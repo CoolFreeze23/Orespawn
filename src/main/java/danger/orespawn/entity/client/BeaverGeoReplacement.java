@@ -4,9 +4,11 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import danger.orespawn.ModEntities;
 import danger.orespawn.OreSpawnMod;
 import danger.orespawn.entity.Beaver;
+import danger.orespawn.entity.client.animation.KeyframeLayer;
+import java.util.List;
+import java.util.Set;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
-import software.bernie.geckolib.animation.AnimatableManager;
 import software.bernie.geckolib.animation.AnimationProcessor;
 import software.bernie.geckolib.animation.AnimationState;
 import software.bernie.geckolib.cache.object.GeoBone;
@@ -14,19 +16,40 @@ import software.bernie.geckolib.cache.object.GeoBone;
 /**
  * GeckoLib Beaver on the converted rig, animated by the classic formulas.
  *
- * <p>The pose is {@link ModelBeaver#setupAnim} verbatim, evaluated on the
- * geo bones of the same names — the G1 harness proved this path matches the
- * classic renderer to within float rounding (FIX_LOG "PHASE G1"). No keyframe
- * clip is involved, so no approximation tolerance applies. Motion only
- * becomes artist-editable once the owner rules on a keyframe tolerance.</p>
+ * <p>The SHIPPED pose is {@link ModelBeaver#setupAnim} verbatim, evaluated on
+ * the geo bones of the same names — the G1 harness proved this path matches
+ * the classic renderer to within float rounding (FIX_LOG "PHASE G1"). No
+ * keyframe clip is involved in it, so no approximation tolerance applies.</p>
+ *
+ * <p>The species also declares its three keyframe layers ({@link #keyframeLayers()}:
+ * the contract's {@code walk} on the gait group, {@code walk_teeth}, {@code walk_tail} —
+ * the Tier-2 pilot's reference-leg clips, Q16 (a)). They register only when the
+ * shipped {@code beaver.animation.json} carries those clips and {@code [modern]
+ * artistAnimations} is on; that file ships EMPTY ({@code "animations": {}}) until
+ * the owner's in-game look accepts the regenerated clip, so the registration is
+ * inert in-game and the classic hook below stays the shipped path. The harness's
+ * keyframe reference leg proves the layers against this hook on a scratch clip
+ * at the ruled 2.5e-3 rad (the density stated beside it).</p>
  *
  * <p>Scale and shadow follow {@link BeaverRenderer}: 0.75 render scale
  * (0.75 / 2 for a baby) and a 0.15 x 0.75 shadow (ENT-S-092, from
  * ClientProxyOreSpawn.java:475 / RenderBeaver.java:23-24,39-49).</p>
  */
 public final class BeaverGeoReplacement extends OreSpawnGeoReplacement<Beaver> {
+    /** The gait group: the four feet, {@code cos(ageInTicks * 3.7F) * PI * 0.45F * limbSwingAmount}. */
+    private static final Set<String> GAIT_BONES = Set.of("rff", "lrf", "lff", "rrf");
+    /**
+     * The three frequency groups of {@link ModelBeaver#setupAnim} (3.7 / 2.7 / 0.5 rad per tick;
+     * {@code ANIM_SPEED} 1.0F), one clip each (Amendment 1 point 5): {@code walk} scaled by
+     * {@code limbSwingAmount}, {@code walk_teeth} and {@code walk_tail} free-running, as the teeth
+     * chew and the tail wags at rest in 1.7.10.
+     */
+    private static final List<KeyframeLayer> KEYFRAME_LAYERS = List.of(
+            new KeyframeLayer("gait", KeyframeLayer.WALK, 3.7F, GAIT_BONES, true),
+            new KeyframeLayer("teeth", KeyframeLayer.walkClip("teeth"), 2.7F, Set.of("teeth"), false),
+            new KeyframeLayer("tail", KeyframeLayer.walkClip("tail"), 0.5F, Set.of("tail"), false));
     private static final GeoReplacementDescriptor<Beaver> DESCRIPTOR = new GeoReplacementDescriptor<>(
-            ModEntities.BEAVER::get,
+            () -> ModEntities.BEAVER.get(),  // lambda: a bound method ref would initialise ModEntities eagerly (the headless keyframe leg instantiates this class registry-free, OPT-029 R0)
             Beaver.class,
             ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "geo/entity/beaver.geo.json"),
             ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "animations/entity/beaver.animation.json"),
@@ -48,8 +71,8 @@ public final class BeaverGeoReplacement extends OreSpawnGeoReplacement<Beaver> {
     }
 
     @Override
-    public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
-        // Intentionally none: the pose is code-driven below.
+    public List<KeyframeLayer> keyframeLayers() {
+        return KEYFRAME_LAYERS;
     }
 
     @Override

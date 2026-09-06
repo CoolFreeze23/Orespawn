@@ -88,6 +88,11 @@ final class G1AnimationRuntime {
             return snapshot(baked);
         }
 
+        /** The keyframe reference leg's persistent bake ({@link KeyframeLeg}): the same fresh bake, kept across the schedule as a per-entity manager keeps its bones in-game. */
+        BakedGeoModel freshBake() {
+            return freshBaked();
+        }
+
         /** GeckoLib's own bake, then the production G2 reorder ({@link DrawOrder#apply}) and, when present, the face order ({@link FaceOrder#apply}), as in S4CandidateRuntime. */
         private BakedGeoModel freshBaked() {
             BakedGeoModel baked = BakedModelFactory.DEFAULT_FACTORY.constructGeoModel(this.geometryTree);

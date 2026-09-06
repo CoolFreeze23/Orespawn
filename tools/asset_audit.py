@@ -739,6 +739,46 @@ OUTSIDE_SEAM = {
 reconciliation = {"shipped": 0, "seam": 0, "outside": 0}
 
 
+def _strip_java_comments(text):
+    """The Java text with its // line comments and /* block */ comments blanked (string and char
+    literals kept intact, escapes honoured; newlines kept so line-based reports still line up).
+    Every text scan below runs on the stripped text: a ';' or a descriptor inside a comment must
+    neither cut a statement short nor count as a construction (slice (c)'s refuter B; the kf17 gate,
+    2026-09-06, where a trailing comment's ';' hid two rigs' geo literals from seam_rigs)."""
+    out = []
+    i, n, quote = 0, len(text), None
+    while i < n:
+        c = text[i]
+        if quote:
+            out.append(c)
+            if c == "\\" and i + 1 < n:
+                out.append(text[i + 1])
+                i += 2
+                continue
+            if c == quote:
+                quote = None
+            i += 1
+            continue
+        if c in ('"', "'"):
+            quote = c
+            out.append(c)
+            i += 1
+            continue
+        if text.startswith("//", i):
+            j = text.find("\n", i)
+            i = n if j == -1 else j
+            continue
+        if text.startswith("/*", i):
+            j = text.find("*/", i + 2)
+            block = text[i:n if j == -1 else j + 2]
+            out.append("\n" * block.count("\n"))
+            i = n if j == -1 else j + 2
+            continue
+        out.append(c)
+        i += 1
+    return "".join(out)
+
+
 def seam_rigs(java_texts):
     """{geo asset path: java file} for the model resource of every GeoReplacementDescriptor
     construction - exactly the rigs OreSpawnGeoReplacementModel draws through the G2 seam.
@@ -749,6 +789,7 @@ def seam_rigs(java_texts):
     static-analysis limit reported under SKIPPED, so it cannot pass silently."""
     rigs = {}
     for path, text in java_texts:
+        text = _strip_java_comments(text)
         for m in DESCRIPTOR_CTOR_RE.finditer(text):
             end = text.find(";", m.end())
             statement = text[m.end():end if end != -1 else len(text)]
@@ -796,7 +837,7 @@ def _descriptor_requires_face_order(java_text):
     translucent rig: the shipped client seam WARNs and falls back to GeckoLib's own face order without the
     key). Detected in the descriptor's own source - the file seam_rigs already attributes the rig to - by the
     override's text; a file constructing more than one descriptor cannot be attributed and is SKIPPED."""
-    return DESCRIPTOR_REQUIRES_FACE_ORDER_RE.search(java_text) is not None
+    return DESCRIPTOR_REQUIRES_FACE_ORDER_RE.search(_strip_java_comments(java_text)) is not None
 
 
 def _face_order_problem(description, bone_cubes, required):
@@ -950,7 +991,7 @@ def check_geckolib(java_texts):
         # FaceOrder.apply accepts (the cube-bearing bones, their cube counts, six-name permutations), and a
         # rig whose descriptor requires it (cubeFaceOrderRequired() true in the descriptor's source, the
         # java file the rig is attributed to) must ship it; absent is the norm for every other rig.
-        java_text = read(java_path)
+        java_text = _strip_java_comments(read(java_path))
         if len(DESCRIPTOR_CTOR_RE.findall(java_text)) != 1 and _descriptor_requires_face_order(java_text):
             skip(rel(java_path), "more than one GeoReplacementDescriptor constructed in the file that overrides "
                  "cubeFaceOrderRequired - the requirement cannot be attributed to a rig; treated as required for %s"

@@ -102,7 +102,7 @@ public final class G1ModelProbe {
             if (args.length != 4) {
                 throw new IllegalArgumentException("geo mode requires exactly 4 arguments");
             }
-            dumpGeo(manifest, Path.of(args[2]), Path.of(args[3]));
+            dumpGeo(manifestPath, manifest, Path.of(args[2]), Path.of(args[3]));
         } else {
             throw new IllegalArgumentException("Unknown mode: " + mode);
         }
@@ -1152,22 +1152,24 @@ public final class G1ModelProbe {
         }
     }
 
-    private static void dumpGeo(JsonObject manifest, Path generatedDir, Path outputDir) throws Exception {
+    private static void dumpGeo(Path manifestPath, JsonObject manifest, Path generatedDir, Path outputDir) throws Exception {
         Files.createDirectories(outputDir);
         clearGeneratedJson(outputDir, ".geo-render.json");
+        // The keyframe reference leg resolves its clip and clip manifest against the repository root, as the vanilla side does.
+        Path repositoryRoot = manifestPath.getParent().getParent();
         for (JsonObject spec : allSpecs(manifest)) {
             String id = spec.get("id").getAsString();
             Path geoPath = generatedDir.resolve(id + ".geo.json");
             Path animationPath = generatedDir.resolve(id + ".animation.json");
             // ENT-S-146 (refuter B, D3): the candidate's render state rides in the same sidecar shape as the classic's.
             JsonObject renderState = new JsonObject();
-            JsonObject dump = dumpGeoModel(manifest, spec, geoPath, animationPath, renderState);
+            JsonObject dump = dumpGeoModel(manifest, spec, repositoryRoot, geoPath, animationPath, renderState);
             writeJson(outputDir.resolve(id + ".geo-render.json"), dump);
             writeJson(outputDir.resolve(id + RENDER_STATE_SUFFIX), renderState);
         }
     }
 
-    private static JsonObject dumpGeoModel(JsonObject manifest, JsonObject spec,
+    private static JsonObject dumpGeoModel(JsonObject manifest, JsonObject spec, Path repositoryRoot,
                                            Path geoPath, Path animationPath, JsonObject renderState) throws Exception {
         Model rawModel = KeyFramesAdapter.GEO_GSON.fromJson(Files.readString(geoPath), Model.class);
         // G2 root-order contract: the generated geo carries the classic draw order under DrawOrder.KEY;
@@ -1328,6 +1330,11 @@ public final class G1ModelProbe {
                 }
             }
         } else {
+            // The keyframe reference leg (Phase G, the controller's return): the shipped phase-locked layers
+            // over the species' regenerated clip, sampled at every request beside the code-driven candidate.
+            KeyframeLeg.Prepared keyframeLeg = KeyframeLeg.declared(spec)
+                    ? KeyframeLeg.prepare(manifest, spec, repositoryRoot, evaluator)
+                    : null;
             for (SampleRequest request : requests) {
                 G1AnimationRuntime.EvaluatedModel candidate;
                 if ("static".equals(animationKind)) {
@@ -1342,8 +1349,19 @@ public final class G1ModelProbe {
                 } else {
                     throw new IllegalStateException("Unsupported G1 candidate animation path " + candidatePath);
                 }
-                samples.add(captureGeoSample(request, candidate, productionHook, recordBonePoses, observed,
-                        candidateColour, candidateLight));
+                JsonObject sample = captureGeoSample(request, candidate, productionHook, recordBonePoses, observed,
+                        candidateColour, candidateLight);
+                if (keyframeLeg != null) {
+                    sample.add(KeyframeLeg.SAMPLE_FIELD, keyframeLeg.classicRotations(request));
+                    JsonObject wrap = keyframeLeg.wrapProvenance(request);
+                    if (wrap != null) {
+                        sample.add(KeyframeLeg.WRAP_FIELD, wrap);
+                    }
+                }
+                samples.add(sample);
+            }
+            if (keyframeLeg != null) {
+                out.add(KeyframeLeg.KEY, keyframeLeg.report(requests));
             }
         }
         out.add("samples", samples);
@@ -1382,10 +1400,16 @@ public final class G1ModelProbe {
         return constructor.newInstance(layer.bakeRoot());
     }
 
-    /** bone -> one array per cube of the six direction names in draw order (the FaceOrder.KEY shape). */
+    /**
+     * bone -> one array per cube of the six direction names in draw order (the FaceOrder.KEY shape). Emitted
+     * in bone-name order: {@code FaceOrder.read} hands back {@code Map.copyOf}, whose iteration order the JDK
+     * salts per JVM ({@code ImmutableCollections.SALT32L}), which made two runs of the probe write PurplePower's
+     * {@code cube_face_order} in two orders (item 15 refuter B, D7); the parity tool compares the objects as
+     * maps, so the order carries no meaning.
+     */
     private static JsonObject faceOrderJson(Map<String, List<List<Direction>>> faceOrder) {
         JsonObject out = new JsonObject();
-        faceOrder.forEach((bone, cubes) -> {
+        new TreeMap<>(faceOrder).forEach((bone, cubes) -> {
             JsonArray cubeArray = new JsonArray();
             for (List<Direction> faces : cubes) {
                 JsonArray faceArray = new JsonArray();
@@ -1520,6 +1544,11 @@ public final class G1ModelProbe {
             }
         }
 
+        if (KeyframeLeg.declared(spec)) {
+            // Amendment 1 point 5: the wrap sample (T - eps vs 0 + eps) per frequency group, on both sides.
+            requests.addAll(KeyframeLeg.wrapRequests(spec, amplitudes(spec)));
+        }
+
         long distinctIds = requests.stream().map(SampleRequest::id).distinct().count();
         if (distinctIds != requests.size()) {
             throw new IllegalStateException("G1 sample schedule contains duplicate IDs");
@@ -1565,7 +1594,7 @@ public final class G1ModelProbe {
         return "a" + amplitudeToken(limbSwingAmount) + "_" + sampleId(fraction);
     }
 
-    private static String amplitudeToken(float limbSwingAmount) {
+    static String amplitudeToken(float limbSwingAmount) {
         return BigDecimal.valueOf(limbSwingAmount).stripTrailingZeros().toPlainString()
                 .replace('-', 'n')
                 .replace('.', '_');
@@ -1582,8 +1611,8 @@ public final class G1ModelProbe {
         Files.writeString(path, GSON.toJson(value) + "\n", StandardCharsets.UTF_8);
     }
 
-    private record SampleRequest(String id, float ageTicks, float limbSwingAmount,
-                                 boolean fullCapture, boolean denseTransformSample) {
+    record SampleRequest(String id, float ageTicks, float limbSwingAmount,
+                         boolean fullCapture, boolean denseTransformSample) {
     }
 
     private record BakeRequest(String id, double fraction, float ageTicks) {

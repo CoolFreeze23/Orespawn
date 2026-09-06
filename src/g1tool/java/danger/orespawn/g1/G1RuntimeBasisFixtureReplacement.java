@@ -6,13 +6,14 @@ import danger.orespawn.entity.client.PoseInputs;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
-import software.bernie.geckolib.animation.AnimatableManager;
 import software.bernie.geckolib.animation.AnimationProcessor;
 
 /**
  * The production-helper side of {@link G1RuntimeBasisFixtureModel}: the same
  * pose written through {@code OreSpawnGeoReplacement}'s classic-vocabulary
- * helpers. Non-production; it has no entity type and is never registered.
+ * helpers. Non-production; it has no entity type and is never registered. It
+ * declares no keyframe layer, so the base's final {@code registerControllers}
+ * registers nothing (item 15 refuter A, D1: the empty override was deleted).
  */
 public final class G1RuntimeBasisFixtureReplacement extends OreSpawnGeoReplacement<Entity> {
     private static final ResourceLocation FIXTURE =
@@ -26,10 +27,6 @@ public final class G1RuntimeBasisFixtureReplacement extends OreSpawnGeoReplaceme
 
     public G1RuntimeBasisFixtureReplacement() {
         super(DESCRIPTOR);
-    }
-
-    @Override
-    public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
     }
 
     @Override

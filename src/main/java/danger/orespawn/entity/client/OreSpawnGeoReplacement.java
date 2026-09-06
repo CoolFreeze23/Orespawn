@@ -1,13 +1,19 @@
 package danger.orespawn.entity.client;
 
+import danger.orespawn.OreSpawnConfig;
+import danger.orespawn.entity.client.animation.KeyframeLayer;
+import java.util.List;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import software.bernie.geckolib.animatable.GeoReplacedEntity;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
+import software.bernie.geckolib.animation.AnimatableManager;
 import software.bernie.geckolib.animation.AnimationProcessor;
 import software.bernie.geckolib.animation.AnimationState;
+import software.bernie.geckolib.cache.GeckoLibCache;
 import software.bernie.geckolib.cache.object.GeoBone;
 import software.bernie.geckolib.constant.DataTickets;
+import software.bernie.geckolib.loading.object.BakedAnimations;
 
 /**
  * One replaced animatable per registry entry. GeckoLib keys its per-entity
@@ -93,9 +99,103 @@ public abstract class OreSpawnGeoReplacement<E extends Entity> implements GeoRep
     }
 
     /**
+     * Two motion sources per species (Phase G slice (e) as ruled 2026-09-06,
+     * {@code phase_g_reports/animation_contract/contract_design.md} section 6):
+     * the species' keyframe layers, one per frequency group of the standard
+     * animation contract, or empty for a species animated by its classic code
+     * only (every species today; the Beaver declares its three groups and
+     * ships an EMPTY clip file, so nothing registers until the owner's look
+     * accepts a clip). A layer registers only when the species' loaded clip
+     * file carries the contract's clips and {@code [modern] artistAnimations}
+     * says so ({@link #registerKeyframeLayers}); the per-entity manager then
+     * decides the source once: layers registered - the artist source, the
+     * classic hook stands down ({@link OreSpawnGeoReplacementModel#setCustomAnimations});
+     * none - the classic hook poses, as it always has.
+     */
+    public List<KeyframeLayer> keyframeLayers() {
+        return List.of();
+    }
+
+    /**
+     * GeckoLib builds the per-entity {@code AnimatableManager} on the client's
+     * render thread ({@code getManagerForId} -> the manager constructor ->
+     * this, 4.8.4 offsets 27-55) and never rebuilds it while the entity stays
+     * in the level (OPT-029 evicts it on leave), so the decision here is the
+     * construction snapshot the config key documents.
+     *
+     * <p>FINAL (item 15 refuter A, D1): {@link #registerKeyframeLayers} over
+     * {@link #loadedClips()} is the single self-gating path for every species;
+     * a species' only lever is {@link #keyframeLayers()} - empty (every species
+     * but the Beaver today) is the classic source and registers nothing. The
+     * thirteen empty per-species overrides that predated the layers were deleted
+     * with the seal; {@code KeyframeLegTests.kf_007} pins the presented state
+     * (every replacement's layers empty but the Beaver's three).</p>
+     */
+    @Override
+    public final void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
+        registerKeyframeLayers(controllers, loadedClips());
+    }
+
+    /**
+     * GeckoLib's bake of this species' animation resource - what
+     * {@code GeoModel.getAnimation} reads (4.8.4 offsets 6-18:
+     * {@code GeckoLibCache.getBakedAnimations().get(resource)}) - or
+     * {@code null} where no bake exists: before the first resource reload, or
+     * on a dedicated server, whose cache map is the empty one the class
+     * initialiser installs. {@code null} is the classic source.
+     */
+    protected final BakedAnimations loadedClips() {
+        return GeckoLibCache.getBakedAnimations().get(this.descriptor.animationResource());
+    }
+
+    /**
+     * Registers this species' {@link #keyframeLayers()} whose clips are present in
+     * {@code clips}, and returns how many were registered (0 = the classic source).
+     * Self-gated by clip presence (Q1 (a)): nothing registers unless the file
+     * carries {@link KeyframeLayer#IDLE} or {@link KeyframeLayer#WALK} - a species
+     * without them is not an artist species (contract section 2.4) - and then a
+     * layer whose own clip is missing is skipped, its bones holding bind (the
+     * section's fallback). Only after that is the config asked
+     * ({@link OreSpawnConfig#artistAnimations(EntityType)}: the modern master, the
+     * key, the exclusion list). The entity readers handed to the controllers are
+     * this replacement's own ({@link #ageInTicks} on the drawn entity,
+     * {@link #limbSwingAmount} from the renderer's state); the headless harness
+     * builds the same layers on explicit inputs through
+     * {@link KeyframeLayer#controller}.
+     */
+    public final int registerKeyframeLayers(AnimatableManager.ControllerRegistrar controllers, BakedAnimations clips) {
+        List<KeyframeLayer> layers = keyframeLayers();
+        if (layers.isEmpty() || clips == null) {
+            return 0;
+        }
+        if (clips.getAnimation(KeyframeLayer.IDLE) == null && clips.getAnimation(KeyframeLayer.WALK) == null) {
+            return 0;
+        }
+        if (!OreSpawnConfig.artistAnimations(this.descriptor.entityType())) {
+            return 0;
+        }
+        int registered = 0;
+        for (KeyframeLayer layer : layers) {
+            if (clips.getAnimation(layer.clip()) == null) {
+                continue;
+            }
+            controllers.add(layer.controller(this, this::ageTicks, OreSpawnGeoReplacement::limbSwingAmount));
+            registered++;
+        }
+        return registered;
+    }
+
+    /** The drawn entity's age for the phase-locked layers: vanilla {@code getBob}, as the classic hook reads it. */
+    private float ageTicks(AnimationState<?> state) {
+        return ageInTicks(entity(state), state);
+    }
+
+    /**
      * Code-driven pose hook, called by the shared model from
      * {@code GeoModel.setCustomAnimations} after keyframe controllers have
-     * run. The default adapts the renderer's state into {@link PoseInputs}
+     * run - and only while the per-entity manager holds no controllers (the
+     * classic source; {@link OreSpawnGeoReplacementModel#setCustomAnimations}).
+     * The default adapts the renderer's state into {@link PoseInputs}
      * and calls {@link #applyCustomAnimations(AnimationProcessor, PoseInputs)};
      * the G1 Beaver overrides this form directly.
      */

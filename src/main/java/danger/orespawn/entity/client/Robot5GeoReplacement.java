@@ -5,7 +5,6 @@ import danger.orespawn.OreSpawnMod;
 import danger.orespawn.entity.Robot5;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.resources.ResourceLocation;
-import software.bernie.geckolib.animation.AnimatableManager;
 import software.bernie.geckolib.animation.AnimationProcessor;
 
 /** GeckoLib Robot5: {@link ModelRobot5#setupAnim} verbatim on the converted rig (Tier 3, code-driven per Amendment 1). */
@@ -21,11 +20,6 @@ public final class Robot5GeoReplacement extends OreSpawnGeoReplacement<Robot5> {
 
     public Robot5GeoReplacement() {
         super(DESCRIPTOR);
-    }
-
-    @Override
-    public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
-        // Intentionally none: the pose is code-driven below.
     }
 
     @Override

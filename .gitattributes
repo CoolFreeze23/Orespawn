@@ -20,3 +20,8 @@
 /src/main/resources/assets/orespawn/animations/entity/*.animation.json text eol=lf
 # The asset audit is edited on every rig landing under core.autocrlf=true checkouts; keep it LF like the other tools (ENT-S-146 refuter B, D9, 2026-09-06).
 /tools/asset_audit.py text eol=lf
+# The keyframe reference leg's Beaver clip (tools/keyframe_clip.py output; a gametest resource, not shipped) is byte-compared with the harness scratch copy; LF (2026-09-06).
+/src/gametest/resources/orespawn_gametest/keyframes/*.animation.json text eol=lf
+# The clip generator and its per-species manifests are mirrored in the probe's in-memory twin and the clip is sha-pinned; keep them LF (item 15 refuter B, D9, 2026-09-06).
+/tools/keyframe_clip.py text eol=lf
+/tools/keyframe_clips/*.json text eol=lf

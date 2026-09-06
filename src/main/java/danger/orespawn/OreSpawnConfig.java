@@ -1,5 +1,8 @@
 package danger.orespawn;
 
+import java.util.List;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.EntityType;
 import net.neoforged.neoforge.common.ModConfigSpec;
 
 public class OreSpawnConfig {
@@ -187,8 +190,8 @@ public class OreSpawnConfig {
     // phase14ContentEnable(), mothraWideRootHitbox(),
     // fireRespectsMobGriefing(), godzillaSparesBossPeers(), petsDefendOwner(),
     // pointysaurusStareAggro(), cryolophosaurusRevengeChase(),
-    // chainsawSweepVanillaSight()), never through the keys directly. The
-    // MOD-024 items are unimplemented proposals, not keys.
+    // chainsawSweepVanillaSight(), artistAnimations(type)), never through the
+    // keys directly. The MOD-024 items are unimplemented proposals, not keys.
     /**
      * Master modern-mode switch -- master override; defaults to true and
      * defers to the per-feature keys; set false to force every modern feature
@@ -202,15 +205,18 @@ public class OreSpawnConfig {
      * {@link #fireRespectsMobGriefing()}, {@link #godzillaSparesBossPeers()},
      * {@link #petsDefendOwner()}, {@link #pointysaurusStareAggro()},
      * {@link #cryolophosaurusRevengeChase()},
-     * {@link #chainsawSweepVanillaSight()} -- a feature's key is never
-     * consulted without this master. Phase G artist
-     * animations will hang off this same master ("artist animations are a
-     * 2.0 feature behind the modern config; classic stays code-driven
-     * parity", ruling 2026-09-03). Construction-snapshotted features (the
+     * {@link #chainsawSweepVanillaSight()},
+     * {@link #artistAnimations(EntityType)} -- a feature's key is never
+     * consulted without this master. Phase G artist animations hang off this
+     * same master ("artist animations are a 2.0 feature behind the modern
+     * config; classic stays code-driven parity", ruling 2026-09-03; the keys
+     * landed 2026-09-06, MOD-038). Construction-snapshotted features (the
      * robot gait mode, the hitbox sub-keys, the T9 goal keys
      * {@link #petsDefendOwner()}, {@link #pointysaurusStareAggro()} and
-     * {@link #cryolophosaurusRevengeChase()}; BOSS-017 pattern) see a flip on
-     * newly constructed/loaded entities only, not live ones.
+     * {@link #cryolophosaurusRevengeChase()}; the per-entity animation
+     * manager's layers, {@link #artistAnimations(EntityType)}; BOSS-017
+     * pattern) see a flip on newly constructed/loaded entities only, not live
+     * ones.
      */
     public static final ModConfigSpec.BooleanValue MODERN_ENABLED;
     /**
@@ -307,6 +313,30 @@ public class OreSpawnConfig {
      * the exact 1.7.10 walk, the classic behaviour.
      */
     public static final ModConfigSpec.BooleanValue MODERN_CHAINSAW_SWEEP_VANILLA_SIGHT;
+    /**
+     * MOD-038 (Phase G, the standard animation contract; owner ruling 2026-09-06,
+     * scope addendum item 24 Q1 (a)): artist keyframe animations on the GeckoLib
+     * candidate renderers -- a species whose {@code .animation.json} carries the
+     * contract's clips ({@code idle} / {@code walk} and the group clips) registers
+     * the contract's phase-locked layers and its code-driven classic pose hook
+     * stands down; a species without those clips (every shipped clip file today:
+     * the Beaver's is empty until the owner's look) keeps the classic pose whatever
+     * this says (self-gated by clip presence). Takes effect only while
+     * {@link #MODERN_ENABLED} is on -- read through
+     * {@link #artistAnimations(EntityType)}, never directly, ONCE per per-entity
+     * animation manager as it is built (BOSS-017 "construction snapshot" shape on the
+     * client: a flip reaches an entity as it re-enters render distance, on F3+T or on
+     * re-login); false is the classic pose everywhere. Nothing in-game changes with
+     * the default until a species ships its clips.
+     */
+    public static final ModConfigSpec.BooleanValue MODERN_ARTIST_ANIMATIONS;
+    /**
+     * MOD-038, the owner's per-species flip list: registry names
+     * ({@code orespawn:beaver}; the bare path is accepted for the mod's own species)
+     * kept on the classic pose in modern mode even when their clips ship. Read with
+     * the master through {@link #artistAnimations(EntityType)}, never directly.
+     */
+    public static final ModConfigSpec.ConfigValue<List<? extends String>> MODERN_CLASSIC_ANIMATION_SPECIES;
 
     static {
         BUILDER.push("mobs");
@@ -517,12 +547,13 @@ public class OreSpawnConfig {
                         "tweaks.phase14ContentEnable, modern.mothraWideRootHitbox, " +
                         "modern.fireRespectsMobGriefing, modern.godzillaSparesBossPeers, " +
                         "modern.petsDefendOwner, modern.pointysaurusStareAggro, " +
-                        "modern.cryolophosaurusRevengeChase, modern.chainsawSweepVanillaSight); false = classic 1.7.10 " +
-                        "parity everywhere, whatever the per-feature keys say. Phase G artist animations will " +
-                        "hang off this same switch (classic stays code-driven parity). Snapshotted features " +
+                        "modern.cryolophosaurusRevengeChase, modern.chainsawSweepVanillaSight, " +
+                        "modern.artistAnimations with modern.classicAnimationSpecies); false = classic 1.7.10 " +
+                        "parity everywhere, whatever the per-feature keys say. Phase G artist animations hang " +
+                        "off this same switch (classic stays code-driven parity). Snapshotted features " +
                         "(the robot gait mode, hitbox sub-keys, the goal keys petsDefendOwner / " +
-                        "pointysaurusStareAggro / cryolophosaurusRevengeChase) pick up a flip on newly " +
-                        "spawned/loaded entities, not live ones."
+                        "pointysaurusStareAggro / cryolophosaurusRevengeChase, the per-entity animation layers " +
+                        "of artistAnimations) pick up a flip on newly spawned/loaded entities, not live ones."
         ).define("enabled", true);
         MODERN_MOTHRA_WIDE_ROOT_HITBOX = BUILDER.comment(
                 "MOD-029: Mothra's root hitbox is 6 x 3 (the port's original size) instead of the 1.7.10 " +
@@ -602,6 +633,27 @@ public class OreSpawnConfig {
                         "(owner ruling 2026-09-05); set false to keep the 1.7.10 walk in modern mode too. Read at every " +
                         "swing, so a change applies to the next left-click."
         ).define("chainsawSweepVanillaSight", true);
+        // MOD-038 (Phase G animation contract, owner ruling 2026-09-06, Q1 (a): "one
+        // [modern] artistAnimations master, default ON, classicAnimationSpecies the
+        // exclusion list, species self-gated by clip presence"). Read once per
+        // per-entity animation manager as it is built (the client's construction
+        // snapshot), never on a live manager.
+        MODERN_ARTIST_ANIMATIONS = BUILDER.comment(
+                "MOD-038: artist keyframe animations on the GeckoLib candidate renderers. A species whose " +
+                        "animation file carries the standard contract's clips (idle / walk and its group clips) plays " +
+                        "them through the phase-locked keyframe layers and its classic code-driven pose stands down; a " +
+                        "species without those clips keeps the classic pose whatever this says (every shipped clip " +
+                        "file is empty until the owner's in-game look accepts a species' clips, so a default install " +
+                        "changes nothing). Only takes effect while modern.enabled is true; classic mode always poses " +
+                        "from the 1.7.10 formulas. On by default (owner ruling 2026-09-06); set false to keep every " +
+                        "species on the classic pose in modern mode too. Picked up by an entity as it (re)enters render " +
+                        "distance, on F3+T or on re-login, not live."
+        ).define("artistAnimations", true);
+        MODERN_CLASSIC_ANIMATION_SPECIES = BUILDER.comment(
+                "MOD-038: species kept on the classic code-driven pose in modern mode even when their artist clips " +
+                        "ship -- registry names, e.g. [\"orespawn:beaver\"] (the bare name \"beaver\" is accepted for " +
+                        "OreSpawn's own species). Empty by default. Same pick-up as artistAnimations."
+        ).defineListAllowEmpty("classicAnimationSpecies", List.of(), element -> element instanceof String);
         BUILDER.pop();
 
         SPEC = BUILDER.build();
@@ -692,6 +744,33 @@ public class OreSpawnConfig {
      */
     public static boolean chainsawSweepVanillaSight() {
         return MODERN_ENABLED.get() && MODERN_CHAINSAW_SWEEP_VANILLA_SIGHT.get();
+    }
+
+    /**
+     * MOD-038 (Phase G animation contract, 2026-09-06): the single
+     * {@code master && key && !excluded} evaluation for a species' artist keyframe
+     * layers -- true only while {@link #MODERN_ENABLED} AND
+     * {@link #MODERN_ARTIST_ANIMATIONS} are both on and {@code type}'s registry name
+     * is not listed in {@link #MODERN_CLASSIC_ANIMATION_SPECIES}. Read by
+     * {@code OreSpawnGeoReplacement.registerKeyframeLayers} ONCE as a per-entity
+     * animation manager is built on the client (the construction-snapshot shape,
+     * BOSS-017), after the species' clip file has been found to carry the contract's
+     * clips; false is the classic pose. Never consulted on the server: the dedicated
+     * server builds no animation manager.
+     */
+    public static boolean artistAnimations(EntityType<?> type) {
+        if (!MODERN_ENABLED.get() || !MODERN_ARTIST_ANIMATIONS.get()) {
+            return false;
+        }
+        ResourceLocation key = EntityType.getKey(type);
+        for (String listed : MODERN_CLASSIC_ANIMATION_SPECIES.get()) {
+            String name = listed.trim();
+            if (name.equals(key.toString())
+                    || (OreSpawnMod.MOD_ID.equals(key.getNamespace()) && name.equals(key.getPath()))) {
+                return false;
+            }
+        }
+        return true;
     }
 
     /**

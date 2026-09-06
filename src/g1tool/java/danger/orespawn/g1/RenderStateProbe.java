@@ -163,7 +163,7 @@ final class RenderStateProbe {
     static JsonObject describeFunction(Function<ResourceLocation, RenderType> function,
                                        Function<ResourceLocation, RenderType> entityModelDefault) throws IOException {
         JsonObject out = new JsonObject();
-        String functionClass = function.getClass().getName();
+        String functionClass = stableClassName(function.getClass());
         String owner = ownerOf(functionClass);
         out.addProperty("function_class", functionClass);
         out.addProperty("owner_class", owner);
@@ -188,6 +188,17 @@ final class RenderStateProbe {
         out.addProperty("render_type", factories.size() == 1 ? snakeCase(factories.get(0)) : null);
         out.addProperty("is_entity_model_default", false);
         return out;
+    }
+
+    /**
+     * A lambda's hidden class is named {@code <owner>$$Lambda/0x<address>} with a per-JVM address, which made
+     * every run of the probe write a different sidecar (item 15 refuter B, D7): the address is dropped, so the
+     * name says "a lambda of this owner" and two runs write the same bytes. Any other class is its own name.
+     */
+    static String stableClassName(Class<?> type) {
+        String name = type.getName();
+        int lambda = name.indexOf("$$Lambda");
+        return lambda < 0 ? name : name.substring(0, lambda + "$$Lambda".length());
     }
 
     /** {@code <owner>$$Lambda/0x...} (a lambda's hidden class) to its owner; any other class is its own owner. */

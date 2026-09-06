@@ -4,7 +4,6 @@ import danger.orespawn.ModEntities;
 import danger.orespawn.OreSpawnMod;
 import danger.orespawn.entity.EntityVortex;
 import net.minecraft.resources.ResourceLocation;
-import software.bernie.geckolib.animation.AnimatableManager;
 
 /**
  * GeckoLib Vortex: one static zero-thickness billboard quad; nothing animates (classic {@code VortexModel.setupAnim} is empty).
@@ -12,7 +11,7 @@ import software.bernie.geckolib.animation.AnimatableManager;
  */
 public final class VortexGeoReplacement extends OreSpawnGeoReplacement<EntityVortex> {
     private static final GeoReplacementDescriptor<EntityVortex> DESCRIPTOR = new GeoReplacementDescriptor<>(
-            ModEntities.ENTITY_VORTEX::get,
+            () -> ModEntities.ENTITY_VORTEX.get(),  // lambda: a bound method ref would initialise ModEntities eagerly and trip Bootstrap.checkBootstrapCalled in a headless leg (OPT-029 R0; item 15 refuter A, D4)
             EntityVortex.class,
             ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "geo/entity/vortex.geo.json"),
             ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "animations/entity/vortex.animation.json"),
@@ -22,10 +21,6 @@ public final class VortexGeoReplacement extends OreSpawnGeoReplacement<EntityVor
 
     public VortexGeoReplacement() {
         super(DESCRIPTOR);
-    }
-
-    @Override
-    public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
     }
 
     public static final class Renderer extends OreSpawnGeoReplacedEntityRenderer<EntityVortex, VortexGeoReplacement> {

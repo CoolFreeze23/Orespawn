@@ -6,7 +6,6 @@ import danger.orespawn.entity.RockBase;
 import danger.orespawn.entity.pose.RockBasePose;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.resources.ResourceLocation;
-import software.bernie.geckolib.animation.AnimatableManager;
 import software.bernie.geckolib.animation.AnimationProcessor;
 
 /**
@@ -41,11 +40,6 @@ public final class RockBaseGeoReplacement extends OreSpawnGeoReplacement<RockBas
 
     public RockBaseGeoReplacement() {
         super(DESCRIPTOR);
-    }
-
-    @Override
-    public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
-        // Intentionally none: the pose is code-driven below.
     }
 
     @Override

@@ -75,6 +75,22 @@ VISUAL_MODES = {
     },
 }
 DEFAULT_VERTEX_COLOR = [255, 255, 255, 255]
+# Phase G, the controller's return (Amendment 1 points 3-5, ADDENDA (1)-(2), item 24 (5)-(14), 2026-09-06):
+# a gait_scaled model may declare a keyframe reference leg - the shipped phase-locked keyframe layers over
+# the species' regenerated clip, sampled by the probe at every schedule request plus the wrap pairs it adds
+# to BOTH sides (`..._kfwrap_<frequency>_c<cycle>_before` / `_after`, T - eps vs 0 + eps at every seam the
+# float phase straddles) and compared here with the compiled setupAnim at its own NAMED tolerance
+# (`thresholds.keyframe_reference_leg_epsilon_radians`, an owner ruling: 2.5e-3 rad; no default). The
+# density - keys per bone per clip - is an OUTPUT: read from what GeckoLib baked, checked against the
+# probe's density search (the fewest keys holding the tolerance, one fewer failing) and stated beside the
+# tolerance and the lerp mode in the ruled wording. A model without the block is untouched.
+KEYFRAME_LEG_KEY = "keyframe_reference_leg"
+KEYFRAME_LEG_SAMPLE_FIELD = "keyframe_rotations"
+KEYFRAME_LEG_TOLERANCE_KEY = "keyframe_reference_leg_epsilon_radians"
+KEYFRAME_WRAP_TOKEN = "_kfwrap_"
+# The probe writes each wrap sample's frequency group beside its id (KeyframeLeg.WRAP_FIELD); the tool matches on
+# that record and never recomputes a token from the manifest's number (item 15 refuter B, D10).
+KEYFRAME_WRAP_FIELD = "keyframe_wrap"
 
 
 def load_json(path: Path) -> dict[str, Any]:
@@ -720,6 +736,245 @@ def render_instance_pose_parity(model_id: str, compiled: dict[str, Any],
             "cube compile) versus measured GeckoLib bone transforms conjugated into classic space "
             "(bone_poses_classic): instance == group bone, draw == clone bone * T(pivot)"
         ),
+    }
+
+
+def resolve_repository_path(repository_root: Path, text: str) -> Path:
+    path = Path(text)
+    return path.resolve() if path.is_absolute() else (repository_root / path).resolve()
+
+
+def keyframe_tolerance_text(epsilon: float) -> str:
+    """The ruling's spelling of the tolerance: 2.5e-3, not 2.5e-03."""
+    mantissa, exponent = f"{epsilon:.1e}".split("e")
+    return f"{mantissa}e{int(exponent)}"
+
+
+def keyframe_reference_leg_parity(model_id: str, spec: dict[str, Any], compiled: dict[str, Any],
+                                  geo_render: dict[str, Any], thresholds: dict[str, Any],
+                                  clip_path: Path, clip_manifest_path: Path) -> dict[str, Any]:
+    """The keyframe reference leg: the shipped keyframe layers against the compiled setupAnim.
+
+    Every non-bind sample of the schedule (the amplitude x fraction grid, the dense probes, the wrap
+    pairs) carries the layers' pose of every bone in classic terms; each layer bone must match the
+    compiled model's rotation within the leg's named tolerance and every other bone must sit at bind
+    within the animation epsilon. The probe's own outputs - the density search, the full-schedule
+    confirmation, the wrap sample, the order-independence check - are required to hold, and the
+    density statement is rebuilt here and must equal the probe's.
+    """
+    leg = spec[KEYFRAME_LEG_KEY]
+    if KEYFRAME_LEG_TOLERANCE_KEY not in thresholds:
+        raise AssertionError(
+            f"{model_id} declares {KEYFRAME_LEG_KEY} but thresholds has no {KEYFRAME_LEG_TOLERANCE_KEY}: "
+            "the keyframe leg's tolerance is an owner ruling and is named, never defaulted"
+        )
+    epsilon = float(thresholds[KEYFRAME_LEG_TOLERANCE_KEY])
+    bind_epsilon = float(thresholds["animation_epsilon_radians"])
+    block = geo_render.get(KEYFRAME_LEG_KEY)
+    if not isinstance(block, dict):
+        raise AssertionError(f"{model_id} geo-render carries no {KEYFRAME_LEG_KEY} block")
+    if block.get("candidate_class") != leg["candidate_class"]:
+        raise AssertionError(f"{model_id} keyframe leg candidate class drift between manifest and probe")
+    if bool(block.get("spline_repair")) != bool(leg["spline_repair"]):
+        raise AssertionError(f"{model_id} keyframe leg spline_repair drift between manifest and probe")
+    if float(block.get("tolerance_radians", -1.0)) != epsilon:
+        raise AssertionError(
+            f"{model_id} the probe searched the density at {block.get('tolerance_radians')} rad, the manifest names {epsilon}"
+        )
+    if not clip_path.is_file():
+        raise AssertionError(f"{model_id} keyframe leg clip is missing: {clip_path}")
+    if block.get("clip_sha256") != sha256(clip_path):
+        raise AssertionError(f"{model_id} keyframe leg clip provenance drift: {clip_path}")
+    if block.get("clip_matches_generator_rule") is not True:
+        raise AssertionError(f"{model_id} keyframe leg clip is not the generator's output")
+
+    vanilla_samples = sample_map(compiled)
+    candidate_samples = sample_map(geo_render)
+    layer_of_bone: dict[str, str] = {}
+    for layer in block["layers"]:
+        for bone in layer["bones"]:
+            if bone in layer_of_bone:
+                raise AssertionError(f"{model_id} bone {bone} in two keyframe layers")
+            layer_of_bone[bone] = layer["group"]
+    groups = [layer["group"] for layer in block["layers"]]
+    max_error = {group: 0.0 for group in groups}
+    worst = {group: "exact" for group in groups}
+    max_bind_motion = 0.0
+    compared = 0
+    wrap_pairs: dict[str, dict[str, Any]] = {}
+    for current_id, vanilla_sample in vanilla_samples.items():
+        if current_id == "bind":
+            continue
+        candidate_sample = candidate_samples[current_id]
+        keyframe = candidate_sample.get(KEYFRAME_LEG_SAMPLE_FIELD)
+        if not isinstance(keyframe, dict):
+            raise AssertionError(f"{model_id}/{current_id} carries no {KEYFRAME_LEG_SAMPLE_FIELD}")
+        transforms = vanilla_sample["transforms"]
+        if set(keyframe) != set(transforms):
+            raise AssertionError(f"{model_id}/{current_id} keyframe bone set differs from the compiled model")
+        for bone, transform in transforms.items():
+            delta = vector_delta(transform["rotation"], keyframe[bone])
+            group = layer_of_bone.get(bone)
+            if group is None:
+                max_bind_motion = max(max_bind_motion, delta)
+                if delta > bind_epsilon:
+                    raise AssertionError(
+                        f"KEYFRAME LEG MISMATCH {model_id}/{current_id}/{bone}: a bone outside every layer moved by "
+                        f"{delta:.12g} > {bind_epsilon:.12g}"
+                    )
+                continue
+            compared += 1
+            if delta > max_error[group]:
+                max_error[group] = delta
+                worst[group] = f"{current_id}:{bone}"
+            if delta > epsilon:
+                raise AssertionError(
+                    f"KEYFRAME LEG MISMATCH {model_id}/{current_id}/{bone}: keyframe layers delta {delta:.12g} > "
+                    f"tolerance {epsilon:.12g}"
+                )
+        if KEYFRAME_WRAP_TOKEN in current_id:
+            # The pair's frequency group comes from the record the probe wrote beside the id (KeyframeLeg
+            # .wrapProvenance): the id's token and the group name were resolved by the same Java frequencyToken
+            # over the same float, so nothing here rebuilds a token from the manifest's number (Float.toString
+            # and `.7g` diverge past seven significant digits; item 15 refuter B, D10).
+            provenance = candidate_sample.get(KEYFRAME_WRAP_FIELD)
+            if not isinstance(provenance, dict) or provenance.get("group") not in groups:
+                raise AssertionError(f"{model_id}/{current_id} wrap sample carries no {KEYFRAME_WRAP_FIELD} group")
+            prefix, _, side = current_id.rpartition("_")
+            id_token = prefix.split(KEYFRAME_WRAP_TOKEN, 1)[1].rsplit("_c", 1)[0]
+            if provenance.get("frequency_token") != id_token:
+                raise AssertionError(
+                    f"{model_id}/{current_id} wrap sample token {provenance.get('frequency_token')!r} "
+                    f"is not the id's {id_token!r}"
+                )
+            pair = wrap_pairs.setdefault(prefix, {})
+            if pair.setdefault("group", provenance["group"]) != provenance["group"]:
+                raise AssertionError(f"{model_id} wrap pair {prefix} names two frequency groups")
+            pair[side] = keyframe
+    if compared == 0:
+        raise AssertionError(f"{model_id} keyframe leg compared no layer bone")
+    if not wrap_pairs:
+        raise AssertionError(f"{model_id} keyframe leg has no wrap pairs (Amendment 1 point 5)")
+    # A wrap pair belongs to ONE frequency group (the record beside its id names it): the seam is that group's,
+    # and only that group's bones are continuous across it - every other group is mid-cycle there and moves by
+    # its own slope over the 2 eps window (the gait moves ~8e-3 rad across the tail's seam window).
+    bones_by_group = {layer["group"]: list(layer["bones"]) for layer in block["layers"]}
+    max_continuity = 0.0
+    groups_wrapped: set[str] = set()
+    for prefix, pair in wrap_pairs.items():
+        if set(pair) != {"group", "before", "after"}:
+            raise AssertionError(f"{model_id} wrap pair {prefix} is incomplete: {sorted(pair)}")
+        group = pair["group"]
+        groups_wrapped.add(group)
+        for bone in bones_by_group[group]:
+            continuity = vector_delta(pair["before"][bone], pair["after"][bone])
+            max_continuity = max(max_continuity, continuity)
+            if continuity > epsilon:
+                raise AssertionError(
+                    f"KEYFRAME LEG WRAP {model_id}/{prefix}/{bone}: |v(T-eps) - v(0+eps)| = {continuity:.12g} > {epsilon:.12g}"
+                )
+    if groups_wrapped != set(bones_by_group):
+        raise AssertionError(
+            f"{model_id} wrap pairs cover groups {sorted(groups_wrapped)}, the layers declare {sorted(bones_by_group)}"
+        )
+
+    density = block["density"]
+    if density.get("every_group_reached_tolerance") is not True:
+        raise AssertionError(f"{model_id} keyframe density search did not reach the tolerance for every group: "
+                             f"{ {group: row.get('fewest_keys_per_bone') for group, row in density['groups'].items()} }")
+    # Refuter B, D3: the probe scans upward from min_keys and the table is non-monotone at the low end (N = 3 beats
+    # N = 4..7 on every group), so "fewest" means something only if the table starts at min_keys, runs without a
+    # gap, and every row below a group's fewest exceeds the tolerance while the fewest row holds it.
+    table = density["search_max_error_radians_by_keys_per_bone"]
+    if [int(keys) for keys in table] != list(range(int(density["min_keys"]), int(density["min_keys"]) + len(table))):
+        raise AssertionError(f"{model_id} keyframe density table does not run consecutively from min_keys "
+                             f"{density['min_keys']}: {list(table)}")
+    for group, row in density["groups"].items():
+        holding_below = [keys for keys, errors in table.items()
+                         if int(keys) < int(row["fewest_keys_per_bone"]) and float(errors[group]) <= epsilon]
+        if holding_below or float(table[str(row["fewest_keys_per_bone"])][group]) > epsilon:
+            raise AssertionError(f"{model_id} keyframe density: {group} fewest {row['fewest_keys_per_bone']} is not the "
+                                 f"first row of the table holding the tolerance (rows below it that hold: {holding_below})")
+    if density.get("clip_density_is_fewest_for_every_group") is not True:
+        raise AssertionError(
+            f"{model_id} the clip's density is not the fewest keys holding the tolerance: "
+            f"{ {group: (row.get('clip_keys_per_bone'), row.get('fewest_keys_per_bone')) for group, row in density['groups'].items()} }"
+        )
+    for group, row in density["groups"].items():
+        if row.get("confirmed_holds_tolerance") is not True or row.get("one_fewer_fails_tolerance") is not True:
+            raise AssertionError(f"{model_id} keyframe density confirmation failed for {group}: {row}")
+    for group, row in block["clip_full_schedule"].items():
+        if row.get("holds_tolerance") is not True:
+            raise AssertionError(f"{model_id} keyframe clip exceeds the tolerance on the dense schedule for {group}: {row}")
+    for group, row in block["wrap_sample"].items():
+        if int(row.get("seams_sampled", 0)) <= 0 or row.get("holds_tolerance") is not True:
+            raise AssertionError(f"{model_id} keyframe wrap sample failed for {group}: {row}")
+    reversed_delta = float(block["schedule_reversed_max_delta_radians"])
+    if reversed_delta > bind_epsilon:
+        raise AssertionError(
+            f"{model_id} the keyframe layers depend on frame order: reversed schedule max delta {reversed_delta:.12g}"
+        )
+    if set(density["groups"]) != set(groups) or set(block["clip"]) != set(groups):
+        raise AssertionError(f"{model_id} keyframe leg group sets disagree")
+
+    keys = " / ".join(str(block["clip"][group]["keys_per_bone"]) for group in groups)
+    lerps: list[str] = []
+    for group in groups:
+        lerp = block["clip"][group]["lerp_mode"]
+        if lerp not in lerps:
+            lerps.append(lerp)
+    arguments = ("with spline arguments repaired at load" if block["spline_repair"]
+                 else "with spline arguments as GeckoLib 4.8.4 evaluates them")
+    if not clip_manifest_path.is_file():
+        raise AssertionError(f"{model_id} keyframe leg clip manifest is missing: {clip_manifest_path}")
+    species_label = load_json(clip_manifest_path)["species_label"]
+    statement = (f"{keyframe_tolerance_text(epsilon)} rad; {species_label} reference leg {keys} "
+                 f"{'|'.join(lerps)} keys per bone {arguments}; wrap sample T−ε vs 0+ε included")
+    if block.get("density_statement") != statement:
+        raise AssertionError(
+            f"{model_id} density statement drift: probe '{block.get('density_statement')}' vs tool '{statement}'"
+        )
+    return {
+        "tolerance_radians": epsilon,
+        "statement": statement,
+        "candidate_class": block["candidate_class"],
+        "controller_class": block["controller_class"],
+        "spline_repair": block["spline_repair"],
+        "spline_repair_class": block.get("spline_repair_class"),
+        "clip_sha256": block["clip_sha256"],
+        "clip_path": leg["clip_path"],
+        "pose_source": block["pose_source"],
+        "layers": block["layers"],
+        "clip": block["clip"],
+        "time_warp": block["time_warp"],
+        "sample_grid": {
+            "layer_bone_samples_compared": compared,
+            "max_error_radians_by_group": max_error,
+            "worst_case_by_group": worst,
+            "max_non_layer_bone_motion_radians": max_bind_motion,
+        },
+        "wrap_pairs": {
+            "count": len(wrap_pairs),
+            "max_abs_T_minus_eps_vs_0_plus_eps_radians": max_continuity,
+        },
+        "density_search": {
+            group: {
+                "fewest_keys_per_bone": row["fewest_keys_per_bone"],
+                "confirmed_max_error_radians": row["confirmed_max_error_radians"],
+                "confirmed_comparisons": row["confirmed_comparisons"],
+                "one_fewer_max_error_radians": row["one_fewer_max_error_radians"],
+            }
+            for group, row in density["groups"].items()
+        },
+        "density_search_schedule": {
+            key: density[key] for key in (
+                "rule", "min_keys", "max_keys", "search_uniform_intervals", "confirm_uniform_intervals",
+                "late_start_age_ticks", "span_age_ticks",
+            )
+        },
+        "clip_full_schedule": block["clip_full_schedule"],
+        "wrap_sample": block["wrap_sample"],
+        "schedule_reversed_max_delta_radians": reversed_delta,
     }
 
 
@@ -2013,6 +2268,7 @@ def markdown_report(report: dict[str, Any]) -> str:
                     f"{contract['max_candidate_unscaled_channel_amplitude_delta_radians']:.12g}.",
                     f"- Reference JSON: `{contract['reference_animation_role']}`; baked-keyframe runtime "
                     "acceptance is false and artist-editable math-to-keyframes remains `OUTSTANDING_G3`.",
+                    *keyframe_leg_lines(model.get(KEYFRAME_LEG_KEY)),
                     "",
                 ]
             )
@@ -2106,6 +2362,35 @@ def proof_file_map(manifest: dict[str, Any], report: dict[str, Any], generated_d
                 relative = Path(sample[field])
                 files[Path("evidence") / relative] = evidence_dir / relative
     return files
+
+
+def keyframe_leg_lines(leg: dict[str, Any] | None) -> list[str]:
+    """The keyframe reference leg's report lines: the density statement first, then the numbers behind it."""
+    if leg is None:
+        return []
+    grid = leg["sample_grid"]
+    search = leg["density_search"]
+    return [
+        f"- Keyframe reference leg: {leg['statement']}.",
+        f"- Keyframe leg: `{leg['controller_class']}` layers of `{leg['candidate_class']}` over clip "
+        f"`{leg['clip_path']}` (sha256 {leg['clip_sha256'][:12]}), spline repair "
+        f"{'ON' if leg['spline_repair'] else 'OFF'}; sample-grid max delta "
+        f"{max(grid['max_error_radians_by_group'].values()):.12g} radians over "
+        f"{grid['layer_bone_samples_compared']} layer-bone samples "
+        f"({', '.join(f'{group} {value:.6g}' for group, value in grid['max_error_radians_by_group'].items())}); "
+        f"{leg['wrap_pairs']['count']} wrap pairs, |v(T-eps) - v(0+eps)| max "
+        f"{leg['wrap_pairs']['max_abs_T_minus_eps_vs_0_plus_eps_radians']:.6g}; non-layer bones moved "
+        f"{grid['max_non_layer_bone_motion_radians']:.6g}.",
+        f"- Keyframe density search (an output): "
+        + "; ".join(
+            f"{group} fewest {row['fewest_keys_per_bone']} keys/bone at {row['confirmed_max_error_radians']:.6g} "
+            f"over {row['confirmed_comparisons']} comparisons, one fewer {row['one_fewer_max_error_radians']:.6g}"
+            for group, row in search.items()
+        )
+        + f"; dense schedule of the shipped-candidate clip: "
+        + ", ".join(f"{group} {row['max_error_radians']:.6g}" for group, row in leg["clip_full_schedule"].items())
+        + f"; reversed schedule max delta {leg['schedule_reversed_max_delta_radians']:.6g}.",
+    ]
 
 
 def synchronize_or_verify_proof(proof_dir: Path, files: dict[Path, Path], write_proof: bool) -> None:
@@ -2243,6 +2528,22 @@ def main() -> int:
             f"G1 ANIMATION PASS: {model_id} max delta "
             f"{animation['max_rotation_delta_radians']:.12g} radians"
         )
+        keyframe_leg = None
+        if KEYFRAME_LEG_KEY in spec:
+            keyframe_clip_path = resolve_repository_path(repository_root, spec[KEYFRAME_LEG_KEY]["clip_path"])
+            keyframe_leg = keyframe_reference_leg_parity(
+                model_id, spec, compiled, geo_render, thresholds, keyframe_clip_path,
+                resolve_repository_path(repository_root, spec[KEYFRAME_LEG_KEY]["clip_manifest"]),
+            )
+            lf_paths.append(keyframe_clip_path)
+            # The console line is ASCII (a cp1252 stdout under Gradle's Exec); the report keeps the ruling's spelling.
+            print(
+                f"G1 KEYFRAME LEG PASS: {model_id} "
+                f"{keyframe_leg['statement'].replace('−', '-').replace('ε', 'eps')}; sample-grid max "
+                f"{max(keyframe_leg['sample_grid']['max_error_radians_by_group'].values()):.12g} radians over "
+                f"{keyframe_leg['sample_grid']['layer_bone_samples_compared']} layer-bone samples, "
+                f"{keyframe_leg['wrap_pairs']['count']} wrap pairs"
+            )
         reference_schema = reference_animation_schema(
             model_id, spec, compiled, reference_animation, animation_contract,
             conversion, float(manifest["ticks_per_second"]),
@@ -2285,6 +2586,8 @@ def main() -> int:
             "reference_animation": reference_schema,
             "draw_order": draw_order,
         }
+        if keyframe_leg is not None:
+            common_report[KEYFRAME_LEG_KEY] = keyframe_leg
         if "reference_source" in spec:
             if args.reference_dir is None:
                 raise AssertionError(f"{model_id} declares reference_source but no --reference-dir was given")

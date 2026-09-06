@@ -7,7 +7,6 @@ import danger.orespawn.OreSpawnMod;
 import danger.orespawn.entity.Elevator;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
-import software.bernie.geckolib.animation.AnimatableManager;
 
 /**
  * GeckoLib hoverboard. The rig is static (the G1 Tier-3 proof); the classic
@@ -26,7 +25,7 @@ public final class ElevatorGeoReplacement extends OreSpawnGeoReplacement<Elevato
     }
 
     private static final GeoReplacementDescriptor<Elevator> DESCRIPTOR = new GeoReplacementDescriptor<>(
-            ModEntities.ELEVATOR::get,
+            () -> ModEntities.ELEVATOR.get(),  // lambda: a bound method ref would initialise ModEntities eagerly and trip Bootstrap.checkBootstrapCalled in a headless leg (OPT-029 R0; item 15 refuter A, D4)
             Elevator.class,
             ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "geo/entity/elevator.geo.json"),
             ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "animations/entity/elevator.animation.json"),
@@ -76,10 +75,6 @@ public final class ElevatorGeoReplacement extends OreSpawnGeoReplacement<Elevato
     @Override
     public boolean nonLivingRender() {
         return true;
-    }
-
-    @Override
-    public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
     }
 
     public static final class Renderer extends OreSpawnGeoReplacedEntityRenderer<Elevator, ElevatorGeoReplacement> {
