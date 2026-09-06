@@ -49,14 +49,25 @@ public class AmbientFlightGoal extends Goal {
      * Tunable steering + retarget parameters for an {@link AmbientFlightGoal}: the 1.7.10 per-mob magic numbers. The Dragonfly's
      * nearTargetDistSq is orig Dragonfly.java:124's {@code < 2.1f} on the INTEGER cell distSq ({@link #tick} compares the same quantity:
      * cells 0, 1, 2 retarget, 3 hunts; 4.5 at HEAD retargeted at 3 and 4 too — ENT-S-135, the T3b refuters); the other presets stand as at HEAD.
+     * {@code blendY} is the y axis's own steering blend: the Dragonfly's 0.20000000149011612 against its x / z 0.3 (orig Dragonfly.java:155-157
+     * blended y by a smaller factor — ENT-S-149); every other flyer blended all three axes by one factor, so the eleven-argument constructor sets
+     * {@code blendY = blend} and those presets read as before.
      */
     public record Params(
             int xzRange, int yRange, int yBias,
-            double steerXY, double steerY, double blend,
+            double steerXY, double steerY, double blend, double blendY,
             float forwardSpeed, float yawDivisor,
             int retargetChance, double nearTargetDistSq,
             int wanderAttempts
     ) {
+        /**
+         * One blend for all three axes — every flyer but the Dragonfly (orig EntityButterfly.java:174-176, Firefly.java:138-140,
+         * EntityMosquito.java:122-124, EntityLunaMoth.java:149-151: the same factor on x, y and z), so {@code blendY = blend} (ENT-S-149).
+         */
+        public Params(int xzRange, int yRange, int yBias, double steerXY, double steerY, double blend, float forwardSpeed, float yawDivisor,
+                      int retargetChance, double nearTargetDistSq, int wanderAttempts) {
+            this(xzRange, yRange, yBias, steerXY, steerY, blend, blend, forwardSpeed, yawDivisor, retargetChance, nearTargetDistSq, wanderAttempts);
+        }
         public static Params butterfly() {
             return new Params(7, 6, 2, 0.5, 0.7, 0.1, 0.5f, 1.0f, 100, 4.0, 25);
         }
@@ -74,7 +85,7 @@ public class AmbientFlightGoal extends Goal {
             return new Params(10, 6, 2, 0.5, 0.68, 0.1, 0.75f, 1.0f, 100, 4.0, 25);
         }
         public static Params dragonfly() {
-            return new Params(10, 5, 2, 0.5, 0.7, 0.3, 1.0f, 4.0f, 300, 2.1, 50); // orig Dragonfly.java:124 — nextInt(300) == 0 || cell distSq < 2.1f (ENT-S-135)
+            return new Params(10, 5, 2, 0.5, 0.7, 0.3, 0.20000000149011612, 1.0f, 4.0f, 300, 2.1, 50); // orig Dragonfly.java:124 — nextInt(300) == 0 || cell distSq < 2.1f (ENT-S-135); :155-157 — the y blend 0.20000000149011612 (the class file's own double constant, ldc2_w — not (double) 0.2f = 0.20000000298023224 as the register glossed it) against the x / z 0.30000000149011613 (the port's 0.3 stands: the presets' short literals, the ENT-S-149 observation) (ENT-S-149)
         }
     }
 
@@ -125,7 +136,7 @@ public class AmbientFlightGoal extends Goal {
         double dz = this.flightTarget.getZ() + 0.5 - this.mob.getZ();
         Vec3 motion = this.mob.getDeltaMovement();
         double mx = motion.x + (Math.signum(dx) * this.params.steerXY() - motion.x) * this.params.blend();
-        double my = motion.y + (Math.signum(dy) * this.params.steerY()  - motion.y) * this.params.blend();
+        double my = motion.y + (Math.signum(dy) * this.params.steerY()  - motion.y) * this.params.blendY(); // orig Dragonfly.java:156 — the y axis's own blend (0.20000000149011612 against the x / z 0.30000000149011613 of :155 / :157); one factor for every other flyer (ENT-S-149)
         double mz = motion.z + (Math.signum(dz) * this.params.steerXY() - motion.z) * this.params.blend();
         this.mob.setDeltaMovement(mx, my, mz);
 

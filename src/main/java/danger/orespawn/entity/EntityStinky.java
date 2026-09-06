@@ -458,7 +458,7 @@ public class EntityStinky extends TamableAnimal {
         // orig Stinky.java:582-607 — activity 1 stops here (its block-eat is customServerAiStep's call after this method); the flight below is activity 2's (ENT-S-119)
         if (this.activity != 2) return;
 
-        if (this.currentFlightTarget.closerToCenterThan(this.position(), 2.1)) {
+        if (this.currentFlightTarget.distSqr(new BlockPos((int) this.getX(), (int) this.getY(), (int) this.getZ())) < 2.1f) { // orig Stinky.java:608 — getDistanceSquared((int) posX, (int) posY, (int) posZ) < 2.1f: the integer-lattice distSq of the (int)-cast cell (cells 0, 1, 2 retarget, 3 and beyond stand — the ENT-S-135 / ENT-S-138 measure); HEAD's closerToCenterThan(position(), 2.1) read the exact position against the cell's centre with the threshold squared (ENT-S-151)
             doNew = true;
         }
 
