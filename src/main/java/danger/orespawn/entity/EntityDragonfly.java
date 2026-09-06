@@ -42,7 +42,7 @@ public class EntityDragonfly extends Animal {
     /**
      * Reference to the hunt goal so {@link #hurt} can retarget the flight
      * toward the attacker — matches 1.7.10's swap of {@code currentFlightTarget}
-     * to {@code attacker.blockPosition()} in {@code hurt()}.
+     * to the attacker's {@code (int)}-cast cell in {@code hurt()} (orig Dragonfly.java:182; ENT-S-148).
      */
     @Nullable
     private DragonflyHuntGoal huntGoal;
@@ -91,7 +91,7 @@ public class EntityDragonfly extends Animal {
         boolean ret = super.hurt(source, amount);
         Entity attacker = source.getEntity();
         if (attacker != null && this.huntGoal != null) {
-            this.huntGoal.setFlightTarget(attacker.blockPosition());
+            this.huntGoal.setFlightTarget(new BlockPos((int) attacker.getX(), (int) attacker.getY(), (int) attacker.getZ())); // orig Dragonfly.java:182 — currentFlightTarget.set((int) e.posX, (int) e.posY, (int) e.posZ): the (int) casts, truncation toward zero (BUG-027 faithful; blockPosition() floored a cell short on a negative axis — ENT-S-148)
         }
         return ret;
     }
