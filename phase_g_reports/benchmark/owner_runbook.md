@@ -43,8 +43,11 @@ untracked files or staged changes), and only a clean, committed tree makes `git_
    blocks; the Queen's 22-block boxes overlap on purpose — she is noPhysics, and every overlapping Queen is still
    drawn in full, which is the cost measured; the wedge holds 132 Queens and the command refuses more), C/D robots
    at a 6-block pitch from 8 blocks (a hundred reach 74 blocks), E/F at a 2-block pitch from 6 blocks (24 blocks).
-   Scene B is the same wedge behind you — NOTE the Queen is noCulling and is drawn off-screen too, so B measures
-   loaded-but-unseen Queens drawn anyway, not frustum culling.
+   Scene B is the same wedge behind you — NOTE that since OPT-013's wave-5 amendment (2026-09-06) the Queen is frustum-culled
+   against MHLib's conservative box (her position ± 77.74 blocks, inflated 0.5 by the renderer): a Queen within 78.24 blocks of
+   your eye on every axis is never culled, one beyond that on some axis and off-screen is. The wedge starts at 40 blocks, so
+   B is a MIXED scene — the rows inside about 78 blocks (40 / 52 / 64 / 76) are still drawn off-screen and cost the collector
+   its whole bone walk, the rows beyond are culled — not a frustum-culling control unless the base distance moves past 78.
 3. Wait the protocol's warm-up: **60 s** (let the JIT and the chunk/entity loading settle; `/orespawn bench
    status` shows the session).
 4. `/orespawn bench start 120` — samples 120 s on both halves. The chat reply confirms the client sampler is
@@ -84,15 +87,15 @@ untracked files or staged changes), and only a clean, committed tree makes `git_
 ## 4. Reading the counters
 
 Per Queen per second at 20 ticks: `server.align_synched_parts` 200, `server.part_setpos` 400 (20 per tick:
-`updateLastPos` + the alignment; a part's FIRST tick carries one more — 30 per Queen, 32 per modern robot on its spawn tick, the
-first-tick lerp snap of OPT-030 — so a scene's first tick after the spawn adds 10 × Queens / 8 × robots once), `net.c2s_bone_packets` ≈ 20 while animating (fewer once the change-only
+`updateLastPos` + the alignment — on the spawn tick as on every later one since OPT-030 (a) (wave 5, 2026-09-06) initialised the
+part's lerp count to −1; the slice (d) gate's 30 per Queen / 32 per modern robot on the spawn tick were the first-tick snap it removed), `net.c2s_bone_packets` ≈ 20 while animating (fewer once the change-only
 stream settles), `net.s2c_update_packets` ≈ 6.7 per Queen while its parts move (`ServerEntity.sendChanges` reaches
 `sendDirtyEntityData` only every `updateInterval` ticks — THE_QUEEN's builder leaves the default 3 — or on impulse or
 dirty synched data; a standing no-AI Queen has no impulse), counted per broadcast call for every tracked entity whether
 or not a player tracks it (an upper bound; `coverage.in_client_level` is the honest single-player count); then the
 linger, then silence.
-Per modern robot per second: `server.align_sub_parts_parts` 160, `server.part_setpos` 480 (24 per tick from the second tick
-on; 32 on the spawn tick),
+Per modern robot per second: `server.align_sub_parts_parts` 160, `server.part_setpos` 480 (24 per tick, the spawn tick
+included since OPT-030 (a)),
 `server.placement_ns` the gait feed plus the static alignment. `client.collector_ns` is the whole GeckoLib render of
 each multipart entity between MHLib's Pre and Post hooks — divide by `client.frames` for the per-draw cost; the
 headless `collector_bench.json` is the collector alone (its `queen_collect_yawpi` row is the baseline; it does not
@@ -101,6 +104,7 @@ include the trust-client apply per synched bone, which needs a live entity).
 ## 5. What the harness cannot do for you
 
 GPU frame time (no query in this build), the mixed scene (a follow-up if ruled), pairing by anything other than
-the two labels, the five-run median (one report per run; the median is yours), a frustum-culling control for the
-Queen (she is noCulling — scene B measures her drawn off-screen), and a working-tree reading beyond the index's
+the two labels, the five-run median (one report per run; the median is yours), a clean frustum-culling control for the
+Queen (since wave 5 she is culled only beyond about 78 blocks on some axis — scene B's nearest four rows are still drawn
+off-screen, the rest culled; a control needs the base distance past 78), and a working-tree reading beyond the index's
 stat data (commit before you run).

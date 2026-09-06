@@ -125,17 +125,18 @@ rate at the p99 frame time, not the worst frame and not the average of the slowe
 1. Adopt R1–R7 as written, or amend the metric each reads (R1 in particular: bytes primary, ns informational).
 2. The ns noise band for R1 (headless; ≈ ±40 % on the record) and the run-to-run band for R4/R5 (live, same
    machine, five runs).
-3. Whether scene B gets its own rule. Note that TheQueen is `noCulling` and answers `shouldRenderAtSqrDistance`
-   with true, so scene B is NOT a frustum-culling control for the Queen: it measures loaded-but-unseen Queens
-   the renderer draws anyway (the collector runs per frame); a true culling control needs a species the
-   frustum culls.
+   *Footnote (wave 5, 2026-09-06, OPT-013 amended):* TheQueen is no longer `noCulling`. She is frustum-culled against
+   MHLib's conservative box (her position ± 77.74 blocks, the profile's rest-pose reach, inflated 0.5 by the renderer), so a
+   Queen within 78.24 blocks of the eye on every axis is never culled and one beyond that on some axis and off-screen is;
+   `shouldRenderAtSqrDistance` still answers true in view. Scene B (rows from 40 blocks at a 12-block pitch) is therefore a
+   MIXED scene from wave 5 on — its four nearest rows drawn off-screen, the rest culled — and a clean culling control needs the
+   base distance past 78. The reading above stands for the runs it reports (HEAD a03c0c5).
 4. Whether the harness's `wander` state is ever a rule input (it is offered for looks; the protocol's fixed
    state is `idle`).
-5. §5's derived `server.part_setpos` (Queen 10 / spider 16 per tick) undercounted `updateLastPos`: the measured
-   values are 20 / 24 per tick from a part's second tick on, and 30 / 32 on its spawn tick (`MHLibPartEntity.tick`'s
-   first-tick lerp snap to the zero interp target — OPT-030, drafted; pinned by `BenchHarnessTests` rows 11–12 at the
-   slice (d) gate, 2026-09-06). Whether the expectation table in `morehitboxes_evaluation.md` §5 is corrected is a
-   records matter for the orchestrator.
+   *Footnote (wave 5, 2026-09-06, OPT-030 FIXED, resolution (a)):* the spawn-tick 30 / 32 were the first-tick lerp snap;
+   with `newPosRotationIncrements` initialised to −1 the spawn tick counts 20 / 24 like every later tick (rows 11–12
+   re-pinned: 30 → 20, 32 → 24; the Queen's Body1 at its fallback offset after the spawn tick, not at the origin). The
+   figures above stand for the runs they report.
 6. The Queen's 12-block pitch (below its 22-block box: a hundred Queens at 24 blocks cannot fit inside the
    tracking and simulation ranges; overlapping Queens are each drawn in full) — accept, or rule a smaller
    count at a wider pitch (the wedge holds 28 Queens at a 24-block pitch under 180 blocks).
