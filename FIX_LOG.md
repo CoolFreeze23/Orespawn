@@ -5900,7 +5900,7 @@ about X, Y, Z at 2 degrees per frame and the ball stays centred; PurplePower's
 three spoke rings turn at their three rates; the purple type textures (0, 1, 2,
 3, 10) follow `getPurpleType()`. Not pushed.
 
-GATE: (filled by the orchestrator)
+GATE: see this section's closing GATE line (4c, 2026-09-06 03:40-03:44, 1199 required tests passed) — this placeholder was the lane draft's copy before the refuter notes, filled 2026-09-06.
 
 REFUTER A NOTES (2026-09-06, all non-blocking, applied or disclosed): (A1) the 4.1e-8 rad animation-leg maxima on both
 models are a serialisation artefact — Python's exact binary32 value of float32 π in `conversion.json`
