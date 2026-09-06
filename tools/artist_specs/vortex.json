@@ -1,0 +1,23 @@
+{
+  "registry": "vortex",
+  "display_name": "Vortex",
+  "status": "draft for the owner's edit (slice (f) lane, 2026-09-06)",
+  "locomotion": "flyer",
+  "artist_scope": "none (Tier 3: a static single cube)",
+  "character_sheet": "A tornado: one tall textured cube that drifts through the air to random points, fills itself with a column of smoke when it has prey, drags players and mobs toward and up into itself, and hurts what it swallows. The cube itself never animates; the tornado's life is particles and pull.",
+  "size_notes": "2.0 x 4.0 block hitbox at x1.",
+  "labels": {
+    "Shape1": "the tornado column (one cube)"
+  },
+  "groups": [],
+  "formulas": [
+    "No channels: setupAnim is empty (VortexModel.java:32)."
+  ],
+  "behaviour": [
+    "Static rig; the motion players see is the entity drifting and the smoke column (EntityVortex.tick)."
+  ],
+  "clips": [],
+  "extras": [],
+  "wishlist": [],
+  "effort_hours": 0
+}

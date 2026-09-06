@@ -1,0 +1,60 @@
+{
+  "registry": "robot_1",
+  "display_name": "RoboSpinner (Robot1)",
+  "status": "draft for the owner's edit (slice (f) lane, 2026-09-06)",
+  "locomotion": "walker",
+  "artist_scope": "none (Tier 3: code-driven; feet driven by distance walked — P2's limbSwing-distance list)",
+  "character_sheet": "A knee-high kamikaze drone: a clockwork body with five wind-up keys, two feet and a lot of plating. It wanders, then locks on, sprints at its target with its body spinning faster the closer it gets, trailing smoke and lava, and blows itself up on contact. The keys turn slowly all the time; the feet flap with the distance walked.",
+  "size_notes": "0.5 x 0.5 block hitbox at x1.",
+  "labels": {
+    "rfoot": "right foot",
+    "lfoot": "left foot",
+    "key1": "wind-up key 1",
+    "key2": "wind-up key 2",
+    "key3": "wind-up key 3",
+    "key4": "wind-up key 4",
+    "key5": "wind-up key 5"
+  },
+  "groups": [
+    {
+      "name": "feet",
+      "bones": [
+        "rfoot",
+        "lfoot"
+      ],
+      "omega": null,
+      "phase": "limbSwing (distance walked) x 1.5 — not time",
+      "axis": "x",
+      "gait_scaled": true,
+      "amplitude": "pi x 0.75 = 2.36 rad x limbSwingAmount, only while limbSwingAmount > 0.1",
+      "plain": "the two feet flap in opposite directions with the distance walked; nothing moves while standing",
+      "math": "walk = amount > 0.1 ? cos(limbSwing*1.5)*pi*0.75*amount : 0; rfoot.xRot = -walk; lfoot.xRot = walk",
+      "source": "ModelRobot1.java:214-230; Robot1GeoReplacement.java:34-45"
+    },
+    {
+      "name": "keys",
+      "bones": [
+        "key1",
+        "key2",
+        "key3",
+        "key4",
+        "key5"
+      ],
+      "omega": 0.013089969389957472,
+      "axis": "z",
+      "gait_scaled": false,
+      "amplitude": "continuous turn (one revolution every 480 ticks / 24 s)",
+      "plain": "the five wind-up keys turn slowly and steadily about Z",
+      "math": "keyN.zRot = rad(ageInTicks * 0.75)",
+      "source": "ModelRobot1.java:214-230; Robot1GeoReplacement.java:47-52"
+    }
+  ],
+  "behaviour": [
+    "The eighteen `ShapeN` plates are static; the spinning-body telegraph is the ENTITY's yaw (Robot1.aiStep), not a bone.",
+    "Feet: distance-driven (limbSwing), so a keyframe clip cannot reproduce them — Amendment 1 point 2 keeps this rig code-driven under any policy."
+  ],
+  "clips": [],
+  "extras": [],
+  "wishlist": [],
+  "effort_hours": 0
+}

@@ -1,0 +1,1218 @@
+#!/usr/bin/env python3
+"""Pins for tools/artist_package.py (Phase G slice (f)) — a `unittest` runner, no pytest.
+
+    python tools/test_artist_package.py
+
+The fixtures are a synthetic repository built in a temp directory: eight registrations (both `Builder.of` and
+`Builder.<X>of` forms; a projectile, a vanilla-cow reuse, a head sidecar that renders nothing, a native GeoEntity boss
+with two controllers and an area-damage helper, an EVENT pulser whose hurt() also raises the flag, a MIXED ticker
+species), a nested rig (per-face UV with a flipped face, a box-UV mirrored cube with its own pivot and rotation, an
+unknown description key), three clips in the three keyframe shapes plus an easing key, hitbox profiles, seeds, twin
+and series textures, an armor-sheet stray, an item-renderer texture, a dormant item twin, and a referenced-vs-
+registry-aligned canonical conflict. Every pin runs the production code paths (Repo, TextureCatalog,
+build_trigger_inventory, spec_document, build_bbmodel, bbmodel_to_geo/animation, roundtrip_diff, build_package,
+check_folder).
+"""
+
+from __future__ import annotations
+
+import json
+import shutil
+import struct
+import sys
+import tempfile
+import unittest
+import zlib
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import artist_package as ap  # noqa: E402
+
+
+def png_bytes(width: int, height: int, seed: int = 0) -> bytes:
+    """A valid RGBA PNG whose pixels depend on `seed` (so twins are byte-identical only when seeds match)."""
+    def chunk(tag: bytes, data: bytes) -> bytes:
+        return struct.pack(">I", len(data)) + tag + data + struct.pack(">I", zlib.crc32(tag + data) & 0xFFFFFFFF)
+    rows = []
+    for y in range(height):
+        row = bytearray(b"\x00")  # filter type 0 (none)
+        for x in range(width):
+            row += bytes([(x * 7 + y * 3 + seed) & 0xFF, (x + seed) & 0xFF, (y * 5 + seed) & 0xFF, 255])
+        rows.append(bytes(row))
+    raw = b"".join(rows)
+    return (b"\x89PNG\r\n\x1a\n" + chunk(b"IHDR", struct.pack(">IIBBBBB", width, height, 8, 6, 0, 0, 0))
+            + chunk(b"IDAT", zlib.compress(raw)) + chunk(b"IEND", b""))
+
+
+FIXTURE_GEO = {
+    "format_version": "1.12.0",
+    "minecraft:geometry": [{
+        "description": {"identifier": "geometry.fixture", "texture_width": 64, "texture_height": 32,
+                        "orespawn:bone_draw_order": ["root", "tail", "arm", "hand"]},
+        "bones": [
+            {"name": "root", "pivot": [0, 24, 0], "cubes": [
+                {"origin": [-4, 12, -2], "size": [8, 12, 4], "modelpart_mirror": True,
+                 "uv": {"north": {"uv": [4, 4], "uv_size": [8, 12]}, "east": {"uv": [0, 4], "uv_size": [4, 12]},
+                        "south": {"uv": [16, 4], "uv_size": [8, 12]}, "west": {"uv": [12, 4], "uv_size": [4, 12]},
+                        "up": {"uv": [4, 0], "uv_size": [8, 4]}, "down": {"uv": [12, 4], "uv_size": [8, -4]}}}]},
+            {"name": "tail", "parent": "root", "pivot": [0, 14, 2], "rotation": [0, 0, 0], "cubes": [
+                {"origin": [-1, 13, 2], "size": [2, 2, 6], "inflate": 0.25,
+                 "uv": {"north": {"uv": [0, 20], "uv_size": [2, 2]}, "up": {"uv": [2, 18], "uv_size": [2, 6]}}}]},
+            {"name": "arm", "parent": "root", "pivot": [4, 22, 0], "rotation": [10, 0, 5], "cubes": [
+                {"origin": [4, 12, -1], "size": [2, 10, 2],
+                 "uv": {"north": {"uv": [40, 4], "uv_size": [2, 10]}, "east": {"uv": [38, 4], "uv_size": [2, 10]},
+                        "south": {"uv": [44, 4], "uv_size": [2, 10]}, "west": {"uv": [42, 4], "uv_size": [2, 10]},
+                        "up": {"uv": [40, 2], "uv_size": [2, 2]}, "down": {"uv": [42, 2], "uv_size": [2, 2]}}}]},
+            {"name": "hand", "parent": "arm", "pivot": [5, 12, 0], "mirror": True, "cubes": [
+                {"origin": [4, 9, -1.5], "size": [2, 3, 3], "uv": [48, 0], "mirror": False,
+                 "pivot": [5, 12, 0], "rotation": [0, 0, -15]}]},
+        ],
+    }],
+}
+
+FIXTURE_ANIM = {
+    "format_version": "1.8.0",
+    "animations": {
+        "idle": {"loop": True, "animation_length": 1.0, "bones": {
+            "tail": {"rotation": {"0.0": {"vector": [0, 0, 0]}, "0.5": {"vector": [12.5, 0, 0], "lerp_mode": "catmullrom"}, "1.0": {"vector": [0, 0, 0]}}}}},
+        "attack": {"loop": False, "animation_length": 0.5, "bones": {
+            "tail": {"rotation": {"0.0": {"pre": [0, 0, 0], "post": [30, 0, 0]},
+                                  "0.25": {"post": [15, 0, 0], "easing": "easeInOutSine", "easingArgs": [2]},
+                                  "0.5": [0, 0, 0]}, "position": {"0.25": [0, 1, 0]}}}},
+        "death": {"loop": "hold_on_last_frame", "animation_length": 2.0, "bones": {"tail": {"rotation": [0, 0, 90]}}},
+    },
+}
+
+# a rig whose bone list is NOT depth-first: `hand` (child of arm) is listed before `arm`
+NON_DFS_GEO = {
+    "format_version": "1.12.0",
+    "minecraft:geometry": [{
+        "description": {"identifier": "geometry.nondfs", "texture_width": 16, "texture_height": 16},
+        "bones": [
+            {"name": "root", "pivot": [0, 0, 0], "cubes": [{"origin": [0, 0, 0], "size": [1, 1, 1], "uv": [0, 0]}]},
+            {"name": "hand", "parent": "arm", "pivot": [0, 0, 0], "cubes": [{"origin": [0, 0, 0], "size": [1, 1, 1], "uv": [0, 0]}]},
+            {"name": "arm", "parent": "root", "pivot": [0, 0, 0], "cubes": [{"origin": [0, 0, 0], "size": [1, 1, 1], "uv": [0, 0]}]},
+            {"name": "tail", "parent": "root", "pivot": [0, 0, 0], "cubes": [{"origin": [0, 0, 0], "size": [1, 1, 1], "uv": [0, 0]}]},
+        ],
+    }],
+}
+
+NATIVE_GEO = {
+    "format_version": "1.12.0",
+    "minecraft:geometry": [{
+        "description": {"identifier": "geometry.native", "texture_width": 64, "texture_height": 64},
+        "bones": [
+            {"name": "root", "pivot": [0, 0, 0], "cubes": [{"origin": [-4, 0, -4], "size": [8, 8, 8], "uv": [0, 0]}]},
+            {"name": "body", "parent": "root", "pivot": [0, 8, 0], "cubes": [{"origin": [-3, 8, -3], "size": [6, 6, 6], "uv": [0, 16]}]},
+            {"name": "head", "parent": "body", "pivot": [0, 14, 0], "cubes": [{"origin": [-2, 14, -2], "size": [4, 4, 4], "uv": [0, 28]}]},
+            {"name": "tail", "parent": "root", "pivot": [0, 4, 4], "cubes": [{"origin": [-1, 3, 4], "size": [2, 2, 6], "uv": [24, 0]}]},
+        ],
+    }],
+}
+
+NATIVE_ANIM = {
+    "format_version": "1.8.0",
+    "animations": {
+        "idle": {"loop": True, "animation_length": 2.0, "bones": {"tail": {"rotation": {"0.0": [0, 0, 0], "1.0": [10, 0, 0], "2.0": [0, 0, 0]}}}},
+        "stance": {"loop": True, "animation_length": 2.0, "bones": {"tail": {"rotation": {"0.0": [0, 0, 0], "2.0": [0, 0, 0]}},
+                                                                   "head": {"rotation": {"0.0": [0, 0, 0], "1.0": [-20, 0, 0], "2.0": [0, 0, 0]}}}},
+        "stomp": {"loop": False, "animation_length": 0.5, "bones": {"head": {"rotation": {"0.0": [0, 0, 0], "0.25": [30, 0, 0], "0.5": [0, 0, 0]}}}},
+        "death": {"loop": "hold_on_last_frame", "animation_length": 1.0, "bones": {"tail": {"rotation": {"0.0": [0, 0, 0], "1.0": [0, 0, 90]}}}},
+    },
+}
+
+FIXTURE_PROFILE = {
+    "sync-with-model": True, "trust-client": True, "synched-bones": ["hand"],
+    "main-hitbox": {"collidable": False, "canReceiveDamage": False, "size": [1, 2]},
+    "parts": [{"name": "hand", "collidable": True, "can-receive-damage": True, "damage-modifier": 1.0,
+               "box": {"type": "multihitboxlib:aabb", "size": [0.5, 0.5], "position": [0, 0, 0], "pivot": [0, 0, 0]}}],
+}
+
+NATIVE_PROFILE = {
+    "sync-with-model": True, "trust-client": True, "synched-bones": ["head"],
+    "main-hitbox": {"collidable": False, "canReceiveDamage": False, "size": [2, 3]},
+    "parts": [{"name": "head", "collidable": True, "can-receive-damage": True, "damage-modifier": 1.0,
+               "box": {"type": "multihitboxlib:aabb", "size": [1, 1], "position": [0, 0, 0], "pivot": [0, 0, 0]}}],
+}
+
+FIXTURE_SEED = {
+    "registry": "fixture", "display_name": "Fixture", "status": "test seed", "locomotion": "walker", "artist_scope": "full contract",
+    "character_sheet": "A test creature.", "labels": {"root": "the body", "arm": "the arm", "tail": "the tail"},
+    "groups": [{"name": "gait", "bones": ["tail"], "omega": 3.7, "axis": "x", "gait_scaled": True, "amplitude": "1 rad",
+                "plain": "the tail wags", "math": "tail.xRot = cos(t*3.7)", "source": "Fixture.java"},
+               {"name": "pump", "bones": ["arm"], "omega": 0.10471975511965978, "axis": "x", "gait_scaled": False,
+                "amplitude": "|cos| x 0.785 + 0.75 rad", "plain": "the arm pumps", "math": "arm = |cos(rad(t % 360) * 6)| * 0.7854 + 0.75",
+                "source": "Fixture.java"}],
+    "behaviour": ["it wags"], "clips": [{"name": "walk", "verdict": "improve"}], "extras": [], "wishlist": [],
+}
+
+NATIVE_SEED = {
+    "registry": "native", "display_name": "Native Boss", "status": "test seed", "locomotion": "walker",
+    "artist_scope": "pilot boss candidate (open question 16)", "character_sheet": "A native boss.",
+    "labels": {"root": "root", "body": "body", "head": "head", "tail": "tail"}, "groups": [], "behaviour": [],
+    "clips": [{"name": "idle", "verdict": "improve", "note": "the hover", "contract": "idle"},
+              {"name": "stance", "verdict": "improve", "note": "the awake stance", "contract": "aggro_idle"},
+              {"name": "stomp", "verdict": "improve", "note": "impact at 5 ticks", "contract": "extra"},
+              {"name": "death", "verdict": "leave", "contract": "death"}],
+    "extras": [],
+    "wishlist": ["a heavier `stance` loop", "a wing-beat `fly` loop distinct from the hover"],
+    "future": ["a `hurt` flinch on the struck head"],
+}
+
+ENTITY_JAVA = """package danger.orespawn.entity;
+
+public class Fixture extends Monster {
+    private static final EntityDataAccessor<Integer> DATA_ATTACKING =
+            SynchedEntityData.defineId(Fixture.class, EntityDataSerializers.INT);
+
+    @Override
+    protected void registerGoals() {
+        this.goalSelector.addGoal(0, new FloatGoal(this));
+        this.goalSelector.addGoal(2, new MeleeAttackGoal(this, 1.0, false));
+        this.goalSelector.addGoal(3, new MysteryGoal(this));
+        this.revengeGoal = new RevengeGoal();
+        this.targetSelector.addGoal(1, this.revengeGoal);
+        // MOD-033 shape: registered only under the modern config key
+        if (OreSpawnConfig.petsDefendOwner()) {
+            this.targetSelector.addGoal(2, new OwnerHurtByTargetGoal(this));
+        }
+        int prio = 4;
+        RandomStrollGoal stroll = new RandomStrollGoal(this, 1.0);
+        this.goalSelector.addGoal(prio, stroll);
+    }
+
+    public int getAttacking() { return this.entityData.get(DATA_ATTACKING); }
+    public void setAttacking(int value) { this.entityData.set(DATA_ATTACKING, value); }
+
+    @Override
+    public void aiStep() {
+        super.aiStep();
+        LivingEntity target = this.getTarget(); // a comment with braces { } and "a string with if ("
+        if (target != null) {
+            if (this.tickCount > 200) this.bonus += 1; // a completed one-liner right above the write
+            this.setAttacking(1);
+            if (this.distanceToSqr(target) < 4.0) {
+                this.doHurtTarget(target);
+            } else {
+                this.level().addFreshEntity(new LaserBall(this.level(), this));
+            }
+        } else {
+            this.setAttacking(0);
+        }
+    }
+
+    @Override
+    public boolean hurt(DamageSource source, float amount) {
+        return super.hurt(source, amount);
+    }
+}
+"""
+
+OTHER_JAVA = """package danger.orespawn.entity;
+
+public class Other extends Animal {
+    @Override
+    protected void registerGoals() {
+    }
+
+    public static AttributeSupplier.Builder createAttributes() {
+        return Mob.createMobAttributes().add(Attributes.MOVEMENT_SPEED, 0.0);
+    }
+}
+"""
+
+DART_JAVA = """package danger.orespawn.entity;
+
+public class Dart extends ThrowableProjectile {
+}
+"""
+
+MOO_JAVA = """package danger.orespawn.entity;
+
+public class Moo extends Cow {
+}
+"""
+
+FIXTURE_HEAD_JAVA = """package danger.orespawn.entity;
+
+public class FixtureHead extends Mob {
+}
+"""
+
+NATIVE_JAVA = """package danger.orespawn.entity;
+
+public class Native extends Monster implements GeoEntity {
+    private static final RawAnimation ANIM_IDLE = RawAnimation.begin().thenLoop("idle");
+    private static final RawAnimation ANIM_STANCE = RawAnimation.begin().thenLoop("stance");
+    private int pendingTicks;
+
+    @Override
+    protected void registerGoals() {
+        this.goalSelector.addGoal(0, new FloatGoal(this));
+    }
+
+    public boolean isAwake() { return true; }
+
+    /** Fires a named action on the Actions controller. */
+    public void triggerNativeAction(String actionName) {
+        this.triggerAnim("Actions", actionName);
+    }
+
+    @Override
+    protected void customServerAiStep() {
+        LivingEntity target = this.getTarget();
+        if (target != null) {
+            if (this.distanceToSqr(target) < 900.0) {
+                if (this.getRandom().nextInt(2) == 1) {
+                    doAreaDamage(this.getX(), this.getY(), this.getZ(), 15.0, 4.0, 0);
+                }
+                if (this.pendingTicks == 0) {
+                    String key;
+                    switch (this.getRandom().nextInt(2)) {
+                        case 0 -> { key = "stomp"; }
+                        default -> { key = "stomp"; }
+                    }
+                    this.triggerNativeAction(key);
+                    this.pendingTicks = 5;
+                }
+            }
+        }
+    }
+
+    private void doAreaDamage(double x, double y, double z, double dist, double damage, int knock) {
+        AABB bb = new AABB(x - dist, y - 10.0, z - dist, x + dist, y + 10.0, z + dist);
+        for (LivingEntity t : this.level().getEntitiesOfClass(LivingEntity.class, bb)) {
+            t.hurt(this.damageSources().explosion(null, null), (float) damage / 2.0f);
+            t.hurt(this.damageSources().generic(), (float) damage / 2.0f);
+        }
+    }
+
+    @Override
+    public void die(DamageSource source) {
+        this.triggerNativeAction("death");
+        super.die(source);
+    }
+
+    @Override
+    public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
+        controllers.add(new AnimationController<>(this, "Movement", 5, state -> {
+            if (this.isDeadOrDying()) {
+                return PlayState.STOP;
+            }
+            if (this.isAwake()) {
+                return state.setAndContinue(ANIM_STANCE);
+            }
+            return state.setAndContinue(ANIM_IDLE);
+        }));
+
+        controllers.add(new AnimationController<>(this, "Actions", 5, state -> PlayState.STOP)
+                .triggerableAnim("stomp", RawAnimation.begin().thenPlay("stomp"))
+                .triggerableAnim("death", RawAnimation.begin().thenPlay("death")));
+    }
+}
+"""
+
+PULSER_JAVA = """package danger.orespawn.entity;
+
+public class Pulser extends Monster {
+    private static final EntityDataAccessor<Integer> DATA_ATTACKING =
+            SynchedEntityData.defineId(Pulser.class, EntityDataSerializers.INT);
+    private int reloadTicker;
+
+    public void setAttacking(int value) { this.entityData.set(DATA_ATTACKING, value); }
+
+    @Override
+    protected void customServerAiStep() {
+        if (this.reloadTicker > 0) {
+            --this.reloadTicker;
+        }
+        LivingEntity target = this.getTarget();
+        if (target != null) {
+            if (this.reloadTicker == 0) {
+                this.setAttacking(1);
+                this.reloadTicker = 20;
+            }
+        }
+        if (this.reloadTicker <= 0) {
+            this.setAttacking(0);
+        }
+    }
+
+    @Override
+    public boolean hurt(DamageSource source, float amount) {
+        this.setAttacking(1);
+        return super.hurt(source, amount);
+    }
+}
+"""
+
+MIXED_JAVA = """package danger.orespawn.entity;
+
+public class Mixed extends Monster {
+    private static final EntityDataAccessor<Integer> DATA_ATTACKING =
+            SynchedEntityData.defineId(Mixed.class, EntityDataSerializers.INT);
+    private int reloadTicker;
+
+    public void setAttacking(int value) { this.entityData.set(DATA_ATTACKING, value); }
+
+    @Override
+    protected void customServerAiStep() {
+        if (this.reloadTicker > 0) {
+            --this.reloadTicker;
+            if (this.reloadTicker < 25) this.setAttacking(0);
+        }
+        if (this.reloadTicker == 0) {
+            LivingEntity target = this.getTarget();
+            this.reloadTicker = 35;
+            if (target != null) {
+                if (this.distanceToSqr(target) < 256.0) {
+                    this.setAttacking(1);
+                    if (this.getSensing().hasLineOfSight(target)) {
+                        fireLaserAt(target);
+                    }
+                }
+            } else {
+                this.setAttacking(0);
+            }
+        }
+    }
+}
+"""
+
+MOD_ENTITIES = """package danger.orespawn;
+
+public final class ModEntities {
+    public static final DeferredHolder<EntityType<?>, EntityType<Fixture>> FIXTURE =
+            // a comment between the assignment and the registration, as ModEntities has
+            ENTITY_TYPES.register("fixture", () -> EntityType.Builder.of(Fixture::new, MobCategory.MONSTER)
+                    .sized(1.0f, 2.0f).clientTrackingRange(8).build("fixture"));
+    public static final DeferredHolder<EntityType<?>, EntityType<Other>> OTHER =
+            ENTITY_TYPES.register("other", () -> EntityType.Builder.of(Other::new, MobCategory.CREATURE)
+                    .sized(0.5f, 0.5f).clientTrackingRange(8).build("other"));
+    public static final DeferredHolder<EntityType<?>, EntityType<Dart>> DART =
+            ENTITY_TYPES.register("dart", () -> EntityType.Builder.<Dart>of(Dart::new, MobCategory.MISC)
+                    // the explicitly typed form the projectiles use
+                    .sized(0.25f, 0.25f).clientTrackingRange(4).updateInterval(10).noSummon().build("dart"));
+    public static final DeferredHolder<EntityType<?>, EntityType<Moo>> MOO =
+            ENTITY_TYPES.register("moo", () -> EntityType.Builder.of(Moo::new, MobCategory.CREATURE)
+                    .sized(0.9f, 1.3f).clientTrackingRange(10).build("moo"));
+    public static final DeferredHolder<EntityType<?>, EntityType<FixtureHead>> FIXTURE_HEAD =
+            ENTITY_TYPES.register("fixture_head", () -> EntityType.Builder.of(FixtureHead::new, MobCategory.MISC)
+                    .sized(9.9f, 10.0f).clientTrackingRange(10).build("fixture_head"));
+    public static final DeferredHolder<EntityType<?>, EntityType<Native>> NATIVE =
+            ENTITY_TYPES.register("native", () -> EntityType.Builder.of(Native::new, MobCategory.MONSTER)
+                    .sized(2.0f, 3.0f).clientTrackingRange(10).build("native"));
+    public static final DeferredHolder<EntityType<?>, EntityType<Pulser>> PULSER =
+            ENTITY_TYPES.register("pulser", () -> EntityType.Builder.of(Pulser::new, MobCategory.MONSTER)
+                    .sized(1.0f, 1.0f).clientTrackingRange(8).build("pulser"));
+    public static final DeferredHolder<EntityType<?>, EntityType<Mixed>> MIXED =
+            ENTITY_TYPES.register("mixed", () -> EntityType.Builder.of(Mixed::new, MobCategory.MONSTER)
+                    .sized(1.0f, 1.0f).clientTrackingRange(8).build("mixed"));
+
+    public static void register(IEventBus eventBus) {
+        ENTITY_TYPES.register(eventBus);
+    }
+}
+"""
+
+CLIENT_JAVA = """package danger.orespawn;
+public final class OreSpawnClient {
+    static void onRegisterRenderers(EntityRenderersEvent.RegisterRenderers event) {
+        event.registerEntityRenderer(ModEntities.FIXTURE.get(), FixtureRenderer::new);
+        event.registerEntityRenderer(ModEntities.OTHER.get(), OtherRenderer::new);
+        event.registerEntityRenderer(ModEntities.MOO.get(), MooRenderer::new);
+        event.registerEntityRenderer(ModEntities.FIXTURE_HEAD.get(), FixtureHeadRenderer::new);
+        event.registerEntityRenderer(ModEntities.NATIVE.get(), NativeRenderer::new);
+    }
+}
+"""
+
+ITEM_RENDERER_JAVA = """package danger.orespawn.client;
+public class OreSpawnItemRenderer {
+    ResourceLocation SWORD = ResourceLocation.fromNamespaceAndPath(MOD_ID, "textures/entity/sword.png");
+}
+"""
+
+FIXTURE_HEAD_RENDERER_JAVA = """package danger.orespawn.entity.client;
+public class FixtureHeadRenderer extends MobRenderer<FixtureHead, FixtureHeadModel> {
+    ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath(MOD_ID, "textures/entity/fixturehead.png");
+    @Override
+    public boolean shouldRender(FixtureHead entity, Frustum frustum, double x, double y, double z) {
+        return false;
+    }
+}
+"""
+
+DESIGN_MD = """# design
+| # | Model (LOC) | Served entity type(s) [W x H] | Texture(s) | setupAnim class (basis) | Renderer scale | Audit | Proposed tier |
+|---:|---|---|---|---|---|---|---:|
+| 1 | `FixtureModel` (10) | fixture [1.0x2.0] | fixture.png 64x32 | gait-scaled | — | — | 2 |
+| 2 | `OtherModel` (5) | other [0.5x0.5] | other.png 32x32 | static | — | — | 3 |
+| 3 | `FixtureHeadModel` (37) | fixture_head [9.9x10.0] | fixturehead.png 64x32 | static — empty setupAnim | — | — | 3 |
+| 4 | `NativeModel` (66) | native [2.0x3.0] | native.png 64x64 | state-branching — existing GeckoLib controller state machine | — | — | 0 |
+
+#### Vanilla-model reuse (proposed Tier 0)
+
+These consumers have no OreSpawn model class to convert.
+
+| Vanilla model | Renderer | Entity type [W x H] | Texture(s) | Tier |
+|---|---|---|---|---:|
+| `CowModel` | `MooRenderer` | moo [0.9x1.3] | moo.png 64x32 (twins: moocow.png) | 0 |
+
+<!-- END GENERATED G0 INVENTORY -->
+
+## 2. Tiering proposal
+"""
+
+
+def build_fixture_repo(root: Path) -> None:
+    java = root / "src/main/java/danger/orespawn"
+    (java / "entity/client").mkdir(parents=True)
+    (java / "entity/ai").mkdir(parents=True)
+    (java / "client").mkdir(parents=True)
+    (java / "ModEntities.java").write_text(MOD_ENTITIES, encoding="utf-8")
+    (java / "OreSpawnClient.java").write_text(CLIENT_JAVA, encoding="utf-8")
+    (java / "client/OreSpawnItemRenderer.java").write_text(ITEM_RENDERER_JAVA, encoding="utf-8")
+    for name, text in (("Fixture", ENTITY_JAVA), ("Other", OTHER_JAVA), ("Dart", DART_JAVA), ("Moo", MOO_JAVA),
+                       ("FixtureHead", FIXTURE_HEAD_JAVA), ("Native", NATIVE_JAVA), ("Pulser", PULSER_JAVA), ("Mixed", MIXED_JAVA)):
+        (java / f"entity/{name}.java").write_text(text, encoding="utf-8")
+    (java / "entity/client/FixtureRenderer.java").write_text(
+        'class FixtureRenderer { ResourceLocation T = ResourceLocation.fromNamespaceAndPath(MOD_ID, "textures/entity/fixture.png"); FixtureGeoReplacement r; }', encoding="utf-8")
+    (java / "entity/client/FixtureGeoReplacement.java").write_text(
+        'class FixtureGeoReplacement { String g = "geo/entity/fixture.geo.json"; String a = "animations/entity/fixture.animation.json"; String t = "textures/entity/fixture.png"; }', encoding="utf-8")
+    (java / "entity/client/OtherRenderer.java").write_text(
+        'class OtherRenderer { String t = "textures/entity/other.png"; String s = "textures/entity/girlfriend" + skin + ".png"; }', encoding="utf-8")
+    (java / "entity/client/MooRenderer.java").write_text(
+        'class MooRenderer extends MobRenderer<Moo, CowModel<Moo>> { String t = "textures/entity/moocow.png"; }', encoding="utf-8")
+    (java / "entity/client/FixtureHeadRenderer.java").write_text(FIXTURE_HEAD_RENDERER_JAVA, encoding="utf-8")
+    (java / "entity/client/NativeRenderer.java").write_text(
+        'class NativeRenderer { String g = "geo/entity/native.geo.json"; String a = "animations/entity/native.animation.json"; String t = "textures/entity/native.png"; }', encoding="utf-8")
+    assets = root / "src/main/resources/assets/orespawn"
+    (assets / "geo/entity").mkdir(parents=True)
+    (assets / "animations/entity").mkdir(parents=True)
+    (assets / "textures/entity").mkdir(parents=True)
+    (assets / "textures/models/armor").mkdir(parents=True)
+    (assets / "textures/item").mkdir(parents=True)
+    (assets / "geo/entity/fixture.geo.json").write_text(json.dumps(FIXTURE_GEO, indent=2), encoding="utf-8")
+    (assets / "animations/entity/fixture.animation.json").write_text(json.dumps(FIXTURE_ANIM, indent=2), encoding="utf-8")
+    (assets / "geo/entity/native.geo.json").write_text(json.dumps(NATIVE_GEO, indent=2), encoding="utf-8")
+    (assets / "animations/entity/native.animation.json").write_text(json.dumps(NATIVE_ANIM, indent=2), encoding="utf-8")
+    tex = assets / "textures/entity"
+    (tex / "fixture.png").write_bytes(png_bytes(64, 32, 1))
+    (tex / "fixturetexture.png").write_bytes(png_bytes(64, 32, 1))  # a byte-identical twin
+    (tex / "other.png").write_bytes(png_bytes(32, 32, 2))
+    (tex / "native.png").write_bytes(png_bytes(64, 64, 3))
+    (tex / "fixturehead.png").write_bytes(png_bytes(64, 32, 4))
+    (tex / "moo.png").write_bytes(png_bytes(64, 32, 6))      # registry-aligned but referenced by nothing
+    (tex / "moocow.png").write_bytes(png_bytes(64, 32, 6))   # its twin: not registry-aligned, referenced by MooRenderer
+    (tex / "sword.png").write_bytes(png_bytes(16, 16, 7))    # referenced only by the item renderer
+    (tex / "dormant.png").write_bytes(png_bytes(16, 16, 8))  # referenced by nothing; a twin lives under textures/item
+    (assets / "textures/item/dormant.png").write_bytes(png_bytes(16, 16, 8))
+    for n in (0, 1, 3):  # girlfriend0..3 with a gap: the law series is violated
+        (tex / f"girlfriend{n}.png").write_bytes(png_bytes(8, 8, 10 + n))
+    (tex / "amethyst_1.png").write_bytes(png_bytes(16, 16, 20))
+    (assets / "textures/models/armor/amethyst_layer_1.png").write_bytes(png_bytes(16, 16, 20))
+    prof = root / "src/main/resources/data/orespawn/multihitboxlib/hitbox_profiles"
+    prof.mkdir(parents=True)
+    (prof / "fixture.json").write_text(json.dumps(FIXTURE_PROFILE), encoding="utf-8")
+    (prof / "native.json").write_text(json.dumps(NATIVE_PROFILE), encoding="utf-8")
+    (root / "tools/artist_specs").mkdir(parents=True)
+    (root / "tools/artist_specs/fixture.json").write_text(json.dumps(FIXTURE_SEED), encoding="utf-8")
+    (root / "tools/artist_specs/native.json").write_text(json.dumps(NATIVE_SEED), encoding="utf-8")
+    (root / "tools/reference_renderer_pins.json").write_text(json.dumps({"entries": [
+        {"entity": "Fixture", "expected_scale": 1, "expected_shadow": 0.5, "status": "pin"},
+        {"entity": "Native", "expected_scale": 2, "expected_shadow": 1.0, "status": "pin"}]}), encoding="utf-8")
+    (root / "phase_g_reports").mkdir()
+    (root / "phase_g_reports/geckolib_migration_design.md").write_text(DESIGN_MD, encoding="utf-8")
+    (root / "provenance_byte_identical_assets.txt").write_text("  textures\\entity\\fixture.png  <=  Fixture.png\n", encoding="utf-8")
+
+
+class FixtureCase(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls) -> None:
+        cls.tmp = Path(tempfile.mkdtemp(prefix="artist_pkg_"))
+        cls.root = cls.tmp / "repo"
+        cls.root.mkdir()
+        build_fixture_repo(cls.root)
+        cls.repo = ap.Repo(cls.root)
+        cls.catalog = ap.TextureCatalog(cls.repo)
+
+    @classmethod
+    def tearDownClass(cls) -> None:
+        shutil.rmtree(cls.tmp, ignore_errors=True)
+
+    def warnings_with(self, code: str) -> list[tuple[str, str, str]]:
+        return [w for w in self.repo.warnings.items if w[1] == code]
+
+    # --- repository facts ---------------------------------------------------------------------
+
+    def test_mod_entities_parse_both_registration_forms(self):
+        # `Builder.of(` and the explicitly typed `Builder.<X>of(` both count; `ENTITY_TYPES.register(eventBus)` does not
+        self.assertEqual(list(self.repo.entities), ["fixture", "other", "dart", "moo", "fixture_head", "native", "pulser", "mixed"])
+        self.assertEqual(self.repo.entities["fixture"]["width"], 1.0)
+        self.assertEqual(self.repo.entities["fixture"]["java_class"], "Fixture")
+        self.assertEqual(self.repo.entities["dart"]["java_class"], "Dart")
+        self.assertEqual(self.repo.entities["dart"]["category"], "MISC")
+        self.assertEqual(self.repo.entities["dart"]["width"], 0.25)
+
+    def test_species_discovery_and_status(self):
+        fx, other = self.repo.get("fixture"), self.repo.get("other")
+        self.assertTrue(fx.landed)
+        self.assertEqual(fx.status, "landed candidate")
+        self.assertEqual(fx.tier, 2)
+        self.assertEqual(fx.tier_label, "Tier 2")
+        self.assertEqual(fx.textures, ["fixture.png"])
+        self.assertEqual(fx.profile_name, "fixture")
+        self.assertEqual(fx.pin["expected_scale"], 1)
+        self.assertFalse(other.landed)
+        self.assertEqual(other.status, "classic only")
+        self.assertEqual(other.textures, ["girlfriend0.png", "girlfriend1.png", "girlfriend3.png", "other.png"])
+        # the projectile registered in the generic form: excluded with the vocabulary that is true for it
+        dart = self.repo.get("dart")
+        self.assertEqual(dart.status, "excluded")
+        self.assertIn("projectile (extends ThrowableProjectile)", dart.status_note)
+        self.assertEqual(dart.tier_label, "no tier (not in the G0 inventory)")
+
+    def test_vanilla_reuse_table_and_head_sidecar(self):
+        # the design's "Vanilla-model reuse" table gives the cow line a tier and a true note, not a blank tier and a false exclusion
+        self.assertEqual(self.repo.vanilla_reuse, {"moo": {"model": "CowModel", "renderer": "MooRenderer", "tier": 0}})
+        moo = self.repo.get("moo")
+        self.assertEqual((moo.status, moo.tier, moo.model), ("excluded", 0, "CowModel (vanilla)"))
+        self.assertIn("vanilla CowModel drawn by MooRenderer", moo.status_note)
+        self.assertNotIn("head sidecar", moo.status_note)
+        # a head sidecar is classic only / Tier 3 per its design row, and the note says it renders nothing
+        head = self.repo.get("fixture_head")
+        self.assertTrue(head.renders_nothing)
+        self.assertEqual((head.status, head.tier), ("classic only", 3))
+        self.assertIn("renders nothing", head.status_note)
+        self.assertIn("shouldRender false", head.status_note)
+        # the native boss: the design's Tier 0 'done' row AND the contract's Tier-1 (MHLib) boss
+        nat = self.repo.get("native")
+        self.assertTrue(nat.landed and nat.is_mhlib_boss)
+        self.assertEqual(nat.tier, 0)
+        self.assertEqual(nat.tier_label, "Tier 1 (boss; the design's 'done' row)")
+        self.assertIn("native GeckoLib rig", nat.status_note)
+
+    def test_png_size_from_ihdr(self):
+        self.assertEqual(ap.png_size(self.root / "src/main/resources/assets/orespawn/textures/entity/other.png"), (32, 32))
+
+    # --- textures -------------------------------------------------------------------------------
+
+    def test_texture_dedupe_on_synthetic_twins(self):
+        cat = self.catalog
+        self.assertEqual(cat.hash["fixture.png"], cat.hash["fixturetexture.png"])
+        self.assertNotEqual(cat.hash["fixture.png"], cat.hash["other.png"])
+        digest = cat.hash["fixture.png"]
+        self.assertEqual(cat.canonical[digest], "fixture.png")  # referenced + registry-aligned wins over the twin
+        header, rows = cat.rows()
+        by_file = {r[0]: dict(zip(header, r)) for r in rows}
+        self.assertEqual(by_file["fixture.png"]["is_canonical"], "yes")
+        self.assertEqual(by_file["fixture.png"]["fan_out_targets"], "fixturetexture.png")
+        self.assertEqual(by_file["fixturetexture.png"]["is_canonical"], "no")
+        self.assertEqual(by_file["fixturetexture.png"]["canonical_name"], "fixture.png")
+        self.assertEqual(by_file["fixture.png"]["entity_folders"], "fixture")
+        self.assertEqual(by_file["fixture.png"]["consumers"], "FixtureGeoReplacement;FixtureRenderer")
+        self.assertEqual(by_file["fixture.png"]["provenance_1_7_10"], "Fixture.png")
+        summary = cat.summary()
+        # 13 shipped: fixture x2 (twins), other, native, fixturehead, moo x2 (twins), sword, dormant, girlfriend x3, amethyst_1
+        self.assertEqual((summary["shipped"], summary["unique_payloads"], summary["duplicate_groups"], summary["redundant_names"]), (13, 11, 2, 2))
+        self.assertEqual(summary["strays"], 3)  # amethyst_1 (armor sheet), sword (item renderer), dormant (dormant twin)
+
+    def test_canonical_prefers_referenced_over_registry_aligned(self):
+        # moo.png is registry-aligned but nothing reads it; moocow.png is what MooRenderer names: the referenced twin is canonical
+        digest = self.catalog.hash["moo.png"]
+        self.assertEqual(digest, self.catalog.hash["moocow.png"])
+        self.assertEqual(self.catalog.canonical[digest], "moocow.png")
+        self.assertEqual(self.catalog.consumers.get("moocow.png"), ["MooRenderer"])
+        self.assertIsNone(self.catalog.consumers.get("moo.png"))
+
+    def test_variant_series_law(self):
+        s = self.catalog.series["girlfriend"]
+        self.assertEqual((s["lo"], s["hi"], s["count"], s["contiguous"], s["law_ok"]), (0, 3, 3, False, False))
+        self.assertIn("VIOLATED", self.catalog.series_of("girlfriend3.png"))
+        self.assertTrue(any(w[1] == "SERIES_LAW" for w in self.repo.warnings.items))
+
+    def test_stray_classes(self):
+        self.assertIn("armor sheet stray", self.catalog.stray["amethyst_1.png"])
+        self.assertIn("byte-identical", self.catalog.stray["amethyst_1.png"])
+        self.assertEqual(self.catalog.stray["fixture.png"], "")
+        self.assertEqual(self.catalog.entity_folders_for("amethyst_1.png"), [])
+        header, rows = self.catalog.rows()
+        self.assertIn("amethyst_1.png", [r[0] for r in rows])  # kept in the global map
+        # an item-renderer texture (a held weapon model) and a dormant twin of an item texture are strays of their own classes
+        self.assertEqual(self.catalog.stray["sword.png"], "item-renderer texture (a held weapon/tool model), not a mob")
+        self.assertEqual(self.catalog.consumers["sword.png"], ["OreSpawnItemRenderer"])
+        self.assertEqual(self.catalog.stray["dormant.png"], "dormant twin of item/dormant.png")
+        self.assertEqual(self.catalog.stray["moocow.png"], "")
+
+    # --- trigger inventory ----------------------------------------------------------------------
+
+    def test_trigger_inventory_on_fixture_goals(self):
+        inv = ap.build_trigger_inventory(self.repo.get("fixture"), self.repo)
+        goals = [(g["selector"], g["priority"], g["goal"], g["category"], g["guard"]) for g in inv["goals"]]
+        self.assertEqual(goals, [("goalSelector", 0, "FloatGoal", "locomotion", ""), ("goalSelector", 2, "MeleeAttackGoal", "attack", ""),
+                                 ("goalSelector", 3, "MysteryGoal", "UNCLASSIFIED", ""), ("targetSelector", 1, "RevengeGoal", "targeting", ""),
+                                 ("targetSelector", 2, "OwnerHurtByTargetGoal", "targeting", "[modern: petsDefendOwner]"),
+                                 ("goalSelector", None, "UNPARSED", "UNPARSED", "")])
+        unparsed = inv["goals"][-1]
+        self.assertIn("non-literal priority `prio`", unparsed["unparsed"])
+        self.assertIn("`stroll`", unparsed["unparsed"])
+        self.assertTrue(any(w[1] == "GOAL_UNCLASSIFIED" and "MysteryGoal" in w[2] for w in self.repo.warnings.items))
+        self.assertTrue(any(w[1] == "GOAL_UNPARSED" for w in self.repo.warnings.items))
+        self.assertEqual([f["name"] for f in inv["flags"]], ["DATA_ATTACKING"])
+        self.assertEqual(inv["attacking"]["verdict"], "STATE")
+        sites = inv["attacking"]["sites"]
+        self.assertEqual([s["value"] for s in sites], [1, 0])
+        self.assertEqual(sites[0]["method"], "aiStep")
+        # the guard is the block that ENCLOSES the write — not the completed one-liner two lines above it
+        self.assertEqual(sites[0]["guard"], "if (target != null)")
+        self.assertEqual(sites[0]["guard_kind"], "if")
+        self.assertEqual(sites[1]["guard"], "NOT(if (target != null))")
+        self.assertEqual(sites[1]["guard_kind"], "else")
+        self.assertEqual(sites[1]["within"], [])
+        self.assertEqual(len(inv["combat"]["melee"]), 1)
+        self.assertEqual(inv["combat"]["melee"][0]["kind"], "single")
+        self.assertEqual([r["code"] for r in inv["combat"]["ranged"]], ["LaserBall"])
+        self.assertIn("hurt", inv["overrides"])
+        drives = {d["clip"]: d for d in inv["drives"]}
+        self.assertIn("aggro_idle / calm_idle", drives)
+        self.assertIn("STATE flag", drives["aggro_idle / calm_idle"]["verdict"])
+        self.assertIn("transport 1", drives["attack"]["signal"])
+        self.assertNotIn("AREA helper", drives["attack"]["signal"])
+
+    def test_attacking_verdicts_event_and_mixed(self):
+        pulser = ap.build_trigger_inventory(self.repo.get("pulser"), self.repo)
+        self.assertEqual(pulser["attacking"]["verdict"], "EVENT")
+        facts = pulser["attacking"]["facts"]
+        self.assertTrue(facts["pulse"] and not facts["held"])
+        self.assertEqual(len(facts["hurt_sets"]), 1)  # hurt() also raises the flag
+        self.assertIn("RAISED in hurt()", pulser["attacking"]["reason"])
+        drives = {d["clip"]: d for d in pulser["drives"]}
+        self.assertIn("transport 2", drives["attack"]["verdict"])
+        self.assertIn("hurt() also raises the flag", drives["attack"]["verdict"])
+        clear = [s for s in pulser["attacking"]["sites"] if s["value"] == 0][0]
+        self.assertEqual(clear["guard"], "if (this.reloadTicker <= 0)")
+        mixed = ap.build_trigger_inventory(self.repo.get("mixed"), self.repo)
+        self.assertEqual(mixed["attacking"]["verdict"], "MIXED")
+        reason = mixed["attacking"]["reason"]
+        # the pulse is per in-range THINK TICK (every 35 ticks, raised before the line-of-sight gate), not "per shot"
+        self.assertIn("10-tick pulse per in-range think tick", reason)
+        self.assertIn("every 35 ticks", reason)
+        self.assertIn("before the line-of-sight gate", reason)
+        self.assertIn("cleared on target loss", reason)
+        self.assertEqual(mixed["attacking"]["facts"]["ticker"], {"ticker": "reloadTicker", "reset": 35, "threshold": 25, "pulse_ticks": 10})
+        sites = {s["line"]: s for s in mixed["attacking"]["sites"]}
+        guards = sorted(s["guard"] for s in mixed["attacking"]["sites"])
+        self.assertIn("if (this.reloadTicker < 25)", guards)
+        self.assertIn("NOT(if (target != null))", guards)
+        held = [s for s in mixed["attacking"]["sites"] if s["guard"] == "NOT(if (target != null))"][0]
+        self.assertEqual(held["within"], ["if (this.reloadTicker == 0)"])
+        self.assertTrue(any(w[1] == "ATTACKING_UNCLASSIFIED" and w[0] == "mixed" for w in self.repo.warnings.items))
+        self.assertTrue(all(s["guard_kind"] != "unparsed" for s in sites.values()))
+
+    def test_native_trigger_sites_and_area_helper(self):
+        inv = ap.build_trigger_inventory(self.repo.get("native"), self.repo)
+        nat = inv["native"]
+        self.assertEqual([c["name"] for c in nat["controllers"]], ["Movement", "Actions"])
+        self.assertEqual({t["clip"]: t["controller"] for t in nat["triggerable"]}, {"stomp": "Actions", "death": "Actions"})
+        self.assertEqual(nat["state_clips"]["stance"]["condition"], "if (this.isAwake())")
+        self.assertEqual(nat["state_clips"]["idle"]["condition"], "default (no earlier branch took it)")
+        self.assertEqual(nat["state_clips"]["idle"]["controller"], "Movement")
+        triggers = nat["clip_triggers"]
+        self.assertEqual(triggers["idle"]["kind"], "state")
+        self.assertIn("`Movement` controller selects it when default", triggers["idle"]["signal"])
+        self.assertEqual(triggers["stomp"]["kind"], "triggered")
+        self.assertIn("triggerAnim(\"Actions\", \"stomp\")", triggers["stomp"]["signal"])
+        self.assertIn("in `customServerAiStep` (picked among stomp)", triggers["stomp"]["signal"])
+        self.assertIn("guard: if (this.pendingTicks == 0) within if (this.distanceToSqr(target) < 900.0)", triggers["stomp"]["signal"])
+        self.assertIn("in `die`", triggers["death"]["signal"])
+        # the area-damage helper is a melee site whose body hurts each victim twice
+        melee = inv["combat"]["melee"]
+        self.assertEqual(len(melee), 1)
+        self.assertEqual(melee[0]["kind"], "area")
+        self.assertEqual(melee[0]["hurts_per_victim"], 2)
+        self.assertEqual(melee[0]["method"], "customServerAiStep")
+        self.assertIn("per victim per roll", ap.melee_transport_note(inv))
+        self.assertIn("2x each", ap.melee_transport_note(inv))
+        # the NATIVE drive table: the shipped clips with their real triggers, the generic names marked not used
+        drives = {d["clip"]: d for d in inv["drives"]}
+        self.assertEqual([d["clip"] for d in inv["drives"]][:4], ["idle", "stance", "stomp", "death"])
+        self.assertIn("in `die`", drives["death"]["signal"])
+        self.assertIn("stands in for the contract's `aggro_idle`", drives["stance"]["verdict"])
+        self.assertIn("not used by this species (native clip set)", drives["aggro_idle"]["verdict"])
+        self.assertIn("carried by native `stance`", drives["aggro_idle"]["verdict"])
+        self.assertIn("not used by this species (native clip set)", drives["hurt"]["verdict"])
+        self.assertIn("not used by this species (native clip set)", drives["fly"]["verdict"])
+        self.assertIn("does not accept idle_alt_N", drives["idle_alt_N"]["verdict"])
+
+    # --- glossary, locks, groups, SPEC, manifest ---------------------------------------------------
+
+    def test_glossary_rendering_and_locked_bones(self):
+        fx = self.repo.get("fixture")
+        geo = fx.geo
+        locked = ap.locked_bones(fx, geo)
+        self.assertEqual(set(locked), {"hand", "arm", "root"})  # the synced part and its ancestors; tail is free
+        self.assertIn("carries hitbox part 'hand'", locked["hand"])
+        rows = ap.build_glossary(fx, self.repo, geo, ap.frequency_groups(fx))
+        self.assertEqual([r["name"] for r in rows], ["root", "tail", "arm", "hand"])  # geo order kept
+        by = {r["name"]: r for r in rows}
+        self.assertEqual(by["arm"]["label"], "the arm")
+        self.assertEqual(by["arm"]["label_source"], "seed")
+        self.assertEqual(by["hand"]["label_source"], "NONE")
+        self.assertIn("no label yet", by["hand"]["label"])
+        self.assertTrue(any(w[1] == "BONE_UNLABELLED" and "hand" in w[2] for w in self.repo.warnings.items))
+        self.assertTrue(by["tail"]["gait_bone"])
+        self.assertEqual(by["tail"]["group"], "gait")
+        self.assertTrue(by["arm"]["locked"] and by["root"]["locked"] and not by["tail"]["locked"])
+
+    def test_frequency_groups_state_the_visible_period_of_a_rectified_shape(self):
+        groups = {g["name"]: g for g in ap.frequency_groups(self.repo.get("fixture"))}
+        self.assertFalse(groups["gait"]["rectified"])
+        self.assertIsNone(groups["gait"]["visible_period_ticks"])
+        pump = groups["pump"]
+        self.assertTrue(pump["rectified"])
+        self.assertAlmostEqual(pump["period_ticks"], 60.0, places=6)
+        self.assertAlmostEqual(pump["visible_period_ticks"], 30.0, places=6)
+        self.assertAlmostEqual(pump["visible_period_seconds"], 1.5, places=6)
+
+    def test_spec_and_manifest(self):
+        fx = self.repo.get("fixture")
+        inv = ap.build_trigger_inventory(fx, self.repo)
+        md, manifest = ap.spec_document(fx, self.repo, self.catalog, inv)
+        self.assertIn("## 3. Bone glossary", md)
+        self.assertIn("### 4.1 Tempo table", md)
+        self.assertIn("1.698 ticks", md)  # 2 pi / 3.7
+        self.assertIn("VISIBLE: 30 ticks (1.5 s)", md)  # the rectified pump: natural 60 ticks, visible 30
+        self.assertIn("PROVISIONAL", md)
+        self.assertIn("`hand`", md)
+        self.assertIn(ap.LOCK_POLICY, md)  # §3 header and §7 carry the one policy sentence
+        self.assertIn("[modern: petsDefendOwner]", md)
+        self.assertIn("`UNPARSED`", md)
+        self.assertIn("guard (the enclosing block)", md)
+        self.assertIn("It REJECTS: " + "; ".join(ap.CHECK_REJECTS), md)  # §11 quotes check's rule table
+        names = [c["name"] for c in manifest["clips"]]
+        for n in ("idle", "walk", "attack", "hurt", "death", "aggro_idle", "calm_idle"):
+            self.assertIn(n, names)
+        clips = {c["name"]: c for c in manifest["clips"]}
+        self.assertEqual(clips["idle"]["loop"], "true")
+        self.assertEqual(clips["attack"]["loop"], "false")
+        self.assertEqual(clips["death"]["loop"], "hold_on_last_frame")
+        self.assertTrue(clips["attack"]["code_triggered"] and clips["attack"]["required"])  # shipped -> may not be renamed
+        self.assertFalse(clips["hurt"]["required"])
+        self.assertEqual(manifest["lock_mode"], "warn")  # ONE policy for every species until the ruling (open question 16)
+        self.assertEqual(manifest["lock_policy"], ap.LOCK_POLICY)
+        self.assertEqual(set(manifest["locked_bones"]), {"hand", "arm", "root"})
+        self.assertEqual(manifest["keyed_locked_by_shipped_clip"], {})  # the fixture clips key only the free tail
+        self.assertEqual(manifest["textures"], [{"canonical": "fixture.png", "width": 64, "height": 32, "aliases": ["fixturetexture.png"]}])
+        self.assertEqual(manifest["texture_size"], [64, 32])
+        self.assertEqual(manifest["animation_file"], "fixture.animation.json")
+        self.assertEqual(manifest["tier_label"], "Tier 2")
+        self.assertFalse(manifest["native"])
+        self.assertTrue(manifest["allow_idle_alt"])
+        # every bone carries its cube signatures so `check` can refuse a changed cube / UV / size
+        root = manifest["bones"][0]
+        self.assertEqual(root["name"], "root")
+        self.assertEqual(root["cubes"][0]["size"], [8.0, 12.0, 4.0])
+        self.assertEqual(root["cubes"][0]["faces"]["down"], [12.0, 4.0, 8.0, -4.0])
+        # the base loops list every bone of the rig, the gait group marked as the scaled one (contract §2.1 / §8)
+        idle = [c for c in ap.clip_rows(fx, inv, fx.animation, ap.frequency_groups(fx), bone_names=["root", "tail", "arm", "hand"],
+                                        locked=ap.locked_bones(fx, fx.geo)) if c["name"] == "idle"][0]
+        self.assertTrue(idle["bones"].startswith("any of the 4 bones — gait group (speed-scaled): tail"))
+        self.assertIn("arm (better left to `idle_pump`)", idle["bones"])
+        self.assertIn("locked (see §7): root, hand", idle["bones"])
+        # a calm_idle that idle covers (no attacking flag) is not artist work: it is not counted in the effort estimate
+        calm = clips["calm_idle"]
+        self.assertFalse(calm["required"])
+        no_flag = dict(inv, attacking={"present": False, "verdict": "NONE", "sites": [], "reason": "", "facts": {}})
+        covered = {c["name"]: c for c in ap.clip_rows(fx, no_flag, fx.animation, ap.frequency_groups(fx))}
+        self.assertEqual(covered["calm_idle"]["verdict"], "covered by idle")
+        self.assertNotIn("aggro_idle", covered)
+        self.assertIn("to author or improve", manifest["effort_source"])
+        self.assertEqual(ap.effort_estimate(fx, 4, list(covered.values()))[0], 4 + 0.2 * 4 + 1.0 * 8)  # calm_idle excluded, 8 to author/improve
+
+    def test_native_clip_rows_branch_and_wishlist_guard(self):
+        nat = self.repo.get("native")
+        inv = ap.build_trigger_inventory(nat, self.repo)
+        md, manifest = ap.spec_document(nat, self.repo, self.catalog, inv)
+        clips = {c["name"]: c for c in manifest["clips"]}
+        self.assertEqual(list(clips), ["idle", "stance", "stomp", "death"])  # the accepted set IS the shipped native set
+        self.assertTrue(manifest["native"])
+        self.assertFalse(manifest["allow_idle_alt"])
+        self.assertEqual(manifest["tier_label"], "Tier 1 (boss; the design's 'done' row)")
+        self.assertEqual(set(manifest["locked_bones"]), {"head", "body", "root"})
+        self.assertEqual(manifest["keyed_locked_by_shipped_clip"], {"stance": ["head"], "stomp": ["head"]})
+        self.assertEqual(manifest["lock_mode"], "warn")
+        rows = {c["name"]: c for c in ap.clip_rows(nat, inv, nat.animation, [], bone_names=["root", "body", "head", "tail"], locked=ap.locked_bones(nat, nat.geo))}
+        self.assertIn("`Movement` controller selects it when if (this.isAwake())", rows["stance"]["trigger"])
+        self.assertIn("triggerAnim(\"Actions\", \"death\")", rows["death"]["trigger"])
+        self.assertIn("in `die`", rows["death"]["trigger"])
+        self.assertEqual(rows["stance"]["layer"], "native `Movement` controller (state)")
+        self.assertEqual(rows["stomp"]["layer"], "native `Actions` controller (triggered)")
+        # a verdict that invites improving a clip which keys locked bones says what that means under each policy
+        self.assertEqual(rows["stomp"]["keyed_locked"], ["head"])
+        self.assertIn("keys 1 locked bone(s) (head): a WARN from `check` today; a REJECT once the server-side evaluator lands", rows["stomp"]["note"])
+        self.assertEqual(rows["idle"]["keyed_locked"], [])
+        self.assertIn("Tier 1 (boss; the design's 'done' row)", md)
+        self.assertIn("`stance` keys 1", md)
+        self.assertIn("`stomp` keys 1", md)
+        self.assertIn("Under today's policy those are warnings; under the REJECT policy the shipped file itself would fail", md)
+        # the wishlist only invites clips the manifest accepts; anything else is marked, and §5.2 holds the future items
+        self.assertIn("- a heavier `stance` loop\n", md)
+        self.assertIn("a wing-beat `fly` loop distinct from the hover — NOT accepted by `check` today: `fly` is not in this creature's clip set", md)
+        self.assertIn("### 5.2 Not accepted today", md)
+        self.assertIn("a `hurt` flinch on the struck head — PROVISIONAL", md)
+        self.assertTrue(any(w[1] == "WISHLIST_UNACCEPTED" and w[0] == "native" for w in self.repo.warnings.items))
+        self.assertTrue(any(w[1] == "LOCKED_BONES_KEYED" and w[0] == "native" and "1 of the 3" in w[2] for w in self.repo.warnings.items))
+        self.assertIn("hurts EACH victim in its box 2x per roll", md)
+        self.assertIn("not used by this species (native clip set)", md)
+
+    # --- .bbmodel round-trip --------------------------------------------------------------------
+
+    def test_roundtrip_on_fixture_rig(self):
+        fx = self.repo.get("fixture")
+        geo, anim = fx.geo, fx.animation
+        tex = (self.root / "src/main/resources/assets/orespawn/textures/entity/fixture.png").read_bytes()
+        bb = ap.build_bbmodel(fx, geo, anim, [("fixture.png", tex, (64, 32))], ap.Warnings())
+        self.assertEqual(bb["meta"]["model_format"], "bedrock")
+        self.assertFalse(bb["meta"]["box_uv"])  # mixed rig: per-element box_uv
+        self.assertEqual(len(bb["elements"]), 4)
+        self.assertEqual(len(bb["outliner"]), 1)  # root; tail/arm nested; hand under arm
+        root = bb["outliner"][0]
+        self.assertEqual([c["name"] for c in root["children"] if isinstance(c, dict)], ["tail", "arm"])
+        arm = [c for c in root["children"] if isinstance(c, dict) and c["name"] == "arm"][0]
+        self.assertEqual(arm["origin"], [-4.0, 22.0, 0.0])          # X mirrored for Blockbench
+        self.assertEqual(arm["rotation"], [-10.0, 0.0, 5.0])        # X, Y negated; Z kept
+        hand_el = [e for e in bb["elements"] if e["name"] == "hand"][0]
+        self.assertTrue(hand_el["box_uv"])
+        self.assertEqual(hand_el["uv_offset"], [48.0, 0.0])
+        self.assertFalse(hand_el["mirror_uv"])                       # the cube's own mirror:false wins over the bone's
+        self.assertEqual(hand_el["rotation"], [0.0, 0.0, -15.0])
+        root_el = [e for e in bb["elements"] if e["name"] == "root"][0]
+        self.assertEqual(root_el["from"], [-4.0, 12.0, -2.0])
+        self.assertEqual(root_el["to"], [4.0, 24.0, 2.0])
+        self.assertEqual(root_el["faces"]["down"]["uv"], [12.0, 4.0, 20.0, 0.0])  # the flipped V survives
+        self.assertEqual(bb["unhandled_root_fields"][ap.STASH_KEY], {"orespawn:bone_draw_order": ["root", "tail", "arm", "hand"]})
+        self.assertEqual([a["loop"] for a in bb["animations"]], ["loop", "once", "hold"])
+        back_geo, reattached = ap.bbmodel_to_geo(bb)
+        back_anim = ap.bbmodel_to_animation(bb)
+        report = ap.roundtrip_diff(geo, back_geo, anim, back_anim, reattached)
+        self.assertTrue(report["equal"], report["differences"])
+        self.assertTrue(report["bone_order_preserved"])
+        self.assertEqual(report["reattached_by_this_importer"], ["orespawn:bone_draw_order"])
+        self.assertEqual(report["dropped_keys"], ["root.cubes[0].modelpart_mirror"])
+        self.assertIn("writer against the tool's importer", report["note"])
+        self.assertEqual([b["name"] for b in back_geo["minecraft:geometry"][0]["bones"]], ["root", "tail", "arm", "hand"])
+        hand_back = back_geo["minecraft:geometry"][0]["bones"][3]
+        self.assertEqual(hand_back["cubes"][0]["rotation"], [0.0, 0.0, -15.0])
+        # a mixed-UV project writes no bone-level mirror (Blockbench: only when Project.box_uv); the cube's
+        # effective mirror is what matters and it stays false
+        self.assertIs(hand_back["cubes"][0].get("mirror", hand_back.get("mirror", False)), False)
+        idle_back = back_anim["animations"]["idle"]["bones"]["tail"]["rotation"]
+        self.assertEqual(idle_back["0.5"]["lerp_mode"], "catmullrom")
+        attack_back = back_anim["animations"]["attack"]["bones"]["tail"]["rotation"]
+        self.assertEqual(attack_back["0.0"]["pre"], [0, 0, 0])
+        # easing survives the writer and the importer
+        self.assertEqual(attack_back["0.25"]["easing"], "easeInOutSine")
+        self.assertEqual(attack_back["0.25"]["easingArgs"], [2])
+
+    def test_roundtrip_reports_a_dropped_easing_or_unknown_key(self):
+        fx = self.repo.get("fixture")
+        geo = fx.geo
+        odd = json.loads(json.dumps(FIXTURE_ANIM))
+        odd["animations"]["idle"]["bones"]["tail"]["rotation"]["0.5"]["orespawn:tag"] = 1  # a key Blockbench has no field for
+        bb = ap.build_bbmodel(fx, geo, odd, [], ap.Warnings())
+        back_geo, reattached = ap.bbmodel_to_geo(bb)
+        report = ap.roundtrip_diff(geo, back_geo, odd, ap.bbmodel_to_animation(bb), reattached)
+        self.assertFalse(report["equal"])
+        self.assertTrue(any("keyframe keys" in d and "orespawn:tag" in d for d in report["differences"]), report["differences"])
+        self.assertIn("clip idle tail.rotation @ 0.5: orespawn:tag", report["dropped_keys"])
+        # a dropped easing is a difference too
+        bb2 = ap.build_bbmodel(fx, geo, fx.animation, [], ap.Warnings())
+        for a in bb2["animations"]:
+            for animator in a["animators"].values():
+                for kf in animator["keyframes"]:
+                    kf.pop("easing", None)
+                    kf.pop("easingArgs", None)
+        report2 = ap.roundtrip_diff(geo, ap.bbmodel_to_geo(bb2)[0], fx.animation, ap.bbmodel_to_animation(bb2), [])
+        self.assertTrue(any("lost: ['easing', 'easingArgs']" in d for d in report2["differences"]), report2["differences"])
+
+    def test_roundtrip_detects_a_reordered_bone(self):
+        fx = self.repo.get("fixture")
+        geo = fx.geo
+        bb = ap.build_bbmodel(fx, geo, fx.animation, [], ap.Warnings())
+        root = bb["outliner"][0]
+        groups = [c for c in root["children"] if isinstance(c, dict)]
+        root["children"] = [c for c in root["children"] if not isinstance(c, dict)] + groups[::-1]
+        back_geo, reattached = ap.bbmodel_to_geo(bb)
+        report = ap.roundtrip_diff(geo, back_geo, fx.animation, ap.bbmodel_to_animation(bb), reattached)
+        self.assertFalse(report["bone_order_preserved"])
+        self.assertFalse(report["equal"])
+
+    def test_roundtrip_reports_a_non_dfs_shipped_order(self):
+        # a shipped rig whose bone list is not depth-first cannot survive Blockbench's outliner-order export
+        fx = self.repo.get("fixture")
+        bb = ap.build_bbmodel(fx, NON_DFS_GEO, {"animations": {}}, [], ap.Warnings())
+        back_geo, reattached = ap.bbmodel_to_geo(bb)
+        self.assertEqual([b["name"] for b in back_geo["minecraft:geometry"][0]["bones"]], ["root", "arm", "hand", "tail"])
+        report = ap.roundtrip_diff(NON_DFS_GEO, back_geo, {"animations": {}}, {"animations": {}}, reattached)
+        self.assertFalse(report["bone_order_preserved"])
+        self.assertFalse(report["equal"])
+        self.assertTrue(any(d.startswith("bone order/set differs") for d in report["differences"]))
+
+    # --- package + check ------------------------------------------------------------------------
+
+    def _returned(self, anim: dict | None, textures: dict[str, bytes] | None = None, extra_files: dict[str, str] | None = None,
+                  anim_name: str = "fixture.animation.json") -> Path:
+        d = Path(tempfile.mkdtemp(prefix="ret_", dir=self.tmp))
+        if anim is not None:
+            (d / anim_name).write_text(json.dumps(anim), encoding="utf-8")
+        if textures:
+            (d / "textures").mkdir()
+            for n, b in textures.items():
+                (d / "textures" / n).write_bytes(b)
+        for n, t in (extra_files or {}).items():
+            (d / n).write_text(t, encoding="utf-8")
+        return d
+
+    GOOD = {"format_version": "1.8.0", "animations": {
+        "idle": {"loop": True, "animation_length": 1.0, "bones": {"tail": {"rotation": {"0.0": [0, 0, 0]}}}},
+        "walk": {"loop": True, "animation_length": 1.0, "bones": {"tail": {"rotation": {"0.0": [0, 0, 0]}}}},
+        "attack": {"loop": False, "animation_length": 0.5, "bones": {"tail": {"rotation": {"0.0": [0, 0, 0]}}}},
+        "death": {"loop": "hold_on_last_frame", "animation_length": 2.0, "bones": {"tail": {"rotation": {"0.0": [0, 0, 0]}}}},
+        "idle_alt_1": {"loop": False, "animation_length": 1.0, "bones": {"tail": {"rotation": {"0.0": [0, 0, 0]}}}},
+    }}
+
+    def _package_fixture(self) -> Path:
+        out = self.tmp / "out"
+        if not (out / "entities/fixture/spec.manifest.json").exists():
+            ap.build_package(self.repo, out, ["fixture"])
+        return out / "entities/fixture/spec.manifest.json"
+
+    @staticmethod
+    def _has(findings, sev, text) -> bool:
+        return any(s == sev and text in msg for s, msg in findings)
+
+    def test_package_and_check_rejections(self):
+        out = self.tmp / "out"
+        summary = ap.build_package(self.repo, out, ["fixture"])
+        entry = summary["entities"][0]
+        self.assertEqual(entry["registry"], "fixture")
+        self.assertTrue(entry["roundtrip"]["equal"])
+        self.assertEqual(entry["tier_label"], "Tier 2")
+        folder = out / "entities/fixture"
+        for name in ("fixture.geo.json", "fixture.animation.json", "fixture.bbmodel", "SPEC.md", "spec.manifest.json",
+                     "textures/fixture.png", "reference/SLOTS.md", "roundtrip.report.json"):
+            self.assertTrue((folder / name).exists(), name)
+        self.assertTrue((out / "INVENTORY.csv").exists() and (out / "TEXTURE_MAP.csv").exists() and (out / "README_FIRST.md").exists())
+        readme = (out / "README_FIRST.md").read_text(encoding="utf-8")
+        self.assertIn(ap.LOCK_POLICY, readme)  # README rule 6 carries the one policy sentence
+        self.assertIn("**What `check` REJECTS**", readme)
+        for r in ap.CHECK_REJECTS:
+            self.assertIn(r, readme)
+        manifest = folder / "spec.manifest.json"
+        good = self.GOOD
+
+        findings, passed = ap.check_folder(self._returned(good, {"fixture.png": png_bytes(64, 32, 5)}), manifest)
+        self.assertTrue(passed, findings)
+        self.assertFalse(any(sev == "REJECT" for sev, _ in findings))
+        self.assertTrue(self._has(findings, "OK", "locked bones: 0 of 3 keyed across 0 clip(s) [lock_mode warn]"))
+        self.assertTrue(self._has(findings, "OK", "checked 5 clip(s), 15 keyframe value(s), 1 texture(s)"))
+        self.assertFalse(self._has(findings, "OK", "nothing to report"))
+
+        renamed_bone = json.loads(json.dumps(good))
+        renamed_bone["animations"]["idle"]["bones"] = {"tale": renamed_bone["animations"]["idle"]["bones"]["tail"]}
+        findings, passed = ap.check_folder(self._returned(renamed_bone), manifest)
+        self.assertFalse(passed)
+        self.assertTrue(self._has(findings, "REJECT", "unknown bone 'tale'"), findings)
+
+        wrong_loop = json.loads(json.dumps(good))
+        wrong_loop["animations"]["idle"]["loop"] = False
+        findings, passed = ap.check_folder(self._returned(wrong_loop), manifest)
+        self.assertFalse(passed)
+        self.assertTrue(self._has(findings, "REJECT", "clip 'idle' loop is false, the SPEC says true"), findings)
+
+        renamed_clip = json.loads(json.dumps(good))
+        renamed_clip["animations"]["strike"] = renamed_clip["animations"].pop("attack")
+        findings, passed = ap.check_folder(self._returned(renamed_clip), manifest)
+        self.assertFalse(passed)
+        self.assertTrue(self._has(findings, "REJECT", "clip 'strike' is not in the SPEC"), findings)
+        self.assertTrue(self._has(findings, "REJECT", "code-triggered clip 'attack' is missing"), findings)
+
+        findings, passed = ap.check_folder(self._returned(good, {"fixture.png": png_bytes(32, 32, 5)}), manifest)
+        self.assertFalse(passed)
+        self.assertTrue(self._has(findings, "REJECT", "canvas 32x32, must stay 64x32"), findings)
+
+        # a keyed locked bone: WARN under the default policy (the manifest says warn), with the policy named in the summary line
+        locked = json.loads(json.dumps(good))
+        locked["animations"]["idle"]["bones"]["hand"] = {"rotation": {"0.0": [0, 0, 0]}}
+        findings, passed = ap.check_folder(self._returned(locked), manifest)
+        self.assertTrue(passed, findings)
+        self.assertTrue(self._has(findings, "WARN", "clip 'idle' keys 1 locked bone(s): hand"), findings)
+        self.assertTrue(self._has(findings, "WARN", "locked bones: 1 of 3 keyed across 1 clip(s) [lock_mode warn] — " + ap.LOCK_POLICY), findings)
+        # ... and a REJECT when the policy flips (the --lock-mode override, or the manifest's lock_mode)
+        findings, passed = ap.check_folder(self._returned(locked), manifest, lock_mode_override="reject")
+        self.assertFalse(passed)
+        self.assertTrue(self._has(findings, "REJECT", "clip 'idle' keys 1 locked bone(s): hand"), findings)
+        strict = json.loads(manifest.read_text(encoding="utf-8"))
+        strict["lock_mode"] = "reject"
+        strict_path = self.tmp / "strict.manifest.json"
+        strict_path.write_text(json.dumps(strict), encoding="utf-8")
+        findings, passed = ap.check_folder(self._returned(locked), strict_path)
+        self.assertFalse(passed)
+        self.assertTrue(self._has(findings, "REJECT", "locked bones: 1 of 3 keyed"), findings)
+
+        # a _preview file: a WARN marked PROVISIONAL (open question 15), no longer a REJECT
+        findings, passed = ap.check_folder(self._returned(good, extra_files={"fixture_preview.animation.json": "{}"}), manifest)
+        self.assertTrue(passed, findings)
+        self.assertTrue(self._has(findings, "WARN", "_preview file is a Blockbench-only aid") and any("open question 15" in m for _, m in findings), findings)
+        self.assertFalse(self._has(findings, "REJECT", "animation files returned"))
+
+        findings, passed = ap.check_folder(self._returned(good, extra_files={"fixture.geo.json": json.dumps({"minecraft:geometry": [{"bones": [{"name": "root"}]}]})}), manifest)
+        self.assertFalse(passed)
+        self.assertTrue(self._has(findings, "REJECT", "bone set/order changed"), findings)
+
+    def test_check_rejects_every_rule_it_claims(self):
+        manifest = self._package_fixture()
+        good = self.GOOD
+        # a missing folder and an empty folder are REJECTs, never "nothing to report"
+        findings, passed = ap.check_folder(self.tmp / "no_such_folder", manifest)
+        self.assertFalse(passed)
+        self.assertTrue(self._has(findings, "REJECT", "does not exist: nothing was returned"), findings)
+        empty = Path(tempfile.mkdtemp(prefix="empty_", dir=self.tmp))
+        findings, passed = ap.check_folder(empty, manifest)
+        self.assertFalse(passed)
+        self.assertTrue(self._has(findings, "REJECT", "is empty: nothing was returned"), findings)
+        self.assertTrue(self._has(findings, "REJECT", "no `fixture.animation.json` returned"), findings)
+        # a wrongly named animation file, and a second one
+        findings, passed = ap.check_folder(self._returned(good, anim_name="fixture_v2.animation.json"), manifest)
+        self.assertFalse(passed)
+        self.assertTrue(self._has(findings, "REJECT", "fixture_v2.animation.json: wrong file name — the sheet names it `fixture.animation.json`"), findings)
+        findings, passed = ap.check_folder(self._returned(good, extra_files={"fixture_old.animation.json": json.dumps(good)}), manifest)
+        self.assertFalse(passed)
+        self.assertTrue(self._has(findings, "REJECT", "2 animation files returned"), findings)
+        # a Molang string (rule 7), a string-typed number (WARN), a non-numeric and a non-finite value
+        molang = json.loads(json.dumps(good))
+        molang["animations"]["idle"]["bones"]["tail"]["rotation"]["0.0"] = ["math.sin(query.anim_time * 10)", 0, 0]
+        findings, passed = ap.check_folder(self._returned(molang), manifest)
+        self.assertFalse(passed)
+        self.assertTrue(self._has(findings, "REJECT", "is a Molang expression / text (rule 7"), findings)
+        stringy = json.loads(json.dumps(good))
+        stringy["animations"]["idle"]["bones"]["tail"]["rotation"]["0.0"] = ["12.5", 0, 0]
+        findings, passed = ap.check_folder(self._returned(stringy), manifest)
+        self.assertTrue(passed, findings)
+        self.assertTrue(self._has(findings, "WARN", "number written as a string"), findings)
+        bad = json.loads(json.dumps(good))
+        bad["animations"]["idle"]["bones"]["tail"]["rotation"]["0.0"] = [True, None, 0]
+        findings, passed = ap.check_folder(self._returned(bad), manifest)
+        self.assertFalse(passed)
+        self.assertEqual(sum(1 for s, m in findings if s == "REJECT" and "is not a finite number" in m), 2, findings)
+        nan = json.loads(json.dumps(good))
+        nan["animations"]["idle"]["bones"]["tail"]["rotation"]["0.0"] = [float("nan"), float("inf"), 0]
+        findings, passed = ap.check_folder(self._returned(nan), manifest)
+        self.assertFalse(passed)
+        self.assertEqual(sum(1 for s, m in findings if s == "REJECT" and "is not a finite number" in m), 2, findings)
+        # absurd values: the bounds are named
+        absurd = json.loads(json.dumps(good))
+        absurd["animations"]["idle"]["bones"]["tail"]["rotation"]["0.0"] = [5000, 0, 0]
+        absurd["animations"]["idle"]["bones"]["tail"]["position"] = {"0.0": [0, 2000, 0]}
+        findings, passed = ap.check_folder(self._returned(absurd), manifest)
+        self.assertFalse(passed)
+        self.assertTrue(self._has(findings, "REJECT", "rotation 5000 exceeds the bound |rotation| <= 3600 degrees"), findings)
+        self.assertTrue(self._has(findings, "REJECT", "position 2000 exceeds the bound |position| <= 1024 units"), findings)
+        # a key beyond animation_length (the declared length shorter than the last key); a missing length is a WARN
+        late = json.loads(json.dumps(good))
+        late["animations"]["idle"]["bones"]["tail"]["rotation"] = {"0.0": [0, 0, 0], "1.5": [10, 0, 0]}
+        findings, passed = ap.check_folder(self._returned(late), manifest)
+        self.assertFalse(passed)
+        self.assertTrue(self._has(findings, "REJECT", "clip 'idle' has a key at 1.5 s beyond its animation_length 1 s"), findings)
+        nolen = json.loads(json.dumps(good))
+        del nolen["animations"]["idle"]["animation_length"]
+        nolen["animations"]["idle"]["bones"]["tail"]["rotation"] = {"0.0": [0, 0, 0], "0.75": [10, 0, 0]}
+        findings, passed = ap.check_folder(self._returned(nolen), manifest)
+        self.assertTrue(passed, findings)
+        self.assertTrue(self._has(findings, "WARN", "clip 'idle' has no animation_length; the game takes the last key (0.75 s)"), findings)
+        # a custom-instruction timeline, an unknown keyframe key, an unsupported channel
+        timeline = json.loads(json.dumps(good))
+        timeline["animations"]["idle"]["timeline"] = {"0.0": "/say hi"}
+        timeline["animations"]["idle"]["bones"]["tail"]["rotation"]["0.0"] = {"vector": [0, 0, 0], "bezier_left": 1}
+        timeline["animations"]["idle"]["bones"]["tail"]["glow"] = {"0.0": [1, 1, 1]}
+        findings, passed = ap.check_folder(self._returned(timeline), manifest)
+        self.assertFalse(passed)
+        self.assertTrue(self._has(findings, "REJECT", "has a `timeline` (custom-instruction keys are not handled; rule 7)"), findings)
+        self.assertTrue(self._has(findings, "WARN", "unknown keyframe key 'bezier_left'"), findings)
+        self.assertTrue(self._has(findings, "REJECT", "unsupported channel 'glow'"), findings)
+        # a returned geo whose cube size / UV / canvas differ
+        geo = json.loads(json.dumps(FIXTURE_GEO))
+        geo["minecraft:geometry"][0]["bones"][1]["cubes"][0]["size"] = [2, 2, 8]
+        geo["minecraft:geometry"][0]["bones"][0]["cubes"][0]["uv"]["north"]["uv"] = [5, 4]
+        findings, passed = ap.check_folder(self._returned(good, extra_files={"fixture.geo.json": json.dumps(geo)}), manifest)
+        self.assertFalse(passed)
+        self.assertTrue(self._has(findings, "REJECT", "bone tail cube[0] size: [2.0, 2.0, 6.0] -> [2.0, 2.0, 8.0]"), findings)
+        self.assertTrue(self._has(findings, "REJECT", "bone root cube[0] uv.north: [4.0, 4.0, 8.0, 12.0] -> [5.0, 4.0, 8.0, 12.0]"), findings)
+        self.assertTrue(self._has(findings, "WARN", "a geo was returned"), findings)
+        canvas = json.loads(json.dumps(FIXTURE_GEO))
+        canvas["minecraft:geometry"][0]["description"]["texture_width"] = 128
+        findings, passed = ap.check_folder(self._returned(good, extra_files={"fixture.geo.json": json.dumps(canvas)}), manifest)
+        self.assertFalse(passed)
+        self.assertTrue(self._has(findings, "REJECT", "texture canvas 128x32 must stay 64x32"), findings)
+        # an unchanged geo passes with only the WARN
+        findings, passed = ap.check_folder(self._returned(good, extra_files={"fixture.geo.json": json.dumps(FIXTURE_GEO)}), manifest)
+        self.assertTrue(passed, findings)
+        # a texture that is not this entity's
+        findings, passed = ap.check_folder(self._returned(good, {"other.png": png_bytes(32, 32, 2)}), manifest)
+        self.assertFalse(passed)
+        self.assertTrue(self._has(findings, "REJECT", "textures/other.png: not one of this entity's textures"), findings)
+
+    def test_check_on_a_native_species(self):
+        out = self.tmp / "out_native"
+        ap.build_package(self.repo, out, ["native"])
+        manifest = out / "entities/native/spec.manifest.json"
+        # the shipped file itself: PASS with the locked-bone warnings (26-of-27 on the real boss, 1-of-3 here)
+        findings, passed = ap.check_folder(self._returned(NATIVE_ANIM, anim_name="native.animation.json"), manifest)
+        self.assertTrue(passed, findings)
+        self.assertTrue(self._has(findings, "WARN", "clip 'stance' keys 1 locked bone(s): head"), findings)
+        self.assertTrue(self._has(findings, "WARN", "locked bones: 1 of 3 keyed across 2 clip(s) [lock_mode warn]"), findings)
+        # a clip outside the native set — including idle_alt_N — is rejected
+        extra = json.loads(json.dumps(NATIVE_ANIM))
+        extra["animations"]["fly"] = {"loop": True, "animation_length": 1.0, "bones": {"tail": {"rotation": {"0.0": [0, 0, 0]}}}}
+        extra["animations"]["idle_alt_1"] = {"loop": False, "animation_length": 1.0, "bones": {"tail": {"rotation": {"0.0": [0, 0, 0]}}}}
+        findings, passed = ap.check_folder(self._returned(extra, anim_name="native.animation.json"), manifest)
+        self.assertFalse(passed)
+        self.assertTrue(self._has(findings, "REJECT", "clip 'fly' is not in the SPEC"), findings)
+        self.assertTrue(self._has(findings, "REJECT", "clip 'idle_alt_1' is not in the SPEC (renamed or added); this creature's native clip set accepts no idle_alt_N"), findings)
+        # the REJECT policy would fail the shipped file itself
+        findings, passed = ap.check_folder(self._returned(NATIVE_ANIM, anim_name="native.animation.json"), manifest, lock_mode_override="reject")
+        self.assertFalse(passed)
+
+    def test_package_refuses_repository_artist_handoff(self):
+        with self.assertRaises(SystemExit):
+            ap.build_package(self.repo, self.root / "artist_handoff", ["fixture"])
+        self.assertFalse((self.root / "artist_handoff").exists())
+
+    def test_inventory_rows(self):
+        header, rows = ap.inventory_rows(self.repo, self.catalog)
+        by = {r[0]: dict(zip(header, r)) for r in rows}
+        self.assertEqual(len(rows), 8)
+        self.assertEqual(by["fixture"]["status"], "landed candidate")
+        self.assertEqual(by["fixture"]["bones"], 4)
+        self.assertEqual(by["fixture"]["locked_bones"], 3)
+        self.assertEqual(by["fixture"]["clips_shipped"], 3)
+        self.assertEqual(by["fixture"]["expected_scale"], 1)
+        self.assertEqual(by["fixture"]["artist_tier"], "Tier 2")
+        # effort_hours is filled with the generator's estimate: 4 h + 0.2 x 4 bones + 1 h x the clips to author or improve
+        self.assertNotEqual(by["fixture"]["effort_hours"], "")
+        self.assertIn("generator:", by["fixture"]["effort_source"])
+        # 4 + 0.2 x 4 bones + 1 h x 10: idle, idle_pump, walk, walk_pump, swim, aggro_idle, calm_idle (a real pair: STATE flag), attack, hurt, death
+        self.assertEqual(by["fixture"]["effort_hours"], "14.8")
+        self.assertEqual(by["other"]["status"], "classic only")
+        self.assertEqual(by["other"]["tier"], 3)
+        self.assertEqual(by["other"]["effort_hours"], "")
+        self.assertEqual(by["dart"]["status"], "excluded")
+        self.assertIn("projectile", by["dart"]["status_note"])
+        self.assertEqual(by["moo"]["tier"], 0)
+        self.assertEqual(by["native"]["artist_tier"], "Tier 1 (boss; the design's 'done' row)")
+        self.assertEqual(by["fixture_head"]["status"], "classic only")
+
+
+if __name__ == "__main__":
+    unittest.main(verbosity=2)

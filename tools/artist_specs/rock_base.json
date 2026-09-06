@@ -1,0 +1,45 @@
+{
+  "registry": "rock_base",
+  "display_name": "Rock (RockBase)",
+  "status": "draft for the owner's edit (slice (f) lane, 2026-09-06)",
+  "locomotion": "stationary",
+  "artist_scope": "none (Tier 3: no motion; the pose is which cubes are visible)",
+  "character_sheet": "A mineable rock disguised as a creature. On its first tick it rolls a type (twelve of them: plain, small, coloured, spiky, TNT and four crystal kinds; the Crystal dimension forces the crystal types), shows the cube set for that type, and sits there with a fixed yaw until it is broken for its drops. It never moves and never turns.",
+  "size_notes": "0.25 x 0.15 block hitbox at x1, no shadow; the visible rock is larger than the hitbox.",
+  "labels": {
+    "RockShape1": "plain rock, piece 1 (types 2-6)",
+    "RockShape2": "plain rock, piece 2",
+    "RockShape3": "plain rock, piece 3",
+    "RockSmallShape1": "small rock, piece 1 (type 1)",
+    "RockSmallShape2": "small rock, piece 2",
+    "RockSpikeyShape1": "spiky rock, piece 1 (type 7)",
+    "RockSpikeyShape2": "spiky rock, piece 2",
+    "RockSpikeyShape3": "spiky rock, piece 3",
+    "RockTNTShape1": "TNT rock, piece 1 (type 8)",
+    "RockTNTShape2": "TNT rock, piece 2",
+    "RockTNTShape3": "TNT rock, piece 3",
+    "RockTNTShape4": "TNT rock, piece 4",
+    "CrystalShape1": "crystal cluster, base 1 (types 9-12)",
+    "CrystalShape2": "crystal cluster, base 2",
+    "CrystalShape3a": "crystal spike 3a",
+    "CrystalShape3b": "crystal spike 3b",
+    "CrystalShape3c": "crystal spike 3c",
+    "CrystalShape3d": "crystal spike 3d",
+    "CrystalShape4a": "crystal spike 4a",
+    "CrystalShape4b": "crystal spike 4b",
+    "CrystalShape4c": "crystal spike 4c",
+    "CrystalShape4d": "crystal spike 4d"
+  },
+  "groups": [],
+  "formulas": [
+    "No rotation channels. Visibility by rock type (ModelRockBase.java:180-230; RockBaseGeoReplacement.java:46-83): type 1 -> the two RockSmall pieces; 7 -> the three RockSpikey pieces; 8 -> the four RockTNT pieces; 9-12 -> the ten Crystal pieces; every other type 2-6 -> the three Rock pieces; type 0 -> nothing.",
+    "Texture by type (RockBaseRenderer.textureFor:56-69): 3 red, 4 green, 5 blue, 6 purple, 8 TNT, 9 crystal, 10 crystal green, 11 crystal blue, 12 crystal TNT, otherwise rocktexture."
+  ],
+  "behaviour": [
+    "Static: the entity zeroes its own rotation every tick (RockBase.tick)."
+  ],
+  "clips": [],
+  "extras": [],
+  "wishlist": [],
+  "effort_hours": 0
+}

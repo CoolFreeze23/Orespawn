@@ -1,0 +1,35 @@
+{
+  "registry": "coin",
+  "display_name": "Coin",
+  "status": "draft for the owner's edit (slice (f) lane, 2026-09-06)",
+  "locomotion": "stationary",
+  "artist_scope": "none (Tier 3: code-driven; the coin spins by formula)",
+  "character_sheet": "A single gold coin standing on edge, hovering in place in daylight above height 50. It has 1 HP, no sound, no reaction and no movement; it only turns about its vertical axis, swinging through a full turn and back every 28.6 seconds. Players collect it. There is nothing to animate beyond the spin the code already does.",
+  "size_notes": "Drawn at x0.125 of the rig (a 1.5 x 1.5 block hitbox that is mostly empty air around a small disc).",
+  "labels": {
+    "coin": "the coin disc (turns about Y)"
+  },
+  "groups": [
+    {
+      "name": "spin",
+      "bones": [
+        "coin"
+      ],
+      "omega": 0.011000000000000001,
+      "axis": "y",
+      "gait_scaled": false,
+      "amplitude": "pi rad: a swing from -180 to +180 degrees and back",
+      "plain": "the coin turns about its vertical axis, swinging through a full turn and back every 571 ticks (28.6 s)",
+      "math": "coin.yRot = cos(ageInTicks * 0.05 * 0.22) * pi   (WINGSPEED = 0.22)",
+      "source": "ModelCoin.java:26,47-50; CoinGeoReplacement.java:39-42"
+    }
+  ],
+  "behaviour": [
+    "One channel: the disc's yaw follows a cosine — it is a slow swing, not a constant-rate spin.",
+    "No other bone, no head, no state."
+  ],
+  "clips": [],
+  "extras": [],
+  "wishlist": [],
+  "effort_hours": 0
+}

@@ -1,0 +1,139 @@
+{
+  "registry": "beaver",
+  "display_name": "Beaver",
+  "status": "draft for the owner's edit (slice (f) lane, 2026-09-06)",
+  "locomotion": "walker",
+  "artist_scope": "full contract (the Tier-2 pilot, scope addendum A.4)",
+  "character_sheet": "A small, round forest animal with a blocky head, buck teeth and a broad flat tail. It waddles on four stubby feet in a brisk trot, chews constantly whether it is walking or not, and slowly rocks its tail. It is timid: it keeps away from monsters and from players, bolts in a panic when hurt, floats in water, and pairs up to breed (the baby is the same rig at half size). Its one job is wood: it looks for logs nearby and chews them down with a chainsaw sound. It never attacks. Read it as a busy, nervous little worker — quick feet, restless jaw, calm tail.",
+  "size_notes": "Drawn at x0.75 of the rig (a 0.6 x 0.8 block hitbox); the baby form at x0.375. The tail is the widest part.",
+  "labels": {
+    "body": "body (torso)",
+    "head": "head",
+    "nose": "nose",
+    "teeth": "front teeth (the chewing pair)",
+    "tail": "flat tail (rocks up and down)",
+    "lff": "left front foot",
+    "lrf": "left rear foot",
+    "rff": "right front foot",
+    "rrf": "right rear foot"
+  },
+  "groups": [
+    {
+      "name": "gait",
+      "bones": [
+        "rff",
+        "lrf",
+        "lff",
+        "rrf"
+      ],
+      "omega": 3.7,
+      "axis": "x",
+      "gait_scaled": true,
+      "amplitude": "pi x 0.45 = 1.414 rad (81 deg) x limbSwingAmount",
+      "plain": "the four feet swing fore-and-aft as a trot: right-front with left-rear, left-front with right-rear (the opposite sign); the swing shrinks to nothing when the beaver stands still",
+      "math": "rff.xRot = lrf.xRot = cos(ageInTicks * 3.7) * pi * 0.45 * limbSwingAmount; lff.xRot = rrf.xRot = -(that)",
+      "source": "ModelBeaver.java:90-101; BeaverGeoReplacement.java:52-63"
+    },
+    {
+      "name": "teeth",
+      "bones": [
+        "teeth"
+      ],
+      "omega": 2.7,
+      "axis": "x",
+      "gait_scaled": false,
+      "amplitude": "pi x 0.25 = 0.785 rad (45 deg)",
+      "plain": "the teeth chew continuously, walking or standing",
+      "math": "teeth.xRot = cos(ageInTicks * 2.7) * pi * 0.25",
+      "source": "ModelBeaver.java:100; BeaverGeoReplacement.java:61"
+    },
+    {
+      "name": "tail",
+      "bones": [
+        "tail"
+      ],
+      "omega": 0.5,
+      "axis": "x",
+      "gait_scaled": false,
+      "amplitude": "pi x 0.05 = 0.157 rad (9 deg)",
+      "plain": "the flat tail rocks slowly up and down, one rock every 12.6 ticks (0.63 s)",
+      "math": "tail.xRot = cos(ageInTicks * 0.5) * pi * 0.05",
+      "source": "ModelBeaver.java:101; BeaverGeoReplacement.java:62"
+    }
+  ],
+  "behaviour": [
+    "Three independent rhythms run at once: a fast trot on the feet (scaled by walking speed), a chew on the teeth and a slow tail rock; nothing else moves (the head and nose are static).",
+    "Standing still, the feet hang at the bind pose while the teeth and tail keep going: today's 'idle' is the walk at zero speed plus the free-running chew and rock (contract §2.1).",
+    "The head does not track the player: the classic model has no head-yaw channel.",
+    "The pose is code-driven in the shipped build (the harness reference leg); the artist clips replace it under the modern config once the contract is wired."
+  ],
+  "clips": [
+    {
+      "name": "walk",
+      "verdict": "improve",
+      "note": "keep the diagonal pairing and the 81-degree swing; add body bob and a head nod if you like"
+    },
+    {
+      "name": "idle",
+      "verdict": "author",
+      "note": "a real rest pose (weight shift, a look-around); today's idle is the walk at zero speed"
+    },
+    {
+      "name": "walk_teeth",
+      "verdict": "leave",
+      "note": "the chew reads well as is"
+    },
+    {
+      "name": "walk_tail",
+      "verdict": "improve",
+      "note": "a slightly bigger rock while walking"
+    },
+    {
+      "name": "idle_teeth",
+      "verdict": "leave"
+    },
+    {
+      "name": "idle_tail",
+      "verdict": "leave"
+    },
+    {
+      "name": "swim",
+      "verdict": "author",
+      "note": "optional: it floats (FloatGoal); a paddle with the tail flat"
+    },
+    {
+      "name": "hurt",
+      "verdict": "author",
+      "note": "a flinch; keep it under half a second",
+      "length_seconds": 0.4
+    },
+    {
+      "name": "death",
+      "verdict": "author",
+      "note": "PROVISIONAL: the vanilla death flip is open question 3",
+      "length_seconds": 1.5
+    }
+  ],
+  "extras": [
+    {
+      "name": "chop",
+      "loop": false,
+      "layer": "overlay",
+      "bones": [
+        "head",
+        "teeth",
+        "nose"
+      ],
+      "length_seconds": 0.6,
+      "code_triggered": true,
+      "trigger": "named call site (transport 3): Beaver.customServerAiStep, where the chainsaw sound plays on a chop — needs a one-line trigger call, PROVISIONAL",
+      "note": "gnawing a log: head down, rapid bites"
+    }
+  ],
+  "wishlist": [
+    "a tail slap when it panics",
+    "an idle_alt where it sits up and nibbles",
+    "a baby-only hop (the baby shares the rig; the clip would play at half scale)"
+  ],
+  "effort_hours": null
+}

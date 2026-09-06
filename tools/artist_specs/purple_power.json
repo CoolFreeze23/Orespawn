@@ -1,0 +1,75 @@
+{
+  "registry": "purple_power",
+  "display_name": "Purple Power",
+  "status": "draft for the owner's edit (slice (f) lane, 2026-09-06)",
+  "locomotion": "flyer",
+  "artist_scope": "none (Tier 3: code-driven spinning rings; render-instance clones)",
+  "character_sheet": "A drifting purple orb of three concentric rings, each ring six spokes, spinning on different axes at different speeds and shedding firework sparks. It floats through blocks, wanders to random points, sometimes homes on a target and hurts on contact, and the 'type 10' bomb form (the Queen's mad-mood cloud) explodes when it expires. It is an effect made into a creature: pure spin.",
+  "size_notes": "0.75 x 0.75 block hitbox; drawn at x1 for type 0, x0.55 for the other types (PurplePowerRenderer).",
+  "labels": {},
+  "groups": [
+    {
+      "name": "inner",
+      "bones": [
+        "Shape1__i0",
+        "Shape1__i1",
+        "Shape1__i2",
+        "Shape1__i3",
+        "Shape1__i4",
+        "Shape1__i5"
+      ],
+      "omega": 0.12740903539558607,
+      "axis": "z (angle1) and x (angle2)",
+      "gait_scaled": false,
+      "amplitude": "continuous turn",
+      "plain": "the inner ring's six spokes turn about Z at 7.3 deg/tick and tip about X at 5.1 deg/tick",
+      "math": "inner.zRot = rad(t*7.3); inner.xRot = rad(t*5.1)",
+      "source": "ModelPurplePower.java:45-56; PurplePowerGeoReplacement.java:56-70"
+    },
+    {
+      "name": "middle",
+      "bones": [
+        "Shape2__i0",
+        "Shape2__i1",
+        "Shape2__i2",
+        "Shape2__i3",
+        "Shape2__i4",
+        "Shape2__i5"
+      ],
+      "omega": 0.0890117918517108,
+      "axis": "z (angle2) and y (angle3)",
+      "gait_scaled": false,
+      "amplitude": "continuous turn",
+      "plain": "the middle ring turns about Z at 5.1 deg/tick and about Y at 3.7 deg/tick",
+      "math": "middle.zRot = rad(t*5.1); middle.yRot = rad(t*3.7)",
+      "source": "ModelPurplePower.java:45-56"
+    },
+    {
+      "name": "outer",
+      "bones": [
+        "Shape3__i0",
+        "Shape3__i1",
+        "Shape3__i2",
+        "Shape3__i3",
+        "Shape3__i4",
+        "Shape3__i5"
+      ],
+      "omega": 0.0645771823237902,
+      "axis": "z (angle3) and x (angle1)",
+      "gait_scaled": false,
+      "amplitude": "continuous turn",
+      "plain": "the outer ring turns about Z at 3.7 deg/tick and tips about X at 7.3 deg/tick",
+      "math": "outer.zRot = rad(t*3.7); outer.xRot = rad(t*7.3)",
+      "source": "ModelPurplePower.java:45-56"
+    }
+  ],
+  "behaviour": [
+    "Each ring is one classic part drawn six times at 60-degree steps (the __fanN groups hold the static step; the __iN clones carry the spin) — Slice 4c's render-instance expansion.",
+    "All three rings turn forever; the common period is 3600 ticks (three minutes). No walk, no head."
+  ],
+  "clips": [],
+  "extras": [],
+  "wishlist": [],
+  "effort_hours": 0,
+  "texture_notes": "Five canvases by type: purplepowertexture (type 0), 2, 3, 4 (types 1-3) and 10 (the bomb)."
+}

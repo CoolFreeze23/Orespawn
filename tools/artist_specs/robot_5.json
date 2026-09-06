@@ -1,0 +1,65 @@
+{
+  "registry": "robot_5",
+  "display_name": "RoboSniper (Robot5)",
+  "status": "draft for the owner's edit (slice (f) lane, 2026-09-06)",
+  "locomotion": "walker",
+  "artist_scope": "none (Tier 3: code-driven; wheels driven by distance — P2's limbSwing-distance list)",
+  "character_sheet": "A wheeled gun cart: four wheels on an axle under a drive box, a stand and swivel carrying two barrels and an ammunition box. It spots targets in a huge 30-block box, plants itself and fires a laser ball every 20 ticks out to thirty blocks, and will not shuffle inside six blocks. The wheels roll with the distance travelled; the turret turns with its gaze.",
+  "size_notes": "1.0 x 2.25 block hitbox at x1.",
+  "labels": {
+    "ammobox": "ammunition box (turns with the turret)",
+    "axle": "axle",
+    "barrel1": "gun barrel 1 (turns with the turret)",
+    "barrel2": "gun barrel 2 (turns with the turret)",
+    "drivebox": "drive box (the chassis)",
+    "lwheel1": "left wheel 1",
+    "lwheel2": "left wheel 2 (offset 45 deg)",
+    "rwheel1": "right wheel 1",
+    "rwheel2": "right wheel 2 (offset 45 deg)",
+    "stand": "turret stand",
+    "swivel": "turret swivel"
+  },
+  "groups": [
+    {
+      "name": "wheels",
+      "bones": [
+        "lwheel1",
+        "lwheel2",
+        "rwheel1",
+        "rwheel2"
+      ],
+      "omega": null,
+      "phase": "limbSwing (distance walked) x 0.15, wrapped at 2 pi — not time",
+      "axis": "x",
+      "gait_scaled": true,
+      "amplitude": "a rolling turn; the second wheel of each side sits 45 deg ahead; 0 while limbSwingAmount <= 0.1",
+      "plain": "the wheels roll with the distance travelled and stop dead when the cart stops",
+      "math": "w = amount > 0.1 ? |limbSwing*0.15 mod 2pi| : 0; lwheel1/rwheel1.xRot = w; lwheel2/rwheel2.xRot = w + 0.7854",
+      "source": "ModelRobot5.java:102-130; Robot5GeoReplacement.java:33-46"
+    },
+    {
+      "name": "turret",
+      "bones": [
+        "barrel1",
+        "barrel2",
+        "ammobox"
+      ],
+      "omega": null,
+      "phase": "the entity's head yaw",
+      "axis": "y",
+      "gait_scaled": false,
+      "amplitude": "half the head yaw",
+      "plain": "barrels and ammo box turn with the gaze at half rate",
+      "math": "barrel1/barrel2/ammobox.yRot = rad(netHeadYaw / 2)",
+      "source": "Robot5GeoReplacement.java:47-50"
+    }
+  ],
+  "behaviour": [
+    "Axle, drive box, stand and swivel are static.",
+    "Wheels: distance-driven (limbSwing), so a keyframe clip cannot reproduce them — Amendment 1 point 2 keeps this rig code-driven under any policy."
+  ],
+  "clips": [],
+  "extras": [],
+  "wishlist": [],
+  "effort_hours": 0
+}

@@ -1,0 +1,23 @@
+{
+  "registry": "elevator",
+  "display_name": "Hoverboard (registry 'elevator')",
+  "status": "draft for the owner's edit (slice (f) lane, 2026-09-06)",
+  "locomotion": "hover (player-ridden vehicle)",
+  "artist_scope": "none (Tier 3: a static rig; the only motion is a whole-body hit wobble done by the renderer)",
+  "character_sheet": "A ridden hovercraft the original mod called the Hoverboard: a flat deck that floats over terrain, climbs obstacles, speeds up with the fly key, sometimes shudders into a 45-tick 'exploding' malfunction at speed, shatters into sticks and diamonds when slammed into a wall, and comes in ten paint colours (the Ultimate Sword cycles them). The rig itself never bends: five static cubes.",
+  "size_notes": "1.25 x 1.0 block hitbox, drawn at x1; the deck sits at the entity's feet (the descriptor translates the converted rig down 1.5 blocks, ENT-S-091).",
+  "labels": {},
+  "groups": [],
+  "formulas": [
+    "No bone motion: setupAnim is empty (ModelElevator.java:65). Not a clip: the renderer tilts the whole board on a hit — rotation about X = sin(hitTime) * hitTime * damageTaken / 10 * forwardDirection while timeSinceHit > 0 (RenderElevator.java:31-38 in 1.7.10; ElevatorGeoReplacement.applyRotations:43-58).",
+    "Texture variant: elevator<color>.png for colour 1..10 (ElevatorRenderer.java:24-27); elevator.png (no number) is shipped but unreferenced."
+  ],
+  "behaviour": [
+    "Static rig. The hit wobble is a renderer rotation of the whole model, driven by the synced timeSinceHit / damageTaken / forwardDirection fields, exactly as vanilla boats."
+  ],
+  "clips": [],
+  "extras": [],
+  "wishlist": [],
+  "effort_hours": 0,
+  "texture_notes": "The ten paint colours are ten separate canvases (elevator1..10); an edit to the board's shape must be made on all ten."
+}

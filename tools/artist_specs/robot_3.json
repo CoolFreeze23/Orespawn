@@ -1,0 +1,87 @@
+{
+  "registry": "robot_3",
+  "display_name": "RoboGunner (Robot3)",
+  "status": "draft for the owner's edit (slice (f) lane, 2026-09-06)",
+  "locomotion": "walker",
+  "artist_scope": "none (Tier 3: code-driven)",
+  "character_sheet": "A mid-range gun platform: a stacked torso on hips and waist rings, two legs, two arms held bent, and a laser turret that swings with its gaze. It tracks targets to about sixteen blocks and fires laser balls on a 35-tick reload; it closes distance but never crowds the melee robots. When it fights, the arms pump; otherwise they hold a bent ready pose.",
+  "size_notes": "2.5 x 5.0 block hitbox, drawn at x0.5 (ENT-S-092 restored the 1.7.10 half scale).",
+  "labels": {
+    "body1": "torso plate 1",
+    "body2": "torso plate 2",
+    "body3": "torso plate 3",
+    "body4": "torso plate 4",
+    "hips": "hips",
+    "waist1": "waist ring 1",
+    "waist2": "waist ring 2",
+    "waist3": "waist ring 3",
+    "lazer": "laser turret (yaws with the gaze; 'lazer' sic)",
+    "lleg1": "left leg, upper",
+    "lleg2": "left leg, lower",
+    "rleg1": "right leg, upper",
+    "rleg2": "right leg, lower",
+    "larm1": "left arm, upper",
+    "larm2": "left arm, lower",
+    "larm3": "left hand",
+    "rarm1": "right arm, upper",
+    "rarm2": "right arm, lower",
+    "rarm3": "right hand"
+  },
+  "groups": [
+    {
+      "name": "legs",
+      "bones": [
+        "lleg1",
+        "lleg2",
+        "rleg1",
+        "rleg2"
+      ],
+      "omega": 0.55,
+      "axis": "x",
+      "gait_scaled": true,
+      "amplitude": "pi x 0.12 = 0.377 rad (22 deg) x limbSwingAmount, only while limbSwingAmount > 0.1",
+      "plain": "a stiff stride, left leg against right, both segments of a leg together",
+      "math": "walk = amount > 0.1 ? cos(t*0.55)*pi*0.12*amount : 0; lleg*.xRot = walk; rleg*.xRot = -walk",
+      "source": "ModelRobot3.java:159-190; Robot3GeoReplacement.java:39-49"
+    },
+    {
+      "name": "arms",
+      "bones": [
+        "rarm1",
+        "rarm2",
+        "rarm3",
+        "larm1",
+        "larm2",
+        "larm3"
+      ],
+      "omega": 1.0,
+      "axis": "x",
+      "gait_scaled": false,
+      "amplitude": "pi x 0.15 = 0.471 rad (27 deg) about a bent rest: upper arms at -1.0 rad, lower arms and hands at +1.0 rad",
+      "plain": "the arms pump while attacking (the swing is switched on at a cosine zero-crossing when the attacking flag is set, off otherwise) around a permanently bent pose",
+      "math": "swing = attacking ? cos(t*1.0)*pi*0.15 : 0; rarm1/larm1.xRot = swing - 1.0; rarm2/3, larm2/3.xRot = swing + 1.0",
+      "source": "ModelRobot3.java:159-190; Robot3GeoReplacement.java:51-66"
+    },
+    {
+      "name": "turret",
+      "bones": [
+        "lazer"
+      ],
+      "omega": null,
+      "phase": "the entity's head yaw",
+      "axis": "y",
+      "gait_scaled": false,
+      "amplitude": "half the head yaw",
+      "plain": "the laser turret turns with the gaze at half rate",
+      "math": "lazer.yRot = rad(netHeadYaw / 2)",
+      "source": "Robot3GeoReplacement.java:50"
+    }
+  ],
+  "behaviour": [
+    "Torso plates, hips and waist rings are static."
+  ],
+  "clips": [],
+  "extras": [],
+  "wishlist": [],
+  "effort_hours": 0
+}

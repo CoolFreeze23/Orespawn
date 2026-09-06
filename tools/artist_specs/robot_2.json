@@ -1,0 +1,80 @@
+{
+  "registry": "robot_2",
+  "display_name": "Robo-Pounder (Robot2)",
+  "status": "draft for the owner's edit (slice (f) lane, 2026-09-06)",
+  "locomotion": "walker",
+  "artist_scope": "none (Tier 3: code-driven)",
+  "character_sheet": "A six-block-tall heavy melee chassis: thick legs, a boxy head that turns with its gaze, and two three-segment arms it windmills when it fights. Its signature move is terrain destruction — a landed swing rips blocks out from under the target and every attack tick shreds the ground around it (mobGriefing on); idle, it sometimes throws a 50-tick tantrum at nothing. Slow legs, wild arms.",
+  "size_notes": "3.0 x 6.2 block hitbox at x1 — the second-largest robot.",
+  "labels": {
+    "head": "head (turns with the gaze)",
+    "lleg1": "left leg, upper",
+    "lleg2": "left leg, lower",
+    "rleg1": "right leg, upper",
+    "rleg2": "right leg, lower",
+    "larm1": "left arm, upper",
+    "larm2": "left arm, lower",
+    "larm3": "left fist",
+    "rarm1": "right arm, upper",
+    "rarm2": "right arm, lower",
+    "rarm3": "right fist"
+  },
+  "groups": [
+    {
+      "name": "legs",
+      "bones": [
+        "lleg1",
+        "lleg2",
+        "rleg1",
+        "rleg2"
+      ],
+      "omega": 0.3,
+      "axis": "x",
+      "gait_scaled": true,
+      "amplitude": "pi x 0.12 = 0.377 rad (22 deg) x limbSwingAmount, only while limbSwingAmount > 0.1",
+      "plain": "a slow, stiff stride: the whole left leg swings against the whole right leg (the two segments of a leg move together)",
+      "math": "walk = amount > 0.1 ? cos(t*0.3)*pi*0.12*amount : 0; lleg1.xRot = lleg2.xRot = walk; rleg1.xRot = rleg2.xRot = -walk",
+      "source": "ModelRobot2.java:131-160; Robot2GeoReplacement.java:36-46"
+    },
+    {
+      "name": "arms",
+      "bones": [
+        "rarm1",
+        "rarm2",
+        "rarm3",
+        "larm1",
+        "larm2",
+        "larm3"
+      ],
+      "omega": 0.3490658503988659,
+      "axis": "x",
+      "gait_scaled": false,
+      "amplitude": "a full windmill turn (rad(t*20 deg), 18 ticks per revolution) on the arm(s) chosen; 0 otherwise",
+      "plain": "while attacking, at every zero-crossing of sin(t*20deg) the code rolls which arms windmill (1 = right, 2 = left, 3 = both, re-rolled until non-zero); the chosen arm(s) spin a full circle about X; not attacking, both arms hang",
+      "math": "armAngle = rad(t*20); rarm*.xRot = (ri1 in {1,3}) ? armAngle : 0; larm*.xRot = (ri1 in {2,3}) ? armAngle : 0; ri1 lives in the client RenderInfo",
+      "source": "ModelRobot2.java:131-160; Robot2GeoReplacement.java:48-70"
+    },
+    {
+      "name": "head",
+      "bones": [
+        "head"
+      ],
+      "omega": null,
+      "phase": "the entity's head yaw",
+      "axis": "y",
+      "gait_scaled": false,
+      "amplitude": "head yaw in radians",
+      "plain": "the head turns to follow the gaze",
+      "math": "head.yRot = rad(netHeadYaw)",
+      "source": "Robot2GeoReplacement.java:47"
+    }
+  ],
+  "behaviour": [
+    "Four unnamed `Shape` plates are static.",
+    "The arm roll is client-side random scratch (RenderInfo.ri1), so two players can see different arms windmill — a classic quirk, kept."
+  ],
+  "clips": [],
+  "extras": [],
+  "wishlist": [],
+  "effort_hours": 0
+}

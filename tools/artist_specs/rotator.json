@@ -1,0 +1,36 @@
+{
+  "registry": "rotator",
+  "display_name": "Rotator",
+  "status": "draft for the owner's edit (slice (f) lane, 2026-09-06)",
+  "locomotion": "flyer",
+  "artist_scope": "none (Tier 3: code-driven; per-frame fan spin; render-instance clones)",
+  "character_sheet": "A night phantom: three eight-bladed fans crossed at right angles, spinning in place while the machine drifts through blocks to random points, sheds sparks, aims a spark stream at whoever it is hunting and hurts on contact. Arrows cannot hurt it. It dissolves in daylight unless a spawner made it. Pure spin — the fans turn two degrees every rendered frame, forever.",
+  "size_notes": "1.0 x 2.0 block hitbox at x1.",
+  "labels": {},
+  "groups": [
+    {
+      "name": "fans",
+      "bones": [
+        "shape1__fan",
+        "shape2__fan",
+        "shape3__fan"
+      ],
+      "omega": null,
+      "phase": "2 degrees per RENDERED FRAME (frame-rate bound, ENT-S-147), wrapping at 359 deg — not per tick",
+      "axis": "x / y / z (one axis per fan)",
+      "gait_scaled": false,
+      "amplitude": "continuous turn",
+      "plain": "fan 1 spins about X, fan 2 about Y, fan 3 about Z, all at the same angle; the angle advances after every draw",
+      "math": "shape1__fan.xRot = rad(rf1); shape2__fan.yRot = rad(rf1); shape3__fan.zRot = rad(rf1); rf1 += 2 per frame, wrap > 359 -> 0 (RenderInfo.rf1)",
+      "source": "RotatorModel.java:54-75,76-95; RotatorGeoReplacement.java:56-66"
+    }
+  ],
+  "behaviour": [
+    "Each fan is one classic blade drawn eight times at 45-degree steps (the __iN clones under one animated __fan hub) — Slice 4c.",
+    "Because the spin is per rendered frame it freezes behind the pause menu and runs faster at high frame rates (recorded, ENT-S-147)."
+  ],
+  "clips": [],
+  "extras": [],
+  "wishlist": [],
+  "effort_hours": 0
+}

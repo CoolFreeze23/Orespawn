@@ -1,0 +1,63 @@
+{
+  "registry": "island",
+  "display_name": "Floating Island (anchor)",
+  "status": "draft for the owner's edit (slice (f) lane, 2026-09-06)",
+  "locomotion": "stationary",
+  "artist_scope": "none (Tier 3: code-driven tumble)",
+  "character_sheet": "The Island anchor from the Crystal dimension's skies. Three small cubes tumble slowly around a point in the sky while the entity itself does not move (its movement speed is 0): it is the anchor of a floating sand island the code builds around it and drifts a block at a time. The tumble is decorative; the island is terrain.",
+  "size_notes": "0.5 x 0.5 block hitbox; the visible cubes are much larger than the hitbox.",
+  "labels": {
+    "Shape1": "tumbling cube 1",
+    "Shape2": "tumbling cube 2",
+    "Shape3": "tumbling cube 3"
+  },
+  "groups": [
+    {
+      "name": "shape1",
+      "bones": [
+        "Shape1"
+      ],
+      "omega": 0.05,
+      "axis": "x, y, z (three rates)",
+      "gait_scaled": false,
+      "amplitude": "pi rad on each axis",
+      "plain": "cube 1 tumbles on all three axes at three slightly different rates (0.05, 0.051, 0.052 rad/tick), so it never repeats exactly",
+      "math": "Shape1.xRot = cos(t*0.05)*pi; Shape1.yRot = cos(t*0.051)*pi; Shape1.zRot = cos(t*0.052)*pi   (t = ageInTicks * WINGSPEED, WINGSPEED = 1.0)",
+      "source": "ModelIsland.java:25,61-70; IslandGeoReplacement.poseIslandRig:38-50"
+    },
+    {
+      "name": "shape2",
+      "bones": [
+        "Shape2"
+      ],
+      "omega": 0.053,
+      "axis": "x, y, z (three rates)",
+      "gait_scaled": false,
+      "amplitude": "pi rad on each axis",
+      "plain": "cube 2 tumbles on all three axes at three slightly different rates (0.053, 0.054, 0.055 rad/tick), so it never repeats exactly",
+      "math": "Shape2.xRot = cos(t*0.053)*pi; Shape2.yRot = cos(t*0.054)*pi; Shape2.zRot = cos(t*0.055)*pi   (t = ageInTicks * WINGSPEED, WINGSPEED = 1.0)",
+      "source": "ModelIsland.java:25,61-70; IslandGeoReplacement.poseIslandRig:38-50"
+    },
+    {
+      "name": "shape3",
+      "bones": [
+        "Shape3"
+      ],
+      "omega": 0.056,
+      "axis": "x, y, z (three rates)",
+      "gait_scaled": false,
+      "amplitude": "pi rad on each axis",
+      "plain": "cube 3 tumbles on all three axes at three slightly different rates (0.056, 0.057, 0.058 rad/tick), so it never repeats exactly",
+      "math": "Shape3.xRot = cos(t*0.056)*pi; Shape3.yRot = cos(t*0.057)*pi; Shape3.zRot = cos(t*0.058)*pi   (t = ageInTicks * WINGSPEED, WINGSPEED = 1.0)",
+      "source": "ModelIsland.java:25,61-70; IslandGeoReplacement.poseIslandRig:38-50"
+    }
+  ],
+  "behaviour": [
+    "Each of the three cubes spins on all three axes at rates near 0.05 rad/tick (a turn every 108-126 ticks), with the rates offset by 0.001 so the three never line up.",
+    "No walk, no head, no state: the entity has no AI goals; its work is block placement in tick()."
+  ],
+  "clips": [],
+  "extras": [],
+  "wishlist": [],
+  "effort_hours": 0
+}
