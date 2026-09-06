@@ -1055,3 +1055,63 @@ _pin) so alignment drift is caught regardless.
   both signs (FIX_LOG "PHASE G SLICE (d)", fix lane 2, F1).
 - **Harness consequence:** none beyond the batch — no existing pin read the sweep's sight.
 - **Status:** IMPLEMENTED 2026-09-06 (the key, the helper, the gated site, the transcription, the pin); the classic branch is orig.
+
+## MOD-038 — Artist keyframe animations on the GeckoLib candidates: the `[modern] artistAnimations` master and the `classicAnimationSpecies` exclusion list (Phase G animation contract, item 15; ruled 2026-09-06 Q1 (a), implemented 2026-09-06 with the keyframe leg's return, default ON; classic runs the code-driven hook)
+
+- **Origin:** Phase G slice (e), the standard animation contract (`phase_g_reports/animation_contract/contract_design.md`
+  section 6.2; owner ruling 2026-09-03: "artist animations are a 2.0 feature behind the modern config; classic stays
+  code-driven parity"): a species whose GeckoLib candidate ships artist clips needs one switch that selects the artist
+  source over the verbatim 1.7.10 formulas, and no MOD record covered the mapping. The per-species boolean shape (~70 keys
+  for Tier 2) and the live per-frame read with dynamic controller add/remove were rejected in the recommendation the owner
+  took.
+- **Ruling (owner, 2026-09-06, Q1 (a)):** "one `[modern] artistAnimations` master, default ON, `classicAnimationSpecies` the
+  exclusion list, species self-gated by clip presence" (scope addendum item 24 (5)-(14)); lands with the keyframe leg's
+  return (item 15), the Beaver's shipped clip file staying EMPTY until the owner's in-game look accepts the regenerated clip.
+- **Classic (the behaviour while the master or the key is off, or the species is listed):** the replacement registers no
+  keyframe layer; its code-driven hook (`OreSpawnGeoReplacement.applyCustomAnimations`, the verbatim 1.7.10 formulas on
+  the geo bones, run from the shared model's `setCustomAnimations`) poses the rig as it has since G1 / Slice 4 — the
+  harness-proven path, unchanged.
+- **Switch (implemented 2026-09-06):** `[modern] artistAnimations` (`OreSpawnConfig.MODERN_ARTIST_ANIMATIONS`,
+  `BooleanValue`, default **true**) and `[modern] classicAnimationSpecies` (`OreSpawnConfig.MODERN_CLASSIC_ANIMATION_SPECIES`,
+  `ConfigValue<List<? extends String>>`, `defineListAllowEmpty`, default empty; registry names, e.g. `["orespawn:beaver"]`,
+  the bare name accepted for the mod's own species), read only through the effective-value helper
+  `OreSpawnConfig.artistAnimations(EntityType<?>)` = `MODERN_ENABLED && MODERN_ARTIST_ANIMATIONS && !listed(type)`, next to
+  `chainsawSweepVanillaSight()` (master-override ruling 2026-09-04: new features register under [modern]; the master off
+  forces classic). One gated site: `OreSpawnGeoReplacement.registerKeyframeLayers`, called from the base's FINAL
+  `registerControllers` (the single path for every species; item 15 refuter A, D1) — i.e. ONCE as GeckoLib builds the
+  per-entity `AnimatableManager` on the client's render thread (4.8.4 `AnimatableManager.<init>` 27-55 →
+  `registerControllers`), which OPT-029 evicts when the entity leaves the level: the BOSS-017 construction-snapshot shape on
+  the client. A flip reaches an entity as it (re)enters render distance, on F3+T (every renderer, replacement and cache
+  rebuilt) or on re-login; never a live manager. The order of the gate: clip presence first (the file must carry `idle` or
+  `walk`, the contract's rule that a species without them is not an artist species; then a layer registers only when ITS
+  clip is present, a missing one skipped with its bones holding bind — the species flips only when at least one declared
+  layer's clip is present), the config second. The `[modern] enabled` comment and javadoc list the two keys and the helper
+  with the ten other keys / helpers.
+- **Effect when effective (a default config):** a species whose `.animation.json` carries the contract's clips registers
+  one `PhaseLockedKeyframeController` per frequency group (`KeyframeLayer`; the Beaver declares `walk` / `walk_teeth` /
+  `walk_tail`), and the shared model's `setCustomAnimations` gate (`manager.getAnimationControllers().isEmpty()`) stands
+  the classic hook down for that entity — one motion source per species, decided by the manager. TODAY every shipped clip
+  file is empty (`"animations": {}`; the Beaver's stays so until the owner's in-game look accepts the regenerated clip), so
+  a default install poses every species from the classic hook exactly as before: the key is armed, not flipped. The switch
+  that would enable the Beaver's keyframe path is not this key — it is the shipped `beaver.animation.json` gaining the
+  three contract clips (the harness-proven scratch clip), which is the owner's look decision; with the key at its default
+  that file change alone would flip the Beaver.
+- **Not covered:** the dev renderer switch (`-Dorespawn.dev.geckolibRenderers=candidate`, Slice 4a Q1) still selects the
+  GeckoLib renderer at all; classic renderer selected → no GeckoLib, no clips. Tier-3 species and the five
+  `limbSwing`-distance models ship no artist clips (Q7 (a), P2). Tier-1 SPEC-locked bones are the package tool's (item 18)
+  and the Queen pilot's, not this key's. An `idle` clip is not yet played by anything (the weights slice; OPEN contract item
+  in the item 15 records).
+- **Pin:** `KeyframeLegTests` (own batch `keyframeLeg`, TEST-003; eight rows `kf_001`..`kf_008`): `kf_001` — the shipped
+  empty clip registers no layer through `registerKeyframeLayers` and through the production `registerControllers` path, and
+  a file with `idle` but none of the Beaver's group clips registers none; `kf_002` — the reference clip registers the three
+  layers, and each of `artistAnimations = false`, `classicAnimationSpecies` listing `orespawn:beaver` or ` beaver `, or
+  `modern.enabled = false` registers none (another species listed, or a foreign namespace, leaves the Beaver artist; `walk`
+  alone registers the gait layer only); `kf_003` — on the server, the layers pose within 2.5e-3 rad of the classic hook and
+  the model's gate stands the hook down on a manager that holds them; `kf_007` — every one of the fourteen shipped
+  replacements declares no layer but the Beaver, the base method is final and un-overridden, and the production path
+  registers nothing on the server; `kf_008` — the seam's repair site serves a repaired copy once per loaded bake, by
+  identity.
+- **Harness consequence:** the keyframe reference leg (declared per model; the shipped manifests declare none; verify PASS
+  both trees) and the asset audit unchanged.
+- **Status:** IMPLEMENTED 2026-09-06 (the keys, the helper, the gated site, the layers, the pins); PRESENTED, inert until
+  a shipped clip carries the contract's clips.

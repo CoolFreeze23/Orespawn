@@ -334,3 +334,45 @@ super-fast-frame edge); no renderer plumbing is spent on what sits behind the pa
 per-render effect ever carries a live signature, the fix shape in ENT-S-147 (a per-render-pass descriptor hook for the
 advance, the pose kept pure) is the one to build.
 - **Player-visible:** only on the pause screen and on the two edges above; the dev-switch candidate only.
+
+## PN-024 — Catmull-Rom keyframes in the replacement seam evaluate with the textbook spline arguments, not GeckoLib 4.8.4's (PROPOSED with the landing: Q9 (a) ruled the divergence, 2026-09-06; the PN record lands on the owner's acceptance; a deliberate divergence from the library, reported upstream; the Queen's native model on stock semantics until her own ruling)
+
+- **The library (GeckoLib 4.8.4, `javap -p -c` of the pinned jar `geckolib-neoforge-1.21.1-4.8.4.jar`, sha at
+  `~/.gradle/.../eb854c8ec53ef922a5f3877a1aa4c1ce1352e0ce/`):** `BakedAnimationsAdapter.buildKeyframeStack` builds
+  consecutive keyframes as `(length, start = the previous key's value, end = this key's value)` (offsets 418-450:
+  the start operand is `aload 6`, the previous iteration's value, once a previous pair exists at 429-441) and
+  `addSplineArgs` gives every CATMULLROM keyframe two easing arguments: `args[0] = i == 0 ? frame.startValue() :
+  frames.get(i - 1).endValue()` (119-146) and `args[1] = i + 1 < size ? frames.get(i + 1).endValue() :
+  frame.endValue()` (147-183). Because `frames.get(i - 1).endValue()` IS `frames.get(i).startValue()`, the evaluator
+  (`EasingType$CatmullRomEasing.apply` 69-113 → `getPointOnSpline(t, args[0], start, end, args[1])`, the textbook
+  `0.5 (2 P1 + (P2 − P0) t + (2 P0 − 5 P1 + 4 P2 − P3) t² + (3 P1 − P0 − 3 P2 + P3) t³)` at 0-69) sees P0 == P1 on
+  every segment and P3 == P2 on the last: each segment starts with half the chord slope instead of the
+  neighbour-derived tangent — a kink at every key, an O(h²) error like linear interpolation with a worse constant.
+  Measured on the Beaver's gait (amplitude 1.414 rad): not within 2.5e-3 rad by 97 keys per bone (6.85e-3 at 97),
+  where linear needs 54 and the repaired spline 15; the arithmetic model of the library's rule reproduces the
+  measured numbers to four digits (`phase_g_reports/animation_contract/demo_results.json` B, F).
+- **The port (this seam only):** `OreSpawnGeoReplacementModel.getAnimation` serves every clip a replacement's
+  controller asks for from a copy of the loaded animation file whose CATMULLROM keyframes carry the textbook
+  neighbours (`SplineRepair`: P0 = the key before the segment's start, P3 = the key after its end; a loop clip
+  continues across its seam, a play-once clip clamps; only the easing arguments change; once per loaded file by
+  identity, so a resource reload repairs the new bake; idempotent). GeckoLib's evaluator is untouched. The
+  keyframe reference leg proves the repaired curve against the classic `ModelBeaver.setupAnim` at 2.5e-3 rad with
+  15 / 13 / 8 catmullrom keys per bone (the fewest; one fewer fails), and pins the library's own arguments on the
+  same clip at 15 / 13 / 8 as the before (`before_after.md`).
+- **Why diverge (owner, 2026-09-06, Q9 (a)):** with the library's arguments the density statement would be the
+  linear row (54 / 41 / 19 keys per bone — 3.6-4.5× the keys an artist would edit); with the repair an artist's
+  catmullrom clip plays as Blockbench previews it (Blockbench's own catmullrom uses the true neighbours), so the
+  preview and the game agree more, not less — the parametrisation stated (item 15 refuter A, D5): the repaired spline
+  is C1 at every key in each segment's NORMALISED time (`EasingType.apply` evaluates the segment at
+  `currentTick / transitionLength`); uniform keys (the generator's rule, every key at `L k / (N − 1)`) make it C1 in
+  tick time too; non-uniform keys do not (the refuter's hand-check: keys at 0 / 0.2 / 0.5 / 1.0 give slopes 0.1418 vs
+  0.0945 rad/tick on the two sides of key 1). The repair is scoped to the replacement seam: the Queen's native
+  `QueenModel extends GeoModel` keeps stock semantics until her own ruling; a resource pack's clip on a replaced
+  species takes the repaired curve like the mod's own. Reported upstream (`upstream_report.md` in the same drafts:
+  the defect, the offsets, a minimal reproduction, the expected P0).
+- **Player-visible:** only on a replaced species that ships catmullrom clips — none today (every shipped clip
+  file is empty until the owner's in-game look; the Beaver look decides visibility); the dev-switch candidate only.
+- **Pins:** `KeyframeLegTests.kf_004_spline_repair_arithmetic` (the library's P0 == P1 against the pinned jar; the
+  repair's neighbours, periodic / clamped, idempotent, the anchor and linear frames untouched; GeckoLib's evaluator
+  over the repaired arguments equals the textbook spline and over its own the kinked one); the harness's
+  `keyframe_reference_leg` (density as an output under the repaired evaluator, before/after presented).
