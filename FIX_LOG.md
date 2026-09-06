@@ -6688,3 +6688,185 @@ GATE: (bench2, 2026-09-06 10:01-10:03, after both refuters, two fix lanes and th
 Refuted twice (MHLib and the client sampler touched; 13 files + 15 new): A (the instrumentation) — no blocking defect; eight items applied or disclosed: the S2C cadence expectation (≈6.7 / Queen / s for no-AI Queens, the builder's updateInterval 3), the second-encode caveat (under the property the byte accounting re-encodes on the sampled threads; identical under both labels, outside collector_ns / placement_ns), derived-not-measured wording, the broadcast count an upper bound with the snapshot's in-level count the honest figure, the collector span's exact bounds in 4.8.4's defaultRender (after preRender, before popPose / renderFinal), the 1 % low label (1000 / p99), line references, the probe slot's statics (no race); upheld: every §5 site once with the right thing counted, the client guards static-final and the server sites' plain read (≈31 per Queen per tick), the dump under the property on every dist with disjoint reset sets, the dump-order pins (the four names at 9-12, evictions 13, the gauge 14), the frame timer Pre→Pre and the MSPT slot. B (the harness) — one BLOCKING: the Queen grid (24-block pitch, rows to 246, columns ±108) reached 269 blocks — past the Queen's 256-block tracking cap and the default 12-chunk simulation distance — while the report normalised by count_spawned (≈96 tracked, ≈76 ticking); fixed by a wedge fill inside 180 blocks and the 70° FOV (Queen pitch 12 — no physics; 100 Queens within 160 blocks) with a coverage object and per-entity figures over the ticking / in-level counts; non-blocking: the headless walk's yaw-0 early-out (a yaw-π variant added — 32,864 B per walk, the baseline), the inactive tax's warm-up (a plateau detector; labelled a floor), the ns band (±40 %; bytes the primary signal), NaN in the JSON (null), a vacuous pitch assertion, a wrong no-AI rationale, a same-frame stop-then-start, the seam's restore, a working-tree reading beside git_head, records nits.
 
 Fix lane 2 (the five red rows, each a harness assumption, no code fix): F1 the Chainsaw class's integer lattice (above); F2 the AntRobot's six legs pinned against the live profile; F3 / F4 the parts' first-tick snap (30 / 32 on the spawn tick, 20 / 24 after — OPT-030 filed, a real MHLib transient not fixed here); F5 nearest-rank p99 stated and pinned. Presented for the owner: the seam versus a mhlib.counters system property on the gameTestServer run; the brief's 'no-AI mobs fall' was wrong — travel's body sits behind isEffectiveAi, so they keep their placed position; scene B is not a culling control for the Queen (noCulling, shouldRenderAtSqrDistance → true) — it measures off-screen Queens drawn anyway; the ticking count is sampled at the end of the run; git_head cannot see a dirty tree beyond the index stat. The threshold is PROPOSED, not adopted: `phase_g_reports/benchmark/threshold_proposal_2026-09-06.md`; the owner's runbook `phase_g_reports/benchmark/owner_runbook.md`.
+
+## PHASE G SLICE (f) — the artist package generator, dry-run on the landed species (2026-09-06; refuted once, fixed)
+
+Owner 2026-09-05, scope addendum item 23 (8)(f): the package generator — SPEC, bone glossary, generated trigger inventory,
+TEXTURE_MAP, INVENTORY.csv — built and dry-run on the landed species; nothing under `artist_handoff/` is committed until the
+mirror drop lands (the drop changes the geometry of 97 models; a package generated before it would be regenerated). This slice
+delivers the TOOL and its dry-run report; the package itself is generated later, on the drop. Repository writes: three new
+things under `tools/` — `tools/artist_package.py` (3,335 lines, standard library only, tool version 0.2.0),
+`tools/test_artist_package.py` (1,218 lines, a `unittest` runner, 24 pins), `tools/artist_specs/<registry>.json` (15 seeds).
+No gradle, no gametest, no record-file edits, nothing under `artist_handoff/` (the tool refuses that path).
+
+THE TOOL. One script, eight subcommands: `inventory` (INVENTORY.csv, one row per `ModEntities` registration: 145 rows —
+both registration forms, `Builder.of(` and `Builder.<X>of(` — registry name, class, category, dims, model, tier AND the
+artist-facing tier label, status landed candidate / classic only / excluded with a note in the vocabulary that is true for the
+row (projectile / fish hook / item entity / vanilla-model reuse / head sidecar that renders nothing), files, bones, cubes,
+clips, textures, the reference pin's scale and shadow, harness proof, hitbox profile, locked-bone count, artist scope, the
+effort estimate and its source, client files); `texture-map` (TEXTURE_MAP.csv, every shipped textures/entity png: content
+hash, canonical id, canonical name, duplicate-name twins, twins in other texture directories, canvas from the PNG IHDR parsed
+by the tool, variant series with the contiguity law, stray class, Java consumers by a static scan of every file under
+src/main/java, entity folders, 1.7.10 provenance, fan-out targets); `spec ENTITY` (SPEC.md + `spec.manifest.json`, the
+machine-readable contract the checker reads — now carrying every bone's cube signatures, the lock policy, the keyed-locked
+bones per shipped clip and the accepted clip set); `readme` (README_FIRST.md, the G5 contract, quoting `check`'s rule table);
+`bbmodel ENTITY` (a Blockbench "Bedrock Entity" project from the geo + animation JSON, textures embedded); `roundtrip ENTITY`
+(the .bbmodel back to geo + animation JSON under Blockbench's bedrock export rules, semantically diffed against the shipped
+files — bone order as a list, cubes, easing and every other keyframe key); `package --out DIR` (the whole tree for the landed
+species plus `dryrun_summary.{md,json}` and `warnings.txt`); `check FOLDER [--manifest FILE] [--lock-mode manifest|warn|reject]`
+(validates a returned artist folder against the manifest: PASS / WARN / REJECT per the rule table README_FIRST prints, always
+ending in a locked-bone summary line and a "checked N clip(s) ..." line; exit 1 on any REJECT). `main()` reconfigures
+stdout/stderr to UTF-8 so the findings (§, —) survive a redirect on Windows.
+
+ONE LOCKED-BONE POLICY (PROVISIONAL, open question 16). Contract §8.1 / P7 say the validator REJECTS a key on a SPEC-locked
+bone; the pilot boss's shipped clips key 26 of her 27 locked bones (every one but `Body1`), so REJECT would fail her own
+baseline. Until the owner rules, ONE sentence (`LOCK_POLICY`, artist_package.py :59-62) is printed identically in README_FIRST
+rule 6, SPEC §3's glossary header, SPEC §5's footer, SPEC §7 and `check`'s summary line: keying a locked bone is a WARN today
+and becomes a REJECT when the server-side hitbox evaluator lands. `lock_mode` in every manifest is `warn` (`LOCK_MODE_DEFAULT`);
+the manifest key, or `check --lock-mode reject`, is the one switch. The Queen's §5 verdict rows say, per clip, "keys 26 locked
+bone(s) ...: a WARN from `check` today; a REJECT once the evaluator lands — then this clip must be re-authored on unlocked bones,
+or the lock lifted per bone by ruling"; her §7 states the 26-of-27 count clip by clip and that REJECT would fail the shipped file.
+
+GENERATED vs AUTHORED. Generated, from the sources named in each SPEC: the size section (`ModEntities` dims, the reference
+pin's scale/shadow); the bone glossary in the geo's own order (locked legacy name, readable label, the classic part path from
+the Slice 4c `render_instances` sidecar for the clone rigs, parent, pivot, frequency group, `gait_bone`, `locked` with the
+reason, cube count); the tempo table (natural period 2π/ω per group in ticks and seconds — and for a rectified shape (|cos|)
+the VISIBLE period, half of it: Robot4's shield_arm 60 ticks natural / 30 ticks visible — the Blockbench preview rate at a 1 s
+authoring length; the Beaver's gait 1.698 ticks / 11.78 clip-ticks per game tick, teeth 2.327, tail 12.566, matching
+`demo_results.json` D); the clip table (contract clips per tier with the JSON `loop` value, layer, weight or trigger, the
+bones — every bone of the rig for the base loops, the gait group marked as the speed-scaled one, other groups' bones pointed
+at their own `<state>_<group>` layer, locked bones listed — length rule, code-triggered flag; the Queen's eight native clips
+with the controller and the real trigger read from `registerControllers` and the call sites, nothing hard-coded); the trigger
+inventory (every `addGoal` of `registerGoals` classified through a goal dictionary, with its `[modern: key]` guard where a
+config gate encloses it and `UNPARSED` — never skipped — for a local-variable goal or a computed priority; every
+`EntityDataAccessor`; every `setAttacking(N)` site with its enclosing method, the ACTUAL enclosing block's guard found by brace
+depth over comment- and string-blanked source (a brace-less one-liner `if` included; an `else` written as the negated `if`
+chain; an unreadable header reported as `(unparsed: ...)`), the outer guard chain, and the comment; melee `doHurtTarget` calls
+AND the mod's area-damage helper `doAreaDamage` with how many times its body hurts each victim; projectile launches
+(`LaserBall`, `BetterFireball`, `ThunderBolt`); native `triggerAnim` sites with a variable key resolved to the literals it is
+assigned; the overrides; locomotion facts; and the "what fires each contract clip" table — for a species with SHIPPED native
+clips a NATIVE table: its own clips with their triggers, the contract's generic names "not used by this species (native clip
+set)"); the locked bones (a profile's `synched-bones` and every ancestor — the Queen: 27, the ten parts plus the neck and tail
+chains and `root`); the textures (canonical + aliases + canvas); the reference slots; the effort estimate (a clip the seed
+marks `leave`, or a `calm_idle` that `idle` covers, is not counted). Authored (the seeds, every one marked "draft for the
+owner's edit"): the character-sheet paragraph, the size notes, the label dictionary (the Queen's 110 bones named by chain;
+Robot4's 56; the named parts of the others), the frequency groups with the formula in plain English and the math with
+file:line, the behaviour bullets, the improve/leave verdicts with the contract mapping, the extras (the Beaver's `chop`), the
+wishlists (only clips the manifest accepts — the generator marks and warns on any other name) and, for the Queen, a `future`
+list (§5.2: needs a code change and a ruling first).
+
+DRY RUN (`package --out <scratch>\pkg\artist_handoff_dryrun`, exit 0, 149 files, 10 MB; stdout/stderr captured beside it):
+all fifteen landed species — the fourteen replaced (beaver, coin, elevator, island, island_too, purple_power, robot_1..5,
+rock_base, rotator, vortex) and the Queen. Per entity: 8 files (17 for the ten-texture Elevator and RockBase, 12 for
+PurplePower's five, 9 for the Queen); bones 1..110; the Beaver's SPEC lists 11 clips (idle / idle_teeth / idle_tail / walk /
+walk_teeth / walk_tail / swim / calm_idle / hurt / death / the `chop` extra), the Queen's 8 native, the Tier-3 thirteen none;
+goals 0..8; the attacking flag classified STATE (Robot1, Robot2, the Queen), EVENT (Robot4 — with the caveat that `hurt()` :284
+also raises it), MIXED (Robot3, Robot5: a 10- / 5-tick pulse per in-range think tick every 35 / 20 ticks, raised before the
+line-of-sight gate, AND cleared on target loss), none (the rest); strike/launch sites 0..6 (the Queen: `doHurtTarget` :816,
+`doAreaDamage` :1157 and :1186 whose body hurts each victim twice at :1429-1430, three launches); textures mapped 1 / 2 / 5 / 10;
+round-trip EQUAL with bone order kept on every rig; effort the Queen 33.5 h (8 + 0.15 × 110 + 1.5 × 6), the Beaver 12.8 h
+(4 + 0.2 × 9 + 1 × 7; `calm_idle` no longer counted), the Tier-3 thirteen 0 h. TEXTURE_MAP: 428 shipped, 338 unique payloads,
+86 duplicate groups, 90 redundant names (the G0 Appendix A numbers exactly), 262 names referenced by Java (the design's 254
+counted model/renderer references only; the extra 8 are `OreSpawnItemRenderer`'s held-weapon textures), 42 strays = 28
+armor-sheet `_1/_2` twins of `textures/models/armor/*_layer_N.png` + 5 GUI/atlas files + 8 item-renderer weapon textures + 1
+dormant twin (`hammytexture.png` = `textures/item/hammytexture.png`, referenced by nothing), the four law series contiguous.
+WARNINGS (32): 29 bones without a label — exactly the unnamed classic `ShapeN` plates (Robot1 ×20, Robot2 ×4, Elevator ×5;
+the placeholder carries the cube's size and position for the owner to name); 2 MIXED attacking verdicts (Robot3 :144/:155/:162,
+Robot5 :131/:143/:152) for the owner to read; 1 LOCKED_BONES_KEYED — the Queen's shipped native clips key 26 of her 27 locked
+bones (the policy sentence follows). No GOAL_UNPARSED, no ATTACKING_GUARD_UNPARSED, no WISHLIST_UNACCEPTED on the fifteen.
+
+`check` ON THE DRY RUN AND ON MUTATED FOLDERS (scratch `pkg\refuter_mutations\`, eleven folders copied from the package with
+the manifest, plus a path that does not exist): the Queen as shipped PASSes (exit 0) with eight per-clip WARN lines and the
+summary "locked bones: 26 of 27 keyed across 8 clip(s) [lock_mode warn] — <policy>"; the same folder under `--lock-mode reject`
+FAILs (exit 1: "REJECT locked bones: 26 of 27 keyed ..."); coin PASSes; the Beaver as shipped FAILs (required `idle` / `walk`
+missing — the intended verdict for an un-animated return); a minimal Beaver return (idle + walk) PASSes; a renamed bone
+(`tale`), a wrong loop, a Molang string, a key past `animation_length`, a changed cube size in a returned geo, a wrongly named
+animation file, and a missing folder each FAIL with exit 1 and the REJECT line naming the rule; a `_preview` file WARNs
+(PROVISIONAL, open question 15) and PASSes.
+
+THE .bbmodel AND THE ROUND-TRIP (item 22 (11); built — it fit well under a quarter of the slice). The writer follows the
+Blockbench 4.x bedrock codec as this lane knows it: pivot [x,y,z] → group origin [-x,y,z]; rotations negate X and Y, keep Z;
+cube origin+size → from [-(x+sx),y,z] / to [-x,y+sy,z+sz]; per-face UV {uv,uv_size} → [u,v,u+w,v+h] (a negative uv_size
+survives as a flipped face); box UV keeps uv_offset and mirror; a bone-level `mirror` is written back only for an all-box
+project (Blockbench's `Project.box_uv` rule), otherwise it moves to the cubes with the same effect; animation values verbatim
+in the Bedrock convention; loop true / hold_on_last_frame / absent ↔ "loop" / "hold" / "once"; deterministic uuid5 ids;
+textures embedded as base64. The importer emulates the export (DFS over the outliner, so bone order = outliner order) and
+the diff compares bone list AND order, parents, pivots, rotations, cubes (origin, size, inflate, pivot, rotation, effective
+mirror, per-face or box UV), the description, clip names/order, loop, length, keys (time, values, lerp mode, pre/post) at
+1e-6, AND the easing / easingArgs / any other keyframe key (a dropped easing or unknown key is a difference and is listed under
+dropped_keys). Unknown description keys — the parked `orespawn:bone_draw_order` of branch g2-root-order — are PRESERVED by
+this tool's writer/importer through `unhandled_root_fields` and reported as "reattached"; the converter's private cube key
+`modelpart_mirror` has no Blockbench field and is reported as "dropped". A REAL Blockbench geo re-export drops both — which
+is why README_FIRST forbids returning the geo: the artist returns the animation file. All fifteen shipped rigs are
+DFS-consistent, so their order survives (a non-DFS rig is pinned to be reported as order CHANGED). STATED PLAINLY: the
+round-trip is this tool's writer against this tool's importer — one memory of the Blockbench codec on both sides — so EQUAL
+proves the two halves agree with each other; the owner's hand-check of one real Blockbench export (the first .bbmodel, then
+the Queen's) is the real test (recorded in records.md).
+
+PROVISIONAL FIELDS (tied to slice (e)'s open questions; the SPEC marks each): the loop authoring-length convention and the
+`_preview` export (14, 15 — `check` warns on a delivered `_preview`), the death clip vs the vanilla flip (3), the hurt clip vs
+the red overlay (4), the attack transport per species (11 — with the area-helper caveat: a `LivingDamageEvent.Post` per victim
+would fire `attack` per victim per roll, twice each on the Queen), aggro_idle for species without a synched flag (12),
+idle_alt cadence (5), the extras cap (6), Tier-3 extras (7), the density statement's wording (9, 10), the pilot boss and the
+locked-bone policy (16) — the Queen's SPEC states her contract mapping as provisional and the lock as warn-mode.
+
+REFUTER AND FIX LANE (one refuter, 2026-09-06; every item applied unless marked presented):
+D1 applied — the one policy sentence in README rule 6 / SPEC §3, §5, §7 / `check`'s summary line; `lock_mode` warn for every
+   species; the Queen's §5 rows and §7 say what keying 26 locked bones means under each policy (artist_package.py :59-62,
+   :1767-1773, :1905-2230, :3054-3244).
+D2 applied — `check` REJECTs a missing / empty folder, a missing / wrongly named / second animation file, a Molang string, a
+   non-numeric or non-finite value, |rotation| > 3600° or |position| > 1024, a key past `animation_length`, a `timeline` key,
+   a returned geo whose bones / parents / pivots / rotations / cubes / UVs / canvas differ (the round-trip's cube signature and
+   `signature_differences` reused, the manifest carries the signatures), a wrong texture or canvas; WARNs where README says
+   warn; the rule table (`CHECK_REJECTS` / `CHECK_WARNS`, :67-86) is printed by README_FIRST and SPEC §11 and pinned case by
+   case (test_artist_package.py :995-1185).
+D3 applied — `ENTITY_RE` matches both forms (:225-229): 145 rows; the note vocabulary per row (`excluded_note`, :538-550).
+D4 applied — the design's "Vanilla-model reuse" table is read (`parse_vanilla_reuse_table`, :274-296): the six cows and
+   spider_driver are Tier 0 with a true note; the head sidecars are classic only / Tier 3 and the note says they render nothing
+   (`renders_nothing`, :528-535: the renderer's `shouldRender` returns false).
+D5 applied — the NATIVE branch of the drive table (`contract_drives`, :1525-1560) and `native_clip_triggers` (:1476-1508):
+   the Queen's eight clips with their real triggers (the Movement predicate lines 1538 / 1533 / 1536; the four strikes picked
+   at :1177 under `if (this.pendingMeleeTicks == 0) within if (distanceToSqr < 900.0) within if (currentTarget != null)`;
+   `death` from `die()` :1488), the generic names "not used by this species (native clip set)", `allow_idle_alt` false; the
+   seed's wishlist rewritten to the accepted set, the three former wishes moved to `future` (§5.2), a `WISHLIST_UNACCEPTED`
+   guard for any seed.
+D6 applied — guards by brace depth (:916-1109): the Queen's :1131 reads `if (currentTarget != null)`; Robot2's :245 reads
+   `NOT(if (rdd < 1.25))` (and :264 `NOT(if (this.justForFun > 0))`) as "other clears" the owner reads; Robot3 / Robot5's
+   verdict wording is per in-range think tick (every 35 / 20 ticks, before the line-of-sight gate), not per shot
+   (`ticker_facts`, :1260-1277); Robot4's transport-2 row carries the `hurt()` :284 caveat.
+D7 applied — `doAreaDamage` in the melee scan (`AREA_HELPERS`, :1322-1367): the Queen's :1157 and :1186 (the brief said :1180;
+   the call is at :1186), the helper's two `hurt` calls at :1429-1430, and the transport-1 caveat (`melee_transport_note`).
+D8 applied — `parse_goals` (:1148-1214) lists a config-gated goal with `[modern: key]` (Girlfriend :228-231 would read
+   `[modern: petsDefendOwner]`; she is not landed, so the fixture pins it) and reports a local-variable / computed-priority
+   goal as UNPARSED with a `GOAL_UNPARSED` warning.
+D9 applied — the base loops list every bone of the rig with the gait group marked (:1810-1832): the Beaver's idle / walk /
+   swim rows name lff, lrf, rff, rrf (speed-scaled), body, head, nose (free), tail / teeth (their own layers).
+D10 applied — `frequency_groups` states the visible half period of a rectified shape (:1735-1764).
+D11 applied — easing and unknown keyframe keys compared (:2695-2705); the writer-and-importer statement above and in the
+   report's note.
+D12 applied — `_preview` is a WARN marked PROVISIONAL (open question 15).
+D13 applied — the records (this entry, records.md): strays 28 + 5 + 8 + 1; 262 − 254 = 8 `OreSpawnItemRenderer` references;
+   RockBase 10 textures; INVENTORY's `effort_hours` filled (+ `effort_source`); `calm_idle` not counted.
+D14 applied — `Species.tier_label` (:512-522): "Tier 1 (boss; the design's 'done' row)" in SPEC §10, README's table, INVENTORY's
+   `artist_tier`, the dry-run summary; the `idle_to_attack` hard-code removed.
+D15 applied — 24 pins (14 → 24): D2's rejections (incl. the missing folder and `lock_mode: warn` / `reject`), D3's generic form,
+   D4's table and the head sidecar, D8's guarded and unparsed goals, an EVENT and a MIXED verdict, the brace-less and one-liner
+   guards, a non-DFS shipped geo, easing survival and a dropped unknown key, the item-renderer / dormant-twin strays, a
+   canonical-name conflict (referenced beats registry-aligned), the native `clip_rows` branch and drive table, the area helper.
+Presented (not done exactly as written): the refuter's own mutated folders were not available to this lane — equivalent
+   mutations were rebuilt under scratch (the verdicts above); `case X:` labels without braces are not parsed (none in the
+   fifteen; they would read `(unparsed: ...)`); the "stands in for the contract's X" phrase in the Queen's drive table comes
+   from the seed's authored `contract` field, PROVISIONAL like the rest of her mapping; `ice_ball` / `acid` / `dead_irukandji`
+   extend the mod's `LaserBall`, so the projectile vocabulary was widened to `*Ball`.
+
+PINS: `tools/test_artist_package.py` — 24 tests over a synthetic repository (eight registrations in both forms; a nested rig
+with per-face UV incl. a flipped face, a box-UV mirrored cube with its own pivot/rotation and an unknown description key;
+three clips in the three keyframe shapes plus an easing key; a native GeoEntity boss with two controllers, a variable-key
+trigger, a `die()` trigger and an area-damage helper; an EVENT pulser whose `hurt()` raises the flag; a MIXED ticker species;
+a config-gated and an unparsable goal; hitbox profiles; seeds with a rectified group and an unaccepted wish; twin and series
+textures; an armor-sheet stray, an item-renderer texture, a dormant item twin, a referenced-vs-registry-aligned twin pair).
+`python tools/test_artist_package.py` → Ran 24 tests, OK.
+
+GATE: (pkg, 2026-09-06, after the refuter and the fix lane): the tool is python under tools/ (no shipped class, asset or config changes) — the standing gate run as the proof of the tree: drift check clean; `build` exit 0 — asset audit `RESULT: 0 error(s), 0 advisory(ies), 4 acknowledged -> exit 0`, referenceGeometry `G1 PARITY PASS: 2 models; checked-in proof verified`, s4Parity `G1 PARITY PASS: 13 models; checked-in proof verified`; `runGameTestServer` exit 0 — literal `All 1254 required tests passed` (unchanged: no gametest in this slice); the tool's own pins `python tools/test_artist_package.py` — 24 tests OK; the dry run regenerated into the scratch directory (149 files; nothing under artist_handoff/ lands before the mirror drop); the summary in `phase_g_reports/artist_package_dryrun_2026-09-06.md`.
+
+Refuted once (tooling, no shipped code): two blocking consistency items, thirteen non-blocking — all applied by the fix lane: ONE locked-bone policy in README_FIRST, the SPEC and `check` (keying a locked bone is a WARN today and becomes a REJECT when the server-side evaluator lands — PROVISIONAL, open question 16; the shipped Queen clips key 26 of her 27 locked bones, `root` among them against the seed's own label); `check` now enforces what the README promises (a missing or empty folder, a wrongly named or second animation file, a Molang-string value, a key past the clip length, non-finite or absurd values, changed cubes / UVs / sizes on a returned geo → REJECT; `_preview` a PROVISIONAL WARN, open question 15); the 17 `Builder.<X>of` registrations restored (145 inventory rows), the vanilla-reuse Tier-0 table read and the head sidecars labelled classic-only Tier 3; the Queen's drive table native (her clips' real triggers, `death` code-triggered from `die()`, the wishlist limited to accepted clips); the attacking verdicts' guards by brace depth (Robot4's `hurt()` caveat; Robot3 / Robot5's per-think-tick pulse; the Queen's guard shown correctly); the area-damage helper as a strike site with the per-victim caveat; guarded goals listed with their modern key, unparseable registrations reported; the Beaver's idle / walk bone lists the whole rig with the gait group marked scaled; the rectified period beside the natural one; the round-trip diff covering easing and unknown keyframe keys (the round-trip is writer and importer from one memory — the owner's hand-check of the first .bbmodel is the real test); the tier vocabulary (the Queen: Tier 1, boss; the design's 'done' row); the records' counts (strays 28 + 5 + 8 + 1; the 8 item-renderer references; RockBase 10 textures); 24 pins (was 14). Upheld: the texture map's dedupe (428 / 338 / 86 / 90, the four series contiguous, the armor strays), the locked-bone list (27 on the Queen), the round-trip EQUAL with bone order kept on every shipped rig, the tempo table's periods, the trigger counts, the README against G5's contract.

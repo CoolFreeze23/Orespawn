@@ -273,3 +273,5 @@ through grass, fluids and torches and is stopped by solid corners) under a new `
 `chainsawSweepVanillaSight`, on by default (MOD-037); `false`, or `modern.enabled = false`, is the 1.7.10 walk.
 
 Dev-only (Phase G slice (d), 2026-09-06): under -Dorespawn.dev.bench=true a /orespawn bench command (op level 2) spawns the six spawn-100 isolation scenes (a wedge inside the camera's field of view, every mob under 180 blocks), samples frame time, CPU, allocation, GC, server MSPT, the MHLib counters and packet bytes for a run, and writes paired classic/candidate reports (with a coverage object and a working-tree reading) to phase_g_reports/benchmark/live/; -Dmhlib.counters=true now also dumps eleven more MHLib counters (four client, seven server, one INFO line per 100 server ticks); no player-facing change.
+
+Nothing player-visible: slice (f) adds a developer tool under tools/ (the artist handoff package generator and its tests) and no shipped asset, class or config changes.
