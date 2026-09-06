@@ -61,10 +61,12 @@ import java.util.function.LongSupplier;
  * two alignment loops), {@code server.part_setpos} ({@code MHLibPartEntity.setPos} on the server:
  * the alignment's call AND {@code updateLastPos}'s call from every part tick), and
  * {@code server.placement_ns} ({@code mhlibAiStep}'s server path plus
- * {@code ModernSpiderGait.feedParts}). Server sites guard with {@link #serverEnabled()}: the same
- * {@link #ENABLED} constant OR'd with the package-private test seam {@link #enabledForTests}
- * (flipped only by {@link #enableForTests}), so the game-test server -- which runs without the
- * property -- can pin the increments; the client sites keep the pure static-final guard.</p>
+ * {@code ModernSpiderGait.feedParts}). Server sites guard with the same {@link #ENABLED} constant as the
+ * client sites ({@code if (MHLibCounters.ENABLED) ...}, folded by the JIT when the property is unset, so
+ * the disabled path costs nothing on either side -- slice (d) had OR'd a package-private test seam into the
+ * server guard, one extra static boolean read per site; item 17 of the owner's 2026-09-06 rulings removed it:
+ * no test seam in production code). The game-test server pins the increments because its run sets the
+ * property ({@code build.gradle}, the {@code gameTestServer} run: {@code systemProperty 'mhlib.counters', 'true'}).</p>
  *
  * <p>Both dump handlers hand the values they just read to every {@link DumpListener} registered
  * through {@link #addDumpListener} (the in-game benchmark harness sums the intervals of a run this
@@ -85,14 +87,6 @@ public final class MHLibCounters {
 	/** Slice (d): the server-side counters, dumped and reset by the server tick handler alone. */
 	private static final List<Counter> SERVER_ALL = new CopyOnWriteArrayList<>();
 	private static final List<DumpListener> DUMP_LISTENERS = new CopyOnWriteArrayList<>();
-
-	/**
-	 * Slice (d) test seam, package-private on purpose: the game-test server runs without
-	 * {@code -D} {@value #PROPERTY}, so the server-side sites read {@link #serverEnabled()} instead of
-	 * the constant. Flipped by {@link #enableForTests} from the server thread and read on the server
-	 * thread; a plain field (no volatile) so the JIT keeps the read hoistable in the alignment loops.
-	 */
-	static boolean enabledForTests = false;
 
 	/** Collector pre-render passes: one per multipart entity rendered per frame (= rendered frames with one Queen in view). */
 	public static final Counter CLIENT_FRAMES = new Counter("client.frames");
@@ -186,29 +180,6 @@ public final class MHLibCounters {
 	/** Every gauge in registration order (OPT-029). */
 	public static List<Gauge> gauges() {
 		return Collections.unmodifiableList(GAUGES);
-	}
-
-	/**
-	 * Slice (d): the guard of the server-side sites -- the constant, or the test seam. With the
-	 * property unset this folds to one static boolean read per site.
-	 */
-	public static boolean serverEnabled() {
-		return ENABLED || enabledForTests;
-	}
-
-	/**
-	 * Slice (d), TEST ONLY: flips {@link #enabledForTests}. Public because the game tests live in
-	 * another package; nothing in the mod calls it. Presented in the slice's records as a
-	 * harness-semantics matter (the server sites read one extra static boolean when the property is
-	 * unset; what they count is unchanged).
-	 */
-	public static void enableForTests(boolean enabled) {
-		enabledForTests = enabled;
-	}
-
-	/** Slice (d), TEST ONLY: the seam's current value (so a test restores what it found). */
-	public static boolean enabledForTests() {
-		return enabledForTests;
 	}
 
 	/** Reads and zeroes every client counter, in declaration order; then reads every gauge, in registration order, resetting nothing. */

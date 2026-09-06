@@ -126,12 +126,13 @@ public abstract class MixinServerEntity {
 	/**
 	 * Slice (d) (2026-09-06): net.s2c_update_packets / net.s2c_update_bytes for one broadcast call
 	 * (either send site above) -- one count per call, whatever the tracker count, and the bytes the
-	 * payload encodes to on the play channel (SPacketUpdateMultipart.encodedLength). Guarded by the
-	 * server-side enable (the constant, or the game tests' seam).
+	 * payload encodes to on the play channel (SPacketUpdateMultipart.encodedLength). Guarded by
+	 * {@link MHLibCounters#ENABLED} like every other counter site (item 17 of the 2026-09-06 rulings: the
+	 * game-test run sets the property; no test seam in production code).
 	 */
 	@Unique
 	private void mhlib$countUpdateBroadcast(final SPacketUpdateMultipart payload) {
-		if (MHLibCounters.serverEnabled()) {
+		if (MHLibCounters.ENABLED) {
 			MHLibCounters.NET_S2C_UPDATE_PACKETS.increment();
 			MHLibCounters.NET_S2C_UPDATE_BYTES.add(payload.encodedLength(this.entity.registryAccess()));
 		}

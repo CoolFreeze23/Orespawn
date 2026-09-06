@@ -1381,7 +1381,7 @@ public final class ModernSpiderGait {
     private void feedParts(Mob robot, long time) {
         // Phase G slice (d) (2026-09-06): server.placement_ns -- the feed's own time, added to the
         // same counter mhlibAiStep's server path adds to (morehitboxes_evaluation.md Section 5).
-        final boolean measure = MHLibCounters.serverEnabled();
+        final boolean measure = MHLibCounters.ENABLED;
         final long start = measure ? System.nanoTime() : 0L;
         try {
             feedPartsBody(robot, time);

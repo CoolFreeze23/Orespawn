@@ -104,6 +104,11 @@ runs {
 
     gameTestServer {
         systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
+        // Phase G slice (d), item 17 of the 2026-09-06 rulings: the MHLib counters are live on the game-test server
+        // (MHLibCounters.ENABLED = Boolean.getBoolean("mhlib.counters")) so the counter rows pin the server-side
+        // increments without a test seam in production code. This run only; the 100-tick dump lines
+        // ("MHLib counters (server, per 100 ticks): ...") in the suite log are the visible side effect.
+        systemProperty 'mhlib.counters', 'true'
         modSource project.sourceSets.gametest
     }
 

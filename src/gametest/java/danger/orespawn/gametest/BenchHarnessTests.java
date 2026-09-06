@@ -73,7 +73,7 @@ import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
  * the per-entity divisors; JSON null -- never a bare NaN -- for undefined metrics, parsed back with a
  * non-lenient reader), the command's gating (absent from the live dispatcher without
  * {@code -Dorespawn.dev.bench=true}; the tree and its permission on a fresh dispatcher), the server-side
- * MHLib counters' increments under the {@code MHLibCounters.enableForTests} seam, the byte accounting of
+ * MHLib counters' increments under the game-test run's {@code -Dmhlib.counters=true}, the byte accounting of
  * both packets against a manual encode, the collector probe's span accounting, the dump order with the
  * four new client names, the order statistics, and the git HEAD / working-tree reader over a synthetic
  * {@code .git}.
@@ -82,18 +82,30 @@ import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
  * has no client import; the client sampler ({@code danger.orespawn.client.bench}) is never named. Frozen
  * mobs stand on the template floor (the spawner resolves y from the heightmap; the rows check the block
  * under the feet); the 48x16x48 {@code empty_large} template holds a Queen 40 blocks from an origin four
- * blocks inside either edge. One asynchronous row (the S2C broadcast and election counts) turns the seam
- * on inside its first delayed step, after every synchronous row of the batch has run and restored it, and
- * is the only row alive while it waits; every row restores the seam's PRIOR value in a finally block (the
- * asynchronous row's first step restores it only when the step fails, else the seam must stay on while
- * it waits). A {@link GameTestGenerator} over {@link #rows()}, one {@link TestFunction} per row,
- * {@code benchharnesstests.sliced_NN_<row>}, own batch {@code benchHarness} (TEST-003).</p>
+ * blocks inside either edge. The three counter rows (11, 12, 17) need the counters live: item 17 of the
+ * owner's 2026-09-06 rulings removed slice (d)'s test seam from {@code MHLibCounters} (production code), and
+ * the {@code gameTestServer} run in {@code build.gradle} sets {@code -Dmhlib.counters=true} instead,
+ * which each of those rows asserts as its precondition (a run without the property -- the client run's
+ * {@code /test} -- fails them there, naming the property). With the property live, {@code MHLibMod.onServerTick}
+ * dumps AND zeroes the server list every 100 server ticks for the whole suite: a synchronous row resets and
+ * reads inside one tick (no dump can land between), so its expectations stay exact; the asynchronous row (the
+ * S2C broadcast and election counts) waits 39 ticks, so it sums the dumps it sees through a
+ * {@link MHLibCounters.DumpListener} and adds the partial it reads, the way {@code BenchSession} does. It runs
+ * in its own batch ({@code benchHarnessAsync}): a row's body starts 20 ticks after its OWN structure's chunks are
+ * entity-ticking, in the chunk pipeline's order, so within one batch nothing pins the start order -- a batch,
+ * though, runs only after the previous batch has completed, so no synchronous row's in-row reset can land inside
+ * the asynchronous row's window (refuter B, item 17). A {@link GameTestGenerator} over {@link #rows()}, one
+ * {@link TestFunction} per row, {@code benchharnesstests.sliced_NN_<row>}, the batches {@code benchHarness} and
+ * {@code benchHarnessAsync} (TEST-003).</p>
  */
 @GameTestHolder(OreSpawnMod.MOD_ID)
 @PrefixGameTestTemplate(false)
 public class BenchHarnessTests {
 
     private static final String BATCH = "benchHarness";
+    /** The asynchronous row (17) runs in its own batch: the framework runs a batch only after the previous one has
+     *  completed, so no synchronous row's in-row reset can land inside its 39-tick window (refuter B, item 17). */
+    private static final String BATCH_ASYNC = "benchHarnessAsync";
     private static final String TEST_PREFIX = "benchharnesstests.";
     private static final String EMPTY_LARGE = OreSpawnMod.MOD_ID + ":empty_large";
     private static final int TIMEOUT_TICKS = 200;
@@ -137,8 +149,10 @@ public class BenchHarnessTests {
                 new Row(8, "report_json_shape", BenchHarnessTests::reportJsonShape, false),
                 new Row(9, "report_pairing_and_files", BenchHarnessTests::reportPairingAndFiles, false),
                 new Row(10, "command_gating_and_tree", BenchHarnessTests::commandGatingAndTree, false),
-                new Row(11, "server_counters_queen_under_the_seam", BenchHarnessTests::serverCountersQueenUnderTheSeam, false),
-                new Row(12, "server_counters_modern_spider_under_the_seam", BenchHarnessTests::serverCountersModernSpiderUnderTheSeam, false),
+                // Rows 11-12 keep their slice (d) tags (the gate's test IDs); since item 17 (2026-09-06) they count under the
+                // game-test run's -Dmhlib.counters=true, not a seam (assertCountersLive).
+                new Row(11, "server_counters_queen_under_the_seam", BenchHarnessTests::serverCountersQueen, false),
+                new Row(12, "server_counters_modern_spider_under_the_seam", BenchHarnessTests::serverCountersModernSpider, false),
                 new Row(13, "packet_encoded_lengths", BenchHarnessTests::packetEncodedLengths, false),
                 new Row(14, "collector_probe_span_accounting", BenchHarnessTests::collectorProbeSpanAccounting, false),
                 new Row(15, "dump_order_with_the_new_names", BenchHarnessTests::dumpOrderWithTheNewNames, false),
@@ -151,7 +165,7 @@ public class BenchHarnessTests {
     public Collection<TestFunction> benchHarnessRows() {
         List<TestFunction> functions = new ArrayList<>();
         for (Row row : rows()) {
-            functions.add(new TestFunction(BATCH, row.testName(), EMPTY_LARGE, Rotation.NONE, TIMEOUT_TICKS, 0L, true, row.body()));
+            functions.add(new TestFunction(row.asynchronous() ? BATCH_ASYNC : BATCH, row.testName(), EMPTY_LARGE, Rotation.NONE, TIMEOUT_TICKS, 0L, true, row.body()));
         }
         return functions;
     }
@@ -609,16 +623,27 @@ public class BenchHarnessTests {
         helper.succeed();
     }
 
-    // ------------------------------------------------------------------ 11-12: the server counters under the seam
+    // ------------------------------------------------------------------ 11-12: the server counters under the game-test run's property
 
-    private static void serverCountersQueenUnderTheSeam(GameTestHelper helper) {
+    /**
+     * Item 17 of the owner's 2026-09-06 rulings: no test seam in production code. The rows that count rely on the
+     * game-test run's property instead ({@code build.gradle}, the {@code gameTestServer} run); a run without it
+     * (the client run's {@code /test}) stops here, naming the property, rather than reading zeros.
+     */
+    private static void assertCountersLive(GameTestHelper helper) {
+        helper.assertTrue(MHLibCounters.ENABLED, FINDING + ": precondition: this row counts through MHLibCounters.ENABLED, which only the gametest run sets --"
+                + " -D" + MHLibCounters.PROPERTY + "=true (build.gradle, runs.gameTestServer: systemProperty 'mhlib.counters', 'true'); the slice (d) test seam"
+                + " is gone (item 17, 2026-09-06)");
+    }
+
+    private static void serverCountersQueen(GameTestHelper helper) {
         TheQueen queen = null;
-        final boolean prior = MHLibCounters.enabledForTests();
-        MHLibCounters.enableForTests(true);
+        assertCountersLive(helper);
         try {
-            helper.assertTrue(MHLibCounters.serverEnabled(), FINDING + ": the seam turns the server-side guard on");
             queen = helper.spawnWithNoFreeWill(ModEntities.THE_QUEEN.get(), new BlockPos(24, 1, 24));
             helper.assertTrue(queen.getParts() != null && queen.getParts().length == 10, FINDING + ": precondition: ten parts");
+            // Each reset-act-read below is one synchronous stretch of this tick: MHLibMod.onServerTick (the 100-tick dump that
+            // zeroes the server list now that the property is live) cannot run between them, so the values stay exact.
             MHLibCounters.sumAndResetServer();
             ((IMultipartEntity<?>) (Object) queen).mhlibAiStep();
             Map<String, Long> after = MHLibCounters.sumAndResetServer();
@@ -651,31 +676,20 @@ public class BenchHarnessTests {
                     + " runbook's 400 per Queen per second counts; actual " + second);
             helper.assertTrue(!(firstPart.getX() == 0.0D && firstPart.getY() == 0.0D && firstPart.getZ() == 0.0D), FINDING + ": the second tick's alignment puts the"
                     + " parts back on the Queen, actual " + firstPart.position());
-            if (!prior) {
-                // The seam was off when this row began (no asynchronous row holds it): the off state counts nothing.
-                MHLibCounters.enableForTests(false);
-                helper.assertTrue(!MHLibCounters.serverEnabled() || MHLibCounters.ENABLED, FINDING + ": the seam off restores the constant's value");
-                MHLibCounters.sumAndResetServer();
-                ((IMultipartEntity<?>) (Object) queen).mhlibAiStep();
-                Map<String, Long> off = MHLibCounters.sumAndResetServer();
-                helper.assertTrue(MHLibCounters.ENABLED || off.get("server.align_synched_parts") == 0L, FINDING
-                        + ": with the seam off (and the property unset) the sites count nothing, actual " + off);
-            }
         } finally {
-            MHLibCounters.enableForTests(prior);
             discardQuietly(queen);
         }
         helper.succeed();
     }
 
-    private static void serverCountersModernSpiderUnderTheSeam(GameTestHelper helper) {
+    private static void serverCountersModernSpider(GameTestHelper helper) {
         SpiderRobot spider = null;
-        final boolean prior = MHLibCounters.enabledForTests();
-        MHLibCounters.enableForTests(true);
+        assertCountersLive(helper);
         try {
             spider = spawnModernSpider(helper, new BlockPos(24, 1, 24));
             helper.assertTrue(spider.isModernMovement() && spider.getParts() != null && spider.getParts().length == 8, FINDING
                     + ": precondition: a modern spider with eight parts, actual modern=" + spider.isModernMovement());
+            // Reset-act-read inside one tick, as in row 11: exact values.
             MHLibCounters.sumAndResetServer();
             ((IMultipartEntity<?>) (Object) spider).mhlibAiStep();
             Map<String, Long> after = MHLibCounters.sumAndResetServer();
@@ -701,7 +715,6 @@ public class BenchHarnessTests {
                     + ": from the second tick on a tick calls setPos three times per leg part (the static alignment, updateLastPos, the gait feed) -- the steady"
                     + " state the runbook's 480 per robot per second counts; actual " + second);
         } finally {
-            MHLibCounters.enableForTests(prior);
             discardQuietly(spider);
         }
         helper.succeed();
@@ -857,14 +870,24 @@ public class BenchHarnessTests {
     // ------------------------------------------------------------------ 17: the S2C broadcasts and the election (asynchronous)
 
     private static void s2cBroadcastsAndElectionCounted(GameTestHelper helper) {
+        assertCountersLive(helper);
         final TheQueen[] queen = new TheQueen[1];
-        final boolean[] prior = new boolean[1];
+        // With the property live, MHLibMod.onServerTick zeroes the server list every 100 server ticks and hands the
+        // interval to the dump listeners: a dump inside this row's 39-tick wait would otherwise vanish from the read
+        // in the second step, so the row sums what the handler publishes (BenchSession.onDump does the same) and
+        // adds the partial it reads itself. The synchronous rows never wait, so they read exact values instead.
+        final Map<String, Long> dumped = new LinkedHashMap<>();
+        final MHLibCounters.DumpListener listener = (side, tick, values) -> {
+            if (MHLibCounters.SERVER_SIDE.equals(side)) {
+                for (Map.Entry<String, Long> entry : values.entrySet()) {
+                    dumped.merge(entry.getKey(), entry.getValue(), Long::sum);
+                }
+            }
+        };
         helper.runAfterDelay(1L, () -> {
-            // The seam's prior value is what every synchronous row of the batch restored before this step runs.
-            prior[0] = MHLibCounters.enabledForTests();
             boolean armed = false;
             try {
-                MHLibCounters.enableForTests(true);
+                MHLibCounters.addDumpListener(listener);
                 queen[0] = helper.spawnWithNoFreeWill(ModEntities.THE_QUEEN.get(), new BlockPos(24, 1, 24));
                 Object self = queen[0];
                 if (self instanceof IMHLibFieldAccessor<?> access) {
@@ -874,8 +897,8 @@ public class BenchHarnessTests {
                 armed = true;
             } finally {
                 if (!armed) {
-                    // The step failed: leave nothing behind (the seam must otherwise stay on while the row waits).
-                    MHLibCounters.enableForTests(prior[0]);
+                    // The step failed: leave nothing behind.
+                    MHLibCounters.removeDumpListener(listener);
                     discardQuietly(queen[0]);
                 }
             }
@@ -883,6 +906,9 @@ public class BenchHarnessTests {
         helper.runAfterDelay(40L, () -> {
             try {
                 Map<String, Long> sums = MHLibCounters.sumAndResetServer();
+                for (Map.Entry<String, Long> entry : dumped.entrySet()) {
+                    sums.merge(entry.getKey(), entry.getValue(), Long::sum);
+                }
                 long packets = sums.get("net.s2c_update_packets");
                 long bytes = sums.get("net.s2c_update_bytes");
                 long masters = sums.get("net.set_master_packets");
@@ -892,7 +918,7 @@ public class BenchHarnessTests {
                 helper.assertTrue(masters >= 1L, FINDING + ": a queued tracker gets elected: setMasterUUID broadcasts SPacketSetMaster, actual " + sums);
                 helper.assertTrue(sums.get("server.align_synched_parts") >= 10L * 30L, FINDING + ": the level ticked the Queen: at least 30 ticks x 10 synched parts, actual " + sums);
             } finally {
-                MHLibCounters.enableForTests(prior[0]);
+                MHLibCounters.removeDumpListener(listener);
                 discardQuietly(queen[0]);
             }
             helper.succeed();

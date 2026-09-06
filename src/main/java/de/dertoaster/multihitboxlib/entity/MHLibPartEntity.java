@@ -258,7 +258,7 @@ public class MHLibPartEntity<T extends Entity> extends PartEntity<T> {
 	public void setPos(double pX, double pY, double pZ) {
 		// Slice (d) (2026-09-06): server.part_setpos -- every server-side call, i.e. the alignment's
 		// (alignSubParts / applyInformation / the gait feed) AND updateLastPos's from each part tick.
-		if (MHLibCounters.serverEnabled()) {
+		if (MHLibCounters.ENABLED) {
 			final Level level = this.level();
 			if (level != null && !level.isClientSide()) {
 				MHLibCounters.SERVER_PART_SETPOS.increment();
