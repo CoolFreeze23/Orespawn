@@ -233,6 +233,55 @@ that slice, not a task for now.
     paragraph per wave — wave 3's five folded into one. (10) **Harness:** the sibling test classes' floating frozen mobs
     stay; the convention is recorded in the harness notes (F0.7); no cross-class change while the rows pass.
 
+24. **Rulings of 2026-09-06 (owner, through the advisor):** (1) **Push:** the 15 commits after 814d151 pushed
+    (origin/master 284972c) before anything else landed. (2) **Slice (c), the G2 root-order contract — approved from the
+    table:** gated and landed from `g2-root-order` with the pin removals (the fifteen `max_contested_fraction_pin` entries
+    and the four `PENDING_OWNER` strings go; the parity tools' default flips to no exclusion; both proofs regenerate; the
+    benchmark re-pins). (3) **Missing-key policy:** a logged fallback to GeckoLib's own order when the key is absent (a
+    resource pack must never crash the client), loud when present and wrong; an asset-audit ERROR for any shipped
+    orespawn rig without the key. (4) **The tie rule:** a fidelity note in the record; the look sheet says last-wins;
+    the production seam's executed evidence is the Section E look. (5)–(14) **Slice (e), the contract and the
+    controller's return:** Q1 (a) one `[modern] artistAnimations` master, default ON, `classicAnimationSpecies` the
+    exclusion list, species self-gated by clip presence; Q2 (a) weight-blended locomotion layers, GeckoLib's blend-in for
+    triggered clips, the bone-reset blend-out, triggered clips replacing the gait on the bones they animate; Q13 (a)
+    weights; Q3 (a) for the pilot — the vanilla flip stays, no death clip; the rule for later: a species whose JSON ships a
+    death clip gets (b), designed when the first such clip arrives, the Queen's own death clip the precedent; Q4 (a) the
+    overlay stays; Q5 (a); Q6 (a) four extras per species without a ruling; Q7 (a) Tier 3 gets no artist clips; Q8 (b)
+    the pause-screen freeze a recorded divergence, PN entry, ENT-S-147 closes on it — no renderer plumbing for what sits
+    behind the pause menu, the hook stays the shape if a per-render effect ever has a live signature; Q9 (a) scoped: the
+    catmullrom spline arguments repaired at load in the replacement seam (`OreSpawnGeoReplacementModel.getAnimation`)
+    only, the Queen's native model on stock semantics until her own ruling, recorded as a deliberate divergence from the
+    library with the javap cite, reported upstream, two refuters, the Beaver look decides visibility; Q10 follows —
+    "2.5e-3 rad; Beaver reference leg 15 / 13 / 8 catmullrom keys per bone with spline arguments repaired at load; wrap
+    sample T−ε vs 0+ε included"; Q11 (a) per species by the trigger inventory; Q12 (a) calm_idle until the SPEC adds
+    the synched byte; Q14 (a) every loop normalised to 1.0 s; Q15 (a) the `_preview` export, Blockbench-only, rejected
+    in the jar; Q16 (a) the Queen the pilot boss, scoped to a subset of her clips (idle and one attack), the Beaver the
+    other pilot; Q17 (a) the Beaver clip regenerated under the converter's rule when the keyframe leg lands, the salvaged
+    documents kept with the note. (15) **Next on the chain:** the keyframe leg (the wrap sample, density as an output),
+    the Q9 repair, and the Beaver clip regenerated — the controller's return as the first Tier-2 slice's precondition,
+    presented before wiring. (16) **Slice (d):** R1–R7 ADOPTED as proposed — bytes lead R1, ns informational within the
+    ±40 % band; the mixed scene added before the first Tier-2 cutover; the live scenes the owner's, not on the critical
+    path until a classic / candidate pair exists. (17) **The counters:** a system property on the gametest run, no test
+    seam in production code. (18) **Slice (f), locked bones:** keying a locked bone is allowed and WARNED (the SPEC
+    states the consequence: the hitbox part follows the bone); renaming, re-parenting or deleting one is REFUSED; the
+    README, the Queen's SPEC and the checker say the same thing; PROVISIONAL comes off; the reject mode stays available
+    for the day the server-side evaluator lands. (19) Nothing under `artist_handoff/` is committed before the mirror
+    drop; after it, the package for every landed species, the pilot pair first. (20) **ENT-S-146:** a parity bug; both
+    halves fixed in classic first, inside 4c — the per-frame rolls from the level RNG through a `PurplePowerPose` seeded
+    in the entity_state kind, the accumulating rotations bug-for-bug and disclosed, the translucent fullbright render
+    state through `entityTranslucent`; the visual leg extended for translucency as a harness-semantics change,
+    before/after presented before its gate; the PurplePower candidate re-proven against the fixed classic; two
+    refuters; the port's opaque steady spin undocumented — no key. (21) **ENT-S-147:** closed under Q8, a PN entry.
+    (22) **ENT-S-148, 149, 151:** parity, classic, one XS batch, one refuter. (23) **ENT-S-150:** (ii) first — the
+    read-only survey of every legacy-AI species' speed under the modern mover as its own lane, the boost one case of a
+    class; (i) after it — the value that reproduces 1.7.10's saturated ≈3.1× sprint (MULTIPLY_BASE ≈ 2.1 or the survey's
+    mapping), the withdrawn ENT-S-145 hunks re-applied with the number and its pins. (24) **OPT-030** rides with the
+    MHLib harvest slice, two refuters; not before. (25) The Girlfriend's owner pair at priorities 1 and 2 on the Leon
+    precedent: ratified; the fifth ENT-S-138 site closed in the batch: ratified. (26) **Order of work:** push → (c)
+    gated and landed → ENT-S-146 in 4c → the (e) records and item 15 → the XS batch (22) → the ENT-S-150 survey lane;
+    the mirror drop on the owner's Section B go, the package and the pilot after it; wave 5 (24 and whatever the survey
+    files) gates only when a slice above is waiting on the owner.
+
 ## D. Rulings executed the same day (for cross-reference)
 
 - ENT-S-098 fixed (shot BetterFireballs carry the mod's own type; save/load round-trip pinned) and its

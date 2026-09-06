@@ -632,6 +632,17 @@ root-order slice with the GeckoLib per-entity cache eviction, then Slice 4c). Th
   under `artist_handoff/` committed until the drop lands. Wave 4 gates only when a slice is waiting on the owner; the
   mirror drop lands on the Section B go. Changelog: one paragraph per wave (wave 3's five folded). Harness: the sibling
   classes' floating frozen mobs stay (F0.7).
+- Rulings of 2026-09-06 (addendum item 24): slice (c) approved — landed with the fifteen contested-fraction pins and
+  the four PENDING_OWNER strings removed, the parity tools defaulting to no exclusion, a logged fallback when a rig's
+  draw-order key is absent (loud when present and wrong; an asset-audit ERROR for the mod's own rigs). The animation
+  contract's Q1–Q17 ruled (one `[modern] artistAnimations` master with a `classicAnimationSpecies` list; weight-blended
+  layers; no death clip and the overlay kept for the pilot; four extras; no Tier-3 clips; the catmullrom repair in the
+  replacement seam only; loops normalised to 1.0 s; the Queen (idle + one attack) and the Beaver the pilot pair; the
+  keyframe leg, the Q9 repair and the Beaver clip regenerated as the first Tier-2 slice's precondition, presented before
+  wiring). The benchmark thresholds R1–R7 adopted; the counters' test seam replaced by a system property on the gametest
+  run. Locked bones: keying warned, renaming / re-parenting / deleting refused. ENT-S-146 fixed in classic inside 4c
+  (two halves, the visual leg extended for translucency, presented before its gate); ENT-S-147 closed as PN-023; ENT-S-
+  148 / 149 / 151 one XS batch; ENT-S-150 the survey lane first, then the value; OPT-030 with the MHLib harvest.
 - Before any Tier-2 slice: the spawn-100 benchmark, classic versus candidate, with a proposed
   regression threshold; its baseline also measures MHLib's bone capture per frame and sync per tick
   and on the wire. Proof rule: geometry-only changes take one refuter; motion transcriptions,

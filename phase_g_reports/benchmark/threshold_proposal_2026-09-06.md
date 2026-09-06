@@ -1,3 +1,7 @@
+<!-- ADOPTED (owner, 2026-09-06, item 16): R1–R7 as proposed — bytes lead R1, ns informational within the ±40 % band; the
+mixed scene is added before the first Tier-2 cutover; the live scenes are the owner's and off the critical path until a
+classic / candidate pair exists. The text below is the proposal as presented. -->
+
 # Threshold proposal — the spawn-100 benchmark (Phase G slice (d), 2026-09-06; revised after refuter B)
 
 **Status: PROPOSED, NOT ADOPTED.** A threshold is a ruling. Nothing below is wired into any gate;

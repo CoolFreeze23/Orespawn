@@ -318,3 +318,19 @@ transcribed exactly. Under the 2026-09-04 doctrine the difference is the engine'
 may take the standing one where 1.7.10 took the nearer (the crouching-against-standing pair from the T4 refutation:
 1.7.10 23.15 against 24.08, the port 25 against 24.08). The ENT-S-139 controls `s139_61` / `s139_62` (two standing players)
 pin the formula on players; the ledger's Irukandji cell (:515) and the ENT-S-135 (c) record read under this entry.
+
+## PN-023 — The Rotator candidate's fan advance rides GeckoLib's per-frame animation dedup: the gyroscope freezes behind the single-player pause screen (ENT-S-147; ruled 2026-09-06, Q8 (b): a recorded divergence, deliberately not reproduced)
+
+- **Original / classic:** the classic `RotatorModel.renderToBuffer` advances the per-entity fan angle `rf1` by 2° on every
+rendered frame (orig ModelRotator.java:75-78 did the same in `render`), so the gyroscope keeps turning behind the pause menu,
+where the world still renders while nothing ticks.
+- **Candidate:** `RotatorGeoReplacement` advances inside GeckoLib's code-driven hook, which `GeoModel.handleAnimations` (4.8.4)
+skips at offset 170 whenever `tickCount + partialTick` equals the manager's last update time for the same instance — every
+paused frame with one Rotator in view, duplicate partial ticks above ~1000 FPS, a same-frame shadow pass. Two or more Rotators in
+view keep spinning (the instance alternates). The mirror edge: an invisible candidate keeps advancing where vanilla skips the
+classic draw.
+- **Why not reproduced (owner, 2026-09-06):** the signature lives only behind the pause menu (and on an invisible or
+super-fast-frame edge); no renderer plumbing is spent on what sits behind the pause menu. The hook keeps its shape; if a
+per-render effect ever carries a live signature, the fix shape in ENT-S-147 (a per-render-pass descriptor hook for the
+advance, the pose kept pure) is the one to build.
+- **Player-visible:** only on the pause screen and on the two edges above; the dev-switch candidate only.
