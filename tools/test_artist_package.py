@@ -764,6 +764,9 @@ class FixtureCase(unittest.TestCase):
         self.assertTrue(by["tail"]["gait_bone"])
         self.assertEqual(by["tail"]["group"], "gait")
         self.assertTrue(by["arm"]["locked"] and by["root"]["locked"] and not by["tail"]["locked"])
+        # the default `root` label states the consequence of a key there in the ruled wording — never "never keyed"
+        self.assertIn("allowed and warned like any locked bone", ap.DEFAULT_LABELS["root"])
+        self.assertFalse(any("never key" in label.lower() for label in ap.DEFAULT_LABELS.values()))
 
     def test_frequency_groups_state_the_visible_period_of_a_rectified_shape(self):
         groups = {g["name"]: g for g in ap.frequency_groups(self.repo.get("fixture"))}
@@ -785,11 +788,20 @@ class FixtureCase(unittest.TestCase):
         self.assertIn("VISIBLE: 30 ticks (1.5 s)", md)  # the rectified pump: natural 60 ticks, visible 30
         self.assertIn("PROVISIONAL", md)
         self.assertIn("`hand`", md)
-        self.assertIn(ap.LOCK_POLICY, md)  # §3 header and §7 carry the one policy sentence
+        self.assertIn(ap.LOCK_POLICY, md)  # §3 header, §5, §7 and §11 carry the one policy sentence (ruled 2026-09-06)
+        self.assertNotIn("PROVISIONAL", ap.LOCK_POLICY)
+        self.assertNotIn("open question 16", ap.LOCK_POLICY)
+        section7 = md.split("## 7. Hitbox bones")[1].split("## 8. Textures")[0]
+        self.assertIn(ap.LOCK_POLICY, section7)
+        self.assertIn(ap.LOCK_REJECT_MODE, section7)  # the reject mode stays available for the day the evaluator lands
+        self.assertNotIn("PROVISIONAL", section7)
+        self.assertNotIn("open question 16", section7)
         self.assertIn("[modern: petsDefendOwner]", md)
         self.assertIn("`UNPARSED`", md)
         self.assertIn("guard (the enclosing block)", md)
         self.assertIn("It REJECTS: " + "; ".join(ap.CHECK_REJECTS), md)  # §11 quotes check's rule table
+        self.assertIn("It WARNS on: " + "; ".join(w.rstrip(".") for w in ap.CHECK_WARNS) + ".", md)
+        self.assertNotIn(".;", md)  # the policy sentence ends in a period; the §11 join strips it
         names = [c["name"] for c in manifest["clips"]]
         for n in ("idle", "walk", "attack", "hurt", "death", "aggro_idle", "calm_idle"):
             self.assertIn(n, names)
@@ -799,8 +811,9 @@ class FixtureCase(unittest.TestCase):
         self.assertEqual(clips["death"]["loop"], "hold_on_last_frame")
         self.assertTrue(clips["attack"]["code_triggered"] and clips["attack"]["required"])  # shipped -> may not be renamed
         self.assertFalse(clips["hurt"]["required"])
-        self.assertEqual(manifest["lock_mode"], "warn")  # ONE policy for every species until the ruling (open question 16)
-        self.assertEqual(manifest["lock_policy"], ap.LOCK_POLICY)
+        self.assertEqual(manifest["lock_mode"], "warn")  # ONE policy for every species (ruled 2026-09-06); `reject` is the mode kept for the evaluator
+        self.assertEqual(manifest["lock_policy"], "warn-keyed, refuse-structural")
+        self.assertEqual(manifest["lock_policy_text"], ap.LOCK_POLICY)
         self.assertEqual(set(manifest["locked_bones"]), {"hand", "arm", "root"})
         self.assertEqual(manifest["keyed_locked_by_shipped_clip"], {})  # the fixture clips key only the free tail
         self.assertEqual(manifest["textures"], [{"canonical": "fixture.png", "width": 64, "height": 32, "aliases": ["fixturetexture.png"]}])
@@ -848,14 +861,19 @@ class FixtureCase(unittest.TestCase):
         self.assertIn("in `die`", rows["death"]["trigger"])
         self.assertEqual(rows["stance"]["layer"], "native `Movement` controller (state)")
         self.assertEqual(rows["stomp"]["layer"], "native `Actions` controller (triggered)")
-        # a verdict that invites improving a clip which keys locked bones says what that means under each policy
+        # a verdict that invites improving a clip which keys locked bones repeats the consequence (the one policy sentence); the
+        # PROVISIONAL marker on a native row is its contract mapping and precedes the lock note, so it never reads as the policy's
         self.assertEqual(rows["stomp"]["keyed_locked"], ["head"])
-        self.assertIn("keys 1 locked bone(s) (head): a WARN from `check` today; a REJECT once the server-side evaluator lands", rows["stomp"]["note"])
+        self.assertIn("keys 1 locked bone(s) (head): " + ap.LOCK_POLICY, rows["stomp"]["note"])
+        self.assertIn("PROVISIONAL (its contract mapping: open question 16)", rows["stomp"]["note"])
+        self.assertLess(rows["stomp"]["note"].index("PROVISIONAL"), rows["stomp"]["note"].index("keys 1 locked bone(s)"))
+        self.assertFalse(rows["stomp"]["note"].rstrip().endswith("PROVISIONAL"))
         self.assertEqual(rows["idle"]["keyed_locked"], [])
         self.assertIn("Tier 1 (boss; the design's 'done' row)", md)
         self.assertIn("`stance` keys 1", md)
         self.assertIn("`stomp` keys 1", md)
-        self.assertIn("Under today's policy those are warnings; under the REJECT policy the shipped file itself would fail", md)
+        self.assertIn("allowed and warned as above: the hitbox parts follow those bones in-game", md)
+        self.assertNotIn("under the REJECT policy the shipped file itself would fail", md)
         # the wishlist only invites clips the manifest accepts; anything else is marked, and §5.2 holds the future items
         self.assertIn("- a heavier `stance` loop\n", md)
         self.assertIn("a wing-beat `fly` loop distinct from the hover — NOT accepted by `check` today: `fly` is not in this creature's clip set", md)
@@ -1005,7 +1023,13 @@ class FixtureCase(unittest.TestCase):
             self.assertTrue((folder / name).exists(), name)
         self.assertTrue((out / "INVENTORY.csv").exists() and (out / "TEXTURE_MAP.csv").exists() and (out / "README_FIRST.md").exists())
         readme = (out / "README_FIRST.md").read_text(encoding="utf-8")
-        self.assertIn(ap.LOCK_POLICY, readme)  # README rule 6 carries the one policy sentence
+        self.assertIn(ap.LOCK_POLICY, readme)  # README rule 6 carries the one policy sentence ...
+        self.assertIn(ap.LOCK_REJECT_MODE, readme)  # ... and that the reject mode exists for the day the evaluator lands
+        self.assertNotIn("Never key a bone", readme)  # keying a locked bone is allowed (and warned)
+        self.assertNotIn("never key", readme.lower())
+        self.assertNotIn(".;", readme)
+        self.assertNotIn(".;", (folder / "SPEC.md").read_text(encoding="utf-8"))
+        self.assertIn("a `locked` bone renamed, re-parented or deleted in a returned `.geo.json` (the finding names the bone)", readme)
         self.assertIn("**What `check` REJECTS**", readme)
         for r in ap.CHECK_REJECTS:
             self.assertIn(r, readme)
@@ -1015,7 +1039,7 @@ class FixtureCase(unittest.TestCase):
         findings, passed = ap.check_folder(self._returned(good, {"fixture.png": png_bytes(64, 32, 5)}), manifest)
         self.assertTrue(passed, findings)
         self.assertFalse(any(sev == "REJECT" for sev, _ in findings))
-        self.assertTrue(self._has(findings, "OK", "locked bones: 0 of 3 keyed across 0 clip(s) [lock_mode warn]"))
+        self.assertTrue(self._has(findings, "OK", "locked bones: 0 of 3 keyed across 0 clip(s) [lock_mode warn; warn-keyed, refuse-structural] — " + ap.LOCK_POLICY), findings)
         self.assertTrue(self._has(findings, "OK", "checked 5 clip(s), 15 keyframe value(s), 1 texture(s)"))
         self.assertFalse(self._has(findings, "OK", "nothing to report"))
 
@@ -1042,17 +1066,20 @@ class FixtureCase(unittest.TestCase):
         self.assertFalse(passed)
         self.assertTrue(self._has(findings, "REJECT", "canvas 32x32, must stay 64x32"), findings)
 
-        # a keyed locked bone: WARN under the default policy (the manifest says warn), with the policy named in the summary line
+        # a keyed locked bone: allowed and WARNED (the ruled policy, 2026-09-06) — the consequence and the policy named, nothing PROVISIONAL
         locked = json.loads(json.dumps(good))
         locked["animations"]["idle"]["bones"]["hand"] = {"rotation": {"0.0": [0, 0, 0]}}
         findings, passed = ap.check_folder(self._returned(locked), manifest)
         self.assertTrue(passed, findings)
-        self.assertTrue(self._has(findings, "WARN", "clip 'idle' keys 1 locked bone(s): hand"), findings)
-        self.assertTrue(self._has(findings, "WARN", "locked bones: 1 of 3 keyed across 1 clip(s) [lock_mode warn] — " + ap.LOCK_POLICY), findings)
-        # ... and a REJECT when the policy flips (the --lock-mode override, or the manifest's lock_mode)
+        self.assertTrue(self._has(findings, "WARN", "clip 'idle' keys 1 locked bone(s): hand (they carry or parent a hitbox part; the part follows the bone in-game — allowed, keep it deliberate)"), findings)
+        self.assertTrue(self._has(findings, "WARN", "locked bones: 1 of 3 keyed across 1 clip(s) [lock_mode warn; warn-keyed, refuse-structural] — " + ap.LOCK_POLICY), findings)
+        self.assertFalse(any("PROVISIONAL" in msg or "open question 16" in msg for _, msg in findings), findings)
+        # ... and the reject mode stays available for the day the evaluator lands (the --lock-mode override, or the manifest's lock_mode)
         findings, passed = ap.check_folder(self._returned(locked), manifest, lock_mode_override="reject")
         self.assertFalse(passed)
-        self.assertTrue(self._has(findings, "REJECT", "clip 'idle' keys 1 locked bone(s): hand"), findings)
+        self.assertTrue(self._has(findings, "REJECT", "clip 'idle' keys 1 locked bone(s): hand (they carry or parent a hitbox part; REJECTED under lock_mode reject)"), findings)
+        self.assertTrue(self._has(findings, "REJECT", "[lock_mode reject; warn-keyed, refuse-structural] — keys on locked bones are REJECTED in this run "
+                                  "(the reject mode, kept for the day the server-side hitbox evaluator lands); the ruled policy: " + ap.LOCK_POLICY), findings)
         strict = json.loads(manifest.read_text(encoding="utf-8"))
         strict["lock_mode"] = "reject"
         strict_path = self.tmp / "strict.manifest.json"
@@ -1060,6 +1087,16 @@ class FixtureCase(unittest.TestCase):
         findings, passed = ap.check_folder(self._returned(locked), strict_path)
         self.assertFalse(passed)
         self.assertTrue(self._has(findings, "REJECT", "locked bones: 1 of 3 keyed"), findings)
+        # a manifest generated before the ruling (its lock_policy is the old sentence) is flagged; the ruled policy applies regardless
+        stale = json.loads(manifest.read_text(encoding="utf-8"))
+        stale["lock_policy"] = "keying a locked bone is a WARN today ... PROVISIONAL, open question 16"
+        stale_path = self.tmp / "stale.manifest.json"
+        stale_path.write_text(json.dumps(stale), encoding="utf-8")
+        findings, passed = ap.check_folder(self._returned(locked), stale_path)
+        self.assertTrue(passed, findings)
+        self.assertTrue(self._has(findings, "WARN", "lock_policy is not `warn-keyed, refuse-structural` — the package predates the 2026-09-06 ruling"), findings)
+        self.assertTrue(self._has(findings, "WARN", "[lock_mode warn; warn-keyed, refuse-structural] — " + ap.LOCK_POLICY), findings)
+        self.assertFalse(any("PROVISIONAL" in msg for _, msg in findings), findings)
 
         # a _preview file: a WARN marked PROVISIONAL (open question 15), no longer a REJECT
         findings, passed = ap.check_folder(self._returned(good, extra_files={"fixture_preview.animation.json": "{}"}), manifest)
@@ -1163,6 +1200,191 @@ class FixtureCase(unittest.TestCase):
         self.assertFalse(passed)
         self.assertTrue(self._has(findings, "REJECT", "textures/other.png: not one of this entity's textures"), findings)
 
+    def test_check_refuses_a_locked_bone_renamed_reparented_or_deleted(self):
+        """The second half of the ruled policy (2026-09-06): a key on a locked bone warns; its name, parent and presence are refused.
+        A rename is told from a deletion by the bone's body (pivot, bind rotation, cubes) reappearing under another name."""
+        manifest = self._package_fixture()
+        good = self.GOOD
+        self.assertEqual([b["name"] for b in FIXTURE_GEO["minecraft:geometry"][0]["bones"]], ["root", "tail", "arm", "hand"])  # 3 = the synced part
+        summary_ok = "locked bones: 0 of 3 keyed across 0 clip(s) [lock_mode warn; warn-keyed, refuse-structural]"
+
+        def returned_with(geo):
+            return self._returned(good, extra_files={"fixture.geo.json": json.dumps(geo)})
+
+        # renamed: `hand` becomes `paw` (its body reappears under the new name) — the locked bone and the new name are named,
+        # the order of the shared names is kept, and the summary line counts it
+        renamed = json.loads(json.dumps(FIXTURE_GEO))
+        renamed["minecraft:geometry"][0]["bones"][3]["name"] = "paw"
+        findings, passed = ap.check_folder(returned_with(renamed), manifest)
+        self.assertFalse(passed)
+        self.assertTrue(self._has(findings, "REJECT", "bone set/order changed (missing ['hand'], added ['paw'], order kept)"), findings)
+        self.assertTrue(self._has(findings, "REJECT", "locked bone hand renamed to paw (paw is not this rig's name) "
+                                  "— it carries or parents a hitbox part; renaming, re-parenting or deleting a locked bone is refused"), findings)
+        self.assertTrue(self._has(findings, "REJECT", "locked bones: 0 of 3 keyed across 0 clip(s); 1 renamed, re-parented or deleted (hand renamed to paw) — REJECTED "
+                                  "[lock_mode warn; warn-keyed, refuse-structural] — " + ap.LOCK_POLICY), findings)
+        self.assertFalse(any("renamed or deleted (" in msg for _, msg in findings), findings)  # identified: never the hedge
+        # re-parented: `hand` moves from `arm` to `root` (names and order intact)
+        reparented = json.loads(json.dumps(FIXTURE_GEO))
+        reparented["minecraft:geometry"][0]["bones"][3]["parent"] = "root"
+        findings, passed = ap.check_folder(returned_with(reparented), manifest)
+        self.assertFalse(passed)
+        self.assertTrue(self._has(findings, "REJECT", "locked bone hand re-parented (arm -> root) — it carries or parents a hitbox part"), findings)
+        self.assertTrue(self._has(findings, "REJECT", "1 renamed, re-parented or deleted (hand re-parented) — REJECTED"), findings)
+        # re-parented to the top level (the parent field removed) is a re-parent too — never "following" a rename that never happened
+        toplevel = json.loads(json.dumps(FIXTURE_GEO))
+        del toplevel["minecraft:geometry"][0]["bones"][3]["parent"]
+        findings, passed = ap.check_folder(returned_with(toplevel), manifest)
+        self.assertFalse(passed)
+        self.assertTrue(self._has(findings, "REJECT", "locked bone hand re-parented (arm -> None) — it carries or parents a hitbox part"), findings)
+        self.assertTrue(self._has(findings, "REJECT", "1 renamed, re-parented or deleted (hand re-parented) — REJECTED"), findings)
+        # deleted: `hand` is gone and no other bone carries its body
+        deleted = json.loads(json.dumps(FIXTURE_GEO))
+        del deleted["minecraft:geometry"][0]["bones"][3]
+        findings, passed = ap.check_folder(returned_with(deleted), manifest)
+        self.assertFalse(passed)
+        self.assertTrue(self._has(findings, "REJECT", "locked bone hand deleted (missing from the returned rig; no other bone carries its pivot and cubes) — it carries"), findings)
+        self.assertTrue(self._has(findings, "REJECT", "1 renamed, re-parented or deleted (hand deleted) — REJECTED"), findings)
+        # a re-parent beside a rename is still named: every bone present in both rigs is compared whatever the set/order verdict
+        both = json.loads(json.dumps(FIXTURE_GEO))
+        both["minecraft:geometry"][0]["bones"][3]["name"] = "paw"
+        both["minecraft:geometry"][0]["bones"][2]["parent"] = "tail"
+        findings, passed = ap.check_folder(returned_with(both), manifest)
+        self.assertFalse(passed)
+        self.assertTrue(self._has(findings, "REJECT", "locked bone arm re-parented (root -> tail)"), findings)
+        self.assertTrue(self._has(findings, "REJECT", "locked bone hand renamed to paw"), findings)
+        self.assertTrue(self._has(findings, "REJECT", "2 renamed, re-parented or deleted (hand renamed to paw, arm re-parented) — REJECTED"), findings)
+        # the children of a renamed bone follow it (their parent field now says the new name): ONE rename, reported once —
+        # `arm` becomes `limb` and `hand` (parent arm -> limb) is listed under the rename, not as a re-parent of its own
+        limb = json.loads(json.dumps(FIXTURE_GEO))
+        limb["minecraft:geometry"][0]["bones"][2]["name"] = "limb"
+        limb["minecraft:geometry"][0]["bones"][3]["parent"] = "limb"
+        findings, passed = ap.check_folder(returned_with(limb), manifest)
+        self.assertFalse(passed)
+        self.assertTrue(self._has(findings, "REJECT", "locked bone arm renamed to limb (limb is not this rig's name; its 1 child bone(s) follow it (hand) — one rename, reported once) — it carries"), findings)
+        self.assertFalse(any("hand re-parented" in msg for _, msg in findings), findings)  # listed under the rename, not on its own
+        self.assertTrue(self._has(findings, "REJECT", "1 renamed, re-parented or deleted (arm renamed to limb) — REJECTED"), findings)
+        # a free bone re-parented is a REJECT under the rig rule but is not called locked; the locked summary stays OK
+        free = json.loads(json.dumps(FIXTURE_GEO))
+        free["minecraft:geometry"][0]["bones"][1]["parent"] = "arm"
+        findings, passed = ap.check_folder(returned_with(free), manifest)
+        self.assertFalse(passed)
+        self.assertTrue(self._has(findings, "REJECT", "bone tail re-parented (root -> arm)"), findings)
+        self.assertFalse(any("locked bone tail" in msg for _, msg in findings), findings)
+        self.assertTrue(self._has(findings, "OK", summary_ok), findings)
+        # a free bone deleted, and one renamed: the rig rule rejects (the set line, the bone named) but nothing is called locked
+        # and the locked summary stays OK — the lock test is `name in locked`, not every missing bone
+        free_deleted = json.loads(json.dumps(FIXTURE_GEO))
+        del free_deleted["minecraft:geometry"][0]["bones"][1]
+        findings, passed = ap.check_folder(returned_with(free_deleted), manifest)
+        self.assertFalse(passed)
+        self.assertTrue(self._has(findings, "REJECT", "bone set/order changed (missing ['tail'], added [], order kept)"), findings)
+        self.assertTrue(self._has(findings, "REJECT", "bone tail deleted (missing from the returned rig; no other bone carries its pivot and cubes) — every bone name is fixed (README rule 1)"), findings)
+        self.assertFalse(any("locked bone" in msg and not msg.startswith("locked bones:") for _, msg in findings), findings)  # no lock finding; the summary line stays
+        self.assertTrue(self._has(findings, "OK", summary_ok), findings)
+        free_renamed = json.loads(json.dumps(FIXTURE_GEO))
+        free_renamed["minecraft:geometry"][0]["bones"][1]["name"] = "tale"
+        findings, passed = ap.check_folder(returned_with(free_renamed), manifest)
+        self.assertFalse(passed)
+        self.assertTrue(self._has(findings, "REJECT", "bone set/order changed (missing ['tail'], added ['tale'], order kept)"), findings)
+        self.assertTrue(self._has(findings, "REJECT", "bone tail renamed to tale (tale is not this rig's name) — every bone name is fixed (README rule 1)"), findings)
+        self.assertFalse(any("locked bone" in msg and not msg.startswith("locked bones:") for _, msg in findings), findings)  # no lock finding; the summary line stays
+        self.assertTrue(self._has(findings, "OK", summary_ok), findings)
+        # keying stays a WARN beside the structural REJECT: the key is allowed, the structure is not
+        keyed = json.loads(json.dumps(good))
+        keyed["animations"]["idle"]["bones"]["arm"] = {"rotation": {"0.0": [0, 0, 0]}}
+        findings, passed = ap.check_folder(self._returned(keyed, extra_files={"fixture.geo.json": json.dumps(renamed)}), manifest)
+        self.assertFalse(passed)
+        self.assertTrue(self._has(findings, "WARN", "clip 'idle' keys 1 locked bone(s): arm"), findings)
+        self.assertTrue(self._has(findings, "REJECT", "locked bones: 1 of 3 keyed across 1 clip(s); 1 renamed, re-parented or deleted (hand renamed to paw) — REJECTED"), findings)
+
+    def test_check_names_duplicates_renames_order_and_manifest_modes(self):
+        """A duplicated bone name is refused by name and never compared (a collision rename is identified by the body); the
+        set/order line's order verdict is an order test; a manifest without the policy token gets the stale WARN; an unknown
+        lock_mode is a REJECT; a missing rotation reads `absent`; a key on an added or renamed bone says which."""
+        manifest = self._package_fixture()
+        good = self.GOOD
+
+        def returned_with(geo, anim=None):
+            return self._returned(anim or good, extra_files={"fixture.geo.json": json.dumps(geo)})
+
+        # a locked bone listed twice — named as a duplicate, never compared against itself ("parented to itself")
+        dup = json.loads(json.dumps(FIXTURE_GEO))
+        dup["minecraft:geometry"][0]["bones"].append(json.loads(json.dumps(dup["minecraft:geometry"][0]["bones"][3])))
+        findings, passed = ap.check_folder(returned_with(dup), manifest)
+        self.assertFalse(passed)
+        self.assertTrue(self._has(findings, "REJECT", "bone set/order changed (missing [], added [], duplicated ['hand'], order kept)"), findings)
+        self.assertTrue(self._has(findings, "REJECT", "duplicate bone name hand (2 times) — a name listed twice is refused by name; neither copy is compared"), findings)
+        self.assertFalse(any("re-parented" in msg or "pivot moved" in msg for _, msg in findings), findings)
+        # a locked bone renamed onto an existing name (a collision): the rename is identified by its body, the collision named
+        collide = json.loads(json.dumps(FIXTURE_GEO))
+        collide["minecraft:geometry"][0]["bones"][3]["name"] = "tail"
+        findings, passed = ap.check_folder(returned_with(collide), manifest)
+        self.assertFalse(passed)
+        self.assertTrue(self._has(findings, "REJECT", "bone set/order changed (missing ['hand'], added [], duplicated ['tail'], order kept)"), findings)
+        self.assertTrue(self._has(findings, "REJECT", "duplicate bone name tail (2 times)"), findings)
+        self.assertTrue(self._has(findings, "REJECT", "locked bone hand renamed to tail (a name the rig already has: the returned rig has 2 bones named tail) "
+                                  "— it carries or parents a hitbox part; renaming, re-parenting or deleting a locked bone is refused"), findings)
+        self.assertFalse(any("bone tail re-parented" in msg or "bone tail pivot" in msg for _, msg in findings), findings)
+        self.assertTrue(self._has(findings, "REJECT", "1 renamed, re-parented or deleted (hand renamed to tail) — REJECTED"), findings)
+        # a pure swap of two bones (same set, same bodies) is `order changed`; a rename keeping the order is `order kept` (above)
+        swapped = json.loads(json.dumps(FIXTURE_GEO))
+        bones = swapped["minecraft:geometry"][0]["bones"]
+        bones[1], bones[2] = bones[2], bones[1]
+        findings, passed = ap.check_folder(returned_with(swapped), manifest)
+        self.assertFalse(passed)
+        self.assertTrue(self._has(findings, "REJECT", "bone set/order changed (missing [], added [], order changed)"), findings)
+        self.assertEqual([msg for sev, msg in findings if sev == "REJECT" and "set/order" not in msg], [], findings)
+        # a bone without a bind rotation reads `absent`, not None
+        rotated = json.loads(json.dumps(FIXTURE_GEO))
+        rotated["minecraft:geometry"][0]["bones"][0]["rotation"] = [5, 0, 0]
+        findings, passed = ap.check_folder(returned_with(rotated), manifest)
+        self.assertFalse(passed)
+        self.assertTrue(self._has(findings, "REJECT", "bone root bind rotation changed absent -> [5, 0, 0]"), findings)
+        # a key on a bone the returned geo ADDED is an added bone; without a geo it is unknown; on a renamed bone it says so
+        antenna = json.loads(json.dumps(FIXTURE_GEO))
+        antenna["minecraft:geometry"][0]["bones"].append({"name": "antenna", "parent": "root", "pivot": [0, 24, 0]})
+        keyed = json.loads(json.dumps(good))
+        keyed["animations"]["idle"]["bones"]["antenna"] = {"rotation": {"0.0": [0, 0, 0]}}
+        findings, passed = ap.check_folder(returned_with(antenna, keyed), manifest)
+        self.assertFalse(passed)
+        self.assertTrue(self._has(findings, "REJECT", "clip 'idle' keys added bone 'antenna' (an artist-added bone; not in the shipped rig)"), findings)
+        findings, passed = ap.check_folder(self._returned(keyed), manifest)
+        self.assertFalse(passed)
+        self.assertTrue(self._has(findings, "REJECT", "clip 'idle' keys unknown bone 'antenna' (renamed?)"), findings)
+        paw_geo = json.loads(json.dumps(FIXTURE_GEO))
+        paw_geo["minecraft:geometry"][0]["bones"][3]["name"] = "paw"
+        keyed_paw = json.loads(json.dumps(good))
+        keyed_paw["animations"]["idle"]["bones"]["paw"] = {"rotation": {"0.0": [0, 0, 0]}}
+        findings, passed = ap.check_folder(returned_with(paw_geo, keyed_paw), manifest)
+        self.assertFalse(passed)
+        self.assertTrue(self._has(findings, "REJECT", "clip 'idle' keys renamed bone 'paw' (the shipped rig's 'hand', renamed in the returned geo — the rename is refused; key 'hand')"), findings)
+        # a manifest WITHOUT the lock_policy key gets the stale-manifest WARN too (`absent`); the ruled policy applies regardless
+        bare = json.loads(manifest.read_text(encoding="utf-8"))
+        del bare["lock_policy"]
+        bare_path = self.tmp / "bare.manifest.json"
+        bare_path.write_text(json.dumps(bare), encoding="utf-8")
+        findings, passed = ap.check_folder(self._returned(good), bare_path)
+        self.assertTrue(passed, findings)
+        self.assertTrue(self._has(findings, "WARN", "bare.manifest.json: lock_policy is absent, not `warn-keyed, refuse-structural` — the package predates the 2026-09-06 ruling; "
+                                  "regenerate it (the checker applies the ruled policy regardless)"), findings)
+        self.assertTrue(self._has(findings, "OK", "[lock_mode warn; warn-keyed, refuse-structural] — " + ap.LOCK_POLICY), findings)
+        # a lock_mode that is neither warn nor reject — from the manifest or the override — is a REJECT, never a silent warn
+        odd = json.loads(manifest.read_text(encoding="utf-8"))
+        odd["lock_mode"] = "strict"
+        odd_path = self.tmp / "odd.manifest.json"
+        odd_path.write_text(json.dumps(odd), encoding="utf-8")
+        findings, passed = ap.check_folder(self._returned(good), odd_path)
+        self.assertFalse(passed)
+        self.assertTrue(self._has(findings, "REJECT", "lock_mode 'strict' is not warn or reject (odd.manifest.json's lock_mode; `warn` is the ruled policy"), findings)
+        self.assertTrue(self._has(findings, "OK", "[lock_mode strict; warn-keyed, refuse-structural]"), findings)
+        findings, passed = ap.check_folder(self._returned(good), manifest, lock_mode_override="loud")
+        self.assertFalse(passed)
+        self.assertTrue(self._has(findings, "REJECT", "lock_mode 'loud' is not warn or reject (the --lock-mode override;"), findings)
+        import contextlib
+        import io
+        with self.assertRaises(SystemExit), contextlib.redirect_stderr(io.StringIO()):  # the CLI's --lock-mode has choices
+            ap.main(["check", str(self._returned(good)), "--lock-mode", "strict"])
+
     def test_check_on_a_native_species(self):
         out = self.tmp / "out_native"
         ap.build_package(self.repo, out, ["native"])
@@ -1171,7 +1393,8 @@ class FixtureCase(unittest.TestCase):
         findings, passed = ap.check_folder(self._returned(NATIVE_ANIM, anim_name="native.animation.json"), manifest)
         self.assertTrue(passed, findings)
         self.assertTrue(self._has(findings, "WARN", "clip 'stance' keys 1 locked bone(s): head"), findings)
-        self.assertTrue(self._has(findings, "WARN", "locked bones: 1 of 3 keyed across 2 clip(s) [lock_mode warn]"), findings)
+        self.assertTrue(self._has(findings, "WARN", "locked bones: 1 of 3 keyed across 2 clip(s) [lock_mode warn; warn-keyed, refuse-structural] — " + ap.LOCK_POLICY), findings)
+        self.assertFalse(any("PROVISIONAL" in msg for _, msg in findings), findings)
         # a clip outside the native set — including idle_alt_N — is rejected
         extra = json.loads(json.dumps(NATIVE_ANIM))
         extra["animations"]["fly"] = {"loop": True, "animation_length": 1.0, "bones": {"tail": {"rotation": {"0.0": [0, 0, 0]}}}}
@@ -1180,9 +1403,10 @@ class FixtureCase(unittest.TestCase):
         self.assertFalse(passed)
         self.assertTrue(self._has(findings, "REJECT", "clip 'fly' is not in the SPEC"), findings)
         self.assertTrue(self._has(findings, "REJECT", "clip 'idle_alt_1' is not in the SPEC (renamed or added); this creature's native clip set accepts no idle_alt_N"), findings)
-        # the REJECT policy would fail the shipped file itself
+        # the reject mode (kept for the day the evaluator lands) would fail the shipped file itself
         findings, passed = ap.check_folder(self._returned(NATIVE_ANIM, anim_name="native.animation.json"), manifest, lock_mode_override="reject")
         self.assertFalse(passed)
+        self.assertTrue(self._has(findings, "REJECT", "the reject mode, kept for the day the server-side hitbox evaluator lands"), findings)
 
     def test_package_refuses_repository_artist_handoff(self):
         with self.assertRaises(SystemExit):

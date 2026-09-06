@@ -19,7 +19,8 @@ Subcommands (standard library only; Python 3.11+):
     bbmodel ENTITY --out DIR          entities/<registry>/<name>.bbmodel (Blockbench project)
     roundtrip ENTITY [--out DIR]      .bbmodel -> geo + animation JSON -> semantic diff vs shipped
     package      --out DIR            the whole tree for the landed species + dryrun_summary
-    check FOLDER [--manifest FILE]    validate a returned artist folder against its manifest
+    check FOLDER [--manifest FILE] [--lock-mode warn|reject]
+                                      validate a returned artist folder against its manifest
 
 Every generated text file is written with LF endings and UTF-8.
 """
@@ -38,11 +39,11 @@ import re
 import struct
 import sys
 import uuid
-from collections import OrderedDict, defaultdict
+from collections import Counter, OrderedDict, defaultdict
 from pathlib import Path
 from typing import Any, Iterable
 
-TOOL_VERSION = "0.2.0 (slice (f) dry run after the refuter, 2026-09-06)"
+TOOL_VERSION = "0.2.1 (slice (f), the locked-bone policy as ruled, 2026-09-06)"
 
 ROOT = Path(__file__).resolve().parent.parent
 BB_NAMESPACE = uuid.UUID("6f0b4b2e-9d1c-4a7e-8f3a-2c5e1d7b9a10")  # deterministic .bbmodel uuids
@@ -51,15 +52,18 @@ CONTRACT_CLIPS_LOOP = ("idle", "walk", "swim", "fly", "aggro_idle", "calm_idle")
 CONTRACT_CLIPS_TRIGGERED = OrderedDict((("attack", "false"), ("hurt", "false"), ("death", "hold_on_last_frame")))
 CONTRACT_CLIP_NAMES = CONTRACT_CLIPS_LOOP + tuple(CONTRACT_CLIPS_TRIGGERED)
 
-# ONE locked-bone policy, stated identically in README_FIRST rule 6, SPEC §3 / §7 and `check`'s summary line.
-# The contract (§8.1 / P7) says the validator REJECTS a key on a SPEC-locked bone; the pilot boss's shipped
-# clips key 26 of her 27 locked bones, so REJECT would fail her own baseline. Until the owner rules (open
-# question 16, and §8.1's "locked: until evaluator"), the checker WARNS. `lock_mode` in the manifest is the
-# one switch that flips it to REJECT.
+# ONE locked-bone policy (owner 2026-09-06, scope addendum item 24 (18)), stated identically in README_FIRST rule 6,
+# SPEC §3 / §5 / §7 / §11 and `check`'s summary line: keying a locked bone is allowed and WARNED — the SPEC states the
+# consequence (the hitbox part follows the bone in-game); renaming, re-parenting or deleting a locked bone is REFUSED.
+# The reject mode for keys (`lock_mode: reject` in the manifest, or `check --lock-mode reject`) stays available for the
+# day the server-side hitbox evaluator lands; it is not the policy today. (Contract §8.1 / P7 wrote REJECT for a key on a
+# locked bone; the pilot boss's shipped clips key 26 of her 27 locked bones — allowed and warned under the ruling.)
 LOCK_MODE_DEFAULT = "warn"
-LOCK_POLICY = ("keying a locked bone is a WARN today and becomes a REJECT when the server-side hitbox evaluator lands "
-               "(contract §8.1 / P7 say REJECT; the pilot boss's shipped clips key 26 of her 27 locked bones, so REJECT "
-               "would fail her own baseline) — PROVISIONAL, open question 16")
+LOCK_POLICY_ID = "warn-keyed, refuse-structural"  # the manifest's `lock_policy` field; `check` prints it beside the sentence
+LOCK_POLICY = ("Keying a locked bone is allowed; the checker warns, and the hitbox part follows the bone in-game "
+               "(the consequence, so keep such keys deliberate). Renaming, re-parenting or deleting a locked bone is refused.")
+LOCK_REJECT_MODE = ("A reject mode for keys on locked bones stays available for the day the server-side hitbox evaluator lands "
+                    "(`check --lock-mode reject`, or `lock_mode: reject` in the manifest); it is not today's policy.")
 
 # `check`'s rule table (README_FIRST "what check enforces" and SPEC §11 quote this list; check_folder implements it).
 ROTATION_BOUND_DEG = 3600.0
@@ -74,10 +78,11 @@ CHECK_REJECTS = [
     f"|rotation| > {ROTATION_BOUND_DEG:.0f} degrees or |position| > {POSITION_BOUND:.0f} units",
     "a key later than the clip's `animation_length` (a declared length shorter than the last key)",
     "a returned `.geo.json` whose bones, parents, pivots, rotations, cubes, UVs or canvas differ from the shipped rig",
+    "a `locked` bone renamed, re-parented or deleted in a returned `.geo.json` (the finding names the bone)",
     "a texture that is not this creature's, or whose canvas size changed",
 ]
 CHECK_WARNS = [
-    "a key on a `locked` bone — " + LOCK_POLICY,
+    "a key on a `locked` bone (the clip and the bones are named) — " + LOCK_POLICY,
     "a `_preview` file delivered (a Blockbench-only aid; whether the package ships one is open question 15) — PROVISIONAL",
     "a returned `.geo.json` at all (the shipped rig is used regardless — do not re-export it)",
     "a clip length far from the stated one (PROVISIONAL rule); an optional clip not delivered",
@@ -1603,7 +1608,7 @@ def contract_drives(species: "Species", inv: dict[str, Any]) -> list[dict[str, s
 # ---------------------------------------------------------------------------
 
 DEFAULT_LABELS: dict[str, str] = {
-    "root": "root (the whole body; the entity's yaw turns it — never keyed by an artist clip)",
+    "root": "root (the whole body; the entity's yaw turns it — a key here moves every part with it: allowed and warned like any locked bone, leave it to the yaw)",
     "body": "body (torso)", "head": "head", "nose": "nose", "teeth": "front teeth", "tail": "tail",
     "neck": "neck", "chest": "chest", "torso": "torso", "hips": "hips", "stomach": "stomach",
     "lff": "left front foot", "lrf": "left rear foot", "rff": "right front foot", "rrf": "right rear foot",
@@ -1765,12 +1770,11 @@ def frequency_groups(species: "Species") -> list[dict[str, Any]]:
 
 
 def lock_note(keyed_locked: list[str]) -> str:
-    """The per-clip consequence of keying locked bones under each policy (D1: said wherever a verdict invites an edit)."""
+    """The per-clip consequence of keying locked bones — the one policy sentence (D1: said wherever a verdict invites an edit)."""
     if not keyed_locked:
         return ""
     shown = ", ".join(keyed_locked[:4]) + (f", +{len(keyed_locked) - 4} more" if len(keyed_locked) > 4 else "")
-    return (f"keys {len(keyed_locked)} locked bone(s) ({shown}): a WARN from `check` today; a REJECT once the server-side evaluator lands — "
-            f"then this clip must be re-authored on unlocked bones, or the lock lifted per bone by ruling (open question 16)")
+    return f"keys {len(keyed_locked)} locked bone(s) ({shown}): {LOCK_POLICY}"
 
 
 def clip_rows(species: "Species", inv: dict[str, Any], anim: dict[str, Any], groups: list[dict[str, Any]],
@@ -1797,9 +1801,11 @@ def clip_rows(species: "Species", inv: dict[str, Any], anim: dict[str, Any], gro
             v = verdicts.get(name, {})
             keyed_locked = sorted(set(clip.get("bones", {})) & set(locked))
             note = v.get("note", "")
+            if "PROVISIONAL" not in note:  # the contract mapping of a native clip is the provisional part — not the lock policy
+                note = (note + " — " if note else "") + "PROVISIONAL (its contract mapping: open question 16)"
             ln = lock_note(keyed_locked)
             if ln:
-                note = (note + " — " if note else "") + ln
+                note = note + " — " + ln
             rows.append({"name": name, "loop": loop_text, "layer": layer, "trigger": trigger,
                          "bones": f"{len(clip.get('bones', {}))} bones keyed" + (f", {len(keyed_locked)} of them locked" if keyed_locked else ""),
                          "length_seconds": clip.get("animation_length"),
@@ -1919,11 +1925,11 @@ def spec_document(species: "Species", repo: "Repo", catalog: "TextureCatalog", i
     keyed_locked = sorted(shipped_keyed_bones(anim) & set(locked))
     keyed_locked_by_clip = {name: sorted(set(clip.get("bones", {})) & set(locked)) for name, clip in anim.get("animations", {}).items()}
     keyed_locked_by_clip = {k: v for k, v in keyed_locked_by_clip.items() if v}
-    lock_mode = LOCK_MODE_DEFAULT  # one policy for every species (LOCK_POLICY); the manifest key is the switch
+    lock_mode = LOCK_MODE_DEFAULT  # one policy for every species (LOCK_POLICY); the manifest key is the reject-mode switch
     if keyed_locked:
         repo.warnings.add(species.registry, "LOCKED_BONES_KEYED",
                           f"the shipped clips key {len(keyed_locked)} of the {len(locked)} SPEC-locked bones ({', '.join(keyed_locked[:6])}...): "
-                          f"{LOCK_POLICY}")
+                          f"allowed and warned — {LOCK_POLICY}")
     accepted_clips = [c["name"] for c in clips]
     allow_idle_alt = bool(clips) and not any(c["role"] == "native" for c in clips)
     wishlist_notes: list[str] = []
@@ -1978,8 +1984,8 @@ def spec_document(species: "Species", repo: "Repo", catalog: "TextureCatalog", i
     L.append("")
     L.append("Never rename, delete or re-parent a bone: code and hitboxes reference them by name. Left/right in the labels follow the model "
              "author's own naming (the side the legacy name calls left); Blockbench mirrors X for display, so the author's left appears on your right when the mob faces you. "
-             "`gait bone` = its motion is scaled by walking speed in-game (P3). `locked` = it carries or parents a hitbox part (contract §8.1); "
-             + LOCK_POLICY + ".")
+             "`gait bone` = its motion is scaled by walking speed in-game (P3). `locked` = it carries or parents a hitbox part (contract §8.1). "
+             + LOCK_POLICY)
     L.append("")
     rows = []
     for r in glossary:
@@ -2055,7 +2061,7 @@ def spec_document(species: "Species", repo: "Repo", catalog: "TextureCatalog", i
                      "read from `registerControllers` and the trigger call sites. `check` rejects any other clip name (including `idle_alt_N`: the native "
                      "controllers roll no idle variants). Its mapping onto the standard contract is PROVISIONAL (open question 16 names it the pilot boss "
                      "candidate); a contract name that is not in this set is listed under 'What fires each contract clip' as not used by this species. "
-                     f"Locked bones: {LOCK_POLICY}.")
+                     f"Locked bones: {LOCK_POLICY}")
         L.append("")
     if seed.get("wishlist"):
         L.append("### 5.1 Wishlist (AUTHORED — only what `check` accepts today; anything else is marked)")
@@ -2146,14 +2152,15 @@ def spec_document(species: "Species", repo: "Repo", catalog: "TextureCatalog", i
     if locked:
         prof = species.profile or {}
         L.append(f"MultiHitboxLib profile `{species.profile_name}.json` (sync-with-model {prof.get('sync-with-model')}, trust-client {prof.get('trust-client')}). "
-                 f"The synced part bones and every ancestor are SPEC-locked (contract §8.1): never rename them. Keys on them: "
-                 + (LOCK_POLICY if lock_mode == "warn" else "REJECTED by `check` (this manifest's lock_mode is `reject`)") + ".")
+                 f"The synced part bones and every ancestor are SPEC-locked (contract §8.1). {LOCK_POLICY} "
+                 + (LOCK_REJECT_MODE if lock_mode == "warn"
+                    else "This manifest's lock_mode is `reject`: `check` REJECTS keys on them (the reject mode, kept for the day the server-side hitbox evaluator lands)."))
         L.append("")
         if keyed_locked_by_clip:
             L.append(f"The shipped clips already key {len(keyed_locked)} of these {len(locked)} bones — "
                      + "; ".join(f"`{c}` keys {len(v)}" for c, v in keyed_locked_by_clip.items())
-                     + ". Under today's policy those are warnings; under the REJECT policy the shipped file itself would fail — which is why the ruling is pending "
-                     "and why every §5 verdict that invites an edit to one of these clips says what its keys mean under each policy.")
+                     + " — allowed and warned as above: the hitbox parts follow those bones in-game, which is how the shipped boss already animates; "
+                     "every §5 verdict that invites an edit to one of these clips repeats the consequence.")
             L.append("")
         L.append(md_table(["bone", "why"], [[f"`{b}`", why] for b, why in locked.items()]))
     else:
@@ -2187,14 +2194,15 @@ def spec_document(species: "Species", repo: "Repo", catalog: "TextureCatalog", i
     L.append("## 11. What 'done' looks like for this entity")
     L.append("")
     anim_name = species.anim_path.name if species.anim_path else species.registry + ".animation.json"
-    L.append(f"1. `{species.geo_path.name}` returned UNCHANGED (or not at all): every bone name, parent, pivot, rotation and cube as listed in §3 and the shipped file.")
+    L.append(f"1. `{species.geo_path.name}` returned UNCHANGED (or not at all): every bone name, parent, pivot, rotation and cube as listed in §3 and the shipped file "
+             "(a `locked` bone renamed, re-parented or deleted is refused by name).")
     if clips:
-        L.append(f"2. `{anim_name}` — that exact file name, one file — (format 1.8.0) holding the clips of §5 with the loop values shown; keys on `locked` bones: {LOCK_POLICY}.")
+        L.append(f"2. `{anim_name}` — that exact file name, one file — (format 1.8.0) holding the clips of §5 with the loop values shown; keys on `locked` bones: {LOCK_POLICY}")
     else:
         L.append(f"2. No animation file (this tier takes no artist clips; an `{anim_name}` with zero clips is tolerated); texture edits only, if any.")
     L.append("3. Textures at their canvas sizes under the canonical names of §8 (aliases are fanned out on import).")
     L.append("4. Optionally the `.bbmodel` working file. `tools/artist_package.py check <your folder>` must pass before hand-in. It REJECTS: "
-             + "; ".join(CHECK_REJECTS) + ". It WARNS on: " + "; ".join(CHECK_WARNS) + ".")
+             + "; ".join(r.rstrip(".") for r in CHECK_REJECTS) + ". It WARNS on: " + "; ".join(w.rstrip(".") for w in CHECK_WARNS) + ".")  # an entry ending in a period joins without ".;"
     L.append("")
 
     manifest = {
@@ -2207,7 +2215,7 @@ def spec_document(species: "Species", repo: "Repo", catalog: "TextureCatalog", i
                    "mirror": bool(by_name[r["name"]].get("mirror", False)),
                    "cubes": [cube_signature(c, bool(by_name[r["name"]].get("mirror", False))) for c in by_name[r["name"]].get("cubes", [])]}
                   for r in glossary],
-        "locked_bones": list(locked), "lock_mode": lock_mode, "lock_policy": LOCK_POLICY,
+        "locked_bones": list(locked), "lock_mode": lock_mode, "lock_policy": LOCK_POLICY_ID, "lock_policy_text": LOCK_POLICY,
         "keyed_locked_by_shipped_clip": keyed_locked_by_clip,
         "native": any(c["role"] == "native" for c in clips),
         "clips": [{"name": c["name"], "loop": c["loop"], "role": c["role"], "code_triggered": c["code_triggered"], "required": c["required"],
@@ -2802,7 +2810,7 @@ def readme_document(repo: "Repo", manifests: dict[str, dict[str, Any]]) -> str:
     L.append("3. **Set each clip's loop mode exactly as its table says**: `true` for cycles (idle, walk), `false` for one-shot actions (attack, hurt), `hold_on_last_frame` only where written (death).")
     L.append("4. **Keep texture canvas sizes.** A 64x32 texture stays 64x32.")
     L.append("5. **Keep each clip's length near the period the sheet states** unless the sheet says the length is free. (In-game, loops play at the creature's own tempo whatever their length — the sheet's tempo table explains; PROVISIONAL, see below.)")
-    L.append(f"6. **Never key a bone the sheet marks `locked`.** Those carry hitboxes (contract §8.1). What the checker does about it: {LOCK_POLICY}.")
+    L.append(f"6. **A bone the sheet marks `locked` carries or parents a hitbox part (contract §8.1).** {LOCK_POLICY} {LOCK_REJECT_MODE}")
     L.append("7. Rotation / position / scale keys, linear or Catmull-Rom curves (and GeckoLib easings), sound and particle keys are fine. No Molang expressions, no custom-instruction keys, "
              "no `_preview` files in a delivery (a Blockbench-only aid — the checker warns; PROVISIONAL, open question 15).")
     L.append("")
@@ -3051,10 +3059,36 @@ def validate_channel(where: str, channel: str, keys: Any, findings: list[tuple[s
     return last_time, checked
 
 
+def _shown(v: Any) -> Any:
+    """A manifest / geo value in a finding: `absent` when the file has none (a bone without a rotation), the value otherwise."""
+    return "absent" if v is None else v
+
+
+def _bone_fingerprint_matches(mb: dict[str, Any], b: dict[str, Any]) -> bool:
+    """True when a returned bone carries the manifest bone's body — pivot, bind rotation and cube signatures — which is what a
+    rename keeps and a deletion loses; the geo comparison uses it to tell a bone renamed from one deleted."""
+    try:
+        if not _close(vec(b.get("pivot")), vec(mb.get("pivot"))) or not _close(vec(b.get("rotation")), vec(mb.get("rotation"))):
+            return False
+        sigs = mb.get("cubes")
+        if sigs is None:
+            return True
+        cubes = b.get("cubes") or []
+        mirror = bool(b.get("mirror", False))
+        return len(cubes) == len(sigs) and not any(signature_differences(sig, cube_signature(c, mirror)) for c, sig in zip(cubes, sigs))
+    except (TypeError, ValueError, AttributeError, KeyError):
+        return False
+
+
 def check_folder(folder: Path, manifest_path: Path | None = None, lock_mode_override: str | None = None) -> tuple[list[tuple[str, str]], bool]:
     """(findings [(severity, message)], passed). Severity: REJECT / WARN / OK. Implements CHECK_REJECTS / CHECK_WARNS
     exactly (README_FIRST and SPEC §11 quote those lists); the last lines are always a locked-bone summary naming the
-    policy and a "checked ..." summary — never "nothing to report"."""
+    policy (LOCK_POLICY: a key on a locked bone WARNS — a REJECT only under lock_mode `reject`; a locked bone renamed,
+    re-parented or deleted in a returned geo is a REJECT that names the bone) and a "checked ..." summary — never
+    "nothing to report". A returned geo is compared bone by bone; a bone missing from it is matched by its body (pivot, bind
+    rotation, cubes) against the bones the shipped rig has not, to say `renamed to Y` or `deleted` (`renamed or deleted` only
+    when several match); a duplicated name is refused by name and never compared; the set/order line's order verdict compares
+    the ORDER of the names both rigs share."""
     findings: list[tuple[str, str]] = []
     if not folder.exists() or not folder.is_dir():
         return [("REJECT", f"folder {folder} does not exist: nothing was returned")], False
@@ -3069,12 +3103,22 @@ def check_folder(folder: Path, manifest_path: Path | None = None, lock_mode_over
     by_manifest = {b["name"]: b for b in m["bones"]}
     locked = set(m.get("locked_bones", []))
     lock_mode = lock_mode_override or m.get("lock_mode", LOCK_MODE_DEFAULT)
-    lock_policy = m.get("lock_policy", LOCK_POLICY)
+    if lock_mode not in ("warn", "reject"):  # neither the ruled policy nor the reject mode: refused, never a silent warn
+        source = "the --lock-mode override" if lock_mode_override else f"{manifest_path.name}'s lock_mode"
+        findings.append(("REJECT", f"lock_mode '{lock_mode}' is not warn or reject ({source}; `warn` is the ruled policy, `reject` the mode kept for "
+                                   "the day the server-side hitbox evaluator lands — regenerate the package or pass --lock-mode warn|reject)"))
+    policy_seen = m.get("lock_policy")  # the value itself is never echoed: a 0.2.0 manifest's is the pre-ruling PROVISIONAL sentence
+    if policy_seen != LOCK_POLICY_ID:  # a package generated before the ruling, or one that never carried the token
+        findings.append(("WARN", f"{manifest_path.name}: lock_policy is {'absent, not' if policy_seen is None else 'not'} `{LOCK_POLICY_ID}` — "
+                         "the package predates the 2026-09-06 ruling; regenerate it (the checker applies the ruled policy regardless)"))
+    locked_structural: list[str] = []  # locked bones renamed, re-parented or deleted in a returned geo (each a REJECT, by name)
     clips_by_name = {c["name"]: c for c in m.get("clips", [])}
     expected_anim = m.get("animation_file") or f"{m.get('registry', 'entity')}.animation.json"
     for p in folder.rglob("*"):
         if p.is_file() and "_preview" in p.name:
             findings.append(("WARN", f"{p.name}: a _preview file is a Blockbench-only aid and is not delivered — PROVISIONAL (open question 15)"))
+    added_names: set[str] = set()  # bones a returned geo lists that the shipped rig has not (a key on one is "an added bone")
+    renamed_names: dict[str, str] = {}  # returned name -> shipped name, for every rename a returned geo's fingerprints identify
     # --- a returned geo: must equal the shipped rig in every respect the manifest records ---
     for gp in sorted(folder.glob("*.geo.json")):
         try:
@@ -3082,30 +3126,94 @@ def check_folder(folder: Path, manifest_path: Path | None = None, lock_mode_over
         except Exception as exc:  # noqa: BLE001 - the artist's file may be anything
             findings.append(("REJECT", f"{gp.name}: unreadable geo ({exc})"))
             continue
-        names = [b["name"] for b in g.get("bones", [])]
+        returned_bones = [b for b in g.get("bones", []) if isinstance(b, dict) and "name" in b]
+        names = [b["name"] for b in returned_bones]
+        manifest_set, returned_set = set(bone_names), set(names)
+        dups = {n: c for n, c in Counter(names).items() if c > 1}  # a name listed twice is refused by name and never compared
+        by = {b["name"]: b for b in returned_bones if b["name"] not in dups}
+        missing = [n for n in bone_names if n not in returned_set]  # rig order
+        added = list(dict.fromkeys(n for n in names if n not in manifest_set))
+        added_names.update(added)
+        # A rename keeps the bone's body (pivot, bind rotation, cubes), so a missing bone is matched by that fingerprint against
+        # the bones the shipped rig has not: the added ones and every copy of a duplicated name (a rename onto an existing
+        # name). One match each way identifies the rename; none is a deletion; several leave "renamed or deleted".
+        candidates = [(i, b) for i, b in enumerate(returned_bones) if b["name"] not in manifest_set or b["name"] in dups]
+        matches = {n: [i for i, b in candidates if _bone_fingerprint_matches(by_manifest[n], b)] for n in missing}
+        claimed = Counter(i for hits in matches.values() for i in hits)
+        renamed_bone = {n: returned_bones[hits[0]] for n, hits in matches.items() if len(hits) == 1 and claimed[hits[0]] == 1}
+        renames = {n: b["name"] for n, b in renamed_bone.items()}  # shipped name -> the returned name that carries its body
+        renamed_names.update({new: old for old, new in renames.items()})
+
+        def follows_rename(mb: dict[str, Any], b: dict[str, Any]) -> bool:
+            """The parent field changed from a renamed bone to that bone's new name: the child followed the rename, it was not re-parented."""
+            old = mb.get("parent")
+            return old is not None and old in renames and renames[old] == (b.get("parent") or None)
+
+        followers: dict[str, list[str]] = defaultdict(list)  # renamed bone -> the children whose parent field followed it
+        for mb in m["bones"]:
+            b = by.get(mb["name"]) or renamed_bone.get(mb["name"])
+            if b is not None and follows_rename(mb, b):
+                followers[mb["parent"]].append(mb["name"])
         if names != bone_names:
-            missing = sorted(set(bone_names) - set(names))
-            added = sorted(set(names) - set(bone_names))
-            findings.append(("REJECT", f"{gp.name}: bone set/order changed (missing {missing[:5]}, added {added[:5]}, order {'kept' if sorted(names) == sorted(bone_names) else 'changed'})"))
-        else:
-            by = {b["name"]: b for b in g["bones"]}
-            for mb in m["bones"]:
-                b = by[mb["name"]]
-                if (b.get("parent") or None) != mb.get("parent"):
-                    findings.append(("REJECT", f"{gp.name}: bone {mb['name']} re-parented ({mb.get('parent')} -> {b.get('parent')})"))
-                if not _close(vec(b.get("pivot")), vec(mb.get("pivot"))):
-                    findings.append(("REJECT", f"{gp.name}: bone {mb['name']} pivot moved {mb.get('pivot')} -> {b.get('pivot')}"))
-                if not _close(vec(b.get("rotation")), vec(mb.get("rotation"))):
-                    findings.append(("REJECT", f"{gp.name}: bone {mb['name']} bind rotation changed {mb.get('rotation')} -> {b.get('rotation')}"))
-                if "cubes" in mb:
-                    mirror = bool(b.get("mirror", False))
-                    cubes = b.get("cubes", [])
-                    if len(cubes) != len(mb["cubes"]):
-                        findings.append(("REJECT", f"{gp.name}: bone {mb['name']} cube count {len(mb['cubes'])} -> {len(cubes)}"))
-                    else:
-                        for i, (c, sig) in enumerate(zip(cubes, mb["cubes"])):
-                            for d in signature_differences(sig, cube_signature(c, mirror)):
-                                findings.append(("REJECT", f"{gp.name}: bone {mb['name']} cube[{i}] {d} (cubes, sizes and UVs must stay as shipped)"))
+            common_returned = list(dict.fromkeys(n for n in names if n in manifest_set))
+            common_manifest = [n for n in bone_names if n in returned_set]
+            order = "kept" if common_returned == common_manifest else "changed"  # the ORDER of the names both rigs share
+            findings.append(("REJECT", f"{gp.name}: bone set/order changed (missing {sorted(missing)[:5]}, added {sorted(added)[:5]}, "
+                             + (f"duplicated {sorted(dups)[:5]}, " if dups else "") + f"order {order})"))
+        for n, c in sorted(dups.items()):
+            findings.append(("REJECT", f"{gp.name}: duplicate bone name {n} ({c} times) — a name listed twice is refused by name; neither copy is compared"))
+        refused = " — it carries or parents a hitbox part; renaming, re-parenting or deleting a locked bone is refused"
+        fixed = " — every bone name is fixed (README rule 1)"
+        for n in missing:
+            mb = by_manifest[n]
+            what, tail = ("locked bone", refused) if n in locked else ("bone", fixed)  # the second half of LOCK_POLICY, by name
+            if n in renamed_bone:
+                nb, new = renamed_bone[n], renames[n]
+                where = (f"a name the rig already has: the returned rig has {dups[new]} bones named {new}" if new in dups
+                         else f"{new} is not this rig's name")
+                kids = followers.get(n, [])
+                if kids:  # one rename is one finding: the children whose parent field followed it are listed here, not as re-parents
+                    where += (f"; its {len(kids)} child bone(s) follow it ({', '.join(kids[:6])}"
+                              + (f", +{len(kids) - 6} more" if len(kids) > 6 else "") + ") — one rename, reported once")
+                verb = f"renamed to {new}"
+                if (nb.get("parent") or None) != mb.get("parent") and not follows_rename(mb, nb):
+                    verb += f" and re-parented ({mb.get('parent')} -> {nb.get('parent') or None})"
+                findings.append(("REJECT", f"{gp.name}: {what} {n} {verb} ({where}){tail}"))
+            elif not matches[n]:
+                verb = "deleted"
+                findings.append(("REJECT", f"{gp.name}: {what} {n} deleted (missing from the returned rig; no other bone carries its pivot and cubes){tail}"))
+            else:  # several bones carry its body: which one is the rename cannot be told
+                verb = "renamed or deleted"
+                twins = sorted({returned_bones[i]["name"] for i in matches[n]})
+                findings.append(("REJECT", f"{gp.name}: {what} {n} renamed or deleted (missing from the returned rig; the bones {twins[:5]} all carry its pivot and cubes){tail}"))
+            if n in locked:
+                locked_structural.append(f"{n} {verb}")
+        # every bone present in both is compared whatever the set/order verdict (a re-parent beside a rename is still named);
+        # a renamed bone's body already matched, a duplicated name is not compared (which copy would be the bone?)
+        for mb in m["bones"]:
+            b = by.get(mb["name"])
+            if b is None:
+                continue
+            new_parent = b.get("parent") or None
+            if new_parent != mb.get("parent") and not follows_rename(mb, b):
+                if mb["name"] in locked:
+                    locked_structural.append(f"{mb['name']} re-parented")
+                    findings.append(("REJECT", f"{gp.name}: locked bone {mb['name']} re-parented ({mb.get('parent')} -> {new_parent}){refused}"))
+                else:
+                    findings.append(("REJECT", f"{gp.name}: bone {mb['name']} re-parented ({mb.get('parent')} -> {new_parent})"))
+            if not _close(vec(b.get("pivot")), vec(mb.get("pivot"))):
+                findings.append(("REJECT", f"{gp.name}: bone {mb['name']} pivot moved {_shown(mb.get('pivot'))} -> {_shown(b.get('pivot'))}"))
+            if not _close(vec(b.get("rotation")), vec(mb.get("rotation"))):
+                findings.append(("REJECT", f"{gp.name}: bone {mb['name']} bind rotation changed {_shown(mb.get('rotation'))} -> {_shown(b.get('rotation'))}"))
+            if "cubes" in mb:
+                mirror = bool(b.get("mirror", False))
+                cubes = b.get("cubes", [])
+                if len(cubes) != len(mb["cubes"]):
+                    findings.append(("REJECT", f"{gp.name}: bone {mb['name']} cube count {len(mb['cubes'])} -> {len(cubes)}"))
+                else:
+                    for i, (c, sig) in enumerate(zip(cubes, mb["cubes"])):
+                        for d in signature_differences(sig, cube_signature(c, mirror)):
+                            findings.append(("REJECT", f"{gp.name}: bone {mb['name']} cube[{i}] {d} (cubes, sizes and UVs must stay as shipped)"))
         desc = g.get("description", {})
         ts = m.get("texture_size")
         if ts and "texture_width" in desc and [desc.get("texture_width"), desc.get("texture_height")] != list(ts):
@@ -3173,7 +3281,13 @@ def check_folder(folder: Path, manifest_path: Path | None = None, lock_mode_over
                 bones = {}
             for bone, chans in bones.items():
                 if bone not in bone_names:
-                    findings.append(("REJECT", f"{ap_.name}: clip '{name}' keys unknown bone '{bone}' (renamed?)"))
+                    if bone in renamed_names:  # a returned geo renamed a shipped bone to this name (refused above)
+                        findings.append(("REJECT", f"{ap_.name}: clip '{name}' keys renamed bone '{bone}' (the shipped rig's '{renamed_names[bone]}', "
+                                                   f"renamed in the returned geo — the rename is refused; key '{renamed_names[bone]}')"))
+                    elif bone in added_names:  # a returned geo lists it as an added bone
+                        findings.append(("REJECT", f"{ap_.name}: clip '{name}' keys added bone '{bone}' (an artist-added bone; not in the shipped rig)"))
+                    else:
+                        findings.append(("REJECT", f"{ap_.name}: clip '{name}' keys unknown bone '{bone}' (renamed?)"))
                 elif bone in locked:
                     locked_hits.setdefault(name, []).append(bone)
                 if not isinstance(chans, dict):
@@ -3202,7 +3316,8 @@ def check_folder(folder: Path, manifest_path: Path | None = None, lock_mode_over
     lock_sev = "REJECT" if lock_mode == "reject" else "WARN"
     for name, bones_hit in locked_hits.items():
         shown = ", ".join(bones_hit[:6]) + (f", +{len(bones_hit) - 6} more" if len(bones_hit) > 6 else "")
-        findings.append((lock_sev, f"clip '{name}' keys {len(bones_hit)} locked bone(s): {shown} (they carry or parent a hitbox part)"))
+        findings.append((lock_sev, f"clip '{name}' keys {len(bones_hit)} locked bone(s): {shown} (they carry or parent a hitbox part; "
+                         + ("the part follows the bone in-game — allowed, keep it deliberate)" if lock_sev == "WARN" else "REJECTED under lock_mode reject)")))
     # --- textures ---
     tex_dir = folder / "textures"
     known = {t["canonical"]: t for t in m.get("textures", [])}
@@ -3233,8 +3348,15 @@ def check_folder(folder: Path, manifest_path: Path | None = None, lock_mode_over
     # --- the summary lines (always present) ---
     keyed_total = len({b for bones_hit in locked_hits.values() for b in bones_hit})
     if locked:
-        sev = lock_sev if locked_hits else "OK"
-        findings.append((sev, f"locked bones: {keyed_total} of {len(locked)} keyed across {len(locked_hits)} clip(s) [lock_mode {lock_mode}] — {lock_policy}"))
+        sev = "REJECT" if locked_structural else (lock_sev if locked_hits else "OK")
+        structural = ((f"; {len(locked_structural)} renamed, re-parented or deleted ({', '.join(locked_structural[:6])}"
+                       + (f", +{len(locked_structural) - 6} more" if len(locked_structural) > 6 else "") + ") — REJECTED")
+                      if locked_structural else "")
+        policy = (LOCK_POLICY if lock_mode != "reject"
+                  else "keys on locked bones are REJECTED in this run (the reject mode, kept for the day the server-side hitbox evaluator lands); "
+                       f"the ruled policy: {LOCK_POLICY}")
+        findings.append((sev, f"locked bones: {keyed_total} of {len(locked)} keyed across {len(locked_hits)} clip(s){structural} "
+                              f"[lock_mode {lock_mode}; {LOCK_POLICY_ID}] — {policy}"))
     else:
         findings.append(("OK", "locked bones: none on this rig"))
     passed = not any(sev == "REJECT" for sev, _ in findings)
@@ -3264,7 +3386,8 @@ def main(argv: list[str] | None = None) -> int:
     p = sub.add_parser("package"); p.add_argument("--out", type=Path, required=True); p.add_argument("--entities", nargs="*"); p.add_argument("--no-roundtrip", action="store_true")
     p = sub.add_parser("check"); p.add_argument("folder", type=Path); p.add_argument("--manifest", type=Path)
     p.add_argument("--lock-mode", choices=("manifest", "warn", "reject"), default="manifest",
-                   help="override the manifest's lock_mode (the locked-bone policy is PROVISIONAL: open question 16)")
+                   help="override the manifest's lock_mode: `warn` is the ruled policy (2026-09-06: a key on a locked bone warns; a locked bone "
+                        "renamed, re-parented or deleted is refused); `reject` is the mode kept for the day the server-side hitbox evaluator lands")
     args = parser.parse_args(argv)
 
     if args.command == "check":

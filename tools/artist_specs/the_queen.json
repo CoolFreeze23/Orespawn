@@ -7,7 +7,7 @@
   "character_sheet": "The Queen is a flying, three-headed boss the size of a building: a long armoured body on two clawed legs, a pair of enormous segmented wings, three snaking necks each ending in a spiked, jawed head, and a whip tail tipped with a stinger. Dormant she hovers and idles with the blue texture; woken (hit, or a player too close) she turns red, shifts into an attack stance and circles, streaming fireballs and thunderbolts from the heads. In contact range she picks one of four strikes — a bite, a tail whip left or right, or a roar — and the hurt lands on the impact frame. In a 'mood' she either terraforms flowers and butterflies (happy) or spews a cloud of purple bombs (mad). Ten of her bones carry hitboxes that follow the animation, so the heads, wings, tail and legs must move like solid, heavy things.",
   "size_notes": "22 x 24 block hitbox, drawn at x2.0 (x0.5 while PlayNicely); the rig is 2048 x 2048 textured. Bone positions on the synced parts are what players can hit.",
   "labels": {
-    "root": "root of the whole rig (the entity's yaw turns it; carries every hitbox part — never key it)",
+    "root": "root of the whole rig (the entity's yaw turns it; every hitbox part hangs from it, so a key here moves them all with it — allowed and warned like any locked bone, but leave it to the yaw)",
     "leftLeg": "left leg root (hitbox part 'leftLeg')",
     "rightLeg": "right leg root (hitbox part 'rightLeg')",
     "LThigh": "left thigh",
