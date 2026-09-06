@@ -6507,7 +6507,7 @@ entry matching by mtime seconds and size → clean, a changed size → DIRTY nam
 DIRTY with 1 missing, index version 4 → head only, garbage → head only, no repository → unknown / head only,
 and the live repository reads as one of the three shapes.
 
-GATE: (filled by the orchestrator)
+GATE: see this section's closing GATE line (bench2, 2026-09-06 10:01-10:03, 1254 required tests passed) — this placeholder was the lane draft's second copy, filled 2026-09-06.
 
 REFUTER A NOTES (2026-09-06, the MHLib instrumentation; no blocking defect): (A1) the S2C cadence expectation for the
 protocol's no-AI scenes is ≈6.7 per Queen per second, not 20 × trackers (`ServerEntity.sendChanges` 201-232: every
