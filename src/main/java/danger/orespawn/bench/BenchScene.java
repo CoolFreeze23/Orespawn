@@ -22,11 +22,16 @@ import net.minecraft.world.entity.Mob;
  *   <li>A: 100 Queens in view, hostile size (the PlayNicely config must be off -- recorded in the
  *       report), idle: no AI, so they stand and animate their idle clip while the collector streams
  *       their bones every tick.</li>
- *   <li>B: the same Queens loaded but behind the player. NOTE: TheQueen sets {@code noCulling} and
- *       answers {@code shouldRenderAtSqrDistance} with true, so the level renderer draws her even
- *       off-screen -- scene B measures what loaded-but-unseen Queens cost when the renderer draws
- *       them anyway (the collector runs per frame), not frustum culling; a true culling control
- *       needs a species the frustum culls.</li>
+ *   <li>B: the same Queens loaded but behind the player. Since OPT-013's wave-5 amendment
+ *       (2026-09-06) the Queen is frustum-culled against MHLib's conservative box (her position
+ *       +- 77.74 blocks, the profile's rest-pose reach, inflated 0.5 by the renderer): a Queen
+ *       within 78.24 blocks of the eye on every axis is never culled (the box contains the camera),
+ *       one beyond that on some axis and out of view is. Scene B's wedge starts at 40 blocks, so the
+ *       rows inside about 78 blocks (40 / 52 / 64 / 76) are still drawn off-screen (the collector
+ *       runs per frame for them) while the rows beyond are culled -- a MIXED scene, not a
+ *       frustum-culling control, unless the base distance moves past 78. Before wave 5 TheQueen set
+ *       {@code noCulling} and every row was drawn; {@code shouldRenderAtSqrDistance} still answers
+ *       true (no distance cut while she is in view).</li>
  *   <li>C / D: 100 SpiderRobots / AntRobots, idle: no AI. The modern gait runs from {@code tick()}
  *       (not from the AI step), so a standing modern robot still feeds its eight leg parts every
  *       server tick and streams a keyframe every 40 ticks; the report records how many spawned
@@ -43,7 +48,7 @@ public enum BenchScene {
     A("the_queen", () -> ModEntities.THE_QUEEN.get(), 100, 12.0D, 40.0D, false,
             "100 Queens in view, hostile size, idle (no AI)"),
     B("the_queen", () -> ModEntities.THE_QUEEN.get(), 100, 12.0D, 40.0D, true,
-            "100 Queens loaded behind the player (drawn anyway: TheQueen is noCulling), hostile size, idle (no AI)"),
+            "100 Queens loaded behind the player (rows inside ~78 blocks drawn anyway -- her 77.74-block cull box holds the camera; rows beyond culled since wave 5), hostile size, idle (no AI)"),
     C("spider_robot", () -> ModEntities.SPIDER_ROBOT.get(), 100, 6.0D, 8.0D, false,
             "100 SpiderRobots (modern when the config says so), idle (no AI): server-fed parts, no bone collection"),
     D("ant_robot", () -> ModEntities.ANT_ROBOT.get(), 100, 6.0D, 8.0D, false,

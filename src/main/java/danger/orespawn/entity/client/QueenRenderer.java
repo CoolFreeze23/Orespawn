@@ -7,7 +7,6 @@ import de.dertoaster.multihitboxlib.api.IMultipartEntity;
 import de.dertoaster.multihitboxlib.entity.hitbox.HitboxProfile;
 import java.util.Optional;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.culling.Frustum;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
 import software.bernie.geckolib.cache.object.GeoBone;
@@ -33,11 +32,16 @@ import software.bernie.geckolib.renderer.GeoEntityRenderer;
  * otherwise, invoked from func_77041_b :48-49. The ModelTheQueen(0.65f)
  * argument is only wingspeed, not a size (ENT-S-092).</p>
  *
- * <p>Frustum culling is forced off via {@link #shouldRender}: the
- * Queen's part-entity hitboxes can extend ~50 blocks from her
- * root AABB on a fully-extended wing or tail swing, and a missed
- * cull would let her invisibly clip through the player's screen
- * edge during the boss fight.</p>
+ * <p>Frustum culling is vanilla's ({@code EntityRenderer.shouldRender}
+ * against {@code TheQueen.getBoundingBoxForCulling()}): MHLib caches a
+ * conservative box once per client tick -- her body box, the cube of the
+ * profile's rest-pose reach (77.74 blocks: the far wing's
+ * {@code |position| + |pivot| + far corner}) around her position, and
+ * the parts' live boxes (OPT-013 / MHLib harvest 3, 2026-09-06;
+ * {@code IMultipartEntity.mhlibCacheCullBox}). Until then this class
+ * returned {@code true} from {@code shouldRender} and the entity set
+ * {@code noCulling}: an off-screen Queen was drawn in full and her bone
+ * collector ran every frame.</p>
  *
  * <h2>MultiHitBoxLib bone tracking</h2>
  *
@@ -99,17 +103,6 @@ public class QueenRenderer extends GeoEntityRenderer<TheQueen> {
     public QueenRenderer(EntityRendererProvider.Context context) {
         super(context, new QueenModel());
         this.shadowRadius = SHADOW;
-    }
-
-    // OPT-013: evaluated for replacement with a finite inflated cull box and
-    // intentionally left as-is. The animated model envelope (GeckoLib/MHLib
-    // bone-driven parts, code-model limb rotations) is not statically provable
-    // from any constant in this codebase, and an under-sized box would visibly
-    // pop the boss out at the screen edge — a behavior change. Keeping
-    // unconditional true is the strictly-neutral choice.
-    @Override
-    public boolean shouldRender(TheQueen entity, Frustum frustum, double cameraX, double cameraY, double cameraZ) {
-        return true;
     }
 
     /**

@@ -5,6 +5,7 @@ import de.dertoaster.multihitboxlib.entity.hitbox.HitboxProfile;
 import de.dertoaster.multihitboxlib.network.client.CPacketBoneInformation;
 import de.dertoaster.multihitboxlib.util.BoneInformation;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.phys.AABB;
 import net.neoforged.neoforge.entity.PartEntity;
 import org.apache.commons.lang3.NotImplementedException;
 
@@ -135,6 +136,39 @@ public interface IMHLibFieldAccessor<T extends LivingEntity> {
     }
 
     public default void _mhlibAccess_setRenderTickStamp(int value) {
+        throw new NotImplementedException();
+    }
+
+    // ──────────────────────────────────────────────────────────────────
+    // OPT-013 / MHLib harvest 3 (2026-09-06): conservative cull bounds
+    // backing fields (the box: IMultipartEntity.mhlibCacheCullBox; the
+    // radius: MHLibPartEntity.mhlibRestReach). The radius is the profile's
+    // rest-pose reach, computed once in mhlibOnConstructor from the very
+    // parts the profile built (0 without a profile); the box is rebuilt
+    // once per CLIENT tick in tickParts -- and again after a gait-fed
+    // species' client mirror moved its parts (mhlibCacheCullBox()) -- and
+    // returned by MixinLivingEntity's getBoundingBoxForCulling modifier
+    // (null until the first client part tick, and always on the server,
+    // which computes nothing: vanilla's box then). Design after
+    // MoreHitboxes' EntityMixin.changeCullBox / MultiPartEntity
+    // .makeBoundingBoxForCulling; no code taken.
+    // ──────────────────────────────────────────────────────────────────
+
+    /** Rest-pose reach of the farthest part (unscaled), or 0 without a profile. */
+    public default double _mhlibAccess_getCullRadius() {
+        throw new NotImplementedException();
+    }
+
+    public default void _mhlibAccess_setCullRadius(double value) {
+        throw new NotImplementedException();
+    }
+
+    /** The cull box cached by the last client part tick (or post-mirror re-cache); {@code null} before the first one and always on the server. */
+    public default AABB _mhlibAccess_getCullBox() {
+        throw new NotImplementedException();
+    }
+
+    public default void _mhlibAccess_setCullBox(AABB value) {
         throw new NotImplementedException();
     }
 

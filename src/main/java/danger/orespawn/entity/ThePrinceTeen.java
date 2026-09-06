@@ -105,7 +105,6 @@ public class ThePrinceTeen extends TamableAnimal
     private int whichAttack = 0;
 
     private final Comparator<Entity> targetSorter;
-    private final float moveSpeed = 0.35f;
     private int hurtTimer = 0;
     private int head1dir = 1, head2dir = 1, head3dir = 1;
     private int growCounter = 0;
@@ -134,9 +133,9 @@ public class ThePrinceTeen extends TamableAnimal
 
     public ThePrinceTeen(EntityType<? extends ThePrinceTeen> type, Level level) {
         super(type, level);
-        // OPT-009: constant speed - assert the attribute base once here instead
-        // of re-writing it every tick (same value the removed per-tick call set).
-        this.getAttribute(Attributes.MOVEMENT_SPEED).setBaseValue(this.moveSpeed);
+        // ENT-S-156 (2026-09-06): the OPT-009 constructor assert that re-applied the pre-BOSS-026 0.35f
+        // field over the registered base is gone; createAttributes' 0.32 (orig ThePrinceTeen.java:87)
+        // stands.
         // orig ThePrinceTeen.java:105 — experienceValue = 300.
         this.xpReward = 300;
         this.noPhysics = false;
