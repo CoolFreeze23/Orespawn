@@ -108,8 +108,14 @@ travel with it as listed here.
   the vendored MultiHitboxLib: the per-entity render-tick gate
   (`de.dertoaster.multihitboxlib.util.RenderTickGate` and the collector's
   pass gate in `IBoneInformationCollectorLayerCommonLogic`), design after
-  `GeckoLibMobMixin` at commit 88899b3 of
-  https://github.com/DarkPred/MoreHitboxes. License text:
+  `GeckoLibMobMixin`, and the player-attack part unwrapping
+  (`de.dertoaster.multihitboxlib.mixin.minecraft.MixinPlayer`: the argument
+  swap to the parent at the head of `Player.attack` and the receiver swap on
+  its inner `Entity.hurt`, the mechanism of `PlayerMixin`) — both at commit
+  88899b3 of https://github.com/DarkPred/MoreHitboxes. The conservative cull
+  bounds (`IMultipartEntity.mhlibCacheCullBox`, `MHLibPartEntity.mhlibRestReach`)
+  are a design after its `EntityMixin.changeCullBox` / `EntityHitboxDataInternal`
+  with no code taken. License text:
   `src/main/resources/META-INF/LICENSE-MoreHitboxes.txt` (ships inside the
   jar) and `src/main/java/de/dertoaster/multihitboxlib/LICENSE-MoreHitboxes.txt`.
 - **MultiHitboxLib** by DerToaster — vendored into

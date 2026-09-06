@@ -345,6 +345,10 @@ public class SpiderRobot extends Mob implements ICustomHitboxProfileSupplier, IM
             // D2 call.
             if (isModernMovement()) {
                 getModernGait().clientTick(this);
+                // OPT-013 / MHLib harvest 3 (refuter B, 2026-09-06): the client mirror just moved the eight leg
+                // parts (ModernSpiderGait.positionLegPart) AFTER LivingEntity.tick's TAIL cached the frustum box
+                // with the legs where alignSubParts had left them -- re-cache so the box holds this tick's legs.
+                ((IMultipartEntity<?>) (Object) this).mhlibCacheCullBox();
             } else {
                 updateLegs();
             }

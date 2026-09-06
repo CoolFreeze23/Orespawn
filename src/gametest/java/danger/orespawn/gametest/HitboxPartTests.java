@@ -22,6 +22,12 @@ import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.Pose;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.GameType;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.entity.PartEntity;
 import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
@@ -621,6 +627,275 @@ public class HitboxPartTests {
                 throw e;
             }
         });
+    }
+
+    /**
+     * MHLib harvest 2 (2026-09-06, wave 5; the MoreHitboxes evaluation section 3.5 (1) / section 4 row 2):
+     * {@code Player.attack} on an {@link MHLibPartEntity} -- the melee packet's shape
+     * ({@code ServerGamePacketListenerImpl.handleInteract} resolves the crosshair id to the part and calls
+     * exactly this) -- lands on the PARENT for everything but the damage, which still enters through the
+     * part and its damage modifier ({@code de.dertoaster.multihitboxlib.mixin.minecraft.MixinPlayer}: the
+     * argument swapped to the parent at HEAD, the receiver of the inner {@code Entity.hurt} swapped back to
+     * the part). NeoForge 21.1.223's own unwrap in {@code Player.attack} (offsets 1109-1126) feeds only the
+     * weapon's {@code hurtEnemy} / {@code postHurtEnemy}.
+     *
+     * <p>Spider half (the push is measurable: KNOCKBACK_RESISTANCE zeroed in-row): a sprinting mock player 3
+     * blocks at -z of a modern spider, facing +z (yaw 0), ATTACK_DAMAGE 10, ATTACK_SPEED raised so the
+     * attack-strength scale is 1 without ticking the off-level mock player, hits leg0. Health drops by exactly
+     * 10 x the leg's damage-modifier 1.0 (ARMOR zeroed) -- the part path; {@code getLastHurtMob()} is the
+     * spider (HEAD: null -- {@code setLastHurtMob} stores a LivingEntity only, and the part is none); the
+     * spider's deltaMovement.z is {@code (double) 0.4F / 2 + 0.5}: the hurt path's own 0.4F knockback away
+     * from the player ({@code LivingEntity.hurt}, both trees) halved by the attack's sprint knockback 1 x 0.5
+     * along the player's facing ({@code LivingEntity.knockback}: {@code v / 2 - dir x strength}) -- HEAD put
+     * that 0.5 on the part's never-integrated deltaMovement, so the spider read 0.4F alone; x stays 0 (the
+     * player straight behind: sin 0 = 0); y is not pinned (the onGround branch).
+     *
+     * <p>Queen half (the modifier is visible: Lwing1 is 0.25): the same blow on the wing arrives as exactly 2.5 before
+     * armour and drops her health by what vanilla's {@code CombatRules.getDamageAfterAbsorb} leaves of it under her
+     * constant {@code getArmorValue()} (the 1.7.10 DEFENSE_VALUE; the ARMOR attribute is not consulted -- the w5b gate),
+     * records her as the last hurt mob, and moves her not at all -- her
+     * KNOCKBACK_RESISTANCE 1.0 absorbs both pushes ({@code LivingEntity.knockback} scales the strength to 0).
+     * {@code s4_part_damage_routes_one_to_one} (the direct {@code part.hurt} path) is unchanged.
+     *
+     * <p>Nothing here ticks (every read sits in the spawn's own synchronous stretch), so neither mob is frozen
+     * against gravity -- refuter B's freeze applies to the ticking rows. No row covers the sweep (refuter A,
+     * 2026-09-06): after the swap the sweep box is the PARENT's box inflated (1, 0.25, 1) -- 24 x 24.5 x 24 around
+     * the hostile Queen's body, not around the struck wing -- and the parent is excluded from its candidates (at
+     * HEAD it was one, taking the sweep's knockback(0.4) while its LivingEntity.hurt fell to the i-frames);
+     * recorded in the FIX_LOG, not pinned.
+     */
+    @GameTest(template = "empty_large", batch = "spiderGaitIsolation")
+    public void s4_player_attack_lands_on_the_parent_through_a_part(GameTestHelper helper) {
+        boolean priorMaster = OreSpawnConfig.MODERN_ENABLED.get();
+        OreSpawnConfig.SpiderMovement prior = OreSpawnConfig.SPIDER_MOVEMENT.get();
+        SpiderRobot spider = null;
+        TheQueen queen = null;
+        try {
+            OreSpawnConfig.MODERN_ENABLED.set(true);
+            OreSpawnConfig.SPIDER_MOVEMENT.set(OreSpawnConfig.SpiderMovement.MODERN);
+            spider = helper.spawnWithNoFreeWill(ModEntities.SPIDER_ROBOT.get(), new BlockPos(12, 1, 12));
+        } finally {
+            OreSpawnConfig.SPIDER_MOVEMENT.set(prior);
+            OreSpawnConfig.MODERN_ENABLED.set(priorMaster);
+        }
+        try {
+            MHLibPartEntity<?> leg = legPart(spider, 0);
+            helper.assertTrue(leg != null, "leg0 part missing");
+            helper.assertTrue(leg.getConfig().damageModifier() == 1.0f, "precondition: the spider leg's damage-modifier is 1.0"
+                    + " (spider_robot.json), actual " + leg.getConfig().damageModifier());
+            spider.getAttribute(Attributes.ARMOR).setBaseValue(0.0D);
+            spider.getAttribute(Attributes.KNOCKBACK_RESISTANCE).setBaseValue(0.0D);
+            spider.setDeltaMovement(Vec3.ZERO);
+            Player player = attacker(helper, spider.getX(), spider.getY(), spider.getZ() - 3.0D);
+            float before = spider.getHealth();
+            player.attack(leg);
+            helper.assertTrue(spider.getHealth() == before - 10.0f, "harvest 2: 10 damage through leg0 (modifier 1.0, armor 0)"
+                    + " must reach the spider through MHLibPartEntity.hurt, expected " + (before - 10.0f) + ", actual " + spider.getHealth());
+            helper.assertTrue(player.getLastHurtMob() == spider, "harvest 2: Player.attack must record the PARENT as the last hurt"
+                    + " mob (HEAD: null, the part is no LivingEntity), actual " + player.getLastHurtMob());
+            final double expectedZ = ((double) 0.4F) / 2.0D + 0.5D;
+            Vec3 motion = spider.getDeltaMovement();
+            helper.assertTrue(motion.x == 0.0D && motion.z == expectedZ, "harvest 2: the sprint knockback must push the PARENT --"
+                    + " deltaMovement (0, ?, (double) 0.4F / 2 + 0.5 = " + expectedZ + "); HEAD pushed the part and the spider kept"
+                    + " the hurt path's 0.4F alone; actual " + motion);
+            spider.discard();
+            spider = null;
+
+            queen = helper.spawnWithNoFreeWill(ModEntities.THE_QUEEN.get(), new BlockPos(36, 1, 36));
+            MHLibPartEntity<?> wing = ((IMultipartEntity<?>) (Object) queen).getPartByName("Lwing1").orElse(null);
+            helper.assertTrue(wing != null, "Queen Lwing1 part missing");
+            helper.assertTrue(wing.getConfig().damageModifier() == 0.25f, "precondition: Lwing1's damage-modifier is 0.25"
+                    + " (the_queen.json), actual " + wing.getConfig().damageModifier());
+            helper.assertTrue(queen.getAttributeBaseValue(Attributes.KNOCKBACK_RESISTANCE) == 1.0D,
+                    "precondition: the Queen's KNOCKBACK_RESISTANCE is 1.0 (TheQueen.createAttributes)");
+            // TheQueen.getArmorValue() is the 1.7.10 constant DEFENSE_VALUE (MobStats; +2 below 2/3 health) and never
+            // consults the ARMOR attribute, so the 2.5 that arrives through the part is then armour-absorbed by vanilla's own
+            // CombatRules.getDamageAfterAbsorb (LivingEntity.getDamageAfterArmorAbsorb) -- the w5b gate: 0.525 arrived, not 2.5.
+            // The pin computes the same call, so it is exact whatever DEFENSE_VALUE is.
+            queen.setDeltaMovement(Vec3.ZERO);
+            Player second = attacker(helper, queen.getX(), queen.getY(), queen.getZ() - 3.0D);
+            float queenBefore = queen.getHealth();
+            DamageSource queenSource = queen.damageSources().playerAttack(second);
+            float afterArmor = net.minecraft.world.damagesource.CombatRules.getDamageAfterAbsorb(queen, 2.5f, queenSource,
+                    (float) queen.getArmorValue(), (float) queen.getAttributeValue(Attributes.ARMOR_TOUGHNESS));
+            helper.assertTrue(afterArmor > 0.0f && afterArmor < 2.5f, "precondition: the Queen's constant armour (getArmorValue "
+                    + queen.getArmorValue() + ") absorbs part of 2.5, leaving " + afterArmor);
+            second.attack(wing);
+            helper.assertTrue(queen.getHealth() == queenBefore - afterArmor, "harvest 2: 10 damage through Lwing1 must arrive as 10 x 0.25"
+                    + " = 2.5 before armour (the part's modifier still applies with the receiver swapped back), then vanilla's armour"
+                    + " formula on TheQueen.getArmorValue() " + queen.getArmorValue() + " leaves " + afterArmor + "; expected "
+                    + (queenBefore - afterArmor) + ", actual " + queen.getHealth());
+            helper.assertTrue(second.getLastHurtMob() == queen, "harvest 2: the Queen is the last hurt mob, actual " + second.getLastHurtMob());
+            helper.assertTrue(queen.getDeltaMovement().equals(Vec3.ZERO), "harvest 2: the Queen's KNOCKBACK_RESISTANCE 1.0 absorbs"
+                    + " the unwrapped push (strength x (1 - 1.0) = 0), actual " + queen.getDeltaMovement());
+        } finally {
+            if (spider != null) {
+                spider.discard();
+            }
+            if (queen != null) {
+                queen.discard();
+            }
+        }
+        helper.succeed();
+    }
+
+    /** A sprinting survival mock player at (x, y, z) facing +z with ATTACK_DAMAGE 10 and the attack-strength scale saturated. */
+    private static Player attacker(GameTestHelper helper, double x, double y, double z) {
+        Player player = helper.makeMockPlayer(GameType.SURVIVAL);
+        player.setPos(x, y, z);
+        player.setYRot(0.0F);
+        player.setXRot(0.0F);
+        player.getAttribute(Attributes.ATTACK_DAMAGE).setBaseValue(10.0D);
+        // getAttackStrengthScale(0.5) = clamp((ticker + 0.5) / (20 / ATTACK_SPEED), 0, 1): a huge attack speed saturates
+        // it without ticking the (unticked, off-level) mock player.
+        player.getAttribute(Attributes.ATTACK_SPEED).setBaseValue(1.0E6D);
+        player.setSprinting(true);
+        return player;
+    }
+
+    /**
+     * OPT-013 / MHLib harvest 3 (2026-09-06, wave 5; the evaluation section 3.4): the conservative frustum
+     * box. R is the profile's rest-pose reach -- the maximum over the parts of {@code |position| + |pivot| +
+     * sqrt(w^2/2 + h^2)} ({@code MHLibPartEntity.mhlibRestReach}, computed once at construction from the parts
+     * the profile built) -- and the box the CLIENT caches ({@code IMultipartEntity.mhlibCacheCullBox}: from
+     * {@code tickParts} at LivingEntity.tick's TAIL, and again from a gait-fed robot's tick after its client
+     * mirror moved the legs) is the body box, the cube position +- R x scale and the parts' live boxes unioned,
+     * returned by {@code getBoundingBoxForCulling()} ({@code MixinLivingEntity}). The SERVER caches nothing
+     * (refuters A / B, 2026-09-06: nothing calls getBoundingBoxForCulling there), which this server-side row
+     * pins directly; the union itself is read through the public, side-effect-free
+     * {@code mhlibComputeCullBox()} over the live server parts -- the same formula over the same kind of boxes
+     * the client caches (the client path is beyond a server gametest: javap of the modifier and the mixin gate
+     * cover it).
+     *
+     * <p>Queen (frozen with setNoGravity -- refuter B: spawnWithNoFreeWill removes goals and brain behaviours,
+     * not gravity, and she is noPhysics): R from the_queen.json by hand is Lwing1's {@code |(5, 18.15, 6.25)| +
+     * |(-22.18, 5.13, 8.78)| + sqrt(44.94^2 / 2 + 10.63^2)} = 19.836 + 24.400 + 33.508 = 77.744 (the
+     * evaluation's "about 78"); the row pins the entity's radius to that hand number (the sizes travel as
+     * floats: within 1e-3) and to the maximum of the parts' own {@code mhlibRestReach} (exact), then -- after two
+     * level ticks with no master streaming, so the parts sit at the profile's fallback rest offsets
+     * ({@code alignSynchedSubParts}) -- that the server holds no cached box and {@code getBoundingBoxForCulling()}
+     * is her vanilla body box, and that every part's live box and her body box lie inside the R cube ALONE (the
+     * formula's claim, not the union's) and inside the computed union. Modern spider (profile resolved: parts
+     * exist; left on the template floor under gravity, where the gait's ground scan wants it): R = sqrt(0.6^2 /
+     * 2 + 0.6^2) = 0.735 (rest offsets all zero); the rest-pose leg boxes (config offset 0, size 0.6 around the
+     * body position) inside the R cube; the FED legs ({@code SpiderRobot.tick}'s {@code serverTick ->
+     * feedParts} after {@code super.tick()} -- the same solve the client mirror places them by) inside the
+     * computed union, and at least one of them OUTSIDE the R cube (the rig's segments are 99/16 blocks): the
+     * union's own contract, and the reason a box cached before the feed -- refuter B's blocker -- held the
+     * previous tick's legs. Classic spider (no profile): radius 0, no box, {@code getBoundingBoxForCulling()}
+     * is the vanilla body box -- vanilla culling untouched.
+     */
+    @GameTest(template = "empty_large", timeoutTicks = 100, batch = "spiderGaitIsolation")
+    public void s4_cull_box_bounds_the_rest_pose_parts(GameTestHelper helper) {
+        final TheQueen queen = helper.spawnWithNoFreeWill(ModEntities.THE_QUEEN.get(), new BlockPos(24, 1, 24));
+        // wave 5 (refuter B): spawnWithNoFreeWill leaves gravity on and the noPhysics Queen would sink 0.047 a tick; the containment
+        // pins below are relative and would hold either way -- frozen for hygiene. The spiders stay on the floor under gravity.
+        queen.setNoGravity(true);
+        final SpiderRobot modern;
+        final SpiderRobot classic;
+        boolean priorMaster = OreSpawnConfig.MODERN_ENABLED.get();
+        OreSpawnConfig.SpiderMovement prior = OreSpawnConfig.SPIDER_MOVEMENT.get();
+        try {
+            OreSpawnConfig.MODERN_ENABLED.set(true);
+            OreSpawnConfig.SPIDER_MOVEMENT.set(OreSpawnConfig.SpiderMovement.MODERN);
+            modern = helper.spawnWithNoFreeWill(ModEntities.SPIDER_ROBOT.get(), new BlockPos(6, 1, 6));
+            OreSpawnConfig.SPIDER_MOVEMENT.set(OreSpawnConfig.SpiderMovement.CLASSIC);
+            classic = helper.spawnWithNoFreeWill(ModEntities.SPIDER_ROBOT.get(), new BlockPos(42, 1, 6));
+        } finally {
+            OreSpawnConfig.SPIDER_MOVEMENT.set(prior);
+            OreSpawnConfig.MODERN_ENABLED.set(priorMaster);
+        }
+        helper.runAfterDelay(2, () -> {
+            try {
+                // --- the Queen: R by hand, R from the parts; the server caches nothing; the rest-pose boxes inside the cube and the union
+                helper.assertTrue(queen.getParts() != null && queen.getParts().length == 10, "precondition: ten Queen parts");
+                IMHLibFieldAccessor<?> queenAccess = (IMHLibFieldAccessor<?>) (Object) queen;
+                double radius = queenAccess._mhlibAccess_getCullRadius();
+                double byHand = Math.sqrt(5.0D * 5.0D + 18.15D * 18.15D + 6.25D * 6.25D)
+                        + Math.sqrt(22.18D * 22.18D + 5.13D * 5.13D + 8.78D * 8.78D)
+                        + Math.sqrt(44.94D * 44.94D / 2.0D + 10.63D * 10.63D);
+                helper.assertTrue(Math.abs(radius - byHand) < 1.0E-3D, "harvest 3: the Queen's cull radius is Lwing1's |position| +"
+                        + " |pivot| + far corner from the_queen.json = " + byHand + " (the evaluation's ~78), actual " + radius);
+                double fromParts = 0.0D;
+                for (PartEntity<?> part : queen.getParts()) {
+                    fromParts = Math.max(fromParts, ((MHLibPartEntity<?>) part).mhlibRestReach());
+                }
+                helper.assertTrue(radius == fromParts, "harvest 3: the radius is the maximum of the parts' own rest reach, expected "
+                        + fromParts + ", actual " + radius);
+                double scale = queen.mhlibGetEntitySizeScale(queen);
+                AABB cube = new AABB(queen.getX() - radius * scale, queen.getY() - radius * scale, queen.getZ() - radius * scale,
+                        queen.getX() + radius * scale, queen.getY() + radius * scale, queen.getZ() + radius * scale);
+                helper.assertTrue(queenAccess._mhlibAccess_getCullBox() == null && queen.getBoundingBoxForCulling().equals(queen.getBoundingBox()),
+                        "harvest 3: the SERVER caches no cull box (mhlibCacheCullBox is gated on isClientSide: nothing calls"
+                                + " getBoundingBoxForCulling there) and the modifier passes vanilla's body box through; actual cached "
+                                + queenAccess._mhlibAccess_getCullBox() + ", answered " + queen.getBoundingBoxForCulling());
+                AABB cull = ((IMultipartEntity<?>) (Object) queen).mhlibComputeCullBox();
+                helper.assertTrue(cull != null, "harvest 3: a profiled entity computes a cull box (mhlibComputeCullBox), actual null");
+                assertInside(helper, queen.getBoundingBox(), cube, "the Queen's body box inside the R cube");
+                assertInside(helper, queen.getBoundingBox(), cull, "the Queen's body box inside the computed cull box");
+                assertInside(helper, cube, cull, "the R cube inside the computed cull box");
+                for (PartEntity<?> part : queen.getParts()) {
+                    String name = ((MHLibPartEntity<?>) part).getConfigName();
+                    helper.assertTrue(!(part.getX() == 0.0D && part.getY() == 0.0D && part.getZ() == 0.0D),
+                            "precondition: part " + name + " was aligned (not at the world origin), actual " + part.position());
+                    assertInside(helper, part.getBoundingBox(), cube, "the Queen's rest-pose part " + name + " inside the R cube");
+                    assertInside(helper, part.getBoundingBox(), cull, "the Queen's part " + name + " inside the computed cull box");
+                }
+                // --- the modern spider: R from the zero rest offsets, the rest boxes inside the cube, the fed legs inside the union and beyond the cube
+                helper.assertTrue(modern.getParts() != null && modern.getParts().length == 8, "precondition: eight modern spider parts");
+                IMHLibFieldAccessor<?> spiderAccess = (IMHLibFieldAccessor<?>) (Object) modern;
+                double spiderRadius = spiderAccess._mhlibAccess_getCullRadius();
+                double spiderByHand = Math.sqrt(((double) 0.6F) * ((double) 0.6F) / 2.0D + ((double) 0.6F) * ((double) 0.6F));
+                helper.assertTrue(spiderRadius == spiderByHand, "harvest 3: the spider's cull radius is sqrt(0.6^2 / 2 + 0.6^2) from"
+                        + " spider_robot.json's zero offsets, expected " + spiderByHand + ", actual " + spiderRadius);
+                AABB spiderCube = new AABB(modern.getX() - spiderRadius, modern.getY() - spiderRadius, modern.getZ() - spiderRadius,
+                        modern.getX() + spiderRadius, modern.getY() + spiderRadius, modern.getZ() + spiderRadius);
+                helper.assertTrue(spiderAccess._mhlibAccess_getCullBox() == null && modern.getBoundingBoxForCulling().equals(modern.getBoundingBox()),
+                        "harvest 3: the server caches nothing for the modern spider either; actual cached " + spiderAccess._mhlibAccess_getCullBox()
+                                + ", answered " + modern.getBoundingBoxForCulling());
+                AABB spiderCull = ((IMultipartEntity<?>) (Object) modern).mhlibComputeCullBox();
+                helper.assertTrue(spiderCull != null, "harvest 3: the modern spider computes a cull box, actual null");
+                assertInside(helper, modern.getBoundingBox(), spiderCull, "the spider's body box inside the computed cull box");
+                boolean anyLegBeyondCube = false;
+                for (PartEntity<?> part : modern.getParts()) {
+                    MHLibPartEntity<?> leg = (MHLibPartEntity<?>) part;
+                    AABB rest = leg.getDimensions(Pose.STANDING).makeBoundingBox(
+                            modern.position().add(leg.getConfigPositionOffset()).subtract(leg.getPivot()));
+                    assertInside(helper, rest, spiderCube, "the spider's rest-pose " + leg.getConfigName() + " box inside the R cube");
+                    assertInside(helper, part.getBoundingBox(), spiderCull,
+                            "the spider's fed " + leg.getConfigName() + " inside the computed cull box (the union)");
+                    anyLegBeyondCube |= !isInside(part.getBoundingBox(), spiderCube);
+                }
+                helper.assertTrue(anyLegBeyondCube, "harvest 3: the gait plants at least one fed leg beyond the 0.735-block R cube (the rig's"
+                        + " 99/16-block segments) -- the union's reason, and the post-mirror re-cache's (refuter B); actual leg0 "
+                        + modern.getParts()[0].getBoundingBox() + " vs the cube " + spiderCube);
+                // --- the classic spider: no profile, no radius, no box, vanilla's answer
+                helper.assertTrue(classic.getParts() == null || classic.getParts().length == 0, "precondition: the classic spider has no parts");
+                IMHLibFieldAccessor<?> classicAccess = (IMHLibFieldAccessor<?>) (Object) classic;
+                helper.assertTrue(classicAccess._mhlibAccess_getCullRadius() == 0.0D && classicAccess._mhlibAccess_getCullBox() == null,
+                        "harvest 3: a classic spider (no profile) carries no cull radius and no cached box, actual radius "
+                                + classicAccess._mhlibAccess_getCullRadius() + " box " + classicAccess._mhlibAccess_getCullBox());
+                helper.assertTrue(((IMultipartEntity<?>) (Object) classic).mhlibComputeCullBox() == null,
+                        "harvest 3: a classic spider computes no cull box (radius 0), actual " + ((IMultipartEntity<?>) (Object) classic).mhlibComputeCullBox());
+                helper.assertTrue(classic.getBoundingBoxForCulling().equals(classic.getBoundingBox()),
+                        "harvest 3: a classic spider keeps vanilla's cull box (its body box), actual " + classic.getBoundingBoxForCulling());
+            } finally {
+                queen.discard();
+                modern.discard();
+                classic.discard();
+            }
+            helper.succeed();
+        });
+    }
+
+    private static boolean isInside(AABB inner, AABB outer) {
+        final double eps = 1.0E-9D;
+        return inner.minX >= outer.minX - eps && inner.minY >= outer.minY - eps && inner.minZ >= outer.minZ - eps
+                && inner.maxX <= outer.maxX + eps && inner.maxY <= outer.maxY + eps && inner.maxZ <= outer.maxZ + eps;
+    }
+
+    private static void assertInside(GameTestHelper helper, AABB inner, AABB outer, String what) {
+        helper.assertTrue(isInside(inner, outer), "harvest 3: " + what + " -- inner " + inner + " is not inside outer " + outer);
     }
 
     private static void assertAllPartsParent(GameTestHelper helper, Entity parent,

@@ -19,6 +19,8 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+import com.llamalad7.mixinextras.injector.ModifyReturnValue;
+
 import de.dertoaster.multihitboxlib.api.IMHLibFieldAccessor;
 import de.dertoaster.multihitboxlib.api.IMultipartEntity;
 import de.dertoaster.multihitboxlib.entity.MHLibPartEntity;
@@ -30,6 +32,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
 @Mixin(LivingEntity.class)
@@ -108,6 +111,19 @@ public abstract class MixinLivingEntity extends Entity implements IMultipartEnti
 	// ──────────────────────────────────────────────────────────────────
 	@Unique
 	private int mhlibRenderTickStamp = RenderTickGate.UNSTAMPED;
+
+	// ──────────────────────────────────────────────────────────────────
+	// OPT-013 / MHLib harvest 3 (2026-09-06): conservative cull bounds (see
+	// IMHLibFieldAccessor). INTENTIONALLY NO FIELD INITIALIZERS: the radius
+	// is written by mhlibOnConstructor at the LivingEntity constructor's
+	// TAIL, after any merged initializer would run, and the JVM defaults
+	// (0.0 / null) are the "no profile" / "not yet ticked" states anyway.
+	// ──────────────────────────────────────────────────────────────────
+	@Unique
+	private double mhlibCullRadius;
+	@Unique
+	@Nullable
+	private AABB mhlibCullBox;
 
 	public MixinLivingEntity(EntityType<?> pEntityType, Level pLevel) {
 		super(pEntityType, pLevel);
@@ -221,6 +237,30 @@ public abstract class MixinLivingEntity extends Entity implements IMultipartEnti
 		cir.setReturnValue(this.mhLibIsPickable(cir.getReturnValue()));
 	}
 
+	// OPT-013 / MHLib harvest 3 (2026-09-06): the frustum box of a profiled entity is the box the CLIENT's
+	// tickParts (and a gait-fed species' post-mirror re-cache) cached -- the body box, the position +- the
+	// scaled rest-pose reach, and the parts' live boxes, unioned -- returned WHOLESALE: for a profiled entity
+	// the value LivingEntity's body computed (its dragon-head inflate, and beneath it Entity's, where OreSpawn's
+	// client EntityCullingMixin adds the oversized-weapon inflate) is discarded (refuter A, 2026-09-06: no
+	// profiled species poses a dragon head or holds a weapon today; recorded, not handled). Every other
+	// LivingEntity, and every entity on the server (nothing is cached there -- getBoundingBoxForCulling is a
+	// client call), gets `original` untouched. A MixinExtras return modifier rather than the evaluation's
+	// merged override: no CallbackInfoReturnable per entity per frame, LivingEntity's body kept (a merged
+	// method would have been an implicit overwrite of it), and the injection is covered by the config's
+	// defaultRequire and pinned to its two return sites (the dragon-head branch and the super call) by allow = expect = 2 (require is a MINIMUM: an
+	// over-match applies silently -- refuter A, 2026-09-06). Design after MoreHitboxes'
+	// EntityMixin.changeCullBox; no code taken.
+	@ModifyReturnValue(
+			method = "getBoundingBoxForCulling()Lnet/minecraft/world/phys/AABB;",
+			at = @At("RETURN"),
+			allow = 2,
+			expect = 2
+	)
+	private AABB mixinGetBoundingBoxForCulling(AABB original) {
+		final AABB cached = this.mhlibCullBox;
+		return cached != null ? cached : original;
+	}
+
 	// MHLib access stuff
 	@Override
 	public PartEntity<?>[] _mhlibAccess_getPartArray() {
@@ -331,6 +371,28 @@ public abstract class MixinLivingEntity extends Entity implements IMultipartEnti
 	@Override
 	public void _mhlibAccess_setRenderTickStamp(int value) {
 		this.mhlibRenderTickStamp = value;
+	}
+
+	// OPT-013 / harvest 3: cull-bounds accessors (see the field comment above).
+	@Override
+	public double _mhlibAccess_getCullRadius() {
+		return this.mhlibCullRadius;
+	}
+
+	@Override
+	public void _mhlibAccess_setCullRadius(double value) {
+		this.mhlibCullRadius = value;
+	}
+
+	@Override
+	@Nullable
+	public AABB _mhlibAccess_getCullBox() {
+		return this.mhlibCullBox;
+	}
+
+	@Override
+	public void _mhlibAccess_setCullBox(@Nullable AABB value) {
+		this.mhlibCullBox = value;
 	}
 
 }

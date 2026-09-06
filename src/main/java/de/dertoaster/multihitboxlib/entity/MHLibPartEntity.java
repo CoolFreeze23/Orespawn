@@ -33,7 +33,23 @@ public class MHLibPartEntity<T extends Entity> extends PartEntity<T> {
 	private EntityDimensions baseSize = EntityDimensions.fixed(1, 1);
 	public static final EntityDimensions FALLBACK_SIZE = EntityDimensions.fixed(1, 1);
 
-	protected int newPosRotationIncrements;
+	// ──────────────────────────────────────────────────────────────────
+	// OPT-030 (a) (2026-09-06, wave 5): -1 is "no interp target". The count
+	// is written only by setPositionAndRotationDirect -- from the client's
+	// readData (below, armed with Math.max(updateSteps, 0)) and the
+	// trust-client apply (IMultipartEntity.tryAddBoneInformation) -- so a
+	// server part, and a client part ticking before its first S2C packet,
+	// used to carry Java's 0 into tick()'s `== 0` branch and snap once to
+	// the never-set zero target: setPos(0, 0, 0), yaw and pitch 0, on its
+	// first tick (the spawn-tick 30 / 32 the slice (d) gate counted; a
+	// synched-bone species' parts sat at the world origin until the next
+	// aiStep). The state machine has three states: -1 idle (nothing to
+	// do), > 0 lerping toward the target (reaching 0 on the last step and
+	// resetting to -1 in the same tick), 0 armed for an immediate snap
+	// (only a packet whose update-steps value is <= 0 arms it, through
+	// readData's Math.max(updateSteps, 0)).
+	// ──────────────────────────────────────────────────────────────────
+	protected int newPosRotationIncrements = -1;
 	protected double interpTargetX;
 	protected double interpTargetY;
 	protected double interpTargetZ;
@@ -428,6 +444,31 @@ public class MHLibPartEntity<T extends Entity> extends PartEntity<T> {
 
 	public Vec3 getPivot() {
 		return this.pivot;
+	}
+
+	/**
+	 * OPT-013 / MHLib harvest 3 (2026-09-06): this part's rest-pose reach from
+	 * its parent's position -- {@code |position| + |pivot| + sqrt(w^2/2 + h^2)}
+	 * over the profile's unscaled numbers (the box's far corner from its
+	 * bottom-centre, height included). Every point of the part's box, placed by
+	 * alignSubParts or alignSynchedSubParts' fallback at any parent rotation,
+	 * lies within this distance of the parent: the pivot and the far corner are
+	 * taken as full lengths regardless of direction. One asymmetry (refuter A,
+	 * 2026-09-06): applyInformation scales the pivot only for an
+	 * IMHLibSizeCallback parent while alignSubParts subtracts it unscaled, so
+	 * under an entity size below 1 the floor argument holds for today's
+	 * profiles (the Queen's synched parts have the callback; the robots' pivots
+	 * are zero) and the live-box union covers the rest. The parent's cull radius
+	 * is the maximum over its parts, computed once at construction
+	 * (IMultipartEntity.mhlibOnConstructor) and scaled per client tick by the
+	 * entity size (IMultipartEntity.mhlibCacheCullBox). Design after MoreHitboxes'
+	 * frustum radius (EntityHitboxDataInternal); no code taken.
+	 */
+	public final double mhlibRestReach() {
+		final EntityDimensions size = this.baseSize == null ? FALLBACK_SIZE : this.baseSize;
+		final double w = size.width();
+		final double h = size.height();
+		return this.basePos.length() + this.pivot.length() + Math.sqrt(w * w / 2.0D + h * h);
 	}
 
 	public void applyInformation(Vec3 worldPos, Vec3 scale, Vec3 rotation, boolean hidden) {

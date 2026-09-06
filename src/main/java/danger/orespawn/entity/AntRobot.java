@@ -332,6 +332,10 @@ public class AntRobot extends Mob implements ICustomHitboxProfileSupplier, IMode
             // (mode from the synced flag); the classic branch is untouched.
             if (isModernMovement()) {
                 getModernGait().clientTick(this);
+                // OPT-013 / MHLib harvest 3 (refuter B, 2026-09-06): the client mirror just moved the leg parts
+                // (ModernSpiderGait.positionLegPart) AFTER LivingEntity.tick's TAIL cached the frustum box with
+                // the legs where alignSubParts had left them -- re-cache so the box holds this tick's legs.
+                ((IMultipartEntity<?>) (Object) this).mhlibCacheCullBox();
             } else {
                 updateLegs();
             }

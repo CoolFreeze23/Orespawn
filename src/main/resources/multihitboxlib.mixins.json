@@ -11,13 +11,15 @@
 		"geckolib.MixinGeoReplacedEntityRenderer",
 		"geckolib.MixinGeoRenderer",
 		"minecraft.MixinCompressionDecoder",
-		"minecraft.MixinPacketBuffer"
+		"minecraft.MixinPlayer"
 	],
 	"client": [
 		"accessor.AccessorClientLevel",
 		"accessor.AccessorEntityRenderer",
-		"minecraft.MixinMinecraft",
-		"minecraft.client.MixinClientboundCustomPayloadPacket"
+		"minecraft.MixinMinecraft"
 	],
+	"injectors": {
+		"defaultRequire": 1
+	},
 	"minVersion": "0.8"
 }

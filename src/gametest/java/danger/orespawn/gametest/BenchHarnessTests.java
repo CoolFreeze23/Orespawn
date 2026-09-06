@@ -641,6 +641,11 @@ public class BenchHarnessTests {
         assertCountersLive(helper);
         try {
             queen = helper.spawnWithNoFreeWill(ModEntities.THE_QUEEN.get(), new BlockPos(24, 1, 24));
+            queen.setYRot(0.0F); // wave 5: the fallback offsets below are pinned at yaw 0 (LivingEntity's constructor rolls a random yaw)
+            // wave 5 (refuter B): spawnWithNoFreeWill removes the goals and brain behaviours, not gravity -- the noPhysics Queen sinks
+            // 0.04704 a tick from her second tick on ((0 - 0.08) x 0.98 x 0.6), which would carry Body1 off the frozen `body1` below by
+            // 0.047 >> 1e-6 at the second-tick pin. getGravity() is 0 under noGravity (Entity.getGravity), so she holds her spawn position.
+            queen.setNoGravity(true);
             helper.assertTrue(queen.getParts() != null && queen.getParts().length == 10, FINDING + ": precondition: ten parts");
             // Each reset-act-read below is one synchronous stretch of this tick: MHLibMod.onServerTick (the 100-tick dump that
             // zeroes the server list now that the property is live) cannot run between them, so the values stay exact.
@@ -653,29 +658,34 @@ public class BenchHarnessTests {
             helper.assertTrue(after.get("server.placement_ns") > 0L, FINDING + ": the placement span is measured, actual " + after);
             helper.assertTrue(after.get("net.s2c_update_packets") == 0L && after.get("net.set_master_packets") == 0L, FINDING
                     + ": mhlibAiStep alone broadcasts nothing (no tracker queued), actual " + after);
-            // One full entity tick of a FRESHLY SPAWNED Queen -- the parts' first tick. The aiStep-tail alignment (MixinLivingEntity :151-160,
-            // alignSynchedSubParts -> applyInformation -> setPos: 10), then the tick-tail part tick (:163-174 -> tickParts -> MHLibPartEntity.tick
-            // :95-117): updateLastPos (:249-255, a setPos at the current position: 10) and, once in a part's life, the client-lerp state
-            // machine's snap -- newPosRotationIncrements (:36) is an int the server never seeds (only readData :241 and the trust-client path
-            // IMultipartEntity :728 call setPositionAndRotationDirect, both client-side), so it is 0 on the first tick and the `== 0` branch
-            // (:109) writes the zero interp target, setPos(0, 0, 0) (10), then -1 for good (:114-116). 30 on the spawn tick, 20 on every later
-            // one. The slice (d) gate (2026-09-06) found the 30 where the lane had derived 20; the snap is OPT-030 (drafted, not fixed here).
+            // One full entity tick of a FRESHLY SPAWNED Queen -- the parts' first tick. The aiStep-tail alignment (MixinLivingEntity,
+            // alignSynchedSubParts -> applyInformation -> setPos: 10), then the tick-tail part tick (tickParts -> MHLibPartEntity.tick):
+            // updateLastPos (a setPos at the current position: 10). 20 on the spawn tick as on every later one. OPT-030 (a) (FIXED 2026-09-06,
+            // wave 5): newPosRotationIncrements is initialised to -1 ("no interp target"), so the client-lerp state machine's `== 0` branch --
+            // which fired once with the never-set zero target on a part's first tick (setPos(0, 0, 0): the 30 the slice (d) gate found, and the
+            // one-tick origin transient of every synched-bone species) -- never runs on the server; readData still arms it on the client with
+            // Math.max(updateSteps, 0), the trust-client apply with synchedPartUpdateSteps.
             queen.tick();
             Map<String, Long> tick = MHLibCounters.sumAndResetServer();
             helper.assertTrue(tick.get("server.align_synched_parts") == 10L, FINDING + ": a tick aligns the ten synched parts once, actual " + tick);
-            helper.assertTrue(tick.get("server.part_setpos") == 30L, FINDING + ": the SPAWN tick calls setPos three times per part -- the alignment, updateLastPos"
-                    + " from the part tick, and the part's first-tick lerp snap to the zero interp target (MHLibPartEntity.tick :109, OPT-030); Section 5's derived"
-                    + " 10 counted the alignment only, the lane's derived 20 missed the snap; actual " + tick);
+            helper.assertTrue(tick.get("server.part_setpos") == 20L, FINDING + ": the SPAWN tick calls setPos twice per part -- the alignment and updateLastPos"
+                    + " from the part tick; the first-tick lerp snap to the zero interp target is gone (OPT-030 (a), wave 5: the count starts at -1). The slice"
+                    + " (d) gate had pinned 30 with the snap; actual " + tick);
             Entity firstPart = queen.getParts()[0];
-            helper.assertTrue(firstPart.getX() == 0.0D && firstPart.getY() == 0.0D && firstPart.getZ() == 0.0D, FINDING + ": after the spawn tick's part tick the"
-                    + " Queen's parts sit at the world origin until the next tick's alignment (the snap's one-tick transient, OPT-030), actual " + firstPart.position());
+            // The transient pin inverted: Body1 (the profile's first part) sits at its fallback offset -- position [0, 14.15, -0.13] minus
+            // pivot [0, 3.75, 0.75] at yaw 0, scale 1 (the_queen.json; alignSynchedSubParts' fallback then applyInformation) -- not at the origin.
+            Vec3 body1 = queen.position().add(0.0D, 14.15D, -0.13D).subtract(0.0D, 3.75D, 0.75D);
+            helper.assertTrue(!(firstPart.getX() == 0.0D && firstPart.getY() == 0.0D && firstPart.getZ() == 0.0D)
+                    && firstPart.position().distanceTo(body1) < 1.0E-6D, FINDING + ": after the spawn tick's part tick the Queen's parts sit where the"
+                    + " alignment put them (Body1 at its fallback offset " + body1 + "), not at the world origin -- the OPT-030 transient pin inverted (the"
+                    + " slice (d) gate had pinned the origin); actual " + firstPart.position());
             queen.tick();
             Map<String, Long> second = MHLibCounters.sumAndResetServer();
             helper.assertTrue(second.get("server.align_synched_parts") == 10L && second.get("server.part_setpos") == 20L, FINDING
                     + ": from the second tick on a tick calls setPos twice per part (the alignment, then updateLastPos from the part tick) -- the steady state the"
                     + " runbook's 400 per Queen per second counts; actual " + second);
-            helper.assertTrue(!(firstPart.getX() == 0.0D && firstPart.getY() == 0.0D && firstPart.getZ() == 0.0D), FINDING + ": the second tick's alignment puts the"
-                    + " parts back on the Queen, actual " + firstPart.position());
+            helper.assertTrue(firstPart.position().distanceTo(body1) < 1.0E-6D, FINDING + ": the second tick's alignment keeps the parts on the"
+                    + " Queen (Body1 at its fallback offset), actual " + firstPart.position());
         } finally {
             discardQuietly(queen);
         }
@@ -687,6 +697,8 @@ public class BenchHarnessTests {
         assertCountersLive(helper);
         try {
             spider = spawnModernSpider(helper, new BlockPos(24, 1, 24));
+            // wave 5 (refuter B): not frozen -- the spider stands on the template floor (rel y 1, F0.7) where the gait's ground scan
+            // wants it, and the pins below are counts and a not-at-origin test, none of them position-relative.
             helper.assertTrue(spider.isModernMovement() && spider.getParts() != null && spider.getParts().length == 8, FINDING
                     + ": precondition: a modern spider with eight parts, actual modern=" + spider.isModernMovement());
             // Reset-act-read inside one tick, as in row 11: exact values.
@@ -696,18 +708,18 @@ public class BenchHarnessTests {
             helper.assertTrue(after.get("server.align_sub_parts_parts") == 8L, FINDING + ": alignSubParts places the eight unsynched leg parts, actual " + after);
             helper.assertTrue(after.get("server.align_synched_parts") == 0L, FINDING + ": no synched part on the spider, actual " + after);
             helper.assertTrue(after.get("server.part_setpos") == 8L, FINDING + ": one setPos per placed part from mhlibAiStep alone, actual " + after);
-            // The spider's SPAWN tick: the aiStep-tail static alignment (8), each leg part's updateLastPos (8) and first-tick lerp snap (8,
-            // MHLibPartEntity.tick :109 -- OPT-030, see row 11), then SpiderRobot.tick's gait feed after super.tick() (:356, ModernSpiderGait.serverTick
-            // -> feedParts: 8) re-places the legs in the same tick, so the snap leaves no window on this species: 32 on the spawn tick, 24 after.
+            // The spider's SPAWN tick: the aiStep-tail static alignment (8), each leg part's updateLastPos (8), then SpiderRobot.tick's gait feed
+            // after super.tick() (ModernSpiderGait.serverTick -> feedParts: 8): 24 on the spawn tick as after it. The first-tick lerp snap (8) the
+            // slice (d) gate counted is gone -- OPT-030 (a) (FIXED 2026-09-06, wave 5), see row 11.
             spider.tick();
             Map<String, Long> tick = MHLibCounters.sumAndResetServer();
             helper.assertTrue(tick.get("server.align_sub_parts_parts") == 8L, FINDING + ": a tick runs the static alignment once, actual " + tick);
-            helper.assertTrue(tick.get("server.part_setpos") == 32L, FINDING + ": the SPAWN tick calls setPos four times per leg part: the static alignment,"
-                    + " updateLastPos, the part's first-tick lerp snap (OPT-030) and the gait feed -- Section 5's derived 16 counted the alignment and the feed,"
-                    + " the lane's derived 24 missed the snap; actual " + tick);
+            helper.assertTrue(tick.get("server.part_setpos") == 24L, FINDING + ": the SPAWN tick calls setPos three times per leg part: the static alignment,"
+                    + " updateLastPos and the gait feed; the first-tick lerp snap is gone (OPT-030 (a), wave 5). The slice (d) gate had pinned 32 with the"
+                    + " snap; actual " + tick);
             Entity firstLeg = spider.getParts()[0];
-            helper.assertTrue(!(firstLeg.getX() == 0.0D && firstLeg.getY() == 0.0D && firstLeg.getZ() == 0.0D), FINDING + ": the gait feed after super.tick() puts"
-                    + " the legs back on the spider within the spawn tick (no OPT-030 window on this species), actual " + firstLeg.position());
+            helper.assertTrue(!(firstLeg.getX() == 0.0D && firstLeg.getY() == 0.0D && firstLeg.getZ() == 0.0D), FINDING + ": the gait feed after super.tick() has"
+                    + " the legs on the spider at the end of the spawn tick (and no snap ever moved them off it: OPT-030 (a)), actual " + firstLeg.position());
             helper.assertTrue(tick.get("server.placement_ns") > 0L, FINDING + ": the placement span covers mhlibAiStep and feedParts, actual " + tick);
             spider.tick();
             Map<String, Long> second = MHLibCounters.sumAndResetServer();

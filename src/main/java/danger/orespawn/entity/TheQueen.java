@@ -228,7 +228,11 @@ public class TheQueen extends Monster implements GeoEntity, IMHLibSizeCallback<T
     public TheQueen(EntityType<? extends TheQueen> type, Level level) {
         super(type, level);
         this.xpReward = 25000;
-        this.noCulling = true;
+        // OPT-013 / MHLib harvest 3 (2026-09-06): noCulling is no longer set -- the frustum test runs
+        // against the conservative box MHLib caches per client tick (IMultipartEntity.mhlibCacheCullBox: her body
+        // box, the profile's rest-pose reach around her position, the parts' live boxes); QueenRenderer's
+        // shouldRender override went with it. 1.7.10 culled her by her 22x24 box (no ignoreFrustumCheck
+        // anywhere in the mod); the always-on flag was the port's own.
         this.noPhysics = true;
         // TF-035: orig TheQueen.java:56/:88 — GenericTargetSorter.
         this.targetSorter = new danger.orespawn.entity.ai.GenericTargetSorter(this);

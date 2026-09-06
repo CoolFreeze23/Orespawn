@@ -16,6 +16,7 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.AgeableMob;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
 import javax.annotation.Nullable;
@@ -620,9 +621,106 @@ public interface IMultipartEntity<T extends Entity> {
 		}
 		if (this instanceof IMHLibFieldAccessor access) {
 			access._mhlibAccess_setTicksSinceLastSynch(access._mhlibAccess_getTicksSinceLastSynch() + 1);
+			// OPT-013 / harvest 3: the frustum box, once per CLIENT tick, after the parts moved (the S2C lerp in
+			// part.tick()); a no-op on the server (refuters A / B, 2026-09-06). A species that moves its parts
+			// later in its own tick re-caches through mhlibCacheCullBox() (the gait-fed robots' client mirror).
+			this.mhlibCacheCullBox(parts, access);
 		} else {
 			throw new IllegalStateException("Access interface not implemented");
 		}
+	}
+
+	/**
+	 * OPT-013 / MHLib harvest 3 (2026-09-06): the conservative frustum box -- one AABB per CLIENT tick, cached on
+	 * the entity and read allocation-free by MixinLivingEntity's getBoundingBoxForCulling modifier every frame.
+	 * Client only (refuters A / B, 2026-09-06): the server never calls getBoundingBoxForCulling, so it caches
+	 * nothing and the modifier passes vanilla's box through there. The union of three boxes: the entity's own;
+	 * the cube {@code position +- R}, R being the profile's rest-pose reach (the maximum over the parts of
+	 * {@code |position| + |pivot| + sqrt(w^2/2 + h^2)}, MHLibPartEntity.mhlibRestReach, computed once at
+	 * construction) scaled by mhlibGetEntitySizeInternally (the PlayNicely 0.25 Queen); and the parts' live
+	 * boxes (the lerped S2C pose, or a species' own client mirror of its parts), so a pose that carries a part
+	 * beyond its rest reach is still covered while it lasts. The static cube is the floor that keeps the
+	 * streaming loop alive: the master client's bone stream needs a render, a render needs the box in view,
+	 * and a box built from the parts alone would sit at the rest pose whenever the stream stops. Nothing runs
+	 * for an entity without a profile (radius 0). Ordering: tickParts caches at LivingEntity.tick's TAIL, after
+	 * part.tick(); a species that moves its parts LATER in its own tick must re-cache through
+	 * {@link #mhlibCacheCullBox()} after the move -- SpiderRobot / AntRobot.tick's client mirror positions the
+	 * eight leg parts after super.tick(), up to the rig's reach from the body (segments of 99/16 blocks), far
+	 * outside the 0.735-block R cube, so without the re-cache the box held the previous tick's legs and a robot
+	 * whose legs are on screen while its body is not would have been culled (refuter B, 2026-09-06).
+	 * {@link #mhlibComputeCullBox()} is the pure computation, public for the suite (a server gametest cannot run
+	 * the client path). Design after MoreHitboxes' EntityMixin.changeCullBox /
+	 * MultiPartEntity.makeBoundingBoxForCulling; no code taken.
+	 */
+	public default void mhlibCacheCullBox(final Collection<MHLibPartEntity<T>> parts, final IMHLibFieldAccessor<?> access) {
+		if (!(this instanceof Entity entity) || !entity.level().isClientSide()) {
+			return;
+		}
+		final AABB box = this.mhlibComputeCullBox(parts, access);
+		if (box != null) {
+			access._mhlibAccess_setCullBox(box);
+		}
+	}
+
+	/**
+	 * The post-move re-cache for a species that positions its parts after LivingEntity.tick's TAIL (see
+	 * {@link #mhlibCacheCullBox(Collection, IMHLibFieldAccessor)}): client only, a no-op on the server and for an
+	 * entity without a profile.
+	 */
+	@SuppressWarnings("unchecked")
+	public default void mhlibCacheCullBox() {
+		if (this instanceof IMHLibFieldAccessor access) {
+			this.mhlibCacheCullBox(access._mhlibAccess_getPartMap().values(), access);
+		}
+	}
+
+	/**
+	 * The box {@link #mhlibCacheCullBox(Collection, IMHLibFieldAccessor)} would cache right now, from this
+	 * entity's parts on whichever side calls it (side-effect free; {@code null} without a profile).
+	 */
+	@SuppressWarnings("unchecked")
+	@Nullable
+	public default AABB mhlibComputeCullBox() {
+		if (this instanceof IMHLibFieldAccessor access) {
+			return this.mhlibComputeCullBox(access._mhlibAccess_getPartMap().values(), access);
+		}
+		return null;
+	}
+
+	/**
+	 * The conservative frustum box computed from the parts' CURRENT boxes: the body box, the cube position +- R x
+	 * scale and the parts' live boxes, unioned; {@code null} for an entity without a profile (radius 0).
+	 * Side-effect free -- the caching and its client gate live in
+	 * {@link #mhlibCacheCullBox(Collection, IMHLibFieldAccessor)}.
+	 */
+	@SuppressWarnings("unchecked")
+	@Nullable
+	public default AABB mhlibComputeCullBox(final Collection<MHLibPartEntity<T>> parts, final IMHLibFieldAccessor<?> access) {
+		final double reach = access._mhlibAccess_getCullRadius();
+		if (reach <= 0.0D || !(this instanceof Entity entity)) {
+			return null;
+		}
+		final double r = reach * this.mhlibGetEntitySizeInternally((T) entity);
+		final AABB body = entity.getBoundingBox();
+		final double x = entity.getX();
+		final double y = entity.getY();
+		final double z = entity.getZ();
+		double minX = Math.min(body.minX, x - r);
+		double minY = Math.min(body.minY, y - r);
+		double minZ = Math.min(body.minZ, z - r);
+		double maxX = Math.max(body.maxX, x + r);
+		double maxY = Math.max(body.maxY, y + r);
+		double maxZ = Math.max(body.maxZ, z + r);
+		for (MHLibPartEntity<T> part : parts) {
+			final AABB box = part.getBoundingBox();
+			minX = Math.min(minX, box.minX);
+			minY = Math.min(minY, box.minY);
+			minZ = Math.min(minZ, box.minZ);
+			maxX = Math.max(maxX, box.maxX);
+			maxY = Math.max(maxY, box.maxY);
+			maxZ = Math.max(maxZ, box.maxZ);
+		}
+		return new AABB(minX, minY, minZ, maxX, maxY, maxZ);
 	}
 
 	public default float mhlibGetEntityRotationXForPartOffset() {
@@ -850,6 +948,16 @@ public interface IMultipartEntity<T extends Entity> {
 
 		access._mhlibAccess_setPartMap(partMap);
 		access._mhlibAccess_setPartArray(partArray);
+
+		// OPT-013 / harvest 3 (2026-09-06): the rest-pose reach of the farthest part, once, from the very
+		// parts this profile built (their basePos / pivot / baseSize are the profile's numbers through the
+		// codec) -- the OPT-019 lifetime argument: a datapack reload only affects NEWLY constructed entities,
+		// whose parts and radius come from the new profile together.
+		double reach = 0.0D;
+		for (MHLibPartEntity<T> part : partMap.values()) {
+			reach = Math.max(reach, part.mhlibRestReach());
+		}
+		access._mhlibAccess_setCullRadius(reach);
 
 		if (entity.isMultipartEntity() && entity.getParts() != null) {
 			// TODO: AccessTransformer
