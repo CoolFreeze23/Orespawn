@@ -1,19 +1,25 @@
 {
   "schema_version": 1,
-  "kind": "code_driven",
+  "kind": "entity_state",
   "controller_required": false,
   "candidate_animation_path": "production_replacement_hook",
   "candidate_class": "danger.orespawn.entity.client.PurplePowerGeoReplacement",
   "candidate_acceptance_path": "production OreSpawnGeoReplacementModel.setCustomAnimations (Amendment 1 Tier-3 code-driven)",
   "sample_ids": [
     "bind",
-    "t0",
-    "t_0_001250",
-    "t_0_005000",
-    "t_0_012500",
-    "t_0_030000",
-    "t_quarter",
-    "t_half",
-    "t_end"
+    "s_seed_1_t0",
+    "s_seed_1_t_half",
+    "s_seed_12345_t0",
+    "s_seed_12345_t_half",
+    "s_seed_2026_t0",
+    "s_seed_2026_t_half",
+    "s_seed_777_t0",
+    "s_seed_777_t_half"
+  ],
+  "entity_states": [
+    "seed_1",
+    "seed_12345",
+    "seed_2026",
+    "seed_777"
   ]
 }

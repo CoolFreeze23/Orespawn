@@ -1,7 +1,9 @@
 package danger.orespawn.entity.client;
 
+import com.google.gson.JsonObject;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.world.entity.Entity;
 import software.bernie.geckolib.animation.AnimationState;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
@@ -62,13 +64,33 @@ public final class OreSpawnGeoReplacementModel<E extends Entity, A extends OreSp
      * bake untouched; the reading presented to the owner with the landing. The shipped
      * rigs never take either fallback - the asset audit fails the build for a seam rig
      * whose key is absent or wrong - and the identity test above means the decision, like
-     * the reorder, is made once per bake.</p>
+     * the reorder, is made once per bake. ENT-S-146 adds the within-cube face order
+     * ({@link FaceOrder#KEY}, written for a translucent rig, where the order of a cube's faces
+     * decides what its blending shows) under the same policy and the same identity test.</p>
      */
     @Override
     public BakedGeoModel getBakedModel(ResourceLocation location) {
         BakedGeoModel baked = super.getBakedModel(location);
         if (baked != this.ordered) {
-            DrawOrder.applyOrFallback(baked, Minecraft.getInstance().getResourceManager(), location);
+            ResourceManager resources = Minecraft.getInstance().getResourceManager();
+            boolean faceOrderRequired = this.descriptor.cubeFaceOrderRequired();
+            // ENT-S-146 (refuter A, D5): the geo resource is parsed ONCE per bake and the document handed to
+            // both keys - not one parse per key for every seam rig on every bake and reload.
+            JsonObject geoJson;
+            try {
+                geoJson = DrawOrder.geoJson(resources, location);
+            } catch (IllegalStateException unreadable) {
+                // The resource GeckoLib baked from moments ago cannot be read: both keys take their
+                // ERROR-logged fallback (once per resource), the bake left exactly as the factory built it.
+                DrawOrder.unreadable(location, unreadable);
+                FaceOrder.unreadable(location, unreadable);
+                this.ordered = baked;
+                return baked;
+            }
+            DrawOrder.applyOrFallback(baked, geoJson, location);
+            // ENT-S-146: the within-cube face order, the same policy (a present key applied, a wrong one
+            // ERROR-logged once and left alone); absent is silent unless the species draws translucent.
+            FaceOrder.applyOrFallback(baked, geoJson, location, faceOrderRequired);
             this.ordered = baked;
         }
         return baked;

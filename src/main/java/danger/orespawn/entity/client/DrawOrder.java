@@ -194,13 +194,23 @@ public final class DrawOrder {
      * its own {@link IllegalStateException}, carrying the cause.
      */
     public static List<String> load(ResourceManager resources, ResourceLocation geo) {
-        JsonObject json;
+        return read(geoJson(resources, geo));
+    }
+
+    /**
+     * The geo resource GeckoLib loaded the bake from, parsed ONCE: the seam
+     * ({@code OreSpawnGeoReplacementModel.getBakedModel}) hands the document to this class and to
+     * {@link FaceOrder} rather than parsing the resource once per key (ENT-S-146, refuter A, D5: one
+     * parse per bake and reload, for every seam rig). The resource must exist and parse - GeckoLib
+     * baked it moments earlier - so a failure is its own {@link IllegalStateException}, carrying the
+     * cause; {@link #unreadable} is the seam's answer to it.
+     */
+    public static JsonObject geoJson(ResourceManager resources, ResourceLocation geo) {
         try (BufferedReader reader = resources.getResourceOrThrow(geo).openAsReader()) {
-            json = JsonParser.parseReader(reader).getAsJsonObject();
+            return JsonParser.parseReader(reader).getAsJsonObject();
         } catch (IOException | RuntimeException exception) {
-            throw new IllegalStateException("Unable to read the draw order of " + geo, exception);
+            throw new IllegalStateException("Unable to read " + geo, exception);
         }
-        return read(json);
     }
 
     /**
@@ -216,13 +226,37 @@ public final class DrawOrder {
      * rigs through the strict statics and takes no fallback.
      */
     public static Decision applyOrFallback(BakedGeoModel model, ResourceManager resources, ResourceLocation geo) {
+        JsonObject json;
+        try {
+            json = geoJson(resources, geo);
+        } catch (IllegalStateException wrong) {
+            return fallback(geo, reason(wrong));
+        }
+        return applyOrFallback(model, json, geo);
+    }
+
+    /**
+     * The same policy over a geo document already parsed ({@link #geoJson}; the seam parses once and
+     * hands the document to this class and to {@link FaceOrder}): {@link #read}'s failure - a key that
+     * is present and malformed - is the ERROR-logged fallback, an absent key the WARN-logged one.
+     */
+    public static Decision applyOrFallback(BakedGeoModel model, JsonObject geoJson, ResourceLocation geo) {
         List<String> order;
         try {
-            order = load(resources, geo);
+            order = read(geoJson);
         } catch (IllegalStateException wrong) {
             return fallback(geo, reason(wrong));
         }
         return applyOrFallback(model, order, geo);
+    }
+
+    /**
+     * The seam's answer when the geo resource itself cannot be read ({@link #geoJson} threw): the
+     * ERROR-logged fallback, once per resource, exactly as the resource-based {@link #applyOrFallback}
+     * answers it - the bake left as the factory built it.
+     */
+    public static Decision unreadable(ResourceLocation geo, IllegalStateException failure) {
+        return fallback(geo, reason(failure));
     }
 
     /**

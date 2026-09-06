@@ -106,7 +106,8 @@ ACKNOWLEDGED = {
 # it is a build error, full stop (owner ruling 2026-09-06, addendum item 24 (3)); and
 # a shipped rig that is neither a seam rig nor a dated OUTSIDE_SEAM exception is a rig
 # outside the contract nobody decided on (refuter B on the landing, 2026-09-06).
-NEVER_ACKNOWLEDGED = {"GECKO_GEO_DRAW_ORDER_MISSING", "GECKO_GEO_SEAM_UNRECONCILED"}
+NEVER_ACKNOWLEDGED = {"GECKO_GEO_DRAW_ORDER_MISSING", "GECKO_GEO_SEAM_UNRECONCILED",
+                      "GECKO_GEO_FACE_ORDER_INVALID"}
 
 findings = []      # list of dicts: level, category, name, detail, path
 skipped = []       # things the static parser could not verify
@@ -706,6 +707,12 @@ DATA = ROOT / "src" / "main" / "resources" / "data"
 # G2 root-order contract: the geo description key the converter writes and the shared
 # OreSpawnGeoReplacementModel applies to each bake (DrawOrder.KEY).
 DRAW_ORDER_KEY = "orespawn:bone_draw_order"
+# ENT-S-146: the within-cube face order a translucent seam rig ships (FaceOrder.KEY). Optional for an
+# opaque rig, REQUIRED for a rig whose descriptor says so (cubeFaceOrderRequired), and when present its
+# content must be exactly what FaceOrder.apply accepts (the rig's cube-bearing bones, one six-name
+# permutation per cube of each), else the client would WARN / ERROR-log and fall back (refuter B, D1).
+FACE_ORDER_KEY = "orespawn:cube_face_order"
+FACE_DIRECTIONS = {"down", "up", "north", "south", "west", "east"}
 DESCRIPTOR_CTOR_RE = re.compile(r'new\s+GeoReplacementDescriptor\s*<[^>]*>\s*\(')
 GEO_LITERAL_RE = re.compile(r'fromNamespaceAndPath\(\s*(?:OreSpawnMod\.MOD_ID|"orespawn")\s*,\s*'
                             r'"(geo/[^"]+)"\s*\)')
@@ -780,21 +787,73 @@ def _draw_order_problem(description, bones):
     return None
 
 
+DESCRIPTOR_REQUIRES_FACE_ORDER_RE = re.compile(
+    r'boolean\s+cubeFaceOrderRequired\s*\(\s*\)\s*\{\s*return\s+true\s*;')
+
+
+def _descriptor_requires_face_order(java_text):
+    """Whether the descriptor constructed in this java file overrides cubeFaceOrderRequired() to true (a
+    translucent rig: the shipped client seam WARNs and falls back to GeckoLib's own face order without the
+    key). Detected in the descriptor's own source - the file seam_rigs already attributes the rig to - by the
+    override's text; a file constructing more than one descriptor cannot be attributed and is SKIPPED."""
+    return DESCRIPTOR_REQUIRES_FACE_ORDER_RE.search(java_text) is not None
+
+
+def _face_order_problem(description, bone_cubes, required):
+    """None when description[FACE_ORDER_KEY] is right, else the reason, worded after the key - exactly what
+    the client's FaceOrder.read + FaceOrder.apply refuse (ENT-S-146; refuter B, D1): the key's bones must be
+    the rig's CUBE-BEARING bones exactly (a cube-less bone named, or a cube-bearing bone missing, is refused),
+    each bone's array must hold one entry per cube of that bone, and each entry must be a permutation of the
+    six direction names. An absent key is the norm for an opaque rig and passes; for a rig whose descriptor
+    REQUIRES the key (`required`) an absent key is the same error - the client would take the logged fallback."""
+    if not isinstance(description, dict) or FACE_ORDER_KEY not in description:
+        return "is absent, but the descriptor requires it (cubeFaceOrderRequired: a translucent rig)" if required else None
+    order = description[FACE_ORDER_KEY]
+    if not isinstance(order, dict):
+        return "is present but not an object: %s" % json.dumps(order)[:80]
+    if not order:
+        return "is present but empty"
+    for bone, cubes in order.items():
+        if not isinstance(cubes, list) or not cubes:
+            return "maps %s to something other than a non-empty array of cubes" % bone
+        for index, faces in enumerate(cubes):
+            if not isinstance(faces, list) or len(faces) != 6 or any(not isinstance(f, str) for f in faces) \
+                    or set(faces) != FACE_DIRECTIONS:
+                return "%s cube %d is not a permutation of the six direction names: %s" % (
+                    bone, index, json.dumps(faces)[:80])
+    if bone_cubes is None:
+        return None  # GECKO_GEO_INVALID already reported the rig; no bone set to compare against
+    cube_bearing = {name for name, count in bone_cubes.items() if count > 0}
+    for bone in order:
+        if bone not in cube_bearing:
+            return "names %s, which is not a cube-bearing bone of the rig" % bone
+    missing = sorted(cube_bearing - set(order))
+    if missing:
+        return "lacks the cube-bearing rig bone(s) %s" % ", ".join(missing)
+    for bone, cubes in order.items():
+        if len(cubes) != bone_cubes[bone]:
+            return "lists %d cube(s) for %s but the rig bone has %d" % (len(cubes), bone, bone_cubes[bone])
+    return None
+
+
 def _geo_bones(path):
+    """{bone name: cube count} of the geo's bones (the face-order rule needs the cube-bearing set and each bone's
+    cube count, FaceOrder.apply's own checks); None after a GECKO_GEO_INVALID report."""
     data, jerr = load_json(path)
     geoms = data.get("minecraft:geometry") if isinstance(data, dict) else None
     if jerr or not isinstance(geoms, list) or not geoms or not isinstance(geoms[0], dict):
         err("GECKO_GEO_INVALID", path.stem,
             "JSON parse error: " + (jerr or "no minecraft:geometry entry"), path)
         return None
-    bones = [b.get("name") for b in geoms[0].get("bones", []) if isinstance(b, dict)]
+    declared = [b for b in geoms[0].get("bones", []) if isinstance(b, dict)]
+    bones = [b.get("name") for b in declared]
     if not bones:
         err("GECKO_GEO_INVALID", path.stem, "geometry declares no bones", path)
         return None
     dupes = sorted({b for b in bones if bones.count(b) > 1})
     if dupes:
         err("GECKO_GEO_INVALID", path.stem, "duplicate bone names: " + ", ".join(dupes), path)
-    return set(bones)
+    return {b.get("name"): len(b.get("cubes") or []) if isinstance(b.get("cubes"), list) else 0 for b in declared}
 
 
 def _entity_dims():
@@ -878,13 +937,31 @@ def check_geckolib(java_texts):
         geoms = data.get("minecraft:geometry") if isinstance(data, dict) else None
         if jerr or not isinstance(geoms, list) or not geoms or not isinstance(geoms[0], dict):
             continue  # GECKO_GEO_INVALID already reported above
+        bone_cubes = geo_bones.get(geo_path.name[:-len(".geo.json")])
         problem = _draw_order_problem(geoms[0].get("description"),
-                                      geo_bones.get(geo_path.name[:-len(".geo.json")]))
+                                      None if bone_cubes is None else set(bone_cubes))
         if problem:
             err("GECKO_GEO_DRAW_ORDER_MISSING", geo_path.stem,
                 'rig drawn by the replacement seam (%s): description["%s"] %s - the client '
                 "would fall back to GeckoLib's own bone order; regenerate it with "
                 "tools/layer_definition_to_geo.py" % (rel(java_path), DRAW_ORDER_KEY, problem),
+                geo_path)
+        # ENT-S-146 (refuter B, D1 / refuter A, D1): the face-order key must be exactly what the client's
+        # FaceOrder.apply accepts (the cube-bearing bones, their cube counts, six-name permutations), and a
+        # rig whose descriptor requires it (cubeFaceOrderRequired() true in the descriptor's source, the
+        # java file the rig is attributed to) must ship it; absent is the norm for every other rig.
+        java_text = read(java_path)
+        if len(DESCRIPTOR_CTOR_RE.findall(java_text)) != 1 and _descriptor_requires_face_order(java_text):
+            skip(rel(java_path), "more than one GeoReplacementDescriptor constructed in the file that overrides "
+                 "cubeFaceOrderRequired - the requirement cannot be attributed to a rig; treated as required for %s"
+                 % geo_path.name)
+        required = _descriptor_requires_face_order(java_text)
+        problem = _face_order_problem(geoms[0].get("description"), bone_cubes, required)
+        if problem:
+            err("GECKO_GEO_FACE_ORDER_INVALID", geo_path.stem,
+                'rig drawn by the replacement seam (%s): description["%s"] %s - the client '
+                "would fall back to GeckoLib's own within-cube face order; regenerate it with "
+                "tools/layer_definition_to_geo.py" % (rel(java_path), FACE_ORDER_KEY, problem),
                 geo_path)
 
     clips = {}  # clip name -> [(file, loop declaration)]; loop is False / True / "hold_on_last_frame"

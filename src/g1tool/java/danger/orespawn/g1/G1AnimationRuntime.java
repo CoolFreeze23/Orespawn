@@ -1,9 +1,11 @@
 package danger.orespawn.g1;
 
 import danger.orespawn.entity.client.DrawOrder;
+import danger.orespawn.entity.client.FaceOrder;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import software.bernie.geckolib.animatable.GeoAnimatable;
@@ -31,20 +33,43 @@ final class G1AnimationRuntime {
      * the key, so an empty order is a harness failure here, never a fallback.
      */
     static Evaluator evaluator(Model rawModel, List<String> drawOrder) {
+        // The opaque-only form: the benchmark (G1PerformanceBenchmark) bakes the g1 rigs through it without
+        // reading a face order; a translucent rig reaches only the probe's four-argument form below.
+        return evaluator(rawModel, drawOrder, Map.of(), false);
+    }
+
+    /**
+     * ENT-S-146: with the geo's within-cube face order ({@link FaceOrder#KEY}) as well - applied through
+     * the strict production {@link FaceOrder#apply} on every fresh bake when present; an absent order
+     * (every opaque rig) applies nothing. {@code faceOrderRequired} is the shipped descriptor's
+     * {@code cubeFaceOrderRequired} (a translucent rig; {@code S4CandidateRuntime.cubeFaceOrderRequired}):
+     * an absent key is then the same harness failure as an absent draw order - the shipped model would
+     * WARN and fall back to GeckoLib's own face order, and the harness takes no fallback (refuter A, D1).
+     * This evaluator bakes the bind sample of EVERY probed rig, translucent ones included.
+     */
+    static Evaluator evaluator(Model rawModel, List<String> drawOrder, Map<String, List<List<Direction>>> faceOrder,
+                               boolean faceOrderRequired) {
         if (drawOrder.isEmpty()) {
             throw new IllegalStateException("harness failure: the generated geo ships without " + DrawOrder.KEY
                     + "; the harness proves shipped rigs and takes no fallback");
         }
-        return new Evaluator(GeometryTree.fromModel(rawModel), drawOrder);
+        if (faceOrderRequired && faceOrder.isEmpty()) {
+            throw new IllegalStateException("harness failure: the generated geo ships without " + FaceOrder.KEY
+                    + ", which the shipped descriptor requires (cubeFaceOrderRequired: a translucent rig); the "
+                    + "harness proves shipped rigs and takes no fallback");
+        }
+        return new Evaluator(GeometryTree.fromModel(rawModel), drawOrder, faceOrder);
     }
 
     static final class Evaluator {
         private final GeometryTree geometryTree;
         private final List<String> drawOrder;
+        private final Map<String, List<List<Direction>>> faceOrder;
 
-        private Evaluator(GeometryTree geometryTree, List<String> drawOrder) {
+        private Evaluator(GeometryTree geometryTree, List<String> drawOrder, Map<String, List<List<Direction>>> faceOrder) {
             this.geometryTree = geometryTree;
             this.drawOrder = drawOrder;
+            this.faceOrder = faceOrder;
         }
 
         EvaluatedModel bindPose() {
@@ -63,10 +88,13 @@ final class G1AnimationRuntime {
             return snapshot(baked);
         }
 
-        /** GeckoLib's own bake, then the production G2 reorder ({@link DrawOrder#apply}), as in S4CandidateRuntime. */
+        /** GeckoLib's own bake, then the production G2 reorder ({@link DrawOrder#apply}) and, when present, the face order ({@link FaceOrder#apply}), as in S4CandidateRuntime. */
         private BakedGeoModel freshBaked() {
             BakedGeoModel baked = BakedModelFactory.DEFAULT_FACTORY.constructGeoModel(this.geometryTree);
             DrawOrder.apply(baked, this.drawOrder);
+            if (!this.faceOrder.isEmpty()) {
+                FaceOrder.apply(baked, this.faceOrder);
+            }
             return baked;
         }
     }

@@ -31,7 +31,50 @@ RETIRED_MANIFEST_FIELDS = ("max_contested_fraction_pin", "in_game_acceptance")
 CONTESTED_MARKER = (40, 90, 255, 255)
 # G2 root-order contract: the geo description key the converter writes and the shipped model applies.
 DRAW_ORDER_KEY = "orespawn:bone_draw_order"
+# ENT-S-146: the within-cube face order key (bone -> one array per cube of GeckoLib direction names in
+# draw order), written for a translucent rig and applied by the shipped model and the harness.
+FACE_ORDER_KEY = "orespawn:cube_face_order"
 DEFAULT_VISUAL_SAMPLE_IDS = ("bind", "t0", "t_quarter", "t_half", "t_three_quarter")
+# ENT-S-146: the per-model visual modes the rasteriser emulates, keyed by the RenderType both
+# renderers draw with (the manifest's `visual_mode.render_type`); the GPU states are the ones the
+# NeoForge 21.1.223 RenderType builders set (bytecode-cited). The default, `entity_cutout_no_cull`,
+# is the verbatim path every landed model is proven under; a model declares another mode in its
+# manifest entry and the tool refuses anything it does not emulate. Both modes are NO_CULL, and that
+# is load-bearing (refuter B, D4): the candidate emits every quad as the REVERSED vertex cycle of the
+# classic's - ModelPart.Polygon.<init> reverses a mirrored cube's vertices, GeckoLib's buildQuads bakes the
+# converter's explicit, unmirrored faces - so the two sides' windings are opposite (measured 2026-09-06:
+# 108 of 108 quads per PurplePower capture, a [3, 2, 1, 0] reversal). Invisible under NO_CULL; a future
+# mode with face culling would draw the two sides' different faces, and must not be added here without
+# a winding leg.
+VISUAL_MODES = {
+    "entity_cutout_no_cull": {
+        # RenderType.lambda$static$3: NO_TRANSPARENCY (22-25), NO_CULL (28-31); builder defaults
+        # LEQUAL_DEPTH_TEST / COLOR_DEPTH_WRITE (CompositeStateBuilder.<init> 26-29 / 75-78).
+        "blend": None,
+        "depth_test": "LEQUAL",
+        "depth_write": True,
+        "cull": False,
+        # rendertype_entity_cutout_no_cull.fsh: `if (color.a < 0.1) discard;` on the TEXTURE alpha.
+        "alpha_discard": CUTOUT_ALPHA_THRESHOLD / 255.0,
+        "rasteriser": "render_capture",
+    },
+    "entity_translucent": {
+        # RenderType.lambda$static$7: TRANSLUCENT_TRANSPARENCY (22-25), NO_CULL (28-31); the same builder
+        # defaults, so the depth test is LEQUAL and the depth IS written (COLOR_DEPTH_WRITE = new
+        # WriteMaskStateShard(true, true), RenderStateShard.<clinit> 1179-1188). RenderStateShard
+        # .lambda$static$10 (TRANSLUCENT_TRANSPARENCY's setup): enableBlend; blendFuncSeparate
+        # (SRC_ALPHA, ONE_MINUS_SRC_ALPHA, ONE, ONE_MINUS_SRC_ALPHA).
+        "blend": ["SRC_ALPHA", "ONE_MINUS_SRC_ALPHA", "ONE", "ONE_MINUS_SRC_ALPHA"],
+        "depth_test": "LEQUAL",
+        "depth_write": True,
+        "cull": False,
+        # rendertype_entity_translucent.fsh: the same `if (color.a < 0.1) discard;` on the texture alpha,
+        # BEFORE `color *= vertexColor` - the vertex alpha never triggers the discard.
+        "alpha_discard": CUTOUT_ALPHA_THRESHOLD / 255.0,
+        "rasteriser": "render_capture_blended",
+    },
+}
+DEFAULT_VERTEX_COLOR = [255, 255, 255, 255]
 
 
 def load_json(path: Path) -> dict[str, Any]:
@@ -310,8 +353,73 @@ def vector_delta(left: Iterable[float], right: Iterable[float]) -> float:
 AXIS_INDEX = {"x": 0, "y": 1, "z": 2}
 
 
+def cube_face_order_parity(model_id: str, compiled: dict[str, Any], geo_render: dict[str, Any],
+                           generated_geometry: dict[str, Any], conversion: dict[str, Any],
+                           normal_epsilon: float) -> dict[str, Any] | None:
+    """ENT-S-146: the within-cube face order, for a rig that ships one (``FACE_ORDER_KEY``).
+
+    Four things must agree: the order the converter derived (``conversion.json``), the order shipped
+    inside the geo (what production reads), the order the geo probe read and applied
+    (``cube_face_order``) and the quad order a fresh bake actually has after the production
+    ``FaceOrder.apply`` (``baked_cube_face_order``). Then, capture by capture and cube by cube, the
+    sequence of face normals the classic ``ModelPart.Cube.compile`` emitted must equal the sequence
+    ``GeoRenderer.renderCube`` emitted - the direct proof that the candidate blends a cube's faces in
+    the classic order. None for a rig without the key (an opaque rig: the order is invisible there
+    except at a coplanar tie, the open item recorded on the G2 contract).
+    """
+    description = generated_geometry["minecraft:geometry"][0]["description"]
+    shipped = description.get(FACE_ORDER_KEY)
+    derived = conversion.get("cube_face_order")
+    applied = geo_render.get("cube_face_order")
+    if shipped is None and derived is None and applied is None:
+        return None
+    if shipped != derived:
+        raise AssertionError(f"{model_id} converter report and geo disagree on {FACE_ORDER_KEY}")
+    if applied != shipped:
+        raise AssertionError(f"{model_id} GeckoLib probe applied a different face order than the geo carries")
+    baked = geo_render.get("baked_cube_face_order")
+    if baked != shipped:
+        raise AssertionError(
+            f"FACE ORDER MISMATCH {model_id}: a fresh GeckoLib bake draws {baked} after FaceOrder.apply, "
+            f"not the contracted {shipped}"
+        )
+    vanilla_samples = full_sample_map(compiled)
+    geo_samples = full_sample_map(geo_render)
+    faces_checked = 0
+    for sample_id, vanilla_sample in vanilla_samples.items():
+        vanilla_cubes = cube_map(vanilla_sample)
+        geo_cubes = cube_map(geo_samples[sample_id])
+        assert_same_cube_set(model_id, sample_id, vanilla_cubes, geo_cubes)
+        for key, vanilla_cube in vanilla_cubes.items():
+            classic = [vertex_normal(vertex) for vertex in vanilla_cube["vertices"][::4]]
+            gecko = [vertex_normal(vertex) for vertex in geo_cubes[key]["vertices"][::4]]
+            if len(classic) != len(gecko) or any(
+                    vector_delta(left, right) > normal_epsilon for left, right in zip(classic, gecko)):
+                raise AssertionError(
+                    f"FACE ORDER MISMATCH {model_id}/{sample_id}/{key[0]}#{key[1]}: classic Cube.compile emitted "
+                    f"faces with normals {classic}; GeoRenderer.renderCube emitted {gecko}"
+                )
+            faces_checked += len(classic)
+    if faces_checked == 0:
+        raise AssertionError(f"FACE ORDER UNEVIDENCED {model_id}: no full capture compared a cube's faces")
+    return {
+        "status": "PASS",
+        "cube_face_order": shipped,
+        "captures_checked": len(vanilla_samples),
+        "faces_checked": faces_checked,
+        "normal_epsilon": normal_epsilon,
+        "evidence": conversion.get("cube_face_order_evidence"),
+        "policy": (
+            "the shipped model permutes every cube's quads into the classic ModelPart.Cube order (FaceOrder"
+            ".apply), so under a blending render type a cube's back face shows through its front face - or "
+            "is rejected by the depth test - exactly as it does on the classic renderer"
+        ),
+    }
+
+
 def draw_order_parity(model_id: str, compiled: dict[str, Any], geo_render: dict[str, Any],
-                      generated_geometry: dict[str, Any], conversion: dict[str, Any]) -> dict[str, Any]:
+                      generated_geometry: dict[str, Any], conversion: dict[str, Any],
+                      normal_epsilon: float = 1.0e-6) -> dict[str, Any]:
     """G2 root-order contract: GeckoLib draws the bones in the classic part order.
 
     Three things must agree: the order the converter derived from the classic captures
@@ -320,7 +428,8 @@ def draw_order_parity(model_id: str, compiled: dict[str, Any], geo_render: dict[
     production ``DrawOrder.apply`` (``baked_bone_order``). Then, capture by capture, the
     sequence of parts the classic ``renderToBuffer`` drew (``draw_order``, attributed by
     skipDraw elimination in the probe) must equal the sequence of bones ``GeoRenderer``
-    emitted cubes for.
+    emitted cubes for. ENT-S-146: a rig shipping a within-cube face order is checked by
+    ``cube_face_order_parity`` as well (reported under ``cube_face_order``).
     """
     description = generated_geometry["minecraft:geometry"][0]["description"]
     order = description.get(DRAW_ORDER_KEY)
@@ -364,7 +473,7 @@ def draw_order_parity(model_id: str, compiled: dict[str, Any], geo_render: dict[
         raise AssertionError(
             f"DRAW ORDER UNEVIDENCED {model_id}: units never drawn by any capture: {sorted(unobserved_units)}"
         )
-    return {
+    report = {
         "status": "PASS",
         "bone_draw_order": order,
         "captures_checked": len(vanilla_samples),
@@ -376,6 +485,43 @@ def draw_order_parity(model_id: str, compiled: dict[str, Any], geo_render: dict[
             "renderToBuffer order (DrawOrder.apply); both renderers traverse in pre-order, so equal "
             "sibling orders are equal draw orders"
         ),
+    }
+    face_order = cube_face_order_parity(model_id, compiled, geo_render, generated_geometry, conversion, normal_epsilon)
+    if face_order is not None:
+        report["cube_face_order"] = face_order
+    return report
+
+
+def visual_mode(model_id: str, spec: dict[str, Any]) -> dict[str, Any] | None:
+    """ENT-S-146: the model's declared visual mode, validated, or None for the verbatim default path.
+
+    ``visual_mode``: ``render_type`` (a VISUAL_MODES key), ``vertex_color`` (the RGBA bytes every
+    vertex carries - what the shader multiplies the texel by; the game quantises a float colour
+    with Mth.floor(f * 255), so the manifest declares the bytes) and ``light`` (``world`` or
+    ``full_bright``; documentary - the rasteriser applies no lightmap on either side, so its flat
+    texel colour is the game's under full brightness and, for a world-lit model, the game's before
+    the lightmap multiply that both renderers apply alike).
+    """
+    declared = spec.get("visual_mode")
+    if declared is None:
+        return None
+    render_type = declared.get("render_type")
+    if render_type not in VISUAL_MODES:
+        raise AssertionError(f"{model_id} visual_mode.render_type {render_type!r} is not emulated: {sorted(VISUAL_MODES)}")
+    colour = [int(value) for value in declared.get("vertex_color", DEFAULT_VERTEX_COLOR)]
+    if len(colour) != 4 or any(value < 0 or value > 255 for value in colour):
+        raise AssertionError(f"{model_id} visual_mode.vertex_color must be four RGBA bytes")
+    light = declared.get("light", "world")
+    if light not in ("world", "full_bright"):
+        raise AssertionError(f"{model_id} visual_mode.light {light!r} is not world or full_bright")
+    if render_type == "entity_cutout_no_cull" and colour != DEFAULT_VERTEX_COLOR:
+        raise AssertionError(f"{model_id} a vertex colour under entity_cutout_no_cull is not emulated")
+    return {
+        "render_type": render_type,
+        "vertex_color": colour,
+        "light": light,
+        "emulated_states": {key: value for key, value in VISUAL_MODES[render_type].items() if key != "rasteriser"},
+        "rasteriser": VISUAL_MODES[render_type]["rasteriser"],
     }
 
 
@@ -1348,6 +1494,113 @@ def render_capture(sample: dict[str, Any], texture: Image.Image,
     return image, contested
 
 
+def render_capture_blended(sample: dict[str, Any], texture: Image.Image, camera: Camera,
+                           mode: dict[str, Any], depth_epsilon: float) -> tuple[Image.Image, list[bool]]:
+    """ENT-S-146: rasterise one capture under ``entity_translucent`` - what the GPU does for ONE model's
+    quads, in emission order, under that RenderType's states (VISUAL_MODES, bytecode-cited):
+
+    * the fragment shader discards a texel with alpha < 0.1 before anything else (both entity shaders
+      share the line), so the vertex alpha never discards;
+    * the surviving fragment's colour is the texel times the vertex colour (the RGBA bytes the manifest
+      declares: ``color *= vertexColor``; ``ColorModulator`` is white, the overlay is NO_OVERLAY and
+      the lightmap is not applied on either side - see ``visual_mode``);
+    * depth test LEQUAL against the depth buffer, WITH the depth mask on (``COLOR_DEPTH_WRITE``): a
+      passing fragment writes its depth, so a later fragment behind it is rejected and a later
+      fragment at the same depth passes and blends again. The harness holds the test to a window
+      (``depth <= front + depth_epsilon``, the manifest's own ``coplanar_depth_epsilon_blocks`` - a
+      named tolerance, an owner ruling with its number, no default): two fragments closer than that
+      are one plane for the harness and every such layer passes, in emission order, on both sides.
+      What the data shows (refuter B on ENT-S-146, measured 2026-09-06): on the classic side alone the
+      six spokes' coplanar depths agree to <= 1e-9 at most contested pixels, so a ring's shared planes
+      ARE ties there; the cross-side noise for the SAME fragment is ~1e-7 genuine (vertex deltas
+      <= 1.8e-7 blocks) plus up to ~1e-6 from this harness's own ``Camera.project``, which rounds every
+      vertex to 6 decimals before projecting (a pre-existing quirk of BOTH modes - the cutout leg's
+      first-wins ties see the same rounding). A window below that noise therefore flips passes between
+      the two sides (the sweep is in before_after.md: 94 / 158 / 35 changed pixels at 1e-6 on three of
+      the four captures; 0 / 2 / 0 / 0 at 1e-5), which is why the window is presented as its own
+      tolerance rather than reused from the geometry epsilon or tuned. The test is against the LAST
+      written depth (a chain of near-coplanar fragments can walk the front back; measured maximum
+      9.9e-6 blocks, no chained pass beyond one window). Fragments a face's thickness apart (1/16
+      block and more) are decided exactly as the GPU decides them;
+    * blending ``SRC_ALPHA / ONE_MINUS_SRC_ALPHA`` over what the pixel holds (the background first),
+      the result quantised to 8 bits after every fragment as an RGBA8 framebuffer does; the
+      destination alpha stays opaque (``ONE / ONE_MINUS_SRC_ALPHA`` over an opaque background).
+
+    The contested mask is this mode's diagnostic: a pixel where a fragment from ANOTHER quad passed
+    within ``depth_epsilon`` of the front - whatever its texel, because under blending a second
+    layer changes the pixel even when its colour is the same - and it is never cleared by a nearer
+    fragment, since every earlier layer still contributes.
+    """
+    colour_scale = [value / 255.0 for value in mode["vertex_color"]]
+    pixels = [BACKGROUND] * (IMAGE_SIZE * IMAGE_SIZE)
+    depth_buffer = [math.inf] * (IMAGE_SIZE * IMAGE_SIZE)
+    owner_quad = [-1] * (IMAGE_SIZE * IMAGE_SIZE)
+    front_texel: list[tuple[int, int, int] | None] = [None] * (IMAGE_SIZE * IMAGE_SIZE)
+    contested = [False] * (IMAGE_SIZE * IMAGE_SIZE)
+    texture = texture.convert("RGBA")
+    texture_pixels = texture.load()
+    texture_width, texture_height = texture.size
+
+    vertices = sample["render_vertices"]
+    if len(vertices) % 4:
+        raise AssertionError("captured renderer vertex count is not quad-aligned")
+    for offset in range(0, len(vertices), 4):
+        quad = vertices[offset:offset + 4]
+        quad_index = offset // 4
+        for indices in ((0, 1, 2), (0, 2, 3)):
+            triangle = [quad[index] for index in indices]
+            projected = [camera.project(vertex_position(vertex)) for vertex in triangle]
+            points = [(point[0], point[1]) for point in projected]
+            area = edge(points[0], points[1], points[2])
+            if abs(area) < 1.0e-12:
+                continue
+            min_x = max(0, int(math.floor(min(point[0] for point in points))))
+            max_x = min(IMAGE_SIZE - 1, int(math.ceil(max(point[0] for point in points))))
+            min_y = max(0, int(math.floor(min(point[1] for point in points))))
+            max_y = min(IMAGE_SIZE - 1, int(math.ceil(max(point[1] for point in points))))
+            uvs = [[float(value) for value in vertex["uv"]] for vertex in triangle]
+
+            for pixel_y in range(min_y, max_y + 1):
+                for pixel_x in range(min_x, max_x + 1):
+                    point = (pixel_x + 0.5, pixel_y + 0.5)
+                    w0 = edge(points[1], points[2], point) / area
+                    w1 = edge(points[2], points[0], point) / area
+                    w2 = 1.0 - w0 - w1
+                    if min(w0, w1, w2) < -1.0e-8:
+                        continue
+                    depth = w0 * projected[0][2] + w1 * projected[1][2] + w2 * projected[2][2]
+                    pixel_index = pixel_y * IMAGE_SIZE + pixel_x
+                    current_depth = depth_buffer[pixel_index]
+                    if depth > current_depth + depth_epsilon:
+                        continue  # LEQUAL, held to the geometry epsilon (see the docstring)
+                    u = w0 * uvs[0][0] + w1 * uvs[1][0] + w2 * uvs[2][0]
+                    v = w0 * uvs[0][1] + w1 * uvs[1][1] + w2 * uvs[2][1]
+                    texture_x = min(texture_width - 1, max(0, int(math.floor(u * texture_width))))
+                    texture_y = min(texture_height - 1, max(0, int(math.floor(v * texture_height))))
+                    source = texture_pixels[texture_x, texture_y]
+                    if source[3] < CUTOUT_ALPHA_THRESHOLD:
+                        continue  # the shader's discard, on the texture alpha
+                    texel = (source[0], source[1], source[2])
+                    if abs(depth - current_depth) <= depth_epsilon and owner_quad[pixel_index] != quad_index:
+                        contested[pixel_index] = True
+                    alpha = source[3] / 255.0 * colour_scale[3]
+                    destination = pixels[pixel_index]
+                    blended = []
+                    for channel in range(3):
+                        src = source[channel] / 255.0 * colour_scale[channel]
+                        dst = destination[channel] / 255.0
+                        value = src * alpha + dst * (1.0 - alpha)
+                        blended.append(min(255, max(0, int(value * 255.0 + 0.5))))
+                    pixels[pixel_index] = (blended[0], blended[1], blended[2], 255)
+                    depth_buffer[pixel_index] = depth
+                    owner_quad[pixel_index] = quad_index
+                    front_texel[pixel_index] = texel
+
+    image = Image.new("RGBA", (IMAGE_SIZE, IMAGE_SIZE))
+    image.putdata(pixels)
+    return image, contested
+
+
 def save_png(image: Image.Image, path: Path) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     image.save(path, format="PNG", compress_level=9)
@@ -1401,6 +1654,7 @@ def visual_parity(model_id: str, spec: dict[str, Any], compiled: dict[str, Any],
             f"{model_id} manifest still carries the retired ruling-2 field(s) {retired}: the z-fight "
             "exclusion and its pins were removed by the owner's ruling of 2026-09-06 (G2 root-order contract)"
         )
+    mode = visual_mode(model_id, spec)
     vanilla_samples = sample_map(compiled)
     geo_samples = sample_map(geo_render)
     visual_sample_ids = tuple(spec.get("visual_sample_ids", DEFAULT_VISUAL_SAMPLE_IDS))
@@ -1431,8 +1685,22 @@ def visual_parity(model_id: str, spec: dict[str, Any], compiled: dict[str, Any],
         (sample_id, camera_entry) for sample_id in visual_sample_ids for camera_entry in cameras
     ):
         capture_id = sample_id if camera_name is None else f"{sample_id}.{camera_name}"
-        vanilla_image, vanilla_contested = render_capture(vanilla_samples[sample_id], texture, camera)
-        geo_image, geo_contested = render_capture(geo_samples[sample_id], texture, camera)
+        if mode is not None and mode["rasteriser"] == "render_capture_blended":
+            # ENT-S-146 (refuter B, D2a): the depth-tie window is its OWN named tolerance, never a reuse of the
+            # geometry epsilon and never defaulted - a manifest that declares a blended model without it fails.
+            if "coplanar_depth_epsilon_blocks" not in thresholds:
+                raise AssertionError(
+                    f"{model_id} declares visual_mode {mode['render_type']} but the manifest thresholds carry no "
+                    "coplanar_depth_epsilon_blocks: the blended rasteriser's depth-tie window is a named tolerance "
+                    "(an owner ruling, presented with its number) and has no default"
+                )
+            depth_epsilon = float(thresholds["coplanar_depth_epsilon_blocks"])
+            vanilla_image, vanilla_contested = render_capture_blended(
+                vanilla_samples[sample_id], texture, camera, mode, depth_epsilon)
+            geo_image, geo_contested = render_capture_blended(geo_samples[sample_id], texture, camera, mode, depth_epsilon)
+        else:
+            vanilla_image, vanilla_contested = render_capture(vanilla_samples[sample_id], texture, camera)
+            geo_image, geo_contested = render_capture(geo_samples[sample_id], texture, camera)
         contested = [left or right for left, right in zip(vanilla_contested, geo_contested)]
         contested_fraction = sum(contested) / (IMAGE_SIZE * IMAGE_SIZE)
         changed, mae, diff_image = pixel_diff(
@@ -1487,7 +1755,7 @@ def visual_parity(model_id: str, spec: dict[str, Any], compiled: dict[str, Any],
     # that resolves differently is a changed pixel and fails above; one that resolves the
     # same way (the ordinary case under the contract) is nothing to a player.
 
-    return {
+    report = {
         "status": "PASS",
         "image_size": [IMAGE_SIZE, IMAGE_SIZE],
         "camera": camera_spec,
@@ -1514,6 +1782,150 @@ def visual_parity(model_id: str, spec: dict[str, Any], compiled: dict[str, Any],
         "minimum_observed_foreground_fraction": min_foreground,
         "samples": rows,
     }
+    if mode is not None:
+        # ENT-S-146: the declared mode and the GPU states the rasteriser emulated for it (only for a
+        # model that declares one: every other report stays as it was).
+        report["visual_mode"] = dict(mode)
+        if mode["rasteriser"] == "render_capture_blended":
+            report["visual_mode"]["emulated_states"] = dict(
+                mode["emulated_states"], coplanar_depth_epsilon_blocks=float(thresholds["coplanar_depth_epsilon_blocks"]))
+            report["z_fight_policy"] = (
+                "blended mode: fragments within the coplanar depth epsilon "
+                f"({float(thresholds['coplanar_depth_epsilon_blocks']):g} blocks, the manifest's own named tolerance) "
+                "of the last written depth are one plane and all pass, in emission order, on both sides (the classic "
+                "side's coplanar spokes tie to <= 1e-9; the cross-side same-fragment noise is ~1e-7 genuine plus up to "
+                "~1e-6 from the harness projector's 6-decimal rounding); a pixel where another quad's fragment passed "
+                "within that window is counted as contested, whatever its texel, as a diagnostic only - every pixel is "
+                "compared, the draw and face orders being contracted equal on both sides (G2 root-order contract; "
+                "ENT-S-146 face order)"
+            )
+    return report
+
+
+# ENT-S-146 (refuter B, D3): the render state each side actually requested, recorded by the probe beside its
+# dumps (`<id>.render-state.json`: the render-type FUNCTION's owner and RenderType factory, the colour and light
+# observed at every addVertex) and required equal on both sides and equal to the model's visual mode.
+RENDER_STATE_SUFFIX = ".render-state.json"
+# LightTexture.pack(15, 15) = 15 << 4 | 15 << 20 = FULL_BRIGHT (21.1.223: `pack` = block << 4 | sky << 20).
+FULL_BRIGHT_PACKED_LIGHT = 15728880
+# The light the probe hands a side whose renderer decides nothing (RenderStateProbe.PROBE_LIGHT), on both sides.
+PROBE_PACKED_LIGHT = 0
+
+
+def render_state_parity(model_id: str, spec: dict[str, Any], mode: dict[str, Any] | None,
+                        vanilla_dir: Path, geo_dir: Path) -> dict[str, Any]:
+    """Both sides' recorded render state equal to each other and to the manifest's visual mode.
+
+    The expectation is the declared mode, or the default every landed model runs under: render type
+    ``entity_cutout_no_cull``, white vertices, the probe's light (``light: world``) - so a cutout rig
+    whose classic model or descriptor ever turned translucent, coloured or fullbright fails loudly here
+    even though its report entry carries no render-state field (only a model that declares a mode does,
+    keeping every other entry byte-identical). The render type is the name of the single RenderType
+    factory the render-type function's owner class references (the probe records every candidate; two
+    or none is a failure here, not a guess): the probe cannot initialise RenderType (OPT-029 R0).
+    """
+    classic_path = vanilla_dir / f"{model_id}{RENDER_STATE_SUFFIX}"
+    candidate_path = geo_dir / f"{model_id}{RENDER_STATE_SUFFIX}"
+    for path in (classic_path, candidate_path):
+        if not path.is_file():
+            raise AssertionError(f"RENDER STATE MISSING {model_id}: the probe wrote no {path.name} (a stale probe run?)")
+    classic = load_json(classic_path)
+    candidate = load_json(candidate_path)
+    if classic.get("side") != "classic" or candidate.get("side") != "candidate":
+        raise AssertionError(f"RENDER STATE {model_id}: the sidecars' sides are not classic / candidate")
+    expected_type = mode["render_type"] if mode else "entity_cutout_no_cull"
+    expected_colour = list(mode["vertex_color"]) if mode else list(DEFAULT_VERTEX_COLOR)
+    expected_light = FULL_BRIGHT_PACKED_LIGHT if (mode and mode["light"] == "full_bright") else PROBE_PACKED_LIGHT
+    observed = {}
+    for side, state in (("classic", classic), ("candidate", candidate)):
+        render_type = state["render_type"]
+        factories = render_type.get("render_type_factories") or []
+        if len(factories) != 1 or render_type.get("render_type") is None:
+            raise AssertionError(
+                f"RENDER STATE AMBIGUOUS {model_id}/{side}: the render-type function's owner "
+                f"{render_type.get('owner_class')} references {factories} RenderType factories; exactly one is required"
+            )
+        colour = state["vertex_color"]
+        if len(colour.get("distinct_argb") or []) != 1 or "rgba" not in colour:
+            raise AssertionError(
+                f"RENDER STATE {model_id}/{side}: the captured vertices carried {colour.get('distinct_rgba')} colours; "
+                "exactly one is required"
+            )
+        light = state["packed_light"]
+        if len(light.get("distinct_observed") or []) != 1 or "value" not in light:
+            raise AssertionError(
+                f"RENDER STATE {model_id}/{side}: the captured vertices carried {light.get('distinct_observed')} packed "
+                "lights; exactly one is required"
+            )
+        if int(colour["vertices_observed"]) == 0:
+            raise AssertionError(f"RENDER STATE UNEVIDENCED {model_id}/{side}: no vertex was observed")
+        observed[side] = {
+            "render_type": render_type["render_type"],
+            "render_type_factory": factories[0],
+            "render_type_owner": render_type.get("owner_class"),
+            "vertex_color": [int(value) for value in colour["rgba"]],
+            "packed_light": int(light["value"]),
+            "vertices_observed": int(colour["vertices_observed"]),
+        }
+    for field in ("render_type", "vertex_color", "packed_light"):
+        left, right = observed["classic"][field], observed["candidate"][field]
+        if left != right:
+            raise AssertionError(
+                f"RENDER STATE MISMATCH {model_id}: classic {field} {left} but the candidate requests {right}"
+            )
+        expected = {"render_type": expected_type, "vertex_color": expected_colour, "packed_light": expected_light}[field]
+        if left != expected:
+            raise AssertionError(
+                f"RENDER STATE MISMATCH {model_id}: both sides request {field} {left} but the manifest's visual mode "
+                f"({'declared' if mode else 'the default, entity_cutout_no_cull'}) is {expected}"
+            )
+    same_function = candidate["render_type"].get("same_function_object_as_classic")
+    if candidate["render_type"].get("source", "").startswith("descriptor.renderType(entity), applied") and not same_function:
+        raise AssertionError(
+            f"RENDER STATE MISMATCH {model_id}: the descriptor hands over a render-type function that is not the "
+            "classic model's own object"
+        )
+    return {
+        "status": "PASS",
+        "expected": {"render_type": expected_type, "vertex_color": expected_colour, "packed_light": expected_light,
+                     "light": mode["light"] if mode else "world"},
+        "classic": observed["classic"],
+        "candidate": dict(observed["candidate"], same_function_object_as_classic=bool(same_function),
+                          source=candidate["render_type"].get("source")),
+        "classic_light_source": classic["packed_light"].get("source"),
+        "observation": (
+            "the render type is the RenderType factory the render-type function's owner class references (the "
+            "probe cannot initialise RenderType: OPT-029 R0); the colour and light are the values every captured "
+            "vertex carried after each side was handed what its renderer would hand it"
+        ),
+    }
+
+
+def visual_mode_lines(visual: dict[str, Any]) -> list[str]:
+    """ENT-S-146: the render-mode line for a model that declares a visual mode; nothing otherwise."""
+    mode = visual.get("visual_mode")
+    if not mode:
+        return []
+    states = mode["emulated_states"]
+    blend = "no blending" if states["blend"] is None else "blend " + " / ".join(states["blend"])
+    coplanar = (f" (fragments within {states['coplanar_depth_epsilon_blocks']:g} blocks are one plane and all pass)"
+                if "coplanar_depth_epsilon_blocks" in states else "")
+    lines = [
+        f"- Render mode: {mode['render_type']} (vertex colour {tuple(mode['vertex_color'])}, light {mode['light']}): "
+        f"{blend} over the background in emission order, {states['depth_test']} depth test with the depth "
+        f"{'written' if states['depth_write'] else 'not written'}{coplanar}, texel alpha < {states['alpha_discard']:.3g} "
+        "discarded; the same emulation on both sides."
+    ]
+    state = visual.get("render_state")
+    if state:
+        classic = state["classic"]
+        lines.append(
+            f"- Render state observed: both sides request {classic['render_type']} (RenderType.{classic['render_type_factory']}, "
+            f"the classic model's own render-type function{' - the same object on the candidate' if state['candidate'].get('same_function_object_as_classic') else ''}), "
+            f"vertex colour {tuple(classic['vertex_color'])} and packed light {classic['packed_light']} at every captured vertex "
+            f"({classic['vertices_observed']} classic + {state['candidate']['vertices_observed']} candidate)."
+        )
+    return lines
 
 
 def render_instance_lines(contract: dict[str, Any]) -> list[str]:
@@ -1614,6 +2026,7 @@ def markdown_report(report: dict[str, Any]) -> str:
                     f"over {contract['position_channel_samples']} position channels; inputs "
                     f"{contract['inputs']}.",
                     contested_line(model["visual"]),
+                    *visual_mode_lines(model["visual"]),
                     *render_instance_lines(contract),
                     "",
                 ]
@@ -1628,6 +2041,7 @@ def markdown_report(report: dict[str, Any]) -> str:
                     f"position maximum delta {contract['max_position_delta_model_units']:.12g} model units; "
                     f"hidden-bone checks {contract['hidden_bone_checks']}.",
                     contested_line(model["visual"]),
+                    *visual_mode_lines(model["visual"]),
                     *render_instance_lines(contract),
                     "",
                 ]
@@ -1833,11 +2247,26 @@ def main() -> int:
             model_id, spec, compiled, reference_animation, animation_contract,
             conversion, float(manifest["ticks_per_second"]),
         )
-        draw_order = draw_order_parity(model_id, compiled, geo_render, generated_geometry, conversion)
+        draw_order = draw_order_parity(model_id, compiled, geo_render, generated_geometry, conversion,
+                                       float(thresholds["normal_epsilon"]))
         print(
             f"G1 DRAW ORDER PASS: {model_id} {draw_order['captures_checked']} captures, "
             f"{draw_order['draws_checked']} draws in the classic order"
         )
+        if "cube_face_order" in draw_order:
+            print(
+                f"G1 FACE ORDER PASS: {model_id} {draw_order['cube_face_order']['faces_checked']} faces over "
+                f"{draw_order['cube_face_order']['captures_checked']} captures in the classic cube order"
+            )
+        # ENT-S-146 (refuter A, D1): a model that declares a BLENDING visual mode must ship the face-order key -
+        # the per-face check fails, it does not skip, when the generated geo carries none.
+        declared_mode = visual_mode(model_id, spec)
+        if declared_mode is not None and VISUAL_MODES[declared_mode["render_type"]]["blend"] is not None \
+                and "cube_face_order" not in draw_order:
+            raise AssertionError(
+                f"FACE ORDER REQUIRED {model_id}: visual_mode {declared_mode['render_type']} blends, but the generated "
+                f"geo carries no {FACE_ORDER_KEY} (declare cube_face_order: \"classic\" and regenerate)"
+            )
         common_report = {
             "model_id": model_id,
             "tier": spec["tier"],
@@ -1896,6 +2325,18 @@ def main() -> int:
                 f"max contested {visual['max_contested_fraction']:.12g} "
                 f"({'excluded: --contested-exclusion diagnostic run' if visual['contested_exclusion_applied'] else 'compared, not excluded; a diagnostic'})"
             )
+            # ENT-S-146 (refuter B, D3): the render state both sides actually requested, against the mode the
+            # visual leg emulated - for EVERY model (a cutout rig reporting anything but cutout / white / the
+            # probe's light fails here); recorded in the report only for a model that declares a mode.
+            render_state = render_state_parity(model_id, spec, declared_mode, args.vanilla_dir, args.geo_dir)
+            print(
+                f"G1 RENDER STATE PASS: {model_id} {render_state['classic']['render_type']} / "
+                f"{tuple(render_state['classic']['vertex_color'])} / light {render_state['classic']['packed_light']} "
+                f"on both sides ({render_state['classic']['vertices_observed']} + "
+                f"{render_state['candidate']['vertices_observed']} vertices observed)"
+            )
+            if declared_mode is not None:
+                visual["render_state"] = render_state
             common_report["visual"] = visual
             model_reports.append(common_report)
 

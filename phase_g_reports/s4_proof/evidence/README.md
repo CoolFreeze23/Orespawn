@@ -173,17 +173,19 @@ The independent gates are:
 
 ## model_purplepower (Tier 3)
 
-- Exact bones: 36; cubes: 18.
-- Geometry maximum corner delta: 1.74175199144e-07 blocks (epsilon 1e-05).
-- Surface maximum UV delta: 0; normal delta: 1.62240699555e-07.
+- Exact bones: 27; cubes: 18.
+- Geometry maximum corner delta: 1.86815416931e-07 blocks (epsilon 1e-05).
+- Surface maximum UV delta: 0; normal delta: 0.
 - Animation maximum rotation delta: 4.10125733374e-08 radians (epsilon 2e-06).
-- Visual maximum changed fraction: 0; maximum mean absolute error: 0.
+- Visual maximum changed fraction: 3.0517578125e-05; maximum mean absolute error: 0.000457763671875.
 - Draw order: GeckoLib bone order equals the classic draw order over 9 captures (162 draws).
 
-- Accepted path: production OreSpawnGeoReplacement.applyCustomAnimations through OreSpawnGeoReplacementModel.setCustomAnimations (`danger.orespawn.entity.client.PurplePowerGeoReplacement`).
-- Rotation maximum delta 4.10125733374e-08 radians; position maximum delta 0 model units over 972 position channels; inputs {'limb_swing': 0.0, 'limb_swing_amounts': [0.0], 'net_head_yaw_degrees': 0.0, 'head_pitch_degrees': 0.0}.
-- Visual z-fight pixels compared, none excluded (G2 root-order contract): maximum contested fraction 0.105850219727, a diagnostic.
-- Render instances: Shape1 x6 (stack, z), Shape2 x6 (stack, z), Shape3 x6 (stack, z); 18 clone and 18 group bones; 162 measured draws over 9 captures: instance pose linear delta 0, translation 0 model units; draw pose linear delta 1.49999999977e-07, translation 0 model units.
+- Accepted path: production OreSpawnGeoReplacement.applyCustomAnimations posed from declared entity states through the entity's pose interface; compiled poseFrom on the same states (`danger.orespawn.entity.client.PurplePowerGeoReplacement`).
+- Entity states: ['seed_1', 'seed_12345', 'seed_2026', 'seed_777']; rotation maximum delta 4.10125733374e-08 radians; position maximum delta 0 model units; hidden-bone checks 8.
+- Visual z-fight pixels compared, none excluded (G2 root-order contract): maximum contested fraction 0.160751342773, a diagnostic.
+- Render mode: entity_translucent (vertex colour (191, 191, 191, 140), light full_bright): blend SRC_ALPHA / ONE_MINUS_SRC_ALPHA / ONE / ONE_MINUS_SRC_ALPHA over the background in emission order, LEQUAL depth test with the depth written (fragments within 1e-05 blocks are one plane and all pass), texel alpha < 0.1 discarded; the same emulation on both sides.
+- Render state observed: both sides request entity_translucent (RenderType.entityTranslucent, the classic model's own render-type function - the same object on the candidate), vertex colour (191, 191, 191, 140) and packed light 15728880 at every captured vertex (3888 classic + 3888 candidate).
+- Render instances: Shape1 x6 (part, z), Shape2 x6 (part, z), Shape3 x6 (part, z); 18 clone and 9 group bones; 162 measured draws over 9 captures: instance pose linear delta 0, translation 0 model units; draw pose linear delta 0, translation 0 model units.
 
 ## fixture_runtime_basis_yz (non-production fixture)
 

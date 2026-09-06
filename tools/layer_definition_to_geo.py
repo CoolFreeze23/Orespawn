@@ -26,6 +26,27 @@ ALL_FACES = {"down", "up", "west", "north", "east", "south"}
 # names in pre-order; GeckoLib 4.8.4's MinecraftGeometry / ModelProperties deserializers ignore
 # it, and the shipped OreSpawnGeoReplacementModel sorts every bake into it (DrawOrder.apply).
 DRAW_ORDER_KEY = "orespawn:bone_draw_order"
+# ENT-S-146: the geo description key carrying the classic WITHIN-CUBE face order (bone -> one array
+# per cube of GeckoLib direction names in draw order); written only for a rig whose manifest entry
+# declares `cube_face_order: "classic"` (a translucent rig, where blending makes the order visible),
+# applied by the shipped OreSpawnGeoReplacementModel and the harness through FaceOrder.apply.
+FACE_ORDER_KEY = "orespawn:cube_face_order"
+# NeoForge 21.1.223 ModelPart.Cube.<init> fills its polygon array DOWN, UP, WEST, NORTH, EAST, SOUTH
+# (offsets 365-785: DOWN 365, UP 436, WEST 507, NORTH 578, EAST 649, SOUTH 720, each slot ending in its
+# Polygon.<init> and aastore) and compile emits them in that order; Polygon.<init> takes the normal from the
+# direction's step and, for a mirrored cube, negates its X (the WEST polygon then faces +X). GeckoLib
+# 4.8.4 BakedModelFactory.buildQuads builds WEST, EAST, NORTH, SOUTH, UP, DOWN (offsets 20-130) and
+# stamps each quad with its direction; internal space is classic space reflected in Y, so a classic
+# normal (x, y, z) is the quad GeckoLib labels by the direction whose step is (x, -y, z).
+CLASSIC_FACE_ORDER = ("down", "up", "west", "north", "east", "south")
+CLASSIC_FACE_NORMAL = {
+    "down": (0.0, -1.0, 0.0), "up": (0.0, 1.0, 0.0), "west": (-1.0, 0.0, 0.0),
+    "north": (0.0, 0.0, -1.0), "east": (1.0, 0.0, 0.0), "south": (0.0, 0.0, 1.0),
+}
+GECKOLIB_LABEL_BY_CLASSIC_NORMAL = {
+    (-1.0, 0.0, 0.0): "west", (1.0, 0.0, 0.0): "east", (0.0, 0.0, -1.0): "north",
+    (0.0, 0.0, 1.0): "south", (0.0, -1.0, 0.0): "up", (0.0, 1.0, 0.0): "down",
+}
 
 
 def load_json(path: Path) -> dict[str, Any]:
@@ -225,7 +246,12 @@ def expand_render_instances(name: str, part: dict[str, Any], parent: str | None,
     draw k's step inside ONE pose-stack rotation the hook animates. Emitted as a
     fan group bone ``<part>__fan`` (pivot at the model origin, bind identity: the
     hook spins it) whose children ``<part>__i<k>`` carry the part's cubes at the
-    part's pivot with the step as their bind rotation on that axis.
+    part's pivot with the step as their bind rotation on that axis. ENT-S-146: an
+    optional ``group_chain`` (outermost first, the last being the fan the clones hang
+    under; default ``["<part>__fan"]``) nests further hook-animated groups above the fan,
+    all at the origin with bind identity - a pose stack rotated about X and then about Y
+    is parent X over child Y, which one GeckoLib bone (rotating Z, then Y, then X) cannot
+    express; PurplePower's carried doublings are such chains.
 
     ``step_scope: stack`` (PurplePower): the loop pushes draw k's step onto the
     pose stack OUTSIDE the part's own animated rotation. Emitted as one parent per
@@ -257,17 +283,32 @@ def expand_render_instances(name: str, part: dict[str, Any], parent: str | None,
     group_bones: list[str] = []
     clone_bones: list[str] = []
     if scope == "part":
-        group = f"{name}__fan"
-        bones.append({"name": group, "pivot": origin_json})
-        group_bones.append(group)
-        mapping[group] = {
-            "role": "group",
-            "source_part": name,
-            "draw_index": None,
-            "animated_by_hook": True,
-            "static_rotation_radians": None,
-            "clones": [f"{name}__i{k}" for k in range(len(angles))],
-        }
+        chain = list(declaration.get("group_chain", [f"{name}__fan"]))
+        if not chain or len(set(chain)) != len(chain) or any(not isinstance(g, str) or not g for g in chain):
+            raise ValueError(f"render_instances.{name}.group_chain must be a non-empty list of distinct bone names")
+        clones = [f"{name}__i{k}" for k in range(len(angles))]
+        for depth, group in enumerate(chain):
+            bone_json: dict[str, Any] = {"name": group, "pivot": origin_json}
+            if depth > 0:
+                bone_json["parent"] = chain[depth - 1]
+            bones.append(bone_json)
+            group_bones.append(group)
+            mapping[group] = {
+                "role": "group",
+                "source_part": name,
+                "draw_index": None,
+                "animated_by_hook": True,
+                "static_rotation_radians": None,
+                "clones": clones,
+            }
+            if "group_chain" in declaration:
+                # ENT-S-146: the chain is recorded only when declared, so a one-group rig's report is unchanged.
+                mapping[group].update({
+                    "group_chain": chain,
+                    "chain_index": depth,
+                    "parent_group": chain[depth - 1] if depth > 0 else None,
+                })
+        group = chain[-1]
         for k, angle in enumerate(angles):
             rotation = list(initial_rotation)
             rotation[axis_index] = angle
@@ -287,6 +328,8 @@ def expand_render_instances(name: str, part: dict[str, Any], parent: str | None,
                 "static_channel": axis,
             }
     else:
+        if "group_chain" in declaration:
+            raise ValueError(f"render_instances.{name}.group_chain needs step_scope part")
         for k, angle in enumerate(angles):
             fan = f"{name}__fan{k}"
             static = [0.0, 0.0, 0.0]
@@ -456,8 +499,92 @@ def derive_bone_draw_order(compiled: dict[str, Any],
     return ordered, evidence
 
 
+def classic_face_labels(mirror: bool) -> list[str]:
+    """The six GeckoLib direction names in the order ModelPart.Cube.compile emits the classic faces
+    (CLASSIC_FACE_ORDER; a mirrored cube's WEST / EAST polygons carry the negated X normals)."""
+    labels = []
+    for face in CLASSIC_FACE_ORDER:
+        normal = CLASSIC_FACE_NORMAL[face]
+        if mirror and face in ("west", "east"):
+            normal = (-normal[0], normal[1], normal[2])
+        labels.append(GECKOLIB_LABEL_BY_CLASSIC_NORMAL[normal])
+    return labels
+
+
+def classic_face_normals(mirror: bool) -> list[tuple[float, float, float]]:
+    """The classic-space normals of those six faces, in emission order."""
+    normals = []
+    for face in CLASSIC_FACE_ORDER:
+        normal = CLASSIC_FACE_NORMAL[face]
+        if mirror and face in ("west", "east"):
+            normal = (-normal[0], normal[1], normal[2])
+        normals.append(normal)
+    return normals
+
+
+def derive_cube_face_order(compiled: dict[str, Any], bones: list[dict[str, Any]],
+                           mirror_flags: dict[str, list[bool]],
+                           unrotated_at_bind: set[str]) -> tuple[dict[str, list[list[str]]], dict[str, Any]]:
+    """ENT-S-146: the classic within-cube face order for every cube-bearing geo bone, as GeckoLib
+    direction names in the order the classic renderer emits the faces.
+
+    Derived from the bytecode rule (``classic_face_labels``: the cube's mirror flag decides the two
+    X faces), because the captures are POSED (a clone's faces turn with its step) and a posed normal
+    names no label. Verified twice: here, against the bind capture's cubes that are unrotated at bind
+    (their captured normals must be the rule's, in order), and by the parity tool's draw-order leg,
+    which compares the per-quad normal sequences of the two renderers on every capture. Either
+    disagreement is a FINDING, never a silent key.
+    """
+    order: dict[str, list[list[str]]] = {}
+    for bone in bones:
+        if not bone.get("cubes"):
+            continue
+        flags = mirror_flags[bone["name"]]
+        if len(flags) != len(bone["cubes"]):
+            raise ValueError(f"{compiled['model_id']}: {bone['name']} mirror flags do not match its cubes")
+        order[bone["name"]] = [classic_face_labels(mirror) for mirror in flags]
+    bind = next((sample for sample in compiled["samples"]
+                 if sample["id"] == "bind" and sample.get("capture_kind") == "full"), None)
+    verified = 0
+    if bind is not None:
+        for cube in bind["cubes"]:
+            bone_name = cube["bone"]
+            if bone_name not in unrotated_at_bind or bone_name not in mirror_flags:
+                continue
+            mirror = mirror_flags[bone_name][int(cube["cube_index"])]
+            vertices = cube["vertices"]
+            if len(vertices) % 4 or len(vertices) // 4 != len(CLASSIC_FACE_ORDER):
+                raise ValueError(f"{compiled['model_id']}: {bone_name} cube {cube['cube_index']} does not emit six quads")
+            captured = []
+            for offset in range(0, len(vertices), 4):
+                normals = {tuple(round(float(v), 6) for v in vertex["normal"]) for vertex in vertices[offset:offset + 4]}
+                if len(normals) != 1:
+                    raise ValueError(f"{compiled['model_id']}: {bone_name} quad vertices disagree on the normal")
+                captured.append(next(iter(normals)))
+            expected = classic_face_normals(mirror)
+            if captured != expected:
+                raise ValueError(
+                    f"FINDING {compiled['model_id']}: {bone_name} cube {cube['cube_index']} emits its faces with normals "
+                    f"{captured} at bind, not the ModelPart.Cube order {expected}"
+                )
+            verified += 1
+    evidence = {
+        "rule": "NeoForge 21.1.223 ModelPart.Cube.<init> polygon order DOWN, UP, WEST, NORTH, EAST, SOUTH "
+                "(offsets 365-785: DOWN 365, UP 436, WEST 507, NORTH 578, EAST 649, SOUTH 720), mirror negating the X "
+                "normals; GeckoLib labels by the direction whose step is "
+                "the classic normal reflected in Y",
+        "cube_bearing_bones": len(order),
+        "cubes": sum(len(cubes) for cubes in order.values()),
+        "verified_unrotated_cubes_at_bind": verified,
+        "verification": "captured normals of every cube unrotated at bind equal the rule's, in order; the parity "
+                        "tool's draw-order leg compares the per-quad normal sequences of both renderers on every capture",
+    }
+    return order, evidence
+
+
 def convert_geometry(compiled: dict[str, Any],
-                     render_instances: dict[str, Any] | None = None) -> tuple[dict[str, Any], dict[str, Any]]:
+                     render_instances: dict[str, Any] | None = None,
+                     cube_face_order: str | None = None) -> tuple[dict[str, Any], dict[str, Any]]:
     root = compiled["definition"]
     if root["cubes"]:
         raise ValueError("unnamed MeshDefinition root contains cubes")
@@ -466,10 +593,21 @@ def convert_geometry(compiled: dict[str, Any],
     cube_count = 0
     expansion_parts: dict[str, Any] = {}
     expansion_bones: dict[str, Any] = {}
+    # ENT-S-146: per emitted cube-bearing bone, its cubes' ModelPart mirror flags (a clone's are its
+    # source part's), and the bones whose cubes are unrotated at bind (the face-order self-check).
+    mirror_flags: dict[str, list[bool]] = {}
+    unrotated_at_bind: set[str] = set()
+    bind_rotations = initial_rotations(compiled) if any(
+        sample["id"] == "bind" for sample in compiled["samples"]) else {}
+    ancestors: dict[str, list[str]] = {}
     for part, parent in iter_parts(root):
         name = part["name"]
         absolute_pivot = [float(value) for value in part["absolute_pivot"]]
         initial_rotation = [float(value) for value in part["initial_rotation_radians"]]
+        ancestors[name] = ([] if parent is None else ancestors[parent] + [parent])
+        lineage_unrotated = all(
+            not nonzero(bind_rotations.get(ancestor, initial_rotation)) for ancestor in ancestors[name]
+        ) and not nonzero(bind_rotations.get(name, initial_rotation))
         if render_instances and name in render_instances:
             expanded = expand_render_instances(
                 name, part, parent, absolute_pivot, initial_rotation, render_instances[name]
@@ -478,7 +616,20 @@ def convert_geometry(compiled: dict[str, Any],
             cube_count += expanded["cube_count"]
             expansion_parts[name] = expanded["summary"]
             expansion_bones.update(expanded["mapping"])
+            for clone_name, entry in expanded["mapping"].items():
+                if entry["role"] != "clone":
+                    continue
+                mirror_flags[clone_name] = [bool(cube["mirror"]) for cube in part["cubes"]]
+                group_entry = expanded["mapping"][entry["group_bone"]]
+                group_static = group_entry.get("static_rotation_radians")
+                if lineage_unrotated and not nonzero(entry["static_rotation_radians"]) and (
+                        group_static is None or not nonzero(group_static)):
+                    unrotated_at_bind.add(clone_name)
             continue
+        if part["cubes"]:
+            mirror_flags[name] = [bool(cube["mirror"]) for cube in part["cubes"]]
+            if lineage_unrotated:
+                unrotated_at_bind.add(name)
         bone: dict[str, Any] = {
             "name": name,
             "pivot": clean_vector(
@@ -523,16 +674,24 @@ def convert_geometry(compiled: dict[str, Any],
 
     model_id = compiled["model_id"]
     bone_draw_order, draw_order_evidence = derive_bone_draw_order(compiled, bones)
+    description: dict[str, Any] = {
+        "identifier": f"geometry.orespawn.g1.{model_id}",
+        "texture_width": compiled["texture_width"],
+        "texture_height": compiled["texture_height"],
+        DRAW_ORDER_KEY: bone_draw_order,
+    }
+    face_order = None
+    face_order_evidence = None
+    if cube_face_order is not None:
+        if cube_face_order != "classic":
+            raise ValueError(f"{model_id}: cube_face_order {cube_face_order!r} is not supported (only \"classic\")")
+        face_order, face_order_evidence = derive_cube_face_order(compiled, bones, mirror_flags, unrotated_at_bind)
+        description[FACE_ORDER_KEY] = face_order
     geometry = {
         "format_version": "1.12.0",
         "minecraft:geometry": [
             {
-                "description": {
-                    "identifier": f"geometry.orespawn.g1.{model_id}",
-                    "texture_width": compiled["texture_width"],
-                    "texture_height": compiled["texture_height"],
-                    DRAW_ORDER_KEY: bone_draw_order,
-                },
+                "description": description,
                 "bones": bones,
             }
         ],
@@ -554,6 +713,9 @@ def convert_geometry(compiled: dict[str, Any],
         "bone_draw_order": bone_draw_order,
         "draw_order_evidence": draw_order_evidence,
     }
+    if face_order is not None:
+        summary["cube_face_order"] = face_order
+        summary["cube_face_order_evidence"] = face_order_evidence
     if render_instances:
         summary["render_instances"] = {
             "declared": render_instances,
@@ -892,7 +1054,7 @@ def convert_model(manifest: dict[str, Any], spec: dict[str, Any],
             f"{model_id} render_instances drift between the probe dump and the manifest: "
             f"{compiled.get('render_instances')} != {render_instances}"
         )
-    geometry, geometry_summary = convert_geometry(compiled, render_instances)
+    geometry, geometry_summary = convert_geometry(compiled, render_instances, spec.get("cube_face_order"))
     animation, animation_contract = convert_animation(
         spec, compiled, float(manifest["ticks_per_second"])
     )
@@ -925,6 +1087,9 @@ def convert_model(manifest: dict[str, Any], spec: dict[str, Any],
         "exact_bone_names": geometry_summary["exact_bone_names"],
         "bone_draw_order": geometry_summary["bone_draw_order"],
         "draw_order_evidence": geometry_summary["draw_order_evidence"],
+        **({"cube_face_order": geometry_summary["cube_face_order"],
+            "cube_face_order_evidence": geometry_summary["cube_face_order_evidence"]}
+           if "cube_face_order" in geometry_summary else {}),
         **({"render_instances": geometry_summary["render_instances"]}
            if "render_instances" in geometry_summary else {}),
         "animation_contract": animation_contract,

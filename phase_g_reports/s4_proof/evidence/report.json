@@ -5,6 +5,7 @@
   "geckolib_version": "4.8.4",
   "thresholds": {
     "geometry_epsilon_blocks": 1e-05,
+    "coplanar_depth_epsilon_blocks": 1e-05,
     "animation_epsilon_radians": 2e-06,
     "position_epsilon_model_units": 0.0001,
     "uv_epsilon_normalized": 1e-07,
@@ -2481,18 +2482,18 @@
       "tier": 3,
       "proof_scope": "production_proof_model",
       "source_class": "danger.orespawn.entity.client.ModelPurplePower",
-      "source_class_sha256": "d633bac419fbff3df34821355426cfe6c6524c017e0dbdcc9a6c5105f1d1f3fb",
-      "compiled_dump_sha256": "3f423e29c5eff82fb04e84333c3f5af2810f17dad43e6994ec999b90349e0d39",
-      "bone_count": 36,
+      "source_class_sha256": "139bb827e2c9153ac5f439c570a5862078b39a461fd6d7c599dd1d2157dfaca4",
+      "compiled_dump_sha256": "f5ca924dd9ec8a37a9242209cb27aff0beed00742205a05a04c0f132d1151b6f",
+      "bone_count": 27,
       "cube_count": 18,
-      "geometry_sha256": "29ba1faf6e72ca873c92f0291dbcab9c62ef85d0930746e554624d863cf718c7",
+      "geometry_sha256": "a5072b041314c93f6b4fc0a97022d8044d01fc7fff21f601ac3c18e00d21ea1a",
       "animation_sha256": "7882082857fdb11e02f158ebc3a6d3f970e2ac60d54813f0e903ee97b2293749",
-      "animation_contract_sha256": "2d3af6d863da88fc24cf224bbdf6f91be6d8e613b714118d4749991a651e7a4c",
+      "animation_contract_sha256": "32fa4b5cdb442c15c16b565a8ec2fc07f8823dfd9172d5340857118b20f1d3d0",
       "geometry": {
         "status": "PASS",
         "epsilon_blocks": 1e-05,
-        "max_corner_delta_blocks": 1.741751991436651e-07,
-        "worst_case": "t_0_012500:Shape3__i2#0",
+        "max_corner_delta_blocks": 1.8681541693133464e-07,
+        "worst_case": "s_seed_12345_t0:Shape3__i1#0",
         "sample_count": 9,
         "cube_sample_count": 162
       },
@@ -2501,12 +2502,12 @@
         "position_epsilon_blocks": 1e-05,
         "normal_epsilon": 1e-06,
         "uv_epsilon_normalized": 1e-07,
-        "max_position_delta_blocks": 1.741751991436651e-07,
-        "max_normal_delta": 1.6224069955492823e-07,
+        "max_position_delta_blocks": 1.8681541693133464e-07,
+        "max_normal_delta": 0.0,
         "max_uv_delta_normalized": 0.0,
         "vertex_samples": 3888,
         "ignored_zero_area_faces": 0,
-        "worst_case": "t_0_012500:Shape3__i2#0",
+        "worst_case": "s_seed_12345_t0:Shape3__i1#0",
         "evidence": "position/normal/UV tuples from baked ModelPart.Cube.compile versus pinned GeckoLib BakedModelFactory rendered through GeoRenderer; faces of exactly zero area are excluded (ruling 2026-09-02)"
       },
       "animation": {
@@ -2518,14 +2519,32 @@
         "max_rotation_delta_radians": 4.101257333744002e-08,
         "max_dense_rotation_delta_radians": 0.0,
         "max_unexpected_position_or_scale_delta": 0.0,
-        "worst_case": "bind:Shape1__fan3",
+        "worst_case": "bind:Shape1__i3",
         "dense_worst_case": "exact",
-        "rotation_channel_samples": 972,
+        "rotation_channel_samples": 486,
         "dense_rotation_channel_samples": 0,
         "contract": {
-          "kind": "code_driven",
-          "accepted_runtime_path": "production OreSpawnGeoReplacement.applyCustomAnimations through OreSpawnGeoReplacementModel.setCustomAnimations",
+          "kind": "entity_state",
+          "accepted_runtime_path": "production OreSpawnGeoReplacement.applyCustomAnimations posed from declared entity states through the entity's pose interface; compiled poseFrom on the same states",
           "candidate_class": "danger.orespawn.entity.client.PurplePowerGeoReplacement",
+          "entity_states": [
+            {
+              "name": "seed_1",
+              "seed": 1
+            },
+            {
+              "name": "seed_12345",
+              "seed": 12345
+            },
+            {
+              "name": "seed_2026",
+              "seed": 2026
+            },
+            {
+              "name": "seed_777",
+              "seed": 777
+            }
+          ],
           "inputs": {
             "limb_swing": 0.0,
             "limb_swing_amounts": [
@@ -2537,57 +2556,48 @@
           "max_position_delta_model_units": 0.0,
           "position_epsilon_model_units": 0.0001,
           "position_worst_case": "exact",
-          "position_channel_samples": 972,
+          "position_channel_samples": 729,
           "hidden_bone_checks": 8,
           "render_instances": {
             "parts": {
               "Shape1": {
                 "count": 6,
                 "axis": "z",
-                "step_scope": "stack",
+                "step_scope": "part",
                 "step_radians": 1.0471976,
-                "step_arithmetic": "float32_multiply",
+                "step_arithmetic": "float32_accumulate",
                 "group_bones": [
-                  "Shape1__fan0",
-                  "Shape1__fan1",
-                  "Shape1__fan2",
-                  "Shape1__fan3",
-                  "Shape1__fan4",
-                  "Shape1__fan5"
+                  "Shape1__fan"
                 ]
               },
               "Shape2": {
                 "count": 6,
                 "axis": "z",
-                "step_scope": "stack",
+                "step_scope": "part",
                 "step_radians": 1.0471976,
-                "step_arithmetic": "float32_multiply",
+                "step_arithmetic": "float32_accumulate",
                 "group_bones": [
-                  "Shape2__fan0",
-                  "Shape2__fan1",
-                  "Shape2__fan2",
-                  "Shape2__fan3",
-                  "Shape2__fan4",
-                  "Shape2__fan5"
+                  "Shape2__carry_x1",
+                  "Shape2__carry_x2",
+                  "Shape2__fan"
                 ]
               },
               "Shape3": {
                 "count": 6,
                 "axis": "z",
-                "step_scope": "stack",
+                "step_scope": "part",
                 "step_radians": 1.0471976,
-                "step_arithmetic": "float32_multiply",
+                "step_arithmetic": "float32_accumulate",
                 "group_bones": [
-                  "Shape3__fan0",
-                  "Shape3__fan1",
-                  "Shape3__fan2",
-                  "Shape3__fan3",
-                  "Shape3__fan4",
-                  "Shape3__fan5"
+                  "Shape3__carry_x1",
+                  "Shape3__carry_x2",
+                  "Shape3__carry_y1",
+                  "Shape3__carry_y2",
+                  "Shape3__fan"
                 ]
               }
             },
-            "group_bones": 18,
+            "group_bones": 9,
             "clone_bones": 18,
             "samples_checked": 9,
             "draws_checked": 162,
@@ -2595,9 +2605,9 @@
             "instance_pose_epsilon_model_units": 0.0001,
             "max_instance_pose_linear_delta": 0.0,
             "max_instance_pose_translation_delta_model_units": 0.0,
-            "max_draw_pose_linear_delta": 1.4999999997655777e-07,
+            "max_draw_pose_linear_delta": 0.0,
             "max_draw_pose_translation_delta_model_units": 0.0,
-            "worst_case": "t_0_012500:Shape1__i2 (draw vs clone)",
+            "worst_case": "exact",
             "evidence": "measured classic per-draw pose stack (instance_pose at the part's pushPose, draw_pose at cube compile) versus measured GeckoLib bone transforms conjugated into classic space (bone_poses_classic): instance == group bone, draw == clone bone * T(pivot)"
           }
         }
@@ -2612,48 +2622,235 @@
       "draw_order": {
         "status": "PASS",
         "bone_draw_order": [
-          "Shape1__fan0",
+          "Shape1__fan",
           "Shape1__i0",
-          "Shape1__fan1",
           "Shape1__i1",
-          "Shape1__fan2",
           "Shape1__i2",
-          "Shape1__fan3",
           "Shape1__i3",
-          "Shape1__fan4",
           "Shape1__i4",
-          "Shape1__fan5",
           "Shape1__i5",
-          "Shape2__fan0",
+          "Shape2__carry_x1",
+          "Shape2__carry_x2",
+          "Shape2__fan",
           "Shape2__i0",
-          "Shape2__fan1",
           "Shape2__i1",
-          "Shape2__fan2",
           "Shape2__i2",
-          "Shape2__fan3",
           "Shape2__i3",
-          "Shape2__fan4",
           "Shape2__i4",
-          "Shape2__fan5",
           "Shape2__i5",
-          "Shape3__fan0",
+          "Shape3__carry_x1",
+          "Shape3__carry_x2",
+          "Shape3__carry_y1",
+          "Shape3__carry_y2",
+          "Shape3__fan",
           "Shape3__i0",
-          "Shape3__fan1",
           "Shape3__i1",
-          "Shape3__fan2",
           "Shape3__i2",
-          "Shape3__fan3",
           "Shape3__i3",
-          "Shape3__fan4",
           "Shape3__i4",
-          "Shape3__fan5",
           "Shape3__i5"
         ],
         "captures_checked": 9,
         "draws_checked": 162,
         "classic_source": "classic EntityModel.renderToBuffer on a second bake posed identically; every ModelPart.render is one pose-stack push, attributed to its part by ModelPart.skipDraw elimination (one run per cube-bearing part with every other part's skipDraw set); a part drawn n > 1 times is named <part>__i<k> by draw ordinal",
         "unobserved_units": [],
-        "policy": "the shipped model sorts GeckoLib's topLevelBones / childBones lists into the classic renderToBuffer order (DrawOrder.apply); both renderers traverse in pre-order, so equal sibling orders are equal draw orders"
+        "policy": "the shipped model sorts GeckoLib's topLevelBones / childBones lists into the classic renderToBuffer order (DrawOrder.apply); both renderers traverse in pre-order, so equal sibling orders are equal draw orders",
+        "cube_face_order": {
+          "status": "PASS",
+          "cube_face_order": {
+            "Shape1__i0": [
+              [
+                "up",
+                "down",
+                "east",
+                "north",
+                "west",
+                "south"
+              ]
+            ],
+            "Shape1__i1": [
+              [
+                "up",
+                "down",
+                "east",
+                "north",
+                "west",
+                "south"
+              ]
+            ],
+            "Shape1__i2": [
+              [
+                "up",
+                "down",
+                "east",
+                "north",
+                "west",
+                "south"
+              ]
+            ],
+            "Shape1__i3": [
+              [
+                "up",
+                "down",
+                "east",
+                "north",
+                "west",
+                "south"
+              ]
+            ],
+            "Shape1__i4": [
+              [
+                "up",
+                "down",
+                "east",
+                "north",
+                "west",
+                "south"
+              ]
+            ],
+            "Shape1__i5": [
+              [
+                "up",
+                "down",
+                "east",
+                "north",
+                "west",
+                "south"
+              ]
+            ],
+            "Shape2__i0": [
+              [
+                "up",
+                "down",
+                "east",
+                "north",
+                "west",
+                "south"
+              ]
+            ],
+            "Shape2__i1": [
+              [
+                "up",
+                "down",
+                "east",
+                "north",
+                "west",
+                "south"
+              ]
+            ],
+            "Shape2__i2": [
+              [
+                "up",
+                "down",
+                "east",
+                "north",
+                "west",
+                "south"
+              ]
+            ],
+            "Shape2__i3": [
+              [
+                "up",
+                "down",
+                "east",
+                "north",
+                "west",
+                "south"
+              ]
+            ],
+            "Shape2__i4": [
+              [
+                "up",
+                "down",
+                "east",
+                "north",
+                "west",
+                "south"
+              ]
+            ],
+            "Shape2__i5": [
+              [
+                "up",
+                "down",
+                "east",
+                "north",
+                "west",
+                "south"
+              ]
+            ],
+            "Shape3__i0": [
+              [
+                "up",
+                "down",
+                "east",
+                "north",
+                "west",
+                "south"
+              ]
+            ],
+            "Shape3__i1": [
+              [
+                "up",
+                "down",
+                "east",
+                "north",
+                "west",
+                "south"
+              ]
+            ],
+            "Shape3__i2": [
+              [
+                "up",
+                "down",
+                "east",
+                "north",
+                "west",
+                "south"
+              ]
+            ],
+            "Shape3__i3": [
+              [
+                "up",
+                "down",
+                "east",
+                "north",
+                "west",
+                "south"
+              ]
+            ],
+            "Shape3__i4": [
+              [
+                "up",
+                "down",
+                "east",
+                "north",
+                "west",
+                "south"
+              ]
+            ],
+            "Shape3__i5": [
+              [
+                "up",
+                "down",
+                "east",
+                "north",
+                "west",
+                "south"
+              ]
+            ]
+          },
+          "captures_checked": 9,
+          "faces_checked": 972,
+          "normal_epsilon": 1e-06,
+          "evidence": {
+            "rule": "NeoForge 21.1.223 ModelPart.Cube.<init> polygon order DOWN, UP, WEST, NORTH, EAST, SOUTH (offsets 365-785: DOWN 365, UP 436, WEST 507, NORTH 578, EAST 649, SOUTH 720), mirror negating the X normals; GeckoLib labels by the direction whose step is the classic normal reflected in Y",
+            "cube_bearing_bones": 18,
+            "cubes": 18,
+            "verified_unrotated_cubes_at_bind": 3,
+            "verification": "captured normals of every cube unrotated at bind equal the rule's, in order; the parity tool's draw-order leg compares the per-quad normal sequences of both renderers on every capture"
+          },
+          "policy": "the shipped model permutes every cube's quads into the classic ModelPart.Cube order (FaceOrder.apply), so under a blending render type a cube's back face shows through its front face - or is rejected by the depth test - exactly as it does on the classic renderer"
+        }
       },
       "visual": {
         "status": "PASS",
@@ -2669,80 +2866,135 @@
         "changed_fraction_threshold": 0.001,
         "mean_absolute_error_threshold": 0.25,
         "minimum_foreground_fraction_threshold": 0.001,
-        "max_changed_fraction": 0.0,
-        "max_mean_absolute_error": 0.0,
-        "z_fight_policy": "pixels where two different quads meet the front within 1e-06 depth with different texels are counted as a diagnostic only; every pixel is compared, the draw order being contracted equal on both sides (G2 root-order contract, landed 2026-09-06)",
+        "max_changed_fraction": 3.0517578125e-05,
+        "max_mean_absolute_error": 0.000457763671875,
+        "z_fight_policy": "blended mode: fragments within the coplanar depth epsilon (1e-05 blocks, the manifest's own named tolerance) of the last written depth are one plane and all pass, in emission order, on both sides (the classic side's coplanar spokes tie to <= 1e-9; the cross-side same-fragment noise is ~1e-7 genuine plus up to ~1e-6 from the harness projector's 6-decimal rounding); a pixel where another quad's fragment passed within that window is counted as contested, whatever its texel, as a diagnostic only - every pixel is compared, the draw and face orders being contracted equal on both sides (G2 root-order contract; ENT-S-146 face order)",
         "contested_exclusion_applied": false,
-        "max_contested_fraction": 0.1058502197265625,
+        "max_contested_fraction": 0.1607513427734375,
         "cutout_alpha_threshold": 0.1,
         "minimum_observed_foreground_fraction": 1.0,
         "samples": [
           {
-            "sample": "bind",
+            "sample": "s_seed_1_t0",
             "camera": null,
             "changed_fraction": 0.0,
             "mean_absolute_error": 0.0,
-            "contested_fraction": 0.1058502197265625,
+            "contested_fraction": 0.1266326904296875,
             "contested_excluded": false,
-            "vanilla_foreground_fraction": 0.2080078125,
-            "geo_foreground_fraction": 0.2080078125,
-            "vanilla_capture": "visual/model_purplepower/bind.vanilla.png",
-            "geo_capture": "visual/model_purplepower/bind.geo.png",
-            "diff_capture": "visual/model_purplepower/bind.diff.png"
+            "vanilla_foreground_fraction": 0.161865234375,
+            "geo_foreground_fraction": 0.161865234375,
+            "vanilla_capture": "visual/model_purplepower/s_seed_1_t0.vanilla.png",
+            "geo_capture": "visual/model_purplepower/s_seed_1_t0.geo.png",
+            "diff_capture": "visual/model_purplepower/s_seed_1_t0.diff.png"
           },
           {
-            "sample": "t_0_001250",
+            "sample": "s_seed_12345_t0",
             "camera": null,
-            "changed_fraction": 0.0,
-            "mean_absolute_error": 0.0,
-            "contested_fraction": 0.0,
+            "changed_fraction": 3.0517578125e-05,
+            "mean_absolute_error": 0.000457763671875,
+            "contested_fraction": 0.1607513427734375,
             "contested_excluded": false,
-            "vanilla_foreground_fraction": 0.24688720703125,
-            "geo_foreground_fraction": 0.24688720703125,
-            "vanilla_capture": "visual/model_purplepower/t_0_001250.vanilla.png",
-            "geo_capture": "visual/model_purplepower/t_0_001250.geo.png",
-            "diff_capture": "visual/model_purplepower/t_0_001250.diff.png"
+            "vanilla_foreground_fraction": 0.203369140625,
+            "geo_foreground_fraction": 0.203369140625,
+            "vanilla_capture": "visual/model_purplepower/s_seed_12345_t0.vanilla.png",
+            "geo_capture": "visual/model_purplepower/s_seed_12345_t0.geo.png",
+            "diff_capture": "visual/model_purplepower/s_seed_12345_t0.diff.png"
           },
           {
-            "sample": "t_0_005000",
+            "sample": "s_seed_2026_t_half",
             "camera": null,
             "changed_fraction": 0.0,
             "mean_absolute_error": 0.0,
-            "contested_fraction": 0.0,
+            "contested_fraction": 0.1418304443359375,
             "contested_excluded": false,
-            "vanilla_foreground_fraction": 0.236480712890625,
-            "geo_foreground_fraction": 0.236480712890625,
-            "vanilla_capture": "visual/model_purplepower/t_0_005000.vanilla.png",
-            "geo_capture": "visual/model_purplepower/t_0_005000.geo.png",
-            "diff_capture": "visual/model_purplepower/t_0_005000.diff.png"
+            "vanilla_foreground_fraction": 0.1680908203125,
+            "geo_foreground_fraction": 0.1680908203125,
+            "vanilla_capture": "visual/model_purplepower/s_seed_2026_t_half.vanilla.png",
+            "geo_capture": "visual/model_purplepower/s_seed_2026_t_half.geo.png",
+            "diff_capture": "visual/model_purplepower/s_seed_2026_t_half.diff.png"
           },
           {
-            "sample": "t_0_030000",
+            "sample": "s_seed_777_t0",
             "camera": null,
             "changed_fraction": 0.0,
             "mean_absolute_error": 0.0,
-            "contested_fraction": 0.0,
+            "contested_fraction": 0.137786865234375,
             "contested_excluded": false,
-            "vanilla_foreground_fraction": 0.2563629150390625,
-            "geo_foreground_fraction": 0.2563629150390625,
-            "vanilla_capture": "visual/model_purplepower/t_0_030000.vanilla.png",
-            "geo_capture": "visual/model_purplepower/t_0_030000.geo.png",
-            "diff_capture": "visual/model_purplepower/t_0_030000.diff.png"
-          },
-          {
-            "sample": "t_quarter",
-            "camera": null,
-            "changed_fraction": 0.0,
-            "mean_absolute_error": 0.0,
-            "contested_fraction": 0.0305938720703125,
-            "contested_excluded": false,
-            "vanilla_foreground_fraction": 0.221038818359375,
-            "geo_foreground_fraction": 0.221038818359375,
-            "vanilla_capture": "visual/model_purplepower/t_quarter.vanilla.png",
-            "geo_capture": "visual/model_purplepower/t_quarter.geo.png",
-            "diff_capture": "visual/model_purplepower/t_quarter.diff.png"
+            "vanilla_foreground_fraction": 0.191986083984375,
+            "geo_foreground_fraction": 0.191986083984375,
+            "vanilla_capture": "visual/model_purplepower/s_seed_777_t0.vanilla.png",
+            "geo_capture": "visual/model_purplepower/s_seed_777_t0.geo.png",
+            "diff_capture": "visual/model_purplepower/s_seed_777_t0.diff.png"
           }
-        ]
+        ],
+        "visual_mode": {
+          "render_type": "entity_translucent",
+          "vertex_color": [
+            191,
+            191,
+            191,
+            140
+          ],
+          "light": "full_bright",
+          "emulated_states": {
+            "blend": [
+              "SRC_ALPHA",
+              "ONE_MINUS_SRC_ALPHA",
+              "ONE",
+              "ONE_MINUS_SRC_ALPHA"
+            ],
+            "depth_test": "LEQUAL",
+            "depth_write": true,
+            "cull": false,
+            "alpha_discard": 0.1,
+            "coplanar_depth_epsilon_blocks": 1e-05
+          },
+          "rasteriser": "render_capture_blended"
+        },
+        "render_state": {
+          "status": "PASS",
+          "expected": {
+            "render_type": "entity_translucent",
+            "vertex_color": [
+              191,
+              191,
+              191,
+              140
+            ],
+            "packed_light": 15728880,
+            "light": "full_bright"
+          },
+          "classic": {
+            "render_type": "entity_translucent",
+            "render_type_factory": "entityTranslucent",
+            "render_type_owner": "danger.orespawn.entity.client.ModelPurplePower",
+            "vertex_color": [
+              191,
+              191,
+              191,
+              140
+            ],
+            "packed_light": 15728880,
+            "vertices_observed": 3888
+          },
+          "candidate": {
+            "render_type": "entity_translucent",
+            "render_type_factory": "entityTranslucent",
+            "render_type_owner": "danger.orespawn.entity.client.ModelPurplePower",
+            "vertex_color": [
+              191,
+              191,
+              191,
+              140
+            ],
+            "packed_light": 15728880,
+            "vertices_observed": 3888,
+            "same_function_object_as_classic": true,
+            "source": "descriptor.renderType(entity), applied to the texture by OreSpawnGeoReplacedEntityRenderer.getRenderType for a visible body"
+          },
+          "classic_light_source": "the classic renderer's getBlockLightLevel / getSkyLightLevel (classic_renderer, evaluated registry-free), packed as EntityRenderer.getPackedLightCoords packs them (0-24), handed to renderToBuffer and observed at addVertex",
+          "observation": "the render type is the RenderType factory the render-type function's owner class references (the probe cannot initialise RenderType: OPT-029 R0); the colour and light are the values every captured vertex carried after each side was handed what its renderer would hand it"
+        }
       }
     }
   ],
@@ -2947,6 +3199,6 @@
       "fixture_runtime_basis_yz.conversion.json"
     ]
   },
-  "visual_artifact_count": 201,
+  "visual_artifact_count": 198,
   "visual_artifact_policy": "output cleared first; exact report-referenced PNG set only"
 }

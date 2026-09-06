@@ -2,6 +2,7 @@ package danger.orespawn.g1;
 
 import com.google.gson.JsonObject;
 import danger.orespawn.entity.client.RenderInfo;
+import danger.orespawn.entity.pose.PurplePowerPose;
 import danger.orespawn.entity.pose.Robot2Pose;
 import danger.orespawn.entity.pose.Robot3Pose;
 import danger.orespawn.entity.pose.Robot4Pose;
@@ -16,8 +17,14 @@ import net.minecraft.util.RandomSource;
  * latch or RNG re-roll evolves identically. {@link #after()} records what the
  * pose wrote back (RenderInfo latch, Robot4 shielding, the Rotator's fan
  * angle) for the parity tool.
+ *
+ * <p>ENT-S-146: the one seeded source stands for both the entity's random
+ * ({@link Robot2Pose#getRandom()}) and the level's ({@link PurplePowerPose#getLevelRandom()});
+ * no pose reads both. PurplePower's rolls are consumed three per frame on each side and
+ * proven through the resulting pose (a roll drawn out of order or in excess moves a fan);
+ * {@link #after()} is unchanged.</p>
  */
-final class ProbeSubject implements Robot2Pose, Robot3Pose, Robot4Pose, RockBasePose, RotatorPose {
+final class ProbeSubject implements Robot2Pose, Robot3Pose, Robot4Pose, RockBasePose, RotatorPose, PurplePowerPose {
     private final RenderInfo renderInfo = new RenderInfo();
     private final int attacking;
     private final int rockType;
@@ -49,6 +56,12 @@ final class ProbeSubject implements Robot2Pose, Robot3Pose, Robot4Pose, RockBase
 
     @Override
     public RandomSource getRandom() {
+        return this.random;
+    }
+
+    /** ENT-S-146: the seeded source as the level's random (orig ModelPurplePower.java:57 {@code worldObj.rand}). */
+    @Override
+    public RandomSource getLevelRandom() {
         return this.random;
     }
 

@@ -3,9 +3,12 @@ package danger.orespawn.entity.client;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
+import java.util.function.Function;
 import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
@@ -13,6 +16,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
 import software.bernie.geckolib.renderer.GeoReplacedEntityRenderer;
+import software.bernie.geckolib.util.Color;
 
 /**
  * Shared base for every OreSpawn GeckoLib replacement renderer.
@@ -22,11 +26,19 @@ import software.bernie.geckolib.renderer.GeoReplacedEntityRenderer;
  * this class's constructor, and that layer is a no-op for entities without a
  * bone-synced hitbox profile.</p>
  *
- * <p>Open item carried from the Phase G review: vanilla {@code ModelPart}
- * emits cube faces in down/up/west/north/east/south order while GeckoLib
- * emits west/east/north/south/up/down. Opaque rigs are unaffected; any
- * translucent or self-overlapping rig needs a face-order pass here before it
- * replaces its classic renderer.</p>
+ * <p>The face-order item carried from the Phase G review (vanilla {@code ModelPart}
+ * emits cube faces in down/up/west/north/east/south order while GeckoLib emits
+ * west/east/north/south/up/down; opaque rigs are unaffected, a translucent rig is
+ * not) is settled by {@link FaceOrder} (ENT-S-146, 2026-09-06): a rig whose manifest
+ * asks for it ships the classic face order under {@code orespawn:cube_face_order} and
+ * the shared model permutes every cube's quads into it at bake time, so a translucent
+ * candidate blends its faces exactly as the classic renderer does.</p>
+ *
+ * <p>ENT-S-146 render state: the descriptor's {@code renderType} / {@code renderColor} /
+ * {@code fullBright} hooks are applied below at the three points GeckoLib and vanilla decide
+ * them - {@link #getRenderType} (the visible-body render type), {@link #getRenderColor} (the
+ * colour int {@code GeoRenderer.defaultRender} feeds every vertex) and the two light-level
+ * getters the dispatcher packs ({@code EntityRenderer.getPackedLightCoords}).</p>
  */
 public abstract class OreSpawnGeoReplacedEntityRenderer<E extends Entity, A extends OreSpawnGeoReplacement<E>>
         extends GeoReplacedEntityRenderer<E, A> {
@@ -173,6 +185,73 @@ public abstract class OreSpawnGeoReplacedEntityRenderer<E extends Entity, A exte
     protected float getShadowRadius(E entity) {
         float radius = this.descriptor.shadowRadius();
         return entity instanceof LivingEntity living ? radius * living.getScale() * living.getAgeScale() : radius;
+    }
+
+    /**
+     * ENT-S-146: the descriptor's render type for a VISIBLE body, else GeckoLib's own.
+     * GeoReplacedEntityRenderer.getRenderType (4.8.4 bytecode): an invisible entity the viewer can
+     * still see draws through {@code RenderType.itemEntityTranslucentCull} (offsets 24-46); a visible
+     * one falls through to {@code GeoRenderer.getRenderType} (52-61), i.e. {@code GeoModel
+     * .getRenderType} = {@code RenderType.entityCutoutNoCull}; an invisible glowing one gets the outline
+     * (62-89). Vanilla's {@code LivingEntityRenderer.getRenderType} has the same three branches (7-16
+     * translucent, 17-30 {@code model.renderType(texture)} for a visible body, 31-44 outline), so the
+     * hook replaces exactly the branch the classic model's render-type function fills, and only that
+     * one. {@code GeoRenderer.defaultRender} calls this once per draw (59-76) with the descriptor's
+     * per-entity texture.
+     */
+    @Override
+    public RenderType getRenderType(A animatable, ResourceLocation texture, MultiBufferSource bufferSource,
+                                    float partialTick) {
+        Entity current = getCurrentEntity();
+        if (current != null && !current.isInvisible()) {
+            // The descriptor hands over the classic model's own render-type FUNCTION (the same object the
+            // classic renderer applies through Model.renderType(texture)), applied to the same texture.
+            Function<ResourceLocation, RenderType> own = this.descriptor.renderType(this.descriptor.requireEntity(current));
+            if (own != null) {
+                return own.apply(texture);
+            }
+        }
+        return super.getRenderType(animatable, texture, bufferSource, partialTick);
+    }
+
+    /**
+     * ENT-S-146: the descriptor's vertex colour, else GeckoLib's white. {@code GeoRenderer.defaultRender}
+     * (4.8.4 bytecode) takes {@code getRenderColor(animatable, partialTick, packedLight).argbInt()} once
+     * (offsets 4-18) and passes that int to {@code preRender}, {@code actuallyRender} (176; the replaced
+     * renderer's override hands it on to {@code GeoRenderer.actuallyRender} at 773, whose
+     * {@code renderRecursively} carries it to every bone), {@code postRender} and {@code renderFinal};
+     * {@code createVerticesOfQuad} hands it to every {@code addVertex} (81). The classic side's
+     * counterpart is the colour argument {@code ModelPart.render} passes to {@code Cube.compile} (176).
+     */
+    @Override
+    public Color getRenderColor(A animatable, float partialTick, int packedLight) {
+        Entity current = getCurrentEntity();
+        if (current != null) {
+            int argb = this.descriptor.renderColor(this.descriptor.requireEntity(current), partialTick);
+            if (argb != GeoReplacementDescriptor.WHITE) {
+                return new Color(argb);
+            }
+        }
+        return super.getRenderColor(animatable, partialTick, packedLight);
+    }
+
+    /**
+     * ENT-S-146: a fullbright species answers {@link GeoReplacementDescriptor#FULL_BRIGHT_LEVEL} (15) for
+     * both levels, so {@code EntityRenderer.getPackedLightCoords} (bytecode 0-24) packs
+     * {@code LightTexture.FULL_BRIGHT} into the light the dispatcher hands {@code render} - which
+     * {@code GeoReplacedEntityRenderer.render} passes to {@code defaultRender} (offset 18) and on to
+     * every vertex. The {@code MagmaCubeRenderer} idiom, the same override the species' classic renderer
+     * carries. The level is the seam's own constant (refuter A, D4): this shared base names no species model.
+     */
+    @Override
+    protected int getBlockLightLevel(E entity, BlockPos pos) {
+        return this.descriptor.fullBright(entity) ? GeoReplacementDescriptor.FULL_BRIGHT_LEVEL : super.getBlockLightLevel(entity, pos);
+    }
+
+    /** See {@link #getBlockLightLevel}. */
+    @Override
+    protected int getSkyLightLevel(E entity, BlockPos pos) {
+        return this.descriptor.fullBright(entity) ? GeoReplacementDescriptor.FULL_BRIGHT_LEVEL : super.getSkyLightLevel(entity, pos);
     }
 
     /** GeckoLib sets the current entity before {@code defaultRender} and clears it only after post-render cleanup. */

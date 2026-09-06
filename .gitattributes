@@ -18,3 +18,5 @@
 # Shipped GeckoLib rigs and clips are byte-compared against the proof copies by the asset audit (GECKO_GEO_PROOF_DRIFT); keep them LF on every checkout (2026-09-06).
 /src/main/resources/assets/orespawn/geo/entity/*.geo.json text eol=lf
 /src/main/resources/assets/orespawn/animations/entity/*.animation.json text eol=lf
+# The asset audit is edited on every rig landing under core.autocrlf=true checkouts; keep it LF like the other tools (ENT-S-146 refuter B, D9, 2026-09-06).
+/tools/asset_audit.py text eol=lf

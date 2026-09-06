@@ -5,46 +5,37 @@
   "proof_scope": "production_proof_model",
   "ground_truth": "executed compiled LayerDefinition and baked ModelPart",
   "source_class": "danger.orespawn.entity.client.ModelPurplePower",
-  "source_class_sha256": "d633bac419fbff3df34821355426cfe6c6524c017e0dbdcc9a6c5105f1d1f3fb",
-  "compiled_dump_sha256": "3f423e29c5eff82fb04e84333c3f5af2810f17dad43e6994ec999b90349e0d39",
-  "geometry_sha256": "29ba1faf6e72ca873c92f0291dbcab9c62ef85d0930746e554624d863cf718c7",
+  "source_class_sha256": "139bb827e2c9153ac5f439c570a5862078b39a461fd6d7c599dd1d2157dfaca4",
+  "compiled_dump_sha256": "f5ca924dd9ec8a37a9242209cb27aff0beed00742205a05a04c0f132d1151b6f",
+  "geometry_sha256": "a5072b041314c93f6b4fc0a97022d8044d01fc7fff21f601ac3c18e00d21ea1a",
   "animation_sha256": "7882082857fdb11e02f158ebc3a6d3f970e2ac60d54813f0e903ee97b2293749",
-  "animation_contract_sha256": "2d3af6d863da88fc24cf224bbdf6f91be6d8e613b714118d4749991a651e7a4c",
-  "bone_count": 36,
+  "animation_contract_sha256": "32fa4b5cdb442c15c16b565a8ec2fc07f8823dfd9172d5340857118b20f1d3d0",
+  "bone_count": 27,
   "cube_count": 18,
   "mirrored_cube_count": 18,
   "mirrored_uv_strategy": "source flag retained as modelpart_mirror; semantics baked into explicit faces; incompatible GeckoLib native mirror disabled",
   "exact_bone_names": [
-    "Shape1__fan0",
-    "Shape1__fan1",
-    "Shape1__fan2",
-    "Shape1__fan3",
-    "Shape1__fan4",
-    "Shape1__fan5",
+    "Shape1__fan",
     "Shape1__i0",
     "Shape1__i1",
     "Shape1__i2",
     "Shape1__i3",
     "Shape1__i4",
     "Shape1__i5",
-    "Shape2__fan0",
-    "Shape2__fan1",
-    "Shape2__fan2",
-    "Shape2__fan3",
-    "Shape2__fan4",
-    "Shape2__fan5",
+    "Shape2__carry_x1",
+    "Shape2__carry_x2",
+    "Shape2__fan",
     "Shape2__i0",
     "Shape2__i1",
     "Shape2__i2",
     "Shape2__i3",
     "Shape2__i4",
     "Shape2__i5",
-    "Shape3__fan0",
-    "Shape3__fan1",
-    "Shape3__fan2",
-    "Shape3__fan3",
-    "Shape3__fan4",
-    "Shape3__fan5",
+    "Shape3__carry_x1",
+    "Shape3__carry_x2",
+    "Shape3__carry_y1",
+    "Shape3__carry_y2",
+    "Shape3__fan",
     "Shape3__i0",
     "Shape3__i1",
     "Shape3__i2",
@@ -53,55 +44,46 @@
     "Shape3__i5"
   ],
   "bone_draw_order": [
-    "Shape1__fan0",
+    "Shape1__fan",
     "Shape1__i0",
-    "Shape1__fan1",
     "Shape1__i1",
-    "Shape1__fan2",
     "Shape1__i2",
-    "Shape1__fan3",
     "Shape1__i3",
-    "Shape1__fan4",
     "Shape1__i4",
-    "Shape1__fan5",
     "Shape1__i5",
-    "Shape2__fan0",
+    "Shape2__carry_x1",
+    "Shape2__carry_x2",
+    "Shape2__fan",
     "Shape2__i0",
-    "Shape2__fan1",
     "Shape2__i1",
-    "Shape2__fan2",
     "Shape2__i2",
-    "Shape2__fan3",
     "Shape2__i3",
-    "Shape2__fan4",
     "Shape2__i4",
-    "Shape2__fan5",
     "Shape2__i5",
-    "Shape3__fan0",
+    "Shape3__carry_x1",
+    "Shape3__carry_x2",
+    "Shape3__carry_y1",
+    "Shape3__carry_y2",
+    "Shape3__fan",
     "Shape3__i0",
-    "Shape3__fan1",
     "Shape3__i1",
-    "Shape3__fan2",
     "Shape3__i2",
-    "Shape3__fan3",
     "Shape3__i3",
-    "Shape3__fan4",
     "Shape3__i4",
-    "Shape3__fan5",
     "Shape3__i5"
   ],
   "draw_order_evidence": {
     "source": "classic EntityModel.renderToBuffer on a second bake posed identically; every ModelPart.render is one pose-stack push, attributed to its part by ModelPart.skipDraw elimination (one run per cube-bearing part with every other part's skipDraw set); a part drawn n > 1 times is named <part>__i<k> by draw ordinal",
     "captures": [
       "bind",
-      "t0",
-      "t_0_001250",
-      "t_0_005000",
-      "t_0_012500",
-      "t_0_030000",
-      "t_quarter",
-      "t_half",
-      "t_end"
+      "s_seed_1_t0",
+      "s_seed_1_t_half",
+      "s_seed_12345_t0",
+      "s_seed_12345_t_half",
+      "s_seed_2026_t0",
+      "s_seed_2026_t_half",
+      "s_seed_777_t0",
+      "s_seed_777_t_half"
     ],
     "cube_bearing_units": 18,
     "observed_units": 18,
@@ -110,40 +92,241 @@
     "tie_break": "converter emission order for pairs never drawn together in any capture",
     "lifting": "pre-order over the geo bone tree, siblings by their subtree's first classic draw"
   },
+  "cube_face_order": {
+    "Shape1__i0": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "Shape1__i1": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "Shape1__i2": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "Shape1__i3": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "Shape1__i4": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "Shape1__i5": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "Shape2__i0": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "Shape2__i1": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "Shape2__i2": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "Shape2__i3": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "Shape2__i4": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "Shape2__i5": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "Shape3__i0": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "Shape3__i1": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "Shape3__i2": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "Shape3__i3": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "Shape3__i4": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "Shape3__i5": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ]
+  },
+  "cube_face_order_evidence": {
+    "rule": "NeoForge 21.1.223 ModelPart.Cube.<init> polygon order DOWN, UP, WEST, NORTH, EAST, SOUTH (offsets 365-785: DOWN 365, UP 436, WEST 507, NORTH 578, EAST 649, SOUTH 720), mirror negating the X normals; GeckoLib labels by the direction whose step is the classic normal reflected in Y",
+    "cube_bearing_bones": 18,
+    "cubes": 18,
+    "verified_unrotated_cubes_at_bind": 3,
+    "verification": "captured normals of every cube unrotated at bind equal the rule's, in order; the parity tool's draw-order leg compares the per-quad normal sequences of both renderers on every capture"
+  },
   "render_instances": {
     "declared": {
       "Shape1": {
         "count": 6,
         "axis": "z",
-        "step_scope": "stack",
+        "step_scope": "part",
         "step_radians": 1.0471976,
-        "step_arithmetic": "float32_multiply",
-        "note": "ModelPurplePower.renderToBuffer:59-64: mulPose(Axis.ZP.rotation(i * 1.0471976F)) on the pose stack, then innerSpoke.render, 6 draws"
+        "step_arithmetic": "float32_accumulate",
+        "note": "ModelPurplePower.renderFan (orig ModelPurplePower.java:59-63): Shape1.zRot = newangle; newangle += 1.0471976f, 6 draws inside mulPose(X, rf1) (orig :58)"
       },
       "Shape2": {
         "count": 6,
         "axis": "z",
-        "step_scope": "stack",
+        "step_scope": "part",
         "step_radians": 1.0471976,
-        "step_arithmetic": "float32_multiply",
-        "note": "ModelPurplePower.renderToBuffer:65-70, middleSpoke"
+        "step_arithmetic": "float32_accumulate",
+        "group_chain": [
+          "Shape2__carry_x1",
+          "Shape2__carry_x2",
+          "Shape2__fan"
+        ],
+        "note": "the same loop (orig :68-72) inside mulPose(Y, rf1') (orig :67) under the carried X rotations - orig :58 and :64 both rotate about X by rf1, the second not negated: the chain's two outer groups carry them, one per glRotatef"
       },
       "Shape3": {
         "count": 6,
         "axis": "z",
-        "step_scope": "stack",
+        "step_scope": "part",
         "step_radians": 1.0471976,
-        "step_arithmetic": "float32_multiply",
-        "note": "ModelPurplePower.renderToBuffer:71-76, outerSpoke"
+        "step_arithmetic": "float32_accumulate",
+        "group_chain": [
+          "Shape3__carry_x1",
+          "Shape3__carry_x2",
+          "Shape3__carry_y1",
+          "Shape3__carry_y2",
+          "Shape3__fan"
+        ],
+        "note": "the same loop (orig :77-81) inside mulPose(Z, rf1'') (orig :76) under X(rf1) twice (orig :58 + :64) and Y(rf1') twice (orig :67 + :73): the chain's four outer groups carry them, one per glRotatef"
       }
     },
     "parts": {
       "Shape1": {
         "count": 6,
         "axis": "z",
-        "step_scope": "stack",
+        "step_scope": "part",
         "step_radians": 1.0471976,
-        "step_arithmetic": "float32_multiply",
+        "step_arithmetic": "float32_accumulate",
         "angles_radians": [
           0.0,
           1.0471975803375244,
@@ -153,12 +336,7 @@
           5.235987663269043
         ],
         "group_bones": [
-          "Shape1__fan0",
-          "Shape1__fan1",
-          "Shape1__fan2",
-          "Shape1__fan3",
-          "Shape1__fan4",
-          "Shape1__fan5"
+          "Shape1__fan"
         ],
         "clone_bones": [
           "Shape1__i0",
@@ -169,14 +347,14 @@
           "Shape1__i5"
         ],
         "cubes_per_draw": 1,
-        "note": "ModelPurplePower.renderToBuffer:59-64: mulPose(Axis.ZP.rotation(i * 1.0471976F)) on the pose stack, then innerSpoke.render, 6 draws"
+        "note": "ModelPurplePower.renderFan (orig ModelPurplePower.java:59-63): Shape1.zRot = newangle; newangle += 1.0471976f, 6 draws inside mulPose(X, rf1) (orig :58)"
       },
       "Shape2": {
         "count": 6,
         "axis": "z",
-        "step_scope": "stack",
+        "step_scope": "part",
         "step_radians": 1.0471976,
-        "step_arithmetic": "float32_multiply",
+        "step_arithmetic": "float32_accumulate",
         "angles_radians": [
           0.0,
           1.0471975803375244,
@@ -186,12 +364,9 @@
           5.235987663269043
         ],
         "group_bones": [
-          "Shape2__fan0",
-          "Shape2__fan1",
-          "Shape2__fan2",
-          "Shape2__fan3",
-          "Shape2__fan4",
-          "Shape2__fan5"
+          "Shape2__carry_x1",
+          "Shape2__carry_x2",
+          "Shape2__fan"
         ],
         "clone_bones": [
           "Shape2__i0",
@@ -202,14 +377,14 @@
           "Shape2__i5"
         ],
         "cubes_per_draw": 1,
-        "note": "ModelPurplePower.renderToBuffer:65-70, middleSpoke"
+        "note": "the same loop (orig :68-72) inside mulPose(Y, rf1') (orig :67) under the carried X rotations - orig :58 and :64 both rotate about X by rf1, the second not negated: the chain's two outer groups carry them, one per glRotatef"
       },
       "Shape3": {
         "count": 6,
         "axis": "z",
-        "step_scope": "stack",
+        "step_scope": "part",
         "step_radians": 1.0471976,
-        "step_arithmetic": "float32_multiply",
+        "step_arithmetic": "float32_accumulate",
         "angles_radians": [
           0.0,
           1.0471975803375244,
@@ -219,12 +394,11 @@
           5.235987663269043
         ],
         "group_bones": [
-          "Shape3__fan0",
-          "Shape3__fan1",
-          "Shape3__fan2",
-          "Shape3__fan3",
-          "Shape3__fan4",
-          "Shape3__fan5"
+          "Shape3__carry_x1",
+          "Shape3__carry_x2",
+          "Shape3__carry_y1",
+          "Shape3__carry_y2",
+          "Shape3__fan"
         ],
         "clone_bones": [
           "Shape3__i0",
@@ -235,498 +409,453 @@
           "Shape3__i5"
         ],
         "cubes_per_draw": 1,
-        "note": "ModelPurplePower.renderToBuffer:71-76, outerSpoke"
+        "note": "the same loop (orig :77-81) inside mulPose(Z, rf1'') (orig :76) under X(rf1) twice (orig :58 + :64) and Y(rf1') twice (orig :67 + :73): the chain's four outer groups carry them, one per glRotatef"
       }
     },
     "bones": {
-      "Shape1__fan0": {
+      "Shape1__fan": {
         "role": "group",
         "source_part": "Shape1",
-        "draw_index": 0,
-        "animated_by_hook": false,
-        "static_rotation_radians": [
-          0.0,
-          0.0,
-          0.0
-        ],
+        "draw_index": null,
+        "animated_by_hook": true,
+        "static_rotation_radians": null,
         "clones": [
-          "Shape1__i0"
+          "Shape1__i0",
+          "Shape1__i1",
+          "Shape1__i2",
+          "Shape1__i3",
+          "Shape1__i4",
+          "Shape1__i5"
         ]
       },
       "Shape1__i0": {
         "role": "clone",
         "source_part": "Shape1",
         "draw_index": 0,
-        "group_bone": "Shape1__fan0",
+        "group_bone": "Shape1__fan",
         "static_rotation_radians": [
           0.0,
           0.0,
           0.0
         ],
-        "static_channel": null
-      },
-      "Shape1__fan1": {
-        "role": "group",
-        "source_part": "Shape1",
-        "draw_index": 1,
-        "animated_by_hook": false,
-        "static_rotation_radians": [
-          0.0,
-          0.0,
-          1.0471975803375244
-        ],
-        "clones": [
-          "Shape1__i1"
-        ]
+        "static_channel": "z"
       },
       "Shape1__i1": {
         "role": "clone",
         "source_part": "Shape1",
         "draw_index": 1,
-        "group_bone": "Shape1__fan1",
+        "group_bone": "Shape1__fan",
         "static_rotation_radians": [
           0.0,
           0.0,
-          0.0
+          1.0471975803375244
         ],
-        "static_channel": null
-      },
-      "Shape1__fan2": {
-        "role": "group",
-        "source_part": "Shape1",
-        "draw_index": 2,
-        "animated_by_hook": false,
-        "static_rotation_radians": [
-          0.0,
-          0.0,
-          2.094395160675049
-        ],
-        "clones": [
-          "Shape1__i2"
-        ]
+        "static_channel": "z"
       },
       "Shape1__i2": {
         "role": "clone",
         "source_part": "Shape1",
         "draw_index": 2,
-        "group_bone": "Shape1__fan2",
+        "group_bone": "Shape1__fan",
         "static_rotation_radians": [
           0.0,
           0.0,
-          0.0
+          2.094395160675049
         ],
-        "static_channel": null
-      },
-      "Shape1__fan3": {
-        "role": "group",
-        "source_part": "Shape1",
-        "draw_index": 3,
-        "animated_by_hook": false,
-        "static_rotation_radians": [
-          0.0,
-          0.0,
-          3.1415927410125732
-        ],
-        "clones": [
-          "Shape1__i3"
-        ]
+        "static_channel": "z"
       },
       "Shape1__i3": {
         "role": "clone",
         "source_part": "Shape1",
         "draw_index": 3,
-        "group_bone": "Shape1__fan3",
+        "group_bone": "Shape1__fan",
         "static_rotation_radians": [
           0.0,
           0.0,
-          0.0
+          3.1415927410125732
         ],
-        "static_channel": null
-      },
-      "Shape1__fan4": {
-        "role": "group",
-        "source_part": "Shape1",
-        "draw_index": 4,
-        "animated_by_hook": false,
-        "static_rotation_radians": [
-          0.0,
-          0.0,
-          4.188790321350098
-        ],
-        "clones": [
-          "Shape1__i4"
-        ]
+        "static_channel": "z"
       },
       "Shape1__i4": {
         "role": "clone",
         "source_part": "Shape1",
         "draw_index": 4,
-        "group_bone": "Shape1__fan4",
+        "group_bone": "Shape1__fan",
         "static_rotation_radians": [
           0.0,
           0.0,
-          0.0
+          4.188790321350098
         ],
-        "static_channel": null
-      },
-      "Shape1__fan5": {
-        "role": "group",
-        "source_part": "Shape1",
-        "draw_index": 5,
-        "animated_by_hook": false,
-        "static_rotation_radians": [
-          0.0,
-          0.0,
-          5.235987663269043
-        ],
-        "clones": [
-          "Shape1__i5"
-        ]
+        "static_channel": "z"
       },
       "Shape1__i5": {
         "role": "clone",
         "source_part": "Shape1",
         "draw_index": 5,
-        "group_bone": "Shape1__fan5",
+        "group_bone": "Shape1__fan",
         "static_rotation_radians": [
           0.0,
           0.0,
-          0.0
+          5.235987663269043
         ],
-        "static_channel": null
+        "static_channel": "z"
       },
-      "Shape2__fan0": {
+      "Shape2__carry_x1": {
         "role": "group",
         "source_part": "Shape2",
-        "draw_index": 0,
-        "animated_by_hook": false,
-        "static_rotation_radians": [
-          0.0,
-          0.0,
-          0.0
-        ],
+        "draw_index": null,
+        "animated_by_hook": true,
+        "static_rotation_radians": null,
         "clones": [
-          "Shape2__i0"
-        ]
+          "Shape2__i0",
+          "Shape2__i1",
+          "Shape2__i2",
+          "Shape2__i3",
+          "Shape2__i4",
+          "Shape2__i5"
+        ],
+        "group_chain": [
+          "Shape2__carry_x1",
+          "Shape2__carry_x2",
+          "Shape2__fan"
+        ],
+        "chain_index": 0,
+        "parent_group": null
+      },
+      "Shape2__carry_x2": {
+        "role": "group",
+        "source_part": "Shape2",
+        "draw_index": null,
+        "animated_by_hook": true,
+        "static_rotation_radians": null,
+        "clones": [
+          "Shape2__i0",
+          "Shape2__i1",
+          "Shape2__i2",
+          "Shape2__i3",
+          "Shape2__i4",
+          "Shape2__i5"
+        ],
+        "group_chain": [
+          "Shape2__carry_x1",
+          "Shape2__carry_x2",
+          "Shape2__fan"
+        ],
+        "chain_index": 1,
+        "parent_group": "Shape2__carry_x1"
+      },
+      "Shape2__fan": {
+        "role": "group",
+        "source_part": "Shape2",
+        "draw_index": null,
+        "animated_by_hook": true,
+        "static_rotation_radians": null,
+        "clones": [
+          "Shape2__i0",
+          "Shape2__i1",
+          "Shape2__i2",
+          "Shape2__i3",
+          "Shape2__i4",
+          "Shape2__i5"
+        ],
+        "group_chain": [
+          "Shape2__carry_x1",
+          "Shape2__carry_x2",
+          "Shape2__fan"
+        ],
+        "chain_index": 2,
+        "parent_group": "Shape2__carry_x2"
       },
       "Shape2__i0": {
         "role": "clone",
         "source_part": "Shape2",
         "draw_index": 0,
-        "group_bone": "Shape2__fan0",
+        "group_bone": "Shape2__fan",
         "static_rotation_radians": [
           0.0,
           0.0,
           0.0
         ],
-        "static_channel": null
-      },
-      "Shape2__fan1": {
-        "role": "group",
-        "source_part": "Shape2",
-        "draw_index": 1,
-        "animated_by_hook": false,
-        "static_rotation_radians": [
-          0.0,
-          0.0,
-          1.0471975803375244
-        ],
-        "clones": [
-          "Shape2__i1"
-        ]
+        "static_channel": "z"
       },
       "Shape2__i1": {
         "role": "clone",
         "source_part": "Shape2",
         "draw_index": 1,
-        "group_bone": "Shape2__fan1",
-        "static_rotation_radians": [
-          0.0,
-          0.0,
-          0.0
-        ],
-        "static_channel": null
-      },
-      "Shape2__fan2": {
-        "role": "group",
-        "source_part": "Shape2",
-        "draw_index": 2,
-        "animated_by_hook": false,
-        "static_rotation_radians": [
-          0.0,
-          0.0,
-          2.094395160675049
-        ],
-        "clones": [
-          "Shape2__i2"
-        ]
-      },
-      "Shape2__i2": {
-        "role": "clone",
-        "source_part": "Shape2",
-        "draw_index": 2,
-        "group_bone": "Shape2__fan2",
-        "static_rotation_radians": [
-          0.0,
-          0.0,
-          0.0
-        ],
-        "static_channel": null
-      },
-      "Shape2__fan3": {
-        "role": "group",
-        "source_part": "Shape2",
-        "draw_index": 3,
-        "animated_by_hook": false,
-        "static_rotation_radians": [
-          0.0,
-          0.0,
-          3.1415927410125732
-        ],
-        "clones": [
-          "Shape2__i3"
-        ]
-      },
-      "Shape2__i3": {
-        "role": "clone",
-        "source_part": "Shape2",
-        "draw_index": 3,
-        "group_bone": "Shape2__fan3",
-        "static_rotation_radians": [
-          0.0,
-          0.0,
-          0.0
-        ],
-        "static_channel": null
-      },
-      "Shape2__fan4": {
-        "role": "group",
-        "source_part": "Shape2",
-        "draw_index": 4,
-        "animated_by_hook": false,
-        "static_rotation_radians": [
-          0.0,
-          0.0,
-          4.188790321350098
-        ],
-        "clones": [
-          "Shape2__i4"
-        ]
-      },
-      "Shape2__i4": {
-        "role": "clone",
-        "source_part": "Shape2",
-        "draw_index": 4,
-        "group_bone": "Shape2__fan4",
-        "static_rotation_radians": [
-          0.0,
-          0.0,
-          0.0
-        ],
-        "static_channel": null
-      },
-      "Shape2__fan5": {
-        "role": "group",
-        "source_part": "Shape2",
-        "draw_index": 5,
-        "animated_by_hook": false,
-        "static_rotation_radians": [
-          0.0,
-          0.0,
-          5.235987663269043
-        ],
-        "clones": [
-          "Shape2__i5"
-        ]
-      },
-      "Shape2__i5": {
-        "role": "clone",
-        "source_part": "Shape2",
-        "draw_index": 5,
-        "group_bone": "Shape2__fan5",
-        "static_rotation_radians": [
-          0.0,
-          0.0,
-          0.0
-        ],
-        "static_channel": null
-      },
-      "Shape3__fan0": {
-        "role": "group",
-        "source_part": "Shape3",
-        "draw_index": 0,
-        "animated_by_hook": false,
-        "static_rotation_radians": [
-          0.0,
-          0.0,
-          0.0
-        ],
-        "clones": [
-          "Shape3__i0"
-        ]
-      },
-      "Shape3__i0": {
-        "role": "clone",
-        "source_part": "Shape3",
-        "draw_index": 0,
-        "group_bone": "Shape3__fan0",
-        "static_rotation_radians": [
-          0.0,
-          0.0,
-          0.0
-        ],
-        "static_channel": null
-      },
-      "Shape3__fan1": {
-        "role": "group",
-        "source_part": "Shape3",
-        "draw_index": 1,
-        "animated_by_hook": false,
+        "group_bone": "Shape2__fan",
         "static_rotation_radians": [
           0.0,
           0.0,
           1.0471975803375244
         ],
-        "clones": [
-          "Shape3__i1"
-        ]
+        "static_channel": "z"
       },
-      "Shape3__i1": {
+      "Shape2__i2": {
         "role": "clone",
-        "source_part": "Shape3",
-        "draw_index": 1,
-        "group_bone": "Shape3__fan1",
-        "static_rotation_radians": [
-          0.0,
-          0.0,
-          0.0
-        ],
-        "static_channel": null
-      },
-      "Shape3__fan2": {
-        "role": "group",
-        "source_part": "Shape3",
+        "source_part": "Shape2",
         "draw_index": 2,
-        "animated_by_hook": false,
+        "group_bone": "Shape2__fan",
         "static_rotation_radians": [
           0.0,
           0.0,
           2.094395160675049
         ],
-        "clones": [
-          "Shape3__i2"
-        ]
+        "static_channel": "z"
       },
-      "Shape3__i2": {
+      "Shape2__i3": {
         "role": "clone",
-        "source_part": "Shape3",
-        "draw_index": 2,
-        "group_bone": "Shape3__fan2",
-        "static_rotation_radians": [
-          0.0,
-          0.0,
-          0.0
-        ],
-        "static_channel": null
-      },
-      "Shape3__fan3": {
-        "role": "group",
-        "source_part": "Shape3",
+        "source_part": "Shape2",
         "draw_index": 3,
-        "animated_by_hook": false,
+        "group_bone": "Shape2__fan",
         "static_rotation_radians": [
           0.0,
           0.0,
           3.1415927410125732
         ],
-        "clones": [
-          "Shape3__i3"
-        ]
+        "static_channel": "z"
       },
-      "Shape3__i3": {
+      "Shape2__i4": {
         "role": "clone",
-        "source_part": "Shape3",
-        "draw_index": 3,
-        "group_bone": "Shape3__fan3",
-        "static_rotation_radians": [
-          0.0,
-          0.0,
-          0.0
-        ],
-        "static_channel": null
-      },
-      "Shape3__fan4": {
-        "role": "group",
-        "source_part": "Shape3",
+        "source_part": "Shape2",
         "draw_index": 4,
-        "animated_by_hook": false,
+        "group_bone": "Shape2__fan",
         "static_rotation_radians": [
           0.0,
           0.0,
           4.188790321350098
         ],
-        "clones": [
-          "Shape3__i4"
-        ]
+        "static_channel": "z"
       },
-      "Shape3__i4": {
+      "Shape2__i5": {
         "role": "clone",
-        "source_part": "Shape3",
-        "draw_index": 4,
-        "group_bone": "Shape3__fan4",
-        "static_rotation_radians": [
-          0.0,
-          0.0,
-          0.0
-        ],
-        "static_channel": null
-      },
-      "Shape3__fan5": {
-        "role": "group",
-        "source_part": "Shape3",
+        "source_part": "Shape2",
         "draw_index": 5,
-        "animated_by_hook": false,
+        "group_bone": "Shape2__fan",
         "static_rotation_radians": [
           0.0,
           0.0,
           5.235987663269043
         ],
-        "clones": [
-          "Shape3__i5"
-        ]
+        "static_channel": "z"
       },
-      "Shape3__i5": {
+      "Shape3__carry_x1": {
+        "role": "group",
+        "source_part": "Shape3",
+        "draw_index": null,
+        "animated_by_hook": true,
+        "static_rotation_radians": null,
+        "clones": [
+          "Shape3__i0",
+          "Shape3__i1",
+          "Shape3__i2",
+          "Shape3__i3",
+          "Shape3__i4",
+          "Shape3__i5"
+        ],
+        "group_chain": [
+          "Shape3__carry_x1",
+          "Shape3__carry_x2",
+          "Shape3__carry_y1",
+          "Shape3__carry_y2",
+          "Shape3__fan"
+        ],
+        "chain_index": 0,
+        "parent_group": null
+      },
+      "Shape3__carry_x2": {
+        "role": "group",
+        "source_part": "Shape3",
+        "draw_index": null,
+        "animated_by_hook": true,
+        "static_rotation_radians": null,
+        "clones": [
+          "Shape3__i0",
+          "Shape3__i1",
+          "Shape3__i2",
+          "Shape3__i3",
+          "Shape3__i4",
+          "Shape3__i5"
+        ],
+        "group_chain": [
+          "Shape3__carry_x1",
+          "Shape3__carry_x2",
+          "Shape3__carry_y1",
+          "Shape3__carry_y2",
+          "Shape3__fan"
+        ],
+        "chain_index": 1,
+        "parent_group": "Shape3__carry_x1"
+      },
+      "Shape3__carry_y1": {
+        "role": "group",
+        "source_part": "Shape3",
+        "draw_index": null,
+        "animated_by_hook": true,
+        "static_rotation_radians": null,
+        "clones": [
+          "Shape3__i0",
+          "Shape3__i1",
+          "Shape3__i2",
+          "Shape3__i3",
+          "Shape3__i4",
+          "Shape3__i5"
+        ],
+        "group_chain": [
+          "Shape3__carry_x1",
+          "Shape3__carry_x2",
+          "Shape3__carry_y1",
+          "Shape3__carry_y2",
+          "Shape3__fan"
+        ],
+        "chain_index": 2,
+        "parent_group": "Shape3__carry_x2"
+      },
+      "Shape3__carry_y2": {
+        "role": "group",
+        "source_part": "Shape3",
+        "draw_index": null,
+        "animated_by_hook": true,
+        "static_rotation_radians": null,
+        "clones": [
+          "Shape3__i0",
+          "Shape3__i1",
+          "Shape3__i2",
+          "Shape3__i3",
+          "Shape3__i4",
+          "Shape3__i5"
+        ],
+        "group_chain": [
+          "Shape3__carry_x1",
+          "Shape3__carry_x2",
+          "Shape3__carry_y1",
+          "Shape3__carry_y2",
+          "Shape3__fan"
+        ],
+        "chain_index": 3,
+        "parent_group": "Shape3__carry_y1"
+      },
+      "Shape3__fan": {
+        "role": "group",
+        "source_part": "Shape3",
+        "draw_index": null,
+        "animated_by_hook": true,
+        "static_rotation_radians": null,
+        "clones": [
+          "Shape3__i0",
+          "Shape3__i1",
+          "Shape3__i2",
+          "Shape3__i3",
+          "Shape3__i4",
+          "Shape3__i5"
+        ],
+        "group_chain": [
+          "Shape3__carry_x1",
+          "Shape3__carry_x2",
+          "Shape3__carry_y1",
+          "Shape3__carry_y2",
+          "Shape3__fan"
+        ],
+        "chain_index": 4,
+        "parent_group": "Shape3__carry_y2"
+      },
+      "Shape3__i0": {
         "role": "clone",
         "source_part": "Shape3",
-        "draw_index": 5,
-        "group_bone": "Shape3__fan5",
+        "draw_index": 0,
+        "group_bone": "Shape3__fan",
         "static_rotation_radians": [
           0.0,
           0.0,
           0.0
         ],
-        "static_channel": null
+        "static_channel": "z"
+      },
+      "Shape3__i1": {
+        "role": "clone",
+        "source_part": "Shape3",
+        "draw_index": 1,
+        "group_bone": "Shape3__fan",
+        "static_rotation_radians": [
+          0.0,
+          0.0,
+          1.0471975803375244
+        ],
+        "static_channel": "z"
+      },
+      "Shape3__i2": {
+        "role": "clone",
+        "source_part": "Shape3",
+        "draw_index": 2,
+        "group_bone": "Shape3__fan",
+        "static_rotation_radians": [
+          0.0,
+          0.0,
+          2.094395160675049
+        ],
+        "static_channel": "z"
+      },
+      "Shape3__i3": {
+        "role": "clone",
+        "source_part": "Shape3",
+        "draw_index": 3,
+        "group_bone": "Shape3__fan",
+        "static_rotation_radians": [
+          0.0,
+          0.0,
+          3.1415927410125732
+        ],
+        "static_channel": "z"
+      },
+      "Shape3__i4": {
+        "role": "clone",
+        "source_part": "Shape3",
+        "draw_index": 4,
+        "group_bone": "Shape3__fan",
+        "static_rotation_radians": [
+          0.0,
+          0.0,
+          4.188790321350098
+        ],
+        "static_channel": "z"
+      },
+      "Shape3__i5": {
+        "role": "clone",
+        "source_part": "Shape3",
+        "draw_index": 5,
+        "group_bone": "Shape3__fan",
+        "static_rotation_radians": [
+          0.0,
+          0.0,
+          5.235987663269043
+        ],
+        "static_channel": "z"
       }
     },
     "semantics": "one bone per classic draw: <part>__i<k> is draw k of <part> (its cubes and pivot); step_scope part = the loop assigns the part's own axis channel, so the step is the clone's bind rotation under one hook-animated group <part>__fan; step_scope stack = the loop rotates the pose stack outside the part, so the step is the bind rotation of a per-draw parent <part>__fan<k> and the clone carries the part's animated channels"
   },
   "animation_contract": {
     "schema_version": 1,
-    "kind": "code_driven",
+    "kind": "entity_state",
     "controller_required": false,
     "candidate_animation_path": "production_replacement_hook",
     "candidate_class": "danger.orespawn.entity.client.PurplePowerGeoReplacement",
     "candidate_acceptance_path": "production OreSpawnGeoReplacementModel.setCustomAnimations (Amendment 1 Tier-3 code-driven)",
     "sample_ids": [
       "bind",
-      "t0",
-      "t_0_001250",
-      "t_0_005000",
-      "t_0_012500",
-      "t_0_030000",
-      "t_quarter",
-      "t_half",
-      "t_end"
+      "s_seed_1_t0",
+      "s_seed_1_t_half",
+      "s_seed_12345_t0",
+      "s_seed_12345_t_half",
+      "s_seed_2026_t0",
+      "s_seed_2026_t_half",
+      "s_seed_777_t0",
+      "s_seed_777_t_half"
+    ],
+    "entity_states": [
+      "seed_1",
+      "seed_12345",
+      "seed_2026",
+      "seed_777"
     ]
   },
   "reference_animation_schema": {
@@ -735,7 +864,7 @@
     "constant_vector_count": 0,
     "runtime_acceptance": false
   },
-  "accepted_animation_evidence": "production OreSpawnGeoReplacement hook through OreSpawnGeoReplacementModel.setCustomAnimations (Amendment 1 Tier-3 code-driven)",
+  "accepted_animation_evidence": "production OreSpawnGeoReplacement hook posed from declared entity states through the entity's pose interface (Amendment 1 Tier-3 code-driven)",
   "artist_editable_math_to_keyframes_status": "NOT_APPLICABLE_TIER3_CODE_DRIVEN",
   "compiled_animation_bake_sample_count": 0,
   "reference_clip_keys_source": "compiled setupAnim output; no Python formula evaluation",
