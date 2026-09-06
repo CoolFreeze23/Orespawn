@@ -9,7 +9,6 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
-import software.bernie.geckolib.animation.AnimatableManager;
 import software.bernie.geckolib.animation.AnimationProcessor;
 
 /**
@@ -109,11 +108,6 @@ public final class PurplePowerGeoReplacement extends OreSpawnGeoReplacement<Purp
 
     public PurplePowerGeoReplacement() {
         super(DESCRIPTOR);
-    }
-
-    @Override
-    public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
-        // Intentionally none: the pose is code-driven below.
     }
 
     /**

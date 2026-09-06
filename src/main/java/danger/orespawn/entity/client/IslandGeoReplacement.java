@@ -6,7 +6,6 @@ import danger.orespawn.entity.Island;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
-import software.bernie.geckolib.animation.AnimatableManager;
 import software.bernie.geckolib.animation.AnimationProcessor;
 
 /** GeckoLib Island: {@link ModelIsland#setupAnim} verbatim on the converted 1.7.10 rig (ENT-S-091 re-proof). */
@@ -22,11 +21,6 @@ public final class IslandGeoReplacement extends OreSpawnGeoReplacement<Island> {
 
     public IslandGeoReplacement() {
         super(DESCRIPTOR);
-    }
-
-    @Override
-    public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
-        // Intentionally none: the pose is code-driven below.
     }
 
     @Override

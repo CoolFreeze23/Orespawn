@@ -7,7 +7,6 @@ import danger.orespawn.entity.pose.Robot4Pose;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
-import software.bernie.geckolib.animation.AnimatableManager;
 import software.bernie.geckolib.animation.AnimationProcessor;
 
 /**
@@ -35,11 +34,6 @@ public final class Robot4GeoReplacement extends OreSpawnGeoReplacement<Robot4> {
 
     public Robot4GeoReplacement() {
         super(DESCRIPTOR);
-    }
-
-    @Override
-    public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
-        // Intentionally none: the pose is code-driven below.
     }
 
     @Override

@@ -5,7 +5,6 @@ import danger.orespawn.OreSpawnMod;
 import danger.orespawn.entity.IslandToo;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.resources.ResourceLocation;
-import software.bernie.geckolib.animation.AnimatableManager;
 import software.bernie.geckolib.animation.AnimationProcessor;
 
 /** GeckoLib IslandToo: {@link ModelIslandToo#setupAnim} verbatim on the converted 1.7.10 rig (ENT-S-091 re-proof). */
@@ -21,11 +20,6 @@ public final class IslandTooGeoReplacement extends OreSpawnGeoReplacement<Island
 
     public IslandTooGeoReplacement() {
         super(DESCRIPTOR);
-    }
-
-    @Override
-    public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
-        // Intentionally none: the pose is code-driven below.
     }
 
     @Override

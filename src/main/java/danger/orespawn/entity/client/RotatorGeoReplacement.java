@@ -6,7 +6,6 @@ import danger.orespawn.entity.EntityRotator;
 import danger.orespawn.entity.pose.RotatorPose;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.resources.ResourceLocation;
-import software.bernie.geckolib.animation.AnimatableManager;
 import software.bernie.geckolib.animation.AnimationProcessor;
 
 /**
@@ -53,11 +52,6 @@ public final class RotatorGeoReplacement extends OreSpawnGeoReplacement<EntityRo
 
     public RotatorGeoReplacement() {
         super(DESCRIPTOR);
-    }
-
-    @Override
-    public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
-        // Intentionally none: the pose is code-driven below.
     }
 
     @Override
