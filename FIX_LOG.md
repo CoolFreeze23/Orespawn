@@ -6885,3 +6885,599 @@ and item 15 (the keyframe leg, the Q9 repair in the seam, the Beaver clip regene
 batch (ENT-S-148 / 149 / 151) → the ENT-S-150 survey lane; item 17 (the counters' seam replaced by a system property on
 the gametest run) and item 18 (the package tool's locked-bone policy) as small slices beside them; the mirror drop on
 the owner's Section B go; the package and the pilot pair after it.
+
+## PHASE G SLICE (c) LANDED — the G2 root-order contract: the pins removed, the exclusion off by default, the missing-key fallback, the audit rule (2026-09-06)
+
+RULING. Owner 2026-09-06 (addendum item 24 (2)-(4)), approved from the presented
+table (`phase_g_reports/g2_root_order_before_after_2026-09-06.md`): slice (c) gated
+and landed from `g2-root-order` (0503bd0 on master) with the pin removals, the parity
+tool's default flipped to no exclusion, the missing-key fallback (logged when absent,
+loud when present and wrong) and an asset-audit ERROR for a shipped rig without the
+key; the tie rule a fidelity note; the production seam's executed evidence the owner's
+Section E look. This section records what the LANDING changed on top of the presented
+branch; the presented slice's own section (G2 ROOT-ORDER CONTRACT, above) stands as
+written. MHLib untouched; the renderer path (the shared replacement model) is touched,
+so two refuters apply.
+
+WHAT THE LANDING CHANGED VS THE PRESENTED BRANCH.
+1. The pins. `tools/s4_model_proofs.json`: every `max_contested_fraction_pin` (13)
+   and every `in_game_acceptance: PENDING_OWNER` string (island, islandtoo, robot5,
+   purplepower) removed; `tools/g1_model_proofs.json`: the two pins removed. Fifteen
+   pins, four strings, the fixtures untouched, nothing else removed. The notes that
+   still hold keep their citation (refuter B, B2 - the landing's first rewording had
+   dropped it): robot5's and rockbase's `visual_note` say bind is not a visual sample
+   "(ruling 2, 2026-09-02: superimposed-at-bind is not a player-visible state; its
+   z-fight clause retired by the G2 contract, 2026-09-06)"; robot2's `visual_note` is
+   HEAD's text verbatim (it never cited ruling 2 or a pin); rotator's and purplepower's
+   `render_instances_note` ended "z-fight contests are expected and pinned" and now end
+   "...expected; the contested fraction is reported as a diagnostic, every pixel
+   compared (G2 root-order contract, 2026-09-06)" - a manifest must not describe a pin
+   that no longer exists (the notes beyond the task's robot2 / robot5 list are a
+   deviation, presented in records.md). Against HEAD the ONLY differences are the
+   removed fields and four note values (a byte-identical JSON round trip, checked).
+2. The tool's default. `tools/g1_render_parity.py`: `visual_parity(...,
+   exclude_contested=False)` - every pixel compared, the contested fraction MEASURED
+   and reported (`max_contested_fraction`, per-capture `contested_fraction`,
+   `contested_excluded`) as a diagnostic - a nonzero fraction with 0 changed pixels is
+   the ordinary case now; `--contested-exclusion` restores the ruling-2 exclusion for
+   a diagnostic run (replacing `--no-contested-exclusion`, which is gone, not aliased)
+   and is refused together with `--write-proof` (the proof is written under the
+   gate's policy only); the pin check and `IN_GAME_ACCEPTANCE_CONTESTED_FRACTION` are
+   gone with the pins, the report's `contested_fraction_pin` and
+   `requires_in_game_acceptance` fields with them; a manifest that still carries a
+   retired field (`RETIRED_MANIFEST_FIELDS`) fails the leg, so a pin cannot linger
+   silently; `z_fight_policy` names which policy ran; the README's intro gains the
+   visual leg's new policy and the draw-order gate, and the per-model contested line
+   reads "compared, none excluded (G2 root-order contract): ... a diagnostic". The
+   pre-existing dead `min_foreground` line (refuter A's A9 kept it where it was) went
+   with the pin block it lived in; `minimum_observed_foreground_fraction` was 1.0 in
+   every report before and is 1.0 after (an observation, not a change). `build.gradle`
+   untouched: g1Parity / s4Parity call the tool with no switch, i.e. the new default.
+3. The missing-key policy. `DrawOrder.read` answers an ABSENT key (no `description`,
+   or no such member) with an EMPTY order and throws for a key that is PRESENT and
+   malformed (an explicit null, a non-array, a non-string or repeated entry, an empty
+   array), its message the exact reason and naming no converter any more (refuter A,
+   A4: on the client path the fix is the pack author's); `DrawOrder.load` lets that
+   exception through unwrapped and wraps only a resource it cannot read. The seam's
+   policy is `DrawOrder.applyOrFallback(model, resources, geo)`, the call
+   `OreSpawnGeoReplacementModel.getBakedModel` now makes (once per bake, the identity
+   test unchanged), returning a production `Decision(outcome, logged)` with `Outcome`
+   APPLIED / ABSENT_FALLBACK / WRONG_KEY_FALLBACK (an overload over an already-read
+   order is the same policy; the smoke and the row use both). An absent key leaves
+   GeckoLib's own bone order in place and logs WARN once per resource. A key that is
+   PRESENT AND WRONG - the read failures above, a name the rig lacks, a rig bone the
+   key lacks, not a pre-order - or a resource that cannot be read does NOT crash the
+   client either, the owner's "never" read as absolute (refuter A, A1; deviation 1 in
+   records.md, the owner's call): it logs ERROR once per resource, naming the geo, the
+   exact reason (`read`'s or `apply`'s own message) and the pack author's fix ("carry
+   the orespawn:bone_draw_order array over from the shipped rig's description"), and
+   takes the same fallback with the bake untouched; a right key is applied. Both lines
+   open "Phase G draw order:" like the mod's other client logs. Once per resource is a
+   static map geo -> the LAST reason: the same reason again is silent, a new reason
+   (absent -> wrong, wrong -> another wrong, wrong -> absent) logs again, an applied
+   bake clears the entry so a rig fixed and broken again is reported again; the map
+   lives for the JVM on purpose (a design choice, refuter A, A3: it survives resource
+   reloads, which re-bake every rig; process state, never game state). `apply`
+   validates everything BEFORE it touches the bake (refuter A, A8: it used to sort in
+   place and then throw on a name the rig lacks or a wrong pre-order, leaving a
+   half-sorted bake - the refuter's probe showed [base, body, head, tail] left as
+   [body, head, tail, base]): the set both ways on the tree as it stands, the pre-order
+   against a sorted COPY, then the in-place sort; it still refuses an empty order. The
+   logger is `LoggerFactory.getLogger("orespawn")` by literal (refuter A, A2: the
+   lane's `OreSpawnMod.MOD_ID` left `#278 = Class // danger/orespawn/OreSpawnMod` in
+   DrawOrder.class; the fix's class file has no `OreSpawnMod` entry at all, javap
+   -v checked) - the same slf4j logger as `OreSpawnMod.LOGGER`, by name. The harness
+   keeps requiring the key and never calls `applyOrFallback`: `S4CandidateRuntime
+   .freshBaked` and `G1AnimationRuntime.evaluator` (the probe's geo dumps and the
+   benchmark both bake through it) throw "harness failure: the generated geo ships
+   without orespawn:bone_draw_order; the harness proves shipped rigs and takes no
+   fallback", and `read` / `apply` / `load` keep throwing, so a proof can never come
+   from a fallback bake.
+4. The audit rule. `tools/asset_audit.py` check 8: ERROR `GECKO_GEO_DRAW_ORDER_MISSING`
+   for any rig the replacement seam draws - the model resource of every
+   `new GeoReplacementDescriptor<>(...)` (`seam_rigs`, a regex over the constructor's
+   argument list; a construction without exactly one literal `geo/` resource is a
+   STATIC-ANALYSIS LIMIT line, never silent) - whose `minecraft:geometry[0].description`
+   lacks the key OR carries a wrong one (refuter B, B6: the content is checked, not
+   presence only - a non-empty array of unique strings whose set equals the geo's
+   bone-name set, else the same category with the reason: "is present but empty",
+   "is present but not an array: ...", "holds non-string entries", "repeats ...", "does
+   not name exactly the rig's bones (rig bones it lacks: ...; names the rig lacks:
+   ...)"; the pre-order property is left to the client's `apply` and the harness's
+   draw-order leg). And the directory is reconciled (refuter B, B3): every
+   `geo/entity/*.geo.json` is a seam rig or a member of `OUTSIDE_SEAM = {"the_queen"}`
+   with its dated reason (`QueenModel`, her own GeoModel, reads her rig; no descriptor;
+   the contract derives the key from a vanilla part order she lacks; presented as a
+   deviation), anything else - and a stale `OUTSIDE_SEAM` entry - is ERROR
+   `GECKO_GEO_SEAM_UNRECONCILED`; a seam rig named by a descriptor but absent from the
+   directory was already `TEXTURE_REF_MISSING`. Both categories are never
+   acknowledgeable: they sit in `NEVER_ACKNOWLEDGED`, the ACKNOWLEDGED filter ignores
+   them, and an ACKNOWLEDGED entry naming one is FATAL (exit 2). The summary line
+   carries the reconciliation: "RESULT: ... ; draw order: 15 shipped geo: 14 seam + 1
+   outside-seam". A key present and wrong is also caught for every proven rig by the
+   existing byte check (`GECKO_GEO_PROOF_DRIFT`).
+5. A pin. NEW `DrawOrderFallbackTests` (own batch `drawOrderFallback`, TEST-003: its one
+   global touch is the synthetic resources it adds to the once-per-resource log map,
+   so their names carry a per-run stamp), ONE row `g2_001_missing_key_falls_back_to
+   _geckolib_order` (kept as one row, not a generator: the suite's count stays 1254 ->
+   1255 for the gate), through the seam's own entry point over an in-memory
+   `ResourceManager` (common classes; javap: no `net/minecraft/client` reference in
+   the test class) serving a synthetic nested rig (body{head, tail}, base) baked through
+   GeckoLib's own loader and factory (`KeyFramesAdapter.GEO_GSON`, `GeometryTree
+   .fromModel`, `BakedModelFactory.DEFAULT_FACTORY` - none `@OnlyIn(CLIENT)`,
+   javap-checked). Pinned through the outcome (refuter A, A5 / A6): absent ->
+   ABSENT_FALLBACK logged on the first call, NOT on the second (same resource), logged
+   again for a second resource, the factory's traversal left exactly as found (asserted
+   a pre-order of the rig, whatever the hash order is); a correct key -> APPLIED, the
+   contracted traversal, idempotent, silent; each of eleven wrong shapes (an explicit
+   null, a string, an object, an empty array, a non-string entry, a JSON null entry, a
+   repeat, an unknown name, a missing rig bone, a child ahead of its parent, an
+   interleaved subtree) -> WRONG_KEY_FALLBACK, never a throw, the traversal IDENTICAL to
+   the pre-call traversal (the bake staged into [base, body, tail, head], which the old
+   partial sort would have changed for three of them), logged once per resource; the
+   last-reason rule on one resource (absent -> wrong twice, the same wrong silent,
+   another wrong again, wrong -> absent again, fixed then broken again); an unreadable
+   resource -> WRONG_KEY_FALLBACK; and the strict `read` / `apply` still throw on the
+   same inputs, the refused `apply` touching nothing. Compiles against the scratch main
+   classes; not executed here (no gradle) - the same calls ran headlessly in the smoke
+   below.
+
+THE TIE RULE (fidelity note, ruling (4)). The harness rasteriser resolves an EXACT
+depth tie first-wins (`render_capture`: a later fragment within 1e-6 replaces the
+front only when nearer by more than 1e-9) where the game's LEQUAL depth test is
+last-wins (a later coplanar fragment overwrites). Parity is unaffected: both captures
+share the rule and, under the contract, the order, so the leg compares like with like;
+what the diff PNGs cannot show is which of two coplanar faces the GAME shows - the
+before/after table (`phase_g_reports/g2_root_order_before_after_2026-09-06.md`) says
+it (last-wins, the classic order) and the owner's Section E look is that evidence.
+Recorded in `render_capture`'s docstring; not changed.
+
+THE SECTION E LOOK. The production seam (`OreSpawnGeoReplacementModel.getBakedModel`,
+client-only through `Minecraft.getInstance()`) is proven by reading (refuter A's
+bytecode trace: `GeoRenderer.defaultRender` 32-49 calls the 1-arg override before any
+draw; the sorted instance feeds every consumer) and executed only by the owner's
+in-game Section E look with the dev switch - recorded here as the seam's executed
+evidence; the statics it calls are executed headlessly (the smoke) and on the game-test
+server (the row).
+
+EVIDENCE (scratch runs, both pipelines, the new default; all with `timeout`; exit codes):
+  javac main (798 sources, `--release 21 -g`, scratch class dirs first): 0 (16
+  pre-existing warnings); javac g1tool (9): 0; javac gametest (67, incl. the new
+  class): 0. `G1ModelProbe vanilla` s4 / g1: 0 / 0 (14 / 3 dumps);
+  `layer_definition_to_geo.py` s4 / g1: 0 / 0 (14 + 3 CONVERT GREEN);
+  `reference_geometry_leg.py` s4: 0; `G1ModelProbe geo` s4 / g1: 0 / 0;
+  `g1_render_parity.py --write-proof` (scratch proof dirs, NO switch) s4 / g1: 0 / 0 -
+  `G1 PARITY PASS: 13 models` / `2 models`; `--contested-exclusion --validate-only`
+  s4: 0 (`STAGING PASS`, Island's line "excluded: --contested-exclusion diagnostic
+  run"); `--contested-exclusion --write-proof`: 2 (refused, no proof dir made); the
+  retired-field guard: fires on a spec carrying a pin; `G1PerformanceBenchmark ... smoke`
+  -> scratch report: 0 (4 scenes measured; source pins that will re-pin:
+  G1PerformanceBenchmark.java, G1AnimationRuntime.java, g1_model_proofs.json); the
+  fallback smoke (scratch javac + java over the SHIPPED assets, re-run on the fixed
+  seam): 0 - `SMOKE OK: 14 seam rigs APPLIED from the shipped assets, the Queen
+  ABSENT_FALLBACK (one WARN), 11 present-and-wrong shapes + 1 missing resource
+  WRONG_KEY_FALLBACK (one ERROR each, the bake untouched), the strict statics throw`;
+  14 ERROR lines and 2 WARN lines under `[orespawn/]` in all (eleven shapes, the
+  missing resource, two for the churn resource; the Queen and the churn's absent step).
+  Per species (changed / MAE / contested, the last a diagnostic):
+    s4  elevator 0 / 0 / 0; vortex 0.000137 / 0.0042 / 0 (the accepted 4a-2 boundary
+    residual, bind.front); coin 0 / 0 / 0; island 0 / 0 / 0.464233; islandtoo 0 / 0 /
+    0.464233; robot1 0 / 0 / 0.000549; robot5 0 / 0 / 0.011612; robot2 0 / 0 / 0;
+    robot3 0 / 0 / 0.002502; robot4 0 / 0 / 0.000412; rockbase 0 / 0 / 0; rotator
+    0 / 0 / 0; purplepower 0 / 0 / 0.105850; fixture_runtime_basis_yz no visual leg
+    (draw order 7 captures / 14 draws).
+    g1  elevator 0 / 0 / 0; beaver 0 / 0 / 0.000015; fixture no visual leg (1 / 2).
+  Draw-order leg: PASS for all 17 entries (s4 142 captures / 2,307 draws; g1 28 / 221).
+  Asset audit (read-only, the tree as it stands, the fixed rule): `RESULT: 15
+  error(s), 0 advisory(ies), 4 acknowledged; draw order: 15 shipped geo: 14 seam + 1
+  outside-seam -> exit 1` - the 15 are the pre-existing GECKO_GEO_PROOF_DRIFT (the 14
+  shipped rigs against the not-yet-regenerated proofs, elevator against both), 0
+  GECKO_GEO_DRAW_ORDER_MISSING, 0 GECKO_GEO_SEAM_UNRECONCILED, the STATIC-ANALYSIS
+  LIMITS identical before and after the rule (the 5 pre-existing), `seam_rigs`
+  enumerating exactly the 14 seam rigs. On a scratch COPY of the tree with the
+  scratch-regenerated proofs substituted (what the orchestrator's --write-proof
+  produces): `RESULT: 0 error(s), 1 advisory(ies), 4 acknowledged; draw order: 15
+  shipped geo: 14 seam + 1 outside-seam -> exit 0` (the advisory is
+  INDEX_CASE_UNCHECKED: the copy is outside git). On that copy with the key REMOVED
+  from robot5 (shipped copy AND its proof copy, so the byte check stays quiet):
+  `RESULT: 1 error(s), ...` - `GECKO_GEO_DRAW_ORDER_MISSING: robot5.geo ... is absent`;
+  with the key EMPTIED (`[]`) instead: `RESULT: 1 error(s), ...` -
+  `GECKO_GEO_DRAW_ORDER_MISSING: robot5.geo ... is present but empty`; with the Queen
+  removed from `OUTSIDE_SEAM`: `RESULT: 1 error(s), ...; draw order: 15 shipped geo: 14
+  seam + 0 outside-seam` - `GECKO_GEO_SEAM_UNRECONCILED: the_queen.geo`. The shipped
+  files and the checked-in proof dirs were never written.
+
+BYTE IDENTITY (scratch proofs). Against the presented lane's exclusion-OFF scratch runs
+(the G2 code with `--no-contested-exclusion`): s4 258 of 260 files identical, g1 42 of
+44 - only `evidence/report.json` (the two removed pin fields, `z_fight_policy`'s
+wording) and `evidence/README.md` differ; every PNG identical, so the default flip
+touched nothing else. Against the CHECKED-IN proofs (which predate G2): identical for
+every animation.json, animation-contract.json, the reference-geometry json, every
+vanilla PNG and every non-contested geo / diff PNG (s4 207 of 260, g1 34 of 44);
+differing exactly the key-bearing files and the evidence texts. The orchestrator's
+regeneration WILL change: s4_proof - `generated/*.geo.json` (14, the key) and
+`generated/*.conversion.json` (14), `evidence/report.json`, `evidence/README.md`, 14
+diff PNGs (island bind / t0, islandtoo bind / t0, purplepower bind / t_quarter, robot1
+a0_5_t0 / a0_5_t_half / a0_5_t_three_quarter, robot3 s_attacking_ri0_a0_5_t_0_230000 /
+s_idle_ri1_a0_5_t_0_100000, robot4 s_idle_a0_t0, robot5 a0_05000000074505806_t0 /
+a1_t0 - no blue paint) and 9 geo PNGs (island bind, islandtoo bind, purplepower bind /
+t_quarter, robot1 a0_5_t0 / a0_5_t_half / a0_5_t_three_quarter, robot5
+a0_05000000074505806_t0 / a1_t0 - the classic winner shows); g1_proof -
+`generated/*.geo.json` (3), `generated/*.conversion.json` (3), `evidence/report.json`,
+`evidence/README.md`, beaver `a1_t0.diff.png` and `a1_t0.geo.png`; the benchmark
+re-pin - `g1_proof/benchmark/report.json` (its source pins, model inputs, class-dir
+pin) and whatever of README.md / protocol.json the gate rewrites. Nothing else.
+
+UNTOUCHED, ON PURPOSE: `build.gradle`; the shipped rigs; the checked-in proof dirs; the
+converter; the probe; MHLib; the Queen; `tools/artist_package.py`,
+`tools/test_artist_package.py`, `tools/artist_specs/` (another lane's).
+
+REFUTER A NOTES (2026-09-06, the Java seam; applied): (A1) "loud when present and
+wrong" was a throw under `EntityRenderDispatcher.render`, a client crash on the mob's
+first frame - the same crash the ruling forbids for an absent key; read as an ERROR log
+once per resource plus the fallback, the crash report one line away, presented to the
+owner as deviation 1. (A2) `LoggerFactory.getLogger(OreSpawnMod.MOD_ID)` left `#278 =
+Class // danger/orespawn/OreSpawnMod` in DrawOrder.class despite the constant folding;
+the literal `"orespawn"` with a comment, javap -v: no `OreSpawnMod` entry at all.
+(A3) the once-per-resource set's lifetime was undocumented; now a map geo -> the last
+reason, JVM lifetime stated in the javadoc and the records as a design choice. (A4)
+`read`'s messages told a pack author to run `tools/layer_definition_to_geo.py`; the
+client path names the pack author's fix instead, the harness keeps its own wording.
+(A5) the row pinned a boolean; it pins the production `Decision` (outcome + logged),
+absent logged once then silent, a second resource logged again. (A6) the wrong shapes
+were pinned as throws; each of eleven is pinned as WRONG_KEY_FALLBACK with the traversal
+identical to the pre-call one, logged once per resource. (A7) the model's field comment
+said "the bake `DrawOrder#apply` last ran on"; it says the bake the seam last decided on
+(applied or fell back). (A8) `apply` sorted in place before it validated (a name the rig
+lacks, a wrong pre-order: half-sorted bake left behind, shown by the refuter's probe);
+it validates the set both ways and the pre-order against a sorted copy first, sorts
+only on success, pinned by the unchanged-traversal assertions. (A9) the row's loading path is
+`@OnlyIn`-clean (javap: no `net/minecraft/client` reference in the test class; none of the
+thirty GeckoLib loader classes it reaches - `BakedModelFactory`, `GeometryTree`,
+`KeyFramesAdapter`, `GeoBone` and the rest - carries `@OnlyIn`; `RenderUtil`, reached from
+`Builtin.constructGeoModel`, has client references in other methods but no annotation and
+no static initialiser), and it is the FIRST GeckoLib bake on the game-test server - no
+earlier row bakes a rig - so the gate run is the first evidence that the bake loads on the
+dedicated server (noted as low risk; the gate below decides). (A10) the "rig repeats bone"
+branch (now in `check`) is unreachable from a GeckoLib bake - `GeometryTree.fromModel`
+builds its maps with `put`, so a duplicated name collapses silently - and stays as
+belt-and-braces, harmless.
+
+REFUTER B NOTES (2026-09-06, tools / proofs / records; applied or the orchestrator's):
+(B1) records, orchestrator. (B2) the reworded bind notes had lost the ruling-2 citation;
+robot5's and rockbase's `visual_note` cite it with the retired clause, robot2's is
+HEAD's text verbatim (it never cited ruling 2 or a pin), rotator's and purplepower's
+stay, the JSON round trip byte-identical and the diff against HEAD only the removed
+fields and four note values. (B3) the audit's coverage was the seam's by construction,
+so a rig outside the seam passed silently; every `geo/entity/*.geo.json` is now
+reconciled - a seam rig or a dated `OUTSIDE_SEAM` member (the Queen) - else
+`GECKO_GEO_SEAM_UNRECONCILED`, never acknowledgeable, the count on the summary line.
+(B4) records, orchestrator. (B5) records, orchestrator. (B6) the rule checked presence
+only, so an empty or malformed key in a shipped rig would have reached the client as a
+log; the content is validated (non-empty, unique strings, the set equal to the geo's
+bones) under the same category with the reason. (B7) records, orchestrator. (B8)
+records, orchestrator. (B9) "the look sheet" was used for the before/after table; the
+records name `phase_g_reports/g2_root_order_before_after_2026-09-06.md` wherever that
+was meant (the look sheet is `owner_look_sheet.md`). (B10) records, orchestrator. (B11)
+records, orchestrator.
+
+GATE: (g2land then g2land2, 2026-09-06 13:41-15:05, after both refuters and the fix lane): the proofs regenerated by hand under the proof rule with the exclusion off - s4 "G1 PARITY PASS: 13 models; checked-in proof updated"; g1 verify drifted (the two pins removed from the manifest) then "G1 PARITY PASS: 2 models; checked-in proof updated"; the benchmark "G1 BENCHMARK EVIDENCE VERIFIED: SMOKE_ONLY / COMPONENT_PROXY_ONLY / PENDING_LIVE_PRECUTOVER; checked-in proof updated" (re-pinned: G1AnimationRuntime.java, G1PerformanceBenchmark.java and g1_model_proofs.json - the first two had gone stale at the presented commit, as its section disclosed). Gate g2land (13:42-13:45): drift verified, build successful, suite RED - "9 required tests failed", all nine ChainsawSweepSightTests rows on their own origin precondition (this run's grid origin z -14,593,049, |z| >= 2^23; nothing of this landing implicated - the rows are fixed in their own section below, CHAINSAW SWEEP ROWS AT A FIXED SITE). Gate g2land2 (15:02-15:05) on the same tree: drift verified ("checked-in proof verified"), build successful, "All 1255 required tests passed" (1254 + DrawOrderFallbackTests' one row; the batch drawOrderFallback:0 ran - the first GeckoLib bake on the dedicated game-test server loaded).
+
+REFUTERS (2026-09-06): A (the Java seam and the harness runtimes) and B (the tools, the manifests, the audit rule, the proof byte identity, the records) - no blocker; their items applied by the fix lane and the orchestrator (REFUTER A NOTES / REFUTER B NOTES above); the reading of "loud" and the Queen's place outside the seam are presented to the owner in this section's deviations.
+
+## PHASE G SLICE (f), ITEM 18 — the locked-bone policy as ruled (2026-09-06)
+
+Owner 2026-09-06, scope addendum item 24 (18): keying a locked bone is allowed and WARNED (the SPEC states the consequence:
+the hitbox part follows the bone); renaming, re-parenting or deleting one is REFUSED; the README, the Queen's SPEC and the
+checker say the same thing; PROVISIONAL comes off; the reject mode stays available for the day the server-side evaluator
+lands. Three files touched: `tools/artist_package.py` (0.2.0 → 0.2.1; 3,335 → 3,371 lines), `tools/test_artist_package.py`
+(24 → 25 pins; 1,218 → 1,305 lines), `tools/artist_specs/the_queen.json` (one label). No gradle, no state-changing git, no
+record-file edits, nothing under `artist_handoff/` (the dry run regenerated under scratch only). The other open questions of
+the presented contract (the Queen's pilot-boss / contract mapping — 16 —, the death flip — 3 —, `_preview` — 15 —, the
+authoring length — 14 —, the attacking-flag heuristic) stay PROVISIONAL where they appear; only the lock policy is ruled.
+
+ONE WORDING. `LOCK_POLICY` (artist_package.py :63-64) is the ruled sentence — "Keying a locked bone is allowed; the checker
+warns, and the hitbox part follows the bone in-game (the consequence, so keep such keys deliberate). Renaming, re-parenting or
+deleting a locked bone is refused." — printed verbatim in README_FIRST rule 6 and its WARN table, SPEC §3's glossary header,
+§5's per-clip notes (`lock_note`, :1772-1777) and native footer (:2064), §7 (:2153-2164), §11 item 2 (:2200), the generator's
+LOCKED_BONES_KEYED warning (:1929-1932), the manifest's `lock_policy_text` (:2218) and `check`'s summary line (:3262-3272).
+"PROVISIONAL" / "open question 16" are gone from the policy everywhere it appears: the constant and its comment (:55-66),
+README rule 6 (:2813), the SPEC's §3 / §5 / §7 / §11, the manifest's lock fields, `check`'s output and the `--lock-mode` help
+(:3301-3303). The contract-mapping marker on a native clip row (still PROVISIONAL, open question 16, as the brief leaves it) is
+now written out — "PROVISIONAL (its contract mapping: open question 16)" — and placed BEFORE the lock note (:1804-1808), so
+the trailing " PROVISIONAL" the §5 table used to append can no longer read as the lock policy's. The reject mode is kept and
+said once per document (`LOCK_REJECT_MODE`, :65-66 — README rule 6, SPEC §7): "A reject mode for keys on locked bones stays
+available for the day the server-side hitbox evaluator lands (`check --lock-mode reject`, or `lock_mode: reject` in the
+manifest); it is not today's policy." `LOCK_MODE_DEFAULT` stays `warn`. README rule 6 no longer opens "Never key a bone the
+sheet marks `locked`" — it opens with what a locked bone is and then the sentence; rule 1 (never rename, delete or re-parent
+ANY bone) is unchanged.
+
+THE MANIFEST. `lock_policy` is the token "warn-keyed, refuse-structural" (`LOCK_POLICY_ID`, :62); `lock_policy_text` carries
+the sentence (:2218); `lock_mode` stays `warn`. `check` prints the token beside the sentence in its summary line and WARNS
+(:3082-3084) when a manifest's `lock_policy` is anything else — a package generated before the ruling: "lock_policy is not
+`warn-keyed, refuse-structural` — the package predates the 2026-09-06 ruling; regenerate it (the checker applies the ruled
+policy regardless)" — so an old manifest never re-prints the PROVISIONAL sentence.
+
+THE CHECKER. The geo comparison (:3098-3135) names a locked bone whose name, parent or presence changed: a locked bone
+missing from the returned rig → REJECT "locked bone X renamed or deleted (missing from the returned rig; the new name(s) [...]
+are not this rig's) — it carries or parents a hitbox part; renaming, re-parenting or deleting a locked bone is refused"; a
+locked bone under another parent → REJECT "locked bone X re-parented (old -> new) — it carries or parents a hitbox part; ...
+refused"; a free bone re-parented stays the plain rig-rule REJECT ("bone X re-parented (old -> new)"). Verified as the brief
+asked: the per-bone comparison (parents, pivots, bind rotations, cubes / UVs — the last since the refuter) used to run only
+when the returned bone list matched the manifest's exactly; it now runs for every bone present in both rigs whatever the
+set/order verdict, so a re-parent beside a rename is still named. Keys on locked bones stay the per-clip WARN with the count
+line (:3229-3233), now ending "(they carry or parent a hitbox part; the part follows the bone in-game — allowed, keep it
+deliberate)"; under `reject` mode the same line is a REJECT ending "REJECTED under lock_mode reject". The summary line:
+"locked bones: K of N keyed across C clip(s)[; S renamed, re-parented or deleted (names) — REJECTED] [lock_mode M;
+warn-keyed, refuse-structural] — <the sentence>" — REJECT when anything structural was refused, WARN when keyed, OK otherwise;
+in reject mode the sentence is prefixed "keys on locked bones are REJECTED in this run (the reject mode, kept for the day the
+server-side hitbox evaluator lands); the ruled policy: ...". `CHECK_REJECTS` gains "a `locked` bone renamed, re-parented or
+deleted in a returned `.geo.json` (the finding names the bone)" (:81 — README's REJECT table and SPEC §11 item 4 quote it);
+`CHECK_WARNS[0]` names the clip and bones (:85); SPEC §11 item 1 adds "(a `locked` bone renamed, re-parented or deleted is
+refused by name)" (:2197-2198).
+
+THE QUEEN. Her seed's `root` label said "carries every hitbox part — never key it"; it now states the consequence ("every
+hitbox part hangs from it, so a key here moves them all with it — allowed and warned like any locked bone, but leave it to the
+yaw"). Her regenerated SPEC: the §3 header, the eight §5 rows ("<seed note> — PROVISIONAL (its contract mapping: open
+question 16) — keys 26 locked bone(s) (LHead, LHead12, LHead4, Lwing1, +22 more): <the sentence>"), the §5 footer ("Locked
+bones: <the sentence>"), §7 ("The synced part bones and every ancestor are SPEC-locked (contract §8.1). <the sentence> <the
+reject-mode sentence>" and "The shipped clips already key 26 of these 27 bones — `idle` keys 26; ... `death` keys 26 — allowed
+and warned as above: the hitbox parts follow those bones in-game, which is how the shipped boss already animates; every §5
+verdict that invites an edit to one of these clips repeats the consequence") and §11 carry the one wording; the pilot-boss /
+contract-mapping marks (open question 16 in `artist_scope`, §5's footer, §6's drive table, §5.2's third item), the death flip
+(3) and the attacking-flag heuristic stay as they were.
+
+DRY RUN regenerated in place (`package --out <scratch>\pkg\artist_handoff_dryrun`, exit 0, stdout / stderr beside it as
+`dryrun_stdout_lock.txt` / `dryrun_stderr_lock.txt`): fifteen species, every round-trip EQUAL with order kept, the Queen's row
+"27 (26 keyed by the shipped clips; warn)", the one LOCKED_BONES_KEYED warning now "the shipped clips key 26 of the 27
+SPEC-locked bones (LHead, LHead12, LHead4, Lwing1, NeckL1, NeckL13...): allowed and warned — <the sentence>"; no PROVISIONAL
+text attached to a lock statement in README_FIRST.md, the Queen's SPEC.md, spec.manifest.json or warnings.txt (grepped: the
+remaining PROVISIONAL lines are the generic header sentence, the contract-mapping marks, the death flip, `_preview`, the
+authoring length and the attacking-flag heuristic).
+
+CHECK OUTPUTS (`<scratch>\pkg\lock_mutations\*` built by `make_lock_mutations.py` from the regenerated package; transcripts
+under `<scratch>\pkg\lock_checks\*.txt`):
+- the_queen_as_shipped (manifest + geo + animation + textures as the package copies them) → PASS, exit 0:
+  `WARN   the_queen.geo.json: a geo was returned; the shipped rig is used regardless (do not re-export the geo)`
+  8 × `WARN   clip '<idle|idle_to_attack|attack|bite|tail_whip_right|tail_whip_left|roar|death>' keys 26 locked bone(s): root,
+  leftLeg, Lwing1, NeckL1, NeckL2, NeckL3, +20 more (they carry or parent a hitbox part; the part follows the bone in-game —
+  allowed, keep it deliberate)`
+  `WARN   locked bones: 26 of 27 keyed across 8 clip(s) [lock_mode warn; warn-keyed, refuse-structural] — Keying a locked bone
+  is allowed; the checker warns, and the hitbox part follows the bone in-game (the consequence, so keep such keys deliberate).
+  Renaming, re-parenting or deleting a locked bone is refused.`
+  `OK     checked 8 clip(s), 47559 keyframe value(s), 2 texture(s) against spec.manifest.json (the_queen)` / `PASS`.
+  No PROVISIONAL text. (The dry run's own `entities/the_queen` folder: the same plus `OK the_queen.bbmodel: parses`, PASS.)
+- the_queen_locked_renamed (`LHead`, a synced head part, renamed `LeftHead`; its four children re-pointed, as a Blockbench
+  rename does) → FAIL, exit 1:
+  `REJECT the_queen.geo.json: bone set/order changed (missing ['LHead'], added ['LeftHead'], order changed)`
+  `REJECT the_queen.geo.json: locked bone LHead renamed or deleted (missing from the returned rig; the new name(s) ['LeftHead']
+  are not this rig's) — it carries or parents a hitbox part; renaming, re-parenting or deleting a locked bone is refused`
+  4 × `REJECT the_queen.geo.json: bone <LHead1|LHead2|LHead3|LJaw1> re-parented (LHead -> LeftHead)`
+  the geo WARN and the 8 keyed WARNs as above
+  `REJECT locked bones: 26 of 27 keyed across 8 clip(s); 1 renamed, re-parented or deleted (LHead renamed or deleted) — REJECTED
+  [lock_mode warn; warn-keyed, refuse-structural] — <the sentence>` / `OK checked 8 clip(s), 47559 ...` / `FAIL`.
+- the_queen_locked_reparented (`Tail4`, a synced tail part, moved from `Tail3` to `root`; names and order intact) → FAIL, exit 1:
+  `REJECT the_queen.geo.json: locked bone Tail4 re-parented (Tail3 -> root) — it carries or parents a hitbox part; renaming,
+  re-parenting or deleting a locked bone is refused`; the geo WARN and the keyed WARNs;
+  `REJECT locked bones: 26 of 27 keyed across 8 clip(s); 1 renamed, re-parented or deleted (Tail4 re-parented) — REJECTED
+  [lock_mode warn; warn-keyed, refuse-structural] — <the sentence>` / `FAIL`.
+- the_queen_locked_deleted (`Body1`, a synced part and a leaf, removed) → FAIL, exit 1:
+  `REJECT the_queen.geo.json: bone set/order changed (missing ['Body1'], added [], order changed)`
+  `REJECT the_queen.geo.json: locked bone Body1 renamed or deleted (missing from the returned rig) — it carries or parents a
+  hitbox part; renaming, re-parenting or deleting a locked bone is refused`; the geo WARN and the keyed WARNs;
+  `REJECT locked bones: 26 of 27 keyed across 8 clip(s); 1 renamed, re-parented or deleted (Body1 renamed or deleted) —
+  REJECTED [lock_mode warn; warn-keyed, refuse-structural] — <the sentence>` / `FAIL`.
+- the_queen_as_shipped with `--lock-mode reject` (the mode kept for the evaluator) → FAIL, exit 1:
+  8 × `REJECT clip '<name>' keys 26 locked bone(s): root, leftLeg, Lwing1, NeckL1, NeckL2, NeckL3, +20 more (they carry or
+  parent a hitbox part; REJECTED under lock_mode reject)`
+  `REJECT locked bones: 26 of 27 keyed across 8 clip(s) [lock_mode reject; warn-keyed, refuse-structural] — keys on locked
+  bones are REJECTED in this run (the reject mode, kept for the day the server-side hitbox evaluator lands); the ruled policy:
+  <the sentence>` / `FAIL`.
+- the pre-ruling refuter copy (`refuter_mutations\the_queen_as_shipped`, its manifest from 0.2.0) → PASS, exit 0, with the new
+  first line `WARN   spec.manifest.json: lock_policy is not `warn-keyed, refuse-structural` — the package predates the
+  2026-09-06 ruling; regenerate it (the checker applies the ruled policy regardless)` and the ruled sentence in the summary —
+  the old PROVISIONAL sentence is never re-printed.
+
+PINS: `python tools/test_artist_package.py` → Ran 25 tests, OK (24 → 25). Adjusted: `test_spec_and_manifest` (:788-795 the
+sentence in §3 / §7 / §11 and `LOCK_REJECT_MODE` in §7, no PROVISIONAL / open question 16 in `LOCK_POLICY` or §7; :809-811
+`lock_policy` == "warn-keyed, refuse-structural", `lock_policy_text` == the sentence), `test_native_clip_rows_branch_and_
+wishlist_guard` (:859-866 the per-clip note is "keys 1 locked bone(s) (head): <the sentence>", the mapping marker precedes it,
+the note no longer ends in "PROVISIONAL"; :870-871 §7's "allowed and warned as above"), `test_package_and_check_rejections`
+(:1021-1024 README rule 6 carries both sentences and no "Never key a bone", the structural rule in the REJECT table; :1034 the
+clean summary; :1061-1091 keyed → WARN with the consequence and nothing PROVISIONAL in the findings, `--lock-mode reject` and
+`lock_mode: reject` → REJECT with the reject-mode summary, a stale 0.2.0-style manifest → the WARN and the ruled sentence),
+`test_check_on_a_native_species` (:1259-1260 the summary format, nothing PROVISIONAL; :1269-1272 the reject-mode text). New:
+`test_check_refuses_a_locked_bone_renamed_reparented_or_deleted` (:1195-1249) — renamed (`hand` → `paw`: the bone and the new
+name named, the summary counts it), re-parented (`hand`: `arm` → `root`), deleted, a re-parent beside a rename (`arm` → `tail`
+with `hand` → `paw`: both named — the per-bone comparison runs whatever the set verdict), a free bone re-parented (`tail`: the
+rig-rule REJECT, not called locked, the locked summary OK), and a keyed locked bone beside a structural refusal (the WARN
+stands beside the REJECT: the key is allowed, the structure is not).
+
+Presented (not done exactly as written): the tool version was bumped 0.2.0 → 0.2.1 so a package generated under the ruled
+policy is distinguishable from the 0.2.0 dry run (the `generated_by` field, the README / SPEC headers, the summary title) —
+not asked by the brief; the manifest gained `lock_policy_text` beside the token so the sentence travels with the package;
+`check` gained the stale-manifest WARN; a locked bone renamed and one deleted are one finding ("renamed or deleted") because a
+returned geo cannot tell them apart (the new names, when any, are listed in the line); the records that describe the
+pre-ruling policy — `phase_g_reports/artist_package_dryrun_2026-09-06.md` :60-61 / :87-89 (the old sentence, 0.2.0), the scratch
+drafts `fixlog.txt` ("ONE LOCKED-BONE POLICY (PROVISIONAL, open question 16)") and `records.md` (deviation 4, open question 3)
+— were NOT edited (no record-file edits); this entry supersedes them.
+
+REFUTER NOTES (2026-09-06, one refuter, no blocker; applied): (D1) the structural test had no unlocked-bone case, so the
+`name in locked` guard of the missing-bone loop could be mutated to `if True:` unseen — `test_check_refuses_a_locked_bone_
+renamed_reparented_or_deleted` (:1203-1298) gained an unlocked bone deleted and one renamed (`tail` gone / `tail` → `tale`:
+the set line, the bone named under the rig rule, no "locked bone" finding, the summary `OK locked bones: 0 of 3 keyed across
+0 clip(s) [...]`, `passed` false); the mutant applied to a SCRATCH copy of the tool (`fix18\mutant_both|label|count\`: both
+halves of the guard, and each half alone) fails that test — verified, the repo file untouched by the mutation. (D2)
+`DEFAULT_LABELS["root"]` (:1611) said "never keyed by an artist clip" — reworded to the consequence: "a key here moves every
+part with it: allowed and warned like any locked bone, leave it to the yaw"; the grep for "never key" over the tool, the tests
+and `tools/artist_specs/*.json` finds nothing else (the test's `assertNotIn("Never key a bone", readme)` is a negative pin and
+stays; the Queen's seed label already carried the ruled wording and is unchanged); pins: no DEFAULT_LABELS value and no
+generated README says it (:768-769, :1029). (D3) records, orchestrator. (D4 / D7 / D8) a bone missing from the returned rig is
+matched by its body — pivot, bind rotation, cube signatures (`_bone_fingerprint_matches`, :3067-3080) — against the bones the
+shipped rig has not (the added ones, and every copy of a duplicated name); one match each way identifies the rename: `locked
+bone X renamed to Y (Y is not this rig's name) — it carries or parents a hitbox part; renaming, re-parenting or deleting a
+locked bone is refused`; no match: `locked bone X deleted (missing from the returned rig; no other bone carries its pivot and
+cubes) — ... refused`; several: the old hedge `renamed or deleted (...; the bones [...] all carry its pivot and cubes)`
+(:3167-3191); an unlocked missing bone gets the same line without "locked" and ending "— every bone name is fixed (README
+rule 1)" — the children whose parent field followed an identified rename are folded INTO the rename line ("its N child
+bone(s) follow it (a, b, ...) — one rename, reported once", :3172-3177) and get no re-parent line of their own (the root
+rename: 27 REJECT lines and "9 renamed, re-parented or deleted" → one line and "1 (root renamed to Root)"; the lane's `LHead`
+rename: the four child lines gone); a genuine re-parent — any other new parent, the top level included — stays the REJECT it
+was (:3199-3204), and the summary counts stay per locked bone. (D5) duplicate names in a returned geo → `REJECT <geo>:
+duplicate bone name X (N times) — a name listed twice is refused by name; neither copy is compared` (:3163-3164; the set line
+adds `duplicated [...]`), and the per-bone comparison skips the name (`by` excludes it, :3133), so a bone never reads as
+parented to itself; a locked bone renamed onto an EXISTING name is identified among the duplicated copies by its body and
+reported `locked bone X renamed to Y (a name the rig already has: the returned rig has N bones named Y) — ... refused`
+(:3173-3174; `a_rename_collides_locked`: "Tail4 renamed to Tail3 (...has 2 bones named Tail3; its 1 child bone(s) follow it
+(Tail5)...)" replaces "Tail3 re-parented (Tail2 -> Tail3)"). (D6) the order verdict compares the ORDER of the names both rigs
+share (first occurrences), not the multiset (:3157-3160): a pure swap prints `order changed`, a rename / deletion / addition
+keeping the order prints `order kept`; no pin had fixed the old word (only "bone set/order changed" was pinned), the new pins
+say both (:1223, :1330-1336). (D9) a manifest WITHOUT `lock_policy` gets the stale-manifest WARN too, "absent" in place of the
+value — `lock_policy is absent, not `warn-keyed, refuse-structural` — the package predates the 2026-09-06 ruling; ...`
+(:3110-3113; pin :1362-1370); a present-but-different value keeps the existing text — the value itself is still never echoed
+(a 0.2.0 manifest's is the PROVISIONAL sentence). (D10) a `lock_mode` that is neither `warn` nor `reject`, from the manifest
+or the API override → `REJECT lock_mode 'X' is not warn or reject (<source>; `warn` is the ruled policy, `reject` the mode
+kept for the day the server-side hitbox evaluator lands — regenerate the package or pass --lock-mode warn|reject)` and FAIL
+(:3105-3109); the CLI's `--lock-mode` already had `choices=("manifest", "warn", "reject")` (`manifest` = the default = read
+the manifest; kept) — a pin asserts it refuses `strict` (:1372-1386). (D11) SPEC §11 item 4 strips a trailing period from each
+rule entry before the "; " join (:2205), so `LOCK_POLICY`'s period no longer prints ".;" — the regenerated README and every
+SPEC: 0 hits; pins :803-804 and :1030-1031. (D12) `absent` for a missing pivot / bind rotation in a finding (`_shown`,
+:3062-3064; :3205-3207 — `bind rotation changed absent -> [5.0, 0, 0]`); a key on a bone a returned geo ADDED reads `keys added
+bone 'X' (an artist-added bone; not in the shipped rig)`, on a bone a returned geo RENAMED `keys renamed bone 'Y' (the shipped
+rig's 'X', renamed in the returned geo — the rename is refused; key 'X')`, and `(renamed?)` only when no geo explains it
+(:3283-3290; pins :1344-1360). (D13) records, orchestrator. Found and fixed while applying: the first cut of
+`follows_rename` read a re-parent to the TOP LEVEL (no parent) as "following" a rename that never happened — the refuter's
+`c2_reparent_to_toplevel` PASSed for one run; fixed (`old in renames and renames[old] == new parent`, :3147-3150) and pinned
+(a locked bone whose parent field is removed → `re-parented (arm -> None)`, :1233-1239). Pins 25 → 26 (new: `test_check_names_
+duplicates_renames_order_and_manifest_modes`, :1300-1386), all OK; `py_compile` clean; every folder re-checked from the final
+tool (`fix18\checks\`, the table in `records_lock.md` §6; no transcript contains "PROVISIONAL", "never key" or ".;"); the
+dry run regenerated under scratch from the final tool (exit 0; the repo's `artist_handoff/` still absent). The tool version
+stays 0.2.1 (not asked).
+
+GATE: (g2land2, 2026-09-06 15:02-15:05, shared with the slice (c) landing as (d) and (f) shared bench2 - the tool is python under tools/, no shipped class, asset or config change; the standing gate run as the proof of the tree): drift verified, build successful, "All 1255 required tests passed"; the tool's own suite `python tools/test_artist_package.py` -> "Ran 26 tests ... OK", and the refuter's mutation folders re-checked by the orchestrator after the fix lane (the root rename reported once with its 26 followers, the duplicate refused by name, the Queen as shipped PASS with the ruled summary).
+
+## CHAINSAW SWEEP ROWS AT A FIXED SITE (2026-09-06) — the nine ITEM-070 rows ran at the random grid origin and refused ~44 % of origins (|z| ≥ 2^23) by their own precondition; they now build their geometry at a fixed absolute site inside the walk's float envelope, built and torn down within the row
+
+DIAGNOSIS. The g2land gate (`g2land.suite.log`, batch `chainsawSweepSight:0`, 13:43:31) failed all nine
+`ChainsawSweepSightTests` rows — `i070_01_9b_tall_mob_standing_in_short_grass_not_swept` through
+`i070_09_master_off_forces_walk_with_key_on` — on their own precondition: "the layout's origin is inside the walk's
+float envelope (|x| < 2^24, |z| < 2^23) the rows' cells were derived for (ITEM-070 test geometry); player at
+(1.2136938E7, -59.0, -1.4593025E7)" (rows 01-08 at x 12136918 … 12137289, z −14593049; row 09 at z −14592995).
+The harness places its structure grid at a random corner, x and z uniform in ±14,999,992 (NF GameTestServer
+`startTests`, bytecode: `ldc -14999992 / 14999992`, corner y −59 → structure-block layer −60); this run's z
+−14,593,049 has |z| ≥ 2^23 = 8,388,608, so the precondition — added at the bench2 gate when the rows moved onto the
+integer lattice ("float ulp 1 beyond 2^23 → integer lattice, all rows hand-replayed both signs") to fail loudly
+where the 1.7.10-faithful walk's float sampling (`Chainsaw.myCanSee`, orig UltimateSword.java:198-247, float for
+float) pins every half-block sample by ties-to-even (at this run's origin the walk did not advance at all: all ten samples read rel z 25) — rejects it, and rejects (15M − 2^23)/15M ≈ 44 % of
+all origins. The code under test is not at fault and is unchanged; the rows' assumption (the origin is in the
+envelope) was.
+
+FIX (src/gametest/java/danger/orespawn/gametest/ChainsawSweepSightTests.java only; javac rc 0). Every row builds
+its geometry at a FIXED ABSOLUTE SITE inside the envelope; the structure at the random origin is only the row's
+runner (`helper.succeed()` / `assertTrue` through it; nothing of the geometry reads `helper.absolutePos`):
+- Sites: rows 01-07 and 09 at x = 100,000 + k·96 (k = 0..6, 7), z = 100,000 (the positive quadrant); row 08, the
+  cast-shift row, at x = z = −100,000 (the negative quadrant its derivation names: the (int) cast reads toward the
+  origin on the half-block z). One site per row, six chunks apart, because a batch's rows tick concurrently and
+  identical FORCED tickets collapse into one in the DistanceManager (`Ticket.equals` on type/level/key/forceTicks). The rel
+  offsets put the whole layout in one chunk on either sign (x +4, z +8 … +13). The envelope precondition stays as
+  a guard on the site constants (`assertFloatEnvelope(helper, siteX, siteZ)`: the layout's farthest |x| < 2^24,
+  |z| < 2^23).
+- Floor: rel y 0 = `level.getHeight(MOTION_BLOCKING_NO_LEAVES, …)` at the player's column — the first air block
+  over the flat game-test world's grass (GameTestServer: WorldPresets.FLAT, WorldOptions(0L, false, false);
+  FlatLevelGeneratorSettings.getDefault: bedrock, dirt×2, grass → surface −61, first air −60), i.e. the very y of
+  the harness grid's structure-block layer (F0.7: `empty_large` is all air over the framework's stone, so the rows'
+  rel y 1 is a block above the floor there and here alike). Every absolute y at a site is therefore the same
+  float it was in the structure frame; pinned: the floor level under both columns, the whole layout below y 0.
+- Per row, on the server thread: (1) `Site.open` — envelope guard; a FORCED region ticket per site chunk
+  (`addRegionTicket(FORCED, chunk, 2, chunk)`: level 33 − 2 = 31, entity-ticking at that chunk, NF
+  DistanceManager.addRegionTicket / ChunkLevel); a synchronous `ServerLevel.getChunk` of the span and the 5×5 ring
+  around each chunk (what NF ChunkMap.prepareEntityTickingChunk needs at FULL, its range-2 future), so the
+  entity-ticking promotion waits on nothing but the main thread's own queue; the floor derived; the ground
+  checked untouched (the flat world's GRASS_BLOCK under both columns — a harness structure's cleared box would
+  show STONE there, NF StructureUtils.clearBlock — and every cell of the layout box rel (18,0,22)-(22,8,31) air);
+  the box outside this row's structure (`helper.getBounds()`). (2) The runner schedules one poll per tick (from the
+  synchronous body — the framework iterates its tick-time map live) up to 60 ticks: when every site chunk is
+  `ServerLevel.isPositionEntityTicking` (the entity manager's TICKING visibility and the ticket range — the
+  harness's own start condition, F0.4), the row's body runs WITHIN THAT TICK as before: it records each overwritten
+  cell's prior (`Site.setBlock`, flags 3 as `GameTestHelper.setBlock`), spawns the frozen 1000-HP prey at the
+  site with `spawnWithNoFreeWill`'s own sequence (create, persistence, moveTo, addFreshEntity, removeFreeWill,
+  then noAi) and pins that `getEntitiesOfClass` — the sweep's own query — returns it, places the survival player,
+  replays the walk, runs the sweep and the assertions exactly as before. (3) A finally (each row's, and the
+  poll's finally (`runWhenReady`) as the safety net; idempotent) removes the player, discards the spawns, restores every overwritten cell
+  to its prior, releases the tickets; then the row asserts nothing survives (every restored cell holds its prior,
+  no LivingEntity in the layout box, player and tickets gone) and succeeds. Row ids, batch, template, holder and
+  prefix annotations, assertion messages (item id, expected/actual) and the integer-lattice cells are unchanged.
+- Why the row spans ticks (the design's synchronous (1)-(4) deviates here): a chunk loaded within a tick keeps its
+  entity sections HIDDEN until the queued full-status promotion (`ChunkHolder.scheduleFullChunkPromotion` →
+  `thenRunAsync` on the chunk source's main-thread executor, which `getChunk`'s `managedBlock` exits before
+  running) pumps between ticks — TF-023 (FIX_LOG, StructureTestsA:481-506, the Basilisk maze): a same-tick spawn
+  plus `getEntitiesOfClass` misses mobs that ARE in section storage, and the sweep's target lookup is exactly that
+  query. Hence the FORCED region ticket (released in the finally) and the wait for F0.4's condition.
+
+PER-ROW TABLE (site x/z; y −60 derived; cells rel to the site, unchanged from the integer-lattice derivation; the
+replay at the site reproduces them by construction — every site coordinate is an integer below 2^23, so each
+half-block sample is exact in float, and the y frame is the structure's own −60):
+
+| row | site (x, z) | geometry / cells | expected | tears down |
+|---|---|---|---|---|
+| 01 i070_01_9b | (100000, 100000) | Zombie (20,1,29), player (20,1,24); short grass on sample 10 → rel (20,2,29) | walk refuses / not swept; ray admits / swept | grass cell → air; Zombie discarded; player removed; ticket released |
+| 02 i070_02_4a | (100096, 100000) | Zombie; cobweb on sample 6 → rel (20,3,27) | same pattern | cobweb → air; Zombie; player; ticket |
+| 03 i070_03_4c | (100192, 100000) | Pig; short grass on sample 8 → rel (20,2,28) | same pattern | grass → air; Pig; player; ticket |
+| 04 i070_04_8c | (100288, 100000) | Pig; bottom stone slab on sample 8 → rel (20,2,28) (eye line 1.94 and lower there, under the slab's cell) | same pattern | slab → air; Pig; player; ticket |
+| 05 i070_05_6 | (100384, 100000) | Cow; water on sample 8 → rel (20,2,28) | same pattern (the ray's Fluid.NONE clip ignores water) | water → air; Cow; player; ticket |
+| 06 i070_06_10 | (100480, 100000) | Zombie; cobweb on sample 1 → rel (20,3,24) (z + 0.5 cast to the player's own column at a positive z) | walk dies on its first read / not swept; ray admits / swept | cobweb → air; Zombie; player; ticket |
+| 07 i070_07_12 | (100576, 100000) | Pig; player elevated (20,4,24); oak log at rel (20,2,27), none of the ten samples | walk sees / swept (key off); ray refuses / spared (key on) | log → air; Pig; player; ticket |
+| 08 i070_08_13 | (−100000, −100000) | Zombie; sample 7's point rel (20, 2.7025, 27.5) → cast cell rel (20,3,28), true cell rel (20,2,27); shift (0,1,1) pinned (negative y and negative half-block z) | stone on the cast cell: walk stops / not swept; stone on the true cell: walk skips it / swept, ray refuses / not swept under the key | both stone cells → air; Zombie; player; ticket |
+| 09 i070_09_master | (100672, 100000) | Zombie; short grass on sample 10 → rel (20,2,29) (row 9b's geometry) | master off + key on → walk / not swept; master on → ray / swept | grass → air; Zombie; player; ticket; master and key restored |
+
+Absolute examples: row 01 player (100020, −59, 100024), Zombie (100020, −59, 100029), grass (100020, −58, 100029);
+row 08 player (−99980, −59, −99976), Zombie (−99980, −59, −99971), seventh sample z −99972.5 → (int) −99972 (rel 28),
+y −57.8975 → (int) −57 (rel 3); the point's own cell (−99980, −58, −99973) = rel (20, 2, 27).
+
+Additions beyond the design, all preconditions or teardown checks (no expected outcome changed): the floor level
+under both columns; the layout below y 0; untouched ground (grass under both columns, the box air); outside this
+row's structure; the spawned prey queryable; row 08's "sits in the negative quadrant"; row 09's "ten samples"
+(it indexes sample 10); "nothing of the site survives" after the teardown; the site wait's own failure message
+("reached entity-ticking within 60 ticks … F0.4; the queued promotion of TF-023").
+
+HARNESS NOTE for the F0 list (`phase_g_reports/harness_slice_2026-09-04.md` §0; MODERNIZATION_NOTES.md carries
+no F0.x entry — the F0.6 / F0.7 form is the report's):
+- **F0.8 Off-structure sites (2026-09-06).** A row whose expectations depend on absolute float precision runs its
+  geometry at a fixed absolute site inside the envelope, force-loads the site's chunks, and tears everything down
+  in its own finally; the structure at the random origin is only the row's runner. The harness grid's corner is
+  uniform in ±14,999,992 (GameTestServer `startTests`), so any row that reads its own absolute position into a
+  float walk is outside |z| < 2^23 in ~44 % of runs. The site pattern (`ChainsawSweepSightTests.Site`): a FORCED
+  region ticket per site chunk at distance 2 (level 31), a synchronous `getChunk` of the span and its 5×5 ring,
+  then a per-tick wait for `isPositionEntityTicking` on every site chunk (the F0.4 condition — a same-tick spawn
+  after a synchronous load is invisible to `getEntitiesOfClass`, TF-023) before the single-tick body; one site per
+  row of a batch, six chunks apart (identical FORCED tickets collapse in the DistanceManager; the sites' chunk sets are disjoint — a pitch of six chunks against a two-chunk ring, never five or under — which is what keeps a neighbour's teardown from pulling a chunk under a running row); rel y 0 from the
+  heightmap (the flat world's first air, −60, the structure-block layer's own y); the ground checked untouched
+  (the flat world's grass under the layout — a cleared structure box shows stone); every overwritten cell restored
+  to its recorded prior, every spawn discarded, the player removed, the tickets released, and the row asserts so
+  before it succeeds.
+
+REFUTER NOTES (2026-09-06, one refuter, no blocker; the claim confirmed by a standalone float replay of the walk at
+the slice-(d) origin, a negative in-envelope origin, the red-gate origin and the four site classes, and by javap of 27
+NeoForge classes; applied): (D1) the records draft's line ranges were stale for fifteen members - corrected to the
+saved file (records, orchestrator). (D2) the Javadoc and the drafts said "the runner's finally" calls close() again -
+`run` has no finally; it is the poll's (`Site.runWhenReady`) - reworded (:460, the drafts). (D3) the post-teardown
+check's `player == null && !ticketed` terms are fields close() resets itself, proving only that close() ran - left as
+they are (the living-entity scan and the cell identity are the check; the player list carries no public per-row
+query worth the coupling). (D4) the mechanism sentence said the walk "rounds the half-block samples by the origin's
+parity"; at the red-gate origin it did not advance at all (ties-to-even pinned all ten samples to rel z 25) -
+sharpened. (D5) the Javadoc's grid span said ~4,300 blocks; at ~1,200 tests the grid is ~8,100 deep in z - corrected
+(the per-site collision bound stays below 1e-8). (D6) `ticketed = true` was set after the ticket loop; set before it,
+so an exception mid-loop cannot leak a ticket past close() (:514). (D7) the protection against a neighbour's teardown
+is the DISJOINT chunk sets (a six-chunk pitch against a two-chunk ring), not only ticket identity - said in F0.8, with
+"never five or under". (D8) NeoForge's `Ticket.equals` also compares `forceTicks` - cited. Confirmed as claimed:
+the relative geometry and the y frame identical to HEAD at every site (cell for cell, both signs); row 08's (0,1,1)
+shift at (-100000,-100000); the level-31 FORCED ticket = ENTITY_TICKING; the synchronous getChunk; the poll's
+condition is the query's own visibility gate (TF-023); the prey spawned only after it; the polls scheduled up front
+because GameTestInfo.tickInternal iterates its map live; the 100-tick budget starts after the harness's own chunk
+gate so the 60 polls always fit; the nine rows' chunk sets pairwise disjoint; the teardown complete and idempotent,
+the player removed as HEAD did; the body never runs on a closed site; no helper geometry call remains; the envelope
+guard is the site's first statement; the flat seed-0 world is deterministic and pristine at the sites; javac rc 0.
+
+GATE: (g2land2, 2026-09-06 15:02-15:05, after the refuter's items): drift verified, build successful, "All 1255 required tests passed" - the batch chainsawSweepSight:0 (9 tests) ran at the fixed sites and passed at a grid origin the old rows would have accepted or refused alike; the red g2land run (13:42-13:45, all nine rows on the origin precondition) is the diagnosis above.
+
+REFUTER (2026-09-06, one refuter, harness rows only): no blocker; the geometry at the sites equal to HEAD's cell for cell by a standalone float replay, the ticket/poll design sound on the bytecode, the teardown complete; its items applied (REFUTER NOTES above).

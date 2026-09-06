@@ -9852,6 +9852,24 @@ keeps BUG-036. Commit 4ea395c's message retains the old number.)*
   MHLib untouched.
 - **Ruled (owner, 2026-09-06, item 24):** rides with the MHLib harvest slice, two refuters; not before.
 
+### OPT-031 — `tools/g1_render_parity.py` reports `minimum_observed_foreground_fraction` as a constant 1.0 in every proof `report.json`: the field is dead, the check behind it is live
+
+- **Evidence:** refuter B on the slice (c) landing (2026-09-06, D5). `tools/g1_render_parity.py` writes
+  `minimum_observed_foreground_fraction` from a value that is never lowered (the working tree's `:1428` and `:1514` after the
+  landing; at HEAD the `min(...)` line sat after a `raise`, so it never ran — pre-existing, disclosed by the landing lane as its
+  deviation 5 when it removed the dead line with the pin block). The per-sample `vanilla_foreground_fraction` /
+  `geo_foreground_fraction` (`:1476-1477`) and the `required_foreground` check (`:1445`) are live: a capture below the
+  required foreground fails the leg as designed; only the summary field is meaningless. Both checked-in proofs
+  (`phase_g_reports/s4_proof/report.json`, `g1_proof/report.json`) carry the constant.
+- **Effect:** none on any verdict — the check is per sample and live. A reader of `report.json` sees a summary that says every
+  capture was fully in frame, which the field does not measure.
+- **Resolution:** PROPOSED (not applied): compute the field as the true minimum over the samples' foreground fractions, or
+  drop it. Either changes every `report.json` in both proof trees, so under the proof rule it lands with the next proof
+  regeneration that has its own reason (the ENT-S-146 visual-leg change is the nearest), presented in that slice's
+  before/after as a report-field change with no verdict effect.
+- **Status:** REPORT (2026-09-06). Filed from the slice (c) landing's refuter B; not fixed in the landing (a report-field
+  change with no verdict effect does not justify a proof regeneration of its own).
+
 ### TEST-003 — Config-flipping gametests in the concurrent default batch
 
 - **Impact:** MEDIUM (suite reliability) — boss005/boss012 flip a global

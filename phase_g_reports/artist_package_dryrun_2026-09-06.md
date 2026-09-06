@@ -34,6 +34,8 @@ every locked bone but `Body1`). "effort" = the generator's estimate (bosses 8 h 
 improve; Tier 2 4 h + 0.2 h/bone + 1 h/clip; a `calm_idle` that `idle` covers is not counted — the Beaver's 13.8 h of the first
 run is 12.8 h now).
 
+> **Superseded 2026-09-06 (item 18; FIX_LOG "PHASE G SLICE (f), ITEM 18").** The lock policy is ruled and no longer PROVISIONAL: keying a locked bone is allowed and WARNED (the hitbox part follows the bone in-game); renaming, re-parenting or deleting a locked bone is REFUSED by name; the README, the SPEC and the checker carry the one sentence; the reject mode stays available (`check --lock-mode reject`) but is not the policy. Tool 0.2.1; the manifest's `lock_policy` is the token `warn-keyed, refuse-structural`. The `check` table below quotes the 0.2.0 summary line (`[lock_mode warn] — <policy>`) and calls the reject mode "the REJECT policy"; under 0.2.1 the summary line reads `[lock_mode warn; warn-keyed, refuse-structural] — <the ruled sentence>` and the reject mode is a kept mode, not a policy.
+
 INVENTORY.csv: 145 rows (both registration forms; the first run's 128 missed the 17 `Builder.<X>of(` registrations) —
 15 landed candidates, 104 classic only, 26 excluded. Excluded notes in the vocabulary that is true per row: 15 projectiles
 (`extends ThrowableProjectile` / `LargeFireball` / `AbstractArrow` / the `LaserBall` family), 1 fish hook, 1 item entity, the
@@ -88,5 +90,6 @@ Every returned geo also draws `WARN <geo>: a geo was returned; the shipped rig i
   NeckL1, NeckL13...): keying a locked bone is a WARN today and becomes a REJECT when the server-side hitbox evaluator lands
   (contract §8.1 / P7 say REJECT; the pilot boss's shipped clips key 26 of her 27 locked bones, so REJECT would fail her own
   baseline) — PROVISIONAL, open question 16".
+  > Superseded 2026-09-06 (item 18): the warning now reads "... allowed and warned — Keying a locked bone is allowed; the checker warns, and the hitbox part follows the bone in-game ..."; nothing PROVISIONAL is attached to it.
 - No SEED_MISSING, no TEXTURE_UNMAPPED, no GOAL_UNCLASSIFIED, no GOAL_UNPARSED, no ATTACKING_GUARD_UNPARSED, no
   WISHLIST_UNACCEPTED, no ROUNDTRIP_DIFF, no GEO_AMBIGUOUS in the final run.

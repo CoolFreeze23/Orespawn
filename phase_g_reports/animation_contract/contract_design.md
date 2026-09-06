@@ -322,6 +322,8 @@ locked bone; the validator rejects keys on it; the glossary marks it. When the s
 consume the artist clip itself (Slice 5's open question), the lock can lift per bone — that is a later
 ruling, recorded in the SPEC as `locked: until evaluator`.
 
+> **Superseded 2026-09-06 (owner item 18; FIX_LOG "PHASE G SLICE (f), ITEM 18").** The validator does NOT reject keys on a SPEC-locked bone: keying a locked bone is allowed and WARNED (the hitbox part follows the bone in-game, so the artist keeps such keys deliberate); renaming, re-parenting or deleting a locked bone is REFUSED. The §8 table's "the validator rejects the clip" and this section's "the validator rejects keys on it" read under that ruling; the controller's exclusion of locked bones and the `locked: until evaluator` lift are unchanged. A reject mode for keys stays available in the package tool (`check --lock-mode reject`) for the day the server-side evaluator lands.
+
 ---
 
 ## 9. The Blockbench preview caveat

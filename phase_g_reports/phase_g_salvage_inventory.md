@@ -207,6 +207,8 @@ above 0.5% needs the owner's in-game acceptance — **Robot5 PENDING** (1.16%,
 coplanar wheel faces). Before/after for every species is in FIX_LOG
 "VISUAL LEG RATIFIED WITH CONDITIONS".
 
+> Superseded 2026-09-06 (slice (c) landed; FIX_LOG "PHASE G SLICE (c) LANDED"): the z-fight exclusion is retired by the G2 root-order contract — every pixel is compared, the contested fraction is reported as a diagnostic, the per-species pins and the above-0.5% in-game acceptance requirement are gone (Robot5's PENDING with them). The bind clause of ruling 2 (superimposed-at-bind is not a player-visible state) stands.
+
 ## 5. Decisions the owner still has to make
 
 - **Animation policy — RULED 2026-09-02, AMENDED same day** (FIX_LOG "PHASE G

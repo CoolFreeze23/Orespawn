@@ -50,6 +50,19 @@ lane over the working tree at 7021b5a (+ the uncommitted i165 fix, + the untrack
   mob falls the block before the row's first tick. The convention: a row whose mob moves, teleports or falls spawns it ON the
   floor (rel y 0, `setNoGravity(true)` for a live mob), as `MiscTargetingParityTests` does; the sibling classes keep rel y 1
   while their rows pass — no cross-class change (owner, 2026-09-05; addendum item 23 (10)).
+- **F0.8 Off-structure sites (2026-09-06).** A row whose expectations depend on absolute float precision runs its
+  geometry at a fixed absolute site inside the envelope, force-loads the site's chunks, and tears everything down
+  in its own finally; the structure at the random origin is only the row's runner. The harness grid's corner is
+  uniform in ±14,999,992 (GameTestServer `startTests`), so any row that reads its own absolute position into a
+  float walk is outside |z| < 2^23 in ~44 % of runs. The site pattern (`ChainsawSweepSightTests.Site`): a FORCED
+  region ticket per site chunk at distance 2 (level 31), a synchronous `getChunk` of the span and its 5×5 ring,
+  then a per-tick wait for `isPositionEntityTicking` on every site chunk (the F0.4 condition — a same-tick spawn
+  after a synchronous load is invisible to `getEntitiesOfClass`, TF-023) before the single-tick body; one site per
+  row of a batch, six chunks apart (identical FORCED tickets collapse in the DistanceManager; the sites' chunk sets are disjoint — a pitch of six chunks against a two-chunk ring, never five or under — which is what keeps a neighbour's teardown from pulling a chunk under a running row); rel y 0 from the
+  heightmap (the flat world's first air, −60, the structure-block layer's own y); the ground checked untouched
+  (the flat world's grass under the layout — a cleared structure box shows stone); every overwritten cell restored
+  to its recorded prior, every spawn discarded, the player removed, the tickets released, and the row asserts so
+  before it succeeds.
 
 ## 1. `i050_vortex_no_launch_drag_pull` — "was 0.0" (wave1e only)
 
