@@ -6226,3 +6226,62 @@ GATE: (w4c, 2026-09-06 07:13-07:17, after both refuters' items, the fix lane and
 Refuted twice (24 files + 2 new test classes): A (the entities and the sibling re-bases) — two blocking test defects, fixed: the tamed-control rows s137_01 / s137_03 expected the Zombie where the companions' sorter picks the Creeper (68 / 2 = 34 against 64; ENT-S-139's own s139_82) — the rows now assert the sorter's answer; the cast rows s138_01 / 03 / 05 assumed the cast and the floor agree on x / z, false on a negative grid origin (random per run) — the fractional position is now integer on x / z so y alone discriminates; plus: the fifth ENT-S-138 site (ButterflyIslandsHuntGoal's own copy of the base lines) is a separate site, kept and re-attributed (the base cast reaches the Dragonfly, Firefly, Mosquito and VampireButterfly; the copy the Butterfly and the Luna Moth) — presented for ratification; the Girlfriend's modern owner pair tied at 3 with her hunt (a running hunt is never pre-empted by an equal priority — MOD-033's promise lost) → the pair at 1 / 2 as the Leon's landing, the owner may still move it; `isOrderedToSit` for orig `isSitting` coincident today (a note); the Stinky's dice order upheld as ruled; the s133 yaw signal inert (the rows discriminate through path / pose / laser); a Stinky / Spyro retarget measure filed (ENT-S-151); the Dragonfly `hurt` finding's ledger row (:322) re-rated. Upheld: ENT-S-133 / 130 / 137 / 134 / 138 / 142 token-faithful, nothing else moved, the re-bases minimal.
 
 B (the moth, the Ender pair, the Chainsaw) — one BLOCKING finding, HELD out of the batch: ENT-S-145's +6.2 is transcribed exactly but 1.7.10's legacy mover clamped the input and moved at a fixed 0.1f AI speed, so the boost saturated to a ≈3.1× sprint (≈1.4 → ≈4.4 blocks/s), while the modern mover scales speed by the unclamped attribute (≈6.52 blocks/tick) — and HEAD's un-boosted Knight already moves at 1.7.10's boosted pace; the entry's resolution had reserved the value; the code, its two rows and the MiscTargetingParityTests re-base it forced are withdrawn, ENT-S-150 filed with the analysis and the options for the owner's ruling. Non-blocking: the Chainsaw rows' descriptions (row 10's cobweb lands on the first sampled cell, the one ahead of the player; the gate's negative y shifts every cell — the rows pin the walk's own facts on replayed sample cells, the table's pictures are the positive-origin readings) corrected; cites (the Dragonfly y-blend orig :155-157, `scanIt` :97-155, `enderTeleportTo`) corrected; observations recorded (the presets' double literals for orig's float casts; the origin sound is not gated by `isSilent`; `isDay()`'s fixed-time clause; two files' LF endings). Upheld: ENT-S-143 line by line against orig EntityLunaMoth.java:54-145 (the hunt-then-scan order, the six-face scan, the torch set), ENT-S-144 against orig :159-206 with the modern sound event, ITEM-070's `myCanSee` token by token against orig UltimateSword.java:198-247 with the key read live and the master forcing the walk, rows 12 / 13 pinning the table's answers.
+
+## PHASE G SLICE (e) — the animation contract and the keyframe controller's return: DESIGNED AND PRESENTED, nothing wired (2026-09-06)
+
+The owner's sequencing ruling (addendum item 23 (8)(e)): designed and presented before anything is wired. A read-only
+design lane produced `phase_g_reports/animation_contract/` — `contract_design.md`, `controller_design.md`,
+`open_questions.md` (17 decisions, each with a recommendation and costs), `demo_results.json` and `records.md`; nothing
+under `src/` changed. Presented for the owner's rulings; no gate applies to a design.
+
+THE CONTRACT (summary): a clip inventory over parallel controller LAYERS, one clip per frequency group (`walk` for the gait
+group, `walk_<group>` for the others — the Beaver's classic transcription is the salvaged trio renamed `walk` / `walk_teeth` /
+`walk_tail`); the locomotion clips (`idle` / `walk` / `swim` / `fly`, `aggro_idle` / `calm_idle`, optional `idle_alt_N`)
+selected by WEIGHTS from client-visible state — `limbSwingAmount` (the seam's own input), `isInWater()`, a species-declared
+flyer flag with `!onGround()`, the species' synched `DATA_ATTACKING` int (51 classes carry it; vanilla's `isAggressive()`
+is set by none) — smoothed over 5 ticks, so no thresholds and no cuts; the gait group's weight is `limbSwingAmount` itself
+(the ruled scaling). `hurt` / `death` are client-observed edges of `hurtTime` / `deathTime` (the fields vanilla's overlay
+and flip read; no packets, no entity flags); `attack` gets three transports chosen per species by the generated trigger
+inventory (an EVENT-flag edge, a generic `LivingDamageEvent.Post` → `triggerAnim` packet for melee, named launch sites for
+ranged); `idle_alt` rolls once per idle loop boundary (p = 0.15) keyed on the clip clock's cycle index so the ENT-S-147
+dedup cannot double-roll. The two motion sources coexist per species through the per-entity manager: classic registers no
+controllers and the hook poses; artist registers the layers and the hook returns early — the gate is
+`manager.getAnimationControllers().isEmpty()`, decided once per manager; a proposed `[modern] artistAnimations` master
+key (default ON, species self-gated by clip presence) plus a `classicAnimationSpecies` exclusion list in the MOD-029 /
+MOD-031 shape. SPEC gains a tempo table, glossary hooks (`gait_bone`, `locked`), a clip table, the trigger-inventory link and
+the density statement; Tier-1 bones in a profile's `synched-bones` are SPEC-locked. Artists may edit shape, keys, lerp
+mode, channels and `animation_length`; not bone names, tempo, clip names / loop types, or locked bones.
+
+THE CONTROLLER (summary): the salvaged `PhaseLockedKeyframeController` (commit 0d238ba) compiles unchanged against today's
+tree (one delta in its probe, `animationAgeTicks(state)`) and returns with three changes — the time-warp reads the clip's
+DECLARED `animation_length` (the ADDENDA ruling; the same shape at 0.5 / 1 / 2 / 3.3 s poses identically, 0.0 rad), an
+additive layer mode for blending, and instrumentation. Delta scaling is from the BIND pose (GeckoLib writes
+`value + initialSnapshot`; the G1 leg defines proportionality from bind; scaling from a first key would shift a cosine's
+mean). GeckoLib composes nothing (two controllers on one bone: the last registered wins — measured 1.412 rad off), so
+blending is the additive layer (composes to 5.2e-8 rad); native transitions blend IN only, and blend OUT to bind through
+the bone-reset lerp — with the additive locomotion layers registered after the triggered controller that reads as a blend
+back to the live pose. The wrap sample straddles the LUT index at every seam and holds. The code-driven hook runs AFTER the
+controllers (`AnimationProcessor.tickAnimation` 268-284 then 287-292; demonstrated), so one source per species. OPT-029
+needs nothing. Two FINDINGS: (1) GeckoLib 4.8.4's `catmullrom` stores `P0 = frames[i−1].endValue()`, which IS the
+segment's own start value, so every segment has a kinked tangent — its error decays like linear's with a worse constant; a
+~60-line OreSpawn-side repair of the easing arguments at clip load (through the same evaluator) is proposed (open question
+9); (2) the salvaged Beaver clip's authored sign is inverted against the landed basis (2.827 rad error, 25 % sign
+agreement; flipped → 1.344e-3 rad) — disposition only (open question 17).
+
+DENSITY (the headless demo over the Beaver rig, `demo_results.json`: 1,057,088 gait / 264,272 teeth / 264,272 tail
+comparisons at amplitudes 0 / 0.25 / 0.5 / 1, plus the wrap seams; the fewest keys per bone holding 2.5e-3 rad):
+  linear                      gait 54 (2.483e-3; 53 fails at 2.575e-3)  teeth 41 (2.414e-3)  tail 19 (2.350e-3)
+  catmullrom as GeckoLib evaluates it   gait not reached by 97 keys (6.85e-3)  teeth not reached (3.81e-3)  tail 31 (2.451e-3)
+  catmullrom, spline args repaired at load   gait 15 (2.163e-3; 14 fails)  teeth 13 (1.892e-3)  tail 8 (2.295e-3)
+  the salvaged 73 linear keys                gait 1.344e-3  teeth 7.47e-4  tail 1.49e-4
+Wrap: |v(T−ε) − v(0+ε)| ≤ 1.6e-5 rad (linear) / ≤ 1e-7 (repaired); seam errors ≤ 4e-5; length independence 0.0 rad; the
+arithmetic model of GeckoLib's spline rule reproduces the measured errors to four digits.
+
+OPEN QUESTIONS (owner): 1 the config key shape · 2 the transition policy · 3 the death clip vs the vanilla death flip · 4
+the hurt clip vs the red overlay · 5 idle_alt cadence · 6 the extras cap · 7 Tier-3 clips · 8 the ENT-S-147 per-render hook
+shape · 9 the catmullrom spline-argument repair · 10 the density statement's wording (54 / 41 / 19 linear vs 15 / 13 / 8
+repaired) · 11 the attack transport · 12 the aggro flag for species without `DATA_ATTACKING` · 13 weights vs discrete states
+· 14 the authoring-length convention · 15 the Blockbench preview at tempo · 16 the pilot boss (the Queen recommended) · 17
+the sign-inverted salvaged clip's disposition.
+
+GATE: none — a design, presented; nothing in `src/` changed (the lane's stray-process check clean).
