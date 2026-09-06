@@ -9,6 +9,7 @@ import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.util.Mth;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -28,9 +29,10 @@ import net.minecraft.world.phys.Vec3;
 import danger.orespawn.OreSpawnConfig;
 import danger.orespawn.entity.ai.GenericTargetSorter;
 import danger.orespawn.entity.ai.TargetSelection;
+import danger.orespawn.entity.pose.PurplePowerPose;
 import danger.orespawn.util.MyUtils;
 
-public class PurplePower extends Mob {
+public class PurplePower extends Mob implements PurplePowerPose {
     private static final EntityDataAccessor<Integer> DATA_PURPLE_TYPE =
             SynchedEntityData.defineId(PurplePower.class, EntityDataSerializers.INT);
 
@@ -69,6 +71,17 @@ public class PurplePower extends Mob {
     }
 
     public int getPurpleType() { return this.entityData.get(DATA_PURPLE_TYPE); }
+
+    /**
+     * ENT-S-146: the LEVEL's random source for the model's three per-frame fan rolls (orig
+     * ModelPurplePower.java:57 / :66 / :75 {@code p.worldObj.rand}) - not {@link #getRandom()}, the
+     * entity's own, which orig PurplePower.java:155-163 ({@code this.rand}) uses for the flight targets
+     * above. Read on the client by {@code ModelPurplePower.poseFrom} and the GeckoLib hook.
+     */
+    @Override
+    public RandomSource getLevelRandom() {
+        return this.level().getRandom();
+    }
 
     @Override
     public boolean isPushable() {

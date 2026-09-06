@@ -9,6 +9,7 @@
   "ticks_per_second": 20.0,
   "thresholds": {
     "geometry_epsilon_blocks": 1e-05,
+    "coplanar_depth_epsilon_blocks": 1e-05,
     "animation_epsilon_radians": 2e-06,
     "position_epsilon_model_units": 0.0001,
     "uv_epsilon_normalized": 1e-07,
@@ -576,66 +577,103 @@
       "id": "model_purplepower",
       "tier": 3,
       "class": "danger.orespawn.entity.client.ModelPurplePower",
+      "classic_renderer": "danger.orespawn.entity.client.PurplePowerRenderer",
       "texture": "src/main/resources/assets/orespawn/textures/entity/purplepowertexture.png",
-      "animation_kind": "code_driven",
+      "animation_kind": "entity_state",
       "candidate_animation_path": "production_replacement_hook",
       "candidate_class": "danger.orespawn.entity.client.PurplePowerGeoReplacement",
-      "loop_period_age_ticks": 3600.0,
+      "loop_period_age_ticks": 20.0,
       "sample_fractions": [
         0.0,
-        0.00125,
-        0.005,
-        0.0125,
-        0.03,
-        0.25,
-        0.5,
-        1.0
+        0.5
       ],
       "limb_swing": 0.0,
       "limb_swing_amount": 0.0,
       "net_head_yaw": 0.0,
       "head_pitch": 0.0,
+      "entity_states": [
+        {
+          "name": "seed_1",
+          "seed": 1
+        },
+        {
+          "name": "seed_12345",
+          "seed": 12345
+        },
+        {
+          "name": "seed_2026",
+          "seed": 2026
+        },
+        {
+          "name": "seed_777",
+          "seed": 777
+        }
+      ],
       "render_instances": {
         "Shape1": {
           "count": 6,
           "axis": "z",
-          "step_scope": "stack",
+          "step_scope": "part",
           "step_radians": 1.0471976,
-          "step_arithmetic": "float32_multiply",
-          "note": "ModelPurplePower.renderToBuffer:59-64: mulPose(Axis.ZP.rotation(i * 1.0471976F)) on the pose stack, then innerSpoke.render, 6 draws"
+          "step_arithmetic": "float32_accumulate",
+          "note": "ModelPurplePower.renderFan (orig ModelPurplePower.java:59-63): Shape1.zRot = newangle; newangle += 1.0471976f, 6 draws inside mulPose(X, rf1) (orig :58)"
         },
         "Shape2": {
           "count": 6,
           "axis": "z",
-          "step_scope": "stack",
+          "step_scope": "part",
           "step_radians": 1.0471976,
-          "step_arithmetic": "float32_multiply",
-          "note": "ModelPurplePower.renderToBuffer:65-70, middleSpoke"
+          "step_arithmetic": "float32_accumulate",
+          "group_chain": [
+            "Shape2__carry_x1",
+            "Shape2__carry_x2",
+            "Shape2__fan"
+          ],
+          "note": "the same loop (orig :68-72) inside mulPose(Y, rf1') (orig :67) under the carried X rotations - orig :58 and :64 both rotate about X by rf1, the second not negated: the chain's two outer groups carry them, one per glRotatef"
         },
         "Shape3": {
           "count": 6,
           "axis": "z",
-          "step_scope": "stack",
+          "step_scope": "part",
           "step_radians": 1.0471976,
-          "step_arithmetic": "float32_multiply",
-          "note": "ModelPurplePower.renderToBuffer:71-76, outerSpoke"
+          "step_arithmetic": "float32_accumulate",
+          "group_chain": [
+            "Shape3__carry_x1",
+            "Shape3__carry_x2",
+            "Shape3__carry_y1",
+            "Shape3__carry_y2",
+            "Shape3__fan"
+          ],
+          "note": "the same loop (orig :77-81) inside mulPose(Z, rf1'') (orig :76) under X(rf1) twice (orig :58 + :64) and Y(rf1') twice (orig :67 + :73): the chain's four outer groups carry them, one per glRotatef"
         }
       },
+      "cube_face_order": "classic",
+      "visual_mode": {
+        "render_type": "entity_translucent",
+        "vertex_color": [
+          191,
+          191,
+          191,
+          140
+        ],
+        "light": "full_bright",
+        "note": "orig ModelPurplePower.java:53-56: GL_BLEND SRC_ALPHA / ONE_MINUS_SRC_ALPHA (RenderType.entityTranslucent on both renderers), glColor4f(0.75, 0.75, 0.75, 0.55) packed by FastColor.ARGB32.colorFromFloat = Mth.floor(f * 255) per channel = (191, 191, 191, 140) - ModelPurplePower.COLOR on both sides, and the (240, 240) lightmap texel = LightTexture.FULL_BRIGHT through both renderers' light-level overrides; the rasteriser blends over the background in emission order with the depth written (LEQUAL), the same on both sides"
+      },
       "visual_sample_ids": [
-        "bind",
-        "t_0_001250",
-        "t_0_005000",
-        "t_0_030000",
-        "t_quarter"
+        "s_seed_1_t0",
+        "s_seed_12345_t0",
+        "s_seed_2026_t_half",
+        "s_seed_777_t0"
       ],
       "camera": {
         "yaw_degrees": 34.0,
         "pitch_degrees": -28.0
       },
       "channels": [],
-      "period_note": "the three spoke rates 7.3, 5.1 and 3.7 degrees per tick (ModelPurplePower.setupAnim:45-56) share the common period 3600 ticks (t*7.3, t*5.1, t*3.7 are all multiples of 360 iff t is a multiple of 3600: 73, 51 and 37 are pairwise coprime); the fractions sample ages 0, 4.5, 18, 45, 108, 900, 1800 and 3600 ticks - small ages where the three rings visibly separate, the half period (all three at 180 degrees) and the full period (the loop closes)",
-      "render_instances_note": "Slice 4c render-instance expansion: each spoke is drawn 6x under mulPose(Z, i * 1.0471976F) on the pose stack OUTSIDE the spoke's own animated rotation, so the converter emits a static parent <part>__fan<k> (Z step k * 60 degrees, float32 product) over the clone <part>__i<k> that the hook animates with the classic setupAnim angles; the six spokes of a ring pass through the origin with coplanar faces, so z-fight contests are expected; the contested fraction is reported as a diagnostic, every pixel compared (G2 root-order contract, 2026-09-06)",
-      "classic_note": "ENT-S-146 (REPORT when this landed): the classic model is a re-authoring of the 1.7.10 one; the candidate reproduces the classic as it stands (harness law); re-base when the fix lands"
+      "state_note": "ENT-S-146 (fixed 2026-09-06): the pose reads only the level's random (orig ModelPurplePower.java:57 / :66 / :75, p.worldObj.rand.nextFloat() * 360 - three rolls per rendered frame in X, Y, Z order) through PurplePowerPose.getLevelRandom(), never age or gait: each state seeds it (ProbeSubject: RandomSource.create(seed)) and both sides consume the same three floats - a roll drawn out of order or in excess moves a fan and fails the geometry and composition legs; the two ages only prove the pose ignores age; nothing is written back (subject_after unchanged)",
+      "render_instances_note": "Slice 4c render-instance expansion re-based onto the fixed classic: each spoke is drawn 6x with its own zRot stepped by the float literal 1.0471976f (accumulated in float32, orig :62) inside the fan's pose-stack rotation, so the converter emits <part>__fan (group, hook-rolled) over <part>__i0..5 (clones, static step); the accumulating rotations of orig :64 / :73 (not negated) are carried by the outer groups of Shape2's and Shape3's chains, ONE GROUP PER glRotatef (X(rf1) twice; X(rf1) twice then Y(rf1') twice), nested because a pose stack rotated about X then Y is parent X over child Y, which one GeckoLib bone (Z, then Y, then X) cannot express, and one per rotation rather than one per doubled angle because a single X(2 rf1) rounds differently from X(rf1) - X(rf1): it left Shape3's normals 1.5e-6 off the classic's, over the surface leg's 1e-6 (measured 2026-09-06; the tolerance stands); the six spokes of a ring pass through the origin with coplanar faces, so z-fight contests are expected; the contested fraction is reported as a diagnostic, every pixel compared (G2 root-order contract, 2026-09-06)",
+      "visual_note": "bind is not a visual sample: without a roll the three rings lie flat in one plane (the unrolled frame of the harness's static captures, never a rendered frame - every rendered frame rolls); the seeded states are the player-visible frames",
+      "face_order_note": "ENT-S-146: under blending with the depth written, whether a spoke's back face shows through its front face depends on the order the two faces are emitted in (vanilla ModelPart.Cube: down, up, west, north, east, south; GeckoLib buildQuads: west, east, north, south, up, down), so the shipped rig carries the classic within-cube order under orespawn:cube_face_order and the seam permutes every cube's quads into it (FaceOrder.apply); the draw-order leg compares the per-quad normal sequences of both renderers on every capture"
     }
   ],
   "fixtures": [

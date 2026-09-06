@@ -7,47 +7,220 @@
         "texture_width": 64,
         "texture_height": 32,
         "orespawn:bone_draw_order": [
-          "Shape1__fan0",
+          "Shape1__fan",
           "Shape1__i0",
-          "Shape1__fan1",
           "Shape1__i1",
-          "Shape1__fan2",
           "Shape1__i2",
-          "Shape1__fan3",
           "Shape1__i3",
-          "Shape1__fan4",
           "Shape1__i4",
-          "Shape1__fan5",
           "Shape1__i5",
-          "Shape2__fan0",
+          "Shape2__carry_x1",
+          "Shape2__carry_x2",
+          "Shape2__fan",
           "Shape2__i0",
-          "Shape2__fan1",
           "Shape2__i1",
-          "Shape2__fan2",
           "Shape2__i2",
-          "Shape2__fan3",
           "Shape2__i3",
-          "Shape2__fan4",
           "Shape2__i4",
-          "Shape2__fan5",
           "Shape2__i5",
-          "Shape3__fan0",
+          "Shape3__carry_x1",
+          "Shape3__carry_x2",
+          "Shape3__carry_y1",
+          "Shape3__carry_y2",
+          "Shape3__fan",
           "Shape3__i0",
-          "Shape3__fan1",
           "Shape3__i1",
-          "Shape3__fan2",
           "Shape3__i2",
-          "Shape3__fan3",
           "Shape3__i3",
-          "Shape3__fan4",
           "Shape3__i4",
-          "Shape3__fan5",
           "Shape3__i5"
-        ]
+        ],
+        "orespawn:cube_face_order": {
+          "Shape1__i0": [
+            [
+              "up",
+              "down",
+              "east",
+              "north",
+              "west",
+              "south"
+            ]
+          ],
+          "Shape1__i1": [
+            [
+              "up",
+              "down",
+              "east",
+              "north",
+              "west",
+              "south"
+            ]
+          ],
+          "Shape1__i2": [
+            [
+              "up",
+              "down",
+              "east",
+              "north",
+              "west",
+              "south"
+            ]
+          ],
+          "Shape1__i3": [
+            [
+              "up",
+              "down",
+              "east",
+              "north",
+              "west",
+              "south"
+            ]
+          ],
+          "Shape1__i4": [
+            [
+              "up",
+              "down",
+              "east",
+              "north",
+              "west",
+              "south"
+            ]
+          ],
+          "Shape1__i5": [
+            [
+              "up",
+              "down",
+              "east",
+              "north",
+              "west",
+              "south"
+            ]
+          ],
+          "Shape2__i0": [
+            [
+              "up",
+              "down",
+              "east",
+              "north",
+              "west",
+              "south"
+            ]
+          ],
+          "Shape2__i1": [
+            [
+              "up",
+              "down",
+              "east",
+              "north",
+              "west",
+              "south"
+            ]
+          ],
+          "Shape2__i2": [
+            [
+              "up",
+              "down",
+              "east",
+              "north",
+              "west",
+              "south"
+            ]
+          ],
+          "Shape2__i3": [
+            [
+              "up",
+              "down",
+              "east",
+              "north",
+              "west",
+              "south"
+            ]
+          ],
+          "Shape2__i4": [
+            [
+              "up",
+              "down",
+              "east",
+              "north",
+              "west",
+              "south"
+            ]
+          ],
+          "Shape2__i5": [
+            [
+              "up",
+              "down",
+              "east",
+              "north",
+              "west",
+              "south"
+            ]
+          ],
+          "Shape3__i0": [
+            [
+              "up",
+              "down",
+              "east",
+              "north",
+              "west",
+              "south"
+            ]
+          ],
+          "Shape3__i1": [
+            [
+              "up",
+              "down",
+              "east",
+              "north",
+              "west",
+              "south"
+            ]
+          ],
+          "Shape3__i2": [
+            [
+              "up",
+              "down",
+              "east",
+              "north",
+              "west",
+              "south"
+            ]
+          ],
+          "Shape3__i3": [
+            [
+              "up",
+              "down",
+              "east",
+              "north",
+              "west",
+              "south"
+            ]
+          ],
+          "Shape3__i4": [
+            [
+              "up",
+              "down",
+              "east",
+              "north",
+              "west",
+              "south"
+            ]
+          ],
+          "Shape3__i5": [
+            [
+              "up",
+              "down",
+              "east",
+              "north",
+              "west",
+              "south"
+            ]
+          ]
+        }
       },
       "bones": [
         {
-          "name": "Shape1__fan0",
+          "name": "Shape1__fan",
           "pivot": [
             0,
             24,
@@ -56,7 +229,7 @@
         },
         {
           "name": "Shape1__i0",
-          "parent": "Shape1__fan0",
+          "parent": "Shape1__fan",
           "pivot": [
             0,
             24,
@@ -138,28 +311,20 @@
               },
               "modelpart_mirror": true
             }
-          ]
-        },
-        {
-          "name": "Shape1__fan1",
-          "pivot": [
-            0,
-            24,
-            0
-          ],
-          "rotation": [
-            0,
-            0,
-            -60.0000016697
           ]
         },
         {
           "name": "Shape1__i1",
-          "parent": "Shape1__fan1",
+          "parent": "Shape1__fan",
           "pivot": [
             0,
             24,
             0
+          ],
+          "rotation": [
+            0,
+            0,
+            -60.0000016697
           ],
           "cubes": [
             {
@@ -237,28 +402,20 @@
               },
               "modelpart_mirror": true
             }
-          ]
-        },
-        {
-          "name": "Shape1__fan2",
-          "pivot": [
-            0,
-            24,
-            0
-          ],
-          "rotation": [
-            0,
-            0,
-            -120.0000033393
           ]
         },
         {
           "name": "Shape1__i2",
-          "parent": "Shape1__fan2",
+          "parent": "Shape1__fan",
           "pivot": [
             0,
             24,
             0
+          ],
+          "rotation": [
+            0,
+            0,
+            -120.0000033393
           ],
           "cubes": [
             {
@@ -336,28 +493,20 @@
               },
               "modelpart_mirror": true
             }
-          ]
-        },
-        {
-          "name": "Shape1__fan3",
-          "pivot": [
-            0,
-            24,
-            0
-          ],
-          "rotation": [
-            0,
-            0,
-            -180.000005009
           ]
         },
         {
           "name": "Shape1__i3",
-          "parent": "Shape1__fan3",
+          "parent": "Shape1__fan",
           "pivot": [
             0,
             24,
             0
+          ],
+          "rotation": [
+            0,
+            0,
+            -180.000005009
           ],
           "cubes": [
             {
@@ -435,28 +584,20 @@
               },
               "modelpart_mirror": true
             }
-          ]
-        },
-        {
-          "name": "Shape1__fan4",
-          "pivot": [
-            0,
-            24,
-            0
-          ],
-          "rotation": [
-            0,
-            0,
-            -240.0000066786
           ]
         },
         {
           "name": "Shape1__i4",
-          "parent": "Shape1__fan4",
+          "parent": "Shape1__fan",
           "pivot": [
             0,
             24,
             0
+          ],
+          "rotation": [
+            0,
+            0,
+            -240.0000066786
           ],
           "cubes": [
             {
@@ -534,28 +675,20 @@
               },
               "modelpart_mirror": true
             }
-          ]
-        },
-        {
-          "name": "Shape1__fan5",
-          "pivot": [
-            0,
-            24,
-            0
-          ],
-          "rotation": [
-            0,
-            0,
-            -299.9999946879
           ]
         },
         {
           "name": "Shape1__i5",
-          "parent": "Shape1__fan5",
+          "parent": "Shape1__fan",
           "pivot": [
             0,
             24,
             0
+          ],
+          "rotation": [
+            0,
+            0,
+            -299.9999946879
           ],
           "cubes": [
             {
@@ -636,7 +769,7 @@
           ]
         },
         {
-          "name": "Shape2__fan0",
+          "name": "Shape2__carry_x1",
           "pivot": [
             0,
             24,
@@ -644,8 +777,26 @@
           ]
         },
         {
+          "name": "Shape2__carry_x2",
+          "pivot": [
+            0,
+            24,
+            0
+          ],
+          "parent": "Shape2__carry_x1"
+        },
+        {
+          "name": "Shape2__fan",
+          "pivot": [
+            0,
+            24,
+            0
+          ],
+          "parent": "Shape2__carry_x2"
+        },
+        {
           "name": "Shape2__i0",
-          "parent": "Shape2__fan0",
+          "parent": "Shape2__fan",
           "pivot": [
             0,
             24,
@@ -727,599 +878,11 @@
               },
               "modelpart_mirror": true
             }
-          ]
-        },
-        {
-          "name": "Shape2__fan1",
-          "pivot": [
-            0,
-            24,
-            0
-          ],
-          "rotation": [
-            0,
-            0,
-            -60.0000016697
           ]
         },
         {
           "name": "Shape2__i1",
-          "parent": "Shape2__fan1",
-          "pivot": [
-            0,
-            24,
-            0
-          ],
-          "cubes": [
-            {
-              "origin": [
-                -4,
-                23.5,
-                -0.5
-              ],
-              "size": [
-                8,
-                1,
-                1
-              ],
-              "uv": {
-                "west": {
-                  "uv": [
-                    9,
-                    8
-                  ],
-                  "uv_size": [
-                    1,
-                    1
-                  ]
-                },
-                "east": {
-                  "uv": [
-                    0,
-                    8
-                  ],
-                  "uv_size": [
-                    1,
-                    1
-                  ]
-                },
-                "north": {
-                  "uv": [
-                    1,
-                    8
-                  ],
-                  "uv_size": [
-                    8,
-                    1
-                  ]
-                },
-                "south": {
-                  "uv": [
-                    10,
-                    8
-                  ],
-                  "uv_size": [
-                    8,
-                    1
-                  ]
-                },
-                "up": {
-                  "uv": [
-                    1,
-                    7
-                  ],
-                  "uv_size": [
-                    8,
-                    1
-                  ]
-                },
-                "down": {
-                  "uv": [
-                    9,
-                    8
-                  ],
-                  "uv_size": [
-                    8,
-                    -1
-                  ]
-                }
-              },
-              "modelpart_mirror": true
-            }
-          ]
-        },
-        {
-          "name": "Shape2__fan2",
-          "pivot": [
-            0,
-            24,
-            0
-          ],
-          "rotation": [
-            0,
-            0,
-            -120.0000033393
-          ]
-        },
-        {
-          "name": "Shape2__i2",
-          "parent": "Shape2__fan2",
-          "pivot": [
-            0,
-            24,
-            0
-          ],
-          "cubes": [
-            {
-              "origin": [
-                -4,
-                23.5,
-                -0.5
-              ],
-              "size": [
-                8,
-                1,
-                1
-              ],
-              "uv": {
-                "west": {
-                  "uv": [
-                    9,
-                    8
-                  ],
-                  "uv_size": [
-                    1,
-                    1
-                  ]
-                },
-                "east": {
-                  "uv": [
-                    0,
-                    8
-                  ],
-                  "uv_size": [
-                    1,
-                    1
-                  ]
-                },
-                "north": {
-                  "uv": [
-                    1,
-                    8
-                  ],
-                  "uv_size": [
-                    8,
-                    1
-                  ]
-                },
-                "south": {
-                  "uv": [
-                    10,
-                    8
-                  ],
-                  "uv_size": [
-                    8,
-                    1
-                  ]
-                },
-                "up": {
-                  "uv": [
-                    1,
-                    7
-                  ],
-                  "uv_size": [
-                    8,
-                    1
-                  ]
-                },
-                "down": {
-                  "uv": [
-                    9,
-                    8
-                  ],
-                  "uv_size": [
-                    8,
-                    -1
-                  ]
-                }
-              },
-              "modelpart_mirror": true
-            }
-          ]
-        },
-        {
-          "name": "Shape2__fan3",
-          "pivot": [
-            0,
-            24,
-            0
-          ],
-          "rotation": [
-            0,
-            0,
-            -180.000005009
-          ]
-        },
-        {
-          "name": "Shape2__i3",
-          "parent": "Shape2__fan3",
-          "pivot": [
-            0,
-            24,
-            0
-          ],
-          "cubes": [
-            {
-              "origin": [
-                -4,
-                23.5,
-                -0.5
-              ],
-              "size": [
-                8,
-                1,
-                1
-              ],
-              "uv": {
-                "west": {
-                  "uv": [
-                    9,
-                    8
-                  ],
-                  "uv_size": [
-                    1,
-                    1
-                  ]
-                },
-                "east": {
-                  "uv": [
-                    0,
-                    8
-                  ],
-                  "uv_size": [
-                    1,
-                    1
-                  ]
-                },
-                "north": {
-                  "uv": [
-                    1,
-                    8
-                  ],
-                  "uv_size": [
-                    8,
-                    1
-                  ]
-                },
-                "south": {
-                  "uv": [
-                    10,
-                    8
-                  ],
-                  "uv_size": [
-                    8,
-                    1
-                  ]
-                },
-                "up": {
-                  "uv": [
-                    1,
-                    7
-                  ],
-                  "uv_size": [
-                    8,
-                    1
-                  ]
-                },
-                "down": {
-                  "uv": [
-                    9,
-                    8
-                  ],
-                  "uv_size": [
-                    8,
-                    -1
-                  ]
-                }
-              },
-              "modelpart_mirror": true
-            }
-          ]
-        },
-        {
-          "name": "Shape2__fan4",
-          "pivot": [
-            0,
-            24,
-            0
-          ],
-          "rotation": [
-            0,
-            0,
-            -240.0000066786
-          ]
-        },
-        {
-          "name": "Shape2__i4",
-          "parent": "Shape2__fan4",
-          "pivot": [
-            0,
-            24,
-            0
-          ],
-          "cubes": [
-            {
-              "origin": [
-                -4,
-                23.5,
-                -0.5
-              ],
-              "size": [
-                8,
-                1,
-                1
-              ],
-              "uv": {
-                "west": {
-                  "uv": [
-                    9,
-                    8
-                  ],
-                  "uv_size": [
-                    1,
-                    1
-                  ]
-                },
-                "east": {
-                  "uv": [
-                    0,
-                    8
-                  ],
-                  "uv_size": [
-                    1,
-                    1
-                  ]
-                },
-                "north": {
-                  "uv": [
-                    1,
-                    8
-                  ],
-                  "uv_size": [
-                    8,
-                    1
-                  ]
-                },
-                "south": {
-                  "uv": [
-                    10,
-                    8
-                  ],
-                  "uv_size": [
-                    8,
-                    1
-                  ]
-                },
-                "up": {
-                  "uv": [
-                    1,
-                    7
-                  ],
-                  "uv_size": [
-                    8,
-                    1
-                  ]
-                },
-                "down": {
-                  "uv": [
-                    9,
-                    8
-                  ],
-                  "uv_size": [
-                    8,
-                    -1
-                  ]
-                }
-              },
-              "modelpart_mirror": true
-            }
-          ]
-        },
-        {
-          "name": "Shape2__fan5",
-          "pivot": [
-            0,
-            24,
-            0
-          ],
-          "rotation": [
-            0,
-            0,
-            -299.9999946879
-          ]
-        },
-        {
-          "name": "Shape2__i5",
-          "parent": "Shape2__fan5",
-          "pivot": [
-            0,
-            24,
-            0
-          ],
-          "cubes": [
-            {
-              "origin": [
-                -4,
-                23.5,
-                -0.5
-              ],
-              "size": [
-                8,
-                1,
-                1
-              ],
-              "uv": {
-                "west": {
-                  "uv": [
-                    9,
-                    8
-                  ],
-                  "uv_size": [
-                    1,
-                    1
-                  ]
-                },
-                "east": {
-                  "uv": [
-                    0,
-                    8
-                  ],
-                  "uv_size": [
-                    1,
-                    1
-                  ]
-                },
-                "north": {
-                  "uv": [
-                    1,
-                    8
-                  ],
-                  "uv_size": [
-                    8,
-                    1
-                  ]
-                },
-                "south": {
-                  "uv": [
-                    10,
-                    8
-                  ],
-                  "uv_size": [
-                    8,
-                    1
-                  ]
-                },
-                "up": {
-                  "uv": [
-                    1,
-                    7
-                  ],
-                  "uv_size": [
-                    8,
-                    1
-                  ]
-                },
-                "down": {
-                  "uv": [
-                    9,
-                    8
-                  ],
-                  "uv_size": [
-                    8,
-                    -1
-                  ]
-                }
-              },
-              "modelpart_mirror": true
-            }
-          ]
-        },
-        {
-          "name": "Shape3__fan0",
-          "pivot": [
-            0,
-            24,
-            0
-          ]
-        },
-        {
-          "name": "Shape3__i0",
-          "parent": "Shape3__fan0",
-          "pivot": [
-            0,
-            24,
-            0
-          ],
-          "cubes": [
-            {
-              "origin": [
-                -7,
-                23.5,
-                -0.5
-              ],
-              "size": [
-                14,
-                1,
-                1
-              ],
-              "uv": {
-                "west": {
-                  "uv": [
-                    15,
-                    1
-                  ],
-                  "uv_size": [
-                    1,
-                    1
-                  ]
-                },
-                "east": {
-                  "uv": [
-                    0,
-                    1
-                  ],
-                  "uv_size": [
-                    1,
-                    1
-                  ]
-                },
-                "north": {
-                  "uv": [
-                    1,
-                    1
-                  ],
-                  "uv_size": [
-                    14,
-                    1
-                  ]
-                },
-                "south": {
-                  "uv": [
-                    16,
-                    1
-                  ],
-                  "uv_size": [
-                    14,
-                    1
-                  ]
-                },
-                "up": {
-                  "uv": [
-                    1,
-                    0
-                  ],
-                  "uv_size": [
-                    14,
-                    1
-                  ]
-                },
-                "down": {
-                  "uv": [
-                    15,
-                    1
-                  ],
-                  "uv_size": [
-                    14,
-                    -1
-                  ]
-                }
-              },
-              "modelpart_mirror": true
-            }
-          ]
-        },
-        {
-          "name": "Shape3__fan1",
+          "parent": "Shape2__fan",
           "pivot": [
             0,
             24,
@@ -1329,33 +892,24 @@
             0,
             0,
             -60.0000016697
-          ]
-        },
-        {
-          "name": "Shape3__i1",
-          "parent": "Shape3__fan1",
-          "pivot": [
-            0,
-            24,
-            0
           ],
           "cubes": [
             {
               "origin": [
-                -7,
+                -4,
                 23.5,
                 -0.5
               ],
               "size": [
-                14,
+                8,
                 1,
                 1
               ],
               "uv": {
                 "west": {
                   "uv": [
-                    15,
-                    1
+                    9,
+                    8
                   ],
                   "uv_size": [
                     1,
@@ -1365,7 +919,7 @@
                 "east": {
                   "uv": [
                     0,
-                    1
+                    8
                   ],
                   "uv_size": [
                     1,
@@ -1375,40 +929,40 @@
                 "north": {
                   "uv": [
                     1,
-                    1
+                    8
                   ],
                   "uv_size": [
-                    14,
+                    8,
                     1
                   ]
                 },
                 "south": {
                   "uv": [
-                    16,
-                    1
+                    10,
+                    8
                   ],
                   "uv_size": [
-                    14,
+                    8,
                     1
                   ]
                 },
                 "up": {
                   "uv": [
                     1,
-                    0
+                    7
                   ],
                   "uv_size": [
-                    14,
+                    8,
                     1
                   ]
                 },
                 "down": {
                   "uv": [
-                    15,
-                    1
+                    9,
+                    8
                   ],
                   "uv_size": [
-                    14,
+                    8,
                     -1
                   ]
                 }
@@ -1418,7 +972,8 @@
           ]
         },
         {
-          "name": "Shape3__fan2",
+          "name": "Shape2__i2",
+          "parent": "Shape2__fan",
           "pivot": [
             0,
             24,
@@ -1428,33 +983,24 @@
             0,
             0,
             -120.0000033393
-          ]
-        },
-        {
-          "name": "Shape3__i2",
-          "parent": "Shape3__fan2",
-          "pivot": [
-            0,
-            24,
-            0
           ],
           "cubes": [
             {
               "origin": [
-                -7,
+                -4,
                 23.5,
                 -0.5
               ],
               "size": [
-                14,
+                8,
                 1,
                 1
               ],
               "uv": {
                 "west": {
                   "uv": [
-                    15,
-                    1
+                    9,
+                    8
                   ],
                   "uv_size": [
                     1,
@@ -1464,7 +1010,7 @@
                 "east": {
                   "uv": [
                     0,
-                    1
+                    8
                   ],
                   "uv_size": [
                     1,
@@ -1474,40 +1020,40 @@
                 "north": {
                   "uv": [
                     1,
-                    1
+                    8
                   ],
                   "uv_size": [
-                    14,
+                    8,
                     1
                   ]
                 },
                 "south": {
                   "uv": [
-                    16,
-                    1
+                    10,
+                    8
                   ],
                   "uv_size": [
-                    14,
+                    8,
                     1
                   ]
                 },
                 "up": {
                   "uv": [
                     1,
-                    0
+                    7
                   ],
                   "uv_size": [
-                    14,
+                    8,
                     1
                   ]
                 },
                 "down": {
                   "uv": [
-                    15,
-                    1
+                    9,
+                    8
                   ],
                   "uv_size": [
-                    14,
+                    8,
                     -1
                   ]
                 }
@@ -1517,7 +1063,8 @@
           ]
         },
         {
-          "name": "Shape3__fan3",
+          "name": "Shape2__i3",
+          "parent": "Shape2__fan",
           "pivot": [
             0,
             24,
@@ -1527,33 +1074,24 @@
             0,
             0,
             -180.000005009
-          ]
-        },
-        {
-          "name": "Shape3__i3",
-          "parent": "Shape3__fan3",
-          "pivot": [
-            0,
-            24,
-            0
           ],
           "cubes": [
             {
               "origin": [
-                -7,
+                -4,
                 23.5,
                 -0.5
               ],
               "size": [
-                14,
+                8,
                 1,
                 1
               ],
               "uv": {
                 "west": {
                   "uv": [
-                    15,
-                    1
+                    9,
+                    8
                   ],
                   "uv_size": [
                     1,
@@ -1563,7 +1101,7 @@
                 "east": {
                   "uv": [
                     0,
-                    1
+                    8
                   ],
                   "uv_size": [
                     1,
@@ -1573,40 +1111,40 @@
                 "north": {
                   "uv": [
                     1,
-                    1
+                    8
                   ],
                   "uv_size": [
-                    14,
+                    8,
                     1
                   ]
                 },
                 "south": {
                   "uv": [
-                    16,
-                    1
+                    10,
+                    8
                   ],
                   "uv_size": [
-                    14,
+                    8,
                     1
                   ]
                 },
                 "up": {
                   "uv": [
                     1,
-                    0
+                    7
                   ],
                   "uv_size": [
-                    14,
+                    8,
                     1
                   ]
                 },
                 "down": {
                   "uv": [
-                    15,
-                    1
+                    9,
+                    8
                   ],
                   "uv_size": [
-                    14,
+                    8,
                     -1
                   ]
                 }
@@ -1616,7 +1154,8 @@
           ]
         },
         {
-          "name": "Shape3__fan4",
+          "name": "Shape2__i4",
+          "parent": "Shape2__fan",
           "pivot": [
             0,
             24,
@@ -1626,11 +1165,223 @@
             0,
             0,
             -240.0000066786
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -4,
+                23.5,
+                -0.5
+              ],
+              "size": [
+                8,
+                1,
+                1
+              ],
+              "uv": {
+                "west": {
+                  "uv": [
+                    9,
+                    8
+                  ],
+                  "uv_size": [
+                    1,
+                    1
+                  ]
+                },
+                "east": {
+                  "uv": [
+                    0,
+                    8
+                  ],
+                  "uv_size": [
+                    1,
+                    1
+                  ]
+                },
+                "north": {
+                  "uv": [
+                    1,
+                    8
+                  ],
+                  "uv_size": [
+                    8,
+                    1
+                  ]
+                },
+                "south": {
+                  "uv": [
+                    10,
+                    8
+                  ],
+                  "uv_size": [
+                    8,
+                    1
+                  ]
+                },
+                "up": {
+                  "uv": [
+                    1,
+                    7
+                  ],
+                  "uv_size": [
+                    8,
+                    1
+                  ]
+                },
+                "down": {
+                  "uv": [
+                    9,
+                    8
+                  ],
+                  "uv_size": [
+                    8,
+                    -1
+                  ]
+                }
+              },
+              "modelpart_mirror": true
+            }
           ]
         },
         {
-          "name": "Shape3__i4",
-          "parent": "Shape3__fan4",
+          "name": "Shape2__i5",
+          "parent": "Shape2__fan",
+          "pivot": [
+            0,
+            24,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            -299.9999946879
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -4,
+                23.5,
+                -0.5
+              ],
+              "size": [
+                8,
+                1,
+                1
+              ],
+              "uv": {
+                "west": {
+                  "uv": [
+                    9,
+                    8
+                  ],
+                  "uv_size": [
+                    1,
+                    1
+                  ]
+                },
+                "east": {
+                  "uv": [
+                    0,
+                    8
+                  ],
+                  "uv_size": [
+                    1,
+                    1
+                  ]
+                },
+                "north": {
+                  "uv": [
+                    1,
+                    8
+                  ],
+                  "uv_size": [
+                    8,
+                    1
+                  ]
+                },
+                "south": {
+                  "uv": [
+                    10,
+                    8
+                  ],
+                  "uv_size": [
+                    8,
+                    1
+                  ]
+                },
+                "up": {
+                  "uv": [
+                    1,
+                    7
+                  ],
+                  "uv_size": [
+                    8,
+                    1
+                  ]
+                },
+                "down": {
+                  "uv": [
+                    9,
+                    8
+                  ],
+                  "uv_size": [
+                    8,
+                    -1
+                  ]
+                }
+              },
+              "modelpart_mirror": true
+            }
+          ]
+        },
+        {
+          "name": "Shape3__carry_x1",
+          "pivot": [
+            0,
+            24,
+            0
+          ]
+        },
+        {
+          "name": "Shape3__carry_x2",
+          "pivot": [
+            0,
+            24,
+            0
+          ],
+          "parent": "Shape3__carry_x1"
+        },
+        {
+          "name": "Shape3__carry_y1",
+          "pivot": [
+            0,
+            24,
+            0
+          ],
+          "parent": "Shape3__carry_x2"
+        },
+        {
+          "name": "Shape3__carry_y2",
+          "pivot": [
+            0,
+            24,
+            0
+          ],
+          "parent": "Shape3__carry_y1"
+        },
+        {
+          "name": "Shape3__fan",
+          "pivot": [
+            0,
+            24,
+            0
+          ],
+          "parent": "Shape3__carry_y2"
+        },
+        {
+          "name": "Shape3__i0",
+          "parent": "Shape3__fan",
           "pivot": [
             0,
             24,
@@ -1715,7 +1466,372 @@
           ]
         },
         {
-          "name": "Shape3__fan5",
+          "name": "Shape3__i1",
+          "parent": "Shape3__fan",
+          "pivot": [
+            0,
+            24,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            -60.0000016697
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -7,
+                23.5,
+                -0.5
+              ],
+              "size": [
+                14,
+                1,
+                1
+              ],
+              "uv": {
+                "west": {
+                  "uv": [
+                    15,
+                    1
+                  ],
+                  "uv_size": [
+                    1,
+                    1
+                  ]
+                },
+                "east": {
+                  "uv": [
+                    0,
+                    1
+                  ],
+                  "uv_size": [
+                    1,
+                    1
+                  ]
+                },
+                "north": {
+                  "uv": [
+                    1,
+                    1
+                  ],
+                  "uv_size": [
+                    14,
+                    1
+                  ]
+                },
+                "south": {
+                  "uv": [
+                    16,
+                    1
+                  ],
+                  "uv_size": [
+                    14,
+                    1
+                  ]
+                },
+                "up": {
+                  "uv": [
+                    1,
+                    0
+                  ],
+                  "uv_size": [
+                    14,
+                    1
+                  ]
+                },
+                "down": {
+                  "uv": [
+                    15,
+                    1
+                  ],
+                  "uv_size": [
+                    14,
+                    -1
+                  ]
+                }
+              },
+              "modelpart_mirror": true
+            }
+          ]
+        },
+        {
+          "name": "Shape3__i2",
+          "parent": "Shape3__fan",
+          "pivot": [
+            0,
+            24,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            -120.0000033393
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -7,
+                23.5,
+                -0.5
+              ],
+              "size": [
+                14,
+                1,
+                1
+              ],
+              "uv": {
+                "west": {
+                  "uv": [
+                    15,
+                    1
+                  ],
+                  "uv_size": [
+                    1,
+                    1
+                  ]
+                },
+                "east": {
+                  "uv": [
+                    0,
+                    1
+                  ],
+                  "uv_size": [
+                    1,
+                    1
+                  ]
+                },
+                "north": {
+                  "uv": [
+                    1,
+                    1
+                  ],
+                  "uv_size": [
+                    14,
+                    1
+                  ]
+                },
+                "south": {
+                  "uv": [
+                    16,
+                    1
+                  ],
+                  "uv_size": [
+                    14,
+                    1
+                  ]
+                },
+                "up": {
+                  "uv": [
+                    1,
+                    0
+                  ],
+                  "uv_size": [
+                    14,
+                    1
+                  ]
+                },
+                "down": {
+                  "uv": [
+                    15,
+                    1
+                  ],
+                  "uv_size": [
+                    14,
+                    -1
+                  ]
+                }
+              },
+              "modelpart_mirror": true
+            }
+          ]
+        },
+        {
+          "name": "Shape3__i3",
+          "parent": "Shape3__fan",
+          "pivot": [
+            0,
+            24,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            -180.000005009
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -7,
+                23.5,
+                -0.5
+              ],
+              "size": [
+                14,
+                1,
+                1
+              ],
+              "uv": {
+                "west": {
+                  "uv": [
+                    15,
+                    1
+                  ],
+                  "uv_size": [
+                    1,
+                    1
+                  ]
+                },
+                "east": {
+                  "uv": [
+                    0,
+                    1
+                  ],
+                  "uv_size": [
+                    1,
+                    1
+                  ]
+                },
+                "north": {
+                  "uv": [
+                    1,
+                    1
+                  ],
+                  "uv_size": [
+                    14,
+                    1
+                  ]
+                },
+                "south": {
+                  "uv": [
+                    16,
+                    1
+                  ],
+                  "uv_size": [
+                    14,
+                    1
+                  ]
+                },
+                "up": {
+                  "uv": [
+                    1,
+                    0
+                  ],
+                  "uv_size": [
+                    14,
+                    1
+                  ]
+                },
+                "down": {
+                  "uv": [
+                    15,
+                    1
+                  ],
+                  "uv_size": [
+                    14,
+                    -1
+                  ]
+                }
+              },
+              "modelpart_mirror": true
+            }
+          ]
+        },
+        {
+          "name": "Shape3__i4",
+          "parent": "Shape3__fan",
+          "pivot": [
+            0,
+            24,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            -240.0000066786
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -7,
+                23.5,
+                -0.5
+              ],
+              "size": [
+                14,
+                1,
+                1
+              ],
+              "uv": {
+                "west": {
+                  "uv": [
+                    15,
+                    1
+                  ],
+                  "uv_size": [
+                    1,
+                    1
+                  ]
+                },
+                "east": {
+                  "uv": [
+                    0,
+                    1
+                  ],
+                  "uv_size": [
+                    1,
+                    1
+                  ]
+                },
+                "north": {
+                  "uv": [
+                    1,
+                    1
+                  ],
+                  "uv_size": [
+                    14,
+                    1
+                  ]
+                },
+                "south": {
+                  "uv": [
+                    16,
+                    1
+                  ],
+                  "uv_size": [
+                    14,
+                    1
+                  ]
+                },
+                "up": {
+                  "uv": [
+                    1,
+                    0
+                  ],
+                  "uv_size": [
+                    14,
+                    1
+                  ]
+                },
+                "down": {
+                  "uv": [
+                    15,
+                    1
+                  ],
+                  "uv_size": [
+                    14,
+                    -1
+                  ]
+                }
+              },
+              "modelpart_mirror": true
+            }
+          ]
+        },
+        {
+          "name": "Shape3__i5",
+          "parent": "Shape3__fan",
           "pivot": [
             0,
             24,
@@ -1725,15 +1841,6 @@
             0,
             0,
             -299.9999946879
-          ]
-        },
-        {
-          "name": "Shape3__i5",
-          "parent": "Shape3__fan5",
-          "pivot": [
-            0,
-            24,
-            0
           ],
           "cubes": [
             {

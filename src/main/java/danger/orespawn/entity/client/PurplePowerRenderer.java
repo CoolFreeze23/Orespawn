@@ -3,6 +3,7 @@ package danger.orespawn.entity.client;
 import danger.orespawn.OreSpawnMod;
 import danger.orespawn.entity.PurplePower;
 import net.minecraft.client.model.geom.ModelLayerLocation;
+import net.minecraft.core.BlockPos;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.resources.ResourceLocation;
@@ -19,6 +20,10 @@ import net.minecraft.resources.ResourceLocation;
  * (:46) - so vanilla RendererLivingEntity's empty preRenderCallback ran and every
  * purple type drew at world scale 1.0. The former render() override here that
  * shrank types != 0 to 0.55 transcribed that dead body and is removed.
+ * <p>
+ * ENT-S-146 (2026-09-06): the orb draws translucent and fullbright as in 1.7.10. The blend state
+ * and the colour are the model's ({@link ModelPurplePower}), the light is the renderer's
+ * ({@link #getBlockLightLevel} / {@link #getSkyLightLevel} below).
  */
 public class PurplePowerRenderer extends MobRenderer<PurplePower, ModelPurplePower> {
     private static final ResourceLocation TEXTURE =
@@ -62,5 +67,30 @@ public class PurplePowerRenderer extends MobRenderer<PurplePower, ModelPurplePow
             case 10 -> TEXTURE_10;
             default -> TEXTURE;
         };
+    }
+
+    /**
+     * ENT-S-146, orig ModelPurplePower.java:56 {@code OpenGlHelper.setLightmapTextureCoords(lightmapTexUnit, 240, 240)}:
+     * the fullbright lightmap texel. In 1.21.1 the light is the renderer's, not the model's: the
+     * dispatcher asks {@code EntityRenderer.getPackedLightCoords} (bytecode 0-24: {@code LightTexture
+     * .pack(getBlockLightLevel(entity, pos), getSkyLightLevel(entity, pos))}) and hands the result to
+     * {@code render}, which {@code LivingEntityRenderer.render} passes to {@code renderToBuffer} (606-621).
+     * Both levels at {@link ModelPurplePower#LIGHT_LEVEL} pack to {@code 15 << 4 | 15 << 20} = 15728880 =
+     * {@code LightTexture.FULL_BRIGHT}, whose lightmap texel is (240, 240) - orig's exact coordinates.
+     * The {@code MagmaCubeRenderer} idiom ({@code getBlockLightLevel} returning 15, bytecode 0-2); the
+     * GeckoLib candidate answers the same through its descriptor's {@code fullBright} hook. The render
+     * type and the colour live in the model (orig :53-55; {@link ModelPurplePower#RENDER_TYPE},
+     * {@link ModelPurplePower#COLOR}): vanilla {@code getRenderType}'s visible-body branch (17-30)
+     * returns the model's function, so no override is needed here.
+     */
+    @Override
+    protected int getBlockLightLevel(PurplePower entity, BlockPos pos) {
+        return ModelPurplePower.LIGHT_LEVEL;
+    }
+
+    /** See {@link #getBlockLightLevel}: orig :56's second 240. */
+    @Override
+    protected int getSkyLightLevel(PurplePower entity, BlockPos pos) {
+        return ModelPurplePower.LIGHT_LEVEL;
     }
 }
