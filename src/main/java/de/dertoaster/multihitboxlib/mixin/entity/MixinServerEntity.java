@@ -14,6 +14,7 @@ import de.dertoaster.multihitboxlib.api.IMultipartEntity;
 import de.dertoaster.multihitboxlib.entity.MHLibPartEntity;
 import de.dertoaster.multihitboxlib.entity.hitbox.HitboxProfile;
 import de.dertoaster.multihitboxlib.network.server.SPacketUpdateMultipart;
+import de.dertoaster.multihitboxlib.util.MHLibCounters;
 import net.minecraft.server.level.ServerEntity;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
@@ -108,15 +109,31 @@ public abstract class MixinServerEntity {
 				this.mhlib$unchangedDataTicks++;
 				// Linger: re-broadcast the stored payload; bit-identical to
 				// what compileList would produce this tick (verified above).
-				PacketDistributor.sendToPlayersTrackingEntity(this.entity,
-						new SPacketUpdateMultipart(this.entity.getId(), this.entity, lastSent));
+				final SPacketUpdateMultipart resend = new SPacketUpdateMultipart(this.entity.getId(), this.entity, lastSent);
+				this.mhlib$countUpdateBroadcast(resend);
+				PacketDistributor.sendToPlayersTrackingEntity(this.entity, resend);
 				return;
 			}
 			this.mhlib$unchangedDataTicks = 0;
 			SPacketUpdateMultipart updatePacket = new SPacketUpdateMultipart(this.entity);
 			this.mhlib$lastSentPartData = updatePacket.data();
 			//MHLibPackets.MHLIB_NETWORK.send(PacketDistributor.TRACKING_ENTITY.with(() -> this.entity), updatePacket);
+			this.mhlib$countUpdateBroadcast(updatePacket);
 			PacketDistributor.sendToPlayersTrackingEntity(this.entity, updatePacket);
+		}
+	}
+
+	/**
+	 * Slice (d) (2026-09-06): net.s2c_update_packets / net.s2c_update_bytes for one broadcast call
+	 * (either send site above) -- one count per call, whatever the tracker count, and the bytes the
+	 * payload encodes to on the play channel (SPacketUpdateMultipart.encodedLength). Guarded by the
+	 * server-side enable (the constant, or the game tests' seam).
+	 */
+	@Unique
+	private void mhlib$countUpdateBroadcast(final SPacketUpdateMultipart payload) {
+		if (MHLibCounters.serverEnabled()) {
+			MHLibCounters.NET_S2C_UPDATE_PACKETS.increment();
+			MHLibCounters.NET_S2C_UPDATE_BYTES.add(payload.encodedLength(this.entity.registryAccess()));
 		}
 	}
 

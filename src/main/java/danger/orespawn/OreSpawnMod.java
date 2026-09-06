@@ -84,6 +84,9 @@ public class OreSpawnMod {
         // load() calls in preInit. NeoForge handles file watching and reload
         // events for us.
         modContainer.registerConfig(ModConfig.Type.COMMON, OreSpawnConfig.SPEC);
+        // Phase G slice (d) (2026-09-06): the spawn-100 benchmark harness's server half, wired only
+        // under -Dorespawn.dev.bench=true (the /orespawn bench command and the run sampler).
+        danger.orespawn.bench.BenchHarness.init();
     }
 
     /**

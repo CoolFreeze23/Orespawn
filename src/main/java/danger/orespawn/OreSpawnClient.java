@@ -32,6 +32,17 @@ public class OreSpawnClient {
     @EventBusSubscriber(modid = OreSpawnMod.MOD_ID, bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
     public static class ClientEvents {
 
+        /**
+         * Phase G slice (d) (2026-09-06): the benchmark harness's client half (the frame timer and
+         * the client-side samplers), installed only under -Dorespawn.dev.bench=true.
+         */
+        @SubscribeEvent
+        public static void clientSetup(net.neoforged.fml.event.lifecycle.FMLClientSetupEvent event) {
+            if (danger.orespawn.bench.BenchCommand.enabled()) {
+                danger.orespawn.client.bench.BenchClientSampler.install();
+            }
+        }
+
         @SubscribeEvent
         public static void registerRenderers(EntityRenderersEvent.RegisterRenderers event) {
             // Monster (hostile)

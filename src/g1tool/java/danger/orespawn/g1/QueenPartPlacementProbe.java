@@ -10,12 +10,15 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import de.dertoaster.multihitboxlib.api.IMHLibExtendedRenderLayer;
 import de.dertoaster.multihitboxlib.client.geckolib.renderlayer.GeckolibBoneInformationCollectorLayer;
+import de.dertoaster.multihitboxlib.mixin.geckolib.MixinGeoRenderer;
 import de.dertoaster.multihitboxlib.util.RenderTickGate;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -40,6 +43,7 @@ import software.bernie.geckolib.loading.object.BakedModelFactory;
 import software.bernie.geckolib.loading.object.GeometryTree;
 import software.bernie.geckolib.model.GeoModel;
 import software.bernie.geckolib.renderer.GeoRenderer;
+import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
 import software.bernie.geckolib.util.RenderUtil;
 
 /**
@@ -142,9 +146,14 @@ public final class QueenPartPlacementProbe {
     }
 
     public static void main(String[] args) throws Exception {
+        if (args.length > 0 && BENCH_FLAG.equals(args[0])) {
+            runBench(args);
+            return;
+        }
         if (args.length < 2) {
             throw new IllegalArgumentException(
-                    "Usage: QueenPartPlacementProbe <the_queen.geo.json> <the_queen.json> [report.json]");
+                    "Usage: QueenPartPlacementProbe <the_queen.geo.json> <the_queen.json> [report.json]\n"
+                            + "   or: QueenPartPlacementProbe " + BENCH_FLAG + " <runs> <the_queen.geo.json> <the_queen.json> <beaver.geo.json> <outDir>");
         }
         Path geoPath = Path.of(args[0]).toAbsolutePath().normalize();
         Path profilePath = Path.of(args[1]).toAbsolutePath().normalize();
@@ -683,6 +692,381 @@ public final class QueenPartPlacementProbe {
         layer.onRenderRecursivelyEnd();                                         // @TAIL renderRecursively
     }
 
+    // ------------------------------------------------------------------ the headless collector benchmark (Phase G slice (d))
+
+    private static final String BENCH_FLAG = "--bench";
+    /** Walks per measured run (morehitboxes_evaluation.md Section 5: "the same nanoTime/allocated-bytes probe over 1,000 walks"). */
+    private static final int BENCH_WALKS = 1000;
+    /** Fewest unmeasured runs before the measured ones (JIT warm-up); see {@link #BENCH_WARMUP_SETTLE}. */
+    private static final int BENCH_WARMUP_MIN_RUNS = 20;
+    /** Most unmeasured runs, whatever the settling says. */
+    private static final int BENCH_WARMUP_MAX_RUNS = 60;
+    /**
+     * Warm-up ends (after the minimum) when {@value #BENCH_WARMUP_SETTLED_RUNS} consecutive runs each
+     * stayed within this fraction of the median of the three runs before them -- a plateau, i.e. the
+     * per-run ns has stopped falling (the JIT has landed). A plateau, not "no new minimum": one early
+     * fast run (an OSR burst) would otherwise count every later, slower run as settled. Refuter B
+     * measured the inactive tax falling 837 -> 113 ns across the MEASURED runs with the former fixed
+     * three-run warm-up; every warm-up run's value is reported so the reader can see the fall.
+     */
+    private static final double BENCH_WARMUP_SETTLE = 0.10D;
+    private static final int BENCH_WARMUP_SETTLED_RUNS = 3;
+    /** The steady-state figure: the median of the last this-many measured runs. */
+    private static final int BENCH_LAST_RUNS = 5;
+    private static volatile double benchSink;
+    /**
+     * Where the collecting walk stores every per-bone result so that it ESCAPES as in-game, where
+     * {@code tryAddBoneInformation} / {@code applyInformation} retain the vectors. Without this the
+     * walk read one field of each and dropped it, and after a long enough warm-up C2's escape
+     * analysis eliminated the 110 world-position {@code Vec3}s and the 20 scale / rotation
+     * {@code Vec3}s of the yaw-0 walk: 16,904 -> 11,704 B/walk in one invocation (fix lane,
+     * 2026-09-06) -- the probe's own artefact, not the collector's cost. A store into a static array
+     * makes the object reachable, which is what the in-game path does.
+     */
+    private static final Object[] BENCH_ESCAPE = new Object[3];
+
+    /**
+     * Phase G slice (d) (2026-09-06): {@code --bench <runs> <the_queen.geo.json> <the_queen.json>
+     * <beaver.geo.json> <outDir>} -- the headless companion of the live counters
+     * {@code client.collector_ns} / {@code client.collector_alloc_bytes}. The real vendored
+     * {@link GeckolibBoneInformationCollectorLayer} is driven over the baked rigs with no GeckoLib
+     * render behind it, so what is timed is the collector alone. The HEAD/TAIL hooks reach the
+     * layer through the REAL {@code MixinGeoRenderer._mhlib_callLayers} loop (the interface's
+     * default method, which {@link BenchGeoRenderer} implements as written: {@code getRenderLayers()},
+     * the iterator, the {@code instanceof}, the {@code Consumer}) -- the way the mixin's
+     * {@code renderRecursively} HEAD/TAIL injections deliver them in-game (refuter B):
+     * <ul>
+     *   <li>{@code queen_collect_yawpi} (the baseline row): one walk = the layer's {@code onPreRender},
+     *       then for every bone of the Queen rig the HEAD hook, what {@code onRenderBone} does for a
+     *       collecting profile ({@code getBoneWorldPosition} -- three {@code GeoBone.getWorldPosition()}
+     *       reads and one {@code Vec3} -- {@code calcScales}, {@code calcRotations}, and for the ten
+     *       synched bones {@code getScaleVector} and {@code getRotationVector}), the children, the
+     *       TAIL hook; then the post hook's {@code setScales(1,1,1)} / {@code setRotations(0,0,0)} and
+     *       {@code onPostRender}. The layer's private {@code bodyYawRotationTerm} -- what
+     *       {@code renderForBone} sets per bone from the rendered entity's body yaw -- is set once
+     *       (reflection) to {@code bodyYawRotationTerm(180)} = -pi, a Queen facing the camera as the
+     *       scenes spawn them, so {@code getRotationVector}'s {@code foldBodyYaw} builds its matrices
+     *       as in-game: seven 3x3 {@code double[][]} per synched bone. NOT included, both needing a
+     *       live entity: {@code tryAddBoneInformation}, and the trust-client apply per synched bone
+     *       ({@code getPartByName} + {@code MHLibPartEntity.applyInformation}, common logic :132-137;
+     *       {@code the_queen.json} is trust-client: true) -- the companion measures the collector's
+     *       walk and fold only. Nor GeckoLib's own matrix chain (the rest pose is walked as baked).</li>
+     *   <li>{@code queen_collect_yaw0}: the same walk with the term at 0 -- {@code foldBodyYaw}'s
+     *       early-out returns the input, no matrices -- the first lane's baseline, kept for comparison.</li>
+     *   <li>{@code beaver_tax_inactive}: a FLOOR of the hook tax. The Beaver rig through a layer whose
+     *       {@code isBoneCollectionActive()} is a constant false: the real chain (layer :58-66 --
+     *       {@code renderer instanceof GeoReplacedEntityRenderer}, {@code getCurrentEntity()},
+     *       {@code shouldCollectModelBones(entity)}: {@code isMultipartEntity}, {@code instanceof
+     *       IMultipartEntity}, {@code getHitboxProfile()}) needs a client renderer and a live entity.
+     *       The HEAD/TAIL hooks run through the real loop and return after their counter guard and
+     *       the {@code isBoneCollectionActive()} call; {@code onRenderBone} returns at its multipart
+     *       check, which the walk mirrors by calling nothing. Scene E's headless counterpart; the
+     *       classic renderer's collector cost is zero by construction.</li>
+     *   <li>{@code beaver_tax_active}: the same rig through the default layer (collection active):
+     *       the push/pop per bone with its two {@code Vector3d} copies and the {@code Tuple} -- the
+     *       upper bound a GeoEntity-path non-multipart entity would pay.</li>
+     * </ul>
+     * Warm-up: at least {@value #BENCH_WARMUP_MIN_RUNS} unmeasured runs and then until the per-run
+     * ns has settled ({@link #BENCH_WARMUP_SETTLE}), at most {@value #BENCH_WARMUP_MAX_RUNS}; every
+     * warm-up run's value is reported. Then {@code runs} measured runs of {@value #BENCH_WALKS} walks
+     * each; every run's value, the median run, and the median of the last {@value #BENCH_LAST_RUNS}
+     * runs (the steady state) are reported per walk, the medians per bone too. Time is
+     * {@code System.nanoTime()}, bytes the calling thread's
+     * {@code ThreadMXBean.getCurrentThreadAllocatedBytes()} (the live counter's source,
+     * {@code MHLibCollectorProbe}). Writes {@code collector_bench.json} into {@code outDir}.
+     */
+    private static void runBench(String[] args) throws Exception {
+        if (args.length < 6) {
+            throw new IllegalArgumentException("Usage: QueenPartPlacementProbe " + BENCH_FLAG
+                    + " <runs> <the_queen.geo.json> <the_queen.json> <beaver.geo.json> <outDir>");
+        }
+        int runs = Integer.parseInt(args[1]);
+        if (runs < 1) {
+            throw new IllegalArgumentException("runs must be >= 1");
+        }
+        Path queenGeo = Path.of(args[2]).toAbsolutePath().normalize();
+        Path queenProfile = Path.of(args[3]).toAbsolutePath().normalize();
+        Path beaverGeo = Path.of(args[4]).toAbsolutePath().normalize();
+        Path outDir = Path.of(args[5]).toAbsolutePath().normalize();
+
+        BakedGeoModel queen = bake(queenGeo);
+        BakedGeoModel beaver = bake(beaverGeo);
+        Profile profile = Profile.read(queenProfile);
+        for (String synced : profile.syncedBones) {
+            if (queen.getBone(synced).isEmpty()) {
+                throw new IllegalStateException("synched bone " + synced + " is not in the geo");
+            }
+        }
+
+        JsonObject report = new JsonObject();
+        report.addProperty("probe", "QueenPartPlacementProbe " + BENCH_FLAG + " (Phase G slice (d), 2026-09-06)");
+        report.addProperty("walks_per_run", BENCH_WALKS);
+        report.addProperty("runs", runs);
+        report.addProperty("warmup", "at least " + BENCH_WARMUP_MIN_RUNS + " runs, then until " + BENCH_WARMUP_SETTLED_RUNS + " consecutive runs stay within "
+                + (int) (BENCH_WARMUP_SETTLE * 100) + " % of the fastest so far, at most " + BENCH_WARMUP_MAX_RUNS + " (per rig: warmup_runs_used)");
+        report.addProperty("jdk", System.getProperty("java.version") + " (" + System.getProperty("java.vm.name") + ", " + System.getProperty("java.vendor") + ")");
+        report.addProperty("allocation_probe_supported", de.dertoaster.multihitboxlib.util.MHLibCollectorProbe.allocationSupported());
+        Path repositoryRoot = danger.orespawn.bench.BenchGit.repositoryRoot();
+        report.addProperty("git_head", danger.orespawn.bench.BenchGit.head(repositoryRoot));
+        report.addProperty("working_tree", danger.orespawn.bench.BenchGit.workingTree(repositoryRoot));
+        report.addProperty("queen_geo", queenGeo.toString().replace('\\', '/'));
+        report.addProperty("queen_profile", queenProfile.toString().replace('\\', '/'));
+        report.addProperty("beaver_geo", beaverGeo.toString().replace('\\', '/'));
+        report.addProperty("hooks", "HEAD/TAIL hooks through the real MixinGeoRenderer._mhlib_callLayers loop (getRenderLayers(), iterator, instanceof, Consumer)");
+        report.addProperty("not_measured", "tryAddBoneInformation and the trust-client getPartByName + MHLibPartEntity.applyInformation per synched bone "
+                + "(both need a live entity; the_queen.json is trust-client: true); the inactive rig's isBoneCollectionActive() chain "
+                + "(needs a GeoReplacedEntityRenderer and a live entity) -- beaver_tax_inactive is a FLOOR of the hook tax");
+        // -pi: bodyYawRotationTerm(180 degrees), a Queen facing the camera as the scenes spawn them (mobs face the origin).
+        final double yawPiTerm = GeckolibBoneInformationCollectorLayer.bodyYawRotationTerm(180.0F);
+        report.addProperty("body_yaw_term_yawpi", yawPiTerm);
+        JsonObject rigs = new JsonObject();
+        StringBuilder out = new StringBuilder();
+        out.append("== headless collector benchmark: ").append(runs).append(" measured runs x ").append(BENCH_WALKS)
+                .append(" walks after an adaptive warm-up (>= ").append(BENCH_WARMUP_MIN_RUNS).append(" runs, settled within ")
+                .append((int) (BENCH_WARMUP_SETTLE * 100)).append(" %); median run and the median of the last ").append(BENCH_LAST_RUNS).append(" reported\n");
+
+        BenchGeoRenderer queenPiRenderer = new BenchGeoRenderer();
+        GeckolibBoneInformationCollectorLayer<GeoAnimatable> queenPiLayer = queenPiRenderer.attach(new GeckolibBoneInformationCollectorLayer<>(queenPiRenderer));
+        setBodyYawRotationTerm(queenPiLayer, yawPiTerm);
+        rigs.add("queen_collect_yawpi", benchRig(out, "queen_collect_yawpi", queen, profile.syncedBones, runs, queenPiRenderer, queenPiLayer, BenchWalk.COLLECT,
+                "body yaw 180 degrees (the term -pi, set on the layer as renderForBone does per bone in-game): onPreRender; per bone: HEAD hook via the real "
+                        + "_mhlib_callLayers loop, getBoneWorldPosition (3 reads + Vec3), calcScales, calcRotations, getScaleVector + getRotationVector for the synched "
+                        + "bones (foldBodyYaw builds four 3x3 matrices and multiplies three: seven double[][] per synched bone), children, TAIL hook; "
+                        + "setScales/setRotations; onPostRender. Not included: tryAddBoneInformation and the trust-client applyInformation (need a live entity)"));
+        if (readBodyYawRotationTerm(queenPiLayer) != yawPiTerm) {
+            throw new IllegalStateException("the body-yaw term did not survive the walks: " + readBodyYawRotationTerm(queenPiLayer));
+        }
+        BenchGeoRenderer queen0Renderer = new BenchGeoRenderer();
+        GeckolibBoneInformationCollectorLayer<GeoAnimatable> queen0Layer = queen0Renderer.attach(new GeckolibBoneInformationCollectorLayer<>(queen0Renderer));
+        rigs.add("queen_collect_yaw0", benchRig(out, "queen_collect_yaw0", queen, profile.syncedBones, runs, queen0Renderer, queen0Layer, BenchWalk.COLLECT,
+                "the same walk at body yaw 0: foldBodyYaw's yawTerm == 0 early-out returns the input (no matrices) -- the first lane's baseline, kept for comparison"));
+        BenchGeoRenderer inactiveRenderer = new BenchGeoRenderer();
+        rigs.add("beaver_tax_inactive", benchRig(out, "beaver_tax_inactive", beaver, List.of(), runs, inactiveRenderer,
+                inactiveRenderer.attach(new InactiveCollectorLayer(inactiveRenderer)), BenchWalk.TAX,
+                "FLOOR of the hook tax: isBoneCollectionActive() is a constant false here (the real chain -- renderer instanceof GeoReplacedEntityRenderer, "
+                        + "getCurrentEntity(), shouldCollectModelBones(entity) -- needs a client renderer and a live entity); onPreRender; per bone HEAD + TAIL hooks "
+                        + "through the real _mhlib_callLayers loop, returning after the counter guard and the isBoneCollectionActive() call; onPostRender"));
+        BenchGeoRenderer activeRenderer = new BenchGeoRenderer();
+        rigs.add("beaver_tax_active", benchRig(out, "beaver_tax_active", beaver, List.of(), runs, activeRenderer,
+                activeRenderer.attach(new GeckolibBoneInformationCollectorLayer<>(activeRenderer)), BenchWalk.TAX,
+                "collection active (the GeoEntity path): onPreRender; per bone HEAD push + TAIL pop through the real _mhlib_callLayers loop "
+                        + "(two Vector3d copies and a Tuple per bone); onPostRender"));
+        report.add("rigs", rigs);
+        report.addProperty("sink", benchSink);
+
+        Files.createDirectories(outDir);
+        Path json = outDir.resolve("collector_bench.json");
+        Files.writeString(json, GSON.toJson(report), StandardCharsets.UTF_8);
+        out.append("report: ").append(json).append('\n');
+        System.out.print(out);
+    }
+
+    private static BakedGeoModel bake(Path geoPath) throws Exception {
+        Model raw = KeyFramesAdapter.GEO_GSON.fromJson(Files.readString(geoPath, StandardCharsets.UTF_8), Model.class);
+        return BakedModelFactory.DEFAULT_FACTORY.constructGeoModel(GeometryTree.fromModel(raw));
+    }
+
+    private enum BenchWalk { COLLECT, TAX }
+
+    /** The layer's private {@code bodyYawRotationTerm}, which only {@code renderForBone} (entity-bound) sets in-game. */
+    private static Field bodyYawRotationTermField() throws ReflectiveOperationException {
+        Field field = GeckolibBoneInformationCollectorLayer.class.getDeclaredField("bodyYawRotationTerm");
+        field.setAccessible(true);
+        return field;
+    }
+
+    private static void setBodyYawRotationTerm(GeckolibBoneInformationCollectorLayer<?> layer, double term) throws ReflectiveOperationException {
+        bodyYawRotationTermField().setDouble(layer, term);
+    }
+
+    private static double readBodyYawRotationTerm(GeckolibBoneInformationCollectorLayer<?> layer) throws ReflectiveOperationException {
+        return bodyYawRotationTermField().getDouble(layer);
+    }
+
+    private static JsonObject benchRig(StringBuilder out, String name, BakedGeoModel model, List<String> synced, int runs, BenchGeoRenderer renderer,
+                                       GeckolibBoneInformationCollectorLayer<GeoAnimatable> layer, BenchWalk walk, String description) {
+        int bones = countBones(model);
+        // Warm-up until the per-run ns plateaus (see BENCH_WARMUP_SETTLE), between the minimum and the maximum run counts.
+        List<Double> warmup = new ArrayList<>();
+        int settled = 0;
+        while (warmup.size() < BENCH_WARMUP_MAX_RUNS) {
+            double ns = benchRun(model, synced, renderer, layer, walk)[0] / (double) BENCH_WALKS;
+            int n = warmup.size();
+            if (n >= 3) {
+                double reference = median(new double[]{warmup.get(n - 1), warmup.get(n - 2), warmup.get(n - 3)});
+                settled = Math.abs(ns - reference) <= reference * BENCH_WARMUP_SETTLE ? settled + 1 : 0;
+            }
+            warmup.add(ns);
+            if (warmup.size() >= BENCH_WARMUP_MIN_RUNS && settled >= BENCH_WARMUP_SETTLED_RUNS) {
+                break;
+            }
+        }
+        double[] nsPerWalk = new double[runs];
+        double[] bytesPerWalk = new double[runs];
+        for (int run = 0; run < runs; run++) {
+            long[] measured = benchRun(model, synced, renderer, layer, walk);
+            nsPerWalk[run] = measured[0] / (double) BENCH_WALKS;
+            bytesPerWalk[run] = measured[1] / (double) BENCH_WALKS;
+        }
+        double medianNs = median(nsPerWalk);
+        double medianBytes = median(bytesPerWalk);
+        int last = Math.min(BENCH_LAST_RUNS, runs);
+        double lastNs = median(Arrays.copyOfRange(nsPerWalk, runs - last, runs));
+        double lastBytes = median(Arrays.copyOfRange(bytesPerWalk, runs - last, runs));
+        double[] warmupArray = new double[warmup.size()];
+        for (int i = 0; i < warmupArray.length; i++) {
+            warmupArray[i] = warmup.get(i);
+        }
+        JsonObject json = new JsonObject();
+        json.addProperty("walk", description);
+        json.addProperty("bones", bones);
+        json.addProperty("synced_bones", synced.size());
+        json.addProperty("warmup_runs_used", warmup.size());
+        json.addProperty("warmup_settled", settled >= BENCH_WARMUP_SETTLED_RUNS);
+        json.add("warmup_runs_ns_per_walk", arr(warmupArray));
+        json.add("runs_ns_per_walk", arr(nsPerWalk));
+        json.add("runs_bytes_per_walk", arr(bytesPerWalk));
+        json.addProperty("median_ns_per_walk", medianNs);
+        json.addProperty("median_ns_last_runs", last);
+        json.addProperty("median_ns_last_runs_per_walk", lastNs);
+        json.addProperty("median_bytes_per_walk", medianBytes);
+        json.addProperty("median_bytes_last_runs_per_walk", lastBytes);
+        json.addProperty("median_ns_per_bone", medianNs / bones);
+        json.addProperty("median_ns_last_runs_per_bone", lastNs / bones);
+        json.addProperty("median_bytes_per_bone", medianBytes / bones);
+        out.append(String.format(Locale.ROOT, "%-20s bones %3d synced %2d | median %10.1f ns/walk (last %d: %10.1f) %9.1f B/walk | %7.1f ns/bone %6.1f B/bone | warm-up %2d runs%s %s | runs ns %s%n",
+                name, bones, synced.size(), medianNs, last, lastNs, medianBytes, medianNs / bones, medianBytes / bones, warmup.size(),
+                settled >= BENCH_WARMUP_SETTLED_RUNS ? "" : " (NOT settled)", Arrays.toString(warmupArray), Arrays.toString(nsPerWalk)));
+        return json;
+    }
+
+    /** {@code {nanos, bytes}} for one run of {@value #BENCH_WALKS} walks. */
+    private static long[] benchRun(BakedGeoModel model, List<String> synced, BenchGeoRenderer renderer,
+                                   GeckolibBoneInformationCollectorLayer<GeoAnimatable> layer, BenchWalk walk) {
+        double sink = 0.0D;
+        long bytes0 = de.dertoaster.multihitboxlib.util.MHLibCollectorProbe.currentThreadAllocatedBytes();
+        long t0 = System.nanoTime();
+        List<GeoBone> tops = model.topLevelBones();
+        for (int i = 0; i < BENCH_WALKS; i++) {
+            layer.onPreRender();
+            for (int t = 0, n = tops.size(); t < n; t++) {
+                GeoBone top = tops.get(t);
+                sink += walk == BenchWalk.COLLECT ? walkLayerBench(renderer, layer, top, synced) : walkTax(renderer, top);
+            }
+            layer.setScales(1, 1, 1);
+            layer.setRotations(0, 0, 0);
+            layer.onPostRender();
+        }
+        long t1 = System.nanoTime();
+        long bytes1 = de.dertoaster.multihitboxlib.util.MHLibCollectorProbe.currentThreadAllocatedBytes();
+        benchSink += sink;
+        return new long[]{t1 - t0, Math.max(0L, bytes1 - bytes0)};
+    }
+
+    /**
+     * The collecting walk: what {@code onRenderBone} does for a collecting profile, minus the entity-bound
+     * builder call and the trust-client apply. The HEAD/TAIL hooks go through the real
+     * {@code MixinGeoRenderer._mhlib_callLayers} (the method refs written as the mixin writes them:
+     * non-capturing, linked once). The children are walked by index so the walk itself allocates nothing
+     * (a for-each iterator per bone would add ~32 B/bone of the probe's own to the layer's count), and
+     * every per-bone result is stored into {@link #BENCH_ESCAPE} so it escapes as in-game.
+     */
+    private static double walkLayerBench(BenchGeoRenderer renderer, GeckolibBoneInformationCollectorLayer<GeoAnimatable> layer, GeoBone bone, List<String> synced) {
+        double sink = 0.0D;
+        renderer._mhlib_callLayers(IMHLibExtendedRenderLayer::onRenderRecursivelyStart);   // MixinGeoRenderer @HEAD renderRecursively
+        Vec3 worldPos = layer.getBoneWorldPosition(bone);
+        BENCH_ESCAPE[0] = worldPos;                                                        // escapes as in-game (see BENCH_ESCAPE)
+        sink += worldPos.x;
+        layer.calcScales(bone);
+        layer.calcRotations(bone);
+        if (synced.contains(bone.getName())) {
+            Vec3 scale = layer.getScaleVector();
+            Vec3 rotation = layer.getRotationVector();
+            BENCH_ESCAPE[1] = scale;
+            BENCH_ESCAPE[2] = rotation;
+            sink += scale.x + rotation.y;
+        }
+        List<GeoBone> children = bone.getChildBones();
+        for (int i = 0, n = children.size(); i < n; i++) {
+            sink += walkLayerBench(renderer, layer, children.get(i), synced);
+        }
+        renderer._mhlib_callLayers(IMHLibExtendedRenderLayer::onRenderRecursivelyEnd);     // @TAIL renderRecursively
+        return sink;
+    }
+
+    /** The non-multipart walk: only the HEAD/TAIL hooks (through the real loop) reach the layer ({@code onRenderBone} returns at its multipart check). */
+    private static double walkTax(BenchGeoRenderer renderer, GeoBone bone) {
+        double sink = 0.0D;
+        renderer._mhlib_callLayers(IMHLibExtendedRenderLayer::onRenderRecursivelyStart);
+        List<GeoBone> children = bone.getChildBones();
+        for (int i = 0, n = children.size(); i < n; i++) {
+            sink += walkTax(renderer, children.get(i));
+        }
+        renderer._mhlib_callLayers(IMHLibExtendedRenderLayer::onRenderRecursivelyEnd);
+        return sink + 1.0D;
+    }
+
+    private static int countBones(BakedGeoModel model) {
+        int count = 0;
+        for (GeoBone top : model.topLevelBones()) {
+            count += countBones(top);
+        }
+        return count;
+    }
+
+    private static int countBones(GeoBone bone) {
+        int count = 1;
+        for (GeoBone child : bone.getChildBones()) {
+            count += countBones(child);
+        }
+        return count;
+    }
+
+    private static double median(double[] values) {
+        double[] sorted = values.clone();
+        Arrays.sort(sorted);
+        int n = sorted.length;
+        return n % 2 == 1 ? sorted[n / 2] : 0.5D * (sorted[n / 2 - 1] + sorted[n / 2]);
+    }
+
+    /**
+     * The layer as a replaced renderer's non-multipart entity sees it: collection inactive, so the hooks
+     * return after their guard. A constant false stands in for the real chain (a GeoReplacedEntityRenderer
+     * and a live entity), which makes the inactive rig a FLOOR of the in-game hook tax.
+     */
+    private static final class InactiveCollectorLayer extends GeckolibBoneInformationCollectorLayer<GeoAnimatable> {
+        InactiveCollectorLayer(GeoRenderer<GeoAnimatable> renderer) {
+            super(renderer);
+        }
+
+        @Override
+        public boolean isBoneCollectionActive() {
+            return false;
+        }
+    }
+
+    /**
+     * The bench renderer: the headless no-op renderer plus the REAL {@link MixinGeoRenderer#_mhlib_callLayers}
+     * -- the mixin interface's default method, run as written over a layer list the rig fills -- so a walk's
+     * HEAD/TAIL hooks reach the layer the way the mixin's {@code renderRecursively} injections deliver them
+     * in-game: {@code getRenderLayers()}, the list iterator, the {@code instanceof IMHLibExtendedRenderLayer},
+     * the {@code Consumer.accept}. ({@code MixinGeoRenderer} is a plain interface outside the mixin
+     * environment; its injector methods are never called here.)
+     */
+    private static final class BenchGeoRenderer extends HeadlessGeoRenderer implements MixinGeoRenderer {
+        private final List<GeoRenderLayer<GeoAnimatable>> layers = new ArrayList<>();
+
+        <L extends GeoRenderLayer<GeoAnimatable>> L attach(L layer) {
+            this.layers.add(layer);
+            return layer;
+        }
+
+        @Override
+        public List<GeoRenderLayer<GeoAnimatable>> getRenderLayers() {
+            return this.layers;
+        }
+    }
+
     // ------------------------------------------------------------------ the per-entity render-tick gate (BUG-044)
 
     /**
@@ -808,7 +1192,7 @@ public final class QueenPartPlacementProbe {
     }
 
     /** A GeoRenderer with no Minecraft behind it; GeoRenderLayer only stores it and isBoneCollectionActive only instanceof-checks it. */
-    private static final class HeadlessGeoRenderer implements GeoRenderer<GeoAnimatable> {
+    private static class HeadlessGeoRenderer implements GeoRenderer<GeoAnimatable> {
         @Override
         public GeoModel<GeoAnimatable> getGeoModel() {
             return null;

@@ -11,6 +11,8 @@ import com.mojang.serialization.Codec;
 import de.dertoaster.multihitboxlib.api.network.IMHLibCustomPacketPayload;
 import de.dertoaster.multihitboxlib.init.MHLibNetwork;
 import de.dertoaster.multihitboxlib.util.BoneInformation;
+import de.dertoaster.multihitboxlib.util.MHLibCounters;
+import io.netty.buffer.Unpooled;
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
@@ -53,7 +55,27 @@ public record CPacketBoneInformation(
 	);
 
 	public void send() {
+		// Slice (d) (2026-09-06): net.c2s_bone_packets / net.c2s_bone_bytes -- the payload is encoded
+		// once more, only under the property, to measure exactly what the codec writes.
+		if (MHLibCounters.ENABLED) {
+			MHLibCounters.NET_C2S_BONE_PACKETS.increment();
+			MHLibCounters.NET_C2S_BONE_BYTES.add(this.encodedLength());
+		}
 		PacketDistributor.sendToServer(this);
+	}
+
+	/**
+	 * Slice (d): the encoded payload length of this packet -- the bytes {@link #STREAM_CODEC} writes
+	 * for it (no custom-payload packet header, no payload type id, no compression).
+	 */
+	public int encodedLength() {
+		final FriendlyByteBuf buf = new FriendlyByteBuf(Unpooled.buffer());
+		try {
+			STREAM_CODEC.encode(buf, this);
+			return buf.readableBytes();
+		} finally {
+			buf.release();
+		}
 	}
 
 	public static Builder builder(Entity entity) {

@@ -21,6 +21,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.entity.PartEntity;
@@ -255,6 +256,14 @@ public class MHLibPartEntity<T extends Entity> extends PartEntity<T> {
 
 	@Override
 	public void setPos(double pX, double pY, double pZ) {
+		// Slice (d) (2026-09-06): server.part_setpos -- every server-side call, i.e. the alignment's
+		// (alignSubParts / applyInformation / the gait feed) AND updateLastPos's from each part tick.
+		if (MHLibCounters.serverEnabled()) {
+			final Level level = this.level();
+			if (level != null && !level.isClientSide()) {
+				MHLibCounters.SERVER_PART_SETPOS.increment();
+			}
+		}
 		super.setPosRaw(pX, pY, pZ);
 		this.setOldPosAndRot();
 
