@@ -5,7 +5,18 @@
       "description": {
         "identifier": "geometry.orespawn.g1.model_beaver",
         "texture_width": 64,
-        "texture_height": 32
+        "texture_height": 32,
+        "orespawn:bone_draw_order": [
+          "head",
+          "nose",
+          "teeth",
+          "body",
+          "tail",
+          "rff",
+          "lff",
+          "rrf",
+          "lrf"
+        ]
       },
       "bones": [
         {

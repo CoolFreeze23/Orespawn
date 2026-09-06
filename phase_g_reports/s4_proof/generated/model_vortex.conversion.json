@@ -6,8 +6,8 @@
   "ground_truth": "executed compiled LayerDefinition and baked ModelPart",
   "source_class": "danger.orespawn.entity.client.VortexModel",
   "source_class_sha256": "3af9aa95b4d7912f55bd841c4c7812fefa9096407966c10676faa8ad40563b84",
-  "compiled_dump_sha256": "436f18fb55e4f37deee3c0171dca0394b58a8b4f369dbaf9e9278d4c25d978e9",
-  "geometry_sha256": "81b72a4252858bedf4ff283f3461cf389f1f82ad44a00296f51180c9145d1c64",
+  "compiled_dump_sha256": "40ef9260c8bbbddd0d02eb0e51fef4ac617bb39b7447d86dda5ce1cbd2df287c",
+  "geometry_sha256": "14b101cb86dcc2669870ad6d9804229c8d85199eab880e2e44559d984098007e",
   "animation_sha256": "7882082857fdb11e02f158ebc3a6d3f970e2ac60d54813f0e903ee97b2293749",
   "animation_contract_sha256": "ef25a2b4eb7640daad7b902fc72c12e0e99737cd0882ac83ea702e72c92a7acd",
   "bone_count": 1,
@@ -17,6 +17,26 @@
   "exact_bone_names": [
     "Shape1"
   ],
+  "bone_draw_order": [
+    "Shape1"
+  ],
+  "draw_order_evidence": {
+    "source": "classic EntityModel.renderToBuffer on a second bake posed identically; every ModelPart.render is one pose-stack push, attributed to its part by ModelPart.skipDraw elimination (one run per cube-bearing part with every other part's skipDraw set); a part drawn n > 1 times is named <part>__i<k> by draw ordinal",
+    "captures": [
+      "bind",
+      "t0",
+      "t_quarter",
+      "t_half",
+      "t_three_quarter",
+      "t_end"
+    ],
+    "cube_bearing_units": 1,
+    "observed_units": 1,
+    "unobserved_units": [],
+    "ordered_pairs": 0,
+    "tie_break": "converter emission order for pairs never drawn together in any capture",
+    "lifting": "pre-order over the geo bone tree, siblings by their subtree's first classic draw"
+  },
   "animation_contract": {
     "schema_version": 1,
     "kind": "static",

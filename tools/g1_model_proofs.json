@@ -38,8 +38,7 @@
         "yaw_degrees": 34.0,
         "pitch_degrees": -28.0
       },
-      "channels": [],
-      "max_contested_fraction_pin": 0.0
+      "channels": []
     },
     {
       "id": "model_beaver",
@@ -133,8 +132,7 @@
           "sign": 1.0,
           "source": "ModelBeaver.setupAnim: cos(ageInTicks * 0.5F) * PI * 0.05F"
         }
-      ],
-      "max_contested_fraction_pin": 1.52587890625e-05
+      ]
     }
   ],
   "fixtures": [

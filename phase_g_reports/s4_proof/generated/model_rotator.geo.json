@@ -5,7 +5,36 @@
       "description": {
         "identifier": "geometry.orespawn.g1.model_rotator",
         "texture_width": 64,
-        "texture_height": 32
+        "texture_height": 32,
+        "orespawn:bone_draw_order": [
+          "shape1__fan",
+          "shape1__i0",
+          "shape1__i1",
+          "shape1__i2",
+          "shape1__i3",
+          "shape1__i4",
+          "shape1__i5",
+          "shape1__i6",
+          "shape1__i7",
+          "shape2__fan",
+          "shape2__i0",
+          "shape2__i1",
+          "shape2__i2",
+          "shape2__i3",
+          "shape2__i4",
+          "shape2__i5",
+          "shape2__i6",
+          "shape2__i7",
+          "shape3__fan",
+          "shape3__i0",
+          "shape3__i1",
+          "shape3__i2",
+          "shape3__i3",
+          "shape3__i4",
+          "shape3__i5",
+          "shape3__i6",
+          "shape3__i7"
+        ]
       },
       "bones": [
         {

@@ -5,7 +5,14 @@
       "description": {
         "identifier": "geometry.orespawn.g1.model_elevator",
         "texture_width": 64,
-        "texture_height": 64
+        "texture_height": 64,
+        "orespawn:bone_draw_order": [
+          "shape1",
+          "shape2",
+          "shape3",
+          "shape4",
+          "shape5"
+        ]
       },
       "bones": [
         {
