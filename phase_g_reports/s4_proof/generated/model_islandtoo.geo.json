@@ -5,7 +5,12 @@
       "description": {
         "identifier": "geometry.orespawn.g1.model_islandtoo",
         "texture_width": 64,
-        "texture_height": 32
+        "texture_height": 32,
+        "orespawn:bone_draw_order": [
+          "Shape1",
+          "Shape2",
+          "Shape3"
+        ]
       },
       "bones": [
         {

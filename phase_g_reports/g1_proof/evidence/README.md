@@ -13,7 +13,10 @@ The independent gates are:
 - animation: independently executed compiled `setupAnim` versus the actual fresh-baked candidate path;
   Beaver uses the owner-approved exact `Mth.cos` custom-hook legacy-parity exception;
   its emitted clip is reference-only, not runtime acceptance, and editable keyframes remain G3 work;
-- visual: independent software rasterization of concrete `EntityModel.renderToBuffer` and `GeoRenderer` streams using the shipped texture.
+- visual: independent software rasterization of concrete `EntityModel.renderToBuffer` and `GeoRenderer` streams using the shipped texture;
+  every pixel is compared (G2 root-order contract, 2026-09-06) and the z-fight contested fraction is reported as a diagnostic only;
+- draw order: per full capture, the sequence of parts the classic `renderToBuffer` drew equals the sequence of bones `GeoRenderer` emitted,
+  and the order shipped in each geo (`orespawn:bone_draw_order`) equals the converter's, the probe's and the fresh bake's traversal.
 
 ## model_elevator (Tier 3)
 
@@ -22,6 +25,7 @@ The independent gates are:
 - Surface maximum UV delta: 0; normal delta: 0.
 - Animation maximum rotation delta: 0 radians (epsilon 2e-06).
 - Visual maximum changed fraction: 0; maximum mean absolute error: 0.
+- Draw order: GeckoLib bone order equals the classic draw order over 6 captures (30 draws).
 
 - Static identity maximum rotation motion: 0 radians; no controller emitted.
 
@@ -32,6 +36,7 @@ The independent gates are:
 - Surface maximum UV delta: 0; normal delta: 0.
 - Animation maximum rotation delta: 0 radians (epsilon 2e-06).
 - Visual maximum changed fraction: 0; maximum mean absolute error: 0.
+- Draw order: GeckoLib bone order equals the classic draw order over 21 captures (189 draws).
 
 - Accepted path: exact Mth.cos GeoModel.setCustomAnimations legacy-parity exception.
 - Dense actual-candidate maximum delta: 0 radians over 2380 samples; minimum authored-key/probe separation 0.000733999999994 age ticks, coincidences 0.
@@ -42,6 +47,7 @@ The independent gates are:
 
 - Coverage: nested_parent_bone, non_mirrored_uv, nonzero_bind_rotation, uniform_inflate.
 - Geometry maximum corner delta: 1.41509716909e-07 blocks; surface UV maximum 0.
+- Draw order: GeckoLib bone order equals the classic draw order over 1 captures (2 draws).
 
 Reproduce with `gradlew.bat g1Parity`. Any mismatch exits nonzero before
 proof evidence can be updated.

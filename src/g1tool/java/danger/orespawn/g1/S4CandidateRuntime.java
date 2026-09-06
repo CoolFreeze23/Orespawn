@@ -54,8 +54,17 @@ final class S4CandidateRuntime {
      * A fresh bake through GeckoLib's own factory, then the G2 root-order contract through the
      * PRODUCTION {@link DrawOrder#apply} - the static the shipped {@code OreSpawnGeoReplacementModel
      * .getBakedModel} calls on the cached bake - so the harness draws in the shipped order.
+     *
+     * <p>No fallback here, on purpose: the shipped model answers a rig without the key with
+     * GeckoLib's own order ({@link DrawOrder#applyOrFallback}, the resource-pack courtesy of the
+     * owner's ruling 2026-09-06), but the harness proves SHIPPED rigs, every one of which must
+     * carry the key - a generated geo without it is a harness failure, never a proof.</p>
      */
     private static BakedGeoModel freshBaked(Model rawModel, List<String> drawOrder) {
+        if (drawOrder.isEmpty()) {
+            throw new IllegalStateException("harness failure: the generated geo ships without " + DrawOrder.KEY
+                    + "; the harness proves shipped rigs and takes no fallback");
+        }
         BakedGeoModel baked = BakedModelFactory.DEFAULT_FACTORY.constructGeoModel(GeometryTree.fromModel(rawModel));
         DrawOrder.apply(baked, drawOrder);
         return baked;

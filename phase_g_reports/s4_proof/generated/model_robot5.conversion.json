@@ -6,8 +6,8 @@
   "ground_truth": "executed compiled LayerDefinition and baked ModelPart",
   "source_class": "danger.orespawn.entity.client.ModelRobot5",
   "source_class_sha256": "360b2f7a8c6f677222e63aa1d728c0f310ff1c8b0d2e1a24f0caed81d71a4406",
-  "compiled_dump_sha256": "d3de8ce6247237b88a1dd45ca86df86033c44853341a8b7ee5962887f0c4c2eb",
-  "geometry_sha256": "6695c54427a11209975713ab283eea4e7907cfb95a4f3a07001f0e916b94c7c5",
+  "compiled_dump_sha256": "804daf754930b7ba5bfac8a0d908ed3225ba1ae02501d92e65d8bb60cfcf49b9",
+  "geometry_sha256": "c8e013aee20c583514fa0c3613f71125b6e94fd5a2f6ba453068ca4b1b9d2c8d",
   "animation_sha256": "7882082857fdb11e02f158ebc3a6d3f970e2ac60d54813f0e903ee97b2293749",
   "animation_contract_sha256": "a0675311a78a04e4ec9a3e98bbf83fb3c91c5bd63c8040d7597a28e70fa57dc4",
   "bone_count": 11,
@@ -27,6 +27,35 @@
     "stand",
     "swivel"
   ],
+  "bone_draw_order": [
+    "lwheel1",
+    "lwheel2",
+    "rwheel1",
+    "rwheel2",
+    "axle",
+    "drivebox",
+    "stand",
+    "swivel",
+    "barrel1",
+    "barrel2",
+    "ammobox"
+  ],
+  "draw_order_evidence": {
+    "source": "classic EntityModel.renderToBuffer on a second bake posed identically; every ModelPart.render is one pose-stack push, attributed to its part by ModelPart.skipDraw elimination (one run per cube-bearing part with every other part's skipDraw set); a part drawn n > 1 times is named <part>__i<k> by draw ordinal",
+    "captures": [
+      "bind",
+      "a0_05000000074505806_t0",
+      "a0_05000000074505806_t_half",
+      "a1_t0",
+      "a1_t_half"
+    ],
+    "cube_bearing_units": 11,
+    "observed_units": 11,
+    "unobserved_units": [],
+    "ordered_pairs": 55,
+    "tie_break": "converter emission order for pairs never drawn together in any capture",
+    "lifting": "pre-order over the geo bone tree, siblings by their subtree's first classic draw"
+  },
   "animation_contract": {
     "schema_version": 1,
     "kind": "code_driven",

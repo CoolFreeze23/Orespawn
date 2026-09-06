@@ -11,7 +11,7 @@ import software.bernie.geckolib.model.GeoModel;
 public final class OreSpawnGeoReplacementModel<E extends Entity, A extends OreSpawnGeoReplacement<E>>
         extends GeoModel<A> {
     private final GeoReplacementDescriptor<E> descriptor;
-    /** G2: the bake {@link DrawOrder#apply} last ran on; a resource reload replaces it. */
+    /** G2: the bake the seam last decided on (applied, or fell back to GeckoLib's own order); a resource reload replaces it. */
     private BakedGeoModel ordered;
 
     public OreSpawnGeoReplacementModel(GeoReplacementDescriptor<E> descriptor) {
@@ -49,12 +49,26 @@ public final class OreSpawnGeoReplacementModel<E extends Entity, A extends OreSp
      * it orders), through the same resource manager GeckoLib loaded the bake from. The
      * reorder is idempotent (sorting a sorted list), so a second model instance over the
      * same cached bake is harmless.
+     *
+     * <p>The missing-key policy (owner ruling 2026-09-06): this call runs inside
+     * {@code GeoRenderer.defaultRender}, under {@code EntityRenderDispatcher.render}, so a
+     * throw here is a client crash on the mob's first frame. A rig WITHOUT the key is what
+     * a resource pack produces (Blockbench's exporter rewrites {@code description} and
+     * drops it), and a resource pack must never crash the client: {@link
+     * DrawOrder#applyOrFallback} reads the resource itself and leaves GeckoLib's own order
+     * in place for such a rig, WARN once. A key that is present and wrong does not crash
+     * the client either - "never" is absolute - it is loud as an ERROR log once per resource
+     * (the geo, the exact reason, the pack author's fix) and then the same fallback, the
+     * bake untouched; the reading presented to the owner with the landing. The shipped
+     * rigs never take either fallback - the asset audit fails the build for a seam rig
+     * whose key is absent or wrong - and the identity test above means the decision, like
+     * the reorder, is made once per bake.</p>
      */
     @Override
     public BakedGeoModel getBakedModel(ResourceLocation location) {
         BakedGeoModel baked = super.getBakedModel(location);
         if (baked != this.ordered) {
-            DrawOrder.apply(baked, DrawOrder.load(Minecraft.getInstance().getResourceManager(), location));
+            DrawOrder.applyOrFallback(baked, Minecraft.getInstance().getResourceManager(), location);
             this.ordered = baked;
         }
         return baked;

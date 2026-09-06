@@ -18,12 +18,16 @@ IMAGE_SIZE = 256
 BACKGROUND = (18, 20, 24, 255)
 # rendertype_entity_cutout.fsh: `if (color.a < 0.1) discard;` -> 0.1 * 255 on 8-bit alpha.
 CUTOUT_ALPHA_THRESHOLD = 25.5
-# Fragments of different quads within this depth of each other are a z-fight
-# (draw-order resolved in both renderers; ruling 2, 2026-09-02: not a parity target).
+# Fragments of different quads within this depth of each other are a z-fight, resolved by
+# draw order in both renderers. Ruling 2 (2026-09-02) excluded them from parity and pinned
+# the excluded fraction per species; the G2 root-order contract (landed 2026-09-06) makes
+# the draw order equal on both sides, so every pixel is compared and the contested
+# fraction is a diagnostic only (nonzero with 0 changed pixels is the ordinary case).
+# `--contested-exclusion` restores the exclusion for diagnostics; it never writes a proof.
 CONTEST_DEPTH_EPSILON = 1.0e-6
-# Owner ruling 2026-09-02: a species whose pinned excluded fraction exceeds this needs a
-# specific in-game acceptance from the owner (Robot5 is the first).
-IN_GAME_ACCEPTANCE_CONTESTED_FRACTION = 0.005
+# Manifest fields of the retired ruling-2 policy: a manifest that still carries one fails,
+# so a pin cannot linger silently (the owner's ruling 2026-09-06 removed all fifteen).
+RETIRED_MANIFEST_FIELDS = ("max_contested_fraction_pin", "in_game_acceptance")
 CONTESTED_MARKER = (40, 90, 255, 255)
 # G2 root-order contract: the geo description key the converter writes and the shipped model applies.
 DRAW_ORDER_KEY = "orespawn:bone_draw_order"
@@ -1264,9 +1268,14 @@ def render_capture(sample: dict[str, Any], texture: Image.Image,
 
     A pixel is CONTESTED when two fragments from different quads land within
     CONTEST_DEPTH_EPSILON of each other at the front with different texels.
-    Both real renderers resolve that by draw order, which ruling 2 (2026-09-02)
-    excludes from parity; the mask lets the comparison skip exactly those
-    pixels and report how many there were.
+    Both real renderers resolve that by draw order. Under the G2 root-order
+    contract the order is equal on both sides, so the mask is a diagnostic
+    (the contested fraction is reported, every pixel compared); the opt-in
+    `--contested-exclusion` uses it to skip exactly those pixels, as ruling 2
+    (2026-09-02) did before the contract. The rasteriser's own tie rule at an
+    EXACT depth tie is first-wins (a later fragment replaces the front only when
+    nearer by more than 1e-9) where the game's LEQUAL depth test is last-wins;
+    parity is unaffected because both captures share the rule and the order.
     """
     pixels = [BACKGROUND] * (IMAGE_SIZE * IMAGE_SIZE)
     depth_buffer = [math.inf] * (IMAGE_SIZE * IMAGE_SIZE)
@@ -1381,9 +1390,17 @@ def foreground_fraction(image: Image.Image) -> float:
 def visual_parity(model_id: str, spec: dict[str, Any], compiled: dict[str, Any],
                   geo_render: dict[str, Any], repository_root: Path,
                   output_dir: Path, thresholds: dict[str, Any],
-                  exclude_contested: bool = True) -> dict[str, Any]:
-    """The visual leg; ``exclude_contested`` False (``--no-contested-exclusion``) compares every
-    pixel, contested ones included, and keeps the contested fraction as a diagnostic only."""
+                  exclude_contested: bool = False) -> dict[str, Any]:
+    """The visual leg. By default (the G2 root-order contract) every pixel is compared,
+    contested ones included, and the contested fraction is a diagnostic only;
+    ``exclude_contested`` True (``--contested-exclusion``) restores the ruling-2 exclusion
+    for a diagnostic run."""
+    retired = [field for field in RETIRED_MANIFEST_FIELDS if field in spec]
+    if retired:
+        raise AssertionError(
+            f"{model_id} manifest still carries the retired ruling-2 field(s) {retired}: the z-fight "
+            "exclusion and its pins were removed by the owner's ruling of 2026-09-06 (G2 root-order contract)"
+        )
     vanilla_samples = sample_map(compiled)
     geo_samples = sample_map(geo_render)
     visual_sample_ids = tuple(spec.get("visual_sample_ids", DEFAULT_VISUAL_SAMPLE_IDS))
@@ -1466,23 +1483,9 @@ def visual_parity(model_id: str, spec: dict[str, Any], compiled: dict[str, Any],
         max_changed = max(max_changed, changed)
         max_mae = max(max_mae, mae)
         max_contested = max(max_contested, contested_fraction)
-    # Owner condition (2026-09-02): the excluded fraction is PINNED per species in the
-    # manifest; growth fails the leg until the pin is raised explicitly, like a tolerance.
-    # With the exclusion off (G2 root-order contract) nothing is excluded: a pin, if the
-    # manifest still carries one, is checked as a diagnostic and is otherwise optional.
-    if "max_contested_fraction_pin" not in spec:
-        if exclude_contested:
-            raise AssertionError(f"{model_id} manifest declares no max_contested_fraction_pin")
-        contested_pin = None
-    else:
-        contested_pin = float(spec["max_contested_fraction_pin"])
-        if max_contested > contested_pin:
-            raise AssertionError(
-                f"CONTESTED PIN EXCEEDED {model_id}: {'excluded ' if exclude_contested else 'diagnostic '}"
-                f"z-fight fraction {max_contested:.12g} > pinned {contested_pin:.12g}; "
-                "raising the pin is an owner ruling"
-            )
-            min_foreground = min(min_foreground, vanilla_foreground, geo_foreground)
+    # The contested fraction is not gated: with every pixel compared, a contested pixel
+    # that resolves differently is a changed pixel and fails above; one that resolves the
+    # same way (the ordinary case under the contract) is nothing to a player.
 
     return {
         "status": "PASS",
@@ -1497,19 +1500,16 @@ def visual_parity(model_id: str, spec: dict[str, Any], compiled: dict[str, Any],
         "z_fight_policy": (
             "pixels where two different quads meet the front within "
             f"{CONTEST_DEPTH_EPSILON:g} depth with different texels are draw-order z-fights, "
-            "excluded from the comparison and painted in the diff (ruling 2, 2026-09-02)"
+            "excluded from the comparison and painted in the diff (--contested-exclusion: the "
+            "ruling-2 exclusion of 2026-09-02 run as a diagnostic; not the gate's policy)"
         ) if exclude_contested else (
             "pixels where two different quads meet the front within "
             f"{CONTEST_DEPTH_EPSILON:g} depth with different texels are counted as a diagnostic only; "
             "every pixel is compared, the draw order being contracted equal on both sides "
-            "(G2 root-order contract)"
+            "(G2 root-order contract, landed 2026-09-06)"
         ),
         "contested_exclusion_applied": exclude_contested,
         "max_contested_fraction": max_contested,
-        "contested_fraction_pin": contested_pin,
-        "requires_in_game_acceptance": (
-            contested_pin is not None and contested_pin > IN_GAME_ACCEPTANCE_CONTESTED_FRACTION
-        ),
         "cutout_alpha_threshold": CUTOUT_ALPHA_THRESHOLD / 255.0,
         "minimum_observed_foreground_fraction": min_foreground,
         "samples": rows,
@@ -1536,9 +1536,9 @@ def render_instance_lines(contract: dict[str, Any]) -> list[str]:
 
 
 def contested_line(visual: dict[str, Any]) -> str:
-    if visual.get("contested_exclusion_applied", True):
-        return (f"- Visual z-fight pixels excluded (ruling 2): maximum contested fraction "
-                f"{visual['max_contested_fraction']:.12g}.")
+    if visual.get("contested_exclusion_applied", False):
+        return (f"- Visual z-fight pixels excluded (--contested-exclusion diagnostic run, not the gate's policy): "
+                f"maximum contested fraction {visual['max_contested_fraction']:.12g}.")
     return (f"- Visual z-fight pixels compared, none excluded (G2 root-order contract): maximum contested "
             f"fraction {visual['max_contested_fraction']:.12g}, a diagnostic.")
 
@@ -1560,7 +1560,10 @@ def markdown_report(report: dict[str, Any]) -> str:
         "- animation: independently executed compiled `setupAnim` versus the actual fresh-baked candidate path;",
         "  Beaver uses the owner-approved exact `Mth.cos` custom-hook legacy-parity exception;",
         "  its emitted clip is reference-only, not runtime acceptance, and editable keyframes remain G3 work;",
-        "- visual: independent software rasterization of concrete `EntityModel.renderToBuffer` and `GeoRenderer` streams using the shipped texture.",
+        "- visual: independent software rasterization of concrete `EntityModel.renderToBuffer` and `GeoRenderer` streams using the shipped texture;",
+        "  every pixel is compared (G2 root-order contract, 2026-09-06) and the z-fight contested fraction is reported as a diagnostic only;",
+        "- draw order: per full capture, the sequence of parts the classic `renderToBuffer` drew equals the sequence of bones `GeoRenderer` emitted,",
+        "  and the order shipped in each geo (`orespawn:bone_draw_order`) equals the converter's, the probe's and the fresh bake's traversal.",
         "",
     ]
     for model in report["models"]:
@@ -1737,13 +1740,16 @@ def main() -> int:
                         help="reference_geometry_leg.py output; required for manifests declaring reference_source")
     parser.add_argument("--write-proof", action="store_true")
     parser.add_argument("--validate-only", action="store_true")
-    parser.add_argument("--no-contested-exclusion", action="store_true",
-                        help="G2 root-order contract: compare every pixel of the visual leg; the z-fight "
-                             "contested fraction is reported (and pinned, if the manifest still pins it) "
-                             "as a diagnostic only")
+    parser.add_argument("--contested-exclusion", action="store_true",
+                        help="diagnostic only: restore the ruling-2 (2026-09-02) z-fight exclusion, skipping "
+                             "contested pixels and painting them in the diff. The gate's policy since the G2 "
+                             "root-order contract (2026-09-06) is the default: every pixel compared, the "
+                             "contested fraction reported. Never writes a proof.")
     args = parser.parse_args()
     if args.write_proof and args.validate_only:
         parser.error("--write-proof and --validate-only are mutually exclusive")
+    if args.write_proof and args.contested_exclusion:
+        parser.error("--contested-exclusion is a diagnostic; the proof is written under the default policy only")
 
     manifest = load_json(args.manifest)
     repository_root = args.manifest.resolve().parent.parent
@@ -1882,16 +1888,13 @@ def main() -> int:
         else:
             visual = visual_parity(
                 model_id, spec, compiled, geo_render, repository_root, args.output_dir, thresholds,
-                exclude_contested=not args.no_contested_exclusion,
+                exclude_contested=args.contested_exclusion,
             )
-            pin = visual["contested_fraction_pin"]
             print(
                 f"G1 VISUAL PASS: {model_id} max changed {visual['max_changed_fraction']:.12g}, "
                 f"max MAE {visual['max_mean_absolute_error']:.12g}, "
                 f"max contested {visual['max_contested_fraction']:.12g} "
-                f"({'excluded' if visual['contested_exclusion_applied'] else 'compared, not excluded'}; "
-                f"pin {'none' if pin is None else f'{pin:.12g}'}"
-                f"{', IN-GAME ACCEPTANCE REQUIRED' if visual['requires_in_game_acceptance'] else ''})"
+                f"({'excluded: --contested-exclusion diagnostic run' if visual['contested_exclusion_applied'] else 'compared, not excluded; a diagnostic'})"
             )
             common_report["visual"] = visual
             model_reports.append(common_report)
@@ -1919,7 +1922,7 @@ def main() -> int:
         "ground_truth": "executed compiled LayerDefinition + baked ModelPart trees",
         "geckolib_version": manifest["geckolib_version"],
         "thresholds": thresholds,
-        "contested_exclusion_applied": not args.no_contested_exclusion,
+        "contested_exclusion_applied": args.contested_exclusion,
         "models": model_reports,
         "fixtures": fixture_reports,
         "deterministic_text_outputs": line_endings,

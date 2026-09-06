@@ -13,8 +13,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
 import software.bernie.geckolib.cache.object.GeoBone;
 
@@ -62,6 +65,32 @@ import software.bernie.geckolib.cache.object.GeoBone;
  * .lambda$loadResources$6} lists every {@code .json} under {@code geo} and
  * {@code lambda$loadModels$5} bakes each one as a model.</p>
  *
+ * <p>The missing-key policy (owner ruling 2026-09-06, addendum item 24 (3); the reading of
+ * "loud" below was presented to the owner with the landing). A rig that ships WITHOUT the
+ * key is not a build error of this mod but the ordinary shape of a third-party resource
+ * pack: Blockbench's bedrock exporter rewrites {@code description} and drops every foreign
+ * key, so a pack that re-exports one of the shipped rigs loses the order - and the owner's
+ * rule is that a resource pack must never crash the client. So {@link #read} answers an
+ * ABSENT key with an empty order, and {@link #applyOrFallback} answers an empty order by
+ * leaving GeckoLib's own bone order in place (the mob still draws; only its
+ * self-overlapping faces may resolve the other way), logged once per resource at WARN. A
+ * key that is PRESENT and wrong - a non-array, a non-string or repeated entry, an empty
+ * array, a name the rig lacks, a rig bone the key lacks, an order that is not a pre-order
+ * of the rig's tree - does not crash the client either, because "never" is absolute: it is
+ * loud as an ERROR log, once per resource, naming the geo, the exact reason ({@link #read}'s
+ * or {@link #apply}'s own message) and the pack author's fix (carry the
+ * {@code orespawn:bone_draw_order} array over from the shipped rig's {@code description}),
+ * and then takes the same fallback - {@link #apply} validates everything before it touches
+ * the bake, so the order it falls back to is exactly the factory's. The alternative reading
+ * (a crash report naming the geo) is one line away and the owner's call. The shipped rigs
+ * must never take either fallback: the asset audit ({@code tools/asset_audit.py};
+ * {@code GECKO_GEO_DRAW_ORDER_MISSING} for a seam rig whose key is absent or whose content
+ * is wrong, {@code GECKO_GEO_SEAM_UNRECONCILED} for a shipped geo the seam does not draw and
+ * no dated exception names) fails the build, and the harness ({@code S4CandidateRuntime},
+ * {@code G1AnimationRuntime}, the probe, the benchmark) never calls
+ * {@code applyOrFallback} - it goes through the strict {@link #read} / {@link #apply}, which
+ * keep throwing, so a proof can never come from a fallback bake.</p>
+ *
  * <p>The lists sorted here are the factory's own mutable {@code ObjectArrayList}s:
  * {@code BakedGeoModel.topLevelBones()} returns its field (bytecode 0-4, a record
  * accessor) and {@code GeoBone.getChildBones()} returns its field (0-4); nothing copies
@@ -73,10 +102,60 @@ public final class DrawOrder {
     /** The description key carrying the classic draw order as geo bone names in pre-order. */
     public static final String KEY = "orespawn:bone_draw_order";
 
+    /**
+     * The mod's logger by NAME, the literal on purpose: {@code OreSpawnMod} is not referenced
+     * here at all (not even its compile-time {@code MOD_ID} constant), so the class file carries
+     * no constant-pool entry for the mod class and the headless harness - the probe, the
+     * benchmark, the fallback smoke - never loads it (javap-checked at the landing,
+     * 2026-09-06). slf4j keys loggers by name, so this is the very logger
+     * {@code OreSpawnMod.LOGGER} holds and the lines land under the mod's own prefix.
+     */
+    private static final Logger LOGGER = LoggerFactory.getLogger("orespawn");
+
+    /**
+     * Once-per-resource logging: the geo, to the reason last logged for it. A repeat of the
+     * same reason for the same resource is silent; a new reason (a pack that goes absent to
+     * wrong, or wrong one way to wrong another way) logs again; an APPLIED bake clears the
+     * entry, so a rig fixed and then broken again is reported again. The map lives for the
+     * JVM, a design choice: it survives resource reloads on purpose (a reload re-bakes every
+     * rig and would otherwise repeat every line) and it is process state only - never game
+     * state, never read by anything but the log decision.
+     */
+    private static final Map<ResourceLocation, String> LAST_LOGGED = new ConcurrentHashMap<>();
+    /** The absent key's entry in {@link #LAST_LOGGED}; no failure message equals it. */
+    private static final String ABSENT = "absent";
+
+    /** What the seam decided for one bake. */
+    public enum Outcome {
+        /** The key was present and right: the bake now draws in the classic order. */
+        APPLIED,
+        /** No key (the resource-pack case): GeckoLib's own order kept; WARN once per resource. */
+        ABSENT_FALLBACK,
+        /**
+         * The key was present and wrong, or the resource could not be read: GeckoLib's own
+         * order kept, the bake untouched; ERROR once per resource, naming the reason.
+         */
+        WRONG_KEY_FALLBACK
+    }
+
+    /**
+     * The seam's decision for one bake, and whether THIS call wrote the once-per-resource log
+     * line ({@code false} for a repeat of the same reason, and always for {@link Outcome#APPLIED}).
+     */
+    public record Decision(Outcome outcome, boolean logged) {
+    }
+
     private DrawOrder() {
     }
 
-    /** The order under {@link #KEY} of a parsed geo JSON document; fails loudly when a rig ships without it. */
+    /**
+     * The order under {@link #KEY} of a parsed geo JSON document. EMPTY when the rig ships
+     * without the key (no {@code description}, or no such member: the resource-pack case,
+     * answered by {@link #applyOrFallback} with GeckoLib's own order); throws when the key is
+     * present and malformed (an explicit {@code null}, a non-array, a non-string or
+     * repeated entry, an empty array). The message is the exact reason and names no fix:
+     * the seam's log line adds the pack author's, the harness fails on it as it is.
+     */
     public static List<String> read(JsonObject geoJson) {
         JsonArray geometries = geoJson.getAsJsonArray("minecraft:geometry");
         if (geometries == null || geometries.isEmpty()) {
@@ -84,9 +163,11 @@ public final class DrawOrder {
         }
         JsonObject description = geometries.get(0).getAsJsonObject().getAsJsonObject("description");
         JsonElement element = description == null ? null : description.get(KEY);
-        if (element == null || !element.isJsonArray()) {
-            throw new IllegalStateException("geo JSON carries no " + KEY
-                    + " (the G2 draw-order contract); regenerate it with tools/layer_definition_to_geo.py");
+        if (element == null) {
+            return List.of();
+        }
+        if (!element.isJsonArray()) {
+            throw new IllegalStateException(KEY + " is present but not an array: " + element);
         }
         List<String> order = new ArrayList<>();
         Set<String> seen = new HashSet<>();
@@ -100,18 +181,90 @@ public final class DrawOrder {
             order.add(name.getAsString());
         }
         if (order.isEmpty()) {
-            throw new IllegalStateException(KEY + " is empty");
+            throw new IllegalStateException(KEY + " is present but empty");
         }
         return List.copyOf(order);
     }
 
-    /** {@link #read} over the geo resource GeckoLib loaded the bake from. */
+    /**
+     * {@link #read} over the geo resource GeckoLib loaded the bake from: empty when the
+     * resource carries no key; {@link #read}'s own exception, unwrapped, when the key is
+     * present and malformed (so the message stays the exact reason). The resource itself
+     * must exist and parse - GeckoLib baked it moments earlier - so a failure to read it is
+     * its own {@link IllegalStateException}, carrying the cause.
+     */
     public static List<String> load(ResourceManager resources, ResourceLocation geo) {
+        JsonObject json;
         try (BufferedReader reader = resources.getResourceOrThrow(geo).openAsReader()) {
-            return read(JsonParser.parseReader(reader).getAsJsonObject());
+            json = JsonParser.parseReader(reader).getAsJsonObject();
         } catch (IOException | RuntimeException exception) {
             throw new IllegalStateException("Unable to read the draw order of " + geo, exception);
         }
+        return read(json);
+    }
+
+    /**
+     * The production seam's policy over the geo resource GeckoLib baked {@code model} from -
+     * the call {@code OreSpawnGeoReplacementModel.getBakedModel} makes, under
+     * {@code EntityRenderDispatcher.render}, where a throw is a client crash on the mob's
+     * first frame. Nothing thrown by {@link #load}, {@link #read} or {@link #apply} escapes:
+     * an absent key is {@link Outcome#ABSENT_FALLBACK} (WARN once per resource); a key that
+     * is present and wrong, or a resource that cannot be read, is
+     * {@link Outcome#WRONG_KEY_FALLBACK} (ERROR once per resource, naming the geo, the exact
+     * reason and the pack author's fix), the bake left exactly as the factory built it; a
+     * right key is {@link Outcome#APPLIED}. The harness never calls this: it proves shipped
+     * rigs through the strict statics and takes no fallback.
+     */
+    public static Decision applyOrFallback(BakedGeoModel model, ResourceManager resources, ResourceLocation geo) {
+        List<String> order;
+        try {
+            order = load(resources, geo);
+        } catch (IllegalStateException wrong) {
+            return fallback(geo, reason(wrong));
+        }
+        return applyOrFallback(model, order, geo);
+    }
+
+    /**
+     * The same policy over an order already read ({@link #read}: empty means absent). A
+     * present order goes through {@link #apply}; when that throws (a name the rig lacks, a
+     * rig bone the key lacks, not a pre-order) the bake is untouched - {@link #apply} checks
+     * everything before it sorts - and the decision is the ERROR-logged fallback.
+     */
+    public static Decision applyOrFallback(BakedGeoModel model, List<String> order, ResourceLocation geo) {
+        if (order.isEmpty()) {
+            boolean logged = !ABSENT.equals(LAST_LOGGED.put(geo, ABSENT));
+            if (logged) {
+                LOGGER.warn("Phase G draw order: {} ships without {} - GeckoLib's own bone order is used, not the "
+                        + "classic one (a resource pack that re-exports the rig loses the key); fix: carry the {} "
+                        + "array over from the shipped rig's description", geo, KEY, KEY);
+            }
+            return new Decision(Outcome.ABSENT_FALLBACK, logged);
+        }
+        try {
+            apply(model, order);
+        } catch (IllegalStateException wrong) {
+            return fallback(geo, reason(wrong));
+        }
+        LAST_LOGGED.remove(geo);
+        return new Decision(Outcome.APPLIED, false);
+    }
+
+    private static Decision fallback(ResourceLocation geo, String reason) {
+        boolean logged = !reason.equals(LAST_LOGGED.put(geo, reason));
+        if (logged) {
+            LOGGER.error("Phase G draw order: {} carries a wrong {} - GeckoLib's own bone order is used, not the "
+                    + "classic one: {}; fix: carry the {} array over from the shipped rig's description",
+                    geo, KEY, reason, KEY);
+        }
+        return new Decision(Outcome.WRONG_KEY_FALLBACK, logged);
+    }
+
+    /** The exact reason: the message, plus the cause when {@link #load} wrapped an unreadable resource. */
+    private static String reason(IllegalStateException failure) {
+        Throwable cause = failure.getCause();
+        return cause == null ? failure.getMessage()
+                : failure.getMessage() + " (" + cause.getClass().getSimpleName() + ": " + cause.getMessage() + ")";
     }
 
     /**
@@ -120,11 +273,20 @@ public final class DrawOrder {
      * the bones exactly as the classic renderer draws the parts. Every bone of the rig
      * must appear in the order and every name in the order must be a bone of the rig, and
      * the order must be a pre-order of the rig's tree (each parent ahead of its subtree, each
-     * subtree contiguous) — a permutation that is not one would sort into a traversal that
+     * subtree contiguous) - a permutation that is not one would sort into a traversal that
      * differs from the shipped list (refuter A, 2026-09-06); anything else is a rig that
-     * drifted from its contract, and fails.
+     * drifted from its contract, and throws. Every check runs BEFORE anything is touched
+     * (refuter A on the landing, 2026-09-06): the set both ways on the tree as it stands,
+     * then the pre-order against a sorted COPY of the lists, and only then the in-place
+     * sort - so a wrong order leaves the bake exactly as found, which is what the seam
+     * falls back to. An empty order is refused here too: the missing-key fallback is
+     * {@link #applyOrFallback}'s, never this method's.
      */
     public static void apply(BakedGeoModel model, List<String> order) {
+        if (order.isEmpty()) {
+            throw new IllegalStateException("draw order is empty: a rig without " + KEY
+                    + " takes applyOrFallback, and the harness takes no fallback");
+        }
         Map<String, Integer> rank = new HashMap<>();
         for (int index = 0; index < order.size(); index++) {
             if (rank.put(order.get(index), index) != null) {
@@ -132,20 +294,23 @@ public final class DrawOrder {
             }
         }
         Set<String> present = new HashSet<>();
-        sort(model.topLevelBones(), rank, present);
+        check(model.topLevelBones(), rank, present);
         if (present.size() != rank.size()) {
             Set<String> missing = new HashSet<>(rank.keySet());
             missing.removeAll(present);
             throw new IllegalStateException("draw order names bones the rig lacks: " + missing);
         }
-        List<String> drawn = traversal(model);
+        List<String> drawn = new ArrayList<>();
+        collectSorted(model.topLevelBones(), rank, drawn);
         if (!drawn.equals(order)) {
             throw new IllegalStateException(KEY + " is not a pre-order of the rig: the sorted bake draws " + drawn
                     + " but the order says " + order);
         }
+        sort(model.topLevelBones(), rank);
     }
 
-    private static void sort(List<GeoBone> bones, Map<String, Integer> rank, Set<String> present) {
+    /** Every rig bone is in the order, once; touches nothing. */
+    private static void check(List<GeoBone> bones, Map<String, Integer> rank, Set<String> present) {
         for (GeoBone bone : bones) {
             if (!rank.containsKey(bone.getName())) {
                 throw new IllegalStateException("rig bone " + bone.getName() + " is missing from " + KEY);
@@ -153,9 +318,30 @@ public final class DrawOrder {
             if (!present.add(bone.getName())) {
                 throw new IllegalStateException("rig repeats bone " + bone.getName());
             }
-            sort(bone.getChildBones(), rank, present);
+            check(bone.getChildBones(), rank, present);
         }
-        bones.sort(Comparator.comparingInt(bone -> rank.get(bone.getName())));
+    }
+
+    private static Comparator<GeoBone> byRank(Map<String, Integer> rank) {
+        return Comparator.comparingInt(bone -> rank.get(bone.getName()));
+    }
+
+    /** The traversal the bake WOULD have after the sort, computed on copies of the lists. */
+    private static void collectSorted(List<GeoBone> bones, Map<String, Integer> rank, List<String> drawn) {
+        List<GeoBone> sorted = new ArrayList<>(bones);
+        sorted.sort(byRank(rank));
+        for (GeoBone bone : sorted) {
+            drawn.add(bone.getName());
+            collectSorted(bone.getChildBones(), rank, drawn);
+        }
+    }
+
+    /** The in-place sort, run only after every check passed. */
+    private static void sort(List<GeoBone> bones, Map<String, Integer> rank) {
+        bones.sort(byRank(rank));
+        for (GeoBone bone : bones) {
+            sort(bone.getChildBones(), rank);
+        }
     }
 
     /** The bake's current pre-order traversal, bone names in the order the renderer visits them. */

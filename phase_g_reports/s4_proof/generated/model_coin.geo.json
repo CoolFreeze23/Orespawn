@@ -5,7 +5,10 @@
       "description": {
         "identifier": "geometry.orespawn.g1.model_coin",
         "texture_width": 512,
-        "texture_height": 512
+        "texture_height": 512,
+        "orespawn:bone_draw_order": [
+          "coin"
+        ]
       },
       "bones": [
         {

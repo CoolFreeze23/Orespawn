@@ -6,8 +6,8 @@
   "ground_truth": "executed compiled LayerDefinition and baked ModelPart",
   "source_class": "danger.orespawn.entity.client.ModelCoin",
   "source_class_sha256": "2de79f388718e1c82d994e23f62882dc4b0029bf8ea9811ede1df8dc452ded20",
-  "compiled_dump_sha256": "d4e5d274f94d69630be5c0215da6b9029a891aaf347eb63e97dfe898c5a1fd37",
-  "geometry_sha256": "ee02ccb5c68bb659b43a91513c0c48c7ef011660ff2f93a58c499bd3c1e1a047",
+  "compiled_dump_sha256": "b46e2b5137ce430bda6c123f6d99efe8c4809863de309cc4bee5d3625c3c60e9",
+  "geometry_sha256": "29a4289d742122d5d5a07e55ea38ed5176cbd1d7df808d7d2f1e7a09e4a93b2d",
   "animation_sha256": "7882082857fdb11e02f158ebc3a6d3f970e2ac60d54813f0e903ee97b2293749",
   "animation_contract_sha256": "0a339eff2ce951231de3143475583bc5184c20f07e5812245947e890da6dedb3",
   "bone_count": 1,
@@ -17,6 +17,27 @@
   "exact_bone_names": [
     "coin"
   ],
+  "bone_draw_order": [
+    "coin"
+  ],
+  "draw_order_evidence": {
+    "source": "classic EntityModel.renderToBuffer on a second bake posed identically; every ModelPart.render is one pose-stack push, attributed to its part by ModelPart.skipDraw elimination (one run per cube-bearing part with every other part's skipDraw set); a part drawn n > 1 times is named <part>__i<k> by draw ordinal",
+    "captures": [
+      "bind",
+      "t0",
+      "t_quarter",
+      "t_0_375000",
+      "t_half",
+      "t_three_quarter",
+      "t_end"
+    ],
+    "cube_bearing_units": 1,
+    "observed_units": 1,
+    "unobserved_units": [],
+    "ordered_pairs": 0,
+    "tie_break": "converter emission order for pairs never drawn together in any capture",
+    "lifting": "pre-order over the geo bone tree, siblings by their subtree's first classic draw"
+  },
   "animation_contract": {
     "schema_version": 1,
     "kind": "code_driven",

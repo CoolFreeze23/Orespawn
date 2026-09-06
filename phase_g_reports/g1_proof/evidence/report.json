@@ -13,6 +13,7 @@
     "pixel_mean_absolute_error": 0.25,
     "minimum_foreground_fraction": 0.001
   },
+  "contested_exclusion_applied": false,
   "models": [
     {
       "model_id": "model_elevator",
@@ -20,10 +21,10 @@
       "proof_scope": "production_proof_model",
       "source_class": "danger.orespawn.entity.client.ModelElevator",
       "source_class_sha256": "9e3a86f831781e04b2a49d4eb2c2c2282e439fda3a11176c7eeb75b6c7c0582a",
-      "compiled_dump_sha256": "7bd14df6f843fdcdf7abee93b09956f98e26036d4b7f5fbe42cf88f788153cf1",
+      "compiled_dump_sha256": "742d99e39728bc6324966b8dabd372de6f49535cda87f8a41371e98dce83e000",
       "bone_count": 5,
       "cube_count": 5,
-      "geometry_sha256": "13c1c078468cc73bb094c6d8564fba97476d55bed6ab0bd2b75445a33e6b38ec",
+      "geometry_sha256": "3dddad4950a5b610a915b5767f86ee3c814f9ebb6500369476ff147fb199d3ac",
       "animation_sha256": "7882082857fdb11e02f158ebc3a6d3f970e2ac60d54813f0e903ee97b2293749",
       "animation_contract_sha256": "ef25a2b4eb7640daad7b902fc72c12e0e99737cd0882ac83ea702e72c92a7acd",
       "geometry": {
@@ -74,6 +75,21 @@
         "constant_vector_count": 0,
         "runtime_acceptance": false
       },
+      "draw_order": {
+        "status": "PASS",
+        "bone_draw_order": [
+          "shape1",
+          "shape2",
+          "shape3",
+          "shape4",
+          "shape5"
+        ],
+        "captures_checked": 6,
+        "draws_checked": 30,
+        "classic_source": "classic EntityModel.renderToBuffer on a second bake posed identically; every ModelPart.render is one pose-stack push, attributed to its part by ModelPart.skipDraw elimination (one run per cube-bearing part with every other part's skipDraw set); a part drawn n > 1 times is named <part>__i<k> by draw ordinal",
+        "unobserved_units": [],
+        "policy": "the shipped model sorts GeckoLib's topLevelBones / childBones lists into the classic renderToBuffer order (DrawOrder.apply); both renderers traverse in pre-order, so equal sibling orders are equal draw orders"
+      },
       "visual": {
         "status": "PASS",
         "image_size": [
@@ -90,10 +106,9 @@
         "minimum_foreground_fraction_threshold": 0.001,
         "max_changed_fraction": 0.0,
         "max_mean_absolute_error": 0.0,
-        "z_fight_policy": "pixels where two different quads meet the front within 1e-06 depth with different texels are draw-order z-fights, excluded from the comparison and painted in the diff (ruling 2, 2026-09-02)",
+        "z_fight_policy": "pixels where two different quads meet the front within 1e-06 depth with different texels are counted as a diagnostic only; every pixel is compared, the draw order being contracted equal on both sides (G2 root-order contract, landed 2026-09-06)",
+        "contested_exclusion_applied": false,
         "max_contested_fraction": 0.0,
-        "contested_fraction_pin": 0.0,
-        "requires_in_game_acceptance": false,
         "cutout_alpha_threshold": 0.1,
         "minimum_observed_foreground_fraction": 1.0,
         "samples": [
@@ -103,6 +118,7 @@
             "changed_fraction": 0.0,
             "mean_absolute_error": 0.0,
             "contested_fraction": 0.0,
+            "contested_excluded": false,
             "vanilla_foreground_fraction": 0.2774658203125,
             "geo_foreground_fraction": 0.2774658203125,
             "vanilla_capture": "visual/model_elevator/bind.vanilla.png",
@@ -115,6 +131,7 @@
             "changed_fraction": 0.0,
             "mean_absolute_error": 0.0,
             "contested_fraction": 0.0,
+            "contested_excluded": false,
             "vanilla_foreground_fraction": 0.2774658203125,
             "geo_foreground_fraction": 0.2774658203125,
             "vanilla_capture": "visual/model_elevator/t0.vanilla.png",
@@ -127,6 +144,7 @@
             "changed_fraction": 0.0,
             "mean_absolute_error": 0.0,
             "contested_fraction": 0.0,
+            "contested_excluded": false,
             "vanilla_foreground_fraction": 0.2774658203125,
             "geo_foreground_fraction": 0.2774658203125,
             "vanilla_capture": "visual/model_elevator/t_quarter.vanilla.png",
@@ -139,6 +157,7 @@
             "changed_fraction": 0.0,
             "mean_absolute_error": 0.0,
             "contested_fraction": 0.0,
+            "contested_excluded": false,
             "vanilla_foreground_fraction": 0.2774658203125,
             "geo_foreground_fraction": 0.2774658203125,
             "vanilla_capture": "visual/model_elevator/t_half.vanilla.png",
@@ -151,6 +170,7 @@
             "changed_fraction": 0.0,
             "mean_absolute_error": 0.0,
             "contested_fraction": 0.0,
+            "contested_excluded": false,
             "vanilla_foreground_fraction": 0.2774658203125,
             "geo_foreground_fraction": 0.2774658203125,
             "vanilla_capture": "visual/model_elevator/t_three_quarter.vanilla.png",
@@ -166,10 +186,10 @@
       "proof_scope": "production_proof_model",
       "source_class": "danger.orespawn.entity.client.ModelBeaver",
       "source_class_sha256": "91e93750c144a368478084bb3fe75738af158d2dfc856652dfc7b944eaa75207",
-      "compiled_dump_sha256": "ef99fe581ade9a5704422a6ba6db142a4ce8d38866f2fa339435e2be95e77dbd",
+      "compiled_dump_sha256": "a42983c18f720daa9dc210bcef6880e8bcb820a4258fd1248275736ddf8032aa",
       "bone_count": 9,
       "cube_count": 9,
-      "geometry_sha256": "486883a1918a74c96dc61422e3d40c5a2f13094a24d2296caeea2fc244feb67d",
+      "geometry_sha256": "712d431e0da8f625e2768899e251dbd8620bdae36ff47ec37dc9cc4aaa00fca8",
       "animation_sha256": "c845420d205f2d5b608b17ddde0ac27f39745316c60a741ada2b8c5b4f5f332d",
       "animation_contract_sha256": "86236c1dc332a52c228a3f0e906272b23527353ec412751ce30c5d3a9a4b727e",
       "geometry": {
@@ -263,6 +283,25 @@
         "minimum_key_probe_separation_age_ticks": 0.0007339999999942393,
         "evaluation_for_runtime_acceptance": "NOT_PERFORMED_REFERENCE_ONLY"
       },
+      "draw_order": {
+        "status": "PASS",
+        "bone_draw_order": [
+          "head",
+          "nose",
+          "teeth",
+          "body",
+          "tail",
+          "rff",
+          "lff",
+          "rrf",
+          "lrf"
+        ],
+        "captures_checked": 21,
+        "draws_checked": 189,
+        "classic_source": "classic EntityModel.renderToBuffer on a second bake posed identically; every ModelPart.render is one pose-stack push, attributed to its part by ModelPart.skipDraw elimination (one run per cube-bearing part with every other part's skipDraw set); a part drawn n > 1 times is named <part>__i<k> by draw ordinal",
+        "unobserved_units": [],
+        "policy": "the shipped model sorts GeckoLib's topLevelBones / childBones lists into the classic renderToBuffer order (DrawOrder.apply); both renderers traverse in pre-order, so equal sibling orders are equal draw orders"
+      },
       "visual": {
         "status": "PASS",
         "image_size": [
@@ -279,10 +318,9 @@
         "minimum_foreground_fraction_threshold": 0.001,
         "max_changed_fraction": 0.0,
         "max_mean_absolute_error": 0.0,
-        "z_fight_policy": "pixels where two different quads meet the front within 1e-06 depth with different texels are draw-order z-fights, excluded from the comparison and painted in the diff (ruling 2, 2026-09-02)",
+        "z_fight_policy": "pixels where two different quads meet the front within 1e-06 depth with different texels are counted as a diagnostic only; every pixel is compared, the draw order being contracted equal on both sides (G2 root-order contract, landed 2026-09-06)",
+        "contested_exclusion_applied": false,
         "max_contested_fraction": 1.52587890625e-05,
-        "contested_fraction_pin": 1.52587890625e-05,
-        "requires_in_game_acceptance": false,
         "cutout_alpha_threshold": 0.1,
         "minimum_observed_foreground_fraction": 1.0,
         "samples": [
@@ -292,6 +330,7 @@
             "changed_fraction": 0.0,
             "mean_absolute_error": 0.0,
             "contested_fraction": 0.0,
+            "contested_excluded": false,
             "vanilla_foreground_fraction": 0.38946533203125,
             "geo_foreground_fraction": 0.38946533203125,
             "vanilla_capture": "visual/model_beaver/bind.vanilla.png",
@@ -304,6 +343,7 @@
             "changed_fraction": 0.0,
             "mean_absolute_error": 0.0,
             "contested_fraction": 1.52587890625e-05,
+            "contested_excluded": false,
             "vanilla_foreground_fraction": 0.3699493408203125,
             "geo_foreground_fraction": 0.3699493408203125,
             "vanilla_capture": "visual/model_beaver/a1_t0.vanilla.png",
@@ -316,6 +356,7 @@
             "changed_fraction": 0.0,
             "mean_absolute_error": 0.0,
             "contested_fraction": 0.0,
+            "contested_excluded": false,
             "vanilla_foreground_fraction": 0.38946533203125,
             "geo_foreground_fraction": 0.38946533203125,
             "vanilla_capture": "visual/model_beaver/a1_t_quarter.vanilla.png",
@@ -328,6 +369,7 @@
             "changed_fraction": 0.0,
             "mean_absolute_error": 0.0,
             "contested_fraction": 0.0,
+            "contested_excluded": false,
             "vanilla_foreground_fraction": 0.389190673828125,
             "geo_foreground_fraction": 0.389190673828125,
             "vanilla_capture": "visual/model_beaver/a1_t_half.vanilla.png",
@@ -340,6 +382,7 @@
             "changed_fraction": 0.0,
             "mean_absolute_error": 0.0,
             "contested_fraction": 0.0,
+            "contested_excluded": false,
             "vanilla_foreground_fraction": 0.38946533203125,
             "geo_foreground_fraction": 0.38946533203125,
             "vanilla_capture": "visual/model_beaver/a1_t_three_quarter.vanilla.png",
@@ -357,10 +400,10 @@
       "proof_scope": "non_production_converter_fixture",
       "source_class": "danger.orespawn.g1.G1ConverterFixtureModel",
       "source_class_sha256": "2802d00cd78514cfd9ca08d7660c322e4819fedf20bf1cd5ca239bf4186559a7",
-      "compiled_dump_sha256": "cc7f12ce51ae7e273005c166319d7637ab07ba0addec4baf2cffdfb2a490d6cc",
+      "compiled_dump_sha256": "724fac63bece6bbb60705ad2e611a0d105664d90a4b141e505a32aa9276038a0",
       "bone_count": 2,
       "cube_count": 2,
-      "geometry_sha256": "77fcd0fc50ae46f51de47da6ecb10f79528646e937195701720eab9c00521af2",
+      "geometry_sha256": "9281c0ac66d082663dd3cdd1f23ee30b0bf131e340c8f85c041572a229d60d68",
       "animation_sha256": "7882082857fdb11e02f158ebc3a6d3f970e2ac60d54813f0e903ee97b2293749",
       "animation_contract_sha256": "46dabc21cf9f3eeb0d8b8c6560fd4c216b2743a0ee0c5cc03a954f3ab99ec4c3",
       "geometry": {
@@ -410,6 +453,18 @@
         "clip_count": 0,
         "constant_vector_count": 0,
         "runtime_acceptance": false
+      },
+      "draw_order": {
+        "status": "PASS",
+        "bone_draw_order": [
+          "fixture_parent",
+          "fixture_child"
+        ],
+        "captures_checked": 1,
+        "draws_checked": 2,
+        "classic_source": "classic EntityModel.renderToBuffer on a second bake posed identically; every ModelPart.render is one pose-stack push, attributed to its part by ModelPart.skipDraw elimination (one run per cube-bearing part with every other part's skipDraw set); a part drawn n > 1 times is named <part>__i<k> by draw ordinal",
+        "unobserved_units": [],
+        "policy": "the shipped model sorts GeckoLib's topLevelBones / childBones lists into the classic renderToBuffer order (DrawOrder.apply); both renderers traverse in pre-order, so equal sibling orders are equal draw orders"
       },
       "fixture_coverage": {
         "status": "PASS",

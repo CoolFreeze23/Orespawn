@@ -5,7 +5,11 @@
       "description": {
         "identifier": "geometry.orespawn.g1.fixture_nested_nonmirrored_rotated_inflate",
         "texture_width": 64,
-        "texture_height": 64
+        "texture_height": 64,
+        "orespawn:bone_draw_order": [
+          "fixture_parent",
+          "fixture_child"
+        ]
       },
       "bones": [
         {

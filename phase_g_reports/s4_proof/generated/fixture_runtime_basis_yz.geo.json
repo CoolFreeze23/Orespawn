@@ -5,7 +5,11 @@
       "description": {
         "identifier": "geometry.orespawn.g1.fixture_runtime_basis_yz",
         "texture_width": 64,
-        "texture_height": 64
+        "texture_height": 64,
+        "orespawn:bone_draw_order": [
+          "basis_parent",
+          "basis_child"
+        ]
       },
       "bones": [
         {

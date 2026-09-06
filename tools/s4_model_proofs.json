@@ -39,8 +39,7 @@
         "yaw_degrees": 34.0,
         "pitch_degrees": -28.0
       },
-      "channels": [],
-      "max_contested_fraction_pin": 0.0
+      "channels": []
     },
     {
       "id": "model_vortex",
@@ -70,8 +69,7 @@
           "pitch_degrees": 0.0
         }
       ],
-      "channels": [],
-      "max_contested_fraction_pin": 0.0
+      "channels": []
     },
     {
       "id": "model_coin",
@@ -100,7 +98,6 @@
         "pitch_degrees": -28.0
       },
       "channels": [],
-      "max_contested_fraction_pin": 0.0,
       "period_note": "the three spoke rates 7.3, 5.1 and 3.7 degrees per tick (ModelPurplePower.setupAnim:45-56) share the common period 3600 ticks: t*7.3, t*5.1 and t*3.7 are all multiples of 360 iff 73t, 51t and 37t are multiples of 3600, and since 73 and 37 are coprime with 3600 that needs t a multiple of 3600 (gcd(51, 3600) = 3, so the 5.1 rate alone closes at 1200); the samples cover the small ages (the visual ones), t_quarter, t_half and t_end — in float32 the loop closes ~1.2e-5 rad short of 73*2pi at t_end and nothing asserts closure (refuter B, D6 / refuter A, A8)"
     },
     {
@@ -137,9 +134,7 @@
         "pitch_degrees": -28.0
       },
       "channels": [],
-      "max_contested_fraction_pin": 0.464233398438,
-      "rig_note": "ENT-S-091 (2026-09-02): rig regenerated from orig ModelIsland.java (three tumbling cubes); the previous body/head/legs rig was not the original",
-      "in_game_acceptance": "PENDING_OWNER: the 1.7.10 Island is three interpenetrating cubes, so 46.4% of every capture is coplanar z-fight excluded under ruling 2; above 0.5% (ruling 2026-09-02)"
+      "rig_note": "ENT-S-091 (2026-09-02): rig regenerated from orig ModelIsland.java (three tumbling cubes); the previous body/head/legs rig was not the original"
     },
     {
       "id": "model_islandtoo",
@@ -175,9 +170,7 @@
         "pitch_degrees": -28.0
       },
       "channels": [],
-      "max_contested_fraction_pin": 0.464233398438,
-      "rig_note": "ENT-S-091 (2026-09-02): rig regenerated from orig ModelIsland.java (three tumbling cubes); the previous body/head/legs rig was not the original",
-      "in_game_acceptance": "PENDING_OWNER: the 1.7.10 Island is three interpenetrating cubes, so 46.4% of every capture is coplanar z-fight excluded under ruling 2; above 0.5% (ruling 2026-09-02)"
+      "rig_note": "ENT-S-091 (2026-09-02): rig regenerated from orig ModelIsland.java (three tumbling cubes); the previous body/head/legs rig was not the original"
     },
     {
       "id": "model_robot1",
@@ -214,8 +207,7 @@
         "yaw_degrees": 34.0,
         "pitch_degrees": -28.0
       },
-      "channels": [],
-      "max_contested_fraction_pin": 0.00054931640625
+      "channels": []
     },
     {
       "id": "model_robot5",
@@ -247,9 +239,7 @@
         "pitch_degrees": -28.0
       },
       "channels": [],
-      "visual_note": "bind excluded: lwheel2/rwheel2 sit superimposed on lwheel1/rwheel1 until the pose adds their 0.785 rad offset (ruling 2, 2026-09-02: superimposed-at-bind is not a player-visible state); the posed samples show the wheels",
-      "max_contested_fraction_pin": 0.0116119384765625,
-      "in_game_acceptance": "PENDING_OWNER: excluded fraction above 0.5% (ruling 2026-09-02)"
+      "visual_note": "bind is not a visual sample: lwheel2/rwheel2 sit superimposed on lwheel1/rwheel1 until the pose adds their 0.785 rad offset (ruling 2, 2026-09-02: superimposed-at-bind is not a player-visible state; its z-fight clause retired by the G2 contract, 2026-09-06); the posed samples show the wheels"
     },
     {
       "id": "model_robot2",
@@ -310,8 +300,7 @@
         "pitch_degrees": -28.0
       },
       "channels": [],
-      "visual_note": "bind excluded: the classic model overlaps arm segments until posed; the posed samples are the player-visible states",
-      "max_contested_fraction_pin": 0.0
+      "visual_note": "bind excluded: the classic model overlaps arm segments until posed; the posed samples are the player-visible states"
     },
     {
       "id": "model_robot3",
@@ -359,8 +348,7 @@
         "yaw_degrees": 34.0,
         "pitch_degrees": -28.0
       },
-      "channels": [],
-      "max_contested_fraction_pin": 0.00250244140625
+      "channels": []
     },
     {
       "id": "model_robot4",
@@ -403,8 +391,7 @@
         "yaw_degrees": 34.0,
         "pitch_degrees": -28.0
       },
-      "channels": [],
-      "max_contested_fraction_pin": 0.0004119873046875
+      "channels": []
     },
     {
       "id": "model_rockbase",
@@ -499,8 +486,7 @@
         "pitch_degrees": -28.0
       },
       "channels": [],
-      "visual_note": "types 0 and 13 draw nothing (classic early return) and are proven by the hidden-bone check, not the visual leg; bind (all 22 parts superimposed) is excluded under ruling 2",
-      "max_contested_fraction_pin": 0.0
+      "visual_note": "types 0 and 13 draw nothing (classic early return) and are proven by the hidden-bone check, not the visual leg; bind (all 22 parts superimposed) is not a visual sample (ruling 2, 2026-09-02: superimposed-at-bind is not a player-visible state; its z-fight clause retired by the G2 contract, 2026-09-06)"
     },
     {
       "id": "model_rotator",
@@ -583,9 +569,8 @@
         "pitch_degrees": -28.0
       },
       "channels": [],
-      "max_contested_fraction_pin": 0.0,
       "state_note": "the pose reads only RenderInfo.rf1 (orig ModelRotator.java:51-52), never age or gait: rf1 presets 0 (bind-like: three flat fans at distinct radii), 2, 90 (the gyroscope: fans in three planes), 180.5, 358 (advances to 360 > 359: wraps to 0) and 359 (wraps); subject_after.rf1 pins the advance and the wrap on both sides; the two ages only prove the pose ignores age",
-      "render_instances_note": "Slice 4c render-instance expansion: each blade part is drawn 8x with its own zRot stepped by the float literal 0.7853982f (accumulated in float32), inside one pose-stack rotation of rf1 degrees about X / Y / Z per part, so the converter emits <part>__fan (group, hook-spun) over <part>__i0..7 (clones, static step); the blades of one fan overlap (bar half-width 2 > arc spacing at radius 4.4) with coplanar faces, so z-fight contests are expected and pinned"
+      "render_instances_note": "Slice 4c render-instance expansion: each blade part is drawn 8x with its own zRot stepped by the float literal 0.7853982f (accumulated in float32), inside one pose-stack rotation of rf1 degrees about X / Y / Z per part, so the converter emits <part>__fan (group, hook-spun) over <part>__i0..7 (clones, static step); the blades of one fan overlap (bar half-width 2 > arc spacing at radius 4.4) with coplanar faces, so z-fight contests are expected; the contested fraction is reported as a diagnostic, every pixel compared (G2 root-order contract, 2026-09-06)"
     },
     {
       "id": "model_purplepower",
@@ -648,10 +633,8 @@
         "pitch_degrees": -28.0
       },
       "channels": [],
-      "max_contested_fraction_pin": 0.1058502197265625,
-      "in_game_acceptance": "PENDING_OWNER: at bind (age 0) the three spoke rings lie in one coplanar slab through the origin, so 10.6% of that capture is coplanar z-fight excluded under ruling 2 (3.1% at t_quarter, 0 elsewhere); above 0.5% (ruling 2026-09-02)",
       "period_note": "the three spoke rates 7.3, 5.1 and 3.7 degrees per tick (ModelPurplePower.setupAnim:45-56) share the common period 3600 ticks (t*7.3, t*5.1, t*3.7 are all multiples of 360 iff t is a multiple of 3600: 73, 51 and 37 are pairwise coprime); the fractions sample ages 0, 4.5, 18, 45, 108, 900, 1800 and 3600 ticks - small ages where the three rings visibly separate, the half period (all three at 180 degrees) and the full period (the loop closes)",
-      "render_instances_note": "Slice 4c render-instance expansion: each spoke is drawn 6x under mulPose(Z, i * 1.0471976F) on the pose stack OUTSIDE the spoke's own animated rotation, so the converter emits a static parent <part>__fan<k> (Z step k * 60 degrees, float32 product) over the clone <part>__i<k> that the hook animates with the classic setupAnim angles; the six spokes of a ring pass through the origin with coplanar faces, so z-fight contests are expected and pinned",
+      "render_instances_note": "Slice 4c render-instance expansion: each spoke is drawn 6x under mulPose(Z, i * 1.0471976F) on the pose stack OUTSIDE the spoke's own animated rotation, so the converter emits a static parent <part>__fan<k> (Z step k * 60 degrees, float32 product) over the clone <part>__i<k> that the hook animates with the classic setupAnim angles; the six spokes of a ring pass through the origin with coplanar faces, so z-fight contests are expected; the contested fraction is reported as a diagnostic, every pixel compared (G2 root-order contract, 2026-09-06)",
       "classic_note": "ENT-S-146 (REPORT when this landed): the classic model is a re-authoring of the 1.7.10 one; the candidate reproduces the classic as it stands (harness law); re-base when the fix lands"
     }
   ],

@@ -31,11 +31,20 @@ Checks
                       trigger-fired clip can finish (BUG-035); every hitbox
                       profile's main size equals the registered EntityType dims,
                       its bones exist in the entity's geo, and no profile ships
-                      under data/minecraft (BUG-036).
+                      under data/minecraft (BUG-036); every shipped rig is
+                      byte-identical to its harness-proven copy; every rig the
+                      GeckoLib replacement seam draws (a GeoReplacementDescriptor's
+                      model resource) carries the G2 classic draw order under
+                      description["orespawn:bone_draw_order"], a non-empty array
+                      of unique strings naming exactly the rig's bones (owner
+                      ruling 2026-09-06 - never acknowledgeable); and every shipped
+                      geo/entity/*.geo.json is reconciled: a seam rig, or a member
+                      of OUTSIDE_SEAM with its dated reason (never acknowledgeable).
 
 Findings whose (category, name) pair is listed in ACKNOWLEDGED below are
 reported under a separate ACKNOWLEDGED section and never affect the exit code
-(the verified-faithful / known-false-positive whitelist).
+(the verified-faithful / known-false-positive whitelist); categories listed in
+NEVER_ACKNOWLEDGED cannot be whitelisted at all.
 
 Exit code 1 if any non-acknowledged ERROR-level findings, else 0.
 --json (alias: --write) refreshes tools/asset_audit_report.json.
@@ -89,6 +98,15 @@ ACKNOWLEDGED = {
     # controller that never finishes is the intended behavior for this one clip.
     ("GECKO_TRIGGER_NEVER_FINISHES", "death"),
 }
+
+# Categories no ACKNOWLEDGED entry may whitelist (an entry naming one is FATAL):
+# a rig the replacement seam draws that ships without the G2 draw-order key, or with
+# a wrong one, would take the client's logged fallback to GeckoLib's own bone order -
+# a courtesy for resource packs that re-export a rig, never the mod's own state - so
+# it is a build error, full stop (owner ruling 2026-09-06, addendum item 24 (3)); and
+# a shipped rig that is neither a seam rig nor a dated OUTSIDE_SEAM exception is a rig
+# outside the contract nobody decided on (refuter B on the landing, 2026-09-06).
+NEVER_ACKNOWLEDGED = {"GECKO_GEO_DRAW_ORDER_MISSING", "GECKO_GEO_SEAM_UNRECONCILED"}
 
 findings = []      # list of dicts: level, category, name, detail, path
 skipped = []       # things the static parser could not verify
@@ -685,6 +703,82 @@ def check_index_case(java_texts):
 
 DATA = ROOT / "src" / "main" / "resources" / "data"
 
+# G2 root-order contract: the geo description key the converter writes and the shared
+# OreSpawnGeoReplacementModel applies to each bake (DrawOrder.KEY).
+DRAW_ORDER_KEY = "orespawn:bone_draw_order"
+DESCRIPTOR_CTOR_RE = re.compile(r'new\s+GeoReplacementDescriptor\s*<[^>]*>\s*\(')
+GEO_LITERAL_RE = re.compile(r'fromNamespaceAndPath\(\s*(?:OreSpawnMod\.MOD_ID|"orespawn")\s*,\s*'
+                            r'"(geo/[^"]+)"\s*\)')
+
+# Shipped rigs (geo/entity/<name>.geo.json) the replacement seam does not draw, each with
+# its dated reason. Every other shipped rig must be named by a GeoReplacementDescriptor;
+# anything else is GECKO_GEO_SEAM_UNRECONCILED (never acknowledgeable), so a rig cannot
+# appear outside the G2 contract silently, and a stale entry here (a rig that gained a
+# descriptor, or no longer ships) is the same error.
+OUTSIDE_SEAM = {
+    # 2026-09-06, slice (c) landing, the Queen deviation (deviation 2 in the landing records,
+    # after the reading of "loud" became deviation 1; presented to the owner): the Queen's own
+    # QueenModel extends GeoModel and reads her rig directly - no GeoReplacementDescriptor
+    # names it, so OreSpawnGeoReplacementModel never bakes it and nothing reads the
+    # draw-order key from it; the contract derives the key from a vanilla part order she
+    # lacks (no classic model exists), so the converter cannot write one. The literal
+    # reading of "any shipped orespawn rig" would need a key nothing consumes - the owner's
+    # call.
+    "the_queen",
+}
+
+# The reconciliation counts for the summary line: shipped geo/entity rigs, of which seam
+# rigs and OUTSIDE_SEAM members.
+reconciliation = {"shipped": 0, "seam": 0, "outside": 0}
+
+
+def seam_rigs(java_texts):
+    """{geo asset path: java file} for the model resource of every GeoReplacementDescriptor
+    construction - exactly the rigs OreSpawnGeoReplacementModel draws through the G2 seam.
+
+    The constructor's argument list is read up to the statement's first ';' (past the
+    arguments, inside any anonymous body) and must name exactly one geo/ literal; any
+    other shape (a helper-built resource, a block lambda ahead of the literal) is a
+    static-analysis limit reported under SKIPPED, so it cannot pass silently."""
+    rigs = {}
+    for path, text in java_texts:
+        for m in DESCRIPTOR_CTOR_RE.finditer(text):
+            end = text.find(";", m.end())
+            statement = text[m.end():end if end != -1 else len(text)]
+            found = GEO_LITERAL_RE.findall(statement)
+            if len(found) != 1:
+                skip(rel(path), "GeoReplacementDescriptor constructed without exactly one literal "
+                     "geo/ model resource (%d found) - its rig's draw-order key is not verified"
+                     % len(found))
+                continue
+            rigs[found[0]] = path
+    return rigs
+
+
+def _draw_order_problem(description, bones):
+    """None when description[DRAW_ORDER_KEY] is a non-empty array of unique strings whose set
+    is exactly `bones` (the geo's bone-name set), else the reason, worded after the key."""
+    if not isinstance(description, dict) or DRAW_ORDER_KEY not in description:
+        return "is absent"
+    order = description[DRAW_ORDER_KEY]
+    if not isinstance(order, list):
+        return "is present but not an array: %s" % json.dumps(order)[:80]
+    if not order:
+        return "is present but empty"
+    non_strings = [json.dumps(entry) for entry in order if not isinstance(entry, str)]
+    if non_strings:
+        return "holds non-string entries: " + ", ".join(non_strings[:5])
+    dupes = sorted({entry for entry in order if order.count(entry) > 1})
+    if dupes:
+        return "repeats " + ", ".join(dupes)
+    if bones is None:
+        return None  # GECKO_GEO_INVALID already reported the rig; no bone set to compare against
+    missing, unknown = sorted(bones - set(order)), sorted(set(order) - bones)
+    if missing or unknown:
+        return "does not name exactly the rig's bones (rig bones it lacks: %s; names the rig lacks: %s)" % (
+            ", ".join(missing) or "none", ", ".join(unknown) or "none")
+    return None
+
 
 def _geo_bones(path):
     data, jerr = load_json(path)
@@ -732,6 +826,66 @@ def check_geckolib(java_texts):
             if proof.read_bytes() != path.read_bytes():
                 err("GECKO_GEO_PROOF_DRIFT", path.stem,
                     "shipped rig differs from its harness-proven copy %s" % rel(proof), path)
+
+    # G2 root-order contract (owner ruling 2026-09-06, addendum item 24 (3); refuter B on the
+    # landing, B-D3 / B-D6): every rig the replacement seam draws - the model resource of a
+    # GeoReplacementDescriptor, which the shared OreSpawnGeoReplacementModel sorts into the
+    # classic draw order at its first bake - must ship that order under
+    # description["orespawn:bone_draw_order"], and the key's CONTENT must be right: a
+    # non-empty array of unique strings naming exactly the geo's bones. A rig without the
+    # key takes the client's WARN-logged fallback to GeckoLib's own bone order and a rig with
+    # a wrong one the ERROR-logged fallback - both exist for resource packs (Blockbench
+    # re-exports drop the key) and must never be the mod's own state: an ERROR, never
+    # acknowledgeable, never merely a client log. The pre-order property is not checked here
+    # (it needs the parent tree); the client's DrawOrder.apply and the harness's draw-order
+    # leg check it, and the byte check above ties every proven rig to its proof.
+    #
+    # Reconciliation: every shipped geo/entity/*.geo.json is a seam rig (named by a
+    # descriptor) or a member of OUTSIDE_SEAM with its dated reason; anything else is
+    # GECKO_GEO_SEAM_UNRECONCILED, as is a stale OUTSIDE_SEAM entry. A seam rig named by a
+    # descriptor but absent from the directory is TEXTURE_REF_MISSING (check_texture_refs)
+    # already.
+    seam = seam_rigs(java_texts)
+    entity_dir = geo_dir / "entity"
+    for path in (sorted(entity_dir.glob("*.geo.json")) if entity_dir.is_dir() else []):
+        asset = path.relative_to(ASSETS).as_posix()
+        name = path.name[:-len(".geo.json")]
+        reconciliation["shipped"] += 1
+        if asset in seam:
+            reconciliation["seam"] += 1
+            if name in OUTSIDE_SEAM:
+                err("GECKO_GEO_SEAM_UNRECONCILED", path.stem,
+                    "listed in OUTSIDE_SEAM but drawn by the replacement seam (%s) - a stale "
+                    "exception; remove it" % rel(seam[asset]), path)
+        elif name in OUTSIDE_SEAM:
+            reconciliation["outside"] += 1
+        else:
+            err("GECKO_GEO_SEAM_UNRECONCILED", path.stem,
+                "shipped rig is drawn by no GeoReplacementDescriptor and OUTSIDE_SEAM does not "
+                "name it - give it a descriptor (and the draw-order key) or list it there with "
+                "a dated reason", path)
+    for name in sorted(OUTSIDE_SEAM):
+        if not (entity_dir / (name + ".geo.json")).is_file():
+            err("GECKO_GEO_SEAM_UNRECONCILED", name + ".geo",
+                "OUTSIDE_SEAM names a rig that does not ship - a stale exception; remove it",
+                entity_dir / (name + ".geo.json"))
+
+    for asset, java_path in sorted(seam.items()):
+        geo_path = ASSETS / asset
+        if not geo_path.is_file():
+            continue  # TEXTURE_REF_MISSING (check_texture_refs) already reports the missing rig
+        data, jerr = load_json(geo_path)
+        geoms = data.get("minecraft:geometry") if isinstance(data, dict) else None
+        if jerr or not isinstance(geoms, list) or not geoms or not isinstance(geoms[0], dict):
+            continue  # GECKO_GEO_INVALID already reported above
+        problem = _draw_order_problem(geoms[0].get("description"),
+                                      geo_bones.get(geo_path.name[:-len(".geo.json")]))
+        if problem:
+            err("GECKO_GEO_DRAW_ORDER_MISSING", geo_path.stem,
+                'rig drawn by the replacement seam (%s): description["%s"] %s - the client '
+                "would fall back to GeckoLib's own bone order; regenerate it with "
+                "tools/layer_definition_to_geo.py" % (rel(java_path), DRAW_ORDER_KEY, problem),
+                geo_path)
 
     clips = {}  # clip name -> [(file, loop declaration)]; loop is False / True / "hold_on_last_frame"
     for path in (sorted(anim_dir.rglob("*.animation.json")) if anim_dir.is_dir() else []):
@@ -833,6 +987,11 @@ def main():
         if not p.is_dir():
             print("FATAL: expected directory missing: %s" % p)
             return 2
+    illegal = sorted({cat for cat, _ in ACKNOWLEDGED if cat in NEVER_ACKNOWLEDGED})
+    if illegal:
+        print("FATAL: ACKNOWLEDGED whitelists a never-acknowledgeable category: %s"
+              % ", ".join(illegal))
+        return 2
 
     items, block_items, spawn_eggs = parse_items()
     blocks = parse_blocks()
@@ -852,10 +1011,12 @@ def main():
     check_geckolib(java_texts)
 
     # ---- report ----
-    acknowledged = [f for f in findings
-                    if (f["category"], f["name"]) in ACKNOWLEDGED]
-    active = [f for f in findings
-              if (f["category"], f["name"]) not in ACKNOWLEDGED]
+    def is_acknowledged(f):
+        return (f["category"], f["name"]) in ACKNOWLEDGED \
+            and f["category"] not in NEVER_ACKNOWLEDGED
+
+    acknowledged = [f for f in findings if is_acknowledged(f)]
+    active = [f for f in findings if not is_acknowledged(f)]
     errors = [f for f in active if f["level"] == "ERROR"]
     advisories = [f for f in active if f["level"] == "ADVISORY"]
 
@@ -910,13 +1071,16 @@ def main():
             "acknowledged_count": len(acknowledged),
             "errors": errors, "advisories": advisories,
             "acknowledged": acknowledged, "skipped": skipped,
+            "draw_order_reconciliation": reconciliation,
         }, indent=2), encoding="utf-8")
         print()
         print("JSON report written: %s" % out)
 
     print()
-    print("RESULT: %d error(s), %d advisory(ies), %d acknowledged -> exit %d"
-          % (len(errors), len(advisories), len(acknowledged), 1 if errors else 0))
+    print("RESULT: %d error(s), %d advisory(ies), %d acknowledged; draw order: %d shipped geo: "
+          "%d seam + %d outside-seam -> exit %d"
+          % (len(errors), len(advisories), len(acknowledged), reconciliation["shipped"],
+             reconciliation["seam"], reconciliation["outside"], 1 if errors else 0))
     return 1 if errors else 0
 
 

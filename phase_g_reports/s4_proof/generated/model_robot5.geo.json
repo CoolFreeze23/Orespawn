@@ -5,7 +5,20 @@
       "description": {
         "identifier": "geometry.orespawn.g1.model_robot5",
         "texture_width": 128,
-        "texture_height": 128
+        "texture_height": 128,
+        "orespawn:bone_draw_order": [
+          "lwheel1",
+          "lwheel2",
+          "rwheel1",
+          "rwheel2",
+          "axle",
+          "drivebox",
+          "stand",
+          "swivel",
+          "barrel1",
+          "barrel2",
+          "ammobox"
+        ]
       },
       "bones": [
         {

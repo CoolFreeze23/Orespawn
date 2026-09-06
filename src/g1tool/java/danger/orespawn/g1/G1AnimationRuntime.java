@@ -23,7 +23,18 @@ final class G1AnimationRuntime {
     private G1AnimationRuntime() {
     }
 
+    /**
+     * The draw order must be the geo's own ({@link DrawOrder#read}): the shipped model answers a rig
+     * without the key with GeckoLib's own order ({@link DrawOrder#applyOrFallback}, the resource-pack
+     * courtesy of the owner's ruling 2026-09-06), but the harness - the probe's geo dumps and the
+     * benchmark both bake through this evaluator - proves SHIPPED rigs, every one of which must carry
+     * the key, so an empty order is a harness failure here, never a fallback.
+     */
     static Evaluator evaluator(Model rawModel, List<String> drawOrder) {
+        if (drawOrder.isEmpty()) {
+            throw new IllegalStateException("harness failure: the generated geo ships without " + DrawOrder.KEY
+                    + "; the harness proves shipped rigs and takes no fallback");
+        }
         return new Evaluator(GeometryTree.fromModel(rawModel), drawOrder);
     }
 
