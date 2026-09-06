@@ -7,6 +7,7 @@ import danger.orespawn.network.SpiderGaitKeyframePayload;
 import danger.orespawn.network.SpiderStepPayload;
 import de.dertoaster.multihitboxlib.api.IMultipartEntity;
 import de.dertoaster.multihitboxlib.entity.MHLibPartEntity;
+import de.dertoaster.multihitboxlib.util.MHLibCounters;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.util.Mth;
@@ -1378,6 +1379,20 @@ public final class ModernSpiderGait {
      * carry this tick's tilt.
      */
     private void feedParts(Mob robot, long time) {
+        // Phase G slice (d) (2026-09-06): server.placement_ns -- the feed's own time, added to the
+        // same counter mhlibAiStep's server path adds to (morehitboxes_evaluation.md Section 5).
+        final boolean measure = MHLibCounters.serverEnabled();
+        final long start = measure ? System.nanoTime() : 0L;
+        try {
+            feedPartsBody(robot, time);
+        } finally {
+            if (measure) {
+                MHLibCounters.SERVER_PLACEMENT_NS.add(System.nanoTime() - start);
+            }
+        }
+    }
+
+    private void feedPartsBody(Mob robot, long time) {
         resolveLegParts(robot);
         if (legParts == null) {
             return;

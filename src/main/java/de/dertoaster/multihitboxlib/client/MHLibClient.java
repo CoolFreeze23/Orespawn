@@ -59,7 +59,10 @@ public class MHLibClient {
 	public static void onClientTick(ClientTickEvent.Post event) {
 		mhlibClientTicks++;
 		if (mhlibClientTicks % MHLibCounters.DUMP_INTERVAL_TICKS == 0) {
-			MHLibMod.LOGGER.info(MHLibCounters.formatDump(mhlibClientTicks, MHLibCounters.sumAndResetAll()));
+			final Map<String, Long> values = MHLibCounters.sumAndResetAll();
+			MHLibMod.LOGGER.info(MHLibCounters.formatDump(mhlibClientTicks, values));
+			// Slice (d): the same values reach the dump listeners (the in-game benchmark harness).
+			MHLibCounters.publishDump(MHLibCounters.CLIENT_SIDE, mhlibClientTicks, values);
 		}
 	}
 

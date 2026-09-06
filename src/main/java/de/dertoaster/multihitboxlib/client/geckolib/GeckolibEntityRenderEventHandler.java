@@ -5,6 +5,8 @@ import java.util.function.Consumer;
 import de.dertoaster.multihitboxlib.api.IMHLibExtendedRenderLayer;
 import de.dertoaster.multihitboxlib.client.EntityRenderEventHandlerCommonLogic;
 import de.dertoaster.multihitboxlib.client.IBoneInformationCollectorLayerCommonLogic;
+import de.dertoaster.multihitboxlib.util.MHLibCollectorProbe;
+import de.dertoaster.multihitboxlib.util.MHLibCounters;
 import net.minecraft.world.entity.Entity;
 import software.bernie.geckolib.event.GeoRenderEvent;
 import software.bernie.geckolib.renderer.GeoRenderer;
@@ -28,11 +30,19 @@ public class GeckolibEntityRenderEventHandler extends EntityRenderEventHandlerCo
 			return;
 		}
 		callLayers(event.getRenderer(), IMHLibExtendedRenderLayer::onPostRender);
+		// Slice (d): close the Pre->Post span of this multipart entity (client.collector_ns / _alloc_bytes).
+		if (MHLibCounters.ENABLED) {
+			MHLibCollectorProbe.end(animatable);
+		}
 	}
 
 	public static void onPreRenderEntity(GeoRenderEvent.Entity.Pre event) {
 		if (!event.getEntity().isMultipartEntity()) {
 			return;
+		}
+		// Slice (d): open the Pre->Post span of this multipart entity, before MHLib's own pre logic.
+		if (MHLibCounters.ENABLED) {
+			MHLibCollectorProbe.begin(event.getEntity());
 		}
 		// BUG-044: decide this pass from the entity's render-tick stamp before its bones are walked.
 		performGlibPreLogic(event.getRenderer(), event.getEntity());
@@ -42,6 +52,10 @@ public class GeckolibEntityRenderEventHandler extends EntityRenderEventHandlerCo
 	public static void onPreRenderReplacedEntity(GeoRenderEvent.ReplacedEntity.Pre event) {
 		if (!event.getReplacedEntity().isMultipartEntity()) {
 			return;
+		}
+		// Slice (d): the same span on the replaced path, keyed on the actual entity.
+		if (MHLibCounters.ENABLED) {
+			MHLibCollectorProbe.begin(event.getReplacedEntity());
 		}
 		// BUG-044: the replaced path keys the stamp on the actual entity (GeoReplacedEntityRenderer.getCurrentEntity()).
 		performGlibPreLogic(event.getRenderer(), event.getReplacedEntity());
@@ -59,6 +73,10 @@ public class GeckolibEntityRenderEventHandler extends EntityRenderEventHandlerCo
 		// the running vectors this hook resets.
 		performGlibLogic(event.getRenderer(), animatable);
 		callLayers(event.getRenderer(), IMHLibExtendedRenderLayer::onPostRender);
+		// Slice (d): close the span (see onPostRenderEntity).
+		if (MHLibCounters.ENABLED) {
+			MHLibCollectorProbe.end(animatable);
+		}
 	}
 
 	/** BUG-044: the collector's per-entity pre hook (onPreRender(Entity)) for every collector layer on the renderer. */

@@ -3,6 +3,8 @@ package de.dertoaster.multihitboxlib.network.server;
 import de.dertoaster.multihitboxlib.api.network.IMHLibCustomPacketPayload;
 import de.dertoaster.multihitboxlib.entity.MHLibPartEntity;
 import de.dertoaster.multihitboxlib.init.MHLibNetwork;
+import io.netty.buffer.Unpooled;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
@@ -62,6 +64,22 @@ public record SPacketUpdateMultipart(
 			data.encode(regBuf);
 		}
 		regBuf.writeInt(-1);
+	}
+
+	/**
+	 * Slice (d) (2026-09-06): the encoded payload length of this packet -- the bytes {@link #write}
+	 * puts on a play-channel buffer for it (no custom-payload packet header, no payload type id, no
+	 * compression). {@code registryAccess} is the sending server's; the part data values need a
+	 * {@link RegistryFriendlyByteBuf}.
+	 */
+	public int encodedLength(RegistryAccess registryAccess) {
+		final RegistryFriendlyByteBuf buf = new RegistryFriendlyByteBuf(Unpooled.buffer(), registryAccess);
+		try {
+			this.write(buf);
+			return buf.readableBytes();
+		} finally {
+			buf.release();
+		}
 	}
 
 	protected static List<PartDataHolder> compileList(final Entity entity) {

@@ -112,6 +112,10 @@ public interface IMultipartEntity<T extends Entity> {
 			}
 			SPacketSetMaster masterPacket = new SPacketSetMaster(this);
 			//MHLibPackets.send(masterPacket, PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> entity));
+			// Slice (d) (2026-09-06): net.set_master_packets -- one per election broadcast.
+			if (MHLibCounters.serverEnabled()) {
+				MHLibCounters.NET_SET_MASTER_PACKETS.increment();
+			}
 			PacketDistributor.sendToPlayersTrackingEntityAndSelf(entity, masterPacket);
 		} else {
 			throw new IllegalStateException("Access interface not implemented");
@@ -311,6 +315,10 @@ public interface IMultipartEntity<T extends Entity> {
 					(x3 * entityScale + curX) - pivot.x,
 					(y3 * entityScale + curY) - pivot.y,
 					(z2 * entityScale + curZ) - pivot.z);
+			// Slice (d) (2026-09-06): server.align_sub_parts_parts -- one per part this loop placed.
+			if (MHLibCounters.serverEnabled() && !entity.level().isClientSide()) {
+				MHLibCounters.SERVER_ALIGN_SUB_PARTS_PARTS.increment();
+			}
 		}
 	}
 	
@@ -377,6 +385,10 @@ public interface IMultipartEntity<T extends Entity> {
 			//System.out.println("Sync data: " + bi.toString());
 
 			part.applyInformation(bi);
+			// Slice (d) (2026-09-06): server.align_synched_parts -- one per synched part this loop applied.
+			if (MHLibCounters.serverEnabled() && !entity.level().isClientSide()) {
+				MHLibCounters.SERVER_ALIGN_SYNCHED_PARTS.increment();
+			}
 		}
 	}
 
@@ -396,6 +408,10 @@ public interface IMultipartEntity<T extends Entity> {
 	public default <E extends Entity & IMultipartEntity<?>> void mhlibAiStep() {
 		if (this instanceof IMHLibFieldAccessor access) {
 			E e = (E)this;
+			// Slice (d) (2026-09-06): server.placement_ns -- the whole server path of this method
+			// (election bookkeeping and both alignment loops); the client path returns before the add.
+			final boolean measure = MHLibCounters.serverEnabled();
+			final long placementStart = measure ? System.nanoTime() : 0L;
 			// First, send packet if present or handle leader stuff
 			this.updateSynching(e);
 
@@ -431,6 +447,9 @@ public interface IMultipartEntity<T extends Entity> {
 				// ──────────────────────────────────────────────────────
 			}
 
+			if (measure) {
+				MHLibCounters.SERVER_PLACEMENT_NS.add(System.nanoTime() - placementStart);
+			}
 		} else {
 			throw new IllegalStateException("Access interface not implemented");
 		}
