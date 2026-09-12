@@ -1,0 +1,254 @@
+{
+  "schema_version": 1,
+  "model_id": "model_ruby_bird",
+  "tier": 2,
+  "proof_scope": "production_proof_model",
+  "ground_truth": "executed compiled LayerDefinition and baked ModelPart",
+  "source_class": "danger.orespawn.entity.client.ModelCockateil",
+  "source_class_sha256": "d3b77c279ad289d722a0caa84ac6c2c2ac6bd109aad62ceb0f13a4766a6514ad",
+  "compiled_dump_sha256": "f08a5cf59d90ad6373d01e99901b4d859d846bd4f9a695e6d80f5c21b3944932",
+  "geometry_sha256": "6d346071c2da4f87408d30e5905696c5b73fa6ecfcf481200581ab08e015daf4",
+  "animation_sha256": "7882082857fdb11e02f158ebc3a6d3f970e2ac60d54813f0e903ee97b2293749",
+  "animation_contract_sha256": "59771856942bef696398f007a757b8c2639471628e5cbb20b57760b288c17652",
+  "bone_count": 16,
+  "cube_count": 16,
+  "mirrored_cube_count": 16,
+  "mirrored_uv_strategy": "source flag retained as modelpart_mirror; semantics baked into explicit faces; incompatible GeckoLib native mirror disabled",
+  "exact_bone_names": [
+    "Beak",
+    "Body",
+    "Head",
+    "LowerBeak",
+    "feather1",
+    "feather2",
+    "feather3",
+    "leg",
+    "lwing1",
+    "lwing2",
+    "otherleg",
+    "rwing1",
+    "rwing2",
+    "tailfeather1",
+    "tailfeather2",
+    "tailfeather3"
+  ],
+  "bone_draw_order": [
+    "Body",
+    "Head",
+    "Beak",
+    "LowerBeak",
+    "feather2",
+    "feather1",
+    "feather3",
+    "tailfeather1",
+    "rwing1",
+    "lwing1",
+    "leg",
+    "otherleg",
+    "lwing2",
+    "rwing2",
+    "tailfeather2",
+    "tailfeather3"
+  ],
+  "draw_order_evidence": {
+    "source": "classic EntityModel.renderToBuffer on a second bake posed identically; every ModelPart.render is one pose-stack push, attributed to its part by ModelPart.skipDraw elimination (one run per cube-bearing part with every other part's skipDraw set); a part drawn n > 1 times is named <part>__i<k> by draw ordinal",
+    "captures": [
+      "bind",
+      "t0",
+      "t_quarter",
+      "t_half",
+      "t_three_quarter",
+      "t_end"
+    ],
+    "cube_bearing_units": 16,
+    "observed_units": 16,
+    "unobserved_units": [],
+    "ordered_pairs": 120,
+    "tie_break": "converter emission order for pairs never drawn together in any capture",
+    "lifting": "pre-order over the geo bone tree, siblings by their subtree's first classic draw"
+  },
+  "animation_contract": {
+    "schema_version": 1,
+    "kind": "code_driven",
+    "controller_required": false,
+    "candidate_animation_path": "production_replacement_hook",
+    "candidate_class": "danger.orespawn.entity.client.RubyBirdGeoReplacement",
+    "candidate_acceptance_path": "production OreSpawnGeoReplacementModel.setCustomAnimations (Amendment 1 Tier-3 code-driven)",
+    "sample_ids": [
+      "bind",
+      "t0",
+      "t_quarter",
+      "t_half",
+      "t_three_quarter",
+      "t_end",
+      "a0_kfwrap_w1_5_c1_before",
+      "a0_kfwrap_w1_5_c1_after",
+      "a0_kfwrap_w1_5_c2_before",
+      "a0_kfwrap_w1_5_c2_after",
+      "a0_kfwrap_w1_5_c3_before",
+      "a0_kfwrap_w1_5_c3_after",
+      "a0_kfwrap_w1_5_c4_before",
+      "a0_kfwrap_w1_5_c4_after",
+      "a0_kfwrap_w1_5_c5_before",
+      "a0_kfwrap_w1_5_c5_after",
+      "a0_kfwrap_w1_5_c6_before",
+      "a0_kfwrap_w1_5_c6_after",
+      "a0_kfwrap_w1_5_c7_before",
+      "a0_kfwrap_w1_5_c7_after",
+      "a0_kfwrap_w1_5_c8_before",
+      "a0_kfwrap_w1_5_c8_after",
+      "a0_kfwrap_w1_5_c9_before",
+      "a0_kfwrap_w1_5_c9_after",
+      "a0_kfwrap_w1_5_c10_before",
+      "a0_kfwrap_w1_5_c10_after",
+      "a0_kfwrap_w1_5_c11_before",
+      "a0_kfwrap_w1_5_c11_after",
+      "a0_kfwrap_w1_5_c12_before",
+      "a0_kfwrap_w1_5_c12_after",
+      "a0_kfwrap_w1_5_c13_before",
+      "a0_kfwrap_w1_5_c13_after",
+      "a0_kfwrap_w1_5_c14_before",
+      "a0_kfwrap_w1_5_c14_after",
+      "a0_kfwrap_w1_3_c1_before",
+      "a0_kfwrap_w1_3_c1_after",
+      "a0_kfwrap_w1_3_c2_before",
+      "a0_kfwrap_w1_3_c2_after",
+      "a0_kfwrap_w1_3_c3_before",
+      "a0_kfwrap_w1_3_c3_after",
+      "a0_kfwrap_w1_3_c4_before",
+      "a0_kfwrap_w1_3_c4_after",
+      "a0_kfwrap_w1_3_c5_before",
+      "a0_kfwrap_w1_3_c5_after",
+      "a0_kfwrap_w1_3_c6_before",
+      "a0_kfwrap_w1_3_c6_after",
+      "a0_kfwrap_w1_3_c7_before",
+      "a0_kfwrap_w1_3_c7_after",
+      "a0_kfwrap_w1_3_c8_before",
+      "a0_kfwrap_w1_3_c8_after",
+      "a0_kfwrap_w1_3_c9_before",
+      "a0_kfwrap_w1_3_c9_after",
+      "a0_kfwrap_w1_3_c10_before",
+      "a0_kfwrap_w1_3_c10_after",
+      "a0_kfwrap_w1_3_c11_before",
+      "a0_kfwrap_w1_3_c11_after",
+      "a0_kfwrap_w1_3_c12_before",
+      "a0_kfwrap_w1_3_c12_after",
+      "a0_kfwrap_w1_2_c1_before",
+      "a0_kfwrap_w1_2_c1_after",
+      "a0_kfwrap_w1_2_c2_before",
+      "a0_kfwrap_w1_2_c2_after",
+      "a0_kfwrap_w1_2_c3_before",
+      "a0_kfwrap_w1_2_c3_after",
+      "a0_kfwrap_w1_2_c4_before",
+      "a0_kfwrap_w1_2_c4_after",
+      "a0_kfwrap_w1_2_c5_before",
+      "a0_kfwrap_w1_2_c5_after",
+      "a0_kfwrap_w1_2_c6_before",
+      "a0_kfwrap_w1_2_c6_after",
+      "a0_kfwrap_w1_2_c7_before",
+      "a0_kfwrap_w1_2_c7_after",
+      "a0_kfwrap_w1_2_c8_before",
+      "a0_kfwrap_w1_2_c8_after",
+      "a0_kfwrap_w1_2_c9_before",
+      "a0_kfwrap_w1_2_c9_after",
+      "a0_kfwrap_w1_2_c10_before",
+      "a0_kfwrap_w1_2_c10_after",
+      "a0_kfwrap_w1_2_c11_before",
+      "a0_kfwrap_w1_2_c11_after",
+      "a0_kfwrap_w1_1_c1_before",
+      "a0_kfwrap_w1_1_c1_after",
+      "a0_kfwrap_w1_1_c2_before",
+      "a0_kfwrap_w1_1_c2_after",
+      "a0_kfwrap_w1_1_c3_before",
+      "a0_kfwrap_w1_1_c3_after",
+      "a0_kfwrap_w1_1_c4_before",
+      "a0_kfwrap_w1_1_c4_after",
+      "a0_kfwrap_w1_1_c5_before",
+      "a0_kfwrap_w1_1_c5_after",
+      "a0_kfwrap_w1_1_c6_before",
+      "a0_kfwrap_w1_1_c6_after",
+      "a0_kfwrap_w1_1_c7_before",
+      "a0_kfwrap_w1_1_c7_after",
+      "a0_kfwrap_w1_1_c8_before",
+      "a0_kfwrap_w1_1_c8_after",
+      "a0_kfwrap_w1_1_c9_before",
+      "a0_kfwrap_w1_1_c9_after",
+      "a0_kfwrap_w1_1_c10_before",
+      "a0_kfwrap_w1_1_c10_after",
+      "a0_kfwrap_w0_3_c1_before",
+      "a0_kfwrap_w0_3_c1_after",
+      "a0_kfwrap_w0_3_c2_before",
+      "a0_kfwrap_w0_3_c2_after"
+    ]
+  },
+  "reference_animation_schema": {
+    "status": "SCHEMA_VALID_REFERENCE_ONLY",
+    "clip_count": 0,
+    "constant_vector_count": 0,
+    "runtime_acceptance": false
+  },
+  "accepted_animation_evidence": "production OreSpawnGeoReplacement hook through OreSpawnGeoReplacementModel.setCustomAnimations (Amendment 1 Tier-3 code-driven)",
+  "artist_editable_math_to_keyframes_status": "NOT_APPLICABLE_TIER3_CODE_DRIVEN",
+  "compiled_animation_bake_sample_count": 0,
+  "reference_clip_keys_source": "compiled setupAnim output; no Python formula evaluation",
+  "source_animation_channel_inventory": [
+    {
+      "bones": [
+        "lwing1"
+      ],
+      "axis": "z",
+      "source": "ModelCockateil.setupAnim:125-126 (the Ruby Bird draws the same model): lwing1.zRot = -1.5f + cos(ageInTicks * 1.5f * wingspeed) * PI * 0.35f"
+    },
+    {
+      "bones": [
+        "lwing2"
+      ],
+      "axis": "z",
+      "source": "ModelCockateil.setupAnim:127: lwing2.zRot = newangle"
+    },
+    {
+      "bones": [
+        "rwing1"
+      ],
+      "axis": "z",
+      "source": "ModelCockateil.setupAnim:128: rwing1.zRot = 1.5f - newangle"
+    },
+    {
+      "bones": [
+        "rwing2"
+      ],
+      "axis": "z",
+      "source": "ModelCockateil.setupAnim:129: rwing2.zRot = -newangle"
+    },
+    {
+      "bones": [
+        "tailfeather1",
+        "tailfeather2",
+        "tailfeather3"
+      ],
+      "axis": "x",
+      "source": "ModelCockateil.setupAnim:130-132: tailfeather1..3.xRot = cos(ageInTicks * 0.3f * wingspeed) * PI * 0.1f"
+    },
+    {
+      "bones": [
+        "feather1"
+      ],
+      "axis": "z",
+      "source": "ModelCockateil.setupAnim:133: feather1.zRot = cos(ageInTicks * 1.1f * wingspeed) * PI * 0.08f"
+    },
+    {
+      "bones": [
+        "feather2"
+      ],
+      "axis": "z",
+      "source": "ModelCockateil.setupAnim:134: feather2.zRot = cos(ageInTicks * 1.2f * wingspeed) * PI * 0.08f"
+    },
+    {
+      "bones": [
+        "feather3"
+      ],
+      "axis": "z",
+      "source": "ModelCockateil.setupAnim:135: feather3.zRot = cos(ageInTicks * 1.3f * wingspeed) * PI * 0.08f"
+    }
+  ]
+}

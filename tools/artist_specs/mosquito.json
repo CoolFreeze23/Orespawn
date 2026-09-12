@@ -1,0 +1,71 @@
+{
+  "registry": "mosquito",
+  "display_name": "Mosquito",
+  "status": "draft for the owner's edit (the first Tier-2 slice, 2026-09-13)",
+  "locomotion": "flyer",
+  "artist_scope": "full contract (Tier 2, the simple-cyclic class: geckolib_migration_design.md section 5)",
+  "character_sheet": "A tiny ambient pest: a 1x1x8 body with two pairs of flat wings, buzzing through the air on its own flight goal. It is small enough to be missed and bites what it lands on. Read it as a nuisance in constant, fast flight.",
+  "size_notes": "Drawn at x0.5 of the rig on a 32x32 sheet.",
+  "labels": {
+    "body": "body (the thin tube)",
+    "leftwing1": "left inner wing",
+    "rightwing1": "right inner wing",
+    "leftwing2": "left outer wing",
+    "rightwing2": "right outer wing"
+  },
+  "groups": [
+    {
+      "name": "wings",
+      "bones": [
+        "rightwing1",
+        "rightwing2",
+        "leftwing1",
+        "leftwing2"
+      ],
+      "omega": 3.0,
+      "axis": "z",
+      "gait_scaled": false,
+      "amplitude": "pi x 0.25 = 0.785 rad (45 deg)",
+      "plain": "the four wings beat fast about the body's long axis, the right pair up while the left pair is down",
+      "math": "rightwing1.zRot = rightwing2.zRot = cos(ageInTicks * 3.0) * pi * 0.25; leftwing1.zRot = leftwing2.zRot = -(that)",
+      "source": "MosquitoModel.java:65-69; MosquitoGeoReplacement.java"
+    }
+  ],
+  "behaviour": [
+    "One rhythm runs at all times: the classic code has no rest pose and no gait scaling, so today's 'idle' is the same motion as the walk (the transcription's idle keys no bone and its one clip carries the bare name walk - contract section 2.1, a one-group species).",
+    "The beat runs whether it flies or sits; nothing else on the rig moves.",
+    "The default renderer poses it from the classic code; the GeckoLib candidate sits behind the dev switch (-Dorespawn.dev.geckolibRenderers) and your clips replace the shipped transcription file for file."
+  ],
+  "clips": [
+    {
+      "name": "walk",
+      "verdict": "leave",
+      "note": "the wing beat; keep the 45-degree flap"
+    },
+    {
+      "name": "idle",
+      "verdict": "author",
+      "note": "optional: a slower beat when it has landed"
+    },
+    {
+      "name": "fly",
+      "verdict": "author",
+      "note": "optional: falls back to walk (section 2.4); the beat is already the flight"
+    },
+    {
+      "name": "hurt",
+      "verdict": "author",
+      "note": "a flinch",
+      "length_seconds": 0.3
+    },
+    {
+      "name": "death",
+      "verdict": "author",
+      "note": "PROVISIONAL: the vanilla death flip is open question 3",
+      "length_seconds": 1.0
+    }
+  ],
+  "extras": [],
+  "wishlist": [],
+  "effort_hours": null
+}

@@ -1,0 +1,176 @@
+{
+  "registry": "cockateil",
+  "display_name": "Cockateil",
+  "status": "draft for the owner's edit (the first Tier-2 slice, 2026-09-13)",
+  "locomotion": "flyer",
+  "artist_scope": "full contract (Tier 2, the simple-cyclic class: geckolib_migration_design.md section 5)",
+  "character_sheet": "A small passive parrot in one of six plumages: a boxy body and head with a beak, a three-feather crest, three tail feathers, two jointed wings and two legs. It flies up when disturbed, breeds, and can be tamed and carried. Read it as a bright, restless little bird: wings beating, crest and tail never quite still.",
+  "size_notes": "Drawn at x0.75 of the rig on a 64x32 sheet; six textures (bird1..bird6) by bird type.",
+  "labels": {
+    "Body": "body",
+    "Head": "head",
+    "Beak": "upper beak",
+    "LowerBeak": "lower beak",
+    "feather1": "crest feather (front)",
+    "feather2": "crest feather (middle)",
+    "feather3": "crest feather (back)",
+    "tailfeather1": "tail feather (base)",
+    "tailfeather2": "tail feather (middle)",
+    "tailfeather3": "tail feather (tip)",
+    "rwing1": "right wing root",
+    "lwing1": "left wing root",
+    "leg": "right leg",
+    "otherleg": "left leg",
+    "lwing2": "left wing tip",
+    "rwing2": "right wing tip"
+  },
+  "groups": [
+    {
+      "name": "wings",
+      "bones": [
+        "lwing1",
+        "lwing2",
+        "rwing1",
+        "rwing2"
+      ],
+      "omega": 1.5,
+      "axis": "z",
+      "gait_scaled": false,
+      "amplitude": "roots: -/+1.5 rad offset, then pi x 0.35 = 1.100 rad (63 deg); tips: pi x 0.35",
+      "plain": "the wing roots beat about the body's long axis around a raised rest, the wing tips follow with the same shape and no offset; left and right mirrored",
+      "math": "lwing1.zRot = -1.5 + c; lwing2.zRot = c; rwing1.zRot = 1.5 - c; rwing2.zRot = -c, with c = cos(ageInTicks * 1.5 * 1.0) * pi * 0.35",
+      "source": "ModelCockateil.java:125-129; CockateilGeoReplacement.java",
+      "wingspeed": 1.0,
+      "omega_note": "the classic phase is ageInTicks x 1.5 x 1 (two float multiplies, left to right): the natural period is 2 pi / 1.5"
+    },
+    {
+      "name": "tail",
+      "bones": [
+        "tailfeather1",
+        "tailfeather2",
+        "tailfeather3"
+      ],
+      "omega": 0.3,
+      "axis": "x",
+      "gait_scaled": false,
+      "amplitude": "pi x 0.1 = 0.314 rad (18 deg)",
+      "plain": "the three tail feathers rock slowly up and down together",
+      "math": "tailfeather1..3.xRot = cos(ageInTicks * 0.3 * 1.0) * pi * 0.1",
+      "source": "ModelCockateil.java:130-132; CockateilGeoReplacement.java",
+      "wingspeed": 1.0,
+      "omega_note": "the classic phase is ageInTicks x 0.3 x 1 (two float multiplies, left to right): the natural period is 2 pi / 0.3"
+    },
+    {
+      "name": "feather1",
+      "bones": [
+        "feather1"
+      ],
+      "omega": 1.1,
+      "axis": "z",
+      "gait_scaled": false,
+      "amplitude": "pi x 0.08 = 0.251 rad (14 deg)",
+      "plain": "the front crest feather sways side to side",
+      "math": "feather1.zRot = cos(ageInTicks * 1.1 * 1.0) * pi * 0.08",
+      "source": "ModelCockateil.java:133; CockateilGeoReplacement.java",
+      "wingspeed": 1.0,
+      "omega_note": "the classic phase is ageInTicks x 1.1 x 1 (two float multiplies, left to right): the natural period is 2 pi / 1.1"
+    },
+    {
+      "name": "feather2",
+      "bones": [
+        "feather2"
+      ],
+      "omega": 1.2,
+      "axis": "z",
+      "gait_scaled": false,
+      "amplitude": "pi x 0.08 = 0.251 rad (14 deg)",
+      "plain": "the middle crest feather sways a little faster",
+      "math": "feather2.zRot = cos(ageInTicks * 1.2 * 1.0) * pi * 0.08",
+      "source": "ModelCockateil.java:134; CockateilGeoReplacement.java",
+      "wingspeed": 1.0,
+      "omega_note": "the classic phase is ageInTicks x 1.2 x 1 (two float multiplies, left to right): the natural period is 2 pi / 1.2"
+    },
+    {
+      "name": "feather3",
+      "bones": [
+        "feather3"
+      ],
+      "omega": 1.3,
+      "axis": "z",
+      "gait_scaled": false,
+      "amplitude": "pi x 0.08 = 0.251 rad (14 deg)",
+      "plain": "the back crest feather sways faster still",
+      "math": "feather3.zRot = cos(ageInTicks * 1.3 * 1.0) * pi * 0.08",
+      "source": "ModelCockateil.java:135; CockateilGeoReplacement.java",
+      "wingspeed": 1.0,
+      "omega_note": "the classic phase is ageInTicks x 1.3 x 1 (two float multiplies, left to right): the natural period is 2 pi / 1.3"
+    }
+  ],
+  "behaviour": [
+    "Several independent rhythms run at all times, none scaled by walking speed; the classic code has no rest pose. The transcription ships idle (no bone) plus one walk_<group> clip per rhythm; which rhythm should carry the bare walk name is a question presented to the owner, so until it is answered the GeckoLib candidate keeps posing from the classic code.",
+    "Five rhythms: the wing beat, the slow tail rock and three crest feathers each at its own sway; body, head, beak and legs are static. The wing roots bind at -1.561 / 1.595 rad and the formula re-centres them at -/+1.5, so the transcription's keys carry that offset (base minus bind).",
+    "The default renderer poses it from the classic code; the GeckoLib candidate sits behind the dev switch (-Dorespawn.dev.geckolibRenderers) and your clips replace the shipped transcription file for file."
+  ],
+  "clips": [
+    {
+      "name": "idle",
+      "verdict": "author",
+      "note": "a real perch: wings folded, crest and tail alive"
+    },
+    {
+      "name": "walk_wings",
+      "verdict": "leave"
+    },
+    {
+      "name": "walk_tail",
+      "verdict": "leave"
+    },
+    {
+      "name": "walk_feather1",
+      "verdict": "leave"
+    },
+    {
+      "name": "walk_feather2",
+      "verdict": "leave"
+    },
+    {
+      "name": "walk_feather3",
+      "verdict": "leave"
+    },
+    {
+      "name": "idle_wings",
+      "verdict": "leave"
+    },
+    {
+      "name": "idle_tail",
+      "verdict": "leave"
+    },
+    {
+      "name": "idle_feather1",
+      "verdict": "leave"
+    },
+    {
+      "name": "idle_feather2",
+      "verdict": "leave"
+    },
+    {
+      "name": "idle_feather3",
+      "verdict": "leave"
+    },
+    {
+      "name": "hurt",
+      "verdict": "author",
+      "note": "a flinch",
+      "length_seconds": 0.3
+    },
+    {
+      "name": "death",
+      "verdict": "author",
+      "note": "PROVISIONAL: the vanilla death flip is open question 3",
+      "length_seconds": 1.0
+    }
+  ],
+  "extras": [],
+  "wishlist": [],
+  "effort_hours": null
+}

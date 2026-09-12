@@ -85,7 +85,7 @@ public class OreSpawnClient {
             event.registerEntityRenderer(ModEntities.THE_KING.get(), TheKingRenderer::new);
             event.registerEntityRenderer(ModEntities.THE_QUEEN.get(), QueenRenderer::new);
             event.registerEntityRenderer(ModEntities.ENTITY_BEE.get(), BeeRenderer::new);
-            event.registerEntityRenderer(ModEntities.ENTITY_BRUTALFLY.get(), BrutalflyRenderer::new);
+            event.registerEntityRenderer(ModEntities.ENTITY_BRUTALFLY.get(), PhaseGDevRenderers.brutalflyRenderer());
             event.registerEntityRenderer(ModEntities.ENTITY_CATER_KILLER.get(), CaterKillerRenderer::new);
             event.registerEntityRenderer(ModEntities.ENTITY_EMPEROR_SCORPION.get(), EmperorScorpionRenderer::new);
             event.registerEntityRenderer(ModEntities.ENTITY_HERCULES_BEETLE.get(), HerculesBeetleRenderer::new);
@@ -111,7 +111,7 @@ public class OreSpawnClient {
             event.registerEntityRenderer(ModEntities.BEAVER.get(), PhaseGDevRenderers.beaverRenderer());
             event.registerEntityRenderer(ModEntities.CASSOWARY.get(), CassowaryRenderer::new);
             event.registerEntityRenderer(ModEntities.CHIPMUNK.get(), ChipmunkRenderer::new);
-            event.registerEntityRenderer(ModEntities.COCKATEIL.get(), CockateilRenderer::new);
+            event.registerEntityRenderer(ModEntities.COCKATEIL.get(), PhaseGDevRenderers.cockateilRenderer());
             event.registerEntityRenderer(ModEntities.COIN.get(), PhaseGDevRenderers.coinRenderer());
             event.registerEntityRenderer(ModEntities.EASTER_BUNNY.get(), EasterBunnyRenderer::new);
             event.registerEntityRenderer(ModEntities.FLOUNDER.get(), FlounderRenderer::new);
@@ -123,14 +123,14 @@ public class OreSpawnClient {
             event.registerEntityRenderer(ModEntities.FROG.get(), FrogRenderer::new);
             event.registerEntityRenderer(ModEntities.GAZELLE.get(), GazelleRenderer::new);
             event.registerEntityRenderer(ModEntities.ENTITY_ANT.get(), AntRenderer::new);
-            event.registerEntityRenderer(ModEntities.ENTITY_CLIFF_RACER.get(), CliffRacerRenderer::new);
+            event.registerEntityRenderer(ModEntities.ENTITY_CLIFF_RACER.get(), PhaseGDevRenderers.cliffRacerRenderer());
             event.registerEntityRenderer(ModEntities.ENTITY_CRICKET.get(), CricketRenderer::new);
-            event.registerEntityRenderer(ModEntities.ENTITY_DRAGONFLY.get(), DragonflyRenderer::new);
+            event.registerEntityRenderer(ModEntities.ENTITY_DRAGONFLY.get(), PhaseGDevRenderers.dragonflyRenderer());
             event.registerEntityRenderer(ModEntities.ENTITY_RED_ANT.get(), RedAntRenderer::new);
             event.registerEntityRenderer(ModEntities.ENTITY_RAINBOW_ANT.get(), RainbowAntRenderer::new);
             event.registerEntityRenderer(ModEntities.ENTITY_STINK_BUG.get(), StinkBugRenderer::new);
             event.registerEntityRenderer(ModEntities.ENTITY_TERMITE.get(), TermiteRenderer::new);
-            event.registerEntityRenderer(ModEntities.ENTITY_TSHIRT.get(), TshirtRenderer::new);
+            event.registerEntityRenderer(ModEntities.ENTITY_TSHIRT.get(), PhaseGDevRenderers.tshirtRenderer());
             event.registerEntityRenderer(ModEntities.ENTITY_UNSTABLE_ANT.get(), UnstableAntRenderer::new);
 
             // Creature (tameable)
@@ -158,7 +158,7 @@ public class OreSpawnClient {
             // Ambient
             event.registerEntityRenderer(ModEntities.ENTITY_BUTTERFLY.get(), ButterflyRenderer::new);
             event.registerEntityRenderer(ModEntities.ENTITY_LUNA_MOTH.get(), LunaMothRenderer::new);
-            event.registerEntityRenderer(ModEntities.ENTITY_MOSQUITO.get(), MosquitoRenderer::new);
+            event.registerEntityRenderer(ModEntities.ENTITY_MOSQUITO.get(), PhaseGDevRenderers.mosquitoRenderer());
             event.registerEntityRenderer(ModEntities.FAIRY.get(), FairyRenderer::new);
             event.registerEntityRenderer(ModEntities.FIREFLY.get(), FireflyRenderer::new);
             event.registerEntityRenderer(ModEntities.GHOST.get(), GhostRenderer::new);
@@ -184,7 +184,7 @@ public class OreSpawnClient {
             event.registerEntityRenderer(ModEntities.APPLE_COW.get(), AppleCowRenderer::new);
             event.registerEntityRenderer(ModEntities.GOLDEN_APPLE_COW.get(), GoldenAppleCowRenderer::new);
             event.registerEntityRenderer(ModEntities.ENCHANTED_APPLE_COW.get(), EnchantedAppleCowRenderer::new);
-            event.registerEntityRenderer(ModEntities.RUBY_BIRD.get(), CockateilRenderer::new);
+            event.registerEntityRenderer(ModEntities.RUBY_BIRD.get(), PhaseGDevRenderers.rubyBirdRenderer());
             event.registerEntityRenderer(ModEntities.VAMPIRE_BUTTERFLY.get(), VampireButterflyRenderer::new);
 
             // Projectiles — ENTITY_NOOP_RENDERER fix batch.

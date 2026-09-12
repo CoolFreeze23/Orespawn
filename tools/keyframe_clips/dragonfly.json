@@ -1,0 +1,39 @@
+{
+  "schema_version": 1,
+  "species": "dragonfly",
+  "species_label": "Dragonfly",
+  "classic_source": "danger.orespawn.entity.client.DragonflyModel.setupAnim (orig ModelDragonfly.java): two frequency groups, wingspeed 2.0f",
+  "classic_channels": {
+    "manifest": "tools/t2_model_proofs.json",
+    "model_id": "model_dragonfly"
+  },
+  "geo": "src/main/resources/assets/orespawn/geo/entity/dragonfly.geo.json",
+  "sign_convention": "the converter's rule (tools/layer_definition_to_geo.py json_rotation_delta): authored X = +classic degrees, Y = -classic, Z = -classic; GeckoLib 4.8.4 negates constant X and Y keys at load (BakedAnimationsAdapter.buildKeyframeStack 209-224 / 250-265), landing on the internal basis (-xRot, yRot, -zRot). The salvaged tools/g3_beaver_animation.py authored the opposite sign (Q17 (a), controller_design.md section 12).",
+  "animation_length_seconds": 1.0,
+  "length_convention": "Q14 (a): every loop normalised to 1.0 s; the controller supplies the tempo from the declared animation_length (ADDENDA (1)); an artist's length edit changes nothing in-game",
+  "lerp_mode": "catmullrom",
+  "spline_arguments": "repaired at load in the replacement seam (Q9 (a) scoped; SplineRepair)",
+  "amplitude": "full: no gait group - every group plays unscaled (Amendment 1 point 3 applies to a gait group only)",
+  "density_source": "an OUTPUT of the harness (Amendment 1 point 4, ADDENDA (2)): the keyframe_reference_leg's density search, the fewest keys per bone holding 2.5e-3 rad under the repaired evaluator, re-derived on every re-transcription; recorded here so the generator reproduces the proven clip byte for byte",
+  "bind_convention": "each key is the classic DELTA from the bone's bind rotation on the channel's axis (GeckoLib adds every key to the initial snapshot): base_radians minus the shipped geo's bind (read from `geo`, the same decimal text the harness's twin reads), then the cosine (the first Tier-2 slice, 2026-09-13)",
+  "idle": {
+    "keys": "none",
+    "why": "the in-game gate opens on idle AND walk delivered together (owner 2026-09-12, item 12); this classic rig has no resting motion of its own - its always-on groups run whether or not the creature moves - so the transcription's idle keys no bone (the bind pose); a MULTI-group species without a gait group has no bare walk under contract section 2.1 (every clip is walk_<group>), so the gate stays CLOSED as ruled until the owner rules which group carries the bare name (presented with the first Tier-2 slice)"
+  },
+  "groups": [
+    {
+      "name": "wings",
+      "clip": "walk_wings",
+      "frequency_radians_per_age_tick": 1.3,
+      "wingspeed": 2.0,
+      "keys_per_bone": 13
+    },
+    {
+      "name": "jaws",
+      "clip": "walk_jaws",
+      "frequency_radians_per_age_tick": 0.3,
+      "wingspeed": 2.0,
+      "keys_per_bone": 10
+    }
+  ]
+}

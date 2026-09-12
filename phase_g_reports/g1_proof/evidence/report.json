@@ -520,7 +520,38 @@
             "holds_tolerance": true
           }
         },
-        "schedule_reversed_max_delta_radians": 0.0
+        "schedule_reversed_max_delta_radians": 0.0,
+        "late_prime_twin": {
+          "manager_built_before_clips_served": true,
+          "unserved_slot_age_ticks": 137.371,
+          "unserved_slot_ticked": false,
+          "unserved_slot_note": "an empty-cache tick cannot run headlessly: GeckoLib 4.8.4 AnimationProcessor.buildAnimationQueue catches the model's throw (GeoModel.getAnimation throws for a file the cache lacks) with GeckoLibConstants.LOGGER, whose class initialiser registers a data component (GeckoLibNeoForge.registerDataComponent -> BuiltInRegistries.<clinit> -> Bootstrap.checkBootstrapCalled; OPT-029 R0). Its in-game outcome, from the bytecode: buildAnimationQueue returns null (121-122, 156-162), setAnimation stops the controller with currentRawAnimation still null (62-63, 99-100), process leaves it STOPPED writing nothing (68-99), and the next served tick runs primeFirstFrame in full - the prime executed here",
+          "prime_age_ticks": 138.371,
+          "unserved_bone_motion_radians": 0.0,
+          "prime": {
+            "gait": {
+              "declared_clip_ticks": 20.0,
+              "clip_ticks_per_age_tick": 11.777465940582237,
+              "last_cosine_index": 31653,
+              "last_clip_tick": 9.65972900390625
+            },
+            "teeth": {
+              "declared_clip_ticks": 20.0,
+              "clip_ticks_per_age_tick": 8.59436707874433,
+              "last_cosine_index": 30183,
+              "last_clip_tick": 9.21112060546875
+            },
+            "tail": {
+              "declared_clip_ticks": 20.0,
+              "clip_ticks_per_age_tick": 1.5915494309189535,
+              "last_cosine_index": 734,
+              "last_clip_tick": 0.2239990234375
+            }
+          },
+          "prime_pose_max_delta_vs_from_zero_radians": 0.0,
+          "follow_up_pose_max_delta_vs_from_zero_radians": 0.0,
+          "holds": true
+        }
       },
       "visual": {
         "status": "PASS",

@@ -46,7 +46,15 @@ public class CockateilRenderer extends MobRenderer<Cockateil, ModelCockateil> {
 
     @Override
     public ResourceLocation getTextureLocation(Cockateil entity) {
-        int type = entity.getBirdType();
+        return textureFor(entity.getBirdType());
+    }
+
+    /**
+     * The per-type texture table (orig RenderCockateil.java by getBirdType, bird1..bird6; an out-of-range type falls
+     * back to bird1), shared with the GeckoLib candidates of both consumers of this rig ({@link CockateilGeoReplacement},
+     * {@link RubyBirdGeoReplacement}) so every renderer reads one source (the PurplePowerRenderer.textureFor precedent).
+     */
+    public static ResourceLocation textureFor(int type) {
         if (type >= 0 && type < TEXTURES.length) {
             return TEXTURES[type];
         }

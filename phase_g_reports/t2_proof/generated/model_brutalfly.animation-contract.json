@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "kind": "code_driven",
+  "controller_required": false,
+  "candidate_animation_path": "production_replacement_hook",
+  "candidate_class": "danger.orespawn.entity.client.BrutalflyGeoReplacement",
+  "candidate_acceptance_path": "production OreSpawnGeoReplacementModel.setCustomAnimations (Amendment 1 Tier-3 code-driven)",
+  "sample_ids": [
+    "bind",
+    "t0",
+    "t_quarter",
+    "t_half",
+    "t_three_quarter",
+    "t_end",
+    "a0_kfwrap_w1_3_c1_before",
+    "a0_kfwrap_w1_3_c1_after",
+    "a0_kfwrap_w1_3_c2_before",
+    "a0_kfwrap_w1_3_c2_after"
+  ]
+}

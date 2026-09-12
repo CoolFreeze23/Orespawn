@@ -843,6 +843,42 @@ class FixtureCase(unittest.TestCase):
         self.assertIn("to author or improve", manifest["effort_source"])
         self.assertEqual(ap.effort_estimate(fx, 4, list(covered.values()))[0], 4 + 0.2 * 4 + 1.0 * 8)  # calm_idle excluded, 8 to author/improve
 
+    def test_one_group_no_gait_species_keys_the_bare_idle_and_walk(self):
+        # contract §2.1: "a species with ONE frequency group has only the bare names" - a Tier-2 flyer whose one
+        # group is unscaled (Firefly: wing_left / wing_right at 2.5 rad/tick) gets the bare idle / walk rows and no
+        # `<state>_<group>` row, so its shipped transcription (`idle` + `walk`) is in the SPEC and `check` accepts it
+        # (item 15 refuter B, note B4; the first Tier-2 slice, 2026-09-13)
+        import copy
+        fx = self.repo.get("fixture")
+        inv = ap.build_trigger_inventory(fx, self.repo)
+        no_flag = dict(inv, attacking={"present": False, "verdict": "NONE", "sites": [], "reason": "", "facts": {}})
+        one = copy.copy(fx)
+        one.seed = dict(fx.seed or {}, groups=[{"name": "wings", "bones": ["tail", "arm"], "omega": 2.5, "axis": "z", "gait_scaled": False}],
+                        clips=[], extras=[], wishlist=[])
+        rows = {c["name"]: c for c in ap.clip_rows(one, no_flag, one.animation, ap.frequency_groups(one), bone_names=["root", "tail", "arm", "hand"])}
+        self.assertIn("idle", rows)
+        self.assertIn("walk", rows)
+        self.assertNotIn("idle_wings", rows)
+        self.assertNotIn("walk_wings", rows)
+        self.assertEqual(rows["walk"]["group"], "wings")
+        self.assertTrue(rows["walk"]["required"] and rows["idle"]["required"])
+        self.assertTrue(rows["idle"]["bones"].startswith("any of the 4 bones — the one frequency group (unscaled; the bare clip is its transcription): tail, arm"))
+        self.assertNotIn("better left to", rows["idle"]["bones"])
+        # a MULTI-group species without a gait group keeps `<state>_<group>` rows and no bare `walk` (which group carries
+        # the bare name is the presented question); the bare `idle` is every species' (§2.1) - listed, optional and
+        # PROVISIONAL, so the shipped transcription's gate-token idle is in the SPEC and `check` accepts it
+        two = copy.copy(fx)
+        two.seed = dict(one.seed, groups=[{"name": "wings", "bones": ["tail"], "omega": 1.5, "axis": "z", "gait_scaled": False},
+                                          {"name": "crest", "bones": ["arm"], "omega": 0.3, "axis": "x", "gait_scaled": False}])
+        rows2 = {c["name"]: c for c in ap.clip_rows(two, no_flag, two.animation, ap.frequency_groups(two), bone_names=["root", "tail", "arm", "hand"])}
+        for n in ("idle_wings", "walk_wings", "idle_crest", "walk_crest"):
+            self.assertIn(n, rows2)
+        self.assertNotIn("walk", rows2)
+        self.assertIn("idle", rows2)
+        self.assertFalse(rows2["idle"]["required"])
+        self.assertTrue(rows2["idle"]["provisional"])
+        self.assertIn("until the owner rules", rows2["idle"]["note"])
+
     def test_native_clip_rows_branch_and_wishlist_guard(self):
         nat = self.repo.get("native")
         inv = ap.build_trigger_inventory(nat, self.repo)

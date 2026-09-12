@@ -1,0 +1,72 @@
+{
+  "registry": "cliff_racer",
+  "display_name": "Cliff Racer",
+  "status": "draft for the owner's edit (the first Tier-2 slice, 2026-09-13)",
+  "locomotion": "flyer",
+  "artist_scope": "full contract (Tier 2, the simple-cyclic class: geckolib_migration_design.md section 5)",
+  "character_sheet": "A lean flying creature: a long thin body with a dorsal fin, two broad flat wings, a long tail with a club at the end, and a small head with a beak. It flies in wide circles and is passive. Read it as a gliding animal with one slow wingbeat.",
+  "size_notes": "Drawn at x1.0 of the rig on a 64x64 sheet.",
+  "labels": {
+    "body": "body (the fuselage)",
+    "fins": "dorsal fin",
+    "lwing": "left wing",
+    "rwing": "right wing",
+    "tail": "tail",
+    "tailend": "tail club",
+    "head": "head",
+    "beak": "beak"
+  },
+  "groups": [
+    {
+      "name": "wings",
+      "bones": [
+        "lwing",
+        "rwing"
+      ],
+      "omega": 1.3,
+      "axis": "z",
+      "gait_scaled": false,
+      "amplitude": "pi x 0.25 = 0.785 rad (45 deg)",
+      "plain": "the two wings beat about the body's long axis, the left up while the right is down",
+      "math": "lwing.zRot = cos(ageInTicks * 1.3) * pi * 0.25; rwing.zRot = -(that)",
+      "source": "CliffRacerModel.java:49-51; CliffRacerGeoReplacement.java"
+    }
+  ],
+  "behaviour": [
+    "One rhythm runs at all times: the classic code has no rest pose and no gait scaling, so today's 'idle' is the same motion as the walk (the transcription's idle keys no bone and its one clip carries the bare name walk - contract section 2.1, a one-group species).",
+    "The beat runs whether it flies or sits; the tail, fin and head are static.",
+    "The default renderer poses it from the classic code; the GeckoLib candidate sits behind the dev switch (-Dorespawn.dev.geckolibRenderers) and your clips replace the shipped transcription file for file."
+  ],
+  "clips": [
+    {
+      "name": "walk",
+      "verdict": "leave",
+      "note": "the wing beat"
+    },
+    {
+      "name": "idle",
+      "verdict": "author",
+      "note": "optional: wings folded, a head turn"
+    },
+    {
+      "name": "fly",
+      "verdict": "author",
+      "note": "optional: falls back to walk (section 2.4)"
+    },
+    {
+      "name": "hurt",
+      "verdict": "author",
+      "note": "a flinch",
+      "length_seconds": 0.4
+    },
+    {
+      "name": "death",
+      "verdict": "author",
+      "note": "PROVISIONAL: the vanilla death flip is open question 3",
+      "length_seconds": 1.5
+    }
+  ],
+  "extras": [],
+  "wishlist": [],
+  "effort_hours": null
+}

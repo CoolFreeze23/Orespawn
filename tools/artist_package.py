@@ -43,7 +43,7 @@ from collections import Counter, OrderedDict, defaultdict
 from pathlib import Path
 from typing import Any, Iterable
 
-TOOL_VERSION = "0.2.2 (item 15 landed: idle AND walk open the switch together; no event keyframes on loops, 2026-09-12)"
+TOOL_VERSION = "0.2.3 (the first Tier-2 slice: a one-group species keys the bare idle / walk, contract section 2.1, 2026-09-13)"
 
 ROOT = Path(__file__).resolve().parent.parent
 BB_NAMESPACE = uuid.UUID("6f0b4b2e-9d1c-4a7e-8f3a-2c5e1d7b9a10")  # deterministic .bbmodel uuids
@@ -1819,18 +1819,29 @@ def clip_rows(species: "Species", inv: dict[str, Any], anim: dict[str, Any], gro
     gait = [g for g in groups if g.get("gait_scaled")]
     others = [g for g in groups if not g.get("gait_scaled")]
     gait_name = gait[0]["name"] if gait else (groups[0]["name"] if groups else "")
+    # Contract §2.1: "a species with ONE frequency group has only the bare names" - a one-group species without a
+    # gait group keys its one group under the bare `idle` / `walk` (the Tier-2 flyers: Tshirt, Mosquito, CliffRacer,
+    # Firefly, Brutalfly), never `<state>_<group>`; a MULTI-group species without a gait group keeps the
+    # `<state>_<group>` rows only until the owner rules which group carries the bare name (the first Tier-2 slice,
+    # 2026-09-13: the doctrine is silent there, the question is presented).
+    single_no_gait = not gait and len(groups) == 1
+    primary = gait[0] if gait else (groups[0] if single_no_gait else None)
+    if single_no_gait:
+        others = []
     all_bones = list(bone_names or [])
     other_group_bones = {b: g["name"] for g in others for b in g.get("bones", [])}
 
     def whole_rig(state: str) -> str:
         """Every bone of the rig for a base loop (§2.1: every group the species idles with; §8: any bone on a Tier-2 rig),
-        the gait group marked as the speed-scaled one, other groups' bones pointed at their own `<state>_<group>` layer."""
+        the gait group (or a one-group species' one group) marked, other groups' bones pointed at their own
+        `<state>_<group>` layer."""
         if not all_bones:
-            return ", ".join(gait[0]["bones"]) if gait else "(as SPEC)"
-        gait_set = set(gait[0]["bones"]) if gait else set()
+            return ", ".join(primary["bones"]) if primary else "(as SPEC)"
+        gait_set = set(primary["bones"]) if primary else set()
         parts = []
         if gait_set:
-            parts.append("gait group (speed-scaled): " + ", ".join(b for b in all_bones if b in gait_set))
+            parts.append(("gait group (speed-scaled): " if gait else "the one frequency group (unscaled; the bare clip is its transcription): ")
+                         + ", ".join(b for b in all_bones if b in gait_set))
         free = [b for b in all_bones if b not in gait_set and b not in other_group_bones and b not in locked]
         if free:
             parts.append("free: " + ", ".join(free))
@@ -1842,17 +1853,27 @@ def clip_rows(species: "Species", inv: dict[str, Any], anim: dict[str, Any], gro
             parts.append("locked (see §7): " + ", ".join(lk))
         return f"any of the {len(all_bones)} bones — " + "; ".join(parts)
 
+    # The bare `walk` belongs to the gait group (or to a one-group species' one group); a MULTI-group species without a
+    # gait group has no bare `walk` until the owner rules which group carries it. The bare `idle` is every species'
+    # (§2.1: "standing, no target"), and rule 3 (idle AND walk together) can only be satisfied where the bare `walk`
+    # exists - so `idle` is required only beside a bare `walk`, and a multi-group no-gait SPEC lists it as optional.
+    bare_walk = bool(gait) or not groups or single_no_gait
+
     def loop_row(name: str, layer: str, weight: str, bones: str, group: str, provisional: bool = False, note: str = "",
                  verdict_default: str = "author") -> dict[str, Any]:
         v = verdicts.get(name, {})
         return {"name": name, "loop": "true", "layer": layer, "trigger": weight, "bones": bones or "(as SPEC)",
                 "length_seconds": None, "length_rule": "free (P6: the declared length is the shape's own timeline; convention open question 14)",
-                "code_triggered": False, "required": name in ("idle", "walk"), "role": "contract", "group": group,
+                "code_triggered": False, "required": name in ("idle", "walk") and bare_walk, "role": "contract", "group": group,
                 "verdict": v.get("verdict", verdict_default), "note": v.get("note", note), "contract": name, "provisional": provisional}
 
     for state in ("idle", "walk"):
         weight = "w_idle = (1 - w_move)(1 - w_swim)(1 - w_fly)" if state == "idle" else "w_walk = w_move (1 - w_swim)(1 - w_fly); the gait group additionally x limbSwingAmount (P3)"
-        if gait or not groups:
+        if state == "idle" and not bare_walk:
+            rows.append(loop_row(state, "base", weight, whole_rig(state), gait_name, provisional=True,
+                                 note="the bare walk is not in this SPEC until the owner rules which frequency group carries it "
+                                      "(a multi-group species without a gait group); idle alone does not open the switch (rule 3)"))
+        elif bare_walk:
             rows.append(loop_row(state, "base", weight, whole_rig(state), gait_name))
         for g in others:
             rows.append(loop_row(f"{state}_{g['name']}", "parallel layer", weight + f" (group {g['name']})", ", ".join(g["bones"]), g["name"]))

@@ -966,7 +966,10 @@ def convert_animation(spec: dict[str, Any], compiled: dict[str, Any],
         # model reads its entity, the same hook posed from declared entity states
         # through the entity's pose interface (entity_state). No clip is emitted
         # or accepted.
-        if spec["channels"]:
+        if spec["channels"] and "keyframe_reference_leg" not in spec:
+            # A code_driven model may declare channels ONLY as the keyframe reference leg's transcription
+            # (the first Tier-2 slice, 2026-09-13: the shipped hook is the classic formula, the layers its
+            # transcription; KeyframeLeg reads them, this converter still emits no clip).
             raise ValueError(f"{kind} proof model declares channels; the pose is production code, not clips")
         if spec.get("candidate_animation_path") != "production_replacement_hook":
             raise ValueError(f"{kind} proof model must declare candidate_animation_path production_replacement_hook")

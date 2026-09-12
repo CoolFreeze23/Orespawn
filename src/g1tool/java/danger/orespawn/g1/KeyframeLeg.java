@@ -44,10 +44,12 @@ import software.bernie.geckolib.model.GeoModel;
 
 /**
  * The keyframe reference leg of the G1 animation proof (Phase G, the controller's return; Amendment 1
- * points 3-5, ADDENDA (1)-(2), scope addendum item 24 (5)-(14) and (15), 2026-09-06).
+ * points 3-5, ADDENDA (1)-(2), scope addendum item 24 (5)-(14) and (15), 2026-09-06; generalised to the
+ * simple-cyclic class by the first Tier-2 slice, 2026-09-13).
  *
- * <p>A {@code gait_scaled} model that declares {@code keyframe_reference_leg} in its manifest entry is
- * proven twice: the landed code-driven leg as before, and beside it the SHIPPED
+ * <p>A model that declares {@code keyframe_reference_leg} in its manifest entry - a {@code gait_scaled}
+ * one (the Beaver) or a {@code code_driven} one whose shipped hook is the classic formula (the Tier-2
+ * simple-cyclic rigs) - is proven twice: the landed code-driven leg as before, and beside it the SHIPPED
  * {@link PhaseLockedKeyframeController} layers the species declares
  * ({@link OreSpawnGeoReplacement#keyframeLayers()}) over the species' SHIPPED clip file (since item 15
  * landed, 2026-09-12: the manifest's {@code keyframe_reference_leg.clip_path}), through GeckoLib 4.8.4's own loader
@@ -57,6 +59,17 @@ import software.bernie.geckolib.model.GeoModel;
  * {@link SplineRepair} applied when the entry says so (Q9 (a)). The layers are built on explicit
  * inputs - the state's animation tick and limb-swing amount - exactly as the shipped replacement
  * builds them on its entity readers (the S4 doctrine).</p>
+ *
+ * <p>The classic channel a manifest declares is {@code base + sign * cos(age * omega [* wingspeed]) * (float) PI
+ * * pi_scale [* limbSwingAmount]} on ONE axis ({@code x}, {@code y} or {@code z}) of one bone, evaluated here in
+ * the compiled float chain and in the compiled ORDER: the phase's two multiplies left to right (the
+ * {@code wingspeed} is never pre-multiplied into {@code omega}), the amplitude scaled, the sign, the base added
+ * LAST ({@code -1.11f - cos(...) * PI * 0.35f} is {@code (-1.11f) + (-(x))}, exact in IEEE). On the internal basis
+ * X and Z are negated, Y kept ({@code OreSpawnGeoReplacement}'s basis facts). A key of the transcription holds
+ * the DELTA from the bone's bind rotation on the channel's axis (GeckoLib adds every key to the initial
+ * snapshot, {@code AnimationProcessor.tickAnimation} 323-341): {@code base - bind} plus the cosine, with the
+ * bind read from the SHIPPED geo the clip manifest names ({@code geo}) - the same decimal text the generator
+ * reads - and checked against the baked rig's initial snapshot.</p>
  *
  * <p>What it emits (all OUTPUT, none of it an input; {@code density} in particular - Amendment 1
  * point 4 and ADDENDA (2)):</p>
@@ -73,7 +86,16 @@ import software.bernie.geckolib.model.GeoModel;
  *       on the full dense schedule with one key fewer failing;</li>
  *   <li>the wrap pairs' continuity and LUT indices, the length-derived time-warp facts, the
  *       order-independence of the persistent manager, and the density statement in the ruled
- *       wording (Q10).</li>
+ *       wording (Q10);</li>
+ *   <li>the late-prime twin (TEST-005, closed by the first Tier-2 slice): a second persistent manager BUILT
+ *       before its clips are served (its controllers registered with the model unserved), whose unserved slot
+ *       is skipped and whose clips are served one sample later, at a late age - asserting that the prime then
+ *       reads the same declared length, the same time-warp ratio and the same LUT index chain as the from-zero
+ *       prime, and poses identically to it. The empty-cache TICK itself cannot run in this JVM: GeckoLib 4.8.4's
+ *       {@code AnimationProcessor.buildAnimationQueue} catches the throw with {@code GeckoLibConstants.LOGGER},
+ *       whose class initialiser registers a data component ({@code GeckoLibNeoForge.registerDataComponent}) and
+ *       trips {@code Bootstrap.checkBootstrapCalled} (OPT-029 R0, the {@code DataTickets} sibling); its outcome
+ *       is read from the bytecode and recorded in the block, not executed.</li>
  * </ul>
  * The classic reference for the dense schedule is the manifest's channels evaluated in the compiled
  * float chain on the internal basis (the {@code G1AnimationRuntime} transcription, generalised); the
@@ -96,8 +118,16 @@ final class KeyframeLeg {
     /** The file-vs-generator pin: baked radians per key, and key lengths in ticks. */
     private static final double TWIN_EPSILON = 1.0e-9D;
     private static final float FREQUENCY_EPSILON = 1.0e-6F;
+    /** The shipped geo's bind rotation against the baked rig's initial snapshot, in degrees (float radians widened). */
+    private static final double BIND_EPSILON_DEGREES = 1.0e-4D;
     private static final double[] QUADRATURES = {0.0D, 0.25D, 0.5D, 0.75D, 1.0D};
     private static final double[] SEAM_OFFSETS = {-0.0001D, 0.0D, 0.0001D};
+    /** The late-prime twin's follow-up ages after its prime, in age ticks. */
+    private static final double[] LATE_PRIME_FOLLOW_UPS = {0.371D, 7.25D, 40.5D};
+    private static final int AXIS_X = 0;
+    private static final int AXIS_Y = 1;
+    private static final int AXIS_Z = 2;
+    private static final String[] AXIS_NAMES = {"x", "y", "z"};
 
     private KeyframeLeg() {
         throw new AssertionError();
@@ -105,25 +135,45 @@ final class KeyframeLeg {
 
     // ------------------------------------------------------------------ the manifest's classic channels and groups
 
-    /** One classic cosine channel from the manifest ({@code channels[]}), on one bone. */
-    record Channel(String bone, float omega, float piScale, float sign, boolean scaled) {
-        /** The compiled chain: {@code Mth.cos(age * omega) * (float) Math.PI * piScale [* amplitude]}, then the sign. */
-        float classicRotX(float age, float amplitude) {
-            float value = Mth.cos(age * this.omega) * (float) Math.PI * this.piScale;
+    /**
+     * One classic cosine channel from the manifest ({@code channels[]}), on one axis of one bone:
+     * {@code base + sign * cos(age * omega * wingspeed) * PI * piScale [* amplitude]}.
+     */
+    record Channel(String bone, int axis, float omega, float wingspeed, float piScale, float sign, float base, boolean scaled) {
+        /** The compiled phase chain, two float multiplies left to right ({@link PhaseLockedKeyframeController#classicPhase(float, float, float)}). */
+        float classicPhase(float age) {
+            return PhaseLockedKeyframeController.classicPhase(age, this.omega, this.wingspeed);
+        }
+
+        /** The compiled chain: {@code Mth.cos(phase) * (float) Math.PI * piScale [* amplitude]}, then the sign, then the base added last. */
+        float classicRotation(float age, float amplitude) {
+            float value = Mth.cos(classicPhase(age)) * (float) Math.PI * this.piScale;
             if (this.scaled) {
                 value = value * amplitude;
             }
-            return this.sign < 0.0F ? -value : value;
+            if (this.sign < 0.0F) {
+                value = -value;
+            }
+            if (this.base != 0.0F) {
+                value = this.base + value;
+            }
+            return value;
         }
 
-        /** The internal basis: rotation X negated (OreSpawnGeoReplacement's basis facts). */
-        float internalRotX(float age, float amplitude) {
-            return -classicRotX(age, amplitude);
+        /** The internal basis: rotation X and Z negated, Y kept (OreSpawnGeoReplacement's basis facts). */
+        float internalRotation(float age, float amplitude) {
+            float classic = classicRotation(age, amplitude);
+            return this.axis == AXIS_Y ? classic : -classic;
+        }
+
+        double effectiveFrequency() {
+            return (double) this.omega * (double) this.wingspeed;
         }
     }
 
     /** One frequency group: the clip manifest's row joined with the classic channels at its frequency. */
-    record Group(String name, String clip, float omega, int keysPerBone, List<Channel> channels, boolean gaitScaled) {
+    record Group(String name, String clip, float omega, float wingspeed, int keysPerBone, List<Channel> channels,
+                 boolean gaitScaled) {
         List<String> bones() {
             List<String> names = new ArrayList<>();
             for (Channel channel : this.channels) {
@@ -132,8 +182,12 @@ final class KeyframeLeg {
             return names;
         }
 
+        double effectiveFrequency() {
+            return (double) this.omega * (double) this.wingspeed;
+        }
+
         double naturalPeriodTicks() {
-            return TWO_PI / this.omega;
+            return TWO_PI / effectiveFrequency();
         }
     }
 
@@ -141,37 +195,55 @@ final class KeyframeLeg {
         return spec.has(KEY);
     }
 
+    private static int axisIndex(String axis, String modelId, JsonObject channel) {
+        for (int index = 0; index < AXIS_NAMES.length; index++) {
+            if (AXIS_NAMES[index].equals(axis)) {
+                return index;
+            }
+        }
+        throw new IllegalStateException("keyframe reference leg: only x / y / z axes are transcribed; " + modelId
+                + " declares " + channel);
+    }
+
     private static List<Channel> channels(JsonObject spec) {
+        String modelId = spec.get("id").getAsString();
         List<Channel> channels = new ArrayList<>();
         for (JsonElement element : spec.getAsJsonArray("channels")) {
             JsonObject channel = element.getAsJsonObject();
-            if (!"cosine".equals(channel.get("formula").getAsString()) || !"x".equals(channel.get("axis").getAsString())) {
-                throw new IllegalStateException("keyframe reference leg: only cosine X channels are transcribed; "
-                        + spec.get("id").getAsString() + " declares " + channel);
+            if (!"cosine".equals(channel.get("formula").getAsString())) {
+                throw new IllegalStateException("keyframe reference leg: only cosine channels are transcribed; "
+                        + modelId + " declares " + channel);
             }
+            int axis = axisIndex(channel.get("axis").getAsString(), modelId, channel);
             float omega = (float) channel.get("frequency_radians_per_age_tick").getAsDouble();
+            float wingspeed = channel.has("wingspeed") ? (float) channel.get("wingspeed").getAsDouble() : 1.0F;
             float piScale = (float) channel.get("pi_scale").getAsDouble();
             float sign = (float) channel.get("sign").getAsDouble();
+            float base = channel.has("base_radians") ? (float) channel.get("base_radians").getAsDouble() : 0.0F;
             boolean scaled = channel.has("limb_swing_scaled") && channel.get("limb_swing_scaled").getAsBoolean();
+            if (!(omega > 0.0F) || !(wingspeed > 0.0F)) {
+                throw new IllegalStateException(modelId + ": a channel needs a positive frequency and wingspeed: " + channel);
+            }
             for (JsonElement bone : channel.getAsJsonArray("bones")) {
-                channels.add(new Channel(bone.getAsString(), omega, piScale, sign, scaled));
+                channels.add(new Channel(bone.getAsString(), axis, omega, wingspeed, piScale, sign, base, scaled));
             }
         }
         return channels;
     }
 
-    private static List<Float> frequencies(List<Channel> channels) {
-        List<Float> frequencies = new ArrayList<>();
+    /** The distinct frequencies, one representative channel each, fastest first (by the literal {@code omega}; a model has one wingspeed). */
+    private static List<Channel> frequencies(List<Channel> channels) {
+        List<Channel> frequencies = new ArrayList<>();
         for (Channel channel : channels) {
-            if (frequencies.stream().noneMatch(known -> Math.abs(known - channel.omega()) <= FREQUENCY_EPSILON)) {
-                frequencies.add(channel.omega());
+            if (frequencies.stream().noneMatch(known -> Math.abs(known.omega() - channel.omega()) <= FREQUENCY_EPSILON)) {
+                frequencies.add(channel);
             }
         }
-        frequencies.sort((a, b) -> Float.compare(b, a));
+        frequencies.sort((a, b) -> Float.compare(b.omega(), a.omega()));
         return frequencies;
     }
 
-    /** {@code w3_7} for 3.7 rad/tick: the float's own shortest decimal (the parity tool rebuilds it from the manifest's number). */
+    /** {@code w3_7} for 3.7 rad/tick: the float's own shortest decimal (the parity tool never rebuilds it from the manifest's number). */
     static String frequencyToken(float omega) {
         return "w" + new BigDecimal(Float.toString(omega)).stripTrailingZeros().toPlainString().replace('.', '_');
     }
@@ -179,8 +251,8 @@ final class KeyframeLeg {
     // ------------------------------------------------------------------ the wrap pairs (both sides)
 
     /**
-     * The wrap sample: for every frequency group, at every seam {@code cycle * 2 pi / omega} inside the
-     * schedule's loop period, the two ages {@code seam - eps} and {@code seam + eps} with
+     * The wrap sample: for every frequency group, at every seam {@code cycle * 2 pi / (omega * wingspeed)} inside
+     * the schedule's loop period, the two ages {@code seam - eps} and {@code seam + eps} with
      * {@code eps = wrap_epsilon_lut_indices * period / 65536}, kept only when the classic float phase
      * chain ({@link PhaseLockedKeyframeController#classicCosineIndex}) straddles the LUT wrap between
      * them - a seam the float phase does not cross is not a wrap sample. One pair per amplitude, so the
@@ -191,15 +263,15 @@ final class KeyframeLeg {
         int epsilonIndices = leg.get("wrap_epsilon_lut_indices").getAsInt();
         double loopPeriod = spec.get("loop_period_age_ticks").getAsDouble();
         List<G1ModelProbe.SampleRequest> requests = new ArrayList<>();
-        for (float omega : frequencies(channels(spec))) {
-            double period = TWO_PI / omega;
+        for (Channel frequency : frequencies(channels(spec))) {
+            double period = TWO_PI / frequency.effectiveFrequency();
             double epsilon = epsilonIndices * period / LUT_SIZE;
-            String token = frequencyToken(omega);
+            String token = frequencyToken(frequency.omega());
             for (long cycle = 1; cycle * period + epsilon <= loopPeriod; cycle++) {
                 double seam = cycle * period;
                 float before = (float) (seam - epsilon);
                 float after = (float) (seam + epsilon);
-                if (!straddles(before, after, omega)) {
+                if (!straddles(before, after, frequency)) {
                     continue;
                 }
                 for (float amplitude : amplitudes) {
@@ -212,9 +284,9 @@ final class KeyframeLeg {
         return requests;
     }
 
-    private static boolean straddles(float before, float after, float omega) {
-        int indexBefore = PhaseLockedKeyframeController.classicCosineIndex(before * omega * 1.0F);
-        int indexAfter = PhaseLockedKeyframeController.classicCosineIndex(after * omega * 1.0F);
+    private static boolean straddles(float before, float after, Channel frequency) {
+        int indexBefore = PhaseLockedKeyframeController.classicCosineIndex(frequency.classicPhase(before));
+        int indexAfter = PhaseLockedKeyframeController.classicCosineIndex(frequency.classicPhase(after));
         return indexBefore > WRAP_BEFORE_MIN_INDEX && indexAfter < WRAP_AFTER_MAX_INDEX;
     }
 
@@ -245,10 +317,16 @@ final class KeyframeLeg {
         for (JsonElement element : clipManifest.getAsJsonArray("groups")) {
             JsonObject row = element.getAsJsonObject();
             float omega = (float) row.get("frequency_radians_per_age_tick").getAsDouble();
+            float rowWingspeed = row.has("wingspeed") ? (float) row.get("wingspeed").getAsDouble() : 1.0F;
             List<Channel> members = new ArrayList<>();
             Set<Boolean> scaled = new LinkedHashSet<>();
             for (Channel channel : channels) {
                 if (Math.abs(channel.omega() - omega) <= FREQUENCY_EPSILON) {
+                    if (Math.abs(channel.wingspeed() - rowWingspeed) > FREQUENCY_EPSILON) {
+                        throw new IllegalStateException(modelId + ": group " + row.get("name").getAsString()
+                                + " declares wingspeed " + rowWingspeed + " but channel " + channel.bone() + " carries "
+                                + channel.wingspeed());
+                    }
                     members.add(channel);
                     scaled.add(channel.scaled());
                     if (!claimed.add(channel.bone())) {
@@ -260,7 +338,7 @@ final class KeyframeLeg {
                 throw new IllegalStateException(modelId + ": group " + row.get("name").getAsString()
                         + " has no classic channel at its frequency, or its channels disagree on limb_swing_scaled");
             }
-            groups.add(new Group(row.get("name").getAsString(), row.get("clip").getAsString(), omega,
+            groups.add(new Group(row.get("name").getAsString(), row.get("clip").getAsString(), omega, rowWingspeed,
                     row.get("keys_per_bone").getAsInt(), members, scaled.iterator().next()));
         }
         if (claimed.size() != channels.size()) {
@@ -283,15 +361,21 @@ final class KeyframeLeg {
             KeyframeLayer layer = layers.get(index);
             if (!layer.group().equals(group.name()) || !layer.clip().equals(group.clip())
                     || layer.angularFrequencyRadiansPerTick() != group.omega()
+                    || layer.wingspeed() != group.wingspeed()
                     || !layer.bones().equals(new LinkedHashSet<>(group.bones()))
                     || layer.gaitScaled() != group.gaitScaled()) {
                 throw new IllegalStateException(modelId + ": production keyframe layer " + index + " (" + layer
                         + ") does not match the clip manifest's group " + group.name() + " " + group.clip() + " "
-                        + group.omega() + " " + group.bones() + " gait=" + group.gaitScaled());
+                        + group.omega() + " x " + group.wingspeed() + " " + group.bones() + " gait=" + group.gaitScaled());
             }
         }
 
-        // 3. The clip file through GeckoLib's own loader, repaired when the entry says so.
+        // 3. The bind rotations the keys are deltas from: the shipped geo the clip manifest names (the generator reads
+        //    the same decimal text), checked against the baked rig's initial snapshot; without a named geo every channel
+        //    bone must sit at bind zero on its axis (the Beaver's form).
+        Map<String, double[]> bindDegrees = bindDegrees(clipManifest, repositoryRoot, evaluator.freshBake(), channels, modelId);
+
+        // 4. The clip file through GeckoLib's own loader, repaired when the entry says so.
         byte[] clipBytes = Files.readAllBytes(clipPath);
         JsonObject clipRoot = JsonParser.parseString(new String(clipBytes, StandardCharsets.UTF_8)).getAsJsonObject();
         BakedAnimations loaded = bake(clipRoot);
@@ -310,8 +394,8 @@ final class KeyframeLeg {
             }
             boolean loop = true;
             Integer keys = null;
-            for (String bone : group.bones()) {
-                List<Keyframe<MathValue>> frames = boneAnimation(animation, bone, modelId).rotationKeyFrames().xKeyframes();
+            for (Channel channel : group.channels()) {
+                List<Keyframe<MathValue>> frames = axisKeyframes(boneAnimation(animation, channel.bone(), modelId), channel.axis());
                 if (keys == null) {
                     keys = frames.size();
                 } else if (keys != frames.size()) {
@@ -326,17 +410,17 @@ final class KeyframeLeg {
             fileLength.put(group.name(), animation.length());
         }
 
-        // 4. The file is the generator's output at its own density (the twin pin), and the twin's bake matches it.
-        BakedAnimations twin = maybeRepair(bake(generate(groups, fileKeys, lerpMode, seconds)), splineRepair);
+        // 5. The file is the generator's output at its own density (the twin pin), and the twin's bake matches it.
+        BakedAnimations twin = maybeRepair(bake(generate(groups, fileKeys, lerpMode, seconds, bindDegrees)), splineRepair);
         double twinDelta = 0.0D;
         for (Group group : groups) {
             Animation fromFile = clips.getAnimation(group.clip());
             Animation fromTwin = twin.getAnimation(group.clip());
-            for (String bone : group.bones()) {
-                List<Keyframe<MathValue>> a = boneAnimation(fromFile, bone, modelId).rotationKeyFrames().xKeyframes();
-                List<Keyframe<MathValue>> b = boneAnimation(fromTwin, bone, modelId).rotationKeyFrames().xKeyframes();
+            for (Channel channel : group.channels()) {
+                List<Keyframe<MathValue>> a = axisKeyframes(boneAnimation(fromFile, channel.bone(), modelId), channel.axis());
+                List<Keyframe<MathValue>> b = axisKeyframes(boneAnimation(fromTwin, channel.bone(), modelId), channel.axis());
                 if (a.size() != b.size()) {
-                    throw new IllegalStateException(modelId + ": " + group.clip() + "/" + bone + " has " + a.size()
+                    throw new IllegalStateException(modelId + ": " + group.clip() + "/" + channel.bone() + " has " + a.size()
                             + " keys, the generator's rule " + b.size());
                 }
                 for (int index = 0; index < a.size(); index++) {
@@ -357,7 +441,7 @@ final class KeyframeLeg {
 
         return new Prepared(modelId, speciesLabel, tolerance, candidateClass, splineRepair, clipPath, sha256(clipBytes),
                 clipManifestPath, groups, layers, clips, lerpMode, seconds, fileKeys, fileLerp, fileArguments, fileLength,
-                twinDelta, search, leg.get("wrap_epsilon_lut_indices").getAsInt(), evaluator);
+                twinDelta, search, leg.get("wrap_epsilon_lut_indices").getAsInt(), evaluator, bindDegrees);
     }
 
     private static Path resolve(Path repositoryRoot, String path) {
@@ -384,6 +468,85 @@ final class KeyframeLeg {
             }
         }
         throw new IllegalStateException(modelId + ": clip " + animation.name() + " does not animate bone " + bone);
+    }
+
+    private static List<Keyframe<MathValue>> axisKeyframes(BoneAnimation animation, int axis) {
+        return switch (axis) {
+            case AXIS_X -> animation.rotationKeyFrames().xKeyframes();
+            case AXIS_Y -> animation.rotationKeyFrames().yKeyframes();
+            default -> animation.rotationKeyFrames().zKeyframes();
+        };
+    }
+
+    /**
+     * The classic bind rotation of every bone in degrees ({@code (x, y, z)} of the ModelPart), read from the shipped
+     * geo the clip manifest names ({@code geo}: the converter wrote JSON {@code (+x, -y, -z)} degrees; a bone without a
+     * {@code rotation} is unrotated) - the same decimal text {@code tools/keyframe_clip.py} reads, so the two generators
+     * subtract the same numbers - and checked against the baked rig's bind (a fresh bake's bone rotation, internal
+     * {@code (-x, y, -z)} radians). Without a named geo (the Beaver's manifest) every channel bone must bake unrotated on
+     * its axis.
+     */
+    private static Map<String, double[]> bindDegrees(JsonObject clipManifest, Path repositoryRoot, BakedGeoModel baked,
+                                                     List<Channel> channels, String modelId) throws Exception {
+        Map<String, GeoBone> bones = new TreeMap<>();
+        for (GeoBone bone : baked.topLevelBones()) {
+            collectBone(bone, bones);
+        }
+        Map<String, double[]> out = new TreeMap<>();
+        if (!clipManifest.has("geo")) {
+            for (Channel channel : channels) {
+                GeoBone bone = bones.get(channel.bone());
+                if (bone == null) {
+                    throw new IllegalStateException(modelId + ": the rig has no bone " + channel.bone());
+                }
+                // a fresh bake's bones hold the JSON bind (the initial snapshot is taken on the first processor tick)
+                float[] internal = {bone.getRotX(), bone.getRotY(), bone.getRotZ()};
+                if (internal[channel.axis()] != 0.0F) {
+                    throw new IllegalStateException(modelId + ": bone " + channel.bone() + " binds rotated on its animated "
+                            + AXIS_NAMES[channel.axis()] + " axis (" + internal[channel.axis()] + " rad internal); the keys are "
+                            + "deltas from bind, so the clip manifest must name the shipped geo (\"geo\")");
+                }
+                out.put(channel.bone(), new double[3]);
+            }
+            return out;
+        }
+        Path geoPath = resolve(repositoryRoot, clipManifest.get("geo").getAsString());
+        JsonObject geo = readJson(geoPath);
+        JsonArray geoBones = geo.getAsJsonArray("minecraft:geometry").get(0).getAsJsonObject().getAsJsonArray("bones");
+        for (JsonElement element : geoBones) {
+            JsonObject bone = element.getAsJsonObject();
+            double[] classic = new double[3];
+            if (bone.has("rotation")) {
+                JsonArray rotation = bone.getAsJsonArray("rotation");
+                classic[0] = rotation.get(0).getAsDouble();
+                classic[1] = -rotation.get(1).getAsDouble();
+                classic[2] = -rotation.get(2).getAsDouble();
+            }
+            out.put(bone.get("name").getAsString(), classic);
+        }
+        for (Channel channel : channels) {
+            double[] fromGeo = out.get(channel.bone());
+            GeoBone bone = bones.get(channel.bone());
+            if (fromGeo == null || bone == null) {
+                throw new IllegalStateException(modelId + ": " + geoPath + " or the baked rig has no bone " + channel.bone());
+            }
+            double[] fromBake = {-Math.toDegrees(bone.getRotX()), Math.toDegrees(bone.getRotY()), -Math.toDegrees(bone.getRotZ())};
+            for (int axis = 0; axis < 3; axis++) {
+                if (Math.abs(fromGeo[axis] - fromBake[axis]) > BIND_EPSILON_DEGREES) {
+                    throw new IllegalStateException(modelId + ": the shipped geo " + geoPath + " binds " + channel.bone()
+                            + " at " + fromGeo[axis] + " deg on " + AXIS_NAMES[axis] + " but the generated rig bakes "
+                            + fromBake[axis] + " deg; the shipped geo is not the converter's output");
+                }
+            }
+        }
+        return out;
+    }
+
+    private static void collectBone(GeoBone bone, Map<String, GeoBone> bones) {
+        if (bones.put(bone.getName(), bone) != null) {
+            throw new IllegalStateException("Generated GeckoLib model has duplicate bone " + bone.getName());
+        }
+        bone.getChildBones().forEach(child -> collectBone(child, bones));
     }
 
     private static String lerpName(EasingType easing) {
@@ -435,10 +598,13 @@ final class KeyframeLeg {
 
     /**
      * The generator's rule ({@code tools/keyframe_clip.py}), in memory: one looping clip per group of the
-     * declared length, keys at {@code L k / (N - 1)} holding {@code sign * (float) Math.PI * piScale} degrees
-     * times {@code cos(2 pi k / (N - 1))}, rounded to 1e-10 degrees, authored X = +classic degrees.
+     * declared length, keys at {@code L k / (N - 1)} holding, in degrees, {@code (base - bind) + sign * (float) Math.PI
+     * * piScale * cos(2 pi k / (N - 1))} - the classic delta from the bone's bind rotation on the channel's axis -
+     * rounded to 1e-10 degrees, authored under the converter's sign rule (X = +classic degrees, Y and Z negated) in
+     * the axis's slot of the key.
      */
-    static JsonObject generate(List<Group> groups, Map<String, Integer> keysPerGroup, String lerpMode, double seconds) {
+    static JsonObject generate(List<Group> groups, Map<String, Integer> keysPerGroup, String lerpMode, double seconds,
+                               Map<String, double[]> bindDegrees) {
         JsonObject animations = new JsonObject();
         for (Group group : groups) {
             int keys = keysPerGroup.get(group.name());
@@ -446,18 +612,25 @@ final class KeyframeLeg {
             JsonObject bones = new JsonObject();
             for (Channel channel : group.channels()) {
                 double amplitudeDegrees = channel.sign() * Math.toDegrees((float) ((float) Math.PI * channel.piScale()));
+                double offsetDegrees = Math.toDegrees((double) channel.base()) - bindDegrees.get(channel.bone())[channel.axis()];
+                double authoredSign = channel.axis() == AXIS_X ? 1.0D : -1.0D;
                 JsonObject rotation = new JsonObject();
                 for (int index = 0; index <= segments; index++) {
-                    double value = Math.round(amplitudeDegrees * Math.cos(TWO_PI * index / segments) * VALUE_ROUNDING)
-                            / VALUE_ROUNDING;
+                    double value = Math.round((offsetDegrees + amplitudeDegrees * Math.cos(TWO_PI * index / segments))
+                            * VALUE_ROUNDING) / VALUE_ROUNDING;
+                    value = authoredSign * value;
                     if (value == 0.0D) {
                         value = 0.0D;
                     }
                     JsonObject key = new JsonObject();
                     JsonArray post = new JsonArray();
-                    post.add(value);
-                    post.add(0);
-                    post.add(0);
+                    for (int axis = 0; axis < 3; axis++) {
+                        if (axis == channel.axis()) {
+                            post.add(value);
+                        } else {
+                            post.add(0);
+                        }
+                    }
                     key.add("post", post);
                     key.addProperty("lerp_mode", lerpMode);
                     rotation.add(timeKey(index, segments, seconds), key);
@@ -511,6 +684,7 @@ final class KeyframeLeg {
         private final JsonObject search;
         private final int wrapEpsilonIndices;
         private final G1AnimationRuntime.Evaluator evaluator;
+        private final Map<String, double[]> bindDegrees;
         private final Harness harness;
         private final Map<String, Map<String, float[]>> forward = new LinkedHashMap<>();
 
@@ -519,7 +693,7 @@ final class KeyframeLeg {
                          List<KeyframeLayer> layers, BakedAnimations clips, String lerpMode, double seconds,
                          Map<String, Integer> fileKeys, Map<String, String> fileLerp, Map<String, String> fileArguments,
                          Map<String, Double> fileLength, double twinDelta, JsonObject search, int wrapEpsilonIndices,
-                         G1AnimationRuntime.Evaluator evaluator) {
+                         G1AnimationRuntime.Evaluator evaluator, Map<String, double[]> bindDegrees) {
             this.modelId = modelId;
             this.speciesLabel = speciesLabel;
             this.tolerance = tolerance;
@@ -541,7 +715,8 @@ final class KeyframeLeg {
             this.search = search;
             this.wrapEpsilonIndices = wrapEpsilonIndices;
             this.evaluator = evaluator;
-            this.harness = new Harness(evaluator.freshBake(), clips, layers);
+            this.bindDegrees = bindDegrees;
+            this.harness = new Harness(evaluator.freshBake(), clips, layers, true);
         }
 
         /** The layers' pose at this request, every bone of the rig in classic terms ({@code (-x, y, -z)} of the internal basis). */
@@ -590,7 +765,7 @@ final class KeyframeLeg {
             throw new IllegalStateException(this.modelId + ": wrap sample " + id + " names no frequency group (token " + token + ")");
         }
 
-        /** The leg's block: provenance, the file's density, the search, the confirmation, the wraps, the time-warp, the statement. */
+        /** The leg's block: provenance, the file's density, the search, the confirmation, the wraps, the time-warp, the twin, the statement. */
         JsonObject report(List<G1ModelProbe.SampleRequest> requests) {
             JsonObject out = new JsonObject();
             out.addProperty("candidate_class", this.candidateClass);
@@ -617,6 +792,10 @@ final class KeyframeLeg {
                 row.addProperty("clip", layer.clip());
                 row.addProperty("controller", layer.controllerName());
                 row.addProperty("frequency_radians_per_age_tick", layer.angularFrequencyRadiansPerTick());
+                if (layer.wingspeed() != 1.0F) {
+                    // The chain's second multiply; omitted for a chain without one so the landed rows stay byte-identical.
+                    row.addProperty("wingspeed", layer.wingspeed());
+                }
                 row.add("bones", names(new TreeSet<>(layer.bones())));
                 row.addProperty("gait_scaled", layer.gaitScaled());
                 row.addProperty("additive", layer.gaitScaled());
@@ -680,6 +859,9 @@ final class KeyframeLeg {
             out.addProperty("schedule_reversed_max_delta_radians", orderDelta);
             out.addProperty("samples_with_keyframe_rotations", this.forward.size());
 
+            // The late-prime twin (TEST-005).
+            out.add("late_prime_twin", latePrimeTwin());
+
             out.addProperty("density_statement", statement());
             return out;
         }
@@ -729,7 +911,7 @@ final class KeyframeLeg {
             }
             // exact quadratures, clip endpoints and both sides of every cyclic seam for every frequency group
             for (Group group : this.groups) {
-                double frequency = group.omega();
+                double frequency = group.effectiveFrequency();
                 long firstCycle = (long) Math.floor(start * frequency / TWO_PI) - 1L;
                 long lastCycle = (long) Math.ceil(end * frequency / TWO_PI) + 1L;
                 for (long cycle = firstCycle; cycle <= lastCycle; cycle++) {
@@ -748,15 +930,15 @@ final class KeyframeLeg {
 
         private RunResult runDense(BakedAnimations candidateClips, int uniformIntervals, List<Float> amplitudes) {
             RunResult result = new RunResult();
-            Harness candidate = new Harness(this.evaluator.freshBake(), candidateClips, this.layers);
+            Harness candidate = new Harness(this.evaluator.freshBake(), candidateClips, this.layers, true);
             TreeSet<Double> ages = denseAges(uniformIntervals);
             for (float amplitude : amplitudes) {
                 for (double age : ages) {
                     Map<String, float[]> pose = candidate.sample((float) age, amplitude);
                     for (Group group : this.groups) {
                         for (Channel channel : group.channels()) {
-                            float reference = channel.internalRotX((float) age, amplitude);
-                            double error = Math.abs(pose.get(channel.bone())[0] - reference);
+                            float reference = channel.internalRotation((float) age, amplitude);
+                            double error = Math.abs(pose.get(channel.bone())[channel.axis()] - reference);
                             result.record(group.name(), error, age, amplitude, channel.bone());
                         }
                     }
@@ -790,8 +972,8 @@ final class KeyframeLeg {
                 for (Group group : this.groups) {
                     uniform.put(group.name(), keys);
                 }
-                RunResult run = runDense(maybeRepair(bake(generate(this.groups, uniform, this.lerpMode, this.seconds)),
-                        this.splineRepair), searchIntervals, List.of(1.0F));
+                RunResult run = runDense(maybeRepair(bake(generate(this.groups, uniform, this.lerpMode, this.seconds,
+                        this.bindDegrees)), this.splineRepair), searchIntervals, List.of(1.0F));
                 JsonObject row = new JsonObject();
                 for (Group group : this.groups) {
                     double error = run.maxError.getOrDefault(group.name(), Double.NaN);
@@ -820,10 +1002,10 @@ final class KeyframeLeg {
                     confirm.put(group.name(), keys == null ? maxKeys : keys);
                     below.put(group.name(), keys == null ? maxKeys : keys - 1);
                 }
-                atFewest = runDense(maybeRepair(bake(generate(this.groups, confirm, this.lerpMode, this.seconds)),
-                        this.splineRepair), confirmIntervals, amplitudes());
-                oneFewer = runDense(maybeRepair(bake(generate(this.groups, below, this.lerpMode, this.seconds)),
-                        this.splineRepair), confirmIntervals, amplitudes());
+                atFewest = runDense(maybeRepair(bake(generate(this.groups, confirm, this.lerpMode, this.seconds,
+                        this.bindDegrees)), this.splineRepair), confirmIntervals, amplitudes());
+                oneFewer = runDense(maybeRepair(bake(generate(this.groups, below, this.lerpMode, this.seconds,
+                        this.bindDegrees)), this.splineRepair), confirmIntervals, amplitudes());
             }
             boolean densityMatches = allFound;
             for (Group group : this.groups) {
@@ -877,10 +1059,10 @@ final class KeyframeLeg {
                     float beforeAge = (float) (seam - epsilon);
                     float atAge = (float) seam;
                     float afterAge = (float) (seam + epsilon);
-                    float before = this.harness.sample(beforeAge, 1.0F).get(probe.bone())[0];
+                    float before = this.harness.sample(beforeAge, 1.0F).get(probe.bone())[probe.axis()];
                     int indexBefore = controller.lastCosineIndex();
-                    float at = this.harness.sample(atAge, 1.0F).get(probe.bone())[0];
-                    float after = this.harness.sample(afterAge, 1.0F).get(probe.bone())[0];
+                    float at = this.harness.sample(atAge, 1.0F).get(probe.bone())[probe.axis()];
+                    float after = this.harness.sample(afterAge, 1.0F).get(probe.bone())[probe.axis()];
                     int indexAfter = controller.lastCosineIndex();
                     if (!(indexBefore > WRAP_BEFORE_MIN_INDEX && indexAfter < WRAP_AFTER_MAX_INDEX)) {
                         continue;
@@ -889,9 +1071,9 @@ final class KeyframeLeg {
                     minIndexBefore = Math.min(minIndexBefore, indexBefore);
                     maxIndexAfter = Math.max(maxIndexAfter, indexAfter);
                     maxContinuity = Math.max(maxContinuity, Math.abs(before - after));
-                    maxErrorBefore = Math.max(maxErrorBefore, Math.abs(before - probe.internalRotX(beforeAge, 1.0F)));
-                    maxErrorAt = Math.max(maxErrorAt, Math.abs(at - probe.internalRotX(atAge, 1.0F)));
-                    maxErrorAfter = Math.max(maxErrorAfter, Math.abs(after - probe.internalRotX(afterAge, 1.0F)));
+                    maxErrorBefore = Math.max(maxErrorBefore, Math.abs(before - probe.internalRotation(beforeAge, 1.0F)));
+                    maxErrorAt = Math.max(maxErrorAt, Math.abs(at - probe.internalRotation(atAge, 1.0F)));
+                    maxErrorAfter = Math.max(maxErrorAfter, Math.abs(after - probe.internalRotation(afterAge, 1.0F)));
                 }
                 JsonObject row = new JsonObject();
                 row.addProperty("probe_bone", probe.bone());
@@ -910,6 +1092,138 @@ final class KeyframeLeg {
                 out.add(group.name(), row);
             }
             return out;
+        }
+
+        // ------------------------------------------------------------------ the late-prime twin (TEST-005)
+
+        /**
+         * A second persistent manager, BUILT before its clips are served: {@code new AnimatableManager} registers its
+         * controllers with the model unserved, the slot at {@code late_start_age_ticks} passes without a tick, the clips
+         * are served, and the next sample - one tick later, at a late age - primes it, reading the declared length then
+         * ({@code primeFirstFrame}). The twin must then carry the SAME facts as the from-zero manager ({@link #harness},
+         * primed at the schedule's first request): the declared clip ticks, the time-warp ratio, the LUT index the chain
+         * selects and the clip tick it maps to, and it must pose identically to it at the prime age and at three
+         * follow-up ages.
+         *
+         * <p>The unserved slot is not ticked because it cannot be, headlessly: an empty-cache tick reaches
+         * {@code AnimationProcessor.buildAnimationQueue}'s catch block (4.8.4 bytecode 89-128: the model's throw -
+         * {@code GeoModel.getAnimation} 45-152 throws for a file the cache lacks - is logged through
+         * {@code GeckoLibConstants.LOGGER}), and {@code GeckoLibConstants.<clinit>} registers a data component
+         * ({@code GeckoLibNeoForge.registerDataComponent} -> {@code DeferredRegister.register} ->
+         * {@code BuiltInRegistries.<clinit>} -> {@code Bootstrap.checkBootstrapCalled}: measured 2026-09-13, the first
+         * Tier-2 slice). Its outcome in-game is read from the bytecode and recorded in the block: {@code buildAnimationQueue}
+         * returns null (121-122, 156-162), {@code setAnimation} 62-63 / 99-100 {@code stop()}s the controller with
+         * {@code currentRawAnimation} still null (only set at 71-73 after a non-null queue), {@code process} 68-99 leaves it
+         * STOPPED and writes nothing, so the next tick with the clips served runs {@code primeFirstFrame} in full - the
+         * prime this twin executes.</p>
+         */
+        private JsonObject latePrimeTwin() {
+            double unservedSlotAge = this.search.get("late_start_age_ticks").getAsDouble();
+            double primeAge = unservedSlotAge + 1.0D;
+            Harness twin = new Harness(this.evaluator.freshBake(), this.clips, this.layers, false);
+
+            // Built unserved: every controller is registered and unprimed, and no bone has moved from bind.
+            boolean primedEarly = false;
+            JsonObject unserved = new JsonObject();
+            for (Group group : this.groups) {
+                PhaseLockedKeyframeController<?> controller = twin.controller(group.name());
+                primedEarly |= !Double.isNaN(controller.declaredClipTicks()) || controller.lastCosineIndex() != -1;
+                JsonObject row = new JsonObject();
+                row.addProperty("primed", !Double.isNaN(controller.declaredClipTicks()));
+                row.addProperty("last_cosine_index", controller.lastCosineIndex());
+                row.addProperty("controller_state", String.valueOf(controller.getAnimationState()));
+                unserved.add(group.name(), row);
+            }
+            double unservedMotion = maxDelta(twin.currentPose(), this.evaluator.bindPose().internalRotations());
+
+            // The clips are served; the next sample primes the twin at the late age.
+            twin.serveClips();
+            Map<String, float[]> twinPose = twin.sample((float) primeAge, 1.0F);
+            Map<String, float[]> fromZeroPose = this.harness.sample((float) primeAge, 1.0F);
+            double primeDelta = maxDelta(twinPose, fromZeroPose);
+            boolean factsAgree = true;
+            JsonObject perGroup = new JsonObject();
+            for (Group group : this.groups) {
+                PhaseLockedKeyframeController<?> late = twin.controller(group.name());
+                PhaseLockedKeyframeController<?> fromZero = this.harness.controller(group.name());
+                int chainIndex = PhaseLockedKeyframeController.classicCosineIndex(late.classicPhase((float) primeAge));
+                boolean agree = late.declaredClipTicks() == fromZero.declaredClipTicks()
+                        && late.clipTicksPerSourceTick() == fromZero.clipTicksPerSourceTick()
+                        && late.lastCosineIndex() == fromZero.lastCosineIndex()
+                        && late.lastCosineIndex() == chainIndex
+                        && late.lastClipTick() == fromZero.lastClipTick()
+                        && late.declaredClipTicks() == this.fileLength.get(group.name());
+                factsAgree &= agree;
+                JsonObject row = new JsonObject();
+                row.addProperty("declared_clip_ticks", late.declaredClipTicks());
+                row.addProperty("from_zero_declared_clip_ticks", fromZero.declaredClipTicks());
+                row.addProperty("clip_ticks_per_age_tick", late.clipTicksPerSourceTick());
+                row.addProperty("from_zero_clip_ticks_per_age_tick", fromZero.clipTicksPerSourceTick());
+                row.addProperty("last_cosine_index", late.lastCosineIndex());
+                row.addProperty("from_zero_last_cosine_index", fromZero.lastCosineIndex());
+                row.addProperty("chain_cosine_index_at_prime_age", chainIndex);
+                row.addProperty("last_clip_tick", late.lastClipTick());
+                row.addProperty("from_zero_last_clip_tick", fromZero.lastClipTick());
+                row.addProperty("controller_state", String.valueOf(late.getAnimationState()));
+                row.addProperty("facts_agree", agree);
+                perGroup.add(group.name(), row);
+            }
+
+            // Follow-up samples on both managers.
+            JsonArray followUps = new JsonArray();
+            double followUpDelta = 0.0D;
+            for (double offset : LATE_PRIME_FOLLOW_UPS) {
+                double age = primeAge + offset;
+                double delta = maxDelta(twin.sample((float) age, 1.0F), this.harness.sample((float) age, 1.0F));
+                followUpDelta = Math.max(followUpDelta, delta);
+                JsonObject row = new JsonObject();
+                row.addProperty("age_ticks", age);
+                row.addProperty("pose_max_delta_radians", delta);
+                followUps.add(row);
+            }
+
+            boolean holds = !primedEarly && unservedMotion == 0.0D && factsAgree
+                    && primeDelta <= TWIN_EPSILON && followUpDelta <= TWIN_EPSILON;
+            JsonObject out = new JsonObject();
+            out.addProperty("rule", "a persistent manager built before its clips are served (its controllers registered "
+                    + "with the model unserved), the unserved slot passed without a tick, the clips served, and the next "
+                    + "sample - one tick later, at a late age - primes it: the declared length, the time-warp ratio, the LUT "
+                    + "index chain and the pose must then equal the from-zero manager's");
+            out.addProperty("manager_built_before_clips_served", true);
+            out.addProperty("unserved_slot_age_ticks", unservedSlotAge);
+            out.addProperty("unserved_slot_ticked", false);
+            out.addProperty("unserved_slot_note", "an empty-cache tick cannot run headlessly: GeckoLib 4.8.4 AnimationProcessor"
+                    + ".buildAnimationQueue catches the model's throw (GeoModel.getAnimation throws for a file the cache lacks) "
+                    + "with GeckoLibConstants.LOGGER, whose class initialiser registers a data component (GeckoLibNeoForge"
+                    + ".registerDataComponent -> BuiltInRegistries.<clinit> -> Bootstrap.checkBootstrapCalled; OPT-029 R0). "
+                    + "Its in-game outcome, from the bytecode: buildAnimationQueue returns null (121-122, 156-162), setAnimation "
+                    + "stops the controller with currentRawAnimation still null (62-63, 99-100), process leaves it STOPPED writing "
+                    + "nothing (68-99), and the next served tick runs primeFirstFrame in full - the prime executed here");
+            out.addProperty("unserved_primed_any_controller", primedEarly);
+            out.add("unserved_controllers", unserved);
+            out.addProperty("unserved_bone_motion_radians", unservedMotion);
+            out.addProperty("prime_age_ticks", primeAge);
+            out.add("prime", perGroup);
+            out.addProperty("prime_pose_max_delta_vs_from_zero_radians", primeDelta);
+            out.add("follow_up_samples", followUps);
+            out.addProperty("follow_up_pose_max_delta_vs_from_zero_radians", followUpDelta);
+            out.addProperty("pose_epsilon_radians", TWIN_EPSILON);
+            out.addProperty("holds", holds);
+            return out;
+        }
+
+        private static double maxDelta(Map<String, float[]> left, Map<String, float[]> right) {
+            if (!left.keySet().equals(right.keySet())) {
+                throw new IllegalStateException("the two managers pose different bone sets");
+            }
+            double delta = 0.0D;
+            for (Map.Entry<String, float[]> entry : left.entrySet()) {
+                float[] other = right.get(entry.getKey());
+                for (int axis = 0; axis < 3; axis++) {
+                    delta = Math.max(delta, Math.abs(entry.getValue()[axis] - other[axis]));
+                }
+            }
+            return delta;
         }
     }
 
@@ -978,17 +1292,34 @@ final class KeyframeLeg {
         }
     }
 
-    /** A model serving the leg's clips (repaired or not) - the probe's stand-in for the shipped model's getAnimation. */
+    /**
+     * A model serving the leg's clips (repaired or not) - the probe's stand-in for the shipped model's getAnimation.
+     * Until {@link #serve()} it throws, as the shipped model's {@code super.getAnimation} throws for a file the cache
+     * lacks (GeckoLib 4.8.4 {@code GeoModel.getAnimation} 45-152) - the late-prime twin's manager is built against it
+     * unserved and never ticked before {@link #serve()} (a tick before that is a harness fault: the throw would reach
+     * GeckoLib's catch block, which cannot run headlessly - see {@code Prepared.latePrimeTwin}).
+     */
     private static final class ClipModel extends GeoModel<ProbeAnimatable> {
         private static final ResourceLocation PROBE = ResourceLocation.fromNamespaceAndPath("orespawn", "g1/keyframe_reference_leg");
         private final BakedAnimations clips;
+        private boolean served;
 
-        ClipModel(BakedAnimations clips) {
+        ClipModel(BakedAnimations clips, boolean served) {
             this.clips = clips;
+            this.served = served;
+        }
+
+        void serve() {
+            this.served = true;
         }
 
         @Override
         public Animation getAnimation(ProbeAnimatable animatable, String name) {
+            if (!this.served) {
+                throw new IllegalStateException("keyframe reference leg, late-prime twin: the clip cache is empty on the "
+                        + "manager's first tick (by design; GeckoLib's own GeoModel.getAnimation throws here for a file the "
+                        + "cache lacks, and buildAnimationQueue catches it): " + name);
+            }
             Animation animation = this.clips.getAnimation(name);
             if (animation == null) {
                 throw new IllegalStateException("keyframe reference leg: clip missing: " + name);
@@ -1020,8 +1351,8 @@ final class KeyframeLeg {
         private final Map<String, PhaseLockedKeyframeController<ProbeAnimatable>> byGroup = new LinkedHashMap<>();
         private final AnimatableManager<ProbeAnimatable> manager;
 
-        Harness(BakedGeoModel baked, BakedAnimations clips, List<KeyframeLayer> layers) {
-            this.model = new ClipModel(clips);
+        Harness(BakedGeoModel baked, BakedAnimations clips, List<KeyframeLayer> layers, boolean serveClips) {
+            this.model = new ClipModel(clips, serveClips);
             this.model.getAnimationProcessor().setActiveModel(baked);
             this.bones = collect(baked);
             for (KeyframeLayer layer : layers) {
@@ -1037,15 +1368,25 @@ final class KeyframeLeg {
             return this.byGroup.get(group);
         }
 
+        /** The late-prime twin: the clips become servable after the manager's first tick. */
+        void serveClips() {
+            this.model.serve();
+        }
+
+        /** Every bone's internal rotation as it stands now (before a tick: the bake's bind). */
+        Map<String, float[]> currentPose() {
+            Map<String, float[]> pose = new TreeMap<>();
+            this.bones.forEach((name, bone) -> pose.put(name, new float[] {bone.getRotX(), bone.getRotY(), bone.getRotZ()}));
+            return pose;
+        }
+
         /** One frame at {@code (age, amplitude)}: every bone's internal rotation after the layers ran. */
         Map<String, float[]> sample(float age, float amplitude) {
             AnimationState<ProbeAnimatable> state = new AnimationState<>(this.animatable, 0.0F, amplitude, 0.0F,
                     amplitude != 0.0F);
             state.animationTick = age;
             this.model.getAnimationProcessor().tickAnimation(this.animatable, this.model, this.manager, age, state, true);
-            Map<String, float[]> pose = new TreeMap<>();
-            this.bones.forEach((name, bone) -> pose.put(name, new float[] {bone.getRotX(), bone.getRotY(), bone.getRotZ()}));
-            return pose;
+            return currentPose();
         }
 
         private static Map<String, GeoBone> collect(BakedGeoModel model) {
@@ -1054,13 +1395,6 @@ final class KeyframeLeg {
                 collectBone(bone, bones);
             }
             return bones;
-        }
-
-        private static void collectBone(GeoBone bone, Map<String, GeoBone> bones) {
-            if (bones.put(bone.getName(), bone) != null) {
-                throw new IllegalStateException("Generated GeckoLib model has duplicate bone " + bone.getName());
-            }
-            bone.getChildBones().forEach(child -> collectBone(child, bones));
         }
     }
 }

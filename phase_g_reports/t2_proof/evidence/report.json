@@ -1,0 +1,2855 @@
+{
+  "schema_version": 1,
+  "status": "PASS",
+  "ground_truth": "executed compiled LayerDefinition + baked ModelPart trees",
+  "geckolib_version": "4.8.4",
+  "thresholds": {
+    "geometry_epsilon_blocks": 1e-05,
+    "coplanar_depth_epsilon_blocks": 1e-05,
+    "animation_epsilon_radians": 2e-06,
+    "position_epsilon_model_units": 0.0001,
+    "uv_epsilon_normalized": 1e-07,
+    "normal_epsilon": 1e-06,
+    "pixel_channel_tolerance": 2,
+    "pixel_changed_fraction": 0.001,
+    "pixel_mean_absolute_error": 0.25,
+    "minimum_foreground_fraction": 0.001,
+    "keyframe_reference_leg_epsilon_radians": 0.0025
+  },
+  "contested_exclusion_applied": false,
+  "models": [
+    {
+      "model_id": "model_tshirt",
+      "tier": 2,
+      "proof_scope": "production_proof_model",
+      "source_class": "danger.orespawn.entity.client.TshirtModel",
+      "source_class_sha256": "bd8c4f7b92fa083d4532627da05bc260a8a252522bd0a60a3846cc3c08a556b9",
+      "compiled_dump_sha256": "9b0681f78fdb5df14a9445db0d5211cc1cf753d3b0a245547207f4e51963afd2",
+      "bone_count": 2,
+      "cube_count": 2,
+      "geometry_sha256": "4e6fc90883413dfa5db3f4765ccb25973ebffbaefe4ff85d7aaddec655f3b8f2",
+      "animation_sha256": "7882082857fdb11e02f158ebc3a6d3f970e2ac60d54813f0e903ee97b2293749",
+      "animation_contract_sha256": "0b2a4710d4b8c099ce57ac2ea3c245bf7eb96ef8e4d72763cae65cee7f65a12a",
+      "geometry": {
+        "status": "PASS",
+        "epsilon_blocks": 1e-05,
+        "max_corner_delta_blocks": 0.0,
+        "worst_case": "exact",
+        "sample_count": 6,
+        "cube_sample_count": 12
+      },
+      "surface_mapping": {
+        "status": "PASS",
+        "position_epsilon_blocks": 1e-05,
+        "normal_epsilon": 1e-06,
+        "uv_epsilon_normalized": 1e-07,
+        "max_position_delta_blocks": 0.0,
+        "max_normal_delta": 0.0,
+        "max_uv_delta_normalized": 0.0,
+        "vertex_samples": 288,
+        "ignored_zero_area_faces": 0,
+        "worst_case": "exact",
+        "evidence": "position/normal/UV tuples from baked ModelPart.Cube.compile versus pinned GeckoLib BakedModelFactory rendered through GeoRenderer; faces of exactly zero area are excluded (ruling 2026-09-02)"
+      },
+      "animation": {
+        "status": "PASS",
+        "epsilon_radians": 2e-06,
+        "accepted_pose_comparison": "compiled setupAnim versus actual fresh-baked GeckoLib candidate",
+        "reference_animation_used_for_acceptance": false,
+        "sample_count": 8,
+        "max_rotation_delta_radians": 0.0,
+        "max_dense_rotation_delta_radians": 0.0,
+        "max_unexpected_position_or_scale_delta": 0.0,
+        "worst_case": "exact",
+        "dense_worst_case": "exact",
+        "rotation_channel_samples": 48,
+        "dense_rotation_channel_samples": 0,
+        "contract": {
+          "kind": "code_driven",
+          "accepted_runtime_path": "production OreSpawnGeoReplacement.applyCustomAnimations through OreSpawnGeoReplacementModel.setCustomAnimations",
+          "candidate_class": "danger.orespawn.entity.client.TshirtGeoReplacement",
+          "inputs": {
+            "limb_swing": 0.0,
+            "limb_swing_amounts": [
+              0.0
+            ],
+            "net_head_yaw_degrees": 0.0,
+            "head_pitch_degrees": 0.0
+          },
+          "max_position_delta_model_units": 0.0,
+          "position_epsilon_model_units": 0.0001,
+          "position_worst_case": "exact",
+          "position_channel_samples": 48,
+          "hidden_bone_checks": 7
+        }
+      },
+      "reference_animation": {
+        "status": "SCHEMA_VALID_REFERENCE_ONLY",
+        "role": "NOT_APPLICABLE_CODE_DRIVEN_MODEL",
+        "clip_count": 0,
+        "constant_vector_count": 0,
+        "runtime_acceptance": false
+      },
+      "draw_order": {
+        "status": "PASS",
+        "bone_draw_order": [
+          "Shape1",
+          "Shape2"
+        ],
+        "captures_checked": 6,
+        "draws_checked": 12,
+        "classic_source": "classic EntityModel.renderToBuffer on a second bake posed identically; every ModelPart.render is one pose-stack push, attributed to its part by ModelPart.skipDraw elimination (one run per cube-bearing part with every other part's skipDraw set); a part drawn n > 1 times is named <part>__i<k> by draw ordinal",
+        "unobserved_units": [],
+        "policy": "the shipped model sorts GeckoLib's topLevelBones / childBones lists into the classic renderToBuffer order (DrawOrder.apply); both renderers traverse in pre-order, so equal sibling orders are equal draw orders"
+      },
+      "keyframe_reference_leg": {
+        "tolerance_radians": 0.0025,
+        "statement": "2.5e-3 rad; Tshirt reference leg 19 catmullrom keys per bone with spline arguments repaired at load; wrap sample T−ε vs 0+ε included",
+        "candidate_class": "danger.orespawn.entity.client.TshirtGeoReplacement",
+        "controller_class": "danger.orespawn.entity.client.animation.PhaseLockedKeyframeController",
+        "spline_repair": true,
+        "spline_repair_class": "danger.orespawn.entity.client.animation.SplineRepair",
+        "clip_sha256": "4185b567e3e5ddb074208605b9a81b9561d38fb5cd7b968e67b3e8589c70b773",
+        "clip_path": "src/main/resources/assets/orespawn/animations/entity/tshirt.animation.json",
+        "pose_source": "persistent BakedGeoModel + production KeyframeLayer.controller (PhaseLockedKeyframeController) x 1 through AnimationProcessor.tickAnimation on explicit inputs",
+        "layers": [
+          {
+            "group": "turn",
+            "clip": "walk",
+            "controller": "keyframe:walk",
+            "frequency_radians_per_age_tick": 0.05,
+            "wingspeed": 0.22,
+            "bones": [
+              "Shape1",
+              "Shape2"
+            ],
+            "gait_scaled": false,
+            "additive": false
+          }
+        ],
+        "clip": {
+          "turn": {
+            "clip": "walk",
+            "keys_per_bone": 19,
+            "lerp_mode": "catmullrom",
+            "spline_arguments": "spline arguments repaired at load",
+            "declared_length_ticks": 20.0,
+            "bones": [
+              "Shape1",
+              "Shape2"
+            ]
+          }
+        },
+        "time_warp": {
+          "turn": {
+            "declared_clip_ticks": 20.0,
+            "natural_period_age_ticks": 571.1986588726294,
+            "clip_ticks_per_age_tick": 0.03501408781224006
+          }
+        },
+        "sample_grid": {
+          "layer_bone_samples_compared": 14,
+          "max_error_radians_by_group": {
+            "turn": 0.0
+          },
+          "worst_case_by_group": {
+            "turn": "exact"
+          },
+          "max_non_layer_bone_motion_radians": 0.0
+        },
+        "wrap_pairs": {
+          "count": 1,
+          "max_abs_T_minus_eps_vs_0_plus_eps_radians": 0.0
+        },
+        "density_search": {
+          "turn": {
+            "fewest_keys_per_bone": 19,
+            "confirmed_max_error_radians": 0.0022129416465759277,
+            "confirmed_comparisons": 524584,
+            "one_fewer_max_error_radians": 0.002630293369293213
+          }
+        },
+        "density_search_schedule": {
+          "rule": "the fewest keys per bone (both ends included, uniform in time, the cosine sampled exactly at the keys, full amplitude) whose max |candidate - classic| over the search schedule at amplitude 1 holds the tolerance; confirmed on the full schedule at every amplitude with one key fewer failing",
+          "min_keys": 3,
+          "max_keys": 97,
+          "search_uniform_intervals": 4096,
+          "confirm_uniform_intervals": 65536,
+          "late_start_age_ticks": 137.371,
+          "span_age_ticks": 1713.6
+        },
+        "clip_full_schedule": {
+          "turn": {
+            "max_error_radians": 0.0022129416465759277,
+            "holds_tolerance": true,
+            "comparisons": 524584,
+            "worst_age_ticks": 165.7409951171875,
+            "worst_amplitude": 0.0,
+            "worst_bone": "Shape1"
+          }
+        },
+        "wrap_sample": {
+          "turn": {
+            "probe_bone": "Shape1",
+            "natural_period_age_ticks": 571.1986588726294,
+            "epsilon_age_ticks": 0.03486319939408138,
+            "epsilon_lut_indices": 4,
+            "seams_sampled": 3,
+            "min_lut_index_before_seam": 65532,
+            "max_lut_index_after_seam": 4,
+            "max_abs_T_minus_eps_vs_0_plus_eps_radians": 0.0,
+            "max_error_vs_classic_before_radians": 0.0,
+            "max_error_vs_classic_at_seam_radians": 0.0,
+            "max_error_vs_classic_after_radians": 0.0,
+            "holds_tolerance": true
+          }
+        },
+        "schedule_reversed_max_delta_radians": 0.0,
+        "late_prime_twin": {
+          "manager_built_before_clips_served": true,
+          "unserved_slot_age_ticks": 137.371,
+          "unserved_slot_ticked": false,
+          "unserved_slot_note": "an empty-cache tick cannot run headlessly: GeckoLib 4.8.4 AnimationProcessor.buildAnimationQueue catches the model's throw (GeoModel.getAnimation throws for a file the cache lacks) with GeckoLibConstants.LOGGER, whose class initialiser registers a data component (GeckoLibNeoForge.registerDataComponent -> BuiltInRegistries.<clinit> -> Bootstrap.checkBootstrapCalled; OPT-029 R0). Its in-game outcome, from the bytecode: buildAnimationQueue returns null (121-122, 156-162), setAnimation stops the controller with currentRawAnimation still null (62-63, 99-100), process leaves it STOPPED writing nothing (68-99), and the next served tick runs primeFirstFrame in full - the prime executed here",
+          "prime_age_ticks": 138.371,
+          "unserved_bone_motion_radians": 0.0,
+          "prime": {
+            "turn": {
+              "declared_clip_ticks": 20.0,
+              "clip_ticks_per_age_tick": 0.03501408781224006,
+              "last_cosine_index": 15875,
+              "last_clip_tick": 4.84466552734375
+            }
+          },
+          "prime_pose_max_delta_vs_from_zero_radians": 0.0,
+          "follow_up_pose_max_delta_vs_from_zero_radians": 0.0,
+          "holds": true
+        }
+      },
+      "reference_geometry": {
+        "status": "PASS",
+        "reference_source": "reference_1_7_10_source/sources/danger/orespawn/ModelTshirt.java",
+        "matched_parts": 2,
+        "ground_truth": "1.7.10 decompiled ModelBase constructor, parsed; never the port"
+      },
+      "visual": {
+        "status": "PASS",
+        "image_size": [
+          256,
+          256
+        ],
+        "camera": {
+          "yaw_degrees": 34.0,
+          "pitch_degrees": -28.0
+        },
+        "channel_tolerance": 2,
+        "changed_fraction_threshold": 0.001,
+        "mean_absolute_error_threshold": 0.25,
+        "minimum_foreground_fraction_threshold": 0.001,
+        "max_changed_fraction": 0.0,
+        "max_mean_absolute_error": 0.0,
+        "z_fight_policy": "pixels where two different quads meet the front within 1e-06 depth with different texels are counted as a diagnostic only; every pixel is compared, the draw order being contracted equal on both sides (G2 root-order contract, landed 2026-09-06)",
+        "contested_exclusion_applied": false,
+        "max_contested_fraction": 0.0,
+        "cutout_alpha_threshold": 0.1,
+        "minimum_observed_foreground_fraction": 1.0,
+        "samples": [
+          {
+            "sample": "bind",
+            "camera": null,
+            "changed_fraction": 0.0,
+            "mean_absolute_error": 0.0,
+            "contested_fraction": 0.0,
+            "contested_excluded": false,
+            "vanilla_foreground_fraction": 0.4080963134765625,
+            "geo_foreground_fraction": 0.4080963134765625,
+            "vanilla_capture": "visual/model_tshirt/bind.vanilla.png",
+            "geo_capture": "visual/model_tshirt/bind.geo.png",
+            "diff_capture": "visual/model_tshirt/bind.diff.png"
+          },
+          {
+            "sample": "t0",
+            "camera": null,
+            "changed_fraction": 0.0,
+            "mean_absolute_error": 0.0,
+            "contested_fraction": 0.0,
+            "contested_excluded": false,
+            "vanilla_foreground_fraction": 0.4080810546875,
+            "geo_foreground_fraction": 0.4080810546875,
+            "vanilla_capture": "visual/model_tshirt/t0.vanilla.png",
+            "geo_capture": "visual/model_tshirt/t0.geo.png",
+            "diff_capture": "visual/model_tshirt/t0.diff.png"
+          },
+          {
+            "sample": "t_quarter",
+            "camera": null,
+            "changed_fraction": 0.0,
+            "mean_absolute_error": 0.0,
+            "contested_fraction": 0.0,
+            "contested_excluded": false,
+            "vanilla_foreground_fraction": 0.4080810546875,
+            "geo_foreground_fraction": 0.4080810546875,
+            "vanilla_capture": "visual/model_tshirt/t_quarter.vanilla.png",
+            "geo_capture": "visual/model_tshirt/t_quarter.geo.png",
+            "diff_capture": "visual/model_tshirt/t_quarter.diff.png"
+          },
+          {
+            "sample": "t_half",
+            "camera": null,
+            "changed_fraction": 0.0,
+            "mean_absolute_error": 0.0,
+            "contested_fraction": 0.0,
+            "contested_excluded": false,
+            "vanilla_foreground_fraction": 0.4080810546875,
+            "geo_foreground_fraction": 0.4080810546875,
+            "vanilla_capture": "visual/model_tshirt/t_half.vanilla.png",
+            "geo_capture": "visual/model_tshirt/t_half.geo.png",
+            "diff_capture": "visual/model_tshirt/t_half.diff.png"
+          },
+          {
+            "sample": "t_three_quarter",
+            "camera": null,
+            "changed_fraction": 0.0,
+            "mean_absolute_error": 0.0,
+            "contested_fraction": 0.0,
+            "contested_excluded": false,
+            "vanilla_foreground_fraction": 0.4080810546875,
+            "geo_foreground_fraction": 0.4080810546875,
+            "vanilla_capture": "visual/model_tshirt/t_three_quarter.vanilla.png",
+            "geo_capture": "visual/model_tshirt/t_three_quarter.geo.png",
+            "diff_capture": "visual/model_tshirt/t_three_quarter.diff.png"
+          }
+        ]
+      }
+    },
+    {
+      "model_id": "model_mosquito",
+      "tier": 2,
+      "proof_scope": "production_proof_model",
+      "source_class": "danger.orespawn.entity.client.MosquitoModel",
+      "source_class_sha256": "f01861662723544f7a6d292f69a14ad33bb7037653f7381ea1fd36479734448f",
+      "compiled_dump_sha256": "245a50e45a443e0932ae5e378a9bb7eb71a2a5c19f74152657f72da5a7c05968",
+      "bone_count": 5,
+      "cube_count": 5,
+      "geometry_sha256": "a6c8899fe6b0d58596516bea525fea4a44324c1f480056bafec2b999b3db5d63",
+      "animation_sha256": "7882082857fdb11e02f158ebc3a6d3f970e2ac60d54813f0e903ee97b2293749",
+      "animation_contract_sha256": "ced9b9a90108296d88379e0847ff0ac273592c5bee8bc986c2f37f205073f0f0",
+      "geometry": {
+        "status": "PASS",
+        "epsilon_blocks": 1e-05,
+        "max_corner_delta_blocks": 2.0024984383960518e-07,
+        "worst_case": "t_end:leftwing2#0",
+        "sample_count": 6,
+        "cube_sample_count": 30
+      },
+      "surface_mapping": {
+        "status": "PASS",
+        "position_epsilon_blocks": 1e-05,
+        "normal_epsilon": 1e-06,
+        "uv_epsilon_normalized": 1e-07,
+        "max_position_delta_blocks": 2.0024984383960518e-07,
+        "max_normal_delta": 0.0,
+        "max_uv_delta_normalized": 0.0,
+        "vertex_samples": 720,
+        "ignored_zero_area_faces": 0,
+        "worst_case": "t_end:leftwing2#0",
+        "evidence": "position/normal/UV tuples from baked ModelPart.Cube.compile versus pinned GeckoLib BakedModelFactory rendered through GeoRenderer; faces of exactly zero area are excluded (ruling 2026-09-02)"
+      },
+      "animation": {
+        "status": "PASS",
+        "epsilon_radians": 2e-06,
+        "accepted_pose_comparison": "compiled setupAnim versus actual fresh-baked GeckoLib candidate",
+        "reference_animation_used_for_acceptance": false,
+        "sample_count": 24,
+        "max_rotation_delta_radians": 0.0,
+        "max_dense_rotation_delta_radians": 0.0,
+        "max_unexpected_position_or_scale_delta": 0.0,
+        "worst_case": "exact",
+        "dense_worst_case": "exact",
+        "rotation_channel_samples": 360,
+        "dense_rotation_channel_samples": 0,
+        "contract": {
+          "kind": "code_driven",
+          "accepted_runtime_path": "production OreSpawnGeoReplacement.applyCustomAnimations through OreSpawnGeoReplacementModel.setCustomAnimations",
+          "candidate_class": "danger.orespawn.entity.client.MosquitoGeoReplacement",
+          "inputs": {
+            "limb_swing": 0.0,
+            "limb_swing_amounts": [
+              0.0
+            ],
+            "net_head_yaw_degrees": 0.0,
+            "head_pitch_degrees": 0.0
+          },
+          "max_position_delta_model_units": 0.0,
+          "position_epsilon_model_units": 0.0001,
+          "position_worst_case": "exact",
+          "position_channel_samples": 360,
+          "hidden_bone_checks": 23
+        }
+      },
+      "reference_animation": {
+        "status": "SCHEMA_VALID_REFERENCE_ONLY",
+        "role": "NOT_APPLICABLE_CODE_DRIVEN_MODEL",
+        "clip_count": 0,
+        "constant_vector_count": 0,
+        "runtime_acceptance": false
+      },
+      "draw_order": {
+        "status": "PASS",
+        "bone_draw_order": [
+          "body",
+          "leftwing1",
+          "rightwing1",
+          "leftwing2",
+          "rightwing2"
+        ],
+        "captures_checked": 6,
+        "draws_checked": 30,
+        "classic_source": "classic EntityModel.renderToBuffer on a second bake posed identically; every ModelPart.render is one pose-stack push, attributed to its part by ModelPart.skipDraw elimination (one run per cube-bearing part with every other part's skipDraw set); a part drawn n > 1 times is named <part>__i<k> by draw ordinal",
+        "unobserved_units": [],
+        "policy": "the shipped model sorts GeckoLib's topLevelBones / childBones lists into the classic renderToBuffer order (DrawOrder.apply); both renderers traverse in pre-order, so equal sibling orders are equal draw orders"
+      },
+      "keyframe_reference_leg": {
+        "tolerance_radians": 0.0025,
+        "statement": "2.5e-3 rad; Mosquito reference leg 13 catmullrom keys per bone with spline arguments repaired at load; wrap sample T−ε vs 0+ε included",
+        "candidate_class": "danger.orespawn.entity.client.MosquitoGeoReplacement",
+        "controller_class": "danger.orespawn.entity.client.animation.PhaseLockedKeyframeController",
+        "spline_repair": true,
+        "spline_repair_class": "danger.orespawn.entity.client.animation.SplineRepair",
+        "clip_sha256": "0f6871224fbc95c719f8726a1d707994b52846e620824158cfc33f2e1eb5a0e8",
+        "clip_path": "src/main/resources/assets/orespawn/animations/entity/mosquito.animation.json",
+        "pose_source": "persistent BakedGeoModel + production KeyframeLayer.controller (PhaseLockedKeyframeController) x 1 through AnimationProcessor.tickAnimation on explicit inputs",
+        "layers": [
+          {
+            "group": "wings",
+            "clip": "walk",
+            "controller": "keyframe:walk",
+            "frequency_radians_per_age_tick": 3.0,
+            "bones": [
+              "leftwing1",
+              "leftwing2",
+              "rightwing1",
+              "rightwing2"
+            ],
+            "gait_scaled": false,
+            "additive": false
+          }
+        ],
+        "clip": {
+          "wings": {
+            "clip": "walk",
+            "keys_per_bone": 13,
+            "lerp_mode": "catmullrom",
+            "spline_arguments": "spline arguments repaired at load",
+            "declared_length_ticks": 20.0,
+            "bones": [
+              "rightwing1",
+              "rightwing2",
+              "leftwing1",
+              "leftwing2"
+            ]
+          }
+        },
+        "time_warp": {
+          "wings": {
+            "declared_clip_ticks": 20.0,
+            "natural_period_age_ticks": 2.0943951023931953,
+            "clip_ticks_per_age_tick": 9.549296585513721
+          }
+        },
+        "sample_grid": {
+          "layer_bone_samples_compared": 92,
+          "max_error_radians_by_group": {
+            "wings": 0.0017553349999999968
+          },
+          "worst_case_by_group": {
+            "wings": "t_half:leftwing1"
+          },
+          "max_non_layer_bone_motion_radians": 0.0
+        },
+        "wrap_pairs": {
+          "count": 9,
+          "max_abs_T_minus_eps_vs_0_plus_eps_radians": 3.0000000039720476e-08
+        },
+        "density_search": {
+          "wings": {
+            "fewest_keys_per_bone": 13,
+            "confirmed_max_error_radians": 0.001892179250717163,
+            "confirmed_comparisons": 1052288,
+            "one_fewer_max_error_radians": 0.002544298768043518
+          }
+        },
+        "density_search_schedule": {
+          "rule": "the fewest keys per bone (both ends included, uniform in time, the cosine sampled exactly at the keys, full amplitude) whose max |candidate - classic| over the search schedule at amplitude 1 holds the tolerance; confirmed on the full schedule at every amplitude with one key fewer failing",
+          "min_keys": 3,
+          "max_keys": 97,
+          "search_uniform_intervals": 4096,
+          "confirm_uniform_intervals": 65536,
+          "late_start_age_ticks": 137.371,
+          "span_age_ticks": 40.5
+        },
+        "clip_full_schedule": {
+          "wings": {
+            "max_error_radians": 0.001892179250717163,
+            "holds_tolerance": true,
+            "comparisons": 1052288,
+            "worst_age_ticks": 138.79297418212892,
+            "worst_amplitude": 0.0,
+            "worst_bone": "rightwing1"
+          }
+        },
+        "wrap_sample": {
+          "wings": {
+            "probe_bone": "rightwing1",
+            "natural_period_age_ticks": 2.0943951023931953,
+            "epsilon_age_ticks": 0.00012783173232380342,
+            "epsilon_lut_indices": 4,
+            "seams_sampled": 19,
+            "min_lut_index_before_seam": 65531,
+            "max_lut_index_after_seam": 4,
+            "max_abs_T_minus_eps_vs_0_plus_eps_radians": 5.960464477539063e-08,
+            "max_error_vs_classic_before_radians": 0.0,
+            "max_error_vs_classic_at_seam_radians": 0.0,
+            "max_error_vs_classic_after_radians": 0.0,
+            "holds_tolerance": true
+          }
+        },
+        "schedule_reversed_max_delta_radians": 0.0,
+        "late_prime_twin": {
+          "manager_built_before_clips_served": true,
+          "unserved_slot_age_ticks": 137.371,
+          "unserved_slot_ticked": false,
+          "unserved_slot_note": "an empty-cache tick cannot run headlessly: GeckoLib 4.8.4 AnimationProcessor.buildAnimationQueue catches the model's throw (GeoModel.getAnimation throws for a file the cache lacks) with GeckoLibConstants.LOGGER, whose class initialiser registers a data component (GeckoLibNeoForge.registerDataComponent -> BuiltInRegistries.<clinit> -> Bootstrap.checkBootstrapCalled; OPT-029 R0). Its in-game outcome, from the bytecode: buildAnimationQueue returns null (121-122, 156-162), setAnimation stops the controller with currentRawAnimation still null (62-63, 99-100), process leaves it STOPPED writing nothing (68-99), and the next served tick runs primeFirstFrame in full - the prime executed here",
+          "prime_age_ticks": 138.371,
+          "unserved_bone_motion_radians": 0.0,
+          "prime": {
+            "wings": {
+              "declared_clip_ticks": 20.0,
+              "clip_ticks_per_age_tick": 9.549296585513721,
+              "last_cosine_index": 4409,
+              "last_clip_tick": 1.34552001953125
+            }
+          },
+          "prime_pose_max_delta_vs_from_zero_radians": 0.0,
+          "follow_up_pose_max_delta_vs_from_zero_radians": 0.0,
+          "holds": true
+        }
+      },
+      "reference_geometry": {
+        "status": "PASS",
+        "reference_source": "reference_1_7_10_source/sources/danger/orespawn/ModelMosquito.java",
+        "matched_parts": 5,
+        "ground_truth": "1.7.10 decompiled ModelBase constructor, parsed; never the port"
+      },
+      "visual": {
+        "status": "PASS",
+        "image_size": [
+          256,
+          256
+        ],
+        "camera": {
+          "yaw_degrees": 34.0,
+          "pitch_degrees": -28.0
+        },
+        "channel_tolerance": 2,
+        "changed_fraction_threshold": 0.001,
+        "mean_absolute_error_threshold": 0.25,
+        "minimum_foreground_fraction_threshold": 0.001,
+        "max_changed_fraction": 0.0,
+        "max_mean_absolute_error": 0.0,
+        "z_fight_policy": "pixels where two different quads meet the front within 1e-06 depth with different texels are counted as a diagnostic only; every pixel is compared, the draw order being contracted equal on both sides (G2 root-order contract, landed 2026-09-06)",
+        "contested_exclusion_applied": false,
+        "max_contested_fraction": 0.0,
+        "cutout_alpha_threshold": 0.1,
+        "minimum_observed_foreground_fraction": 1.0,
+        "samples": [
+          {
+            "sample": "bind",
+            "camera": null,
+            "changed_fraction": 0.0,
+            "mean_absolute_error": 0.0,
+            "contested_fraction": 0.0,
+            "contested_excluded": false,
+            "vanilla_foreground_fraction": 0.2189483642578125,
+            "geo_foreground_fraction": 0.2189483642578125,
+            "vanilla_capture": "visual/model_mosquito/bind.vanilla.png",
+            "geo_capture": "visual/model_mosquito/bind.geo.png",
+            "diff_capture": "visual/model_mosquito/bind.diff.png"
+          },
+          {
+            "sample": "t0",
+            "camera": null,
+            "changed_fraction": 0.0,
+            "mean_absolute_error": 0.0,
+            "contested_fraction": 0.0,
+            "contested_excluded": false,
+            "vanilla_foreground_fraction": 0.193756103515625,
+            "geo_foreground_fraction": 0.193756103515625,
+            "vanilla_capture": "visual/model_mosquito/t0.vanilla.png",
+            "geo_capture": "visual/model_mosquito/t0.geo.png",
+            "diff_capture": "visual/model_mosquito/t0.diff.png"
+          },
+          {
+            "sample": "t_quarter",
+            "camera": null,
+            "changed_fraction": 0.0,
+            "mean_absolute_error": 0.0,
+            "contested_fraction": 0.0,
+            "contested_excluded": false,
+            "vanilla_foreground_fraction": 0.18121337890625,
+            "geo_foreground_fraction": 0.18121337890625,
+            "vanilla_capture": "visual/model_mosquito/t_quarter.vanilla.png",
+            "geo_capture": "visual/model_mosquito/t_quarter.geo.png",
+            "diff_capture": "visual/model_mosquito/t_quarter.diff.png"
+          },
+          {
+            "sample": "t_half",
+            "camera": null,
+            "changed_fraction": 0.0,
+            "mean_absolute_error": 0.0,
+            "contested_fraction": 0.0,
+            "contested_excluded": false,
+            "vanilla_foreground_fraction": 0.218658447265625,
+            "geo_foreground_fraction": 0.218658447265625,
+            "vanilla_capture": "visual/model_mosquito/t_half.vanilla.png",
+            "geo_capture": "visual/model_mosquito/t_half.geo.png",
+            "diff_capture": "visual/model_mosquito/t_half.diff.png"
+          },
+          {
+            "sample": "t_three_quarter",
+            "camera": null,
+            "changed_fraction": 0.0,
+            "mean_absolute_error": 0.0,
+            "contested_fraction": 0.0,
+            "contested_excluded": false,
+            "vanilla_foreground_fraction": 0.2129364013671875,
+            "geo_foreground_fraction": 0.2129364013671875,
+            "vanilla_capture": "visual/model_mosquito/t_three_quarter.vanilla.png",
+            "geo_capture": "visual/model_mosquito/t_three_quarter.geo.png",
+            "diff_capture": "visual/model_mosquito/t_three_quarter.diff.png"
+          }
+        ]
+      }
+    },
+    {
+      "model_id": "model_cliffracer",
+      "tier": 2,
+      "proof_scope": "production_proof_model",
+      "source_class": "danger.orespawn.entity.client.CliffRacerModel",
+      "source_class_sha256": "252ad32ea512331e5bcbaf762ce2d2dc2db9006098915d4c288fd4a229a8ff38",
+      "compiled_dump_sha256": "1bd2052b4d0a0b2a89b815fc74dc5a6278051b2f30a09c60337299e2f8808f44",
+      "bone_count": 8,
+      "cube_count": 8,
+      "geometry_sha256": "2eb0be5738ba649ad7473ee85a725d8673944f159261420236d498f28964d9fd",
+      "animation_sha256": "7882082857fdb11e02f158ebc3a6d3f970e2ac60d54813f0e903ee97b2293749",
+      "animation_contract_sha256": "e3da0c04fc06f2957d7dc4fc3e9e9035a2f8be6e1132a6cae41db0ae93176639",
+      "geometry": {
+        "status": "PASS",
+        "epsilon_blocks": 1e-05,
+        "max_corner_delta_blocks": 2.9999999995311555e-07,
+        "worst_case": "t_half:lwing#0",
+        "sample_count": 6,
+        "cube_sample_count": 48
+      },
+      "surface_mapping": {
+        "status": "PASS",
+        "position_epsilon_blocks": 1e-05,
+        "normal_epsilon": 1e-06,
+        "uv_epsilon_normalized": 1e-07,
+        "max_position_delta_blocks": 2.9999999995311555e-07,
+        "max_normal_delta": 0.0,
+        "max_uv_delta_normalized": 0.0,
+        "vertex_samples": 1152,
+        "ignored_zero_area_faces": 0,
+        "worst_case": "t_half:lwing#0",
+        "evidence": "position/normal/UV tuples from baked ModelPart.Cube.compile versus pinned GeckoLib BakedModelFactory rendered through GeoRenderer; faces of exactly zero area are excluded (ruling 2026-09-02)"
+      },
+      "animation": {
+        "status": "PASS",
+        "epsilon_radians": 2e-06,
+        "accepted_pose_comparison": "compiled setupAnim versus actual fresh-baked GeckoLib candidate",
+        "reference_animation_used_for_acceptance": false,
+        "sample_count": 14,
+        "max_rotation_delta_radians": 0.0,
+        "max_dense_rotation_delta_radians": 0.0,
+        "max_unexpected_position_or_scale_delta": 0.0,
+        "worst_case": "exact",
+        "dense_worst_case": "exact",
+        "rotation_channel_samples": 336,
+        "dense_rotation_channel_samples": 0,
+        "contract": {
+          "kind": "code_driven",
+          "accepted_runtime_path": "production OreSpawnGeoReplacement.applyCustomAnimations through OreSpawnGeoReplacementModel.setCustomAnimations",
+          "candidate_class": "danger.orespawn.entity.client.CliffRacerGeoReplacement",
+          "inputs": {
+            "limb_swing": 0.0,
+            "limb_swing_amounts": [
+              0.0
+            ],
+            "net_head_yaw_degrees": 0.0,
+            "head_pitch_degrees": 0.0
+          },
+          "max_position_delta_model_units": 0.0,
+          "position_epsilon_model_units": 0.0001,
+          "position_worst_case": "exact",
+          "position_channel_samples": 336,
+          "hidden_bone_checks": 13
+        }
+      },
+      "reference_animation": {
+        "status": "SCHEMA_VALID_REFERENCE_ONLY",
+        "role": "NOT_APPLICABLE_CODE_DRIVEN_MODEL",
+        "clip_count": 0,
+        "constant_vector_count": 0,
+        "runtime_acceptance": false
+      },
+      "draw_order": {
+        "status": "PASS",
+        "bone_draw_order": [
+          "body",
+          "fins",
+          "lwing",
+          "rwing",
+          "tail",
+          "tailend",
+          "head",
+          "beak"
+        ],
+        "captures_checked": 6,
+        "draws_checked": 48,
+        "classic_source": "classic EntityModel.renderToBuffer on a second bake posed identically; every ModelPart.render is one pose-stack push, attributed to its part by ModelPart.skipDraw elimination (one run per cube-bearing part with every other part's skipDraw set); a part drawn n > 1 times is named <part>__i<k> by draw ordinal",
+        "unobserved_units": [],
+        "policy": "the shipped model sorts GeckoLib's topLevelBones / childBones lists into the classic renderToBuffer order (DrawOrder.apply); both renderers traverse in pre-order, so equal sibling orders are equal draw orders"
+      },
+      "keyframe_reference_leg": {
+        "tolerance_radians": 0.0025,
+        "statement": "2.5e-3 rad; Cliff Racer reference leg 13 catmullrom keys per bone with spline arguments repaired at load; wrap sample T−ε vs 0+ε included",
+        "candidate_class": "danger.orespawn.entity.client.CliffRacerGeoReplacement",
+        "controller_class": "danger.orespawn.entity.client.animation.PhaseLockedKeyframeController",
+        "spline_repair": true,
+        "spline_repair_class": "danger.orespawn.entity.client.animation.SplineRepair",
+        "clip_sha256": "96243b5dd44a1c979999b7aa5e3b388dd9295c370553ba604454c880fed5c343",
+        "clip_path": "src/main/resources/assets/orespawn/animations/entity/cliffracer.animation.json",
+        "pose_source": "persistent BakedGeoModel + production KeyframeLayer.controller (PhaseLockedKeyframeController) x 1 through AnimationProcessor.tickAnimation on explicit inputs",
+        "layers": [
+          {
+            "group": "wings",
+            "clip": "walk",
+            "controller": "keyframe:walk",
+            "frequency_radians_per_age_tick": 1.3,
+            "bones": [
+              "lwing",
+              "rwing"
+            ],
+            "gait_scaled": false,
+            "additive": false
+          }
+        ],
+        "clip": {
+          "wings": {
+            "clip": "walk",
+            "keys_per_bone": 13,
+            "lerp_mode": "catmullrom",
+            "spline_arguments": "spline arguments repaired at load",
+            "declared_length_ticks": 20.0,
+            "bones": [
+              "lwing",
+              "rwing"
+            ]
+          }
+        },
+        "time_warp": {
+          "wings": {
+            "declared_clip_ticks": 20.0,
+            "natural_period_age_ticks": 4.83321964434266,
+            "clip_ticks_per_age_tick": 4.138028368607297
+          }
+        },
+        "sample_grid": {
+          "layer_bone_samples_compared": 26,
+          "max_error_radians_by_group": {
+            "wings": 0.0017441000000000262
+          },
+          "worst_case_by_group": {
+            "wings": "t_end:lwing"
+          },
+          "max_non_layer_bone_motion_radians": 0.0
+        },
+        "wrap_pairs": {
+          "count": 4,
+          "max_abs_T_minus_eps_vs_0_plus_eps_radians": 0.0
+        },
+        "density_search": {
+          "wings": {
+            "fewest_keys_per_bone": 13,
+            "confirmed_max_error_radians": 0.001892179250717163,
+            "confirmed_comparisons": 525112,
+            "one_fewer_max_error_radians": 0.0025442689657211304
+          }
+        },
+        "density_search_schedule": {
+          "rule": "the fewest keys per bone (both ends included, uniform in time, the cosine sampled exactly at the keys, full amplitude) whose max |candidate - classic| over the search schedule at amplitude 1 holds the tolerance; confirmed on the full schedule at every amplitude with one key fewer failing",
+          "min_keys": 3,
+          "max_keys": 97,
+          "search_uniform_intervals": 4096,
+          "confirm_uniform_intervals": 65536,
+          "late_start_age_ticks": 137.371,
+          "span_age_ticks": 40.5
+        },
+        "clip_full_schedule": {
+          "wings": {
+            "max_error_radians": 0.001892179250717163,
+            "holds_tolerance": true,
+            "comparisons": 525112,
+            "worst_age_ticks": 139.0457283935547,
+            "worst_amplitude": 0.0,
+            "worst_bone": "lwing"
+          }
+        },
+        "wrap_sample": {
+          "wings": {
+            "probe_bone": "lwing",
+            "natural_period_age_ticks": 4.83321964434266,
+            "epsilon_age_ticks": 0.00029499631618302367,
+            "epsilon_lut_indices": 4,
+            "seams_sampled": 8,
+            "min_lut_index_before_seam": 65531,
+            "max_lut_index_after_seam": 4,
+            "max_abs_T_minus_eps_vs_0_plus_eps_radians": 5.960464477539063e-08,
+            "max_error_vs_classic_before_radians": 0.0,
+            "max_error_vs_classic_at_seam_radians": 0.0,
+            "max_error_vs_classic_after_radians": 0.0,
+            "holds_tolerance": true
+          }
+        },
+        "schedule_reversed_max_delta_radians": 0.0,
+        "late_prime_twin": {
+          "manager_built_before_clips_served": true,
+          "unserved_slot_age_ticks": 137.371,
+          "unserved_slot_ticked": false,
+          "unserved_slot_note": "an empty-cache tick cannot run headlessly: GeckoLib 4.8.4 AnimationProcessor.buildAnimationQueue catches the model's throw (GeoModel.getAnimation throws for a file the cache lacks) with GeckoLibConstants.LOGGER, whose class initialiser registers a data component (GeckoLibNeoForge.registerDataComponent -> BuiltInRegistries.<clinit> -> Bootstrap.checkBootstrapCalled; OPT-029 R0). Its in-game outcome, from the bytecode: buildAnimationQueue returns null (121-122, 156-162), setAnimation stops the controller with currentRawAnimation still null (62-63, 99-100), process leaves it STOPPED writing nothing (68-99), and the next served tick runs primeFirstFrame in full - the prime executed here",
+          "prime_age_ticks": 138.371,
+          "unserved_bone_motion_radians": 0.0,
+          "prime": {
+            "wings": {
+              "declared_clip_ticks": 20.0,
+              "clip_ticks_per_age_tick": 4.138028368607297,
+              "last_cosine_index": 41232,
+              "last_clip_tick": 12.5830078125
+            }
+          },
+          "prime_pose_max_delta_vs_from_zero_radians": 0.0,
+          "follow_up_pose_max_delta_vs_from_zero_radians": 0.0,
+          "holds": true
+        }
+      },
+      "reference_geometry": {
+        "status": "PASS",
+        "reference_source": "reference_1_7_10_source/sources/danger/orespawn/ModelCliffRacer.java",
+        "matched_parts": 8,
+        "ground_truth": "1.7.10 decompiled ModelBase constructor, parsed; never the port"
+      },
+      "visual": {
+        "status": "PASS",
+        "image_size": [
+          256,
+          256
+        ],
+        "camera": {
+          "yaw_degrees": 34.0,
+          "pitch_degrees": -28.0
+        },
+        "channel_tolerance": 2,
+        "changed_fraction_threshold": 0.001,
+        "mean_absolute_error_threshold": 0.25,
+        "minimum_foreground_fraction_threshold": 0.001,
+        "max_changed_fraction": 0.0,
+        "max_mean_absolute_error": 0.0,
+        "z_fight_policy": "pixels where two different quads meet the front within 1e-06 depth with different texels are counted as a diagnostic only; every pixel is compared, the draw order being contracted equal on both sides (G2 root-order contract, landed 2026-09-06)",
+        "contested_exclusion_applied": false,
+        "max_contested_fraction": 0.0,
+        "cutout_alpha_threshold": 0.1,
+        "minimum_observed_foreground_fraction": 1.0,
+        "samples": [
+          {
+            "sample": "bind",
+            "camera": null,
+            "changed_fraction": 0.0,
+            "mean_absolute_error": 0.0,
+            "contested_fraction": 0.0,
+            "contested_excluded": false,
+            "vanilla_foreground_fraction": 0.227142333984375,
+            "geo_foreground_fraction": 0.227142333984375,
+            "vanilla_capture": "visual/model_cliffracer/bind.vanilla.png",
+            "geo_capture": "visual/model_cliffracer/bind.geo.png",
+            "diff_capture": "visual/model_cliffracer/bind.diff.png"
+          },
+          {
+            "sample": "t0",
+            "camera": null,
+            "changed_fraction": 0.0,
+            "mean_absolute_error": 0.0,
+            "contested_fraction": 0.0,
+            "contested_excluded": false,
+            "vanilla_foreground_fraction": 0.191131591796875,
+            "geo_foreground_fraction": 0.191131591796875,
+            "vanilla_capture": "visual/model_cliffracer/t0.vanilla.png",
+            "geo_capture": "visual/model_cliffracer/t0.geo.png",
+            "diff_capture": "visual/model_cliffracer/t0.diff.png"
+          },
+          {
+            "sample": "t_quarter",
+            "camera": null,
+            "changed_fraction": 0.0,
+            "mean_absolute_error": 0.0,
+            "contested_fraction": 0.0,
+            "contested_excluded": false,
+            "vanilla_foreground_fraction": 0.1919708251953125,
+            "geo_foreground_fraction": 0.1919708251953125,
+            "vanilla_capture": "visual/model_cliffracer/t_quarter.vanilla.png",
+            "geo_capture": "visual/model_cliffracer/t_quarter.geo.png",
+            "diff_capture": "visual/model_cliffracer/t_quarter.diff.png"
+          },
+          {
+            "sample": "t_half",
+            "camera": null,
+            "changed_fraction": 0.0,
+            "mean_absolute_error": 0.0,
+            "contested_fraction": 0.0,
+            "contested_excluded": false,
+            "vanilla_foreground_fraction": 0.19769287109375,
+            "geo_foreground_fraction": 0.19769287109375,
+            "vanilla_capture": "visual/model_cliffracer/t_half.vanilla.png",
+            "geo_capture": "visual/model_cliffracer/t_half.geo.png",
+            "diff_capture": "visual/model_cliffracer/t_half.diff.png"
+          },
+          {
+            "sample": "t_three_quarter",
+            "camera": null,
+            "changed_fraction": 0.0,
+            "mean_absolute_error": 0.0,
+            "contested_fraction": 0.0,
+            "contested_excluded": false,
+            "vanilla_foreground_fraction": 0.2046051025390625,
+            "geo_foreground_fraction": 0.2046051025390625,
+            "vanilla_capture": "visual/model_cliffracer/t_three_quarter.vanilla.png",
+            "geo_capture": "visual/model_cliffracer/t_three_quarter.geo.png",
+            "diff_capture": "visual/model_cliffracer/t_three_quarter.diff.png"
+          }
+        ]
+      }
+    },
+    {
+      "model_id": "model_brutalfly",
+      "tier": 2,
+      "proof_scope": "production_proof_model",
+      "source_class": "danger.orespawn.entity.client.BrutalflyModel",
+      "source_class_sha256": "1f39a2690fba13ceac5b9686b4dc11e9adae257c0dc3b65f6d8c79fcab9d5340",
+      "compiled_dump_sha256": "008b7f427ad062d39eb377dc77a380941b4416438c7ea07827ab51408f9d0997",
+      "bone_count": 14,
+      "cube_count": 14,
+      "geometry_sha256": "760ad35b9c0d40caffc87ddb6c0ebee79c96ee8665c68a288b1e7b087d6f2534",
+      "animation_sha256": "7882082857fdb11e02f158ebc3a6d3f970e2ac60d54813f0e903ee97b2293749",
+      "animation_contract_sha256": "b08ae0ce8b05511de6b9b8efc87d898c1a7ab5a0f72e178d2029eb9f7d751ba4",
+      "geometry": {
+        "status": "PASS",
+        "epsilon_blocks": 1e-05,
+        "max_corner_delta_blocks": 2.009975123166216e-07,
+        "worst_case": "t_half:leftwing4#0",
+        "sample_count": 6,
+        "cube_sample_count": 84
+      },
+      "surface_mapping": {
+        "status": "PASS",
+        "position_epsilon_blocks": 1e-05,
+        "normal_epsilon": 1e-06,
+        "uv_epsilon_normalized": 1e-07,
+        "max_position_delta_blocks": 2.009975123166216e-07,
+        "max_normal_delta": 0.0,
+        "max_uv_delta_normalized": 0.0,
+        "vertex_samples": 2016,
+        "ignored_zero_area_faces": 0,
+        "worst_case": "t_half:leftwing4#0",
+        "evidence": "position/normal/UV tuples from baked ModelPart.Cube.compile versus pinned GeckoLib BakedModelFactory rendered through GeoRenderer; faces of exactly zero area are excluded (ruling 2026-09-02)"
+      },
+      "animation": {
+        "status": "PASS",
+        "epsilon_radians": 2e-06,
+        "accepted_pose_comparison": "compiled setupAnim versus actual fresh-baked GeckoLib candidate",
+        "reference_animation_used_for_acceptance": false,
+        "sample_count": 10,
+        "max_rotation_delta_radians": 0.0,
+        "max_dense_rotation_delta_radians": 0.0,
+        "max_unexpected_position_or_scale_delta": 0.0,
+        "worst_case": "exact",
+        "dense_worst_case": "exact",
+        "rotation_channel_samples": 420,
+        "dense_rotation_channel_samples": 0,
+        "contract": {
+          "kind": "code_driven",
+          "accepted_runtime_path": "production OreSpawnGeoReplacement.applyCustomAnimations through OreSpawnGeoReplacementModel.setCustomAnimations",
+          "candidate_class": "danger.orespawn.entity.client.BrutalflyGeoReplacement",
+          "inputs": {
+            "limb_swing": 0.0,
+            "limb_swing_amounts": [
+              0.0
+            ],
+            "net_head_yaw_degrees": 0.0,
+            "head_pitch_degrees": 0.0
+          },
+          "max_position_delta_model_units": 0.0,
+          "position_epsilon_model_units": 0.0001,
+          "position_worst_case": "exact",
+          "position_channel_samples": 420,
+          "hidden_bone_checks": 9
+        }
+      },
+      "reference_animation": {
+        "status": "SCHEMA_VALID_REFERENCE_ONLY",
+        "role": "NOT_APPLICABLE_CODE_DRIVEN_MODEL",
+        "clip_count": 0,
+        "constant_vector_count": 0,
+        "runtime_acceptance": false
+      },
+      "draw_order": {
+        "status": "PASS",
+        "bone_draw_order": [
+          "head",
+          "body",
+          "leftwing",
+          "rightwing",
+          "leftwing2",
+          "rightwing2",
+          "leftwing3",
+          "rightwing3",
+          "leftwing4",
+          "rightwing4",
+          "leftwing5",
+          "rightwing5",
+          "leftwing6",
+          "rightwing6"
+        ],
+        "captures_checked": 6,
+        "draws_checked": 84,
+        "classic_source": "classic EntityModel.renderToBuffer on a second bake posed identically; every ModelPart.render is one pose-stack push, attributed to its part by ModelPart.skipDraw elimination (one run per cube-bearing part with every other part's skipDraw set); a part drawn n > 1 times is named <part>__i<k> by draw ordinal",
+        "unobserved_units": [],
+        "policy": "the shipped model sorts GeckoLib's topLevelBones / childBones lists into the classic renderToBuffer order (DrawOrder.apply); both renderers traverse in pre-order, so equal sibling orders are equal draw orders"
+      },
+      "keyframe_reference_leg": {
+        "tolerance_radians": 0.0025,
+        "statement": "2.5e-3 rad; Brutalfly reference leg 13 catmullrom keys per bone with spline arguments repaired at load; wrap sample T−ε vs 0+ε included",
+        "candidate_class": "danger.orespawn.entity.client.BrutalflyGeoReplacement",
+        "controller_class": "danger.orespawn.entity.client.animation.PhaseLockedKeyframeController",
+        "spline_repair": true,
+        "spline_repair_class": "danger.orespawn.entity.client.animation.SplineRepair",
+        "clip_sha256": "dd8850763250910a1dbf2c39afea3c5b6a3b7a9b9fb05cd7828cd445fbce9afa",
+        "clip_path": "src/main/resources/assets/orespawn/animations/entity/brutalfly.animation.json",
+        "pose_source": "persistent BakedGeoModel + production KeyframeLayer.controller (PhaseLockedKeyframeController) x 1 through AnimationProcessor.tickAnimation on explicit inputs",
+        "layers": [
+          {
+            "group": "wings",
+            "clip": "walk",
+            "controller": "keyframe:walk",
+            "frequency_radians_per_age_tick": 1.3,
+            "wingspeed": 0.2,
+            "bones": [
+              "leftwing",
+              "leftwing2",
+              "leftwing3",
+              "leftwing4",
+              "leftwing5",
+              "leftwing6",
+              "rightwing",
+              "rightwing2",
+              "rightwing3",
+              "rightwing4",
+              "rightwing5",
+              "rightwing6"
+            ],
+            "gait_scaled": false,
+            "additive": false
+          }
+        ],
+        "clip": {
+          "wings": {
+            "clip": "walk",
+            "keys_per_bone": 13,
+            "lerp_mode": "catmullrom",
+            "spline_arguments": "spline arguments repaired at load",
+            "declared_length_ticks": 20.0,
+            "bones": [
+              "rightwing",
+              "rightwing2",
+              "rightwing3",
+              "rightwing4",
+              "rightwing5",
+              "rightwing6",
+              "leftwing",
+              "leftwing2",
+              "leftwing3",
+              "leftwing4",
+              "leftwing5",
+              "leftwing6"
+            ]
+          }
+        },
+        "time_warp": {
+          "wings": {
+            "declared_clip_ticks": 20.0,
+            "natural_period_age_ticks": 24.166097861610382,
+            "clip_ticks_per_age_tick": 0.8276056860537451
+          }
+        },
+        "sample_grid": {
+          "layer_bone_samples_compared": 108,
+          "max_error_radians_by_group": {
+            "wings": 0.0014850499999999878
+          },
+          "worst_case_by_group": {
+            "wings": "t_three_quarter:leftwing"
+          },
+          "max_non_layer_bone_motion_radians": 0.0
+        },
+        "wrap_pairs": {
+          "count": 2,
+          "max_abs_T_minus_eps_vs_0_plus_eps_radians": 0.0
+        },
+        "density_search": {
+          "wings": {
+            "fewest_keys_per_bone": 13,
+            "confirmed_max_error_radians": 0.001892179250717163,
+            "confirmed_comparisons": 3146784,
+            "one_fewer_max_error_radians": 0.002544298768043518
+          }
+        },
+        "density_search_schedule": {
+          "rule": "the fewest keys per bone (both ends included, uniform in time, the cosine sampled exactly at the keys, full amplitude) whose max |candidate - classic| over the search schedule at amplitude 1 holds the tolerance; confirmed on the full schedule at every amplitude with one key fewer failing",
+          "min_keys": 3,
+          "max_keys": 97,
+          "search_uniform_intervals": 4096,
+          "confirm_uniform_intervals": 65536,
+          "late_start_age_ticks": 137.371,
+          "span_age_ticks": 40.5
+        },
+        "clip_full_schedule": {
+          "wings": {
+            "max_error_radians": 0.001892179250717163,
+            "holds_tolerance": true,
+            "comparisons": 3146784,
+            "worst_age_ticks": 138.5019051513672,
+            "worst_amplitude": 0.0,
+            "worst_bone": "rightwing"
+          }
+        },
+        "wrap_sample": {
+          "wings": {
+            "probe_bone": "rightwing",
+            "natural_period_age_ticks": 24.166097861610382,
+            "epsilon_age_ticks": 0.0014749815589361805,
+            "epsilon_lut_indices": 4,
+            "seams_sampled": 2,
+            "min_lut_index_before_seam": 65532,
+            "max_lut_index_after_seam": 3,
+            "max_abs_T_minus_eps_vs_0_plus_eps_radians": 0.0,
+            "max_error_vs_classic_before_radians": 0.0,
+            "max_error_vs_classic_at_seam_radians": 0.0,
+            "max_error_vs_classic_after_radians": 0.0,
+            "holds_tolerance": true
+          }
+        },
+        "schedule_reversed_max_delta_radians": 0.0,
+        "late_prime_twin": {
+          "manager_built_before_clips_served": true,
+          "unserved_slot_age_ticks": 137.371,
+          "unserved_slot_ticked": false,
+          "unserved_slot_note": "an empty-cache tick cannot run headlessly: GeckoLib 4.8.4 AnimationProcessor.buildAnimationQueue catches the model's throw (GeoModel.getAnimation throws for a file the cache lacks) with GeckoLibConstants.LOGGER, whose class initialiser registers a data component (GeckoLibNeoForge.registerDataComponent -> BuiltInRegistries.<clinit> -> Bootstrap.checkBootstrapCalled; OPT-029 R0). Its in-game outcome, from the bytecode: buildAnimationQueue returns null (121-122, 156-162), setAnimation stops the controller with currentRawAnimation still null (62-63, 99-100), process leaves it STOPPED writing nothing (68-99), and the next served tick runs primeFirstFrame in full - the prime executed here",
+          "prime_age_ticks": 138.371,
+          "unserved_bone_motion_radians": 0.0,
+          "prime": {
+            "wings": {
+              "declared_clip_ticks": 20.0,
+              "clip_ticks_per_age_tick": 0.8276056860537451,
+              "last_cosine_index": 47568,
+              "last_clip_tick": 14.5166015625
+            }
+          },
+          "prime_pose_max_delta_vs_from_zero_radians": 0.0,
+          "follow_up_pose_max_delta_vs_from_zero_radians": 0.0,
+          "holds": true
+        }
+      },
+      "visual": {
+        "status": "PASS",
+        "image_size": [
+          256,
+          256
+        ],
+        "camera": {
+          "yaw_degrees": 34.0,
+          "pitch_degrees": -28.0
+        },
+        "channel_tolerance": 2,
+        "changed_fraction_threshold": 0.001,
+        "mean_absolute_error_threshold": 0.25,
+        "minimum_foreground_fraction_threshold": 0.001,
+        "max_changed_fraction": 0.0,
+        "max_mean_absolute_error": 0.0,
+        "z_fight_policy": "pixels where two different quads meet the front within 1e-06 depth with different texels are counted as a diagnostic only; every pixel is compared, the draw order being contracted equal on both sides (G2 root-order contract, landed 2026-09-06)",
+        "contested_exclusion_applied": false,
+        "max_contested_fraction": 0.0,
+        "cutout_alpha_threshold": 0.1,
+        "minimum_observed_foreground_fraction": 1.0,
+        "samples": [
+          {
+            "sample": "bind",
+            "camera": null,
+            "changed_fraction": 0.0,
+            "mean_absolute_error": 0.0,
+            "contested_fraction": 0.0,
+            "contested_excluded": false,
+            "vanilla_foreground_fraction": 0.2172698974609375,
+            "geo_foreground_fraction": 0.2172698974609375,
+            "vanilla_capture": "visual/model_brutalfly/bind.vanilla.png",
+            "geo_capture": "visual/model_brutalfly/bind.geo.png",
+            "diff_capture": "visual/model_brutalfly/bind.diff.png"
+          },
+          {
+            "sample": "t0",
+            "camera": null,
+            "changed_fraction": 0.0,
+            "mean_absolute_error": 0.0,
+            "contested_fraction": 0.0,
+            "contested_excluded": false,
+            "vanilla_foreground_fraction": 0.1772003173828125,
+            "geo_foreground_fraction": 0.1772003173828125,
+            "vanilla_capture": "visual/model_brutalfly/t0.vanilla.png",
+            "geo_capture": "visual/model_brutalfly/t0.geo.png",
+            "diff_capture": "visual/model_brutalfly/t0.diff.png"
+          },
+          {
+            "sample": "t_quarter",
+            "camera": null,
+            "changed_fraction": 0.0,
+            "mean_absolute_error": 0.0,
+            "contested_fraction": 0.0,
+            "contested_excluded": false,
+            "vanilla_foreground_fraction": 0.1502532958984375,
+            "geo_foreground_fraction": 0.1502532958984375,
+            "vanilla_capture": "visual/model_brutalfly/t_quarter.vanilla.png",
+            "geo_capture": "visual/model_brutalfly/t_quarter.geo.png",
+            "diff_capture": "visual/model_brutalfly/t_quarter.diff.png"
+          },
+          {
+            "sample": "t_half",
+            "camera": null,
+            "changed_fraction": 0.0,
+            "mean_absolute_error": 0.0,
+            "contested_fraction": 0.0,
+            "contested_excluded": false,
+            "vanilla_foreground_fraction": 0.1762237548828125,
+            "geo_foreground_fraction": 0.1762237548828125,
+            "vanilla_capture": "visual/model_brutalfly/t_half.vanilla.png",
+            "geo_capture": "visual/model_brutalfly/t_half.geo.png",
+            "diff_capture": "visual/model_brutalfly/t_half.diff.png"
+          },
+          {
+            "sample": "t_three_quarter",
+            "camera": null,
+            "changed_fraction": 0.0,
+            "mean_absolute_error": 0.0,
+            "contested_fraction": 0.0,
+            "contested_excluded": false,
+            "vanilla_foreground_fraction": 0.15301513671875,
+            "geo_foreground_fraction": 0.15301513671875,
+            "vanilla_capture": "visual/model_brutalfly/t_three_quarter.vanilla.png",
+            "geo_capture": "visual/model_brutalfly/t_three_quarter.geo.png",
+            "diff_capture": "visual/model_brutalfly/t_three_quarter.diff.png"
+          }
+        ]
+      }
+    },
+    {
+      "model_id": "model_dragonfly",
+      "tier": 2,
+      "proof_scope": "production_proof_model",
+      "source_class": "danger.orespawn.entity.client.DragonflyModel",
+      "source_class_sha256": "8d3379f03d5408303abc62fc566402878edf250887a949c2e9ad98402bf5c153",
+      "compiled_dump_sha256": "9e1412bf5b9e38afd1cc2b5c5c4702d5247d49c877469ae38679d1ff7e0d9924",
+      "bone_count": 26,
+      "cube_count": 26,
+      "geometry_sha256": "8485df31bea1f0686d04d64030fabcc8dde9dd20f3795a32e88674766828855f",
+      "animation_sha256": "7882082857fdb11e02f158ebc3a6d3f970e2ac60d54813f0e903ee97b2293749",
+      "animation_contract_sha256": "e68ba33db5a3d1ad5c75074f344e0808c2746c669176f0acf2151fde0556fce9",
+      "geometry": {
+        "status": "PASS",
+        "epsilon_blocks": 1e-05,
+        "max_corner_delta_blocks": 3.0066592751997733e-07,
+        "worst_case": "bind:ljaw#0",
+        "sample_count": 6,
+        "cube_sample_count": 156
+      },
+      "surface_mapping": {
+        "status": "PASS",
+        "position_epsilon_blocks": 1e-05,
+        "normal_epsilon": 1e-06,
+        "uv_epsilon_normalized": 1e-07,
+        "max_position_delta_blocks": 3.0066592751997733e-07,
+        "max_normal_delta": 1.4000000003733248e-07,
+        "max_uv_delta_normalized": 0.0,
+        "vertex_samples": 3744,
+        "ignored_zero_area_faces": 0,
+        "worst_case": "bind:ljaw#0",
+        "evidence": "position/normal/UV tuples from baked ModelPart.Cube.compile versus pinned GeckoLib BakedModelFactory rendered through GeoRenderer; faces of exactly zero area are excluded (ruling 2026-09-02)"
+      },
+      "animation": {
+        "status": "PASS",
+        "epsilon_radians": 2e-06,
+        "accepted_pose_comparison": "compiled setupAnim versus actual fresh-baked GeckoLib candidate",
+        "reference_animation_used_for_acceptance": false,
+        "sample_count": 44,
+        "max_rotation_delta_radians": 0.0,
+        "max_dense_rotation_delta_radians": 0.0,
+        "max_unexpected_position_or_scale_delta": 0.0,
+        "worst_case": "exact",
+        "dense_worst_case": "exact",
+        "rotation_channel_samples": 3432,
+        "dense_rotation_channel_samples": 0,
+        "contract": {
+          "kind": "code_driven",
+          "accepted_runtime_path": "production OreSpawnGeoReplacement.applyCustomAnimations through OreSpawnGeoReplacementModel.setCustomAnimations",
+          "candidate_class": "danger.orespawn.entity.client.DragonflyGeoReplacement",
+          "inputs": {
+            "limb_swing": 0.0,
+            "limb_swing_amounts": [
+              0.0
+            ],
+            "net_head_yaw_degrees": 0.0,
+            "head_pitch_degrees": 0.0
+          },
+          "max_position_delta_model_units": 0.0,
+          "position_epsilon_model_units": 0.0001,
+          "position_worst_case": "exact",
+          "position_channel_samples": 3432,
+          "hidden_bone_checks": 43
+        }
+      },
+      "reference_animation": {
+        "status": "SCHEMA_VALID_REFERENCE_ONLY",
+        "role": "NOT_APPLICABLE_CODE_DRIVEN_MODEL",
+        "clip_count": 0,
+        "constant_vector_count": 0,
+        "runtime_acceptance": false
+      },
+      "draw_order": {
+        "status": "PASS",
+        "bone_draw_order": [
+          "Shape1",
+          "lfwing",
+          "Shape3",
+          "Shape4",
+          "Shape5",
+          "rjaw",
+          "ljaw",
+          "tail1",
+          "tail2",
+          "Shape10",
+          "Shape11",
+          "Shape12",
+          "Shape13",
+          "Shape14",
+          "Shape15",
+          "Shape16",
+          "Shape17",
+          "Shape18",
+          "Shape19",
+          "Shape20",
+          "Shape21",
+          "Shape22",
+          "Shape23",
+          "lrwing",
+          "rfwing",
+          "rrwing"
+        ],
+        "captures_checked": 6,
+        "draws_checked": 156,
+        "classic_source": "classic EntityModel.renderToBuffer on a second bake posed identically; every ModelPart.render is one pose-stack push, attributed to its part by ModelPart.skipDraw elimination (one run per cube-bearing part with every other part's skipDraw set); a part drawn n > 1 times is named <part>__i<k> by draw ordinal",
+        "unobserved_units": [],
+        "policy": "the shipped model sorts GeckoLib's topLevelBones / childBones lists into the classic renderToBuffer order (DrawOrder.apply); both renderers traverse in pre-order, so equal sibling orders are equal draw orders"
+      },
+      "keyframe_reference_leg": {
+        "tolerance_radians": 0.0025,
+        "statement": "2.5e-3 rad; Dragonfly reference leg 13 / 10 catmullrom keys per bone with spline arguments repaired at load; wrap sample T−ε vs 0+ε included",
+        "candidate_class": "danger.orespawn.entity.client.DragonflyGeoReplacement",
+        "controller_class": "danger.orespawn.entity.client.animation.PhaseLockedKeyframeController",
+        "spline_repair": true,
+        "spline_repair_class": "danger.orespawn.entity.client.animation.SplineRepair",
+        "clip_sha256": "bd2c04161e495febf46ae4f6eba221baef7fefcd06e2da842fce9726e409f416",
+        "clip_path": "src/main/resources/assets/orespawn/animations/entity/dragonfly.animation.json",
+        "pose_source": "persistent BakedGeoModel + production KeyframeLayer.controller (PhaseLockedKeyframeController) x 2 through AnimationProcessor.tickAnimation on explicit inputs",
+        "layers": [
+          {
+            "group": "wings",
+            "clip": "walk_wings",
+            "controller": "keyframe:walk_wings",
+            "frequency_radians_per_age_tick": 1.3,
+            "wingspeed": 2.0,
+            "bones": [
+              "lfwing",
+              "lrwing",
+              "rfwing",
+              "rrwing"
+            ],
+            "gait_scaled": false,
+            "additive": false
+          },
+          {
+            "group": "jaws",
+            "clip": "walk_jaws",
+            "controller": "keyframe:walk_jaws",
+            "frequency_radians_per_age_tick": 0.3,
+            "wingspeed": 2.0,
+            "bones": [
+              "ljaw",
+              "rjaw"
+            ],
+            "gait_scaled": false,
+            "additive": false
+          }
+        ],
+        "clip": {
+          "wings": {
+            "clip": "walk_wings",
+            "keys_per_bone": 13,
+            "lerp_mode": "catmullrom",
+            "spline_arguments": "spline arguments repaired at load",
+            "declared_length_ticks": 20.0,
+            "bones": [
+              "lfwing",
+              "rfwing",
+              "lrwing",
+              "rrwing"
+            ]
+          },
+          "jaws": {
+            "clip": "walk_jaws",
+            "keys_per_bone": 10,
+            "lerp_mode": "catmullrom",
+            "spline_arguments": "spline arguments repaired at load",
+            "declared_length_ticks": 20.0,
+            "bones": [
+              "ljaw",
+              "rjaw"
+            ]
+          }
+        },
+        "time_warp": {
+          "wings": {
+            "declared_clip_ticks": 20.0,
+            "natural_period_age_ticks": 2.41660982217133,
+            "clip_ticks_per_age_tick": 8.276056737214594
+          },
+          "jaws": {
+            "declared_clip_ticks": 20.0,
+            "natural_period_age_ticks": 10.471975095847073,
+            "clip_ticks_per_age_tick": 1.9098593929937349
+          }
+        },
+        "sample_grid": {
+          "layer_bone_samples_compared": 258,
+          "max_error_radians_by_group": {
+            "wings": 0.0017444000000002013,
+            "jaws": 0.0017785200000000057
+          },
+          "worst_case_by_group": {
+            "wings": "t_quarter:rrwing",
+            "jaws": "a0_kfwrap_w1_3_c9_before:ljaw"
+          },
+          "max_non_layer_bone_motion_radians": 0.0
+        },
+        "wrap_pairs": {
+          "count": 19,
+          "max_abs_T_minus_eps_vs_0_plus_eps_radians": 2.9999999995311555e-07
+        },
+        "density_search": {
+          "wings": {
+            "fewest_keys_per_bone": 13,
+            "confirmed_max_error_radians": 0.0018923282623291016,
+            "confirmed_comparisons": 1052528,
+            "one_fewer_max_error_radians": 0.002544403076171875
+          },
+          "jaws": {
+            "fewest_keys_per_bone": 10,
+            "confirmed_max_error_radians": 0.0019441097974777222,
+            "confirmed_comparisons": 526264,
+            "one_fewer_max_error_radians": 0.002805262804031372
+          }
+        },
+        "density_search_schedule": {
+          "rule": "the fewest keys per bone (both ends included, uniform in time, the cosine sampled exactly at the keys, full amplitude) whose max |candidate - classic| over the search schedule at amplitude 1 holds the tolerance; confirmed on the full schedule at every amplitude with one key fewer failing",
+          "min_keys": 3,
+          "max_keys": 97,
+          "search_uniform_intervals": 4096,
+          "confirm_uniform_intervals": 65536,
+          "late_start_age_ticks": 137.371,
+          "span_age_ticks": 40.5
+        },
+        "clip_full_schedule": {
+          "jaws": {
+            "max_error_radians": 0.0019441097974777222,
+            "holds_tolerance": true,
+            "comparisons": 526264,
+            "worst_age_ticks": 150.43079156494142,
+            "worst_amplitude": 0.0,
+            "worst_bone": "rjaw"
+          },
+          "wings": {
+            "max_error_radians": 0.0018923282623291016,
+            "holds_tolerance": true,
+            "comparisons": 1052528,
+            "worst_age_ticks": 138.39623040771485,
+            "worst_amplitude": 0.0,
+            "worst_bone": "lrwing"
+          }
+        },
+        "wrap_sample": {
+          "wings": {
+            "probe_bone": "lfwing",
+            "natural_period_age_ticks": 2.41660982217133,
+            "epsilon_age_ticks": 0.00014749815809151184,
+            "epsilon_lut_indices": 4,
+            "seams_sampled": 17,
+            "min_lut_index_before_seam": 65531,
+            "max_lut_index_after_seam": 4,
+            "max_abs_T_minus_eps_vs_0_plus_eps_radians": 5.960464477539063e-08,
+            "max_error_vs_classic_before_radians": 0.0,
+            "max_error_vs_classic_at_seam_radians": 0.0,
+            "max_error_vs_classic_after_radians": 0.0,
+            "holds_tolerance": true
+          },
+          "jaws": {
+            "probe_bone": "ljaw",
+            "natural_period_age_ticks": 10.471975095847073,
+            "epsilon_age_ticks": 0.0006391586362211348,
+            "epsilon_lut_indices": 4,
+            "seams_sampled": 3,
+            "min_lut_index_before_seam": 65531,
+            "max_lut_index_after_seam": 4,
+            "max_abs_T_minus_eps_vs_0_plus_eps_radians": 2.9802322387695312e-08,
+            "max_error_vs_classic_before_radians": 2.9802322387695312e-08,
+            "max_error_vs_classic_at_seam_radians": 0.0,
+            "max_error_vs_classic_after_radians": 2.9802322387695312e-08,
+            "holds_tolerance": true
+          }
+        },
+        "schedule_reversed_max_delta_radians": 0.0,
+        "late_prime_twin": {
+          "manager_built_before_clips_served": true,
+          "unserved_slot_age_ticks": 137.371,
+          "unserved_slot_ticked": false,
+          "unserved_slot_note": "an empty-cache tick cannot run headlessly: GeckoLib 4.8.4 AnimationProcessor.buildAnimationQueue catches the model's throw (GeoModel.getAnimation throws for a file the cache lacks) with GeckoLibConstants.LOGGER, whose class initialiser registers a data component (GeckoLibNeoForge.registerDataComponent -> BuiltInRegistries.<clinit> -> Bootstrap.checkBootstrapCalled; OPT-029 R0). Its in-game outcome, from the bytecode: buildAnimationQueue returns null (121-122, 156-162), setAnimation stops the controller with currentRawAnimation still null (62-63, 99-100), process leaves it STOPPED writing nothing (68-99), and the next served tick runs primeFirstFrame in full - the prime executed here",
+          "prime_age_ticks": 138.371,
+          "unserved_bone_motion_radians": 0.0,
+          "prime": {
+            "wings": {
+              "declared_clip_ticks": 20.0,
+              "clip_ticks_per_age_tick": 8.276056737214594,
+              "last_cosine_index": 16928,
+              "last_clip_tick": 5.166015625
+            },
+            "jaws": {
+              "declared_clip_ticks": 20.0,
+              "clip_ticks_per_age_tick": 1.9098593929937349,
+              "last_cosine_index": 13989,
+              "last_clip_tick": 4.26910400390625
+            }
+          },
+          "prime_pose_max_delta_vs_from_zero_radians": 0.0,
+          "follow_up_pose_max_delta_vs_from_zero_radians": 0.0,
+          "holds": true
+        }
+      },
+      "visual": {
+        "status": "PASS",
+        "image_size": [
+          256,
+          256
+        ],
+        "camera": {
+          "yaw_degrees": 34.0,
+          "pitch_degrees": -28.0
+        },
+        "channel_tolerance": 2,
+        "changed_fraction_threshold": 0.001,
+        "mean_absolute_error_threshold": 0.25,
+        "minimum_foreground_fraction_threshold": 0.001,
+        "max_changed_fraction": 0.0,
+        "max_mean_absolute_error": 0.0,
+        "z_fight_policy": "pixels where two different quads meet the front within 1e-06 depth with different texels are counted as a diagnostic only; every pixel is compared, the draw order being contracted equal on both sides (G2 root-order contract, landed 2026-09-06)",
+        "contested_exclusion_applied": false,
+        "max_contested_fraction": 0.0,
+        "cutout_alpha_threshold": 0.1,
+        "minimum_observed_foreground_fraction": 1.0,
+        "samples": [
+          {
+            "sample": "bind",
+            "camera": null,
+            "changed_fraction": 0.0,
+            "mean_absolute_error": 0.0,
+            "contested_fraction": 0.0,
+            "contested_excluded": false,
+            "vanilla_foreground_fraction": 0.193328857421875,
+            "geo_foreground_fraction": 0.193328857421875,
+            "vanilla_capture": "visual/model_dragonfly/bind.vanilla.png",
+            "geo_capture": "visual/model_dragonfly/bind.geo.png",
+            "diff_capture": "visual/model_dragonfly/bind.diff.png"
+          },
+          {
+            "sample": "t0",
+            "camera": null,
+            "changed_fraction": 0.0,
+            "mean_absolute_error": 0.0,
+            "contested_fraction": 0.0,
+            "contested_excluded": false,
+            "vanilla_foreground_fraction": 0.166259765625,
+            "geo_foreground_fraction": 0.166259765625,
+            "vanilla_capture": "visual/model_dragonfly/t0.vanilla.png",
+            "geo_capture": "visual/model_dragonfly/t0.geo.png",
+            "diff_capture": "visual/model_dragonfly/t0.diff.png"
+          },
+          {
+            "sample": "t_quarter",
+            "camera": null,
+            "changed_fraction": 0.0,
+            "mean_absolute_error": 0.0,
+            "contested_fraction": 0.0,
+            "contested_excluded": false,
+            "vanilla_foreground_fraction": 0.168426513671875,
+            "geo_foreground_fraction": 0.168426513671875,
+            "vanilla_capture": "visual/model_dragonfly/t_quarter.vanilla.png",
+            "geo_capture": "visual/model_dragonfly/t_quarter.geo.png",
+            "diff_capture": "visual/model_dragonfly/t_quarter.diff.png"
+          },
+          {
+            "sample": "t_half",
+            "camera": null,
+            "changed_fraction": 0.0,
+            "mean_absolute_error": 0.0,
+            "contested_fraction": 0.0,
+            "contested_excluded": false,
+            "vanilla_foreground_fraction": 0.1764068603515625,
+            "geo_foreground_fraction": 0.1764068603515625,
+            "vanilla_capture": "visual/model_dragonfly/t_half.vanilla.png",
+            "geo_capture": "visual/model_dragonfly/t_half.geo.png",
+            "diff_capture": "visual/model_dragonfly/t_half.diff.png"
+          },
+          {
+            "sample": "t_three_quarter",
+            "camera": null,
+            "changed_fraction": 0.0,
+            "mean_absolute_error": 0.0,
+            "contested_fraction": 0.0,
+            "contested_excluded": false,
+            "vanilla_foreground_fraction": 0.16986083984375,
+            "geo_foreground_fraction": 0.16986083984375,
+            "vanilla_capture": "visual/model_dragonfly/t_three_quarter.vanilla.png",
+            "geo_capture": "visual/model_dragonfly/t_three_quarter.geo.png",
+            "diff_capture": "visual/model_dragonfly/t_three_quarter.diff.png"
+          }
+        ]
+      }
+    },
+    {
+      "model_id": "model_cockateil",
+      "tier": 2,
+      "proof_scope": "production_proof_model",
+      "source_class": "danger.orespawn.entity.client.ModelCockateil",
+      "source_class_sha256": "d3b77c279ad289d722a0caa84ac6c2c2ac6bd109aad62ceb0f13a4766a6514ad",
+      "compiled_dump_sha256": "e274592fbd1f0f8589b710ac08cda3ff0953bbeec5262dab49089bc81705f0b2",
+      "bone_count": 16,
+      "cube_count": 16,
+      "geometry_sha256": "846a77fbeef1eade4cad046d3f58c1ffb17842830b861964a0d7aeee1edadccd",
+      "animation_sha256": "7882082857fdb11e02f158ebc3a6d3f970e2ac60d54813f0e903ee97b2293749",
+      "animation_contract_sha256": "341aaa64ee3ee6861c7a2980573d8cf6e5bc0bfab9a7ed4df1cd2beaca023e44",
+      "geometry": {
+        "status": "PASS",
+        "epsilon_blocks": 1e-05,
+        "max_corner_delta_blocks": 2.0396078067586136e-07,
+        "worst_case": "t_half:tailfeather2#0",
+        "sample_count": 6,
+        "cube_sample_count": 96
+      },
+      "surface_mapping": {
+        "status": "PASS",
+        "position_epsilon_blocks": 1e-05,
+        "normal_epsilon": 1e-06,
+        "uv_epsilon_normalized": 1e-07,
+        "max_position_delta_blocks": 2.0396078067586136e-07,
+        "max_normal_delta": 1.1661903786408315e-07,
+        "max_uv_delta_normalized": 0.0,
+        "vertex_samples": 2304,
+        "ignored_zero_area_faces": 0,
+        "worst_case": "t_half:tailfeather2#0",
+        "evidence": "position/normal/UV tuples from baked ModelPart.Cube.compile versus pinned GeckoLib BakedModelFactory rendered through GeoRenderer; faces of exactly zero area are excluded (ruling 2026-09-02)"
+      },
+      "animation": {
+        "status": "PASS",
+        "epsilon_radians": 2e-06,
+        "accepted_pose_comparison": "compiled setupAnim versus actual fresh-baked GeckoLib candidate",
+        "reference_animation_used_for_acceptance": false,
+        "sample_count": 104,
+        "max_rotation_delta_radians": 0.0,
+        "max_dense_rotation_delta_radians": 0.0,
+        "max_unexpected_position_or_scale_delta": 0.0,
+        "worst_case": "exact",
+        "dense_worst_case": "exact",
+        "rotation_channel_samples": 4992,
+        "dense_rotation_channel_samples": 0,
+        "contract": {
+          "kind": "code_driven",
+          "accepted_runtime_path": "production OreSpawnGeoReplacement.applyCustomAnimations through OreSpawnGeoReplacementModel.setCustomAnimations",
+          "candidate_class": "danger.orespawn.entity.client.CockateilGeoReplacement",
+          "inputs": {
+            "limb_swing": 0.0,
+            "limb_swing_amounts": [
+              0.0
+            ],
+            "net_head_yaw_degrees": 0.0,
+            "head_pitch_degrees": 0.0
+          },
+          "max_position_delta_model_units": 0.0,
+          "position_epsilon_model_units": 0.0001,
+          "position_worst_case": "exact",
+          "position_channel_samples": 4992,
+          "hidden_bone_checks": 103
+        }
+      },
+      "reference_animation": {
+        "status": "SCHEMA_VALID_REFERENCE_ONLY",
+        "role": "NOT_APPLICABLE_CODE_DRIVEN_MODEL",
+        "clip_count": 0,
+        "constant_vector_count": 0,
+        "runtime_acceptance": false
+      },
+      "draw_order": {
+        "status": "PASS",
+        "bone_draw_order": [
+          "Body",
+          "Head",
+          "Beak",
+          "LowerBeak",
+          "feather2",
+          "feather1",
+          "feather3",
+          "tailfeather1",
+          "rwing1",
+          "lwing1",
+          "leg",
+          "otherleg",
+          "lwing2",
+          "rwing2",
+          "tailfeather2",
+          "tailfeather3"
+        ],
+        "captures_checked": 6,
+        "draws_checked": 96,
+        "classic_source": "classic EntityModel.renderToBuffer on a second bake posed identically; every ModelPart.render is one pose-stack push, attributed to its part by ModelPart.skipDraw elimination (one run per cube-bearing part with every other part's skipDraw set); a part drawn n > 1 times is named <part>__i<k> by draw ordinal",
+        "unobserved_units": [],
+        "policy": "the shipped model sorts GeckoLib's topLevelBones / childBones lists into the classic renderToBuffer order (DrawOrder.apply); both renderers traverse in pre-order, so equal sibling orders are equal draw orders"
+      },
+      "keyframe_reference_leg": {
+        "tolerance_radians": 0.0025,
+        "statement": "2.5e-3 rad; Cockateil reference leg 14 / 10 / 9 / 9 / 9 catmullrom keys per bone with spline arguments repaired at load; wrap sample T−ε vs 0+ε included",
+        "candidate_class": "danger.orespawn.entity.client.CockateilGeoReplacement",
+        "controller_class": "danger.orespawn.entity.client.animation.PhaseLockedKeyframeController",
+        "spline_repair": true,
+        "spline_repair_class": "danger.orespawn.entity.client.animation.SplineRepair",
+        "clip_sha256": "238f28f6f6604824836b8ace6c8ada5c1a855f8e2c1f88053efbb2fe32b04ff1",
+        "clip_path": "src/main/resources/assets/orespawn/animations/entity/cockateil.animation.json",
+        "pose_source": "persistent BakedGeoModel + production KeyframeLayer.controller (PhaseLockedKeyframeController) x 5 through AnimationProcessor.tickAnimation on explicit inputs",
+        "layers": [
+          {
+            "group": "wings",
+            "clip": "walk_wings",
+            "controller": "keyframe:walk_wings",
+            "frequency_radians_per_age_tick": 1.5,
+            "bones": [
+              "lwing1",
+              "lwing2",
+              "rwing1",
+              "rwing2"
+            ],
+            "gait_scaled": false,
+            "additive": false
+          },
+          {
+            "group": "tail",
+            "clip": "walk_tail",
+            "controller": "keyframe:walk_tail",
+            "frequency_radians_per_age_tick": 0.3,
+            "bones": [
+              "tailfeather1",
+              "tailfeather2",
+              "tailfeather3"
+            ],
+            "gait_scaled": false,
+            "additive": false
+          },
+          {
+            "group": "feather1",
+            "clip": "walk_feather1",
+            "controller": "keyframe:walk_feather1",
+            "frequency_radians_per_age_tick": 1.1,
+            "bones": [
+              "feather1"
+            ],
+            "gait_scaled": false,
+            "additive": false
+          },
+          {
+            "group": "feather2",
+            "clip": "walk_feather2",
+            "controller": "keyframe:walk_feather2",
+            "frequency_radians_per_age_tick": 1.2,
+            "bones": [
+              "feather2"
+            ],
+            "gait_scaled": false,
+            "additive": false
+          },
+          {
+            "group": "feather3",
+            "clip": "walk_feather3",
+            "controller": "keyframe:walk_feather3",
+            "frequency_radians_per_age_tick": 1.3,
+            "bones": [
+              "feather3"
+            ],
+            "gait_scaled": false,
+            "additive": false
+          }
+        ],
+        "clip": {
+          "wings": {
+            "clip": "walk_wings",
+            "keys_per_bone": 14,
+            "lerp_mode": "catmullrom",
+            "spline_arguments": "spline arguments repaired at load",
+            "declared_length_ticks": 20.0,
+            "bones": [
+              "lwing1",
+              "lwing2",
+              "rwing1",
+              "rwing2"
+            ]
+          },
+          "tail": {
+            "clip": "walk_tail",
+            "keys_per_bone": 10,
+            "lerp_mode": "catmullrom",
+            "spline_arguments": "spline arguments repaired at load",
+            "declared_length_ticks": 20.0,
+            "bones": [
+              "tailfeather1",
+              "tailfeather2",
+              "tailfeather3"
+            ]
+          },
+          "feather1": {
+            "clip": "walk_feather1",
+            "keys_per_bone": 9,
+            "lerp_mode": "catmullrom",
+            "spline_arguments": "spline arguments repaired at load",
+            "declared_length_ticks": 20.0,
+            "bones": [
+              "feather1"
+            ]
+          },
+          "feather2": {
+            "clip": "walk_feather2",
+            "keys_per_bone": 9,
+            "lerp_mode": "catmullrom",
+            "spline_arguments": "spline arguments repaired at load",
+            "declared_length_ticks": 20.0,
+            "bones": [
+              "feather2"
+            ]
+          },
+          "feather3": {
+            "clip": "walk_feather3",
+            "keys_per_bone": 9,
+            "lerp_mode": "catmullrom",
+            "spline_arguments": "spline arguments repaired at load",
+            "declared_length_ticks": 20.0,
+            "bones": [
+              "feather3"
+            ]
+          }
+        },
+        "time_warp": {
+          "wings": {
+            "declared_clip_ticks": 20.0,
+            "natural_period_age_ticks": 4.1887902047863905,
+            "clip_ticks_per_age_tick": 4.7746482927568605
+          },
+          "tail": {
+            "declared_clip_ticks": 20.0,
+            "natural_period_age_ticks": 20.943950191694146,
+            "clip_ticks_per_age_tick": 0.9549296964968674
+          },
+          "feather1": {
+            "declared_clip_ticks": 20.0,
+            "natural_period_age_ticks": 5.711986519086559,
+            "clip_ticks_per_age_tick": 3.5014088239126884
+          },
+          "feather2": {
+            "declared_clip_ticks": 20.0,
+            "natural_period_age_ticks": 5.2359875479235365,
+            "clip_ticks_per_age_tick": 3.8197187859874697
+          },
+          "feather3": {
+            "declared_clip_ticks": 20.0,
+            "natural_period_age_ticks": 4.83321964434266,
+            "clip_ticks_per_age_tick": 4.138028368607297
+          }
+        },
+        "sample_grid": {
+          "layer_bone_samples_compared": 1030,
+          "max_error_radians_by_group": {
+            "wings": 0.0019694999999999574,
+            "tail": 0.0019409200000000126,
+            "feather1": 0.0022394200000000197,
+            "feather2": 0.002229480000000006,
+            "feather3": 0.0022394999999999776
+          },
+          "worst_case_by_group": {
+            "wings": "a0_kfwrap_w1_2_c5_before:lwing1",
+            "tail": "a0_kfwrap_w1_1_c6_before:tailfeather1",
+            "feather1": "a0_kfwrap_w1_2_c5_before:feather1",
+            "feather2": "a0_kfwrap_w1_3_c1_before:feather2",
+            "feather3": "a0_kfwrap_w1_2_c1_before:feather3"
+          },
+          "max_non_layer_bone_motion_radians": 0.0
+        },
+        "wrap_pairs": {
+          "count": 49,
+          "max_abs_T_minus_eps_vs_0_plus_eps_radians": 1.1999999999234845e-07
+        },
+        "density_search": {
+          "wings": {
+            "fewest_keys_per_bone": 14,
+            "confirmed_max_error_radians": 0.0021088123321533203,
+            "confirmed_comparisons": 1054880,
+            "one_fewer_max_error_radians": 0.0026491880416870117
+          },
+          "tail": {
+            "fewest_keys_per_bone": 10,
+            "confirmed_max_error_radians": 0.0019440948963165283,
+            "confirmed_comparisons": 791160,
+            "one_fewer_max_error_radians": 0.0028052330017089844
+          },
+          "feather1": {
+            "fewest_keys_per_bone": 9,
+            "confirmed_max_error_radians": 0.0022441744804382324,
+            "confirmed_comparisons": 263720,
+            "one_fewer_max_error_radians": 0.0036724060773849487
+          },
+          "feather2": {
+            "fewest_keys_per_bone": 9,
+            "confirmed_max_error_radians": 0.0022441744804382324,
+            "confirmed_comparisons": 263720,
+            "one_fewer_max_error_radians": 0.0036724060773849487
+          },
+          "feather3": {
+            "fewest_keys_per_bone": 9,
+            "confirmed_max_error_radians": 0.0022441744804382324,
+            "confirmed_comparisons": 263720,
+            "one_fewer_max_error_radians": 0.003672391176223755
+          }
+        },
+        "density_search_schedule": {
+          "rule": "the fewest keys per bone (both ends included, uniform in time, the cosine sampled exactly at the keys, full amplitude) whose max |candidate - classic| over the search schedule at amplitude 1 holds the tolerance; confirmed on the full schedule at every amplitude with one key fewer failing",
+          "min_keys": 3,
+          "max_keys": 97,
+          "search_uniform_intervals": 4096,
+          "confirm_uniform_intervals": 65536,
+          "late_start_age_ticks": 137.371,
+          "span_age_ticks": 40.5
+        },
+        "clip_full_schedule": {
+          "feather1": {
+            "max_error_radians": 0.0022441744804382324,
+            "holds_tolerance": true,
+            "comparisons": 263720,
+            "worst_age_ticks": 137.5508324584961,
+            "worst_amplitude": 0.0,
+            "worst_bone": "feather1"
+          },
+          "feather2": {
+            "max_error_radians": 0.0022441744804382324,
+            "holds_tolerance": true,
+            "comparisons": 263720,
+            "worst_age_ticks": 140.94725579833985,
+            "worst_amplitude": 0.0,
+            "worst_bone": "feather2"
+          },
+          "feather3": {
+            "max_error_radians": 0.0022441744804382324,
+            "holds_tolerance": true,
+            "comparisons": 263720,
+            "worst_age_ticks": 140.554837890625,
+            "worst_amplitude": 0.0,
+            "worst_bone": "feather3"
+          },
+          "tail": {
+            "max_error_radians": 0.0019440948963165283,
+            "holds_tolerance": true,
+            "comparisons": 791160,
+            "worst_age_ticks": 138.96168298339845,
+            "worst_amplitude": 0.0,
+            "worst_bone": "tailfeather1"
+          },
+          "wings": {
+            "max_error_radians": 0.0021088123321533203,
+            "holds_tolerance": true,
+            "comparisons": 1054880,
+            "worst_age_ticks": 145.71497888183595,
+            "worst_amplitude": 0.0,
+            "worst_bone": "lwing1"
+          }
+        },
+        "wrap_sample": {
+          "wings": {
+            "probe_bone": "lwing1",
+            "natural_period_age_ticks": 4.1887902047863905,
+            "epsilon_age_ticks": 0.00025566346464760684,
+            "epsilon_lut_indices": 4,
+            "seams_sampled": 10,
+            "min_lut_index_before_seam": 65531,
+            "max_lut_index_after_seam": 4,
+            "max_abs_T_minus_eps_vs_0_plus_eps_radians": 0.0,
+            "max_error_vs_classic_before_radians": 1.1920928955078125e-07,
+            "max_error_vs_classic_at_seam_radians": 0.0,
+            "max_error_vs_classic_after_radians": 1.1920928955078125e-07,
+            "holds_tolerance": true
+          },
+          "tail": {
+            "probe_bone": "tailfeather1",
+            "natural_period_age_ticks": 20.943950191694146,
+            "epsilon_age_ticks": 0.0012783172724422697,
+            "epsilon_lut_indices": 4,
+            "seams_sampled": 2,
+            "min_lut_index_before_seam": 65531,
+            "max_lut_index_after_seam": 4,
+            "max_abs_T_minus_eps_vs_0_plus_eps_radians": 0.0,
+            "max_error_vs_classic_before_radians": 0.0,
+            "max_error_vs_classic_at_seam_radians": 0.0,
+            "max_error_vs_classic_after_radians": 0.0,
+            "holds_tolerance": true
+          },
+          "feather1": {
+            "probe_bone": "feather1",
+            "natural_period_age_ticks": 5.711986519086559,
+            "epsilon_age_ticks": 0.00034863198969034174,
+            "epsilon_lut_indices": 4,
+            "seams_sampled": 7,
+            "min_lut_index_before_seam": 65531,
+            "max_lut_index_after_seam": 4,
+            "max_abs_T_minus_eps_vs_0_plus_eps_radians": 2.9802322387695312e-08,
+            "max_error_vs_classic_before_radians": 2.9802322387695312e-08,
+            "max_error_vs_classic_at_seam_radians": 0.0,
+            "max_error_vs_classic_after_radians": 2.9802322387695312e-08,
+            "holds_tolerance": true
+          },
+          "feather2": {
+            "probe_bone": "feather2",
+            "natural_period_age_ticks": 5.2359875479235365,
+            "epsilon_age_ticks": 0.0003195793181105674,
+            "epsilon_lut_indices": 4,
+            "seams_sampled": 7,
+            "min_lut_index_before_seam": 65531,
+            "max_lut_index_after_seam": 4,
+            "max_abs_T_minus_eps_vs_0_plus_eps_radians": 2.9802322387695312e-08,
+            "max_error_vs_classic_before_radians": 2.9802322387695312e-08,
+            "max_error_vs_classic_at_seam_radians": 0.0,
+            "max_error_vs_classic_after_radians": 2.9802322387695312e-08,
+            "holds_tolerance": true
+          },
+          "feather3": {
+            "probe_bone": "feather3",
+            "natural_period_age_ticks": 4.83321964434266,
+            "epsilon_age_ticks": 0.00029499631618302367,
+            "epsilon_lut_indices": 4,
+            "seams_sampled": 8,
+            "min_lut_index_before_seam": 65531,
+            "max_lut_index_after_seam": 4,
+            "max_abs_T_minus_eps_vs_0_plus_eps_radians": 2.9802322387695312e-08,
+            "max_error_vs_classic_before_radians": 2.9802322387695312e-08,
+            "max_error_vs_classic_at_seam_radians": 0.0,
+            "max_error_vs_classic_after_radians": 2.9802322387695312e-08,
+            "holds_tolerance": true
+          }
+        },
+        "schedule_reversed_max_delta_radians": 0.0,
+        "late_prime_twin": {
+          "manager_built_before_clips_served": true,
+          "unserved_slot_age_ticks": 137.371,
+          "unserved_slot_ticked": false,
+          "unserved_slot_note": "an empty-cache tick cannot run headlessly: GeckoLib 4.8.4 AnimationProcessor.buildAnimationQueue catches the model's throw (GeoModel.getAnimation throws for a file the cache lacks) with GeckoLibConstants.LOGGER, whose class initialiser registers a data component (GeckoLibNeoForge.registerDataComponent -> BuiltInRegistries.<clinit> -> Bootstrap.checkBootstrapCalled; OPT-029 R0). Its in-game outcome, from the bytecode: buildAnimationQueue returns null (121-122, 156-162), setAnimation stops the controller with currentRawAnimation still null (62-63, 99-100), process leaves it STOPPED writing nothing (68-99), and the next served tick runs primeFirstFrame in full - the prime executed here",
+          "prime_age_ticks": 138.371,
+          "unserved_bone_motion_radians": 0.0,
+          "prime": {
+            "wings": {
+              "declared_clip_ticks": 20.0,
+              "clip_ticks_per_age_tick": 4.7746482927568605,
+              "last_cosine_index": 2204,
+              "last_clip_tick": 0.672607421875
+            },
+            "tail": {
+              "declared_clip_ticks": 20.0,
+              "clip_ticks_per_age_tick": 0.9549296964968674,
+              "last_cosine_index": 39762,
+              "last_clip_tick": 12.1343994140625
+            },
+            "feather1": {
+              "declared_clip_ticks": 20.0,
+              "clip_ticks_per_age_tick": 3.5014088239126884,
+              "last_cosine_index": 14724,
+              "last_clip_tick": 4.493408203125
+            },
+            "feather2": {
+              "declared_clip_ticks": 20.0,
+              "clip_ticks_per_age_tick": 3.8197187859874697,
+              "last_cosine_index": 27978,
+              "last_clip_tick": 8.5382080078125
+            },
+            "feather3": {
+              "declared_clip_ticks": 20.0,
+              "clip_ticks_per_age_tick": 4.138028368607297,
+              "last_cosine_index": 41232,
+              "last_clip_tick": 12.5830078125
+            }
+          },
+          "prime_pose_max_delta_vs_from_zero_radians": 0.0,
+          "follow_up_pose_max_delta_vs_from_zero_radians": 0.0,
+          "holds": true
+        }
+      },
+      "visual": {
+        "status": "PASS",
+        "image_size": [
+          256,
+          256
+        ],
+        "camera": {
+          "yaw_degrees": 34.0,
+          "pitch_degrees": -28.0
+        },
+        "channel_tolerance": 2,
+        "changed_fraction_threshold": 0.001,
+        "mean_absolute_error_threshold": 0.25,
+        "minimum_foreground_fraction_threshold": 0.001,
+        "max_changed_fraction": 0.0,
+        "max_mean_absolute_error": 0.0,
+        "z_fight_policy": "pixels where two different quads meet the front within 1e-06 depth with different texels are counted as a diagnostic only; every pixel is compared, the draw order being contracted equal on both sides (G2 root-order contract, landed 2026-09-06)",
+        "contested_exclusion_applied": false,
+        "max_contested_fraction": 0.0,
+        "cutout_alpha_threshold": 0.1,
+        "minimum_observed_foreground_fraction": 1.0,
+        "samples": [
+          {
+            "sample": "bind",
+            "camera": null,
+            "changed_fraction": 0.0,
+            "mean_absolute_error": 0.0,
+            "contested_fraction": 0.0,
+            "contested_excluded": false,
+            "vanilla_foreground_fraction": 0.2480621337890625,
+            "geo_foreground_fraction": 0.2480621337890625,
+            "vanilla_capture": "visual/model_cockateil/bind.vanilla.png",
+            "geo_capture": "visual/model_cockateil/bind.geo.png",
+            "diff_capture": "visual/model_cockateil/bind.diff.png"
+          },
+          {
+            "sample": "t0",
+            "camera": null,
+            "changed_fraction": 0.0,
+            "mean_absolute_error": 0.0,
+            "contested_fraction": 0.0,
+            "contested_excluded": false,
+            "vanilla_foreground_fraction": 0.192779541015625,
+            "geo_foreground_fraction": 0.192779541015625,
+            "vanilla_capture": "visual/model_cockateil/t0.vanilla.png",
+            "geo_capture": "visual/model_cockateil/t0.geo.png",
+            "diff_capture": "visual/model_cockateil/t0.diff.png"
+          },
+          {
+            "sample": "t_quarter",
+            "camera": null,
+            "changed_fraction": 0.0,
+            "mean_absolute_error": 0.0,
+            "contested_fraction": 0.0,
+            "contested_excluded": false,
+            "vanilla_foreground_fraction": 0.2465972900390625,
+            "geo_foreground_fraction": 0.2465972900390625,
+            "vanilla_capture": "visual/model_cockateil/t_quarter.vanilla.png",
+            "geo_capture": "visual/model_cockateil/t_quarter.geo.png",
+            "diff_capture": "visual/model_cockateil/t_quarter.diff.png"
+          },
+          {
+            "sample": "t_half",
+            "camera": null,
+            "changed_fraction": 0.0,
+            "mean_absolute_error": 0.0,
+            "contested_fraction": 0.0,
+            "contested_excluded": false,
+            "vanilla_foreground_fraction": 0.257080078125,
+            "geo_foreground_fraction": 0.257080078125,
+            "vanilla_capture": "visual/model_cockateil/t_half.vanilla.png",
+            "geo_capture": "visual/model_cockateil/t_half.geo.png",
+            "diff_capture": "visual/model_cockateil/t_half.diff.png"
+          },
+          {
+            "sample": "t_three_quarter",
+            "camera": null,
+            "changed_fraction": 0.0,
+            "mean_absolute_error": 0.0,
+            "contested_fraction": 0.0,
+            "contested_excluded": false,
+            "vanilla_foreground_fraction": 0.246612548828125,
+            "geo_foreground_fraction": 0.246612548828125,
+            "vanilla_capture": "visual/model_cockateil/t_three_quarter.vanilla.png",
+            "geo_capture": "visual/model_cockateil/t_three_quarter.geo.png",
+            "diff_capture": "visual/model_cockateil/t_three_quarter.diff.png"
+          }
+        ]
+      }
+    },
+    {
+      "model_id": "model_ruby_bird",
+      "tier": 2,
+      "proof_scope": "production_proof_model",
+      "source_class": "danger.orespawn.entity.client.ModelCockateil",
+      "source_class_sha256": "d3b77c279ad289d722a0caa84ac6c2c2ac6bd109aad62ceb0f13a4766a6514ad",
+      "compiled_dump_sha256": "f08a5cf59d90ad6373d01e99901b4d859d846bd4f9a695e6d80f5c21b3944932",
+      "bone_count": 16,
+      "cube_count": 16,
+      "geometry_sha256": "6d346071c2da4f87408d30e5905696c5b73fa6ecfcf481200581ab08e015daf4",
+      "animation_sha256": "7882082857fdb11e02f158ebc3a6d3f970e2ac60d54813f0e903ee97b2293749",
+      "animation_contract_sha256": "59771856942bef696398f007a757b8c2639471628e5cbb20b57760b288c17652",
+      "geometry": {
+        "status": "PASS",
+        "epsilon_blocks": 1e-05,
+        "max_corner_delta_blocks": 2.0396078067586136e-07,
+        "worst_case": "t_half:tailfeather2#0",
+        "sample_count": 6,
+        "cube_sample_count": 96
+      },
+      "surface_mapping": {
+        "status": "PASS",
+        "position_epsilon_blocks": 1e-05,
+        "normal_epsilon": 1e-06,
+        "uv_epsilon_normalized": 1e-07,
+        "max_position_delta_blocks": 2.0396078067586136e-07,
+        "max_normal_delta": 1.1661903786408315e-07,
+        "max_uv_delta_normalized": 0.0,
+        "vertex_samples": 2304,
+        "ignored_zero_area_faces": 0,
+        "worst_case": "t_half:tailfeather2#0",
+        "evidence": "position/normal/UV tuples from baked ModelPart.Cube.compile versus pinned GeckoLib BakedModelFactory rendered through GeoRenderer; faces of exactly zero area are excluded (ruling 2026-09-02)"
+      },
+      "animation": {
+        "status": "PASS",
+        "epsilon_radians": 2e-06,
+        "accepted_pose_comparison": "compiled setupAnim versus actual fresh-baked GeckoLib candidate",
+        "reference_animation_used_for_acceptance": false,
+        "sample_count": 104,
+        "max_rotation_delta_radians": 0.0,
+        "max_dense_rotation_delta_radians": 0.0,
+        "max_unexpected_position_or_scale_delta": 0.0,
+        "worst_case": "exact",
+        "dense_worst_case": "exact",
+        "rotation_channel_samples": 4992,
+        "dense_rotation_channel_samples": 0,
+        "contract": {
+          "kind": "code_driven",
+          "accepted_runtime_path": "production OreSpawnGeoReplacement.applyCustomAnimations through OreSpawnGeoReplacementModel.setCustomAnimations",
+          "candidate_class": "danger.orespawn.entity.client.RubyBirdGeoReplacement",
+          "inputs": {
+            "limb_swing": 0.0,
+            "limb_swing_amounts": [
+              0.0
+            ],
+            "net_head_yaw_degrees": 0.0,
+            "head_pitch_degrees": 0.0
+          },
+          "max_position_delta_model_units": 0.0,
+          "position_epsilon_model_units": 0.0001,
+          "position_worst_case": "exact",
+          "position_channel_samples": 4992,
+          "hidden_bone_checks": 103
+        }
+      },
+      "reference_animation": {
+        "status": "SCHEMA_VALID_REFERENCE_ONLY",
+        "role": "NOT_APPLICABLE_CODE_DRIVEN_MODEL",
+        "clip_count": 0,
+        "constant_vector_count": 0,
+        "runtime_acceptance": false
+      },
+      "draw_order": {
+        "status": "PASS",
+        "bone_draw_order": [
+          "Body",
+          "Head",
+          "Beak",
+          "LowerBeak",
+          "feather2",
+          "feather1",
+          "feather3",
+          "tailfeather1",
+          "rwing1",
+          "lwing1",
+          "leg",
+          "otherleg",
+          "lwing2",
+          "rwing2",
+          "tailfeather2",
+          "tailfeather3"
+        ],
+        "captures_checked": 6,
+        "draws_checked": 96,
+        "classic_source": "classic EntityModel.renderToBuffer on a second bake posed identically; every ModelPart.render is one pose-stack push, attributed to its part by ModelPart.skipDraw elimination (one run per cube-bearing part with every other part's skipDraw set); a part drawn n > 1 times is named <part>__i<k> by draw ordinal",
+        "unobserved_units": [],
+        "policy": "the shipped model sorts GeckoLib's topLevelBones / childBones lists into the classic renderToBuffer order (DrawOrder.apply); both renderers traverse in pre-order, so equal sibling orders are equal draw orders"
+      },
+      "keyframe_reference_leg": {
+        "tolerance_radians": 0.0025,
+        "statement": "2.5e-3 rad; Ruby Bird reference leg 14 / 10 / 9 / 9 / 9 catmullrom keys per bone with spline arguments repaired at load; wrap sample T−ε vs 0+ε included",
+        "candidate_class": "danger.orespawn.entity.client.RubyBirdGeoReplacement",
+        "controller_class": "danger.orespawn.entity.client.animation.PhaseLockedKeyframeController",
+        "spline_repair": true,
+        "spline_repair_class": "danger.orespawn.entity.client.animation.SplineRepair",
+        "clip_sha256": "238f28f6f6604824836b8ace6c8ada5c1a855f8e2c1f88053efbb2fe32b04ff1",
+        "clip_path": "src/main/resources/assets/orespawn/animations/entity/cockateil.animation.json",
+        "pose_source": "persistent BakedGeoModel + production KeyframeLayer.controller (PhaseLockedKeyframeController) x 5 through AnimationProcessor.tickAnimation on explicit inputs",
+        "layers": [
+          {
+            "group": "wings",
+            "clip": "walk_wings",
+            "controller": "keyframe:walk_wings",
+            "frequency_radians_per_age_tick": 1.5,
+            "bones": [
+              "lwing1",
+              "lwing2",
+              "rwing1",
+              "rwing2"
+            ],
+            "gait_scaled": false,
+            "additive": false
+          },
+          {
+            "group": "tail",
+            "clip": "walk_tail",
+            "controller": "keyframe:walk_tail",
+            "frequency_radians_per_age_tick": 0.3,
+            "bones": [
+              "tailfeather1",
+              "tailfeather2",
+              "tailfeather3"
+            ],
+            "gait_scaled": false,
+            "additive": false
+          },
+          {
+            "group": "feather1",
+            "clip": "walk_feather1",
+            "controller": "keyframe:walk_feather1",
+            "frequency_radians_per_age_tick": 1.1,
+            "bones": [
+              "feather1"
+            ],
+            "gait_scaled": false,
+            "additive": false
+          },
+          {
+            "group": "feather2",
+            "clip": "walk_feather2",
+            "controller": "keyframe:walk_feather2",
+            "frequency_radians_per_age_tick": 1.2,
+            "bones": [
+              "feather2"
+            ],
+            "gait_scaled": false,
+            "additive": false
+          },
+          {
+            "group": "feather3",
+            "clip": "walk_feather3",
+            "controller": "keyframe:walk_feather3",
+            "frequency_radians_per_age_tick": 1.3,
+            "bones": [
+              "feather3"
+            ],
+            "gait_scaled": false,
+            "additive": false
+          }
+        ],
+        "clip": {
+          "wings": {
+            "clip": "walk_wings",
+            "keys_per_bone": 14,
+            "lerp_mode": "catmullrom",
+            "spline_arguments": "spline arguments repaired at load",
+            "declared_length_ticks": 20.0,
+            "bones": [
+              "lwing1",
+              "lwing2",
+              "rwing1",
+              "rwing2"
+            ]
+          },
+          "tail": {
+            "clip": "walk_tail",
+            "keys_per_bone": 10,
+            "lerp_mode": "catmullrom",
+            "spline_arguments": "spline arguments repaired at load",
+            "declared_length_ticks": 20.0,
+            "bones": [
+              "tailfeather1",
+              "tailfeather2",
+              "tailfeather3"
+            ]
+          },
+          "feather1": {
+            "clip": "walk_feather1",
+            "keys_per_bone": 9,
+            "lerp_mode": "catmullrom",
+            "spline_arguments": "spline arguments repaired at load",
+            "declared_length_ticks": 20.0,
+            "bones": [
+              "feather1"
+            ]
+          },
+          "feather2": {
+            "clip": "walk_feather2",
+            "keys_per_bone": 9,
+            "lerp_mode": "catmullrom",
+            "spline_arguments": "spline arguments repaired at load",
+            "declared_length_ticks": 20.0,
+            "bones": [
+              "feather2"
+            ]
+          },
+          "feather3": {
+            "clip": "walk_feather3",
+            "keys_per_bone": 9,
+            "lerp_mode": "catmullrom",
+            "spline_arguments": "spline arguments repaired at load",
+            "declared_length_ticks": 20.0,
+            "bones": [
+              "feather3"
+            ]
+          }
+        },
+        "time_warp": {
+          "wings": {
+            "declared_clip_ticks": 20.0,
+            "natural_period_age_ticks": 4.1887902047863905,
+            "clip_ticks_per_age_tick": 4.7746482927568605
+          },
+          "tail": {
+            "declared_clip_ticks": 20.0,
+            "natural_period_age_ticks": 20.943950191694146,
+            "clip_ticks_per_age_tick": 0.9549296964968674
+          },
+          "feather1": {
+            "declared_clip_ticks": 20.0,
+            "natural_period_age_ticks": 5.711986519086559,
+            "clip_ticks_per_age_tick": 3.5014088239126884
+          },
+          "feather2": {
+            "declared_clip_ticks": 20.0,
+            "natural_period_age_ticks": 5.2359875479235365,
+            "clip_ticks_per_age_tick": 3.8197187859874697
+          },
+          "feather3": {
+            "declared_clip_ticks": 20.0,
+            "natural_period_age_ticks": 4.83321964434266,
+            "clip_ticks_per_age_tick": 4.138028368607297
+          }
+        },
+        "sample_grid": {
+          "layer_bone_samples_compared": 1030,
+          "max_error_radians_by_group": {
+            "wings": 0.0019694999999999574,
+            "tail": 0.0019409200000000126,
+            "feather1": 0.0022394200000000197,
+            "feather2": 0.002229480000000006,
+            "feather3": 0.0022394999999999776
+          },
+          "worst_case_by_group": {
+            "wings": "a0_kfwrap_w1_2_c5_before:lwing1",
+            "tail": "a0_kfwrap_w1_1_c6_before:tailfeather1",
+            "feather1": "a0_kfwrap_w1_2_c5_before:feather1",
+            "feather2": "a0_kfwrap_w1_3_c1_before:feather2",
+            "feather3": "a0_kfwrap_w1_2_c1_before:feather3"
+          },
+          "max_non_layer_bone_motion_radians": 0.0
+        },
+        "wrap_pairs": {
+          "count": 49,
+          "max_abs_T_minus_eps_vs_0_plus_eps_radians": 1.1999999999234845e-07
+        },
+        "density_search": {
+          "wings": {
+            "fewest_keys_per_bone": 14,
+            "confirmed_max_error_radians": 0.0021088123321533203,
+            "confirmed_comparisons": 1054880,
+            "one_fewer_max_error_radians": 0.0026491880416870117
+          },
+          "tail": {
+            "fewest_keys_per_bone": 10,
+            "confirmed_max_error_radians": 0.0019440948963165283,
+            "confirmed_comparisons": 791160,
+            "one_fewer_max_error_radians": 0.0028052330017089844
+          },
+          "feather1": {
+            "fewest_keys_per_bone": 9,
+            "confirmed_max_error_radians": 0.0022441744804382324,
+            "confirmed_comparisons": 263720,
+            "one_fewer_max_error_radians": 0.0036724060773849487
+          },
+          "feather2": {
+            "fewest_keys_per_bone": 9,
+            "confirmed_max_error_radians": 0.0022441744804382324,
+            "confirmed_comparisons": 263720,
+            "one_fewer_max_error_radians": 0.0036724060773849487
+          },
+          "feather3": {
+            "fewest_keys_per_bone": 9,
+            "confirmed_max_error_radians": 0.0022441744804382324,
+            "confirmed_comparisons": 263720,
+            "one_fewer_max_error_radians": 0.003672391176223755
+          }
+        },
+        "density_search_schedule": {
+          "rule": "the fewest keys per bone (both ends included, uniform in time, the cosine sampled exactly at the keys, full amplitude) whose max |candidate - classic| over the search schedule at amplitude 1 holds the tolerance; confirmed on the full schedule at every amplitude with one key fewer failing",
+          "min_keys": 3,
+          "max_keys": 97,
+          "search_uniform_intervals": 4096,
+          "confirm_uniform_intervals": 65536,
+          "late_start_age_ticks": 137.371,
+          "span_age_ticks": 40.5
+        },
+        "clip_full_schedule": {
+          "feather1": {
+            "max_error_radians": 0.0022441744804382324,
+            "holds_tolerance": true,
+            "comparisons": 263720,
+            "worst_age_ticks": 137.5508324584961,
+            "worst_amplitude": 0.0,
+            "worst_bone": "feather1"
+          },
+          "feather2": {
+            "max_error_radians": 0.0022441744804382324,
+            "holds_tolerance": true,
+            "comparisons": 263720,
+            "worst_age_ticks": 140.94725579833985,
+            "worst_amplitude": 0.0,
+            "worst_bone": "feather2"
+          },
+          "feather3": {
+            "max_error_radians": 0.0022441744804382324,
+            "holds_tolerance": true,
+            "comparisons": 263720,
+            "worst_age_ticks": 140.554837890625,
+            "worst_amplitude": 0.0,
+            "worst_bone": "feather3"
+          },
+          "tail": {
+            "max_error_radians": 0.0019440948963165283,
+            "holds_tolerance": true,
+            "comparisons": 791160,
+            "worst_age_ticks": 138.96168298339845,
+            "worst_amplitude": 0.0,
+            "worst_bone": "tailfeather1"
+          },
+          "wings": {
+            "max_error_radians": 0.0021088123321533203,
+            "holds_tolerance": true,
+            "comparisons": 1054880,
+            "worst_age_ticks": 145.71497888183595,
+            "worst_amplitude": 0.0,
+            "worst_bone": "lwing1"
+          }
+        },
+        "wrap_sample": {
+          "wings": {
+            "probe_bone": "lwing1",
+            "natural_period_age_ticks": 4.1887902047863905,
+            "epsilon_age_ticks": 0.00025566346464760684,
+            "epsilon_lut_indices": 4,
+            "seams_sampled": 10,
+            "min_lut_index_before_seam": 65531,
+            "max_lut_index_after_seam": 4,
+            "max_abs_T_minus_eps_vs_0_plus_eps_radians": 0.0,
+            "max_error_vs_classic_before_radians": 1.1920928955078125e-07,
+            "max_error_vs_classic_at_seam_radians": 0.0,
+            "max_error_vs_classic_after_radians": 1.1920928955078125e-07,
+            "holds_tolerance": true
+          },
+          "tail": {
+            "probe_bone": "tailfeather1",
+            "natural_period_age_ticks": 20.943950191694146,
+            "epsilon_age_ticks": 0.0012783172724422697,
+            "epsilon_lut_indices": 4,
+            "seams_sampled": 2,
+            "min_lut_index_before_seam": 65531,
+            "max_lut_index_after_seam": 4,
+            "max_abs_T_minus_eps_vs_0_plus_eps_radians": 0.0,
+            "max_error_vs_classic_before_radians": 0.0,
+            "max_error_vs_classic_at_seam_radians": 0.0,
+            "max_error_vs_classic_after_radians": 0.0,
+            "holds_tolerance": true
+          },
+          "feather1": {
+            "probe_bone": "feather1",
+            "natural_period_age_ticks": 5.711986519086559,
+            "epsilon_age_ticks": 0.00034863198969034174,
+            "epsilon_lut_indices": 4,
+            "seams_sampled": 7,
+            "min_lut_index_before_seam": 65531,
+            "max_lut_index_after_seam": 4,
+            "max_abs_T_minus_eps_vs_0_plus_eps_radians": 2.9802322387695312e-08,
+            "max_error_vs_classic_before_radians": 2.9802322387695312e-08,
+            "max_error_vs_classic_at_seam_radians": 0.0,
+            "max_error_vs_classic_after_radians": 2.9802322387695312e-08,
+            "holds_tolerance": true
+          },
+          "feather2": {
+            "probe_bone": "feather2",
+            "natural_period_age_ticks": 5.2359875479235365,
+            "epsilon_age_ticks": 0.0003195793181105674,
+            "epsilon_lut_indices": 4,
+            "seams_sampled": 7,
+            "min_lut_index_before_seam": 65531,
+            "max_lut_index_after_seam": 4,
+            "max_abs_T_minus_eps_vs_0_plus_eps_radians": 2.9802322387695312e-08,
+            "max_error_vs_classic_before_radians": 2.9802322387695312e-08,
+            "max_error_vs_classic_at_seam_radians": 0.0,
+            "max_error_vs_classic_after_radians": 2.9802322387695312e-08,
+            "holds_tolerance": true
+          },
+          "feather3": {
+            "probe_bone": "feather3",
+            "natural_period_age_ticks": 4.83321964434266,
+            "epsilon_age_ticks": 0.00029499631618302367,
+            "epsilon_lut_indices": 4,
+            "seams_sampled": 8,
+            "min_lut_index_before_seam": 65531,
+            "max_lut_index_after_seam": 4,
+            "max_abs_T_minus_eps_vs_0_plus_eps_radians": 2.9802322387695312e-08,
+            "max_error_vs_classic_before_radians": 2.9802322387695312e-08,
+            "max_error_vs_classic_at_seam_radians": 0.0,
+            "max_error_vs_classic_after_radians": 2.9802322387695312e-08,
+            "holds_tolerance": true
+          }
+        },
+        "schedule_reversed_max_delta_radians": 0.0,
+        "late_prime_twin": {
+          "manager_built_before_clips_served": true,
+          "unserved_slot_age_ticks": 137.371,
+          "unserved_slot_ticked": false,
+          "unserved_slot_note": "an empty-cache tick cannot run headlessly: GeckoLib 4.8.4 AnimationProcessor.buildAnimationQueue catches the model's throw (GeoModel.getAnimation throws for a file the cache lacks) with GeckoLibConstants.LOGGER, whose class initialiser registers a data component (GeckoLibNeoForge.registerDataComponent -> BuiltInRegistries.<clinit> -> Bootstrap.checkBootstrapCalled; OPT-029 R0). Its in-game outcome, from the bytecode: buildAnimationQueue returns null (121-122, 156-162), setAnimation stops the controller with currentRawAnimation still null (62-63, 99-100), process leaves it STOPPED writing nothing (68-99), and the next served tick runs primeFirstFrame in full - the prime executed here",
+          "prime_age_ticks": 138.371,
+          "unserved_bone_motion_radians": 0.0,
+          "prime": {
+            "wings": {
+              "declared_clip_ticks": 20.0,
+              "clip_ticks_per_age_tick": 4.7746482927568605,
+              "last_cosine_index": 2204,
+              "last_clip_tick": 0.672607421875
+            },
+            "tail": {
+              "declared_clip_ticks": 20.0,
+              "clip_ticks_per_age_tick": 0.9549296964968674,
+              "last_cosine_index": 39762,
+              "last_clip_tick": 12.1343994140625
+            },
+            "feather1": {
+              "declared_clip_ticks": 20.0,
+              "clip_ticks_per_age_tick": 3.5014088239126884,
+              "last_cosine_index": 14724,
+              "last_clip_tick": 4.493408203125
+            },
+            "feather2": {
+              "declared_clip_ticks": 20.0,
+              "clip_ticks_per_age_tick": 3.8197187859874697,
+              "last_cosine_index": 27978,
+              "last_clip_tick": 8.5382080078125
+            },
+            "feather3": {
+              "declared_clip_ticks": 20.0,
+              "clip_ticks_per_age_tick": 4.138028368607297,
+              "last_cosine_index": 41232,
+              "last_clip_tick": 12.5830078125
+            }
+          },
+          "prime_pose_max_delta_vs_from_zero_radians": 0.0,
+          "follow_up_pose_max_delta_vs_from_zero_radians": 0.0,
+          "holds": true
+        }
+      },
+      "visual": {
+        "status": "PASS",
+        "image_size": [
+          256,
+          256
+        ],
+        "camera": {
+          "yaw_degrees": 34.0,
+          "pitch_degrees": -28.0
+        },
+        "channel_tolerance": 2,
+        "changed_fraction_threshold": 0.001,
+        "mean_absolute_error_threshold": 0.25,
+        "minimum_foreground_fraction_threshold": 0.001,
+        "max_changed_fraction": 0.0,
+        "max_mean_absolute_error": 0.0,
+        "z_fight_policy": "pixels where two different quads meet the front within 1e-06 depth with different texels are counted as a diagnostic only; every pixel is compared, the draw order being contracted equal on both sides (G2 root-order contract, landed 2026-09-06)",
+        "contested_exclusion_applied": false,
+        "max_contested_fraction": 0.0,
+        "cutout_alpha_threshold": 0.1,
+        "minimum_observed_foreground_fraction": 1.0,
+        "samples": [
+          {
+            "sample": "bind",
+            "camera": null,
+            "changed_fraction": 0.0,
+            "mean_absolute_error": 0.0,
+            "contested_fraction": 0.0,
+            "contested_excluded": false,
+            "vanilla_foreground_fraction": 0.2480621337890625,
+            "geo_foreground_fraction": 0.2480621337890625,
+            "vanilla_capture": "visual/model_ruby_bird/bind.vanilla.png",
+            "geo_capture": "visual/model_ruby_bird/bind.geo.png",
+            "diff_capture": "visual/model_ruby_bird/bind.diff.png"
+          },
+          {
+            "sample": "t0",
+            "camera": null,
+            "changed_fraction": 0.0,
+            "mean_absolute_error": 0.0,
+            "contested_fraction": 0.0,
+            "contested_excluded": false,
+            "vanilla_foreground_fraction": 0.192779541015625,
+            "geo_foreground_fraction": 0.192779541015625,
+            "vanilla_capture": "visual/model_ruby_bird/t0.vanilla.png",
+            "geo_capture": "visual/model_ruby_bird/t0.geo.png",
+            "diff_capture": "visual/model_ruby_bird/t0.diff.png"
+          },
+          {
+            "sample": "t_quarter",
+            "camera": null,
+            "changed_fraction": 0.0,
+            "mean_absolute_error": 0.0,
+            "contested_fraction": 0.0,
+            "contested_excluded": false,
+            "vanilla_foreground_fraction": 0.2465972900390625,
+            "geo_foreground_fraction": 0.2465972900390625,
+            "vanilla_capture": "visual/model_ruby_bird/t_quarter.vanilla.png",
+            "geo_capture": "visual/model_ruby_bird/t_quarter.geo.png",
+            "diff_capture": "visual/model_ruby_bird/t_quarter.diff.png"
+          },
+          {
+            "sample": "t_half",
+            "camera": null,
+            "changed_fraction": 0.0,
+            "mean_absolute_error": 0.0,
+            "contested_fraction": 0.0,
+            "contested_excluded": false,
+            "vanilla_foreground_fraction": 0.257080078125,
+            "geo_foreground_fraction": 0.257080078125,
+            "vanilla_capture": "visual/model_ruby_bird/t_half.vanilla.png",
+            "geo_capture": "visual/model_ruby_bird/t_half.geo.png",
+            "diff_capture": "visual/model_ruby_bird/t_half.diff.png"
+          },
+          {
+            "sample": "t_three_quarter",
+            "camera": null,
+            "changed_fraction": 0.0,
+            "mean_absolute_error": 0.0,
+            "contested_fraction": 0.0,
+            "contested_excluded": false,
+            "vanilla_foreground_fraction": 0.246612548828125,
+            "geo_foreground_fraction": 0.246612548828125,
+            "vanilla_capture": "visual/model_ruby_bird/t_three_quarter.vanilla.png",
+            "geo_capture": "visual/model_ruby_bird/t_three_quarter.geo.png",
+            "diff_capture": "visual/model_ruby_bird/t_three_quarter.diff.png"
+          }
+        ]
+      }
+    }
+  ],
+  "fixtures": [],
+  "deterministic_text_outputs": {
+    "status": "PASS",
+    "line_ending": "LF",
+    "file_count": 52,
+    "files": [
+      "model_tshirt.compiled.json",
+      "model_tshirt.geo-render.json",
+      "model_tshirt.geo.json",
+      "model_tshirt.animation.json",
+      "model_tshirt.animation-contract.json",
+      "model_tshirt.conversion.json",
+      "tshirt.animation.json",
+      "model_tshirt.reference-geometry.json",
+      "model_mosquito.compiled.json",
+      "model_mosquito.geo-render.json",
+      "model_mosquito.geo.json",
+      "model_mosquito.animation.json",
+      "model_mosquito.animation-contract.json",
+      "model_mosquito.conversion.json",
+      "mosquito.animation.json",
+      "model_mosquito.reference-geometry.json",
+      "model_cliffracer.compiled.json",
+      "model_cliffracer.geo-render.json",
+      "model_cliffracer.geo.json",
+      "model_cliffracer.animation.json",
+      "model_cliffracer.animation-contract.json",
+      "model_cliffracer.conversion.json",
+      "cliffracer.animation.json",
+      "model_cliffracer.reference-geometry.json",
+      "model_brutalfly.compiled.json",
+      "model_brutalfly.geo-render.json",
+      "model_brutalfly.geo.json",
+      "model_brutalfly.animation.json",
+      "model_brutalfly.animation-contract.json",
+      "model_brutalfly.conversion.json",
+      "brutalfly.animation.json",
+      "model_dragonfly.compiled.json",
+      "model_dragonfly.geo-render.json",
+      "model_dragonfly.geo.json",
+      "model_dragonfly.animation.json",
+      "model_dragonfly.animation-contract.json",
+      "model_dragonfly.conversion.json",
+      "dragonfly.animation.json",
+      "model_cockateil.compiled.json",
+      "model_cockateil.geo-render.json",
+      "model_cockateil.geo.json",
+      "model_cockateil.animation.json",
+      "model_cockateil.animation-contract.json",
+      "model_cockateil.conversion.json",
+      "cockateil.animation.json",
+      "model_ruby_bird.compiled.json",
+      "model_ruby_bird.geo-render.json",
+      "model_ruby_bird.geo.json",
+      "model_ruby_bird.animation.json",
+      "model_ruby_bird.animation-contract.json",
+      "model_ruby_bird.conversion.json",
+      "cockateil.animation.json"
+    ]
+  },
+  "visual_artifact_count": 105,
+  "visual_artifact_policy": "output cleared first; exact report-referenced PNG set only"
+}

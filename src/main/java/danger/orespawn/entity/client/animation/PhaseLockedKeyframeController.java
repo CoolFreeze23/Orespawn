@@ -24,8 +24,11 @@ import software.bernie.geckolib.model.GeoModel;
  * ADDENDA; scope addendum item 24 (5)-(14), 2026-09-06). What it does, in order:</p>
  * <ol>
  *   <li>computes the classic float phase exactly as the compiled {@code setupAnim} does -
- *       {@code (float) ageInTicks * omega * 1.0F}, float arithmetic left to right - and hands it
- *       to GeckoLib as the controller clock (ANIM-001: an entity first seen late must not restart
+ *       {@code (float) ageInTicks * omega * wingspeed}, float arithmetic left to right, where
+ *       {@code wingspeed} is the chain's second multiply (the Beaver's {@code ANIM_SPEED} 1.0F; a species'
+ *       {@code wingspeed} field, e.g. {@code ageInTicks * 1.3f * 0.2f} - never pre-multiplied into
+ *       {@code omega}, since {@code (age * 1.3f) * 0.2f} and {@code age * 0.26f} round differently) - and
+ *       hands it to GeckoLib as the controller clock (ANIM-001: an entity first seen late must not restart
  *       at phase zero, so the ordinary relative {@code tickOffset} clock is never used);</li>
  *   <li>primes itself straight into RUNNING on its first call, bypassing GeckoLib 4.8.4's
  *       zero-length TRANSITIONING bootstrap ({@code AnimationController.process} offsets 242-324
@@ -91,6 +94,8 @@ public final class PhaseLockedKeyframeController<T extends GeoAnimatable>
     }
 
     private final float angularFrequencyRadiansPerSourceTick;
+    /** The classic chain's second multiply ({@code ageInTicks * omega * wingspeed}); 1.0F when the chain has none. */
+    private final float wingspeed;
     private final StateFloatFunction<T> sourceAgeTicks;
     private final Set<String> amplitudeScaledRotationBones;
     private final StateFloatFunction<T> rotationAmplitude;
@@ -104,6 +109,7 @@ public final class PhaseLockedKeyframeController<T extends GeoAnimatable>
             T animatable,
             String name,
             float angularFrequencyRadiansPerSourceTick,
+            float wingspeed,
             StateFloatFunction<T> sourceAgeTicks,
             Set<String> amplitudeScaledRotationBones,
             StateFloatFunction<T> rotationAmplitude,
@@ -111,28 +117,44 @@ public final class PhaseLockedKeyframeController<T extends GeoAnimatable>
             AnimationStateHandler<T> stateHandler) {
         super(animatable, name, 0, stateHandler);
         validateAngularFrequency(angularFrequencyRadiansPerSourceTick);
+        if (!Float.isFinite(wingspeed) || wingspeed <= 0.0F) {
+            throw new IllegalArgumentException("Wingspeed must be finite and positive");
+        }
         this.angularFrequencyRadiansPerSourceTick = angularFrequencyRadiansPerSourceTick;
+        this.wingspeed = wingspeed;
         this.sourceAgeTicks = sourceAgeTicks;
         this.amplitudeScaledRotationBones = Set.copyOf(amplitudeScaledRotationBones);
         this.rotationAmplitude = rotationAmplitude;
         this.additive = additive;
     }
 
-    /** A phase-locked controller whose authored channels stay unscaled and replace the bone (the salvaged shape). */
+    /** A phase-locked controller whose authored channels stay unscaled and replace the bone (the salvaged shape); the chain's second multiply is 1.0F. */
     public static <T extends GeoAnimatable> PhaseLockedKeyframeController<T> unscaled(
             T animatable,
             String name,
             float angularFrequencyRadiansPerSourceTick,
             StateFloatFunction<T> sourceAgeTicks,
             AnimationStateHandler<T> stateHandler) {
+        return unscaled(animatable, name, angularFrequencyRadiansPerSourceTick, 1.0F, sourceAgeTicks, stateHandler);
+    }
+
+    /** As {@link #unscaled(GeoAnimatable, String, float, StateFloatFunction, AnimationStateHandler)}, with the chain's second multiply ({@code wingspeed}). */
+    public static <T extends GeoAnimatable> PhaseLockedKeyframeController<T> unscaled(
+            T animatable,
+            String name,
+            float angularFrequencyRadiansPerSourceTick,
+            float wingspeed,
+            StateFloatFunction<T> sourceAgeTicks,
+            AnimationStateHandler<T> stateHandler) {
         return new PhaseLockedKeyframeController<>(
-                animatable, name, angularFrequencyRadiansPerSourceTick, sourceAgeTicks,
+                animatable, name, angularFrequencyRadiansPerSourceTick, wingspeed, sourceAgeTicks,
                 Set.of(), state -> 1.0F, false, stateHandler);
     }
 
     /**
      * A phase-locked controller that multiplies only the named bones' authored rotation channels by a
      * per-frame amplitude; {@code additive} selects the LAYERED composition (class javadoc, item 5).
+     * The chain's second multiply is 1.0F.
      */
     public static <T extends GeoAnimatable> PhaseLockedKeyframeController<T> amplitudeScaledRotations(
             T animatable,
@@ -143,11 +165,26 @@ public final class PhaseLockedKeyframeController<T extends GeoAnimatable>
             StateFloatFunction<T> rotationAmplitude,
             boolean additive,
             AnimationStateHandler<T> stateHandler) {
+        return amplitudeScaledRotations(animatable, name, angularFrequencyRadiansPerSourceTick, 1.0F, sourceAgeTicks,
+                amplitudeScaledRotationBones, rotationAmplitude, additive, stateHandler);
+    }
+
+    /** As the eight-argument form, with the chain's second multiply ({@code wingspeed}). */
+    public static <T extends GeoAnimatable> PhaseLockedKeyframeController<T> amplitudeScaledRotations(
+            T animatable,
+            String name,
+            float angularFrequencyRadiansPerSourceTick,
+            float wingspeed,
+            StateFloatFunction<T> sourceAgeTicks,
+            Set<String> amplitudeScaledRotationBones,
+            StateFloatFunction<T> rotationAmplitude,
+            boolean additive,
+            AnimationStateHandler<T> stateHandler) {
         if (amplitudeScaledRotationBones.isEmpty()) {
             throw new IllegalArgumentException("Amplitude-scaled controller requires at least one rotation bone");
         }
         return new PhaseLockedKeyframeController<>(
-                animatable, name, angularFrequencyRadiansPerSourceTick, sourceAgeTicks,
+                animatable, name, angularFrequencyRadiansPerSourceTick, wingspeed, sourceAgeTicks,
                 amplitudeScaledRotationBones, rotationAmplitude, additive, stateHandler);
     }
 
@@ -172,13 +209,19 @@ public final class PhaseLockedKeyframeController<T extends GeoAnimatable>
         return this.lastCosineIndex;
     }
 
-    /** The time-warp ratio: clip ticks advanced per source tick, {@code declaredClipTicks * omega / 2 pi}. */
+    /** The time-warp ratio: clip ticks advanced per source tick, {@code declaredClipTicks * omega * wingspeed / 2 pi}. */
     public double clipTicksPerSourceTick() {
-        return this.declaredClipTicks * this.angularFrequencyRadiansPerSourceTick / (2.0D * Math.PI);
+        return this.declaredClipTicks * ((double) this.angularFrequencyRadiansPerSourceTick * (double) this.wingspeed)
+                / (2.0D * Math.PI);
     }
 
     public float angularFrequencyRadiansPerSourceTick() {
         return this.angularFrequencyRadiansPerSourceTick;
+    }
+
+    /** The classic chain's second multiply; 1.0F when the chain has none. */
+    public float wingspeed() {
+        return this.wingspeed;
     }
 
     public Set<String> amplitudeScaledRotationBones() {
@@ -201,10 +244,19 @@ public final class PhaseLockedKeyframeController<T extends GeoAnimatable>
         return (classicSineIndex - CLASSIC_COSINE_QUARTER_TURN) & CLASSIC_TRIG_INDEX_MASK;
     }
 
-    /** The classic float phase for a source age: {@code (float) age * omega * 1.0F}, the compiled chain. */
+    /** The classic float phase for a source age: {@code (float) age * omega * wingspeed}, the compiled chain left to right. */
     public float classicPhase(float sourceAgeTick) {
-        float phaseRadians = sourceAgeTick * this.angularFrequencyRadiansPerSourceTick;
-        return phaseRadians * 1.0F;
+        return classicPhase(sourceAgeTick, this.angularFrequencyRadiansPerSourceTick, this.wingspeed);
+    }
+
+    /**
+     * The compiled chain on its own, for the harness: {@code (age * omega) * wingspeed} in float32, two
+     * roundings in the classic order ({@code ModelBeaver.setupAnim}: {@code ageInTicks * 3.7F * ANIM_SPEED};
+     * {@code BrutalflyModel.setupAnim}: {@code ageInTicks * 1.3f * this.wingspeed}).
+     */
+    public static float classicPhase(float sourceAgeTick, float omega, float wingspeed) {
+        float phaseRadians = sourceAgeTick * omega;
+        return phaseRadians * wingspeed;
     }
 
     @Override

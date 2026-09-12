@@ -307,6 +307,74 @@ tasks.register('s4Parity', Exec) {
 }
 tasks.named('check') { dependsOn tasks.named('s4Parity') }
 
+// Phase G, the first Tier-2 slice (2026-09-13): the same probe/converter/parity tools over a
+// third manifest and proof directory - the simple-cyclic Tier-2 rigs with their keyframe
+// reference legs (and the late-prime twin, TEST-005) - proven without touching the immutable
+// G1 or Slice 4 evidence. Separate build dir: both tools prune their output dir to the
+// current manifest's ids.
+def t2Manifest = file('tools/t2_model_proofs.json')
+def t2BuildDir = layout.buildDirectory.dir('t2')
+
+tasks.register('t2DumpCompiledModels', JavaExec) {
+    group = 'verification'
+    description = 'Dump compiled/baked LayerDefinition trees for the first Tier-2 slice models.'
+    dependsOn tasks.named('g1toolClasses')
+    classpath = sourceSets.g1tool.runtimeClasspath
+    mainClass = 'danger.orespawn.g1.G1ModelProbe'
+    args 'vanilla', t2Manifest.absolutePath,
+            t2BuildDir.get().dir('vanilla').asFile.absolutePath
+}
+
+tasks.register('t2ConvertModels', Exec) {
+    group = 'verification'
+    description = 'Convert compiled Tier-2 dumps to Bedrock geo.'
+    dependsOn tasks.named('t2DumpCompiledModels')
+    workingDir = projectDir
+    commandLine 'python', 'tools/layer_definition_to_geo.py',
+            '--manifest', t2Manifest.absolutePath,
+            '--dump-dir', t2BuildDir.get().dir('vanilla').asFile.absolutePath,
+            '--output-dir', t2BuildDir.get().dir('generated').asFile.absolutePath
+}
+
+tasks.register('t2ReferenceGeometry', Exec) {
+    group = 'verification'
+    description = 'Independent leg: compiled Tier-2 models against their parsed 1.7.10 reference sources.'
+    dependsOn tasks.named('t2DumpCompiledModels')
+    workingDir = projectDir
+    commandLine 'python', 'tools/reference_geometry_leg.py',
+            '--manifest', t2Manifest.absolutePath,
+            '--dump-dir', t2BuildDir.get().dir('vanilla').asFile.absolutePath,
+            '--output-dir', t2BuildDir.get().dir('reference').asFile.absolutePath
+}
+
+tasks.register('t2ProbeGeoRenderer', JavaExec) {
+    group = 'verification'
+    description = 'Bake and capture Tier-2 geometry through GeckoLib GeoRenderer, with the keyframe reference legs.'
+    dependsOn tasks.named('t2ConvertModels')
+    classpath = sourceSets.g1tool.runtimeClasspath
+    mainClass = 'danger.orespawn.g1.G1ModelProbe'
+    args 'geo', t2Manifest.absolutePath,
+            t2BuildDir.get().dir('generated').asFile.absolutePath,
+            t2BuildDir.get().dir('geo').asFile.absolutePath
+}
+
+tasks.register('t2Parity', Exec) {
+    group = 'verification'
+    description = 'Run the geometry, animation, keyframe-leg and visual parity gates over the Tier-2 models.'
+    dependsOn tasks.named('t2ProbeGeoRenderer')
+    dependsOn tasks.named('t2ReferenceGeometry')
+    workingDir = projectDir
+    commandLine 'python', 'tools/g1_render_parity.py',
+            '--manifest', t2Manifest.absolutePath,
+            '--vanilla-dir', t2BuildDir.get().dir('vanilla').asFile.absolutePath,
+            '--generated-dir', t2BuildDir.get().dir('generated').asFile.absolutePath,
+            '--geo-dir', t2BuildDir.get().dir('geo').asFile.absolutePath,
+            '--output-dir', t2BuildDir.get().dir('evidence').asFile.absolutePath,
+            '--reference-dir', t2BuildDir.get().dir('reference').asFile.absolutePath,
+            '--proof-dir', file('phase_g_reports/t2_proof').absolutePath
+}
+tasks.named('check') { dependsOn tasks.named('t2Parity') }
+
 // Standing reference-geometry gate (owner ruling 2026-09-02, BUG-041 / ENT-S-091): every port
 // entity model with a 1.7.10 source is compiled, dumped and compared against the parsed original;
 // models still carrying ruled parity bugs pin their exact divergence counts until the fix lands.

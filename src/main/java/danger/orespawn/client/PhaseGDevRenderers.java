@@ -2,9 +2,15 @@ package danger.orespawn.client;
 
 import danger.orespawn.OreSpawnMod;
 import danger.orespawn.entity.Beaver;
+import danger.orespawn.entity.Cockateil;
 import danger.orespawn.entity.Coin;
 import danger.orespawn.entity.Elevator;
+import danger.orespawn.entity.EntityBrutalfly;
+import danger.orespawn.entity.EntityCliffRacer;
+import danger.orespawn.entity.EntityDragonfly;
+import danger.orespawn.entity.EntityMosquito;
 import danger.orespawn.entity.EntityRotator;
+import danger.orespawn.entity.EntityTshirt;
 import danger.orespawn.entity.EntityVortex;
 import danger.orespawn.entity.Island;
 import danger.orespawn.entity.IslandToo;
@@ -17,14 +23,24 @@ import danger.orespawn.entity.Robot5;
 import danger.orespawn.entity.RockBase;
 import danger.orespawn.entity.client.BeaverGeoReplacedRenderer;
 import danger.orespawn.entity.client.BeaverRenderer;
+import danger.orespawn.entity.client.BrutalflyGeoReplacement;
+import danger.orespawn.entity.client.BrutalflyRenderer;
+import danger.orespawn.entity.client.CliffRacerGeoReplacement;
+import danger.orespawn.entity.client.CliffRacerRenderer;
+import danger.orespawn.entity.client.CockateilGeoReplacement;
+import danger.orespawn.entity.client.CockateilRenderer;
 import danger.orespawn.entity.client.CoinGeoReplacement;
 import danger.orespawn.entity.client.CoinRenderer;
+import danger.orespawn.entity.client.DragonflyGeoReplacement;
+import danger.orespawn.entity.client.DragonflyRenderer;
 import danger.orespawn.entity.client.ElevatorGeoReplacement;
 import danger.orespawn.entity.client.ElevatorRenderer;
 import danger.orespawn.entity.client.IslandGeoReplacement;
 import danger.orespawn.entity.client.IslandRenderer;
 import danger.orespawn.entity.client.IslandTooGeoReplacement;
 import danger.orespawn.entity.client.IslandTooRenderer;
+import danger.orespawn.entity.client.MosquitoGeoReplacement;
+import danger.orespawn.entity.client.MosquitoRenderer;
 import danger.orespawn.entity.client.PurplePowerGeoReplacement;
 import danger.orespawn.entity.client.PurplePowerRenderer;
 import danger.orespawn.entity.client.Robot1GeoReplacement;
@@ -41,6 +57,9 @@ import danger.orespawn.entity.client.RockBaseGeoReplacement;
 import danger.orespawn.entity.client.RockBaseRenderer;
 import danger.orespawn.entity.client.RotatorGeoReplacement;
 import danger.orespawn.entity.client.RotatorRenderer;
+import danger.orespawn.entity.client.RubyBirdGeoReplacement;
+import danger.orespawn.entity.client.TshirtGeoReplacement;
+import danger.orespawn.entity.client.TshirtRenderer;
 import danger.orespawn.entity.client.VortexGeoReplacement;
 import danger.orespawn.entity.client.VortexRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
@@ -107,6 +126,40 @@ public final class PhaseGDevRenderers {
     public static EntityRendererProvider<EntityRotator> rotatorRenderer() {
         return select("rotator", RotatorRenderer::new, RotatorGeoReplacement.Renderer::new);
     }
+
+    /** The first Tier-2 slice (2026-09-13): the simple-cyclic rigs, the classic renderers the default. */
+    public static EntityRendererProvider<EntityTshirt> tshirtRenderer() {
+        return select("tshirt", TshirtRenderer::new, TshirtGeoReplacement.Renderer::new);
+    }
+
+    public static EntityRendererProvider<EntityMosquito> mosquitoRenderer() {
+        return select("mosquito", MosquitoRenderer::new, MosquitoGeoReplacement.Renderer::new);
+    }
+
+    public static EntityRendererProvider<EntityCliffRacer> cliffRacerRenderer() {
+        return select("cliff_racer", CliffRacerRenderer::new, CliffRacerGeoReplacement.Renderer::new);
+    }
+
+
+
+    public static EntityRendererProvider<EntityBrutalfly> brutalflyRenderer() {
+        return select("brutalfly", BrutalflyRenderer::new, BrutalflyGeoReplacement.Renderer::new);
+    }
+
+    public static EntityRendererProvider<EntityDragonfly> dragonflyRenderer() {
+        return select("dragonfly", DragonflyRenderer::new, DragonflyGeoReplacement.Renderer::new);
+    }
+
+    /** One rig, two consumers (design Q9: one profile per registry path): the Cockateil and the Ruby Bird select separately. */
+    public static EntityRendererProvider<Cockateil> cockateilRenderer() {
+        return select("cockateil", CockateilRenderer::new, CockateilGeoReplacement.Renderer::new);
+    }
+
+    /** The classic path draws the Ruby Bird with the Cockateil's renderer (RubyBird extends Cockateil), so both providers are typed over Cockateil, as OreSpawnClient always registered it. */
+    public static EntityRendererProvider<Cockateil> rubyBirdRenderer() {
+        return select("ruby_bird", CockateilRenderer::new, RubyBirdGeoReplacement.Renderer::new);
+    }
+
 
     private static <E extends Entity> EntityRendererProvider<E> select(String species,
                                                                        EntityRendererProvider<E> classic,

@@ -1,0 +1,63 @@
+{
+  "registry": "tshirt",
+  "display_name": "Tshirt",
+  "status": "draft for the owner's edit (the first Tier-2 slice, 2026-09-13)",
+  "locomotion": "stationary",
+  "artist_scope": "full contract (Tier 2, the simple-cyclic class: geckolib_migration_design.md section 5)",
+  "character_sheet": "A novelty: a floating T-shirt, two flat printed quads (a wide banner and the shirt body) hanging in the air and slowly turning about their shared pivot. It has no legs, no face and no attack; it does not move on its own (movement speed 0) and drops emeralds when broken. Read it as a sign that turns, not a creature.",
+  "size_notes": "Drawn at x0.33 of the rig; the two quads are 256x64 and 128x128 on a declared 512x256 sheet that binds a 320x160 image (the 1.7.10 UV window, kept on purpose).",
+  "labels": {
+    "Shape1": "the wide banner quad (256 x 64)",
+    "Shape2": "the shirt body quad (128 x 128)"
+  },
+  "groups": [
+    {
+      "name": "turn",
+      "bones": [
+        "Shape1",
+        "Shape2"
+      ],
+      "omega": 0.05,
+      "axis": "y",
+      "gait_scaled": false,
+      "amplitude": "pi x 1.0 = 3.142 rad (180 deg) each way",
+      "plain": "both quads turn together about the vertical, a full half-turn each way, once every 571 ticks (28.6 s)",
+      "math": "Shape1.yRot = Shape2.yRot = cos(ageInTicks * 0.05 * 0.22) * pi",
+      "source": "TshirtModel.java:54-56; TshirtGeoReplacement.java",
+      "wingspeed": 0.22,
+      "omega_note": "the classic phase is ageInTicks x 0.05 x 0.22 (two float multiplies, left to right): the natural period is 2 pi / 0.011"
+    }
+  ],
+  "behaviour": [
+    "One rhythm runs at all times: the classic code has no rest pose and no gait scaling, so today's 'idle' is the same motion as the walk (the transcription's idle keys no bone and its one clip carries the bare name walk - contract section 2.1, a one-group species).",
+    "It never walks: the walk clip is the turn, and it plays whether or not anything moves.",
+    "The default renderer poses it from the classic code; the GeckoLib candidate sits behind the dev switch (-Dorespawn.dev.geckolibRenderers) and your clips replace the shipped transcription file for file."
+  ],
+  "clips": [
+    {
+      "name": "walk",
+      "verdict": "leave",
+      "note": "the slow turn is the whole creature; keep the half-turn amplitude"
+    },
+    {
+      "name": "idle",
+      "verdict": "author",
+      "note": "required with walk (the two open the artist switch together); today's idle is the turn itself, so the shipped transcription's idle keys no bone - a gentle hang or flutter of your own is welcome here"
+    },
+    {
+      "name": "hurt",
+      "verdict": "author",
+      "note": "a twitch; keep it short",
+      "length_seconds": 0.3
+    },
+    {
+      "name": "death",
+      "verdict": "author",
+      "note": "PROVISIONAL: the vanilla death flip is open question 3",
+      "length_seconds": 1.0
+    }
+  ],
+  "extras": [],
+  "wishlist": [],
+  "effort_hours": null
+}

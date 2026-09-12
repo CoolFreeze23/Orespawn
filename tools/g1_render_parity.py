@@ -917,6 +917,43 @@ def keyframe_reference_leg_parity(model_id: str, spec: dict[str, Any], compiled:
     if set(density["groups"]) != set(groups) or set(block["clip"]) != set(groups):
         raise AssertionError(f"{model_id} keyframe leg group sets disagree")
 
+    # TEST-005 (closed by the first Tier-2 slice, 2026-09-13): the late-prime twin - a persistent manager built
+    # before its clips are served (its controllers registered with the model unserved), the unserved slot passed
+    # without a tick (an empty-cache tick cannot run headlessly: GeckoLib's buildAnimationQueue catch block
+    # initialises GeckoLibConstants, which registers a data component - OPT-029 R0; the probe records the tick's
+    # bytecode-derived outcome), the prime one sample later at a late age - is REQUIRED for every model that declares
+    # the leg, and must carry the from-zero prime's declared length, time-warp ratio and LUT index chain (each fact
+    # equal to the time_warp block and to each other) and pose identically to the from-zero manager.
+    twin = block.get("late_prime_twin")
+    if not isinstance(twin, dict):
+        raise AssertionError(f"{model_id} keyframe leg carries no late_prime_twin block (TEST-005)")
+    if twin.get("holds") is not True:
+        raise AssertionError(f"{model_id} late-prime twin does not hold: {twin}")
+    if twin.get("manager_built_before_clips_served") is not True or twin.get("unserved_slot_ticked") is not False \
+            or twin.get("unserved_primed_any_controller") is not False:
+        raise AssertionError(f"{model_id} late-prime twin: the manager must be built unserved and prime nothing before the clips are served")
+    if float(twin.get("unserved_bone_motion_radians", 1.0)) != 0.0:
+        raise AssertionError(f"{model_id} late-prime twin: a bone moved before the clips were served")
+    if float(twin["prime_age_ticks"]) <= float(twin["unserved_slot_age_ticks"]):
+        raise AssertionError(f"{model_id} late-prime twin: the prime must come after the unserved slot")
+    if set(twin["prime"]) != set(groups):
+        raise AssertionError(f"{model_id} late-prime twin group set disagrees with the layers")
+    for group, row in twin["prime"].items():
+        warp = block["time_warp"][group]
+        if row.get("facts_agree") is not True:
+            raise AssertionError(f"{model_id} late-prime twin: {group} facts disagree with the from-zero prime: {row}")
+        if float(row["declared_clip_ticks"]) != float(warp["declared_clip_ticks"]) \
+                or float(row["clip_ticks_per_age_tick"]) != float(warp["clip_ticks_per_age_tick"]):
+            raise AssertionError(f"{model_id} late-prime twin: {group} time-warp differs from the from-zero prime's")
+        if int(row["last_cosine_index"]) != int(row["from_zero_last_cosine_index"]) \
+                or int(row["last_cosine_index"]) != int(row["chain_cosine_index_at_prime_age"]) \
+                or float(row["last_clip_tick"]) != float(row["from_zero_last_clip_tick"]):
+            raise AssertionError(f"{model_id} late-prime twin: {group} LUT index chain differs from the from-zero prime's")
+    twin_pose_delta = max(float(twin["prime_pose_max_delta_vs_from_zero_radians"]),
+                          float(twin["follow_up_pose_max_delta_vs_from_zero_radians"]))
+    if twin_pose_delta > bind_epsilon:
+        raise AssertionError(f"{model_id} late-prime twin poses {twin_pose_delta:.12g} rad off the from-zero manager")
+
     keys = " / ".join(str(block["clip"][group]["keys_per_bone"]) for group in groups)
     lerps: list[str] = []
     for group in groups:
@@ -975,6 +1012,26 @@ def keyframe_reference_leg_parity(model_id: str, spec: dict[str, Any], compiled:
         "clip_full_schedule": block["clip_full_schedule"],
         "wrap_sample": block["wrap_sample"],
         "schedule_reversed_max_delta_radians": reversed_delta,
+        "late_prime_twin": {
+            "manager_built_before_clips_served": True,
+            "unserved_slot_age_ticks": twin["unserved_slot_age_ticks"],
+            "unserved_slot_ticked": False,
+            "unserved_slot_note": twin.get("unserved_slot_note"),
+            "prime_age_ticks": twin["prime_age_ticks"],
+            "unserved_bone_motion_radians": twin["unserved_bone_motion_radians"],
+            "prime": {
+                group: {
+                    "declared_clip_ticks": row["declared_clip_ticks"],
+                    "clip_ticks_per_age_tick": row["clip_ticks_per_age_tick"],
+                    "last_cosine_index": row["last_cosine_index"],
+                    "last_clip_tick": row["last_clip_tick"],
+                }
+                for group, row in twin["prime"].items()
+            },
+            "prime_pose_max_delta_vs_from_zero_radians": twin["prime_pose_max_delta_vs_from_zero_radians"],
+            "follow_up_pose_max_delta_vs_from_zero_radians": twin["follow_up_pose_max_delta_vs_from_zero_radians"],
+            "holds": True,
+        },
     }
 
 
@@ -2284,6 +2341,9 @@ def markdown_report(report: dict[str, Any]) -> str:
                     contested_line(model["visual"]),
                     *visual_mode_lines(model["visual"]),
                     *render_instance_lines(contract),
+                    # A code_driven model may declare the keyframe reference leg (the Tier-2 transcriptions, 2026-09-13):
+                    # its README lines are the gait_scaled branch's (the T2a refuter, M2).
+                    *keyframe_leg_lines(model.get(KEYFRAME_LEG_KEY)),
                     "",
                 ]
             )
@@ -2390,6 +2450,17 @@ def keyframe_leg_lines(leg: dict[str, Any] | None) -> list[str]:
         + f"; dense schedule of the shipped-candidate clip: "
         + ", ".join(f"{group} {row['max_error_radians']:.6g}" for group, row in leg["clip_full_schedule"].items())
         + f"; reversed schedule max delta {leg['schedule_reversed_max_delta_radians']:.6g}.",
+        f"- Keyframe late-prime twin (TEST-005): a manager built before its clips were served (unserved through the slot at age "
+        f"{leg['late_prime_twin']['unserved_slot_age_ticks']:g}, no tick, bone motion "
+        f"{leg['late_prime_twin']['unserved_bone_motion_radians']:g}), primed at age "
+        f"{leg['late_prime_twin']['prime_age_ticks']:g}: "
+        + "; ".join(
+            f"{group} declared {row['declared_clip_ticks']:g} ticks, {row['clip_ticks_per_age_tick']:.6g} clip ticks per age "
+            f"tick, LUT index {row['last_cosine_index']}, clip tick {row['last_clip_tick']:.6g}"
+            for group, row in leg["late_prime_twin"]["prime"].items()
+        )
+        + f" - every fact the from-zero prime's; pose delta {leg['late_prime_twin']['prime_pose_max_delta_vs_from_zero_radians']:g} "
+        f"at the prime, {leg['late_prime_twin']['follow_up_pose_max_delta_vs_from_zero_radians']:g} over the follow-ups.",
     ]
 
 

@@ -1,0 +1,96 @@
+{
+  "registry": "brutalfly",
+  "display_name": "Brutalfly",
+  "status": "draft for the owner's edit (the first Tier-2 slice, 2026-09-13)",
+  "locomotion": "flyer",
+  "artist_scope": "full contract (Tier 2, the simple-cyclic class: geckolib_migration_design.md section 5)",
+  "character_sheet": "A giant hostile fly: a thin body and head with six wing parts a side, drawn nine times the size of its rig. It flies at players and attacks. Read it as a huge, slow-beating insect - the beat is slow because the rig is enormous.",
+  "size_notes": "Drawn at x9.0 of the rig (a 64x32 sheet); the shadow is 6.75 blocks.",
+  "labels": {
+    "body": "body",
+    "head": "head",
+    "leftwing": "left wing root",
+    "rightwing": "right wing root",
+    "leftwing2": "left wing blade",
+    "rightwing2": "right wing blade",
+    "leftwing3": "left wing rear",
+    "rightwing3": "right wing rear",
+    "leftwing4": "left wing tail",
+    "rightwing4": "right wing tail",
+    "leftwing5": "left wing tip stub",
+    "rightwing5": "right wing tip stub",
+    "leftwing6": "left wing tip",
+    "rightwing6": "right wing tip"
+  },
+  "groups": [
+    {
+      "name": "wings",
+      "bones": [
+        "rightwing",
+        "rightwing2",
+        "rightwing3",
+        "rightwing4",
+        "rightwing5",
+        "rightwing6",
+        "leftwing",
+        "leftwing2",
+        "leftwing3",
+        "leftwing4",
+        "leftwing5",
+        "leftwing6"
+      ],
+      "omega": 1.3,
+      "axis": "z",
+      "gait_scaled": false,
+      "amplitude": "pi x 0.25 = 0.785 rad (45 deg)",
+      "plain": "all six right wing parts beat together about the body's long axis, the six left parts the mirror",
+      "math": "rightwing*.zRot = cos(ageInTicks * 1.3 * 0.2) * pi * 0.25; leftwing*.zRot = -(that)",
+      "source": "BrutalflyModel.java:126-136; BrutalflyGeoReplacement.java",
+      "wingspeed": 0.2,
+      "omega_note": "the classic phase is ageInTicks x 1.3 x 0.2 (two float multiplies, left to right): the natural period is 2 pi / 0.26"
+    }
+  ],
+  "behaviour": [
+    "One rhythm runs at all times: the classic code has no rest pose and no gait scaling, so today's 'idle' is the same motion as the walk (the transcription's idle keys no bone and its one clip carries the bare name walk - contract section 2.1, a one-group species).",
+    "The beat runs whether it flies or sits; the body and head are static.",
+    "The default renderer poses it from the classic code; the GeckoLib candidate sits behind the dev switch (-Dorespawn.dev.geckolibRenderers) and your clips replace the shipped transcription file for file."
+  ],
+  "clips": [
+    {
+      "name": "walk",
+      "verdict": "leave",
+      "note": "the wing beat"
+    },
+    {
+      "name": "idle",
+      "verdict": "author",
+      "note": "optional: a slower beat"
+    },
+    {
+      "name": "fly",
+      "verdict": "author",
+      "note": "optional: falls back to walk (section 2.4)"
+    },
+    {
+      "name": "attack",
+      "verdict": "author",
+      "note": "a lunge",
+      "length_seconds": 0.5
+    },
+    {
+      "name": "hurt",
+      "verdict": "author",
+      "note": "a flinch",
+      "length_seconds": 0.4
+    },
+    {
+      "name": "death",
+      "verdict": "author",
+      "note": "PROVISIONAL: the vanilla death flip is open question 3",
+      "length_seconds": 2.0
+    }
+  ],
+  "extras": [],
+  "wishlist": [],
+  "effort_hours": null
+}
