@@ -424,3 +424,69 @@ advance, the pose kept pure) is the one to build.
   will not flash at all once the change lands. The harness emulates no overlay on either side, so neither is in the proof.
 - **Pins:** none today; with the change: `PurplePowerPoseTests` gains the overlay pin (the classic renderer's and the
   descriptor's overlay both `NO_OVERLAY` for the orb), harness-neutral.
+
+## PN-027 — The replacement seam draws every cube with its quads' true transformed normals: GeckoLib 4.8.4's `RenderUtil.fixInvertedFlatCube` is not applied (ENT-S-161; ruled 2026-09-13, item 3; a deliberate divergence from the library, reported upstream; the Queen's native renderer on stock semantics until her own ruling)
+
+- **The library (GeckoLib 4.8.4, `javap -p -c` of the pinned jar `geckolib-neoforge-1.21.1-4.8.4.jar`):** the default
+  `GeoRenderer.renderCube` (offsets 0-126) translates to the cube's pivot, rotates and translates back (2 / 7 / 12),
+  takes the pose's normal matrix (16-22) and a copy of the pose (24-38), and for every non-null quad (54-123)
+  transforms the quad's normal by the normal matrix (76-93), calls `RenderUtil.fixInvertedFlatCube(cube, normal)` (98)
+  and hands the result to `createVerticesOfQuad` (115). `fixInvertedFlatCube` (0-129) multiplies the TRANSFORMED
+  normal's x by −1 when x < 0 and the cube's size is 0 in y or z (0-42), its y by −1 when y < 0 and the size is 0 in
+  x or z (43-85), its z by −1 when z < 0 and the size is 0 in x or y (86-128) — component-wise, after the transform.
+  For an axis-aligned zero-thickness cube the two real faces' normals have no off-axis component and survive (the
+  Vortex's 128×64×0 plate: the s4 surface leg 0 normal delta); for a ROTATED one the flips produce a vector that is
+  neither the classic renderer's normal nor a reflection of it, and the two faces are no longer opposite. Measured on
+  the Firefly's `wing_left` (0×6×2 under the part's Z 0.698 / Y 0.0175 rad bind): classic (0.766, 0.643, −0.017) and
+  (−0.766, −0.643, 0.017), GeckoLib (0.766, 0.643, +0.017) and (−0.766, +0.643, +0.017) — the first Tier-2 slice's
+  `RENDERER MAPPING MISMATCH` at the ruled 1e-6 normal epsilon; the Cloud Shark's `leftfin` / `rightfin` (0×3×7) and
+  the Gold Fish's `Pectoralfin1..4` (0×3×5) and `Bottomfin1/2` (0×5×2) the same; the Cloud Shark's `fins` (0×10×10)
+  are axis-aligned at bind but swing about Y under their clip, so the helper flips a component at every animated
+  sample (refuter B: a stock delta of 1.41, cured to 1e-7 by the override).
+- **The port (the seam only):** `entity/client/TrueNormalCubeRenderer.render` is GeckoLib's `renderCube` statement for
+  statement minus the one call — the pivot translation and rotation, the normal matrix, the pose copy, the per-quad
+  loop and `createVerticesOfQuad` are the library's; the quad's normal transformed by the pose's normal matrix is what
+  every vertex carries. `OreSpawnGeoReplacedEntityRenderer.renderCube` (the base of every replacement renderer)
+  overrides to it, and the harness's `G1ModelProbe.CapturingGeoRenderer.renderCube` draws through the same static, so
+  the proof draws what the seam draws. `QueenRenderer` (her native `GeoEntityRenderer`) is not on the seam's base and
+  keeps stock semantics until her own ruling; the benchmark's and the Queen part probe's headless renderers keep the
+  default too (the ruling names the capturing renderer only). Out of scope, noted (refuter B): a geo cube with GeckoLib's
+  own `mirror: true` has its WEST / EAST vertex sets swapped by `VertexSet.verticesForQuad` while `GeoQuad.build` keeps
+  `direction.step()` as the normal, so the swapped faces carry the INWARD normal where the classic `Polygon` keeps
+  outward ones — untouched by this override; no converted rig sets it (the converter emits `modelpart_mirror` and bakes
+  the mirror into per-face UVs; 0 of the shipped and dropped geos), and the Queen's one such cube is on her native
+  renderer outside the harness.
+- **Why diverge (owner, 2026-09-13, item 3):** the classic renderer (`ModelPart.Cube.compile` → `Polygon` normals,
+  transformed by the pose) lights the true transformed normal, and that is the parity target; the library's helper is
+  a display heuristic for Blockbench-authored flat planes that the converter's rigs do not need (their flat cubes are
+  the 1.7.10 models' own zero-width boxes, rotated by their parts). Confined to the seam, one static; the alternative —
+  the converter emitting a minimal thickness — would make the geo no longer the literal conversion.
+- **Upstream report (the text prepared for the issue; filing it is the owner's, as with PN-024):** "GeckoLib 4.8.4 (`geckolib-neoforge-1.21.1-4.8.4`): `GeoRenderer.renderCube`
+  calls `RenderUtil.fixInvertedFlatCube(cube, normal)` on the pose-TRANSFORMED quad normal (offset 98 after the
+  `Matrix3f.transform` at 90). The helper flips a negative component when the cube is flat on one of the other two axes
+  (bytecode 0-129). For a flat cube that is rotated by its bone (or by the cube's own rotation) the transformed normal
+  has off-axis components, and flipping them component-wise yields a vector that is neither the untransformed
+  reflection nor a unit-preserving reflection of the true normal, and the two real faces of the plate stop being
+  opposite — the plate is lit inconsistently with the rest of the model. Minimal reproduction: a geo with one cube of
+  size [0, 6, 2] on a bone rotated [0, 0, 40] (degrees); render it and log the normal handed to `createVerticesOfQuad`
+  for the two X faces against `poseStack.last().normal().transform(quad.normal())`: expected (0.766, 0.643, 0) and
+  (−0.766, −0.643, 0); observed the face whose transformed y is negative comes back with y negated — (−0.766, +0.643, 0)
+  instead of (−0.766, −0.643, 0) — while the other face is untouched, so the two faces are no longer opposite (dot
+  product −0.17, not −1); the x component is never touched for a cube flat in x (its flip needs a cube flat in y or z).
+  A bone rotated [0, −1, −40] affects both faces (the Firefly's own bind). Expected fix: apply the heuristic to the
+  cube's LOCAL quad normal before the transform (or only when the transformed normal is still axis-aligned), or make
+  it opt-in per model."
+- **Player-visible:** nothing for a default install (the classic renderers are the default). On the GeckoLib candidates
+  no landed rig carries a rotated zero-thickness cube today; the Firefly, Cloud Shark and Gold Fish (which do) rejoin
+  the next Tier-2 slice on this path. The helper conditions on POSE-space components, so in-game — where the stack
+  carries the entity's yaw from `applyRotations` — even an unrotated flat cube was rewritten at generic yaws (the
+  Vortex's `size.z == 0` plate: its x and y components flipped when negative), which the harness's bind pose without
+  yaw never showed (refuter A): on the Vortex candidate behind the dev switch the plate's lighting now follows the
+  classic renderer's at every yaw, where before it flipped at some.
+- **Pins:** the surface leg of every proof tree draws through the capturing renderer's override, and the three trees
+  verify unchanged under it — no normal a proof COMPARES was ever altered by the helper: the harness pose carries no
+  yaw, the Vortex plate's two real faces stay (0, 0, ±1), and its four zero-area faces — which the helper did rewrite
+  under `size.z == 0` — are excluded on both sides by `drop_zero_area_faces` (the 2026-09-02 ruling) and draw no pixel;
+  the face-order leg, which would compare them, runs only for a rig shipping `orespawn:cube_face_order` (PurplePower,
+  no flat cube) — refuter B, from the override build's own dumps. The Firefly / Cloud Shark / Gold Fish surface legs at
+  1e-6 when they land.
