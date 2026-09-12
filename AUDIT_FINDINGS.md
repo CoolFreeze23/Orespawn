@@ -10071,6 +10071,63 @@ keeps BUG-036. Commit 4ea395c's message retains the old number.)*
   are in the OPT-013 status line; not fixed in wave 5.
 - **Ruled (owner, 2026-09-12, item 23 — ruled, deferred):** mitigation (c) — the master client is exempt from culling, so the stream never stops (the master's own render cost; the pre-harvest state for one client); pin: the master's `shouldRender` true with her outside its frustum while a non-master's is false. (a) and (b) not adopted: they change the election protocol OPT-003 designed. Coded with the harvest remainder, not before; the real fix is Slice 5's server-side evaluator.
 
+### ENT-S-160 — The Ghost rig cannot be converted on the current harness: its translucency is a RENDERER-level render type the render-state leg cannot observe, and its arms carry two frequency groups each (the first Tier-2 slice, 2026-09-13; found by the lane, dropped from the slice)
+
+- **Evidence:** (1) `GhostRenderer.getRenderType` (src/main/java/danger/orespawn/entity/client/GhostRenderer.java:37-40) returns
+  `RenderType.entityTranslucent(...)` — the port's own decision so ghost.png's alpha channel is honoured — while `GhostModel`
+  keeps the `EntityModel` default function (`RenderType::entityCutoutNoCull`). The harness's render-state leg
+  (`RenderStateProbe.classicFunction` on the classic side; `tools/g1_render_parity.py render_state_parity`) reads the
+  MODEL's render-type function object, the ENT-S-146 shape (the function lives on the model so the descriptor can hand
+  over the same object and the two renderers cannot drift), so a Ghost manifest entry declaring `visual_mode
+  entity_translucent` fails RENDER STATE MISMATCH against the classic side's cutout function, and one declaring nothing
+  makes the GeckoLib candidate draw cutout where the classic renderer draws translucent — a visible divergence. Fitting
+  the Ghost needs either the ENT-S-146 move (the function onto `GhostModel`, a classic renderer / model change under the
+  frozen parity lanes) or a render-state leg that observes renderer-level overrides (a harness extension).
+  (2) `GhostModel.setupAnim` (:56-59) animates each arm at TWO frequencies on two axes (lArm: Z at 0.30, X at 0.34;
+  rArm: Z at 0.32, X at 0.36), so each arm belongs to two frequency groups. Amendment 1 point 5 partitions the rig into
+  groups (a bone in exactly one), and both the harness (`KeyframeLeg.prepare`: "bone in two frequency groups";
+  `keyframe_reference_leg_parity`: "bone in two keyframe layers") and the generator (`tools/keyframe_clip.py`) refuse it;
+  a transcription would need an additive per-axis layer — the shipped unscaled controller replaces the bone
+  (last-registered-wins), so the second layer would erase the first — a harness and contract extension.
+- **Resolution:** OPEN — dropped from the first Tier-2 slice under the brief's rule (a rig that does not fit the
+  pure-cosine class on the current harness is dropped, the harness not extended for it). Options for the owner:
+  (a) the ENT-S-146 move on the Ghost (the render-type function onto `GhostModel`; `GhostRenderer.getRenderType` then
+  applies the model's function as `LivingEntityRenderer` does), one small renderer change under the frozen lanes;
+  (b) a render-state leg that reads a classic renderer's `getRenderType` override (the `classic_renderer` light hook's
+  sibling); plus, for the transcription, (c) an additive unscaled layer kind so one bone may carry two frequency
+  groups (Amendment 1 point 5 amended), or (d) the Ghost stays on its classic hook with no keyframe transcription.
+  Recommended: (a) with (d) — the Ghost joins the seam with its hook; its transcription waits on a ruling for (c).
+
+### ENT-S-161 — GeckoLib 4.8.4 mangles the lighting normal of a ROTATED zero-thickness cube (`RenderUtil.fixInvertedFlatCube`): the surface leg fails the Firefly, Cloud Shark and Gold Fish rigs (the first Tier-2 slice, 2026-09-13; found by the lane, filed)
+
+- **Evidence:** the classic renderer lights a zero-width `ModelPart` cube (`addBox(0, -6, 0, 0, 6, 2)`, the Firefly's
+  wings; the Cloud Shark's `leftfin` / `rightfin` 0x3x7; the Gold Fish's four `Pectoralfin`s 0x3x5 and `Bottomfin1/2`
+  0x5x2) by its two real X faces' true normals, the face direction rotated by the part's bind pose (the probe's
+  vanilla capture of `model_firefly/bind/wing_left`: quads with normals (0.766, 0.643, -0.017) and (-0.766, -0.643,
+  0.017), the X axis under the part's Z 0.698 / Y 0.0175 rad rotation). GeckoLib's `GeoRenderer.renderCube` (4.8.4
+  bytecode: the quad normal transformed by the pose at 84-90, then `RenderUtil.fixInvertedFlatCube(cube, normal)` at
+  98) rewrites every quad normal of a flat cube component-wise: `fixInvertedFlatCube` (0-129) multiplies x by -1
+  when x < 0 and size.y == 0 or size.z == 0, y by -1 when y < 0 and size.x == 0 or size.z == 0, z by -1 when z < 0
+  and size.x == 0 or size.y == 0. For an AXIS-ALIGNED flat cube the two real faces' normals have zero off-axis
+  components and survive (the Vortex, 128x64x0 unrotated: surface leg 0 normal delta, s4 proof); for a ROTATED one
+  they do not: the probe's GeckoLib capture of the same wing carries (-0.766, +0.643, +0.017) and (+0.766, +0.643,
+  +0.017) - neither a unit-preserving reflection nor the classic's, and the two faces no longer opposite. The
+  surface leg (`tools/g1_render_parity.py surface_mapping_parity`, normal epsilon 1e-6, an owner ruling) reports
+  `RENDERER MAPPING MISMATCH model_firefly/bind/wing_left#0: no GeoRenderer vertex matches position (0.0625, 0.375,
+  -0.125) and normal (0.7659278, 0.6426897, -0.017452413)`; the same holds for every rotated flat cube of the
+  three rigs (the Cloud Shark's `fins`, rotated only about X, keeps its X normals: untouched). In-game the candidate's
+  rotated flat parts are lit by the mangled normals (the directional entity diffuse term), the classic's by the true
+  ones: a visible divergence of the two renderers on those parts, geometry identical (positions matched on every
+  vertex).
+- **Resolution:** OPEN — a renderer parity item under the frozen lanes (cost rules 2026-09-12, item 25 (2)). Options
+  for the owner: (a) the seam renderer overrides `renderCube` to hand `createVerticesOfQuad` the un-mangled
+  transformed normal (one override in `OreSpawnGeoReplacedEntityRenderer`; the harness's `CapturingGeoRenderer`
+  takes the same override so the proof draws what the seam draws) - renderer code, two refuters; (b) the converter
+  emits a minimal non-zero thickness for a flat cube (e.g. 1e-6 model units: below the geometry leg's 1e-5 blocks;
+  `fixInvertedFlatCube` then never triggers) - a converter change, the geo no longer the literal conversion, and the
+  drop's proof regeneration would carry it; (c) the three rigs stay classic until GeckoLib is patched. Recommended:
+  (a) - the classic's lighting is the parity target and the override is confined to the seam.
+
 ### TEST-003 — Config-flipping gametests in the concurrent default batch
 
 - **Impact:** MEDIUM (suite reliability) — boss005/boss012 flip a global
@@ -10165,7 +10222,7 @@ keeps BUG-036. Commit 4ea395c's message retains the old number.)*
   pin, an owner-scoped negative (`acid.getOwner() != bug` every tick), a per-tick minion cull (logged, not asserted) and a 1000-HP cow;
   deterministic now — a failure means the trooper itself fired — with the window, timeout and batch unchanged (StructureTestsA.java:1100-1213).
 
-### TEST-005 — The keyframe controller's late-prime case has no headless twin (OPEN harness item; ruled 2026-09-12, item 13: closed by the headless twin in the first Tier-2 slice, not before)
+### TEST-005 — The keyframe controller's late-prime case has no headless twin (CLOSED 2026-09-13 by the headless twin of the first Tier-2 slice; ruled 2026-09-12, item 13)
 
 - **Evidence:** `KeyframeLegTests.kf_006_declared_length_time_warp_and_late_prime` pinned, on the dedicated server, that a
   `PhaseLockedKeyframeController` primed AFTER its first tick (a manager built while the clip cache was still empty, then
@@ -10176,8 +10233,27 @@ keeps BUG-036. Commit 4ea395c's message retains the old number.)*
   (`src/g1tool/.../KeyframeLeg.java`) primes every controller on its first sample, so the late prime is unpinned
   headlessly; the fact rests on the client run's execution of the kept body. Item 15's record (FIX_LOG "THE KEYFRAME LEG'S
   RETURN", the kf17d resolution) and the lane's records section 8.3 filed it; this entry is the register line.
-- **Resolution:** OPEN — a `KeyframeLeg` variant that builds the manager before the clips are served and serves them one
-  sample later, asserting the same time-warp (declared ticks, ratio, the LUT index chain) as the from-zero prime. Ruled
-  (owner, 2026-09-12, item 13): closed by that headless twin in the FIRST Tier-2 slice, not before.
-- **Status:** OPEN (2026-09-12). The three client-only rows (`kf_003`, `kf_005`, `kf_006`) are accepted and recorded as
+- **Resolution:** CLOSED 2026-09-13 (the first Tier-2 slice). `KeyframeLeg.Prepared.latePrimeTwin` (src/g1tool) builds a
+  second persistent manager against a model that is NOT yet serving clips (`new AnimatableManager` registers the layers'
+  controllers with the model unserved), passes the slot at `late_start_age_ticks` (137.371) without a tick, serves the
+  clips, and primes on the next sample (138.371): every controller must be unprimed until then (`declaredClipTicks` NaN,
+  `lastCosineIndex` -1, no bone off bind), and at the prime the declared clip ticks, the time-warp ratio
+  (`clipTicksPerSourceTick`), the LUT index the chain selects (`classicCosineIndex(classicPhase(age))`, equal to
+  `lastCosineIndex` on both managers) and the clip tick it maps to must equal the from-zero manager's (the leg's own
+  harness, primed at the schedule's first request), and the pose must equal it at the prime and at three follow-up ages
+  (+0.371, +7.25, +40.5 ticks; measured 0 on every model). The block is `late_prime_twin` in the probe's leg output,
+  REQUIRED by `tools/g1_render_parity.py keyframe_reference_leg_parity` for every model that declares the leg (the Beaver
+  and the six Tier-2 rigs) and written into the checked-in report.json and README. LIMIT, recorded in the block: the
+  empty-cache TICK itself cannot run in the probe JVM — GeckoLib 4.8.4 `AnimationProcessor.buildAnimationQueue` catches
+  the model's throw (`GeoModel.getAnimation` 45-152 throws for a file the cache lacks) with `GeckoLibConstants.LOGGER`,
+  whose class initialiser registers a data component (`GeckoLibNeoForge.registerDataComponent` -> `DeferredRegister
+  .register` -> `BuiltInRegistries.<clinit>` -> `Bootstrap.checkBootstrapCalled`; the `DataTickets` sibling of
+  OPT-029 R0; measured 2026-09-13); its in-game outcome is read from the bytecode and recorded — `buildAnimationQueue`
+  returns null (121-122, 156-162), `setAnimation` stops the controller with `currentRawAnimation` still null (62-63,
+  99-100), `process` leaves it STOPPED writing nothing (68-99) — so the next served tick runs `primeFirstFrame` in full,
+  which is the prime the twin executes. Note (not a finding): the OTHER GeckoLib path, a present file that lacks the clip's
+  name, returns null from `getAnimation`, and `setAnimation` then sets `currentRawAnimation` over an EMPTY queue (71-73),
+  after which `primeFirstFrame`'s guard (`currentRawAnimation != null`) never primes and the controller stays STOPPED;
+  unreachable in production because `registerKeyframeLayers` registers only layers whose clips are baked.
+- **Status:** CLOSED (2026-09-13, the first Tier-2 slice; the twin's block in the g1 and t2 proofs). The three client-only rows (`kf_003`, `kf_005`, `kf_006`) are accepted and recorded as
   such (owner, 2026-09-12, item 14): the headless leg is the proof; their bodies stay reviewable under the client run.
