@@ -1199,6 +1199,34 @@ class FixtureCase(unittest.TestCase):
         findings, passed = ap.check_folder(self._returned(good, {"other.png": png_bytes(32, 32, 2)}), manifest)
         self.assertFalse(passed)
         self.assertTrue(self._has(findings, "REJECT", "textures/other.png: not one of this entity's textures"), findings)
+        # event keyframes (owner 2026-09-12, item 11): REJECTED on a looping clip, fine on a one-shot
+        events = json.loads(json.dumps(good))
+        events["animations"]["idle"]["sound_effects"] = {"0.5": {"effect": "step"}}
+        events["animations"]["walk"]["particle_effects"] = {"0.25": {"effect": "dust"}}
+        events["animations"]["attack"]["sound_effects"] = {"0.1": {"effect": "swing"}}
+        findings, passed = ap.check_folder(self._returned(events), manifest)
+        self.assertFalse(passed)
+        self.assertTrue(self._has(findings, "REJECT", "clip 'idle' carries `sound_effects` on a looping clip"), findings)
+        self.assertTrue(self._has(findings, "REJECT", "clip 'walk' carries `particle_effects` on a looping clip"), findings)
+        self.assertFalse(any("clip 'attack' carries" in m for _, m in findings), findings)
+        empty_events = json.loads(json.dumps(good))
+        empty_events["animations"]["idle"]["sound_effects"] = {}
+        findings, passed = ap.check_folder(self._returned(empty_events), manifest)
+        self.assertTrue(passed, findings)
+        # idle without walk, walk without idle (owner 2026-09-12, item 12): the switch opens only with both, and the message says so
+        for dropped in ("walk", "idle"):
+            partial = json.loads(json.dumps(good))
+            del partial["animations"][dropped]
+            findings, passed = ap.check_folder(self._returned(partial), manifest)
+            self.assertFalse(passed)
+            self.assertTrue(self._has(findings, "REJECT", f"required clip '{dropped}' is missing (idle and walk open the game's switch only together"), findings)
+        # the README and the SPEC carry the two rules in the checker's words
+        readme = ap.readme_document(self.repo, {})
+        self.assertIn("No event keyframes on loops", readme)
+        self.assertIn("Deliver `idle` and `walk` together", readme)
+        for rule in ("an event keyframe (`sound_effects` / `particle_effects`) on a LOOPING clip", "they open the game's switch only TOGETHER"):
+            self.assertIn(rule, readme)
+            self.assertIn(rule, (self.tmp / "out/entities/fixture/SPEC.md").read_text(encoding="utf-8"))
 
     def test_check_refuses_a_locked_bone_renamed_reparented_or_deleted(self):
         """The second half of the ruled policy (2026-09-06): a key on a locked bone warns; its name, parent and presence are refused.

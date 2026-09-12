@@ -33,7 +33,7 @@ import software.bernie.geckolib.animation.RawAnimation;
  */
 public record KeyframeLayer(String group, String clip, float angularFrequencyRadiansPerTick, Set<String> bones,
                             boolean gaitScaled) {
-    /** The contract's standing loop: no target, not moving. Its presence (or {@link #WALK}'s) makes a species an artist species. */
+    /** The contract's standing loop: no target, not moving. Its presence TOGETHER with {@link #WALK}'s makes a species an artist species (owner 2026-09-12, item 12: one without the other stays classic). */
     public static final String IDLE = "idle";
     /** The contract's ground-locomotion loop on the gait group. */
     public static final String WALK = "walk";

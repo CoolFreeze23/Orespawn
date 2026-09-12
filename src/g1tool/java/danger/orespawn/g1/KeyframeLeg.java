@@ -49,8 +49,8 @@ import software.bernie.geckolib.model.GeoModel;
  * <p>A {@code gait_scaled} model that declares {@code keyframe_reference_leg} in its manifest entry is
  * proven twice: the landed code-driven leg as before, and beside it the SHIPPED
  * {@link PhaseLockedKeyframeController} layers the species declares
- * ({@link OreSpawnGeoReplacement#keyframeLayers()}) over the species' regenerated clip file
- * (a scratch path until the owner's look moves it into the jar), through GeckoLib 4.8.4's own loader
+ * ({@link OreSpawnGeoReplacement#keyframeLayers()}) over the species' SHIPPED clip file (since item 15
+ * landed, 2026-09-12: the manifest's {@code keyframe_reference_leg.clip_path}), through GeckoLib 4.8.4's own loader
  * ({@code FileLoader.loadAnimationsFile} 51-69: {@code KeyFramesAdapter.GEO_GSON} over the file's
  * {@code animations} member) and its own pipeline ({@code AnimationProcessor.tickAnimation} on a
  * persistent manager, as a drawn entity's manager persists), with the production

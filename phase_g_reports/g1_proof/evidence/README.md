@@ -42,6 +42,9 @@ The independent gates are:
 - Dense actual-candidate maximum delta: 0 radians over 2380 samples; minimum authored-key/probe separation 0.000733999999994 age ticks, coincidences 0.
 - Candidate gait proportionality maximum delta: 5.00000000292e-08 radians over amplitudes [0.0, 0.25, 0.5, 1.0]; candidate unscaled-channel delta 0.
 - Reference JSON: `REFERENCE_ONLY_NOT_RUNTIME_ACCEPTANCE`; baked-keyframe runtime acceptance is false and artist-editable math-to-keyframes remains `OUTSTANDING_G3`.
+- Keyframe reference leg: 2.5e-3 rad; Beaver reference leg 15 / 13 / 8 catmullrom keys per bone with spline arguments repaired at load; wrap sample T−ε vs 0+ε included.
+- Keyframe leg: `danger.orespawn.entity.client.animation.PhaseLockedKeyframeController` layers of `danger.orespawn.entity.client.BeaverGeoReplacement` over clip `src/main/resources/assets/orespawn/animations/entity/beaver.animation.json` (sha256 40f305d76c3f), spline repair ON; sample-grid max delta 0.00229524 radians over 17568 layer-bone samples (gait 0.00216249, teeth 0.00189214, tail 0.00229524); 264 wrap pairs, |v(T-eps) - v(0+eps)| max 3e-08; non-layer bones moved 0.
+- Keyframe density search (an output): gait fewest 15 keys/bone at 0.00216275 over 1057088 comparisons, one fewer 0.00271118; teeth fewest 13 keys/bone at 0.00189218 over 264272 comparisons, one fewer 0.00254428; tail fewest 8 keys/bone at 0.00229527 over 264272 comparisons, one fewer 0.00398448; dense schedule of the shipped-candidate clip: gait 0.00216275, tail 0.00229527, teeth 0.00189218; reversed schedule max delta 0.
 
 ## fixture_nested_nonmirrored_rotated_inflate (non-production fixture)
 

@@ -83,15 +83,18 @@ import software.bernie.geckolib.model.GeoModel;
  * dedicated server loads them; the gametest run has already proven {@code new BeaverGeoReplacement()} on
  * this server ({@link GeoCacheEvictionTests}).
  * <ul>
- * <li>{@code kf_001}: the SHIPPED {@code beaver.animation.json} is empty, so the Beaver registers no layer
- *     through {@code registerKeyframeLayers} and the production {@code registerControllers} path (GeckoLib's
- *     animation cache holds no bake on this server) - the classic hook stays the shipped path; a file with
- *     only {@code idle} registers nothing either (no group clip present).</li>
- * <li>{@code kf_002}: the reference clip (the generator's output, a test resource) registers the three
- *     contract layers - in order, on the named controllers, the gait layer additive and scaled on the four
- *     feet - and the config gates them: {@code artistAnimations} off, {@code classicAnimationSpecies}
- *     listing the Beaver (either spelling), or the modern master off, each registers none; a file with
- *     {@code walk} alone registers the gait layer only.</li>
+ * <li>{@code kf_001} (item 15 landed, 2026-09-12): the SHIPPED {@code beaver.animation.json} is the
+ *     transcription - {@code idle} (no bone keyed), {@code walk}, {@code walk_teeth}, {@code walk_tail} - and
+ *     registers the three layers under the default keys through {@code registerKeyframeLayers}; no bake at
+ *     all, a file with only {@code idle}, and a file with only {@code walk} each register nothing (the gate
+ *     opens on idle AND walk together, owner 2026-09-12 item 12); the production {@code registerControllers}
+ *     path registers nothing on this server (GeckoLib's animation cache holds no bake here).</li>
+ * <li>{@code kf_002}: the reference clip (the generator's output, a test resource, byte-equal to the shipped
+ *     file) registers the three contract layers - in order, on the named controllers, the gait layer
+ *     additive and scaled on the four feet - and the config gates them: {@code artistAnimations} off,
+ *     {@code classicAnimationSpecies} listing the Beaver (either spelling), or the modern master off, each
+ *     registers none; {@code walk} alone registers none, {@code idle} + {@code walk} registers the gait layer
+ *     only (the teeth and tail hold bind), {@code idle} + {@code walk_teeth} registers none.</li>
  * <li>{@code kf_003} (CLIENT-ONLY, not a gate row - GeckoLib's controller processing initialises
  *     {@code MolangQueries}, which the dedicated server refuses; the harness leg carries these facts): on this server, through the production code on both sides, the three layers
  *     (built by the production registration on a real frozen Beaver's age and the state's limb-swing
@@ -156,10 +159,10 @@ public class KeyframeLegTests {
             ]}]}
             """;
 
-    // ------------------------------------------------------------------ row 1: the shipped clip registers nothing
+    // ------------------------------------------------------------------ row 1: the shipped clip registers the layers; partial files none
 
     @GameTest(template = "empty", batch = BATCH)
-    public static void kf_001_shipped_clip_registers_no_layer(GameTestHelper helper) {
+    public static void kf_001_shipped_clip_registers_the_layers_and_partial_files_none(GameTestHelper helper) {
         BeaverGeoReplacement replacement = new BeaverGeoReplacement();
         List<KeyframeLayer> layers = replacement.keyframeLayers();
         helper.assertTrue(layers.size() == 3, "the Beaver declares its three frequency groups");
@@ -174,14 +177,29 @@ public class KeyframeLegTests {
                 && !layers.get(2).gaitScaled(), "tail layer: walk_tail, 0.5 rad/tick, unscaled");
 
         BakedAnimations shipped = bakeClips(resource(SHIPPED_CLIP));
-        helper.assertTrue(shipped.animations().isEmpty(), "the shipped beaver.animation.json ships no clip (the owner's look pending)");
-        AnimatableManager.ControllerRegistrar registrar = registrar();
-        helper.assertTrue(replacement.registerKeyframeLayers(registrar, shipped) == 0 && registrar.controllers().isEmpty(),
-                "an empty clip file registers no layer");
-        helper.assertTrue(replacement.registerKeyframeLayers(registrar(), null) == 0, "no bake at all registers no layer");
-        BakedAnimations idleOnly = new BakedAnimations(Map.of(KeyframeLayer.IDLE, syntheticLoop("idle", "rff", 5, 10.0D, "linear", 1.0D)));
-        helper.assertTrue(replacement.registerKeyframeLayers(registrar(), idleOnly) == 0,
-                "a file with idle but none of the Beaver's group clips registers no layer (the bones hold bind)");
+        helper.assertTrue(shipped.animations().keySet().equals(Set.of(KeyframeLayer.IDLE, KeyframeLayer.WALK, "walk_teeth", "walk_tail")),
+                "the shipped beaver.animation.json is the transcription: idle, walk, walk_teeth, walk_tail (item 15 landed 2026-09-12)");
+        helper.assertTrue(shipped.getAnimation(KeyframeLayer.IDLE).boneAnimations().length == 0
+                        && shipped.getAnimation(KeyframeLayer.IDLE).loopType() == Animation.LoopType.LOOP,
+                "the transcription's idle keys no bone (the resting motion is the always-on groups); it loops");
+        Flags flags = Flags.read();
+        try {
+            OreSpawnConfig.MODERN_ENABLED.set(true);
+            OreSpawnConfig.MODERN_ARTIST_ANIMATIONS.set(true);
+            OreSpawnConfig.MODERN_CLASSIC_ANIMATION_SPECIES.set(List.of());
+            AnimatableManager.ControllerRegistrar registrar = registrar();
+            helper.assertTrue(replacement.registerKeyframeLayers(registrar, shipped) == 3 && registrar.controllers().size() == 3,
+                    "the shipped clip registers the three layers under the default keys");
+            helper.assertTrue(replacement.registerKeyframeLayers(registrar(), null) == 0, "no bake at all registers no layer");
+            BakedAnimations idleOnly = new BakedAnimations(Map.of(KeyframeLayer.IDLE, syntheticLoop("idle", "rff", 5, 10.0D, "linear", 1.0D)));
+            helper.assertTrue(replacement.registerKeyframeLayers(registrar(), idleOnly) == 0,
+                    "a file with idle but no walk registers no layer (the gate opens on idle AND walk together)");
+            BakedAnimations walkOnly = new BakedAnimations(Map.of(KeyframeLayer.WALK, shipped.getAnimation(KeyframeLayer.WALK)));
+            helper.assertTrue(replacement.registerKeyframeLayers(registrar(), walkOnly) == 0,
+                    "a file with walk but no idle registers no layer (one without the other stays classic)");
+        } finally {
+            flags.restore();
+        }
         AnimatableManager<BeaverGeoReplacement> manager = new AnimatableManager<>(replacement);
         helper.assertTrue(manager.getAnimationControllers().isEmpty(),
                 "the production registerControllers path registers nothing: GeckoLib's animation cache holds no bake on this server");
@@ -245,10 +263,18 @@ public class KeyframeLegTests {
             OreSpawnConfig.MODERN_ENABLED.set(true);
 
             BakedAnimations walkOnly = new BakedAnimations(Map.of(KeyframeLayer.WALK, reference.getAnimation(KeyframeLayer.WALK)));
+            helper.assertTrue(replacement.registerKeyframeLayers(registrar(), walkOnly) == 0,
+                    "walk alone registers none: the gate opens on idle AND walk together (owner 2026-09-12, item 12)");
+            BakedAnimations idleAndWalk = new BakedAnimations(Map.of(KeyframeLayer.IDLE, reference.getAnimation(KeyframeLayer.IDLE),
+                    KeyframeLayer.WALK, reference.getAnimation(KeyframeLayer.WALK)));
             AnimatableManager.ControllerRegistrar partial = registrar();
-            helper.assertTrue(replacement.registerKeyframeLayers(partial, walkOnly) == 1
+            helper.assertTrue(replacement.registerKeyframeLayers(partial, idleAndWalk) == 1
                             && partial.controllers().get(0).getName().equals("keyframe:walk"),
-                    "walk alone registers the gait layer only; the teeth and tail hold bind");
+                    "idle + walk registers the gait layer only; the teeth and tail hold bind (contract section 2.4's fallback)");
+            BakedAnimations idleAndTeeth = new BakedAnimations(Map.of(KeyframeLayer.IDLE, reference.getAnimation(KeyframeLayer.IDLE),
+                    "walk_teeth", reference.getAnimation("walk_teeth")));
+            helper.assertTrue(replacement.registerKeyframeLayers(registrar(), idleAndTeeth) == 0,
+                    "idle + walk_teeth registers none: a partial delivery without walk stays classic");
         } finally {
             flags.restore();
         }

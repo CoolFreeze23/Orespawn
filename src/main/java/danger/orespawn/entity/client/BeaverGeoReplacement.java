@@ -23,13 +23,13 @@ import software.bernie.geckolib.cache.object.GeoBone;
  *
  * <p>The species also declares its three keyframe layers ({@link #keyframeLayers()}:
  * the contract's {@code walk} on the gait group, {@code walk_teeth}, {@code walk_tail} —
- * the Tier-2 pilot's reference-leg clips, Q16 (a)). They register only when the
- * shipped {@code beaver.animation.json} carries those clips and {@code [modern]
- * artistAnimations} is on; that file ships EMPTY ({@code "animations": {}}) until
- * the owner's in-game look accepts the regenerated clip, so the registration is
- * inert in-game and the classic hook below stays the shipped path. The harness's
- * keyframe reference leg proves the layers against this hook on a scratch clip
- * at the ruled 2.5e-3 rad (the density stated beside it).</p>
+ * the Tier-2 pilot's reference-leg clips, Q16 (a)). Since item 15 landed (2026-09-12)
+ * the shipped {@code beaver.animation.json} is the transcription ({@code tools/keyframe_clip.py}:
+ * {@code idle} keying no bone, {@code walk}, {@code walk_teeth}, {@code walk_tail}), so on the
+ * GeckoLib candidate renderer the layers register under the default keys and the hook below
+ * stands down ({@link OreSpawnGeoReplacementModel#setCustomAnimations}); the hook poses when the
+ * gate (idle AND walk) or {@code [modern] artistAnimations} says no. The harness's keyframe
+ * reference leg proves the layers against this hook on the SHIPPED clip at the ruled 2.5e-3 rad.</p>
  *
  * <p>Scale and shadow follow {@link BeaverRenderer}: 0.75 render scale
  * (0.75 / 2 for a baby) and a 0.15 x 0.75 shadow (ENT-S-092, from

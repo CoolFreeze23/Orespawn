@@ -14,6 +14,10 @@
   "spline_arguments": "repaired at load in the replacement seam (Q9 (a) scoped; SplineRepair)",
   "amplitude": "full: the controller scales the gait group's delta by limbSwingAmount (Amendment 1 point 3)",
   "density_source": "an OUTPUT of the harness (Amendment 1 point 4, ADDENDA (2)): the G1 keyframe_reference_leg's density search, the fewest keys per bone holding 2.5e-3 rad under the repaired evaluator, re-derived on every re-transcription; recorded here so the generator reproduces the proven clip byte for byte",
+  "idle": {
+    "keys": "none",
+    "why": "the in-game gate opens on idle AND walk delivered together (owner 2026-09-12, item 12); the classic Beaver has no resting motion of its own - at rest the always-on groups (walk_teeth, walk_tail) carry it and the gait group sits at limbSwingAmount 0 - so the transcription's idle keys no bone (the bind pose); an artist's real idle replaces it"
+  },
   "groups": [
     {
       "name": "gait",

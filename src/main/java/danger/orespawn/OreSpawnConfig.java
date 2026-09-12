@@ -315,19 +315,19 @@ public class OreSpawnConfig {
     public static final ModConfigSpec.BooleanValue MODERN_CHAINSAW_SWEEP_VANILLA_SIGHT;
     /**
      * MOD-038 (Phase G, the standard animation contract; owner ruling 2026-09-06,
-     * scope addendum item 24 Q1 (a)): artist keyframe animations on the GeckoLib
-     * candidate renderers -- a species whose {@code .animation.json} carries the
-     * contract's clips ({@code idle} / {@code walk} and the group clips) registers
-     * the contract's phase-locked layers and its code-driven classic pose hook
-     * stands down; a species without those clips (every shipped clip file today:
-     * the Beaver's is empty until the owner's look) keeps the classic pose whatever
-     * this says (self-gated by clip presence). Takes effect only while
+     * scope addendum item 24 Q1 (a); the gate as ruled 2026-09-12, item 12): artist
+     * keyframe animations on the GeckoLib candidate renderers -- a species whose
+     * {@code .animation.json} carries the contract's {@code idle} AND {@code walk} clips
+     * together (plus the group clips) registers the contract's phase-locked layers and
+     * its code-driven classic pose hook stands down; one without the other, or neither
+     * (the Beaver ships its transcription since 2026-09-12, every other shipped clip
+     * file is empty), keeps the classic pose whatever this says. Takes effect only while
      * {@link #MODERN_ENABLED} is on -- read through
      * {@link #artistAnimations(EntityType)}, never directly, ONCE per per-entity
      * animation manager as it is built (BOSS-017 "construction snapshot" shape on the
      * client: a flip reaches an entity as it re-enters render distance, on F3+T or on
-     * re-login); false is the classic pose everywhere. Nothing in-game changes with
-     * the default until a species ships its clips.
+     * re-login); false is the classic pose everywhere. With the default keys the
+     * GeckoLib-rendered Beaver plays its layers; the classic renderer never reads the clip.
      */
     public static final ModConfigSpec.BooleanValue MODERN_ARTIST_ANIMATIONS;
     /**
@@ -640,11 +640,11 @@ public class OreSpawnConfig {
         // snapshot), never on a live manager.
         MODERN_ARTIST_ANIMATIONS = BUILDER.comment(
                 "MOD-038: artist keyframe animations on the GeckoLib candidate renderers. A species whose " +
-                        "animation file carries the standard contract's clips (idle / walk and its group clips) plays " +
-                        "them through the phase-locked keyframe layers and its classic code-driven pose stands down; a " +
-                        "species without those clips keeps the classic pose whatever this says (every shipped clip " +
-                        "file is empty until the owner's in-game look accepts a species' clips, so a default install " +
-                        "changes nothing). Only takes effect while modern.enabled is true; classic mode always poses " +
+                        "animation file carries the standard contract's idle AND walk clips together (plus its group " +
+                        "clips) plays them through the phase-locked keyframe layers and its classic code-driven pose " +
+                        "stands down; one without the other, or neither, keeps the classic pose whatever this says " +
+                        "(the Beaver ships its transcription since 2026-09-12; every other shipped clip file is empty " +
+                        "until a species' clips land). Only takes effect while modern.enabled is true; classic mode always poses " +
                         "from the 1.7.10 formulas. On by default (owner ruling 2026-09-06); set false to keep every " +
                         "species on the classic pose in modern mode too. Picked up by an entity as it (re)enters render " +
                         "distance, on F3+T or on re-login, not live."

@@ -23,7 +23,11 @@ cosine formula, frequency, pi_scale, sign, limb_swing_scaled) and writes the ``.
 * with the density the manifest records per group - an OUTPUT of the harness (the G1
   ``keyframe_reference_leg`` density search: the fewest keys per bone holding 2.5e-3 rad under the
   repaired catmullrom evaluator), which the harness re-derives and checks against this file on every
-  run; ``lerp_mode`` as the manifest says.
+  run; ``lerp_mode`` as the manifest says;
+* plus, where the manifest declares ``"idle": {"keys": "none"}``, an ``idle`` loop that keys no bone: the
+  in-game gate opens on ``idle`` AND ``walk`` together (owner 2026-09-12, item 12), and a classic transcription
+  has no resting motion of its own (the always-on groups carry it; the gait group sits at limbSwingAmount 0),
+  so its idle is the bind pose until an artist's real idle replaces it.
 
 Deterministic: LF line endings, UTF-8, two-space JSON, values rounded to 1e-10 degrees, ``-0.0``
 written as ``0.0``. The G1 probe regenerates the same keys in memory (``KeyframeLeg``) and pins the
@@ -139,6 +143,18 @@ def build_clips(clip_manifest: dict, channels: list[dict], keys_override: dict[s
         animations[group["clip"]] = {"loop": True, "animation_length": seconds, "bones": bones}
         lines.append(f"{group['clip']}: {keys} {lerp_mode} keys per bone over {sorted(bones)} "
                      f"({frequency} rad/tick, {'gait, scaled by limbSwingAmount' if scaled.pop() else 'unscaled'})")
+    idle = clip_manifest.get("idle")
+    if idle is not None:
+        # The in-game gate opens on ``idle`` AND ``walk`` together (owner 2026-09-12, item 12). A classic
+        # transcription has no resting motion of its own - at rest the always-on groups carry it and the gait
+        # group sits at limbSwingAmount 0 - so its ``idle`` keys no bone; an artist's real idle replaces it.
+        if idle.get("keys") != "none":
+            raise SystemExit("idle: only the 'none' form is transcribed (the resting motion is the always-on groups)")
+        if "idle" in animations:
+            raise SystemExit("idle: a group already claims the clip name")
+        animations["idle"] = {"loop": True, "animation_length": seconds, "bones": {}}
+        lines.append("idle: no bone keyed (the classic resting motion is the always-on groups; present so the "
+                     "idle-AND-walk gate opens)")
     return {"format_version": "1.8.0", "animations": animations}, lines
 
 

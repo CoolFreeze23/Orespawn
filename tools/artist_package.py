@@ -43,7 +43,7 @@ from collections import Counter, OrderedDict, defaultdict
 from pathlib import Path
 from typing import Any, Iterable
 
-TOOL_VERSION = "0.2.1 (slice (f), the locked-bone policy as ruled, 2026-09-06)"
+TOOL_VERSION = "0.2.2 (item 15 landed: idle AND walk open the switch together; no event keyframes on loops, 2026-09-12)"
 
 ROOT = Path(__file__).resolve().parent.parent
 BB_NAMESPACE = uuid.UUID("6f0b4b2e-9d1c-4a7e-8f3a-2c5e1d7b9a10")  # deterministic .bbmodel uuids
@@ -72,9 +72,10 @@ CHECK_REJECTS = [
     "a missing or empty folder, or a missing manifest",
     "no `.animation.json`, one under the wrong name (the sheet names the file), or a second one",
     "a clip not in the sheet (renamed or added; `idle_alt_N` only where the sheet allows it), or a clip delivered for a Tier-3 creature",
-    "a wrong `loop` value; a missing `idle` / `walk`; a missing clip the game already triggers by name",
+    "a wrong `loop` value; a missing `idle` or `walk` (they open the game's switch only TOGETHER — one without the other leaves the creature on its code-driven motion); a missing clip the game already triggers by name",
     "a key on a bone the rig does not have (renamed), or a channel other than rotation / position / scale",
     "a Molang string, a non-numeric or non-finite value, a custom-instruction (`timeline`) key",
+    "an event keyframe (`sound_effects` / `particle_effects`) on a LOOPING clip — no event keyframes on loops; code-fired events come from the trigger inventory (one-shot clips may carry them)",
     f"|rotation| > {ROTATION_BOUND_DEG:.0f} degrees or |position| > {POSITION_BOUND:.0f} units",
     "a key later than the clip's `animation_length` (a declared length shorter than the last key)",
     "a returned `.geo.json` whose bones, parents, pivots, rotations, cubes, UVs or canvas differ from the shipped rig",
@@ -2807,11 +2808,14 @@ def readme_document(repo: "Repo", manifests: dict[str, dict[str, Any]]) -> str:
     L.append("")
     L.append("1. **Never rename, delete or re-parent a bone.** Code and hitboxes find bones by name. The glossary in each `SPEC.md` gives readable labels beside the fixed names; use the labels to understand, the names to work.")
     L.append("2. **Never rename a clip.** Every clip name in a `SPEC.md` table is fixed; the ones marked code-triggered are fired by the game by that exact name. You may ADD clips only where the sheet says so (`idle_alt_1`, `idle_alt_2`, ...).")
-    L.append("3. **Set each clip's loop mode exactly as its table says**: `true` for cycles (idle, walk), `false` for one-shot actions (attack, hurt), `hold_on_last_frame` only where written (death).")
+    L.append("3. **Set each clip's loop mode exactly as its table says**: `true` for cycles (idle, walk), `false` for one-shot actions (attack, hurt), `hold_on_last_frame` only where written (death). "
+             "**Deliver `idle` and `walk` together**: the game switches a creature to your animations only when BOTH are in the file — one without the other leaves the creature on its old code-driven motion, and `check` says so.")
     L.append("4. **Keep texture canvas sizes.** A 64x32 texture stays 64x32.")
     L.append("5. **Keep each clip's length near the period the sheet states** unless the sheet says the length is free. (In-game, loops play at the creature's own tempo whatever their length — the sheet's tempo table explains; PROVISIONAL, see below.)")
     L.append(f"6. **A bone the sheet marks `locked` carries or parents a hitbox part (contract §8.1).** {LOCK_POLICY} {LOCK_REJECT_MODE}")
-    L.append("7. Rotation / position / scale keys, linear or Catmull-Rom curves (and GeckoLib easings), sound and particle keys are fine. No Molang expressions, no custom-instruction keys, "
+    L.append("7. Rotation / position / scale keys, linear or Catmull-Rom curves (and GeckoLib easings) are fine; sound and particle keys only on one-shot clips (attack, hurt, death). "
+             "**No event keyframes on loops** (idle, walk and the other cycles) — code-fired events come from the trigger inventory in each sheet, not from keys on a cycle (a loop plays under a phase lock that would fire such a key once, ever). "
+             "No Molang expressions, no custom-instruction keys, "
              "no `_preview` files in a delivery (a Blockbench-only aid — the checker warns; PROVISIONAL, open question 15).")
     L.append("")
     L.append("## What is in each entity folder")
@@ -3265,6 +3269,11 @@ def check_folder(folder: Path, manifest_path: Path | None = None, lock_mode_over
                 findings.append(("REJECT", f"{ap_.name}: clip '{name}' loop is {loop}, the SPEC says {spec['loop']}"))
             if "timeline" in clip:
                 findings.append(("REJECT", f"{ap_.name}: clip '{name}' has a `timeline` (custom-instruction keys are not handled; rule 7)"))
+            if spec["loop"] == "true":  # owner 2026-09-12, item 11: no event keyframes on loops
+                for event_key in ("sound_effects", "particle_effects"):
+                    if clip.get(event_key):
+                        findings.append(("REJECT", f"{ap_.name}: clip '{name}' carries `{event_key}` on a looping clip — no event keyframes on loops; "
+                                                   "code-fired events come from the trigger inventory (rule 7)"))
             rule = str(spec.get("length_rule", "free"))
             declared = clip.get("animation_length")
             length = float(declared) if _finite_number(declared) else 0.0
@@ -3310,7 +3319,8 @@ def check_folder(folder: Path, manifest_path: Path | None = None, lock_mode_over
                 if spec.get("code_triggered") and spec.get("required"):
                     findings.append(("REJECT", f"{ap_.name}: code-triggered clip '{name}' is missing (renamed or removed)"))
                 elif spec.get("required"):
-                    findings.append(("REJECT", f"{ap_.name}: required clip '{name}' is missing"))
+                    findings.append(("REJECT", f"{ap_.name}: required clip '{name}' is missing (idle and walk open the game's switch only "
+                                               "together — without it the creature stays on its code-driven motion)"))
                 else:
                     findings.append(("WARN", f"{ap_.name}: optional clip '{name}' not delivered (falls back per the contract)"))
     lock_sev = "REJECT" if lock_mode == "reject" else "WARN"
