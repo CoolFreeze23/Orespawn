@@ -7,12 +7,12 @@ classic `EntityModel` and candidate `GeoRenderer` CPU vertex paths. It does
 not a Q6 pass. The Tier-1, GPU, MSPT, and MHLib packet scenes remain a
 binding pre-cutover gate for the first runtime-integrated conversion slice.
 
-- Captured: 2026-09-12T16:37:18.001287400Z
+- Captured: 2026-09-12T18:31:35.004624100Z
 - OS: Windows 11 10.0 (amd64)
 - CPU: Intel64 Family 6 Model 198 Stepping 2, GenuineIntel (24 logical processors)
 - JVM: Microsoft 21.0.7 / OpenJDK 64-Bit Server VM
 - JVM flags: ['-Dfile.encoding=UTF-8', '-Duser.country=US', '-Duser.language=en', '-Duser.variant']
-- Repository base revision: `bd4f33ca58e20c57247a14c880bed18a4eebd15c` (working content bound by source/input hashes).
+- Repository base revision: `5904681ac43ccc8840131b9af0238bdafa75877f` (working content bound by source/input hashes).
 - Warmup/runs: 1s; 2 x 2s per scene
 - Seed: N/A — no randomized world exists in the headless component proxy
 - Resolution: N/A — no window, raster target, or GPU submission
@@ -23,47 +23,47 @@ binding pre-cutover gate for the first runtime-integrated conversion slice.
 ## elevator_100_visible
 
 - Scope: renderer vertex submission only; no window, GPU, client tick, or server.
-- Classic median/p95: 0.054615000 / 0.088250000 ms.
-- Candidate median/p95: 0.182375000 / 0.296355000 ms.
-- Candidate 1% low: 2475.707 FPS (component-only inverse p99).
-- WARNING — component median ratio delta: 233.92840794653486%; absolute p95 delta: 0.20810500000000004 ms.
-- Allocation classic/candidate: 93880.000 / 346680.000 bytes per frame.
+- Classic median/p95: 0.048510000 / 0.070035000 ms.
+- Candidate median/p95: 0.120100000 / 0.174975000 ms.
+- Candidate 1% low: 4507.042 FPS (component-only inverse p99).
+- WARNING — component median ratio delta: 147.57781900639046%; absolute p95 delta: 0.10493999999999999 ms.
+- Allocation classic/candidate: 91480.000 / 215480.000 bytes per frame.
 - Model-bone instances: 500; MHLib parts: 0.
 
 ## beaver_100_visible
 
 - Scope: renderer vertex submission only; no window, GPU, client tick, or server.
-- Classic median/p95: 0.120045000 / 0.165935000 ms.
-- Candidate median/p95: 0.240270000 / 0.332415000 ms.
-- Candidate 1% low: 2369.949 FPS (component-only inverse p99).
-- WARNING — component median ratio delta: 100.14994377108582%; absolute p95 delta: 0.16648000000000002 ms.
+- Classic median/p95: 0.119705000 / 0.173235000 ms.
+- Candidate median/p95: 0.222830000 / 0.311765000 ms.
+- Candidate 1% low: 2550.923 FPS (component-only inverse p99).
+- WARNING — component median ratio delta: 86.149283655653463%; absolute p95 delta: 0.13852999999999996 ms.
 - Allocation classic/candidate: 171480.000 / 394680.000 bytes per frame.
 - Model-bone instances: 900; MHLib parts: 0.
 
 ## mixed_100_visible
 
 - Scope: renderer vertex submission only; no window, GPU, client tick, or server.
-- Classic median/p95: 0.092610000 / 0.131550000 ms.
-- Candidate median/p95: 0.195560000 / 0.279680000 ms.
-- Candidate 1% low: 2872.078 FPS (component-only inverse p99).
-- WARNING — component median ratio delta: 111.16510096101932%; absolute p95 delta: 0.14813000000000004 ms.
-- Allocation classic/candidate: 132680.000 / 305080.000 bytes per frame.
+- Classic median/p95: 0.088215000 / 0.124495000 ms.
+- Candidate median/p95: 0.168190000 / 0.238520000 ms.
+- Candidate 1% low: 3298.099 FPS (component-only inverse p99).
+- WARNING — component median ratio delta: 90.659184945870891%; absolute p95 delta: 0.11402500000000002 ms.
+- Allocation classic/candidate: 131480.000 / 305080.000 bytes per frame.
 - Model-bone instances: 700; MHLib parts: 0.
 
 ## mixed_100_rotation_state_only
 
 - Scope: rotation-state iteration only; not offscreen rendering, culling, or controller work.
-- Classic median/p95: 0.001000000 / 0.001266000 ms.
-- Candidate median/p95: 0.002054500 / 0.002576500 ms.
-- Candidate 1% low: 293987.946 FPS (component-only inverse p99).
-- WARNING — component median ratio delta: 105.45%; absolute p95 delta: 0.0013104999999999998 ms.
+- Classic median/p95: 0.001117500 / 0.001579500 ms.
+- Candidate median/p95: 0.002268500 / 0.003145000 ms.
+- Candidate 1% low: 262226.301 FPS (component-only inverse p99).
+- WARNING — component median ratio delta: 102.99776286353466%; absolute p95 delta: 0.0015655000000000003 ms.
 - Allocation classic/candidate: 280.000 / 280.000 bytes per frame.
 - Model-bone instances: 700; MHLib parts: 0.
 
 ## Q6 status and exact mixed-100 warning numbers
 
-- WARNING — mixed-100 component median ratio delta: 111.16510096101932%.
-- WARNING — mixed-100 absolute component p95 delta: 0.14813000000000004 ms.
+- WARNING — mixed-100 component median ratio delta: 90.659184945870891%.
+- WARNING — mixed-100 absolute component p95 delta: 0.11402500000000002 ms.
 - These component warnings must not be compared with or substituted for Q6's
   whole-client ≤10% median and ≤2 ms p95 acceptance limits.
 - Final whole-client median/p95, GPU time, server p95 <50 ms, and no sustained

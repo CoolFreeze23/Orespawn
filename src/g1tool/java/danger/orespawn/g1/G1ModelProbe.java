@@ -8,6 +8,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import danger.orespawn.entity.client.TrueNormalCubeRenderer;
 import danger.orespawn.entity.client.DrawOrder;
 import danger.orespawn.entity.client.FaceOrder;
 import danger.orespawn.entity.client.GeoReplacementDescriptor;
@@ -1756,11 +1757,21 @@ public final class G1ModelProbe {
             for (int index = 0; index < cubes.size(); index++) {
                 poseStack.pushPose();
                 consumer.begin(bone.getName(), bone.getName(), index);
-                GeoRenderer.super.renderCube(poseStack, cubes.get(index), buffer,
-                        packedLight, packedOverlay, color);
+                renderCube(poseStack, cubes.get(index), buffer, packedLight, packedOverlay, color);
                 consumer.end();
                 poseStack.popPose();
             }
+        }
+
+        /**
+         * ENT-S-161 (owner 2026-09-13, item 3): the seam's cube path - GeckoLib's {@code renderCube} minus
+         * {@code RenderUtil.fixInvertedFlatCube} - through the same static the shipped replacement renderer
+         * uses ({@link TrueNormalCubeRenderer}), so the captured normals are the normals the seam draws.
+         */
+        @Override
+        public void renderCube(PoseStack poseStack, GeoCube cube, VertexConsumer buffer,
+                               int packedLight, int packedOverlay, int color) {
+            TrueNormalCubeRenderer.render(this, poseStack, cube, buffer, packedLight, packedOverlay, color);
         }
 
         @Override

@@ -15,6 +15,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
+import software.bernie.geckolib.cache.object.GeoCube;
 import software.bernie.geckolib.renderer.GeoReplacedEntityRenderer;
 import software.bernie.geckolib.util.Color;
 
@@ -257,5 +258,16 @@ public abstract class OreSpawnGeoReplacedEntityRenderer<E extends Entity, A exte
     /** GeckoLib sets the current entity before {@code defaultRender} and clears it only after post-render cleanup. */
     protected final E currentEntity() {
         return this.descriptor.requireEntity(getCurrentEntity());
+    }
+
+    /**
+     * ENT-S-161 (owner 2026-09-13, item 3; PN-027): every cube of a replacement is drawn with its quads'
+     * true transformed normals - GeckoLib's own {@code renderCube} minus {@code RenderUtil.fixInvertedFlatCube},
+     * which mangles the normal of a ROTATED zero-thickness cube ({@link TrueNormalCubeRenderer}). The
+     * harness's capturing renderer draws through the same static, so the proof draws what the seam draws.
+     */
+    @Override
+    public void renderCube(PoseStack poseStack, GeoCube cube, VertexConsumer buffer, int packedLight, int packedOverlay, int colour) {
+        TrueNormalCubeRenderer.render(this, poseStack, cube, buffer, packedLight, packedOverlay, colour);
     }
 }
