@@ -11,7 +11,8 @@
     "pixel_channel_tolerance": 2,
     "pixel_changed_fraction": 0.001,
     "pixel_mean_absolute_error": 0.25,
-    "minimum_foreground_fraction": 0.001
+    "minimum_foreground_fraction": 0.001,
+    "keyframe_reference_leg_epsilon_radians": 0.0025
   },
   "contested_exclusion_applied": false,
   "models": [
@@ -186,12 +187,12 @@
       "proof_scope": "production_proof_model",
       "source_class": "danger.orespawn.entity.client.ModelBeaver",
       "source_class_sha256": "91e93750c144a368478084bb3fe75738af158d2dfc856652dfc7b944eaa75207",
-      "compiled_dump_sha256": "a42983c18f720daa9dc210bcef6880e8bcb820a4258fd1248275736ddf8032aa",
+      "compiled_dump_sha256": "505213a4709e43bcce20c6a643de859c018a72c3213927be06b6910ff3f00456",
       "bone_count": 9,
       "cube_count": 9,
       "geometry_sha256": "712d431e0da8f625e2768899e251dbd8620bdae36ff47ec37dc9cc4aaa00fca8",
       "animation_sha256": "c845420d205f2d5b608b17ddde0ac27f39745316c60a741ada2b8c5b4f5f332d",
-      "animation_contract_sha256": "86236c1dc332a52c228a3f0e906272b23527353ec412751ce30c5d3a9a4b727e",
+      "animation_contract_sha256": "f1bd124fda441719450d3c462e275fd133c3f0d95d8d19bdb1524595627a6803",
       "geometry": {
         "status": "PASS",
         "epsilon_blocks": 1e-05,
@@ -218,13 +219,13 @@
         "epsilon_radians": 2e-06,
         "accepted_pose_comparison": "compiled setupAnim versus actual fresh-baked GeckoLib candidate",
         "reference_animation_used_for_acceptance": false,
-        "sample_count": 2401,
+        "sample_count": 2929,
         "max_rotation_delta_radians": 0.0,
         "max_dense_rotation_delta_radians": 0.0,
         "max_unexpected_position_or_scale_delta": 0.0,
         "worst_case": "exact",
         "dense_worst_case": "exact",
-        "rotation_channel_samples": 64827,
+        "rotation_channel_samples": 79083,
         "dense_rotation_channel_samples": 64260,
         "contract": {
           "kind": "gait_scaled",
@@ -260,7 +261,7 @@
           "max_compiled_gait_proportionality_delta_radians": 5.000000002919336e-08,
           "max_candidate_unscaled_channel_amplitude_delta_radians": 0.0,
           "max_compiled_unscaled_channel_amplitude_delta_radians": 0.0,
-          "proportional_channel_samples": 9600,
+          "proportional_channel_samples": 11712,
           "frequency_radians_per_age_tick": [
             0.5,
             2.7,
@@ -301,6 +302,225 @@
         "classic_source": "classic EntityModel.renderToBuffer on a second bake posed identically; every ModelPart.render is one pose-stack push, attributed to its part by ModelPart.skipDraw elimination (one run per cube-bearing part with every other part's skipDraw set); a part drawn n > 1 times is named <part>__i<k> by draw ordinal",
         "unobserved_units": [],
         "policy": "the shipped model sorts GeckoLib's topLevelBones / childBones lists into the classic renderToBuffer order (DrawOrder.apply); both renderers traverse in pre-order, so equal sibling orders are equal draw orders"
+      },
+      "keyframe_reference_leg": {
+        "tolerance_radians": 0.0025,
+        "statement": "2.5e-3 rad; Beaver reference leg 15 / 13 / 8 catmullrom keys per bone with spline arguments repaired at load; wrap sample T−ε vs 0+ε included",
+        "candidate_class": "danger.orespawn.entity.client.BeaverGeoReplacement",
+        "controller_class": "danger.orespawn.entity.client.animation.PhaseLockedKeyframeController",
+        "spline_repair": true,
+        "spline_repair_class": "danger.orespawn.entity.client.animation.SplineRepair",
+        "clip_sha256": "40f305d76c3fd8e8f67d758d1443a610fa1b187b4de6c5cd3f6137d4922dd5d5",
+        "clip_path": "src/main/resources/assets/orespawn/animations/entity/beaver.animation.json",
+        "pose_source": "persistent BakedGeoModel + production KeyframeLayer.controller (PhaseLockedKeyframeController) x 3 through AnimationProcessor.tickAnimation on explicit inputs",
+        "layers": [
+          {
+            "group": "gait",
+            "clip": "walk",
+            "controller": "keyframe:walk",
+            "frequency_radians_per_age_tick": 3.7,
+            "bones": [
+              "lff",
+              "lrf",
+              "rff",
+              "rrf"
+            ],
+            "gait_scaled": true,
+            "additive": true
+          },
+          {
+            "group": "teeth",
+            "clip": "walk_teeth",
+            "controller": "keyframe:walk_teeth",
+            "frequency_radians_per_age_tick": 2.7,
+            "bones": [
+              "teeth"
+            ],
+            "gait_scaled": false,
+            "additive": false
+          },
+          {
+            "group": "tail",
+            "clip": "walk_tail",
+            "controller": "keyframe:walk_tail",
+            "frequency_radians_per_age_tick": 0.5,
+            "bones": [
+              "tail"
+            ],
+            "gait_scaled": false,
+            "additive": false
+          }
+        ],
+        "clip": {
+          "gait": {
+            "clip": "walk",
+            "keys_per_bone": 15,
+            "lerp_mode": "catmullrom",
+            "spline_arguments": "spline arguments repaired at load",
+            "declared_length_ticks": 20.0,
+            "bones": [
+              "rff",
+              "lrf",
+              "lff",
+              "rrf"
+            ]
+          },
+          "teeth": {
+            "clip": "walk_teeth",
+            "keys_per_bone": 13,
+            "lerp_mode": "catmullrom",
+            "spline_arguments": "spline arguments repaired at load",
+            "declared_length_ticks": 20.0,
+            "bones": [
+              "teeth"
+            ]
+          },
+          "tail": {
+            "clip": "walk_tail",
+            "keys_per_bone": 8,
+            "lerp_mode": "catmullrom",
+            "spline_arguments": "spline arguments repaired at load",
+            "declared_length_ticks": 20.0,
+            "bones": [
+              "tail"
+            ]
+          }
+        },
+        "time_warp": {
+          "gait": {
+            "declared_clip_ticks": 20.0,
+            "natural_period_age_ticks": 1.6981581692446202,
+            "clip_ticks_per_age_tick": 11.777465940582237
+          },
+          "teeth": {
+            "declared_clip_ticks": 20.0,
+            "natural_period_age_ticks": 2.3271056282276086,
+            "clip_ticks_per_age_tick": 8.59436707874433
+          },
+          "tail": {
+            "declared_clip_ticks": 20.0,
+            "natural_period_age_ticks": 12.566370614359172,
+            "clip_ticks_per_age_tick": 1.5915494309189535
+          }
+        },
+        "sample_grid": {
+          "layer_bone_samples_compared": 17568,
+          "max_error_radians_by_group": {
+            "gait": 0.0021624899999999614,
+            "teeth": 0.0018921439999999984,
+            "tail": 0.002295240000000004
+          },
+          "worst_case_by_group": {
+            "gait": "a1_dense_461:lff",
+            "teeth": "a0_dense_279:teeth",
+            "tail": "a0_dense_107:tail"
+          },
+          "max_non_layer_bone_motion_radians": 0.0
+        },
+        "wrap_pairs": {
+          "count": 264,
+          "max_abs_T_minus_eps_vs_0_plus_eps_radians": 3.0000000039720476e-08
+        },
+        "density_search": {
+          "gait": {
+            "fewest_keys_per_bone": 15,
+            "confirmed_max_error_radians": 0.002162754535675049,
+            "confirmed_comparisons": 1057088,
+            "one_fewer_max_error_radians": 0.002711176872253418
+          },
+          "teeth": {
+            "fewest_keys_per_bone": 13,
+            "confirmed_max_error_radians": 0.001892179250717163,
+            "confirmed_comparisons": 264272,
+            "one_fewer_max_error_radians": 0.0025442838668823242
+          },
+          "tail": {
+            "fewest_keys_per_bone": 8,
+            "confirmed_max_error_radians": 0.002295270562171936,
+            "confirmed_comparisons": 264272,
+            "one_fewer_max_error_radians": 0.0039844810962677
+          }
+        },
+        "density_search_schedule": {
+          "rule": "the fewest keys per bone (both ends included, uniform in time, the cosine sampled exactly at the keys, full amplitude) whose max |candidate - classic| over the search schedule at amplitude 1 holds the tolerance; confirmed on the full schedule at every amplitude with one key fewer failing",
+          "min_keys": 3,
+          "max_keys": 97,
+          "search_uniform_intervals": 4096,
+          "confirm_uniform_intervals": 65536,
+          "late_start_age_ticks": 137.371,
+          "span_age_ticks": 40.5
+        },
+        "clip_full_schedule": {
+          "gait": {
+            "max_error_radians": 0.002162754535675049,
+            "holds_tolerance": true,
+            "comparisons": 1057088,
+            "worst_age_ticks": 140.43371362304688,
+            "worst_amplitude": 1.0,
+            "worst_bone": "rff"
+          },
+          "tail": {
+            "max_error_radians": 0.002295270562171936,
+            "holds_tolerance": true,
+            "comparisons": 264272,
+            "worst_age_ticks": 151.95967645263673,
+            "worst_amplitude": 0.0,
+            "worst_bone": "tail"
+          },
+          "teeth": {
+            "max_error_radians": 0.001892179250717163,
+            "holds_tolerance": true,
+            "comparisons": 264272,
+            "worst_age_ticks": 142.49159020996095,
+            "worst_amplitude": 0.0,
+            "worst_bone": "teeth"
+          }
+        },
+        "wrap_sample": {
+          "gait": {
+            "probe_bone": "rff",
+            "natural_period_age_ticks": 1.6981581692446202,
+            "epsilon_age_ticks": 0.00010364734919705934,
+            "epsilon_lut_indices": 4,
+            "seams_sampled": 24,
+            "min_lut_index_before_seam": 65531,
+            "max_lut_index_after_seam": 4,
+            "max_abs_T_minus_eps_vs_0_plus_eps_radians": 0.0,
+            "max_error_vs_classic_before_radians": 1.1920928955078125e-07,
+            "max_error_vs_classic_at_seam_radians": 0.0,
+            "max_error_vs_classic_after_radians": 0.0,
+            "holds_tolerance": true
+          },
+          "teeth": {
+            "probe_bone": "teeth",
+            "natural_period_age_ticks": 2.3271056282276086,
+            "epsilon_age_ticks": 0.0001420352556291265,
+            "epsilon_lut_indices": 4,
+            "seams_sampled": 17,
+            "min_lut_index_before_seam": 65531,
+            "max_lut_index_after_seam": 4,
+            "max_abs_T_minus_eps_vs_0_plus_eps_radians": 5.960464477539063e-08,
+            "max_error_vs_classic_before_radians": 0.0,
+            "max_error_vs_classic_at_seam_radians": 0.0,
+            "max_error_vs_classic_after_radians": 0.0,
+            "holds_tolerance": true
+          },
+          "tail": {
+            "probe_bone": "tail",
+            "natural_period_age_ticks": 12.566370614359172,
+            "epsilon_age_ticks": 0.0007669903939428206,
+            "epsilon_lut_indices": 4,
+            "seams_sampled": 4,
+            "min_lut_index_before_seam": 65531,
+            "max_lut_index_after_seam": 4,
+            "max_abs_T_minus_eps_vs_0_plus_eps_radians": 1.4901161193847656e-08,
+            "max_error_vs_classic_before_radians": 1.4901161193847656e-08,
+            "max_error_vs_classic_at_seam_radians": 0.0,
+            "max_error_vs_classic_after_radians": 0.0,
+            "holds_tolerance": true
+          }
+        },
+        "schedule_reversed_max_delta_radians": 0.0
       },
       "visual": {
         "status": "PASS",
@@ -493,7 +713,7 @@
   "deterministic_text_outputs": {
     "status": "PASS",
     "line_ending": "LF",
-    "file_count": 18,
+    "file_count": 19,
     "files": [
       "model_elevator.compiled.json",
       "model_elevator.geo-render.json",
@@ -507,6 +727,7 @@
       "model_beaver.animation.json",
       "model_beaver.animation-contract.json",
       "model_beaver.conversion.json",
+      "beaver.animation.json",
       "fixture_nested_nonmirrored_rotated_inflate.compiled.json",
       "fixture_nested_nonmirrored_rotated_inflate.geo-render.json",
       "fixture_nested_nonmirrored_rotated_inflate.geo.json",

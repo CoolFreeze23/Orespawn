@@ -103,14 +103,16 @@ public abstract class OreSpawnGeoReplacement<E extends Entity> implements GeoRep
      * 2026-09-06, {@code phase_g_reports/animation_contract/contract_design.md}
      * section 6): the species' keyframe layers, one per frequency group of
      * the standard animation contract, or empty for a species animated by its
-     * classic code only (every species today; the Beaver declares its
-     * three groups and ships an EMPTY clip file, so nothing registers until
-     * in-game looks accepts a clip). A layer registers only when the
-     * species' loaded clip file carries the contract's clips and {@code
-     * [modern] artistAnimations} says so ({@link #registerKeyframeLayers});
-     * the per-entity manager then decides the source once: layers
-     * registered - the artist source, the classic hook stands down ({@link
-     * OreSpawnGeoReplacementModel#setCustomAnimations}); none - the classic hook poses, as it always has.
+     * classic code only (every species but the Beaver, which declares its
+     * three groups and, since item 15 landed on 2026-09-12, ships its
+     * transcription - {@code idle}, {@code walk}, {@code walk_teeth}, {@code
+     * walk_tail} - so its layers register under the default keys). A layer
+     * registers only when the species' loaded clip file carries {@code idle} AND
+     * {@code walk} (one without the other stays classic) and
+     * {@code [modern] artistAnimations} says so ({@link
+     * #registerKeyframeLayers}); the per-entity manager then decides the
+     * source once: layers registered - the artist source, the classic hook stands down
+     * ({@link OreSpawnGeoReplacementModel#setCustomAnimations}); none - the classic hook poses, as it always has.
      */
     public List<KeyframeLayer> keyframeLayers() {
         return List.of();
@@ -151,24 +153,25 @@ public abstract class OreSpawnGeoReplacement<E extends Entity> implements GeoRep
     /**
      * Registers this species' {@link #keyframeLayers()} whose clips are present in
      * {@code clips}, and returns how many were registered (0 = the classic source).
-     * Self-gated by clip presence (Q1 (a)): nothing registers unless the file
-     * carries {@link KeyframeLayer#IDLE} or {@link KeyframeLayer#WALK} - a species
-     * without them is not an artist species (contract section 2.4) - and then a
-     * layer whose own clip is missing is skipped, its bones holding bind (the
-     * section's fallback). Only after that is the config asked
-     * ({@link OreSpawnConfig#artistAnimations(EntityType)}: the modern master, the
-     * key, the exclusion list). The entity readers handed to the controllers are
-     * this replacement's own ({@link #ageInTicks} on the drawn entity,
-     * {@link #limbSwingAmount} from the renderer's state); the headless harness
-     * builds the same layers on explicit inputs through
-     * {@link KeyframeLayer#controller}.
+     * Self-gated by clip presence (Q1 (a); the gate as decided 2026-09-12, item
+     * 12): nothing registers unless the file carries BOTH {@link
+     * KeyframeLayer#IDLE} and {@link KeyframeLayer#WALK} - the artist gate opens on
+     * idle and walk delivered together; one without the other stays classic, and
+     * the package checker says so - and then a layer whose own clip is missing is
+     * skipped, its bones holding bind (contract section 2.4's fallback). Only
+     * after that is the config asked ({@link
+     * OreSpawnConfig#artistAnimations(EntityType)}: the modern master, the key,
+     * the exclusion list). The entity readers handed to the
+     * controllers are this replacement's own ({@link #ageInTicks} on the drawn
+     * entity, {@link #limbSwingAmount} from the
+     * renderer's state); the headless harness builds the same layers on explicit inputs through {@link KeyframeLayer#controller}.
      */
     public final int registerKeyframeLayers(AnimatableManager.ControllerRegistrar controllers, BakedAnimations clips) {
         List<KeyframeLayer> layers = keyframeLayers();
         if (layers.isEmpty() || clips == null) {
             return 0;
         }
-        if (clips.getAnimation(KeyframeLayer.IDLE) == null && clips.getAnimation(KeyframeLayer.WALK) == null) {
+        if (clips.getAnimation(KeyframeLayer.IDLE) == null || clips.getAnimation(KeyframeLayer.WALK) == null) {
             return 0;
         }
         if (!OreSpawnConfig.artistAnimations(this.descriptor.entityType())) {

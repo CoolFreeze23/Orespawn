@@ -65,7 +65,7 @@
     "Three independent rhythms run at once: a fast trot on the feet (scaled by walking speed), a chew on the teeth and a slow tail rock; nothing else moves (the head and nose are static).",
     "Standing still, the feet hang at the bind pose while the teeth and tail keep going: today's 'idle' is the walk at zero speed plus the free-running chew and rock (contract §2.1).",
     "The head does not track the player: the classic model has no head-yaw channel.",
-    "The pose is code-driven in the shipped build (the harness reference leg); the artist clips replace it under the modern config once the contract is wired."
+    "The default renderer poses it from the classic code; the GeckoLib candidate (behind the dev switch) plays the shipped keyframe transcription of that code since 2026-09-12 (walk, walk_teeth, walk_tail; its idle keys no bone - the always-on teeth and tail are the resting motion) under the modern config, and your clips replace that transcription file for file."
   ],
   "clips": [
     {

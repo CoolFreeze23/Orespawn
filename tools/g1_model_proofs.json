@@ -15,7 +15,8 @@
     "pixel_channel_tolerance": 2,
     "pixel_changed_fraction": 0.001,
     "pixel_mean_absolute_error": 0.25,
-    "minimum_foreground_fraction": 0.001
+    "minimum_foreground_fraction": 0.001,
+    "keyframe_reference_leg_epsilon_radians": 0.0025
   },
   "models": [
     {
@@ -56,6 +57,21 @@
       "animation_interpolation": "catmullrom",
       "candidate_animation_path": "geckolib_custom_animation_code",
       "emitted_clip_role": "REFERENCE_ONLY_NOT_RUNTIME_ACCEPTANCE",
+      "keyframe_reference_leg": {
+        "candidate_class": "danger.orespawn.entity.client.BeaverGeoReplacement",
+        "clip_path": "src/main/resources/assets/orespawn/animations/entity/beaver.animation.json",
+        "clip_manifest": "tools/keyframe_clips/beaver.json",
+        "spline_repair": true,
+        "wrap_epsilon_lut_indices": 4,
+        "density_search": {
+          "min_keys": 3,
+          "max_keys": 97,
+          "search_uniform_intervals": 4096,
+          "confirm_uniform_intervals": 65536,
+          "late_start_age_ticks": 137.371,
+          "span_age_ticks": 40.5
+        }
+      },
       "sample_fractions": [
         0.0,
         0.25,
