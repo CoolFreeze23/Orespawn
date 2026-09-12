@@ -4896,3 +4896,21 @@ never rewritten. (2) The gate line's "byte-identical" claim for the post-gate co
 pin was first produced by a script that compared an empty directory (javac had written the class under its package path);
 re-run recursively after the commit: one class file, the gated and the committed sources compile byte-identically
 (`scratchpad/w5/ident_gated` vs `ident_committed`).
+
+## RULINGS 2026-09-12 RECORDED (docs-only) — push; THE COST RULES (parity lanes frozen until the artist-tier cut-over; refuter counts by lane kind; records per landing; the FIX_LOG split; doctrine decisions the agent's; three counts open every report); item 15 lands now; slice (c) / ENT-S-146 deviations ratified; ENT-S-152 (PN-025) and ENT-S-153 (PN-026); the speed class and MHLib ruled, deferred; Section H; the order of work
+
+Recorded in `phase_g_reports/phase_g_scope_addendum_2026-09-03.md` item 25 (the rulings in full) and
+`PHASE_G_PROMPT.md` §6b (the bullet); the register carries a dated line under ENT-S-145, 146, 152, 153, 155, 157, 158,
+159, OPT-013, OPT-031 and OPT-032, and a new TEST-005 (the late-prime headless twin — an open harness item, closed by
+the first Tier-2 slice); PARITY_NOTES PN-025 closes ENT-S-152 and PN-026 records ENT-S-153's ruled reading (2) (the code
+change deferred). Executed here, docs-only: the push (origin/master 182a76d, the 21 commits after 284972c, before
+anything else landed); the FIX_LOG split (commit 4a799ab: the Phase A–F sections moved unchanged to `FIX_LOG_pre_G.md`,
+a pointer with the citation offsets where they stood — a pre-2026-09-12 `FIX_LOG.md:N` with N > 3452 is line N − 3323
+of this file, one with 128 ≤ N ≤ 3452 is line N − 119 of the moved file; lanes read only this file from now on).
+Decided under doctrine, reversible (item 9): (i) the late-prime item is filed as a register line (TEST-005) — the harness
+note keeps its conventions and the register keeps its open items; (ii) PN-026 records the RULED reading, stating that the
+port flashes red until the deferred one-line change lands. The order of work from here: item 15 landed under one gate
+(the shipped Beaver clip, the leg in the shipped g1 manifest, the proofs regenerated; the idle-AND-walk gate; the README
+and checker rules) → the look sheet's Section H → the first Tier-2 slice (one refuter; the headless twin in it; the three
+counts open its report). The drop lands on the owner's Section B go; the package and the pilot follow it; nothing else
+runs; the changelog is written once, before the next push.

@@ -281,6 +281,68 @@ that slice, not a task for now.
     gated and landed → ENT-S-146 in 4c → the (e) records and item 15 → the XS batch (22) → the ENT-S-150 survey lane;
     the mirror drop on the owner's Section B go, the package and the pilot after it; wave 5 (24 and whatever the survey
     files) gates only when a slice above is waiting on the owner.
+25. **Rulings of 2026-09-12 (owner, through the advisor):** (1) **Push:** master pushed now, the 21 commits after
+    origin/master 284972c (origin/master 182a76d). **Cost rules (standing; they win over every earlier order of work,
+    addendum item 26 and the 2026-09-06 order included):** (2) parity lanes are frozen until the artist-tier rigs are cut
+    over; items 18–23 of this set are rulings, entered in the register as "ruled, deferred", not coded; new findings get a
+    register line and stop; the audit waves run as records only; wave 6 does not run. (3) **Order:** item 15 landed, then
+    the Tier-2 slices, then the harvest remainder with Slice 5, then the Tier-1 slices. The first Tier-2 slice starts as
+    soon as item 15 is landed, on the current harness, behind the switch as 4b did; the drop, when it lands, regenerates its
+    proofs with everyone else's. That slice's report states anything the drop would change in what the slice produced
+    beyond the proofs (geos, clip signs), with the cost. (4) **Conversion slices the harness proves:** one refuter
+    regardless of file count, no before/after document (the gate literal and the proof rows are the evidence), records as
+    the FIX_LOG section and register lines. Two refuters stay for MHLib, renderer and motion code; a harness-semantics
+    change still presents its before/after before its gate. (5) **Tooling and docs lanes** (python under tools/, records
+    scripts, checker policy, report edits): no refuter; the tool's own tests and one dry run are the check. (6) **Records
+    per landing:** the FIX_LOG section and the register lines. A dated report a landing supersedes gets one banner line at
+    its top naming the FIX_LOG section (the form already on the G2 before/after), never passage-by-passage notes. The
+    changelog is written once per push. (7) **A red gate on a row outside the slice:** the smallest change that makes it
+    green, one refuter, one paragraph in FIX_LOG, a register line if a better fix exists for later. (8) **FIX_LOG:** the
+    Phase A–F sections (FIX_LOG:128–3452) move unchanged to `FIX_LOG_pre_G.md` with a one-line pointer where they stood;
+    the preamble and "Pending manual tests" stay; one docs-only commit; from then on lanes read only the live file.
+    (9) **Decisions the recorded doctrine already answers** (PN-012/016, Amendment 1, the addendum, the (e) rulings) are
+    the agent's: made, tagged "decided under doctrine, reversible", reported one line each; ask only where the doctrine is
+    silent. (10) **Every report opens with three counts and no percentages:** rigs landed through the seam over the
+    design's conversion count; artist-tier species with keyframe clips / 90; artist-tier species packaged / 90. The package
+    dry run (scratch, not `artist_handoff/`) is regenerated at the end of every slice for the third count. **Item 15 —
+    lands now** (this reverses "wires after the Beaver look"; the owner's look judges the keyframe Beaver in the same
+    sitting as A–H): (11) **event keyframes** are not part of the contract on looping clips (they fire once per manager
+    under the phase lock); the README states "no event keyframes on loops — code-fired events come from the trigger
+    inventory"; revisited only if an artist needs one. (12) **The idle-only delivery gap:** the artist gate opens on
+    `idle` AND `walk` delivered together; one without the other stays classic and the checker says so; a README rule.
+    (13) **The late-prime case without a headless twin:** an open harness item, closed by the headless twin in the first
+    Tier-2 slice, not before. (14) **The three keyframe rows client-only:** accepted and recorded; the headless leg is the
+    proof. **Slice (c), ENT-S-146 — the presented deviations (docs only):** (15) "loud when present and wrong" as an ERROR
+    log once per resource plus the fallback: ratified — a resource pack never crashes the client; the asset-audit ERROR is
+    what guards the shipped rigs. The Queen declared outside the seam as an explicit set: ratified. (16) **The translucent
+    mode's depth-tie window:** 1e-5 stands as the named tolerance `coplanar_depth_epsilon_blocks` for the translucent mode
+    only (PurplePower is its one user). The unrounded projector with 1e-6 rides with the drop's proof regeneration, which
+    redoes every proof anyway — before/after per species presented then; the window retires if the numbers allow. Not a
+    separate slice. (17) **ENT-S-152:** a disclosure — the port follows 1.21.1's within-cube face order and the two
+    renderers match each other by the face-order contract; a PN entry, no vanilla fork. (18) **ENT-S-153:** reading (2) —
+    NO_OVERLAY on the orb on both renderers, the ENT-S-094 shape, one line each side. No red flash 1.7.10 never showed;
+    the grey pass is out of proportion. PN entry now; the code change ruled, deferred with the parity lanes. **The speed
+    class and MHLib — ruled, deferred (register lines now; no code until the cut-over):** (19) **ENT-S-157 with ENT-S-145**
+    (this is item 23 (i)'s value): the Ender pair in classic gets (a) + (b) — bases re-tuned to A' = √(0.1·A): Knight
+    0.1789, Reaper 0.1924, so the idle walk is 1.7.10's 1.38 / 1.60 b/s; the attacking boost as a per-species ADD_VALUE
+    (+0.1406 / +0.1271, orig's operation 0) reaching the 4.405 b/s cap while a target is held; the withdrawn ENT-S-145
+    hunks re-applied with those numbers and the 28 rows re-based. One batch, one refuter, when the freeze lifts.
+    (20) **ENT-S-155:** classic faithful — the SpiderDriver on 1.7.10's 0.8, absurd as it is; modern keeps the 1.21.1
+    spider base under `[modern] spiderDriverModernSpeed`, default ON, one MOD record. (21) **ENT-S-158:** parity, both
+    modes, one port-wide mapping — the 1.7.10 water pace restored for every OreSpawn swimmer on the default travel through
+    one shape (a shared travel override or helper), never per species. The shape and a before/after table in blocks per
+    second per swimmer are presented before its gate; refuters by files touched. (22) **ENT-S-159:** parity, classic, XS,
+    with the next XS batch. (23) **OPT-032:** mitigation (c) — the master client is exempt from culling, so the stream
+    never stops (the master's own render cost, the pre-harvest state for one client); pin: the master's `shouldRender`
+    true with her outside its frustum while a non-master's is false. (a) and (b) are not adopted: they change the
+    election protocol OPT-003 designed. Coded with the harvest remainder, not before; the real fix is Slice 5's
+    server-side evaluator, recorded. (24) **OPT-031:** with the drop's proof regeneration. (25) **The OPT-013 look item**
+    goes on the look sheet now as Section H: one Queen, walk beyond ~80 blocks, turn away for ten seconds, turn back — her
+    parts must not be resting; two minutes. **Records:** (26) the wave-5 commit-message correction in FIX_LOG stands; no
+    amend, as ever. (27) **Order of work:** push → the cost rules, the deferred rulings and the two PN entries recorded
+    with the FIX_LOG split (docs-only) → item 15 landed (one gate) → Section H → the first Tier-2 slice (the species list
+    the agent's; the headless twin in it; one refuter; the counts open the report). The drop lands on the owner's
+    Section B go; the package and the pilot follow it. Nothing else runs.
 
 ## D. Rulings executed the same day (for cross-reference)
 

@@ -376,3 +376,50 @@ advance, the pose kept pure) is the one to build.
   repair's neighbours, periodic / clamped, idempotent, the anchor and linear frames untouched; GeckoLib's evaluator
   over the repaired arguments equals the textbook spline and over its own the kinked one); the harness's
   `keyframe_reference_leg` (density as an output under the repaired evaluator, before/after presented).
+
+## PN-025 — Both renderers emit a box's six faces in 1.21.1's `ModelPart.Cube` order (DOWN, UP, WEST, NORTH, EAST, SOUTH), not 1.7.10's `ModelBox` order (+X, −X, −Y, +Y, −Z, +Z) (ENT-S-152; ruled a disclosure 2026-09-12, item 17: no vanilla fork)
+
+- **The original:** 1.7.10's `ModelBox` (`bis.<init>` 365-772 in the client jar, verified 2026-09-06) stores and `render`
+  walks a cube's quads as +X, −X, −Y, +Y, −Z, +Z; a mirrored box swaps x1 / x2 before the corners and reverses each quad's
+  vertices. NeoForge 21.1.223's `ModelPart.Cube.<init>` (365-785) stores DOWN, UP, WEST, NORTH, EAST, SOUTH and `compile`
+  emits them in that order; the two orders agree only on the two Z faces coming last, −Z before +Z. Full derivation:
+  `phase_g_reports/ent_s_152_cube_face_order_2026-09-06.md`.
+- **The port:** the classic renderer IS vanilla's `ModelPart.Cube`, and the GeckoLib candidate is permuted into the same
+  order at bake by the face-order contract (`orespawn:cube_face_order`, written by the converter from the `ModelPart.Cube`
+  order, applied by `FaceOrder` in the replacement seam, checked by the asset audit, proven per face by the harness — 972
+  faces over 9 captures on PurplePower). So the two renderers match EACH OTHER exactly, and both follow 1.21.1, not 1.7.10.
+- **Why not reproduced (owner, 2026-09-12, item 17):** reproducing 1.7.10's order means forking vanilla's cube for one
+  species (the `LayerDefinition` / `CubeListBuilder` bake path is closed around it) and permuting the candidate into that
+  order instead — out of proportion for a rim shimmer; a disclosure, not a choice.
+- **Player-visible:** nothing for a cutout rig (the depth test decides whatever the emission order). On the PurplePower
+  orb, drawn blended with the depth mask on, the order decides which of a spoke's OWN faces shows through the others where
+  an end face and a side face overlap at a spoke's tip seen obliquely: 1.7.10 drew the two end faces first, 1.21.1 draws
+  the ±Y sides first, so one 0.55-alpha layer of the 0.75-grey texel is on or off a few pixels per spoke tip — a slightly
+  different shimmer; the rings' look is unchanged.
+- **Pins:** the harness's `G1 FACE ORDER PASS` on every rig that declares `cube_face_order: "classic"` (PurplePower); the
+  asset audit's `GECKO_GEO_FACE_ORDER_*` rules; `PurplePowerPoseTests` (`FaceOrder.apply` on a GeckoLib bake with the
+  seam's fallback policy).
+
+## PN-026 — The PurplePower orb's hurt / death flash: 1.7.10 drew no red (its second, untextured `GL_EQUAL` pass brightened the front layer toward flat grey); the port draws NO overlay on the orb on both renderers once reading (2) lands, and 1.21.1's red until then (ENT-S-153; ruled 2026-09-12, item 18: `NO_OVERLAY`, the ENT-S-094 shape, one line each side; the code change deferred with the parity lanes)
+
+- **The original:** `RendererLivingEntity.doRender` (`boh.a`, verified against the 1.7.10 client jar 2026-09-06) drew a
+  SECOND `mainModel.render` pass after the normal one — lightmap and texturing off, blend on, `glDepthFunc(GL_EQUAL)`,
+  `glColor4f(brightness, 0, 0, 0.4f)` in the hurt / death branch — but orig `ModelPurplePower.render` (:55) called
+  `glColor4f(0.75, 0.75, 0.75, 0.55)` at the top of its own `render`, INSIDE that second pass, after the red: the red never
+  reached a vertex. The orb never flashed red; on a hit or while dying its front-most surfaces brightened toward the flat
+  0.75 grey (one more 0.55-alpha untextured layer over the front layer). Full derivation:
+  `phase_g_reports/ent_s_153_hurt_flash_2026-09-06.md`.
+- **The port:** NeoForge 21.1.223 has one draw with a per-vertex overlay coordinate (`LivingEntityRenderer.getOverlayCoords`,
+  `OverlayTexture.v(hurt)` = 3 when hurt or dying, the overlay rows the constant red at alpha 178/255) that
+  `rendertype_entity_translucent.fsh` mixes into every fragment; GeckoLib 4.8.4's `GeoReplacedEntityRenderer.getPackedOverlay`
+  packs the same for a `LivingEntity`. Until the ruled change lands the orb flashes ~30 % red on both renderers; the
+  ruled shape is `OverlayTexture.NO_OVERLAY` for the orb on both renderers (the ENT-S-094 shape: one line in the classic
+  renderer's overlay call, one in the descriptor's overlay hook), i.e. no flash at all — closer to 1.7.10 than the red,
+  but not 1.7.10's grey pass.
+- **Why not reproduced (owner, 2026-09-12, item 18):** reading (3) — the 1.7.10 grey second pass — needs a mod-defined
+  equal-depth render type and an untextured shader for a hurt frame of one species: out of proportion. Reading (2) is the
+  ruling; its code change is deferred with the parity lanes (the cost rules: no parity code until the artist-tier cut-over).
+- **Player-visible:** in 1.7.10 the orb brightened toward flat grey for a hurt frame; in the port it flashes red today and
+  will not flash at all once the change lands. The harness emulates no overlay on either side, so neither is in the proof.
+- **Pins:** none today; with the change: `PurplePowerPoseTests` gains the overlay pin (the classic renderer's and the
+  descriptor's overlay both `NO_OVERLAY` for the orb), harness-neutral.

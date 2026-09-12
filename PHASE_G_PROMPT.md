@@ -648,6 +648,36 @@ root-order slice with the GeckoLib per-entity cache eviction, then Slice 4c). Th
   and on the wire. Proof rule: geometry-only changes take one refuter; motion transcriptions,
   MHLib and renderer changes keep two. A Forge 1.7.10 Prism instance with the original jar is the
   visual ground truth.
+- Rulings of 2026-09-12 (addendum item 25) — THE COST RULES, standing, winning over every earlier order of work
+  (addendum item 26 and the 2026-09-06 order included): parity lanes frozen until the artist-tier rigs are cut over —
+  new findings get a register line and stop, the audit waves run as records only, wave 6 does not run; order: item 15
+  landed → the Tier-2 slices → the harvest remainder with Slice 5 → the Tier-1 slices (the first Tier-2 slice on the
+  current harness behind the switch as 4b did; the drop regenerates its proofs with everyone else's; its report states
+  what the drop would change beyond the proofs, with the cost); refuters: ONE for a conversion slice the harness proves,
+  regardless of file count, with no before/after document (the gate literal and the proof rows are the evidence), TWO
+  for MHLib / renderer / motion code, NONE for tooling and docs lanes (the tool's own tests and one dry run); a
+  harness-semantics change still presents its before/after before its gate; records per landing = the FIX_LOG section
+  and the register lines, a superseded dated report gets one banner line at its top naming the FIX_LOG section, the
+  changelog once per push; a red gate on a row outside the slice = the smallest green change, one refuter, one FIX_LOG
+  paragraph, a register line if a better fix exists; FIX_LOG's Phase A–F sections moved unchanged to `FIX_LOG_pre_G.md`
+  (lanes read only the live file); decisions the recorded doctrine already answers are the agent's, tagged "decided under
+  doctrine, reversible", one line each; every report opens with three counts and no percentages (rigs through the seam /
+  the design's 106; artist-tier species with keyframe clips / 90; artist-tier species packaged / 90, from a regenerated
+  scratch dry run). Item 15 LANDS NOW (the owner's look judges the keyframe Beaver with A–H): no event keyframes on
+  loops (a README rule; code-fired events come from the trigger inventory); the artist gate opens on `idle` AND `walk`
+  together, one without the other stays classic and the checker says so; the late-prime headless twin an open harness
+  item (TEST-005) closed in the first Tier-2 slice; the three client-only keyframe rows accepted. Slice (c) / ENT-S-146
+  deviations ratified: the ERROR-log-plus-fallback reading of "loud when present and wrong", the Queen outside the seam
+  as an explicit set, `coplanar_depth_epsilon_blocks` 1e-5 the named tolerance of the translucent mode only (the
+  unrounded projector at 1e-6 rides with the drop's proof regeneration). ENT-S-152 a disclosure (PN-025, no vanilla
+  fork); ENT-S-153 reading (2) — NO_OVERLAY on the orb, both renderers (PN-026 now; the code deferred). Ruled, deferred
+  (register lines, no code until the cut-over): ENT-S-157 with 145 ((a) + (b): bases √(0.1·A) = 0.1789 / 0.1924, the
+  boost ADD_VALUE +0.1406 / +0.1271 to the 4.405 b/s cap; one batch, one refuter); ENT-S-155 (classic 0.8; modern 0.3
+  under `[modern] spiderDriverModernSpeed`, default ON, one MOD record); ENT-S-158 (parity both modes through one shared
+  travel shape, before/after in b/s per swimmer before its gate); ENT-S-159 (classic, with the next XS batch); OPT-032
+  mitigation (c) with the harvest remainder (the real fix Slice 5's evaluator); OPT-031 with the drop; the OPT-013 look
+  item is the look sheet's Section H. Order of work: push → the records with the FIX_LOG split → item 15 → Section H →
+  the first Tier-2 slice; the drop on the Section B go, the package and the pilot after it; nothing else runs.
 
 ## 7. Standing traps checklist (things that have actually bitten this project)
 
