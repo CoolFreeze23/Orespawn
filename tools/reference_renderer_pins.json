@@ -402,7 +402,7 @@
       "expected_scale": 0.75,
       "ref_derivation": "shadow: RenderFirefly(ModelFirefly par1, float par2, float par3) { super((ModelBase)par1, par2 * par3); this.scale = par3; } (RenderFirefly.java:21-24). ... | scale: this.scale = par3 = 0.75f (RenderFirefly.java:23); func_77041_b -> preRenderScale -> GL11.glScalef(0.75,0.75,0.75) (RenderFirefly.java:38-44).",
       "port_renderer": "src/main/java/danger/orespawn/entity/client/FireflyRenderer.java",
-      "port_candidate": "none",
+      "port_candidate": "src/main/java/danger/orespawn/entity/client/FireflyGeoReplacement.java",
       "truth_verdicts": {
         "shadow": "DIVERGES",
         "scale": "DIVERGES"
@@ -530,7 +530,7 @@
       "expected_scale": 0.25,
       "ref_derivation": "shadow: RenderAnt.java:21-22 `super((ModelBase)par1ModelBase, par2 * par3)` with ClientProxyOreSpawn.java:412 args (0.1f, 0.25f) -> shadowSize = 0.1f * 0.25f = 0.025 (re-read; confirmed) | scale: RenderAnt.java:23 `this.scale = par3` = 0.25f (field default at :19 is also 0.25f); RenderAnt.java:38-40 preRenderScale -> GL11.glScalef(0.25,0.25,0.25) via func_77041_b at :42-44 (re-read; confirmed)",
       "port_renderer": "src/main/java/danger/orespawn/entity/client/AntRenderer.java",
-      "port_candidate": "none",
+      "port_candidate": "src/main/java/danger/orespawn/entity/client/AntGeoReplacement.java",
       "truth_verdicts": {
         "shadow": "MATCH",
         "scale": "MATCH"
@@ -548,7 +548,7 @@
       "expected_scale": 0.35,
       "ref_derivation": "shadow: RenderAnt.java:21-22 `super((ModelBase)par1ModelBase, par2 * par3)` with ClientProxyOreSpawn.java:413 args (0.15f, 0.35f) -> shadowSize = 0.15f * 0.35f = 0.0525 (re-read; confirmed) | scale: RenderAnt.java:23 `this.scale = par3` = 0.35f; RenderAnt.java:38-40 preRenderScale -> GL11.glScalef(0.35,0.35,0.35) via func_77041_b at :42-44 (re-read; confirmed)",
       "port_renderer": "src/main/java/danger/orespawn/entity/client/RedAntRenderer.java",
-      "port_candidate": "none",
+      "port_candidate": "src/main/java/danger/orespawn/entity/client/RedAntGeoReplacement.java",
       "truth_verdicts": {
         "shadow": "MATCH",
         "scale": "MATCH"
@@ -566,7 +566,7 @@
       "expected_scale": 0.25,
       "ref_derivation": "shadow: RenderAnt.java:21-22 `super((ModelBase)par1ModelBase, par2 * par3)` with ClientProxyOreSpawn.java:414 args (0.1f, 0.25f) -> shadowSize = 0.1f * 0.25f = 0.025 (re-read; confirmed) | scale: RenderAnt.java:23 `this.scale = par3` = 0.25f; RenderAnt.java:38-40 preRenderScale -> GL11.glScalef(0.25,0.25,0.25) via func_77041_b at :42-44 (re-read; confirmed)",
       "port_renderer": "src/main/java/danger/orespawn/entity/client/RainbowAntRenderer.java",
-      "port_candidate": "none",
+      "port_candidate": "src/main/java/danger/orespawn/entity/client/RainbowAntGeoReplacement.java",
       "truth_verdicts": {
         "shadow": "MATCH",
         "scale": "MATCH"
@@ -584,7 +584,7 @@
       "expected_scale": 0.25,
       "ref_derivation": "shadow: RenderAnt.java:21-22 `super((ModelBase)par1ModelBase, par2 * par3)` with ClientProxyOreSpawn.java:415 args (0.1f, 0.25f) -> shadowSize = 0.1f * 0.25f = 0.025 (re-read; confirmed) | scale: RenderAnt.java:23 `this.scale = par3` = 0.25f; RenderAnt.java:38-40 preRenderScale -> GL11.glScalef(0.25,0.25,0.25) via func_77041_b at :42-44 (re-read; confirmed)",
       "port_renderer": "src/main/java/danger/orespawn/entity/client/UnstableAntRenderer.java",
-      "port_candidate": "none",
+      "port_candidate": "src/main/java/danger/orespawn/entity/client/UnstableAntGeoReplacement.java",
       "truth_verdicts": {
         "shadow": "MATCH",
         "scale": "MATCH"
@@ -1762,7 +1762,7 @@
       "expected_scale": 1,
       "ref_derivation": "shadow: RenderGoldFish.java:22-23 `super((ModelBase)par1ModelBase, par2 * par3)` with ClientProxyOreSpawn.java:470 `new RenderGoldFish(new ModelGoldFish(0.7f), 0.2f, 1.0f)` par2=0.2f, par3=1.0f -> shadowSize = 0.2. ... | scale: RenderGoldFish.java:19 default 1.0f, :24 `this.scale = par3` = 1.0f; preRenderScale (:39-41) glScalef(1.0,1.0,1.0) via func_77041_b (:43-45) ...",
       "port_renderer": "src/main/java/danger/orespawn/entity/client/GoldFishRenderer.java",
-      "port_candidate": "none",
+      "port_candidate": "src/main/java/danger/orespawn/entity/client/GoldFishGeoReplacement.java",
       "truth_verdicts": {
         "shadow": "DIVERGES",
         "scale": "MATCH"
@@ -1895,7 +1895,7 @@
       "expected_scale": 0.35,
       "ref_derivation": "shadow: RenderAnt.java:21-22 `super((ModelBase)par1ModelBase, par2 * par3)`; ClientProxyOreSpawn.java:476 passes par2=0.15f, par3=0.35f -> shadowSize = 0.15f*0.35f = 0.0525 (float32 0.05250000209). Re-read and confirmed. | scale: RenderAnt.java:23 `this.scale = par3` = 0.35f (overriding the field default 0.25f at :19); preRenderScale (RenderAnt.java:38-40, bound via func_77041_b :42-44) glScalef(0.35,0.35,0.35) with no child branch. ...",
       "port_renderer": "src/main/java/danger/orespawn/entity/client/TermiteRenderer.java",
-      "port_candidate": "none",
+      "port_candidate": "src/main/java/danger/orespawn/entity/client/TermiteGeoReplacement.java",
       "truth_verdicts": {
         "shadow": "MATCH",
         "scale": "MATCH"

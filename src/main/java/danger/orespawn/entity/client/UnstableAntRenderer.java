@@ -14,8 +14,8 @@ public class UnstableAntRenderer extends MobRenderer<EntityUnstableAnt, AntModel
     public static final ModelLayerLocation MODEL_LAYER =
             new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "unstable_ant"), "main");
 
-    /** orig ClientProxyOreSpawn: RenderAnt(new ModelAnt(), 0.1f shadow, 0.25f scale). */
-    private static final float SCALE = 0.25f;
+    /** orig ClientProxyOreSpawn: RenderAnt(new ModelAnt(), 0.1f shadow, 0.25f scale). Public since the second Tier-2 slice (2026-09-13): the GeckoLib candidate {@link UnstableAntGeoReplacement} scales and shadows by this same constant (tools/reference_renderer_pins.py pins both sides; T2SeamTests reads it). */
+    public static final float SCALE = 0.25f;
 
     public UnstableAntRenderer(EntityRendererProvider.Context context) {
         super(context, new AntModel<>(context.bakeLayer(MODEL_LAYER)), 0.1f * SCALE);
