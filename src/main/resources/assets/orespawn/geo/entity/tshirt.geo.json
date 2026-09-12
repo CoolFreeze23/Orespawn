@@ -1,0 +1,186 @@
+{
+  "format_version": "1.12.0",
+  "minecraft:geometry": [
+    {
+      "description": {
+        "identifier": "geometry.orespawn.g1.model_tshirt",
+        "texture_width": 512,
+        "texture_height": 256,
+        "orespawn:bone_draw_order": [
+          "Shape1",
+          "Shape2"
+        ]
+      },
+      "bones": [
+        {
+          "name": "Shape1",
+          "pivot": [
+            0,
+            152,
+            0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -128,
+                152,
+                0
+              ],
+              "size": [
+                256,
+                64,
+                1
+              ],
+              "uv": {
+                "west": {
+                  "uv": [
+                    1,
+                    1
+                  ],
+                  "uv_size": [
+                    -1,
+                    64
+                  ]
+                },
+                "east": {
+                  "uv": [
+                    258,
+                    1
+                  ],
+                  "uv_size": [
+                    -1,
+                    64
+                  ]
+                },
+                "north": {
+                  "uv": [
+                    257,
+                    1
+                  ],
+                  "uv_size": [
+                    -256,
+                    64
+                  ]
+                },
+                "south": {
+                  "uv": [
+                    514,
+                    1
+                  ],
+                  "uv_size": [
+                    -256,
+                    64
+                  ]
+                },
+                "up": {
+                  "uv": [
+                    257,
+                    0
+                  ],
+                  "uv_size": [
+                    -256,
+                    1
+                  ]
+                },
+                "down": {
+                  "uv": [
+                    513,
+                    1
+                  ],
+                  "uv_size": [
+                    -256,
+                    -1
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "name": "Shape2",
+          "pivot": [
+            0,
+            152,
+            0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -64,
+                24,
+                0
+              ],
+              "size": [
+                128,
+                128,
+                1
+              ],
+              "uv": {
+                "west": {
+                  "uv": [
+                    1,
+                    65
+                  ],
+                  "uv_size": [
+                    -1,
+                    128
+                  ]
+                },
+                "east": {
+                  "uv": [
+                    130,
+                    65
+                  ],
+                  "uv_size": [
+                    -1,
+                    128
+                  ]
+                },
+                "north": {
+                  "uv": [
+                    129,
+                    65
+                  ],
+                  "uv_size": [
+                    -128,
+                    128
+                  ]
+                },
+                "south": {
+                  "uv": [
+                    258,
+                    65
+                  ],
+                  "uv_size": [
+                    -128,
+                    128
+                  ]
+                },
+                "up": {
+                  "uv": [
+                    129,
+                    64
+                  ],
+                  "uv_size": [
+                    -128,
+                    1
+                  ]
+                },
+                "down": {
+                  "uv": [
+                    257,
+                    65
+                  ],
+                  "uv_size": [
+                    -128,
+                    -1
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

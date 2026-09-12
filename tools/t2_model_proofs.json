@@ -1,0 +1,733 @@
+{
+  "schema_version": 1,
+  "geckolib_version": "4.8.4",
+  "runtime_versions": {
+    "minecraft": "1.21.1",
+    "neoforge": "21.1.223",
+    "geckolib": "4.8.4"
+  },
+  "ticks_per_second": 20.0,
+  "thresholds": {
+    "geometry_epsilon_blocks": 1e-05,
+    "coplanar_depth_epsilon_blocks": 1e-05,
+    "animation_epsilon_radians": 2e-06,
+    "position_epsilon_model_units": 0.0001,
+    "uv_epsilon_normalized": 1e-07,
+    "normal_epsilon": 1e-06,
+    "pixel_channel_tolerance": 2,
+    "pixel_changed_fraction": 0.001,
+    "pixel_mean_absolute_error": 0.25,
+    "minimum_foreground_fraction": 0.001,
+    "keyframe_reference_leg_epsilon_radians": 0.0025
+  },
+  "channel_schema_note": "the first Tier-2 slice (2026-09-13): a channel is base_radians + sign * cos(ageInTicks * frequency_radians_per_age_tick * wingspeed) * (float) PI * pi_scale [* limbSwingAmount] on ONE axis (x / y / z) of each listed bone, evaluated in the compiled float chain and order (the phase's two multiplies left to right, the base added last); wingspeed defaults to 1.0 (the Beaver's ANIM_SPEED), base_radians to 0; a key of the transcription is the delta from the bone's bind rotation on that axis (KeyframeLeg / tools/keyframe_clip.py)",
+  "models": [
+    {
+      "id": "model_tshirt",
+      "tier": 2,
+      "class": "danger.orespawn.entity.client.TshirtModel",
+      "texture": "src/main/resources/assets/orespawn/textures/entity/tshirt.png",
+      "reference_source": "reference_1_7_10_source/sources/danger/orespawn/ModelTshirt.java",
+      "declared_sheet_over_image": [
+        320,
+        160
+      ],
+      "sheet_note": "the 1.7.10 model declares 512x256 and binds a 320x160 image on purpose (a 0.625 UV window); the probe's size check is waived for this declared pair (tools/reference_model_proofs.json reference_tshirt)",
+      "animation_kind": "code_driven",
+      "candidate_animation_path": "production_replacement_hook",
+      "candidate_class": "danger.orespawn.entity.client.TshirtGeoReplacement",
+      "loop_period_age_ticks": 1142.4,
+      "period_note": "the one frequency 0.05 x 0.22 = 0.011 rad/tick closes every 571.2 ticks (the Coin's period); two cycles so the wrap sampler has a seam inside the loop",
+      "sample_fractions": [
+        0.0,
+        0.25,
+        0.5,
+        0.75,
+        1.0
+      ],
+      "limb_swing": 0.0,
+      "limb_swing_amount": 0.0,
+      "net_head_yaw": 0.0,
+      "head_pitch": 0.0,
+      "camera": {
+        "yaw_degrees": 34.0,
+        "pitch_degrees": -28.0
+      },
+      "channels": [
+        {
+          "bones": [
+            "Shape1",
+            "Shape2"
+          ],
+          "axis": "y",
+          "formula": "cosine",
+          "frequency_radians_per_age_tick": 0.05,
+          "wingspeed": 0.22,
+          "pi_scale": 1.0,
+          "limb_swing_scaled": false,
+          "sign": 1.0,
+          "source": "TshirtModel.setupAnim:54-56 (orig ModelTshirt.render): Shape1.yRot = Shape2.yRot = cos(ageInTicks * 0.05F * WINGSPEED) * PI; WINGSPEED 0.22F (orig ClientProxyOreSpawn.java:418)"
+        }
+      ],
+      "keyframe_reference_leg": {
+        "candidate_class": "danger.orespawn.entity.client.TshirtGeoReplacement",
+        "clip_path": "src/main/resources/assets/orespawn/animations/entity/tshirt.animation.json",
+        "clip_manifest": "tools/keyframe_clips/tshirt.json",
+        "spline_repair": true,
+        "wrap_epsilon_lut_indices": 4,
+        "density_search": {
+          "min_keys": 3,
+          "max_keys": 97,
+          "search_uniform_intervals": 4096,
+          "confirm_uniform_intervals": 65536,
+          "late_start_age_ticks": 137.371,
+          "span_age_ticks": 1713.6
+        },
+        "schedule_note": "the Beaver's schedule except the span: the Beaver's 40.5 ticks cover 3.2 cycles of its slowest group (0.5 rad/tick), the Tshirt's one group closes every 571.2 ticks, so the same 40.5 would sample 7 percent of one cycle and the density search would be no search; 1713.6 = three natural periods (stated as a deviation in the slice report)"
+      }
+    },
+    {
+      "id": "model_mosquito",
+      "tier": 2,
+      "class": "danger.orespawn.entity.client.MosquitoModel",
+      "texture": "src/main/resources/assets/orespawn/textures/entity/mosquito.png",
+      "reference_source": "reference_1_7_10_source/sources/danger/orespawn/ModelMosquito.java",
+      "animation_kind": "code_driven",
+      "candidate_animation_path": "production_replacement_hook",
+      "candidate_class": "danger.orespawn.entity.client.MosquitoGeoReplacement",
+      "loop_period_age_ticks": 20.0,
+      "sample_fractions": [
+        0.0,
+        0.25,
+        0.5,
+        0.75,
+        1.0
+      ],
+      "limb_swing": 0.0,
+      "limb_swing_amount": 0.0,
+      "net_head_yaw": 0.0,
+      "head_pitch": 0.0,
+      "camera": {
+        "yaw_degrees": 34.0,
+        "pitch_degrees": -28.0
+      },
+      "channels": [
+        {
+          "bones": [
+            "rightwing1",
+            "rightwing2"
+          ],
+          "axis": "z",
+          "formula": "cosine",
+          "frequency_radians_per_age_tick": 3.0,
+          "pi_scale": 0.25,
+          "limb_swing_scaled": false,
+          "sign": 1.0,
+          "source": "MosquitoModel.setupAnim:65-67 (orig ModelMosquito.render): rightwing1.zRot = rightwing2.zRot = cos(ageInTicks * 3.0F) * PI * 0.25F"
+        },
+        {
+          "bones": [
+            "leftwing1",
+            "leftwing2"
+          ],
+          "axis": "z",
+          "formula": "cosine",
+          "frequency_radians_per_age_tick": 3.0,
+          "pi_scale": 0.25,
+          "limb_swing_scaled": false,
+          "sign": -1.0,
+          "source": "MosquitoModel.setupAnim:68-69: the left wings the negative"
+        }
+      ],
+      "keyframe_reference_leg": {
+        "candidate_class": "danger.orespawn.entity.client.MosquitoGeoReplacement",
+        "clip_path": "src/main/resources/assets/orespawn/animations/entity/mosquito.animation.json",
+        "clip_manifest": "tools/keyframe_clips/mosquito.json",
+        "spline_repair": true,
+        "wrap_epsilon_lut_indices": 4,
+        "density_search": {
+          "min_keys": 3,
+          "max_keys": 97,
+          "search_uniform_intervals": 4096,
+          "confirm_uniform_intervals": 65536,
+          "late_start_age_ticks": 137.371,
+          "span_age_ticks": 40.5
+        }
+      }
+    },
+    {
+      "id": "model_cliffracer",
+      "tier": 2,
+      "class": "danger.orespawn.entity.client.CliffRacerModel",
+      "texture": "src/main/resources/assets/orespawn/textures/entity/cliffracer.png",
+      "reference_source": "reference_1_7_10_source/sources/danger/orespawn/ModelCliffRacer.java",
+      "animation_kind": "code_driven",
+      "candidate_animation_path": "production_replacement_hook",
+      "candidate_class": "danger.orespawn.entity.client.CliffRacerGeoReplacement",
+      "loop_period_age_ticks": 20.0,
+      "sample_fractions": [
+        0.0,
+        0.25,
+        0.5,
+        0.75,
+        1.0
+      ],
+      "limb_swing": 0.0,
+      "limb_swing_amount": 0.0,
+      "net_head_yaw": 0.0,
+      "head_pitch": 0.0,
+      "camera": {
+        "yaw_degrees": 34.0,
+        "pitch_degrees": -28.0
+      },
+      "channels": [
+        {
+          "bones": [
+            "lwing"
+          ],
+          "axis": "z",
+          "formula": "cosine",
+          "frequency_radians_per_age_tick": 1.3,
+          "pi_scale": 0.25,
+          "limb_swing_scaled": false,
+          "sign": 1.0,
+          "source": "CliffRacerModel.setupAnim:49-50: lWing.zRot = cos(ageInTicks * 1.3f) * PI * 0.25f"
+        },
+        {
+          "bones": [
+            "rwing"
+          ],
+          "axis": "z",
+          "formula": "cosine",
+          "frequency_radians_per_age_tick": 1.3,
+          "pi_scale": 0.25,
+          "limb_swing_scaled": false,
+          "sign": -1.0,
+          "source": "CliffRacerModel.setupAnim:51: rWing.zRot the negative"
+        }
+      ],
+      "keyframe_reference_leg": {
+        "candidate_class": "danger.orespawn.entity.client.CliffRacerGeoReplacement",
+        "clip_path": "src/main/resources/assets/orespawn/animations/entity/cliffracer.animation.json",
+        "clip_manifest": "tools/keyframe_clips/cliff_racer.json",
+        "spline_repair": true,
+        "wrap_epsilon_lut_indices": 4,
+        "density_search": {
+          "min_keys": 3,
+          "max_keys": 97,
+          "search_uniform_intervals": 4096,
+          "confirm_uniform_intervals": 65536,
+          "late_start_age_ticks": 137.371,
+          "span_age_ticks": 40.5
+        }
+      }
+    },
+    {
+      "id": "model_brutalfly",
+      "tier": 2,
+      "class": "danger.orespawn.entity.client.BrutalflyModel",
+      "texture": "src/main/resources/assets/orespawn/textures/entity/brutalfly.png",
+      "animation_kind": "code_driven",
+      "candidate_animation_path": "production_replacement_hook",
+      "candidate_class": "danger.orespawn.entity.client.BrutalflyGeoReplacement",
+      "loop_period_age_ticks": 50.0,
+      "period_note": "the one frequency 1.3 x 0.2 = 0.26 rad/tick closes every 24.17 ticks; two cycles inside the loop",
+      "sample_fractions": [
+        0.0,
+        0.25,
+        0.5,
+        0.75,
+        1.0
+      ],
+      "limb_swing": 0.0,
+      "limb_swing_amount": 0.0,
+      "net_head_yaw": 0.0,
+      "head_pitch": 0.0,
+      "camera": {
+        "yaw_degrees": 34.0,
+        "pitch_degrees": -28.0
+      },
+      "channels": [
+        {
+          "bones": [
+            "rightwing",
+            "rightwing2",
+            "rightwing3",
+            "rightwing4",
+            "rightwing5",
+            "rightwing6"
+          ],
+          "axis": "z",
+          "formula": "cosine",
+          "frequency_radians_per_age_tick": 1.3,
+          "wingspeed": 0.2,
+          "pi_scale": 0.25,
+          "limb_swing_scaled": false,
+          "sign": 1.0,
+          "source": "BrutalflyModel.setupAnim:126-130: rightwing..rightwing6.zRot = cos(ageInTicks * 1.3f * wingspeed) * PI * 0.25f; wingspeed 0.2f (orig ModelBrutalfly.java:27,32, ClientProxyOreSpawn.java:507)"
+        },
+        {
+          "bones": [
+            "leftwing",
+            "leftwing2",
+            "leftwing3",
+            "leftwing4",
+            "leftwing5",
+            "leftwing6"
+          ],
+          "axis": "z",
+          "formula": "cosine",
+          "frequency_radians_per_age_tick": 1.3,
+          "wingspeed": 0.2,
+          "pi_scale": 0.25,
+          "limb_swing_scaled": false,
+          "sign": -1.0,
+          "source": "BrutalflyModel.setupAnim:131-136: the six left wings the negative"
+        }
+      ],
+      "keyframe_reference_leg": {
+        "candidate_class": "danger.orespawn.entity.client.BrutalflyGeoReplacement",
+        "clip_path": "src/main/resources/assets/orespawn/animations/entity/brutalfly.animation.json",
+        "clip_manifest": "tools/keyframe_clips/brutalfly.json",
+        "spline_repair": true,
+        "wrap_epsilon_lut_indices": 4,
+        "density_search": {
+          "min_keys": 3,
+          "max_keys": 97,
+          "search_uniform_intervals": 4096,
+          "confirm_uniform_intervals": 65536,
+          "late_start_age_ticks": 137.371,
+          "span_age_ticks": 40.5
+        }
+      },
+      "reference_note": "no reference_source here: the parsed 1.7.10 source diverges from the port by the MIRROR pins the standing reference gate carries (tools/reference_model_proofs.json; BUG-041, cleared by the mirror drop), and tools/g1_render_parity.py accepts only an exact reference match - the s4 precedent (model_coin only)"
+    },
+    {
+      "id": "model_dragonfly",
+      "tier": 2,
+      "class": "danger.orespawn.entity.client.DragonflyModel",
+      "texture": "src/main/resources/assets/orespawn/textures/entity/dragonfly.png",
+      "animation_kind": "code_driven",
+      "candidate_animation_path": "production_replacement_hook",
+      "candidate_class": "danger.orespawn.entity.client.DragonflyGeoReplacement",
+      "loop_period_age_ticks": 40.0,
+      "sample_fractions": [
+        0.0,
+        0.25,
+        0.5,
+        0.75,
+        1.0
+      ],
+      "limb_swing": 0.0,
+      "limb_swing_amount": 0.0,
+      "net_head_yaw": 0.0,
+      "head_pitch": 0.0,
+      "camera": {
+        "yaw_degrees": 34.0,
+        "pitch_degrees": -28.0
+      },
+      "channels": [
+        {
+          "bones": [
+            "lfwing"
+          ],
+          "axis": "z",
+          "formula": "cosine",
+          "frequency_radians_per_age_tick": 1.3,
+          "wingspeed": 2.0,
+          "pi_scale": 0.25,
+          "limb_swing_scaled": false,
+          "sign": 1.0,
+          "source": "DragonflyModel.setupAnim:211: lfwing.zRot = cos(ageInTicks * 1.3f * wingspeed) * PI * 0.25f; wingspeed 2.0f (orig ModelDragonfly.java:13,42, ClientProxyOreSpawn.java:424)"
+        },
+        {
+          "bones": [
+            "rfwing"
+          ],
+          "axis": "z",
+          "formula": "cosine",
+          "frequency_radians_per_age_tick": 1.3,
+          "wingspeed": 2.0,
+          "pi_scale": 0.25,
+          "limb_swing_scaled": false,
+          "sign": -1.0,
+          "source": "DragonflyModel.setupAnim:212: rfwing.zRot = -newangle"
+        },
+        {
+          "bones": [
+            "lrwing"
+          ],
+          "axis": "z",
+          "formula": "cosine",
+          "frequency_radians_per_age_tick": 1.3,
+          "wingspeed": 2.0,
+          "pi_scale": 0.25,
+          "limb_swing_scaled": false,
+          "sign": 1.0,
+          "base_radians": 3.14,
+          "source": "DragonflyModel.setupAnim:213: lrwing.zRot = newangle + 3.14f"
+        },
+        {
+          "bones": [
+            "rrwing"
+          ],
+          "axis": "z",
+          "formula": "cosine",
+          "frequency_radians_per_age_tick": 1.3,
+          "wingspeed": 2.0,
+          "pi_scale": 0.25,
+          "limb_swing_scaled": false,
+          "sign": -1.0,
+          "base_radians": 3.14,
+          "source": "DragonflyModel.setupAnim:214: rrwing.zRot = -newangle + 3.14f"
+        },
+        {
+          "bones": [
+            "ljaw"
+          ],
+          "axis": "x",
+          "formula": "cosine",
+          "frequency_radians_per_age_tick": 0.3,
+          "wingspeed": 2.0,
+          "pi_scale": 0.1,
+          "limb_swing_scaled": false,
+          "sign": 1.0,
+          "source": "DragonflyModel.setupAnim:215: ljaw.xRot = cos(ageInTicks * 0.3f * wingspeed) * PI * 0.1f"
+        },
+        {
+          "bones": [
+            "rjaw"
+          ],
+          "axis": "x",
+          "formula": "cosine",
+          "frequency_radians_per_age_tick": 0.3,
+          "wingspeed": 2.0,
+          "pi_scale": 0.1,
+          "limb_swing_scaled": false,
+          "sign": -1.0,
+          "source": "DragonflyModel.setupAnim:216: rjaw.xRot = -newangle"
+        }
+      ],
+      "keyframe_reference_leg": {
+        "candidate_class": "danger.orespawn.entity.client.DragonflyGeoReplacement",
+        "clip_path": "src/main/resources/assets/orespawn/animations/entity/dragonfly.animation.json",
+        "clip_manifest": "tools/keyframe_clips/dragonfly.json",
+        "spline_repair": true,
+        "wrap_epsilon_lut_indices": 4,
+        "density_search": {
+          "min_keys": 3,
+          "max_keys": 97,
+          "search_uniform_intervals": 4096,
+          "confirm_uniform_intervals": 65536,
+          "late_start_age_ticks": 137.371,
+          "span_age_ticks": 40.5
+        }
+      },
+      "reference_note": "no reference_source here: the parsed 1.7.10 source diverges from the port by the MIRROR pins the standing reference gate carries (tools/reference_model_proofs.json; BUG-041, cleared by the mirror drop), and tools/g1_render_parity.py accepts only an exact reference match - the s4 precedent (model_coin only)"
+    },
+    {
+      "id": "model_cockateil",
+      "tier": 2,
+      "class": "danger.orespawn.entity.client.ModelCockateil",
+      "texture": "src/main/resources/assets/orespawn/textures/entity/bird1.png",
+      "animation_kind": "code_driven",
+      "candidate_animation_path": "production_replacement_hook",
+      "candidate_class": "danger.orespawn.entity.client.CockateilGeoReplacement",
+      "loop_period_age_ticks": 62.83185307179586,
+      "sample_fractions": [
+        0.0,
+        0.25,
+        0.5,
+        0.75,
+        1.0
+      ],
+      "limb_swing": 0.0,
+      "limb_swing_amount": 0.0,
+      "net_head_yaw": 0.0,
+      "head_pitch": 0.0,
+      "camera": {
+        "yaw_degrees": 34.0,
+        "pitch_degrees": -28.0
+      },
+      "channels": [
+        {
+          "bones": [
+            "lwing1"
+          ],
+          "axis": "z",
+          "formula": "cosine",
+          "frequency_radians_per_age_tick": 1.5,
+          "wingspeed": 1.0,
+          "pi_scale": 0.35,
+          "limb_swing_scaled": false,
+          "sign": 1.0,
+          "base_radians": -1.5,
+          "source": "ModelCockateil.setupAnim:125-126: lwing1.zRot = -1.5f + cos(ageInTicks * 1.5f * wingspeed) * PI * 0.35f; wingspeed 1.0f (orig ModelCockateil.java:13,32, ClientProxyOreSpawn.java:430-431)"
+        },
+        {
+          "bones": [
+            "lwing2"
+          ],
+          "axis": "z",
+          "formula": "cosine",
+          "frequency_radians_per_age_tick": 1.5,
+          "wingspeed": 1.0,
+          "pi_scale": 0.35,
+          "limb_swing_scaled": false,
+          "sign": 1.0,
+          "source": "ModelCockateil.setupAnim:127: lwing2.zRot = newangle"
+        },
+        {
+          "bones": [
+            "rwing1"
+          ],
+          "axis": "z",
+          "formula": "cosine",
+          "frequency_radians_per_age_tick": 1.5,
+          "wingspeed": 1.0,
+          "pi_scale": 0.35,
+          "limb_swing_scaled": false,
+          "sign": -1.0,
+          "base_radians": 1.5,
+          "source": "ModelCockateil.setupAnim:128: rwing1.zRot = 1.5f - newangle"
+        },
+        {
+          "bones": [
+            "rwing2"
+          ],
+          "axis": "z",
+          "formula": "cosine",
+          "frequency_radians_per_age_tick": 1.5,
+          "wingspeed": 1.0,
+          "pi_scale": 0.35,
+          "limb_swing_scaled": false,
+          "sign": -1.0,
+          "source": "ModelCockateil.setupAnim:129: rwing2.zRot = -newangle"
+        },
+        {
+          "bones": [
+            "tailfeather1",
+            "tailfeather2",
+            "tailfeather3"
+          ],
+          "axis": "x",
+          "formula": "cosine",
+          "frequency_radians_per_age_tick": 0.3,
+          "wingspeed": 1.0,
+          "pi_scale": 0.1,
+          "limb_swing_scaled": false,
+          "sign": 1.0,
+          "source": "ModelCockateil.setupAnim:130-132: tailfeather1..3.xRot = cos(ageInTicks * 0.3f * wingspeed) * PI * 0.1f"
+        },
+        {
+          "bones": [
+            "feather1"
+          ],
+          "axis": "z",
+          "formula": "cosine",
+          "frequency_radians_per_age_tick": 1.1,
+          "wingspeed": 1.0,
+          "pi_scale": 0.08,
+          "limb_swing_scaled": false,
+          "sign": 1.0,
+          "source": "ModelCockateil.setupAnim:133: feather1.zRot = cos(ageInTicks * 1.1f * wingspeed) * PI * 0.08f"
+        },
+        {
+          "bones": [
+            "feather2"
+          ],
+          "axis": "z",
+          "formula": "cosine",
+          "frequency_radians_per_age_tick": 1.2,
+          "wingspeed": 1.0,
+          "pi_scale": 0.08,
+          "limb_swing_scaled": false,
+          "sign": 1.0,
+          "source": "ModelCockateil.setupAnim:134: feather2.zRot = cos(ageInTicks * 1.2f * wingspeed) * PI * 0.08f"
+        },
+        {
+          "bones": [
+            "feather3"
+          ],
+          "axis": "z",
+          "formula": "cosine",
+          "frequency_radians_per_age_tick": 1.3,
+          "wingspeed": 1.0,
+          "pi_scale": 0.08,
+          "limb_swing_scaled": false,
+          "sign": 1.0,
+          "source": "ModelCockateil.setupAnim:135: feather3.zRot = cos(ageInTicks * 1.3f * wingspeed) * PI * 0.08f"
+        }
+      ],
+      "keyframe_reference_leg": {
+        "candidate_class": "danger.orespawn.entity.client.CockateilGeoReplacement",
+        "clip_path": "src/main/resources/assets/orespawn/animations/entity/cockateil.animation.json",
+        "clip_manifest": "tools/keyframe_clips/cockateil.json",
+        "spline_repair": true,
+        "wrap_epsilon_lut_indices": 4,
+        "density_search": {
+          "min_keys": 3,
+          "max_keys": 97,
+          "search_uniform_intervals": 4096,
+          "confirm_uniform_intervals": 65536,
+          "late_start_age_ticks": 137.371,
+          "span_age_ticks": 40.5
+        }
+      },
+      "reference_note": "no reference_source here: the parsed 1.7.10 source diverges from the port by the MIRROR pins the standing reference gate carries (tools/reference_model_proofs.json; BUG-041, cleared by the mirror drop), and tools/g1_render_parity.py accepts only an exact reference match - the s4 precedent (model_coin only)"
+    },
+    {
+      "id": "model_ruby_bird",
+      "tier": 2,
+      "class": "danger.orespawn.entity.client.ModelCockateil",
+      "texture": "src/main/resources/assets/orespawn/textures/entity/bird1.png",
+      "rig_note": "one rig, two consumers (orig ClientProxyOreSpawn.java:430-431, identical registrations): the Ruby Bird's descriptor shares the Cockateil's shipped geo, clip file, layers and hook under its own registry path (design Q9); proven here on its own entry",
+      "animation_kind": "code_driven",
+      "candidate_animation_path": "production_replacement_hook",
+      "candidate_class": "danger.orespawn.entity.client.RubyBirdGeoReplacement",
+      "loop_period_age_ticks": 62.83185307179586,
+      "sample_fractions": [
+        0.0,
+        0.25,
+        0.5,
+        0.75,
+        1.0
+      ],
+      "limb_swing": 0.0,
+      "limb_swing_amount": 0.0,
+      "net_head_yaw": 0.0,
+      "head_pitch": 0.0,
+      "camera": {
+        "yaw_degrees": 34.0,
+        "pitch_degrees": -28.0
+      },
+      "channels": [
+        {
+          "bones": [
+            "lwing1"
+          ],
+          "axis": "z",
+          "formula": "cosine",
+          "frequency_radians_per_age_tick": 1.5,
+          "wingspeed": 1.0,
+          "pi_scale": 0.35,
+          "limb_swing_scaled": false,
+          "sign": 1.0,
+          "base_radians": -1.5,
+          "source": "ModelCockateil.setupAnim:125-126 (the Ruby Bird draws the same model): lwing1.zRot = -1.5f + cos(ageInTicks * 1.5f * wingspeed) * PI * 0.35f"
+        },
+        {
+          "bones": [
+            "lwing2"
+          ],
+          "axis": "z",
+          "formula": "cosine",
+          "frequency_radians_per_age_tick": 1.5,
+          "wingspeed": 1.0,
+          "pi_scale": 0.35,
+          "limb_swing_scaled": false,
+          "sign": 1.0,
+          "source": "ModelCockateil.setupAnim:127: lwing2.zRot = newangle"
+        },
+        {
+          "bones": [
+            "rwing1"
+          ],
+          "axis": "z",
+          "formula": "cosine",
+          "frequency_radians_per_age_tick": 1.5,
+          "wingspeed": 1.0,
+          "pi_scale": 0.35,
+          "limb_swing_scaled": false,
+          "sign": -1.0,
+          "base_radians": 1.5,
+          "source": "ModelCockateil.setupAnim:128: rwing1.zRot = 1.5f - newangle"
+        },
+        {
+          "bones": [
+            "rwing2"
+          ],
+          "axis": "z",
+          "formula": "cosine",
+          "frequency_radians_per_age_tick": 1.5,
+          "wingspeed": 1.0,
+          "pi_scale": 0.35,
+          "limb_swing_scaled": false,
+          "sign": -1.0,
+          "source": "ModelCockateil.setupAnim:129: rwing2.zRot = -newangle"
+        },
+        {
+          "bones": [
+            "tailfeather1",
+            "tailfeather2",
+            "tailfeather3"
+          ],
+          "axis": "x",
+          "formula": "cosine",
+          "frequency_radians_per_age_tick": 0.3,
+          "wingspeed": 1.0,
+          "pi_scale": 0.1,
+          "limb_swing_scaled": false,
+          "sign": 1.0,
+          "source": "ModelCockateil.setupAnim:130-132: tailfeather1..3.xRot = cos(ageInTicks * 0.3f * wingspeed) * PI * 0.1f"
+        },
+        {
+          "bones": [
+            "feather1"
+          ],
+          "axis": "z",
+          "formula": "cosine",
+          "frequency_radians_per_age_tick": 1.1,
+          "wingspeed": 1.0,
+          "pi_scale": 0.08,
+          "limb_swing_scaled": false,
+          "sign": 1.0,
+          "source": "ModelCockateil.setupAnim:133: feather1.zRot = cos(ageInTicks * 1.1f * wingspeed) * PI * 0.08f"
+        },
+        {
+          "bones": [
+            "feather2"
+          ],
+          "axis": "z",
+          "formula": "cosine",
+          "frequency_radians_per_age_tick": 1.2,
+          "wingspeed": 1.0,
+          "pi_scale": 0.08,
+          "limb_swing_scaled": false,
+          "sign": 1.0,
+          "source": "ModelCockateil.setupAnim:134: feather2.zRot = cos(ageInTicks * 1.2f * wingspeed) * PI * 0.08f"
+        },
+        {
+          "bones": [
+            "feather3"
+          ],
+          "axis": "z",
+          "formula": "cosine",
+          "frequency_radians_per_age_tick": 1.3,
+          "wingspeed": 1.0,
+          "pi_scale": 0.08,
+          "limb_swing_scaled": false,
+          "sign": 1.0,
+          "source": "ModelCockateil.setupAnim:135: feather3.zRot = cos(ageInTicks * 1.3f * wingspeed) * PI * 0.08f"
+        }
+      ],
+      "keyframe_reference_leg": {
+        "candidate_class": "danger.orespawn.entity.client.RubyBirdGeoReplacement",
+        "clip_path": "src/main/resources/assets/orespawn/animations/entity/cockateil.animation.json",
+        "clip_manifest": "tools/keyframe_clips/ruby_bird.json",
+        "spline_repair": true,
+        "wrap_epsilon_lut_indices": 4,
+        "density_search": {
+          "min_keys": 3,
+          "max_keys": 97,
+          "search_uniform_intervals": 4096,
+          "confirm_uniform_intervals": 65536,
+          "late_start_age_ticks": 137.371,
+          "span_age_ticks": 40.5
+        }
+      },
+      "reference_note": "no reference_source here: the parsed 1.7.10 source diverges from the port by the MIRROR pins the standing reference gate carries (tools/reference_model_proofs.json; BUG-041, cleared by the mirror drop), and tools/g1_render_parity.py accepts only an exact reference match - the s4 precedent (model_coin only)"
+    }
+  ],
+  "fixtures": []
+}

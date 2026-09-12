@@ -1,0 +1,1220 @@
+{
+  "format_version": "1.12.0",
+  "minecraft:geometry": [
+    {
+      "description": {
+        "identifier": "geometry.orespawn.g1.model_brutalfly",
+        "texture_width": 64,
+        "texture_height": 32,
+        "orespawn:bone_draw_order": [
+          "head",
+          "body",
+          "leftwing",
+          "rightwing",
+          "leftwing2",
+          "rightwing2",
+          "leftwing3",
+          "rightwing3",
+          "leftwing4",
+          "rightwing4",
+          "leftwing5",
+          "rightwing5",
+          "leftwing6",
+          "rightwing6"
+        ]
+      },
+      "bones": [
+        {
+          "name": "body",
+          "pivot": [
+            0,
+            7,
+            0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -1,
+                6,
+                -4
+              ],
+              "size": [
+                1,
+                1,
+                8
+              ],
+              "uv": {
+                "west": {
+                  "uv": [
+                    30,
+                    27
+                  ],
+                  "uv_size": [
+                    8,
+                    1
+                  ]
+                },
+                "east": {
+                  "uv": [
+                    21,
+                    27
+                  ],
+                  "uv_size": [
+                    8,
+                    1
+                  ]
+                },
+                "north": {
+                  "uv": [
+                    29,
+                    27
+                  ],
+                  "uv_size": [
+                    1,
+                    1
+                  ]
+                },
+                "south": {
+                  "uv": [
+                    38,
+                    27
+                  ],
+                  "uv_size": [
+                    1,
+                    1
+                  ]
+                },
+                "up": {
+                  "uv": [
+                    29,
+                    19
+                  ],
+                  "uv_size": [
+                    1,
+                    8
+                  ]
+                },
+                "down": {
+                  "uv": [
+                    30,
+                    27
+                  ],
+                  "uv_size": [
+                    1,
+                    -8
+                  ]
+                }
+              },
+              "modelpart_mirror": true
+            }
+          ]
+        },
+        {
+          "name": "head",
+          "pivot": [
+            0,
+            7,
+            1
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -1,
+                6,
+                -5
+              ],
+              "size": [
+                1,
+                1,
+                1
+              ],
+              "uv": {
+                "west": {
+                  "uv": [
+                    23,
+                    12
+                  ],
+                  "uv_size": [
+                    1,
+                    1
+                  ]
+                },
+                "east": {
+                  "uv": [
+                    21,
+                    12
+                  ],
+                  "uv_size": [
+                    1,
+                    1
+                  ]
+                },
+                "north": {
+                  "uv": [
+                    22,
+                    12
+                  ],
+                  "uv_size": [
+                    1,
+                    1
+                  ]
+                },
+                "south": {
+                  "uv": [
+                    24,
+                    12
+                  ],
+                  "uv_size": [
+                    1,
+                    1
+                  ]
+                },
+                "up": {
+                  "uv": [
+                    22,
+                    11
+                  ],
+                  "uv_size": [
+                    1,
+                    1
+                  ]
+                },
+                "down": {
+                  "uv": [
+                    23,
+                    12
+                  ],
+                  "uv_size": [
+                    1,
+                    -1
+                  ]
+                }
+              },
+              "modelpart_mirror": true
+            }
+          ]
+        },
+        {
+          "name": "leftwing",
+          "pivot": [
+            -1,
+            7,
+            0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -2,
+                6,
+                -4
+              ],
+              "size": [
+                1,
+                1,
+                5
+              ],
+              "uv": {
+                "west": {
+                  "uv": [
+                    49,
+                    29
+                  ],
+                  "uv_size": [
+                    5,
+                    1
+                  ]
+                },
+                "east": {
+                  "uv": [
+                    43,
+                    29
+                  ],
+                  "uv_size": [
+                    5,
+                    1
+                  ]
+                },
+                "north": {
+                  "uv": [
+                    48,
+                    29
+                  ],
+                  "uv_size": [
+                    1,
+                    1
+                  ]
+                },
+                "south": {
+                  "uv": [
+                    54,
+                    29
+                  ],
+                  "uv_size": [
+                    1,
+                    1
+                  ]
+                },
+                "up": {
+                  "uv": [
+                    48,
+                    24
+                  ],
+                  "uv_size": [
+                    1,
+                    5
+                  ]
+                },
+                "down": {
+                  "uv": [
+                    49,
+                    29
+                  ],
+                  "uv_size": [
+                    1,
+                    -5
+                  ]
+                }
+              },
+              "modelpart_mirror": true
+            }
+          ]
+        },
+        {
+          "name": "leftwing2",
+          "pivot": [
+            -1,
+            7,
+            0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -8,
+                6,
+                -6
+              ],
+              "size": [
+                6,
+                1,
+                7
+              ],
+              "uv": {
+                "west": {
+                  "uv": [
+                    13,
+                    7
+                  ],
+                  "uv_size": [
+                    7,
+                    1
+                  ]
+                },
+                "east": {
+                  "uv": [
+                    0,
+                    7
+                  ],
+                  "uv_size": [
+                    7,
+                    1
+                  ]
+                },
+                "north": {
+                  "uv": [
+                    7,
+                    7
+                  ],
+                  "uv_size": [
+                    6,
+                    1
+                  ]
+                },
+                "south": {
+                  "uv": [
+                    20,
+                    7
+                  ],
+                  "uv_size": [
+                    6,
+                    1
+                  ]
+                },
+                "up": {
+                  "uv": [
+                    7,
+                    0
+                  ],
+                  "uv_size": [
+                    6,
+                    7
+                  ]
+                },
+                "down": {
+                  "uv": [
+                    13,
+                    7
+                  ],
+                  "uv_size": [
+                    6,
+                    -7
+                  ]
+                }
+              },
+              "modelpart_mirror": true
+            }
+          ]
+        },
+        {
+          "name": "leftwing3",
+          "pivot": [
+            -1,
+            7,
+            0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -6,
+                6,
+                1
+              ],
+              "size": [
+                5,
+                1,
+                5
+              ],
+              "uv": {
+                "west": {
+                  "uv": [
+                    10,
+                    14
+                  ],
+                  "uv_size": [
+                    5,
+                    1
+                  ]
+                },
+                "east": {
+                  "uv": [
+                    0,
+                    14
+                  ],
+                  "uv_size": [
+                    5,
+                    1
+                  ]
+                },
+                "north": {
+                  "uv": [
+                    5,
+                    14
+                  ],
+                  "uv_size": [
+                    5,
+                    1
+                  ]
+                },
+                "south": {
+                  "uv": [
+                    15,
+                    14
+                  ],
+                  "uv_size": [
+                    5,
+                    1
+                  ]
+                },
+                "up": {
+                  "uv": [
+                    5,
+                    9
+                  ],
+                  "uv_size": [
+                    5,
+                    5
+                  ]
+                },
+                "down": {
+                  "uv": [
+                    10,
+                    14
+                  ],
+                  "uv_size": [
+                    5,
+                    -5
+                  ]
+                }
+              },
+              "modelpart_mirror": true
+            }
+          ]
+        },
+        {
+          "name": "leftwing4",
+          "pivot": [
+            -1,
+            7,
+            0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -3,
+                6,
+                6
+              ],
+              "size": [
+                2,
+                1,
+                7
+              ],
+              "uv": {
+                "west": {
+                  "uv": [
+                    11,
+                    31
+                  ],
+                  "uv_size": [
+                    7,
+                    1
+                  ]
+                },
+                "east": {
+                  "uv": [
+                    2,
+                    31
+                  ],
+                  "uv_size": [
+                    7,
+                    1
+                  ]
+                },
+                "north": {
+                  "uv": [
+                    9,
+                    31
+                  ],
+                  "uv_size": [
+                    2,
+                    1
+                  ]
+                },
+                "south": {
+                  "uv": [
+                    18,
+                    31
+                  ],
+                  "uv_size": [
+                    2,
+                    1
+                  ]
+                },
+                "up": {
+                  "uv": [
+                    9,
+                    24
+                  ],
+                  "uv_size": [
+                    2,
+                    7
+                  ]
+                },
+                "down": {
+                  "uv": [
+                    11,
+                    31
+                  ],
+                  "uv_size": [
+                    2,
+                    -7
+                  ]
+                }
+              },
+              "modelpart_mirror": true
+            }
+          ]
+        },
+        {
+          "name": "leftwing5",
+          "pivot": [
+            -1,
+            7,
+            0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -3,
+                6,
+                -7
+              ],
+              "size": [
+                1,
+                1,
+                1
+              ],
+              "uv": {
+                "west": {
+                  "uv": [
+                    23,
+                    17
+                  ],
+                  "uv_size": [
+                    1,
+                    1
+                  ]
+                },
+                "east": {
+                  "uv": [
+                    21,
+                    17
+                  ],
+                  "uv_size": [
+                    1,
+                    1
+                  ]
+                },
+                "north": {
+                  "uv": [
+                    22,
+                    17
+                  ],
+                  "uv_size": [
+                    1,
+                    1
+                  ]
+                },
+                "south": {
+                  "uv": [
+                    24,
+                    17
+                  ],
+                  "uv_size": [
+                    1,
+                    1
+                  ]
+                },
+                "up": {
+                  "uv": [
+                    22,
+                    16
+                  ],
+                  "uv_size": [
+                    1,
+                    1
+                  ]
+                },
+                "down": {
+                  "uv": [
+                    23,
+                    17
+                  ],
+                  "uv_size": [
+                    1,
+                    -1
+                  ]
+                }
+              },
+              "modelpart_mirror": true
+            }
+          ]
+        },
+        {
+          "name": "leftwing6",
+          "pivot": [
+            -1,
+            7,
+            0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -10,
+                6,
+                -6
+              ],
+              "size": [
+                2,
+                1,
+                1
+              ],
+              "uv": {
+                "west": {
+                  "uv": [
+                    53,
+                    11
+                  ],
+                  "uv_size": [
+                    1,
+                    1
+                  ]
+                },
+                "east": {
+                  "uv": [
+                    50,
+                    11
+                  ],
+                  "uv_size": [
+                    1,
+                    1
+                  ]
+                },
+                "north": {
+                  "uv": [
+                    51,
+                    11
+                  ],
+                  "uv_size": [
+                    2,
+                    1
+                  ]
+                },
+                "south": {
+                  "uv": [
+                    54,
+                    11
+                  ],
+                  "uv_size": [
+                    2,
+                    1
+                  ]
+                },
+                "up": {
+                  "uv": [
+                    51,
+                    10
+                  ],
+                  "uv_size": [
+                    2,
+                    1
+                  ]
+                },
+                "down": {
+                  "uv": [
+                    53,
+                    11
+                  ],
+                  "uv_size": [
+                    2,
+                    -1
+                  ]
+                }
+              },
+              "modelpart_mirror": true
+            }
+          ]
+        },
+        {
+          "name": "rightwing",
+          "pivot": [
+            0,
+            7,
+            0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                0,
+                6,
+                -4
+              ],
+              "size": [
+                1,
+                1,
+                5
+              ],
+              "uv": {
+                "west": {
+                  "uv": [
+                    49,
+                    22
+                  ],
+                  "uv_size": [
+                    5,
+                    1
+                  ]
+                },
+                "east": {
+                  "uv": [
+                    43,
+                    22
+                  ],
+                  "uv_size": [
+                    5,
+                    1
+                  ]
+                },
+                "north": {
+                  "uv": [
+                    48,
+                    22
+                  ],
+                  "uv_size": [
+                    1,
+                    1
+                  ]
+                },
+                "south": {
+                  "uv": [
+                    54,
+                    22
+                  ],
+                  "uv_size": [
+                    1,
+                    1
+                  ]
+                },
+                "up": {
+                  "uv": [
+                    48,
+                    17
+                  ],
+                  "uv_size": [
+                    1,
+                    5
+                  ]
+                },
+                "down": {
+                  "uv": [
+                    49,
+                    22
+                  ],
+                  "uv_size": [
+                    1,
+                    -5
+                  ]
+                }
+              },
+              "modelpart_mirror": true
+            }
+          ]
+        },
+        {
+          "name": "rightwing2",
+          "pivot": [
+            0,
+            7,
+            0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                1,
+                6,
+                -6
+              ],
+              "size": [
+                6,
+                1,
+                7
+              ],
+              "uv": {
+                "west": {
+                  "uv": [
+                    42,
+                    7
+                  ],
+                  "uv_size": [
+                    7,
+                    1
+                  ]
+                },
+                "east": {
+                  "uv": [
+                    29,
+                    7
+                  ],
+                  "uv_size": [
+                    7,
+                    1
+                  ]
+                },
+                "north": {
+                  "uv": [
+                    36,
+                    7
+                  ],
+                  "uv_size": [
+                    6,
+                    1
+                  ]
+                },
+                "south": {
+                  "uv": [
+                    49,
+                    7
+                  ],
+                  "uv_size": [
+                    6,
+                    1
+                  ]
+                },
+                "up": {
+                  "uv": [
+                    36,
+                    0
+                  ],
+                  "uv_size": [
+                    6,
+                    7
+                  ]
+                },
+                "down": {
+                  "uv": [
+                    42,
+                    7
+                  ],
+                  "uv_size": [
+                    6,
+                    -7
+                  ]
+                }
+              },
+              "modelpart_mirror": true
+            }
+          ]
+        },
+        {
+          "name": "rightwing3",
+          "pivot": [
+            0,
+            7,
+            0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                0,
+                6,
+                1
+              ],
+              "size": [
+                5,
+                1,
+                5
+              ],
+              "uv": {
+                "west": {
+                  "uv": [
+                    37,
+                    14
+                  ],
+                  "uv_size": [
+                    5,
+                    1
+                  ]
+                },
+                "east": {
+                  "uv": [
+                    27,
+                    14
+                  ],
+                  "uv_size": [
+                    5,
+                    1
+                  ]
+                },
+                "north": {
+                  "uv": [
+                    32,
+                    14
+                  ],
+                  "uv_size": [
+                    5,
+                    1
+                  ]
+                },
+                "south": {
+                  "uv": [
+                    42,
+                    14
+                  ],
+                  "uv_size": [
+                    5,
+                    1
+                  ]
+                },
+                "up": {
+                  "uv": [
+                    32,
+                    9
+                  ],
+                  "uv_size": [
+                    5,
+                    5
+                  ]
+                },
+                "down": {
+                  "uv": [
+                    37,
+                    14
+                  ],
+                  "uv_size": [
+                    5,
+                    -5
+                  ]
+                }
+              },
+              "modelpart_mirror": true
+            }
+          ]
+        },
+        {
+          "name": "rightwing4",
+          "pivot": [
+            0,
+            7,
+            0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                0,
+                6,
+                6
+              ],
+              "size": [
+                2,
+                1,
+                7
+              ],
+              "uv": {
+                "west": {
+                  "uv": [
+                    11,
+                    23
+                  ],
+                  "uv_size": [
+                    7,
+                    1
+                  ]
+                },
+                "east": {
+                  "uv": [
+                    2,
+                    23
+                  ],
+                  "uv_size": [
+                    7,
+                    1
+                  ]
+                },
+                "north": {
+                  "uv": [
+                    9,
+                    23
+                  ],
+                  "uv_size": [
+                    2,
+                    1
+                  ]
+                },
+                "south": {
+                  "uv": [
+                    18,
+                    23
+                  ],
+                  "uv_size": [
+                    2,
+                    1
+                  ]
+                },
+                "up": {
+                  "uv": [
+                    9,
+                    16
+                  ],
+                  "uv_size": [
+                    2,
+                    7
+                  ]
+                },
+                "down": {
+                  "uv": [
+                    11,
+                    23
+                  ],
+                  "uv_size": [
+                    2,
+                    -7
+                  ]
+                }
+              },
+              "modelpart_mirror": true
+            }
+          ]
+        },
+        {
+          "name": "rightwing5",
+          "pivot": [
+            0,
+            7,
+            0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                1,
+                6,
+                -7
+              ],
+              "size": [
+                1,
+                1,
+                1
+              ],
+              "uv": {
+                "west": {
+                  "uv": [
+                    29,
+                    17
+                  ],
+                  "uv_size": [
+                    1,
+                    1
+                  ]
+                },
+                "east": {
+                  "uv": [
+                    27,
+                    17
+                  ],
+                  "uv_size": [
+                    1,
+                    1
+                  ]
+                },
+                "north": {
+                  "uv": [
+                    28,
+                    17
+                  ],
+                  "uv_size": [
+                    1,
+                    1
+                  ]
+                },
+                "south": {
+                  "uv": [
+                    30,
+                    17
+                  ],
+                  "uv_size": [
+                    1,
+                    1
+                  ]
+                },
+                "up": {
+                  "uv": [
+                    28,
+                    16
+                  ],
+                  "uv_size": [
+                    1,
+                    1
+                  ]
+                },
+                "down": {
+                  "uv": [
+                    29,
+                    17
+                  ],
+                  "uv_size": [
+                    1,
+                    -1
+                  ]
+                }
+              },
+              "modelpart_mirror": true
+            }
+          ]
+        },
+        {
+          "name": "rightwing6",
+          "pivot": [
+            0,
+            7,
+            0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                7,
+                6,
+                -6
+              ],
+              "size": [
+                2,
+                1,
+                1
+              ],
+              "uv": {
+                "west": {
+                  "uv": [
+                    53,
+                    14
+                  ],
+                  "uv_size": [
+                    1,
+                    1
+                  ]
+                },
+                "east": {
+                  "uv": [
+                    50,
+                    14
+                  ],
+                  "uv_size": [
+                    1,
+                    1
+                  ]
+                },
+                "north": {
+                  "uv": [
+                    51,
+                    14
+                  ],
+                  "uv_size": [
+                    2,
+                    1
+                  ]
+                },
+                "south": {
+                  "uv": [
+                    54,
+                    14
+                  ],
+                  "uv_size": [
+                    2,
+                    1
+                  ]
+                },
+                "up": {
+                  "uv": [
+                    51,
+                    13
+                  ],
+                  "uv_size": [
+                    2,
+                    1
+                  ]
+                },
+                "down": {
+                  "uv": [
+                    53,
+                    14
+                  ],
+                  "uv_size": [
+                    2,
+                    -1
+                  ]
+                }
+              },
+              "modelpart_mirror": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
