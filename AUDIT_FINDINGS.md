@@ -10130,6 +10130,95 @@ keeps BUG-036. Commit 4ea395c's message retains the old number.)*
   (a) - the classic's lighting is the parity target and the override is confined to the seam.
 - **Ruled (owner, 2026-09-13, item 3):** (a) — the seam renderer overrides `renderCube` to hand the un-mangled transformed normal through (GeckoLib's own method minus `RenderUtil.fixInvertedFlatCube`); the harness's `CapturingGeoRenderer` takes the same override so the proof draws what the seam draws; two refuters; a PN entry recording the deliberate divergence from the library with the upstream report text, as PN-024 did. Lands FIRST under its own gate; the Firefly, Cloud Shark and Gold Fish then rejoin the next Tier-2 slice.
 - **FIXED (2026-09-13, under its own gate; two refuters):** `entity/client/TrueNormalCubeRenderer.render` — GeckoLib's `renderCube` (4.8.4 offsets 0-126) minus the `RenderUtil.fixInvertedFlatCube` call (98) — behind `OreSpawnGeoReplacedEntityRenderer.renderCube` (every replacement renderer) and `G1ModelProbe.CapturingGeoRenderer.renderCube` (the harness draws what the seam draws); the Queen's native renderer and the benchmark's / part probe's headless renderers keep the default. PN-027 records the divergence with the upstream report text. The three parity proofs verify unchanged under it: no normal a proof compares was ever altered by the helper (the harness pose carries no yaw; the Vortex plate's two real faces stay (0, 0, ±1); its four zero-area faces, which the helper did rewrite, are dropped on both sides by `drop_zero_area_faces` and draw no pixel); in-game the helper also rewrote flat cubes at generic entity yaws, so the Vortex candidate's plate now lights as the classic renderer's at every yaw. The benchmark proof re-pinned (the g1tool class directory moved). The Firefly, Cloud Shark and Gold Fish rejoin the next Tier-2 slice on this path. FIX_LOG "ENT-S-161 LANDED".
+- **2026-09-13 (the second Tier-2 slice, T2b):** the Firefly and the Gold Fish — dropped by the first slice because `RenderUtil.fixInvertedFlatCube` mangled the lighting normal of their rotated zero-thickness cubes — REJOINED on this path: their surface legs pass at the ruled 1e-6 normal epsilon (Firefly normal max 1.08e-7, Gold Fish 1.6e-7; the zero-area faces ignored on both sides), their keyframe legs at 2.5e-3 rad, no residue; the tolerance untouched. The Cloud Shark's surface leg passes the same way (normal max 1.17e-7) — its residue is of another kind and not this finding's: the z-fight WINNER of a thin fin's two coplanar faces, first the within-cube face order (met by the FaceOrder contract's classic declaration, TEST-007), then the rasteriser's tie rule (TEST-006, a proposed harness-semantics change presented with before/after numbers, nothing applied); the rig waits in the lane's scratch on that ruling. FIX_LOG "PHASE G — THE SECOND TIER-2 SLICE, T2b".
+
+### TEST-006 — the visual leg's cutout rasteriser decides a coplanar z-fight by sub-window depth noise, so two renderers emitting the same faces in the same order can still show different faces (the Cloud Shark's fins)
+
+- **Where seen:** run 1b of the second Tier-2 slice's t2 chain, after the classic face order was declared on the rig
+  (`cube_face_order: "classic"`, FACE ORDER PASS 288 faces over 6 captures): `VISUAL MISMATCH model_cloudshark/bind:
+  changed fraction 0.0032043457 > 0.001`. Every changed pixel is a contested pixel of one thin fin's two coplanar faces, emitted in the SAME order on both sides: at bind the right
+  side fin (`rightfin`, 0 x 3 x 7, mirrored, rotated -1.134 rad about Y; vanilla's winner quad 38, GeckoLib's quad 40; 210 px), at t0
+  and t_half the tail fin `topfin` (293 / 507 px), at t_quarter the left fin (342 px), at t_three_quarter the tail fin and the right
+  fin (449 + 218 px) - refuter A's re-measurement from the same dumps.
+- **Mechanism (measured with the tool's own projection, `tie_depths.py`):** the rasteriser
+  (`tools/g1_render_parity.py render_capture`) flags a fragment within CONTEST_DEPTH_EPSILON = 1e-6 of the front as
+  contested but lets it REPLACE the front when it is nearer by more than 1e-9 ("first-wins at an EXACT tie"). At bind vanilla's interpolated depths of the fin's two faces tie exactly (a maximum gap of 4e-16), so its first emitted face
+  shows, while GeckoLib's (its own float matrix path: pivot, rotate, un-pivot per vertex) differ by up to 3.1e-7, so at 210 of the
+  500 shared pixels its second face is nearer by more than 1e-9 and replaces the first; at the four animated samples the sides
+  SWAP - it is VANILLA's later face that lands nearer by more than 1e-9 (562 / 565, 3100 / 3107, 967 / 985, 865 / 867 pixels;
+  depth gaps 3.7e-7 to 1.0e-6) while GeckoLib ties or keeps the first (refuter A). The tie is decided by sub-window depth
+  noise on whichever side is not exactly coplanar at that pose. The docstring's premise - "parity is unaffected because both
+  captures share the rule and the order" - holds for the order but not for the tie: the decision inside the contest
+  window is made by geometry noise 300 times smaller than the window and different on the two sides.
+- **Numbers (run 1b, the classic face order applied; `tie_rule_before_after.py`, the same rasteriser with the replace
+  margin as a parameter):**
+  | sample | today (replace when nearer by > 1e-9) | proposed (first-wins throughout the 1e-6 window) | contested (both) |
+  |---|---|---|---|
+  | cloudshark bind | changed 0.00320, MAE 0.018 | changed 0, MAE 0 | 0.0256 |
+  | cloudshark t0 | 0.00447, 0.027 | 0, 0 | 0.0213 |
+  | cloudshark t_quarter | 0.00522, 0.063 | 0, 0 | 0.0246 |
+  | cloudshark t_half | 0.00774, 0.046 | 0, 0 | 0.0491 |
+  | cloudshark t_three_quarter | 0.01018, 0.060 | 0, 0 | 0.0246 |
+  | goldfish (five samples) | 0, 0 | 0, 0 | 0.0086 - 0.0097 |
+  | firefly (five samples) | 0, 0 | 0, 0 | 0 |
+  Under the standing rule the Cloud Shark's five samples fail the 0.001 changed-fraction threshold; under the proposed
+  rule they pass with the contested fraction reported unchanged (the diagnostic the G2 root-order contract kept). The Gold
+  Fish (contested 0.9 percent on its fins) and the Firefly pass under both. The rig's other legs are green: geometry max
+  2.34e-7 blocks, surface UV 0 / normal 1.17e-7 (72 zero-area faces ignored), animation 0 rad, draw order 48 draws in the
+  classic order, face order 288 faces, keyframe leg 11 / 13 / 10 keys at 2.5e-3 rad (grid max 1.95e-3 rad over 212
+  samples, 24 wrap pairs), the late-prime twin holding.
+- **In-game reading (stated, not measured):** both renderers draw a zero-thickness cube's two faces without culling;
+  the GPU's LEQUAL test resolves equal depths to the face emitted last and unequal ones to the nearer, so a rotated flat
+  cube whose transformed corners are not exactly coplanar z-fights on its own renderer (a known artefact of paper-thin
+  parts); which of the two islands shows per fragment is decided by depth noise on both renderers alike. No pixel-exact
+  parity exists for such a fragment; the proposed rule makes the HARNESS decide contested fragments by emission order
+  alone - the G2 root-order contract's premise - while still reporting how many fragments were contested.
+- **Proposed ruling (the owner's; nothing applied):** in `render_capture`, a fragment inside the contest window never
+  replaces the front (the replace margin 1e-9 becomes CONTEST_DEPTH_EPSILON); before/after for every existing proof MEASURED by refuter A on the verify dumps with the tool's own projection: first-wins
+  throughout the window leaves every sample of the 14 t2, the 2 g1 and the 12 cutout s4 models at identical changed / MAE /
+  contested numbers - several DO report contested fragments (g1 Beaver 1.5e-5; s4 Island / IslandToo 0.225 / 0.464, Robot5 0.0116,
+  Robot3 0.0025, Robot1 5.5e-4, Robot4 4.1e-4), none of which changes hands, because a different-texel fragment inside the window
+  is flagged before the rule acts (the Vortex's 9 changed pixels are uncontested silhouette pixels on both cameras); the Cloud
+  Shark then rejoins from `t2b/dropped/` on its regenerated proof. Alternatives: (b) an owner tolerance for contested
+  fragments on flat cubes (the retired exclusion under another name - not recommended); (c) the Cloud Shark stays classic.
+- **Status:** OPEN; the Cloud Shark's conversion complete and kept in the lane's scratch (descriptor, geo with the
+  classic face order, clip, clip manifest, seed, manifest entry).
+
+### TEST-007 — a cutout rig's zero-thickness cube shows a different face on the candidate than on the classic renderer unless the rig ships the classic within-cube order (the FaceOrder contract's "open item", now met by a shipped rig)
+
+- **Where seen:** run 1 of the second Tier-2 slice's t2 chain (2026-09-13), the Cloud Shark's visual leg at bind:
+  `VISUAL MISMATCH model_cloudshark/bind: changed fraction 0.0160217285 > 0.001` (contested fraction 0.0256, MAE 0.127).
+  Every one of the 1,050 changed pixels is a contested pixel owned by a different quad of the SAME cube on the two
+  sides (vanilla quad n+2 against GeckoLib quad n on cubes 5, 6, 7: the tail fin `fins` 0 x 10 x 10 and the side fins
+  `leftfin` / `rightfin` 0 x 3 x 7, all `.mirror()`ed). The geometry, surface (UV 0, normal <= 1e-6 under ENT-S-161)
+  and draw-order legs passed the same capture: the vertex TUPLES agree, the ORDER within the cube does not.
+- **Mechanism (bytecode-cited in FaceOrder.java and tools/layer_definition_to_geo.py):** `ModelPart.Cube.<init>`
+  emits DOWN, UP, WEST, NORTH, EAST, SOUTH and `Polygon.<init>` negates the X normal of a mirrored cube, so a mirrored
+  cube flat in X emits its +X-normal face (the WEST slot) BEFORE its -X face; GeckoLib 4.8.4 `buildQuads` emits WEST
+  (-X) before EAST (+X). A zero-thickness cube's two real faces are coplanar and both are drawn (entityCutoutNoCull);
+  the z-fight winner is the face emitted LAST in-game (LEQUAL) and FIRST in the harness's rasteriser - on both sides the
+  same rule, so the two renderers agree only when they emit the two faces in the same order. Where the two faces carry
+  different texels (the Cloud Shark's fins: the west and east islands of a 0-wide box are different pictures) the
+  candidate shows the mirror-flipped island of every fin. The Firefly's wings (0 x 6 x 2, mirrored) passed the same leg
+  because their two islands carry identical texels (the rasteriser counts a tie as contested only with different
+  texels); the Vortex's plate is flat in Z, where the mirror negation touches no normal. Exactly the case FaceOrder.java
+  names: "For an opaque (cutout) rig the order is invisible except where two faces of ONE cube are coplanar (a
+  zero-thickness box) - the open item recorded on the G2 root-order contract."
+- **Resolution in the slice (decided under doctrine - the ENT-S-146 face-order contract - reversible):** the three
+  rigs with zero-thickness cubes (Firefly, Cloud Shark, Gold Fish) declare `cube_face_order: "classic"` in
+  `tools/t2_model_proofs.json` (a `face_order_note` on each), their descriptors override `cubeFaceOrderRequired()`
+  (the PurplePower's form; the asset audit's regex), the converter writes `orespawn:cube_face_order` into their shipped
+  geos, the seam permutes every cube's quads into the classic order (`FaceOrder.apply`) and the draw-order leg compares
+  the per-quad normal sequences of both renderers on every capture (`G1 FACE ORDER PASS`). The Ant rig has no
+  zero-thickness cube and ships without the key, like every first-slice rig.
+- **Follow-up (tooling, no refuter; for the owner's queue):** make the requirement mechanical - the converter (or the
+  asset audit) should REFUSE a converted rig that has a zero-thickness cube and no `cube_face_order: "classic"`, so the
+  next such rig cannot ship the wrong face by omission; alternatively ship the classic order for EVERY converted rig with
+  the mirror drop's regeneration (the drop regenerates every geo anyway), after which the key stops being per-rig.
+- **Status:** met in the slice for the three rigs: the Firefly's and Gold Fish's visual legs green under it (changed 0 /
+  MAE 0; contested 0 and 0.9 percent reported), the Cloud Shark's changed fraction cut from 1.6 percent to 0.32 percent
+  at bind by it - its remaining residue is the rasteriser's tie rule, a separate finding (`audit_visual_tie_rule.txt`) on
+  which the rig waits; the rule recorded; the tooling follow-up open.
 
 ### TEST-003 — Config-flipping gametests in the concurrent default batch
 
