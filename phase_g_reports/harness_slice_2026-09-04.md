@@ -63,6 +63,16 @@ lane over the working tree at 7021b5a (+ the uncommitted i165 fix, + the untrack
   (the flat world's grass under the layout — a cleared structure box shows stone); every overwritten cell restored
   to its recorded prior, every spawn discarded, the player removed, the tickets released, and the row asserts so
   before it succeeds.
+- **F0.9 Client-only GeckoLib rows (2026-09-06; accepted by the owner 2026-09-12, item 14).** GeckoLib 4.8.4's
+  `AnimationController.processCurrentAnimation` calls `MathParser.setVariable` unconditionally, which initialises
+  `MolangQueries`, whose static initialiser reaches `ClientLevel`; the dedicated server's `RuntimeDistCleaner` refuses
+  it, so no dedicated-server game test can drive `AnimationController.process` — a row that must tick a GeckoLib
+  controller is written CLIENT-ONLY (unannotated, its body kept reviewable under the client run, the class javadoc
+  naming it) and its facts live in the headless harness leg, which is the proof (`KeyframeLegTests` kf_003 / kf_005 /
+  kf_006; the late-prime case is TEST-005 until its headless twin). Two conventions from the same gates: an annotated
+  `@GameTest(template = …)` names its template BARE ("empty", "empty_large" — the mod id is prefixed for it), a generated
+  `TestFunction` names it qualified (`orespawn:empty_large`); a server-side model double that must not reach the Molang
+  setup overrides `applyMolangQueries` as a no-op (the reference clips carry constants only).
 
 ## 1. `i050_vortex_no_launch_drag_pull` — "was 0.0" (wave1e only)
 

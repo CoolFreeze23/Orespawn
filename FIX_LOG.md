@@ -4914,3 +4914,86 @@ port flashes red until the deferred one-line change lands. The order of work fro
 and checker rules) → the look sheet's Section H → the first Tier-2 slice (one refuter; the headless twin in it; the three
 counts open its report). The drop lands on the owner's Section B go; the package and the pilot follow it; nothing else
 runs; the changelog is written once, before the next push.
+
+## PHASE G — ITEM 15 LANDED (2026-09-12): the Beaver's keyframe path wired — the shipped transcription, the leg in the shipped g1 manifest, the idle-AND-walk gate, the README and checker rules (no event keyframes on loops; idle and walk together), the late-prime twin filed (TEST-005), the three client-only rows accepted
+
+RULING. Owner 2026-09-12 (addendum item 25 (11)-(14) and "item 15 — lands now", reversing 2026-09-06's "wires after
+the Beaver look": the owner's look judges the keyframe Beaver in the same sitting as A–H). (11) Event keyframes are not
+part of the contract on looping clips (they fire once per manager under the phase lock); the README states "no event
+keyframes on loops — code-fired events come from the trigger inventory". (12) The idle-only delivery gap: the artist
+gate opens on `idle` AND `walk` delivered together; one without the other stays classic and the checker says so; a
+README rule. (13) The late-prime case without a headless twin: an open harness item (TEST-005), closed by the headless
+twin in the first Tier-2 slice, not before. (14) The three keyframe rows client-only: accepted and recorded; the
+headless leg is the proof. Executed by the orchestrator directly (a small delta on the presented state of 317dce7);
+two refuters (the seam code is renderer / motion code under the cost rules' item 4); one gate.
+
+WHAT LANDED:
+- `src/main/resources/assets/orespawn/animations/entity/beaver.animation.json` — the SHIPPED clip is now the
+  transcription (`tools/keyframe_clip.py` over `tools/keyframe_clips/beaver.json`; sha256 40f305d76c3f…): `walk` (the
+  gait group, 15 catmullrom keys per bone on rff / lrf / lff / rrf, scaled by limbSwingAmount), `walk_teeth` (13, teeth),
+  `walk_tail` (8, tail), 1.0 s loops, authored X = +classic degrees, plus an `idle` that keys NO bone (below). The
+  gametest resource `src/gametest/resources/orespawn_gametest/keyframes/beaver.animation.json` is the same bytes.
+- `tools/g1_model_proofs.json` — `thresholds.keyframe_reference_leg_epsilon_radians: 0.0025` (named, no default) and the
+  Beaver entry's `keyframe_reference_leg` block (candidate_class `BeaverGeoReplacement`, `clip_path` the SHIPPED file,
+  `clip_manifest`, `spline_repair` true, `wrap_epsilon_lut_indices` 4, the (e) schedule: `late_start_age_ticks` 137.371,
+  `span_age_ticks` 40.5, 4096 / 65536 intervals, keys 3..97) — the block the presented slice ran on a scratch copy, with
+  repository-relative paths (`KeyframeLeg.resolve` and the tool's `resolve_repository_path` resolve them against the
+  repository root; the checked-in `report.json` carries the manifest's string, never an absolute path).
+- `entity/client/OreSpawnGeoReplacement.registerKeyframeLayers` — the self-gate is `idle` AND `walk` present (item 12;
+  it was `idle` OR `walk`); everything after it unchanged (a layer registers only when ITS clip is present, the config
+  gate second). `KeyframeLayer.IDLE`'s javadoc, the class javadoc and MOD-038's config comment say the same thing.
+- `tools/keyframe_clip.py` + the clip manifest — an `idle` loop keying no bone when the manifest declares
+  `"idle": {"keys": "none"}`.
+- `tools/artist_package.py` 0.2.2 (the tooling lane's own tests are the check — cost rules item 5): README_FIRST rule 3
+  ("Deliver `idle` and `walk` together: the game switches a creature to your animations only when BOTH are in the
+  file — one without the other leaves the creature on its old code-driven motion, and `check` says so"), rule 7
+  ("sound and particle keys only on one-shot clips … No event keyframes on loops — code-fired events come from the
+  trigger inventory"), `CHECK_REJECTS` (the idle / walk entry with the consequence; a new entry: an event keyframe on a
+  LOOPING clip), `check_folder` (a present non-empty `sound_effects` / `particle_effects` on a clip whose SPEC loop is
+  `true` → REJECT; one-shot clips keep rule 7's allowance; the required-clip message carries the consequence);
+  SPEC §11 quotes the same list. `tools/test_artist_package.py` (26 pins): the event-key rule on idle / walk, the
+  allowance on attack, an empty `sound_effects` object tolerated, idle-without-walk and walk-without-idle rejected with
+  the message, the README and the fixture SPEC carrying both rules in the checker's words — all pass.
+- `KeyframeLegTests` (own batch `keyframeLeg`; still 5 gate rows, the count unchanged at 1273): `kf_001` re-pinned as
+  `kf_001_shipped_clip_registers_the_layers_and_partial_files_none` — the shipped file carries exactly idle / walk /
+  walk_teeth / walk_tail, idle keys no bone and loops, the shipped file registers the three layers under the default
+  keys, no bake / idle-only / walk-only register none, the production path registers nothing on this server (no bake);
+  `kf_002` — walk alone registers NONE (was: the gait layer only), idle + walk registers the gait layer only (the teeth
+  and tail hold bind), idle + walk_teeth registers none.
+
+DECIDED UNDER DOCTRINE, REVERSIBLE (item 9), one line each: (i) the transcription's `idle` keys no bone — the gate as
+ruled needs `idle` AND `walk`, and a classic transcription has no resting motion of its own (at rest the always-on
+groups walk_teeth / walk_tail carry it and the gait group sits at limbSwingAmount 0), so its idle is the bind pose until
+an artist's real idle replaces it (the alternative — a two-condition gate that also accepts the complete declared group
+set — would let a walk-family delivery without `idle` flip a species, against item 12's letter); (ii) the checker
+REJECTS (not warns) event keyframes on a looping clip — item 18's form: the README, the SPEC and the checker say the same
+thing, and a clip outside the contract is a REJECT like a renamed clip; one-shot clips keep rule 7's allowance;
+(iii) the late-prime item is a register line (TEST-005), not a KNOWN_ISSUES entry (player-facing) — the harness note's
+F0.9 records the client-only rows' acceptance and the two conventions the kf17 gates found.
+
+THE PROOF (`phase_g_reports/g1_proof`, regenerated by hand under the proof rule — the leg is a new block, verify mode
+cannot pass it): `G1 KEYFRAME LEG PASS: model_beaver 2.5e-3 rad; Beaver reference leg 15 / 13 / 8 catmullrom keys per
+bone with spline arguments repaired at load; wrap sample T−ε vs 0+ε included; sample-grid max 0.00229524 radians over
+17568 layer-bone samples, 264 wrap pairs` — the density search: gait fewest 15 keys/bone at 2.16275e-3 over 1,057,088
+comparisons (one fewer 2.71118e-3), teeth 13 at 1.89218e-3 over 264,272 (one fewer 2.54428e-3), tail 8 at 2.29527e-3 over
+264,272 (one fewer 3.98448e-3) — the presented slice's numbers exactly (FIX_LOG "THE KEYFRAME LEG'S RETURN", THE DENSITY)
+through the SHIPPED clip and the SHIPPED manifest; `G1 PARITY PASS: 2 models; checked-in proof updated` (the Beaver's
+animation-contract / conversion files gain the 528 wrap samples on both sides; every other number unchanged — geometry
+2.0e-7 blocks, animation 0 rad, visual 0 / 0, draw order 21 captures / 189 draws); the benchmark proof re-pinned (the
+manifest's hash moved; `G1 BENCHMARK EVIDENCE VERIFIED … checked-in proof updated`); the s4 proof untouched (`G1 PARITY
+PASS: 13 models; checked-in proof verified` in the gate's build).
+
+IN-GAME: nothing for a default install — the classic renderers are the default and `ModelBeaver.setupAnim` never reads
+the clip. The GeckoLib Beaver behind `-Dorespawn.dev.geckolibRenderers=beaver` (the owner's Section E look) now builds
+its per-entity manager with the three phase-locked layers over the shipped clip (repaired at load, PN-024) and its
+classic hook stands down; `idle` is baked and nothing plays it (the weights slice); `[modern] artistAnimations` at its
+default; `classicAnimationSpecies` listing `orespawn:beaver`, or the key off, or `modern.enabled = false`, puts the
+candidate back on the classic hook.
+
+NOT DONE (by design): no `fly` / `swim` / weights / idle_alt / trigger transports (later slices); the Queen's native
+model on stock spline semantics (her own ruling); the late-prime headless twin (TEST-005 — the first Tier-2 slice);
+the three client-only rows stay client-only (accepted, item 14); the `_preview` export (slice (f)).
+
+REFUTER NOTES: two refuters (2026-09-13), in parallel with the gate. REFUTER A (the seam gate, the transcription's idle, the leg in the shipped manifest; javap over the pinned GeckoLib 4.8.4 jar): all seven claims CONFIRMED on the code — the gate returns 0 unless idle AND walk are baked and then registers the declared layers whose clips exist, in order, after the config gate, with no other production path touched (`registerControllers` final → `loadedClips()`; `setCustomAnimations` and `getAnimation` untouched; the harness's `S4CandidateRuntime` / `KeyframeLeg` never call `registerKeyframeLayers` and the twin pin walks the groups only, so neither the AND-gate nor the empty idle alters a probe sample); the empty idle bakes to a zero-length `boneAnimations()` with `LoopType.LOOP` (`BakedAnimationsAdapter.bakeAnimation` offsets 38-52: `getAsJsonObject(json, "bones", new JsonObject())` → an empty `BoneAnimation[0]`; `LoopType` is an interface with a static `LOOP`, identity-correct; `SplineRepair.repair` handles the empty array; nothing plays idle); the shipped clip is the generator's output byte for byte (sha256 40f305d7…, `cmp` 0 against a fresh run and against the gametest resource; LF, no BOM; 15 / 13 / 8 catmullrom keys; x0 = ±80.9999988389 / 45.0000012522 / 9.0000002504 = `degrees((float) PI * (float) pi_scale)` with the classic signs, max error 0); the manifest block's fields and types are exactly what `KeyframeLeg.prepare` and `keyframe_reference_leg_parity` read, the relative paths resolve against the repository root on both sides and the checked-in `report.json` carries the manifest's string; the pins hold (imports, the Flags helper, kf_007 / kf_008 on the dedicated server's empty cache map); the count stays 1273 (a rename inside an own batch cannot reorder the default batch); in-game the candidate Beaver registers the three layers under the default keys and the classic renderer never reads the clip. REFUTED: records accuracy — three stale javadoc passages (M1 `BeaverGeoReplacement` "ships EMPTY … a scratch clip", M2 `OreSpawnConfig`'s field javadoc "idle / walk", M3 `KeyframeLeg` "a scratch path until the owner's look") — FIXED after the gate, comment-only, byte-identical (the GATE line); notes recorded: the probe's geo-render dump writes the resolved absolute clip path (a `build/g1/geo` artifact, never checked in); the `.gitattributes` comment reworded; `KeyframeLegTests.TOLERANCE_RAD` is a duplicate literal for the client-only kf_003, not a fallback. REFUTER B (the package tool, the README / checker rules, the dry run): all six claims CONFIRMED — the event-key rule catches Blockbench's clip-level `sound_effects` / `particle_effects` in both the object and list forms and per-bone events fall to "unsupported channel"; `idle_alt_N` (a one-shot by design, contract §2.1) keeps them, consistent; README_FIRST, SPEC §11 and `check` say the same thing; `required` is true exactly for idle / walk on every non-native species with clips, Tier 3 and the native Queen untouched; `python tools/test_artist_package.py` 26 OK; the dry run exit 0 (15 entities) and the packaged Beaver's shipped transcription PASSES `check` (`checked 4 clip(s), 243 keyframe value(s), 1 texture(s)`; the bone-less idle trips no rule). NOTES applied: the Beaver seed's "once the contract is wired" sentence reworded. NOTES recorded, nothing changed: (B1) the Beaver's dry-run ROUND-TRIP now reports `6 diff(s), order kept` (it was `EQUAL, order kept` on 2026-09-06) — the tool's Blockbench emulation writes 4-decimal timecodes while the transcription's key times are k/14, k/12, k/7 s at 10 decimals; the values are identical, only the times differ, and an artist's 4-decimal re-export still PASSES `check`; the round-trip time tolerance (1e-6 s) is NOT loosened — for the owner: widen it to 5e-5 s, or emit 10-decimal timecodes if that is what Blockbench really writes (the tool's own note leaves that to the owner's hand-check); (B2) the rule also rejects event keys on the native Queen's loops (her `idle`, and her `attack`, which loops in her manifest) though her native controllers are not phase-locked — uniform by design; "revisit if an artist needs one" will first surface on the boss; (B3) `clip.get(event_key)` truthiness lets `[]` / `false` / `null` through (nothing fires; Blockbench never writes them), and `timeline: {}` is rejected on presence while `sound_effects: {}` is tolerated — uneven, harmless; (B4) a NO-GAIT Tier-2 species: `loop_row` emits the bare `idle` / `walk` SPEC rows only `if gait or not groups`, so a one-group no-gait seed would get `<state>_<group>` rows only and its checker would reject a bare `walk` — contract §2.1 says a one-group species carries the bare names; carried into the first Tier-2 slice's brief (the multi-group no-gait case is a doctrine gap, presented there); (B5) nothing plays `idle` until the weights slice — the transcription's idle is a gate token and an artist's real idle is inert until then (the SPEC's `idle` row promises `w_idle`); (B6) the README priority table lists all eleven Beaver clips without marking the two rule 3 requires; (B7) clip-level Molang fields (`anim_time_update`, `blend_weight`) pass `check` silently though rule 7 says no Molang — GeckoLib ignores them; pre-existing.
+
+GATE: (kf15, 2026-09-13 00:01-00:08, one run, the two refuters running beside it): the g1 proof regenerated by hand under the proof rule (`--write-proof` — the leg block is new, verify mode cannot pass it — `G1 KEYFRAME LEG PASS: model_beaver … sample-grid max 0.00229524 radians over 17568 layer-bone samples, 264 wrap pairs`, `G1 PARITY PASS: 2 models; checked-in proof updated`; the benchmark proof re-pinned on the manifest's new hash, `G1 BENCHMARK EVIDENCE VERIFIED … checked-in proof updated`); the drift check green; the build green (`RESULT: 0 error(s), 0 advisory(ies), 4 acknowledged; draw order: 15 shipped geo: 14 seam + 1 outside-seam`, `G1 PARITY PASS: 2 models; checked-in proof verified`, `G1 PARITY PASS: 13 models; checked-in proof verified`); the suite `All 1273 required tests passed` (the count unchanged: five gate rows in `keyframeLeg`, kf_001 renamed inside its own batch). POST-GATE, comment-only (the w5 precedent): refuter A's three stale javadoc passages (M1 `BeaverGeoReplacement` :24-32, M2 `OreSpawnConfig` :317-330, M3 `KeyframeLeg` :52-53) and refuter B's stale Beaver seed sentence reworded, each replacement the same line count as the passage it replaced; main / g1tool / gametest recompiled (918 / 63 / 241 class files) and compared recursively with the gated compile: 0 differing files; `g1BenchmarkVerify` re-run green (`checked-in proof verified`, 14 s). Package tool tests 26 / 26 after every edit.

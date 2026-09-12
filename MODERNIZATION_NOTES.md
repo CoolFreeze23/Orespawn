@@ -1115,3 +1115,5 @@ _pin) so alignment drift is caught regardless.
   both trees) and the asset audit unchanged.
 - **Status:** IMPLEMENTED 2026-09-06 (the keys, the helper, the gated site, the layers, the pins); PRESENTED, inert until
   a shipped clip carries the contract's clips.
+- **Status (2026-09-12):** WIRED — item 15 landed (owner 2026-09-12: "lands now"): the shipped `beaver.animation.json` carries the transcription (idle keying no bone, walk, walk_teeth, walk_tail), so the GeckoLib Beaver behind the dev switch plays its layers under this key's default; the gate is `idle` AND `walk` together (item 12; the config comment and the seam's javadoc say so); the classic renderer (the default) is untouched. FIX_LOG "PHASE G — ITEM 15 LANDED".
+

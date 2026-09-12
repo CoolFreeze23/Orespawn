@@ -335,7 +335,7 @@ per-render effect ever carries a live signature, the fix shape in ENT-S-147 (a p
 advance, the pose kept pure) is the one to build.
 - **Player-visible:** only on the pause screen and on the two edges above; the dev-switch candidate only.
 
-## PN-024 — Catmull-Rom keyframes in the replacement seam evaluate with the textbook spline arguments, not GeckoLib 4.8.4's (PROPOSED with the landing: Q9 (a) ruled the divergence, 2026-09-06; the PN record lands on the owner's acceptance; a deliberate divergence from the library, reported upstream; the Queen's native model on stock semantics until her own ruling)
+## PN-024 — Catmull-Rom keyframes in the replacement seam evaluate with the textbook spline arguments, not GeckoLib 4.8.4's (LANDED 2026-09-12 with item 15 — the shipped Beaver clip plays through the repaired seam; Q9 (a) ruled the divergence 2026-09-06; a deliberate divergence from the library, reported upstream; the Queen's native model on stock semantics until her own ruling)
 
 - **The library (GeckoLib 4.8.4, `javap -p -c` of the pinned jar `geckolib-neoforge-1.21.1-4.8.4.jar`, sha at
   `~/.gradle/.../eb854c8ec53ef922a5f3877a1aa4c1ce1352e0ce/`):** `BakedAnimationsAdapter.buildKeyframeStack` builds
@@ -370,8 +370,9 @@ advance, the pose kept pure) is the one to build.
   `QueenModel extends GeoModel` keeps stock semantics until her own ruling; a resource pack's clip on a replaced
   species takes the repaired curve like the mod's own. Reported upstream (`upstream_report.md` in the same drafts:
   the defect, the offsets, a minimal reproduction, the expected P0).
-- **Player-visible:** only on a replaced species that ships catmullrom clips — none today (every shipped clip
-  file is empty until the owner's in-game look; the Beaver look decides visibility); the dev-switch candidate only.
+- **Player-visible:** only on a replaced species that ships catmullrom clips — the Beaver since 2026-09-12 (item 15
+  landed: its transcription plays through the repaired arguments on the GeckoLib candidate behind the dev switch; the
+  classic renderer, the default, is untouched); every other shipped clip file is empty; the dev-switch candidate only.
 - **Pins:** `KeyframeLegTests.kf_004_spline_repair_arithmetic` (the library's P0 == P1 against the pinned jar; the
   repair's neighbours, periodic / clamped, idempotent, the anchor and linear frames untouched; GeckoLib's evaluator
   over the repaired arguments equals the textbook spline and over its own the kinked one); the harness's
