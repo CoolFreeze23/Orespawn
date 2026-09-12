@@ -43,7 +43,7 @@ from collections import Counter, OrderedDict, defaultdict
 from pathlib import Path
 from typing import Any, Iterable
 
-TOOL_VERSION = "0.2.3 (the first Tier-2 slice: a one-group species keys the bare idle / walk, contract section 2.1, 2026-09-13)"
+TOOL_VERSION = "0.2.4 (the second Tier-2 slice, 2026-09-13: the naming rule's primary_group SPEC rows, the round-trip key-time tolerance 5e-5 s, the native-controller event-key exemption)"
 
 ROOT = Path(__file__).resolve().parent.parent
 BB_NAMESPACE = uuid.UUID("6f0b4b2e-9d1c-4a7e-8f3a-2c5e1d7b9a10")  # deterministic .bbmodel uuids
@@ -75,7 +75,7 @@ CHECK_REJECTS = [
     "a wrong `loop` value; a missing `idle` or `walk` (they open the game's switch only TOGETHER — one without the other leaves the creature on its code-driven motion); a missing clip the game already triggers by name",
     "a key on a bone the rig does not have (renamed), or a channel other than rotation / position / scale",
     "a Molang string, a non-numeric or non-finite value, a custom-instruction (`timeline`) key",
-    "an event keyframe (`sound_effects` / `particle_effects`) on a LOOPING clip — no event keyframes on loops; code-fired events come from the trigger inventory (one-shot clips may carry them)",
+    "an event keyframe (`sound_effects` / `particle_effects`) on a LOOPING clip of a phase-locked species — no event keyframes on loops; code-fired events come from the trigger inventory (one-shot clips may carry them; a creature whose controllers are its own GeckoLib controllers — the SPEC's controller kind `native`, the Queen — is exempt: native controllers are not phase-locked, event keys fire per loop)",
     f"|rotation| > {ROTATION_BOUND_DEG:.0f} degrees or |position| > {POSITION_BOUND:.0f} units",
     "a key later than the clip's `animation_length` (a declared length shorter than the last key)",
     "a returned `.geo.json` whose bones, parents, pivots, rotations, cubes, UVs or canvas differ from the shipped rig",
@@ -1778,6 +1778,29 @@ def lock_note(keyed_locked: list[str]) -> str:
     return f"keys {len(keyed_locked)} locked bone(s) ({shown}): {LOCK_POLICY}"
 
 
+def primary_group(species: "Species", groups: list[dict[str, Any]], gait: list[dict[str, Any]]) -> dict[str, Any] | None:
+    """The group whose clip carries the bare `walk` (the naming rule, owner 2026-09-13, addendum item 26 (2); contract
+    §2.1 amended): the gait group when the rig has one, else the seed's `primary_group`, else the FIRST group; None for a
+    species without groups. A seed naming an unknown group, or a group other than the gait group, is a seed error - the
+    generator (tools/keyframe_clip.py) and the harness's twin (KeyframeLeg.primaryGroup) refuse the same manifest."""
+    if not groups:
+        return None
+    declared = (species.seed or {}).get("primary_group")
+    by_name = {g["name"]: g for g in groups}
+    if len(gait) > 1:
+        raise SystemExit(f"{species.registry}: more than one gait-scaled group {[g['name'] for g in gait]} (one gait group per rig)")
+    if gait:
+        if declared and declared != gait[0]["name"]:
+            raise SystemExit(f"{species.registry}: seed primary_group {declared!r} names a group other than the gait group "
+                             f"{gait[0]['name']!r} (the gait group carries the bare walk)")
+        return gait[0]
+    if declared:
+        if declared not in by_name:
+            raise SystemExit(f"{species.registry}: seed primary_group {declared!r} names no frequency group {list(by_name)}")
+        return by_name[declared]
+    return groups[0]
+
+
 def clip_rows(species: "Species", inv: dict[str, Any], anim: dict[str, Any], groups: list[dict[str, Any]],
               bone_names: list[str] | None = None, locked: dict[str, str] | None = None) -> list[dict[str, Any]]:
     """The clip table: contract clips this species ships or would ship, with loop mode, layer, trigger, bones, rule.
@@ -1817,30 +1840,27 @@ def clip_rows(species: "Species", inv: dict[str, Any], anim: dict[str, Any], gro
     if species.tier == 3 or scope.startswith("none"):
         return rows  # no artist clips (P2; open question 7)
     gait = [g for g in groups if g.get("gait_scaled")]
-    others = [g for g in groups if not g.get("gait_scaled")]
-    gait_name = gait[0]["name"] if gait else (groups[0]["name"] if groups else "")
-    # Contract §2.1: "a species with ONE frequency group has only the bare names" - a one-group species without a
-    # gait group keys its one group under the bare `idle` / `walk` (the Tier-2 flyers: Tshirt, Mosquito, CliffRacer,
-    # Firefly, Brutalfly), never `<state>_<group>`; a MULTI-group species without a gait group keeps the
-    # `<state>_<group>` rows only until the owner rules which group carries the bare name (the first Tier-2 slice,
-    # 2026-09-13: the doctrine is silent there, the question is presented).
-    single_no_gait = not gait and len(groups) == 1
-    primary = gait[0] if gait else (groups[0] if single_no_gait else None)
-    if single_no_gait:
-        others = []
+    # The naming rule (owner 2026-09-13, addendum item 26 (2); contract §2.1 amended): the bare `walk` belongs to the
+    # gait group; a species WITHOUT a gait group names its primary locomotion group in its seed (`primary_group`, the
+    # FIRST group when absent) and THAT group's clip carries the bare name - a label, not a semantic (the contract's
+    # fly -> walk fallback plays a flyer's walk in flight); every other group's is `<state>_<group>`. So every species
+    # with groups has the bare `idle` / `walk` pair (item 12's gate opens on both), and the first slice's PROVISIONAL
+    # optional bare idle of a multi-group no-gait species is gone.
+    primary = primary_group(species, groups, gait)
+    others = [g for g in groups if primary is None or g["name"] != primary["name"]]
+    gait_name = primary["name"] if primary else ""
     all_bones = list(bone_names or [])
     other_group_bones = {b: g["name"] for g in others for b in g.get("bones", [])}
 
     def whole_rig(state: str) -> str:
         """Every bone of the rig for a base loop (§2.1: every group the species idles with; §8: any bone on a Tier-2 rig),
-        the gait group (or a one-group species' one group) marked, other groups' bones pointed at their own
-        `<state>_<group>` layer."""
+        the gait group (or the primary group) marked, other groups' bones pointed at their own `<state>_<group>` layer."""
         if not all_bones:
             return ", ".join(primary["bones"]) if primary else "(as SPEC)"
         gait_set = set(primary["bones"]) if primary else set()
         parts = []
         if gait_set:
-            parts.append(("gait group (speed-scaled): " if gait else "the one frequency group (unscaled; the bare clip is its transcription): ")
+            parts.append(("gait group (speed-scaled): " if gait else "the primary group (unscaled; the bare clip is its transcription, a label under the naming rule): ")
                          + ", ".join(b for b in all_bones if b in gait_set))
         free = [b for b in all_bones if b not in gait_set and b not in other_group_bones and b not in locked]
         if free:
@@ -1853,11 +1873,10 @@ def clip_rows(species: "Species", inv: dict[str, Any], anim: dict[str, Any], gro
             parts.append("locked (see §7): " + ", ".join(lk))
         return f"any of the {len(all_bones)} bones — " + "; ".join(parts)
 
-    # The bare `walk` belongs to the gait group (or to a one-group species' one group); a MULTI-group species without a
-    # gait group has no bare `walk` until the owner rules which group carries it. The bare `idle` is every species'
-    # (§2.1: "standing, no target"), and rule 3 (idle AND walk together) can only be satisfied where the bare `walk`
-    # exists - so `idle` is required only beside a bare `walk`, and a multi-group no-gait SPEC lists it as optional.
-    bare_walk = bool(gait) or not groups or single_no_gait
+    # The bare `walk` is the gait group's, else the primary group's (the naming rule); the bare `idle` is every species'
+    # (§2.1: "standing, no target") and rule 3 (idle AND walk together) applies to every species - both bare rows are
+    # required (a species without groups keeps the bare pair too: there is nothing to name).
+    bare_walk = True
 
     def loop_row(name: str, layer: str, weight: str, bones: str, group: str, provisional: bool = False, note: str = "",
                  verdict_default: str = "author") -> dict[str, Any]:
@@ -1869,12 +1888,11 @@ def clip_rows(species: "Species", inv: dict[str, Any], anim: dict[str, Any], gro
 
     for state in ("idle", "walk"):
         weight = "w_idle = (1 - w_move)(1 - w_swim)(1 - w_fly)" if state == "idle" else "w_walk = w_move (1 - w_swim)(1 - w_fly); the gait group additionally x limbSwingAmount (P3)"
-        if state == "idle" and not bare_walk:
-            rows.append(loop_row(state, "base", weight, whole_rig(state), gait_name, provisional=True,
-                                 note="the bare walk is not in this SPEC until the owner rules which frequency group carries it "
-                                      "(a multi-group species without a gait group); idle alone does not open the switch (rule 3)"))
-        elif bare_walk:
-            rows.append(loop_row(state, "base", weight, whole_rig(state), gait_name))
+        note = ""
+        if state == "walk" and primary is not None and not gait:
+            note = (f"the bare walk is the primary group `{primary['name']}`'s (the seed's primary_group; the first group when it names none) "
+                    "- a label, not a semantic: the fly -> walk fallback plays it in flight (owner 2026-09-13, addendum item 26 (2))")
+        rows.append(loop_row(state, "base", weight, whole_rig(state), gait_name, note=note))
         for g in others:
             rows.append(loop_row(f"{state}_{g['name']}", "parallel layer", weight + f" (group {g['name']})", ", ".join(g["bones"]), g["name"]))
     loco = seed.get("locomotion", "walker")
@@ -2046,6 +2064,16 @@ def spec_document(species: "Species", repo: "Repo", catalog: "TextureCatalog", i
                           g.get("amplitude", ""), "yes" if g.get("gait_scaled") else "no", rate, g.get("source", "")])
         L.append(md_table(["group", "bones", "axis", "omega (rad/tick)", "natural period", "amplitude", "speed-scaled", "Blockbench preview rate", "source"], trows))
         L.append("")
+        primary_row = primary_group(species, groups, [g for g in groups if g.get("gait_scaled")])
+        if primary_row is not None and primary_row.get("gait_scaled"):
+            L.append(f"The bare `walk` clip is the gait group's (`{primary_row['name']}`, scaled by walking speed in-game); every other group keys "
+                     "`walk_<group>` / `idle_<group>` (contract §2.1).")
+            L.append("")
+        elif primary_row is not None:
+            L.append(f"The bare `walk` clip is the primary group's, `{primary_row['name']}` (the seed's `primary_group`; the first group when the seed names none) "
+                     "— a label, not a semantic: the contract's fly → walk fallback is what plays a flyer's walk in flight (owner 2026-09-13, addendum item 26 (2)); "
+                     "every other group keys `walk_<group>` / `idle_<group>`.")
+            L.append("")
         if any_rectified:
             L.append("A rectified group (`|cos|`, `|sin|`) has TWO periods: the natural 2π/ω of the underlying wave, and the visible one — half of it — "
                      "at which the pump you see actually repeats; author the loop to the visible period.")
@@ -2083,6 +2111,8 @@ def spec_document(species: "Species", repo: "Repo", catalog: "TextureCatalog", i
                      "read from `registerControllers` and the trigger call sites. `check` rejects any other clip name (including `idle_alt_N`: the native "
                      "controllers roll no idle variants). Its mapping onto the standard contract is PROVISIONAL (open question 16 names it the pilot boss "
                      "candidate); a contract name that is not in this set is listed under 'What fires each contract clip' as not used by this species. "
+                     "Its controllers are its own GeckoLib controllers (controller kind `native` in the manifest), not phase-locked, so its LOOPING "
+                     "clips may carry sound / particle keys — they fire once per loop (README rule 7's exception; owner 2026-09-13, addendum item 26 (6)). "
                      f"Locked bones: {LOCK_POLICY}")
         L.append("")
     if seed.get("wishlist"):
@@ -2240,6 +2270,9 @@ def spec_document(species: "Species", repo: "Repo", catalog: "TextureCatalog", i
         "locked_bones": list(locked), "lock_mode": lock_mode, "lock_policy": LOCK_POLICY_ID, "lock_policy_text": LOCK_POLICY,
         "keyed_locked_by_shipped_clip": keyed_locked_by_clip,
         "native": any(c["role"] == "native" for c in clips),
+        # the SPEC's controller kind (owner 2026-09-13, addendum item 26 (6)): `native` - the species' own GeckoLib controllers,
+        # not phase-locked, so its loops may carry event keys; `phase_locked` - the contract's phase-locked keyframe layers
+        "controller_kind": "native" if any(c["role"] == "native" for c in clips) else "phase_locked",
         "clips": [{"name": c["name"], "loop": c["loop"], "role": c["role"], "code_triggered": c["code_triggered"], "required": c["required"],
                    "length_rule": c["length_rule"], "length_seconds": c.get("length_seconds"), "provisional": c.get("provisional", False)} for c in clips],
         "allow_idle_alt": allow_idle_alt,
@@ -2652,11 +2685,19 @@ def signature_differences(xs: dict[str, Any], ys: dict[str, Any]) -> list[str]:
     return out
 
 
+ROUNDTRIP_TIME_TOLERANCE_SECONDS = 5e-5
+ROUNDTRIP_TIME_NOTE = ("key TIMES compare within 5e-5 s (owner 2026-09-13, addendum item 26 (5)): the Blockbench emulation writes 4-decimal "
+                       "timecodes while a transcription's key times are k/(N-1) s at 10 decimals (the first Tier-2 slice's Beaver round-trip "
+                       "reported six time-only diffs); Blockbench's real timecode precision is read from its exporter source when the _preview "
+                       "export (open question 15) is built, and the emulation follows it then. Values compare at 1e-6.")
+
+
 def roundtrip_diff(shipped_geo: dict[str, Any], back_geo: dict[str, Any], shipped_anim: dict[str, Any],
                    back_anim: dict[str, Any], reattached: list[str]) -> dict[str, Any]:
     """Semantic diff of the shipped files against what the emulated Blockbench export wrote back. NOTE: the writer and
     the importer are this tool's own (the same memory of the Blockbench codec on both sides), so EQUAL proves the two
-    halves agree with each other — the owner's hand-check of one real Blockbench export is the real test."""
+    halves agree with each other — the owner's hand-check of one real Blockbench export is the real test. Key times
+    compare within ROUNDTRIP_TIME_TOLERANCE_SECONDS (ROUNDTRIP_TIME_NOTE), values within 1e-6."""
     diffs: list[str] = []
     dropped: list[str] = []
     sg, bg = shipped_geo["minecraft:geometry"][0], back_geo["minecraft:geometry"][0]
@@ -2724,7 +2765,7 @@ def roundtrip_diff(shipped_geo: dict[str, Any], back_geo: dict[str, Any], shippe
                     diffs.append(f"clip {name} {bone}.{ch}: {len(s_keys)} keys -> {len(b_keys)}")
                     continue
                 for (st, sk), (bt, bk) in zip(s_keys, b_keys):
-                    if not _close(st, bt) or sk["lerp"] != bk["lerp"] or len(sk["points"]) != len(bk["points"]) \
+                    if not _close(st, bt, ROUNDTRIP_TIME_TOLERANCE_SECONDS) or sk["lerp"] != bk["lerp"] or len(sk["points"]) != len(bk["points"]) \
                             or not all(_close(p, q) for p, q in zip(sk["points"], bk["points"])):
                         diffs.append(f"clip {name} {bone}.{ch} @ {st}: {sk} -> {bk}")
                         break
@@ -2739,6 +2780,7 @@ def roundtrip_diff(shipped_geo: dict[str, Any], back_geo: dict[str, Any], shippe
                         break
     return {"equal": not diffs, "bone_order_preserved": order_ok, "differences": diffs, "dropped_keys": sorted(set(dropped)),
             "reattached_by_this_importer": reattached,
+            "time_tolerance_seconds": ROUNDTRIP_TIME_TOLERANCE_SECONDS, "time_tolerance_note": ROUNDTRIP_TIME_NOTE,
             "note": "a real Blockbench geo re-export drops the dropped_keys and the reattached description keys; the artist returns the animation file, never the geo. "
                     "This round-trip is the tool's writer against the tool's importer (one memory of the Blockbench codec on both sides): EQUAL means they agree "
                     "with each other; the owner's hand-check of one real Blockbench export is the real test."}
@@ -2836,6 +2878,7 @@ def readme_document(repo: "Repo", manifests: dict[str, dict[str, Any]]) -> str:
     L.append(f"6. **A bone the sheet marks `locked` carries or parents a hitbox part (contract §8.1).** {LOCK_POLICY} {LOCK_REJECT_MODE}")
     L.append("7. Rotation / position / scale keys, linear or Catmull-Rom curves (and GeckoLib easings) are fine; sound and particle keys only on one-shot clips (attack, hurt, death). "
              "**No event keyframes on loops** (idle, walk and the other cycles) — code-fired events come from the trigger inventory in each sheet, not from keys on a cycle (a loop plays under a phase lock that would fire such a key once, ever). "
+             "Exception: a creature whose controllers are its own GeckoLib controllers (its sheet says controller kind `native` — the Queen) is not phase-locked, so its loops may carry event keys; they fire once per loop, and `check` notes each one (owner 2026-09-13). "
              "No Molang expressions, no custom-instruction keys, "
              "no `_preview` files in a delivery (a Blockbench-only aid — the checker warns; PROVISIONAL, open question 15).")
     L.append("")
@@ -3124,6 +3167,8 @@ def check_folder(folder: Path, manifest_path: Path | None = None, lock_mode_over
     if not delivered:
         findings.append(("REJECT", f"folder {folder} is empty: nothing was returned"))
     m = load_json(manifest_path)
+    # the SPEC's controller kind (owner 2026-09-13, addendum item 26 (6)); a 0.2.3 manifest carries only the `native` flag
+    native_controllers = m.get("controller_kind", "native" if m.get("native") else "phase_locked") == "native"
     bone_names = [b["name"] for b in m["bones"]]
     by_manifest = {b["name"]: b for b in m["bones"]}
     locked = set(m.get("locked_bones", []))
@@ -3293,8 +3338,12 @@ def check_folder(folder: Path, manifest_path: Path | None = None, lock_mode_over
             if spec["loop"] == "true":  # owner 2026-09-12, item 11: no event keyframes on loops
                 for event_key in ("sound_effects", "particle_effects"):
                     if clip.get(event_key):
-                        findings.append(("REJECT", f"{ap_.name}: clip '{name}' carries `{event_key}` on a looping clip — no event keyframes on loops; "
-                                                   "code-fired events come from the trigger inventory (rule 7)"))
+                        if native_controllers:  # owner 2026-09-13, addendum item 26 (6): a native-controller species is exempt
+                            findings.append(("NOTE", f"{ap_.name}: clip '{name}' carries `{event_key}` on a looping clip — allowed for this creature: "
+                                                     "native controllers are not phase-locked; event keys fire per loop (controller kind native; rule 7's exception)"))
+                        else:
+                            findings.append(("REJECT", f"{ap_.name}: clip '{name}' carries `{event_key}` on a looping clip — no event keyframes on loops; "
+                                                       "code-fired events come from the trigger inventory (rule 7)"))
             rule = str(spec.get("length_rule", "free"))
             declared = clip.get("animation_length")
             length = float(declared) if _finite_number(declared) else 0.0

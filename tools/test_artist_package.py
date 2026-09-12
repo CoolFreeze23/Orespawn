@@ -843,7 +843,7 @@ class FixtureCase(unittest.TestCase):
         self.assertIn("to author or improve", manifest["effort_source"])
         self.assertEqual(ap.effort_estimate(fx, 4, list(covered.values()))[0], 4 + 0.2 * 4 + 1.0 * 8)  # calm_idle excluded, 8 to author/improve
 
-    def test_one_group_no_gait_species_keys_the_bare_idle_and_walk(self):
+    def test_bare_walk_rows_follow_the_naming_rule(self):
         # contract §2.1: "a species with ONE frequency group has only the bare names" - a Tier-2 flyer whose one
         # group is unscaled (Firefly: wing_left / wing_right at 2.5 rad/tick) gets the bare idle / walk rows and no
         # `<state>_<group>` row, so its shipped transcription (`idle` + `walk`) is in the SPEC and `check` accepts it
@@ -862,22 +862,74 @@ class FixtureCase(unittest.TestCase):
         self.assertNotIn("walk_wings", rows)
         self.assertEqual(rows["walk"]["group"], "wings")
         self.assertTrue(rows["walk"]["required"] and rows["idle"]["required"])
-        self.assertTrue(rows["idle"]["bones"].startswith("any of the 4 bones — the one frequency group (unscaled; the bare clip is its transcription): tail, arm"))
+        self.assertTrue(rows["idle"]["bones"].startswith("any of the 4 bones — the primary group (unscaled; the bare clip is its transcription, a label under the naming rule): tail, arm"))
         self.assertNotIn("better left to", rows["idle"]["bones"])
-        # a MULTI-group species without a gait group keeps `<state>_<group>` rows and no bare `walk` (which group carries
-        # the bare name is the presented question); the bare `idle` is every species' (§2.1) - listed, optional and
-        # PROVISIONAL, so the shipped transcription's gate-token idle is in the SPEC and `check` accepts it
+        # a MULTI-group species without a gait group: the naming rule (owner 2026-09-13, addendum item 26 (2); contract
+        # §2.1 amended) puts the bare `walk` on the seed's `primary_group` - the FIRST group when the seed names none -
+        # and `<state>_<group>` on every other; both bare rows are required (the first slice's PROVISIONAL optional idle
+        # of a multi-group no-gait species is gone with the ruling)
         two = copy.copy(fx)
         two.seed = dict(one.seed, groups=[{"name": "wings", "bones": ["tail"], "omega": 1.5, "axis": "z", "gait_scaled": False},
                                           {"name": "crest", "bones": ["arm"], "omega": 0.3, "axis": "x", "gait_scaled": False}])
         rows2 = {c["name"]: c for c in ap.clip_rows(two, no_flag, two.animation, ap.frequency_groups(two), bone_names=["root", "tail", "arm", "hand"])}
-        for n in ("idle_wings", "walk_wings", "idle_crest", "walk_crest"):
+        for n in ("idle", "walk", "idle_crest", "walk_crest"):
             self.assertIn(n, rows2)
-        self.assertNotIn("walk", rows2)
-        self.assertIn("idle", rows2)
-        self.assertFalse(rows2["idle"]["required"])
-        self.assertTrue(rows2["idle"]["provisional"])
-        self.assertIn("until the owner rules", rows2["idle"]["note"])
+        for n in ("idle_wings", "walk_wings"):
+            self.assertNotIn(n, rows2)
+        self.assertEqual(rows2["walk"]["group"], "wings")
+        self.assertTrue(rows2["walk"]["required"] and rows2["idle"]["required"])
+        self.assertFalse(rows2["idle"]["provisional"])
+        self.assertIn("the primary group `wings`'s", rows2["walk"]["note"])
+        self.assertIn("a label, not a semantic", rows2["walk"]["note"])
+        self.assertTrue(rows2["idle"]["bones"].startswith("any of the 4 bones — the primary group (unscaled; the bare clip is its transcription, a label under the naming rule): tail"))
+        self.assertIn("arm (better left to `idle_crest`)", rows2["idle"]["bones"])
+        # the seed names the primary group explicitly: that group carries the bare walk, the first group becomes walk_wings
+        three = copy.copy(fx)
+        three.seed = dict(two.seed, primary_group="crest")
+        rows3 = {c["name"]: c for c in ap.clip_rows(three, no_flag, three.animation, ap.frequency_groups(three), bone_names=["root", "tail", "arm", "hand"])}
+        self.assertEqual(rows3["walk"]["group"], "crest")
+        for n in ("idle_wings", "walk_wings"):
+            self.assertIn(n, rows3)
+        for n in ("idle_crest", "walk_crest"):
+            self.assertNotIn(n, rows3)
+        # a gait group always carries the bare walk; a seed naming another group, or an unknown one, is refused
+        fx_groups = ap.frequency_groups(fx)
+        self.assertEqual(ap.primary_group(fx, fx_groups, [g for g in fx_groups if g.get("gait_scaled")])["name"], "gait")
+        bad = copy.copy(fx)
+        bad.seed = dict(fx.seed, primary_group="pump")
+        with self.assertRaises(SystemExit):
+            ap.clip_rows(bad, no_flag, bad.animation, ap.frequency_groups(bad), bone_names=["root", "tail", "arm", "hand"])
+        unknown = copy.copy(fx)
+        unknown.seed = dict(two.seed, primary_group="beak")
+        with self.assertRaises(SystemExit):
+            ap.clip_rows(unknown, no_flag, unknown.animation, ap.frequency_groups(unknown), bone_names=["root", "tail", "arm", "hand"])
+        # the SPEC names the primary group beside the tempo table
+        md, _ = ap.spec_document(two, self.repo, self.catalog, no_flag)
+        self.assertIn("The bare `walk` clip is the primary group's, `wings`", md)
+
+    def test_roundtrip_key_time_tolerance(self):
+        # owner 2026-09-13 (addendum item 26 (5)): key TIMES compare within 5e-5 s - the Blockbench emulation writes
+        # 4-decimal timecodes while a transcription's key times are k/(N-1) s at 10 decimals (the first Tier-2 slice's
+        # Beaver round-trip: six time-only diffs); a 10-decimal time round-trips EQUAL, a 1e-4 difference does not
+        fx = self.repo.get("fixture")
+        geo = fx.geo
+        tex = (self.root / "src/main/resources/assets/orespawn/textures/entity/fixture.png").read_bytes()
+
+        def clip(times):
+            return {"format_version": "1.8.0", "animations": {"walk": {"loop": True, "animation_length": 1.0, "bones": {"tail": {"rotation": {
+                t: {"post": [10, 0, 0], "lerp_mode": "catmullrom"} for t in times}}}}}}
+
+        shipped = clip(["0.0", "0.0769230769", "0.1538461538", "1.0"])
+        bb = ap.build_bbmodel(fx, geo, shipped, [("fixture.png", tex, (64, 32))], ap.Warnings())
+        back = ap.bbmodel_to_animation(bb)
+        self.assertEqual(sorted(back["animations"]["walk"]["bones"]["tail"]["rotation"]), ["0.0", "0.0769", "0.1538", "1.0"])  # 4-decimal timecodes
+        report = ap.roundtrip_diff(geo, geo, shipped, back, [])
+        self.assertTrue(report["equal"], report["differences"])
+        self.assertEqual(report["time_tolerance_seconds"], 5e-5)
+        self.assertIn("4-decimal timecodes", report["time_tolerance_note"])
+        self.assertIn("exporter source", report["time_tolerance_note"])
+        self.assertFalse(ap.roundtrip_diff(geo, geo, clip(["0.0", "0.5", "1.0"]), clip(["0.0", "0.5001", "1.0"]), [])["equal"])
+        self.assertTrue(ap.roundtrip_diff(geo, geo, clip(["0.0", "0.5", "1.0"]), clip(["0.0", "0.50004", "1.0"]), [])["equal"])
 
     def test_native_clip_rows_branch_and_wishlist_guard(self):
         nat = self.repo.get("native")
@@ -1259,6 +1311,8 @@ class FixtureCase(unittest.TestCase):
         # the README and the SPEC carry the two rules in the checker's words
         readme = ap.readme_document(self.repo, {})
         self.assertIn("No event keyframes on loops", readme)
+        self.assertIn("is not phase-locked, so its loops may carry event keys", readme)  # the native exemption (owner 2026-09-13)
+        self.assertEqual(json.loads(manifest.read_text(encoding="utf-8"))["controller_kind"], "phase_locked")
         self.assertIn("Deliver `idle` and `walk` together", readme)
         for rule in ("an event keyframe (`sound_effects` / `particle_effects`) on a LOOPING clip", "they open the game's switch only TOGETHER"):
             self.assertIn(rule, readme)
@@ -1459,6 +1513,17 @@ class FixtureCase(unittest.TestCase):
         self.assertTrue(self._has(findings, "WARN", "clip 'stance' keys 1 locked bone(s): head"), findings)
         self.assertTrue(self._has(findings, "WARN", "locked bones: 1 of 3 keyed across 2 clip(s) [lock_mode warn; warn-keyed, refuse-structural] — " + ap.LOCK_POLICY), findings)
         self.assertFalse(any("PROVISIONAL" in msg for _, msg in findings), findings)
+        # owner 2026-09-13 (addendum item 26 (6)): a native-controller species is exempt from the event-key rule on loops
+        # - its own GeckoLib controllers are not phase-locked - keyed on the manifest's controller kind, and the checker's
+        # line says why; the Tier-2 fixture (phase-locked) still rejects (test_check_rejects_every_rule_it_claims)
+        self.assertEqual(json.loads(manifest.read_text(encoding="utf-8"))["controller_kind"], "native")
+        keyed = json.loads(json.dumps(NATIVE_ANIM))
+        keyed["animations"]["idle"]["sound_effects"] = {"0.5": {"effect": "hum"}}
+        findings, passed = ap.check_folder(self._returned(keyed, anim_name="native.animation.json"), manifest)
+        self.assertTrue(passed, findings)
+        self.assertTrue(self._has(findings, "NOTE", "clip 'idle' carries `sound_effects` on a looping clip — allowed for this creature: "
+                                                    "native controllers are not phase-locked; event keys fire per loop"), findings)
+        self.assertFalse(any(sev == "REJECT" for sev, _ in findings), findings)
         # a clip outside the native set — including idle_alt_N — is rejected
         extra = json.loads(json.dumps(NATIVE_ANIM))
         extra["animations"]["fly"] = {"loop": True, "animation_length": 1.0, "bones": {"tail": {"rotation": {"0.0": [0, 0, 0]}}}}
