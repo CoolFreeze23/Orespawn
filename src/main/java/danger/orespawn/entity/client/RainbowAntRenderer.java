@@ -14,8 +14,8 @@ public class RainbowAntRenderer extends MobRenderer<EntityRainbowAnt, AntModel<E
     public static final ModelLayerLocation MODEL_LAYER =
             new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "rainbow_ant"), "main");
 
-    /** orig ClientProxyOreSpawn: RenderAnt(new ModelAnt(), 0.1f shadow, 0.25f scale). */
-    private static final float SCALE = 0.25f;
+    /** orig ClientProxyOreSpawn: RenderAnt(new ModelAnt(), 0.1f shadow, 0.25f scale). Public since the second Tier-2 slice (2026-09-13): the GeckoLib candidate {@link RainbowAntGeoReplacement} scales and shadows by this same constant (tools/reference_renderer_pins.py pins both sides; T2SeamTests reads it). */
+    public static final float SCALE = 0.25f;
 
     public RainbowAntRenderer(EntityRendererProvider.Context context) {
         super(context, new AntModel<>(context.bakeLayer(MODEL_LAYER)), 0.1f * SCALE);

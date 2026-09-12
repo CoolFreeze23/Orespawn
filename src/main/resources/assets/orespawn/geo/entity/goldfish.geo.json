@@ -1,0 +1,1604 @@
+{
+  "format_version": "1.12.0",
+  "minecraft:geometry": [
+    {
+      "description": {
+        "identifier": "geometry.orespawn.g1.model_goldfish",
+        "texture_width": 64,
+        "texture_height": 64,
+        "orespawn:bone_draw_order": [
+          "Body",
+          "Head",
+          "Dorsalfin",
+          "Mouth",
+          "Jaw",
+          "Pectoralfin1",
+          "Pectoralfin2",
+          "Pectoralfin3",
+          "Pectoralfin4",
+          "Bottomfin",
+          "Tail1",
+          "Tail2",
+          "Caudalfin1",
+          "Caudalfin2",
+          "Bottomfin1",
+          "Bottomfin2"
+        ],
+        "orespawn:cube_face_order": {
+          "Body": [
+            [
+              "up",
+              "down",
+              "east",
+              "north",
+              "west",
+              "south"
+            ]
+          ],
+          "Bottomfin": [
+            [
+              "up",
+              "down",
+              "east",
+              "north",
+              "west",
+              "south"
+            ]
+          ],
+          "Bottomfin1": [
+            [
+              "up",
+              "down",
+              "east",
+              "north",
+              "west",
+              "south"
+            ]
+          ],
+          "Bottomfin2": [
+            [
+              "up",
+              "down",
+              "east",
+              "north",
+              "west",
+              "south"
+            ]
+          ],
+          "Caudalfin1": [
+            [
+              "up",
+              "down",
+              "east",
+              "north",
+              "west",
+              "south"
+            ]
+          ],
+          "Caudalfin2": [
+            [
+              "up",
+              "down",
+              "east",
+              "north",
+              "west",
+              "south"
+            ]
+          ],
+          "Dorsalfin": [
+            [
+              "up",
+              "down",
+              "east",
+              "north",
+              "west",
+              "south"
+            ]
+          ],
+          "Head": [
+            [
+              "up",
+              "down",
+              "east",
+              "north",
+              "west",
+              "south"
+            ]
+          ],
+          "Jaw": [
+            [
+              "up",
+              "down",
+              "east",
+              "north",
+              "west",
+              "south"
+            ]
+          ],
+          "Mouth": [
+            [
+              "up",
+              "down",
+              "east",
+              "north",
+              "west",
+              "south"
+            ]
+          ],
+          "Pectoralfin1": [
+            [
+              "up",
+              "down",
+              "east",
+              "north",
+              "west",
+              "south"
+            ]
+          ],
+          "Pectoralfin2": [
+            [
+              "up",
+              "down",
+              "east",
+              "north",
+              "west",
+              "south"
+            ]
+          ],
+          "Pectoralfin3": [
+            [
+              "up",
+              "down",
+              "east",
+              "north",
+              "west",
+              "south"
+            ]
+          ],
+          "Pectoralfin4": [
+            [
+              "up",
+              "down",
+              "east",
+              "north",
+              "west",
+              "south"
+            ]
+          ],
+          "Tail1": [
+            [
+              "up",
+              "down",
+              "east",
+              "north",
+              "west",
+              "south"
+            ]
+          ],
+          "Tail2": [
+            [
+              "up",
+              "down",
+              "east",
+              "north",
+              "west",
+              "south"
+            ]
+          ]
+        }
+      },
+      "bones": [
+        {
+          "name": "Body",
+          "pivot": [
+            0,
+            10,
+            -5
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -2,
+                8,
+                -5
+              ],
+              "size": [
+                4,
+                4,
+                10
+              ],
+              "uv": {
+                "west": {
+                  "uv": [
+                    14,
+                    25
+                  ],
+                  "uv_size": [
+                    10,
+                    4
+                  ]
+                },
+                "east": {
+                  "uv": [
+                    0,
+                    25
+                  ],
+                  "uv_size": [
+                    10,
+                    4
+                  ]
+                },
+                "north": {
+                  "uv": [
+                    10,
+                    25
+                  ],
+                  "uv_size": [
+                    4,
+                    4
+                  ]
+                },
+                "south": {
+                  "uv": [
+                    24,
+                    25
+                  ],
+                  "uv_size": [
+                    4,
+                    4
+                  ]
+                },
+                "up": {
+                  "uv": [
+                    10,
+                    15
+                  ],
+                  "uv_size": [
+                    4,
+                    10
+                  ]
+                },
+                "down": {
+                  "uv": [
+                    14,
+                    25
+                  ],
+                  "uv_size": [
+                    4,
+                    -10
+                  ]
+                }
+              },
+              "modelpart_mirror": true
+            }
+          ]
+        },
+        {
+          "name": "Bottomfin",
+          "pivot": [
+            0,
+            10,
+            -5
+          ],
+          "cubes": [
+            {
+              "origin": [
+                0,
+                5,
+                1
+              ],
+              "size": [
+                0,
+                3,
+                4
+              ],
+              "uv": {
+                "west": {
+                  "uv": [
+                    24,
+                    12
+                  ],
+                  "uv_size": [
+                    4,
+                    3
+                  ]
+                },
+                "east": {
+                  "uv": [
+                    20,
+                    12
+                  ],
+                  "uv_size": [
+                    4,
+                    3
+                  ]
+                },
+                "north": {
+                  "uv": [
+                    24,
+                    12
+                  ],
+                  "uv_size": [
+                    0,
+                    3
+                  ]
+                },
+                "south": {
+                  "uv": [
+                    28,
+                    12
+                  ],
+                  "uv_size": [
+                    0,
+                    3
+                  ]
+                },
+                "up": {
+                  "uv": [
+                    24,
+                    8
+                  ],
+                  "uv_size": [
+                    0,
+                    4
+                  ]
+                },
+                "down": {
+                  "uv": [
+                    24,
+                    12
+                  ],
+                  "uv_size": [
+                    0,
+                    -4
+                  ]
+                }
+              },
+              "modelpart_mirror": true
+            }
+          ]
+        },
+        {
+          "name": "Bottomfin1",
+          "pivot": [
+            0,
+            10,
+            -5
+          ],
+          "rotation": [
+            17.0414206752,
+            0,
+            -19.1719986139
+          ],
+          "cubes": [
+            {
+              "origin": [
+                1,
+                3,
+                -4
+              ],
+              "size": [
+                0,
+                5,
+                2
+              ],
+              "uv": {
+                "west": {
+                  "uv": [
+                    22,
+                    2
+                  ],
+                  "uv_size": [
+                    2,
+                    5
+                  ]
+                },
+                "east": {
+                  "uv": [
+                    20,
+                    2
+                  ],
+                  "uv_size": [
+                    2,
+                    5
+                  ]
+                },
+                "north": {
+                  "uv": [
+                    22,
+                    2
+                  ],
+                  "uv_size": [
+                    0,
+                    5
+                  ]
+                },
+                "south": {
+                  "uv": [
+                    24,
+                    2
+                  ],
+                  "uv_size": [
+                    0,
+                    5
+                  ]
+                },
+                "up": {
+                  "uv": [
+                    22,
+                    0
+                  ],
+                  "uv_size": [
+                    0,
+                    2
+                  ]
+                },
+                "down": {
+                  "uv": [
+                    22,
+                    2
+                  ],
+                  "uv_size": [
+                    0,
+                    -2
+                  ]
+                }
+              },
+              "modelpart_mirror": true
+            }
+          ]
+        },
+        {
+          "name": "Bottomfin2",
+          "pivot": [
+            0,
+            10,
+            -5
+          ],
+          "rotation": [
+            17.0414206752,
+            0,
+            19.1715975434
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -1,
+                3,
+                -4
+              ],
+              "size": [
+                0,
+                5,
+                2
+              ],
+              "uv": {
+                "west": {
+                  "uv": [
+                    22,
+                    2
+                  ],
+                  "uv_size": [
+                    2,
+                    5
+                  ]
+                },
+                "east": {
+                  "uv": [
+                    20,
+                    2
+                  ],
+                  "uv_size": [
+                    2,
+                    5
+                  ]
+                },
+                "north": {
+                  "uv": [
+                    22,
+                    2
+                  ],
+                  "uv_size": [
+                    0,
+                    5
+                  ]
+                },
+                "south": {
+                  "uv": [
+                    24,
+                    2
+                  ],
+                  "uv_size": [
+                    0,
+                    5
+                  ]
+                },
+                "up": {
+                  "uv": [
+                    22,
+                    0
+                  ],
+                  "uv_size": [
+                    0,
+                    2
+                  ]
+                },
+                "down": {
+                  "uv": [
+                    22,
+                    2
+                  ],
+                  "uv_size": [
+                    0,
+                    -2
+                  ]
+                }
+              },
+              "modelpart_mirror": true
+            }
+          ]
+        },
+        {
+          "name": "Caudalfin1",
+          "pivot": [
+            0,
+            10,
+            5
+          ],
+          "rotation": [
+            46.8639025597,
+            0,
+            0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -0.5,
+                1.5,
+                11
+              ],
+              "size": [
+                1,
+                3,
+                4
+              ],
+              "uv": {
+                "west": {
+                  "uv": [
+                    18,
+                    39
+                  ],
+                  "uv_size": [
+                    4,
+                    3
+                  ]
+                },
+                "east": {
+                  "uv": [
+                    13,
+                    39
+                  ],
+                  "uv_size": [
+                    4,
+                    3
+                  ]
+                },
+                "north": {
+                  "uv": [
+                    17,
+                    39
+                  ],
+                  "uv_size": [
+                    1,
+                    3
+                  ]
+                },
+                "south": {
+                  "uv": [
+                    22,
+                    39
+                  ],
+                  "uv_size": [
+                    1,
+                    3
+                  ]
+                },
+                "up": {
+                  "uv": [
+                    17,
+                    35
+                  ],
+                  "uv_size": [
+                    1,
+                    4
+                  ]
+                },
+                "down": {
+                  "uv": [
+                    18,
+                    39
+                  ],
+                  "uv_size": [
+                    1,
+                    -4
+                  ]
+                }
+              },
+              "modelpart_mirror": true
+            }
+          ]
+        },
+        {
+          "name": "Caudalfin2",
+          "pivot": [
+            0,
+            10,
+            5
+          ],
+          "rotation": [
+            46.8639025597,
+            0,
+            0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -0.5,
+                0.5,
+                11
+              ],
+              "size": [
+                1,
+                4,
+                3
+              ],
+              "uv": {
+                "west": {
+                  "uv": [
+                    19,
+                    38
+                  ],
+                  "uv_size": [
+                    3,
+                    4
+                  ]
+                },
+                "east": {
+                  "uv": [
+                    15,
+                    38
+                  ],
+                  "uv_size": [
+                    3,
+                    4
+                  ]
+                },
+                "north": {
+                  "uv": [
+                    18,
+                    38
+                  ],
+                  "uv_size": [
+                    1,
+                    4
+                  ]
+                },
+                "south": {
+                  "uv": [
+                    22,
+                    38
+                  ],
+                  "uv_size": [
+                    1,
+                    4
+                  ]
+                },
+                "up": {
+                  "uv": [
+                    18,
+                    35
+                  ],
+                  "uv_size": [
+                    1,
+                    3
+                  ]
+                },
+                "down": {
+                  "uv": [
+                    19,
+                    38
+                  ],
+                  "uv_size": [
+                    1,
+                    -3
+                  ]
+                }
+              },
+              "modelpart_mirror": true
+            }
+          ]
+        },
+        {
+          "name": "Dorsalfin",
+          "pivot": [
+            0,
+            10,
+            -5
+          ],
+          "cubes": [
+            {
+              "origin": [
+                0,
+                12,
+                -5
+              ],
+              "size": [
+                0,
+                4,
+                10
+              ],
+              "uv": {
+                "west": {
+                  "uv": [
+                    39,
+                    10
+                  ],
+                  "uv_size": [
+                    10,
+                    4
+                  ]
+                },
+                "east": {
+                  "uv": [
+                    29,
+                    10
+                  ],
+                  "uv_size": [
+                    10,
+                    4
+                  ]
+                },
+                "north": {
+                  "uv": [
+                    39,
+                    10
+                  ],
+                  "uv_size": [
+                    0,
+                    4
+                  ]
+                },
+                "south": {
+                  "uv": [
+                    49,
+                    10
+                  ],
+                  "uv_size": [
+                    0,
+                    4
+                  ]
+                },
+                "up": {
+                  "uv": [
+                    39,
+                    0
+                  ],
+                  "uv_size": [
+                    0,
+                    10
+                  ]
+                },
+                "down": {
+                  "uv": [
+                    39,
+                    10
+                  ],
+                  "uv_size": [
+                    0,
+                    -10
+                  ]
+                }
+              },
+              "modelpart_mirror": true
+            }
+          ]
+        },
+        {
+          "name": "Head",
+          "pivot": [
+            0,
+            10,
+            -5
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -1.5,
+                8,
+                -8
+              ],
+              "size": [
+                3,
+                4,
+                3
+              ],
+              "uv": {
+                "west": {
+                  "uv": [
+                    6,
+                    33
+                  ],
+                  "uv_size": [
+                    3,
+                    4
+                  ]
+                },
+                "east": {
+                  "uv": [
+                    0,
+                    33
+                  ],
+                  "uv_size": [
+                    3,
+                    4
+                  ]
+                },
+                "north": {
+                  "uv": [
+                    3,
+                    33
+                  ],
+                  "uv_size": [
+                    3,
+                    4
+                  ]
+                },
+                "south": {
+                  "uv": [
+                    9,
+                    33
+                  ],
+                  "uv_size": [
+                    3,
+                    4
+                  ]
+                },
+                "up": {
+                  "uv": [
+                    3,
+                    30
+                  ],
+                  "uv_size": [
+                    3,
+                    3
+                  ]
+                },
+                "down": {
+                  "uv": [
+                    6,
+                    33
+                  ],
+                  "uv_size": [
+                    3,
+                    -3
+                  ]
+                }
+              },
+              "modelpart_mirror": true
+            }
+          ]
+        },
+        {
+          "name": "Jaw",
+          "pivot": [
+            0.5,
+            8.4,
+            -7.4
+          ],
+          "rotation": [
+            -13.0887567339,
+            0,
+            0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -1.5,
+                7.4,
+                -10.4
+              ],
+              "size": [
+                3,
+                1,
+                3
+              ],
+              "uv": {
+                "west": {
+                  "uv": [
+                    19,
+                    33
+                  ],
+                  "uv_size": [
+                    3,
+                    1
+                  ]
+                },
+                "east": {
+                  "uv": [
+                    13,
+                    33
+                  ],
+                  "uv_size": [
+                    3,
+                    1
+                  ]
+                },
+                "north": {
+                  "uv": [
+                    16,
+                    33
+                  ],
+                  "uv_size": [
+                    3,
+                    1
+                  ]
+                },
+                "south": {
+                  "uv": [
+                    22,
+                    33
+                  ],
+                  "uv_size": [
+                    3,
+                    1
+                  ]
+                },
+                "up": {
+                  "uv": [
+                    16,
+                    30
+                  ],
+                  "uv_size": [
+                    3,
+                    3
+                  ]
+                },
+                "down": {
+                  "uv": [
+                    19,
+                    33
+                  ],
+                  "uv_size": [
+                    3,
+                    -3
+                  ]
+                }
+              },
+              "modelpart_mirror": true
+            }
+          ]
+        },
+        {
+          "name": "Mouth",
+          "pivot": [
+            0,
+            10,
+            -5
+          ],
+          "rotation": [
+            -45.0000020972,
+            0,
+            0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -1.5,
+                6.4,
+                -8.5
+              ],
+              "size": [
+                3,
+                3,
+                3
+              ],
+              "uv": {
+                "west": {
+                  "uv": [
+                    6,
+                    41
+                  ],
+                  "uv_size": [
+                    3,
+                    3
+                  ]
+                },
+                "east": {
+                  "uv": [
+                    0,
+                    41
+                  ],
+                  "uv_size": [
+                    3,
+                    3
+                  ]
+                },
+                "north": {
+                  "uv": [
+                    3,
+                    41
+                  ],
+                  "uv_size": [
+                    3,
+                    3
+                  ]
+                },
+                "south": {
+                  "uv": [
+                    9,
+                    41
+                  ],
+                  "uv_size": [
+                    3,
+                    3
+                  ]
+                },
+                "up": {
+                  "uv": [
+                    3,
+                    38
+                  ],
+                  "uv_size": [
+                    3,
+                    3
+                  ]
+                },
+                "down": {
+                  "uv": [
+                    6,
+                    41
+                  ],
+                  "uv_size": [
+                    3,
+                    -3
+                  ]
+                }
+              },
+              "modelpart_mirror": true
+            }
+          ]
+        },
+        {
+          "name": "Pectoralfin1",
+          "pivot": [
+            2,
+            10,
+            -3
+          ],
+          "rotation": [
+            -17.0414206752,
+            19.1715975434,
+            0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                2,
+                8.5,
+                -3
+              ],
+              "size": [
+                0,
+                3,
+                5
+              ],
+              "uv": {
+                "west": {
+                  "uv": [
+                    5,
+                    5
+                  ],
+                  "uv_size": [
+                    5,
+                    3
+                  ]
+                },
+                "east": {
+                  "uv": [
+                    0,
+                    5
+                  ],
+                  "uv_size": [
+                    5,
+                    3
+                  ]
+                },
+                "north": {
+                  "uv": [
+                    5,
+                    5
+                  ],
+                  "uv_size": [
+                    0,
+                    3
+                  ]
+                },
+                "south": {
+                  "uv": [
+                    10,
+                    5
+                  ],
+                  "uv_size": [
+                    0,
+                    3
+                  ]
+                },
+                "up": {
+                  "uv": [
+                    5,
+                    0
+                  ],
+                  "uv_size": [
+                    0,
+                    5
+                  ]
+                },
+                "down": {
+                  "uv": [
+                    5,
+                    5
+                  ],
+                  "uv_size": [
+                    0,
+                    -5
+                  ]
+                }
+              },
+              "modelpart_mirror": true
+            }
+          ]
+        },
+        {
+          "name": "Pectoralfin2",
+          "pivot": [
+            -2,
+            10,
+            -3
+          ],
+          "rotation": [
+            -17.041002416,
+            -19.1719986139,
+            0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -2,
+                8.5,
+                -3
+              ],
+              "size": [
+                0,
+                3,
+                5
+              ],
+              "uv": {
+                "west": {
+                  "uv": [
+                    5,
+                    5
+                  ],
+                  "uv_size": [
+                    5,
+                    3
+                  ]
+                },
+                "east": {
+                  "uv": [
+                    0,
+                    5
+                  ],
+                  "uv_size": [
+                    5,
+                    3
+                  ]
+                },
+                "north": {
+                  "uv": [
+                    5,
+                    5
+                  ],
+                  "uv_size": [
+                    0,
+                    3
+                  ]
+                },
+                "south": {
+                  "uv": [
+                    10,
+                    5
+                  ],
+                  "uv_size": [
+                    0,
+                    3
+                  ]
+                },
+                "up": {
+                  "uv": [
+                    5,
+                    0
+                  ],
+                  "uv_size": [
+                    0,
+                    5
+                  ]
+                },
+                "down": {
+                  "uv": [
+                    5,
+                    5
+                  ],
+                  "uv_size": [
+                    0,
+                    -5
+                  ]
+                }
+              },
+              "modelpart_mirror": true
+            }
+          ]
+        },
+        {
+          "name": "Pectoralfin3",
+          "pivot": [
+            2,
+            10,
+            1
+          ],
+          "rotation": [
+            -17.0414206752,
+            19.1715975434,
+            0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                2,
+                8.5,
+                1
+              ],
+              "size": [
+                0,
+                3,
+                5
+              ],
+              "uv": {
+                "west": {
+                  "uv": [
+                    5,
+                    5
+                  ],
+                  "uv_size": [
+                    5,
+                    3
+                  ]
+                },
+                "east": {
+                  "uv": [
+                    0,
+                    5
+                  ],
+                  "uv_size": [
+                    5,
+                    3
+                  ]
+                },
+                "north": {
+                  "uv": [
+                    5,
+                    5
+                  ],
+                  "uv_size": [
+                    0,
+                    3
+                  ]
+                },
+                "south": {
+                  "uv": [
+                    10,
+                    5
+                  ],
+                  "uv_size": [
+                    0,
+                    3
+                  ]
+                },
+                "up": {
+                  "uv": [
+                    5,
+                    0
+                  ],
+                  "uv_size": [
+                    0,
+                    5
+                  ]
+                },
+                "down": {
+                  "uv": [
+                    5,
+                    5
+                  ],
+                  "uv_size": [
+                    0,
+                    -5
+                  ]
+                }
+              },
+              "modelpart_mirror": true
+            }
+          ]
+        },
+        {
+          "name": "Pectoralfin4",
+          "pivot": [
+            -2,
+            10,
+            1
+          ],
+          "rotation": [
+            -17.0414206752,
+            -19.1719986139,
+            0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -2,
+                8.5,
+                1
+              ],
+              "size": [
+                0,
+                3,
+                5
+              ],
+              "uv": {
+                "west": {
+                  "uv": [
+                    5,
+                    5
+                  ],
+                  "uv_size": [
+                    5,
+                    3
+                  ]
+                },
+                "east": {
+                  "uv": [
+                    0,
+                    5
+                  ],
+                  "uv_size": [
+                    5,
+                    3
+                  ]
+                },
+                "north": {
+                  "uv": [
+                    5,
+                    5
+                  ],
+                  "uv_size": [
+                    0,
+                    3
+                  ]
+                },
+                "south": {
+                  "uv": [
+                    10,
+                    5
+                  ],
+                  "uv_size": [
+                    0,
+                    3
+                  ]
+                },
+                "up": {
+                  "uv": [
+                    5,
+                    0
+                  ],
+                  "uv_size": [
+                    0,
+                    5
+                  ]
+                },
+                "down": {
+                  "uv": [
+                    5,
+                    5
+                  ],
+                  "uv_size": [
+                    0,
+                    -5
+                  ]
+                }
+              },
+              "modelpart_mirror": true
+            }
+          ]
+        },
+        {
+          "name": "Tail1",
+          "pivot": [
+            0,
+            10,
+            5
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -1.5,
+                8,
+                5
+              ],
+              "size": [
+                3,
+                4,
+                6
+              ],
+              "uv": {
+                "west": {
+                  "uv": [
+                    38,
+                    21
+                  ],
+                  "uv_size": [
+                    6,
+                    4
+                  ]
+                },
+                "east": {
+                  "uv": [
+                    29,
+                    21
+                  ],
+                  "uv_size": [
+                    6,
+                    4
+                  ]
+                },
+                "north": {
+                  "uv": [
+                    35,
+                    21
+                  ],
+                  "uv_size": [
+                    3,
+                    4
+                  ]
+                },
+                "south": {
+                  "uv": [
+                    44,
+                    21
+                  ],
+                  "uv_size": [
+                    3,
+                    4
+                  ]
+                },
+                "up": {
+                  "uv": [
+                    35,
+                    15
+                  ],
+                  "uv_size": [
+                    3,
+                    6
+                  ]
+                },
+                "down": {
+                  "uv": [
+                    38,
+                    21
+                  ],
+                  "uv_size": [
+                    3,
+                    -6
+                  ]
+                }
+              },
+              "modelpart_mirror": true
+            }
+          ]
+        },
+        {
+          "name": "Tail2",
+          "pivot": [
+            0,
+            10,
+            5
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -1,
+                8.5,
+                11
+              ],
+              "size": [
+                2,
+                3,
+                4
+              ],
+              "uv": {
+                "west": {
+                  "uv": [
+                    6,
+                    12
+                  ],
+                  "uv_size": [
+                    4,
+                    3
+                  ]
+                },
+                "east": {
+                  "uv": [
+                    0,
+                    12
+                  ],
+                  "uv_size": [
+                    4,
+                    3
+                  ]
+                },
+                "north": {
+                  "uv": [
+                    4,
+                    12
+                  ],
+                  "uv_size": [
+                    2,
+                    3
+                  ]
+                },
+                "south": {
+                  "uv": [
+                    10,
+                    12
+                  ],
+                  "uv_size": [
+                    2,
+                    3
+                  ]
+                },
+                "up": {
+                  "uv": [
+                    4,
+                    8
+                  ],
+                  "uv_size": [
+                    2,
+                    4
+                  ]
+                },
+                "down": {
+                  "uv": [
+                    6,
+                    12
+                  ],
+                  "uv_size": [
+                    2,
+                    -4
+                  ]
+                }
+              },
+              "modelpart_mirror": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

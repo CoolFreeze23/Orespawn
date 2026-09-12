@@ -1402,7 +1402,7 @@ def animation_parity(model_id: str, spec: dict[str, Any], compiled: dict[str, An
             "candidate_class": candidate_class,
             "inputs": {
                 "limb_swing": spec["limb_swing"],
-                "limb_swing_amounts": spec.get("limb_swing_amount_samples", [spec["limb_swing_amount"]]),
+                "limb_swing_amounts": spec["limb_swing_amount_samples"] if "limb_swing_amount_samples" in spec else [spec["limb_swing_amount"]],
                 "net_head_yaw_degrees": spec.get("net_head_yaw", 0.0),
                 "head_pitch_degrees": spec.get("head_pitch", 0.0),
             },
@@ -1432,7 +1432,7 @@ def animation_parity(model_id: str, spec: dict[str, Any], compiled: dict[str, An
             "entity_states": spec["entity_states"],
             "inputs": {
                 "limb_swing": spec["limb_swing"],
-                "limb_swing_amounts": spec.get("limb_swing_amount_samples", [spec["limb_swing_amount"]]),
+                "limb_swing_amounts": spec["limb_swing_amount_samples"] if "limb_swing_amount_samples" in spec else [spec["limb_swing_amount"]],
                 "net_head_yaw_degrees": spec.get("net_head_yaw", 0.0),
                 "head_pitch_degrees": spec.get("head_pitch", 0.0),
             },

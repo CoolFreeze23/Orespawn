@@ -1,0 +1,76 @@
+{
+  "registry": "firefly",
+  "display_name": "Firefly",
+  "status": "draft for the owner's edit (the second Tier-2 slice, 2026-09-13)",
+  "locomotion": "flyer",
+  "artist_scope": "full contract (Tier 2, the simple-cyclic class: geckolib_migration_design.md section 5)",
+  "character_sheet": "A small ambient insect: a cube body, a boxy head with eyes and a mouth, four legs, two flat wings standing up from the back, and a tail light. It drifts through the air on an ambient flight goal and is harmless. Read it as a slow-drifting glow with a fast wing shiver.",
+  "size_notes": "Drawn at x0.75 of the rig on a 64x128 sheet.",
+  "labels": {
+    "body": "body",
+    "wing_left": "left wing",
+    "wing_right": "right wing",
+    "head": "head",
+    "mouth": "mouth",
+    "eye_left": "left eye",
+    "eye_right": "right eye",
+    "front_leg_left_": "front left leg",
+    "front_leg_right": "front right leg",
+    "back_leg_left": "back left leg",
+    "back_leg_right": "back right leg",
+    "TailLight": "tail light"
+  },
+  "groups": [
+    {
+      "name": "wings",
+      "bones": [
+        "wing_left",
+        "wing_right"
+      ],
+      "omega": 2.5,
+      "axis": "z",
+      "gait_scaled": false,
+      "amplitude": "+1.11 rad offset, then pi x 0.35 = 1.100 rad (63 deg)",
+      "plain": "the two wings shiver fast about the body's long axis around a raised rest angle (1.11 rad), mirrored left and right",
+      "math": "wing_left.zRot = 1.11 + cos(ageInTicks * 2.5) * pi * 0.35; wing_right.zRot = -1.11 - cos(ageInTicks * 2.5) * pi * 0.35",
+      "source": "FireflyModel.java:112-113; FireflyGeoReplacement.java"
+    }
+  ],
+  "behaviour": [
+    "One rhythm runs at all times: the classic code has no rest pose and no gait scaling, so today's 'idle' is the same motion as the walk (the transcription's idle keys no bone and its one clip carries the bare name walk - contract section 2.1, a one-group species).",
+    "The wings bind at +-0.698 rad and the formula re-centres them at +-1.11 rad, so the transcription's keys carry that offset (base minus bind). The wings are rotated zero-thickness cubes: the seam lights them by their true normals (ENT-S-161).",
+    "The default renderer poses it from the classic code; the GeckoLib candidate sits behind the dev switch (-Dorespawn.dev.geckolibRenderers) and your clips replace the shipped transcription file for file."
+  ],
+  "clips": [
+    {
+      "name": "walk",
+      "verdict": "leave",
+      "note": "the wing shiver"
+    },
+    {
+      "name": "idle",
+      "verdict": "author",
+      "note": "required with walk (today the transcription's idle keys no bone); a real one: wings still, a light pulse"
+    },
+    {
+      "name": "fly",
+      "verdict": "author",
+      "note": "optional: falls back to walk (section 2.4)"
+    },
+    {
+      "name": "hurt",
+      "verdict": "author",
+      "note": "a flinch",
+      "length_seconds": 0.3
+    },
+    {
+      "name": "death",
+      "verdict": "author",
+      "note": "PROVISIONAL: the vanilla death flip is open question 3",
+      "length_seconds": 1.0
+    }
+  ],
+  "extras": [],
+  "wishlist": [],
+  "effort_hours": null
+}

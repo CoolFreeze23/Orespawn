@@ -1,7 +1,7 @@
 {
   "registry": "dragonfly",
   "display_name": "Dragonfly",
-  "status": "draft for the owner's edit (the first Tier-2 slice, 2026-09-13)",
+  "status": "draft for the owner's edit (the second Tier-2 slice, 2026-09-13)",
   "locomotion": "flyer",
   "artist_scope": "full contract (Tier 2, the simple-cyclic class: geckolib_migration_design.md section 5)",
   "character_sheet": "A large passive dragonfly: a thorax with a head, two jaws, antennae, six jointed legs, a two-part tail and four long wings. It hunts small prey on the wing and is otherwise calm. Read it as a fast four-winged flyer with a slowly working mouth.",
@@ -70,27 +70,25 @@
       "omega_note": "the classic phase is ageInTicks x 0.3 x 2 (two float multiplies, left to right): the natural period is 2 pi / 0.6"
     }
   ],
+  "primary_group": "wings",
   "behaviour": [
-    "Several independent rhythms run at all times, none scaled by walking speed; the classic code has no rest pose. The transcription ships idle (no bone) plus one walk_<group> clip per rhythm; which rhythm should carry the bare walk name is a question presented to the owner, so until it is answered the GeckoLib candidate keeps posing from the classic code.",
-    "Two rhythms: the fast wing beat and the slow jaws; legs, tail, head and antennae are static.",
+    "Several independent rhythms run at all times, none scaled by walking speed; the classic code has no rest pose. The transcription ships idle (no bone) plus one clip per rhythm: the primary group (`primary_group`; the first group when the seed names none) carries the bare `walk` - a label, not a semantic: the contract's fly -> walk fallback is what plays a flyer's walk in flight (owner 2026-09-13, addendum item 26 (2)) - and every other rhythm is `walk_<group>`, so the GeckoLib candidate plays the transcription behind the switch.",
+    "Two rhythms: the fast wing beat (the primary group: its clip is the bare walk) and the slow jaws; legs, tail, head and antennae are static.",
     "The default renderer poses it from the classic code; the GeckoLib candidate sits behind the dev switch (-Dorespawn.dev.geckolibRenderers) and your clips replace the shipped transcription file for file."
   ],
   "clips": [
     {
       "name": "idle",
       "verdict": "author",
-      "note": "a real perch: wings still, jaws working"
+      "note": "required with walk (today the transcription's idle keys no bone); a real perch: wings still, jaws working"
     },
     {
-      "name": "walk_wings",
-      "verdict": "leave"
+      "name": "walk",
+      "verdict": "leave",
+      "note": "the wing beat (the primary group's transcription; a label, not a semantic)"
     },
     {
       "name": "walk_jaws",
-      "verdict": "leave"
-    },
-    {
-      "name": "idle_wings",
       "verdict": "leave"
     },
     {

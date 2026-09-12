@@ -58,7 +58,10 @@ import software.bernie.geckolib.model.GeoModel;
  * persistent manager, as a drawn entity's manager persists), with the production
  * {@link SplineRepair} applied when the entry says so (Q9 (a)). The layers are built on explicit
  * inputs - the state's animation tick and limb-swing amount - exactly as the shipped replacement
- * builds them on its entity readers (the S4 doctrine).</p>
+ * builds them on its entity readers (the S4 doctrine). The clip manifest's names are checked against the naming
+ * rule (owner 2026-09-13, addendum item 26 (2); contract section 2.1 amended; {@link #primaryGroup}): the bare
+ * {@code walk} on the gait group, else on the manifest's {@code primary_group} (the first group when absent), and
+ * {@code walk_<group>} on every other - the same rule the generator applies.</p>
  *
  * <p>The classic channel a manifest declares is {@code base + sign * cos(age * omega [* wingspeed]) * (float) PI
  * * pi_scale [* limbSwingAmount]} on ONE axis ({@code x}, {@code y} or {@code z}) of one bone, evaluated here in
@@ -243,6 +246,36 @@ final class KeyframeLeg {
         return frequencies;
     }
 
+    /**
+     * The group whose clip carries the bare {@code walk} (the naming rule, owner 2026-09-13, addendum item 26 (2)):
+     * the one gait-scaled group when the rig has one (a manifest naming a different {@code primary_group} is refused;
+     * two gait-scaled groups are refused), else the manifest's {@code primary_group} (which must name a group), else
+     * the first group. Mirrored by {@code tools/keyframe_clip.py}.
+     */
+    static String primaryGroup(JsonObject clipManifest, List<Group> groups, String modelId) {
+        List<String> gait = groups.stream().filter(Group::gaitScaled).map(Group::name).toList();
+        if (gait.size() > 1) {
+            throw new IllegalStateException(modelId + ": more than one gait-scaled group " + gait + " (one gait group per rig)");
+        }
+        // a JSON null is "absent" - the generator's `.get()` semantics (the T2b refuter B, M1); Gson's JsonNull.getAsString throws
+        String declared = clipManifest.has("primary_group") && !clipManifest.get("primary_group").isJsonNull()
+                ? clipManifest.get("primary_group").getAsString() : null;
+        if (!gait.isEmpty()) {
+            if (declared != null && !declared.equals(gait.get(0))) {
+                throw new IllegalStateException(modelId + ": primary_group " + declared + " names a group other than the gait group "
+                        + gait.get(0) + " (the gait group carries the bare walk)");
+            }
+            return gait.get(0);
+        }
+        if (declared != null) {
+            if (groups.stream().noneMatch(group -> group.name().equals(declared))) {
+                throw new IllegalStateException(modelId + ": primary_group " + declared + " names no frequency group of the clip manifest");
+            }
+            return declared;
+        }
+        return groups.get(0).name();
+    }
+
     /** {@code w3_7} for 3.7 rad/tick: the float's own shortest decimal (the parity tool never rebuilds it from the manifest's number). */
     static String frequencyToken(float omega) {
         return "w" + new BigDecimal(Float.toString(omega)).stripTrailingZeros().toPlainString().replace('.', '_');
@@ -344,6 +377,18 @@ final class KeyframeLeg {
         if (claimed.size() != channels.size()) {
             throw new IllegalStateException(modelId + ": classic channels outside every frequency group: "
                     + channels.stream().map(Channel::bone).filter(bone -> !claimed.contains(bone)).toList());
+        }
+        // The naming rule (owner 2026-09-13, addendum item 26 (2); contract section 2.1 amended): the bare `walk` is the
+        // gait group's clip; a species without a gait group names its primary locomotion group (`primary_group`, the
+        // FIRST group when absent) and THAT group's clip carries the bare name; every other group's is walk_<group>.
+        String primary = primaryGroup(clipManifest, groups, modelId);
+        for (Group group : groups) {
+            String expected = group.name().equals(primary) ? KeyframeLayer.WALK : KeyframeLayer.walkClip(group.name());
+            if (!group.clip().equals(expected)) {
+                throw new IllegalStateException(modelId + ": the naming rule: group " + group.name() + " must carry clip "
+                        + expected + " (the bare walk belongs to the " + (groups.get(0).gaitScaled() || group.gaitScaled()
+                        ? "gait" : "primary") + " group " + primary + "), the clip manifest says " + group.clip());
+            }
         }
         double seconds = clipManifest.get("animation_length_seconds").getAsDouble();
         String lerpMode = clipManifest.get("lerp_mode").getAsString();

@@ -26,9 +26,13 @@ import software.bernie.geckolib.animation.AnimationProcessor;
  * and both are proven by the harness.</p>
  *
  * <p>The SHIPPED pose is the classic hook (the S4 doctrine); {@link #keyframeLayers()} declares the five groups'
- * transcription. A multi-group species without a gait group has no bare {@code walk} under contract section 2.1
- * ({@code walk_wings}, {@code walk_tail}, {@code walk_feather1..3}), so the shipped {@code cockateil.animation.json}
- * leaves the gate CLOSED as ruled until the owner rules which group carries the bare name (presented with the slice).</p>
+ * transcription. A multi-group species without a gait group carries the bare {@code walk} on its SPEC's primary
+ * group - {@code primary_group} in the clip manifest and the seed, the FIRST group ({@code wings}) here (owner
+ * 2026-09-13, addendum item 26 (2); contract section 2.1 amended; the bare name is a label, not a semantic: the
+ * contract's fly - walk fallback plays it in flight) - and {@code walk_tail}, {@code walk_feather1..3} on the others,
+ * so the shipped {@code cockateil.animation.json} ({@code idle} keying no bone + {@code walk} + four {@code walk_<group>})
+ * OPENS the gate on the GeckoLib candidate, for both consumers of the rig (the second Tier-2 slice; the first slice
+ * shipped it CLOSED as {@code walk_wings}).</p>
  *
  * <p>Texture by {@link Cockateil#getBirdType()} through {@link CockateilRenderer#textureFor}; scale and shadow follow
  * {@link CockateilRenderer}: 0.75 render scale and a 0.3 x 0.75 shadow (ENT-S-092).</p>
@@ -37,7 +41,8 @@ public final class CockateilGeoReplacement extends OreSpawnGeoReplacement<Cockat
     /** orig ModelCockateil.java:13,32 {@code wingspeed} = 1.0f (ClientProxyOreSpawn.java:430-431, both consumers): the chain's second multiply. */
     static final float WINGSPEED = 1.0F;
     static final List<KeyframeLayer> KEYFRAME_LAYERS = List.of(
-            new KeyframeLayer("wings", KeyframeLayer.walkClip("wings"), 1.5F, WINGSPEED,
+            // the SPEC's primary group (the first): the bare walk, a label under the naming rule
+            new KeyframeLayer("wings", KeyframeLayer.WALK, 1.5F, WINGSPEED,
                     Set.of("lwing1", "lwing2", "rwing1", "rwing2"), false),
             new KeyframeLayer("tail", KeyframeLayer.walkClip("tail"), 0.3F, WINGSPEED,
                     Set.of("tailfeather1", "tailfeather2", "tailfeather3"), false),

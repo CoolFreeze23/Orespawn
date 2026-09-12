@@ -14,8 +14,8 @@ public class RedAntRenderer extends MobRenderer<EntityRedAnt, AntModel<EntityRed
     public static final ModelLayerLocation MODEL_LAYER =
             new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "red_ant"), "main");
 
-    /** orig ClientProxyOreSpawn: RenderAnt(new ModelAnt(), 0.15f shadow, 0.35f scale). */
-    private static final float SCALE = 0.35f;
+    /** orig ClientProxyOreSpawn: RenderAnt(new ModelAnt(), 0.15f shadow, 0.35f scale). Public since the second Tier-2 slice (2026-09-13): the GeckoLib candidate {@link RedAntGeoReplacement} scales and shadows by this same constant (tools/reference_renderer_pins.py pins both sides; T2SeamTests reads it). */
+    public static final float SCALE = 0.35f;
 
     public RedAntRenderer(EntityRendererProvider.Context context) {
         super(context, new AntModel<>(context.bakeLayer(MODEL_LAYER)), 0.15f * SCALE);

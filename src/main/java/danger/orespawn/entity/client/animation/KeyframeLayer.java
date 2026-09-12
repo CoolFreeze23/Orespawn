@@ -18,9 +18,15 @@ import software.bernie.geckolib.animation.RawAnimation;
  * keys a bone outside its group writes that bone non-additively, last-registered-wins; item 15
  * refuter A, D3) and whether it is the gait group, whose delta the controller scales by
  * {@code limbSwingAmount} (Amendment 1 point 3). The gait group's clip carries the bare name
- * {@link #WALK}; every other group's is {@link #walkClip} ({@code walk_<group>}) - and a species
- * with ONE frequency group has only the bare names (contract section 2.1), so its one group's clip
- * is {@link #WALK} whether or not it is gait-scaled (the first Tier-2 slice, 2026-09-13).
+ * {@link #WALK}; every other group's is {@link #walkClip} ({@code walk_<group>}). A species WITHOUT a
+ * gait group names its primary locomotion group in its SPEC ({@code primary_group} in the clip
+ * manifest and the seed; the FIRST group when absent) and THAT group's clip carries the bare
+ * {@link #WALK} - a label, not a semantic: the contract's fly - walk fallback is what plays a flyer's
+ * walk in flight (owner 2026-09-13, addendum item 26 (2); contract section 2.1 amended) - so a species
+ * with ONE frequency group has only the bare names whether or not its group is gait-scaled (the first
+ * Tier-2 slice), and a multi-group one without a gait group has exactly one bare clip (the second).
+ * The harness's twin ({@code KeyframeLeg}) and the generator ({@code tools/keyframe_clip.py}) refuse a
+ * clip manifest that breaks the rule.
  *
  * <p>The phase the controller locks to is the classic model's own float chain, left to right:
  * {@code ageInTicks * omega * wingspeed}. {@code omega} is the formula's literal frequency and
@@ -45,7 +51,7 @@ public record KeyframeLayer(String group, String clip, float angularFrequencyRad
                             Set<String> bones, boolean gaitScaled) {
     /** The contract's standing loop: no target, not moving. Its presence TOGETHER with {@link #WALK}'s makes a species an artist species (owner 2026-09-12, item 12: one without the other stays classic). */
     public static final String IDLE = "idle";
-    /** The contract's ground-locomotion loop on the gait group (or on the one group of a one-group species). */
+    /** The contract's ground-locomotion loop on the PRIMARY group: the gait group, else the SPEC's {@code primary_group}, else the first group (owner 2026-09-13, item 2). */
     public static final String WALK = "walk";
 
     public KeyframeLayer {
@@ -72,7 +78,7 @@ public record KeyframeLayer(String group, String clip, float angularFrequencyRad
         this(group, clip, angularFrequencyRadiansPerTick, 1.0F, bones, gaitScaled);
     }
 
-    /** The contract's group-clip name for a non-gait group of the walk: {@code walk_<group>}. */
+    /** The contract's group-clip name for every group other than the primary one (the gait group, else {@code primary_group}, else the first): {@code walk_<group>}. */
     public static String walkClip(String group) {
         return WALK + "_" + group;
     }

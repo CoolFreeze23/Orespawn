@@ -1,0 +1,39 @@
+{
+  "schema_version": 1,
+  "species": "unstable_ant",
+  "species_label": "Unstable Ant",
+  "classic_source": "danger.orespawn.entity.client.AntModel.setupAnim (orig ModelAnt.java:162-174): a gait group (the twelve legs, ageInTicks * 2.7f, scaled by limbSwingAmount) and the jaws (ageInTicks * 0.4f); no wingspeed; the Unstable Ant draws the Ant rig (orig ClientProxyOreSpawn.java:415)",
+  "classic_channels": {
+    "manifest": "tools/t2_model_proofs.json",
+    "model_id": "model_unstable_ant"
+  },
+  "geo": "src/main/resources/assets/orespawn/geo/entity/ant.geo.json",
+  "sign_convention": "the converter's rule (tools/layer_definition_to_geo.py json_rotation_delta): authored X = +classic degrees, Y = -classic, Z = -classic; GeckoLib 4.8.4 negates constant X and Y keys at load (BakedAnimationsAdapter.buildKeyframeStack 209-224 / 250-265), landing on the internal basis (-xRot, yRot, -zRot). The salvaged tools/g3_beaver_animation.py authored the opposite sign (Q17 (a), controller_design.md section 12).",
+  "animation_length_seconds": 1.0,
+  "length_convention": "Q14 (a): every loop normalised to 1.0 s; the controller supplies the tempo from the declared animation_length (ADDENDA (1)); an artist's length edit changes nothing in-game",
+  "lerp_mode": "catmullrom",
+  "spline_arguments": "repaired at load in the replacement seam (Q9 (a) scoped; SplineRepair)",
+  "amplitude": "full: the controller scales the gait group's delta by limbSwingAmount (Amendment 1 point 3)",
+  "density_source": "an OUTPUT of the harness (Amendment 1 point 4, ADDENDA (2)): the keyframe_reference_leg's density search, the fewest keys per bone holding 2.5e-3 rad under the repaired evaluator, re-derived on every re-transcription; recorded here so the generator reproduces the proven clip byte for byte",
+  "bind_convention": "each key is the classic DELTA from the bone's bind rotation on the channel's axis (GeckoLib adds every key to the initial snapshot): base_radians minus the shipped geo's bind (read from `geo`, the same decimal text the harness's twin reads), then the cosine (the first Tier-2 slice, 2026-09-13)",
+  "naming_rule": "owner 2026-09-13, addendum item 26 (2), contract section 2.1 amended: the bare walk is the gait group's clip; a species without a gait group names its primary locomotion group here (primary_group; the FIRST group when absent) and THAT group's clip carries the bare walk - a label, not a semantic (the contract's fly -> walk fallback plays a flyer's walk in flight); every other group's is walk_<group>. tools/keyframe_clip.py and the harness's twin (KeyframeLeg.primaryGroup) refuse a manifest that breaks the rule",
+  "idle": {
+    "keys": "none",
+    "why": "the in-game gate opens on idle AND walk delivered together (owner 2026-09-12, item 12); the classic rig has no resting motion of its own - at rest the always-on group (walk_jaws) carries it and the gait group sits at limbSwingAmount 0 - so the transcription's idle keys no bone (the bind pose); the gait group's clip is the bare walk (contract section 2.1), so the gate OPENS on the GeckoLib candidate; an artist's real idle replaces this one"
+  },
+  "groups": [
+    {
+      "name": "gait",
+      "clip": "walk",
+      "frequency_radians_per_age_tick": 2.7,
+      "keys_per_bone": 15
+    },
+    {
+      "name": "jaws",
+      "clip": "walk_jaws",
+      "frequency_radians_per_age_tick": 0.4,
+      "keys_per_bone": 8
+    }
+  ],
+  "shared_rig": "this species' clip file IS the Ant's (src/main/resources/assets/orespawn/animations/entity/ant.animation.json, one rig, five consumers: orig ClientProxyOreSpawn.java:412-415, 476); this manifest exists so the harness proves the species' descriptor on its own entry, and the generator's output over it must equal the Ant's"
+}

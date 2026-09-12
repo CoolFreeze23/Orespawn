@@ -16,14 +16,16 @@
   "amplitude": "full: no gait group - every group plays unscaled (Amendment 1 point 3 applies to a gait group only)",
   "density_source": "an OUTPUT of the harness (Amendment 1 point 4, ADDENDA (2)): the keyframe_reference_leg's density search, the fewest keys per bone holding 2.5e-3 rad under the repaired evaluator, re-derived on every re-transcription; recorded here so the generator reproduces the proven clip byte for byte",
   "bind_convention": "each key is the classic DELTA from the bone's bind rotation on the channel's axis (GeckoLib adds every key to the initial snapshot): base_radians minus the shipped geo's bind (read from `geo`, the same decimal text the harness's twin reads), then the cosine (the first Tier-2 slice, 2026-09-13)",
+  "naming_rule": "owner 2026-09-13, addendum item 26 (2), contract section 2.1 amended: the bare walk is the gait group's clip; a species without a gait group names its primary locomotion group here (primary_group; the FIRST group when absent) and THAT group's clip carries the bare walk - a label, not a semantic (the contract's fly -> walk fallback plays a flyer's walk in flight); every other group's is walk_<group>. tools/keyframe_clip.py and the harness's twin (KeyframeLeg.primaryGroup) refuse a manifest that breaks the rule",
   "idle": {
     "keys": "none",
-    "why": "the in-game gate opens on idle AND walk delivered together (owner 2026-09-12, item 12); this classic rig has no resting motion of its own - its always-on groups run whether or not the creature moves - so the transcription's idle keys no bone (the bind pose); a MULTI-group species without a gait group has no bare walk under contract section 2.1 (every clip is walk_<group>), so the gate stays CLOSED as ruled until the owner rules which group carries the bare name (presented with the first Tier-2 slice)"
+    "why": "the in-game gate opens on idle AND walk delivered together (owner 2026-09-12, item 12); this classic rig has no resting motion of its own - its always-on groups run whether or not the creature moves - so the transcription's idle keys no bone (the bind pose); a MULTI-group species without a gait group carries the bare walk on its primary group (primary_group, the first group when absent; owner 2026-09-13, addendum item 26 (2)) and walk_<group> on the others, so the gate OPENS on the GeckoLib candidate (the second Tier-2 slice; the first slice shipped this file with the gate CLOSED as walk_<group> only); an artist's real idle replaces this one"
   },
+  "primary_group": "wings",
   "groups": [
     {
       "name": "wings",
-      "clip": "walk_wings",
+      "clip": "walk",
       "frequency_radians_per_age_tick": 1.5,
       "wingspeed": 1.0,
       "keys_per_bone": 14

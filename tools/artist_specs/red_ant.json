@@ -1,0 +1,118 @@
+{
+  "registry": "red_ant",
+  "display_name": "Red Ant",
+  "status": "draft for the owner's edit (the second Tier-2 slice, 2026-09-13)",
+  "locomotion": "walker",
+  "artist_scope": "full contract (Tier 2, the gait-scaled class: geckolib_migration_design.md section 5)",
+  "character_sheet": "The Ant's rig in red, drawn larger (x0.35): a hostile ant that attacks players with a bite and carries a right-clicking player to the Mining dimension. Read it as an angry ant: the same scurry, faster to close in.",
+  "size_notes": "Drawn at x0.35 of the rig on a 64x32 sheet (the Ant's); the shadow is 0.0525 blocks.",
+  "labels": {
+    "thorax": "thorax (the middle body)",
+    "thorax1": "thorax stud (front)",
+    "thorax3": "thorax stud (rear)",
+    "abdomen": "abdomen",
+    "abdomen1": "abdomen tip",
+    "head": "head",
+    "jawsr": "right jaw",
+    "jawsl": "left jaw",
+    "llegtop1": "left middle leg (upper; the classic's leg 1)",
+    "llegbot1": "left middle leg (lower; leg 1)",
+    "llegtop2": "left rear leg (upper; leg 2)",
+    "llegbot2": "left rear leg (lower; leg 2)",
+    "llegtop3": "left front leg (upper; leg 3)",
+    "llegbot3": "left front leg (lower; leg 3)",
+    "rlegtop1": "right middle leg (upper; leg 1)",
+    "rlegbot1": "right middle leg (lower; leg 1)",
+    "rlegtop2": "right front leg (upper; leg 2)",
+    "rlegbot2": "right front leg (lower; leg 2)",
+    "rlegtop3": "right rear leg (upper; leg 3)",
+    "rlegbot3": "right rear leg (lower; leg 3)"
+  },
+  "groups": [
+    {
+      "name": "gait",
+      "bones": [
+        "llegtop1",
+        "llegbot1",
+        "llegtop2",
+        "llegbot2",
+        "llegtop3",
+        "llegbot3",
+        "rlegtop1",
+        "rlegbot1",
+        "rlegtop2",
+        "rlegbot2",
+        "rlegtop3",
+        "rlegbot3"
+      ],
+      "omega": 2.7,
+      "axis": "x",
+      "gait_scaled": true,
+      "amplitude": "pi x 0.45 = 1.414 rad (81 deg) at full walking speed, scaled by limbSwingAmount (0 when standing)",
+      "plain": "all twelve leg parts swing about the sideways axis in step with walking speed: the left middle, right front and right rear legs one way, the right middle, left rear and left front legs the other; still when the creature stands",
+      "math": "llegbot1.xRot = llegtop1.xRot = rlegtop2.xRot = rlegbot2.xRot = rlegtop3.xRot = rlegbot3.xRot = cos(ageInTicks * 2.7) * pi * 0.45 * limbSwingAmount; rlegtop1, rlegbot1, llegtop2, llegbot2, llegtop3, llegbot3 = -(that)",
+      "source": "AntModel.java:166-176 (orig ModelAnt.java:162-172); AntGeoReplacement.java"
+    },
+    {
+      "name": "jaws",
+      "bones": [
+        "jawsl",
+        "jawsr"
+      ],
+      "omega": 0.4,
+      "axis": "y",
+      "gait_scaled": false,
+      "amplitude": "pi x 0.05 = 0.157 rad (9 deg)",
+      "plain": "the two jaws open and close slowly about the vertical, mirrored, whether or not the creature moves",
+      "math": "jawsl.yRot = cos(ageInTicks * 0.4) * pi * 0.05; jawsr.yRot = -(that)",
+      "source": "AntModel.java:177-178 (orig ModelAnt.java:173-174); AntGeoReplacement.java"
+    }
+  ],
+  "behaviour": [
+    "One gait rhythm scaled by walking speed and one always-on rhythm: the classic code swings the twelve leg parts by limbSwingAmount (still when the creature stands, full at a run) and works the jaws whether or not it moves; it has no rest pose of its own. The transcription ships idle (no bone), walk (the legs; the controller scales the delta by walking speed - contract section 5.1, P3) and walk_jaws.",
+    "The legs bind rotated about Y and Z and animate about X; the jaws bind unrotated.",
+    "Shared rig (design Q9, one profile per registry path): the Ant, Rainbow Ant, Red Ant, Termite and Unstable Ant draw one geo and one clip file (the Ant's) under their own registry names, each with its own texture, shadow and scale; a clip delivered under any of the five names is played by all five.",
+    "The default renderer poses it from the classic code; the GeckoLib candidate sits behind the dev switch (-Dorespawn.dev.geckolibRenderers) and your clips replace the shipped transcription file for file."
+  ],
+  "clips": [
+    {
+      "name": "idle",
+      "verdict": "author",
+      "note": "required with walk (today the transcription's idle keys no bone); a real rest: legs planted, jaws working"
+    },
+    {
+      "name": "walk",
+      "verdict": "leave",
+      "note": "the leg scurry; keep the 81-degree swing - the controller scales it by walking speed"
+    },
+    {
+      "name": "walk_jaws",
+      "verdict": "leave"
+    },
+    {
+      "name": "idle_jaws",
+      "verdict": "leave"
+    },
+    {
+      "name": "attack",
+      "verdict": "author",
+      "note": "a bite: the jaws snap",
+      "length_seconds": 0.4
+    },
+    {
+      "name": "hurt",
+      "verdict": "author",
+      "note": "a flinch",
+      "length_seconds": 0.3
+    },
+    {
+      "name": "death",
+      "verdict": "author",
+      "note": "PROVISIONAL: the vanilla death flip is open question 3",
+      "length_seconds": 1.0
+    }
+  ],
+  "extras": [],
+  "wishlist": [],
+  "effort_hours": null
+}

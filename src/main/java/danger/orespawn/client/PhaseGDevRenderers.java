@@ -5,13 +5,20 @@ import danger.orespawn.entity.Beaver;
 import danger.orespawn.entity.Cockateil;
 import danger.orespawn.entity.Coin;
 import danger.orespawn.entity.Elevator;
+import danger.orespawn.entity.EntityAnt;
 import danger.orespawn.entity.EntityBrutalfly;
 import danger.orespawn.entity.EntityCliffRacer;
 import danger.orespawn.entity.EntityDragonfly;
 import danger.orespawn.entity.EntityMosquito;
+import danger.orespawn.entity.EntityRainbowAnt;
+import danger.orespawn.entity.EntityRedAnt;
 import danger.orespawn.entity.EntityRotator;
+import danger.orespawn.entity.EntityTermite;
 import danger.orespawn.entity.EntityTshirt;
+import danger.orespawn.entity.EntityUnstableAnt;
 import danger.orespawn.entity.EntityVortex;
+import danger.orespawn.entity.Firefly;
+import danger.orespawn.entity.GoldFish;
 import danger.orespawn.entity.Island;
 import danger.orespawn.entity.IslandToo;
 import danger.orespawn.entity.PurplePower;
@@ -21,6 +28,8 @@ import danger.orespawn.entity.Robot3;
 import danger.orespawn.entity.Robot4;
 import danger.orespawn.entity.Robot5;
 import danger.orespawn.entity.RockBase;
+import danger.orespawn.entity.client.AntGeoReplacement;
+import danger.orespawn.entity.client.AntRenderer;
 import danger.orespawn.entity.client.BeaverGeoReplacedRenderer;
 import danger.orespawn.entity.client.BeaverRenderer;
 import danger.orespawn.entity.client.BrutalflyGeoReplacement;
@@ -35,6 +44,10 @@ import danger.orespawn.entity.client.DragonflyGeoReplacement;
 import danger.orespawn.entity.client.DragonflyRenderer;
 import danger.orespawn.entity.client.ElevatorGeoReplacement;
 import danger.orespawn.entity.client.ElevatorRenderer;
+import danger.orespawn.entity.client.FireflyGeoReplacement;
+import danger.orespawn.entity.client.FireflyRenderer;
+import danger.orespawn.entity.client.GoldFishGeoReplacement;
+import danger.orespawn.entity.client.GoldFishRenderer;
 import danger.orespawn.entity.client.IslandGeoReplacement;
 import danger.orespawn.entity.client.IslandRenderer;
 import danger.orespawn.entity.client.IslandTooGeoReplacement;
@@ -43,6 +56,10 @@ import danger.orespawn.entity.client.MosquitoGeoReplacement;
 import danger.orespawn.entity.client.MosquitoRenderer;
 import danger.orespawn.entity.client.PurplePowerGeoReplacement;
 import danger.orespawn.entity.client.PurplePowerRenderer;
+import danger.orespawn.entity.client.RainbowAntGeoReplacement;
+import danger.orespawn.entity.client.RainbowAntRenderer;
+import danger.orespawn.entity.client.RedAntGeoReplacement;
+import danger.orespawn.entity.client.RedAntRenderer;
 import danger.orespawn.entity.client.Robot1GeoReplacement;
 import danger.orespawn.entity.client.Robot1Renderer;
 import danger.orespawn.entity.client.Robot2GeoReplacement;
@@ -58,8 +75,12 @@ import danger.orespawn.entity.client.RockBaseRenderer;
 import danger.orespawn.entity.client.RotatorGeoReplacement;
 import danger.orespawn.entity.client.RotatorRenderer;
 import danger.orespawn.entity.client.RubyBirdGeoReplacement;
+import danger.orespawn.entity.client.TermiteGeoReplacement;
+import danger.orespawn.entity.client.TermiteRenderer;
 import danger.orespawn.entity.client.TshirtGeoReplacement;
 import danger.orespawn.entity.client.TshirtRenderer;
+import danger.orespawn.entity.client.UnstableAntGeoReplacement;
+import danger.orespawn.entity.client.UnstableAntRenderer;
 import danger.orespawn.entity.client.VortexGeoReplacement;
 import danger.orespawn.entity.client.VortexRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
@@ -158,6 +179,36 @@ public final class PhaseGDevRenderers {
     /** The classic path draws the Ruby Bird with the Cockateil's renderer (RubyBird extends Cockateil), so both providers are typed over Cockateil, as OreSpawnClient always registered it. */
     public static EntityRendererProvider<Cockateil> rubyBirdRenderer() {
         return select("ruby_bird", CockateilRenderer::new, RubyBirdGeoReplacement.Renderer::new);
+    }
+
+    /** The second Tier-2 slice (2026-09-13): the two rigs rejoined under ENT-S-161 (the Cloud Shark waits on the visual leg's tie rule), the classic renderers the default. */
+    public static EntityRendererProvider<Firefly> fireflyRenderer() {
+        return select("firefly", FireflyRenderer::new, FireflyGeoReplacement.Renderer::new);
+    }
+
+    public static EntityRendererProvider<GoldFish> goldFishRenderer() {
+        return select("gold_fish", GoldFishRenderer::new, GoldFishGeoReplacement.Renderer::new);
+    }
+
+    /** One rig, five consumers (design Q9: one profile per registry path): the Ant and its four siblings select separately, each over its own entity class as the classic renderers are typed. */
+    public static EntityRendererProvider<EntityAnt> antRenderer() {
+        return select("ant", AntRenderer::new, AntGeoReplacement.Renderer::new);
+    }
+
+    public static EntityRendererProvider<EntityRainbowAnt> rainbowAntRenderer() {
+        return select("rainbow_ant", RainbowAntRenderer::new, RainbowAntGeoReplacement.Renderer::new);
+    }
+
+    public static EntityRendererProvider<EntityRedAnt> redAntRenderer() {
+        return select("red_ant", RedAntRenderer::new, RedAntGeoReplacement.Renderer::new);
+    }
+
+    public static EntityRendererProvider<EntityTermite> termiteRenderer() {
+        return select("termite", TermiteRenderer::new, TermiteGeoReplacement.Renderer::new);
+    }
+
+    public static EntityRendererProvider<EntityUnstableAnt> unstableAntRenderer() {
+        return select("unstable_ant", UnstableAntRenderer::new, UnstableAntGeoReplacement.Renderer::new);
     }
 
 

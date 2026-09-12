@@ -1,0 +1,1796 @@
+{
+  "format_version": "1.12.0",
+  "minecraft:geometry": [
+    {
+      "description": {
+        "identifier": "geometry.orespawn.g1.model_termite",
+        "texture_width": 64,
+        "texture_height": 32,
+        "orespawn:bone_draw_order": [
+          "thorax",
+          "thorax1",
+          "thorax3",
+          "abdomen",
+          "abdomen1",
+          "head",
+          "jawsr",
+          "jawsl",
+          "llegtop1",
+          "llegbot1",
+          "llegtop2",
+          "llegbot2",
+          "llegtop3",
+          "llegbot3",
+          "rlegtop1",
+          "rlegbot1",
+          "rlegtop2",
+          "rlegbot2",
+          "rlegtop3",
+          "rlegbot3"
+        ]
+      },
+      "bones": [
+        {
+          "name": "abdomen",
+          "pivot": [
+            0,
+            7,
+            0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -3,
+                4,
+                4
+              ],
+              "size": [
+                3,
+                3,
+                5
+              ],
+              "uv": {
+                "west": {
+                  "uv": [
+                    46,
+                    5
+                  ],
+                  "uv_size": [
+                    5,
+                    3
+                  ]
+                },
+                "east": {
+                  "uv": [
+                    38,
+                    5
+                  ],
+                  "uv_size": [
+                    5,
+                    3
+                  ]
+                },
+                "north": {
+                  "uv": [
+                    43,
+                    5
+                  ],
+                  "uv_size": [
+                    3,
+                    3
+                  ]
+                },
+                "south": {
+                  "uv": [
+                    51,
+                    5
+                  ],
+                  "uv_size": [
+                    3,
+                    3
+                  ]
+                },
+                "up": {
+                  "uv": [
+                    43,
+                    0
+                  ],
+                  "uv_size": [
+                    3,
+                    5
+                  ]
+                },
+                "down": {
+                  "uv": [
+                    46,
+                    5
+                  ],
+                  "uv_size": [
+                    3,
+                    -5
+                  ]
+                }
+              },
+              "modelpart_mirror": true
+            }
+          ]
+        },
+        {
+          "name": "abdomen1",
+          "pivot": [
+            0,
+            7,
+            0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -2,
+                5,
+                9
+              ],
+              "size": [
+                1,
+                1,
+                1
+              ],
+              "uv": {
+                "west": {
+                  "uv": [
+                    56,
+                    1
+                  ],
+                  "uv_size": [
+                    1,
+                    1
+                  ]
+                },
+                "east": {
+                  "uv": [
+                    54,
+                    1
+                  ],
+                  "uv_size": [
+                    1,
+                    1
+                  ]
+                },
+                "north": {
+                  "uv": [
+                    55,
+                    1
+                  ],
+                  "uv_size": [
+                    1,
+                    1
+                  ]
+                },
+                "south": {
+                  "uv": [
+                    57,
+                    1
+                  ],
+                  "uv_size": [
+                    1,
+                    1
+                  ]
+                },
+                "up": {
+                  "uv": [
+                    55,
+                    0
+                  ],
+                  "uv_size": [
+                    1,
+                    1
+                  ]
+                },
+                "down": {
+                  "uv": [
+                    56,
+                    1
+                  ],
+                  "uv_size": [
+                    1,
+                    -1
+                  ]
+                }
+              },
+              "modelpart_mirror": true
+            }
+          ]
+        },
+        {
+          "name": "head",
+          "pivot": [
+            0,
+            7,
+            0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -3,
+                5,
+                -4
+              ],
+              "size": [
+                3,
+                3,
+                3
+              ],
+              "uv": {
+                "west": {
+                  "uv": [
+                    12,
+                    3
+                  ],
+                  "uv_size": [
+                    3,
+                    3
+                  ]
+                },
+                "east": {
+                  "uv": [
+                    6,
+                    3
+                  ],
+                  "uv_size": [
+                    3,
+                    3
+                  ]
+                },
+                "north": {
+                  "uv": [
+                    9,
+                    3
+                  ],
+                  "uv_size": [
+                    3,
+                    3
+                  ]
+                },
+                "south": {
+                  "uv": [
+                    15,
+                    3
+                  ],
+                  "uv_size": [
+                    3,
+                    3
+                  ]
+                },
+                "up": {
+                  "uv": [
+                    9,
+                    0
+                  ],
+                  "uv_size": [
+                    3,
+                    3
+                  ]
+                },
+                "down": {
+                  "uv": [
+                    12,
+                    3
+                  ],
+                  "uv_size": [
+                    3,
+                    -3
+                  ]
+                }
+              },
+              "modelpart_mirror": true
+            }
+          ]
+        },
+        {
+          "name": "jawsl",
+          "pivot": [
+            0,
+            7,
+            0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -4,
+                6,
+                -6
+              ],
+              "size": [
+                1,
+                1,
+                3
+              ],
+              "uv": {
+                "west": {
+                  "uv": [
+                    4,
+                    17
+                  ],
+                  "uv_size": [
+                    3,
+                    1
+                  ]
+                },
+                "east": {
+                  "uv": [
+                    0,
+                    17
+                  ],
+                  "uv_size": [
+                    3,
+                    1
+                  ]
+                },
+                "north": {
+                  "uv": [
+                    3,
+                    17
+                  ],
+                  "uv_size": [
+                    1,
+                    1
+                  ]
+                },
+                "south": {
+                  "uv": [
+                    7,
+                    17
+                  ],
+                  "uv_size": [
+                    1,
+                    1
+                  ]
+                },
+                "up": {
+                  "uv": [
+                    3,
+                    14
+                  ],
+                  "uv_size": [
+                    1,
+                    3
+                  ]
+                },
+                "down": {
+                  "uv": [
+                    4,
+                    17
+                  ],
+                  "uv_size": [
+                    1,
+                    -3
+                  ]
+                }
+              },
+              "modelpart_mirror": true
+            }
+          ]
+        },
+        {
+          "name": "jawsr",
+          "pivot": [
+            0,
+            7,
+            0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                0,
+                6,
+                -6
+              ],
+              "size": [
+                1,
+                1,
+                3
+              ],
+              "uv": {
+                "west": {
+                  "uv": [
+                    4,
+                    12
+                  ],
+                  "uv_size": [
+                    3,
+                    1
+                  ]
+                },
+                "east": {
+                  "uv": [
+                    0,
+                    12
+                  ],
+                  "uv_size": [
+                    3,
+                    1
+                  ]
+                },
+                "north": {
+                  "uv": [
+                    3,
+                    12
+                  ],
+                  "uv_size": [
+                    1,
+                    1
+                  ]
+                },
+                "south": {
+                  "uv": [
+                    7,
+                    12
+                  ],
+                  "uv_size": [
+                    1,
+                    1
+                  ]
+                },
+                "up": {
+                  "uv": [
+                    3,
+                    9
+                  ],
+                  "uv_size": [
+                    1,
+                    3
+                  ]
+                },
+                "down": {
+                  "uv": [
+                    4,
+                    12
+                  ],
+                  "uv_size": [
+                    1,
+                    -3
+                  ]
+                }
+              },
+              "modelpart_mirror": true
+            }
+          ]
+        },
+        {
+          "name": "llegbot1",
+          "pivot": [
+            0,
+            7,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            -61.0000089544
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -8,
+                9,
+                1
+              ],
+              "size": [
+                3,
+                1,
+                1
+              ],
+              "uv": {
+                "west": {
+                  "uv": [
+                    19,
+                    20
+                  ],
+                  "uv_size": [
+                    1,
+                    1
+                  ]
+                },
+                "east": {
+                  "uv": [
+                    15,
+                    20
+                  ],
+                  "uv_size": [
+                    1,
+                    1
+                  ]
+                },
+                "north": {
+                  "uv": [
+                    16,
+                    20
+                  ],
+                  "uv_size": [
+                    3,
+                    1
+                  ]
+                },
+                "south": {
+                  "uv": [
+                    20,
+                    20
+                  ],
+                  "uv_size": [
+                    3,
+                    1
+                  ]
+                },
+                "up": {
+                  "uv": [
+                    16,
+                    19
+                  ],
+                  "uv_size": [
+                    3,
+                    1
+                  ]
+                },
+                "down": {
+                  "uv": [
+                    19,
+                    20
+                  ],
+                  "uv_size": [
+                    3,
+                    -1
+                  ]
+                }
+              },
+              "modelpart_mirror": true
+            }
+          ]
+        },
+        {
+          "name": "llegbot2",
+          "pivot": [
+            0,
+            7,
+            0
+          ],
+          "rotation": [
+            0,
+            12.9999998419,
+            -61.0000089544
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -8,
+                9,
+                2
+              ],
+              "size": [
+                3,
+                1,
+                1
+              ],
+              "uv": {
+                "west": {
+                  "uv": [
+                    19,
+                    23
+                  ],
+                  "uv_size": [
+                    1,
+                    1
+                  ]
+                },
+                "east": {
+                  "uv": [
+                    15,
+                    23
+                  ],
+                  "uv_size": [
+                    1,
+                    1
+                  ]
+                },
+                "north": {
+                  "uv": [
+                    16,
+                    23
+                  ],
+                  "uv_size": [
+                    3,
+                    1
+                  ]
+                },
+                "south": {
+                  "uv": [
+                    20,
+                    23
+                  ],
+                  "uv_size": [
+                    3,
+                    1
+                  ]
+                },
+                "up": {
+                  "uv": [
+                    16,
+                    22
+                  ],
+                  "uv_size": [
+                    3,
+                    1
+                  ]
+                },
+                "down": {
+                  "uv": [
+                    19,
+                    23
+                  ],
+                  "uv_size": [
+                    3,
+                    -1
+                  ]
+                }
+              },
+              "modelpart_mirror": true
+            }
+          ]
+        },
+        {
+          "name": "llegbot3",
+          "pivot": [
+            0,
+            7,
+            0
+          ],
+          "rotation": [
+            0,
+            -20.0000028419,
+            -61.0000089544
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -8,
+                9,
+                0
+              ],
+              "size": [
+                3,
+                1,
+                1
+              ],
+              "uv": {
+                "west": {
+                  "uv": [
+                    19,
+                    26
+                  ],
+                  "uv_size": [
+                    1,
+                    1
+                  ]
+                },
+                "east": {
+                  "uv": [
+                    15,
+                    26
+                  ],
+                  "uv_size": [
+                    1,
+                    1
+                  ]
+                },
+                "north": {
+                  "uv": [
+                    16,
+                    26
+                  ],
+                  "uv_size": [
+                    3,
+                    1
+                  ]
+                },
+                "south": {
+                  "uv": [
+                    20,
+                    26
+                  ],
+                  "uv_size": [
+                    3,
+                    1
+                  ]
+                },
+                "up": {
+                  "uv": [
+                    16,
+                    25
+                  ],
+                  "uv_size": [
+                    3,
+                    1
+                  ]
+                },
+                "down": {
+                  "uv": [
+                    19,
+                    26
+                  ],
+                  "uv_size": [
+                    3,
+                    -1
+                  ]
+                }
+              },
+              "modelpart_mirror": true
+            }
+          ]
+        },
+        {
+          "name": "llegtop1",
+          "pivot": [
+            0,
+            7,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            -21.9999979695
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -6,
+                5,
+                1
+              ],
+              "size": [
+                3,
+                1,
+                1
+              ],
+              "uv": {
+                "west": {
+                  "uv": [
+                    19,
+                    11
+                  ],
+                  "uv_size": [
+                    1,
+                    1
+                  ]
+                },
+                "east": {
+                  "uv": [
+                    15,
+                    11
+                  ],
+                  "uv_size": [
+                    1,
+                    1
+                  ]
+                },
+                "north": {
+                  "uv": [
+                    16,
+                    11
+                  ],
+                  "uv_size": [
+                    3,
+                    1
+                  ]
+                },
+                "south": {
+                  "uv": [
+                    20,
+                    11
+                  ],
+                  "uv_size": [
+                    3,
+                    1
+                  ]
+                },
+                "up": {
+                  "uv": [
+                    16,
+                    10
+                  ],
+                  "uv_size": [
+                    3,
+                    1
+                  ]
+                },
+                "down": {
+                  "uv": [
+                    19,
+                    11
+                  ],
+                  "uv_size": [
+                    3,
+                    -1
+                  ]
+                }
+              },
+              "modelpart_mirror": true
+            }
+          ]
+        },
+        {
+          "name": "llegtop2",
+          "pivot": [
+            0,
+            7,
+            0
+          ],
+          "rotation": [
+            0,
+            11.9999994133,
+            -21.9999979695
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -6,
+                5,
+                2
+              ],
+              "size": [
+                3,
+                1,
+                1
+              ],
+              "uv": {
+                "west": {
+                  "uv": [
+                    19,
+                    14
+                  ],
+                  "uv_size": [
+                    1,
+                    1
+                  ]
+                },
+                "east": {
+                  "uv": [
+                    15,
+                    14
+                  ],
+                  "uv_size": [
+                    1,
+                    1
+                  ]
+                },
+                "north": {
+                  "uv": [
+                    16,
+                    14
+                  ],
+                  "uv_size": [
+                    3,
+                    1
+                  ]
+                },
+                "south": {
+                  "uv": [
+                    20,
+                    14
+                  ],
+                  "uv_size": [
+                    3,
+                    1
+                  ]
+                },
+                "up": {
+                  "uv": [
+                    16,
+                    13
+                  ],
+                  "uv_size": [
+                    3,
+                    1
+                  ]
+                },
+                "down": {
+                  "uv": [
+                    19,
+                    14
+                  ],
+                  "uv_size": [
+                    3,
+                    -1
+                  ]
+                }
+              },
+              "modelpart_mirror": true
+            }
+          ]
+        },
+        {
+          "name": "llegtop3",
+          "pivot": [
+            0,
+            7,
+            0
+          ],
+          "rotation": [
+            0,
+            -20.0000028419,
+            -21.9999979695
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -6,
+                5,
+                0
+              ],
+              "size": [
+                3,
+                1,
+                1
+              ],
+              "uv": {
+                "west": {
+                  "uv": [
+                    19,
+                    17
+                  ],
+                  "uv_size": [
+                    1,
+                    1
+                  ]
+                },
+                "east": {
+                  "uv": [
+                    15,
+                    17
+                  ],
+                  "uv_size": [
+                    1,
+                    1
+                  ]
+                },
+                "north": {
+                  "uv": [
+                    16,
+                    17
+                  ],
+                  "uv_size": [
+                    3,
+                    1
+                  ]
+                },
+                "south": {
+                  "uv": [
+                    20,
+                    17
+                  ],
+                  "uv_size": [
+                    3,
+                    1
+                  ]
+                },
+                "up": {
+                  "uv": [
+                    16,
+                    16
+                  ],
+                  "uv_size": [
+                    3,
+                    1
+                  ]
+                },
+                "down": {
+                  "uv": [
+                    19,
+                    17
+                  ],
+                  "uv_size": [
+                    3,
+                    -1
+                  ]
+                }
+              },
+              "modelpart_mirror": true
+            }
+          ]
+        },
+        {
+          "name": "rlegbot1",
+          "pivot": [
+            0,
+            7,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            56.0000010819
+          ],
+          "cubes": [
+            {
+              "origin": [
+                4,
+                6,
+                1
+              ],
+              "size": [
+                3,
+                1,
+                1
+              ],
+              "uv": {
+                "west": {
+                  "uv": [
+                    29,
+                    20
+                  ],
+                  "uv_size": [
+                    1,
+                    1
+                  ]
+                },
+                "east": {
+                  "uv": [
+                    25,
+                    20
+                  ],
+                  "uv_size": [
+                    1,
+                    1
+                  ]
+                },
+                "north": {
+                  "uv": [
+                    26,
+                    20
+                  ],
+                  "uv_size": [
+                    3,
+                    1
+                  ]
+                },
+                "south": {
+                  "uv": [
+                    30,
+                    20
+                  ],
+                  "uv_size": [
+                    3,
+                    1
+                  ]
+                },
+                "up": {
+                  "uv": [
+                    26,
+                    19
+                  ],
+                  "uv_size": [
+                    3,
+                    1
+                  ]
+                },
+                "down": {
+                  "uv": [
+                    29,
+                    20
+                  ],
+                  "uv_size": [
+                    3,
+                    -1
+                  ]
+                }
+              },
+              "modelpart_mirror": true
+            }
+          ]
+        },
+        {
+          "name": "rlegbot2",
+          "pivot": [
+            0,
+            7,
+            0
+          ],
+          "rotation": [
+            0,
+            33.9999973828,
+            56.0000010819
+          ],
+          "cubes": [
+            {
+              "origin": [
+                4,
+                6,
+                0
+              ],
+              "size": [
+                3,
+                1,
+                1
+              ],
+              "uv": {
+                "west": {
+                  "uv": [
+                    29,
+                    23
+                  ],
+                  "uv_size": [
+                    1,
+                    1
+                  ]
+                },
+                "east": {
+                  "uv": [
+                    25,
+                    23
+                  ],
+                  "uv_size": [
+                    1,
+                    1
+                  ]
+                },
+                "north": {
+                  "uv": [
+                    26,
+                    23
+                  ],
+                  "uv_size": [
+                    3,
+                    1
+                  ]
+                },
+                "south": {
+                  "uv": [
+                    30,
+                    23
+                  ],
+                  "uv_size": [
+                    3,
+                    1
+                  ]
+                },
+                "up": {
+                  "uv": [
+                    26,
+                    22
+                  ],
+                  "uv_size": [
+                    3,
+                    1
+                  ]
+                },
+                "down": {
+                  "uv": [
+                    29,
+                    23
+                  ],
+                  "uv_size": [
+                    3,
+                    -1
+                  ]
+                }
+              },
+              "modelpart_mirror": true
+            }
+          ]
+        },
+        {
+          "name": "rlegbot3",
+          "pivot": [
+            0,
+            7,
+            0
+          ],
+          "rotation": [
+            0,
+            -23.9999988267,
+            56.0000010819
+          ],
+          "cubes": [
+            {
+              "origin": [
+                4,
+                6,
+                2
+              ],
+              "size": [
+                3,
+                1,
+                1
+              ],
+              "uv": {
+                "west": {
+                  "uv": [
+                    29,
+                    26
+                  ],
+                  "uv_size": [
+                    1,
+                    1
+                  ]
+                },
+                "east": {
+                  "uv": [
+                    25,
+                    26
+                  ],
+                  "uv_size": [
+                    1,
+                    1
+                  ]
+                },
+                "north": {
+                  "uv": [
+                    26,
+                    26
+                  ],
+                  "uv_size": [
+                    3,
+                    1
+                  ]
+                },
+                "south": {
+                  "uv": [
+                    30,
+                    26
+                  ],
+                  "uv_size": [
+                    3,
+                    1
+                  ]
+                },
+                "up": {
+                  "uv": [
+                    26,
+                    25
+                  ],
+                  "uv_size": [
+                    3,
+                    1
+                  ]
+                },
+                "down": {
+                  "uv": [
+                    29,
+                    26
+                  ],
+                  "uv_size": [
+                    3,
+                    -1
+                  ]
+                }
+              },
+              "modelpart_mirror": true
+            }
+          ]
+        },
+        {
+          "name": "rlegtop1",
+          "pivot": [
+            0,
+            7,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            27.0000001124
+          ],
+          "cubes": [
+            {
+              "origin": [
+                1,
+                4,
+                1
+              ],
+              "size": [
+                3,
+                1,
+                1
+              ],
+              "uv": {
+                "west": {
+                  "uv": [
+                    29,
+                    11
+                  ],
+                  "uv_size": [
+                    1,
+                    1
+                  ]
+                },
+                "east": {
+                  "uv": [
+                    25,
+                    11
+                  ],
+                  "uv_size": [
+                    1,
+                    1
+                  ]
+                },
+                "north": {
+                  "uv": [
+                    26,
+                    11
+                  ],
+                  "uv_size": [
+                    3,
+                    1
+                  ]
+                },
+                "south": {
+                  "uv": [
+                    30,
+                    11
+                  ],
+                  "uv_size": [
+                    3,
+                    1
+                  ]
+                },
+                "up": {
+                  "uv": [
+                    26,
+                    10
+                  ],
+                  "uv_size": [
+                    3,
+                    1
+                  ]
+                },
+                "down": {
+                  "uv": [
+                    29,
+                    11
+                  ],
+                  "uv_size": [
+                    3,
+                    -1
+                  ]
+                }
+              },
+              "modelpart_mirror": true
+            }
+          ]
+        },
+        {
+          "name": "rlegtop2",
+          "pivot": [
+            0,
+            7,
+            0
+          ],
+          "rotation": [
+            0,
+            33.9999973828,
+            27.0000001124
+          ],
+          "cubes": [
+            {
+              "origin": [
+                1,
+                4,
+                0
+              ],
+              "size": [
+                3,
+                1,
+                1
+              ],
+              "uv": {
+                "west": {
+                  "uv": [
+                    29,
+                    14
+                  ],
+                  "uv_size": [
+                    1,
+                    1
+                  ]
+                },
+                "east": {
+                  "uv": [
+                    25,
+                    14
+                  ],
+                  "uv_size": [
+                    1,
+                    1
+                  ]
+                },
+                "north": {
+                  "uv": [
+                    26,
+                    14
+                  ],
+                  "uv_size": [
+                    3,
+                    1
+                  ]
+                },
+                "south": {
+                  "uv": [
+                    30,
+                    14
+                  ],
+                  "uv_size": [
+                    3,
+                    1
+                  ]
+                },
+                "up": {
+                  "uv": [
+                    26,
+                    13
+                  ],
+                  "uv_size": [
+                    3,
+                    1
+                  ]
+                },
+                "down": {
+                  "uv": [
+                    29,
+                    14
+                  ],
+                  "uv_size": [
+                    3,
+                    -1
+                  ]
+                }
+              },
+              "modelpart_mirror": true
+            }
+          ]
+        },
+        {
+          "name": "rlegtop3",
+          "pivot": [
+            0,
+            7,
+            0
+          ],
+          "rotation": [
+            0,
+            -23.9999988267,
+            27.0000001124
+          ],
+          "cubes": [
+            {
+              "origin": [
+                1,
+                4,
+                2
+              ],
+              "size": [
+                3,
+                1,
+                1
+              ],
+              "uv": {
+                "west": {
+                  "uv": [
+                    29,
+                    17
+                  ],
+                  "uv_size": [
+                    1,
+                    1
+                  ]
+                },
+                "east": {
+                  "uv": [
+                    25,
+                    17
+                  ],
+                  "uv_size": [
+                    1,
+                    1
+                  ]
+                },
+                "north": {
+                  "uv": [
+                    26,
+                    17
+                  ],
+                  "uv_size": [
+                    3,
+                    1
+                  ]
+                },
+                "south": {
+                  "uv": [
+                    30,
+                    17
+                  ],
+                  "uv_size": [
+                    3,
+                    1
+                  ]
+                },
+                "up": {
+                  "uv": [
+                    26,
+                    16
+                  ],
+                  "uv_size": [
+                    3,
+                    1
+                  ]
+                },
+                "down": {
+                  "uv": [
+                    29,
+                    17
+                  ],
+                  "uv_size": [
+                    3,
+                    -1
+                  ]
+                }
+              },
+              "modelpart_mirror": true
+            }
+          ]
+        },
+        {
+          "name": "thorax",
+          "pivot": [
+            0,
+            7,
+            0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -3,
+                4,
+                0
+              ],
+              "size": [
+                3,
+                3,
+                3
+              ],
+              "uv": {
+                "west": {
+                  "uv": [
+                    28,
+                    3
+                  ],
+                  "uv_size": [
+                    3,
+                    3
+                  ]
+                },
+                "east": {
+                  "uv": [
+                    22,
+                    3
+                  ],
+                  "uv_size": [
+                    3,
+                    3
+                  ]
+                },
+                "north": {
+                  "uv": [
+                    25,
+                    3
+                  ],
+                  "uv_size": [
+                    3,
+                    3
+                  ]
+                },
+                "south": {
+                  "uv": [
+                    31,
+                    3
+                  ],
+                  "uv_size": [
+                    3,
+                    3
+                  ]
+                },
+                "up": {
+                  "uv": [
+                    25,
+                    0
+                  ],
+                  "uv_size": [
+                    3,
+                    3
+                  ]
+                },
+                "down": {
+                  "uv": [
+                    28,
+                    3
+                  ],
+                  "uv_size": [
+                    3,
+                    -3
+                  ]
+                }
+              },
+              "modelpart_mirror": true
+            }
+          ]
+        },
+        {
+          "name": "thorax1",
+          "pivot": [
+            0,
+            7,
+            0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -2,
+                5,
+                -1
+              ],
+              "size": [
+                1,
+                1,
+                1
+              ],
+              "uv": {
+                "west": {
+                  "uv": [
+                    20,
+                    1
+                  ],
+                  "uv_size": [
+                    1,
+                    1
+                  ]
+                },
+                "east": {
+                  "uv": [
+                    18,
+                    1
+                  ],
+                  "uv_size": [
+                    1,
+                    1
+                  ]
+                },
+                "north": {
+                  "uv": [
+                    19,
+                    1
+                  ],
+                  "uv_size": [
+                    1,
+                    1
+                  ]
+                },
+                "south": {
+                  "uv": [
+                    21,
+                    1
+                  ],
+                  "uv_size": [
+                    1,
+                    1
+                  ]
+                },
+                "up": {
+                  "uv": [
+                    19,
+                    0
+                  ],
+                  "uv_size": [
+                    1,
+                    1
+                  ]
+                },
+                "down": {
+                  "uv": [
+                    20,
+                    1
+                  ],
+                  "uv_size": [
+                    1,
+                    -1
+                  ]
+                }
+              },
+              "modelpart_mirror": true
+            }
+          ]
+        },
+        {
+          "name": "thorax3",
+          "pivot": [
+            0,
+            7,
+            0
+          ],
+          "cubes": [
+            {
+              "origin": [
+                -2,
+                5,
+                3
+              ],
+              "size": [
+                1,
+                1,
+                1
+              ],
+              "uv": {
+                "west": {
+                  "uv": [
+                    36,
+                    1
+                  ],
+                  "uv_size": [
+                    1,
+                    1
+                  ]
+                },
+                "east": {
+                  "uv": [
+                    34,
+                    1
+                  ],
+                  "uv_size": [
+                    1,
+                    1
+                  ]
+                },
+                "north": {
+                  "uv": [
+                    35,
+                    1
+                  ],
+                  "uv_size": [
+                    1,
+                    1
+                  ]
+                },
+                "south": {
+                  "uv": [
+                    37,
+                    1
+                  ],
+                  "uv_size": [
+                    1,
+                    1
+                  ]
+                },
+                "up": {
+                  "uv": [
+                    35,
+                    0
+                  ],
+                  "uv_size": [
+                    1,
+                    1
+                  ]
+                },
+                "down": {
+                  "uv": [
+                    36,
+                    1
+                  ],
+                  "uv_size": [
+                    1,
+                    -1
+                  ]
+                }
+              },
+              "modelpart_mirror": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

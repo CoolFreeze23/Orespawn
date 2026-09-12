@@ -22,7 +22,8 @@ import software.bernie.geckolib.animation.AnimationProcessor;
  *
  * <p>Texture by {@link Cockateil#getBirdType()} through {@link CockateilRenderer#textureFor}; scale and shadow follow
  * {@link CockateilRenderer}: 0.75 render scale and a 0.3 x 0.75 shadow (ENT-S-092). The gate stands as the
- * Cockateil's: a multi-group species without a bare {@code walk}, CLOSED as ruled.</p>
+ * Cockateil's: OPEN since the second Tier-2 slice (2026-09-13), the shared clip file carrying the bare {@code walk} on
+ * the rig's primary group ({@code wings}) under the naming rule (owner 2026-09-13, addendum item 26 (2)).</p>
  */
 public final class RubyBirdGeoReplacement extends OreSpawnGeoReplacement<Cockateil> {
     private static final GeoReplacementDescriptor<Cockateil> DESCRIPTOR = new GeoReplacementDescriptor<>(

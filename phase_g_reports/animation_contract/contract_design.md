@@ -1,5 +1,7 @@
 # The standard animation contract — specification for ruling
 
+> **Amended 2026-09-13 (owner ruling, scope addendum item 26 (2); landed by FIX_LOG "PHASE G — THE SECOND TIER-2 SLICE, T2b").** §2.1's naming rule: for a multi-group species without a gait group, the SPEC names the species' primary locomotion group (`primary_group` in the clip manifest and the seed; the FIRST group when absent) and THAT group's clip carries the bare `walk`; the other groups stay `walk_<group>`. The bare name is a label, not a semantic (§2.4's fly → walk fallback is what plays a flyer's walk in flight); item 12's gate (`idle` AND `walk`) and the README rule stand.
+
 Phase G slice (e), design lane, 2026-09-06. Owner ruling 2026-09-05, scope addendum item 23 (8)(e);
 addendum §A.2; FIX_LOG "PHASE G RULING — AMENDMENT 1" (:3908-3974) and its ADDENDA (:3976-3998).
 **Presented for ruling before anything is wired. Nothing under `src/` changes with this document.**

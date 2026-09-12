@@ -99,7 +99,7 @@ The independent gates are:
 - Rotation maximum delta 0 radians; position maximum delta 0 model units over 3432 position channels; inputs {'limb_swing': 0.0, 'limb_swing_amounts': [0.0], 'net_head_yaw_degrees': 0.0, 'head_pitch_degrees': 0.0}.
 - Visual z-fight pixels compared, none excluded (G2 root-order contract): maximum contested fraction 0, a diagnostic.
 - Keyframe reference leg: 2.5e-3 rad; Dragonfly reference leg 13 / 10 catmullrom keys per bone with spline arguments repaired at load; wrap sample T−ε vs 0+ε included.
-- Keyframe leg: `danger.orespawn.entity.client.animation.PhaseLockedKeyframeController` layers of `danger.orespawn.entity.client.DragonflyGeoReplacement` over clip `src/main/resources/assets/orespawn/animations/entity/dragonfly.animation.json` (sha256 bd2c04161e49), spline repair ON; sample-grid max delta 0.00177852 radians over 258 layer-bone samples (wings 0.0017444, jaws 0.00177852); 19 wrap pairs, |v(T-eps) - v(0+eps)| max 3e-07; non-layer bones moved 0.
+- Keyframe leg: `danger.orespawn.entity.client.animation.PhaseLockedKeyframeController` layers of `danger.orespawn.entity.client.DragonflyGeoReplacement` over clip `src/main/resources/assets/orespawn/animations/entity/dragonfly.animation.json` (sha256 32c1c0e4e36a), spline repair ON; sample-grid max delta 0.00177852 radians over 258 layer-bone samples (wings 0.0017444, jaws 0.00177852); 19 wrap pairs, |v(T-eps) - v(0+eps)| max 3e-07; non-layer bones moved 0.
 - Keyframe density search (an output): wings fewest 13 keys/bone at 0.00189233 over 1052528 comparisons, one fewer 0.0025444; jaws fewest 10 keys/bone at 0.00194411 over 526264 comparisons, one fewer 0.00280526; dense schedule of the shipped-candidate clip: jaws 0.00194411, wings 0.00189233; reversed schedule max delta 0.
 - Keyframe late-prime twin (TEST-005): a manager built before its clips were served (unserved through the slot at age 137.371, no tick, bone motion 0), primed at age 138.371: wings declared 20 ticks, 8.27606 clip ticks per age tick, LUT index 16928, clip tick 5.16602; jaws declared 20 ticks, 1.90986 clip ticks per age tick, LUT index 13989, clip tick 4.2691 - every fact the from-zero prime's; pose delta 0 at the prime, 0 over the follow-ups.
 
@@ -116,7 +116,7 @@ The independent gates are:
 - Rotation maximum delta 0 radians; position maximum delta 0 model units over 4992 position channels; inputs {'limb_swing': 0.0, 'limb_swing_amounts': [0.0], 'net_head_yaw_degrees': 0.0, 'head_pitch_degrees': 0.0}.
 - Visual z-fight pixels compared, none excluded (G2 root-order contract): maximum contested fraction 0, a diagnostic.
 - Keyframe reference leg: 2.5e-3 rad; Cockateil reference leg 14 / 10 / 9 / 9 / 9 catmullrom keys per bone with spline arguments repaired at load; wrap sample T−ε vs 0+ε included.
-- Keyframe leg: `danger.orespawn.entity.client.animation.PhaseLockedKeyframeController` layers of `danger.orespawn.entity.client.CockateilGeoReplacement` over clip `src/main/resources/assets/orespawn/animations/entity/cockateil.animation.json` (sha256 238f28f6f660), spline repair ON; sample-grid max delta 0.0022395 radians over 1030 layer-bone samples (wings 0.0019695, tail 0.00194092, feather1 0.00223942, feather2 0.00222948, feather3 0.0022395); 49 wrap pairs, |v(T-eps) - v(0+eps)| max 1.2e-07; non-layer bones moved 0.
+- Keyframe leg: `danger.orespawn.entity.client.animation.PhaseLockedKeyframeController` layers of `danger.orespawn.entity.client.CockateilGeoReplacement` over clip `src/main/resources/assets/orespawn/animations/entity/cockateil.animation.json` (sha256 03379fe98589), spline repair ON; sample-grid max delta 0.0022395 radians over 1030 layer-bone samples (wings 0.0019695, tail 0.00194092, feather1 0.00223942, feather2 0.00222948, feather3 0.0022395); 49 wrap pairs, |v(T-eps) - v(0+eps)| max 1.2e-07; non-layer bones moved 0.
 - Keyframe density search (an output): wings fewest 14 keys/bone at 0.00210881 over 1054880 comparisons, one fewer 0.00264919; tail fewest 10 keys/bone at 0.00194409 over 791160 comparisons, one fewer 0.00280523; feather1 fewest 9 keys/bone at 0.00224417 over 263720 comparisons, one fewer 0.00367241; feather2 fewest 9 keys/bone at 0.00224417 over 263720 comparisons, one fewer 0.00367241; feather3 fewest 9 keys/bone at 0.00224417 over 263720 comparisons, one fewer 0.00367239; dense schedule of the shipped-candidate clip: feather1 0.00224417, feather2 0.00224417, feather3 0.00224417, tail 0.00194409, wings 0.00210881; reversed schedule max delta 0.
 - Keyframe late-prime twin (TEST-005): a manager built before its clips were served (unserved through the slot at age 137.371, no tick, bone motion 0), primed at age 138.371: wings declared 20 ticks, 4.77465 clip ticks per age tick, LUT index 2204, clip tick 0.672607; tail declared 20 ticks, 0.95493 clip ticks per age tick, LUT index 39762, clip tick 12.1344; feather1 declared 20 ticks, 3.50141 clip ticks per age tick, LUT index 14724, clip tick 4.49341; feather2 declared 20 ticks, 3.81972 clip ticks per age tick, LUT index 27978, clip tick 8.53821; feather3 declared 20 ticks, 4.13803 clip ticks per age tick, LUT index 41232, clip tick 12.583 - every fact the from-zero prime's; pose delta 0 at the prime, 0 over the follow-ups.
 
@@ -133,9 +133,128 @@ The independent gates are:
 - Rotation maximum delta 0 radians; position maximum delta 0 model units over 4992 position channels; inputs {'limb_swing': 0.0, 'limb_swing_amounts': [0.0], 'net_head_yaw_degrees': 0.0, 'head_pitch_degrees': 0.0}.
 - Visual z-fight pixels compared, none excluded (G2 root-order contract): maximum contested fraction 0, a diagnostic.
 - Keyframe reference leg: 2.5e-3 rad; Ruby Bird reference leg 14 / 10 / 9 / 9 / 9 catmullrom keys per bone with spline arguments repaired at load; wrap sample T−ε vs 0+ε included.
-- Keyframe leg: `danger.orespawn.entity.client.animation.PhaseLockedKeyframeController` layers of `danger.orespawn.entity.client.RubyBirdGeoReplacement` over clip `src/main/resources/assets/orespawn/animations/entity/cockateil.animation.json` (sha256 238f28f6f660), spline repair ON; sample-grid max delta 0.0022395 radians over 1030 layer-bone samples (wings 0.0019695, tail 0.00194092, feather1 0.00223942, feather2 0.00222948, feather3 0.0022395); 49 wrap pairs, |v(T-eps) - v(0+eps)| max 1.2e-07; non-layer bones moved 0.
+- Keyframe leg: `danger.orespawn.entity.client.animation.PhaseLockedKeyframeController` layers of `danger.orespawn.entity.client.RubyBirdGeoReplacement` over clip `src/main/resources/assets/orespawn/animations/entity/cockateil.animation.json` (sha256 03379fe98589), spline repair ON; sample-grid max delta 0.0022395 radians over 1030 layer-bone samples (wings 0.0019695, tail 0.00194092, feather1 0.00223942, feather2 0.00222948, feather3 0.0022395); 49 wrap pairs, |v(T-eps) - v(0+eps)| max 1.2e-07; non-layer bones moved 0.
 - Keyframe density search (an output): wings fewest 14 keys/bone at 0.00210881 over 1054880 comparisons, one fewer 0.00264919; tail fewest 10 keys/bone at 0.00194409 over 791160 comparisons, one fewer 0.00280523; feather1 fewest 9 keys/bone at 0.00224417 over 263720 comparisons, one fewer 0.00367241; feather2 fewest 9 keys/bone at 0.00224417 over 263720 comparisons, one fewer 0.00367241; feather3 fewest 9 keys/bone at 0.00224417 over 263720 comparisons, one fewer 0.00367239; dense schedule of the shipped-candidate clip: feather1 0.00224417, feather2 0.00224417, feather3 0.00224417, tail 0.00194409, wings 0.00210881; reversed schedule max delta 0.
 - Keyframe late-prime twin (TEST-005): a manager built before its clips were served (unserved through the slot at age 137.371, no tick, bone motion 0), primed at age 138.371: wings declared 20 ticks, 4.77465 clip ticks per age tick, LUT index 2204, clip tick 0.672607; tail declared 20 ticks, 0.95493 clip ticks per age tick, LUT index 39762, clip tick 12.1344; feather1 declared 20 ticks, 3.50141 clip ticks per age tick, LUT index 14724, clip tick 4.49341; feather2 declared 20 ticks, 3.81972 clip ticks per age tick, LUT index 27978, clip tick 8.53821; feather3 declared 20 ticks, 4.13803 clip ticks per age tick, LUT index 41232, clip tick 12.583 - every fact the from-zero prime's; pose delta 0 at the prime, 0 over the follow-ups.
+
+## model_firefly (Tier 2)
+
+- Exact bones: 12; cubes: 12.
+- Geometry maximum corner delta: 1.33416640628e-07 blocks (epsilon 1e-05).
+- Surface maximum UV delta: 0; normal delta: 1.07721864019e-07.
+- Animation maximum rotation delta: 0 radians (epsilon 2e-06).
+- Visual maximum changed fraction: 0; maximum mean absolute error: 0.
+- Draw order: GeckoLib bone order equals the classic draw order over 6 captures (72 draws).
+
+- Accepted path: production OreSpawnGeoReplacement.applyCustomAnimations through OreSpawnGeoReplacementModel.setCustomAnimations (`danger.orespawn.entity.client.FireflyGeoReplacement`).
+- Rotation maximum delta 0 radians; position maximum delta 0 model units over 720 position channels; inputs {'limb_swing': 0.0, 'limb_swing_amounts': [0.0], 'net_head_yaw_degrees': 0.0, 'head_pitch_degrees': 0.0}.
+- Visual z-fight pixels compared, none excluded (G2 root-order contract): maximum contested fraction 0, a diagnostic.
+- Keyframe reference leg: 2.5e-3 rad; Firefly reference leg 14 catmullrom keys per bone with spline arguments repaired at load; wrap sample T−ε vs 0+ε included.
+- Keyframe leg: `danger.orespawn.entity.client.animation.PhaseLockedKeyframeController` layers of `danger.orespawn.entity.client.FireflyGeoReplacement` over clip `src/main/resources/assets/orespawn/animations/entity/firefly.animation.json` (sha256 3c7c6ad2235f), spline repair ON; sample-grid max delta 0.0014405 radians over 38 layer-bone samples (wings 0.0014405); 7 wrap pairs, |v(T-eps) - v(0+eps)| max 0; non-layer bones moved 0.
+- Keyframe density search (an output): wings fewest 14 keys/bone at 0.00210881 over 525856 comparisons, one fewer 0.00264907; dense schedule of the shipped-candidate clip: wings 0.00210881; reversed schedule max delta 0.
+- Keyframe late-prime twin (TEST-005): a manager built before its clips were served (unserved through the slot at age 137.371, no tick, bone motion 0), primed at age 138.371: wings declared 20 ticks, 7.95775 clip ticks per age tick, LUT index 3674, clip tick 1.12122 - every fact the from-zero prime's; pose delta 0 at the prime, 0 over the follow-ups.
+
+## model_goldfish (Tier 2)
+
+- Exact bones: 16; cubes: 16.
+- Geometry maximum corner delta: 2.02239066457e-07 blocks (epsilon 1e-05).
+- Surface maximum UV delta: 0; normal delta: 1.59999999916e-07.
+- Animation maximum rotation delta: 0 radians (epsilon 2e-06).
+- Visual maximum changed fraction: 0; maximum mean absolute error: 0.
+- Draw order: GeckoLib bone order equals the classic draw order over 6 captures (96 draws).
+
+- Accepted path: production OreSpawnGeoReplacement.applyCustomAnimations through OreSpawnGeoReplacementModel.setCustomAnimations (`danger.orespawn.entity.client.GoldFishGeoReplacement`).
+- Rotation maximum delta 0 radians; position maximum delta 0 model units over 4608 position channels; inputs {'limb_swing': 0.0, 'limb_swing_amounts': [0.0], 'net_head_yaw_degrees': 0.0, 'head_pitch_degrees': 0.0}.
+- Visual z-fight pixels compared, none excluded (G2 root-order contract): maximum contested fraction 0.00965881347656, a diagnostic.
+- Keyframe reference leg: 2.5e-3 rad; Gold Fish reference leg 11 / 11 / 11 / 11 / 13 / 10 catmullrom keys per bone with spline arguments repaired at load; wrap sample T−ε vs 0+ε included.
+- Keyframe leg: `danger.orespawn.entity.client.animation.PhaseLockedKeyframeController` layers of `danger.orespawn.entity.client.GoldFishGeoReplacement` over clip `src/main/resources/assets/orespawn/animations/entity/goldfish.animation.json` (sha256 3eac914e282b), spline repair ON; sample-grid max delta 0.00208834 radians over 665 layer-bone samples (pectoral1 0.00208834, pectoral2 0.00207969, pectoral3 0.00207986, pectoral4 0.00207986, bottomfins 0.00189148, jaw 0.001941); 45 wrap pairs, |v(T-eps) - v(0+eps)| max 3e-08; non-layer bones moved 0.
+- Keyframe density search (an output): pectoral1 fewest 11 keys/bone at 0.0020889 over 263672 comparisons, one fewer 0.00291613; pectoral2 fewest 11 keys/bone at 0.0020889 over 263672 comparisons, one fewer 0.00291622; pectoral3 fewest 11 keys/bone at 0.0020889 over 263672 comparisons, one fewer 0.00291613; pectoral4 fewest 11 keys/bone at 0.0020889 over 263672 comparisons, one fewer 0.00291622; bottomfins fewest 13 keys/bone at 0.00189218 over 527344 comparisons, one fewer 0.0025443; jaw fewest 10 keys/bone at 0.00194412 over 263672 comparisons, one fewer 0.00280523; dense schedule of the shipped-candidate clip: bottomfins 0.00189218, jaw 0.00194412, pectoral1 0.0020889, pectoral2 0.0020889, pectoral3 0.0020889, pectoral4 0.0020889; reversed schedule max delta 0.
+- Keyframe late-prime twin (TEST-005): a manager built before its clips were served (unserved through the slot at age 137.371, no tick, bone motion 0), primed at age 138.371: pectoral1 declared 20 ticks, 2.89662 clip ticks per age tick, LUT index 2648, clip tick 0.808105; pectoral2 declared 20 ticks, 2.6738 clip ticks per age tick, LUT index 32692, clip tick 9.97681; pectoral3 declared 20 ticks, 2.45099 clip ticks per age tick, LUT index 62735, clip tick 19.1452; pectoral4 declared 20 ticks, 2.22817 clip ticks per age tick, LUT index 27243, clip tick 8.3139; bottomfins declared 20 ticks, 3.78789 clip ticks per age tick, LUT index 13545, clip tick 4.13361; jaw declared 20 ticks, 1.55972 clip ticks per age tick, LUT index 51838, clip tick 15.8197 - every fact the from-zero prime's; pose delta 0 at the prime, 0 over the follow-ups.
+
+## model_ant (Tier 2)
+
+- Exact bones: 20; cubes: 20.
+- Geometry maximum corner delta: 3.01662062534e-07 blocks (epsilon 1e-05).
+- Surface maximum UV delta: 0; normal delta: 2.44948974303e-07.
+- Animation maximum rotation delta: 0 radians (epsilon 2e-06).
+- Visual maximum changed fraction: 0; maximum mean absolute error: 0.
+- Draw order: GeckoLib bone order equals the classic draw order over 21 captures (420 draws).
+
+- Accepted path: production OreSpawnGeoReplacement.applyCustomAnimations through OreSpawnGeoReplacementModel.setCustomAnimations (`danger.orespawn.entity.client.AntGeoReplacement`).
+- Rotation maximum delta 0 radians; position maximum delta 0 model units over 15180 position channels; inputs {'limb_swing': 0.0, 'limb_swing_amounts': [0.0, 0.25, 0.5, 1.0], 'net_head_yaw_degrees': 0.0, 'head_pitch_degrees': 0.0}.
+- Visual z-fight pixels compared, none excluded (G2 root-order contract): maximum contested fraction 0, a diagnostic.
+- Keyframe reference leg: 2.5e-3 rad; Ant reference leg 15 / 8 catmullrom keys per bone with spline arguments repaired at load; wrap sample T−ε vs 0+ε included.
+- Keyframe leg: `danger.orespawn.entity.client.animation.PhaseLockedKeyframeController` layers of `danger.orespawn.entity.client.AntGeoReplacement` over clip `src/main/resources/assets/orespawn/animations/entity/ant.animation.json` (sha256 2f6ad0b8ba92), spline repair ON; sample-grid max delta 0.00216644 radians over 3528 layer-bone samples (gait 6.13921e-05, jaws 0.00216644); 116 wrap pairs, |v(T-eps) - v(0+eps)| max 0; non-layer bones moved 0.
+- Keyframe density search (an output): gait fewest 15 keys/bone at 0.00216275 over 3157296 comparisons, one fewer 0.00271118; jaws fewest 8 keys/bone at 0.00229527 over 526216 comparisons, one fewer 0.00398448; dense schedule of the shipped-candidate clip: gait 0.00216275, jaws 0.00229527; reversed schedule max delta 0.
+- Keyframe late-prime twin (TEST-005): a manager built before its clips were served (unserved through the slot at age 137.371, no tick, bone motion 0), primed at age 138.371: gait declared 20 ticks, 8.59437 clip ticks per age tick, LUT index 30183, clip tick 9.21112; jaws declared 20 ticks, 1.27324 clip ticks per age tick, LUT index 53016, clip tick 16.1792 - every fact the from-zero prime's; pose delta 0 at the prime, 0 over the follow-ups.
+
+## model_rainbow_ant (Tier 2)
+
+- Exact bones: 20; cubes: 20.
+- Geometry maximum corner delta: 3.01662062534e-07 blocks (epsilon 1e-05).
+- Surface maximum UV delta: 0; normal delta: 2.44948974303e-07.
+- Animation maximum rotation delta: 0 radians (epsilon 2e-06).
+- Visual maximum changed fraction: 0; maximum mean absolute error: 0.
+- Draw order: GeckoLib bone order equals the classic draw order over 21 captures (420 draws).
+
+- Accepted path: production OreSpawnGeoReplacement.applyCustomAnimations through OreSpawnGeoReplacementModel.setCustomAnimations (`danger.orespawn.entity.client.RainbowAntGeoReplacement`).
+- Rotation maximum delta 0 radians; position maximum delta 0 model units over 15180 position channels; inputs {'limb_swing': 0.0, 'limb_swing_amounts': [0.0, 0.25, 0.5, 1.0], 'net_head_yaw_degrees': 0.0, 'head_pitch_degrees': 0.0}.
+- Visual z-fight pixels compared, none excluded (G2 root-order contract): maximum contested fraction 0, a diagnostic.
+- Keyframe reference leg: 2.5e-3 rad; Rainbow Ant reference leg 15 / 8 catmullrom keys per bone with spline arguments repaired at load; wrap sample T−ε vs 0+ε included.
+- Keyframe leg: `danger.orespawn.entity.client.animation.PhaseLockedKeyframeController` layers of `danger.orespawn.entity.client.RainbowAntGeoReplacement` over clip `src/main/resources/assets/orespawn/animations/entity/ant.animation.json` (sha256 2f6ad0b8ba92), spline repair ON; sample-grid max delta 0.00216644 radians over 3528 layer-bone samples (gait 6.13921e-05, jaws 0.00216644); 116 wrap pairs, |v(T-eps) - v(0+eps)| max 0; non-layer bones moved 0.
+- Keyframe density search (an output): gait fewest 15 keys/bone at 0.00216275 over 3157296 comparisons, one fewer 0.00271118; jaws fewest 8 keys/bone at 0.00229527 over 526216 comparisons, one fewer 0.00398448; dense schedule of the shipped-candidate clip: gait 0.00216275, jaws 0.00229527; reversed schedule max delta 0.
+- Keyframe late-prime twin (TEST-005): a manager built before its clips were served (unserved through the slot at age 137.371, no tick, bone motion 0), primed at age 138.371: gait declared 20 ticks, 8.59437 clip ticks per age tick, LUT index 30183, clip tick 9.21112; jaws declared 20 ticks, 1.27324 clip ticks per age tick, LUT index 53016, clip tick 16.1792 - every fact the from-zero prime's; pose delta 0 at the prime, 0 over the follow-ups.
+
+## model_red_ant (Tier 2)
+
+- Exact bones: 20; cubes: 20.
+- Geometry maximum corner delta: 3.01662062534e-07 blocks (epsilon 1e-05).
+- Surface maximum UV delta: 0; normal delta: 2.44948974303e-07.
+- Animation maximum rotation delta: 0 radians (epsilon 2e-06).
+- Visual maximum changed fraction: 0; maximum mean absolute error: 0.
+- Draw order: GeckoLib bone order equals the classic draw order over 21 captures (420 draws).
+
+- Accepted path: production OreSpawnGeoReplacement.applyCustomAnimations through OreSpawnGeoReplacementModel.setCustomAnimations (`danger.orespawn.entity.client.RedAntGeoReplacement`).
+- Rotation maximum delta 0 radians; position maximum delta 0 model units over 15180 position channels; inputs {'limb_swing': 0.0, 'limb_swing_amounts': [0.0, 0.25, 0.5, 1.0], 'net_head_yaw_degrees': 0.0, 'head_pitch_degrees': 0.0}.
+- Visual z-fight pixels compared, none excluded (G2 root-order contract): maximum contested fraction 0, a diagnostic.
+- Keyframe reference leg: 2.5e-3 rad; Red Ant reference leg 15 / 8 catmullrom keys per bone with spline arguments repaired at load; wrap sample T−ε vs 0+ε included.
+- Keyframe leg: `danger.orespawn.entity.client.animation.PhaseLockedKeyframeController` layers of `danger.orespawn.entity.client.RedAntGeoReplacement` over clip `src/main/resources/assets/orespawn/animations/entity/ant.animation.json` (sha256 2f6ad0b8ba92), spline repair ON; sample-grid max delta 0.00216644 radians over 3528 layer-bone samples (gait 6.13921e-05, jaws 0.00216644); 116 wrap pairs, |v(T-eps) - v(0+eps)| max 0; non-layer bones moved 0.
+- Keyframe density search (an output): gait fewest 15 keys/bone at 0.00216275 over 3157296 comparisons, one fewer 0.00271118; jaws fewest 8 keys/bone at 0.00229527 over 526216 comparisons, one fewer 0.00398448; dense schedule of the shipped-candidate clip: gait 0.00216275, jaws 0.00229527; reversed schedule max delta 0.
+- Keyframe late-prime twin (TEST-005): a manager built before its clips were served (unserved through the slot at age 137.371, no tick, bone motion 0), primed at age 138.371: gait declared 20 ticks, 8.59437 clip ticks per age tick, LUT index 30183, clip tick 9.21112; jaws declared 20 ticks, 1.27324 clip ticks per age tick, LUT index 53016, clip tick 16.1792 - every fact the from-zero prime's; pose delta 0 at the prime, 0 over the follow-ups.
+
+## model_termite (Tier 2)
+
+- Exact bones: 20; cubes: 20.
+- Geometry maximum corner delta: 3.01662062534e-07 blocks (epsilon 1e-05).
+- Surface maximum UV delta: 0; normal delta: 2.44948974303e-07.
+- Animation maximum rotation delta: 0 radians (epsilon 2e-06).
+- Visual maximum changed fraction: 0; maximum mean absolute error: 0.
+- Draw order: GeckoLib bone order equals the classic draw order over 21 captures (420 draws).
+
+- Accepted path: production OreSpawnGeoReplacement.applyCustomAnimations through OreSpawnGeoReplacementModel.setCustomAnimations (`danger.orespawn.entity.client.TermiteGeoReplacement`).
+- Rotation maximum delta 0 radians; position maximum delta 0 model units over 15180 position channels; inputs {'limb_swing': 0.0, 'limb_swing_amounts': [0.0, 0.25, 0.5, 1.0], 'net_head_yaw_degrees': 0.0, 'head_pitch_degrees': 0.0}.
+- Visual z-fight pixels compared, none excluded (G2 root-order contract): maximum contested fraction 0, a diagnostic.
+- Keyframe reference leg: 2.5e-3 rad; Termite reference leg 15 / 8 catmullrom keys per bone with spline arguments repaired at load; wrap sample T−ε vs 0+ε included.
+- Keyframe leg: `danger.orespawn.entity.client.animation.PhaseLockedKeyframeController` layers of `danger.orespawn.entity.client.TermiteGeoReplacement` over clip `src/main/resources/assets/orespawn/animations/entity/ant.animation.json` (sha256 2f6ad0b8ba92), spline repair ON; sample-grid max delta 0.00216644 radians over 3528 layer-bone samples (gait 6.13921e-05, jaws 0.00216644); 116 wrap pairs, |v(T-eps) - v(0+eps)| max 0; non-layer bones moved 0.
+- Keyframe density search (an output): gait fewest 15 keys/bone at 0.00216275 over 3157296 comparisons, one fewer 0.00271118; jaws fewest 8 keys/bone at 0.00229527 over 526216 comparisons, one fewer 0.00398448; dense schedule of the shipped-candidate clip: gait 0.00216275, jaws 0.00229527; reversed schedule max delta 0.
+- Keyframe late-prime twin (TEST-005): a manager built before its clips were served (unserved through the slot at age 137.371, no tick, bone motion 0), primed at age 138.371: gait declared 20 ticks, 8.59437 clip ticks per age tick, LUT index 30183, clip tick 9.21112; jaws declared 20 ticks, 1.27324 clip ticks per age tick, LUT index 53016, clip tick 16.1792 - every fact the from-zero prime's; pose delta 0 at the prime, 0 over the follow-ups.
+
+## model_unstable_ant (Tier 2)
+
+- Exact bones: 20; cubes: 20.
+- Geometry maximum corner delta: 3.01662062534e-07 blocks (epsilon 1e-05).
+- Surface maximum UV delta: 0; normal delta: 2.44948974303e-07.
+- Animation maximum rotation delta: 0 radians (epsilon 2e-06).
+- Visual maximum changed fraction: 0; maximum mean absolute error: 0.
+- Draw order: GeckoLib bone order equals the classic draw order over 21 captures (420 draws).
+
+- Accepted path: production OreSpawnGeoReplacement.applyCustomAnimations through OreSpawnGeoReplacementModel.setCustomAnimations (`danger.orespawn.entity.client.UnstableAntGeoReplacement`).
+- Rotation maximum delta 0 radians; position maximum delta 0 model units over 15180 position channels; inputs {'limb_swing': 0.0, 'limb_swing_amounts': [0.0, 0.25, 0.5, 1.0], 'net_head_yaw_degrees': 0.0, 'head_pitch_degrees': 0.0}.
+- Visual z-fight pixels compared, none excluded (G2 root-order contract): maximum contested fraction 0.00430297851562, a diagnostic.
+- Keyframe reference leg: 2.5e-3 rad; Unstable Ant reference leg 15 / 8 catmullrom keys per bone with spline arguments repaired at load; wrap sample T−ε vs 0+ε included.
+- Keyframe leg: `danger.orespawn.entity.client.animation.PhaseLockedKeyframeController` layers of `danger.orespawn.entity.client.UnstableAntGeoReplacement` over clip `src/main/resources/assets/orespawn/animations/entity/ant.animation.json` (sha256 2f6ad0b8ba92), spline repair ON; sample-grid max delta 0.00216644 radians over 3528 layer-bone samples (gait 6.13921e-05, jaws 0.00216644); 116 wrap pairs, |v(T-eps) - v(0+eps)| max 0; non-layer bones moved 0.
+- Keyframe density search (an output): gait fewest 15 keys/bone at 0.00216275 over 3157296 comparisons, one fewer 0.00271118; jaws fewest 8 keys/bone at 0.00229527 over 526216 comparisons, one fewer 0.00398448; dense schedule of the shipped-candidate clip: gait 0.00216275, jaws 0.00229527; reversed schedule max delta 0.
+- Keyframe late-prime twin (TEST-005): a manager built before its clips were served (unserved through the slot at age 137.371, no tick, bone motion 0), primed at age 138.371: gait declared 20 ticks, 8.59437 clip ticks per age tick, LUT index 30183, clip tick 9.21112; jaws declared 20 ticks, 1.27324 clip ticks per age tick, LUT index 53016, clip tick 16.1792 - every fact the from-zero prime's; pose delta 0 at the prime, 0 over the follow-ups.
 
 Reproduce with `gradlew.bat g1Parity`. Any mismatch exits nonzero before
 proof evidence can be updated.

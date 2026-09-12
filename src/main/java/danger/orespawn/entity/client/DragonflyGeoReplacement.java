@@ -21,9 +21,12 @@ import software.bernie.geckolib.animation.AnimationProcessor;
  * minus the bind).
  *
  * <p>The SHIPPED pose is the classic hook below (the S4 doctrine); {@link #keyframeLayers()} declares the two
- * groups' transcription. A multi-group species without a gait group has no bare {@code walk} under contract
- * section 2.1 ({@code walk_wings}, {@code walk_jaws}), so the shipped {@code dragonfly.animation.json} leaves the
- * gate CLOSED as ruled until the owner rules which group carries the bare name (presented with the slice).</p>
+ * groups' transcription. A multi-group species without a gait group carries the bare {@code walk} on its SPEC's
+ * primary group - {@code primary_group} in the clip manifest and the seed, the FIRST group ({@code wings}) here
+ * (owner 2026-09-13, addendum item 26 (2); contract section 2.1 amended; the bare name is a label, not a semantic:
+ * the contract's fly - walk fallback plays it in flight) - and {@code walk_jaws} on the other, so the shipped
+ * {@code dragonfly.animation.json} ({@code idle} keying no bone + {@code walk} + {@code walk_jaws}) OPENS the gate on
+ * the GeckoLib candidate (the second Tier-2 slice; the first slice shipped it CLOSED as {@code walk_wings}).</p>
  *
  * <p>Scale and shadow follow {@link DragonflyRenderer}: 1.5 render scale and a 0.3 x 1.5 shadow (ENT-S-092).</p>
  */
@@ -31,7 +34,8 @@ public final class DragonflyGeoReplacement extends OreSpawnGeoReplacement<Entity
     /** orig ModelDragonfly.java:13,42 {@code wingspeed} = 2.0f (ClientProxyOreSpawn.java:424): the chain's second multiply. */
     static final float WINGSPEED = 2.0F;
     static final List<KeyframeLayer> KEYFRAME_LAYERS = List.of(
-            new KeyframeLayer("wings", KeyframeLayer.walkClip("wings"), 1.3F, WINGSPEED,
+            // the SPEC's primary group (the first): the bare walk, a label under the naming rule
+            new KeyframeLayer("wings", KeyframeLayer.WALK, 1.3F, WINGSPEED,
                     Set.of("lfwing", "rfwing", "lrwing", "rrwing"), false),
             new KeyframeLayer("jaws", KeyframeLayer.walkClip("jaws"), 0.3F, WINGSPEED, Set.of("ljaw", "rjaw"), false));
     private static final GeoReplacementDescriptor<EntityDragonfly> DESCRIPTOR = new GeoReplacementDescriptor<>(

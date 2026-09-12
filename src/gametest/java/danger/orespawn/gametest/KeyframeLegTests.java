@@ -7,6 +7,7 @@ import danger.orespawn.ModEntities;
 import danger.orespawn.OreSpawnConfig;
 import danger.orespawn.OreSpawnMod;
 import danger.orespawn.entity.Beaver;
+import danger.orespawn.entity.client.AntGeoReplacement;
 import danger.orespawn.entity.client.BeaverGeoReplacement;
 import danger.orespawn.entity.client.BrutalflyGeoReplacement;
 import danger.orespawn.entity.client.CliffRacerGeoReplacement;
@@ -14,12 +15,16 @@ import danger.orespawn.entity.client.CockateilGeoReplacement;
 import danger.orespawn.entity.client.CoinGeoReplacement;
 import danger.orespawn.entity.client.DragonflyGeoReplacement;
 import danger.orespawn.entity.client.ElevatorGeoReplacement;
+import danger.orespawn.entity.client.FireflyGeoReplacement;
+import danger.orespawn.entity.client.GoldFishGeoReplacement;
 import danger.orespawn.entity.client.IslandGeoReplacement;
 import danger.orespawn.entity.client.IslandTooGeoReplacement;
 import danger.orespawn.entity.client.MosquitoGeoReplacement;
 import danger.orespawn.entity.client.OreSpawnGeoReplacement;
 import danger.orespawn.entity.client.OreSpawnGeoReplacementModel;
 import danger.orespawn.entity.client.PurplePowerGeoReplacement;
+import danger.orespawn.entity.client.RainbowAntGeoReplacement;
+import danger.orespawn.entity.client.RedAntGeoReplacement;
 import danger.orespawn.entity.client.Robot1GeoReplacement;
 import danger.orespawn.entity.client.Robot2GeoReplacement;
 import danger.orespawn.entity.client.Robot3GeoReplacement;
@@ -28,7 +33,9 @@ import danger.orespawn.entity.client.Robot5GeoReplacement;
 import danger.orespawn.entity.client.RockBaseGeoReplacement;
 import danger.orespawn.entity.client.RotatorGeoReplacement;
 import danger.orespawn.entity.client.RubyBirdGeoReplacement;
+import danger.orespawn.entity.client.TermiteGeoReplacement;
 import danger.orespawn.entity.client.TshirtGeoReplacement;
+import danger.orespawn.entity.client.UnstableAntGeoReplacement;
 import danger.orespawn.entity.client.VortexGeoReplacement;
 import danger.orespawn.entity.client.animation.KeyframeLayer;
 import danger.orespawn.entity.client.animation.PhaseLockedKeyframeController;
@@ -123,9 +130,9 @@ import software.bernie.geckolib.model.GeoModel;
  *     {@code MolangQueries}, which the dedicated server refuses; the harness leg carries these facts): the declared-length time-warp (the same shape at 0.5 s and 2.0 s poses identically;
  *     the declared ticks and the ratio), the late prime (a controller first processed at a late age poses
  *     as one that ran from age zero), the LUT index chain straddling a seam and saturating at an absurd age.</li>
- * <li>{@code kf_007} (item 15 refuter A, D1; the first Tier-2 slice, 2026-09-13): the presented state - every one
- *     of the twenty-one shipped replacements, constructed registry-free on this server, declares no keyframe layer
- *     but the Beaver (its three) and the seven Tier-2 descriptors (their transcriptions, pinned group by group in
+ * <li>{@code kf_007} (item 15 refuter A, D1; the Tier-2 slices, 2026-09-13): the presented state - every one
+ *     of the twenty-eight shipped replacements, constructed registry-free on this server, declares no keyframe layer
+ *     but the Beaver (its three) and the fourteen Tier-2 descriptors (their transcriptions, pinned group by group in
  *     {@link T2SeamTests}); {@code registerControllers} is final on the base and no replacement declares its own, so
  *     the base's self-gated registration is the single path, and it registers nothing here for every species.</li>
  * <li>{@code kf_008} (item 15 refuter B, D2): the production repair site - GeckoLib's animation cache map
@@ -565,19 +572,28 @@ public class KeyframeLegTests {
                 // the first Tier-2 slice (2026-09-13): the simple-cyclic rigs, transcribed
                 new TshirtGeoReplacement(), new MosquitoGeoReplacement(), new CliffRacerGeoReplacement(),
                 new BrutalflyGeoReplacement(), new DragonflyGeoReplacement(), new CockateilGeoReplacement(),
-                new RubyBirdGeoReplacement());
+                new RubyBirdGeoReplacement(),
+                // the second Tier-2 slice (2026-09-13): the two rigs rejoined under ENT-S-161, the Ant rig's five consumers
+                new FireflyGeoReplacement(), new GoldFishGeoReplacement(),
+                new AntGeoReplacement(), new RainbowAntGeoReplacement(), new RedAntGeoReplacement(),
+                new TermiteGeoReplacement(), new UnstableAntGeoReplacement());
     }
 
     /** The Tier-2 descriptors' declared group counts (pinned group by group in T2SeamTests). */
-    private static final Map<Class<?>, Integer> TIER_2_GROUPS = Map.of(
-            TshirtGeoReplacement.class, 1, MosquitoGeoReplacement.class, 1, CliffRacerGeoReplacement.class, 1,
-            BrutalflyGeoReplacement.class, 1, DragonflyGeoReplacement.class, 2, CockateilGeoReplacement.class, 5,
-            RubyBirdGeoReplacement.class, 5);
+    private static final Map<Class<?>, Integer> TIER_2_GROUPS = Map.ofEntries(
+            Map.entry(TshirtGeoReplacement.class, 1), Map.entry(MosquitoGeoReplacement.class, 1),
+            Map.entry(CliffRacerGeoReplacement.class, 1), Map.entry(BrutalflyGeoReplacement.class, 1),
+            Map.entry(DragonflyGeoReplacement.class, 2), Map.entry(CockateilGeoReplacement.class, 5),
+            Map.entry(RubyBirdGeoReplacement.class, 5),
+            Map.entry(FireflyGeoReplacement.class, 1),
+            Map.entry(GoldFishGeoReplacement.class, 6), Map.entry(AntGeoReplacement.class, 2),
+            Map.entry(RainbowAntGeoReplacement.class, 2), Map.entry(RedAntGeoReplacement.class, 2),
+            Map.entry(TermiteGeoReplacement.class, 2), Map.entry(UnstableAntGeoReplacement.class, 2));
 
     @GameTest(template = "empty", batch = BATCH)
     public static void kf_007_every_shipped_replacement_declares_its_layers_and_the_seam_registers_nothing_here(GameTestHelper helper) throws ReflectiveOperationException {
         List<OreSpawnGeoReplacement<?>> replacements = everyReplacement();
-        helper.assertTrue(replacements.size() == 21, "the twenty-one shipped replacements (G1, Slice 4 and the first Tier-2 slice)");
+        helper.assertTrue(replacements.size() == 28, "the twenty-eight shipped replacements (G1, Slice 4 and the two Tier-2 slices)");
         Method sealed = OreSpawnGeoReplacement.class.getMethod("registerControllers", AnimatableManager.ControllerRegistrar.class);
         helper.assertTrue(Modifier.isFinal(sealed.getModifiers()),
                 "registerControllers is final on the base: registerKeyframeLayers over loadedClips is the single self-gating path");
@@ -600,8 +616,8 @@ public class KeyframeLegTests {
             helper.assertTrue(new AnimatableManager<>(replacement).getAnimationControllers().isEmpty(),
                     name + ": the production registerControllers registers nothing on this server (no bake; the layers empty, or the clips absent)");
         }
-        helper.assertTrue(beavers == 1, "exactly one Beaver among the twenty-one");
-        helper.assertTrue(tier2 == 7, "the seven Tier-2 descriptors among the twenty-one");
+        helper.assertTrue(beavers == 1, "exactly one Beaver among the twenty-eight");
+        helper.assertTrue(tier2 == 14, "the fourteen Tier-2 descriptors among the twenty-eight");
         helper.succeed();
     }
 

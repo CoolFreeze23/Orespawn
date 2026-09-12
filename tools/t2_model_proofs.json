@@ -727,7 +727,807 @@
         }
       },
       "reference_note": "no reference_source here: the parsed 1.7.10 source diverges from the port by the MIRROR pins the standing reference gate carries (tools/reference_model_proofs.json; BUG-041, cleared by the mirror drop), and tools/g1_render_parity.py accepts only an exact reference match - the s4 precedent (model_coin only)"
+    },
+    {
+      "id": "model_firefly",
+      "tier": 2,
+      "class": "danger.orespawn.entity.client.FireflyModel",
+      "texture": "src/main/resources/assets/orespawn/textures/entity/fireflytexture.png",
+      "animation_kind": "code_driven",
+      "candidate_animation_path": "production_replacement_hook",
+      "candidate_class": "danger.orespawn.entity.client.FireflyGeoReplacement",
+      "loop_period_age_ticks": 20.0,
+      "period_note": "the one frequency 2.5 rad/tick closes every 2.51 ticks; eight cycles inside the loop (the Mosquito's 20-tick loop)",
+      "sample_fractions": [
+        0.0,
+        0.25,
+        0.5,
+        0.75,
+        1.0
+      ],
+      "limb_swing": 0.0,
+      "limb_swing_amount": 0.0,
+      "net_head_yaw": 0.0,
+      "head_pitch": 0.0,
+      "camera": {
+        "yaw_degrees": 34.0,
+        "pitch_degrees": -28.0
+      },
+      "cube_face_order": "classic",
+      "face_order_note": "the second Tier-2 slice (2026-09-13): this rig carries zero-thickness cubes (the two wings, 0 x 6 x 2, mirrored, rotated about Z at bind), each drawing its two coplanar faces without culling; where the two faces carry different texels the z-fight winner is the face emitted last (LEQUAL in-game; the harness's rasteriser: first) - and for a .mirror()ed cube flat in X the classic emits the +X-normal face before the -X one (Polygon.<init> negates the X normal of the WEST slot) while GeckoLib's buildQuads emits WEST (-X) before EAST (+X), so the candidate showed the OTHER face: run 1 of the chain refused the Cloud Shark at bind (changed 1.6 percent, contested 2.56 percent, every changed pixel on the three fins). The FaceOrder contract's open item for a cutout rig (a zero-thickness box, FaceOrder.java) - met by declaring the classic order here exactly as the PurplePower does; the seam permutes every cube's quads into it and the draw-order leg compares the per-quad normal sequences of both renderers on every capture; the descriptor requires the key (a re-exported pack that drops it gets one WARN)",
+      "channels": [
+        {
+          "bones": [
+            "wing_left"
+          ],
+          "axis": "z",
+          "formula": "cosine",
+          "frequency_radians_per_age_tick": 2.5,
+          "pi_scale": 0.35,
+          "limb_swing_scaled": false,
+          "sign": 1.0,
+          "base_radians": 1.11,
+          "source": "FireflyModel.setupAnim:112: wing_left.zRot = 1.11f + cos(ageInTicks * wingspeed) * PI * 0.35f; wingspeed 2.5f is the one frequency (orig ModelFirefly.java:16,33, ClientProxyOreSpawn.java:406)"
+        },
+        {
+          "bones": [
+            "wing_right"
+          ],
+          "axis": "z",
+          "formula": "cosine",
+          "frequency_radians_per_age_tick": 2.5,
+          "pi_scale": 0.35,
+          "limb_swing_scaled": false,
+          "sign": -1.0,
+          "base_radians": -1.11,
+          "source": "FireflyModel.setupAnim:113: wing_right.zRot = -1.11f - cos(ageInTicks * wingspeed) * PI * 0.35f"
+        }
+      ],
+      "keyframe_reference_leg": {
+        "candidate_class": "danger.orespawn.entity.client.FireflyGeoReplacement",
+        "clip_path": "src/main/resources/assets/orespawn/animations/entity/firefly.animation.json",
+        "clip_manifest": "tools/keyframe_clips/firefly.json",
+        "spline_repair": true,
+        "wrap_epsilon_lut_indices": 4,
+        "density_search": {
+          "min_keys": 3,
+          "max_keys": 97,
+          "search_uniform_intervals": 4096,
+          "confirm_uniform_intervals": 65536,
+          "late_start_age_ticks": 137.371,
+          "span_age_ticks": 40.5
+        }
+      },
+      "reference_note": "no reference_source here: the parsed 1.7.10 source diverges from the port by the MIRROR pins the standing reference gate carries (tools/reference_model_proofs.json; BUG-041, cleared by the mirror drop), and tools/g1_render_parity.py accepts only an exact reference match - the s4 precedent (model_coin only)"
+    },
+    {
+      "id": "model_goldfish",
+      "tier": 2,
+      "class": "danger.orespawn.entity.client.ModelGoldFish",
+      "texture": "src/main/resources/assets/orespawn/textures/entity/goldfish.png",
+      "animation_kind": "code_driven",
+      "candidate_animation_path": "production_replacement_hook",
+      "candidate_class": "danger.orespawn.entity.client.GoldFishGeoReplacement",
+      "loop_period_age_ticks": 62.83185307179586,
+      "period_note": "the slowest frequency 0.7 x 0.7 = 0.49 rad/tick closes every 12.82 ticks; the Beaver's 2 pi / 0.1 loop holds 4.9 cycles of it",
+      "sample_fractions": [
+        0.0,
+        0.25,
+        0.5,
+        0.75,
+        1.0
+      ],
+      "limb_swing": 0.0,
+      "limb_swing_amount": 0.0,
+      "net_head_yaw": 0.0,
+      "head_pitch": 0.0,
+      "camera": {
+        "yaw_degrees": 34.0,
+        "pitch_degrees": -28.0
+      },
+      "cube_face_order": "classic",
+      "face_order_note": "the second Tier-2 slice (2026-09-13): this rig carries zero-thickness cubes (the four pectoral fins and the two lower fins, mirrored, the pectoral fins rotated about Y at bind), each drawing its two coplanar faces without culling; where the two faces carry different texels the z-fight winner is the face emitted last (LEQUAL in-game; the harness's rasteriser: first) - and for a .mirror()ed cube flat in X the classic emits the +X-normal face before the -X one (Polygon.<init> negates the X normal of the WEST slot) while GeckoLib's buildQuads emits WEST (-X) before EAST (+X), so the candidate showed the OTHER face: run 1 of the chain refused the Cloud Shark at bind (changed 1.6 percent, contested 2.56 percent, every changed pixel on the three fins). The FaceOrder contract's open item for a cutout rig (a zero-thickness box, FaceOrder.java) - met by declaring the classic order here exactly as the PurplePower does; the seam permutes every cube's quads into it and the draw-order leg compares the per-quad normal sequences of both renderers on every capture; the descriptor requires the key (a re-exported pack that drops it gets one WARN)",
+      "channels": [
+        {
+          "bones": [
+            "Pectoralfin1"
+          ],
+          "axis": "y",
+          "formula": "cosine",
+          "frequency_radians_per_age_tick": 1.3,
+          "wingspeed": 0.7,
+          "pi_scale": 0.15,
+          "limb_swing_scaled": false,
+          "sign": 1.0,
+          "base_radians": 0.4,
+          "source": "ModelGoldFish.setupAnim:125-126: Pectoralfin1.yRot = 0.4f + cos(ageInTicks * 1.3f * wingspeed) * PI * 0.15f; wingspeed 0.7f (orig ModelGoldFish.java:13,32, ClientProxyOreSpawn.java:470)"
+        },
+        {
+          "bones": [
+            "Pectoralfin2"
+          ],
+          "axis": "y",
+          "formula": "cosine",
+          "frequency_radians_per_age_tick": 1.2,
+          "wingspeed": 0.7,
+          "pi_scale": 0.15,
+          "limb_swing_scaled": false,
+          "sign": 1.0,
+          "base_radians": -0.4,
+          "source": "ModelGoldFish.setupAnim:127-128: Pectoralfin2.yRot = -0.4f + cos(ageInTicks * 1.2f * wingspeed) * PI * 0.15f"
+        },
+        {
+          "bones": [
+            "Pectoralfin3"
+          ],
+          "axis": "y",
+          "formula": "cosine",
+          "frequency_radians_per_age_tick": 1.1,
+          "wingspeed": 0.7,
+          "pi_scale": 0.15,
+          "limb_swing_scaled": false,
+          "sign": 1.0,
+          "base_radians": 0.4,
+          "source": "ModelGoldFish.setupAnim:129-130: Pectoralfin3.yRot = 0.4f + cos(ageInTicks * 1.1f * wingspeed) * PI * 0.15f"
+        },
+        {
+          "bones": [
+            "Pectoralfin4"
+          ],
+          "axis": "y",
+          "formula": "cosine",
+          "frequency_radians_per_age_tick": 1.0,
+          "wingspeed": 0.7,
+          "pi_scale": 0.15,
+          "limb_swing_scaled": false,
+          "sign": 1.0,
+          "base_radians": -0.4,
+          "source": "ModelGoldFish.setupAnim:131-132: Pectoralfin4.yRot = -0.4f + cos(ageInTicks * 1.0f * wingspeed) * PI * 0.15f"
+        },
+        {
+          "bones": [
+            "Bottomfin1"
+          ],
+          "axis": "y",
+          "formula": "cosine",
+          "frequency_radians_per_age_tick": 1.7,
+          "wingspeed": 0.7,
+          "pi_scale": 0.25,
+          "limb_swing_scaled": false,
+          "sign": 1.0,
+          "source": "ModelGoldFish.setupAnim:133: Bottomfin1.yRot = cos(ageInTicks * 1.7f * wingspeed) * PI * 0.25f"
+        },
+        {
+          "bones": [
+            "Bottomfin2"
+          ],
+          "axis": "y",
+          "formula": "cosine",
+          "frequency_radians_per_age_tick": 1.7,
+          "wingspeed": 0.7,
+          "pi_scale": 0.25,
+          "limb_swing_scaled": false,
+          "sign": -1.0,
+          "source": "ModelGoldFish.setupAnim:134: Bottomfin2.yRot = -newangle"
+        },
+        {
+          "bones": [
+            "Jaw"
+          ],
+          "axis": "x",
+          "formula": "cosine",
+          "frequency_radians_per_age_tick": 0.7,
+          "wingspeed": 0.7,
+          "pi_scale": 0.1,
+          "limb_swing_scaled": false,
+          "sign": 1.0,
+          "base_radians": -0.25,
+          "source": "ModelGoldFish.setupAnim:135-136: Jaw.xRot = -0.25f + cos(ageInTicks * 0.7f * wingspeed) * PI * 0.1f"
+        }
+      ],
+      "keyframe_reference_leg": {
+        "candidate_class": "danger.orespawn.entity.client.GoldFishGeoReplacement",
+        "clip_path": "src/main/resources/assets/orespawn/animations/entity/goldfish.animation.json",
+        "clip_manifest": "tools/keyframe_clips/gold_fish.json",
+        "spline_repair": true,
+        "wrap_epsilon_lut_indices": 4,
+        "density_search": {
+          "min_keys": 3,
+          "max_keys": 97,
+          "search_uniform_intervals": 4096,
+          "confirm_uniform_intervals": 65536,
+          "late_start_age_ticks": 137.371,
+          "span_age_ticks": 40.5
+        }
+      },
+      "reference_note": "no reference_source here: the parsed 1.7.10 source diverges from the port by the MIRROR pins the standing reference gate carries (tools/reference_model_proofs.json; BUG-041, cleared by the mirror drop), and tools/g1_render_parity.py accepts only an exact reference match - the s4 precedent (model_coin only)"
+    },
+    {
+      "id": "model_ant",
+      "tier": 2,
+      "class": "danger.orespawn.entity.client.AntModel",
+      "texture": "src/main/resources/assets/orespawn/textures/entity/ant.png",
+      "rig_note": "the first gait-scaled Tier-2 rig after the Beaver: the gait channels are scaled by limbSwingAmount, so the setupAnim and visual legs run the Beaver's amplitude matrix (limb_swing_amount_samples) and the keyframe leg its own",
+      "animation_kind": "code_driven",
+      "candidate_animation_path": "production_replacement_hook",
+      "candidate_class": "danger.orespawn.entity.client.AntGeoReplacement",
+      "loop_period_age_ticks": 62.83185307179586,
+      "period_note": "the jaws' 0.4 rad/tick closes every 15.71 ticks; the Beaver's 2 pi / 0.1 loop holds four cycles of it (the gait's 2.7 rad/tick, 27)",
+      "sample_fractions": [
+        0.0,
+        0.25,
+        0.5,
+        0.75,
+        1.0
+      ],
+      "limb_swing": 0.0,
+      "limb_swing_amount": 0.0,
+      "limb_swing_amount_samples": [
+        0.0,
+        0.25,
+        0.5,
+        1.0
+      ],
+      "visual_sample_ids": [
+        "bind",
+        "a1_t0",
+        "a1_t_quarter",
+        "a1_t_half",
+        "a1_t_three_quarter"
+      ],
+      "visual_note": "the Beaver's visual samples for a gait-scaled rig (g1): the bind and the full-amplitude fractions; the amplitude matrix is the setupAnim leg's and the keyframe leg's",
+      "net_head_yaw": 0.0,
+      "head_pitch": 0.0,
+      "camera": {
+        "yaw_degrees": 34.0,
+        "pitch_degrees": -28.0
+      },
+      "channels": [
+        {
+          "bones": [
+            "llegbot1",
+            "llegtop1",
+            "rlegtop2",
+            "rlegbot2",
+            "rlegtop3",
+            "rlegbot3"
+          ],
+          "axis": "x",
+          "formula": "cosine",
+          "frequency_radians_per_age_tick": 2.7,
+          "pi_scale": 0.45,
+          "limb_swing_scaled": true,
+          "sign": 1.0,
+          "source": "AntModel.setupAnim:166-170 (orig ModelAnt.java:162-166): llegbot1.xRot = llegtop1.xRot = cos(ageInTicks * 2.7f) * PI * 0.45f * limbSwingAmount; rlegtop2, rlegbot2, rlegtop3, rlegbot3 the same"
+        },
+        {
+          "bones": [
+            "rlegtop1",
+            "rlegbot1",
+            "llegtop2",
+            "llegbot2",
+            "llegtop3",
+            "llegbot3"
+          ],
+          "axis": "x",
+          "formula": "cosine",
+          "frequency_radians_per_age_tick": 2.7,
+          "pi_scale": 0.45,
+          "limb_swing_scaled": true,
+          "sign": -1.0,
+          "source": "AntModel.setupAnim:171-176 (orig ModelAnt.java:167-172): the six others the negative"
+        },
+        {
+          "bones": [
+            "jawsl"
+          ],
+          "axis": "y",
+          "formula": "cosine",
+          "frequency_radians_per_age_tick": 0.4,
+          "pi_scale": 0.05,
+          "limb_swing_scaled": false,
+          "sign": 1.0,
+          "source": "AntModel.setupAnim:177 (orig ModelAnt.java:173): jawsl.yRot = cos(ageInTicks * 0.4f) * PI * 0.05f"
+        },
+        {
+          "bones": [
+            "jawsr"
+          ],
+          "axis": "y",
+          "formula": "cosine",
+          "frequency_radians_per_age_tick": 0.4,
+          "pi_scale": 0.05,
+          "limb_swing_scaled": false,
+          "sign": -1.0,
+          "source": "AntModel.setupAnim:178 (orig ModelAnt.java:174): jawsr.yRot = -jawsl.yRot"
+        }
+      ],
+      "keyframe_reference_leg": {
+        "candidate_class": "danger.orespawn.entity.client.AntGeoReplacement",
+        "clip_path": "src/main/resources/assets/orespawn/animations/entity/ant.animation.json",
+        "clip_manifest": "tools/keyframe_clips/ant.json",
+        "spline_repair": true,
+        "wrap_epsilon_lut_indices": 4,
+        "density_search": {
+          "min_keys": 3,
+          "max_keys": 97,
+          "search_uniform_intervals": 4096,
+          "confirm_uniform_intervals": 65536,
+          "late_start_age_ticks": 137.371,
+          "span_age_ticks": 40.5
+        }
+      },
+      "reference_note": "no reference_source here: the parsed 1.7.10 source diverges from the port by the MIRROR pins the standing reference gate carries (tools/reference_model_proofs.json; BUG-041, cleared by the mirror drop), and tools/g1_render_parity.py accepts only an exact reference match - the s4 precedent (model_coin only)"
+    },
+    {
+      "id": "model_rainbow_ant",
+      "tier": 2,
+      "class": "danger.orespawn.entity.client.AntModel",
+      "texture": "src/main/resources/assets/orespawn/textures/entity/rainbow_ant.png",
+      "rig_note": "one rig, five consumers (orig ClientProxyOreSpawn.java:412-415, 476: RenderAnt(new ModelAnt(), shadow, scale) with 0.1f / 0.25f for the Ant, Rainbow Ant and Unstable Ant and 0.15f / 0.35f for the Red Ant and Termite): the Rainbow Ant's descriptor shares the Ant's shipped geo, clip file, layers and hook under its own registry path (design Q9); proven here on its own entry",
+      "animation_kind": "code_driven",
+      "candidate_animation_path": "production_replacement_hook",
+      "candidate_class": "danger.orespawn.entity.client.RainbowAntGeoReplacement",
+      "loop_period_age_ticks": 62.83185307179586,
+      "period_note": "the jaws' 0.4 rad/tick closes every 15.71 ticks; the Beaver's 2 pi / 0.1 loop holds four cycles of it (the gait's 2.7 rad/tick, 27)",
+      "sample_fractions": [
+        0.0,
+        0.25,
+        0.5,
+        0.75,
+        1.0
+      ],
+      "limb_swing": 0.0,
+      "limb_swing_amount": 0.0,
+      "limb_swing_amount_samples": [
+        0.0,
+        0.25,
+        0.5,
+        1.0
+      ],
+      "visual_sample_ids": [
+        "bind",
+        "a1_t0",
+        "a1_t_quarter",
+        "a1_t_half",
+        "a1_t_three_quarter"
+      ],
+      "visual_note": "the Beaver's visual samples for a gait-scaled rig (g1): the bind and the full-amplitude fractions; the amplitude matrix is the setupAnim leg's and the keyframe leg's",
+      "net_head_yaw": 0.0,
+      "head_pitch": 0.0,
+      "camera": {
+        "yaw_degrees": 34.0,
+        "pitch_degrees": -28.0
+      },
+      "channels": [
+        {
+          "bones": [
+            "llegbot1",
+            "llegtop1",
+            "rlegtop2",
+            "rlegbot2",
+            "rlegtop3",
+            "rlegbot3"
+          ],
+          "axis": "x",
+          "formula": "cosine",
+          "frequency_radians_per_age_tick": 2.7,
+          "pi_scale": 0.45,
+          "limb_swing_scaled": true,
+          "sign": 1.0,
+          "source": "AntModel.setupAnim:166-170 (orig ModelAnt.java:162-166): llegbot1.xRot = llegtop1.xRot = cos(ageInTicks * 2.7f) * PI * 0.45f * limbSwingAmount; rlegtop2, rlegbot2, rlegtop3, rlegbot3 the same"
+        },
+        {
+          "bones": [
+            "rlegtop1",
+            "rlegbot1",
+            "llegtop2",
+            "llegbot2",
+            "llegtop3",
+            "llegbot3"
+          ],
+          "axis": "x",
+          "formula": "cosine",
+          "frequency_radians_per_age_tick": 2.7,
+          "pi_scale": 0.45,
+          "limb_swing_scaled": true,
+          "sign": -1.0,
+          "source": "AntModel.setupAnim:171-176 (orig ModelAnt.java:167-172): the six others the negative"
+        },
+        {
+          "bones": [
+            "jawsl"
+          ],
+          "axis": "y",
+          "formula": "cosine",
+          "frequency_radians_per_age_tick": 0.4,
+          "pi_scale": 0.05,
+          "limb_swing_scaled": false,
+          "sign": 1.0,
+          "source": "AntModel.setupAnim:177 (orig ModelAnt.java:173): jawsl.yRot = cos(ageInTicks * 0.4f) * PI * 0.05f"
+        },
+        {
+          "bones": [
+            "jawsr"
+          ],
+          "axis": "y",
+          "formula": "cosine",
+          "frequency_radians_per_age_tick": 0.4,
+          "pi_scale": 0.05,
+          "limb_swing_scaled": false,
+          "sign": -1.0,
+          "source": "AntModel.setupAnim:178 (orig ModelAnt.java:174): jawsr.yRot = -jawsl.yRot"
+        }
+      ],
+      "keyframe_reference_leg": {
+        "candidate_class": "danger.orespawn.entity.client.RainbowAntGeoReplacement",
+        "clip_path": "src/main/resources/assets/orespawn/animations/entity/ant.animation.json",
+        "clip_manifest": "tools/keyframe_clips/rainbow_ant.json",
+        "spline_repair": true,
+        "wrap_epsilon_lut_indices": 4,
+        "density_search": {
+          "min_keys": 3,
+          "max_keys": 97,
+          "search_uniform_intervals": 4096,
+          "confirm_uniform_intervals": 65536,
+          "late_start_age_ticks": 137.371,
+          "span_age_ticks": 40.5
+        }
+      },
+      "reference_note": "no reference_source here: the parsed 1.7.10 source diverges from the port by the MIRROR pins the standing reference gate carries (tools/reference_model_proofs.json; BUG-041, cleared by the mirror drop), and tools/g1_render_parity.py accepts only an exact reference match - the s4 precedent (model_coin only)"
+    },
+    {
+      "id": "model_red_ant",
+      "tier": 2,
+      "class": "danger.orespawn.entity.client.AntModel",
+      "texture": "src/main/resources/assets/orespawn/textures/entity/red_ant.png",
+      "rig_note": "one rig, five consumers (orig ClientProxyOreSpawn.java:412-415, 476: RenderAnt(new ModelAnt(), shadow, scale) with 0.1f / 0.25f for the Ant, Rainbow Ant and Unstable Ant and 0.15f / 0.35f for the Red Ant and Termite): the Red Ant's descriptor shares the Ant's shipped geo, clip file, layers and hook under its own registry path (design Q9); proven here on its own entry",
+      "animation_kind": "code_driven",
+      "candidate_animation_path": "production_replacement_hook",
+      "candidate_class": "danger.orespawn.entity.client.RedAntGeoReplacement",
+      "loop_period_age_ticks": 62.83185307179586,
+      "period_note": "the jaws' 0.4 rad/tick closes every 15.71 ticks; the Beaver's 2 pi / 0.1 loop holds four cycles of it (the gait's 2.7 rad/tick, 27)",
+      "sample_fractions": [
+        0.0,
+        0.25,
+        0.5,
+        0.75,
+        1.0
+      ],
+      "limb_swing": 0.0,
+      "limb_swing_amount": 0.0,
+      "limb_swing_amount_samples": [
+        0.0,
+        0.25,
+        0.5,
+        1.0
+      ],
+      "visual_sample_ids": [
+        "bind",
+        "a1_t0",
+        "a1_t_quarter",
+        "a1_t_half",
+        "a1_t_three_quarter"
+      ],
+      "visual_note": "the Beaver's visual samples for a gait-scaled rig (g1): the bind and the full-amplitude fractions; the amplitude matrix is the setupAnim leg's and the keyframe leg's",
+      "net_head_yaw": 0.0,
+      "head_pitch": 0.0,
+      "camera": {
+        "yaw_degrees": 34.0,
+        "pitch_degrees": -28.0
+      },
+      "channels": [
+        {
+          "bones": [
+            "llegbot1",
+            "llegtop1",
+            "rlegtop2",
+            "rlegbot2",
+            "rlegtop3",
+            "rlegbot3"
+          ],
+          "axis": "x",
+          "formula": "cosine",
+          "frequency_radians_per_age_tick": 2.7,
+          "pi_scale": 0.45,
+          "limb_swing_scaled": true,
+          "sign": 1.0,
+          "source": "AntModel.setupAnim:166-170 (orig ModelAnt.java:162-166): llegbot1.xRot = llegtop1.xRot = cos(ageInTicks * 2.7f) * PI * 0.45f * limbSwingAmount; rlegtop2, rlegbot2, rlegtop3, rlegbot3 the same"
+        },
+        {
+          "bones": [
+            "rlegtop1",
+            "rlegbot1",
+            "llegtop2",
+            "llegbot2",
+            "llegtop3",
+            "llegbot3"
+          ],
+          "axis": "x",
+          "formula": "cosine",
+          "frequency_radians_per_age_tick": 2.7,
+          "pi_scale": 0.45,
+          "limb_swing_scaled": true,
+          "sign": -1.0,
+          "source": "AntModel.setupAnim:171-176 (orig ModelAnt.java:167-172): the six others the negative"
+        },
+        {
+          "bones": [
+            "jawsl"
+          ],
+          "axis": "y",
+          "formula": "cosine",
+          "frequency_radians_per_age_tick": 0.4,
+          "pi_scale": 0.05,
+          "limb_swing_scaled": false,
+          "sign": 1.0,
+          "source": "AntModel.setupAnim:177 (orig ModelAnt.java:173): jawsl.yRot = cos(ageInTicks * 0.4f) * PI * 0.05f"
+        },
+        {
+          "bones": [
+            "jawsr"
+          ],
+          "axis": "y",
+          "formula": "cosine",
+          "frequency_radians_per_age_tick": 0.4,
+          "pi_scale": 0.05,
+          "limb_swing_scaled": false,
+          "sign": -1.0,
+          "source": "AntModel.setupAnim:178 (orig ModelAnt.java:174): jawsr.yRot = -jawsl.yRot"
+        }
+      ],
+      "keyframe_reference_leg": {
+        "candidate_class": "danger.orespawn.entity.client.RedAntGeoReplacement",
+        "clip_path": "src/main/resources/assets/orespawn/animations/entity/ant.animation.json",
+        "clip_manifest": "tools/keyframe_clips/red_ant.json",
+        "spline_repair": true,
+        "wrap_epsilon_lut_indices": 4,
+        "density_search": {
+          "min_keys": 3,
+          "max_keys": 97,
+          "search_uniform_intervals": 4096,
+          "confirm_uniform_intervals": 65536,
+          "late_start_age_ticks": 137.371,
+          "span_age_ticks": 40.5
+        }
+      },
+      "reference_note": "no reference_source here: the parsed 1.7.10 source diverges from the port by the MIRROR pins the standing reference gate carries (tools/reference_model_proofs.json; BUG-041, cleared by the mirror drop), and tools/g1_render_parity.py accepts only an exact reference match - the s4 precedent (model_coin only)"
+    },
+    {
+      "id": "model_termite",
+      "tier": 2,
+      "class": "danger.orespawn.entity.client.AntModel",
+      "texture": "src/main/resources/assets/orespawn/textures/entity/termite.png",
+      "rig_note": "one rig, five consumers (orig ClientProxyOreSpawn.java:412-415, 476: RenderAnt(new ModelAnt(), shadow, scale) with 0.1f / 0.25f for the Ant, Rainbow Ant and Unstable Ant and 0.15f / 0.35f for the Red Ant and Termite): the Termite's descriptor shares the Ant's shipped geo, clip file, layers and hook under its own registry path (design Q9); proven here on its own entry",
+      "animation_kind": "code_driven",
+      "candidate_animation_path": "production_replacement_hook",
+      "candidate_class": "danger.orespawn.entity.client.TermiteGeoReplacement",
+      "loop_period_age_ticks": 62.83185307179586,
+      "period_note": "the jaws' 0.4 rad/tick closes every 15.71 ticks; the Beaver's 2 pi / 0.1 loop holds four cycles of it (the gait's 2.7 rad/tick, 27)",
+      "sample_fractions": [
+        0.0,
+        0.25,
+        0.5,
+        0.75,
+        1.0
+      ],
+      "limb_swing": 0.0,
+      "limb_swing_amount": 0.0,
+      "limb_swing_amount_samples": [
+        0.0,
+        0.25,
+        0.5,
+        1.0
+      ],
+      "visual_sample_ids": [
+        "bind",
+        "a1_t0",
+        "a1_t_quarter",
+        "a1_t_half",
+        "a1_t_three_quarter"
+      ],
+      "visual_note": "the Beaver's visual samples for a gait-scaled rig (g1): the bind and the full-amplitude fractions; the amplitude matrix is the setupAnim leg's and the keyframe leg's",
+      "net_head_yaw": 0.0,
+      "head_pitch": 0.0,
+      "camera": {
+        "yaw_degrees": 34.0,
+        "pitch_degrees": -28.0
+      },
+      "channels": [
+        {
+          "bones": [
+            "llegbot1",
+            "llegtop1",
+            "rlegtop2",
+            "rlegbot2",
+            "rlegtop3",
+            "rlegbot3"
+          ],
+          "axis": "x",
+          "formula": "cosine",
+          "frequency_radians_per_age_tick": 2.7,
+          "pi_scale": 0.45,
+          "limb_swing_scaled": true,
+          "sign": 1.0,
+          "source": "AntModel.setupAnim:166-170 (orig ModelAnt.java:162-166): llegbot1.xRot = llegtop1.xRot = cos(ageInTicks * 2.7f) * PI * 0.45f * limbSwingAmount; rlegtop2, rlegbot2, rlegtop3, rlegbot3 the same"
+        },
+        {
+          "bones": [
+            "rlegtop1",
+            "rlegbot1",
+            "llegtop2",
+            "llegbot2",
+            "llegtop3",
+            "llegbot3"
+          ],
+          "axis": "x",
+          "formula": "cosine",
+          "frequency_radians_per_age_tick": 2.7,
+          "pi_scale": 0.45,
+          "limb_swing_scaled": true,
+          "sign": -1.0,
+          "source": "AntModel.setupAnim:171-176 (orig ModelAnt.java:167-172): the six others the negative"
+        },
+        {
+          "bones": [
+            "jawsl"
+          ],
+          "axis": "y",
+          "formula": "cosine",
+          "frequency_radians_per_age_tick": 0.4,
+          "pi_scale": 0.05,
+          "limb_swing_scaled": false,
+          "sign": 1.0,
+          "source": "AntModel.setupAnim:177 (orig ModelAnt.java:173): jawsl.yRot = cos(ageInTicks * 0.4f) * PI * 0.05f"
+        },
+        {
+          "bones": [
+            "jawsr"
+          ],
+          "axis": "y",
+          "formula": "cosine",
+          "frequency_radians_per_age_tick": 0.4,
+          "pi_scale": 0.05,
+          "limb_swing_scaled": false,
+          "sign": -1.0,
+          "source": "AntModel.setupAnim:178 (orig ModelAnt.java:174): jawsr.yRot = -jawsl.yRot"
+        }
+      ],
+      "keyframe_reference_leg": {
+        "candidate_class": "danger.orespawn.entity.client.TermiteGeoReplacement",
+        "clip_path": "src/main/resources/assets/orespawn/animations/entity/ant.animation.json",
+        "clip_manifest": "tools/keyframe_clips/termite.json",
+        "spline_repair": true,
+        "wrap_epsilon_lut_indices": 4,
+        "density_search": {
+          "min_keys": 3,
+          "max_keys": 97,
+          "search_uniform_intervals": 4096,
+          "confirm_uniform_intervals": 65536,
+          "late_start_age_ticks": 137.371,
+          "span_age_ticks": 40.5
+        }
+      },
+      "reference_note": "no reference_source here: the parsed 1.7.10 source diverges from the port by the MIRROR pins the standing reference gate carries (tools/reference_model_proofs.json; BUG-041, cleared by the mirror drop), and tools/g1_render_parity.py accepts only an exact reference match - the s4 precedent (model_coin only)"
+    },
+    {
+      "id": "model_unstable_ant",
+      "tier": 2,
+      "class": "danger.orespawn.entity.client.AntModel",
+      "texture": "src/main/resources/assets/orespawn/textures/entity/unstable_ant.png",
+      "rig_note": "one rig, five consumers (orig ClientProxyOreSpawn.java:412-415, 476: RenderAnt(new ModelAnt(), shadow, scale) with 0.1f / 0.25f for the Ant, Rainbow Ant and Unstable Ant and 0.15f / 0.35f for the Red Ant and Termite): the Unstable Ant's descriptor shares the Ant's shipped geo, clip file, layers and hook under its own registry path (design Q9); proven here on its own entry",
+      "animation_kind": "code_driven",
+      "candidate_animation_path": "production_replacement_hook",
+      "candidate_class": "danger.orespawn.entity.client.UnstableAntGeoReplacement",
+      "loop_period_age_ticks": 62.83185307179586,
+      "period_note": "the jaws' 0.4 rad/tick closes every 15.71 ticks; the Beaver's 2 pi / 0.1 loop holds four cycles of it (the gait's 2.7 rad/tick, 27)",
+      "sample_fractions": [
+        0.0,
+        0.25,
+        0.5,
+        0.75,
+        1.0
+      ],
+      "limb_swing": 0.0,
+      "limb_swing_amount": 0.0,
+      "limb_swing_amount_samples": [
+        0.0,
+        0.25,
+        0.5,
+        1.0
+      ],
+      "visual_sample_ids": [
+        "bind",
+        "a1_t0",
+        "a1_t_quarter",
+        "a1_t_half",
+        "a1_t_three_quarter"
+      ],
+      "visual_note": "the Beaver's visual samples for a gait-scaled rig (g1): the bind and the full-amplitude fractions; the amplitude matrix is the setupAnim leg's and the keyframe leg's",
+      "net_head_yaw": 0.0,
+      "head_pitch": 0.0,
+      "camera": {
+        "yaw_degrees": 34.0,
+        "pitch_degrees": -28.0
+      },
+      "channels": [
+        {
+          "bones": [
+            "llegbot1",
+            "llegtop1",
+            "rlegtop2",
+            "rlegbot2",
+            "rlegtop3",
+            "rlegbot3"
+          ],
+          "axis": "x",
+          "formula": "cosine",
+          "frequency_radians_per_age_tick": 2.7,
+          "pi_scale": 0.45,
+          "limb_swing_scaled": true,
+          "sign": 1.0,
+          "source": "AntModel.setupAnim:166-170 (orig ModelAnt.java:162-166): llegbot1.xRot = llegtop1.xRot = cos(ageInTicks * 2.7f) * PI * 0.45f * limbSwingAmount; rlegtop2, rlegbot2, rlegtop3, rlegbot3 the same"
+        },
+        {
+          "bones": [
+            "rlegtop1",
+            "rlegbot1",
+            "llegtop2",
+            "llegbot2",
+            "llegtop3",
+            "llegbot3"
+          ],
+          "axis": "x",
+          "formula": "cosine",
+          "frequency_radians_per_age_tick": 2.7,
+          "pi_scale": 0.45,
+          "limb_swing_scaled": true,
+          "sign": -1.0,
+          "source": "AntModel.setupAnim:171-176 (orig ModelAnt.java:167-172): the six others the negative"
+        },
+        {
+          "bones": [
+            "jawsl"
+          ],
+          "axis": "y",
+          "formula": "cosine",
+          "frequency_radians_per_age_tick": 0.4,
+          "pi_scale": 0.05,
+          "limb_swing_scaled": false,
+          "sign": 1.0,
+          "source": "AntModel.setupAnim:177 (orig ModelAnt.java:173): jawsl.yRot = cos(ageInTicks * 0.4f) * PI * 0.05f"
+        },
+        {
+          "bones": [
+            "jawsr"
+          ],
+          "axis": "y",
+          "formula": "cosine",
+          "frequency_radians_per_age_tick": 0.4,
+          "pi_scale": 0.05,
+          "limb_swing_scaled": false,
+          "sign": -1.0,
+          "source": "AntModel.setupAnim:178 (orig ModelAnt.java:174): jawsr.yRot = -jawsl.yRot"
+        }
+      ],
+      "keyframe_reference_leg": {
+        "candidate_class": "danger.orespawn.entity.client.UnstableAntGeoReplacement",
+        "clip_path": "src/main/resources/assets/orespawn/animations/entity/ant.animation.json",
+        "clip_manifest": "tools/keyframe_clips/unstable_ant.json",
+        "spline_repair": true,
+        "wrap_epsilon_lut_indices": 4,
+        "density_search": {
+          "min_keys": 3,
+          "max_keys": 97,
+          "search_uniform_intervals": 4096,
+          "confirm_uniform_intervals": 65536,
+          "late_start_age_ticks": 137.371,
+          "span_age_ticks": 40.5
+        }
+      },
+      "reference_note": "no reference_source here: the parsed 1.7.10 source diverges from the port by the MIRROR pins the standing reference gate carries (tools/reference_model_proofs.json; BUG-041, cleared by the mirror drop), and tools/g1_render_parity.py accepts only an exact reference match - the s4 precedent (model_coin only)"
     }
   ],
-  "fixtures": []
+  "fixtures": [],
+  "naming_rule_note": "the second Tier-2 slice (2026-09-13): the bare walk is the gait group's clip, else the clip manifest's primary_group's (the first group when absent), the other groups' walk_<group> (owner 2026-09-13, addendum item 26 (2); KeyframeLeg.primaryGroup and tools/keyframe_clip.py refuse a manifest that breaks it)"
 }

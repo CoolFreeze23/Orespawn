@@ -1,0 +1,247 @@
+{
+  "schema_version": 1,
+  "model_id": "model_firefly",
+  "tier": 2,
+  "proof_scope": "production_proof_model",
+  "ground_truth": "executed compiled LayerDefinition and baked ModelPart",
+  "source_class": "danger.orespawn.entity.client.FireflyModel",
+  "source_class_sha256": "5102c14c19ba4067fe7f4b0e759c9a638f9b4f03cea007b670a57659f492db07",
+  "compiled_dump_sha256": "d547606e07bee26c19fdb8206778b51b51032592ee01b5927338078b7aaac08e",
+  "geometry_sha256": "ba4132ff092606a720b7c046a898dd58631dfa70488023069164c2160e9e15fc",
+  "animation_sha256": "7882082857fdb11e02f158ebc3a6d3f970e2ac60d54813f0e903ee97b2293749",
+  "animation_contract_sha256": "d00ec0d919d5798453aeb235041f8be447153b6834dc925ab47ce9d31b1a4dc3",
+  "bone_count": 12,
+  "cube_count": 12,
+  "mirrored_cube_count": 12,
+  "mirrored_uv_strategy": "source flag retained as modelpart_mirror; semantics baked into explicit faces; incompatible GeckoLib native mirror disabled",
+  "exact_bone_names": [
+    "TailLight",
+    "back_leg_left",
+    "back_leg_right",
+    "body",
+    "eye_left",
+    "eye_right",
+    "front_leg_left_",
+    "front_leg_right",
+    "head",
+    "mouth",
+    "wing_left",
+    "wing_right"
+  ],
+  "bone_draw_order": [
+    "body",
+    "wing_left",
+    "wing_right",
+    "head",
+    "mouth",
+    "eye_left",
+    "eye_right",
+    "front_leg_left_",
+    "front_leg_right",
+    "back_leg_left",
+    "back_leg_right",
+    "TailLight"
+  ],
+  "draw_order_evidence": {
+    "source": "classic EntityModel.renderToBuffer on a second bake posed identically; every ModelPart.render is one pose-stack push, attributed to its part by ModelPart.skipDraw elimination (one run per cube-bearing part with every other part's skipDraw set); a part drawn n > 1 times is named <part>__i<k> by draw ordinal",
+    "captures": [
+      "bind",
+      "t0",
+      "t_quarter",
+      "t_half",
+      "t_three_quarter",
+      "t_end"
+    ],
+    "cube_bearing_units": 12,
+    "observed_units": 12,
+    "unobserved_units": [],
+    "ordered_pairs": 66,
+    "tie_break": "converter emission order for pairs never drawn together in any capture",
+    "lifting": "pre-order over the geo bone tree, siblings by their subtree's first classic draw"
+  },
+  "cube_face_order": {
+    "TailLight": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "back_leg_left": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "back_leg_right": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "body": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "eye_left": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "eye_right": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "front_leg_left_": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "front_leg_right": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "head": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "mouth": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "wing_left": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "wing_right": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ]
+  },
+  "cube_face_order_evidence": {
+    "rule": "NeoForge 21.1.223 ModelPart.Cube.<init> polygon order DOWN, UP, WEST, NORTH, EAST, SOUTH (offsets 365-785: DOWN 365, UP 436, WEST 507, NORTH 578, EAST 649, SOUTH 720), mirror negating the X normals; GeckoLib labels by the direction whose step is the classic normal reflected in Y",
+    "cube_bearing_bones": 12,
+    "cubes": 12,
+    "verified_unrotated_cubes_at_bind": 2,
+    "verification": "captured normals of every cube unrotated at bind equal the rule's, in order; the parity tool's draw-order leg compares the per-quad normal sequences of both renderers on every capture"
+  },
+  "animation_contract": {
+    "schema_version": 1,
+    "kind": "code_driven",
+    "controller_required": false,
+    "candidate_animation_path": "production_replacement_hook",
+    "candidate_class": "danger.orespawn.entity.client.FireflyGeoReplacement",
+    "candidate_acceptance_path": "production OreSpawnGeoReplacementModel.setCustomAnimations (Amendment 1 Tier-3 code-driven)",
+    "sample_ids": [
+      "bind",
+      "t0",
+      "t_quarter",
+      "t_half",
+      "t_three_quarter",
+      "t_end",
+      "a0_kfwrap_w2_5_c1_before",
+      "a0_kfwrap_w2_5_c1_after",
+      "a0_kfwrap_w2_5_c2_before",
+      "a0_kfwrap_w2_5_c2_after",
+      "a0_kfwrap_w2_5_c3_before",
+      "a0_kfwrap_w2_5_c3_after",
+      "a0_kfwrap_w2_5_c4_before",
+      "a0_kfwrap_w2_5_c4_after",
+      "a0_kfwrap_w2_5_c5_before",
+      "a0_kfwrap_w2_5_c5_after",
+      "a0_kfwrap_w2_5_c6_before",
+      "a0_kfwrap_w2_5_c6_after",
+      "a0_kfwrap_w2_5_c7_before",
+      "a0_kfwrap_w2_5_c7_after"
+    ]
+  },
+  "reference_animation_schema": {
+    "status": "SCHEMA_VALID_REFERENCE_ONLY",
+    "clip_count": 0,
+    "constant_vector_count": 0,
+    "runtime_acceptance": false
+  },
+  "accepted_animation_evidence": "production OreSpawnGeoReplacement hook through OreSpawnGeoReplacementModel.setCustomAnimations (Amendment 1 Tier-3 code-driven)",
+  "artist_editable_math_to_keyframes_status": "NOT_APPLICABLE_TIER3_CODE_DRIVEN",
+  "compiled_animation_bake_sample_count": 0,
+  "reference_clip_keys_source": "compiled setupAnim output; no Python formula evaluation",
+  "source_animation_channel_inventory": [
+    {
+      "bones": [
+        "wing_left"
+      ],
+      "axis": "z",
+      "source": "FireflyModel.setupAnim:112: wing_left.zRot = 1.11f + cos(ageInTicks * wingspeed) * PI * 0.35f; wingspeed 2.5f is the one frequency (orig ModelFirefly.java:16,33, ClientProxyOreSpawn.java:406)"
+    },
+    {
+      "bones": [
+        "wing_right"
+      ],
+      "axis": "z",
+      "source": "FireflyModel.setupAnim:113: wing_right.zRot = -1.11f - cos(ageInTicks * wingspeed) * PI * 0.35f"
+    }
+  ]
+}

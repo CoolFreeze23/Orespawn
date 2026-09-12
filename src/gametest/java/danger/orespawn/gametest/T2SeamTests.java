@@ -4,6 +4,8 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import danger.orespawn.OreSpawnConfig;
 import danger.orespawn.OreSpawnMod;
+import danger.orespawn.entity.client.AntGeoReplacement;
+import danger.orespawn.entity.client.AntRenderer;
 import danger.orespawn.entity.client.BrutalflyGeoReplacement;
 import danger.orespawn.entity.client.BrutalflyRenderer;
 import danger.orespawn.entity.client.CliffRacerGeoReplacement;
@@ -12,12 +14,24 @@ import danger.orespawn.entity.client.CockateilGeoReplacement;
 import danger.orespawn.entity.client.CockateilRenderer;
 import danger.orespawn.entity.client.DragonflyGeoReplacement;
 import danger.orespawn.entity.client.DragonflyRenderer;
+import danger.orespawn.entity.client.FireflyGeoReplacement;
+import danger.orespawn.entity.client.FireflyRenderer;
+import danger.orespawn.entity.client.GoldFishGeoReplacement;
+import danger.orespawn.entity.client.GoldFishRenderer;
 import danger.orespawn.entity.client.MosquitoGeoReplacement;
 import danger.orespawn.entity.client.MosquitoRenderer;
 import danger.orespawn.entity.client.OreSpawnGeoReplacement;
+import danger.orespawn.entity.client.RainbowAntGeoReplacement;
+import danger.orespawn.entity.client.RainbowAntRenderer;
+import danger.orespawn.entity.client.RedAntGeoReplacement;
+import danger.orespawn.entity.client.RedAntRenderer;
 import danger.orespawn.entity.client.RubyBirdGeoReplacement;
+import danger.orespawn.entity.client.TermiteGeoReplacement;
+import danger.orespawn.entity.client.TermiteRenderer;
 import danger.orespawn.entity.client.TshirtGeoReplacement;
 import danger.orespawn.entity.client.TshirtRenderer;
+import danger.orespawn.entity.client.UnstableAntGeoReplacement;
+import danger.orespawn.entity.client.UnstableAntRenderer;
 import danger.orespawn.entity.client.animation.KeyframeLayer;
 import danger.orespawn.entity.client.animation.PhaseLockedKeyframeController;
 import java.io.InputStream;
@@ -40,24 +54,31 @@ import software.bernie.geckolib.loading.json.typeadapter.KeyFramesAdapter;
 import software.bernie.geckolib.loading.object.BakedAnimations;
 
 /**
- * The first Tier-2 slice (2026-09-13): what the dedicated game-test server can pin of the seven simple-cyclic
- * descriptors behind the dev switch - no GeckoLib ticking (a controller's {@code process} initialises
- * {@code MolangQueries}, which this server refuses: the kf17d finding; the harness's keyframe reference leg
- * carries the pose facts). Own batch {@code t2Seam} (TEST-003).
+ * The Tier-2 slices (2026-09-13): what the dedicated game-test server can pin of the fourteen Tier-2 descriptors behind
+ * the dev switch - the first slice's seven (six simple-cyclic rigs, the Cockateil rig with two consumers), the second
+ * slice's Firefly and Gold Fish (rejoined once ENT-S-161 landed; the Cloud Shark waits on the visual leg's tie rule) and
+ * the Ant rig's five consumers (the first gait-scaled Tier-2 rig after the Beaver) - no GeckoLib ticking (a controller's {@code process} initialises
+ * {@code MolangQueries}, which this server refuses: the kf17d finding; the harness's keyframe reference leg carries the
+ * pose facts). Own batch {@code t2Seam} (TEST-003).
  * <ul>
- * <li>{@code t2_001}: every new descriptor constructs registry-free on this server (the lazy entity-type
- *     suppliers, OPT-029 R0) and declares its frequency groups exactly - count, clip names, omegas, the chain's
- *     wingspeed, bones, none gait-scaled; the Ruby Bird declares the Cockateil's layers (one rig, two consumers).</li>
+ * <li>{@code t2_001}: every descriptor constructs registry-free on this server (the lazy entity-type suppliers,
+ *     OPT-029 R0) and declares its frequency groups exactly - count, clip names under the naming rule (the gait
+ *     group's clip, else the SPEC's primary group's, is the bare {@code walk}; every other group's is
+ *     {@code walk_<group>}: owner 2026-09-13, addendum item 26 (2), contract section 2.1 amended), omegas, the
+ *     chain's wingspeed, bones, gait scaling on the Ant's legs and nowhere else; a shared rig's consumers declare the
+ *     owner's layers (the Ruby Bird the Cockateil's, the four other ants the Ant's).</li>
  * <li>{@code t2_002}: each shipped {@code <name>.animation.json} bakes through GeckoLib's own loader and carries
  *     {@code idle} keying no bone plus exactly one looping clip per declared group, every group bone keyed.</li>
- * <li>{@code t2_003}: the gate as ruled (owner 2026-09-12, item 12; contract section 2.1): under the modern keys a
- *     ONE-group species (its clip the bare {@code walk}) registers its one phase-locked layer on the declared
- *     controller with the declared omega and wingspeed; a MULTI-group species without a gait group (no bare
- *     {@code walk}: {@code walk_<group>} only) registers NOTHING - the classic hook stays its path until the owner
- *     rules which group carries the bare name (the presented question's pin).</li>
+ * <li>{@code t2_003} (re-pinned by the second slice under the naming rule): under the modern keys EVERY landed species
+ *     registers its declared layers under the default keys - one phase-locked controller per layer named
+ *     {@code keyframe:<clip>} with the declared omega and wingspeed, exactly one of them {@code keyframe:walk} (the
+ *     primary group's), the gait group's amplitude-scaled and additive over its bones (the Ant family), every other
+ *     unscaled - so the Dragonfly, Cockateil and Ruby Bird gates the first slice pinned CLOSED are now OPEN; the
+ *     config gate still closes them all.</li>
  * <li>{@code t2_004}: the render facts the 4c precedent pinned in code - each descriptor's shadow radius is its
- *     classic renderer's constant (ENT-S-092), the Cockateil and Ruby Bird sharing the Cockateil renderer's, and
- *     the two consumers share one geo, clip file and layer list.</li>
+ *     classic renderer's constant (ENT-S-092; the Ant family's {@code 0.1 / 0.15 x SCALE} products where the classic
+ *     renderer declares no SHADOW), the Cockateil and Ruby Bird sharing the Cockateil renderer's - and each shared
+ *     rig's consumers share one geo, clip file and layer list.</li>
  * </ul>
  */
 @GameTestHolder(OreSpawnMod.MOD_ID)
@@ -65,24 +86,39 @@ import software.bernie.geckolib.loading.object.BakedAnimations;
 public class T2SeamTests {
     private static final String BATCH = "t2Seam";
     private static final String CLIPS = "/assets/orespawn/animations/entity/";
+    private static final Set<String> ANT_GAIT_BONES = Set.of("llegtop1", "llegbot1", "llegtop2", "llegbot2", "llegtop3", "llegbot3",
+            "rlegtop1", "rlegbot1", "rlegtop2", "rlegbot2", "rlegtop3", "rlegbot3");
 
-    /** One species' declared transcription: the descriptor, its shipped clip, and the groups the classic model has. */
-    private record Species(String name, OreSpawnGeoReplacement<?> replacement, String clipFile, boolean bareWalk,
-                           List<String> groups, List<Float> omegas, List<Float> wingspeeds, List<Set<String>> bones) {
+    /**
+     * One species' declared transcription: the descriptor, its shipped clip file, the group carrying the bare walk
+     * (the gait group, else the SPEC's primary group), the gait group (null for a species without one) and the groups
+     * the classic model has.
+     */
+    private record Species(String name, OreSpawnGeoReplacement<?> replacement, String clipFile, String primaryGroup,
+                           String gaitGroup, List<String> groups, List<Float> omegas, List<Float> wingspeeds,
+                           List<Set<String>> bones) {
+        String expectedClip(String group) {
+            return group.equals(this.primaryGroup) ? KeyframeLayer.WALK : KeyframeLayer.walkClip(group);
+        }
+
+        boolean expectedGaitScaled(String group) {
+            return group.equals(this.gaitGroup);
+        }
     }
 
     private static List<Species> species() {
         List<Species> out = new ArrayList<>();
-        out.add(new Species("tshirt", new TshirtGeoReplacement(), "tshirt", true, List.of("turn"), List.of(0.05F),
+        // the first Tier-2 slice: six simple-cyclic rigs, seven descriptors
+        out.add(new Species("tshirt", new TshirtGeoReplacement(), "tshirt", "turn", null, List.of("turn"), List.of(0.05F),
                 List.of(0.22F), List.of(Set.of("Shape1", "Shape2"))));
-        out.add(new Species("mosquito", new MosquitoGeoReplacement(), "mosquito", true, List.of("wings"), List.of(3.0F),
+        out.add(new Species("mosquito", new MosquitoGeoReplacement(), "mosquito", "wings", null, List.of("wings"), List.of(3.0F),
                 List.of(1.0F), List.of(Set.of("rightwing1", "rightwing2", "leftwing1", "leftwing2"))));
-        out.add(new Species("cliff_racer", new CliffRacerGeoReplacement(), "cliffracer", true, List.of("wings"), List.of(1.3F),
+        out.add(new Species("cliff_racer", new CliffRacerGeoReplacement(), "cliffracer", "wings", null, List.of("wings"), List.of(1.3F),
                 List.of(1.0F), List.of(Set.of("lwing", "rwing"))));
-        out.add(new Species("brutalfly", new BrutalflyGeoReplacement(), "brutalfly", true, List.of("wings"), List.of(1.3F),
+        out.add(new Species("brutalfly", new BrutalflyGeoReplacement(), "brutalfly", "wings", null, List.of("wings"), List.of(1.3F),
                 List.of(0.2F), List.of(Set.of("rightwing", "rightwing2", "rightwing3", "rightwing4", "rightwing5", "rightwing6",
                         "leftwing", "leftwing2", "leftwing3", "leftwing4", "leftwing5", "leftwing6"))));
-        out.add(new Species("dragonfly", new DragonflyGeoReplacement(), "dragonfly", false, List.of("wings", "jaws"),
+        out.add(new Species("dragonfly", new DragonflyGeoReplacement(), "dragonfly", "wings", null, List.of("wings", "jaws"),
                 List.of(1.3F, 0.3F), List.of(2.0F, 2.0F),
                 List.of(Set.of("lfwing", "rfwing", "lrwing", "rrwing"), Set.of("ljaw", "rjaw"))));
         List<String> birdGroups = List.of("wings", "tail", "feather1", "feather2", "feather3");
@@ -90,8 +126,27 @@ public class T2SeamTests {
         List<Float> birdWingspeeds = List.of(1.0F, 1.0F, 1.0F, 1.0F, 1.0F);
         List<Set<String>> birdBones = List.of(Set.of("lwing1", "lwing2", "rwing1", "rwing2"),
                 Set.of("tailfeather1", "tailfeather2", "tailfeather3"), Set.of("feather1"), Set.of("feather2"), Set.of("feather3"));
-        out.add(new Species("cockateil", new CockateilGeoReplacement(), "cockateil", false, birdGroups, birdOmegas, birdWingspeeds, birdBones));
-        out.add(new Species("ruby_bird", new RubyBirdGeoReplacement(), "cockateil", false, birdGroups, birdOmegas, birdWingspeeds, birdBones));
+        out.add(new Species("cockateil", new CockateilGeoReplacement(), "cockateil", "wings", null, birdGroups, birdOmegas, birdWingspeeds, birdBones));
+        out.add(new Species("ruby_bird", new RubyBirdGeoReplacement(), "cockateil", "wings", null, birdGroups, birdOmegas, birdWingspeeds, birdBones));
+        // the second Tier-2 slice: the two rigs rejoined under ENT-S-161 (the primary group of a multi-group species is
+        // the SPEC's primary group - `primary_group`, the first when absent; the Cloud Shark waits on the visual leg's tie rule), and the Ant rig's five consumers
+        // (a gait group: the twelve legs)
+        out.add(new Species("firefly", new FireflyGeoReplacement(), "firefly", "wings", null, List.of("wings"), List.of(2.5F),
+                List.of(1.0F), List.of(Set.of("wing_left", "wing_right"))));
+        out.add(new Species("gold_fish", new GoldFishGeoReplacement(), "goldfish", "pectoral1", null,
+                List.of("pectoral1", "pectoral2", "pectoral3", "pectoral4", "bottomfins", "jaw"),
+                List.of(1.3F, 1.2F, 1.1F, 1.0F, 1.7F, 0.7F), List.of(0.7F, 0.7F, 0.7F, 0.7F, 0.7F, 0.7F),
+                List.of(Set.of("Pectoralfin1"), Set.of("Pectoralfin2"), Set.of("Pectoralfin3"), Set.of("Pectoralfin4"),
+                        Set.of("Bottomfin1", "Bottomfin2"), Set.of("Jaw"))));
+        List<String> antGroups = List.of("gait", "jaws");
+        List<Float> antOmegas = List.of(2.7F, 0.4F);
+        List<Float> antWingspeeds = List.of(1.0F, 1.0F);
+        List<Set<String>> antBones = List.of(ANT_GAIT_BONES, Set.of("jawsl", "jawsr"));
+        out.add(new Species("ant", new AntGeoReplacement(), "ant", "gait", "gait", antGroups, antOmegas, antWingspeeds, antBones));
+        out.add(new Species("rainbow_ant", new RainbowAntGeoReplacement(), "ant", "gait", "gait", antGroups, antOmegas, antWingspeeds, antBones));
+        out.add(new Species("red_ant", new RedAntGeoReplacement(), "ant", "gait", "gait", antGroups, antOmegas, antWingspeeds, antBones));
+        out.add(new Species("termite", new TermiteGeoReplacement(), "ant", "gait", "gait", antGroups, antOmegas, antWingspeeds, antBones));
+        out.add(new Species("unstable_ant", new UnstableAntGeoReplacement(), "ant", "gait", "gait", antGroups, antOmegas, antWingspeeds, antBones));
         return out;
     }
 
@@ -100,30 +155,37 @@ public class T2SeamTests {
     @GameTest(template = "empty", batch = BATCH)
     public static void t2_001_every_descriptor_constructs_registry_free_and_declares_its_groups(GameTestHelper helper) {
         List<Species> all = species();
-        helper.assertTrue(all.size() == 7, "the seven Tier-2 descriptors of the first slice (six rigs; the Cockateil rig has two consumers)");
+        helper.assertTrue(all.size() == 14, "the fourteen Tier-2 descriptors of the two slices (nine rigs; the Cockateil rig has two consumers, the Ant rig five)");
         for (Species species : all) {
             List<KeyframeLayer> layers = species.replacement().keyframeLayers();
             helper.assertTrue(layers.size() == species.groups().size(),
                     species.name() + " declares " + species.groups().size() + " frequency groups (found " + layers.size() + ")");
             Set<String> claimed = new HashSet<>();
+            int bareWalks = 0;
             for (int index = 0; index < layers.size(); index++) {
                 KeyframeLayer layer = layers.get(index);
                 String group = species.groups().get(index);
-                String expectedClip = species.bareWalk() ? KeyframeLayer.WALK : KeyframeLayer.walkClip(group);
+                String expectedClip = species.expectedClip(group);
                 helper.assertTrue(layer.group().equals(group), species.name() + " layer " + index + " is group " + group);
                 helper.assertTrue(layer.clip().equals(expectedClip), species.name() + "/" + group + " clip is " + expectedClip
-                        + " (" + (species.bareWalk() ? "a one-group species: the bare name" : "a multi-group species: walk_<group>") + ")");
+                        + " (the naming rule: the bare walk on the " + (species.gaitGroup() != null ? "gait" : "primary") + " group "
+                        + species.primaryGroup() + ", walk_<group> elsewhere)");
                 helper.assertTrue(layer.angularFrequencyRadiansPerTick() == species.omegas().get(index),
                         species.name() + "/" + group + " omega " + species.omegas().get(index));
                 helper.assertTrue(layer.wingspeed() == species.wingspeeds().get(index),
                         species.name() + "/" + group + " wingspeed " + species.wingspeeds().get(index));
                 helper.assertTrue(layer.bones().equals(species.bones().get(index)),
                         species.name() + "/" + group + " bones " + species.bones().get(index));
-                helper.assertTrue(!layer.gaitScaled(), species.name() + "/" + group + " is unscaled (no gait group in the class)");
+                helper.assertTrue(layer.gaitScaled() == species.expectedGaitScaled(group), species.name() + "/" + group
+                        + (species.expectedGaitScaled(group) ? " is the gait group, scaled by limbSwingAmount" : " is unscaled (not the gait group)"));
+                if (layer.clip().equals(KeyframeLayer.WALK)) {
+                    bareWalks++;
+                }
                 for (String bone : layer.bones()) {
                     helper.assertTrue(claimed.add(bone), species.name() + ": bone " + bone + " in one group only (Amendment 1 point 5)");
                 }
             }
+            helper.assertTrue(bareWalks == 1, species.name() + ": exactly one group carries the bare walk (found " + bareWalks + ")");
             helper.assertTrue(new AnimatableManager<>(species.replacement()).getAnimationControllers().isEmpty(),
                     species.name() + ": the production registerControllers registers nothing on this server (no bake)");
         }
@@ -162,10 +224,10 @@ public class T2SeamTests {
         helper.succeed();
     }
 
-    // ------------------------------------------------------------------ row 3: the gate as ruled
+    // ------------------------------------------------------------------ row 3: the gate under the naming rule
 
     @GameTest(template = "empty", batch = BATCH)
-    public static void t2_003_gate_registers_the_bare_walk_species_only(GameTestHelper helper) {
+    public static void t2_003_gate_registers_every_landed_species_declared_layers(GameTestHelper helper) {
         Flags flags = Flags.read();
         try {
             OreSpawnConfig.MODERN_ENABLED.set(true);
@@ -173,26 +235,35 @@ public class T2SeamTests {
             OreSpawnConfig.MODERN_CLASSIC_ANIMATION_SPECIES.set(List.of());
             for (Species species : species()) {
                 BakedAnimations shipped = bakeClips(resource(CLIPS + species.clipFile() + ".animation.json"));
+                List<KeyframeLayer> layers = species.replacement().keyframeLayers();
                 AnimatableManager.ControllerRegistrar registrar = registrar();
                 int registered = species.replacement().registerKeyframeLayers(registrar, shipped);
-                if (species.bareWalk()) {
-                    helper.assertTrue(registered == 1 && registrar.controllers().size() == 1,
-                            species.name() + ": a one-group species ships idle + the bare walk, so the gate registers its one layer");
-                    KeyframeLayer layer = species.replacement().keyframeLayers().get(0);
-                    AnimationController<? extends GeoAnimatable> controller = registrar.controllers().get(0);
+                helper.assertTrue(registered == layers.size() && registrar.controllers().size() == layers.size(),
+                        species.name() + ": the shipped file carries idle AND the bare walk, so the gate registers every declared layer ("
+                                + layers.size() + "; found " + registered + ") - the naming rule opened it (owner 2026-09-13, item 26 (2))");
+                int bareWalks = 0;
+                for (int index = 0; index < layers.size(); index++) {
+                    KeyframeLayer layer = layers.get(index);
+                    AnimationController<? extends GeoAnimatable> controller = registrar.controllers().get(index);
+                    Set<String> scaledBones = layer.gaitScaled() ? layer.bones() : Set.of();
                     helper.assertTrue(controller instanceof PhaseLockedKeyframeController<?> locked
-                                    && locked.getName().equals("keyframe:walk")
+                                    && locked.getName().equals(layer.controllerName())
                                     && locked.angularFrequencyRadiansPerSourceTick() == layer.angularFrequencyRadiansPerTick()
                                     && locked.wingspeed() == layer.wingspeed()
-                                    && !locked.additive() && locked.amplitudeScaledRotationBones().isEmpty(),
-                            species.name() + ": the phase-locked keyframe:walk with omega " + layer.angularFrequencyRadiansPerTick()
-                                    + " x wingspeed " + layer.wingspeed() + ", unscaled");
-                } else {
-                    helper.assertTrue(registered == 0 && registrar.controllers().isEmpty(),
-                            species.name() + ": a multi-group species without a bare walk registers nothing (the gate as ruled: "
-                                    + "idle AND walk; walk_<group> is not walk) - the classic hook stays its path");
+                                    && locked.additive() == layer.gaitScaled()
+                                    && locked.amplitudeScaledRotationBones().equals(scaledBones),
+                            species.name() + "/" + layer.group() + ": the phase-locked " + layer.controllerName() + " with omega "
+                                    + layer.angularFrequencyRadiansPerTick() + " x wingspeed " + layer.wingspeed()
+                                    + (layer.gaitScaled() ? ", amplitude-scaled and additive over " + layer.bones() : ", unscaled"));
+                    if (layer.clip().equals(KeyframeLayer.WALK)) {
+                        bareWalks++;
+                        helper.assertTrue(layer.group().equals(species.primaryGroup()),
+                                species.name() + ": keyframe:walk is the " + (species.gaitGroup() != null ? "gait" : "primary") + " group "
+                                        + species.primaryGroup() + "'s (found " + layer.group() + ")");
+                    }
                 }
-                // The config gate still stands in front of a one-group species.
+                helper.assertTrue(bareWalks == 1, species.name() + ": exactly one keyframe:walk among the registered layers");
+                // The config gate still stands in front of every species.
                 OreSpawnConfig.MODERN_ARTIST_ANIMATIONS.set(false);
                 helper.assertTrue(species.replacement().registerKeyframeLayers(registrar(), shipped) == 0,
                         species.name() + ": artistAnimations off registers nothing");
@@ -204,14 +275,20 @@ public class T2SeamTests {
         helper.succeed();
     }
 
-    // ------------------------------------------------------------------ row 4: the render facts and the shared rig
+    // ------------------------------------------------------------------ row 4: the render facts and the shared rigs
 
     @GameTest(template = "empty", batch = BATCH)
-    public static void t2_004_shadow_radii_and_the_shared_rig(GameTestHelper helper) {
-        Map<String, Float> shadows = Map.of(
-                "tshirt", TshirtRenderer.SHADOW, "mosquito", MosquitoRenderer.SHADOW, "cliff_racer", CliffRacerRenderer.SHADOW,
-                "brutalfly", BrutalflyRenderer.SHADOW, "dragonfly", DragonflyRenderer.SHADOW,
-                "cockateil", CockateilRenderer.SHADOW, "ruby_bird", CockateilRenderer.SHADOW);
+    public static void t2_004_shadow_radii_and_the_shared_rigs(GameTestHelper helper) {
+        Map<String, Float> shadows = Map.ofEntries(
+                Map.entry("tshirt", TshirtRenderer.SHADOW), Map.entry("mosquito", MosquitoRenderer.SHADOW),
+                Map.entry("cliff_racer", CliffRacerRenderer.SHADOW), Map.entry("brutalfly", BrutalflyRenderer.SHADOW),
+                Map.entry("dragonfly", DragonflyRenderer.SHADOW), Map.entry("cockateil", CockateilRenderer.SHADOW),
+                Map.entry("ruby_bird", CockateilRenderer.SHADOW), Map.entry("firefly", FireflyRenderer.SHADOW),
+                Map.entry("gold_fish", GoldFishRenderer.SHADOW),
+                // orig RenderAnt.java:22 super(model, par2 * par3): the classic renderers pass 0.1f / 0.15f x their SCALE (no SHADOW constant)
+                Map.entry("ant", 0.1F * AntRenderer.SCALE), Map.entry("rainbow_ant", 0.1F * RainbowAntRenderer.SCALE),
+                Map.entry("red_ant", 0.15F * RedAntRenderer.SCALE), Map.entry("termite", 0.15F * TermiteRenderer.SCALE),
+                Map.entry("unstable_ant", 0.1F * UnstableAntRenderer.SCALE));
         for (Species species : species()) {
             float expected = shadows.get(species.name());
             helper.assertTrue(species.replacement().descriptor().shadowRadius() == expected,
@@ -226,6 +303,17 @@ public class T2SeamTests {
         helper.assertTrue(cockateil.descriptor().shadowRadius() == CockateilRenderer.SHADOW
                         && rubyBird.descriptor().shadowRadius() == CockateilRenderer.SHADOW,
                 "both consumers carry the shared CockateilRenderer shadow (orig ClientProxyOreSpawn.java:430-431, identical registrations)");
+        AntGeoReplacement ant = new AntGeoReplacement();
+        for (OreSpawnGeoReplacement<?> consumer : List.of(new RainbowAntGeoReplacement(), new RedAntGeoReplacement(),
+                new TermiteGeoReplacement(), new UnstableAntGeoReplacement())) {
+            helper.assertTrue(ant.descriptor().modelResource().equals(consumer.descriptor().modelResource())
+                            && ant.descriptor().animationResource().equals(consumer.descriptor().animationResource())
+                            && ant.keyframeLayers() == consumer.keyframeLayers(),
+                    "one rig, five consumers: " + consumer.getClass().getSimpleName()
+                            + " shares the Ant's geo, clip file and layer list under its own descriptor (orig ClientProxyOreSpawn.java:412-415, 476)");
+            helper.assertTrue(!ant.descriptor().textureResource().equals(consumer.descriptor().textureResource()),
+                    consumer.getClass().getSimpleName() + " draws its own texture over the shared rig");
+        }
         helper.succeed();
     }
 

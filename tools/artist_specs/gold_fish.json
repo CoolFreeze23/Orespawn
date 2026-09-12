@@ -1,0 +1,198 @@
+{
+  "registry": "gold_fish",
+  "display_name": "Gold Fish",
+  "status": "draft for the owner's edit (the second Tier-2 slice, 2026-09-13)",
+  "locomotion": "swimmer",
+  "artist_scope": "full contract (Tier 2, the simple-cyclic class: geckolib_migration_design.md section 5)",
+  "character_sheet": "A small passive fish: a boxy body and head with a mouth and hinged jaw, a dorsal fin, four pectoral fins, a bottom fin, a two-part tail with two caudal fins and two lower bottom fins. It swims in water and is harmless. Read it as a fish that never stops finning: every fin at its own slow rhythm.",
+  "size_notes": "Drawn at x1.0 of the rig on a 64x64 sheet.",
+  "labels": {
+    "Body": "body",
+    "Head": "head",
+    "Dorsalfin": "dorsal fin",
+    "Mouth": "mouth",
+    "Jaw": "lower jaw",
+    "Pectoralfin1": "left front pectoral fin",
+    "Pectoralfin2": "right front pectoral fin",
+    "Pectoralfin3": "left rear pectoral fin",
+    "Pectoralfin4": "right rear pectoral fin",
+    "Bottomfin": "rear bottom fin (static)",
+    "Tail1": "tail base",
+    "Tail2": "tail tip",
+    "Caudalfin1": "upper caudal fin",
+    "Caudalfin2": "lower caudal fin",
+    "Bottomfin1": "left lower fin",
+    "Bottomfin2": "right lower fin"
+  },
+  "groups": [
+    {
+      "name": "pectoral1",
+      "bones": [
+        "Pectoralfin1"
+      ],
+      "omega": 1.3,
+      "axis": "y",
+      "gait_scaled": false,
+      "amplitude": "+0.4 rad offset, then pi x 0.15 = 0.471 rad (27 deg)",
+      "plain": "the left front pectoral fin sculls about the vertical around its rest angle",
+      "math": "Pectoralfin1.yRot = 0.4 + cos(ageInTicks * 1.3 * 0.7) * pi * 0.15",
+      "source": "ModelGoldFish.java:125-126; GoldFishGeoReplacement.java",
+      "wingspeed": 0.7,
+      "omega_note": "the classic phase is ageInTicks x 1.3 x 0.7 (two float multiplies, left to right): the natural period is 2 pi / 0.91"
+    },
+    {
+      "name": "pectoral2",
+      "bones": [
+        "Pectoralfin2"
+      ],
+      "omega": 1.2,
+      "axis": "y",
+      "gait_scaled": false,
+      "amplitude": "-0.4 rad offset, then pi x 0.15 = 0.471 rad (27 deg)",
+      "plain": "the right front pectoral fin sculls a little slower, mirrored",
+      "math": "Pectoralfin2.yRot = -0.4 + cos(ageInTicks * 1.2 * 0.7) * pi * 0.15",
+      "source": "ModelGoldFish.java:127-128; GoldFishGeoReplacement.java",
+      "wingspeed": 0.7,
+      "omega_note": "the classic phase is ageInTicks x 1.2 x 0.7 (two float multiplies, left to right): the natural period is 2 pi / 0.84"
+    },
+    {
+      "name": "pectoral3",
+      "bones": [
+        "Pectoralfin3"
+      ],
+      "omega": 1.1,
+      "axis": "y",
+      "gait_scaled": false,
+      "amplitude": "+0.4 rad offset, then pi x 0.15 = 0.471 rad (27 deg)",
+      "plain": "the left rear pectoral fin, slower again",
+      "math": "Pectoralfin3.yRot = 0.4 + cos(ageInTicks * 1.1 * 0.7) * pi * 0.15",
+      "source": "ModelGoldFish.java:129-130; GoldFishGeoReplacement.java",
+      "wingspeed": 0.7,
+      "omega_note": "the classic phase is ageInTicks x 1.1 x 0.7 (two float multiplies, left to right): the natural period is 2 pi / 0.77"
+    },
+    {
+      "name": "pectoral4",
+      "bones": [
+        "Pectoralfin4"
+      ],
+      "omega": 1.0,
+      "axis": "y",
+      "gait_scaled": false,
+      "amplitude": "-0.4 rad offset, then pi x 0.15 = 0.471 rad (27 deg)",
+      "plain": "the right rear pectoral fin, the slowest of the four, mirrored",
+      "math": "Pectoralfin4.yRot = -0.4 + cos(ageInTicks * 1.0 * 0.7) * pi * 0.15",
+      "source": "ModelGoldFish.java:131-132; GoldFishGeoReplacement.java",
+      "wingspeed": 0.7,
+      "omega_note": "the classic phase is ageInTicks x 1 x 0.7 (two float multiplies, left to right): the natural period is 2 pi / 0.7"
+    },
+    {
+      "name": "bottomfins",
+      "bones": [
+        "Bottomfin1",
+        "Bottomfin2"
+      ],
+      "omega": 1.7,
+      "axis": "y",
+      "gait_scaled": false,
+      "amplitude": "pi x 0.25 = 0.785 rad (45 deg)",
+      "plain": "the two lower fins sweep about the vertical, mirrored",
+      "math": "Bottomfin1.yRot = cos(ageInTicks * 1.7 * 0.7) * pi * 0.25; Bottomfin2.yRot = -(that)",
+      "source": "ModelGoldFish.java:133-134; GoldFishGeoReplacement.java",
+      "wingspeed": 0.7,
+      "omega_note": "the classic phase is ageInTicks x 1.7 x 0.7 (two float multiplies, left to right): the natural period is 2 pi / 1.19"
+    },
+    {
+      "name": "jaw",
+      "bones": [
+        "Jaw"
+      ],
+      "omega": 0.7,
+      "axis": "x",
+      "gait_scaled": false,
+      "amplitude": "-0.25 rad offset, then pi x 0.1 = 0.314 rad (18 deg)",
+      "plain": "the jaw opens and shuts slowly around a slightly open rest",
+      "math": "Jaw.xRot = -0.25 + cos(ageInTicks * 0.7 * 0.7) * pi * 0.1",
+      "source": "ModelGoldFish.java:135-136; GoldFishGeoReplacement.java",
+      "wingspeed": 0.7,
+      "omega_note": "the classic phase is ageInTicks x 0.7 x 0.7 (two float multiplies, left to right): the natural period is 2 pi / 0.49"
+    }
+  ],
+  "primary_group": "pectoral1",
+  "behaviour": [
+    "Several independent rhythms run at all times, none scaled by walking speed; the classic code has no rest pose. The transcription ships idle (no bone) plus one clip per rhythm: the primary group (`primary_group`; the first group when the seed names none) carries the bare `walk` - a label, not a semantic: the contract's fly -> walk fallback is what plays a flyer's walk in flight (owner 2026-09-13, addendum item 26 (2)) - and every other rhythm is `walk_<group>`, so the GeckoLib candidate plays the transcription behind the switch.",
+    "Six rhythms: four pectoral fins each at its own rate (the left front one is the primary group: its clip is the bare walk), the lower fin pair, the jaw; the body, head, tail and caudal fins are static. The pectoral fins bind at -/+0.335 rad about Y and the jaw at -0.228 rad about X, so the transcription's keys carry the offset (base minus bind). The pectoral and lower fins are rotated zero-thickness cubes: the seam lights them by their true normals (ENT-S-161).",
+    "The default renderer poses it from the classic code; the GeckoLib candidate sits behind the dev switch (-Dorespawn.dev.geckolibRenderers) and your clips replace the shipped transcription file for file."
+  ],
+  "clips": [
+    {
+      "name": "idle",
+      "verdict": "author",
+      "note": "required with walk (today the transcription's idle keys no bone); a real hover: slow fins, the jaw still"
+    },
+    {
+      "name": "walk",
+      "verdict": "leave",
+      "note": "the left front pectoral scull (the primary group's transcription; a label, not a semantic)"
+    },
+    {
+      "name": "walk_pectoral2",
+      "verdict": "leave"
+    },
+    {
+      "name": "walk_pectoral3",
+      "verdict": "leave"
+    },
+    {
+      "name": "walk_pectoral4",
+      "verdict": "leave"
+    },
+    {
+      "name": "walk_bottomfins",
+      "verdict": "leave"
+    },
+    {
+      "name": "walk_jaw",
+      "verdict": "leave"
+    },
+    {
+      "name": "idle_pectoral2",
+      "verdict": "leave"
+    },
+    {
+      "name": "idle_pectoral3",
+      "verdict": "leave"
+    },
+    {
+      "name": "idle_pectoral4",
+      "verdict": "leave"
+    },
+    {
+      "name": "idle_bottomfins",
+      "verdict": "leave"
+    },
+    {
+      "name": "idle_jaw",
+      "verdict": "leave"
+    },
+    {
+      "name": "swim",
+      "verdict": "author",
+      "note": "optional: a tail sweep while moving; falls back to walk then idle (section 2.4)"
+    },
+    {
+      "name": "hurt",
+      "verdict": "author",
+      "note": "a flinch",
+      "length_seconds": 0.3
+    },
+    {
+      "name": "death",
+      "verdict": "author",
+      "note": "PROVISIONAL: the vanilla death flip is open question 3",
+      "length_seconds": 1.0
+    }
+  ],
+  "extras": [],
+  "wishlist": [],
+  "effort_hours": null
+}

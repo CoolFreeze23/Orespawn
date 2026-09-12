@@ -4,8 +4,13 @@
 The Phase G standard animation contract (phase_g_reports/animation_contract/contract_design.md,
 ruled 2026-09-06) transcribes a species' classic trig animation as ONE looping clip PER FREQUENCY
 GROUP (Amendment 1 point 5): the gait group's clip is ``walk``, every other group's is
-``walk_<group>`` - and a species with ONE frequency group has only the bare names (section 2.1), so
-its one group's clip is ``walk`` whether or not it is gait-scaled. This tool reads a clip manifest
+``walk_<group>``. A species WITHOUT a gait group names its primary locomotion group in the clip
+manifest (``primary_group``; the FIRST group when absent) and THAT group's clip carries the bare
+``walk`` - a label, not a semantic (owner 2026-09-13, addendum item 26 (2); section 2.1 amended) -
+so a species with ONE frequency group has only the bare names whether or not its group is
+gait-scaled, and a multi-group one without a gait group has exactly one bare clip. The manifest's
+``clip`` names are checked against that rule (``primary_group``: mirrored by the harness's twin,
+``KeyframeLeg.primaryGroup``); a manifest that breaks it is refused. This tool reads a clip manifest
 (``tools/keyframe_clips/<species>.json``) and the classic channels it points at in the model manifest
 (``tools/g1_model_proofs.json`` / ``tools/t2_model_proofs.json``: bones, axis, cosine formula, frequency,
 wingspeed, pi_scale, sign, base_radians, limb_swing_scaled) and writes the ``.animation.json``:
@@ -137,6 +142,44 @@ def group_channels(channels: list[dict], frequency: float) -> list[dict]:
     ]
 
 
+def primary_group(clip_manifest: dict, gait_groups: list[str]) -> str:
+    """The group whose clip carries the bare ``walk`` (the naming rule, owner 2026-09-13, addendum item 26 (2)):
+    the one gait-scaled group when the rig has one (a manifest naming a different ``primary_group`` is refused; two
+    gait-scaled groups are refused), else the manifest's ``primary_group`` (which must name a group), else the first
+    group. The harness's twin applies the same rule (``KeyframeLeg.primaryGroup``)."""
+    names = [group["name"] for group in clip_manifest["groups"]]
+    if len(gait_groups) > 1:
+        raise SystemExit(f"more than one gait-scaled group {gait_groups} (one gait group per rig)")
+    declared = clip_manifest.get("primary_group")
+    if gait_groups:
+        if declared is not None and declared != gait_groups[0]:
+            raise SystemExit(f"primary_group {declared} names a group other than the gait group {gait_groups[0]} "
+                             "(the gait group carries the bare walk)")
+        return gait_groups[0]
+    if declared is not None:
+        if declared not in names:
+            raise SystemExit(f"primary_group {declared} names no frequency group of the clip manifest {names}")
+        return declared
+    return names[0]
+
+
+def check_clip_names(clip_manifest: dict, channels: list[dict]) -> tuple[str, bool]:
+    """Every group's ``clip`` under the naming rule: the bare ``walk`` on the primary group, ``walk_<group>`` on every
+    other; returns the primary group's name and whether it is the gait group."""
+    gait_groups = []
+    for group in clip_manifest["groups"]:
+        members = group_channels(channels, float(group["frequency_radians_per_age_tick"]))
+        if members and all(bool(channel.get("limb_swing_scaled", False)) for channel in members):
+            gait_groups.append(group["name"])
+    primary = primary_group(clip_manifest, gait_groups)
+    for group in clip_manifest["groups"]:
+        expected = "walk" if group["name"] == primary else f"walk_{group['name']}"
+        if group["clip"] != expected:
+            raise SystemExit(f"the naming rule: group {group['name']} must carry clip {expected} (the bare walk belongs to the "
+                             f"{'gait' if gait_groups else 'primary'} group {primary}), the clip manifest says {group['clip']}")
+    return primary, bool(gait_groups)
+
+
 def cosine_rotation(axis: str, offset_degrees: float, amplitude_degrees: float, keys: int, lerp_mode: str,
                     seconds: float) -> dict:
     if keys < 3:
@@ -160,6 +203,10 @@ def build_clips(clip_manifest: dict, channels: list[dict], keys_override: dict[s
     animations: dict[str, dict] = {}
     lines: list[str] = []
     seen_bones: set[str] = set()
+    primary, primary_is_gait = check_clip_names(clip_manifest, channels)
+    lines.append(f"the bare walk is group {primary}'s: "
+                 + ("the gait group" if primary_is_gait else "the primary group (primary_group; the first group when absent)")
+                 + " (owner 2026-09-13, addendum item 26 (2))")
     for group in clip_manifest["groups"]:
         frequency = float(group["frequency_radians_per_age_tick"])
         wingspeed = float(group.get("wingspeed", 1.0))
