@@ -188,3 +188,23 @@ entity's render pass and the bone counters count every GeckoLib entity's bones.
 | Two-Queen case, pre-fix jar | one Queen's part boxes stick at rest offsets (BUG-044 starvation) | |
 | Hitch case, post-fix: one Queen in view, stall the client for more than two ticks (F3+T resource reload, or alt-tab to a heavy window for a second), come back | her part boxes keep following | |
 | Hitch case, pre-fix jar | after the stall the part boxes stay at rest offsets for the rest of the session (BUG-044 wedge); server-side reach against her parts fails where the animation has moved them | |
+
+
+## Section H — dev instance, current build, no JVM argument: the Queen under culling (the OPT-013 look item; owner 2026-09-12, item 25)
+
+Two minutes, one Queen, single player (you are her MASTER client: the client that streams her bone positions to the
+server). Since wave 5 (2026-09-06) she is culled like every mob: her cull box is her position ± 77.74 × scale (the
+profile's rest-pose reach) plus her parts' live boxes, and a box that contains the camera is never rejected — so she is
+never culled while you are within 78.24 blocks of her on every axis, and culled beyond that when she is off-screen
+(`AUDIT_FINDINGS.md` OPT-013's 2026-09-06 status line; OPT-032). While the master does not render her, its bone stream
+is empty and the server holds her ten collidable parts at the profile's rest pose; the master's next render sends the
+first full payload and the parts go back on the animated body (OPT-032, mitigation (c) ruled and deferred with the
+harvest remainder). Same world as Section C; `playNicely = false`; no JVM argument.
+
+| Step | Expect | Result |
+|---|---|---|
+| `/summon orespawn:the_queen ~ ~ ~40` in the open; F3+B on; look at her ten part boxes (three heads, tail, wing root, body, hips) | the boxes ride the animated body (the Section C row-3 look) | |
+| Walk straight away from her, watching F3's XYZ, until you are more than 80 blocks from her on that axis; keep her in view | still drawn at any distance while in view (`shouldRenderAtSqrDistance` is true for her); the boxes still ride the body | |
+| Turn your back on her for ten seconds (she leaves your view beyond the 78-block edge) | she is culled — nothing of her is drawn or animated on your client (the render saving); meanwhile her parts rest on the server, which you cannot see | |
+| Turn back to face her | she is drawn again at once, and within a tick or two her ten boxes must be ON the animated body — not hanging at the rest offsets while the body animates. **Pass = her parts are not resting.** Boxes that stay at rest offsets while she animates = FAIL (report it as is; the ruled mitigation (c) is deferred, nothing is fixed mid-session) | |
+| Optional: hit a head once after turning back | the hit registers on the animated part | |
