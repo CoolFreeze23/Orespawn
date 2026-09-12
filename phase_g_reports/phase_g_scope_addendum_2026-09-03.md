@@ -343,6 +343,36 @@ that slice, not a task for now.
     with the FIX_LOG split (docs-only) → item 15 landed (one gate) → Section H → the first Tier-2 slice (the species list
     the agent's; the headless twin in it; one refuter; the counts open the report). The drop lands on the owner's
     Section B go; the package and the pilot follow it. Nothing else runs.
+26. **Rulings of 2026-09-13 (owner, through the advisor):** (1) **Push:** master pushed now, the seven commits after
+    origin/master 182a76d (origin/master c6ee196). **The first Tier-2 slice's questions:** (2) the bare-name rule for a
+    multi-group species without a gait group: (a) — the SPEC names the species' primary locomotion group explicitly
+    (`primary_group`; the first group when absent) and that group's clip carries the bare `walk`; the other groups
+    stay `walk_<group>`. The contract's fallback (fly → walk with the state's weight) is what plays a flyer's walk in
+    flight, so the bare name is a label, not a semantic; item 12's gate and the README rule stand. Lands with the next
+    Tier-2 slice: the Dragonfly, Cockateil and Ruby Bird clip files regenerate under it and their gates open; the seam
+    delta takes a second refuter as renderer code. (3) **ENT-S-161:** (a) — the seam renderer overrides `renderCube`
+    to hand the un-mangled transformed normal through; the harness's `CapturingGeoRenderer` takes the same override;
+    two refuters; a PN entry recording the deliberate divergence from the library with the upstream report text, as
+    PN-024 did. It lands first in the next session under its own gate; the Firefly, Cloud Shark and Gold Fish then
+    rejoin the next slice. (4) **ENT-S-160:** (a) with (d) as recommended, executed in the remainder slice after the
+    weights slice, since (c) is that slice's additive layer. Nothing now. (5) **The round-trip's six time-only diffs:**
+    widen the round-trip time tolerance to 5e-5 s (tooling, no refuter). Blockbench's real timecode precision is read
+    from its exporter source when the `_preview` export (Q15) is built, and the emulation follows it then. (6) **The
+    event-key rule:** native-controller species are exempt (the Queen), keyed on the SPEC's controller kind; the checker
+    says why. Tooling. (7) **The weights slice** (Q2 (a), Q13 (a), already ruled) is contract completion, not a parity
+    lane. It lands after the Tier-2 slices, two refuters, under one constraint: every transcription stays bit-exact to
+    the classic hook (the reference leg is its proof) — weights apply to artist clips only, or transcription groups are
+    declared always-on. The flyers' and swimmers' fly / swim semantics are settled in that slice, not before. (8) The
+    mirror drop's effect on the six rigs (three geo regenerations, no clip change): noted. (9) The decided-under-doctrine
+    items stand. **The order, amended (replaces cost rule 3's sequence):** (10) Tier-2 slices → the weights slice → the
+    Tier-1 rigs through the seam in the same form with the hitbox profiles excluded (each boss's SPEC pre-declares its
+    intended locked bones, marked provisional, from the G0 design where it has them and the Queen's profile as the
+    template where it does not) → the full package. The harvest remainder, Slice 5 and the profiles are a phase after
+    the package; the locked-bone policy stays WARN until then. The drop, the Queen's package and her pilot go on the
+    owner's Section B go, whenever that comes, independent of the slices. **Order of work now:** (11) push →
+    ENT-S-161 (3) → the next Tier-2 slice: the three rejoined rigs plus the next species in the design's order, ten to
+    fourteen in all, the naming rule (2) with it, one refuter for the conversion, the counts open the report; items 5
+    and 6 ride in the same tooling commit. Nothing else runs.
 
 ## D. Rulings executed the same day (for cross-reference)
 

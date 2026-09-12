@@ -10097,6 +10097,7 @@ keeps BUG-036. Commit 4ea395c's message retains the old number.)*
   sibling); plus, for the transcription, (c) an additive unscaled layer kind so one bone may carry two frequency
   groups (Amendment 1 point 5 amended), or (d) the Ghost stays on its classic hook with no keyframe transcription.
   Recommended: (a) with (d) — the Ghost joins the seam with its hook; its transcription waits on a ruling for (c).
+- **Ruled (owner, 2026-09-13, item 4):** (a) with (d) as recommended — the ENT-S-146 move (the render-type function onto `GhostModel`) so the Ghost joins the seam with its classic hook, and no keyframe transcription until an additive per-axis layer kind exists; executed in the remainder slice AFTER the weights slice, since (c) — one bone carrying two frequency groups — is that slice's additive layer. Nothing now.
 
 ### ENT-S-161 — GeckoLib 4.8.4 mangles the lighting normal of a ROTATED zero-thickness cube (`RenderUtil.fixInvertedFlatCube`): the surface leg fails the Firefly, Cloud Shark and Gold Fish rigs (the first Tier-2 slice, 2026-09-13; found by the lane, filed)
 
@@ -10127,6 +10128,7 @@ keeps BUG-036. Commit 4ea395c's message retains the old number.)*
   `fixInvertedFlatCube` then never triggers) - a converter change, the geo no longer the literal conversion, and the
   drop's proof regeneration would carry it; (c) the three rigs stay classic until GeckoLib is patched. Recommended:
   (a) - the classic's lighting is the parity target and the override is confined to the seam.
+- **Ruled (owner, 2026-09-13, item 3):** (a) — the seam renderer overrides `renderCube` to hand the un-mangled transformed normal through (GeckoLib's own method minus `RenderUtil.fixInvertedFlatCube`); the harness's `CapturingGeoRenderer` takes the same override so the proof draws what the seam draws; two refuters; a PN entry recording the deliberate divergence from the library with the upstream report text, as PN-024 did. Lands FIRST under its own gate; the Firefly, Cloud Shark and Gold Fish then rejoin the next Tier-2 slice.
 
 ### TEST-003 — Config-flipping gametests in the concurrent default batch
 

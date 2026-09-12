@@ -678,6 +678,28 @@ root-order slice with the GeckoLib per-entity cache eviction, then Slice 4c). Th
   mitigation (c) with the harvest remainder (the real fix Slice 5's evaluator); OPT-031 with the drop; the OPT-013 look
   item is the look sheet's Section H. Order of work: push → the records with the FIX_LOG split → item 15 → Section H →
   the first Tier-2 slice; the drop on the Section B go, the package and the pilot after it; nothing else runs.
+- Rulings of 2026-09-13 (addendum item 26): the push (origin/master c6ee196). The first Tier-2 slice's questions: the
+  bare-name rule for a multi-group species without a gait group is (a) — the SPEC's `primary_group` (the first group
+  when absent) carries the bare `walk`, the others stay `walk_<group>`; a label, not a semantic (the contract's fly →
+  walk fallback plays a flyer's walk in flight); item 12's gate and the README rule stand; it lands with the next
+  Tier-2 slice (the Dragonfly, Cockateil and Ruby Bird clips regenerate and their gates open; the seam delta takes a
+  second refuter as renderer code). ENT-S-161 (a): the seam renderer overrides `renderCube` to hand the un-mangled
+  transformed normal through, the harness's capturing renderer takes the same override, two refuters, a PN entry with
+  the upstream report text as PN-024 did — it lands FIRST, under its own gate, and the Firefly, Cloud Shark and Gold
+  Fish rejoin the next slice. ENT-S-160 (a) with (d), in the remainder slice after the weights slice ((c) is that
+  slice's additive layer). Tooling, no refuter: the round-trip time tolerance widened to 5e-5 s (Blockbench's real
+  precision read from its exporter when the `_preview` export is built); native-controller species exempt from the
+  event-key rule, keyed on the SPEC's controller kind, the checker saying why. The weights slice (Q2 (a), Q13 (a)) is
+  contract completion, not a parity lane: after the Tier-2 slices, two refuters, every transcription bit-exact to the
+  classic hook (weights on artist clips only, or transcription groups declared always-on); fly / swim semantics settled
+  there. THE ORDER, AMENDED (replaces cost rule 3's sequence): Tier-2 slices → the weights slice → the Tier-1 rigs
+  through the seam with the hitbox profiles excluded (each boss's SPEC pre-declares its intended locked bones,
+  provisional, from the G0 design or the Queen's profile as the template) → the full package; the harvest remainder,
+  Slice 5 and the profiles are a phase after the package; the locked-bone policy stays WARN until then; the drop, the
+  Queen's package and her pilot on the Section B go, independent of the slices. Order of work now: push → ENT-S-161 →
+  the next Tier-2 slice (the three rejoined rigs plus the next species in the design's order, ten to fourteen in all,
+  the naming rule with it, one refuter for the conversion, the counts open the report; the two tooling items in the
+  same tooling commit). Nothing else runs.
 
 ## 7. Standing traps checklist (things that have actually bitten this project)
 
