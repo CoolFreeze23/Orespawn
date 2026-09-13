@@ -5214,6 +5214,13 @@ Entries: **79 total** — ANIM 20 (DIVERGENT 8 · PARTIAL 10 · MISSING 2) · BU
   a law-11 check — neither bears on B2.
 - **Status (2026-09-06):** FIXED (2026-09-06, wave 4 — B2: `Chainsaw.myCanSee(Player, LivingEntity)` (item/Chainsaw.java:167-207) transcribes orig UltimateSword.java:198-246 step for step in floats — the origin `player.getY() + 1.4f` (the server feet, the ENT-S-120 premise), the end `e.getY() + e.getBbHeight() / 2`, the cumulative rescale with `(int)` counts, the per-sample `(int)` casts (BUG-027 kept; the y &lt; 0 behaviour documented at the method: the cell above the true cell on a fractional negative y, void air below the world's bottom), `state.isAir()` for `== Blocks.air`, the in-grass / in-water quirk of row 10 included; `isSuitableTarget` (:140-144) reads `OreSpawnConfig.chainsawSweepVanillaSight()` live per swing — the vanilla ray in modern under `[modern] chainsawSweepVanillaSight` (default true; `modern.enabled = false` forces the walk) — MOD-037; pinned `ChainsawSweepSightTests` i070_01-09 (rows 9b, 4a, 4c, 8c, 6, 10 not swept by the walk and swept by the ray; row 12 swept by the walk, refused by the ray; row 13 the cast's cell shift, frame-reported; the master off forcing the walk) through `findSomethingToHit`'s 56 damage on a frozen 1000-HP target, the occluders placed on replayed sample cells — the cells a float-for-float replay of the walk reads at the layout's actual origin: the table's pictures (the target's own cell, the head cell between, the ground cell before the pig's, and for row 10 the head-height cell just ahead of the player — z + 0.5, never the player's own cell with the target five blocks off) are the positive-origin readings, the gate's negative y shifts the cells one up through the `(int)` truncation, and the facts pinned are the walk's own — a non-air block on a sampled cell stops the walk, the vanilla ray passes collision-less and fluid blocks; the ledger :1107 cell re-rated FIXED)
 
+### ITEM-071 — ChainsawItemModel diverges from ModelChainsaw in geometry: the animated `tooth` part is absent and `blade2`'s box sits 2.5 units off in x (REPORT, 2026-09-13; uncovered by the BUG-041 stage-2 drop's reference leg over the item models)
+
+- **Status:** DIVERGENT — REPORT for the owner's ruling (parity lanes frozen, the 2026-09-12 cost rules: a register line and stop); pinned in the reference manifest so the count can only shrink.
+- **Impact:** LOW-visual, one held item (the Chainsaw). The original draws a `tooth` cube (orig ModelChainsaw.java:77-82: box (0, -1, -0.5) 1x1x1 at pivot (0, -2, -5)) that `renderTooth*` moves along the blade — a running chain; the port has no tooth (known before: the mirror reconciliation's out-of-scope note, 2026-09-05). And the port's `blade2` (the 1x5x5 blade tip at pivot (0, 0, -28)) has its box origin at (-2.5, -2.5, -2.5) where the original's is (0, -2.5, -2.5): the tip is shifted 2.5 units in x. Not a mirror divergence: the drop touched no box.
+- **Evidence:** the standing reference-geometry leg over the eight models added to `tools/reference_model_proofs.json` by BUG-041 stage 2 (the item models dumped through `G1ModelProbe`'s `layer_factory` + `geometry_only` keys): `phase_g_reports/reference_proof/reference_chainsaw.reference-geometry.json` — `MISSING_IN_PORT` blade2 [(0, -2.5, -2.5) 1x5x5 uv (0, 8)] and tooth; `EXTRA_IN_PORT` blade2 [(-2.5, -2.5, -2.5) …] (the leg reports the shifted box as one MISSING and one EXTRA). The item models had never been surveyed: `reference_survey_manifest.py` scans entity/client only. Port source `src/main/java/danger/orespawn/client/model/ChainsawItemModel.java`; the other six item models are exact.
+- **Resolution:** OPEN — pinned `{MISSING_IN_PORT: 2, EXTRA_IN_PORT: 1}` on `reference_chainsaw` with a `pin_note` (FIX_LOG "BUG-041 — THE MIRROR DROP (2026-09-13)"). Owner's call: restore blade2's x (a one-number fix; the pin then shrinks to the tooth alone) and whether the animated tooth is wanted (a missing animated part, a separate item). A fix is a parity lane — frozen until the artist-tier rigs are cut over.
+
 ### ANIM-001 — Systemic: `wingspeed` → `limbSwingAmount` frequency mistranslation (39 model files)
 
 - **Status:** DIVERGENT
@@ -6305,7 +6312,7 @@ keeps BUG-036. Commit 4ea395c's message retains the old number.)*
 - **Population question (owner):** answered in FIX_LOG "REFERENCE-GEOMETRY
   SURVEY" once the whole-population run completes.
 
-### BUG-041 — 82 port models mirror their cubes; the 1.7.10 originals set `mirror` after `addBox`, where it is inert (REPORT, 2026-09-02; stage 1 landed 2026-09-02; counts reconciled 2026-09-05 — 89 models / 3,122 calls remain)
+### BUG-041 — 82 port models mirror their cubes; the 1.7.10 originals set `mirror` after `addBox`, where it is inert (REPORT, 2026-09-02; stage 1 landed 2026-09-02; counts reconciled 2026-09-05 — 89 models / 3,122 calls remain; STAGE 2 LANDED 2026-09-13 (d51f06f) — the port-wide drop, 97 models / 3,234 calls, 0 MIRROR divergences on 109 reference-leg models; the owner's look follows)
 
 - **Impact:** MEDIUM-visual, PORT-WIDE — every affected face samples its
   texture flipped horizontally relative to 1.7.10. Invisible on symmetric
@@ -6340,7 +6347,7 @@ keeps BUG-036. Commit 4ea395c's message retains the old number.)*
   66 `.mirror()` calls, dropped in 5354420 (stage 1; 0 remain, the reference
   leg exact); the owner compares the release jar (mirrored) against the new
   build in-game.
-- **Resolution:** OPEN — stage 1 landed (EnderReaper, 5354420); counts reconciled 2026-09-05 (FIX_LOG
+- **Resolution:** FIXED — stage 2 landed 2026-09-13 (d51f06f; the dated bullet below; the owner's Section B item 1 look follows, a failure there reverting the drop by commit); stage 1 landed (EnderReaper, 5354420); counts reconciled 2026-09-05 (FIX_LOG
   "BUG-041 COUNTS RECONCILED"): 89 models / 3,122 `.mirror()` calls pinned in `tools/reference_model_proofs.json`
   remain (12 exact); `ButterflyModel` (10 calls) and the seven `client/model` item models (102) carry the same
   defect outside the manifest — the owner's scope call. Proposed: one commit dropping
@@ -6349,6 +6356,12 @@ keeps BUG-036. Commit 4ea395c's message retains the old number.)*
   changes); `reference_source` is declared for all 101 and the 89 pins clear in the same commit.
   Alternatively an owner MOD ruling that the port keeps the flipped mapping,
   recorded per model in the manifest. Owner's call.
+- **2026-09-13 — stage 2 landed (d51f06f; owner 2026-09-13, second set, item 9; the 2026-09-05 scope):** the port-wide
+  drop — 97 models / 3,234 calls — geometry-only, proven by the reference-geometry leg (0 MIRROR divergences; every pin cleared,
+  `reference_source` declared for all) and the g1 / s4 / t2 parity trees regenerated; one refuter; FIX_LOG
+  "BUG-041 — THE MIRROR DROP (2026-09-13)". Status: FIXED pending the owner's Section B item 1 look (a failure
+  there reverts the drop by commit). The `_preview`-style caveat stands: the item models have no reference pins
+  (the law-11 census is their proof, per the FIX_LOG section).
 - **Scope ruled (owner, 2026-09-05):** the 112 calls outside the manifest — `ButterflyModel` (10) and the seven
   `client/model` item models (BattleAxe 15, Bertha 12, Chainsaw 7, Hammy 33, QueenBattleAxe 9, Slice 14, SquidZooka 12)
   — join the drop: pinned by the reference leg where a 1.7.10 pair exists (all eight pair by name — the manifest and
