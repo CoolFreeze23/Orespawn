@@ -759,6 +759,21 @@ root-order slice with the GeckoLib per-entity cache eviction, then Slice 4c). Th
   full folder (5 to 8) → stop and report with the counts and the folder's file count. The slices resume on the next
   prompt: the remaining Tier-2 first, then the four FK rigs as real hierarchies, then the Tier-1 rigs. Nothing else runs.
 
+- Rulings of 2026-09-14 (addendum item 30): the push (origin/master ced24f8). The folder's gaps, tooling, no refuter
+  unless named: TEST-009 (a) — the GiantRobot pair's reference entries gain the render_instances form the fan rigs use,
+  the pair packages with its instance bones (the final bone set), the Tier-1 slice lands the same rig; ANIM-025 — the
+  Crab's reference entry gains the same form now (twenty-four leg bones, the sheet corrected), the port's renderToBuffer
+  fix lands with the Crab's slice, one refuter, exempt from the freeze as a rig matter, the register line staying until
+  then; TEST-010 (a) — geometry-only entries for the Boyfriend and Girlfriend, packaged now, landing on the hook in a
+  Tier-2 slice as the Cannon Fodder did; TEST-011 — the readers extended (the ATTACKING accessor, the consumer-set flag
+  traced into the goal, vanilla MeleeAttackGoal with the entity's state name), the affected sheets regenerated with their
+  rows offered and the wishlist warnings cleared; the goal dictionary — one lane fills the 73 missing entries from the
+  goal classes, one line each, no sheet leaving with a GOAL_UNCLASSIFIED row; the design's section 6 against the port's
+  rigs — the provisional locks stand as drafted, reconciled at the profile phase; the seeds stay DRAFT, the Tier-2 seeds
+  unrefuted. Order of work: push → items 2 to 6 as one tooling commit, the folder regenerated, every check PASS, no
+  ARTIST_TIER_UNPACKAGED line → the next Tier-2 slice: fifteen rigs on the hook in the design's order, the Crab with its
+  draw fix among them, one refuter, the counts open the report → stop and report. Nothing else runs.
+
 ## 7. Standing traps checklist (things that have actually bitten this project)
 
 - Uppercase in resource filenames → `ResourceLocation` crash. Lowercase all geo/

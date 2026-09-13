@@ -5462,6 +5462,9 @@ Entries: **79 total** — ANIM 20 (DIVERGENT 8 · PARTIAL 10 · MISSING 2) · BU
 - **Original:** `ModelCrab.java` (1.7.10, `render` from line 195): the three leg parts are re-posed and drawn again and again in unrolled blocks — the position and yaw set, `func_78785_a` (render) called on `leg1` / `leg2` / `leg3`, then the next block — eight draws per part around the body (the seed lane's reading; the orchestrator confirmed the repeated render calls in the source).
 - **Port:** `entity/client/ModelCrab.java` `setupAnim` re-poses the three leg parts eight times, but `renderToBuffer` (`ModelCrab.java:269-295`) draws each part once — the last pose of the loop — so the rig carries three leg bones and the game shows three legs. The same shape as the Rotator's and PurplePower's fan rigs, which Slice 4c expanded through `render_instances`.
 - **Resolution:** OPEN — a parity lane's later work (the Slice 4c render-instance form, or distinct leg bones, when the Crab lands through the seam); the seed notes it for the animator. Not fixed here.
+- **2026-09-14 (owner, item 3):** RULED — the Crab's reference entry gains the render_instances form now, so its folder
+  carries the twenty-four leg bones with the sheet corrected; the port's `renderToBuffer` fix lands with the Crab's slice,
+  one refuter, EXEMPT from the parity freeze as a rig matter (a wrong rig is not a parity lane). This line stays until then.
 
 ## BUG — Port-code bugs (from 09_bugs.md)
 
@@ -10363,6 +10366,9 @@ two coplanar faces interpolate depth along OPPOSITE diagonals on the two sides a
 - **Where:** `tools/layer_definition_to_geo.py` refuses a model whose part is drawn more than once unless the manifest entry declares the Slice 4c `render_instances` form (the fan rigs' precedent: PurplePower and Rotator declare it in the s4 manifest); `tools/reference_model_proofs.json` `reference_giantrobot` declares none. The port's `ModelGiantRobot` replays `thigh`, `shin`, `foot1..3`, `arm1..3` and `knuckles` at two transforms (`__i0` / `__i1` — the left and the right side of one part).
 - **Measured:** `gradle referenceConvertModels` (`--continue-on-refusal`) converts 106 of 109 reference entries; the three refusals are `reference_giantrobot`, `reference_purplepower` and `reference_rotator` — the last two ship their s4 geos already, so only the GiantRobot pair is without a rig. The package's README, `warnings.txt` (`ARTIST_TIER_UNPACKAGED`) and the dry-run counts name `giant_robot` and `jeffery`.
 - **Resolution:** OPEN — either (a) the reference entry gains the `render_instances` declaration the fan rigs use (a manifest edit and a converter run; the reference-geometry leg's comparison is unaffected, it compares parts, not instances) so the pair packages from the converter's output, or (b) the pair waits for the Tier-1 slice, where the design's section 6 row already says the rig must split its replayed thigh / shin / arm parts into distinct left and right bones (a converter change is then unnecessary). Until ruled, the four-registry gap is stated in the package.
+- **2026-09-14 (owner, item 2):** RULED (a) — the GiantRobot pair's reference entries gain the render_instances form the
+  fan rigs use; the pair packages from the converter's output with its instance bones, which are the FINAL bone set; the
+  Tier-1 slice lands the same rig. Tooling, no refuter.
 
 ### TEST-010 — `boyfriend` and `girlfriend` have no reference entry: `ModelBoyfriend` / `ModelGirlfriend` are HumanoidModel subclasses that 1.7.10 drew with vanilla ModelBiped, so the reference leg has no 1.7.10 source to pair them with and the artist package has no rig for them (REPORT, 2026-09-13; found by the full folder's tooling)
 
@@ -10370,6 +10376,8 @@ two coplanar faces interpolate depth along OPPOSITE diagonals on the two sides a
 - **Where:** `tools/reference_model_proofs.json` pairs each port model with a 1.7.10 `Model*.java` source (`reference_source`); the Boyfriend and the Girlfriend have none — 1.7.10's `ClientProxyOreSpawn` registered them on vanilla `ModelBiped` (the mirror reconciliation of 2026-09-05 recorded their arm / leg mirrors as vanilla's, not BUG-041's). The full folder's generator takes an unlanded rig from the reference leg's converter output, so a species without an entry has no rig to package.
 - **Measured:** the dry run names both under `ARTIST_TIER_UNPACKAGED` and in the README's closing line; the other 70 unseeded registries package (68 from the reference leg; the GiantRobot pair is TEST-009).
 - **Resolution:** OPEN — either (a) a reference entry without a 1.7.10 comparison (geometry only, the form the seven weapon models got in BUG-041 stage 2: `geometry_only`, no `reference_source`, the leg reporting the entry as unpaired) so the converter's output packages, or (b) the pair waits for its own slice. Until ruled, the gap is stated in the package.
+- **2026-09-14 (owner, item 4):** RULED (a) — geometry-only entries for the Boyfriend and Girlfriend; they package now and
+  land on the hook in a Tier-2 slice as the Cannon Fodder did. Tooling, no refuter.
 
 ### TEST-011 — The package generator's trigger inventory misses three flag idioms, so four sheets cannot offer the `attack` / `aggro_idle` rows their entities warrant: a raw `ATTACKING` accessor (the Lizard), a flag set through a goal's consumer (the Cave Fisher, the Dungeon Beast), and a vanilla `MeleeAttackGoal` strike with a `DATA_SCREAMING` state (the Ender Knight) (REPORT, 2026-09-13; found by the Tier-2 batch A seed lane)
 
@@ -10378,6 +10386,9 @@ two coplanar faces interpolate depth along OPPOSITE diagonals on the two sides a
 - **Measured:** the batch A dry run: `WISHLIST_UNACCEPTED` on the Lizard (`aggro_idle`), the Cave Fisher (`aggro_idle`) and the Ender Knight (`attack`, `aggro_idle`); the Dungeon Beast's `aggro_idle` row likewise not offered. The seeds carry the verdicts and the notes citing the entity lines; the sheets mark the matching wishlist lines "NOT accepted by `check` today".
 - **The same family in the boss batch:** the `aggro_idle` / `calm_idle` pair is not offered for the Emperor Scorpion and the T-Rex (`DATA_ATTACKING` set through a goal's IntConsumer → classified NONE), the Alien Boss and the Baby Dragon (`setAttacking` and the strike sites in the parent class), the Kraken (cleared at `Kraken.java:450`, the set site unread) and the Water Dragon (sites in an inner goal); no `attack` row for the Baby Dragon (strike sites in `Dragon.java`) and the Luna Moth (the nip called in the parent goal). Their seeds keep the verdict marked "NOT offered" and word the wishlists to what `check` accepts.
 - **Resolution:** OPEN — extend the readers (a field named `ATTACKING`; a consumer-set flag traced into the goal class; vanilla `MeleeAttackGoal` as a strike site with the entity's own state name) so the four sheets offer the rows, or edit the four seeds to the rows offered. Tooling; no refuter; the owner's call which.
+- **2026-09-14 (owner, item 5):** RULED — extend the readers (the ATTACKING accessor, the consumer-set flag traced into the
+  goal, vanilla MeleeAttackGoal with the entity's state name); the affected sheets regenerate with their rows offered and
+  the wishlist warnings cleared. Tooling, no refuter.
 
 ### TEST-003 — Config-flipping gametests in the concurrent default batch
 

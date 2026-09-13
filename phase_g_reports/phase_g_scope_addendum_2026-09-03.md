@@ -447,6 +447,24 @@ that slice, not a task for now.
     the counts and the folder's file count. The slices resume on the next prompt, the remaining Tier-2 first, then the
     four FK rigs as real hierarchies, then the Tier-1 rigs. Nothing else runs.
 
+30. **Rulings of 2026-09-14 (owner, through the advisor):** (1) **Push:** master pushed now, the eight commits after
+    origin/master 5db339d (origin/master ced24f8). **The folder's gaps (tooling, no refuter unless named):** (2) TEST-009:
+    (a). The GiantRobot pair's reference entries gain the render_instances form the fan rigs use; the pair packages from
+    the converter's output with its instance bones, which are the final bone set. The Tier-1 slice lands the same rig.
+    (3) ANIM-025: the Crab's reference entry gains the same form now, so its folder carries the twenty-four leg bones with
+    the sheet corrected; the port's renderToBuffer fix lands with the Crab's slice, one refuter, exempt from the freeze as
+    a rig matter (a wrong rig is not a parity lane). The register line stays until then. (4) TEST-010: (a). Geometry-only
+    entries for the Boyfriend and Girlfriend; they package now and land on the hook in a Tier-2 slice as the Cannon
+    Fodder did. (5) TEST-011: extend the readers (the ATTACKING accessor, the consumer-set flag traced into the goal,
+    vanilla MeleeAttackGoal with the entity's state name); the affected sheets regenerate with their rows offered and the
+    wishlist warnings cleared. (6) The goal dictionary: one lane fills the 73 missing entries from the goal classes, one
+    line each; no sheet leaves with a GOAL_UNCLASSIFIED row. (7) The design's section 6 against the port's rigs (the
+    Kraken's six chains, the six sizes, the segment calls): the provisional locks stand as drafted; reconciled at the
+    profile phase, not before. (8) The seeds stay DRAFT; the Tier-2 seeds stay unrefuted. **Order of work:** (9) push →
+    items 2 to 6 as one tooling commit, the folder regenerated, every check PASS, no ARTIST_TIER_UNPACKAGED line → the
+    next Tier-2 slice: fifteen rigs on the hook in the design's order, the Crab with its draw fix among them, one
+    refuter, the counts open the report → stop and report. Nothing else runs.
+
 ## D. Rulings executed the same day (for cross-reference)
 
 - ENT-S-098 fixed (shot BetterFireballs carry the mod's own type; save/load round-trip pinned) and its

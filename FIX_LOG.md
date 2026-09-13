@@ -6614,3 +6614,14 @@ python; the package is a repository directory) — the cost rules' tooling check
 IN-GAME: nothing — seeds and a generated package; no shipped resource or class changed.
 
 GATE: not run - no build input moved (the seeds, the generator's DRAFT banner and its test, and the generated artist_handoff/ are outside the jar: `build.gradle` and `src/` untouched); the cost rules' tooling check applies: `gradle referenceDumpCompiledModels referenceConvertModels` exit 0 (106 geos, the three refusals by name), `test_artist_package.py` 40 OK, the package run exit 0 (112 folders, 995 files, 42 MB), 112 of 112 folders `check` PASS, `asset_audit.py` 0 errors (2026-09-13 23:00-23:01). KNOWN_ISSUES count 1278 unchanged. Stray-process check: only the Gradle daemon.
+
+## RULINGS 2026-09-14 RECORDED (docs-only) — push; the folder's four gaps ruled (TEST-009 (a), ANIM-025's rig now and its draw fix with the Crab's slice, TEST-010 (a), TEST-011 the readers extended, the goal dictionary filled); the design's section 6 locks stand as drafted; the seeds stay DRAFT; then the next Tier-2 slice with the Crab
+
+Recorded in `phase_g_reports/phase_g_scope_addendum_2026-09-03.md` item 30 (the rulings in full) and `PHASE_G_PROMPT.md`
+§6b (the bullet); the register carries dated lines under TEST-009, TEST-010, TEST-011 and ANIM-025. Executed here,
+docs-only: the push (origin/master ced24f8, the eight commits after 5db339d, before anything else landed). The order of
+work from here: items 2 to 6 as one tooling commit (the GiantRobot's and the Crab's reference entries with the
+render_instances form, the Boyfriend's and Girlfriend's geometry-only entries, the trigger inventory's three readers, the
+goal dictionary's 73 entries; the folder regenerated, every check PASS, no ARTIST_TIER_UNPACKAGED line) → the next
+Tier-2 slice (fifteen rigs on the hook in the design's order, the Crab with its draw fix among them — exempt from the
+freeze as a rig matter — one refuter, the counts opening the report) → stop and report. Nothing else runs.
