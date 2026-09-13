@@ -48,8 +48,23 @@ final class S4CandidateRuntime {
                                                                     String candidateClass, Inputs inputs,
                                                                     Object subject) throws Exception {
         OreSpawnGeoReplacement<?> replacement = instantiate(candidateClass);
-        BakedGeoModel baked = freshBaked(rawModel, drawOrder, faceOrder,
-                replacement.descriptor().cubeFaceOrderRequired(), candidateClass);
+        return evaluateProductionHook(rawModel, drawOrder, faceOrder, candidateClass, inputs, subject,
+                replacement.descriptor().cubeFaceOrderRequired());
+    }
+
+    /**
+     * The same pose with the face-order strictness stated by the caller: the reference-clip sampler poses an
+     * UNLANDED hook over the reference leg's converter output, which carries the draw-order key but not yet the face-order
+     * key its descriptor may require (the landing slice's TEST-007 writes it) - the face order only orders cube
+     * vertices for rendering and moves no bone, so the sampler passes {@code false} for a reference rig and the shipped
+     * descriptor's own requirement for a shipped one.
+     */
+    static G1AnimationRuntime.EvaluatedModel evaluateProductionHook(Model rawModel, List<String> drawOrder,
+                                                                    Map<String, List<List<Direction>>> faceOrder,
+                                                                    String candidateClass, Inputs inputs,
+                                                                    Object subject, boolean requireFaceOrder) throws Exception {
+        OreSpawnGeoReplacement<?> replacement = instantiate(candidateClass);
+        BakedGeoModel baked = freshBaked(rawModel, drawOrder, faceOrder, requireFaceOrder, candidateClass);
         pose(baked, replacement, inputs, subject);
         return snapshot(baked);
     }

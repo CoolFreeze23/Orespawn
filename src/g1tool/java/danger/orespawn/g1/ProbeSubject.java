@@ -86,6 +86,14 @@ final class ProbeSubject implements Robot2Pose, Robot3Pose, Robot4Pose, RockBase
     /** Slice 4c: an {@code rf1} preset was declared, so {@link #after()} reports the advanced angle. */
     private final boolean fanSpinDeclared;
     private int shielding = -1;
+    /**
+     * The reference-clip sampler's cross-check: whether any pose call read {@link #getAttacking()} on this
+     * subject - every pose interface's attacking getter lands here, so the sampler can report which hooks actually
+     * read the flag at the sampled inputs beside the pose interfaces they declare. The attacking VALUE itself is
+     * declared through the state ({@code attacking}, the Slice 4b presets' field): the sampler's attack state
+     * declares 1, its walk and idle states 0.
+     */
+    private boolean attackingRead;
 
     ProbeSubject(JsonObject state) {
         this.attacking = state.has("attacking") ? state.get("attacking").getAsInt() : 0;
@@ -105,7 +113,13 @@ final class ProbeSubject implements Robot2Pose, Robot3Pose, Robot4Pose, RockBase
 
     @Override
     public int getAttacking() {
+        this.attackingRead = true;
         return this.attacking;
+    }
+
+    /** Whether a pose call has read {@link #getAttacking()} on this subject (the sampler's cross-check; see the field). */
+    boolean attackingRead() {
+        return this.attackingRead;
     }
 
     @Override

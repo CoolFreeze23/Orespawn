@@ -1,0 +1,143 @@
+{
+  "format_version": "1.8.0",
+  "animations": {
+    "reference_idle": {
+      "loop": true,
+      "animation_length": 0.05,
+      "bones": {
+        "abdomen": {
+          "rotation": {
+            "0.0": {
+              "post": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "lerp_mode": "linear"
+            }
+          }
+        },
+        "body": {
+          "rotation": {
+            "0.0": {
+              "post": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "lerp_mode": "linear"
+            }
+          }
+        },
+        "head": {
+          "rotation": {
+            "0.0": {
+              "post": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "lerp_mode": "linear"
+            }
+          }
+        },
+        "lfleg": {
+          "rotation": {
+            "0.0": {
+              "post": [
+                0.0,
+                0.0709844485,
+                0.0
+              ],
+              "lerp_mode": "linear"
+            }
+          }
+        },
+        "lleg1": {
+          "rotation": {
+            "0.0": {
+              "post": [
+                -0.028956587,
+                0.0190391523,
+                0.0
+              ],
+              "lerp_mode": "linear"
+            }
+          }
+        },
+        "lleg2": {
+          "rotation": {
+            "0.0": {
+              "post": [
+                0.0297420587,
+                0.0037753871,
+                0.0
+              ],
+              "lerp_mode": "linear"
+            }
+          }
+        },
+        "lrleg": {
+          "rotation": {
+            "0.0": {
+              "post": [
+                0.0,
+                -0.0404500878,
+                0.0
+              ],
+              "lerp_mode": "linear"
+            }
+          }
+        },
+        "rfleg": {
+          "rotation": {
+            "0.0": {
+              "post": [
+                0.0,
+                -0.0602798345,
+                0.0
+              ],
+              "lerp_mode": "linear"
+            }
+          }
+        },
+        "rleg1": {
+          "rotation": {
+            "0.0": {
+              "post": [
+                -0.028956587,
+                -0.0190391523,
+                0.0
+              ],
+              "lerp_mode": "linear"
+            }
+          }
+        },
+        "rleg2": {
+          "rotation": {
+            "0.0": {
+              "post": [
+                0.0297420587,
+                -0.0037753871,
+                0.0
+              ],
+              "lerp_mode": "linear"
+            }
+          }
+        },
+        "rrleg": {
+          "rotation": {
+            "0.0": {
+              "post": [
+                0.0,
+                -0.0015811888,
+                0.0
+              ],
+              "lerp_mode": "linear"
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -16,35 +16,50 @@ import java.nio.file.Path;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.TreeSet;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import net.minecraft.core.Direction;
 import software.bernie.geckolib.cache.object.GeoBone;
 import software.bernie.geckolib.loading.json.raw.Model;
 import software.bernie.geckolib.loading.json.typeadapter.KeyFramesAdapter;
 
 /**
- * The reference-clip sampler: for every seam rig with a manifest entry, the shipped classic hook sampled at
- * FIXED inputs into one reference-only Bedrock clip, {@code
- * tools/reference_clips/<registry>_reference.animation.json}, one file per REGISTRY (a shared rig's
- * consumers each get their own file, identical content), plus the index {@code reference_clips.json} the package
- * generator ({@code tools/artist_package.py package}) reads for the SPEC's "Reference clip (reference-only)"
- * section and the manifest's {@code reference_clip} block. The clip is never shipped and never returned: the
- * package checker refuses it and the asset audit refuses it under {@code src/main/resources}.
+ * The reference-clip sampler (every hook and every reachable state since 2026-09-14): for every seam rig with a
+ * manifest entry AND every unlanded hook (a reference entry whose model class has a {@code <Name>GeoReplacement}
+ * descriptor, {@link #HOOK_DESCRIPTORS}), the classic hook sampled at FIXED inputs into reference-only Bedrock clips,
+ * one file per REGISTRY and STATE: {@code
+ * tools/reference_clips/<registry>_reference_walk.animation.json} (limbSwingAmount 1, the walk position advancing: the
+ * fixed inputs of 2026-09-13 exactly - every earlier {@code <registry>_reference.animation.json} reproduces byte for
+ * byte under this name, the decision), {@code <registry>_reference_idle.animation.json} (limbSwingAmount 0, the
+ * walk position 0, everything else as the walk) and {@code <registry>_reference_attack.animation.json} where the hook
+ * READS an attacking state through the pose interface it declares (attacking 1, limbSwingAmount 0) - plus the
+ * index {@code reference_clips.json} the package generator ({@code tools/artist_package.py package}) reads for the
+ * SPEC's "Reference clips (reference-only)" section and the manifest's {@code reference_clips} block. A clip is never
+ * shipped and never returned under its own name: the package checker refuses it and the asset audit refuses
+ * it under {@code src/main/resources}; its keys may be the starting point of a delivered {@code idle} /
+ * {@code walk} / {@code aggro_idle} (item 31 (13)).
  *
- * <p>THE POSE SOURCE (the S4 doctrine): the shipped {@code OreSpawnGeoReplacement} named by the manifest's
- * {@code candidate_class}, instantiated registry-free ({@link S4CandidateRuntime#instantiate}) and posed through
- * {@code OreSpawnGeoReplacement.pose} on explicit {@code PoseInputs} over a fresh bake of the SHIPPED geo the
- * descriptor names ({@code modelResource}), exactly as the harness's geo dumps pose it
- * ({@link S4CandidateRuntime#evaluateProductionHook}). The Beaver's shipped hook takes the renderer's
- * {@code AnimationState} (no {@code PoseInputs} form), so it is sampled through the probe's accepted Beaver path
+ * <p>THE POSE SOURCE (the S4 doctrine): the {@code OreSpawnGeoReplacement} named by the manifest's
+ * {@code candidate_class} - or, for an unlanded hook, the descriptor {@link #HOOK_DESCRIPTORS} names - instantiated
+ * registry-free ({@link S4CandidateRuntime#instantiate}) and posed through {@code OreSpawnGeoReplacement.pose} on
+ * explicit {@code PoseInputs} over a fresh bake of the geo: the SHIPPED geo the descriptor names ({@code modelResource})
+ * for a landed rig, exactly as the harness's geo dumps pose it ({@link S4CandidateRuntime#evaluateProductionHook}); the
+ * reference leg's converter output {@code build/reference/generated/reference_<rig>.geo.json} (gradle
+ * {@code referenceConvertModels}) for an unlanded hook, baked without the face-order strictness its descriptor may
+ * declare (the converter's output carries the draw-order key, not yet the face-order key the landing slice's TEST-007
+ * writes; the face order moves no bone). The Beaver's shipped hook takes the renderer's {@code AnimationState} (no
+ * {@code PoseInputs} form), so it is sampled through the probe's accepted Beaver path
  * ({@link G1AnimationRuntime.Evaluator#evaluateBeaverCodeDriven}, the G1 legacy-parity exception: the same
- * {@code Mth.cos} formulas in {@code GeoModel.setCustomAnimations}). A static rig without a hook (the Elevator,
- * the Vortex) is one key at bind. A species whose descriptor has no classic hook of either form is skipped and
- * said so (the Queen is native GeckoLib and has no manifest entry: her eight native clips are her reference).</p>
+ * {@code Mth.cos} formulas in {@code GeoModel.setCustomAnimations}). A static rig without a hook (the Elevator, the
+ * Vortex) is one key at bind. A reference entry whose model class has no descriptor (the held species, the head
+ * sidecars, the solver rigs, the native Queen) is skipped and said so.</p>
  *
  * <p>THE FIXED INPUTS (the decision's, pinned): {@code limbSwingAmount} 1.0; {@code limbSwing} advancing 1.0 per
  * tick from 0 - the classic renderer's own feed at full walking speed: vanilla {@code WalkAnimationState.update}
@@ -56,32 +71,35 @@ import software.bernie.geckolib.loading.json.typeadapter.KeyFramesAdapter;
  * (looking ahead); every entity-state flag at its rest value - a {@link ProbeSubject} built from an EMPTY
  * state: {@code attacking} 0, {@code ri1} 0, {@code rock_type} 0, {@code rf1} 0 - with its entity RNG seeded 0
  * ({@code RandomSource.create(0)}) ONCE per clip and evolving across the keys, one pose call per key (a fan
- * angle or a roll advances per call, as it advances per rendered frame in-game); full health (no shipped hook reads health). Twenty samples per second: one key per tick.</p>
+ * angle or a roll advances per call, as it advances per rendered frame in-game); full health (no hook reads health
+ * below the maximum). Twenty samples per second: one key per tick. THE STATES (item 31 (11)): {@code walk} is
+ * exactly the above; {@code idle} sets limbSwingAmount 0 and limbSwing 0 (the walk position at rest); {@code
+ * attack} sets the subject's {@code attacking} to 1 with limbSwingAmount 0 and limbSwing 0, and
+ * exists only where the hook reads attacking through a pose interface it declares ({@link #declaredAttacking}: the
+ * {@code inputs.subject(<X>Pose.class)} casts of the hook and of the static helpers it delegates to, followed into the interface's getters named like {@link #ATTACKING_GETTER}).</p>
  *
- * <p>THE SPAN, per rig (replacing the earlier wording): a rig with a period structure - a manifest that declares
- * {@code channels} (the effective frequency {@code omega * wingspeed} per channel, the slowest distinct one's period
- * {@code T = 2 pi / f}), or a hook rig without declared channels (the Slice 4 rigs) whose {@link #RULES} row states
- * its period with the source line it was read from - spans the SMALLEST multiple {@code k * T} of its slowest group's
- * period at which EVERY group returns within 5 degrees of its start: the pose at {@code t = k * T} against the
- * pose at {@code t = 0}, per bone and axis, the authored rotation deltas' difference reduced mod 360 ({@link
- * #wrapDegrees}, exactly as the loop seam is measured), the maximum at most {@link
+ * <p>THE SPAN, per rig and per state (replacing the earlier wording): a rig with a period structure - a manifest
+ * that declares {@code channels} (the effective frequency {@code omega * wingspeed} per channel, the slowest
+ * distinct one's period {@code T = 2 pi / f}), or a hook rig without declared channels whose {@link #RULES} / {@link
+ * #HOOK_RULES} row states its period with the source line it was read from - spans the SMALLEST multiple {@code k *
+ * T} of its slowest group's period at which EVERY group returns within 5 degrees of its start: the pose at {@code t
+ * = k * T} against the pose at {@code t = 0}, per bone and axis, the authored rotation deltas' difference reduced
+ * mod 360 ({@link #wrapDegrees}, exactly as the loop seam is measured), the maximum at most {@link
  * #CLOSURE_TOLERANCE_DEGREES}; where the hook writes positions, each position channel must return within {@link
- * #CLOSURE_TOLERANCE_UNITS} model unit of its start (one sixteenth of a block, the model grid's pixel - the visual
- * order of 5 degrees on a 16-unit bone; today only Robot4's cannon assembly writes positions and it is constant at
- * rest, so that half of the rule is stated, not exercised). The first {@code k >= 1} with {@code k * T <= 120} ticks
- * (the 6 s cap, {@link #SPAN_CAP_TICKS}) that passes is the span ({@code period_multiple}, the index's
- * {@code period_multiple_k}); a single-group rig passes at {@code k = 1} (the seam 0 by construction). Past the cap -
- * no such {@code k}, or {@code T} itself over 120 ticks (the Coin, the T-shirt, the Rotator, the Island pair, Robot1) -
- * the span is two seconds ({@code two_seconds_past_cap}, 40 ticks) and the sheet states the seam (the index's
- * {@code seam_delta_degrees}: the closing key's delta at 40 ticks). A static rig is one key ({@code one_key}); a rig
- * with no period (the Purple Power's fresh random rolls) is two seconds ({@code two_seconds_no_period}). The closure
- * test poses {@code t = 0} and then each candidate {@code t = k * T} in sequence on its own rest-state subject (every
- * periodic hook is a pure function of {@code t}; the one call-sequence rig, the Rotator, is past the cap before any
- * candidate is posed), and the clip is then sampled on a fresh subject exactly as before. Keys sit at every whole tick
- * inside the span plus a CLOSING key at the span's end (the pose sampled AT {@code k * T} - Bedrock and GeckoLib hold
- * the last key until {@code animation_length}, so without it the loop would hitch by up to a tick); the index records
- * the seam delta (closing key against first key, degrees, reduced mod 360) so a past-cap window's seam and a sawtooth
- * channel's wrap are visible.</p>
+ * #CLOSURE_TOLERANCE_UNITS} model unit of its start (one sixteenth of a block, the model grid's pixel). The first
+ * {@code k >= 1} with {@code k * T <= 120} ticks (the 6 s cap, {@link #SPAN_CAP_TICKS}) that passes is the span
+ * ({@code period_multiple}, the index's {@code period_multiple_k}); a single-group rig passes at {@code k =
+ * 1} (the seam 0 by construction). Past the cap - no such {@code k}, or {@code T} itself over 120 ticks - the span
+ * is two seconds ({@code two_seconds_past_cap}, 40 ticks) and the sheet states the seam (the index's {@code
+ * seam_delta_degrees}: the closing key's delta at 40 ticks). A static rig is one key ({@code one_key}); a rig with
+ * no period (the Purple Power's fresh random rolls) is two seconds ({@code two_seconds_no_period}). The closure test
+ * runs PER STATE on that state's inputs and its own fresh subject, and a state whose hook writes nothing that
+ * MOVES - every bone's rotation and position identical at every sample - is one key ({@code one_key}, the note saying
+ * which structure is not live at those inputs: a threshold gait at limbSwingAmount 0, for one). Keys sit at every
+ * whole tick inside the span plus a CLOSING key at the span's end (the pose sampled AT {@code k * T} - Bedrock and
+ * GeckoLib hold the last key until {@code animation_length}, so without it the loop would hitch by up to a tick); the
+ * index records the seam delta (closing key against first key, degrees, reduced mod 360) so a past-cap window's seam
+ * and a sawtooth channel's wrap are visible.</p>
  *
  * <p>THE KEYS: a rotation key per bone per sample, DELTAS from the bone's bind under the converter's sign rule
  * (authored X = +classic degrees, Y and Z negated; the rule {@code tools/keyframe_clip.py} and {@link KeyframeLeg}
@@ -89,15 +107,17 @@ import software.bernie.geckolib.loading.json.typeadapter.KeyFramesAdapter;
  * facts), so the classic delta is {@code (-(Ix - Bx), Iy - By, -(Iz - Bz))} and the authored key
  * {@code (+dCx, -dCy, -dCz)} - equivalently {@code (-dIx, -dIy, +dIz)} in internal terms, which is exactly what
  * GeckoLib 4.8.4 undoes at load (X and Y rotation keys negated, Z kept) before adding the key to the bone's initial
- * snapshot. A position key per bone per sample where the hook writes positions (Robot4's cannon follow through
- * {@code moveTo}; every other packaged hook writes rotations only): GeckoLib reads position keys unnegated and sets
- * them absolutely, and a fresh bake's offsets are 0, so the authored key is the internal offset itself -
- * {@code (-dx, -dy, +dz)} of the classic pivot move {@code (dx, dy, dz)}, the numbers {@code moveTo} writes.
- * Values rounded to 1e-10 (degrees / model units), never {@code -0.0}; {@code lerp_mode} linear; two-space JSON,
- * LF, UTF-8; deterministic, so two runs compare byte for byte.</p>
+ * snapshot. A position key per bone per sample where the hook writes positions ({@code moveTo}): GeckoLib reads
+ * position keys unnegated and sets them absolutely, and a fresh bake's offsets are 0, so the authored key is the
+ * internal offset itself - {@code (-dx, -dy, +dz)} of the classic pivot move {@code (dx, dy, dz)}, the numbers
+ * {@code moveTo} writes. Values rounded to 1e-10 (degrees / model units), never {@code -0.0}; {@code lerp_mode}
+ * linear; two-space JSON, LF, UTF-8; deterministic, so two runs compare byte for byte. The walk clip's Bedrock clip
+ * name stays {@code reference} (the pinned bytes); the idle and attack clips are {@code reference_idle} and
+ * {@code reference_attack}, so the three files import beside each other without a name collision.</p>
  *
- * <p>Usage: {@code ReferenceClipSampler <output-dir> <manifest>...} (build.gradle {@code referenceClips}, the writer)
- * and {@code ReferenceClipSampler --verify <checked-in-dir> <scratch-out-dir> <manifest>...} (build.gradle
+ * <p>Usage: {@code ReferenceClipSampler <output-dir> <manifest>... [--reference <reference-manifest> <geo-dir>]}
+ * (build.gradle {@code referenceClips}, the writer) and {@code ReferenceClipSampler --verify <checked-in-dir>
+ * <scratch-out-dir> <manifest>... [--reference <reference-manifest> <geo-dir>]} (build.gradle
  * {@code referenceClipsVerify}, a {@code check} dependency): the clips are regenerated into the scratch directory
  * and every file is compared byte for byte with the checked-in directory; a difference, a file the sampler
  * produced that is not checked in, or a checked-in file the sampler did not produce prints one {@code REFERENCE
@@ -107,7 +127,12 @@ import software.bernie.geckolib.loading.json.typeadapter.KeyFramesAdapter;
 public final class ReferenceClipSampler {
     static final String CLIP_NAME = "reference";
     static final String INDEX_FILE = "reference_clips.json";
-    static final String FILE_SUFFIX = "_reference.animation.json";
+    /** The state file names: {@code <registry>_reference_<state>.animation.json}. */
+    static final String FILE_INFIX = "_reference_";
+    static final String FILE_EXTENSION = ".animation.json";
+    static final String STATE_WALK = "walk";
+    static final String STATE_IDLE = "idle";
+    static final String STATE_ATTACK = "attack";
     static final double TICKS_PER_SECOND = 20.0D;
     static final double TWO_SECONDS_TICKS = 40.0D;
     /** The cap on a period multiple: 6 s; past it, two seconds. */
@@ -140,6 +165,28 @@ public final class ReferenceClipSampler {
             + "(attacking 0, ri1 0, rock_type 0, rf1 0: a ProbeSubject built from an empty state); the entity RNG seeded 0 "
             + "once per clip and evolving across the keys; one pose call per key, 20 keys per second; full health "
             + "(no shipped hook reads health)";
+    static final String IDLE_INPUTS_STATEMENT = "limbSwingAmount 0.0; limbSwing 0 (the walk position at rest: vanilla "
+            + "WalkAnimationState holds its position while the speed is 0, and a creature that has not walked since it spawned "
+            + "carries 0); ageInTicks = t (getBob: tickCount + partialTick, partialTick 0; advancing 1.0 per tick from 0); "
+            + "netHeadYaw 0; headPitch 0 (looking ahead); every entity-state flag at its rest value (attacking 0, ri1 0, "
+            + "rock_type 0, rf1 0: a ProbeSubject built from an empty state); the entity RNG seeded 0 once per clip and evolving "
+            + "across the keys; one pose call per key, 20 keys per second; full health";
+    static final String ATTACK_INPUTS_STATEMENT = "attacking 1 (the pose interface's getAttacking() answers 1: the hook's "
+            + "attacking branch); limbSwingAmount 0.0; limbSwing 0 (the walk position at rest); ageInTicks = t (getBob: "
+            + "tickCount + partialTick, partialTick 0; advancing 1.0 per tick from 0); netHeadYaw 0; headPitch 0 (looking "
+            + "ahead); every other entity-state flag at its rest value (ri1 0, rock_type 0, rf1 0: a ProbeSubject built from "
+            + "the attack state); the entity RNG seeded 0 once per clip and evolving across the keys; one pose call per key, "
+            + "20 keys per second; full health";
+    /** The getter names that read an attacking state on a pose interface (item 31 (11): getAttacking / isAttacking and kin). */
+    static final Pattern ATTACKING_GETTER = Pattern.compile("(?i)^(get|is)?(is)?attack(ing)?$");
+    /** The hook's declared pose interface: {@code inputs.subject(<X>.class)} in the descriptor or a helper it delegates to. */
+    static final Pattern SUBJECT_CAST = Pattern.compile("subject\\(\\s*([A-Za-z0-9_.]+)\\.class\\s*\\)");
+    /** A hook delegating to another descriptor's static pose helper ({@code <Other>GeoReplacement.poseRig(...)}, for one). */
+    static final Pattern DELEGATION = Pattern.compile("\\b([A-Z][A-Za-z0-9]*GeoReplacement)\\.(pose[A-Za-z0-9]*)\\s*\\(");
+    static final String POSE_PACKAGE = "danger.orespawn.entity.pose.";
+    static final String CLIENT_PACKAGE = "danger.orespawn.entity.client.";
+    static final String CLIENT_SOURCE_DIR = "src/main/java/danger/orespawn/entity/client";
+    static final String SHIPPED_ASSETS = "src/main/resources/assets/orespawn";
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
 
     /** The registry each manifest id packages under (the file name); an id without a row is refused. */
@@ -189,6 +236,130 @@ public final class ReferenceClipSampler {
             Map.entry("model_cricket", "cricket"),
             Map.entry("model_herculesbeetle", "hercules_beetle")));
 
+    /**
+     * An unlanded hook: the descriptor's simple class name, the ModEntities registry it packages under and the rig it
+     * names - the map {@code HOOKS} in {@code tools/asset_audit.py} carries (descriptor -> rig, 67 entries; the two
+     * delegating descriptors, the Alien Boss's on the Alien's rig and the Leonopteryx's on the Leon's, added here
+     * because they package under their own registries). The reference entry is {@code reference_<rig>} in {@code
+     * tools/reference_model_proofs.json}, its geo {@code
+     * <geo-dir>/reference_<rig>.geo.json}. A row whose descriptor is gone, whose reference entry is gone, or whose rig
+     * has shipped (the descriptor's geo exists under src/main/resources: the slice landed and the manifest carries it) is
+     * refused as stale, so the list empties as the slices land - the audit's {@code HOOK_STALE} rule, mirrored.
+     */
+    record Hook(String descriptor, String registry, String rig) {
+        String referenceId() {
+            return "reference_" + this.rig;
+        }
+
+        String candidateClass() {
+            return CLIENT_PACKAGE + this.descriptor;
+        }
+    }
+
+    static final Map<String, Hook> HOOK_DESCRIPTORS = hooks(
+            new Hook("AlienGeoReplacement", "alien", "alien"),
+            new Hook("AlienBossGeoReplacement", "alien_boss", "alien"),
+            new Hook("AlosaurusGeoReplacement", "alosaurus", "alosaurus"),
+            new Hook("AttackSquidGeoReplacement", "attack_squid", "attacksquid"),
+            new Hook("BabyDragonGeoReplacement", "baby_dragon", "dragon"),
+            new Hook("BandPGeoReplacement", "band_p", "bandp"),
+            new Hook("BaryonyxGeoReplacement", "baryonyx", "baryonyx"),
+            new Hook("BasiliskGeoReplacement", "basilisk", "basilisk"),
+            new Hook("ButterflyGeoReplacement", "butterfly", "butterfly"),
+            new Hook("CamarasaurusGeoReplacement", "camarasaurus", "camarasaurus"),
+            new Hook("CassowaryGeoReplacement", "cassowary", "cassowary"),
+            new Hook("CaveFisherGeoReplacement", "cave_fisher", "cavefisher"),
+            new Hook("CephadromeGeoReplacement", "cephadrome", "cephadrome"),
+            new Hook("ChipmunkGeoReplacement", "chipmunk", "chipmunk"),
+            new Hook("CrabGeoReplacement", "crab", "crab"),
+            new Hook("CreepingHorrorGeoReplacement", "creeping_horror", "creepinghorror"),
+            new Hook("CryolophosaurusGeoReplacement", "cryolophosaurus", "cryolophosaurus"),
+            new Hook("DragonGeoReplacement", "dragon", "dragon"),
+            new Hook("DungeonBeastGeoReplacement", "dungeon_beast", "dungeonbeast"),
+            new Hook("EasterBunnyGeoReplacement", "easter_bunny", "easterbunny"),
+            new Hook("EmperorScorpionGeoReplacement", "emperor_scorpion", "emperorscorpion"),
+            new Hook("EnderKnightGeoReplacement", "ender_knight", "enderknight"),
+            new Hook("EnderReaperGeoReplacement", "ender_reaper", "enderreaper"),
+            new Hook("FlounderGeoReplacement", "flounder", "flounder"),
+            new Hook("FrogGeoReplacement", "frog", "frog"),
+            new Hook("GazelleGeoReplacement", "gazelle", "gazelle"),
+            new Hook("GhostGeoReplacement", "ghost", "ghost"),
+            new Hook("GhostSkellyGeoReplacement", "ghost_skelly", "ghostskelly"),
+            new Hook("GiantRobotGeoReplacement", "giant_robot", "giantrobot"),
+            new Hook("GodzillaGeoReplacement", "godzilla", "godzilla"),
+            new Hook("HammerheadGeoReplacement", "hammerhead", "hammerhead"),
+            new Hook("HydroliscGeoReplacement", "hydrolisc", "hydrolisc"),
+            new Hook("JefferyGeoReplacement", "jeffery", "giantrobot"),
+            new Hook("KrakenGeoReplacement", "kraken", "kraken"),
+            new Hook("KyuubiGeoReplacement", "kyuubi", "kyuubi"),
+            new Hook("LeafMonsterGeoReplacement", "leaf_monster", "leafmonster"),
+            new Hook("LeonGeoReplacement", "leon", "leon"),
+            new Hook("LeonopteryxGeoReplacement", "leonopteryx", "leon"),
+            new Hook("LizardGeoReplacement", "lizard", "lizard"),
+            new Hook("LunaMothGeoReplacement", "luna_moth", "butterfly"),
+            new Hook("LurkingTerrorGeoReplacement", "lurking_terror", "lurkingterror"),
+            new Hook("MantisGeoReplacement", "mantis", "mantis"),
+            new Hook("MolenoidGeoReplacement", "molenoid", "molenoid"),
+            new Hook("MothraGeoReplacement", "mothra", "butterfly"),
+            new Hook("NastysaurusGeoReplacement", "nastysaurus", "nastysaurus"),
+            new Hook("OstrichGeoReplacement", "ostrich", "ostrich"),
+            new Hook("PeacockGeoReplacement", "peacock", "peacock"),
+            new Hook("PitchBlackGeoReplacement", "pitch_black", "pitchblack"),
+            new Hook("PointysaurusGeoReplacement", "pointysaurus", "pointysaurus"),
+            new Hook("RatGeoReplacement", "rat", "rat"),
+            new Hook("ScorpionGeoReplacement", "scorpion", "scorpion"),
+            new Hook("SeaMonsterGeoReplacement", "sea_monster", "seamonster"),
+            new Hook("SeaViperGeoReplacement", "sea_viper", "seaviper"),
+            new Hook("SpitBugGeoReplacement", "spit_bug", "spitbug"),
+            new Hook("SpyroGeoReplacement", "spyro", "spyro"),
+            new Hook("StinkBugGeoReplacement", "stink_bug", "stinkbug"),
+            new Hook("StinkyGeoReplacement", "stinky", "stinky"),
+            new Hook("TRexGeoReplacement", "trex", "trex"),
+            new Hook("TheKingGeoReplacement", "the_king", "theking"),
+            new Hook("ThePrinceAdultGeoReplacement", "the_prince_adult", "theprinceadult"),
+            new Hook("ThePrinceGeoReplacement", "the_prince", "theprince"),
+            new Hook("ThePrinceTeenGeoReplacement", "the_prince_teen", "theprinceteen"),
+            new Hook("TriffidGeoReplacement", "triffid", "triffid"),
+            new Hook("TrooperBugGeoReplacement", "trooper_bug", "trooperbug"),
+            new Hook("UrchinGeoReplacement", "urchin", "urchin"),
+            new Hook("VampireButterflyGeoReplacement", "vampire_butterfly", "butterfly"),
+            new Hook("VelocityRaptorGeoReplacement", "velocity_raptor", "velocityraptor"),
+            new Hook("WaterDragonGeoReplacement", "water_dragon", "waterdragon"),
+            new Hook("WhaleGeoReplacement", "whale", "whale"));
+
+    private static Map<String, Hook> hooks(Hook... rows) {
+        Map<String, Hook> out = new TreeMap<>();
+        for (Hook row : rows) {
+            if (out.put(row.descriptor(), row) != null) {
+                throw new IllegalStateException("HOOK_DESCRIPTORS lists " + row.descriptor() + " twice");
+            }
+        }
+        return out;
+    }
+
+    /** One sampled state: its file suffix and clip name, the walk inputs and the subject's attacking value. */
+    record State(String name, float limbSwingAmount, double limbSwingPerTick, int attacking, String statement) {
+        static final State WALK = new State(STATE_WALK, LIMB_SWING_AMOUNT, LIMB_SWING_PER_TICK, 0, INPUTS_STATEMENT);
+        static final State IDLE = new State(STATE_IDLE, 0.0F, 0.0D, 0, IDLE_INPUTS_STATEMENT);
+        static final State ATTACK = new State(STATE_ATTACK, 0.0F, 0.0D, 1, ATTACK_INPUTS_STATEMENT);
+
+        /** The walk clip keeps the pinned name {@code reference}; the others carry their state. */
+        String clipName() {
+            return STATE_WALK.equals(this.name) ? CLIP_NAME : CLIP_NAME + "_" + this.name;
+        }
+
+        String fileName(String registry) {
+            return registry + FILE_INFIX + this.name + FILE_EXTENSION;
+        }
+
+        /** The subject's declared state: the rest state, with {@code attacking} raised for the attack state. */
+        JsonObject subjectState() {
+            JsonObject state = restState();
+            state.addProperty("name", this.name);
+            state.addProperty("attacking", this.attacking);
+            return state;
+        }
+    }
     /**
      * A rig's span rule. {@code kind}: {@link #RULE_ONE_KEY} (a static rig, or nothing to sample), {@link #RULE_PERIODIC}
      * (a period structure - {@code periodTicks} is the slowest group's period {@code T} - which {@link #resolveSpan}
@@ -334,42 +505,436 @@ public final class ReferenceClipSampler {
                             + "(HerculesBeetleGeoReplacement.applyCustomAnimations, HerculesBeetleModel.poseFrom; orig ModelHerculesBeetle.java:293): 123.2 ticks, "
                             + "over the 6 s cap; the eighteen leg parts cos(ageInTicks * ws * 0.45F) * PI * 0.12 * limbSwingAmount about Y (orig :286-292)"))));
 
+    /**
+     * The span rule of every unlanded hook ((3)): a hook declares no manifest channels, so each row states its
+     * SLOWEST rhythm - the smallest effective frequency (the literal times the descriptor's wingspeed, a |cos| fold halving
+     * the period) among the rhythms live in any sampled state (walk at limbSwingAmount 1, idle at 0, attack where the
+     * hook reads attacking; a rhythm gated on state the probe never enters - a sitting read, a ridden read, an activity, a
+     * singing frog - is named as such and left out) - with the lines of {@code
+     * applyCustomAnimations} it was read from; the closure test settles the multiple, or the two-second window, per state.
+     * Authored from the extracted rhythm lines of each hook (every {@code cos} / {@code sin} / {@code
+     * toRadians} / {@code %} expression of the descriptor's pose code with its line number, the wingspeed constants and
+     * the state gates), then read against the hook's code; nothing here is derived by the sampler itself. A delegating
+     * descriptor (the Alien Boss, the Leonopteryx, the Baby Dragon, Jeffery) shares its rig's row; the Butterfly rig's four
+     * consumers carry their own wingspeed and therefore their own period. The three hooks whose gait reads the entity's
+     * movement delta (the Cephadrome, the Dragon, the Ostrich: {@code xOld() - getX()}, 0 on a probe that does not move)
+     * show no gait at these inputs in any state; their rows say so.
+     */
+    static final Map<String, Rule> HOOK_RULES = hookRules();
+
+    private static Map<String, Rule> hookRules() {
+        Map<String, Rule> rules = new TreeMap<>();
+        Rule alien = Rule.periodic(TWO_PI / (double) (1.0F * 0.22F),
+                "wingspeed 0.22: the slowest rhythms are the jaw, tail and claw sways cos(ageInTicks * WINGSPEED) * PI * 0.05 / 0.02 / 0.03 "
+                        + "(AlienGeoReplacement.poseRig:192, 199, 206, 212; the jaws fold it through Math.abs at :235-236, a half period) at 0.22 rad/tick, "
+                        + "28.56 ticks; the gait cos(ageInTicks * 4.0 * WINGSPEED) * PI * 0.5 * limbSwingAmount (:78) at 0.88; the head fan "
+                        + "cos(ageInTicks * fanspeed * WINGSPEED) with fanspeed 1.22 (:114-130) at 0.268 in the attacking branch; the leg latch at "
+                        + "3.5 * 0.22 = 0.77 with its 0.2-tick look-ahead (:176-177) rolled on the entity RNG at a zero crossing");
+        rules.put("AlienGeoReplacement", alien);
+        rules.put("AlienBossGeoReplacement", alien);  // AlienBossGeoReplacement.applyCustomAnimations:35 -> AlienGeoReplacement.poseRig
+        rules.put("AlosaurusGeoReplacement", Rule.periodic(TWO_PI / (double) 0.1F,
+                "the slowest rhythm is the forelimb sway cos(ageInTicks * 0.1) * PI * 0.05 around -0.523 on shape17 / shape11 "
+                        + "(AlosaurusGeoReplacement.applyCustomAnimations:63-64, every state) at 0.1 rad/tick, 62.83 ticks; the threshold gait "
+                        + "cos(ageInTicks * 1.3 * 0.22) * PI * 0.25 * limbSwingAmount (:50, walk) at 0.286; the attacking jaw 0.52 + cos(ageInTicks * 0.45) * PI * 0.18 (:61) at 0.45"));
+        rules.put("AttackSquidGeoReplacement", Rule.periodic(TWO_PI / (double) (0.25F * 1.0F),
+                "wingspeed 1.0: ten rhythms on both branches - 0.25 and 0.39 (the body pair), 1.2, 1.1, 1.0, 1.9, 1.8, 1.7, 1.6, 1.5 (the eight "
+                        + "tentacles) - at amplitude 0.04 / 0.4 x limbSwingAmount above the 0.1 threshold (AttackSquidGeoReplacement.applyCustomAnimations:64-73) "
+                        + "and 0.01 / 0.1 below it (:75-84): the slowest 0.25 rad/tick, 25.13 ticks; the body yaw follows netHeadYaw * 0.75 = 0 (:96)"));
+        Rule dragon = Rule.periodic(TWO_PI / (double) (0.2F * 1.0F),
+                "ANIM_SPEED 1.0: the slowest rhythm is the resting wing beat -0.85 + cos(ageInTicks * 0.2 * ANIM_SPEED) * PI * 0.028 (DragonGeoReplacement"
+                        + ".poseDragon:151, activity 0 and not attacking) at 0.2 rad/tick, 31.42 ticks; the activity beat cos(ageInTicks * 0.75) * PI * 0.28 (:146, :150) and "
+                        + "the attacking-by-activity -0.45 + cos(ageInTicks * 0.85) * PI * 0.2 (:147); the tail chain cos(ageInTicks * tailspeed) with tailspeed 0.76 "
+                        + "at rest, 0.96 attacking, 0.22 sitting (:97-98, :198-208, :211-258); the attacking jaw cos(ageInTicks * 1.5) * PI * 0.14 (:309); the fourteen legs "
+                        + "cos(ageInTicks * 1.25 * ANIM_SPEED) * PI * lspeed * 0.6 (:104) scale by the movement delta lspeed = |xOld - x, zOld - z| (:96-103), 0 on the "
+                        + "probe, so the gait does not move at these inputs");
+        rules.put("DragonGeoReplacement", dragon);
+        rules.put("BabyDragonGeoReplacement", dragon);  // BabyDragonGeoReplacement.applyCustomAnimations:61 -> DragonGeoReplacement.poseDragon
+        rules.put("BandPGeoReplacement", Rule.periodic(TWO_PI / (double) (0.3F * 0.4F),
+                "wingspeed 0.4: the slowest rhythm is the idle sway cos(ageInTicks * 0.3 * WINGSPEED) * PI * 0.02 (BandPGeoReplacement"
+                        + ".applyCustomAnimations:67, below the 0.1 threshold) at 0.12 rad/tick, 52.36 ticks, beside cos(ageInTicks * 0.6 * WINGSPEED) * PI * 0.005 "
+                        + "(:66); the threshold gait cos(ageInTicks * 1.3 * WINGSPEED) * PI * 0.25 * limbSwingAmount (:61) at 0.52 and its 2.6 harmonic (:62); the head "
+                        + "follows netHeadYaw / headPitch = 0 (:75-76)"));
+        rules.put("BaryonyxGeoReplacement", Rule.periodic(TWO_PI / (double) (0.7F * 0.25F),
+                "wingspeed 0.25: the slowest rhythm is the claw wave cos(ageInTicks * 0.7 * WINGSPEED) * PI * 0.25 (BaryonyxGeoReplacement"
+                        + ".applyCustomAnimations:76, every state) at 0.175 rad/tick, 35.90 ticks; the threshold gait cos(ageInTicks * 1.3 * WINGSPEED) * PI * 0.15 "
+                        + "* limbSwingAmount (:69, walk) at 0.325"));
+        rules.put("BasiliskGeoReplacement", Rule.periodic(TWO_PI / (double) (1.3F * 0.3F),
+                "wingspeed 0.3: the ten-ring serpentine cos(ageInTicks * 1.3 * WINGSPEED - n * pi/4) * PI * 0.1 * limbSwingAmount (BasiliskGeoReplacement"
+                        + ".applyCustomAnimations:66-111, walk; the rings' pivots follow, position channels) at 0.39 rad/tick, 16.11 ticks - the slowest; the "
+                        + "attacking jaw -1.0 + cos(ageInTicks * 0.45) * PI * 0.18 (:112) at 0.45"));
+        rules.put("ButterflyGeoReplacement", Rule.periodic(TWO_PI / (double) (1.3F * 1.0F),
+                "one rhythm at wingspeed 1.0: the eight mirrored wings cos(ageInTicks * 1.3 * wingspeed) * PI * 0.25 about Z (ButterflyGeoReplacement"
+                        + ".pose:69; ButterflyGeoReplacement.applyCustomAnimations passes WINGSPEED 1.0) at 1.3 rad/tick, 4.83 ticks; nothing reads the walk or the entity"));
+        rules.put("LunaMothGeoReplacement", Rule.periodic(TWO_PI / (double) (1.3F * 0.75F),
+                "the Butterfly rig's one rhythm at the Luna Moth's wingspeed 0.75: cos(ageInTicks * 1.3 * 0.75) * PI * 0.25 on the eight wings "
+                        + "(LunaMothGeoReplacement.applyCustomAnimations:58 -> ButterflyGeoReplacement.pose:69) at 0.975 rad/tick, 6.44 ticks"));
+        rules.put("MothraGeoReplacement", Rule.periodic(TWO_PI / (double) (1.3F * 0.2F),
+                "the Butterfly rig's one rhythm at Mothra's wingspeed 0.2: cos(ageInTicks * 1.3 * 0.2) * PI * 0.25 on the eight wings "
+                        + "(MothraGeoReplacement.applyCustomAnimations:45 -> ButterflyGeoReplacement.pose:69) at 0.26 rad/tick, 24.17 ticks"));
+        rules.put("VampireButterflyGeoReplacement", Rule.periodic(TWO_PI / (double) (1.3F * 1.0F),
+                "the Butterfly rig's one rhythm at the Vampire Butterfly's wingspeed 1.0: cos(ageInTicks * 1.3 * 1.0) * PI * 0.25 on the eight wings "
+                        + "(VampireButterflyGeoReplacement.applyCustomAnimations:40 -> ButterflyGeoReplacement.pose:69) at 1.3 rad/tick, 4.83 ticks"));
+        rules.put("CamarasaurusGeoReplacement", Rule.periodic(TWO_PI / (double) (1.3F * 0.65F),
+                "wingspeed 0.65: the slowest rhythm is the threshold gait on eight legs cos(ageInTicks * 1.3 * WINGSPEED) * PI * 0.25 * limbSwingAmount "
+                        + "(CamarasaurusGeoReplacement.applyCustomAnimations:69, walk) at 0.845 rad/tick, 7.44 ticks; the health-frequency tail "
+                        + "cos(ageInTicks * 1.5 * WINGSPEED * hf) * PI * 0.25 * hf with hf = health / max health = 1 (:80, every state) at 0.975; the neck and head "
+                        + "look follows netHeadYaw = 0 (:102-123)"));
+        rules.put("CassowaryGeoReplacement", Rule.periodic(TWO_PI / (double) (1.3F * 0.55F),
+                "wingspeed 0.55: the threshold gait cos(ageInTicks * 1.3 * WINGSPEED) * PI * 0.15 * limbSwingAmount (CassowaryGeoReplacement"
+                        + ".applyCustomAnimations:62, walk) at 0.715 rad/tick, 8.79 ticks - the slowest - and its 2.6 harmonic (:63); the crest and beak follow the "
+                        + "neck by (sin, cos) (:76-79); nothing moves below the threshold"));
+        rules.put("CaveFisherGeoReplacement", Rule.periodic(TWO_PI / (double) (2.0F * 0.62F),
+                "wingspeed 0.62: the thirty-six gait-scaled legs in three phases cos(ageInTicks * 2.0 * WINGSPEED - n * pi/4) * PI * 0.12 * limbSwingAmount "
+                        + "(CaveFisherGeoReplacement.applyCustomAnimations:59, 72, 85; walk) at 1.24 rad/tick, 5.07 ticks - the slowest; the claw snap "
+                        + "cos(ageInTicks * 3.0 * WINGSPEED) * PI * 0.15 with its 0.1-tick look-ahead (:100-101) latched on RenderInfo and re-rolled on the entity RNG "
+                        + "by the attacking flag (the Robot2 precedent), folded through Math.abs on the arm segments (:123-142)"));
+        rules.put("CephadromeGeoReplacement", Rule.periodic(TWO_PI / (double) (0.2F * 0.55F),
+                "wingspeed 0.55: the slowest rhythm is the resting wing beat -0.85 + cos(ageInTicks * 0.2 * WINGSPEED) * PI * ... (CephadromeGeoReplacement"
+                        + ".applyCustomAnimations:112, activity 0 and not attacking) at 0.11 rad/tick, 57.12 ticks; the fins' sway cos(ageInTicks * 0.15 * WINGSPEED) "
+                        + "* PI * 0.05 (:124) folds through Math.abs on the fins and membranes (:125-132) to a 38.08-tick period; the tail chain at tailspeed 0.76 "
+                        + "(:72, :139-156; 0.22 in the ridden branch :135); the jaw cos(ageInTicks * 0.5 * WINGSPEED) * PI * 0.14 (:217); the legs "
+                        + "cos(ageInTicks * 0.75 * WINGSPEED) * PI * lspeed * 0.4 (:80) scale by the movement delta lspeed = |xOld - x, zOld - z| (:70-79), 0 on the "
+                        + "probe, so the gait does not move at these inputs"));
+        rules.put("ChipmunkGeoReplacement", Rule.periodic(TWO_PI / (double) 0.25F,
+                "the slowest rhythm is the tail 0.306 + cos(ageInTicks * 0.25) * PI * 0.06 (ChipmunkGeoReplacement.applyCustomAnimations:80, every state "
+                        + "but sitting) at 0.25 rad/tick, 25.13 ticks; the threshold gait cos(ageInTicks * 2.3 * ANIM_SPEED) * PI * 0.25 * limbSwingAmount (:61) and "
+                        + "cos(ageInTicks * 1.3 * ANIM_SPEED) * PI * 0.25 * limbSwingAmount (:81, ANIM_SPEED 1.0) at 2.3 and 1.3; the head look follows netHeadYaw = 0 (:68)"));
+        rules.put("CrabGeoReplacement", Rule.periodic(TWO_PI / (double) 0.13F,
+                "the slowest rhythm is the resting claw-tip drift cos(ageInTicks * 0.13) * PI * 0.02 (CrabGeoReplacement.applyCustomAnimations:123, attacking 0) "
+                        + "at 0.13 rad/tick, 48.33 ticks; the resting eyes and mouths at 0.35 / 0.25 / 0.3 / 0.45 / 0.15 (:105-119), the attacking ones at 0.45 / 0.35 / 0.4 / "
+                        + "0.55 / 0.43 (:128-146); the eight leg poses -pi/2 +- cos(ageInTicks * 1.7) * PI * 0.15 * limbSwingAmount on the leg1 / leg2 / leg3 clones "
+                        + "(:82-103, walk) at 1.7"));
+        rules.put("CreepingHorrorGeoReplacement", Rule.periodic(TWO_PI / (double) 0.103F,
+                "the slowest rhythm is the fourth spike's yaw cos(ageInTicks * 0.103) * PI * 0.08 (CreepingHorrorGeoReplacement.applyCustomAnimations:81, every "
+                        + "state) at 0.103 rad/tick, 61.0 ticks, beside the fifth's 0.107 (:83) and the folded cos(ageInTicks * 0.11) * PI * 0.25 through Math.abs (:70-71, "
+                        + "a 28.56-tick half period); the fifteen spike cosines 0.48 .. 1.61 (:65-94); the eight gait-scaled legs cos(ageInTicks * 1.25) * PI * 0.35 * "
+                        + "limbSwingAmount (:56, walk)"));
+        rules.put("CryolophosaurusGeoReplacement", Rule.periodic(TWO_PI / (double) 0.28F,
+                "the slowest rhythm is the jaw -1.15 + cos(ageInTicks * 0.28) * PI * 0.1 (CryolophosaurusGeoReplacement.applyCustomAnimations:65, every state) "
+                        + "at 0.28 rad/tick, 22.44 ticks; the threshold gait cos(ageInTicks * 1.3 * WINGSPEED) * PI * 0.25 * limbSwingAmount at wingspeed 0.75 (:56, walk) at 0.975"));
+        rules.put("DungeonBeastGeoReplacement", Rule.periodic(TWO_PI / (double) (0.5F * 0.62F),
+                "wingspeed 0.62: the slowest rhythm is the fourteen phased spine segments cos(ageInTicks * 0.5 * WINGSPEED + n * pi/4) * PI * 0.07 "
+                        + "(DungeonBeastGeoReplacement.applyCustomAnimations:73-86, every state) at 0.31 rad/tick, 20.27 ticks; the ten gait-scaled legs "
+                        + "cos(ageInTicks * 1.4 * WINGSPEED) * PI * 0.22 * limbSwingAmount (:60, walk) at 0.868; the tail cos(ageInTicks * 0.75 * WINGSPEED) * PI * 0.25 * "
+                        + "tailamp with tailamp = limbSwingAmount at rest and 1.25 attacking (:87-88, :97-138); the jaw latch cos(ageInTicks * 2.0 * WINGSPEED) * PI * 0.15 "
+                        + "with its 0.1-tick look-ahead (:143-144) on RenderInfo, re-rolled on the entity RNG"));
+        rules.put("EasterBunnyGeoReplacement", Rule.periodic(TWO_PI / (double) (1.3F * 0.55F),
+                "wingspeed 0.55: the threshold gait cos(ageInTicks * 1.3 * WINGSPEED) * PI * 0.1 * limbSwingAmount and its 2.6 harmonic (EasterBunnyGeoReplacement"
+                        + ".applyCustomAnimations:56-57, walk), and the idle ear branch cos(ageInTicks * 1.3 * WINGSPEED) * PI * 0.01 (:60, below the threshold): the "
+                        + "slowest 0.715 rad/tick, 8.79 ticks"));
+        rules.put("EmperorScorpionGeoReplacement", Rule.periodic(TWO_PI / (double) (0.5F * 0.22F),
+                "wingspeed 0.22: the slowest rhythm is the resting mandibles cos(ageInTicks * 0.5 * WINGSPEED) * PI * 0.05 (EmperorScorpionGeoReplacement"
+                        + ".applyCustomAnimations:100, attacking 0) at 0.11 rad/tick, 57.12 ticks; the attacking mandibles at 2.5 * 0.22 (:101); the four-phase legs "
+                        + "cos(ageInTicks * 2.0 * WINGSPEED - n * pi/4) * PI * 0.12 * limbSwingAmount with the 0.1-tick look-ahead lift 0.47 * limbSwingAmount - |newangle| "
+                        + "(:67-95, walk; position follows); the tail latch cos(ageInTicks * 3.0 * WINGSPEED) * PI * 0.15 (:107-108) on RenderInfo ri1 / ri2, rolled on the entity "
+                        + "RNG at a zero crossing (the Robot2 precedent)"));
+        rules.put("EnderKnightGeoReplacement", Rule.periodic(TWO_PI / (double) (0.7F * 0.21F),
+                "wingspeed 0.21: the slowest rhythm is the cape cos(ageInTicks * 0.7 * WINGSPEED) * PI * 0.02 (EnderKnightGeoReplacement.applyCustomAnimations:79, "
+                        + "every state) at 0.147 rad/tick, 42.74 ticks; the threshold gait on fourteen leg parts cos(ageInTicks * 1.3 * WINGSPEED) * PI * 0.25 * "
+                        + "limbSwingAmount (:63, walk) at 0.273; the screaming branch cos(ageInTicks * 2.7 * WINGSPEED) * PI * 0.3 (:88, isScreaming false on the probe); "
+                        + "the head look clamped from netHeadYaw = 0 (:80); the forearm and blade position writes follow the arms (:128-136)"));
+        rules.put("EnderReaperGeoReplacement", Rule.periodic(TWO_PI / (double) (0.7F * 0.23F),
+                "wingspeed 0.23: the slowest rhythm is cos(ageInTicks * 0.7 * WINGSPEED) * PI * 0.06 (EnderReaperGeoReplacement.applyCustomAnimations:74, every "
+                        + "state) at 0.161 rad/tick, 39.02 ticks; the threshold gait cos(ageInTicks * 1.3 * WINGSPEED) * PI * 0.25 * limbSwingAmount (:57, walk) feeding "
+                        + "the scythe 1.0 - |newangle| (:58); cos(ageInTicks * 1.9 * WINGSPEED) * PI * 0.25 (:63); the screaming branch at 2.7 * 0.23 (:70, isScreaming false on the probe)"));
+        rules.put("FlounderGeoReplacement", Rule.periodic(TWO_PI / (double) 0.7F,
+                "the slowest rhythm is the idle tail sway cos(ageInTicks * 0.7) * PI * 0.05 (FlounderGeoReplacement.applyCustomAnimations:61, below the 0.1 "
+                        + "threshold) at 0.7 rad/tick, 8.98 ticks; above it the fins cos(ageInTicks * 1.3) and cos(ageInTicks * 1.7) * PI * 0.25 * limbSwingAmount (:53-54) "
+                        + "and the tail cos(ageInTicks * 1.2) * PI * 0.25 * limbSwingAmount (:61)"));
+        rules.put("FrogGeoReplacement", Rule.periodic(TWO_PI / (double) (1.4F * 1.0F),
+                "wingspeed 1.0: the threshold gait cos(ageInTicks * WINGSPEED * 1.4) * PI * 0.55 * limbSwingAmount (FrogGeoReplacement.applyCustomAnimations:62, walk; "
+                        + "the lower legs' position writes follow :87-92) at 1.4 rad/tick, 4.49 ticks - the only rhythm live at these inputs; the singing jaw "
+                        + "cos(ageInTicks * 0.85 * WINGSPEED) * PI * 0.15 (:70) needs getSinging() != 0 and the jump branch a vertical velocity beyond 0.1, neither on the probe"));
+        rules.put("GazelleGeoReplacement", Rule.periodic(TWO_PI / (double) 0.1F,
+                "the slowest rhythm is the tail 1.0 + cos(ageInTicks * 0.1) * PI * 0.06 (GazelleGeoReplacement.applyCustomAnimations:99, every state) at 0.1 rad/tick, "
+                        + "62.83 ticks; the neck sway cos(ageInTicks * 0.5) * PI * 0.02 (:84); the threshold gait on eighteen legs cos(ageInTicks * 1.1 * WINGSPEED) * PI * 0.12 "
+                        + "* limbSwingAmount at wingspeed 0.65 (:62, walk) at 0.715; the head look on eleven parts follows netHeadYaw = 0 (:85); the crouch branch is off "
+                        + "(isCrouching false on the probe)"));
+        rules.put("GhostGeoReplacement", Rule.periodic(TWO_PI / (double) 0.3F,
+                "four slow cosines on the two arms: cos(ageInTicks * 0.3 / 0.32 / 0.34 / 0.36) * PI * 0.05 about Z and X (GhostGeoReplacement.applyCustomAnimations:58-61, "
+                        + "every state): the slowest 0.3 rad/tick, 20.94 ticks; nothing reads the walk or the entity"));
+        rules.put("GhostSkellyGeoReplacement", Rule.periodic(TWO_PI / (double) 0.05F,
+                "the slowest rhythm is the head swivel cos(ageInTicks * 0.05) * PI * 2 beside its sawtooth |ageInTicks * 0.05 mod 2 pi| that gates the RenderInfo "
+                        + "latch rolled on the entity RNG (GhostSkellyGeoReplacement.applyCustomAnimations:83-85) at 0.05 rad/tick, 125.66 ticks - over the 6 s cap; the "
+                        + "chains cos(ageInTicks * 0.2 / 0.22 / 0.24 / 0.26) * PI * 0.05 (:67-79)"));
+        Rule giantRobot = Rule.periodic(TWO_PI / (double) 0.25F,
+                "WING_SPEED 0.25: the hip sway and quarter turn cos / sin(-ageInTicks * WING_SPEED) * PI * 0.1 * movescale and the two-phase thigh and shin "
+                        + "(GiantRobotGeoReplacement.poseRig:79-87; movescale = limbSwingAmount * 0.65 clamped to 1, :72-75, so 0 at idle) at 0.25 rad/tick, 25.13 ticks - "
+                        + "the slowest; the bob cos(-ageInTicks * WING_SPEED * 2.0) * movescale (:91) and the attacking shoulder twist and windmill punch "
+                        + "sin(ageInTicks * WING_SPEED * 2.0) (:112-117) at 0.5; the head look follows netHeadYaw = 0 (:135-136); the twenty-two instance bones posed by "
+                        + "renderLeg / renderArm (:152-211)");
+        rules.put("GiantRobotGeoReplacement", giantRobot);
+        rules.put("JefferyGeoReplacement", giantRobot);  // JefferyGeoReplacement.applyCustomAnimations:36 -> GiantRobotGeoReplacement.poseRig
+        rules.put("GodzillaGeoReplacement", Rule.periodic(TWO_PI / (double) (0.1F * 1.0F),
+                "ANIM_SPEED 1.0: the slowest rhythm is the idle arm drift sin(ageInTicks * ANIM_SPEED * 0.1) * PI * 0.02 (GodzillaGeoReplacement"
+                        + ".applyCustomAnimations:209, attacking 0) at 0.1 rad/tick, 62.83 ticks; the per-leg threshold gait cos / sin(ageInTicks * 0.75 * ANIM_SPEED "
+                        + "+ n * pi/4) with the toe lift and sweep position writes (:97-99, :135-137, walk) at 0.75; the idle tail cos(ageInTicks * 0.75) * PI * 0.05 and the attacking "
+                        + "tail fan cos(ageInTicks * 1.75) * PI * 0.2 (:182-183); the attacking jaw cos(ageInTicks * 1.5) * PI * 0.12 (:202) and arms sin(ageInTicks * 1.75) * PI * 0.16 (:208); "
+                        + "the head look follows netHeadYaw * 0.55 = 0 (:187)"));
+        hookRulesHtoP(rules);
+        hookRulesRtoW(rules);
+        return rules;
+    }
+
+    private static void hookRulesHtoP(Map<String, Rule> rules) {
+        rules.put("HammerheadGeoReplacement", Rule.periodic(TWO_PI / (double) (0.3F * 0.33F),
+                "wingspeed 0.33: the slowest rhythm is the armour sway cos(ageInTicks * 0.3 * WINGSPEED) * PI * 0.03 (HammerheadGeoReplacement"
+                        + ".applyCustomAnimations:96, every state) at 0.099 rad/tick, 63.47 ticks; the (double) > 0.1 gait on twelve leg parts cos(ageInTicks * 1.3 * "
+                        + "WINGSPEED) * PI * 0.1 * limbSwingAmount and its pi/4 phase (:62-63, walk) at 0.429; the attacking nod cos(ageInTicks * 1.3 * WINGSPEED) * PI * 0.13 "
+                        + "(:99); the head look at 0.25 on sixteen parts follows netHeadYaw = 0 (:79)"));
+        rules.put("HydroliscGeoReplacement", Rule.periodic(TWO_PI / (double) (0.75F * 0.65F),
+                "wingspeed 0.65: the slowest rhythm is the health-frequency feather cos(ageInTicks * 0.75 * WINGSPEED * hf) * PI * 0.2 * hf with hf = 1 at full "
+                        + "health (HydroliscGeoReplacement.applyCustomAnimations:106, every state) at 0.4875 rad/tick, 12.89 ticks; the other feather at 1.25 * 0.65 * hf (:105); "
+                        + "the tail sway cos(ageInTicks * 1.0 * WINGSPEED) * PI * 0.15 with its follows (:86-101, stilled when sitting - false on the probe); the threshold "
+                        + "gait over twenty-four parts cos(ageInTicks * 1.3 * WINGSPEED) * PI * 0.25 * limbSwingAmount (:61, walk) at 0.845"));
+        rules.put("KrakenGeoReplacement", Rule.periodic(TWO_PI / (double) (0.087F * 1.0F),
+                "ANIM_SPEED 1.0: the slowest rhythm is the fourth tentacle pair's pitch cos(ageInTicks * differ * ANIM_SPEED - n * pi/4) * PI * amp with differ "
+                        + "0.087 (KrakenGeoReplacement.dangleTentacle:245-310; differ 0.1 / 0.101 / 0.097 / 0.093 / 0.087 and ydiffer 0.1 / 0.102 / 0.098 / 0.092 / 0.088 per "
+                        + "tentacle, :215-229; 0.2 for the two rear ones, :234-235; 0.5 with amp 0.03 while attacking, :241-242) at 0.087 rad/tick, 72.22 ticks; the fins "
+                        + "cos(ageInTicks * 0.43 / 0.32 * ANIM_SPEED) * PI * 0.15 / 0.14 (:68-69); the mouth latch cos(ageInTicks * 0.66) * PI * 0.15 with its 0.1-tick "
+                        + "look-ahead (:93-94) re-rolled on the entity RNG at the zero crossing (the Robot2 precedent); the teeth twitch cos(ageInTicks * 0.5 * ANIM_SPEED) * PI * 0.015 (:109)"));
+        rules.put("KyuubiGeoReplacement", Rule.periodic(TWO_PI / (double) (0.5F * 0.5F),
+                "wingspeed 0.5: the slowest rhythms are the arm sway cos(ageInTicks * 0.5 * WINGSPEED) * PI * 0.01 (KyuubiGeoReplacement.applyCustomAnimations:86, "
+                        + "every state) and the nine-ring tail's pitch chain -0.26 .. 2.0 + cos(ageInTicks * 0.5 * WINGSPEED - n * pi/4) * PI * 0.1 (:184-216) at 0.25 rad/tick, "
+                        + "25.13 ticks; the tail's yaw chain cos(ageInTicks * 0.9 * WINGSPEED - n * pi/4) * PI * 0.2 (:159-183) at 0.45; the two horn chains cos(ageInTicks * "
+                        + "1.3 * WINGSPEED - n * pi/4) * PI * 0.1 (:110-156) at 0.65; the threshold gait cos(ageInTicks * 1.1 * WINGSPEED) * PI * 0.2 * limbSwingAmount (:70, "
+                        + "walk; the lower legs and arms move by sin of the upper joint, :76-99) at 0.55; the head follows netHeadYaw = 0 (:101-102)"));
+        rules.put("LeafMonsterGeoReplacement", Rule.periodic(TWO_PI / (double) 0.95F,
+                "the threshold gait cos(ageInTicks * 0.95) * PI * 0.25 * limbSwingAmount (LeafMonsterGeoReplacement.applyCustomAnimations:64, walk in the "
+                        + "attacking branch) at 0.95 rad/tick, 6.61 ticks - the slowest by period; the |cos| arms cos(ageInTicks * 0.7) * PI * 0.55 through Math.abs "
+                        + "(:67-71, attacking) fold to a 4.49-tick half period; at rest the bush (attacking 0) holds still"));
+        Rule leon = Rule.periodic(TWO_PI / (double) (0.6F * 0.22F),
+                "wingspeed 0.22: the slowest rhythm is the standing sway cos(ageInTicks * 0.6 * WINGSPEED) * PI * 0.02 (LeonGeoReplacement.poseRig:224, "
+                        + "activity 0) at 0.132 rad/tick, 47.60 ticks; the standing threshold gait cos(ageInTicks * 1.8 * WINGSPEED) * PI * 0.25 * limbSwingAmount and "
+                        + "cos(ageInTicks * 0.9 * WINGSPEED) * PI * 0.25 * limbSwingAmount (:143-144, walk; the feet follow, :170-179) with the idle 0.9 * 0.22 sway at "
+                        + "amplitude 0.02 (:147); the flight beat cos(ageInTicks * 1.6 * WINGSPEED * spd) * PI * 0.06 / 0.26 * amp with spd 1.7 and amp 1.4 while attacking "
+                        + "(:259, :344, :256-257), the flying legs at 3.6 * 0.22 (:316) and the flying jaw at 2.6 * 0.22 (:468) need activity != 0 (0 on the probe); the ridden "
+                        + "yaw accumulator rf1 needs getBeingRidden() != 0; the head look follows netHeadYaw = 0 (:232-253)");
+        rules.put("LeonGeoReplacement", leon);
+        rules.put("LeonopteryxGeoReplacement", leon);  // LeonopteryxGeoReplacement.applyCustomAnimations:41 -> LeonGeoReplacement.poseRig
+        rules.put("LizardGeoReplacement", Rule.periodic(TWO_PI / (double) (0.25F * 0.65F),
+                "wingspeed 0.65: the slowest rhythm is the resting tail cos(ageInTicks * 0.25 * WINGSPEED) * PI * 0.05 (LizardGeoReplacement.applyCustomAnimations:118, "
+                        + "attacking 0; five rings follow) at 0.1625 rad/tick, 38.67 ticks; the attacking tail cos(ageInTicks * 1.25 * WINGSPEED) * PI * 0.35 (:120); the "
+                        + "attacking lower jaw 0.52 + cos(ageInTicks * 0.45) * 0.35 (:110); the threshold gait over twenty parts cos(ageInTicks * 1.0 * WINGSPEED) * PI * 0.25 * "
+                        + "limbSwingAmount (:89, walk) at 0.65; the head look with the neck and jaw follows netHeadYaw = 0 (:145-163)"));
+        rules.put("LurkingTerrorGeoReplacement", Rule.periodic(TWO_PI / (double) (0.1F * 1.0F),
+                "wingspeed 1.0: the slowest rhythm is the thorax breath sin(ageInTicks * 0.1 * WINGSPEED) * PI * 0.06 with the abdomen following by position "
+                        + "(LurkingTerrorGeoReplacement.applyCustomAnimations:198-201, every state) at 0.1 rad/tick, 62.83 ticks; the legs sin(ageInTicks * legspeed * WINGSPEED) "
+                        + "with legspeed 0.7 (:69, :110-144) behind the phase-wrap latch |ageInTicks * legspeed mod 2 pi| rolled on the entity RNG (:73-74); the jaws |sin(ageInTicks * "
+                        + "mouthspeed * WINGSPEED)| with mouthspeed 0.9 (:70, :97-98, :150-151, a folded half period) forced open while attacking; cos(ageInTicks * 1.4 * WINGSPEED) * PI * 0.2 (:202)"));
+        rules.put("MantisGeoReplacement", Rule.periodic(TWO_PI / (double) (0.051F * 2.0F),
+                "wingspeed 2.0: the slowest rhythm is cos(ageInTicks * 0.051 * WINGSPEED) * PI * 0.013 (MantisGeoReplacement.applyCustomAnimations:62, every state) "
+                        + "at 0.102 rad/tick, 61.60 ticks; the wings cos(ageInTicks * 0.9 * WINGSPEED) * PI * 0.25 / 0.35 (:55-58) at 1.8; the attacking-branch forearms "
+                        + "cos(ageInTicks * 0.51 * WINGSPEED) * PI * 0.25 with their follows (:65-93) at 1.02"));
+        rules.put("MolenoidGeoReplacement", Rule.periodic(TWO_PI / (double) (0.1F * 0.5F),
+                "wingspeed 0.5: the slowest rhythm is the nose stars cos(ageInTicks * 0.1 * WINGSPEED) * PI (MolenoidGeoReplacement.applyCustomAnimations:131, every "
+                        + "state) at 0.05 rad/tick, 125.66 ticks - over the 6 s cap; the attacking arms cos(ageInTicks * 1.7 * WINGSPEED) * PI * 0.25 else the threshold "
+                        + "arms cos(ageInTicks * 1.3 * WINGSPEED) * PI * 0.25 * limbSwingAmount (:53) and the threshold legs (:92) at 0.65, each with a three-link chain from "
+                        + "the bind pivot (:57-121)"));
+        rules.put("NastysaurusGeoReplacement", Rule.periodic(TWO_PI / (double) (0.26F * 0.65F),
+                "wingspeed 0.65: the slowest rhythm is the resting tail chain cos(ageInTicks * tailspeed * WINGSPEED) * PI * tailamp with tailspeed 0.26 "
+                        + "(NastysaurusGeoReplacement.applyCustomAnimations:233-243, attacking 0; 0.76 attacking, :230) at 0.169 rad/tick, 37.18 ticks; the threshold gait "
+                        + "cos / sin(ageInTicks * WINGSPEED / pscale) with pscale 2.0 and the claw position writes (:71, :154-210, walk) at 0.325; the attacking jaw "
+                        + "cos(ageInTicks * 0.85 * WINGSPEED) * PI * 0.16 (:118) else the RenderInfo chew latch gated by |ageInTicks * 0.7 * WINGSPEED mod 2 pi| and rolled "
+                        + "from the level RNG (:121-131); the head look at 0.35 follows netHeadYaw = 0 (:86-87)"));
+        rules.put("OstrichGeoReplacement", Rule.periodic(TWO_PI / (double) 0.05F,
+                "the slowest rhythm is the tail -0.594 + cos(ageInTicks * 0.05) * PI * 0.06 (OstrichGeoReplacement.applyCustomAnimations:102, every state) at 0.05 "
+                        + "rad/tick, 125.66 ticks - over the 6 s cap, beside the tail feathers at 0.061 and 0.072 (:106-107); the |cos| wings cos(ageInTicks * 1.0 * WINGSPEED) "
+                        + "* PI * 0.15 with the 0.3-tick look-ahead (:151-152, :163; wingspeed 0.65) behind the ri1 latch rolled on the entity RNG at a zero crossing; the legs "
+                        + "cos(ageInTicks * 1.25 * WINGSPEED) * PI * lspeed * 0.4 (:73) scale by the movement delta lspeed = |xOld - x, zOld - z| clamped to 0.75 (:70-72), 0 on "
+                        + "the probe, so the gait does not move at these inputs; the ridden rf1 accumulation needs isVehicle() (false on the probe); the head look at 0.65 follows "
+                        + "netHeadYaw = 0 (:145)"));
+        rules.put("PeacockGeoReplacement", Rule.periodic(TWO_PI / (double) (1.3F * 0.75F),
+                "wingspeed 0.75: one rhythm - the threshold legs cos(ageInTicks * 1.3 * WINGSPEED) * PI * 0.15 * limbSwingAmount (PeacockGeoReplacement"
+                        + ".applyCustomAnimations:70, walk) at 0.975 rad/tick, 6.44 ticks; the display branch needs getBlink() > 0 (0 on the probe: the feathers stay folded); "
+                        + "nothing moves below the threshold"));
+        rules.put("PitchBlackGeoReplacement", Rule.periodic(TWO_PI / (double) (0.05F * 0.65F),
+                "wingspeed 0.65, pscale 1.0 on the probe: the slowest rhythm is the resting wing sway -pi/4 + cos(ageInTicks * 0.05 * WINGSPEED / pscale) * PI * ... "
+                        + "(PitchBlackGeoReplacement.applyCustomAnimations:86, activity 0) at 0.0325 rad/tick, 193.33 ticks - over the 6 s cap; the activity wings "
+                        + "cos(ageInTicks * 0.45 * WINGSPEED / pscale) * PI * 0.24 (:86, activity != 0); the attacking jaw cos(ageInTicks * 0.85 * WINGSPEED) * PI * 0.16 (:179) else "
+                        + "the RenderInfo chomp latch gated by |ageInTicks * 0.7 * WINGSPEED mod 2 pi| (:184-185); the walking legs cos / sin(ageInTicks * 0.75 * WINGSPEED / pscale) "
+                        + "with the pscale-scaled claw writes (:222-285, walk) at 0.4875 and the flying legs cos(ageInTicks * 0.85 * WINGSPEED / pscale) * 0.2 while attacking (:305); "
+                        + "the forked tail chain at tailspeed 0.76 / pscale walking and 0.26 / pscale at rest (:349-353, :355-416)"));
+        rules.put("PointysaurusGeoReplacement", Rule.periodic(TWO_PI / (double) (0.02F * 1.0F),
+                "wingspeed 1.0: the slowest rhythm is the tail pitch sway cos(ageInTicks * 0.02 * WINGSPEED) * PI * 0.15 (PointysaurusGeoReplacement"
+                        + ".applyCustomAnimations:89, every state) at 0.02 rad/tick, 314.16 ticks - over the 6 s cap; the attacking tail yaw cos(ageInTicks * 1.3 * WINGSPEED) "
+                        + "* PI * 0.25 else the resting cos(ageInTicks * 0.3 * WINGSPEED) * PI * 0.05 (:87); the threshold gait cos(ageInTicks * 1.3 * WINGSPEED) * PI * 0.25 * "
+                        + "limbSwingAmount (:58, walk) at 1.3; the head look at 0.45 on twenty-two parts follows netHeadYaw / headPitch = 0 (:64-75)"));
+    }
+
+    private static void hookRulesRtoW(Map<String, Rule> rules) {
+        rules.put("RatGeoReplacement", Rule.periodic(TWO_PI / (double) 0.4F,
+                "the slowest rhythm is the resting tail cos(ageInTicks * 0.4) * PI * 0.05 (RatGeoReplacement.applyCustomAnimations:61, attacking 0; the tail tip "
+                        + "follows, :66-67) at 0.4 rad/tick, 15.71 ticks; the attacking tail cos(ageInTicks * 1.5) * PI * 0.25 (:60); the threshold gait cos(ageInTicks * 1.7) "
+                        + "* PI * 0.25 * limbSwingAmount (:53, walk) at 1.7"));
+        rules.put("ScorpionGeoReplacement", Rule.periodic(TWO_PI / (double) (2.0F * 0.62F),
+                "wingspeed 0.62: the pi/2-phased gait cos(ageInTicks * 2.0 * WINGSPEED - n * pi/4) * PI * 0.12 * limbSwingAmount (ScorpionGeoReplacement"
+                        + ".applyCustomAnimations:68-77, walk) at 1.24 rad/tick, 5.07 ticks - the slowest; the claw and tail latch cos(ageInTicks * 3.0 * WINGSPEED) * PI * "
+                        + "0.15 with its 0.1-tick look-ahead (:82-83) on RenderInfo ri1 / ri2, rolled on the entity RNG with attacking-picked ranges (the Robot2 precedent); "
+                        + "the claw and tail chains follow by position (:117-159)"));
+        rules.put("SeaMonsterGeoReplacement", Rule.periodic(TWO_PI / (double) (0.2F * 0.5F),
+                "wingspeed 0.5: the slowest rhythm is the eye twitch cos(ageInTicks * 0.2 * WINGSPEED) * PI * 0.05 (SeaMonsterGeoReplacement.applyCustomAnimations:144, "
+                        + "every state) at 0.1 rad/tick, 62.83 ticks; the tail fan cos(ageInTicks * 1.3 * WINGSPEED) * PI * 0.2 * limbSwingAmount (:58, walking or attacking; "
+                        + "seven follows :62-88), the fins cos(ageInTicks * 1.2 * WINGSPEED) * PI * 0.2 * limbSwingAmount (:91) and the neck chain 0.455 * limbSwingAmount + "
+                        + "cos(ageInTicks * 0.9 * WINGSPEED) * PI * 0.25 * limbSwingAmount (:100; five follows :104-130) - each with its own idle alternative below the threshold; "
+                        + "the attacking jaw cos(ageInTicks * 1.7 * WINGSPEED) * PI * 0.17 (:141); the head look at 0.5 follows netHeadYaw = 0 (:135)"));
+        rules.put("SeaViperGeoReplacement", Rule.periodic(TWO_PI / (double) (0.2F * 0.5F),
+                "wingspeed 0.5: the slowest rhythm is the resting jaw cos(ageInTicks * 0.2 * WINGSPEED) * PI * 0.02 (SeaViperGeoReplacement.applyCustomAnimations:116, "
+                        + "attacking 0) at 0.1 rad/tick, 62.83 ticks; the resting tongue cos(ageInTicks * 0.5 * WINGSPEED) * PI * 0.05 (:125); the attacking jaw "
+                        + "cos(ageInTicks * 1.7 * WINGSPEED) * PI * 0.17, teeth at 4.7 * 0.5 and tongue at 1.5 * 0.5 (:104-113); the twenty-one-segment doseg chain "
+                        + "cos(f2 * 1.3 * WINGSPEED - n * pi/4) * PI * 0.2 * f1 with the negative-swing clamp (:71, :172-173, walk) at 0.65; the head look at 0.5 with the "
+                        + "jaw following follows netHeadYaw = 0 (:134-146)"));
+        rules.put("SpitBugGeoReplacement", Rule.periodic(Math.PI / (double) (0.3F * 0.55F),
+                "wingspeed 0.55: the slowest rhythm is the resting jaw |cos(ageInTicks * 0.3 * WINGSPEED) * PI * 0.015| (SpitBugGeoReplacement"
+                        + ".applyCustomAnimations:80-81, attacking 0) at 0.165 rad/tick, which the absolute value folds to a 19.04-tick half period; the attacking jaw "
+                        + "|cos(ageInTicks * 2.6 * WINGSPEED) * PI * 0.1| (:80); the Mth.sin gait sin(ageInTicks * 2.0 * WINGSPEED) * PI * 0.12 * limbSwingAmount with the "
+                        + "0.1-tick look-ahead and the |cos| lift on the rising half-cycle (:64-76, walk; the four leg helpers over bind pivots and chains, :103-255) at 1.1"));
+        rules.put("SpyroGeoReplacement", Rule.periodic(TWO_PI / (double) 1.2F,
+                "the port's ws = limbSwingAmount (SpyroGeoReplacement.applyCustomAnimations:70): every rhythm scales by the walking speed, so nothing moves at "
+                        + "limbSwingAmount 0; at 1 the slowest is the tail cos(ageInTicks * 1.2 * ws) * PI * 0.25 (:115; the tail chain follows, :122-123) at 1.2 rad/tick, "
+                        + "5.24 ticks; the threshold gait cos(ageInTicks * 2.3 * ws) * PI * 0.4 * limbSwingAmount and cos(ageInTicks * 2.0 * ws) * PI * 0.25 * limbSwingAmount "
+                        + "(:73, :80) at 2.3 and 2.0; the activity 3 / 2 branches and the sitting still are off on the probe; the head look on twelve parts follows "
+                        + "netHeadYaw / headPitch = 0 (:132-156)"));
+        rules.put("StinkBugGeoReplacement", Rule.periodic(TWO_PI / (double) (0.1F * 0.75F),
+                "wingspeed 0.75: the slowest rhythm is the tail -0.2 + sin(ageInTicks * 0.1 * WINGSPEED) * PI * 0.1 (StinkBugGeoReplacement.applyCustomAnimations:67, "
+                        + "every state) at 0.075 rad/tick, 83.78 ticks; the antennae sin(ageInTicks * 0.4 / 0.43 / 0.46 / 0.49 * WINGSPEED) * PI * 0.15 (:63-66), "
+                        + "sin(ageInTicks * 0.4 * WINGSPEED) * PI * 0.2 (:58) and sin(ageInTicks * 0.2 * WINGSPEED) * PI * 0.04 (:61); the legs sin(ageInTicks * 3.1 * WINGSPEED) "
+                        + "* PI * 0.3 * limbSwingAmount (:52, walk) at 2.325"));
+        rules.put("StinkyGeoReplacement", Rule.periodic(TWO_PI / (double) 1.0F,
+                "the port's ws = limbSwingAmount (StinkyGeoReplacement.applyCustomAnimations:63): every rhythm scales by the walking speed, so nothing moves at "
+                        + "limbSwingAmount 0; at 1 the slowest is the tail cos(ageInTicks * 1.0 * ws) * PI * 0.2 (:85; the tail chain follows, :91-97) at 1.0 rad/tick, "
+                        + "6.28 ticks; the threshold gait cos(ageInTicks * 2.3 * ws) * PI * 0.4 * limbSwingAmount and cos(ageInTicks * 2.0 * ws) * PI * 0.25 * limbSwingAmount "
+                        + "(:65, :69); the activity-2 fold and the sitting still are off on the probe; the head look follows netHeadYaw / headPitch = 0 (:101-115)"));
+        rules.put("TRexGeoReplacement", Rule.periodic(TWO_PI / (double) 0.1F,
+                "the slowest rhythm is the arm sway -0.523 + cos(ageInTicks * 0.1) * PI * 0.05 on shape17 / shape11 (TRexGeoReplacement.applyCustomAnimations:75-76, "
+                        + "every state) at 0.1 rad/tick, 62.83 ticks; the float-compare threshold gait on eight leg parts cos(ageInTicks * 1.3 * ANIM_SPEED) * PI * 0.25 * "
+                        + "limbSwingAmount (:58, ANIM_SPEED 1.0, walk) at 1.3; the attacking jaw 0.52 + cos(ageInTicks * 0.45) * PI * 0.18 (:72)"));
+        rules.put("TheKingGeoReplacement", Rule.periodic(TWO_PI / (double) (0.08F * 1.0F),
+                "WING_SPEED 1.0: the slowest rhythm is the centre head's resting pitch sin(ageInTicks * 0.08 * WING_SPEED) * PI * 0.1 (TheKingGeoReplacement"
+                        + ".applyCustomAnimations:298, attacking 0; the three heads' resting rhythms 0.17 / 0.13 / 0.45, 0.19 / 0.12 / 0.55, 0.13 / 0.08 / 0.65, :291-299) at "
+                        + "0.08 rad/tick, 78.54 ticks; the attacking heads at 0.3 / 0.2 / 0.85, 0.32 / 0.21 / 0.95, 0.28 / 0.19 / 0.75 (:278-286); the wings cos(ageInTicks * 0.75 "
+                        + "* WING_SPEED) * PI * 0.21 attacking else cos(ageInTicks * 0.35 * WING_SPEED) * PI * 0.15 (:83-84) with the 84 / 184 follows; the fourteen claws and legs on "
+                        + "attacking (:142, :162); the eight-link tail chain at tailspeed 0.26 resting and 0.56 attacking (:212-217, :220-268)"));
+        rules.put("ThePrinceAdultGeoReplacement", Rule.periodic(TWO_PI / (double) (0.13F * 0.65F),
+                "wingspeed 0.65: the slowest rhythm is the centre head's resting yaw sin(ageInTicks * 0.13 * WINGSPEED) * PI * 0.08 (ThePrinceAdultGeoReplacement"
+                        + ".applyCustomAnimations:308, attacking 0; the heads' resting rhythms 0.17 / 0.45, 0.19 / 0.55, 0.13 / 0.65, :302-310, their pitch getHeadNExt() - 30 in "
+                        + "every state) at 0.0845 rad/tick, 74.35 ticks; the attacking heads at 0.3 / 0.85, 0.32 / 0.95, 0.28 / 0.75 (:285-293) and the sitting jaws at 0.25 / 0.35 "
+                        + "/ 0.45 (:334-336); the wings by attacking / activity / sitting cos(ageInTicks * 0.75 / 0.35 * WINGSPEED) (:88-92) with the 84 / 184 follows; the gait "
+                        + "cos(ageInTicks * 0.3 * WINGSPEED) * PI * 0.25 * limbSwingAmount while walking and not sitting (:176, walk) at 0.195; the tail chain at tailspeed 0.26 "
+                        + "resting, 0.56 attacking, 0 sitting (:74-75, :226-231)"));
+        rules.put("ThePrinceGeoReplacement", Rule.periodic(TWO_PI / (double) (0.3F * 0.65F),
+                "wingspeed 0.65: the slowest rhythm is the resting wings cos(ageInTicks * 0.3 * WINGSPEED) * PI * 0.04 (ThePrinceGeoReplacement"
+                        + ".applyCustomAnimations:86, below the threshold and not attacking) at 0.195 rad/tick, 32.22 ticks; the threshold-or-attacking wings cos(ageInTicks "
+                        + "* 2.3 * WINGSPEED) * PI * 0.4 * limbSwingAmount (:85) and the threshold legs cos(ageInTicks * 2.0 * WINGSPEED) * PI * 0.25 * limbSwingAmount (:95, "
+                        + "walk); the attacking lash cos(ageInTicks * 0.9 * WINGSPEED) * PI * 0.06 (:106) and the tail fan cos(ageInTicks * 1.3 * WINGSPEED) * PI * 0.12 (:111; "
+                        + "four follows :116-132); the jaw chatter cos(ageInTicks * 1.9 / 2.1 / 2.3 * WINGSPEED) * PI * 0.2 (:191-195); the three heads' look and the necks by the "
+                        + "head extensions (0 on the probe, :149-244)"));
+        rules.put("ThePrinceTeenGeoReplacement", Rule.periodic(TWO_PI / (double) (0.25F * 0.65F),
+                "wingspeed 0.65: the slowest rhythm is the resting jaw chatter cos(ageInTicks * 0.25 * WINGSPEED) * PI * 0.02 (ThePrinceTeenGeoReplacement"
+                        + ".applyCustomAnimations:323, attacking 0; the other heads at 0.3 / 0.35, :325-327) at 0.1625 rad/tick, 38.67 ticks, beside the resting tail chain at "
+                        + "tailspeed 0.26 (:81-82, :210-244; 0.56 attacking :203, 0 sitting :207); the wings cos(ageInTicks * 1.3 * WINGSPEED) * PI * 0.2 * limbSwingAmount walking, "
+                        + "cos(ageInTicks * 0.3 * WINGSPEED) * PI * 0.04 resting (:90-91), 1.4 / 1.7 * 0.65 by activity and attacking (:93-96); the legs cos(ageInTicks * 0.55 * "
+                        + "WINGSPEED) * PI * 0.25 * limbSwingAmount with its pi/2 phase (:136-137, walk) and cos(ageInTicks * WINGSPEED) * PI * 0.25 attacking (:149-150); the "
+                        + "attacking jaws at 0.9 / 1.1 / 1.3 * 0.65 (:316-320); the flight yaw latch rf1 needs activity (0 on the probe); the three-head look follows the head "
+                        + "extensions = 0 (:276-424)"));
+        rules.put("TriffidGeoReplacement", Rule.periodic(Math.PI / (double) (0.25F * 1.0F),
+                "wingspeed 1.0: the only rhythm live at these inputs is the attacking tentacle |cos(ageInTicks * 0.25 * WINGSPEED) * PI * 0.5| with its alternating roll "
+                        + "(TriffidGeoReplacement.applyCustomAnimations:147-148, attacking; the l44 chain follows by position, :158-217) at 0.25 rad/tick, which the absolute "
+                        + "value folds to a 12.57-tick half period; the four leaf chains cos(ageInTicks * 0.25 * WINGSPEED) * PI * 0.039 (:67) need getOpenClosed() != 0 - 0 on "
+                        + "the probe, the closed constant 0.1225 rad - so the walk and idle states hold still"));
+        rules.put("TrooperBugGeoReplacement", Rule.periodic(TWO_PI / (double) (0.1F * 0.22F),
+                "wingspeed 0.22: the slowest rhythm is the resting cos(ageInTicks * 0.1 * WINGSPEED) * PI * 0.02 (TrooperBugGeoReplacement.applyCustomAnimations:89, "
+                        + "attacking 0; the five attacking branches at 1.4 / 2.5 / 2.6 / 1.0 / 2.6 * 0.22 and the resting 0.4 / 0.5 / 0.3 / 0.1 / 0.3 * 0.22, :74-94) at 0.022 "
+                        + "rad/tick, 285.60 ticks - over the 6 s cap; the Mth.sin gait sin(ageInTicks * 2.0 * WINGSPEED) * PI * 0.12 * limbSwingAmount with the 0.1-tick "
+                        + "look-ahead and the |cos| lift (:109-121, walk; the four leg helpers :145-288) at 0.44"));
+        rules.put("UrchinGeoReplacement", Rule.periodic(TWO_PI / (double) 0.02F,
+                "wingspeed 1.0: the slowest rhythm is the slow centre spin (ageInTicks * 0.02) mod 2 pi with its eight spikes cos(ageInTicks * 0.07 / 0.065 / 0.075 / "
+                        + "0.08 / 0.055 / 0.045 / 0.035 / 0.04 * WINGSPEED) * PI * 0.02 (UrchinGeoReplacement.applyCustomAnimations:94-102, one branch of the state switch) at "
+                        + "0.02 rad/tick, 314.16 ticks - over the 6 s cap; the other branch spins (ageInTicks * 0.2) mod 2 pi with the spikes at 0.7 / 0.65 / 0.75 / 0.8 / 0.55 / 0.45 "
+                        + "/ 0.35 / 0.4 * PI * 0.06 (:84-92); the threshold spikes cos(ageInTicks * 0.7 / 1.7 / 1.65 / 1.75 / 1.8 * WINGSPEED) * PI * 0.15 * limbSwingAmount (:63-67, walk)"));
+        rules.put("VelocityRaptorGeoReplacement", Rule.periodic(TWO_PI / (double) 0.3F,
+                "wingspeed 1.25: the slowest rhythm is cos(ageInTicks * 0.3) * PI * 0.05 (VelocityRaptorGeoReplacement.applyCustomAnimations:87, every state) at 0.3 "
+                        + "rad/tick, 20.94 ticks; the health-frequency idiom cos(ageInTicks * 1.25 * WINGSPEED * hf) * PI * 0.1 * hf (:82) and cos(ageInTicks * 1.4 * WINGSPEED "
+                        + "* hf) * PI * 0.25 * hf (:105, not sitting) with hf = 1 at full health; cos(ageInTicks * 1.3 * WINGSPEED) * PI * 0.1 (:98); the threshold gait "
+                        + "cos(ageInTicks * 1.3 * WINGSPEED) * PI * 0.25 * limbSwingAmount (:72, walk) at 1.625"));
+        rules.put("WaterDragonGeoReplacement", Rule.periodic(TWO_PI / (double) (0.5F * 0.5F),
+                "wingspeed 0.5: the slowest rhythm is cos(ageInTicks * 0.5 * WINGSPEED) * PI * 0.05 (WaterDragonGeoReplacement.applyCustomAnimations:124, every state) "
+                        + "at 0.25 rad/tick, 25.13 ticks, beside the 0.8 / 0.7 / 0.6 * 0.5 sways (:109-119); the threshold gait cos(ageInTicks * 1.3 * WINGSPEED) * PI * 0.2 * "
+                        + "limbSwingAmount and the pi/4-phased body wave cos(ageInTicks * 1.3 * WINGSPEED - n * pi/4) * PI * 0.4 * limbSwingAmount with its chained position writes "
+                        + "(:82-99, walk) at 0.65; the three-way attacking jaw cos(ageInTicks * 1.2 * WINGSPEED) * PI * 0.25 at attacking 1, 0.45 rad at 2, -0.25 at rest (:129); the "
+                        + "head look at 0.75 with the nose, jaw, fin and ears following follows netHeadYaw = 0 (:130-142)"));
+        rules.put("WhaleGeoReplacement", Rule.periodic(TWO_PI / (double) 0.03F,
+                "the slowest rhythm is cos(ageInTicks * 0.03) * PI * 0.02 (WhaleGeoReplacement.applyCustomAnimations:72, every state) at 0.03 rad/tick, 209.44 ticks - "
+                        + "over the 6 s cap; the two thresholds cos(ageInTicks * 0.3) * PI * 0.2 * limbSwingAmount else cos(ageInTicks * 0.08) * PI * 0.05 (:62-63) and "
+                        + "cos(ageInTicks * 0.4) * PI * 0.16 * limbSwingAmount else cos(ageInTicks * 0.05) * PI * 0.03 (:76-77); the tail position chain follows (:88-93)"));
+    }
+
     private ReferenceClipSampler() {
+    }
+
+    static final String USAGE = "Usage: ReferenceClipSampler <output-dir> <manifest>... [--reference <reference-manifest> <geo-dir>] | "
+            + "--verify <checked-in-dir> <scratch-out-dir> <manifest>... [--reference <reference-manifest> <geo-dir>]";
+
+    /** The command line past the mode arguments: the seam manifests and, optionally, the reference manifest with its geo directory. */
+    record Options(List<Path> manifests, Path referenceManifest, Path referenceGeoDir) {
+        static Options parse(String[] args, int from) {
+            List<Path> manifests = new ArrayList<>();
+            Path referenceManifest = null;
+            Path referenceGeoDir = null;
+            for (int i = from; i < args.length; i++) {
+                if ("--reference".equals(args[i])) {
+                    if (i + 2 >= args.length) {
+                        throw new IllegalArgumentException("--reference takes <reference-manifest> <geo-dir>. " + USAGE);
+                    }
+                    referenceManifest = Path.of(args[i + 1]).toAbsolutePath().normalize();
+                    referenceGeoDir = Path.of(args[i + 2]).toAbsolutePath().normalize();
+                    i += 2;
+                } else {
+                    manifests.add(Path.of(args[i]));
+                }
+            }
+            if (manifests.isEmpty()) {
+                throw new IllegalArgumentException(USAGE);
+            }
+            return new Options(manifests, referenceManifest, referenceGeoDir);
+        }
     }
 
     public static void main(String[] args) throws Exception {
         if (args.length >= 1 && "--verify".equals(args[0])) {
             if (args.length < 4) {
-                throw new IllegalArgumentException("Usage: ReferenceClipSampler --verify <checked-in-dir> <scratch-out-dir> <manifest>...");
+                throw new IllegalArgumentException(USAGE);
             }
-            List<Path> manifests = new ArrayList<>();
-            for (int i = 3; i < args.length; i++) {
-                manifests.add(Path.of(args[i]));
-            }
-            int status = verify(Path.of(args[1]).toAbsolutePath().normalize(), Path.of(args[2]).toAbsolutePath().normalize(), manifests);
+            int status = verify(Path.of(args[1]).toAbsolutePath().normalize(), Path.of(args[2]).toAbsolutePath().normalize(),
+                    Options.parse(args, 3));
             if (status != 0) {
                 System.exit(status);
             }
             return;
         }
         if (args.length < 2) {
-            throw new IllegalArgumentException("Usage: ReferenceClipSampler <output-dir> <manifest>... | --verify <checked-in-dir> <scratch-out-dir> <manifest>...");
+            throw new IllegalArgumentException(USAGE);
         }
-        List<Path> manifests = new ArrayList<>();
-        for (int i = 1; i < args.length; i++) {
-            manifests.add(Path.of(args[i]));
-        }
-        write(Path.of(args[0]).toAbsolutePath().normalize(), manifests);
+        write(Path.of(args[0]).toAbsolutePath().normalize(), Options.parse(args, 1));
     }
 
     /**
-     * The verifier (build.gradle {@code referenceClipsVerify}): regenerate into {@code scratch}, then compare every
-     * regular file of both directories byte for byte. Returns 1 with one {@code REFERENCE CLIPS DRIFT} line
+     * The verifier (build.gradle {@code referenceClipsVerify}): clear {@code scratch} of the sampler's earlier
+     * outputs (a clip or index left by a previous verify - after a renaming, a stale file would read as "produced by
+     * the sampler"), regenerate into it, then compare every regular file of both directories byte for byte. Returns 1
+     * with one {@code REFERENCE CLIPS DRIFT} line
      * naming each file that differs, is produced but not checked in, or is checked in but not produced; 0 with {@code
      * REFERENCE CLIPS VERIFIED: N files}.
      */
-    static int verify(Path checkedIn, Path scratch, List<Path> manifests) throws Exception {
-        write(scratch, manifests);
+    static int verify(Path checkedIn, Path scratch, Options options) throws Exception {
+        if (Files.isDirectory(scratch)) {
+            try (var listing = Files.list(scratch)) {
+                for (Path stale : listing.filter(Files::isRegularFile).filter(ReferenceClipSampler::isSamplerOutput).toList()) {
+                    Files.delete(stale);
+                }
+            }
+        }
+        write(scratch, options);
         TreeSet<String> names = new TreeSet<>();
         for (Path directory : List.of(checkedIn, scratch)) {
             if (Files.isDirectory(directory)) {
@@ -399,15 +964,38 @@ public final class ReferenceClipSampler {
         return 0;
     }
 
-    /** The writer: every manifest's rigs sampled into {@code outputDir} plus the index. */
-    static void write(Path outputDir, List<Path> manifestPaths) throws Exception {
+    /** A file the sampler writes: a clip ({@code *.animation.json}) or the index. */
+    private static boolean isSamplerOutput(Path path) {
+        String name = path.getFileName().toString();
+        return name.endsWith(".animation.json") || name.equals(INDEX_FILE);
+    }
+
+    /**
+     * One rig to sample: a manifest entry (landed: the shipped geo, the manifest's channels or the {@link #RULES} row) or an
+     * unlanded hook (the reference leg's geo, the {@link #HOOK_RULES} row, the bake lenient about the face-order key).
+     */
+    record Entry(String id, String registry, String ruleKey, Path manifestPath, Path repositoryRoot, JsonObject spec, String modelClass,
+                 String candidateClass, boolean beaverPath, boolean isStatic, Path geoPath, boolean strictFaceOrder, String hook,
+                 boolean landed, String rigSource) {
+        String descriptorName() {
+            return this.candidateClass == null ? null : this.candidateClass.substring(this.candidateClass.lastIndexOf('.') + 1);
+        }
+    }
+
+    static final String RIG_SOURCE_SHIPPED = "shipped";
+    static final String RIG_SOURCE_REFERENCE = "reference-leg converter output";
+
+    /** The writer: every manifest's rigs, then every unlanded hook of the reference manifest, sampled into {@code outputDir} plus the index. */
+    static void write(Path outputDir, Options options) throws Exception {
         Files.createDirectories(outputDir);
-        Map<String, JsonObject> index = new TreeMap<>();
+        Map<String, List<JsonObject>> index = new TreeMap<>();
         Map<String, String> sampledClasses = new TreeMap<>();
-        for (Path given : manifestPaths) {
+        Map<String, String> landedClasses = new TreeMap<>();  // model class -> registry sampled from a manifest
+        Path repositoryRoot = null;
+        for (Path given : options.manifests()) {
             Path manifestPath = given.toAbsolutePath().normalize();
             JsonObject manifest = readJson(manifestPath);
-            Path repositoryRoot = manifestPath.getParent().getParent();
+            repositoryRoot = manifestPath.getParent().getParent();
             for (JsonElement element : manifest.getAsJsonArray("models")) {
                 JsonObject spec = element.getAsJsonObject();
                 String id = spec.get("id").getAsString();
@@ -427,18 +1015,103 @@ public final class ReferenceClipSampler {
                             + " duplicates an entry already sampled (the same class " + modelClass + ")");
                     continue;
                 }
-                JsonObject entry = sample(spec, id, registry, manifestPath, repositoryRoot, outputDir);
+                Entry entry = manifestEntry(spec, id, registry, manifestPath, repositoryRoot);
                 sampledClasses.put(registry, modelClass);
+                landedClasses.put(modelClass, registry);
                 if (entry != null) {
-                    index.put(registry, entry);
+                    index.put(registry, sample(entry, outputDir));
                 }
             }
         }
+        int hooksSampled = 0;
+        List<String> skipped = new ArrayList<>();
+        if (options.referenceManifest() != null) {
+            Path referenceManifest = options.referenceManifest();
+            JsonObject manifest = readJson(referenceManifest);
+            Map<String, JsonObject> entries = new LinkedHashMap<>();
+            for (JsonElement element : manifest.getAsJsonArray("models")) {
+                JsonObject spec = element.getAsJsonObject();
+                entries.put(spec.get("id").getAsString(), spec);
+            }
+            TreeSet<String> hooked = new TreeSet<>();
+            for (Hook hook : HOOK_DESCRIPTORS.values()) {
+                JsonObject spec = entries.get(hook.referenceId());
+                if (spec == null) {
+                    throw new IllegalStateException(hook.descriptor() + ": HOOK_DESCRIPTORS names " + hook.referenceId() + ", which "
+                            + referenceManifest.getFileName() + " does not carry - the row is stale; fix the row or the manifest");
+                }
+                Path source = repositoryRoot.resolve(CLIENT_SOURCE_DIR).resolve(hook.descriptor() + ".java");
+                if (!Files.isRegularFile(source)) {
+                    throw new IllegalStateException(hook.descriptor() + ": HOOK_DESCRIPTORS names a descriptor with no source at " + source
+                            + " - the row is stale; remove it");
+                }
+                GeoReplacementDescriptor<?> descriptor = S4CandidateRuntime.instantiate(hook.candidateClass()).descriptor();
+                Path shipped = repositoryRoot.resolve(SHIPPED_ASSETS).resolve(descriptor.modelResource().getPath());
+                if (Files.isRegularFile(shipped)) {
+                    throw new IllegalStateException(hook.descriptor() + ": its rig " + descriptor.modelResource().getPath() + " ships - the slice "
+                            + "landed, so the seam manifest carries it and the HOOK_DESCRIPTORS row is stale; remove the row (the audit's HOOK_STALE rule)");
+                }
+                if (sampledClasses.containsKey(hook.registry())) {
+                    throw new IllegalStateException(hook.descriptor() + ": registry " + hook.registry() + " is already sampled from a seam manifest ("
+                            + sampledClasses.get(hook.registry()) + ") - the HOOK_DESCRIPTORS row is stale; remove it");
+                }
+                Path geo = options.referenceGeoDir().resolve(hook.referenceId() + ".geo.json");
+                if (!Files.isRegularFile(geo)) {
+                    throw new IllegalStateException(hook.referenceId() + ": " + geo + " does not exist - run gradle referenceConvertModels "
+                            + "(tools/layer_definition_to_geo.py over " + referenceManifest.getFileName() + ") or point --reference at its output directory");
+                }
+                String modelClass = spec.get("class").getAsString();
+                Entry entry = new Entry(hook.referenceId(), hook.registry(), hook.descriptor(), referenceManifest, repositoryRoot, spec, modelClass,
+                        hook.candidateClass(), false, false, geo, false,
+                        hook.candidateClass() + ".applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose "
+                                + "(the S4 doctrine: the unlanded hook of - the classic setupAnim transcribed into the "
+                                + "descriptor's PoseInputs form, proven when the rig lands - registry-free, on explicit PoseInputs, over the reference leg's "
+                                + "converter output " + geo.getFileName() + " baked without the face-order strictness the landing slice's TEST-007 adds)",
+                        false, RIG_SOURCE_REFERENCE);
+                index.put(hook.registry(), sample(entry, outputDir));
+                sampledClasses.put(hook.registry(), modelClass);
+                hooked.add(hook.referenceId());
+                hooksSampled++;
+            }
+            for (Map.Entry<String, JsonObject> reference : entries.entrySet()) {
+                String id = reference.getKey();
+                String modelClass = reference.getValue().get("class").getAsString();
+                if (hooked.contains(id) || landedClasses.containsKey(modelClass)) {
+                    continue;
+                }
+                skipped.add(id);
+                System.out.println("skip  " + id + ": " + modelClass.substring(modelClass.lastIndexOf('.') + 1)
+                        + " has no <Name>GeoReplacement descriptor in HOOK_DESCRIPTORS - no clip (a held species, a head sidecar, a solver rig or a "
+                        + "native rig: sampled when the rig lands)");
+            }
+        }
         JsonObject root = new JsonObject();
-        root.addProperty("schema_version", 2);
+        root.addProperty("schema_version", 3);
         root.addProperty("generated_by", "danger.orespawn.g1.ReferenceClipSampler (build.gradle referenceClips; verified at check by referenceClipsVerify)");
-        root.addProperty("purpose", "reference-only clips sampled from every packaged species' classic hook"
-                + "; never shipped, never returned - the package checker and the asset audit refuse them");
+        root.addProperty("purpose", "reference-only clips sampled from every hook, landed or not, one clip per reachable state"
+                + ": the seam manifests' rigs on their shipped geo and every "
+                + "unlanded hook (a reference entry whose model class has a <Name>GeoReplacement descriptor) on the reference leg's converter output; "
+                + "never shipped, never returned under its own name - the package checker and the asset audit refuse it; its keys may be the starting "
+                + "point of a delivered idle / walk / aggro_idle (item 31 (13))");
+        JsonObject states = new JsonObject();
+        for (State state : List.of(State.WALK, State.IDLE, State.ATTACK)) {
+            JsonObject description = new JsonObject();
+            description.addProperty("file", "<registry>" + FILE_INFIX + state.name() + FILE_EXTENSION);
+            description.addProperty("clip_name", state.clipName());
+            description.addProperty("inputs", state.statement());
+            description.addProperty("when", STATE_WALK.equals(state.name()) ? "every sampled rig (the fixed inputs of 2026-09-13; every earlier "
+                    + "<registry>_reference.animation.json reproduces byte for byte under this name)"
+                    : STATE_IDLE.equals(state.name()) ? "every sampled rig"
+                    : "where the hook reads an attacking state through a pose interface it declares (the attacking_rule)");
+            states.add(state.name(), description);
+        }
+        root.add("states", states);
+        root.addProperty("attacking_rule", "reference_attack exists where the hook READS an attacking state through a pose interface it declares: the "
+                + "inputs.subject(<X>Pose.class) casts of the descriptor's applyCustomAnimations and of the static pose helpers it delegates to "
+                + "(<Other>GeoReplacement.poseRig / poseDragon / pose), followed into that interface's public getters whose names match "
+                + ATTACKING_GETTER.pattern() + " (getAttacking / isAttacking and kin; today every match is int getAttacking()); a cast to a type outside "
+                + "danger.orespawn.entity.pose is reported per clip under attacking.outside_pose_interface (none today); attacking.read_at_inputs says "
+                + "whether the pose actually called the probe's getAttacking() at that state's inputs (the cross-check)");
         root.addProperty("clip_name", CLIP_NAME);
         root.addProperty("samples_per_second", TICKS_PER_SECOND);
         root.addProperty("fixed_inputs", INPUTS_STATEMENT);
@@ -450,23 +1123,32 @@ public final class ReferenceClipSampler {
                 + "construction). Past the cap - no such k, or T itself over 120 ticks - two seconds (rule two_seconds_past_cap, 40 ticks) "
                 + "and the sheet states the seam (seam_delta_degrees: the closing key's delta at 40 ticks). A static rig one key (one_key); "
                 + "a rig with no period two seconds (two_seconds_no_period). Keys at every whole tick inside the span plus the closing key "
-                + "at its end");
+                + "at its end. Per state: the closure test runs on each state's own inputs and subject, and a "
+                + "state whose hook writes nothing that moves - every bone's rotation and position the same at every sample - is one key (one_key)");
         root.addProperty("rotation_rule", "a rotation key per bone per sample as the DELTA from the bone's bind under the converter's "
                 + "sign rule: authored X = +classic degrees, Y and Z negated (tools/keyframe_clip.py; KeyframeLeg); rounded to 1e-10 "
                 + "degrees, never -0.0; lerp_mode linear");
         root.addProperty("position_rule", "a position key per bone per sample where the hook writes positions (OreSpawnGeoReplacement.moveTo): "
                 + "the internal offset the hook wrote, (-dx, -dy, +dz) of the classic pivot move (dx, dy, dz) in model units - GeckoLib reads "
                 + "position keys unnegated and sets them absolutely over a fresh bake's zero offsets");
+        root.addProperty("hooks_sampled_from_reference_manifest", hooksSampled);
+        root.add("reference_entries_skipped", names(skipped));
         JsonArray clips = new JsonArray();
-        index.values().forEach(clips::add);
+        int files = 0;
+        for (List<JsonObject> rows : index.values()) {
+            for (JsonObject row : rows) {
+                clips.add(row);
+                files++;
+            }
+        }
         root.add("clips", clips);
         writeJson(outputDir.resolve(INDEX_FILE), root);
-        System.out.println("wrote " + outputDir.resolve(INDEX_FILE) + " (" + index.size() + " clips)");
+        System.out.println("wrote " + outputDir.resolve(INDEX_FILE) + " (" + files + " clips over " + index.size() + " registries; " + hooksSampled
+                + " unlanded hooks from the reference manifest; " + skipped.size() + " reference entries skipped)");
     }
 
-    /** One manifest entry: the clip file and its index row, or {@code null} for a species without a classic hook (said so). */
-    private static JsonObject sample(JsonObject spec, String id, String registry, Path manifestPath, Path repositoryRoot,
-                                     Path outputDir) throws Exception {
+    /** One seam-manifest entry as an {@link Entry}, or {@code null} for a species without a classic hook (said so). */
+    private static Entry manifestEntry(JsonObject spec, String id, String registry, Path manifestPath, Path repositoryRoot) throws Exception {
         String animationKind = spec.get("animation_kind").getAsString();
         String candidateClass = spec.has("candidate_class") ? spec.get("candidate_class").getAsString() : null;
         boolean beaverPath = candidateClass == null && "gait_scaled".equals(animationKind)
@@ -479,20 +1161,20 @@ public final class ReferenceClipSampler {
         boolean faceOrderRequired = false;
         if (candidateClass != null) {
             GeoReplacementDescriptor<?> descriptor = S4CandidateRuntime.instantiate(candidateClass).descriptor();
-            geoPath = repositoryRoot.resolve("src/main/resources/assets/orespawn").resolve(descriptor.modelResource().getPath());
+            geoPath = repositoryRoot.resolve(SHIPPED_ASSETS).resolve(descriptor.modelResource().getPath());
             faceOrderRequired = descriptor.cubeFaceOrderRequired();
             hook = candidateClass + ".applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose "
                     + "(the S4 doctrine: the shipped replacement, registry-free, on explicit PoseInputs)";
         } else if (beaverPath) {
             String legClass = spec.getAsJsonObject("keyframe_reference_leg").get("candidate_class").getAsString();
             GeoReplacementDescriptor<?> descriptor = S4CandidateRuntime.instantiate(legClass).descriptor();
-            geoPath = repositoryRoot.resolve("src/main/resources/assets/orespawn").resolve(descriptor.modelResource().getPath());
+            geoPath = repositoryRoot.resolve(SHIPPED_ASSETS).resolve(descriptor.modelResource().getPath());
             faceOrderRequired = descriptor.cubeFaceOrderRequired();
             hook = "G1AnimationRuntime.Evaluator.evaluateBeaverCodeDriven (the probe's accepted Beaver path - the G1 legacy-parity "
                     + "exception's GeoModel.setCustomAnimations with ModelBeaver's exact Mth.cos formulas): the shipped "
                     + legClass + " hook takes the renderer's AnimationState and has no PoseInputs form to pose registry-free";
         } else if (isStatic) {
-            geoPath = repositoryRoot.resolve("src/main/resources/assets/orespawn/geo/entity")
+            geoPath = repositoryRoot.resolve(SHIPPED_ASSETS + "/geo/entity")
                     .resolve(id.substring("model_".length()) + ".geo.json");
             hook = "none (a static rig: no classic hook; one key at bind)";
         } else {
@@ -503,12 +1185,18 @@ public final class ReferenceClipSampler {
         if (!Files.isRegularFile(geoPath)) {
             throw new IllegalStateException(id + ": the shipped geo " + geoPath + " does not exist");
         }
-        Rule base = ruleFor(spec, id, isStatic);
-        Model rawModel = KeyFramesAdapter.GEO_GSON.fromJson(Files.readString(geoPath, StandardCharsets.UTF_8), Model.class);
-        JsonObject geoJson = readJson(geoPath);
+        return new Entry(id, registry, id, manifestPath, repositoryRoot, spec, spec.get("class").getAsString(), candidateClass, beaverPath, isStatic,
+                geoPath, faceOrderRequired, hook, true, RIG_SOURCE_SHIPPED);
+    }
+
+    /** One rig: its states sampled into their clip files; the index rows in walk, idle, attack order. */
+    private static List<JsonObject> sample(Entry entry, Path outputDir) throws Exception {
+        Rule base = ruleFor(entry);
+        Model rawModel = KeyFramesAdapter.GEO_GSON.fromJson(Files.readString(entry.geoPath(), StandardCharsets.UTF_8), Model.class);
+        JsonObject geoJson = readJson(entry.geoPath());
         List<String> drawOrder = DrawOrder.read(geoJson);
         Map<String, List<List<Direction>>> faceOrder = FaceOrder.read(geoJson);
-        G1AnimationRuntime.Evaluator evaluator = G1AnimationRuntime.evaluator(rawModel, drawOrder, faceOrder, faceOrderRequired);
+        G1AnimationRuntime.Evaluator evaluator = G1AnimationRuntime.evaluator(rawModel, drawOrder, faceOrder, entry.strictFaceOrder());
         Map<String, float[]> bindRotations = new TreeMap<>();
         Map<String, float[]> bindPositions = new TreeMap<>();
         G1AnimationRuntime.EvaluatedModel bind = evaluator.bindPose();
@@ -516,22 +1204,37 @@ public final class ReferenceClipSampler {
             bindRotations.put(name, new float[]{bone.getRotX(), bone.getRotY(), bone.getRotZ()});
             bindPositions.put(name, new float[]{bone.getPosX(), bone.getPosY(), bone.getPosZ()});
         });
+        Attacking attacking = entry.candidateClass() != null ? declaredAttacking(entry.descriptorName(), entry.repositoryRoot()) : Attacking.NONE;
+        List<State> states = new ArrayList<>(List.of(State.WALK, State.IDLE));
+        if (attacking.reads()) {
+            states.add(State.ATTACK);
+        }
+        List<JsonObject> rows = new ArrayList<>();
+        for (State state : states) {
+            // One pose call at t on a subject: the replacement on explicit PoseInputs, the probe's Beaver path, or bind.
+            Poser poser = (t, subject) -> {
+                if (entry.candidateClass() != null) {
+                    return S4CandidateRuntime.evaluateProductionHook(rawModel, drawOrder, faceOrder, entry.candidateClass(),
+                            new S4CandidateRuntime.Inputs((float) t, (float) (t * state.limbSwingPerTick()), state.limbSwingAmount(),
+                                    NET_HEAD_YAW, HEAD_PITCH), subject, entry.strictFaceOrder());
+                }
+                if (entry.beaverPath()) {
+                    return evaluator.evaluateBeaverCodeDriven(t, state.limbSwingAmount());
+                }
+                return evaluator.bindPose();
+            };
+            rows.add(sampleState(entry, state, base, poser, bindRotations, bindPositions, attacking, outputDir));
+        }
+        return rows;
+    }
 
-        // One pose call at t on a subject: the shipped replacement on explicit PoseInputs, the probe's Beaver path, or bind.
-        Poser poser = (t, subject) -> {
-            if (candidateClass != null) {
-                return S4CandidateRuntime.evaluateProductionHook(rawModel, drawOrder, faceOrder, candidateClass,
-                        new S4CandidateRuntime.Inputs((float) t, (float) (t * LIMB_SWING_PER_TICK), LIMB_SWING_AMOUNT,
-                                NET_HEAD_YAW, HEAD_PITCH), subject);
-            }
-            if (beaverPath) {
-                return evaluator.evaluateBeaverCodeDriven(t, LIMB_SWING_AMOUNT);
-            }
-            return evaluator.bindPose();
-        };
+    /** One state of one rig: the closure test on its inputs, the keys, the file, the index row. */
+    private static JsonObject sampleState(Entry entry, State state, Rule base, Poser poser, Map<String, float[]> bindRotations,
+                                          Map<String, float[]> bindPositions, Attacking attacking, Path outputDir) throws Exception {
+        String id = entry.id();
         // The span rule: the closure test settles a period structure into the smallest multiple of the slowest period
-        // that closes within 5 degrees, or two seconds past the 6 s cap.
-        Rule rule = resolveSpan(base, id, poser, bindRotations, bindPositions);
+        // that closes within 5 degrees, or two seconds past the 6 s cap - per state.
+        Rule rule = resolveSpan(base, id, poser, bindRotations, bindPositions, state);
 
         // The sample times: every whole tick inside the span, then the closing key at the span's end.
         List<Double> ticks = new ArrayList<>();
@@ -545,7 +1248,7 @@ public final class ReferenceClipSampler {
             ticks.add(rule.spanTicks());
         }
 
-        ProbeSubject subject = new ProbeSubject(restState());  // every flag at its rest value; the RNG seeded 0, once
+        ProbeSubject subject = new ProbeSubject(state.subjectState());  // every flag at the state's value; the RNG seeded 0, once
         Map<String, List<double[]>> rotationKeys = new TreeMap<>();   // bone -> authored (x, y, z) degrees per sample
         Map<String, List<double[]>> positionKeys = new TreeMap<>();   // bone -> authored (x, y, z) units per sample
         TreeSet<String> hiddenBones = new TreeSet<>();
@@ -555,40 +1258,49 @@ public final class ReferenceClipSampler {
             sample.position().forEach((name, key) -> positionKeys.computeIfAbsent(name, k -> new ArrayList<>()).add(key));
             hiddenBones.addAll(sample.hidden());
         }
+        // Item 31 (11): a state whose hook writes nothing that MOVES - every bone's rotation and position the same at every
+        // sample - is one key; the note keeps the structure the closure test settled and says it is not live at these inputs.
+        if (ticks.size() > 1 && !varies(rotationKeys) && !varies(positionKeys)) {
+            rotationKeys.replaceAll((name, keys) -> new ArrayList<>(keys.subList(0, 1)));
+            positionKeys.replaceAll((name, keys) -> new ArrayList<>(keys.subList(0, 1)));
+            ticks = new ArrayList<>(List.of(0.0D));
+            rule = Rule.oneKey("nothing moves at the " + state.name() + " inputs: every bone's rotation and position is the same at every sample of "
+                    + "the span the closure test settled (" + rule.kind() + "; " + rule.note() + "), so this state is one key");
+        }
         // Position keys only where the hook wrote a position on the bone at any sample.
         List<String> positionBones = new ArrayList<>();
-        for (Map.Entry<String, List<double[]>> entry : positionKeys.entrySet()) {
-            if (entry.getValue().stream().anyMatch(v -> v[0] != 0.0D || v[1] != 0.0D || v[2] != 0.0D)) {
-                positionBones.add(entry.getKey());
+        for (Map.Entry<String, List<double[]>> keyed : positionKeys.entrySet()) {
+            if (keyed.getValue().stream().anyMatch(v -> v[0] != 0.0D || v[1] != 0.0D || v[2] != 0.0D)) {
+                positionBones.add(keyed.getKey());
             }
         }
         List<String> movingBones = new ArrayList<>();
-        for (Map.Entry<String, List<double[]>> entry : rotationKeys.entrySet()) {
-            if (entry.getValue().stream().anyMatch(v -> v[0] != 0.0D || v[1] != 0.0D || v[2] != 0.0D)) {
-                movingBones.add(entry.getKey());
+        for (Map.Entry<String, List<double[]>> keyed : rotationKeys.entrySet()) {
+            if (keyed.getValue().stream().anyMatch(v -> v[0] != 0.0D || v[1] != 0.0D || v[2] != 0.0D)) {
+                movingBones.add(keyed.getKey());
             }
         }
 
         double spanSeconds = RULE_ONE_KEY.equals(rule.kind()) ? 1.0D / TICKS_PER_SECOND : round(rule.spanTicks() / TICKS_PER_SECOND);
         JsonObject bones = new JsonObject();
-        for (Map.Entry<String, List<double[]>> entry : rotationKeys.entrySet()) {
+        for (Map.Entry<String, List<double[]>> keyed : rotationKeys.entrySet()) {
             JsonObject bone = new JsonObject();
-            bone.add("rotation", keys(ticks, entry.getValue()));
-            if (positionBones.contains(entry.getKey())) {
-                bone.add("position", keys(ticks, positionKeys.get(entry.getKey())));
+            bone.add("rotation", keys(ticks, keyed.getValue()));
+            if (positionBones.contains(keyed.getKey())) {
+                bone.add("position", keys(ticks, positionKeys.get(keyed.getKey())));
             }
-            bones.add(entry.getKey(), bone);
+            bones.add(keyed.getKey(), bone);
         }
         JsonObject clip = new JsonObject();
         clip.addProperty("loop", true);
         clip.addProperty("animation_length", spanSeconds);
         clip.add("bones", bones);
         JsonObject animations = new JsonObject();
-        animations.add(CLIP_NAME, clip);
+        animations.add(state.clipName(), clip);
         JsonObject document = new JsonObject();
         document.addProperty("format_version", "1.8.0");
         document.add("animations", animations);
-        Path clipPath = outputDir.resolve(registry + FILE_SUFFIX);
+        Path clipPath = outputDir.resolve(state.fileName(entry.registry()));
         writeJson(clipPath, document);
         String sha256 = sha256(Files.readAllBytes(clipPath));
 
@@ -596,9 +1308,9 @@ public final class ReferenceClipSampler {
         double seamRotation = 0.0D;
         double seamPosition = 0.0D;
         if (ticks.size() > 1) {
-            for (Map.Entry<String, List<double[]>> entry : rotationKeys.entrySet()) {
-                double[] first = entry.getValue().get(0);
-                double[] last = entry.getValue().get(entry.getValue().size() - 1);
+            for (Map.Entry<String, List<double[]>> keyed : rotationKeys.entrySet()) {
+                double[] first = keyed.getValue().get(0);
+                double[] last = keyed.getValue().get(keyed.getValue().size() - 1);
                 for (int axis = 0; axis < 3; axis++) {
                     seamRotation = Math.max(seamRotation, Math.abs(wrapDegrees(last[axis] - first[axis])));
                 }
@@ -613,39 +1325,135 @@ public final class ReferenceClipSampler {
             }
         }
 
-        JsonObject entry = new JsonObject();
-        entry.addProperty("registry", registry);
-        entry.addProperty("model_id", id);
-        entry.addProperty("manifest", manifestPath.getFileName().toString());
-        entry.addProperty("model_class", spec.get("class").getAsString());
-        entry.addProperty("hook", hook);
-        entry.addProperty("geo", repositoryRoot.relativize(geoPath).toString().replace('\\', '/'));
-        entry.addProperty("file", clipPath.getFileName().toString());
-        entry.addProperty("sha256", sha256);
-        entry.addProperty("rule", rule.kind());
-        entry.addProperty("rule_note", rule.note());
+        JsonObject row = new JsonObject();
+        row.addProperty("registry", entry.registry());
+        row.addProperty("state", state.name());
+        row.addProperty("model_id", id);
+        row.addProperty("manifest", entry.manifestPath().getFileName().toString());
+        row.addProperty("model_class", entry.modelClass());
+        row.addProperty("landed", entry.landed());
+        row.addProperty("rig_source", entry.rigSource());
+        row.addProperty("hook", entry.hook());
+        row.addProperty("geo", entry.repositoryRoot().relativize(entry.geoPath()).toString().replace('\\', '/'));
+        row.addProperty("file", clipPath.getFileName().toString());
+        row.addProperty("clip_name", state.clipName());
+        row.addProperty("sha256", sha256);
+        row.addProperty("rule", rule.kind());
+        row.addProperty("rule_note", rule.note());
         if (rule.periodTicks() > 0.0D) {  // a period structure (period_multiple or two_seconds_past_cap): the slowest group's period T
-            entry.addProperty("period_ticks", round(rule.periodTicks()));
+            row.addProperty("period_ticks", round(rule.periodTicks()));
         }
         if (RULE_PERIOD_MULTIPLE.equals(rule.kind())) {
-            entry.addProperty("period_multiple_k", rule.k());
-            entry.addProperty("closure_delta_degrees", round(rule.closureDegrees()));
+            row.addProperty("period_multiple_k", rule.k());
+            row.addProperty("closure_delta_degrees", round(rule.closureDegrees()));
         }
-        entry.addProperty("span_ticks", RULE_ONE_KEY.equals(rule.kind()) ? 0.0D : round(rule.spanTicks()));
-        entry.addProperty("animation_length_seconds", spanSeconds);
-        entry.addProperty("keys_per_bone", ticks.size());
-        entry.addProperty("bones", rotationKeys.size());
-        entry.add("moving_bones", names(movingBones));
-        entry.add("position_bones", names(positionBones));
-        entry.add("hidden_bones_at_rest", names(new ArrayList<>(hiddenBones)));
-        entry.addProperty("seam_delta_degrees", round(seamRotation));
-        entry.addProperty("seam_delta_position_units", round(seamPosition));
-        entry.add("subject_after", subject.after());
-        entry.addProperty("sampled_inputs", INPUTS_STATEMENT);
+        row.addProperty("span_ticks", RULE_ONE_KEY.equals(rule.kind()) ? 0.0D : round(rule.spanTicks()));
+        row.addProperty("animation_length_seconds", spanSeconds);
+        row.addProperty("keys_per_bone", ticks.size());
+        row.addProperty("bones", rotationKeys.size());
+        row.add("moving_bones", names(movingBones));
+        row.add("position_bones", names(positionBones));
+        row.add("hidden_bones_at_rest", names(new ArrayList<>(hiddenBones)));
+        row.addProperty("seam_delta_degrees", round(seamRotation));
+        row.addProperty("seam_delta_position_units", round(seamPosition));
+        row.add("subject_after", subject.after());
+        row.add("attacking", attacking.json(subject.attackingRead()));
+        row.addProperty("sampled_inputs", state.statement());
         System.out.println(String.format(Locale.ROOT, "wrote %s: %s%s, %d keys per bone over %d bones (%d moving, %d positioned), span %s ticks, seam %s deg, sha256 %s",
                 clipPath.getFileName(), rule.kind(), RULE_PERIOD_MULTIPLE.equals(rule.kind()) ? " (k = " + rule.k() + " x " + fmt(rule.periodTicks()) + " ticks)" : "",
                 ticks.size(), rotationKeys.size(), movingBones.size(), positionBones.size(), fmt(rule.spanTicks()), fmt(seamRotation), sha256));
-        return entry;
+        return row;
+    }
+
+    /** Whether any bone's keys differ between samples (the one-key collapse's test). */
+    private static boolean varies(Map<String, List<double[]>> keys) {
+        for (List<double[]> values : keys.values()) {
+            double[] first = values.get(0);
+            for (double[] value : values) {
+                if (value[0] != first[0] || value[1] != first[1] || value[2] != first[2]) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * What the hook declares about attacking (item 31 (11)): the pose interfaces its {@code inputs.subject(...)} casts name
+     * (following the static pose helpers it delegates to), the attacking getters those interfaces declare, and any cast to a
+     * type outside the pose package (a read outside a pose interface - none today).
+     */
+    record Attacking(List<String> interfaces, List<String> getters, List<String> outside) {
+        static final Attacking NONE = new Attacking(List.of(), List.of(), List.of());
+
+        boolean reads() {
+            return !this.getters.isEmpty();
+        }
+
+        JsonObject json(boolean readAtInputs) {
+            JsonObject out = new JsonObject();
+            out.add("declared_pose_interfaces", names(this.interfaces));
+            out.add("getters", names(this.getters));
+            out.add("outside_pose_interface", names(this.outside));
+            out.addProperty("reads_attacking", reads());
+            out.addProperty("read_at_inputs", readAtInputs);
+            return out;
+        }
+    }
+
+    static Attacking declaredAttacking(String descriptor, Path repositoryRoot) throws IOException {
+        LinkedHashSet<String> visited = new LinkedHashSet<>();
+        LinkedHashSet<String> casts = new LinkedHashSet<>();
+        collectCasts(descriptor, repositoryRoot, visited, casts, 0);
+        List<String> interfaces = new ArrayList<>();
+        TreeSet<String> getters = new TreeSet<>();
+        List<String> outside = new ArrayList<>();
+        for (String cast : casts) {
+            String name = cast.substring(cast.lastIndexOf('.') + 1);
+            Class<?> type = null;
+            try {
+                type = Class.forName(POSE_PACKAGE + name, false, ReferenceClipSampler.class.getClassLoader());
+            } catch (ClassNotFoundException notAPoseInterface) {
+                type = null;
+            }
+            if (type == null || !type.isInterface()) {
+                outside.add(cast);
+                continue;
+            }
+            interfaces.add(name);
+            for (java.lang.reflect.Method method : type.getMethods()) {
+                if (ATTACKING_GETTER.matcher(method.getName()).matches()) {
+                    getters.add(name + "." + method.getName() + "()");
+                }
+            }
+        }
+        return new Attacking(interfaces, new ArrayList<>(getters), outside);
+    }
+
+    /** The {@code subject(<X>.class)} casts of a descriptor's source and of the descriptors whose static pose helpers it calls. */
+    private static void collectCasts(String descriptor, Path repositoryRoot, LinkedHashSet<String> visited, LinkedHashSet<String> casts, int depth)
+            throws IOException {
+        if (!visited.add(descriptor) || depth > 3) {
+            return;
+        }
+        Path source = repositoryRoot.resolve(CLIENT_SOURCE_DIR).resolve(descriptor + ".java");
+        if (!Files.isRegularFile(source)) {
+            throw new IllegalStateException(descriptor + ": no source at " + source + " to read the declared pose interfaces from");
+        }
+        String text = Files.readString(source, StandardCharsets.UTF_8)
+                .replaceAll("(?s)/\\*.*?\\*/", " ")
+                .replaceAll("//[^\\n]*", " ");
+        Matcher cast = SUBJECT_CAST.matcher(text);
+        while (cast.find()) {
+            casts.add(cast.group(1));
+        }
+        Matcher delegation = DELEGATION.matcher(text);
+        while (delegation.find()) {
+            String other = delegation.group(1);
+            if (!other.equals(descriptor)) {
+                collectCasts(other, repositoryRoot, visited, casts, depth + 1);
+            }
+        }
     }
 
     /** One pose call at tick {@code t} on {@code subject}, whichever hook form the rig has. */
@@ -690,13 +1498,13 @@ public final class ReferenceClipSampler {
 
     /**
      * The closure test on a {@link #RULE_PERIODIC} rule: the pose at {@code t = 0}, then at each candidate
-     * {@code t = k * T} in turn on one fresh rest-state subject, the maximum authored rotation delta between the two over
-     * every bone and axis (reduced mod 360, exactly as the loop seam is measured) and the maximum position delta in model
-     * units; the first {@code k >= 1} with {@code k * T <= 120} ticks that passes both tolerances is the span. Past the
-     * cap - {@code T} itself over 120 ticks, or no candidate passing - two seconds. Any other rule kind is returned as
-     * it is.
+     * {@code t = k * T} in turn on one fresh subject in the state's declared values, the maximum authored rotation delta
+     * between the two over every bone and axis (reduced mod 360, exactly as the loop seam is measured) and the maximum
+     * position delta in model units; the first {@code k >= 1} with {@code k * T <= 120} ticks that passes both tolerances is
+     * the span. Past the cap - {@code T} itself over 120 ticks, or no candidate passing - two seconds. Any other rule
+     * kind is returned as it is.
      */
-    static Rule resolveSpan(Rule base, String id, Poser poser, Map<String, float[]> bindRotations, Map<String, float[]> bindPositions)
+    static Rule resolveSpan(Rule base, String id, Poser poser, Map<String, float[]> bindRotations, Map<String, float[]> bindPositions, State state)
             throws Exception {
         if (!RULE_PERIODIC.equals(base.kind())) {
             return base;
@@ -706,7 +1514,7 @@ public final class ReferenceClipSampler {
             return base.pastCap("the slowest group's period " + fmt(period) + " ticks exceeds the 6 s cap (120 ticks): a two-second window "
                     + "(40 ticks), not a loop - the sheet states the closing key's seam");
         }
-        ProbeSubject subject = new ProbeSubject(restState());
+        ProbeSubject subject = new ProbeSubject(state.subjectState());
         Sample start = authoredKeys(id, poser.pose(0.0D, subject), bindRotations, bindPositions);
         List<String> tried = new ArrayList<>();
         for (int k = 1; k * period <= SPAN_CAP_TICKS + 1.0e-9D; k++) {
@@ -755,14 +1563,15 @@ public final class ReferenceClipSampler {
     }
 
     /**
-     * The span rule's base, before the closure test ({@link #resolveSpan}): static = one key; declared channels = a period
-     * structure whose slowest distinct frequency gives {@code T}; otherwise the {@link #RULES} row.
+     * The span rule's base, before the closure test ({@link #resolveSpan}): static = one key; a landed rig's declared channels =
+     * a period structure whose slowest distinct frequency gives {@code T}; otherwise the {@link #RULES} row (a landed hook rig,
+     * keyed by its manifest id) or the {@link #HOOK_RULES} row (an unlanded hook, keyed by its descriptor).
      */
-    static Rule ruleFor(JsonObject spec, String id, boolean isStatic) {
-        if (isStatic) {
+    static Rule ruleFor(Entry entry) {
+        if (entry.isStatic()) {
             return Rule.oneKey("a static rig (animation_kind static, no hook): one key at bind");
         }
-        JsonArray channels = spec.has("channels") ? spec.getAsJsonArray("channels") : new JsonArray();
+        JsonArray channels = entry.landed() && entry.spec().has("channels") ? entry.spec().getAsJsonArray("channels") : new JsonArray();
         if (channels.size() > 0) {
             List<Double> frequencies = new ArrayList<>();
             for (JsonElement element : channels) {
@@ -783,10 +1592,11 @@ public final class ReferenceClipSampler {
             return Rule.periodic(TWO_PI / slowest, declared + ": the slowest group's period 2 pi / " + fmt(slowest) + " = "
                     + fmt(TWO_PI / slowest) + " ticks");
         }
-        Rule rule = RULES.get(id);
+        Rule rule = entry.landed() ? RULES.get(entry.ruleKey()) : HOOK_RULES.get(entry.ruleKey());
         if (rule == null) {
-            throw new IllegalStateException(id + ": a hook rig without declared channels and without a ReferenceClipSampler.RULES "
-                    + "row - state its sampling rule (one natural period, or two seconds) with the source line it is read from");
+            throw new IllegalStateException(entry.id() + ": a hook rig without declared channels and without a ReferenceClipSampler."
+                    + (entry.landed() ? "RULES" : "HOOK_RULES") + " row for " + entry.ruleKey()
+                    + " - state its sampling rule (one natural period, or two seconds) with the source line it is read from");
         }
         return rule;
     }
