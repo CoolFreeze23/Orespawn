@@ -9,7 +9,7 @@
   "labels": {},
   "groups": [],
   "formulas": [
-    "No bone motion: setupAnim is empty (ModelElevator.java:65). Not a clip: the renderer tilts the whole board on a hit — rotation about X = sin(hitTime) * hitTime * damageTaken / 10 * forwardDirection while timeSinceHit > 0 (RenderElevator.java:31-38 in 1.7.10; ElevatorGeoReplacement.applyRotations:43-58).",
+    "No bone motion: setupAnim is empty (ModelElevator.java:65; orig ModelElevator.java:54-57, `render`, writes no angle). Not a clip: the renderer tilts the whole board on a hit — rotation about X = sin(hitTime) * hitTime * damageTaken / 10 * forwardDirection while timeSinceHit > 0 (RenderElevator.java:31-38 in 1.7.10; ElevatorGeoReplacement.applyRotations:43-58).",
     "Texture variant: elevator<color>.png for colour 1..10 (ElevatorRenderer.java:24-27); elevator.png (no number) is shipped but unreferenced."
   ],
   "behaviour": [

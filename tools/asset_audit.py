@@ -37,9 +37,13 @@ Checks
                       model resource) carries the G2 classic draw order under
                       description["orespawn:bone_draw_order"], a non-empty array
                       of unique strings naming exactly the rig's bones (owner
-                      ruling 2026-09-06 - never acknowledgeable); and every shipped
+                      ruling 2026-09-06 - never acknowledgeable); every shipped
                       geo/entity/*.geo.json is reconciled: a seam rig, or a member
-                      of OUTSIDE_SEAM with its dated reason (never acknowledgeable).
+                      of OUTSIDE_SEAM with its dated reason (never acknowledgeable);
+                      and no reference-only clip (*_reference.animation.json, the
+                      package sampler's output under tools/reference_clips/) ships
+                      anywhere under src/main/resources (owner ruling 2026-09-13,
+                      second set, item 27 (3) - never acknowledgeable).
 
 Findings whose (category, name) pair is listed in ACKNOWLEDGED below are
 reported under a separate ACKNOWLEDGED section and never affect the exit code
@@ -107,7 +111,14 @@ ACKNOWLEDGED = {
 # a shipped rig that is neither a seam rig nor a dated OUTSIDE_SEAM exception is a rig
 # outside the contract nobody decided on (refuter B on the landing, 2026-09-06).
 NEVER_ACKNOWLEDGED = {"GECKO_GEO_DRAW_ORDER_MISSING", "GECKO_GEO_SEAM_UNRECONCILED",
-                      "GECKO_GEO_FACE_ORDER_INVALID", "GECKO_GEO_FLAT_CUBE_FACE_ORDER_MISSING"}
+                      "GECKO_GEO_FACE_ORDER_INVALID", "GECKO_GEO_FLAT_CUBE_FACE_ORDER_MISSING",
+                      "GECKO_REFERENCE_CLIP_SHIPPED"}
+
+# The reference-only clip (owner 2026-09-13, second set, addendum item 27 (3)): the package sampler's output,
+# tools/reference_clips/<registry>_reference.animation.json - the classic hook sampled at fixed inputs for the
+# artist to look at - is carried beside each species' sheet and NEVER shipped; the package checker refuses a
+# returned one, and this audit refuses one anywhere under src/main/resources (never acknowledgeable).
+REFERENCE_CLIP_SUFFIX = "_reference.animation.json"
 
 findings = []      # list of dicts: level, category, name, detail, path
 skipped = []       # things the static parser could not verify
@@ -1039,6 +1050,16 @@ def check_geckolib(java_texts):
                 "descriptor, then regenerate it with tools/layer_definition_to_geo.py (TEST-007)"
                 % (rel(java_path), ", ".join(flat[:6]) + (" ..." if len(flat) > 6 else ""), FACE_ORDER_KEY),
                 geo_path)
+
+    # The reference-only clip never ships (owner 2026-09-13, second set, item 27 (3)): a *_reference.animation.json
+    # anywhere under src/main/resources is an ERROR naming the file, never acknowledgeable - the package copies it
+    # beside the sheet from tools/reference_clips/ and the checker refuses a returned one; the jar carries none.
+    resources = ROOT / "src" / "main" / "resources"
+    for path in (sorted(resources.rglob("*" + REFERENCE_CLIP_SUFFIX)) if resources.is_dir() else []):
+        err("GECKO_REFERENCE_CLIP_SHIPPED", path.name[:-len(".animation.json")],
+            "a reference-only clip (the package sampler's output, tools/reference_clips/) is shipped under "
+            "src/main/resources - it is sampled from the classic hook for the artist to look at and is never "
+            "loaded, never shipped; delete it (the package generator copies it from tools/reference_clips/)", path)
 
     clips = {}  # clip name -> [(file, loop declaration)]; loop is False / True / "hold_on_last_frame"
     for path in (sorted(anim_dir.rglob("*.animation.json")) if anim_dir.is_dir() else []):

@@ -9,67 +9,38 @@
   "labels": {},
   "groups": [
     {
-      "name": "inner",
+      "name": "rings",
       "bones": [
-        "Shape1__i0",
-        "Shape1__i1",
-        "Shape1__i2",
-        "Shape1__i3",
-        "Shape1__i4",
-        "Shape1__i5"
+        "Shape1__fan",
+        "Shape2__carry_x1",
+        "Shape2__carry_x2",
+        "Shape2__fan",
+        "Shape3__carry_x1",
+        "Shape3__carry_x2",
+        "Shape3__carry_y1",
+        "Shape3__carry_y2",
+        "Shape3__fan"
       ],
-      "omega": 0.12740903539558607,
-      "axis": "z (angle1) and x (angle2)",
+      "omega": null,
+      "phase": "three fresh rolls of the level's random per RENDERED FRAME (nextFloat() * 360 degrees) — no rate, no period",
+      "axis": "x (the inner fan), y (the middle fan, under the carried X), z (the outer fan, under the carried X and Y)",
       "gait_scaled": false,
-      "amplitude": "continuous turn",
-      "plain": "the inner ring's six spokes turn about Z at 7.3 deg/tick and tip about X at 5.1 deg/tick",
-      "math": "inner.zRot = rad(t*7.3); inner.xRot = rad(t*5.1)",
-      "source": "ModelPurplePower.java:45-56; PurplePowerGeoReplacement.java:56-70"
-    },
-    {
-      "name": "middle",
-      "bones": [
-        "Shape2__i0",
-        "Shape2__i1",
-        "Shape2__i2",
-        "Shape2__i3",
-        "Shape2__i4",
-        "Shape2__i5"
-      ],
-      "omega": 0.0890117918517108,
-      "axis": "z (angle2) and y (angle3)",
-      "gait_scaled": false,
-      "amplitude": "continuous turn",
-      "plain": "the middle ring turns about Z at 5.1 deg/tick and about Y at 3.7 deg/tick",
-      "math": "middle.zRot = rad(t*5.1); middle.yRot = rad(t*3.7)",
-      "source": "ModelPurplePower.java:45-56"
-    },
-    {
-      "name": "outer",
-      "bones": [
-        "Shape3__i0",
-        "Shape3__i1",
-        "Shape3__i2",
-        "Shape3__i3",
-        "Shape3__i4",
-        "Shape3__i5"
-      ],
-      "omega": 0.0645771823237902,
-      "axis": "z (angle3) and x (angle1)",
-      "gait_scaled": false,
-      "amplitude": "continuous turn",
-      "plain": "the outer ring turns about Z at 3.7 deg/tick and tips about X at 7.3 deg/tick",
-      "math": "outer.zRot = rad(t*3.7); outer.xRot = rad(t*7.3)",
-      "source": "ModelPurplePower.java:45-56"
+      "amplitude": "any angle: a fresh random roll every frame",
+      "plain": "every frame each ring jumps to a fresh random angle: the inner fan about X, the middle fan about Y under the inner's X roll (applied twice), the outer fan about Z under both — a flicker, not a spin",
+      "math": "x = rand*360; Shape1__fan.xRot = rad(x); y = rand*360; Shape2__carry_x1.xRot = Shape2__carry_x2.xRot = rad(x); Shape2__fan.yRot = rad(y); z = rand*360; Shape3__carry_x1/x2.xRot = rad(x); Shape3__carry_y1/y2.yRot = rad(y); Shape3__fan.zRot = rad(z)",
+      "source": "PurplePowerGeoReplacement.java:121-136; ModelPurplePower.java:159-200 (orig ModelPurplePower.java:57-82; ENT-S-146 fixed 2026-09-06)"
     }
   ],
   "behaviour": [
-    "Each ring is one classic part drawn six times at 60-degree steps (the __fanN groups hold the static step; the __iN clones carry the spin) — Slice 4c's render-instance expansion.",
-    "All three rings turn forever; the common period is 3600 ticks (three minutes). No walk, no head."
+    "Each ring is one classic part drawn six times at 60-degree steps (the __fan groups hold the roll; the __iN clones carry the static step) — Slice 4c's render-instance expansion; the carry groups repeat the earlier rolls the way the original's nested glRotatef calls did.",
+    "Every rendered frame re-rolls the three angles from the level's random (ENT-S-146, fixed 2026-09-06: the earlier port spun the rings at 7.3 / 5.1 / 3.7 degrees per tick, which the original never did); there is no period, no walk, no head."
   ],
   "clips": [],
   "extras": [],
   "wishlist": [],
   "effort_hours": 0,
-  "texture_notes": "Five canvases by type: purplepowertexture (type 0), 2, 3, 4 (types 1-3) and 10 (the bomb)."
+  "texture_notes": "Five canvases by type: purplepowertexture (type 0), 2, 3, 4 (types 1-3) and 10 (the bomb).",
+  "formulas": [
+    "`PurplePowerGeoReplacement.applyCustomAnimations` (PurplePowerGeoReplacement.java:121-136) and the classic `ModelPurplePower.renderToBuffer` (ModelPurplePower.java:159-200; orig ModelPurplePower.java:44-86, `render`; ENT-S-146, fixed 2026-09-06): three rolls of the level's random per rendered frame, each `nextFloat() * 360` degrees — the first turns the inner fan about X (orig :57-58) and is carried as the middle and outer chains' X, applied twice (orig :58 and :64); the second turns the middle fan about Y (orig :66-67) and is carried as the outer chain's Y, twice (orig :67 and :73); the third turns the outer fan about Z (orig :75-76); each fan is one spoke drawn six times at 1.0471976-radian steps (orig :59-63 / :68-72 / :77-81). No input but the random is read: the walk, the age, the head and the attack flag play no part, and there is no period — every frame is a fresh roll."
+  ]
 }

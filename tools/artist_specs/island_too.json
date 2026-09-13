@@ -59,5 +59,8 @@
   "clips": [],
   "extras": [],
   "wishlist": [],
-  "effort_hours": 0
+  "effort_hours": 0,
+  "formulas": [
+    "`ModelIslandToo.setupAnim` (ModelIslandToo.java:32-42) is the Island's nine cosines with the Island's wingspeed 1.0 — the age in ticks times 0.05 .. 0.058 radians per tick (cube 1's X, Y, Z; cube 2's; cube 3's), times pi, every angle swinging between +180 and -180 degrees with its own period (125.7 down to 108.3 ticks) — the original drew the same `ModelIsland` (orig ModelIsland.java:41-53, `render`) through RenderIslandToo. The GeckoLib hook `IslandTooGeoReplacement` calls `IslandGeoReplacement.poseIslandRig` (IslandTooGeoReplacement.java:26-28)."
+  ]
 }

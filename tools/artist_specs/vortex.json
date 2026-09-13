@@ -11,7 +11,7 @@
   },
   "groups": [],
   "formulas": [
-    "No channels: setupAnim is empty (VortexModel.java:32)."
+    "No channels: setupAnim is empty (VortexModel.java:32; orig ModelVortex.java:27-30, `render`, writes no angle)."
   ],
   "behaviour": [
     "Static rig; the motion players see is the entity drifting and the smoke column (EntityVortex.tick)."

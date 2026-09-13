@@ -43,7 +43,7 @@ from collections import Counter, OrderedDict, defaultdict
 from pathlib import Path
 from typing import Any, Iterable
 
-TOOL_VERSION = "0.2.4 (the second Tier-2 slice, 2026-09-13: the naming rule's primary_group SPEC rows, the round-trip key-time tolerance 5e-5 s, the native-controller event-key exemption)"
+TOOL_VERSION = "0.2.5 (the reference-clip sampler, 2026-09-13: the reference-only clip per packaged species, the SPEC's reference-clip section with the plain-language transcription, the manifest's reference_clip / exact_transcription, the checker's refusal)"
 
 ROOT = Path(__file__).resolve().parent.parent
 BB_NAMESPACE = uuid.UUID("6f0b4b2e-9d1c-4a7e-8f3a-2c5e1d7b9a10")  # deterministic .bbmodel uuids
@@ -81,7 +81,18 @@ CHECK_REJECTS = [
     "a returned `.geo.json` whose bones, parents, pivots, rotations, cubes, UVs or canvas differ from the shipped rig",
     "a `locked` bone renamed, re-parented or deleted in a returned `.geo.json` (the finding names the bone)",
     "a texture that is not this creature's, or whose canvas size changed",
+    "a `*_reference.animation.json` returned that is not the package's own untouched copy (the reference-only clip the package carries beside the sheet: the classic code sampled at fixed inputs, never edited, never delivered, never shipped — the finding names the file; the untouched copy coming back is warned, not a delivery)",
 ]
+# The reference-only clip (owner 2026-09-13, second set, addendum item 27 (3)): `tools/reference_clips/<registry>_reference.animation.json`,
+# the classic hook sampled at fixed inputs by the g1 harness (ReferenceClipSampler; gradle referenceClips), copied beside each
+# species' sheet by `package`, marked reference-only in SPEC §4.3, refused by `check` (a REJECT naming the file) and by the
+# asset audit under src/main/resources (the jar never carries one). `_preview` stays a WARN (open question 15); this is a REJECT.
+REFERENCE_CLIP_SUFFIX = "_reference.animation.json"
+REFERENCE_CLIP_INDEX = "reference_clips.json"
+REFERENCE_CLIP_NAME = "reference"
+README_REFERENCE_SENTENCE = ("The `<registry>_reference.animation.json` beside each sheet is REFERENCE-ONLY: the creature's classic code sampled at "
+                             "fixed inputs so you can see today's motion in Blockbench — never edit it into a delivery, never return it (the "
+                             "checker REJECTS it by name) and never ship it (the game's jar never carries one).")
 CHECK_WARNS = [
     "a key on a `locked` bone (the clip and the bones are named) — " + LOCK_POLICY,
     "a `_preview` file delivered (a Blockbench-only aid; whether the package ships one is open question 15) — PROVISIONAL",
@@ -122,6 +133,8 @@ class Paths:
         self.dev_renderers = self.java / "client/PhaseGDevRenderers.java"
         self.profiles = root / "src/main/resources/data/orespawn/multihitboxlib/hitbox_profiles"
         self.specs_dir = root / "tools/artist_specs"
+        self.keyframe_clips = root / "tools/keyframe_clips"      # the exact transcriptions' clip manifests (one per registry)
+        self.reference_clips = root / "tools/reference_clips"    # the sampler's reference-only clips and their index
         self.pins = root / "tools/reference_renderer_pins.json"
         self.design = root / "phase_g_reports/geckolib_migration_design.md"
         self.provenance = root / "provenance_byte_identical_assets.txt"
@@ -355,6 +368,15 @@ def load_proof_ids(paths: Paths) -> dict[str, str]:
     return out
 
 
+def load_reference_clip_index(paths: Paths) -> dict[str, dict[str, Any]]:
+    """registry -> the sampler's index row (`tools/reference_clips/reference_clips.json`, written by the g1 harness's
+    ReferenceClipSampler: file, sha256, rule, span, keys, the sampled inputs); empty when the sampler has not run."""
+    index = paths.reference_clips / REFERENCE_CLIP_INDEX
+    if not index.exists():
+        return {}
+    return {row["registry"]: row for row in load_json(index).get("clips", [])}
+
+
 def parse_provenance(paths: Paths) -> dict[str, str]:
     out: dict[str, str] = {}
     if not paths.provenance.exists():
@@ -570,6 +592,7 @@ class Repo:
         self.profiles = load_profiles(self.paths)
         self.sidecars = load_sidecars(self.paths)
         self.proof_ids = load_proof_ids(self.paths)
+        self.reference_clips = load_reference_clip_index(self.paths)
         self.provenance = parse_provenance(self.paths)
         self.geos = geo_files(self.paths)
         self.anims = animation_files(self.paths)
@@ -1770,6 +1793,124 @@ def frequency_groups(species: "Species") -> list[dict[str, Any]]:
     return out
 
 
+def exact_transcription(species: "Species", repo: "Repo") -> bool:
+    """True where the shipped `.animation.json` carries the species' exact keyframe transcription: a clip manifest
+    `tools/keyframe_clips/<registry>.json` exists (the generator's input, tools/keyframe_clip.py) and every clip its groups
+    name (and `idle` where it declares one) is in the shipped file. False for a species running on its classic hook
+    (Amendment 2, 2026-09-13) and for a native rig (the Queen: her own clips, no transcription)."""
+    manifest_path = repo.paths.keyframe_clips / f"{species.registry}.json"
+    if not manifest_path.exists():
+        return False
+    clip_manifest = load_json(manifest_path)
+    shipped = species.animation.get("animations", {})
+    names = [g["clip"] for g in clip_manifest.get("groups", [])]
+    if clip_manifest.get("idle") is not None:
+        names.append("idle")
+    return bool(names) and all(n in shipped for n in names)
+
+
+def reference_clip_facts(species: "Species", repo: "Repo", native: bool) -> tuple[dict[str, Any] | None, str]:
+    """(the sampler's index row for this species with its file's sha256 verified, or None; the reason when None).
+    A landed species whose descriptor has no classic hook (`native`: the SPEC's controller kind - a native GeckoLib rig, the
+    Queen) has none by design; a hook species without a row means the sampler has not run (gradle referenceClips) - a
+    warning, never a silent omission."""
+    row = repo.reference_clips.get(species.registry)
+    if row is None:
+        if native:
+            return None, ("no sampled reference clip: this creature has no classic hook (a native GeckoLib rig) — its own shipped "
+                          "clips are its reference")
+        repo.warnings.add(species.registry, "REFERENCE_CLIP_MISSING",
+                          f"no row for {species.registry} in tools/reference_clips/{REFERENCE_CLIP_INDEX}: run gradle referenceClips "
+                          "(the g1 harness's ReferenceClipSampler) before packaging")
+        return None, "no sampled reference clip in this package (the sampler has not run for this creature: gradle referenceClips)"
+    path = repo.paths.reference_clips / row["file"]
+    if not path.exists():
+        repo.warnings.add(species.registry, "REFERENCE_CLIP_MISSING", f"the index names {row['file']} but tools/reference_clips/ has no such file")
+        return None, f"no sampled reference clip in this package (the index names `{row['file']}` but the file is missing)"
+    actual = sha256_file(path)
+    if actual != row.get("sha256"):
+        repo.warnings.add(species.registry, "REFERENCE_CLIP_STALE",
+                          f"{row['file']} sha256 {actual[:12]}... differs from the index's {str(row.get('sha256'))[:12]}...: re-run gradle referenceClips")
+    return dict(row) | {"sha256": actual, "_path": path}, ""
+
+
+def reference_clip_section(species: "Species", repo: "Repo", seed: dict[str, Any], exact: bool, native: bool) -> tuple[list[str], dict[str, Any] | None]:
+    """SPEC §4.3 (owner 2026-09-13, second set, addendum item 27 (3)) and the manifest's `reference_clip` block: what the
+    reference-only clip is, that it is never returned or shipped, and - for a species without an exact transcription - the
+    plain-language transcription of its source formulas (migration design section 5: the source method and line quoted, each
+    formula and constant in words; the seed's `formulas`)."""
+    L: list[str] = []
+    L.append("### 4.3 Reference clip (reference-only)")
+    L.append("")
+    row, reason = reference_clip_facts(species, repo, native)
+    manifest_block: dict[str, Any] | None = None
+    if row is None:
+        L.append(f"_{reason}._")
+    else:
+        keys = int(row.get("keys_per_bone", 0))
+        span_ticks = float(row.get("span_ticks", 0.0))
+        rule = str(row.get("rule", ""))
+        if rule == "one_key":
+            span = "one key at the bind pose (nothing in this rig's code moves a bone at these inputs)"
+        elif rule == "natural_period":
+            span = f"one natural period of the motion — {fmt(span_ticks, 3)} ticks ({fmt(span_ticks / TICKS_PER_SECOND, 3)} s), the last key closing the loop at the period"
+        elif rule == "multi_frequency_slowest_group":
+            span = f"the period of the slowest of its rhythms — {fmt(span_ticks, 3)} ticks ({fmt(span_ticks / TICKS_PER_SECOND, 3)} s); the faster rhythms repeat inside it"
+        elif rule == "multi_frequency_capped_two_seconds":
+            span = f"two seconds ({fmt(span_ticks, 0)} ticks): its slowest rhythm is longer than that, so the clip is a two-second window, not a loop"
+        else:
+            span = f"two seconds ({fmt(span_ticks, 0)} ticks): this motion has no natural period"
+        L.append(f"`{row['file']}` (beside this sheet; sha256 `{row['sha256']}`) is NOT a clip to edit, improve, return or ship. It is the creature's "
+                 "classic code — the motion the game draws today — SAMPLED by the harness at fixed inputs so you can open it beside the rig in "
+                 "Blockbench and see that motion: full walking speed (limbSwingAmount 1, the walk position and the age advancing one tick per key), "
+                 f"not attacking, looking straight ahead, every state flag at rest, full health; {span}; 20 keys per second ({keys} keys per bone), "
+                 "linear keys; rotations are deltas from the bind pose under the same sign rule as the shipped clips (X as the classic degrees, Y and Z "
+                 "negated), positions only where the code moves a bone.")
+        L.append("")
+        L.append(f"- Sampled from: `{row.get('hook', '')}`.")
+        L.append(f"- Rule applied: {row.get('rule_note', '')}.")
+        moving = row.get("moving_bones") or []
+        positioned = row.get("position_bones") or []
+        hidden = row.get("hidden_bones_at_rest") or []
+        L.append(f"- Bones that move in it: {', '.join('`' + b + '`' for b in moving) if moving else 'none'}"
+                 + (f"; bones the code also MOVES (position keys): {', '.join('`' + b + '`' for b in positioned)}" if positioned else "")
+                 + (f"; bones the code hides at rest (no animation channel can express that; see the transcription below): {len(hidden)}" if hidden else "")
+                 + ".")
+        L.append(f"- Loop seam: the closing key differs from the first by at most {fmt(float(row.get('seam_delta_degrees', 0.0)), 4)} degrees (mod 360).")
+        L.append("")
+        L.append("`check` REJECTS a returned `*_reference.animation.json` by name, and the game's jar never carries one (the asset audit refuses it).")
+        manifest_block = {
+            "file": row["file"], "sha256": row["sha256"], "clip": REFERENCE_CLIP_NAME, "reference_only": True,
+            "rule": rule, "rule_note": row.get("rule_note"), "span_ticks": span_ticks,
+            "animation_length_seconds": row.get("animation_length_seconds"), "keys_per_bone": keys,
+            "sampled_inputs": row.get("sampled_inputs"), "hook": row.get("hook"),
+            "moving_bones": moving, "position_bones": positioned, "hidden_bones_at_rest": hidden,
+            "seam_delta_degrees": row.get("seam_delta_degrees"),
+        }
+    L.append("")
+    if native:
+        L.append("This creature is a native GeckoLib rig: it has no classic code to transcribe, so there is neither an exact transcription "
+                 "nor a plain-language one — its shipped clips (§5) are its reference.")
+    elif exact:
+        anim_name = species.anim_path.name if species.anim_path else f"{species.registry}.animation.json"
+        L.append(f"This creature ships an EXACT keyframe transcription of its code in `{anim_name}` (§4.1, §5): the reference clip is the "
+                 "code itself at the fixed inputs above, for comparison; the transcription is what you improve.")
+    else:
+        L.append("This creature has NO exact keyframe transcription (owner 2026-09-13, Amendment 2: its motion does not fit the current "
+                 "transcription form, and the game runs its classic code until you deliver `idle` and `walk`). Its source formulas in plain "
+                 "language (migration design section 5 — the source method and line quoted, each formula and constant in words):")
+        L.append("")
+        formulas = seed.get("formulas", [])
+        for line in formulas:
+            L.append(f"- {line}")
+        if not formulas:
+            L.append("- _(no `formulas` in the seed yet — the lane authors them from the model sources, the orig line cited)_")
+            repo.warnings.add(species.registry, "FORMULAS_MISSING",
+                              "no exact transcription and no `formulas` in the seed: the SPEC's plain-language transcription (design section 5) is missing")
+    L.append("")
+    return L, manifest_block
+
+
 def lock_note(keyed_locked: list[str]) -> str:
     """The per-clip consequence of keying locked bones — the one policy sentence (D1: said wherever a verdict invites an edit)."""
     if not keyed_locked:
@@ -2088,6 +2229,12 @@ def spec_document(species: "Species", repo: "Repo", catalog: "TextureCatalog", i
     for extra in seed.get("formulas", []):
         L.append(f"- {extra}")
     L.append("")
+    # §4.3 (owner 2026-09-13, second set, item 27 (3)): the reference-only clip, and the plain-language transcription
+    # where no exact transcription ships.
+    is_native_rig = any(c["role"] == "native" for c in clips)
+    exact = exact_transcription(species, repo)
+    section, reference_clip = reference_clip_section(species, repo, seed, exact, is_native_rig)
+    L.extend(section)
     L.append("## 5. Clips: what to improve, what to leave (AUTHORED verdicts on generated rows)")
     L.append("")
     if not clips:
@@ -2278,6 +2425,10 @@ def spec_document(species: "Species", repo: "Repo", catalog: "TextureCatalog", i
         "allow_idle_alt": allow_idle_alt,
         "textures": [{"canonical": t["canonical"], "width": t["width"], "height": t["height"], "aliases": t["aliases"]} for t in textures],
         "effort_hours": hours, "effort_source": hours_source,
+        # owner 2026-09-13, second set, item 27 (3): the reference-only clip beside the sheet (None where the species has no
+        # classic hook, or the sampler has not run), and whether the shipped .animation.json carries the exact transcription
+        "reference_clip": reference_clip,
+        "exact_transcription": exact,
     }
     return "\n".join(L) + "\n", manifest
 
@@ -2880,7 +3031,8 @@ def readme_document(repo: "Repo", manifests: dict[str, dict[str, Any]]) -> str:
              "**No event keyframes on loops** (idle, walk and the other cycles) — code-fired events come from the trigger inventory in each sheet, not from keys on a cycle (a loop plays under a phase lock that would fire such a key once, ever). "
              "Exception: a creature whose controllers are its own GeckoLib controllers (its sheet says controller kind `native` — the Queen) is not phase-locked, so its loops may carry event keys; they fire once per loop, and `check` notes each one (owner 2026-09-13). "
              "No Molang expressions, no custom-instruction keys, "
-             "no `_preview` files in a delivery (a Blockbench-only aid — the checker warns; PROVISIONAL, open question 15).")
+             "no `_preview` files in a delivery (a Blockbench-only aid — the checker warns; PROVISIONAL, open question 15). "
+             + README_REFERENCE_SENTENCE)
     L.append("")
     L.append("## What is in each entity folder")
     L.append("")
@@ -2888,6 +3040,9 @@ def readme_document(repo: "Repo", manifests: dict[str, dict[str, Any]]) -> str:
     L.append("entities/<registry_name>/")
     L.append("  <name>.geo.json          the rig (do not edit, do not re-export)")
     L.append("  <name>.animation.json    the current clips (empty for creatures that ship none yet)")
+    L.append("  <registry_name>_reference.animation.json")
+    L.append("                           REFERENCE-ONLY: the creature's classic code sampled at fixed inputs, to look at beside the rig")
+    L.append("                           (SPEC §4.3); never edit, return or ship it — the checker rejects it by name")
     L.append("  <registry_name>.bbmodel  a Blockbench project of the same rig, textures embedded")
     L.append("  textures/                the texture(s) to edit, one canonical copy each")
     L.append("  SPEC.md                  the creature's sheet: what it is, size, bone glossary, current motion in plain English,")
@@ -2965,6 +3120,11 @@ def build_package(repo: "Repo", out_dir: Path, registries: list[str] | None = No
         write_text(folder / "SPEC.md", spec_md)
         write_json(folder / "spec.manifest.json", manifest)
         write_text(folder / "reference" / "SLOTS.md", slots_document(s))
+        # owner 2026-09-13, second set, item 27 (3): the reference-only clip beside the sheet, byte for byte from
+        # tools/reference_clips/ (the sampler's output; its sha256 is in the manifest), under the same name.
+        if manifest.get("reference_clip"):
+            src = repo.paths.reference_clips / manifest["reference_clip"]["file"]
+            (folder / src.name).write_bytes(src.read_bytes())
         textures = []
         for t in catalog.canonical_for_species(s):
             if t["stray"]:
@@ -3187,6 +3347,22 @@ def check_folder(folder: Path, manifest_path: Path | None = None, lock_mode_over
     for p in folder.rglob("*"):
         if p.is_file() and "_preview" in p.name:
             findings.append(("WARN", f"{p.name}: a _preview file is a Blockbench-only aid and is not delivered — PROVISIONAL (open question 15)"))
+        if p.is_file() and p.name.endswith(REFERENCE_CLIP_SUFFIX):
+            # owner 2026-09-13, second set, item 27 (3): the reference-only clip is never a delivery and never shipped. The package's
+            # OWN copy coming back untouched (the manifest's file name and sha256) is not a delivery - a WARN naming it, so the
+            # generated folder itself checks PASS; any other `*_reference.animation.json` (edited, or a name the sheet never gave)
+            # is a REJECT by name.
+            own = m.get("reference_clip") or {}
+            # the sampler writes LF and the sheet's sha256 is of that file; a copy whose line endings a transfer changed is still untouched
+            returned_sha = hashlib.sha256(p.read_bytes().replace(b"\r\n", b"\n")).hexdigest()
+            if own and p.name == own.get("file") and returned_sha == own.get("sha256"):
+                findings.append(("WARN", f"{p.name}: the package's own reference-only clip came back untouched — not a delivery and never "
+                                         "shipped (the classic code sampled at fixed inputs, to be looked at); leave it out of the returned folder"))
+            else:
+                findings.append(("REJECT", f"{p.name}: a reference-only clip that is not the package's own untouched copy"
+                                           + (" (its bytes differ from the sheet's)" if own and p.name == own.get("file") else " (a name the sheet never gave)")
+                                           + " — the reference clip is the classic code sampled at fixed inputs, never edited, never delivered, "
+                                           "never shipped; remove it from the returned folder"))
     added_names: set[str] = set()  # bones a returned geo lists that the shipped rig has not (a key on one is "an added bone")
     renamed_names: dict[str, str] = {}  # returned name -> shipped name, for every rename a returned geo's fingerprints identify
     # --- a returned geo: must equal the shipped rig in every respect the manifest records ---
@@ -3290,7 +3466,8 @@ def check_folder(folder: Path, manifest_path: Path | None = None, lock_mode_over
             findings.append(("REJECT", f"{gp.name}: texture canvas {desc.get('texture_width')}x{desc.get('texture_height')} must stay {ts[0]}x{ts[1]}"))
         findings.append(("WARN", f"{gp.name}: a geo was returned; the shipped rig is used regardless (do not re-export the geo)"))
     # --- the animation file: exactly one, under the sheet's name ---
-    anim_files = [p for p in sorted(folder.glob("*.animation.json")) if "_preview" not in p.name]
+    # a `_preview` file is warned above and a `*_reference.animation.json` rejected above; neither counts as the delivery
+    anim_files = [p for p in sorted(folder.glob("*.animation.json")) if "_preview" not in p.name and not p.name.endswith(REFERENCE_CLIP_SUFFIX)]
     if not anim_files and clips_by_name:
         findings.append(("REJECT", f"no `{expected_anim}` returned (the sheet names the file)"))
     if len(anim_files) > 1:

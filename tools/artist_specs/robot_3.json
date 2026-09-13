@@ -83,5 +83,8 @@
   "clips": [],
   "extras": [],
   "wishlist": [],
-  "effort_hours": 0
+  "effort_hours": 0,
+  "formulas": [
+    "`ModelRobot3.poseFrom` (ModelRobot3.java:165-199, called from `setupAnim` :159-163; orig ModelRobot3.java:163-186, `render`): (1) the legs — while the walking speed is above a tenth, the cosine of the age in ticks times 0.55, times pi, times 0.12, times the walking speed (up to 21.6 degrees; orig :163-167), the left leg's two parts positive and the right leg's the negative; (2) the laser turret yaws by half the head yaw in radians; (3) the latch — the arm swing is the cosine of the age times pi times 0.15 (up to 27 degrees), and at every upward zero crossing (the swing 0.3 ticks ahead positive while the swing now is negative) the per-entity `ri1` latches to 1 while attacking, else to 0; while `ri1` is 0 the swing is 0 (orig :169-180); (4) the arms — the upper arms pitch by the swing minus 1.0 radian, the lower arms and hands by the swing plus 1.0 radian, the bent ready pose (orig :181-186). At rest the arms hold the bent pose and only the legs move. The GeckoLib hook is the same (Robot3GeoReplacement.java:39-71)."
+  ]
 }

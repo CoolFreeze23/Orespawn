@@ -525,6 +525,41 @@ def build_fixture_repo(root: Path) -> None:
     (root / "phase_g_reports").mkdir()
     (root / "phase_g_reports/geckolib_migration_design.md").write_text(DESIGN_MD, encoding="utf-8")
     (root / "provenance_byte_identical_assets.txt").write_text("  textures\\entity\\fixture.png  <=  Fixture.png\n", encoding="utf-8")
+    # the reference-only clip (owner 2026-09-13, second set, item 27 (3)): the sampler's synthetic output for the fixture and
+    # its index row; the native boss has no row by design (no classic hook)
+    clips_dir = root / "tools/reference_clips"
+    clips_dir.mkdir(parents=True)
+    clip_path = clips_dir / "fixture_reference.animation.json"
+    clip_path.write_bytes((json.dumps(REFERENCE_CLIP, indent=2) + "\n").encode("utf-8"))
+    (clips_dir / "reference_clips.json").write_text(json.dumps({
+        "schema_version": 1, "clip_name": "reference",
+        "clips": [{"registry": "fixture", "model_id": "model_fixture", "manifest": "t2_model_proofs.json", "model_class": "FixtureModel",
+                   "hook": "FixtureGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs)",
+                   "geo": "src/main/resources/assets/orespawn/geo/entity/fixture.geo.json",
+                   "file": clip_path.name, "sha256": ap.sha256_file(clip_path), "rule": "natural_period",
+                   "rule_note": "one channel at 3.7 rad/tick: one natural period 2 pi / 3.7 = 1.698 ticks",
+                   "span_ticks": 1.6981317008, "animation_length_seconds": 0.0849065850, "keys_per_bone": 3, "bones": 4,
+                   "moving_bones": ["tail"], "position_bones": ["arm"], "hidden_bones_at_rest": [],
+                   "seam_delta_degrees": 0.0, "seam_delta_position_units": 0.0,
+                   "subject_after": {"ri1": 0, "shielding": -1, "rf1": 0.0},
+                   "sampled_inputs": "limbSwingAmount 1.0; limbSwing = t; ageInTicks = t; netHeadYaw 0; headPitch 0; rest state; RNG seed 0"}],
+    }, indent=2) + "\n", encoding="utf-8")
+
+
+REFERENCE_CLIP = {
+    "format_version": "1.8.0",
+    "animations": {
+        "reference": {"loop": True, "animation_length": 0.084906585, "bones": {
+            "arm": {"rotation": {"0.0": {"post": [0.0, 0.0, 0.0], "lerp_mode": "linear"}, "0.05": {"post": [0.0, 0.0, 0.0], "lerp_mode": "linear"},
+                                 "0.084906585": {"post": [0.0, 0.0, 0.0], "lerp_mode": "linear"}},
+                    "position": {"0.0": {"post": [0.0, -1.5, 2.0], "lerp_mode": "linear"}, "0.05": {"post": [0.0, -1.5, 2.0], "lerp_mode": "linear"},
+                                 "0.084906585": {"post": [0.0, -1.5, 2.0], "lerp_mode": "linear"}}},
+            "tail": {"rotation": {"0.0": {"post": [57.2957795131, 0.0, 0.0], "lerp_mode": "linear"},
+                                  "0.05": {"post": [-48.9012345678, 0.0, 0.0], "lerp_mode": "linear"},
+                                  "0.084906585": {"post": [57.2957795131, 0.0, 0.0], "lerp_mode": "linear"}}},
+        }},
+    },
+}
 
 
 class FixtureCase(unittest.TestCase):
@@ -1121,6 +1156,13 @@ class FixtureCase(unittest.TestCase):
         self.assertIn("**What `check` REJECTS**", readme)
         for r in ap.CHECK_REJECTS:
             self.assertIn(r, readme)
+        # the reference-only clip (owner 2026-09-13, second set, item 27 (3)): README rule 7 says so beside the `_preview` sentence,
+        # the folder listing names the file, and the REJECT is in the checker's own rule table
+        self.assertIn(ap.README_REFERENCE_SENTENCE, readme)
+        self.assertIn("no `_preview` files in a delivery (a Blockbench-only aid — the checker warns; PROVISIONAL, open question 15). "
+                      + ap.README_REFERENCE_SENTENCE, readme)
+        self.assertIn("<registry_name>_reference.animation.json", readme)
+        self.assertTrue(any("`*_reference.animation.json` returned" in r for r in ap.CHECK_REJECTS))
         manifest = folder / "spec.manifest.json"
         good = self.GOOD
 
@@ -1195,6 +1237,122 @@ class FixtureCase(unittest.TestCase):
         findings, passed = ap.check_folder(self._returned(good, extra_files={"fixture.geo.json": json.dumps({"minecraft:geometry": [{"bones": [{"name": "root"}]}]})}), manifest)
         self.assertFalse(passed)
         self.assertTrue(self._has(findings, "REJECT", "bone set/order changed"), findings)
+
+    def test_reference_clip_packaged_spec_section_and_manifest(self):
+        """The reference-only clip (owner 2026-09-13, second set, item 27 (3)): `package` copies tools/reference_clips/
+        <registry>_reference.animation.json beside the sheet byte for byte; SPEC §4.3 states what it is, the fixed inputs, the
+        span, that it is never returned or shipped, and - without an exact transcription - the plain-language transcription
+        of the source formulas (the seed's `formulas`, design section 5); the manifest records `reference_clip` (file, sha256,
+        sampled inputs, span) and `exact_transcription`."""
+        out = self.tmp / "out_reference"
+        ap.build_package(self.repo, out, ["fixture"])
+        folder = out / "entities/fixture"
+        src = self.root / "tools/reference_clips/fixture_reference.animation.json"
+        copied = folder / "fixture_reference.animation.json"
+        self.assertTrue(copied.exists())
+        self.assertEqual(copied.read_bytes(), src.read_bytes())
+        manifest = json.loads((folder / "spec.manifest.json").read_text(encoding="utf-8"))
+        rc = manifest["reference_clip"]
+        self.assertEqual(rc["file"], "fixture_reference.animation.json")
+        self.assertEqual(rc["sha256"], ap.sha256_file(src))
+        self.assertEqual(rc["clip"], "reference")
+        self.assertTrue(rc["reference_only"])
+        self.assertEqual(rc["rule"], "natural_period")
+        self.assertAlmostEqual(rc["span_ticks"], 1.6981317008)
+        self.assertEqual(rc["keys_per_bone"], 3)
+        self.assertIn("limbSwingAmount 1.0", rc["sampled_inputs"])
+        self.assertEqual(rc["position_bones"], ["arm"])
+        self.assertFalse(manifest["exact_transcription"])  # no tools/keyframe_clips/fixture.json: the fixture runs on its hook
+        spec = (folder / "SPEC.md").read_text(encoding="utf-8")
+        self.assertIn("### 4.3 Reference clip (reference-only)", spec)
+        self.assertIn("`fixture_reference.animation.json` (beside this sheet; sha256 `" + rc["sha256"] + "`) is NOT a clip to edit, improve, return or ship.", spec)
+        self.assertIn("full walking speed (limbSwingAmount 1, the walk position and the age advancing one tick per key), not attacking, looking straight ahead", spec)
+        self.assertIn("one natural period of the motion — 1.698 ticks (0.085 s), the last key closing the loop at the period", spec)
+        self.assertIn("20 keys per second (3 keys per bone), linear keys", spec)
+        self.assertIn("`check` REJECTS a returned `*_reference.animation.json` by name, and the game's jar never carries one", spec)
+        self.assertIn("bones the code also MOVES (position keys): `arm`", spec)
+        self.assertIn("This creature has NO exact keyframe transcription", spec)
+        self.assertIn("Its source formulas in plain language (migration design section 5", spec)
+        self.assertIn("no `formulas` in the seed yet", spec)  # FIXTURE_SEED carries none: the placeholder and a warning, never silence
+        self.assertTrue(self.warnings_with("FORMULAS_MISSING"))
+        self.assertLess(spec.index("### 4.3 Reference clip"), spec.index("## 5. Clips"))
+        # a clip manifest whose clips the shipped file carries makes it an exact transcription (the 15 registries today)
+        clips_dir = self.root / "tools/keyframe_clips"
+        clips_dir.mkdir(exist_ok=True)
+        clip_manifest = clips_dir / "fixture.json"
+        try:
+            clip_manifest.write_text(json.dumps({"species": "fixture", "groups": [{"name": "gait", "clip": "idle"}]}), encoding="utf-8")
+            fx = self.repo.get("fixture")
+            inv = ap.build_trigger_inventory(fx, self.repo)
+            md, m2 = ap.spec_document(fx, self.repo, self.catalog, inv)
+            self.assertTrue(m2["exact_transcription"])
+            self.assertIn("This creature ships an EXACT keyframe transcription of its code in `fixture.animation.json`", md)
+            self.assertNotIn("This creature has NO exact keyframe transcription", md)
+            clip_manifest.write_text(json.dumps({"species": "fixture", "groups": [{"name": "gait", "clip": "walk"}]}), encoding="utf-8")
+            _, m3 = ap.spec_document(fx, self.repo, self.catalog, inv)
+            self.assertFalse(m3["exact_transcription"])  # `walk` is not in the shipped file: the transcription does not ship
+        finally:
+            clip_manifest.unlink()
+        # a native rig (the boss) has no sampled clip by design - said so, no warning; a hook species without a row is warned
+        nat = self.repo.get("native")
+        inv = ap.build_trigger_inventory(nat, self.repo)
+        md, mn = ap.spec_document(nat, self.repo, self.catalog, inv)
+        self.assertIsNone(mn["reference_clip"])
+        self.assertFalse(mn["exact_transcription"])
+        self.assertIn("no sampled reference clip: this creature has no classic hook (a native GeckoLib rig)", md)
+        self.assertIn("This creature is a native GeckoLib rig: it has no classic code to transcribe", md)
+        self.assertNotIn("This creature has NO exact keyframe transcription", md)
+        self.assertFalse([w for w in self.warnings_with("FORMULAS_MISSING") if w[0] == "native"])
+        self.assertFalse([w for w in self.warnings_with("REFERENCE_CLIP_MISSING") if w[0] == "native"])
+        saved = self.repo.reference_clips
+        try:
+            self.repo.reference_clips = {}
+            fx = self.repo.get("fixture")
+            inv = ap.build_trigger_inventory(fx, self.repo)
+            md, mx = ap.spec_document(fx, self.repo, self.catalog, inv)
+            self.assertIsNone(mx["reference_clip"])
+            self.assertIn("the sampler has not run for this creature: gradle referenceClips", md)
+            self.assertTrue([w for w in self.warnings_with("REFERENCE_CLIP_MISSING") if w[0] == "fixture"])
+        finally:
+            self.repo.reference_clips = saved
+
+    def test_check_rejects_a_returned_reference_clip(self):
+        """`check` REJECTS a returned `*_reference.animation.json` by name (reference-only, never edited, never delivered, never
+        shipped) - a REJECT where `_preview` is a WARN - unless it is the package's own copy back untouched (the sheet's file name
+        and sha256), which is warned as not a delivery so the generated folder itself checks PASS; neither counts as a second
+        animation file."""
+        manifest = self._package_fixture()
+        good = self.GOOD
+        own = (self.root / "tools/reference_clips/fixture_reference.animation.json").read_text(encoding="utf-8")
+        # the package's own copy, untouched: a WARN, PASS
+        findings, passed = ap.check_folder(self._returned(good, extra_files={"fixture_reference.animation.json": own}), manifest)
+        self.assertTrue(passed, findings)
+        self.assertTrue(self._has(findings, "WARN", "fixture_reference.animation.json: the package's own reference-only clip came back untouched — not a delivery"), findings)
+        self.assertFalse(self._has(findings, "REJECT", "animation files returned"), findings)
+        self.assertFalse(self._has(findings, "REJECT", "wrong file name"), findings)
+        # the same name with edited bytes: a REJECT naming the file
+        edited = json.loads(own)
+        edited["animations"]["reference"]["bones"]["tail"]["rotation"]["0.05"]["post"] = [0.0, 0.0, 0.0]
+        findings, passed = ap.check_folder(self._returned(good, extra_files={"fixture_reference.animation.json": json.dumps(edited)}), manifest)
+        self.assertFalse(passed)
+        self.assertTrue(self._has(findings, "REJECT", "fixture_reference.animation.json: a reference-only clip that is not the package's own untouched copy (its bytes differ from the sheet's)"), findings)
+        self.assertTrue(self._has(findings, "REJECT", "never edited, never delivered, never shipped; remove it from the returned folder"), findings)
+        self.assertFalse(self._has(findings, "REJECT", "animation files returned"), findings)  # a refused file, not a second delivery
+        # a reference name the sheet never gave: a REJECT naming the file
+        findings, passed = ap.check_folder(self._returned(good, extra_files={"fixture_v2_reference.animation.json": own}), manifest)
+        self.assertFalse(passed)
+        self.assertTrue(self._has(findings, "REJECT", "fixture_v2_reference.animation.json: a reference-only clip that is not the package's own untouched copy (a name the sheet never gave)"), findings)
+        # the generated package folder itself, as the artist receives it: its own clip is the WARN, never a REJECT (the dry run's
+        # rule - every real package folder checks PASS; the synthetic fixture's shipped file lacks `walk`, its own REJECT)
+        out = self.tmp / "out_reference_check"
+        ap.build_package(self.repo, out, ["fixture"])
+        findings, _ = ap.check_folder(out / "entities/fixture")
+        self.assertTrue(self._has(findings, "WARN", "the package's own reference-only clip came back untouched"), findings)
+        self.assertFalse(any(sev == "REJECT" and "reference" in msg for sev, msg in findings), findings)
+        # the same folder without it passes with no reference finding at all
+        findings, passed = ap.check_folder(self._returned(good), manifest)
+        self.assertTrue(passed, findings)
+        self.assertFalse(any("reference-only" in msg for _, msg in findings), findings)
 
     def test_check_rejects_every_rule_it_claims(self):
         manifest = self._package_fixture()

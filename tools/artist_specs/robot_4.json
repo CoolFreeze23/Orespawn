@@ -162,5 +162,8 @@
   "clips": [],
   "extras": [],
   "wishlist": [],
-  "effort_hours": 0
+  "effort_hours": 0,
+  "formulas": [
+    "`ModelRobot4.poseFrom` (ModelRobot4.java:424-532, called from `setupAnim` :418-422; orig ModelRobot4.java:421-500, `render`): (1) the legs — while the walking speed is above a tenth, the cosine of the age in ticks times 0.5, times pi, times 0.15, times the walking speed (up to 27 degrees; orig :421-437): the left foot pieces, shin, calf, knee guard and thigh pitch by that angle and the right ones by its negative, the calves plus 0.175 radians, the knee guards plus 0.63, the thighs minus 0.175 (the standing bend); (2) the head yaws by the head yaw over 1.5, in radians; (3) the shield arm — while attacking, the absolute cosine of (the age modulo 360, in radians, times 6) times 0.7853982, plus 0.75 — a pump between 0.75 and 1.54 radians — else 0, and the client-side shielding flag is raised while that exceeds a third of 0.7853982 (orig :439-451, ENT-K-070): the right shoulder pitches by its negative, the shoulder guard, upper arm and guard tip by its negative minus 0.21, the shield base, shield tip and lower arm by its negative plus 1.047, the shield end by its negative plus 1.04; (4) the cannon arm — 0.85 radians while attacking, else 0 (orig :460-474): the left shoulder pitches by its negative, the upper arm by its negative minus 0.21, the cannon base, muzzle, four plates and ammunition drum by its negative minus 0.7, the glow segments by its negative plus 0.17, 0.17, 0.08, 0.08 and 0; (5) the cannon follow — every cannon part's pivot moves to the left shoulder's pivot plus 14 units along (cos, sin) of the upper arm's pitch, in y and z (orig :475-500), a POSITION write. At rest the arms hang (the cannon parts sit 14 units along the -0.21-radian upper arm) and only the legs move. The GeckoLib hook is the same (Robot4GeoReplacement.java:40-121, the follow through `moveTo`)."
+  ]
 }

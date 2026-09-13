@@ -30,3 +30,5 @@
 # The clip generator and its per-species manifests are mirrored in the probe's in-memory twin and the clip is sha-pinned; keep them LF (item 15 refuter B, D9, 2026-09-06).
 /tools/keyframe_clip.py text eol=lf
 /tools/keyframe_clips/*.json text eol=lf
+# The reference-only clips the sampler writes (ReferenceClipSampler, gradle referenceClips) and their index are sha-pinned by the package manifests and byte-compared between runs; keep them LF (owner 2026-09-13, second set, item 27 (3)).
+/tools/reference_clips/*.json text eol=lf

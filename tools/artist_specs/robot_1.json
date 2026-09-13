@@ -56,5 +56,8 @@
   "clips": [],
   "extras": [],
   "wishlist": [],
-  "effort_hours": 0
+  "effort_hours": 0,
+  "formulas": [
+    "`ModelRobot1.setupAnim` (ModelRobot1.java:214-227; orig ModelRobot1.java:211-222, `render`): while the walking speed is above a tenth, each foot pitches by the cosine of the walk position times 1.5, times pi, times 0.75, times the walking speed — up to 135 degrees each way at full speed, the left foot positive and the right foot the negative — and holds 0 below a tenth (the port reads the walk POSITION, limbSwing, where the original's `f2 * 1.5f * wingspeed` read the age in ticks); the five wind-up keys turn about Z by the age in ticks times 0.75 degrees (a full turn every 480 ticks, 24 s; orig :218-222 `f2 * 0.75f * wingspeed`, wingspeed 1.0). The head angles and the entity's state play no part. The GeckoLib hook is the same (Robot1GeoReplacement.java:31-48)."
+  ]
 }
