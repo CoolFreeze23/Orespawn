@@ -700,6 +700,29 @@ root-order slice with the GeckoLib per-entity cache eviction, then Slice 4c). Th
   the next Tier-2 slice (the three rejoined rigs plus the next species in the design's order, ten to fourteen in all,
   the naming rule with it, one refuter for the conversion, the counts open the report; the two tooling items in the
   same tooling commit). Nothing else runs.
+- Rulings of 2026-09-13, second set (addendum item 27): the push (origin/master e7e916e). AMENDMENT 2 TO AMENDMENT 1
+  (point 1 amended, the rest stands): a rig LANDS when it draws through the seam on the classic hook with the
+  geometry, surface, visual and draw-order legs, the animation leg at 0 rad against the hook, and the reference leg
+  where a 1.7.10 pair exists; an exact keyframe transcription ships only where the current form fits without a
+  harness extension; every other artist-tier species runs on its hook until an artist delivers idle and walk (the
+  self-gate), and NO harness or controller extension is built to transcribe it — the threshold, |cos| / Mth.sin,
+  attacking-branch, head-look, position-write and health-frequency idioms are not extensions to schedule; the FK
+  rigs land as real hierarchies, on the hook. A species without an exact transcription gets, in its package, the
+  SPEC's plain-language transcription of its source formulas and a reference-only clip sampled from the hook at fixed
+  inputs (limbSwingAmount 1, not attacking, looking ahead, full health; one natural period, else two seconds), named
+  `<species>_reference.animation.json`, refused in the jar by the checker like `_preview` (tooling, no refuter: the
+  sampler in the generator, applied to every packaged species). The threshold question: (c) — the Cricket, Baryonyx
+  and Cryolophosaurus land on the hook. TEST-006 adopted (first-wins throughout the contest window; every existing
+  proof identical; one refuter; the Cloud Shark rejoins the next slice). TEST-007: the converter or the audit refuses a
+  cutout rig with a zero-thickness cube that omits the classic face order (tooling). The benchmark's smoke figures:
+  timing-class, no action. The mirror drop lands now on its proofs (the reference leg and law 11), the 2026-09-05
+  scope, one refuter, one gate; the owner's Section B item 1 look follows it, a failure reverting the drop by commit.
+  The pilot pair's package (the Queen: idle and one attack; the Beaver) is generated into `artist_handoff/` after the
+  drop, checker PASS, reported with its file list; species packages per slice; the full package when the last rig
+  lands. COUNTS: the second count is "artist-tier species with an exact transcription shipped / 90", informational;
+  the third, packaged, is the deliverable. Order of work: push → TEST-006, TEST-007 and the sampler → the mirror drop →
+  the pilot pair's package → stop and report with the counts and the next slice's species list (the Cloud Shark plus
+  the next ten to fourteen in the design's order, on the hook). Nothing else runs.
 
 ## 7. Standing traps checklist (things that have actually bitten this project)
 

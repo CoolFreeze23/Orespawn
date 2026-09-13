@@ -373,6 +373,36 @@ that slice, not a task for now.
     ENT-S-161 (3) → the next Tier-2 slice: the three rejoined rigs plus the next species in the design's order, ten to
     fourteen in all, the naming rule (2) with it, one refuter for the conversion, the counts open the report; items 5
     and 6 ride in the same tooling commit. Nothing else runs.
+27. **Rulings of 2026-09-13, second set (owner, through the advisor):** (1) **Push:** master pushed now, the six
+    commits after origin/master c6ee196 (origin/master e7e916e). **Amendment 2 to Amendment 1 (point 1 amended; the
+    rest stands):** (2) a rig LANDS when it draws through the seam on the classic hook with the geometry, surface,
+    visual and draw-order legs, the animation leg at 0 rad against the hook, and the reference leg where a 1.7.10 pair
+    exists. An exact keyframe transcription ships only where the current transcription form fits without a harness
+    extension; every other artist-tier species runs on its hook until an artist delivers idle and walk — the self-gate
+    as designed — and no harness or controller extension is built to transcribe it. The threshold, |cos| / Mth.sin,
+    attacking-branch, head-look, position-write and health-frequency idioms are not extensions to schedule. The FK
+    rigs land as real hierarchies per the design when their turn comes, on the hook. (3) The package for a species
+    without an exact transcription carries the SPEC's plain-language transcription of its source formulas (design
+    section 5) and a reference-only clip sampled from the hook at fixed inputs (limbSwingAmount 1, not attacking,
+    looking ahead, full health; one natural period where there is one, two seconds otherwise), named
+    `<species>_reference.animation.json`, marked reference-only in the SPEC and refused in the jar by the checker as
+    `_preview` is. One tooling item, no refuter: the sampler in the generator, applied to every packaged species.
+    (4) **The threshold question:** (c). The Cricket, Baryonyx and Cryolophosaurus land under item 2; no
+    `limb_swing_threshold` property. **The slice's findings:** (5) **TEST-006:** adopt first-wins throughout the
+    contest window, as measured (every existing proof identical); the before/after stands as presented; one refuter;
+    the Cloud Shark rejoins the next slice from scratch. (6) **TEST-007:** the converter or the audit refuses a cutout
+    rig with a zero-thickness cube that omits the classic face order; tooling, no refuter. (7) The benchmark's smoke
+    figures: timing-class, recorded, no action. (8) The decided-under-doctrine items stand. **The drop and the
+    pilot:** (9) the mirror drop lands now on its proofs (the reference leg and law 11), the scope as ruled on
+    2026-09-05, one refuter, one gate. The owner's Section B item 1 look follows it; a failure there reverts the drop
+    by commit. (10) The pilot pair's package (the Queen: idle and one attack; the Beaver) is generated into
+    `artist_handoff/` after the drop, checker PASS, and reported with its file list; the owner sends it to the
+    animator. Species packages follow per slice; the full package when the last rig lands. **Counts:** (11) the second
+    count becomes "artist-tier species with an exact transcription shipped / 90", informational; the third, packaged,
+    is the deliverable count. **Order of work:** (12) push → TEST-006, TEST-007 and the sampler (tooling; one refuter
+    for the tie rule) → the mirror drop → the pilot pair's package → stop and report with the counts and the next
+    slice's species list (the Cloud Shark plus the next ten to fourteen in the design's order, on the hook). Nothing
+    else runs.
 
 ## D. Rulings executed the same day (for cross-reference)
 

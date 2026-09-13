@@ -10183,6 +10183,7 @@ keeps BUG-036. Commit 4ea395c's message retains the old number.)*
   fragments on flat cubes (the retired exclusion under another name - not recommended); (c) the Cloud Shark stays classic.
 - **Status:** OPEN; the Cloud Shark's conversion complete and kept in the lane's scratch (descriptor, geo with the
   classic face order, clip, clip manifest, seed, manifest entry).
+- **Ruled (owner, 2026-09-13, second set, item 5):** ADOPTED — first-wins throughout the contest window, as measured (every existing proof identical); the before/after stands as presented; one refuter; the Cloud Shark rejoins the next slice from scratch. Lands in the tooling step under its own gate.
 
 ### TEST-007 — a cutout rig's zero-thickness cube shows a different face on the candidate than on the classic renderer unless the rig ships the classic within-cube order (the FaceOrder contract's "open item", now met by a shipped rig)
 
@@ -10219,6 +10220,7 @@ keeps BUG-036. Commit 4ea395c's message retains the old number.)*
   MAE 0; contested 0 and 0.9 percent reported), the Cloud Shark's changed fraction cut from 1.6 percent to 0.32 percent
   at bind by it - its remaining residue is the rasteriser's tie rule, a separate finding (`audit_visual_tie_rule.txt`) on
   which the rig waits; the rule recorded; the tooling follow-up open.
+- **Ruled (owner, 2026-09-13, second set, item 6):** the converter or the audit refuses a cutout rig with a zero-thickness cube that omits the classic face order; tooling, no refuter. Lands in the tooling step (the asset audit's rule; the Vortex — the one shipped cutout rig with a zero-thickness cube — declared and regenerated).
 
 ### TEST-003 — Config-flipping gametests in the concurrent default batch
 
