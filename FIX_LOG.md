@@ -6208,3 +6208,49 @@ the bosses' provisional locked bones from design §6, the Queen's profile the te
 first; every folder PASS; the package count the deliverable) → stop and report with the counts and the folder's file
 count. The slices resume on the next prompt: the remaining Tier-2, then the four FK rigs as real hierarchies, then the
 Tier-1 rigs. Nothing else runs.
+
+## THE FOURTH-SET TOOLING COMMIT (2026-09-13) — the sheets of ANIM-021 to 024 carry "the original moved more" under section 4 from the register entries; the Terrible Terror's sampler row folds its |cos| period (owner 2026-09-13, fourth set, items 3 and 4; tooling, no refuter)
+
+RULING. Owner 2026-09-13, fourth set (addendum item 29 (3)-(4)): (3) ANIM-021 to 024 are register lines deferred with the
+parity lanes; the four sheets gain a paragraph under §4, "the original moved more", from the register entry's description,
+so the animator can animate toward the 1.7.10 motion — tooling. (4) The checker's "not delivered yet" rule ratified; the
+Cannon Fodder without a reference leg ratified; the Terrible Terror's row wording with the tooling commit. The cost rules
+of 2026-09-12 (item 25 (5)): a tooling lane takes no refuter — the tool's own tests and one dry run are the check.
+Executed by the orchestrator directly.
+
+WHAT LANDED:
+- THE SEEDS (`tools/artist_specs/gamma_metroid.json`, `rubber_ducky.json`, `terrible_terror.json`, `cricket.json`): a new
+  field `original_moved_more` {`register`, `original`, `port`} — the register entry's Original and Port bullets, quoted
+  from the entries the T2c lane drafted (`scratchpad/r17/seed_omm.py` wrote them from the drafts, exact-guarded):
+  ANIM-021 the Gamma Metroid (1.7.10's eleven channels — the tusks' own cosines and yaws, the gait with its up-lift, the
+  shell sway zeroed while sitting over four shell parts, the beak's |cos| on X and Z, wingspeed 0.45 — against the port's
+  three), ANIM-022 the Rubber Ducky (the head / beak factors 0.45 / 0.65 and the pitch, the wing angle latched through
+  RenderInfo with the random re-roll and the kill-count quadruple, the sitting check, the wing Y — against the port's
+  every-frame |cos| fold), ANIM-023 the Terrible Terror (eight leg parts and the four-part tail chain following on
+  cosines — against the port's four leg parts and a resting tail), ANIM-024 the Cricket (the gait at wingspeed 2.5 and
+  the singing branch's hind legs — against the port's 1.0 rad/tick and the not-singing constants).
+- THE GENERATOR (`tools/artist_package.py` 0.2.8): `spec_document` emits "### 4.4 The original moved more (from the
+  register; animate toward the 1.7.10 motion)" after §4.3 when the seed carries the field: one sentence naming the
+  register entry and that it is deferred with the parity lanes (the game's pose unchanged until that lane runs), then
+  "The original (1.7.10)" and "The port today" as the entry states them. `tools/test_artist_package.py` 36 tests (+1: the
+  fixture seed carries a synthetic entry; the section, its bullets and its place between §4.3 and §5 pinned).
+- THE SAMPLER (`ReferenceClipSampler.RULES`, `model_terribleterror`): the slowest period is the jaw's |cos| at 0.3
+  rad/tick FOLDED — `Math.PI / 0.3F` = 10.47 ticks, the Rubber Ducky's row's form — where the row wrote 2 pi / 0.3 and
+  called the fold "closes twice per period" (the refuter's N3 on the T2c landing). The index regenerated: the Terrible
+  Terror's row `period_ticks` 20.944 -> 10.472 and its `rule_note`; the clip itself unchanged (past the 6 s cap under
+  either base — the 1.25 rad/tick legs never return within 5 degrees at a multiple of the jaw's fold under 120 ticks —
+  so `two_seconds_past_cap`, 40 ticks, the seam 52.3 degrees as before); the other 43 clips and rows untouched.
+- `artist_handoff/` regenerated for the pilot pair (the tool version in every generated header; the two folders `check`
+  PASS; 10 files changed by the regeneration, no content change beyond the version line and the summaries).
+
+THE CHECKS (the tool's own tests and one dry run): `python tools/test_artist_package.py` 36 tests OK; the dry run
+`package --out <scratch>/r17/pkg`: 44 species folders, 44 of 44 `check` PASS, the four sheets carrying §4.4 and no other
+sheet; the pilot pair regenerated into `artist_handoff/`, both folders PASS; the clips regenerated TWICE under
+`gradle referenceClips` (the second run with `--rerun-tasks`) and the two runs byte-identical, one file changed against
+HEAD (the index); `gradle referenceClipsVerify` green on its own and inside the build's `check`; the benchmark proof
+re-pinned (the g1tool class directory moved by the row's text); `asset_audit.py` 0 errors.
+
+IN-GAME: nothing — a sheet section, a seed field and a sampler comment-and-constant; no shipped resource or class
+behaviour changed (the sampler's constant feeds the reference clip's span rule only, and the span did not move).
+
+GATE: (tool4, 2026-09-13 15:57-16:07; no refuter - tooling): `gradle referenceClips` run twice (the second with `--rerun-tasks`), the two runs byte-identical (44 files; one file changed against HEAD - the index, the Terrible Terror row's `period_ticks` 20.944 -> 10.472 and its `rule_note`; no clip changed); `gradle referenceClipsVerify` on its own `REFERENCE CLIPS VERIFIED: 44 files`; g1ConvertModels / g1WriteRuntimeClasspath / g1Benchmark and the benchmark proof re-pinned (the g1tool class directory moved by the row's text; `G1 BENCHMARK EVIDENCE VERIFIED: SMOKE_ONLY / COMPONENT_PROXY_ONLY / PENDING_LIVE_PRECUTOVER; checked-in proof updated`); `asset_audit.py` 0 errors / 0 advisories / 4 acknowledged (39 shipped geo: 38 seam + 1 outside-seam); staged 20 modified; then `gate_wrapped.sh tool4`: the drift check verified the re-pinned proof, `gradlew build` SUCCESSFUL (1m 53s; `check` with `referenceClipsVerify` green), `runGameTestServer` All 1278 required tests passed (unchanged: no gametest added). The tool checked outside the gate: 36 tool tests OK, the dry run 44 of 44 PASS, the pilot pair PASS. Stray-process check: only the Gradle daemon.
