@@ -161,8 +161,8 @@ Source: `src/main/java/danger/orespawn/entity/Alien.java` (Monster)
 | selector | prio | goal | guard | category | what it does | bears on |
 |---|---|---|---|---|---|---|
 | goalSelector | 0 | `FloatGoal` | - | locomotion | bobs up to the surface in water (vanilla) | swim state (client reads isInWater) |
-| goalSelector | 1 | `MoveThroughVillageGoal` | - | UNCLASSIFIED | no entry in the generator's goal dictionary | unknown |
-| goalSelector | 1 | `AlienTorchSeekGoal` | - | UNCLASSIFIED | no entry in the generator's goal dictionary | unknown |
+| goalSelector | 1 | `MoveThroughVillageGoal` | - | locomotion | walks to random points of interest (doors / workstations) of a nearby village, the villager-style patrol; the registration's flag restricts it to night-time (vanilla MoveThroughVillageGoal) | walk |
+| goalSelector | 1 | `AlienTorchSeekGoal` | - | locomotion | flagless one-shot torch hunt: on the 7-in-8 of ticks that skip the combat roll, a 1-in-30 roll with PlayNicely off scans cube shells r=2..14 (11 and 13 skipped) for the nearest torch / wall torch / Extreme Torch, paths to it at speed 1.0 and, when it lies within distSq 27 with mobGriefing on, removes the block that same tick (AlienTorchSeekGoal.java:47-95, 108-143) | walk (the path to the torch); the block removal is no clip |
 | goalSelector | 2 | `MyEntityAIWanderALot` | - | locomotion | OreSpawn's restless wander: picks a new spot often | walk |
 | goalSelector | 3 | `LookAtPlayerGoal` | - | look | turns the head toward a nearby player (vanilla; head yaw/pitch only) | none: head look, not a clip |
 | goalSelector | 4 | `RandomLookAroundGoal` | - | look | looks around idly (vanilla; head yaw/pitch only) | none: head look, not a clip |

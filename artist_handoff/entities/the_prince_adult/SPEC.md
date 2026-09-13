@@ -234,9 +234,9 @@ Source: `src/main/java/danger/orespawn/entity/ThePrinceAdult.java` (TamableAnima
 | selector | prio | goal | guard | category | what it does | bears on |
 |---|---|---|---|---|---|---|
 | goalSelector | 0 | `FloatGoal` | - | locomotion | bobs up to the surface in water (vanilla) | swim state (client reads isInWater) |
-| goalSelector | 1 | `FollowOwnerGoal` | - | UNCLASSIFIED | no entry in the generator's goal dictionary | unknown |
-| goalSelector | 2 | `TemptGoal` | - | UNCLASSIFIED | no entry in the generator's goal dictionary | unknown |
-| goalSelector | 3 | `MyEntityAIWander` | - | UNCLASSIFIED | no entry in the generator's goal dictionary | unknown |
+| goalSelector | 1 | `FollowOwnerGoal` | - | social | follows its owner (vanilla tamed-pet goal): when not ordered to sit and the owner is beyond the start distance it paths to them at the registration's speed, teleporting to a safe spot beside them when too far to path, and releases inside the stop distance (vanilla FollowOwnerGoal) | walk |
+| goalSelector | 2 | `TemptGoal` | - | social | walks toward a nearby player holding the species' tempt item, keeping its eyes on them, and gives up when they put it away or move off (vanilla TemptGoal; the item is the registration's ingredient argument) | walk |
+| goalSelector | 3 | `MyEntityAIWander` | - | locomotion | OreSpawn's wander (MOVE): on a 1-in-90 roll, when not ordered to sit, picks a random reachable spot within 10 horizontal / 7 vertical blocks and walks to it at the registration's speed, giving up when the path ends or a pet stands on its owner's column (MyEntityAIWander.java:30-65) | walk |
 | goalSelector | 4 | `LookAtPlayerGoal` | - | look | turns the head toward a nearby player (vanilla; head yaw/pitch only) | none: head look, not a clip |
 | goalSelector | 5 | `RandomLookAroundGoal` | - | look | looks around idly (vanilla; head yaw/pitch only) | none: head look, not a clip |
 | targetSelector | 1 | `OwnerHurtByTargetGoal` | [modern: petsDefendOwner] | targeting | defends its owner: targets whoever hurt the owner (vanilla tamed-pet goal) | aggro state |

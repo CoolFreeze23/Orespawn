@@ -100,7 +100,7 @@ Source: `src/main/java/danger/orespawn/entity/Irukandji.java` (Monster)
 | selector | prio | goal | guard | category | what it does | bears on |
 |---|---|---|---|---|---|---|
 | goalSelector | 0 | `FloatGoal` | - | locomotion | bobs up to the surface in water (vanilla) | swim state (client reads isInWater) |
-| goalSelector | 1 | `MyEntityAIWander` | - | UNCLASSIFIED | no entry in the generator's goal dictionary | unknown |
+| goalSelector | 1 | `MyEntityAIWander` | - | locomotion | OreSpawn's wander (MOVE): on a 1-in-90 roll, when not ordered to sit, picks a random reachable spot within 10 horizontal / 7 vertical blocks and walks to it at the registration's speed, giving up when the path ends or a pet stands on its owner's column (MyEntityAIWander.java:30-65) | walk |
 | goalSelector | 2 | `LookAtPlayerGoal` | - | look | turns the head toward a nearby player (vanilla; head yaw/pitch only) | none: head look, not a clip |
 | goalSelector | 3 | `RandomLookAroundGoal` | - | look | looks around idly (vanilla; head yaw/pitch only) | none: head look, not a clip |
 | targetSelector | 1 | `HurtByTargetGoal` | - | targeting | retaliates against whoever hurt it (vanilla target selector) | aggro state (through the attacking flag where one exists) |
@@ -123,6 +123,7 @@ The guard is the header of the block that actually encloses the write (found by 
 **Strike and launch sites:**
 
 - melee `doHurtTarget(target)` — Irukandji.java:197 in `customServerAiStep`, guard: if (this.random.nextInt(4) == 0 || this.random.nextInt(5) == 1) within if (this.distanceToSqr(target) < 3.0) within if (target != null && target.isAlive())
+- melee (a direct hurt on the victim) `player.hurt(this.damageSources().mobAttack(this), EMPTY_HAND_RETALIATION_DAMAGE)` — Irukandji.java:118 in `hurt`, guard: if (damager instanceof Player player && player.getMainHandItem().isEmpty())
 
 **What fires each contract clip:**
 

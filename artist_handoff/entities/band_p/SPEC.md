@@ -103,11 +103,11 @@ Source: `src/main/java/danger/orespawn/entity/BandP.java` (Monster)
 
 | selector | prio | goal | guard | category | what it does | bears on |
 |---|---|---|---|---|---|---|
-| goalSelector | 0 | `MoveThroughVillageGoal` | - | UNCLASSIFIED | no entry in the generator's goal dictionary | unknown |
+| goalSelector | 0 | `MoveThroughVillageGoal` | - | locomotion | walks to random points of interest (doors / workstations) of a nearby village, the villager-style patrol; the registration's flag restricts it to night-time (vanilla MoveThroughVillageGoal) | walk |
 | goalSelector | 1 | `WaterAvoidingRandomStrollGoal` | - | locomotion | strolls to random spots, avoiding water (vanilla) | walk |
 | goalSelector | 2 | `LookAtPlayerGoal` | - | look | turns the head toward a nearby player (vanilla; head yaw/pitch only) | none: head look, not a clip |
 | goalSelector | 3 | `RandomLookAroundGoal` | - | look | looks around idly (vanilla; head yaw/pitch only) | none: head look, not a clip |
-| goalSelector | 4 | `OpenDoorGoal` | - | UNCLASSIFIED | no entry in the generator's goal dictionary | unknown |
+| goalSelector | 4 | `OpenDoorGoal` | - | locomotion | opens a wooden door in its path as it walks through and, when the registration asks, closes it behind it; no body motion of its own (vanilla OpenDoorGoal, a DoorInteractGoal) | none (no clip: the door swings, the mob keeps walking) |
 | goalSelector | 5 | `MoveIndoorsGoal` | - | locomotion | heads indoors at night | walk |
 
 A `[modern: key]` guard means the goal is registered only under the modern config key named (read once, at construction); `UNPARSED` means the registration's shape is one the generator does not read (a local variable or a computed priority) — the owner reads that line.

@@ -484,6 +484,16 @@
       "verdict": "covered by idle"
     },
     {
+      "name": "attack",
+      "loop": "false",
+      "role": "contract",
+      "code_triggered": true,
+      "required": false,
+      "length_rule": "near:0.5",
+      "length_seconds": 0.5,
+      "verdict": "author"
+    },
+    {
       "name": "hurt",
       "loop": "false",
       "role": "contract",
@@ -516,8 +526,8 @@
       ]
     }
   ],
-  "effort_hours": 12.2,
-  "effort_source": "generator: 4 h + 0.2 h/bone x 6 + 1 h/clip x 7 to author or improve (owner adjusts)",
+  "effort_hours": 13.2,
+  "effort_source": "generator: 4 h + 0.2 h/bone x 6 + 1 h/clip x 8 to author or improve (owner adjusts)",
   "reference_clip": {
     "file": "cannon_fodder_reference.animation.json",
     "sha256": "bf6eb49c23cead8130fe6f220b8d2194c731ae2aa51bd0f4da9f575f0a51d90b",

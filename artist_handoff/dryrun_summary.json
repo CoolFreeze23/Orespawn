@@ -42,10 +42,7 @@
           "orespawn:bone_draw_order"
         ]
       },
-      "warnings": [
-        "GOAL_UNCLASSIFIED: goal MoveThroughVillageGoal (Alien.java:92) has no dictionary entry",
-        "GOAL_UNCLASSIFIED: goal AlienTorchSeekGoal (Alien.java:96) has no dictionary entry"
-      ]
+      "warnings": []
     },
     {
       "registry": "alien_boss",
@@ -67,16 +64,16 @@
       "bones": 55,
       "cubes": 55,
       "clips_shipped": 0,
-      "clips_in_spec": 16,
+      "clips_in_spec": 17,
       "goals": 1,
-      "flags": 0,
-      "attacking": "NONE",
-      "strike_sites": 1,
+      "flags": 1,
+      "attacking": "STATE",
+      "strike_sites": 3,
       "textures_mapped": 1,
       "locked_bones": 16,
       "lock_mode": "warn",
       "keyed_locked_bones": 0,
-      "effort_hours": 37.2,
+      "effort_hours": 40.2,
       "unlabelled_bones": 0,
       "roundtrip": {
         "equal": true,
@@ -113,7 +110,7 @@
       "goals": 6,
       "flags": 1,
       "attacking": "STATE",
-      "strike_sites": 1,
+      "strike_sites": 2,
       "textures_mapped": 1,
       "locked_bones": 0,
       "lock_mode": "warn",
@@ -129,9 +126,7 @@
           "orespawn:bone_draw_order"
         ]
       },
-      "warnings": [
-        "GOAL_UNCLASSIFIED: goal MoveThroughVillageGoal (Alosaurus.java:84) has no dictionary entry"
-      ]
+      "warnings": []
     },
     {
       "registry": "attack_squid",
@@ -216,10 +211,7 @@
           "orespawn:bone_draw_order"
         ]
       },
-      "warnings": [
-        "GOAL_UNCLASSIFIED: goal MoveThroughVillageGoal (BandP.java:78) has no dictionary entry",
-        "GOAL_UNCLASSIFIED: goal OpenDoorGoal (BandP.java:83) has no dictionary entry"
-      ]
+      "warnings": []
     },
     {
       "registry": "basilisk",
@@ -261,9 +253,7 @@
           "orespawn:bone_draw_order"
         ]
       },
-      "warnings": [
-        "GOAL_UNCLASSIFIED: goal MoveThroughVillageGoal (Basilisk.java:81) has no dictionary entry"
-      ]
+      "warnings": []
     },
     {
       "registry": "cave_fisher",
@@ -285,16 +275,16 @@
       "bones": 75,
       "cubes": 75,
       "clips_shipped": 0,
-      "clips_in_spec": 10,
+      "clips_in_spec": 11,
       "goals": 5,
       "flags": 1,
-      "attacking": "NONE",
+      "attacking": "STATE",
       "strike_sites": 1,
       "textures_mapped": 1,
       "locked_bones": 0,
       "lock_mode": "warn",
       "keyed_locked_bones": 0,
-      "effort_hours": 29.0,
+      "effort_hours": 30.0,
       "unlabelled_bones": 0,
       "roundtrip": {
         "equal": true,
@@ -305,9 +295,7 @@
           "orespawn:bone_draw_order"
         ]
       },
-      "warnings": [
-        "WISHLIST_UNACCEPTED: wishlist names clip(s) ['aggro_idle'] that the manifest does not accept"
-      ]
+      "warnings": []
     },
     {
       "registry": "cloud_shark",
@@ -370,8 +358,8 @@
         "spec.manifest.json",
         "textures/crab.png"
       ],
-      "bones": 25,
-      "cubes": 25,
+      "bones": 46,
+      "cubes": 46,
       "clips_shipped": 0,
       "clips_in_spec": 14,
       "goals": 5,
@@ -382,7 +370,7 @@
       "locked_bones": 0,
       "lock_mode": "warn",
       "keyed_locked_bones": 0,
-      "effort_hours": 23.0,
+      "effort_hours": 27.2,
       "unlabelled_bones": 0,
       "roundtrip": {
         "equal": true,
@@ -435,9 +423,7 @@
           "orespawn:bone_draw_order"
         ]
       },
-      "warnings": [
-        "GOAL_UNCLASSIFIED: goal MoveThroughVillageGoal (CreepingHorror.java:78) has no dictionary entry"
-      ]
+      "warnings": []
     },
     {
       "registry": "cryolophosaurus",
@@ -463,7 +449,7 @@
       "goals": 7,
       "flags": 0,
       "attacking": "NONE",
-      "strike_sites": 1,
+      "strike_sites": 2,
       "textures_mapped": 1,
       "locked_bones": 0,
       "lock_mode": "warn",
@@ -501,16 +487,16 @@
       "bones": 64,
       "cubes": 64,
       "clips_shipped": 0,
-      "clips_in_spec": 14,
+      "clips_in_spec": 15,
       "goals": 5,
       "flags": 1,
-      "attacking": "NONE",
+      "attacking": "STATE",
       "strike_sites": 1,
       "textures_mapped": 1,
       "locked_bones": 0,
       "lock_mode": "warn",
       "keyed_locked_bones": 0,
-      "effort_hours": 30.8,
+      "effort_hours": 31.8,
       "unlabelled_bones": 0,
       "roundtrip": {
         "equal": true,
@@ -543,16 +529,16 @@
       "bones": 40,
       "cubes": 40,
       "clips_shipped": 0,
-      "clips_in_spec": 11,
+      "clips_in_spec": 13,
       "goals": 7,
       "flags": 1,
-      "attacking": "NONE",
+      "attacking": "STATE",
       "strike_sites": 0,
       "textures_mapped": 1,
       "locked_bones": 0,
       "lock_mode": "warn",
       "keyed_locked_bones": 0,
-      "effort_hours": 23.0,
+      "effort_hours": 25.0,
       "unlabelled_bones": 0,
       "roundtrip": {
         "equal": true,
@@ -563,10 +549,7 @@
           "orespawn:bone_draw_order"
         ]
       },
-      "warnings": [
-        "WISHLIST_UNACCEPTED: wishlist names clip(s) ['attack'] that the manifest does not accept",
-        "WISHLIST_UNACCEPTED: wishlist names clip(s) ['aggro_idle'] that the manifest does not accept"
-      ]
+      "warnings": []
     },
     {
       "registry": "ender_reaper",
@@ -588,16 +571,16 @@
       "bones": 66,
       "cubes": 66,
       "clips_shipped": 0,
-      "clips_in_spec": 12,
+      "clips_in_spec": 14,
       "goals": 7,
       "flags": 1,
-      "attacking": "NONE",
+      "attacking": "STATE",
       "strike_sites": 0,
       "textures_mapped": 1,
       "locked_bones": 0,
       "lock_mode": "warn",
       "keyed_locked_bones": 0,
-      "effort_hours": 28.2,
+      "effort_hours": 30.2,
       "unlabelled_bones": 0,
       "roundtrip": {
         "equal": true,
@@ -608,10 +591,91 @@
           "orespawn:bone_draw_order"
         ]
       },
-      "warnings": [
-        "WISHLIST_UNACCEPTED: wishlist names clip(s) ['aggro_idle'] that the manifest does not accept",
-        "WISHLIST_UNACCEPTED: wishlist names clip(s) ['attack'] that the manifest does not accept"
-      ]
+      "warnings": []
+    },
+    {
+      "registry": "giant_robot",
+      "tier": 1,
+      "tier_label": "Tier 1 (boss)",
+      "rig_source": "reference-leg converter output",
+      "in_game": false,
+      "seed": true,
+      "files": [
+        "SPEC.md",
+        "giant_robot.animation.json",
+        "giant_robot.bbmodel",
+        "reference/SLOTS.md",
+        "reference_giantrobot.geo.json",
+        "roundtrip.report.json",
+        "spec.manifest.json",
+        "textures/giantrobot.png"
+      ],
+      "bones": 29,
+      "cubes": 29,
+      "clips_shipped": 0,
+      "clips_in_spec": 11,
+      "goals": 6,
+      "flags": 1,
+      "attacking": "STATE",
+      "strike_sites": 3,
+      "textures_mapped": 1,
+      "locked_bones": 25,
+      "lock_mode": "warn",
+      "keyed_locked_bones": 0,
+      "effort_hours": 27.4,
+      "unlabelled_bones": 0,
+      "roundtrip": {
+        "equal": true,
+        "bone_order_preserved": true,
+        "differences": 0,
+        "dropped_keys": 0,
+        "reattached": [
+          "orespawn:bone_draw_order"
+        ]
+      },
+      "warnings": []
+    },
+    {
+      "registry": "jeffery",
+      "tier": 1,
+      "tier_label": "Tier 1 (boss)",
+      "rig_source": "reference-leg converter output",
+      "in_game": false,
+      "seed": true,
+      "files": [
+        "SPEC.md",
+        "jeffery.animation.json",
+        "jeffery.bbmodel",
+        "reference/SLOTS.md",
+        "reference_giantrobot.geo.json",
+        "roundtrip.report.json",
+        "spec.manifest.json",
+        "textures/giantrobot.png"
+      ],
+      "bones": 29,
+      "cubes": 29,
+      "clips_shipped": 0,
+      "clips_in_spec": 11,
+      "goals": 0,
+      "flags": 1,
+      "attacking": "STATE",
+      "strike_sites": 3,
+      "textures_mapped": 1,
+      "locked_bones": 25,
+      "lock_mode": "warn",
+      "keyed_locked_bones": 0,
+      "effort_hours": 27.4,
+      "unlabelled_bones": 0,
+      "roundtrip": {
+        "equal": true,
+        "bone_order_preserved": true,
+        "differences": 0,
+        "dropped_keys": 0,
+        "reattached": [
+          "orespawn:bone_draw_order"
+        ]
+      },
+      "warnings": []
     },
     {
       "registry": "hammerhead",
@@ -680,7 +744,7 @@
       "goals": 5,
       "flags": 1,
       "attacking": "STATE",
-      "strike_sites": 1,
+      "strike_sites": 2,
       "textures_mapped": 1,
       "locked_bones": 0,
       "lock_mode": "warn",
@@ -696,9 +760,7 @@
           "orespawn:bone_draw_order"
         ]
       },
-      "warnings": [
-        "GOAL_UNCLASSIFIED: goal MyEntityAIWander (Irukandji.java:82) has no dictionary entry"
-      ]
+      "warnings": []
     },
     {
       "registry": "nastysaurus",
@@ -720,16 +782,16 @@
       "bones": 59,
       "cubes": 59,
       "clips_shipped": 0,
-      "clips_in_spec": 13,
+      "clips_in_spec": 14,
       "goals": 6,
       "flags": 1,
-      "attacking": "NONE",
-      "strike_sites": 1,
+      "attacking": "STATE",
+      "strike_sites": 2,
       "textures_mapped": 1,
       "locked_bones": 0,
       "lock_mode": "warn",
       "keyed_locked_bones": 0,
-      "effort_hours": 27.8,
+      "effort_hours": 28.8,
       "unlabelled_bones": 0,
       "roundtrip": {
         "equal": true,
@@ -740,9 +802,7 @@
           "orespawn:bone_draw_order"
         ]
       },
-      "warnings": [
-        "WISHLIST_UNACCEPTED: wishlist names clip(s) ['aggro_idle'] that the manifest does not accept"
-      ]
+      "warnings": []
     },
     {
       "registry": "pitch_black",
@@ -806,16 +866,16 @@
       "bones": 30,
       "cubes": 30,
       "clips_shipped": 0,
-      "clips_in_spec": 13,
+      "clips_in_spec": 14,
       "goals": 8,
       "flags": 1,
-      "attacking": "NONE",
-      "strike_sites": 1,
+      "attacking": "STATE",
+      "strike_sites": 2,
       "textures_mapped": 1,
       "locked_bones": 0,
       "lock_mode": "warn",
       "keyed_locked_bones": 0,
-      "effort_hours": 22.0,
+      "effort_hours": 23.0,
       "unlabelled_bones": 0,
       "roundtrip": {
         "equal": true,
@@ -826,10 +886,7 @@
           "orespawn:bone_draw_order"
         ]
       },
-      "warnings": [
-        "GOAL_UNCLASSIFIED: goal PointysaurusStareGoal (Pointysaurus.java:84) has no dictionary entry",
-        "WISHLIST_UNACCEPTED: wishlist names clip(s) ['aggro_idle'] that the manifest does not accept"
-      ]
+      "warnings": []
     },
     {
       "registry": "robot_1",
@@ -1138,16 +1195,16 @@
       "bones": 34,
       "cubes": 34,
       "clips_shipped": 0,
-      "clips_in_spec": 13,
+      "clips_in_spec": 14,
       "goals": 8,
       "flags": 1,
-      "attacking": "NONE",
-      "strike_sites": 1,
+      "attacking": "STATE",
+      "strike_sites": 2,
       "textures_mapped": 1,
       "locked_bones": 0,
       "lock_mode": "warn",
       "keyed_locked_bones": 0,
-      "effort_hours": 23.8,
+      "effort_hours": 24.8,
       "unlabelled_bones": 0,
       "roundtrip": {
         "equal": true,
@@ -1158,11 +1215,7 @@
           "orespawn:bone_draw_order"
         ]
       },
-      "warnings": [
-        "GOAL_UNCLASSIFIED: goal SeaViperBiteGoal (SeaViper.java:119) has no dictionary entry",
-        "GOAL_UNCLASSIFIED: goal RandomSwimmingGoal (SeaViper.java:120) has no dictionary entry",
-        "WISHLIST_UNACCEPTED: wishlist names clip(s) ['aggro_idle'] that the manifest does not accept"
-      ]
+      "warnings": []
     },
     {
       "registry": "skate",
@@ -1205,9 +1258,7 @@
           "orespawn:bone_draw_order"
         ]
       },
-      "warnings": [
-        "GOAL_UNCLASSIFIED: goal MyEntityAIWander (Skate.java:76) has no dictionary entry"
-      ]
+      "warnings": []
     },
     {
       "registry": "trex",
@@ -1229,16 +1280,16 @@
       "bones": 27,
       "cubes": 27,
       "clips_shipped": 0,
-      "clips_in_spec": 11,
+      "clips_in_spec": 12,
       "goals": 6,
       "flags": 1,
-      "attacking": "NONE",
-      "strike_sites": 1,
+      "attacking": "STATE",
+      "strike_sites": 2,
       "textures_mapped": 1,
       "locked_bones": 8,
       "lock_mode": "warn",
       "keyed_locked_bones": 0,
-      "effort_hours": 25.6,
+      "effort_hours": 28.6,
       "unlabelled_bones": 0,
       "roundtrip": {
         "equal": true,
@@ -1317,7 +1368,7 @@
       "goals": 5,
       "flags": 2,
       "attacking": "STATE",
-      "strike_sites": 6,
+      "strike_sites": 7,
       "textures_mapped": 1,
       "locked_bones": 12,
       "lock_mode": "warn",
@@ -1419,10 +1470,7 @@
           "orespawn:bone_draw_order"
         ]
       },
-      "warnings": [
-        "GOAL_UNCLASSIFIED: goal KingEndGameGoal (TheKing.java:215) has no dictionary entry",
-        "GOAL_UNCLASSIFIED: goal KingPrimaryGoal (TheKing.java:216) has no dictionary entry"
-      ]
+      "warnings": []
     },
     {
       "registry": "the_queen",
@@ -1575,16 +1623,16 @@
       "bones": 80,
       "cubes": 80,
       "clips_shipped": 0,
-      "clips_in_spec": 21,
+      "clips_in_spec": 22,
       "goals": 6,
       "flags": 1,
-      "attacking": "NONE",
+      "attacking": "STATE",
       "strike_sites": 2,
       "textures_mapped": 1,
       "locked_bones": 0,
       "lock_mode": "warn",
       "keyed_locked_bones": 0,
-      "effort_hours": 40.0,
+      "effort_hours": 42.0,
       "unlabelled_bones": 0,
       "roundtrip": {
         "equal": true,
@@ -1617,16 +1665,16 @@
       "bones": 78,
       "cubes": 78,
       "clips_shipped": 0,
-      "clips_in_spec": 12,
+      "clips_in_spec": 13,
       "goals": 6,
       "flags": 1,
-      "attacking": "NONE",
-      "strike_sites": 1,
+      "attacking": "STATE",
+      "strike_sites": 2,
       "textures_mapped": 1,
       "locked_bones": 48,
       "lock_mode": "warn",
       "keyed_locked_bones": 0,
-      "effort_hours": 34.7,
+      "effort_hours": 37.7,
       "unlabelled_bones": 0,
       "roundtrip": {
         "equal": true,
@@ -1637,9 +1685,7 @@
           "orespawn:bone_draw_order"
         ]
       },
-      "warnings": [
-        "GOAL_UNCLASSIFIED: goal EmperorScorpionPoisonGoal (EntityEmperorScorpion.java:96) has no dictionary entry"
-      ]
+      "warnings": []
     },
     {
       "registry": "hercules_beetle",
@@ -1662,16 +1708,16 @@
       "bones": 37,
       "cubes": 37,
       "clips_shipped": 0,
-      "clips_in_spec": 9,
+      "clips_in_spec": 10,
       "goals": 6,
       "flags": 1,
-      "attacking": "NONE",
+      "attacking": "STATE",
       "strike_sites": 2,
       "textures_mapped": 1,
       "locked_bones": 0,
       "lock_mode": "warn",
       "keyed_locked_bones": 0,
-      "effort_hours": 19.4,
+      "effort_hours": 21.4,
       "unlabelled_bones": 0,
       "roundtrip": {
         "equal": true,
@@ -1999,16 +2045,16 @@
       "bones": 22,
       "cubes": 22,
       "clips_shipped": 0,
-      "clips_in_spec": 13,
+      "clips_in_spec": 14,
       "goals": 5,
       "flags": 1,
-      "attacking": "NONE",
+      "attacking": "STATE",
       "strike_sites": 2,
       "textures_mapped": 1,
       "locked_bones": 0,
       "lock_mode": "warn",
       "keyed_locked_bones": 0,
-      "effort_hours": 20.4,
+      "effort_hours": 21.4,
       "unlabelled_bones": 0,
       "roundtrip": {
         "equal": true,
@@ -2019,9 +2065,7 @@
           "orespawn:bone_draw_order"
         ]
       },
-      "warnings": [
-        "WISHLIST_UNACCEPTED: wishlist names clip(s) ['aggro_idle'] that the manifest does not accept"
-      ]
+      "warnings": []
     },
     {
       "registry": "spit_bug",
@@ -2043,16 +2087,16 @@
       "bones": 93,
       "cubes": 93,
       "clips_shipped": 0,
-      "clips_in_spec": 11,
+      "clips_in_spec": 12,
       "goals": 6,
       "flags": 1,
-      "attacking": "NONE",
-      "strike_sites": 3,
+      "attacking": "STATE",
+      "strike_sites": 4,
       "textures_mapped": 1,
       "locked_bones": 0,
       "lock_mode": "warn",
       "keyed_locked_bones": 0,
-      "effort_hours": 32.6,
+      "effort_hours": 33.6,
       "unlabelled_bones": 0,
       "roundtrip": {
         "equal": true,
@@ -2063,9 +2107,7 @@
           "orespawn:bone_draw_order"
         ]
       },
-      "warnings": [
-        "GOAL_UNCLASSIFIED: goal SpitBugAcidAttackGoal (EntitySpitBug.java:86) has no dictionary entry"
-      ]
+      "warnings": []
     },
     {
       "registry": "terrible_terror",
@@ -2173,16 +2215,16 @@
       "bones": 134,
       "cubes": 134,
       "clips_shipped": 0,
-      "clips_in_spec": 19,
+      "clips_in_spec": 20,
       "goals": 6,
       "flags": 1,
-      "attacking": "NONE",
-      "strike_sites": 1,
+      "attacking": "STATE",
+      "strike_sites": 2,
       "textures_mapped": 1,
       "locked_bones": 0,
       "lock_mode": "warn",
       "keyed_locked_bones": 0,
-      "effort_hours": 48.8,
+      "effort_hours": 49.8,
       "unlabelled_bones": 0,
       "roundtrip": {
         "equal": true,
@@ -2193,10 +2235,7 @@
           "orespawn:bone_draw_order"
         ]
       },
-      "warnings": [
-        "GOAL_UNCLASSIFIED: goal TrooperBugLeapAttackGoal (EntityTrooperBug.java:88) has no dictionary entry",
-        "WISHLIST_UNACCEPTED: wishlist names clip(s) ['aggro_idle'] that the manifest does not accept"
-      ]
+      "warnings": []
     },
     {
       "registry": "vortex",
@@ -2411,9 +2450,7 @@
           "orespawn:bone_draw_order"
         ]
       },
-      "warnings": [
-        "GOAL_UNCLASSIFIED: goal MyEntityAIWander (Baryonyx.java:62) has no dictionary entry"
-      ]
+      "warnings": []
     },
     {
       "registry": "beaver",
@@ -2498,9 +2535,7 @@
           "orespawn:bone_draw_order"
         ]
       },
-      "warnings": [
-        "GOAL_UNCLASSIFIED: goal MyEntityAIWander (Cassowary.java:51) has no dictionary entry"
-      ]
+      "warnings": []
     },
     {
       "registry": "chipmunk",
@@ -2522,16 +2557,16 @@
       "bones": 18,
       "cubes": 18,
       "clips_shipped": 0,
-      "clips_in_spec": 9,
+      "clips_in_spec": 10,
       "goals": 12,
-      "flags": 0,
+      "flags": 2,
       "attacking": "NONE",
-      "strike_sites": 0,
+      "strike_sites": 1,
       "textures_mapped": 1,
       "locked_bones": 0,
       "lock_mode": "warn",
       "keyed_locked_bones": 0,
-      "effort_hours": 15.6,
+      "effort_hours": 16.6,
       "unlabelled_bones": 0,
       "roundtrip": {
         "equal": true,
@@ -2542,10 +2577,7 @@
           "orespawn:bone_draw_order"
         ]
       },
-      "warnings": [
-        "GOAL_UNCLASSIFIED: goal FollowOwnerGoal (Chipmunk.java:67) has no dictionary entry",
-        "GOAL_UNCLASSIFIED: goal TemptGoal (Chipmunk.java:71) has no dictionary entry"
-      ]
+      "warnings": []
     },
     {
       "registry": "cockateil",
@@ -2720,9 +2752,7 @@
           "orespawn:bone_draw_order"
         ]
       },
-      "warnings": [
-        "GOAL_UNCLASSIFIED: goal MyEntityAIWander (Flounder.java:61) has no dictionary entry"
-      ]
+      "warnings": []
     },
     {
       "registry": "frog",
@@ -2764,9 +2794,7 @@
           "orespawn:bone_draw_order"
         ]
       },
-      "warnings": [
-        "GOAL_UNCLASSIFIED: goal MyEntityAIWander (Frog.java:67) has no dictionary entry"
-      ]
+      "warnings": []
     },
     {
       "registry": "gazelle",
@@ -2808,11 +2836,7 @@
           "orespawn:bone_draw_order"
         ]
       },
-      "warnings": [
-        "GOAL_UNCLASSIFIED: goal FollowOwnerGoal (Gazelle.java:72) has no dictionary entry",
-        "GOAL_UNCLASSIFIED: goal TemptGoal (Gazelle.java:74) has no dictionary entry",
-        "GOAL_UNCLASSIFIED: goal MyEntityAIWander (Gazelle.java:78) has no dictionary entry"
-      ]
+      "warnings": []
     },
     {
       "registry": "gold_fish",
@@ -2964,16 +2988,16 @@
       "bones": 16,
       "cubes": 16,
       "clips_shipped": 0,
-      "clips_in_spec": 10,
+      "clips_in_spec": 11,
       "goals": 7,
       "flags": 0,
       "attacking": "NONE",
-      "strike_sites": 0,
+      "strike_sites": 1,
       "textures_mapped": 1,
       "locked_bones": 0,
       "lock_mode": "warn",
       "keyed_locked_bones": 0,
-      "effort_hours": 15.2,
+      "effort_hours": 16.2,
       "unlabelled_bones": 0,
       "roundtrip": {
         "equal": true,
@@ -2984,9 +3008,7 @@
           "orespawn:bone_draw_order"
         ]
       },
-      "warnings": [
-        "WISHLIST_UNACCEPTED: wishlist names clip(s) ['attack'] that the manifest does not accept"
-      ]
+      "warnings": []
     },
     {
       "registry": "whale",
@@ -3028,10 +3050,7 @@
           "orespawn:bone_draw_order"
         ]
       },
-      "warnings": [
-        "GOAL_UNCLASSIFIED: goal TemptGoal (Whale.java:62) has no dictionary entry",
-        "GOAL_UNCLASSIFIED: goal MyEntityAIWander (Whale.java:65) has no dictionary entry"
-      ]
+      "warnings": []
     },
     {
       "registry": "ant",
@@ -3203,9 +3222,7 @@
           "orespawn:bone_draw_order"
         ]
       },
-      "warnings": [
-        "GOAL_UNCLASSIFIED: goal DragonflyHuntGoal (EntityDragonfly.java:65) has no dictionary entry"
-      ]
+      "warnings": []
     },
     {
       "registry": "red_ant",
@@ -3465,6 +3482,95 @@
       "warnings": []
     },
     {
+      "registry": "boyfriend",
+      "tier": 2,
+      "tier_label": "Tier 2",
+      "rig_source": "reference-leg converter output",
+      "in_game": false,
+      "seed": true,
+      "files": [
+        "SPEC.md",
+        "boyfriend.animation.json",
+        "boyfriend.bbmodel",
+        "reference/SLOTS.md",
+        "reference_boyfriend.geo.json",
+        "roundtrip.report.json",
+        "spec.manifest.json",
+        "textures/boyfriend0.png",
+        "textures/boyfriend1.png",
+        "textures/boyfriend10.png",
+        "textures/boyfriend11.png",
+        "textures/boyfriend12.png",
+        "textures/boyfriend13.png",
+        "textures/boyfriend14.png",
+        "textures/boyfriend15.png",
+        "textures/boyfriend16.png",
+        "textures/boyfriend17.png",
+        "textures/boyfriend18.png",
+        "textures/boyfriend19.png",
+        "textures/boyfriend2.png",
+        "textures/boyfriend20.png",
+        "textures/boyfriend21.png",
+        "textures/boyfriend22.png",
+        "textures/boyfriend23.png",
+        "textures/boyfriend24.png",
+        "textures/boyfriend25.png",
+        "textures/boyfriend26.png",
+        "textures/boyfriend27.png",
+        "textures/boyfriend3.png",
+        "textures/boyfriend4.png",
+        "textures/boyfriend5.png",
+        "textures/boyfriend6.png",
+        "textures/boyfriend7.png",
+        "textures/boyfriend8.png",
+        "textures/boyfriend9.png",
+        "textures/frogprince.png",
+        "textures/frogprince2.png",
+        "textures/swimshorts0.png",
+        "textures/swimshorts1.png",
+        "textures/swimshorts10.png",
+        "textures/swimshorts11.png",
+        "textures/swimshorts12.png",
+        "textures/swimshorts13.png",
+        "textures/swimshorts14.png",
+        "textures/swimshorts15.png",
+        "textures/swimshorts16.png",
+        "textures/swimshorts17.png",
+        "textures/swimshorts2.png",
+        "textures/swimshorts3.png",
+        "textures/swimshorts4.png",
+        "textures/swimshorts5.png",
+        "textures/swimshorts6.png",
+        "textures/swimshorts7.png",
+        "textures/swimshorts8.png",
+        "textures/swimshorts9.png"
+      ],
+      "bones": 7,
+      "cubes": 7,
+      "clips_shipped": 0,
+      "clips_in_spec": 12,
+      "goals": 16,
+      "flags": 5,
+      "attacking": "NONE",
+      "strike_sites": 2,
+      "textures_mapped": 48,
+      "locked_bones": 0,
+      "lock_mode": "warn",
+      "keyed_locked_bones": 0,
+      "effort_hours": 16.4,
+      "unlabelled_bones": 0,
+      "roundtrip": {
+        "equal": true,
+        "bone_order_preserved": true,
+        "differences": 0,
+        "dropped_keys": 2,
+        "reattached": [
+          "orespawn:bone_draw_order"
+        ]
+      },
+      "warnings": []
+    },
+    {
       "registry": "camarasaurus",
       "tier": 2,
       "tier_label": "Tier 2",
@@ -3504,11 +3610,7 @@
           "orespawn:bone_draw_order"
         ]
       },
-      "warnings": [
-        "GOAL_UNCLASSIFIED: goal FollowOwnerGoal (Camarasaurus.java:69) has no dictionary entry",
-        "GOAL_UNCLASSIFIED: goal TemptGoal (Camarasaurus.java:71) has no dictionary entry",
-        "GOAL_UNCLASSIFIED: goal MyEntityAIWander (Camarasaurus.java:74) has no dictionary entry"
-      ]
+      "warnings": []
     },
     {
       "registry": "dragon",
@@ -3551,11 +3653,7 @@
           "orespawn:bone_draw_order"
         ]
       },
-      "warnings": [
-        "GOAL_UNCLASSIFIED: goal SitWhenOrderedToGoal (Dragon.java:141) has no dictionary entry",
-        "GOAL_UNCLASSIFIED: goal FollowOwnerGoal (Dragon.java:142) has no dictionary entry",
-        "GOAL_UNCLASSIFIED: goal TemptGoal (Dragon.java:144) has no dictionary entry"
-      ]
+      "warnings": []
     },
     {
       "registry": "baby_dragon",
@@ -3578,16 +3676,16 @@
       "bones": 55,
       "cubes": 55,
       "clips_shipped": 0,
-      "clips_in_spec": 15,
+      "clips_in_spec": 17,
       "goals": 0,
-      "flags": 0,
-      "attacking": "NONE",
-      "strike_sites": 0,
+      "flags": 4,
+      "attacking": "STATE",
+      "strike_sites": 9,
       "textures_mapped": 2,
       "locked_bones": 11,
       "lock_mode": "warn",
       "keyed_locked_bones": 0,
-      "effort_hours": 37.2,
+      "effort_hours": 41.8,
       "unlabelled_bones": 0,
       "roundtrip": {
         "equal": true,
@@ -3621,16 +3719,16 @@
       "bones": 6,
       "cubes": 6,
       "clips_shipped": 0,
-      "clips_in_spec": 8,
+      "clips_in_spec": 9,
       "goals": 0,
       "flags": 2,
       "attacking": "NONE",
-      "strike_sites": 0,
+      "strike_sites": 1,
       "textures_mapped": 1,
       "locked_bones": 0,
       "lock_mode": "warn",
       "keyed_locked_bones": 0,
-      "effort_hours": 12.2,
+      "effort_hours": 13.2,
       "unlabelled_bones": 0,
       "roundtrip": {
         "equal": true,
@@ -3684,10 +3782,90 @@
           "orespawn:bone_draw_order"
         ]
       },
-      "warnings": [
-        "GOAL_UNCLASSIFIED: goal FollowOwnerGoal (EntityGammaMetroid.java:78) has no dictionary entry",
-        "GOAL_UNCLASSIFIED: goal TemptGoal (EntityGammaMetroid.java:79) has no dictionary entry"
-      ]
+      "warnings": []
+    },
+    {
+      "registry": "girlfriend",
+      "tier": 2,
+      "tier_label": "Tier 2",
+      "rig_source": "reference-leg converter output",
+      "in_game": false,
+      "seed": true,
+      "files": [
+        "SPEC.md",
+        "girlfriend.animation.json",
+        "girlfriend.bbmodel",
+        "reference/SLOTS.md",
+        "reference_girlfriend.geo.json",
+        "roundtrip.report.json",
+        "spec.manifest.json",
+        "textures/girlfriend0.png",
+        "textures/girlfriend1.png",
+        "textures/girlfriend10.png",
+        "textures/girlfriend11.png",
+        "textures/girlfriend12.png",
+        "textures/girlfriend13.png",
+        "textures/girlfriend14.png",
+        "textures/girlfriend15.png",
+        "textures/girlfriend16.png",
+        "textures/girlfriend17.png",
+        "textures/girlfriend18.png",
+        "textures/girlfriend19.png",
+        "textures/girlfriend2.png",
+        "textures/girlfriend20.png",
+        "textures/girlfriend21.png",
+        "textures/girlfriend22.png",
+        "textures/girlfriend23.png",
+        "textures/girlfriend24.png",
+        "textures/girlfriend25.png",
+        "textures/girlfriend26.png",
+        "textures/girlfriend27.png",
+        "textures/girlfriend28.png",
+        "textures/girlfriend29.png",
+        "textures/girlfriend3.png",
+        "textures/girlfriend30.png",
+        "textures/girlfriend31.png",
+        "textures/girlfriend32.png",
+        "textures/girlfriend33.png",
+        "textures/girlfriend34.png",
+        "textures/girlfriend35.png",
+        "textures/girlfriend36.png",
+        "textures/girlfriend37.png",
+        "textures/girlfriend38.png",
+        "textures/girlfriend39.png",
+        "textures/girlfriend4.png",
+        "textures/girlfriend40.png",
+        "textures/girlfriend5.png",
+        "textures/girlfriend6.png",
+        "textures/girlfriend7.png",
+        "textures/girlfriend8.png",
+        "textures/girlfriend9.png",
+        "textures/girlfriendv.png"
+      ],
+      "bones": 7,
+      "cubes": 7,
+      "clips_shipped": 0,
+      "clips_in_spec": 14,
+      "goals": 19,
+      "flags": 4,
+      "attacking": "NONE",
+      "strike_sites": 2,
+      "textures_mapped": 42,
+      "locked_bones": 0,
+      "lock_mode": "warn",
+      "keyed_locked_bones": 0,
+      "effort_hours": 17.4,
+      "unlabelled_bones": 0,
+      "roundtrip": {
+        "equal": true,
+        "bone_order_preserved": true,
+        "differences": 0,
+        "dropped_keys": 2,
+        "reattached": [
+          "orespawn:bone_draw_order"
+        ]
+      },
+      "warnings": []
     },
     {
       "registry": "hydrolisc",
@@ -3729,10 +3907,7 @@
           "orespawn:bone_draw_order"
         ]
       },
-      "warnings": [
-        "GOAL_UNCLASSIFIED: goal FollowOwnerGoal (EntityHydrolisc.java:70) has no dictionary entry",
-        "GOAL_UNCLASSIFIED: goal TemptGoal (EntityHydrolisc.java:71) has no dictionary entry"
-      ]
+      "warnings": []
     },
     {
       "registry": "leon",
@@ -3774,10 +3949,7 @@
           "orespawn:bone_draw_order"
         ]
       },
-      "warnings": [
-        "GOAL_UNCLASSIFIED: goal FollowOwnerGoal (EntityLeon.java:154) has no dictionary entry",
-        "GOAL_UNCLASSIFIED: goal TemptGoal (EntityLeon.java:155) has no dictionary entry"
-      ]
+      "warnings": []
     },
     {
       "registry": "leonopteryx",
@@ -3819,10 +3991,7 @@
           "orespawn:bone_draw_order"
         ]
       },
-      "warnings": [
-        "GOAL_UNCLASSIFIED: goal FollowOwnerGoal (EntityLeon.java:154) has no dictionary entry",
-        "GOAL_UNCLASSIFIED: goal TemptGoal (EntityLeon.java:155) has no dictionary entry"
-      ]
+      "warnings": []
     },
     {
       "registry": "lizard",
@@ -3844,7 +4013,7 @@
       "bones": 71,
       "cubes": 71,
       "clips_shipped": 0,
-      "clips_in_spec": 11,
+      "clips_in_spec": 12,
       "goals": 8,
       "flags": 1,
       "attacking": "STATE",
@@ -3853,7 +4022,7 @@
       "locked_bones": 0,
       "lock_mode": "warn",
       "keyed_locked_bones": 0,
-      "effort_hours": 29.2,
+      "effort_hours": 30.2,
       "unlabelled_bones": 0,
       "roundtrip": {
         "equal": true,
@@ -3864,11 +4033,7 @@
           "orespawn:bone_draw_order"
         ]
       },
-      "warnings": [
-        "GOAL_UNCLASSIFIED: goal FollowOwnerGoal (Lizard.java:80) has no dictionary entry",
-        "GOAL_UNCLASSIFIED: goal TemptGoal (Lizard.java:82) has no dictionary entry",
-        "WISHLIST_UNACCEPTED: wishlist names clip(s) ['aggro_idle'] that the manifest does not accept"
-      ]
+      "warnings": []
     },
     {
       "registry": "ostrich",
@@ -3910,10 +4075,7 @@
           "orespawn:bone_draw_order"
         ]
       },
-      "warnings": [
-        "GOAL_UNCLASSIFIED: goal FollowOwnerGoal (Ostrich.java:129) has no dictionary entry",
-        "GOAL_UNCLASSIFIED: goal TemptGoal (Ostrich.java:131) has no dictionary entry"
-      ]
+      "warnings": []
     },
     {
       "registry": "rubber_ducky",
@@ -3956,10 +4118,7 @@
           "orespawn:bone_draw_order"
         ]
       },
-      "warnings": [
-        "GOAL_UNCLASSIFIED: goal FollowOwnerGoal (EntityRubberDucky.java:86) has no dictionary entry",
-        "GOAL_UNCLASSIFIED: goal TemptGoal (EntityRubberDucky.java:87) has no dictionary entry"
-      ]
+      "warnings": []
     },
     {
       "registry": "spyro",
@@ -4001,10 +4160,7 @@
           "orespawn:bone_draw_order"
         ]
       },
-      "warnings": [
-        "GOAL_UNCLASSIFIED: goal MyEntityAIFollowOwner (EntitySpyro.java:95) has no dictionary entry",
-        "GOAL_UNCLASSIFIED: goal TemptGoal (EntitySpyro.java:96) has no dictionary entry"
-      ]
+      "warnings": []
     },
     {
       "registry": "stinky",
@@ -4046,10 +4202,7 @@
           "orespawn:bone_draw_order"
         ]
       },
-      "warnings": [
-        "GOAL_UNCLASSIFIED: goal MyEntityAIFollowOwner (EntityStinky.java:102) has no dictionary entry",
-        "GOAL_UNCLASSIFIED: goal TemptGoal (EntityStinky.java:103) has no dictionary entry"
-      ]
+      "warnings": []
     },
     {
       "registry": "the_prince",
@@ -4091,11 +4244,7 @@
           "orespawn:bone_draw_order"
         ]
       },
-      "warnings": [
-        "GOAL_UNCLASSIFIED: goal FollowOwnerGoal (ThePrince.java:108) has no dictionary entry",
-        "GOAL_UNCLASSIFIED: goal TemptGoal (ThePrince.java:109) has no dictionary entry",
-        "GOAL_UNCLASSIFIED: goal MyEntityAIWander (ThePrince.java:111) has no dictionary entry"
-      ]
+      "warnings": []
     },
     {
       "registry": "the_prince_adult",
@@ -4137,11 +4286,7 @@
           "orespawn:bone_draw_order"
         ]
       },
-      "warnings": [
-        "GOAL_UNCLASSIFIED: goal FollowOwnerGoal (ThePrinceAdult.java:138) has no dictionary entry",
-        "GOAL_UNCLASSIFIED: goal TemptGoal (ThePrinceAdult.java:139) has no dictionary entry",
-        "GOAL_UNCLASSIFIED: goal MyEntityAIWander (ThePrinceAdult.java:140) has no dictionary entry"
-      ]
+      "warnings": []
     },
     {
       "registry": "the_princess",
@@ -4183,11 +4328,7 @@
           "orespawn:bone_draw_order"
         ]
       },
-      "warnings": [
-        "GOAL_UNCLASSIFIED: goal FollowOwnerGoal (ThePrincess.java:106) has no dictionary entry",
-        "GOAL_UNCLASSIFIED: goal TemptGoal (ThePrincess.java:107) has no dictionary entry",
-        "GOAL_UNCLASSIFIED: goal MyEntityAIWander (ThePrincess.java:109) has no dictionary entry"
-      ]
+      "warnings": []
     },
     {
       "registry": "the_prince_teen",
@@ -4229,11 +4370,7 @@
           "orespawn:bone_draw_order"
         ]
       },
-      "warnings": [
-        "GOAL_UNCLASSIFIED: goal FollowOwnerGoal (ThePrinceTeen.java:149) has no dictionary entry",
-        "GOAL_UNCLASSIFIED: goal TemptGoal (ThePrinceTeen.java:150) has no dictionary entry",
-        "GOAL_UNCLASSIFIED: goal MyEntityAIWander (ThePrinceTeen.java:151) has no dictionary entry"
-      ]
+      "warnings": []
     },
     {
       "registry": "velocity_raptor",
@@ -4275,10 +4412,7 @@
           "orespawn:bone_draw_order"
         ]
       },
-      "warnings": [
-        "GOAL_UNCLASSIFIED: goal FollowOwnerGoal (VelocityRaptor.java:64) has no dictionary entry",
-        "GOAL_UNCLASSIFIED: goal TemptGoal (VelocityRaptor.java:66) has no dictionary entry"
-      ]
+      "warnings": []
     },
     {
       "registry": "water_dragon",
@@ -4300,16 +4434,16 @@
       "bones": 24,
       "cubes": 24,
       "clips_shipped": 0,
-      "clips_in_spec": 16,
+      "clips_in_spec": 17,
       "goals": 10,
       "flags": 1,
-      "attacking": "UNCLASSIFIED",
-      "strike_sites": 2,
+      "attacking": "STATE",
+      "strike_sites": 3,
       "textures_mapped": 1,
       "locked_bones": 11,
       "lock_mode": "warn",
       "keyed_locked_bones": 0,
-      "effort_hours": 34.1,
+      "effort_hours": 37.1,
       "unlabelled_bones": 0,
       "roundtrip": {
         "equal": true,
@@ -4320,12 +4454,7 @@
           "orespawn:bone_draw_order"
         ]
       },
-      "warnings": [
-        "GOAL_UNCLASSIFIED: goal TemptGoal (WaterDragon.java:133) has no dictionary entry",
-        "GOAL_UNCLASSIFIED: goal WaterCanonAttackGoal (WaterDragon.java:134) has no dictionary entry",
-        "GOAL_UNCLASSIFIED: goal RandomSwimmingGoal (WaterDragon.java:135) has no dictionary entry",
-        "ATTACKING_UNCLASSIFIED: DATA_ATTACKING classified UNCLASSIFIED: the clear sites' guards match neither the pulse nor the target-loss pattern; other clears at line(s) [622] (guards: NOT(if (this.streamCount > 0))) — the owner reads them"
-      ]
+      "warnings": []
     },
     {
       "registry": "butterfly",
@@ -4370,9 +4499,7 @@
           "orespawn:bone_draw_order"
         ]
       },
-      "warnings": [
-        "GOAL_UNCLASSIFIED: goal ButterflyIslandsHuntGoal (EntityButterfly.java:74) has no dictionary entry"
-      ]
+      "warnings": []
     },
     {
       "registry": "luna_moth",
@@ -4397,11 +4524,11 @@
       "bones": 10,
       "cubes": 10,
       "clips_shipped": 0,
-      "clips_in_spec": 6,
+      "clips_in_spec": 7,
       "goals": 1,
-      "flags": 0,
+      "flags": 1,
       "attacking": "NONE",
-      "strike_sites": 0,
+      "strike_sites": 1,
       "textures_mapped": 4,
       "locked_bones": 0,
       "lock_mode": "warn",
@@ -4417,9 +4544,7 @@
           "orespawn:bone_draw_order"
         ]
       },
-      "warnings": [
-        "GOAL_UNCLASSIFIED: goal LunaMothFlightGoal (EntityLunaMoth.java:55) has no dictionary entry"
-      ]
+      "warnings": []
     },
     {
       "registry": "mosquito",
@@ -4462,9 +4587,7 @@
           "orespawn:bone_draw_order"
         ]
       },
-      "warnings": [
-        "GOAL_UNCLASSIFIED: goal MosquitoFlightGoal (EntityMosquito.java:49) has no dictionary entry"
-      ]
+      "warnings": []
     },
     {
       "registry": "fairy",
@@ -4668,7 +4791,7 @@
       "clips_shipped": 0,
       "clips_in_spec": 7,
       "goals": 0,
-      "flags": 0,
+      "flags": 1,
       "attacking": "NONE",
       "strike_sites": 2,
       "textures_mapped": 1,
@@ -4958,7 +5081,7 @@
       "clips_shipped": 6,
       "clips_in_spec": 14,
       "goals": 0,
-      "flags": 0,
+      "flags": 1,
       "attacking": "NONE",
       "strike_sites": 0,
       "textures_mapped": 6,
@@ -4994,23 +5117,6 @@
     }
   },
   "warnings": [
-    "[global] ARTIST_TIER_UNPACKAGED: 4 artist-tier species have no rig to package (no shipped geo, no reference-leg geo) — giant_robot: the converter refused reference_giantrobot (ValueError: reference_giantrobot capture bind draws [...], which are not cube-bearing geo bones (a part drawn more than once without render_instances, or a part the rig lacks)); jeffery: the converter refused reference_giantrobot (ValueError: reference_giantrobot capture bind draws [...], which are not cube-bearing geo bones (a part drawn more than once without render_instances, or a part the rig lacks)); boyfriend: no entry whose class is ModelBoyfriend in reference_model_proofs.json — no reference-leg geo can exist for it until the reference leg covers the model; girlfriend: no entry whose class is ModelGirlfriend in reference_model_proofs.json — no reference-leg geo can exist for it until the reference leg covers the model",
-    "[alien] GOAL_UNCLASSIFIED: goal MoveThroughVillageGoal (Alien.java:92) has no dictionary entry",
-    "[alien] GOAL_UNCLASSIFIED: goal AlienTorchSeekGoal (Alien.java:96) has no dictionary entry",
-    "[alosaurus] GOAL_UNCLASSIFIED: goal MoveThroughVillageGoal (Alosaurus.java:84) has no dictionary entry",
-    "[band_p] GOAL_UNCLASSIFIED: goal MoveThroughVillageGoal (BandP.java:78) has no dictionary entry",
-    "[band_p] GOAL_UNCLASSIFIED: goal OpenDoorGoal (BandP.java:83) has no dictionary entry",
-    "[basilisk] GOAL_UNCLASSIFIED: goal MoveThroughVillageGoal (Basilisk.java:81) has no dictionary entry",
-    "[cave_fisher] WISHLIST_UNACCEPTED: wishlist names clip(s) ['aggro_idle'] that the manifest does not accept",
-    "[creeping_horror] GOAL_UNCLASSIFIED: goal MoveThroughVillageGoal (CreepingHorror.java:78) has no dictionary entry",
-    "[ender_knight] WISHLIST_UNACCEPTED: wishlist names clip(s) ['attack'] that the manifest does not accept",
-    "[ender_knight] WISHLIST_UNACCEPTED: wishlist names clip(s) ['aggro_idle'] that the manifest does not accept",
-    "[ender_reaper] WISHLIST_UNACCEPTED: wishlist names clip(s) ['aggro_idle'] that the manifest does not accept",
-    "[ender_reaper] WISHLIST_UNACCEPTED: wishlist names clip(s) ['attack'] that the manifest does not accept",
-    "[irukandji] GOAL_UNCLASSIFIED: goal MyEntityAIWander (Irukandji.java:82) has no dictionary entry",
-    "[nastysaurus] WISHLIST_UNACCEPTED: wishlist names clip(s) ['aggro_idle'] that the manifest does not accept",
-    "[pointysaurus] GOAL_UNCLASSIFIED: goal PointysaurusStareGoal (Pointysaurus.java:84) has no dictionary entry",
-    "[pointysaurus] WISHLIST_UNACCEPTED: wishlist names clip(s) ['aggro_idle'] that the manifest does not accept",
     "[robot_1] BONE_UNLABELLED: bone Shape1 has no glossary label",
     "[robot_1] BONE_UNLABELLED: bone Shape10 has no glossary label",
     "[robot_1] BONE_UNLABELLED: bone Shape11 has no glossary label",
@@ -5037,78 +5143,8 @@
     "[robot_2] BONE_UNLABELLED: bone Shape8 has no glossary label",
     "[robot_3] ATTACKING_UNCLASSIFIED: DATA_ATTACKING classified MIXED: a 10-tick pulse per in-range think tick: the flag is raised at line(s) [155] every 35 ticks (reloadTicker reset) while a target is in range — before the line-of-sight gate, so it pulses whether or not a shot fires — and cleared when reloadTicker < 25 at line(s) [144] AND cleared on target loss at line(s) [162]",
     "[robot_5] ATTACKING_UNCLASSIFIED: DATA_ATTACKING classified MIXED: a 5-tick pulse per in-range think tick: the flag is raised at line(s) [143] every 20 ticks (reloadTicker reset) while a target is in range — before the line-of-sight gate, so it pulses whether or not a shot fires — and cleared when reloadTicker < 15 at line(s) [131] AND cleared on target loss at line(s) [152]",
-    "[sea_viper] GOAL_UNCLASSIFIED: goal SeaViperBiteGoal (SeaViper.java:119) has no dictionary entry",
-    "[sea_viper] GOAL_UNCLASSIFIED: goal RandomSwimmingGoal (SeaViper.java:120) has no dictionary entry",
-    "[sea_viper] WISHLIST_UNACCEPTED: wishlist names clip(s) ['aggro_idle'] that the manifest does not accept",
-    "[skate] GOAL_UNCLASSIFIED: goal MyEntityAIWander (Skate.java:76) has no dictionary entry",
     "[kraken] ATTACKING_UNCLASSIFIED: DATA_ATTACKING classified STATE?: cleared unconditionally at line(s) [450] (the enclosing branch decides; read the source)",
-    "[the_king] GOAL_UNCLASSIFIED: goal KingEndGameGoal (TheKing.java:215) has no dictionary entry",
-    "[the_king] GOAL_UNCLASSIFIED: goal KingPrimaryGoal (TheKing.java:216) has no dictionary entry",
     "[the_queen] LOCKED_BONES_KEYED: the shipped clips key 26 of the 27 SPEC-locked bones (LHead, LHead12, LHead4, Lwing1, NeckL1, NeckL13...): allowed and warned — Keying a locked bone is allowed; the checker warns, and the hitbox part follows the bone in-game (the consequence, so keep such keys deliberate). Renaming, re-parenting or deleting a locked bone is refused.",
-    "[emperor_scorpion] GOAL_UNCLASSIFIED: goal EmperorScorpionPoisonGoal (EntityEmperorScorpion.java:96) has no dictionary entry",
-    "[scorpion] WISHLIST_UNACCEPTED: wishlist names clip(s) ['aggro_idle'] that the manifest does not accept",
-    "[spit_bug] GOAL_UNCLASSIFIED: goal SpitBugAcidAttackGoal (EntitySpitBug.java:86) has no dictionary entry",
-    "[trooper_bug] GOAL_UNCLASSIFIED: goal TrooperBugLeapAttackGoal (EntityTrooperBug.java:88) has no dictionary entry",
-    "[trooper_bug] WISHLIST_UNACCEPTED: wishlist names clip(s) ['aggro_idle'] that the manifest does not accept",
-    "[baryonyx] GOAL_UNCLASSIFIED: goal MyEntityAIWander (Baryonyx.java:62) has no dictionary entry",
-    "[cassowary] GOAL_UNCLASSIFIED: goal MyEntityAIWander (Cassowary.java:51) has no dictionary entry",
-    "[chipmunk] GOAL_UNCLASSIFIED: goal FollowOwnerGoal (Chipmunk.java:67) has no dictionary entry",
-    "[chipmunk] GOAL_UNCLASSIFIED: goal TemptGoal (Chipmunk.java:71) has no dictionary entry",
-    "[flounder] GOAL_UNCLASSIFIED: goal MyEntityAIWander (Flounder.java:61) has no dictionary entry",
-    "[frog] GOAL_UNCLASSIFIED: goal MyEntityAIWander (Frog.java:67) has no dictionary entry",
-    "[gazelle] GOAL_UNCLASSIFIED: goal FollowOwnerGoal (Gazelle.java:72) has no dictionary entry",
-    "[gazelle] GOAL_UNCLASSIFIED: goal TemptGoal (Gazelle.java:74) has no dictionary entry",
-    "[gazelle] GOAL_UNCLASSIFIED: goal MyEntityAIWander (Gazelle.java:78) has no dictionary entry",
-    "[peacock] WISHLIST_UNACCEPTED: wishlist names clip(s) ['attack'] that the manifest does not accept",
-    "[whale] GOAL_UNCLASSIFIED: goal TemptGoal (Whale.java:62) has no dictionary entry",
-    "[whale] GOAL_UNCLASSIFIED: goal MyEntityAIWander (Whale.java:65) has no dictionary entry",
-    "[dragonfly] GOAL_UNCLASSIFIED: goal DragonflyHuntGoal (EntityDragonfly.java:65) has no dictionary entry",
-    "[camarasaurus] GOAL_UNCLASSIFIED: goal FollowOwnerGoal (Camarasaurus.java:69) has no dictionary entry",
-    "[camarasaurus] GOAL_UNCLASSIFIED: goal TemptGoal (Camarasaurus.java:71) has no dictionary entry",
-    "[camarasaurus] GOAL_UNCLASSIFIED: goal MyEntityAIWander (Camarasaurus.java:74) has no dictionary entry",
-    "[dragon] GOAL_UNCLASSIFIED: goal SitWhenOrderedToGoal (Dragon.java:141) has no dictionary entry",
-    "[dragon] GOAL_UNCLASSIFIED: goal FollowOwnerGoal (Dragon.java:142) has no dictionary entry",
-    "[dragon] GOAL_UNCLASSIFIED: goal TemptGoal (Dragon.java:144) has no dictionary entry",
-    "[gamma_metroid] GOAL_UNCLASSIFIED: goal FollowOwnerGoal (EntityGammaMetroid.java:78) has no dictionary entry",
-    "[gamma_metroid] GOAL_UNCLASSIFIED: goal TemptGoal (EntityGammaMetroid.java:79) has no dictionary entry",
-    "[hydrolisc] GOAL_UNCLASSIFIED: goal FollowOwnerGoal (EntityHydrolisc.java:70) has no dictionary entry",
-    "[hydrolisc] GOAL_UNCLASSIFIED: goal TemptGoal (EntityHydrolisc.java:71) has no dictionary entry",
-    "[leon] GOAL_UNCLASSIFIED: goal FollowOwnerGoal (EntityLeon.java:154) has no dictionary entry",
-    "[leon] GOAL_UNCLASSIFIED: goal TemptGoal (EntityLeon.java:155) has no dictionary entry",
-    "[leonopteryx] GOAL_UNCLASSIFIED: goal FollowOwnerGoal (EntityLeon.java:154) has no dictionary entry",
-    "[leonopteryx] GOAL_UNCLASSIFIED: goal TemptGoal (EntityLeon.java:155) has no dictionary entry",
-    "[lizard] GOAL_UNCLASSIFIED: goal FollowOwnerGoal (Lizard.java:80) has no dictionary entry",
-    "[lizard] GOAL_UNCLASSIFIED: goal TemptGoal (Lizard.java:82) has no dictionary entry",
-    "[lizard] WISHLIST_UNACCEPTED: wishlist names clip(s) ['aggro_idle'] that the manifest does not accept",
-    "[ostrich] GOAL_UNCLASSIFIED: goal FollowOwnerGoal (Ostrich.java:129) has no dictionary entry",
-    "[ostrich] GOAL_UNCLASSIFIED: goal TemptGoal (Ostrich.java:131) has no dictionary entry",
-    "[rubber_ducky] GOAL_UNCLASSIFIED: goal FollowOwnerGoal (EntityRubberDucky.java:86) has no dictionary entry",
-    "[rubber_ducky] GOAL_UNCLASSIFIED: goal TemptGoal (EntityRubberDucky.java:87) has no dictionary entry",
-    "[spyro] GOAL_UNCLASSIFIED: goal MyEntityAIFollowOwner (EntitySpyro.java:95) has no dictionary entry",
-    "[spyro] GOAL_UNCLASSIFIED: goal TemptGoal (EntitySpyro.java:96) has no dictionary entry",
-    "[stinky] GOAL_UNCLASSIFIED: goal MyEntityAIFollowOwner (EntityStinky.java:102) has no dictionary entry",
-    "[stinky] GOAL_UNCLASSIFIED: goal TemptGoal (EntityStinky.java:103) has no dictionary entry",
-    "[the_prince] GOAL_UNCLASSIFIED: goal FollowOwnerGoal (ThePrince.java:108) has no dictionary entry",
-    "[the_prince] GOAL_UNCLASSIFIED: goal TemptGoal (ThePrince.java:109) has no dictionary entry",
-    "[the_prince] GOAL_UNCLASSIFIED: goal MyEntityAIWander (ThePrince.java:111) has no dictionary entry",
-    "[the_prince_adult] GOAL_UNCLASSIFIED: goal FollowOwnerGoal (ThePrinceAdult.java:138) has no dictionary entry",
-    "[the_prince_adult] GOAL_UNCLASSIFIED: goal TemptGoal (ThePrinceAdult.java:139) has no dictionary entry",
-    "[the_prince_adult] GOAL_UNCLASSIFIED: goal MyEntityAIWander (ThePrinceAdult.java:140) has no dictionary entry",
-    "[the_princess] GOAL_UNCLASSIFIED: goal FollowOwnerGoal (ThePrincess.java:106) has no dictionary entry",
-    "[the_princess] GOAL_UNCLASSIFIED: goal TemptGoal (ThePrincess.java:107) has no dictionary entry",
-    "[the_princess] GOAL_UNCLASSIFIED: goal MyEntityAIWander (ThePrincess.java:109) has no dictionary entry",
-    "[the_prince_teen] GOAL_UNCLASSIFIED: goal FollowOwnerGoal (ThePrinceTeen.java:149) has no dictionary entry",
-    "[the_prince_teen] GOAL_UNCLASSIFIED: goal TemptGoal (ThePrinceTeen.java:150) has no dictionary entry",
-    "[the_prince_teen] GOAL_UNCLASSIFIED: goal MyEntityAIWander (ThePrinceTeen.java:151) has no dictionary entry",
-    "[velocity_raptor] GOAL_UNCLASSIFIED: goal FollowOwnerGoal (VelocityRaptor.java:64) has no dictionary entry",
-    "[velocity_raptor] GOAL_UNCLASSIFIED: goal TemptGoal (VelocityRaptor.java:66) has no dictionary entry",
-    "[water_dragon] GOAL_UNCLASSIFIED: goal TemptGoal (WaterDragon.java:133) has no dictionary entry",
-    "[water_dragon] GOAL_UNCLASSIFIED: goal WaterCanonAttackGoal (WaterDragon.java:134) has no dictionary entry",
-    "[water_dragon] GOAL_UNCLASSIFIED: goal RandomSwimmingGoal (WaterDragon.java:135) has no dictionary entry",
-    "[water_dragon] ATTACKING_UNCLASSIFIED: DATA_ATTACKING classified UNCLASSIFIED: the clear sites' guards match neither the pulse nor the target-loss pattern; other clears at line(s) [622] (guards: NOT(if (this.streamCount > 0))) — the owner reads them",
-    "[butterfly] GOAL_UNCLASSIFIED: goal ButterflyIslandsHuntGoal (EntityButterfly.java:74) has no dictionary entry",
-    "[luna_moth] GOAL_UNCLASSIFIED: goal LunaMothFlightGoal (EntityLunaMoth.java:55) has no dictionary entry",
-    "[mosquito] GOAL_UNCLASSIFIED: goal MosquitoFlightGoal (EntityMosquito.java:49) has no dictionary entry",
     "[elevator] BONE_UNLABELLED: bone shape1 has no glossary label",
     "[elevator] BONE_UNLABELLED: bone shape2 has no glossary label",
     "[elevator] BONE_UNLABELLED: bone shape3 has no glossary label",
@@ -5116,22 +5152,22 @@
     "[elevator] BONE_UNLABELLED: bone shape5 has no glossary label"
   ],
   "counts": {
-    "folders": 112,
-    "entity_files": 989,
+    "folders": 116,
+    "entity_files": 1109,
     "package_wide_files": 6,
-    "files": 995,
+    "files": 1115,
     "per_tier": {
       "tier_1": {
-        "registries": 26,
-        "rigs": 20,
-        "not_in_game_registries": 25,
-        "not_in_game_rigs": 19
+        "registries": 28,
+        "rigs": 21,
+        "not_in_game_registries": 27,
+        "not_in_game_rigs": 20
       },
       "tier_2": {
-        "registries": 73,
-        "rigs": 68,
-        "not_in_game_registries": 43,
-        "not_in_game_rigs": 43
+        "registries": 75,
+        "rigs": 70,
+        "not_in_game_registries": 45,
+        "not_in_game_rigs": 45
       },
       "tier_3": {
         "registries": 13,
@@ -5141,27 +5177,10 @@
       }
     },
     "rig_sources": {
-      "reference-leg converter output": 68,
+      "reference-leg converter output": 72,
       "shipped": 44
     },
     "seed_missing": [],
-    "artist_tier_not_packaged": [
-      {
-        "registry": "giant_robot",
-        "why": "the converter refused reference_giantrobot (ValueError: reference_giantrobot capture bind draws [...], which are not cube-bearing geo bones (a part drawn more than once without render_instances, or a part the rig lacks))"
-      },
-      {
-        "registry": "jeffery",
-        "why": "the converter refused reference_giantrobot (ValueError: reference_giantrobot capture bind draws [...], which are not cube-bearing geo bones (a part drawn more than once without render_instances, or a part the rig lacks))"
-      },
-      {
-        "registry": "boyfriend",
-        "why": "no entry whose class is ModelBoyfriend in reference_model_proofs.json — no reference-leg geo can exist for it until the reference leg covers the model"
-      },
-      {
-        "registry": "girlfriend",
-        "why": "no entry whose class is ModelGirlfriend in reference_model_proofs.json — no reference-leg geo can exist for it until the reference leg covers the model"
-      }
-    ]
+    "artist_tier_not_packaged": []
   }
 }

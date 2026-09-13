@@ -6555,6 +6555,16 @@
       "verdict": "leave"
     },
     {
+      "name": "aggro_idle",
+      "loop": "true",
+      "role": "contract",
+      "code_triggered": false,
+      "required": false,
+      "length_rule": "near:1.0",
+      "length_seconds": 1.0,
+      "verdict": "author"
+    },
+    {
       "name": "calm_idle",
       "loop": "true",
       "role": "contract",
@@ -6626,8 +6636,8 @@
       ]
     }
   ],
-  "effort_hours": 32.6,
-  "effort_source": "generator: 4 h + 0.2 h/bone x 93 + 1 h/clip x 10 to author or improve (owner adjusts)",
+  "effort_hours": 33.6,
+  "effort_source": "generator: 4 h + 0.2 h/bone x 93 + 1 h/clip x 11 to author or improve (owner adjusts)",
   "reference_clip": null,
   "exact_transcription": false,
   "rig_source": "reference-leg converter output",

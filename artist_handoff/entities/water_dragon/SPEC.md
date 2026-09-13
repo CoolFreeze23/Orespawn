@@ -104,7 +104,8 @@ This creature has NO exact keyframe transcription and is not yet on its hook (th
 | `walk_neck_fin` | true | parallel layer | w_walk = w_move (1 - w_swim)(1 - w_fly); the gait group additionally x limbSwingAmount (P3) (group neck_fin) | neackfin | 1 s | no | author |  |
 | `walk_jaw` | true | parallel layer | w_walk = w_move (1 - w_swim)(1 - w_fly); the gait group additionally x limbSwingAmount (P3) (group jaw) | jaw | 1 s | no | author |  |
 | `swim` | true | base | w_swim from isInWater() | any of the 24 bones — gait group (speed-scaled): Leg1, Leg2, Leg7, Leg8, body3, body4, tail1, tailbottom, tailmiddle, tailtop; free: body2, headfin, neck1, neck2, neck3, neck4, nose; other groups' bones: Bodyfin (better left to `swim_body_fin`), jaw (better left to `swim_jaw`), leftear (better left to `swim_ears`), neackfin (better left to `swim_neck_fin`), rightear (better left to `swim_ears`); locked (see §7): Head, body1 | 1 s | no | author | the in-water motion (the smooth swimming mover, WaterDragon.java:114; the water speed :223): the same wave, fuller and faster, with the body level |
-| `calm_idle` | true | base | = idle until this creature's SPEC adds a synched attacking byte (ruled 2026-09-06, Q12 (a)) | (as idle) | 1 s | no | covered by idle | covered by idle while the inventory offers no aggro_idle / calm_idle pair (the setAttacking sites sit in the inner WaterCanonAttackGoal, :572 / :622, and the melee goal's IntConsumer, :561); the rest with the flag clear is the jaw shut at −0.25 (:221) and the fins' slow sway |
+| `aggro_idle` | true | base | w_idle x w_aggro (DATA_ATTACKING held) | any of the 24 bones — gait group (speed-scaled): Leg1, Leg2, Leg7, Leg8, body3, body4, tail1, tailbottom, tailmiddle, tailtop; free: body2, headfin, neck1, neck2, neck3, neck4, nose; other groups' bones: Bodyfin (better left to `idle_body_fin`), jaw (better left to `idle_jaw`), leftear (better left to `idle_ears`), neackfin (better left to `idle_neck_fin`), rightear (better left to `idle_ears`); locked (see §7): Head, body1 | 1 s | no | author | the attacking flag set — 1 in reach (the melee goal), 2 while the cannon fires (WaterCanonAttackGoal :572): the jaw chomping or held open (ModelWaterDragon.java:221), the body wave running; offered by the trigger inventory now (TEST-011 (b), owner 2026-09-14, item 5): the inner WaterCanonAttackGoal hands the setter to its parent BugMeleeAttackGoal, whose writes are traced (raised in reach at BugMeleeAttackGoal.java:168, cleared out of reach and on target loss at :176 / :145) beside the cannon's own :572 / :622 — classified STATE, so w_aggro drives this pair |
+| `calm_idle` | true | base | w_idle x (1 - w_aggro) | any of the 24 bones — gait group (speed-scaled): Leg1, Leg2, Leg7, Leg8, body3, body4, tail1, tailbottom, tailmiddle, tailtop; free: body2, headfin, neck1, neck2, neck3, neck4, nose; other groups' bones: Bodyfin (better left to `idle_body_fin`), jaw (better left to `idle_jaw`), leftear (better left to `idle_ears`), neackfin (better left to `idle_neck_fin`), rightear (better left to `idle_ears`); locked (see §7): Head, body1 | 1 s | no | author | the pair is offered now (TEST-011 (b), owner 2026-09-14, item 5: the melee goal's writes traced through the inner WaterCanonAttackGoal's setter, :561, beside its own :572 / :622); the rest with the flag clear is the jaw shut at −0.25 (:221) and the fins' slow sway |
 | `attack` | false | triggered controller | event: a strike (the transport per species by the trigger inventory — ruled 2026-09-06, Q11 (a); §6 says which applies here) | (any unlocked) | 0.5 s | yes | author | the bite: the dinosaur melee goal (Presets.waterDragon, WaterDragon.java:134, :560-562; reach four blocks plus half the target's width) lands doHurtTarget (:285-293) — 20 of damage; author a head strike with the jaw's chomp; the cannon is the `cannon` extra |
 | `hurt` | false | triggered controller | event: hurtTime rising edge (client-observed); the red overlay stays (ruled 2026-09-06, Q4 (a)) | (any unlocked) | 0.4 s | yes | author | a flinch to waterdragon_hurt (getHurtSound :508-511); hurt() (:300-328) refuses damage for 10 ticks and turns it on a mob attacker |
 | `death` | hold_on_last_frame | triggered controller | event: deathTime > 0; the vanilla death flip stays — the pilot ships no death clip (ruled 2026-09-06, Q3 (a)); a creature whose JSON ships one gets the clip-replaces-flip mode when the first such clip arrives, so a `death` delivered here plays under the flip until then | (any unlocked) | 1.5 s | yes | author | ruled 2026-09-06, Q3 (a): the vanilla death flip stays; a creature whose JSON ships a `death` clip gets the clip-replaces-flip mode, designed when the first such clip arrives (the Queen's own death clip the precedent) - a `death` delivered here plays under the flip until then |
@@ -130,9 +131,9 @@ Source: `src/main/java/danger/orespawn/entity/WaterDragon.java` (TamableAnimal)
 | goalSelector | 0 | `FloatGoal` | - | locomotion | bobs up to the surface in water (vanilla) | swim state (client reads isInWater) |
 | goalSelector | 1 | `BreedGoal` | - | social | walks to a mate and breeds (vanilla) | walk |
 | goalSelector | 2 | `OwnerFollowAnyNavGoal` | - | social | follows its owner | walk |
-| goalSelector | 3 | `TemptGoal` | - | UNCLASSIFIED | no entry in the generator's goal dictionary | unknown |
-| goalSelector | 4 | `WaterCanonAttackGoal` | - | UNCLASSIFIED | no entry in the generator's goal dictionary | unknown |
-| goalSelector | 5 | `RandomSwimmingGoal` | - | UNCLASSIFIED | no entry in the generator's goal dictionary | unknown |
+| goalSelector | 3 | `TemptGoal` | - | social | walks toward a nearby player holding the species' tempt item, keeping its eyes on them, and gives up when they put it away or move off (vanilla TemptGoal; the item is the registration's ingredient argument) | walk |
+| goalSelector | 4 | `WaterCanonAttackGoal` | - | attack | OreSpawn dinosaur melee (DinosaurMeleeAttackGoal, waterDragon preset) with the water canon: on a cadence tick out of melee reach, while a burst is loaded it sets attacking 2 (the jaw-open pose) and fires one ownerless WaterBall from the mouth (speed 1.4, spread 5, ballistic lift; 1 in 15 also a SmallFireball) with the bow sound; an empty canon sets attacking 0 and reloads 8 rounds on a 1-in-4 roll (WaterDragon.java:555-629, an inner class) | attack (event); the attacking flag = 2 holds the jaw-open pose through the stream |
+| goalSelector | 5 | `RandomSwimmingGoal` | - | locomotion | a RandomStrollGoal for a swimmer: on the registration's interval picks a random position in the water around it and swims there at the given speed (vanilla RandomSwimmingGoal) | swim state (client reads isInWater) |
 | goalSelector | 6 | `MyEntityAIWanderALot` | - | locomotion | OreSpawn's restless wander: picks a new spot often | walk |
 | goalSelector | 7 | `LookAtPlayerGoal` | - | look | turns the head toward a nearby player (vanilla; head yaw/pitch only) | none: head look, not a clip |
 | goalSelector | 8 | `RandomLookAroundGoal` | - | look | looks around idly (vanilla; head yaw/pitch only) | none: head look, not a clip |
@@ -142,19 +143,27 @@ A `[modern: key]` guard means the goal is registered only under the modern confi
 
 **Synched state flags** (what the client can see): `DATA_ATTACKING` (Integer, line 71)
 
-**Attacking flag `DATA_ATTACKING`** — classified **UNCLASSIFIED** (the clear sites' guards match neither the pulse nor the target-loss pattern; other clears at line(s) [622] (guards: NOT(if (this.streamCount > 0))) — the owner reads them) — a mechanical reading; the owner confirms it against the sites:
+**Attacking flag `DATA_ATTACKING`** — classified **STATE** (cleared when the target is lost at line(s) [145, 176]; other clears at line(s) [622, 153] (guards: NOT(if (this.streamCount > 0)); if (this.params.forgetTargetRoll() > 0 && this.mob.getRandom().nextInt(this.params.forgetTargetRoll()) == 0)) — the owner reads them) — a mechanical reading; the owner confirms it against the sites:
 
 | line | method | sets | guard (the enclosing block) | within | comment |
 |---|---|---|---|---|---|
 | 572 | onOutOfMeleeRange | 2 | if (this.streamCount > 0) | - | orig :625 — pose 2 opens the jaw (ModelWaterDragon) |
 | 622 | onOutOfMeleeRange | 0 | NOT(if (this.streamCount > 0)) | - | orig :643 |
+| ai/BugMeleeAttackGoal.java:132 | stop | 0 | (unguarded: the method body) | - |  [via WaterCanonAttackGoal (registered at line 134)] |
+| ai/BugMeleeAttackGoal.java:145 | tick | 0 | if (target == null \|\| !target.isAlive()) | - |  [via WaterCanonAttackGoal (registered at line 134)] |
+| ai/BugMeleeAttackGoal.java:153 | tick | 0 | if (this.params.forgetTargetRoll() > 0 && this.mob.getRandom().nextInt(this.params.forgetTargetRoll()) == 0) | - |  [via WaterCanonAttackGoal (registered at line 134)] |
+| ai/BugMeleeAttackGoal.java:168 | tick | 1 | if (distSq < reachSq) | - |  [via WaterCanonAttackGoal (registered at line 134)] |
+| ai/BugMeleeAttackGoal.java:176 | tick | 0 | NOT(if (distSq < reachSq)) | - |  [via WaterCanonAttackGoal (registered at line 134)] |
 
 The guard is the header of the block that actually encloses the write (found by brace depth, comments and strings blanked); an `else` branch is written as the negated `if` chain it closes; a header the parser cannot read is `(unparsed: ...)`, never dropped.
+
+The flag's writes traced into the goal class the entity hands its setter to (TEST-011 (b); the `[via ...]` rows above): `WaterCanonAttackGoal` registered at line 134 (``) — ai/DinosaurMeleeAttackGoal.java, ai/BugMeleeAttackGoal.java, sites ai/BugMeleeAttackGoal.java:132, ai/BugMeleeAttackGoal.java:145, ai/BugMeleeAttackGoal.java:153, ai/BugMeleeAttackGoal.java:168, ai/BugMeleeAttackGoal.java:176.
 
 **Locomotion facts:** has a baby form (the renderer halves the scale). Overrides: hurt, doHurtTarget, aiStep, customServerAiStep.
 
 **Strike and launch sites:**
 
+- melee `doHurtTarget(target)` — ai/BugMeleeAttackGoal.java:172 in `tick`, guard: (unparsed: boolean hit =) within if (this.mob.getRandom().nextInt(this.params.outerAttackRoll()) == 0 || this.mob.getRandom().nextInt(this.params.innerAttackRoll()) == 1) within if (distSq < reachSq)
 - ranged `new SmallFireball(...)` — WaterDragon.java:577 in `onOutOfMeleeRange`
 - ranged `new WaterBall(...)` — WaterDragon.java:599 in `onOutOfMeleeRange`
 
@@ -165,7 +174,8 @@ The guard is the header of the block that actually encloses the write (found by 
 | `walk` | limbSwingAmount from AnimationState (the seam's input; 0 at rest, 1 at full stride) | the gait group's weight and speed scale (P3) |
 | `idle` | w_idle = (1 - w_move)(1 - w_swim)(1 - w_fly) | standing still |
 | `swim` | Entity.isInWater() (client-evaluated); FloatGoal keeps it at the surface | falls back to walk then idle when absent (§2.4) |
-| `aggro_idle / calm_idle / attack` | DATA_ATTACKING classified UNCLASSIFIED: the clear sites' guards match neither the pulse nor the target-loss pattern; other clears at line(s) [622] (guards: NOT(if (this.streamCount > 0))) — the owner reads them | OWNER READS THE SITES (listed below) — a mechanical reading; the owner confirms which of the ruled transports applies (ruled 2026-09-06, Q11 (a) / Q12 (a)) |
+| `aggro_idle / calm_idle` | DATA_ATTACKING held while engaged (cleared when the target is lost at line(s) [145, 176]; other clears at line(s) [622, 153] (guards: NOT(if (this.streamCount > 0)); if (this.params.forgetTargetRoll() > 0 && this.mob.getRandom().nextInt(this.params.forgetTargetRoll()) == 0)) — the owner reads them) | STATE flag drives w_aggro (§4.3) |
+| `attack` | melee: LivingDamageEvent.Post -> triggerAnim packet (transport 1); ranged: named launch sites (transport 3) | the transport per species by the trigger inventory (ruled 2026-09-06, Q11 (a)): this flag is held, not pulsed at the strike, so the signal column's transport applies — the server LivingDamageEvent.Post -> triggerAnim packet for melee, a named launch site for ranged |
 | `hurt` | rising edge of LivingEntity.hurtTime (0 -> 10), client-observed | always available; the red overlay stays (ruled 2026-09-06, Q4 (a)) |
 | `death` | LivingEntity.deathTime > 0, client-observed | hold_on_last_frame; the vanilla death flip stays and the pilot ships no death clip (ruled 2026-09-06, Q3 (a)); a creature whose JSON ships a `death` clip gets the clip-replaces-flip mode, designed when the first such clip arrives (the Queen's own death clip the precedent) — until then a delivered `death` plays under the flip |
 | `idle_alt_N` | a roll at each idle loop boundary (p = 0.15) while w_idle > 0.9 | optional; one roll per idle loop boundary, p = 0.15, a uniform choice, only while the idle weight is above 0.9 and no triggered clip plays, keyed on the clip-clock cycle index (ruled 2026-09-06, Q5 (a)) |
@@ -201,7 +211,7 @@ Intended locked bones — provisional — the design's section 6 proposal, not y
 ## 10. Effort and priority
 
 - Artist scope: full contract (Tier 1, the state-branching class: geckolib_migration_design.md section 5) with the §8.1 locks; the rig is not yet in-game (it lands through the seam in a later slice).
-- Estimated effort: 34.1 h (generator: 8 h + 0.15 h/bone x 24 + 1.5 h/clip x 15 to author or improve (owner adjusts)).
+- Estimated effort: 37.1 h (generator: 8 h + 0.15 h/bone x 24 + 1.5 h/clip x 17 to author or improve (owner adjusts)).
 - Tier 1 (boss) (state-branching — setupAnim branches on entity state).
 
 ## 11. What 'done' looks like for this entity

@@ -98,7 +98,8 @@ This creature has NO exact keyframe transcription and is not yet on its hook (th
 | `walk_jaw` | true | parallel layer | w_walk = w_move (1 - w_swim)(1 - w_fly); the gait group additionally x limbSwingAmount (P3) (group jaw) | jaw | 1 s | no | author |  |
 | `walk_arms` | true | parallel layer | w_walk = w_move (1 - w_swim)(1 - w_fly); the gait group additionally x limbSwingAmount (P3) (group arms) | shape11, shape17 | 1 s | no | author |  |
 | `swim` | true | base | w_swim from isInWater() | any of the 27 bones — gait group (speed-scaled): leftleg, leftleg2, leftleg3, leftleg4, rightleg, rightleg2, rightleg3, rightleg4; free: shape18, shape19, shape2, shape20, shape21, shape4, shape6, spine1, spine2, spine3, spine4, spine5; other groups' bones: jaw (better left to `swim_jaw`), shape11 (better left to `swim_arms`), shape17 (better left to `swim_arms`); locked (see §7): shape1, shape3, shape5, tail_extension | 1 s | no | leave | no swim state: FloatGoal (TRex.java:75) only bobs it to the surface; the contract's fallback to walk stands |
-| `calm_idle` | true | base | = idle until this creature's SPEC adds a synched attacking byte (ruled 2026-09-06, Q12 (a)) | (as idle) | 1 s | no | covered by idle | covered by idle while the inventory offers no aggro_idle / calm_idle pair (DATA_ATTACKING classified NONE: the flag is set through the goal's IntConsumer, TRex.java:76); the rest with the flag clear is the jaw at 0.1 (:240) and the arms waving (:242-243) |
+| `aggro_idle` | true | base | w_idle x w_aggro (DATA_ATTACKING held) | any of the 27 bones — gait group (speed-scaled): leftleg, leftleg2, leftleg3, leftleg4, rightleg, rightleg2, rightleg3, rightleg4; free: shape18, shape19, shape2, shape20, shape21, shape4, shape6, spine1, spine2, spine3, spine4, spine5; other groups' bones: jaw (better left to `idle_jaw`), shape11 (better left to `idle_arms`), shape17 (better left to `idle_arms`); locked (see §7): shape1, shape3, shape5, tail_extension | 1 s | no | author | the attacking flag (set by the melee goal, TRex.java:76): the jaw chomping (ModelTRex.java:239) — a lowered, stalking head to go with it; offered by the trigger inventory now (TEST-011 (b), owner 2026-09-14, item 5): the flag's writes are traced into the goal the entity hands its setter to (DinosaurMeleeAttackGoal, a BugMeleeAttackGoal: raised in reach at BugMeleeAttackGoal.java:168, cleared out of reach and on target loss at :176 / :145) — classified STATE, so w_aggro drives this pair |
+| `calm_idle` | true | base | w_idle x (1 - w_aggro) | any of the 27 bones — gait group (speed-scaled): leftleg, leftleg2, leftleg3, leftleg4, rightleg, rightleg2, rightleg3, rightleg4; free: shape18, shape19, shape2, shape20, shape21, shape4, shape6, spine1, spine2, spine3, spine4, spine5; other groups' bones: jaw (better left to `idle_jaw`), shape11 (better left to `idle_arms`), shape17 (better left to `idle_arms`); locked (see §7): shape1, shape3, shape5, tail_extension | 1 s | no | author | the pair is offered now (TEST-011 (b), owner 2026-09-14, item 5: the flag's writes traced into the goal, BugMeleeAttackGoal.java:145-176, from the setter handed at TRex.java:76); the rest with the flag clear is the jaw at 0.1 (:240) and the arms waving (:242-243) |
 | `attack` | false | triggered controller | event: a strike (the transport per species by the trigger inventory — ruled 2026-09-06, Q11 (a); §6 says which applies here) | (any unlocked) | 0.5 s | yes | author | the bite: the dinosaur melee goal (TRex.java:76-77, reach four blocks plus half the target's width on two dice) lands doHurtTarget (:314-328) — 22 of damage and a 1.2 knockback; author a lunging bite with the jaw's chomp |
 | `hurt` | false | triggered controller | event: hurtTime rising edge (client-observed); the red overlay stays (ruled 2026-09-06, Q4 (a)) | (any unlocked) | 0.4 s | yes | author | a flinch to alo_hurt (getHurtSound :285-289); hurt() (:331-345) stores the attacker for revenge |
 | `death` | hold_on_last_frame | triggered controller | event: deathTime > 0; the vanilla death flip stays — the pilot ships no death clip (ruled 2026-09-06, Q3 (a)); a creature whose JSON ships one gets the clip-replaces-flip mode when the first such clip arrives, so a `death` delivered here plays under the flip until then | (any unlocked) | 1.5 s | yes | author | ruled 2026-09-06, Q3 (a): the vanilla death flip stays; a creature whose JSON ships a `death` clip gets the clip-replaces-flip mode, designed when the first such clip arrives (the Queen's own death clip the precedent) - a `death` delivered here plays under the flip until then |
@@ -110,7 +111,7 @@ Loop values are the JSON `loop` field exactly: `true` for cycles, `false` for on
 
 
 - in `walk`: the code swings each leg as one stiff chain (ModelTRex.java:228-236); bend the knee and ankle on the forward swing and let the torso and tail counter-sway — the head is static in the code, so a head bob is all yours
-- in `attack`'s wind-up: the jaw chomp (:239) with the head lowered and turned on the target — the code never turns the head; the contract's aggro_idle would carry it, but the trigger inventory does not offer it here (the flag is set through the goal's IntConsumer, TRex.java:76)
+- in `attack`'s wind-up: the jaw chomp (:239) with the head lowered and turned on the target — the code never turns the head; the contract's aggro_idle carries it — offered now (TEST-011 (b): the flag's writes traced into the goal, from the setter handed at TRex.java:76)
 - in `attack`: a lunging bite; the reach is four blocks plus half the target's width (DinosaurMeleeAttackGoal.Presets.trex, TRex.java:76-77)
 - in `idle`: keep the tiny arms' slow wave (:242-243) and add a breath on the torso
 
@@ -131,18 +132,26 @@ A `[modern: key]` guard means the goal is registered only under the modern confi
 
 **Synched state flags** (what the client can see): `DATA_ATTACKING` (Integer, line 33)
 
-**Attacking flag `DATA_ATTACKING`** — classified **NONE** (no setAttacking sites) — a mechanical reading; the owner confirms it against the sites:
+**Attacking flag `DATA_ATTACKING`** — classified **STATE** (cleared when the target is lost at line(s) [145, 176]; other clears at line(s) [153] (guards: if (this.params.forgetTargetRoll() > 0 && this.mob.getRandom().nextInt(this.params.forgetTargetRoll()) == 0)) — the owner reads them) — a mechanical reading; the owner confirms it against the sites:
 
 | line | method | sets | guard (the enclosing block) | within | comment |
 |---|---|---|---|---|---|
+| ai/BugMeleeAttackGoal.java:132 | stop | 0 | (unguarded: the method body) | - |  [via DinosaurMeleeAttackGoal (registered at line 76)] |
+| ai/BugMeleeAttackGoal.java:145 | tick | 0 | if (target == null \|\| !target.isAlive()) | - |  [via DinosaurMeleeAttackGoal (registered at line 76)] |
+| ai/BugMeleeAttackGoal.java:153 | tick | 0 | if (this.params.forgetTargetRoll() > 0 && this.mob.getRandom().nextInt(this.params.forgetTargetRoll()) == 0) | - |  [via DinosaurMeleeAttackGoal (registered at line 76)] |
+| ai/BugMeleeAttackGoal.java:168 | tick | 1 | if (distSq < reachSq) | - |  [via DinosaurMeleeAttackGoal (registered at line 76)] |
+| ai/BugMeleeAttackGoal.java:176 | tick | 0 | NOT(if (distSq < reachSq)) | - |  [via DinosaurMeleeAttackGoal (registered at line 76)] |
 
 The guard is the header of the block that actually encloses the write (found by brace depth, comments and strings blanked); an `else` branch is written as the negated `if` chain it closes; a header the parser cannot read is `(unparsed: ...)`, never dropped.
+
+The flag's writes traced into the goal class the entity hands its setter to (TEST-011 (b); the `[via ...]` rows above): `DinosaurMeleeAttackGoal` registered at line 76 (`this, this::setAttacking, DinosaurMeleeAttackGoal.Presets.trex()`) — ai/DinosaurMeleeAttackGoal.java, ai/BugMeleeAttackGoal.java, sites ai/BugMeleeAttackGoal.java:132, ai/BugMeleeAttackGoal.java:145, ai/BugMeleeAttackGoal.java:153, ai/BugMeleeAttackGoal.java:168, ai/BugMeleeAttackGoal.java:176.
 
 **Locomotion facts:** a walker. Overrides: hurt, doHurtTarget, customServerAiStep, removeWhenFarAway.
 
 **Strike and launch sites:**
 
 - melee `doHurtTarget(target)` — TRex.java:315 in `doHurtTarget`
+- melee `doHurtTarget(target)` — ai/BugMeleeAttackGoal.java:172 in `tick`, guard: (unparsed: boolean hit =) within if (this.mob.getRandom().nextInt(this.params.outerAttackRoll()) == 0 || this.mob.getRandom().nextInt(this.params.innerAttackRoll()) == 1) within if (distSq < reachSq)
 
 **What fires each contract clip:**
 
@@ -151,7 +160,8 @@ The guard is the header of the block that actually encloses the write (found by 
 | `walk` | limbSwingAmount from AnimationState (the seam's input; 0 at rest, 1 at full stride) | the gait group's weight and speed scale (P3) |
 | `idle` | w_idle = (1 - w_move)(1 - w_swim)(1 - w_fly) | standing still |
 | `swim` | Entity.isInWater() (client-evaluated); FloatGoal keeps it at the surface | falls back to walk then idle when absent (§2.4) |
-| `aggro_idle / calm_idle / attack` | DATA_ATTACKING classified NONE: no setAttacking sites | OWNER READS THE SITES (listed below) — a mechanical reading; the owner confirms which of the ruled transports applies (ruled 2026-09-06, Q11 (a) / Q12 (a)) |
+| `aggro_idle / calm_idle` | DATA_ATTACKING held while engaged (cleared when the target is lost at line(s) [145, 176]; other clears at line(s) [153] (guards: if (this.params.forgetTargetRoll() > 0 && this.mob.getRandom().nextInt(this.params.forgetTargetRoll()) == 0)) — the owner reads them) | STATE flag drives w_aggro (§4.3) |
+| `attack` | melee: LivingDamageEvent.Post -> triggerAnim packet (transport 1); ranged: named launch sites (transport 3) | the transport per species by the trigger inventory (ruled 2026-09-06, Q11 (a)): this flag is held, not pulsed at the strike, so the signal column's transport applies — the server LivingDamageEvent.Post -> triggerAnim packet for melee, a named launch site for ranged |
 | `hurt` | rising edge of LivingEntity.hurtTime (0 -> 10), client-observed | always available; the red overlay stays (ruled 2026-09-06, Q4 (a)) |
 | `death` | LivingEntity.deathTime > 0, client-observed | hold_on_last_frame; the vanilla death flip stays and the pilot ships no death clip (ruled 2026-09-06, Q3 (a)); a creature whose JSON ships a `death` clip gets the clip-replaces-flip mode, designed when the first such clip arrives (the Queen's own death clip the precedent) — until then a delivered `death` plays under the flip |
 | `idle_alt_N` | a roll at each idle loop boundary (p = 0.15) while w_idle > 0.9 | optional; one roll per idle loop boundary, p = 0.15, a uniform choice, only while the idle weight is above 0.9 and no triggered clip plays, keyed on the clip-clock cycle index (ruled 2026-09-06, Q5 (a)) |
@@ -184,7 +194,7 @@ Intended locked bones — provisional — the design's section 6 proposal, not y
 ## 10. Effort and priority
 
 - Artist scope: full contract (Tier 1, the gait-scaled class: geckolib_migration_design.md section 5) with the §8.1 locks; the rig is not yet in-game (it lands through the seam in a later slice).
-- Estimated effort: 25.6 h (generator: 8 h + 0.15 h/bone x 27 + 1.5 h/clip x 9 to author or improve (owner adjusts)).
+- Estimated effort: 28.6 h (generator: 8 h + 0.15 h/bone x 27 + 1.5 h/clip x 11 to author or improve (owner adjusts)).
 - Tier 1 (boss) (gait-scaled — trigonometric pose depends on limbSwingAmount).
 
 ## 11. What 'done' looks like for this entity

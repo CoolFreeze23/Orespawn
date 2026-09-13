@@ -107,7 +107,8 @@ This creature has NO exact keyframe transcription and is not yet on its hook (th
 | `walk_jaw` | true | parallel layer | w_walk = w_move (1 - w_swim)(1 - w_fly); the gait group additionally x limbSwingAmount (P3) (group jaw) | MouthBottom | 1 s | no | author |  |
 | `walk_tongue` | true | parallel layer | w_walk = w_move (1 - w_swim)(1 - w_fly); the gait group additionally x limbSwingAmount (P3) (group tongue) | ToungBase, MiddleTounge, ForkLeft, ForkRight | 1 s | no | author |  |
 | `swim` | true | base | w_swim from isInWater() | any of the 34 bones — gait group (speed-scaled): TailTip, t10, t11, t12, t13, t14, t15, t16, t17, t18, t19, t2, t20, t21, t3, t4, t5, t6, t7, t8, t9, tBase; free: EyeLeft, EyeRight, FangLeft, FangRight, Head, MouthTop, Neck; other groups' bones: ForkLeft (better left to `swim_tongue`), ForkRight (better left to `swim_tongue`), MiddleTounge (better left to `swim_tongue`), MouthBottom (better left to `swim_jaw`), ToungBase (better left to `swim_tongue`) | 1 s | no | author | its element: a water-bound navigator (SeaViper.java:148-151) with a swimming move control (:100-101), 0.75 speed in water (:59, :205-206) and a RandomSwimmingGoal (:120); the code draws the same wave in water (no water branch) — author the swim as the full-speed serpentine and leave walk to the land crawl; optional: falls back to walk then idle when absent (section 2.4) |
-| `calm_idle` | true | base | = idle until this creature's SPEC adds a synched attacking byte (ruled 2026-09-06, Q12 (a)) | (as idle) | 1 s | no | author | the flag at 0 (BugMeleeAttackGoal.java:132, :145, :176): the jaw's 4-degree breath and the slow tongue (ModelSeaViper.java:294-303) — the same rest as idle |
+| `aggro_idle` | true | base | w_idle x w_aggro (DATA_ATTACKING held) | any of the 34 bones — gait group (speed-scaled): TailTip, t10, t11, t12, t13, t14, t15, t16, t17, t18, t19, t2, t20, t21, t3, t4, t5, t6, t7, t8, t9, tBase; free: EyeLeft, EyeRight, FangLeft, FangRight, Head, MouthTop, Neck; other groups' bones: ForkLeft (better left to `idle_tongue`), ForkRight (better left to `idle_tongue`), MiddleTounge (better left to `idle_tongue`), MouthBottom (better left to `idle_jaw`), ToungBase (better left to `idle_tongue`) | 1 s | no | author | DATA_ATTACKING held at 1 while it stands in reach (SeaViper.java:56-57, :195-197; BugMeleeAttackGoal.java:168): the jaw chattering 31 degrees at 0.85/tick and the tongue's fast flick (ModelSeaViper.java:280-291) over the coiled body |
+| `calm_idle` | true | base | w_idle x (1 - w_aggro) | any of the 34 bones — gait group (speed-scaled): TailTip, t10, t11, t12, t13, t14, t15, t16, t17, t18, t19, t2, t20, t21, t3, t4, t5, t6, t7, t8, t9, tBase; free: EyeLeft, EyeRight, FangLeft, FangRight, Head, MouthTop, Neck; other groups' bones: ForkLeft (better left to `idle_tongue`), ForkRight (better left to `idle_tongue`), MiddleTounge (better left to `idle_tongue`), MouthBottom (better left to `idle_jaw`), ToungBase (better left to `idle_tongue`) | 1 s | no | author | the flag at 0 (BugMeleeAttackGoal.java:132, :145, :176): the jaw's 4-degree breath and the slow tongue (ModelSeaViper.java:294-303) — the same rest as idle |
 | `attack` | false | triggered controller | event: a strike (the transport per species by the trigger inventory — ruled 2026-09-06, Q11 (a); §6 says which applies here) | (any unlocked) | 0.5 s | yes | author | the bite: doHurtTarget (SeaViper.java:209-226) for 22 with a 0.8 / 0.14 knockback and poison one time in two for 6 s (8 on Easy; SeaViperBiteGoal.java:22-31), rolled within 4.5 blocks plus half the target's width on a 1-in-5 cadence tick (BugMeleeAttackGoal.java:159-174; Presets.seaViper: nextInt(2) == 0 or nextInt(4) == 1); the flag is held while in reach, not pulsed at the strike, so the strike is transport 1 (the server LivingDamageEvent.Post) — a strike of the head with the jaw snapping shut |
 | `hurt` | false | triggered controller | event: hurtTime rising edge (client-observed); the red overlay stays (ruled 2026-09-06, Q4 (a)) | (any unlocked) | 0.4 s | yes | author | a flinch: hurt() (SeaViper.java:228-250) refuses cactus and other vipers, takes one hit per 5 ticks (:235-238) and turns on a mob attacker (:245-248); the seaviper_hit sound (:398-401); the hurtTime edge is client-observed |
 | `death` | hold_on_last_frame | triggered controller | event: deathTime > 0; the vanilla death flip stays — the pilot ships no death clip (ruled 2026-09-06, Q3 (a)); a creature whose JSON ships one gets the clip-replaces-flip mode when the first such clip arrives, so a `death` delivered here plays under the flip until then | (any unlocked) | 1.5 s | yes | author | ruled 2026-09-06, Q3 (a): the vanilla death flip stays; a creature whose JSON ships a `death` clip gets the clip-replaces-flip mode, designed when the first such clip arrives (the Queen's own death clip the precedent) - a `death` delivered here plays under the flip until then |
@@ -123,7 +124,7 @@ Loop values are the JSON `loop` field exactly: `true` for cycles, `false` for on
 - in `swim`: the code's wave is uniform down all 22 segments (ModelSeaViper.java:331-343) — let the amplitude grow toward the tail and add a vertical undulation; the segments are yaw-only today
 - in `walk` (the land crawl at 0.25, SeaViper.java:59-60): a heavier, slower serpentine with the head raised; the code plays the swim wave scaled by speed
 - in `attack`: a strike — the head is look-only (:312-324) and the neck static (:97-100); a coil-and-lunge with the jaw snapping on the bite (SeaViper.java:209-226)
-- in `aggro_idle`: the coiled S-curve the code holds at rest (:342) with the head raised and weaving; keep the 31-degree chatter (:282-283) and the fast tongue (:285-291) — NOT accepted by `check` today: `aggro_idle` is not in this creature's clip set
+- in `aggro_idle`: the coiled S-curve the code holds at rest (:342) with the head raised and weaving; keep the 31-degree chatter (:282-283) and the fast tongue (:285-291)
 
 ## 6. Trigger inventory (generated from the entity's AI goals and state flags)
 
@@ -132,8 +133,8 @@ Source: `src/main/java/danger/orespawn/entity/SeaViper.java` (Monster)
 | selector | prio | goal | guard | category | what it does | bears on |
 |---|---|---|---|---|---|---|
 | goalSelector | 0 | `FloatGoal` | - | locomotion | bobs up to the surface in water (vanilla) | swim state (client reads isInWater) |
-| goalSelector | 1 | `SeaViperBiteGoal` | - | UNCLASSIFIED | no entry in the generator's goal dictionary | unknown |
-| goalSelector | 2 | `RandomSwimmingGoal` | - | UNCLASSIFIED | no entry in the generator's goal dictionary | unknown |
+| goalSelector | 1 | `SeaViperBiteGoal` | - | attack | OreSpawn dinosaur melee (DinosaurMeleeAttackGoal, seaViper preset: 1-in-5 cadence, reach 4.5 + half width, stands down under PlayNicely) whose landed bite also poisons the target for 6 s (8 s on Easy) on a 1-in-2 roll (SeaViperBiteGoal.java:18-31) | attack (event) |
+| goalSelector | 2 | `RandomSwimmingGoal` | - | locomotion | a RandomStrollGoal for a swimmer: on the registration's interval picks a random position in the water around it and swims there at the given speed (vanilla RandomSwimmingGoal) | swim state (client reads isInWater) |
 | goalSelector | 3 | `MyEntityAIWanderALot` | - | locomotion | OreSpawn's restless wander: picks a new spot often | walk |
 | goalSelector | 4 | `LookAtPlayerGoal` | - | look | turns the head toward a nearby player (vanilla; head yaw/pitch only) | none: head look, not a clip |
 | goalSelector | 5 | `LookAtPlayerGoal` | - | look | turns the head toward a nearby player (vanilla; head yaw/pitch only) | none: head look, not a clip |
@@ -144,18 +145,26 @@ A `[modern: key]` guard means the goal is registered only under the modern confi
 
 **Synched state flags** (what the client can see): `DATA_ATTACKING` (Integer, line 56)
 
-**Attacking flag `DATA_ATTACKING`** — classified **NONE** (no setAttacking sites) — a mechanical reading; the owner confirms it against the sites:
+**Attacking flag `DATA_ATTACKING`** — classified **STATE** (cleared when the target is lost at line(s) [145, 176]; other clears at line(s) [153] (guards: if (this.params.forgetTargetRoll() > 0 && this.mob.getRandom().nextInt(this.params.forgetTargetRoll()) == 0)) — the owner reads them) — a mechanical reading; the owner confirms it against the sites:
 
 | line | method | sets | guard (the enclosing block) | within | comment |
 |---|---|---|---|---|---|
+| ai/BugMeleeAttackGoal.java:132 | stop | 0 | (unguarded: the method body) | - |  [via SeaViperBiteGoal (registered at line 119)] |
+| ai/BugMeleeAttackGoal.java:145 | tick | 0 | if (target == null \|\| !target.isAlive()) | - |  [via SeaViperBiteGoal (registered at line 119)] |
+| ai/BugMeleeAttackGoal.java:153 | tick | 0 | if (this.params.forgetTargetRoll() > 0 && this.mob.getRandom().nextInt(this.params.forgetTargetRoll()) == 0) | - |  [via SeaViperBiteGoal (registered at line 119)] |
+| ai/BugMeleeAttackGoal.java:168 | tick | 1 | if (distSq < reachSq) | - |  [via SeaViperBiteGoal (registered at line 119)] |
+| ai/BugMeleeAttackGoal.java:176 | tick | 0 | NOT(if (distSq < reachSq)) | - |  [via SeaViperBiteGoal (registered at line 119)] |
 
 The guard is the header of the block that actually encloses the write (found by brace depth, comments and strings blanked); an `else` branch is written as the negated `if` chain it closes; a header the parser cannot read is `(unparsed: ...)`, never dropped.
+
+The flag's writes traced into the goal class the entity hands its setter to (TEST-011 (b); the `[via ...]` rows above): `SeaViperBiteGoal` registered at line 119 (`this, this::setAttacking`) — ai/SeaViperBiteGoal.java, ai/DinosaurMeleeAttackGoal.java, ai/BugMeleeAttackGoal.java, sites ai/BugMeleeAttackGoal.java:132, ai/BugMeleeAttackGoal.java:145, ai/BugMeleeAttackGoal.java:153, ai/BugMeleeAttackGoal.java:168, ai/BugMeleeAttackGoal.java:176.
 
 **Locomotion facts:** a walker. Overrides: hurt, doHurtTarget, aiStep, customServerAiStep.
 
 **Strike and launch sites:**
 
 - melee `doHurtTarget(target)` — SeaViper.java:215 in `doHurtTarget`
+- melee `doHurtTarget(target)` — ai/BugMeleeAttackGoal.java:172 in `tick`, guard: (unparsed: boolean hit =) within if (this.mob.getRandom().nextInt(this.params.outerAttackRoll()) == 0 || this.mob.getRandom().nextInt(this.params.innerAttackRoll()) == 1) within if (distSq < reachSq)
 
 **What fires each contract clip:**
 
@@ -164,7 +173,8 @@ The guard is the header of the block that actually encloses the write (found by 
 | `walk` | limbSwingAmount from AnimationState (the seam's input; 0 at rest, 1 at full stride) | the gait group's weight and speed scale (P3) |
 | `idle` | w_idle = (1 - w_move)(1 - w_swim)(1 - w_fly) | standing still |
 | `swim` | Entity.isInWater() (client-evaluated); FloatGoal keeps it at the surface | falls back to walk then idle when absent (§2.4) |
-| `aggro_idle / calm_idle / attack` | DATA_ATTACKING classified NONE: no setAttacking sites | OWNER READS THE SITES (listed below) — a mechanical reading; the owner confirms which of the ruled transports applies (ruled 2026-09-06, Q11 (a) / Q12 (a)) |
+| `aggro_idle / calm_idle` | DATA_ATTACKING held while engaged (cleared when the target is lost at line(s) [145, 176]; other clears at line(s) [153] (guards: if (this.params.forgetTargetRoll() > 0 && this.mob.getRandom().nextInt(this.params.forgetTargetRoll()) == 0)) — the owner reads them) | STATE flag drives w_aggro (§4.3) |
+| `attack` | melee: LivingDamageEvent.Post -> triggerAnim packet (transport 1); ranged: named launch sites (transport 3) | the transport per species by the trigger inventory (ruled 2026-09-06, Q11 (a)): this flag is held, not pulsed at the strike, so the signal column's transport applies — the server LivingDamageEvent.Post -> triggerAnim packet for melee, a named launch site for ranged |
 | `hurt` | rising edge of LivingEntity.hurtTime (0 -> 10), client-observed | always available; the red overlay stays (ruled 2026-09-06, Q4 (a)) |
 | `death` | LivingEntity.deathTime > 0, client-observed | hold_on_last_frame; the vanilla death flip stays and the pilot ships no death clip (ruled 2026-09-06, Q3 (a)); a creature whose JSON ships a `death` clip gets the clip-replaces-flip mode, designed when the first such clip arrives (the Queen's own death clip the precedent) — until then a delivered `death` plays under the flip |
 | `idle_alt_N` | a roll at each idle loop boundary (p = 0.15) while w_idle > 0.9 | optional; one roll per idle loop boundary, p = 0.15, a uniform choice, only while the idle weight is above 0.9 and no triggered clip plays, keyed on the clip-clock cycle index (ruled 2026-09-06, Q5 (a)) |
@@ -186,7 +196,7 @@ No MultiHitboxLib profile: no locked bones. Every bone name is still immutable (
 ## 10. Effort and priority
 
 - Artist scope: full contract (Tier 2, the state-branching class: geckolib_migration_design.md section 5); the rig is not yet in-game (it lands through the seam in a later slice).
-- Estimated effort: 23.8 h (generator: 4 h + 0.2 h/bone x 34 + 1 h/clip x 13 to author or improve (owner adjusts)).
+- Estimated effort: 24.8 h (generator: 4 h + 0.2 h/bone x 34 + 1 h/clip x 14 to author or improve (owner adjusts)).
 - Tier 2 (state-branching — setupAnim branches on entity state).
 - Density statement (the harness's, not the artist's; ruled 2026-09-06, Q9 (a) and Q10): the classic transcription is verified at 2.5e-3 rad — Beaver reference leg 15 / 13 / 8 catmullrom keys per bone with spline arguments repaired at load; wrap sample T−ε vs 0+ε included; the key counts per bone are an output of the harness, re-derived on every re-transcription.
 

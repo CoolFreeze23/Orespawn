@@ -117,8 +117,8 @@ Source: `src/main/java/danger/orespawn/entity/EntityGammaMetroid.java` (TamableA
 |---|---|---|---|---|---|---|
 | goalSelector | 0 | `FloatGoal` | - | locomotion | bobs up to the surface in water (vanilla) | swim state (client reads isInWater) |
 | goalSelector | 1 | `BreedGoal` | - | social | walks to a mate and breeds (vanilla) | walk |
-| goalSelector | 2 | `FollowOwnerGoal` | - | UNCLASSIFIED | no entry in the generator's goal dictionary | unknown |
-| goalSelector | 3 | `TemptGoal` | - | UNCLASSIFIED | no entry in the generator's goal dictionary | unknown |
+| goalSelector | 2 | `FollowOwnerGoal` | - | social | follows its owner (vanilla tamed-pet goal): when not ordered to sit and the owner is beyond the start distance it paths to them at the registration's speed, teleporting to a safe spot beside them when too far to path, and releases inside the stop distance (vanilla FollowOwnerGoal) | walk |
+| goalSelector | 3 | `TemptGoal` | - | social | walks toward a nearby player holding the species' tempt item, keeping its eyes on them, and gives up when they put it away or move off (vanilla TemptGoal; the item is the registration's ingredient argument) | walk |
 | goalSelector | 4 | `WaterAvoidingRandomStrollGoal` | - | locomotion | strolls to random spots, avoiding water (vanilla) | walk |
 | goalSelector | 5 | `LookAtPlayerGoal` | - | look | turns the head toward a nearby player (vanilla; head yaw/pitch only) | none: head look, not a clip |
 | goalSelector | 6 | `RandomLookAroundGoal` | - | look | looks around idly (vanilla; head yaw/pitch only) | none: head look, not a clip |

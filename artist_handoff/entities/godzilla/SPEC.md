@@ -202,6 +202,7 @@ The guard is the header of the block that actually encloses the write (found by 
 
 - melee `doHurtTarget(currentTarget)` — Godzilla.java:783 in `customServerAiStep`, guard: if (this.getRandom().nextInt(Math.max(1, 4 - this.largeUnknownDetected)) == 0 || this.getRandom().nextInt(Math.max(1, 3 - this.largeUnknownDetected)) == 1) within NOT(if (this.getRandom().nextInt(65) == 1 && this.myGetDistanceSqToEntity(currentTarget) > 300.0)) AND NOT(else if (this.getRandom().nextInt(Math.max(1, 20 - this.largeUnknownDetected * 5)) == 1 && this.jumpTimer == 0)) AND else if (this.myGetDistanceSqToEntity(currentTarget) < (double) (300.0f + currentTarget.getBbWidth() / 2.0f * (currentTarget.getBbWidth() / 2.0f))) within if (currentTarget != null)
 - melee `doHurtTarget(target)` — Godzilla.java:834 in `doHurtTarget`
+- melee (a direct hurt on the victim) `targetEntity.hurt(this.damageSources().mobAttack(this), 100.0f)` — Godzilla.java:562 in `doLightningAttack`
 - ranged `new BetterFireball(...)` — Godzilla.java:527 in `fireCannon`
 - ranged `new BetterFireball(...)` — Godzilla.java:540 in `fireCannon`
 - ranged `new LightningBolt(...)` — Godzilla.java:570 in `doLightningAttack`

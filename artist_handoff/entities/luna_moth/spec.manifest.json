@@ -732,6 +732,16 @@
       "verdict": "covered by idle"
     },
     {
+      "name": "attack",
+      "loop": "false",
+      "role": "contract",
+      "code_triggered": true,
+      "required": false,
+      "length_rule": "near:0.5",
+      "length_seconds": 0.5,
+      "verdict": "leave"
+    },
+    {
       "name": "hurt",
       "loop": "false",
       "role": "contract",

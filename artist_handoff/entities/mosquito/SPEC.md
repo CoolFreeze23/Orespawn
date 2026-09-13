@@ -78,7 +78,7 @@ Source: `src/main/java/danger/orespawn/entity/EntityMosquito.java` (AmbientCreat
 
 | selector | prio | goal | guard | category | what it does | bears on |
 |---|---|---|---|---|---|---|
-| goalSelector | 8 | `MosquitoFlightGoal` | - | UNCLASSIFIED | no entry in the generator's goal dictionary | unknown |
+| goalSelector | 8 | `MosquitoFlightGoal` | - | locomotion | the mosquito's ambient flight (AmbientFlightGoal, mosquito preset) where one retarget in ten aims the flight target at the nearest player within 16 blocks, two blocks above their feet; every other retarget a random air cell (MosquitoFlightGoal.java:22-39) | fly |
 
 A `[modern: key]` guard means the goal is registered only under the modern config key named (read once, at construction); `UNPARSED` means the registration's shape is one the generator does not read (a local variable or a computed priority) — the owner reads that line.
 

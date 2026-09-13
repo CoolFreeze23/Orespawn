@@ -83,6 +83,7 @@ This creature has NO exact keyframe transcription and is not yet on its hook (th
 | `walk_fan` | true | parallel layer | w_walk = w_move (1 - w_swim)(1 - w_fly); the gait group additionally x limbSwingAmount (P3) (group fan) | tailf1, tailf2, tailf3, tailf4, tailf5, tailf6, tailf7, hf1, hf2, hf3 | 1 s | no | author |  |
 | `swim` | true | base | w_swim from isInWater() | any of the 16 bones — gait group (speed-scaled): lleg, rleg; free: body, head1, head2, neck; other groups' bones: hf1 (better left to `swim_fan`), hf2 (better left to `swim_fan`), hf3 (better left to `swim_fan`), tailf1 (better left to `swim_fan`), tailf2 (better left to `swim_fan`), tailf3 (better left to `swim_fan`), tailf4 (better left to `swim_fan`), tailf5 (better left to `swim_fan`), tailf6 (better left to `swim_fan`), tailf7 (better left to `swim_fan`) | 1 s | no | leave | no swim behaviour: a FloatGoal keeps it at the surface (Peacock.java:58) and it strolls clear of water (:63); the fallback to walk covers it (section 2.4) |
 | `calm_idle` | true | base | = idle until this creature's SPEC adds a synched attacking byte (ruled 2026-09-06, Q12 (a)) | (as idle) | 1 s | no | leave | = idle: no synched attacking flag in Peacock.java (the blink timer at :40-42 is the fan, not aggression), so calm_idle is covered by idle (ruled 2026-09-06, Q12 (a)) |
+| `attack` | false | triggered controller | event: a strike (the transport per species by the trigger inventory — ruled 2026-09-06, Q11 (a); §6 says which applies here) | (any unlocked) | 0.4 s | yes | author | the peck: on a 1-in-10 tick the nearest visible termite within 10 blocks is hurt for a flat 6 within 2 blocks (Peacock.java:141-147, findSomethingToAttack :170-183), else it paths there at 1.2; no attacking flag, so the strike is transport 1 (the server LivingDamageEvent.Post) — a head jab; the neck and head are static in the code |
 | `hurt` | false | triggered controller | event: hurtTime rising edge (client-observed); the red overlay stays (ruled 2026-09-06, Q4 (a)) | (any unlocked) | 0.3 s | yes | author | a flinch to the peacockhit sound (Peacock.java:106-109, at 0.4 volume :116-119); the PanicGoal at 1.5 speed runs after (:62); the hurtTime edge is client-observed |
 | `death` | hold_on_last_frame | triggered controller | event: deathTime > 0; the vanilla death flip stays — the pilot ships no death clip (ruled 2026-09-06, Q3 (a)); a creature whose JSON ships one gets the clip-replaces-flip mode when the first such clip arrives, so a `death` delivered here plays under the flip until then | (any unlocked) | 1 s | yes | author | ruled 2026-09-06, Q3 (a): the vanilla death flip stays; a creature whose JSON ships a `death` clip gets the clip-replaces-flip mode, designed when the first such clip arrives (the Queen's own death clip the precedent) - a `death` delivered here plays under the flip until then |
 | `display` | true | base | the blink timer (Peacock.java:40-42, :74-76, ticked at :78-92): on for 25-125 ticks, off for 50-350, rolled on each side from its own random; the model opens the fan and raises the crest while it is on (ModelPeacock.java:135-151) — a state loop when the rig lands, its transport the SPEC's (the timer is not synched) | tailf1, tailf2, tailf3, tailf4, tailf5, tailf6, tailf7, hf1, hf2, hf3, body, neck, head1, head2 | 1 s | no | author | the fan held open with a shimmer of the feathers and a strut of the body; the crest up |
@@ -96,7 +97,7 @@ Loop values are the JSON `loop` field exactly: `true` for cycles, `false` for on
 
 - in `display`: the code snaps the fan open and shut (ModelPeacock.java:135-169) — an opening sweep of the seven feathers from the centre outward and a shimmer while held sells the 25-125-tick state (Peacock.java:78-92)
 - in `walk`: a bird's head-bob — the neck and head are static in the code (:74-84); the legs alone move (:132-134)
-- in `attack`: a neck jab at the termite (Peacock.java:144-146); the rig has no head motion today — NOT accepted by `check` today: `attack` is not in this creature's clip set
+- in `attack`: a neck jab at the termite (Peacock.java:144-146); the rig has no head motion today
 - in `idle`: a look-around of the head and a settle of the flat tail; the crest folds to -61 degrees when the fan is closed (:153-155) — let it twitch
 
 ## 6. Trigger inventory (generated from the entity's AI goals and state flags)
@@ -119,6 +120,10 @@ A `[modern: key]` guard means the goal is registered only under the modern confi
 
 **Locomotion facts:** has a baby form (the renderer halves the scale). Overrides: tick, customServerAiStep, removeWhenFarAway.
 
+**Strike and launch sites:**
+
+- melee (a direct hurt on the victim) `prey.hurt(this.damageSources().mobAttack(this), 6.0f)` — Peacock.java:146 in `customServerAiStep`, guard: if (this.distanceToSqr(prey) < 4.0) within if (prey != null) within if (this.random.nextInt(10) == 1)
+
 **What fires each contract clip:**
 
 | clip | signal | verdict |
@@ -127,7 +132,7 @@ A `[modern: key]` guard means the goal is registered only under the modern confi
 | `idle` | w_idle = (1 - w_move)(1 - w_swim)(1 - w_fly) | standing still |
 | `swim` | Entity.isInWater() (client-evaluated); FloatGoal keeps it at the surface | falls back to walk then idle when absent (§2.4) |
 | `aggro_idle / calm_idle` | no synched attacking flag | calm_idle only until this creature's SPEC adds a synched byte mirroring getTarget() != null (ruled 2026-09-06, Q12 (a): aggro_idle waits for that byte) |
-| `attack` | no strike or launch site found | no attack clip: the mob does not attack |
+| `attack` | melee: LivingDamageEvent.Post -> triggerAnim packet (transport 1); ranged: named launch sites (transport 3) | the transport per species by the trigger inventory (ruled 2026-09-06, Q11 (a)): no attacking flag here, so the signal column's transport applies — the server LivingDamageEvent.Post -> triggerAnim packet for melee, a named launch site for ranged |
 | `hurt` | rising edge of LivingEntity.hurtTime (0 -> 10), client-observed | always available; the red overlay stays (ruled 2026-09-06, Q4 (a)) |
 | `death` | LivingEntity.deathTime > 0, client-observed | hold_on_last_frame; the vanilla death flip stays and the pilot ships no death clip (ruled 2026-09-06, Q3 (a)); a creature whose JSON ships a `death` clip gets the clip-replaces-flip mode, designed when the first such clip arrives (the Queen's own death clip the precedent) — until then a delivered `death` plays under the flip |
 | `idle_alt_N` | a roll at each idle loop boundary (p = 0.15) while w_idle > 0.9 | optional; one roll per idle loop boundary, p = 0.15, a uniform choice, only while the idle weight is above 0.9 and no triggered clip plays, keyed on the clip-clock cycle index (ruled 2026-09-06, Q5 (a)) |
@@ -149,7 +154,7 @@ No MultiHitboxLib profile: no locked bones. Every bone name is still immutable (
 ## 10. Effort and priority
 
 - Artist scope: full contract (Tier 2, the state-branching class: geckolib_migration_design.md section 5); the rig is not yet in-game (it lands through the seam in a later slice).
-- Estimated effort: 15.2 h (generator: 4 h + 0.2 h/bone x 16 + 1 h/clip x 8 to author or improve (owner adjusts)).
+- Estimated effort: 16.2 h (generator: 4 h + 0.2 h/bone x 16 + 1 h/clip x 9 to author or improve (owner adjusts)).
 - Tier 2 (state-branching — setupAnim branches on entity state).
 - Density statement (the harness's, not the artist's; ruled 2026-09-06, Q9 (a) and Q10): the classic transcription is verified at 2.5e-3 rad — Beaver reference leg 15 / 13 / 8 catmullrom keys per bone with spline arguments repaired at load; wrap sample T−ε vs 0+ε included; the key counts per bone are an output of the harness, re-derived on every re-transcription.
 

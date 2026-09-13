@@ -1312,6 +1312,16 @@
       "verdict": "leave"
     },
     {
+      "name": "attack",
+      "loop": "false",
+      "role": "contract",
+      "code_triggered": true,
+      "required": false,
+      "length_rule": "near:0.5",
+      "length_seconds": 0.5,
+      "verdict": "author"
+    },
+    {
       "name": "hurt",
       "loop": "false",
       "role": "contract",
@@ -1353,8 +1363,8 @@
       ]
     }
   ],
-  "effort_hours": 15.6,
-  "effort_source": "generator: 4 h + 0.2 h/bone x 18 + 1 h/clip x 8 to author or improve (owner adjusts)",
+  "effort_hours": 16.6,
+  "effort_source": "generator: 4 h + 0.2 h/bone x 18 + 1 h/clip x 9 to author or improve (owner adjusts)",
   "reference_clip": null,
   "exact_transcription": false,
   "rig_source": "reference-leg converter output",

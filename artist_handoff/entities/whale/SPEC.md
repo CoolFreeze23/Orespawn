@@ -105,10 +105,10 @@ Source: `src/main/java/danger/orespawn/entity/Whale.java` (Animal)
 |---|---|---|---|---|---|---|
 | goalSelector | 0 | `FloatGoal` | - | locomotion | bobs up to the surface in water (vanilla) | swim state (client reads isInWater) |
 | goalSelector | 1 | `BreedGoal` | - | social | walks to a mate and breeds (vanilla) | walk |
-| goalSelector | 2 | `TemptGoal` | - | UNCLASSIFIED | no entry in the generator's goal dictionary | unknown |
+| goalSelector | 2 | `TemptGoal` | - | social | walks toward a nearby player holding the species' tempt item, keeping its eyes on them, and gives up when they put it away or move off (vanilla TemptGoal; the item is the registration's ingredient argument) | walk |
 | goalSelector | 4 | `PanicGoal` | - | flee | runs in a panic after taking damage (vanilla) | walk (fast) |
 | goalSelector | 5 | `LookAtPlayerGoal` | - | look | turns the head toward a nearby player (vanilla; head yaw/pitch only) | none: head look, not a clip |
-| goalSelector | 6 | `MyEntityAIWander` | - | UNCLASSIFIED | no entry in the generator's goal dictionary | unknown |
+| goalSelector | 6 | `MyEntityAIWander` | - | locomotion | OreSpawn's wander (MOVE): on a 1-in-90 roll, when not ordered to sit, picks a random reachable spot within 10 horizontal / 7 vertical blocks and walks to it at the registration's speed, giving up when the path ends or a pet stands on its owner's column (MyEntityAIWander.java:30-65) | walk |
 | goalSelector | 7 | `RandomLookAroundGoal` | - | look | looks around idly (vanilla; head yaw/pitch only) | none: head look, not a clip |
 
 A `[modern: key]` guard means the goal is registered only under the modern config key named (read once, at construction); `UNPARSED` means the registration's shape is one the generator does not read (a local variable or a computed priority) — the owner reads that line.

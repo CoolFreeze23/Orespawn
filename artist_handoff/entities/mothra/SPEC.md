@@ -95,7 +95,7 @@ Source: `src/main/java/danger/orespawn/entity/Mothra.java` (EntityButterfly, Ore
 
 _No AI goals registered (the behaviour lives in tick / customServerAiStep)._
 
-**Synched state flags** (what the client can see): none
+**Synched state flags** (what the client can see): `BUTTERFLY_TYPE` (Integer, line 48 of EntityButterfly.java, the parent class)
 
 **Locomotion facts:** a walker. Overrides: hurt, die, tick, customServerAiStep, isPushable, removeWhenFarAway.
 

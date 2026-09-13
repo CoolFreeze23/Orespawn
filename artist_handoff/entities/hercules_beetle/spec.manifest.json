@@ -2679,6 +2679,16 @@
       "verdict": "author"
     },
     {
+      "name": "aggro_idle",
+      "loop": "true",
+      "role": "contract",
+      "code_triggered": false,
+      "required": false,
+      "length_rule": "near:1.0",
+      "length_seconds": 1.0,
+      "verdict": "author"
+    },
+    {
       "name": "calm_idle",
       "loop": "true",
       "role": "contract",
@@ -2686,7 +2696,7 @@
       "required": false,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "covered by idle"
+      "verdict": "author"
     },
     {
       "name": "attack",
@@ -2730,8 +2740,8 @@
       ]
     }
   ],
-  "effort_hours": 19.4,
-  "effort_source": "generator: 4 h + 0.2 h/bone x 37 + 1 h/clip x 8 to author or improve (owner adjusts)",
+  "effort_hours": 21.4,
+  "effort_source": "generator: 4 h + 0.2 h/bone x 37 + 1 h/clip x 10 to author or improve (owner adjusts)",
   "reference_clip": {
     "file": "hercules_beetle_reference.animation.json",
     "sha256": "f53ace9bf992411c47b79d4e94a4432ea846974035bd967d78d186820db520cb",

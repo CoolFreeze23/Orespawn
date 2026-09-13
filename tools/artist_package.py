@@ -1044,6 +1044,32 @@ GOAL_ROLES: dict[str, tuple[str, str, str]] = {
     "AmbientFlightGoal": ("locomotion", "ambient flight preset", "fly"),
     "QueenMoodGoal": ("boss", "fires once when attackLevel crosses 1000: happy = terraforms flowers/grass and spawns butterflies; mad = a cloud of PurplePower bombs (particles/spawns, no body motion)", "none (no clip; extra by SPEC if wanted)"),
     "QueenPrimaryGoal": ("boss", "flight pathing (follows the King when happy), target acquisition, the four contact attacks (bite / tail_left / tail_right / roar) and the ranged streams", "extras: bite, tail_whip_left, tail_whip_right, roar (native triggerable clips)"),
+    # owner 2026-09-14, item 6: the dictionary lane's entries for the goals the full folder left unclassified
+    "AlienTorchSeekGoal": ("locomotion", "flagless one-shot torch hunt: on the 7-in-8 of ticks that skip the combat roll, a 1-in-30 roll with PlayNicely off scans cube shells r=2..14 (11 and 13 skipped) for the nearest torch / wall torch / Extreme Torch, paths to it at speed 1.0 and, when it lies within distSq 27 with mobGriefing on, removes the block that same tick (AlienTorchSeekGoal.java:47-95, 108-143)", "walk (the path to the torch); the block removal is no clip"),
+    "ButterflyIslandsHuntGoal": ("locomotion", "the butterfly's ambient flight (a random air cell re-picked on a 1-in-100 roll or within cell distSq 4, then the steer) and, on a tick the retarget skipped, a 1-in-10 roll in the Islands dimension with the type-1 vampire skin and not Peaceful: scans an 8/5/8 box for the first visible non-creative player or horse, flies at it and bites (doHurtTarget) inside distSq 6 (ButterflyIslandsHuntGoal.java:65-107, 117-136)", "fly; attack (event) on the bite"),
+    "DragonflyHuntGoal": ("locomotion", "the dragonfly's ambient flight (AmbientFlightGoal, dragonfly preset) plus, on every tick the retarget skipped, a 1-in-12 roll when not Peaceful with PlayNicely off: scans a 10/6/10 box for the nearest visible prey (ants, butterflies, cockateils, mosquitoes, fireflies, horses unless DragonflyHorseFriendly), moves the flight target onto it and bites once (doHurtTarget) inside distSq 6, retaining no target (DragonflyHuntGoal.java:59-74, 85-94, 96-128)", "fly; attack (event) on the bite"),
+    "EmperorScorpionPoisonGoal": ("attack", "OreSpawn bug melee (BugMeleeAttackGoal, emperorScorpion preset: 1-in-4 cadence, reach 6 + half width) whose landed swing also poisons the target for 90 ticks on a 1-in-3 roll (EmperorScorpionPoisonGoal.java:24-34)", "attack (event)"),
+    "FollowOwnerGoal": ("social", "follows its owner (vanilla tamed-pet goal): when not ordered to sit and the owner is beyond the start distance it paths to them at the registration's speed, teleporting to a safe spot beside them when too far to path, and releases inside the stop distance (vanilla FollowOwnerGoal)", "walk"),
+    "KingEndGameGoal": ("boss", "the end-phase-1 cutscene: runs at priority 0 with MOVE|LOOK|JUMP locked only while getEndPhase() == 1 and each tick calls TheKing.aiStepEndGameDialogue(), which freezes the boss (noPhysics, zero motion), pins the nearest player facing it at 1 HP and speaks one scripted chat line at set ticks up to 'Prepare to die!' at tick 500, when isEnd flips to 2 (KingEndGameGoal.java:50-80; TheKing.java:638-693)", "none (no clip; the boss holds still - the chat lines are the cutscene)"),
+    "KingPrimaryGoal": ("boss", "the King's whole live phase at priority 1 (MOVE|LOOK) whenever alive and not in end-phase 1, each tick TheKing.aiStepPrimary(): a new wander cell within 120 of home when too far / 1-in-200 / arrived, else on a 1-in-5 roll (1-in-3 under half health or enraged) takes the revenge target or an 80x64x80 scan, sets attacking 1, chases or strafes it, area + melee damage inside 30 blocks, forward area damage, one of three aimed ranged streams (fire / lightning / ice) beyond 30, attacking 0 and ammo refilled with no target; enraged it trails PurplePower bombs; always lerps motion toward the flight target and yaw by 1/8 (KingPrimaryGoal.java:79-108; TheKing.java:735-925)", "aggro state (through the attacking flag); attack (event) at the strike / launch sites; fly (the flight lerp)"),
+    "LunaMothFlightGoal": ("locomotion", "the Luna Moth's flight over its own preset (10/6 wander, 1-in-100 retarget, 0.5/0.68 steer) with the inherited Islands vampire hunt, plus, on a tick the retarget skipped, at night on a 1-in-10 roll: scans cube shells r=2..14 (every other radius past 6) for the nearest torch / wall torch / Extreme Torch and sets the flight target one block above it (LunaMothFlightGoal.java:61-89, 97-166)", "fly; attack (event) on the inherited bite"),
+    "MosquitoFlightGoal": ("locomotion", "the mosquito's ambient flight (AmbientFlightGoal, mosquito preset) where one retarget in ten aims the flight target at the nearest player within 16 blocks, two blocks above their feet; every other retarget a random air cell (MosquitoFlightGoal.java:22-39)", "fly"),
+    "MoveThroughVillageGoal": ("locomotion", "walks to random points of interest (doors / workstations) of a nearby village, the villager-style patrol; the registration's flag restricts it to night-time (vanilla MoveThroughVillageGoal)", "walk"),
+    "MyEntityAIFollowOwner": ("social", "OreSpawn's pet follow (MOVE|LOOK): starts when not ordered to sit and the owner is beyond maxDist (or beyond half of it while below y 60 or at night), looks at the owner and re-paths to them every 10 ticks at followSpeed with floating off; when no path exists and the owner is 12+ blocks away, teleports to a clear two-high spot on solid ground in a ring around them; stops inside minDist or on the owner's column (MyEntityAIFollowOwner.java:45-60, 79-125)", "walk"),
+    "MyEntityAIWander": ("locomotion", "OreSpawn's wander (MOVE): on a 1-in-90 roll, when not ordered to sit, picks a random reachable spot within 10 horizontal / 7 vertical blocks and walks to it at the registration's speed, giving up when the path ends or a pet stands on its owner's column (MyEntityAIWander.java:30-65)", "walk"),
+    "OpenDoorGoal": ("locomotion", "opens a wooden door in its path as it walks through and, when the registration asks, closes it behind it; no body motion of its own (vanilla OpenDoorGoal, a DoorInteractGoal)", "none (no clip: the door swings, the mob keeps walking)"),
+    "PointysaurusStareGoal": ("targeting", "eye-contact aggression (a modern addition, TARGET flag): finds the nearest survival player within 32 blocks whose view vector points at the dino (dot > 0.97) with line of sight, stares back at them and after 5 held ticks sets them as the combat target; drops when they look away or leave range (PointysaurusStareGoal.java:43-96)", "aggro state (it sets the target; the stare itself is head look, not a clip)"),
+    "RandomSwimmingGoal": ("locomotion", "a RandomStrollGoal for a swimmer: on the registration's interval picks a random position in the water around it and swims there at the given speed (vanilla RandomSwimmingGoal)", "swim state (client reads isInWater)"),
+    "SeaViperBiteGoal": ("attack", "OreSpawn dinosaur melee (DinosaurMeleeAttackGoal, seaViper preset: 1-in-5 cadence, reach 4.5 + half width, stands down under PlayNicely) whose landed bite also poisons the target for 6 s (8 s on Easy) on a 1-in-2 roll (SeaViperBiteGoal.java:18-31)", "attack (event)"),
+    "SitWhenOrderedToGoal": ("social", "keeps a tamed pet sitting where its owner told it to: while the owner's sit order stands (with vanilla's in-water / airborne / owner-under-attack exceptions) it stops navigation and holds the sitting pose (vanilla SitWhenOrderedToGoal)", "none (no sit clip in the contract; a sitting pose is by SPEC if wanted)"),
+    "SpitBugAcidAttackGoal": ("attack", "OreSpawn bug melee (BugMeleeAttackGoal, spitBug preset) with the acid stream: on each 1-in-5 cadence tick out of melee reach but within 20 blocks, a 1-in-7 roll loads an 8-round burst, then one Acid projectile per cadence tick leaves the mouth (velocity 1.1, spread 6, ballistic lift) with the clatter sound and the attacking flag is raised to 1 for that round (after the base's out-of-reach clear) (SpitBugAcidAttackGoal.java:55-64, 66-93)", "attack (event); the attacking flag pulses 1 per acid round"),
+    "TemptGoal": ("social", "walks toward a nearby player holding the species' tempt item, keeping its eyes on them, and gives up when they put it away or move off (vanilla TemptGoal; the item is the registration's ingredient argument)", "walk"),
+    "TrooperBugLeapAttackGoal": ("attack", "OreSpawn bug melee (BugMeleeAttackGoal, trooperBug preset) plus the leap: on a cadence tick out of reach, on the ground and 4-8 blocks from the target, a 1-in-10 roll looks at the target, calls jumpFromGround() (the entity's forward + up impulse) and raises the attacking flag to 1, skipping the melee logic that tick (TrooperBugLeapAttackGoal.java:30-42)", "attack (event); the leap is a jump impulse, no clip of its own"),
+    "WaterCanonAttackGoal": ("attack", "OreSpawn dinosaur melee (DinosaurMeleeAttackGoal, waterDragon preset) with the water canon: on a cadence tick out of melee reach, while a burst is loaded it sets attacking 2 (the jaw-open pose) and fires one ownerless WaterBall from the mouth (speed 1.4, spread 5, ballistic lift; 1 in 15 also a SmallFireball) with the bow sound; an empty canon sets attacking 0 and reloads 8 rounds on a 1-in-4 roll (WaterDragon.java:555-629, an inner class)", "attack (event); the attacking flag = 2 holds the jaw-open pose through the stream"),
+    # owner 2026-09-14, item 6 (the orchestrator): the three goals of the Boyfriend's and Girlfriend's folders, packaged after the dictionary lane
+    "RangedAttackGoal": ("attack", "vanilla ranged attack: with a target in range it strafes at the registered speed and fires the mob's performRangedAttack on its cadence (Boyfriend.java:137 and Girlfriend.java:197 register it at 1.25 speed, a 20-tick cadence, 10 blocks)", "attack (event: the shot, RangedAttackMob.performRangedAttack)"),
+    "ValentineTargetGoal": ("targeting", "the Girlfriend's Valentine's-day target hunt (Girlfriend.java:323-342, an inner MyEntityAINearestAttackableTargetGoal at 16 blocks with sight and nearby-only, never her owner or another tamed pet): canUse only while she isValentineAngry, hunting the nearest player (@1) and the nearest Boyfriend (@2); inert otherwise", "aggro state (through the attacking flag where one exists)"),
+    "MyEntityAIDance": ("social", "the Girlfriend's dance (MyEntityAIDance.java:68-210, @3, held in her public Dance field): when not ordered to sit, inside the dance hours of the day and with dance blocks in range, she walks toward them or (a random stay-put roll, :109) holds her spot, dancing a move rolled from the variants (:210) that nearby Girlfriends sync to through the Dance field; stops when sitting, out of hours or with no block in range", "none (no dance clip in the contract; the seed's `dance` extra names it)"),
 }
 
 METHOD_HEADER_RE = re.compile(r"^\s*(?:public|protected|private)?\s*(?:static\s+)?(?:final\s+)?[\w<>\[\], .?]+\s+(\w+)\s*\([^;{]*\)\s*(?:throws [\w., ]+)?\s*\{", re.M)
@@ -1400,14 +1426,20 @@ def parse_synched_data(text: str) -> list[dict[str, Any]]:
     return out
 
 
-def attacking_sites(text: str) -> list[dict[str, Any]]:
-    """Every setAttacking(N) call with its method, the ACTUAL enclosing block's guard (found by brace depth over the
-    comment-stripped source; an `else` branch is the negated `if` chain), the outer guard chain (`within`), and the
-    trailing comment. A block whose header the parser cannot read is reported as `(unparsed: ...)`, never dropped."""
+def flag_write_sites(text: str, call_re: str, file_label: str = "") -> list[dict[str, Any]]:
+    """Every write of a flag matched by `call_re` (its group 1 the literal written: a number, `true` or `false`) with its
+    method, the ACTUAL enclosing block's guard (found by brace depth over the comment-stripped source; an `else` branch
+    is the negated `if` chain), the outer guard chain (`within`), and the trailing comment. A block whose header the
+    parser cannot read is reported as `(unparsed: ...)`, never dropped. `file_label` names the source when it is not the
+    entity's own file (a parent class or a goal class: TEST-011 (b))."""
     lines = text.splitlines()
     clean = strip_java_noise(text)
     out = []
-    for m in re.finditer(r"setAttacking\(\s*(\d+)\s*\)\s*;", clean):
+    for m in re.finditer(call_re, clean):
+        literal = m.group(1)
+        value = {"true": 1, "false": 0}.get(literal)
+        if value is None:
+            value = int(literal)
         ln = line_of(clean, m.start())
         chain = enclosing_guards(clean, m.start())
         guard, kind = chain[0] if chain else ("(unparsed: no enclosing block)", "unparsed")
@@ -1418,10 +1450,158 @@ def attacking_sites(text: str) -> list[dict[str, Any]]:
         cm = re.search(r"//\s*(.*)$", lines[ln - 1])
         if cm:
             comment = cm.group(1).strip()
-        out.append({"value": int(m.group(1)), "line": ln, "method": enclosing_method(text, m.start()),
-                    "guard": guard, "guard_kind": kind, "within": within, "comment": comment,
-                    "code": strip_java_noise(lines[ln - 1]).strip() or lines[ln - 1].strip()})
+        site = {"value": value, "line": ln, "method": enclosing_method(text, m.start()),
+                "guard": guard, "guard_kind": kind, "within": within, "comment": comment,
+                "code": strip_java_noise(lines[ln - 1]).strip() or lines[ln - 1].strip()}
+        if file_label:
+            site["file"] = file_label
+        out.append(site)
     return out
+
+
+def attacking_sites(text: str, file_label: str = "") -> list[dict[str, Any]]:
+    """Every setAttacking(N) call with its method, the ACTUAL enclosing block's guard (found by brace depth over the
+    comment-stripped source; an `else` branch is the negated `if` chain), the outer guard chain (`within`), and the
+    trailing comment. A block whose header the parser cannot read is reported as `(unparsed: ...)`, never dropped."""
+    return flag_write_sites(text, r"setAttacking\(\s*(\d+)\s*\)\s*;", file_label)
+
+
+# TEST-011 (owner 2026-09-14, item 5): the three flag idioms the trigger inventory reads beside the literal
+# `setAttacking(N)` sites of the entity file - (a) the accessor named `ATTACKING` (the Lizard); (b) a flag set through a
+# goal's consumer (`this::setAttacking` or a lambda handed to BugMeleeAttackGoal and its kin), traced INTO the goal class
+# and its parents, and a parent entity class's flags and sites counting for the subclass (the Alien Boss, the Baby
+# Dragon); (c) vanilla MeleeAttackGoal as a strike site, with the entity's own synched state name (DATA_SCREAMING) read
+# as the held aggro state when it toggles around the target (held_state_flag says how).
+ATTACKING_FLAG_NAMES = ("DATA_ATTACKING", "ATTACKING")
+CONSUMER_PASS_RE = re.compile(r"::\s*setAttacking\b|->\s*(?:this\.)?setAttacking\s*\(")
+VANILLA_MELEE_GOAL = "MeleeAttackGoal"
+VANILLA_MELEE_STRIKE = ("net.minecraft.world.entity.ai.goal.MeleeAttackGoal.checkAndPerformAttack: canPerformAttack (within melee reach - "
+                        "isWithinMeleeAttackRange - with line of sight and the attack cooldown elapsed), resetAttackCooldown (20 ticks), "
+                        "swing, then the entity's doHurtTarget - NeoForge 21.1.223 bytecode (checkAndPerformAttack offsets 2-27, "
+                        "resetAttackCooldown bipush 20)")
+
+
+def class_extends(text: str, name: str | None = None) -> str | None:
+    """The simple name of the class `name` (the file's first class when None) extends, or None."""
+    clean = strip_java_noise(text)
+    pattern = rf"class\s+{re.escape(name)}\b[^{{;]*?\bextends\s+([\w.]+)" if name else r"class\s+\w+\s+extends\s+([\w.]+)"
+    m = re.search(pattern, clean)
+    return m.group(1).split(".")[-1] if m else None
+
+
+def entity_parent_chain(text: str, entity_dir: Path) -> list[tuple[str, str]]:
+    """The mod's own parent entity classes of the file's class, nearest first, as (label, text) pairs - only parents
+    whose source sits in entity/ (Alien for the Alien Boss, Dragon for the Baby Dragon); vanilla parents end the chain."""
+    out: list[tuple[str, str]] = []
+    seen: set[str] = set()
+    parent = class_extends(text)
+    while parent and parent not in seen and len(out) < 6:
+        path = entity_dir / f"{parent}.java"
+        if not path.exists():
+            break
+        ptext = read_text(path)
+        out.append((f"{parent}.java", ptext))
+        seen.add(parent)
+        parent = class_extends(ptext)
+    return out
+
+
+def goal_class_chain(goal: str, entity_text: str, ai_dir: Path) -> list[tuple[str, str]]:
+    """The goal class's source files, the registered class first (its file under ai/, or - for an inner class of the entity
+    file, WaterDragon's WaterCanonAttackGoal - nothing of its own: its body is the entity file's) and then its parents under
+    ai/ (a DinosaurMeleeAttackGoal's BugMeleeAttackGoal, a LunaMothFlightGoal's ButterflyIslandsHuntGoal); a vanilla parent
+    ends the chain."""
+    out: list[tuple[str, str]] = []
+    seen: set[str] = set()
+    own = ai_dir / f"{goal}.java"
+    if own.exists():
+        text = read_text(own)
+        out.append((f"ai/{goal}.java", text))
+        seen.add(goal)
+        parent = class_extends(text)
+    else:
+        parent = class_extends(entity_text, goal)
+    while parent and parent not in seen and len(out) < 6:
+        path = ai_dir / f"{parent}.java"
+        if not path.exists():
+            break
+        text = read_text(path)
+        out.append((f"ai/{parent}.java", text))
+        seen.add(parent)
+        parent = class_extends(text)
+    return out
+
+
+def inner_class_body(text: str, name: str) -> str:
+    """The brace-matched body of the inner class `name` declared in `text` (comments and strings blanked), or ''."""
+    clean = strip_java_noise(text)
+    m = re.search(rf"class\s+{re.escape(name)}\b[^{{;]*\{{", clean)
+    if not m:
+        return ""
+    depth, i = 0, m.end() - 1
+    while i < len(clean):
+        if clean[i] == "{":
+            depth += 1
+        elif clean[i] == "}":
+            depth -= 1
+            if depth == 0:
+                return clean[m.end():i]
+        i += 1
+    return ""
+
+
+def goal_passes_consumer(goal: dict[str, Any], entity_text: str) -> bool:
+    """TEST-011 (b): the registration hands the entity's setter to the goal (`this::setAttacking`, or a lambda calling it),
+    or the goal is an inner class of the entity file whose body hands it up to its parent's constructor."""
+    if CONSUMER_PASS_RE.search(goal.get("args", "")):
+        return True
+    return bool(CONSUMER_PASS_RE.search(inner_class_body(entity_text, goal["goal"])))
+
+
+def consumer_sites(text: str, file_label: str) -> list[dict[str, Any]]:
+    """The goal class's own writes of the consumer it was handed: `<consumer>.accept(N)` for every IntConsumer field or
+    parameter the class declares (BugMeleeAttackGoal's `this.setAttacking.accept(0)` / `.accept(1)`)."""
+    consumers = sorted(set(re.findall(r"\bIntConsumer\s+(\w+)", strip_java_noise(text))))
+    if not consumers:
+        return []
+    call_re = r"\b(?:" + "|".join(re.escape(c) for c in consumers) + r")\.accept\(\s*(\d+)\s*\)\s*;"
+    return flag_write_sites(text, call_re, file_label)
+
+
+def held_state_flag(text: str, flags: list[dict[str, Any]], goals: list[dict[str, Any]]) -> dict[str, Any] | None:
+    """TEST-011 (c): an entity with NO attacking flag whose strike is vanilla MeleeAttackGoal may hold its aggro under its
+    own synched name (the Ender Knight's and the Ender Reaper's DATA_SCREAMING). Recognised - mechanically, the owner
+    confirms it against the sites like any verdict - when (1) a vanilla `MeleeAttackGoal` is registered, (2) a synched flag
+    `DATA_<NAME>` of a Boolean / Byte / Integer serializer has a `set<Name>` setter whose literal writes (true / false, 0 / N)
+    include a RAISE inside the target-selection code (a site inside registerGoals' span - the anonymous target goal's body
+    - or in a `setTarget` override) and (3) a CLEAR guarded by target loss (`target == null`, the else of `target != null`:
+    classify_attacking's STATE pattern). The first such flag is the held state; its sites classify as the attacking flag's."""
+    melee = [g for g in goals if g["goal"] == VANILLA_MELEE_GOAL]
+    if not melee:
+        return None
+    found = extract_method(text, "registerGoals")
+    span = (found[1], found[1] + found[0].count("\n") + 1) if found else None
+    for f in flags:
+        if f["name"] in ATTACKING_FLAG_NAMES or f["type"] not in ("Boolean", "Byte", "Integer") or f.get("file"):
+            continue
+        m = re.fullmatch(r"DATA_([A-Z0-9_]+)", f["name"])
+        if not m:
+            continue
+        setter = "set" + "".join(part.capitalize() for part in m.group(1).lower().split("_"))
+        sites = flag_write_sites(text, rf"\b{setter}\(\s*(true|false|\d+)\s*\)\s*;")
+        raises = [s for s in sites if s["value"] != 0]
+        in_target_code = [s for s in raises if (span and span[0] <= s["line"] <= span[1]) or s["method"] == "setTarget"]
+        held = [s for s in sites if s["value"] == 0 and STATE_GUARD_RE.search(s["guard"])]
+        if in_target_code and held:
+            return {
+                "flag_name": f["name"], "setter": setter, "sites": sites,
+                "recognised": (f"`{f['name']}` is read as the held aggro state under the entity's own name (TEST-011 (c)): no attacking flag is "
+                               f"declared, the strike is vanilla MeleeAttackGoal (registered at line {melee[0]['line']}), and `{setter}` is raised "
+                               f"inside the target-selection code (line(s) {[s['line'] for s in in_target_code]}: the target goal's body"
+                               f"{' / setTarget' if any(s['method'] == 'setTarget' for s in in_target_code) else ''}) and cleared on target loss "
+                               f"(line(s) {[s['line'] for s in held]}) - the STATE pattern; every other write is listed below"),
+            }
+    return None
 
 
 PULSE_GUARD_RE = re.compile(r"[Tt]icker|reload|cooldown|[Tt]icks\s*[<>]|<\s*\d+\s*\)", re.I)
@@ -1520,6 +1700,21 @@ def combat_sites(files: list[tuple[str, str]]) -> dict[str, list[dict[str, Any]]
                 site["hurt_lines"] = hurts
                 site["helper_line"] = start
             out["melee"].append(site)
+        for m in re.finditer(r"(?<![\w.])(\w+)\.hurt\(\s*(?:this\.|\w+\.)*damageSources\(\)\.mobAttack\(", clean):
+            # TEST-011 (c): a direct mob-attack hurt on a victim held in a local or a parameter (the Peacock's
+            # `prey.hurt(this.damageSources().mobAttack(this), 6.0f)`, Peacock.java:146) is a strike site; a field receiver
+            # (`this.<field>.hurt(...)`: the Queen's health-tracked part) is not a victim, and inside doHurtTarget or an area
+            # helper the call IS that strike, already counted
+            if m.group(1) == "this":
+                continue
+            method = enclosing_method(text, m.start())
+            if method == "doHurtTarget" or method in AREA_HELPERS:
+                continue
+            ln = line_of(clean, m.start())
+            out["melee"].append({"file": label, "line": ln, "method": method,
+                                 "code": " ".join(strip_java_noise(text.splitlines()[ln - 1]).split()).rstrip(";") or f"{m.group(1)}.hurt(...)",
+                                 "kind": "direct",
+                                 "guards": [g for g, k in enclosing_guards(clean, m.start()) if k not in ("method", "class", "file")]})
         for m in re.finditer(r"new\s+(\w*(?:Ball|Acid|Arrow|Bolt|Rock|Fireball|Urchin|Shot)\w*)\s*\(", clean):
             out["ranged"].append({"file": label, "line": line_of(clean, m.start()), "method": enclosing_method(text, m.start()), "code": m.group(1)})
         for m in re.finditer(r"\b(trigger\w*Anim\w*|trigger\w+Action)\(\s*(\"[^\"]*\"|\w+)", text):
@@ -1612,6 +1807,9 @@ def build_trigger_inventory(species: "Species", repo: "Repo") -> dict[str, Any]:
         return inv
     text = read_text(species.entity_file)
     inv["entity_file"] = str(species.entity_file.relative_to(repo.paths.root)).replace("\\", "/")
+    # TEST-011 (b): a parent class's flags and sites count for the subclass (the Alien Boss's Alien, the Baby Dragon's Dragon)
+    parents = entity_parent_chain(text, repo.paths.entity_dir)
+    inv["parent_classes"] = [label for label, _ in parents]
     inv["goals"] = parse_goals(text, species.java_class)
     for g in inv["goals"]:
         g["category"], g["plain"], g["drives"] = classify_goal(g["goal"])
@@ -1620,22 +1818,64 @@ def build_trigger_inventory(species: "Species", repo: "Repo") -> dict[str, Any]:
     for g in inv["goals"]:
         if g["goal"] == "UNPARSED":
             repo.warnings.add(species.registry, "GOAL_UNPARSED", f"addGoal at {g['source']}:{g['line']} not parsed: {g['unparsed']}")
-    inv["flags"] = parse_synched_data(text)
+    flags = parse_synched_data(text)
+    for label, ptext in parents:
+        for f in parse_synched_data(ptext):
+            if f["name"] not in {x["name"] for x in flags}:
+                flags.append(dict(f, file=label))
+    inv["flags"] = flags
     sites = attacking_sites(text)
+    for label, ptext in parents:
+        sites.extend(attacking_sites(ptext, file_label=label))
+    # TEST-011 (b): a flag set through a goal's consumer - the goal's set / clear sites become the entity's sites
+    traced: list[dict[str, Any]] = []
+    for g in inv["goals"]:
+        if g["goal"] in ("UNPARSED", "?") or not goal_passes_consumer(g, text):
+            continue
+        chain = goal_class_chain(g["goal"], text, repo.paths.ai_dir)
+        found: list[dict[str, Any]] = []
+        for label, gtext in chain:
+            for s in consumer_sites(gtext, label):
+                s["via"] = f"{g['goal']} (registered at line {g['line']})"
+                found.append(s)
+        traced.append({"goal": g["goal"], "line": g["line"], "args": g.get("args", ""), "chain": [label for label, _ in chain],
+                       "sites": [f"{s['file']}:{s['line']}" for s in found]})
+        sites.extend(found)
+    # TEST-011 (a): the accessor named ATTACKING is the attacking flag (the Lizard, Lizard.java:57-58)
+    flag_name = next((f["name"] for f in flags if f["name"] in ATTACKING_FLAG_NAMES), None)
     verdict, reason, facts = classify_attacking(sites, text)
-    inv["attacking"] = {"present": any(f["name"] == "DATA_ATTACKING" for f in inv["flags"]), "sites": sites,
-                        "verdict": verdict, "reason": reason, "facts": facts}
-    if inv["attacking"]["present"] and verdict in ("UNCLASSIFIED", "MIXED", "STATE?"):
-        repo.warnings.add(species.registry, "ATTACKING_UNCLASSIFIED", f"DATA_ATTACKING classified {verdict}: {reason}")
-    for s in sites:
+    inv["attacking"] = {"present": flag_name is not None, "flag_name": flag_name, "sites": sites,
+                        "verdict": verdict, "reason": reason, "facts": facts, "traced_goals": traced,
+                        "parent_classes": inv["parent_classes"]}
+    if flag_name is None and not sites:
+        # TEST-011 (c): the entity's own state name around a vanilla MeleeAttackGoal (DATA_SCREAMING)
+        held = held_state_flag(text, flags, inv["goals"])
+        if held:
+            verdict, reason, facts = classify_attacking(held["sites"], text)
+            inv["attacking"].update({"present": True, "flag_name": held["flag_name"], "setter": held["setter"], "sites": held["sites"],
+                                     "verdict": verdict, "reason": reason, "facts": facts, "recognised": held["recognised"]})
+    if inv["attacking"]["present"] and inv["attacking"]["verdict"] in ("UNCLASSIFIED", "MIXED", "STATE?"):
+        repo.warnings.add(species.registry, "ATTACKING_UNCLASSIFIED",
+                          f"{inv['attacking']['flag_name']} classified {inv['attacking']['verdict']}: {inv['attacking']['reason']}")
+    for s in inv["attacking"]["sites"]:
         if s["guard_kind"] == "unparsed":
             repo.warnings.add(species.registry, "ATTACKING_GUARD_UNPARSED", f"setAttacking at line {s['line']}: {s['guard']}")
-    goal_files: list[tuple[str, str]] = [(f"{species.java_class}.java", text)]
+    goal_files: list[tuple[str, str]] = [(f"{species.java_class}.java", text)] + list(parents)
+    seen_files = {label for label, _ in goal_files}
     for g in inv["goals"]:
-        p = repo.paths.ai_dir / f"{g['goal']}.java"
-        if p.exists():
-            goal_files.append((f"ai/{p.name}", read_text(p)))
+        # the goal's own file and its parents under ai/ (the Luna Moth's nip is the parent goal's, ButterflyIslandsHuntGoal.java:83)
+        for label, gtext in goal_class_chain(g["goal"], text, repo.paths.ai_dir):
+            if label not in seen_files:
+                seen_files.add(label)
+                goal_files.append((label, gtext))
     inv["combat"] = combat_sites(goal_files)
+    # TEST-011 (c): a vanilla `new MeleeAttackGoal(...)` registration is a strike site - the strike is vanilla code, reached
+    # through the entity's doHurtTarget; with an override of doHurtTarget the override's own super call is the site already
+    if not any("doHurtTarget" in overrides(t) for _, t in [(None, text)] + list(parents)):
+        inv["combat"]["vanilla_melee"] = [
+            {"file": "vanilla MeleeAttackGoal", "line": g["line"], "registration": f"{species.java_class}.java:{g['line']}",
+             "method": "checkAndPerformAttack", "code": "doHurtTarget(target)", "kind": "vanilla", "strike": VANILLA_MELEE_STRIKE}
+            for g in inv["goals"] if g["goal"] == VANILLA_MELEE_GOAL]
     inv["overrides"] = overrides(text)
     inv["locomotion"] = locomotion_facts(text)
     inv["native"] = native_controllers(text) if inv["locomotion"]["geo_entity"] else {}
@@ -1685,6 +1925,12 @@ def melee_transport_note(inv: dict[str, Any]) -> str:
     melee = (inv.get("combat") or {}).get("melee", [])
     area = [s for s in melee if s.get("kind") == "area"]
     base = "melee: LivingDamageEvent.Post -> triggerAnim packet (transport 1); ranged: named launch sites (transport 3)"
+    vanilla = (inv.get("combat") or {}).get("vanilla_melee", [])
+    if not melee and vanilla:
+        # TEST-011 (c): the strike lives in vanilla MeleeAttackGoal - reached through the entity's doHurtTarget, so the
+        # server LivingDamageEvent.Post fires on it as on any melee hit
+        return (f"melee (vanilla MeleeAttackGoal registered at {vanilla[0]['registration']}; the strike is vanilla code reached "
+                "through the entity's doHurtTarget): LivingDamageEvent.Post -> triggerAnim packet (transport 1); ranged: named launch sites (transport 3)")
     if not area:
         return base
     s = area[0]
@@ -1744,10 +1990,12 @@ def contract_drives(species: "Species", inv: dict[str, Any]) -> list[dict[str, s
     rows.append({"clip": "swim", "signal": "Entity.isInWater() (client-evaluated)" + ("; FloatGoal keeps it at the surface" if any(g["goal"] == "FloatGoal" for g in inv["goals"]) else ""), "verdict": "falls back to walk then idle when absent (§2.4)"})
     att = inv.get("attacking") or {}
     facts = att.get("facts") or {}
+    flag = att.get("flag_name") or "DATA_ATTACKING"  # TEST-011 (a) / (c): the flag under its own name
     if att.get("present"):
         v = att["verdict"]
         if v == "STATE":
-            rows.append({"clip": "aggro_idle / calm_idle", "signal": f"DATA_ATTACKING held while engaged ({att['reason']})", "verdict": "STATE flag drives w_aggro (§4.3)"})
+            rows.append({"clip": "aggro_idle / calm_idle", "signal": f"{flag} held while engaged ({att['reason']})"
+                         + (f"; {att['recognised']}" if att.get("recognised") else ""), "verdict": "STATE flag drives w_aggro (§4.3)"})
             rows.append({"clip": "attack", "signal": melee_transport_note(inv),
                          "verdict": "the transport per species by the trigger inventory (ruled 2026-09-06, Q11 (a)): this flag is held, not pulsed at the strike, "
                                     "so the signal column's transport applies — the server LivingDamageEvent.Post -> triggerAnim packet for melee, a named launch site for ranged"})
@@ -1756,18 +2004,18 @@ def contract_drives(species: "Species", inv: dict[str, Any]) -> list[dict[str, s
             if facts.get("hurt_sets"):
                 caveat = (f" — CAVEAT: hurt() also raises the flag at line(s) {facts['hurt_sets']}, so the client-observed edge fires when the mob is HIT "
                           f"as well as when it strikes; transport 2 must mask the hurt edge (e.g. ignore a rising edge while hurtTime > 0) or fall back to transport 1/3")
-            rows.append({"clip": "attack", "signal": f"rising edge of DATA_ATTACKING ({att['reason']})",
+            rows.append({"clip": "attack", "signal": f"rising edge of {flag} ({att['reason']})",
                          "verdict": "EVENT flag: client-observed edge, transport 2 (§4.4)" + caveat
                                     + " — the transport per species by the trigger inventory (ruled 2026-09-06, Q11 (a)): the client-observed edge where the flag pulses at the strike, this species"})
             rows.append({"clip": "aggro_idle / calm_idle", "signal": "no held state: the flag pulses",
                          "verdict": "calm_idle only until this creature's SPEC adds a synched byte mirroring getTarget() != null (ruled 2026-09-06, Q12 (a): aggro_idle waits for that byte)"})
         else:
-            rows.append({"clip": "aggro_idle / calm_idle / attack", "signal": f"DATA_ATTACKING classified {v}: {att['reason']}",
+            rows.append({"clip": "aggro_idle / calm_idle / attack", "signal": f"{flag} classified {v}: {att['reason']}",
                          "verdict": "OWNER READS THE SITES (listed below) — a mechanical reading; the owner confirms which of the ruled transports applies (ruled 2026-09-06, Q11 (a) / Q12 (a))"})
     else:
         rows.append({"clip": "aggro_idle / calm_idle", "signal": "no synched attacking flag",
                      "verdict": "calm_idle only until this creature's SPEC adds a synched byte mirroring getTarget() != null (ruled 2026-09-06, Q12 (a): aggro_idle waits for that byte)"})
-        if inv["combat"].get("melee") or inv["combat"].get("ranged"):
+        if inv["combat"].get("melee") or inv["combat"].get("ranged") or inv["combat"].get("vanilla_melee"):
             rows.append({"clip": "attack", "signal": melee_transport_note(inv),
                          "verdict": "the transport per species by the trigger inventory (ruled 2026-09-06, Q11 (a)): no attacking flag here, so the signal column's transport applies — "
                                     "the server LivingDamageEvent.Post -> triggerAnim packet for melee, a named launch site for ranged"})
@@ -2258,13 +2506,14 @@ def clip_rows(species: "Species", inv: dict[str, Any], anim: dict[str, Any], gro
         rows.append(loop_row("fly", "base", "w_fly (flyer species and !onGround)", whole_rig("fly"), gait_name))
     att = inv.get("attacking") or {}
     if att.get("present") and att.get("verdict") in ("STATE", "MIXED"):
-        rows.append(loop_row("aggro_idle", "base", "w_idle x w_aggro (DATA_ATTACKING held)", whole_rig("idle"), gait_name))
+        rows.append(loop_row("aggro_idle", "base", f"w_idle x w_aggro ({att.get('flag_name') or 'DATA_ATTACKING'} held)", whole_rig("idle"), gait_name))
         rows.append(loop_row("calm_idle", "base", "w_idle x (1 - w_aggro)", whole_rig("idle"), gait_name))
     else:
         rows.append(loop_row("calm_idle", "base", "= idle until this creature's SPEC adds a synched attacking byte (ruled 2026-09-06, Q12 (a))", "(as idle)", gait_name,
                              note="not needed while idle covers it; listed so the name stays reserved — not counted in the effort estimate",
                              verdict_default="covered by idle"))
-    has_attack = bool(inv.get("combat", {}).get("melee") or inv.get("combat", {}).get("ranged") or att.get("present"))
+    has_attack = bool(inv.get("combat", {}).get("melee") or inv.get("combat", {}).get("ranged") or inv.get("combat", {}).get("vanilla_melee")
+                      or att.get("present"))
     for name, loop in CONTRACT_CLIPS_TRIGGERED.items():
         if name == "attack" and not has_attack:
             continue
@@ -2549,19 +2798,31 @@ def spec_document(species: "Species", repo: "Repo", catalog: "TextureCatalog", i
     else:
         L.append("_No AI goals registered (the behaviour lives in tick / customServerAiStep)._")
     L.append("")
-    L.append("**Synched state flags** (what the client can see): " + (", ".join(f"`{f['name']}` ({f['type']}, line {f['line']})" for f in inv.get("flags", [])) or "none"))
+    L.append("**Synched state flags** (what the client can see): " + (", ".join(f"`{f['name']}` ({f['type']}, line {f['line']}" + (f" of {f['file']}, the parent class" if f.get("file") else "") + ")" for f in inv.get("flags", [])) or "none"))
     L.append("")
     att = inv.get("attacking") or {}
     if att.get("present"):
-        L.append(f"**Attacking flag `DATA_ATTACKING`** — classified **{att['verdict']}** ({att['reason']}) — a mechanical reading; the owner confirms it against the sites:")
+        flag = att.get("flag_name") or "DATA_ATTACKING"
+        L.append(f"**Attacking flag `{flag}`** — classified **{att['verdict']}** ({att['reason']}) — a mechanical reading; the owner confirms it against the sites:")
         L.append("")
+        if att.get("recognised"):
+            L.append(att["recognised"] + ".")
+            L.append("")
         L.append(md_table(["line", "method", "sets", "guard (the enclosing block)", "within", "comment"],
-                          [[s["line"], s["method"], s["value"], s["guard"] or "(unguarded: the method body)",
-                            " within ".join(s.get("within", [])[:3]) or "-", s["comment"]] for s in att["sites"]]))
+                          [[f"{s['file']}:{s['line']}" if s.get("file") else s["line"], s["method"], s["value"], s["guard"] or "(unguarded: the method body)",
+                            " within ".join(s.get("within", [])[:3]) or "-", s["comment"] + (f" [via {s['via']}]" if s.get("via") else "")] for s in att["sites"]]))
         L.append("")
         L.append("The guard is the header of the block that actually encloses the write (found by brace depth, comments and strings blanked); an `else` "
                  "branch is written as the negated `if` chain it closes; a header the parser cannot read is `(unparsed: ...)`, never dropped.")
         L.append("")
+        if att.get("traced_goals"):
+            L.append("The flag's writes traced into the goal class the entity hands its setter to (TEST-011 (b); the `[via ...]` rows above): "
+                     + "; ".join(f"`{t['goal']}` registered at line {t['line']} (`{t['args']}`) — " + (", ".join(t["chain"]) or "no source under ai/")
+                                 + (f", sites {', '.join(t['sites'])}" if t["sites"] else ", no consumer writes found") for t in att["traced_goals"]) + ".")
+            L.append("")
+        if att.get("parent_classes"):
+            L.append("The parent class's flags and sites count for this subclass (TEST-011 (b)): " + ", ".join(f"`{p}`" for p in att["parent_classes"]) + ".")
+            L.append("")
     loco = inv.get("locomotion", {})
     facts = []
     if loco.get("stationary"):
@@ -2579,11 +2840,17 @@ def spec_document(species: "Species", repo: "Repo", catalog: "TextureCatalog", i
     L.append("**Locomotion facts:** " + ("; ".join(facts) or "a walker") + f". Overrides: {', '.join(inv.get('overrides', [])) or 'none'}.")
     L.append("")
     comb = inv.get("combat", {})
-    if comb.get("melee") or comb.get("ranged") or comb.get("native_triggers"):
+    if comb.get("melee") or comb.get("ranged") or comb.get("native_triggers") or comb.get("vanilla_melee"):
         L.append("**Strike and launch sites:**")
         L.append("")
+        for s in comb.get("vanilla_melee", []):
+            L.append(f"- melee (vanilla `MeleeAttackGoal`, registered at {s['registration']}) `{s['code']}` inside vanilla code — {s['strike']}; "
+                     "no doHurtTarget override in the entity or its parents, so the strike is the vanilla goal's (TEST-011 (c))")
         for s in comb.get("melee", []):
-            if s.get("kind") == "area":
+            if s.get("kind") == "direct":
+                L.append(f"- melee (a direct hurt on the victim) `{s['code']}` — {s['file']}:{s['line']} in `{s['method']}`"
+                         + (f", guard: {' within '.join(s['guards'][:3])}" if s.get("guards") else ""))
+            elif s.get("kind") == "area":
                 L.append(f"- melee (AREA helper) `{s['code']}` — {s['file']}:{s['line']} in `{s['method']}`"
                          + (f", guard: {' within '.join(s['guards'][:3])}" if s.get("guards") else "")
                          + f"; the helper (line {s.get('helper_line')}) hurts EACH victim in its box {s.get('hurts_per_victim', '?')}x per roll "

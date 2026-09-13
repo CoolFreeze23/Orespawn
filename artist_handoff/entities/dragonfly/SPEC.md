@@ -104,7 +104,7 @@ Source: `src/main/java/danger/orespawn/entity/EntityDragonfly.java` (Animal)
 
 | selector | prio | goal | guard | category | what it does | bears on |
 |---|---|---|---|---|---|---|
-| goalSelector | 3 | `DragonflyHuntGoal` | - | UNCLASSIFIED | no entry in the generator's goal dictionary | unknown |
+| goalSelector | 3 | `DragonflyHuntGoal` | - | locomotion | the dragonfly's ambient flight (AmbientFlightGoal, dragonfly preset) plus, on every tick the retarget skipped, a 1-in-12 roll when not Peaceful with PlayNicely off: scans a 10/6/10 box for the nearest visible prey (ants, butterflies, cockateils, mosquitoes, fireflies, horses unless DragonflyHorseFriendly), moves the flight target onto it and bites once (doHurtTarget) inside distSq 6, retaining no target (DragonflyHuntGoal.java:59-74, 85-94, 96-128) | fly; attack (event) on the bite |
 
 A `[modern: key]` guard means the goal is registered only under the modern config key named (read once, at construction); `UNPARSED` means the registration's shape is one the generator does not read (a local variable or a computed priority) — the owner reads that line.
 

@@ -126,6 +126,7 @@ A `[modern: key]` guard means the goal is registered only under the modern confi
 **Strike and launch sites:**
 
 - melee `doHurtTarget(prey)` — Cryolophosaurus.java:111 in `customServerAiStep`, guard: if (this.distanceToSqr(prey) < 5.0 && (this.random.nextInt(12) == 0 || this.random.nextInt(14) == 1)) within if (prey != null) within if (this.random.nextInt(5) == 1)
+- melee `doHurtTarget(target)` — ai/BugMeleeAttackGoal.java:172 in `tick`, guard: (unparsed: boolean hit =) within if (this.mob.getRandom().nextInt(this.params.outerAttackRoll()) == 0 || this.mob.getRandom().nextInt(this.params.innerAttackRoll()) == 1) within if (distSq < reachSq)
 
 **What fires each contract clip:**
 

@@ -67,7 +67,7 @@
     "One gait rhythm on the legs (ModelChipmunk.java:161-167): above a walking speed of 0.1 the cosine of the age x 2.3 (ANIM_SPEED 1.0, :20), x pi x 0.25, x the walking speed swings the front right and back left legs one way and the other pair the opposite - a 45-degree scamper at full speed every 2.7 ticks. Below the threshold the legs snap to their rests.",
     "The head follows 0.45 of the look yaw (:169-178) and takes nine parts with it - the nose, both ears, the mouth, both cheeks and the two hidden hat pieces - each set to the same yaw one by one; no pitch.",
     "The tail (:180-185): unless the chipmunk is in its sitting pose, the base takes 0.306 rad plus a slow wag (the cosine of the age x 0.25, x pi x 0.06 - 11 degrees every 25 ticks) plus a stride bob (the cosine of the age x 1.3, x pi x 0.25, x the walking speed - 45 degrees at full speed every 4.8 ticks, no threshold), and the tip takes the base's angle plus another 0.306. Sitting, the branch is skipped and the tail keeps whatever angle it had.",
-    "The body, rump and neck never move; the two hat pieces are hidden every frame (:187-188). There is no attacking flag and no strike (the cannon-fodder base activates and hats it but never bites, EntityCannonFodder.java:70-136).",
+    "The body, rump and neck never move; the two hat pieces are hidden every frame (:187-188). There is no attacking flag; the strike is the cannon-fodder base's, once activated (IS_ACTIVATED 2): on a 1-in-5 tick a target within 3 blocks is hurt for 3 on the Chipmunk's own row of the species table (swing gate 6; EntityCannonFodder.java:273-290, a direct mobAttack hurt the trigger inventory reads now - TEST-011 (c), owner 2026-09-14, item 5).",
     "The renderer halves the scale for a baby (ChipmunkRenderer.java:39-43)."
   ],
   "clips": [
@@ -89,12 +89,12 @@
     {
       "name": "calm_idle",
       "verdict": "leave",
-      "note": "= idle: no synched attacking flag in Chipmunk.java (the cannon-fodder base's HAT_COLOR / IS_ACTIVATED are team state, EntityCannonFodder.java:68-71) and no attack at all, so calm_idle is covered by idle (ruled 2026-09-06, Q12 (a))"
+      "note": "= idle: no synched attacking flag in Chipmunk.java (the cannon-fodder base's HAT_COLOR / IS_ACTIVATED are team state, EntityCannonFodder.java:68-71) so calm_idle is covered by idle (ruled 2026-09-06, Q12 (a)); the strike it does have is the cannon-fodder base's (see attack)"
     },
     {
       "name": "attack",
-      "verdict": "leave",
-      "note": "no attack: the entity never strikes - no melee or ranged goal, no doHurtTarget call in Chipmunk.java or EntityCannonFodder.java (the 1-damage attribute at Chipmunk.java:86 is unused); the generator offers no attack row"
+      "verdict": "author",
+      "note": "offered now: the cannon-fodder base's strike, once the chipmunk is activated (IS_ACTIVATED 2) - on a 1-in-5 tick a target within 3 blocks is hurt for 3 on the Chipmunk's row of the species table, swing gate 6 (EntityCannonFodder.java:273-290: a direct mobAttack hurt, not a doHurtTarget call, which is why the seed first read it as no strike; the trigger inventory reads it now - TEST-011 (c), owner 2026-09-14, item 5); no attacking flag, so the strike is transport 1 (the server LivingDamageEvent.Post) - a quick nip; the 1-damage attribute at Chipmunk.java:86 is unused"
     },
     {
       "name": "hurt",

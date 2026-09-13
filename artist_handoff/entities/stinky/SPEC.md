@@ -115,8 +115,8 @@ Source: `src/main/java/danger/orespawn/entity/EntityStinky.java` (TamableAnimal)
 |---|---|---|---|---|---|---|
 | goalSelector | 1 | `FloatGoal` | - | locomotion | bobs up to the surface in water (vanilla) | swim state (client reads isInWater) |
 | goalSelector | 2 | `AvoidEntityGoal` | - | flee | runs away from a class of entities (vanilla) | walk (fast) |
-| goalSelector | 3 | `MyEntityAIFollowOwner` | - | UNCLASSIFIED | no entry in the generator's goal dictionary | unknown |
-| goalSelector | 4 | `TemptGoal` | - | UNCLASSIFIED | no entry in the generator's goal dictionary | unknown |
+| goalSelector | 3 | `MyEntityAIFollowOwner` | - | social | OreSpawn's pet follow (MOVE\|LOOK): starts when not ordered to sit and the owner is beyond maxDist (or beyond half of it while below y 60 or at night), looks at the owner and re-paths to them every 10 ticks at followSpeed with floating off; when no path exists and the owner is 12+ blocks away, teleports to a clear two-high spot on solid ground in a ring around them; stops inside minDist or on the owner's column (MyEntityAIFollowOwner.java:45-60, 79-125) | walk |
+| goalSelector | 4 | `TemptGoal` | - | social | walks toward a nearby player holding the species' tempt item, keeping its eyes on them, and gives up when they put it away or move off (vanilla TemptGoal; the item is the registration's ingredient argument) | walk |
 | goalSelector | 5 | `PanicGoal` | - | flee | runs in a panic after taking damage (vanilla) | walk (fast) |
 | goalSelector | 6 | `LookAtPlayerGoal` | - | look | turns the head toward a nearby player (vanilla; head yaw/pitch only) | none: head look, not a clip |
 | goalSelector | 7 | `WaterAvoidingRandomStrollGoal` | - | locomotion | strolls to random spots, avoiding water (vanilla) | walk |

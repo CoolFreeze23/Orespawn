@@ -106,7 +106,7 @@ Source: `src/main/java/danger/orespawn/entity/RubyBird.java` (Cockateil)
 
 _No AI goals registered (the behaviour lives in tick / customServerAiStep)._
 
-**Synched state flags** (what the client can see): none
+**Synched state flags** (what the client can see): `DATA_BIRD_TYPE` (Integer, line 43 of Cockateil.java, the parent class)
 
 **Locomotion facts:** has a baby form (the renderer halves the scale). Overrides: none.
 

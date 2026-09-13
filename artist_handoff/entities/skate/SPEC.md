@@ -82,7 +82,7 @@ Source: `src/main/java/danger/orespawn/entity/Skate.java` (Monster)
 | selector | prio | goal | guard | category | what it does | bears on |
 |---|---|---|---|---|---|---|
 | goalSelector | 0 | `FloatGoal` | - | locomotion | bobs up to the surface in water (vanilla) | swim state (client reads isInWater) |
-| goalSelector | 1 | `MyEntityAIWander` | - | UNCLASSIFIED | no entry in the generator's goal dictionary | unknown |
+| goalSelector | 1 | `MyEntityAIWander` | - | locomotion | OreSpawn's wander (MOVE): on a 1-in-90 roll, when not ordered to sit, picks a random reachable spot within 10 horizontal / 7 vertical blocks and walks to it at the registration's speed, giving up when the path ends or a pet stands on its owner's column (MyEntityAIWander.java:30-65) | walk |
 | goalSelector | 2 | `LookAtPlayerGoal` | - | look | turns the head toward a nearby player (vanilla; head yaw/pitch only) | none: head look, not a clip |
 | goalSelector | 3 | `RandomLookAroundGoal` | - | look | looks around idly (vanilla; head yaw/pitch only) | none: head look, not a clip |
 | targetSelector | 1 | `HurtByTargetGoal` | - | targeting | retaliates against whoever hurt it (vanilla target selector) | aggro state (through the attacking flag where one exists) |

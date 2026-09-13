@@ -106,7 +106,7 @@ Source: `src/main/java/danger/orespawn/entity/Frog.java` (Animal)
 |---|---|---|---|---|---|---|
 | goalSelector | 0 | `FloatGoal` | - | locomotion | bobs up to the surface in water (vanilla) | swim state (client reads isInWater) |
 | goalSelector | 1 | `PanicGoal` | - | flee | runs in a panic after taking damage (vanilla) | walk (fast) |
-| goalSelector | 2 | `MyEntityAIWander` | - | UNCLASSIFIED | no entry in the generator's goal dictionary | unknown |
+| goalSelector | 2 | `MyEntityAIWander` | - | locomotion | OreSpawn's wander (MOVE): on a 1-in-90 roll, when not ordered to sit, picks a random reachable spot within 10 horizontal / 7 vertical blocks and walks to it at the registration's speed, giving up when the path ends or a pet stands on its owner's column (MyEntityAIWander.java:30-65) | walk |
 
 A `[modern: key]` guard means the goal is registered only under the modern config key named (read once, at construction); `UNPARSED` means the registration's shape is one the generator does not read (a local variable or a computed priority) — the owner reads that line.
 

@@ -50,7 +50,7 @@ This rig is NOT yet in-game: the geometry is the converter's output over the por
 - One gait rhythm on the legs (ModelChipmunk.java:161-167): above a walking speed of 0.1 the cosine of the age x 2.3 (ANIM_SPEED 1.0, :20), x pi x 0.25, x the walking speed swings the front right and back left legs one way and the other pair the opposite - a 45-degree scamper at full speed every 2.7 ticks. Below the threshold the legs snap to their rests.
 - The head follows 0.45 of the look yaw (:169-178) and takes nine parts with it - the nose, both ears, the mouth, both cheeks and the two hidden hat pieces - each set to the same yaw one by one; no pitch.
 - The tail (:180-185): unless the chipmunk is in its sitting pose, the base takes 0.306 rad plus a slow wag (the cosine of the age x 0.25, x pi x 0.06 - 11 degrees every 25 ticks) plus a stride bob (the cosine of the age x 1.3, x pi x 0.25, x the walking speed - 45 degrees at full speed every 4.8 ticks, no threshold), and the tip takes the base's angle plus another 0.306. Sitting, the branch is skipped and the tail keeps whatever angle it had.
-- The body, rump and neck never move; the two hat pieces are hidden every frame (:187-188). There is no attacking flag and no strike (the cannon-fodder base activates and hats it but never bites, EntityCannonFodder.java:70-136).
+- The body, rump and neck never move; the two hat pieces are hidden every frame (:187-188). There is no attacking flag; the strike is the cannon-fodder base's, once activated (IS_ACTIVATED 2): on a 1-in-5 tick a target within 3 blocks is hurt for 3 on the Chipmunk's own row of the species table (swing gate 6; EntityCannonFodder.java:273-290, a direct mobAttack hurt the trigger inventory reads now - TEST-011 (c), owner 2026-09-14, item 5).
 - The renderer halves the scale for a baby (ChipmunkRenderer.java:39-43).
 
 ### 4.1 Tempo table (contract §7.1)
@@ -86,7 +86,8 @@ This creature has NO exact keyframe transcription and is not yet on its hook (th
 | `walk` | true | base | w_walk = w_move (1 - w_swim)(1 - w_fly); the gait group additionally x limbSwingAmount (P3) | any of the 18 bones — gait group (speed-scaled): leg1, leg2, leg3, leg4; free: body, body_tail, cheek1, cheek2, ear1, ear2, hat1, hat2, head, mouth_under, neck, nose; other groups' bones: tail1 (better left to `walk_tail_wag`), tail2 (better left to `walk_tail_wag`) | 1 s | no | author | REQUIRED with idle: the locomotion loop - the gait group's 45-degree scamper at full speed with the tail bobbing (ModelChipmunk.java:161-167, :182-184), scaled by walking speed in-game |
 | `walk_tail_wag` | true | parallel layer | w_walk = w_move (1 - w_swim)(1 - w_fly); the gait group additionally x limbSwingAmount (P3) (group tail_wag) | tail1, tail2 | 1 s | no | author |  |
 | `swim` | true | base | w_swim from isInWater() | any of the 18 bones — gait group (speed-scaled): leg1, leg2, leg3, leg4; free: body, body_tail, cheek1, cheek2, ear1, ear2, hat1, hat2, head, mouth_under, neck, nose; other groups' bones: tail1 (better left to `swim_tail_wag`), tail2 (better left to `swim_tail_wag`) | 1 s | no | author | it has the state: a FloatGoal keeps it at the surface (Chipmunk.java:65) - a frantic paddle; optional: falls back to walk then idle when absent (section 2.4) |
-| `calm_idle` | true | base | = idle until this creature's SPEC adds a synched attacking byte (ruled 2026-09-06, Q12 (a)) | (as idle) | 1 s | no | leave | = idle: no synched attacking flag in Chipmunk.java (the cannon-fodder base's HAT_COLOR / IS_ACTIVATED are team state, EntityCannonFodder.java:68-71) and no attack at all, so calm_idle is covered by idle (ruled 2026-09-06, Q12 (a)) |
+| `calm_idle` | true | base | = idle until this creature's SPEC adds a synched attacking byte (ruled 2026-09-06, Q12 (a)) | (as idle) | 1 s | no | leave | = idle: no synched attacking flag in Chipmunk.java (the cannon-fodder base's HAT_COLOR / IS_ACTIVATED are team state, EntityCannonFodder.java:68-71) so calm_idle is covered by idle (ruled 2026-09-06, Q12 (a)); the strike it does have is the cannon-fodder base's (see attack) |
+| `attack` | false | triggered controller | event: a strike (the transport per species by the trigger inventory — ruled 2026-09-06, Q11 (a); §6 says which applies here) | (any unlocked) | 0.5 s | yes | author | offered now: the cannon-fodder base's strike, once the chipmunk is activated (IS_ACTIVATED 2) - on a 1-in-5 tick a target within 3 blocks is hurt for 3 on the Chipmunk's row of the species table, swing gate 6 (EntityCannonFodder.java:273-290: a direct mobAttack hurt, not a doHurtTarget call, which is why the seed first read it as no strike; the trigger inventory reads it now - TEST-011 (c), owner 2026-09-14, item 5); no attacking flag, so the strike is transport 1 (the server LivingDamageEvent.Post) - a quick nip; the 1-damage attribute at Chipmunk.java:86 is unused |
 | `hurt` | false | triggered controller | event: hurtTime rising edge (client-observed); the red overlay stays (ruled 2026-09-06, Q4 (a)) | (any unlocked) | 0.3 s | yes | author | a flinch: no hurt() override in Chipmunk.java (vanilla LivingEntity.hurt; the scorpion_hit sound at :200-203); the hurtTime edge is client-observed - it panics after (:72) |
 | `death` | hold_on_last_frame | triggered controller | event: deathTime > 0; the vanilla death flip stays — the pilot ships no death clip (ruled 2026-09-06, Q3 (a)); a creature whose JSON ships one gets the clip-replaces-flip mode when the first such clip arrives, so a `death` delivered here plays under the flip until then | (any unlocked) | 1 s | yes | author | ruled 2026-09-06, Q3 (a): the vanilla death flip stays; a creature whose JSON ships a `death` clip gets the clip-replaces-flip mode, designed when the first such clip arrives (the Queen's own death clip the precedent) - a `death` delivered here plays under the flip until then |
 | `sit` | true | overlay | state: isInSittingPose() - TamableAnimal's synched sitting flag, toggled by the owner's click (Chipmunk.java:184-189) and cleared on release (:164-165); today its only visible effect is the tail frozen at its last angle (ModelChipmunk.java:180) - the seam needs a state selector for it | body, body_tail, leg1, leg2, leg3, leg4, tail1, tail2 | 1 s | no | author | a sitting pose: haunches down, tail curled up the back; needs the seam to select it on the sitting flag |
@@ -111,9 +112,9 @@ Source: `src/main/java/danger/orespawn/entity/Chipmunk.java` (EntityCannonFodder
 |---|---|---|---|---|---|---|
 | goalSelector | 0 | `FloatGoal` | - | locomotion | bobs up to the surface in water (vanilla) | swim state (client reads isInWater) |
 | goalSelector | 1 | `BreedGoal` | - | social | walks to a mate and breeds (vanilla) | walk |
-| goalSelector | 2 | `FollowOwnerGoal` | - | UNCLASSIFIED | no entry in the generator's goal dictionary | unknown |
+| goalSelector | 2 | `FollowOwnerGoal` | - | social | follows its owner (vanilla tamed-pet goal): when not ordered to sit and the owner is beyond the start distance it paths to them at the registration's speed, teleporting to a safe spot beside them when too far to path, and releases inside the stop distance (vanilla FollowOwnerGoal) | walk |
 | goalSelector | 3 | `AvoidEntityGoal` | - | flee | runs away from a class of entities (vanilla) | walk (fast) |
-| goalSelector | 4 | `TemptGoal` | - | UNCLASSIFIED | no entry in the generator's goal dictionary | unknown |
+| goalSelector | 4 | `TemptGoal` | - | social | walks toward a nearby player holding the species' tempt item, keeping its eyes on them, and gives up when they put it away or move off (vanilla TemptGoal; the item is the registration's ingredient argument) | walk |
 | goalSelector | 5 | `PanicGoal` | - | flee | runs in a panic after taking damage (vanilla) | walk (fast) |
 | goalSelector | 6 | `AvoidEntityGoal` | - | flee | runs away from a class of entities (vanilla) | walk (fast) |
 | goalSelector | 7 | `LookAtPlayerGoal` | - | look | turns the head toward a nearby player (vanilla; head yaw/pitch only) | none: head look, not a clip |
@@ -124,9 +125,13 @@ Source: `src/main/java/danger/orespawn/entity/Chipmunk.java` (EntityCannonFodder
 
 A `[modern: key]` guard means the goal is registered only under the modern config key named (read once, at construction); `UNPARSED` means the registration's shape is one the generator does not read (a local variable or a computed priority) — the owner reads that line.
 
-**Synched state flags** (what the client can see): none
+**Synched state flags** (what the client can see): `IS_ACTIVATED` (Integer, line 35 of EntityCannonFodder.java, the parent class), `HAT_COLOR` (Integer, line 37 of EntityCannonFodder.java, the parent class)
 
 **Locomotion facts:** has a baby form (the renderer halves the scale). Overrides: customServerAiStep.
+
+**Strike and launch sites:**
+
+- melee (a direct hurt on the victim) `attackTarget.hurt(this.damageSources().mobAttack(this), fodderDamage)` — EntityCannonFodder.java:290 in `customServerAiStep`, guard: if (this.distanceToSqr(attackTarget) < 9.0 && (this.random.nextInt(swingFrequency + 1) == 0 || this.random.nextInt(swingFrequency) == 1)) within if (attackTarget != null) within if (this.level().getDifficulty() != Difficulty.PEACEFUL && this.random.nextInt(5) == 1)
 
 **What fires each contract clip:**
 
@@ -136,7 +141,7 @@ A `[modern: key]` guard means the goal is registered only under the modern confi
 | `idle` | w_idle = (1 - w_move)(1 - w_swim)(1 - w_fly) | standing still |
 | `swim` | Entity.isInWater() (client-evaluated); FloatGoal keeps it at the surface | falls back to walk then idle when absent (§2.4) |
 | `aggro_idle / calm_idle` | no synched attacking flag | calm_idle only until this creature's SPEC adds a synched byte mirroring getTarget() != null (ruled 2026-09-06, Q12 (a): aggro_idle waits for that byte) |
-| `attack` | no strike or launch site found | no attack clip: the mob does not attack |
+| `attack` | melee: LivingDamageEvent.Post -> triggerAnim packet (transport 1); ranged: named launch sites (transport 3) | the transport per species by the trigger inventory (ruled 2026-09-06, Q11 (a)): no attacking flag here, so the signal column's transport applies — the server LivingDamageEvent.Post -> triggerAnim packet for melee, a named launch site for ranged |
 | `hurt` | rising edge of LivingEntity.hurtTime (0 -> 10), client-observed | always available; the red overlay stays (ruled 2026-09-06, Q4 (a)) |
 | `death` | LivingEntity.deathTime > 0, client-observed | hold_on_last_frame; the vanilla death flip stays and the pilot ships no death clip (ruled 2026-09-06, Q3 (a)); a creature whose JSON ships a `death` clip gets the clip-replaces-flip mode, designed when the first such clip arrives (the Queen's own death clip the precedent) — until then a delivered `death` plays under the flip |
 | `idle_alt_N` | a roll at each idle loop boundary (p = 0.15) while w_idle > 0.9 | optional; one roll per idle loop boundary, p = 0.15, a uniform choice, only while the idle weight is above 0.9 and no triggered clip plays, keyed on the clip-clock cycle index (ruled 2026-09-06, Q5 (a)) |
@@ -158,7 +163,7 @@ No MultiHitboxLib profile: no locked bones. Every bone name is still immutable (
 ## 10. Effort and priority
 
 - Artist scope: full contract (Tier 2, the state-branching class (a sitting branch freezes the tail): geckolib_migration_design.md section 5); the rig is not yet in-game (it lands through the seam in a later slice).
-- Estimated effort: 15.6 h (generator: 4 h + 0.2 h/bone x 18 + 1 h/clip x 8 to author or improve (owner adjusts)).
+- Estimated effort: 16.6 h (generator: 4 h + 0.2 h/bone x 18 + 1 h/clip x 9 to author or improve (owner adjusts)).
 - Tier 2 (state-branching — setupAnim branches on entity state).
 - Density statement (the harness's, not the artist's; ruled 2026-09-06, Q9 (a) and Q10): the classic transcription is verified at 2.5e-3 rad — Beaver reference leg 15 / 13 / 8 catmullrom keys per bone with spline arguments repaired at load; wrap sample T−ε vs 0+ε included; the key counts per bone are an output of the harness, re-derived on every re-transcription.
 

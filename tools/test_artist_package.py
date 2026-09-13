@@ -2300,5 +2300,377 @@ class FixtureCase(unittest.TestCase):
         self.assertEqual(by["fixture_head"]["status"], "classic only")
 
 
+# ---------------------------------------------------------------------------------------------------------------------
+# TEST-011 (owner 2026-09-14, item 5): the trigger inventory's three readers, pinned on their own fixture entities beside
+# the standing fixture (its pins above are untouched): (a) the accessor named ATTACKING; (b) a flag set through a goal's
+# consumer, traced into the goal class and its parent, and a parent entity class's flags and sites counting for the
+# subclass; (c) vanilla MeleeAttackGoal as a strike site with the entity's own state name (DATA_SCREAMING) read as the held
+# aggro state, a direct hurt on the victim as a strike site, and a parent goal's strike (the inherited nip).
+# ---------------------------------------------------------------------------------------------------------------------
+
+LIZARDISH_JAVA = """package danger.orespawn.entity;
+
+public class Lizardish extends TamableAnimal {
+    private static final EntityDataAccessor<Byte> ATTACKING =
+            SynchedEntityData.defineId(Lizardish.class, EntityDataSerializers.BYTE);
+
+    @Override
+    protected void registerGoals() {
+        this.goalSelector.addGoal(0, new FloatGoal(this));
+    }
+
+    public int getAttacking() { return this.entityData.get(ATTACKING); }
+    public void setAttacking(int val) { this.entityData.set(ATTACKING, (byte) val); }
+
+    @Override
+    protected void customServerAiStep() {
+        LivingEntity prey = this.findSomethingToAttack();
+        if (prey != null) {
+            if (this.distanceToSqr(prey) < 12.0) {
+                this.setAttacking(1);
+                this.doHurtTarget(prey);
+            }
+        } else {
+            this.setAttacking(0);
+        }
+    }
+}
+"""
+
+LIZARDISH_JR_JAVA = """package danger.orespawn.entity;
+
+public class LizardishJr extends Lizardish {
+    public LizardishJr(EntityType<? extends LizardishJr> type, Level level) {
+        super(type, level);
+    }
+}
+"""
+
+BUGGER_JAVA = """package danger.orespawn.entity;
+
+public class Bugger extends Monster {
+    private static final EntityDataAccessor<Integer> DATA_ATTACKING =
+            SynchedEntityData.defineId(Bugger.class, EntityDataSerializers.INT);
+
+    @Override
+    protected void registerGoals() {
+        this.goalSelector.addGoal(0, new FloatGoal(this));
+        this.goalSelector.addGoal(1, new FixtureBugChildGoal(this, this::setAttacking));
+    }
+
+    public int getAttacking() { return this.entityData.get(DATA_ATTACKING); }
+    public void setAttacking(int value) { this.entityData.set(DATA_ATTACKING, value); }
+}
+"""
+
+FIXTURE_BUG_GOAL_JAVA = """package danger.orespawn.entity.ai;
+
+import java.util.function.IntConsumer;
+
+public class FixtureBugGoal extends Goal {
+    protected final Mob mob;
+    protected final IntConsumer setAttacking;
+
+    public FixtureBugGoal(Mob mob, IntConsumer setAttacking) {
+        this.mob = mob;
+        this.setAttacking = setAttacking;
+    }
+
+    @Override
+    public void stop() {
+        this.setAttacking.accept(0);
+    }
+
+    @Override
+    public void tick() {
+        LivingEntity target = this.mob.getTarget();
+        if (target == null || !target.isAlive()) {
+            this.setAttacking.accept(0);
+            return;
+        }
+        double distSq = this.mob.distanceToSqr(target);
+        if (distSq < 9.0) {
+            this.setAttacking.accept(1);
+            this.mob.doHurtTarget(target);
+        } else {
+            this.setAttacking.accept(0);
+        }
+    }
+}
+"""
+
+FIXTURE_BUG_CHILD_GOAL_JAVA = """package danger.orespawn.entity.ai;
+
+import java.util.function.IntConsumer;
+
+public class FixtureBugChildGoal extends FixtureBugGoal {
+    public FixtureBugChildGoal(Mob mob, IntConsumer setAttacking) {
+        super(mob, setAttacking);
+    }
+}
+"""
+
+SCREAMER_JAVA = """package danger.orespawn.entity;
+
+public class Screamer extends Monster {
+    private static final EntityDataAccessor<Boolean> DATA_SCREAMING =
+            SynchedEntityData.defineId(Screamer.class, EntityDataSerializers.BOOLEAN);
+
+    @Override
+    protected void registerGoals() {
+        this.goalSelector.addGoal(0, new FloatGoal(this));
+        this.goalSelector.addGoal(1, new MeleeAttackGoal(this, 1.0, false));
+        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, 0, true, false, null) {
+            @Override
+            protected void findTarget() {
+                Player nearest = this.mob.level().getNearestPlayer(this.mob, 64.0);
+                if (nearest != null) {
+                    if (this.targetConditions.test(this.mob, nearest)) {
+                        Screamer.this.setScreaming(true);
+                        this.target = nearest;
+                        return;
+                    }
+                    Screamer.this.setScreaming(false);
+                }
+                this.target = null;
+            }
+        });
+    }
+
+    public boolean isScreaming() { return this.entityData.get(DATA_SCREAMING); }
+    public void setScreaming(boolean val) { this.entityData.set(DATA_SCREAMING, val); }
+
+    @Override
+    public void aiStep() {
+        LivingEntity target = this.getTarget();
+        if (target != null) {
+            this.teleportDelay = 0;
+        } else {
+            this.setScreaming(false);
+        }
+        super.aiStep();
+    }
+
+    @Override
+    public boolean hurt(DamageSource source, float amount) {
+        this.setScreaming(true);
+        return super.hurt(source, amount);
+    }
+}
+"""
+
+PECKER_JAVA = """package danger.orespawn.entity;
+
+public class Pecker extends Animal {
+    @Override
+    protected void registerGoals() {
+        this.goalSelector.addGoal(0, new FloatGoal(this));
+    }
+
+    @Override
+    protected void customServerAiStep() {
+        LivingEntity prey = this.findSomethingToAttack();
+        if (prey != null) {
+            if (this.distanceToSqr(prey) < 4.0) {
+                prey.hurt(this.damageSources().mobAttack(this), 6.0f);
+            }
+        }
+    }
+}
+"""
+
+MOTHLING_JAVA = """package danger.orespawn.entity;
+
+public class Mothling extends AmbientCreature {
+    @Override
+    protected void registerGoals() {
+        this.goalSelector.addGoal(8, new FixtureChildHuntGoal(this));
+    }
+}
+"""
+
+FIXTURE_HUNT_GOAL_JAVA = """package danger.orespawn.entity.ai;
+
+public class FixtureHuntGoal extends Goal {
+    protected final Mob mob;
+
+    public FixtureHuntGoal(Mob mob) {
+        this.mob = mob;
+    }
+
+    @Override
+    public void tick() {
+        LivingEntity prey = this.findSomethingToAttack();
+        if (prey != null) {
+            if (this.mob.distanceToSqr(prey) < 6.0) {
+                this.mob.doHurtTarget(prey);
+            }
+        }
+    }
+}
+"""
+
+FIXTURE_CHILD_HUNT_GOAL_JAVA = """package danger.orespawn.entity.ai;
+
+public class FixtureChildHuntGoal extends FixtureHuntGoal {
+    public FixtureChildHuntGoal(Mob mob) {
+        super(mob);
+    }
+}
+"""
+
+READER_REGISTRATIONS = """    public static final DeferredHolder<EntityType<?>, EntityType<Lizardish>> LIZARDISH =
+            ENTITY_TYPES.register("lizardish", () -> EntityType.Builder.of(Lizardish::new, MobCategory.CREATURE)
+                    .sized(1.0f, 1.0f).clientTrackingRange(8).build("lizardish"));
+    public static final DeferredHolder<EntityType<?>, EntityType<LizardishJr>> LIZARDISH_JR =
+            ENTITY_TYPES.register("lizardish_jr", () -> EntityType.Builder.of(LizardishJr::new, MobCategory.CREATURE)
+                    .sized(0.5f, 0.5f).clientTrackingRange(8).build("lizardish_jr"));
+    public static final DeferredHolder<EntityType<?>, EntityType<Bugger>> BUGGER =
+            ENTITY_TYPES.register("bugger", () -> EntityType.Builder.of(Bugger::new, MobCategory.MONSTER)
+                    .sized(1.0f, 1.0f).clientTrackingRange(8).build("bugger"));
+    public static final DeferredHolder<EntityType<?>, EntityType<Screamer>> SCREAMER =
+            ENTITY_TYPES.register("screamer", () -> EntityType.Builder.of(Screamer::new, MobCategory.MONSTER)
+                    .sized(0.6f, 2.9f).clientTrackingRange(8).build("screamer"));
+    public static final DeferredHolder<EntityType<?>, EntityType<Pecker>> PECKER =
+            ENTITY_TYPES.register("pecker", () -> EntityType.Builder.of(Pecker::new, MobCategory.AMBIENT)
+                    .sized(0.65f, 1.2f).clientTrackingRange(8).build("pecker"));
+    public static final DeferredHolder<EntityType<?>, EntityType<Mothling>> MOTHLING =
+            ENTITY_TYPES.register("mothling", () -> EntityType.Builder.of(Mothling::new, MobCategory.AMBIENT)
+                    .sized(0.5f, 0.5f).clientTrackingRange(8).build("mothling"));
+"""
+
+
+def build_reader_fixture(root: Path) -> None:
+    """The standing fixture repo plus the TEST-011 entities and goals (registered without renderers: the trigger inventory
+    reads the entity file, its mod parents and the goal classes only)."""
+    build_fixture_repo(root)
+    java = root / "src/main/java/danger/orespawn"
+    for name, text in (("Lizardish", LIZARDISH_JAVA), ("LizardishJr", LIZARDISH_JR_JAVA), ("Bugger", BUGGER_JAVA),
+                       ("Screamer", SCREAMER_JAVA), ("Pecker", PECKER_JAVA), ("Mothling", MOTHLING_JAVA)):
+        (java / f"entity/{name}.java").write_text(text, encoding="utf-8")
+    for name, text in (("FixtureBugGoal", FIXTURE_BUG_GOAL_JAVA), ("FixtureBugChildGoal", FIXTURE_BUG_CHILD_GOAL_JAVA),
+                       ("FixtureHuntGoal", FIXTURE_HUNT_GOAL_JAVA), ("FixtureChildHuntGoal", FIXTURE_CHILD_HUNT_GOAL_JAVA)):
+        (java / f"entity/ai/{name}.java").write_text(text, encoding="utf-8")
+    mod_entities = java / "ModEntities.java"
+    text = mod_entities.read_text(encoding="utf-8")
+    marker = "    public static void register("
+    assert marker in text
+    mod_entities.write_text(text.replace(marker, READER_REGISTRATIONS + "\n" + marker, 1), encoding="utf-8")
+
+
+class ReaderCase(unittest.TestCase):
+    """TEST-011: the three readers, each pinned on its own fixture entity; the standing fixture's own inventory is checked
+    unchanged beside them (its melee site count, the pins of FixtureCase)."""
+
+    @classmethod
+    def setUpClass(cls) -> None:
+        cls.tmp = Path(tempfile.mkdtemp(prefix="artist_pkg_readers_"))
+        cls.root = cls.tmp / "repo"
+        cls.root.mkdir()
+        build_reader_fixture(cls.root)
+        cls.repo = ap.Repo(cls.root)
+
+    @classmethod
+    def tearDownClass(cls) -> None:
+        shutil.rmtree(cls.tmp, ignore_errors=True)
+
+    def inventory(self, registry: str) -> dict:
+        return ap.build_trigger_inventory(self.repo.get(registry), self.repo)
+
+    def test_a_accessor_named_attacking_is_the_attacking_flag(self):
+        inv = self.inventory("lizardish")
+        self.assertEqual([f["name"] for f in inv["flags"]], ["ATTACKING"])
+        att = inv["attacking"]
+        self.assertTrue(att["present"])
+        self.assertEqual(att["flag_name"], "ATTACKING")
+        self.assertEqual(att["verdict"], "STATE")
+        self.assertEqual([(s["value"], s["guard"]) for s in att["sites"]],
+                         [(1, "if (this.distanceToSqr(prey) < 12.0)"), (0, "NOT(if (prey != null))")])
+        self.assertTrue(all("file" not in s for s in att["sites"]))  # the entity's own sites carry no file label
+        drives = {d["clip"]: d for d in inv["drives"]}
+        self.assertIn("STATE flag", drives["aggro_idle / calm_idle"]["verdict"])
+        self.assertTrue(drives["aggro_idle / calm_idle"]["signal"].startswith("ATTACKING held while engaged"))
+        self.assertIn("transport 1", drives["attack"]["signal"])
+        self.assertFalse([w for w in self.repo.warnings.for_scope("lizardish") if w[1] == "ATTACKING_UNCLASSIFIED"])
+
+    def test_b_parent_class_flags_and_sites_count_for_the_subclass(self):
+        inv = self.inventory("lizardish_jr")
+        self.assertEqual(inv["parent_classes"], ["Lizardish.java"])
+        self.assertEqual([(f["name"], f.get("file")) for f in inv["flags"]], [("ATTACKING", "Lizardish.java")])
+        att = inv["attacking"]
+        self.assertTrue(att["present"])
+        self.assertEqual(att["verdict"], "STATE")
+        self.assertEqual([(s["file"], s["value"]) for s in att["sites"]], [("Lizardish.java", 1), ("Lizardish.java", 0)])
+        self.assertEqual([(s["file"], s["code"]) for s in inv["combat"]["melee"]], [("Lizardish.java", "doHurtTarget(prey)")])
+        drives = {d["clip"]: d for d in inv["drives"]}
+        self.assertIn("STATE flag", drives["aggro_idle / calm_idle"]["verdict"])
+        self.assertIn("attack", drives)
+
+    def test_b_consumer_set_flag_traced_into_the_goal_and_its_parent(self):
+        inv = self.inventory("bugger")
+        att = inv["attacking"]
+        self.assertTrue(att["present"])
+        self.assertEqual(att["flag_name"], "DATA_ATTACKING")
+        self.assertEqual(att["traced_goals"][0]["goal"], "FixtureBugChildGoal")
+        self.assertEqual(att["traced_goals"][0]["chain"], ["ai/FixtureBugChildGoal.java", "ai/FixtureBugGoal.java"])
+        self.assertTrue(all(s["file"] == "ai/FixtureBugGoal.java" for s in att["sites"]))
+        self.assertTrue(all("FixtureBugChildGoal" in s["via"] for s in att["sites"]))
+        self.assertEqual([s["value"] for s in att["sites"]], [0, 0, 1, 0])
+        self.assertEqual(att["verdict"], "STATE")  # cleared on target loss (target == null / !isAlive) and out of reach
+        self.assertIn("cleared when the target is lost", att["reason"])
+        self.assertEqual([(s["file"], s["code"]) for s in inv["combat"]["melee"]], [("ai/FixtureBugGoal.java", "doHurtTarget(target)")])
+        drives = {d["clip"]: d for d in inv["drives"]}
+        self.assertIn("STATE flag", drives["aggro_idle / calm_idle"]["verdict"])
+        self.assertIn("attack", drives)
+        self.assertFalse([w for w in self.repo.warnings.for_scope("bugger") if w[1] == "ATTACKING_UNCLASSIFIED"])
+
+    def test_c_vanilla_melee_goal_with_the_entity_s_own_state_name(self):
+        inv = self.inventory("screamer")
+        self.assertEqual([f["name"] for f in inv["flags"]], ["DATA_SCREAMING"])
+        att = inv["attacking"]
+        self.assertTrue(att["present"])
+        self.assertEqual((att["flag_name"], att["setter"]), ("DATA_SCREAMING", "setScreaming"))
+        self.assertEqual(att["verdict"], "STATE")
+        self.assertIn("the target goal's body", att["recognised"])
+        self.assertIn("cleared on target loss", att["recognised"])
+        self.assertEqual([s["value"] for s in att["sites"]], [1, 0, 0, 1])  # findTarget's raise and clear, aiStep's clear, hurt()'s raise
+        self.assertIn("RAISED in hurt()", att["reason"])  # the standing caveat applies to the recognised flag too
+        self.assertEqual(inv["combat"]["melee"], [])
+        vanilla = inv["combat"]["vanilla_melee"]
+        self.assertEqual(len(vanilla), 1)
+        self.assertTrue(vanilla[0]["registration"].startswith("Screamer.java:"))
+        self.assertIn("resetAttackCooldown (20 ticks)", vanilla[0]["strike"])
+        drives = {d["clip"]: d for d in inv["drives"]}
+        self.assertIn("STATE flag", drives["aggro_idle / calm_idle"]["verdict"])
+        self.assertTrue(drives["aggro_idle / calm_idle"]["signal"].startswith("DATA_SCREAMING held while engaged"))
+        self.assertIn("read as the held aggro state", drives["aggro_idle / calm_idle"]["signal"])
+        self.assertIn("vanilla MeleeAttackGoal registered at Screamer.java:", drives["attack"]["signal"])
+        self.assertIn("transport 1", drives["attack"]["signal"])
+
+    def test_c_direct_hurt_and_the_parent_goal_s_strike_are_strike_sites(self):
+        pecker = self.inventory("pecker")
+        self.assertFalse(pecker["attacking"]["present"])
+        self.assertEqual([(s["kind"], s["file"], s["method"]) for s in pecker["combat"]["melee"]],
+                         [("direct", "Pecker.java", "customServerAiStep")])
+        self.assertTrue(pecker["combat"]["melee"][0]["code"].startswith("prey.hurt(this.damageSources().mobAttack(this)"))
+        drives = {d["clip"]: d for d in pecker["drives"]}
+        self.assertIn("attack", drives)
+        self.assertEqual(drives["aggro_idle / calm_idle"]["signal"], "no synched attacking flag")
+        moth = self.inventory("mothling")
+        self.assertEqual([(s["file"], s["code"]) for s in moth["combat"]["melee"]], [("ai/FixtureHuntGoal.java", "doHurtTarget(prey)")])
+        self.assertIn("attack", {d["clip"] for d in moth["drives"]})
+
+    def test_the_standing_fixture_reads_as_before(self):
+        # the fixture's own strike site count and verdict are FixtureCase's pins; the vanilla goal it also registers is
+        # recorded beside them (vanilla_melee), never among the melee sites
+        inv = self.inventory("fixture")
+        self.assertEqual(inv["attacking"]["verdict"], "STATE")
+        self.assertEqual(inv["attacking"]["flag_name"], "DATA_ATTACKING")
+        self.assertEqual(len(inv["combat"]["melee"]), 1)
+        self.assertEqual(len(inv["combat"]["vanilla_melee"]), 1)
+        self.assertEqual(inv["parent_classes"], [])
+        self.assertEqual(inv["attacking"]["traced_goals"], [])
+
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)

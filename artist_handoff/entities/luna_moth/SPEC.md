@@ -42,7 +42,7 @@ This rig is NOT yet in-game: the geometry is the converter's output over the por
 - One rhythm runs at all times: the eight wing panels roll about the body's long axis at 0.975 rad/tick (a 6.44-tick beat — the butterfly's 1.3 scaled by this renderer's wingspeed 0.75, LunaMothRenderer.java:29), 45 degrees each way, the left set mirroring the right (ButterflyModel.java:109-115). The body and the head are static; the walk position, the walking speed, the head angles and the entity's state play no part.
 - The flight is the entity's: LunaMothFlightGoal (EntityLunaMoth.java:55) steers the delta movement toward torches when sheltered and wanders on the butterfly preset otherwise, and tick :58-63 damps the vertical speed by 0.6 each tick. The model never banks or bobs the body with that motion.
 - The renderer draws the head, then the body, then the wing pairs inner to outer (renderToBuffer, ButterflyModel.java:119-130).
-- No `attack` row: the moth's only strike is the Islands nip it inherits — LunaMothFlightGoal extends ButterflyIslandsHuntGoal (LunaMothFlightGoal.java:43), whose :83 calls EntityButterfly.doHurtTarget (EntityButterfly.java:161-165) — and the trigger inventory, which reads the entity file and the goal file it names, does not see the parent goal's call; the owner decides whether the nip earns a strike clip when the rig lands.
+- The `attack` row is offered from the inherited nip: LunaMothFlightGoal extends ButterflyIslandsHuntGoal (LunaMothFlightGoal.java:43), whose :83 calls EntityButterfly.doHurtTarget (EntityButterfly.java:161-165) — the trigger inventory follows the registered goal's parent class now (TEST-011, owner 2026-09-14, item 5); the nip's clip is left unauthored (verdict `leave` below) until the owner decides whether it earns a strike clip when the rig lands.
 
 ### 4.1 Tempo table (contract §7.1)
 
@@ -74,6 +74,7 @@ This creature has NO exact keyframe transcription and is not yet on its hook (th
 | `walk` | true | base | w_walk = w_move (1 - w_swim)(1 - w_fly); the gait group additionally x limbSwingAmount (P3) | any of the 10 bones — the primary group (unscaled; the bare clip is its transcription, a label under the naming rule): leftwing, leftwing2, leftwing3, leftwing4, rightwing, rightwing2, rightwing3, rightwing4; free: body, head | 1 s | no | author | REQUIRED with idle: the bare walk is the wings group's (the rig's one group, no gait group) — a label under the naming rule; in flight the fly -> walk fallback plays it |
 | `fly` | true | base | w_fly (flyer species and !onGround) | any of the 10 bones — the primary group (unscaled; the bare clip is its transcription, a label under the naming rule): leftwing, leftwing2, leftwing3, leftwing4, rightwing, rightwing2, rightwing3, rightwing4; free: body, head | 1 s | no | author | the true locomotion: airborne on LunaMothFlightGoal from spawn (EntityLunaMoth.java:55) — a softer, slower flutter than the butterfly's |
 | `calm_idle` | true | base | = idle until this creature's SPEC adds a synched attacking byte (ruled 2026-09-06, Q12 (a)) | (as idle) | 1 s | no | covered by idle | not needed while idle covers it; listed so the name stays reserved — not counted in the effort estimate |
+| `attack` | false | triggered controller | event: a strike (the transport per species by the trigger inventory — ruled 2026-09-06, Q11 (a); §6 says which applies here) | (any unlocked) | 0.5 s | yes | leave | offered now (the inherited Islands nip, ButterflyIslandsHuntGoal.java:83 — TEST-011, owner 2026-09-14, item 5): a 1-damage nip on a player or a horse in the Islands, no attacking flag, so the strike would be transport 1 (the server LivingDamageEvent.Post) — left unauthored until the owner decides whether the nip earns a strike clip when the rig lands |
 | `hurt` | false | triggered controller | event: hurtTime rising edge (client-observed); the red overlay stays (ruled 2026-09-06, Q4 (a)) | (any unlocked) | 0.3 s | yes | author | a flinch (no hurt sound: the butterfly's getHurtSound returns null, EntityButterfly.java:178-181) |
 | `death` | hold_on_last_frame | triggered controller | event: deathTime > 0; the vanilla death flip stays — the pilot ships no death clip (ruled 2026-09-06, Q3 (a)); a creature whose JSON ships one gets the clip-replaces-flip mode when the first such clip arrives, so a `death` delivered here plays under the flip until then | (any unlocked) | 1 s | yes | author | ruled 2026-09-06, Q3 (a): the vanilla death flip stays; a creature whose JSON ships a `death` clip gets the clip-replaces-flip mode, designed when the first such clip arrives (the Queen's own death clip the precedent) - a `death` delivered here plays under the flip until then |
 
@@ -93,13 +94,17 @@ Source: `src/main/java/danger/orespawn/entity/EntityLunaMoth.java` (EntityButter
 
 | selector | prio | goal | guard | category | what it does | bears on |
 |---|---|---|---|---|---|---|
-| goalSelector | 8 | `LunaMothFlightGoal` | - | UNCLASSIFIED | no entry in the generator's goal dictionary | unknown |
+| goalSelector | 8 | `LunaMothFlightGoal` | - | locomotion | the Luna Moth's flight over its own preset (10/6 wander, 1-in-100 retarget, 0.5/0.68 steer) with the inherited Islands vampire hunt, plus, on a tick the retarget skipped, at night on a 1-in-10 roll: scans cube shells r=2..14 (every other radius past 6) for the nearest torch / wall torch / Extreme Torch and sets the flight target one block above it (LunaMothFlightGoal.java:61-89, 97-166) | fly; attack (event) on the inherited bite |
 
 A `[modern: key]` guard means the goal is registered only under the modern config key named (read once, at construction); `UNPARSED` means the registration's shape is one the generator does not read (a local variable or a computed priority) — the owner reads that line.
 
-**Synched state flags** (what the client can see): none
+**Synched state flags** (what the client can see): `BUTTERFLY_TYPE` (Integer, line 48 of EntityButterfly.java, the parent class)
 
 **Locomotion facts:** a walker. Overrides: tick.
+
+**Strike and launch sites:**
+
+- melee `doHurtTarget(prey)` — ai/ButterflyIslandsHuntGoal.java:83 in `tick`, guard: if (this.mob.distanceToSqr(prey) < BITE_DIST_SQ) within if (prey != null) within if (this.mob.getRandom().nextInt(HUNT_ROLL_BOUND) == 0 && this.mob.level().dimension() == ModDimensionKeys.ISLANDS && this.butterfly.getButterflyType() == VAMPIRE_TYPE && this.mob.level().getDifficulty() != Difficulty.PEACEFUL)
 
 **What fires each contract clip:**
 
@@ -110,7 +115,7 @@ A `[modern: key]` guard means the goal is registered only under the modern confi
 | `walk` | limbSwingAmount (vanilla walk animation state) | ground locomotion, if any |
 | `swim` | Entity.isInWater() (client-evaluated) | falls back to walk then idle when absent (§2.4) |
 | `aggro_idle / calm_idle` | no synched attacking flag | calm_idle only until this creature's SPEC adds a synched byte mirroring getTarget() != null (ruled 2026-09-06, Q12 (a): aggro_idle waits for that byte) |
-| `attack` | no strike or launch site found | no attack clip: the mob does not attack |
+| `attack` | melee: LivingDamageEvent.Post -> triggerAnim packet (transport 1); ranged: named launch sites (transport 3) | the transport per species by the trigger inventory (ruled 2026-09-06, Q11 (a)): no attacking flag here, so the signal column's transport applies — the server LivingDamageEvent.Post -> triggerAnim packet for melee, a named launch site for ranged |
 | `hurt` | rising edge of LivingEntity.hurtTime (0 -> 10), client-observed | always available; the red overlay stays (ruled 2026-09-06, Q4 (a)) |
 | `death` | LivingEntity.deathTime > 0, client-observed | hold_on_last_frame; the vanilla death flip stays and the pilot ships no death clip (ruled 2026-09-06, Q3 (a)); a creature whose JSON ships a `death` clip gets the clip-replaces-flip mode, designed when the first such clip arrives (the Queen's own death clip the precedent) — until then a delivered `death` plays under the flip |
 | `idle_alt_N` | a roll at each idle loop boundary (p = 0.15) while w_idle > 0.9 | optional; one roll per idle loop boundary, p = 0.15, a uniform choice, only while the idle weight is above 0.9 and no triggered clip plays, keyed on the clip-clock cycle index (ruled 2026-09-06, Q5 (a)) |

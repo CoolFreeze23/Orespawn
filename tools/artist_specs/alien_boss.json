@@ -173,12 +173,12 @@
     {
       "name": "aggro_idle",
       "verdict": "author",
-      "note": "the attacking flag (Alien.java:230, within four blocks of a target): the crest spread and rippling (ModelAlien.java:401-435), the jaw always chomping and the claws reaching in half the periods (:476-478); NOT offered by the trigger inventory for this registry today (the setAttacking sites are in Alien.java, the parent, so the inventory classifies the boss's flag NONE) — kept here for the owner"
+      "note": "the attacking flag (Alien.java:230, within four blocks of a target): the crest spread and rippling (ModelAlien.java:401-435), the jaw always chomping and the claws reaching in half the periods (:476-478); offered by the trigger inventory now (TEST-011 (b), owner 2026-09-14, item 5): DATA_ATTACKING is read from the parent class Alien.java — raised at :230 within four blocks, cleared at :239 on target loss — and classified STATE, so w_aggro drives this pair"
     },
     {
       "name": "calm_idle",
-      "verdict": "covered by idle",
-      "note": "covered by idle while the inventory offers no aggro_idle / calm_idle pair for this registry (the setAttacking sites are in Alien.java, the parent); the rest with the flag clear (Alien.java:239) is the crest flat (:370-400) and the tail, jaw and claws stirring in a period of fifteen (:471-474)"
+      "verdict": "author",
+      "note": "the pair is offered now (TEST-011 (b), owner 2026-09-14, item 5: the flag's sites read from the parent class Alien.java); the rest with the flag clear (Alien.java:239) is the crest flat (:370-400) and the tail, jaw and claws stirring in a period of fifteen (:471-474)"
     },
     {
       "name": "attack",
@@ -213,7 +213,7 @@
   ],
   "wishlist": [
     "in `walk`: a rolling, hunched stride — the code swings each leg as one stiff piece (ModelAlien.java:568-580); bend the knee on the forward swing and let the torso and tail counter-sway; heavier than the Alien's",
-    "in `idle`: the crest flaring open (:401-435) as a threat display, the claws lifted — the boss's signature while attacking; the contract's aggro_idle would carry it, but the trigger inventory does not offer it for this registry (the setAttacking sites are in Alien.java, the parent)",
+    "in `idle`: the crest flaring open (:401-435) as a threat display, the claws lifted — the boss's signature while attacking; the contract's aggro_idle carries it — offered now (TEST-011 (b): the flag's sites read from the parent class Alien.java)",
     "in `attack`: a claw rake with the jaw snapping wide (the rectified chomp, :583) and a lunge from the hips; the hit lands within four blocks (Alien.java:229-234)",
     "in `summon`: a head-back call with the crest thrown open, timed to the 200-tick cooldown's spawn (AlienBoss.java:102-116)"
   ],

@@ -1,0 +1,898 @@
+{
+  "generated_by": "tools/artist_package.py 0.2.9 (the full folder, 2026-09-13, fourth set, items 5, 7 and 8: every artist-tier species packaged - a rig not yet in-game from the reference leg's converter output, bone names final; the Tier-1 bosses' intended locked bones from the design's section 6 rendered in section 7 and validated against the geo; the README's priority table the full list, bosses first, closing with the deliverable count)",
+  "registry": "girlfriend",
+  "display_name": "Girlfriend",
+  "tier": 2,
+  "tier_label": "Tier 2",
+  "geo_file": "reference_girlfriend.geo.json",
+  "animation_file": "girlfriend.animation.json",
+  "bbmodel_file": "girlfriend.bbmodel",
+  "texture_size": [
+    64,
+    32
+  ],
+  "bones": [
+    {
+      "name": "body",
+      "parent": null,
+      "pivot": [
+        0,
+        24,
+        0
+      ],
+      "rotation": null,
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            -4.0,
+            12.0,
+            -2.0
+          ],
+          "size": [
+            8.0,
+            12.0,
+            4.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              20.0,
+              20.0,
+              -4.0,
+              12.0
+            ],
+            "east": [
+              32.0,
+              20.0,
+              -4.0,
+              12.0
+            ],
+            "north": [
+              28.0,
+              20.0,
+              -8.0,
+              12.0
+            ],
+            "south": [
+              40.0,
+              20.0,
+              -8.0,
+              12.0
+            ],
+            "up": [
+              28.0,
+              16.0,
+              -8.0,
+              4.0
+            ],
+            "down": [
+              36.0,
+              20.0,
+              -8.0,
+              -4.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "hat",
+      "parent": null,
+      "pivot": [
+        0,
+        24,
+        0
+      ],
+      "rotation": null,
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            -4.0,
+            24.0,
+            -4.0
+          ],
+          "size": [
+            8.0,
+            8.0,
+            8.0
+          ],
+          "inflate": 0.5,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              40.0,
+              8.0,
+              -8.0,
+              8.0
+            ],
+            "east": [
+              56.0,
+              8.0,
+              -8.0,
+              8.0
+            ],
+            "north": [
+              48.0,
+              8.0,
+              -8.0,
+              8.0
+            ],
+            "south": [
+              64.0,
+              8.0,
+              -8.0,
+              8.0
+            ],
+            "up": [
+              48.0,
+              0.0,
+              -8.0,
+              8.0
+            ],
+            "down": [
+              56.0,
+              8.0,
+              -8.0,
+              -8.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "head",
+      "parent": null,
+      "pivot": [
+        0,
+        24,
+        0
+      ],
+      "rotation": null,
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            -4.0,
+            24.0,
+            -4.0
+          ],
+          "size": [
+            8.0,
+            8.0,
+            8.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              8.0,
+              8.0,
+              -8.0,
+              8.0
+            ],
+            "east": [
+              24.0,
+              8.0,
+              -8.0,
+              8.0
+            ],
+            "north": [
+              16.0,
+              8.0,
+              -8.0,
+              8.0
+            ],
+            "south": [
+              32.0,
+              8.0,
+              -8.0,
+              8.0
+            ],
+            "up": [
+              16.0,
+              0.0,
+              -8.0,
+              8.0
+            ],
+            "down": [
+              24.0,
+              8.0,
+              -8.0,
+              -8.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "left_arm",
+      "parent": null,
+      "pivot": [
+        -5,
+        22,
+        0
+      ],
+      "rotation": null,
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            -7.0,
+            12.0,
+            -2.0
+          ],
+          "size": [
+            3.0,
+            12.0,
+            4.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              47.0,
+              20.0,
+              4.0,
+              12.0
+            ],
+            "east": [
+              40.0,
+              20.0,
+              4.0,
+              12.0
+            ],
+            "north": [
+              44.0,
+              20.0,
+              3.0,
+              12.0
+            ],
+            "south": [
+              51.0,
+              20.0,
+              3.0,
+              12.0
+            ],
+            "up": [
+              44.0,
+              16.0,
+              3.0,
+              4.0
+            ],
+            "down": [
+              47.0,
+              20.0,
+              3.0,
+              -4.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "left_leg",
+      "parent": null,
+      "pivot": [
+        -1.9,
+        12,
+        0
+      ],
+      "rotation": null,
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            -3.9,
+            0.0,
+            -2.0
+          ],
+          "size": [
+            4.0,
+            12.0,
+            4.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              8.0,
+              20.0,
+              4.0,
+              12.0
+            ],
+            "east": [
+              0.0,
+              20.0,
+              4.0,
+              12.0
+            ],
+            "north": [
+              4.0,
+              20.0,
+              4.0,
+              12.0
+            ],
+            "south": [
+              12.0,
+              20.0,
+              4.0,
+              12.0
+            ],
+            "up": [
+              4.0,
+              16.0,
+              4.0,
+              4.0
+            ],
+            "down": [
+              8.0,
+              20.0,
+              4.0,
+              -4.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "right_arm",
+      "parent": null,
+      "pivot": [
+        5,
+        22,
+        0
+      ],
+      "rotation": null,
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            4.0,
+            12.0,
+            -2.0
+          ],
+          "size": [
+            3.0,
+            12.0,
+            4.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              44.0,
+              20.0,
+              -4.0,
+              12.0
+            ],
+            "east": [
+              51.0,
+              20.0,
+              -4.0,
+              12.0
+            ],
+            "north": [
+              47.0,
+              20.0,
+              -3.0,
+              12.0
+            ],
+            "south": [
+              54.0,
+              20.0,
+              -3.0,
+              12.0
+            ],
+            "up": [
+              47.0,
+              16.0,
+              -3.0,
+              4.0
+            ],
+            "down": [
+              50.0,
+              20.0,
+              -3.0,
+              -4.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "right_leg",
+      "parent": null,
+      "pivot": [
+        1.9,
+        12,
+        0
+      ],
+      "rotation": null,
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            -0.1,
+            0.0,
+            -2.0
+          ],
+          "size": [
+            4.0,
+            12.0,
+            4.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              4.0,
+              20.0,
+              -4.0,
+              12.0
+            ],
+            "east": [
+              12.0,
+              20.0,
+              -4.0,
+              12.0
+            ],
+            "north": [
+              8.0,
+              20.0,
+              -4.0,
+              12.0
+            ],
+            "south": [
+              16.0,
+              20.0,
+              -4.0,
+              12.0
+            ],
+            "up": [
+              8.0,
+              16.0,
+              -4.0,
+              4.0
+            ],
+            "down": [
+              12.0,
+              20.0,
+              -4.0,
+              -4.0
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "locked_bones": [],
+  "lock_mode": "warn",
+  "lock_policy": "warn-keyed, refuse-structural",
+  "lock_policy_text": "Keying a locked bone is allowed; the checker warns, and the hitbox part follows the bone in-game (the consequence, so keep such keys deliberate). Renaming, re-parenting or deleting a locked bone is refused.",
+  "keyed_locked_by_shipped_clip": {},
+  "native": false,
+  "controller_kind": "phase_locked",
+  "clips": [
+    {
+      "name": "idle",
+      "loop": "true",
+      "role": "contract",
+      "code_triggered": false,
+      "required": true,
+      "length_rule": "near:1.0",
+      "length_seconds": 1.0,
+      "verdict": "author"
+    },
+    {
+      "name": "idle_arm_sway_roll",
+      "loop": "true",
+      "role": "contract",
+      "code_triggered": false,
+      "required": false,
+      "length_rule": "near:1.0",
+      "length_seconds": 1.0,
+      "verdict": "author"
+    },
+    {
+      "name": "idle_arm_sway_pitch",
+      "loop": "true",
+      "role": "contract",
+      "code_triggered": false,
+      "required": false,
+      "length_rule": "near:1.0",
+      "length_seconds": 1.0,
+      "verdict": "author"
+    },
+    {
+      "name": "walk",
+      "loop": "true",
+      "role": "contract",
+      "code_triggered": false,
+      "required": true,
+      "length_rule": "near:1.0",
+      "length_seconds": 1.0,
+      "verdict": "author"
+    },
+    {
+      "name": "walk_arm_sway_roll",
+      "loop": "true",
+      "role": "contract",
+      "code_triggered": false,
+      "required": false,
+      "length_rule": "near:1.0",
+      "length_seconds": 1.0,
+      "verdict": "author"
+    },
+    {
+      "name": "walk_arm_sway_pitch",
+      "loop": "true",
+      "role": "contract",
+      "code_triggered": false,
+      "required": false,
+      "length_rule": "near:1.0",
+      "length_seconds": 1.0,
+      "verdict": "author"
+    },
+    {
+      "name": "swim",
+      "loop": "true",
+      "role": "contract",
+      "code_triggered": false,
+      "required": false,
+      "length_rule": "near:1.0",
+      "length_seconds": 1.0,
+      "verdict": "leave"
+    },
+    {
+      "name": "calm_idle",
+      "loop": "true",
+      "role": "contract",
+      "code_triggered": false,
+      "required": false,
+      "length_rule": "near:1.0",
+      "length_seconds": 1.0,
+      "verdict": "leave"
+    },
+    {
+      "name": "attack",
+      "loop": "false",
+      "role": "contract",
+      "code_triggered": true,
+      "required": false,
+      "length_rule": "near:0.5",
+      "length_seconds": 0.5,
+      "verdict": "author"
+    },
+    {
+      "name": "hurt",
+      "loop": "false",
+      "role": "contract",
+      "code_triggered": true,
+      "required": false,
+      "length_rule": "near:0.3",
+      "length_seconds": 0.3,
+      "verdict": "author"
+    },
+    {
+      "name": "death",
+      "loop": "hold_on_last_frame",
+      "role": "contract",
+      "code_triggered": true,
+      "required": false,
+      "length_rule": "near:1.0",
+      "length_seconds": 1.0,
+      "verdict": "author"
+    },
+    {
+      "name": "shoot",
+      "loop": "false",
+      "role": "extra",
+      "code_triggered": false,
+      "required": false,
+      "length_rule": "near:0.5",
+      "length_seconds": 0.5,
+      "verdict": "author"
+    },
+    {
+      "name": "dance",
+      "loop": "true",
+      "role": "extra",
+      "code_triggered": false,
+      "required": false,
+      "length_rule": "near:1.0",
+      "length_seconds": 1.0,
+      "verdict": "author"
+    },
+    {
+      "name": "sit",
+      "loop": "true",
+      "role": "extra",
+      "code_triggered": false,
+      "required": false,
+      "length_rule": "near:1.0",
+      "length_seconds": 1.0,
+      "verdict": "author"
+    }
+  ],
+  "allow_idle_alt": true,
+  "textures": [
+    {
+      "canonical": "girlfriend0.png",
+      "width": 64,
+      "height": 32,
+      "aliases": []
+    },
+    {
+      "canonical": "girlfriend1.png",
+      "width": 64,
+      "height": 32,
+      "aliases": []
+    },
+    {
+      "canonical": "girlfriend10.png",
+      "width": 64,
+      "height": 32,
+      "aliases": []
+    },
+    {
+      "canonical": "girlfriend11.png",
+      "width": 64,
+      "height": 32,
+      "aliases": []
+    },
+    {
+      "canonical": "girlfriend12.png",
+      "width": 64,
+      "height": 32,
+      "aliases": []
+    },
+    {
+      "canonical": "girlfriend13.png",
+      "width": 64,
+      "height": 32,
+      "aliases": []
+    },
+    {
+      "canonical": "girlfriend14.png",
+      "width": 64,
+      "height": 32,
+      "aliases": []
+    },
+    {
+      "canonical": "girlfriend15.png",
+      "width": 64,
+      "height": 32,
+      "aliases": []
+    },
+    {
+      "canonical": "girlfriend16.png",
+      "width": 64,
+      "height": 32,
+      "aliases": []
+    },
+    {
+      "canonical": "girlfriend17.png",
+      "width": 64,
+      "height": 32,
+      "aliases": []
+    },
+    {
+      "canonical": "girlfriend18.png",
+      "width": 64,
+      "height": 32,
+      "aliases": []
+    },
+    {
+      "canonical": "girlfriend19.png",
+      "width": 64,
+      "height": 32,
+      "aliases": []
+    },
+    {
+      "canonical": "girlfriend2.png",
+      "width": 64,
+      "height": 32,
+      "aliases": []
+    },
+    {
+      "canonical": "girlfriend20.png",
+      "width": 64,
+      "height": 32,
+      "aliases": []
+    },
+    {
+      "canonical": "girlfriend21.png",
+      "width": 64,
+      "height": 32,
+      "aliases": []
+    },
+    {
+      "canonical": "girlfriend22.png",
+      "width": 64,
+      "height": 32,
+      "aliases": []
+    },
+    {
+      "canonical": "girlfriend23.png",
+      "width": 64,
+      "height": 32,
+      "aliases": []
+    },
+    {
+      "canonical": "girlfriend24.png",
+      "width": 64,
+      "height": 32,
+      "aliases": []
+    },
+    {
+      "canonical": "girlfriend25.png",
+      "width": 64,
+      "height": 32,
+      "aliases": []
+    },
+    {
+      "canonical": "girlfriend26.png",
+      "width": 64,
+      "height": 32,
+      "aliases": []
+    },
+    {
+      "canonical": "girlfriend27.png",
+      "width": 64,
+      "height": 32,
+      "aliases": []
+    },
+    {
+      "canonical": "girlfriend28.png",
+      "width": 64,
+      "height": 32,
+      "aliases": []
+    },
+    {
+      "canonical": "girlfriend29.png",
+      "width": 64,
+      "height": 32,
+      "aliases": []
+    },
+    {
+      "canonical": "girlfriend3.png",
+      "width": 64,
+      "height": 32,
+      "aliases": []
+    },
+    {
+      "canonical": "girlfriend30.png",
+      "width": 64,
+      "height": 32,
+      "aliases": []
+    },
+    {
+      "canonical": "girlfriend31.png",
+      "width": 64,
+      "height": 32,
+      "aliases": []
+    },
+    {
+      "canonical": "girlfriend32.png",
+      "width": 64,
+      "height": 32,
+      "aliases": []
+    },
+    {
+      "canonical": "girlfriend33.png",
+      "width": 64,
+      "height": 32,
+      "aliases": []
+    },
+    {
+      "canonical": "girlfriend34.png",
+      "width": 64,
+      "height": 32,
+      "aliases": []
+    },
+    {
+      "canonical": "girlfriend35.png",
+      "width": 64,
+      "height": 32,
+      "aliases": []
+    },
+    {
+      "canonical": "girlfriend36.png",
+      "width": 64,
+      "height": 32,
+      "aliases": []
+    },
+    {
+      "canonical": "girlfriend37.png",
+      "width": 64,
+      "height": 32,
+      "aliases": []
+    },
+    {
+      "canonical": "girlfriend38.png",
+      "width": 64,
+      "height": 32,
+      "aliases": []
+    },
+    {
+      "canonical": "girlfriend39.png",
+      "width": 64,
+      "height": 32,
+      "aliases": []
+    },
+    {
+      "canonical": "girlfriend4.png",
+      "width": 64,
+      "height": 32,
+      "aliases": []
+    },
+    {
+      "canonical": "girlfriend40.png",
+      "width": 64,
+      "height": 32,
+      "aliases": []
+    },
+    {
+      "canonical": "girlfriend5.png",
+      "width": 64,
+      "height": 32,
+      "aliases": []
+    },
+    {
+      "canonical": "girlfriend6.png",
+      "width": 64,
+      "height": 32,
+      "aliases": []
+    },
+    {
+      "canonical": "girlfriend7.png",
+      "width": 64,
+      "height": 32,
+      "aliases": []
+    },
+    {
+      "canonical": "girlfriend8.png",
+      "width": 64,
+      "height": 32,
+      "aliases": []
+    },
+    {
+      "canonical": "girlfriend9.png",
+      "width": 64,
+      "height": 32,
+      "aliases": []
+    },
+    {
+      "canonical": "girlfriendv.png",
+      "width": 64,
+      "height": 32,
+      "aliases": []
+    }
+  ],
+  "effort_hours": 17.4,
+  "effort_source": "generator: 4 h + 0.2 h/bone x 7 + 1 h/clip x 12 to author or improve (owner adjusts)",
+  "reference_clip": null,
+  "exact_transcription": false,
+  "rig_source": "reference-leg converter output",
+  "in_game": false,
+  "reference_id": "reference_girlfriend",
+  "locked_bones_source": "none",
+  "locked_bones_provisional": []
+}

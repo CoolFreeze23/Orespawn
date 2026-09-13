@@ -119,7 +119,7 @@ Source: `src/main/java/danger/orespawn/entity/Alosaurus.java` (Monster)
 |---|---|---|---|---|---|---|
 | goalSelector | 0 | `FloatGoal` | - | locomotion | bobs up to the surface in water (vanilla) | swim state (client reads isInWater) |
 | goalSelector | 1 | `DinosaurMeleeAttackGoal` | - | attack | OreSpawn dinosaur melee | attack (event) |
-| goalSelector | 2 | `MoveThroughVillageGoal` | - | UNCLASSIFIED | no entry in the generator's goal dictionary | unknown |
+| goalSelector | 2 | `MoveThroughVillageGoal` | - | locomotion | walks to random points of interest (doors / workstations) of a nearby village, the villager-style patrol; the registration's flag restricts it to night-time (vanilla MoveThroughVillageGoal) | walk |
 | goalSelector | 3 | `MyEntityAIWanderALot` | - | locomotion | OreSpawn's restless wander: picks a new spot often | walk |
 | goalSelector | 4 | `LookAtPlayerGoal` | - | look | turns the head toward a nearby player (vanilla; head yaw/pitch only) | none: head look, not a clip |
 | goalSelector | 5 | `RandomLookAroundGoal` | - | look | looks around idly (vanilla; head yaw/pitch only) | none: head look, not a clip |
@@ -128,19 +128,27 @@ A `[modern: key]` guard means the goal is registered only under the modern confi
 
 **Synched state flags** (what the client can see): `DATA_ATTACKING` (Integer, line 43)
 
-**Attacking flag `DATA_ATTACKING`** — classified **STATE** (cleared when the target is lost at line(s) [177]) — a mechanical reading; the owner confirms it against the sites:
+**Attacking flag `DATA_ATTACKING`** — classified **STATE** (cleared when the target is lost at line(s) [177, 145, 176]; other clears at line(s) [153] (guards: if (this.params.forgetTargetRoll() > 0 && this.mob.getRandom().nextInt(this.params.forgetTargetRoll()) == 0)) — the owner reads them) — a mechanical reading; the owner confirms it against the sites:
 
 | line | method | sets | guard (the enclosing block) | within | comment |
 |---|---|---|---|---|---|
 | 177 | customServerAiStep | 0 | NOT(if (prey != null)) | if (this.random.nextInt(5) == 0) | orig Alosaurus.java:177 |
+| ai/BugMeleeAttackGoal.java:132 | stop | 0 | (unguarded: the method body) | - |  [via DinosaurMeleeAttackGoal (registered at line 77)] |
+| ai/BugMeleeAttackGoal.java:145 | tick | 0 | if (target == null \|\| !target.isAlive()) | - |  [via DinosaurMeleeAttackGoal (registered at line 77)] |
+| ai/BugMeleeAttackGoal.java:153 | tick | 0 | if (this.params.forgetTargetRoll() > 0 && this.mob.getRandom().nextInt(this.params.forgetTargetRoll()) == 0) | - |  [via DinosaurMeleeAttackGoal (registered at line 77)] |
+| ai/BugMeleeAttackGoal.java:168 | tick | 1 | if (distSq < reachSq) | - |  [via DinosaurMeleeAttackGoal (registered at line 77)] |
+| ai/BugMeleeAttackGoal.java:176 | tick | 0 | NOT(if (distSq < reachSq)) | - |  [via DinosaurMeleeAttackGoal (registered at line 77)] |
 
 The guard is the header of the block that actually encloses the write (found by brace depth, comments and strings blanked); an `else` branch is written as the negated `if` chain it closes; a header the parser cannot read is `(unparsed: ...)`, never dropped.
+
+The flag's writes traced into the goal class the entity hands its setter to (TEST-011 (b); the `[via ...]` rows above): `DinosaurMeleeAttackGoal` registered at line 77 (`this, this::setAttacking, DinosaurMeleeAttackGoal.Presets.alosaurus()`) — ai/DinosaurMeleeAttackGoal.java, ai/BugMeleeAttackGoal.java, sites ai/BugMeleeAttackGoal.java:132, ai/BugMeleeAttackGoal.java:145, ai/BugMeleeAttackGoal.java:153, ai/BugMeleeAttackGoal.java:168, ai/BugMeleeAttackGoal.java:176.
 
 **Locomotion facts:** a walker. Overrides: doHurtTarget, customServerAiStep, removeWhenFarAway.
 
 **Strike and launch sites:**
 
 - melee `doHurtTarget(target)` — Alosaurus.java:144 in `doHurtTarget`
+- melee `doHurtTarget(target)` — ai/BugMeleeAttackGoal.java:172 in `tick`, guard: (unparsed: boolean hit =) within if (this.mob.getRandom().nextInt(this.params.outerAttackRoll()) == 0 || this.mob.getRandom().nextInt(this.params.innerAttackRoll()) == 1) within if (distSq < reachSq)
 
 **What fires each contract clip:**
 
@@ -149,7 +157,7 @@ The guard is the header of the block that actually encloses the write (found by 
 | `walk` | limbSwingAmount from AnimationState (the seam's input; 0 at rest, 1 at full stride) | the gait group's weight and speed scale (P3) |
 | `idle` | w_idle = (1 - w_move)(1 - w_swim)(1 - w_fly) | standing still |
 | `swim` | Entity.isInWater() (client-evaluated); FloatGoal keeps it at the surface | falls back to walk then idle when absent (§2.4) |
-| `aggro_idle / calm_idle` | DATA_ATTACKING held while engaged (cleared when the target is lost at line(s) [177]) | STATE flag drives w_aggro (§4.3) |
+| `aggro_idle / calm_idle` | DATA_ATTACKING held while engaged (cleared when the target is lost at line(s) [177, 145, 176]; other clears at line(s) [153] (guards: if (this.params.forgetTargetRoll() > 0 && this.mob.getRandom().nextInt(this.params.forgetTargetRoll()) == 0)) — the owner reads them) | STATE flag drives w_aggro (§4.3) |
 | `attack` | melee: LivingDamageEvent.Post -> triggerAnim packet (transport 1); ranged: named launch sites (transport 3) | the transport per species by the trigger inventory (ruled 2026-09-06, Q11 (a)): this flag is held, not pulsed at the strike, so the signal column's transport applies — the server LivingDamageEvent.Post -> triggerAnim packet for melee, a named launch site for ranged |
 | `hurt` | rising edge of LivingEntity.hurtTime (0 -> 10), client-observed | always available; the red overlay stays (ruled 2026-09-06, Q4 (a)) |
 | `death` | LivingEntity.deathTime > 0, client-observed | hold_on_last_frame; the vanilla death flip stays and the pilot ships no death clip (ruled 2026-09-06, Q3 (a)); a creature whose JSON ships a `death` clip gets the clip-replaces-flip mode, designed when the first such clip arrives (the Queen's own death clip the precedent) — until then a delivered `death` plays under the flip |

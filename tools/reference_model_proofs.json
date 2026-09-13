@@ -705,7 +705,349 @@
         "pitch_degrees": -28.0
       },
       "channels": [],
-      "fixed": "BUG-041 stage 2 (2026-09-13): mirror flags dropped; exact match required"
+      "fixed": "BUG-041 stage 2 (2026-09-13): mirror flags dropped; exact match required",
+      "render_instances": {
+        "leg1": {
+          "count": 8,
+          "step_scope": "explicit",
+          "instances": [
+            {
+              "pivot": [
+                36.0,
+                3.0,
+                0.0
+              ],
+              "rotation": [
+                null,
+                -1.5707963267948966,
+                null
+              ],
+              "note": "draw 0: the left (x 36) side, z 0, yaw -pi/2 +a (orig ModelCrab.java:207-210; port setupAnim's pose 1 of 8, ModelCrab.java:183-234)"
+            },
+            {
+              "pivot": [
+                36.0,
+                3.0,
+                10.0
+              ],
+              "rotation": [
+                null,
+                -1.5707963267948966,
+                null
+              ],
+              "note": "draw 1: the left (x 36) side, z 10, yaw -pi/2 -a (orig ModelCrab.java:215-218; port setupAnim's pose 2 of 8, ModelCrab.java:183-234)"
+            },
+            {
+              "pivot": [
+                36.0,
+                3.0,
+                20.0
+              ],
+              "rotation": [
+                null,
+                -1.5707963267948966,
+                null
+              ],
+              "note": "draw 2: the left (x 36) side, z 20, yaw -pi/2 +a (orig ModelCrab.java:223-226; port setupAnim's pose 3 of 8, ModelCrab.java:183-234)"
+            },
+            {
+              "pivot": [
+                36.0,
+                3.0,
+                30.0
+              ],
+              "rotation": [
+                null,
+                -1.5707963267948966,
+                null
+              ],
+              "note": "draw 3: the left (x 36) side, z 30, yaw -pi/2 -a (orig ModelCrab.java:231-234; port setupAnim's pose 4 of 8, ModelCrab.java:183-234)"
+            },
+            {
+              "pivot": [
+                -36.0,
+                3.0,
+                0.0
+              ],
+              "rotation": [
+                null,
+                1.5707963267948966,
+                null
+              ],
+              "note": "draw 4: the right (x -36) side, z 0, yaw +pi/2 -a (orig ModelCrab.java:245-248; port setupAnim's pose 5 of 8, ModelCrab.java:183-234)"
+            },
+            {
+              "pivot": [
+                -36.0,
+                3.0,
+                10.0
+              ],
+              "rotation": [
+                null,
+                1.5707963267948966,
+                null
+              ],
+              "note": "draw 5: the right (x -36) side, z 10, yaw +pi/2 +a (orig ModelCrab.java:253-256; port setupAnim's pose 6 of 8, ModelCrab.java:183-234)"
+            },
+            {
+              "pivot": [
+                -36.0,
+                3.0,
+                20.0
+              ],
+              "rotation": [
+                null,
+                1.5707963267948966,
+                null
+              ],
+              "note": "draw 6: the right (x -36) side, z 20, yaw +pi/2 -a (orig ModelCrab.java:261-264; port setupAnim's pose 7 of 8, ModelCrab.java:183-234)"
+            },
+            {
+              "pivot": [
+                -36.0,
+                3.0,
+                30.0
+              ],
+              "rotation": [
+                null,
+                1.5707963267948966,
+                null
+              ],
+              "note": "draw 7: the right (x -36) side, z 30, yaw +pi/2 +a (orig ModelCrab.java:269-272; port setupAnim's pose 8 of 8, ModelCrab.java:183-234)"
+            }
+          ],
+          "pinned_draw_count": 1,
+          "pinned_draw_note": "ANIM-025: the port's renderToBuffer (ModelCrab.java:269-295) draws each leg part ONCE (its setupAnim re-poses the part eight times and the last pose is drawn) where 1.7.10 drew it at each of the eight; the fix lands with the Crab's slice (one refuter, exempt from the freeze as a rig matter - owner 2026-09-14, item 3), when this pin is removed and the probe holds the port to the eight draws",
+          "note": "the upper leg segment (pitch -1.343904): 1.7.10 ModelCrab.render (orig :195-289) sets the part's rotation point and yaw and draws it eight times - four on the left side (x 36) at z 0 / 10 / 20 / 30 with yaw -pi/2 + a, -pi/2 - a, -pi/2 + a, -pi/2 - a, then four on the right (x -36) with the yaw negated, a = cos(age 1.7) pi 0.15 swing (0 at bind); the pitch is the part's own (the constructor's), never reset by the render"
+        },
+        "leg2": {
+          "count": 8,
+          "step_scope": "explicit",
+          "instances": [
+            {
+              "pivot": [
+                36.0,
+                3.0,
+                0.0
+              ],
+              "rotation": [
+                null,
+                -1.5707963267948966,
+                null
+              ],
+              "note": "draw 0: the left (x 36) side, z 0, yaw -pi/2 +a (orig ModelCrab.java:207-210; port setupAnim's pose 1 of 8, ModelCrab.java:183-234)"
+            },
+            {
+              "pivot": [
+                36.0,
+                3.0,
+                10.0
+              ],
+              "rotation": [
+                null,
+                -1.5707963267948966,
+                null
+              ],
+              "note": "draw 1: the left (x 36) side, z 10, yaw -pi/2 -a (orig ModelCrab.java:215-218; port setupAnim's pose 2 of 8, ModelCrab.java:183-234)"
+            },
+            {
+              "pivot": [
+                36.0,
+                3.0,
+                20.0
+              ],
+              "rotation": [
+                null,
+                -1.5707963267948966,
+                null
+              ],
+              "note": "draw 2: the left (x 36) side, z 20, yaw -pi/2 +a (orig ModelCrab.java:223-226; port setupAnim's pose 3 of 8, ModelCrab.java:183-234)"
+            },
+            {
+              "pivot": [
+                36.0,
+                3.0,
+                30.0
+              ],
+              "rotation": [
+                null,
+                -1.5707963267948966,
+                null
+              ],
+              "note": "draw 3: the left (x 36) side, z 30, yaw -pi/2 -a (orig ModelCrab.java:231-234; port setupAnim's pose 4 of 8, ModelCrab.java:183-234)"
+            },
+            {
+              "pivot": [
+                -36.0,
+                3.0,
+                0.0
+              ],
+              "rotation": [
+                null,
+                1.5707963267948966,
+                null
+              ],
+              "note": "draw 4: the right (x -36) side, z 0, yaw +pi/2 -a (orig ModelCrab.java:245-248; port setupAnim's pose 5 of 8, ModelCrab.java:183-234)"
+            },
+            {
+              "pivot": [
+                -36.0,
+                3.0,
+                10.0
+              ],
+              "rotation": [
+                null,
+                1.5707963267948966,
+                null
+              ],
+              "note": "draw 5: the right (x -36) side, z 10, yaw +pi/2 +a (orig ModelCrab.java:253-256; port setupAnim's pose 6 of 8, ModelCrab.java:183-234)"
+            },
+            {
+              "pivot": [
+                -36.0,
+                3.0,
+                20.0
+              ],
+              "rotation": [
+                null,
+                1.5707963267948966,
+                null
+              ],
+              "note": "draw 6: the right (x -36) side, z 20, yaw +pi/2 -a (orig ModelCrab.java:261-264; port setupAnim's pose 7 of 8, ModelCrab.java:183-234)"
+            },
+            {
+              "pivot": [
+                -36.0,
+                3.0,
+                30.0
+              ],
+              "rotation": [
+                null,
+                1.5707963267948966,
+                null
+              ],
+              "note": "draw 7: the right (x -36) side, z 30, yaw +pi/2 +a (orig ModelCrab.java:269-272; port setupAnim's pose 8 of 8, ModelCrab.java:183-234)"
+            }
+          ],
+          "pinned_draw_count": 1,
+          "pinned_draw_note": "ANIM-025: the port's renderToBuffer (ModelCrab.java:269-295) draws each leg part ONCE (its setupAnim re-poses the part eight times and the last pose is drawn) where 1.7.10 drew it at each of the eight; the fix lands with the Crab's slice (one refuter, exempt from the freeze as a rig matter - owner 2026-09-14, item 3), when this pin is removed and the probe holds the port to the eight draws",
+          "note": "the middle leg segment (pitch -0.9599311): 1.7.10 ModelCrab.render (orig :195-289) sets the part's rotation point and yaw and draws it eight times - four on the left side (x 36) at z 0 / 10 / 20 / 30 with yaw -pi/2 + a, -pi/2 - a, -pi/2 + a, -pi/2 - a, then four on the right (x -36) with the yaw negated, a = cos(age 1.7) pi 0.15 swing (0 at bind); the pitch is the part's own (the constructor's), never reset by the render"
+        },
+        "leg3": {
+          "count": 8,
+          "step_scope": "explicit",
+          "instances": [
+            {
+              "pivot": [
+                36.0,
+                3.0,
+                0.0
+              ],
+              "rotation": [
+                null,
+                -1.5707963267948966,
+                null
+              ],
+              "note": "draw 0: the left (x 36) side, z 0, yaw -pi/2 +a (orig ModelCrab.java:207-210; port setupAnim's pose 1 of 8, ModelCrab.java:183-234)"
+            },
+            {
+              "pivot": [
+                36.0,
+                3.0,
+                10.0
+              ],
+              "rotation": [
+                null,
+                -1.5707963267948966,
+                null
+              ],
+              "note": "draw 1: the left (x 36) side, z 10, yaw -pi/2 -a (orig ModelCrab.java:215-218; port setupAnim's pose 2 of 8, ModelCrab.java:183-234)"
+            },
+            {
+              "pivot": [
+                36.0,
+                3.0,
+                20.0
+              ],
+              "rotation": [
+                null,
+                -1.5707963267948966,
+                null
+              ],
+              "note": "draw 2: the left (x 36) side, z 20, yaw -pi/2 +a (orig ModelCrab.java:223-226; port setupAnim's pose 3 of 8, ModelCrab.java:183-234)"
+            },
+            {
+              "pivot": [
+                36.0,
+                3.0,
+                30.0
+              ],
+              "rotation": [
+                null,
+                -1.5707963267948966,
+                null
+              ],
+              "note": "draw 3: the left (x 36) side, z 30, yaw -pi/2 -a (orig ModelCrab.java:231-234; port setupAnim's pose 4 of 8, ModelCrab.java:183-234)"
+            },
+            {
+              "pivot": [
+                -36.0,
+                3.0,
+                0.0
+              ],
+              "rotation": [
+                null,
+                1.5707963267948966,
+                null
+              ],
+              "note": "draw 4: the right (x -36) side, z 0, yaw +pi/2 -a (orig ModelCrab.java:245-248; port setupAnim's pose 5 of 8, ModelCrab.java:183-234)"
+            },
+            {
+              "pivot": [
+                -36.0,
+                3.0,
+                10.0
+              ],
+              "rotation": [
+                null,
+                1.5707963267948966,
+                null
+              ],
+              "note": "draw 5: the right (x -36) side, z 10, yaw +pi/2 +a (orig ModelCrab.java:253-256; port setupAnim's pose 6 of 8, ModelCrab.java:183-234)"
+            },
+            {
+              "pivot": [
+                -36.0,
+                3.0,
+                20.0
+              ],
+              "rotation": [
+                null,
+                1.5707963267948966,
+                null
+              ],
+              "note": "draw 6: the right (x -36) side, z 20, yaw +pi/2 -a (orig ModelCrab.java:261-264; port setupAnim's pose 7 of 8, ModelCrab.java:183-234)"
+            },
+            {
+              "pivot": [
+                -36.0,
+                3.0,
+                30.0
+              ],
+              "rotation": [
+                null,
+                1.5707963267948966,
+                null
+              ],
+              "note": "draw 7: the right (x -36) side, z 30, yaw +pi/2 +a (orig ModelCrab.java:269-272; port setupAnim's pose 8 of 8, ModelCrab.java:183-234)"
+            }
+          ],
+          "pinned_draw_count": 1,
+          "pinned_draw_note": "ANIM-025: the port's renderToBuffer (ModelCrab.java:269-295) draws each leg part ONCE (its setupAnim re-poses the part eight times and the last pose is drawn) where 1.7.10 drew it at each of the eight; the fix lands with the Crab's slice (one refuter, exempt from the freeze as a rig matter - owner 2026-09-14, item 3), when this pin is removed and the probe holds the port to the eight draws",
+          "note": "the lower leg segment (pitch -0.5759587): 1.7.10 ModelCrab.render (orig :195-289) sets the part's rotation point and yaw and draws it eight times - four on the left side (x 36) at z 0 / 10 / 20 / 30 with yaw -pi/2 + a, -pi/2 - a, -pi/2 + a, -pi/2 - a, then four on the right (x -36) with the yaw negated, a = cos(age 1.7) pi 0.15 swing (0 at bind); the pitch is the part's own (the constructor's), never reset by the render"
+        }
+      },
+      "render_instances_note": "ANIM-025 (owner 2026-09-14, item 3): the render_instances form in its explicit step_scope (a translation series with a mirrored yaw, not a rotation step about the body's centre: a turn of pi about Y maps z +10 to z -10 where 1.7.10 drew both sides at z +10) - eight declared draws per leg part, so the converter's rig carries the twenty-four leg bones (leg1__i0..7, leg2__i0..7, leg3__i0..7: eight three-segment legs, draws 0-3 the left side front to back, 4-7 the right). The port draws each part once today (pinned_draw_count 1 per part; the register line stays until the Crab's slice lands the draw fix and removes the pins). The leg's comparison of the parts is unchanged."
     },
     {
       "id": "reference_creepinghorror",
@@ -921,7 +1263,283 @@
         "pitch_degrees": -28.0
       },
       "channels": [],
-      "fixed": "BUG-041 stage 2 (2026-09-13): mirror flags dropped; exact match required"
+      "fixed": "BUG-041 stage 2 (2026-09-13): mirror flags dropped; exact match required",
+      "render_instances": {
+        "thigh": {
+          "count": 2,
+          "step_scope": "explicit",
+          "instances": [
+            {
+              "pivot": [
+                0.0,
+                -60.0,
+                13.0
+              ],
+              "note": "draw 0: the sign +1 pass (the first renderLeg / renderArm call)"
+            },
+            {
+              "pivot": [
+                0.0,
+                -60.0,
+                -13.0
+              ],
+              "note": "draw 1: the sign -1 pass (the second call, the offsets negated)"
+            }
+          ],
+          "note": "renderLeg (ModelGiantRobot.java:271-281; orig :173-199 / :200-226): x = hip.x + s cos(hip.xRot) sin(hip.yRot) 13, y = hip.y - s sin(hip.xRot) 13, z = hip.z + s cos(hip.xRot) cos(hip.yRot) 13, s = +1 for draw 0 and -1 for draw 1; at bind (the constructor pose, hip (0, -60, 0) unrotated) (0, -60, +13) / (0, -60, -13); in-game the hip's constant quarter turn (setupAnim :208, hip.yRot = pi/2 + the sway) carries the pair to x +13 / -13 - draw 0 the model's left side (+x, vanilla's left_arm side), draw 1 the right"
+        },
+        "thigh2": {
+          "count": 2,
+          "step_scope": "explicit",
+          "instances": [
+            {
+              "pivot": [
+                0.0,
+                -60.0,
+                13.0
+              ],
+              "note": "draw 0: the sign +1 pass (the first renderLeg / renderArm call)"
+            },
+            {
+              "pivot": [
+                0.0,
+                -60.0,
+                -13.0
+              ],
+              "note": "draw 1: the sign -1 pass (the second call, the offsets negated)"
+            }
+          ],
+          "note": "as thigh: renderLeg (ModelGiantRobot.java:271-281; orig :173-199 / :200-226): x = hip.x + s cos(hip.xRot) sin(hip.yRot) 13, y = hip.y - s sin(hip.xRot) 13, z = hip.z + s cos(hip.xRot) cos(hip.yRot) 13, s = +1 for draw 0 and -1 for draw 1; at bind (the constructor pose, hip (0, -60, 0) unrotated) (0, -60, +13) / (0, -60, -13); in-game the hip's constant quarter turn (setupAnim :208, hip.yRot = pi/2 + the sway) carries the pair to x +13 / -13 - draw 0 the model's left side (+x, vanilla's left_arm side), draw 1 the right"
+        },
+        "thigh3": {
+          "count": 2,
+          "step_scope": "explicit",
+          "instances": [
+            {
+              "pivot": [
+                0.0,
+                -60.0,
+                13.0
+              ],
+              "note": "draw 0: the sign +1 pass (the first renderLeg / renderArm call)"
+            },
+            {
+              "pivot": [
+                0.0,
+                -60.0,
+                -13.0
+              ],
+              "note": "draw 1: the sign -1 pass (the second call, the offsets negated)"
+            }
+          ],
+          "note": "as thigh: renderLeg (ModelGiantRobot.java:271-281; orig :173-199 / :200-226): x = hip.x + s cos(hip.xRot) sin(hip.yRot) 13, y = hip.y - s sin(hip.xRot) 13, z = hip.z + s cos(hip.xRot) cos(hip.yRot) 13, s = +1 for draw 0 and -1 for draw 1; at bind (the constructor pose, hip (0, -60, 0) unrotated) (0, -60, +13) / (0, -60, -13); in-game the hip's constant quarter turn (setupAnim :208, hip.yRot = pi/2 + the sway) carries the pair to x +13 / -13 - draw 0 the model's left side (+x, vanilla's left_arm side), draw 1 the right"
+        },
+        "shin": {
+          "count": 2,
+          "step_scope": "explicit",
+          "instances": [
+            {
+              "pivot": [
+                0.0,
+                -20.0,
+                13.0
+              ],
+              "note": "draw 0: the sign +1 pass (the first renderLeg / renderArm call)"
+            },
+            {
+              "pivot": [
+                0.0,
+                -20.0,
+                -13.0
+              ],
+              "note": "draw 1: the sign -1 pass (the second call, the offsets negated)"
+            }
+          ],
+          "note": "renderLeg (:283-287): shin.y = thigh.y + cos(thigh.xRot) 40, z = thigh.z + sin(thigh.xRot) 40, x = thigh.x - at bind (0, -20, +13) / (0, -20, -13) (thigh.xRot 0 at bind: the walk's angles are setupAnim's, all 0 in the constructor pose)"
+        },
+        "foot1": {
+          "count": 2,
+          "step_scope": "explicit",
+          "instances": [
+            {
+              "pivot": [
+                0.0,
+                -20.0,
+                13.0
+              ],
+              "note": "draw 0: the sign +1 pass (the first renderLeg / renderArm call)"
+            },
+            {
+              "pivot": [
+                0.0,
+                -20.0,
+                -13.0
+              ],
+              "note": "draw 1: the sign -1 pass (the second call, the offsets negated)"
+            }
+          ],
+          "note": "renderLeg (:289-299): the foot pieces take the shin's rotation point and pitch - at bind (0, -20, +13) / (0, -20, -13)"
+        },
+        "foot2": {
+          "count": 2,
+          "step_scope": "explicit",
+          "instances": [
+            {
+              "pivot": [
+                0.0,
+                -20.0,
+                13.0
+              ],
+              "note": "draw 0: the sign +1 pass (the first renderLeg / renderArm call)"
+            },
+            {
+              "pivot": [
+                0.0,
+                -20.0,
+                -13.0
+              ],
+              "note": "draw 1: the sign -1 pass (the second call, the offsets negated)"
+            }
+          ],
+          "note": "renderLeg (:289-299): the foot pieces take the shin's rotation point and pitch - at bind (0, -20, +13) / (0, -20, -13)"
+        },
+        "foot3": {
+          "count": 2,
+          "step_scope": "explicit",
+          "instances": [
+            {
+              "pivot": [
+                0.0,
+                -20.0,
+                13.0
+              ],
+              "note": "draw 0: the sign +1 pass (the first renderLeg / renderArm call)"
+            },
+            {
+              "pivot": [
+                0.0,
+                -20.0,
+                -13.0
+              ],
+              "note": "draw 1: the sign -1 pass (the second call, the offsets negated)"
+            }
+          ],
+          "note": "renderLeg (:289-299): the foot pieces take the shin's rotation point and pitch - at bind (0, -20, +13) / (0, -20, -13)"
+        },
+        "arm1": {
+          "count": 2,
+          "step_scope": "explicit",
+          "instances": [
+            {
+              "pivot": [
+                26.0,
+                -120.0,
+                0.0
+              ],
+              "note": "draw 0: the sign +1 pass (the first renderLeg / renderArm call)"
+            },
+            {
+              "pivot": [
+                -26.0,
+                -120.0,
+                0.0
+              ],
+              "note": "draw 1: the sign -1 pass (the second call, the offsets negated)"
+            }
+          ],
+          "note": "renderArm (:309-314; orig :243-254 / :255-266): y = hip.y - 60, x = hip.x + s 26, z = shoulders.z - s sin(shoulders.yRot) 26, s = +1 for draw 0 (x +26, the model's left side) and -1 for draw 1 (x -26); at bind (+26, -120, 0) / (-26, -120, 0)"
+        },
+        "arm2": {
+          "count": 2,
+          "step_scope": "explicit",
+          "instances": [
+            {
+              "pivot": [
+                26.0,
+                -120.0,
+                0.0
+              ],
+              "note": "draw 0: the sign +1 pass (the first renderLeg / renderArm call)"
+            },
+            {
+              "pivot": [
+                -26.0,
+                -120.0,
+                0.0
+              ],
+              "note": "draw 1: the sign -1 pass (the second call, the offsets negated)"
+            }
+          ],
+          "note": "as arm1: renderArm (:309-314; orig :243-254 / :255-266): y = hip.y - 60, x = hip.x + s 26, z = shoulders.z - s sin(shoulders.yRot) 26, s = +1 for draw 0 (x +26, the model's left side) and -1 for draw 1 (x -26); at bind (+26, -120, 0) / (-26, -120, 0)"
+        },
+        "arm3": {
+          "count": 2,
+          "step_scope": "explicit",
+          "instances": [
+            {
+              "pivot": [
+                26.0,
+                -79.0,
+                0.0
+              ],
+              "rotation": [
+                -0.19634954084936207,
+                null,
+                null
+              ],
+              "note": "draw 0: the sign +1 pass (the first renderLeg / renderArm call)"
+            },
+            {
+              "pivot": [
+                -26.0,
+                -79.0,
+                0.0
+              ],
+              "rotation": [
+                -0.19634954084936207,
+                null,
+                null
+              ],
+              "note": "draw 1: the sign -1 pass (the second call, the offsets negated)"
+            }
+          ],
+          "note": "renderArm (:316-320): xRot = the lower angle - 0.19634954 (the forearm leads the upper arm by that constant, present at bind), y = arm1.y + cos(arm1.xRot) 41 = -79, z = arm1.z + sin(arm1.xRot) 41 = 0, x = arm1.x - at bind (+26, -79, 0) / (-26, -79, 0) with xRot -0.19634954"
+        },
+        "knuckles": {
+          "count": 2,
+          "step_scope": "explicit",
+          "instances": [
+            {
+              "pivot": [
+                26.0,
+                -79.0,
+                0.0
+              ],
+              "rotation": [
+                -0.19634954084936207,
+                null,
+                null
+              ],
+              "note": "draw 0: the sign +1 pass (the first renderLeg / renderArm call)"
+            },
+            {
+              "pivot": [
+                -26.0,
+                -79.0,
+                0.0
+              ],
+              "rotation": [
+                -0.19634954084936207,
+                null,
+                null
+              ],
+              "note": "draw 1: the sign -1 pass (the second call, the offsets negated)"
+            }
+          ],
+          "note": "as arm3: renderArm (:316-320): xRot = the lower angle - 0.19634954 (the forearm leads the upper arm by that constant, present at bind), y = arm1.y + cos(arm1.xRot) 41 = -79, z = arm1.z + sin(arm1.xRot) 41 = 0, x = arm1.x - at bind (+26, -79, 0) / (-26, -79, 0) with xRot -0.19634954"
+        }
+      },
+      "render_instances_note": "TEST-009 (a) (owner 2026-09-14, item 2): the render_instances form of the fan rigs (Slice 4c), extended MINIMALLY with step_scope explicit - the classic re-poses the shared thigh / thigh2 / thigh3 / shin / foot1-3 and arm1-3 / knuckles between its two draws from code (renderLeg / renderArm: a translation per side and, when walking, each side's own angles), which no rotation step about one axis expresses; each draw's bind transform is declared per instance and the converter emits one top-level clone per draw (<part>__i0 the sign +1 pass, <part>__i1 the sign -1 pass) - the FINAL bone set; the Tier-1 slice lands the same rig and its hook animates each clone directly. The reference-geometry leg compares parts, not instances: its comparison is unchanged by this declaration."
     },
     {
       "id": "reference_godzilla",
@@ -2019,6 +2637,42 @@
       "geometry_only": true,
       "rig_note": "a client/model item model: a static LayerDefinition holder drawn by OreSpawnItemRenderer from createLayerDefinition().bakeRoot() (no model class, no hook); dumped geometry-only through its own factory; never surveyed before the mirror drop (BUG-041 stage 2)",
       "fixed": "BUG-041 stage 2 (2026-09-13): mirror flags dropped; exact match required"
+    },
+    {
+      "id": "reference_boyfriend",
+      "tier": 0,
+      "class": "danger.orespawn.entity.client.ModelBoyfriend",
+      "texture": "src/main/resources/assets/orespawn/textures/entity/boyfriend0.png",
+      "animation_kind": "static",
+      "loop_period_age_ticks": 20.0,
+      "sample_fractions": [],
+      "limb_swing": 0.0,
+      "limb_swing_amount": 0.0,
+      "camera": {
+        "yaw_degrees": 34.0,
+        "pitch_degrees": -28.0
+      },
+      "channels": [],
+      "geometry_only": true,
+      "rig_note": "TEST-010 (a) (owner 2026-09-14, item 4): a HumanoidModel subclass with its own createBodyLayer (ModelBoyfriend.java:15-41: the vanilla biped's seven parts - head, hat, body, right_arm, left_arm, right_leg, left_leg - on a 64x32 sheet, the arms 4 wide); 1.7.10 drew the Boyfriend with vanilla ModelBiped (ClientProxyOreSpawn), so there is no 1.7.10 ModelPart source to compare against - no reference_source, geometry only (the form of the seven client/model item models of BUG-041 stage 2): the reference leg reports the entry unpaired and never compares it; the dump is the converter's input for the artist package's rig. The texture is the renderer's skin 0 (BoyfriendRenderer.getTextureLocation :43-58: boyfriend0-27, swimshorts0-17, frogprince / frogprince2 - one rig, every skin 64x32). The left arm's and left leg's mirror() are vanilla's own (the mirror reconciliation of 2026-09-05), not BUG-041's."
+    },
+    {
+      "id": "reference_girlfriend",
+      "tier": 0,
+      "class": "danger.orespawn.entity.client.ModelGirlfriend",
+      "texture": "src/main/resources/assets/orespawn/textures/entity/girlfriend0.png",
+      "animation_kind": "static",
+      "loop_period_age_ticks": 20.0,
+      "sample_fractions": [],
+      "limb_swing": 0.0,
+      "limb_swing_amount": 0.0,
+      "camera": {
+        "yaw_degrees": 34.0,
+        "pitch_degrees": -28.0
+      },
+      "channels": [],
+      "geometry_only": true,
+      "rig_note": "TEST-010 (a) (owner 2026-09-14, item 4): a HumanoidModel subclass with its own createBodyLayer (ModelGirlfriend.java:15-41: the vanilla biped's seven parts on a 64x32 sheet, the arms 3 wide); 1.7.10 drew the Girlfriend with vanilla ModelBiped (ClientProxyOreSpawn), so there is no 1.7.10 ModelPart source to compare against - no reference_source, geometry only (the form of the seven client/model item models of BUG-041 stage 2): the reference leg reports the entry unpaired and never compares it; the dump is the converter's input for the artist package's rig. The texture is the renderer's skin 0 (GirlfriendRenderer.getTextureLocation :36-44: girlfriend0-40 and girlfriendv - one rig, every skin 64x32). The left arm's and left leg's mirror() are vanilla's own (the mirror reconciliation of 2026-09-05), not BUG-041's."
     }
   ]
 }

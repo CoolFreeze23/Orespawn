@@ -92,7 +92,8 @@ This creature has NO exact keyframe transcription and is not yet on its hook (th
 | `walk_claws` | true | parallel layer | w_walk = w_move (1 - w_swim)(1 - w_fly); the gait group additionally x limbSwingAmount (P3) (group claws) | larm2, larm1, lclaw, rarm2, rarm1, rclaw | 1 s | no | author |  |
 | `walk_tail` | true | parallel layer | w_walk = w_move (1 - w_swim)(1 - w_fly); the gait group additionally x limbSwingAmount (P3) (group tail) | tail1, tail2, tail3, tail4, tail5, tail6 | 1 s | no | author |  |
 | `swim` | true | base | w_swim from isInWater() | any of the 22 bones — gait group (speed-scaled): lleg1, lleg2, lleg3, lleg4, rleg1, rleg2, rleg3, rleg4; free: body, head; other groups' bones: larm1 (better left to `swim_claws`), larm2 (better left to `swim_claws`), lclaw (better left to `swim_claws`), rarm1 (better left to `swim_claws`), rarm2 (better left to `swim_claws`), rclaw (better left to `swim_claws`), tail1 (better left to `swim_tail`), tail2 (better left to `swim_tail`), tail3 (better left to `swim_tail`), tail4 (better left to `swim_tail`), tail5 (better left to `swim_tail`), tail6 (better left to `swim_tail`) | 1 s | no | leave | no swim behaviour beyond the FloatGoal that keeps it at the surface (EntityScorpion.java:62); the code draws the same wave in water; the fallback to walk covers it (section 2.4) |
-| `calm_idle` | true | base | = idle until this creature's SPEC adds a synched attacking byte (ruled 2026-09-06, Q12 (a)) | (as idle) | 1 s | no | author | the flag at 0 (BugMeleeAttackGoal.java:132, :145, :176): the rare snaps (one claw cycle in ten, one tail cycle in twenty-five, ScorpionModel.java:221-223) over the same rest as idle |
+| `aggro_idle` | true | base | w_idle x w_aggro (DATA_ATTACKING held) | any of the 22 bones — gait group (speed-scaled): lleg1, lleg2, lleg3, lleg4, rleg1, rleg2, rleg3, rleg4; free: body, head; other groups' bones: larm1 (better left to `idle_claws`), larm2 (better left to `idle_claws`), lclaw (better left to `idle_claws`), rarm1 (better left to `idle_claws`), rarm2 (better left to `idle_claws`), rclaw (better left to `idle_claws`), tail1 (better left to `idle_tail`), tail2 (better left to `idle_tail`), tail3 (better left to `idle_tail`), tail4 (better left to `idle_tail`), tail5 (better left to `idle_tail`), tail6 (better left to `idle_tail`) | 1 s | no | author | DATA_ATTACKING held at 1 while it stands in reach (EntityScorpion.java:43-44, :100-102; BugMeleeAttackGoal.java:168): the claws snapping one cycle in two and the tail whipping one in three (ScorpionModel.java:224-227) — a raised-tail threat pose with the claws open would carry it |
+| `calm_idle` | true | base | w_idle x (1 - w_aggro) | any of the 22 bones — gait group (speed-scaled): lleg1, lleg2, lleg3, lleg4, rleg1, rleg2, rleg3, rleg4; free: body, head; other groups' bones: larm1 (better left to `idle_claws`), larm2 (better left to `idle_claws`), lclaw (better left to `idle_claws`), rarm1 (better left to `idle_claws`), rarm2 (better left to `idle_claws`), rclaw (better left to `idle_claws`), tail1 (better left to `idle_tail`), tail2 (better left to `idle_tail`), tail3 (better left to `idle_tail`), tail4 (better left to `idle_tail`), tail5 (better left to `idle_tail`), tail6 (better left to `idle_tail`) | 1 s | no | author | the flag at 0 (BugMeleeAttackGoal.java:132, :145, :176): the rare snaps (one claw cycle in ten, one tail cycle in twenty-five, ScorpionModel.java:221-223) over the same rest as idle |
 | `attack` | false | triggered controller | event: a strike (the transport per species by the trigger inventory — ruled 2026-09-06, Q11 (a); §6 says which applies here) | (any unlocked) | 0.4 s | yes | author | the sting: doHurtTarget (EntityScorpion.java:151-160) for 4 with scorpion_attack at the victim one time in three, rolled by the melee goal within 3 blocks plus half the target's width on a 1-in-6 cadence tick (BugMeleeAttackGoal.java:159-174; Params.scorpion: nextInt(5) == 0 or nextInt(6) == 1); the flag is held while in reach, not pulsed at the strike, so the strike is transport 1 (the server LivingDamageEvent.Post) — a tail stab over the head |
 | `hurt` | false | triggered controller | event: hurtTime rising edge (client-observed); the red overlay stays (ruled 2026-09-06, Q4 (a)) | (any unlocked) | 0.3 s | yes | author | a flinch: hurt() (EntityScorpion.java:166-170) refuses cactus; the scorpion_hit sound at 1.5 volume (:115-118, :125-128); the hurtTime edge is client-observed |
 | `death` | hold_on_last_frame | triggered controller | event: deathTime > 0; the vanilla death flip stays — the pilot ships no death clip (ruled 2026-09-06, Q3 (a)); a creature whose JSON ships one gets the clip-replaces-flip mode when the first such clip arrives, so a `death` delivered here plays under the flip until then | (any unlocked) | 1 s | yes | author | ruled 2026-09-06, Q3 (a): the vanilla death flip stays; a creature whose JSON ships a `death` clip gets the clip-replaces-flip mode, designed when the first such clip arrives (the Queen's own death clip the precedent) - a `death` delivered here plays under the flip until then |
@@ -107,7 +108,7 @@ Loop values are the JSON `loop` field exactly: `true` for cycles, `false` for on
 
 - in `walk`: the leg wave (ScorpionModel.java:193-204) is yaw-only — the legs never lift; add a lift on each leg's forward sweep so the wave reads as steps
 - in `attack`: a stab — the code's tail cycle (:278-292) is a random curl, not aimed; a deliberate over-the-head strike on the bite (EntityScorpion.java:151-160)
-- in `aggro_idle`: a raised tail and open claws as a held threat, with the code's frequent snaps (:224-227) over it — NOT accepted by `check` today: `aggro_idle` is not in this creature's clip set
+- in `aggro_idle`: a raised tail and open claws as a held threat, with the code's frequent snaps (:224-227) over it
 - in `idle`: a slow breath of the body and the rare snaps (:221-223) as idle variants
 
 ## 6. Trigger inventory (generated from the entity's AI goals and state flags)
@@ -126,12 +127,19 @@ A `[modern: key]` guard means the goal is registered only under the modern confi
 
 **Synched state flags** (what the client can see): `DATA_ATTACKING` (Integer, line 43)
 
-**Attacking flag `DATA_ATTACKING`** — classified **NONE** (no setAttacking sites) — a mechanical reading; the owner confirms it against the sites:
+**Attacking flag `DATA_ATTACKING`** — classified **STATE** (cleared when the target is lost at line(s) [145, 176]; other clears at line(s) [153] (guards: if (this.params.forgetTargetRoll() > 0 && this.mob.getRandom().nextInt(this.params.forgetTargetRoll()) == 0)) — the owner reads them) — a mechanical reading; the owner confirms it against the sites:
 
 | line | method | sets | guard (the enclosing block) | within | comment |
 |---|---|---|---|---|---|
+| ai/BugMeleeAttackGoal.java:132 | stop | 0 | (unguarded: the method body) | - |  [via BugMeleeAttackGoal (registered at line 67)] |
+| ai/BugMeleeAttackGoal.java:145 | tick | 0 | if (target == null \|\| !target.isAlive()) | - |  [via BugMeleeAttackGoal (registered at line 67)] |
+| ai/BugMeleeAttackGoal.java:153 | tick | 0 | if (this.params.forgetTargetRoll() > 0 && this.mob.getRandom().nextInt(this.params.forgetTargetRoll()) == 0) | - |  [via BugMeleeAttackGoal (registered at line 67)] |
+| ai/BugMeleeAttackGoal.java:168 | tick | 1 | if (distSq < reachSq) | - |  [via BugMeleeAttackGoal (registered at line 67)] |
+| ai/BugMeleeAttackGoal.java:176 | tick | 0 | NOT(if (distSq < reachSq)) | - |  [via BugMeleeAttackGoal (registered at line 67)] |
 
 The guard is the header of the block that actually encloses the write (found by brace depth, comments and strings blanked); an `else` branch is written as the negated `if` chain it closes; a header the parser cannot read is `(unparsed: ...)`, never dropped.
+
+The flag's writes traced into the goal class the entity hands its setter to (TEST-011 (b); the `[via ...]` rows above): `BugMeleeAttackGoal` registered at line 67 (`this, this::setAttacking, BugMeleeAttackGoal.Params.scorpion()`) — ai/BugMeleeAttackGoal.java, sites ai/BugMeleeAttackGoal.java:132, ai/BugMeleeAttackGoal.java:145, ai/BugMeleeAttackGoal.java:153, ai/BugMeleeAttackGoal.java:168, ai/BugMeleeAttackGoal.java:176.
 
 **Locomotion facts:** uses a per-entity RenderInfo scratch (client-only, never synced). Overrides: hurt, doHurtTarget, customServerAiStep.
 
@@ -147,7 +155,8 @@ The guard is the header of the block that actually encloses the write (found by 
 | `walk` | limbSwingAmount from AnimationState (the seam's input; 0 at rest, 1 at full stride) | the gait group's weight and speed scale (P3) |
 | `idle` | w_idle = (1 - w_move)(1 - w_swim)(1 - w_fly) | standing still |
 | `swim` | Entity.isInWater() (client-evaluated); FloatGoal keeps it at the surface | falls back to walk then idle when absent (§2.4) |
-| `aggro_idle / calm_idle / attack` | DATA_ATTACKING classified NONE: no setAttacking sites | OWNER READS THE SITES (listed below) — a mechanical reading; the owner confirms which of the ruled transports applies (ruled 2026-09-06, Q11 (a) / Q12 (a)) |
+| `aggro_idle / calm_idle` | DATA_ATTACKING held while engaged (cleared when the target is lost at line(s) [145, 176]; other clears at line(s) [153] (guards: if (this.params.forgetTargetRoll() > 0 && this.mob.getRandom().nextInt(this.params.forgetTargetRoll()) == 0)) — the owner reads them) | STATE flag drives w_aggro (§4.3) |
+| `attack` | melee: LivingDamageEvent.Post -> triggerAnim packet (transport 1); ranged: named launch sites (transport 3) | the transport per species by the trigger inventory (ruled 2026-09-06, Q11 (a)): this flag is held, not pulsed at the strike, so the signal column's transport applies — the server LivingDamageEvent.Post -> triggerAnim packet for melee, a named launch site for ranged |
 | `hurt` | rising edge of LivingEntity.hurtTime (0 -> 10), client-observed | always available; the red overlay stays (ruled 2026-09-06, Q4 (a)) |
 | `death` | LivingEntity.deathTime > 0, client-observed | hold_on_last_frame; the vanilla death flip stays and the pilot ships no death clip (ruled 2026-09-06, Q3 (a)); a creature whose JSON ships a `death` clip gets the clip-replaces-flip mode, designed when the first such clip arrives (the Queen's own death clip the precedent) — until then a delivered `death` plays under the flip |
 | `idle_alt_N` | a roll at each idle loop boundary (p = 0.15) while w_idle > 0.9 | optional; one roll per idle loop boundary, p = 0.15, a uniform choice, only while the idle weight is above 0.9 and no triggered clip plays, keyed on the clip-clock cycle index (ruled 2026-09-06, Q5 (a)) |
@@ -169,7 +178,7 @@ No MultiHitboxLib profile: no locked bones. Every bone name is still immutable (
 ## 10. Effort and priority
 
 - Artist scope: full contract (Tier 2, the state-branching class: geckolib_migration_design.md section 5); the rig is not yet in-game (it lands through the seam in a later slice).
-- Estimated effort: 20.4 h (generator: 4 h + 0.2 h/bone x 22 + 1 h/clip x 12 to author or improve (owner adjusts)).
+- Estimated effort: 21.4 h (generator: 4 h + 0.2 h/bone x 22 + 1 h/clip x 13 to author or improve (owner adjusts)).
 - Tier 2 (state-branching — setupAnim branches on entity state).
 - Density statement (the harness's, not the artist's; ruled 2026-09-06, Q9 (a) and Q10): the classic transcription is verified at 2.5e-3 rad — Beaver reference leg 15 / 13 / 8 catmullrom keys per bone with spline arguments repaired at load; wrap sample T−ε vs 0+ε included; the key counts per bone are an output of the harness, re-derived on every re-transcription.
 

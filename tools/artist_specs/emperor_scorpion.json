@@ -172,12 +172,12 @@
     {
       "name": "aggro_idle",
       "verdict": "author",
-      "note": "the attacking stance: DATA_ATTACKING (EntityEmperorScorpion.java:48) is set by the melee goal (:96) — the model answers with fast mandibles and busier claws and tail (EmperorScorpionModel.java:617, :628-634); NOT offered by the trigger inventory today (the flag is set through the goal's IntConsumer, so the inventory classifies it NONE) — kept here for the owner"
+      "note": "the attacking stance: DATA_ATTACKING (EntityEmperorScorpion.java:48) is set by the melee goal (:96) — the model answers with fast mandibles and busier claws and tail (EmperorScorpionModel.java:617, :628-634); offered by the trigger inventory now (TEST-011 (b), owner 2026-09-14, item 5): the flag's writes are traced into the goal the entity hands its setter to (EmperorScorpionPoisonGoal, a BugMeleeAttackGoal: raised in reach at BugMeleeAttackGoal.java:168, cleared out of reach and on target loss at :176 / :145) — classified STATE, so w_aggro drives this pair"
     },
     {
       "name": "calm_idle",
-      "verdict": "covered by idle",
-      "note": "covered by idle while the inventory offers no aggro_idle / calm_idle pair (DATA_ATTACKING classified NONE: the flag is set through the goal's IntConsumer, EntityEmperorScorpion.java:96); the rest with the flag clear is slow mandibles (:617) and a claw or the tail moving in a few periods of twenty (:628-630)"
+      "verdict": "author",
+      "note": "the pair is offered now (TEST-011 (b), owner 2026-09-14, item 5: the flag's writes traced into the goal, BugMeleeAttackGoal.java:145-176, from the setter handed at EntityEmperorScorpion.java:96); the rest with the flag clear is slow mandibles (:617) and a claw or the tail moving in a few periods of twenty (:628-630)"
     },
     {
       "name": "attack",
@@ -212,7 +212,7 @@
   ],
   "wishlist": [
     "in `walk`: keep the code's lift on every forward swing (EmperorScorpionModel.java:588-590) so the crawl reads as eight feet planting, not sliding; the body can rock a few degrees with the phases",
-    "in `attack`'s wind-up: claws raised and open, mandibles working fast (the attacking branch, :617, :631-634) — the threat display before the strike; the contract's aggro_idle would carry it, but the trigger inventory does not offer it here (the flag is set through the goal's IntConsumer, EntityEmperorScorpion.java:96)",
+    "in `attack`'s wind-up: claws raised and open, mandibles working fast (the attacking branch, :617, :631-634) — the threat display before the strike; the contract's aggro_idle carries it — offered now (TEST-011 (b): the flag's writes traced into the goal, from the setter handed at EntityEmperorScorpion.java:96)",
     "in `attack`: the tail sting arcing over the body to the impact and the claws closing; the strike is a plain melee hit (EntityEmperorScorpion.java:167-179), so the sting is the picture of it",
     "in `hurt`: a recoil that reads with the 30-tick invulnerability window (EntityEmperorScorpion.java:183-185): a short flinch, then the guard"
   ],

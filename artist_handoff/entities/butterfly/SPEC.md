@@ -94,7 +94,7 @@ Source: `src/main/java/danger/orespawn/entity/EntityButterfly.java` (AmbientCrea
 
 | selector | prio | goal | guard | category | what it does | bears on |
 |---|---|---|---|---|---|---|
-| goalSelector | 8 | `ButterflyIslandsHuntGoal` | - | UNCLASSIFIED | no entry in the generator's goal dictionary | unknown |
+| goalSelector | 8 | `ButterflyIslandsHuntGoal` | - | locomotion | the butterfly's ambient flight (a random air cell re-picked on a 1-in-100 roll or within cell distSq 4, then the steer) and, on a tick the retarget skipped, a 1-in-10 roll in the Islands dimension with the type-1 vampire skin and not Peaceful: scans an 8/5/8 box for the first visible non-creative player or horse, flies at it and bites (doHurtTarget) inside distSq 6 (ButterflyIslandsHuntGoal.java:65-107, 117-136) | fly; attack (event) on the bite |
 
 A `[modern: key]` guard means the goal is registered only under the modern config key named (read once, at construction); `UNPARSED` means the registration's shape is one the generator does not read (a local variable or a computed priority) — the owner reads that line.
 

@@ -122,7 +122,7 @@
     "The cape's lower piece also stirs at all times (:292): the cosine of the age x 0.7 x 0.21, x pi x 0.02 - 3.6 degrees every 42.7 ticks; the upper piece is static.",
     "The head turns 0.45 of the look yaw, clamped to +-0.45 rad (:293-299), no pitch.",
     "The arms and sword branch on the synched screaming flag (:300-322). Calm: the upper arms at -0.5 rad, the forearms at -1.0 and yawed +1.0 (left) and -1.0 (right) - folded across the chest - the sword handle and blade at 0.35; nothing moves. Screaming: the cosine of the age x 2.7 x 0.21, x pi x 0.3 (54 degrees every 11.1 ticks) is added to -1.2 on the four upper-arm pieces and to -1.8 on the forearms, both arms together, and one and a half times it to 0.5 on the sword - the arms thrown high and pumping, the sword whirling 81 degrees. Each forearm is placed 10 units along its upper arm's pitch and the sword 7 units along the right forearm's (:323-328): a hand-written FK chain on flat bones (when the rig lands a keyframed swing must key the positions too, or the arms must be parented).",
-    "The pelvis, spine, ribs, neck, collars, shoulders, hips and upper cape never move. The screaming flag is a held state (EnderKnight.java:119 on a stare, :342 on a hit; cleared at :124, :252, :260, :283) under a name the generator's inventory does not read as an attacking flag (an owner note); the strike is vanilla's MeleeAttackGoal (:56), whose doHurtTarget call is in vanilla code, so the inventory finds no melee site either - the attack is real.",
+    "The pelvis, spine, ribs, neck, collars, shoulders, hips and upper cape never move. The screaming flag is a held state (EnderKnight.java:119 on a stare, :342 on a hit; cleared at :124, :252, :260, :283) under its own name, which the generator's inventory reads as the held aggro state (TEST-011 (c), owner 2026-09-14, item 5: no attacking flag, a vanilla MeleeAttackGoal, the flag raised in the target goal's findTarget and cleared on target loss); the strike is vanilla's MeleeAttackGoal (:56), whose doHurtTarget call is in vanilla code - the inventory records it as the strike site now.",
     "The teleports (EnderKnight.java:290-337) are instant position changes with portal particles and the enderman teleport sound at both ends; the body itself does not animate them."
   ],
   "clips": [
@@ -144,7 +144,7 @@
     {
       "name": "aggro_idle",
       "verdict": "author",
-      "note": "the screaming branch at rest: arms thrown high and pumping 54 deg every 11.1 ticks, the sword whirling 81 deg (ModelEnderKnight.java:301-308); the synched screaming flag is held while it has a target (EnderKnight.java:119, :342; cleared :124, :252, :260, :283). NOTE for the owner: the flag is DATA_SCREAMING, not DATA_ATTACKING, so the generator's mechanical inventory reads no attacking state and offers no aggro_idle row until it is told"
+      "note": "the screaming branch at rest: arms thrown high and pumping 54 deg every 11.1 ticks, the sword whirling 81 deg (ModelEnderKnight.java:301-308); the synched screaming flag is held while it has a target (EnderKnight.java:119, :342; cleared :124, :252, :260, :283). Offered now: the generator's inventory reads DATA_SCREAMING as the held aggro state under the entity's own name (TEST-011 (c), owner 2026-09-14, item 5: raised in the target goal's findTarget at :119, cleared on target loss at :124 / :283 - classified STATE), so w_aggro drives this pair"
     },
     {
       "name": "calm_idle",
@@ -154,7 +154,7 @@
     {
       "name": "attack",
       "verdict": "author",
-      "note": "a sword strike: the vanilla MeleeAttackGoal (EnderKnight.java:56) closes and calls doHurtTarget for 12 inside vanilla code - no strike site in the entity file, so the generator's inventory finds no melee site and may offer no attack row (an owner note); no attacking flag, so the strike is transport 1 (the server LivingDamageEvent.Post) - an overhead sword blow landing on the impact frame",
+      "note": "a sword strike: the vanilla MeleeAttackGoal (EnderKnight.java:56) closes and calls doHurtTarget for 12 inside vanilla code - offered now: the generator's inventory records the vanilla goal's strike as the site (TEST-011 (c): MeleeAttackGoal.checkAndPerformAttack calls the entity's doHurtTarget, no override here); the held screaming state is not pulsed at the strike, so the strike is transport 1 (the server LivingDamageEvent.Post) - an overhead sword blow landing on the impact frame",
       "length_seconds": 0.5
     },
     {

@@ -403,8 +403,17 @@ def main() -> int:
     args.output_dir.mkdir(parents=True, exist_ok=True)
     failures = 0
     summary = []
+    unpaired: list[str] = []
     for spec in manifest["models"]:
         if "reference_source" not in spec:
+            # TEST-010 (a) (owner 2026-09-14, item 4): a geometry-only entry with no 1.7.10 ModelPart source (the
+            # Boyfriend and the Girlfriend: HumanoidModel subclasses 1.7.10 drew with vanilla ModelBiped) is reported
+            # as UNPAIRED and never compared - its compiled dump is the converter's input for the artist package's
+            # rig, and nothing here can be compared against; no report file, so the checked-in proof set stays the
+            # paired entries' alone.
+            unpaired.append(spec["id"])
+            print(f"REFERENCE GEOMETRY UNPAIRED: {spec['id']}: no reference_source (geometry-only entry, no 1.7.10 "
+                  "model to compare against; not compared)")
             continue
         model_id = spec["id"]
         reference_path = repository_root / spec["reference_source"]
@@ -459,6 +468,9 @@ def main() -> int:
             print(f"REFERENCE GEOMETRY {report['status']}: {model_id}: {detail}")
             if not args.survey:
                 failures += 1
+    if unpaired:
+        print(f"REFERENCE GEOMETRY: {len(summary)} entries compared, {len(unpaired)} unpaired (geometry-only, no "
+              f"1.7.10 source): {unpaired}")
     if args.proof_dir is not None and not args.survey:
         proof_files = {f"{model_id}.reference-geometry.json" for model_id, _status in summary}
         if args.write_proof:
@@ -484,9 +496,12 @@ def main() -> int:
         counts: dict[str, int] = {}
         for _model_id, status in summary:
             counts[status] = counts.get(status, 0) + 1
+        if unpaired:
+            counts["UNPAIRED"] = len(unpaired)
         print(f"REFERENCE GEOMETRY SURVEY: {counts}")
         (args.output_dir / "survey_summary.json").write_text(
-            json.dumps({"models": summary, "counts": counts}, indent=2) + "\n", encoding="utf-8", newline="\n")
+            json.dumps({"models": summary, "counts": counts, **({"unpaired": unpaired} if unpaired else {})}, indent=2)
+            + "\n", encoding="utf-8", newline="\n")
         return 0
     return 1 if failures else 0
 

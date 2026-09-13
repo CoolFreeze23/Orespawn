@@ -187,7 +187,7 @@
     "A wave runs down the fourteen spines (:424, :435-448): the cosine of the age x 0.5 x 0.62, x pi x 0.07 (12.6 degrees every 20.3 ticks), each spine a further pi/8 along the wave than the one before, the tail-side spines negated.",
     "The tail sways (:449-488): the cosine of the age x 0.75 x 0.62, x pi x 0.25, x an amount that is the walking speed when calm and a fixed 1.25 when the synched attacking flag is up, taken at 0.25 through 1.75 along the seven segments (an 11-degree base and a 79-degree tip at amount 1, a 98-degree tip lash when attacking); each next segment's position is re-derived 6, 5, 4.5, 4, 3 and 3 units along the previous segment's yaw and the tail spines are placed with their segment - an FK chain written by hand on flat bones (when the rig lands a keyframed sway must key the positions too, or the tail must be parented).",
     "The jaws flap on a latch (:492-518): at every boundary of the 5.1-tick jaw cycle a per-entity roll picks nextInt(15) when calm - the flap plays for that cycle on a 0 - and 0 while attacking, so the two three-piece jaws flap 27 degrees open and shut every cycle during a hunt and about one cycle in fifteen at rest; otherwise they sit at their rests.",
-    "The body, neck, head pieces, eyes, horns, shoulders and the outer toes never move; nothing reads the look. The attacking flag lives in the bug melee goal (DungeonBeast.java:72-73 hands setAttacking to it; raised in reach and cleared out of it, BugMeleeAttackGoal.java:145-176) - a held state, but the entity file holds no setAttacking site, so the generator's inventory reads no state here (an owner note); the bite is doHurtTarget inside the goal (:172), transport 1."
+    "The body, neck, head pieces, eyes, horns, shoulders and the outer toes never move; nothing reads the look. The attacking flag lives in the bug melee goal (DungeonBeast.java:72-73 hands setAttacking to it; raised in reach and cleared out of it, BugMeleeAttackGoal.java:145-176) - a held state, read by the generator's inventory through the goal it is handed to (TEST-011 (b), owner 2026-09-14, item 5: classified STATE); the bite is doHurtTarget inside the goal (:172), transport 1."
   ],
   "clips": [
     {
@@ -208,7 +208,7 @@
     {
       "name": "aggro_idle",
       "verdict": "author",
-      "note": "the entity has the state - the synched attacking flag held while the prey is in reach, raised and cleared inside the bug melee goal (DungeonBeast.java:72-73; BugMeleeAttackGoal.java:145-176) - and the model branches on it twice: the tail lashing at full amplitude x 1.25 whether it moves or not (ModelDungeonBeast.java:449) and the jaws flapping every cycle (:500-501). NOTE for the owner: the flag's sites are in the goal, not the entity file, so the generator's mechanical inventory reads no attacking state and offers no aggro_idle row until it is told"
+      "note": "the entity has the state - the synched attacking flag held while the prey is in reach, raised and cleared inside the bug melee goal (DungeonBeast.java:72-73; BugMeleeAttackGoal.java:145-176) - and the model branches on it twice: the tail lashing at full amplitude x 1.25 whether it moves or not (ModelDungeonBeast.java:449) and the jaws flapping every cycle (:500-501). Offered now: the generator's inventory traces the flag's writes into the goal the entity hands its setter to (TEST-011 (b), owner 2026-09-14, item 5) and classifies it STATE, so w_aggro drives this pair"
     },
     {
       "name": "calm_idle",

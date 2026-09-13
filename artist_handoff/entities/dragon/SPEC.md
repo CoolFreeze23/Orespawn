@@ -158,9 +158,9 @@ Source: `src/main/java/danger/orespawn/entity/Dragon.java` (TamableAnimal, dange
 | selector | prio | goal | guard | category | what it does | bears on |
 |---|---|---|---|---|---|---|
 | goalSelector | 0 | `FloatGoal` | - | locomotion | bobs up to the surface in water (vanilla) | swim state (client reads isInWater) |
-| goalSelector | 1 | `SitWhenOrderedToGoal` | - | UNCLASSIFIED | no entry in the generator's goal dictionary | unknown |
-| goalSelector | 2 | `FollowOwnerGoal` | - | UNCLASSIFIED | no entry in the generator's goal dictionary | unknown |
-| goalSelector | 3 | `TemptGoal` | - | UNCLASSIFIED | no entry in the generator's goal dictionary | unknown |
+| goalSelector | 1 | `SitWhenOrderedToGoal` | - | social | keeps a tamed pet sitting where its owner told it to: while the owner's sit order stands (with vanilla's in-water / airborne / owner-under-attack exceptions) it stops navigation and holds the sitting pose (vanilla SitWhenOrderedToGoal) | none (no sit clip in the contract; a sitting pose is by SPEC if wanted) |
+| goalSelector | 2 | `FollowOwnerGoal` | - | social | follows its owner (vanilla tamed-pet goal): when not ordered to sit and the owner is beyond the start distance it paths to them at the registration's speed, teleporting to a safe spot beside them when too far to path, and releases inside the stop distance (vanilla FollowOwnerGoal) | walk |
+| goalSelector | 3 | `TemptGoal` | - | social | walks toward a nearby player holding the species' tempt item, keeping its eyes on them, and gives up when they put it away or move off (vanilla TemptGoal; the item is the registration's ingredient argument) | walk |
 | goalSelector | 4 | `WaterAvoidingRandomStrollGoal` | - | locomotion | strolls to random spots, avoiding water (vanilla) | walk |
 | goalSelector | 5 | `LookAtPlayerGoal` | - | look | turns the head toward a nearby player (vanilla; head yaw/pitch only) | none: head look, not a clip |
 | goalSelector | 6 | `RandomLookAroundGoal` | - | look | looks around idly (vanilla; head yaw/pitch only) | none: head look, not a clip |

@@ -74,6 +74,7 @@ This creature has NO exact keyframe transcription (owner 2026-09-13, Amendment 2
 | `walk_head` | true | parallel layer | w_walk = w_move (1 - w_swim)(1 - w_fly); the gait group additionally x limbSwingAmount (P3) (group head) | head | 1 s | no | author |  |
 | `swim` | true | base | w_swim from isInWater() | any of the 6 bones — gait group (speed-scaled): leg_back_left, leg_back_right, leg_front_left, leg_front_right; free: body; other groups' bones: head (better left to `swim_head`) | 1 s | no | author | optional: falls back to walk then idle when absent (§2.4) |
 | `calm_idle` | true | base | = idle until this creature's SPEC adds a synched attacking byte (ruled 2026-09-06, Q12 (a)) | (as idle) | 1 s | no | covered by idle | not needed while idle covers it; listed so the name stays reserved — not counted in the effort estimate |
+| `attack` | false | triggered controller | event: a strike (the transport per species by the trigger inventory — ruled 2026-09-06, Q11 (a); §6 says which applies here) | (any unlocked) | 0.5 s | yes | author |  |
 | `hurt` | false | triggered controller | event: hurtTime rising edge (client-observed); the red overlay stays (ruled 2026-09-06, Q4 (a)) | (any unlocked) | 0.3 s | yes | author | a flinch |
 | `death` | hold_on_last_frame | triggered controller | event: deathTime > 0; the vanilla death flip stays — the pilot ships no death clip (ruled 2026-09-06, Q3 (a)); a creature whose JSON ships one gets the clip-replaces-flip mode when the first such clip arrives, so a `death` delivered here plays under the flip until then | (any unlocked) | 1 s | yes | author | ruled 2026-09-06, Q3 (a): the vanilla death flip stays; a creature whose JSON ships a `death` clip gets the clip-replaces-flip mode, designed when the first such clip arrives (the Queen's own death clip the precedent) - a `death` delivered here plays under the flip until then |
 
@@ -89,6 +90,10 @@ _No AI goals registered (the behaviour lives in tick / customServerAiStep)._
 
 **Locomotion facts:** has a baby form (the renderer halves the scale). Overrides: customServerAiStep.
 
+**Strike and launch sites:**
+
+- melee (a direct hurt on the victim) `attackTarget.hurt(this.damageSources().mobAttack(this), fodderDamage)` — EntityCannonFodder.java:290 in `customServerAiStep`, guard: if (this.distanceToSqr(attackTarget) < 9.0 && (this.random.nextInt(swingFrequency + 1) == 0 || this.random.nextInt(swingFrequency) == 1)) within if (attackTarget != null) within if (this.level().getDifficulty() != Difficulty.PEACEFUL && this.random.nextInt(5) == 1)
+
 **What fires each contract clip:**
 
 | clip | signal | verdict |
@@ -97,7 +102,7 @@ _No AI goals registered (the behaviour lives in tick / customServerAiStep)._
 | `idle` | w_idle = (1 - w_move)(1 - w_swim)(1 - w_fly) | standing still |
 | `swim` | Entity.isInWater() (client-evaluated) | falls back to walk then idle when absent (§2.4) |
 | `aggro_idle / calm_idle` | no synched attacking flag | calm_idle only until this creature's SPEC adds a synched byte mirroring getTarget() != null (ruled 2026-09-06, Q12 (a): aggro_idle waits for that byte) |
-| `attack` | no strike or launch site found | no attack clip: the mob does not attack |
+| `attack` | melee: LivingDamageEvent.Post -> triggerAnim packet (transport 1); ranged: named launch sites (transport 3) | the transport per species by the trigger inventory (ruled 2026-09-06, Q11 (a)): no attacking flag here, so the signal column's transport applies — the server LivingDamageEvent.Post -> triggerAnim packet for melee, a named launch site for ranged |
 | `hurt` | rising edge of LivingEntity.hurtTime (0 -> 10), client-observed | always available; the red overlay stays (ruled 2026-09-06, Q4 (a)) |
 | `death` | LivingEntity.deathTime > 0, client-observed | hold_on_last_frame; the vanilla death flip stays and the pilot ships no death clip (ruled 2026-09-06, Q3 (a)); a creature whose JSON ships a `death` clip gets the clip-replaces-flip mode, designed when the first such clip arrives (the Queen's own death clip the precedent) — until then a delivered `death` plays under the flip |
 | `idle_alt_N` | a roll at each idle loop boundary (p = 0.15) while w_idle > 0.9 | optional; one roll per idle loop boundary, p = 0.15, a uniform choice, only while the idle weight is above 0.9 and no triggered clip plays, keyed on the clip-clock cycle index (ruled 2026-09-06, Q5 (a)) |
@@ -119,7 +124,7 @@ No MultiHitboxLib profile: no locked bones. Every bone name is still immutable (
 ## 10. Effort and priority
 
 - Artist scope: full contract (Tier 2, the gait-scaled (a walk-distance gait) class: geckolib_migration_design.md section 5); ON THE HOOK until idle and walk are delivered (Amendment 2).
-- Estimated effort: 12.2 h (generator: 4 h + 0.2 h/bone x 6 + 1 h/clip x 7 to author or improve (owner adjusts)).
+- Estimated effort: 13.2 h (generator: 4 h + 0.2 h/bone x 6 + 1 h/clip x 8 to author or improve (owner adjusts)).
 - Tier 2 (gait-scaled — trigonometric pose depends on limbSwingAmount).
 - Density statement (the harness's, not the artist's; ruled 2026-09-06, Q9 (a) and Q10): the classic transcription is verified at 2.5e-3 rad — Beaver reference leg 15 / 13 / 8 catmullrom keys per bone with spline arguments repaired at load; wrap sample T−ε vs 0+ε included; the key counts per bone are an output of the harness, re-derived on every re-transcription.
 

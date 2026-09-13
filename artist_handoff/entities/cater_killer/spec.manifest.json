@@ -5772,6 +5772,16 @@
       "verdict": "author"
     },
     {
+      "name": "aggro_idle",
+      "loop": "true",
+      "role": "contract",
+      "code_triggered": false,
+      "required": false,
+      "length_rule": "near:1.0",
+      "length_seconds": 1.0,
+      "verdict": "author"
+    },
+    {
       "name": "calm_idle",
       "loop": "true",
       "role": "contract",
@@ -5779,7 +5789,7 @@
       "required": false,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "covered by idle"
+      "verdict": "author"
     },
     {
       "name": "attack",
@@ -5823,8 +5833,8 @@
       ]
     }
   ],
-  "effort_hours": 40.0,
-  "effort_source": "generator: 4 h + 0.2 h/bone x 80 + 1 h/clip x 20 to author or improve (owner adjusts)",
+  "effort_hours": 42.0,
+  "effort_source": "generator: 4 h + 0.2 h/bone x 80 + 1 h/clip x 22 to author or improve (owner adjusts)",
   "reference_clip": {
     "file": "cater_killer_reference.animation.json",
     "sha256": "8648c3d9b4e23990393dde5d897be6b7d5ef2ef4c84651be091e6d82e757e500",

@@ -101,7 +101,8 @@ This creature has NO exact keyframe transcription and is not yet on its hook (th
 | `walk_tail_sway` | true | parallel layer | w_walk = w_move (1 - w_swim)(1 - w_fly); the gait group additionally x limbSwingAmount (P3) (group tail_sway) | tail | 1 s | no | author |  |
 | `walk_tail_lift` | true | parallel layer | w_walk = w_move (1 - w_swim)(1 - w_fly); the gait group additionally x limbSwingAmount (P3) (group tail_lift) | tail | 1 s | no | author |  |
 | `swim` | true | base | w_swim from isInWater() | any of the 30 bones — gait group (speed-scaled): lfleg, lrleg, rfleg, rrleg; free: body1, body2, body3, bump1, bump10, bump11, bump12, bump13, bump14, bump15, bump16, bump2, bump3, bump4, bump5, bump6, bump7, bump8, bump9, chorn, guard, head, lhorn, nose, rhorn; other groups' bones: tail (better left to `swim_tail_lift`) | 1 s | no | leave | no swim behaviour beyond the FloatGoal that keeps it at the surface (Pointysaurus.java:62); the code draws the same plod in water; the fallback to walk covers it (section 2.4) |
-| `calm_idle` | true | base | = idle until this creature's SPEC adds a synched attacking byte (ruled 2026-09-06, Q12 (a)) | (as idle) | 1 s | no | author | the flag at 0 (BugMeleeAttackGoal.java:132, :145, :176): the tail's slow 9-degree wag (ModelPointysaurus.java:299) over the same stand as idle |
+| `aggro_idle` | true | base | w_idle x w_aggro (DATA_ATTACKING held) | any of the 30 bones — gait group (speed-scaled): lfleg, lrleg, rfleg, rrleg; free: body1, body2, body3, bump1, bump10, bump11, bump12, bump13, bump14, bump15, bump16, bump2, bump3, bump4, bump5, bump6, bump7, bump8, bump9, chorn, guard, head, lhorn, nose, rhorn; other groups' bones: tail (better left to `idle_tail_lift`) | 1 s | no | author | DATA_ATTACKING held at 1 while it stands in reach (Pointysaurus.java:44-45, :296-298; BugMeleeAttackGoal.java:168): the tail lashing 45 degrees at 1.3/tick (ModelPointysaurus.java:298) — a lowered head and the horns forward would carry it |
+| `calm_idle` | true | base | w_idle x (1 - w_aggro) | any of the 30 bones — gait group (speed-scaled): lfleg, lrleg, rfleg, rrleg; free: body1, body2, body3, bump1, bump10, bump11, bump12, bump13, bump14, bump15, bump16, bump2, bump3, bump4, bump5, bump6, bump7, bump8, bump9, chorn, guard, head, lhorn, nose, rhorn; other groups' bones: tail (better left to `idle_tail_lift`) | 1 s | no | author | the flag at 0 (BugMeleeAttackGoal.java:132, :145, :176): the tail's slow 9-degree wag (ModelPointysaurus.java:299) over the same stand as idle |
 | `attack` | false | triggered controller | event: a strike (the transport per species by the trigger inventory — ruled 2026-09-06, Q11 (a); §6 says which applies here) | (any unlocked) | 0.5 s | yes | author | the gore: doHurtTarget (Pointysaurus.java:269-284) for 10 with a 0.8 knockback, rolled by the melee goal within 4 blocks plus half the target's width on a 1-in-6 cadence tick (BugMeleeAttackGoal.java:159-174; Presets.pointysaurus); the flag is held while in reach, not pulsed at the strike, so the strike is transport 1 (the server LivingDamageEvent.Post) — a head toss with the three horns |
 | `hurt` | false | triggered controller | event: hurtTime rising edge (client-observed); the red overlay stays (ruled 2026-09-06, Q4 (a)) | (any unlocked) | 0.4 s | yes | author | a flinch: hurt() (Pointysaurus.java:286-290) refuses cactus and stores the attacker for the revenge goal (:68-69); the alo_hurt sound at 0.9 volume and a 1.5 pitch (:249-252, :259-267); the hurtTime edge is client-observed |
 | `death` | hold_on_last_frame | triggered controller | event: deathTime > 0; the vanilla death flip stays — the pilot ships no death clip (ruled 2026-09-06, Q3 (a)); a creature whose JSON ships one gets the clip-replaces-flip mode when the first such clip arrives, so a `death` delivered here plays under the flip until then | (any unlocked) | 1.5 s | yes | author | ruled 2026-09-06, Q3 (a): the vanilla death flip stays; a creature whose JSON ships a `death` clip gets the clip-replaces-flip mode, designed when the first such clip arrives (the Queen's own death clip the precedent) - a `death` delivered here plays under the flip until then |
@@ -115,7 +116,7 @@ Loop values are the JSON `loop` field exactly: `true` for cycles, `false` for on
 
 
 - in `walk`: the four legs are single blocks swung 45 degrees (ModelPointysaurus.java:249-253) — a ceratopsian's rolling plod with a body sway sells the weight; keep the diagonal pairing
-- in `aggro_idle`: the code lashes only the tail (:298); drop the head and bring the horns forward so the in-reach state (BugMeleeAttackGoal.java:168) reads as a threat — NOT accepted by `check` today: `aggro_idle` is not in this creature's clip set
+- in `aggro_idle`: the code lashes only the tail (:298); drop the head and bring the horns forward so the in-reach state (BugMeleeAttackGoal.java:168) reads as a threat
 - in `attack`: a horn toss — the head is look-only in the code (:255-296); the gore lands 10 within 4 blocks plus half the target's width (Pointysaurus.java:269-284)
 - in `idle`: a head sway with the frill and a slow tail lift — the code already lifts the tail on a 314-tick wave (:300-301); keep that as the breath
 
@@ -131,25 +132,33 @@ Source: `src/main/java/danger/orespawn/entity/Pointysaurus.java` (Monster)
 | goalSelector | 3 | `LookAtPlayerGoal` | - | look | turns the head toward a nearby player (vanilla; head yaw/pitch only) | none: head look, not a clip |
 | goalSelector | 4 | `RandomLookAroundGoal` | - | look | looks around idly (vanilla; head yaw/pitch only) | none: head look, not a clip |
 | targetSelector | 1 | `RevengeGoal` | - | targeting | the species' own revenge target goal (an inner class) | aggro state (through the attacking flag where one exists) |
-| targetSelector | 2 | `PointysaurusStareGoal` | [modern: pointysaurusStareAggro] | UNCLASSIFIED | no entry in the generator's goal dictionary | unknown |
+| targetSelector | 2 | `PointysaurusStareGoal` | [modern: pointysaurusStareAggro] | targeting | eye-contact aggression (a modern addition, TARGET flag): finds the nearest survival player within 32 blocks whose view vector points at the dino (dot > 0.97) with line of sight, stares back at them and after 5 held ticks sets them as the combat target; drops when they look away or leave range (PointysaurusStareGoal.java:43-96) | aggro state (it sets the target; the stare itself is head look, not a clip) |
 | targetSelector | 3 | `NearestAttackableTargetGoal` | - | targeting | hunts the nearest attackable target (vanilla) | aggro state |
 
 A `[modern: key]` guard means the goal is registered only under the modern config key named (read once, at construction); `UNPARSED` means the registration's shape is one the generator does not read (a local variable or a computed priority) — the owner reads that line.
 
 **Synched state flags** (what the client can see): `DATA_ATTACKING` (Integer, line 44)
 
-**Attacking flag `DATA_ATTACKING`** — classified **NONE** (no setAttacking sites) — a mechanical reading; the owner confirms it against the sites:
+**Attacking flag `DATA_ATTACKING`** — classified **STATE** (cleared when the target is lost at line(s) [145, 176]; other clears at line(s) [153] (guards: if (this.params.forgetTargetRoll() > 0 && this.mob.getRandom().nextInt(this.params.forgetTargetRoll()) == 0)) — the owner reads them) — a mechanical reading; the owner confirms it against the sites:
 
 | line | method | sets | guard (the enclosing block) | within | comment |
 |---|---|---|---|---|---|
+| ai/BugMeleeAttackGoal.java:132 | stop | 0 | (unguarded: the method body) | - |  [via DinosaurMeleeAttackGoal (registered at line 63)] |
+| ai/BugMeleeAttackGoal.java:145 | tick | 0 | if (target == null \|\| !target.isAlive()) | - |  [via DinosaurMeleeAttackGoal (registered at line 63)] |
+| ai/BugMeleeAttackGoal.java:153 | tick | 0 | if (this.params.forgetTargetRoll() > 0 && this.mob.getRandom().nextInt(this.params.forgetTargetRoll()) == 0) | - |  [via DinosaurMeleeAttackGoal (registered at line 63)] |
+| ai/BugMeleeAttackGoal.java:168 | tick | 1 | if (distSq < reachSq) | - |  [via DinosaurMeleeAttackGoal (registered at line 63)] |
+| ai/BugMeleeAttackGoal.java:176 | tick | 0 | NOT(if (distSq < reachSq)) | - |  [via DinosaurMeleeAttackGoal (registered at line 63)] |
 
 The guard is the header of the block that actually encloses the write (found by brace depth, comments and strings blanked); an `else` branch is written as the negated `if` chain it closes; a header the parser cannot read is `(unparsed: ...)`, never dropped.
+
+The flag's writes traced into the goal class the entity hands its setter to (TEST-011 (b); the `[via ...]` rows above): `DinosaurMeleeAttackGoal` registered at line 63 (`this, this::setAttacking, DinosaurMeleeAttackGoal.Presets.pointysaurus()`) — ai/DinosaurMeleeAttackGoal.java, ai/BugMeleeAttackGoal.java, sites ai/BugMeleeAttackGoal.java:132, ai/BugMeleeAttackGoal.java:145, ai/BugMeleeAttackGoal.java:153, ai/BugMeleeAttackGoal.java:168, ai/BugMeleeAttackGoal.java:176.
 
 **Locomotion facts:** a walker. Overrides: hurt, doHurtTarget, customServerAiStep, removeWhenFarAway.
 
 **Strike and launch sites:**
 
 - melee `doHurtTarget(target)` — Pointysaurus.java:271 in `doHurtTarget`
+- melee `doHurtTarget(target)` — ai/BugMeleeAttackGoal.java:172 in `tick`, guard: (unparsed: boolean hit =) within if (this.mob.getRandom().nextInt(this.params.outerAttackRoll()) == 0 || this.mob.getRandom().nextInt(this.params.innerAttackRoll()) == 1) within if (distSq < reachSq)
 
 **What fires each contract clip:**
 
@@ -158,7 +167,8 @@ The guard is the header of the block that actually encloses the write (found by 
 | `walk` | limbSwingAmount from AnimationState (the seam's input; 0 at rest, 1 at full stride) | the gait group's weight and speed scale (P3) |
 | `idle` | w_idle = (1 - w_move)(1 - w_swim)(1 - w_fly) | standing still |
 | `swim` | Entity.isInWater() (client-evaluated); FloatGoal keeps it at the surface | falls back to walk then idle when absent (§2.4) |
-| `aggro_idle / calm_idle / attack` | DATA_ATTACKING classified NONE: no setAttacking sites | OWNER READS THE SITES (listed below) — a mechanical reading; the owner confirms which of the ruled transports applies (ruled 2026-09-06, Q11 (a) / Q12 (a)) |
+| `aggro_idle / calm_idle` | DATA_ATTACKING held while engaged (cleared when the target is lost at line(s) [145, 176]; other clears at line(s) [153] (guards: if (this.params.forgetTargetRoll() > 0 && this.mob.getRandom().nextInt(this.params.forgetTargetRoll()) == 0)) — the owner reads them) | STATE flag drives w_aggro (§4.3) |
+| `attack` | melee: LivingDamageEvent.Post -> triggerAnim packet (transport 1); ranged: named launch sites (transport 3) | the transport per species by the trigger inventory (ruled 2026-09-06, Q11 (a)): this flag is held, not pulsed at the strike, so the signal column's transport applies — the server LivingDamageEvent.Post -> triggerAnim packet for melee, a named launch site for ranged |
 | `hurt` | rising edge of LivingEntity.hurtTime (0 -> 10), client-observed | always available; the red overlay stays (ruled 2026-09-06, Q4 (a)) |
 | `death` | LivingEntity.deathTime > 0, client-observed | hold_on_last_frame; the vanilla death flip stays and the pilot ships no death clip (ruled 2026-09-06, Q3 (a)); a creature whose JSON ships a `death` clip gets the clip-replaces-flip mode, designed when the first such clip arrives (the Queen's own death clip the precedent) — until then a delivered `death` plays under the flip |
 | `idle_alt_N` | a roll at each idle loop boundary (p = 0.15) while w_idle > 0.9 | optional; one roll per idle loop boundary, p = 0.15, a uniform choice, only while the idle weight is above 0.9 and no triggered clip plays, keyed on the clip-clock cycle index (ruled 2026-09-06, Q5 (a)) |
@@ -180,7 +190,7 @@ No MultiHitboxLib profile: no locked bones. Every bone name is still immutable (
 ## 10. Effort and priority
 
 - Artist scope: full contract (Tier 2, the gait-scaled (with an attacking branch) class: geckolib_migration_design.md section 5); the rig is not yet in-game (it lands through the seam in a later slice).
-- Estimated effort: 22 h (generator: 4 h + 0.2 h/bone x 30 + 1 h/clip x 12 to author or improve (owner adjusts)).
+- Estimated effort: 23 h (generator: 4 h + 0.2 h/bone x 30 + 1 h/clip x 13 to author or improve (owner adjusts)).
 - Tier 2 (gait-scaled — trigonometric pose depends on limbSwingAmount).
 - Density statement (the harness's, not the artist's; ruled 2026-09-06, Q9 (a) and Q10): the classic transcription is verified at 2.5e-3 rad — Beaver reference leg 15 / 13 / 8 catmullrom keys per bone with spline arguments repaired at load; wrap sample T−ε vs 0+ε included; the key counts per bone are an output of the harness, re-derived on every re-transcription.
 

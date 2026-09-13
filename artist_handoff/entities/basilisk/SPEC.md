@@ -112,7 +112,7 @@ Source: `src/main/java/danger/orespawn/entity/Basilisk.java` (Monster)
 | selector | prio | goal | guard | category | what it does | bears on |
 |---|---|---|---|---|---|---|
 | goalSelector | 0 | `FloatGoal` | - | locomotion | bobs up to the surface in water (vanilla) | swim state (client reads isInWater) |
-| goalSelector | 1 | `MoveThroughVillageGoal` | - | UNCLASSIFIED | no entry in the generator's goal dictionary | unknown |
+| goalSelector | 1 | `MoveThroughVillageGoal` | - | locomotion | walks to random points of interest (doors / workstations) of a nearby village, the villager-style patrol; the registration's flag restricts it to night-time (vanilla MoveThroughVillageGoal) | walk |
 | goalSelector | 2 | `WaterAvoidingRandomStrollGoal` | - | locomotion | strolls to random spots, avoiding water (vanilla) | walk |
 | goalSelector | 3 | `LookAtPlayerGoal` | - | look | turns the head toward a nearby player (vanilla; head yaw/pitch only) | none: head look, not a clip |
 | goalSelector | 4 | `RandomLookAroundGoal` | - | look | looks around idly (vanilla; head yaw/pitch only) | none: head look, not a clip |
