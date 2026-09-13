@@ -12,6 +12,16 @@ the mirror drop landed (d51f06f; owner 2026-09-13, second set, item 10: the pilo
 `artist_handoff/` was committed and the generator refused the path. The `package` subcommand writes
 wherever `--out` points.
 
+The full folder (owner 2026-09-13, fourth set, addendum item 29 (5)-(8)): EVERY artist-tier species (the design's Tier 1
+and Tier 2 rows) is packaged, landed or not - a species without a shipped geo takes the reference leg's converter output
+(`--reference-geo-dir`, default `build/reference/generated`: gradle referenceConvertModels over tools/reference_model_proofs.json,
+the registry mapped to its `reference_<name>` entry through its model class), its sheet stating that the rig is not yet
+in-game and that bone names are final, its animation file empty, its reference clip "sampled when the rig lands"; the
+shipped geo is preferred wherever one exists (a seam rig's shipped geo carries the seam's keys). A Tier-1 boss's seed may
+pre-declare its intended locked bones from the design's section 6 (`locked_bones_provisional`: rendered provisional in
+SPEC §7, validated against the geo, carried as the manifest's `locked_bones`). The README's priority table is the full
+list, bosses first, closing with the deliverable count; the dry-run summary states the counts per tier.
+
 Subcommands (standard library only; Python 3.11+):
 
     inventory    --out DIR            INVENTORY.csv, one row per ModEntities registration
@@ -20,7 +30,7 @@ Subcommands (standard library only; Python 3.11+):
     readme       --out DIR            README_FIRST.md (the G5 artist contract)
     bbmodel ENTITY --out DIR          entities/<registry>/<name>.bbmodel (Blockbench project)
     roundtrip ENTITY [--out DIR]      .bbmodel -> geo + animation JSON -> semantic diff vs shipped
-    package      --out DIR            the whole tree for the landed species + dryrun_summary
+    package      --out DIR            the whole tree for every species with a rig to package + dryrun_summary (the counts)
     check FOLDER [--manifest FILE] [--lock-mode warn|reject]
                                       validate a returned artist folder against its manifest
 
@@ -45,10 +55,31 @@ from collections import Counter, OrderedDict, defaultdict
 from pathlib import Path
 from typing import Any, Iterable
 
-TOOL_VERSION = ("0.2.8 (the fourth-set tooling commit, 2026-09-13: the sheets of ANIM-021 to 024 carry 'the original moved more' under "
-                "section 4 from the register entries; the Terrible Terror's sampler row folds its |cos| period)")
+TOOL_VERSION = ("0.2.9 (the full folder, 2026-09-13, fourth set, items 5, 7 and 8: every artist-tier species packaged - a rig not yet "
+                "in-game from the reference leg's converter output, bone names final; the Tier-1 bosses' intended locked bones from the "
+                "design's section 6 rendered in section 7 and validated against the geo; the README's priority table the full list, "
+                "bosses first, closing with the deliverable count)")  # its text is emitted into every generated file: the §7 marking's word is kept for the marking
 
 ROOT = Path(__file__).resolve().parent.parent
+
+# The rig's source (owner 2026-09-13, fourth set, addendum item 29 (5)): a shipped geo (the rig in-game through the seam, or the
+# native boss) is preferred wherever one exists - a seam rig's shipped geo carries the seam's keys; an artist-tier species without
+# one takes the reference leg's converter output (gradle referenceConvertModels: tools/layer_definition_to_geo.py over the
+# standing reference manifest's compiled dumps into build/reference/generated/<reference id>.geo.json), the geometry proven part
+# for part against the 1.7.10 source by the reference-geometry leg. Such a rig is NOT yet in-game; its sheet says so.
+RIG_SOURCE_SHIPPED = "shipped"
+RIG_SOURCE_REFERENCE = "reference-leg converter output"
+RIG_SOURCE_NONE = "none"
+NOT_IN_GAME_STATEMENT = ("This rig is NOT yet in-game: the geometry is the converter's output over the port's compiled model, proven part "
+                         "for part against the 1.7.10 source by the reference-geometry leg; it lands through the seam in a later slice. "
+                         "Bone names are FINAL — the seam, the hitbox profiles and the transcriptions find bones by name.")
+# A Tier-1 boss's intended locked bones (owner 2026-09-13, fourth set, addendum item 29 (7)): the seed's `locked_bones_provisional`,
+# read by the seed lanes from the design's section 6 per-rig table; rendered in SPEC §7 and carried as the manifest's
+# `locked_bones` so the checker's lock policy protects their names, marked with this one word until a profile exists.
+PROVISIONAL_LOCK_SENTENCE = ("provisional — the design's section 6 proposal, not yet a profile; the Queen's profile (`the_queen`) is the "
+                             "template for the profile's form")
+# the files `package` writes beside entities/ on every run (the dry-run summary's file count names them)
+PACKAGE_WIDE_FILES = ("README_FIRST.md", "INVENTORY.csv", "TEXTURE_MAP.csv", "dryrun_summary.json", "dryrun_summary.md", "warnings.txt")
 BB_NAMESPACE = uuid.UUID("6f0b4b2e-9d1c-4a7e-8f3a-2c5e1d7b9a10")  # deterministic .bbmodel uuids
 
 CONTRACT_CLIPS_LOOP = ("idle", "walk", "swim", "fly", "aggro_idle", "calm_idle")
@@ -146,6 +177,8 @@ class Paths:
         self.specs_dir = root / "tools/artist_specs"
         self.keyframe_clips = root / "tools/keyframe_clips"      # the exact transcriptions' clip manifests (one per registry)
         self.reference_clips = root / "tools/reference_clips"    # the sampler's reference-only clips and their index
+        self.reference_manifest = root / "tools/reference_model_proofs.json"  # the standing reference leg: each port model class -> `reference_<name>`
+        self.reference_geo_default = root / "build/reference/generated"      # gradle referenceConvertModels: the reference leg's geo per entry
         self.pins = root / "tools/reference_renderer_pins.json"
         self.design = root / "phase_g_reports/geckolib_migration_design.md"
         self.provenance = root / "provenance_byte_identical_assets.txt"
@@ -390,6 +423,29 @@ def load_reference_clip_index(paths: Paths) -> dict[str, dict[str, Any]]:
     return {row["registry"]: row for row in load_json(index).get("clips", [])}
 
 
+def load_reference_ids(paths: Paths) -> dict[str, str]:
+    """model class (the simple name, e.g. `ModelAlien`) -> the reference leg's model id (`reference_alien`) from
+    tools/reference_model_proofs.json (109 entries; the ButterflyModel's one entry serves its four registries). The rig of a
+    species without a shipped geo is `<reference-geo-dir>/<id>.geo.json`, the converter's output over that entry's compiled
+    dump (owner 2026-09-13, fourth set, addendum item 29 (5)); a model class with no entry has no reference-leg geo."""
+    if not paths.reference_manifest.exists():
+        return {}
+    out: dict[str, str] = {}
+    for entry in load_json(paths.reference_manifest).get("models", []):
+        out.setdefault(str(entry.get("class", "")).rsplit(".", 1)[-1], entry["id"])
+    return out
+
+
+def load_reference_refusals(reference_geo_dir: Path) -> dict[str, str]:
+    """reference id -> why the converter refused the entry (its `refusals.json`, written under --continue-on-refusal: an
+    entry drawn from shared parts without the render_instances form, for one); empty when the converter refused nothing."""
+    path = reference_geo_dir / "refusals.json"
+    if not path.exists():
+        return {}
+    # the reason as one readable line (the converter's message lists every offending draw; refusals.json keeps the full text)
+    return {r["id"]: re.sub(r"\[[^\]]*\]", "[...]", str(r.get("reason", ""))) for r in load_json(path).get("refused", [])}
+
+
 def parse_provenance(paths: Paths) -> dict[str, str]:
     out: dict[str, str] = {}
     if not paths.provenance.exists():
@@ -529,10 +585,26 @@ class Species:
         self.status = "excluded"
         self.status_note = ""
         self.renders_nothing = False
+        # the rig's source (RIG_SOURCE_*; owner 2026-09-13, fourth set, item 29 (5)); `reference_id` the reference leg's entry
+        # for the species' model class; `rig_reason` why an artist-tier species has no rig to package (nothing otherwise)
+        self.rig_source = RIG_SOURCE_NONE
+        self.reference_id: str | None = None
+        self.rig_reason = ""
 
     @property
     def landed(self) -> bool:
-        return self.geo_path is not None
+        """A shipped geo: the rig in-game through the seam, or the native boss. A rig packaged from the reference leg's
+        converter output is NOT landed (`packageable`, not `landed`; its sheet says it is not yet in-game)."""
+        return self.rig_source == RIG_SOURCE_SHIPPED
+
+    @property
+    def packageable(self) -> bool:
+        """A rig to package: shipped, or the reference leg's converter output for an artist-tier species not yet in-game."""
+        return self.geo_path is not None and self.rig_source != RIG_SOURCE_NONE
+
+    @property
+    def in_game(self) -> bool:
+        return self.landed
 
     @property
     def geo(self) -> dict[str, Any]:
@@ -594,9 +666,14 @@ def excluded_note(species: "Species") -> str:
 class Repo:
     """All mechanical facts, loaded once."""
 
-    def __init__(self, root: Path, warnings: Warnings | None = None):
+    def __init__(self, root: Path, warnings: Warnings | None = None, reference_geo_dir: Path | None = None):
         self.paths = Paths(root)
         self.warnings = warnings or Warnings()
+        # owner 2026-09-13, fourth set, item 29 (5): the reference leg's geo per manifest entry (gradle referenceConvertModels;
+        # `--reference-geo-dir`), the rig of every artist-tier species without a shipped geo
+        self.reference_geo_dir = Path(reference_geo_dir) if reference_geo_dir else self.paths.reference_geo_default
+        self.reference_ids = load_reference_ids(self.paths)
+        self.reference_refusals = load_reference_refusals(self.reference_geo_dir)
         self.entities = parse_mod_entities(self.paths)
         self.tier_table = parse_tier_table(self.paths, self.warnings)
         self.tiers = registry_tiers(self.tier_table)
@@ -619,6 +696,11 @@ class Repo:
         for stem in self.geos:
             if stem not in claimed:
                 self.warnings.add("global", "GEO_UNCLAIMED", f"geo/entity/{stem}.geo.json is referenced by no registered renderer")
+        unpackaged = [s for s in self.species.values() if s.tier in (1, 2) and not s.packageable and s.rig_reason]
+        if unpackaged:  # an artist-tier species the full folder cannot carry yet: named, with the reason, never silent
+            self.warnings.add("global", "ARTIST_TIER_UNPACKAGED",
+                              f"{len(unpackaged)} artist-tier species have no rig to package (no shipped geo, no reference-leg geo) — "
+                              + "; ".join(f"{s.registry}: {s.rig_reason}" for s in unpackaged))
 
     def _build(self, registry: str, row: dict[str, Any]) -> Species:
         s = Species(registry, row)
@@ -631,6 +713,7 @@ class Repo:
         if refs:
             s.geo_stem = refs[0]
             s.geo_path = self.geos[refs[0]]
+            s.rig_source = RIG_SOURCE_SHIPPED
             s.anim_path = self.anims.get(refs[0])
             if len(refs) > 1:
                 self.warnings.add(registry, "GEO_AMBIGUOUS", f"client files name several geos {refs}; using {refs[0]}")
@@ -652,6 +735,8 @@ class Repo:
         if vanilla and not s.model:
             s.model, s.tier, s.animation_class = f"{vanilla['model']} (vanilla)", vanilla["tier"], "vanilla model reuse"
         s.renders_nothing = renders_nothing(s.client_files)
+        if not s.landed and s.tier in (1, 2) and s.model and not s.model.endswith("(vanilla)") and not s.renders_nothing:
+            self._attach_reference_rig(s)
         if s.landed:
             s.status = "landed candidate"
             if s.tier == 0 or (s.tier is None and s.profile):
@@ -667,8 +752,11 @@ class Repo:
             if s.renders_nothing:
                 s.status_note = (f"Tier {s.tier} model {s.model}: a head sidecar — its renderer refuses to draw (shouldRender false); "
                                  f"an invisible gaze/damage hitbox, so it renders nothing and takes no artist work; no geo landed")
+            elif s.rig_source == RIG_SOURCE_REFERENCE:
+                s.status_note = (f"Tier {s.tier} model {s.model}; no geo landed yet — packaged from the reference leg's converter output "
+                                 f"({s.geo_path.name}: the rig is not yet in-game, its bone names final)")
             else:
-                s.status_note = f"Tier {s.tier} model {s.model}; no geo landed yet"
+                s.status_note = f"Tier {s.tier} model {s.model}; no geo landed yet" + (f" ({s.rig_reason})" if s.rig_reason else "")
         elif s.model and s.tier == 0:
             s.status = "excluded"
             s.status_note = f"Tier 0 ({s.model}): solver-fed / native rig, no artist conversion"
@@ -677,14 +765,55 @@ class Repo:
             s.status_note = excluded_note(s)
         return s
 
+    def _attach_reference_rig(self, s: Species) -> None:
+        """An artist-tier species without a shipped geo takes the reference leg's converter output (owner 2026-09-13, fourth
+        set, item 29 (5)): `<reference-geo-dir>/<reference id>.geo.json`, the id found through the species' model class in
+        tools/reference_model_proofs.json (the ButterflyModel's four registries share `reference_butterfly`); the converter's
+        sidecar beside it names the classic parts. `landed` stays False - the rig is not yet in-game. A species whose model has
+        no reference entry, or whose entry the converter refused (or has not converted yet), keeps `rig_reason` and no rig."""
+        ref_id = self.reference_ids.get(s.model or "")
+        if ref_id is None:
+            s.rig_reason = (f"no entry whose class is {s.model} in {self.paths.reference_manifest.name} — no reference-leg geo can exist "
+                            "for it until the reference leg covers the model")
+            return
+        s.reference_id = ref_id
+        geo = self.reference_geo_dir / f"{ref_id}.geo.json"
+        if not geo.exists():
+            why = self.reference_refusals.get(ref_id)
+            s.rig_reason = (f"the converter refused {ref_id} ({why})" if why
+                            else f"{geo.name} is not under {self.reference_geo_dir} (run gradle referenceConvertModels, or pass --reference-geo-dir)")
+            return
+        s.rig_source = RIG_SOURCE_REFERENCE
+        s.geo_path = geo
+        s.geo_stem = ref_id
+        s.anim_path = None  # no shipped clips: the package writes the empty animation file in the s4 hook form
+        s.proof = self.paths.reference_manifest.name  # the reference-geometry leg is the proof of this geometry
+        sidecar = self.reference_geo_dir / f"{ref_id}.conversion.json"
+        if sidecar.exists():
+            s.sidecar = load_json(sidecar) | {"_path": str(sidecar).replace("\\", "/")}
+
     def landed_species(self) -> list[Species]:
         return [s for s in self.species.values() if s.landed]
 
+    def packageable_species(self) -> list[Species]:
+        """Every species with a rig to package: the shipped rigs (the seam's and the native boss) and, since the full folder
+        (owner 2026-09-13, fourth set, item 29 (5)), every artist-tier species with a reference-leg geo."""
+        return [s for s in self.species.values() if s.packageable]
+
     def get(self, registry: str) -> Species:
         if registry not in self.species:
-            raise SystemExit(f"unknown registry name {registry!r}; known landed species: "
-                             + ", ".join(s.registry for s in self.landed_species()))
+            raise SystemExit(f"unknown registry name {registry!r}; known species with a rig to package: "
+                             + ", ".join(s.registry for s in self.packageable_species()))
         return self.species[registry]
+
+    def get_packageable(self, registry: str) -> Species:
+        """`get`, refusing by name a species with no rig to package (the spec / bbmodel / roundtrip subcommands)."""
+        s = self.get(registry)
+        if not s.packageable:
+            raise SystemExit(f"{registry}: no rig to package — "
+                             + (s.rig_reason or "no shipped geo, and not an artist-tier species with a reference-leg geo")
+                             + "; known species with a rig to package: " + ", ".join(x.registry for x in self.packageable_species()))
+        return s
 
 
 # ---------------------------------------------------------------------------
@@ -1704,21 +1833,47 @@ def ancestors(name: str, by_name: dict[str, dict[str, Any]]) -> list[str]:
     return out
 
 
-def locked_bones(species: "Species", geo: dict[str, Any]) -> dict[str, str]:
-    """bone -> reason; a profile's synched-bones and every ancestor (contract §8.1 / P7)."""
+def provisional_lock_entries(species: "Species") -> list[dict[str, Any]]:
+    """The seed's `locked_bones_provisional` (owner 2026-09-13, fourth set, addendum item 29 (7)): a Tier-1 boss's intended
+    locked bones, read by the seed lane from the design's section 6 per-rig table (`bone [W,H] @damage`) -
+    [{"bone": name, "size": [w, h], "damage": d}, ...]; empty where the seed carries none."""
+    out: list[dict[str, Any]] = []
+    for e in (species.seed or {}).get("locked_bones_provisional") or []:
+        if isinstance(e, dict) and e.get("bone"):
+            out.append({"bone": str(e["bone"]), "size": e.get("size"), "damage": e.get("damage")})
+    return out
+
+
+def locked_bones(species: "Species", geo: dict[str, Any], warnings: Warnings | None = None) -> dict[str, str]:
+    """bone -> reason; a profile's synched-bones and every ancestor (contract §8.1 / P7). Without a profile, a Tier-1 boss's
+    seed may pre-declare its intended locked bones (`locked_bones_provisional`, the design's section 6; owner 2026-09-13,
+    fourth set, item 29 (7)): the named bones the geo has, and their ancestors, are locked the same way and marked
+    provisional; a named bone the geo lacks locks nothing and is a LOCKED_BONE_UNKNOWN warning naming it (when `warnings`
+    is given - the glossary's call; the inventory's count adds none)."""
     out: dict[str, str] = {}
     prof = species.profile
-    if not prof or not prof.get("synched-bones"):
-        return out
     bones, by_name, _ = bone_maps(geo)
-    parts = {p["name"]: p for p in prof.get("parts", [])}
-    for name in prof["synched-bones"]:
+    if prof and prof.get("synched-bones"):
+        parts = {p["name"]: p for p in prof.get("parts", [])}
+        for name in prof["synched-bones"]:
+            if name not in by_name:
+                continue
+            part = parts.get(name, {})
+            out[name] = f"carries hitbox part '{name}' (size {part.get('box', {}).get('size')}, damage x{part.get('damage-modifier')}) — synched-bones, {species.profile_name}.json"
+            for anc in ancestors(name, by_name):
+                out.setdefault(anc, f"ancestor of the synced part bone '{name}'")
+        return out
+    for e in provisional_lock_entries(species):
+        name = e["bone"]
         if name not in by_name:
+            if warnings is not None:
+                warnings.add(species.registry, "LOCKED_BONE_UNKNOWN",
+                             f"locked_bones_provisional names bone '{name}', which the rig's geo ({species.geo_path.name if species.geo_path else 'no geo'}) "
+                             "does not have: the seed lane resolves it to the rig's name; until then it locks nothing")
             continue
-        part = parts.get(name, {})
-        out[name] = f"carries hitbox part '{name}' (size {part.get('box', {}).get('size')}, damage x{part.get('damage-modifier')}) — synched-bones, {species.profile_name}.json"
+        out[name] = f"intended hitbox part '{name}' (size {e.get('size')}, damage x{e.get('damage')}) — {PROVISIONAL_LOCK_SENTENCE}"
         for anc in ancestors(name, by_name):
-            out.setdefault(anc, f"ancestor of the synced part bone '{name}'")
+            out.setdefault(anc, f"ancestor of the intended part bone '{name}' — provisional, as the part is")
     return out
 
 
@@ -1745,7 +1900,7 @@ def build_glossary(species: "Species", repo: "Repo", geo: dict[str, Any], groups
     seed = species.seed or {}
     labels = seed.get("labels", {})
     bones, by_name, children = bone_maps(geo)
-    locked = locked_bones(species, geo)
+    locked = locked_bones(species, geo, repo.warnings)
     ri = (species.sidecar or {}).get("render_instances", {}).get("bones", {})
     group_of: dict[str, tuple[str, bool]] = {}
     for g in groups:
@@ -1860,14 +2015,32 @@ def reference_clip_facts(species: "Species", repo: "Repo", native: bool) -> tupl
     return dict(row) | {"sha256": actual, "_path": path}, ""
 
 
-def reference_clip_section(species: "Species", repo: "Repo", seed: dict[str, Any], exact: bool, native: bool) -> tuple[list[str], dict[str, Any] | None]:
+def reference_clip_section(species: "Species", repo: "Repo", seed: dict[str, Any], exact: bool, native: bool,
+                           unlanded: bool = False) -> tuple[list[str], dict[str, Any] | None]:
     """SPEC §4.3 (owner 2026-09-13, second set, addendum item 27 (3)) and the manifest's `reference_clip` block: what the
     reference-only clip is, that it is never returned or shipped, and - for a species without an exact transcription - the
     plain-language transcription of its source formulas (migration design section 5: the source method and line quoted, each
-    formula and constant in words; the seed's `formulas`)."""
+    formula and constant in words; the seed's `formulas`). `unlanded` (owner 2026-09-13, fourth set, item 29 (5)): a rig not
+    yet in-game has no hook for the sampler to sample and no formulas authored yet - the section says both, and neither the
+    REFERENCE_CLIP_MISSING nor the FORMULAS_MISSING warning is raised (the sampler samples seam rigs only; the formulas are
+    authored when the rig lands on its hook)."""
     L: list[str] = []
     L.append("### 4.3 Reference clip (reference-only)")
     L.append("")
+    if unlanded:
+        L.append("_no reference clip yet: it is sampled from the classic hook when the rig lands through the seam; until then §4.1 / §4.2 "
+                 "and the plain-language formulas (where the seed carries them) are the motion's description._")
+        L.append("")
+        L.append("This creature has NO exact keyframe transcription and is not yet on its hook (the rig is not yet in-game: §3). The "
+                 "plain-language transcription of its source formulas (migration design section 5 — the source method and line quoted, "
+                 "each formula and constant in words) is authored when the rig lands on its hook; until then the seed's description, "
+                 "clip verdicts and wishlist (§1, §4, §5) describe the motion" + (":" if seed.get("formulas") else "."))
+        L.append("")
+        for line in seed.get("formulas", []):
+            L.append(f"- {line}")
+        if seed.get("formulas"):
+            L.append("")
+        return L, None
     row, reason = reference_clip_facts(species, repo, native)
     manifest_block: dict[str, Any] | None = None
     if row is None:
@@ -2184,9 +2357,14 @@ def spec_document(species: "Species", repo: "Repo", catalog: "TextureCatalog", i
     tw, th = desc.get("texture_width"), desc.get("texture_height")
     oq = "phase_g_reports/animation_contract/open_questions.md"
 
+    unlanded = species.rig_source == RIG_SOURCE_REFERENCE  # the rig from the reference leg's converter output: not yet in-game
+
     L: list[str] = []
     L.append(f"# {display} — `{species.registry}` — artist SPEC")
     L.append("")
+    if unlanded:  # owner 2026-09-13, fourth set, item 29 (5): stated right under the title, again in §3 and §11
+        L.append(f"**{NOT_IN_GAME_STATEMENT}**")
+        L.append("")
     L.append(f"Generated by `tools/artist_package.py` {TOOL_VERSION} from the repository's own sources; the paragraphs marked "
              f"AUTHORED come from `tools/artist_specs/{species.registry}.json` ({seed.get('status', 'no seed')}). "
              f"Every contract decision this sheet rests on was ruled by the mod's owner on 2026-09-06 (`{oq}` records each ruling); a line that cites "
@@ -2214,6 +2392,9 @@ def spec_document(species: "Species", repo: "Repo", catalog: "TextureCatalog", i
              "`gait bone` = its motion is scaled by walking speed in-game (P3). `locked` = it carries or parents a hitbox part (contract §8.1). "
              + LOCK_POLICY)
     L.append("")
+    if unlanded:
+        L.append(NOT_IN_GAME_STATEMENT)
+        L.append("")
     rows = []
     for r in glossary:
         rows.append([f"`{r['name']}`", r["label"], r["classic"], r["parent"] or "-",
@@ -2281,7 +2462,7 @@ def spec_document(species: "Species", repo: "Repo", catalog: "TextureCatalog", i
     # where no exact transcription ships.
     is_native_rig = any(c["role"] == "native" for c in clips)
     exact = exact_transcription(species, repo)
-    section, reference_clip = reference_clip_section(species, repo, seed, exact, is_native_rig)
+    section, reference_clip = reference_clip_section(species, repo, seed, exact, is_native_rig, unlanded=unlanded)
     L.extend(section)
     # §4.4 (owner 2026-09-13, fourth set, item 3): where the register records that the 1.7.10 original moved MORE than the
     # port's classic pose does (ANIM-021 to 024, deferred with the parity lanes), the sheet carries that description so the
@@ -2414,7 +2595,10 @@ def spec_document(species: "Species", repo: "Repo", catalog: "TextureCatalog", i
     L.append("")
     L.append("## 7. Hitbox bones that must keep their names")
     L.append("")
-    if locked:
+    prov_entries = provisional_lock_entries(species)
+    prov_unknown = [e["bone"] for e in prov_entries if e["bone"] not in by_name]
+    has_profile = bool(species.profile and species.profile.get("synched-bones"))
+    if locked and has_profile:
         prof = species.profile or {}
         L.append(f"MultiHitboxLib profile `{species.profile_name}.json` (sync-with-model {prof.get('sync-with-model')}, trust-client {prof.get('trust-client')}). "
                  f"The synced part bones and every ancestor are SPEC-locked (contract §8.1). {LOCK_POLICY} "
@@ -2428,6 +2612,29 @@ def spec_document(species: "Species", repo: "Repo", catalog: "TextureCatalog", i
                      "every §5 verdict that invites an edit to one of these clips repeats the consequence.")
             L.append("")
         L.append(md_table(["bone", "why"], [[f"`{b}`", why] for b, why in locked.items()]))
+    elif prov_entries:
+        # owner 2026-09-13, fourth set, item 29 (7): the Tier-1 boss's intended locked bones from the design's section 6,
+        # pre-declared by the seed, marked provisional; the named bones and their ancestors are locked as a profile's would be
+        L.append(f"Intended locked bones — {PROVISIONAL_LOCK_SENTENCE} (`phase_g_reports/geckolib_migration_design.md` section 6, the per-rig "
+                 "table, read into this sheet's seed as `locked_bones_provisional`). The named bones and every ancestor are SPEC-locked now, "
+                 f"as they will be when the profile lands (contract §8.1), so a delivery keeps their names. {LOCK_POLICY} "
+                 + (LOCK_REJECT_MODE if lock_mode == "warn"
+                    else "This manifest's lock_mode is `reject`: `check` REJECTS keys on them (the reject mode, kept for the day the server-side hitbox evaluator lands)."))
+        L.append("")
+        if prov_unknown:
+            L.append(f"The design names {len(prov_unknown)} bone(s) this rig's geo does not have — "
+                     + ", ".join(f"`{b}`" for b in prov_unknown)
+                     + " — the seed lane resolves them to the rig's names (each is a `LOCKED_BONE_UNKNOWN` warning of the generator); "
+                       "they lock nothing until then.")
+            L.append("")
+        if locked:
+            L.append(md_table(["bone", "why"], [[f"`{b}`", why] for b, why in locked.items()]))
+        else:
+            L.append("_None of the named bones is in this rig's geo yet: nothing is locked until the seed lane resolves them._")
+    elif species.tier == 1:
+        L.append("No MultiHitboxLib profile yet, and no intended locked bones pre-declared (the design's section 6 has no row for this rig): "
+                 "the Queen's profile (`the_queen`) is the template for the profile when it is written, and the bones it locks are decided then. "
+                 "Every bone name is still immutable (the code poses bones by name).")
     else:
         L.append("No MultiHitboxLib profile: no locked bones. Every bone name is still immutable (the code poses bones by name).")
     L.append("")
@@ -2461,8 +2668,12 @@ def spec_document(species: "Species", repo: "Repo", catalog: "TextureCatalog", i
     L.append("## 11. What 'done' looks like for this entity")
     L.append("")
     anim_name = species.anim_path.name if species.anim_path else species.registry + ".animation.json"
-    L.append(f"1. `{species.geo_path.name}` returned UNCHANGED (or not at all): every bone name, parent, pivot, rotation and cube as listed in §3 and the shipped file "
-             "(a `locked` bone renamed, re-parented or deleted is refused by name).")
+    if unlanded:
+        L.append(f"_{NOT_IN_GAME_STATEMENT}_")
+        L.append("")
+    L.append(f"1. `{species.geo_path.name}` returned UNCHANGED (or not at all): every bone name, parent, pivot, rotation and cube as listed in §3 and "
+             + ("the packaged file (the reference leg's geo; the rule is the shipped rig's)" if unlanded else "the shipped file")
+             + " (a `locked` bone renamed, re-parented or deleted is refused by name).")
     if clips:
         L.append(f"2. `{anim_name}` — that exact file name, one file — (format 1.8.0) holding the clips of §5 with the loop values shown; keys on `locked` bones: {LOCK_POLICY}")
     else:
@@ -2499,6 +2710,15 @@ def spec_document(species: "Species", repo: "Repo", catalog: "TextureCatalog", i
         # classic hook, or the sampler has not run), and whether the shipped .animation.json carries the exact transcription
         "reference_clip": reference_clip,
         "exact_transcription": exact,
+        # owner 2026-09-13, fourth set, item 29 (5): where the rig comes from and whether it is in-game (a reference-leg rig is not;
+        # its sheet says so under the title, in §3 and in §11); item 29 (7): the intended locked bones a Tier-1 boss's seed
+        # pre-declares from the design's section 6 (each with whether the geo has it; the manifest's `locked_bones` carries those
+        # it has, and their ancestors, marked provisional in the sheet)
+        "rig_source": species.rig_source,
+        "in_game": species.in_game,
+        "reference_id": species.reference_id,
+        "locked_bones_source": "profile" if has_profile else ("provisional (the design's section 6)" if prov_entries else "none"),
+        "locked_bones_provisional": [dict(e, in_geo=e["bone"] in by_name) for e in prov_entries],
     }
     return "\n".join(L) + "\n", manifest
 
@@ -3015,7 +3235,7 @@ def inventory_rows(repo: "Repo", catalog: "TextureCatalog", manifests: dict[str,
     """One row per registration. `effort_hours` is the generator's estimate (or the seed's owner-set figure) for every
     landed species, taken from the manifests passed in (the package run) or computed here (the `inventory` subcommand)."""
     header = ["registry_name", "java_class", "category", "width", "height", "model_class", "tier", "artist_tier", "animation_class",
-              "status", "status_note", "geo_file", "animation_file", "bbmodel_file", "spec_file", "bones", "cubes",
+              "status", "status_note", "geo_file", "rig_source", "in_game", "animation_file", "bbmodel_file", "spec_file", "bones", "cubes",
               "clips_shipped", "textures_referenced", "canonical_textures", "expected_scale", "expected_shadow",
               "pin_status", "harness_proof", "hitbox_profile", "locked_bones", "artist_scope", "effort_hours", "effort_source",
               "client_files", "notes"]
@@ -3027,7 +3247,7 @@ def inventory_rows(repo: "Repo", catalog: "TextureCatalog", manifests: dict[str,
         scope = ""
         hours: Any = ""
         hours_source = ""
-        if s.landed:
+        if s.packageable:
             geo = s.geo
             bl = geo["minecraft:geometry"][0]["bones"]
             bones = len(bl)
@@ -3046,8 +3266,9 @@ def inventory_rows(repo: "Repo", catalog: "TextureCatalog", manifests: dict[str,
         rows.append([
             s.registry, s.java_class, s.category, fmt(s.width) if s.width is not None else "", fmt(s.height) if s.height is not None else "",
             s.model or "", s.tier if s.tier is not None else "", s.tier_label, s.animation_class, s.status, s.status_note,
-            s.geo_path.name if s.geo_path else "", s.anim_path.name if s.anim_path else "",
-            f"{s.registry}.bbmodel" if s.landed else "", "SPEC.md" if s.landed else "",
+            s.geo_path.name if s.geo_path else "", s.rig_source, ("yes" if s.in_game else "no") if s.packageable else "",
+            s.anim_path.name if s.anim_path else "",
+            f"{s.registry}.bbmodel" if s.packageable else "", "SPEC.md" if s.packageable else "",
             bones, cubes, clips, len(s.textures), canon,
             pin.get("expected_scale", ""), pin.get("expected_shadow", ""), pin.get("status", "no pin"),
             s.proof or "", s.profile_name or "", locked, scope, hours, hours_source,
@@ -3065,10 +3286,12 @@ def write_inventory(repo: "Repo", out_dir: Path, catalog: "TextureCatalog", mani
 
 def readme_document(repo: "Repo", manifests: dict[str, dict[str, Any]], packaged: list[str] | None = None) -> str:
     """README_FIRST.md. `packaged` (owner 2026-09-13, third set, item 28 (4)): the registries THIS package run wrote (the
-    `--entities` set; the whole landed set when none) — the priority table lists those folders only, with one line that
-    more folders follow as creatures land; the manifests' keys when not given."""
+    `--entities` set; the whole packageable set when none) — the priority table lists those folders only; the manifests' keys
+    when not given. The full folder (fourth set, item 29 (8)): a run over every species with a rig to package lists them
+    all, bosses first (Tier 1, then Tier 2, then Tier 3), and closes with the deliverable count per tier; a partial run keeps
+    the one line that more folders follow."""
     packaged_set = list(packaged) if packaged is not None else list(manifests)
-    landed = [s for s in repo.landed_species() if s.registry in packaged_set]
+    landed = [s for s in repo.packageable_species() if s.registry in packaged_set]
 
     def prio(s: "Species") -> tuple:
         return (0 if s.tier in (0, 1) else 1 if s.tier == 2 else 2, s.registry)
@@ -3147,7 +3370,8 @@ def readme_document(repo: "Repo", manifests: dict[str, dict[str, Any]], packaged
     L.append("## Priority order and effort")
     L.append("")
     L.append("Bosses first (they carry hitboxes and need the most care), then the ordinary creatures, then nothing for the code-driven props (no animation work: they are listed so their textures and sheets exist). "
-             "The table lists the folders in THIS package only.")
+             "The table lists the folders in THIS package only. A folder whose rig is marked not yet in-game is packaged from the reference leg's "
+             "proven geometry (its sheet says so under the title): the bone names are final, and the rig lands through the seam in a later slice.")
     L.append("")
     rows = []
     for s in sorted(landed, key=prio):
@@ -3165,10 +3389,28 @@ def readme_document(repo: "Repo", manifests: dict[str, dict[str, Any]], packaged
             clips = [c["name"] for c in clip_rows_]
             clips_text = ", ".join(clips) if clips else "none (no animation work)"
         rows.append([s.registry, m.get("display_name", s.java_class), m.get("tier_label", s.tier_label), len(m.get("bones", [])),
-                     clips_text, fmt(float(m.get("effort_hours", 0) or 0), 1) + " h" if clip_rows_ else "0 h"])
-    L.append(md_table(["folder", "creature", "tier", "bones", "clips to deliver", "estimated effort"], rows))
+                     "yes" if m.get("in_game", s.in_game) else "not yet", clips_text,
+                     fmt(float(m.get("effort_hours", 0) or 0), 1) + " h" if clip_rows_ else "0 h"])
+    L.append(md_table(["folder", "creature", "tier", "bones", "rig in-game", "clips to deliver", "estimated effort"], rows))
     L.append("")
-    L.append(f"More folders follow as creatures land through the seam; this package carries {len(rows)}.")
+    every = repo.packageable_species()
+    if every and {s.registry for s in landed} == {s.registry for s in every}:
+        # the full folder (owner 2026-09-13, fourth set, item 29 (8)): the deliverable count per tier (the Queen counted with
+        # the Tier-1 bosses, as her row's tier reads); an artist-tier species with no rig to package yet is named, never dropped
+        n1 = sum(1 for s in landed if s.tier in (0, 1))
+        n2 = sum(1 for s in landed if s.tier == 2)
+        n3 = len(landed) - n1 - n2
+        unpackaged = [s for s in repo.species.values() if s.tier in (1, 2) and not s.packageable and s.rig_reason]
+        if unpackaged:
+            L.append(f"This package carries every artist-tier species with a rig to package ({n1} Tier 1, {n2} Tier 2) and the {n3} Tier-3 props; "
+                     "rigs marked not-yet-in-game land through the seam in later slices. Not packaged yet — "
+                     f"{len(unpackaged)} artist-tier species without a rig to package: "
+                     + "; ".join(f"`{s.registry}` ({s.rig_reason})" for s in unpackaged) + ".")
+        else:
+            L.append(f"This package carries every artist-tier species ({n1} Tier 1, {n2} Tier 2) and the {n3} Tier-3 props; "
+                     "rigs marked not-yet-in-game land through the seam in later slices.")
+    else:
+        L.append(f"More folders follow as creatures land through the seam; this package carries {len(rows)}.")
     L.append("")
     L.append("Effort figures are the generator's estimate (bosses 8 h + 0.15 h per bone + 1.5 h per clip to author or improve; others 4 h + 0.2 h per bone + 1 h per clip; "
              "a clip marked 'leave' or 'covered by idle' is not counted) unless the sheet states an owner-set figure. "
@@ -3178,18 +3420,20 @@ def readme_document(repo: "Repo", manifests: dict[str, dict[str, Any]], packaged
 
 
 def build_package(repo: "Repo", out_dir: Path, registries: list[str] | None = None, with_roundtrip: bool = True) -> dict[str, Any]:
-    """The whole tree for the landed species (the dry run); returns the summary."""
+    """The whole tree for every species with a rig to package (the dry run: the shipped rigs and, since the full folder -
+    owner 2026-09-13, fourth set, item 29 (5) - every artist-tier species with a reference-leg geo); returns the summary."""
     # The repository's artist_handoff/ was refused as an output until the mirror drop landed (owner 2026-09-05, addendum
     # item 23 (8)(f)); the drop landed (d51f06f) and the pilot pair's package is generated there (owner 2026-09-13, second
     # set, item 10) - an --out under it is an ordinary output now.
     catalog = TextureCatalog(repo)
     out_dir.mkdir(parents=True, exist_ok=True)
-    species = [repo.get(r) for r in registries] if registries else repo.landed_species()
+    species = [repo.get(r) for r in registries] if registries else repo.packageable_species()
     manifests: dict[str, dict[str, Any]] = {}
     summary: dict[str, Any] = {"tool": TOOL_VERSION, "out_dir": str(out_dir), "entities": [], "texture_map": None, "warnings": []}
     for s in species:
-        if not s.landed:
-            repo.warnings.add(s.registry, "NOT_LANDED", "no geo: nothing to package")
+        if not s.packageable:
+            repo.warnings.add(s.registry, "NOT_PACKAGEABLE", "no shipped geo and no reference-leg geo: nothing to package"
+                              + (f" ({s.rig_reason})" if s.rig_reason else ""))
             continue
         folder = out_dir / "entities" / s.registry
         folder.mkdir(parents=True, exist_ok=True)
@@ -3232,6 +3476,7 @@ def build_package(repo: "Repo", out_dir: Path, registries: list[str] | None = No
         keyed_sets = list(manifest.get("keyed_locked_by_shipped_clip", {}).values())
         summary["entities"].append({
             "registry": s.registry, "tier": s.tier, "tier_label": s.tier_label,
+            "rig_source": s.rig_source, "in_game": s.in_game, "seed": s.seed is not None,
             "files": sorted(str(p.relative_to(folder)).replace("\\", "/") for p in folder.rglob("*") if p.is_file()),
             "bones": len(bl), "cubes": sum(len(b.get("cubes", [])) for b in bl),
             "clips_shipped": len(anim.get("animations", {})), "clips_in_spec": len(manifest["clips"]),
@@ -3253,6 +3498,7 @@ def build_package(repo: "Repo", out_dir: Path, registries: list[str] | None = No
     write_inventory(repo, out_dir, catalog, manifests)
     _, tex_summary = write_texture_map(repo, out_dir, catalog)
     summary["texture_map"] = tex_summary
+    summary["counts"] = package_counts(repo, manifests, summary["entities"])
     summary["warnings"] = [f"[{scope}] {code}: {msg}" for scope, code, msg in repo.warnings.items]
     write_json(out_dir / "dryrun_summary.json", summary)
     write_text(out_dir / "dryrun_summary.md", summary_markdown(summary))
@@ -3260,17 +3506,68 @@ def build_package(repo: "Repo", out_dir: Path, registries: list[str] | None = No
     return summary
 
 
+def tier_bucket(species: "Species") -> int:
+    """The tier a folder is counted under: the bosses (the design's Tier 1, and the Queen's Tier 0 'done' row - her row reads
+    Tier 1 (boss)), then Tier 2, then the Tier-3 props."""
+    return 1 if species.tier in (0, 1) else (2 if species.tier == 2 else 3)
+
+
+def package_counts(repo: "Repo", manifests: dict[str, dict[str, Any]], entities: list[dict[str, Any]]) -> dict[str, Any]:
+    """The dry run's counts (owner 2026-09-13, fourth set, item 29 (8): the package count is the deliverable): registries
+    packaged per tier, rigs per tier (a shared rig - one model class serving several registries - counted once), how many of
+    each are not yet in-game, folders, files, the rig sources, the species packaged without a seed (the SEED_MISSING fallback)
+    and the artist-tier species with no rig to package at all."""
+    packaged = [repo.species[r] for r in manifests]
+    per_tier: dict[str, dict[str, int]] = {}
+    for t in (1, 2, 3):
+        group = [s for s in packaged if tier_bucket(s) == t]
+        per_tier[f"tier_{t}"] = {
+            "registries": len(group), "rigs": len({s.model or s.registry for s in group}),
+            "not_in_game_registries": sum(1 for s in group if not s.in_game),
+            "not_in_game_rigs": len({s.model or s.registry for s in group if not s.in_game}),
+        }
+    entity_files = sum(len(e["files"]) for e in entities)
+    return {
+        "folders": len(manifests), "entity_files": entity_files, "package_wide_files": len(PACKAGE_WIDE_FILES),
+        "files": entity_files + len(PACKAGE_WIDE_FILES), "per_tier": per_tier,
+        "rig_sources": dict(Counter(s.rig_source for s in packaged)),
+        "seed_missing": [s.registry for s in packaged if s.seed is None],
+        "artist_tier_not_packaged": [{"registry": s.registry, "why": s.rig_reason}
+                                     for s in repo.species.values() if s.tier in (1, 2) and not s.packageable and s.rig_reason],
+    }
+
+
 def summary_markdown(summary: dict[str, Any]) -> str:
     L = [f"# Dry-run summary — {summary['tool']}", "", f"Output: `{summary['out_dir']}`", ""]
+    c = summary.get("counts")
+    if c:
+        L.append("## Counts (the deliverable)")
+        L.append("")
+        for t in (1, 2, 3):
+            pt = c["per_tier"][f"tier_{t}"]
+            L.append(f"- Tier {t}: {pt['registries']} registries over {pt['rigs']} rigs (a shared rig counted once)"
+                     + (f"; not yet in-game: {pt['not_in_game_registries']} registries over {pt['not_in_game_rigs']} rigs" if pt["not_in_game_registries"] else "")
+                     + ".")
+        L.append(f"- Folders: {c['folders']} (one per registry); files: {c['files']} ({c['entity_files']} in the entity folders + the "
+                 f"{c['package_wide_files']} package-wide files).")
+        L.append("- Rig sources: " + ", ".join(f"{k} {v}" for k, v in c["rig_sources"].items()) + ".")
+        sm = c.get("seed_missing", [])
+        L.append(f"- Packaged without a seed (the SEED_MISSING fallback: the display name from the registry, empty authored sections): {len(sm)}"
+                 + (" — " + ", ".join(sm) if sm else "") + ".")
+        np_ = c.get("artist_tier_not_packaged", [])
+        L.append(f"- Artist-tier species with no rig to package: {len(np_)}"
+                 + (" — " + "; ".join(f"{e['registry']} ({e['why']})" for e in np_) if np_ else "") + ".")
+        L.append("")
     rows = []
     for e in summary["entities"]:
         rt = e["roundtrip"]
         rt_text = "-" if rt is None else ("EQUAL, order kept" if rt["equal"] and rt["bone_order_preserved"] else f"{rt['differences']} diff(s), order {'kept' if rt['bone_order_preserved'] else 'CHANGED'}")
         locked_text = f"{e['locked_bones']} ({e.get('keyed_locked_bones', 0)} keyed by the shipped clips; {e['lock_mode']})" if e["locked_bones"] else "0"
-        rows.append([e["registry"], e.get("tier_label", e["tier"]), len(e["files"]), e["bones"], e["cubes"], e["clips_shipped"], e["clips_in_spec"],
+        rig_text = "shipped" if e.get("in_game", True) else "reference leg (not yet in-game)"
+        rows.append([e["registry"], e.get("tier_label", e["tier"]), rig_text, len(e["files"]), e["bones"], e["cubes"], e["clips_shipped"], e["clips_in_spec"],
                      e["goals"], e["flags"], e["attacking"] or "-", e["strike_sites"], e["textures_mapped"],
                      locked_text, e["unlabelled_bones"], rt_text, fmt(float(e.get("effort_hours") or 0), 1) + " h", len(e["warnings"])])
-    L.append(md_table(["entity", "tier", "files", "bones", "cubes", "clips shipped", "clips in SPEC", "goals", "flags", "attacking",
+    L.append(md_table(["entity", "tier", "rig", "files", "bones", "cubes", "clips shipped", "clips in SPEC", "goals", "flags", "attacking",
                        "strike/launch sites", "textures", "locked", "unlabelled", "round-trip", "effort", "warnings"], rows))
     L.append("")
     t = summary.get("texture_map") or {}
@@ -3738,11 +4035,15 @@ def main(argv: list[str] | None = None) -> int:
     sub = parser.add_subparsers(dest="command", required=True)
     p = sub.add_parser("inventory"); p.add_argument("--out", type=Path, required=True)
     p = sub.add_parser("texture-map"); p.add_argument("--out", type=Path, required=True)
-    p = sub.add_parser("spec"); p.add_argument("entity"); p.add_argument("--out", type=Path, required=True)
+    # owner 2026-09-13, fourth set, item 29 (5): the reference leg's geo per manifest entry - the rig of every artist-tier species
+    # without a shipped geo (gradle referenceConvertModels writes the default; a headless run passes its own directory)
+    ref_help = "the directory of the reference leg's converter output (<reference id>.geo.json per entry of tools/reference_model_proofs.json; default build/reference/generated under --root)"
+    p = sub.add_parser("spec"); p.add_argument("entity"); p.add_argument("--out", type=Path, required=True); p.add_argument("--reference-geo-dir", type=Path, help=ref_help)
     p = sub.add_parser("readme"); p.add_argument("--out", type=Path, required=True)
-    p = sub.add_parser("bbmodel"); p.add_argument("entity"); p.add_argument("--out", type=Path, required=True)
-    p = sub.add_parser("roundtrip"); p.add_argument("entity"); p.add_argument("--out", type=Path)
+    p = sub.add_parser("bbmodel"); p.add_argument("entity"); p.add_argument("--out", type=Path, required=True); p.add_argument("--reference-geo-dir", type=Path, help=ref_help)
+    p = sub.add_parser("roundtrip"); p.add_argument("entity"); p.add_argument("--out", type=Path); p.add_argument("--reference-geo-dir", type=Path, help=ref_help)
     p = sub.add_parser("package"); p.add_argument("--out", type=Path, required=True); p.add_argument("--entities", nargs="*"); p.add_argument("--no-roundtrip", action="store_true")
+    p.add_argument("--reference-geo-dir", type=Path, help=ref_help)
     p = sub.add_parser("check"); p.add_argument("folder", type=Path); p.add_argument("--manifest", type=Path)
     p.add_argument("--lock-mode", choices=("manifest", "warn", "reject"), default="manifest",
                    help="override the manifest's lock_mode: `warn` is the ruled policy (2026-09-06: a key on a locked bone warns; a locked bone "
@@ -3756,7 +4057,7 @@ def main(argv: list[str] | None = None) -> int:
         print("PASS" if passed else "FAIL")
         return 0 if passed else 1
 
-    repo = Repo(args.root)
+    repo = Repo(args.root, reference_geo_dir=getattr(args, "reference_geo_dir", None))
     if args.command == "inventory":
         path = write_inventory(repo, args.out, TextureCatalog(repo))
         print(f"wrote {path} ({len(repo.species)} rows)")
@@ -3766,13 +4067,13 @@ def main(argv: list[str] | None = None) -> int:
     elif args.command == "readme":
         catalog = TextureCatalog(repo)
         manifests = {}
-        for s in repo.landed_species():
+        for s in repo.packageable_species():
             inv = build_trigger_inventory(s, repo)
             _, manifests[s.registry] = spec_document(s, repo, catalog, inv)
         write_text(args.out / "README_FIRST.md", readme_document(repo, manifests))
         print(f"wrote {args.out / 'README_FIRST.md'}")
     elif args.command == "spec":
-        s = repo.get(args.entity)
+        s = repo.get_packageable(args.entity)
         inv = build_trigger_inventory(s, repo)
         md, manifest = spec_document(s, repo, TextureCatalog(repo), inv)
         folder = args.out / "entities" / s.registry
@@ -3781,7 +4082,7 @@ def main(argv: list[str] | None = None) -> int:
         write_text(folder / "reference" / "SLOTS.md", slots_document(s))
         print(f"wrote {folder / 'SPEC.md'} ({len(manifest['bones'])} bones, {len(manifest['clips'])} clips, {len(manifest['locked_bones'])} locked)")
     elif args.command in ("bbmodel", "roundtrip"):
-        s = repo.get(args.entity)
+        s = repo.get_packageable(args.entity)
         catalog = TextureCatalog(repo)
         textures = []
         for t in catalog.canonical_for_species(s):

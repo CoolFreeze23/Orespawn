@@ -1118,6 +1118,12 @@ def main() -> int:
     parser.add_argument("--manifest", type=Path, required=True)
     parser.add_argument("--dump-dir", type=Path, required=True)
     parser.add_argument("--output-dir", type=Path, required=True)
+    parser.add_argument("--continue-on-refusal", action="store_true",
+                        help="convert every entry the converter accepts and NAME each one it refuses (G1 CONVERT REFUSED, and "
+                             "<output-dir>/refusals.json) instead of stopping at the first; exit 0. The reference manifest's "
+                             "mode (gradle referenceConvertModels: the artist package's rigs): an entry drawn from shared parts "
+                             "without the render_instances form is refused, the rest still convert. The proof chains keep the "
+                             "strict default (the first refusal stops the run, exit 1).")
     args = parser.parse_args()
 
     manifest = load_json(args.manifest)
@@ -1125,6 +1131,16 @@ def main() -> int:
         raise ValueError("unsupported G1 manifest schema")
     args.output_dir.mkdir(parents=True, exist_ok=True)
     specs = [*manifest["models"], *manifest.get("fixtures", [])]
+    if "ticks_per_second" not in manifest:
+        # The standing reference manifest (tools/reference_model_proofs.json: every port model against its 1.7.10
+        # source, geometry only) never carried `ticks_per_second` - the value feeds clip sampling, which a static
+        # entry has none of. The full folder (owner 2026-09-13, fourth set, item 29 (5)) converts that manifest for
+        # the artist package's rigs (gradle referenceConvertModels), so a manifest without the key is accepted when
+        # EVERY entry is static and refused, naming the entries, when any would sample a clip.
+        sampled = [spec["id"] for spec in specs if spec.get("animation_kind") != "static"]
+        if sampled:
+            raise ValueError(f"manifest has no ticks_per_second but declares non-static models: {sampled}")
+        manifest = dict(manifest, ticks_per_second=20.0)
     expected_ids = {spec["id"] for spec in specs}
     generated_suffixes = (
         ".geo.json", ".animation.json", ".animation-contract.json",
@@ -1137,9 +1153,29 @@ def main() -> int:
             existing.name.startswith(model_id + ".") for model_id in expected_ids
         ):
             existing.unlink()
+    refusals: list[dict[str, Any]] = []
     for spec in specs:
-        convert_model(manifest, spec, args.dump_dir, args.output_dir)
+        try:
+            convert_model(manifest, spec, args.dump_dir, args.output_dir)
+        except (ValueError, KeyError, FileNotFoundError) as exc:
+            if not args.continue_on_refusal:
+                raise
+            # a refused entry leaves no output behind (a geo from an earlier, accepted form would be stale)
+            for stale in args.output_dir.iterdir():
+                if stale.is_file() and stale.name.startswith(spec["id"] + ".") and stale.name.endswith(generated_suffixes):
+                    stale.unlink()
+            reason = f"{type(exc).__name__}: {exc}"
+            refusals.append({"id": spec["id"], "class": spec.get("class"), "reason": reason})
+            print(f"G1 CONVERT REFUSED: {spec['id']} - {reason}")
+            continue
         print(f"G1 CONVERT GREEN: {spec['id']} compiled LayerDefinition -> geo + animation contract")
+    if args.continue_on_refusal:
+        write_json(args.output_dir / "refusals.json", {
+            "schema_version": 1, "manifest": args.manifest.name, "converted": len(specs) - len(refusals),
+            "refused": refusals,
+        })
+        print(f"G1 CONVERT: {len(specs) - len(refusals)} of {len(specs)} entries converted, {len(refusals)} refused "
+              f"(named above and in {args.output_dir / 'refusals.json'})")
     return 0
 
 

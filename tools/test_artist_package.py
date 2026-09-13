@@ -3,10 +3,12 @@
 
     python tools/test_artist_package.py
 
-The fixtures are a synthetic repository built in a temp directory: eight registrations (both `Builder.of` and
+The fixtures are a synthetic repository built in a temp directory: twelve registrations (both `Builder.of` and
 `Builder.<X>of` forms; a projectile, a vanilla-cow reuse, a head sidecar that renders nothing, a native GeoEntity boss
 with two controllers and an area-damage helper, an EVENT pulser whose hurt() also raises the flag, a MIXED ticker
-species), a nested rig (per-face UV with a flipped face, a box-UV mirrored cube with its own pivot and rotation, an
+species; since the full folder - owner 2026-09-13, fourth set, item 29 (5) - an unlanded Tier-1 boss and a seedless Tier-2
+critter packaged from the reference leg's geo under build/reference/generated, an orphan model with no reference entry
+and a model the converter refused), a nested rig (per-face UV with a flipped face, a box-UV mirrored cube with its own pivot and rotation, an
 unknown description key), three clips in the three keyframe shapes plus an easing key, hitbox profiles, seeds, twin
 and series textures, an armor-sheet stray, an item-renderer texture, a dormant item twin, and a referenced-vs-
 registry-aligned canonical conflict. Every pin runs the production code paths (Repo, TextureCatalog,
@@ -161,6 +163,91 @@ NATIVE_SEED = {
     "wishlist": ["a heavier `stance` loop", "a wing-beat `fly` loop distinct from the hover"],
     "future": ["a `hurt` flinch on the struck head"],
 }
+
+# The full folder (owner 2026-09-13, fourth set, item 29 (5)): a Tier-1 boss with NO shipped geo, packaged from the reference
+# leg's converter output (build/reference/generated/reference_boss.geo.json, found through its model class in the reference
+# manifest); its seed pre-declares the intended locked bones from the design's section 6 (item 29 (7)) - `horn` is a bone
+# the rig does not have.
+BOSS_SEED = {
+    "registry": "boss", "display_name": "Test Boss", "status": "test seed (DRAFT)", "locomotion": "walker", "artist_scope": "full contract",
+    "character_sheet": "A boss not yet in-game.", "labels": {"root": "root", "body": "body", "head": "head", "tail": "tail"},
+    "groups": [], "behaviour": ["it stomps"], "clips": [], "extras": [], "wishlist": [],
+    "locked_bones_provisional": [{"bone": "head", "size": [1.1, 1.0], "damage": 1}, {"bone": "tail", "size": [0.9, 0.9], "damage": 0.25},
+                                 {"bone": "horn", "size": [0.4, 0.4], "damage": 1}],
+}
+
+# the converter's output for the boss (the reference leg's form: the g1 identifier, the draw-order description key)
+BOSS_GEO = {
+    "format_version": "1.12.0",
+    "minecraft:geometry": [{
+        "description": {"identifier": "geometry.orespawn.g1.reference_boss", "texture_width": 64, "texture_height": 64,
+                        "orespawn:bone_draw_order": ["root", "body", "head", "tail"]},
+        "bones": [
+            {"name": "root", "pivot": [0, 0, 0], "cubes": [{"origin": [-4, 0, -4], "size": [8, 8, 8], "uv": [0, 0]}]},
+            {"name": "body", "parent": "root", "pivot": [0, 8, 0], "cubes": [{"origin": [-3, 8, -3], "size": [6, 6, 6], "uv": [0, 16]}]},
+            {"name": "head", "parent": "body", "pivot": [0, 14, 0], "cubes": [{"origin": [-2, 14, -2], "size": [4, 4, 4], "uv": [0, 28]}]},
+            {"name": "tail", "parent": "root", "pivot": [0, 4, 4], "cubes": [{"origin": [-1, 3, 4], "size": [2, 2, 6], "uv": [24, 0]}]},
+        ],
+    }],
+}
+
+CRITTER_GEO = {
+    "format_version": "1.12.0",
+    "minecraft:geometry": [{
+        "description": {"identifier": "geometry.orespawn.g1.reference_critter", "texture_width": 32, "texture_height": 32,
+                        "orespawn:bone_draw_order": ["body", "leg"]},
+        "bones": [
+            {"name": "body", "pivot": [0, 4, 0], "cubes": [{"origin": [-2, 2, -3], "size": [4, 3, 6], "uv": [0, 0]}]},
+            {"name": "leg", "parent": "body", "pivot": [0, 2, 0], "cubes": [{"origin": [-1, 0, -1], "size": [2, 2, 2], "uv": [0, 9]}]},
+        ],
+    }],
+}
+
+# the fixture's reference manifest: the boss, the critter, a model the converter refuses (its refusals.json row below) and the
+# fixture itself - whose SHIPPED geo must win over the reference geo that also exists for it; the orphan model has no entry
+REFERENCE_MANIFEST = {"schema_version": 1, "purpose": "test", "models": [
+    {"id": "reference_boss", "tier": 0, "class": "danger.orespawn.entity.client.BossModel", "animation_kind": "static", "channels": []},
+    {"id": "reference_critter", "tier": 0, "class": "danger.orespawn.entity.client.CritterModel", "animation_kind": "static", "channels": []},
+    {"id": "reference_refused", "tier": 0, "class": "danger.orespawn.entity.client.RefusedModel", "animation_kind": "static", "channels": []},
+    {"id": "reference_fixture", "tier": 0, "class": "danger.orespawn.entity.client.FixtureModel", "animation_kind": "static", "channels": []},
+]}
+REFERENCE_REFUSALS = {"schema_version": 1, "manifest": "reference_model_proofs.json", "converted": 3, "refused": [
+    {"id": "reference_refused", "class": "danger.orespawn.entity.client.RefusedModel",
+     "reason": "ValueError: reference_refused capture bind draws ['leg__i0', 'leg__i1'], which are not cube-bearing geo bones "
+               "(a part drawn more than once without render_instances, or a part the rig lacks)"}]}
+
+BOSS_JAVA = """package danger.orespawn.entity;
+
+public class Boss extends Monster {
+    @Override
+    protected void registerGoals() {
+        this.goalSelector.addGoal(0, new FloatGoal(this));
+        this.goalSelector.addGoal(2, new MeleeAttackGoal(this, 1.0, false));
+    }
+
+    @Override
+    public void aiStep() {
+        super.aiStep();
+        LivingEntity target = this.getTarget();
+        if (target != null && this.distanceToSqr(target) < 9.0) {
+            this.doHurtTarget(target);
+        }
+    }
+}
+"""
+
+CRITTER_JAVA = """package danger.orespawn.entity;
+
+public class Critter extends Animal {
+    @Override
+    protected void registerGoals() {
+        this.goalSelector.addGoal(0, new FloatGoal(this));
+    }
+}
+"""
+
+ORPHAN_JAVA = CRITTER_JAVA.replace("Critter", "Orphan")
+REFUSED_JAVA = CRITTER_JAVA.replace("Critter", "Refused")
 
 ENTITY_JAVA = """package danger.orespawn.entity;
 
@@ -411,6 +498,18 @@ public final class ModEntities {
     public static final DeferredHolder<EntityType<?>, EntityType<Mixed>> MIXED =
             ENTITY_TYPES.register("mixed", () -> EntityType.Builder.of(Mixed::new, MobCategory.MONSTER)
                     .sized(1.0f, 1.0f).clientTrackingRange(8).build("mixed"));
+    public static final DeferredHolder<EntityType<?>, EntityType<Boss>> BOSS =
+            ENTITY_TYPES.register("boss", () -> EntityType.Builder.of(Boss::new, MobCategory.MONSTER)
+                    .sized(3.0f, 4.0f).clientTrackingRange(10).build("boss"));
+    public static final DeferredHolder<EntityType<?>, EntityType<Critter>> CRITTER =
+            ENTITY_TYPES.register("critter", () -> EntityType.Builder.of(Critter::new, MobCategory.CREATURE)
+                    .sized(0.6f, 0.5f).clientTrackingRange(8).build("critter"));
+    public static final DeferredHolder<EntityType<?>, EntityType<Orphan>> ORPHAN =
+            ENTITY_TYPES.register("orphan", () -> EntityType.Builder.of(Orphan::new, MobCategory.CREATURE)
+                    .sized(1.0f, 1.0f).clientTrackingRange(8).build("orphan"));
+    public static final DeferredHolder<EntityType<?>, EntityType<Refused>> REFUSED =
+            ENTITY_TYPES.register("refused", () -> EntityType.Builder.of(Refused::new, MobCategory.CREATURE)
+                    .sized(2.0f, 2.0f).clientTrackingRange(8).build("refused"));
 
     public static void register(IEventBus eventBus) {
         ENTITY_TYPES.register(eventBus);
@@ -426,6 +525,10 @@ public final class OreSpawnClient {
         event.registerEntityRenderer(ModEntities.MOO.get(), MooRenderer::new);
         event.registerEntityRenderer(ModEntities.FIXTURE_HEAD.get(), FixtureHeadRenderer::new);
         event.registerEntityRenderer(ModEntities.NATIVE.get(), NativeRenderer::new);
+        event.registerEntityRenderer(ModEntities.BOSS.get(), BossRenderer::new);
+        event.registerEntityRenderer(ModEntities.CRITTER.get(), CritterRenderer::new);
+        event.registerEntityRenderer(ModEntities.ORPHAN.get(), OrphanRenderer::new);
+        event.registerEntityRenderer(ModEntities.REFUSED.get(), RefusedRenderer::new);
     }
 }
 """
@@ -453,6 +556,10 @@ DESIGN_MD = """# design
 | 2 | `OtherModel` (5) | other [0.5x0.5] | other.png 32x32 | static | — | — | 3 |
 | 3 | `FixtureHeadModel` (37) | fixture_head [9.9x10.0] | fixturehead.png 64x32 | static — empty setupAnim | — | — | 3 |
 | 4 | `NativeModel` (66) | native [2.0x3.0] | native.png 64x64 | state-branching — existing GeckoLib controller state machine | — | — | 0 |
+| 5 | `BossModel` (80) | boss [3.0x4.0] | boss.png 64x64 | state-branching | BossRenderer: x2 | — | 1 |
+| 6 | `CritterModel` (20) | critter [0.6x0.5] | critter.png 32x32 | gait-scaled | — | — | 2 |
+| 7 | `OrphanModel` (20) | orphan [1.0x1.0] | orphan.png 32x32 | static | — | — | 2 |
+| 8 | `RefusedModel` (30) | refused [2.0x2.0] | refused.png 32x32 | static | — | — | 2 |
 
 #### Vanilla-model reuse (proposed Tier 0)
 
@@ -477,7 +584,8 @@ def build_fixture_repo(root: Path) -> None:
     (java / "OreSpawnClient.java").write_text(CLIENT_JAVA, encoding="utf-8")
     (java / "client/OreSpawnItemRenderer.java").write_text(ITEM_RENDERER_JAVA, encoding="utf-8")
     for name, text in (("Fixture", ENTITY_JAVA), ("Other", OTHER_JAVA), ("Dart", DART_JAVA), ("Moo", MOO_JAVA),
-                       ("FixtureHead", FIXTURE_HEAD_JAVA), ("Native", NATIVE_JAVA), ("Pulser", PULSER_JAVA), ("Mixed", MIXED_JAVA)):
+                       ("FixtureHead", FIXTURE_HEAD_JAVA), ("Native", NATIVE_JAVA), ("Pulser", PULSER_JAVA), ("Mixed", MIXED_JAVA),
+                       ("Boss", BOSS_JAVA), ("Critter", CRITTER_JAVA), ("Orphan", ORPHAN_JAVA), ("Refused", REFUSED_JAVA)):
         (java / f"entity/{name}.java").write_text(text, encoding="utf-8")
     (java / "entity/client/FixtureRenderer.java").write_text(
         'class FixtureRenderer { ResourceLocation T = ResourceLocation.fromNamespaceAndPath(MOD_ID, "textures/entity/fixture.png"); FixtureGeoReplacement r; }', encoding="utf-8")
@@ -490,6 +598,9 @@ def build_fixture_repo(root: Path) -> None:
     (java / "entity/client/FixtureHeadRenderer.java").write_text(FIXTURE_HEAD_RENDERER_JAVA, encoding="utf-8")
     (java / "entity/client/NativeRenderer.java").write_text(
         'class NativeRenderer { String g = "geo/entity/native.geo.json"; String a = "animations/entity/native.animation.json"; String t = "textures/entity/native.png"; }', encoding="utf-8")
+    for name in ("Boss", "Critter", "Orphan", "Refused"):  # classic renderers: a texture, no geo reference (no shipped rig)
+        (java / f"entity/client/{name}Renderer.java").write_text(
+            f'class {name}Renderer {{ String t = "textures/entity/{name.lower()}.png"; }}', encoding="utf-8")
     assets = root / "src/main/resources/assets/orespawn"
     (assets / "geo/entity").mkdir(parents=True)
     (assets / "animations/entity").mkdir(parents=True)
@@ -505,6 +616,10 @@ def build_fixture_repo(root: Path) -> None:
     (tex / "fixturetexture.png").write_bytes(png_bytes(64, 32, 1))  # a byte-identical twin
     (tex / "other.png").write_bytes(png_bytes(32, 32, 2))
     (tex / "native.png").write_bytes(png_bytes(64, 64, 3))
+    (tex / "boss.png").write_bytes(png_bytes(64, 64, 30))
+    (tex / "critter.png").write_bytes(png_bytes(32, 32, 31))
+    (tex / "orphan.png").write_bytes(png_bytes(32, 32, 32))
+    (tex / "refused.png").write_bytes(png_bytes(32, 32, 33))
     (tex / "fixturehead.png").write_bytes(png_bytes(64, 32, 4))
     (tex / "moo.png").write_bytes(png_bytes(64, 32, 6))      # registry-aligned but referenced by nothing
     (tex / "moocow.png").write_bytes(png_bytes(64, 32, 6))   # its twin: not registry-aligned, referenced by MooRenderer
@@ -522,9 +637,11 @@ def build_fixture_repo(root: Path) -> None:
     (root / "tools/artist_specs").mkdir(parents=True)
     (root / "tools/artist_specs/fixture.json").write_text(json.dumps(FIXTURE_SEED), encoding="utf-8")
     (root / "tools/artist_specs/native.json").write_text(json.dumps(NATIVE_SEED), encoding="utf-8")
+    (root / "tools/artist_specs/boss.json").write_text(json.dumps(BOSS_SEED), encoding="utf-8")  # the critter has no seed
     (root / "tools/reference_renderer_pins.json").write_text(json.dumps({"entries": [
         {"entity": "Fixture", "expected_scale": 1, "expected_shadow": 0.5, "status": "pin"},
-        {"entity": "Native", "expected_scale": 2, "expected_shadow": 1.0, "status": "pin"}]}), encoding="utf-8")
+        {"entity": "Native", "expected_scale": 2, "expected_shadow": 1.0, "status": "pin"},
+        {"entity": "Boss", "expected_scale": 2, "expected_shadow": 1.5, "status": "pin"}]}), encoding="utf-8")
     (root / "phase_g_reports").mkdir()
     (root / "phase_g_reports/geckolib_migration_design.md").write_text(DESIGN_MD, encoding="utf-8")
     (root / "provenance_byte_identical_assets.txt").write_text("  textures\\entity\\fixture.png  <=  Fixture.png\n", encoding="utf-8")
@@ -548,6 +665,16 @@ def build_fixture_repo(root: Path) -> None:
                    "subject_after": {"ri1": 0, "shielding": -1, "rf1": 0.0},
                    "sampled_inputs": "limbSwingAmount 1.0; limbSwing = t; ageInTicks = t; netHeadYaw 0; headPitch 0; rest state; RNG seed 0"}],
     }, indent=2) + "\n", encoding="utf-8")
+    # the full folder (owner 2026-09-13, fourth set, item 29 (5)): the reference manifest and the converter's output directory
+    # (gradle referenceConvertModels' default, build/reference/generated) - the boss's and the critter's geos with their
+    # sidecars, a geo for the fixture too (its shipped geo must win), the converter's refusals.json naming reference_refused
+    (root / "tools/reference_model_proofs.json").write_text(json.dumps(REFERENCE_MANIFEST, indent=2) + "\n", encoding="utf-8")
+    generated = root / "build/reference/generated"
+    generated.mkdir(parents=True)
+    for model_id, geo in (("reference_boss", BOSS_GEO), ("reference_critter", CRITTER_GEO), ("reference_fixture", FIXTURE_GEO)):
+        (generated / f"{model_id}.geo.json").write_text(json.dumps(geo, indent=2) + "\n", encoding="utf-8")
+        (generated / f"{model_id}.conversion.json").write_text(json.dumps({"schema_version": 1, "model_id": model_id}) + "\n", encoding="utf-8")
+    (generated / "refusals.json").write_text(json.dumps(REFERENCE_REFUSALS, indent=2) + "\n", encoding="utf-8")
 
 
 REFERENCE_CLIP = {
@@ -587,7 +714,8 @@ class FixtureCase(unittest.TestCase):
 
     def test_mod_entities_parse_both_registration_forms(self):
         # `Builder.of(` and the explicitly typed `Builder.<X>of(` both count; `ENTITY_TYPES.register(eventBus)` does not
-        self.assertEqual(list(self.repo.entities), ["fixture", "other", "dart", "moo", "fixture_head", "native", "pulser", "mixed"])
+        self.assertEqual(list(self.repo.entities), ["fixture", "other", "dart", "moo", "fixture_head", "native", "pulser", "mixed",
+                                                    "boss", "critter", "orphan", "refused"])
         self.assertEqual(self.repo.entities["fixture"]["width"], 1.0)
         self.assertEqual(self.repo.entities["fixture"]["java_class"], "Fixture")
         self.assertEqual(self.repo.entities["dart"]["java_class"], "Dart")
@@ -653,8 +781,9 @@ class FixtureCase(unittest.TestCase):
         self.assertEqual(by_file["fixture.png"]["consumers"], "FixtureGeoReplacement;FixtureRenderer")
         self.assertEqual(by_file["fixture.png"]["provenance_1_7_10"], "Fixture.png")
         summary = cat.summary()
-        # 13 shipped: fixture x2 (twins), other, native, fixturehead, moo x2 (twins), sword, dormant, girlfriend x3, amethyst_1
-        self.assertEqual((summary["shipped"], summary["unique_payloads"], summary["duplicate_groups"], summary["redundant_names"]), (13, 11, 2, 2))
+        # 17 shipped: fixture x2 (twins), other, native, fixturehead, moo x2 (twins), sword, dormant, girlfriend x3, amethyst_1,
+        # and the full folder's four (boss, critter, orphan, refused - each referenced by its classic renderer, so no stray)
+        self.assertEqual((summary["shipped"], summary["unique_payloads"], summary["duplicate_groups"], summary["redundant_names"]), (17, 15, 2, 2))
         self.assertEqual(summary["strays"], 3)  # amethyst_1 (armor sheet), sword (item renderer), dormant (dormant twin)
 
     def test_canonical_prefers_referenced_over_registry_aligned(self):
@@ -1885,10 +2014,245 @@ class FixtureCase(unittest.TestCase):
         ap.build_package(self.repo, self.root / "artist_handoff", ["fixture"], with_roundtrip=False)
         self.assertTrue((self.root / "artist_handoff" / "entities" / "fixture" / "SPEC.md").exists())
 
+    # --- the full folder (owner 2026-09-13, fourth set, addendum item 29 (5), (7), (8)) ------------------------------------
+
+    def test_unlanded_species_packaged_from_the_reference_geo(self):
+        """Item 29 (5): an artist-tier species without a shipped geo is packaged from the reference leg's converter output
+        (build/reference/generated/<reference id>.geo.json, the id found through its model class): `landed` stays False,
+        `rig_source` names the converter output, the sheet states that the rig is not yet in-game and that bone names are final
+        under its title and again in §3 and §11, the animation file is the empty s4 hook form, there is no reference clip and
+        neither REFERENCE_CLIP_MISSING nor FORMULAS_MISSING is raised (§4.3 says the clip is sampled when the rig lands), the
+        manifest carries rig_source / in_game / reference_id, a species without a seed renders with the SEED_MISSING fallback,
+        and the generated folder itself checks PASS (the geo "returned UNCHANGED" rule as for a shipped rig; the empty file
+        "not delivered yet"). The shipped geo is preferred where one exists (the fixture stays shipped although
+        reference_fixture.geo.json exists); a Tier-3 species without a shipped geo is not packaged."""
+        boss, critter, fx, other = (self.repo.get(r) for r in ("boss", "critter", "fixture", "other"))
+        self.assertFalse(boss.landed)
+        self.assertTrue(boss.packageable)
+        self.assertFalse(boss.in_game)
+        self.assertEqual(boss.rig_source, ap.RIG_SOURCE_REFERENCE)
+        self.assertEqual(boss.reference_id, "reference_boss")
+        self.assertEqual(boss.geo_path, self.root / "build/reference/generated/reference_boss.geo.json")
+        self.assertIsNone(boss.anim_path)
+        self.assertEqual(boss.proof, "reference_model_proofs.json")
+        self.assertEqual(boss.status, "classic only")
+        self.assertIn("packaged from the reference leg's converter output (reference_boss.geo.json: the rig is not yet in-game, its bone names final)", boss.status_note)
+        self.assertEqual(boss.tier_label, "Tier 1 (boss)")
+        self.assertEqual(fx.rig_source, ap.RIG_SOURCE_SHIPPED)  # the shipped geo wins over the reference geo that also exists
+        self.assertTrue(fx.landed and fx.in_game and fx.packageable)
+        self.assertFalse(other.packageable)  # Tier 3 without a shipped geo: not an artist-tier species
+        self.assertEqual([s.registry for s in self.repo.packageable_species()], ["fixture", "native", "boss", "critter"])
+        self.assertEqual([s.registry for s in self.repo.landed_species()], ["fixture", "native"])
+        out = self.tmp / "out_full"
+        summary = ap.build_package(self.repo, out)  # no --entities: every species with a rig to package
+        self.assertEqual(sorted(p.name for p in (out / "entities").iterdir()), ["boss", "critter", "fixture", "native"])
+        folder = out / "entities/boss"
+        for name in ("reference_boss.geo.json", "boss.animation.json", "boss.bbmodel", "SPEC.md", "spec.manifest.json",
+                     "textures/boss.png", "reference/SLOTS.md", "roundtrip.report.json"):
+            self.assertTrue((folder / name).exists(), name)
+        self.assertEqual((folder / "reference_boss.geo.json").read_text(encoding="utf-8"), (self.root / "build/reference/generated/reference_boss.geo.json").read_text(encoding="utf-8"))
+        self.assertFalse(list(folder.glob("*_reference.animation.json")))  # no hook yet: no reference clip
+        self.assertEqual((folder / "boss.animation.json").read_text(encoding="utf-8"), '{\n  "format_version": "1.8.0",\n  "animations": {}\n}\n')  # the s4 hook form
+        entry = {e["registry"]: e for e in summary["entities"]}["boss"]
+        self.assertTrue(entry["roundtrip"]["equal"])
+        self.assertEqual((entry["rig_source"], entry["in_game"], entry["seed"]), (ap.RIG_SOURCE_REFERENCE, False, True))
+        spec = (folder / "SPEC.md").read_text(encoding="utf-8")
+        self.assertEqual(spec.split("\n\n")[1], f"**{ap.NOT_IN_GAME_STATEMENT}**")  # right under the title
+        self.assertIn("This rig is NOT yet in-game: the geometry is the converter's output over the port's compiled model, proven part for part "
+                      "against the 1.7.10 source by the reference-geometry leg; it lands through the seam in a later slice. Bone names are FINAL — "
+                      "the seam, the hitbox profiles and the transcriptions find bones by name.", spec)
+        self.assertEqual(spec.count(ap.NOT_IN_GAME_STATEMENT), 3)
+        self.assertIn(ap.NOT_IN_GAME_STATEMENT, spec.split("## 3. Bone glossary")[1].split("## 4. Current animation")[0])
+        s11 = spec.split("## 11. What 'done' looks like")[1]
+        self.assertIn(ap.NOT_IN_GAME_STATEMENT, s11)
+        self.assertIn("1. `reference_boss.geo.json` returned UNCHANGED (or not at all): every bone name, parent, pivot, rotation and cube as listed in §3 and the packaged file (the reference leg's geo; the rule is the shipped rig's)", s11)
+        s43 = spec.split("### 4.3 Reference clip (reference-only)")[1].split("## 5. Clips")[0]
+        self.assertIn("_no reference clip yet: it is sampled from the classic hook when the rig lands through the seam; until then §4.1 / §4.2 and "
+                      "the plain-language formulas (where the seed carries them) are the motion's description._", s43)
+        self.assertIn("is authored when the rig lands on its hook", s43)
+        self.assertNotIn("no `formulas` in the seed yet", s43)
+        self.assertNotIn("the sampler has not run", s43)
+        for code in ("REFERENCE_CLIP_MISSING", "FORMULAS_MISSING", "NOT_PACKAGEABLE"):
+            self.assertFalse([w for w in self.warnings_with(code) if w[0] in ("boss", "critter")], code)
+        self.assertNotIn("PROVISIONAL", spec)
+        self.assertNotIn("open question", spec.lower())
+        m = json.loads((folder / "spec.manifest.json").read_text(encoding="utf-8"))
+        self.assertEqual((m["rig_source"], m["in_game"], m["reference_id"], m["geo_file"], m["animation_file"]),
+                         (ap.RIG_SOURCE_REFERENCE, False, "reference_boss", "reference_boss.geo.json", "boss.animation.json"))
+        self.assertIsNone(m["reference_clip"])
+        self.assertIs(m["exact_transcription"], False)
+        self.assertEqual(m["controller_kind"], "phase_locked")
+        self.assertTrue({c["name"] for c in m["clips"]} >= {"idle", "walk", "attack", "hurt", "death"})
+        self.assertEqual({c["name"]: c["required"] for c in m["clips"] if c["name"] in ("idle", "walk", "attack")}, {"idle": True, "walk": True, "attack": False})
+        mf = json.loads((out / "entities/fixture/spec.manifest.json").read_text(encoding="utf-8"))
+        self.assertEqual((mf["rig_source"], mf["in_game"], mf["reference_id"]), (ap.RIG_SOURCE_SHIPPED, True, None))
+        # the SEED_MISSING fallback (item 29 (5), kept): the critter has no seed - the display name from the registry row, the
+        # authored sections empty, the dry run reporting which
+        self.assertTrue([w for w in self.warnings_with("SEED_MISSING") if w[0] == "critter"])
+        self.assertFalse([w for w in self.warnings_with("SEED_MISSING") if w[0] == "boss"])
+        mc = json.loads((out / "entities/critter/spec.manifest.json").read_text(encoding="utf-8"))
+        self.assertEqual((mc["display_name"], mc["rig_source"], mc["in_game"], mc["tier_label"]), ("Critter", ap.RIG_SOURCE_REFERENCE, False, "Tier 2"))
+        self.assertIn("_(no character sheet yet", (out / "entities/critter/SPEC.md").read_text(encoding="utf-8"))
+        self.assertEqual(summary["counts"]["seed_missing"], ["critter"])
+        # the generated folders check PASS: the geo returned unchanged (a WARN, as for a shipped rig), the empty file not a delivery
+        for reg in ("boss", "critter"):
+            findings, passed = ap.check_folder(out / "entities" / reg)
+            self.assertTrue(passed, findings)
+            for name in ("idle", "walk"):
+                self.assertTrue(self._has(findings, "WARN", f"required clip '{name}' not delivered yet"), findings)
+            self.assertTrue(self._has(findings, "WARN", "a geo was returned; the shipped rig is used regardless"), findings)
+            self.assertFalse(self._has(findings, "REJECT", ""), findings)
+        # a returned geo that renames a bone of the reference rig is refused exactly as for a shipped rig (`tail` is a
+        # provisional locked bone of the boss: the finding says so by name)
+        renamed = json.loads(json.dumps(BOSS_GEO))
+        renamed["minecraft:geometry"][0]["bones"][3]["name"] = "tale"
+        findings, passed = ap.check_folder(self._returned({"format_version": "1.8.0", "animations": {}}, anim_name="boss.animation.json",
+                                                          extra_files={"reference_boss.geo.json": json.dumps(renamed)}), folder / "spec.manifest.json")
+        self.assertFalse(passed)
+        self.assertTrue(self._has(findings, "REJECT", "locked bone tail renamed to tale"), findings)
+
+    def test_locked_bones_provisional_rendered_validated_and_carried(self):
+        """Item 29 (7): a Tier-1 boss's seed pre-declares its intended locked bones from the design's section 6
+        (`locked_bones_provisional`): §7 lists them as provisional with the Queen's profile as the template for the profile's
+        form, the named bones the geo has and their ancestors are the manifest's `locked_bones` (so the checker's lock policy -
+        warn-keyed, refuse-structural - protects their names), a named bone the geo lacks is a LOCKED_BONE_UNKNOWN warning
+        naming it and locks nothing, a Tier-1 boss with no design row says the Queen's profile is the template, and a Tier-2
+        species without a profile keeps the plain sentence. The word is lower case; the marker pins stay."""
+        boss = self.repo.get("boss")
+        geo = boss.geo
+        locked = ap.locked_bones(boss, geo, self.repo.warnings)
+        self.assertEqual(list(locked), ["head", "body", "root", "tail"])  # the named bones the geo has, each with its ancestors
+        self.assertEqual(locked["head"], "intended hitbox part 'head' (size [1.1, 1.0], damage x1) — " + ap.PROVISIONAL_LOCK_SENTENCE)
+        self.assertIn("provisional — the design's section 6 proposal, not yet a profile; the Queen's profile (`the_queen`) is the template for the profile's form", locked["tail"])
+        self.assertEqual(locked["body"], "ancestor of the intended part bone 'head' — provisional, as the part is")
+        unknown = [w for w in self.warnings_with("LOCKED_BONE_UNKNOWN") if w[0] == "boss"]
+        self.assertTrue(unknown, self.repo.warnings.items)
+        self.assertIn("locked_bones_provisional names bone 'horn', which the rig's geo (reference_boss.geo.json) does not have", unknown[-1][2])
+        self.assertEqual(ap.provisional_lock_entries(self.repo.get("fixture")), [])
+        inv = ap.build_trigger_inventory(boss, self.repo)
+        md, m = ap.spec_document(boss, self.repo, self.catalog, inv)
+        s7 = md.split("## 7. Hitbox bones that must keep their names")[1].split("## 8. Textures")[0]
+        self.assertIn("Intended locked bones — provisional — the design's section 6 proposal, not yet a profile; the Queen's profile (`the_queen`) is "
+                      "the template for the profile's form (`phase_g_reports/geckolib_migration_design.md` section 6, the per-rig table", s7)
+        self.assertIn("The named bones and every ancestor are SPEC-locked now, as they will be when the profile lands (contract §8.1)", s7)
+        self.assertIn("The design names 1 bone(s) this rig's geo does not have — `horn` — the seed lane resolves them to the rig's names", s7)
+        self.assertIn("| `head` | intended hitbox part 'head' (size [1.1, 1.0], damage x1) — provisional", s7)
+        self.assertIn("| `root` | ancestor of the intended part bone 'head' — provisional, as the part is |", s7)
+        self.assertIn(ap.LOCK_POLICY, s7)
+        self.assertIn(ap.LOCK_REJECT_MODE, s7)
+        self.assertNotIn("MultiHitboxLib profile `", s7)
+        self.assertNotIn("PROVISIONAL", md)
+        self.assertNotIn("open question", md.lower())
+        self.assertEqual(m["locked_bones"], ["root", "body", "head", "tail"])  # the manifest lists them in the rig's (geo) order
+        self.assertEqual(m["locked_bones_source"], "provisional (the design's section 6)")
+        self.assertEqual(m["locked_bones_provisional"], [{"bone": "head", "size": [1.1, 1.0], "damage": 1, "in_geo": True},
+                                                         {"bone": "tail", "size": [0.9, 0.9], "damage": 0.25, "in_geo": True},
+                                                         {"bone": "horn", "size": [0.4, 0.4], "damage": 1, "in_geo": False}])
+        self.assertEqual((m["lock_mode"], m["lock_policy"]), ("warn", ap.LOCK_POLICY_ID))
+        by = {r["name"]: r for r in ap.build_glossary(boss, self.repo, geo, [])}
+        self.assertTrue(by["head"]["locked"] and by["tail"]["locked"] and by["body"]["locked"] and by["root"]["locked"])
+        self.assertIn("provisional", by["head"]["lock_reason"])
+        self.assertIn("yes: intended hitbox part 'head'", md.split("## 3. Bone glossary")[1].split("## 4.")[0])
+        # the checker on a delivery: a key on a provisional locked bone WARNs under the ruled policy and the summary counts it;
+        # renaming one is refused by name (the previous test); the lock mode is the standing WARN mode
+        out = self.tmp / "out_prov"
+        ap.build_package(self.repo, out, ["boss"], with_roundtrip=False)
+        manifest = out / "entities/boss/spec.manifest.json"
+        keyed = {"format_version": "1.8.0", "animations": {
+            "idle": {"loop": True, "animation_length": 1.0, "bones": {"tail": {"rotation": {"0.0": [0, 0, 0]}}}},
+            "walk": {"loop": True, "animation_length": 1.0, "bones": {"body": {"rotation": {"0.0": [0, 0, 0]}}}}}}
+        findings, passed = ap.check_folder(self._returned(keyed, anim_name="boss.animation.json"), manifest)
+        self.assertTrue(passed, findings)
+        self.assertTrue(self._has(findings, "WARN", "clip 'idle' keys 1 locked bone(s): tail (they carry or parent a hitbox part; the part follows the bone in-game — allowed, keep it deliberate)"), findings)
+        self.assertTrue(self._has(findings, "WARN", "locked bones: 2 of 4 keyed across 2 clip(s) [lock_mode warn; warn-keyed, refuse-structural] — " + ap.LOCK_POLICY), findings)
+        findings, passed = ap.check_folder(self._returned(keyed, anim_name="boss.animation.json"), manifest, lock_mode_override="reject")
+        self.assertFalse(passed)  # the reject mode stays available, as for a profile's locks
+        # no design row (the seed carries no list): the Queen's profile is the template, nothing is locked
+        saved = boss.seed
+        try:
+            boss.seed = {k: v for k, v in saved.items() if k != "locked_bones_provisional"}
+            md2, m2 = ap.spec_document(boss, self.repo, self.catalog, inv)
+            s7b = md2.split("## 7. Hitbox bones that must keep their names")[1].split("## 8. Textures")[0]
+            self.assertIn("No MultiHitboxLib profile yet, and no intended locked bones pre-declared (the design's section 6 has no row for this rig): "
+                          "the Queen's profile (`the_queen`) is the template for the profile when it is written", s7b)
+            self.assertEqual((m2["locked_bones"], m2["locked_bones_source"], m2["locked_bones_provisional"]), ([], "none", []))
+        finally:
+            boss.seed = saved
+        # a Tier-2 species without a profile keeps the plain sentence; the native boss's profile section is untouched
+        critter = self.repo.get("critter")
+        md3, m3 = ap.spec_document(critter, self.repo, self.catalog, ap.build_trigger_inventory(critter, self.repo))
+        self.assertIn("No MultiHitboxLib profile: no locked bones. Every bone name is still immutable", md3)
+        self.assertEqual(m3["locked_bones_source"], "none")
+        nat = self.repo.get("native")
+        _, mn = ap.spec_document(nat, self.repo, self.catalog, ap.build_trigger_inventory(nat, self.repo))
+        self.assertEqual((mn["locked_bones_source"], mn["locked_bones"]), ("profile", ["root", "body", "head"]))
+
+    def test_readme_full_table_bosses_first_with_the_deliverable_count_and_the_dry_run_counts(self):
+        """Item 29 (8): a run over every species with a rig lists them all in the priority table, bosses first (Tier 1 - the
+        Queen's 'done' row among them - then Tier 2, then Tier 3), a `rig in-game` column saying which are not yet, and closes
+        with the deliverable count per tier, naming every artist-tier species with no rig to package (no reference entry; the
+        converter's refusal) - never dropping one silently; the dry-run summary states registries and rigs per tier (a shared
+        rig counted once), folders and files. A partial run keeps the one line that more folders follow."""
+        out = self.tmp / "out_readme_full"
+        summary = ap.build_package(self.repo, out, with_roundtrip=False)
+        readme = (out / "README_FIRST.md").read_text(encoding="utf-8")
+        table = readme.split("## Priority order and effort")[1]
+        rows = [line for line in table.splitlines() if line.startswith("| ") and not line.startswith("| folder")]
+        self.assertEqual([r.split("|")[1].strip() for r in rows], ["boss", "native", "critter", "fixture"])  # tier, then registry
+        self.assertIn("| boss | Test Boss | Tier 1 (boss) | 4 | not yet |", table)
+        self.assertIn("| native | Native Boss | Tier 1 (boss; the design's 'done' row) | 4 | yes |", table)
+        self.assertIn("| fixture | Fixture | Tier 2 | 4 | yes |", table)
+        self.assertIn("| critter | Critter | Tier 2 | 2 | not yet |", table)
+        self.assertIn("A folder whose rig is marked not yet in-game is packaged from the reference leg's proven geometry (its sheet says so under the title): "
+                      "the bone names are final, and the rig lands through the seam in a later slice.", table)
+        self.assertIn("This package carries every artist-tier species with a rig to package (2 Tier 1, 2 Tier 2) and the 0 Tier-3 props; rigs marked "
+                      "not-yet-in-game land through the seam in later slices. Not packaged yet — 2 artist-tier species without a rig to package: "
+                      "`orphan` (no entry whose class is OrphanModel in reference_model_proofs.json — no reference-leg geo can exist for it until the "
+                      "reference leg covers the model); `refused` (the converter refused reference_refused (ValueError: reference_refused capture bind "
+                      "draws [...], which are not cube-bearing geo bones (a part drawn more than once without render_instances, or a part the rig lacks))).", table)
+        self.assertNotIn("More folders follow", table)
+        unpackaged = self.warnings_with("ARTIST_TIER_UNPACKAGED")
+        self.assertTrue(unpackaged and "orphan: no entry whose class is OrphanModel" in unpackaged[0][2] and "refused: the converter refused reference_refused" in unpackaged[0][2], unpackaged)
+        c = summary["counts"]
+        self.assertEqual((c["folders"], c["package_wide_files"]), (4, 6))
+        self.assertEqual(c["per_tier"]["tier_1"], {"registries": 2, "rigs": 2, "not_in_game_registries": 1, "not_in_game_rigs": 1})
+        self.assertEqual(c["per_tier"]["tier_2"], {"registries": 2, "rigs": 2, "not_in_game_registries": 1, "not_in_game_rigs": 1})
+        self.assertEqual(c["per_tier"]["tier_3"], {"registries": 0, "rigs": 0, "not_in_game_registries": 0, "not_in_game_rigs": 0})
+        self.assertEqual(c["rig_sources"], {ap.RIG_SOURCE_SHIPPED: 2, ap.RIG_SOURCE_REFERENCE: 2})
+        self.assertEqual(c["seed_missing"], ["critter"])
+        self.assertEqual([e["registry"] for e in c["artist_tier_not_packaged"]], ["orphan", "refused"])
+        n_files = sum(1 for p in out.rglob("*") if p.is_file())
+        self.assertEqual(c["files"], n_files)
+        self.assertEqual(c["entity_files"], n_files - 6)
+        md = (out / "dryrun_summary.md").read_text(encoding="utf-8")
+        self.assertIn("- Tier 1: 2 registries over 2 rigs (a shared rig counted once); not yet in-game: 1 registries over 1 rigs.", md)
+        self.assertIn(f"- Folders: 4 (one per registry); files: {n_files} ({n_files - 6} in the entity folders + the 6 package-wide files).", md)
+        self.assertIn("- Packaged without a seed (the SEED_MISSING fallback: the display name from the registry, empty authored sections): 1 — critter.", md)
+        self.assertIn("- Artist-tier species with no rig to package: 2 — orphan (", md)
+        self.assertIn("| boss | Tier 1 (boss) | reference leg (not yet in-game) |", md)
+        self.assertEqual(json.loads((out / "dryrun_summary.json").read_text(encoding="utf-8"))["counts"]["folders"], 4)
+        # a partial run (the pilot's mechanism) keeps the one line that more folders follow
+        ap.build_package(self.repo, self.tmp / "out_partial", ["fixture"], with_roundtrip=False)
+        partial = (self.tmp / "out_partial/README_FIRST.md").read_text(encoding="utf-8")
+        self.assertIn("More folders follow as creatures land through the seam; this package carries 1.", partial)
+        self.assertNotIn("This package carries every artist-tier species", partial)
+
     def test_inventory_rows(self):
         header, rows = ap.inventory_rows(self.repo, self.catalog)
         by = {r[0]: dict(zip(header, r)) for r in rows}
-        self.assertEqual(len(rows), 8)
+        self.assertEqual(len(rows), 12)
+        # the full folder (item 29 (5)): a species packaged from the reference leg's geo has its rig columns filled and says it
+        # is not in-game; a species with no rig to package says why in its status note and fills nothing
+        self.assertEqual(by["boss"]["status"], "classic only")
+        self.assertEqual((by["boss"]["rig_source"], by["boss"]["in_game"], by["boss"]["geo_file"], by["boss"]["spec_file"], by["boss"]["bones"]),
+                         (ap.RIG_SOURCE_REFERENCE, "no", "reference_boss.geo.json", "SPEC.md", 4))
+        self.assertEqual(by["boss"]["locked_bones"], 4)  # head, tail and their ancestors, provisional (item 29 (7))
+        self.assertEqual(by["boss"]["harness_proof"], "reference_model_proofs.json")
+        self.assertEqual((by["fixture"]["rig_source"], by["fixture"]["in_game"]), (ap.RIG_SOURCE_SHIPPED, "yes"))
+        self.assertEqual((by["orphan"]["rig_source"], by["orphan"]["in_game"], by["orphan"]["bones"], by["orphan"]["spec_file"]), (ap.RIG_SOURCE_NONE, "", "", ""))
+        self.assertIn("no entry whose class is OrphanModel in reference_model_proofs.json", by["orphan"]["status_note"])
+        self.assertIn("the converter refused reference_refused (ValueError: reference_refused capture bind draws [...], which are not cube-bearing geo bones", by["refused"]["status_note"])
+        self.assertEqual((by["other"]["rig_source"], by["other"]["in_game"]), (ap.RIG_SOURCE_NONE, ""))  # Tier 3 without a shipped geo: not packaged
         self.assertEqual(by["fixture"]["status"], "landed candidate")
         self.assertEqual(by["fixture"]["bones"], 4)
         self.assertEqual(by["fixture"]["locked_bones"], 3)
