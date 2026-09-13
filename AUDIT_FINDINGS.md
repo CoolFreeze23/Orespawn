@@ -10350,6 +10350,20 @@ two coplanar faces interpolate depth along OPPOSITE diagonals on the two sides a
   is what the GPU does. No canonical diagonal, no wider window. The line stays OPEN: a reachable pose that flips on a
   future rig comes back as a finding.
 
+### TEST-009 — The GiantRobot's reference entry converts to no rig: `ModelGiantRobot` replays shared leg and arm parts at two transforms and `reference_giantrobot` carries no `render_instances` form, so `giant_robot` and `jeffery` (Tier 1) have no folder in the artist package (REPORT, 2026-09-13; found by the full folder's tooling)
+
+- **Status:** OPEN — the owner's call between two routes (the full folder's tooling lane, 2026-09-13; tooling, not a parity finding).
+- **Where:** `tools/layer_definition_to_geo.py` refuses a model whose part is drawn more than once unless the manifest entry declares the Slice 4c `render_instances` form (the fan rigs' precedent: PurplePower and Rotator declare it in the s4 manifest); `tools/reference_model_proofs.json` `reference_giantrobot` declares none. The port's `ModelGiantRobot` replays `thigh`, `shin`, `foot1..3`, `arm1..3` and `knuckles` at two transforms (`__i0` / `__i1` — the left and the right side of one part).
+- **Measured:** `gradle referenceConvertModels` (`--continue-on-refusal`) converts 106 of 109 reference entries; the three refusals are `reference_giantrobot`, `reference_purplepower` and `reference_rotator` — the last two ship their s4 geos already, so only the GiantRobot pair is without a rig. The package's README, `warnings.txt` (`ARTIST_TIER_UNPACKAGED`) and the dry-run counts name `giant_robot` and `jeffery`.
+- **Resolution:** OPEN — either (a) the reference entry gains the `render_instances` declaration the fan rigs use (a manifest edit and a converter run; the reference-geometry leg's comparison is unaffected, it compares parts, not instances) so the pair packages from the converter's output, or (b) the pair waits for the Tier-1 slice, where the design's section 6 row already says the rig must split its replayed thigh / shin / arm parts into distinct left and right bones (a converter change is then unnecessary). Until ruled, the four-registry gap is stated in the package.
+
+### TEST-010 — `boyfriend` and `girlfriend` have no reference entry: `ModelBoyfriend` / `ModelGirlfriend` are HumanoidModel subclasses that 1.7.10 drew with vanilla ModelBiped, so the reference leg has no 1.7.10 source to pair them with and the artist package has no rig for them (REPORT, 2026-09-13; found by the full folder's tooling)
+
+- **Status:** OPEN — the owner's call (the full folder's tooling lane, 2026-09-13; tooling, not a parity finding).
+- **Where:** `tools/reference_model_proofs.json` pairs each port model with a 1.7.10 `Model*.java` source (`reference_source`); the Boyfriend and the Girlfriend have none — 1.7.10's `ClientProxyOreSpawn` registered them on vanilla `ModelBiped` (the mirror reconciliation of 2026-09-05 recorded their arm / leg mirrors as vanilla's, not BUG-041's). The full folder's generator takes an unlanded rig from the reference leg's converter output, so a species without an entry has no rig to package.
+- **Measured:** the dry run names both under `ARTIST_TIER_UNPACKAGED` and in the README's closing line; the other 70 unseeded registries package (68 from the reference leg; the GiantRobot pair is TEST-009).
+- **Resolution:** OPEN — either (a) a reference entry without a 1.7.10 comparison (geometry only, the form the seven weapon models got in BUG-041 stage 2: `geometry_only`, no `reference_source`, the leg reporting the entry as unpaired) so the converter's output packages, or (b) the pair waits for its own slice. Until ruled, the gap is stated in the package.
+
 ### TEST-003 — Config-flipping gametests in the concurrent default batch
 
 - **Impact:** MEDIUM (suite reliability) — boss005/boss012 flip a global
