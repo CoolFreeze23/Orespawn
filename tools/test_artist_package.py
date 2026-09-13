@@ -148,7 +148,7 @@ FIXTURE_SEED = {
 
 NATIVE_SEED = {
     "registry": "native", "display_name": "Native Boss", "status": "test seed", "locomotion": "walker",
-    "artist_scope": "pilot boss candidate (open question 16)", "character_sheet": "A native boss.",
+    "artist_scope": "pilot boss (ruled 2026-09-06, Q16 (a)): idle and one attack", "character_sheet": "A native boss.",
     "labels": {"root": "root", "body": "body", "head": "head", "tail": "tail"}, "groups": [], "behaviour": [],
     "clips": [{"name": "idle", "verdict": "improve", "note": "the hover", "contract": "idle"},
               {"name": "stance", "verdict": "improve", "note": "the awake stance", "contract": "aggro_idle"},
@@ -536,8 +536,9 @@ def build_fixture_repo(root: Path) -> None:
         "clips": [{"registry": "fixture", "model_id": "model_fixture", "manifest": "t2_model_proofs.json", "model_class": "FixtureModel",
                    "hook": "FixtureGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs)",
                    "geo": "src/main/resources/assets/orespawn/geo/entity/fixture.geo.json",
-                   "file": clip_path.name, "sha256": ap.sha256_file(clip_path), "rule": "natural_period",
-                   "rule_note": "one channel at 3.7 rad/tick: one natural period 2 pi / 3.7 = 1.698 ticks",
+                   "file": clip_path.name, "sha256": ap.sha256_file(clip_path), "rule": "period_multiple",
+                   "rule_note": "one channel at 3.7 rad/tick: one natural period 2 pi / 3.7 = 1.698 ticks; closes at k = 1 (1.698132 ticks): every bone returns within 0 degrees of its start at k x T",
+                   "period_ticks": 1.6981317008, "period_multiple_k": 1, "closure_delta_degrees": 0.0,
                    "span_ticks": 1.6981317008, "animation_length_seconds": 0.0849065850, "keys_per_bone": 3, "bones": 4,
                    "moving_bones": ["tail"], "position_bones": ["arm"], "hidden_bones_at_rest": [],
                    "seam_delta_degrees": 0.0, "seam_delta_position_units": 0.0,
@@ -821,7 +822,10 @@ class FixtureCase(unittest.TestCase):
         self.assertIn("### 4.1 Tempo table", md)
         self.assertIn("1.698 ticks", md)  # 2 pi / 3.7
         self.assertIn("VISIBLE: 30 ticks (1.5 s)", md)  # the rectified pump: natural 60 ticks, visible 30
-        self.assertIn("PROVISIONAL", md)
+        # every marker resolved to the 2026-09-06 rulings (owner 2026-09-13, third set, item 28 (3)): the sheet cites them
+        self.assertNotIn("PROVISIONAL", md)
+        self.assertNotIn("open question", md.lower())
+        self.assertIn("ruled 2026-09-06, Q14 (a)", md)
         self.assertIn("`hand`", md)
         self.assertIn(ap.LOCK_POLICY, md)  # §3 header, §5, §7 and §11 carry the one policy sentence (ruled 2026-09-06)
         self.assertNotIn("PROVISIONAL", ap.LOCK_POLICY)
@@ -913,7 +917,10 @@ class FixtureCase(unittest.TestCase):
             self.assertNotIn(n, rows2)
         self.assertEqual(rows2["walk"]["group"], "wings")
         self.assertTrue(rows2["walk"]["required"] and rows2["idle"]["required"])
-        self.assertFalse(rows2["idle"]["provisional"])
+        self.assertNotIn("provisional", rows2["idle"])  # the per-row marker flag is gone with the markers (item 28 (3))
+        # README rule 5, the phase-locked kind (ruled 2026-09-06, Q14 (a)): every loop row is authored at 1.0 s
+        self.assertEqual(rows2["idle"]["length_seconds"], 1.0)
+        self.assertEqual(rows2["walk"]["length_rule"], "near:1.0")
         self.assertIn("the primary group `wings`'s", rows2["walk"]["note"])
         self.assertIn("a label, not a semantic", rows2["walk"]["note"])
         self.assertTrue(rows2["idle"]["bones"].startswith("any of the 4 bones — the primary group (unscaled; the bare clip is its transcription, a label under the naming rule): tail"))
@@ -985,12 +992,15 @@ class FixtureCase(unittest.TestCase):
         self.assertEqual(rows["stance"]["layer"], "native `Movement` controller (state)")
         self.assertEqual(rows["stomp"]["layer"], "native `Actions` controller (triggered)")
         # a verdict that invites improving a clip which keys locked bones repeats the consequence (the one policy sentence); the
-        # PROVISIONAL marker on a native row is its contract mapping and precedes the lock note, so it never reads as the policy's
+        # contract-mapping sentence on a native row (the seed's mapping, ruled 2026-09-06, Q16 (a)) precedes the lock note, so it
+        # never reads as the policy's; no marker is left on the row (owner 2026-09-13, third set, item 28 (3))
         self.assertEqual(rows["stomp"]["keyed_locked"], ["head"])
         self.assertIn("keys 1 locked bone(s) (head): " + ap.LOCK_POLICY, rows["stomp"]["note"])
-        self.assertIn("PROVISIONAL (its contract mapping: open question 16)", rows["stomp"]["note"])
-        self.assertLess(rows["stomp"]["note"].index("PROVISIONAL"), rows["stomp"]["note"].index("keys 1 locked bone(s)"))
-        self.assertFalse(rows["stomp"]["note"].rstrip().endswith("PROVISIONAL"))
+        self.assertIn("mapped to the contract's `extra` by the seed (ruled 2026-09-06, Q16 (a): the pilot boss keeps its native clip set)", rows["stomp"]["note"])
+        self.assertLess(rows["stomp"]["note"].index("Q16 (a)"), rows["stomp"]["note"].index("keys 1 locked bone(s)"))
+        self.assertNotIn("PROVISIONAL", rows["stomp"]["note"])
+        self.assertNotIn("open question", rows["stomp"]["note"])
+        self.assertNotIn("provisional", rows["stomp"])
         self.assertEqual(rows["idle"]["keyed_locked"], [])
         self.assertIn("Tier 1 (boss; the design's 'done' row)", md)
         self.assertIn("`stance` keys 1", md)
@@ -1001,7 +1011,9 @@ class FixtureCase(unittest.TestCase):
         self.assertIn("- a heavier `stance` loop\n", md)
         self.assertIn("a wing-beat `fly` loop distinct from the hover — NOT accepted by `check` today: `fly` is not in this creature's clip set", md)
         self.assertIn("### 5.2 Not accepted today", md)
-        self.assertIn("a `hurt` flinch on the struck head — PROVISIONAL", md)
+        self.assertIn("- a `hurt` flinch on the struck head\n", md)  # the §5.2 bullets carry no marker (item 28 (3)); the heading says why
+        self.assertNotIn("PROVISIONAL", md)
+        self.assertNotIn("open question", md.lower())
         self.assertTrue(any(w[1] == "WISHLIST_UNACCEPTED" and w[0] == "native" for w in self.repo.warnings.items))
         self.assertTrue(any(w[1] == "LOCKED_BONES_KEYED" and w[0] == "native" and "1 of the 3" in w[2] for w in self.repo.warnings.items))
         self.assertIn("hurts EACH victim in its box 2x per roll", md)
@@ -1159,7 +1171,7 @@ class FixtureCase(unittest.TestCase):
         # the reference-only clip (owner 2026-09-13, second set, item 27 (3)): README rule 7 says so beside the `_preview` sentence,
         # the folder listing names the file, and the REJECT is in the checker's own rule table
         self.assertIn(ap.README_REFERENCE_SENTENCE, readme)
-        self.assertIn("no `_preview` files in a delivery (a Blockbench-only aid — the checker warns; PROVISIONAL, open question 15). "
+        self.assertIn("no `_preview` files in a delivery (a Blockbench-only aid, never in the jar — ruled 2026-09-06, Q15 (a); the checker warns). "
                       + ap.README_REFERENCE_SENTENCE, readme)
         self.assertIn("<registry_name>_reference.animation.json", readme)
         self.assertTrue(any("`*_reference.animation.json` returned" in r for r in ap.CHECK_REJECTS))
@@ -1228,10 +1240,11 @@ class FixtureCase(unittest.TestCase):
         self.assertTrue(self._has(findings, "WARN", "[lock_mode warn; warn-keyed, refuse-structural] — " + ap.LOCK_POLICY), findings)
         self.assertFalse(any("PROVISIONAL" in msg for _, msg in findings), findings)
 
-        # a _preview file: a WARN marked PROVISIONAL (open question 15), no longer a REJECT
+        # a _preview file: a WARN citing the ruling (2026-09-06, Q15 (a): Blockbench-only, never in the jar), no longer a REJECT
         findings, passed = ap.check_folder(self._returned(good, extra_files={"fixture_preview.animation.json": "{}"}), manifest)
         self.assertTrue(passed, findings)
-        self.assertTrue(self._has(findings, "WARN", "_preview file is a Blockbench-only aid") and any("open question 15" in m for _, m in findings), findings)
+        self.assertTrue(self._has(findings, "WARN", "_preview file is a Blockbench-only aid, never in the jar (ruled 2026-09-06, Q15 (a)); leave it out of the delivery"), findings)
+        self.assertFalse(any("PROVISIONAL" in m or "open question" in m for _, m in findings), findings)
         self.assertFalse(self._has(findings, "REJECT", "animation files returned"))
 
         findings, passed = ap.check_folder(self._returned(good, extra_files={"fixture.geo.json": json.dumps({"minecraft:geometry": [{"bones": [{"name": "root"}]}]})}), manifest)
@@ -1257,7 +1270,9 @@ class FixtureCase(unittest.TestCase):
         self.assertEqual(rc["sha256"], ap.sha256_file(src))
         self.assertEqual(rc["clip"], "reference")
         self.assertTrue(rc["reference_only"])
-        self.assertEqual(rc["rule"], "natural_period")
+        self.assertEqual(rc["rule"], "period_multiple")  # the span rule (owner 2026-09-13, third set, item 28 (5)): a period multiple
+        self.assertEqual(rc["period_multiple_k"], 1)
+        self.assertAlmostEqual(rc["period_ticks"], 1.6981317008)
         self.assertAlmostEqual(rc["span_ticks"], 1.6981317008)
         self.assertEqual(rc["keys_per_bone"], 3)
         self.assertIn("limbSwingAmount 1.0", rc["sampled_inputs"])
@@ -1267,7 +1282,7 @@ class FixtureCase(unittest.TestCase):
         self.assertIn("### 4.3 Reference clip (reference-only)", spec)
         self.assertIn("`fixture_reference.animation.json` (beside this sheet; sha256 `" + rc["sha256"] + "`) is NOT a clip to edit, improve, return or ship.", spec)
         self.assertIn("full walking speed (limbSwingAmount 1, the walk position and the age advancing one tick per key), not attacking, looking straight ahead", spec)
-        self.assertIn("one natural period of the motion — 1.698 ticks (0.085 s), the last key closing the loop at the period", spec)
+        self.assertIn("one period of its slowest rhythm — 1.698 ticks (0.085 s): every moving bone is back within 5 degrees of its start there, so the last key closes the loop", spec)
         self.assertIn("20 keys per second (3 keys per bone), linear keys", spec)
         self.assertIn("`check` REJECTS a returned `*_reference.animation.json` by name, and the game's jar never carries one", spec)
         self.assertIn("bones the code also MOVES (position keys): `arm`", spec)
@@ -1694,6 +1709,145 @@ class FixtureCase(unittest.TestCase):
         findings, passed = ap.check_folder(self._returned(NATIVE_ANIM, anim_name="native.animation.json"), manifest, lock_mode_override="reject")
         self.assertFalse(passed)
         self.assertTrue(self._has(findings, "REJECT", "the reject mode, kept for the day the server-side hitbox evaluator lands"), findings)
+
+    # --- the third-set tooling commit (owner 2026-09-13, third set, item 28 (2)-(6)) ---------------------------------
+
+    def test_rulings_resolved_no_markers_in_readme_and_sheets(self):
+        """Item 28 (3): a generated README and every generated SPEC / manifest carry neither `PROVISIONAL` nor `open question`;
+        each ruled point cites its 2026-09-06 ruling; the lock reject mode is named as THE one open item (README rule 6 and
+        SPEC §7 carry LOCK_REJECT_MODE, which says so)."""
+        out = self.tmp / "out_resolved"
+        ap.build_package(self.repo, out, ["fixture", "native"], with_roundtrip=False)
+        texts = {name: (out / name).read_text(encoding="utf-8")
+                 for name in ("README_FIRST.md", "entities/fixture/SPEC.md", "entities/native/SPEC.md", "INVENTORY.csv")}
+        texts["fixture manifest"] = json.dumps(json.loads((out / "entities/fixture/spec.manifest.json").read_text(encoding="utf-8")))
+        texts["native manifest"] = json.dumps(json.loads((out / "entities/native/spec.manifest.json").read_text(encoding="utf-8")))
+        for name, text in texts.items():
+            self.assertNotIn("PROVISIONAL", text, name)
+            self.assertNotIn("open question", text.lower(), name)
+        self.assertIn("the one open item", ap.LOCK_REJECT_MODE)
+        self.assertNotIn("PROVISIONAL", ap.LOCK_REJECT_MODE)
+        self.assertIn(ap.LOCK_REJECT_MODE, texts["README_FIRST.md"])
+        self.assertIn(ap.LOCK_REJECT_MODE, texts["entities/fixture/SPEC.md"].split("## 7. Hitbox bones")[1].split("## 8. Textures")[0])
+        self.assertNotIn("## PROVISIONAL items", texts["README_FIRST.md"])
+        # the rulings are cited where they apply: the sheets' trigger rows, clip rows and §4.1; the README's rules 5 and 7
+        spec = texts["entities/fixture/SPEC.md"]
+        for cite in ("ruled 2026-09-06, Q3 (a)", "ruled 2026-09-06, Q4 (a)", "ruled 2026-09-06, Q5 (a)", "ruled 2026-09-06, Q6 (a)",
+                     "ruled 2026-09-06, Q11 (a)", "ruled 2026-09-06, Q14 (a)", "ruled 2026-09-06, Q15 (a)"):
+            self.assertIn(cite, spec, cite)
+        self.assertIn("ruled 2026-09-06, Q16 (a)", texts["entities/native/SPEC.md"])
+        # Q12 (calm_idle until the synched byte) is cited on the rows of a creature WITHOUT a held flag: the drive rows and the
+        # calm_idle clip row under a no-flag inventory (the fixture itself holds a STATE flag, so its sheet has a real pair)
+        fx_species = self.repo.get("fixture")
+        inv = ap.build_trigger_inventory(fx_species, self.repo)
+        no_flag = dict(inv, attacking={"present": False, "verdict": "NONE", "sites": [], "reason": "", "facts": {}})
+        drives = {d["clip"]: d for d in ap.contract_drives(fx_species, no_flag)}
+        self.assertIn("ruled 2026-09-06, Q12 (a): aggro_idle waits for that byte", drives["aggro_idle / calm_idle"]["verdict"])
+        self.assertIn("ruled 2026-09-06, Q11 (a)", drives["attack"]["verdict"])
+        self.assertIn("ruled 2026-09-06, Q3 (a)", drives["death"]["verdict"])
+        self.assertIn("ruled 2026-09-06, Q5 (a)", drives["idle_alt_N"]["verdict"])
+        covered = {c["name"]: c for c in ap.clip_rows(fx_species, no_flag, fx_species.animation, ap.frequency_groups(fx_species))}
+        self.assertIn("ruled 2026-09-06, Q12 (a)", covered["calm_idle"]["trigger"])
+        for d in drives.values():
+            self.assertNotIn("PROVISIONAL", d["verdict"])
+            self.assertNotIn("open question", d["verdict"])
+        self.assertIn("ruled 2026-09-06, Q9 (a) and Q10", spec)  # the density statement (Tier 2)
+        self.assertIn("a mechanical reading; the owner confirms it against the sites", spec)  # the classifier's caveat, in plain words
+        self.assertIn("Q14 (a)", texts["README_FIRST.md"])
+        self.assertIn("Q15 (a)", texts["README_FIRST.md"])
+        # the manifest's per-clip marker flag is gone; the verdict travels instead (the README's priority table reads it)
+        fx = json.loads(texts["fixture manifest"])
+        self.assertTrue(all("provisional" not in c for c in fx["clips"]))
+        self.assertEqual({c["name"]: c["verdict"] for c in fx["clips"]}["walk"], "improve")
+
+    def test_readme_rule_5_split_and_priority_table_lists_the_packaged_folders_only(self):
+        """Item 28 (3): README rule 5 carries both controller kinds; item 28 (4): the priority table lists the folders of THIS
+        package only, with the follow-on line, and a native creature's row is its pilot scope (the improve / author clips to
+        deliver, the `leave` clips later, returned as shipped) with the effort re-estimated from the verdicts."""
+        manifests = {}
+        for reg in ("fixture", "native"):
+            s = self.repo.get(reg)
+            inv = ap.build_trigger_inventory(s, self.repo)
+            _, manifests[reg] = ap.spec_document(s, self.repo, self.catalog, inv)
+        readme = ap.readme_document(self.repo, manifests, packaged=["fixture"])
+        rule5 = [line for line in readme.splitlines() if line.startswith("5. **Loop length by controller kind.**")]
+        self.assertEqual(len(rule5), 1, readme)
+        self.assertIn("A phase-locked creature (every sheet but the Queen's today): author every loop at 1.0 s", rule5[0])
+        self.assertIn("the sheet's tempo table gives the rate (contract §9; ruled 2026-09-06, Q14 (a))", rule5[0])
+        self.assertIn("A native creature (the Queen): keep each clip's shipped length — her controllers play the clip as authored", rule5[0])
+        self.assertNotIn("Keep each clip's length near the period the sheet states", readme)
+        # the packaged set only: the fixture's row, not the native boss's, and the follow-on line
+        table = readme.split("## Priority order and effort")[1]
+        self.assertIn("| fixture |", table)
+        self.assertNotIn("| native |", table)
+        self.assertIn("More folders follow as creatures land through the seam; this package carries 1.", table)
+        # the native creature packaged alone: its row is the pilot scope, the effort re-estimated from the verdicts
+        # (NATIVE_SEED: idle / stance / stomp improve, death leave -> 8 h + 0.15 x 4 bones + 1.5 x 3 = 13.1 h)
+        readme_native = ap.readme_document(self.repo, manifests, packaged=["native"])
+        table_native = readme_native.split("## Priority order and effort")[1]
+        self.assertIn("| native |", table_native)
+        self.assertNotIn("| fixture |", table_native)
+        self.assertIn("`idle`, `stance`, `stomp` — its other 1 clip: later, returned as shipped | 13.1 h |", table_native)
+        self.assertEqual(manifests["native"]["effort_hours"], 13.1)
+        self.assertIn("this package carries 1.", table_native)
+        # no packaged set given: the manifests' keys (the `readme` subcommand's whole landed set)
+        both = ap.readme_document(self.repo, manifests).split("## Priority order and effort")[1]
+        self.assertIn("| fixture |", both)
+        self.assertIn("| native |", both)
+        self.assertIn("this package carries 2.", both)
+
+    def test_check_length_warn_follows_the_controller_kind(self):
+        """Item 28 (3): the checker's length WARN follows rule 5's split - a phase-locked creature's loops against 1.0 s, a native
+        creature's clips against their shipped length, a one-shot against its row - and carries no marker."""
+        manifest = self._package_fixture()
+        good = self.GOOD
+        stretched = json.loads(json.dumps(good))
+        stretched["animations"]["idle"]["animation_length"] = 3.0  # a loop far from 1.0 s on the phase-locked fixture
+        stretched["animations"]["attack"]["animation_length"] = 2.0  # a one-shot far from its row's 0.5 s
+        findings, passed = ap.check_folder(self._returned(stretched), manifest)
+        self.assertTrue(passed, findings)
+        self.assertTrue(self._has(findings, "WARN", "clip 'idle' length 3 s is far from the stated 1 s (rule 5, a phase-locked creature: author every loop at 1.0 s (ruled 2026-09-06, Q14 (a))"), findings)
+        self.assertTrue(self._has(findings, "WARN", "clip 'attack' length 2 s is far from the stated 0.5 s (the length the sheet's row states for this one-shot)"), findings)
+        self.assertFalse(any("PROVISIONAL" in m or "open question" in m for _, m in findings), findings)
+        out = self.tmp / "out_native_length"
+        ap.build_package(self.repo, out, ["native"], with_roundtrip=False)
+        native_manifest = out / "entities/native/spec.manifest.json"
+        self.assertEqual(json.loads(native_manifest.read_text(encoding="utf-8"))["controller_kind"], "native")
+        keyed = json.loads(json.dumps(NATIVE_ANIM))
+        keyed["animations"]["idle"]["animation_length"] = 6.0  # the shipped idle is 2.0 s
+        findings, passed = ap.check_folder(self._returned(keyed, anim_name="native.animation.json"), native_manifest)
+        self.assertTrue(passed, findings)
+        self.assertTrue(self._has(findings, "WARN", "clip 'idle' length 6 s is far from the stated 2 s (rule 5, a native creature: keep each clip's shipped length"), findings)
+        self.assertFalse(any("PROVISIONAL" in m or "open question" in m for _, m in findings), findings)
+
+    def test_reference_clip_span_rule_wording(self):
+        """Item 28 (5): SPEC §4.3 says the span rule in words per index rule - a period multiple (k > 1) names the multiple and
+        the 5-degree test; past the cap it states the seam explicitly; the manifest carries the period and k."""
+        fx = self.repo.get("fixture")
+        inv = ap.build_trigger_inventory(fx, self.repo)
+        saved = self.repo.reference_clips
+        row = dict(saved["fixture"])
+        try:
+            self.repo.reference_clips = {"fixture": dict(row, rule="period_multiple", period_multiple_k=4, period_ticks=15.7079632679,
+                                                         span_ticks=62.8318530718, animation_length_seconds=3.1415926536, keys_per_bone=64)}
+            md, m = ap.spec_document(fx, self.repo, self.catalog, inv)
+            self.assertIn("4 periods of its slowest rhythm (15.708 ticks each) — 62.832 ticks (3.142 s): the smallest multiple at which EVERY rhythm "
+                          "returns within 5 degrees of its start (the rule caps this search at 6 s), so the last key closes the loop", md)
+            self.assertEqual(m["reference_clip"]["period_multiple_k"], 4)
+            self.assertAlmostEqual(m["reference_clip"]["period_ticks"], 15.7079632679)
+            self.repo.reference_clips = {"fixture": dict(row, rule="two_seconds_past_cap", period_ticks=571.1986673842, span_ticks=40.0,
+                                                         animation_length_seconds=2.0, keys_per_bone=41, seam_delta_degrees=17.142012628)}
+            row.pop("period_multiple_k", None)
+            md, m = ap.spec_document(fx, self.repo, self.catalog, inv)
+            self.assertIn("two seconds (40 ticks): this motion does not close within 6 s (its slowest rhythm is 571.199 ticks, and no multiple of it under 6 s "
+                          "brings every rhythm back within 5 degrees) — a two-second window, not a loop; the closing key differs from the first by 17.142 degrees", md)
+            self.assertEqual(m["reference_clip"]["rule"], "two_seconds_past_cap")
+            self.repo.reference_clips = {"fixture": dict(row, rule="two_seconds_no_period", span_ticks=40.0, animation_length_seconds=2.0,
+                                                         keys_per_bone=41, seam_delta_degrees=174.1531103624)}
+            md, _ = ap.spec_document(fx, self.repo, self.catalog, inv)
+            self.assertIn("two seconds (40 ticks): this motion has no natural period — a two-second window, not a loop; the closing key differs from the first by 174.1531 degrees", md)
+        finally:
+            self.repo.reference_clips = saved
 
     def test_package_writes_repository_artist_handoff(self):
         # owner 2026-09-13, second set, item 10: since the mirror drop landed the repository's artist_handoff/ is an

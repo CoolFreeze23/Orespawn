@@ -1,5 +1,5 @@
 {
-  "generated_by": "tools/artist_package.py 0.2.6 (the pilot package, 2026-09-13: artist_handoff/ writable after the mirror drop; the Queen's pilot scope - idle and attack - marked in her seed and sheet)",
+  "generated_by": "tools/artist_package.py 0.2.7 (the third-set tooling commit, 2026-09-13: the pilot's second clip is bite; every contract marker resolved to the 2026-09-06 rulings, README rule 5 split by controller kind; the priority table lists the packaged folders only; the reference clip's span rule - a period multiple closing within 5 degrees, capped at 6 s)",
   "registry": "beaver",
   "display_name": "Beaver",
   "tier": 2,
@@ -630,9 +630,9 @@
       "role": "contract",
       "code_triggered": false,
       "required": true,
-      "length_rule": "free (P6: the declared length is the shape's own timeline; convention open question 14)",
-      "length_seconds": null,
-      "provisional": false
+      "length_rule": "near:1.0",
+      "length_seconds": 1.0,
+      "verdict": "author"
     },
     {
       "name": "idle_teeth",
@@ -640,9 +640,9 @@
       "role": "contract",
       "code_triggered": false,
       "required": false,
-      "length_rule": "free (P6: the declared length is the shape's own timeline; convention open question 14)",
-      "length_seconds": null,
-      "provisional": false
+      "length_rule": "near:1.0",
+      "length_seconds": 1.0,
+      "verdict": "leave"
     },
     {
       "name": "idle_tail",
@@ -650,9 +650,9 @@
       "role": "contract",
       "code_triggered": false,
       "required": false,
-      "length_rule": "free (P6: the declared length is the shape's own timeline; convention open question 14)",
-      "length_seconds": null,
-      "provisional": false
+      "length_rule": "near:1.0",
+      "length_seconds": 1.0,
+      "verdict": "leave"
     },
     {
       "name": "walk",
@@ -660,9 +660,9 @@
       "role": "contract",
       "code_triggered": false,
       "required": true,
-      "length_rule": "free (P6: the declared length is the shape's own timeline; convention open question 14)",
-      "length_seconds": null,
-      "provisional": false
+      "length_rule": "near:1.0",
+      "length_seconds": 1.0,
+      "verdict": "improve"
     },
     {
       "name": "walk_teeth",
@@ -670,9 +670,9 @@
       "role": "contract",
       "code_triggered": false,
       "required": false,
-      "length_rule": "free (P6: the declared length is the shape's own timeline; convention open question 14)",
-      "length_seconds": null,
-      "provisional": false
+      "length_rule": "near:1.0",
+      "length_seconds": 1.0,
+      "verdict": "leave"
     },
     {
       "name": "walk_tail",
@@ -680,9 +680,9 @@
       "role": "contract",
       "code_triggered": false,
       "required": false,
-      "length_rule": "free (P6: the declared length is the shape's own timeline; convention open question 14)",
-      "length_seconds": null,
-      "provisional": false
+      "length_rule": "near:1.0",
+      "length_seconds": 1.0,
+      "verdict": "improve"
     },
     {
       "name": "swim",
@@ -690,9 +690,9 @@
       "role": "contract",
       "code_triggered": false,
       "required": false,
-      "length_rule": "free (P6: the declared length is the shape's own timeline; convention open question 14)",
-      "length_seconds": null,
-      "provisional": true
+      "length_rule": "near:1.0",
+      "length_seconds": 1.0,
+      "verdict": "author"
     },
     {
       "name": "calm_idle",
@@ -700,9 +700,9 @@
       "role": "contract",
       "code_triggered": false,
       "required": false,
-      "length_rule": "free (P6: the declared length is the shape's own timeline; convention open question 14)",
-      "length_seconds": null,
-      "provisional": true
+      "length_rule": "near:1.0",
+      "length_seconds": 1.0,
+      "verdict": "covered by idle"
     },
     {
       "name": "hurt",
@@ -712,7 +712,7 @@
       "required": false,
       "length_rule": "near:0.4",
       "length_seconds": 0.4,
-      "provisional": true
+      "verdict": "author"
     },
     {
       "name": "death",
@@ -722,7 +722,7 @@
       "required": false,
       "length_rule": "near:1.5",
       "length_seconds": 1.5,
-      "provisional": true
+      "verdict": "author"
     },
     {
       "name": "chop",
@@ -732,7 +732,7 @@
       "required": false,
       "length_rule": "near:0.6",
       "length_seconds": 0.6,
-      "provisional": true
+      "verdict": "author"
     }
   ],
   "allow_idle_alt": true,
@@ -750,14 +750,16 @@
   "effort_source": "generator: 4 h + 0.2 h/bone x 9 + 1 h/clip x 7 to author or improve (owner adjusts)",
   "reference_clip": {
     "file": "beaver_reference.animation.json",
-    "sha256": "e5e19ebb913b76547a862b35b74ca71cc03953a067eca2d1e7e84ce20d18ad18",
+    "sha256": "ba49c7fac1f0546ec9931c94268560b8d32b5695a3157aafd4c235de2a5d1fa1",
     "clip": "reference",
     "reference_only": true,
-    "rule": "multi_frequency_slowest_group",
-    "rule_note": "the manifest's channels: 3 distinct frequency group(s) [3.7, 2.7, 0.5] rad/tick (omega x wingspeed): the slowest group's period 2 pi / 0.5 = 12.566371 ticks",
-    "span_ticks": 12.5663706144,
-    "animation_length_seconds": 0.6283185307,
-    "keys_per_bone": 14,
+    "rule": "period_multiple",
+    "rule_note": "the manifest's channels: 3 distinct frequency group(s) [3.7, 2.7, 0.5] rad/tick (omega x wingspeed): the slowest group's period 2 pi / 0.5 = 12.566371 ticks; closes at k = 5 (62.831853 ticks): every bone returns within 0 degrees of its start at k x T (the 5-degree test under the 6 s cap; k = 1: 146.528547 deg, k = 2: 55.975531 deg, k = 3: 55.968144 deg, k = 4: 146.533116 deg, k = 5: 0 deg)",
+    "span_ticks": 62.8318530718,
+    "period_ticks": 12.5663706144,
+    "period_multiple_k": 5,
+    "animation_length_seconds": 3.1415926536,
+    "keys_per_bone": 64,
     "sampled_inputs": "limbSwingAmount 1.0; limbSwing = t (advancing 1.0 per tick from 0: vanilla WalkAnimationState.update does speed += (movementSpeed - speed) * multiplier; position += speed, and the classic renderer hands walkAnimation.position(partialTick) as limbSwing and min(1, speed) as limbSwingAmount, so at speed 1 the position advances exactly 1.0 per tick); ageInTicks = t (getBob: tickCount + partialTick, partialTick 0); netHeadYaw 0; headPitch 0 (looking ahead); every entity-state flag at its rest value (attacking 0, ri1 0, rock_type 0, rf1 0: a ProbeSubject built from an empty state); the entity RNG seeded 0 once per clip and evolving across the keys; one pose call per key, 20 keys per second; full health (no shipped hook reads health)",
     "hook": "G1AnimationRuntime.Evaluator.evaluateBeaverCodeDriven (the probe's accepted Beaver path - the G1 legacy-parity exception's GeoModel.setCustomAnimations with ModelBeaver's exact Mth.cos formulas): the shipped danger.orespawn.entity.client.BeaverGeoReplacement hook takes the renderer's AnimationState and has no PoseInputs form to pose registry-free",
     "moving_bones": [
@@ -770,7 +772,7 @@
     ],
     "position_bones": [],
     "hidden_bones_at_rest": [],
-    "seam_delta_degrees": 146.5285468681
+    "seam_delta_degrees": 0.0
   },
   "exact_transcription": true
 }

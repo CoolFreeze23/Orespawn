@@ -110,7 +110,7 @@
     {
       "name": "death",
       "verdict": "author",
-      "note": "PROVISIONAL: the vanilla death flip is open question 3",
+      "note": "ruled 2026-09-06, Q3 (a): the vanilla death flip stays; a creature whose JSON ships a `death` clip gets the clip-replaces-flip mode, designed when the first such clip arrives (the Queen's own death clip the precedent) — a `death` delivered here plays under the flip until then",
       "length_seconds": 1.5
     }
   ],
@@ -126,7 +126,7 @@
       ],
       "length_seconds": 0.6,
       "code_triggered": true,
-      "trigger": "named call site (transport 3): Beaver.customServerAiStep, where the chainsaw sound plays on a chop — needs a one-line trigger call, PROVISIONAL",
+      "trigger": "named call site (transport 3): Beaver.customServerAiStep, where the chainsaw sound plays on a chop — needs a one-line trigger call (the transport per species by the trigger inventory, ruled 2026-09-06, Q11 (a); the call is wired when this clip lands)",
       "note": "gnawing a log: head down, rapid bites"
     }
   ],

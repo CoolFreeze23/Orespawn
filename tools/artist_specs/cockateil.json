@@ -164,7 +164,7 @@
     {
       "name": "death",
       "verdict": "author",
-      "note": "PROVISIONAL: the vanilla death flip is open question 3",
+      "note": "ruled 2026-09-06, Q3 (a): the vanilla death flip stays; a creature whose JSON ships a `death` clip gets the clip-replaces-flip mode, designed when the first such clip arrives (the Queen's own death clip the precedent) — a `death` delivered here plays under the flip until then",
       "length_seconds": 1.0
     }
   ],

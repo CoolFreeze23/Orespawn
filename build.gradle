@@ -375,11 +375,12 @@ tasks.register('t2Parity', Exec) {
 }
 tasks.named('check') { dependsOn tasks.named('t2Parity') }
 
-// The reference-clip sampler (owner 2026-09-13, second set, addendum item 27 (3)): every seam rig with a manifest
-// entry (the g1, s4 and t2 manifests) has its shipped classic hook sampled at fixed inputs into ONE reference-only
-// clip per registry under tools/reference_clips/ (never shipped, never returned: the package checker and the asset
-// audit refuse it); tools/artist_package.py package copies it into each species' folder. Not a check dependency:
-// the clips are the package generator's input, regenerated when a hook or a rig changes.
+// The reference-clip sampler (owner 2026-09-13, second set, addendum item 27 (3); the span rule of the third set,
+// item 28 (5)): every seam rig with a manifest entry (the g1, s4 and t2 manifests) has its shipped classic hook
+// sampled at fixed inputs into ONE reference-only clip per registry under tools/reference_clips/ (never shipped,
+// never returned: the package checker and the asset audit refuse it); tools/artist_package.py package copies it into
+// each species' folder. `referenceClips` is the WRITER (regeneration after a hook, a rig or the rule changes);
+// `referenceClipsVerify` below is the `check` dependency (third set, item 28 (6)).
 tasks.register('referenceClips', JavaExec) {
     group = 'verification'
     description = 'Sample every seam rig\'s classic hook at fixed inputs into tools/reference_clips/<registry>_reference.animation.json (reference-only; never shipped).'
@@ -391,6 +392,27 @@ tasks.register('referenceClips', JavaExec) {
             s4Manifest.absolutePath,
             t2Manifest.absolutePath
 }
+// Owner 2026-09-13, third set, addendum item 28 (6): the build regenerates the reference clips into
+// build/reference_clips/ and compares every file byte for byte with tools/reference_clips/ (the sampler's own
+// --verify mode: no python in the loop). A difference, a file produced but not checked in, or a checked-in file no
+// longer produced fails the build with the file list on one `REFERENCE CLIPS DRIFT:` line, as proof drift does; a
+// changed hook, rig or rule is therefore followed by `gradle referenceClips` and a commit of the result.
+def referenceClipsBuildDir = layout.buildDirectory.dir('reference_clips')
+
+tasks.register('referenceClipsVerify', JavaExec) {
+    group = 'verification'
+    description = 'Regenerate the reference clips into build/reference_clips/ and compare them byte for byte with tools/reference_clips/ (drift fails the build).'
+    dependsOn tasks.named('g1toolClasses')
+    classpath = sourceSets.g1tool.runtimeClasspath
+    mainClass = 'danger.orespawn.g1.ReferenceClipSampler'
+    args '--verify',
+            file('tools/reference_clips').absolutePath,
+            referenceClipsBuildDir.get().asFile.absolutePath,
+            g1Manifest.absolutePath,
+            s4Manifest.absolutePath,
+            t2Manifest.absolutePath
+}
+tasks.named('check') { dependsOn tasks.named('referenceClipsVerify') }
 
 // Standing reference-geometry gate (owner ruling 2026-09-02, BUG-041 / ENT-S-091): every port
 // entity model with a 1.7.10 source is compiled, dumped and compared against the parsed original;

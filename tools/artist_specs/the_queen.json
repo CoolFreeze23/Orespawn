@@ -1,9 +1,9 @@
 {
   "registry": "the_queen",
   "display_name": "The Queen",
-  "status": "pilot package (owner 2026-09-13, second set, item 10); draft for the owner's edit (slice (f) lane, 2026-09-06)",
+  "status": "pilot package (owner 2026-09-13, second set, item 10; the second clip `bite`, third set, item 2); draft for the owner's edit (slice (f) lane, 2026-09-06)",
   "locomotion": "flyer",
-  "artist_scope": "PILOT (owner 2026-09-13, second set, item 10): two clips to improve - `idle` (the dormant hover) and one attack, the `attack` clip (the awake stance loop); the other six (`idle_to_attack`, `bite`, `tail_whip_right`, `tail_whip_left`, `roar`, `death`) come back EXACTLY as shipped inside the same `the_queen.animation.json` (the checker requires every code-triggered clip present by name; a clip you did not touch is simply the shipped one). Beyond the pilot: the full contract with the §8.1 locks (open question 16); today a native GeckoLib rig with eight hand-made clips.",
+  "artist_scope": "PILOT (owner 2026-09-13, second set, item 10; third set, item 2): two clips to improve - `idle` (the dormant hover) and one attack, the `bite` strike, its impact frame where the hurt lands: 8 ticks after the trigger, the impact at 0.4 s; the other six (`idle_to_attack`, `attack`, `tail_whip_right`, `tail_whip_left`, `roar`, `death`) come back EXACTLY as shipped inside the same `the_queen.animation.json` (the checker requires every code-triggered clip present by name; a clip you did not touch is simply the shipped one). Beyond the pilot: the full contract with the §8.1 locks (ruled 2026-09-06, Q16 (a): the Queen is the pilot boss, scoped to `idle` and one attack; the Beaver the other pilot); today a native GeckoLib rig with eight hand-made clips.",
   "character_sheet": "The Queen is a flying, three-headed boss the size of a building: a long armoured body on two clawed legs, a pair of enormous segmented wings, three snaking necks each ending in a spiked, jawed head, and a whip tail tipped with a stinger. Dormant she hovers and idles with the blue texture; woken (hit, or a player too close) she turns red, shifts into an attack stance and circles, streaming fireballs and thunderbolts from the heads. In contact range she picks one of four strikes — a bite, a tail whip left or right, or a roar — and the hurt lands on the impact frame. In a 'mood' she either terraforms flowers and butterflies (happy) or spews a cloud of purple bombs (mad). Ten of her bones carry hitboxes that follow the animation, so the heads, wings, tail and legs must move like solid, heavy things.",
   "size_notes": "22 x 24 block hitbox, drawn at x2.0 (x0.5 while PlayNicely); the rig is 2048 x 2048 textured. Bone positions on the synced parts are what players can hit.",
   "labels": {
@@ -139,14 +139,14 @@
     },
     {
       "name": "attack",
-      "verdict": "improve",
-      "note": "the awake stance loop, not a strike; this is the contract's aggro_idle",
+      "verdict": "leave",
+      "note": "outside the pilot scope (owner 2026-09-13, third set): return as shipped - later, the awake stance loop, not a strike; this is the contract's aggro_idle",
       "contract": "aggro_idle"
     },
     {
       "name": "bite",
-      "verdict": "leave",
-      "note": "outside the pilot scope (owner 2026-09-13): return as shipped - later, the hurt lands 8 ticks after the trigger — put the impact at 0.4 s",
+      "verdict": "improve",
+      "note": "the hurt lands 8 ticks after the trigger — put the impact at 0.4 s",
       "contract": "extra"
     },
     {
@@ -170,20 +170,21 @@
     {
       "name": "death",
       "verdict": "leave",
-      "note": "code-triggered from die() (TheQueen.java:1488, before super.die()), not the client-observed deathTime; PROVISIONAL: the vanilla death flip is open question 3",
+      "note": "code-triggered from die() (TheQueen.java:1488, before super.die()), not the client-observed deathTime; ruled 2026-09-06, Q3 (a): the vanilla death flip stays for the pilot and no death clip is authored - the later rule, a death clip replacing the flip for a creature whose JSON ships one, is designed when the first such clip arrives, with this clip (the Queen's own) as the precedent",
       "contract": "death"
     }
   ],
   "extras": [],
   "wishlist": [
     "in `idle` (the dormant hover): a slow wing-beat so she reads as airborne even when still",
-    "in `attack` (the awake stance loop, the contract's aggro_idle role): a heavier, more menacing hover so aggro reads without a second idle",
-    "(beyond the pilot - not now) in `bite` / `tail_whip_left` / `tail_whip_right` / `roar`: put the impact frame exactly where the hurt lands (8 / 12 / 12 / 16 ticks after the trigger)"
+    "(beyond the pilot - not now) in `attack` (the awake stance loop, the contract's aggro_idle role): a heavier, more menacing hover so aggro reads without a second idle",
+    "in `bite`: put the impact frame exactly where the hurt lands (8 ticks after the trigger — the impact at 0.4 s)",
+    "(beyond the pilot - not now) in `tail_whip_left` / `tail_whip_right` / `roar`: put the impact frame exactly where the hurt lands (12 / 12 / 16 ticks after the trigger)"
   ],
   "future": [
     "a `hurt` flinch on the struck head (the contract clip; the head is known server-side) — needs a triggerable on the `Actions` controller and a server call in hurt()",
     "a wing-beat `fly` loop distinct from the hover — needs a `Movement` state for airborne-and-moving (today `idle` / `attack` cover still and awake)",
-    "a `calm_idle` / `aggro_idle` split so the stance loop is not called `attack` — a rename of the native clip set, only with the ruling that maps her onto the contract (open question 16)"
+    "a `calm_idle` / `aggro_idle` split so the stance loop is not called `attack` — a rename of the native clip set, only with the ruling that maps her onto the contract (ruled 2026-09-06, Q16 (a): she is the pilot boss and keeps her native clip set; the mapping of that set onto the contract names is a later ruling)"
   ],
   "effort_hours": null
 }

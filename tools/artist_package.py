@@ -45,7 +45,9 @@ from collections import Counter, OrderedDict, defaultdict
 from pathlib import Path
 from typing import Any, Iterable
 
-TOOL_VERSION = "0.2.6 (the pilot package, 2026-09-13: artist_handoff/ writable after the mirror drop; the Queen's pilot scope - idle and attack - marked in her seed and sheet)"
+TOOL_VERSION = ("0.2.7 (the third-set tooling commit, 2026-09-13: the pilot's second clip is bite; every contract marker resolved to the "
+                "2026-09-06 rulings, README rule 5 split by controller kind; the priority table lists the packaged folders only; the reference "
+                "clip's span rule - a period multiple closing within 5 degrees, capped at 6 s)")
 
 ROOT = Path(__file__).resolve().parent.parent
 BB_NAMESPACE = uuid.UUID("6f0b4b2e-9d1c-4a7e-8f3a-2c5e1d7b9a10")  # deterministic .bbmodel uuids
@@ -65,7 +67,9 @@ LOCK_POLICY_ID = "warn-keyed, refuse-structural"  # the manifest's `lock_policy`
 LOCK_POLICY = ("Keying a locked bone is allowed; the checker warns, and the hitbox part follows the bone in-game "
                "(the consequence, so keep such keys deliberate). Renaming, re-parenting or deleting a locked bone is refused.")
 LOCK_REJECT_MODE = ("A reject mode for keys on locked bones stays available for the day the server-side hitbox evaluator lands "
-                    "(`check --lock-mode reject`, or `lock_mode: reject` in the manifest); it is not today's policy.")
+                    "(`check --lock-mode reject`, or `lock_mode: reject` in the manifest); it is not today's policy — the one open item "
+                    "in this package: whether and when that mode becomes the policy is the owner's later ruling; everything else here "
+                    "rests on the rulings of 2026-09-06.")
 
 # `check`'s rule table (README_FIRST "what check enforces" and SPEC §11 quote this list; check_folder implements it).
 ROTATION_BOUND_DEG = 3600.0
@@ -88,7 +92,8 @@ CHECK_REJECTS = [
 # The reference-only clip (owner 2026-09-13, second set, addendum item 27 (3)): `tools/reference_clips/<registry>_reference.animation.json`,
 # the classic hook sampled at fixed inputs by the g1 harness (ReferenceClipSampler; gradle referenceClips), copied beside each
 # species' sheet by `package`, marked reference-only in SPEC §4.3, refused by `check` (a REJECT naming the file) and by the
-# asset audit under src/main/resources (the jar never carries one). `_preview` stays a WARN (open question 15); this is a REJECT.
+# asset audit under src/main/resources (the jar never carries one). `_preview` stays a WARN (ruled 2026-09-06, Q15 (a): a
+# Blockbench-only export, never in the jar); this is a REJECT.
 REFERENCE_CLIP_SUFFIX = "_reference.animation.json"
 REFERENCE_CLIP_INDEX = "reference_clips.json"
 REFERENCE_CLIP_NAME = "reference"
@@ -97,9 +102,10 @@ README_REFERENCE_SENTENCE = ("The `<registry>_reference.animation.json` beside e
                              "checker REJECTS it by name) and never ship it (the game's jar never carries one).")
 CHECK_WARNS = [
     "a key on a `locked` bone (the clip and the bones are named) — " + LOCK_POLICY,
-    "a `_preview` file delivered (a Blockbench-only aid; whether the package ships one is open question 15) — PROVISIONAL",
+    "a `_preview` file delivered (a Blockbench-only aid, never in the jar — ruled 2026-09-06, Q15 (a); leave it out of the delivery)",
     "a returned `.geo.json` at all (the shipped rig is used regardless — do not re-export it)",
-    "a clip length far from the stated one (PROVISIONAL rule); an optional clip not delivered",
+    "a clip length far from the one the sheet states (rule 5: a phase-locked creature's loops at 1.0 s — ruled 2026-09-06, Q14 (a); "
+    "a native creature's clips at their shipped length; a one-shot at the length its row states); an optional clip not delivered",
     "an alias-named texture (the canonical name is preferred); a `format_version` other than 1.8.0",
     "a number written as a string; an unknown keyframe key; a clip without `animation_length`; an unreadable `.bbmodel`",
 ]
@@ -111,6 +117,10 @@ LAW_SERIES = {  # migration design Appendix A.5 — contiguous variant series (t
 }
 GUI_STRAY_NAMES = {"items.png", "textures.png", "logo.png", "spinners.png", "girlfriendgui.png"}
 TICKS_PER_SECOND = 20.0
+# README rule 5, the phase-locked kind (owner 2026-09-06, Q14 (a); split by controller kind 2026-09-13, third set, item 28 (3)):
+# every loop of a phase-locked creature is authored at 1.0 s — in-game the length is free (P6) and the sheet's tempo table
+# gives the rate; a native creature (controller kind `native`, the Queen) keeps each clip's shipped length instead.
+LOOP_AUTHORING_LENGTH_SECONDS = 1.0
 
 
 # ---------------------------------------------------------------------------
@@ -205,7 +215,9 @@ def fmt(value: float, digits: int = 4) -> str:
         return str(value)
     if isinstance(value, int):
         return str(value)
-    text = f"{value:.{digits}f}".rstrip("0").rstrip(".")
+    text = f"{value:.{digits}f}"
+    if "." in text:  # trailing zeros go only after a decimal point: fmt(40.0, 0) is "40", not "4" (0.2.7)
+        text = text.rstrip("0").rstrip(".")
     return text if text not in ("", "-0") else "0"
 
 
@@ -541,8 +553,8 @@ class Species:
     @property
     def tier_label(self) -> str:
         """The tier as an artist reads it. The design's tier table says 0 for the Queen ('done' — a native rig);
-        the animation contract calls the same species its Tier-1 (MHLib) boss (§8.1, open question 16): both are
-        written, so neither document's number is contradicted."""
+        the animation contract calls the same species its Tier-1 (MHLib) boss (§8.1; ruled 2026-09-06, Q16 (a): the
+        pilot boss): both are written, so neither document's number is contradicted."""
         if self.tier == 0 and self.is_mhlib_boss and self.landed:
             return "Tier 1 (boss; the design's 'done' row)"
         if self.tier is None:
@@ -1310,7 +1322,8 @@ def ticker_facts(text: str, sites: list[dict[str, Any]]) -> dict[str, Any] | Non
 
 def classify_attacking(sites: list[dict[str, Any]], text: str = "") -> tuple[str, str, dict[str, Any]]:
     """STATE (held while engaged) / EVENT (pulsed at a strike) / MIXED / UNCLASSIFIED, the reason, and the facts the
-    verdict rests on (pulse / held / other clears, the hurt() sets, the ticker). Heuristic: PROVISIONAL."""
+    verdict rests on (pulse / held / other clears, the hurt() sets, the ticker). Heuristic: a mechanical reading — the owner
+    confirms it against the sites (no ruling is pending behind it)."""
     facts: dict[str, Any] = {"pulse": [], "held": [], "other": [], "unguarded": [], "hurt_sets": [], "ticker": None, "caveats": []}
     if not sites:
         return "NONE", "no setAttacking sites", facts
@@ -1572,7 +1585,7 @@ def contract_drives(species: "Species", inv: dict[str, Any]) -> list[dict[str, s
             verdict = {"triggered": "shipped native clip, code-triggered by name", "state": "shipped native clip, selected by controller state",
                        "unreferenced": "shipped but nothing plays it"}.get(t.get("kind", "unreferenced"), "shipped")
             if role:
-                verdict += f"; stands in for the contract's `{role}` (seed mapping — PROVISIONAL, open question 16)"
+                verdict += f"; stands in for the contract's `{role}` (the seed's mapping — ruled 2026-09-06, Q16 (a): the pilot boss keeps its native clip set)"
             rows.append({"clip": name, "signal": t.get("signal", "?"), "verdict": verdict})
         covered = {v for v in mapping.values() if v in CONTRACT_CLIP_NAMES}
         for generic in CONTRACT_CLIP_NAMES + ("idle_alt_N",):
@@ -1583,7 +1596,7 @@ def contract_drives(species: "Species", inv: dict[str, Any]) -> list[dict[str, s
                 stand_in = next(n for n, v in mapping.items() if v == generic)
                 note += f" — its role is carried by native `{stand_in}`"
             elif generic == "hurt":
-                note += "; vanilla's red overlay is the only cue (open question 4); adding it needs a controller change and a ruling"
+                note += "; vanilla's red overlay is the only cue (ruled 2026-09-06, Q4 (a): the overlay stays); adding a hurt clip needs a controller change and a ruling"
             elif generic == "death":
                 note += "; the native `death` is code-triggered from die(), not the client-observed deathTime"
             elif generic == "idle_alt_N":
@@ -1607,25 +1620,37 @@ def contract_drives(species: "Species", inv: dict[str, Any]) -> list[dict[str, s
         v = att["verdict"]
         if v == "STATE":
             rows.append({"clip": "aggro_idle / calm_idle", "signal": f"DATA_ATTACKING held while engaged ({att['reason']})", "verdict": "STATE flag drives w_aggro (§4.3)"})
-            rows.append({"clip": "attack", "signal": melee_transport_note(inv), "verdict": "PROVISIONAL (open question 11)"})
+            rows.append({"clip": "attack", "signal": melee_transport_note(inv),
+                         "verdict": "the transport per species by the trigger inventory (ruled 2026-09-06, Q11 (a)): this flag is held, not pulsed at the strike, "
+                                    "so the signal column's transport applies — the server LivingDamageEvent.Post -> triggerAnim packet for melee, a named launch site for ranged"})
         elif v == "EVENT":
             caveat = ""
             if facts.get("hurt_sets"):
                 caveat = (f" — CAVEAT: hurt() also raises the flag at line(s) {facts['hurt_sets']}, so the client-observed edge fires when the mob is HIT "
                           f"as well as when it strikes; transport 2 must mask the hurt edge (e.g. ignore a rising edge while hurtTime > 0) or fall back to transport 1/3")
-            rows.append({"clip": "attack", "signal": f"rising edge of DATA_ATTACKING ({att['reason']})", "verdict": "EVENT flag: client-observed edge, transport 2 (§4.4)" + caveat + " — PROVISIONAL (open question 11)"})
-            rows.append({"clip": "aggro_idle / calm_idle", "signal": "no held state: the flag pulses", "verdict": "calm_idle only until a synched byte mirrors getTarget() != null — PROVISIONAL (open question 12)"})
+            rows.append({"clip": "attack", "signal": f"rising edge of DATA_ATTACKING ({att['reason']})",
+                         "verdict": "EVENT flag: client-observed edge, transport 2 (§4.4)" + caveat
+                                    + " — the transport per species by the trigger inventory (ruled 2026-09-06, Q11 (a)): the client-observed edge where the flag pulses at the strike, this species"})
+            rows.append({"clip": "aggro_idle / calm_idle", "signal": "no held state: the flag pulses",
+                         "verdict": "calm_idle only until this creature's SPEC adds a synched byte mirroring getTarget() != null (ruled 2026-09-06, Q12 (a): aggro_idle waits for that byte)"})
         else:
-            rows.append({"clip": "aggro_idle / calm_idle / attack", "signal": f"DATA_ATTACKING classified {v}: {att['reason']}", "verdict": "OWNER READS THE SITES (listed below) — PROVISIONAL"})
+            rows.append({"clip": "aggro_idle / calm_idle / attack", "signal": f"DATA_ATTACKING classified {v}: {att['reason']}",
+                         "verdict": "OWNER READS THE SITES (listed below) — a mechanical reading; the owner confirms which of the ruled transports applies (ruled 2026-09-06, Q11 (a) / Q12 (a))"})
     else:
-        rows.append({"clip": "aggro_idle / calm_idle", "signal": "no synched attacking flag", "verdict": "calm_idle only — PROVISIONAL (open question 12)"})
+        rows.append({"clip": "aggro_idle / calm_idle", "signal": "no synched attacking flag",
+                     "verdict": "calm_idle only until this creature's SPEC adds a synched byte mirroring getTarget() != null (ruled 2026-09-06, Q12 (a): aggro_idle waits for that byte)"})
         if inv["combat"].get("melee") or inv["combat"].get("ranged"):
-            rows.append({"clip": "attack", "signal": melee_transport_note(inv), "verdict": "PROVISIONAL (open question 11)"})
+            rows.append({"clip": "attack", "signal": melee_transport_note(inv),
+                         "verdict": "the transport per species by the trigger inventory (ruled 2026-09-06, Q11 (a)): no attacking flag here, so the signal column's transport applies — "
+                                    "the server LivingDamageEvent.Post -> triggerAnim packet for melee, a named launch site for ranged"})
         else:
             rows.append({"clip": "attack", "signal": "no strike or launch site found", "verdict": "no attack clip: the mob does not attack"})
-    rows.append({"clip": "hurt", "signal": "rising edge of LivingEntity.hurtTime (0 -> 10), client-observed", "verdict": "always available; the red overlay stays — PROVISIONAL (open question 4)"})
-    rows.append({"clip": "death", "signal": "LivingEntity.deathTime > 0, client-observed", "verdict": "hold_on_last_frame; the vanilla death flip is open question 3 — PROVISIONAL"})
-    rows.append({"clip": "idle_alt_N", "signal": "a roll at each idle loop boundary (p = 0.15) while w_idle > 0.9", "verdict": "optional — PROVISIONAL (open question 5)"})
+    rows.append({"clip": "hurt", "signal": "rising edge of LivingEntity.hurtTime (0 -> 10), client-observed", "verdict": "always available; the red overlay stays (ruled 2026-09-06, Q4 (a))"})
+    rows.append({"clip": "death", "signal": "LivingEntity.deathTime > 0, client-observed",
+                 "verdict": "hold_on_last_frame; the vanilla death flip stays and the pilot ships no death clip (ruled 2026-09-06, Q3 (a)); a creature whose JSON ships a `death` clip "
+                            "gets the clip-replaces-flip mode, designed when the first such clip arrives (the Queen's own death clip the precedent) — until then a delivered `death` plays under the flip"})
+    rows.append({"clip": "idle_alt_N", "signal": "a roll at each idle loop boundary (p = 0.15) while w_idle > 0.9",
+                 "verdict": "optional; one roll per idle loop boundary, p = 0.15, a uniform choice, only while the idle weight is above 0.9 and no triggered clip plays, keyed on the clip-clock cycle index (ruled 2026-09-06, Q5 (a))"})
     return rows
 
 
@@ -1852,16 +1877,24 @@ def reference_clip_section(species: "Species", repo: "Repo", seed: dict[str, Any
         keys = int(row.get("keys_per_bone", 0))
         span_ticks = float(row.get("span_ticks", 0.0))
         rule = str(row.get("rule", ""))
+        seam = float(row.get("seam_delta_degrees", 0.0))
+        period_ticks = float(row.get("period_ticks") or 0.0)
+        multiple = int(row.get("period_multiple_k") or 0)
+        # the span rule (owner 2026-09-13, third set, item 28 (5)): the smallest multiple of the slowest rhythm's period at
+        # which every rhythm returns within 5 degrees of its start, capped at 6 s; past the cap two seconds and the seam stated
         if rule == "one_key":
             span = "one key at the bind pose (nothing in this rig's code moves a bone at these inputs)"
-        elif rule == "natural_period":
-            span = f"one natural period of the motion — {fmt(span_ticks, 3)} ticks ({fmt(span_ticks / TICKS_PER_SECOND, 3)} s), the last key closing the loop at the period"
-        elif rule == "multi_frequency_slowest_group":
-            span = f"the period of the slowest of its rhythms — {fmt(span_ticks, 3)} ticks ({fmt(span_ticks / TICKS_PER_SECOND, 3)} s); the faster rhythms repeat inside it"
-        elif rule == "multi_frequency_capped_two_seconds":
-            span = f"two seconds ({fmt(span_ticks, 0)} ticks): its slowest rhythm is longer than that, so the clip is a two-second window, not a loop"
+        elif rule == "period_multiple" and multiple <= 1:
+            span = (f"one period of its slowest rhythm — {fmt(span_ticks, 3)} ticks ({fmt(span_ticks / TICKS_PER_SECOND, 3)} s): every moving bone is back "
+                    "within 5 degrees of its start there, so the last key closes the loop")
+        elif rule == "period_multiple":
+            span = (f"{multiple} periods of its slowest rhythm ({fmt(period_ticks, 3)} ticks each) — {fmt(span_ticks, 3)} ticks ({fmt(span_ticks / TICKS_PER_SECOND, 3)} s): "
+                    "the smallest multiple at which EVERY rhythm returns within 5 degrees of its start (the rule caps this search at 6 s), so the last key closes the loop")
+        elif rule == "two_seconds_past_cap":
+            span = (f"two seconds ({fmt(span_ticks, 0)} ticks): this motion does not close within 6 s (its slowest rhythm is {fmt(period_ticks, 3)} ticks, and no multiple "
+                    f"of it under 6 s brings every rhythm back within 5 degrees) — a two-second window, not a loop; the closing key differs from the first by {fmt(seam, 4)} degrees")
         else:
-            span = f"two seconds ({fmt(span_ticks, 0)} ticks): this motion has no natural period"
+            span = f"two seconds ({fmt(span_ticks, 0)} ticks): this motion has no natural period — a two-second window, not a loop; the closing key differs from the first by {fmt(seam, 4)} degrees"
         L.append(f"`{row['file']}` (beside this sheet; sha256 `{row['sha256']}`) is NOT a clip to edit, improve, return or ship. It is the creature's "
                  "classic code — the motion the game draws today — SAMPLED by the harness at fixed inputs so you can open it beside the rig in "
                  "Blockbench and see that motion: full walking speed (limbSwingAmount 1, the walk position and the age advancing one tick per key), "
@@ -1884,6 +1917,7 @@ def reference_clip_section(species: "Species", repo: "Repo", seed: dict[str, Any
         manifest_block = {
             "file": row["file"], "sha256": row["sha256"], "clip": REFERENCE_CLIP_NAME, "reference_only": True,
             "rule": rule, "rule_note": row.get("rule_note"), "span_ticks": span_ticks,
+            "period_ticks": row.get("period_ticks"), "period_multiple_k": row.get("period_multiple_k"),
             "animation_length_seconds": row.get("animation_length_seconds"), "keys_per_bone": keys,
             "sampled_inputs": row.get("sampled_inputs"), "hook": row.get("hook"),
             "moving_bones": moving, "position_bones": positioned, "hidden_bones_at_rest": hidden,
@@ -1956,8 +1990,9 @@ def clip_rows(species: "Species", inv: dict[str, Any], anim: dict[str, Any], gro
     native = anim.get("animations", {})
     locked = locked or {}
     if species.tier == 0 or (native and inv.get("native")):
-        # a native GeckoLib species: its shipped clips are the table; the contract mapping is PROVISIONAL. The trigger
-        # of each clip is read from registerControllers and the call sites (native_clip_triggers) — nothing hard-coded.
+        # a native GeckoLib species: its shipped clips are the table; the contract mapping is the seed's per row (ruled
+        # 2026-09-06, Q16 (a): the pilot boss keeps its native clip set). The trigger of each clip is read from
+        # registerControllers and the call sites (native_clip_triggers) — nothing hard-coded.
         triggers = (inv.get("native") or {}).get("clip_triggers") or {}
         for name, clip in native.items():
             loop = clip.get("loop", False)
@@ -1968,8 +2003,11 @@ def clip_rows(species: "Species", inv: dict[str, Any], anim: dict[str, Any], gro
             v = verdicts.get(name, {})
             keyed_locked = sorted(set(clip.get("bones", {})) & set(locked))
             note = v.get("note", "")
-            if "PROVISIONAL" not in note:  # the contract mapping of a native clip is the provisional part — not the lock policy
-                note = (note + " — " if note else "") + "PROVISIONAL (its contract mapping: open question 16)"
+            role = v.get("contract", "")
+            mapping = (f"mapped to the contract's `{role}` by the seed" if role else "no contract role in the seed") \
+                + " (ruled 2026-09-06, Q16 (a): the pilot boss keeps its native clip set)"
+            if "Q16 (a)" not in note:  # the mapping sentence precedes the lock note, so it never reads as the policy's
+                note = (note + " — " if note else "") + mapping
             ln = lock_note(keyed_locked)
             if ln:
                 note = note + " — " + ln
@@ -1978,17 +2016,17 @@ def clip_rows(species: "Species", inv: dict[str, Any], anim: dict[str, Any], gro
                          "length_seconds": clip.get("animation_length"),
                          "length_rule": f"near:{clip.get('animation_length')}", "code_triggered": True, "required": True,
                          "role": "native", "verdict": v.get("verdict", "leave"), "note": note, "keyed_locked": keyed_locked,
-                         "contract": v.get("contract", "PROVISIONAL (open question 16)"), "provisional": True})
+                         "contract": v.get("contract", "unmapped (a native clip the seed gives no contract role)")})
         return rows
     if species.tier == 3 or scope.startswith("none"):
-        return rows  # no artist clips (P2; open question 7)
+        return rows  # no artist clips (P2; ruled 2026-09-06, Q7 (a): Tier 3 gets no artist clips)
     gait = [g for g in groups if g.get("gait_scaled")]
     # The naming rule (owner 2026-09-13, addendum item 26 (2); contract §2.1 amended): the bare `walk` belongs to the
     # gait group; a species WITHOUT a gait group names its primary locomotion group in its seed (`primary_group`, the
     # FIRST group when absent) and THAT group's clip carries the bare name - a label, not a semantic (the contract's
     # fly -> walk fallback plays a flyer's walk in flight); every other group's is `<state>_<group>`. So every species
-    # with groups has the bare `idle` / `walk` pair (item 12's gate opens on both), and the first slice's PROVISIONAL
-    # optional bare idle of a multi-group no-gait species is gone.
+    # with groups has the bare `idle` / `walk` pair (item 12's gate opens on both), and the first slice's optional bare
+    # idle of a multi-group no-gait species (optional then) is gone.
     primary = primary_group(species, groups, gait)
     others = [g for g in groups if primary is None or g["name"] != primary["name"]]
     gait_name = primary["name"] if primary else ""
@@ -2021,13 +2059,15 @@ def clip_rows(species: "Species", inv: dict[str, Any], anim: dict[str, Any], gro
     # required (a species without groups keeps the bare pair too: there is nothing to name).
     bare_walk = True
 
-    def loop_row(name: str, layer: str, weight: str, bones: str, group: str, provisional: bool = False, note: str = "",
+    def loop_row(name: str, layer: str, weight: str, bones: str, group: str, note: str = "",
                  verdict_default: str = "author") -> dict[str, Any]:
+        # README rule 5, the phase-locked kind (ruled 2026-09-06, Q14 (a)): every loop authored at 1.0 s; in-game the
+        # length is free (P6: the declared length is the shape's own timeline) and the tempo table gives the rate.
         v = verdicts.get(name, {})
         return {"name": name, "loop": "true", "layer": layer, "trigger": weight, "bones": bones or "(as SPEC)",
-                "length_seconds": None, "length_rule": "free (P6: the declared length is the shape's own timeline; convention open question 14)",
+                "length_seconds": LOOP_AUTHORING_LENGTH_SECONDS, "length_rule": f"near:{LOOP_AUTHORING_LENGTH_SECONDS}",
                 "code_triggered": False, "required": name in ("idle", "walk") and bare_walk, "role": "contract", "group": group,
-                "verdict": v.get("verdict", verdict_default), "note": v.get("note", note), "contract": name, "provisional": provisional}
+                "verdict": v.get("verdict", verdict_default), "note": v.get("note", note), "contract": name}
 
     for state in ("idle", "walk"):
         weight = "w_idle = (1 - w_move)(1 - w_swim)(1 - w_fly)" if state == "idle" else "w_walk = w_move (1 - w_swim)(1 - w_fly); the gait group additionally x limbSwingAmount (P3)"
@@ -2040,16 +2080,16 @@ def clip_rows(species: "Species", inv: dict[str, Any], anim: dict[str, Any], gro
             rows.append(loop_row(f"{state}_{g['name']}", "parallel layer", weight + f" (group {g['name']})", ", ".join(g["bones"]), g["name"]))
     loco = seed.get("locomotion", "walker")
     if loco in ("swimmer", "walker"):
-        rows.append(loop_row("swim", "base", "w_swim from isInWater()", whole_rig("swim"), gait_name, provisional=True,
+        rows.append(loop_row("swim", "base", "w_swim from isInWater()", whole_rig("swim"), gait_name,
                              note="optional: falls back to walk then idle when absent (§2.4)"))
     if loco == "flyer":
-        rows.append(loop_row("fly", "base", "w_fly (flyer species and !onGround)", whole_rig("fly"), gait_name, provisional=True))
+        rows.append(loop_row("fly", "base", "w_fly (flyer species and !onGround)", whole_rig("fly"), gait_name))
     att = inv.get("attacking") or {}
     if att.get("present") and att.get("verdict") in ("STATE", "MIXED"):
-        rows.append(loop_row("aggro_idle", "base", "w_idle x w_aggro (DATA_ATTACKING held)", whole_rig("idle"), gait_name, provisional=True))
-        rows.append(loop_row("calm_idle", "base", "w_idle x (1 - w_aggro)", whole_rig("idle"), gait_name, provisional=True))
+        rows.append(loop_row("aggro_idle", "base", "w_idle x w_aggro (DATA_ATTACKING held)", whole_rig("idle"), gait_name))
+        rows.append(loop_row("calm_idle", "base", "w_idle x (1 - w_aggro)", whole_rig("idle"), gait_name))
     else:
-        rows.append(loop_row("calm_idle", "base", "= idle until an aggro flag exists (open question 12)", "(as idle)", gait_name, provisional=True,
+        rows.append(loop_row("calm_idle", "base", "= idle until this creature's SPEC adds a synched attacking byte (ruled 2026-09-06, Q12 (a))", "(as idle)", gait_name,
                              note="not needed while idle covers it; listed so the name stays reserved — not counted in the effort estimate",
                              verdict_default="covered by idle"))
     has_attack = bool(inv.get("combat", {}).get("melee") or inv.get("combat", {}).get("ranged") or att.get("present"))
@@ -2059,20 +2099,24 @@ def clip_rows(species: "Species", inv: dict[str, Any], anim: dict[str, Any], gro
         v = verdicts.get(name, {})
         default_len = {"attack": 0.5, "hurt": 0.4, "death": 2.0}[name]
         length = v.get("length_seconds", default_len)
-        trigger = {"attack": "event: a strike (transport per the trigger inventory; open question 11)",
-                   "hurt": "event: hurtTime rising edge (client-observed); the red overlay stays (open question 4)",
-                   "death": "event: deathTime > 0; the vanilla death flip is open question 3"}[name]
+        trigger = {"attack": "event: a strike (the transport per species by the trigger inventory — ruled 2026-09-06, Q11 (a); §6 says which applies here)",
+                   "hurt": "event: hurtTime rising edge (client-observed); the red overlay stays (ruled 2026-09-06, Q4 (a))",
+                   "death": "event: deathTime > 0; the vanilla death flip stays — the pilot ships no death clip (ruled 2026-09-06, Q3 (a)); a creature whose "
+                            "JSON ships one gets the clip-replaces-flip mode when the first such clip arrives, so a `death` delivered here plays under the flip until then"}[name]
         rows.append({"name": name, "loop": loop, "layer": "triggered controller", "trigger": trigger, "bones": "(any unlocked)",
                      "length_seconds": length, "length_rule": f"near:{length}", "code_triggered": True,
                      "required": name in native,  # a shipped code-triggered clip may not be renamed or dropped
                      "role": "contract", "group": "", "verdict": v.get("verdict", "author"), "note": v.get("note", ""),
-                     "contract": name, "provisional": True})
+                     "contract": name})
     for extra in seed.get("extras", []):
+        looping_extra = str(extra.get("loop")).lower() == "true"
         rows.append({"name": extra["name"], "loop": str(extra.get("loop", "false")).lower(), "layer": extra.get("layer", "overlay"),
                      "trigger": extra.get("trigger", "(SPEC)"), "bones": ", ".join(extra.get("bones", [])) or "(SPEC)",
-                     "length_seconds": extra.get("length_seconds"), "length_rule": "free" if str(extra.get("loop")).lower() == "true" else f"near:{extra.get('length_seconds', 1.0)}",
+                     # a looping extra follows rule 5's phase-locked kind (1.0 s); a one-shot the length its seed states
+                     "length_seconds": LOOP_AUTHORING_LENGTH_SECONDS if looping_extra else extra.get("length_seconds"),
+                     "length_rule": f"near:{LOOP_AUTHORING_LENGTH_SECONDS}" if looping_extra else f"near:{extra.get('length_seconds', 1.0)}",
                      "code_triggered": bool(extra.get("code_triggered", False)), "required": False, "role": "extra", "group": "",
-                     "verdict": "author", "note": extra.get("note", ""), "contract": "extra (§2.3; cap of four is open question 6)", "provisional": True})
+                     "verdict": "author", "note": extra.get("note", ""), "contract": "extra (§2.3; four per creature without a ruling — ruled 2026-09-06, Q6 (a))"})
     if len(seed.get("extras", [])) > 4:
         pass  # reported by the caller as a warning
     return rows
@@ -2103,7 +2147,7 @@ def spec_document(species: "Species", repo: "Repo", catalog: "TextureCatalog", i
     locked = {r["name"]: r["lock_reason"] for r in glossary if r["locked"]}
     clips = clip_rows(species, inv, anim, groups, bone_names=[b["name"] for b in bones], locked=locked)
     if len(seed.get("extras", [])) > 4:
-        repo.warnings.add(species.registry, "EXTRAS_CAP", f"{len(seed['extras'])} extras exceed the proposed cap of four (open question 6)")
+        repo.warnings.add(species.registry, "EXTRAS_CAP", f"{len(seed['extras'])} extras exceed the cap of four per creature without a ruling (ruled 2026-09-06, Q6 (a): more needs the owner)")
     textures = catalog.canonical_for_species(species)
     keyed_locked = sorted(shipped_keyed_bones(anim) & set(locked))
     keyed_locked_by_clip = {name: sorted(set(clip.get("bones", {})) & set(locked)) for name, clip in anim.get("animations", {}).items()}
@@ -2122,8 +2166,8 @@ def spec_document(species: "Species", repo: "Repo", catalog: "TextureCatalog", i
                and n not in [r["name"] for r in glossary]]
         if bad:
             wishlist_notes.append(w + f" — NOT accepted by `check` today: {', '.join('`' + b + '`' for b in bad)} is not in this creature's clip set"
-                                  + ("; a new clip on a native rig needs a controller change and the owner's ruling (open question 16)" if not allow_idle_alt else "")
-                                  + " — PROVISIONAL")
+                                  + ("; a new clip on a native rig needs a controller change and the owner's ruling (the pilot boss keeps its native clip set: "
+                                     "ruled 2026-09-06, Q16 (a))" if not allow_idle_alt else ""))
             repo.warnings.add(species.registry, "WISHLIST_UNACCEPTED", f"wishlist names clip(s) {bad} that the manifest does not accept")
         else:
             wishlist_notes.append(w)
@@ -2146,7 +2190,8 @@ def spec_document(species: "Species", repo: "Repo", catalog: "TextureCatalog", i
     L.append("")
     L.append(f"Generated by `tools/artist_package.py` {TOOL_VERSION} from the repository's own sources; the paragraphs marked "
              f"AUTHORED come from `tools/artist_specs/{species.registry}.json` ({seed.get('status', 'no seed')}). "
-             f"Fields marked PROVISIONAL depend on an open question in `{oq}` and may change when the owner rules; nothing here invents an answer.")
+             f"Every contract decision this sheet rests on was ruled by the mod's owner on 2026-09-06 (`{oq}` records each ruling); a line that cites "
+             "one (\"ruled 2026-09-06, Q14 (a)\") states that ruling — nothing here invents an answer. The one open item is the lock reject mode (§7, README rule 6).")
     L.append("")
     L.append("## 1. What this mob is (AUTHORED — draft for the owner's edit)")
     L.append("")
@@ -2221,8 +2266,10 @@ def spec_document(species: "Species", repo: "Repo", catalog: "TextureCatalog", i
             L.append("A rectified group (`|cos|`, `|sin|`) has TWO periods: the natural 2π/ω of the underlying wave, and the visible one — half of it — "
                      "at which the pump you see actually repeats; author the loop to the visible period.")
             L.append("")
-        L.append("In-game each loop plays once per natural period; your timeline's length is the SHAPE's timeline and does not change that (P6). "
-                 "Blockbench previews at the declared length, so a 1.0 s preview of a fast group shows the shape slowed down (contract §9; the authoring-length convention is open question 14, a `_preview` export is open question 15) — PROVISIONAL.")
+        L.append("Author every loop at 1.0 s (README rule 5, the phase-locked kind; ruled 2026-09-06, Q14 (a)). In-game each loop plays once per natural "
+                 "period whatever its length; your timeline's length is the SHAPE's timeline and does not change that (P6). Blockbench previews at the "
+                 "declared length, so a 1.0 s preview of a fast group shows the shape slowed down (contract §9); a `_preview` copy stretched to the natural "
+                 "periods is a Blockbench-only aid, never in the jar and never in a delivery (ruled 2026-09-06, Q15 (a)).")
         L.append("")
     L.append("### 4.2 The math")
     L.append("")
@@ -2240,26 +2287,28 @@ def spec_document(species: "Species", repo: "Repo", catalog: "TextureCatalog", i
     L.append("## 5. Clips: what to improve, what to leave (AUTHORED verdicts on generated rows)")
     L.append("")
     if not clips:
-        why = "Tier 3 (P2 / Amendment 1 point 1): this rig stays code-driven; its animation JSON stays `{}` and no artist clips are accepted (open question 7 records the option of extras) — PROVISIONAL." if species.tier == 3 else "no clips"
+        why = "Tier 3 (P2 / Amendment 1 point 1): this rig stays code-driven; its animation JSON stays `{}` and no artist clips are accepted (ruled 2026-09-06, Q7 (a): Tier 3 gets no artist clips, extras included)." if species.tier == 3 else "no clips"
         L.append(why)
     else:
         crows = []
         for c in clips:
             crows.append([f"`{c['name']}`", c["loop"], c["layer"], c["trigger"], c["bones"],
                           (fmt(c["length_seconds"], 3) + " s") if c.get("length_seconds") else "free",
-                          "yes" if c["code_triggered"] else "no", c["verdict"],
-                          (c.get("note", "") + (" PROVISIONAL" if c.get("provisional") and "PROVISIONAL" not in c.get("note", "") else "")).strip()])
+                          "yes" if c["code_triggered"] else "no", c["verdict"], c.get("note", "").strip()])
         L.append(md_table(["clip", "loop", "layer", "weight / trigger", "bones it may animate", "length", "code-triggered", "verdict", "notes"], crows))
         L.append("")
         is_native = any(c["role"] == "native" for c in clips)
         if not is_native:
             L.append("Loop values are the JSON `loop` field exactly: `true` for cycles, `false` for one-shots, `hold_on_last_frame` only where written. "
-                     "Every name in this table is fixed (contract §2.4); `idle_alt_1`, `idle_alt_2`, ... may be added freely.")
+                     "Every name in this table is fixed (contract §2.4); `idle_alt_1`, `idle_alt_2`, ... may be added freely. A sheet may carry up to four "
+                     "extra clips of this creature's own beyond the contract's names (§2.3; ruled 2026-09-06, Q6 (a)) — more needs the owner's ruling; "
+                     "the extras rows above, if any, are those.")
         else:
             L.append(f"This species already animates natively: the {len(clips)} names above are its ACCEPTED clip set — what the code selects or triggers today, "
                      "read from `registerControllers` and the trigger call sites. `check` rejects any other clip name (including `idle_alt_N`: the native "
-                     "controllers roll no idle variants). Its mapping onto the standard contract is PROVISIONAL (open question 16 names it the pilot boss "
-                     "candidate); a contract name that is not in this set is listed under 'What fires each contract clip' as not used by this species. "
+                     "controllers roll no idle variants). Its mapping onto the standard contract is the seed's, row by row (ruled 2026-09-06, Q16 (a): this "
+                     "species is the pilot boss and keeps its native clip set; the pilot's scope is in §10); a contract name that is not in this set is listed "
+                     "under 'What fires each contract clip' as not used by this species. "
                      "Its controllers are its own GeckoLib controllers (controller kind `native` in the manifest), not phase-locked, so its LOOPING "
                      "clips may carry sound / particle keys — they fire once per loop (README rule 7's exception; owner 2026-09-13, addendum item 26 (6)). "
                      f"Locked bones: {LOCK_POLICY}")
@@ -2274,7 +2323,7 @@ def spec_document(species: "Species", repo: "Repo", catalog: "TextureCatalog", i
         L.append("### 5.2 Not accepted today (AUTHORED — needs a code change and the owner's ruling first; do not deliver these)")
         L.append("")
         for w in seed["future"]:
-            L.append(f"- {w} — PROVISIONAL")
+            L.append(f"- {w}")
         L.append("")
     L.append("## 6. Trigger inventory (generated from the entity's AI goals and state flags)")
     L.append("")
@@ -2295,7 +2344,7 @@ def spec_document(species: "Species", repo: "Repo", catalog: "TextureCatalog", i
     L.append("")
     att = inv.get("attacking") or {}
     if att.get("present"):
-        L.append(f"**Attacking flag `DATA_ATTACKING`** — classified **{att['verdict']}** ({att['reason']}) — PROVISIONAL (a mechanical heuristic; the owner verifies against the sites):")
+        L.append(f"**Attacking flag `DATA_ATTACKING`** — classified **{att['verdict']}** ({att['reason']}) — a mechanical reading; the owner confirms it against the sites:")
         L.append("")
         L.append(md_table(["line", "method", "sets", "guard (the enclosing block)", "within", "comment"],
                           [[s["line"], s["method"], s["value"], s["guard"] or "(unguarded: the method body)",
@@ -2329,7 +2378,8 @@ def spec_document(species: "Species", repo: "Repo", catalog: "TextureCatalog", i
                 L.append(f"- melee (AREA helper) `{s['code']}` — {s['file']}:{s['line']} in `{s['method']}`"
                          + (f", guard: {' within '.join(s['guards'][:3])}" if s.get("guards") else "")
                          + f"; the helper (line {s.get('helper_line')}) hurts EACH victim in its box {s.get('hurts_per_victim', '?')}x per roll "
-                         f"(line(s) {s.get('hurt_lines', [])}) — a LivingDamageEvent.Post per victim would fire `attack` per victim per roll (transport 1 caveat, open question 11)")
+                         f"(line(s) {s.get('hurt_lines', [])}) — a LivingDamageEvent.Post per victim would fire `attack` per victim per roll (the transport 1 caveat; "
+                         "ruled 2026-09-06, Q11 (a): the transport is chosen per species by this inventory, and this caveat is what the choice weighs)")
             else:
                 L.append(f"- melee `{s['code']}` — {s['file']}:{s['line']} in `{s['method']}`" + (f", guard: {' within '.join(s['guards'][:3])}" if s.get("guards") else ""))
         for s in comb.get("ranged", []):
@@ -2390,7 +2440,9 @@ def spec_document(species: "Species", repo: "Repo", catalog: "TextureCatalog", i
              + (" The design's tier table says 0 ('done': a native rig); the animation contract calls this species its Tier-1 (MHLib) boss — both are true, so both are written."
                 if species.tier == 0 and species.is_mhlib_boss else ""))
     if species.tier == 2:
-        L.append("- Density statement (the harness's, not the artist's): the classic transcription is verified at 2.5e-3 rad; the key counts per bone are an output of the harness (Beaver: 54 / 41 / 19 linear or 15 / 13 / 8 catmullrom with repaired spline arguments — open questions 9 and 10) — PROVISIONAL.")
+        L.append("- Density statement (the harness's, not the artist's; ruled 2026-09-06, Q9 (a) and Q10): the classic transcription is verified at 2.5e-3 rad — "
+                 "Beaver reference leg 15 / 13 / 8 catmullrom keys per bone with spline arguments repaired at load; wrap sample T−ε vs 0+ε included; the key "
+                 "counts per bone are an output of the harness, re-derived on every re-transcription.")
     L.append("")
     L.append("## 11. What 'done' looks like for this entity")
     L.append("")
@@ -2422,8 +2474,10 @@ def spec_document(species: "Species", repo: "Repo", catalog: "TextureCatalog", i
         # the SPEC's controller kind (owner 2026-09-13, addendum item 26 (6)): `native` - the species' own GeckoLib controllers,
         # not phase-locked, so its loops may carry event keys; `phase_locked` - the contract's phase-locked keyframe layers
         "controller_kind": "native" if any(c["role"] == "native" for c in clips) else "phase_locked",
+        # `verdict` (0.2.7): the seed's verdict per clip, so the README's priority table can say which clips a folder delivers
+        # (a native creature's `leave` clips come back as shipped); the old per-clip marker flag is gone with the markers (item 28 (3))
         "clips": [{"name": c["name"], "loop": c["loop"], "role": c["role"], "code_triggered": c["code_triggered"], "required": c["required"],
-                   "length_rule": c["length_rule"], "length_seconds": c.get("length_seconds"), "provisional": c.get("provisional", False)} for c in clips],
+                   "length_rule": c["length_rule"], "length_seconds": c.get("length_seconds"), "verdict": c.get("verdict", "author")} for c in clips],
         "allow_idle_alt": allow_idle_alt,
         "textures": [{"canonical": t["canonical"], "width": t["width"], "height": t["height"], "aliases": t["aliases"]} for t in textures],
         "effort_hours": hours, "effort_source": hours_source,
@@ -2842,7 +2896,7 @@ ROUNDTRIP_TIME_TOLERANCE_SECONDS = 5e-5
 ROUNDTRIP_TIME_NOTE = ("key TIMES compare within 5e-5 s (owner 2026-09-13, addendum item 26 (5)): the Blockbench emulation writes 4-decimal "
                        "timecodes while a transcription's key times are k/(N-1) s at 10 decimals (the first Tier-2 slice's Beaver round-trip "
                        "reported six time-only diffs); Blockbench's real timecode precision is read from its exporter source when the _preview "
-                       "export (open question 15) is built, and the emulation follows it then. Values compare at 1e-6.")
+                       "export (ruled 2026-09-06, Q15 (a): Blockbench-only, never shipped) is built, and the emulation follows it then. Values compare at 1e-6.")
 
 
 def roundtrip_diff(shipped_geo: dict[str, Any], back_geo: dict[str, Any], shipped_anim: dict[str, Any],
@@ -2995,8 +3049,12 @@ def write_inventory(repo: "Repo", out_dir: Path, catalog: "TextureCatalog", mani
     return path
 
 
-def readme_document(repo: "Repo", manifests: dict[str, dict[str, Any]]) -> str:
-    landed = repo.landed_species()
+def readme_document(repo: "Repo", manifests: dict[str, dict[str, Any]], packaged: list[str] | None = None) -> str:
+    """README_FIRST.md. `packaged` (owner 2026-09-13, third set, item 28 (4)): the registries THIS package run wrote (the
+    `--entities` set; the whole landed set when none) — the priority table lists those folders only, with one line that
+    more folders follow as creatures land; the manifests' keys when not given."""
+    packaged_set = list(packaged) if packaged is not None else list(manifests)
+    landed = [s for s in repo.landed_species() if s.registry in packaged_set]
 
     def prio(s: "Species") -> tuple:
         return (0 if s.tier in (0, 1) else 1 if s.tier == 2 else 2, s.registry)
@@ -3004,7 +3062,8 @@ def readme_document(repo: "Repo", manifests: dict[str, dict[str, Any]]) -> str:
     L: list[str] = []
     L.append("# READ ME FIRST — OreSpawn animation handoff")
     L.append("")
-    L.append(f"_Generated by `tools/artist_package.py` {TOOL_VERSION}. Sections marked PROVISIONAL follow decisions the mod's owner has not made yet; they will be confirmed before your gig starts._")
+    L.append(f"_Generated by `tools/artist_package.py` {TOOL_VERSION}. Every rule below, and every contract line in the sheets, rests on the "
+             "mod owner's rulings of 2026-09-06 (each sheet cites the ruling where it applies); the one open item is the lock reject mode in rule 6._")
     L.append("")
     L.append("## What this is")
     L.append("")
@@ -3027,13 +3086,16 @@ def readme_document(repo: "Repo", manifests: dict[str, dict[str, Any]]) -> str:
     L.append("3. **Set each clip's loop mode exactly as its table says**: `true` for cycles (idle, walk), `false` for one-shot actions (attack, hurt), `hold_on_last_frame` only where written (death). "
              "**Deliver `idle` and `walk` together**: the game switches a creature to your animations only when BOTH are in the file — one without the other leaves the creature on its old code-driven motion, and `check` says so.")
     L.append("4. **Keep texture canvas sizes.** A 64x32 texture stays 64x32.")
-    L.append("5. **Keep each clip's length near the period the sheet states** unless the sheet says the length is free. (In-game, loops play at the creature's own tempo whatever their length — the sheet's tempo table explains; PROVISIONAL, see below.)")
+    L.append("5. **Loop length by controller kind.** A phase-locked creature (every sheet but the Queen's today): author every loop at 1.0 s — in-game the "
+             "length is free, the loop plays at the creature's own tempo and the sheet's tempo table gives the rate (contract §9; ruled 2026-09-06, Q14 (a)). "
+             "A native creature (the Queen): keep each clip's shipped length — her controllers play the clip as authored. Each sheet's manifest says which "
+             "kind applies (`controller_kind`: `phase_locked` or `native`), and one-shot clips keep the length their row states.")
     L.append(f"6. **A bone the sheet marks `locked` carries or parents a hitbox part (contract §8.1).** {LOCK_POLICY} {LOCK_REJECT_MODE}")
     L.append("7. Rotation / position / scale keys, linear or Catmull-Rom curves (and GeckoLib easings) are fine; sound and particle keys only on one-shot clips (attack, hurt, death). "
              "**No event keyframes on loops** (idle, walk and the other cycles) — code-fired events come from the trigger inventory in each sheet, not from keys on a cycle (a loop plays under a phase lock that would fire such a key once, ever). "
              "Exception: a creature whose controllers are its own GeckoLib controllers (its sheet says controller kind `native` — the Queen) is not phase-locked, so its loops may carry event keys; they fire once per loop, and `check` notes each one (owner 2026-09-13). "
              "No Molang expressions, no custom-instruction keys, "
-             "no `_preview` files in a delivery (a Blockbench-only aid — the checker warns; PROVISIONAL, open question 15). "
+             "no `_preview` files in a delivery (a Blockbench-only aid, never in the jar — ruled 2026-09-06, Q15 (a); the checker warns). "
              + README_REFERENCE_SENTENCE)
     L.append("")
     L.append("## What is in each entity folder")
@@ -3070,28 +3132,33 @@ def readme_document(repo: "Repo", manifests: dict[str, dict[str, Any]]) -> str:
     L.append("")
     L.append("## Priority order and effort")
     L.append("")
-    L.append("Bosses first (they carry hitboxes and need the most care), then the ordinary creatures, then nothing for the code-driven props (no animation work: they are listed so their textures and sheets exist).")
+    L.append("Bosses first (they carry hitboxes and need the most care), then the ordinary creatures, then nothing for the code-driven props (no animation work: they are listed so their textures and sheets exist). "
+             "The table lists the folders in THIS package only.")
     L.append("")
     rows = []
     for s in sorted(landed, key=prio):
         m = manifests.get(s.registry, {})
-        clips = [c["name"] for c in m.get("clips", [])]
+        clip_rows_ = m.get("clips", [])
+        if m.get("controller_kind") == "native":
+            # a native creature's row is its pilot scope (owner 2026-09-13, third set, item 28 (4)): the clips the seed marks
+            # improve / author are the delivery; the `leave` clips come back as shipped, later
+            deliver = [c["name"] for c in clip_rows_ if c.get("verdict", "author") in ("author", "improve")]
+            later = [c["name"] for c in clip_rows_ if c.get("verdict") == "leave"]
+            clips_text = ", ".join(f"`{n}`" for n in deliver) if deliver else "none (no animation work)"
+            if later:
+                clips_text += f" — {'her' if s.registry == 'the_queen' else 'its'} other {len(later)} clip{'s' if len(later) != 1 else ''}: later, returned as shipped"
+        else:
+            clips = [c["name"] for c in clip_rows_]
+            clips_text = ", ".join(clips) if clips else "none (no animation work)"
         rows.append([s.registry, m.get("display_name", s.java_class), m.get("tier_label", s.tier_label), len(m.get("bones", [])),
-                     ", ".join(clips) if clips else "none (no animation work)",
-                     fmt(float(m.get("effort_hours", 0) or 0), 1) + " h" if m.get("clips") else "0 h"])
+                     clips_text, fmt(float(m.get("effort_hours", 0) or 0), 1) + " h" if clip_rows_ else "0 h"])
     L.append(md_table(["folder", "creature", "tier", "bones", "clips to deliver", "estimated effort"], rows))
+    L.append("")
+    L.append(f"More folders follow as creatures land through the seam; this package carries {len(rows)}.")
     L.append("")
     L.append("Effort figures are the generator's estimate (bosses 8 h + 0.15 h per bone + 1.5 h per clip to author or improve; others 4 h + 0.2 h per bone + 1 h per clip; "
              "a clip marked 'leave' or 'covered by idle' is not counted) unless the sheet states an owner-set figure. "
              "'Tier 1 (boss; the design's 'done' row)' is a creature the migration design lists as done (a native rig) and the animation contract treats as its Tier-1 boss — both are true.")
-    L.append("")
-    L.append("## PROVISIONAL items (decided before a gig starts)")
-    L.append("")
-    L.append("- The authoring-length convention for loops (normalise every loop to 1.0 s, or author at the natural period).")
-    L.append("- Whether a `death` clip replaces the vanilla death flip, and whether a `hurt` clip suppresses the red flash.")
-    L.append("- The `attack` trigger transport per creature, and `aggro_idle` for creatures without a synced attacking flag.")
-    L.append("- The optional `idle_alt_N` cadence and the cap on extra clips per creature.")
-    L.append("- Which boss is the pilot (the Queen is the candidate).")
     L.append("")
     return "\n".join(L) + "\n"
 
@@ -3166,7 +3233,9 @@ def build_package(repo: "Repo", out_dir: Path, registries: list[str] | None = No
                                                    "reattached": rt["reattached_by_this_importer"]},
             "warnings": [f"{code}: {msg}" for _, code, msg in repo.warnings.for_scope(s.registry)],
         })
-    write_text(out_dir / "README_FIRST.md", readme_document(repo, manifests))
+    # the README's priority table lists THIS run's folders only (owner 2026-09-13, third set, item 28 (4)); INVENTORY.csv and
+    # TEXTURE_MAP.csv stay package-wide
+    write_text(out_dir / "README_FIRST.md", readme_document(repo, manifests, packaged=list(manifests)))
     write_inventory(repo, out_dir, catalog, manifests)
     _, tex_summary = write_texture_map(repo, out_dir, catalog)
     summary["texture_map"] = tex_summary
@@ -3339,7 +3408,7 @@ def check_folder(folder: Path, manifest_path: Path | None = None, lock_mode_over
         source = "the --lock-mode override" if lock_mode_override else f"{manifest_path.name}'s lock_mode"
         findings.append(("REJECT", f"lock_mode '{lock_mode}' is not warn or reject ({source}; `warn` is the ruled policy, `reject` the mode kept for "
                                    "the day the server-side hitbox evaluator lands — regenerate the package or pass --lock-mode warn|reject)"))
-    policy_seen = m.get("lock_policy")  # the value itself is never echoed: a 0.2.0 manifest's is the pre-ruling PROVISIONAL sentence
+    policy_seen = m.get("lock_policy")  # the value itself is never echoed: a 0.2.0 manifest's is the pre-ruling sentence
     if policy_seen != LOCK_POLICY_ID:  # a package generated before the ruling, or one that never carried the token
         findings.append(("WARN", f"{manifest_path.name}: lock_policy is {'absent, not' if policy_seen is None else 'not'} `{LOCK_POLICY_ID}` — "
                          "the package predates the 2026-09-06 ruling; regenerate it (the checker applies the ruled policy regardless)"))
@@ -3348,7 +3417,7 @@ def check_folder(folder: Path, manifest_path: Path | None = None, lock_mode_over
     expected_anim = m.get("animation_file") or f"{m.get('registry', 'entity')}.animation.json"
     for p in folder.rglob("*"):
         if p.is_file() and "_preview" in p.name:
-            findings.append(("WARN", f"{p.name}: a _preview file is a Blockbench-only aid and is not delivered — PROVISIONAL (open question 15)"))
+            findings.append(("WARN", f"{p.name}: a _preview file is a Blockbench-only aid, never in the jar (ruled 2026-09-06, Q15 (a)); leave it out of the delivery"))
         if p.is_file() and p.name.endswith(REFERENCE_CLIP_SUFFIX):
             # owner 2026-09-13, second set, item 27 (3): the reference-only clip is never a delivery and never shipped. The package's
             # OWN copy coming back untouched (the manifest's file name and sha256) is not a delivery - a WARN naming it, so the
@@ -3531,7 +3600,15 @@ def check_folder(folder: Path, manifest_path: Path | None = None, lock_mode_over
             if rule.startswith("near:") and declared is not None:
                 target = float(rule.split(":", 1)[1])
                 if target > 0 and abs(length - target) > 0.5 * target:
-                    findings.append(("WARN", f"{ap_.name}: clip '{name}' length {fmt(length, 3)} s is far from the stated {fmt(target, 3)} s (PROVISIONAL rule)"))
+                    # README rule 5 by controller kind (owner 2026-09-13, third set, item 28 (3)): a phase-locked creature's loops
+                    # against 1.0 s (ruled 2026-09-06, Q14 (a)); a native creature's clips against their shipped length
+                    if native_controllers:
+                        why = "rule 5, a native creature: keep each clip's shipped length — its controllers play the clip as authored"
+                    elif str(spec.get("loop", "")).lower() == "true":
+                        why = "rule 5, a phase-locked creature: author every loop at 1.0 s (ruled 2026-09-06, Q14 (a)); in-game the length is free and the tempo table gives the rate"
+                    else:
+                        why = "the length the sheet's row states for this one-shot"
+                    findings.append(("WARN", f"{ap_.name}: clip '{name}' length {fmt(length, 3)} s is far from the stated {fmt(target, 3)} s ({why})"))
             last_key = 0.0
             bones = clip.get("bones", {})
             if not isinstance(bones, dict):

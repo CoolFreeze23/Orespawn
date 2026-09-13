@@ -1,4 +1,4 @@
-# Dry-run summary — 0.2.6 (the pilot package, 2026-09-13: artist_handoff/ writable after the mirror drop; the Queen's pilot scope - idle and attack - marked in her seed and sheet)
+# Dry-run summary — 0.2.7 (the third-set tooling commit, 2026-09-13: the pilot's second clip is bite; every contract marker resolved to the 2026-09-06 rulings, README rule 5 split by controller kind; the priority table lists the packaged folders only; the reference clip's span rule - a period multiple closing within 5 degrees, capped at 6 s)
 
 Output: `artist_handoff`
 

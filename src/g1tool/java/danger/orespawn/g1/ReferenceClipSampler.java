@@ -58,15 +58,30 @@ import software.bernie.geckolib.loading.json.typeadapter.KeyFramesAdapter;
  * the keys, one pose call per key (a fan angle or a roll advances per call, as it advances per rendered frame
  * in-game); full health (no shipped hook reads health). Twenty samples per second: one key per tick.</p>
  *
- * <p>THE SPAN, per rig (the ruling: one natural period where there is one, two seconds otherwise; static rigs one
- * key; multi-frequency rigs the period of the slowest group up to 40 ticks): a rig whose manifest declares
- * {@code channels} derives its rule from them (the effective frequency {@code omega * wingspeed} per channel; one
- * distinct frequency = its natural period {@code 2 pi / f}; several = the slowest one's period capped at 40 ticks);
- * a hook rig without declared channels (the Slice 4 rigs) carries its rule in {@link #RULES}, each with the source
- * line it was read from. Keys sit at every whole tick inside the span plus a CLOSING key at the span's end (the
- * pose sampled AT the period, which a periodic hook returns to its first key's pose - Bedrock and GeckoLib hold the
- * last key until {@code animation_length}, so without it the loop would hitch by up to a tick); the index records
- * the seam delta (closing key against first key, degrees, reduced mod 360) so a sawtooth channel's wrap is visible.</p>
+ * <p>THE SPAN, per rig (owner 2026-09-13, third set, addendum item 28 (5), replacing item 27 (3)'s wording): a rig
+ * with a period structure - a manifest that declares {@code channels} (the effective frequency {@code omega * wingspeed}
+ * per channel, the slowest distinct one's period {@code T = 2 pi / f}), or a hook rig without declared channels (the
+ * Slice 4 rigs) whose {@link #RULES} row states its period with the source line it was read from - spans the SMALLEST
+ * multiple {@code k * T} of its slowest group's period at which EVERY group returns within 5 degrees of its start:
+ * the pose at {@code t = k * T} against the pose at {@code t = 0}, per bone and axis, the authored rotation deltas'
+ * difference reduced mod 360 ({@link #wrapDegrees}, exactly as the loop seam is measured), the maximum at most
+ * {@link #CLOSURE_TOLERANCE_DEGREES}; where the hook writes positions, each position channel must return within
+ * {@link #CLOSURE_TOLERANCE_UNITS} model unit of its start (one sixteenth of a block, the model grid's pixel - the
+ * visual order of 5 degrees on a 16-unit bone; today only Robot4's cannon assembly writes positions and it is constant
+ * at rest, so that half of the rule is stated, not exercised). The first {@code k >= 1} with {@code k * T <= 120} ticks
+ * (the 6 s cap, {@link #SPAN_CAP_TICKS}) that passes is the span ({@code period_multiple}, the index's
+ * {@code period_multiple_k}); a single-group rig passes at {@code k = 1} (the seam 0 by construction). Past the cap -
+ * no such {@code k}, or {@code T} itself over 120 ticks (the Coin, the T-shirt, the Rotator, the Island pair, Robot1) -
+ * the span is two seconds ({@code two_seconds_past_cap}, 40 ticks) and the sheet states the seam (the index's
+ * {@code seam_delta_degrees}: the closing key's delta at 40 ticks). A static rig is one key ({@code one_key}); a rig
+ * with no period (the Purple Power's fresh random rolls) is two seconds ({@code two_seconds_no_period}). The closure
+ * test poses {@code t = 0} and then each candidate {@code t = k * T} in sequence on its own rest-state subject (every
+ * periodic hook is a pure function of {@code t}; the one call-sequence rig, the Rotator, is past the cap before any
+ * candidate is posed), and the clip is then sampled on a fresh subject exactly as before. Keys sit at every whole tick
+ * inside the span plus a CLOSING key at the span's end (the pose sampled AT {@code k * T} - Bedrock and GeckoLib hold
+ * the last key until {@code animation_length}, so without it the loop would hitch by up to a tick); the index records
+ * the seam delta (closing key against first key, degrees, reduced mod 360) so a past-cap window's seam and a sawtooth
+ * channel's wrap are visible.</p>
  *
  * <p>THE KEYS: a rotation key per bone per sample, DELTAS from the bone's bind under the converter's sign rule
  * (authored X = +classic degrees, Y and Z negated; the rule {@code tools/keyframe_clip.py} and {@link KeyframeLeg}
@@ -81,7 +96,13 @@ import software.bernie.geckolib.loading.json.typeadapter.KeyFramesAdapter;
  * Values rounded to 1e-10 (degrees / model units), never {@code -0.0}; {@code lerp_mode} linear; two-space JSON,
  * LF, UTF-8; deterministic, so two runs compare byte for byte.</p>
  *
- * <p>Usage: {@code ReferenceClipSampler <output-dir> <manifest>...} (build.gradle {@code referenceClips}).</p>
+ * <p>Usage: {@code ReferenceClipSampler <output-dir> <manifest>...} (build.gradle {@code referenceClips}, the writer)
+ * and {@code ReferenceClipSampler --verify <checked-in-dir> <scratch-out-dir> <manifest>...} (build.gradle
+ * {@code referenceClipsVerify}, a {@code check} dependency - owner 2026-09-13, third set, addendum item 28 (6)): the
+ * clips are regenerated into the scratch directory and every file is compared byte for byte with the checked-in
+ * directory; a difference, a file the sampler produced that is not checked in, or a checked-in file the sampler did
+ * not produce prints one {@code REFERENCE CLIPS DRIFT: <files>} line and exits 1 (the build fails, as proof drift
+ * does); success prints {@code REFERENCE CLIPS VERIFIED: N files}. No python in the loop.</p>
  */
 public final class ReferenceClipSampler {
     static final String CLIP_NAME = "reference";
@@ -89,6 +110,19 @@ public final class ReferenceClipSampler {
     static final String FILE_SUFFIX = "_reference.animation.json";
     static final double TICKS_PER_SECOND = 20.0D;
     static final double TWO_SECONDS_TICKS = 40.0D;
+    /** The cap on a period multiple: 6 s (owner 2026-09-13, third set, item 28 (5)); past it, two seconds. */
+    static final double SPAN_CAP_TICKS = 120.0D;
+    /** Every group must return within this many degrees of its start at k * T (per bone and axis, reduced mod 360). */
+    static final double CLOSURE_TOLERANCE_DEGREES = 5.0D;
+    /** A position channel must return within one model unit (1/16 block, the model grid's pixel) of its start at k * T. */
+    static final double CLOSURE_TOLERANCE_UNITS = 1.0D;
+    static final String RULE_ONE_KEY = "one_key";
+    static final String RULE_PERIODIC = "periodic";  // a period structure, resolved by the closure test to one of the next two
+    static final String RULE_PERIOD_MULTIPLE = "period_multiple";
+    static final String RULE_TWO_SECONDS_PAST_CAP = "two_seconds_past_cap";
+    static final String RULE_TWO_SECONDS_NO_PERIOD = "two_seconds_no_period";
+    static final String DRIFT_LINE = "REFERENCE CLIPS DRIFT: ";
+    static final String VERIFIED_LINE = "REFERENCE CLIPS VERIFIED: ";
     static final double TWO_PI = 2.0D * Math.PI;
     /** The generator's rounding of a key (tools/keyframe_clip.py VALUE_DECIMALS; KeyframeLeg.VALUE_ROUNDING). */
     static final double VALUE_ROUNDING = 1.0e10D;
@@ -139,56 +173,64 @@ public final class ReferenceClipSampler {
             Map.entry("model_termite", "termite"),
             Map.entry("model_unstable_ant", "unstable_ant")));
 
-    /** The sampling rule of a hook rig whose manifest declares no channels, with the source it was read from. */
-    record Rule(String kind, double spanTicks, String note) {
+    /**
+     * A rig's span rule. {@code kind}: {@link #RULE_ONE_KEY} (a static rig, or nothing to sample), {@link #RULE_PERIODIC}
+     * (a period structure - {@code periodTicks} is the slowest group's period {@code T} - which {@link #resolveSpan}
+     * settles into {@link #RULE_PERIOD_MULTIPLE} with its {@code k} and closure delta, or {@link #RULE_TWO_SECONDS_PAST_CAP}),
+     * or {@link #RULE_TWO_SECONDS_NO_PERIOD}. The note names the source lines the rule was read from and, once resolved,
+     * the closure test's result.
+     */
+    record Rule(String kind, double spanTicks, String note, double periodTicks, int k, double closureDegrees) {
         static Rule oneKey(String note) {
-            return new Rule("one_key", 0.0D, note);
+            return new Rule(RULE_ONE_KEY, 0.0D, note, 0.0D, 0, 0.0D);
         }
 
-        static Rule naturalPeriod(double ticks, String note) {
-            return new Rule("natural_period", ticks, note);
+        /** A rig with a period structure: the slowest group's period, to be resolved by the closure test. */
+        static Rule periodic(double periodTicks, String note) {
+            return new Rule(RULE_PERIODIC, periodTicks, note, periodTicks, 0, 0.0D);
         }
 
-        static Rule slowestCapped(double slowestTicks, String note) {
-            return slowestTicks > TWO_SECONDS_TICKS
-                    ? new Rule("multi_frequency_capped_two_seconds", TWO_SECONDS_TICKS,
-                            note + "; the slowest group's period " + fmt(slowestTicks) + " ticks exceeds 40, capped at 40 ticks (two seconds)")
-                    : new Rule("multi_frequency_slowest_group", slowestTicks, note);
+        static Rule twoSecondsNoPeriod(String note) {
+            return new Rule(RULE_TWO_SECONDS_NO_PERIOD, TWO_SECONDS_TICKS, note, 0.0D, 0, 0.0D);
         }
 
-        static Rule twoSeconds(String note) {
-            return new Rule("two_seconds_no_period", TWO_SECONDS_TICKS, note);
+        Rule periodMultiple(int multiple, double closure, String closureNote) {
+            return new Rule(RULE_PERIOD_MULTIPLE, multiple * periodTicks, note + "; " + closureNote, periodTicks, multiple, closure);
+        }
+
+        Rule pastCap(String capNote) {
+            return new Rule(RULE_TWO_SECONDS_PAST_CAP, TWO_SECONDS_TICKS, note + "; " + capNote, periodTicks, 0, 0.0D);
         }
     }
 
     static final Map<String, Rule> RULES = new TreeMap<>(Map.ofEntries(
-            Map.entry("model_coin", Rule.naturalPeriod(TWO_PI / (double) (0.05F * 0.22F),
+            Map.entry("model_coin", Rule.periodic(TWO_PI / (double) (0.05F * 0.22F),
                     "one channel: coin.yRot = cos(ageInTicks * 0.05F * 0.22F) * PI (CoinGeoReplacement.java:39, ModelCoin.java:49; "
                             + "orig ModelCoin.java:32, wingspeed 0.22): one natural period 2 pi / (0.05 x 0.22) = 571.2 ticks")),
-            Map.entry("model_island", Rule.slowestCapped(TWO_PI / (double) (0.05F * 1.0F),
+            Map.entry("model_island", Rule.periodic(TWO_PI / (double) (0.05F * 1.0F),
                     "nine channels at 0.05..0.058 rad/tick x wingspeed 1.0 (IslandGeoReplacement.poseIslandRig:34-42, "
                             + "ModelIsland.java:63-71; orig ModelIsland.java:45-53): nine frequencies, the slowest 0.05 rad/tick")),
-            Map.entry("model_islandtoo", Rule.slowestCapped(TWO_PI / (double) (0.05F * 1.0F),
+            Map.entry("model_islandtoo", Rule.periodic(TWO_PI / (double) (0.05F * 1.0F),
                     "the Island's nine channels (IslandTooGeoReplacement.java:27 -> IslandGeoReplacement.poseIslandRig; "
                             + "ModelIslandToo.java:33-41; orig ModelIsland.java:45-53): the slowest 0.05 rad/tick")),
-            Map.entry("model_robot1", Rule.slowestCapped(360.0D / 0.75D,
+            Map.entry("model_robot1", Rule.periodic(360.0D / 0.75D,
                     "two frequencies: the feet cos(limbSwing * 1.5F) x PI x 0.75 x limbSwingAmount (period 2 pi / 1.5 = 4.19 ticks "
                             + "at limbSwing +1 per tick; Robot1GeoReplacement.java:36-40, ModelRobot1.java:215-219; orig ModelRobot1.java:215-217 "
                             + "reads f2 = ageInTicks there) and the five keys toRadians(ageInTicks * 0.75) (one turn per 480 ticks; "
                             + "Robot1GeoReplacement.java:42-47, ModelRobot1.java:221-226; orig :218-222)")),
-            Map.entry("model_robot5", Rule.naturalPeriod(TWO_PI / (double) 0.15F,
+            Map.entry("model_robot5", Rule.periodic(TWO_PI / (double) 0.15F,
                     "one channel: the wheels |limbSwing * 0.15F mod 2 pi| (a sawtooth that wraps every 2 pi / 0.15 = 41.9 ticks at "
                             + "limbSwing +1 per tick; Robot5GeoReplacement.java:32-41, ModelRobot5.java:104-113; orig ModelRobot5.java:104-112 "
                             + "reads f2 = ageInTicks there); the turret yaw follows netHeadYaw / 2 = 0")),
-            Map.entry("model_robot2", Rule.naturalPeriod(TWO_PI / (double) 0.3F,
+            Map.entry("model_robot2", Rule.periodic(TWO_PI / (double) 0.3F,
                     "at rest one channel is live: the legs cos(ageInTicks * 0.3F) x PI x 0.12 x limbSwingAmount (Robot2GeoReplacement.java:40-46, "
                             + "ModelRobot2.java:141-147; orig ModelRobot2.java:133-137); the arms' windmill (rad(ageInTicks * 20)) needs a "
                             + "re-roll of ri1 while attacking (orig :139-170) and ri1 stays 0 at rest; the head follows netHeadYaw = 0")),
-            Map.entry("model_robot3", Rule.naturalPeriod(TWO_PI / (double) 0.55F,
+            Map.entry("model_robot3", Rule.periodic(TWO_PI / (double) 0.55F,
                     "at rest one channel is live: the legs cos(ageInTicks * 0.55F) x PI x 0.12 x limbSwingAmount (Robot3GeoReplacement.java:45-51, "
                             + "ModelRobot3.java:169-175; orig ModelRobot3.java:163-167); the arms' swing is latched off while ri1 is 0 "
                             + "(orig :169-186), holding their bent rest (-1.0 / +1.0 rad); the turret follows netHeadYaw / 2 = 0")),
-            Map.entry("model_robot4", Rule.naturalPeriod(TWO_PI / (double) 0.5F,
+            Map.entry("model_robot4", Rule.periodic(TWO_PI / (double) 0.5F,
                     "at rest one channel is live: the legs cos(ageInTicks * 0.5F) x PI x 0.15 x limbSwingAmount with the fixed calf / knee "
                             + "guard / thigh offsets (Robot4GeoReplacement.java:46-66, ModelRobot4.java:430-450; orig ModelRobot4.java:421-437); "
                             + "the shield pump and the cannon aim need attacking (orig :439-474) and rest at 0; the cannon assembly's "
@@ -197,12 +239,12 @@ public final class ReferenceClipSampler {
                     "no rotation or position channel: the pose is which cubes are visible for the rock type "
                             + "(RockBaseGeoReplacement.java:46-85, ModelRockBase.java:186-221; orig ModelRockBase.java:182-222), "
                             + "and visibility has no Bedrock animation channel; the SPEC's plain-language transcription carries it")),
-            Map.entry("model_rotator", Rule.naturalPeriod(180.0D,
+            Map.entry("model_rotator", Rule.periodic(180.0D,
                     "the three fans turn by RenderInfo.rf1 degrees, advanced 2 degrees per pose call and wrapped to 0 past 359 "
                             + "(RotatorGeoReplacement.java:58-67, RotatorModel.java:85-90; orig ModelRotator.java:52-77): the call "
                             + "sequence 0, 2, ..., 358, 0 closes every 180 calls - one call per key, so 180 ticks (in-game the advance "
                             + "is per rendered frame, ENT-S-147)")),
-            Map.entry("model_purplepower", Rule.twoSeconds(
+            Map.entry("model_purplepower", Rule.twoSecondsNoPeriod(
                     "no period: the three fans take three fresh rolls of the level random per pose call (nextFloat() * 360 in X, Y, Z "
                             + "order; PurplePowerGeoReplacement.java:121-136, ModelPurplePower.java:187-194; orig ModelPurplePower.java:57 / "
                             + ":66 / :75) - two seconds from the seed-0 random"))));
@@ -211,15 +253,74 @@ public final class ReferenceClipSampler {
     }
 
     public static void main(String[] args) throws Exception {
-        if (args.length < 2) {
-            throw new IllegalArgumentException("Usage: ReferenceClipSampler <output-dir> <manifest>...");
+        if (args.length >= 1 && "--verify".equals(args[0])) {
+            if (args.length < 4) {
+                throw new IllegalArgumentException("Usage: ReferenceClipSampler --verify <checked-in-dir> <scratch-out-dir> <manifest>...");
+            }
+            List<Path> manifests = new ArrayList<>();
+            for (int i = 3; i < args.length; i++) {
+                manifests.add(Path.of(args[i]));
+            }
+            int status = verify(Path.of(args[1]).toAbsolutePath().normalize(), Path.of(args[2]).toAbsolutePath().normalize(), manifests);
+            if (status != 0) {
+                System.exit(status);
+            }
+            return;
         }
-        Path outputDir = Path.of(args[0]).toAbsolutePath().normalize();
+        if (args.length < 2) {
+            throw new IllegalArgumentException("Usage: ReferenceClipSampler <output-dir> <manifest>... | --verify <checked-in-dir> <scratch-out-dir> <manifest>...");
+        }
+        List<Path> manifests = new ArrayList<>();
+        for (int i = 1; i < args.length; i++) {
+            manifests.add(Path.of(args[i]));
+        }
+        write(Path.of(args[0]).toAbsolutePath().normalize(), manifests);
+    }
+
+    /**
+     * The verifier (build.gradle {@code referenceClipsVerify}; owner 2026-09-13, third set, item 28 (6)): regenerate into
+     * {@code scratch}, then compare every regular file of both directories byte for byte. Returns 1 with one
+     * {@code REFERENCE CLIPS DRIFT} line naming each file that differs, is produced but not checked in, or is checked in
+     * but not produced; 0 with {@code REFERENCE CLIPS VERIFIED: N files}.
+     */
+    static int verify(Path checkedIn, Path scratch, List<Path> manifests) throws Exception {
+        write(scratch, manifests);
+        TreeSet<String> names = new TreeSet<>();
+        for (Path directory : List.of(checkedIn, scratch)) {
+            if (Files.isDirectory(directory)) {
+                try (var listing = Files.list(directory)) {
+                    listing.filter(Files::isRegularFile).forEach(path -> names.add(path.getFileName().toString()));
+                }
+            }
+        }
+        List<String> drift = new ArrayList<>();
+        for (String name : names) {
+            Path expected = checkedIn.resolve(name);
+            Path produced = scratch.resolve(name);
+            if (!Files.isRegularFile(expected)) {
+                drift.add(name + " (produced by the sampler, not checked in)");
+            } else if (!Files.isRegularFile(produced)) {
+                drift.add(name + " (checked in, not produced by the sampler)");
+            } else if (!java.util.Arrays.equals(Files.readAllBytes(expected), Files.readAllBytes(produced))) {
+                drift.add(name + " (differs)");
+            }
+        }
+        if (!drift.isEmpty()) {
+            System.out.println(DRIFT_LINE + String.join(", ", drift) + " - " + checkedIn + " against the sampler's output in " + scratch
+                    + ": regenerate with gradle referenceClips and commit the result");
+            return 1;
+        }
+        System.out.println(VERIFIED_LINE + names.size() + " files (" + checkedIn + " reproduced byte for byte in " + scratch + ")");
+        return 0;
+    }
+
+    /** The writer: every manifest's rigs sampled into {@code outputDir} plus the index. */
+    static void write(Path outputDir, List<Path> manifestPaths) throws Exception {
         Files.createDirectories(outputDir);
         Map<String, JsonObject> index = new TreeMap<>();
         Map<String, String> sampledClasses = new TreeMap<>();
-        for (int i = 1; i < args.length; i++) {
-            Path manifestPath = Path.of(args[i]).toAbsolutePath().normalize();
+        for (Path given : manifestPaths) {
+            Path manifestPath = given.toAbsolutePath().normalize();
             JsonObject manifest = readJson(manifestPath);
             Path repositoryRoot = manifestPath.getParent().getParent();
             for (JsonElement element : manifest.getAsJsonArray("models")) {
@@ -249,16 +350,22 @@ public final class ReferenceClipSampler {
             }
         }
         JsonObject root = new JsonObject();
-        root.addProperty("schema_version", 1);
-        root.addProperty("generated_by", "danger.orespawn.g1.ReferenceClipSampler (build.gradle referenceClips)");
+        root.addProperty("schema_version", 2);
+        root.addProperty("generated_by", "danger.orespawn.g1.ReferenceClipSampler (build.gradle referenceClips; verified at check by referenceClipsVerify)");
         root.addProperty("purpose", "reference-only clips sampled from every packaged species' classic hook (owner 2026-09-13, "
                 + "second set, addendum item 27 (3)); never shipped, never returned - the package checker and the asset audit refuse them");
         root.addProperty("clip_name", CLIP_NAME);
         root.addProperty("samples_per_second", TICKS_PER_SECOND);
         root.addProperty("fixed_inputs", INPUTS_STATEMENT);
-        root.addProperty("span_rule", "one natural period where there is one (a closing key at the period); two seconds (40 ticks) "
-                + "where the rig has no single natural period; a static rig one key; a multi-frequency rig the period of the slowest "
-                + "group up to 40 ticks; keys at every whole tick inside the span plus the closing key at its end");
+        root.addProperty("span_rule", "owner 2026-09-13, third set, addendum item 28 (5): a rig with a period structure spans the smallest "
+                + "multiple k x T of its slowest group's period T at which every group returns within 5 degrees of its start (the pose at "
+                + "t = k x T against the pose at t = 0, per bone and axis, the authored rotation deltas' difference reduced mod 360, the "
+                + "maximum at most 5.0 degrees; a position channel within 1.0 model unit), capped at 6 s (120 ticks): the first k >= 1 with "
+                + "k x T <= 120 that passes (rule period_multiple, period_multiple_k = k; a single-group rig passes at k = 1, its seam 0 by "
+                + "construction). Past the cap - no such k, or T itself over 120 ticks - two seconds (rule two_seconds_past_cap, 40 ticks) "
+                + "and the sheet states the seam (seam_delta_degrees: the closing key's delta at 40 ticks). A static rig one key (one_key); "
+                + "a rig with no period two seconds (two_seconds_no_period). Keys at every whole tick inside the span plus the closing key "
+                + "at its end");
         root.addProperty("rotation_rule", "a rotation key per bone per sample as the DELTA from the bone's bind under the converter's "
                 + "sign rule: authored X = +classic degrees, Y and Z negated (tools/keyframe_clip.py; KeyframeLeg); rounded to 1e-10 "
                 + "degrees, never -0.0; lerp_mode linear");
@@ -311,7 +418,7 @@ public final class ReferenceClipSampler {
         if (!Files.isRegularFile(geoPath)) {
             throw new IllegalStateException(id + ": the shipped geo " + geoPath + " does not exist");
         }
-        Rule rule = ruleFor(spec, id, isStatic);
+        Rule base = ruleFor(spec, id, isStatic);
         Model rawModel = KeyFramesAdapter.GEO_GSON.fromJson(Files.readString(geoPath, StandardCharsets.UTF_8), Model.class);
         JsonObject geoJson = readJson(geoPath);
         List<String> drawOrder = DrawOrder.read(geoJson);
@@ -325,9 +432,25 @@ public final class ReferenceClipSampler {
             bindPositions.put(name, new float[]{bone.getPosX(), bone.getPosY(), bone.getPosZ()});
         });
 
+        // One pose call at t on a subject: the shipped replacement on explicit PoseInputs, the probe's Beaver path, or bind.
+        Poser poser = (t, subject) -> {
+            if (candidateClass != null) {
+                return S4CandidateRuntime.evaluateProductionHook(rawModel, drawOrder, faceOrder, candidateClass,
+                        new S4CandidateRuntime.Inputs((float) t, (float) (t * LIMB_SWING_PER_TICK), LIMB_SWING_AMOUNT,
+                                NET_HEAD_YAW, HEAD_PITCH), subject);
+            }
+            if (beaverPath) {
+                return evaluator.evaluateBeaverCodeDriven(t, LIMB_SWING_AMOUNT);
+            }
+            return evaluator.bindPose();
+        };
+        // The span rule (owner 2026-09-13, third set, item 28 (5)): the closure test settles a period structure into the
+        // smallest multiple of the slowest period that closes within 5 degrees, or two seconds past the 6 s cap.
+        Rule rule = resolveSpan(base, id, poser, bindRotations, bindPositions);
+
         // The sample times: every whole tick inside the span, then the closing key at the span's end.
         List<Double> ticks = new ArrayList<>();
-        if ("one_key".equals(rule.kind())) {
+        if (RULE_ONE_KEY.equals(rule.kind())) {
             ticks.add(0.0D);
         } else {
             int whole = (int) Math.ceil(rule.spanTicks() - 1.0e-9D);
@@ -342,38 +465,10 @@ public final class ReferenceClipSampler {
         Map<String, List<double[]>> positionKeys = new TreeMap<>();   // bone -> authored (x, y, z) units per sample
         TreeSet<String> hiddenBones = new TreeSet<>();
         for (double t : ticks) {
-            G1AnimationRuntime.EvaluatedModel posed;
-            if (candidateClass != null) {
-                posed = S4CandidateRuntime.evaluateProductionHook(rawModel, drawOrder, faceOrder, candidateClass,
-                        new S4CandidateRuntime.Inputs((float) t, (float) (t * LIMB_SWING_PER_TICK), LIMB_SWING_AMOUNT,
-                                NET_HEAD_YAW, HEAD_PITCH), subject);
-            } else if (beaverPath) {
-                posed = evaluator.evaluateBeaverCodeDriven(t, LIMB_SWING_AMOUNT);
-            } else {
-                posed = evaluator.bindPose();
-            }
-            if (!posed.bones().keySet().equals(bindRotations.keySet())) {
-                throw new IllegalStateException(id + ": the posed bake's bones differ from the bind bake's");
-            }
-            for (Map.Entry<String, GeoBone> boneEntry : posed.bones().entrySet()) {
-                String name = boneEntry.getKey();
-                GeoBone bone = boneEntry.getValue();
-                float[] bindRotation = bindRotations.get(name);
-                // classic = (-Ix, Iy, -Iz); the classic delta from bind; authored = (+dCx, -dCy, -dCz).
-                double dCx = -(double) bone.getRotX() + (double) bindRotation[0];
-                double dCy = (double) bone.getRotY() - (double) bindRotation[1];
-                double dCz = -(double) bone.getRotZ() + (double) bindRotation[2];
-                rotationKeys.computeIfAbsent(name, key -> new ArrayList<>()).add(new double[]{
-                        round(Math.toDegrees(dCx)), round(-Math.toDegrees(dCy)), round(-Math.toDegrees(dCz))});
-                float[] bindPosition = bindPositions.get(name);
-                positionKeys.computeIfAbsent(name, key -> new ArrayList<>()).add(new double[]{
-                        round((double) bone.getPosX() - (double) bindPosition[0]),
-                        round((double) bone.getPosY() - (double) bindPosition[1]),
-                        round((double) bone.getPosZ() - (double) bindPosition[2])});
-                if (bone.isHidden()) {
-                    hiddenBones.add(name);
-                }
-            }
+            Sample sample = authoredKeys(id, poser.pose(t, subject), bindRotations, bindPositions);
+            sample.rotation().forEach((name, key) -> rotationKeys.computeIfAbsent(name, k -> new ArrayList<>()).add(key));
+            sample.position().forEach((name, key) -> positionKeys.computeIfAbsent(name, k -> new ArrayList<>()).add(key));
+            hiddenBones.addAll(sample.hidden());
         }
         // Position keys only where the hook wrote a position on the bone at any sample.
         List<String> positionBones = new ArrayList<>();
@@ -389,7 +484,7 @@ public final class ReferenceClipSampler {
             }
         }
 
-        double spanSeconds = "one_key".equals(rule.kind()) ? 1.0D / TICKS_PER_SECOND : round(rule.spanTicks() / TICKS_PER_SECOND);
+        double spanSeconds = RULE_ONE_KEY.equals(rule.kind()) ? 1.0D / TICKS_PER_SECOND : round(rule.spanTicks() / TICKS_PER_SECOND);
         JsonObject bones = new JsonObject();
         for (Map.Entry<String, List<double[]>> entry : rotationKeys.entrySet()) {
             JsonObject bone = new JsonObject();
@@ -444,7 +539,14 @@ public final class ReferenceClipSampler {
         entry.addProperty("sha256", sha256);
         entry.addProperty("rule", rule.kind());
         entry.addProperty("rule_note", rule.note());
-        entry.addProperty("span_ticks", "one_key".equals(rule.kind()) ? 0.0D : round(rule.spanTicks()));
+        if (rule.periodTicks() > 0.0D) {  // a period structure (period_multiple or two_seconds_past_cap): the slowest group's period T
+            entry.addProperty("period_ticks", round(rule.periodTicks()));
+        }
+        if (RULE_PERIOD_MULTIPLE.equals(rule.kind())) {
+            entry.addProperty("period_multiple_k", rule.k());
+            entry.addProperty("closure_delta_degrees", round(rule.closureDegrees()));
+        }
+        entry.addProperty("span_ticks", RULE_ONE_KEY.equals(rule.kind()) ? 0.0D : round(rule.spanTicks()));
         entry.addProperty("animation_length_seconds", spanSeconds);
         entry.addProperty("keys_per_bone", ticks.size());
         entry.addProperty("bones", rotationKeys.size());
@@ -455,10 +557,101 @@ public final class ReferenceClipSampler {
         entry.addProperty("seam_delta_position_units", round(seamPosition));
         entry.add("subject_after", subject.after());
         entry.addProperty("sampled_inputs", INPUTS_STATEMENT);
-        System.out.println(String.format(Locale.ROOT, "wrote %s: %s, %d keys per bone over %d bones (%d moving, %d positioned), span %s ticks, seam %s deg, sha256 %s",
-                clipPath.getFileName(), rule.kind(), ticks.size(), rotationKeys.size(), movingBones.size(), positionBones.size(),
-                fmt(rule.spanTicks()), fmt(seamRotation), sha256));
+        System.out.println(String.format(Locale.ROOT, "wrote %s: %s%s, %d keys per bone over %d bones (%d moving, %d positioned), span %s ticks, seam %s deg, sha256 %s",
+                clipPath.getFileName(), rule.kind(), RULE_PERIOD_MULTIPLE.equals(rule.kind()) ? " (k = " + rule.k() + " x " + fmt(rule.periodTicks()) + " ticks)" : "",
+                ticks.size(), rotationKeys.size(), movingBones.size(), positionBones.size(), fmt(rule.spanTicks()), fmt(seamRotation), sha256));
         return entry;
+    }
+
+    /** One pose call at tick {@code t} on {@code subject}, whichever hook form the rig has. */
+    @FunctionalInterface
+    interface Poser {
+        G1AnimationRuntime.EvaluatedModel pose(double t, ProbeSubject subject) throws Exception;
+    }
+
+    /** The authored keys of one pose: rotation deltas (degrees, the converter's sign rule) and position offsets per bone; the hidden bones. */
+    record Sample(Map<String, double[]> rotation, Map<String, double[]> position, TreeSet<String> hidden) {
+    }
+
+    /** The posed bake against the bind bake: the authored rotation delta and position offset of every bone, rounded as the keys are. */
+    static Sample authoredKeys(String id, G1AnimationRuntime.EvaluatedModel posed, Map<String, float[]> bindRotations,
+                               Map<String, float[]> bindPositions) {
+        if (!posed.bones().keySet().equals(bindRotations.keySet())) {
+            throw new IllegalStateException(id + ": the posed bake's bones differ from the bind bake's");
+        }
+        Map<String, double[]> rotation = new TreeMap<>();
+        Map<String, double[]> position = new TreeMap<>();
+        TreeSet<String> hidden = new TreeSet<>();
+        for (Map.Entry<String, GeoBone> boneEntry : posed.bones().entrySet()) {
+            String name = boneEntry.getKey();
+            GeoBone bone = boneEntry.getValue();
+            float[] bindRotation = bindRotations.get(name);
+            // classic = (-Ix, Iy, -Iz); the classic delta from bind; authored = (+dCx, -dCy, -dCz).
+            double dCx = -(double) bone.getRotX() + (double) bindRotation[0];
+            double dCy = (double) bone.getRotY() - (double) bindRotation[1];
+            double dCz = -(double) bone.getRotZ() + (double) bindRotation[2];
+            rotation.put(name, new double[]{round(Math.toDegrees(dCx)), round(-Math.toDegrees(dCy)), round(-Math.toDegrees(dCz))});
+            float[] bindPosition = bindPositions.get(name);
+            position.put(name, new double[]{
+                    round((double) bone.getPosX() - (double) bindPosition[0]),
+                    round((double) bone.getPosY() - (double) bindPosition[1]),
+                    round((double) bone.getPosZ() - (double) bindPosition[2])});
+            if (bone.isHidden()) {
+                hidden.add(name);
+            }
+        }
+        return new Sample(rotation, position, hidden);
+    }
+
+    /**
+     * The closure test (owner 2026-09-13, third set, item 28 (5)) on a {@link #RULE_PERIODIC} rule: the pose at
+     * {@code t = 0}, then at each candidate {@code t = k * T} in turn on one fresh rest-state subject, the maximum authored
+     * rotation delta between the two over every bone and axis (reduced mod 360, exactly as the loop seam is measured) and
+     * the maximum position delta in model units; the first {@code k >= 1} with {@code k * T <= 120} ticks that passes both
+     * tolerances is the span. Past the cap - {@code T} itself over 120 ticks, or no candidate passing - two seconds. Any
+     * other rule kind is returned as it is.
+     */
+    static Rule resolveSpan(Rule base, String id, Poser poser, Map<String, float[]> bindRotations, Map<String, float[]> bindPositions)
+            throws Exception {
+        if (!RULE_PERIODIC.equals(base.kind())) {
+            return base;
+        }
+        double period = base.periodTicks();
+        if (period > SPAN_CAP_TICKS + 1.0e-9D) {
+            return base.pastCap("the slowest group's period " + fmt(period) + " ticks exceeds the 6 s cap (120 ticks): a two-second window "
+                    + "(40 ticks), not a loop - the sheet states the closing key's seam");
+        }
+        ProbeSubject subject = new ProbeSubject(restState());
+        Sample start = authoredKeys(id, poser.pose(0.0D, subject), bindRotations, bindPositions);
+        List<String> tried = new ArrayList<>();
+        for (int k = 1; k * period <= SPAN_CAP_TICKS + 1.0e-9D; k++) {
+            Sample candidate = authoredKeys(id, poser.pose(k * period, subject), bindRotations, bindPositions);
+            double rotation = 0.0D;
+            for (Map.Entry<String, double[]> bone : start.rotation().entrySet()) {
+                double[] first = bone.getValue();
+                double[] last = candidate.rotation().get(bone.getKey());
+                for (int axis = 0; axis < 3; axis++) {
+                    rotation = Math.max(rotation, Math.abs(wrapDegrees(last[axis] - first[axis])));
+                }
+            }
+            double position = 0.0D;
+            for (Map.Entry<String, double[]> bone : start.position().entrySet()) {
+                double[] first = bone.getValue();
+                double[] last = candidate.position().get(bone.getKey());
+                for (int axis = 0; axis < 3; axis++) {
+                    position = Math.max(position, Math.abs(last[axis] - first[axis]));
+                }
+            }
+            tried.add("k = " + k + ": " + fmt(rotation) + " deg" + (position > 0.0D ? " / " + fmt(position) + " units" : ""));
+            if (rotation <= CLOSURE_TOLERANCE_DEGREES && position <= CLOSURE_TOLERANCE_UNITS) {
+                return base.periodMultiple(k, rotation, "closes at k = " + k + " (" + fmt(k * period) + " ticks): every bone returns within "
+                        + fmt(rotation) + " degrees" + (position > 0.0D ? " and " + fmt(position) + " model units" : "")
+                        + " of its start at k x T (the 5-degree test under the 6 s cap; " + String.join(", ", tried) + ")");
+            }
+        }
+        return base.pastCap("no multiple of the slowest group's period " + fmt(period) + " ticks up to the 6 s cap (120 ticks) brings every "
+                + "group back within 5 degrees of its start (" + String.join(", ", tried) + "): a two-second window (40 ticks), not a loop - "
+                + "the sheet states the closing key's seam");
     }
 
     /**
@@ -476,7 +669,10 @@ public final class ReferenceClipSampler {
         return state;
     }
 
-    /** The span rule: static = one key; declared channels = derived from their frequencies; otherwise the {@link #RULES} row. */
+    /**
+     * The span rule's base, before the closure test ({@link #resolveSpan}): static = one key; declared channels = a period
+     * structure whose slowest distinct frequency gives {@code T}; otherwise the {@link #RULES} row.
+     */
     static Rule ruleFor(JsonObject spec, String id, boolean isStatic) {
         if (isStatic) {
             return Rule.oneKey("a static rig (animation_kind static, no hook): one key at bind");
@@ -497,9 +693,9 @@ public final class ReferenceClipSampler {
             String declared = "the manifest's channels: " + frequencies.size() + " distinct frequency group(s) "
                     + frequencies.stream().map(ReferenceClipSampler::fmt).toList() + " rad/tick (omega x wingspeed)";
             if (frequencies.size() == 1) {
-                return Rule.naturalPeriod(TWO_PI / slowest, declared + ": one natural period 2 pi / f = " + fmt(TWO_PI / slowest) + " ticks");
+                return Rule.periodic(TWO_PI / slowest, declared + ": one natural period 2 pi / f = " + fmt(TWO_PI / slowest) + " ticks");
             }
-            return Rule.slowestCapped(TWO_PI / slowest, declared + ": the slowest group's period 2 pi / " + fmt(slowest) + " = "
+            return Rule.periodic(TWO_PI / slowest, declared + ": the slowest group's period 2 pi / " + fmt(slowest) + " = "
                     + fmt(TWO_PI / slowest) + " ticks");
         }
         Rule rule = RULES.get(id);

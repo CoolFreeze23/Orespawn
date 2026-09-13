@@ -7,6 +7,6 @@
     "orespawn:bone_draw_order"
   ],
   "time_tolerance_seconds": 5e-05,
-  "time_tolerance_note": "key TIMES compare within 5e-5 s (owner 2026-09-13, addendum item 26 (5)): the Blockbench emulation writes 4-decimal timecodes while a transcription's key times are k/(N-1) s at 10 decimals (the first Tier-2 slice's Beaver round-trip reported six time-only diffs); Blockbench's real timecode precision is read from its exporter source when the _preview export (open question 15) is built, and the emulation follows it then. Values compare at 1e-6.",
+  "time_tolerance_note": "key TIMES compare within 5e-5 s (owner 2026-09-13, addendum item 26 (5)): the Blockbench emulation writes 4-decimal timecodes while a transcription's key times are k/(N-1) s at 10 decimals (the first Tier-2 slice's Beaver round-trip reported six time-only diffs); Blockbench's real timecode precision is read from its exporter source when the _preview export (ruled 2026-09-06, Q15 (a): Blockbench-only, never shipped) is built, and the emulation follows it then. Values compare at 1e-6.",
   "note": "a real Blockbench geo re-export drops the dropped_keys and the reattached description keys; the artist returns the animation file, never the geo. This round-trip is the tool's writer against the tool's importer (one memory of the Blockbench codec on both sides): EQUAL means they agree with each other; the owner's hand-check of one real Blockbench export is the real test."
 }
