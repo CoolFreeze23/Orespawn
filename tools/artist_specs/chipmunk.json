@@ -1,0 +1,140 @@
+{
+  "registry": "chipmunk",
+  "display_name": "Chipmunk",
+  "status": "DRAFT — authored by a first pass from the entity code, 2026-09-13; edit pending",
+  "locomotion": "walker",
+  "artist_scope": "full contract (Tier 2, the state-branching class (a sitting branch freezes the tail): geckolib_migration_design.md section 5); the rig is not yet in-game (it lands through the seam in a later slice)",
+  "character_sheet": "A tiny chipmunk: a body and a body-tail block, a neck, a head with a nose, two cheeks, a mouth and two ears, two hidden hat pieces, four legs and a two-segment tail (ModelChipmunk.java:42-59; 18 parts on a 64x32 sheet, drawn at 0.9 and half that as a baby). It is a skittish pet from the cannon-fodder family (Chipmunk.java:45-47): 5 HP, speed 0.38, an unused 1-damage attribute (:82-87) - it never strikes. An apple tames it one time in two (:131-155), a dead bush releases it (:157-172), a name tag names it, a click sits it (:184-189); a carrot, potato or quinoa gives it a team hat and activates it (EntityCannonFodder.java:83-136). It floats (:65), breeds (:66), follows its owner (:67), runs from monsters and players (:68, :73), panics (:72), watches players and mobs (:74-75), wanders (:76), shelters indoors (:79), heals slowly (:107-109) and now and then digs the dirt or farmland out from under itself (:111-118). It spawns above y 50 with at most two others near (:227-232). Read it as a nervous rodent: a quick scamper, the head swivelling with the look, the tail wagging - frozen mid-wag when it sits.",
+  "size_notes": "Drawn at x0.9 of the rig, x0.45 as a baby (ChipmunkRenderer.java:26, 39-43) on a 64x32 sheet (ModelChipmunk.java:156); the hitbox is 0.35 x 0.35 (ModEntities.java:353-354; the AMBIENT category); shadow 0.15 x 0.9 (ChipmunkRenderer.java:28). The two hat pieces are hidden by the model (visible = false, ModelChipmunk.java:187-188).",
+  "labels": {
+    "body": "body",
+    "body_tail": "body, rear block (the rump)",
+    "neck": "neck (pitched 90 deg)",
+    "head": "head (turns 0.45 of the look yaw)",
+    "nose": "nose (turns with the head)",
+    "mouth_under": "mouth, under (turns with the head)",
+    "cheek1": "cheek 1 (turns with the head)",
+    "cheek2": "cheek 2 (turns with the head)",
+    "ear1": "ear 1 (turns with the head)",
+    "ear2": "ear 2 (turns with the head)",
+    "hat1": "team hat piece 1 (hidden by the model: visible = false)",
+    "hat2": "team hat piece 2 (hidden by the model: visible = false)",
+    "leg1": "front right leg (swings with leg3)",
+    "leg2": "front left leg (swings with leg4)",
+    "leg3": "back left leg (swings with leg1)",
+    "leg4": "back right leg (swings with leg2)",
+    "tail1": "tail segment 1 (base; wags, and bobs with the stride)",
+    "tail2": "tail segment 2 (tip; the base's angle plus 0.306 rad)"
+  },
+  "groups": [
+    {
+      "name": "gait",
+      "bones": [
+        "leg1",
+        "leg2",
+        "leg3",
+        "leg4"
+      ],
+      "omega": 2.3,
+      "axis": "x",
+      "gait_scaled": true,
+      "amplitude": "pi x 0.25 = 0.785 rad (45 deg) x the walking speed at 2.3 x 1.0 - still below the 0.1 threshold, no rest offsets",
+      "plain": "a fast four-legged scamper: front right with back left, front left with back right",
+      "math": "a = limbSwingAmount > 0.1 ? cos(ageInTicks * 2.3 * 1.0) * pi * 0.25 * limbSwingAmount : 0; leg1.xRot = leg3.xRot = a; leg2.xRot = leg4.xRot = -a",
+      "source": "ModelChipmunk.java:161-167",
+      "wingspeed": 1.0,
+      "omega_note": "the classic phase is ageInTicks x 2.3 x 1.0 (ANIM_SPEED, ModelChipmunk.java:20): the natural period is 2 pi / 2.3 = 2.7 ticks"
+    },
+    {
+      "name": "tail_wag",
+      "bones": [
+        "tail1",
+        "tail2"
+      ],
+      "omega": 0.25,
+      "axis": "x",
+      "gait_scaled": false,
+      "amplitude": "0.306 rad rest on the base and a further 0.306 on the tip, then pi x 0.06 = 0.188 rad (11 deg) on both; PLUS a stride term pi x 0.25 = 0.785 rad (45 deg) x the walking speed at 1.3 x 1.0 (no threshold); frozen at its last pose while sitting",
+      "plain": "the tail wags slowly up and down at rest and bobs hard with the stride; when the chipmunk sits the tail stays wherever it was",
+      "math": "if not sitting: tail1.xRot = 0.306 + cos(t * 0.25) * pi * 0.06 + cos(t * 1.3 * 1.0) * pi * 0.25 * limbSwingAmount; tail2.xRot = 0.306 + tail1.xRot",
+      "source": "ModelChipmunk.java:180-185",
+      "phase": "isInSittingPose() skips the update (ModelChipmunk.java:180): the tail freezes; the stride term at 1.3 (period 4.8 ticks) rides on the same bones",
+      "wingspeed": 1.0,
+      "omega_note": "the classic phase of the wag is ageInTicks x 0.25: the natural period is 2 pi / 0.25 = 25.1 ticks; the stride term is ageInTicks x 1.3 x 1.0 (period 4.8 ticks), scaled by speed though this is not the gait group"
+    }
+  ],
+  "behaviour": [
+    "One gait rhythm on the legs (ModelChipmunk.java:161-167): above a walking speed of 0.1 the cosine of the age x 2.3 (ANIM_SPEED 1.0, :20), x pi x 0.25, x the walking speed swings the front right and back left legs one way and the other pair the opposite - a 45-degree scamper at full speed every 2.7 ticks. Below the threshold the legs snap to their rests.",
+    "The head follows 0.45 of the look yaw (:169-178) and takes nine parts with it - the nose, both ears, the mouth, both cheeks and the two hidden hat pieces - each set to the same yaw one by one; no pitch.",
+    "The tail (:180-185): unless the chipmunk is in its sitting pose, the base takes 0.306 rad plus a slow wag (the cosine of the age x 0.25, x pi x 0.06 - 11 degrees every 25 ticks) plus a stride bob (the cosine of the age x 1.3, x pi x 0.25, x the walking speed - 45 degrees at full speed every 4.8 ticks, no threshold), and the tip takes the base's angle plus another 0.306. Sitting, the branch is skipped and the tail keeps whatever angle it had.",
+    "The body, rump and neck never move; the two hat pieces are hidden every frame (:187-188). There is no attacking flag and no strike (the cannon-fodder base activates and hats it but never bites, EntityCannonFodder.java:70-136).",
+    "The renderer halves the scale for a baby (ChipmunkRenderer.java:39-43)."
+  ],
+  "clips": [
+    {
+      "name": "idle",
+      "verdict": "author",
+      "note": "REQUIRED with walk: the gate opens on the pair (today nothing ships; the classic code plays) - the standing loop: legs at rest, the tail's slow 11-degree wag (ModelChipmunk.java:181)"
+    },
+    {
+      "name": "walk",
+      "verdict": "author",
+      "note": "REQUIRED with idle: the locomotion loop - the gait group's 45-degree scamper at full speed with the tail bobbing (ModelChipmunk.java:161-167, :182-184), scaled by walking speed in-game"
+    },
+    {
+      "name": "swim",
+      "verdict": "author",
+      "note": "it has the state: a FloatGoal keeps it at the surface (Chipmunk.java:65) - a frantic paddle; optional: falls back to walk then idle when absent (section 2.4)"
+    },
+    {
+      "name": "calm_idle",
+      "verdict": "leave",
+      "note": "= idle: no synched attacking flag in Chipmunk.java (the cannon-fodder base's HAT_COLOR / IS_ACTIVATED are team state, EntityCannonFodder.java:68-71) and no attack at all, so calm_idle is covered by idle"
+    },
+    {
+      "name": "attack",
+      "verdict": "leave",
+      "note": "no attack: the entity never strikes - no melee or ranged goal, no doHurtTarget call in Chipmunk.java or EntityCannonFodder.java (the 1-damage attribute at Chipmunk.java:86 is unused); the generator offers no attack row"
+    },
+    {
+      "name": "hurt",
+      "verdict": "author",
+      "note": "a flinch: no hurt() override in Chipmunk.java (vanilla LivingEntity.hurt; the scorpion_hit sound at :200-203); the hurtTime edge is client-observed - it panics after (:72)",
+      "length_seconds": 0.3
+    },
+    {
+      "name": "death",
+      "verdict": "author",
+      "note": "the vanilla death flip stays; a creature whose JSON ships a `death` clip gets the clip-replaces-flip mode, designed when the first such clip arrives (the Queen's own death clip the precedent) - a `death` delivered here plays under the flip until then",
+      "length_seconds": 1.0
+    }
+  ],
+  "extras": [
+    {
+      "name": "sit",
+      "loop": "true",
+      "layer": "overlay",
+      "bones": [
+        "body",
+        "body_tail",
+        "leg1",
+        "leg2",
+        "leg3",
+        "leg4",
+        "tail1",
+        "tail2"
+      ],
+      "code_triggered": false,
+      "trigger": "state: isInSittingPose() - TamableAnimal's synched sitting flag, toggled by the owner's click (Chipmunk.java:184-189) and cleared on release (:164-165); today its only visible effect is the tail frozen at its last angle (ModelChipmunk.java:180) - the seam needs a state selector for it",
+      "note": "a sitting pose: haunches down, tail curled up the back; needs the seam to select it on the sitting flag"
+    }
+  ],
+  "wishlist": [
+    "a real sitting pose: today the chipmunk 'sits' standing with its tail frozen mid-wag (ModelChipmunk.java:180) - haunches down, tail curled over the back",
+    "in `idle`: a nibble - paws to the mouth with the cheeks working; the head assembly is nine flat parts the code turns together (:169-178), so key them as one",
+    "in `walk`: a bounding scamper - the legs are four rigid blocks swinging 45 deg (:164-167); a hop of the body block with each stride reads as a chipmunk",
+    "in `hurt`: a startled jump straight up before the panic run (Chipmunk.java:72)",
+    "the hat pieces are hidden by the model (:187-188): key nothing on hat1 / hat2"
+  ],
+  "effort_hours": null
+}

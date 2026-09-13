@@ -1,0 +1,160 @@
+{
+  "registry": "triffid",
+  "display_name": "Triffid",
+  "status": "DRAFT — authored by a first pass from the entity code, 2026-09-13; edit pending",
+  "locomotion": "stationary",
+  "artist_scope": "full contract (Tier 2, the state-branching class: geckolib_migration_design.md section 5); the rig is not yet in-game (it lands through the seam in a later slice)",
+  "character_sheet": "A hostile carnivorous plant: a 9x8x9 base on fifty-two root pieces, a stem of sixteen bulbous blocks rising to a ring of eleven zero-thickness petals and a twenty-three-plate head, four leaves of thirteen to fifteen chained segments that curl around the stem, and a fifteen-segment tongue folded like an accordion that lashes out forty-five units (TriffidModel.java:382-1276, 178 parts). 100 HP, 20 damage, 12 armour and a speed of 0.13 it never uses: it has no wander goal and re-anchors itself every hundred ticks (MobStats.java:132; EntityTriffid.java:56-71, :135-137). Closed (the synched DATA_OPEN_CLOSED at 0, :44-45) it cannot be hurt (:186-193); it opens one roll in eight every eighty ticks (:210-215) or whenever prey - anything but creepers, the ender reaper, its own kind, the two terrors, the pitch black, dragons and creative players - enters its 10-block box (:218-221, :264-277), turning to face it every tick (:138-146); within 5 blocks it raises its attacking flag and bites every 1-in-10 tick for 20 (:222-228, :42-43). A hit that lands closes it for 300 ticks, roots it and clears its fire (:150-177, :122-129, :200-204). It spawns wherever it is placed (:280-284; ModEntities.java:302-304). Read it as a trap plant: leaves curled tight when closed, swaying wide when open, the tongue whipping out straight and snapping back while it feeds.",
+  "size_notes": "Drawn at x1.0 of the rig (TriffidRenderer.java:23; shadow 0.3, :25) on a 532x715 sheet (TriffidModel.java:1276), triffid.png (TriffidRenderer.java:19); the hitbox is 2.0 x 4.0 (ModEntities.java:302-304). The original's ModelTriffid(1.0f) argument was the wingspeed (TriffidModel.java:21), not a scale. The four leaves and the tongue are position chains the code re-places each tick (:1283-1349, :1357-1395, :1593-1616) - key the joints, not the positions.",
+  "labels": {
+    "base": "base (the 9x8x9 block at the ground; static)",
+    "root": "root, main piece (2x2x5 on the ground; static)",
+    "root43": "root, piece 43 (static)",
+    "r1": "root 1 (static)", "r2": "root 2 (static)", "r3": "root 3 (static)", "r4": "root 4 (static)", "r5": "root 5 (static)",
+    "r6": "root 6 (static)", "r7": "root 7 (static)", "r8": "root 8 (static)", "r9": "root 9 (static)", "r10": "root 10 (static)",
+    "r11": "root 11 (static)", "r12": "root 12 (static)", "r13": "root 13 (static)", "r14": "root 14 (static)", "r15": "root 15 (static)",
+    "r16": "root 16 (static)", "r17": "root 17 (static)", "r18": "root 18 (static)", "r19": "root 19 (static)", "r20": "root 20 (static)",
+    "r21": "root 21 (static)", "r22": "root 22 (static)", "r23": "root 23 (static)", "r24": "root 24 (static)", "r25": "root 25 (static)",
+    "r26": "root 26 (static)", "r27": "root 27 (static)", "r28": "root 28 (static)", "r29": "root 29 (static)", "r30": "root 30 (static)",
+    "r31": "root 31 (static)", "r32": "root 32 (static)", "r33": "root 33 (static)", "r34": "root 34 (static)", "r35": "root 35 (static)",
+    "r36": "root 36 (static)", "r37": "root 37 (static)", "r38": "root 38 (static)", "r39": "root 39 (static)", "r40": "root 40 (static)",
+    "r41": "root 41 (static)", "r42": "root 42 (static)", "r43": "root 43 (static)", "r44": "root 44 (static)", "r45": "root 45 (static)",
+    "r46": "root 46 (static)", "r47": "root 47 (static)", "r48": "root 48 (static)", "r49": "root 49 (static)", "r50": "root 50 (static)",
+    "b1": "stem block 1 (a 9x8x9 bulb at the base; static)", "b2": "stem block 2 (static)", "b3": "stem block 3 (static)", "b4": "stem block 4 (static)",
+    "b5": "stem block 5 (static)", "b6": "stem block 6 (static)", "b7": "stem block 7 (static)", "b8": "stem block 8 (static)", "b9": "stem block 9 (static)",
+    "b10": "stem block 10 (static)", "b11": "stem block 11 (static)", "b13": "stem block 13 (static)", "b14": "stem block 14 (static)",
+    "b15": "stem block 15 (static)", "b16": "stem block 16 (static)", "b17": "stem block 17, the top (static)",
+    "c1": "petal 1 (a zero-thickness 5x2 plane in the ring under the head; static)", "c2": "petal 2 (static)", "c3": "petal 3 (static)",
+    "c4": "petal 4 (static)", "c5": "petal 5 (static)", "c6": "petal 6 (static)", "c7": "petal 7 (static)", "c8": "petal 8 (static)",
+    "c9": "petal 9 (static)", "c10": "petal 10 (static)", "c11": "petal 11 (static)",
+    "h1": "head plate 1 (static)", "h2": "head plate 2 (static)", "h3": "head plate 3 (static)", "h4": "head plate 4 (static)", "h5": "head plate 5 (static)",
+    "h6": "head plate 6 (static)", "h7": "head plate 7 (static)", "h8": "head plate 8 (static)", "h9": "head plate 9 (static)", "h10": "head plate 10 (static)",
+    "h11": "head plate 11 (static)", "h12": "head plate 12 (static)", "h13": "head plate 13 (static)", "h14": "head plate 14 (static)", "h15": "head plate 15 (static)",
+    "h16": "head plate 16 (static)", "h17": "head plate 17 (static)", "h18": "head plate 18 (static)", "h19": "head plate 19 (static)", "h20": "head plate 20 (static)",
+    "h21": "head plate 21 (static)", "h22": "head plate 22 (static)", "h23": "head plate 23 (static)",
+    "l1": "left leaf, segment 1, the root (1x5x5 at the base's side, rest roll -0.95; the leaf group)",
+    "l2": "left leaf, segment 2 (placed 3 along segment 1; curls a further step)", "l3": "left leaf, segment 3 (placed 4 along)", "leaf3": "left leaf, segment 4 (a 1x4x7 blade sharing segment 3's place; placed 4 along)",
+    "l4": "left leaf, segment 5", "l5": "left leaf, segment 6", "l6": "left leaf, segment 7 (the widest, 1x6x10)", "l7": "left leaf, segment 8", "l8": "left leaf, segment 9",
+    "l9": "left leaf, segment 10", "l10": "left leaf, segment 11", "l11": "left leaf, segment 12", "l12": "left leaf, segment 13", "l13": "left leaf, segment 14", "l14": "left leaf, segment 15", "l15": "left leaf, segment 16, the tip",
+    "l16": "front leaf, segment 1, the root (5x1x5 ahead of the base, rest pitch -0.75; the leaf group)",
+    "l17": "front leaf, segment 2 (placed 3 along)", "l18": "front leaf, segment 3", "l19": "front leaf, segment 4", "l20": "front leaf, segment 5", "l21": "front leaf, segment 6 (the widest, 10x1x5)",
+    "l22": "front leaf, segment 7", "l23": "front leaf, segment 8", "l24": "front leaf, segment 9", "l25": "front leaf, segment 10", "l26": "front leaf, segment 11",
+    "l27": "front leaf, segment 12", "l28": "front leaf, segment 13", "l29": "front leaf, segment 14", "l30": "front leaf, segment 15, the tip",
+    "l31": "right leaf, segment 1, the root (rest roll +0.95; the leaf group)",
+    "l32": "right leaf, segment 2 (placed 3 along)", "leaf32": "right leaf, segment 3 (a 1x3x7 blade; placed 3 along)", "l33": "right leaf, segment 4", "l34": "right leaf, segment 5",
+    "l35": "right leaf, segment 6", "l36": "right leaf, segment 7 (the widest)", "l37": "right leaf, segment 8", "l38": "right leaf, segment 9", "l39": "right leaf, segment 10",
+    "l40": "right leaf, segment 11", "l41": "right leaf, segment 12", "l42": "right leaf, segment 13", "l43": "right leaf, segment 14, the tip",
+    "l44": "back leaf, segment 1, the root (5x1x5 behind the base, rest pitch +0.75; the leaf group)",
+    "l45": "back leaf, segment 2 (placed 5 along)", "l46": "back leaf, segment 3", "l47": "back leaf, segment 4", "l48": "back leaf, segment 5", "l49": "back leaf, segment 6 (the widest, 10x1x5)",
+    "leaf49": "back leaf, segment 7 (a 9x1x3 blade; placed 5 along)", "l50": "back leaf, segment 8", "l51": "back leaf, segment 9", "l52": "back leaf, segment 10", "l53": "back leaf, segment 11",
+    "l54": "back leaf, segment 12", "l55": "back leaf, segment 13", "l56": "back leaf, segment 14", "l57": "back leaf, segment 15, the tip",
+    "t15": "tongue, segment 15, the root (a 6x1x1 bar at the head's mouth; the tongue's first fold)",
+    "t14": "tongue, segment 14 (placed 6 along the root; folds the other way)", "t13": "tongue, segment 13 (3 long; placed 3 along)", "t12": "tongue, segment 12 (3 long)",
+    "t11": "tongue, segment 11 (3 long)", "t10": "tongue, segment 10 (3 long)", "t9": "tongue, segment 9 (6 long; placed 3 along)", "t8": "tongue, segment 8 (6 long; placed 6 along)",
+    "t7": "tongue, segment 7 (6 long)", "t6": "tongue, segment 6 (6 long)", "t5": "tongue, segment 5 (6 long)", "t4": "tongue, segment 4 (6 long)", "t3": "tongue, segment 3 (6 long)",
+    "t2": "tongue, segment 2 (3 long; rides segment 3's end)", "t1": "tongue, segment 1, the tip (3 long; rides segment 3's end)"
+  },
+  "groups": [
+    {
+      "name": "leaves",
+      "bones": ["l1", "l2", "l3", "leaf3", "l4", "l5", "l6", "l7", "l8", "l9", "l10", "l11", "l12", "l13", "l14", "l15", "l16", "l17", "l18", "l19", "l20", "l21", "l22", "l23", "l24", "l25", "l26", "l27", "l28", "l29", "l30", "l31", "l32", "leaf32", "l33", "l34", "l35", "l36", "l37", "l38", "l39", "l40", "l41", "l42", "l43", "l44", "l45", "l46", "l47", "l48", "l49", "leaf49", "l50", "l51", "l52", "l53", "l54", "l55", "l56", "l57"],
+      "omega": 0.25,
+      "axis": "z (the left and right leaves) and x (the front and back leaves), each segment placed along the one before",
+      "gait_scaled": false,
+      "amplitude": "open: pi x 0.039 = 0.1225 rad (7 deg) per segment at 0.25 rad/tick, accumulating along the chain (up to ±1.8 rad at a 15-segment tip); closed: a fixed +0.1225 rad per segment - the cosine's peak held, the leaves curled tight around the stem; the root segments about their rests (-0.95 / +0.95 roll, -0.75 / +0.75 pitch), each next segment placed 1-6 px along the previous one's angle",
+      "plain": "the four leaves curl in and uncurl on one slow wave while the plant is open, the bend growing from root to tip; closed, they hold the full curl",
+      "math": "a = openClosed == 0 ? 0.1225 : cos(t * 0.25 * 1.0) * pi * 0.039; left: l1.zRot = -0.95 + a, then seg.zRot = prev.zRot + a with seg placed j px along prev (leafpartA); right: l31.zRot = 0.95 - a, then prev.zRot - a (leafpartC); front: l16.xRot = -0.75 - a, then prev.xRot - a (leafpartB); back: l44.xRot = 0.75 + a, then prev.xRot + a (leafpartD)",
+      "source": "TriffidModel.java:1283-1349 (the chains), :1593-1616 (the four leafpart helpers); wingspeed 1.0 (:21)",
+      "phase": "the synched DATA_OPEN_CLOSED int (EntityTriffid.java:44-45): 1 opens the wave, 0 holds the curl",
+      "wingspeed": 1.0,
+      "omega_note": "the classic phase is ageInTicks x 0.25 x 1.0: the natural period is 25.1 ticks; closed there is no period - the angle is the constant 0.1225"
+    },
+    {
+      "name": "tongue",
+      "bones": ["t15", "t14", "t13", "t12", "t11", "t10", "t9", "t8", "t7", "t6", "t5", "t4", "t3", "t2", "t1"],
+      "omega": 0.25,
+      "axis": "z, each segment placed along the one before",
+      "gait_scaled": false,
+      "amplitude": "attacking: |cos(t x 0.25)| x pi x 0.5 - a sweep from 90 deg to 0 and back every 12.6 ticks, applied with alternating sign to the fourteen chained segments about a -0.6 offset, so the accordion unfolds to a straight 45-unit lash and folds back; not attacking: 90 deg held - the tongue fully folded; the segments are placed 6 / 3 / 3 / 3 / 3 / 3 / 6 / 6 / 6 / 6 / 6 / 6 / 3 px along the one before; all yaws 0",
+      "plain": "the tongue whips out straight and snaps back into its folds while the plant feeds; at rest it stays folded up at the mouth",
+      "math": "a = attacking ? |cos(t * 0.25 * 1.0) * pi * 0.5| : pi/2; t15.zRot = -a - 0.6; t14.zRot = a - 0.6 (placed 6 along t15); t13 = -a - 0.6 (3 along); t12 = a - 0.6; t11 = -a - 0.6; t10 = a - 0.6; t9 = -a - 0.6 (3 along); t8 = a - 0.6 (6 along); t7 ... t3 alternating (6 along each); t2 and t1 placed 3 along t3; every tN.yRot = 0",
+      "source": "TriffidModel.java:1350-1408",
+      "phase": "the synched DATA_ATTACKING int (EntityTriffid.java:42-43; 1 while prey is within 5 blocks on the 1-in-10 pass :222-228, 0 otherwise :229-234 and on a hit :165, :175) selects the lash",
+      "wingspeed": 1.0,
+      "omega_note": "the classic phase is ageInTicks x 0.25: the cosine's period is 25.1 ticks, the absolute value halves it to 12.6 per lash"
+    }
+  ],
+  "behaviour": [
+    "Two synched states drive everything (EntityTriffid.java:42-45). DATA_OPEN_CLOSED (TriffidModel.java:1283): closed, every leaf segment adds a fixed 0.1225 rad to the one before, so the four leaves - 13 to 15 segments each, placed link by link (:1284-1349, :1593-1616) - hold a tight curl around the stem; open, the same angle sways as a 25-tick cosine between +0.1225 and -0.1225 per segment, and the leaves breathe from the full curl to a full uncurl, the tips swinging up to 1.8 rad.",
+    "DATA_ATTACKING (:1350-1355): at rest the fifteen tongue segments hold 90 degrees alternating about -0.6 - an accordion folded at the mouth; attacking, |cos| sweeps that angle from 90 to 0 and back every 12.6 ticks, so the chain (:1357-1395, placed 3 and 6 px per segment) shoots out into a straight 45-unit lash and folds back - the bite's motion, though the hurt itself is the 1-in-10 pass (EntityTriffid.java:222-228).",
+    "The base, roots, the sixteen stem blocks, the eleven petals and the twenty-three head plates are static; there is no head look, and the entity turns its whole body to face prey every tick (EntityTriffid.java:138-146). It does not walk: no wander goal, a re-anchor to its own position every hundred ticks (:135-137), no pushing (:117-120), and no horizontal motion during the hurt lockout (:122-129)."
+  ],
+  "clips": [
+    {
+      "name": "idle",
+      "verdict": "author",
+      "note": "REQUIRED with walk: the gate opens on the pair (today nothing ships; the classic code plays) — the closed rest: leaves curled tight (TriffidModel.java:1283, the constant), the tongue folded (:1354-1355); the open sway is the `open` extra"
+    },
+    {
+      "name": "walk",
+      "verdict": "author",
+      "note": "REQUIRED with idle by the gate rule, but it never plays: the Triffid is stationary - no wander goal, a re-anchor to its own position every hundred ticks and no pushing (EntityTriffid.java:56-62, :117-120, :135-137) - so deliver the idle again under this name (a rooted plant does not stride); the generator's stationary row says as much"
+    },
+    {
+      "name": "aggro_idle",
+      "verdict": "author",
+      "note": "DATA_ATTACKING held at 1 while prey is within 5 blocks on the 1-in-10 pass (EntityTriffid.java:222-228, :42-43): the tongue lashing out and back every 12.6 ticks (TriffidModel.java:1350-1395) over the open leaves"
+    },
+    {
+      "name": "calm_idle",
+      "verdict": "author",
+      "note": "the flag at 0 (EntityTriffid.java:229-234, :165, :175): the tongue folded (TriffidModel.java:1354-1355) — the same rest as idle, open or closed by the other byte"
+    },
+    {
+      "name": "attack",
+      "verdict": "author",
+      "note": "the bite: doHurtTarget (vanilla, 20 of damage from MobStats.TRIFFID, EntityTriffid.java:69) every 1-in-10 tick while prey is within 5 blocks, no dice (:218-228); the flag is held while in reach, not pulsed at the strike, so the strike is transport 1 (the server LivingDamageEvent.Post) — the tongue lash the code already draws (TriffidModel.java:1351-1353) timed to the hurt",
+      "length_seconds": 0.6
+    },
+    {
+      "name": "hurt",
+      "verdict": "author",
+      "note": "a flinch: a hit lands only while it is open and outside the 300-tick lockout (EntityTriffid.java:150-177, :186-193), then it slams shut, drops the attacking flag and roots itself for 300 ticks (:173-175, :122-129, :200-204); the triffid_hit sound at 0.75 volume (:96-99, :107-110); the hurtTime edge is client-observed — the `close` extra follows",
+      "length_seconds": 0.4
+    },
+    {
+      "name": "death",
+      "verdict": "author",
+      "note": "the vanilla death flip stays; a creature whose JSON ships a `death` clip gets the clip-replaces-flip mode, designed when the first such clip arrives (the Queen's own death clip the precedent) - a `death` delivered here plays under the flip until then",
+      "length_seconds": 1.5
+    }
+  ],
+  "extras": [
+    {
+      "name": "open",
+      "loop": "true",
+      "layer": "base",
+      "bones": ["l1", "l2", "l3", "leaf3", "l4", "l5", "l6", "l7", "l8", "l9", "l10", "l11", "l12", "l13", "l14", "l15", "l16", "l17", "l18", "l19", "l20", "l21", "l22", "l23", "l24", "l25", "l26", "l27", "l28", "l29", "l30", "l31", "l32", "leaf32", "l33", "l34", "l35", "l36", "l37", "l38", "l39", "l40", "l41", "l42", "l43", "l44", "l45", "l46", "l47", "l48", "l49", "leaf49", "l50", "l51", "l52", "l53", "l54", "l55", "l56", "l57"],
+      "code_triggered": false,
+      "trigger": "the synched DATA_OPEN_CLOSED int at 1 (EntityTriffid.java:44-45, :88-94): set by prey in the 10-block box on the 1-in-10 pass (:218-221) or one roll in eight on a 1-in-80 tick (:210-215); cleared by the other seven rolls, and by every tick of the 300-tick hurt lockout (:200-204) — the leaves sway open on a 25-tick wave (TriffidModel.java:1283-1349); a state loop on the byte when the rig lands",
+      "note": "the open sway: the four leaves breathing from curled to spread, the tips leading"
+    },
+    {
+      "name": "close",
+      "loop": "false",
+      "layer": "overlay",
+      "bones": ["l1", "l16", "l31", "l44", "l6", "l21", "l36", "l49", "t15", "t14", "t13", "t12"],
+      "length_seconds": 0.5,
+      "code_triggered": false,
+      "trigger": "the hit that lands (EntityTriffid.java:168-176): super.hurt, then the 300-tick lockout, DATA_OPEN_CLOSED to 0 and the attacking flag to 0 — the leaves snap from the sway to the held curl (TriffidModel.java:1283) and the tongue folds (:1354-1355); a transition on the byte's falling edge, its transport the seam's when the rig lands",
+      "note": "the snap shut: the leaves clamp around the stem and the tongue folds in one beat"
+    }
+  ],
+  "wishlist": [
+    "in `open`: the code sways every leaf segment by one angle (TriffidModel.java:1287-1349) — let the tips lag the roots so the leaves ripple rather than hinge; the sixteen stem blocks and the petal ring are static (:382-1276), a slow stem sway would sell a living plant",
+    "in `attack`: the tongue lash the code draws (:1350-1395) is a uniform accordion — a whip that cracks at the tip on the hurt tick (EntityTriffid.java:222-228)",
+    "in `close`: a snap of the leaves and a shudder of the head plates on the hit (EntityTriffid.java:168-176); the head is static today",
+    "in `idle` (closed): a slow breath of the curl and a twitch of the folded tongue - a rooted plant needs a tell that it is alive"
+  ],
+  "effort_hours": null
+}

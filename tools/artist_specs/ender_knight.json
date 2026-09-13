@@ -1,0 +1,204 @@
+{
+  "registry": "ender_knight",
+  "display_name": "Ender Knight",
+  "status": "DRAFT — authored by a first pass from the entity code, 2026-09-13; edit pending",
+  "locomotion": "walker",
+  "artist_scope": "full contract (Tier 2, the state-branching class (a screaming branch on the arms and sword): geckolib_migration_design.md section 5); the rig is not yet in-game (it lands through the seam in a later slice)",
+  "character_sheet": "A towering armoured enderman: a pelvis, three spine pieces and four ribs up to a neck, collars and shoulders, a head, two three-piece arms - the right one holding a sword of handle and blade - two legs of thigh, two shin pieces and a hip, four foot pieces each, and a two-piece cape (ModelEnderKnight.java:64-103; 40 parts on a 512x512 sheet; 2.9 blocks tall). It is a hostile enderman in mail: 60 HP, 12 damage, 6 armour, speed 0.32, a 64-block follow range (MobStats.ENDER_KNIGHT, EnderKnight.java:202-210). It attacks a player who looks at it - the nearest player within 64 blocks whose gaze lines up with its chest and who has no pumpkin on (:90-144, :187-200), the enderman stare rule - or whoever hurts it (:63-74), closing with a vanilla melee goal (:56). While it has a target it SCREAMS (a synched flag, :40-41, :119, :342) and teleports: away when the starer comes within 4 blocks, toward a target more than 16 blocks away (:264-286), at random when hit by an arrow or magic (:339-349), in daylight (:243-255) and when wet or burning (:257-262, :228-230); portal particles stream off it (:232-241). It spawns in darkness at night above y 30 (:366-374). Read it as an enderman knight: a long-legged stride, the cape stirring, arms folded and the sword low at rest - then, screaming, the arms thrown up and the sword whirling.",
+  "size_notes": "Drawn at x1.0 of the rig (EnderKnightRenderer.java:25; no scale override) on a 512x512 sheet (ModelEnderKnight.java:270); the hitbox is 0.6 x 2.9 (ModEntities.java:87-89); shadow 0.3 (EnderKnightRenderer.java:27).",
+  "labels": {
+    "pelvis": "pelvis",
+    "spine1": "spine, lower piece (-17 deg)",
+    "spine2": "spine, middle piece",
+    "spine3": "spine, upper piece (11 deg)",
+    "rib1": "rib 1 (top)",
+    "rib2": "rib 2",
+    "rib3": "rib 3",
+    "rib4": "rib 4 (bottom)",
+    "neck": "neck",
+    "head": "head (turns 0.45 of the look yaw, clamped to +-0.45 rad)",
+    "lcollar": "left collar",
+    "rcollar": "right collar",
+    "lshoulder": "left shoulder",
+    "rshoulder": "right shoulder",
+    "cape1": "cape, upper piece (static)",
+    "cape2": "cape, lower piece (stirs with the stride and a slow sway)",
+    "larm2": "left upper arm, piece a (the shoulder hinge)",
+    "larm3": "left upper arm, piece b (moves with piece a)",
+    "larm1": "left forearm (placed 10 units along the upper arm's pitch by the code; folded across at rest)",
+    "rarm2": "right upper arm, piece a (the shoulder hinge)",
+    "rarm3": "right upper arm, piece b (moves with piece a)",
+    "rarm1": "right forearm (placed 10 units along the upper arm's pitch; holds the sword)",
+    "handle": "sword handle (placed 7 units along the right forearm's pitch)",
+    "blade": "sword blade (moves with the handle)",
+    "lhip": "left hip (static)",
+    "lleg1": "left thigh",
+    "lleg2": "left shin, piece a (rest -0.1 rad)",
+    "lleg3": "left shin, piece b (rest -0.1 rad)",
+    "lfoot1": "left foot, piece 1",
+    "lfoot2": "left foot, piece 2 (rest +0.6 rad)",
+    "lfoot3": "left foot, piece 3",
+    "lfoot4": "left foot, piece 4",
+    "rhip": "right hip (static)",
+    "rleg1": "right thigh",
+    "rleg2": "right shin, piece a (rest -0.1 rad)",
+    "rleg3": "right shin, piece b (rest -0.1 rad)",
+    "rfoot1": "right foot, piece 1",
+    "rfoot2": "right foot, piece 2 (rest +0.6 rad)",
+    "rfoot3": "right foot, piece 3",
+    "rfoot4": "right foot, piece 4"
+  },
+  "groups": [
+    {
+      "name": "gait",
+      "bones": [
+        "lleg1",
+        "lleg2",
+        "lleg3",
+        "lfoot1",
+        "lfoot2",
+        "lfoot3",
+        "lfoot4",
+        "rleg1",
+        "rleg2",
+        "rleg3",
+        "rfoot1",
+        "rfoot2",
+        "rfoot3",
+        "rfoot4",
+        "cape2"
+      ],
+      "omega": 0.273,
+      "axis": "x (the legs) / z (the cape's quarter-swing)",
+      "gait_scaled": true,
+      "amplitude": "rests 0 (thigh, foot pieces 1, 3, 4), -0.1 rad (shin pieces), +0.6 (foot piece 2), then pi x 0.25 = 0.785 rad (45 deg) x the walking speed at 1.3 x 0.21 - still below the 0.1 threshold; the cape's lower piece rolls by a quarter of it",
+      "plain": "the long legs stride in opposition, every piece of a leg together, and the cape swings a little with the step",
+      "math": "a = limbSwingAmount > 0.1 ? cos(ageInTicks * 1.3 * 0.21) * pi * 0.25 * limbSwingAmount : 0; lfoot1/3/4.xRot = a; lfoot2.xRot = 0.6 + a; lleg1.xRot = a; lleg2/lleg3.xRot = -0.1 + a; the right pieces the same rests - a; cape2.zRot = a / 4",
+      "source": "ModelEnderKnight.java:276-291",
+      "wingspeed": 0.21,
+      "omega_note": "the classic phase is ageInTicks x 1.3 x 0.21 (wingspeed, ModelEnderKnight.java:21): the natural period is 2 pi / 0.273 = 23 ticks"
+    },
+    {
+      "name": "cape_sway",
+      "bones": [
+        "cape2"
+      ],
+      "omega": 0.147,
+      "axis": "x",
+      "gait_scaled": false,
+      "amplitude": "pi x 0.02 = 0.063 rad (3.6 deg), at all times",
+      "plain": "the cape's lower piece stirs slowly fore and aft",
+      "math": "cape2.xRot = cos(ageInTicks * 0.7 * 0.21) * pi * 0.02",
+      "source": "ModelEnderKnight.java:292",
+      "wingspeed": 0.21,
+      "omega_note": "the classic phase is ageInTicks x 0.7 x 0.21: the natural period is 2 pi / 0.147 = 42.7 ticks"
+    },
+    {
+      "name": "arms",
+      "bones": [
+        "larm1",
+        "larm2",
+        "larm3",
+        "rarm1",
+        "rarm2",
+        "rarm3",
+        "handle",
+        "blade"
+      ],
+      "omega": 0.567,
+      "axis": "x",
+      "gait_scaled": false,
+      "amplitude": "screaming: -1.2 rad rest (upper arms), -1.8 (forearms), +0.5 (sword), then pi x 0.3 = 0.942 rad (54 deg) on the arms and 1.5 x that (81 deg) on the sword; calm: held still - upper arms -0.5, forearms -1.0 with the left yawed +1.0 and the right -1.0 (folded across), the sword at 0.35; each forearm placed 10 units along its upper arm's pitch, the sword 7 units along the right forearm's",
+      "plain": "at rest the arms are folded across the chest with the sword held low; screaming, both arms rise high and pump together with the sword whirling wider still",
+      "math": "s = cos(ageInTicks * 2.7 * 0.21) * pi * 0.3; screaming: larm2/larm3/rarm2/rarm3.xRot = -1.2 + s; larm1/rarm1.xRot = -1.8 + s; handle/blade.xRot = 0.5 + s * 1.5; calm: larm2/larm3/rarm2/rarm3.xRot = -0.5; larm1.xRot = rarm1.xRot = -1.0, larm1.yRot = 1.0, rarm1.yRot = -1.0; handle/blade.xRot = 0.35; larm1/rarm1 y/z placed 10 units along larm2/rarm2's pitch; handle/blade placed 7 units along rarm1's pitch (+1 on y)",
+      "source": "ModelEnderKnight.java:300-328",
+      "phase": "the synched screaming flag selects the branch (EnderKnight.java:40-41: set when a player stares, :119, or when hurt, :342; cleared when the target is lost, :124, :283, in daylight, :252, and when wet or burning, :260)",
+      "wingspeed": 0.21,
+      "omega_note": "the classic phase is ageInTicks x 2.7 x 0.21: the natural period is 2 pi / 0.567 = 11.1 ticks"
+    }
+  ],
+  "behaviour": [
+    "One gait rhythm on the legs (ModelEnderKnight.java:276-291): above a walking speed of 0.1 the cosine of the age x 1.3 x 0.21 (wingspeed, :21), x pi x 0.25, x the walking speed is added to every piece of the left leg (thigh, two shin pieces around -0.1 rad, four foot pieces, the second around +0.6) and subtracted from the right - a 45-degree stride at full speed every 23 ticks, each leg one rigid unit; the cape's lower piece rolls by a quarter of it. Below the threshold the legs snap to their rests.",
+    "The cape's lower piece also stirs at all times (:292): the cosine of the age x 0.7 x 0.21, x pi x 0.02 - 3.6 degrees every 42.7 ticks; the upper piece is static.",
+    "The head turns 0.45 of the look yaw, clamped to +-0.45 rad (:293-299), no pitch.",
+    "The arms and sword branch on the synched screaming flag (:300-322). Calm: the upper arms at -0.5 rad, the forearms at -1.0 and yawed +1.0 (left) and -1.0 (right) - folded across the chest - the sword handle and blade at 0.35; nothing moves. Screaming: the cosine of the age x 2.7 x 0.21, x pi x 0.3 (54 degrees every 11.1 ticks) is added to -1.2 on the four upper-arm pieces and to -1.8 on the forearms, both arms together, and one and a half times it to 0.5 on the sword - the arms thrown high and pumping, the sword whirling 81 degrees. Each forearm is placed 10 units along its upper arm's pitch and the sword 7 units along the right forearm's (:323-328): a hand-written FK chain on flat bones (when the rig lands a keyframed swing must key the positions too, or the arms must be parented).",
+    "The pelvis, spine, ribs, neck, collars, shoulders, hips and upper cape never move. The screaming flag is a held state (EnderKnight.java:119 on a stare, :342 on a hit; cleared at :124, :252, :260, :283) under a name the generator's inventory does not read as an attacking flag (an owner note); the strike is vanilla's MeleeAttackGoal (:56), whose doHurtTarget call is in vanilla code, so the inventory finds no melee site either - the attack is real.",
+    "The teleports (EnderKnight.java:290-337) are instant position changes with portal particles and the enderman teleport sound at both ends; the body itself does not animate them."
+  ],
+  "clips": [
+    {
+      "name": "idle",
+      "verdict": "author",
+      "note": "REQUIRED with walk: the gate opens on the pair (today nothing ships; the classic code plays) - the standing loop of the calm branch: arms folded, sword low, the cape stirring"
+    },
+    {
+      "name": "walk",
+      "verdict": "author",
+      "note": "REQUIRED with idle: the locomotion loop - the gait group's 45-degree long stride with the cape swinging (ModelEnderKnight.java:276-291), scaled by walking speed in-game"
+    },
+    {
+      "name": "swim",
+      "verdict": "author",
+      "note": "it has the state - a FloatGoal keeps it at the surface (EnderKnight.java:55) - but water hurts it and it teleports out (:228-230, :259-262), so author a brief thrashing paddle; optional: falls back to walk then idle when absent (section 2.4)"
+    },
+    {
+      "name": "aggro_idle",
+      "verdict": "author",
+      "note": "the screaming branch at rest: arms thrown high and pumping 54 deg every 11.1 ticks, the sword whirling 81 deg (ModelEnderKnight.java:301-308); the synched screaming flag is held while it has a target (EnderKnight.java:119, :342; cleared :124, :252, :260, :283). NOTE for the owner: the flag is DATA_SCREAMING, not DATA_ATTACKING, so the generator's mechanical inventory reads no attacking state and offers no aggro_idle row until it is told"
+    },
+    {
+      "name": "calm_idle",
+      "verdict": "author",
+      "note": "the calm branch: arms folded across the chest, sword at 0.35 rad (ModelEnderKnight.java:309-322) - the same as idle; may be delivered as a copy of idle"
+    },
+    {
+      "name": "attack",
+      "verdict": "author",
+      "note": "a sword strike: the vanilla MeleeAttackGoal (EnderKnight.java:56) closes and calls doHurtTarget for 12 inside vanilla code - no strike site in the entity file, so the generator's inventory finds no melee site and may offer no attack row (an owner note); no attacking flag, so the strike is transport 1 (the server LivingDamageEvent.Post) - an overhead sword blow landing on the impact frame",
+      "length_seconds": 0.5
+    },
+    {
+      "name": "hurt",
+      "verdict": "author",
+      "note": "a flinch: hurt() at EnderKnight.java:339-349 sets the scream and, for an arrow or magic, teleports away instead of taking the hit; the hurtTime edge is client-observed",
+      "length_seconds": 0.3
+    },
+    {
+      "name": "death",
+      "verdict": "author",
+      "note": "the vanilla death flip stays; a creature whose JSON ships a `death` clip gets the clip-replaces-flip mode, designed when the first such clip arrives (the Queen's own death clip the precedent) - a `death` delivered here plays under the flip until then",
+      "length_seconds": 1.0
+    }
+  ],
+  "extras": [
+    {
+      "name": "teleport",
+      "loop": "false",
+      "layer": "overlay",
+      "bones": [
+        "cape1",
+        "cape2",
+        "larm1",
+        "larm2",
+        "larm3",
+        "rarm1",
+        "rarm2",
+        "rarm3",
+        "handle",
+        "blade"
+      ],
+      "length_seconds": 0.3,
+      "code_triggered": false,
+      "trigger": "enderTeleportTo (EnderKnight.java:308-318): every teleport - away from a starer within 4 blocks or toward a target beyond 16 (:271-286), at random on an arrow or magic hit (:339-349), in daylight (:243-255), when wet or burning (:257-262) - a position jump with portal particles and the enderman teleport sound at both ends; a server-side event with no trigger by name today (the seam would need a named site)",
+      "note": "the vanish: a snap of the cape and arms inward on the tick it goes - it will read at the landing, not the origin, since the entity is already there"
+    }
+  ],
+  "wishlist": [
+    "in `walk`: bend the legs - thigh, shin pieces and foot pieces swing as one rigid unit (ModelEnderKnight.java:277-290); a knee that lags the thigh makes the enderman's long, deliberate stride, and the ribs and spine (static) should sway",
+    "the arms and sword (ModelEnderKnight.java:300-328): the rig's bones are flat and the code slides the forearm along the upper arm and the sword along the forearm - author the fold, the rise and the swing as rotations and flag to the owner that the seam must parent the chains or key the positions when the rig lands",
+    "in `attack`: a real sword blow - the screaming branch only pumps the arms (:301-308); an overhead cut landing on the impact frame with the cape following",
+    "in `aggro_idle`: keep the arms-up scream (:301-308) but let the head follow the stare - the code clamps the look to 0.45 rad (:293-299)",
+    "the `teleport` extra: the code snaps the position (EnderKnight.java:308-318); a half-second wind-up would have to play BEFORE the jump, which the seam cannot know - keep it to a landing settle"
+  ],
+  "effort_hours": null
+}

@@ -1,0 +1,158 @@
+{
+  "registry": "stinky",
+  "display_name": "Stinky",
+  "status": "DRAFT — authored by a first pass from the entity code, 2026-09-13; edit pending",
+  "locomotion": "flyer",
+  "artist_scope": "full contract (Tier 2, the state-branching class: geckolib_migration_design.md section 5); the rig is not yet in-game (it lands through the seam in a later slice)",
+  "character_sheet": "A tameable winged stink dragon: an 8x8x10 body with a chest block and a rump, a two-piece raked neck to a 5x5x5 head with a snout and two two-piece horns, two zero-thickness 18x10 wings, four 8-long legs and a three-piece tail (StinkyModel.java:68-166, twenty parts). 100 HP, speed 0.3, 10 damage (EntityStinky.java:122-127). Beef tames it one time in two (:228-244) and its owner's click sits it (:246-254). On the ground (the synched DATA_ACTIVITY at 1, :68-69, :137-145) it wanders, follows its owner and flees monsters (:98-107) and, one tick in fifty, hunts coal ore within eight blocks and eats it with a burp (:297-299, :313-335); in the air (2 - a 1-in-20 roll on a 1-in-100 tick, a flying or distant owner, or any hit, :215-222, :277-292) it flies from block target to block target (:459-523), hunts monsters within 12 blocks and bites within 3 blocks plus half the target's width (:437-455). It burps up a coal in front of itself one tick in 1750 and farts out one of nineteen skin-dependent items behind one tick in 2000, changing skin as often (:181-190, :205-207, :542-569); it takes no fall damage (:210-213). It spawns in daylight, at most three together (:660-665; ModEntities.java:570-571). Read it as a comic dragon: the Spyro's bouncy trot and wing flap with a longer whipping tail, the legs tucked in flight.",
+  "size_notes": "Drawn at x1.0 of the rig (StinkyRenderer.java:23; shadow 0.75, :25) on a 128x64 sheet (StinkyModel.java:168), stinky.png (StinkyRenderer.java:18 - the port draws one texture; the nineteen synched skins, EntityStinky.java:70-71, :155-163, pick only the fart drop today); the hitbox is 0.75 x 0.75 (ModEntities.java:570-571). The original's ModelStinky(0.65f) argument was a wingspeed the port's model does not keep: every rhythm's frequency is multiplied by limbSwingAmount itself (StinkyModel.java:173), so the tempo rises with the walking speed. The tail is a position chain (:200-204) - key the joints, not the positions.",
+  "labels": {
+    "body": "body (8x8x10; static)",
+    "tail1": "chest block (6x6x3 under the neck's root - named 'tail1' by the model's author; static)",
+    "neckbase": "rump (6x6x3 behind the body - named 'neckbase'; static)",
+    "neck1": "neck, base (4x5x5 raked up 41 deg; static)",
+    "neck": "neck (4x8x4 rising 8; yaws at half the look and pitches at a third)",
+    "head": "head (5x5x5 at the neck's top; the full look yaw and a third of the pitch)",
+    "snout": "snout (3x3x4; follows the head)",
+    "Lhorn1": "left horn, base (2x2x3; follows the head)",
+    "Lhorn2": "left horn, tip (1x1x3; follows the head)",
+    "Rhorn1": "right horn, base (follows the head)",
+    "Rhorn2": "right horn, tip (follows the head)",
+    "Lwing": "left wing (a zero-thickness 18x10 plane, rolled 23 deg up; flaps with the wing beat)",
+    "Rwing": "right wing (the mirror; flaps opposite)",
+    "Rleg2": "right front leg (3x8x3 at z -3; the gait, with the left rear; tucked to -1.0 in flight)",
+    "Lleg2": "left front leg (the gait, with the right rear; tucked to -1.0 in flight)",
+    "Rleg1": "right rear leg (3x8x3 at z 5.5; the gait, with the left front; tucked to +1.0 in flight)",
+    "Lleg1": "left rear leg (the gait, with the right front; tucked to +1.0 in flight)",
+    "tail2": "tail, first piece (5x5x5 raked up 22 deg; yaws with the tail wave)",
+    "tail3": "tail, second piece (4x4x4, placed 4 along the first; yaws at 1.6x the wave)",
+    "tail4": "tail, tip (3x3x5, placed 3 along the second; yaws at 2.6x the wave)"
+  },
+  "groups": [
+    {
+      "name": "gait",
+      "bones": ["Rleg1", "Lleg1", "Rleg2", "Lleg2", "Lwing", "Rwing"],
+      "omega": null,
+      "axis": "x (the legs) and z (the wings)",
+      "gait_scaled": true,
+      "amplitude": "legs: pi x 0.25 = 0.785 rad (45 deg) x the walking speed above a limbSwingAmount of 0.1, at a tempo of 2.0 x limbSwingAmount rad/tick; the right rear and left front one way, the left rear and right front the other; in flight (activity 2) the front legs hold -1.0 and the rear legs +1.0, still. Wings: pi x 0.4 = 1.257 rad (72 deg) x the speed above the same threshold, at a tempo of 2.3 x limbSwingAmount rad/tick, about the wings' 0.4 rad rests (the right about -0.4, the left about +0.4, in opposition); the rests below the threshold",
+      "plain": "the four legs trot in diagonal pairs and the two wing planes flap together, all faster and wider as it walks faster; in the air the legs tuck - the front pair back, the rear pair forward - and hold, while the wings still follow only the walking speed",
+      "math": "a = amount > 0.1 ? cos(t * 2.0 * amount) * pi * 0.25 * amount : 0; activity != 2 ? (Rleg1.xRot = a; Lleg1.xRot = -a; Rleg2.xRot = -a; Lleg2.xRot = a) : (Rleg2.xRot = Lleg2.xRot = -1.0; Rleg1.xRot = Lleg1.xRot = 1.0); w = amount > 0.1 ? cos(t * 2.3 * amount) * pi * 0.4 * amount : 0; Rwing.zRot = w - 0.4; Lwing.zRot = -w + 0.4",
+      "source": "StinkyModel.java:175-177 (the wings), :179-193 (the legs)",
+      "phase": "the synched DATA_ACTIVITY int (EntityStinky.java:68-69): 2 selects the leg tuck; one gait group per rig is the generator's rule, so the legs and wings share this group",
+      "omega_note": "the frequency terms are 2.0 x limbSwingAmount for the legs and 2.3 x limbSwingAmount for the wings (:173, :175, :179): at full stride the natural periods are 3.14 and 2.73 ticks"
+    },
+    {
+      "name": "tail",
+      "bones": ["tail2", "tail3", "tail4"],
+      "omega": null,
+      "axis": "y (and the chain's x / z positions)",
+      "gait_scaled": false,
+      "amplitude": "pi x 0.2 = 0.628 rad (36 deg) at the first piece, 1.6x (58 deg) at the second and 2.6x (94 deg) at the tip, at a tempo of 1.0 x limbSwingAmount rad/tick — so at rest the cosine sits at 1 and the tail is HELD bent 36 / 58 / 94 degrees to one side, wagging only as it moves; 0 (straight) while sitting; the second piece is placed 4 px along the first and the tip 3 px along the second, each 0.5 to the side",
+      "plain": "the tail whips side to side with the walk, the tip swinging wildest; standing still it stays curled hard to one side; sitting, it straightens",
+      "math": "a = sitting ? 0 : cos(t * 1.0 * amount) * pi * 0.2; tail2.yRot = a; tail3.z = tail2.z + cos(a) * 4; tail3.x = tail2.x + sin(a) * 4 - 0.5; tail3.yRot = a * 1.6; tail4.z = tail3.z + cos(tail3.yRot) * 3; tail4.x = tail3.x + sin(tail3.yRot) * 3 - 0.5; tail4.yRot = a * 2.6",
+      "source": "StinkyModel.java:195-205",
+      "phase": "isInSittingPose (the owner's click, EntityStinky.java:246-254) zeroes it",
+      "omega_note": "the frequency term is 1.0 x limbSwingAmount (:173, :195): at full stride the natural period is 6.28 ticks; at rest there is no period - the tail holds cos(0) = 1"
+    }
+  ],
+  "behaviour": [
+    "Every rhythm's frequency is multiplied by limbSwingAmount (StinkyModel.java:173): the faster it walks, the faster it moves. Above a limbSwingAmount of 0.1 the four legs trot 45 degrees x the speed in diagonal pairs (:179-185) and the two wing planes flap 72 degrees x the speed about their 23-degree rests (:175-177); the tail wags 36 degrees at the root, 58 at the second piece and 94 at the tip (:195-205). Standing still the legs and wings freeze and the tail is held curled hard to one side - the cosine of zero (:195, :199).",
+    "One state branch on the synched DATA_ACTIVITY int (EntityStinky.java:68-69, :137-145): in flight (2) the legs tuck and hold - the front pair back a radian, the rear pair forward a radian (StinkyModel.java:186-193) - while the wings still beat only with the walking speed (:175). The sitting pose straightens the tail (:196-198).",
+    "The head, snout and both horns take the full look yaw and a third of the pitch, the neck half the yaw and a third of the pitch (:207-221). The body, chest block, rump and neck base are static.",
+    "The takeoff is a flag flip (EntityStinky.java:220, :278, :285, :291, :441, :447), the landing the same 1-in-100 roll answering 1 nineteen times in twenty (:277-279), the bite doHurtTarget within 3 blocks plus half the target's width on the 1-in-7 flight scan (:450-453), the coal meal a block eaten with a burp (:329-333), the burp and the fart item drops (:181-190) - none of them animation events."
+  ],
+  "clips": [
+    {
+      "name": "idle",
+      "verdict": "author",
+      "note": "REQUIRED with walk: the gate opens on the pair (today nothing ships; the classic code plays) — the ground rest: legs and wings still at their rests (StinkyModel.java:175-179), the tail curled (:195, :199), the head on the look"
+    },
+    {
+      "name": "walk",
+      "verdict": "author",
+      "note": "REQUIRED with idle: the locomotion loop — the diagonal trot with the wings flapping and the tail whipping, all at a tempo that rises with the speed (:175-205); the reference clip is the code at full stride"
+    },
+    {
+      "name": "fly",
+      "verdict": "author",
+      "note": "DATA_ACTIVITY 2 (EntityStinky.java:68-69; set at :220 on a hit, :278 on the roll, :285 with a flying owner, :291 with a far owner, :441 / :447 on prey): the legs tucked and held (StinkyModel.java:186-193) while the wings beat only with the walking speed (:175) — a real wing beat is the ask; the generator's flyer row plays it while airborne"
+    },
+    {
+      "name": "swim",
+      "verdict": "leave",
+      "note": "no swim state: in water it is lifted 0.07 a tick (EntityStinky.java:175-178) and the FloatGoal (:100) keeps it up; the fallback to walk covers it (section 2.4)"
+    },
+    {
+      "name": "calm_idle",
+      "verdict": "leave",
+      "note": "= idle: no synched attacking flag in EntityStinky.java (DATA_ACTIVITY, DATA_SKIN and the vestigial DATA_SPYRO_FIRE at :66-71 are flight, skin and an unused fire flag), so calm_idle is covered by idle"
+    },
+    {
+      "name": "attack",
+      "verdict": "author",
+      "note": "the bite: doHurtTarget (vanilla, 10 of damage, EntityStinky.java:126) on the 1-in-7 flight scan within 3 blocks plus half the target's width of a monster (:437-455, :571-586); no attacking flag, so the strike is transport 1 (the server LivingDamageEvent.Post) — a swooping head snap",
+      "length_seconds": 0.4
+    },
+    {
+      "name": "hurt",
+      "verdict": "author",
+      "note": "a flinch to the duck_hurt sound at 0.6 volume (EntityStinky.java:644-647, :654-657); hurt() (:215-222) refuses cactus, unsits it and sends it into the air; the hurtTime edge is client-observed",
+      "length_seconds": 0.3
+    },
+    {
+      "name": "death",
+      "verdict": "author",
+      "note": "the vanilla death flip stays; a creature whose JSON ships a `death` clip gets the clip-replaces-flip mode, designed when the first such clip arrives (the Queen's own death clip the precedent) - a `death` delivered here plays under the flip until then",
+      "length_seconds": 1.0
+    }
+  ],
+  "extras": [
+    {
+      "name": "fart",
+      "loop": "false",
+      "layer": "overlay",
+      "bones": ["tail2", "tail3", "tail4", "neckbase", "body", "Lwing", "Rwing"],
+      "length_seconds": 0.6,
+      "code_triggered": false,
+      "trigger": "tick (EntityStinky.java:187-190): one server tick in 2000 the fart sound at pitch 1.5 and one skin-dependent item - blaze powder to a peach tree seed by skin (:542-569) - dropped 0.55-1.1 blocks behind (:534-540); a server roll with no packet today — a named site (transport 3) when the rig lands",
+      "note": "a tail lift and a body shudder on the sound"
+    },
+    {
+      "name": "burp",
+      "loop": "false",
+      "layer": "overlay",
+      "bones": ["neck", "head", "snout", "Lhorn1", "Rhorn1", "neck1"],
+      "length_seconds": 0.5,
+      "code_triggered": false,
+      "trigger": "tick (EntityStinky.java:181-184): one server tick in 1750 PLAYER_BURP and a coal dropped 0.75-1.5 blocks in front (:526-532); a server roll with no packet today — a named site (transport 3) when the rig lands",
+      "note": "a neck heave and a head jerk on the burp"
+    },
+    {
+      "name": "eat_coal",
+      "loop": "false",
+      "layer": "overlay",
+      "bones": ["neck", "head", "snout", "neck1", "Lhorn1", "Rhorn1"],
+      "length_seconds": 0.8,
+      "code_triggered": false,
+      "trigger": "eatCoalOre (EntityStinky.java:313-335) from the ground pass one tick in fifty (:297-299, PlayNicely off): a scan up to eight blocks for coal ore, a walk to it at 1.25 and, within 3.5 blocks, the block eaten with a heal and a burp (:327-333); a world edit with no packet today — a named site (transport 3) when the rig lands",
+      "note": "a head-down bite at the ore and a chew"
+    },
+    {
+      "name": "sit",
+      "loop": "true",
+      "layer": "base",
+      "bones": ["Rleg1", "Lleg1", "Rleg2", "Lleg2", "body", "tail2", "tail3", "tail4", "Lwing", "Rwing", "neck", "head"],
+      "code_triggered": false,
+      "trigger": "the vanilla sitting pose flag (TamableAnimal's synched sit bit), toggled by the owner's click (EntityStinky.java:246-254, which also grounds it at :249): the model straightens the tail while it is set (StinkyModel.java:196-198) and the entity stops moving (:275); a state loop on the flag when the rig lands",
+      "note": "a curled-up rest: legs folded, wings closed, the tail straight along the ground"
+    }
+  ],
+  "wishlist": [
+    "in `fly`: the code beats the wings only with the walking speed (StinkyModel.java:175), so a hovering Stinky hangs with still wings - a true wing beat in the air with the legs tucked as the code has them (:186-193)",
+    "in `walk`: a waddling trot over the diagonal pairs (:181-185) with the tail whip the code already has (:195-205); the tempo rises with the speed (:173), keep that feel",
+    "in `idle`: the curled tail (:195, :199) is a quirk of the code, not a pose - a slow tail sway and a sniff of the snout read better",
+    "in `attack`: a swoop and a head snap on the bite (EntityStinky.java:450-453); the head is look-only today (StinkyModel.java:207-221)"
+  ],
+  "effort_hours": null
+}

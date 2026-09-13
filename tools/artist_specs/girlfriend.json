@@ -1,0 +1,142 @@
+{
+  "registry": "girlfriend",
+  "display_name": "Girlfriend",
+  "status": "DRAFT — authored by a first pass from the entity code, 2026-09-13; edit pending",
+  "locomotion": "walker",
+  "artist_scope": "full contract (Tier 2, the gait-scaled class (the vanilla biped: distance-phased limbs, time-phased arm sway): geckolib_migration_design.md section 5); the rig is not yet in-game (it lands through the seam in a later slice) - and TODAY it has no rig to package at all: ModelGirlfriend has no entry in tools/reference_model_proofs.json (TEST-010), so the generator reports it unpackaged until the reference leg covers the vanilla biped",
+  "character_sheet": "A player-shaped companion: the vanilla biped - a head with a hat layer, a body, two slim 3-wide arms and two legs (ModelGirlfriend.java:15-41, the HumanoidModel layout on a 64x32 sheet) - drawn with one of 41 numbered skins, a dandelion cycling them (Girlfriend.java:94, :117-119, :554-562; GirlfriendRenderer.java:42-44), and wearing whatever armour she is given (:576-585; GirlfriendRenderer.java:20-23). She is a tameable fighter: 80 HP, speed 0.3, 8 damage plus her held weapon (:355-360); a poppy tames her one time in three (:528-552), her owner's food heals her and a weapon or armour equips (:564-598), an empty hand takes an item back or toggles her sitting (:600-612). Tamed, she follows her owner (:183-188), hunts creepers within 20 and monsters within 15 blocks (:246-272), is jealous of untamed rivals near her owner (:279-280) and, with a weapon in hand, swings it every 25 ticks within 4 blocks - 10 with Big Bertha (:434-453) - taunting within 7 (:454-465); at range she shoots an Ultimate Arrow from the Ultimate Bow or throws a shoe every 20 ticks within 10 blocks (:197, :489-522). Between 14000 and 22000 of the day she dances on a floor of gold, diamond, emerald, ruby, amethyst, titanium or uranium blocks - ten moves of strafes, hops, crouches, arm swings and turns, synchronised with the girlfriends beside her (:193-194; MyEntityAIDance.java:58-75, :186-284). On February 14 she is a 2.5 x 8 giant with 800 HP who hunts players and boyfriends until a Rose Sword cures her (:126-162, :211-212, :653-668). She floats, panics, opens doors and shelters indoors (:198-206), heals 1 per 100 ticks (:392-398), takes at most 10 per hit and ignores cactus (:641-670). Read her as a player character: the Steve walk, a weapon swing, a shoe throw, the dance.",
+  "size_notes": "Drawn at x1.0 of the rig (GirlfriendRenderer.java:19, a HumanoidMobRenderer; x5 while valentine-angry, :27-33; shadow 0.5) on a 64x32 sheet (ModelGirlfriend.java:41); the hitbox is 0.5 x 1.6, or 2.5 x 8.0 as the valentine giant (ModEntities.java:519-522; Girlfriend.java:156-162). A HumanoidArmorLayer draws the vanilla armour models over the same bones (GirlfriendRenderer.java:20-23). Skins: girlfriend0-40 and girlfriendv (GirlfriendRenderer.java:35-45) - one rig for all.",
+  "labels": {
+    "head": "head (turns and pitches with the look)",
+    "hat": "hat layer (an inflated copy of the head; the vanilla model copies the head's pose onto it)",
+    "body": "body (torso)",
+    "right_arm": "right arm (a slim 3-wide arm; swings with the stride, sways at rest, carries the weapon swing)",
+    "left_arm": "left arm (a slim 3-wide arm; swings with the stride, sways at rest)",
+    "right_leg": "right leg",
+    "left_leg": "left leg"
+  },
+  "groups": [
+    {
+      "name": "gait",
+      "bones": ["right_arm", "left_arm", "right_leg", "left_leg"],
+      "omega": null,
+      "axis": "x",
+      "gait_scaled": true,
+      "amplitude": "legs: 1.4 rad (80 deg) x the walking speed; arms: 2.0 x 0.5 = 1.0 rad (57 deg) x the walking speed, each arm opposite its own side's leg; no threshold",
+      "plain": "the vanilla biped walk: the legs stride in opposition and the arms swing against them, the stride phased by the distance walked rather than by time",
+      "math": "right_leg.xRot = cos(limbSwing * 0.6662) * 1.4 * limbSwingAmount; left_leg.xRot = cos(limbSwing * 0.6662 + pi) * 1.4 * limbSwingAmount; right_arm.xRot = cos(limbSwing * 0.6662 + pi) * 2.0 * limbSwingAmount * 0.5; left_arm.xRot = cos(limbSwing * 0.6662) * 2.0 * limbSwingAmount * 0.5",
+      "source": "vanilla HumanoidModel.setupAnim (net.minecraft.client.model.HumanoidModel; ModelGirlfriend.java:9 extends it with no override)",
+      "phase": "phase from distance walked: limbSwing x 0.6662 (one stride every 9.4 units of distance), not time",
+      "omega_note": "not time-based: the vanilla walk cycle advances with limbSwing (the distance walked), so it has no natural period in ticks; the contract's walk loop is scaled by speed in-game as any gait group"
+    },
+    {
+      "name": "arm_sway_roll",
+      "bones": ["right_arm", "left_arm"],
+      "omega": 0.09,
+      "axis": "z",
+      "gait_scaled": false,
+      "amplitude": "0.05 rad (3 deg) around a 0.05 rad rest, the two arms in opposition (a slight outward sway)",
+      "plain": "at all times the arms sway gently outward and back about the shoulder, in opposition",
+      "math": "right_arm.zRot += cos(ageInTicks * 0.09) * 0.05 + 0.05; left_arm.zRot -= cos(ageInTicks * 0.09) * 0.05 + 0.05",
+      "source": "vanilla HumanoidModel.setupAnim (ModelGirlfriend.java:9 extends it with no override)",
+      "omega_note": "the vanilla idle sway: the natural period is 2 pi / 0.09 = 69.8 ticks"
+    },
+    {
+      "name": "arm_sway_pitch",
+      "bones": ["right_arm", "left_arm"],
+      "omega": 0.067,
+      "axis": "x",
+      "gait_scaled": false,
+      "amplitude": "0.05 rad (3 deg), the two arms in opposition, added to the gait's pitch",
+      "plain": "a second, slower sway of the arms fore and aft, in opposition",
+      "math": "right_arm.xRot += sin(ageInTicks * 0.067) * 0.05; left_arm.xRot -= sin(ageInTicks * 0.067) * 0.05",
+      "source": "vanilla HumanoidModel.setupAnim (ModelGirlfriend.java:9 extends it with no override)",
+      "omega_note": "the vanilla idle sway (a sine): the natural period is 2 pi / 0.067 = 93.8 ticks"
+    }
+  ],
+  "behaviour": [
+    "The port's ModelGirlfriend adds no motion of its own: it is the vanilla HumanoidModel (ModelGirlfriend.java:9, no setupAnim override), so the biped's standard rules pose it - the head turns and pitches with the look, the hat copies the head; the legs stride at 1.4 rad x the walking speed and the arms swing against them at 1.0 rad x the walking speed, both phased by the distance walked (limbSwing x 0.6662) rather than by time; at rest the arms sway 3 degrees outward (cos at 0.09/tick) and fore-and-aft (sin at 0.067/tick) in opposition.",
+    "The vanilla swing plays on the main arm whenever the entity swings: the held-weapon melee calls swing(MAIN_HAND) before every hit (Girlfriend.java:441-442), the ranged attack swings after each shot or throw (:521), and the dance's moves 4, 5, 6, 9 and 10 swing the used hand every ten ticks (MyEntityAIDance.java:231, :239, :244, :262, :277); the vanilla arm poses for a held item and a drawn bow apply as for a player; the dance's crouch moves (3, 7, 8, 9, 10: setShiftKeyDown, :226, :249, :255, :261, :275) put her in the vanilla sneak pose.",
+    "The armour layer draws the vanilla armour models over the same seven bones (GirlfriendRenderer.java:20-23), so every bone keyed here moves her armour with her.",
+    "The skin, not the pose, carries her states: 41 numbered skins and the valentine texture (GirlfriendRenderer.java:35-45); the synched values (DATA_SKIN, DATA_VOICE, DATA_VOICE_ENABLE, DATA_FEELING_BETTER, Girlfriend.java:79-88) are skin, voice and the valentine cure, not an attacking flag. The valentine giant is a x5 render scale and a 2.5 x 8 hitbox (GirlfriendRenderer.java:27-33; Girlfriend.java:156-162), the same rig.",
+    "There is no rig to package today: ModelGirlfriend (the vanilla biped) has no entry in tools/reference_model_proofs.json (TEST-010), so no reference-leg geo exists and the generator lists the species as unpackaged; the bone names above are the createBodyLayer names (ModelGirlfriend.java:19-39) and will be the rig's when it is covered."
+  ],
+  "clips": [
+    {
+      "name": "idle",
+      "verdict": "author",
+      "note": "REQUIRED with walk: the gate opens on the pair (today nothing ships; the vanilla biped code plays) - the standing loop: the 3-degree arm sways, a breath"
+    },
+    {
+      "name": "walk",
+      "verdict": "author",
+      "note": "REQUIRED with idle: the locomotion loop - the biped stride, legs 80 deg and arms 57 deg at full speed (vanilla HumanoidModel.setupAnim), scaled by walking speed in-game"
+    },
+    {
+      "name": "swim",
+      "verdict": "leave",
+      "note": "no swim behaviour beyond the FloatGoal that keeps her at the surface (Girlfriend.java:198) - she strolls around water (WaterAvoidingRandomStrollGoal, :201) and has no wet state (the Boyfriend's swimshorts have no counterpart here); the fallback to walk then idle covers it (section 2.4)"
+    },
+    {
+      "name": "calm_idle",
+      "verdict": "leave",
+      "note": "= idle: no synched attacking flag in Girlfriend.java (DATA_SKIN / DATA_VOICE / DATA_VOICE_ENABLE / DATA_FEELING_BETTER at :79-88 are skin, voice and the valentine cure), so calm_idle is covered by idle until this creature's SPEC adds the byte"
+    },
+    {
+      "name": "attack",
+      "verdict": "author",
+      "note": "a weapon swing: the held-weapon melee every 25 ticks within 4 blocks, 10 with Big Bertha (Girlfriend.java:434-453: swing(MAIN_HAND) then doHurtTarget at :441-442, the o_fight line every third hit :443-451); no attacking flag, so the strike is transport 1 (the server LivingDamageEvent.Post); the ranged shot / throw (:489-522, a named launch site, transport 3) is the `shoot` extra",
+      "length_seconds": 0.5
+    },
+    {
+      "name": "hurt",
+      "verdict": "author",
+      "note": "a flinch: hurt() at Girlfriend.java:641-670 caps every hit at 10, refuses cactus and, as the valentine giant, walls; the o_ow line (:701-705); the hurtTime edge is client-observed",
+      "length_seconds": 0.3
+    },
+    {
+      "name": "death",
+      "verdict": "author",
+      "note": "the vanilla death flip stays; a creature whose JSON ships a `death` clip gets the clip-replaces-flip mode, designed when the first such clip arrives (the Queen's own death clip the precedent) - a `death` delivered here plays under the flip until then",
+      "length_seconds": 1.0
+    }
+  ],
+  "extras": [
+    {
+      "name": "shoot",
+      "loop": "false",
+      "layer": "overlay",
+      "bones": ["right_arm", "left_arm", "head"],
+      "length_seconds": 0.5,
+      "code_triggered": false,
+      "trigger": "performRangedAttack (Girlfriend.java:489-522), called by the RangedAttackGoal every 20 ticks within 10 blocks of a target (:197): an Ultimate Arrow when the Ultimate Bow is held (:495-509), else a thrown Shoe of a random type (:510-520), then swing(MAIN_HAND) (:521); a named launch site (transport 3) - today only the vanilla arm swing plays",
+      "note": "the shot: a bow draw and release with the Ultimate Bow, an overarm shoe throw otherwise - author the throw; the bow pose is vanilla's when the bow is held"
+    },
+    {
+      "name": "dance",
+      "loop": "true",
+      "layer": "base",
+      "bones": ["head", "hat", "body", "right_arm", "left_arm", "right_leg", "left_leg"],
+      "code_triggered": false,
+      "trigger": "MyEntityAIDance (Girlfriend.java:193-194): between 14000 and 22000 of the day, not sitting, on a floor of gold, diamond, emerald, ruby, amethyst, titanium or uranium blocks under her feet (MyEntityAIDance.java:58-75), she walks to the floor's centre (:118-151) and cycles ten moves of 160 ticks each (:208-283) - strafes on a 20-tick beat, crouches on the half-beat, hops of 0.25, arm swings every 10 ticks, body and head turns of 10 degrees - synchronised with the lowest-id dancing girlfriend within 4 blocks (:195-206); is_dancing is a goal field, not a synched byte, so the loop's transport waits for the SPEC when the rig lands",
+      "note": "a dance loop over the vanilla crouch and swing the goal already drives: hips, shoulders and a head bob on the 20-tick beat (1.0 s)"
+    },
+    {
+      "name": "sit",
+      "loop": "true",
+      "layer": "base",
+      "bones": ["body", "right_leg", "left_leg", "right_arm", "left_arm"],
+      "code_triggered": false,
+      "trigger": "the vanilla sitting pose flag (TamableAnimal's synched sit bit) toggled by the owner's empty-hand click when she carries nothing to hand back (Girlfriend.java:600-612, setOrderedToSit / setInSittingPose at :607-608); the HumanoidModel draws no sitting pose for a mob, so a sitting girlfriend stands - a state loop on the flag when the rig lands",
+      "note": "a seated rest: legs forward, hands on the knees"
+    }
+  ],
+  "wishlist": [
+    "keep her a player: the vanilla biped clips (Steve's walk and swing) are the reference - do not exaggerate, the armour layer rides the same bones (GirlfriendRenderer.java:20-23) and reads wrong if the limbs bend",
+    "in `attack`: a real weapon swing with weight - the vanilla swing is a quick arm arc (Girlfriend.java:441); a wind-up sells the 25-tick cadence",
+    "the `dance` extra: the goal moves her body (strafes, hops, turns, MyEntityAIDance.java:293-321) and only the vanilla crouch and swing pose the rig - a loop with hips and shoulders on the 20-tick beat makes the ten moves read as dancing",
+    "the `shoot` extra: the shoe throw (Girlfriend.java:510-520) has no pose beyond the arm swing today - an overarm throw with a step",
+    "in `idle`: a look-around and a weight shift over the vanilla arm sways; she loiters near her owner (:183-188)"
+  ],
+  "effort_hours": null
+}

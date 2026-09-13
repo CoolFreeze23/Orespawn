@@ -1,0 +1,261 @@
+{
+  "registry": "godzilla",
+  "display_name": "Mobzilla",
+  "status": "DRAFT — authored by a first pass from the entity code, 2026-09-13; edit pending",
+  "locomotion": "walker",
+  "artist_scope": "full contract (Tier 1, the gait-scaled class: geckolib_migration_design.md section 5) with the §8.1 locks; the rig is not yet in-game (it lands through the seam in a later slice)",
+  "character_sheet": "Mobzilla (the `godzilla` registry) is the mod's largest boss, a 25-block bipedal kaiju: a three-block body under a spined back, a neck to a head with an upper and a hinged lower jaw, two arms of shoulder, upper arm, forearm and a three-fingered hand, two legs of thigh, upper leg and lower leg on three-toed feet, and an eight-segment tail with spines (ModelGodzilla.createBodyLayer, ModelGodzilla.java:168-537). It has 4000 HP, 175 attack and 21 armour (MobStats.GODZILLA, createAttributes Godzilla.java:148-155; a 6000 constant gates its healing, :66, :311-313), a purple boss bar (:86-87) and four manual hitbox parts that ride the root — bodyLow 8x8, bodyUp 6x6, head 5x5, tail 4x4 (:129-133, :292-295; the head takes full damage, the bodies half, the tail a quarter plus one, :262-270). It wanders and looks at anything living within 50 blocks (:140-145). Its AI (customServerAiStep :655-814) reloads eight cannon shots every 100 ticks, picks a target on a 1-in-5 tick and, by distance and dice: calls lightning on it (100 damage, fire, an explosion and two bolts, :769-770, doLightningAttack :560-578), leaps at it (jumpAtEntity :391-403), closes within seventeen blocks with the attacking flag up and stomps it (:777-784, doHurtTarget :819-847: a 3.2 knockback, and a big creature halved), or beyond 25 blocks fires a volley — a really big fireball and five more from the mouth 22 blocks ahead and 19 up (fireCannon :516-556). Every landing from a jump rings damage out to 10, 15 and 25 blocks (:699-710, doJumpDamage :490-512), and it crushes blocks around and ahead of itself while it walks (:712-733). Damage to it is capped and refused for 20 ticks after each hit (hurt :851-879); it heals 5 on a 1-in-35 roll (:811-813), never falls or burns by lightning (:315-326), and spawns once per world by night above y 50 under open sky on a 1-in-40 roll with a clear 17x11x17 pocket and no other within 64 blocks (checkSpawnRules :184-214) in the Village biome (village_biome.json), calling up its invisible gaze-tracking head sidecar at its first target (:756-763). Read it as slow and vast: every step plants, the arms swing wide when it rages, the tail lashes.",
+  "size_notes": "Drawn at x2.0 of the rig, a quarter of that while PlayNicely (GodzillaRenderer.java:25, applied :34-40; shadow 1.0 x 2.0) on a 1024x1024 sheet (ModelGodzilla.java:537); 9.9 x 25 block hitbox (ModEntities.java:188-193; 2.475 x 6.25 while PlayNicely, Godzilla.getDefaultDimensions :254-259; the design's row writes [10,25]). The four manual part hitboxes are placed from the root position, not from the pose (:292-295) — until the bone-synced profile lands, the head's and tail's hit surfaces do not move with your keys. The arms, legs and tail are chains the code positions segment by segment — key the joints, never the positions.",
+  "labels": {
+    "Head": "head (turns 0.55 of the look yaw and pitches with the look; intended hitbox part 'Head')",
+    "TopJaw": "upper jaw (with the head)",
+    "LowerJaw": "lower jaw (with the head; chomps 22 degrees about 0.52 while attacking)",
+    "Neck": "neck (static)",
+    "BodyTop": "upper body (static; intended hitbox part 'BodyTop')",
+    "BodyCenter": "mid body (static)",
+    "BodyBottom": "lower body and hips (static; intended hitbox part 'BodyBottom')",
+    "LShoulder": "left shoulder (static)",
+    "LUpperArm": "left upper arm (swings about the vertical from 0.65)",
+    "LLowerArm": "left forearm (1.5x the arm wave from 0.78, placed at the upper arm's end)",
+    "LHand": "left hand (2x the arm wave from 1.308, placed at the forearm's end; intended hitbox part 'LHand')",
+    "LThumbBase": "left thumb, base (1x the arm wave)",
+    "LThumbTip": "left thumb, tip",
+    "LIndexBase": "left index finger, base (2x the arm wave)",
+    "LIndexTip": "left index finger, tip",
+    "L3rdFingerBase": "left third finger, base (3x the arm wave)",
+    "L3rdFingerTip": "left third finger, tip",
+    "RShoulder": "right shoulder (static)",
+    "RUpperArm": "right upper arm (the mirror of the left, from −0.65)",
+    "RLowerArm": "right forearm (from −0.78)",
+    "RHand": "right hand (from −2.0; intended hitbox part 'RHand')",
+    "RThumbBase": "right thumb, base",
+    "RThumbTip": "right thumb, tip",
+    "RIndexBase": "right index finger, base",
+    "RIndexTip": "right index finger, tip",
+    "R3rdFingerBase": "right third finger, base",
+    "R3rdFingerTip": "right third finger, tip",
+    "LThigh": "left thigh (the stride: 18 degrees about −0.558 on a wave 45 degrees ahead of the foot's, sliding 8.75 units fore-aft; intended hitbox part 'LThigh')",
+    "LUpperLeg": "left upper leg (27 degrees about −0.17, 45 degrees ahead; placed above the lower leg)",
+    "LLowerLeg": "left lower leg (16 degrees about 0.22; rides the foot's slide and lift; intended hitbox part 'LLowerLeg')",
+    "LToe1": "left foot, outer toe, tip (the foot slides 35 units fore-aft and lifts 18 on the forward half)",
+    "LToe2": "left foot, outer toe, middle",
+    "LToe3": "left foot, outer toe, base",
+    "LToe4": "left foot, middle toe, tip",
+    "LToe5": "left foot, middle toe, middle",
+    "LToe6": "left foot, middle toe, base",
+    "LToe7": "left foot, inner toe, tip",
+    "LToe8": "left foot, inner toe, middle",
+    "LToe9": "left foot, inner toe, base",
+    "RThigh": "right thigh (the stride, half a period behind the left; intended hitbox part 'RThigh')",
+    "RLegUpper": "right upper leg (the port's name; the left is 'LUpperLeg')",
+    "RLegLower": "right lower leg (the port's name; the left is 'LLowerLeg'; intended hitbox part 'RLegLower')",
+    "RToe1": "right foot, outer toe, tip",
+    "RToe2": "right foot, outer toe, middle",
+    "RToe3": "right foot, outer toe, base",
+    "RToe4": "right foot, middle toe, tip",
+    "RToe5": "right foot, middle toe, middle",
+    "RToe6": "right foot, middle toe, base",
+    "RToe7": "right foot, inner toe, tip",
+    "RToe8": "right foot, inner toe, middle",
+    "RToe9": "right foot, inner toe, base",
+    "TailBase": "tail base (a quarter of the tail wave; intended hitbox part 'TailBase')",
+    "Tail2": "tail segment 2 (a half)",
+    "Tail3": "tail segment 3 (three quarters)",
+    "Tail4": "tail segment 4 (1.25x; intended hitbox part 'Tail4')",
+    "Tail5": "tail segment 5 (1.5x)",
+    "Tail6": "tail segment 6 (1.75x)",
+    "Tail7": "tail segment 7 (2x)",
+    "TailTip": "tail tip (2.25x; intended hitbox part 'TailTip')",
+    "Lspikes1": "left crest spine on the head (static)",
+    "Rspikes1": "right crest spine on the head (static)",
+    "Lspike2": "left back spine 2 (static)",
+    "Rspike2": "right back spine 2 (static)",
+    "Lspike3": "left back spine 3 (static)",
+    "Rspike3": "right back spine 3 (static)",
+    "Lspike4": "left back spine 4 (static)",
+    "Rspike4": "right back spine 4 (static)",
+    "Lspike5": "left tail-base spine (yaws with the tail base)",
+    "Rspike5": "right tail-base spine (yaws with the tail base)",
+    "Spike6": "tail spine on segment 2",
+    "Spikes7": "tail spine on segment 3"
+  },
+  "groups": [
+    {
+      "name": "gait",
+      "bones": [
+        "LThigh", "LUpperLeg", "LLowerLeg", "LToe1", "LToe2", "LToe3", "LToe4", "LToe5", "LToe6", "LToe7", "LToe8", "LToe9",
+        "RThigh", "RLegUpper", "RLegLower", "RToe1", "RToe2", "RToe3", "RToe4", "RToe5", "RToe6", "RToe7", "RToe8", "RToe9"
+      ],
+      "omega": 0.75,
+      "axis": "x, with the foot's slide (z) and lift (y)",
+      "gait_scaled": true,
+      "amplitude": "x the walking speed, zero below a limbSwingAmount of 0.001: the foot (nine toe pieces) slides 35 units fore-aft with the wave and lifts 18 units on the forward half (sin > 0); the lower leg rides the foot and pitches pi x 0.09 = 0.283 rad (16 deg) about 0.22; the upper leg pitches pi x 0.15 = 0.471 rad (27 deg) about −0.17 on a wave 45 degrees ahead and is placed 55 units up the lower leg; the thigh pitches pi x 0.1 = 0.314 rad (18 deg) about −0.558, 45 degrees ahead, and slides 35/4 units; the right leg half a period behind the left",
+      "plain": "each leg strides as a planted foot that slides back and lifts forward, the lower leg following it and the upper leg and thigh swinging a quarter turn ahead; the right leg opposite the left",
+      "math": "c = cos(t * 0.75), c2 = cos(t * 0.75 + pi/4), s = sin(t * 0.75) (right: + pi, + 5pi/4, + pi); LToe*.z = 6 + 35 c amount; LToe*.y = s > 0 ? 16 - s * 18 * amount : 16; LLowerLeg = the foot's position, xRot 0.22 + c * pi * 0.09 * amount; LUpperLeg.xRot = -0.17 + c2 * pi * 0.15 * amount (placed 55 up the lower leg by cos/sin); LThigh.xRot = -0.558 + c2 * pi * 0.1 * amount, z = 2 + 35 c amount / 4",
+      "source": "ModelGodzilla.java:553-623; ANIM_SPEED 1.0 (:20)",
+      "omega_note": "the classic phase is ageInTicks x 0.75 (ANIM_SPEED 1.0): the natural period is 2 pi / 0.75 = 8.38 ticks"
+    },
+    {
+      "name": "tail",
+      "bones": [
+        "TailBase", "Lspike5", "Rspike5", "Tail2", "Spike6", "Tail3", "Spikes7", "Tail4", "Tail5", "Tail6", "Tail7", "TailTip"
+      ],
+      "omega": 0.75,
+      "axis": "y",
+      "gait_scaled": false,
+      "amplitude": "calm: pi x 0.05 = 0.157 rad (9 deg) at 0.75 rad/tick; attacking: pi x 0.2 = 0.628 rad (36 deg) at 1.75 rad/tick; scaled 0.25 / 0.5 / 0.75 / 1.25 / 1.5 / 1.75 / 2 / 2.25 along the eight segments (the tip 81 deg attacking), each placed at the end of the one before; the spines ride their segments",
+      "plain": "the tail sways in phase along its length, the tip swinging nine times the base — a slow sweep at rest, a fast lash while attacking",
+      "math": "a = attacking ? cos(t * 1.75) * pi * 0.2 : cos(t * 0.75) * pi * 0.05; TailBase.yRot = Lspike5 = Rspike5 = 0.25a; Tail2 = 0.5a; Tail3 = 0.75a; Tail4 = 1.25a; Tail5 = 1.5a; Tail6 = 1.75a; Tail7 = 2a; TailTip = 2.25a; positions along the chain by cos/sin x 25 / 20 / 20 / 25 / 27 / 28 / 18",
+      "source": "ModelGodzilla.java:625-630 (doTail :707-747)",
+      "phase": "the synced DATA_ATTACKING byte (Godzilla.java:83; set at :779 / :790, cleared at :799 / :802 / :806) selects the rhythm",
+      "omega_note": "the classic phase calm is ageInTicks x 0.75 (period 8.38 ticks); attacking x 1.75 (period 3.59 ticks)"
+    },
+    {
+      "name": "arms",
+      "bones": [
+        "LUpperArm", "LLowerArm", "LHand", "LThumbBase", "LThumbTip", "LIndexBase", "LIndexTip", "L3rdFingerBase", "L3rdFingerTip",
+        "RUpperArm", "RLowerArm", "RHand", "RThumbBase", "RThumbTip", "RIndexBase", "RIndexTip", "R3rdFingerBase", "R3rdFingerTip"
+      ],
+      "omega": 1.75,
+      "axis": "y",
+      "gait_scaled": false,
+      "amplitude": "attacking: a sine of pi x 0.16 = 0.503 rad (29 deg) at 1.75 rad/tick; calm: pi x 0.02 = 0.063 rad (3.6 deg) at 0.1 rad/tick; the upper arm takes the wave about ±0.65, the forearm 1.5x about ±0.78, the hand 2x about 1.308 / −2.0, the index finger 2x, the thumb 1x, the third finger 3x, each placed at the end of the segment before; the right arm the negative",
+      "plain": "the arms swing about the vertical with the hands and fingers opening and closing — a faint drift at rest, a wide fast flail while attacking",
+      "math": "a = attacking ? sin(t * 1.75) * pi * 0.16 : sin(t * 0.1) * pi * 0.02; LUpperArm.yRot = 0.65 + a; LLowerArm.yRot = 0.78 + 1.5a; LHand.yRot = 1.308 + 2a; LIndexBase/Tip = -0.139 / -0.034 + 2a; LThumbBase/Tip = 0.261 / 0.139 + a; L3rdFingerBase/Tip = -0.471 / -0.331 + 3a; the right arm: RUpperArm = -0.65 - a, RLowerArm = -0.78 - 1.5a, RHand = -2.0 - 2a, fingers mirrored; positions along the chain by sin/cos x 50 and 45",
+      "source": "ModelGodzilla.java:647-704",
+      "phase": "the attacking flag selects the rhythm",
+      "omega_note": "the classic phase attacking is ageInTicks x 1.75 (period 3.59 ticks); calm x 0.1 (period 62.8 ticks)"
+    },
+    {
+      "name": "jaw",
+      "bones": [
+        "LowerJaw"
+      ],
+      "omega": 1.5,
+      "axis": "x",
+      "gait_scaled": false,
+      "amplitude": "attacking: pi x 0.12 = 0.377 rad (22 deg) about 0.52 plus the head's pitch; calm: still at 0.52 plus the pitch",
+      "plain": "the lower jaw chomps fast while the attacking flag is set and hangs open at rest, following the head's pitch",
+      "math": "LowerJaw.xRot = 0.52 + (attacking ? cos(t * 1.5) * pi * 0.12 : 0) + headPitch",
+      "source": "ModelGodzilla.java:641-645",
+      "phase": "the attacking flag selects",
+      "omega_note": "the classic phase is ageInTicks x 1.5: the natural period is 4.19 ticks"
+    }
+  ],
+  "behaviour": [
+    "One speed-scaled stride at 0.75 rad/tick (an 8.4-tick period): each foot — nine toe pieces moved as one — slides 35 units back and forth with the wave and lifts 18 units on its forward half, the lower leg rides it and pitches 16 degrees, the upper leg and thigh swing 27 and 18 degrees a quarter turn ahead, and the right leg runs half a period behind the left (ModelGodzilla.java:553-623). Standing still every leg rests.",
+    "The tail sways in phase along eight segments, the tip nine times the base: 9 degrees at 0.75 rad/tick at rest, 36 degrees at 1.75 rad/tick while the synced DATA_ATTACKING byte is set (Godzilla.java:83; raised at :779 within seventeen blocks and at :790 when the cannon is aimed) (:625-630, :707-747).",
+    "The arms swing about the vertical with the hands and fingers opening and closing — 3.6 degrees at 0.1 rad/tick at rest, 29 degrees at 1.75 rad/tick attacking, wider at every joint out (:647-704); the lower jaw chomps 22 degrees at 1.5 rad/tick while attacking (:641-645). The head turns 0.55 of the look yaw and pitches with the look, the jaws with it (:632-639).",
+    "The body blocks, neck, shoulders and the back and crest spines are static; the walk position plays no part.",
+    "The stomp (doHurtTarget, Godzilla.java:819-847), the leap (jumpAtEntity :391-403), the landing rings (:699-710), the cannon volley (fireCannon :516-556) and the lightning (doLightningAttack :560-578) are all rolled by customServerAiStep (:655-814) — nothing in the code fires an animation for any of them; the four manual part hitboxes are placed from the root each tick (:292-295)."
+  ],
+  "clips": [
+    {
+      "name": "idle",
+      "verdict": "author",
+      "note": "REQUIRED with walk: the gate opens on the pair — the standing rest: the tail's slow sweep, the arms' faint drift, the head on the look"
+    },
+    {
+      "name": "walk",
+      "verdict": "author",
+      "note": "REQUIRED with idle: the gait group's planting stride (the foot slide and lift, :553-623)"
+    },
+    {
+      "name": "swim",
+      "verdict": "leave",
+      "note": "no swim state: FloatGoal (Godzilla.java:141) only bobs it to the surface; the contract's fallback to walk stands"
+    },
+    {
+      "name": "aggro_idle",
+      "verdict": "author",
+      "note": "the attacking flag (Godzilla.java:779 within seventeen blocks, :790 while aiming the cannon): the arms flailing wide (ModelGodzilla.java:648-649), the tail lashing (:627-628), the jaw chomping (:642-643)"
+    },
+    {
+      "name": "calm_idle",
+      "verdict": "author",
+      "note": "the flag clear (:799 / :802 / :806): the arms drifting (:650), the tail's slow sweep (:629), the jaw still (:644)"
+    },
+    {
+      "name": "attack",
+      "verdict": "author",
+      "note": "the stomp: doHurtTarget (Godzilla.java:819-847) from customServerAiStep :781-784 within seventeen blocks — 175 of damage, a 3.2 knockback, a big creature halved; author a foot-stomp or a hand-slam; the leap, the landing rings, the cannon and the lightning are the extras",
+      "length_seconds": 0.8
+    },
+    {
+      "name": "hurt",
+      "verdict": "author",
+      "note": "a flinch to alo_hurt (getHurtSound :337-341); hurt() (:851-879) caps the damage, refuses more for 20 ticks and turns it on the attacker",
+      "length_seconds": 0.5
+    },
+    {
+      "name": "death",
+      "verdict": "author",
+      "note": "the vanilla death flip stays; a creature whose JSON ships a `death` clip gets the clip-replaces-flip mode, designed when the first such clip arrives (the Queen's own death clip the precedent) - a `death` delivered here plays under the flip until then",
+      "length_seconds": 3.0
+    }
+  ],
+  "extras": [
+    {
+      "name": "jump",
+      "loop": false,
+      "layer": "overlay",
+      "trigger": "jumpAtEntity (Godzilla.java:391-403) on a 1-in-20 roll of the 1-in-5 AI tick with a target and no jump timer (:772-775): a leap at the target, +1.25 up and 0.05 of the distance forward; no animation trigger is wired today (a named-site trigger, transport 3, when the rig lands)",
+      "bones": ["LThigh", "LUpperLeg", "LLowerLeg", "RThigh", "RLegUpper", "RLegLower", "BodyBottom", "BodyCenter", "BodyTop", "TailBase"],
+      "length_seconds": 0.6,
+      "code_triggered": false,
+      "note": "the crouch and the launch"
+    },
+    {
+      "name": "land",
+      "loop": false,
+      "layer": "overlay",
+      "trigger": "the landing after a jump (Godzilla.java:699-710): when the vertical speed that fell below −0.95 (or −1.5) comes back above −0.1, doJumpDamage rings out to 10, 15 and 25 blocks (:490-512); no animation trigger is wired today",
+      "bones": ["LThigh", "LUpperLeg", "LLowerLeg", "RThigh", "RLegUpper", "RLegLower", "BodyBottom", "BodyCenter", "BodyTop", "Head"],
+      "length_seconds": 0.8,
+      "code_triggered": false,
+      "note": "the impact crouch for the three damage rings"
+    },
+    {
+      "name": "cannon",
+      "loop": false,
+      "layer": "overlay",
+      "trigger": "fireCannon (Godzilla.java:516-556) from customServerAiStep :786-800 — beyond 25 blocks, with shots left (eight reloaded every 100 ticks, :683) and the head within 0.5 rad of the target: a really big BetterFireball and five more from the mouth 22 blocks ahead and 19 up; a named launch site (transport 3) when the rig lands",
+      "bones": ["Neck", "Head", "TopJaw", "LowerJaw", "BodyTop"],
+      "length_seconds": 0.6,
+      "code_triggered": false,
+      "note": "a chest-fill and a head-throw for the volley"
+    },
+    {
+      "name": "lightning",
+      "loop": false,
+      "layer": "overlay",
+      "trigger": "doLightningAttack (Godzilla.java:560-578) on a 1-in-65 roll with the target beyond 300 distSq (:769-770): 100 of damage, five seconds of fire, an explosion at the target and two bolts — one on the target, one 15 above Mobzilla; no animation trigger is wired today",
+      "bones": ["Head", "TopJaw", "LowerJaw", "Neck", "LUpperArm", "RUpperArm", "LLowerArm", "RLowerArm", "LHand", "RHand"],
+      "length_seconds": 1.0,
+      "code_triggered": false,
+      "note": "the arms raised and the head thrown back for the storm call"
+    }
+  ],
+  "wishlist": [
+    "in `walk`: the code's stride is a foot slide with a lift on the forward half and three joints bending (ModelGodzilla.java:553-623) — keep the heavy plant and add a body sway and a tail counter-swing",
+    "in `aggro_idle`: the arms swinging wide and fast (:648-649, :655-704) and the tail lashing (:627-628) — the rage before the strike",
+    "in `cannon`: a chest-fill and a head-throw timed to the volley from the mouth, 22 blocks ahead and 19 up (Godzilla.java:517-520)",
+    "in `land`: the crouch on impact for the three damage rings (Godzilla.java:704-710) — the whole rig settling, the toes spreading"
+  ],
+  "locked_bones_provisional": [
+    {"bone": "BodyBottom", "size": [8, 8], "damage": 0.5},
+    {"bone": "BodyTop", "size": [6, 6], "damage": 0.5},
+    {"bone": "Head", "size": [5, 5], "damage": 1},
+    {"bone": "TailBase", "size": [4, 4], "damage": 0.25},
+    {"bone": "Tail4", "size": [3, 3], "damage": 0.25},
+    {"bone": "TailTip", "size": [2, 2], "damage": 0.25},
+    {"bone": "LThigh", "size": [3, 7], "damage": 0.5},
+    {"bone": "RThigh", "size": [3, 7], "damage": 0.5},
+    {"bone": "LLowerLeg", "size": [3, 7], "damage": 0.5},
+    {"bone": "RLegLower", "size": [3, 7], "damage": 0.5},
+    {"bone": "LHand", "size": [2, 2], "damage": 0.25},
+    {"bone": "RHand", "size": [2, 2], "damage": 0.25}
+  ],
+  "locked_bones_note": "The design's section 6 ModelGodzilla row (geckolib_migration_design.md:448): 'Start from current envelopes: BodyBottom [8,8] @0.5; BodyTop [6,6] @0.5; Head [5,5] @1; TailBase [4,4] @0.25; add Tail4 [3,3] @0.25, TailTip [2,2] @0.25, left/right thigh/lower-leg segments [3,7] @0.5, and hands [2,2] @0.25'. BodyBottom, BodyTop, Head, TailBase, Tail4 and TailTip resolve as written. 'left/right thigh/lower-leg segments' is not a bone name: taken as LThigh / RThigh and the lower legs, which the port names asymmetrically — LLowerLeg on the left and RLegLower on the right (ModelGodzilla.createBodyLayer; likewise LUpperLeg / RLegUpper); the upper legs are not named by the row and stay visual. 'hands' taken as LHand / RHand (the fingers stay visual). The four manual OreSpawnPartEntity parts (bodyLow 8x8, bodyUp 6x6, head 5x5, tail 4x4 — Godzilla.java:129-133) are the envelopes the row starts from and keeps live until cutover; the row writes the main size as [10,25] against the registered 9.9 x 25.",
+  "effort_hours": null
+}

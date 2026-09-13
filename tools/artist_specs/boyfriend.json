@@ -1,0 +1,139 @@
+{
+  "registry": "boyfriend",
+  "display_name": "Boyfriend",
+  "status": "DRAFT — authored by a first pass from the entity code, 2026-09-13; edit pending",
+  "locomotion": "walker",
+  "artist_scope": "full contract (Tier 2, the gait-scaled class (the vanilla biped: distance-phased limbs, time-phased arm sway): geckolib_migration_design.md section 5); the rig is not yet in-game (it lands through the seam in a later slice) - and TODAY it has no rig to package at all: ModelBoyfriend has no entry in tools/reference_model_proofs.json (TEST-010), so the generator reports it unpackaged until the reference leg covers the vanilla biped",
+  "character_sheet": "A player-shaped companion: the vanilla biped - a head with a hat layer, a body, two arms and two legs (ModelBoyfriend.java:15-42, the HumanoidModel layout on a 64x32 sheet) - drawn with one of 28 numbered skins, 18 swimshorts skins for the 500 ticks after a swim, or a frog-prince skin once kissed (BoyfriendRenderer.java:42-59; Boyfriend.java:92-93, :102-103, :305-311), and wearing whatever armour he is given (BoyfriendRenderer.java:30-33). He is a tameable fighter: 80 HP, speed 0.3, 8 damage plus his held weapon (:224-229), fire-immune (ModEntities.java:477); cooked beef or cooked peacock tames him one time in three (:454-477), a dead bush breaks it off (:479-489), leather or a peacock feather cycles his outfit (:515-529), a ruby silences him and an amethyst restores his voice (:491-513). Tamed, he follows his owner (:132), hunts creepers and monsters within 20 and 15 blocks (:172-192), is jealous of other boyfriends (:196-197) and, with a weapon in hand, swings it every 25 ticks within 4 blocks - 10 with Big Bertha (:349-379, doHurtTarget :368) - or, at range, shoots an Ultimate Arrow from the Ultimate Bow or throws his shoes every 20 ticks within 10 blocks (:137, :415-448). He floats (:138), panics (:139), opens doors (:143), shelters indoors (:146), heals 1 HP per 150 ticks (:312-318), takes at most 10 per hit and ignores cactus (:668-673). Read him as a player character: the Steve walk, a weapon swing, a bow draw, the arms swaying at rest.",
+  "size_notes": "Drawn at x1.0 of the rig (BoyfriendRenderer.java:24; no scale override) on a 64x32 sheet (ModelBoyfriend.java:41); the hitbox is 0.5 x 1.6 (ModEntities.java:475-478); shadow 0.55 (BoyfriendRenderer.java:26). A HumanoidArmorLayer draws the vanilla armour models over the same bones (BoyfriendRenderer.java:30-33). Skins: boyfriend0-27, swimshorts0-17, frogprince, frogprince2 - one rig for all.",
+  "labels": {
+    "head": "head (turns and pitches with the look)",
+    "hat": "hat layer (an inflated copy of the head; the vanilla model copies the head's pose onto it)",
+    "body": "body (torso)",
+    "right_arm": "right arm (swings with the stride, sways at rest, carries the weapon swing)",
+    "left_arm": "left arm (swings with the stride, sways at rest)",
+    "right_leg": "right leg",
+    "left_leg": "left leg"
+  },
+  "groups": [
+    {
+      "name": "gait",
+      "bones": [
+        "right_arm",
+        "left_arm",
+        "right_leg",
+        "left_leg"
+      ],
+      "omega": null,
+      "axis": "x",
+      "gait_scaled": true,
+      "amplitude": "legs: 1.4 rad (80 deg) x the walking speed; arms: 2.0 x 0.5 = 1.0 rad (57 deg) x the walking speed, each arm opposite its own side's leg; no threshold",
+      "plain": "the vanilla biped walk: the legs stride in opposition and the arms swing against them, the stride phased by the distance walked rather than by time",
+      "math": "right_leg.xRot = cos(limbSwing * 0.6662) * 1.4 * limbSwingAmount; left_leg.xRot = cos(limbSwing * 0.6662 + pi) * 1.4 * limbSwingAmount; right_arm.xRot = cos(limbSwing * 0.6662 + pi) * 2.0 * limbSwingAmount * 0.5; left_arm.xRot = cos(limbSwing * 0.6662) * 2.0 * limbSwingAmount * 0.5",
+      "source": "vanilla HumanoidModel.setupAnim (net.minecraft.client.model.HumanoidModel; ModelBoyfriend.java:9 extends it with no override)",
+      "phase": "phase from distance walked: limbSwing x 0.6662 (one stride every 9.4 units of distance), not time",
+      "omega_note": "not time-based: the vanilla walk cycle advances with limbSwing (the distance walked), so it has no natural period in ticks; the contract's walk loop is scaled by speed in-game as any gait group"
+    },
+    {
+      "name": "arm_sway_roll",
+      "bones": [
+        "right_arm",
+        "left_arm"
+      ],
+      "omega": 0.09,
+      "axis": "z",
+      "gait_scaled": false,
+      "amplitude": "0.05 rad (3 deg) around a 0.05 rad rest, the two arms in opposition (a slight outward sway)",
+      "plain": "at all times the arms sway gently outward and back about the shoulder, in opposition",
+      "math": "right_arm.zRot += cos(ageInTicks * 0.09) * 0.05 + 0.05; left_arm.zRot -= cos(ageInTicks * 0.09) * 0.05 + 0.05",
+      "source": "vanilla HumanoidModel.setupAnim (ModelBoyfriend.java:9 extends it with no override)",
+      "omega_note": "the vanilla idle sway: the natural period is 2 pi / 0.09 = 69.8 ticks"
+    },
+    {
+      "name": "arm_sway_pitch",
+      "bones": [
+        "right_arm",
+        "left_arm"
+      ],
+      "omega": 0.067,
+      "axis": "x",
+      "gait_scaled": false,
+      "amplitude": "0.05 rad (3 deg), the two arms in opposition, added to the gait's pitch",
+      "plain": "a second, slower sway of the arms fore and aft, in opposition",
+      "math": "right_arm.xRot += sin(ageInTicks * 0.067) * 0.05; left_arm.xRot -= sin(ageInTicks * 0.067) * 0.05",
+      "source": "vanilla HumanoidModel.setupAnim (ModelBoyfriend.java:9 extends it with no override)",
+      "omega_note": "the vanilla idle sway (a sine): the natural period is 2 pi / 0.067 = 93.8 ticks"
+    }
+  ],
+  "behaviour": [
+    "The port's ModelBoyfriend adds no motion of its own: it is the vanilla HumanoidModel (ModelBoyfriend.java:9, no setupAnim override), so the biped's standard rules pose it - the head turns and pitches with the look, the hat copies the head; the legs stride at 1.4 rad x the walking speed and the arms swing against them at 1.0 rad x the walking speed, both phased by the distance walked (limbSwing x 0.6662) rather than by time; at rest the arms sway 3 degrees outward (cos at 0.09/tick) and fore-and-aft (sin at 0.067/tick) in opposition.",
+    "The vanilla swing plays on the main arm whenever the entity swings: the held-weapon melee calls swing(MAIN_HAND) before every hit (Boyfriend.java:367) and the ranged attack swings after each shot or throw (:447); the vanilla arm poses for a held item and a drawn bow apply as for a player.",
+    "The armour layer draws the vanilla armour models over the same seven bones (BoyfriendRenderer.java:30-33), so every bone keyed here moves his armour with him.",
+    "The skin, not the pose, carries his states: numbered dry skins, the swimshorts set for 500 ticks after water (:305-311), the frog-prince skins (BoyfriendRenderer.java:44-53); the synched values (DATA_SKIN, DATA_WET_SKIN, DATA_IS_PRINCE, DATA_VOICE, Boyfriend.java:79-88) are skin and voice, not an attacking flag.",
+    "There is no rig to package today: ModelBoyfriend (the vanilla biped) has no entry in tools/reference_model_proofs.json (TEST-010), so no reference-leg geo exists and the generator lists the species as unpackaged; the bone names above are the createBodyLayer names (ModelBoyfriend.java:19-39) and will be the rig's when it is covered."
+  ],
+  "clips": [
+    {
+      "name": "idle",
+      "verdict": "author",
+      "note": "REQUIRED with walk: the gate opens on the pair (today nothing ships; the vanilla biped code plays) - the standing loop: the 3-degree arm sways, a breath"
+    },
+    {
+      "name": "walk",
+      "verdict": "author",
+      "note": "REQUIRED with idle: the locomotion loop - the biped stride, legs 80 deg and arms 57 deg at full speed (vanilla HumanoidModel.setupAnim), scaled by walking speed in-game"
+    },
+    {
+      "name": "swim",
+      "verdict": "author",
+      "note": "he has the state: a FloatGoal keeps him at the surface (Boyfriend.java:138) and a swim puts him in swimshorts for 500 ticks (:305-311) - a swimming stroke; optional: falls back to walk then idle when absent (section 2.4)"
+    },
+    {
+      "name": "calm_idle",
+      "verdict": "leave",
+      "note": "= idle: no synched attacking flag in Boyfriend.java (DATA_SKIN / DATA_WET_SKIN / DATA_IS_PRINCE / DATA_VOICE at :79-88 are skin and voice), so calm_idle is covered by idle until this creature's SPEC adds the byte"
+    },
+    {
+      "name": "attack",
+      "verdict": "author",
+      "note": "a weapon swing: the held-weapon melee every 25 ticks within 4 blocks, 10 with Big Bertha (Boyfriend.java:349-379: swing(MAIN_HAND) then doHurtTarget at :367-368); no attacking flag, so the strike is transport 1 (the server LivingDamageEvent.Post); the ranged shot / throw (:415-448, a named launch site, transport 3) is the `shoot` extra",
+      "length_seconds": 0.5
+    },
+    {
+      "name": "hurt",
+      "verdict": "author",
+      "note": "a flinch: hurt() at Boyfriend.java:668-673 caps every hit at 10 and refuses cactus; the hurtTime edge is client-observed",
+      "length_seconds": 0.3
+    },
+    {
+      "name": "death",
+      "verdict": "author",
+      "note": "the vanilla death flip stays; a creature whose JSON ships a `death` clip gets the clip-replaces-flip mode, designed when the first such clip arrives (the Queen's own death clip the precedent) - a `death` delivered here plays under the flip until then",
+      "length_seconds": 1.0
+    }
+  ],
+  "extras": [
+    {
+      "name": "shoot",
+      "loop": "false",
+      "layer": "overlay",
+      "bones": [
+        "right_arm",
+        "left_arm",
+        "head"
+      ],
+      "length_seconds": 0.5,
+      "code_triggered": false,
+      "trigger": "performRangedAttack (Boyfriend.java:415-448), called by the RangedAttackGoal every 20 ticks within 10 blocks of a target (:137): an Ultimate Arrow when the Ultimate Bow is held (:421-435), else a pair of thrown Shoes (:437-445), then swing(MAIN_HAND) (:447); a named launch site (transport 3) - today only the vanilla arm swing plays",
+      "note": "the shot: a bow draw and release with the Ultimate Bow, an overarm shoe throw otherwise - author the throw; the bow pose is vanilla's when the bow is held"
+    }
+  ],
+  "wishlist": [
+    "keep him a player: the vanilla biped clips (Steve's walk and swing) are the reference - do not exaggerate, the armour layer rides the same bones (BoyfriendRenderer.java:30-33) and reads wrong if the limbs bend",
+    "in `attack`: a real weapon swing with weight - the vanilla swing is a quick arm arc (Boyfriend.java:367); a wind-up sells the 25-tick cadence",
+    "the `shoot` extra: the shoe throw (Boyfriend.java:437-445) has no pose beyond the arm swing today - an overarm throw with a step",
+    "in `idle`: a look-around and a weight shift over the vanilla arm sways; he loiters near his owner (:132)",
+    "in `swim`: a stroke rather than the walk - the swimshorts skin (:305-311) makes the swim a moment worth a pose"
+  ],
+  "effort_hours": null
+}

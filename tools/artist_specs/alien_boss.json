@@ -1,0 +1,240 @@
+{
+  "registry": "alien_boss",
+  "display_name": "Alien Boss",
+  "status": "DRAFT — authored by a first pass from the entity code, 2026-09-13; edit pending",
+  "locomotion": "walker",
+  "artist_scope": "full contract (Tier 1, the FK-chained class: geckolib_migration_design.md section 5) with the §8.1 locks; the rig is not yet in-game (it lands through the seam in a later slice)",
+  "character_sheet": "The Alien Boss is the leader of the WTF-Alien dungeon, a port addition promoted from the Alien (AlienBoss.java:22-39: 1.7.10 registered only the Alien) on the same rig: a torso and stomach on a neck carrying a three-piece head with four fangs and a two-piece lower jaw, a fifteen-blade crest fan, two-segment arms with three claw fingers each, legs of a thigh, a two-piece shin and a foot, and a five-segment spiked tail (ModelAlien.createBodyLayer, ModelAlien.java:136-360), drawn by the Alien's renderer at the Alien's scale (OreSpawnClient.java:53). It has 320 HP, 24 attack, 12 armour, 0.6 knockback resistance; its createAttributes speed of 0.55 (:60-68) is overridden to the Alien's 0.65 by the shared constructor (Alien.java:73), inherits the Alien's goals — village walking, torch breaking, wandering (Alien.java:82-101) — and adds a player hunt (AlienBoss.java:57). Its eighth-tick scan, its four-block attacking flag and its ~40 percent swing are the Alien's (Alien.java:221-246); a hit poisons one time in five (Alien.java:170-194) and withers one time in three for 60 ticks (AlienBoss.java:76-83). Every 200 ticks while its target lives it summons an Alien beside itself, up to three nearby (:86-117); it is immune to its own minions (:126-132) and never despawns (:135-138). It has no natural spawn: the dungeon places it. Read it as the Alien made heavier: the same stalking stride, a wider threat display, and the summon.",
+  "size_notes": "Drawn at x1.1 of the rig by the Alien's renderer (AlienRenderer.java:25, applied :34-37; OreSpawnClient.java:53 registers AlienRenderer for alien_boss) on the 256x128 sheet (ModelAlien.java:360); 1.4 x 3.5 block hitbox (ModEntities.java:30-31) — the root box is larger than the Alien's but the drawn rig is not (design section 6: do not enlarge the bone boxes for that). The arms, claws, tail and legs are chains the code positions segment by segment (an FK chain in code, design section 5: real parent-child bones in the converted rig) — key the joints, never the positions.",
+  "labels": {
+    "torso": "torso (static; intended hitbox part 'torso')",
+    "stomach": "stomach (static; intended hitbox part 'stomach')",
+    "neck": "neck (turns 0.35 of the look yaw)",
+    "head": "head, main piece (turns 0.75 of the look yaw, placed on the neck; intended hitbox part 'head')",
+    "head1": "head, upper piece (rides the head)",
+    "head2": "head, rear piece (rides the head)",
+    "fang1": "fang 1 (rides the head)",
+    "fang2": "fang 2 (rides the head)",
+    "fang3": "fang 3 (rides the head)",
+    "fang4": "fang 4 (rides the head)",
+    "jaw1": "lower jaw, front piece (chomps: a rectified wave, never below the rest)",
+    "jaw2": "lower jaw, rear piece (the same angle as the front piece)",
+    "fan": "crest fan, centre blade (flat at −1.85 at rest; waves when attacking)",
+    "fanl1": "crest fan, left blade 1 (spread 15 degrees when raised; waves a twelfth of a period behind the centre)",
+    "fanl2": "crest fan, left blade 2 (spread 30 degrees)",
+    "fanl3": "crest fan, left blade 3 (spread 45 degrees)",
+    "fanl4": "crest fan, left blade 4 (spread 60 degrees)",
+    "fanl5": "crest fan, left blade 5 (spread 75 degrees)",
+    "fanl6": "crest fan, left blade 6 (spread 90 degrees)",
+    "fanl7": "crest fan, left blade 7 (spread 105 degrees)",
+    "fanr1": "crest fan, right blade 1 (spread −15 degrees when raised)",
+    "fanr2": "crest fan, right blade 2 (spread −30 degrees)",
+    "fanr3": "crest fan, right blade 3 (spread −45 degrees)",
+    "fanr4": "crest fan, right blade 4 (spread −60 degrees)",
+    "fanr5": "crest fan, right blade 5 (spread −75 degrees)",
+    "fanr6": "crest fan, right blade 6 (spread −90 degrees)",
+    "fanr7": "crest fan, right blade 7 (spread −105 degrees)",
+    "arml1": "left arm, upper (swings about the vertical from −0.52; intended hitbox part 'arml1')",
+    "arml2": "left forearm (placed at the upper arm's end; intended hitbox part)",
+    "clawl1": "left claw, finger 1 (placed at the forearm's end; curls with the arm's wave)",
+    "clawl2": "left claw, finger 2",
+    "clawl3": "left claw, finger 3",
+    "armr1": "right arm, upper (swings about the vertical from −2.61; intended hitbox part 'armr1')",
+    "armr2": "right forearm (placed at the upper arm's end; intended hitbox part)",
+    "clawr1": "right claw, finger 1",
+    "clawr2": "right claw, finger 2",
+    "clawr3": "right claw, finger 3",
+    "lThigh": "left thigh (the stride, −0.8 rest; intended hitbox part)",
+    "lShin1": "left shin, upper piece (the stride, −0.8 rest; intended hitbox part)",
+    "lShin": "left shin, lower piece (the stride, −0.4 rest; intended hitbox part)",
+    "lFoot": "left foot (the stride)",
+    "rThigh": "right thigh (the stride, opposite the left; intended hitbox part)",
+    "rShin1": "right shin, upper piece (intended hitbox part)",
+    "rShin": "right shin, lower piece (intended hitbox part)",
+    "rFoot": "right foot",
+    "tail1": "tail segment 1 (yaws a quarter of the tail wave; intended hitbox part 'tail1')",
+    "tail2": "tail segment 2 (a half)",
+    "tail3": "tail segment 3 (0.8; intended hitbox part 'tail3')",
+    "tail4": "tail segment 4 (1.25)",
+    "tail5": "tail segment 5 (1.5, the tip; intended hitbox part 'tail5')",
+    "spike1": "tail spike 1 (rides segment 1)",
+    "spike2": "tail spike 2 (rides segment 2)",
+    "spike3": "tail spike 3 (rides segment 3)",
+    "spike4": "tail spike 4 (rides segment 4, splayed +0.52)",
+    "spike5": "tail spike 5 (rides segment 4, splayed −0.52)"
+  },
+  "groups": [
+    {
+      "name": "gait",
+      "bones": [
+        "lThigh", "lShin1", "lShin", "lFoot", "rThigh", "rShin1", "rShin", "rFoot"
+      ],
+      "omega": 0.88,
+      "axis": "x",
+      "gait_scaled": true,
+      "amplitude": "pi x 0.5 = 1.571 rad (90 deg) x the walking speed, no threshold: the foot by the wave, the lower shin about −0.4, the upper shin and thigh about −0.8; the right leg the negative",
+      "plain": "the two legs stride with the walking speed, every piece of a leg swinging together about its own rest, the right leg opposite the left",
+      "math": "a = cos(t * 4.0 * 0.22) * pi * 0.5 * amount; lFoot.xRot = a, lShin.xRot = a - 0.4, lShin1.xRot = lThigh.xRot = a - 0.8; rFoot.xRot = -a, rShin.xRot = -a - 0.4, rShin1.xRot = rThigh.xRot = -a - 0.8",
+      "source": "ModelAlien.java:367-369 (doLeftLeg :568-573, doRightLeg :575-580); wingspeed 0.22 (:21)",
+      "wingspeed": 0.22,
+      "omega_note": "the classic phase is ageInTicks x 4.0 x wingspeed 0.22 = 0.88 rad/tick: the natural period is 2 pi / 0.88 = 7.14 ticks"
+    },
+    {
+      "name": "fan",
+      "bones": [
+        "fan", "fanl1", "fanl2", "fanl3", "fanl4", "fanl5", "fanl6", "fanl7",
+        "fanr1", "fanr2", "fanr3", "fanr4", "fanr5", "fanr6", "fanr7"
+      ],
+      "omega": 0.268,
+      "axis": "x (the wave), z (the spread, static)",
+      "gait_scaled": false,
+      "amplitude": "attacking: pi x 0.1 = 0.314 rad (18 deg) about zero, blade k a k x 30-degree phase behind the centre, spread ±0.261 k about z; not attacking: every blade flat at −1.85 rad and unspread, still",
+      "plain": "the crest fan lies flat until the attacking flag is set, then spreads into a fan and ripples blade by blade",
+      "math": "attacking ? (fan.xRot = cos(t * 1.22 * 0.22) * pi * 0.1; fanlK.xRot = fanrK.xRot = cos(t * 1.22 * 0.22 - K * pi/6) * pi * 0.1; fanlK.zRot = 0.261 K, fanrK.zRot = -0.261 K) : (every blade xRot = -1.85, zRot = 0)",
+      "source": "ModelAlien.java:370-435",
+      "phase": "the synced DATA_ATTACKING byte (Alien.java:48, set at :230 within four blocks of a target, cleared at :239) selects the branch",
+      "wingspeed": 0.22,
+      "omega_note": "the classic phase is ageInTicks x 1.22 x wingspeed 0.22 = 0.268 rad/tick: the natural period is 2 pi / 0.268 = 23.4 ticks"
+    },
+    {
+      "name": "tail",
+      "bones": [
+        "tail1", "tail2", "tail3", "tail4", "tail5", "spike1", "spike2", "spike3", "spike4", "spike5"
+      ],
+      "omega": 0.77,
+      "axis": "y",
+      "gait_scaled": false,
+      "amplitude": "when the latch picks the tail: pi x 0.5 = 1.571 rad (90 deg) at 0.77 rad/tick, scaled 0.25 / 0.5 / 0.8 / 1.25 / 1.5 along segments 1-5 (each segment placed at the end of the one before; the spikes ride their segments, 4 and 5 splayed ±0.52); otherwise pi x 0.05 = 0.157 rad (9 deg) at 0.22 rad/tick with the same scaling",
+      "plain": "the tail lashes hard in the periods a per-entity random latch picks for it and sways gently otherwise, the tip swinging six times the base",
+      "math": "a = ri2 == 1 ? cos(t * 3.5 * 0.22) * pi * 0.5 : cos(t * 0.22) * pi * 0.05; tail1.yRot = spike1.yRot = 0.25a; tail2.yRot = 0.5a; tail3.yRot = 0.8a; tail4.yRot = 1.25a; tail5.yRot = 1.5a; spike4.yRot = tail4.yRot + 0.52, spike5.yRot = tail4.yRot - 0.52; positions along the chain by cos/sin x 10",
+      "source": "ModelAlien.java:468-486 (doTail :586-612)",
+      "phase": "a per-entity random latch (RenderInfo ri2, re-rolled at each rising zero-crossing of the 0.77 wave: :470-480) — at rest 1 in 15 periods, attacking 1 in 2",
+      "wingspeed": 0.22,
+      "omega_note": "the classic phase is ageInTicks x 3.5 x wingspeed 0.22 = 0.77 rad/tick (period 8.16 ticks) when picked; ageInTicks x 0.22 (period 28.6 ticks) otherwise"
+    },
+    {
+      "name": "jaw",
+      "bones": [
+        "jaw1", "jaw2"
+      ],
+      "omega": 0.77,
+      "axis": "x",
+      "gait_scaled": false,
+      "amplitude": "when the latch picks the jaw: |pi x 0.35| = up to 1.1 rad (63 deg) at 0.77 rad/tick, rectified (the jaw opens from the rest and never past it); otherwise |pi x 0.02| = up to 0.063 rad (3.6 deg) at 0.22 rad/tick",
+      "plain": "the lower jaw chomps wide in the periods the latch picks for it and works faintly otherwise; the wave is rectified, so it opens twice per period",
+      "math": "a = ri3 == 1 ? cos(t * 3.5 * 0.22) * pi * 0.35 : cos(t * 0.22) * pi * 0.02; jaw1.xRot = jaw2.xRot = |a|",
+      "source": "ModelAlien.java:487-493 (doJaw :582-584)",
+      "phase": "a per-entity random latch (RenderInfo ri3) — at rest 1 in 15 periods, attacking always (ri3 = 1 at :478)",
+      "rectified": true,
+      "wingspeed": 0.22,
+      "omega_note": "the classic phase is ageInTicks x 3.5 x wingspeed 0.22 = 0.77 rad/tick (period 8.16 ticks, visible 4.08) when picked; ageInTicks x 0.22 (period 28.6, visible 14.3) otherwise"
+    },
+    {
+      "name": "claws",
+      "bones": [
+        "arml1", "arml2", "clawl1", "clawl2", "clawl3", "armr1", "armr2", "clawr1", "clawr2", "clawr3"
+      ],
+      "omega": 0.77,
+      "axis": "y",
+      "gait_scaled": false,
+      "amplitude": "when the latch picks an arm: |pi x 0.2| = up to 0.628 rad (36 deg) at 0.77 rad/tick, rectified — the upper arm swings twice it from −0.52 (right: −2.61), the forearm once it from 0.855 (right: 2.27), the three fingers four times it from 2.7 / 2.27 / 2.7 (right: 0.436 / 0.87 / 0.436), each placed at the end of the segment before; otherwise |pi x 0.03| = up to 0.094 rad (5.4 deg) at 0.22 rad/tick",
+      "plain": "each arm swings out and its claws curl in the periods the latch picks for it, and twitches faintly otherwise; rectified, so it reaches twice per period",
+      "math": "a = cos(t * 3.5 * 0.22) * pi * 0.2; s = cos(t * 0.22) * pi * 0.03; doLeftClaw(ri1 in {1,3} ? a : s): arml1.yRot = -0.52 + |2x|, arml2.yRot = 0.855 + |x|, clawl1/2/3.yRot = 2.7 / 2.27 / 2.7 + |4x|; doRightClaw(ri1 in {2,3} ? -a : s): armr1.yRot = -2.61 - |2x|, armr2.yRot = 2.27 - |x|, clawr1/2/3.yRot = 0.436 / 0.87 / 0.436 - |4x|; positions along the chain by sin/cos x 9 and 14",
+      "source": "ModelAlien.java:494-506 (doLeftClaw :614-628, doRightClaw :630-644)",
+      "phase": "a per-entity random latch (RenderInfo ri1) — at rest each arm in 2 periods of 15, attacking 2 of 4",
+      "rectified": true,
+      "wingspeed": 0.22,
+      "omega_note": "the classic phase is ageInTicks x 3.5 x wingspeed 0.22 = 0.77 rad/tick (period 8.16 ticks, visible 4.08) when picked; ageInTicks x 0.22 otherwise"
+    }
+  ],
+  "behaviour": [
+    "The legs stride on one speed-scaled wave at 0.88 rad/tick (a 7.1-tick period) and a full 90 degrees at top speed: the foot, the two shin pieces and the thigh of a leg swing together about their own rests, the right leg opposite the left (ModelAlien.java:367-369, :568-580). The torso and stomach are static.",
+    "The fifteen-blade crest fan lies flat and still until the synced DATA_ATTACKING byte is set (Alien.java:48, raised at :230 within four blocks of a target — the boss inherits the scan, AlienBoss.java:86-87); then it spreads into a fan, 15 degrees per blade, and ripples at 0.268 rad/tick, each blade a twelfth of a period behind the last (:370-435).",
+    "The tail, the jaw and the two arms share one 0.77 rad/tick wave (an 8.2-tick period) but each moves hard only in the periods a per-entity random latch picks for it, re-rolled at every rising zero-crossing (:467-480): at rest the tail in 1 period of 15, the jaw in 1 of 15, each arm in 2 of 15; attacking the tail in 1 of 2, the jaw always, each arm in 2 of 4. The parts not picked sway, chomp or twitch faintly on a slow 0.22 rad/tick wave (:481-506). The jaw and claw waves are rectified (absolute values, :583, :615-643): they open and reach twice per period and never cross their rests.",
+    "The neck turns 0.35 of the look yaw and the head 0.75 of it, the head pieces, fangs and jaw riding the head by position (:436-463); the walk position plays no part.",
+    "The strike (Alien.doHurtTarget :170-194 with the boss's wither at AlienBoss.java:76-83) is rolled by the Alien's customServerAiStep (Alien.java:229-236), and the summon (AlienBoss.java:86-117) fires on a 200-tick cooldown — nothing in the code fires an animation for either."
+  ],
+  "clips": [
+    {
+      "name": "idle",
+      "verdict": "author",
+      "note": "REQUIRED with walk: the gate opens on the pair — the stalking rest: faint claw and jaw twitches, the tail swaying, the crest flat"
+    },
+    {
+      "name": "walk",
+      "verdict": "author",
+      "note": "REQUIRED with idle: the gait group's stride (the code swings the whole leg 90 degrees at top speed, :367); the boss walks at the Alien's 0.65 (Alien.java:73 overrides AlienBoss.java:42)"
+    },
+    {
+      "name": "swim",
+      "verdict": "leave",
+      "note": "no swim state: the inherited FloatGoal (Alien.java:83) only bobs it to the surface; the contract's fallback to walk stands"
+    },
+    {
+      "name": "aggro_idle",
+      "verdict": "author",
+      "note": "the attacking flag (Alien.java:230, within four blocks of a target): the crest spread and rippling (ModelAlien.java:401-435), the jaw always chomping and the claws reaching in half the periods (:476-478); NOT offered by the trigger inventory for this registry today (the setAttacking sites are in Alien.java, the parent, so the inventory classifies the boss's flag NONE) — kept here for the owner"
+    },
+    {
+      "name": "calm_idle",
+      "verdict": "covered by idle",
+      "note": "covered by idle while the inventory offers no aggro_idle / calm_idle pair for this registry (the setAttacking sites are in Alien.java, the parent); the rest with the flag clear (Alien.java:239) is the crest flat (:370-400) and the tail, jaw and claws stirring in a period of fifteen (:471-474)"
+    },
+    {
+      "name": "attack",
+      "verdict": "author",
+      "note": "the melee strike: Alien.doHurtTarget (Alien.java:170-194) from customServerAiStep :233-234 within four blocks on a ~40 percent roll, the boss adding a wither one time in three (AlienBoss.java:76-83) — a claw rake with the jaw snapping",
+      "length_seconds": 0.5
+    },
+    {
+      "name": "hurt",
+      "verdict": "author",
+      "note": "a flinch to alien_hurt (Alien.getHurtSound :155-157); the boss ignores its own minions' hits (AlienBoss.java:126-132) and retaliates on other mobs (Alien.java:197-218)",
+      "length_seconds": 0.4
+    },
+    {
+      "name": "death",
+      "verdict": "author",
+      "note": "the vanilla death flip stays; a creature whose JSON ships a `death` clip gets the clip-replaces-flip mode, designed when the first such clip arrives (the Queen's own death clip the precedent) - a `death` delivered here plays under the flip until then",
+      "length_seconds": 1.5
+    }
+  ],
+  "extras": [
+    {
+      "name": "summon",
+      "loop": false,
+      "layer": "overlay",
+      "trigger": "AlienBoss.customServerAiStep :86-117 — every 200 ticks while its target lives, with fewer than three Aliens within 12 blocks, an Alien is spawned beside it (:102-116); no animation trigger is wired today (a named-site trigger, transport 3, when the rig lands)",
+      "bones": ["head", "head1", "head2", "jaw1", "jaw2", "fan", "fanl1", "fanl2", "fanl3", "fanl4", "fanl5", "fanl6", "fanl7", "fanr1", "fanr2", "fanr3", "fanr4", "fanr5", "fanr6", "fanr7", "arml1", "armr1"],
+      "length_seconds": 1.0,
+      "code_triggered": false,
+      "note": "a head-back call with the crest thrown open and the arms raised as the minion drops"
+    }
+  ],
+  "wishlist": [
+    "in `walk`: a rolling, hunched stride — the code swings each leg as one stiff piece (ModelAlien.java:568-580); bend the knee on the forward swing and let the torso and tail counter-sway; heavier than the Alien's",
+    "in `idle`: the crest flaring open (:401-435) as a threat display, the claws lifted — the boss's signature while attacking; the contract's aggro_idle would carry it, but the trigger inventory does not offer it for this registry (the setAttacking sites are in Alien.java, the parent)",
+    "in `attack`: a claw rake with the jaw snapping wide (the rectified chomp, :583) and a lunge from the hips; the hit lands within four blocks (Alien.java:229-234)",
+    "in `summon`: a head-back call with the crest thrown open, timed to the 200-tick cooldown's spawn (AlienBoss.java:102-116)"
+  ],
+  "locked_bones_provisional": [
+    {"bone": "head", "size": [0.9, 0.75], "damage": 1},
+    {"bone": "torso", "size": [1.05, 1.4], "damage": 0.5},
+    {"bone": "stomach", "size": [0.9, 0.9], "damage": 0.5},
+    {"bone": "arml1", "size": [0.35, 0.8], "damage": 0.5},
+    {"bone": "armr1", "size": [0.35, 0.8], "damage": 0.5},
+    {"bone": "arml2", "size": [0.35, 0.8], "damage": 0.5},
+    {"bone": "armr2", "size": [0.35, 0.8], "damage": 0.5},
+    {"bone": "lThigh", "size": [0.4, 1.1], "damage": 0.5},
+    {"bone": "rThigh", "size": [0.4, 1.1], "damage": 0.5},
+    {"bone": "lShin1", "size": [0.4, 1.1], "damage": 0.5},
+    {"bone": "rShin1", "size": [0.4, 1.1], "damage": 0.5},
+    {"bone": "lShin", "size": [0.4, 1.1], "damage": 0.5},
+    {"bone": "rShin", "size": [0.4, 1.1], "damage": 0.5},
+    {"bone": "tail1", "size": [0.3, 0.5], "damage": 0.25},
+    {"bone": "tail3", "size": [0.3, 0.5], "damage": 0.25},
+    {"bone": "tail5", "size": [0.3, 0.5], "damage": 0.25}
+  ],
+  "locked_bones_note": "The design's section 6 ModelAlien row (geckolib_migration_design.md:443): 'head [0.9,0.75] @1; torso [1.05,1.4] @0.5; stomach [0.9,0.9] @0.5; arml1/armr1 and lower arms [0.35,0.8] @0.5; thigh/shin pairs [0.4,1.1] @0.5; tail1/tail3/tail5 [0.3,0.5] @0.25'. head, torso, stomach, arml1, armr1, tail1, tail3 and tail5 resolve as written. 'lower arms' is not a bone name: taken as arml2 / armr2 (the forearms, ModelAlien.createBodyLayer). 'thigh/shin pairs' is not a bone name: taken as lThigh / rThigh and BOTH shin pieces a side, lShin1 (upper) and lShin (lower), rShin1 and rShin — the rig splits the shin in two (the feet lFoot / rFoot are left visual). The same list as `alien`'s at the same sizes: 'Separate registry profiles with one server-fed FK pose'; 'Do not enlarge bone boxes merely because AlienBoss has a larger root box unless the rendered scale is also proven larger' — both registries are drawn by AlienRenderer at x1.1 (OreSpawnClient.java:49, :53), so the sizes stay the Alien's.",
+  "effort_hours": null
+}

@@ -1,0 +1,175 @@
+{
+  "registry": "spyro",
+  "display_name": "Spyro",
+  "status": "DRAFT — authored by a first pass from the entity code, 2026-09-13; edit pending",
+  "locomotion": "flyer",
+  "artist_scope": "full contract (Tier 2, the state-branching class: geckolib_migration_design.md section 5); the rig is not yet in-game (it lands through the seam in a later slice)",
+  "character_sheet": "A tameable baby dragon: a 5x4x10 torso with two back scales, a raked neck to a two-piece head with a jaw, two nostril nubs, three head scales and two two-piece horns, two zero-thickness 10x4 wings on root nubs, four legs of an upper, a lower and a paw, and a tail of a base, a second piece and two tip pieces with a scale (SpyroModel.java:102-285, 37 parts), drawn at x0.75. 200 HP, speed 0.3, 5 damage (EntitySpyro.java:115-120). Beef tames it one time in two (:225-241); its owner can untame it with a dead bush, put its fire out with ice, light it with flint and steel, name it, sit it with any other item, or evolve it into a Dragon with a diamond (:247-328) - one tick in 100,000 it grows up on its own (:167-187). On the ground (activity 1) it wanders, follows its owner and flees monsters (:91-100); in the air (the synched DATA_ACTIVITY at 2, :65-66, :129-136 - a 1-in-8 roll on a 1-in-100 tick, a flying owner, or an owner more than 16 blocks away, :202-205, :349-362) it flies from block target to block target near its owner (:423-473), hunts monsters within 12 blocks (:389-417, :489-507), bites within 3 blocks plus half the target's width for 5 (:405-408) and, within 8 blocks with its fire lit (DATA_SPYRO_FIRE :67-68), shoots small fireballs (:409-411, :480-487); it takes no fall damage (:210-213). It spawns in daylight above y 50 (:579-584; ModEntities.java:566-567). Read it as a dragon hatchling: a bouncy four-legged trot with the wings flapping, the legs tucked in flight, the tail held bent to one side at rest.",
+  "size_notes": "Drawn at x0.75 of the rig (SpyroRenderer.java:23, :36; shadow 0.4875, :25) on a 64x64 sheet (SpyroModel.java:287), spyro.png (SpyroRenderer.java:19); the hitbox is 0.5 x 0.5 (ModEntities.java:566-567). The original's ModelSpyro(0.65f) argument was a wingspeed the port's model does not keep: every rhythm's frequency is multiplied by limbSwingAmount itself (SpyroModel.java:292), so the tempo rises with the walking speed. The tail's second piece is placed 3 px along the base each tick (:343-344) - key the joint, not the position.",
+  "labels": {
+    "Torso": "torso (5x4x10; static)",
+    "Neck": "neck (3x3x3 raked up 26 deg; static)",
+    "HeadPieceTop": "head, upper (5x3x4; the full look yaw and pitch)",
+    "HeadPieceBottom": "head, lower (5x2x6; the look)",
+    "JawPiece": "jaw (3x1x3 under the head; the look)",
+    "SnoutLeft": "left nostril nub (the look)",
+    "SnoutRight": "right nostril nub (the look)",
+    "ScaleHead": "head scale (1x2x2 on the crown; the look)",
+    "ScaleTop1": "brow scale (1x1x2; the look)",
+    "ScaleBackHead": "back-of-head scale (1x2x1; the look)",
+    "HornLeftBottom": "left horn, base (2x3x2, splayed -0.785 yaw and -0.785 pitch off the head; the look)",
+    "HornLeftTop": "left horn, tip (1x3x1; the look)",
+    "HornRightBottom": "right horn, base (splayed +0.785 yaw, -0.785 pitch; the look)",
+    "HornRightTop": "right horn, tip (the look)",
+    "WingLeft": "left wing (a zero-thickness 10x4 plane; rolls with the wing beat)",
+    "WingPieceLeft": "left wing root nub (1x2x1; static)",
+    "WingRight": "right wing (the mirror; rolls opposite)",
+    "WingPieceRight": "right wing root nub (static)",
+    "LegRightFrontTop": "right front leg, upper (2x3x3, rest -0.087; the gait; tucked to -1.0 in flight)",
+    "LegRightFrontBottom": "right front leg, lower (2x4x2, rest -0.17; the gait)",
+    "RightFrontPaw": "right front paw (2x1x4; the gait)",
+    "LegLeftFrontTop": "left front leg, upper (rest -0.087; the gait, opposite the right front)",
+    "LegLeftFrontBottom": "left front leg, lower (rest -0.17; the gait)",
+    "LeftFrontPaw": "left front paw (the gait)",
+    "LegRightBackTop": "right back leg, upper (rest -0.174; the gait, with the left front; tucked to +1.0 in flight)",
+    "LegRightBackBottom": "right back leg, lower (rest 0.139; the gait)",
+    "RightBackPaw": "right back paw (the gait)",
+    "LegLeftBackTop": "left back leg, upper (rest -0.174; the gait, with the right front)",
+    "LegLeftBackBottom": "left back leg, lower (rest 0.139; the gait)",
+    "LeftBackPaw": "left back paw (the gait)",
+    "TailBack": "tail, base (2x2x4 raked 26 deg; yaws with the tail wave)",
+    "ScaleTailPiece": "tail-base scale (yaws with the tail base)",
+    "TailFront": "tail, second piece (1x1x4, placed 3 along the base; yaws at 1.6x the wave)",
+    "TailPieceLarge": "tail tip, large piece (1x2x2; rides the second piece)",
+    "TailPieceSmall": "tail tip, small piece (1x1x1; rides the second piece)",
+    "ScaleBackPiece1": "back scale 1 (1x1x2; static)",
+    "ScaleBackPiece2": "back scale 2 (static)"
+  },
+  "groups": [
+    {
+      "name": "gait",
+      "bones": ["LegRightFrontTop", "LegRightFrontBottom", "RightFrontPaw", "LegLeftFrontTop", "LegLeftFrontBottom", "LeftFrontPaw", "LegRightBackTop", "LegRightBackBottom", "RightBackPaw", "LegLeftBackTop", "LegLeftBackBottom", "LeftBackPaw", "WingLeft", "WingRight"],
+      "omega": null,
+      "axis": "x (the legs) and z (the wings)",
+      "gait_scaled": true,
+      "amplitude": "legs: pi x 0.25 = 0.785 rad (45 deg) x the walking speed above a limbSwingAmount of 0.1, at a tempo of 2.0 x limbSwingAmount rad/tick (2.0 at full stride); every piece of a leg by the same angle about its rest, the right front and left back one way, the left front and right back the other; 0 below the threshold and in activity 3; in flight (activity 2) the front legs hold -1.0 and the back legs +1.0 plus their rests, still. Wings: pi x 0.4 = 1.257 rad (72 deg) x the speed above the same threshold, at a tempo of 2.3 x limbSwingAmount rad/tick, the right wing the negative; halved in activity 3; 0 below the threshold",
+      "plain": "the four legs trot in diagonal pairs, each a stiff chain, and the two wing planes flap together, all faster and wider as it walks faster; in the air the legs tuck - the front legs back, the back legs forward - and hold, while the wings still follow only the walking speed",
+      "math": "a = amount > 0.1 ? cos(t * 2.0 * amount) * pi * 0.25 * amount : 0 (activity 3: 0); activity != 2 ? (LegRightFrontTop = a - 0.087, LegRightFrontBottom = a - 0.17, RightFrontPaw = a, the left front = -a + rests, LegRightBackBottom = -a + 0.139, LegRightBackTop = -a - 0.174, RightBackPaw = -a, the left back = a + rests) : (front pieces = -1.0 + rests; back pieces = 1.0 + rests); w = amount > 0.1 ? cos(t * 2.3 * amount) * pi * 0.4 * amount : 0; activity == 3 ? w /= 2; WingLeft.zRot = w; WingRight.zRot = -w",
+      "source": "SpyroModel.java:295-300 (the wings), :302-335 (the legs)",
+      "phase": "the synched DATA_ACTIVITY int (EntitySpyro.java:65-66): 2 selects the leg tuck; 3 halves the wings and stills the legs (a value the port's entity never sets: :350-360, :393, :400 write 1 and 2); one gait group per rig is the generator's rule, so the legs and wings share this group",
+      "omega_note": "the frequency terms are 2.0 x limbSwingAmount for the legs and 2.3 x limbSwingAmount for the wings (SpyroModel.java:292, :295, :302): at full stride the natural periods are 3.14 and 2.73 ticks; the reference clip's fixed limbSwingAmount sets both amplitude and tempo"
+    },
+    {
+      "name": "tail",
+      "bones": ["TailBack", "ScaleTailPiece", "TailFront", "TailPieceLarge", "TailPieceSmall"],
+      "omega": null,
+      "axis": "y (and the second piece's x / z position)",
+      "gait_scaled": false,
+      "amplitude": "pi x 0.25 = 0.785 rad (45 deg) at the base and 1.6x (72 deg) at the second piece and tips, at a tempo of 1.2 x limbSwingAmount rad/tick — so at rest the cosine sits at 1 and the tail is HELD bent 45 / 72 degrees to one side, wagging only as it moves; 0 (straight) while sitting or in activity 3; the second piece is placed 3 px along the base's yaw, 0.5 to the side",
+      "plain": "the tail wags side to side with the walk, the tip swinging wider than the root; standing still it stays cocked to one side; sitting, it straightens",
+      "math": "a = (sitting || activity == 3) ? 0 : cos(t * 1.2 * amount) * pi * 0.25; TailBack.yRot = ScaleTailPiece.yRot = a; TailFront.z = TailBack.z + cos(a) * 3; TailFront.x = TailBack.x + sin(a) * 3 - 0.5; TailFront.yRot = TailPieceLarge.yRot = TailPieceSmall.yRot = a * 1.6; the tip pieces ride TailFront's position",
+      "source": "SpyroModel.java:337-351",
+      "phase": "isInSittingPose (the owner's sit toggle, EntitySpyro.java:325-328) and activity 3 zero it",
+      "omega_note": "the frequency term is 1.2 x limbSwingAmount (:292, :337): at full stride the natural period is 5.24 ticks; at rest there is no period - the tail holds cos(0) = 1"
+    }
+  ],
+  "behaviour": [
+    "Every rhythm's frequency is multiplied by limbSwingAmount (SpyroModel.java:292): the faster it walks, the faster it moves. Above a limbSwingAmount of 0.1 the four legs trot 45 degrees x the speed in diagonal pairs (:302-319) and the two wing planes flap 72 degrees x the speed (:295-300); the tail wags 45 degrees at the base and 72 at the tip (:337-351). Standing still the legs and wings freeze and the tail is held cocked 45 degrees to one side - the cosine of zero (:337, :341).",
+    "Two state branches on the synched DATA_ACTIVITY int (EntitySpyro.java:65-66): in flight (2) the legs tuck and hold - the front pair back a radian, the back pair forward a radian (SpyroModel.java:320-335) - while the wings still beat only with the walking speed (:295); a third value (3) halves the wings, stills the legs and straightens the tail (:297, :303-304, :338-339) but the port's entity never sets it (EntitySpyro.java:350-360, :393, :400 write 1 and 2). The sitting pose straightens the tail (:338-340).",
+    "The head - both head pieces, the jaw, the nostrils, the three head scales and both horns - takes the full look yaw and pitch, the horns splayed 0.785 rad (:353-377). The torso, neck, wing root nubs and back scales are static.",
+    "The takeoff is a flag flip (EntitySpyro.java:204, :352-353, :360, :393, :400), the landing a 1-in-100 roll that mostly answers 1 (:351-353), the bite doHurtTarget within 3 blocks plus half the target's width on the flight pass (:405-408), the fireball shootFireball (:480-487) - none of them animation events."
+  ],
+  "clips": [
+    {
+      "name": "idle",
+      "verdict": "author",
+      "note": "REQUIRED with walk: the gate opens on the pair (today nothing ships; the classic code plays) — the ground rest: legs and wings still (SpyroModel.java:295, :302), the tail cocked 45 degrees (:337, :341), the head on the look"
+    },
+    {
+      "name": "walk",
+      "verdict": "author",
+      "note": "REQUIRED with idle: the locomotion loop — the diagonal trot with the wings flapping and the tail wagging, all at a tempo that rises with the speed (:295-319, :337-351); the reference clip is the code at full stride"
+    },
+    {
+      "name": "fly",
+      "verdict": "author",
+      "note": "DATA_ACTIVITY 2 (EntitySpyro.java:65-66, :129-136; set at :204, :352-353, :360, :393, :400): the legs tucked and held (SpyroModel.java:320-335) while the wings beat only with the walking speed (:295) — a real wing beat is the ask; the generator's flyer row plays it while airborne"
+    },
+    {
+      "name": "swim",
+      "verdict": "leave",
+      "note": "no swim state: in water it is lifted 0.07 a tick (EntitySpyro.java:156-159) and the FloatGoal (:93) keeps it up; the fallback to walk covers it (section 2.4)"
+    },
+    {
+      "name": "calm_idle",
+      "verdict": "leave",
+      "note": "= idle: no synched attacking flag in EntitySpyro.java (DATA_ACTIVITY and DATA_SPYRO_FIRE at :65-68 are flight and fire), so calm_idle is covered by idle"
+    },
+    {
+      "name": "attack",
+      "verdict": "author",
+      "note": "the bite: doHurtTarget (vanilla, 5 of damage, EntitySpyro.java:119) on the 1-in-6 flight pass within 3 blocks plus half the target's width of a monster it hunts (:389-408, :489-507); no attacking flag, so the strike is transport 1 (the server LivingDamageEvent.Post) — a head snap; the fireball is the `breath` extra",
+      "length_seconds": 0.4
+    },
+    {
+      "name": "hurt",
+      "verdict": "author",
+      "note": "a flinch to the duck_hurt sound at 0.4 volume (EntitySpyro.java:563-566, :573-576); hurt() (:215-219) refuses cactus; a tame Spyro under a quarter health flees (:392-398); the hurtTime edge is client-observed",
+      "length_seconds": 0.3
+    },
+    {
+      "name": "death",
+      "verdict": "author",
+      "note": "the vanilla death flip stays; a creature whose JSON ships a `death` clip gets the clip-replaces-flip mode, designed when the first such clip arrives (the Queen's own death clip the precedent) - a `death` delivered here plays under the flip until then",
+      "length_seconds": 1.0
+    }
+  ],
+  "extras": [
+    {
+      "name": "breath",
+      "loop": "false",
+      "layer": "overlay",
+      "bones": ["Neck", "HeadPieceTop", "HeadPieceBottom", "JawPiece", "SnoutLeft", "SnoutRight", "HornLeftBottom", "HornRightBottom"],
+      "length_seconds": 0.4,
+      "code_triggered": false,
+      "trigger": "shootFireball (EntitySpyro.java:480-487) from the flight pass (:409-411): a SmallFireball from 1.25 up toward the target within 8 blocks, out of water, with DATA_SPYRO_FIRE at 1 (lit with flint and steel :300-310, put out with ice :262-272), on nextInt(10) == 0 or nextInt(15) == 1; a named launch site (transport 3) when the rig lands",
+      "note": "a head rear and a jaw snap on the fireball"
+    },
+    {
+      "name": "takeoff",
+      "loop": "false",
+      "layer": "overlay",
+      "bones": ["LegRightFrontTop", "LegLeftFrontTop", "LegRightBackTop", "LegLeftBackTop", "WingLeft", "WingRight", "Torso"],
+      "length_seconds": 0.6,
+      "code_triggered": false,
+      "trigger": "the synched DATA_ACTIVITY int rising 1 -> 2 (EntitySpyro.setActivity :133-136; set at :204 with the owner beyond 16 blocks, :352-353 on the 1-in-8 roll, :360 with a flying owner, :393 / :400 on prey) — the legs tuck (SpyroModel.java:320-335); a transition on the flag's edge, its transport the seam's when the rig lands",
+      "note": "a hop with the first downstroke, the legs folding"
+    },
+    {
+      "name": "land",
+      "loop": "false",
+      "layer": "overlay",
+      "bones": ["LegRightFrontTop", "LegLeftFrontTop", "LegRightBackTop", "LegLeftBackTop", "WingLeft", "WingRight", "Torso"],
+      "length_seconds": 0.6,
+      "code_triggered": false,
+      "trigger": "the synched DATA_ACTIVITY int falling 2 -> 1 (EntitySpyro.java:351-353: a 1-in-100 tick with no prey in sight answers 1 seven times in eight; :350 lifts a 0 to 1) — the legs unfold (SpyroModel.java:307-319); a transition on the flag's edge",
+      "note": "the settle onto four paws with the wings folding"
+    },
+    {
+      "name": "sit",
+      "loop": "true",
+      "layer": "base",
+      "bones": ["LegRightFrontTop", "LegRightFrontBottom", "LegLeftFrontTop", "LegLeftFrontBottom", "LegRightBackTop", "LegRightBackBottom", "LegLeftBackTop", "LegLeftBackBottom", "Torso", "TailBack", "TailFront", "WingLeft", "WingRight"],
+      "code_triggered": false,
+      "trigger": "the vanilla sitting pose flag (TamableAnimal's synched sit bit), toggled by the owner's click with any other item (EntitySpyro.java:325-328): the model straightens the tail while it is set (SpyroModel.java:338-340) and the entity stops flying (EntitySpyro.java:372); a state loop on the flag when the rig lands",
+      "note": "a curled-up rest: legs folded, wings closed, the tail straight along the ground"
+    }
+  ],
+  "wishlist": [
+    "in `fly`: the code beats the wings only with the walking speed (SpyroModel.java:295), so a hovering Spyro hangs with still wings - a true wing beat in the air with the legs tucked as the code has them (:320-335)",
+    "in `walk`: a hatchling's bounce over the diagonal trot (:307-319); the tempo already rises with the speed (:292), keep that feel",
+    "in `idle`: the cocked tail (:337, :341) is a quirk of the code, not a pose - a slow tail sway and a head bob read better",
+    "in `breath`: a head rear and a jaw snap on the fireball (EntitySpyro.java:480-487); the jaw is look-only today (SpyroModel.java:355, :368)"
+  ],
+  "effort_hours": null
+}

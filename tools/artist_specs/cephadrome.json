@@ -1,0 +1,222 @@
+{
+  "registry": "cephadrome",
+  "display_name": "Cephadrome",
+  "status": "DRAFT — authored by a first pass from the entity code, 2026-09-13; edit pending",
+  "locomotion": "flyer",
+  "artist_scope": "full contract (Tier 1, the state-branching class: geckolib_migration_design.md section 5) with the §8.1 locks; the rig is not yet in-game (it lands through the seam in a later slice)",
+  "character_sheet": "The Cephadrome is a rideable flying hammerhead shark on legs: a hammer-headed head with a hinged mouth on a three-segment neck, a body of several blocks with a tall chest keel, two three-segment legs with feet, two four-spar wing fins with a membrane, a four-spar dorsal fin with four membranes, and a three-segment tail ending in a four-spar tail fin (ModelCephadrome.createBodyLayer, ModelCephadrome.java:129-283). It is a PathfinderMob in the ambient category (Cephadrome.java:41; ModEntities.java:733-734) with 300 HP and 70 attack (createAttributes :137-141), wanders and looks about on the ground (:130-134), and on a 1-in-7 tick hunts monsters, Mothra, the Ender Dragon, untamed Leons, Gamma Metroids and Water Dragons — and players once one has hurt it below nine tenths of its health, or when in a bad mood, or after a refused mount (customServerAiStep :352-386, isSuitableTarget :401-420) — running at 1.7 with the attacking flag up and biting within six blocks plus half the target's width for 70 (doHurtTarget :309-331, x1.5 against the Kraken, a 2.5 knockback). Fed raw meat it heals to full and lets a player mount (:56-60); ridden it flies with no gravity on the client-predicted RiderFlightController (:73-84, :182) and its wings sound every 22 ticks (:164-173) — the model's activity 1 is that ridden flight. Hits are refused for 25 ticks after each one and turn it on the attacker (hurt :334-349); it heals 2 on a 1-in-100 roll (:356-358). It spawns by day above y 50 with clear air above and no other within 16 blocks (checkSpawnRules :544-555; a spawner-born one is born hostile) through the ambient_cephadrome biome modifier. Read it as a shark that walks: a flat-bodied stride on the ground, and in the air a slow wide beat of the wing fins.",
+  "size_notes": "Drawn at x1.0 of the rig (CephadromeRenderer.java:20, applied :30; shadow 1.25) on a 512x256 sheet (ModelCephadrome.java:283); 2.5 x 2.25 block hitbox (ModEntities.java:733-734). The wing fins are 70-unit spars with zero-thickness membranes. The neck, tail and tail fin are chains the code positions segment by segment — key the joints, never the positions.",
+  "labels": {
+    "body": "body (the main 12x15x19 block; static)",
+    "body2": "upper back block (static)",
+    "butt": "hindquarters block (static)",
+    "chest": "chest keel (the tall 9x29x7 block under the neck; static)",
+    "chest1": "chest plate (static)",
+    "neck3": "neck, segment 3 (at the body; turns an eighth of the look yaw)",
+    "neck2": "neck, segment 2 (a quarter of the look yaw)",
+    "neck1": "neck, segment 1 (at the head; half the look yaw)",
+    "head": "head (turns three quarters of the look yaw; intended hitbox part 'head')",
+    "hammerhead": "hammer-head lobe, main (36 wide; rides the head)",
+    "hammerhead2": "hammer-head lobe, front (50 wide; rides the head)",
+    "mouth": "lower jaw (still at −0.87; works 25 degrees while attacking)",
+    "leftshoulder": "left shoulder (static)",
+    "lefwingfin1": "left wing fin, spar 1 (the 70-long root spar; the model's own spelling 'lefwingfin1'; intended hitbox part)",
+    "leftwingfin2": "left wing fin, spar 2 (64 long)",
+    "leftwingfin3": "left wing fin, spar 3 (48 long)",
+    "leftwingfin4": "left wing fin, spar 4 (37 long)",
+    "leftwingmembrane": "left wing membrane (zero-thickness, 64x34)",
+    "rightshoulder": "right shoulder (static)",
+    "rightwingfin1": "right wing fin, spar 1 (the 69-long root spar; intended hitbox part)",
+    "rightwingfin2": "right wing fin, spar 2 (64 long)",
+    "rightwingfin3": "right wing fin, spar 3 (48 long)",
+    "rightwingfin4": "right wing fin, spar 4 (37 long)",
+    "rightwingmembrane": "right wing membrane (zero-thickness, 64x34)",
+    "leftleg1": "left leg, upper (the stride; tucked forward in ridden flight; intended hitbox part)",
+    "leftleg2": "left leg, middle (intended hitbox part)",
+    "leftleg3": "left leg, lower (intended hitbox part)",
+    "leftfoot": "left foot (intended hitbox part)",
+    "rightleg1": "right leg, upper (the stride, opposite the left on the ground; intended hitbox part)",
+    "rightleg2": "right leg, middle (intended hitbox part)",
+    "rightleg3": "right leg, lower (intended hitbox part)",
+    "rightfoot": "right foot (intended hitbox part)",
+    "tail1": "tail segment 1 (the tail wave's root; intended hitbox part 'tail1')",
+    "tail2": "tail segment 2 (an eighth of a period behind)",
+    "tail3": "tail segment 3 (a quarter behind; intended hitbox part 'tail3')",
+    "tailfin1": "tail fin, spar 1 (the 30-long; rides the tail's end, three eighths behind)",
+    "tailfin2": "tail fin, spar 2 (rides spar 1)",
+    "tailfin3": "tail fin, spar 3 (rides spar 1)",
+    "tailfin4": "tail fin, spar 4 (rides spar 1)",
+    "tailmembrane1": "tail fin membrane 1 (rides spar 1)",
+    "tailmembrane2": "tail fin membrane 2 (rides spar 1)",
+    "tailmembrane3": "tail fin membrane 3 (rides spar 1)",
+    "topfin1": "dorsal fin, spar 1 (the 30-long; folds a slow rectified wave about −1.85)",
+    "topfin2": "dorsal fin, spar 2 (about −2.07, half the wave)",
+    "topfin3": "dorsal fin, spar 3 (about −2.42, a quarter)",
+    "topfin4": "dorsal fin, spar 4 (about −2.63, an eighth)",
+    "topmem1": "dorsal fin membrane 1 (with spar 1, about −0.26)",
+    "topmem2": "dorsal fin membrane 2 (with spar 2, about −0.52)",
+    "topmem3": "dorsal fin membrane 3 (with spar 3, about −0.89)",
+    "topmem4": "dorsal fin membrane 4 (with spar 4, about −1.11)"
+  },
+  "groups": [
+    {
+      "name": "gait",
+      "bones": [
+        "leftleg1", "leftleg2", "leftleg3", "leftfoot", "rightleg1", "rightleg2", "rightleg3", "rightfoot"
+      ],
+      "omega": 0.4125,
+      "axis": "x",
+      "gait_scaled": true,
+      "amplitude": "pi x 0.4 x the TRUE horizontal speed in blocks per tick (from xOld / zOld, not limbSwingAmount), clamped to 0.75 rad (43 deg) once past 0.5, zero below a limbSwingAmount of 0.001: every piece of a leg swings together about its rest (upper −0.58, middle 0.98, lower −0.52, foot 0), the left leg opposite the right; in ridden flight (activity 1) both legs are held tucked one radian forward and still",
+      "plain": "on the ground the two legs stride with the real speed, each leg a stiff piece; ridden, they tuck forward and hold",
+      "math": "s = amount > 0.001 ? |velocity_xz| : 0; a = clamp(cos(t * 0.75 * 0.55) * pi * s * 0.4, ±0.75 past ±0.5); activity != 0 ? (leg1.xRot = -0.58 + 1, leg2 = 0.98 + 1, leg3 = -0.52 + 1, foot = 1, both sides) : (right: -0.58 + a, 0.98 + a, -0.52 + a, a; left: -0.58 - a, 0.98 - a, -0.52 - a, -a)",
+      "source": "ModelCephadrome.java:298-331; wingspeed 0.55 (:24)",
+      "phase": "the synced DATA_ACTIVITY byte (Cephadrome.java:53; 1 while ridden) selects tucked-and-still over the stride",
+      "wingspeed": 0.55,
+      "omega_note": "the classic phase is ageInTicks x 0.75 x wingspeed 0.55 = 0.4125 rad/tick: the natural period is 2 pi / 0.4125 = 15.23 ticks; the amplitude is the entity's real speed, so the reference clip's fixed limbSwingAmount does not drive it"
+    },
+    {
+      "name": "wing_fins",
+      "bones": [
+        "lefwingfin1", "leftwingfin2", "leftwingfin3", "leftwingfin4", "leftwingmembrane",
+        "rightwingfin1", "rightwingfin2", "rightwingfin3", "rightwingfin4", "rightwingmembrane"
+      ],
+      "omega": 0.3025,
+      "axis": "z",
+      "gait_scaled": false,
+      "amplitude": "ridden flight (activity 1): pi x 0.28 = 0.88 rad (50 deg) about zero at 0.55 x 0.55 = 0.3025 rad/tick; on the ground and calm: pi x 0.028 = 0.088 rad (5 deg) about −0.85 at 0.2 x 0.55 = 0.11 rad/tick; on the ground and attacking: pi x 0.068 = 0.214 rad (12 deg) about −0.65 at 0.9 x 0.55 = 0.495 rad/tick; the right fin the negative of the left",
+      "plain": "the wing fins beat wide and slow in ridden flight, hang folded with a faint stir on the ground, and half-raise and quiver while attacking",
+      "math": "w = activity != 0 ? cos(t * 0.55 * 0.55) * pi * 0.28 : (attacking == 0 ? -0.85 + cos(t * 0.2 * 0.55) * pi * 0.028 : -0.65 + cos(t * 0.9 * 0.55) * pi * 0.068); left spars and membrane zRot = w; right = -w",
+      "source": "ModelCephadrome.java:333-343",
+      "phase": "three branches: DATA_ACTIVITY 1 (ridden), else DATA_ATTACKING clear / set",
+      "wingspeed": 0.55,
+      "omega_note": "the classic phase in flight is ageInTicks x 0.55 x wingspeed 0.55 = 0.3025 rad/tick (period 20.8 ticks); calm 0.11 (57.1 ticks); attacking 0.495 (12.7 ticks)"
+    },
+    {
+      "name": "top_fins",
+      "bones": [
+        "topfin1", "topfin2", "topfin3", "topfin4", "topmem1", "topmem2", "topmem3", "topmem4"
+      ],
+      "omega": 0.0825,
+      "axis": "x",
+      "gait_scaled": false,
+      "amplitude": "|pi x 0.05| = up to 0.157 rad (9 deg), rectified, folding only one way from the rests: spar 1 and membrane 1 the full wave about −1.85 / −0.26, spar 2 and membrane 2 a half about −2.07 / −0.52, spar 3 and membrane 3 a quarter about −2.42 / −0.89, spar 4 and membrane 4 an eighth about −2.63 / −1.11",
+      "plain": "the dorsal fin folds and rises very slowly, the front spar most and the rear least; the wave is rectified, so it folds twice per period",
+      "math": "u = cos(t * 0.15 * 0.55) * pi * 0.05; topfin1.xRot = -1.85 - |u|, topmem1.xRot = -0.26 - |u|; topfin2 = -2.07 - |u/2|, topmem2 = -0.52 - |u/2|; topfin3 = -2.42 - |u/4|, topmem3 = -0.89 - |u/4|; topfin4 = -2.63 - |u/8|, topmem4 = -1.11 - |u/8|",
+      "source": "ModelCephadrome.java:345-353",
+      "rectified": true,
+      "wingspeed": 0.55,
+      "omega_note": "the classic phase is ageInTicks x 0.15 x wingspeed 0.55 = 0.0825 rad/tick: the natural period is 76.2 ticks, the visible period 38.1"
+    },
+    {
+      "name": "tail",
+      "bones": [
+        "tail1", "tail2", "tail3", "tailfin1", "tailfin2", "tailfin3", "tailfin4", "tailmembrane1", "tailmembrane2", "tailmembrane3"
+      ],
+      "omega": 0.418,
+      "axis": "y",
+      "gait_scaled": false,
+      "amplitude": "segment 1: pi x 0.04 = 0.126 rad (7 deg); segments 2 and 3 and the tail fin: pi x 0.1 = 0.314 rad (18 deg) at 0.76 x 0.55 = 0.418 rad/tick, an eighth of a period apart down the chain; on the ground and calm: pi x 0.03 = 0.094 rad (5 deg) at 0.22 x 0.55 = 0.121 rad/tick; each segment placed at the end of the one before, the four fin spars and three membranes riding the fin root",
+      "plain": "the tail sweeps side to side in a travelling wave — brisk in flight or when attacking, a slow sway at rest on the ground",
+      "math": "ts = (activity == 0 && attacking == 0) ? 0.22 : 0.76; amp = (activity == 0 && attacking == 0) ? 0.03 : 0.1; tail1.yRot = cos(t * ts * 0.55) * pi * 0.04; tail2.yRot = cos(t * ts * 0.55 - pi/4) * pi * amp; tail3.yRot = cos(... - pi/2) * pi * amp; tailfin1.yRot = cos(... - 3pi/4) * pi * amp; tailfin2/3/4 and tailmembrane1/2/3 = tailfin1 (positions along the chain by cos/sin x 13 / 13 / 10)",
+      "source": "ModelCephadrome.java:355-389",
+      "phase": "state-branching: the calm ground state (activity 0 and attacking 0) selects the slow, small wave",
+      "wingspeed": 0.55,
+      "omega_note": "the classic phase is ageInTicks x 0.76 x wingspeed 0.55 = 0.418 rad/tick (period 15.0 ticks); calm on the ground 0.22 x 0.55 = 0.121 (51.9 ticks)"
+    },
+    {
+      "name": "mouth",
+      "bones": [
+        "mouth"
+      ],
+      "omega": 0.275,
+      "axis": "x",
+      "gait_scaled": false,
+      "amplitude": "attacking: pi x 0.14 = 0.44 rad (25 deg) about −0.61; not attacking: still at −0.87",
+      "plain": "the lower jaw works while the attacking flag is set and hangs still otherwise",
+      "math": "mouth.xRot = attacking ? -0.61 + cos(t * 0.5 * 0.55) * pi * 0.14 : -0.87",
+      "source": "ModelCephadrome.java:434-435",
+      "phase": "the synced DATA_ATTACKING byte (Cephadrome.java:51, set at :377, cleared at :383) selects",
+      "wingspeed": 0.55,
+      "omega_note": "the classic phase is ageInTicks x 0.5 x wingspeed 0.55 = 0.275 rad/tick: the natural period is 22.8 ticks"
+    }
+  ],
+  "behaviour": [
+    "On the ground the two legs stride as stiff pieces at 0.4125 rad/tick (a 15.2-tick period), the swing scaled by the entity's TRUE horizontal speed (from its last position, ModelCephadrome.java:299-300) rather than by limbSwingAmount, and clamped at 43 degrees (:301-307); ridden (DATA_ACTIVITY 1, Cephadrome.java:53) both legs tuck one radian forward and hold (:312-321).",
+    "The wing fins branch three ways (:333-343): in ridden flight they beat 50 degrees each way at 0.3025 rad/tick (a 20.8-tick beat); on the ground they hang folded at −0.85 with a 5-degree stir, and while the attacking flag is set they half-raise to −0.65 and quiver 12 degrees at 0.495 rad/tick. The right fin mirrors the left.",
+    "The dorsal fin folds on a very slow rectified wave (a 76-tick period, folding twice in it), the front spar 9 degrees and each spar behind half the last (:345-353). The tail sweeps in a travelling wave an eighth of a period per segment — 18 degrees at 0.418 rad/tick in flight or when attacking, 5 degrees at 0.121 rad/tick at rest on the ground — and the tail fin's spars and membranes ride its end (:355-389).",
+    "The neck turns toward the look in three steps (an eighth, a quarter, a half) and the head three quarters, the hammer-head lobes and the mouth riding it (:413-432); ridden, the look is replaced by a filtered turn rate clamped to ±50 degrees (:395-405). The mouth works 25 degrees at 0.275 rad/tick while attacking and hangs at −0.87 otherwise (:434-435).",
+    "The bite (doHurtTarget, Cephadrome.java:309-331) is rolled by the 1-in-7 hunt (:365-385) and the wing sound every 22 ticks while ridden is the entity's (:164-173) — neither is an animation event."
+  ],
+  "clips": [
+    {
+      "name": "idle",
+      "verdict": "author",
+      "note": "REQUIRED with walk: the gate opens on the pair — the ground rest: fins folded and stirring, the dorsal fin's slow fold, the tail's small sway"
+    },
+    {
+      "name": "walk",
+      "verdict": "author",
+      "note": "REQUIRED with idle: the gait group's stride (the code scales it by the real speed, :299-307; keep it short and low)"
+    },
+    {
+      "name": "fly",
+      "verdict": "author",
+      "note": "the ridden flight (DATA_ACTIVITY 1: Cephadrome.java:182 no gravity while a player controls it; the model's activity branch): legs tucked (:312-321), the wing fins beating 50 degrees (:333), the tail brisk (:355-358)"
+    },
+    {
+      "name": "aggro_idle",
+      "verdict": "author",
+      "note": "the attacking flag on the ground (Cephadrome.java:377): the fins half-raised and quivering (ModelCephadrome.java:333), the mouth working (:435), the tail brisk (:355-358)"
+    },
+    {
+      "name": "calm_idle",
+      "verdict": "author",
+      "note": "the flag clear (:383): fins folded at −0.85 with a faint stir (:333), the mouth shut (:435), the tail slow (:356-357)"
+    },
+    {
+      "name": "attack",
+      "verdict": "author",
+      "note": "the bite: doHurtTarget (Cephadrome.java:309-331) from customServerAiStep :378-381 within six blocks plus half the target's width — 70 of damage and a 2.5 knockback; author a bite lunge with the hammer head swinging",
+      "length_seconds": 0.6
+    },
+    {
+      "name": "hurt",
+      "verdict": "author",
+      "note": "a flinch to alo_hurt (getHurtSound :294-296); hurt() (:334-349) then refuses damage for 25 ticks and turns it on the attacker",
+      "length_seconds": 0.4
+    },
+    {
+      "name": "death",
+      "verdict": "author",
+      "note": "the vanilla death flip stays; a creature whose JSON ships a `death` clip gets the clip-replaces-flip mode, designed when the first such clip arrives (the Queen's own death clip the precedent) - a `death` delivered here plays under the flip until then",
+      "length_seconds": 1.5
+    }
+  ],
+  "extras": [],
+  "wishlist": [
+    "in `fly`: the ridden beat — the code beats the wing fins 50 degrees (ModelCephadrome.java:333) but holds the body flat; bank into turns (the yaw filter at :395-405 already turns the head) and let the tail trail the turn",
+    "in `walk`: the code scales the stride by the true speed (:299-307) — keep it short and low, a shark on legs, with the tail's travelling wave (:360-370) carried through",
+    "in `aggro_idle`: the fins half-raised and quivering (:333, the attacking branch) with the mouth working (:435) — a threat display before the bite",
+    "in `attack`: a bite lunge with the hammer head swinging; the bite lands within six blocks plus half the target's width (Cephadrome.java:378-381)"
+  ],
+  "locked_bones_provisional": [
+    {"bone": "head", "size": [1.3, 1.0], "damage": 1},
+    {"bone": "body", "size": [2.3, 1.4], "damage": 0.5},
+    {"bone": "chest", "size": [2.3, 1.4], "damage": 0.5},
+    {"bone": "leftleg1", "size": [0.5, 0.9], "damage": 0.5},
+    {"bone": "leftleg2", "size": [0.5, 0.9], "damage": 0.5},
+    {"bone": "leftleg3", "size": [0.5, 0.9], "damage": 0.5},
+    {"bone": "leftfoot", "size": [0.5, 0.9], "damage": 0.5},
+    {"bone": "rightleg1", "size": [0.5, 0.9], "damage": 0.5},
+    {"bone": "rightleg2", "size": [0.5, 0.9], "damage": 0.5},
+    {"bone": "rightleg3", "size": [0.5, 0.9], "damage": 0.5},
+    {"bone": "rightfoot", "size": [0.5, 0.9], "damage": 0.5},
+    {"bone": "lefwingfin1", "size": [1.7, 0.45], "damage": 0.25},
+    {"bone": "rightwingfin1", "size": [1.7, 0.45], "damage": 0.25},
+    {"bone": "tail1", "size": [0.8, 0.7], "damage": 0.25},
+    {"bone": "tail3", "size": [0.8, 0.7], "damage": 0.25}
+  ],
+  "locked_bones_note": "The design's section 6 ModelCephadrome row (geckolib_migration_design.md:445): 'head [1.3,1.0] @1; body/chest [2.3,1.4] @0.5; left/right leg chains [0.5,0.9] @0.5; wing-fin roots [1.7,0.45] @0.25; tail1/tail3 [0.8,0.7] @0.25'. head, body, chest, tail1 and tail3 resolve as written. 'left/right leg chains' is not a bone name: taken as every segment of each chain — leftleg1, leftleg2, leftleg3, leftfoot and rightleg1, rightleg2, rightleg3, rightfoot (the code poses all four pieces a side, ModelCephadrome.java:314-330). 'wing-fin roots' is not a bone name: taken as the root spar a side — the port model spells the left one 'lefwingfin1' (createBodyLayer; the geo carries that spelling) and the right 'rightwingfin1'; the row says the membranes and outer spars stay visual ('make only structural fin roots damageable').",
+  "effort_hours": null
+}

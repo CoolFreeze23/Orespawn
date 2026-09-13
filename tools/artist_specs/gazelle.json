@@ -1,0 +1,155 @@
+{
+  "registry": "gazelle",
+  "display_name": "Gazelle",
+  "status": "DRAFT — authored by a first pass from the entity code, 2026-09-13; edit pending",
+  "locomotion": "walker",
+  "artist_scope": "full contract (Tier 2, the state-branching class: geckolib_migration_design.md section 5); the rig is not yet in-game (it lands through the seam in a later slice)",
+  "character_sheet": "A tameable, skittish grazer: a 6x6x13 body with a chest wedge, a long raked neck with a throat fluff, a cube head with a nose, a mouth, two ears and two three-segment antlers, four legs of four or five pieces down to a hoof, and a stub tail (ModelGazelle.java:101-269, 34 parts). 15 HP, speed 0.3 and no attack (Gazelle.java:82-87). It flees monsters within 8 blocks and players within 12 (:73, :76), panics when hurt (:75), is tempted by wheat (:74) and tamed by it one time in two (:226-249); tamed it follows its owner (:72), sits on a right-click (:277-282), is untamed with glass (:251-265) and takes at most 10 per hit (:210-216). It grazes: hurt or on a 1-in-750 tick it scans up to ten blocks for carrots, potatoes or grass, walks there, eats the block with a burp and heals (:89-94, :150-182); every 250 ticks or so it drifts toward another gazelle (:184-189). It spawns between y 50 and 100 on dirt or grass (:288-294; ModEntities.java:385-386), breeds on a crystal apple (:325-327) and its fawn inherits the owner (:340-348). Read it as a deer: a light diagonal trot, the ears flicking, the tail wagging, the head down to graze.",
+  "size_notes": "Drawn at x1.0 of the rig, x0.5 as a baby (GazelleRenderer.java:28, :40-41; shadow 0.45, :30) on a 64x64 sheet (ModelGazelle.java:271), gazelletexture.png (GazelleRenderer.java:22); the hitbox is 0.6 x 1.8 (ModEntities.java:385-386). The original's ModelGazelle(0.65f) argument was the wingspeed (ModelGazelle.java:24), not a scale.",
+  "labels": {
+    "Chest": "chest wedge (5x2x3 under the neck's root, pitched 134 deg; static)",
+    "Body": "body (the 6x6x13 barrel, pitched 13 deg; static)",
+    "neck": "neck (5x5x13 raked 87 deg up from the chest; static)",
+    "throatfluff": "throat fluff (4x3x5 under the head; static)",
+    "head": "head (a 6x6x6 cube at the neck's top; yaws with the look at 0.45 of the head yaw; no pitch)",
+    "nose": "nose (5x3x5 ahead of the head; yaws with the head)",
+    "mouth": "mouth (4x2x5 under the nose; yaws with the head)",
+    "lear": "left ear (3x2x1 turned 90 deg out; yaws with the head plus a 4-degree flick)",
+    "rear": "right ear (the mirror; yaws with the head plus the same flick)",
+    "la1": "left antler, base segment (1x4x1; yaws with the head)",
+    "la2": "left antler, middle segment (1x5x1 raked back 60 deg; yaws with the head)",
+    "la3": "left antler, tip segment (1x5x1; yaws with the head)",
+    "ra1": "right antler, base segment (yaws with the head)",
+    "ra2": "right antler, middle segment (yaws with the head)",
+    "ra3": "right antler, tip segment (yaws with the head)",
+    "lfleg1": "left front leg, shoulder piece (2x6x3, rest 0.297; the gait)",
+    "lfleg2": "left front leg, cannon (2x12x2, rest -0.074; the gait)",
+    "lfleg3": "left front leg, lower piece (2x6x2, rest -0.409; the gait)",
+    "lfleg4": "left front hoof (3x3x3; the gait)",
+    "rfleg1": "right front leg, shoulder piece (the gait, opposite the left front)",
+    "rfleg2": "right front leg, cannon (the gait)",
+    "rfleg3": "right front leg, lower piece (the gait)",
+    "rfleg4": "right front hoof (the gait)",
+    "lrleg1": "left rear leg, hip piece (2x6x3; the gait, with the right front)",
+    "lrleg2": "left rear thigh (2x2x6, rest 0.185; the gait)",
+    "lrleg3": "left rear shin (2x12x2, rest -0.074; the gait)",
+    "lrleg4": "left rear lower piece (2x6x2, rest -0.409; the gait)",
+    "lrleg5": "left rear hoof (3x3x3; the gait)",
+    "rrleg1": "right rear leg, hip piece (the gait, with the left front)",
+    "rrleg2": "right rear thigh (the gait)",
+    "rrleg3": "right rear shin (the gait)",
+    "rrleg4": "right rear lower piece (the gait)",
+    "rrleg5": "right rear hoof (the gait)",
+    "tail": "tail (a 4x4x4 stub pitched 55 deg; wags 11 deg at 0.1 rad/tick unless the entity is in the crouching pose)"
+  },
+  "groups": [
+    {
+      "name": "gait",
+      "bones": ["lfleg1", "lfleg2", "lfleg3", "lfleg4", "rfleg1", "rfleg2", "rfleg3", "rfleg4", "lrleg1", "lrleg2", "lrleg3", "lrleg4", "lrleg5", "rrleg1", "rrleg2", "rrleg3", "rrleg4", "rrleg5"],
+      "omega": 0.715,
+      "axis": "x",
+      "gait_scaled": true,
+      "amplitude": "pi x 0.12 = 0.377 rad (22 deg) x the walking speed above a limbSwingAmount of 0.1, added to each piece's rest (front: 0.297 / -0.074 / -0.409 / 0; rear: 0 / 0.185 / -0.074 / -0.409 / 0); 0 below the threshold",
+      "plain": "the four legs swing fore and aft as stiff chains, every piece of a leg together: the left front with the right rear one way, the right front with the left rear the other — a diagonal trot",
+      "math": "a = amount > 0.1 ? cos(t * 1.1 * 0.65) * pi * 0.12 * amount : 0; lfleg1..4.xRot = rest + a; rfleg1..4.xRot = rest - a; lrleg1..5.xRot = rest - a; rrleg1..5.xRot = rest + a",
+      "source": "ModelGazelle.java:276-297; wingspeed 0.65 (:24)",
+      "phase": "the limbSwingAmount threshold of 0.1 gates it",
+      "wingspeed": 0.65,
+      "omega_note": "the classic phase is ageInTicks x 1.1 x 0.65 = 0.715: the natural period is 2 pi / 0.715 = 8.79 ticks"
+    },
+    {
+      "name": "ears",
+      "bones": ["lear", "rear"],
+      "omega": 0.5,
+      "axis": "y",
+      "gait_scaled": false,
+      "amplitude": "pi x 0.02 = 0.063 rad (4 deg) about 1.57 rad plus the head's yaw, both ears together",
+      "plain": "the ears flick gently in step, riding the head's turn",
+      "math": "e = cos(t * 0.5) * pi * 0.02; lear.yRot = rear.yRot = 1.57 + head.yRot + e",
+      "source": "ModelGazelle.java:299, :302-303",
+      "omega_note": "the classic phase is ageInTicks x 0.5 (no wingspeed term): the natural period is 12.6 ticks"
+    },
+    {
+      "name": "tail",
+      "bones": ["tail"],
+      "omega": 0.1,
+      "axis": "x",
+      "gait_scaled": false,
+      "amplitude": "pi x 0.06 = 0.188 rad (11 deg) about a 1.0 rad rest; skipped (the last value held) while the entity is in the crouching pose",
+      "plain": "the tail wags slowly up and down at all times",
+      "math": "if (!crouching) tail.xRot = 1.0 + cos(t * 0.1) * pi * 0.06",
+      "source": "ModelGazelle.java:311-313",
+      "phase": "the branch on isCrouching() (the CROUCHING pose, one a mob is never given) holds the last angle",
+      "omega_note": "the classic phase is ageInTicks x 0.1: the natural period is 62.8 ticks"
+    }
+  ],
+  "behaviour": [
+    "One gait rhythm above a limbSwingAmount of 0.1 (ModelGazelle.java:276-297): the eighteen leg pieces swing 22 degrees x the walking speed about their rests at 0.715 rad/tick (an 8.8-tick period), each leg a stiff chain, the left front with the right rear and the right front with the left rear — a diagonal trot at the 0.3 walk (Gazelle.java:53).",
+    "Two unscaled rhythms: the ears flick 4 degrees at 0.5 rad/tick over the head's yaw (:299, :302-303) and the tail wags 11 degrees about 1.0 rad at 0.1 rad/tick, a 63-tick period (:311-313) — the one state branch, which skips the wag while the entity is in the crouching pose (a pose a mob never takes), so in practice it always runs.",
+    "The head, nose and mouth yaw together with the look at 0.45 of the head yaw and never pitch (:300-301); the six antler segments follow the head's yaw (:304-309). The chest, body, neck and throat fluff are static.",
+    "The sit toggle (Gazelle.java:277-282, setInSittingPose) and the graze (:150-182: the walk to the block, the bite, the burp) draw no pose today — the model has no sitting branch and no head pitch."
+  ],
+  "clips": [
+    {
+      "name": "idle",
+      "verdict": "author",
+      "note": "REQUIRED with walk: the gate opens on the pair (today nothing ships; the classic code plays) — the stand: the ears' flick (ModelGazelle.java:299, :302-303), the tail's slow wag (:311-313), the legs at their rests"
+    },
+    {
+      "name": "walk",
+      "verdict": "author",
+      "note": "REQUIRED with idle: the locomotion loop — the diagonal trot of the eighteen leg pieces at 0.715 rad/tick, 22 degrees x the walking speed (:276-297); the reference clip is that trot at full stride"
+    },
+    {
+      "name": "swim",
+      "verdict": "leave",
+      "note": "no swim behaviour beyond the FloatGoal that keeps it at the surface (Gazelle.java:70); the code draws the same trot in water; the fallback to walk covers it (section 2.4)"
+    },
+    {
+      "name": "calm_idle",
+      "verdict": "leave",
+      "note": "= idle: no synched attacking flag in Gazelle.java and no attack at all (ATTACK_DAMAGE 0, :86; no melee or ranged goal), so calm_idle is covered by idle"
+    },
+    {
+      "name": "hurt",
+      "verdict": "author",
+      "note": "a flinch: hurt() (Gazelle.java:210-216) caps a tamed gazelle's hit at 10; the scorpion_hit sound at 0.4 volume (:302-305, :312-315); the PanicGoal at 1.5 speed runs after (:75); the hurtTime edge is client-observed",
+      "length_seconds": 0.3
+    },
+    {
+      "name": "death",
+      "verdict": "author",
+      "note": "the vanilla death flip stays; a creature whose JSON ships a `death` clip gets the clip-replaces-flip mode, designed when the first such clip arrives (the Queen's own death clip the precedent) - a `death` delivered here plays under the flip until then",
+      "length_seconds": 1.0
+    }
+  ],
+  "extras": [
+    {
+      "name": "graze",
+      "loop": "false",
+      "layer": "overlay",
+      "bones": ["head", "nose", "mouth", "lear", "rear", "la1", "la2", "la3", "ra1", "ra2", "ra3", "throatfluff"],
+      "length_seconds": 1.0,
+      "code_triggered": false,
+      "trigger": "customServerAiStep (Gazelle.java:150-182): hurt on a 1-in-30 tick or on a 1-in-750 roll it scans for carrots, potatoes or grass (:89-94, scanForFood :96-130), walks to the block (:170) and, within 3.5 blocks (:171), eats it under mobGriefing with PLAYER_BURP and a heal of 1 (:172-179); a server-side roll with no packet today — a named site (transport 3) when the rig lands",
+      "note": "the head down to the grass and a chew on the burp; the neck is static in the rig, so key the head group only"
+    },
+    {
+      "name": "sit",
+      "loop": "true",
+      "layer": "base",
+      "bones": ["lfleg1", "lfleg2", "lfleg3", "lfleg4", "rfleg1", "rfleg2", "rfleg3", "rfleg4", "lrleg1", "lrleg2", "lrleg3", "lrleg4", "lrleg5", "rrleg1", "rrleg2", "rrleg3", "rrleg4", "rrleg5", "Body", "Chest", "neck", "tail"],
+      "code_triggered": false,
+      "trigger": "the vanilla sitting pose flag (TamableAnimal's synched sit bit) toggled by the owner's empty-hand click (Gazelle.java:277-282, setOrderedToSit / setInSittingPose); ModelGazelle draws no sitting branch today, so a sitting gazelle stands — a state loop on the flag when the rig lands",
+      "note": "the folded-legs rest of a deer: the legs tucked, the body lowered, the tail still"
+    }
+  ],
+  "wishlist": [
+    "in `walk`: keep the diagonal trot the code has (ModelGazelle.java:280-297) but bend the legs — every piece of a leg swings by the same angle today, so the cannons and hooves never articulate; a knee break and a hoof flick sell the 0.3 speed (Gazelle.java:53)",
+    "in `idle`: the head is yaw-only (:300) — add a head dip and a look-around over the ear flick (:302-303) and the tail wag (:311-313)",
+    "in `graze`: the bite the code fires (Gazelle.java:171-179) has no pose; a neck-and-head dip with a chew on the burp",
+    "in `sit`: the owner's sit toggle (Gazelle.java:277-282) is invisible today; a folded rest pose",
+    "in `hurt`: a startled leap before the PanicGoal's bolt (Gazelle.java:75)"
+  ],
+  "effort_hours": null
+}

@@ -1,0 +1,151 @@
+{
+  "registry": "attack_squid",
+  "display_name": "Attack Squid",
+  "status": "DRAFT — authored by a first pass from the entity code, 2026-09-13; edit pending",
+  "locomotion": "swimmer",
+  "artist_scope": "full contract (Tier 2, the gait-scaled class (a walking / idle amplitude branch on the threshold): geckolib_migration_design.md section 5); the rig is not yet in-game (it lands through the seam in a later slice)",
+  "character_sheet": "A small, vicious squid: one body block and eight tentacles fanned around it, each tentacle its own bone at its own rest angle (ModelAttackSquid.java createBodyLayer; 9 parts on a 64x32 sheet). It is a water-creature monster - 10 HP, 8 damage, no armour (MobStats.ATTACK_SQUID, AttackSquid.java:94-101) - that walks on the ground path and floats at the surface (:87), hunts players, girlfriends and boyfriends, zombies, villagers, spiders and lizards within 10 blocks (:228-267), raises the synched attacking flag and bites within 3 blocks (:193-201, doHurtTarget) and, farther out, swims at the prey while spitting from its water cannon: one throw in five, an ink sack (1 in 3) or a water ball from a muzzle 1.2 blocks ahead (:276-297). Out of water it hunts for water and dries out (:170-191); its own kind, water balls and water dragons cannot hurt it (:136-146); a Squid Zooka shot lives 250 ticks and attacks anything (:117-119, :159-168, :266). It spawns above y 50 by day (:372-376). Read it as a squid on legs: the body swaying, eight tentacles each waving at its own rate - lazily at rest, wildly on the move.",
+  "size_notes": "Drawn at x0.9 of the rig (AttackSquidRenderer.java:25, 37) on a 64x32 sheet (ModelAttackSquid.java:84); the hitbox is 1.0 x 1.25 (ModEntities.java:40-42); shadow 0.25 x 0.9 (AttackSquidRenderer.java:27).",
+  "labels": {
+    "body": "body (the mantle; pitches, rolls and turns three quarters of the look yaw)",
+    "tent1": "tentacle 1, left side (pitches; rest -1.03 rad)",
+    "tent2": "tentacle 2, right front (rolls; rest -0.26 rad)",
+    "tent3": "tentacle 3, front (pitches; rest -1.03 rad)",
+    "tent4": "tentacle 4, right side (pitches; rest +0.63 rad)",
+    "tent5": "tentacle 5, back (pitches; rest +0.6 rad)",
+    "tent6": "tentacle 6, right back (pitches; rest -0.48 rad)",
+    "tent7": "tentacle 7, left back (rolls; rest +0.37 rad)",
+    "tent8": "tentacle 8, left front (pitches; rest +0.43 rad)"
+  },
+  "groups": [
+    {
+      "name": "tentacles",
+      "bones": [
+        "tent1",
+        "tent2",
+        "tent3",
+        "tent4",
+        "tent5",
+        "tent6",
+        "tent7",
+        "tent8"
+      ],
+      "omega": 1.5,
+      "axis": "x (tentacles 1, 3, 4, 5, 6, 8) / z (tentacles 2, 7)",
+      "gait_scaled": true,
+      "amplitude": "walking (speed above 0.1): pi x 0.4 = 1.257 rad (72 deg) x the walking speed; standing: a fixed pi x 0.1 = 0.314 rad (18 deg) - the branch steps from 18 deg to 72 deg x speed at the threshold (7 deg at 0.1); rests -1.03 / -0.26 / -1.03 / +0.63 / +0.6 / -0.48 / +0.37 / +0.43 rad (tentacles 1-8)",
+      "plain": "the eight tentacles each wave about their own rest at their own rate - eight rates from 1.0 to 1.9 rad/tick - lazily when standing, three times as wide and speed-scaled on the move",
+      "math": "kN = walking ? pi * 0.4 * limbSwingAmount : pi * 0.1; tent1.xRot = cos(t * 1.2) * k - 1.03; tent7.zRot = cos(t * 1.1) * k + 0.37; tent5.xRot = cos(t * 1.0) * k + 0.6; tent6.xRot = cos(t * 1.9) * k - 0.48; tent4.xRot = cos(t * 1.8) * k + 0.63; tent2.zRot = cos(t * 1.7) * k - 0.26; tent3.xRot = cos(t * 1.6) * k - 1.03; tent8.xRot = cos(t * 1.5) * k + 0.43 (wingspeed 1.0)",
+      "source": "ModelAttackSquid.java:100-130",
+      "wingspeed": 1.0,
+      "omega_note": "ONE group for eight rates (the rig may carry one gait group): the code runs the tentacles at 1.2 / 1.1 / 1.0 / 1.9 / 1.8 / 1.7 / 1.6 / 1.5 x 1.0 (wingspeed, ModelAttackSquid.java:21) - periods 5.2 / 5.7 / 6.3 / 3.3 / 3.5 / 3.7 / 3.9 / 4.2 ticks; the omega here is tentacle 8's 1.5 (period 4.2 ticks), the median rate - author the loop at that period with the other tentacles phase-offset (the eight-rate drift is lost in one phase-locked loop; see the wishlist)"
+    },
+    {
+      "name": "body_pitch",
+      "bones": [
+        "body"
+      ],
+      "omega": 0.25,
+      "axis": "x",
+      "gait_scaled": false,
+      "amplitude": "walking: pi x 0.04 = 0.126 rad (7 deg) x the walking speed; standing: pi x 0.01 = 0.031 rad (2 deg)",
+      "plain": "the body nods slowly, a little more on the move",
+      "math": "body.xRot = cos(t * 0.25 * 1.0) * (walking ? pi * 0.04 * limbSwingAmount : pi * 0.01)",
+      "source": "ModelAttackSquid.java:101, 112, 131",
+      "wingspeed": 1.0,
+      "omega_note": "the classic phase is ageInTicks x 0.25 x 1.0: the natural period is 2 pi / 0.25 = 25.1 ticks; the walking branch scales it by speed though it is not the gait group"
+    },
+    {
+      "name": "body_roll",
+      "bones": [
+        "body"
+      ],
+      "omega": 0.39,
+      "axis": "z",
+      "gait_scaled": false,
+      "amplitude": "walking: pi x 0.04 = 0.126 rad (7 deg) x the walking speed; standing: pi x 0.01 = 0.031 rad (2 deg)",
+      "plain": "the body rolls slowly at a second rate, a little more on the move",
+      "math": "body.zRot = cos(t * 0.39 * 1.0) * (walking ? pi * 0.04 * limbSwingAmount : pi * 0.01)",
+      "source": "ModelAttackSquid.java:102, 113, 132",
+      "wingspeed": 1.0,
+      "omega_note": "the classic phase is ageInTicks x 0.39 x 1.0: the natural period is 2 pi / 0.39 = 16.1 ticks; the walking branch scales it by speed though it is not the gait group"
+    }
+  ],
+  "behaviour": [
+    "Ten cosines, all of them always running, in two branches on the walking speed (ModelAttackSquid.java:100-122): above 0.1 every amplitude is scaled by the walking speed - pi x 0.4 (72 degrees) on the tentacles, pi x 0.04 (7 degrees) on the body; at or below 0.1 the amplitudes are fixed - pi x 0.1 (18 degrees) and pi x 0.01 (2 degrees). The rates never change: the body pitches at 0.25 and rolls at 0.39 (wingspeed 1.0, :21), the eight tentacles wave at 1.2, 1.1, 1.0, 1.9, 1.8, 1.7, 1.6 and 1.5 rad/tick (periods 3.3 to 6.3 ticks).",
+    "Each tentacle is one bone at its own rest angle (:123-130): tentacles 1, 3, 4, 5, 6 and 8 pitch (about x), tentacles 2 and 7 roll (about z); the rests are -1.03, -0.26, -1.03, +0.63, +0.6, -0.48, +0.37 and +0.43 rad. Because the eight rates are all different the tentacles drift in and out of step continuously - a squirm, never a stroke.",
+    "The body turns three quarters of the look yaw (:133), so the LookAtPlayerGoal (AttackSquid.java:89) swings the whole mantle; there is no head pitch.",
+    "The classic model never reads the attacking flag: the synched DATA_ATTACKING (AttackSquid.java:52-53) is raised within 3 blocks of prey (:196-197) and cleared when none is found (:210) - a held state - but the pose is the same either way; the bite (doHurtTarget :200) and the water cannon (:276-297) have no pose of their own.",
+    "Below the threshold the walking branch's amplitude would be 7 degrees at a speed of 0.1 against the standing branch's 18 - the code steps DOWN as the squid starts to move, then climbs to 72 degrees at full stride; the seam's speed scaling will smooth this."
+  ],
+  "clips": [
+    {
+      "name": "idle",
+      "verdict": "author",
+      "note": "REQUIRED with walk: the gate opens on the pair (today nothing ships; the classic code plays) - the standing squirm: tentacles at 18 deg, body at 2 deg (ModelAttackSquid.java:112-121)"
+    },
+    {
+      "name": "walk",
+      "verdict": "author",
+      "note": "REQUIRED with idle: the locomotion loop - the gait group's 72-degree tentacle thrash at full speed (ModelAttackSquid.java:101-110), scaled by walking speed in-game"
+    },
+    {
+      "name": "swim",
+      "verdict": "author",
+      "note": "it has the state and it is its home: a water creature (ModEntities.java:40) with a FloatGoal (AttackSquid.java:87) that hunts for water and dries out on land (:170-191) - a jetting stroke of all eight tentacles; optional: falls back to walk then idle when absent (section 2.4)"
+    },
+    {
+      "name": "aggro_idle",
+      "verdict": "author",
+      "note": "the entity has the state - the synched attacking flag held within 3 blocks of prey (AttackSquid.java:197, cleared :210) - but the classic model ignores it (no branch in ModelAttackSquid.setupAnim): a first aggro pose, tentacles raised toward the prey"
+    },
+    {
+      "name": "calm_idle",
+      "verdict": "author",
+      "note": "the flag down: the same squirm as idle (the model has no branch) - may be delivered as a copy of idle"
+    },
+    {
+      "name": "attack",
+      "verdict": "author",
+      "note": "a bite: doHurtTarget for 8 within 3 blocks on a 1-in-4-or-1-in-5 roll each tenth think tick (AttackSquid.java:196-201); the flag is held, so the strike is transport 1 (the server LivingDamageEvent.Post); the water cannon beyond 3 blocks is a ranged launch site (new WaterBall / InkSack at :284-287, transport 3) and is the `spit` extra - a lunge of the front tentacles on the impact frame",
+      "length_seconds": 0.5
+    },
+    {
+      "name": "hurt",
+      "verdict": "author",
+      "note": "a flinch: hurt() at AttackSquid.java:132-152 (its own kind, water balls and water dragons refused; a mob attacker becomes the target); the hurtTime edge is client-observed - it also fires while drying out on land (:183-185)",
+      "length_seconds": 0.3
+    },
+    {
+      "name": "death",
+      "verdict": "author",
+      "note": "the vanilla death flip stays; a creature whose JSON ships a `death` clip gets the clip-replaces-flip mode, designed when the first such clip arrives (the Queen's own death clip the precedent) - a `death` delivered here plays under the flip until then",
+      "length_seconds": 1.0
+    }
+  ],
+  "extras": [
+    {
+      "name": "spit",
+      "loop": "false",
+      "layer": "overlay",
+      "bones": [
+        "body",
+        "tent2",
+        "tent3",
+        "tent8"
+      ],
+      "length_seconds": 0.5,
+      "code_triggered": false,
+      "trigger": "the water cannon: watercanon(target) at AttackSquid.java:276-297, called each tenth think tick while the prey is beyond 3 blocks (:202-204), firing one call in five - an ink sack (1 in 3) or a water ball from a muzzle 1.2 blocks ahead and 1.0 up with the arrow-shoot sound; a named launch site (transport 3) - nothing triggers a clip by name today",
+      "note": "a spit: the mantle contracts and the front tentacles flare as the shot leaves the muzzle 1.2 blocks ahead (AttackSquid.java:281-283)"
+    }
+  ],
+  "wishlist": [
+    "the eight-rate squirm (ModelAttackSquid.java:103-110, 114-121) cannot survive one phase-locked loop: author `idle` and `walk` at tentacle 8's 4.2-tick period with each tentacle offset in phase and a slightly different shape, so the fan never reads as a chorus line",
+    "in `swim`: a real jet - a squeeze of the body and a sweep of all eight tentacles together (the code plays the walking squirm in water)",
+    "in `attack`: a lunge with the front tentacles (2, 3, 8) wrapping forward on the impact frame - the bite (AttackSquid.java:200) has no pose today",
+    "in `aggro_idle`: tentacles raised and spread toward the prey - the model ignores the attacking flag (AttackSquid.java:197) entirely",
+    "in `hurt`: a squid's recoil - the body jerks back and every tentacle snaps in"
+  ],
+  "effort_hours": null
+}

@@ -1,0 +1,147 @@
+{
+  "registry": "jeffery",
+  "display_name": "Jeffery",
+  "status": "DRAFT — authored by a first pass from the entity code, 2026-09-13; edit pending",
+  "locomotion": "walker",
+  "artist_scope": "full contract (Tier 1, the state-branching class: geckolib_migration_design.md section 5) with the §8.1 locks; the rig is not yet in-game (it lands through the seam in a later slice) — and not yet packaged: the reference leg's converter refuses ModelGiantRobot because its legs and arms are shared parts drawn twice (see behaviour), so this sheet has no geo until G1 splits them",
+  "character_sheet": "Jeffery is the Giant Robot under another name: a subclass with the same stat block — 550 HP, 40 attack, 18 armour (MobStats.JEFFERY, Jeffery.java:26-33; the class comment calls it a named-skin alias, :11-16) — on the same rig: a hip bar under three stacked back blocks, a shoulder bar, a neck and a head, one thigh (three pieces) and one shin with a three-piece foot, and one arm of three pieces with knuckles — eighteen parts, the leg and the arm each drawn TWICE, once per side, at mirrored offsets (ModelGiantRobot.createBodyLayer, ModelGiantRobot.java:75-169; renderToBuffer :241-262). It inherits everything the Giant Robot does (GiantRobot.java): wanders far, walks through villages and looks about (:70-89), and on a 1-in-5 tick takes its target — anything living and not a monster or a creative player within 16 blocks (:248-265) — aims its head within 0.5 rad and fires a laser ball from a muzzle 3.75 blocks ahead and 10 up (fireLaserBall :192-216) and, within eight blocks plus half the target's width, raises the attacking flag and punches (customServerAiStep :139-181, doHurtTarget :120-132). Cactus cannot hurt it and a mob attacker becomes its target (hurt :238-246). It spawns under the Giant Robot's rules (checkSpawnRules :286-294); no biome file names `jeffery` in the port's data today. Read it as the Giant Robot: the hips sway and bob, the legs swing stiffly, the arms windmill when it fights.",
+  "size_notes": "Drawn at x1.0 of the rig by the Giant Robot's renderer (GiantRobotRenderer.java:25, applied :37; shadow 0.99) on a 256x512 sheet (ModelGiantRobot.java:169); 3.0 x 9.75 block hitbox (ModEntities.java:102-104; the design's row writes [4,10]). NO GEO IS PACKAGED TODAY: the converter refuses reference_giantrobot ('capture bind draws ... not cube-bearing geo bones (a part drawn more than once without render_instances)') — the shared thigh, shin, foot and arm parts are drawn twice per frame at mirrored offsets (ModelGiantRobot.java:247-253). The design's row: 'G1 must create distinct left/right bones before any profile can exist.' The labels below are the eighteen createBodyLayer parts; the split rig's names are decided when G1 splits them.",
+  "labels": {
+    "hip": "hip bar (the rig's root: sways 18 degrees about x and y with the walk and bobs 4 units at twice the stride; intended hitbox part 'hip')",
+    "back1": "back block 1, lower (rides the hip's bob)",
+    "back2": "back block 2, middle (rides the hip's bob)",
+    "back3": "back block 3, upper (rides the bob; counter-twists half the shoulders' twist)",
+    "shoulders": "shoulder bar (rides the bob; twists against the hip sway, or windmills when attacking; intended hitbox part 'shoulders')",
+    "neck": "neck (rides the bob; static)",
+    "head": "head (rides the bob; turns the look yaw and a third of the pitch; intended hitbox part 'head')",
+    "thigh": "thigh, the long piece — SHARED: drawn once per leg with that leg's thigh angle (renderLeg :271-281); intended hitbox part, one per leg once split",
+    "thigh2": "thigh, the hip block — SHARED, drawn per leg with the thigh angle; intended hitbox part once split",
+    "thigh3": "thigh, the knee block — SHARED, drawn per leg with the thigh angle; intended hitbox part once split",
+    "shin": "shin — SHARED: drawn once per leg with that leg's shin angle, placed 40 units down the thigh (renderLeg :283-287); intended hitbox part once split",
+    "foot1": "foot, sole plate — SHARED, drawn per leg with the shin angle (renderLeg :289-299); intended hitbox part once split",
+    "foot2": "foot, ankle block — SHARED, drawn per leg with the shin angle; intended hitbox part once split",
+    "foot3": "foot, heel block — SHARED, drawn per leg with the shin angle; intended hitbox part once split",
+    "arm1": "upper arm, shoulder block — SHARED: drawn once per arm with that arm's upper angle, 26 units out from the hip (renderArm :309-314); intended hitbox part once split",
+    "arm2": "upper arm, the long piece — SHARED, drawn per arm with the upper angle; intended hitbox part once split",
+    "arm3": "forearm — SHARED, drawn per arm with the lower angle less 0.196 (renderArm :317); intended hitbox part once split",
+    "knuckles": "knuckles (the fist) — SHARED, drawn per arm with the forearm's angle; intended hitbox part once split"
+  },
+  "groups": [
+    {
+      "name": "gait",
+      "bones": [
+        "hip", "back1", "back2", "back3", "shoulders", "neck", "head", "thigh", "thigh2", "thigh3", "shin", "foot1", "foot2", "foot3"
+      ],
+      "omega": 0.25,
+      "axis": "x (the thighs, shins and hip pitch), y (the hip yaw), with the hip's bob",
+      "gait_scaled": true,
+      "amplitude": "x a move scale of 0.65 x the walking speed capped at 1: the hip pitches pi x 0.1 = 0.314 rad (18 deg) on a cosine and yaws the same on a sine about pi/2, and bobs 4 units at twice the stride; the thighs pitch pi x 0.15 = 0.471 rad (27 deg) about −0.196 x the scale, the two legs half a period apart and a quarter ahead of the hip; the shins pi x 0.2 = 0.628 rad (36 deg) about +0.628 x the scale, half a period apart; the feet take the shin angle; the whole torso rides the bob",
+      "plain": "the hips sway and bob with the walk while the two legs swing stiffly half a period apart, thigh and shin on their own phases, and the torso and head ride the bob",
+      "math": "ms = min(1, amount * 0.65); hip.xRot = cos(-t * 0.25) * pi * 0.1 * ms; hip.yRot = pi/2 + sin(-t * 0.25) * pi * 0.1 * ms; hip.y = -60 + 4 cos(-t * 0.5) ms; thighAngle0 = cos(-t * 0.25 + pi/2) * pi * 0.15 * ms - 0.196 ms; thighAngle1 = cos(-t * 0.25 + 3pi/2) * ... - 0.196 ms; shinAngle0 = cos(-t * 0.25 + pi) * pi * 0.2 * ms + 0.628 ms; shinAngle1 = cos(-t * 0.25) * ... + 0.628 ms; leg 1 (sign +1) draws thigh/thigh2/thigh3 at thighAngle0 and shin/foot1/2/3 at shinAngle0, leg 2 (sign −1) at thighAngle1 / shinAngle1, each thigh placed 13 units from the hip by the hip's angles and the shin 40 units down the thigh; back1/2/3, shoulders, neck, head .y = hip.y",
+      "source": "ModelGiantRobot.java:185-208, :232-235 (renderLeg :269-300); WING_SPEED 0.25 (:31)",
+      "omega_note": "the classic phase is −ageInTicks x WING_SPEED 0.25 (a negative phase: the cosine is even, the sine odd): the natural period is 2 pi / 0.25 = 25.1 ticks; the bob runs at twice that rate (12.6 ticks)"
+    },
+    {
+      "name": "arms",
+      "bones": [
+        "arm1", "arm2", "arm3", "knuckles"
+      ],
+      "omega": 0.5,
+      "axis": "x (the arm swing), y (the shoulders' twist)",
+      "gait_scaled": false,
+      "amplitude": "not attacking: each arm takes the OTHER leg's thigh angle (arm A the second leg's, arm B the first's) — the walk's swing at the stride's 0.25 rad/tick — and the shoulders yaw against the hip's sway; attacking: a windmill punch at 0.5 rad/tick — the upper arm pi/5 = 0.628 rad (36 deg) about −pi/4 + 0.628, the forearm the negative plus pi + 0.628, arm B on the opposite sine — and the shoulders twist pi x 0.2 = 0.628 rad (36 deg) on the same sine",
+      "plain": "the arms swing with the walk, opposite their legs, and windmill in wide punches with the shoulders twisting while the attacking flag is set",
+      "math": "calm: armA1 = armA2 = thighAngle1, armB1 = armB2 = thighAngle0, shoulders.yRot = -hipYAngle; attacking: armA1 = sin(t * 0.5) * pi/5 - pi/4 + 0.628, armA2 = -(sin(t * 0.5) * pi/5 - pi/4) + pi + 0.628, armB1 = -sin(t * 0.5) * pi/5 - pi/4 + 0.628, armB2 = -(armB1 - 0.628) + pi + 0.628, shoulders.yRot = -sin(t * 0.5) * pi * 0.2; back3.yRot = shoulders.yRot / 2; arm 1 (sign +1) draws arm1/arm2 at armA1 and arm3/knuckles at armA2 - 0.196, arm 2 (sign −1) at armB1 / armB2, each 26 units out from the hip",
+      "source": "ModelGiantRobot.java:210-229 (renderArm :307-317)",
+      "phase": "the synced DATA_ATTACKING byte (GiantRobot.java:49, set at :168 within eight blocks plus half the target's width, cleared at :171 / :176 / :179) selects the windmill",
+      "omega_note": "the classic phase attacking is ageInTicks x WING_SPEED 0.25 x 2 = 0.5 rad/tick (period 12.6 ticks); calm, the arms follow the stride's 0.25"
+    }
+  ],
+  "behaviour": [
+    "The rig is eighteen parts drawing a two-legged, two-armed robot: the thigh (three pieces), shin and foot (three pieces) are drawn twice per frame, once per leg with that leg's angles and mirrored hip offsets, and so are the three arm pieces and the knuckles (ModelGiantRobot.java:241-262, renderLeg :269-300, renderArm :307-317). The reference leg's converter refuses that (a part drawn more than once without render_instances), so no geo is packaged today; the design's row requires distinct left and right bones before any profile can exist.",
+    "The walk is scaled by 0.65 x the walking speed capped at 1 (:187-190): the hip pitches and yaws 18 degrees on a 0.25 rad/tick wave (a 25-tick period) and bobs 4 units at twice that rate (:193-194, :205-208); the thighs swing 27 degrees a quarter turn ahead of the hip and the shins 36 degrees, the two legs half a period apart (:195-202); the whole torso, neck and head ride the bob (:232-235) and the head turns the look yaw and a third of the pitch (:236-237).",
+    "Not attacking, each arm swings with the other leg's thigh angle and the shoulders yaw against the hip's sway; while the synced DATA_ATTACKING byte is set (GiantRobot.java:49, raised at :168 within eight blocks plus half the target's width) the arms windmill 36 degrees at 0.5 rad/tick in punches and the shoulders twist 36 degrees with them, the upper back block half as much (:210-229).",
+    "The laser (fireLaserBall, GiantRobot.java:192-216) and the punch (doHurtTarget :120-132) are rolled by customServerAiStep (:139-181), inherited unchanged by Jeffery (Jeffery.java:17) — nothing in the code fires an animation for them."
+  ],
+  "clips": [
+    {
+      "name": "idle",
+      "verdict": "author",
+      "note": "REQUIRED with walk: the gate opens on the pair — the standing rest: the hips level, the arms hanging, the head on the look"
+    },
+    {
+      "name": "walk",
+      "verdict": "author",
+      "note": "REQUIRED with idle: the gait group's lumbering stride with the hip sway and bob (:185-208)"
+    },
+    {
+      "name": "swim",
+      "verdict": "leave",
+      "note": "no swim state: the inherited FloatGoal (GiantRobot.java:71) only bobs it to the surface; the contract's fallback to walk stands"
+    },
+    {
+      "name": "aggro_idle",
+      "verdict": "author",
+      "note": "the attacking flag (GiantRobot.java:168, within eight blocks plus half the target's width): the windmilling arms and twisting shoulders (ModelGiantRobot.java:215-225)"
+    },
+    {
+      "name": "calm_idle",
+      "verdict": "author",
+      "note": "the flag clear (:171 / :176 / :179): the arms following the (still) legs (:213-214), the shoulders square"
+    },
+    {
+      "name": "attack",
+      "verdict": "author",
+      "note": "the punch: GiantRobot.doHurtTarget (:120-132) from customServerAiStep :166-169 within eight blocks plus half the target's width — 40 of damage and a knockback; author one windmill punch landing; the laser is the `laser` extra",
+      "length_seconds": 0.6
+    },
+    {
+      "name": "hurt",
+      "verdict": "author",
+      "note": "a flinch to robot_hurt (GiantRobot.getHurtSound :274-277); hurt() (:238-246) turns it on a mob attacker",
+      "length_seconds": 0.4
+    },
+    {
+      "name": "death",
+      "verdict": "author",
+      "note": "the vanilla death flip stays; a creature whose JSON ships a `death` clip gets the clip-replaces-flip mode, designed when the first such clip arrives (the Queen's own death clip the precedent) - a `death` delivered here plays under the flip until then",
+      "length_seconds": 2.0
+    }
+  ],
+  "extras": [
+    {
+      "name": "laser",
+      "loop": false,
+      "layer": "overlay",
+      "trigger": "GiantRobot.fireLaserBall (:192-216) from customServerAiStep :162-165 — with the head aimed within 0.5 rad of the target and the reload done, a LaserBall from the chest muzzle 3.75 blocks ahead and 10 up (explosive beyond ten blocks, 25-tick reload; plain within, 10-tick); a named launch site (transport 3) when the rig lands",
+      "bones": ["shoulders", "back3", "neck", "head"],
+      "length_seconds": 0.4,
+      "code_triggered": false,
+      "note": "a chest-recoil and a head-nod per shot"
+    }
+  ],
+  "wishlist": [
+    "in `walk`: keep the hip sway and bob (ModelGiantRobot.java:193-208) — the machine's whole character — and let the shoulders counter-sway a little more than the code's half twist",
+    "in `aggro_idle`: the windmill punches (:215-225) read as a threat when slowed; keep them wide",
+    "in `attack`: one punch landing — the code never distinguishes a hit from the windmill (GiantRobot.java:168-169)",
+    "in `laser`: a chest-recoil per shot timed to the 10- or 25-tick reload (GiantRobot.java:206-215)"
+  ],
+  "locked_bones_provisional": [
+    {"bone": "head", "size": [2.5, 2], "damage": 1},
+    {"bone": "shoulders", "size": [4, 1.8], "damage": 0.5},
+    {"bone": "hip", "size": [3, 2], "damage": 0.5},
+    {"bone": "thigh", "size": [1.2, 3], "damage": 0.5},
+    {"bone": "thigh2", "size": [1.2, 3], "damage": 0.5},
+    {"bone": "thigh3", "size": [1.2, 3], "damage": 0.5},
+    {"bone": "shin", "size": [1.2, 3], "damage": 0.5},
+    {"bone": "arm1", "size": [1, 2.5], "damage": 0.5},
+    {"bone": "arm2", "size": [1, 2.5], "damage": 0.5},
+    {"bone": "arm3", "size": [1, 2.5], "damage": 0.5},
+    {"bone": "foot1", "size": [1.6, 1.2], "damage": 0.25},
+    {"bone": "foot2", "size": [1.6, 1.2], "damage": 0.25},
+    {"bone": "foot3", "size": [1.6, 1.2], "damage": 0.25},
+    {"bone": "knuckles", "size": [1.6, 1.2], "damage": 0.25}
+  ],
+  "locked_bones_note": "The design's section 6 ModelGiantRobot row (geckolib_migration_design.md:447): 'head [2.5,2] @1; shoulders [4,1.8] @0.5; hip [3,2] @0.5; each replayed thigh/shin segment [1.2,3] @0.5; each arm chain [1,2.5] @0.5; feet/knuckles [1.6,1.2] @0.25' — 'Its legacy model replays shared parts at two transforms; G1 must create distinct left/right bones before any profile can exist.' head, shoulders and hip resolve as written. 'each replayed thigh/shin segment' taken as the shared thigh, thigh2, thigh3 and shin; 'each arm chain' as arm1, arm2, arm3; 'feet/knuckles' as foot1, foot2, foot3 and knuckles — each shared bone standing for BOTH sides until G1 splits them (the split rig's left/right names are decided then, and this list is rewritten to them). No geo is packaged today (the converter refuses reference_giantrobot), so these entries lock nothing until the rig exists. The same list as `giant_robot`'s: 'Separate equal-size profiles'.",
+  "effort_hours": null
+}

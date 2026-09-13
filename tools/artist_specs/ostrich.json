@@ -1,0 +1,169 @@
+{
+  "registry": "ostrich",
+  "display_name": "Ostrich",
+  "status": "DRAFT — authored by a first pass from the entity code, 2026-09-13; edit pending",
+  "locomotion": "walker",
+  "artist_scope": "full contract (Tier 2, the state-branching class: geckolib_migration_design.md section 5); the rig is not yet in-game (it lands through the seam in a later slice)",
+  "character_sheet": "A tameable, rideable ostrich: a two-block body with a rump and an under-tail block, a 21-tall neck to a skull with an upper and a lower beak, three zero-thickness tail plumes, two stub wings, and two legs of a hip, a thigh, a shin and a four-plate foot with four zero-thickness claws (OstrichModel.java:107-295, 38 parts; the two hat pieces stay hidden, :412-413). 25 HP, speed 0.38 and an unused attack of 6 - it has no attack goal (Ostrich.java:125-144). It flees monsters within 8 blocks, panics when hurt, is tempted by wheat and tamed by it one time in two (:130-132, :160-174); an empty hand mounts it, tame or wild (:176-182, :204-215), and the rider drives a client-predicted sprint with a throttle to 0.75, a 1.85 yaw lag and a 'FAST' hop on the jump key (:49-71, :237-243); it takes no fall damage (:289-292) and shrugs off cactus (:146-154). It spawns in daylight above y 50 on a 1-in-4 roll, no other within 16 (:302-310; ModEntities.java:555-556). Read it as an ostrich: long strides that snap to a kick at speed, the plumes waving, an occasional wing flap, the head leaning into a ridden turn.",
+  "size_notes": "Drawn at x1.0 of the rig (OstrichRenderer.java:23; shadow 0.55, :25; no baby scale in the port renderer) on a 256x128 sheet (OstrichModel.java:297), ostrich.png (OstrichRenderer.java:19); the hitbox is 0.85 x 2.1 (ModEntities.java:555-556). The original's ModelOstrich(0.65f) argument was the wingspeed (OstrichModel.java:22), not a scale. Hat1 and Hat2 are never visible (getIsActivated is a constant 0, Ostrich.java:116-117; OstrichModel.java:412-413).",
+  "labels": {
+    "Body1": "body, front block (8x9x8 pitched up 13 deg; static)",
+    "body2": "body, rear block (8x8x8; static)",
+    "Body3": "rump (6x7x3; static)",
+    "Body4": "under-tail block (4x3x3 pitched 58 deg; static)",
+    "neck2": "neck base (2x4x3; static)",
+    "Neck1": "neck (3x21x3 rising 21 from the body; yaws with the head; flips with the sitting head)",
+    "Head1": "skull (4x4x4 at the neck's top; yaws with the look at 0.65; flips upside down in the sitting pose)",
+    "head": "upper beak (2x2x4 ahead of the skull; follows the skull)",
+    "mouth1": "lower beak (2x1x3; follows the skull)",
+    "Hat1": "hat brim (5x1x5 on the skull; hidden — the activation gate never opens)",
+    "Hat2": "hat crown (4x2x4; hidden)",
+    "Lwing": "left wing (1x7x11 at the flank; flaps on the wing latch)",
+    "Rwing": "right wing (the mirror)",
+    "Tail1": "tail plume, centre (a zero-thickness 4x14 plane raked up 34 deg; pitches on a slow wave)",
+    "Tail2": "tail plume, right (3x13, yawed +19 deg; pitches with the centre and yaws on its own wave)",
+    "Tail3": "tail plume, left (3x13, yawed -19 deg; pitches with the centre and yaws on its own wave)",
+    "leftleg": "left hip (4x6x5, rest -0.297; the gait)",
+    "LLeg1": "left thigh (2x7x3, rest 0.483; the gait)",
+    "LLeg2": "left shin (2x7x3, rest -0.437; the gait)",
+    "Lfoot1": "left foot, main plate (2x2x6; the gait)",
+    "Lfoot2": "left foot, toe plate right (2x1x5 yawed +15 deg; the gait)",
+    "Lfoot3": "left foot, toe plate left (yawed -15 deg; the gait)",
+    "Lfoot4": "left foot, heel plate (2x2x4; the gait)",
+    "LClaw1": "left front claw (a zero-thickness 2x3 plane; the gait)",
+    "LClaw2": "left right-toe claw (zero-thickness; the gait)",
+    "LClaw3": "left left-toe claw (zero-thickness; the gait)",
+    "LClaw4": "left heel claw (zero-thickness; the gait)",
+    "rightleg": "right hip (the gait, opposite the left)",
+    "Rleg1": "right thigh (the gait)",
+    "RLeg2": "right shin (the gait)",
+    "Rfoot1": "right foot, main plate (the gait)",
+    "Rfoot2": "right foot, heel plate (the gait)",
+    "Rfoot3": "right foot, toe plate left (the gait)",
+    "Rfoot4": "right foot, toe plate right (the gait)",
+    "Rclaw1": "right front claw (the gait)",
+    "Rclaw2": "right right-toe claw (the gait)",
+    "Rclaw3": "right left-toe claw (the gait)",
+    "Rclaw4": "right heel claw (the gait)"
+  },
+  "groups": [
+    {
+      "name": "gait",
+      "bones": ["leftleg", "LLeg1", "LLeg2", "Lfoot1", "Lfoot2", "Lfoot3", "Lfoot4", "LClaw1", "LClaw2", "LClaw3", "LClaw4", "rightleg", "Rleg1", "RLeg2", "Rfoot1", "Rfoot2", "Rfoot3", "Rfoot4", "Rclaw1", "Rclaw2", "Rclaw3", "Rclaw4"],
+      "omega": 0.8125,
+      "axis": "x",
+      "gait_scaled": true,
+      "amplitude": "pi x 0.4 x the TRUE horizontal speed in blocks per tick (from xOld / zOld, not limbSwingAmount), and snapped to ±0.75 rad (43 deg) whenever it passes ±0.5 rad - a kick plateau at a run; every piece of a leg by the same angle about its rest (hip -0.297, thigh 0.483, shin -0.437, foot and claws 0), the right the negative; no threshold",
+      "plain": "the two legs stride fore and aft as stiff chains, opposite each other, the swing growing with the real speed and snapping to a fixed kick when it runs",
+      "math": "s = sqrt((xOld - x)^2 + (zOld - z)^2); a = cos(t * 1.25 * 0.65) * pi * s * 0.4; a = a > 0.5 ? 0.75 : a < -0.5 ? -0.75 : a; leftleg.xRot = -0.297 + a; LLeg1.xRot = 0.483 + a; LLeg2.xRot = -0.437 + a; Lfoot1..4.xRot = LClaw1..4.xRot = a; the right leg: rest - a",
+      "source": "OstrichModel.java:313-343; wingspeed 0.65 (:22)",
+      "phase": "the amplitude is the entity's real speed, so the reference clip's fixed limbSwingAmount does not drive it",
+      "wingspeed": 0.65,
+      "omega_note": "the classic phase is ageInTicks x 1.25 x 0.65 = 0.8125: the natural period is 7.73 ticks"
+    },
+    {
+      "name": "tail",
+      "bones": ["Tail1", "Tail2", "Tail3"],
+      "omega": 0.05,
+      "axis": "x (all three) and y (the side plumes)",
+      "gait_scaled": false,
+      "amplitude": "pitch: pi x 0.06 = 0.188 rad (11 deg) about -0.594 at 0.05 rad/tick, all three plumes together; yaw: pi x 0.08 = 0.251 rad (14 deg) about -0.334 for the left plume at 0.061 rad/tick and about +0.334 for the right at 0.072 rad/tick",
+      "plain": "the three tail plumes rise and fall together on a slow wave while the two side plumes fan in and out on their own slower rhythms",
+      "math": "Tail1.xRot = Tail2.xRot = Tail3.xRot = -0.594 + cos(t * 0.05) * pi * 0.06; Tail3.yRot = -0.334 + cos(t * 0.061) * pi * 0.08; Tail2.yRot = 0.334 - cos(t * 0.072) * pi * 0.08",
+      "source": "OstrichModel.java:344-347",
+      "omega_note": "the classic phases are ageInTicks x 0.05 (126 ticks), x 0.061 (103 ticks) and x 0.072 (87 ticks) - no wingspeed term"
+    },
+    {
+      "name": "wings",
+      "bones": ["Lwing", "Rwing"],
+      "omega": 0.65,
+      "axis": "z (and y at half)",
+      "gait_scaled": false,
+      "amplitude": "pi x 0.15 = 0.471 rad (27 deg), one-sided (the absolute value), the wing yawing half of that; played only when a per-entity latch, rerolled one chance in three at each negative-to-positive zero crossing of the 9.7-tick cycle, is set - else 0",
+      "plain": "the wings flap out and back in a one-sided beat, one cycle in three on average, still the rest of the time",
+      "math": "w = cos(t * 1.0 * 0.65) * pi * 0.15; n = cos((t + 0.3) * 1.0 * 0.65) * pi * 0.15; if (n > 0 && w < 0) ri1 = nextInt(3) == 1; if (ri1 == 0) w = 0; w = |w|; Lwing.zRot = -w; Lwing.yRot = w / 2; Rwing.zRot = w; Rwing.yRot = -w / 2",
+      "source": "OstrichModel.java:389-406; the RenderInfo latch (:351; Ostrich.java:75-93)",
+      "phase": "a client-side roll on the per-entity RenderInfo, not a synched state",
+      "wingspeed": 0.65,
+      "omega_note": "the classic phase is ageInTicks x 1.0 x 0.65: the natural period is 9.67 ticks; the absolute value halves the visible beat"
+    }
+  ],
+  "behaviour": [
+    "One gait rhythm with no threshold (OstrichModel.java:313-343): the two legs stride as stiff chains at 0.8125 rad/tick (a 7.7-tick period) with an amplitude of pi x 0.4 x the entity's TRUE horizontal speed - read from its last position, not limbSwingAmount - and snapped to ±0.75 rad whenever it passes ±0.5, so a running ostrich kicks to a fixed 43 degrees; every piece of a leg, feet and claws included, takes the same angle, the right leg the negative of the left.",
+    "Three unscaled rhythms: the three tail plumes pitch 11 degrees together on a 126-tick wave while the side plumes fan 14 degrees on 103- and 87-tick waves (:344-347); the wings flap 27 degrees one-sided on a 9.7-tick cycle only when a per-entity latch, rerolled one chance in three at each cycle's zero crossing, is set (:389-406).",
+    "The head branches three ways. Ridden (:355-365), the head yaw becomes the entity's own turn rate x 20, smoothed at a sixtieth per tick and clamped to ±50 - a lean into the turn; otherwise the look yaw is halved (:366-368). In the sitting pose (:371-377) the skull, both beaks, the neck and the hats flip upside down (xRot pi) with no yaw - though no code path in the port sets the ostrich sitting (mobInteract :157-185 tames and mounts only; mounting clears it :179), so the branch is dormant; else they sit level (:378-384). The skull, beaks and hats then yaw at 0.65 of that head yaw (:385-388); the neck's yaw is not written.",
+    "The body blocks, rump and under-tail are static. The ridden run (Ostrich.java:237-243, the RiderFlightController), its FAST hop (:49-58) and the taming are not animation events."
+  ],
+  "clips": [
+    {
+      "name": "idle",
+      "verdict": "author",
+      "note": "REQUIRED with walk: the gate opens on the pair (today nothing ships; the classic code plays) — the stand: the tail plumes' slow waves (OstrichModel.java:344-347), the wings still (:399-400), the legs at their rests"
+    },
+    {
+      "name": "walk",
+      "verdict": "author",
+      "note": "REQUIRED with idle: the locomotion loop — the two-legged stride at 0.8125 rad/tick scaled by the real speed and snapping to a 43-degree kick at a run (:313-343); the reference clip is that stride at full walking speed"
+    },
+    {
+      "name": "swim",
+      "verdict": "leave",
+      "note": "no swim behaviour: a FloatGoal keeps it at the surface (Ostrich.java:127) and it strolls clear of water (:135); the fallback to walk covers it (section 2.4)"
+    },
+    {
+      "name": "calm_idle",
+      "verdict": "leave",
+      "note": "= idle: no synched attacking flag in Ostrich.java and no attack goal at all (the ATTACK_DAMAGE of 6 at :143 is unused: no melee or ranged goal, :125-137), so calm_idle is covered by idle"
+    },
+    {
+      "name": "hurt",
+      "verdict": "author",
+      "note": "a flinch: hurt() (Ostrich.java:146-154) skips cactus and reports false to every attacker while still taking the damage; the cryo_hurt sound at 0.4 volume (:274-277, :284-285); the PanicGoal at 1.5 speed runs after (:132); the hurtTime edge is client-observed",
+      "length_seconds": 0.4
+    },
+    {
+      "name": "death",
+      "verdict": "author",
+      "note": "the vanilla death flip stays; a creature whose JSON ships a `death` clip gets the clip-replaces-flip mode, designed when the first such clip arrives (the Queen's own death clip the precedent) - a `death` delivered here plays under the flip until then",
+      "length_seconds": 1.0
+    }
+  ],
+  "extras": [
+    {
+      "name": "flap",
+      "loop": "false",
+      "layer": "overlay",
+      "bones": ["Lwing", "Rwing", "Body1", "body2"],
+      "length_seconds": 0.5,
+      "code_triggered": false,
+      "trigger": "the wing latch (OstrichModel.java:391-398): at each negative-to-positive zero crossing of the 9.7-tick wing cycle a 1-in-3 roll on the per-entity RenderInfo arms one one-sided 27-degree beat (:399-406); a client-side roll — an idle variant when the rig lands (the idle_alt_N roll, is the natural home)",
+      "note": "one wing beat with a shrug of the body"
+    },
+    {
+      "name": "jump",
+      "loop": "false",
+      "layer": "overlay",
+      "bones": ["leftleg", "LLeg1", "LLeg2", "Lfoot1", "rightleg", "Rleg1", "RLeg2", "Rfoot1", "Neck1", "Head1", "Lwing", "Rwing"],
+      "length_seconds": 0.6,
+      "code_triggered": false,
+      "trigger": "the ridden FAST hop (Ostrich.java:49-58, :237-243, :265-268): the rider's fly-up key fires a single +1.0 + v x 6.0 hop with a 20-tick latch through the RiderFlightController on the riding client (:60-71); client-predicted, no packet for the rig today — a named site (transport 3) when the rig lands",
+      "note": "a crouch and a spring with the wings out"
+    },
+    {
+      "name": "sit",
+      "loop": "true",
+      "layer": "base",
+      "bones": ["Neck1", "Head1", "head", "mouth1", "leftleg", "LLeg1", "LLeg2", "rightleg", "Rleg1", "RLeg2", "Body1", "body2"],
+      "code_triggered": false,
+      "trigger": "the vanilla sitting pose flag (TamableAnimal's synched sit bit; OstrichPose.isInSittingPose, OstrichPose.java:21): the model flips the neck, skull, beaks and hats upside down while it is set and the activation is 0 (OstrichModel.java:371-377) — the code's head-in-the-sand; no code path in the port sets it today (mobInteract Ostrich.java:157-185 tames and mounts only, :179 clears it), so the branch is dormant — a state loop on the flag when the rig lands",
+      "note": "the folded rest with the head buried: the code's own joke, worth keeping as a pose rather than an inversion"
+    }
+  ],
+  "wishlist": [
+    "in `walk`: the code's stride swings every leg piece by one angle (OstrichModel.java:322-343) — bend the knee and let the foot plates flick; keep the snap to a fixed kick above 0.5 rad (:316-321), it is the ostrich's run",
+    "in `idle`: the tail plumes' three slow waves (:344-347) with a head bob and a look-around; the neck is a single 21-tall bone (:252-255), so the bob lives at its base",
+    "in `flap`: one full two-sided beat — the code's flap is one-sided (:401) and plays one cycle in three (:396-398)",
+    "in `sit`: a real crouch with the legs folded under the body — the code only flips the head (:371-377)"
+  ],
+  "effort_hours": null
+}

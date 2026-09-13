@@ -1,0 +1,128 @@
+{
+  "registry": "ghost",
+  "display_name": "Ghost",
+  "status": "DRAFT — authored by a first pass from the entity code, 2026-09-13; edit pending",
+  "locomotion": "flyer",
+  "artist_scope": "full contract (Tier 2, the simple-cyclic class: geckolib_migration_design.md section 5); the rig is not yet in-game (it lands through the seam in a later slice)",
+  "character_sheet": "A hovering ghost of the Halloween nights: one 6x21x6 head-and-body column and two 2x11x2 arms splayed 0.33 rad (19 deg) at the shoulders (GhostModel.java:38-49), drawn translucent (GhostRenderer.java:38-40). It passes through blocks (noPhysics, Ghost.java:50) and drifts toward a spot beside the nearest player within 16 blocks, else to a random air pocket (Ghost.java:119-160), and hurts whoever it touches: 2 contact damage within 1.5 blocks every 20 ticks, no melee goal (Ghost.java:102-116, doHurtTarget :68-71). It spawns at night, in Halloween week anywhere and year-round in snowy taiga, taiga, frozen river, jungle and dark forest (Ghost.java:196-209). Read it as a sheet ghost: a still column, two arms drifting slowly and never quite together.",
+  "size_notes": "Drawn at x0.65 of the rig (GhostRenderer.java:21, 45) on a 64x64 sheet (GhostModel.java:50); the hitbox is 0.5 x 1.5 (ModEntities.java:638-639); no shadow (SHADOW 0, GhostRenderer.java:19).",
+  "labels": {
+    "HeadAndBody": "head-and-body column (the sheet)",
+    "LArm": "left arm",
+    "RArm": "right arm"
+  },
+  "primary_group": "larm_roll",
+  "groups": [
+    {
+      "name": "larm_roll",
+      "bones": [
+        "LArm"
+      ],
+      "omega": 0.3,
+      "axis": "z",
+      "gait_scaled": false,
+      "amplitude": "-0.33 rad rest (19 deg splayed), then pi x 0.05 = 0.157 rad (9 deg)",
+      "plain": "the left arm rolls slowly in and out at the shoulder around its splayed rest",
+      "math": "LArm.zRot = -0.33 + cos(ageInTicks * 0.3) * pi * 0.05",
+      "source": "GhostModel.java:56",
+      "omega_note": "the phase is ageInTicks x 0.3: the natural period is 2 pi / 0.3 = 20.9 ticks"
+    },
+    {
+      "name": "rarm_roll",
+      "bones": [
+        "RArm"
+      ],
+      "omega": 0.32,
+      "axis": "z",
+      "gait_scaled": false,
+      "amplitude": "+0.33 rad rest (19 deg splayed), then pi x 0.05 = 0.157 rad (9 deg)",
+      "plain": "the right arm rolls in and out at its own, slightly faster rate",
+      "math": "RArm.zRot = 0.33 + cos(ageInTicks * 0.32) * pi * 0.05",
+      "source": "GhostModel.java:57",
+      "omega_note": "the natural period is 2 pi / 0.32 = 19.6 ticks"
+    },
+    {
+      "name": "larm_swing",
+      "bones": [
+        "LArm"
+      ],
+      "omega": 0.34,
+      "axis": "x",
+      "gait_scaled": false,
+      "amplitude": "-0.33 rad rest, then pi x 0.05 = 0.157 rad (9 deg)",
+      "plain": "the left arm swings fore and aft around a rest pitched 19 deg back",
+      "math": "LArm.xRot = -0.33 + cos(ageInTicks * 0.34) * pi * 0.05",
+      "source": "GhostModel.java:58",
+      "omega_note": "the natural period is 2 pi / 0.34 = 18.5 ticks"
+    },
+    {
+      "name": "rarm_swing",
+      "bones": [
+        "RArm"
+      ],
+      "omega": 0.36,
+      "axis": "x",
+      "gait_scaled": false,
+      "amplitude": "+0.33 rad rest, then pi x 0.05 = 0.157 rad (9 deg)",
+      "plain": "the right arm swings fore and aft around a rest pitched 19 deg forward, faster still",
+      "math": "RArm.xRot = 0.33 + cos(ageInTicks * 0.36) * pi * 0.05",
+      "source": "GhostModel.java:59",
+      "omega_note": "the natural period is 2 pi / 0.36 = 17.5 ticks"
+    }
+  ],
+  "behaviour": [
+    "Four slow cosines on the two arms and nothing else (GhostModel.java:56-59): the left arm rolls about z at 0.30 rad/tick around a -0.33 rad (19 deg) splay and the right at 0.32 around +0.33; the left arm swings about x at 0.34 around -0.33 and the right at 0.36 around +0.33 - each pi x 0.05 = 9 deg either way.",
+    "The four rates are deliberately unequal (periods 20.9, 19.6, 18.5 and 17.5 ticks), so the arms drift in and out of step over the minutes rather than waving in unison; the head-and-body column is static - no line of setupAnim touches it.",
+    "Nothing scales with walking speed (limbSwingAmount is unused, GhostModel.java:54) and nothing turns toward the player (netHeadYaw and headPitch are unused) even though a LookAtPlayerGoal runs (Ghost.java:55).",
+    "The visible travel is the entity's own drift, not a pose: customServerAiStep eases the motion toward a flight target beside the nearest player or a random air pocket (Ghost.java:119-160), turns the yaw a sixth of the way per tick (:162-165) and damps the vertical motion to 0.65 each tick (:76-78); it hovers with noPhysics (:50) and never takes fall damage (:186-188).",
+    "Drawn translucent through entityTranslucent (GhostRenderer.java:38-40) at x0.65 (GhostRenderer.java:45)."
+  ],
+  "clips": [
+    {
+      "name": "idle",
+      "verdict": "author",
+      "note": "REQUIRED with walk: the gate opens on the pair (today nothing ships; the classic code plays) - the hovering-still loop, the primary group's rhythm"
+    },
+    {
+      "name": "walk",
+      "verdict": "author",
+      "note": "REQUIRED with idle: the locomotion loop - a label under the naming rule (the bare walk is the primary group larm_roll's): the ghost never walks, its travel is the drift of customServerAiStep (Ghost.java:153-165), so author the drifting-in-motion arm rhythm here"
+    },
+    {
+      "name": "fly",
+      "verdict": "author",
+      "note": "the airborne loop: the ghost hovers with noPhysics (Ghost.java:50) and drifts toward its flight target (Ghost.java:153-160); !onGround selects it"
+    },
+    {
+      "name": "calm_idle",
+      "verdict": "leave",
+      "note": "= idle: no synched attacking flag in Ghost.java (no DATA_ATTACKING; the target comes from NearestAttackableTargetGoal at :56 and the contact poll at :103-110), so calm_idle is covered by idle until this creature's SPEC adds the byte"
+    },
+    {
+      "name": "attack",
+      "verdict": "author",
+      "note": "a touch: 2 contact damage within 1.5 blocks, once per 20 ticks (Ghost.java:102-116 through doHurtTarget :68-71; no MeleeAttackGoal) - a short reach of both arms at the strike",
+      "length_seconds": 0.5
+    },
+    {
+      "name": "hurt",
+      "verdict": "author",
+      "note": "a flinch: hurt() at Ghost.java:82-85 (only the inWall source is refused); the hurtTime edge is client-observed",
+      "length_seconds": 0.3
+    },
+    {
+      "name": "death",
+      "verdict": "author",
+      "note": "the vanilla death flip stays; a creature whose JSON ships a `death` clip gets the clip-replaces-flip mode, designed when the first such clip arrives (the Queen's own death clip the precedent) - a `death` delivered here plays under the flip until then",
+      "length_seconds": 1.0
+    }
+  ],
+  "extras": [],
+  "wishlist": [
+    "in `fly`: a slow vertical bob of the whole column and a trailing lean into the direction of travel - the code moves the entity (Ghost.java:153-160) but never poses the body, so today it drifts stiff as a board",
+    "in `attack`: a visible reach of both arms toward the victim at the strike - the contact damage (Ghost.java:102-116) has no visible strike today",
+    "in `idle`: a faint sway of the head-and-body column so the sheet does not hang dead-still while the arms drift",
+    "in `hurt`: a recoil that keeps the translucent silhouette readable (the vanilla red overlay stays)"
+  ],
+  "effort_hours": null
+}

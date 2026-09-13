@@ -1,0 +1,140 @@
+{
+  "registry": "urchin",
+  "display_name": "Urchin",
+  "status": "DRAFT — authored by a first pass from the entity code, 2026-09-13; edit pending",
+  "locomotion": "walker",
+  "artist_scope": "full contract (Tier 2, the state-branching class: geckolib_migration_design.md section 5); the rig is not yet in-game (it lands through the seam in a later slice)",
+  "character_sheet": "A hostile crystal urchin: seventeen spines on one pivot - a 30-tall central spine, four 25-long and four 20-long spines fanned upward around it, and eight 8-long spines splayed downward as feet (ModelUrchin.java:64-130) - drawn at x1.25. 25 HP, 10 damage, 4 armour, speed 0.3, fire-immune (Urchin.java:82-89; ModEntities.java:172-175). It sheds flame particles (:118-123) and burns in water, hurting itself and smoking (:124-135). On a 1-in-8 tick it picks the nearest living thing in a 16-block box - not the Crystal dimension's other creatures nor a creative player (:164-184, :209-240) - walks at 1.2 and, within 2.8 blocks, raises its attacking flag and one time in seven bites for 10 and five seconds of fire (:105-109, :171-176). It spawns in the dark in the night half of the day with six air blocks around its head (:268-284) and despawns in daylight unless a Crystal Urchin spawner made it (:138-147). Read it as a spiky crystal star: the feet scuttling, the crown of spines slowly turning and swaying, a fast spin when it is about to bite.",
+  "size_notes": "Drawn at x1.25 of the rig (UrchinRenderer.java:25, :38; shadow 0.4375, :27) on a 128x128 sheet (ModelUrchin.java:132), urchin.png (UrchinRenderer.java:20); the hitbox is 1.35 x 2.1 (ModEntities.java:172-175). The original's ModelUrchin(1.0f) argument was the wingspeed (ModelUrchin.java:21), not a scale. Every part is a 1-wide spine on the same pivot at y 16.",
+  "labels": {
+    "center": "central spine (1x30x1 rising 30; spins about the vertical - slowly at rest, fast while attacking)",
+    "tis1": "top inner spine 1 (1x25x1, splayed +15 deg forward; sways on two slow rhythms)",
+    "tis2": "top inner spine 2 (splayed -15 deg; sways)",
+    "tis3": "top inner spine 3 (splayed +15 deg sideways; sways)",
+    "tis4": "top inner spine 4 (splayed -15 deg sideways; sways)",
+    "tos1": "top outer spine 1 (1x20x1 at z +2, splayed -30 deg; sways)",
+    "tos2": "top outer spine 2 (at x -2, splayed -30 deg; sways)",
+    "tos3": "top outer spine 3 (at x +2, splayed +30 deg; sways)",
+    "tos4": "top outer spine 4 (at z -2, splayed +30 deg; sways)",
+    "if1": "inner foot 1 (1x8x1 hanging down, splayed +15 deg; paddles with the walk at 1.7 rad/tick)",
+    "if2": "inner foot 2 (splayed -15 deg; paddles at 1.65 rad/tick)",
+    "if3": "inner foot 3 (paddles at 1.75 rad/tick)",
+    "if4": "inner foot 4 (paddles at 1.8 rad/tick)",
+    "of1": "outer foot 1 (at x +2, splayed -30 deg; rolls with the walk at 0.7 rad/tick)",
+    "of2": "outer foot 2 (at x -2, splayed +30 deg; rolls at 0.7 rad/tick, opposite)",
+    "of3": "outer foot 3 (at z -2, splayed -30 deg; pitches at 0.7 rad/tick)",
+    "of4": "outer foot 4 (at z +2, splayed +30 deg; pitches at 0.7 rad/tick, opposite)"
+  },
+  "groups": [
+    {
+      "name": "gait",
+      "bones": ["if1", "if2", "if3", "if4", "of1", "of2", "of3", "of4"],
+      "omega": 0.7,
+      "axis": "x (the inner feet and of3 / of4) and z (of1 / of2)",
+      "gait_scaled": true,
+      "amplitude": "pi x 0.15 = 0.471 rad (27 deg) x the walking speed above a limbSwingAmount of 0.1 about each foot's splay rest (±0.261 inner, ±0.523 outer); the four outer feet share one rhythm at 0.7 rad/tick, the four inner feet run at 1.7, 1.65, 1.75 and 1.8 so they never line up; 0 below the threshold",
+      "plain": "the eight downward spines scuttle: the outer four rock together, the inner four paddle at four slightly different rates",
+      "math": "n = cos(t * 0.7) * pi * 0.15 * amount; n1..n4 = cos(t * 1.7 / 1.65 / 1.75 / 1.8) * pi * 0.15 * amount (all 0 when amount <= 0.1); if1.xRot = 0.261 + n1; if2.xRot = -0.261 - n2; if3.xRot = n3; if4.xRot = -n4; of1.zRot = -0.523 + n; of2.zRot = 0.523 - n; of3.xRot = -0.523 + n; of4.xRot = 0.523 - n",
+      "source": "ModelUrchin.java:146-166; wingspeed 1.0 (:21)",
+      "phase": "the limbSwingAmount threshold of 0.1 gates it",
+      "wingspeed": 1.0,
+      "omega_note": "the classic phase is ageInTicks x 0.7 for the outer feet (an 8.98-tick period); the inner feet run at 1.7 / 1.65 / 1.75 / 1.8 (3.5-3.8 ticks)"
+    },
+    {
+      "name": "spin",
+      "bones": ["center"],
+      "omega": 0.02,
+      "axis": "y",
+      "gait_scaled": false,
+      "amplitude": "a continuous turn: calm at 0.02 rad/tick (one turn every 314 ticks); attacking at 0.2 rad/tick (one turn every 31 ticks)",
+      "plain": "the central spine turns steadily about the vertical - a slow creep at rest, a fast spin while the attacking flag is up",
+      "math": "center.yRot = (t * (attacking ? 0.2 : 0.02)) mod 2pi",
+      "source": "ModelUrchin.java:167-168, :177-178, :188",
+      "phase": "the synched DATA_ATTACKING int (Urchin.java:45-46, set 1 within 2.8 blocks of a target on the 1-in-8 pass :171-173, 0 with no target :180-182) selects the rate",
+      "omega_note": "not a cosine: a linear spin wrapped at 2 pi - 314 ticks per turn calm, 31 attacking"
+    },
+    {
+      "name": "crown",
+      "bones": ["tis1", "tis2", "tis3", "tis4", "tos1", "tos2", "tos3", "tos4"],
+      "omega": 0.07,
+      "axis": "x and z",
+      "gait_scaled": false,
+      "amplitude": "calm: pi x 0.02 = 0.063 rad (3.6 deg) on eight rhythms at 0.07 / 0.065 / 0.075 / 0.08 / 0.055 / 0.045 / 0.035 / 0.04 rad/tick; attacking: pi x 0.06 = 0.188 rad (11 deg) on the same eight rhythms ten times faster (0.7 / 0.65 / 0.75 / 0.8 / 0.55 / 0.45 / 0.35 / 0.4); each of the eight spines takes one rhythm on x and another on z about its splay rest",
+      "plain": "the eight upward spines sway on two axes each at eight unrelated rates: a slow shimmer at rest, a fast shiver while attacking",
+      "math": "n1..n8 = cos(t * r_i) * pi * A with (r, A) = calm (0.07, 0.065, 0.075, 0.08, 0.055, 0.045, 0.035, 0.04; 0.02) or attacking (x10; 0.06); tis1.xRot = 0.261 + n1; tis2.xRot = -0.261 + n2; tis3.xRot = n3; tis4.xRot = n4; tis1.zRot = n5; tis2.zRot = n6; tis3.zRot = 0.261 + n7; tis4.zRot = -0.261 + n8; tos1.xRot = -0.532 + n1; tos2.xRot = n7; tos3.xRot = n3; tos4.xRot = 0.532 + n5; tos1.zRot = n4; tos2.zRot = -0.523 + n6; tos3.zRot = 0.523 + n2; tos4.zRot = n8",
+      "source": "ModelUrchin.java:167-204",
+      "phase": "the synched DATA_ATTACKING int selects the rate and width",
+      "wingspeed": 1.0,
+      "omega_note": "the classic phases are ageInTicks x 0.035-0.08 calm (79-180 ticks) and x 0.35-0.8 attacking (7.9-18 ticks)"
+    }
+  ],
+  "behaviour": [
+    "One gait rhythm above a limbSwingAmount of 0.1 (ModelUrchin.java:146-166): the eight downward spines scuttle 27 degrees x the walking speed about their splay rests, the outer four together at 0.7 rad/tick and the inner four at 1.7, 1.65, 1.75 and 1.8 rad/tick, so the feet never fall into step.",
+    "Two branches on the synched DATA_ATTACKING int (Urchin.java:45-46), which the 1-in-8 pass sets to 1 within 2.8 blocks of a target (:171-173) and clears when it has none (:180-182): calm, the central spine creeps round once every 314 ticks and the eight upward spines shimmer 3.6 degrees on eight slow rhythms (0.035-0.08 rad/tick); attacking, the spine spins once every 31 ticks and the crown shivers 11 degrees at ten times the rate (:167-204). Note the flag stays 1 while the target is merely out of reach (:177-179 sets nothing), so the fast spin also plays during the chase.",
+    "There is no head and no look: every part sits on one pivot at y 16. The bite (doHurtTarget, Urchin.java:105-109: 10 and five seconds of fire, one time in seven on the pass) and the water burn (:133-135) draw no pose."
+  ],
+  "clips": [
+    {
+      "name": "idle",
+      "verdict": "author",
+      "note": "REQUIRED with walk: the gate opens on the pair (today nothing ships; the classic code plays) — the rest: the slow spin (ModelUrchin.java:178) and the 3.6-degree shimmer of the crown (:179-186), the feet still"
+    },
+    {
+      "name": "walk",
+      "verdict": "author",
+      "note": "REQUIRED with idle: the locomotion loop — the eight feet scuttling at 0.7 and 1.65-1.8 rad/tick, 27 degrees x the walking speed (:146-166); the reference clip is that scuttle at full stride"
+    },
+    {
+      "name": "swim",
+      "verdict": "leave",
+      "note": "no swim state: water burns it — in water it hurts itself one tick in five and smokes (Urchin.java:124-135); the FloatGoal (:72) only lifts it to the surface; the fallback to walk covers it (section 2.4)"
+    },
+    {
+      "name": "aggro_idle",
+      "verdict": "author",
+      "note": "DATA_ATTACKING held at 1 by the 1-in-8 pass while a target is within 2.8 blocks (Urchin.java:171-173; it stays 1 through the chase, :177-179): the 31-tick spin (ModelUrchin.java:168) and the 11-degree shiver of the crown (:169-176)"
+    },
+    {
+      "name": "calm_idle",
+      "verdict": "author",
+      "note": "the flag at 0 (Urchin.java:180-182): the 314-tick creep and the 3.6-degree shimmer (ModelUrchin.java:177-186) — the same rest as idle"
+    },
+    {
+      "name": "attack",
+      "verdict": "author",
+      "note": "the bite: doHurtTarget (Urchin.java:105-109) ignites the target for 5 s and lands 10 (:87), one time in seven on the 1-in-8 pass within 2.8 blocks (:171-176); the flag is held while in reach, not pulsed at the strike, so the strike is transport 1 (the server LivingDamageEvent.Post) — a snap of the whole crown toward the target",
+      "length_seconds": 0.4
+    },
+    {
+      "name": "hurt",
+      "verdict": "author",
+      "note": "a flinch: hurt() (Urchin.java:111-115) refuses cactus; the glasshit sound at 1.1 volume (:248-251, :258-261); the hurtTime edge is client-observed",
+      "length_seconds": 0.3
+    },
+    {
+      "name": "death",
+      "verdict": "author",
+      "note": "the vanilla death flip stays; a creature whose JSON ships a `death` clip gets the clip-replaces-flip mode, designed when the first such clip arrives (the Queen's own death clip the precedent) - a `death` delivered here plays under the flip until then",
+      "length_seconds": 1.0
+    }
+  ],
+  "extras": [
+    {
+      "name": "water_burn",
+      "loop": "false",
+      "layer": "overlay",
+      "bones": ["center", "tis1", "tis2", "tis3", "tis4", "tos1", "tos2", "tos3", "tos4"],
+      "length_seconds": 0.4,
+      "code_triggered": false,
+      "trigger": "aiStep (Urchin.java:133-135): in water, one server tick in five, it bites itself (doHurtTarget on itself - 10 and fire it is immune to), the client puffing smoke above it one tick in five (:124-131); the self-hurt is a hurtTime edge like any hit, so today the `hurt` flinch would play — a named site (transport 3) tells it apart when the rig lands",
+      "note": "a shudder of the crown with the spines drawing in"
+    }
+  ],
+  "wishlist": [
+    "in `walk`: the code paddles the eight feet at five unrelated rates (ModelUrchin.java:147-151) — a scuttle with a hop, the crown bobbing, reads better than the shimmer; keep the feet out of step",
+    "in `aggro_idle`: the fast spin (:168) is the tell — add a crouch of the crown before the bite so the 2.8-block reach (Urchin.java:172) reads",
+    "in `attack`: a snap of the crown toward the target and a flare — the bite ignites (Urchin.java:107); nothing in the rig points at the victim today",
+    "in `idle`: keep the 314-tick creep (:178) and the eight-rate shimmer (:179-186); a slow breath of the whole star sells a living crystal"
+  ],
+  "effort_hours": null
+}

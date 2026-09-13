@@ -1,0 +1,141 @@
+{
+  "registry": "leaf_monster",
+  "display_name": "Leaf Monster",
+  "status": "DRAFT — authored by a first pass from the entity code, 2026-09-13; edit pending",
+  "locomotion": "walker",
+  "artist_scope": "full contract (Tier 2, the gait-scaled class (with an attacking branch that raises the figure): geckolib_migration_design.md section 5); the rig is not yet in-game (it lands through the seam in a later slice)",
+  "character_sheet": "A leaf-block mimic built of five one-block leaf cubes: a body cube, an arm cube at each side and a leg cube under each arm (LeafMonsterModel.java:37-41, a 128x128 sheet). Calm, it is a pile: the body cube drops to the ground between the two leg cubes with the arm cubes sitting on top of them, and the entity snaps itself to the block grid and to a 90-degree yaw every tick (EntityLeafMonster.java:89-104), so it passes for leaves. When prey - an ant, a butterfly, a luna moth or a non-creative player - comes within 4 blocks and in sight (:143-170) it raises the synched attacking flag (:130), rises a full block so the body hangs between the arms above the legs, flails both arms, walks at the prey and bites within 2.2 blocks (:126-139, doHurtTarget :134) for 2 damage; 6 HP, 1 armour (MobStats.LEAF_MONSTER, :57-64). It floats (:52), panics when hurt (:53) and spawns in darkness at night above y 50 (below y 20 in the Islands) with at most four others nearby (:194-206). Read it as an ambush: dead-still leaves, then a two-block figure of flailing blocks.",
+  "size_notes": "Drawn at x1.0 of the rig (LeafMonsterRenderer.java:24; no scale override) on a 128x128 sheet (LeafMonsterModel.java:42); the hitbox is 1.0 x 2.5 (ModEntities.java:257-259); shadow 0.65 (LeafMonsterRenderer.java:26). The bind pose is the RISEN figure (body at 0, arms at -8): the calm pile is a position offset the code applies.",
+  "labels": {
+    "body": "body cube (drops one block to the ground when calm)",
+    "larm": "left arm cube (drops one block when calm; flails when attacking)",
+    "rarm": "right arm cube (drops one block when calm; flails when attacking)",
+    "lleg": "left leg cube (swings with the stride when attacking)",
+    "rleg": "right leg cube (swings with the stride when attacking)"
+  },
+  "groups": [
+    {
+      "name": "gait",
+      "bones": [
+        "lleg",
+        "rleg"
+      ],
+      "omega": 0.95,
+      "axis": "x",
+      "gait_scaled": true,
+      "amplitude": "pi x 0.25 = 0.785 rad (45 deg) x the walking speed above the 0.1 threshold - in the attacking branch only (calm: held at 0, and the entity cannot move while calm)",
+      "plain": "the two leg cubes swing fore and aft in opposition with the stride, only while it is attacking",
+      "math": "attacking: a = limbSwingAmount > 0.1 ? cos(t * 0.95) * pi * 0.25 * limbSwingAmount : 0; lleg.xRot = a; rleg.xRot = -a; calm: lleg.xRot = rleg.xRot = 0",
+      "source": "LeafMonsterModel.java:56-57, 62-64",
+      "phase": "the attacking flag selects the branch (EntityLeafMonster.java:130 raises it, :137 clears it)",
+      "omega_note": "the phase is ageInTicks x 0.95 (no wingspeed): the natural period is 2 pi / 0.95 = 6.6 ticks"
+    },
+    {
+      "name": "arms",
+      "bones": [
+        "larm",
+        "rarm"
+      ],
+      "omega": 0.7,
+      "axis": "y and x",
+      "gait_scaled": false,
+      "rectified": true,
+      "amplitude": "pi x 0.55 = 1.728 rad (99 deg), rectified (|cos|: the arms swing out and snap back twice per natural period) - in the attacking branch only, at any walking speed; calm: held at 0",
+      "plain": "both arm cubes flail: they yaw outward together and pitch forward together, dropping back through the rest each half period",
+      "math": "attacking: m = abs(cos(t * 0.7) * pi * 0.55); rarm.yRot = -m; larm.yRot = m; rarm.xRot = larm.xRot = -m; calm: all 0",
+      "source": "LeafMonsterModel.java:52-55, 65-69",
+      "phase": "the attacking flag selects the branch (EntityLeafMonster.java:130, :137)",
+      "omega_note": "the phase is ageInTicks x 0.7: the natural period is 2 pi / 0.7 = 9 ticks, the visible pump every 4.5"
+    }
+  ],
+  "behaviour": [
+    "Two branches on the synched attacking flag (LeafMonsterModel.java:47-70). Calm (attacking == 0, :48-57): the body cube is dropped 16 units to the ground and both arm cubes 16 units onto the leg cubes, every rotation is 0 - a still 3-wide pile of leaf blocks; the entity meanwhile snaps its position to the block centre and its yaw to a multiple of 90 degrees every tick (EntityLeafMonster.java:89-104), so it cannot walk or turn while calm.",
+    "Attacking (:58-69): the body and arms return to the bind pose (the figure rises one block: legs at the ground, body above them, arms at the top); the legs swing with the stride - the cosine of the age x 0.95, x pi x 0.25, x the walking speed above the 0.1 threshold, left and right opposed (45 degrees at full stride every 6.6 ticks); the arms flail regardless of speed - the absolute value of the cosine of the age x 0.7 x pi x 0.55 (99 degrees) yaws both arms outward and pitches both forward, a rectified pump every 4.5 ticks.",
+    "The switch between the branches is instant: the code snaps the body and arms between the two heights on the tick the flag changes (no transition), which is why the `rise` and `sink` extras exist.",
+    "Nothing reads the head look (netHeadYaw unused; no look goal registered, EntityLeafMonster.java:50-55) and nothing scales with health.",
+    "The attacking flag is held: set 1 every fourth think tick while prey is found (EntityLeafMonster.java:126-131) and 0 when none is (:137) - a state, so the strike (doHurtTarget :134, within 2.2 blocks on a roll) is transport 1."
+  ],
+  "clips": [
+    {
+      "name": "idle",
+      "verdict": "author",
+      "note": "REQUIRED with walk: the gate opens on the pair (today nothing ships; the classic code plays) - the disguise: the body and both arms dropped one block (16 units) onto the ground and the legs, nothing moving (LeafMonsterModel.java:48-57); position keys, no rotation"
+    },
+    {
+      "name": "walk",
+      "verdict": "author",
+      "note": "REQUIRED with idle: the locomotion loop - the risen figure's stride: legs 45 deg in opposition (LeafMonsterModel.java:62-64), the arms flailing (:65-69); it only ever walks while attacking (calm, the entity is pinned to the grid, EntityLeafMonster.java:89-104)"
+    },
+    {
+      "name": "swim",
+      "verdict": "author",
+      "note": "it has the state - a FloatGoal keeps it at the surface (EntityLeafMonster.java:52) - though only the risen figure can reach water (calm it is pinned to the grid); a bobbing pile; optional: falls back to walk then idle when absent (section 2.4)"
+    },
+    {
+      "name": "aggro_idle",
+      "verdict": "author",
+      "note": "the attacking branch standing still: the figure risen (body and arms at the bind height), legs at 0, both arms flailing 99 deg at the rectified 4.5-tick pump (LeafMonsterModel.java:58-61, 65-69); the synched attacking flag is held while prey is in range (EntityLeafMonster.java:130, cleared :137)"
+    },
+    {
+      "name": "calm_idle",
+      "verdict": "author",
+      "note": "the calm branch: identical to idle (the dropped, motionless pile, LeafMonsterModel.java:48-57) - may be delivered as a copy of idle"
+    },
+    {
+      "name": "attack",
+      "verdict": "author",
+      "note": "a bite: doHurtTarget within 2.2 blocks on a 1-in-8-or-1-in-10 roll each fourth think tick (EntityLeafMonster.java:132-135); the flag is held, so the strike is transport 1 (the server LivingDamageEvent.Post) - a lunge of the body cube and both arms",
+      "length_seconds": 0.5
+    },
+    {
+      "name": "hurt",
+      "verdict": "author",
+      "note": "a flinch: no hurt() override (vanilla LivingEntity.hurt; leaves_hit sound at EntityLeafMonster.java:178-181); the hurtTime edge is client-observed",
+      "length_seconds": 0.3
+    },
+    {
+      "name": "death",
+      "verdict": "author",
+      "note": "the vanilla death flip stays; a creature whose JSON ships a `death` clip gets the clip-replaces-flip mode, designed when the first such clip arrives (the Queen's own death clip the precedent) - a `death` delivered here plays under the flip until then",
+      "length_seconds": 1.0
+    }
+  ],
+  "extras": [
+    {
+      "name": "rise",
+      "loop": "false",
+      "layer": "overlay",
+      "bones": [
+        "body",
+        "larm",
+        "rarm"
+      ],
+      "length_seconds": 0.5,
+      "code_triggered": false,
+      "trigger": "the rising edge of DATA_ATTACKING (EntityLeafMonster.java:130, set every fourth think tick while prey is in range); today the pose snaps between the branches on that tick (LeafMonsterModel.java:48-61) - the seam needs an edge trigger to play it",
+      "note": "the ambush reveal: the body and both arms rise one block (16 units) from the pile to the bind height - position keys, ending where aggro_idle begins"
+    },
+    {
+      "name": "sink",
+      "loop": "false",
+      "layer": "overlay",
+      "bones": [
+        "body",
+        "larm",
+        "rarm"
+      ],
+      "length_seconds": 0.5,
+      "code_triggered": false,
+      "trigger": "the falling edge of DATA_ATTACKING (EntityLeafMonster.java:137, when no prey is found); today the pose snaps (LeafMonsterModel.java:48-57) - the seam needs an edge trigger to play it",
+      "note": "the settle back into the pile: the body and both arms drop one block, ending where idle / calm_idle begin"
+    }
+  ],
+  "wishlist": [
+    "the reveal and the settle (`rise` / `sink`): the code snaps between the pile and the figure on one tick (LeafMonsterModel.java:48-61) - a half-second rise with the arms coming up last sells the ambush",
+    "in `walk`: a lurching stride - five rigid cubes with 45-degree leg swings (LeafMonsterModel.java:62-64) read as a golem; let the body cube bob with the step",
+    "in `aggro_idle`: keep the 99-degree arm flail (:65-69) but give the body a menace lean toward the prey; the code moves only the arms",
+    "in `attack`: a lunge - the bite (EntityLeafMonster.java:134) has no pose of its own today",
+    "in `idle`: nothing - the disguise must be dead still (the entity is pinned to the block grid, EntityLeafMonster.java:89-104); resist adding a breath"
+  ],
+  "effort_hours": null
+}

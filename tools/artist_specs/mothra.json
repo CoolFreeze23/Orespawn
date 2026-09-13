@@ -1,0 +1,101 @@
+{
+  "registry": "mothra",
+  "display_name": "Mothra",
+  "status": "DRAFT — authored by a first pass from the entity code, 2026-09-13; edit pending",
+  "locomotion": "flyer",
+  "artist_scope": "full contract (Tier 1, the simple-cyclic class: geckolib_migration_design.md section 5) with the §8.1 locks; the rig is not yet in-game (it lands through the seam in a later slice)",
+  "character_sheet": "Mothra is the boss moth: the shared butterfly rig — a body bar, a head cube and four flat wing panels a side (ButterflyModel.createBodyLayer, ButterflyModel.java:54-102) — drawn ten times over in the eyemoth skin (MothraRenderer.java:19-20, :24), with a boss bar (Mothra.java:76-77) and four manual hitbox parts that ride the root each tick: body 4x3, wingL and wingR 5x1.5, head 2x2 (Mothra.java:96-100, :211-214; hits on the head count full, the body half, the wings a quarter plus one, :183-192). She is a butterfly subclass (Mothra.java:46) that flies by her own AI: a flight target she wanders between, re-picked when stuck, on a 1-in-300 roll or on arrival (customServerAiStep :393-413), and a 1-in-10 tick in which she sights the nearest survival player in a 25/20/25 box, flies to a point four blocks above them and, on a 1-in-3 roll (1-in-2 on Hard), shoots a fireball (:414-434) — a SmallFireball or a BetterFireball from a muzzle 2.25 blocks ahead (attackWithFireball :326-363), healing 1 HP per shot; with no player she hunts other mobs the same way (:427-433). Her wings sound every 30 ticks (:228-234), she heals 1 HP every 200 ticks (:235-239), being hurt turns her flight target on the attacker (:243-251), and dying bursts 20 explosion particles and releases 20 luna moths (:455-477). She spawns above y 70 under open sky (:513-514) in badlands, the Nether and the Chaos biome (the boss_mothra and nether biome modifiers, chaos_biome.json), gated to a nearby spawner block while the config says so (:499-511), never within 64 blocks of another Mothra (:495-497). Read her as a slow, vast moth: the same flutter as the butterfly at a fifth of the rate, and the hitboxes follow the wings.",
+  "size_notes": "Drawn at x10 of the rig (MothraRenderer.java:24, applied at :34-36; shadow 0.75 x 10) on the shared 64x32 sheet (ButterflyModel.java:104) — the eyemoth skin (MothraRenderer.java:19-20); 5.0 x 2.0 block hitbox as registered (ModEntities.java:656-658), 6 x 3 while the modern wide-root option is on (Mothra.getDefaultDimensions, Mothra.java:177-181). The four part hitboxes (body, wingL, wingR, head) are placed from the root position, not from the animation (Mothra.java:194-214) — until the bone-synced profile lands, the wings' hit surfaces do not move with your wing keys.",
+  "labels": {
+    "body": "body (the 1x1x8 bar; intended hitbox part 'body')",
+    "head": "head (the one-cube head at the front; intended hitbox part 'head')",
+    "leftwing": "left forewing, inner panel (5x5, beside the body; intended hitbox part 'leftwing')",
+    "leftwing2": "left forewing, outer panel (6x7, the big panel; a visual child of the wing root)",
+    "leftwing3": "left hindwing (5x5, behind the forewing; visual)",
+    "leftwing4": "left tail streamer (the 1x7 strip trailing behind; visual)",
+    "rightwing": "right forewing, inner panel (5x5, beside the body; intended hitbox part 'rightwing')",
+    "rightwing2": "right forewing, outer panel (6x7, the big panel; a visual child of the wing root)",
+    "rightwing3": "right hindwing (5x5, behind the forewing; visual)",
+    "rightwing4": "right tail streamer (the 1x7 strip trailing behind; visual)"
+  },
+  "groups": [
+    {
+      "name": "wings",
+      "bones": [
+        "leftwing",
+        "leftwing2",
+        "leftwing3",
+        "leftwing4",
+        "rightwing",
+        "rightwing2",
+        "rightwing3",
+        "rightwing4"
+      ],
+      "omega": 0.26,
+      "axis": "z",
+      "gait_scaled": false,
+      "amplitude": "pi x 0.25 = 0.785 rad (45 deg) each way; the four left panels the negative of the four right panels",
+      "plain": "the eight wing panels flap about the body's long axis together, 45 degrees up and down, the left side mirroring the right, at a fifth of the butterfly's rate; nothing else moves",
+      "math": "rightwing.zRot = rightwing2.zRot = rightwing3.zRot = rightwing4.zRot = cos(ageInTicks * 1.3 * 0.2) * pi * 0.25; leftwing*.zRot = -rightwing.zRot",
+      "source": "ButterflyModel.java:109-115 (wingspeed 0.2 from MothraRenderer.java:30)",
+      "wingspeed": 0.2,
+      "omega_note": "the classic phase is ageInTicks x 1.3 x wingspeed 0.2 (two float multiplies, left to right) = 0.26 rad/tick: the natural period is 2 pi / 0.26 = 24.17 ticks (1.21 s)"
+    }
+  ],
+  "behaviour": [
+    "One rhythm runs at all times: the eight wing panels roll about the body's long axis at 0.26 rad/tick (a 24.17-tick beat — the butterfly's 1.3 scaled by this renderer's wingspeed 0.2, MothraRenderer.java:30), 45 degrees each way, the left set mirroring the right (ButterflyModel.java:109-115). The body and the head are static; the walk position, the walking speed, the head angles and the entity's state play no part — she flaps the same whether wandering, strafing a player or shooting.",
+    "The flight is the entity's own: customServerAiStep blends the delta movement toward the flight target at 0.5 horizontal and 0.7 vertical (Mothra.java:436-443) and turns the yaw a quarter of the way toward the heading each tick (:445-448); tick :225-226 damps the vertical speed by 0.6. The model never banks or pitches the body with that motion.",
+    "The fireball (attackWithFireball, Mothra.java:326-363) and the death burst (die, :455-477) are timed by the AI, not by animation events; the four manual part hitboxes are placed from the root position each tick (:203-214), not from the pose.",
+    "The renderer draws the head, then the body, then the wing pairs inner to outer (renderToBuffer, ButterflyModel.java:119-130)."
+  ],
+  "clips": [
+    {
+      "name": "idle",
+      "verdict": "author",
+      "note": "REQUIRED with walk: the gate opens on the pair — the hovering flutter (she is never on the ground)"
+    },
+    {
+      "name": "walk",
+      "verdict": "author",
+      "note": "REQUIRED with idle: the bare walk is the wings group's (the rig's one group, no gait group) — a label under the naming rule; in flight the fly -> walk fallback plays it"
+    },
+    {
+      "name": "fly",
+      "verdict": "author",
+      "note": "the true locomotion: her own flight AI (Mothra.java:393-448) keeps her airborne from spawn — the slow vast beat, a body bob with it"
+    },
+    {
+      "name": "attack",
+      "verdict": "author",
+      "note": "the fireball shot: attackWithFireball (Mothra.java:326-363) fires a SmallFireball or BetterFireball from a muzzle 2.25 blocks ahead on a 1-in-3 roll (1-in-2 on Hard) at :421 / :431 — author the shot as the strike (a head dip and a wing snap)",
+      "length_seconds": 0.5
+    },
+    {
+      "name": "hurt",
+      "verdict": "author",
+      "note": "a flinch; hurt() (Mothra.java:243-251) also turns her flight target on the attacker, so the flinch can lead into a turn (no hurt sound: :126)",
+      "length_seconds": 0.3
+    },
+    {
+      "name": "death",
+      "verdict": "author",
+      "note": "die() (Mothra.java:455-477) bursts 20 explosion particles and releases 20 luna moths; the vanilla death flip stays; a creature whose JSON ships a `death` clip gets the clip-replaces-flip mode, designed when the first such clip arrives (the Queen's own death clip the precedent) - a `death` delivered here plays under the flip until then",
+      "length_seconds": 1.5
+    }
+  ],
+  "extras": [],
+  "wishlist": [
+    "in `fly`: a slow body rise and fall with the 24-tick beat and a bank into turns — at x10 a rigid body reads as a kite, not a moth (the code moves only the wings: ButterflyModel.java:109-115)",
+    "in `attack`: a wing snap and a head dip on the shot; the fireball leaves a muzzle 2.25 blocks ahead of her (Mothra.java:331-334), so aim the dip there",
+    "in `hurt`: a lurch toward the attacker, since hurt() retargets her flight on them (Mothra.java:247-249)",
+    "keep the wing roots `leftwing` / `rightwing` as the driving bones and let `leftwing2` / `rightwing2` / the hindwings / the streamers lag a few degrees: the intended hitbox parts follow the roots"
+  ],
+  "locked_bones_provisional": [
+    {"bone": "body", "size": [4, 3], "damage": 0.5},
+    {"bone": "head", "size": [2, 2], "damage": 1},
+    {"bone": "leftwing", "size": [5, 1.5], "damage": 0.25},
+    {"bone": "rightwing", "size": [5, 1.5], "damage": 0.25}
+  ],
+  "locked_bones_note": "The design's section 6 ButterflyModel row (geckolib_migration_design.md:440): 'Preserve the current Mothra topology and sizes: body [4,3] @0.5; head [2,2] @1; leftwing/rightwing [5,1.5] @0.25. The secondary wing bones remain visual children.' All four design names resolve to the port model's part names as written (ButterflyModel.createBodyLayer: body, head, leftwing, rightwing); the secondary panels leftwing2/3/4 and rightwing2/3/4 are left unlocked as the row says. The sizes are today's four manual OreSpawnPartEntity parts (Mothra.java:96-100: body 4x3, wingL / wingR 5x1.5, head 2x2), which the row keeps live until the atomic profile cutover.",
+  "effort_hours": null
+}

@@ -1,0 +1,202 @@
+{
+  "registry": "ender_reaper",
+  "display_name": "Ender Reaper",
+  "status": "DRAFT — authored by a first pass from the entity code, 2026-09-13; edit pending",
+  "locomotion": "walker",
+  "artist_scope": "full contract (Tier 2, the state-branching class: geckolib_migration_design.md section 5); the rig is not yet in-game (it lands through the seam in a later slice)",
+  "character_sheet": "A hostile skeletal wraith with a scythe: a bare spine, pelvis and tailbone with no legs at all, a ribcage of forty rib and vertebra pieces, two bony arms hung from shoulder blocks, the right hand carrying a 39-long scythe with a bladed head, two wings of two spars and a zero-thickness sail each, and a boxy skull (ModelEnderReaper.java:161-423, 66 parts). 90 HP, 18 damage, 8 armour, speed 0.37 (EnderReaper.java:199-207). It is an enderman's heir: it hunts only the player who looks at it (the pumpkin-stare test :184-197 selects the target :87-141), screams while it holds that stare (DATA_SCREAMING :39-40, set at :116 and on a hit at :341), teleports away from a starer within 4 blocks (:273-277) and toward a far target it has held 30 ticks (:278-280), flees daylight (:245-254) and water or fire (:258-261), drowns in rain (:226-228) and sheds portal particles (:230-239); a melee goal bites at 18 (:54). It spawns in the dark at night above y 30 with no other reaper within 16 blocks (:366-374), through the dark forest, highlands and lowlands biome modifiers and in the Chaos and Island biomes. Read it as a floating skeleton: no stride, a hover, the wings and the scythe carrying the mood.",
+  "size_notes": "Drawn at x1.0 of the rig (EnderReaperRenderer.java:25; shadow 0.2, :27) on a 512x512 sheet (ModelEnderReaper.java:425), enderreaper.png (EnderReaperRenderer.java:19); the hitbox is 0.7 x 2.9 (ModEntities.java:92-94). The original's ModelEnderReaper(0.23f) argument was the wingspeed, not a scale (ModelEnderReaper.java:19-20; EnderReaperRenderer.java:10-15).",
+  "labels": {
+    "rwing1": "right wing sail (a zero-thickness 50x17 membrane hung from the shoulder, raked back 100 deg; sweeps with the wing group)",
+    "lwing1": "left wing sail (the mirror; sweeps with the wing group)",
+    "Shape3": "spine (the 12-tall backbone column; static)",
+    "Shape4": "pelvis / lower spine (6 tall, tilted back 14 deg; static)",
+    "Shape5": "tailbone (3 tall, tilted 44 deg; the lowest point of the rig — it has no legs; static)",
+    "Shape6": "neck (6 tall, raked 135 deg from the spine top up to the skull; static)",
+    "Shape7": "left top rib (4 wide at the shoulder row; static)",
+    "Shape8": "right top rib (static)",
+    "Shape9": "right rib 2 (static)",
+    "Shape10": "right rib 3 (static)",
+    "Shape11": "right rib 4 (static)",
+    "Shape12": "right rib 5 (2 wide; static)",
+    "Shape13": "right rib 6, the lowest (3 wide; static)",
+    "Shape14": "vertebra knob 1 (a 1x1x1 behind the spine top; static)",
+    "Shape15": "vertebra knob 2 (static)",
+    "Shape16": "vertebra knob 3 (static)",
+    "Shape17": "vertebra knob 4 (static)",
+    "Shape18": "vertebra knob 5 (static)",
+    "Shape19": "vertebra knob 6, the lowest (static)",
+    "Shape20": "left rib 2 (static)",
+    "Shape21": "left rib 3 (static)",
+    "Shape22": "left rib 4 (static)",
+    "Shape23": "left rib 5 (3 wide; static)",
+    "Shape24": "left rib 6, the lowest (2 wide; static)",
+    "Shape25": "left rib 6, side run (1x1x3; static)",
+    "Shape26": "left rib 6, front (2 wide; static)",
+    "Shape27": "left rib 5, side run (1x1x5; static)",
+    "Shape28": "left rib 4, side run (1x1x5; static)",
+    "Shape29": "left rib 3, side run (1x1x6; static)",
+    "Shape30": "left rib 2, side run (1x1x6; static)",
+    "Shape31": "left top rib, side run (1x1x6; static)",
+    "Shape32": "left rib 5, front (2 wide; static)",
+    "Shape33": "left rib 4, front (4 wide; static)",
+    "Shape34": "left rib 3, front (static)",
+    "Shape35": "left rib 2, front (static)",
+    "Shape36": "left top rib, front (static)",
+    "Shape37": "right rib 6, side run (1x1x3; static)",
+    "Shape38": "right rib 5, side run (1x1x5; static)",
+    "Shape39": "right rib 4, side run (1x1x6; static)",
+    "Shape40": "right rib 3, side run (static)",
+    "Shape41": "right rib 2, side run (static)",
+    "Shape42": "right top rib, side run (static)",
+    "Shape43": "right rib 6, front (2 wide; static)",
+    "Shape44": "right rib 5, front (2 wide; static)",
+    "Shape45": "right rib 4, front (4 wide; static)",
+    "Shape46": "right rib 3, front (static)",
+    "Shape47": "right rib 2, front (static)",
+    "Shape48": "right top rib, front (static)",
+    "Shape49": "right shoulder block (3x2x3, rolled 30 deg; static)",
+    "rarm2": "right upper arm, bone 1 (1x12; static)",
+    "rarm3": "right upper arm, bone 2 (the paired bone beside it; static)",
+    "relbow": "right elbow (2x2x3; static)",
+    "rarm1": "right forearm (1x11x2, pitched forward 44 deg toward the scythe grip; static — the code never poses the scythe arm)",
+    "Shape54": "left shoulder block (3x2x3, rolled -30 deg; static)",
+    "larm3": "left upper arm, bone 1 (1x12; static)",
+    "larm2": "left upper arm, bone 2 (static)",
+    "lelbow": "left elbow (2x2x4; static)",
+    "larm1": "left forearm (1x9x2; the one arm bone the code poses: held back and up at rest, snapped forward while screaming)",
+    "scythe1": "scythe shaft (1x39, pivoting at the right hand, rolled 1.0 rad at rest; the scythe group)",
+    "scythe2": "scythe blade (a zero-thickness 16x6 plane at the shaft's top; rolls with the shaft)",
+    "scythe3": "scythe blade tip (a zero-thickness 7x5 plane; rolls with the shaft)",
+    "head": "skull (6x6x5 on the neck; yaws with the look at 0.45 of the head yaw, clamped to ±0.45 rad; no pitch)",
+    "lwing3": "left wing, lower spar (1x19x3 from the shoulder, raked 135 deg; sweeps with the wing group)",
+    "lwing2": "left wing, upper spar (1x19x3 hung 11 above its pivot, raked 100 deg; sweeps with the wing group)",
+    "rwing3": "right wing, lower spar (the mirror; sweeps with the wing group)",
+    "rwing2": "right wing, upper spar (the mirror; sweeps with the wing group)"
+  },
+  "groups": [
+    {
+      "name": "wings",
+      "bones": ["lwing1", "lwing2", "lwing3", "rwing1", "rwing2", "rwing3"],
+      "omega": 0.161,
+      "axis": "y",
+      "gait_scaled": false,
+      "amplitude": "calm: pi x 0.06 = 0.188 rad (11 deg) about the 0.785 rad rest at 0.7 x 0.23 = 0.161 rad/tick; screaming: pi x 0.3 = 0.942 rad (54 deg) about the same rest at 2.7 x 0.23 = 0.621 rad/tick; the three right parts the negative",
+      "plain": "the six wing parts sweep together about the vertical: a slow 11-degree stir when calm, a wide 54-degree beat while screaming",
+      "math": "w = screaming ? cos(t * 2.7 * 0.23) * pi * 0.3 : cos(t * 0.7 * 0.23) * pi * 0.06; lwing1.yRot = lwing2.yRot = lwing3.yRot = 0.785 + w; rwing1.yRot = rwing2.yRot = rwing3.yRot = -0.785 - w",
+      "source": "ModelEnderReaper.java:434-449; wingspeed 0.23 (:20)",
+      "phase": "the synched DATA_SCREAMING boolean (EnderReaper.java:39-40) selects the branch",
+      "wingspeed": 0.23,
+      "omega_note": "the classic phase is ageInTicks x 0.7 x 0.23 calm (a 39-tick period) and x 2.7 x 0.23 screaming (a 10.1-tick beat)"
+    },
+    {
+      "name": "scythe",
+      "bones": ["scythe1", "scythe2", "scythe3"],
+      "omega": 0.299,
+      "axis": "z",
+      "gait_scaled": true,
+      "amplitude": "walking (calm): the shaft dips from its 1.0 rad rest by |cos(t x 1.3 x 0.23)| x pi x 0.25 x the walking speed above a limbSwingAmount of 0.1 (up to 0.785 rad, 45 deg, one-sided), still at 1.0 below; screaming: 1.0 + cos(t x 1.9 x 0.23) x pi x 0.25 (45 deg each way, unscaled) overrides the walk",
+      "plain": "the scythe rolls at the right hand: a one-sided dip with the stride when calm, a full swing either way while screaming",
+      "math": "a = amount > 0.1 ? cos(t * 1.3 * 0.23) * pi * 0.25 * amount : 0; scythe1.zRot = scythe2.zRot = scythe3.zRot = 1.0 - |a|; screaming: scythe1/2/3.zRot = 1.0 + cos(t * 1.9 * 0.23) * pi * 0.25",
+      "source": "ModelEnderReaper.java:431-437; wingspeed 0.23 (:20)",
+      "phase": "the limbSwingAmount threshold of 0.1 gates the dip; DATA_SCREAMING replaces it with the swing",
+      "wingspeed": 0.23,
+      "omega_note": "the classic phase is ageInTicks x 1.3 x 0.23 = 0.299 walking (the absolute value halves the period to 10.5 ticks) and x 1.9 x 0.23 = 0.437 screaming (a 14.4-tick swing)"
+    },
+    {
+      "name": "left_arm",
+      "bones": ["larm1"],
+      "omega": null,
+      "axis": "x and y (a held pose, no rhythm)",
+      "gait_scaled": false,
+      "amplitude": "calm: xRot -2.436, yRot 1.0 (the forearm swung back and up); screaming: xRot -0.436, yRot -0.488 (snapped forward and inward) — a switch, not a wave",
+      "plain": "the left forearm holds one of two poses: back and raised when calm, thrust forward while screaming",
+      "math": "larm1.xRot, larm1.yRot = screaming ? (-0.436, -0.488) : (-2.436, 1.0)",
+      "source": "ModelEnderReaper.java:438-439, :442-443",
+      "phase": "the synched DATA_SCREAMING boolean selects the pose",
+      "omega_note": "no natural period: a pose switch on the flag's edge"
+    }
+  ],
+  "behaviour": [
+    "Two branches on the synched DATA_SCREAMING boolean (EnderReaper.java:39-40; ModelEnderReaper.java:434-445). Calm, the left forearm is held back and up (xRot -2.436, yRot 1.0, :442-443) and the six wing parts stir 11 degrees about their 45-degree rest at 0.161 rad/tick, a 39-tick period (:444, :446-449). Screaming, the forearm snaps forward (-0.436 / -0.488, :438-439), the wings beat 54 degrees at 0.621 rad/tick, a 10-tick beat (:440), and the scythe swings 45 degrees each way about 1.0 rad at 0.437 rad/tick (:435-437).",
+    "The walk moves only the scythe: above a limbSwingAmount of 0.1 the shaft and both blade planes dip from 1.0 rad by |cos(t x 0.299)| x 0.785 x the walking speed (:431-433) — a one-sided dip at a 10.5-tick period, since the absolute value halves the cosine's period; still, the shaft rests at 1.0 rad. Screaming overrides the dip with the full swing (:436).",
+    "The skull yaws with the look at 0.45 of the head yaw, clamped to ±0.45 rad (:450-456); it never pitches. Everything else — the spine, pelvis, tailbone and neck, the forty rib and vertebra pieces, both shoulder blocks, the whole right arm and the left upper arm — is static (:169-391).",
+    "The rig has no legs: it stands on a tailbone (:177-179) and moves at 0.37 (EnderReaper.java:203), so its walk reads as a glide. The flag goes up on the first tick of a held stare (:116) and on any hit (:341); it drops when the nearest player looks away (:121), at the daylight escape (:251), when wet or burning (:259) and whenever the target is gone (:282) — a held state, not a pulse.",
+    "The teleports (:289-336) are instant moves with a sound pair at the origin and the landing (:314-315) and a portal trail — no pose today; the scream is the ambient sound while the flag is up (:351-353)."
+  ],
+  "clips": [
+    {
+      "name": "idle",
+      "verdict": "author",
+      "note": "REQUIRED with walk: the gate opens on the pair (today nothing ships; the classic code plays) — the calm stance: the wings' 11-degree stir (ModelEnderReaper.java:444-449), the left forearm back and up (:442-443), the scythe shaft resting at 1.0 rad (:432); a legless hover"
+    },
+    {
+      "name": "walk",
+      "verdict": "author",
+      "note": "REQUIRED with idle: the locomotion loop — the code's only gait-scaled motion is the scythe's one-sided dip above a limbSwingAmount of 0.1 (:431-433); there are no legs (:169-179), so the reference clip is a glide with the scythe dipping"
+    },
+    {
+      "name": "swim",
+      "verdict": "leave",
+      "note": "no swim state: water hurts it every tick (EnderReaper.java:226-228) and any wetness teleports it away at once (:258-261); the FloatGoal (:53) only lifts it for the instant before the teleport — the fallback to walk covers it (section 2.4)"
+    },
+    {
+      "name": "aggro_idle",
+      "verdict": "author",
+      "note": "the screaming branch — a held synched state the model reads (ModelEnderReaper.java:434-440): the wings beating 54 degrees at 0.621/tick, the scythe swinging 45 degrees each way, the left forearm thrust forward; the byte is DATA_SCREAMING (EnderReaper.java:39-40, up at :116 and :341, down at :121 / :251 / :259 / :282), not DATA_ATTACKING, so the generator's inventory offers calm_idle only and the seam's w_aggro waits for this creature's SPEC to name the byte; author it now against that byte"
+    },
+    {
+      "name": "calm_idle",
+      "verdict": "author",
+      "note": "the calm branch (ModelEnderReaper.java:441-445) — the same stance as `idle`; listed because the code has the two-state split on DATA_SCREAMING (see aggro_idle): until the SPEC names that byte the generator reads calm_idle as covered by idle, and the pair plays as one"
+    },
+    {
+      "name": "attack",
+      "verdict": "author",
+      "note": "the melee: a vanilla MeleeAttackGoal at 1.0 speed (EnderReaper.java:54) landing 18 of damage (:200-204, MobStats.ENDER_REAPER); no attacking flag, so the strike is transport 1 (the server LivingDamageEvent.Post) — a scythe swing from the right arm, which the code never poses (ModelEnderReaper.java:369-371)",
+      "length_seconds": 0.5
+    },
+    {
+      "name": "hurt",
+      "verdict": "author",
+      "note": "a flinch: hurt() (EnderReaper.java:339-348) raises the screaming flag (:341) and, on an indirect or magic hit, teleports away with up to 16 tries before taking the damage (:342-346); the hurtTime edge is client-observed; ENDERMAN_HURT (:356-358)",
+      "length_seconds": 0.3
+    },
+    {
+      "name": "death",
+      "verdict": "author",
+      "note": "the vanilla death flip stays; a creature whose JSON ships a `death` clip gets the clip-replaces-flip mode, designed when the first such clip arrives (the Queen's own death clip the precedent) - a `death` delivered here plays under the flip until then",
+      "length_seconds": 1.0
+    }
+  ],
+  "extras": [
+    {
+      "name": "teleport",
+      "loop": "false",
+      "layer": "overlay",
+      "bones": ["lwing1", "lwing2", "lwing3", "rwing1", "rwing2", "rwing3", "scythe1", "scythe2", "scythe3", "larm1", "head"],
+      "length_seconds": 0.4,
+      "code_triggered": false,
+      "trigger": "enderTeleportTo (EnderReaper.java:307-317): reached from the daylight escape (:245-254), the wet or burning escape (:258-261), a staring player within 4 blocks (:273-277), a far target held past 30 ticks (:278-280, teleportToEntity :326-336) and an indirect hit (:342-346); ENDERMAN_TELEPORT plays at the origin and again at the landing (:314-315); no pose today — a named site (transport 3) when the rig lands",
+      "note": "the vanish: a fold of the wings and a dip of the skull on the portal sound; the same clip can play at the landing"
+    },
+    {
+      "name": "stare",
+      "loop": "false",
+      "layer": "overlay",
+      "bones": ["head", "larm1", "scythe1", "scythe2", "scythe3"],
+      "length_seconds": 0.5,
+      "code_triggered": false,
+      "trigger": "the first tick of a held stare — findTarget (EnderReaper.java:104-118): ENDERMAN_STARE at the player (:109-112) on stareTimer 0, the screaming flag up (:116), the target taken (:117); a one-shot on the flag's rising edge as the screaming loop begins",
+      "note": "the tell: the skull snaps to the starer and the scythe comes up before the screaming loop settles"
+    }
+  ],
+  "wishlist": [
+    "in `idle`: a floating skeleton's hover — there are no legs (ModelEnderReaper.java:169-179: spine, pelvis, tailbone), so let the ribcage rise and fall and the wing sails (:161-167) drift; the code gives it only the 11-degree wing stir (:444)",
+    "in `walk`: a glide, not a stride — the code moves only the scythe with the walk (:431-433); a lean into the travel and the wings trailing sell the 0.37 speed",
+    "in `aggro_idle` (the screaming branch): keep the 54-degree wing beat (:440, :446-449) and the scythe's wide swing (:435-437), and make the left forearm's snap forward (:438-439) the tell",
+    "in `attack`: a real scythe swing with the right arm — rarm1 (:369-371) carries the shaft (:393-403) and the code never moves it; the MeleeAttackGoal lands 18 (EnderReaper.java:54, :204)",
+    "in `teleport`: a fold of the wings and a dissolve on the portal sound pair (EnderReaper.java:314-315)"
+  ],
+  "effort_hours": null
+}

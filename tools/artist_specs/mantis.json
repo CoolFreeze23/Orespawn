@@ -1,0 +1,150 @@
+{
+  "registry": "mantis",
+  "display_name": "Mantis",
+  "status": "DRAFT — authored by a first pass from the entity code, 2026-09-13; edit pending",
+  "locomotion": "flyer",
+  "artist_scope": "full contract (Tier 2, the state-branching class (an attacking branch on the raptorial arms): geckolib_migration_design.md section 5); the rig is not yet in-game (it lands through the seam in a later slice)",
+  "character_sheet": "A giant flying mantis: a thorax and a swept abdomen, a two-piece neck carrying a two-piece head with two eyes and two antennae, two three-piece raptorial arms folded under the neck, four four-piece walking legs splayed wide, and four wings - a front and a rear pair (MantisModel.java; 36 parts on a 256x256 sheet). It is hostile and heavy: 120 HP, 16 damage, 10 armour (MobStats.MANTIS, EntityMantis.java:68-76), 100 XP. It has no goals (:56-66): its flight is its own - random air spots 4 to 12 blocks away (:147-166), the motion eased toward them (:185-193), the yaw turned a quarter of the way per tick (:195-197), the vertical motion damped to 0.6 (:119-122) - and every eighth think tick it hunts players, any monster, butterflies, cockateils and fairies within 16 blocks and in sight, never anything in water (:167-183, :229-277), raising the synched attacking flag (:173), flying above the prey and striking within 5 blocks plus half the prey's width (:175-179, doHurtTarget) for 16. A hit makes it retaliate (:213-222); water hurts it (:123-125); it heals slowly (:199-201) and spawns in clear air above y 50 by day, never near another (:279-290). Read it as a hovering predator: wings a blur, the raptorial arms folded and breathing at rest, unfolding into wide slashes when it attacks.",
+  "size_notes": "Drawn at x1.1 of the rig (MantisRenderer.java:25, 37) on a 256x256 sheet (MantisModel.java:282); the hitbox is 2.5 x 3.25 (ModEntities.java:267-269); shadow 0.9 x 1.1 (MantisRenderer.java:27).",
+  "labels": {
+    "thorax": "thorax (pitched -14 deg)",
+    "abdomen": "abdomen (swept up -29 deg)",
+    "neck1": "neck, base piece",
+    "neck2": "neck, upper piece",
+    "head1": "head, left half (tilted -8 deg)",
+    "head2": "head, right half (tilted +10 deg)",
+    "leye": "left eye",
+    "reye": "right eye",
+    "lantenna": "left antenna",
+    "rantenna": "right antenna",
+    "larm1": "left raptorial arm, upper segment (the shoulder hinge)",
+    "larm2": "left raptorial arm, forearm (placed 22 units along the upper segment's pitch by the code)",
+    "larm3": "left raptorial arm, claw (placed 17 units along the forearm's pitch by the code)",
+    "rarm1": "right raptorial arm, upper segment (the shoulder hinge)",
+    "rarm2": "right raptorial arm, forearm (placed 22 units along the upper segment's pitch by the code)",
+    "rarm3": "right raptorial arm, claw (placed 17 units along the forearm's pitch by the code)",
+    "lfleg1": "left front leg, part 1 (the foot end, 36 deg)",
+    "lfleg2": "left front leg, part 2 (16 deg)",
+    "lfleg3": "left front leg, part 3 (at the thorax)",
+    "lfleg4": "left front leg, part 4 (at the thorax)",
+    "rfleg1": "right front leg, part 1 (the foot end, -36 deg)",
+    "rfleg2": "right front leg, part 2 (-16 deg)",
+    "rlfleg3": "right front leg, part 3 (at the thorax; the part is spelled rlfleg3 in the code - keep it)",
+    "rfleg4": "right front leg, part 4 (at the thorax)",
+    "lrleg1": "left rear leg, part 1 (the foot end, 50 deg)",
+    "lrleg2": "left rear leg, part 2 (31 deg)",
+    "lrleg3": "left rear leg, part 3 (at the thorax)",
+    "lrleg4": "left rear leg, part 4 (at the thorax)",
+    "rrleg1": "right rear leg, part 1 (the foot end, -50 deg)",
+    "rrleg2": "right rear leg, part 2 (-31 deg)",
+    "rrleg3": "right rear leg, part 3 (at the thorax)",
+    "rrleg4": "right rear leg, part 4 (at the thorax)",
+    "lfwing": "left front wing (rest -0.698 rad, 40 deg out)",
+    "rfwing": "right front wing (rest +0.698 rad)",
+    "lrwing": "left rear wing (rest -0.349 rad, 20 deg out)",
+    "rrwing": "right rear wing (rest +0.349 rad)"
+  },
+  "primary_group": "wings",
+  "groups": [
+    {
+      "name": "wings",
+      "bones": [
+        "lfwing",
+        "rfwing",
+        "lrwing",
+        "rrwing"
+      ],
+      "omega": 1.8,
+      "axis": "z",
+      "gait_scaled": false,
+      "amplitude": "front pair: -0.698 / +0.698 rad rests, then pi x 0.25 = 0.785 rad (45 deg); rear pair: -0.349 / +0.349 rests, then pi x 0.35 = 1.1 rad (63 deg), beating opposite to the front pair",
+      "plain": "all four wings beat up and down about the body's axis at one fast rhythm, the rear pair wider and opposite to the front pair, left and right mirrored",
+      "math": "f = cos(t * 0.9 * 2.0) * pi * 0.25; lfwing.zRot = -0.698 - f; rfwing.zRot = 0.698 + f; r = cos(t * 0.9 * 2.0) * pi * 0.35; lrwing.zRot = -0.349 + r; rrwing.zRot = 0.349 - r",
+      "source": "MantisModel.java:289-294",
+      "wingspeed": 2.0,
+      "omega_note": "the classic phase is ageInTicks x 0.9 x 2.0 (wingspeed, MantisModel.java:21): the natural period is 2 pi / 1.8 = 3.5 ticks"
+    },
+    {
+      "name": "arms",
+      "bones": [
+        "larm1",
+        "larm2",
+        "larm3",
+        "rarm1",
+        "rarm2",
+        "rarm3"
+      ],
+      "omega": 0.102,
+      "axis": "x",
+      "gait_scaled": false,
+      "amplitude": "calm: -0.2 rad rest (folded), then pi x 0.013 = 0.041 rad (2 deg) at 0.051 x 2.0; attacking: -0.698 rad rest (40 deg), then pi x 0.25 = 0.785 rad (45 deg) at 0.51 x 2.0 (omega 1.02) - the forearm takes the negative of the upper segment's angle and the claw the same as the upper, so the arm folds and unfolds like a jack-knife; left and right in opposition",
+      "plain": "the raptorial arms breathe, folded, at rest and unfold into fast, wide alternating slashes when it attacks",
+      "math": "calm: n = cos(t * 0.051 * 2.0) * pi * 0.013, a1 = -0.2; attacking: n = cos(t * 0.51 * 2.0) * pi * 0.25, a1 = -0.698; larm1.xRot = a1 + n; larm2.xRot = -a1 - n; larm3.xRot = a1 + n; rarm1.xRot = a1 - n; rarm2.xRot = -a1 + n; rarm3.xRot = a1 - n; larm2 / rarm2 placed 22 units along the upper segment's pitch, larm3 / rarm3 17 units along the forearm's",
+      "source": "MantisModel.java:295-315",
+      "phase": "the attacking flag selects the rhythm (EntityMantis.java:173 raises it, :181 clears it)",
+      "wingspeed": 2.0,
+      "omega_note": "the calm phase is ageInTicks x 0.051 x 2.0: the natural period is 2 pi / 0.102 = 61.6 ticks; attacking 2 pi / 1.02 = 6.2 ticks"
+    }
+  ],
+  "behaviour": [
+    "The four wings beat at all times (MantisModel.java:289-294): the cosine of the age x 0.9 x 2.0 (wingspeed, :21) - a 3.5-tick period, a blur - x pi x 0.25 on the front pair (45 degrees around a 40-degree spread) and x pi x 0.35 on the rear pair (63 degrees around a 20-degree spread, the opposite way), left and right mirrored.",
+    "The raptorial arms branch on the synched attacking flag (:295-315). Calm: a 2-degree breathing (the cosine of the age x 0.051 x 2.0 x pi x 0.013, every 61.6 ticks) around a -0.2 rad fold. Attacking: 45-degree swings (the cosine of the age x 0.51 x 2.0 x pi x 0.25, every 6.2 ticks) around a -0.698 rad (40-degree) rest - the left arm's upper segment and claw take the angle, its forearm the negative, and the right arm the mirror, so the arms alternate and jack-knife open and shut.",
+    "Each forearm is placed 22 units along its upper segment's pitch and each claw 17 units along the forearm's (:303-304, :306-307, :310-311, :313-314): a hand-written FK chain on flat bones - when this rig lands a keyframed strike must key the positions too, or the arm bones must be parented.",
+    "The legs, neck, head, eyes, antennae, thorax and abdomen never move; nothing scales with walking speed (limbSwingAmount unused) and nothing reads the look. The visible travel is the entity's own flight (EntityMantis.java:141-197): random air spots, the motion eased toward them, a dive above the prey (:174).",
+    "The attacking flag is held: set 1 every eighth think tick while a target is found (EntityMantis.java:167-173) and 0 when none is (:181) - a state, so the strike (doHurtTarget :178, within 5 blocks plus half the prey's width) is transport 1."
+  ],
+  "clips": [
+    {
+      "name": "idle",
+      "verdict": "author",
+      "note": "REQUIRED with walk: the gate opens on the pair (today nothing ships; the classic code plays) - the hovering-still loop, the primary group's wing beat with the arms folded"
+    },
+    {
+      "name": "walk",
+      "verdict": "author",
+      "note": "REQUIRED with idle: the locomotion loop - a label under the naming rule (the bare walk is the primary group wings'): it never walks, its travel is the flight of customServerAiStep (EntityMantis.java:185-197), so author the in-flight wing beat here"
+    },
+    {
+      "name": "fly",
+      "verdict": "author",
+      "note": "the airborne loop: the entity flies on its own motion (EntityMantis.java:185-197; the vertical motion damped to 0.6 each tick, :119-122); !onGround selects it"
+    },
+    {
+      "name": "aggro_idle",
+      "verdict": "author",
+      "note": "the attacking branch: the arms unfolded to -0.698 rad and slashing 45 deg every 6.2 ticks in alternation (MantisModel.java:299-315) over the wing beat; the synched attacking flag is held while a target is found (EntityMantis.java:173, cleared :181)"
+    },
+    {
+      "name": "calm_idle",
+      "verdict": "author",
+      "note": "the calm branch: the arms folded at -0.2 rad with the 2-degree, 61.6-tick breathing (MantisModel.java:296-297, 302-315) over the wing beat - the same as idle; may be delivered as a copy of idle"
+    },
+    {
+      "name": "attack",
+      "verdict": "author",
+      "note": "a slash: doHurtTarget for 16 within 5 blocks plus half the prey's width each eighth think tick with a target (EntityMantis.java:175-179); the flag is held, so the strike is transport 1 (the server LivingDamageEvent.Post) - both raptorial arms snap forward and down on the impact frame",
+      "length_seconds": 0.5
+    },
+    {
+      "name": "hurt",
+      "verdict": "author",
+      "note": "a flinch: hurt() at EntityMantis.java:213-222 (the attacker becomes the retaliation target and the flight target); the hurtTime edge is client-observed - it also fires when water hurts it (:123-125)",
+      "length_seconds": 0.3
+    },
+    {
+      "name": "death",
+      "verdict": "author",
+      "note": "the vanilla death flip stays; a creature whose JSON ships a `death` clip gets the clip-replaces-flip mode, designed when the first such clip arrives (the Queen's own death clip the precedent) - a `death` delivered here plays under the flip until then",
+      "length_seconds": 1.0
+    }
+  ],
+  "extras": [],
+  "wishlist": [
+    "the raptorial arms (MantisModel.java:295-315): the rig's arm bones are flat and the code slides the forearm and claw along the segment above - author the fold and the slash as rotations and flag to the owner that the seam must parent the chains or key the positions when the rig lands",
+    "in `attack`: a real strike - the code's attacking branch is a continuous alternating slash (MantisModel.java:299-315) with no impact; put both arms' snap on the impact frame and a recoil after",
+    "in `fly` / `walk`: tuck the legs and trail the abdomen - the four walking legs and the abdomen never move (they hang splayed as if standing), so the flight reads as a standing insect carried through the air",
+    "in `idle`: a slow head turn and antenna twitch (the neck, head, eyes and antennae are static, and no look is read)",
+    "the wings beat every 3.5 ticks (MantisModel.java:289-294): at the 1.0 s authoring length the shape is 5.7 beats - author one beat and let the tempo table's rate stretch it, or the loop will strobe"
+  ],
+  "effort_hours": null
+}
