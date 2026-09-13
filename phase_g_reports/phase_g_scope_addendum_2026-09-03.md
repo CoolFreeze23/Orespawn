@@ -465,6 +465,28 @@ that slice, not a task for now.
     next Tier-2 slice: fifteen rigs on the hook in the design's order, the Crab with its draw fix among them, one
     refuter, the counts open the report → stop and report. Nothing else runs.
 
+31. **Rulings of 2026-09-14, addendum, items 10-15 (owner, through the advisor):** runs after the 2026-09-14 order at
+    whatever point it has reached: finish and land what is in progress first; if the fifteen-rig slice has not started,
+    it moves to the prompt after this one. **The reference clips — every species, now:** (10) Every unlanded
+    artist-tier species gets its hook now: the classic setupAnim transcribed verbatim into its GeoReplacement
+    descriptor's PoseInputs form, exactly as a landing slice writes it, by lanes in parallel. No refuter now: the
+    landing slice's animation leg, 0 rad against the classic model, is the hook's proof, and the sheet says the clip is
+    sampled from a transcription proven when the rig lands. A species whose code reads state the PoseInputs form cannot
+    carry stays "sampled when the rig lands"; report the count. (11) The sampler runs over every hook, landed or not,
+    and emits one clip per reachable state: reference_walk (limbSwingAmount 1), reference_idle (0), reference_attack
+    where the hook reads attacking (true, limbSwingAmount 0), each under the span rule; the sheet's §4.3 lists them.
+    Every existing reference clip regenerates under the same path and must reproduce byte for byte as reference_walk.
+    (12) The generator embeds each folder's clips in its .bbmodel so the Animation tab is populated on opening. If that
+    cannot be trusted without a real Blockbench round-trip, README_FIRST gains the Import Animations instruction under
+    Toolchain instead and §4.3 names the file to import. Either way the README says how the clips are loaded. (13) A
+    reference clip's keys may be the starting point of a delivered clip: the animator copies them into idle, walk or
+    aggro_idle and improves from there; README rule 7 and §4.3 say so. Only the reference file itself coming back under
+    its own name is refused. (14) The landing slices reuse the hooks from item 10; a slice adds the geo, the renderer
+    registration, the layers and the proofs. **Order of work:** (15) The hooks (10) in parallel lanes → the sampler,
+    the .bbmodel or README, and the rule (11 to 13) as one tooling commit → the folder regenerated, every check PASS →
+    stop and report with the counts, the number of species carrying reference clips over 90, and the number held under
+    item 10. Nothing else runs.
+
 ## D. Rulings executed the same day (for cross-reference)
 
 - ENT-S-098 fixed (shot BetterFireballs carry the mod's own type; save/load round-trip pinned) and its

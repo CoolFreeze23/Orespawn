@@ -774,6 +774,25 @@ root-order slice with the GeckoLib per-entity cache eviction, then Slice 4c). Th
   ARTIST_TIER_UNPACKAGED line → the next Tier-2 slice: fifteen rigs on the hook in the design's order, the Crab with its
   draw fix among them, one refuter, the counts open the report → stop and report. Nothing else runs.
 
+- Rulings of 2026-09-14, addendum, items 10-15 (addendum item 31): runs after the 2026-09-14 order at whatever
+  point it has reached — what is in progress lands first; the fifteen-rig slice, not yet started, moves to the prompt
+  after this one. Every unlanded artist-tier species gets its hook now (the classic setupAnim transcribed verbatim into
+  its GeoReplacement descriptor's PoseInputs form, as a landing slice writes it, by lanes in parallel, no refuter: the
+  landing slice's animation leg at 0 rad is the hook's proof; a species whose code reads state the PoseInputs form
+  cannot carry stays "sampled when the rig lands", the count reported). The sampler runs over every hook, landed or
+  not, one clip per reachable state — reference_walk (limbSwingAmount 1), reference_idle (0), reference_attack where
+  the hook reads attacking (true, limbSwingAmount 0) — each under the span rule, §4.3 listing them; every existing
+  reference clip regenerates under the same path and reproduces byte for byte as reference_walk. The generator embeds
+  each folder's clips in its .bbmodel (the Animation tab populated on opening), or — if that cannot be trusted without
+  a real Blockbench round-trip — README_FIRST gains the Import Animations instruction under Toolchain and §4.3 names
+  the file to import; either way the README says how the clips are loaded. A reference clip's keys may be the starting
+  point of a delivered clip (copied into idle, walk or aggro_idle and improved; README rule 7 and §4.3 say so); only
+  the reference file itself coming back under its own name is refused. The landing slices reuse the hooks; a slice
+  adds the geo, the renderer registration, the layers and the proofs. Order of work: the hooks in parallel lanes → the
+  sampler, the .bbmodel or README, and the rule as one tooling commit → the folder regenerated, every check PASS → stop
+  and report with the counts, the number of species carrying reference clips over 90, and the number held under item
+  10. Nothing else runs.
+
 ## 7. Standing traps checklist (things that have actually bitten this project)
 
 - Uppercase in resource filenames → `ResourceLocation` crash. Lowercase all geo/

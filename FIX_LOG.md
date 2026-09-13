@@ -6625,3 +6625,18 @@ render_instances form, the Boyfriend's and Girlfriend's geometry-only entries, t
 goal dictionary's 73 entries; the folder regenerated, every check PASS, no ARTIST_TIER_UNPACKAGED line) → the next
 Tier-2 slice (fifteen rigs on the hook in the design's order, the Crab with its draw fix among them — exempt from the
 freeze as a rig matter — one refuter, the counts opening the report) → stop and report. Nothing else runs.
+
+## RULINGS 2026-09-14, ADDENDUM (ITEMS 10-15) RECORDED (docs-only) — the hooks for every unlanded artist-tier species now, by lanes, no refuter; the sampler over every hook with one clip per reachable state; the clips into the .bbmodel or the README's import instruction; reference keys as a starting point; the fifteen-rig slice moved to the next prompt
+
+Recorded in `phase_g_reports/phase_g_scope_addendum_2026-09-03.md` item 31 (the rulings in full) and `PHASE_G_PROMPT.md`
+§6b (the bullet). Executed here, docs-only, while the 2026-09-14 tooling commit (items 2 to 6) was in progress — that
+commit lands first as the addendum directs; the fifteen-rig slice had not started and moves to the prompt after this
+one. The order of work from here: the hooks (item 10) in parallel lanes, each unlanded artist-tier species' classic
+`setupAnim` transcribed verbatim into its GeoReplacement descriptor's PoseInputs form as a landing slice writes it (a
+species whose code reads state the form cannot carry is held, "sampled when the rig lands", the count reported) → the
+sampler over every hook emitting reference_walk / reference_idle / reference_attack per reachable state under the span
+rule, the existing clips reproducing byte for byte as reference_walk, the clips embedded in each .bbmodel or the README's
+Import Animations instruction with §4.3 naming the file, and the rule that a reference clip's keys may seed a delivered
+clip (only the reference file under its own name refused) — one tooling commit → the folder regenerated, every check
+PASS → stop and report with the counts, the number of species carrying reference clips over 90, and the number held
+under item 10. Nothing else runs.
