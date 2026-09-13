@@ -5465,6 +5465,14 @@ Entries: **79 total** — ANIM 20 (DIVERGENT 8 · PARTIAL 10 · MISSING 2) · BU
 - **2026-09-14 (owner, item 3):** RULED — the Crab's reference entry gains the render_instances form now, so its folder
   carries the twenty-four leg bones with the sheet corrected; the port's `renderToBuffer` fix lands with the Crab's slice,
   one refuter, EXEMPT from the parity freeze as a rig matter (a wrong rig is not a parity lane). This line stays until then.
+- **2026-09-14 — THE RIG LANDED (beb7c61, the folder's gaps, item 3):** `reference_crab` declares `render_instances`
+  for `leg1`, `leg2`, `leg3` — eight explicit instances each from 1.7.10's unrolled blocks (`ModelCrab.java:195-289`: the
+  pivots (±36, 3, z) for z = 0 / 10 / 20 / 30, the yaws -pi/2 ± a and their mirror); the converter's rig has 46 bones,
+  the twenty-four leg bones `leg<n>__i0..7`; the seed corrected (the 24 labelled, the gait group over them, the sheet
+  saying the game draws three segments today). The probe holds the port's single draw per part to a declared
+  `pinned_draw_count: 1` (the reference leg's pinned-divergence idiom) and fails by name the moment the draw fix lands.
+  The port's `renderToBuffer` fix (each part drawn eight times as the original) lands with the Crab's slice, one
+  refuter, exempt from the freeze. This line stays until then.
 
 ## BUG — Port-code bugs (from 09_bugs.md)
 
@@ -10369,6 +10377,17 @@ two coplanar faces interpolate depth along OPPOSITE diagonals on the two sides a
 - **2026-09-14 (owner, item 2):** RULED (a) — the GiantRobot pair's reference entries gain the render_instances form the
   fan rigs use; the pair packages from the converter's output with its instance bones, which are the FINAL bone set; the
   Tier-1 slice lands the same rig. Tooling, no refuter.
+- **2026-09-14 — LANDED (beb7c61, the folder's gaps, item 2):** `reference_giantrobot` declares `render_instances` for its
+  eleven shared parts (thigh, thigh2, thigh3, shin, foot1-3, arm1-3, knuckles), `count` 2 each, in the form's new
+  `step_scope: explicit` — the fan form (a rotation step about one axis) cannot express the second transform, a
+  translation per side, so each draw's bind transform is declared per instance (the constructor-pose draws: the legs at
+  (0, -60, ±13), the shins and feet at (0, -20, ±13), the upper arms at (±26, -120, 0), the forearms at (±26, -79, 0)
+  pitched -0.19634954); the converter emits one top-level clone per draw (`<part>__i0` the model's left side, the sign
+  +1 pass; `__i1` the right) — 29 bones, the FINAL bone set; the 22 declared transforms match the probe's captured draw
+  poses to 3e-8; the fan rigs' converter output byte-identical. The reference leg's comparison unchanged (109 checked-in
+  proofs verified byte for byte). The `giant_robot` and `jeffery` seeds label every bone and lock the 25 intended parts.
+  The pair packages. The Tier-1 slice lands the same rig and extends the parity tool's composition leg for the form.
+  Status: FIXED for the folder; the entry stays for the slice's landing.
 
 ### TEST-010 — `boyfriend` and `girlfriend` have no reference entry: `ModelBoyfriend` / `ModelGirlfriend` are HumanoidModel subclasses that 1.7.10 drew with vanilla ModelBiped, so the reference leg has no 1.7.10 source to pair them with and the artist package has no rig for them (REPORT, 2026-09-13; found by the full folder's tooling)
 
@@ -10378,6 +10397,12 @@ two coplanar faces interpolate depth along OPPOSITE diagonals on the two sides a
 - **Resolution:** OPEN — either (a) a reference entry without a 1.7.10 comparison (geometry only, the form the seven weapon models got in BUG-041 stage 2: `geometry_only`, no `reference_source`, the leg reporting the entry as unpaired) so the converter's output packages, or (b) the pair waits for its own slice. Until ruled, the gap is stated in the package.
 - **2026-09-14 (owner, item 4):** RULED (a) — geometry-only entries for the Boyfriend and Girlfriend; they package now and
   land on the hook in a Tier-2 slice as the Cannon Fodder did. Tooling, no refuter.
+- **2026-09-14 — LANDED (beb7c61, the folder's gaps, item 4):** `reference_boyfriend` / `reference_girlfriend` (class
+  `ModelBoyfriend` / `ModelGirlfriend`, the renderers' skin 0 textures, `geometry_only: true`, no `reference_source`); the
+  probe dumps them geometry-only, the converter produces the seven-bone HumanoidModel rigs (the seeds' labels), the
+  reference leg reports them `REFERENCE GEOMETRY UNPAIRED` (a new line; it skipped a source-less entry silently before)
+  and stays green over the 111 entries. Both package. Status: FIXED for the folder; they land on the hook in a Tier-2
+  slice as the Cannon Fodder did.
 
 ### TEST-011 — The package generator's trigger inventory misses three flag idioms, so four sheets cannot offer the `attack` / `aggro_idle` rows their entities warrant: a raw `ATTACKING` accessor (the Lizard), a flag set through a goal's consumer (the Cave Fisher, the Dungeon Beast), and a vanilla `MeleeAttackGoal` strike with a `DATA_SCREAMING` state (the Ender Knight) (REPORT, 2026-09-13; found by the Tier-2 batch A seed lane)
 
@@ -10389,6 +10414,21 @@ two coplanar faces interpolate depth along OPPOSITE diagonals on the two sides a
 - **2026-09-14 (owner, item 5):** RULED — extend the readers (the ATTACKING accessor, the consumer-set flag traced into the
   goal, vanilla MeleeAttackGoal with the entity's state name); the affected sheets regenerate with their rows offered and
   the wishlist warnings cleared. Tooling, no refuter.
+- **2026-09-14 — LANDED (beb7c61, the folder's gaps, item 5):** the three readers in `tools/artist_package.py` — (a) a
+  synched accessor named `ATTACKING` is the attacking flag (the Lizard: STATE, the pair offered); (b) a flag handed to a
+  goal (`this::setAttacking`, a lambda, an inner goal's super call) is traced into the goal class and its parents under
+  `ai/`, and a parent entity class's flags, sites and strike sites count for the subclass (the Cave Fisher, Dungeon
+  Beast, Emperor Scorpion, T-Rex, Water Dragon, Nastysaurus, Pointysaurus, Sea Viper, Scorpion, Spit Bug, Trooper Bug, the
+  CaterKiller, Hercules Beetle, Alosaurus and Cryolophosaurus of the same goal family; the Alien Boss, Baby Dragon and
+  Jeffery through their parents); (c) vanilla `MeleeAttackGoal` with no `doHurtTarget` override is a strike site
+  (verified from the NeoForge 21.1.223 bytecode), the entity's own synched state (`DATA_SCREAMING`) is the held aggro
+  state when raised in the target-selection code and cleared on target loss (the Ender Knight, the Ender Reaper), a
+  direct mob-attack hurt on a victim is a strike site (the Peacock's peck, the Cannon Fodder's and Chipmunk's
+  `EntityCannonFodder.java:290`, the Godzilla's lightning, the Irukandji's sting-back), and the registered goal's parent
+  chain is scanned (the Luna Moth's nip). Six fixture pins (46 tests). The folder: WISHLIST_UNACCEPTED 0 (was 12), the
+  Water Dragon's ATTACKING_UNCLASSIFIED line gone; the seeds whose notes said "NOT offered" reworded to the fact. The
+  Kraken (an unconditional clear inside `releaseCaughtEntity`, :450) is outside the three idioms and stays as it was.
+  Status: FIXED.
 
 ### TEST-003 — Config-flipping gametests in the concurrent default batch
 
