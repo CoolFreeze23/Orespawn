@@ -741,6 +741,24 @@ root-order slice with the GeckoLib per-entity cache eviction, then Slice 4c). Th
   the hook, one refuter, the counts open the report. Order of work: push → items 2 to 6 as one tooling commit with the
   package regenerated, its file list in the report → the slice. Nothing else runs.
 
+- Rulings of 2026-09-13, fourth set (addendum item 29): the push (origin/master 5db339d). TEST-008: (c) stands as the
+  rule — bind excluded from the visual samples of a rig whose hook writes the flat bone every frame, with the note; the
+  harness keeps each renderer's own diagonal (what the GPU does); no canonical diagonal, no wider window; the line
+  stays open, a reachable pose that flips on a future rig comes back as a finding. ANIM-021 to 024: register lines,
+  deferred with the parity lanes; the four sheets gain "the original moved more" under §4 from the register entries
+  (tooling). The checker's "not delivered yet" rule ratified; the Cannon Fodder without a reference leg ratified; the
+  Terrible Terror's sampler-row wording with the tooling commit. THE FULL FOLDER: every artist-tier species not yet
+  packaged is packaged — the rig from the converter's proven output where none is shipped (the reference leg's geo;
+  the sheet states the rig is not yet in-game and that bone names are final), textures, the SPEC, the .bbmodel; a
+  reference clip only where a hook exists, the sheet saying "sampled when the rig lands" otherwise; seeds for the
+  unseeded species drafted by lanes from the entity code (the description, the clip verdicts, the wishlist), each
+  sheet marked DRAFT above its authored sections, one refuter over the twenty boss seeds only; each Tier-1 boss's sheet
+  pre-declares its intended locked bones from the design's section 6, marked provisional, the Queen's profile the
+  template where the design has none; the README's priority table the full list, bosses first; every folder check
+  PASS; the package count is the deliverable count. Order of work: push → items 3 and 4 as one tooling commit → the
+  full folder (5 to 8) → stop and report with the counts and the folder's file count. The slices resume on the next
+  prompt: the remaining Tier-2 first, then the four FK rigs as real hierarchies, then the Tier-1 rigs. Nothing else runs.
+
 ## 7. Standing traps checklist (things that have actually bitten this project)
 
 - Uppercase in resource filenames → `ResourceLocation` crash. Lowercase all geo/

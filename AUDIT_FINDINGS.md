@@ -5403,7 +5403,8 @@ Entries: **79 total** — ANIM 20 (DIVERGENT 8 · PARTIAL 10 · MISSING 2) · BU
 - **Fix (a parity lane's, later):** transcribe `render:173-207` in full into `setupAnim` (and the seam's hook with it: the third slice's
   descriptor is the port's pose verbatim, so it changes when the port changes), the wingspeed 0.45f restored, the sitting check through
   the entity (an entity-state read: `GammaMetroidPose` per the Slice 4b form), the gait on `limbSwingAmount`.
-- **Resolution:** OPEN
+- **Resolution:** OPEN — DEFERRED with the parity lanes (owner 2026-09-13, fourth set, item 3); the sheet's §4 carries
+  "the original moved more" from this entry's description so the animator can animate toward the 1.7.10 motion (tooling).
 
 ### ANIM-022 — RubberDucky: the port's setupAnim drops 1.7.10's wing latch, sitting check, head-look factors and wing yaw
 
@@ -5420,7 +5421,8 @@ Entries: **79 total** — ANIM 20 (DIVERGENT 8 · PARTIAL 10 · MISSING 2) · BU
 - **Fix (a parity lane's, later):** transcribe `render:86-116` in full - a RenderInfo latch and the level random through a
   `RubberDuckyPose` (the Slice 4b form: `getRenderInfo`, `getLevelRandom`, `getKillCount`, `isInSittingPose`), the head factors, the
   wing Y; the seam's hook follows the port.
-- **Resolution:** OPEN
+- **Resolution:** OPEN — DEFERRED with the parity lanes (owner 2026-09-13, fourth set, item 3); the sheet's §4 carries
+  "the original moved more" from this entry's description so the animator can animate toward the 1.7.10 motion (tooling).
 
 ### ANIM-023 — TerribleTerror: the port's setupAnim drops four leg parts and the whole tail chain of 1.7.10's pose
 
@@ -5435,7 +5437,8 @@ Entries: **79 total** — ANIM 20 (DIVERGENT 8 · PARTIAL 10 · MISSING 2) · BU
   lower leg parts fl22 / fl12 / bl22 / bl12 and the four tail parts are never posed (they hold their LayerDefinition rest).
 - **Fix (a parity lane's, later):** transcribe `render:176-198` in full (the four lower legs, the tail chain with its position follow -
   the seam's `moveTo` idiom); the seam's hook follows the port.
-- **Resolution:** OPEN
+- **Resolution:** OPEN — DEFERRED with the parity lanes (owner 2026-09-13, fourth set, item 3); the sheet's §4 carries
+  "the original moved more" from this entry's description so the animator can animate toward the 1.7.10 motion (tooling).
 
 ### ANIM-024 — Cricket: the port's setupAnim runs the legs at 1.0 rad/tick where 1.7.10 ran at wingspeed 2.5, and drops the singing branch
 
@@ -5450,7 +5453,8 @@ Entries: **79 total** — ANIM 20 (DIVERGENT 8 · PARTIAL 10 · MISSING 2) · BU
   if any, never reaches the model). Not in ANIM-001's list (the port never multiplied by limbSwingAmount; the constant is missing).
 - **Fix (a parity lane's, later):** the wingspeed 2.5f on the gait; the singing branch through a `CricketPose` (the Slice 4b form,
   an entity-state read); the seam's hook follows the port.
-- **Resolution:** OPEN
+- **Resolution:** OPEN — DEFERRED with the parity lanes (owner 2026-09-13, fourth set, item 3); the sheet's §4 carries
+  "the original moved more" from this entry's description so the animator can animate toward the 1.7.10 motion (tooling).
 
 ## BUG — Port-code bugs (from 09_bugs.md)
 
@@ -10341,6 +10345,10 @@ two coplanar faces interpolate depth along OPPOSITE diagonals on the two sides a
 - **What the slice did:** the Bee's `visual_sample_ids` are its four posed samples, bind excluded with the note above; every other
   flat-cube rig of the slice (the Cloud Shark's three fins, the Fairy's four wings, the Terrible Terror's horns / wings / tail tip)
   passes its visual leg at bind and posed.
+- **2026-09-13 (owner, fourth set, item 2):** (c) STANDS AS THE RULE — bind is excluded from the visual samples of a rig
+  whose hook writes the flat bone every frame, with the note; the harness keeps each renderer's own diagonal, since that
+  is what the GPU does. No canonical diagonal, no wider window. The line stays OPEN: a reachable pose that flips on a
+  future rig comes back as a finding.
 
 ### TEST-003 — Config-flipping gametests in the concurrent default batch
 

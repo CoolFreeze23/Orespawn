@@ -426,6 +426,27 @@ that slice, not a task for now.
     (9) push → items 2 to 6 as one tooling commit with the package regenerated, its file list in the report → the
     slice. Nothing else runs.
 
+29. **Rulings of 2026-09-13, fourth set (owner, through the advisor):** (1) **Push:** master pushed now, the six commits
+    after origin/master ba4d2c0 (origin/master 5db339d). **The slice's findings:** (2) TEST-008: (c) stands as the rule —
+    bind is excluded from the visual samples of a rig whose hook writes the flat bone every frame, with the note; the
+    harness keeps each renderer's own diagonal, since that is what the GPU does. No canonical diagonal, no wider window.
+    The line stays open; a reachable pose that flips on a future rig comes back as a finding. (3) ANIM-021 to 024:
+    register lines, deferred with the parity lanes. The four sheets gain a paragraph under §4, "the original moved
+    more", from the register entry's description, so the animator can animate toward the 1.7.10 motion; tooling. (4)
+    The checker's "not delivered yet" rule: ratified. The Cannon Fodder without a reference leg: ratified. The Terrible
+    Terror's row wording: with the tooling commit. **The full folder:** (5) Every artist-tier species not yet packaged
+    is packaged now: the rig from the converter's proven output where none is shipped (the reference leg's geo; the
+    sheet states the rig is not yet in-game and that bone names are final), textures, the SPEC, the .bbmodel; a
+    reference clip only where a hook exists, the sheet saying "sampled when the rig lands" otherwise. (6) Seeds for the
+    unseeded species are drafted by lanes from the entity code — the description, the clip verdicts, the wishlist —
+    each sheet marked DRAFT above its authored sections; one refuter over the twenty boss seeds only, none over the
+    rest. (7) Each Tier-1 boss's sheet pre-declares its intended locked bones from the design's section 6, marked
+    provisional, the Queen's profile as the template where the design has none. (8) The README's priority table
+    becomes the full list, bosses first; every folder check PASS; the package count is the deliverable count.
+    **Order of work:** (9) push → items 3 and 4 as one tooling commit → the full folder (5 to 8) → stop and report with
+    the counts and the folder's file count. The slices resume on the next prompt, the remaining Tier-2 first, then the
+    four FK rigs as real hierarchies, then the Tier-1 rigs. Nothing else runs.
+
 ## D. Rulings executed the same day (for cross-reference)
 
 - ENT-S-098 fixed (shot BetterFireballs carry the mod's own type; save/load round-trip pinned) and its
