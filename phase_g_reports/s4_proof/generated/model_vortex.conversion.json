@@ -7,7 +7,7 @@
   "source_class": "danger.orespawn.entity.client.VortexModel",
   "source_class_sha256": "3af9aa95b4d7912f55bd841c4c7812fefa9096407966c10676faa8ad40563b84",
   "compiled_dump_sha256": "40ef9260c8bbbddd0d02eb0e51fef4ac617bb39b7447d86dda5ce1cbd2df287c",
-  "geometry_sha256": "14b101cb86dcc2669870ad6d9804229c8d85199eab880e2e44559d984098007e",
+  "geometry_sha256": "8d0832a75d52dd4f42914734cfb4be08d298f497fa4d7147d95eae4b76eb204a",
   "animation_sha256": "7882082857fdb11e02f158ebc3a6d3f970e2ac60d54813f0e903ee97b2293749",
   "animation_contract_sha256": "ef25a2b4eb7640daad7b902fc72c12e0e99737cd0882ac83ea702e72c92a7acd",
   "bone_count": 1,
@@ -36,6 +36,25 @@
     "ordered_pairs": 0,
     "tie_break": "converter emission order for pairs never drawn together in any capture",
     "lifting": "pre-order over the geo bone tree, siblings by their subtree's first classic draw"
+  },
+  "cube_face_order": {
+    "Shape1": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ]
+  },
+  "cube_face_order_evidence": {
+    "rule": "NeoForge 21.1.223 ModelPart.Cube.<init> polygon order DOWN, UP, WEST, NORTH, EAST, SOUTH (offsets 365-785: DOWN 365, UP 436, WEST 507, NORTH 578, EAST 649, SOUTH 720), mirror negating the X normals; GeckoLib labels by the direction whose step is the classic normal reflected in Y",
+    "cube_bearing_bones": 1,
+    "cubes": 1,
+    "verified_unrotated_cubes_at_bind": 1,
+    "verification": "captured normals of every cube unrotated at bind equal the rule's, in order; the parity tool's draw-order leg compares the per-quad normal sequences of both renderers on every capture"
   },
   "animation_contract": {
     "schema_version": 1,

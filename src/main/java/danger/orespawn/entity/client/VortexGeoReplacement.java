@@ -17,6 +17,16 @@ public final class VortexGeoReplacement extends OreSpawnGeoReplacement<EntityVor
             ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "animations/entity/vortex.animation.json"),
             ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "textures/entity/vortex.png"),
             VortexRenderer.SHADOW) {
+        /**
+         * TEST-007: the Vortex's plate is a zero-thickness cube (128x64x0), so the rig ships the classic
+         * within-cube face order ({@code orespawn:cube_face_order}, written by the converter from the manifest
+         * entry's {@code cube_face_order: "classic"}) and the seam expects it - the plate's two coplanar faces
+         * are then emitted in the classic renderer's order on the candidate.
+         */
+        @Override
+        public boolean cubeFaceOrderRequired() {
+            return true;
+        }
     };
 
     public VortexGeoReplacement() {
