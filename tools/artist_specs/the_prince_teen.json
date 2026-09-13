@@ -1,0 +1,240 @@
+{
+  "registry": "the_prince_teen",
+  "display_name": "The Prince (Teen)",
+  "status": "DRAFT — authored by a seed lane from the entity code, 2026-09-13; the owner's edit pending",
+  "locomotion": "flyer",
+  "artist_scope": "full contract (Tier 1, the state-branching class: geckolib_migration_design.md section 5) with the §8.1 locks; the rig is not yet in-game (it lands through the seam in a later slice)",
+  "character_sheet": "The Prince Teen is the royal hatchling grown: a three-headed dragon on the Nightmare's kind of rig — a two-block body with two shoulders and two back fins, three necks of three segments each ending in a two-piece head with a head fin and a two-piece jaw, two three-segment legs on clawed feet, two four-spar wings with four membranes each, and a five-segment tail with three spikes (ModelThePrinceTeen.createBodyLayer, ModelThePrinceTeen.java:171-530). It is a TamableAnimal and a rideable flyer with 1500 HP, 0.32 speed and 50 attack (createAttributes ThePrinceTeen.java:191-199), follows its owner, is tempted by beef, wanders and looks about (:147-153), avenges and defends (:160-163) and hunts monsters (:177-189). Its activity byte is 0 on the ground and 1 in flight (no physics when flying, :232; the wings sound every 20 ticks, :238-248): it takes off on a 1-in-10 tick with prey in sight (:617-626), when its owner flies or is far (:255-259, :660-665), or when hurt (hurt :286-310, a 20-tick guard). Flying (:748-790) it flies to just above its target with the attacking flag up and bites within eight blocks plus half the target's width (doHurtTarget :276) or, within twenty blocks with its fire lit on a 1-in-2, shoots — a big fireball, a thunderbolt or an ice ball from six blocks ahead and 3.5 up when its head is aimed (shootSomethingAt :528-580); a tamed one below a quarter health flees. Ridden, it fires a canon trio on the strafe keys and bites for its rider within eight blocks (:499-518). Its three necks rise and fall on synced head extensions random-walked between 0 and 60 (:261-272). After 25 kills and 10 days it grows into the Prince Adult (:629-632, transformToAdult :874-885); a diamond regresses it to the Prince (revertToBaby :1031-1040); a diamond block tames and heals it, an empty hand mounts it, ice and flint and steel take and give its fire, any other item sits it and grounds it (:926-1026). It has no natural spawn (it grows from the Prince). Read it as an adolescent Nightmare: a bat-winged flyer with three snapping heads.",
+  "size_notes": "Drawn at x1.25 of the rig (ThePrinceTeenRenderer.java:28, applied :35-38; shadow 1.0 x 1.25) on a 512x256 sheet (ModelThePrinceTeen.java:530); 3.25 x 4.25 block hitbox (ModEntities.java:587-589). The necks, legs, wings and tail are chains the code positions segment by segment — key the joints, never the positions.",
+  "labels": {
+    "body": "body (static; intended hitbox part 'body')",
+    "body2": "upper body block (static; intended hitbox part 'body2')",
+    "lshoulder": "left shoulder (static)",
+    "rshoulder": "right shoulder (static)",
+    "backfin1": "back fin 1 (static)",
+    "backfin2": "back fin 2 (static)",
+    "neck1": "neck base (static)",
+    "neck3": "centre neck, segment 1 (an eighth of the centre head's yaw; pitches by a third of the centre extension)",
+    "neck4": "centre neck, segment 2 (a quarter of the yaw; two thirds of the extension)",
+    "neck5": "centre neck, segment 3 (half the yaw; the full extension)",
+    "head3": "centre head, main piece (the look split's centre share; intended hitbox part 'head3')",
+    "head7": "centre head, second piece (with the head)",
+    "headfin": "centre head fin (with the head, +0.5 pitch)",
+    "jaw1": "centre lower jaw, piece 1 (chomps 18 degrees about 0.25 attacking, 3.6 about 0.1 at rest)",
+    "jaw5": "centre lower jaw, piece 2 (with piece 1)",
+    "neck3L": "left neck, segment 1 (an eighth of the left head's yaw; a third of the left extension)",
+    "neck4L": "left neck, segment 2 (a quarter; two thirds)",
+    "neck5L": "left neck, segment 3 (a half; the full extension)",
+    "head3L": "left head, main piece (the look split's left share; intended hitbox part 'head3L')",
+    "head7L": "left head, second piece",
+    "headfinL": "left head fin (+0.5 pitch)",
+    "jaw1L": "left lower jaw, piece 1 (chomps on its own rate)",
+    "jaw5L": "left lower jaw, piece 2",
+    "neck3R": "right neck, segment 1 (an eighth of the right head's yaw; a third of the right extension)",
+    "neck4R": "right neck, segment 2 (a quarter; two thirds)",
+    "neck5R": "right neck, segment 3 (a half; the full extension)",
+    "head3R": "right head, main piece (the look split's right share; intended hitbox part 'head3R')",
+    "head7R": "right head, second piece",
+    "headfinR": "right head fin (+0.5 pitch)",
+    "jaw1R": "right lower jaw, piece 1 (chomps on its own rate)",
+    "jaw5R": "right lower jaw, piece 2",
+    "leftleg1": "left thigh (the stride about −0.575; tucked at −0.5 in flight; intended hitbox part)",
+    "leftleg2": "left upper leg piece (about 0.977; intended hitbox part)",
+    "leftleg3": "left lower leg (a quarter period ahead about −0.523; tucked at −1.25 in flight; intended hitbox part)",
+    "lclaw2": "left foot, claw 2 (flat on the ground, curled −0.685 in flight)",
+    "lclaw4": "left foot, claw 4",
+    "lclaw5": "left foot, claw 5",
+    "lclaw6": "left foot, claw 6",
+    "lclaw7": "left foot, claw 7",
+    "rightleg1": "right thigh (the stride, opposite the left; tucked at +0.5 in flight; intended hitbox part)",
+    "rightleg2": "right upper leg piece (intended hitbox part)",
+    "rightleg3": "right lower leg (tucked at +1.25 in flight; intended hitbox part)",
+    "rclaw2": "right foot, claw 2 (curled −0.685 in flight)",
+    "rclaw4": "right foot, claw 4",
+    "rclaw5": "right foot, claw 5",
+    "rclaw6": "right foot, claw 6",
+    "rclaw7": "right foot, claw 7",
+    "wing1": "left wing, spar 1 (the beat about −0.4; intended hitbox part 'wing1')",
+    "wing2": "left wing, spar 2 (1.25x the beat about −0.4)",
+    "wing3": "left wing, spar 3 (about −0.6)",
+    "wing4": "left wing, spar 4 (about −0.2)",
+    "mem1": "left wing membrane 1 (with spar 1)",
+    "mem2": "left wing membrane 2 (with spar 2)",
+    "mem3": "left wing membrane 3 (with spar 3)",
+    "mem4": "left wing membrane 4 (with spar 4)",
+    "rwing1": "right wing, spar 1 (the negative beat about +0.4; intended hitbox part 'rwing1')",
+    "rwing2": "right wing, spar 2 (1.25x about +0.4)",
+    "rwing3": "right wing, spar 3 (about +0.6)",
+    "rwing4": "right wing, spar 4 (about +0.2)",
+    "rmem1": "right wing membrane 1",
+    "rmem2": "right wing membrane 2",
+    "rmem3": "right wing membrane 3",
+    "rmem4": "right wing membrane 4",
+    "tail1": "tail segment 1 (a quarter of the tail wave; intended hitbox part 'tail1')",
+    "tail2": "tail segment 2 (an eighth of a period behind)",
+    "tail3": "tail segment 3 (a quarter behind; intended hitbox part 'tail3')",
+    "tail4": "tail segment 4 (three eighths behind)",
+    "tail5": "tail segment 5 (segment 4 plus half the wave; intended hitbox part 'tail5')",
+    "Tailspike1": "tail spike 1 (segment 5 plus a third of the wave)",
+    "Tailspike2": "tail spike 2 (with spike 1)",
+    "Tailspike3": "tail spike 3 (spike 1 plus three quarters of the wave)"
+  },
+  "groups": [
+    {
+      "name": "gait",
+      "bones": [
+        "leftleg1", "leftleg2", "leftleg3", "lclaw2", "lclaw4", "lclaw5", "lclaw6", "lclaw7",
+        "rightleg1", "rightleg2", "rightleg3", "rclaw2", "rclaw4", "rclaw5", "rclaw6", "rclaw7"
+      ],
+      "omega": 0.3575,
+      "axis": "x",
+      "gait_scaled": true,
+      "amplitude": "on the ground, x the walking speed above a 0.1 threshold: pi x 0.25 = 0.785 rad (45 deg) on the thigh (about −0.575) and upper piece (about 0.977), the lower leg on a wave a quarter period ahead (about −0.523), the right leg the negative; attacking: the same 45 degrees at 0.65 rad/tick unscaled; in flight and not attacking: the legs held tucked (thigh −0.5, lower leg −1.25; right +) with the claws curled to −0.685; the claws lie flat on the ground",
+      "plain": "on the ground the legs stride with the speed, the lower legs a quarter turn ahead; attacking they swing whatever the speed; in the air they tuck up and the claws curl",
+      "math": "moving: n = cos(t * 0.55 * 0.65) * pi * 0.25 * amount, n2 = cos(t * 0.55 * 0.65 + pi/2) * pi * 0.25 * amount; attacking: n = cos(t * 0.65) * pi * 0.25, n2 = cos(t * 0.65 + pi/2) * pi * 0.25; flying and calm: n = -0.5, n2 = -1.25 (right: rn = 0.5, rn2 = 1.25); leftleg1.xRot = n - 0.575; leftleg2.xRot = n + 0.977; leftleg3.xRot = n2 - 0.523; rightleg1 = -rn - 0.575; rightleg2 = -rn + 0.977; rightleg3 = -rn2 - 0.523; claws.xRot = flying ? -0.685 : 0; positions along the chain",
+      "source": "ModelThePrinceTeen.java:587-657; wingspeed 0.65 (:24)",
+      "phase": "the synced DATA_ACTIVITY byte (ThePrinceTeen.java:67; 1 in flight) and DATA_ATTACKING select the branch",
+      "wingspeed": 0.65,
+      "omega_note": "the classic phase moving is ageInTicks x 0.55 x wingspeed 0.65 = 0.3575 rad/tick (period 17.6 ticks); attacking x 0.65 (period 9.7 ticks)"
+    },
+    {
+      "name": "wings",
+      "bones": [
+        "wing1", "wing2", "wing3", "wing4", "mem1", "mem2", "mem3", "mem4",
+        "rwing1", "rwing2", "rwing3", "rwing4", "rmem1", "rmem2", "rmem3", "rmem4"
+      ],
+      "omega": 0.91,
+      "axis": "z",
+      "gait_scaled": false,
+      "amplitude": "in flight (activity 1): pi x 0.4 = 1.257 rad (72 deg) at 0.91 rad/tick; attacking: the same 72 degrees at 1.105 rad/tick; on the ground and moving above 0.1: pi x 0.2 = 0.628 rad (36 deg) x the walking speed at 0.845 rad/tick; on the ground and still: pi x 0.04 = 0.126 rad (7 deg) at 0.195 rad/tick; spar 1 about −0.4, spar 2 1.25x about −0.4, spar 3 about −0.6, spar 4 about −0.2, the membranes with their spars; the right wing the negative",
+      "plain": "the wings beat wide in flight and wider-faster when attacking, flap half as far with the stride on the ground, and stir at rest",
+      "math": "w = attacking ? cos(t * 1.7 * 0.65) * pi * 0.4 : (activity == 1 ? cos(t * 1.4 * 0.65) * pi * 0.4 : (amount > 0.1 ? cos(t * 1.3 * 0.65) * pi * 0.2 * amount : cos(t * 0.3 * 0.65) * pi * 0.04)); wing1.zRot = w - 0.4; wing2.zRot = 1.25w - 0.4; wing3.zRot = w - 0.6; wing4.zRot = w - 0.2; mem1..4 = their spars; rwing1 = -w + 0.4; rwing2 = -1.25w + 0.4; rwing3 = -w + 0.6; rwing4 = -w + 0.2",
+      "source": "ModelThePrinceTeen.java:551-585",
+      "phase": "four branches: attacking, flying, moving on the ground, still",
+      "wingspeed": 0.65,
+      "omega_note": "the classic phase flying is ageInTicks x 1.4 x wingspeed 0.65 = 0.91 rad/tick (period 6.9 ticks); attacking 1.7 x 0.65 = 1.105 (5.7); moving 1.3 x 0.65 = 0.845 (7.4); still 0.3 x 0.65 = 0.195 (32.2)"
+    },
+    {
+      "name": "tail",
+      "bones": [
+        "tail1", "tail2", "tail3", "tail4", "tail5", "Tailspike1", "Tailspike2", "Tailspike3"
+      ],
+      "omega": 0.169,
+      "axis": "y",
+      "gait_scaled": false,
+      "amplitude": "calm: pi x 0.08 = 0.251 rad (14 deg) at 0.169 rad/tick; attacking: pi x 0.19 = 0.597 rad (34 deg) at 0.364 rad/tick; zero when sitting; segment 1 a quarter of the wave, segments 2 to 4 the full wave an eighth of a period apart, segment 5 segment 4's angle plus half the wave, the spikes a third and then three quarters more; each placed at the end of the one before",
+      "plain": "the tail sweeps in a travelling wave that curls toward the spikes — slow and small at rest, fast and wide attacking, still when sitting",
+      "math": "ts = attacking ? 0.56 : 0.26; amp = sitting ? 0 : (attacking ? 0.19 : 0.08); tail1.yRot = cos(t * ts * 0.65) * pi * amp / 4; tail2 = cos(t * ts * 0.65 - pi/4) * pi * amp; tail3 = cos(... - pi/2) * pi * amp; tail4 = cos(... - 3pi/4) * pi * amp; h = tail4's wave / 2; tail5 = tail4 + h; Tailspike1 = Tailspike2 = tail5 + 2h/3; Tailspike3 = Tailspike1 + 3h/2",
+      "source": "ModelThePrinceTeen.java:659-688",
+      "phase": "the attacking flag selects the rate; isOrderedToSit stills it",
+      "wingspeed": 0.65,
+      "omega_note": "the classic phase calm is ageInTicks x 0.26 x wingspeed 0.65 = 0.169 rad/tick (period 37.2 ticks); attacking 0.56 x 0.65 = 0.364 (17.3 ticks)"
+    },
+    {
+      "name": "jaws",
+      "bones": [
+        "jaw1", "jaw5", "jaw1L", "jaw5L", "jaw1R", "jaw5R"
+      ],
+      "omega": 0.585,
+      "axis": "x",
+      "gait_scaled": false,
+      "amplitude": "attacking: pi x 0.1 = 0.314 rad (18 deg) about 0.25 plus the head's pitch, the left jaw at 0.9 x 0.65 = 0.585 rad/tick, the right at 1.1 x 0.65 = 0.715, the centre at 1.3 x 0.65 = 0.845; not attacking: pi x 0.02 = 0.063 rad (3.6 deg) about 0.1 at 0.25 / 0.3 / 0.35 x 0.65",
+      "plain": "the three jaws chomp on three different rates while attacking and breathe faintly at rest",
+      "math": "Ljx = attacking ? 0.25 + cos(t * 0.9 * 0.65) * pi * 0.1 : 0.1 + cos(t * 0.25 * 0.65) * pi * 0.02; Rjx = attacking ? 0.25 + cos(t * 1.1 * 0.65) * pi * 0.1 : 0.1 + cos(t * 0.3 * 0.65) * pi * 0.02; jx = attacking ? 0.25 + cos(t * 1.3 * 0.65) * pi * 0.1 : 0.1 + cos(t * 0.35 * 0.65) * pi * 0.02; jaw1L.xRot = jaw5L.xRot = pitch_L + Ljx; jaw1.xRot = jaw5.xRot = pitch_C + jx; jaw1R.xRot = jaw5R.xRot = pitch_R + Rjx",
+      "source": "ModelThePrinceTeen.java:746-781",
+      "phase": "the synced DATA_ATTACKING byte (ThePrinceTeen.java:65; set at :765 with a target, cleared at :756 / :784) selects",
+      "wingspeed": 0.65,
+      "omega_note": "the classic phases attacking are ageInTicks x 0.9 / 1.1 / 1.3 x wingspeed 0.65 = 0.585 / 0.715 / 0.845 rad/tick; calm 0.1625 / 0.195 / 0.2275"
+    }
+  ],
+  "behaviour": [
+    "On the ground the legs stride 45 degrees at top speed at 0.3575 rad/tick (a 17.6-tick period) above a walking-speed threshold of 0.1, the lower legs a quarter period ahead; attacking, they swing at 0.65 rad/tick whatever the speed; in flight (DATA_ACTIVITY 1, ThePrinceTeen.java:67) and calm they tuck up and the claws curl (ModelThePrinceTeen.java:587-657).",
+    "The wings branch four ways (:551-559): 72 degrees at 0.91 rad/tick in flight, 72 at 1.105 attacking, 36 x the speed at 0.845 moving on the ground, 7 at 0.195 still; the second spar beats 1.25 times the rest and the membranes ride their spars (:561-585). The tail sweeps in a travelling wave along five segments and three spikes, 14 degrees at 0.169 rad/tick at rest and 34 at 0.364 attacking, still when sitting (:659-688).",
+    "The three heads share the look — two thirds of the look yaw and pitch to the heads on the side the look turns to, half of that to the others — and in flight the look is replaced by a filtered turn rate clamped to ±50 degrees (:690-717); each neck takes an eighth, a quarter and a half of its head's yaw and pitches by a third, two thirds and the whole of its synced head extension, which random-walks between 0 and 60 (ThePrinceTeen.java:261-272; ModelThePrinceTeen.java:719-744, :783-849). The jaws chomp 18 degrees on three rates attacking and breathe 3.6 at rest (:746-781).",
+    "The body blocks, shoulders, back fins and neck base are static; the walk position plays no part beyond the speed.",
+    "The bite (doHurtTarget, ThePrinceTeen.java:276), the shot (shootSomethingAt :528-580), the rider's canon trio (:499-518), the growth into the Adult (:874-885) and the regression to the Prince (:1031-1040) are rolled by the AI or the player — nothing in the code fires an animation for them."
+  ],
+  "clips": [
+    {
+      "name": "idle",
+      "verdict": "author",
+      "note": "REQUIRED with walk: the gate opens on the pair — the ground rest: the wings' stir, the tail's slow sweep, the three heads bobbing on their extensions"
+    },
+    {
+      "name": "walk",
+      "verdict": "author",
+      "note": "REQUIRED with idle: the gait group's stride with the wings flapping half-open (:551-553, :587-599)"
+    },
+    {
+      "name": "fly",
+      "verdict": "author",
+      "note": "activity 1 (ThePrinceTeen.java:232, no physics): the 72-degree beat (ModelThePrinceTeen.java:554-556), the legs tucked and claws curled (:607-615)"
+    },
+    {
+      "name": "aggro_idle",
+      "verdict": "author",
+      "note": "the attacking flag (ThePrinceTeen.java:765): the faster beat (ModelThePrinceTeen.java:557-559), the legs swinging (:600-606), the tail fast (:659-662), the three jaws chomping (:749-755)"
+    },
+    {
+      "name": "calm_idle",
+      "verdict": "author",
+      "note": "the flag clear (:756 / :784): the jaws breathing (:756-763), the tail slow (:542-543), the legs tucked in the air (:607-612)"
+    },
+    {
+      "name": "attack",
+      "verdict": "author",
+      "note": "the bite: doHurtTarget (ThePrinceTeen.java:276) from the flight AI :769-775 within eight blocks plus half the target's width, or the ridden auto-melee :507-510 — 50 of damage; author a three-headed strike; the shot is the `cannon` extra",
+      "length_seconds": 0.5
+    },
+    {
+      "name": "hurt",
+      "verdict": "author",
+      "note": "a flinch to alo_hurt (ThePrinceTeen.java:61); hurt() (:286-310) refuses damage for 20 ticks and sends it into flight",
+      "length_seconds": 0.4
+    },
+    {
+      "name": "death",
+      "verdict": "author",
+      "note": "ruled 2026-09-06, Q3 (a): the vanilla death flip stays; a creature whose JSON ships a `death` clip gets the clip-replaces-flip mode, designed when the first such clip arrives (the Queen's own death clip the precedent) - a `death` delivered here plays under the flip until then",
+      "length_seconds": 1.5
+    }
+  ],
+  "extras": [
+    {
+      "name": "cannon",
+      "loop": false,
+      "layer": "overlay",
+      "trigger": "shootSomethingAt (ThePrinceTeen.java:528-580) from the flight AI :776-778 within twenty blocks with fire on a 1-in-2, or the rider's strafe keys (:499-518): with the head aimed within 0.5 rad, a 1-in-3 choice of a big BetterFireball, a ThunderBolt or an IceBall from six blocks ahead and 3.5 up; a named launch site (transport 3) when the rig lands",
+      "bones": ["neck3", "neck4", "neck5", "head3", "head7", "jaw1", "jaw5", "neck3L", "head3L", "neck3R", "head3R"],
+      "length_seconds": 0.5,
+      "code_triggered": false,
+      "note": "a head-throw and a jaw-gape on the firing head"
+    }
+  ],
+  "wishlist": [
+    "in `fly`: the code beats the wings 72 degrees (ModelThePrinceTeen.java:554-556) but holds the body flat — add a body rise on the downstroke and let the tail trail the turn",
+    "in `walk`: the stride with the lower legs a quarter turn ahead (:587-599) — add a body sway; the claws lie flat in the code, so a toe-spread on the plant is yours",
+    "in `attack`: a three-headed strike with the jaws' chomp (:749-755); the bite lands within eight blocks plus half the target's width (ThePrinceTeen.java:769-773)",
+    "in `aggro_idle`: the three heads on their three jaw rates (:749-755) and the tail's fast sweep (:659-662), read as a hover-and-hiss"
+  ],
+  "locked_bones_provisional": [
+    {"bone": "body", "size": [2, 2], "damage": 0.5},
+    {"bone": "body2", "size": [2, 2], "damage": 0.5},
+    {"bone": "head3", "size": [1.1, 1], "damage": 1},
+    {"bone": "head3L", "size": [1.1, 1], "damage": 1},
+    {"bone": "head3R", "size": [1.1, 1], "damage": 1},
+    {"bone": "leftleg1", "size": [0.7, 1.8], "damage": 0.5},
+    {"bone": "leftleg2", "size": [0.7, 1.8], "damage": 0.5},
+    {"bone": "leftleg3", "size": [0.7, 1.8], "damage": 0.5},
+    {"bone": "rightleg1", "size": [0.7, 1.8], "damage": 0.5},
+    {"bone": "rightleg2", "size": [0.7, 1.8], "damage": 0.5},
+    {"bone": "rightleg3", "size": [0.7, 1.8], "damage": 0.5},
+    {"bone": "wing1", "size": [2.3, 0.7], "damage": 0.25},
+    {"bone": "rwing1", "size": [2.3, 0.7], "damage": 0.25},
+    {"bone": "tail1", "size": [0.9, 0.9], "damage": 0.25},
+    {"bone": "tail3", "size": [0.9, 0.9], "damage": 0.25},
+    {"bone": "tail5", "size": [0.9, 0.9], "damage": 0.25}
+  ],
+  "locked_bones_note": "The design's section 6 ModelThePrinceTeen row (geckolib_migration_design.md:457): 'body/body2 [2,2] @0.5; head3/head3L/head3R [1.1,1] @1; left/right segmented legs [0.7,1.8] @0.5; wing1/rwing1 [2.3,0.7] @0.25; tail1/tail3/tail5 [0.9,0.9] @0.25'. body, body2, head3, head3L, head3R, wing1, rwing1, tail1, tail3 and tail5 resolve as written (ModelThePrinceTeen.createBodyLayer). 'left/right segmented legs' is not a bone name: taken as the three leg segments a side — leftleg1, leftleg2, leftleg3 and rightleg1, rightleg2, rightleg3 (the claw pieces stay visual). The row: 'Preserve three-head names and separate membrane visuals from damage roots.'",
+  "effort_hours": null
+}

@@ -1,0 +1,191 @@
+{
+  "format_version": "1.8.0",
+  "animations": {
+    "reference": {
+      "loop": true,
+      "animation_length": 0.2617993774,
+      "bones": {
+        "Shape1": {
+          "rotation": {
+            "0.0": {
+              "post": [
+                26.9771879195,
+                0.0,
+                0.0
+              ],
+              "lerp_mode": "linear"
+            },
+            "0.05": {
+              "post": [
+                9.7619420033,
+                0.0,
+                0.0
+              ],
+              "lerp_mode": "linear"
+            },
+            "0.1": {
+              "post": [
+                -19.9308574132,
+                0.0,
+                0.0
+              ],
+              "lerp_mode": "linear"
+            },
+            "0.15": {
+              "post": [
+                -24.2357053735,
+                0.0,
+                0.0
+              ],
+              "lerp_mode": "linear"
+            },
+            "0.2": {
+              "post": [
+                2.3375536963,
+                0.0,
+                0.0
+              ],
+              "lerp_mode": "linear"
+            },
+            "0.25": {
+              "post": [
+                25.9015902196,
+                0.0,
+                0.0
+              ],
+              "lerp_mode": "linear"
+            },
+            "0.2617993774": {
+              "post": [
+                26.9771879195,
+                0.0,
+                0.0
+              ],
+              "lerp_mode": "linear"
+            }
+          }
+        },
+        "body": {
+          "rotation": {
+            "0.0": {
+              "post": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "lerp_mode": "linear"
+            },
+            "0.05": {
+              "post": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "lerp_mode": "linear"
+            },
+            "0.1": {
+              "post": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "lerp_mode": "linear"
+            },
+            "0.15": {
+              "post": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "lerp_mode": "linear"
+            },
+            "0.2": {
+              "post": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "lerp_mode": "linear"
+            },
+            "0.25": {
+              "post": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "lerp_mode": "linear"
+            },
+            "0.2617993774": {
+              "post": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "lerp_mode": "linear"
+            }
+          }
+        },
+        "tail1": {
+          "rotation": {
+            "0.0": {
+              "post": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "lerp_mode": "linear"
+            },
+            "0.05": {
+              "post": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "lerp_mode": "linear"
+            },
+            "0.1": {
+              "post": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "lerp_mode": "linear"
+            },
+            "0.15": {
+              "post": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "lerp_mode": "linear"
+            },
+            "0.2": {
+              "post": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "lerp_mode": "linear"
+            },
+            "0.25": {
+              "post": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "lerp_mode": "linear"
+            },
+            "0.2617993774": {
+              "post": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "lerp_mode": "linear"
+            }
+          }
+        }
+      }
+    }
+  }
+}

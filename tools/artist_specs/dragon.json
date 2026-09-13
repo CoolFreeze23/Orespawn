@@ -1,0 +1,235 @@
+{
+  "registry": "dragon",
+  "display_name": "Dragon",
+  "status": "DRAFT — authored by a seed lane from the entity code, 2026-09-13; the owner's edit pending",
+  "locomotion": "flyer",
+  "artist_scope": "full contract (Tier 1, the state-branching class: geckolib_migration_design.md section 5) with the §8.1 locks; the rig is not yet in-game (it lands through the seam in a later slice)",
+  "character_sheet": "The Dragon is a tameable, rideable fire- or water-breathing dragon: a three-block body with three back spikes, a two-piece neck to a horned head with an upper and a hinged lower jaw, two wings of three spars and three membrane panels each on a root panel, four legs — two-piece front legs with feet, three-piece hind legs with feet — and a seven-segment spiked tail ending in a fin (ModelDragon.createBodyLayer, ModelDragon.java:136-415; one tail segment is named 'neck1' by the model's author). It has 200 HP and 35 attack (createAttributes, Dragon.java:173-178; double against the Kraken, doHurtTarget :285-302, knockback 1.75). On the ground it sits when told, follows its owner, is tempted by beef, wanders and looks about (goals :140-147) and hunts monsters, Mothra and the Kraken — never players (:942-957); a 1-in-10 roll with prey in sight, a far owner or a rare roll sends it into the air (customServerAiStep :394-401, tick :381-386, handlePassiveBehaviors :873-894). Flying (DATA_ACTIVITY 1, no gravity, :379) it steers itself to a flight target, and on a 1-in-9 roll with a target raises the attacking flag and bites within five blocks plus half the target's width or, within sixteen and with fire, shoots — a small or big fireball, a water ball or an ice ball by its type and fire level (handleAIFlight :670-706, shootProjectileAt :808-860); a tamed one below a quarter health flees (:676-683) and seeks water to heal (:897-908). Beef tames it one time in five (:974-991); an owner mounts it with an empty hand and rides it on the client-predicted RiderFlightController, firing with the strafe keys (:1001-1005, tickRidden :450-455, handleRiderProjectiles :504-567), and gives it fire with flint and steel or gunpowder, takes it with ice, and changes its type with a water or lava bucket (:1040-1096). Being hurt wakes it into flight and turns it on the attacker (hurt :305-344). It spawns in the Island biome (island_biome.json) by day, with no other Dragon within 16 blocks, anywhere in the Islands or else above y 50 (checkSpawnRules :1242-1249). Read it as a real dragon: a heavy four-legged walker on the ground, and a wide slow wing-beat with the legs tucked in the air.",
+  "size_notes": "Drawn at x1.0 of the rig (DragonRenderer.java:30, applied :42; shadow 1.25) on a 256x128 sheet (ModelDragon.java:415), dragon.png or white_dragon.png by the synced dragon type (DragonRenderer.java:21-24, :48); 1.5 x 1.25 block hitbox (ModEntities.java:487-489; the design's row writes [1.5,2] — the profile takes the registered size). The wings, legs, neck and tail are chains the code positions segment by segment — key the joints, never the positions.",
+  "labels": {
+    "body": "body (the main 12x18x10 block, laid flat; static; intended hitbox part 'body')",
+    "body2": "lower body block (static)",
+    "body3": "upper body block (static)",
+    "spike4": "back spike 1 (static, on the body)",
+    "spike5": "back spike 2 (static, on the body)",
+    "spike6": "back spike 3 (static, on the body)",
+    "neck2": "neck, base (a quarter of the look yaw)",
+    "spike2": "neck-base spike (turns with the neck base)",
+    "neck3": "neck, upper (half the look yaw, placed on the base)",
+    "spike1": "neck spike (rides the upper neck)",
+    "head": "head (three quarters of the look yaw, placed on the neck; intended hitbox part 'head')",
+    "mouth1": "upper jaw (rides the head)",
+    "mouth2": "lower jaw (still at 0.07; chomps 25 degrees about 0.4 while attacking)",
+    "horn1": "left horn (rides the head, splayed +0.26)",
+    "horn2": "right horn (rides the head, splayed −0.26)",
+    "leg4": "front left leg, upper (the stride about 0.557; tucked in flight; intended hitbox part 'leg4')",
+    "leg5": "front left leg, lower (about −0.557)",
+    "foot2": "front left foot",
+    "leg3": "front right leg, upper (the stride, opposite the left; intended hitbox part 'leg3')",
+    "leg6": "front right leg, lower",
+    "foot1": "front right foot",
+    "leg2": "hind left thigh (the stride about −0.632; intended hitbox part 'leg2')",
+    "leg7": "hind left shin (about 0.89)",
+    "leg10": "hind left ankle (about −0.557)",
+    "foot3": "hind left foot",
+    "leg1": "hind right thigh (the stride, opposite the left; intended hitbox part 'leg1')",
+    "leg9": "hind right shin",
+    "leg11": "hind right ankle",
+    "foot4": "hind right foot",
+    "wing1": "left wing, root spar (11 long; the beat's root)",
+    "wing15": "left wing, root panel (12x8; beats with the root spar; intended hitbox part 'wing15')",
+    "wing3": "left wing, middle spar (24 long; 4/3 of the beat, placed at the root spar's end)",
+    "wing8": "left wing, inner membrane (28x8; rides the middle spar)",
+    "wing2": "left wing, tip spar (36 long; 3/2 of the beat, placed at the middle spar's end)",
+    "wing9": "left wing, middle membrane (18x26; rides the tip spar)",
+    "wing7": "left wing, outer membrane strip (8x36; rides the tip spar)",
+    "wing4": "right wing, root spar (the mirror of the left)",
+    "wing14": "right wing, root panel (intended hitbox part 'wing14')",
+    "wing5": "right wing, middle spar (4/3 of the beat)",
+    "wing10": "right wing, inner membrane (33x8; rides the middle spar)",
+    "wing6": "right wing, tip spar (3/2 of the beat)",
+    "wing12": "right wing, middle membrane (rides the tip spar)",
+    "wing11": "right wing, outer membrane strip (rides the tip spar)",
+    "tail1": "tail segment 1 (the root of the tail wave; intended hitbox part 'tail1')",
+    "spike10": "tail spike on segment 1",
+    "tail2": "tail segment 2 (an eighth of the wave)",
+    "spike7": "tail spike on segment 2",
+    "neck1": "tail segment 3 — named 'neck1' by the model's author but posed in the tail chain between tail2 and tail3 (ModelDragon.java:543-548)",
+    "spike8": "tail spike on segment 3 ('neck1')",
+    "tail3": "tail segment 4 (three eighths of the wave; intended hitbox part 'tail3')",
+    "spike3": "tail spike on segment 4",
+    "tail4": "tail segment 5 (half the wave)",
+    "spike9": "tail spike on segment 5",
+    "tail6": "tail segment 6 (five eighths; intended hitbox part 'tail6')",
+    "tail5": "tail tip fin (the zero-thickness 11x10 fin at the end; three quarters of the wave)"
+  },
+  "groups": [
+    {
+      "name": "gait",
+      "bones": [
+        "leg4", "leg5", "foot2", "leg3", "leg6", "foot1",
+        "leg2", "leg7", "leg10", "foot3", "leg1", "leg9", "leg11", "foot4"
+      ],
+      "omega": 1.25,
+      "axis": "x",
+      "gait_scaled": true,
+      "amplitude": "pi x 0.6 x the TRUE horizontal speed in blocks per tick (from xOld / zOld, not limbSwingAmount; about 0.6 rad at the 0.32 walk), zero below a limbSwingAmount of 0.001: every piece of a leg swings together about its rest (front upper ±0.557, front lower ∓0.557, hind thigh −0.632, shin 0.89, ankle −0.557, feet 0), the front left and hind right one way, the front right and hind left the other; in flight (activity 1) every leg is held tucked one radian and still",
+      "plain": "on the ground the four legs stride diagonally with the real speed, each leg a stiff chain; in the air they all tuck and hold",
+      "math": "a = amount > 0.001 ? cos(t * 1.25) * pi * |velocity_xz| * 0.6 : 0; activity != 0 ? (leg4 = 0.557 - 1, leg5 = -0.557 - 1, foot2 = -1, leg3 = 0.557 - 1, leg6 = -0.557 - 1, foot1 = -1, leg2 = -0.632 + 1, leg7 = 0.89 + 1, leg10 = -0.557 + 1, foot3 = 1, leg1 = -0.632 + 1, leg9 = 0.89 + 1, leg11 = -0.557 + 1, foot4 = 1) : (leg4/leg5/foot2 = rest + a; leg3/leg6/foot1 = rest - a; leg2/leg7/leg10/foot3 = rest - a; leg1/leg9/leg11/foot4 = rest + a)",
+      "source": "ModelDragon.java:425-466; ANIM_SPEED 1.0 (:20)",
+      "phase": "the synced DATA_ACTIVITY byte (Dragon.java:66; 1 in flight) selects tucked-and-still over the stride",
+      "omega_note": "the classic phase is ageInTicks x 1.25 (ANIM_SPEED 1.0): the natural period is 2 pi / 1.25 = 5.03 ticks; the amplitude is the entity's real speed, so the reference clip's fixed limbSwingAmount does not drive it"
+    },
+    {
+      "name": "wings",
+      "bones": [
+        "wing1", "wing15", "wing3", "wing8", "wing2", "wing7", "wing9",
+        "wing4", "wing14", "wing5", "wing10", "wing6", "wing11", "wing12"
+      ],
+      "omega": 0.75,
+      "axis": "z",
+      "gait_scaled": false,
+      "amplitude": "in flight (activity 1): pi x 0.28 = 0.88 rad (50 deg) about zero at 0.75 rad/tick; on the ground and attacking: pi x 0.2 = 0.628 rad (36 deg) about −0.45 at 0.85 rad/tick; on the ground and calm: pi x 0.028 = 0.088 rad (5 deg) about −0.85 at 0.2 rad/tick; the root spar and root panel take the wave, the middle spar and inner membrane 4/3 of it, the tip spar and its two membranes 3/2, each placed at the end of the spar before; the right wing the negative",
+      "plain": "the wings beat wide and slow in flight, hang folded with a faint stir on the ground, and half-raise and flap while attacking on the ground; the beat widens from root to tip",
+      "math": "w = activity != 0 ? cos(t * 0.75) * pi * 0.28 : (attacking ? -0.45 + cos(t * 0.85) * pi * 0.2 : -0.85 + cos(t * 0.2) * pi * 0.028); wing1.zRot = wing15.zRot = w; wing3.zRot = wing8.zRot = 4w/3; wing2.zRot = wing7.zRot = wing9.zRot = 3w/2; wing4/wing14 = -w; wing5/wing10 = -4w/3; wing6/wing11/wing12 = -3w/2; positions along the spars by sin/cos x 7 and 6",
+      "source": "ModelDragon.java:469-513",
+      "phase": "three branches: DATA_ACTIVITY 1 (flying), else DATA_ATTACKING set / clear",
+      "omega_note": "the classic phase in flight is ageInTicks x 0.75 (period 8.38 ticks); ground attacking 0.85 (7.39 ticks); ground calm 0.2 (31.4 ticks)"
+    },
+    {
+      "name": "tail",
+      "bones": [
+        "tail1", "spike10", "tail2", "spike7", "neck1", "spike8", "tail3", "spike3", "tail4", "spike9", "tail6", "tail5"
+      ],
+      "omega": 0.76,
+      "axis": "y",
+      "gait_scaled": false,
+      "amplitude": "segment 1: pi x 0.04 = 0.126 rad (7 deg); the segments behind: pi x amp x 0.125 / 0.25 / 0.375 / 0.5 / 0.625 / 0.75 in order (tail2, neck1, tail3, tail4, tail6, tail5) with amp 0.45 in calm flight (up to 61 deg at the tip) at 0.76 rad/tick, amp 0.75 attacking at 0.96 rad/tick, amp 0.22 on the ground and calm at 0.22 rad/tick, zero in the sitting pose; every segment in phase, placed at the end of the one before; the spikes ride their segments",
+      "plain": "the tail sways side to side, the swing growing toward the tip — brisk and wide in flight or when attacking, small and slow on the ground, still when sitting",
+      "math": "ts, amp = attacking ? (0.96, 0.75) : (activity == 0 ? (0.22, 0.22) : (0.76, 0.45)); sitting ? (0, 0); tail1.yRot = cos(t * ts) * pi * 0.04; tail2.yRot = cos(t * ts) * pi * amp * 0.125; neck1 = ... * 0.25; tail3 = ... * 0.375; tail4 = ... * 0.5; tail6 = ... * 0.625; tail5 = ... * 0.75; spike10/7/8/3/9 = the segment they ride; positions along the chain by cos/sin x 6",
+      "source": "ModelDragon.java:422-423, :516-570",
+      "phase": "state-branching: attacking, or the calm ground state, or sitting (isInSittingPose) select the rate and width",
+      "omega_note": "the classic phase in calm flight is ageInTicks x 0.76 (period 8.27 ticks); attacking 0.96 (6.54 ticks); calm on the ground 0.22 (28.6 ticks)"
+    },
+    {
+      "name": "mouth",
+      "bones": [
+        "mouth2"
+      ],
+      "omega": 1.5,
+      "axis": "x",
+      "gait_scaled": false,
+      "amplitude": "attacking: pi x 0.14 = 0.44 rad (25 deg) about 0.4; not attacking: still at 0.07",
+      "plain": "the lower jaw chomps fast while the attacking flag is set and hangs nearly shut otherwise",
+      "math": "mouth2.xRot = attacking ? 0.4 + cos(t * 1.5) * pi * 0.14 : 0.07",
+      "source": "ModelDragon.java:618-619",
+      "phase": "the synced DATA_ATTACKING byte (Dragon.java:64; set at :685 with a target in flight, :588 ridden) selects",
+      "omega_note": "the classic phase is ageInTicks x 1.5: the natural period is 4.19 ticks"
+    }
+  ],
+  "behaviour": [
+    "On the ground the four legs stride diagonally at 1.25 rad/tick (a 5-tick period), each leg a stiff chain, the swing scaled by the entity's TRUE horizontal speed (from its last position, ModelDragon.java:425-432) rather than by limbSwingAmount; in flight (DATA_ACTIVITY 1, Dragon.java:66) every leg tucks one radian and holds (:435-450).",
+    "The wings branch three ways (:469-477): in flight they beat 50 degrees at 0.75 rad/tick (an 8.4-tick beat), the middle spars 4/3 of that and the tips 3/2, each placed at the end of the spar before (:479-513); on the ground they hang folded at −0.85 with a 5-degree stir, and while the attacking flag is set they half-raise to −0.45 and flap 36 degrees at 0.85 rad/tick.",
+    "The tail sways in phase along seven segments, the swing growing toward the tip: 0.45 wide at 0.76 rad/tick in calm flight, 0.75 wide at 0.96 attacking, 0.22 wide at 0.22 on the ground, still in the sitting pose (:516-570). The neck turns a quarter and a half of the look and the head three quarters, the jaws and horns riding it (:592-616); in flight the look is replaced by a filtered turn rate clamped to ±50 degrees (:577-587). The lower jaw chomps 25 degrees at 1.5 rad/tick while attacking and rests at 0.07 (:618-619).",
+    "The body blocks and the three back spikes are static; the walk position plays no part.",
+    "The takeoff and the landing are flag flips (customServerAiStep :394-401, handlePassiveBehaviors :873-894, hurt :315, mobInteract :1004), the bite is doHurtTarget (:285-302) from the flight AI (:693) or the ridden auto-melee (:591), the shot is shootProjectileAt (:808-860) or the rider's strafe keys (:504-567), and the wing sound every 20 ticks in flight (:356-370) is the entity's — none of these are animation events."
+  ],
+  "clips": [
+    {
+      "name": "idle",
+      "verdict": "author",
+      "note": "REQUIRED with walk: the gate opens on the pair — the ground rest: wings folded and stirring, the tail's slow sway, the head on the look"
+    },
+    {
+      "name": "walk",
+      "verdict": "author",
+      "note": "REQUIRED with idle: the gait group's four-legged stride (the code scales it by the real speed, :425-432)"
+    },
+    {
+      "name": "fly",
+      "verdict": "author",
+      "note": "DATA_ACTIVITY 1 (Dragon.java:379, no gravity): the legs tucked (ModelDragon.java:435-450), the wings beating 50 degrees (:471, :475), the tail brisk (:422-423)"
+    },
+    {
+      "name": "aggro_idle",
+      "verdict": "author",
+      "note": "the attacking flag (Dragon.java:685 in flight, :588 ridden): the jaw chomping (ModelDragon.java:618-619), the tail at 0.96 and 0.75 wide (:516-519), on the ground the wings half-raised and flapping (:472)"
+    },
+    {
+      "name": "calm_idle",
+      "verdict": "author",
+      "note": "the flag clear (Dragon.java:704): the jaw at rest (:619), the tail slow on the ground (:520-522), the wings folded (:476)"
+    },
+    {
+      "name": "attack",
+      "verdict": "author",
+      "note": "the bite: doHurtTarget (Dragon.java:285-302) from handleAIFlight :691-695 within five blocks plus half the target's width, or handleRiderCombat :589-592 within seven — 35 of damage and a 1.75 knockback; author a head lunge with the jaw's chomp (ModelDragon.java:618-619); the ranged shot is the `breath` extra",
+      "length_seconds": 0.5
+    },
+    {
+      "name": "hurt",
+      "verdict": "author",
+      "note": "a flinch to alo_hurt (getHurtSound :257-260); hurt() (:305-344) then flips it into flight, refuses damage for 20 ticks and turns it on the attacker",
+      "length_seconds": 0.4
+    },
+    {
+      "name": "death",
+      "verdict": "author",
+      "note": "ruled 2026-09-06, Q3 (a): the vanilla death flip stays; a creature whose JSON ships a `death` clip gets the clip-replaces-flip mode, designed when the first such clip arrives (the Queen's own death clip the precedent) - a `death` delivered here plays under the flip until then",
+      "length_seconds": 1.5
+    }
+  ],
+  "extras": [
+    {
+      "name": "breath",
+      "loop": false,
+      "layer": "overlay",
+      "trigger": "the shot: shootProjectileAt (Dragon.java:808-860) from handleAIFlight :696-699 within sixteen blocks with fire, or the rider's strafe keys (handleRiderProjectiles :504-567) — a SmallFireball, BetterFireball, WaterBall or IceBall by type and fire level, launched 2.25 blocks ahead and 1.25 up; a named launch site (transport 3) when the rig lands",
+      "bones": ["neck2", "neck3", "head", "mouth1", "mouth2", "horn1", "horn2"],
+      "length_seconds": 0.5,
+      "code_triggered": false,
+      "note": "a head rear and a jaw snap on the shot"
+    },
+    {
+      "name": "takeoff",
+      "loop": false,
+      "layer": "overlay",
+      "trigger": "the synced DATA_ACTIVITY byte rising 0 -> 1 (Dragon.setActivity; set at customServerAiStep :399, tick :384, handlePassiveBehaviors :877 / :883 / :890, hurt :315, mobInteract :1004) — the legs tuck and the wings start the flight beat (ModelDragon.java:435-450, :471); a transition on the flag's edge, its transport the seam's when the rig lands",
+      "bones": ["leg1", "leg2", "leg3", "leg4", "wing1", "wing4", "wing15", "wing14", "body"],
+      "length_seconds": 0.8,
+      "code_triggered": false,
+      "note": "the crouch, the leap and the first downstroke"
+    },
+    {
+      "name": "land",
+      "loop": false,
+      "layer": "overlay",
+      "trigger": "the synced DATA_ACTIVITY byte falling 1 -> 0 (handlePassiveBehaviors :888-894 on a 1-in-50 tick, 14 times in 15; :897-901 when it goes to water) — the legs untuck (ModelDragon.java:451-466); a transition on the flag's edge",
+      "bones": ["leg1", "leg2", "leg3", "leg4", "wing1", "wing4", "wing15", "wing14", "body"],
+      "length_seconds": 0.8,
+      "code_triggered": false,
+      "note": "the settle onto four legs with the wings folding"
+    }
+  ],
+  "wishlist": [
+    "in `fly`: the code beats the wings 50 degrees (ModelDragon.java:471, :475) but never bobs the body; add a body rise on the downstroke and a neck-and-tail follow-through",
+    "in `walk`: the four legs swing as stiff chains scaled by the real speed (:425-432, :451-466); bend the knees on the forward swing and let the tail's slow sway (:520-522) counter the stride",
+    "in `attack`: the bite with the lower jaw's chomp (:618-619) and a head lunge; the bite lands within five blocks plus half the target's width (Dragon.java:691-693)",
+    "in `breath`: a head rear and a jaw snap timed to the launch; the projectile leaves 2.25 blocks ahead and 1.25 up (Dragon.java:809-813)"
+  ],
+  "locked_bones_provisional": [
+    {"bone": "head", "size": [1, 0.8], "damage": 1},
+    {"bone": "body", "size": [1.4, 1.1], "damage": 0.5},
+    {"bone": "leg1", "size": [0.4, 0.75], "damage": 0.5},
+    {"bone": "leg2", "size": [0.4, 0.75], "damage": 0.5},
+    {"bone": "leg3", "size": [0.4, 0.75], "damage": 0.5},
+    {"bone": "leg4", "size": [0.4, 0.75], "damage": 0.5},
+    {"bone": "wing14", "size": [2.2, 0.5], "damage": 0.25},
+    {"bone": "wing15", "size": [2.2, 0.5], "damage": 0.25},
+    {"bone": "tail1", "size": [0.6, 0.55], "damage": 0.25},
+    {"bone": "tail3", "size": [0.6, 0.55], "damage": 0.25},
+    {"bone": "tail6", "size": [0.6, 0.55], "damage": 0.25}
+  ],
+  "locked_bones_note": "The design's section 6 ModelDragon row (geckolib_migration_design.md:446): 'Adult: head [1,0.8] @1, body [1.4,1.1] @0.5, four leg roots [0.4,0.75] @0.5, wing14/wing15 [2.2,0.5] @0.25, tail1/tail3/tail6 [0.6,0.55] @0.25'. head, body, wing14, wing15, tail1, tail3 and tail6 resolve as written (wing14 / wing15 are the root panels; tail3 is the fourth segment of the chain and tail6 the sixth — the chain runs tail1, tail2, 'neck1', tail3, tail4, tail6, tail5, ModelDragon.java:531-570). 'four leg roots' is not a bone name: taken as the root of each leg chain — leg1 and leg2 (the hind thighs), leg3 and leg4 (the front uppers) (createBodyLayer :225-242, setupAnim :451-466). The row's baby profile ('the same bones at 45% part sizes') is in `baby_dragon`'s seed.",
+  "effort_hours": null
+}

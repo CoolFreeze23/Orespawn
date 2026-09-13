@@ -1,0 +1,4370 @@
+{
+  "generated_by": "tools/artist_package.py 0.2.9 (the full folder, 2026-09-13, fourth set, items 5, 7 and 8: every artist-tier species packaged - a rig not yet in-game from the reference leg's converter output, bone names final; the Tier-1 bosses' intended locked bones from the design's section 6 rendered in section 7 and validated against the geo; the README's priority table the full list, bosses first, closing with the deliverable count)",
+  "registry": "lurking_terror",
+  "display_name": "Lurking Terror",
+  "tier": 2,
+  "tier_label": "Tier 2",
+  "geo_file": "reference_lurkingterror.geo.json",
+  "animation_file": "lurking_terror.animation.json",
+  "bbmodel_file": "lurking_terror.bbmodel",
+  "texture_size": [
+    256,
+    64
+  ],
+  "bones": [
+    {
+      "name": "abdomen",
+      "parent": null,
+      "pivot": [
+        0,
+        11,
+        20
+      ],
+      "rotation": null,
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            -3.0,
+            8.0,
+            20.0
+          ],
+          "size": [
+            6.0,
+            6.0,
+            16.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              134.0,
+              34.0,
+              -16.0,
+              6.0
+            ],
+            "east": [
+              156.0,
+              34.0,
+              -16.0,
+              6.0
+            ],
+            "north": [
+              140.0,
+              34.0,
+              -6.0,
+              6.0
+            ],
+            "south": [
+              162.0,
+              34.0,
+              -6.0,
+              6.0
+            ],
+            "up": [
+              140.0,
+              18.0,
+              -6.0,
+              16.0
+            ],
+            "down": [
+              146.0,
+              34.0,
+              -6.0,
+              -16.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "body",
+      "parent": null,
+      "pivot": [
+        0,
+        14,
+        0
+      ],
+      "rotation": null,
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            -4.0,
+            10.0,
+            -8.0
+          ],
+          "size": [
+            8.0,
+            8.0,
+            12.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              51.0,
+              39.0,
+              -12.0,
+              8.0
+            ],
+            "east": [
+              71.0,
+              39.0,
+              -12.0,
+              8.0
+            ],
+            "north": [
+              59.0,
+              39.0,
+              -8.0,
+              8.0
+            ],
+            "south": [
+              79.0,
+              39.0,
+              -8.0,
+              8.0
+            ],
+            "up": [
+              59.0,
+              27.0,
+              -8.0,
+              12.0
+            ],
+            "down": [
+              67.0,
+              39.0,
+              -8.0,
+              -12.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "head",
+      "parent": null,
+      "pivot": [
+        0,
+        14,
+        -8
+      ],
+      "rotation": null,
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            -3.0,
+            11.0,
+            -11.0
+          ],
+          "size": [
+            6.0,
+            6.0,
+            5.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              32.0,
+              53.0,
+              -5.0,
+              6.0
+            ],
+            "east": [
+              43.0,
+              53.0,
+              -5.0,
+              6.0
+            ],
+            "north": [
+              38.0,
+              53.0,
+              -6.0,
+              6.0
+            ],
+            "south": [
+              49.0,
+              53.0,
+              -6.0,
+              6.0
+            ],
+            "up": [
+              38.0,
+              48.0,
+              -6.0,
+              5.0
+            ],
+            "down": [
+              44.0,
+              53.0,
+              -6.0,
+              -5.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "jaw1",
+      "parent": null,
+      "pivot": [
+        2,
+        14,
+        -8
+      ],
+      "rotation": [
+        0,
+        -23.4319512798,
+        0
+      ],
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            2.0,
+            13.0,
+            -21.0
+          ],
+          "size": [
+            1.0,
+            2.0,
+            14.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              110.0,
+              45.0,
+              -14.0,
+              2.0
+            ],
+            "east": [
+              125.0,
+              45.0,
+              -14.0,
+              2.0
+            ],
+            "north": [
+              111.0,
+              45.0,
+              -1.0,
+              2.0
+            ],
+            "south": [
+              126.0,
+              45.0,
+              -1.0,
+              2.0
+            ],
+            "up": [
+              111.0,
+              31.0,
+              -1.0,
+              14.0
+            ],
+            "down": [
+              112.0,
+              45.0,
+              -1.0,
+              -14.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "jaw1part2",
+      "parent": null,
+      "pivot": [
+        2,
+        14,
+        -8
+      ],
+      "rotation": [
+        0,
+        -23.4319512798,
+        0
+      ],
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            2.1,
+            12.0,
+            -13.0
+          ],
+          "size": [
+            1.0,
+            4.0,
+            5.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              44.0,
+              22.0,
+              -5.0,
+              4.0
+            ],
+            "east": [
+              50.0,
+              22.0,
+              -5.0,
+              4.0
+            ],
+            "north": [
+              45.0,
+              22.0,
+              -1.0,
+              4.0
+            ],
+            "south": [
+              51.0,
+              22.0,
+              -1.0,
+              4.0
+            ],
+            "up": [
+              45.0,
+              17.0,
+              -1.0,
+              5.0
+            ],
+            "down": [
+              46.0,
+              22.0,
+              -1.0,
+              -5.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "jaw1tooth1",
+      "parent": null,
+      "pivot": [
+        2,
+        14,
+        -8
+      ],
+      "rotation": [
+        0,
+        -23.4319512798,
+        0
+      ],
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            1.0,
+            13.5,
+            -21.0
+          ],
+          "size": [
+            1.0,
+            1.0,
+            1.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              40.0,
+              28.0,
+              -1.0,
+              1.0
+            ],
+            "east": [
+              42.0,
+              28.0,
+              -1.0,
+              1.0
+            ],
+            "north": [
+              41.0,
+              28.0,
+              -1.0,
+              1.0
+            ],
+            "south": [
+              43.0,
+              28.0,
+              -1.0,
+              1.0
+            ],
+            "up": [
+              41.0,
+              27.0,
+              -1.0,
+              1.0
+            ],
+            "down": [
+              42.0,
+              28.0,
+              -1.0,
+              -1.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "jaw1tooth2",
+      "parent": null,
+      "pivot": [
+        2,
+        14,
+        -8
+      ],
+      "rotation": [
+        0,
+        -23.4319512798,
+        0
+      ],
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            1.0,
+            13.5,
+            -19.0
+          ],
+          "size": [
+            1.0,
+            1.0,
+            1.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              40.0,
+              28.0,
+              -1.0,
+              1.0
+            ],
+            "east": [
+              42.0,
+              28.0,
+              -1.0,
+              1.0
+            ],
+            "north": [
+              41.0,
+              28.0,
+              -1.0,
+              1.0
+            ],
+            "south": [
+              43.0,
+              28.0,
+              -1.0,
+              1.0
+            ],
+            "up": [
+              41.0,
+              27.0,
+              -1.0,
+              1.0
+            ],
+            "down": [
+              42.0,
+              28.0,
+              -1.0,
+              -1.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "jaw1tooth3",
+      "parent": null,
+      "pivot": [
+        2,
+        14,
+        -8
+      ],
+      "rotation": [
+        0,
+        -23.4319512798,
+        0
+      ],
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            1.0,
+            13.5,
+            -17.0
+          ],
+          "size": [
+            1.0,
+            1.0,
+            1.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              40.0,
+              28.0,
+              -1.0,
+              1.0
+            ],
+            "east": [
+              42.0,
+              28.0,
+              -1.0,
+              1.0
+            ],
+            "north": [
+              41.0,
+              28.0,
+              -1.0,
+              1.0
+            ],
+            "south": [
+              43.0,
+              28.0,
+              -1.0,
+              1.0
+            ],
+            "up": [
+              41.0,
+              27.0,
+              -1.0,
+              1.0
+            ],
+            "down": [
+              42.0,
+              28.0,
+              -1.0,
+              -1.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "jaw1tooth4",
+      "parent": null,
+      "pivot": [
+        2,
+        14,
+        -8
+      ],
+      "rotation": [
+        0,
+        -23.4319512798,
+        0
+      ],
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            1.0,
+            13.5,
+            -15.0
+          ],
+          "size": [
+            1.0,
+            1.0,
+            1.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              40.0,
+              28.0,
+              -1.0,
+              1.0
+            ],
+            "east": [
+              42.0,
+              28.0,
+              -1.0,
+              1.0
+            ],
+            "north": [
+              41.0,
+              28.0,
+              -1.0,
+              1.0
+            ],
+            "south": [
+              43.0,
+              28.0,
+              -1.0,
+              1.0
+            ],
+            "up": [
+              41.0,
+              27.0,
+              -1.0,
+              1.0
+            ],
+            "down": [
+              42.0,
+              28.0,
+              -1.0,
+              -1.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "jaw1tooth5",
+      "parent": null,
+      "pivot": [
+        2,
+        14,
+        -8
+      ],
+      "rotation": [
+        0,
+        -23.4319512798,
+        0
+      ],
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            1.0,
+            14.5,
+            -12.5
+          ],
+          "size": [
+            1.0,
+            1.0,
+            1.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              40.0,
+              28.0,
+              -1.0,
+              1.0
+            ],
+            "east": [
+              42.0,
+              28.0,
+              -1.0,
+              1.0
+            ],
+            "north": [
+              41.0,
+              28.0,
+              -1.0,
+              1.0
+            ],
+            "south": [
+              43.0,
+              28.0,
+              -1.0,
+              1.0
+            ],
+            "up": [
+              41.0,
+              27.0,
+              -1.0,
+              1.0
+            ],
+            "down": [
+              42.0,
+              28.0,
+              -1.0,
+              -1.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "jaw1tooth6",
+      "parent": null,
+      "pivot": [
+        2,
+        14,
+        -8
+      ],
+      "rotation": [
+        0,
+        -23.4319512798,
+        0
+      ],
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            1.0,
+            12.5,
+            -12.5
+          ],
+          "size": [
+            1.0,
+            1.0,
+            1.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              40.0,
+              28.0,
+              -1.0,
+              1.0
+            ],
+            "east": [
+              42.0,
+              28.0,
+              -1.0,
+              1.0
+            ],
+            "north": [
+              41.0,
+              28.0,
+              -1.0,
+              1.0
+            ],
+            "south": [
+              43.0,
+              28.0,
+              -1.0,
+              1.0
+            ],
+            "up": [
+              41.0,
+              27.0,
+              -1.0,
+              1.0
+            ],
+            "down": [
+              42.0,
+              28.0,
+              -1.0,
+              -1.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "jaw2",
+      "parent": null,
+      "pivot": [
+        -2,
+        14,
+        -8
+      ],
+      "rotation": [
+        0,
+        23.432002846,
+        0
+      ],
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            -3.0,
+            13.0,
+            -21.0
+          ],
+          "size": [
+            1.0,
+            2.0,
+            14.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              110.0,
+              62.0,
+              -14.0,
+              2.0
+            ],
+            "east": [
+              125.0,
+              62.0,
+              -14.0,
+              2.0
+            ],
+            "north": [
+              111.0,
+              62.0,
+              -1.0,
+              2.0
+            ],
+            "south": [
+              126.0,
+              62.0,
+              -1.0,
+              2.0
+            ],
+            "up": [
+              111.0,
+              48.0,
+              -1.0,
+              14.0
+            ],
+            "down": [
+              112.0,
+              62.0,
+              -1.0,
+              -14.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "jaw2part2",
+      "parent": null,
+      "pivot": [
+        -2,
+        14,
+        -8
+      ],
+      "rotation": [
+        0,
+        23.432002846,
+        0
+      ],
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            -3.1,
+            12.0,
+            -13.0
+          ],
+          "size": [
+            1.0,
+            4.0,
+            5.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              44.0,
+              12.0,
+              -5.0,
+              4.0
+            ],
+            "east": [
+              50.0,
+              12.0,
+              -5.0,
+              4.0
+            ],
+            "north": [
+              45.0,
+              12.0,
+              -1.0,
+              4.0
+            ],
+            "south": [
+              51.0,
+              12.0,
+              -1.0,
+              4.0
+            ],
+            "up": [
+              45.0,
+              7.0,
+              -1.0,
+              5.0
+            ],
+            "down": [
+              46.0,
+              12.0,
+              -1.0,
+              -5.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "jaw2tooth1",
+      "parent": null,
+      "pivot": [
+        -2,
+        14,
+        -8
+      ],
+      "rotation": [
+        0,
+        23.432002846,
+        0
+      ],
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            -2.0,
+            13.5,
+            -21.0
+          ],
+          "size": [
+            1.0,
+            1.0,
+            1.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              97.0,
+              49.0,
+              -1.0,
+              1.0
+            ],
+            "east": [
+              99.0,
+              49.0,
+              -1.0,
+              1.0
+            ],
+            "north": [
+              98.0,
+              49.0,
+              -1.0,
+              1.0
+            ],
+            "south": [
+              100.0,
+              49.0,
+              -1.0,
+              1.0
+            ],
+            "up": [
+              98.0,
+              48.0,
+              -1.0,
+              1.0
+            ],
+            "down": [
+              99.0,
+              49.0,
+              -1.0,
+              -1.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "jaw2tooth2",
+      "parent": null,
+      "pivot": [
+        -2,
+        14,
+        -8
+      ],
+      "rotation": [
+        0,
+        23.432002846,
+        0
+      ],
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            -2.0,
+            13.5,
+            -19.0
+          ],
+          "size": [
+            1.0,
+            1.0,
+            1.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              97.0,
+              49.0,
+              -1.0,
+              1.0
+            ],
+            "east": [
+              99.0,
+              49.0,
+              -1.0,
+              1.0
+            ],
+            "north": [
+              98.0,
+              49.0,
+              -1.0,
+              1.0
+            ],
+            "south": [
+              100.0,
+              49.0,
+              -1.0,
+              1.0
+            ],
+            "up": [
+              98.0,
+              48.0,
+              -1.0,
+              1.0
+            ],
+            "down": [
+              99.0,
+              49.0,
+              -1.0,
+              -1.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "jaw2tooth3",
+      "parent": null,
+      "pivot": [
+        -2,
+        14,
+        -8
+      ],
+      "rotation": [
+        0,
+        23.432002846,
+        0
+      ],
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            -2.0,
+            13.5,
+            -17.0
+          ],
+          "size": [
+            1.0,
+            1.0,
+            1.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              97.0,
+              49.0,
+              -1.0,
+              1.0
+            ],
+            "east": [
+              99.0,
+              49.0,
+              -1.0,
+              1.0
+            ],
+            "north": [
+              98.0,
+              49.0,
+              -1.0,
+              1.0
+            ],
+            "south": [
+              100.0,
+              49.0,
+              -1.0,
+              1.0
+            ],
+            "up": [
+              98.0,
+              48.0,
+              -1.0,
+              1.0
+            ],
+            "down": [
+              99.0,
+              49.0,
+              -1.0,
+              -1.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "jaw2tooth4",
+      "parent": null,
+      "pivot": [
+        -2,
+        14,
+        -8
+      ],
+      "rotation": [
+        0,
+        23.432002846,
+        0
+      ],
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            -2.0,
+            13.5,
+            -15.0
+          ],
+          "size": [
+            1.0,
+            1.0,
+            1.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              97.0,
+              49.0,
+              -1.0,
+              1.0
+            ],
+            "east": [
+              99.0,
+              49.0,
+              -1.0,
+              1.0
+            ],
+            "north": [
+              98.0,
+              49.0,
+              -1.0,
+              1.0
+            ],
+            "south": [
+              100.0,
+              49.0,
+              -1.0,
+              1.0
+            ],
+            "up": [
+              98.0,
+              48.0,
+              -1.0,
+              1.0
+            ],
+            "down": [
+              99.0,
+              49.0,
+              -1.0,
+              -1.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "jaw2tooth5",
+      "parent": null,
+      "pivot": [
+        -2,
+        14,
+        -8
+      ],
+      "rotation": [
+        0,
+        23.432002846,
+        0
+      ],
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            -2.0,
+            14.5,
+            -12.5
+          ],
+          "size": [
+            1.0,
+            1.0,
+            1.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              97.0,
+              49.0,
+              -1.0,
+              1.0
+            ],
+            "east": [
+              99.0,
+              49.0,
+              -1.0,
+              1.0
+            ],
+            "north": [
+              98.0,
+              49.0,
+              -1.0,
+              1.0
+            ],
+            "south": [
+              100.0,
+              49.0,
+              -1.0,
+              1.0
+            ],
+            "up": [
+              98.0,
+              48.0,
+              -1.0,
+              1.0
+            ],
+            "down": [
+              99.0,
+              49.0,
+              -1.0,
+              -1.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "jaw2tooth6",
+      "parent": null,
+      "pivot": [
+        -2,
+        14,
+        -8
+      ],
+      "rotation": [
+        0,
+        23.432002846,
+        0
+      ],
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            -2.0,
+            12.5,
+            -12.5
+          ],
+          "size": [
+            1.0,
+            1.0,
+            1.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              97.0,
+              49.0,
+              -1.0,
+              1.0
+            ],
+            "east": [
+              99.0,
+              49.0,
+              -1.0,
+              1.0
+            ],
+            "north": [
+              98.0,
+              49.0,
+              -1.0,
+              1.0
+            ],
+            "south": [
+              100.0,
+              49.0,
+              -1.0,
+              1.0
+            ],
+            "up": [
+              98.0,
+              48.0,
+              -1.0,
+              1.0
+            ],
+            "down": [
+              99.0,
+              49.0,
+              -1.0,
+              -1.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "jaw3",
+      "parent": null,
+      "pivot": [
+        0,
+        16,
+        -8
+      ],
+      "rotation": [
+        -23.4319512798,
+        0,
+        0
+      ],
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            -1.0,
+            16.0,
+            -21.0
+          ],
+          "size": [
+            2.0,
+            1.0,
+            14.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              109.0,
+              30.0,
+              -14.0,
+              1.0
+            ],
+            "east": [
+              125.0,
+              30.0,
+              -14.0,
+              1.0
+            ],
+            "north": [
+              111.0,
+              30.0,
+              -2.0,
+              1.0
+            ],
+            "south": [
+              127.0,
+              30.0,
+              -2.0,
+              1.0
+            ],
+            "up": [
+              111.0,
+              16.0,
+              -2.0,
+              14.0
+            ],
+            "down": [
+              113.0,
+              30.0,
+              -2.0,
+              -14.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "jaw3part2",
+      "parent": null,
+      "pivot": [
+        0,
+        16.1,
+        -8
+      ],
+      "rotation": [
+        -23.4319512798,
+        0,
+        0
+      ],
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            -2.0,
+            16.1,
+            -13.0
+          ],
+          "size": [
+            4.0,
+            1.0,
+            5.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              5.0,
+              32.0,
+              -5.0,
+              1.0
+            ],
+            "east": [
+              14.0,
+              32.0,
+              -5.0,
+              1.0
+            ],
+            "north": [
+              9.0,
+              32.0,
+              -4.0,
+              1.0
+            ],
+            "south": [
+              18.0,
+              32.0,
+              -4.0,
+              1.0
+            ],
+            "up": [
+              9.0,
+              27.0,
+              -4.0,
+              5.0
+            ],
+            "down": [
+              13.0,
+              32.0,
+              -4.0,
+              -5.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "jaw3tooth1",
+      "parent": null,
+      "pivot": [
+        0,
+        16,
+        -8
+      ],
+      "rotation": [
+        -23.4319512798,
+        0,
+        0
+      ],
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            -0.5,
+            15.0,
+            -21.0
+          ],
+          "size": [
+            1.0,
+            1.0,
+            1.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              96.0,
+              17.0,
+              -1.0,
+              1.0
+            ],
+            "east": [
+              98.0,
+              17.0,
+              -1.0,
+              1.0
+            ],
+            "north": [
+              97.0,
+              17.0,
+              -1.0,
+              1.0
+            ],
+            "south": [
+              99.0,
+              17.0,
+              -1.0,
+              1.0
+            ],
+            "up": [
+              97.0,
+              16.0,
+              -1.0,
+              1.0
+            ],
+            "down": [
+              98.0,
+              17.0,
+              -1.0,
+              -1.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "jaw3tooth2",
+      "parent": null,
+      "pivot": [
+        0,
+        16,
+        -8
+      ],
+      "rotation": [
+        -23.4319512798,
+        0,
+        0
+      ],
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            -0.5,
+            15.0,
+            -19.0
+          ],
+          "size": [
+            1.0,
+            1.0,
+            1.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              96.0,
+              17.0,
+              -1.0,
+              1.0
+            ],
+            "east": [
+              98.0,
+              17.0,
+              -1.0,
+              1.0
+            ],
+            "north": [
+              97.0,
+              17.0,
+              -1.0,
+              1.0
+            ],
+            "south": [
+              99.0,
+              17.0,
+              -1.0,
+              1.0
+            ],
+            "up": [
+              97.0,
+              16.0,
+              -1.0,
+              1.0
+            ],
+            "down": [
+              98.0,
+              17.0,
+              -1.0,
+              -1.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "jaw3tooth3",
+      "parent": null,
+      "pivot": [
+        0,
+        16,
+        -8
+      ],
+      "rotation": [
+        -23.4319512798,
+        0,
+        0
+      ],
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            -0.5,
+            15.0,
+            -17.0
+          ],
+          "size": [
+            1.0,
+            1.0,
+            1.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              96.0,
+              17.0,
+              -1.0,
+              1.0
+            ],
+            "east": [
+              98.0,
+              17.0,
+              -1.0,
+              1.0
+            ],
+            "north": [
+              97.0,
+              17.0,
+              -1.0,
+              1.0
+            ],
+            "south": [
+              99.0,
+              17.0,
+              -1.0,
+              1.0
+            ],
+            "up": [
+              97.0,
+              16.0,
+              -1.0,
+              1.0
+            ],
+            "down": [
+              98.0,
+              17.0,
+              -1.0,
+              -1.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "jaw3tooth4",
+      "parent": null,
+      "pivot": [
+        0,
+        16,
+        -8
+      ],
+      "rotation": [
+        -23.4319512798,
+        0,
+        0
+      ],
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            -0.5,
+            15.0,
+            -15.0
+          ],
+          "size": [
+            1.0,
+            1.0,
+            1.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              96.0,
+              17.0,
+              -1.0,
+              1.0
+            ],
+            "east": [
+              98.0,
+              17.0,
+              -1.0,
+              1.0
+            ],
+            "north": [
+              97.0,
+              17.0,
+              -1.0,
+              1.0
+            ],
+            "south": [
+              99.0,
+              17.0,
+              -1.0,
+              1.0
+            ],
+            "up": [
+              97.0,
+              16.0,
+              -1.0,
+              1.0
+            ],
+            "down": [
+              98.0,
+              17.0,
+              -1.0,
+              -1.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "jaw3tooth5",
+      "parent": null,
+      "pivot": [
+        0,
+        16,
+        -8
+      ],
+      "rotation": [
+        -23.4319512798,
+        0,
+        0
+      ],
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            0.5,
+            15.0,
+            -12.5
+          ],
+          "size": [
+            1.0,
+            1.0,
+            1.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              96.0,
+              17.0,
+              -1.0,
+              1.0
+            ],
+            "east": [
+              98.0,
+              17.0,
+              -1.0,
+              1.0
+            ],
+            "north": [
+              97.0,
+              17.0,
+              -1.0,
+              1.0
+            ],
+            "south": [
+              99.0,
+              17.0,
+              -1.0,
+              1.0
+            ],
+            "up": [
+              97.0,
+              16.0,
+              -1.0,
+              1.0
+            ],
+            "down": [
+              98.0,
+              17.0,
+              -1.0,
+              -1.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "jaw3tooth6",
+      "parent": null,
+      "pivot": [
+        0,
+        16,
+        -8
+      ],
+      "rotation": [
+        -23.4319512798,
+        0,
+        0
+      ],
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            -1.5,
+            15.0,
+            -12.5
+          ],
+          "size": [
+            1.0,
+            1.0,
+            1.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              96.0,
+              17.0,
+              -1.0,
+              1.0
+            ],
+            "east": [
+              98.0,
+              17.0,
+              -1.0,
+              1.0
+            ],
+            "north": [
+              97.0,
+              17.0,
+              -1.0,
+              1.0
+            ],
+            "south": [
+              99.0,
+              17.0,
+              -1.0,
+              1.0
+            ],
+            "up": [
+              97.0,
+              16.0,
+              -1.0,
+              1.0
+            ],
+            "down": [
+              98.0,
+              17.0,
+              -1.0,
+              -1.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "jaw4",
+      "parent": null,
+      "pivot": [
+        0,
+        12,
+        -8
+      ],
+      "rotation": [
+        23.432002846,
+        0,
+        0
+      ],
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            -1.0,
+            11.0,
+            -21.0
+          ],
+          "size": [
+            2.0,
+            1.0,
+            14.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              109.0,
+              14.0,
+              -14.0,
+              1.0
+            ],
+            "east": [
+              125.0,
+              14.0,
+              -14.0,
+              1.0
+            ],
+            "north": [
+              111.0,
+              14.0,
+              -2.0,
+              1.0
+            ],
+            "south": [
+              127.0,
+              14.0,
+              -2.0,
+              1.0
+            ],
+            "up": [
+              111.0,
+              0.0,
+              -2.0,
+              14.0
+            ],
+            "down": [
+              113.0,
+              14.0,
+              -2.0,
+              -14.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "jaw4part2",
+      "parent": null,
+      "pivot": [
+        0,
+        11.9,
+        -8
+      ],
+      "rotation": [
+        23.432002846,
+        0,
+        0
+      ],
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            -2.0,
+            10.9,
+            -13.0
+          ],
+          "size": [
+            4.0,
+            1.0,
+            5.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              5.0,
+              25.0,
+              -5.0,
+              1.0
+            ],
+            "east": [
+              14.0,
+              25.0,
+              -5.0,
+              1.0
+            ],
+            "north": [
+              9.0,
+              25.0,
+              -4.0,
+              1.0
+            ],
+            "south": [
+              18.0,
+              25.0,
+              -4.0,
+              1.0
+            ],
+            "up": [
+              9.0,
+              20.0,
+              -4.0,
+              5.0
+            ],
+            "down": [
+              13.0,
+              25.0,
+              -4.0,
+              -5.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "jaw4tooth1",
+      "parent": null,
+      "pivot": [
+        0,
+        12,
+        -8
+      ],
+      "rotation": [
+        23.432002846,
+        0,
+        0
+      ],
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            -0.5,
+            12.0,
+            -21.0
+          ],
+          "size": [
+            1.0,
+            1.0,
+            1.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              96.0,
+              1.0,
+              -1.0,
+              1.0
+            ],
+            "east": [
+              98.0,
+              1.0,
+              -1.0,
+              1.0
+            ],
+            "north": [
+              97.0,
+              1.0,
+              -1.0,
+              1.0
+            ],
+            "south": [
+              99.0,
+              1.0,
+              -1.0,
+              1.0
+            ],
+            "up": [
+              97.0,
+              0.0,
+              -1.0,
+              1.0
+            ],
+            "down": [
+              98.0,
+              1.0,
+              -1.0,
+              -1.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "jaw4tooth2",
+      "parent": null,
+      "pivot": [
+        0,
+        12,
+        -8
+      ],
+      "rotation": [
+        23.432002846,
+        0,
+        0
+      ],
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            -0.5,
+            12.0,
+            -19.0
+          ],
+          "size": [
+            1.0,
+            1.0,
+            1.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              96.0,
+              1.0,
+              -1.0,
+              1.0
+            ],
+            "east": [
+              98.0,
+              1.0,
+              -1.0,
+              1.0
+            ],
+            "north": [
+              97.0,
+              1.0,
+              -1.0,
+              1.0
+            ],
+            "south": [
+              99.0,
+              1.0,
+              -1.0,
+              1.0
+            ],
+            "up": [
+              97.0,
+              0.0,
+              -1.0,
+              1.0
+            ],
+            "down": [
+              98.0,
+              1.0,
+              -1.0,
+              -1.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "jaw4tooth3",
+      "parent": null,
+      "pivot": [
+        0,
+        12,
+        -8
+      ],
+      "rotation": [
+        23.432002846,
+        0,
+        0
+      ],
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            -0.5,
+            12.0,
+            -17.0
+          ],
+          "size": [
+            1.0,
+            1.0,
+            1.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              96.0,
+              1.0,
+              -1.0,
+              1.0
+            ],
+            "east": [
+              98.0,
+              1.0,
+              -1.0,
+              1.0
+            ],
+            "north": [
+              97.0,
+              1.0,
+              -1.0,
+              1.0
+            ],
+            "south": [
+              99.0,
+              1.0,
+              -1.0,
+              1.0
+            ],
+            "up": [
+              97.0,
+              0.0,
+              -1.0,
+              1.0
+            ],
+            "down": [
+              98.0,
+              1.0,
+              -1.0,
+              -1.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "jaw4tooth4",
+      "parent": null,
+      "pivot": [
+        0,
+        12,
+        -8
+      ],
+      "rotation": [
+        23.432002846,
+        0,
+        0
+      ],
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            -0.5,
+            12.0,
+            -15.0
+          ],
+          "size": [
+            1.0,
+            1.0,
+            1.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              96.0,
+              1.0,
+              -1.0,
+              1.0
+            ],
+            "east": [
+              98.0,
+              1.0,
+              -1.0,
+              1.0
+            ],
+            "north": [
+              97.0,
+              1.0,
+              -1.0,
+              1.0
+            ],
+            "south": [
+              99.0,
+              1.0,
+              -1.0,
+              1.0
+            ],
+            "up": [
+              97.0,
+              0.0,
+              -1.0,
+              1.0
+            ],
+            "down": [
+              98.0,
+              1.0,
+              -1.0,
+              -1.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "jaw4tooth5",
+      "parent": null,
+      "pivot": [
+        0,
+        12,
+        -8
+      ],
+      "rotation": [
+        23.432002846,
+        0,
+        0
+      ],
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            0.5,
+            12.0,
+            -12.5
+          ],
+          "size": [
+            1.0,
+            1.0,
+            1.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              96.0,
+              1.0,
+              -1.0,
+              1.0
+            ],
+            "east": [
+              98.0,
+              1.0,
+              -1.0,
+              1.0
+            ],
+            "north": [
+              97.0,
+              1.0,
+              -1.0,
+              1.0
+            ],
+            "south": [
+              99.0,
+              1.0,
+              -1.0,
+              1.0
+            ],
+            "up": [
+              97.0,
+              0.0,
+              -1.0,
+              1.0
+            ],
+            "down": [
+              98.0,
+              1.0,
+              -1.0,
+              -1.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "jaw4tooth6",
+      "parent": null,
+      "pivot": [
+        0,
+        12,
+        -8
+      ],
+      "rotation": [
+        23.432002846,
+        0,
+        0
+      ],
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            -1.5,
+            12.0,
+            -12.5
+          ],
+          "size": [
+            1.0,
+            1.0,
+            1.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              96.0,
+              1.0,
+              -1.0,
+              1.0
+            ],
+            "east": [
+              98.0,
+              1.0,
+              -1.0,
+              1.0
+            ],
+            "north": [
+              97.0,
+              1.0,
+              -1.0,
+              1.0
+            ],
+            "south": [
+              99.0,
+              1.0,
+              -1.0,
+              1.0
+            ],
+            "up": [
+              97.0,
+              0.0,
+              -1.0,
+              1.0
+            ],
+            "down": [
+              98.0,
+              1.0,
+              -1.0,
+              -1.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "leg1",
+      "parent": null,
+      "pivot": [
+        4,
+        14,
+        -1
+      ],
+      "rotation": [
+        0,
+        33.0000026838,
+        10.9999989848
+      ],
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            3.0,
+            12.5,
+            -2.5
+          ],
+          "size": [
+            16.0,
+            3.0,
+            3.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              21.0,
+              3.0,
+              -3.0,
+              3.0
+            ],
+            "east": [
+              40.0,
+              3.0,
+              -3.0,
+              3.0
+            ],
+            "north": [
+              37.0,
+              3.0,
+              -16.0,
+              3.0
+            ],
+            "south": [
+              56.0,
+              3.0,
+              -16.0,
+              3.0
+            ],
+            "up": [
+              37.0,
+              0.0,
+              -16.0,
+              3.0
+            ],
+            "down": [
+              53.0,
+              3.0,
+              -16.0,
+              -3.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "leg1part2",
+      "parent": null,
+      "pivot": [
+        4,
+        14,
+        -1
+      ],
+      "rotation": [
+        0,
+        33.0000026838,
+        10.9999989848
+      ],
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            16.0,
+            7.5,
+            -2.5
+          ],
+          "size": [
+            3.0,
+            8.0,
+            3.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              61.0,
+              3.0,
+              -3.0,
+              8.0
+            ],
+            "east": [
+              67.0,
+              3.0,
+              -3.0,
+              8.0
+            ],
+            "north": [
+              64.0,
+              3.0,
+              -3.0,
+              8.0
+            ],
+            "south": [
+              70.0,
+              3.0,
+              -3.0,
+              8.0
+            ],
+            "up": [
+              64.0,
+              0.0,
+              -3.0,
+              3.0
+            ],
+            "down": [
+              67.0,
+              3.0,
+              -3.0,
+              -3.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "leg1part3",
+      "parent": null,
+      "pivot": [
+        4,
+        14,
+        -1
+      ],
+      "rotation": [
+        0,
+        33.0000026838,
+        38.6923097306
+      ],
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            17.0,
+            7.0,
+            -2.0
+          ],
+          "size": [
+            2.0,
+            8.0,
+            2.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              2.0,
+              2.0,
+              -2.0,
+              8.0
+            ],
+            "east": [
+              6.0,
+              2.0,
+              -2.0,
+              8.0
+            ],
+            "north": [
+              4.0,
+              2.0,
+              -2.0,
+              8.0
+            ],
+            "south": [
+              8.0,
+              2.0,
+              -2.0,
+              8.0
+            ],
+            "up": [
+              4.0,
+              0.0,
+              -2.0,
+              2.0
+            ],
+            "down": [
+              6.0,
+              2.0,
+              -2.0,
+              -2.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "leg2",
+      "parent": null,
+      "pivot": [
+        -4,
+        14,
+        -1
+      ],
+      "rotation": [
+        0,
+        -33.0000026838,
+        -10.9999989848
+      ],
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            -19.0,
+            12.5,
+            -2.5
+          ],
+          "size": [
+            16.0,
+            3.0,
+            3.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              21.0,
+              3.0,
+              -3.0,
+              3.0
+            ],
+            "east": [
+              40.0,
+              3.0,
+              -3.0,
+              3.0
+            ],
+            "north": [
+              37.0,
+              3.0,
+              -16.0,
+              3.0
+            ],
+            "south": [
+              56.0,
+              3.0,
+              -16.0,
+              3.0
+            ],
+            "up": [
+              37.0,
+              0.0,
+              -16.0,
+              3.0
+            ],
+            "down": [
+              53.0,
+              3.0,
+              -16.0,
+              -3.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "leg2part2",
+      "parent": null,
+      "pivot": [
+        -4,
+        14,
+        -1
+      ],
+      "rotation": [
+        0,
+        -33.0000026838,
+        -10.9999989848
+      ],
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            -19.0,
+            7.5,
+            -2.5
+          ],
+          "size": [
+            3.0,
+            8.0,
+            3.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              61.0,
+              3.0,
+              -3.0,
+              8.0
+            ],
+            "east": [
+              67.0,
+              3.0,
+              -3.0,
+              8.0
+            ],
+            "north": [
+              64.0,
+              3.0,
+              -3.0,
+              8.0
+            ],
+            "south": [
+              70.0,
+              3.0,
+              -3.0,
+              8.0
+            ],
+            "up": [
+              64.0,
+              0.0,
+              -3.0,
+              3.0
+            ],
+            "down": [
+              67.0,
+              3.0,
+              -3.0,
+              -3.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "leg2part3",
+      "parent": null,
+      "pivot": [
+        -4,
+        14,
+        -1
+      ],
+      "rotation": [
+        0,
+        -33.0000026838,
+        -38.6920003334
+      ],
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            -19.0,
+            7.0,
+            -2.0
+          ],
+          "size": [
+            2.0,
+            8.0,
+            2.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              2.0,
+              2.0,
+              -2.0,
+              8.0
+            ],
+            "east": [
+              6.0,
+              2.0,
+              -2.0,
+              8.0
+            ],
+            "north": [
+              4.0,
+              2.0,
+              -2.0,
+              8.0
+            ],
+            "south": [
+              8.0,
+              2.0,
+              -2.0,
+              8.0
+            ],
+            "up": [
+              4.0,
+              0.0,
+              -2.0,
+              2.0
+            ],
+            "down": [
+              6.0,
+              2.0,
+              -2.0,
+              -2.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "leg3",
+      "parent": null,
+      "pivot": [
+        4,
+        14,
+        1
+      ],
+      "rotation": [
+        0,
+        -16.0000011276,
+        10.9999989848
+      ],
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            3.0,
+            12.5,
+            -0.5
+          ],
+          "size": [
+            16.0,
+            3.0,
+            3.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              21.0,
+              3.0,
+              -3.0,
+              3.0
+            ],
+            "east": [
+              40.0,
+              3.0,
+              -3.0,
+              3.0
+            ],
+            "north": [
+              37.0,
+              3.0,
+              -16.0,
+              3.0
+            ],
+            "south": [
+              56.0,
+              3.0,
+              -16.0,
+              3.0
+            ],
+            "up": [
+              37.0,
+              0.0,
+              -16.0,
+              3.0
+            ],
+            "down": [
+              53.0,
+              3.0,
+              -16.0,
+              -3.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "leg3part2",
+      "parent": null,
+      "pivot": [
+        4,
+        14,
+        1
+      ],
+      "rotation": [
+        0,
+        -16.0000011276,
+        10.9999989848
+      ],
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            16.0,
+            7.5,
+            -0.5
+          ],
+          "size": [
+            3.0,
+            8.0,
+            3.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              61.0,
+              3.0,
+              -3.0,
+              8.0
+            ],
+            "east": [
+              67.0,
+              3.0,
+              -3.0,
+              8.0
+            ],
+            "north": [
+              64.0,
+              3.0,
+              -3.0,
+              8.0
+            ],
+            "south": [
+              70.0,
+              3.0,
+              -3.0,
+              8.0
+            ],
+            "up": [
+              64.0,
+              0.0,
+              -3.0,
+              3.0
+            ],
+            "down": [
+              67.0,
+              3.0,
+              -3.0,
+              -3.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "leg3part3",
+      "parent": null,
+      "pivot": [
+        4,
+        14,
+        1
+      ],
+      "rotation": [
+        0,
+        -16.0000011276,
+        38.6920003334
+      ],
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            17.0,
+            7.0,
+            0.0
+          ],
+          "size": [
+            2.0,
+            8.0,
+            2.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              2.0,
+              2.0,
+              -2.0,
+              8.0
+            ],
+            "east": [
+              6.0,
+              2.0,
+              -2.0,
+              8.0
+            ],
+            "north": [
+              4.0,
+              2.0,
+              -2.0,
+              8.0
+            ],
+            "south": [
+              8.0,
+              2.0,
+              -2.0,
+              8.0
+            ],
+            "up": [
+              4.0,
+              0.0,
+              -2.0,
+              2.0
+            ],
+            "down": [
+              6.0,
+              2.0,
+              -2.0,
+              -2.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "leg4",
+      "parent": null,
+      "pivot": [
+        -4,
+        14,
+        1
+      ],
+      "rotation": [
+        0,
+        16.0000011276,
+        -10.9999989848
+      ],
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            -19.0,
+            12.5,
+            -0.5
+          ],
+          "size": [
+            16.0,
+            3.0,
+            3.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              21.0,
+              3.0,
+              -3.0,
+              3.0
+            ],
+            "east": [
+              40.0,
+              3.0,
+              -3.0,
+              3.0
+            ],
+            "north": [
+              37.0,
+              3.0,
+              -16.0,
+              3.0
+            ],
+            "south": [
+              56.0,
+              3.0,
+              -16.0,
+              3.0
+            ],
+            "up": [
+              37.0,
+              0.0,
+              -16.0,
+              3.0
+            ],
+            "down": [
+              53.0,
+              3.0,
+              -16.0,
+              -3.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "leg4part2",
+      "parent": null,
+      "pivot": [
+        -4,
+        14,
+        1
+      ],
+      "rotation": [
+        0,
+        16.0000011276,
+        -10.9999989848
+      ],
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            -19.0,
+            7.5,
+            -0.5
+          ],
+          "size": [
+            3.0,
+            8.0,
+            3.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              61.0,
+              3.0,
+              -3.0,
+              8.0
+            ],
+            "east": [
+              67.0,
+              3.0,
+              -3.0,
+              8.0
+            ],
+            "north": [
+              64.0,
+              3.0,
+              -3.0,
+              8.0
+            ],
+            "south": [
+              70.0,
+              3.0,
+              -3.0,
+              8.0
+            ],
+            "up": [
+              64.0,
+              0.0,
+              -3.0,
+              3.0
+            ],
+            "down": [
+              67.0,
+              3.0,
+              -3.0,
+              -3.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "leg4part3",
+      "parent": null,
+      "pivot": [
+        -4,
+        14,
+        1
+      ],
+      "rotation": [
+        0,
+        16.0000011276,
+        -38.6920003334
+      ],
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            -19.0,
+            7.0,
+            0.0
+          ],
+          "size": [
+            2.0,
+            8.0,
+            2.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              2.0,
+              2.0,
+              -2.0,
+              8.0
+            ],
+            "east": [
+              6.0,
+              2.0,
+              -2.0,
+              8.0
+            ],
+            "north": [
+              4.0,
+              2.0,
+              -2.0,
+              8.0
+            ],
+            "south": [
+              8.0,
+              2.0,
+              -2.0,
+              8.0
+            ],
+            "up": [
+              4.0,
+              0.0,
+              -2.0,
+              2.0
+            ],
+            "down": [
+              6.0,
+              2.0,
+              -2.0,
+              -2.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "leg5",
+      "parent": null,
+      "pivot": [
+        -4,
+        14,
+        4
+      ],
+      "rotation": [
+        0,
+        64.9939831527,
+        -19.5209986661
+      ],
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            -25.0,
+            12.5,
+            2.5
+          ],
+          "size": [
+            25.0,
+            3.0,
+            3.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              122.0,
+              3.0,
+              -3.0,
+              3.0
+            ],
+            "east": [
+              150.0,
+              3.0,
+              -3.0,
+              3.0
+            ],
+            "north": [
+              147.0,
+              3.0,
+              -25.0,
+              3.0
+            ],
+            "south": [
+              175.0,
+              3.0,
+              -25.0,
+              3.0
+            ],
+            "up": [
+              147.0,
+              0.0,
+              -25.0,
+              3.0
+            ],
+            "down": [
+              172.0,
+              3.0,
+              -25.0,
+              -3.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "leg5part2",
+      "parent": null,
+      "pivot": [
+        -4,
+        14,
+        4
+      ],
+      "rotation": [
+        0,
+        64.9939831527,
+        -19.5209986661
+      ],
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            -25.0,
+            5.5,
+            2.5
+          ],
+          "size": [
+            3.0,
+            10.0,
+            3.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              21.0,
+              12.0,
+              -3.0,
+              10.0
+            ],
+            "east": [
+              27.0,
+              12.0,
+              -3.0,
+              10.0
+            ],
+            "north": [
+              24.0,
+              12.0,
+              -3.0,
+              10.0
+            ],
+            "south": [
+              30.0,
+              12.0,
+              -3.0,
+              10.0
+            ],
+            "up": [
+              24.0,
+              9.0,
+              -3.0,
+              3.0
+            ],
+            "down": [
+              27.0,
+              12.0,
+              -3.0,
+              -3.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "leg6",
+      "parent": null,
+      "pivot": [
+        4,
+        14,
+        4
+      ],
+      "rotation": [
+        0,
+        -64.9939831527,
+        19.5209986661
+      ],
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            0.0,
+            12.5,
+            2.5
+          ],
+          "size": [
+            25.0,
+            3.0,
+            3.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              122.0,
+              3.0,
+              -3.0,
+              3.0
+            ],
+            "east": [
+              150.0,
+              3.0,
+              -3.0,
+              3.0
+            ],
+            "north": [
+              147.0,
+              3.0,
+              -25.0,
+              3.0
+            ],
+            "south": [
+              175.0,
+              3.0,
+              -25.0,
+              3.0
+            ],
+            "up": [
+              147.0,
+              0.0,
+              -25.0,
+              3.0
+            ],
+            "down": [
+              172.0,
+              3.0,
+              -25.0,
+              -3.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "leg6part2",
+      "parent": null,
+      "pivot": [
+        4,
+        14,
+        4
+      ],
+      "rotation": [
+        0,
+        -64.9939831527,
+        19.5209986661
+      ],
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            22.0,
+            5.5,
+            2.5
+          ],
+          "size": [
+            3.0,
+            10.0,
+            3.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              21.0,
+              12.0,
+              -3.0,
+              10.0
+            ],
+            "east": [
+              27.0,
+              12.0,
+              -3.0,
+              10.0
+            ],
+            "north": [
+              24.0,
+              12.0,
+              -3.0,
+              10.0
+            ],
+            "south": [
+              30.0,
+              12.0,
+              -3.0,
+              10.0
+            ],
+            "up": [
+              24.0,
+              9.0,
+              -3.0,
+              3.0
+            ],
+            "down": [
+              27.0,
+              12.0,
+              -3.0,
+              -3.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "thorax",
+      "parent": null,
+      "pivot": [
+        0,
+        14,
+        9
+      ],
+      "rotation": [
+        -14.911243807,
+        0,
+        0
+      ],
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            -2.0,
+            12.0,
+            3.0
+          ],
+          "size": [
+            4.0,
+            4.0,
+            18.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              18.0,
+              60.0,
+              -18.0,
+              4.0
+            ],
+            "east": [
+              40.0,
+              60.0,
+              -18.0,
+              4.0
+            ],
+            "north": [
+              22.0,
+              60.0,
+              -4.0,
+              4.0
+            ],
+            "south": [
+              44.0,
+              60.0,
+              -4.0,
+              4.0
+            ],
+            "up": [
+              22.0,
+              42.0,
+              -4.0,
+              18.0
+            ],
+            "down": [
+              26.0,
+              60.0,
+              -4.0,
+              -18.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "tonguepart1",
+      "parent": null,
+      "pivot": [
+        -1.6,
+        14.7,
+        -15
+      ],
+      "rotation": [
+        59.6449637689,
+        -72.4260478964,
+        61.7751635554
+      ],
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            -2.1,
+            14.2,
+            -20.0
+          ],
+          "size": [
+            1.0,
+            1.0,
+            5.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              29.0,
+              39.0,
+              -5.0,
+              1.0
+            ],
+            "east": [
+              35.0,
+              39.0,
+              -5.0,
+              1.0
+            ],
+            "north": [
+              30.0,
+              39.0,
+              -1.0,
+              1.0
+            ],
+            "south": [
+              36.0,
+              39.0,
+              -1.0,
+              1.0
+            ],
+            "up": [
+              30.0,
+              34.0,
+              -1.0,
+              5.0
+            ],
+            "down": [
+              31.0,
+              39.0,
+              -1.0,
+              -5.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "tonguepart2",
+      "parent": null,
+      "pivot": [
+        0,
+        14,
+        -11
+      ],
+      "rotation": [
+        -10.6508900706,
+        12.7810669388,
+        -38.3431950868
+      ],
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            -0.5,
+            13.5,
+            -16.0
+          ],
+          "size": [
+            1.0,
+            1.0,
+            5.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              5.0,
+              51.0,
+              -5.0,
+              1.0
+            ],
+            "east": [
+              11.0,
+              51.0,
+              -5.0,
+              1.0
+            ],
+            "north": [
+              6.0,
+              51.0,
+              -1.0,
+              1.0
+            ],
+            "south": [
+              12.0,
+              51.0,
+              -1.0,
+              1.0
+            ],
+            "up": [
+              6.0,
+              46.0,
+              -1.0,
+              5.0
+            ],
+            "down": [
+              7.0,
+              51.0,
+              -1.0,
+              -5.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "tonguepart3",
+      "parent": null,
+      "pivot": [
+        -0.2,
+        12.7,
+        -19
+      ],
+      "rotation": [
+        -14.911243807,
+        -21.3017744116,
+        61.7751635554
+      ],
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            -0.7,
+            12.2,
+            -24.0
+          ],
+          "size": [
+            1.0,
+            1.0,
+            5.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              29.0,
+              32.0,
+              -5.0,
+              1.0
+            ],
+            "east": [
+              35.0,
+              32.0,
+              -5.0,
+              1.0
+            ],
+            "north": [
+              30.0,
+              32.0,
+              -1.0,
+              1.0
+            ],
+            "south": [
+              36.0,
+              32.0,
+              -1.0,
+              1.0
+            ],
+            "up": [
+              30.0,
+              27.0,
+              -1.0,
+              5.0
+            ],
+            "down": [
+              31.0,
+              32.0,
+              -1.0,
+              -5.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "wing_1",
+      "parent": null,
+      "pivot": [
+        2,
+        18,
+        -5
+      ],
+      "rotation": [
+        34.0828413504,
+        53.2544388939,
+        0
+      ],
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            -2.0,
+            18.0,
+            -5.0
+          ],
+          "size": [
+            8.0,
+            0.0,
+            22.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              130.0,
+              64.0,
+              -22.0,
+              0.0
+            ],
+            "east": [
+              160.0,
+              64.0,
+              -22.0,
+              0.0
+            ],
+            "north": [
+              138.0,
+              64.0,
+              -8.0,
+              0.0
+            ],
+            "south": [
+              168.0,
+              64.0,
+              -8.0,
+              0.0
+            ],
+            "up": [
+              138.0,
+              42.0,
+              -8.0,
+              22.0
+            ],
+            "down": [
+              146.0,
+              64.0,
+              -8.0,
+              -22.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "wing_2",
+      "parent": null,
+      "pivot": [
+        -2,
+        18,
+        -5
+      ],
+      "rotation": [
+        34.0830017786,
+        -53.2539977164,
+        0
+      ],
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            -6.0,
+            18.0,
+            -5.0
+          ],
+          "size": [
+            8.0,
+            0.0,
+            22.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              163.0,
+              64.0,
+              -22.0,
+              0.0
+            ],
+            "east": [
+              193.0,
+              64.0,
+              -22.0,
+              0.0
+            ],
+            "north": [
+              171.0,
+              64.0,
+              -8.0,
+              0.0
+            ],
+            "south": [
+              201.0,
+              64.0,
+              -8.0,
+              0.0
+            ],
+            "up": [
+              171.0,
+              42.0,
+              -8.0,
+              22.0
+            ],
+            "down": [
+              179.0,
+              64.0,
+              -8.0,
+              -22.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "wing_3",
+      "parent": null,
+      "pivot": [
+        2,
+        18,
+        -1
+      ],
+      "rotation": [
+        19.1715975434,
+        23.4319512798,
+        0
+      ],
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            0.0,
+            18.0,
+            -1.0
+          ],
+          "size": [
+            4.0,
+            0.0,
+            18.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              82.0,
+              45.0,
+              -18.0,
+              0.0
+            ],
+            "east": [
+              104.0,
+              45.0,
+              -18.0,
+              0.0
+            ],
+            "north": [
+              86.0,
+              45.0,
+              -4.0,
+              0.0
+            ],
+            "south": [
+              108.0,
+              45.0,
+              -4.0,
+              0.0
+            ],
+            "up": [
+              86.0,
+              27.0,
+              -4.0,
+              18.0
+            ],
+            "down": [
+              90.0,
+              45.0,
+              -4.0,
+              -18.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "wing_4",
+      "parent": null,
+      "pivot": [
+        -2,
+        18,
+        -1
+      ],
+      "rotation": [
+        19.1715975434,
+        -23.432002846,
+        0
+      ],
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            -4.0,
+            18.0,
+            -1.0
+          ],
+          "size": [
+            4.0,
+            0.0,
+            18.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              171.0,
+              35.0,
+              -18.0,
+              0.0
+            ],
+            "east": [
+              193.0,
+              35.0,
+              -18.0,
+              0.0
+            ],
+            "north": [
+              175.0,
+              35.0,
+              -4.0,
+              0.0
+            ],
+            "south": [
+              197.0,
+              35.0,
+              -4.0,
+              0.0
+            ],
+            "up": [
+              175.0,
+              17.0,
+              -4.0,
+              18.0
+            ],
+            "down": [
+              179.0,
+              35.0,
+              -4.0,
+              -18.0
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "locked_bones": [],
+  "lock_mode": "warn",
+  "lock_policy": "warn-keyed, refuse-structural",
+  "lock_policy_text": "Keying a locked bone is allowed; the checker warns, and the hitbox part follows the bone in-game (the consequence, so keep such keys deliberate). Renaming, re-parenting or deleting a locked bone is refused.",
+  "keyed_locked_by_shipped_clip": {},
+  "native": false,
+  "controller_kind": "phase_locked",
+  "clips": [
+    {
+      "name": "idle",
+      "loop": "true",
+      "role": "contract",
+      "code_triggered": false,
+      "required": true,
+      "length_rule": "near:1.0",
+      "length_seconds": 1.0,
+      "verdict": "author"
+    },
+    {
+      "name": "idle_breath",
+      "loop": "true",
+      "role": "contract",
+      "code_triggered": false,
+      "required": false,
+      "length_rule": "near:1.0",
+      "length_seconds": 1.0,
+      "verdict": "author"
+    },
+    {
+      "name": "idle_legs",
+      "loop": "true",
+      "role": "contract",
+      "code_triggered": false,
+      "required": false,
+      "length_rule": "near:1.0",
+      "length_seconds": 1.0,
+      "verdict": "author"
+    },
+    {
+      "name": "idle_mouth",
+      "loop": "true",
+      "role": "contract",
+      "code_triggered": false,
+      "required": false,
+      "length_rule": "near:1.0",
+      "length_seconds": 1.0,
+      "verdict": "author"
+    },
+    {
+      "name": "walk",
+      "loop": "true",
+      "role": "contract",
+      "code_triggered": false,
+      "required": true,
+      "length_rule": "near:1.0",
+      "length_seconds": 1.0,
+      "verdict": "author"
+    },
+    {
+      "name": "walk_breath",
+      "loop": "true",
+      "role": "contract",
+      "code_triggered": false,
+      "required": false,
+      "length_rule": "near:1.0",
+      "length_seconds": 1.0,
+      "verdict": "author"
+    },
+    {
+      "name": "walk_legs",
+      "loop": "true",
+      "role": "contract",
+      "code_triggered": false,
+      "required": false,
+      "length_rule": "near:1.0",
+      "length_seconds": 1.0,
+      "verdict": "author"
+    },
+    {
+      "name": "walk_mouth",
+      "loop": "true",
+      "role": "contract",
+      "code_triggered": false,
+      "required": false,
+      "length_rule": "near:1.0",
+      "length_seconds": 1.0,
+      "verdict": "author"
+    },
+    {
+      "name": "fly",
+      "loop": "true",
+      "role": "contract",
+      "code_triggered": false,
+      "required": false,
+      "length_rule": "near:1.0",
+      "length_seconds": 1.0,
+      "verdict": "author"
+    },
+    {
+      "name": "aggro_idle",
+      "loop": "true",
+      "role": "contract",
+      "code_triggered": false,
+      "required": false,
+      "length_rule": "near:1.0",
+      "length_seconds": 1.0,
+      "verdict": "author"
+    },
+    {
+      "name": "calm_idle",
+      "loop": "true",
+      "role": "contract",
+      "code_triggered": false,
+      "required": false,
+      "length_rule": "near:1.0",
+      "length_seconds": 1.0,
+      "verdict": "author"
+    },
+    {
+      "name": "attack",
+      "loop": "false",
+      "role": "contract",
+      "code_triggered": true,
+      "required": false,
+      "length_rule": "near:0.5",
+      "length_seconds": 0.5,
+      "verdict": "author"
+    },
+    {
+      "name": "hurt",
+      "loop": "false",
+      "role": "contract",
+      "code_triggered": true,
+      "required": false,
+      "length_rule": "near:0.3",
+      "length_seconds": 0.3,
+      "verdict": "author"
+    },
+    {
+      "name": "death",
+      "loop": "hold_on_last_frame",
+      "role": "contract",
+      "code_triggered": true,
+      "required": false,
+      "length_rule": "near:1.0",
+      "length_seconds": 1.0,
+      "verdict": "author"
+    },
+    {
+      "name": "mouth_flare",
+      "loop": "false",
+      "role": "extra",
+      "code_triggered": false,
+      "required": false,
+      "length_rule": "near:0.35",
+      "length_seconds": 0.35,
+      "verdict": "author"
+    }
+  ],
+  "allow_idle_alt": true,
+  "textures": [
+    {
+      "canonical": "lurkingterror.png",
+      "width": 256,
+      "height": 64,
+      "aliases": []
+    }
+  ],
+  "effort_hours": 30.8,
+  "effort_source": "generator: 4 h + 0.2 h/bone x 59 + 1 h/clip x 15 to author or improve (owner adjusts)",
+  "reference_clip": null,
+  "exact_transcription": false,
+  "rig_source": "reference-leg converter output",
+  "in_game": false,
+  "reference_id": "reference_lurkingterror",
+  "locked_bones_source": "none",
+  "locked_bones_provisional": []
+}

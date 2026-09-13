@@ -1,0 +1,157 @@
+{
+  "registry": "molenoid",
+  "display_name": "Molenoid",
+  "status": "DRAFT — authored by a seed lane from the entity code, 2026-09-13; the owner's edit pending",
+  "locomotion": "walker",
+  "artist_scope": "full contract (Tier 2, the gait-scaled (with an attacking branch) class: geckolib_migration_design.md section 5); the rig is not yet in-game (it lands through the seam in a later slice)",
+  "character_sheet": "A hostile giant mole: a 32x20x56 body with a shoulder block, a three-block head ending in a snout with a six-spoke nose star, two arms of an upper arm, a hand and four 13-long claws, two legs of the same build, a rump and a stub tail (MolenoidModel.java:104-287, 37 parts). 200 HP, 18 damage, 12 armour, speed 0.35 (EntityMolenoid.java:77-86). On a 1-in-4 tick it picks prey in a 12-block box - non-creative players, monsters and the attackable animals, never another mole (:141-142, :280-302) - seeing through dirt, sand and gravel with its own block ray (:315-358); within 6 blocks plus half the target's width it raises its attacking flag and, within 4, bites on a double dice for 18 with a knockback (:147-151, :115-130), else lobs one to four mole-dirt blocks onto the ground around the target (:152-156, :211-226); farther out it paths at 1.25 (:158), the flag dropped when it finds nothing (:161). It digs as it goes: a three-block column ahead is cleared every tick, up or down toward the prey (:199, :243-268), and mounds of mole dirt are kicked up behind it in proportion to its speed (:175-197); walls cannot hurt it (:107-113). It spawns in the dark at night above y 50 under three blocks of clear air, no other within 16 (:387-397; ModEntities.java:272-274). Read it as a mole: a crawling dig with the arm chains sweeping, the nose star turning, a frantic dig when it is on its prey.",
+  "size_notes": "Drawn at x1.0 of the rig (MolenoidRenderer.java:23; shadow 1.0, :25) on a 256x256 sheet (MolenoidModel.java:289), molenoid.png (MolenoidRenderer.java:18); the hitbox is 3.9 x 2.6 (ModEntities.java:272-274). The original's ModelMolenoid(0.5f) argument was the wingspeed (MolenoidModel.java:21), not a scale. The arms and legs are position chains the code re-places each tick (hands 15 px along the arm, claws 10 px along the hand; :297-298, :300-301) - key the joints, not the positions.",
+  "labels": {
+    "body": "body (the 32x20x56 barrel; static)",
+    "shoulders": "shoulders (34x17x10 across the front; static)",
+    "head1": "head, back block (28x14x10; static — no look)",
+    "head2": "head, middle block (22x10x10; static)",
+    "head3": "snout (8x8x10; static)",
+    "nosestar1": "nose star, spoke 1 (a 1x16x1 spoke crossing the snout tip; rolls with the star)",
+    "nosestar2": "nose star, spoke 2 (+30 deg; rolls with the star)",
+    "nosestar3": "nose star, spoke 3 (+60 deg; rolls with the star)",
+    "nosestar4": "nose star, spoke 4 (+90 deg; rolls with the star)",
+    "nosestar5": "nose star, spoke 5 (-60 deg; rolls with the star)",
+    "nosestar6": "nose star, spoke 6 (-30 deg; rolls with the star)",
+    "larm": "left arm (17x11x5 from the shoulder, yawed 36 deg out; the arms group)",
+    "lhand": "left hand (12x14x4, placed 15 along the arm; 1.25x the arm's swing)",
+    "lclaw1": "left claw 1, the lowest (13x3x2, placed 10 along the hand; 1.5x the swing, splayed -10 deg)",
+    "lclaw2": "left claw 2 (with claw 1)",
+    "lclaw3": "left claw 3 (with claw 1)",
+    "lclaw4": "left claw 4, the highest (with claw 1)",
+    "rarm": "right arm (the mirror; the arms group)",
+    "rhand": "right hand (1.25x the swing)",
+    "rclaw1": "right claw 1, the lowest (1.5x the swing, splayed +10 deg)",
+    "rclaw2": "right claw 2 (with claw 1)",
+    "rclaw3": "right claw 3 (with claw 1)",
+    "rclaw4": "right claw 4, the highest (with claw 1)",
+    "lleg": "left leg (17x11x5 at the hip, yawed 36 deg out; the legs group)",
+    "lfoot": "left foot (12x14x4, placed 15 along the leg; 1.25x the leg's swing)",
+    "ltoe1": "left toe 1, the lowest (13x3x2, placed 10 along the foot; 1.5x the swing, splayed -15 deg)",
+    "ltoe2": "left toe 2 (with toe 1)",
+    "ltoe3": "left toe 3 (with toe 1)",
+    "ltoe4": "left toe 4, the highest (with toe 1)",
+    "rleg": "right leg (the mirror; the legs group)",
+    "rfoot": "right foot (1.25x the swing)",
+    "rtoe1": "right toe 1, the lowest (1.5x the swing, splayed +15 deg)",
+    "rtoe2": "right toe 2 (with toe 1)",
+    "rtoe3": "right toe 3 (with toe 1)",
+    "rtoe4": "right toe 4, the highest (with toe 1)",
+    "butt": "rump (22x11x5 behind the body; static)",
+    "tail": "tail (4x3x5; static)"
+  },
+  "groups": [
+    {
+      "name": "gait",
+      "bones": ["larm", "lhand", "lclaw1", "lclaw2", "lclaw3", "lclaw4", "rarm", "rhand", "rclaw1", "rclaw2", "rclaw3", "rclaw4", "lleg", "lfoot", "ltoe1", "ltoe2", "ltoe3", "ltoe4", "rleg", "rfoot", "rtoe1", "rtoe2", "rtoe3", "rtoe4"],
+      "omega": 0.65,
+      "axis": "y (and each chain's x / z positions)",
+      "gait_scaled": true,
+      "amplitude": "arms and legs alike: pi x 0.25 = 0.785 rad (45 deg) x the walking speed above a limbSwingAmount of 0.1 at 1.3 x 0.5 = 0.65 rad/tick, 0 below the threshold; the arm or leg swings about ±0.628, the hand or foot 1.25x, the four claws or toes 1.5x about ∓0.174 (claws) / ∓0.261 (toes); each hand or foot is placed 15 px along its limb's yaw and each claw or toe set 10 px along the hand's or foot's; the legs take the negative of the arms' angle, and the same angle on both sides with mirrored rests puts left against right. The attacking branch: with the flag up the ARMS alone dig at 1.7 x 0.5 = 0.85 rad/tick and the full 45 deg, unscaled and with no threshold, while the legs keep the gait",
+      "plain": "the two arm chains and the two leg chains sweep about the vertical like a mole digging, each hand, foot, claw and toe set swinging farther than its limb, the legs against the arms and left against right; while the attacking flag is up the arms dig faster and even when it stands still",
+      "math": "g = amount > 0.1 ? cos(t * 1.3 * 0.5) * pi * 0.25 * amount : 0; a = attacking ? cos(t * 1.7 * 0.5) * pi * 0.25 : g; larm.yRot = a + 0.628; lhand.x/z = larm.x/z ± 15 along larm.yRot; lhand.yRot = a * 1.25; lclaw1..4.x/z = lhand.x/z ± 10 along lhand.yRot; lclaw1..4.yRot = a * 1.5 - 0.174; rarm.yRot = a - 0.628; rhand.yRot = a * 1.25; rclaw1..4.yRot = a * 1.5 + 0.174 (the right chain placed the mirror way); lleg.yRot = -g + 0.628; lfoot.yRot = -g * 1.25; ltoe1..4.yRot = -g * 1.5 - 0.261; rleg.yRot = -g - 0.628; rfoot.yRot = -g * 1.25; rtoe1..4.yRot = -g * 1.5 + 0.261; the feet and toes placed along the chain as the hands and claws are",
+      "source": "MolenoidModel.java:295-327 (the arms), :328-360 (the legs); wingspeed 0.5 (:21)",
+      "phase": "the limbSwingAmount threshold of 0.1 gates the gait; the synched DATA_ATTACKING int (EntityMolenoid.java:51-52, set 1 within 6 blocks plus half the target's width on the 1-in-4 pass :147-148, 0 with no prey :161) selects the arms' unscaled dig over it; one gait group per rig is the generator's rule, so the arms and legs share this group",
+      "wingspeed": 0.5,
+      "omega_note": "the classic phase is ageInTicks x 1.3 x 0.5 = 0.65 (a 9.67-tick period) for the gait, and x 1.7 x 0.5 = 0.85 (7.39 ticks) for the arms' attacking dig"
+    },
+    {
+      "name": "nose_star",
+      "bones": ["nosestar1", "nosestar2", "nosestar3", "nosestar4", "nosestar5", "nosestar6"],
+      "omega": 0.05,
+      "axis": "z",
+      "gait_scaled": false,
+      "amplitude": "pi = 3.14 rad (180 deg) each way about 0, the six spokes offset 0 / +30 / +60 / +90 / -60 / -30 deg — the star rocks through a full turn and back",
+      "plain": "the nose star rolls slowly back and forth through a full turn at all times",
+      "math": "s = cos(t * 0.1 * 0.5) * pi; nosestar1.zRot = s; nosestar2.zRot = s + 0.523; nosestar3.zRot = s + 1.047; nosestar4.zRot = s + 1.57; nosestar5.zRot = s - 1.047; nosestar6.zRot = s - 0.523",
+      "source": "MolenoidModel.java:361-366",
+      "wingspeed": 0.5,
+      "omega_note": "the classic phase is ageInTicks x 0.1 x 0.5 = 0.05: the natural period is 126 ticks (6.3 s)"
+    }
+  ],
+  "behaviour": [
+    "One gait rhythm above a limbSwingAmount of 0.1 (MolenoidModel.java:295, :328-360): the arm and leg chains sweep 45 degrees x the walking speed about the vertical at 0.65 rad/tick, a 9.7-tick period, the hands and feet at 1.25 times the angle and the claws and toes at 1.5, each piece placed along the one before (15 and 10 px); the arms and legs take the same angle with opposite signs, so a left arm sweeps with the right leg - a crawling dig.",
+    "One branch on the synched DATA_ATTACKING int (EntityMolenoid.java:51-52), raised on the 1-in-4 pass within 6 blocks plus half the target's width (:147-148) and dropped when the pass finds no prey (:161): while it is up the arms dig at 0.85 rad/tick and full 45-degree amplitude whether or not the mole moves (:295), the legs still following the stride (:328).",
+    "The six-spoke nose star rolls through a full turn and back on a 126-tick cosine at all times (:361-366). The body, shoulders, the three head blocks, the rump and the tail are static; the head does not follow the look.",
+    "The bite (doHurtTarget, EntityMolenoid.java:115-130: 18 and a 0.8 knockback, within 4 blocks on the double dice :150-151), the block lob (:152-156, :211-226), the dig ahead (:243-268) and the spoil mounds (:175-197) are world edits on server rolls - no animation events today."
+  ],
+  "clips": [
+    {
+      "name": "idle",
+      "verdict": "author",
+      "note": "REQUIRED with walk: the gate opens on the pair (today nothing ships; the classic code plays) — the rest: the nose star's slow roll (MolenoidModel.java:361-366), the arms and legs at their 36-degree splay"
+    },
+    {
+      "name": "walk",
+      "verdict": "author",
+      "note": "REQUIRED with idle: the locomotion loop — the arm and leg chains sweeping 45 degrees x the walking speed at 0.65 rad/tick in opposition (:295-360); the reference clip is that crawl at full stride"
+    },
+    {
+      "name": "swim",
+      "verdict": "leave",
+      "note": "no swim behaviour beyond the FloatGoal that keeps it at the surface (EntityMolenoid.java:70); the code draws the same crawl in water; the fallback to walk covers it (section 2.4)"
+    },
+    {
+      "name": "aggro_idle",
+      "verdict": "author",
+      "note": "DATA_ATTACKING held at 1 by the 1-in-4 pass while prey is within 6 blocks plus half its width (EntityMolenoid.java:147-148, :161): the arms digging at 0.85 rad/tick and full 45 degrees with the mole standing still (MolenoidModel.java:295) — the dig-on-the-spot"
+    },
+    {
+      "name": "calm_idle",
+      "verdict": "author",
+      "note": "the flag at 0 (EntityMolenoid.java:161): the arms still at their splay (MolenoidModel.java:295, the 0 branch) over the nose star's roll — the same rest as idle"
+    },
+    {
+      "name": "attack",
+      "verdict": "author",
+      "note": "the bite: doHurtTarget (EntityMolenoid.java:115-130) for 18 with a 0.8 knockback, on the 1-in-4 pass within 4 blocks when nextInt(4) == 0 or nextInt(5) == 1 (:150-151); the flag is held while in reach, not pulsed at the strike, so the strike is transport 1 (the server LivingDamageEvent.Post) — a two-armed claw slam; the block lob is the `lob` extra",
+      "length_seconds": 0.5
+    },
+    {
+      "name": "hurt",
+      "verdict": "author",
+      "note": "a flinch: hurt() (EntityMolenoid.java:107-113) refuses wall suffocation; the molenoid_hit sound at 1.1 volume (:372-375, :382-385); the HurtByTargetGoal turns it on the attacker (:74); the hurtTime edge is client-observed",
+      "length_seconds": 0.4
+    },
+    {
+      "name": "death",
+      "verdict": "author",
+      "note": "ruled 2026-09-06, Q3 (a): the vanilla death flip stays; a creature whose JSON ships a `death` clip gets the clip-replaces-flip mode, designed when the first such clip arrives (the Queen's own death clip the precedent) - a `death` delivered here plays under the flip until then",
+      "length_seconds": 1.5
+    }
+  ],
+  "extras": [
+    {
+      "name": "lob",
+      "loop": "false",
+      "layer": "overlay",
+      "bones": ["larm", "lhand", "lclaw1", "lclaw2", "lclaw3", "lclaw4", "rarm", "rhand", "rclaw1", "rclaw2", "rclaw3", "rclaw4", "shoulders"],
+      "length_seconds": 0.6,
+      "code_triggered": false,
+      "trigger": "throwBlocksAtTarget (EntityMolenoid.java:211-226), from the 1-in-4 pass when prey is within 6 blocks plus half its width but the bite did not roll or the prey is beyond 4 blocks (:147-156; PlayNicely off): one to four mole-dirt blocks set on the surface within 2 of the target; a world edit with no packet today — a named site (transport 3) when the rig lands",
+      "note": "a scoop and a fling of both arm chains toward the target"
+    },
+    {
+      "name": "dig",
+      "loop": "false",
+      "layer": "overlay",
+      "bones": ["larm", "lhand", "lclaw1", "lclaw2", "lclaw3", "lclaw4", "rarm", "rhand", "rclaw1", "rclaw2", "rclaw3", "rclaw4", "head1", "head2", "head3"],
+      "length_seconds": 0.5,
+      "code_triggered": false,
+      "trigger": "the spoil roll (EntityMolenoid.java:175-197): on a coin-flip tick, with odds proportional to the ground speed (100 x speed / 0.35 per cent), a mole-dirt mound is set ~6 blocks behind the head; the path ahead is cleared every tick (clearPathAhead :243-268); server rolls with no packet today — a named site (transport 3) when the rig lands",
+      "note": "a head-down scoop that kicks earth behind, on the mound roll while moving"
+    }
+  ],
+  "wishlist": [
+    "in `walk`: the code's crawl is a flat yaw sweep of four chains (MolenoidModel.java:295-360) — a mole's dig-crawl with the claws raking down and back and the body rolling sells the digging the entity really does (EntityMolenoid.java:243-268)",
+    "in `aggro_idle`: keep the unscaled 0.85-rad/tick arm dig (:295) and add a head-down, shoulders-up posture; the mole is on its prey within 6 blocks (EntityMolenoid.java:146-148)",
+    "in `attack`: a two-armed slam — the bite lands 18 within 4 blocks (EntityMolenoid.java:150-151, :115-130); the arms are yaw-only today",
+    "in `idle`: the nose star's 126-tick roll (:361-366) is the only rest motion — add a sniff of the snout and a breath of the body"
+  ],
+  "effort_hours": null
+}

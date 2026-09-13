@@ -1,0 +1,175 @@
+{
+  "registry": "sea_monster",
+  "display_name": "Sea Monster",
+  "status": "DRAFT — authored by a seed lane from the entity code, 2026-09-13; the owner's edit pending",
+  "locomotion": "swimmer",
+  "artist_scope": "full contract (Tier 1, the state-branching class: geckolib_migration_design.md section 5) with the §8.1 locks; the rig is not yet in-game (it lands through the seam in a later slice)",
+  "character_sheet": "The Sea Monster is a plesiosaur: a front and back body block with four flipper fins, a six-segment neck rising to a small head of upper jaw, hinged lower jaw and two eyes, and a seven-piece tapering tail (ModelSeaMonster.createBodyLayer, ModelSeaMonster.java:72-168). It has 110 HP, 14 attack and 8 armour (MobStats.SEA_MONSTER, createAttributes SeaMonster.java:101-109), swims at 0.55 and crawls on land at 0.25 (aiStep :125-132), wanders far and looks about (:93-98), and every fifth tick takes its stored target or the nearest living thing in a 16-block box, closing to within four blocks plus half its width, raising the attacking flag and biting on a 1-in-4 roll (customServerAiStep :215-247; doHurtTarget :135-147 with a 0.6 knockback). Out of water it seeks the nearest water on a 1-in-25 roll and dries out slowly when it finds none (:194-213); in water it heals 1 on a 1-in-120 roll with a splash (:249-252). Cactus cannot hurt it, hits are refused for 8 ticks after each one and a mob attacker becomes its target (hurt :150-170). It spawns at night in the dark above y 50 with no other within 16 blocks (checkSpawnRules :339-346) in oceans and swamps (the ocean spawns and hostile_sea_monster biome modifiers). Read it as a long-necked swimmer: the tail's travelling wave drives it, the fins row, the neck rears and strikes.",
+  "size_notes": "Drawn at x1.0 of the rig (SeaMonsterRenderer.java:27, applied :36-40; shadow 1.0) on a 256x128 sheet (ModelSeaMonster.java:168); 1.25 x 2.5 block hitbox (ModEntities.java:154-156; the design's row writes [5,5] — the profile takes the registered size). The neck and tail are chains the code positions segment by segment — key the joints, never the positions.",
+  "labels": {
+    "BodyFront": "front body block (static; intended hitbox part 'BodyFront')",
+    "BodyBack": "back body block (static; intended hitbox part 'BodyBack')",
+    "NeckBase": "neck, segment 1 — the base (rises with the neck wave a fifth; intended hitbox part 'NeckBase')",
+    "Neck2": "neck, segment 2 (a quarter of the wave added to the base)",
+    "Neck3": "neck, segment 3 (a third added; intended hitbox part 'Neck3')",
+    "Neck4": "neck, segment 4 (a half added)",
+    "Neck5": "neck, segment 5 (a half taken back)",
+    "Neck6": "neck, segment 6 (a third taken back; intended hitbox part 'Neck6')",
+    "TopJaw": "head and upper jaw (rides the neck's end; turns half the look yaw; intended hitbox part 'TopJaw')",
+    "BottomJaw": "lower jaw (rides the head; chomps 31 degrees about 0.45 attacking, breathes 9 degrees about 0.17 otherwise)",
+    "LeftEye": "left eye (rides the head)",
+    "RightEye": "right eye (rides the head)",
+    "FinFrontLeft": "front left flipper (rows with the wave about −0.523 / +0.698; intended hitbox part)",
+    "FinFrontRight": "front right flipper (about −0.523 / −0.698; intended hitbox part)",
+    "FinBackLeft": "back left flipper (the opposite phase; intended hitbox part)",
+    "FinBackRight": "back right flipper (the opposite phase; intended hitbox part)",
+    "TailBase": "tail segment 1 — the base (a seventh of the tail wave; intended hitbox part 'TailBase')",
+    "Tail2": "tail segment 2 (a sixth)",
+    "Tail3": "tail segment 3 (a fifth; intended hitbox part 'Tail3')",
+    "Tail4": "tail segment 4 (a quarter)",
+    "Tail5": "tail segment 5 (a third)",
+    "Tail6": "tail segment 6 (a half)",
+    "TailTip": "tail tip (the full wave; intended hitbox part 'TailTip')"
+  },
+  "groups": [
+    {
+      "name": "gait",
+      "bones": [
+        "TailBase", "Tail2", "Tail3", "Tail4", "Tail5", "Tail6", "TailTip"
+      ],
+      "omega": 0.65,
+      "axis": "y",
+      "gait_scaled": true,
+      "amplitude": "pi x 0.2 = 0.628 rad (36 deg) x the walking speed at the tip, divided by 7 / 6 / 5 / 4 / 3 / 2 / 1 from the base out, each segment placed at the end of the one before; zero below a limbSwingAmount of 0.1 unless the attacking flag is set (then the same wave, still scaled by the speed)",
+      "plain": "the tail sweeps side to side with the swimming or walking speed, the swing growing toward the tip",
+      "math": "a = (amount > 0.1 || attacking) ? cos(t * 1.3 * 0.5) * pi * 0.2 * amount : 0; TailBase.yRot = a/7; Tail2 = a/6; Tail3 = a/5; Tail4 = a/4; Tail5 = a/3; Tail6 = a/2; TailTip = a; positions along the chain by cos/sin x 10 / 7 / 5 / 5 / 5 / 5",
+      "source": "ModelSeaMonster.java:175-194; wingspeed 0.5 (:21)",
+      "phase": "a threshold of 0.1 on the walking speed, waived while the attacking flag is set",
+      "wingspeed": 0.5,
+      "omega_note": "the classic phase is ageInTicks x 1.3 x wingspeed 0.5 = 0.65 rad/tick: the natural period is 9.67 ticks"
+    },
+    {
+      "name": "fins",
+      "bones": [
+        "FinFrontLeft", "FinFrontRight", "FinBackLeft", "FinBackRight"
+      ],
+      "omega": 0.6,
+      "axis": "x and y together",
+      "gait_scaled": false,
+      "amplitude": "moving (speed above 0.1) or attacking: pi x 0.2 = 0.628 rad (36 deg) x the walking speed; still: pi x 0.02 = 0.063 rad (3.6 deg); the front fins take the wave on both pitch (about −0.523) and yaw (about ±0.698), the back fins its negative",
+      "plain": "the four flippers row — the front pair and the back pair opposite — with the speed, and stir faintly at rest",
+      "math": "f = (amount > 0.1 || attacking) ? cos(t * 1.2 * 0.5) * pi * 0.2 * amount : cos(t * 1.2 * 0.5) * pi * 0.02; FinFrontLeft.xRot = f - 0.523, yRot = f + 0.698; FinBackLeft.xRot = -f - 0.523, yRot = -f + 0.698; FinFrontRight.xRot = f - 0.523, yRot = f - 0.698; FinBackRight.xRot = -f - 0.523, yRot = -f - 0.698",
+      "source": "ModelSeaMonster.java:195-203",
+      "phase": "state-branching: the speed threshold or the attacking flag selects the speed-scaled stroke over the rest stir",
+      "wingspeed": 0.5,
+      "omega_note": "the classic phase is ageInTicks x 1.2 x wingspeed 0.5 = 0.6 rad/tick: the natural period is 10.5 ticks"
+    },
+    {
+      "name": "neck",
+      "bones": [
+        "NeckBase", "Neck2", "Neck3", "Neck4", "Neck5", "Neck6", "TopJaw", "LeftEye", "RightEye"
+      ],
+      "omega": 0.45,
+      "axis": "x",
+      "gait_scaled": false,
+      "amplitude": "moving or attacking: a rise of 0.455 x the speed plus pi x 0.25 = 0.785 rad (45 deg) x the speed at 0.45 rad/tick; still: pi x 0.02 = 0.063 rad (3.6 deg) at 0.15 rad/tick; the base takes a fifth about 0.455, then the segments add a quarter, a third and a half and take back a half and a third, each placed 9 (then 5) units up the one before; the head rides the last segment and turns half the look yaw",
+      "plain": "the neck rears and nods along its six segments, strongly with the speed or when attacking, faintly at rest; the head rides its end and follows the look",
+      "math": "n = (amount > 0.1 || attacking) ? 0.455 * amount + cos(t * 0.9 * 0.5) * pi * 0.25 * amount : cos(t * 0.3 * 0.5) * pi * 0.02; NeckBase.xRot = 0.455 + n/5; Neck2 = NeckBase + n/4; Neck3 = Neck2 + n/3; Neck4 = Neck3 + n/2; Neck5 = Neck4 - n/2; Neck6 = Neck5 - n/3; TopJaw / eyes placed 5 units past Neck6, yRot = look yaw x 0.5; positions along the chain by sin/cos x 9",
+      "source": "ModelSeaMonster.java:204-229",
+      "phase": "state-branching: the speed threshold or the attacking flag selects the rearing wave over the rest breath",
+      "wingspeed": 0.5,
+      "omega_note": "the classic phase moving is ageInTicks x 0.9 x wingspeed 0.5 = 0.45 rad/tick (period 14.0 ticks); still x 0.3 x 0.5 = 0.15 (41.9 ticks)"
+    },
+    {
+      "name": "jaw",
+      "bones": [
+        "BottomJaw"
+      ],
+      "omega": 0.85,
+      "axis": "x",
+      "gait_scaled": false,
+      "amplitude": "attacking: pi x 0.17 = 0.534 rad (31 deg) about 0.45 at 0.85 rad/tick; not attacking: pi x 0.05 = 0.157 rad (9 deg) about 0.17 at 0.1 rad/tick",
+      "plain": "the lower jaw chomps wide while the attacking flag is set and breathes slowly otherwise",
+      "math": "BottomJaw.xRot = attacking ? 0.45 + cos(t * 1.7 * 0.5) * pi * 0.17 : 0.17 + cos(t * 0.2 * 0.5) * pi * 0.05 (placed with the head, yRot the look yaw x 0.5)",
+      "source": "ModelSeaMonster.java:230-236",
+      "phase": "the synced DATA_ATTACKING byte (SeaMonster.java:49; set at :237 within reach, cleared at :245) selects",
+      "wingspeed": 0.5,
+      "omega_note": "the classic phase attacking is ageInTicks x 1.7 x wingspeed 0.5 = 0.85 rad/tick (period 7.39 ticks); calm x 0.2 x 0.5 = 0.1 (62.8 ticks)"
+    }
+  ],
+  "behaviour": [
+    "Moving (a walking speed above 0.1) or with the attacking flag set, three speed-scaled waves run: the tail sweeps at 0.65 rad/tick (a 9.7-tick period), the swing growing from a seventh at the base to the full 36 degrees at the tip (ModelSeaMonster.java:175-194); the four flippers row at 0.6 rad/tick, front and back pairs opposite (:195-203); and the neck rears by 0.455 x the speed and nods 45 degrees x the speed along its six segments at 0.45 rad/tick, the head riding its end (:204-226). Still, the tail is straight and the fins and neck stir 3.6 degrees.",
+    "The head and eyes turn half the look yaw (:227-229); the lower jaw chomps 31 degrees at 0.85 rad/tick while the synced DATA_ATTACKING byte is set (SeaMonster.java:49, raised at :237 within four blocks plus half the target's width) and breathes 9 degrees at 0.1 rad/tick otherwise (:230-236).",
+    "The two body blocks are static; the walk position plays no part. The entity swims at 0.55 and crawls at 0.25 (aiStep :125-132), so the same waves run faster in the water.",
+    "The bite (doHurtTarget, SeaMonster.java:135-147) is rolled by the fifth-tick scan (:215-247) — nothing in the code fires an animation for it."
+  ],
+  "clips": [
+    {
+      "name": "idle",
+      "verdict": "author",
+      "note": "REQUIRED with walk: the gate opens on the pair — the rest afloat or ashore: fins and neck stirring, the jaw breathing"
+    },
+    {
+      "name": "walk",
+      "verdict": "author",
+      "note": "REQUIRED with idle: the gait group's tail wave with the flippers rowing — on land a dragging crawl at 0.25 (SeaMonster.java:129)"
+    },
+    {
+      "name": "swim",
+      "verdict": "author",
+      "note": "the in-water motion at 0.55 (SeaMonster.java:129): the same tail wave and rowing fins, faster and fuller, with the neck low"
+    },
+    {
+      "name": "aggro_idle",
+      "verdict": "author",
+      "note": "the attacking flag (SeaMonster.java:237, within four blocks plus half the target's width): the neck reared (the 0.455 x speed lift, ModelSeaMonster.java:204-205), the jaw chomping (:231-232), the tail and fins working even when still (:175, :195, :204)"
+    },
+    {
+      "name": "calm_idle",
+      "verdict": "author",
+      "note": "the flag clear (:245): the jaw breathing (:234-235), the neck's faint stir (:204)"
+    },
+    {
+      "name": "attack",
+      "verdict": "author",
+      "note": "the bite: doHurtTarget (SeaMonster.java:135-147) from customServerAiStep :238-239 on a 1-in-4 roll within four blocks plus half the target's width — 14 of damage and a 0.6 knockback; author a neck strike down with the jaw's chomp",
+      "length_seconds": 0.5
+    },
+    {
+      "name": "hurt",
+      "verdict": "author",
+      "note": "a flinch to seamonster_hit (getHurtSound :327-330); hurt() (:150-170) refuses damage for 8 ticks and turns it on a mob attacker",
+      "length_seconds": 0.4
+    },
+    {
+      "name": "death",
+      "verdict": "author",
+      "note": "ruled 2026-09-06, Q3 (a): the vanilla death flip stays; a creature whose JSON ships a `death` clip gets the clip-replaces-flip mode, designed when the first such clip arrives (the Queen's own death clip the precedent) - a `death` delivered here plays under the flip until then",
+      "length_seconds": 1.5
+    }
+  ],
+  "extras": [],
+  "wishlist": [
+    "in `swim`: the tail's travelling wave (ModelSeaMonster.java:175-194) at the water speed with the body undulating — the code moves only the tail, fins and neck, never the body blocks",
+    "in `walk`: a slow, dragging crawl on the flippers (the land speed is 0.25, SeaMonster.java:129) with the neck held low",
+    "in `aggro_idle`: the neck reared (the 0.455 x speed lift at :204-205 reads as a rear) and the jaw working (:231-232)",
+    "in `attack`: a neck strike down with the jaw's chomp; the bite lands within four blocks plus half the target's width (SeaMonster.java:235-239)"
+  ],
+  "locked_bones_provisional": [
+    {"bone": "TopJaw", "size": [2.5, 1.5], "damage": 1},
+    {"bone": "BodyFront", "size": [5, 3.5], "damage": 0.5},
+    {"bone": "BodyBack", "size": [5, 3.5], "damage": 0.5},
+    {"bone": "NeckBase", "size": [2, 2], "damage": 0.5},
+    {"bone": "Neck3", "size": [2, 2], "damage": 0.5},
+    {"bone": "Neck6", "size": [2, 2], "damage": 0.5},
+    {"bone": "FinFrontLeft", "size": [2.5, 0.7], "damage": 0.25},
+    {"bone": "FinFrontRight", "size": [2.5, 0.7], "damage": 0.25},
+    {"bone": "FinBackLeft", "size": [2.5, 0.7], "damage": 0.25},
+    {"bone": "FinBackRight", "size": [2.5, 0.7], "damage": 0.25},
+    {"bone": "TailBase", "size": [1.5, 1.5], "damage": 0.25},
+    {"bone": "Tail3", "size": [1.5, 1.5], "damage": 0.25},
+    {"bone": "TailTip", "size": [1.5, 1.5], "damage": 0.25}
+  ],
+  "locked_bones_note": "The design's section 6 ModelSeaMonster row (geckolib_migration_design.md:452): 'TopJaw [2.5,1.5] @1; BodyFront/BodyBack [5,3.5] @0.5; NeckBase/Neck3/Neck6 [2,2] @0.5; four fins [2.5,0.7] @0.25; TailBase/Tail3/TailTip [1.5,1.5] @0.25'. Every named bone resolves as written (ModelSeaMonster.createBodyLayer); 'four fins' taken as FinFrontLeft, FinFrontRight, FinBackLeft and FinBackRight. The row writes the main size as [5,5] and the renderer scale as x3; the registration is 1.25 x 2.5 (ModEntities.java:154-156) and SeaMonsterRenderer.SCALE is 1.0 (SeaMonsterRenderer.java:27) — the profile takes the registered size and the owner reconciles the row.",
+  "effort_hours": null
+}

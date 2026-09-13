@@ -1,0 +1,116 @@
+{
+  "registry": "cassowary",
+  "display_name": "Cassowary",
+  "status": "DRAFT — authored by a seed lane from the entity code, 2026-09-13; the owner's edit pending",
+  "locomotion": "walker",
+  "artist_scope": "full contract (Tier 2, the gait-scaled class: geckolib_migration_design.md section 5); the rig is not yet in-game (it lands through the seam in a later slice)",
+  "character_sheet": "A cassowary: a body angled up with a tail behind, a neck base and a long neck bent up and back over it, a head with a beak and a casque crest on top, a wattle ('gobbler') under the throat, and two legs with feet (ModelCassowary.java:39-117; 12 parts on a 64x32 sheet). It is a skittish bird: 10 HP, speed 0.25, an unused 8-damage attribute (Cassowary.java:55-60) - no goal strikes. It floats (:45), breeds on crystal apples (:46, :93-96), runs from monsters AND players (:47-48), panics when hurt (:49), watches other mobs (:50) and wanders (:51); it spawns by day (:104-109) and a chick is drawn at half size (CassowaryRenderer.java:30-31). Read it as a nervous flightless bird: a quick two-legged stride with the neck and wattle bobbing at twice the step, frozen still when it stops.",
+  "size_notes": "Drawn at x1.0 of the rig, x0.5 as a chick (CassowaryRenderer.java:20, 30-31) on a 64x32 sheet (ModelCassowary.java:117); the hitbox is 0.5 x 1.2 (ModEntities.java:347-348); shadow 0.5 (CassowaryRenderer.java:23).",
+  "labels": {
+    "body": "body (pitched up 19 deg)",
+    "tail": "tail (raised 51 deg)",
+    "neck1": "neck base (angled -68 deg)",
+    "neck": "neck (built pointing back over the body at -2.827 rad; bobs)",
+    "head": "head (rides at the end of the neck)",
+    "beak": "beak (rides at the end of the neck)",
+    "crest": "casque crest (rides at the end of the neck)",
+    "gobbler": "wattle (bobs with the neck)",
+    "leg1": "left leg (swings with foot2)",
+    "foot2": "left foot (swings with leg1)",
+    "leg2": "right leg (swings with foot1)",
+    "foot1": "right foot (swings with leg2)"
+  },
+  "groups": [
+    {
+      "name": "gait",
+      "bones": [
+        "leg1",
+        "foot2",
+        "leg2",
+        "foot1"
+      ],
+      "omega": 0.715,
+      "axis": "x",
+      "gait_scaled": true,
+      "amplitude": "pi x 0.15 = 0.471 rad (27 deg) x the walking speed at 1.3 x 0.55 - still below the 0.1 threshold, no rest offsets",
+      "plain": "the two legs stride in opposition, each foot swinging with its leg",
+      "math": "a = limbSwingAmount > 0.1 ? cos(ageInTicks * 1.3 * 0.55) * pi * 0.15 * limbSwingAmount : 0; leg1.xRot = foot2.xRot = a; leg2.xRot = foot1.xRot = -a",
+      "source": "ModelCassowary.java:124-134",
+      "wingspeed": 0.55,
+      "omega_note": "the classic phase is ageInTicks x 1.3 x 0.55 (wingspeed, ModelCassowary.java:24): the natural period is 2 pi / 0.715 = 8.8 ticks"
+    },
+    {
+      "name": "neck_bob",
+      "bones": [
+        "neck",
+        "gobbler",
+        "crest",
+        "beak",
+        "head"
+      ],
+      "omega": 1.43,
+      "axis": "x (the neck and wattle); the crest, beak and head slide with the neck's end",
+      "gait_scaled": false,
+      "amplitude": "neck: -2.827 rad rest, then pi x 0.1 = 0.314 rad (18 deg) x the walking speed at 2.6 x 0.55 (twice the gait rate); the wattle the same around 0; the crest, beak and head are placed 7 units along the neck's pitch, so they ride its bob as a position; nothing below the 0.1 threshold",
+      "plain": "the neck and the wattle bob twice per stride and the head, beak and crest ride up and down on the end of the neck; still when standing",
+      "math": "b = limbSwingAmount > 0.1 ? cos(ageInTicks * 2.6 * 0.55) * pi * 0.1 * limbSwingAmount : 0; neck.xRot = -2.827 + b; gobbler.xRot = b; crest.z = beak.z = head.z = neck.z + sin(neck.xRot) * 7; crest.y = beak.y = head.y = neck.y + cos(neck.xRot) * 7",
+      "source": "ModelCassowary.java:126, 135-142",
+      "wingspeed": 0.55,
+      "omega_note": "the classic phase is ageInTicks x 2.6 x 0.55: the natural period is 2 pi / 1.43 = 4.4 ticks - twice the gait rate; the walking branch scales it by speed though it is not the gait group"
+    }
+  ],
+  "behaviour": [
+    "Everything moves only above a walking speed of 0.1 (ModelCassowary.java:124-130); standing, the bird is frozen - no breath, no head turn (netHeadYaw unused, so the LookAtPlayerGoal at Cassowary.java:50 turns nothing).",
+    "The gait (:125, :131-134): the cosine of the age x 1.3 x 0.55 (wingspeed, :24), x pi x 0.15, x the walking speed swings the left leg and foot forward and the right leg and foot back - 27 degrees at full stride every 8.8 ticks (the code pairs leg1 with foot2 and leg2 with foot1: they share pivots, so each pair is one leg).",
+    "The neck bobs at twice the stride rate (:126, :135-136): -2.827 rad plus the cosine of the age x 2.6 x 0.55, x pi x 0.1, x the walking speed - 18 degrees every 4.4 ticks - and the wattle takes the same angle around 0.",
+    "The head, beak and crest have no rotation of their own: the code places all three 7 units along the neck's pitch (:137-142), so they ride the bob as a position - an FK step written by hand on flat bones (when the rig lands, key their positions with the neck or parent them to it).",
+    "The body, tail and neck base never move; there is no attacking flag and no strike."
+  ],
+  "clips": [
+    {
+      "name": "idle",
+      "verdict": "author",
+      "note": "REQUIRED with walk: the gate opens on the pair (today nothing ships; the classic code plays) - the standing loop: the code freezes the bird below the threshold (ModelCassowary.java:127-130), so this is new: a wary stillness with a small breath"
+    },
+    {
+      "name": "walk",
+      "verdict": "author",
+      "note": "REQUIRED with idle: the locomotion loop - the gait group's 27-degree stride with the neck and wattle bobbing at twice the rate (ModelCassowary.java:124-142), scaled by walking speed in-game"
+    },
+    {
+      "name": "swim",
+      "verdict": "author",
+      "note": "it has the state: a FloatGoal keeps it at the surface (Cassowary.java:45) - a paddling stride, the neck held high; optional: falls back to walk then idle when absent (section 2.4)"
+    },
+    {
+      "name": "calm_idle",
+      "verdict": "leave",
+      "note": "= idle: no synched attacking flag in Cassowary.java (no DATA_ATTACKING) and no attack at all, so calm_idle is covered by idle (ruled 2026-09-06, Q12 (a))"
+    },
+    {
+      "name": "attack",
+      "verdict": "leave",
+      "note": "no attack: the entity never strikes - no melee or ranged goal, no doHurtTarget call (the 8-damage attribute at Cassowary.java:59 is unused); the generator offers no attack row"
+    },
+    {
+      "name": "hurt",
+      "verdict": "author",
+      "note": "a flinch: no hurt() override (vanilla LivingEntity.hurt; the duck_hurt sound at Cassowary.java:75-78); the hurtTime edge is client-observed - it panics after (:49)",
+      "length_seconds": 0.3
+    },
+    {
+      "name": "death",
+      "verdict": "author",
+      "note": "ruled 2026-09-06, Q3 (a): the vanilla death flip stays; a creature whose JSON ships a `death` clip gets the clip-replaces-flip mode, designed when the first such clip arrives (the Queen's own death clip the precedent) - a `death` delivered here plays under the flip until then",
+      "length_seconds": 1.0
+    }
+  ],
+  "extras": [],
+  "wishlist": [
+    "in `idle`: the code freezes the bird when it stops (ModelCassowary.java:127-130) - give it a head cock and a wattle twitch so it reads alive; it runs from players (Cassowary.java:48), so wariness fits",
+    "in `walk`: a bird's stride - a knee that lags the hip (leg and foot swing as one, ModelCassowary.java:131-134) and a forward lunge of the neck on each step instead of the up-and-down bob",
+    "the head, beak and crest ride the neck's end as code-placed positions (ModelCassowary.java:137-142): author the neck as a rotation and flag to the owner that the seam must parent the three head parts to the neck or key their positions when the rig lands",
+    "in `hurt` / before the panic (Cassowary.java:49): a startled leap with the tail flaring"
+  ],
+  "effort_hours": null
+}

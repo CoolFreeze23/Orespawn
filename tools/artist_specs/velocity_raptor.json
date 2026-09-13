@@ -1,0 +1,181 @@
+{
+  "registry": "velocity_raptor",
+  "display_name": "Velocity Raptor",
+  "status": "DRAFT — authored by a seed lane from the entity code, 2026-09-13; the owner's edit pending",
+  "locomotion": "walker",
+  "artist_scope": "full contract (Tier 2, the gait-scaled class: geckolib_migration_design.md section 5); the rig is not yet in-game (it lands through the seam in a later slice)",
+  "character_sheet": "A small tameable feathered raptor: a 4x7x11 body, a raked neck to a head with a snout and a four-feather crest, two hat pieces, two arms of an upper and a lower piece with three zero-thickness feathers each, two legs of a thigh, a shin, a foot and a toe claw, and a two-piece tail with four zero-thickness feathers (VelocityRaptorModel.java:98-266, 34 parts), drawn at x0.75. 10 HP (20 tamed), speed 0.55 - the fastest thing on legs in the mod - and an attack of 2 it never uses: it has no attack goal (VelocityRaptor.java:60-70, :87-93). It flees monsters within 8 blocks and panics at 1.6 (:65, :67), is tempted by apples and tamed by one in two (:66, :166-182); tamed it follows its owner at 1.5 (:64), is untamed with a dead bush (:193-204), named with a tag (:211-216) and sat with a sneak-click (:220-224). Hurt on a 1-in-20 tick, or one tick in 250, it grazes dandelions, poppies, red tulips, oak leaves or hay within nine blocks, eating the block and healing 2 (:111-160); it takes at most 10 per hit and 2 per fall (:95-109). It spawns in daylight above y 50 (:265-270; ModEntities.java:592-593) and breeds on apples (:255, :272-276). Read it as a sprinting bird-dinosaur: a quick two-legged stride, the crest and tail feathers fluttering - and drooping as it weakens.",
+  "size_notes": "Drawn at x0.75 of the rig, x0.375 as a baby (VelocityRaptorRenderer.java:24, :39-43; shadow 0.4125, :26) on a 128x128 sheet (VelocityRaptorModel.java:268), velocityraptor.png (VelocityRaptorRenderer.java:20); the hitbox is 0.5 x 0.6 (ModEntities.java:592-593). The original's ModelVelocityRaptor(1.25f) argument was the wingspeed (VelocityRaptorModel.java:21), not a scale. The crest and tail feathers scale their rate and size by the health fraction (:284-288, :306).",
+  "labels": {
+    "Shape1": "body (4x7x11; static)",
+    "neck": "neck (2x8x3 raked up 62 deg; static)",
+    "head1": "head (3x4x7 ahead of the neck; static — no look)",
+    "head2": "snout (2x4x4; static)",
+    "Hat1": "hat brim (4x1x5 on the head; static, always drawn)",
+    "Hat2": "hat crown (3x2x3; static)",
+    "hf1": "crest feather 1, the front (a zero-thickness 1x2 plane raked 54 deg; flutters with the crest)",
+    "hf2": "crest feather 2 (raked 38 deg; flutters opposite feather 1)",
+    "hf3": "crest feather 3 (raked 26 deg; flutters with feather 1)",
+    "hf4": "crest feather 4, the rear (raked 14 deg; flutters opposite)",
+    "lf1": "left arm, upper (1x3x2, rest 0.279; sways with the arm group)",
+    "lf2": "left arm, lower (1x4x1, rest -0.436; sways with the arm group)",
+    "lff1": "left arm feather 1 (a zero-thickness 1x3 plane, rest -0.279; sways with the arm and flutters in yaw)",
+    "lff2": "left arm feather 2 (rest -0.453; sways and flutters opposite)",
+    "lff3": "left arm feather 3 (rest -1.047; sways and flutters with feather 1)",
+    "rf1": "right arm, upper (the mirror; sways opposite the left)",
+    "rf2": "right arm, lower (the mirror)",
+    "rff1": "right arm feather 1 (the mirror)",
+    "rff2": "right arm feather 2 (the mirror)",
+    "rff3": "right arm feather 3 (the mirror)",
+    "bl1": "left thigh (2x6x4; the gait)",
+    "bl2": "left shin (2x5x2, rest 0.488; the gait)",
+    "bl3": "left foot (2x2x4; the gait)",
+    "bl4": "left toe claw (1x3x1, rest 0.628; the gait)",
+    "br1": "right thigh (the gait, opposite the left)",
+    "br2": "right shin (the gait)",
+    "br3": "right foot (the gait)",
+    "br4": "right toe claw (the gait)",
+    "tail1": "tail, base (2x5x4; static)",
+    "tail2": "tail (1x2x10; static)",
+    "tf1": "tail feather 1 (a zero-thickness 1x3 plane at z 19, raked -31 deg; rolls with the tail-feather flutter)",
+    "tf2": "tail feather 2 (at z 21; rolls opposite)",
+    "tf3": "tail feather 3 (at z 23; rolls with feather 1)",
+    "tf4": "tail feather 4, the tip (at z 25; rolls opposite)"
+  },
+  "groups": [
+    {
+      "name": "gait",
+      "bones": ["bl1", "bl2", "bl3", "bl4", "br1", "br2", "br3", "br4"],
+      "omega": 1.625,
+      "axis": "x",
+      "gait_scaled": true,
+      "amplitude": "pi x 0.25 = 0.785 rad (45 deg) x the walking speed above a limbSwingAmount of 0.1, every piece of a leg by the same angle about its rest (thigh 0, shin 0.488, foot 0, claw 0.628), the right leg the negative; 0 below the threshold",
+      "plain": "the two legs stride fore and aft as stiff chains, opposite each other",
+      "math": "a = amount > 0.1 ? cos(t * 1.3 * 1.25) * pi * 0.25 * amount : 0; bl1.xRot = a; bl2.xRot = a + 0.488; bl3.xRot = a; bl4.xRot = a + 0.628; br1..4 = -a + the same rests",
+      "source": "VelocityRaptorModel.java:275-283; wingspeed 1.25 (:21)",
+      "phase": "the limbSwingAmount threshold of 0.1 gates it",
+      "wingspeed": 1.25,
+      "omega_note": "the classic phase is ageInTicks x 1.3 x 1.25 = 1.625: the natural period is 3.87 ticks"
+    },
+    {
+      "name": "crest",
+      "bones": ["hf1", "hf2", "hf3", "hf4"],
+      "omega": 1.5625,
+      "axis": "y",
+      "gait_scaled": false,
+      "amplitude": "pi x 0.1 = 0.314 rad (18 deg) x the health fraction at 1.25 x 1.25 x the health fraction rad/tick, feathers 1 and 3 one way, 2 and 4 the other - at full health an 18-degree flutter every 4 ticks, dwindling to nothing as it dies",
+      "plain": "the four crest feathers flutter side to side in alternation, fast and wide when healthy, slow and limp when hurt",
+      "math": "hf = health / maxHealth; c = cos(t * 1.25 * 1.25 * hf) * pi * 0.1 * hf; hf1.yRot = hf3.yRot = c; hf2.yRot = hf4.yRot = -c",
+      "source": "VelocityRaptorModel.java:284-288",
+      "phase": "the health fraction (client-known) scales both rate and size",
+      "wingspeed": 1.25,
+      "omega_note": "the classic phase is ageInTicks x 1.25 x 1.25 x hf: 4.02 ticks at full health, longer as the health drops"
+    },
+    {
+      "name": "arms",
+      "bones": ["lf1", "lf2", "lff1", "lff2", "lff3", "rf1", "rf2", "rff1", "rff2", "rff3"],
+      "omega": 0.3,
+      "axis": "x",
+      "gait_scaled": false,
+      "amplitude": "pi x 0.05 = 0.157 rad (9 deg) about each piece's rest (upper 0.279, lower -0.436, feathers -0.279 / -0.453 / -1.047), the right arm the negative",
+      "plain": "the two arms and their feathers sway slowly fore and aft in opposition at all times",
+      "math": "a = cos(t * 0.3) * pi * 0.05; lf1.xRot = a + 0.279; lf2.xRot = a - 0.436; lff1.xRot = a - 0.279; lff2.xRot = a - 0.453; lff3.xRot = a - 1.047; the right arm: -a + the same rests",
+      "source": "VelocityRaptorModel.java:289-299",
+      "omega_note": "the classic phase is ageInTicks x 0.3 (no wingspeed term): the natural period is 20.9 ticks"
+    },
+    {
+      "name": "arm_feathers",
+      "bones": ["lff1", "lff2", "lff3", "rff1", "rff2", "rff3"],
+      "omega": 1.625,
+      "axis": "y",
+      "gait_scaled": false,
+      "amplitude": "pi x 0.1 = 0.314 rad (18 deg), feathers 1 and 3 of the left arm one way and feather 2 the other, the right arm mirrored",
+      "plain": "the six arm feathers flutter in alternation at the stride's rate at all times, over the arms' slow sway",
+      "math": "f = cos(t * 1.3 * 1.25) * pi * 0.1; lff1.yRot = lff3.yRot = f; lff2.yRot = -f; rff1.yRot = rff3.yRot = -f; rff2.yRot = f",
+      "source": "VelocityRaptorModel.java:300-305",
+      "wingspeed": 1.25,
+      "omega_note": "the classic phase is ageInTicks x 1.3 x 1.25 = 1.625: the natural period is 3.87 ticks, the gait's rate but unscaled by the walk"
+    },
+    {
+      "name": "tail_feathers",
+      "bones": ["tf1", "tf2", "tf3", "tf4"],
+      "omega": 1.75,
+      "axis": "z",
+      "gait_scaled": false,
+      "amplitude": "pi x 0.25 = 0.785 rad (45 deg) x the health fraction at 1.4 x 1.25 x the health fraction rad/tick, feathers 1 and 3 one way, 2 and 4 the other; 0 (flat) in the sitting pose",
+      "plain": "the four tail feathers roll in alternation, wide and fast when healthy, limp when hurt, flat when sitting",
+      "math": "r = sitting ? 0 : cos(t * 1.4 * 1.25 * hf) * pi * 0.25 * hf; tf1.zRot = tf3.zRot = r; tf2.zRot = tf4.zRot = -r",
+      "source": "VelocityRaptorModel.java:306-310",
+      "phase": "isInSittingPose (the sneak-click, VelocityRaptor.java:220-224) zeroes it; the health fraction scales rate and size",
+      "wingspeed": 1.25,
+      "omega_note": "the classic phase is ageInTicks x 1.4 x 1.25 x hf: 3.59 ticks at full health"
+    }
+  ],
+  "behaviour": [
+    "One gait rhythm above a limbSwingAmount of 0.1 (VelocityRaptorModel.java:275-283): the two legs stride 45 degrees x the walking speed as stiff chains in opposition at 1.625 rad/tick, a 3.9-tick period - a sprint at the 0.55 speed (VelocityRaptor.java:91).",
+    "Four unscaled rhythms: the arms sway 9 degrees in opposition on a 21-tick cosine (:289-299); the six arm feathers flutter 18 degrees in alternation at the stride's rate whether or not it walks (:300-305); the crest feathers flutter 18 degrees at 1.56 rad/tick and the tail feathers roll 45 degrees at 1.75 rad/tick in alternation - both scaled in rate and size by the health fraction, so a wounded raptor's feathers go slow and limp (:284-288, :306-310); the sitting pose flattens the tail feathers (:306).",
+    "The body, neck, head, snout, hats and the two tail pieces are static; the head does not follow the look. The graze (VelocityRaptor.java:142-159) and the sit toggle (:220-224) draw no pose beyond the flat tail feathers."
+  ],
+  "clips": [
+    {
+      "name": "idle",
+      "verdict": "author",
+      "note": "REQUIRED with walk: the gate opens on the pair (today nothing ships; the classic code plays) — the stand: the arms' slow sway (VelocityRaptorModel.java:289-299), the crest, arm and tail feathers fluttering (:284-288, :300-310), the legs still"
+    },
+    {
+      "name": "walk",
+      "verdict": "author",
+      "note": "REQUIRED with idle: the locomotion loop — the two-legged stride at 1.625 rad/tick, 45 degrees x the walking speed (:275-283); the reference clip is that sprint at full stride"
+    },
+    {
+      "name": "swim",
+      "verdict": "leave",
+      "note": "no swim behaviour: a FloatGoal keeps it at the surface (VelocityRaptor.java:62) and it strolls clear of water (:69); the fallback to walk covers it (section 2.4)"
+    },
+    {
+      "name": "calm_idle",
+      "verdict": "leave",
+      "note": "= idle: no synched attacking flag in VelocityRaptor.java and no attack goal at all (the ATTACK_DAMAGE of 2 at :92 is unused; the owner-defence targets at :77-81 have no melee goal to consume them), so calm_idle is covered by idle (ruled 2026-09-06, Q12 (a))"
+    },
+    {
+      "name": "hurt",
+      "verdict": "author",
+      "note": "a flinch: hurt() (VelocityRaptor.java:95-98) caps every hit at 10; the cryo_hurt sound at 0.4 volume (:242-245, :253); the PanicGoal at 1.6 speed runs after (:67); the hurtTime edge is client-observed — note the feathers slow and droop with the health fraction on their own (VelocityRaptorModel.java:284-288, :306)",
+      "length_seconds": 0.3
+    },
+    {
+      "name": "death",
+      "verdict": "author",
+      "note": "ruled 2026-09-06, Q3 (a): the vanilla death flip stays; a creature whose JSON ships a `death` clip gets the clip-replaces-flip mode, designed when the first such clip arrives (the Queen's own death clip the precedent) - a `death` delivered here plays under the flip until then",
+      "length_seconds": 1.0
+    }
+  ],
+  "extras": [
+    {
+      "name": "graze",
+      "loop": "false",
+      "layer": "overlay",
+      "bones": ["neck", "head1", "head2", "hf1", "hf2", "hf3", "hf4", "Hat1", "Hat2"],
+      "length_seconds": 1.0,
+      "code_triggered": false,
+      "trigger": "customServerAiStep (VelocityRaptor.java:142-159): hurt on a 1-in-20 tick, or on a 1-in-250 roll, not sitting, it scans up to nine blocks for a dandelion, poppy, red tulip, oak leaves or hay (:111-134), walks there at 1.0 (:150) and, within 3.5 blocks, eats the block under mobGriefing and heals 2 (:151-157); a server-side roll with no packet today — a named site (transport 3) when the rig lands",
+      "note": "a head-down peck at the plant and a chew; the neck and head are static in the rig, so key them together"
+    },
+    {
+      "name": "sit",
+      "loop": "true",
+      "layer": "base",
+      "bones": ["bl1", "bl2", "bl3", "bl4", "br1", "br2", "br3", "br4", "Shape1", "tail1", "tail2", "tf1", "tf2", "tf3", "tf4"],
+      "code_triggered": false,
+      "trigger": "the vanilla sitting pose flag (TamableAnimal's synched sit bit) toggled by the owner's sneak-click (VelocityRaptor.java:220-224, setOrderedToSit / setInSittingPose): the model flattens the tail feathers while it is set (VelocityRaptorModel.java:306) and the graze pauses (VelocityRaptor.java:142); a state loop on the flag when the rig lands",
+      "note": "a crouched rest: legs folded under the body, the tail down"
+    }
+  ],
+  "wishlist": [
+    "in `walk`: the code's stride swings every leg piece by one angle (VelocityRaptorModel.java:276-283) — bend the knee and flick the foot; at 0.55 (VelocityRaptor.java:91) this is a sprint, let the body lean into it",
+    "in `idle`: keep the health-scaled flutters (:284-288, :306-310) - a healthy raptor should read as twitchy and a hurt one as drooping; add a head bob, the head is static (:168-186)",
+    "in `graze`: a peck at the flower (VelocityRaptor.java:151-157); nothing in the rig reaches the ground today",
+    "in `hurt`: a startled hop before the 1.6-speed bolt (VelocityRaptor.java:67)"
+  ],
+  "effort_hours": null
+}

@@ -1,0 +1,1554 @@
+{
+  "generated_by": "tools/artist_package.py 0.2.9 (the full folder, 2026-09-13, fourth set, items 5, 7 and 8: every artist-tier species packaged - a rig not yet in-game from the reference leg's converter output, bone names final; the Tier-1 bosses' intended locked bones from the design's section 6 rendered in section 7 and validated against the geo; the README's priority table the full list, bosses first, closing with the deliverable count)",
+  "registry": "termite",
+  "display_name": "Termite",
+  "tier": 2,
+  "tier_label": "Tier 2",
+  "geo_file": "ant.geo.json",
+  "animation_file": "ant.animation.json",
+  "bbmodel_file": "termite.bbmodel",
+  "texture_size": [
+    64,
+    32
+  ],
+  "bones": [
+    {
+      "name": "abdomen",
+      "parent": null,
+      "pivot": [
+        0,
+        7,
+        0
+      ],
+      "rotation": null,
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            -3.0,
+            4.0,
+            4.0
+          ],
+          "size": [
+            3.0,
+            3.0,
+            5.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              43.0,
+              5.0,
+              -5.0,
+              3.0
+            ],
+            "east": [
+              51.0,
+              5.0,
+              -5.0,
+              3.0
+            ],
+            "north": [
+              46.0,
+              5.0,
+              -3.0,
+              3.0
+            ],
+            "south": [
+              54.0,
+              5.0,
+              -3.0,
+              3.0
+            ],
+            "up": [
+              46.0,
+              0.0,
+              -3.0,
+              5.0
+            ],
+            "down": [
+              49.0,
+              5.0,
+              -3.0,
+              -5.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "abdomen1",
+      "parent": null,
+      "pivot": [
+        0,
+        7,
+        0
+      ],
+      "rotation": null,
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            -2.0,
+            5.0,
+            9.0
+          ],
+          "size": [
+            1.0,
+            1.0,
+            1.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              55.0,
+              1.0,
+              -1.0,
+              1.0
+            ],
+            "east": [
+              57.0,
+              1.0,
+              -1.0,
+              1.0
+            ],
+            "north": [
+              56.0,
+              1.0,
+              -1.0,
+              1.0
+            ],
+            "south": [
+              58.0,
+              1.0,
+              -1.0,
+              1.0
+            ],
+            "up": [
+              56.0,
+              0.0,
+              -1.0,
+              1.0
+            ],
+            "down": [
+              57.0,
+              1.0,
+              -1.0,
+              -1.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "head",
+      "parent": null,
+      "pivot": [
+        0,
+        7,
+        0
+      ],
+      "rotation": null,
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            -3.0,
+            5.0,
+            -4.0
+          ],
+          "size": [
+            3.0,
+            3.0,
+            3.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              9.0,
+              3.0,
+              -3.0,
+              3.0
+            ],
+            "east": [
+              15.0,
+              3.0,
+              -3.0,
+              3.0
+            ],
+            "north": [
+              12.0,
+              3.0,
+              -3.0,
+              3.0
+            ],
+            "south": [
+              18.0,
+              3.0,
+              -3.0,
+              3.0
+            ],
+            "up": [
+              12.0,
+              0.0,
+              -3.0,
+              3.0
+            ],
+            "down": [
+              15.0,
+              3.0,
+              -3.0,
+              -3.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "jawsl",
+      "parent": null,
+      "pivot": [
+        0,
+        7,
+        0
+      ],
+      "rotation": null,
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            -4.0,
+            6.0,
+            -6.0
+          ],
+          "size": [
+            1.0,
+            1.0,
+            3.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              3.0,
+              17.0,
+              -3.0,
+              1.0
+            ],
+            "east": [
+              7.0,
+              17.0,
+              -3.0,
+              1.0
+            ],
+            "north": [
+              4.0,
+              17.0,
+              -1.0,
+              1.0
+            ],
+            "south": [
+              8.0,
+              17.0,
+              -1.0,
+              1.0
+            ],
+            "up": [
+              4.0,
+              14.0,
+              -1.0,
+              3.0
+            ],
+            "down": [
+              5.0,
+              17.0,
+              -1.0,
+              -3.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "jawsr",
+      "parent": null,
+      "pivot": [
+        0,
+        7,
+        0
+      ],
+      "rotation": null,
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            0.0,
+            6.0,
+            -6.0
+          ],
+          "size": [
+            1.0,
+            1.0,
+            3.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              3.0,
+              12.0,
+              -3.0,
+              1.0
+            ],
+            "east": [
+              7.0,
+              12.0,
+              -3.0,
+              1.0
+            ],
+            "north": [
+              4.0,
+              12.0,
+              -1.0,
+              1.0
+            ],
+            "south": [
+              8.0,
+              12.0,
+              -1.0,
+              1.0
+            ],
+            "up": [
+              4.0,
+              9.0,
+              -1.0,
+              3.0
+            ],
+            "down": [
+              5.0,
+              12.0,
+              -1.0,
+              -3.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "llegbot1",
+      "parent": null,
+      "pivot": [
+        0,
+        7,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        -61.0000089544
+      ],
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            -8.0,
+            9.0,
+            1.0
+          ],
+          "size": [
+            3.0,
+            1.0,
+            1.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              16.0,
+              20.0,
+              -1.0,
+              1.0
+            ],
+            "east": [
+              20.0,
+              20.0,
+              -1.0,
+              1.0
+            ],
+            "north": [
+              19.0,
+              20.0,
+              -3.0,
+              1.0
+            ],
+            "south": [
+              23.0,
+              20.0,
+              -3.0,
+              1.0
+            ],
+            "up": [
+              19.0,
+              19.0,
+              -3.0,
+              1.0
+            ],
+            "down": [
+              22.0,
+              20.0,
+              -3.0,
+              -1.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "llegbot2",
+      "parent": null,
+      "pivot": [
+        0,
+        7,
+        0
+      ],
+      "rotation": [
+        0,
+        12.9999998419,
+        -61.0000089544
+      ],
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            -8.0,
+            9.0,
+            2.0
+          ],
+          "size": [
+            3.0,
+            1.0,
+            1.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              16.0,
+              23.0,
+              -1.0,
+              1.0
+            ],
+            "east": [
+              20.0,
+              23.0,
+              -1.0,
+              1.0
+            ],
+            "north": [
+              19.0,
+              23.0,
+              -3.0,
+              1.0
+            ],
+            "south": [
+              23.0,
+              23.0,
+              -3.0,
+              1.0
+            ],
+            "up": [
+              19.0,
+              22.0,
+              -3.0,
+              1.0
+            ],
+            "down": [
+              22.0,
+              23.0,
+              -3.0,
+              -1.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "llegbot3",
+      "parent": null,
+      "pivot": [
+        0,
+        7,
+        0
+      ],
+      "rotation": [
+        0,
+        -20.0000028419,
+        -61.0000089544
+      ],
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            -8.0,
+            9.0,
+            0.0
+          ],
+          "size": [
+            3.0,
+            1.0,
+            1.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              16.0,
+              26.0,
+              -1.0,
+              1.0
+            ],
+            "east": [
+              20.0,
+              26.0,
+              -1.0,
+              1.0
+            ],
+            "north": [
+              19.0,
+              26.0,
+              -3.0,
+              1.0
+            ],
+            "south": [
+              23.0,
+              26.0,
+              -3.0,
+              1.0
+            ],
+            "up": [
+              19.0,
+              25.0,
+              -3.0,
+              1.0
+            ],
+            "down": [
+              22.0,
+              26.0,
+              -3.0,
+              -1.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "llegtop1",
+      "parent": null,
+      "pivot": [
+        0,
+        7,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        -21.9999979695
+      ],
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            -6.0,
+            5.0,
+            1.0
+          ],
+          "size": [
+            3.0,
+            1.0,
+            1.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              16.0,
+              11.0,
+              -1.0,
+              1.0
+            ],
+            "east": [
+              20.0,
+              11.0,
+              -1.0,
+              1.0
+            ],
+            "north": [
+              19.0,
+              11.0,
+              -3.0,
+              1.0
+            ],
+            "south": [
+              23.0,
+              11.0,
+              -3.0,
+              1.0
+            ],
+            "up": [
+              19.0,
+              10.0,
+              -3.0,
+              1.0
+            ],
+            "down": [
+              22.0,
+              11.0,
+              -3.0,
+              -1.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "llegtop2",
+      "parent": null,
+      "pivot": [
+        0,
+        7,
+        0
+      ],
+      "rotation": [
+        0,
+        11.9999994133,
+        -21.9999979695
+      ],
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            -6.0,
+            5.0,
+            2.0
+          ],
+          "size": [
+            3.0,
+            1.0,
+            1.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              16.0,
+              14.0,
+              -1.0,
+              1.0
+            ],
+            "east": [
+              20.0,
+              14.0,
+              -1.0,
+              1.0
+            ],
+            "north": [
+              19.0,
+              14.0,
+              -3.0,
+              1.0
+            ],
+            "south": [
+              23.0,
+              14.0,
+              -3.0,
+              1.0
+            ],
+            "up": [
+              19.0,
+              13.0,
+              -3.0,
+              1.0
+            ],
+            "down": [
+              22.0,
+              14.0,
+              -3.0,
+              -1.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "llegtop3",
+      "parent": null,
+      "pivot": [
+        0,
+        7,
+        0
+      ],
+      "rotation": [
+        0,
+        -20.0000028419,
+        -21.9999979695
+      ],
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            -6.0,
+            5.0,
+            0.0
+          ],
+          "size": [
+            3.0,
+            1.0,
+            1.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              16.0,
+              17.0,
+              -1.0,
+              1.0
+            ],
+            "east": [
+              20.0,
+              17.0,
+              -1.0,
+              1.0
+            ],
+            "north": [
+              19.0,
+              17.0,
+              -3.0,
+              1.0
+            ],
+            "south": [
+              23.0,
+              17.0,
+              -3.0,
+              1.0
+            ],
+            "up": [
+              19.0,
+              16.0,
+              -3.0,
+              1.0
+            ],
+            "down": [
+              22.0,
+              17.0,
+              -3.0,
+              -1.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "rlegbot1",
+      "parent": null,
+      "pivot": [
+        0,
+        7,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        56.0000010819
+      ],
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            4.0,
+            6.0,
+            1.0
+          ],
+          "size": [
+            3.0,
+            1.0,
+            1.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              26.0,
+              20.0,
+              -1.0,
+              1.0
+            ],
+            "east": [
+              30.0,
+              20.0,
+              -1.0,
+              1.0
+            ],
+            "north": [
+              29.0,
+              20.0,
+              -3.0,
+              1.0
+            ],
+            "south": [
+              33.0,
+              20.0,
+              -3.0,
+              1.0
+            ],
+            "up": [
+              29.0,
+              19.0,
+              -3.0,
+              1.0
+            ],
+            "down": [
+              32.0,
+              20.0,
+              -3.0,
+              -1.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "rlegbot2",
+      "parent": null,
+      "pivot": [
+        0,
+        7,
+        0
+      ],
+      "rotation": [
+        0,
+        33.9999973828,
+        56.0000010819
+      ],
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            4.0,
+            6.0,
+            0.0
+          ],
+          "size": [
+            3.0,
+            1.0,
+            1.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              26.0,
+              23.0,
+              -1.0,
+              1.0
+            ],
+            "east": [
+              30.0,
+              23.0,
+              -1.0,
+              1.0
+            ],
+            "north": [
+              29.0,
+              23.0,
+              -3.0,
+              1.0
+            ],
+            "south": [
+              33.0,
+              23.0,
+              -3.0,
+              1.0
+            ],
+            "up": [
+              29.0,
+              22.0,
+              -3.0,
+              1.0
+            ],
+            "down": [
+              32.0,
+              23.0,
+              -3.0,
+              -1.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "rlegbot3",
+      "parent": null,
+      "pivot": [
+        0,
+        7,
+        0
+      ],
+      "rotation": [
+        0,
+        -23.9999988267,
+        56.0000010819
+      ],
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            4.0,
+            6.0,
+            2.0
+          ],
+          "size": [
+            3.0,
+            1.0,
+            1.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              26.0,
+              26.0,
+              -1.0,
+              1.0
+            ],
+            "east": [
+              30.0,
+              26.0,
+              -1.0,
+              1.0
+            ],
+            "north": [
+              29.0,
+              26.0,
+              -3.0,
+              1.0
+            ],
+            "south": [
+              33.0,
+              26.0,
+              -3.0,
+              1.0
+            ],
+            "up": [
+              29.0,
+              25.0,
+              -3.0,
+              1.0
+            ],
+            "down": [
+              32.0,
+              26.0,
+              -3.0,
+              -1.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "rlegtop1",
+      "parent": null,
+      "pivot": [
+        0,
+        7,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        27.0000001124
+      ],
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            1.0,
+            4.0,
+            1.0
+          ],
+          "size": [
+            3.0,
+            1.0,
+            1.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              26.0,
+              11.0,
+              -1.0,
+              1.0
+            ],
+            "east": [
+              30.0,
+              11.0,
+              -1.0,
+              1.0
+            ],
+            "north": [
+              29.0,
+              11.0,
+              -3.0,
+              1.0
+            ],
+            "south": [
+              33.0,
+              11.0,
+              -3.0,
+              1.0
+            ],
+            "up": [
+              29.0,
+              10.0,
+              -3.0,
+              1.0
+            ],
+            "down": [
+              32.0,
+              11.0,
+              -3.0,
+              -1.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "rlegtop2",
+      "parent": null,
+      "pivot": [
+        0,
+        7,
+        0
+      ],
+      "rotation": [
+        0,
+        33.9999973828,
+        27.0000001124
+      ],
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            1.0,
+            4.0,
+            0.0
+          ],
+          "size": [
+            3.0,
+            1.0,
+            1.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              26.0,
+              14.0,
+              -1.0,
+              1.0
+            ],
+            "east": [
+              30.0,
+              14.0,
+              -1.0,
+              1.0
+            ],
+            "north": [
+              29.0,
+              14.0,
+              -3.0,
+              1.0
+            ],
+            "south": [
+              33.0,
+              14.0,
+              -3.0,
+              1.0
+            ],
+            "up": [
+              29.0,
+              13.0,
+              -3.0,
+              1.0
+            ],
+            "down": [
+              32.0,
+              14.0,
+              -3.0,
+              -1.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "rlegtop3",
+      "parent": null,
+      "pivot": [
+        0,
+        7,
+        0
+      ],
+      "rotation": [
+        0,
+        -23.9999988267,
+        27.0000001124
+      ],
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            1.0,
+            4.0,
+            2.0
+          ],
+          "size": [
+            3.0,
+            1.0,
+            1.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              26.0,
+              17.0,
+              -1.0,
+              1.0
+            ],
+            "east": [
+              30.0,
+              17.0,
+              -1.0,
+              1.0
+            ],
+            "north": [
+              29.0,
+              17.0,
+              -3.0,
+              1.0
+            ],
+            "south": [
+              33.0,
+              17.0,
+              -3.0,
+              1.0
+            ],
+            "up": [
+              29.0,
+              16.0,
+              -3.0,
+              1.0
+            ],
+            "down": [
+              32.0,
+              17.0,
+              -3.0,
+              -1.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "thorax",
+      "parent": null,
+      "pivot": [
+        0,
+        7,
+        0
+      ],
+      "rotation": null,
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            -3.0,
+            4.0,
+            0.0
+          ],
+          "size": [
+            3.0,
+            3.0,
+            3.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              25.0,
+              3.0,
+              -3.0,
+              3.0
+            ],
+            "east": [
+              31.0,
+              3.0,
+              -3.0,
+              3.0
+            ],
+            "north": [
+              28.0,
+              3.0,
+              -3.0,
+              3.0
+            ],
+            "south": [
+              34.0,
+              3.0,
+              -3.0,
+              3.0
+            ],
+            "up": [
+              28.0,
+              0.0,
+              -3.0,
+              3.0
+            ],
+            "down": [
+              31.0,
+              3.0,
+              -3.0,
+              -3.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "thorax1",
+      "parent": null,
+      "pivot": [
+        0,
+        7,
+        0
+      ],
+      "rotation": null,
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            -2.0,
+            5.0,
+            -1.0
+          ],
+          "size": [
+            1.0,
+            1.0,
+            1.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              19.0,
+              1.0,
+              -1.0,
+              1.0
+            ],
+            "east": [
+              21.0,
+              1.0,
+              -1.0,
+              1.0
+            ],
+            "north": [
+              20.0,
+              1.0,
+              -1.0,
+              1.0
+            ],
+            "south": [
+              22.0,
+              1.0,
+              -1.0,
+              1.0
+            ],
+            "up": [
+              20.0,
+              0.0,
+              -1.0,
+              1.0
+            ],
+            "down": [
+              21.0,
+              1.0,
+              -1.0,
+              -1.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "thorax3",
+      "parent": null,
+      "pivot": [
+        0,
+        7,
+        0
+      ],
+      "rotation": null,
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            -2.0,
+            5.0,
+            3.0
+          ],
+          "size": [
+            1.0,
+            1.0,
+            1.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              35.0,
+              1.0,
+              -1.0,
+              1.0
+            ],
+            "east": [
+              37.0,
+              1.0,
+              -1.0,
+              1.0
+            ],
+            "north": [
+              36.0,
+              1.0,
+              -1.0,
+              1.0
+            ],
+            "south": [
+              38.0,
+              1.0,
+              -1.0,
+              1.0
+            ],
+            "up": [
+              36.0,
+              0.0,
+              -1.0,
+              1.0
+            ],
+            "down": [
+              37.0,
+              1.0,
+              -1.0,
+              -1.0
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "locked_bones": [],
+  "lock_mode": "warn",
+  "lock_policy": "warn-keyed, refuse-structural",
+  "lock_policy_text": "Keying a locked bone is allowed; the checker warns, and the hitbox part follows the bone in-game (the consequence, so keep such keys deliberate). Renaming, re-parenting or deleting a locked bone is refused.",
+  "keyed_locked_by_shipped_clip": {},
+  "native": false,
+  "controller_kind": "phase_locked",
+  "clips": [
+    {
+      "name": "idle",
+      "loop": "true",
+      "role": "contract",
+      "code_triggered": false,
+      "required": true,
+      "length_rule": "near:1.0",
+      "length_seconds": 1.0,
+      "verdict": "author"
+    },
+    {
+      "name": "idle_jaws",
+      "loop": "true",
+      "role": "contract",
+      "code_triggered": false,
+      "required": false,
+      "length_rule": "near:1.0",
+      "length_seconds": 1.0,
+      "verdict": "leave"
+    },
+    {
+      "name": "walk",
+      "loop": "true",
+      "role": "contract",
+      "code_triggered": false,
+      "required": true,
+      "length_rule": "near:1.0",
+      "length_seconds": 1.0,
+      "verdict": "leave"
+    },
+    {
+      "name": "walk_jaws",
+      "loop": "true",
+      "role": "contract",
+      "code_triggered": false,
+      "required": false,
+      "length_rule": "near:1.0",
+      "length_seconds": 1.0,
+      "verdict": "leave"
+    },
+    {
+      "name": "swim",
+      "loop": "true",
+      "role": "contract",
+      "code_triggered": false,
+      "required": false,
+      "length_rule": "near:1.0",
+      "length_seconds": 1.0,
+      "verdict": "author"
+    },
+    {
+      "name": "calm_idle",
+      "loop": "true",
+      "role": "contract",
+      "code_triggered": false,
+      "required": false,
+      "length_rule": "near:1.0",
+      "length_seconds": 1.0,
+      "verdict": "covered by idle"
+    },
+    {
+      "name": "attack",
+      "loop": "false",
+      "role": "contract",
+      "code_triggered": true,
+      "required": false,
+      "length_rule": "near:0.4",
+      "length_seconds": 0.4,
+      "verdict": "author"
+    },
+    {
+      "name": "hurt",
+      "loop": "false",
+      "role": "contract",
+      "code_triggered": true,
+      "required": false,
+      "length_rule": "near:0.3",
+      "length_seconds": 0.3,
+      "verdict": "author"
+    },
+    {
+      "name": "death",
+      "loop": "hold_on_last_frame",
+      "role": "contract",
+      "code_triggered": true,
+      "required": false,
+      "length_rule": "near:1.0",
+      "length_seconds": 1.0,
+      "verdict": "author"
+    }
+  ],
+  "allow_idle_alt": true,
+  "textures": [
+    {
+      "canonical": "termite.png",
+      "width": 64,
+      "height": 32,
+      "aliases": []
+    }
+  ],
+  "effort_hours": 13.0,
+  "effort_source": "generator: 4 h + 0.2 h/bone x 20 + 1 h/clip x 5 to author or improve (owner adjusts)",
+  "reference_clip": {
+    "file": "termite_reference.animation.json",
+    "sha256": "7942fd420869303d46e4aeea585e965ce811a7a4c06a95e49a8d0ed061e732bb",
+    "clip": "reference",
+    "reference_only": true,
+    "rule": "period_multiple",
+    "rule_note": "the manifest's channels: 2 distinct frequency group(s) [2.7, 0.4] rad/tick (omega x wingspeed): the slowest group's period 2 pi / 0.4 = 15.707963 ticks; closes at k = 4 (62.831853 ticks): every bone returns within 0 degrees of its start at k x T (the 5-degree test under the 6 s cap; k = 1: 81.007765 deg, k = 2: 161.999998 deg, k = 3: 80.999999 deg, k = 4: 0 deg)",
+    "span_ticks": 62.8318530718,
+    "period_ticks": 15.7079632679,
+    "period_multiple_k": 4,
+    "animation_length_seconds": 3.1415926536,
+    "keys_per_bone": 64,
+    "sampled_inputs": "limbSwingAmount 1.0; limbSwing = t (advancing 1.0 per tick from 0: vanilla WalkAnimationState.update does speed += (movementSpeed - speed) * multiplier; position += speed, and the classic renderer hands walkAnimation.position(partialTick) as limbSwing and min(1, speed) as limbSwingAmount, so at speed 1 the position advances exactly 1.0 per tick); ageInTicks = t (getBob: tickCount + partialTick, partialTick 0); netHeadYaw 0; headPitch 0 (looking ahead); every entity-state flag at its rest value (attacking 0, ri1 0, rock_type 0, rf1 0: a ProbeSubject built from an empty state); the entity RNG seeded 0 once per clip and evolving across the keys; one pose call per key, 20 keys per second; full health (no shipped hook reads health)",
+    "hook": "danger.orespawn.entity.client.TermiteGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the shipped replacement, registry-free, on explicit PoseInputs)",
+    "moving_bones": [
+      "jawsl",
+      "jawsr",
+      "llegbot1",
+      "llegbot2",
+      "llegbot3",
+      "llegtop1",
+      "llegtop2",
+      "llegtop3",
+      "rlegbot1",
+      "rlegbot2",
+      "rlegbot3",
+      "rlegtop1",
+      "rlegtop2",
+      "rlegtop3"
+    ],
+    "position_bones": [],
+    "hidden_bones_at_rest": [],
+    "seam_delta_degrees": 0.0
+  },
+  "exact_transcription": true,
+  "rig_source": "shipped",
+  "in_game": true,
+  "reference_id": null,
+  "locked_bones_source": "none",
+  "locked_bones_provisional": []
+}

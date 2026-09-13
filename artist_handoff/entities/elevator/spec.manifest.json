@@ -1,0 +1,451 @@
+{
+  "generated_by": "tools/artist_package.py 0.2.9 (the full folder, 2026-09-13, fourth set, items 5, 7 and 8: every artist-tier species packaged - a rig not yet in-game from the reference leg's converter output, bone names final; the Tier-1 bosses' intended locked bones from the design's section 6 rendered in section 7 and validated against the geo; the README's priority table the full list, bosses first, closing with the deliverable count)",
+  "registry": "elevator",
+  "display_name": "Hoverboard (registry 'elevator')",
+  "tier": 3,
+  "tier_label": "Tier 3",
+  "geo_file": "elevator.geo.json",
+  "animation_file": "elevator.animation.json",
+  "bbmodel_file": "elevator.bbmodel",
+  "texture_size": [
+    64,
+    64
+  ],
+  "bones": [
+    {
+      "name": "shape1",
+      "parent": null,
+      "pivot": [
+        0,
+        24,
+        0
+      ],
+      "rotation": null,
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            -4.0,
+            23.0,
+            -8.0
+          ],
+          "size": [
+            8.0,
+            1.0,
+            16.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              16.0,
+              16.0,
+              -16.0,
+              1.0
+            ],
+            "east": [
+              40.0,
+              16.0,
+              -16.0,
+              1.0
+            ],
+            "north": [
+              24.0,
+              16.0,
+              -8.0,
+              1.0
+            ],
+            "south": [
+              48.0,
+              16.0,
+              -8.0,
+              1.0
+            ],
+            "up": [
+              24.0,
+              0.0,
+              -8.0,
+              16.0
+            ],
+            "down": [
+              32.0,
+              16.0,
+              -8.0,
+              -16.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "shape2",
+      "parent": null,
+      "pivot": [
+        0,
+        24,
+        0
+      ],
+      "rotation": null,
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            -3.0,
+            23.0,
+            -9.0
+          ],
+          "size": [
+            6.0,
+            1.0,
+            1.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              1.0,
+              19.0,
+              -1.0,
+              1.0
+            ],
+            "east": [
+              8.0,
+              19.0,
+              -1.0,
+              1.0
+            ],
+            "north": [
+              7.0,
+              19.0,
+              -6.0,
+              1.0
+            ],
+            "south": [
+              14.0,
+              19.0,
+              -6.0,
+              1.0
+            ],
+            "up": [
+              7.0,
+              18.0,
+              -6.0,
+              1.0
+            ],
+            "down": [
+              13.0,
+              19.0,
+              -6.0,
+              -1.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "shape3",
+      "parent": null,
+      "pivot": [
+        0,
+        24,
+        0
+      ],
+      "rotation": null,
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            -1.0,
+            23.0,
+            -10.0
+          ],
+          "size": [
+            2.0,
+            1.0,
+            1.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              1.0,
+              22.0,
+              -1.0,
+              1.0
+            ],
+            "east": [
+              4.0,
+              22.0,
+              -1.0,
+              1.0
+            ],
+            "north": [
+              3.0,
+              22.0,
+              -2.0,
+              1.0
+            ],
+            "south": [
+              6.0,
+              22.0,
+              -2.0,
+              1.0
+            ],
+            "up": [
+              3.0,
+              21.0,
+              -2.0,
+              1.0
+            ],
+            "down": [
+              5.0,
+              22.0,
+              -2.0,
+              -1.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "shape4",
+      "parent": null,
+      "pivot": [
+        0,
+        24,
+        0
+      ],
+      "rotation": null,
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            -3.0,
+            23.0,
+            8.0
+          ],
+          "size": [
+            6.0,
+            1.0,
+            1.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              18.0,
+              19.0,
+              -1.0,
+              1.0
+            ],
+            "east": [
+              25.0,
+              19.0,
+              -1.0,
+              1.0
+            ],
+            "north": [
+              24.0,
+              19.0,
+              -6.0,
+              1.0
+            ],
+            "south": [
+              31.0,
+              19.0,
+              -6.0,
+              1.0
+            ],
+            "up": [
+              24.0,
+              18.0,
+              -6.0,
+              1.0
+            ],
+            "down": [
+              30.0,
+              19.0,
+              -6.0,
+              -1.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "shape5",
+      "parent": null,
+      "pivot": [
+        0,
+        24,
+        0
+      ],
+      "rotation": null,
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            -1.0,
+            23.0,
+            9.0
+          ],
+          "size": [
+            2.0,
+            1.0,
+            1.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              18.0,
+              22.0,
+              -1.0,
+              1.0
+            ],
+            "east": [
+              21.0,
+              22.0,
+              -1.0,
+              1.0
+            ],
+            "north": [
+              20.0,
+              22.0,
+              -2.0,
+              1.0
+            ],
+            "south": [
+              23.0,
+              22.0,
+              -2.0,
+              1.0
+            ],
+            "up": [
+              20.0,
+              21.0,
+              -2.0,
+              1.0
+            ],
+            "down": [
+              22.0,
+              22.0,
+              -2.0,
+              -1.0
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "locked_bones": [],
+  "lock_mode": "warn",
+  "lock_policy": "warn-keyed, refuse-structural",
+  "lock_policy_text": "Keying a locked bone is allowed; the checker warns, and the hitbox part follows the bone in-game (the consequence, so keep such keys deliberate). Renaming, re-parenting or deleting a locked bone is refused.",
+  "keyed_locked_by_shipped_clip": {},
+  "native": false,
+  "controller_kind": "phase_locked",
+  "clips": [],
+  "allow_idle_alt": false,
+  "textures": [
+    {
+      "canonical": "elevator1.png",
+      "width": 64,
+      "height": 64,
+      "aliases": [
+        "elevator.png"
+      ]
+    },
+    {
+      "canonical": "elevator10.png",
+      "width": 64,
+      "height": 64,
+      "aliases": []
+    },
+    {
+      "canonical": "elevator2.png",
+      "width": 64,
+      "height": 64,
+      "aliases": []
+    },
+    {
+      "canonical": "elevator3.png",
+      "width": 64,
+      "height": 64,
+      "aliases": []
+    },
+    {
+      "canonical": "elevator4.png",
+      "width": 64,
+      "height": 64,
+      "aliases": []
+    },
+    {
+      "canonical": "elevator5.png",
+      "width": 64,
+      "height": 64,
+      "aliases": []
+    },
+    {
+      "canonical": "elevator6.png",
+      "width": 64,
+      "height": 64,
+      "aliases": []
+    },
+    {
+      "canonical": "elevator7.png",
+      "width": 64,
+      "height": 64,
+      "aliases": []
+    },
+    {
+      "canonical": "elevator8.png",
+      "width": 64,
+      "height": 64,
+      "aliases": []
+    },
+    {
+      "canonical": "elevator9.png",
+      "width": 64,
+      "height": 64,
+      "aliases": []
+    }
+  ],
+  "effort_hours": 0.0,
+  "effort_source": "seed (owner-set)",
+  "reference_clip": {
+    "file": "elevator_reference.animation.json",
+    "sha256": "be0f631fbd6defbe5cdc760c48ba527fa5d4d56bf372b079172eb5f53f7bee18",
+    "clip": "reference",
+    "reference_only": true,
+    "rule": "one_key",
+    "rule_note": "a static rig (animation_kind static, no hook): one key at bind",
+    "span_ticks": 0.0,
+    "period_ticks": null,
+    "period_multiple_k": null,
+    "animation_length_seconds": 0.05,
+    "keys_per_bone": 1,
+    "sampled_inputs": "limbSwingAmount 1.0; limbSwing = t (advancing 1.0 per tick from 0: vanilla WalkAnimationState.update does speed += (movementSpeed - speed) * multiplier; position += speed, and the classic renderer hands walkAnimation.position(partialTick) as limbSwing and min(1, speed) as limbSwingAmount, so at speed 1 the position advances exactly 1.0 per tick); ageInTicks = t (getBob: tickCount + partialTick, partialTick 0); netHeadYaw 0; headPitch 0 (looking ahead); every entity-state flag at its rest value (attacking 0, ri1 0, rock_type 0, rf1 0: a ProbeSubject built from an empty state); the entity RNG seeded 0 once per clip and evolving across the keys; one pose call per key, 20 keys per second; full health (no shipped hook reads health)",
+    "hook": "none (a static rig: no classic hook; one key at bind)",
+    "moving_bones": [],
+    "position_bones": [],
+    "hidden_bones_at_rest": [],
+    "seam_delta_degrees": 0.0
+  },
+  "exact_transcription": false,
+  "rig_source": "shipped",
+  "in_game": true,
+  "reference_id": null,
+  "locked_bones_source": "none",
+  "locked_bones_provisional": []
+}

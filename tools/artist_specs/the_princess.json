@@ -1,0 +1,232 @@
+{
+  "registry": "the_princess",
+  "display_name": "The Princess",
+  "status": "DRAFT — authored by a seed lane from the entity code, 2026-09-13; the owner's edit pending",
+  "locomotion": "flyer",
+  "artist_scope": "full contract (Tier 1, the state-branching class: geckolib_migration_design.md section 5) with the §8.1 locks; the rig is not yet in-game (it lands through the seam in a later slice)",
+  "character_sheet": "The Princess is the Prince's sister on the same tiny three-headed rig with three power orbs added: a body with a back fin, a neck base and three two-piece necks each ending in a head with a snout, a head fin and a hinged jaw, two one-piece legs, three-panel wings a side, a five-piece tail and three spinning power orbs, one over each neck (ModelThePrincess.createBodyLayer, ModelThePrincess.java:100-179). She is a TamableAnimal with 400 HP, 0.32 speed and 10 attack (createAttributes ThePrincess.java:125-133; her bite is 9, :209-218), tames herself to the nearest player within ten blocks (:251-258), follows, is tempted by beef, looks about and wanders (:104-123), and flies at activity 2 with no physics (:165; a 1-in-100 tick rolls a 1-in-20 flight, :285-286; when hurt, when her owner flies or is far, :220-224, :290-311). Her brain is the Prince's (doMovement :466-515): on a 1-in-7 tick with a target she flies at it with the attacking flag up and bites within three blocks plus half its width, or fires a fireball, a thunderbolt or an ice ball from three blocks ahead between five and twelve blocks with her fire lit and her head aimed (:643-691). Her power builds one a tick, five while attacking, and at 500 she either fires three purple powers if attacking (firePurplePower :330-340) or blooms — terraforms the ground below her and hatches butterflies and cockateils (bloom :400-425) — the level synced as DATA_POWER (:242-244, :263-277), sparkling with fireworks above 400 (:178-190). Her three necks rise and fall on head extensions random-walked between 0 and 60 (:167-173). She spawns wherever she is placed (checkSpawnRules :791-794; no biome file names her). Read her as the Prince with orbs: quick little wing-beats, three bobbing heads, and three spheres spinning on their own axes.",
+  "size_notes": "Drawn at x0.7 of the rig (ThePrincessRenderer.java:20, applied :30; shadow 0.7 x 0.7) on a 128x128 sheet (ModelThePrincess.java:179); 0.75 x 1.25 block hitbox (ModEntities.java:583-584). The design's row applies the Prince's small-target demotion rule and notes her flight presentation is visual only. The tail and the necks are chains the code positions segment by segment — key the joints, never the positions.",
+  "labels": {
+    "body": "body (static; intended hitbox part 'body')",
+    "Backfin": "back fin (static)",
+    "neckbase": "neck base (static)",
+    "neck1": "centre neck, lower (pitches by the centre head extension)",
+    "neck": "centre neck, upper (half the centre head's look yaw)",
+    "head": "centre head (two thirds of the look yaw and pitch, halved when the look is to the left; intended hitbox part 'head')",
+    "snout": "centre snout (with the head)",
+    "headfin": "centre head fin (with the head)",
+    "jaw": "centre lower jaw (with the head; chomps 36 degrees about 0.2 while attacking)",
+    "Lneck1": "left neck, lower (pitches by the left head extension)",
+    "Lneck": "left neck, upper (half the left head's yaw)",
+    "Lhead": "left head (the look split: the full share when the look is to the left, half otherwise; intended hitbox part 'Lhead')",
+    "Lsnout": "left snout (with the left head)",
+    "Lheadfin": "left head fin (with the left head)",
+    "Ljaw": "left lower jaw (chomps 36 degrees about 0.2 while attacking)",
+    "Rneck1": "right neck, lower (pitches by the right head extension)",
+    "Rneck": "right neck, upper (half the right head's yaw)",
+    "Rhead": "right head (the look split: the full share when the look is to the right, half otherwise; intended hitbox part 'Rhead')",
+    "Rsnout": "right snout (with the right head)",
+    "Rheadfin": "right head fin (with the right head)",
+    "Rjaw": "right lower jaw (chomps 36 degrees about 0.2 while attacking)",
+    "Lleg1": "left leg (the stride, 45 degrees at top speed; tucked at −1 rad in flight; intended hitbox part 'Lleg1')",
+    "Rleg1": "right leg (opposite the left; intended hitbox part 'Rleg1')",
+    "Lwing": "left wing, root panel (beats about +0.4; intended hitbox part 'Lwing')",
+    "Lwing2": "left wing, middle panel (about +0.6)",
+    "Lwing3": "left wing, tip panel (about +0.2)",
+    "Rwing": "right wing, root panel (beats about −0.4; intended hitbox part 'Rwing')",
+    "Rwing2": "right wing, middle panel (about −0.6)",
+    "Rwing3": "right wing, tip panel (about −0.2)",
+    "tail2": "tail segment 2 (the wag's root — the rig has no tail1; intended hitbox part 'tail2')",
+    "tail3": "tail segment 3 (1.6x the wag)",
+    "tail4": "tail segment 4 (2.6x)",
+    "Tail5": "tail segment 5 (3.6x; intended hitbox part — the design's 'tail5')",
+    "Tail6": "tail segment 6 (4.6x, the tip)",
+    "Lpower": "left power orb (spins on all three axes by fixed increments per render frame)",
+    "Cpower": "centre power orb (spins faster)",
+    "Rpower": "right power orb (spins on its own rates)"
+  },
+  "groups": [
+    {
+      "name": "gait",
+      "bones": [
+        "Rleg1", "Lleg1"
+      ],
+      "omega": 1.3,
+      "axis": "x",
+      "gait_scaled": true,
+      "amplitude": "pi x 0.25 = 0.785 rad (45 deg) x the walking speed above a 0.1 threshold (zero below it), the right leg + and the left −; in flight (activity 2) and not attacking both legs are held tucked at −1 rad",
+      "plain": "the two little legs stride with the walking speed on the ground and tuck up in flight",
+      "math": "a = amount > 0.1 ? cos(t * 2.0 * 0.65) * pi * 0.25 * amount : 0; (activity != 2 || attacking) ? (Rleg1.xRot = a, Lleg1.xRot = -a) : (Rleg1.xRot = Lleg1.xRot = -1)",
+      "source": "ModelThePrincess.java:197-206; wingspeed 0.65 (:21)",
+      "phase": "the synced DATA_ACTIVITY byte (ThePrincess.java:66; 2 in flight) selects the tuck unless the attacking flag is set",
+      "wingspeed": 0.65,
+      "omega_note": "the classic phase is ageInTicks x 2.0 x wingspeed 0.65 = 1.3 rad/tick: the natural period is 4.83 ticks"
+    },
+    {
+      "name": "wings",
+      "bones": [
+        "Rwing", "Rwing2", "Rwing3", "Lwing", "Lwing2", "Lwing3"
+      ],
+      "omega": 1.495,
+      "axis": "z",
+      "gait_scaled": false,
+      "amplitude": "moving (speed above 0.1) or attacking: pi x 0.4 = 1.257 rad (72 deg) x the walking speed at 1.495 rad/tick; still: pi x 0.04 = 0.126 rad (7 deg) at 0.195 rad/tick; the right panels about −0.4 / −0.6 / −0.2, the left the negative wave about +0.4 / +0.6 / +0.2",
+      "plain": "the wings beat fast and wide with the speed or when attacking, and stir slowly at rest",
+      "math": "w = (amount > 0.1 || attacking) ? cos(t * 2.3 * 0.65) * pi * 0.4 * amount : cos(t * 0.3 * 0.65) * pi * 0.04; Rwing.zRot = w - 0.4; Rwing2.zRot = w - 0.6; Rwing3.zRot = w - 0.2; Lwing.zRot = -w + 0.4; Lwing2.zRot = -w + 0.6; Lwing3.zRot = -w + 0.2",
+      "source": "ModelThePrincess.java:187-195",
+      "phase": "state-branching: the speed threshold or the attacking flag selects the fast beat (still scaled by the walking speed while attacking)",
+      "wingspeed": 0.65,
+      "omega_note": "the classic phase moving is ageInTicks x 2.3 x wingspeed 0.65 = 1.495 rad/tick (period 4.2 ticks); still 0.3 x 0.65 = 0.195 (32.2 ticks)"
+    },
+    {
+      "name": "tail",
+      "bones": [
+        "tail2", "tail3", "tail4", "Tail5", "Tail6"
+      ],
+      "omega": 0.585,
+      "axis": "y",
+      "gait_scaled": false,
+      "amplitude": "calm: pi x 0.06 = 0.188 rad (11 deg) at 0.585 rad/tick; attacking: pi x 0.12 = 0.377 rad (22 deg) at 0.845 rad/tick; zero when sitting; scaled 1 / 1.6 / 2.6 / 3.6 / 4.6 along segments 2 to 6, each placed at the end of the one before",
+      "plain": "the tail wags, the swing growing toward the tip — faster and wider while attacking, still when sitting",
+      "math": "g = sitting ? 0 : (attacking ? cos(t * 1.3 * 0.65) * pi * 0.12 : cos(t * 0.9 * 0.65) * pi * 0.06); tail2.yRot = g; tail3 = 1.6g; tail4 = 2.6g; Tail5 = 3.6g; Tail6 = 4.6g; positions along the chain",
+      "source": "ModelThePrincess.java:208-227",
+      "phase": "isOrderedToSit stills it; the attacking flag selects the fast wave",
+      "wingspeed": 0.65,
+      "omega_note": "the classic phase calm is ageInTicks x 0.9 x wingspeed 0.65 = 0.585 rad/tick (period 10.7 ticks); attacking 1.3 x 0.65 = 0.845 (7.4 ticks)"
+    },
+    {
+      "name": "jaws",
+      "bones": [
+        "Ljaw", "jaw", "Rjaw"
+      ],
+      "omega": 1.235,
+      "axis": "x",
+      "gait_scaled": false,
+      "amplitude": "attacking: pi x 0.2 = 0.628 rad (36 deg) about 0.2 plus the head's pitch, each jaw on its own rate — the left at 1.235 rad/tick, the right at 1.365, the centre at 1.495; not attacking: the head's pitch only",
+      "plain": "the three jaws chomp on three slightly different rates while the attacking flag is set",
+      "math": "Ljx = attacking ? 0.2 + cos(t * 1.9 * 0.65) * pi * 0.2 : 0; Rjx = attacking ? 0.2 + cos(t * 2.1 * 0.65) * pi * 0.2 : 0; jx = attacking ? 0.2 + cos(t * 2.3 * 0.65) * pi * 0.2 : 0; Ljaw.xRot = pitch_L + Ljx; jaw.xRot = pitch_C + jx; Rjaw.xRot = pitch_R + Rjx",
+      "source": "ModelThePrincess.java:266-289",
+      "phase": "the synced DATA_ATTACKING byte (ThePrincess.java:70, set at :481 with a target, cleared at :473 / :513) selects",
+      "wingspeed": 0.65,
+      "omega_note": "the classic phases are ageInTicks x 1.9 / 2.1 / 2.3 x wingspeed 0.65 = 1.235 / 1.365 / 1.495 rad/tick (periods 5.1 / 4.6 / 4.2 ticks)"
+    },
+    {
+      "name": "power_orbs",
+      "bones": [
+        "Lpower", "Cpower", "Rpower"
+      ],
+      "axis": "x, y and z together",
+      "gait_scaled": false,
+      "amplitude": "a full spin on every axis, wrapping at pi: the left orb by 0.03 / 0.035 / 0.05 rad per render frame (x / y / z), the centre by 0.04 / 0.046 / 0.13, the right by 0.05 / 0.065 / 0.03",
+      "plain": "the three power orbs tumble on all three axes at their own rates — the code adds a fixed increment per RENDER FRAME, not per tick, so the spin runs at the frame rate",
+      "math": "each frame: Lpower.xRot += 0.03, .yRot += 0.035, .zRot += 0.05; Cpower += 0.04 / 0.046 / 0.13; Rpower += 0.05 / 0.065 / 0.03; each wrapped to (-pi, pi]",
+      "source": "ModelThePrincess.java:319-354",
+      "phase": "not time-based: per-frame increments on the model's own part state (a frame-rate-dependent spin); a keyed spin at a chosen rate replaces it",
+      "omega_note": "no tick omega: at 60 frames a second the centre orb's z spin turns once every 1.6 s, the left orb's x once every 3.5 s"
+    }
+  ],
+  "behaviour": [
+    "The two little legs stride 45 degrees at top speed at 1.3 rad/tick above a walking-speed threshold of 0.1, and tuck up at −1 rad in flight unless she is attacking (ModelThePrincess.java:197-206; the activity byte is ThePrincess.java:66, 2 in the air).",
+    "The wings beat 72 degrees x the walking speed at 1.495 rad/tick when she moves or the attacking flag is set, and stir 7 degrees at 0.195 otherwise (:187-195) — the beat is scaled by the walking speed even in flight. The tail wags along five segments (the rig has no tail1), the tip 4.6 times the root — 11 degrees at 0.585 rad/tick at rest, 22 at 0.845 attacking, still when sitting (:208-227).",
+    "The three heads share the look: two thirds of the look yaw and pitch go to the heads on the side the look turns to and half of that to the others, each upper neck half its head's yaw (:229-264, :278-289); the lower necks pitch by the three head extensions, which random-walk between 0 and 60 degrees (ThePrincess.java:167-173; ModelThePrincess.java:291-296). The jaws chomp 36 degrees on three rates while attacking (:266-276).",
+    "The three power orbs tumble on every axis by fixed increments per render frame (:319-354) — a frame-rate-dependent spin the model keeps in its own part state; the body, back fin and neck base are static.",
+    "The bite (doHurtTarget, ThePrincess.java:209-218), the canon trio (:643-691), the purple-power volley (:330-340) and the bloom (:400-425) are rolled by doMovement and customServerAiStep — nothing in the code fires an animation for them."
+  ],
+  "clips": [
+    {
+      "name": "idle",
+      "verdict": "author",
+      "note": "REQUIRED with walk: the gate opens on the pair — the ground rest: the wings' slow stir, the tail's wag, the heads bobbing on their extensions, the orbs spinning"
+    },
+    {
+      "name": "walk",
+      "verdict": "author",
+      "note": "REQUIRED with idle: the gait group's two-legged scamper with the wings beating (:197-202, :188)"
+    },
+    {
+      "name": "fly",
+      "verdict": "author",
+      "note": "activity 2 (ThePrincess.java:165, no physics; :286, :294-311): the legs tucked (ModelThePrincess.java:203-206) — author a real hover beat, which the code lacks (its beat is speed-scaled, :188)"
+    },
+    {
+      "name": "aggro_idle",
+      "verdict": "author",
+      "note": "the attacking flag (ThePrincess.java:481): the three jaws chomping (ModelThePrincess.java:266-276), the tail fast (:212-214), the legs out of the tuck (:200); her power builds faster (:264-266)"
+    },
+    {
+      "name": "calm_idle",
+      "verdict": "author",
+      "note": "the flag clear (:473 / :513): the jaws shut on the pitch (:281, :285, :289), the tail's slow wag (:208)"
+    },
+    {
+      "name": "attack",
+      "verdict": "author",
+      "note": "the bite: doHurtTarget (ThePrincess.java:209-218) from doMovement :487-488 within three blocks plus half the target's width — 9 of damage; author a three-headed nip; the canon trio and the purple volley are the extras",
+      "length_seconds": 0.4
+    },
+    {
+      "name": "hurt",
+      "verdict": "author",
+      "note": "a flinch to duck_hurt (ThePrincess.java:62); hurt() (:220-224) un-sits her and sends her into flight",
+      "length_seconds": 0.3
+    },
+    {
+      "name": "death",
+      "verdict": "author",
+      "note": "ruled 2026-09-06, Q3 (a): the vanilla death flip stays; a creature whose JSON ships a `death` clip gets the clip-replaces-flip mode, designed when the first such clip arrives (the Queen's own death clip the precedent) - a `death` delivered here plays under the flip until then",
+      "length_seconds": 1.0
+    }
+  ],
+  "extras": [
+    {
+      "name": "cannon",
+      "loop": false,
+      "layer": "overlay",
+      "trigger": "doMovement :489-509 — with a target between five and twelve blocks, her fire lit (getSpyroFire), on two dice and with the head aimed within 0.5 rad: a 1-in-3 choice of firecanon (a fireball), firecanonl (a thunderbolt) or firecanoni (an ice ball) from three blocks ahead and one up (:643-691); a named launch site (transport 3) when the rig lands",
+      "bones": ["neck", "neck1", "head", "snout", "jaw", "Lneck", "Lhead", "Ljaw", "Rneck", "Rhead", "Rjaw"],
+      "length_seconds": 0.4,
+      "code_triggered": false,
+      "note": "a head-rear and a jaw-gape on the shot"
+    },
+    {
+      "name": "purple_power",
+      "loop": false,
+      "layer": "overlay",
+      "trigger": "firePurplePower (ThePrincess.java:330-340) when her power passes 500 while attacking (:270-272): three PurplePowers from 1.5 blocks ahead and one up; no animation trigger is wired today",
+      "bones": ["Lpower", "Cpower", "Rpower", "head", "Lhead", "Rhead"],
+      "length_seconds": 0.8,
+      "code_triggered": false,
+      "note": "the three orbs flaring and the heads thrown back"
+    },
+    {
+      "name": "bloom",
+      "loop": false,
+      "layer": "overlay",
+      "trigger": "bloom (ThePrincess.java:400-425) when her power passes 500 and she is not attacking (:273-274): the ground below her is terraformed and two hatchlings — butterflies or cockateils — are released; no animation trigger is wired today",
+      "bones": ["Lpower", "Cpower", "Rpower", "Lwing", "Rwing", "Lwing2", "Rwing2", "Lwing3", "Rwing3"],
+      "length_seconds": 1.0,
+      "code_triggered": false,
+      "note": "the orbs flaring and the wings spread wide for the bloom"
+    }
+  ],
+  "wishlist": [
+    "in `fly`: a proper hover beat — the code's wing beat is scaled by the walking speed (ModelThePrincess.java:188), so a hovering Princess's wings barely move; give her a quick wide flutter and a body bob",
+    "in `idle`: the three orbs' tumble (:319-354) keyed at a chosen rate — the code spins them per render frame, so their speed today depends on the frame rate",
+    "in `attack`: a three-headed nip with the jaws' chomp (:266-276); the bite lands within three blocks plus half the target's width (ThePrincess.java:485-488)",
+    "in `bloom`: the orbs flaring and the wings spread as the ground blooms beneath her (ThePrincess.java:400-425)"
+  ],
+  "locked_bones_provisional": [
+    {"bone": "head", "size": [0.35, 0.35], "damage": 1},
+    {"bone": "Lhead", "size": [0.35, 0.35], "damage": 1},
+    {"bone": "Rhead", "size": [0.35, 0.35], "damage": 1},
+    {"bone": "body", "size": [0.7, 0.55], "damage": 0.5},
+    {"bone": "Lleg1", "size": [0.22, 0.5], "damage": 0.5},
+    {"bone": "Rleg1", "size": [0.22, 0.5], "damage": 0.5},
+    {"bone": "Lwing", "size": [0.55, 0.2], "damage": 0.25},
+    {"bone": "Rwing", "size": [0.55, 0.2], "damage": 0.25},
+    {"bone": "tail2", "size": [0.25, 0.35], "damage": 0.25},
+    {"bone": "Tail5", "size": [0.25, 0.35], "damage": 0.25}
+  ],
+  "locked_bones_note": "The design's section 6 ModelThePrincess row (geckolib_migration_design.md:456): 'head/Lhead/Rhead [0.35,0.35] @1; body [0.7,0.55] @0.5; Lleg1/Rleg1 [0.22,0.5] @0.5; Lwing/Rwing [0.55,0.2] @0.25; tail2/tail5 [0.25,0.35] @0.25'. head, Lhead, Rhead, body, Lleg1, Rleg1, Lwing, Rwing and tail2 resolve as written. 'tail5' does not: the port model spells the fifth tail segment 'Tail5' (capital T, as 'Tail6'; ModelThePrincess.createBodyLayer — the rig has tail2, tail3, tail4, Tail5, Tail6 and no tail1), so Tail5 is taken. The row applies the Prince's small-target demotion rule and says the MOD-003 flight presentation is visual and cannot become client damage authority.",
+  "effort_hours": null
+}

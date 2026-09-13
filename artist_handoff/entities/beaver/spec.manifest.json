@@ -1,5 +1,5 @@
 {
-  "generated_by": "tools/artist_package.py 0.2.8 (the fourth-set tooling commit, 2026-09-13: the sheets of ANIM-021 to 024 carry 'the original moved more' under section 4 from the register entries; the Terrible Terror's sampler row folds its |cos| period)",
+  "generated_by": "tools/artist_package.py 0.2.9 (the full folder, 2026-09-13, fourth set, items 5, 7 and 8: every artist-tier species packaged - a rig not yet in-game from the reference leg's converter output, bone names final; the Tier-1 bosses' intended locked bones from the design's section 6 rendered in section 7 and validated against the geo; the README's priority table the full list, bosses first, closing with the deliverable count)",
   "registry": "beaver",
   "display_name": "Beaver",
   "tier": 2,
@@ -774,5 +774,10 @@
     "hidden_bones_at_rest": [],
     "seam_delta_degrees": 0.0
   },
-  "exact_transcription": true
+  "exact_transcription": true,
+  "rig_source": "shipped",
+  "in_game": true,
+  "reference_id": null,
+  "locked_bones_source": "none",
+  "locked_bones_provisional": []
 }

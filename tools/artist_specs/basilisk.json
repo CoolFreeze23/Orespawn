@@ -1,0 +1,134 @@
+{
+  "registry": "basilisk",
+  "display_name": "Basilisk",
+  "status": "DRAFT — authored by a seed lane from the entity code, 2026-09-13; the owner's edit pending",
+  "locomotion": "walker",
+  "artist_scope": "full contract (Tier 1, the gait-scaled class: geckolib_migration_design.md section 5) with the §8.1 locks; the rig is not yet in-game (it lands through the seam in a later slice)",
+  "character_sheet": "The Basilisk is a giant hostile serpent: a tall head with a snout, a hinged lower jaw and six brow spikes, two neck blocks, six body blocks and a four-piece tapering tail, laid out nose to tip (ModelBasilisk.createBodyLayer, ModelBasilisk.java:71-180). It has 200 HP, 24 attack and 15 armour (MobStats.BASILISK, createAttributes Basilisk.java:92-101), walks through villages and wanders (:74-85), and fights on a 1-in-5 tick re-scan (customServerAiStep :201-237): the scanned target is slowed (Slowness V for 100 ticks — the 'gaze', :227) whether or not it is in reach, and within six blocks plus half its width the attacking flag rises and a bite lands on nested dice (:214-220) — one bite in three poisons for 8 to 14 seconds by difficulty and every bite knocks back (doHurtTarget :157-185). Hits are refused for 30 ticks after each one (hurt :188-194) and it heals 1 on a 1-in-75 roll (:234-236). It spawns at night in the dark with clear air above and no other Basilisk within 20 blocks (checkSpawnRules :284-291) in dark forests, jungles and old-growth birch (the hostile_basilisk biome modifiers); a baby is drawn at half size (BasiliskRenderer.java:41-42). Read it as a serpent: the whole body is one travelling wave, and the head never turns.",
+  "size_notes": "Drawn at x1.25 of the rig, half that for a baby (BasiliskRenderer.java:29, :41-42; shadow 0.5 x 1.25) on a 256x64 sheet (ModelBasilisk.java:180); 1.6 x 3.5 block hitbox (ModEntities.java:50-53). The body and tail are a chain the code positions block by block (design section 5: real parent-child bones in the converted rig) — key the joints, never the positions.",
+  "labels": {
+    "head": "head (static: the code never turns it; intended hitbox part 'head')",
+    "snout": "snout (static)",
+    "jaw": "lower jaw (still at −1.1 at rest; chomps 32 degrees about −1.0 while attacking)",
+    "rog1": "head spike 1 (left inner, on the brow)",
+    "rog2": "head spike 2 (right inner, on the brow)",
+    "rog3": "head spike 3 (left of centre)",
+    "rog4": "head spike 4 (right of centre)",
+    "rog5": "head spike 5 (right outer)",
+    "rog6": "head spike 6 (left outer)",
+    "neck1": "neck block 1 (behind the head; static; intended hitbox part 'neck1')",
+    "neck2": "neck block 2 (static)",
+    "body1": "body block 1 (the front; the serpentine wave's root; intended hitbox part 'body1')",
+    "body2": "body block 2 (an eighth of a turn behind the wave)",
+    "body3": "body block 3 (intended hitbox part 'body3')",
+    "body4": "body block 4",
+    "body5": "body block 5 (intended hitbox part 'body5')",
+    "body6": "body block 6 (the last, before the tail)",
+    "tail1": "tail segment 1 (intended hitbox part 'tail1')",
+    "tail2": "tail segment 2",
+    "tail3": "tail segment 3 (intended hitbox part 'tail3')",
+    "tail4": "tail segment 4 (the tip; intended hitbox part 'tail4')"
+  },
+  "groups": [
+    {
+      "name": "gait",
+      "bones": [
+        "body1", "body2", "body3", "body4", "body5", "body6", "tail1", "tail2", "tail3", "tail4"
+      ],
+      "omega": 0.39,
+      "axis": "y",
+      "gait_scaled": true,
+      "amplitude": "pi x 0.1 = 0.314 rad (18 deg) x the walking speed, no threshold; each block an eighth of a period (pi/4) behind the one before, from body block 1 to the tail tip, and each placed at the end of the one before (12, 11, 12, 12, 12, 12, 10, 10, 10 units along)",
+      "plain": "the six body blocks and four tail segments yaw in a travelling wave with the walking speed, each an eighth of a turn behind the last, so the body snakes; still when standing",
+      "math": "seg_k.yRot = cos(t * 1.3 * 0.3 - k * pi/4) * pi * 0.1 * amount (k = 0..9: body1..body6, tail1..tail4); seg_(k+1).x/z = seg_k.x/z + cos/sin(seg_k.yRot) x length_k",
+      "source": "ModelBasilisk.java:186-213; wingspeed 0.3 (:24)",
+      "wingspeed": 0.3,
+      "omega_note": "the classic phase is ageInTicks x 1.3 x wingspeed 0.3 = 0.39 rad/tick: the natural period is 2 pi / 0.39 = 16.1 ticks"
+    },
+    {
+      "name": "jaw",
+      "bones": [
+        "jaw"
+      ],
+      "omega": 0.45,
+      "axis": "x",
+      "gait_scaled": false,
+      "amplitude": "attacking: pi x 0.18 = 0.565 rad (32 deg) about −1.0; not attacking: still at −1.1",
+      "plain": "the lower jaw chomps while the attacking flag is set and hangs still otherwise",
+      "math": "jaw.xRot = attacking ? -1.0 + cos(t * 0.45) * pi * 0.18 : -1.1",
+      "source": "ModelBasilisk.java:214",
+      "phase": "the synced DATA_ATTACKING byte (Basilisk.java:46, set at :216 within reach, cleared at :229) selects; note the phase is ageInTicks x 0.45 WITHOUT the wingspeed",
+      "omega_note": "the classic phase is ageInTicks x 0.45 (no wingspeed factor on this line): the natural period is 2 pi / 0.45 = 13.96 ticks"
+    }
+  ],
+  "behaviour": [
+    "One speed-scaled travelling wave at 0.39 rad/tick (a 16.1-tick period) runs from the first body block to the tail tip: each of the ten segments yaws 18 degrees at top speed, an eighth of a period behind the one before, and is placed at the end of the previous segment (ModelBasilisk.java:186-213). Standing still the body is straight.",
+    "The lower jaw chomps 32 degrees at 0.45 rad/tick about −1.0 while the synced DATA_ATTACKING byte is set (Basilisk.java:46, raised at :216 within six blocks plus half the target's width) and hangs shut at −1.1 otherwise (ModelBasilisk.java:214).",
+    "The head, snout, brow spikes and the two neck blocks are static: the code never turns the head with the look, and the walk position plays no part.",
+    "The bite (doHurtTarget, Basilisk.java:157-185) and the Slowness 'gaze' (:227) are rolled by the 1-in-5 scan — nothing in the code fires an animation for them."
+  ],
+  "clips": [
+    {
+      "name": "idle",
+      "verdict": "author",
+      "note": "REQUIRED with walk: the gate opens on the pair — the coiled rest (the code holds the whole body straight and still)"
+    },
+    {
+      "name": "walk",
+      "verdict": "author",
+      "note": "REQUIRED with idle: the gait group's serpentine wave (ten segments an eighth of a turn apart, :186-213)"
+    },
+    {
+      "name": "swim",
+      "verdict": "leave",
+      "note": "no swim state: FloatGoal (Basilisk.java:74) only bobs it to the surface; the contract's fallback to walk stands"
+    },
+    {
+      "name": "aggro_idle",
+      "verdict": "author",
+      "note": "the attacking flag (Basilisk.java:216, within six blocks plus half the target's width): the jaw chomping (ModelBasilisk.java:214) — a raised, staring head to go with the Slowness 'gaze' (:227)"
+    },
+    {
+      "name": "calm_idle",
+      "verdict": "author",
+      "note": "the flag clear (:229): the jaw shut at −1.1 (:214), the body at rest"
+    },
+    {
+      "name": "attack",
+      "verdict": "author",
+      "note": "the bite: doHurtTarget (Basilisk.java:157-185) from customServerAiStep :218-219 within six blocks plus half the target's width — 24 of damage, poison one time in three, a knockback; author a lunge bite",
+      "length_seconds": 0.5
+    },
+    {
+      "name": "hurt",
+      "verdict": "author",
+      "note": "a recoil to alo_hurt (getHurtSound :130-134); hurt() (:188-194) then refuses damage for 30 ticks",
+      "length_seconds": 0.4
+    },
+    {
+      "name": "death",
+      "verdict": "author",
+      "note": "ruled 2026-09-06, Q3 (a): the vanilla death flip stays; a creature whose JSON ships a `death` clip gets the clip-replaces-flip mode, designed when the first such clip arrives (the Queen's own death clip the precedent) - a `death` delivered here plays under the flip until then",
+      "length_seconds": 1.5
+    }
+  ],
+  "extras": [],
+  "wishlist": [
+    "in `walk`: keep the serpentine wave (ModelBasilisk.java:186-213) — ten segments an eighth of a turn apart — and add a head sway leading it; the code never turns the head",
+    "in `aggro_idle`: the jaw chomp the attacking branch shows (:214) plus a raised, fixed stare — the Slowness 'gaze' (Basilisk.java:227) deserves one",
+    "in `attack`: a lunge bite; the reach is six blocks plus half the target's width (Basilisk.java:214-215), so the head can travel",
+    "in `idle`: a slow tongue-flick or jaw twitch; the code holds the jaw shut at rest (:214)"
+  ],
+  "locked_bones_provisional": [
+    {"bone": "head", "size": [1.4, 1.0], "damage": 1},
+    {"bone": "body1", "size": [1.6, 1.1], "damage": 0.5},
+    {"bone": "body3", "size": [1.6, 1.1], "damage": 0.5},
+    {"bone": "body5", "size": [1.6, 1.1], "damage": 0.5},
+    {"bone": "neck1", "size": [1.0, 0.8], "damage": 0.5},
+    {"bone": "tail1", "size": [0.7, 0.7], "damage": 0.25},
+    {"bone": "tail3", "size": [0.7, 0.7], "damage": 0.25},
+    {"bone": "tail4", "size": [0.7, 0.7], "damage": 0.25}
+  ],
+  "locked_bones_note": "The design's section 6 ModelBasilisk row (geckolib_migration_design.md:444): 'head [1.4,1.0] @1; body1/body3/body5 [1.6,1.1] @0.5; neck1 [1.0,0.8] @0.5; tail1/tail3/tail4 [0.7,0.7] @0.25'. Every design name resolves to the port model's part names as written (ModelBasilisk.createBodyLayer). The row asks that the adult x1.25 and baby x0.625 scales be verified against the static sizes before main damage is disabled (BasiliskRenderer.java:41-42 halves the scale for isBaby()).",
+  "effort_hours": null
+}

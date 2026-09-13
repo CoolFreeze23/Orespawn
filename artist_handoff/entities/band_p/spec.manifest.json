@@ -1,0 +1,654 @@
+{
+  "generated_by": "tools/artist_package.py 0.2.9 (the full folder, 2026-09-13, fourth set, items 5, 7 and 8: every artist-tier species packaged - a rig not yet in-game from the reference leg's converter output, bone names final; the Tier-1 bosses' intended locked bones from the design's section 6 rendered in section 7 and validated against the geo; the README's priority table the full list, bosses first, closing with the deliverable count)",
+  "registry": "band_p",
+  "display_name": "Bandit / Pirate (BandP)",
+  "tier": 2,
+  "tier_label": "Tier 2",
+  "geo_file": "reference_bandp.geo.json",
+  "animation_file": "band_p.animation.json",
+  "bbmodel_file": "band_p.bbmodel",
+  "texture_size": [
+    64,
+    128
+  ],
+  "bones": [
+    {
+      "name": "belly",
+      "parent": null,
+      "pivot": [
+        0,
+        12,
+        0
+      ],
+      "rotation": [
+        4.0000017143,
+        0,
+        0
+      ],
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            -8.0,
+            7.0,
+            -7.0
+          ],
+          "size": [
+            16.0,
+            10.0,
+            16.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              16.0,
+              77.0,
+              -16.0,
+              10.0
+            ],
+            "east": [
+              48.0,
+              77.0,
+              -16.0,
+              10.0
+            ],
+            "north": [
+              32.0,
+              77.0,
+              -16.0,
+              10.0
+            ],
+            "south": [
+              64.0,
+              77.0,
+              -16.0,
+              10.0
+            ],
+            "up": [
+              32.0,
+              61.0,
+              -16.0,
+              16.0
+            ],
+            "down": [
+              48.0,
+              77.0,
+              -16.0,
+              -16.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "chest",
+      "parent": null,
+      "pivot": [
+        0,
+        19,
+        2
+      ],
+      "rotation": null,
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            -5.0,
+            16.0,
+            -3.0
+          ],
+          "size": [
+            10.0,
+            6.0,
+            10.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              10.0,
+              52.0,
+              -10.0,
+              6.0
+            ],
+            "east": [
+              30.0,
+              52.0,
+              -10.0,
+              6.0
+            ],
+            "north": [
+              20.0,
+              52.0,
+              -10.0,
+              6.0
+            ],
+            "south": [
+              40.0,
+              52.0,
+              -10.0,
+              6.0
+            ],
+            "up": [
+              20.0,
+              42.0,
+              -10.0,
+              10.0
+            ],
+            "down": [
+              30.0,
+              52.0,
+              -10.0,
+              -10.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "head",
+      "parent": null,
+      "pivot": [
+        0,
+        23,
+        3
+      ],
+      "rotation": null,
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            -3.0,
+            22.0,
+            0.0
+          ],
+          "size": [
+            6.0,
+            6.0,
+            6.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              6.0,
+              17.0,
+              -6.0,
+              6.0
+            ],
+            "east": [
+              18.0,
+              17.0,
+              -6.0,
+              6.0
+            ],
+            "north": [
+              12.0,
+              17.0,
+              -6.0,
+              6.0
+            ],
+            "south": [
+              24.0,
+              17.0,
+              -6.0,
+              6.0
+            ],
+            "up": [
+              12.0,
+              11.0,
+              -6.0,
+              6.0
+            ],
+            "down": [
+              18.0,
+              17.0,
+              -6.0,
+              -6.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "larm",
+      "parent": null,
+      "pivot": [
+        -6,
+        20,
+        3
+      ],
+      "rotation": [
+        0,
+        0,
+        28.000000541
+      ],
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            -9.0,
+            11.0,
+            1.0
+          ],
+          "size": [
+            4.0,
+            10.0,
+            4.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              4.0,
+              29.0,
+              -4.0,
+              10.0
+            ],
+            "east": [
+              12.0,
+              29.0,
+              -4.0,
+              10.0
+            ],
+            "north": [
+              8.0,
+              29.0,
+              -4.0,
+              10.0
+            ],
+            "south": [
+              16.0,
+              29.0,
+              -4.0,
+              10.0
+            ],
+            "up": [
+              8.0,
+              25.0,
+              -4.0,
+              4.0
+            ],
+            "down": [
+              12.0,
+              29.0,
+              -4.0,
+              -4.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "lleg",
+      "parent": null,
+      "pivot": [
+        -2,
+        8,
+        2
+      ],
+      "rotation": null,
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            -6.0,
+            0.0,
+            -1.0
+          ],
+          "size": [
+            6.0,
+            8.0,
+            6.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              31.0,
+              96.0,
+              -6.0,
+              8.0
+            ],
+            "east": [
+              43.0,
+              96.0,
+              -6.0,
+              8.0
+            ],
+            "north": [
+              37.0,
+              96.0,
+              -6.0,
+              8.0
+            ],
+            "south": [
+              49.0,
+              96.0,
+              -6.0,
+              8.0
+            ],
+            "up": [
+              37.0,
+              90.0,
+              -6.0,
+              6.0
+            ],
+            "down": [
+              43.0,
+              96.0,
+              -6.0,
+              -6.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "rarm",
+      "parent": null,
+      "pivot": [
+        6,
+        20,
+        3
+      ],
+      "rotation": [
+        0,
+        0,
+        -28.000000541
+      ],
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            5.0,
+            11.0,
+            1.0
+          ],
+          "size": [
+            4.0,
+            10.0,
+            4.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              22.0,
+              29.0,
+              -4.0,
+              10.0
+            ],
+            "east": [
+              30.0,
+              29.0,
+              -4.0,
+              10.0
+            ],
+            "north": [
+              26.0,
+              29.0,
+              -4.0,
+              10.0
+            ],
+            "south": [
+              34.0,
+              29.0,
+              -4.0,
+              10.0
+            ],
+            "up": [
+              26.0,
+              25.0,
+              -4.0,
+              4.0
+            ],
+            "down": [
+              30.0,
+              29.0,
+              -4.0,
+              -4.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "rleg",
+      "parent": null,
+      "pivot": [
+        2,
+        8,
+        2
+      ],
+      "rotation": null,
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            0.0,
+            0.0,
+            -1.0
+          ],
+          "size": [
+            6.0,
+            8.0,
+            6.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              6.0,
+              96.0,
+              -6.0,
+              8.0
+            ],
+            "east": [
+              18.0,
+              96.0,
+              -6.0,
+              8.0
+            ],
+            "north": [
+              12.0,
+              96.0,
+              -6.0,
+              8.0
+            ],
+            "south": [
+              24.0,
+              96.0,
+              -6.0,
+              8.0
+            ],
+            "up": [
+              12.0,
+              90.0,
+              -6.0,
+              6.0
+            ],
+            "down": [
+              18.0,
+              96.0,
+              -6.0,
+              -6.0
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "locked_bones": [],
+  "lock_mode": "warn",
+  "lock_policy": "warn-keyed, refuse-structural",
+  "lock_policy_text": "Keying a locked bone is allowed; the checker warns, and the hitbox part follows the bone in-game (the consequence, so keep such keys deliberate). Renaming, re-parenting or deleting a locked bone is refused.",
+  "keyed_locked_by_shipped_clip": {},
+  "native": false,
+  "controller_kind": "phase_locked",
+  "clips": [
+    {
+      "name": "idle",
+      "loop": "true",
+      "role": "contract",
+      "code_triggered": false,
+      "required": true,
+      "length_rule": "near:1.0",
+      "length_seconds": 1.0,
+      "verdict": "author"
+    },
+    {
+      "name": "idle_belly_bounce",
+      "loop": "true",
+      "role": "contract",
+      "code_triggered": false,
+      "required": false,
+      "length_rule": "near:1.0",
+      "length_seconds": 1.0,
+      "verdict": "author"
+    },
+    {
+      "name": "idle_arm_sway",
+      "loop": "true",
+      "role": "contract",
+      "code_triggered": false,
+      "required": false,
+      "length_rule": "near:1.0",
+      "length_seconds": 1.0,
+      "verdict": "author"
+    },
+    {
+      "name": "walk",
+      "loop": "true",
+      "role": "contract",
+      "code_triggered": false,
+      "required": true,
+      "length_rule": "near:1.0",
+      "length_seconds": 1.0,
+      "verdict": "author"
+    },
+    {
+      "name": "walk_belly_bounce",
+      "loop": "true",
+      "role": "contract",
+      "code_triggered": false,
+      "required": false,
+      "length_rule": "near:1.0",
+      "length_seconds": 1.0,
+      "verdict": "author"
+    },
+    {
+      "name": "walk_arm_sway",
+      "loop": "true",
+      "role": "contract",
+      "code_triggered": false,
+      "required": false,
+      "length_rule": "near:1.0",
+      "length_seconds": 1.0,
+      "verdict": "author"
+    },
+    {
+      "name": "swim",
+      "loop": "true",
+      "role": "contract",
+      "code_triggered": false,
+      "required": false,
+      "length_rule": "near:1.0",
+      "length_seconds": 1.0,
+      "verdict": "leave"
+    },
+    {
+      "name": "calm_idle",
+      "loop": "true",
+      "role": "contract",
+      "code_triggered": false,
+      "required": false,
+      "length_rule": "near:1.0",
+      "length_seconds": 1.0,
+      "verdict": "leave"
+    },
+    {
+      "name": "attack",
+      "loop": "false",
+      "role": "contract",
+      "code_triggered": true,
+      "required": false,
+      "length_rule": "near:0.5",
+      "length_seconds": 0.5,
+      "verdict": "author"
+    },
+    {
+      "name": "hurt",
+      "loop": "false",
+      "role": "contract",
+      "code_triggered": true,
+      "required": false,
+      "length_rule": "near:0.3",
+      "length_seconds": 0.3,
+      "verdict": "author"
+    },
+    {
+      "name": "death",
+      "loop": "hold_on_last_frame",
+      "role": "contract",
+      "code_triggered": true,
+      "required": false,
+      "length_rule": "near:1.0",
+      "length_seconds": 1.0,
+      "verdict": "author"
+    },
+    {
+      "name": "steal",
+      "loop": "false",
+      "role": "extra",
+      "code_triggered": false,
+      "required": false,
+      "length_rule": "near:0.6",
+      "length_seconds": 0.6,
+      "verdict": "author"
+    }
+  ],
+  "allow_idle_alt": true,
+  "textures": [
+    {
+      "canonical": "bandp_bandit.png",
+      "width": 64,
+      "height": 128,
+      "aliases": [
+        "bandptexture.png"
+      ]
+    },
+    {
+      "canonical": "bandp_pirate.png",
+      "width": 128,
+      "height": 128,
+      "aliases": [
+        "squidzookatexture.png"
+      ]
+    }
+  ],
+  "effort_hours": 15.4,
+  "effort_source": "generator: 4 h + 0.2 h/bone x 7 + 1 h/clip x 10 to author or improve (owner adjusts)",
+  "reference_clip": null,
+  "exact_transcription": false,
+  "rig_source": "reference-leg converter output",
+  "in_game": false,
+  "reference_id": "reference_bandp",
+  "locked_bones_source": "none",
+  "locked_bones_provisional": []
+}

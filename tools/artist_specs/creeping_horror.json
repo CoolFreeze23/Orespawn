@@ -1,0 +1,168 @@
+{
+  "registry": "creeping_horror",
+  "display_name": "Creeping Horror",
+  "status": "DRAFT — authored by a seed lane from the entity code, 2026-09-13; the owner's edit pending",
+  "locomotion": "walker",
+  "artist_scope": "full contract (Tier 2, the gait-scaled class: geckolib_migration_design.md section 5); the rig is not yet in-game (it lands through the seam in a later slice)",
+  "character_sheet": "A low, creeping insect horror: a body block with five 'insides' pieces at its centre, four two-part legs splayed out to the sides, two two-part pincers at the front, a three-segment tail curling up behind and five spikes on its back (ModelCreepingHorror.java:48-73; 26 parts on a 128x128 sheet). It is hostile but weak: 10 HP, 3 damage, 2 armour, speed 0.25 (MobStats.CREEPING_HORROR, CreepingHorror.java:85-93). Every fifth tick it hunts anything alive and in sight within 16 blocks - its own kind, the mod's scenery and ally mobs and creative players excepted (:145-200) - walks at it at 1.25 and bites within 2.2 blocks on 1-in-12-or-1-in-14 dice (:153-163, doHurtTarget :159); it retaliates when hit (:82), floats (:69), panics (:70), walks through villages (:78) and strolls avoiding water (:79). It spawns in darkness at night in the Chaos dimension or below y 15 (:100-112) and tends to vanish by day (:114-123). Read it as a skittering bug: legs sweeping wide with the stride, pincers working, the tail pumping up and down, the five spikes quivering on fifteen different beats.",
+  "size_notes": "Drawn at x0.75 of the rig (CreepingHorrorRenderer.java:25, 38) on a 128x128 sheet (ModelCreepingHorror.java:184); the hitbox is 0.75 x 0.5 (ModEntities.java:73-75); shadow 0.45 x 0.75 (CreepingHorrorRenderer.java:27).",
+  "labels": {
+    "body": "body",
+    "insides1": "insides piece 1 (at the body's centre)",
+    "insides2": "insides piece 2",
+    "insides3": "insides piece 3",
+    "insides4": "insides piece 4",
+    "insides5": "insides piece 5",
+    "leg1": "left front leg, upper (rest +0.576 rad)",
+    "leg1part2": "left front leg, lower (moves with the upper)",
+    "leg2": "left back leg, upper (rest -0.576 rad)",
+    "leg2part2": "left back leg, lower",
+    "leg3": "right front leg, upper (rest -0.576 rad)",
+    "leg3part2": "right front leg, lower",
+    "leg4": "right back leg, upper (rest +0.576 rad)",
+    "leg4part2": "right back leg, lower",
+    "pincer1": "right pincer, upper piece",
+    "pincer1part2": "right pincer, lower piece",
+    "pincer2": "left pincer, upper piece",
+    "pincer2part2": "left pincer, lower piece",
+    "tailseg1": "tail segment 1 (base; rest -0.55 rad)",
+    "tailseg2": "tail segment 2 (middle)",
+    "tailseg3": "tail segment 3 (tip; rest -0.22 rad)",
+    "spike1": "back spike 1 (right front)",
+    "spike2": "back spike 2 (right rear)",
+    "spike3": "back spike 3 (left rear)",
+    "spike4": "back spike 4 (left front)",
+    "spike5": "back spike 5 (centre front)"
+  },
+  "groups": [
+    {
+      "name": "gait",
+      "bones": [
+        "leg1",
+        "leg1part2",
+        "leg2",
+        "leg2part2",
+        "leg3",
+        "leg3part2",
+        "leg4",
+        "leg4part2"
+      ],
+      "omega": 1.25,
+      "axis": "y",
+      "gait_scaled": true,
+      "amplitude": "rests +0.576 rad (left front, right back) and -0.576 (left back, right front), then pi x 0.35 = 1.1 rad (63 deg) x the walking speed at 1.25, no threshold",
+      "plain": "the four legs sweep wide fore and aft with the stride, upper and lower parts together: the left front and right back one way, the other two the opposite",
+      "math": "a = cos(ageInTicks * 1.25) * pi * 0.35 * limbSwingAmount; leg1/leg1part2.yRot = 0.576 + a; leg2/leg2part2.yRot = -0.576 - a; leg3/leg3part2.yRot = -0.576 - a; leg4/leg4part2.yRot = 0.576 + a",
+      "source": "ModelCreepingHorror.java:189-193",
+      "omega_note": "the phase is ageInTicks x 1.25 (no wingspeed): the natural period is 2 pi / 1.25 = 5 ticks"
+    },
+    {
+      "name": "pincers",
+      "bones": [
+        "pincer1",
+        "pincer1part2",
+        "pincer2",
+        "pincer2part2"
+      ],
+      "omega": 0.48,
+      "axis": "y",
+      "gait_scaled": false,
+      "amplitude": "pi x 0.15 = 0.471 rad (27 deg), the left pincer the mirror of the right, no rest offset",
+      "plain": "the two pincers open and close together at all times",
+      "math": "p = cos(ageInTicks * 0.48) * pi * 0.15; pincer1/pincer1part2.yRot = p; pincer2/pincer2part2.yRot = -p",
+      "source": "ModelCreepingHorror.java:194-197",
+      "omega_note": "the phase is ageInTicks x 0.48: the natural period is 2 pi / 0.48 = 13.1 ticks"
+    },
+    {
+      "name": "tail",
+      "bones": [
+        "tailseg1",
+        "tailseg2",
+        "tailseg3"
+      ],
+      "omega": 0.11,
+      "axis": "x",
+      "gait_scaled": false,
+      "rectified": true,
+      "amplitude": "rests -0.55 / 0 / -0.22 rad (base, middle, tip), then pi x 0.25 = 0.785 rad (45 deg), rectified (|cos|: the tail pumps up and drops twice per natural period), the same angle on all three segments",
+      "plain": "the tail pumps up from its curl and settles, slowly, all three segments together",
+      "math": "n = abs(cos(ageInTicks * 0.11) * pi * 0.25); tailseg1.xRot = -0.55 + n; tailseg2.xRot = n; tailseg3.xRot = -0.22 + n",
+      "source": "ModelCreepingHorror.java:198-202",
+      "omega_note": "the phase is ageInTicks x 0.11: the natural period is 2 pi / 0.11 = 57.1 ticks, the visible pump every 28.6"
+    },
+    {
+      "name": "spikes",
+      "bones": [
+        "spike1",
+        "spike2",
+        "spike3",
+        "spike4",
+        "spike5"
+      ],
+      "omega": 0.81,
+      "axis": "x, y and z - each spike on three rates of its own",
+      "gait_scaled": false,
+      "amplitude": "pitch: 0.7 rad rest then pi x 0.08 = 0.251 rad (14 deg); yaw and roll: pi x 0.08 around 0 - fifteen cosines, one per spike per axis",
+      "plain": "the five back spikes quiver, each on its own three beats, never in step",
+      "math": "spikeN.xRot = 0.7 + cos(t * wx_N) * pi * 0.08 with wx = 0.81 / 0.87 / 0.99 / 0.103 / 0.107; spikeN.yRot = cos(t * wy_N) * pi * 0.08 with wy = 1.11 / 1.17 / 1.25 / 1.28 / 1.31; spikeN.zRot = cos(t * wz_N) * pi * 0.08 with wz = 1.41 / 1.47 / 1.55 / 1.58 / 1.61",
+      "source": "ModelCreepingHorror.java:203-222",
+      "omega_note": "fifteen rates in one group: the omega here is spike1's pitch, 0.81 (period 7.8 ticks); spikes 4 and 5 pitch at 0.103 and 0.107 (periods 61 and 59 ticks - ten times slower than the first three, a likely slip in the 1.7.10 constants kept as-is); author one quiver at 0.81 and offset the other spikes and axes"
+    }
+  ],
+  "behaviour": [
+    "One gait rhythm on the legs (ModelCreepingHorror.java:189-193): the cosine of the age x 1.25, x pi x 0.35, x the walking speed (63 degrees at full speed every 5 ticks, no threshold) is added to the +0.576 rad rests of the left front and right back legs and subtracted from the -0.576 rests of the other two, the lower part of each leg copying the upper - a wide sideways sweep; at a standstill the legs sit on their rests.",
+    "The pincers open and close at all times (:194-197): the cosine of the age x 0.48, x pi x 0.15 - 27 degrees every 13.1 ticks - on the right pincer's two pieces, and its negative on the left.",
+    "The tail pumps (:198-202): the absolute value of the cosine of the age x 0.11 x pi x 0.25 (45 degrees, rectified - a rise and fall every 28.6 ticks) is added to the base's -0.55 rad, the middle's 0 and the tip's -0.22, all three segments turning by the same angle.",
+    "The five spikes quiver on fifteen beats (:203-222): each pitches 14 degrees around 0.7 rad at 0.81, 0.87, 0.99, 0.103 and 0.107, yaws 14 degrees at 1.11 to 1.31 and rolls 14 degrees at 1.41 to 1.61 - spikes 4 and 5 pitch ten times slower than the first three (0.103 and 0.107 read like 1.03 and 1.07 mistyped in the original; kept).",
+    "The body and the five insides pieces never move; nothing reads the look (netHeadYaw unused), so the LookAtPlayerGoal (CreepingHorror.java:80) turns nothing visible. There is no attacking flag: the bite (doHurtTarget :159, within 2.2 blocks on dice) has no pose of its own."
+  ],
+  "clips": [
+    {
+      "name": "idle",
+      "verdict": "author",
+      "note": "REQUIRED with walk: the gate opens on the pair (today nothing ships; the classic code plays) - the standing loop: legs on their rests, the pincers working, the tail pumping, the spikes quivering"
+    },
+    {
+      "name": "walk",
+      "verdict": "author",
+      "note": "REQUIRED with idle: the locomotion loop - the gait group's 63-degree leg sweep at full speed (ModelCreepingHorror.java:189-193), scaled by walking speed in-game"
+    },
+    {
+      "name": "swim",
+      "verdict": "author",
+      "note": "it has the state: a FloatGoal keeps it at the surface (CreepingHorror.java:69) though its stroll avoids water (:79) - a paddling sweep of the legs; optional: falls back to walk then idle when absent (section 2.4)"
+    },
+    {
+      "name": "calm_idle",
+      "verdict": "leave",
+      "note": "= idle: no synched attacking flag in CreepingHorror.java (no DATA_ATTACKING; the target is the fifth-tick scan's pick, :153-155), so calm_idle is covered by idle until this creature's SPEC adds the byte (ruled 2026-09-06, Q12 (a))"
+    },
+    {
+      "name": "attack",
+      "verdict": "author",
+      "note": "a bite: doHurtTarget within 2.2 blocks on a 1-in-12-or-1-in-14 roll each fifth think tick with a target in sight (CreepingHorror.java:153-163); no attacking flag, so the strike is transport 1 (the server LivingDamageEvent.Post) - a lunge with the pincers closing on the impact frame",
+      "length_seconds": 0.5
+    },
+    {
+      "name": "hurt",
+      "verdict": "author",
+      "note": "a flinch: no hurt() override (vanilla LivingEntity.hurt; the creepinghorror_hit sound at CreepingHorror.java:130-133); the hurtTime edge is client-observed - it retaliates (:82) or panics (:70)",
+      "length_seconds": 0.3
+    },
+    {
+      "name": "death",
+      "verdict": "author",
+      "note": "ruled 2026-09-06, Q3 (a): the vanilla death flip stays; a creature whose JSON ships a `death` clip gets the clip-replaces-flip mode, designed when the first such clip arrives (the Queen's own death clip the precedent) - a `death` delivered here plays under the flip until then",
+      "length_seconds": 1.0
+    }
+  ],
+  "extras": [],
+  "wishlist": [
+    "in `walk`: bend the legs - the lower part copies the upper (ModelCreepingHorror.java:190-193), so each leg is a rigid V; a lift of the lower part as the leg swings forward makes a skitter",
+    "the fifteen spike beats (:203-222) cannot survive one phase-locked loop: quiver the spikes at one rate with five phase offsets and vary the amplitude a little per spike",
+    "in `attack`: a lunge - the bite (CreepingHorror.java:159) has no pose today; close both pincers on the impact frame and pump the tail up",
+    "in `idle`: a breath in the body block and a shift of the insides pieces (they never move) so the horror reads as something alive under the shell",
+    "in `hurt`: a scuttle back with the tail thrown high"
+  ],
+  "effort_hours": null
+}

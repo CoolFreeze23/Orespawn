@@ -1,0 +1,129 @@
+{
+  "generated_by": "tools/artist_package.py 0.2.9 (the full folder, 2026-09-13, fourth set, items 5, 7 and 8: every artist-tier species packaged - a rig not yet in-game from the reference leg's converter output, bone names final; the Tier-1 bosses' intended locked bones from the design's section 6 rendered in section 7 and validated against the geo; the README's priority table the full list, bosses first, closing with the deliverable count)",
+  "registry": "vortex",
+  "display_name": "Vortex",
+  "tier": 3,
+  "tier_label": "Tier 3",
+  "geo_file": "vortex.geo.json",
+  "animation_file": "vortex.animation.json",
+  "bbmodel_file": "vortex.bbmodel",
+  "texture_size": [
+    256,
+    128
+  ],
+  "bones": [
+    {
+      "name": "Shape1",
+      "parent": null,
+      "pivot": [
+        0,
+        2,
+        0
+      ],
+      "rotation": null,
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            -64.0,
+            2.0,
+            0.0
+          ],
+          "size": [
+            128.0,
+            64.0,
+            0.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              0.0,
+              0.0,
+              0.0,
+              64.0
+            ],
+            "east": [
+              128.0,
+              0.0,
+              0.0,
+              64.0
+            ],
+            "north": [
+              128.0,
+              0.0,
+              -128.0,
+              64.0
+            ],
+            "south": [
+              256.0,
+              0.0,
+              -128.0,
+              64.0
+            ],
+            "up": [
+              128.0,
+              0.0,
+              -128.0,
+              0.0
+            ],
+            "down": [
+              256.0,
+              0.0,
+              -128.0,
+              0.0
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "locked_bones": [],
+  "lock_mode": "warn",
+  "lock_policy": "warn-keyed, refuse-structural",
+  "lock_policy_text": "Keying a locked bone is allowed; the checker warns, and the hitbox part follows the bone in-game (the consequence, so keep such keys deliberate). Renaming, re-parenting or deleting a locked bone is refused.",
+  "keyed_locked_by_shipped_clip": {},
+  "native": false,
+  "controller_kind": "phase_locked",
+  "clips": [],
+  "allow_idle_alt": false,
+  "textures": [
+    {
+      "canonical": "vortex.png",
+      "width": 256,
+      "height": 128,
+      "aliases": [
+        "vortextexture.png"
+      ]
+    }
+  ],
+  "effort_hours": 0.0,
+  "effort_source": "seed (owner-set)",
+  "reference_clip": {
+    "file": "vortex_reference.animation.json",
+    "sha256": "6e7f166a037efcef07a43bdfa8a8e3d579c12e96476d2b1336a6ac9ad7480588",
+    "clip": "reference",
+    "reference_only": true,
+    "rule": "one_key",
+    "rule_note": "a static rig (animation_kind static, no hook): one key at bind",
+    "span_ticks": 0.0,
+    "period_ticks": null,
+    "period_multiple_k": null,
+    "animation_length_seconds": 0.05,
+    "keys_per_bone": 1,
+    "sampled_inputs": "limbSwingAmount 1.0; limbSwing = t (advancing 1.0 per tick from 0: vanilla WalkAnimationState.update does speed += (movementSpeed - speed) * multiplier; position += speed, and the classic renderer hands walkAnimation.position(partialTick) as limbSwing and min(1, speed) as limbSwingAmount, so at speed 1 the position advances exactly 1.0 per tick); ageInTicks = t (getBob: tickCount + partialTick, partialTick 0); netHeadYaw 0; headPitch 0 (looking ahead); every entity-state flag at its rest value (attacking 0, ri1 0, rock_type 0, rf1 0: a ProbeSubject built from an empty state); the entity RNG seeded 0 once per clip and evolving across the keys; one pose call per key, 20 keys per second; full health (no shipped hook reads health)",
+    "hook": "none (a static rig: no classic hook; one key at bind)",
+    "moving_bones": [],
+    "position_bones": [],
+    "hidden_bones_at_rest": [],
+    "seam_delta_degrees": 0.0
+  },
+  "exact_transcription": false,
+  "rig_source": "shipped",
+  "in_game": true,
+  "reference_id": null,
+  "locked_bones_source": "none",
+  "locked_bones_provisional": []
+}

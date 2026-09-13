@@ -1,0 +1,130 @@
+{
+  "registry": "easter_bunny",
+  "display_name": "Easter Bunny",
+  "status": "DRAFT — authored by a seed lane from the entity code, 2026-09-13; the owner's edit pending",
+  "locomotion": "walker",
+  "artist_scope": "full contract (Tier 2, the gait-scaled class (with a standing branch on the ears): geckolib_migration_design.md section 5); the rig is not yet in-game (it lands through the seam in a later slice)",
+  "character_sheet": "A rabbit: a body and an upper body, a head with a nose and two long ears, two front paws, two legs with feet and a tail (ModelEasterBunny.java:37-49; 13 parts on a 64x128 sheet). It is a skittish holiday animal: 10 HP, speed 0.45, an unused 8-damage attribute (EasterBunny.java:59-64) - no goal strikes. It floats (:49), breeds on crystal apples (:50, :93-96), runs from monsters AND players (:51-52), panics when hurt (:53), watches other mobs (:54) and strolls avoiding water (:55); about once in 600 ticks it lays a stack of one to three random spawn eggs from a 115-slot table (:104-237). It spawns only at Easter, above y 50, by day, never within 32 blocks of another (:245-256); a kit is drawn at half size (EasterBunnyRenderer.java:39-41). Read it as a quick, nervous hare: a fast two-legged hop with the ears flapping at half the stride rate, the ears twitching gently when it stops.",
+  "size_notes": "Drawn at x1.0 of the rig, x0.5 as a baby (EasterBunnyRenderer.java:27, 39-41) on a 64x128 sheet (ModelEasterBunny.java:108); the hitbox is 0.5 x 0.75 (ModEntities.java:371-373); shadow 0.5 (EasterBunnyRenderer.java:29).",
+  "labels": {
+    "body": "body (the haunches)",
+    "upperbody": "upper body (the chest)",
+    "head": "head",
+    "nose": "nose",
+    "lear": "left ear (rest -0.226 rad; flaps)",
+    "rear": "right ear (rest -0.418 rad; flaps the other way)",
+    "lpaw": "left front paw",
+    "rpaw": "right front paw",
+    "lleg": "left leg",
+    "lfoot": "left foot (swings with the left leg)",
+    "rleg": "right leg",
+    "rfoot": "right foot (swings with the right leg)",
+    "tail": "tail"
+  },
+  "groups": [
+    {
+      "name": "gait",
+      "bones": [
+        "lleg",
+        "lfoot",
+        "rleg",
+        "rfoot"
+      ],
+      "omega": 1.43,
+      "axis": "x",
+      "gait_scaled": true,
+      "amplitude": "pi x 0.15 = 0.471 rad (27 deg) x the walking speed at 2.6 x 0.55 - still below the 0.1 threshold, no rest offsets",
+      "plain": "the two legs hop in opposition, each foot swinging with its leg",
+      "math": "a = limbSwingAmount > 0.1 ? cos(ageInTicks * 2.6 * 0.55) * pi * 0.15 * limbSwingAmount : 0; lleg.xRot = lfoot.xRot = a; rleg.xRot = rfoot.xRot = -a",
+      "source": "ModelEasterBunny.java:115-123",
+      "wingspeed": 0.55,
+      "omega_note": "the classic phase is ageInTicks x 2.6 x 0.55 (wingspeed, ModelEasterBunny.java:21): the natural period is 2 pi / 1.43 = 4.4 ticks"
+    },
+    {
+      "name": "ears",
+      "bones": [
+        "lear",
+        "rear"
+      ],
+      "omega": 0.715,
+      "axis": "x",
+      "gait_scaled": false,
+      "amplitude": "rests -0.226 rad (left) and -0.418 (right), then on the move pi x 0.1 = 0.314 rad (18 deg) x the walking speed, at a standstill pi x 0.01 = 0.031 rad (1.8 deg); the right ear takes the negative",
+      "plain": "the ears flap in opposition at half the stride rate on the move and twitch faintly at rest",
+      "math": "e = limbSwingAmount > 0.1 ? cos(ageInTicks * 1.3 * 0.55) * pi * 0.1 * limbSwingAmount : cos(ageInTicks * 1.3 * 0.55) * pi * 0.01; lear.xRot = -0.226 + e; rear.xRot = -0.418 - e",
+      "source": "ModelEasterBunny.java:115-121, 124-125",
+      "phase": "the walking-speed threshold selects the amplitude (ModelEasterBunny.java:115, 118): the rate is the same in both branches",
+      "wingspeed": 0.55,
+      "omega_note": "the classic phase is ageInTicks x 1.3 x 0.55: the natural period is 2 pi / 0.715 = 8.8 ticks - half the gait rate; the walking branch scales it by speed though it is not the gait group"
+    }
+  ],
+  "behaviour": [
+    "Two branches on the walking speed (ModelEasterBunny.java:115-121). On the move (above 0.1): the cosine of the age x 2.6 x 0.55 (wingspeed, :21), x pi x 0.15, x the walking speed swings the left leg and foot forward and the right pair back - 27 degrees at full speed every 4.4 ticks (:122-123); the ears take the cosine of the age x 1.3 x 0.55, x pi x 0.1, x the walking speed - 18 degrees every 8.8 ticks, half the stride rate - the left around -0.226 rad and the right, negated, around -0.418 (:124-125).",
+    "At a standstill the legs hold 0 and the ears keep the same rhythm at a tenth of the amplitude - a 1.8-degree twitch every 8.8 ticks (:120).",
+    "The body, upper body, head, nose, paws and tail never move; nothing reads the look (netHeadYaw unused), so the LookAtPlayerGoal (EasterBunny.java:54) turns nothing visible. There is no attacking flag and no strike; the egg laying (:110-111, :116-237) is a drop with no pose of its own."
+  ],
+  "clips": [
+    {
+      "name": "idle",
+      "verdict": "author",
+      "note": "REQUIRED with walk: the gate opens on the pair (today nothing ships; the classic code plays) - the standing loop: legs still, the ears' 1.8-degree twitch (ModelEasterBunny.java:120)"
+    },
+    {
+      "name": "walk",
+      "verdict": "author",
+      "note": "REQUIRED with idle: the locomotion loop - the gait group's 27-degree hop with the ears flapping at half the rate (ModelEasterBunny.java:115-125), scaled by walking speed in-game"
+    },
+    {
+      "name": "swim",
+      "verdict": "author",
+      "note": "it has the state: a FloatGoal keeps it at the surface (EasterBunny.java:49) though its stroll avoids water (:55) - a paddling hop, ears back; optional: falls back to walk then idle when absent (section 2.4)"
+    },
+    {
+      "name": "calm_idle",
+      "verdict": "leave",
+      "note": "= idle: no synched attacking flag in EasterBunny.java (no DATA_ATTACKING) and no attack at all, so calm_idle is covered by idle (ruled 2026-09-06, Q12 (a))"
+    },
+    {
+      "name": "attack",
+      "verdict": "leave",
+      "note": "no attack: the entity never strikes - no melee or ranged goal, no doHurtTarget call (the 8-damage attribute at EasterBunny.java:63 is unused); the generator offers no attack row"
+    },
+    {
+      "name": "hurt",
+      "verdict": "author",
+      "note": "a flinch: no hurt() override (vanilla LivingEntity.hurt; the duck_hurt sound at EasterBunny.java:77-80); the hurtTime edge is client-observed - it panics after (:53)",
+      "length_seconds": 0.3
+    },
+    {
+      "name": "death",
+      "verdict": "author",
+      "note": "ruled 2026-09-06, Q3 (a): the vanilla death flip stays; a creature whose JSON ships a `death` clip gets the clip-replaces-flip mode, designed when the first such clip arrives (the Queen's own death clip the precedent) - a `death` delivered here plays under the flip until then",
+      "length_seconds": 1.0
+    }
+  ],
+  "extras": [
+    {
+      "name": "lay_egg",
+      "loop": "false",
+      "layer": "overlay",
+      "bones": [
+        "body",
+        "upperbody",
+        "tail",
+        "lear",
+        "rear"
+      ],
+      "length_seconds": 0.8,
+      "code_triggered": false,
+      "trigger": "layAnEgg: about once in 600 ticks a stack of one to three random spawn eggs drops beside the bunny (EasterBunny.java:110-111, :116-237); a server-side event with no trigger by name today (the seam would need a named site)",
+      "note": "the egg drop: a squat and a hop forward with the tail flicking - the only thing this animal does besides run"
+    }
+  ],
+  "wishlist": [
+    "in `walk`: a hop, not a walk - the code swings the legs 27 deg in opposition (ModelEasterBunny.java:122-123); a rabbit bounds with both legs together and the body rising; the seam's speed scaling will carry the amplitude",
+    "the `lay_egg` extra: the bunny's one event (EasterBunny.java:110-111) has no pose today",
+    "in `idle`: a nose twitch and a head turn (the nose and head never move, and no look is read) over the ears' faint twitch",
+    "in `hurt`: a startled leap straight up with the ears flat before the panic run (EasterBunny.java:53)"
+  ],
+  "effort_hours": null
+}

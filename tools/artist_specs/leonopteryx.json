@@ -1,0 +1,342 @@
+{
+  "registry": "leonopteryx",
+  "display_name": "Leonopteryx",
+  "status": "DRAFT — authored by a seed lane from the entity code, 2026-09-13; the owner's edit pending",
+  "locomotion": "flyer",
+  "artist_scope": "full contract (Tier 1, the state-branching class: geckolib_migration_design.md section 5) with the §8.1 locks; the rig is not yet in-game (it lands through the seam in a later slice)",
+  "character_sheet": "The Leonopteryx is the canonical registry of Leon, the tameable, rideable flying lion-dragon — one EntityLeon class behind both ids, `leon` the save-compat alias (ModEntities.java:530-547); this sheet and `leon`'s describe the same rig and code. The rig is a chest and abdomen, a three-segment neck to a crested head with an upper and a lower jaw, three sails above and three below the jaws, eye ridges and two-piece antennae, two-segment arms each carrying two wing panels, three-finger wing fans with claws at their tips, a broad back panel and a long tail-fin strip a side, and two-segment legs with feet — every part twice over, one skeleton for standing and one for flight (LeonModel.createBodyLayer, LeonModel.java:257-751; standingParts / flyingParts :233-255; one set visible per frame, :774-776). It has 250 HP and 55 attack (createAttributes, EntityLeon.java:231-238; four times that against the Kraken, and 55 through the Ender Dragon's parts, doHurtTarget :431-461, knockback 1.25). Standing it wanders, follows its owner, is tempted by beef and looks about (goals :153-158) and takes to the air when it finds prey or on a rare roll (alwaysDo :594-630); flying it steers itself to a flight target, hunts monsters — and players while untamed — on a 1-in-8 roll and bites within 7 blocks plus half the target's width (flyWithoutRider :633-797), a tamed one fleeing when below a quarter health (:704-712). A diamond block tames it at once and beef one time in three; an item sits and stands it, a dead bush untames it, an empty hand mounts it (mobInteract :871-962); ridden, it flies on the client-predicted RiderFlightController (:97-108, tickRidden :346-352) and bites for its rider within 9 blocks (flyWithRider :556-578). Being hurt wakes it into flight and turns it on the attacker (hurt :464-484). It spawns by day above y 50 on a 1-in-16 dice with no other Leon within 48 blocks (checkSpawnRules :976-985); the Chaos biome lists `leon` (chaos_biome.json). Read it as two creatures on one rig: a heavy walker, and a wide-winged flyer whose whole body pumps with the beat.",
+  "size_notes": "Drawn at x1.75 of the rig (LeonRenderer.java:29, applied :38-39; shadow 1.75) on a 256x256 sheet (LeonModel.java:751); 3.5 x 8.25 block hitbox (ModEntities.java:542-547, both registries). The rig carries both skeletons (98 bones: 49 standing, 49 flight-form with an f prefix); the code shows one set per frame by the synced activity byte and hides the other (LeonModel.java:774-776) — a standing clip keys the plain bones, a flight clip the f bones.",
+  "labels": {
+    "chest": "chest (the standing form's torso; rocks an eighth of the breath; intended hitbox part 'chest')",
+    "neck_1": "neck, segment 1 (at the chest; static standing)",
+    "neck_2": "neck, segment 2 (static standing)",
+    "neck_3": "neck, segment 3 (to the head; static standing)",
+    "abdomen": "abdomen (the hindquarters; intended hitbox part 'abdomen')",
+    "head": "head (turns half the look yaw; intended hitbox part 'head')",
+    "upper_jaw": "upper jaw (turns with the head)",
+    "bottom_jaw": "lower jaw (hinged: breathes at rest, turns with the head)",
+    "chest_ridge": "chest ridge (the keel spine along the chest; rocks with the chest)",
+    "upper_sail_1": "head crest, sail 1 (the tall spine)",
+    "upper_sail2_": "head crest, sail 2 (the fin)",
+    "upper_sail3": "head crest, sail 3 (the zero-thickness membrane)",
+    "lower_sail1": "jaw sail 1 (the spine under the lower jaw)",
+    "lower_sail2": "jaw sail 2 (the fin)",
+    "lower_sail_3": "jaw sail 3 (the zero-thickness membrane)",
+    "eye_ridge_L": "left eye ridge (turns with the head)",
+    "eye_ridge_R": "right eye ridge (turns with the head)",
+    "anntena_1_L": "left antenna, base",
+    "anntena_1_R": "right antenna, base",
+    "anntena_2_L": "left antenna, tip (the long whisker)",
+    "anntena_2_R": "right antenna, tip (the long whisker)",
+    "arm_1_L": "left upper arm (swings half the stride)",
+    "arm_2_L": "left forearm (placed at the upper arm's end)",
+    "wing_1_L": "left wing, root panel (on the upper arm; intended hitbox part 'wing_1_L')",
+    "wing_2_L": "left wing, second panel (on the forearm)",
+    "arm_1_R": "right upper arm (swings half the stride, opposite the left)",
+    "arm_2_R": "right forearm (placed at the upper arm's end)",
+    "wing_1_R": "right wing, root panel (on the upper arm; intended hitbox part 'wing_1_R')",
+    "wing_2_R": "right wing, second panel (on the forearm)",
+    "leg_1_L": "left thigh (swings 45 degrees with the stride about −0.611; intended hitbox part 'leg_1_L')",
+    "leg_1_R": "right thigh (opposite the left; intended hitbox part 'leg_1_R')",
+    "leg_2_L": "left shin (about +0.611, placed at the thigh's end; intended hitbox part 'leg_2_L')",
+    "leg_2_R": "right shin (intended hitbox part 'leg_2_R')",
+    "footL": "left foot (placed at the shin's end; intended hitbox part 'footL')",
+    "footR": "right foot (placed at the shin's end; intended hitbox part 'footR')",
+    "wing_3_L": "left back panel (the broad 16x26 sheet over the back; sways a tenth of the stride about −0.523)",
+    "wing_3_R": "right back panel (about +0.523)",
+    "wing_4_L": "left tail-fin strip (the 31-long strip behind; static standing)",
+    "wing_4_R": "right tail-fin strip (static standing)",
+    "claw_L": "left wing-tip claw, long (placed at the left fan's end)",
+    "claw_R": "right wing-tip claw, long (placed at the right fan's end)",
+    "claw_L2": "second claw named left — placed at the RIGHT fan's end in the code (LeonModel.java:827-829)",
+    "claw_R_2": "second claw named right — placed at the LEFT fan's end in the code (LeonModel.java:810-812)",
+    "wing_5_L": "left wing fan, finger 1 (the 31-long spar at the forearm's end; folds with the stride about 0.68)",
+    "wing_6_L": "left wing fan, finger 2 (about 0.453)",
+    "wing_7_L": "left wing fan, finger 3 (about 0.119; posed at the RIGHT fan's end in the standing code, :819-825)",
+    "wing_5_R": "right wing fan, finger 1 (folds with the stride about 0.68)",
+    "wing_6_R": "right wing fan, finger 2 (about 0.453)",
+    "wing_7_R": "right wing fan, finger 3 (about 0.119; posed at the LEFT fan's end in the standing code, :802-808)",
+    "fchest": "flight form: chest (pitches an eighth of the beat and rises and falls 10 units with it; intended hitbox part 'fchest')",
+    "fneck_1": "flight form: neck, segment 1 (pitches −1/12 of the beat)",
+    "fneck_2": "flight form: neck, segment 2 (−1/10 of the beat)",
+    "fneck_3": "flight form: neck, segment 3 (−1/8 of the beat)",
+    "fabdomen": "flight form: abdomen (placed behind the chest; intended hitbox part 'fabdomen')",
+    "fhead": "flight form: head (rides the neck chain; turns half the look yaw, or the filtered turn rate when ridden; intended hitbox part 'fhead')",
+    "fupper_jaw": "flight form: upper jaw (rides the head)",
+    "fbottom_jaw": "flight form: lower jaw (breathes calm, snaps 29 degrees attacking)",
+    "fchest_ridge": "flight form: chest ridge (with the chest)",
+    "fupper_sail_1": "flight form: head crest, sail 1",
+    "fupper_sail2_": "flight form: head crest, sail 2",
+    "fupper_sail3": "flight form: head crest, sail 3 (membrane)",
+    "flower_sail1": "flight form: jaw sail 1 (with the lower jaw)",
+    "flower_sail2": "flight form: jaw sail 2",
+    "flower_sail_3": "flight form: jaw sail 3 (membrane)",
+    "feye_ridge_L": "flight form: left eye ridge",
+    "feye_ridge_R": "flight form: right eye ridge",
+    "fanntena_1_L": "flight form: left antenna, base",
+    "fanntena_1_R": "flight form: right antenna, base",
+    "fanntena_2_L": "flight form: left antenna, tip",
+    "fanntena_2_R": "flight form: right antenna, tip",
+    "farm_1_L": "flight form: left upper arm (the beat's root: −pi/2 minus the beat)",
+    "farm_2_L": "flight form: left forearm (1.3x the beat, placed at the upper arm's end)",
+    "fwing_1_L": "flight form: left wing, root panel (beats with the upper arm; intended hitbox part 'fwing_1_L')",
+    "fwing_2_L": "flight form: left wing, second panel (with the forearm)",
+    "farm_1_R": "flight form: right upper arm (+pi/2 plus the beat)",
+    "farm_2_R": "flight form: right forearm (1.3x the beat)",
+    "fwing_1_R": "flight form: right wing, root panel (intended hitbox part 'fwing_1_R')",
+    "fwing_2_R": "flight form: right wing, second panel",
+    "fleg_1_L": "flight form: left thigh (tucked; reaches and paddles attacking; intended hitbox part 'fleg_1_L')",
+    "fleg_1_R": "flight form: right thigh (intended hitbox part 'fleg_1_R')",
+    "fleg_2_L": "flight form: left shin (intended hitbox part 'fleg_2_L')",
+    "fleg_2_R": "flight form: right shin (intended hitbox part 'fleg_2_R')",
+    "ffootL": "flight form: left foot (intended hitbox part 'ffootL')",
+    "ffootR": "flight form: right foot (intended hitbox part 'ffootR')",
+    "fwing_3_L": "flight form: left back panel (held at −0.785 yaw, placed with the abdomen)",
+    "fwing_3_R": "flight form: right back panel (held at +0.785 yaw)",
+    "fwing_4_L": "flight form: left tail-fin strip (pitches a tenth of the beat, placed 26 behind the abdomen)",
+    "fwing_4_R": "flight form: right tail-fin strip (the opposite pitch)",
+    "fclaw_L": "flight form: left wing-tip claw, long (placed at the left fan's end)",
+    "fclaw_R": "flight form: right wing-tip claw, long (placed at the right fan's end)",
+    "fclaw_L2": "flight form: second claw named left — placed at the RIGHT fan's end (:960-963)",
+    "fclaw_R_2": "flight form: second claw named right — placed at the LEFT fan's end (:940-943)",
+    "fwing_5_L": "flight form: left wing fan, finger 1 (1.65x the beat; fanned −45 degrees)",
+    "fwing_6_L": "flight form: left wing fan, finger 2 (fanned −67 degrees)",
+    "fwing_7_L": "flight form: left wing fan, finger 3 (fanned −90 degrees; posed at the RIGHT fan's end, :958-959, :966-967)",
+    "fwing_5_R": "flight form: right wing fan, finger 1 (1.65x the beat; fanned −45 degrees)",
+    "fwing_6_R": "flight form: right wing fan, finger 2 (fanned −67 degrees)",
+    "fwing_7_R": "flight form: right wing fan, finger 3 (fanned −90 degrees; posed at the LEFT fan's end, :938-939, :946-947)"
+  },
+  "groups": [
+    {
+      "name": "gait",
+      "bones": [
+        "leg_1_L", "leg_1_R", "leg_2_L", "leg_2_R", "footL", "footR",
+        "arm_1_L", "arm_1_R", "arm_2_L", "arm_2_R",
+        "wing_1_L", "wing_1_R", "wing_2_L", "wing_2_R",
+        "wing_3_L", "wing_3_R"
+      ],
+      "omega": 0.396,
+      "axis": "x (the legs, arms and wing panels), y (the back panels)",
+      "gait_scaled": true,
+      "amplitude": "pi x 0.25 = 0.785 rad (45 deg) x the walking speed above a 0.1 threshold (zero below it): the thighs about ∓0.611 rad (left +, right −), the shins about ±0.611 with the feet placed along the chain; the upper arms and root wing panels at half of it about −0.07 / −0.17, the forearms and second panels at half about −0.471 / −0.523; the back panels at a tenth about ±0.523",
+      "plain": "standing, the legs stride with the walking speed, the arms and the two wing panels a side swing half as far with them, and the broad back panels sway a tenth",
+      "math": "a = amount > 0.1 ? cos(t * 1.8 * 0.22) * pi * 0.25 * amount : 0; leg_1_L.xRot = -0.611 + a, leg_1_R.xRot = -0.611 - a; leg_2_L.xRot = 0.611 + a, leg_2_R.xRot = 0.611 - a (feet by position); wing_3_R.yRot = 0.523 - a/10, wing_3_L.yRot = -0.523 - a/10; arm_1_L.xRot = -0.07 - a/2, arm_1_R.xRot = -0.07 + a/2; wing_1_L/R.xRot = -0.17 -/+ a/2; arm_2_L/R.xRot = -0.471 -/+ a/2; wing_2_L/R.xRot = -0.523 -/+ a/2 (positions along the chain)",
+      "source": "LeonModel.java:761-766, :778-799, :813-816 (the standing branch, activity 0); wingspeed 0.22 (:21)",
+      "phase": "activity 0 (standing) only — the flight skeleton is hidden",
+      "wingspeed": 0.22,
+      "omega_note": "the classic phase is ageInTicks x 1.8 x wingspeed 0.22 = 0.396 rad/tick: the natural period is 2 pi / 0.396 = 15.87 ticks"
+    },
+    {
+      "name": "wing_fold",
+      "bones": [
+        "wing_5_L", "wing_5_R", "wing_6_L", "wing_6_R", "wing_7_L", "wing_7_R",
+        "claw_L", "claw_R", "claw_L2", "claw_R_2"
+      ],
+      "omega": 0.198,
+      "axis": "x",
+      "gait_scaled": false,
+      "amplitude": "walking (speed above 0.1): pi x 0.25 x speed at a half / a quarter / an eighth on fingers 1 / 2 / 3 about rests 0.68 / 0.453 / 0.119; standing still: pi x 0.02 = 0.063 rad (3.6 deg) at the same fractions; zero in the sitting pose; the claws are placed at the fans' ends",
+      "plain": "standing, the three fan fingers a side fold and unfold slowly — with the stride when walking, a faint breath when still, nothing while sitting",
+      "math": "b = amount > 0.1 ? cos(t * 0.9 * 0.22) * pi * 0.25 * amount : (sitting ? 0 : cos(t * 0.9 * 0.22) * pi * 0.02); wing_5_L/R.xRot = 0.68 + b/2; wing_6_L/R.xRot = 0.453 + b/4; wing_7_R/L.xRot = 0.119 + b/8 (positions from the forearm chain)",
+      "source": "LeonModel.java:763-769, :800-812, :817-829 (the standing branch)",
+      "phase": "state-branching: the walking speed above 0.1 scales it, isInSittingPose stills it (:767-769)",
+      "wingspeed": 0.22,
+      "omega_note": "the classic phase is ageInTicks x 0.9 x wingspeed 0.22 = 0.198 rad/tick: the natural period is 2 pi / 0.198 = 31.73 ticks"
+    },
+    {
+      "name": "breath",
+      "bones": [
+        "chest", "chest_ridge", "bottom_jaw", "lower_sail1", "lower_sail2", "lower_sail_3"
+      ],
+      "omega": 0.132,
+      "axis": "x",
+      "gait_scaled": false,
+      "amplitude": "pi x 0.02 = 0.063 rad (3.6 deg): the chest and its ridge at an eighth about −0.436; the lower jaw and its three sails at a half about −1.308 / 0.297 / 0.384 / −0.384",
+      "plain": "standing, the chest rocks and the lower jaw works a few degrees in a slow breath",
+      "math": "c = cos(t * 0.6 * 0.22) * pi * 0.02; chest.xRot = chest_ridge.xRot = -0.436 + c/8; bottom_jaw.xRot = -1.308 + c/2; lower_sail1.xRot = 0.297 + c/2; lower_sail2.xRot = 0.384 + c/2; lower_sail_3.xRot = -0.384 + c/2",
+      "source": "LeonModel.java:830-835 (the standing branch)",
+      "phase": "activity 0 (standing) only",
+      "wingspeed": 0.22,
+      "omega_note": "the classic phase is ageInTicks x 0.6 x wingspeed 0.22 = 0.132 rad/tick: the natural period is 2 pi / 0.132 = 47.6 ticks"
+    },
+    {
+      "name": "fly_body",
+      "bones": [
+        "fchest", "fchest_ridge", "fabdomen", "fwing_3_L", "fwing_3_R", "fwing_4_L", "fwing_4_R"
+      ],
+      "omega": 0.352,
+      "axis": "x, with a vertical bob",
+      "gait_scaled": false,
+      "amplitude": "pi x 0.06 = 0.188 rad (10.8 deg): the chest pitches an eighth of it and rises and falls by sin(wave) x 10 units (x1.4 attacking) unless ridden; the abdomen and back panels ride the chest; the tail-fin strips pitch ±a tenth",
+      "plain": "flying, the chest pumps up and down with the beat and the tail fins flutter a little; attacking, 1.7 times faster and 1.4 times higher",
+      "math": "spd = attacking ? 1.7 : 1; amp = attacking ? 1.4 : 1; d = cos(t * 1.6 * 0.22 * spd) * pi * 0.06; fchest.xRot = d/8; fchest_ridge.xRot = -0.18 + d/8; fchest.y = ridden ? -2 : -2 + sin(d) * 10 * amp; fwing_4_R.xRot = d/10, fwing_4_L.xRot = -d/10 (fabdomen and fwing_3 placed from the chest)",
+      "source": "LeonModel.java:852-878 (the flight branch, activity 1)",
+      "phase": "activity 1 (flying); the attacking flag (getAttacking) speeds and widens it (:852-855); the bob is flat while ridden (:859)",
+      "wingspeed": 0.22,
+      "omega_note": "the classic phase is ageInTicks x 1.6 x wingspeed 0.22 = 0.352 rad/tick (period 17.85 ticks); attacking x1.7 = 0.598 (period 10.5 ticks)"
+    },
+    {
+      "name": "fly_wings",
+      "bones": [
+        "farm_1_L", "farm_1_R", "farm_2_L", "farm_2_R",
+        "fwing_1_L", "fwing_1_R", "fwing_2_L", "fwing_2_R",
+        "fwing_5_L", "fwing_5_R", "fwing_6_L", "fwing_6_R", "fwing_7_L", "fwing_7_R",
+        "fclaw_L", "fclaw_R", "fclaw_L2", "fclaw_R_2",
+        "fneck_1", "fneck_2", "fneck_3",
+        "fhead", "fupper_jaw", "fupper_sail_1", "fupper_sail2_", "fupper_sail3",
+        "feye_ridge_L", "feye_ridge_R", "fanntena_1_L", "fanntena_1_R", "fanntena_2_L", "fanntena_2_R"
+      ],
+      "omega": 0.352,
+      "axis": "z (the wing beat), x (the neck)",
+      "gait_scaled": false,
+      "amplitude": "pi x 0.26 = 0.817 rad (47 deg), x1.4 attacking (65 deg): the upper arms and root panels about ∓pi/2 (left −, right +), the forearms and second panels at 1.3x, the three fan fingers at 1.65x (held fanned at −45 / −67 / −90 deg about x), the claws placed at the fans' ends; the neck pitches −1/12, −1/10 and −1/8 of it segment by segment and the head with its crest, ridges and antennae rides the chain by position",
+      "plain": "flying, the wings beat about the body's long axis from the shoulders out, each segment wider than the last, and the neck and head nod against the beat",
+      "math": "e = cos(t * 1.6 * 0.22 * spd) * pi * 0.26 * amp; farm_1_L.zRot = fwing_1_L.zRot = -pi/2 - e, farm_1_R.zRot = fwing_1_R.zRot = pi/2 + e; farm_2_L.zRot = fwing_2_L.zRot = -pi/2 - 1.3e (right +); fwing_5/6/7_L.zRot = -pi/2 - 1.65e (right +), xRot = -0.785 / -1.178 / -1.571; fneck_1.xRot = -e/12, fneck_2.xRot = -e/10, fneck_3.xRot = -e/8; positions along each chain by cos/sin",
+      "source": "LeonModel.java:925-1008 (the flight branch)",
+      "phase": "activity 1 (flying); spd 1.7 and amp 1.4 while attacking (:852-855)",
+      "wingspeed": 0.22,
+      "omega_note": "the classic phase is ageInTicks x 1.6 x wingspeed 0.22 = 0.352 rad/tick (period 17.85 ticks); attacking x1.7 = 0.598 (period 10.5 ticks)"
+    },
+    {
+      "name": "fly_legs",
+      "bones": [
+        "fleg_1_L", "fleg_1_R", "fleg_2_L", "fleg_2_R", "ffootL", "ffootR"
+      ],
+      "omega": 0.792,
+      "axis": "x",
+      "gait_scaled": false,
+      "amplitude": "attacking: pi x 0.1 = 0.314 rad (18 deg) on the thighs about −0.1 − pi/4 (left +, right −), 1.5x on the shins about 0.2 − pi/4, 2x on the feet about −pi/4; not attacking: tucked and still (thighs −0.1 + pi/2, shins 0.1 + pi/2, feet pi)",
+      "plain": "flying, the legs hang tucked; attacking they reach forward and paddle, shins and feet swinging wider than the thighs",
+      "math": "f = attacking ? cos(t * 3.6 * 0.22) * pi * 0.1 : 0; rest = attacking ? -pi/4 : pi/2; fleg_1_L.xRot = -0.1 + rest + f, fleg_1_R.xRot = -0.1 + rest - f; fleg_2_L.xRot = (attacking ? 0.2 : 0.1) + rest + 1.5f (right −); ffootL.xRot = attacking ? -pi/4 + 2f : pi (right −); positions along the chain",
+      "source": "LeonModel.java:879-924 (the flight branch)",
+      "phase": "the attacking flag selects: tucked and still, or reaching and paddling",
+      "wingspeed": 0.22,
+      "omega_note": "the classic phase is ageInTicks x 3.6 x wingspeed 0.22 = 0.792 rad/tick: the natural period is 2 pi / 0.792 = 7.93 ticks"
+    },
+    {
+      "name": "fly_jaw",
+      "bones": [
+        "fbottom_jaw", "flower_sail1", "flower_sail2", "flower_sail_3"
+      ],
+      "omega": 0.572,
+      "axis": "x",
+      "gait_scaled": false,
+      "amplitude": "attacking: pi x 0.16 = 0.503 rad (29 deg) about −0.9; not attacking: half of fly_body's 10.8-degree wave about −1.308 (a breath at 0.352 rad/tick); the three jaw sails follow at +1.605 / +1.692 / +0.924",
+      "plain": "flying, the lower jaw breathes with the body; attacking it snaps wide and fast, the jaw sails with it",
+      "math": "g = attacking ? -0.9 + cos(t * 2.6 * 0.22) * pi * 0.16 : -1.308 + d/2; fbottom_jaw.xRot = g; flower_sail1.xRot = g + 1.605; flower_sail2.xRot = g + 1.692; flower_sail_3.xRot = g + 0.924",
+      "source": "LeonModel.java:1048-1056 (the flight branch)",
+      "phase": "the attacking flag selects the rhythm",
+      "wingspeed": 0.22,
+      "omega_note": "the classic phase attacking is ageInTicks x 2.6 x wingspeed 0.22 = 0.572 rad/tick (period 10.98 ticks); calm, the jaw follows fly_body's 0.352"
+    }
+  ],
+  "behaviour": [
+    "Two skeletons on one rig: the standing parts and the flight parts (f-prefixed) are both in the geo, and the code shows exactly one set per frame by the synced DATA_ACTIVITY byte — 0 standing, else flying (LeonModel.java:774-776; EntityLeon.java:82-83, :261-268). No animation channel expresses that visibility: how the two skeletons are toggled under GeckoLib is a seam decision for when the rig lands (§5.2).",
+    "Standing (activity 0): one speed-scaled stride at 0.396 rad/tick (a 15.9-tick period) above a walking-speed threshold of 0.1 — the thighs swing 45 degrees each way about their rests with the shins and feet placed along them, the arms and the two wing panels a side swing half of it, the back panels sway a tenth (LeonModel.java:761-766, :778-799, :813-816). The wing fans fold at a slower 0.198 rad/tick: a half, a quarter and an eighth of the stride when walking, a 3.6-degree breath when still, nothing while sitting (:763-769, :800-812, :817-829). A 0.132 rad/tick breath rocks the chest an eighth and the lower jaw and its sails a half of 3.6 degrees (:830-835); the head, crest, eye ridges, antennae and lower jaw turn half the look yaw (:836-850).",
+    "Flying (activity 1): the beat is 0.352 rad/tick (a 17.9-tick period), 1.7 times faster and 1.4 times wider while the attacking flag is set (:852-855). The chest pitches an eighth of a 10.8-degree wave and rises and falls 10 units with it unless ridden (:856-860); the upper arms and root panels beat 47 degrees about the body's long axis, the forearms and second panels 1.3 times that, the three fan fingers 1.65 times, fanned at 45, 67 and 90 degrees (:925-969); the neck pitches against the beat segment by segment and the head with its parts rides the chain (:970-1008); the tail-fin strips pitch a tenth (:877-878).",
+    "Flying and not attacking the legs hang tucked and still; attacking they reach forward and paddle at 0.792 rad/tick — 18 degrees on the thighs, 27 on the shins, 36 on the feet (:879-924) — and the lower jaw snaps 29 degrees at 0.572 rad/tick about a −0.9 rest instead of breathing (:1048-1056). The head turns half the look yaw, or, ridden, a filtered turn rate clamped to ±50 degrees (:1009-1044).",
+    "The takeoff and the landing are flag flips (alwaysDo, EntityLeon.java:594-630; hurt :469; mobInteract :943, :955), the bite is doHurtTarget (:431-461) from the flight AI (:721) or the ridden auto-melee (:573), and the wing sound every 20 ticks in flight (:494-503) is the entity's — none of these are animation events."
+  ],
+  "clips": [
+    {
+      "name": "idle",
+      "verdict": "author",
+      "note": "REQUIRED with walk: the gate opens on the pair — the standing rest (activity 0): the breath, the faint fan fold, the head on the look"
+    },
+    {
+      "name": "walk",
+      "verdict": "author",
+      "note": "REQUIRED with idle: the gait group's stride on the standing skeleton (legs, arms, wing panels, back panels)"
+    },
+    {
+      "name": "fly",
+      "verdict": "author",
+      "note": "activity 1 — the flight skeleton (LeonModel.java:774-776): the wing beat with the chest pumping and the neck nodding against it (fly_wings, fly_body); the standing bones must be hidden here (§5.2)"
+    },
+    {
+      "name": "aggro_idle",
+      "verdict": "author",
+      "note": "the attacking flag in flight (set at EntityLeon.java:570 / :715 while a target is in reach): the 1.7x faster, 1.4x wider beat, the paddling legs and the snapping jaw (LeonModel.java:852-855, :902-923, :1051-1052)"
+    },
+    {
+      "name": "calm_idle",
+      "verdict": "author",
+      "note": "the flag clear: the standing rest on the ground, or the calm hover in the air (the legs tucked, the jaw breathing)"
+    },
+    {
+      "name": "attack",
+      "verdict": "author",
+      "note": "the bite: doHurtTarget (EntityLeon.java:431-461) from flyWithoutRider :719-722 within 7 blocks plus half the target's width, or flyWithRider :571-574 within 9 — 55 of damage and a 1.25 knockback; author the lunge and the jaw snap on the flight skeleton",
+      "length_seconds": 0.6
+    },
+    {
+      "name": "hurt",
+      "verdict": "author",
+      "note": "a flinch to leon_hit (getHurtSound :408-410); hurt() (:464-484) then flips it into flight and onto the attacker, and ignores damage for 15 ticks",
+      "length_seconds": 0.4
+    },
+    {
+      "name": "death",
+      "verdict": "author",
+      "note": "ruled 2026-09-06, Q3 (a): the vanilla death flip stays; a creature whose JSON ships a `death` clip gets the clip-replaces-flip mode, designed when the first such clip arrives (the Queen's own death clip the precedent) - a `death` delivered here plays under the flip until then",
+      "length_seconds": 2.0
+    }
+  ],
+  "extras": [
+    {
+      "name": "takeoff",
+      "loop": false,
+      "layer": "overlay",
+      "trigger": "the synced DATA_ACTIVITY byte rising 0 -> 1 (EntityLeon.setActivity :264-268; set at alwaysDo :600 / :616 / :619 / :626, hurt :469, mobInteract :943) — the standing skeleton hides and the flight skeleton shows (LeonModel.java:774-776); a transition on the flag's edge, its transport the seam's when the rig lands",
+      "bones": ["fchest", "fabdomen", "farm_1_L", "farm_1_R", "fwing_1_L", "fwing_1_R", "fleg_1_L", "fleg_1_R"],
+      "length_seconds": 1.0,
+      "code_triggered": false,
+      "note": "the crouch and the first downstroke on the flight skeleton"
+    },
+    {
+      "name": "land",
+      "loop": false,
+      "layer": "overlay",
+      "trigger": "the synced DATA_ACTIVITY byte falling 1 -> 0 (alwaysDo :623-629 on a 1-in-50 tick, 14 times in 15; mobInteract :955 when sat) — the flight skeleton hides and the standing skeleton shows (LeonModel.java:774-776); a transition on the flag's edge",
+      "bones": ["chest", "abdomen", "leg_1_L", "leg_1_R", "leg_2_L", "leg_2_R", "footL", "footR", "wing_1_L", "wing_1_R"],
+      "length_seconds": 1.0,
+      "code_triggered": false,
+      "note": "the settle onto the legs on the standing skeleton"
+    }
+  ],
+  "wishlist": [
+    "in `fly`: a real wing-beat with the body rising on the downstroke — the code already lifts the chest 10 units with the beat (LeonModel.java:859); keep that and add the neck and tail-fin follow-through it lacks",
+    "in `walk`: a heavy stride — the code swings the thighs 45 degrees (:778-780) but never shifts the chest; add a chest roll and a head bob so the weight reads",
+    "in `attack`: the bite with the jaw snapping (the attacking jaw wave, :1051-1052) and a forward lunge; the bite lands within 7 blocks plus half the target's width (EntityLeon.java:719-722)",
+    "in `aggro_idle`: the paddling legs and the faster beat the code shows while attacking (:852-855, :902-923), made to read as a dive rather than a hover"
+  ],
+  "future": [
+    "a visibility switch between the standing and flight skeletons — the code toggles `.visible` by DATA_ACTIVITY (LeonModel.java:774-776); no animation channel expresses that, so the seam needs a ruling on how the two skeletons are shown (a scale-to-zero key on the hidden set, or a code toggle) before a flight-form clip can play beside a standing one"
+  ],
+  "locked_bones_provisional": [
+    {"bone": "head", "size": [2, 1.8], "damage": 1},
+    {"bone": "fhead", "size": [2, 1.8], "damage": 1},
+    {"bone": "chest", "size": [3, 3], "damage": 0.5},
+    {"bone": "fchest", "size": [3, 3], "damage": 0.5},
+    {"bone": "abdomen", "size": [2.5, 2.5], "damage": 0.5},
+    {"bone": "fabdomen", "size": [2.5, 2.5], "damage": 0.5},
+    {"bone": "leg_1_L", "size": [1, 2.5], "damage": 0.5},
+    {"bone": "leg_1_R", "size": [1, 2.5], "damage": 0.5},
+    {"bone": "leg_2_L", "size": [1, 2.5], "damage": 0.5},
+    {"bone": "leg_2_R", "size": [1, 2.5], "damage": 0.5},
+    {"bone": "footL", "size": [1, 2.5], "damage": 0.5},
+    {"bone": "footR", "size": [1, 2.5], "damage": 0.5},
+    {"bone": "fleg_1_L", "size": [1, 2.5], "damage": 0.5},
+    {"bone": "fleg_1_R", "size": [1, 2.5], "damage": 0.5},
+    {"bone": "fleg_2_L", "size": [1, 2.5], "damage": 0.5},
+    {"bone": "fleg_2_R", "size": [1, 2.5], "damage": 0.5},
+    {"bone": "ffootL", "size": [1, 2.5], "damage": 0.5},
+    {"bone": "ffootR", "size": [1, 2.5], "damage": 0.5},
+    {"bone": "wing_1_L", "size": [4, 1], "damage": 0.25},
+    {"bone": "wing_1_R", "size": [4, 1], "damage": 0.25},
+    {"bone": "fwing_1_L", "size": [4, 1], "damage": 0.25},
+    {"bone": "fwing_1_R", "size": [4, 1], "damage": 0.25}
+  ],
+  "locked_bones_note": "The design's section 6 LeonModel row (geckolib_migration_design.md:442): 'Active-form head/fhead [2,1.8] @1; chest/fchest [3,3] @0.5; abdomen/fabdomen [2.5,2.5] @0.5; upper/lower legs/feet [1,2.5] @0.5; structural wing roots [4,1] @0.25' — 'Only the active normal/f* skeleton receives parts'. head, fhead, chest, fchest, abdomen and fabdomen resolve as written. 'upper/lower legs/feet' is not a bone name: taken as both skeletons' thighs, shins and feet — leg_1_L/R, leg_2_L/R, footL/R and fleg_1_L/R, fleg_2_L/R, ffootL/R (LeonModel.createBodyLayer :406-433, :651-678). 'structural wing roots' is not a bone name: taken as the root wing panel a side on each skeleton — wing_1_L/R and fwing_1_L/R (the panel posed with the upper arm at the shoulder, :794-795 / :928-929); the arms (arm_1_*, farm_1_*) and the outer panels and fans stay visual. Both registries (leon, leonopteryx) carry the same list: 'Separate equal-size registry profiles, one server-fed form/flight pose'.",
+  "effort_hours": null
+}

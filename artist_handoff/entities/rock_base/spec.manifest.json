@@ -1,0 +1,1651 @@
+{
+  "generated_by": "tools/artist_package.py 0.2.9 (the full folder, 2026-09-13, fourth set, items 5, 7 and 8: every artist-tier species packaged - a rig not yet in-game from the reference leg's converter output, bone names final; the Tier-1 bosses' intended locked bones from the design's section 6 rendered in section 7 and validated against the geo; the README's priority table the full list, bosses first, closing with the deliverable count)",
+  "registry": "rock_base",
+  "display_name": "Rock (RockBase)",
+  "tier": 3,
+  "tier_label": "Tier 3",
+  "geo_file": "rockbase.geo.json",
+  "animation_file": "rockbase.animation.json",
+  "bbmodel_file": "rock_base.bbmodel",
+  "texture_size": [
+    64,
+    64
+  ],
+  "bones": [
+    {
+      "name": "CrystalShape1",
+      "parent": null,
+      "pivot": [
+        0,
+        1,
+        0
+      ],
+      "rotation": null,
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            -1.0,
+            0.0,
+            -1.0
+          ],
+          "size": [
+            2.0,
+            5.0,
+            2.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              2.0,
+              2.0,
+              -2.0,
+              5.0
+            ],
+            "east": [
+              6.0,
+              2.0,
+              -2.0,
+              5.0
+            ],
+            "north": [
+              4.0,
+              2.0,
+              -2.0,
+              5.0
+            ],
+            "south": [
+              8.0,
+              2.0,
+              -2.0,
+              5.0
+            ],
+            "up": [
+              4.0,
+              0.0,
+              -2.0,
+              2.0
+            ],
+            "down": [
+              6.0,
+              2.0,
+              -2.0,
+              -2.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "CrystalShape2",
+      "parent": null,
+      "pivot": [
+        0,
+        1,
+        0
+      ],
+      "rotation": null,
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            -0.5,
+            5.0,
+            -0.5
+          ],
+          "size": [
+            1.0,
+            3.0,
+            1.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              11.0,
+              1.0,
+              -1.0,
+              3.0
+            ],
+            "east": [
+              13.0,
+              1.0,
+              -1.0,
+              3.0
+            ],
+            "north": [
+              12.0,
+              1.0,
+              -1.0,
+              3.0
+            ],
+            "south": [
+              14.0,
+              1.0,
+              -1.0,
+              3.0
+            ],
+            "up": [
+              12.0,
+              0.0,
+              -1.0,
+              1.0
+            ],
+            "down": [
+              13.0,
+              1.0,
+              -1.0,
+              -1.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "CrystalShape3a",
+      "parent": null,
+      "pivot": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        31.0000018267,
+        0,
+        0
+      ],
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            0.0,
+            1.0,
+            -1.0
+          ],
+          "size": [
+            1.0,
+            5.0,
+            1.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              1.0,
+              9.0,
+              -1.0,
+              5.0
+            ],
+            "east": [
+              3.0,
+              9.0,
+              -1.0,
+              5.0
+            ],
+            "north": [
+              2.0,
+              9.0,
+              -1.0,
+              5.0
+            ],
+            "south": [
+              4.0,
+              9.0,
+              -1.0,
+              5.0
+            ],
+            "up": [
+              2.0,
+              8.0,
+              -1.0,
+              1.0
+            ],
+            "down": [
+              3.0,
+              9.0,
+              -1.0,
+              -1.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "CrystalShape3b",
+      "parent": null,
+      "pivot": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        -31.0000018267,
+        0,
+        0
+      ],
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            -1.0,
+            1.0,
+            0.0
+          ],
+          "size": [
+            1.0,
+            5.0,
+            1.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              1.0,
+              9.0,
+              -1.0,
+              5.0
+            ],
+            "east": [
+              3.0,
+              9.0,
+              -1.0,
+              5.0
+            ],
+            "north": [
+              2.0,
+              9.0,
+              -1.0,
+              5.0
+            ],
+            "south": [
+              4.0,
+              9.0,
+              -1.0,
+              5.0
+            ],
+            "up": [
+              2.0,
+              8.0,
+              -1.0,
+              1.0
+            ],
+            "down": [
+              3.0,
+              9.0,
+              -1.0,
+              -1.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "CrystalShape3c",
+      "parent": null,
+      "pivot": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        -31.0000018267
+      ],
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            -1.0,
+            1.0,
+            -1.0
+          ],
+          "size": [
+            1.0,
+            5.0,
+            1.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              1.0,
+              9.0,
+              -1.0,
+              5.0
+            ],
+            "east": [
+              3.0,
+              9.0,
+              -1.0,
+              5.0
+            ],
+            "north": [
+              2.0,
+              9.0,
+              -1.0,
+              5.0
+            ],
+            "south": [
+              4.0,
+              9.0,
+              -1.0,
+              5.0
+            ],
+            "up": [
+              2.0,
+              8.0,
+              -1.0,
+              1.0
+            ],
+            "down": [
+              3.0,
+              9.0,
+              -1.0,
+              -1.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "CrystalShape3d",
+      "parent": null,
+      "pivot": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        31.0000018267
+      ],
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            0.0,
+            1.0,
+            0.0
+          ],
+          "size": [
+            1.0,
+            5.0,
+            1.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              1.0,
+              9.0,
+              -1.0,
+              5.0
+            ],
+            "east": [
+              3.0,
+              9.0,
+              -1.0,
+              5.0
+            ],
+            "north": [
+              2.0,
+              9.0,
+              -1.0,
+              5.0
+            ],
+            "south": [
+              4.0,
+              9.0,
+              -1.0,
+              5.0
+            ],
+            "up": [
+              2.0,
+              8.0,
+              -1.0,
+              1.0
+            ],
+            "down": [
+              3.0,
+              9.0,
+              -1.0,
+              -1.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "CrystalShape4a",
+      "parent": null,
+      "pivot": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        75.0000034953,
+        0,
+        0
+      ],
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            -1.0,
+            1.0,
+            -1.0
+          ],
+          "size": [
+            1.0,
+            3.0,
+            1.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              1.0,
+              17.0,
+              -1.0,
+              3.0
+            ],
+            "east": [
+              3.0,
+              17.0,
+              -1.0,
+              3.0
+            ],
+            "north": [
+              2.0,
+              17.0,
+              -1.0,
+              3.0
+            ],
+            "south": [
+              4.0,
+              17.0,
+              -1.0,
+              3.0
+            ],
+            "up": [
+              2.0,
+              16.0,
+              -1.0,
+              1.0
+            ],
+            "down": [
+              3.0,
+              17.0,
+              -1.0,
+              -1.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "CrystalShape4b",
+      "parent": null,
+      "pivot": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        -75.0000034953,
+        0,
+        0
+      ],
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            0.0,
+            1.0,
+            0.0
+          ],
+          "size": [
+            1.0,
+            3.0,
+            1.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              1.0,
+              17.0,
+              -1.0,
+              3.0
+            ],
+            "east": [
+              3.0,
+              17.0,
+              -1.0,
+              3.0
+            ],
+            "north": [
+              2.0,
+              17.0,
+              -1.0,
+              3.0
+            ],
+            "south": [
+              4.0,
+              17.0,
+              -1.0,
+              3.0
+            ],
+            "up": [
+              2.0,
+              16.0,
+              -1.0,
+              1.0
+            ],
+            "down": [
+              3.0,
+              17.0,
+              -1.0,
+              -1.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "CrystalShape4c",
+      "parent": null,
+      "pivot": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        -75.0000034953
+      ],
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            -1.0,
+            1.0,
+            0.0
+          ],
+          "size": [
+            1.0,
+            3.0,
+            1.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              1.0,
+              17.0,
+              -1.0,
+              3.0
+            ],
+            "east": [
+              3.0,
+              17.0,
+              -1.0,
+              3.0
+            ],
+            "north": [
+              2.0,
+              17.0,
+              -1.0,
+              3.0
+            ],
+            "south": [
+              4.0,
+              17.0,
+              -1.0,
+              3.0
+            ],
+            "up": [
+              2.0,
+              16.0,
+              -1.0,
+              1.0
+            ],
+            "down": [
+              3.0,
+              17.0,
+              -1.0,
+              -1.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "CrystalShape4d",
+      "parent": null,
+      "pivot": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        75.0000034953
+      ],
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            0.0,
+            1.0,
+            -1.0
+          ],
+          "size": [
+            1.0,
+            3.0,
+            1.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              1.0,
+              17.0,
+              -1.0,
+              3.0
+            ],
+            "east": [
+              3.0,
+              17.0,
+              -1.0,
+              3.0
+            ],
+            "north": [
+              2.0,
+              17.0,
+              -1.0,
+              3.0
+            ],
+            "south": [
+              4.0,
+              17.0,
+              -1.0,
+              3.0
+            ],
+            "up": [
+              2.0,
+              16.0,
+              -1.0,
+              1.0
+            ],
+            "down": [
+              3.0,
+              17.0,
+              -1.0,
+              -1.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "RockShape1",
+      "parent": null,
+      "pivot": [
+        0,
+        1,
+        0
+      ],
+      "rotation": null,
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            -3.0,
+            0.0,
+            -1.0
+          ],
+          "size": [
+            6.0,
+            1.0,
+            2.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              2.0,
+              2.0,
+              -2.0,
+              1.0
+            ],
+            "east": [
+              10.0,
+              2.0,
+              -2.0,
+              1.0
+            ],
+            "north": [
+              8.0,
+              2.0,
+              -6.0,
+              1.0
+            ],
+            "south": [
+              16.0,
+              2.0,
+              -6.0,
+              1.0
+            ],
+            "up": [
+              8.0,
+              0.0,
+              -6.0,
+              2.0
+            ],
+            "down": [
+              14.0,
+              2.0,
+              -6.0,
+              -2.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "RockShape2",
+      "parent": null,
+      "pivot": [
+        0,
+        1,
+        0
+      ],
+      "rotation": null,
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            0.0,
+            0.0,
+            1.0
+          ],
+          "size": [
+            3.0,
+            1.0,
+            1.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              1.0,
+              5.0,
+              -1.0,
+              1.0
+            ],
+            "east": [
+              5.0,
+              5.0,
+              -1.0,
+              1.0
+            ],
+            "north": [
+              4.0,
+              5.0,
+              -3.0,
+              1.0
+            ],
+            "south": [
+              8.0,
+              5.0,
+              -3.0,
+              1.0
+            ],
+            "up": [
+              4.0,
+              4.0,
+              -3.0,
+              1.0
+            ],
+            "down": [
+              7.0,
+              5.0,
+              -3.0,
+              -1.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "RockShape3",
+      "parent": null,
+      "pivot": [
+        0,
+        1,
+        0
+      ],
+      "rotation": null,
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            -2.0,
+            0.0,
+            -2.0
+          ],
+          "size": [
+            2.0,
+            1.0,
+            1.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              1.0,
+              8.0,
+              -1.0,
+              1.0
+            ],
+            "east": [
+              4.0,
+              8.0,
+              -1.0,
+              1.0
+            ],
+            "north": [
+              3.0,
+              8.0,
+              -2.0,
+              1.0
+            ],
+            "south": [
+              6.0,
+              8.0,
+              -2.0,
+              1.0
+            ],
+            "up": [
+              3.0,
+              7.0,
+              -2.0,
+              1.0
+            ],
+            "down": [
+              5.0,
+              8.0,
+              -2.0,
+              -1.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "RockSmallShape1",
+      "parent": null,
+      "pivot": [
+        0,
+        1,
+        0
+      ],
+      "rotation": null,
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            -2.0,
+            0.0,
+            -1.0
+          ],
+          "size": [
+            2.0,
+            1.0,
+            1.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              1.0,
+              8.0,
+              -1.0,
+              1.0
+            ],
+            "east": [
+              4.0,
+              8.0,
+              -1.0,
+              1.0
+            ],
+            "north": [
+              3.0,
+              8.0,
+              -2.0,
+              1.0
+            ],
+            "south": [
+              6.0,
+              8.0,
+              -2.0,
+              1.0
+            ],
+            "up": [
+              3.0,
+              7.0,
+              -2.0,
+              1.0
+            ],
+            "down": [
+              5.0,
+              8.0,
+              -2.0,
+              -1.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "RockSmallShape2",
+      "parent": null,
+      "pivot": [
+        0,
+        1,
+        0
+      ],
+      "rotation": null,
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            -1.0,
+            0.0,
+            0.0
+          ],
+          "size": [
+            3.0,
+            1.0,
+            1.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              1.0,
+              5.0,
+              -1.0,
+              1.0
+            ],
+            "east": [
+              5.0,
+              5.0,
+              -1.0,
+              1.0
+            ],
+            "north": [
+              4.0,
+              5.0,
+              -3.0,
+              1.0
+            ],
+            "south": [
+              8.0,
+              5.0,
+              -3.0,
+              1.0
+            ],
+            "up": [
+              4.0,
+              4.0,
+              -3.0,
+              1.0
+            ],
+            "down": [
+              7.0,
+              5.0,
+              -3.0,
+              -1.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "RockSpikeyShape1",
+      "parent": null,
+      "pivot": [
+        0,
+        1,
+        0
+      ],
+      "rotation": null,
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            -3.0,
+            0.0,
+            -1.0
+          ],
+          "size": [
+            6.0,
+            1.0,
+            2.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              2.0,
+              2.0,
+              -2.0,
+              1.0
+            ],
+            "east": [
+              10.0,
+              2.0,
+              -2.0,
+              1.0
+            ],
+            "north": [
+              8.0,
+              2.0,
+              -6.0,
+              1.0
+            ],
+            "south": [
+              16.0,
+              2.0,
+              -6.0,
+              1.0
+            ],
+            "up": [
+              8.0,
+              0.0,
+              -6.0,
+              2.0
+            ],
+            "down": [
+              14.0,
+              2.0,
+              -6.0,
+              -2.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "RockSpikeyShape2",
+      "parent": null,
+      "pivot": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        -89.999981276,
+        0
+      ],
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            1.0,
+            0.0,
+            -1.0
+          ],
+          "size": [
+            3.0,
+            1.0,
+            1.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              1.0,
+              5.0,
+              -1.0,
+              1.0
+            ],
+            "east": [
+              5.0,
+              5.0,
+              -1.0,
+              1.0
+            ],
+            "north": [
+              4.0,
+              5.0,
+              -3.0,
+              1.0
+            ],
+            "south": [
+              8.0,
+              5.0,
+              -3.0,
+              1.0
+            ],
+            "up": [
+              4.0,
+              4.0,
+              -3.0,
+              1.0
+            ],
+            "down": [
+              7.0,
+              5.0,
+              -3.0,
+              -1.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "RockSpikeyShape3",
+      "parent": null,
+      "pivot": [
+        0,
+        1,
+        0
+      ],
+      "rotation": [
+        0,
+        -89.999981276,
+        0
+      ],
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            -3.0,
+            0.0,
+            1.0
+          ],
+          "size": [
+            2.0,
+            1.0,
+            1.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              1.0,
+              8.0,
+              -1.0,
+              1.0
+            ],
+            "east": [
+              4.0,
+              8.0,
+              -1.0,
+              1.0
+            ],
+            "north": [
+              3.0,
+              8.0,
+              -2.0,
+              1.0
+            ],
+            "south": [
+              6.0,
+              8.0,
+              -2.0,
+              1.0
+            ],
+            "up": [
+              3.0,
+              7.0,
+              -2.0,
+              1.0
+            ],
+            "down": [
+              5.0,
+              8.0,
+              -2.0,
+              -1.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "RockTNTShape1",
+      "parent": null,
+      "pivot": [
+        0,
+        1,
+        0
+      ],
+      "rotation": null,
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            -3.0,
+            0.0,
+            -1.0
+          ],
+          "size": [
+            6.0,
+            1.0,
+            2.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              2.0,
+              2.0,
+              -2.0,
+              1.0
+            ],
+            "east": [
+              10.0,
+              2.0,
+              -2.0,
+              1.0
+            ],
+            "north": [
+              8.0,
+              2.0,
+              -6.0,
+              1.0
+            ],
+            "south": [
+              16.0,
+              2.0,
+              -6.0,
+              1.0
+            ],
+            "up": [
+              8.0,
+              0.0,
+              -6.0,
+              2.0
+            ],
+            "down": [
+              14.0,
+              2.0,
+              -6.0,
+              -2.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "RockTNTShape2",
+      "parent": null,
+      "pivot": [
+        0,
+        1,
+        0
+      ],
+      "rotation": null,
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            0.0,
+            0.0,
+            1.0
+          ],
+          "size": [
+            3.0,
+            1.0,
+            1.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              1.0,
+              5.0,
+              -1.0,
+              1.0
+            ],
+            "east": [
+              5.0,
+              5.0,
+              -1.0,
+              1.0
+            ],
+            "north": [
+              4.0,
+              5.0,
+              -3.0,
+              1.0
+            ],
+            "south": [
+              8.0,
+              5.0,
+              -3.0,
+              1.0
+            ],
+            "up": [
+              4.0,
+              4.0,
+              -3.0,
+              1.0
+            ],
+            "down": [
+              7.0,
+              5.0,
+              -3.0,
+              -1.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "RockTNTShape3",
+      "parent": null,
+      "pivot": [
+        0,
+        1,
+        0
+      ],
+      "rotation": null,
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            -2.0,
+            0.0,
+            -2.0
+          ],
+          "size": [
+            2.0,
+            1.0,
+            1.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              1.0,
+              8.0,
+              -1.0,
+              1.0
+            ],
+            "east": [
+              4.0,
+              8.0,
+              -1.0,
+              1.0
+            ],
+            "north": [
+              3.0,
+              8.0,
+              -2.0,
+              1.0
+            ],
+            "south": [
+              6.0,
+              8.0,
+              -2.0,
+              1.0
+            ],
+            "up": [
+              3.0,
+              7.0,
+              -2.0,
+              1.0
+            ],
+            "down": [
+              5.0,
+              8.0,
+              -2.0,
+              -1.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "RockTNTShape4",
+      "parent": null,
+      "pivot": [
+        0,
+        2,
+        0
+      ],
+      "rotation": null,
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            1.0,
+            1.0,
+            -2.0
+          ],
+          "size": [
+            3.0,
+            1.0,
+            3.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              3.0,
+              13.0,
+              -3.0,
+              1.0
+            ],
+            "east": [
+              9.0,
+              13.0,
+              -3.0,
+              1.0
+            ],
+            "north": [
+              6.0,
+              13.0,
+              -3.0,
+              1.0
+            ],
+            "south": [
+              12.0,
+              13.0,
+              -3.0,
+              1.0
+            ],
+            "up": [
+              6.0,
+              10.0,
+              -3.0,
+              3.0
+            ],
+            "down": [
+              9.0,
+              13.0,
+              -3.0,
+              -3.0
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "locked_bones": [],
+  "lock_mode": "warn",
+  "lock_policy": "warn-keyed, refuse-structural",
+  "lock_policy_text": "Keying a locked bone is allowed; the checker warns, and the hitbox part follows the bone in-game (the consequence, so keep such keys deliberate). Renaming, re-parenting or deleting a locked bone is refused.",
+  "keyed_locked_by_shipped_clip": {},
+  "native": false,
+  "controller_kind": "phase_locked",
+  "clips": [],
+  "allow_idle_alt": false,
+  "textures": [
+    {
+      "canonical": "rockbluetexture.png",
+      "width": 64,
+      "height": 64,
+      "aliases": []
+    },
+    {
+      "canonical": "rockcrystalbluetexture.png",
+      "width": 64,
+      "height": 64,
+      "aliases": []
+    },
+    {
+      "canonical": "rockcrystalgreentexture.png",
+      "width": 64,
+      "height": 64,
+      "aliases": []
+    },
+    {
+      "canonical": "rockcrystaltexture.png",
+      "width": 64,
+      "height": 64,
+      "aliases": []
+    },
+    {
+      "canonical": "rockcrystaltnttexture.png",
+      "width": 64,
+      "height": 64,
+      "aliases": []
+    },
+    {
+      "canonical": "rockgreentexture.png",
+      "width": 64,
+      "height": 64,
+      "aliases": []
+    },
+    {
+      "canonical": "rockpurpletexture.png",
+      "width": 64,
+      "height": 64,
+      "aliases": []
+    },
+    {
+      "canonical": "rockredtexture.png",
+      "width": 64,
+      "height": 64,
+      "aliases": []
+    },
+    {
+      "canonical": "rocktexture.png",
+      "width": 64,
+      "height": 64,
+      "aliases": []
+    },
+    {
+      "canonical": "rocktnttexture.png",
+      "width": 64,
+      "height": 64,
+      "aliases": []
+    }
+  ],
+  "effort_hours": 0.0,
+  "effort_source": "seed (owner-set)",
+  "reference_clip": {
+    "file": "rock_base_reference.animation.json",
+    "sha256": "dccbb5fb4a84040fe4ea9c7f0f8a2d6f50fddd68017514b12ca7d67e0757fa82",
+    "clip": "reference",
+    "reference_only": true,
+    "rule": "one_key",
+    "rule_note": "no rotation or position channel: the pose is which cubes are visible for the rock type (RockBaseGeoReplacement.java:46-85, ModelRockBase.java:186-221; orig ModelRockBase.java:182-222), and visibility has no Bedrock animation channel; the SPEC's plain-language transcription carries it",
+    "span_ticks": 0.0,
+    "period_ticks": null,
+    "period_multiple_k": null,
+    "animation_length_seconds": 0.05,
+    "keys_per_bone": 1,
+    "sampled_inputs": "limbSwingAmount 1.0; limbSwing = t (advancing 1.0 per tick from 0: vanilla WalkAnimationState.update does speed += (movementSpeed - speed) * multiplier; position += speed, and the classic renderer hands walkAnimation.position(partialTick) as limbSwing and min(1, speed) as limbSwingAmount, so at speed 1 the position advances exactly 1.0 per tick); ageInTicks = t (getBob: tickCount + partialTick, partialTick 0); netHeadYaw 0; headPitch 0 (looking ahead); every entity-state flag at its rest value (attacking 0, ri1 0, rock_type 0, rf1 0: a ProbeSubject built from an empty state); the entity RNG seeded 0 once per clip and evolving across the keys; one pose call per key, 20 keys per second; full health (no shipped hook reads health)",
+    "hook": "danger.orespawn.entity.client.RockBaseGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the shipped replacement, registry-free, on explicit PoseInputs)",
+    "moving_bones": [],
+    "position_bones": [],
+    "hidden_bones_at_rest": [
+      "CrystalShape1",
+      "CrystalShape2",
+      "CrystalShape3a",
+      "CrystalShape3b",
+      "CrystalShape3c",
+      "CrystalShape3d",
+      "CrystalShape4a",
+      "CrystalShape4b",
+      "CrystalShape4c",
+      "CrystalShape4d",
+      "RockShape1",
+      "RockShape2",
+      "RockShape3",
+      "RockSmallShape1",
+      "RockSmallShape2",
+      "RockSpikeyShape1",
+      "RockSpikeyShape2",
+      "RockSpikeyShape3",
+      "RockTNTShape1",
+      "RockTNTShape2",
+      "RockTNTShape3",
+      "RockTNTShape4"
+    ],
+    "seam_delta_degrees": 0.0
+  },
+  "exact_transcription": false,
+  "rig_source": "shipped",
+  "in_game": true,
+  "reference_id": null,
+  "locked_bones_source": "none",
+  "locked_bones_provisional": []
+}

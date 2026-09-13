@@ -1,0 +1,146 @@
+{
+  "registry": "alosaurus",
+  "display_name": "Alosaurus",
+  "status": "DRAFT — authored by a seed lane from the entity code, 2026-09-13; the owner's edit pending",
+  "locomotion": "walker",
+  "artist_scope": "full contract (Tier 2, the gait-scaled class (with an attacking branch on the jaw): geckolib_migration_design.md section 5); the rig is not yet in-game (it lands through the seam in a later slice)",
+  "character_sheet": "A big theropod: a 10x18x31 torso with hips and a 25-long tail behind, a neck angled up to a 9x9x12 head and a 7x9x9 snout tip with a hinged jaw beneath, a spike on each side of the head and each flank, two small 2x10x2 forelimbs, and two legs of thigh, shin, heel spur and foot (ModelAlosaurus.java:70-153; 21 parts on a 128x128 sheet). It is hostile: 110 HP, 18 damage, 8 armour, speed 0.35 (MobStats.ALOSAURUS, Alosaurus.java:94-103), 40 XP. Every fifth tick it picks the nearest living thing in sight within 12 blocks - other allosaurs, cryolophosaurs, velocity raptors and creative players excepted (:168-206) - and hands it to its dinosaur melee goal (:77-78): a chase at 1.25, a bite within 4 blocks plus half the prey's width on dice, the synched attacking flag raised for the chase and cleared when the scan comes up empty (:177); a bite knocks the victim back 1.2 blocks and up a little (:142-159). It walks through villages (:84), wanders far (:85), watches players (:86), floats (:76) and spawns in darkness at night above y 50 in a clear column, never near another (:219-229). Read it as a heavy hunter: a striding, tail-balanced walk, the little forelimbs twitching, the jaw hanging almost shut until it hunts - then snapping.",
+  "size_notes": "Drawn at x1.0 of the rig (AlosaurusRenderer.java:20, 30) on a 128x128 sheet (ModelAlosaurus.java:155); the hitbox is 1.9 x 3.6 (ModEntities.java:34-35); shadow 1.0 (AlosaurusRenderer.java:23).",
+  "labels": {
+    "shape1": "torso (10x18x31)",
+    "shape2": "hips",
+    "shape3": "tail",
+    "shape4": "neck (angled up 23 deg)",
+    "shape5": "head (the upper snout block)",
+    "shape6": "snout tip (the lower snout block)",
+    "jaw": "lower jaw (hinged; the chomp)",
+    "shape18": "head spike, left",
+    "shape19": "head spike, right",
+    "shape20": "flank spike, left",
+    "shape21": "flank spike, right",
+    "shape11": "left forelimb (2x10x2, twitches)",
+    "shape17": "right forelimb (2x10x2, twitches)",
+    "leftleg": "left thigh",
+    "leftleg2": "left shin",
+    "leftleg3": "left heel spur",
+    "leftleg4": "left foot",
+    "rightleg": "right thigh",
+    "rightleg2": "right shin",
+    "rightleg3": "right heel spur",
+    "rightleg4": "right foot"
+  },
+  "groups": [
+    {
+      "name": "gait",
+      "bones": [
+        "rightleg",
+        "rightleg2",
+        "rightleg3",
+        "rightleg4",
+        "leftleg",
+        "leftleg2",
+        "leftleg3",
+        "leftleg4"
+      ],
+      "omega": 0.286,
+      "axis": "x",
+      "gait_scaled": true,
+      "amplitude": "rests -0.174 / +0.506 / -0.401 / 0 rad (thigh, shin, heel spur, foot), then pi x 0.25 = 0.785 rad (45 deg) x the walking speed at 1.3 x 0.22 - still (rests only) below the 0.1 threshold",
+      "plain": "the two legs stride in opposition, every part of a leg swinging together as one rigid unit",
+      "math": "a = limbSwingAmount > 0.1 ? cos(ageInTicks * 1.3 * 0.22) * pi * 0.25 * limbSwingAmount : 0; rightleg.xRot = -0.174 + a; rightleg2.xRot = 0.506 + a; rightleg3.xRot = -0.401 + a; rightleg4.xRot = a; leftleg* = the same rests - a",
+      "source": "ModelAlosaurus.java:161-171",
+      "omega_note": "the classic phase is ageInTicks x 1.3 x 0.22 (a hard-coded product, no wingspeed field): the natural period is 2 pi / 0.286 = 22 ticks"
+    },
+    {
+      "name": "jaw",
+      "bones": [
+        "jaw"
+      ],
+      "omega": 0.45,
+      "axis": "x",
+      "gait_scaled": false,
+      "amplitude": "calm: held at 0.1 rad (6 deg open), no motion; attacking: 0.52 rad rest (30 deg) then pi x 0.18 = 0.565 rad (32 deg) either way at 0.45",
+      "plain": "the jaw hangs almost shut at rest and chomps wide when it hunts",
+      "math": "jaw.xRot = attacking ? 0.52 + cos(ageInTicks * 0.45) * pi * 0.18 : 0.1",
+      "source": "ModelAlosaurus.java:172-174",
+      "phase": "the attacking flag selects the branch (raised by the dinosaur melee goal, Alosaurus.java:77-78; cleared :177)",
+      "omega_note": "the phase is ageInTicks x 0.45 (no wingspeed): the natural period is 2 pi / 0.45 = 14 ticks"
+    },
+    {
+      "name": "forelimbs",
+      "bones": [
+        "shape11",
+        "shape17"
+      ],
+      "omega": 0.1,
+      "axis": "x",
+      "gait_scaled": false,
+      "amplitude": "-0.523 rad rest (30 deg forward), then pi x 0.05 = 0.157 rad (9 deg)",
+      "plain": "the two little forelimbs twitch slowly together",
+      "math": "shape11.xRot = shape17.xRot = -0.523 + cos(ageInTicks * 0.1) * pi * 0.05",
+      "source": "ModelAlosaurus.java:175-176",
+      "omega_note": "the phase is ageInTicks x 0.1: the natural period is 2 pi / 0.1 = 62.8 ticks"
+    }
+  ],
+  "behaviour": [
+    "One gait rhythm on the legs (ModelAlosaurus.java:161-171): above a walking speed of 0.1 the cosine of the age x 1.3 x 0.22, x pi x 0.25, x the walking speed is added to every part of the right leg and subtracted from every part of the left - a 45-degree stride at full speed every 22 ticks; the thigh, shin, heel spur and foot of a leg share one pivot and swing as one rigid unit around their rests (-0.174, +0.506, -0.401, 0 rad). Below the threshold the legs snap to their rests.",
+    "The jaw branches on the synched attacking flag (:172-174): calm it sits 0.1 rad (6 degrees) open and still; attacking it chomps 0.52 rad plus the cosine of the age x 0.45 x pi x 0.18 - 32 degrees either way around a 30-degree gape every 14 ticks.",
+    "The two forelimbs twitch at all times (:175-176): the cosine of the age x 0.1, x pi x 0.05 - 9 degrees around a 30-degree forward rest every 62.8 ticks, both together.",
+    "The torso, hips, tail, neck, head, snout tip and the four spikes never move; nothing reads the look (netHeadYaw unused), so the LookAtPlayerGoal (Alosaurus.java:86) turns nothing visible.",
+    "The attacking flag is raised by the dinosaur melee goal for the chase (Alosaurus.java:77-78, the accepted mapping of the original 1-in-5 combat pass, :161-167) and cleared when the fifth-tick scan finds no prey (:177) - a held state, so the bite (doHurtTarget :143-159, with its 1.2-block knockback) is transport 1."
+  ],
+  "clips": [
+    {
+      "name": "idle",
+      "verdict": "author",
+      "note": "REQUIRED with walk: the gate opens on the pair (today nothing ships; the classic code plays) - the standing loop: legs at their rests, the jaw 6 deg open, the forelimbs twitching"
+    },
+    {
+      "name": "walk",
+      "verdict": "author",
+      "note": "REQUIRED with idle: the locomotion loop - the gait group's 45-degree stride at full speed (ModelAlosaurus.java:161-171), scaled by walking speed in-game"
+    },
+    {
+      "name": "swim",
+      "verdict": "author",
+      "note": "it has the state: a FloatGoal keeps it at the surface (Alosaurus.java:76) - a wading stride with the tail sculling; optional: falls back to walk then idle when absent (section 2.4)"
+    },
+    {
+      "name": "aggro_idle",
+      "verdict": "author",
+      "note": "the attacking branch at rest: the jaw chomping 32 deg around a 30-degree gape every 14 ticks (ModelAlosaurus.java:172-174); the synched attacking flag is held through the chase (Alosaurus.java:77-78) and cleared when the scan is empty (:177)"
+    },
+    {
+      "name": "calm_idle",
+      "verdict": "author",
+      "note": "the calm branch: the jaw held 0.1 rad open (ModelAlosaurus.java:174) - the same as idle; may be delivered as a copy of idle"
+    },
+    {
+      "name": "attack",
+      "verdict": "author",
+      "note": "a bite: the dinosaur melee goal (Alosaurus.java:77-78; the alosaurus preset - chase 1.25, reach 4 blocks plus half the prey's width, 1-in-4-or-1-in-5 swing dice on a 1-in-5 cadence, :161-167) calls doHurtTarget (:143-159), which knocks the victim back 1.2 and up 0.1 (0.2 for a player); the flag is held, so the strike is transport 1 (the server LivingDamageEvent.Post) - the head drives down and the jaw slams shut on the impact frame",
+      "length_seconds": 0.5
+    },
+    {
+      "name": "hurt",
+      "verdict": "author",
+      "note": "a flinch: no hurt() override (vanilla LivingEntity.hurt; alo_hurt sound at Alosaurus.java:124-127); the hurtTime edge is client-observed",
+      "length_seconds": 0.3
+    },
+    {
+      "name": "death",
+      "verdict": "author",
+      "note": "ruled 2026-09-06, Q3 (a): the vanilla death flip stays; a creature whose JSON ships a `death` clip gets the clip-replaces-flip mode, designed when the first such clip arrives (the Queen's own death clip the precedent) - a `death` delivered here plays under the flip until then",
+      "length_seconds": 1.0
+    }
+  ],
+  "extras": [],
+  "wishlist": [
+    "in `walk`: bend the legs - thigh, shin, heel spur and foot swing as one rigid unit (ModelAlosaurus.java:164-171); a knee and an ankle that lag the thigh make a theropod stride, and the tail should counter-sway (it never moves today)",
+    "in `attack`: a lunge with the whole neck and head - the code only chomps the jaw (:172-174) and the bite has no pose of its own (Alosaurus.java:143-159)",
+    "in `aggro_idle`: a lowered head and a raised tail with the chomp, so the hunt reads before the strike",
+    "in `idle`: a head turn to the player (the LookAtPlayerGoal runs, Alosaurus.java:86, but the model ignores netHeadYaw) and a slow breath in the torso",
+    "in `hurt`: a stagger back on the legs and a head toss"
+  ],
+  "effort_hours": null
+}

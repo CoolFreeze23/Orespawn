@@ -1,0 +1,1115 @@
+{
+  "generated_by": "tools/artist_package.py 0.2.9 (the full folder, 2026-09-13, fourth set, items 5, 7 and 8: every artist-tier species packaged - a rig not yet in-game from the reference leg's converter output, bone names final; the Tier-1 bosses' intended locked bones from the design's section 6 rendered in section 7 and validated against the geo; the README's priority table the full list, bosses first, closing with the deliverable count)",
+  "registry": "whale",
+  "display_name": "Whale",
+  "tier": 2,
+  "tier_label": "Tier 2",
+  "geo_file": "reference_whale.geo.json",
+  "animation_file": "whale.animation.json",
+  "bbmodel_file": "whale.bbmodel",
+  "texture_size": [
+    256,
+    256
+  ],
+  "bones": [
+    {
+      "name": "back",
+      "parent": null,
+      "pivot": [
+        0,
+        16,
+        3
+      ],
+      "rotation": null,
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            -4.0,
+            14.0,
+            3.0
+          ],
+          "size": [
+            8.0,
+            2.0,
+            40.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              40.0,
+              85.0,
+              -40.0,
+              2.0
+            ],
+            "east": [
+              88.0,
+              85.0,
+              -40.0,
+              2.0
+            ],
+            "north": [
+              48.0,
+              85.0,
+              -8.0,
+              2.0
+            ],
+            "south": [
+              96.0,
+              85.0,
+              -8.0,
+              2.0
+            ],
+            "up": [
+              48.0,
+              45.0,
+              -8.0,
+              40.0
+            ],
+            "down": [
+              56.0,
+              85.0,
+              -8.0,
+              -40.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "backfin",
+      "parent": null,
+      "pivot": [
+        0,
+        16,
+        11
+      ],
+      "rotation": [
+        20.9999975409,
+        0,
+        0
+      ],
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            -0.5,
+            12.0,
+            11.0
+          ],
+          "size": [
+            1.0,
+            4.0,
+            8.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              8.0,
+              23.0,
+              -8.0,
+              4.0
+            ],
+            "east": [
+              17.0,
+              23.0,
+              -8.0,
+              4.0
+            ],
+            "north": [
+              9.0,
+              23.0,
+              -1.0,
+              4.0
+            ],
+            "south": [
+              18.0,
+              23.0,
+              -1.0,
+              4.0
+            ],
+            "up": [
+              9.0,
+              15.0,
+              -1.0,
+              8.0
+            ],
+            "down": [
+              10.0,
+              23.0,
+              -1.0,
+              -8.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "belly",
+      "parent": null,
+      "pivot": [
+        0,
+        2,
+        6
+      ],
+      "rotation": null,
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            -6.0,
+            0.0,
+            6.0
+          ],
+          "size": [
+            12.0,
+            2.0,
+            32.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              32.0,
+              124.0,
+              -32.0,
+              2.0
+            ],
+            "east": [
+              76.0,
+              124.0,
+              -32.0,
+              2.0
+            ],
+            "north": [
+              44.0,
+              124.0,
+              -12.0,
+              2.0
+            ],
+            "south": [
+              88.0,
+              124.0,
+              -12.0,
+              2.0
+            ],
+            "up": [
+              44.0,
+              92.0,
+              -12.0,
+              32.0
+            ],
+            "down": [
+              56.0,
+              124.0,
+              -12.0,
+              -32.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "body",
+      "parent": null,
+      "pivot": [
+        0,
+        14,
+        0
+      ],
+      "rotation": null,
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            -10.0,
+            2.0,
+            0.0
+          ],
+          "size": [
+            20.0,
+            12.0,
+            52.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              52.0,
+              240.0,
+              -52.0,
+              12.0
+            ],
+            "east": [
+              124.0,
+              240.0,
+              -52.0,
+              12.0
+            ],
+            "north": [
+              72.0,
+              240.0,
+              -20.0,
+              12.0
+            ],
+            "south": [
+              144.0,
+              240.0,
+              -20.0,
+              12.0
+            ],
+            "up": [
+              72.0,
+              188.0,
+              -20.0,
+              52.0
+            ],
+            "down": [
+              92.0,
+              240.0,
+              -20.0,
+              -52.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "head",
+      "parent": null,
+      "pivot": [
+        0,
+        13,
+        -6
+      ],
+      "rotation": null,
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            -8.0,
+            5.0,
+            -22.0
+          ],
+          "size": [
+            16.0,
+            8.0,
+            22.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              22.0,
+              177.0,
+              -22.0,
+              8.0
+            ],
+            "east": [
+              60.0,
+              177.0,
+              -22.0,
+              8.0
+            ],
+            "north": [
+              38.0,
+              177.0,
+              -16.0,
+              8.0
+            ],
+            "south": [
+              76.0,
+              177.0,
+              -16.0,
+              8.0
+            ],
+            "up": [
+              38.0,
+              155.0,
+              -16.0,
+              22.0
+            ],
+            "down": [
+              54.0,
+              177.0,
+              -16.0,
+              -22.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "jaw",
+      "parent": null,
+      "pivot": [
+        0,
+        4,
+        0
+      ],
+      "rotation": [
+        4.0000017143,
+        0,
+        0
+      ],
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            -7.0,
+            3.0,
+            -20.0
+          ],
+          "size": [
+            14.0,
+            2.0,
+            20.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              20.0,
+              150.0,
+              -20.0,
+              2.0
+            ],
+            "east": [
+              54.0,
+              150.0,
+              -20.0,
+              2.0
+            ],
+            "north": [
+              34.0,
+              150.0,
+              -14.0,
+              2.0
+            ],
+            "south": [
+              68.0,
+              150.0,
+              -14.0,
+              2.0
+            ],
+            "up": [
+              34.0,
+              130.0,
+              -14.0,
+              20.0
+            ],
+            "down": [
+              48.0,
+              150.0,
+              -14.0,
+              -20.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "lfin1",
+      "parent": null,
+      "pivot": [
+        -10,
+        6,
+        8
+      ],
+      "rotation": [
+        0,
+        5.0000021429,
+        0
+      ],
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            -14.0,
+            4.0,
+            5.0
+          ],
+          "size": [
+            4.0,
+            3.0,
+            6.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              102.0,
+              6.0,
+              -6.0,
+              3.0
+            ],
+            "east": [
+              112.0,
+              6.0,
+              -6.0,
+              3.0
+            ],
+            "north": [
+              106.0,
+              6.0,
+              -4.0,
+              3.0
+            ],
+            "south": [
+              116.0,
+              6.0,
+              -4.0,
+              3.0
+            ],
+            "up": [
+              106.0,
+              0.0,
+              -4.0,
+              6.0
+            ],
+            "down": [
+              110.0,
+              6.0,
+              -4.0,
+              -6.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "lfin2",
+      "parent": null,
+      "pivot": [
+        -10,
+        6,
+        8
+      ],
+      "rotation": [
+        0,
+        5.0000021429,
+        0
+      ],
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            -34.0,
+            4.5,
+            5.0
+          ],
+          "size": [
+            22.0,
+            2.0,
+            8.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              128.0,
+              8.0,
+              -8.0,
+              2.0
+            ],
+            "east": [
+              158.0,
+              8.0,
+              -8.0,
+              2.0
+            ],
+            "north": [
+              150.0,
+              8.0,
+              -22.0,
+              2.0
+            ],
+            "south": [
+              180.0,
+              8.0,
+              -22.0,
+              2.0
+            ],
+            "up": [
+              150.0,
+              0.0,
+              -22.0,
+              8.0
+            ],
+            "down": [
+              172.0,
+              8.0,
+              -22.0,
+              -8.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "rfin1",
+      "parent": null,
+      "pivot": [
+        10,
+        6,
+        8
+      ],
+      "rotation": [
+        0,
+        -5.0000021429,
+        0
+      ],
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            10.0,
+            4.0,
+            5.0
+          ],
+          "size": [
+            4.0,
+            3.0,
+            6.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              102.0,
+              18.0,
+              -6.0,
+              3.0
+            ],
+            "east": [
+              112.0,
+              18.0,
+              -6.0,
+              3.0
+            ],
+            "north": [
+              106.0,
+              18.0,
+              -4.0,
+              3.0
+            ],
+            "south": [
+              116.0,
+              18.0,
+              -4.0,
+              3.0
+            ],
+            "up": [
+              106.0,
+              12.0,
+              -4.0,
+              6.0
+            ],
+            "down": [
+              110.0,
+              18.0,
+              -4.0,
+              -6.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "rfin2",
+      "parent": null,
+      "pivot": [
+        10,
+        6,
+        8
+      ],
+      "rotation": [
+        0,
+        -5.0000021429,
+        0
+      ],
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            12.0,
+            4.5,
+            5.0
+          ],
+          "size": [
+            22.0,
+            2.0,
+            8.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              128.0,
+              21.0,
+              -8.0,
+              2.0
+            ],
+            "east": [
+              158.0,
+              21.0,
+              -8.0,
+              2.0
+            ],
+            "north": [
+              150.0,
+              21.0,
+              -22.0,
+              2.0
+            ],
+            "south": [
+              180.0,
+              21.0,
+              -22.0,
+              2.0
+            ],
+            "up": [
+              150.0,
+              13.0,
+              -22.0,
+              8.0
+            ],
+            "down": [
+              172.0,
+              21.0,
+              -22.0,
+              -8.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "tail1",
+      "parent": null,
+      "pivot": [
+        0,
+        13,
+        52
+      ],
+      "rotation": null,
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            -6.0,
+            6.0,
+            52.0
+          ],
+          "size": [
+            12.0,
+            7.0,
+            14.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              200.0,
+              14.0,
+              -14.0,
+              7.0
+            ],
+            "east": [
+              226.0,
+              14.0,
+              -14.0,
+              7.0
+            ],
+            "north": [
+              212.0,
+              14.0,
+              -12.0,
+              7.0
+            ],
+            "south": [
+              238.0,
+              14.0,
+              -12.0,
+              7.0
+            ],
+            "up": [
+              212.0,
+              0.0,
+              -12.0,
+              14.0
+            ],
+            "down": [
+              224.0,
+              14.0,
+              -12.0,
+              -14.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "tail2",
+      "parent": null,
+      "pivot": [
+        0,
+        12,
+        66
+      ],
+      "rotation": null,
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            -4.0,
+            7.0,
+            66.0
+          ],
+          "size": [
+            8.0,
+            5.0,
+            10.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              196.0,
+              34.0,
+              -10.0,
+              5.0
+            ],
+            "east": [
+              214.0,
+              34.0,
+              -10.0,
+              5.0
+            ],
+            "north": [
+              204.0,
+              34.0,
+              -8.0,
+              5.0
+            ],
+            "south": [
+              222.0,
+              34.0,
+              -8.0,
+              5.0
+            ],
+            "up": [
+              204.0,
+              24.0,
+              -8.0,
+              10.0
+            ],
+            "down": [
+              212.0,
+              34.0,
+              -8.0,
+              -10.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "tailfin1",
+      "parent": null,
+      "pivot": [
+        -2,
+        11,
+        74
+      ],
+      "rotation": [
+        5.0000021429,
+        5.0000021429,
+        0
+      ],
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            -19.0,
+            9.0,
+            74.0
+          ],
+          "size": [
+            17.0,
+            2.0,
+            11.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              197.0,
+              54.0,
+              -11.0,
+              2.0
+            ],
+            "east": [
+              225.0,
+              54.0,
+              -11.0,
+              2.0
+            ],
+            "north": [
+              214.0,
+              54.0,
+              -17.0,
+              2.0
+            ],
+            "south": [
+              242.0,
+              54.0,
+              -17.0,
+              2.0
+            ],
+            "up": [
+              214.0,
+              43.0,
+              -17.0,
+              11.0
+            ],
+            "down": [
+              231.0,
+              54.0,
+              -17.0,
+              -11.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "tailfin2",
+      "parent": null,
+      "pivot": [
+        2,
+        11,
+        74
+      ],
+      "rotation": [
+        5.0000021429,
+        -5.0000021429,
+        0
+      ],
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            2.0,
+            9.0,
+            74.0
+          ],
+          "size": [
+            17.0,
+            2.0,
+            11.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              197.0,
+              70.0,
+              -11.0,
+              2.0
+            ],
+            "east": [
+              225.0,
+              70.0,
+              -11.0,
+              2.0
+            ],
+            "north": [
+              214.0,
+              70.0,
+              -17.0,
+              2.0
+            ],
+            "south": [
+              242.0,
+              70.0,
+              -17.0,
+              2.0
+            ],
+            "up": [
+              214.0,
+              59.0,
+              -17.0,
+              11.0
+            ],
+            "down": [
+              231.0,
+              70.0,
+              -17.0,
+              -11.0
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "locked_bones": [],
+  "lock_mode": "warn",
+  "lock_policy": "warn-keyed, refuse-structural",
+  "lock_policy_text": "Keying a locked bone is allowed; the checker warns, and the hitbox part follows the bone in-game (the consequence, so keep such keys deliberate). Renaming, re-parenting or deleting a locked bone is refused.",
+  "keyed_locked_by_shipped_clip": {},
+  "native": false,
+  "controller_kind": "phase_locked",
+  "clips": [
+    {
+      "name": "idle",
+      "loop": "true",
+      "role": "contract",
+      "code_triggered": false,
+      "required": true,
+      "length_rule": "near:1.0",
+      "length_seconds": 1.0,
+      "verdict": "author"
+    },
+    {
+      "name": "idle_jaw",
+      "loop": "true",
+      "role": "contract",
+      "code_triggered": false,
+      "required": false,
+      "length_rule": "near:1.0",
+      "length_seconds": 1.0,
+      "verdict": "author"
+    },
+    {
+      "name": "walk",
+      "loop": "true",
+      "role": "contract",
+      "code_triggered": false,
+      "required": true,
+      "length_rule": "near:1.0",
+      "length_seconds": 1.0,
+      "verdict": "author"
+    },
+    {
+      "name": "walk_jaw",
+      "loop": "true",
+      "role": "contract",
+      "code_triggered": false,
+      "required": false,
+      "length_rule": "near:1.0",
+      "length_seconds": 1.0,
+      "verdict": "author"
+    },
+    {
+      "name": "swim",
+      "loop": "true",
+      "role": "contract",
+      "code_triggered": false,
+      "required": false,
+      "length_rule": "near:1.0",
+      "length_seconds": 1.0,
+      "verdict": "author"
+    },
+    {
+      "name": "calm_idle",
+      "loop": "true",
+      "role": "contract",
+      "code_triggered": false,
+      "required": false,
+      "length_rule": "near:1.0",
+      "length_seconds": 1.0,
+      "verdict": "leave"
+    },
+    {
+      "name": "hurt",
+      "loop": "false",
+      "role": "contract",
+      "code_triggered": true,
+      "required": false,
+      "length_rule": "near:0.4",
+      "length_seconds": 0.4,
+      "verdict": "author"
+    },
+    {
+      "name": "death",
+      "loop": "hold_on_last_frame",
+      "role": "contract",
+      "code_triggered": true,
+      "required": false,
+      "length_rule": "near:1.5",
+      "length_seconds": 1.5,
+      "verdict": "author"
+    },
+    {
+      "name": "spout",
+      "loop": "false",
+      "role": "extra",
+      "code_triggered": false,
+      "required": false,
+      "length_rule": "near:2.0",
+      "length_seconds": 2.0,
+      "verdict": "author"
+    },
+    {
+      "name": "splash",
+      "loop": "false",
+      "role": "extra",
+      "code_triggered": false,
+      "required": false,
+      "length_rule": "near:0.6",
+      "length_seconds": 0.6,
+      "verdict": "author"
+    }
+  ],
+  "allow_idle_alt": true,
+  "textures": [
+    {
+      "canonical": "whale.png",
+      "width": 256,
+      "height": 256,
+      "aliases": [
+        "whaletexture.png"
+      ]
+    }
+  ],
+  "effort_hours": 15.8,
+  "effort_source": "generator: 4 h + 0.2 h/bone x 14 + 1 h/clip x 9 to author or improve (owner adjusts)",
+  "reference_clip": null,
+  "exact_transcription": false,
+  "rig_source": "reference-leg converter output",
+  "in_game": false,
+  "reference_id": "reference_whale",
+  "locked_bones_source": "none",
+  "locked_bones_provisional": []
+}

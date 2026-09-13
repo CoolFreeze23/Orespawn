@@ -1,0 +1,95 @@
+{
+  "registry": "butterfly",
+  "display_name": "Butterfly",
+  "status": "DRAFT — authored by a seed lane from the entity code, 2026-09-13; the owner's edit pending",
+  "locomotion": "flyer",
+  "artist_scope": "full contract (Tier 1, the simple-cyclic class: geckolib_migration_design.md section 5) with the §8.1 locks (none pre-declared: the design's section 6 keeps this consumer of the shared ButterflyModel single-box); the rig is not yet in-game (it lands through the seam in a later slice)",
+  "character_sheet": "A small ambient butterfly: a one-cube body bar with a one-cube head at the front and four flat wing panels a side — an inner forewing, a larger outer forewing, a hindwing behind it and a long narrow tail streamer (ButterflyModel.createBodyLayer, ButterflyModel.java:54-102). It drifts about the air on the butterfly flight preset (EntityButterfly.java:74; the vertical drag at tick :103-107 keeps it hovering), wears one of four skins (ButterflyRenderer.java:33-37), and an empty-handed right-click on it carries the player to the Chaos dimension and back (mobInteract, EntityButterfly.java:117-149). In the Islands its type-1 form hunts prey and nips for 1.0 on a 1-in-2 roll (doHurtTarget :161-165, reached from ButterflyIslandsHuntGoal.java:83). It spawns by day, in the air, above y 50 or anywhere in the Islands (checkSpawnRules :209-219), in forest, jungle and taiga swarms (the swarm_butterfly biome modifiers). Read it as a fluttering insect: everything is in the wings.",
+  "size_notes": "Drawn at x1.0 of the rig (ButterflyRenderer has no scale override; shadow 0.3, ButterflyRenderer.java:28) on a 64x32 sheet (ButterflyModel.java:104), four skins by the synced butterfly type (ButterflyRenderer.java:33-37); 0.4 x 0.4 block hitbox (ModEntities.java:602-603). The wing panels are one unit thick: they read only from above and the side.",
+  "labels": {
+    "body": "body (the 1x1x8 bar from the head back to the tail)",
+    "head": "head (the one-cube head at the front)",
+    "leftwing": "left forewing, inner panel (5x5, beside the body)",
+    "leftwing2": "left forewing, outer panel (6x7, the big panel)",
+    "leftwing3": "left hindwing (5x5, behind the forewing)",
+    "leftwing4": "left tail streamer (the 1x7 strip trailing behind)",
+    "rightwing": "right forewing, inner panel (5x5, beside the body)",
+    "rightwing2": "right forewing, outer panel (6x7, the big panel)",
+    "rightwing3": "right hindwing (5x5, behind the forewing)",
+    "rightwing4": "right tail streamer (the 1x7 strip trailing behind)"
+  },
+  "groups": [
+    {
+      "name": "wings",
+      "bones": [
+        "leftwing",
+        "leftwing2",
+        "leftwing3",
+        "leftwing4",
+        "rightwing",
+        "rightwing2",
+        "rightwing3",
+        "rightwing4"
+      ],
+      "omega": 1.3,
+      "axis": "z",
+      "gait_scaled": false,
+      "amplitude": "pi x 0.25 = 0.785 rad (45 deg) each way; the four left panels the negative of the four right panels",
+      "plain": "the eight wing panels flap about the body's long axis together, 45 degrees up and down, the left side mirroring the right; nothing else moves",
+      "math": "rightwing.zRot = rightwing2.zRot = rightwing3.zRot = rightwing4.zRot = cos(ageInTicks * 1.3 * 1.0) * pi * 0.25; leftwing*.zRot = -rightwing.zRot",
+      "source": "ButterflyModel.java:109-115 (wingspeed 1.0 from ButterflyRenderer.java:28)",
+      "wingspeed": 1.0,
+      "omega_note": "the classic phase is ageInTicks x 1.3 x wingspeed 1.0 (two float multiplies, left to right): the natural period is 2 pi / 1.3 = 4.83 ticks"
+    }
+  ],
+  "behaviour": [
+    "One rhythm runs at all times: the eight wing panels roll about the body's long axis at 1.3 rad/tick (a 4.83-tick beat), 45 degrees each way, the left set mirroring the right (ButterflyModel.java:109-115). The body and the head are static; the walk position, the walking speed, the head angles and the entity's state play no part in the pose.",
+    "The flight itself is the entity's: the butterfly preset of AmbientFlightGoal steers the delta movement (EntityButterfly.java:74; ButterflyIslandsHuntGoal carries the Islands hunt in the same goal) and tick :103-107 damps the vertical speed to 0.6 each tick, so it hovers and drifts rather than falls. The model never banks, pitches or bobs the body with that motion.",
+    "The renderer draws the head, then the body, then the wing pairs inner to outer (renderToBuffer, ButterflyModel.java:119-130)."
+  ],
+  "clips": [
+    {
+      "name": "idle",
+      "verdict": "author",
+      "note": "REQUIRED with walk: the gate opens on the pair — the resting flutter (the code flaps at full rate whatever the entity does)"
+    },
+    {
+      "name": "walk",
+      "verdict": "author",
+      "note": "REQUIRED with idle: the bare walk is the wings group's (the rig's one group, no gait group) — a label under the naming rule; in flight the fly -> walk fallback plays it"
+    },
+    {
+      "name": "fly",
+      "verdict": "author",
+      "note": "the true locomotion: the entity is airborne on AmbientFlightGoal from spawn (EntityButterfly.java:74) — the flutter with a body bob"
+    },
+    {
+      "name": "attack",
+      "verdict": "author",
+      "note": "the Islands nip: doHurtTarget (EntityButterfly.java:161-165) fires from ButterflyIslandsHuntGoal.java:83 within distSq 6 of the prey, lands on a 1-in-2 roll for 1.0 — a quick dart, nothing heavy",
+      "length_seconds": 0.4
+    },
+    {
+      "name": "hurt",
+      "verdict": "author",
+      "note": "a flinch (no hurt sound: getHurtSound returns null, EntityButterfly.java:178-181)",
+      "length_seconds": 0.3
+    },
+    {
+      "name": "death",
+      "verdict": "author",
+      "note": "ruled 2026-09-06, Q3 (a): the vanilla death flip stays; a creature whose JSON ships a `death` clip gets the clip-replaces-flip mode, designed when the first such clip arrives (the Queen's own death clip the precedent) - a `death` delivered here plays under the flip until then",
+      "length_seconds": 1.0
+    }
+  ],
+  "extras": [],
+  "wishlist": [
+    "in `fly`: a slow bob and a slight roll of the body with the beat, so the flight reads as fluttering rather than a flat glide (the code moves only the wings: ButterflyModel.java:109-115)",
+    "in `idle`: wings slowly opening and closing as a settled butterfly's do, distinct from the airborne flap",
+    "in `attack`: a short dart forward for the Islands nip (EntityButterfly.java:161-165) — the strike is small; keep it quick",
+    "a tail-streamer lag: `leftwing4` / `rightwing4` trailing a few degrees behind the panels instead of rolling rigidly with them"
+  ],
+  "locked_bones_provisional": [],
+  "locked_bones_note": "The design's section 6 ButterflyModel row (geckolib_migration_design.md:440) keeps this consumer single-box — 'butterfly / luna_moth [0.4,0.4] ... stay single-box', 'other shared-rig consumers get no profile' — so no intended locked bones are pre-declared; the row's four part bones (body, head, leftwing, rightwing) belong to mothra's profile only. Every bone name stays final regardless (the shared rig serves four registries).",
+  "effort_hours": null
+}

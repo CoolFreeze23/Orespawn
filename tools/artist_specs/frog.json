@@ -1,0 +1,138 @@
+{
+  "registry": "frog",
+  "display_name": "Frog",
+  "status": "DRAFT — authored by a seed lane from the entity code, 2026-09-13; the owner's edit pending",
+  "locomotion": "walker",
+  "artist_scope": "full contract (Tier 2, the state-branching class: geckolib_migration_design.md section 5); the rig is not yet in-game (it lands through the seam in a later slice)",
+  "character_sheet": "A small passive frog: an 8x11x2 body slab pitched forward 42 degrees, an 8x8 jaw plate hinged beneath it, two stubby front legs, two long jointed hind legs (a 9-long thigh and a 10-long shin each) and two eye nubs (ModelFrog.java:52-100, ten parts). 8 HP, speed 0.1, no fall damage and silent feet (Frog.java:70-75, :210-217). It hops: a random leap about every 70 ticks after a 50-tick cooldown (:96-108, :124-127) and one whenever it is hit (:229-236); it floats and is pushed by water (:65, :92-94); it hunts ants, butterflies, crickets, mosquitoes, fireflies and small worms within 8 blocks, biting for 3 and healing 1 on a kill (:220-226, :239-276); it croaks with a synched singing state of 35 ticks on half of its ambient rolls (:49-50, :183-192). A sneaking, empty-handed player pops it into a Boyfriend frog-prince or a Girlfriend princess in a puff of smoke (:132-179). It spawns in daylight above y 50, at most five together (:284-292; ModEntities.java:381-382). Read it as a frog: a squat, a leap with the hind legs kicked straight, a croak.",
+  "size_notes": "Drawn at x1.0 of the rig, x0.5 as a baby (FrogRenderer.java:27, :39-40; shadow 0.35, :29) on a 64x64 sheet (ModelFrog.java:102), frogtexture.png (FrogRenderer.java:22); the hitbox is 0.75 x 0.75 (ModEntities.java:381-382). The original's ModelFrog(1.0f) argument was the wingspeed (ModelFrog.java:23), not a scale.",
+  "labels": {
+    "body": "body (an 8x11x2 slab pitched forward 42 deg; static)",
+    "jaw": "jaw (an 8x8x1 plate hinged at the body's pivot, resting 70 deg open; croaks while singing)",
+    "lfleg": "left front leg (1x5x1, splayed 27 deg; yaws with the gait)",
+    "rfleg": "right front leg (the mirror; yaws with the gait, opposite)",
+    "lleg1": "left thigh (1x9x2, rolled 13 deg out at rest; kicks to 140 deg in the air)",
+    "rleg1": "right thigh (the mirror; kicks to -140 deg in the air)",
+    "lleg2": "left shin (1x10x1, placed at the thigh's end by the code; yaws at half the gait, opposite the front leg)",
+    "rleg2": "right shin (the mirror)",
+    "leye": "left eye (a 1x2x1 nub on the head end of the body; static)",
+    "reye": "right eye (static)"
+  },
+  "groups": [
+    {
+      "name": "gait",
+      "bones": ["lfleg", "rfleg", "lleg2", "rleg2"],
+      "omega": 1.4,
+      "axis": "y",
+      "gait_scaled": true,
+      "amplitude": "front legs: pi x 0.55 = 1.728 rad (99 deg) x the walking speed above a limbSwingAmount of 0.1, the right the negative; shins: half of that (49 deg), each opposite its own side's front leg; 0 below the threshold",
+      "plain": "the front legs paddle wide about the vertical with the stride, left against right, and the shins swing half as far the other way",
+      "math": "a = amount > 0.1 ? cos(t * 1.0 * 1.4) * pi * 0.55 * amount : 0; lfleg.yRot = a; rfleg.yRot = -a; lleg2.yRot = -a / 2; rleg2.yRot = a / 2",
+      "source": "ModelFrog.java:107-113; wingspeed 1.0 (:23)",
+      "phase": "the limbSwingAmount threshold of 0.1 gates it",
+      "wingspeed": 1.0,
+      "omega_note": "the classic phase is ageInTicks x 1.0 x 1.4: the natural period is 2 pi / 1.4 = 4.49 ticks"
+    },
+    {
+      "name": "jaw",
+      "bones": ["jaw"],
+      "omega": 0.85,
+      "axis": "x",
+      "gait_scaled": false,
+      "amplitude": "singing: pi x 0.15 = 0.471 rad (27 deg) about the 1.22 rad rest; not singing: still at 1.22",
+      "plain": "the jaw plate croaks open and shut while the singing state runs, and hangs at its 70-degree rest otherwise",
+      "math": "jaw.xRot = 1.22 + (singing != 0 ? cos(t * 0.85 * 1.0) * pi * 0.15 : 0)",
+      "source": "ModelFrog.java:115-118",
+      "phase": "the synched DATA_SINGING int (Frog.java:49-50): set to 35 by getAmbientSound on half its rolls (:183-192), counted down to 0 (:115-120)",
+      "wingspeed": 1.0,
+      "omega_note": "the classic phase is ageInTicks x 0.85: the natural period is 2 pi / 0.85 = 7.39 ticks; the state lasts 35 ticks (1.75 s)"
+    },
+    {
+      "name": "thighs",
+      "bones": ["lleg1", "rleg1", "lleg2", "rleg2"],
+      "omega": null,
+      "axis": "z (a pose switch, no rhythm)",
+      "gait_scaled": false,
+      "amplitude": "in the air (|vertical velocity| > 0.1): thighs rolled to 2.44 / -2.44 rad (140 deg, kicked straight out); on the ground: 0.227 / -0.227 (13 deg); the shins are re-placed at the thigh's end each tick (y = thigh.y - cos(zRot) x 9, z = thigh.z + sin(zRot) x 9)",
+      "plain": "the hind legs tuck when standing and kick straight out while the frog is rising or falling, the shins riding the thigh ends",
+      "math": "z = |dy| > 0.1 ? 2.44 : 0.227; lleg1.zRot = z; rleg1.zRot = -z; lleg2.y = lleg1.y - cos(z) * 9; lleg2.z = lleg1.z + sin(z) * 9; rleg2 likewise",
+      "source": "ModelFrog.java:120-131",
+      "phase": "the client-read vertical velocity (getDeltaMovement().y), not a synched flag",
+      "omega_note": "no natural period: a pose switch on the airborne test; the hop itself is jumpAround (Frog.java:96-108)"
+    }
+  ],
+  "behaviour": [
+    "One gait rhythm above a limbSwingAmount of 0.1 (ModelFrog.java:107-113): the front legs paddle 99 degrees x the walking speed about the vertical at 1.4 rad/tick (a 4.5-tick period), the right the mirror of the left, and the shins swing half as far the other way; at speed 0.1 (Frog.java:53) the stride is a slow paddle.",
+    "Two state branches. The jaw plate croaks 27 degrees about its 70-degree rest at 0.85 rad/tick while the synched DATA_SINGING count runs (ModelFrog.java:115-118; Frog.java:49-50, set to 35 at :188-189 on half the ambient rolls, counted down at :115-120) and hangs still otherwise. The thighs roll from a 13-degree tuck to a 140-degree kick whenever the vertical velocity passes 0.1 either way (:120-126) — the hop, which the entity fires at random about every 70 ticks (Frog.java:124-127, jumpAround :96-108) and on every hit (:231-234); the shins are re-placed at the thigh ends each tick (:128-131).",
+    "The body, the jaw's hinge and the two eyes are static; the head does not follow the look (there is no head bone). The bite on an insect (doHurtTarget, Frog.java:220-226, from the hunt at :243-252) and the prince transformation (:132-179, the frog is discarded at :135) draw no pose."
+  ],
+  "clips": [
+    {
+      "name": "idle",
+      "verdict": "author",
+      "note": "REQUIRED with walk: the gate opens on the pair (today nothing ships; the classic code plays) — the squat: thighs tucked at 13 degrees (ModelFrog.java:124-125), the jaw at rest (:118), the front legs still (:109)"
+    },
+    {
+      "name": "walk",
+      "verdict": "author",
+      "note": "REQUIRED with idle: the locomotion loop — the front legs' 99-degree paddle and the shins' half-swing at 1.4 rad/tick (:107-113) at the 0.1 walk speed (Frog.java:53); the reference clip is that paddle at full stride"
+    },
+    {
+      "name": "swim",
+      "verdict": "author",
+      "note": "it has the state: a FloatGoal keeps it at the surface (Frog.java:65) and it is pushed by the water (:92-94); the code draws the same paddle in water (no water branch in setupAnim) — a frog kick; optional: falls back to walk then idle when absent (section 2.4)"
+    },
+    {
+      "name": "calm_idle",
+      "verdict": "leave",
+      "note": "= idle: no synched attacking flag in Frog.java (DATA_SINGING at :49-50 is the croak, not aggression; the insect hunt at :243-252 sets no flag), so calm_idle is covered by idle (ruled 2026-09-06, Q12 (a))"
+    },
+    {
+      "name": "attack",
+      "verdict": "author",
+      "note": "the bite: doHurtTarget (Frog.java:220-226) for 3, healing 1 on a kill, fired from customServerAiStep within 2.4 blocks of an insect it hunts (:243-252, the prey list :266-276); no attacking flag, so the strike is transport 1 (the server LivingDamageEvent.Post) — a jaw snap and a lunge",
+      "length_seconds": 0.4
+    },
+    {
+      "name": "hurt",
+      "verdict": "author",
+      "note": "a flinch: hurt() (Frog.java:229-236) takes the damage then hops away at once (jumpAround :232, a 25-tick cooldown); the scorpion_hit sound (:194-197); the hurtTime edge is client-observed — the `jump` extra follows",
+      "length_seconds": 0.3
+    },
+    {
+      "name": "death",
+      "verdict": "author",
+      "note": "ruled 2026-09-06, Q3 (a): the vanilla death flip stays; a creature whose JSON ships a `death` clip gets the clip-replaces-flip mode, designed when the first such clip arrives (the Queen's own death clip the precedent) - a `death` delivered here plays under the flip until then",
+      "length_seconds": 1.0
+    }
+  ],
+  "extras": [
+    {
+      "name": "jump",
+      "loop": "false",
+      "layer": "overlay",
+      "bones": ["lleg1", "rleg1", "lleg2", "rleg2", "lfleg", "rfleg", "body"],
+      "length_seconds": 0.6,
+      "code_triggered": false,
+      "trigger": "jumpAround (Frog.java:96-108): a 0.75-1.3 upward and 0.7-1.45 forward impulse along the yaw, fired on a 1-in-70 tick once the 50-tick cooldown has run (:124-127) and on every hit (:231-234); the model kicks the thighs to 140 degrees while |vertical velocity| > 0.1 (ModelFrog.java:120-126) — today a client-read pose, a named site (transport 3) when the rig lands",
+      "note": "the leap: a crouch, the hind legs snapping straight, the front legs reaching, then the landing squat"
+    },
+    {
+      "name": "sing",
+      "loop": "false",
+      "layer": "overlay",
+      "bones": ["jaw", "body"],
+      "length_seconds": 1.75,
+      "code_triggered": false,
+      "trigger": "the synched DATA_SINGING int rising to 35 (Frog.java:183-192: getAmbientSound on half its rolls, the frog sound at 0.7 volume :204-207), counted down over 35 ticks (:115-120); the jaw croaks 27 degrees at 0.85 rad/tick while it runs (ModelFrog.java:115-118) — a 1.75-second one-shot on the flag's rising edge",
+      "note": "the croak: a throat swell of the body and the jaw plate working for 1.75 s"
+    }
+  ],
+  "wishlist": [
+    "in `walk`: a hop cadence rather than the code's paddle (ModelFrog.java:107-113) — the entity moves at 0.1 and leaps at random (Frog.java:96-108), so the walk should read as short hops with the thighs driving",
+    "in `jump`: the kick the code has (thighs to 140 degrees, :120-126) with a crouch before and a squat after; the shins today are simply re-placed at the thigh ends (:128-131) — key the joint instead",
+    "in `sing`: a throat swell — the jaw plate (:57-60) is the only croak the code has (:115-118); a body puff sells the 35-tick state",
+    "in `attack`: a tongue-lash is not in the rig — a jaw snap and a body lunge toward the insect (Frog.java:248-250) is what the parts allow"
+  ],
+  "effort_hours": null
+}

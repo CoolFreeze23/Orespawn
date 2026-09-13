@@ -1,0 +1,164 @@
+{
+  "registry": "pointysaurus",
+  "display_name": "Pointysaurus",
+  "status": "DRAFT — authored by a seed lane from the entity code, 2026-09-13; the owner's edit pending",
+  "locomotion": "walker",
+  "artist_scope": "full contract (Tier 2, the gait-scaled (with an attacking branch) class: geckolib_migration_design.md section 5); the rig is not yet in-game (it lands through the seam in a later slice)",
+  "character_sheet": "A hostile three-horned dinosaur: a 22x9x30 body slab with two upper body blocks, four stumpy block legs, a 12x10x12 head with a nose, two 23-long brow horns and a nose horn, a 28x23 neck frill studded with sixteen bumps, and a stub tail (ModelPointysaurus.java:92-240, 30 parts). 80 HP, 10 damage, 16 armour, speed 0.35 (Pointysaurus.java:219-228). It hunts players only: any player whose box meets its own grown 12 x 5 x 12, on a 1-in-6 cadence (:123-152), and - a modern addition behind a config flag - any player who stares at it from within 32 blocks for five ticks (:83-91; PointysaurusStareGoal.java:47-59, :86-96); it chases at 1.25 and, within 4 blocks plus half the target's width, rolls its gore on a 1-in-6 cadence (:62-64; DinosaurMeleeAttackGoal.Presets.pointysaurus; BugMeleeAttackGoal.java:159-174), landing 10 with a 0.8 knockback (:269-284). The synched DATA_ATTACKING int (:44-45) is held at 1 while it stands in reach (BugMeleeAttackGoal.java:168) and dropped when it chases or stands down (:132, :145, :176). It spawns in the dark at night above y 50 under five blocks of clear air (:303-312; ModEntities.java:125-126). Read it as a triceratops: a four-legged plod, the head and frill swinging with the look, the tail lashing when it closes in.",
+  "size_notes": "Drawn at x1.0 of the rig (PointysaurusRenderer.java:20, :30; shadow 1.0, :23) on a 128x128 sheet (ModelPointysaurus.java:242), pointysaurus.png (PointysaurusRenderer.java:15); the hitbox is 2.9 x 2.9 (ModEntities.java:125-126). The original's ModelPointysaurus wingspeed is 1.0 (ModelPointysaurus.java:23).",
+  "labels": {
+    "body1": "body (the 22x9x30 slab; static)",
+    "body2": "upper body, front block (18x7x15; static)",
+    "body3": "upper body, rear block (16x6x11; static)",
+    "head": "head (12x10x12, pitched down 11 deg; yaws and pitches with the look at 0.45)",
+    "nose": "nose (10x6x5 ahead of the head; follows the head)",
+    "chorn": "nose horn (3 wide; follows the head)",
+    "lhorn": "left brow horn (2x2x23, splayed -0.14 yaw and -0.16 pitch off the head; follows the head)",
+    "rhorn": "right brow horn (splayed +0.14 yaw, -0.16 pitch; follows the head)",
+    "guard": "neck frill (a 28x23x3 plate raked back 15 deg behind the head; follows the head's yaw and pitch, 0.262 rad back)",
+    "bump1": "frill bump, right edge 1 (2x2x2; rides the frill)",
+    "bump2": "frill bump, right edge 2 (rides the frill)",
+    "bump3": "frill bump, right edge 3 (rides the frill)",
+    "bump4": "frill bump, right edge 4 (rides the frill)",
+    "bump5": "frill bump, right edge 5, the lowest (rides the frill)",
+    "bump6": "frill bump, left edge 1 (rides the frill)",
+    "bump7": "frill bump, left edge 2 (rides the frill)",
+    "bump8": "frill bump, left edge 3 (rides the frill)",
+    "bump9": "frill bump, left edge 4 (rides the frill)",
+    "bump10": "frill bump, left edge 5, the lowest (rides the frill)",
+    "bump11": "frill bump, top edge 1, right (rides the frill)",
+    "bump12": "frill bump, top edge 2 (rides the frill)",
+    "bump13": "frill bump, top edge 3 (rides the frill)",
+    "bump14": "frill bump, top edge 4 (rides the frill)",
+    "bump15": "frill bump, top edge 5 (rides the frill)",
+    "bump16": "frill bump, top edge 6, left (rides the frill)",
+    "lfleg": "left front leg (a 6x8x6 block; the gait, with the right rear)",
+    "rfleg": "right front leg (the gait, with the left rear)",
+    "lrleg": "left rear leg (an 8x8x8 block; the gait, with the right front)",
+    "rrleg": "right rear leg (the gait, with the left front)",
+    "tail": "tail (a 6x6x9 stub; sways side to side - slow at rest, a lash while attacking - and lifts on a very slow wave)"
+  },
+  "groups": [
+    {
+      "name": "gait",
+      "bones": ["lfleg", "rfleg", "lrleg", "rrleg"],
+      "omega": 1.3,
+      "axis": "x",
+      "gait_scaled": true,
+      "amplitude": "pi x 0.25 = 0.785 rad (45 deg) x the walking speed above a limbSwingAmount of 0.1; the left front and right rear one way, the right front and left rear the other; 0 below the threshold",
+      "plain": "the four block legs swing fore and aft in diagonal pairs with the stride",
+      "math": "a = amount > 0.1 ? cos(t * 1.3 * 1.0) * pi * 0.25 * amount : 0; lfleg.xRot = rrleg.xRot = a; rfleg.xRot = lrleg.xRot = -a",
+      "source": "ModelPointysaurus.java:249-253; wingspeed 1.0 (:23)",
+      "phase": "the limbSwingAmount threshold of 0.1 gates it",
+      "wingspeed": 1.0,
+      "omega_note": "the classic phase is ageInTicks x 1.3 x 1.0: the natural period is 2 pi / 1.3 = 4.83 ticks"
+    },
+    {
+      "name": "tail_sway",
+      "bones": ["tail"],
+      "omega": 0.3,
+      "axis": "y",
+      "gait_scaled": false,
+      "amplitude": "calm: pi x 0.05 = 0.157 rad (9 deg) at 0.3 rad/tick; attacking: pi x 0.25 = 0.785 rad (45 deg) at 1.3 rad/tick",
+      "plain": "the tail sways side to side: a slow small wag at rest, a fast wide lash while the attacking flag is up",
+      "math": "tail.yRot = attacking ? cos(t * 1.3 * 1.0) * pi * 0.25 : cos(t * 0.3 * 1.0) * pi * 0.05",
+      "source": "ModelPointysaurus.java:298-299",
+      "phase": "the synched DATA_ATTACKING int (Pointysaurus.java:44-45, held at 1 within reach: BugMeleeAttackGoal.java:168) selects the branch",
+      "wingspeed": 1.0,
+      "omega_note": "the classic phase is ageInTicks x 0.3 calm (a 20.9-tick period) and x 1.3 attacking (4.83 ticks)"
+    },
+    {
+      "name": "tail_lift",
+      "bones": ["tail"],
+      "omega": 0.02,
+      "axis": "x",
+      "gait_scaled": false,
+      "amplitude": "pi x 0.15 = 0.471 rad (27 deg) about a 0.28 rad rest",
+      "plain": "the tail lifts and drops on a very slow wave at all times",
+      "math": "tail.xRot = 0.28 + cos(t * 0.02 * 1.0) * pi * 0.15",
+      "source": "ModelPointysaurus.java:300-301",
+      "wingspeed": 1.0,
+      "omega_note": "the classic phase is ageInTicks x 0.02: the natural period is 314 ticks (15.7 s)"
+    }
+  ],
+  "behaviour": [
+    "One gait rhythm above a limbSwingAmount of 0.1 (ModelPointysaurus.java:249-253): the four block legs swing 45 degrees x the walking speed in diagonal pairs at 1.3 rad/tick, a 4.8-tick period - a quick plod at the 0.35 walk (Pointysaurus.java:224).",
+    "The head, nose, nose horn, both brow horns, the frill and its sixteen bumps turn together with the look at 0.45 of the head yaw and pitch (:255-296): the brow horns splayed 0.14 rad out and 0.16 rad down off the head, the frill and bumps 0.262 rad back. The body blocks are static.",
+    "The tail has one branch on the synched DATA_ATTACKING int (Pointysaurus.java:44-45; held at 1 while it stands within 4 blocks plus half the target's width, BugMeleeAttackGoal.java:168, dropped at :132 / :145 / :176): a 9-degree wag at 0.3 rad/tick at rest, a 45-degree lash at 1.3 rad/tick while attacking (:298-299); over both a 27-degree lift-and-drop on a 314-tick wave (:300-301).",
+    "The gore is doHurtTarget (Pointysaurus.java:269-284: 10 of damage and a 0.8 knockback) from the goal's swing roll (BugMeleeAttackGoal.java:170-173, nextInt(5) == 0 or nextInt(6) == 1 on a 1-in-6 cadence tick in reach); the stare lock turns the look control onto the starer's eyes for five ticks before taking the target (PointysaurusStareGoal.java:86-96) - neither is an animation event today."
+  ],
+  "clips": [
+    {
+      "name": "idle",
+      "verdict": "author",
+      "note": "REQUIRED with walk: the gate opens on the pair (today nothing ships; the classic code plays) — the stand: the tail's 9-degree wag (ModelPointysaurus.java:299) and slow lift (:300-301), the legs still"
+    },
+    {
+      "name": "walk",
+      "verdict": "author",
+      "note": "REQUIRED with idle: the locomotion loop — the diagonal 45-degree leg swing at 1.3 rad/tick (:249-253); the reference clip is that plod at full walking speed"
+    },
+    {
+      "name": "swim",
+      "verdict": "leave",
+      "note": "no swim behaviour beyond the FloatGoal that keeps it at the surface (Pointysaurus.java:62); the code draws the same plod in water; the fallback to walk covers it (section 2.4)"
+    },
+    {
+      "name": "aggro_idle",
+      "verdict": "author",
+      "note": "DATA_ATTACKING held at 1 while it stands in reach (Pointysaurus.java:44-45, :296-298; BugMeleeAttackGoal.java:168): the tail lashing 45 degrees at 1.3/tick (ModelPointysaurus.java:298) — a lowered head and the horns forward would carry it"
+    },
+    {
+      "name": "calm_idle",
+      "verdict": "author",
+      "note": "the flag at 0 (BugMeleeAttackGoal.java:132, :145, :176): the tail's slow 9-degree wag (ModelPointysaurus.java:299) over the same stand as idle"
+    },
+    {
+      "name": "attack",
+      "verdict": "author",
+      "note": "the gore: doHurtTarget (Pointysaurus.java:269-284) for 10 with a 0.8 knockback, rolled by the melee goal within 4 blocks plus half the target's width on a 1-in-6 cadence tick (BugMeleeAttackGoal.java:159-174; Presets.pointysaurus); the flag is held while in reach, not pulsed at the strike, so the strike is transport 1 (the server LivingDamageEvent.Post) — a head toss with the three horns",
+      "length_seconds": 0.5
+    },
+    {
+      "name": "hurt",
+      "verdict": "author",
+      "note": "a flinch: hurt() (Pointysaurus.java:286-290) refuses cactus and stores the attacker for the revenge goal (:68-69); the alo_hurt sound at 0.9 volume and a 1.5 pitch (:249-252, :259-267); the hurtTime edge is client-observed",
+      "length_seconds": 0.4
+    },
+    {
+      "name": "death",
+      "verdict": "author",
+      "note": "ruled 2026-09-06, Q3 (a): the vanilla death flip stays; a creature whose JSON ships a `death` clip gets the clip-replaces-flip mode, designed when the first such clip arrives (the Queen's own death clip the precedent) - a `death` delivered here plays under the flip until then",
+      "length_seconds": 1.5
+    }
+  ],
+  "extras": [
+    {
+      "name": "stare",
+      "loop": "false",
+      "layer": "overlay",
+      "bones": ["head", "nose", "chorn", "lhorn", "rhorn", "guard", "bump1", "bump2", "bump3", "bump4", "bump5", "bump6", "bump7", "bump8", "bump9", "bump10", "bump11", "bump12", "bump13", "bump14", "bump15", "bump16"],
+      "length_seconds": 0.5,
+      "code_triggered": false,
+      "trigger": "PointysaurusStareGoal (registered when the config flag is on, Pointysaurus.java:83-91): a non-creative player within 32 blocks looking straight at it (dot > 0.97, line of sight; PointysaurusStareGoal.java:47-59) is tracked by the look control and, after five ticks, taken as the target (:68-70, :86-96); the moment the target is set has no packet today — a named site (transport 3) when the rig lands",
+      "note": "the tell on the lock: a head drop and a frill shake at the starer"
+    },
+    {
+      "name": "roar",
+      "loop": "false",
+      "layer": "overlay",
+      "bones": ["head", "nose", "chorn", "lhorn", "rhorn", "guard"],
+      "length_seconds": 0.8,
+      "code_triggered": false,
+      "trigger": "getAmbientSound (Pointysaurus.java:241-247): the vanilla ambient roll answers alo_living one time in four, at 0.9 volume and a 1.5 pitch (:259-267); a sound the server plays, no animation hook today — a named site (transport 3) when the rig lands",
+      "note": "a short head-up bellow"
+    }
+  ],
+  "wishlist": [
+    "in `walk`: the four legs are single blocks swung 45 degrees (ModelPointysaurus.java:249-253) — a ceratopsian's rolling plod with a body sway sells the weight; keep the diagonal pairing",
+    "in `aggro_idle`: the code lashes only the tail (:298); drop the head and bring the horns forward so the in-reach state (BugMeleeAttackGoal.java:168) reads as a threat",
+    "in `attack`: a horn toss — the head is look-only in the code (:255-296); the gore lands 10 within 4 blocks plus half the target's width (Pointysaurus.java:269-284)",
+    "in `idle`: a head sway with the frill and a slow tail lift — the code already lifts the tail on a 314-tick wave (:300-301); keep that as the breath"
+  ],
+  "effort_hours": null
+}

@@ -1,0 +1,500 @@
+{
+  "generated_by": "tools/artist_package.py 0.2.9 (the full folder, 2026-09-13, fourth set, items 5, 7 and 8: every artist-tier species packaged - a rig not yet in-game from the reference leg's converter output, bone names final; the Tier-1 bosses' intended locked bones from the design's section 6 rendered in section 7 and validated against the geo; the README's priority table the full list, bosses first, closing with the deliverable count)",
+  "registry": "leaf_monster",
+  "display_name": "Leaf Monster",
+  "tier": 2,
+  "tier_label": "Tier 2",
+  "geo_file": "reference_leafmonster.geo.json",
+  "animation_file": "leaf_monster.animation.json",
+  "bbmodel_file": "leaf_monster.bbmodel",
+  "texture_size": [
+    128,
+    128
+  ],
+  "bones": [
+    {
+      "name": "body",
+      "parent": null,
+      "pivot": [
+        0,
+        24,
+        0
+      ],
+      "rotation": null,
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            -8.0,
+            16.0,
+            -8.0
+          ],
+          "size": [
+            16.0,
+            16.0,
+            16.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              48.0,
+              48.0,
+              -16.0,
+              16.0
+            ],
+            "east": [
+              80.0,
+              48.0,
+              -16.0,
+              16.0
+            ],
+            "north": [
+              64.0,
+              48.0,
+              -16.0,
+              16.0
+            ],
+            "south": [
+              96.0,
+              48.0,
+              -16.0,
+              16.0
+            ],
+            "up": [
+              64.0,
+              32.0,
+              -16.0,
+              16.0
+            ],
+            "down": [
+              80.0,
+              48.0,
+              -16.0,
+              -16.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "larm",
+      "parent": null,
+      "pivot": [
+        -8,
+        32,
+        0
+      ],
+      "rotation": null,
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            -24.0,
+            32.0,
+            -8.0
+          ],
+          "size": [
+            16.0,
+            16.0,
+            16.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              80.0,
+              16.0,
+              -16.0,
+              16.0
+            ],
+            "east": [
+              112.0,
+              16.0,
+              -16.0,
+              16.0
+            ],
+            "north": [
+              96.0,
+              16.0,
+              -16.0,
+              16.0
+            ],
+            "south": [
+              128.0,
+              16.0,
+              -16.0,
+              16.0
+            ],
+            "up": [
+              96.0,
+              0.0,
+              -16.0,
+              16.0
+            ],
+            "down": [
+              112.0,
+              16.0,
+              -16.0,
+              -16.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "lleg",
+      "parent": null,
+      "pivot": [
+        -8,
+        16,
+        0
+      ],
+      "rotation": null,
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            -24.0,
+            0.0,
+            -8.0
+          ],
+          "size": [
+            16.0,
+            16.0,
+            16.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              80.0,
+              80.0,
+              -16.0,
+              16.0
+            ],
+            "east": [
+              112.0,
+              80.0,
+              -16.0,
+              16.0
+            ],
+            "north": [
+              96.0,
+              80.0,
+              -16.0,
+              16.0
+            ],
+            "south": [
+              128.0,
+              80.0,
+              -16.0,
+              16.0
+            ],
+            "up": [
+              96.0,
+              64.0,
+              -16.0,
+              16.0
+            ],
+            "down": [
+              112.0,
+              80.0,
+              -16.0,
+              -16.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "rarm",
+      "parent": null,
+      "pivot": [
+        8,
+        32,
+        0
+      ],
+      "rotation": null,
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            8.0,
+            32.0,
+            -8.0
+          ],
+          "size": [
+            16.0,
+            16.0,
+            16.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              16.0,
+              16.0,
+              -16.0,
+              16.0
+            ],
+            "east": [
+              48.0,
+              16.0,
+              -16.0,
+              16.0
+            ],
+            "north": [
+              32.0,
+              16.0,
+              -16.0,
+              16.0
+            ],
+            "south": [
+              64.0,
+              16.0,
+              -16.0,
+              16.0
+            ],
+            "up": [
+              32.0,
+              0.0,
+              -16.0,
+              16.0
+            ],
+            "down": [
+              48.0,
+              16.0,
+              -16.0,
+              -16.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "rleg",
+      "parent": null,
+      "pivot": [
+        8,
+        16,
+        0
+      ],
+      "rotation": null,
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            8.0,
+            0.0,
+            -8.0
+          ],
+          "size": [
+            16.0,
+            16.0,
+            16.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              16.0,
+              80.0,
+              -16.0,
+              16.0
+            ],
+            "east": [
+              48.0,
+              80.0,
+              -16.0,
+              16.0
+            ],
+            "north": [
+              32.0,
+              80.0,
+              -16.0,
+              16.0
+            ],
+            "south": [
+              64.0,
+              80.0,
+              -16.0,
+              16.0
+            ],
+            "up": [
+              32.0,
+              64.0,
+              -16.0,
+              16.0
+            ],
+            "down": [
+              48.0,
+              80.0,
+              -16.0,
+              -16.0
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "locked_bones": [],
+  "lock_mode": "warn",
+  "lock_policy": "warn-keyed, refuse-structural",
+  "lock_policy_text": "Keying a locked bone is allowed; the checker warns, and the hitbox part follows the bone in-game (the consequence, so keep such keys deliberate). Renaming, re-parenting or deleting a locked bone is refused.",
+  "keyed_locked_by_shipped_clip": {},
+  "native": false,
+  "controller_kind": "phase_locked",
+  "clips": [
+    {
+      "name": "idle",
+      "loop": "true",
+      "role": "contract",
+      "code_triggered": false,
+      "required": true,
+      "length_rule": "near:1.0",
+      "length_seconds": 1.0,
+      "verdict": "author"
+    },
+    {
+      "name": "idle_arms",
+      "loop": "true",
+      "role": "contract",
+      "code_triggered": false,
+      "required": false,
+      "length_rule": "near:1.0",
+      "length_seconds": 1.0,
+      "verdict": "author"
+    },
+    {
+      "name": "walk",
+      "loop": "true",
+      "role": "contract",
+      "code_triggered": false,
+      "required": true,
+      "length_rule": "near:1.0",
+      "length_seconds": 1.0,
+      "verdict": "author"
+    },
+    {
+      "name": "walk_arms",
+      "loop": "true",
+      "role": "contract",
+      "code_triggered": false,
+      "required": false,
+      "length_rule": "near:1.0",
+      "length_seconds": 1.0,
+      "verdict": "author"
+    },
+    {
+      "name": "swim",
+      "loop": "true",
+      "role": "contract",
+      "code_triggered": false,
+      "required": false,
+      "length_rule": "near:1.0",
+      "length_seconds": 1.0,
+      "verdict": "author"
+    },
+    {
+      "name": "aggro_idle",
+      "loop": "true",
+      "role": "contract",
+      "code_triggered": false,
+      "required": false,
+      "length_rule": "near:1.0",
+      "length_seconds": 1.0,
+      "verdict": "author"
+    },
+    {
+      "name": "calm_idle",
+      "loop": "true",
+      "role": "contract",
+      "code_triggered": false,
+      "required": false,
+      "length_rule": "near:1.0",
+      "length_seconds": 1.0,
+      "verdict": "author"
+    },
+    {
+      "name": "attack",
+      "loop": "false",
+      "role": "contract",
+      "code_triggered": true,
+      "required": false,
+      "length_rule": "near:0.5",
+      "length_seconds": 0.5,
+      "verdict": "author"
+    },
+    {
+      "name": "hurt",
+      "loop": "false",
+      "role": "contract",
+      "code_triggered": true,
+      "required": false,
+      "length_rule": "near:0.3",
+      "length_seconds": 0.3,
+      "verdict": "author"
+    },
+    {
+      "name": "death",
+      "loop": "hold_on_last_frame",
+      "role": "contract",
+      "code_triggered": true,
+      "required": false,
+      "length_rule": "near:1.0",
+      "length_seconds": 1.0,
+      "verdict": "author"
+    },
+    {
+      "name": "rise",
+      "loop": "false",
+      "role": "extra",
+      "code_triggered": false,
+      "required": false,
+      "length_rule": "near:0.5",
+      "length_seconds": 0.5,
+      "verdict": "author"
+    },
+    {
+      "name": "sink",
+      "loop": "false",
+      "role": "extra",
+      "code_triggered": false,
+      "required": false,
+      "length_rule": "near:0.5",
+      "length_seconds": 0.5,
+      "verdict": "author"
+    }
+  ],
+  "allow_idle_alt": true,
+  "textures": [
+    {
+      "canonical": "leafmonster.png",
+      "width": 128,
+      "height": 128,
+      "aliases": [
+        "leafmonstertexture.png"
+      ]
+    }
+  ],
+  "effort_hours": 17.0,
+  "effort_source": "generator: 4 h + 0.2 h/bone x 5 + 1 h/clip x 12 to author or improve (owner adjusts)",
+  "reference_clip": null,
+  "exact_transcription": false,
+  "rig_source": "reference-leg converter output",
+  "in_game": false,
+  "reference_id": "reference_leafmonster",
+  "locked_bones_source": "none",
+  "locked_bones_provisional": []
+}

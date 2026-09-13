@@ -1,0 +1,702 @@
+{
+  "generated_by": "tools/artist_package.py 0.2.9 (the full folder, 2026-09-13, fourth set, items 5, 7 and 8: every artist-tier species packaged - a rig not yet in-game from the reference leg's converter output, bone names final; the Tier-1 bosses' intended locked bones from the design's section 6 rendered in section 7 and validated against the geo; the README's priority table the full list, bosses first, closing with the deliverable count)",
+  "registry": "rubber_ducky",
+  "display_name": "Rubber Ducky",
+  "tier": 2,
+  "tier_label": "Tier 2",
+  "geo_file": "rubberducky.geo.json",
+  "animation_file": "rubberducky.animation.json",
+  "bbmodel_file": "rubber_ducky.bbmodel",
+  "texture_size": [
+    64,
+    64
+  ],
+  "bones": [
+    {
+      "name": "back",
+      "parent": null,
+      "pivot": [
+        0,
+        4,
+        0
+      ],
+      "rotation": null,
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            -3.0,
+            3.0,
+            -3.0
+          ],
+          "size": [
+            6.0,
+            1.0,
+            10.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              10.0,
+              43.0,
+              -10.0,
+              1.0
+            ],
+            "east": [
+              26.0,
+              43.0,
+              -10.0,
+              1.0
+            ],
+            "north": [
+              16.0,
+              43.0,
+              -6.0,
+              1.0
+            ],
+            "south": [
+              32.0,
+              43.0,
+              -6.0,
+              1.0
+            ],
+            "up": [
+              16.0,
+              33.0,
+              -6.0,
+              10.0
+            ],
+            "down": [
+              22.0,
+              43.0,
+              -6.0,
+              -10.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "beak",
+      "parent": null,
+      "pivot": [
+        0,
+        5,
+        -1
+      ],
+      "rotation": null,
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            -1.5,
+            5.0,
+            -6.0
+          ],
+          "size": [
+            3.0,
+            1.0,
+            3.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              3.0,
+              24.0,
+              -3.0,
+              1.0
+            ],
+            "east": [
+              9.0,
+              24.0,
+              -3.0,
+              1.0
+            ],
+            "north": [
+              6.0,
+              24.0,
+              -3.0,
+              1.0
+            ],
+            "south": [
+              12.0,
+              24.0,
+              -3.0,
+              1.0
+            ],
+            "up": [
+              6.0,
+              21.0,
+              -3.0,
+              3.0
+            ],
+            "down": [
+              9.0,
+              24.0,
+              -3.0,
+              -3.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "body",
+      "parent": null,
+      "pivot": [
+        0,
+        3,
+        0
+      ],
+      "rotation": null,
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            -3.0,
+            1.0,
+            -3.0
+          ],
+          "size": [
+            6.0,
+            2.0,
+            8.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              8.0,
+              53.0,
+              -8.0,
+              2.0
+            ],
+            "east": [
+              22.0,
+              53.0,
+              -8.0,
+              2.0
+            ],
+            "north": [
+              14.0,
+              53.0,
+              -6.0,
+              2.0
+            ],
+            "south": [
+              28.0,
+              53.0,
+              -6.0,
+              2.0
+            ],
+            "up": [
+              14.0,
+              45.0,
+              -6.0,
+              8.0
+            ],
+            "down": [
+              20.0,
+              53.0,
+              -6.0,
+              -8.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "bottom",
+      "parent": null,
+      "pivot": [
+        0,
+        1,
+        0
+      ],
+      "rotation": null,
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            -2.0,
+            0.0,
+            -2.0
+          ],
+          "size": [
+            4.0,
+            1.0,
+            4.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              4.0,
+              60.0,
+              -4.0,
+              1.0
+            ],
+            "east": [
+              12.0,
+              60.0,
+              -4.0,
+              1.0
+            ],
+            "north": [
+              8.0,
+              60.0,
+              -4.0,
+              1.0
+            ],
+            "south": [
+              16.0,
+              60.0,
+              -4.0,
+              1.0
+            ],
+            "up": [
+              8.0,
+              56.0,
+              -4.0,
+              4.0
+            ],
+            "down": [
+              12.0,
+              60.0,
+              -4.0,
+              -4.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "head",
+      "parent": null,
+      "pivot": [
+        0,
+        5,
+        -1
+      ],
+      "rotation": null,
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            -2.0,
+            5.0,
+            -3.0
+          ],
+          "size": [
+            4.0,
+            4.0,
+            4.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              17.0,
+              22.0,
+              -4.0,
+              4.0
+            ],
+            "east": [
+              25.0,
+              22.0,
+              -4.0,
+              4.0
+            ],
+            "north": [
+              21.0,
+              22.0,
+              -4.0,
+              4.0
+            ],
+            "south": [
+              29.0,
+              22.0,
+              -4.0,
+              4.0
+            ],
+            "up": [
+              21.0,
+              18.0,
+              -4.0,
+              4.0
+            ],
+            "down": [
+              25.0,
+              22.0,
+              -4.0,
+              -4.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "lwing",
+      "parent": null,
+      "pivot": [
+        -3,
+        3,
+        -2
+      ],
+      "rotation": null,
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            -5.0,
+            2.5,
+            -2.0
+          ],
+          "size": [
+            2.0,
+            1.0,
+            5.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              5.0,
+              5.0,
+              -5.0,
+              1.0
+            ],
+            "east": [
+              12.0,
+              5.0,
+              -5.0,
+              1.0
+            ],
+            "north": [
+              7.0,
+              5.0,
+              -2.0,
+              1.0
+            ],
+            "south": [
+              14.0,
+              5.0,
+              -2.0,
+              1.0
+            ],
+            "up": [
+              7.0,
+              0.0,
+              -2.0,
+              5.0
+            ],
+            "down": [
+              9.0,
+              5.0,
+              -2.0,
+              -5.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "neck",
+      "parent": null,
+      "pivot": [
+        0,
+        5,
+        -1
+      ],
+      "rotation": null,
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            -1.0,
+            4.0,
+            -2.0
+          ],
+          "size": [
+            2.0,
+            1.0,
+            2.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              19.0,
+              29.0,
+              -2.0,
+              1.0
+            ],
+            "east": [
+              23.0,
+              29.0,
+              -2.0,
+              1.0
+            ],
+            "north": [
+              21.0,
+              29.0,
+              -2.0,
+              1.0
+            ],
+            "south": [
+              25.0,
+              29.0,
+              -2.0,
+              1.0
+            ],
+            "up": [
+              21.0,
+              27.0,
+              -2.0,
+              2.0
+            ],
+            "down": [
+              23.0,
+              29.0,
+              -2.0,
+              -2.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "rwing",
+      "parent": null,
+      "pivot": [
+        3,
+        3,
+        -2
+      ],
+      "rotation": null,
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            3.0,
+            2.5,
+            -2.0
+          ],
+          "size": [
+            2.0,
+            1.0,
+            5.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              22.0,
+              5.0,
+              -5.0,
+              1.0
+            ],
+            "east": [
+              29.0,
+              5.0,
+              -5.0,
+              1.0
+            ],
+            "north": [
+              24.0,
+              5.0,
+              -2.0,
+              1.0
+            ],
+            "south": [
+              31.0,
+              5.0,
+              -2.0,
+              1.0
+            ],
+            "up": [
+              24.0,
+              0.0,
+              -2.0,
+              5.0
+            ],
+            "down": [
+              26.0,
+              5.0,
+              -2.0,
+              -5.0
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "locked_bones": [],
+  "lock_mode": "warn",
+  "lock_policy": "warn-keyed, refuse-structural",
+  "lock_policy_text": "Keying a locked bone is allowed; the checker warns, and the hitbox part follows the bone in-game (the consequence, so keep such keys deliberate). Renaming, re-parenting or deleting a locked bone is refused.",
+  "keyed_locked_by_shipped_clip": {},
+  "native": false,
+  "controller_kind": "phase_locked",
+  "clips": [
+    {
+      "name": "idle",
+      "loop": "true",
+      "role": "contract",
+      "code_triggered": false,
+      "required": true,
+      "length_rule": "near:1.0",
+      "length_seconds": 1.0,
+      "verdict": "author"
+    },
+    {
+      "name": "idle_head",
+      "loop": "true",
+      "role": "contract",
+      "code_triggered": false,
+      "required": false,
+      "length_rule": "near:1.0",
+      "length_seconds": 1.0,
+      "verdict": "author"
+    },
+    {
+      "name": "walk",
+      "loop": "true",
+      "role": "contract",
+      "code_triggered": false,
+      "required": true,
+      "length_rule": "near:1.0",
+      "length_seconds": 1.0,
+      "verdict": "author"
+    },
+    {
+      "name": "walk_head",
+      "loop": "true",
+      "role": "contract",
+      "code_triggered": false,
+      "required": false,
+      "length_rule": "near:1.0",
+      "length_seconds": 1.0,
+      "verdict": "author"
+    },
+    {
+      "name": "swim",
+      "loop": "true",
+      "role": "contract",
+      "code_triggered": false,
+      "required": false,
+      "length_rule": "near:1.0",
+      "length_seconds": 1.0,
+      "verdict": "author"
+    },
+    {
+      "name": "aggro_idle",
+      "loop": "true",
+      "role": "contract",
+      "code_triggered": false,
+      "required": false,
+      "length_rule": "near:1.0",
+      "length_seconds": 1.0,
+      "verdict": "author"
+    },
+    {
+      "name": "calm_idle",
+      "loop": "true",
+      "role": "contract",
+      "code_triggered": false,
+      "required": false,
+      "length_rule": "near:1.0",
+      "length_seconds": 1.0,
+      "verdict": "author"
+    },
+    {
+      "name": "attack",
+      "loop": "false",
+      "role": "contract",
+      "code_triggered": true,
+      "required": false,
+      "length_rule": "near:0.5",
+      "length_seconds": 0.5,
+      "verdict": "author"
+    },
+    {
+      "name": "hurt",
+      "loop": "false",
+      "role": "contract",
+      "code_triggered": true,
+      "required": false,
+      "length_rule": "near:0.3",
+      "length_seconds": 0.3,
+      "verdict": "author"
+    },
+    {
+      "name": "death",
+      "loop": "hold_on_last_frame",
+      "role": "contract",
+      "code_triggered": true,
+      "required": false,
+      "length_rule": "near:1.0",
+      "length_seconds": 1.0,
+      "verdict": "author"
+    }
+  ],
+  "allow_idle_alt": true,
+  "textures": [
+    {
+      "canonical": "rubberducky.png",
+      "width": 64,
+      "height": 64,
+      "aliases": [
+        "rubberduckytexture.png"
+      ]
+    }
+  ],
+  "effort_hours": 15.6,
+  "effort_source": "generator: 4 h + 0.2 h/bone x 8 + 1 h/clip x 10 to author or improve (owner adjusts)",
+  "reference_clip": {
+    "file": "rubber_ducky_reference.animation.json",
+    "sha256": "f125940969299ef65ecbd6567692cd0448ab4ca34e50b95fe31230ad4e7fcc60",
+    "clip": "reference",
+    "reference_only": true,
+    "rule": "period_multiple",
+    "rule_note": "one channel: the wings |cos(ageInTicks * 1.0F) * PI * 0.15| about Z, mirrored (RubberDuckyGeoReplacement.applyCustomAnimations, RubberDuckyModel.setupAnim; orig ModelRubberDucky.java:91, 111-114 for the lines the port keeps): the absolute value folds the cosine, so the natural period is pi / 1.0 = 3.14 ticks; the head and beak follow netHeadYaw = 0; closes at k = 1 (3.141593 ticks): every bone returns within 0 degrees of its start at k x T (the 5-degree test under the 6 s cap; k = 1: 0 deg)",
+    "span_ticks": 3.1415926536,
+    "period_ticks": 3.1415926536,
+    "period_multiple_k": 1,
+    "animation_length_seconds": 0.1570796327,
+    "keys_per_bone": 5,
+    "sampled_inputs": "limbSwingAmount 1.0; limbSwing = t (advancing 1.0 per tick from 0: vanilla WalkAnimationState.update does speed += (movementSpeed - speed) * multiplier; position += speed, and the classic renderer hands walkAnimation.position(partialTick) as limbSwing and min(1, speed) as limbSwingAmount, so at speed 1 the position advances exactly 1.0 per tick); ageInTicks = t (getBob: tickCount + partialTick, partialTick 0); netHeadYaw 0; headPitch 0 (looking ahead); every entity-state flag at its rest value (attacking 0, ri1 0, rock_type 0, rf1 0: a ProbeSubject built from an empty state); the entity RNG seeded 0 once per clip and evolving across the keys; one pose call per key, 20 keys per second; full health (no shipped hook reads health)",
+    "hook": "danger.orespawn.entity.client.RubberDuckyGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the shipped replacement, registry-free, on explicit PoseInputs)",
+    "moving_bones": [
+      "lwing",
+      "rwing"
+    ],
+    "position_bones": [],
+    "hidden_bones_at_rest": [],
+    "seam_delta_degrees": 0.0
+  },
+  "exact_transcription": false,
+  "rig_source": "shipped",
+  "in_game": true,
+  "reference_id": null,
+  "locked_bones_source": "none",
+  "locked_bones_provisional": []
+}

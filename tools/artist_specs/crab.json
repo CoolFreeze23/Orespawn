@@ -1,0 +1,169 @@
+{
+  "registry": "crab",
+  "display_name": "Crab",
+  "status": "DRAFT — authored by a seed lane from the entity code, 2026-09-13; the owner's edit pending",
+  "locomotion": "walker",
+  "artist_scope": "full contract (Tier 2, the state-branching class (an attacking branch on the eyes, mouth and claws; the renderer's scale is the entity's): geckolib_migration_design.md section 5); the rig is not yet in-game (it lands through the seam in a later slice)",
+  "character_sheet": "A giant crab at one of three sizes: a six-block body (a shell top and bottom, two side plates, a rear block and a face block), two two-piece eyestalks angled outward, two mouthparts, two five-piece claw arms ending in a hinged pincer, and three leg parts on the left side (ModelCrab.java:47-71; 25 parts on a 256x512 sheet). The 1.7.10 model drew those three leg parts eight times at eight poses; the port's setupAnim re-poses them eight times in a row (ModelCrab.java:183-234) and only the last pose is drawn, so the rig carries three leg bones. It is a hostile scavenger scaled 0.25, 0.5 or 1.0 at spawn (0.35 from a spawner; Crab.java:147-159) with its stats, speed, reach, knockback, XP and hitbox scaled with it (:161-186, :201-229, :130-137): 250 x scale HP, 24 x scale damage, 16 + 2 x scale armour. Every fifth tick it looks 16 blocks for a non-creative player, any monster, a lizard, a rubber ducky, a villager, a girlfriend, a boyfriend or an attackable non-mob (:365-395), raises the synched attacking flag within 6 blocks plus half the prey's width (scaled, :307-309), swings on a 40 percent roll (:311-321, doHurtTarget :212-229 with knockback) and clears the flag when no target is found (:326). It seeks water when dry and dries out without it (:277-290), heals in water (:330-335), ignores cactus and its own kind, takes a hit only every 8 ticks and turns on a mob that hits it (:231-248); it spawns above y 50 by day, rarely in the Crystal dimension (:443-456). Read it as a sidling crab: legs scuttling, eyestalks and mouthparts twitching - faster and wider when it hunts - claws waving, then snapping.",
+  "size_notes": "Drawn at x getCrabScale() of the rig - 0.25, 0.35, 0.5 or 1.0 (CrabRenderer.java:37-38; Crab.java:118-120) - on a 256x512 sheet (ModelCrab.java:178); the hitbox is 2.5 x scale wide and 3.5 x scale tall (Crab.java:130-137; ModEntities.java:66-70); shadow 0.99, never scaled (CrabRenderer.java:27).",
+  "labels": {
+    "body1": "shell, top",
+    "body2": "shell, bottom",
+    "body3": "left side plate (the left leg root)",
+    "body4": "right side plate (the right leg root)",
+    "body5": "rear block",
+    "body6": "face block (between the eyes)",
+    "Leye1": "left eyestalk, lower piece (angled -28 deg)",
+    "Leye2": "left eyestalk, upper piece",
+    "Reye1": "right eyestalk, lower piece (angled 28 deg)",
+    "Reye2": "right eyestalk, upper piece",
+    "Lmouth": "left mouthpart (rest -0.72 rad)",
+    "Rmouth": "right mouthpart (rest +0.72 rad)",
+    "Lclaw1": "left claw arm, piece 1 (shoulder, 28 deg)",
+    "Lclaw2": "left claw arm, piece 2 (10 deg)",
+    "Lclaw3": "left claw, base of the hand (rest -0.453 rad; waves)",
+    "Lclaw4": "left claw, fixed pincer (rest -0.349 rad; waves)",
+    "Lclaw5": "left claw, moving pincer (rest +0.384 rad; waves the other way - the snap)",
+    "Rclaw1": "right claw arm, piece 1 (shoulder, -28 deg)",
+    "Rclaw2": "right claw arm, piece 2 (-10 deg)",
+    "Rclaw3": "right claw, base of the hand (rest +0.453 rad; waves)",
+    "Rclaw4": "right claw, fixed pincer (rest +0.349 rad; waves)",
+    "Rclaw5": "right claw, moving pincer (rest -0.384 rad; waves the other way - the snap)",
+    "leg1": "leg part 1 (the three leg parts are one leg in the rig; the code re-poses them eight times and draws the last)",
+    "leg2": "leg part 2 (as leg1)",
+    "leg3": "leg part 3 (as leg1)"
+  },
+  "groups": [
+    {
+      "name": "gait",
+      "bones": [
+        "leg1",
+        "leg2",
+        "leg3"
+      ],
+      "omega": 1.7,
+      "axis": "y",
+      "gait_scaled": true,
+      "amplitude": "+-pi/2 rad rest (the legs turned square to the body), then pi x 0.15 = 0.471 rad (27 deg) x the walking speed at 1.7, no threshold; the eight poses of the code alternate the sign pair by pair",
+      "plain": "the leg parts scuttle fore and aft about the vertical with the stride; in the 1.7.10 original eight legs alternated, in the port the three parts show the last pose",
+      "math": "a = cos(ageInTicks * 1.7) * pi * 0.15 * limbSwingAmount; the code sets leg1/2/3.yRot to -pi/2 + a, -pi/2 - a, ... at x = 36 then the negatives at x = -36 with z = 0 / 10 / 20 / 30 (eight poses, ModelCrab.java:183-234); the last one drawn: x = -36, z = 30, yRot = pi/2 + a",
+      "source": "ModelCrab.java:183-234",
+      "omega_note": "the phase is ageInTicks x 1.7 (no wingspeed - the ModelCrab(1.0f) argument is unused, CrabRenderer.java:17-18): the natural period is 2 pi / 1.7 = 3.7 ticks"
+    },
+    {
+      "name": "eyes",
+      "bones": [
+        "Leye1",
+        "Leye2",
+        "Reye1",
+        "Reye2"
+      ],
+      "omega": 0.35,
+      "axis": "x and z",
+      "gait_scaled": false,
+      "amplitude": "calm: pi x 0.05 = 0.157 rad (9 deg) at four rates - left pitch 0.35, left roll 0.25 (around +0.54), right pitch 0.3, right roll 0.45 (around -0.54); attacking: pi x 0.1 = 0.314 rad (18 deg) at 0.45 / 0.35 / 0.4 / 0.55",
+      "plain": "the two eyestalks wobble on their own, each piece pair together - a small slow wobble at rest, twice as wide and faster when it hunts",
+      "math": "calm: Leye1/2.xRot = cos(t * 0.35) * pi * 0.05; Leye1/2.zRot = 0.54 + cos(t * 0.25) * pi * 0.05; Reye1/2.xRot = cos(t * 0.3) * pi * 0.05; Reye1/2.zRot = -0.54 + cos(t * 0.45) * pi * 0.05; attacking: the same at 0.45 / 0.35 / 0.4 / 0.55 and pi x 0.1",
+      "source": "ModelCrab.java:236-239, 251-254",
+      "phase": "the attacking flag selects the rhythm (Crab.java:309 raises it, :326 clears it)",
+      "omega_note": "four rates in one group: the omega here is the left pitch's 0.35 (period 18 ticks); the others 0.25 / 0.3 / 0.45 calm and 0.45 / 0.35 / 0.4 / 0.55 attacking - author the wobble at 0.35 with the other three offset"
+    },
+    {
+      "name": "mouth",
+      "bones": [
+        "Lmouth",
+        "Rmouth"
+      ],
+      "omega": 0.25,
+      "axis": "y",
+      "gait_scaled": false,
+      "amplitude": "-0.72 / +0.72 rad rests, then calm: pi x 0.05 = 0.157 rad (9 deg) at 0.25; attacking: pi x 0.15 = 0.471 rad (27 deg) at 0.45 - the two mouthparts mirrored",
+      "plain": "the mouthparts work open and shut together, gently at rest and chewing hard when it hunts",
+      "math": "calm: Lmouth.yRot = -0.72 + cos(t * 0.25) * pi * 0.05; Rmouth.yRot = 0.72 - the same; attacking: cos(t * 0.45) * pi * 0.15",
+      "source": "ModelCrab.java:240-241, 255-256",
+      "phase": "the attacking flag selects the rhythm (Crab.java:309, :326)",
+      "omega_note": "the calm phase is ageInTicks x 0.25: the natural period is 2 pi / 0.25 = 25.1 ticks; attacking 2 pi / 0.45 = 14 ticks"
+    },
+    {
+      "name": "claws",
+      "bones": [
+        "Lclaw3",
+        "Lclaw4",
+        "Lclaw5",
+        "Rclaw3",
+        "Rclaw4",
+        "Rclaw5"
+      ],
+      "omega": 0.15,
+      "axis": "y",
+      "gait_scaled": false,
+      "amplitude": "rests -0.453 / -0.349 / +0.384 rad (left hand base, fixed pincer, moving pincer; the right the negatives), then calm: left pi x 0.03 = 0.094 rad (5 deg) at 0.15, right pi x 0.02 = 0.063 rad (4 deg) at 0.13; attacking: left pi x 0.13 = 0.408 rad (23 deg) at 0.35, right pi x 0.12 = 0.377 rad (22 deg) at 0.43 - the moving pincer takes the negative, so the claw opens and shuts",
+      "plain": "each claw's hand and fixed pincer swing together while the moving pincer swings the other way - a slow open-and-shut at rest, a fast wide snapping when it hunts, the two claws on slightly different beats",
+      "math": "calm: nL = cos(t * 0.15) * pi * 0.03, nR = cos(t * 0.13) * pi * 0.02; attacking: nL = cos(t * 0.35) * pi * 0.13, nR = cos(t * 0.43) * pi * 0.12; Lclaw3.yRot = -0.453 + nL; Lclaw4.yRot = -0.349 + nL; Lclaw5.yRot = 0.384 - nL; Rclaw3.yRot = 0.453 + nR; Rclaw4.yRot = 0.349 + nR; Rclaw5.yRot = -0.384 - nR",
+      "source": "ModelCrab.java:242-249, 257-264",
+      "phase": "the attacking flag selects the rhythm (Crab.java:309, :326)",
+      "omega_note": "the calm phase is ageInTicks x 0.15 (left) / 0.13 (right): the natural periods are 41.9 / 48.3 ticks; attacking 0.35 / 0.43 - 18 / 14.6 ticks; the omega here is the left claw's calm rate"
+    }
+  ],
+  "behaviour": [
+    "The legs (ModelCrab.java:183-234): the cosine of the age x 1.7, x pi x 0.15, x the walking speed (27 degrees at full speed every 3.7 ticks, no threshold) is added to or subtracted from a +-pi/2 rest on the three leg parts, which the code positions and poses eight times in a row - four on the right side (x = 36) at z = 0, 10, 20, 30 with alternating sign, four on the left (x = -36) negated. The 1.7.10 original rendered the parts at each pose; the port's renderToBuffer draws each part once, so only the last pose (x = -36, z = 30, pi/2 + the swing) shows - the rig carries three leg bones, and eight legs are the artist's to add or the owner's to rule on.",
+    "Everything else branches on the synched attacking flag (:235-265). Calm: the eyestalks wobble 9 degrees - the left pitching at 0.35 and rolling at 0.25 around +0.54 rad, the right pitching at 0.3 and rolling at 0.45 around -0.54; the mouthparts work 9 degrees at 0.25 around +-0.72; the claws open and shut 5 (left, at 0.15) and 4 (right, at 0.13) degrees around their rests. Attacking: the eyes 18 degrees at 0.45 / 0.35 / 0.4 / 0.55, the mouth 27 degrees at 0.45, the claws 23 (left, at 0.35) and 22 (right, at 0.43) degrees - every rhythm faster and two to five times wider.",
+    "Each claw is five flat bones: the shoulder and arm pieces (Lclaw1, Lclaw2 and the right pair) never move; the hand base and fixed pincer take the wave and the moving pincer its negative, so the claw snaps about the hand. The shell blocks, side plates, rear and face blocks never move; nothing reads the look (netHeadYaw unused), so the LookAtPlayerGoal (Crab.java:92) turns nothing visible.",
+    "The attacking flag is held: set 1 every fifth think tick while the prey is within reach (Crab.java:307-309) and 0 when no target is found (:326) - a state, so the swing (doHurtTarget :212-229, with a knockback of 1.15 x scale) is transport 1.",
+    "The renderer scales the whole rig by the crab's synched size (CrabRenderer.java:37-38): a 0.25 crab is a quarter of the rig, a 1.0 crab the full 5-block-wide monster - author at the rig's scale."
+  ],
+  "clips": [
+    {
+      "name": "idle",
+      "verdict": "author",
+      "note": "REQUIRED with walk: the gate opens on the pair (today nothing ships; the classic code plays) - the standing loop of the calm branch: legs at their rests, the small eye, mouth and claw rhythms"
+    },
+    {
+      "name": "walk",
+      "verdict": "author",
+      "note": "REQUIRED with idle: the locomotion loop - the gait group's 27-degree leg scuttle at full speed (ModelCrab.java:183-234), scaled by walking speed in-game; sideways, as a crab walks"
+    },
+    {
+      "name": "swim",
+      "verdict": "author",
+      "note": "it has the state: a FloatGoal keeps it at the surface (Crab.java:90), it seeks water when dry and heals in it (:277-290, :330-335) and moves faster there (:203) - a paddling scuttle; optional: falls back to walk then idle when absent (section 2.4)"
+    },
+    {
+      "name": "aggro_idle",
+      "verdict": "author",
+      "note": "the attacking branch at rest: the eyes wobbling 18 deg, the mouth chewing 27 deg, the claws snapping 23 deg on two beats (ModelCrab.java:251-264); the synched attacking flag is held within reach (Crab.java:307-309) and cleared when no target is found (:326)"
+    },
+    {
+      "name": "calm_idle",
+      "verdict": "author",
+      "note": "the calm branch: the small eye, mouth and claw rhythms (ModelCrab.java:236-249) - the same as idle; may be delivered as a copy of idle"
+    },
+    {
+      "name": "attack",
+      "verdict": "author",
+      "note": "a claw strike: doHurtTarget within 6 blocks plus half the prey's width (scaled) on a 1-in-4-or-1-in-5 roll each fifth think tick (Crab.java:307-321), knocking the victim back 1.15 x scale; the flag is held, so the strike is transport 1 (the server LivingDamageEvent.Post) - a claw thrown forward with the pincer closing on the impact frame",
+      "length_seconds": 0.5
+    },
+    {
+      "name": "hurt",
+      "verdict": "author",
+      "note": "a flinch: hurt() at Crab.java:231-248 (cactus and its own kind refused; a hit lands only every 8 ticks; a mob attacker becomes the target); the hurtTime edge is client-observed",
+      "length_seconds": 0.3
+    },
+    {
+      "name": "death",
+      "verdict": "author",
+      "note": "ruled 2026-09-06, Q3 (a): the vanilla death flip stays; a creature whose JSON ships a `death` clip gets the clip-replaces-flip mode, designed when the first such clip arrives (the Queen's own death clip the precedent) - a `death` delivered here plays under the flip until then",
+      "length_seconds": 1.0
+    }
+  ],
+  "extras": [],
+  "wishlist": [
+    "the legs: the rig has three leg bones where the 1.7.10 crab drew eight legs (ModelCrab.java:183-234, the eight re-poses) - the owner rules whether the rig gains eight leg bones before this sheet is authored; until then author the three as one left leg",
+    "in `walk`: a sideways scuttle - the code swings the legs fore and aft (:192-234) but a crab moves broadside; a lift-and-set of the leg parts with the body rocking sells it",
+    "in `attack`: a real claw strike - the code only speeds up the open-and-shut (:257-264); throw one claw forward and close the moving pincer (Lclaw5 / Rclaw5) on the impact frame",
+    "keep each claw whole: hand base, fixed pincer and moving pincer share one pivot (the rig's Lclaw3-5 / Rclaw3-5) and the arm pieces (Lclaw1-2 / Rclaw1-2) never move - key the arm pieces too so the claw reaches rather than pivots in place",
+    "in `hurt`: a rear-up with both claws raised - it turns on whatever hits it (Crab.java:243-246)"
+  ],
+  "effort_hours": null
+}

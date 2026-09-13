@@ -1,0 +1,175 @@
+{
+  "registry": "stink_bug",
+  "display_name": "Stink Bug",
+  "status": "DRAFT — authored by a seed lane from the entity code, 2026-09-13; the owner's edit pending",
+  "locomotion": "walker",
+  "artist_scope": "full contract (Tier 2, the gait-scaled class: geckolib_migration_design.md section 5); the rig is not yet in-game (it lands through the seam in a later slice)",
+  "character_sheet": "A tiny passive stink bug: a 6x5x8 body under a head with a jaw plate, two antennae, eight bumps on its back and two rocking nubs, a 4x4x6 tail block studded with twenty-two spots, and six 2x2 feet on six leg stubs (StinkBugModel.java:124-322, 50 parts), drawn at x0.85. 5 HP, speed 0.15, no attack (EntityStinkBug.java:57-62). It flees players within 4 blocks and panics when hurt (:50-51), breeds on a crystal apple (:49, :113-118) and, when it dies, releases a gas of nausea for fifteen seconds on everything within 8 blocks around and 10 above it, with a fart for a death sound (:75-78, :85-102). It spawns above y 50 (:120-126; ModEntities.java:449-451). Read it as a beetle: the feet twitching in a quick patter, the antennae waving, the spotted tail breathing.",
+  "size_notes": "Drawn at x0.85 of the rig (StinkBugRenderer.java:21, :35; shadow 0.2975, :19) on a 64x32 sheet (StinkBugModel.java:324), stinkbug.png (StinkBugRenderer.java:14); the hitbox is 0.55 x 0.55 (ModEntities.java:449-451). The original's ModelStinkBug(0.75f) argument was the wingspeed (StinkBugModel.java:14), not a scale.",
+  "labels": {
+    "body": "body (6x5x8; static)",
+    "head": "head (5x4x4 ahead of the body; static — no look)",
+    "jaw": "jaw plate (5x1x4 under the head; nods 7 deg about 0.18 rad)",
+    "h1": "left antenna (a 1x2x1 stalk pitched 30 deg and yawed out; waves on its own two rhythms)",
+    "h2": "right antenna (the mirror; waves on two other rhythms)",
+    "b9": "back nub, front (a 1x2x1 spike pitched 30 deg forward; rocks 36 deg side to side)",
+    "b10": "back nub, rear (pitched 30 deg back; rocks opposite the front nub)",
+    "b1": "back bump 1 (a 1x1x1 stud on the body's top; static)",
+    "b2": "back bump 2 (static)",
+    "b3": "back bump 3 (static)",
+    "b4": "back bump 4 (static)",
+    "b5": "back bump 5 (static)",
+    "b6": "back bump 6 (static)",
+    "b7": "back bump 7 (static)",
+    "b8": "back bump 8 (static)",
+    "tail": "tail block (4x4x6 behind the body, raked up 19 deg; breathes 18 deg about -0.2 rad)",
+    "t1": "tail spot 1 (a 1x1x1 stud on the tail; breathes with the tail)",
+    "t2": "tail spot 2 (breathes with the tail)",
+    "t3": "tail spot 3 (breathes with the tail)",
+    "t4": "tail spot 4 (breathes with the tail)",
+    "t5": "tail spot 5 (breathes with the tail)",
+    "t6": "tail spot 6 (breathes with the tail)",
+    "t7": "tail spot 7 (breathes with the tail)",
+    "t8": "tail spot 8 (breathes with the tail)",
+    "t9": "tail spot 9 (breathes with the tail)",
+    "t10": "tail spot 10 (breathes with the tail)",
+    "t11": "tail spot 11 (breathes with the tail)",
+    "t12": "tail spot 12 (breathes with the tail)",
+    "t13": "tail spot 13 (breathes with the tail)",
+    "t14": "tail spot 14 (breathes with the tail)",
+    "t15": "tail spot 15 (breathes with the tail)",
+    "t16": "tail spot 16 (breathes with the tail)",
+    "t17": "tail spot 17 (breathes with the tail)",
+    "t18": "tail spot 18 (breathes with the tail)",
+    "t19": "tail spot 19 (breathes with the tail)",
+    "t20": "tail spot 20 (breathes with the tail)",
+    "t21": "tail spot 21 (breathes with the tail)",
+    "t22": "tail spot 22 (breathes with the tail)",
+    "l1": "right leg stub, front (2x1x2 at the body's side; static)",
+    "l2": "right leg stub, middle (static)",
+    "l3": "right leg stub, rear (static)",
+    "l4": "left leg stub, front (static)",
+    "l5": "left leg stub, middle (static)",
+    "l6": "left leg stub, rear (static)",
+    "f1": "right foot, front (a 2x2x2 block under the stub; the gait)",
+    "f2": "right foot, middle (the gait, opposite the front)",
+    "f3": "right foot, rear (the gait, with the front)",
+    "f4": "left foot, front (the gait, opposite the right front)",
+    "f5": "left foot, middle (NOT driven by the code - the one foot setupAnim never writes; static)",
+    "f6": "left foot, rear (the gait, with the left front)"
+  },
+  "groups": [
+    {
+      "name": "gait",
+      "bones": ["f1", "f2", "f3", "f4", "f6"],
+      "omega": 2.325,
+      "axis": "x",
+      "gait_scaled": true,
+      "amplitude": "pi x 0.3 = 0.942 rad (54 deg) x the walking speed as a sine at 3.1 x 0.75 = 2.325 rad/tick: the right front and rear feet one way, the right middle and the left front and rear feet the other; no threshold; the left middle foot (f5) is never written",
+      "plain": "five of the six feet patter fore and aft in two opposed sets with the stride; the left middle foot stays still",
+      "math": "a = sin(t * 3.1 * 0.75) * pi * 0.3 * amount; f1.xRot = f3.xRot = a; f2.xRot = f4.xRot = f6.xRot = -a; f5 unwritten",
+      "source": "StinkBugModel.java:330-332; wingspeed 0.75 (:14)",
+      "wingspeed": 0.75,
+      "omega_note": "the classic phase is ageInTicks x 3.1 x 0.75 = 2.325: the natural period is 2.70 ticks"
+    },
+    {
+      "name": "nubs",
+      "bones": ["b9", "b10"],
+      "omega": 0.3,
+      "axis": "z",
+      "gait_scaled": false,
+      "amplitude": "pi x 0.2 = 0.628 rad (36 deg) as a sine, the rear nub the negative of the front",
+      "plain": "the two back nubs rock side to side in opposition",
+      "math": "n = sin(t * 0.4 * 0.75) * pi * 0.2; b9.zRot = n; b10.zRot = -n",
+      "source": "StinkBugModel.java:333-334",
+      "wingspeed": 0.75,
+      "omega_note": "the classic phase is ageInTicks x 0.4 x 0.75 = 0.3: the natural period is 20.9 ticks"
+    },
+    {
+      "name": "jaw",
+      "bones": ["jaw"],
+      "omega": 0.15,
+      "axis": "x",
+      "gait_scaled": false,
+      "amplitude": "pi x 0.04 = 0.126 rad (7 deg) about a 0.18 rad rest as a sine",
+      "plain": "the jaw plate nods slowly at all times",
+      "math": "jaw.xRot = 0.18 + sin(t * 0.2 * 0.75) * pi * 0.04",
+      "source": "StinkBugModel.java:335-336",
+      "wingspeed": 0.75,
+      "omega_note": "the classic phase is ageInTicks x 0.2 x 0.75 = 0.15: the natural period is 41.9 ticks"
+    },
+    {
+      "name": "antennae",
+      "bones": ["h1", "h2"],
+      "omega": 0.3,
+      "axis": "x and y",
+      "gait_scaled": false,
+      "amplitude": "pi x 0.15 = 0.471 rad (27 deg) on four sines: the left antenna pitches about 0.52 at 0.4 x 0.75 and yaws about -0.3 at 0.43 x 0.75; the right pitches about 0.52 at 0.46 x 0.75 and yaws about +0.3 at 0.49 x 0.75",
+      "plain": "the two antennae wave on four unrelated slow rhythms, never in step",
+      "math": "h1.xRot = 0.52 + sin(t * 0.4 * 0.75) * pi * 0.15; h1.yRot = -0.3 + sin(t * 0.43 * 0.75) * pi * 0.15; h2.xRot = 0.52 + sin(t * 0.46 * 0.75) * pi * 0.15; h2.yRot = 0.3 + sin(t * 0.49 * 0.75) * pi * 0.15",
+      "source": "StinkBugModel.java:337-340",
+      "wingspeed": 0.75,
+      "omega_note": "the classic phases are ageInTicks x 0.3 / 0.3225 / 0.345 / 0.3675 (17-21 ticks)"
+    },
+    {
+      "name": "tail",
+      "bones": ["tail", "t1", "t2", "t3", "t4", "t5", "t6", "t7", "t8", "t9", "t10", "t11", "t12", "t13", "t14", "t15", "t16", "t17", "t18", "t19", "t20", "t21", "t22"],
+      "omega": 0.075,
+      "axis": "x",
+      "gait_scaled": false,
+      "amplitude": "pi x 0.1 = 0.314 rad (18 deg) about a -0.2 rad rest as a sine, the tail block and all twenty-two spots together",
+      "plain": "the spotted tail block breathes slowly up and down at all times, the spots riding it",
+      "math": "tail.xRot = t1..t22.xRot = -0.2 + sin(t * 0.1 * 0.75) * pi * 0.1",
+      "source": "StinkBugModel.java:341-357",
+      "wingspeed": 0.75,
+      "omega_note": "the classic phase is ageInTicks x 0.1 x 0.75 = 0.075: the natural period is 83.8 ticks"
+    }
+  ],
+  "behaviour": [
+    "One gait rhythm with no threshold (StinkBugModel.java:330-332): five of the six feet patter 54 degrees x the walking speed as a sine at 2.325 rad/tick (a 2.7-tick period), the right front and rear against the other three; the left middle foot is never written and stays still - a quirk of the model, not a design.",
+    "Four unscaled rhythms run at all times: the two back nubs rock 36 degrees in opposition on a 21-tick sine (:333-334), the jaw plate nods 7 degrees on a 42-tick sine (:335-336), the antennae wave 27 degrees on four sines of 17-21 ticks (:337-340), and the tail block with its twenty-two spots breathes 18 degrees on an 84-tick sine (:341-357).",
+    "The body, head, eight back bumps and six leg stubs are static; the head does not follow the look. The death gas (EntityStinkBug.java:85-102) is an effect on the kill, not a pose; there is no attack and no hurt sound (:70-73)."
+  ],
+  "clips": [
+    {
+      "name": "idle",
+      "verdict": "author",
+      "note": "REQUIRED with walk: the gate opens on the pair (today nothing ships; the classic code plays) — the rest: the nubs rocking (StinkBugModel.java:333-334), the antennae waving (:337-340), the jaw nodding (:335-336), the tail breathing (:341-357), the feet still"
+    },
+    {
+      "name": "walk",
+      "verdict": "author",
+      "note": "REQUIRED with idle: the locomotion loop — the five-foot patter at 2.325 rad/tick, 54 degrees x the walking speed (:330-332); drive the left middle foot too (the code leaves it still)"
+    },
+    {
+      "name": "swim",
+      "verdict": "leave",
+      "note": "no swim behaviour beyond the FloatGoal that keeps it at the surface (EntityStinkBug.java:48); the code draws the same patter in water; the fallback to walk covers it (section 2.4)"
+    },
+    {
+      "name": "calm_idle",
+      "verdict": "leave",
+      "note": "= idle: no synched attacking flag in EntityStinkBug.java and no attack at all (ATTACK_DAMAGE 0, :61; no melee or ranged goal), so calm_idle is covered by idle (ruled 2026-09-06, Q12 (a))"
+    },
+    {
+      "name": "hurt",
+      "verdict": "author",
+      "note": "a flinch: there is no hurt sound (EntityStinkBug.java:70-73); the PanicGoal at 1.5 speed runs after (:50); the hurtTime edge is client-observed",
+      "length_seconds": 0.3
+    },
+    {
+      "name": "death",
+      "verdict": "author",
+      "note": "ruled 2026-09-06, Q3 (a): the vanilla death flip stays; a creature whose JSON ships a `death` clip gets the clip-replaces-flip mode, designed when the first such clip arrives (the Queen's own death clip the precedent) - a `death` delivered here plays under the flip until then; the kill releases the nausea gas (EntityStinkBug.java:85-102) with the fart sound (:75-78) — a tail-up puff would be the pose",
+      "length_seconds": 1.0
+    }
+  ],
+  "extras": [],
+  "wishlist": [
+    "in `walk`: drive all six feet - the code never writes the left middle foot (StinkBugModel.java:330-332) - and add a body wobble; the six leg stubs (l1-l6) are static today",
+    "in `idle`: keep the four slow rhythms the code has (:333-357) and add a head twitch; the head is static (:184-187)",
+    "in `death`: the gas (EntityStinkBug.java:85-102) is the creature's whole point - a tail-up puff before the flip",
+    "in `hurt`: a scuttle-back flinch; there is no hurt sound to cue it (:70-73)"
+  ],
+  "effort_hours": null
+}

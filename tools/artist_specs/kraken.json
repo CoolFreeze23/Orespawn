@@ -1,0 +1,236 @@
+{
+  "registry": "kraken",
+  "display_name": "Kraken",
+  "status": "DRAFT — authored by a seed lane from the entity code, 2026-09-13; the owner's edit pending",
+  "locomotion": "flyer",
+  "artist_scope": "full contract (Tier 1, the simple-cyclic class: geckolib_migration_design.md section 5) with the §8.1 locks; the rig is not yet in-game (it lands through the seam in a later slice)",
+  "character_sheet": "The Kraken is a flying squid the size of a tower: a mantle head with two eyes, a siphon jet and an eight-flap mouth ringed by 41 teeth, a front, centre and back body, a three-piece tail with two fins, four eight-segment tentacles dangling below and two eight-segment arm tentacles ending in suckers (ModelKraken.createBodyLayer, ModelKraken.java:249-594). It has 1000 HP and 40 attack (MobStats.KRAKEN, createAttributes Kraken.java:107-115), a blue boss bar (:57-58), fears no fire (:131-133) and never touches the ground: it steers itself between flight targets it re-picks on arrival or a 1-in-250 roll (customServerAiStep :261-290, pickNewFlightTarget :292-358, applyFlightMovement :453-460), brings rain and thunder wherever it goes (:204-220) and drops a lightning bolt sixteen blocks below itself on a 1-in-400 roll (:251-259). On a 1-in-8 tick it looks for the nearest survival player in sight, or half the time for any living prey — ground-bound things and unridden mounts (:663-685) — flies to fifteen blocks above them and, when the point fifteen below itself is within reach, GRABS them (searchForPrey :371-396, attackWithSomething :541-552): the victim is carried fifteen blocks beneath it toward y 200, squeezed on a 1-in-50 roll and let go above y 190, on a 1-in-250 roll or when the Kraken is hurt (handleCaughtEntity :398-444, hurt :562-586). Hurt by a player above quarter health it turns on them (:565-570); below a quarter it climbs, and at an eighth of its health above y 130 it calls ten more Krakens (:332-357). It leaves the world above y 256 or after 3600 ticks (:287-289, :136-145), and spawns above y 50 under a clear column (checkSpawnRules :718-723). Read it as a slow airborne squid: tentacles trailing in long waves, the two arms snapping down for the grab.",
+  "size_notes": "Drawn at x1.0 of the rig, a third of that while PlayNicely (KrakenRenderer.java:28, applied :37-45; shadow 1.0) on a 512x512 sheet (ModelKraken.java:594); 4 x 15 block hitbox (ModEntities.java:199-200; 1.33 x 5 while PlayNicely, Kraken.getDefaultDimensions :176-180). The tentacles are eight-segment chains the code positions segment by segment, 30 units apart — key the joints, never the positions.",
+  "labels": {
+    "Head": "head (the mantle; static; intended hitbox part 'Head')",
+    "Lefteye": "left eye (static)",
+    "Righteye": "right eye (static)",
+    "Jet": "siphon jet (static)",
+    "Frontbody": "front body (static; intended hitbox part 'Frontbody')",
+    "Centerbody": "centre body (static; intended hitbox part 'Centerbody')",
+    "Backbody": "back body (static; intended hitbox part 'Backbody')",
+    "Tailbase1": "tail base (static; intended hitbox part 'Tailbase1')",
+    "Tail2": "tail, middle (static)",
+    "Tailtip": "tail tip (static; intended hitbox part 'Tailtip')",
+    "Finleft": "left tail fin (rolls 25 degrees at 0.32 rad/tick; intended hitbox part 'Finleft')",
+    "Finright": "right tail fin (rolls 27 degrees at 0.43 rad/tick; intended hitbox part 'Finright')",
+    "Mouth1": "mouth flap 1 (twitches 2.7 degrees about −0.38 / −0.38 on the latch)",
+    "Mouth2": "mouth flap 2 (about −0.38 / +0.38)",
+    "Mouth3": "mouth flap 3 (about +0.38 / +0.38)",
+    "Mouth4": "mouth flap 4 (about +0.38)",
+    "Mouth5": "mouth flap 5 (about +0.38 / −0.38)",
+    "Mouth6": "mouth flap 6 (about −0.38)",
+    "Mouth7": "mouth flap 7 (about +0.38)",
+    "Mouth8": "mouth flap 8 (about −0.38)",
+    "Tooth1": "tooth 1 (twitches seven times the mouth's angle about its rest)",
+    "Tooth2": "tooth 2", "Tooth3": "tooth 3", "Tooth4": "tooth 4", "Tooth5": "tooth 5", "Tooth6": "tooth 6", "Tooth7": "tooth 7", "Tooth8": "tooth 8", "Tooth9": "tooth 9", "Tooth10": "tooth 10",
+    "Tooth11": "tooth 11", "Tooth12": "tooth 12", "Tooth13": "tooth 13", "Tooth14": "tooth 14", "Tooth15": "tooth 15", "Tooth16": "tooth 16", "Tooth17": "tooth 17", "Tooth18": "tooth 18", "Tooth19": "tooth 19", "Tooth20": "tooth 20",
+    "Tooth21": "tooth 21", "Tooth22": "tooth 22", "Tooth23": "tooth 23", "Tooth24": "tooth 24", "Tooth25": "tooth 25", "Tooth26": "tooth 26", "Tooth27": "tooth 27", "Tooth28": "tooth 28", "Tooth29": "tooth 29", "Tooth30": "tooth 30",
+    "Tooth31": "tooth 31", "Tooth32": "tooth 32", "Tooth33": "tooth 33", "Tooth34": "tooth 34", "Tooth35": "tooth 35", "Tooth36": "tooth 36", "Tooth37": "tooth 37", "Tooth38": "tooth 38", "Tooth39": "tooth 39", "Tooth40": "tooth 40", "Tooth41": "tooth 41",
+    "Tent11": "dangling tentacle 1 (right upper), segment 1 — the root (sways 18 degrees; intended hitbox part 'Tent11')",
+    "Tent12": "dangling tentacle 1, segment 2", "Tent13": "dangling tentacle 1, segment 3", "Tent14": "dangling tentacle 1, segment 4", "Tent15": "dangling tentacle 1, segment 5", "Tent16": "dangling tentacle 1, segment 6", "Tent17": "dangling tentacle 1, segment 7", "Tent18": "dangling tentacle 1, segment 8 (the tip)",
+    "Tent21": "dangling tentacle 2 (right lower), segment 1 — the root (intended hitbox part 'Tent21')",
+    "Tent22": "dangling tentacle 2, segment 2", "Tent23": "dangling tentacle 2, segment 3", "Tent24": "dangling tentacle 2, segment 4", "Tent25": "dangling tentacle 2, segment 5", "Tent26": "dangling tentacle 2, segment 6", "Tent27": "dangling tentacle 2, segment 7", "Tent28": "dangling tentacle 2, segment 8 (the tip)",
+    "Tent31": "dangling tentacle 3 (left lower), segment 1 — the root (intended hitbox part 'Tent31')",
+    "Tent32": "dangling tentacle 3, segment 2", "Tent33": "dangling tentacle 3, segment 3", "Tent34": "dangling tentacle 3, segment 4", "Tent35": "dangling tentacle 3, segment 5", "Tent36": "dangling tentacle 3, segment 6", "Tent37": "dangling tentacle 3, segment 7", "Tent38": "dangling tentacle 3, segment 8 (the tip)",
+    "Tent41": "dangling tentacle 4 (left upper), segment 1 — the root (intended hitbox part 'Tent41')",
+    "Tent42": "dangling tentacle 4, segment 2", "Tent43": "dangling tentacle 4, segment 3", "Tent44": "dangling tentacle 4, segment 4", "Tent45": "dangling tentacle 4, segment 5", "Tent46": "dangling tentacle 4, segment 6", "Tent47": "dangling tentacle 4, segment 7", "Tent48": "dangling tentacle 4, segment 8 (the tip)",
+    "Tent51": "left arm tentacle (reaches when attacking), segment 1 — the root (intended hitbox part 'Tent51')",
+    "Tent52": "left arm tentacle, segment 2", "Tent53": "left arm tentacle, segment 3", "Tent54": "left arm tentacle, segment 4", "Tent55": "left arm tentacle, segment 5", "Tent56": "left arm tentacle, segment 6", "Tent57": "left arm tentacle, segment 7", "Tent58": "left arm tentacle, segment 8 (the tip; carries the sucker)",
+    "Sucktioncupleft": "left arm sucker (rides the left arm's tip, 30 units on)",
+    "Tent61": "right arm tentacle (reaches when attacking), segment 1 — the root (intended hitbox part 'Tent61')",
+    "Tent62": "right arm tentacle, segment 2", "Tent63": "right arm tentacle, segment 3", "Tent64": "right arm tentacle, segment 4", "Tent65": "right arm tentacle, segment 5", "Tent66": "right arm tentacle, segment 6", "Tent67": "right arm tentacle, segment 7", "Tent68": "right arm tentacle, segment 8 (the tip; carries the sucker)",
+    "Sucktioncupright": "right arm sucker (rides the right arm's tip, 30 units on)"
+  },
+  "groups": [
+    {
+      "name": "fin_right",
+      "bones": ["Finright"],
+      "omega": 0.43,
+      "axis": "z",
+      "gait_scaled": false,
+      "amplitude": "pi x 0.15 = 0.471 rad (27 deg) about zero",
+      "plain": "the right tail fin rolls on its own slow rhythm",
+      "math": "Finright.zRot = cos(t * 0.43) * pi * 0.15",
+      "source": "ModelKraken.java:599; ANIM_SPEED 1.0 (:21)",
+      "omega_note": "the classic phase is ageInTicks x 0.43: the natural period is 14.6 ticks"
+    },
+    {
+      "name": "fin_left",
+      "bones": ["Finleft"],
+      "omega": 0.32,
+      "axis": "z",
+      "gait_scaled": false,
+      "amplitude": "pi x 0.14 = 0.44 rad (25 deg) about zero",
+      "plain": "the left tail fin rolls on a slower rhythm than the right, so the two never quite agree",
+      "math": "Finleft.zRot = cos(t * 0.32) * pi * 0.14",
+      "source": "ModelKraken.java:600",
+      "omega_note": "the classic phase is ageInTicks x 0.32: the natural period is 19.6 ticks"
+    },
+    {
+      "name": "tentacles",
+      "bones": [
+        "Tent11", "Tent12", "Tent13", "Tent14", "Tent15", "Tent16", "Tent17", "Tent18",
+        "Tent21", "Tent22", "Tent23", "Tent24", "Tent25", "Tent26", "Tent27", "Tent28",
+        "Tent31", "Tent32", "Tent33", "Tent34", "Tent35", "Tent36", "Tent37", "Tent38",
+        "Tent41", "Tent42", "Tent43", "Tent44", "Tent45", "Tent46", "Tent47", "Tent48"
+      ],
+      "omega": 0.1,
+      "axis": "x and y (a pitch wave and a yaw wave at slightly different rates)",
+      "gait_scaled": false,
+      "amplitude": "pi x 0.1 = 0.314 rad (18 deg) on every segment, each 0.314 rad (18 deg of phase) behind the one before, about a splay on the root and half of it on the second segment (tentacle 1: yaw +0.44; 2 and 3: pitch +0.26; 4: yaw −0.44); the pitch wave at 0.101 / 0.097 / 0.093 / 0.087 rad/tick and the yaw wave at 0.102 / 0.098 / 0.092 / 0.088 for tentacles 1-4 (the pitch sign −1); each segment placed 30 units along the one before; never changed by the attacking flag",
+      "plain": "the four lower tentacles trail in slow travelling waves, each tentacle at its own slightly different pair of rates so they drift apart, whatever the Kraken is doing",
+      "math": "for tentacle d (1..4), segment k (0..7): p_k.xRot = xoff_k - cos(t * differ_d - k * 0.314) * pi * 0.1; p_k.yRot = yoff_k - cos(t * ydiffer_d - k * 0.314) * pi * 0.1 (xoff / yoff on k = 0, halved on k = 1, zero after); positions along the chain by sin/cos x 30",
+      "source": "ModelKraken.java:716-719 (dangleTentacle :842-921 with att 0)",
+      "omega_note": "the classic phases are ageInTicks x 0.101 / 0.097 / 0.093 / 0.087 (pitch) and x 0.102 / 0.098 / 0.092 / 0.088 (yaw): periods from 62 to 72 ticks; the seed's 0.1 stands for the family"
+    },
+    {
+      "name": "arms",
+      "bones": [
+        "Tent51", "Tent52", "Tent53", "Tent54", "Tent55", "Tent56", "Tent57", "Tent58", "Sucktioncupleft",
+        "Tent61", "Tent62", "Tent63", "Tent64", "Tent65", "Tent66", "Tent67", "Tent68", "Sucktioncupright"
+      ],
+      "omega": 0.2,
+      "axis": "x and y",
+      "gait_scaled": false,
+      "amplitude": "calm: pi x 0.1 = 0.314 rad (18 deg) on every segment at 0.2 rad/tick (the yaw wave at 0.1), each 18 degrees of phase behind the one before, about a −0.25 pitch on the root (half on the second segment), the left arm's pitch wave negative and the right's positive; attacking: pi x 0.03 = 0.094 rad (5.4 deg) at 0.5 rad/tick with no splay — the arms straighten and quiver; the suckers ride the tips 30 units on",
+      "plain": "the two arm tentacles wave like the others at rest and straighten into a fast fine quiver while the attacking flag is set — the grab's pose",
+      "math": "att = attacking; differ = att ? 0.5 : 0.2; amp = att ? 0.03 : 0.1; xoff = att ? 0 : -0.25; s = -1 (left, tentacle 5) / +1 (right, tentacle 6); p_k.xRot = xoff_k + s * cos(t * differ - k * 0.314) * pi * amp; p_k.yRot = -cos(t * 0.1 - k * 0.314) * pi * amp; Sucktioncup = the tip's angles, placed 30 units on",
+      "source": "ModelKraken.java:604-617 (dangleTentacle :842-921 with dir 5 / 6, :866-875)",
+      "phase": "the synced DATA_ATTACKING byte (Kraken.java:44; set at :550 on the grab, cleared at :450 on release) selects",
+      "omega_note": "the classic phase calm is ageInTicks x 0.2 (period 31.4 ticks; the yaw wave x 0.1, 62.8 ticks); attacking x 0.5 (period 12.6 ticks)"
+    },
+    {
+      "name": "mouth",
+      "bones": [
+        "Mouth1", "Mouth2", "Mouth3", "Mouth4", "Mouth5", "Mouth6", "Mouth7", "Mouth8",
+        "Tooth1", "Tooth2", "Tooth3", "Tooth4", "Tooth5", "Tooth6", "Tooth7", "Tooth8", "Tooth9", "Tooth10",
+        "Tooth11", "Tooth12", "Tooth13", "Tooth14", "Tooth15", "Tooth16", "Tooth17", "Tooth18", "Tooth19", "Tooth20",
+        "Tooth21", "Tooth22", "Tooth23", "Tooth24", "Tooth25", "Tooth26", "Tooth27", "Tooth28", "Tooth29", "Tooth30",
+        "Tooth31", "Tooth32", "Tooth33", "Tooth34", "Tooth35", "Tooth36", "Tooth37", "Tooth38", "Tooth39", "Tooth40", "Tooth41"
+      ],
+      "omega": 0.5,
+      "axis": "x and y",
+      "gait_scaled": false,
+      "amplitude": "when the latch picks it: pi x 0.015 = 0.047 rad (2.7 deg) on the eight mouth flaps about ±0.38, and seven times that (19 deg) on the 41 teeth about their rests (each tooth's own sign); otherwise still",
+      "plain": "the mouth flaps and teeth twitch in the periods a per-entity random latch picks for them — a few periods in ten at rest, half of them while attacking — and hold still otherwise",
+      "math": "at each rising zero-crossing of cos(t * 0.66): ri1 = attacking ? nextInt(4) : nextInt(10); m = (ri1 == 1 || ri1 == 3) ? cos(t * 0.5) * pi * 0.015 : 0; MouthN.xRot / yRot = ±0.38 ± m; ToothN.xRot / yRot = rest ± 7m",
+      "source": "ModelKraken.java:622-714",
+      "phase": "a per-entity random latch (RenderInfo ri1, re-rolled at each rising zero-crossing of a 0.66 rad/tick wave, :622-635); the attacking flag loads the dice",
+      "omega_note": "the classic phase is ageInTicks x 0.5: the natural period is 12.6 ticks; the latch re-rolls every 9.5 ticks"
+    }
+  ],
+  "behaviour": [
+    "The two tail fins roll on their own rhythms — the right 27 degrees at 0.43 rad/tick, the left 25 degrees at 0.32 — so they never agree (ModelKraken.java:599-600). The head, eyes, jet, the three body blocks and the tail itself are static; nothing reads the walking speed, the walk position or the look angles.",
+    "The four lower tentacles trail in slow travelling waves, 18 degrees on every segment and 18 degrees of phase between segments, each tentacle at its own pair of rates (a pitch wave at 0.087-0.101 rad/tick and a yaw wave at 0.088-0.102), the root splayed and the chain placed 30 units segment by segment (:716-719, dangleTentacle :842-921); the attacking flag never touches them.",
+    "The two arm tentacles wave the same way at rest (0.2 rad/tick, splayed −0.25 at the root) and, while the synced DATA_ATTACKING byte is set (Kraken.java:44, raised on the grab at :550, cleared on release at :450), straighten and quiver 5 degrees at 0.5 rad/tick — the pose of the hold; the suckers ride the tips (:604-617).",
+    "The mouth flaps twitch 2.7 degrees and the 41 teeth 19 degrees at 0.5 rad/tick only in the periods a per-entity random latch picks — 2 in 10 at rest, 2 in 4 attacking, re-rolled every 9.5 ticks (:622-714).",
+    "The grab (attackWithSomething, Kraken.java:541-552), the squeeze on the held victim (:435-437), the reinforcements (:339-357) and the lightning (:251-259) are rolled by the AI — nothing in the code fires an animation for them."
+  ],
+  "clips": [
+    {
+      "name": "idle",
+      "verdict": "author",
+      "note": "REQUIRED with walk: the gate opens on the pair — the hover: fins rolling, tentacles trailing, the mouth still"
+    },
+    {
+      "name": "walk",
+      "verdict": "author",
+      "note": "REQUIRED with idle: the bare walk is the first group's (fin_right; the rig has no gait group) — a label under the naming rule; in flight the fly -> walk fallback plays it"
+    },
+    {
+      "name": "fly",
+      "verdict": "author",
+      "note": "the true locomotion: the Kraken steers itself between flight targets and never lands (Kraken.java:261-290, :453-460) — the hover with the tentacles trailing behind the motion"
+    },
+    {
+      "name": "aggro_idle",
+      "verdict": "author",
+      "note": "the attacking flag (Kraken.java:550, set on the grab while a victim is held): the two arm tentacles straight and quivering (ModelKraken.java:872-875), the mouth twitching in half the periods (:632-634); NOT offered by the trigger inventory today (it classifies the flag STATE? — cleared unconditionally at :450 — and offers no pair) — kept here for the owner"
+    },
+    {
+      "name": "calm_idle",
+      "verdict": "covered by idle",
+      "note": "covered by idle while the inventory offers no aggro_idle / calm_idle pair (DATA_ATTACKING classified STATE?: cleared unconditionally at Kraken.java:450 on release); the rest with the flag clear is the arms waving like the other tentacles (:866-869), the mouth twitching rarely (:629-630)"
+    },
+    {
+      "name": "attack",
+      "verdict": "author",
+      "note": "the squeeze: doHurtTarget on the held victim, 15 blocks below, on a 1-in-50 tick (Kraken.java:435-437) — 40 of damage; author a pulse of the arm tentacles and a mouth-clench; the grab itself is the `grab` extra",
+      "length_seconds": 0.6
+    },
+    {
+      "name": "hurt",
+      "verdict": "author",
+      "note": "a flinch (no hurt sound: getHurtSound :609-612); hurt() (:562-586) refuses damage for 30 ticks, half the time lets the victim go, and above quarter health turns the flight on a player attacker",
+      "length_seconds": 0.5
+    },
+    {
+      "name": "death",
+      "verdict": "author",
+      "note": "ruled 2026-09-06, Q3 (a): the vanilla death flip stays; a creature whose JSON ships a `death` clip gets the clip-replaces-flip mode, designed when the first such clip arrives (the Queen's own death clip the precedent) - a `death` delivered here plays under the flip until then",
+      "length_seconds": 3.0
+    }
+  ],
+  "extras": [
+    {
+      "name": "grab",
+      "loop": false,
+      "layer": "overlay",
+      "trigger": "attackWithSomething (Kraken.java:541-552) from searchForPrey :371-396 on a 1-in-8 tick with no victim held: when the point 15 blocks below the Kraken is within reach of the prey it becomes `caught` and the attacking flag rises (:548-550); no animation trigger is wired today (the flag's rising edge, or a named-site trigger, when the rig lands)",
+      "bones": ["Tent51", "Tent52", "Tent53", "Tent54", "Tent55", "Tent56", "Tent57", "Tent58", "Sucktioncupleft", "Tent61", "Tent62", "Tent63", "Tent64", "Tent65", "Tent66", "Tent67", "Tent68", "Sucktioncupright"],
+      "length_seconds": 0.8,
+      "code_triggered": false,
+      "note": "the two arms snapping down and closing 15 blocks below"
+    },
+    {
+      "name": "summon",
+      "loop": false,
+      "layer": "overlay",
+      "trigger": "pickNewFlightTarget (Kraken.java:332-357): once, when hurt by a player, below an eighth of its health and above y 130, ten more Krakens are spawned around it at y 170 (:339-356); no animation trigger is wired today",
+      "bones": ["Head", "Frontbody", "Centerbody", "Backbody", "Mouth1", "Mouth2", "Mouth3", "Mouth4", "Mouth5", "Mouth6", "Mouth7", "Mouth8"],
+      "length_seconds": 1.0,
+      "code_triggered": false,
+      "note": "a mantle flare and a mouth-gape for the call"
+    },
+    {
+      "name": "bolt",
+      "loop": false,
+      "layer": "overlay",
+      "trigger": "customServerAiStep (Kraken.java:251-259): on a 1-in-400 roll (and not PlayNicely) a lightning bolt is dropped 16 blocks below the Kraken; no animation trigger is wired today",
+      "bones": ["Head", "Jet", "Tailbase1", "Tail2", "Tailtip", "Finleft", "Finright"],
+      "length_seconds": 0.5,
+      "code_triggered": false,
+      "note": "a jet-pulse and a fin-clap for the discharge"
+    }
+  ],
+  "wishlist": [
+    "in `fly`: a slow mantle pulse with the fins' roll (ModelKraken.java:599-600) — the code never moves the body — and the tentacles trailing behind the motion",
+    "in `idle` while a victim is held: the two arm tentacles reaching down straight and quivering (:872-875, the attacking branch) while the four dangling ones keep their slow waves — the contract's aggro_idle would carry it, but the trigger inventory does not offer it here (DATA_ATTACKING classified STATE?, cleared unconditionally at Kraken.java:450)",
+    "in `grab`: the arms closing on a point 15 blocks below (Kraken.java:424-426) and the mantle flaring",
+    "in `attack`: a squeeze pulse down the arm tentacles for the hurt on the held victim (Kraken.java:435-437)"
+  ],
+  "locked_bones_provisional": [
+    {"bone": "Head", "size": [5, 4], "damage": 1},
+    {"bone": "Centerbody", "size": [6, 5], "damage": 0.5},
+    {"bone": "Frontbody", "size": [6, 5], "damage": 0.5},
+    {"bone": "Backbody", "size": [6, 5], "damage": 0.5},
+    {"bone": "Tent11", "size": [1.4, 4], "damage": 0.25},
+    {"bone": "Tent21", "size": [1.4, 4], "damage": 0.25},
+    {"bone": "Tent31", "size": [1.4, 4], "damage": 0.25},
+    {"bone": "Tent41", "size": [1.4, 4], "damage": 0.25},
+    {"bone": "Tent51", "size": [1.4, 4], "damage": 0.25},
+    {"bone": "Tent61", "size": [1.4, 4], "damage": 0.25},
+    {"bone": "Tailbase1", "size": [2, 3], "damage": 0.25},
+    {"bone": "Tailtip", "size": [2, 3], "damage": 0.25},
+    {"bone": "Finleft", "size": [2, 1], "damage": 0.25},
+    {"bone": "Finright", "size": [2, 1], "damage": 0.25}
+  ],
+  "locked_bones_note": "The design's section 6 ModelKraken row (geckolib_migration_design.md:450): 'Head [5,4] @1; Centerbody/Frontbody/Backbody [6,5] @0.5; eight structural tentacle roots (Tent11, Tent21, …) [1.4,4] @0.25; Tailbase1/Tailtip [2,3] @0.25; fins [2,1] @0.25'. Head, Centerbody, Frontbody, Backbody, Tailbase1 and Tailtip resolve as written. 'eight structural tentacle roots' does not resolve as counted: the port model has SIX tentacle chains (Tent1x to Tent6x, eight segments each — ModelKraken.createBodyLayer; four dangling, two arms), so the six roots Tent11, Tent21, Tent31, Tent41, Tent51 and Tent61 are listed and the owner reconciles the count. 'fins' taken as Finleft / Finright. The row asks that the part count and packets be benchmarked before every tentacle root is accepted.",
+  "effort_hours": null
+}

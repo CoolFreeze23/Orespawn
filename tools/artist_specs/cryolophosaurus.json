@@ -1,0 +1,123 @@
+{
+  "registry": "cryolophosaurus",
+  "display_name": "Cryolophosaurus",
+  "status": "DRAFT — authored by a seed lane from the entity code, 2026-09-13; the owner's edit pending",
+  "locomotion": "walker",
+  "artist_scope": "full contract (Tier 2, the gait-scaled class: geckolib_migration_design.md section 5); the rig is not yet in-game (it lands through the seam in a later slice)",
+  "character_sheet": "A small crested theropod: a body with hips and a tail behind, a neck to a head with a snout, a jaw beneath and the crest on top, two two-piece arms and two legs of thigh, shin, heel spur and foot (ModelCryolophosaurus.java:47-66; 20 parts on a 128x128 sheet, drawn at half size). It is a timid hunter: 10 HP, 3 damage, 1 armour, speed 0.25 (MobStats.CRYOLOPHOSAURUS, Cryolophosaurus.java:79-87). Every fifth tick it looks 9 blocks around for prey in sight - the big dinosaurs, ghosts, cave fishers, gamma metroids, butterflies, fireflies, mosquitoes, rock bases and creative players excepted (:117-136) - walks at it at 1.25 and bites within 2.2 blocks on timid 1-in-12-or-1-in-14 dice (:94-115, doHurtTarget :111); it retaliates when hit (:71) and, under a modern option, chases its attacker with a dinosaur melee goal whose attacking callback is a no-op (:57-67, :74-77 - it has no attacking flag). It floats (:55), panics (:56), wanders (:68) and spawns in darkness at night or below y 50 (:172-178). Read it as a nervous little raptor: a quick stride on rigid legs, the jaw working slowly all the time, the arms and tail carried still.",
+  "size_notes": "Drawn at x0.5 of the rig (CryolophosaurusRenderer.java:20, 30) on a 128x128 sheet (ModelCryolophosaurus.java:173); the hitbox is 0.75 x 0.75 (ModEntities.java:78-79); shadow 0.75 x 0.5 (CryolophosaurusRenderer.java:23).",
+  "labels": {
+    "shape1": "body",
+    "shape2": "neck (angled -13 deg)",
+    "shape3": "head",
+    "shape11": "snout",
+    "jaw": "lower jaw (hinged -72 deg; works open and shut)",
+    "shape9": "crest (on the head, -54 deg)",
+    "shape5": "hips",
+    "shape6": "tail",
+    "shape7": "right arm, upper",
+    "shape8": "right arm, forearm",
+    "shape16": "left arm, upper",
+    "shape17": "left arm, forearm",
+    "rightleg": "right thigh (rest -0.279 rad)",
+    "rightleg2": "right shin (rest +0.384 rad)",
+    "rightleg3": "right heel spur (rest -0.68 rad)",
+    "rightleg4": "right foot",
+    "leftleg": "left thigh (rest -0.279 rad)",
+    "leftleg2": "left shin (rest +0.384 rad)",
+    "leftleg3": "left heel spur (rest -0.68 rad)",
+    "leftleg4": "left foot"
+  },
+  "groups": [
+    {
+      "name": "gait",
+      "bones": [
+        "rightleg",
+        "rightleg2",
+        "rightleg3",
+        "rightleg4",
+        "leftleg",
+        "leftleg2",
+        "leftleg3",
+        "leftleg4"
+      ],
+      "omega": 0.975,
+      "axis": "x",
+      "gait_scaled": true,
+      "amplitude": "rests -0.279 / +0.384 / -0.68 / 0 rad (thigh, shin, heel spur, foot), then pi x 0.25 = 0.785 rad (45 deg) x the walking speed at 1.3 x 0.75 - still (rests only) below the 0.1 threshold",
+      "plain": "the two legs stride in opposition, every part of a leg swinging together as one rigid unit",
+      "math": "a = limbSwingAmount > 0.1 ? cos(ageInTicks * 1.3 * 0.75) * pi * 0.25 * limbSwingAmount : 0; rightleg.xRot = -0.279 + a; rightleg2.xRot = 0.384 + a; rightleg3.xRot = -0.68 + a; rightleg4.xRot = a; leftleg* = the same rests - a",
+      "source": "ModelCryolophosaurus.java:179-187",
+      "wingspeed": 0.75,
+      "omega_note": "the classic phase is ageInTicks x 1.3 x 0.75 (wingspeed, ModelCryolophosaurus.java:24): the natural period is 2 pi / 0.975 = 6.4 ticks"
+    },
+    {
+      "name": "jaw",
+      "bones": [
+        "jaw"
+      ],
+      "omega": 0.28,
+      "axis": "x",
+      "gait_scaled": false,
+      "amplitude": "-1.15 rad rest, then pi x 0.1 = 0.314 rad (18 deg), at all times (no attacking branch)",
+      "plain": "the jaw works slowly open and shut around its hinge, whatever the creature is doing",
+      "math": "jaw.xRot = -1.15 + cos(ageInTicks * 0.28) * pi * 0.1",
+      "source": "ModelCryolophosaurus.java:188",
+      "omega_note": "the phase is ageInTicks x 0.28 (no wingspeed): the natural period is 2 pi / 0.28 = 22.4 ticks"
+    }
+  ],
+  "behaviour": [
+    "One gait rhythm on the legs (ModelCryolophosaurus.java:179-187): above a walking speed of 0.1 the cosine of the age x 1.3 x 0.75 (wingspeed, :24), x pi x 0.25, x the walking speed is added to every part of the right leg and subtracted from every part of the left - a 45-degree stride at full speed every 6.4 ticks; thigh, shin, heel spur and foot share one pivot and swing as one rigid unit around their rests. Below the threshold the legs snap to their rests.",
+    "The jaw works at all times (:188): -1.15 rad plus the cosine of the age x 0.28 x pi x 0.1 - 18 degrees every 22.4 ticks; there is no attacking branch and no attacking flag (the melee goal's callback is a no-op, Cryolophosaurus.java:74-77).",
+    "The body, neck, head, snout, crest, hips, tail and both arms never move; nothing reads the look (netHeadYaw unused), so the LookAtPlayerGoal (Cryolophosaurus.java:69) turns nothing visible.",
+    "The bite (doHurtTarget :111, within 2.2 blocks on timid dice) has no pose of its own; the renderer draws the whole rig at half size (CryolophosaurusRenderer.java:30)."
+  ],
+  "clips": [
+    {
+      "name": "idle",
+      "verdict": "author",
+      "note": "REQUIRED with walk: the gate opens on the pair (today nothing ships; the classic code plays) - the standing loop: legs at their rests, the jaw working"
+    },
+    {
+      "name": "walk",
+      "verdict": "author",
+      "note": "REQUIRED with idle: the locomotion loop - the gait group's 45-degree stride at full speed (ModelCryolophosaurus.java:179-187), scaled by walking speed in-game"
+    },
+    {
+      "name": "swim",
+      "verdict": "author",
+      "note": "it has the state: a FloatGoal keeps it at the surface (Cryolophosaurus.java:55) - a wading stride with the tail sculling; optional: falls back to walk then idle when absent (section 2.4)"
+    },
+    {
+      "name": "calm_idle",
+      "verdict": "leave",
+      "note": "= idle: no synched attacking flag in Cryolophosaurus.java (the melee goal's setAttacking callback is a no-op, :74-77), so calm_idle is covered by idle until this creature's SPEC adds the byte (ruled 2026-09-06, Q12 (a))"
+    },
+    {
+      "name": "attack",
+      "verdict": "author",
+      "note": "a bite: doHurtTarget within 2.2 blocks on a 1-in-12-or-1-in-14 roll each fifth think tick (Cryolophosaurus.java:105-114), and the optional dinosaur melee goal's chase (:64-67; the cryolophosaurus preset, DinosaurMeleeAttackGoal.java:37); no attacking flag, so the strike is transport 1 (the server LivingDamageEvent.Post) - a quick head-down snap",
+      "length_seconds": 0.5
+    },
+    {
+      "name": "hurt",
+      "verdict": "author",
+      "note": "a flinch: no hurt() override (vanilla LivingEntity.hurt; the cryo_hurt sound at Cryolophosaurus.java:157-160); the hurtTime edge is client-observed - it panics (:56) or retaliates (:71)",
+      "length_seconds": 0.3
+    },
+    {
+      "name": "death",
+      "verdict": "author",
+      "note": "ruled 2026-09-06, Q3 (a): the vanilla death flip stays; a creature whose JSON ships a `death` clip gets the clip-replaces-flip mode, designed when the first such clip arrives (the Queen's own death clip the precedent) - a `death` delivered here plays under the flip until then",
+      "length_seconds": 1.0
+    }
+  ],
+  "extras": [],
+  "wishlist": [
+    "in `walk`: bend the legs - thigh, shin, heel spur and foot swing as one rigid unit (ModelCryolophosaurus.java:180-187); a knee and an ankle that lag the thigh, and a tail that counter-sways (static today), make a raptor's stride",
+    "in `attack`: a snap - the bite (Cryolophosaurus.java:111) has no pose today; a head-down lunge with the jaw closing on the impact frame",
+    "in `idle`: a head turn to the player (the LookAtPlayerGoal runs, Cryolophosaurus.java:69, but the model ignores netHeadYaw) and a twitch of the little arms",
+    "in `hurt`: a startled hop back - it is timid and panics (Cryolophosaurus.java:56)"
+  ],
+  "effort_hours": null
+}

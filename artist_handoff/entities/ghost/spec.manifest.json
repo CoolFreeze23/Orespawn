@@ -1,0 +1,384 @@
+{
+  "generated_by": "tools/artist_package.py 0.2.9 (the full folder, 2026-09-13, fourth set, items 5, 7 and 8: every artist-tier species packaged - a rig not yet in-game from the reference leg's converter output, bone names final; the Tier-1 bosses' intended locked bones from the design's section 6 rendered in section 7 and validated against the geo; the README's priority table the full list, bosses first, closing with the deliverable count)",
+  "registry": "ghost",
+  "display_name": "Ghost",
+  "tier": 2,
+  "tier_label": "Tier 2",
+  "geo_file": "reference_ghost.geo.json",
+  "animation_file": "ghost.animation.json",
+  "bbmodel_file": "ghost.bbmodel",
+  "texture_size": [
+    64,
+    64
+  ],
+  "bones": [
+    {
+      "name": "HeadAndBody",
+      "parent": null,
+      "pivot": [
+        0,
+        24,
+        0
+      ],
+      "rotation": null,
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            -3.0,
+            3.0,
+            -3.0
+          ],
+          "size": [
+            6.0,
+            21.0,
+            6.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              6.0,
+              6.0,
+              -6.0,
+              21.0
+            ],
+            "east": [
+              18.0,
+              6.0,
+              -6.0,
+              21.0
+            ],
+            "north": [
+              12.0,
+              6.0,
+              -6.0,
+              21.0
+            ],
+            "south": [
+              24.0,
+              6.0,
+              -6.0,
+              21.0
+            ],
+            "up": [
+              12.0,
+              0.0,
+              -6.0,
+              6.0
+            ],
+            "down": [
+              18.0,
+              6.0,
+              -6.0,
+              -6.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "LArm",
+      "parent": null,
+      "pivot": [
+        -3,
+        18,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        19.0000024134
+      ],
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            -4.0,
+            8.0,
+            -1.0
+          ],
+          "size": [
+            2.0,
+            11.0,
+            2.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              36.0,
+              2.0,
+              -2.0,
+              11.0
+            ],
+            "east": [
+              40.0,
+              2.0,
+              -2.0,
+              11.0
+            ],
+            "north": [
+              38.0,
+              2.0,
+              -2.0,
+              11.0
+            ],
+            "south": [
+              42.0,
+              2.0,
+              -2.0,
+              11.0
+            ],
+            "up": [
+              38.0,
+              0.0,
+              -2.0,
+              2.0
+            ],
+            "down": [
+              40.0,
+              2.0,
+              -2.0,
+              -2.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "RArm",
+      "parent": null,
+      "pivot": [
+        3,
+        18,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        -19.0000024134
+      ],
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            2.0,
+            8.0,
+            -1.0
+          ],
+          "size": [
+            2.0,
+            11.0,
+            2.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              27.0,
+              2.0,
+              -2.0,
+              11.0
+            ],
+            "east": [
+              31.0,
+              2.0,
+              -2.0,
+              11.0
+            ],
+            "north": [
+              29.0,
+              2.0,
+              -2.0,
+              11.0
+            ],
+            "south": [
+              33.0,
+              2.0,
+              -2.0,
+              11.0
+            ],
+            "up": [
+              29.0,
+              0.0,
+              -2.0,
+              2.0
+            ],
+            "down": [
+              31.0,
+              2.0,
+              -2.0,
+              -2.0
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "locked_bones": [],
+  "lock_mode": "warn",
+  "lock_policy": "warn-keyed, refuse-structural",
+  "lock_policy_text": "Keying a locked bone is allowed; the checker warns, and the hitbox part follows the bone in-game (the consequence, so keep such keys deliberate). Renaming, re-parenting or deleting a locked bone is refused.",
+  "keyed_locked_by_shipped_clip": {},
+  "native": false,
+  "controller_kind": "phase_locked",
+  "clips": [
+    {
+      "name": "idle",
+      "loop": "true",
+      "role": "contract",
+      "code_triggered": false,
+      "required": true,
+      "length_rule": "near:1.0",
+      "length_seconds": 1.0,
+      "verdict": "author"
+    },
+    {
+      "name": "idle_rarm_roll",
+      "loop": "true",
+      "role": "contract",
+      "code_triggered": false,
+      "required": false,
+      "length_rule": "near:1.0",
+      "length_seconds": 1.0,
+      "verdict": "author"
+    },
+    {
+      "name": "idle_larm_swing",
+      "loop": "true",
+      "role": "contract",
+      "code_triggered": false,
+      "required": false,
+      "length_rule": "near:1.0",
+      "length_seconds": 1.0,
+      "verdict": "author"
+    },
+    {
+      "name": "idle_rarm_swing",
+      "loop": "true",
+      "role": "contract",
+      "code_triggered": false,
+      "required": false,
+      "length_rule": "near:1.0",
+      "length_seconds": 1.0,
+      "verdict": "author"
+    },
+    {
+      "name": "walk",
+      "loop": "true",
+      "role": "contract",
+      "code_triggered": false,
+      "required": true,
+      "length_rule": "near:1.0",
+      "length_seconds": 1.0,
+      "verdict": "author"
+    },
+    {
+      "name": "walk_rarm_roll",
+      "loop": "true",
+      "role": "contract",
+      "code_triggered": false,
+      "required": false,
+      "length_rule": "near:1.0",
+      "length_seconds": 1.0,
+      "verdict": "author"
+    },
+    {
+      "name": "walk_larm_swing",
+      "loop": "true",
+      "role": "contract",
+      "code_triggered": false,
+      "required": false,
+      "length_rule": "near:1.0",
+      "length_seconds": 1.0,
+      "verdict": "author"
+    },
+    {
+      "name": "walk_rarm_swing",
+      "loop": "true",
+      "role": "contract",
+      "code_triggered": false,
+      "required": false,
+      "length_rule": "near:1.0",
+      "length_seconds": 1.0,
+      "verdict": "author"
+    },
+    {
+      "name": "fly",
+      "loop": "true",
+      "role": "contract",
+      "code_triggered": false,
+      "required": false,
+      "length_rule": "near:1.0",
+      "length_seconds": 1.0,
+      "verdict": "author"
+    },
+    {
+      "name": "calm_idle",
+      "loop": "true",
+      "role": "contract",
+      "code_triggered": false,
+      "required": false,
+      "length_rule": "near:1.0",
+      "length_seconds": 1.0,
+      "verdict": "leave"
+    },
+    {
+      "name": "attack",
+      "loop": "false",
+      "role": "contract",
+      "code_triggered": true,
+      "required": false,
+      "length_rule": "near:0.5",
+      "length_seconds": 0.5,
+      "verdict": "author"
+    },
+    {
+      "name": "hurt",
+      "loop": "false",
+      "role": "contract",
+      "code_triggered": true,
+      "required": false,
+      "length_rule": "near:0.3",
+      "length_seconds": 0.3,
+      "verdict": "author"
+    },
+    {
+      "name": "death",
+      "loop": "hold_on_last_frame",
+      "role": "contract",
+      "code_triggered": true,
+      "required": false,
+      "length_rule": "near:1.0",
+      "length_seconds": 1.0,
+      "verdict": "author"
+    }
+  ],
+  "allow_idle_alt": true,
+  "textures": [
+    {
+      "canonical": "ghost.png",
+      "width": 64,
+      "height": 64,
+      "aliases": [
+        "ghosttexture.png"
+      ]
+    }
+  ],
+  "effort_hours": 16.6,
+  "effort_source": "generator: 4 h + 0.2 h/bone x 3 + 1 h/clip x 12 to author or improve (owner adjusts)",
+  "reference_clip": null,
+  "exact_transcription": false,
+  "rig_source": "reference-leg converter output",
+  "in_game": false,
+  "reference_id": "reference_ghost",
+  "locked_bones_source": "none",
+  "locked_bones_provisional": []
+}

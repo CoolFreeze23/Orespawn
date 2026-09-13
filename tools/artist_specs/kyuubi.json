@@ -1,0 +1,233 @@
+{
+  "registry": "kyuubi",
+  "display_name": "Kyuubi",
+  "status": "DRAFT — authored by a seed lane from the entity code, 2026-09-13; the owner's edit pending",
+  "locomotion": "walker",
+  "artist_scope": "full contract (Tier 2, the gait-scaled class (with hand-written FK chains on the tail and horns): geckolib_migration_design.md section 5); the rig is not yet in-game (it lands through the seam in a later slice)",
+  "character_sheet": "A burning fox demon that walks upright: a chest and body, a head (built turned 180 degrees and turned back by the code) with two five-piece flame horns sweeping back from it, two-part arms and legs, and a nine-segment tail curling up and over its back - and every body part has a 'Fire' twin drawn over it, 21 pairs on a 512x256 sheet (KyuubiModel.java createBodyLayer). It is hostile: 125 HP, 10 attack, 10 armour (EntityKyuubi.java:65-72, MobStats.KYUUBI), fire-immune (ModEntities.java:254) and sets itself alight every few ticks (:82-89); water burns it (:90-91). Every tenth think tick it picks the nearest living thing that is not a monster within 12 blocks and in sight (:110-114, :131-154), walks at it and, within 8 blocks, hurls a small fireball from 1.25 blocks up on a roll (:115-125); it never bites. It floats (:57), panics when hurt (:58) and spawns anywhere (:180-184). Read it as a flaming, loping biped: arms and legs pumping with the stride, the tail and the two horns rippling in slow travelling waves, the head following the player.",
+  "size_notes": "Drawn at x1.0 of the rig (KyuubiRenderer.java:24; no scale override) on a 512x256 sheet (KyuubiModel.java:317); the hitbox is 0.5 x 1.25 (ModEntities.java:252-254); shadow 0.1 (KyuubiRenderer.java:26).",
+  "labels": {
+    "body": "body (lower torso, pitched -17 deg)",
+    "bodyFire": "body, fire twin",
+    "chest": "chest (upper torso, pitched -49 deg)",
+    "chestFire": "chest, fire twin",
+    "head": "head (built turned 180 deg; the code adds pi to its yaw so it faces forward and follows the look)",
+    "headFire": "head, fire twin (follows the look without the flip; the horns hang from its yaw)",
+    "lfArmLower": "left forearm (placed 8 units along the upper arm's pitch by the code)",
+    "lfArmLowerFire": "left forearm, fire twin",
+    "lfArmUpper": "left upper arm",
+    "lfArmUpperFire": "left upper arm, fire twin",
+    "lfHorn1": "left flame horn, piece 1 (base, at the head)",
+    "lfHorn2": "left flame horn, piece 2",
+    "lfHorn3": "left flame horn, piece 3",
+    "lfHorn4": "left flame horn, piece 4",
+    "lfHorn5": "left flame horn, piece 5 (tip)",
+    "lfLegLower": "left shin (placed 8 units along the thigh's pitch by the code)",
+    "lfLegLowerFire": "left shin, fire twin",
+    "lfLegUpper": "left thigh",
+    "lfLegUppperFire": "left thigh, fire twin (the part is spelled with three p's in the code - keep it)",
+    "rtArmLower": "right forearm (placed 8 units along the upper arm's pitch by the code)",
+    "rtArmLowerFire": "right forearm, fire twin",
+    "rtArmUpper": "right upper arm",
+    "rtArmUpperFire": "right upper arm, fire twin",
+    "rtHorn1": "right flame horn, piece 1 (base, at the head)",
+    "rtHorn2": "right flame horn, piece 2",
+    "rtHorn3": "right flame horn, piece 3",
+    "rtHorn4": "right flame horn, piece 4",
+    "rtHorn5": "right flame horn, piece 5 (tip)",
+    "rtLegLower": "right shin (placed 8 units along the thigh's pitch by the code)",
+    "rtLegLowerFire": "right shin, fire twin",
+    "rtLegUpper": "right thigh",
+    "rtLegUpperFire": "right thigh, fire twin",
+    "tail0": "tail root (static, at the base of the spine)",
+    "tail1": "tail segment 1 (base of the wave)",
+    "tail2": "tail segment 2",
+    "tail3": "tail segment 3",
+    "tail4": "tail segment 4",
+    "tail5": "tail segment 5",
+    "tail6": "tail segment 6",
+    "tail7": "tail segment 7",
+    "tail8": "tail segment 8",
+    "tail9": "tail segment 9 (tip, curled 2 rad over the back)"
+  },
+  "groups": [
+    {
+      "name": "gait",
+      "bones": [
+        "rtLegUpper",
+        "rtLegUpperFire",
+        "rtLegLower",
+        "rtLegLowerFire",
+        "lfLegUpper",
+        "lfLegUppperFire",
+        "lfLegLower",
+        "lfLegLowerFire",
+        "rtArmUpper",
+        "rtArmUpperFire",
+        "rtArmLower",
+        "rtArmLowerFire",
+        "lfArmUpper",
+        "lfArmUpperFire",
+        "lfArmLower",
+        "lfArmLowerFire"
+      ],
+      "omega": 0.55,
+      "axis": "x",
+      "gait_scaled": true,
+      "amplitude": "legs: rests +0.59 / -0.15 rad (right thigh / shin), +0.26 / -0.44 (left), then pi x 0.2 = 0.628 rad (36 deg) x the walking speed above the 0.1 threshold; arms: rests 0 (upper) / +0.48 (lower), then pi x 0.08 = 0.251 rad (14 deg) x the walking speed, no threshold - each lower part slid 8 units along the upper part's pitch",
+      "plain": "the legs and arms pump with the stride at one rhythm - the right leg and right arm one way, the left leg and left arm the other - the legs three times as wide as the arms; each fire twin moves exactly with its part",
+      "math": "a = limbSwingAmount > 0.1 ? cos(t * 1.1 * 0.5) * pi * 0.2 * limbSwingAmount : 0; rtLegUpper(+Fire).xRot = 0.59 + a; rtLegLower(+Fire).xRot = -0.15 + a; lfLegUpper(+Fire).xRot = 0.26 - a; lfLegLower(+Fire).xRot = -0.44 - a; b = cos(t * 1.1 * 0.5) * pi * 0.08 * limbSwingAmount (+ the arm_breath term); rtArmUpper(+Fire).xRot = b; rtArmLower(+Fire).xRot = 0.48 + b; lfArmUpper(+Fire).xRot = -b; lfArmLower(+Fire).xRot = 0.48 - b; every lower part's z = sin(upper xRot) * 8",
+      "source": "KyuubiModel.java:323-348",
+      "wingspeed": 0.5,
+      "omega_note": "the classic phase is ageInTicks x 1.1 x 0.5 (wingspeed, KyuubiModel.java:13-14): the natural period is 2 pi / 0.55 = 11.4 ticks"
+    },
+    {
+      "name": "arm_breath",
+      "bones": [
+        "rtArmUpper",
+        "rtArmUpperFire",
+        "rtArmLower",
+        "rtArmLowerFire",
+        "lfArmUpper",
+        "lfArmUpperFire",
+        "lfArmLower",
+        "lfArmLowerFire"
+      ],
+      "omega": 0.25,
+      "axis": "x",
+      "gait_scaled": false,
+      "amplitude": "pi x 0.01 = 0.031 rad (2 deg), added to the arms' gait term at all times",
+      "plain": "a barely visible slow breathing of the arms, present even when standing",
+      "math": "rtArm*.xRot += cos(t * 0.5 * 0.5) * pi * 0.01; lfArm*.xRot -= the same",
+      "source": "KyuubiModel.java:337-348",
+      "wingspeed": 0.5,
+      "omega_note": "the classic phase is ageInTicks x 0.5 x 0.5: the natural period is 2 pi / 0.25 = 25.1 ticks"
+    },
+    {
+      "name": "horns",
+      "bones": [
+        "lfHorn1",
+        "lfHorn2",
+        "lfHorn3",
+        "lfHorn4",
+        "lfHorn5",
+        "rtHorn1",
+        "rtHorn2",
+        "rtHorn3",
+        "rtHorn4",
+        "rtHorn5"
+      ],
+      "omega": 0.65,
+      "axis": "y",
+      "gait_scaled": false,
+      "amplitude": "+0.244 rad rest splay (left) / -0.244 (right, mirrored), then pi x 0.1 = 0.314 rad (18 deg), each piece lagging the one before it by pi/4 - all on top of the head's look yaw",
+      "plain": "a travelling wave runs from the base to the tip of each flame horn, the two sides mirrored, the whole horn turning with the head",
+      "math": "lfHornK.yRot = headFire.yRot + 0.244 + cos(t * 1.3 * 0.5 - (K-1) * pi/4) * pi * 0.1; rtHornK.yRot = headFire.yRot - 0.244 - cos(t * 1.3 * 0.5 - (K-1) * pi/4) * pi * 0.1; each piece's x/z placed along the previous piece's yaw (3.6, 2, 4, 3, 2 units)",
+      "source": "KyuubiModel.java:352-368",
+      "wingspeed": 0.5,
+      "omega_note": "the classic phase is ageInTicks x 1.3 x 0.5: the natural period is 2 pi / 0.65 = 9.7 ticks"
+    },
+    {
+      "name": "tail_sway",
+      "bones": [
+        "tail1",
+        "tail2",
+        "tail3",
+        "tail4",
+        "tail5",
+        "tail6",
+        "tail7",
+        "tail8",
+        "tail9"
+      ],
+      "omega": 0.45,
+      "axis": "y",
+      "gait_scaled": false,
+      "amplitude": "pi x 0.2 = 0.628 rad (36 deg) per segment, each lagging the one before it by pi/4 (a full wave every eight segments)",
+      "plain": "a sideways wave travels up the nine-segment tail from the base to the tip",
+      "math": "tailK.yRot = cos(t * 0.9 * 0.5 - (K-1) * pi/4) * pi * 0.2; tail(K+1).x = tailK.x - sin(tailK.yRot) * L_K (L = 3, 4, 3.5, 5, 4, 3, 2, 1)",
+      "source": "KyuubiModel.java:369-385",
+      "wingspeed": 0.5,
+      "omega_note": "the classic phase is ageInTicks x 0.9 x 0.5: the natural period is 2 pi / 0.45 = 14 ticks"
+    },
+    {
+      "name": "tail_curl",
+      "bones": [
+        "tail1",
+        "tail2",
+        "tail3",
+        "tail4",
+        "tail5",
+        "tail6",
+        "tail7",
+        "tail8",
+        "tail9"
+      ],
+      "omega": 0.25,
+      "axis": "x",
+      "gait_scaled": false,
+      "amplitude": "rests -0.26 / -0.78 / -1.11 / -0.18 / +0.22 / +0.63 / +0.89 / +1.52 / +2.0 rad (the curl up and over the back), then pi x 0.1 = 0.314 rad (18 deg), each segment lagging the one before it by pi/4",
+      "plain": "a slower up-and-down ripple runs along the curled tail, the segments' y/z placed along the previous segment's pitch",
+      "math": "tailK.xRot = rest_K + cos(t * 0.5 * 0.5 - (K-1) * pi/4) * pi * 0.1; tail(K+1).y = tailK.y + sin(tailK.xRot) * L_K; tail(K+1).z = tailK.z - cos(tailK.xRot) * L_K",
+      "source": "KyuubiModel.java:386-410",
+      "wingspeed": 0.5,
+      "omega_note": "the classic phase is ageInTicks x 0.5 x 0.5: the natural period is 2 pi / 0.25 = 25.1 ticks"
+    }
+  ],
+  "behaviour": [
+    "One gait rhythm on the limbs (KyuubiModel.java:323-348): above a walking speed of 0.1 the cosine of the age x 1.1 x 0.5 (wingspeed), x pi x 0.2, x the walking speed pitches the right thigh and shin forward and the left pair back (rests +0.59 / -0.15 and +0.26 / -0.44 rad); the arms take the same cosine at pi x 0.08 x the walking speed (no threshold) plus a 2-degree breathing at 0.5 x 0.5 (:337), the right arm with the right leg. Each shin and forearm is slid 8 units along its upper part's pitch (:328-329, :334-335, :341-342, :347-348) - a hand-written FK chain on flat bones.",
+    "Every body part has a Fire twin (bodyFire, chestFire, headFire, the arm, leg and horn twins) posed to exactly the same angle as its part (:325, :327, :332, :334, :338, :340, :344, :346); the chest, body and tail root never move.",
+    "The head turns to the look (:350-351): the head part is built facing backward (its geo rotation is 180 deg about y) and the code adds pi to netHeadYaw, so `head` faces forward; `headFire` takes the look yaw straight. The horns hang from headFire's yaw: five pieces per side, each placed along the previous piece's yaw (3.6, 2, 4, 3, 2 units) and turned by +-0.244 rad plus a cosine at 1.3 x 0.5 lagging pi/4 per piece (:352-368) - an 18-degree wave running base to tip every 9.7 ticks, mirrored left and right.",
+    "The nine-segment tail carries two travelling waves (:369-410): a sideways one - 36 degrees per segment at 0.9 x 0.5, lagging pi/4 per segment, each segment's x placed along the previous yaw - and a slower up-and-down one at 0.5 x 0.5, 18 degrees around a curl that rises from -0.26 rad at the base to 2.0 rad at the tip, y and z placed along the previous pitch. The tail's bones are flat (no parents) in the rig, so when this rig lands a keyframed wave must key positions as well as rotations, or the tail must be re-parented.",
+    "Nothing in the pose reads the attack: the fireball leaves from 1.25 blocks up (EntityKyuubi.java:120-122) with no wind-up; the entity sets itself on fire every ~10 ticks (:82-89) and puffs smoke when water hurts it (:90-98)."
+  ],
+  "clips": [
+    {
+      "name": "idle",
+      "verdict": "author",
+      "note": "REQUIRED with walk: the gate opens on the pair (today nothing ships; the classic code plays) - the standing loop: limbs at their rests with the 2-degree arm breathing, the horns and tail waving"
+    },
+    {
+      "name": "walk",
+      "verdict": "author",
+      "note": "REQUIRED with idle: the locomotion loop - the gait group's 36-degree leg pump and 14-degree arm pump at full stride (KyuubiModel.java:323-348), scaled by walking speed in-game"
+    },
+    {
+      "name": "swim",
+      "verdict": "author",
+      "note": "it has the state - a FloatGoal keeps it at the surface (EntityKyuubi.java:57) - but water hurts it (aiStep :90-91), so author a thrashing, hurried paddle; optional: falls back to walk then idle when absent (section 2.4)"
+    },
+    {
+      "name": "calm_idle",
+      "verdict": "leave",
+      "note": "= idle: no synched attacking flag in EntityKyuubi.java (no DATA_ATTACKING; the target is found by the 1-in-10 scan at :110-114), so calm_idle is covered by idle until this creature's SPEC adds the byte (ruled 2026-09-06, Q12 (a))"
+    },
+    {
+      "name": "attack",
+      "verdict": "author",
+      "note": "a fireball throw: a ranged launch site (new SmallFireball at EntityKyuubi.java:120-122, fired from 1.25 blocks up within 8 blocks of the target on a 1-in-6-or-1-in-8 roll each think tick, :115-125; transport 3, a named launch site) - an arm flung forward, the head thrown back",
+      "length_seconds": 0.5
+    },
+    {
+      "name": "hurt",
+      "verdict": "author",
+      "note": "a flinch: no hurt() override (vanilla LivingEntity.hurt); the hurtTime edge is client-observed - it also fires when water burns it (doHurtTarget on itself at EntityKyuubi.java:91)",
+      "length_seconds": 0.3
+    },
+    {
+      "name": "death",
+      "verdict": "author",
+      "note": "ruled 2026-09-06, Q3 (a): the vanilla death flip stays; a creature whose JSON ships a `death` clip gets the clip-replaces-flip mode, designed when the first such clip arrives (the Queen's own death clip the precedent) - a `death` delivered here plays under the flip until then",
+      "length_seconds": 1.0
+    }
+  ],
+  "extras": [],
+  "wishlist": [
+    "key every Fire twin exactly with its part (bodyFire with body, lfLegUppperFire with lfLegUpper, and so on): the code poses them identically (KyuubiModel.java:325-348) and a twin drifting off its part reads as a rendering bug",
+    "the tail and horn waves: the rig's bones are flat and the code slides each next segment along the previous one's angle (KyuubiModel.java:352-410) - author the waves as rotations and flag to the owner that the seam must either parent the chains or key the positions when the rig lands",
+    "in `attack`: a wind-up the code never had - the fireball simply appears at 1.25 blocks (EntityKyuubi.java:120-122); an arm flung forward and the horns flaring sell the throw",
+    "in `walk`: a lope, not a march - a heavier stride that dips the chest (the chest and body never move today) so the fire twins flicker with the step",
+    "in `idle`: a slow head-and-horn turn reading as the scan for prey (the code re-picks a target every tenth think tick, EntityKyuubi.java:110-114)"
+  ],
+  "effort_hours": null
+}

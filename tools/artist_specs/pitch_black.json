@@ -1,0 +1,254 @@
+{
+  "registry": "pitch_black",
+  "display_name": "Nightmare",
+  "status": "DRAFT — authored by a seed lane from the entity code, 2026-09-13; the owner's edit pending",
+  "locomotion": "flyer",
+  "artist_scope": "full contract (Tier 1, the state-branching class: geckolib_migration_design.md section 5) with the §8.1 locks; the rig is not yet in-game (it lands through the seam in a later slice)",
+  "character_sheet": "The Nightmare (the `pitch_black` registry) is a winged, many-toothed boss that comes in five sizes: a two-block body with two shoulders, a three-segment neck to a seven-piece head with two eyes, twenty-three teeth and a five-piece lower jaw, two wings of three spars, three membranes and three claws each, two three-piece legs on seven-piece clawed feet with a leg spike each, and a nine-segment forked tail with two points and six spikes (ModelPitchBlack.createBodyLayer, ModelPitchBlack.java:229-637). Its size tier (1 to 5, scale 0.5 to 4, PitchBlack.java:106-128) sets its stats — 125 to 1000 HP, 15 to 120 attack, 11 to 18 armour, 0.25 to 0.6 speed (:119-125, applySizeTierAttributes :265-296) — its hitbox (2.5 x 3.5 blocks times the scale, :299-307), its purple boss bar's name (:130-131, :292) and, in the model, the rate of every rhythm. Grounded (DATA_ACTIVITY 0) it wanders and looks about (:172-176) and takes off on a 1-in-10 tick with prey in sight (:461-471) or a 4-in-5 chance of a rare roll (tick :420-441); flying (activity 1) it steers itself between flight targets (:474-488, :516-528) and on a 1-in-8 tick hunts anything living in sight within 16 plus six scales of blocks except its own kind and eight listed allies (:489-511, :566-600), flying to two blocks above the target with the attacking flag up and biting within five blocks plus half the target's width plus the scale (doHurtTarget :365-401: the tier's attack, a knockback scaled by size; the Ender Dragon hit part-wise). It lands only on a rare roll with solid ground below and no prey (:420-437); hits are refused for 20 ticks and turn its flight on the attacker (hurt :531-543); its wings sound every 20 ticks (:406-412) and it heals 1 plus the scale on a 1-in-250 roll (:421). It spawns at night in the dark in the Chaos and Island biomes (chaos_biome.json, island_biome.json) — in Chaos never within 16 blocks of another, and above scale 1 only under a clear air pocket sized by its tier (checkSpawnRules :672-690) (chaos_biome.json, island_biome.json) and strews its loot by its size (:625-630). Read it as a bat-winged stalker: a heavy stride on the ground, a slow wide beat in the air, the forked tail sweeping.",
+  "size_notes": "Drawn at the entity's own size scale — 0.5, 1, 2, 3 or 4 by the synced size tier (PitchBlackRenderer.java:42-43; shadow 1.25) on a 512x256 sheet (ModelPitchBlack.java:637); 2.0 x 3.0 block hitbox as registered (ModEntities.java:121-122), 2.5 x 3.5 times the scale live (PitchBlack.getDefaultDimensions :299-307). Every wing, leg and tail rate in the model is divided by the scale (the bigger the slower); the jaw's are not. The legs, wings and tail are chains the code positions segment by segment — key the joints, never the positions.",
+  "labels": {
+    "body": "body (static; intended hitbox part 'body')",
+    "body2": "upper body block (static; intended hitbox part 'body2')",
+    "lshoulder": "left shoulder (static)",
+    "rshoulder": "right shoulder (static)",
+    "neck1": "neck, segment 1 (at the body; static)",
+    "neck2": "neck, segment 2 (static)",
+    "neck3": "neck, segment 3 (at the head; half the head's turn)",
+    "head1": "head, main piece (turns 0.55 of the look yaw on the ground, 0.2 in flight; intended hitbox part 'head1')",
+    "head2": "head, piece 2 (turns with the head)",
+    "head3": "head, piece 3 (turns with the head)",
+    "head4": "head, piece 4 (turns with the head)",
+    "head5": "head, piece 5 (turns with the head)",
+    "head6": "head, piece 6 (turns with the head)",
+    "head7": "head, piece 7 (turns with the head)",
+    "leye": "left eye (turns with the head)",
+    "reye": "right eye (turns with the head)",
+    "jaw1": "lower jaw, piece 1 (chomps: 29 degrees about 0.5 attacking, a 1-in-20 chomp per period at rest)",
+    "jaw2": "lower jaw, piece 2 (with piece 1)",
+    "jaw3": "lower jaw, piece 3 (with piece 1)",
+    "jaw4": "lower jaw, piece 4 (with piece 1)",
+    "jaw5": "lower jaw, piece 5 (with piece 1)",
+    "tooth1": "upper tooth 1 (turns with the head)", "tooth2": "upper tooth 2", "tooth3": "upper tooth 3", "tooth4": "upper tooth 4", "tooth5": "upper tooth 5",
+    "tooth6": "upper tooth 6", "tooth7": "upper tooth 7", "tooth8": "upper tooth 8", "tooth9": "upper tooth 9", "tooth10": "upper tooth 10",
+    "tooth11": "upper tooth 11", "tooth12": "upper tooth 12", "tooth13": "upper tooth 13",
+    "tooth14": "lower tooth 14 (chomps with the jaw)", "tooth15": "lower tooth 15 (chomps with the jaw)",
+    "tooth16": "lower tooth 16 (chomps with the jaw)", "tooth17": "lower tooth 17 (chomps with the jaw)", "tooth18": "lower tooth 18 (chomps with the jaw)",
+    "tooth19": "lower tooth 19 (chomps with the jaw)", "tooth20": "lower tooth 20 (chomps with the jaw)",
+    "tooth21": "lower tooth 21 (chomps with the jaw)", "tooth22": "lower tooth 22 (chomps with the jaw)", "tooth23": "lower tooth 23 (chomps with the jaw)",
+    "leftleg1": "left thigh (the stride, 32 degrees at top speed about −0.576; intended hitbox part)",
+    "leftleg2": "left upper leg piece (about 0.977; intended hitbox part)",
+    "leftleg3": "left lower leg (rides the foot; about −0.61; intended hitbox part)",
+    "llegspike": "left leg spike (rides the left lower leg)",
+    "lclaw1": "left foot, claw piece 1 (the foot slides 12 x scale units fore-aft and lifts 6 x scale on the forward half)",
+    "lclaw2": "left foot, claw piece 2", "lclaw3": "left foot, claw piece 3", "lclaw4": "left foot, claw piece 4", "lclaw5": "left foot, claw piece 5", "lclaw6": "left foot, claw piece 6", "lclaw7": "left foot, claw piece 7",
+    "rightleg1": "right thigh (the stride, half a period behind the left; intended hitbox part)",
+    "rightleg2": "right upper leg piece (intended hitbox part)",
+    "rightleg3": "right lower leg (rides the foot; intended hitbox part)",
+    "llegspike2": "right leg spike — the port's name ('llegspike2'); it rides the RIGHT lower leg (ModelPitchBlack.java:826-829)",
+    "rclaw1": "right foot, claw piece 1",
+    "rclaw2": "right foot, claw piece 2", "rclaw3": "right foot, claw piece 3", "rclaw4": "right foot, claw piece 4", "rclaw5": "right foot, claw piece 5", "rclaw6": "right foot, claw piece 6", "rclaw7": "right foot, claw piece 7",
+    "wing1": "left wing, root spar (the beat's root; intended hitbox part 'wing1')",
+    "wing2": "left wing, middle spar (5/3 of the beat, placed 21 along the root)",
+    "wing3": "left wing, tip spar (2x the beat, placed 43 along the middle)",
+    "mem1": "left wing membrane 1 (with the root spar)",
+    "mem2": "left wing membrane 2 (with the middle spar)",
+    "mem3": "left wing membrane 3 (with the tip spar)",
+    "wingclaw1": "left wing claw 1 (3/2 of the beat, at the tip)",
+    "wingclaw2": "left wing claw 2 (at the tip)",
+    "wingclaw3": "left wing claw 3 (at the tip)",
+    "rwing1": "right wing, root spar (the mirror of the left; intended hitbox part 'rwing1')",
+    "rwing2": "right wing, middle spar",
+    "rwing3": "right wing, tip spar",
+    "rmem1": "right wing membrane 1",
+    "rmem2": "right wing membrane 2",
+    "rmem3": "right wing membrane 3",
+    "rwingclaw1": "right wing claw 1",
+    "rwingclaw2": "right wing claw 2",
+    "rwingclaw3": "right wing claw 3",
+    "tail1": "tail segment 1 (half the tail wave; intended hitbox part 'tail1')",
+    "tail2": "tail segment 2 (an eighth of a period behind)",
+    "tail3": "tail segment 3 (a quarter behind)",
+    "tail4": "tail segment 4 (three eighths behind)",
+    "tail5": "tail segment 5 — the fork (segment 4's angle plus half the wave; intended hitbox part 'tail5')",
+    "tail6": "left fork, segment 1 (+0.174 from the fork)",
+    "tail9": "left fork, segment 2 (intended hitbox part 'tail9')",
+    "tailpoint1": "left fork, the point",
+    "tail7": "right fork, segment 1 (−0.174 from the fork)",
+    "tail8": "right fork, segment 2",
+    "tailpoint2": "right fork, the point",
+    "tailspike1": "tail spike 1 (rides the left fork's second segment)",
+    "tailspike2": "tail spike 2 (rides the left fork's first segment)",
+    "tailspike3": "tail spike 3 (rides the left fork's first segment)",
+    "tailspike4": "tail spike 4 (rides the right fork's second segment)",
+    "tailspike5": "tail spike 5 (rides the right fork's first segment)",
+    "tailspike6": "tail spike 6 (rides the right fork's first segment)"
+  },
+  "groups": [
+    {
+      "name": "gait",
+      "bones": [
+        "leftleg1", "leftleg2", "leftleg3", "llegspike", "lclaw1", "lclaw2", "lclaw3", "lclaw4", "lclaw5", "lclaw6", "lclaw7",
+        "rightleg1", "rightleg2", "rightleg3", "llegspike2", "rclaw1", "rclaw2", "rclaw3", "rclaw4", "rclaw5", "rclaw6", "rclaw7"
+      ],
+      "omega": 0.4875,
+      "axis": "x, with the foot's slide (z) and lift (y)",
+      "gait_scaled": true,
+      "amplitude": "on the ground (activity 0), x the walking speed, zero below a limbSwingAmount of 0.001: the foot (seven claw pieces) slides 12 x scale units fore-aft with the wave and lifts 6 x scale units on the forward half (sin > 0); the lower leg and its spike ride the foot and pitch pi x 0.18 = 0.565 rad (32 deg) about −0.61 / −0.785; the thigh and upper leg pitch the same 32 degrees about −0.576 / 0.977, placed 17 units up the lower leg; the right leg half a period behind; in flight (activity 1) the feet hang at a fixed height with the claws at −0.7, the legs following, and paddle 11 degrees while attacking",
+      "plain": "on the ground each leg strides as a planted foot that slides back and lifts forward with the leg pieces swinging above it, the right leg opposite the left; in the air the legs hang tucked, paddling a little when it attacks",
+      "math": "c = cos(t * 0.75 * 0.65 / scale), s = sin(same) (right: + pi); lclaw*.z = 7 + 12 scale * c * amount; lclaw*.y = s > 0 ? 21 - s * 6 scale * amount : 21; leftleg3 = the foot's position, xRot -0.61 + c * pi * 0.18 * amount; llegspike.xRot = -0.785 + the same; leftleg1.xRot = -0.576 + the same; leftleg2.xRot = 0.977 + the same (both placed 17 up the lower leg); in flight: p = attacking ? cos(t * 0.85 * 0.65 / scale) * 0.2 : 0; lclaw*.y = 9 + 30 p (right 9 - 30 p), lclaw*.xRot = -0.7 + p (right -0.7 - p); leftleg3.xRot = -0.61 + lclaw1.xRot; leftleg1/2.xRot = rest - lclaw1.xRot / 4",
+      "source": "ModelPitchBlack.java:761-904 (the ground branch :765-847, the flight branch :848-904); wingspeed 0.65 (:22)",
+      "phase": "the synced DATA_ACTIVITY byte (PitchBlack.java:93; 0 grounded, 1 flying) selects the stride or the tuck; every rate is divided by the size scale",
+      "wingspeed": 0.65,
+      "omega_note": "the classic phase is ageInTicks x 0.75 x wingspeed 0.65 / scale = 0.4875 rad/tick at scale 1 (period 12.9 ticks; 25.8 at scale 2, 51.5 at scale 4, 6.4 at scale 0.5)"
+    },
+    {
+      "name": "wings",
+      "bones": [
+        "wing1", "wing2", "wing3", "mem1", "mem2", "mem3", "wingclaw1", "wingclaw2", "wingclaw3",
+        "rwing1", "rwing2", "rwing3", "rmem1", "rmem2", "rmem3", "rwingclaw1", "rwingclaw2", "rwingclaw3"
+      ],
+      "omega": 0.2925,
+      "axis": "z",
+      "gait_scaled": false,
+      "amplitude": "in flight (activity 1): pi x 0.24 = 0.754 rad (43 deg) about zero at 0.2925 / scale rad/tick; on the ground: pi x 0.02 = 0.063 rad (3.6 deg) about −pi/4 (folded) at 0.0325 / scale rad/tick; the root spar and membrane take the wave, the middle spar and membrane 5/3 of it, the tip spar and membrane 2x, the three claws 3/2, each placed at the end of the spar before (21 and 43 units); the right wing the negative",
+      "plain": "in the air the wings beat wide and slow, widening from root to tip; on the ground they hang folded with a faint stir",
+      "math": "w = activity != 0 ? cos(t * 0.45 * 0.65 / scale) * pi * 0.24 : -pi/4 + cos(t * 0.05 * 0.65 / scale) * pi * 0.02; wing1.zRot = mem1.zRot = w; wing2 = mem2 = 5w/3; wing3 = mem3 = 2w; wingclaw1/2/3 = 3w/2; the right wing the negatives; positions along the spars by sin/cos x 21 and 43",
+      "source": "ModelPitchBlack.java:658-698",
+      "phase": "the synced DATA_ACTIVITY byte selects; the rate is divided by the size scale",
+      "wingspeed": 0.65,
+      "omega_note": "the classic phase in flight is ageInTicks x 0.45 x wingspeed 0.65 / scale = 0.2925 rad/tick at scale 1 (period 21.5 ticks); on the ground 0.05 x 0.65 / scale = 0.0325 (193 ticks)"
+    },
+    {
+      "name": "jaw",
+      "bones": [
+        "jaw1", "jaw2", "jaw3", "jaw4", "jaw5",
+        "tooth14", "tooth15", "tooth16", "tooth17", "tooth18", "tooth19", "tooth20", "tooth21", "tooth22", "tooth23"
+      ],
+      "omega": 0.5525,
+      "axis": "x",
+      "gait_scaled": false,
+      "amplitude": "attacking: pi x 0.16 = 0.503 rad (29 deg) about 0.5; not attacking: at the start of each period of a 0.455 rad/tick phase a 1-in-20 roll arms a chomp — the same 29 degrees about 0.5 for that period — else the jaw rests at pi/16 (0.196); the ten lower teeth chomp with the jaw; not divided by the scale",
+      "plain": "the five-piece lower jaw and its teeth chomp steadily while the attacking flag is set, and now and then — one period in twenty — at rest",
+      "math": "j = attacking ? 0.5 + cos(t * 0.85 * 0.65) * pi * 0.16 : (latched ? 0.5 + sin(t * 0.85 * 0.65) * pi * 0.16 : pi/16); latched re-rolled (1 in 20) when (t * 0.7 * 0.65) mod 2pi wraps; jaw1..jaw5.xRot = tooth14..tooth23.xRot = j",
+      "source": "ModelPitchBlack.java:729-760",
+      "phase": "the synced DATA_ATTACKING byte (PitchBlack.java:91; set at :494 with prey, cleared at :513) selects; at rest a per-entity latch (RenderInfo rf1 / ri1, :735-742) rolls the chomp",
+      "wingspeed": 0.65,
+      "omega_note": "the classic phase is ageInTicks x 0.85 x wingspeed 0.65 = 0.5525 rad/tick (period 11.4 ticks), not scaled by size; the rest latch wraps every 13.8 ticks"
+    },
+    {
+      "name": "tail",
+      "bones": [
+        "tail1", "tail2", "tail3", "tail4", "tail5", "tail6", "tail9", "tailpoint1", "tail7", "tail8", "tailpoint2",
+        "tailspike1", "tailspike2", "tailspike3", "tailspike4", "tailspike5", "tailspike6"
+      ],
+      "omega": 0.494,
+      "axis": "y",
+      "gait_scaled": false,
+      "amplitude": "attacking: pi x 0.25 = 0.785 rad (45 deg) at 0.76 x 0.65 / scale rad/tick; not attacking: pi x 0.08 = 0.251 rad (14 deg) at 0.26 x 0.65 / scale; segment 1 takes half the wave, segments 2 to 4 the full wave an eighth of a period apart, the fork (segment 5) adds half the wave to segment 4, each fork adds another half per segment about ±0.174, and the points half again; the six spikes ride their segments; positions along the chain by 11 and 9 units",
+      "plain": "the tail sweeps side to side in a travelling wave and the two forks fan out at its end — slow and small at rest, fast and wide while attacking",
+      "math": "ts, amp = attacking ? (0.76 / scale, 0.25) : (0.26 / scale, 0.08); tail1.yRot = cos(t * ts * 0.65) * pi * amp / 2; tail2 = cos(... - pi/4) * pi * amp; tail3 = cos(... - pi/2) * pi * amp; tail4 = cos(... - 3pi/4) * pi * amp; h = tail4's wave / 2; tail5 = tail4 + h; tail6 = 0.174 + tail5 + h; tail9 = tail6 + h; tailpoint1 = tail9 + h; tail7 = -0.174 + tail5 + h; tail8 = tail7 + h; tailpoint2 = tail8 + h; spikes = their segments",
+      "source": "ModelPitchBlack.java:905-955",
+      "phase": "the attacking flag selects; the rate is divided by the size scale",
+      "wingspeed": 0.65,
+      "omega_note": "the classic phase attacking is ageInTicks x 0.76 x wingspeed 0.65 / scale = 0.494 rad/tick at scale 1 (period 12.7 ticks); calm 0.26 x 0.65 / scale = 0.169 (37.2 ticks)"
+    }
+  ],
+  "behaviour": [
+    "Every rhythm but the jaw's is divided by the size scale (ModelPitchBlack.java:653): a scale-4 Nightmare moves four times slower than a scale-1 one, a scale-0.5 twice faster.",
+    "On the ground (DATA_ACTIVITY 0, PitchBlack.java:93) one speed-scaled stride at 0.4875 / scale rad/tick: each foot — seven claw pieces moved as one — slides 12 x scale units back and forth and lifts 6 x scale on its forward half, the lower leg and its spike ride it and pitch 32 degrees, the thigh and upper piece swing the same above, the right leg half a period behind (:765-847). In the air the feet hang at a fixed height with the claws curled and, while attacking, paddle 11 degrees at 0.5525 / scale rad/tick (:848-904).",
+    "The wings beat 43 degrees at 0.2925 / scale rad/tick in flight, the middle spars 5/3 and the tips twice that, the claws 3/2, each placed at the end of the spar before; on the ground they hang folded at −45 degrees with a 3.6-degree stir (:658-698). The head turns 0.55 of the look yaw on the ground and only 0.2 in flight, the neck's last segment half of that, and the head pieces, eyes, upper teeth and jaw follow (:699-728).",
+    "The five-piece lower jaw and its ten teeth chomp 29 degrees at 0.5525 rad/tick (not scaled) while the synced DATA_ATTACKING byte is set (raised at :494 with prey in the hunt), and at rest one period in twenty on a per-entity latch (:729-760). The tail sweeps in a travelling wave along five segments and fans into two forks — 14 degrees at 0.169 / scale rad/tick at rest, 45 degrees at 0.494 / scale attacking (:905-955).",
+    "The body blocks, shoulders and the first two neck segments are static; the walk position plays no part beyond the speed. The takeoff and landing are flag flips (PitchBlack.java:436, :439, :467, :540), the bite is doHurtTarget (:365-401) from the hunt (:509-511) — none are animation events."
+  ],
+  "clips": [
+    {
+      "name": "idle",
+      "verdict": "author",
+      "note": "REQUIRED with walk: the gate opens on the pair — the grounded rest: wings folded and stirring, the tail's slow sweep, the rare chomp"
+    },
+    {
+      "name": "walk",
+      "verdict": "author",
+      "note": "REQUIRED with idle: the gait group's planting stride on the ground (:765-847)"
+    },
+    {
+      "name": "fly",
+      "verdict": "author",
+      "note": "DATA_ACTIVITY 1 (PitchBlack.java:439, :467, :540): the 43-degree beat (ModelPitchBlack.java:658), the legs tucked (:848-904), the head turning less (:700)"
+    },
+    {
+      "name": "aggro_idle",
+      "verdict": "author",
+      "note": "the attacking flag (PitchBlack.java:494, hunting in flight): the jaw chomping steadily (ModelPitchBlack.java:730-731), the legs paddling (:851), the tail fast and wide (:905-907)"
+    },
+    {
+      "name": "calm_idle",
+      "verdict": "author",
+      "note": "the flag clear (:513): the jaw at pi/16 with its rare chomp (:735-748), the tail slow and small (:909-910)"
+    },
+    {
+      "name": "attack",
+      "verdict": "author",
+      "note": "the bite: doHurtTarget (PitchBlack.java:365-401) from customServerAiStep :509-511 within five blocks plus half the target's width plus the scale — the tier's attack (15 to 120) and a knockback scaled by size; author a diving bite with the jaw's chomp and the feet reaching",
+      "length_seconds": 0.6
+    },
+    {
+      "name": "hurt",
+      "verdict": "author",
+      "note": "a flinch to pitchblack_hit (getHurtSound :608-611); hurt() (:531-543) refuses damage for 20 ticks, wakes it into flight and turns it on the attacker",
+      "length_seconds": 0.4
+    },
+    {
+      "name": "death",
+      "verdict": "author",
+      "note": "ruled 2026-09-06, Q3 (a): the vanilla death flip stays; a creature whose JSON ships a `death` clip gets the clip-replaces-flip mode, designed when the first such clip arrives (the Queen's own death clip the precedent) - a `death` delivered here plays under the flip until then",
+      "length_seconds": 2.0
+    }
+  ],
+  "extras": [
+    {
+      "name": "takeoff",
+      "loop": false,
+      "layer": "overlay",
+      "trigger": "the synced DATA_ACTIVITY byte rising 0 -> 1 (PitchBlack.setActivity :206; set at tick :439 on a rare roll, customServerAiStep :467 with prey in sight, hurt :540) — the legs tuck and the wings start the flight beat (ModelPitchBlack.java:658, :848-904); a transition on the flag's edge, its transport the seam's when the rig lands",
+      "bones": ["wing1", "rwing1", "wing2", "rwing2", "leftleg1", "rightleg1", "leftleg3", "rightleg3", "body", "body2"],
+      "length_seconds": 0.8,
+      "code_triggered": false,
+      "note": "the crouch, the leap and the first downstroke"
+    },
+    {
+      "name": "land",
+      "loop": false,
+      "layer": "overlay",
+      "trigger": "the synced DATA_ACTIVITY byte falling 1 -> 0 (tick :435-437: a 1-in-250 x 1-in-5 roll with solid ground within ten below and no prey in sight) — the wings fold and the legs untuck (ModelPitchBlack.java:658, :765-847); a transition on the flag's edge",
+      "bones": ["wing1", "rwing1", "wing2", "rwing2", "leftleg1", "rightleg1", "leftleg3", "rightleg3", "body", "body2"],
+      "length_seconds": 0.8,
+      "code_triggered": false,
+      "note": "the settle onto the feet with the wings folding to −45 degrees"
+    }
+  ],
+  "wishlist": [
+    "in `fly`: the code beats the wings 43 degrees (ModelPitchBlack.java:658) but holds the body flat — add a body rise on the downstroke and let the forked tail trail; remember the beat slows with the size tier",
+    "in `walk`: the code's stride is a foot slide with a lift on the forward half and the leg pieces swinging above it (:765-847) — keep the heavy plant and add a body sway and a head bob",
+    "in `attack`: a diving bite with the jaw's 29-degree chomp (:730-731) and the feet reaching; the bite lands within five blocks plus half the target's width plus the scale (PitchBlack.java:492-511)",
+    "in `aggro_idle`: the steady chomp (:730-731) and the tail's fast 45-degree sweep (:905-907) made into a hover-and-stare"
+  ],
+  "locked_bones_provisional": [
+    {"bone": "head1", "size": [1.2, 1], "damage": 1},
+    {"bone": "body", "size": [1.8, 1.8], "damage": 0.5},
+    {"bone": "body2", "size": [1.8, 1.8], "damage": 0.5},
+    {"bone": "leftleg1", "size": [0.6, 1.4], "damage": 0.5},
+    {"bone": "leftleg2", "size": [0.6, 1.4], "damage": 0.5},
+    {"bone": "leftleg3", "size": [0.6, 1.4], "damage": 0.5},
+    {"bone": "rightleg1", "size": [0.6, 1.4], "damage": 0.5},
+    {"bone": "rightleg2", "size": [0.6, 1.4], "damage": 0.5},
+    {"bone": "rightleg3", "size": [0.6, 1.4], "damage": 0.5},
+    {"bone": "wing1", "size": [2, 0.6], "damage": 0.25},
+    {"bone": "rwing1", "size": [2, 0.6], "damage": 0.25},
+    {"bone": "tail1", "size": [0.7, 0.7], "damage": 0.25},
+    {"bone": "tail5", "size": [0.7, 0.7], "damage": 0.25},
+    {"bone": "tail9", "size": [0.7, 0.7], "damage": 0.25}
+  ],
+  "locked_bones_note": "The design's section 6 ModelPitchBlack row (geckolib_migration_design.md:451): 'At scale 1: head1 [1.2,1] @1; body/body2 [1.8,1.8] @0.5; left/right segmented legs [0.6,1.4] @0.5; wing1/rwing1 [2,0.6] @0.25; tail1/tail5/tail9 [0.7,0.7] @0.25. Multiply part sizes from the authoritative discrete size tier.' head1, body, body2, wing1, rwing1, tail1, tail5 and tail9 resolve as written (ModelPitchBlack.createBodyLayer; tail9 is the left fork's second segment, ModelPitchBlack.java:932-934). 'left/right segmented legs' is not a bone name: taken as the three leg segments a side — leftleg1, leftleg2, leftleg3 and rightleg1, rightleg2, rightleg3 (the seven claw pieces a foot and the leg spikes stay visual). The sizes are the row's scale-1 values; the profile multiplies them by the synced size tier's scale (PitchBlack.getPitchBlackScale :240-242), which the row calls the scale-path proof case.",
+  "effort_hours": null
+}

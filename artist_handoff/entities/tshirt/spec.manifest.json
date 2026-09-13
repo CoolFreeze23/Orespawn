@@ -1,0 +1,250 @@
+{
+  "generated_by": "tools/artist_package.py 0.2.9 (the full folder, 2026-09-13, fourth set, items 5, 7 and 8: every artist-tier species packaged - a rig not yet in-game from the reference leg's converter output, bone names final; the Tier-1 bosses' intended locked bones from the design's section 6 rendered in section 7 and validated against the geo; the README's priority table the full list, bosses first, closing with the deliverable count)",
+  "registry": "tshirt",
+  "display_name": "Tshirt",
+  "tier": 2,
+  "tier_label": "Tier 2",
+  "geo_file": "tshirt.geo.json",
+  "animation_file": "tshirt.animation.json",
+  "bbmodel_file": "tshirt.bbmodel",
+  "texture_size": [
+    512,
+    256
+  ],
+  "bones": [
+    {
+      "name": "Shape1",
+      "parent": null,
+      "pivot": [
+        0,
+        152,
+        0
+      ],
+      "rotation": null,
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            -128.0,
+            152.0,
+            0.0
+          ],
+          "size": [
+            256.0,
+            64.0,
+            1.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              1.0,
+              1.0,
+              -1.0,
+              64.0
+            ],
+            "east": [
+              258.0,
+              1.0,
+              -1.0,
+              64.0
+            ],
+            "north": [
+              257.0,
+              1.0,
+              -256.0,
+              64.0
+            ],
+            "south": [
+              514.0,
+              1.0,
+              -256.0,
+              64.0
+            ],
+            "up": [
+              257.0,
+              0.0,
+              -256.0,
+              1.0
+            ],
+            "down": [
+              513.0,
+              1.0,
+              -256.0,
+              -1.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Shape2",
+      "parent": null,
+      "pivot": [
+        0,
+        152,
+        0
+      ],
+      "rotation": null,
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            -64.0,
+            24.0,
+            0.0
+          ],
+          "size": [
+            128.0,
+            128.0,
+            1.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              1.0,
+              65.0,
+              -1.0,
+              128.0
+            ],
+            "east": [
+              130.0,
+              65.0,
+              -1.0,
+              128.0
+            ],
+            "north": [
+              129.0,
+              65.0,
+              -128.0,
+              128.0
+            ],
+            "south": [
+              258.0,
+              65.0,
+              -128.0,
+              128.0
+            ],
+            "up": [
+              129.0,
+              64.0,
+              -128.0,
+              1.0
+            ],
+            "down": [
+              257.0,
+              65.0,
+              -128.0,
+              -1.0
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "locked_bones": [],
+  "lock_mode": "warn",
+  "lock_policy": "warn-keyed, refuse-structural",
+  "lock_policy_text": "Keying a locked bone is allowed; the checker warns, and the hitbox part follows the bone in-game (the consequence, so keep such keys deliberate). Renaming, re-parenting or deleting a locked bone is refused.",
+  "keyed_locked_by_shipped_clip": {},
+  "native": false,
+  "controller_kind": "phase_locked",
+  "clips": [
+    {
+      "name": "idle",
+      "loop": "true",
+      "role": "contract",
+      "code_triggered": false,
+      "required": true,
+      "length_rule": "near:1.0",
+      "length_seconds": 1.0,
+      "verdict": "author"
+    },
+    {
+      "name": "walk",
+      "loop": "true",
+      "role": "contract",
+      "code_triggered": false,
+      "required": true,
+      "length_rule": "near:1.0",
+      "length_seconds": 1.0,
+      "verdict": "leave"
+    },
+    {
+      "name": "calm_idle",
+      "loop": "true",
+      "role": "contract",
+      "code_triggered": false,
+      "required": false,
+      "length_rule": "near:1.0",
+      "length_seconds": 1.0,
+      "verdict": "covered by idle"
+    },
+    {
+      "name": "hurt",
+      "loop": "false",
+      "role": "contract",
+      "code_triggered": true,
+      "required": false,
+      "length_rule": "near:0.3",
+      "length_seconds": 0.3,
+      "verdict": "author"
+    },
+    {
+      "name": "death",
+      "loop": "hold_on_last_frame",
+      "role": "contract",
+      "code_triggered": true,
+      "required": false,
+      "length_rule": "near:1.0",
+      "length_seconds": 1.0,
+      "verdict": "author"
+    }
+  ],
+  "allow_idle_alt": true,
+  "textures": [
+    {
+      "canonical": "tshirt.png",
+      "width": 320,
+      "height": 160,
+      "aliases": [
+        "tshirttexture.png"
+      ]
+    }
+  ],
+  "effort_hours": 7.4,
+  "effort_source": "generator: 4 h + 0.2 h/bone x 2 + 1 h/clip x 3 to author or improve (owner adjusts)",
+  "reference_clip": {
+    "file": "tshirt_reference.animation.json",
+    "sha256": "46effcfd93a2d46d9765b1149bb33c4bdeb72383ffcccd2c3f51c31222afd6d2",
+    "clip": "reference",
+    "reference_only": true,
+    "rule": "two_seconds_past_cap",
+    "rule_note": "the manifest's channels: 1 distinct frequency group(s) [0.011] rad/tick (omega x wingspeed): one natural period 2 pi / f = 571.198664 ticks; the slowest group's period 571.198664 ticks exceeds the 6 s cap (120 ticks): a two-second window (40 ticks), not a loop - the sheet states the closing key's seam",
+    "span_ticks": 40.0,
+    "period_ticks": 571.1986642891,
+    "period_multiple_k": null,
+    "animation_length_seconds": 2.0,
+    "keys_per_bone": 41,
+    "sampled_inputs": "limbSwingAmount 1.0; limbSwing = t (advancing 1.0 per tick from 0: vanilla WalkAnimationState.update does speed += (movementSpeed - speed) * multiplier; position += speed, and the classic renderer hands walkAnimation.position(partialTick) as limbSwing and min(1, speed) as limbSwingAmount, so at speed 1 the position advances exactly 1.0 per tick); ageInTicks = t (getBob: tickCount + partialTick, partialTick 0); netHeadYaw 0; headPitch 0 (looking ahead); every entity-state flag at its rest value (attacking 0, ri1 0, rock_type 0, rf1 0: a ProbeSubject built from an empty state); the entity RNG seeded 0 once per clip and evolving across the keys; one pose call per key, 20 keys per second; full health (no shipped hook reads health)",
+    "hook": "danger.orespawn.entity.client.TshirtGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the shipped replacement, registry-free, on explicit PoseInputs)",
+    "moving_bones": [
+      "Shape1",
+      "Shape2"
+    ],
+    "position_bones": [],
+    "hidden_bones_at_rest": [],
+    "seam_delta_degrees": 17.142012628
+  },
+  "exact_transcription": true,
+  "rig_source": "shipped",
+  "in_game": true,
+  "reference_id": null,
+  "locked_bones_source": "none",
+  "locked_bones_provisional": []
+}

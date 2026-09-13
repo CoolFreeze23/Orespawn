@@ -1,0 +1,1341 @@
+{
+  "generated_by": "tools/artist_package.py 0.2.9 (the full folder, 2026-09-13, fourth set, items 5, 7 and 8: every artist-tier species packaged - a rig not yet in-game from the reference leg's converter output, bone names final; the Tier-1 bosses' intended locked bones from the design's section 6 rendered in section 7 and validated against the geo; the README's priority table the full list, bosses first, closing with the deliverable count)",
+  "registry": "gold_fish",
+  "display_name": "Gold Fish",
+  "tier": 2,
+  "tier_label": "Tier 2",
+  "geo_file": "goldfish.geo.json",
+  "animation_file": "goldfish.animation.json",
+  "bbmodel_file": "gold_fish.bbmodel",
+  "texture_size": [
+    64,
+    64
+  ],
+  "bones": [
+    {
+      "name": "Body",
+      "parent": null,
+      "pivot": [
+        0,
+        10,
+        -5
+      ],
+      "rotation": null,
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            -2.0,
+            8.0,
+            -5.0
+          ],
+          "size": [
+            4.0,
+            4.0,
+            10.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              10.0,
+              25.0,
+              -10.0,
+              4.0
+            ],
+            "east": [
+              24.0,
+              25.0,
+              -10.0,
+              4.0
+            ],
+            "north": [
+              14.0,
+              25.0,
+              -4.0,
+              4.0
+            ],
+            "south": [
+              28.0,
+              25.0,
+              -4.0,
+              4.0
+            ],
+            "up": [
+              14.0,
+              15.0,
+              -4.0,
+              10.0
+            ],
+            "down": [
+              18.0,
+              25.0,
+              -4.0,
+              -10.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Bottomfin",
+      "parent": null,
+      "pivot": [
+        0,
+        10,
+        -5
+      ],
+      "rotation": null,
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            0.0,
+            5.0,
+            1.0
+          ],
+          "size": [
+            0.0,
+            3.0,
+            4.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              24.0,
+              12.0,
+              -4.0,
+              3.0
+            ],
+            "east": [
+              28.0,
+              12.0,
+              -4.0,
+              3.0
+            ],
+            "north": [
+              24.0,
+              12.0,
+              0.0,
+              3.0
+            ],
+            "south": [
+              28.0,
+              12.0,
+              0.0,
+              3.0
+            ],
+            "up": [
+              24.0,
+              8.0,
+              0.0,
+              4.0
+            ],
+            "down": [
+              24.0,
+              12.0,
+              0.0,
+              -4.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Bottomfin1",
+      "parent": null,
+      "pivot": [
+        0,
+        10,
+        -5
+      ],
+      "rotation": [
+        17.0414206752,
+        0,
+        -19.1719986139
+      ],
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            1.0,
+            3.0,
+            -4.0
+          ],
+          "size": [
+            0.0,
+            5.0,
+            2.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              22.0,
+              2.0,
+              -2.0,
+              5.0
+            ],
+            "east": [
+              24.0,
+              2.0,
+              -2.0,
+              5.0
+            ],
+            "north": [
+              22.0,
+              2.0,
+              0.0,
+              5.0
+            ],
+            "south": [
+              24.0,
+              2.0,
+              0.0,
+              5.0
+            ],
+            "up": [
+              22.0,
+              0.0,
+              0.0,
+              2.0
+            ],
+            "down": [
+              22.0,
+              2.0,
+              0.0,
+              -2.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Bottomfin2",
+      "parent": null,
+      "pivot": [
+        0,
+        10,
+        -5
+      ],
+      "rotation": [
+        17.0414206752,
+        0,
+        19.1715975434
+      ],
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            -1.0,
+            3.0,
+            -4.0
+          ],
+          "size": [
+            0.0,
+            5.0,
+            2.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              22.0,
+              2.0,
+              -2.0,
+              5.0
+            ],
+            "east": [
+              24.0,
+              2.0,
+              -2.0,
+              5.0
+            ],
+            "north": [
+              22.0,
+              2.0,
+              0.0,
+              5.0
+            ],
+            "south": [
+              24.0,
+              2.0,
+              0.0,
+              5.0
+            ],
+            "up": [
+              22.0,
+              0.0,
+              0.0,
+              2.0
+            ],
+            "down": [
+              22.0,
+              2.0,
+              0.0,
+              -2.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Caudalfin1",
+      "parent": null,
+      "pivot": [
+        0,
+        10,
+        5
+      ],
+      "rotation": [
+        46.8639025597,
+        0,
+        0
+      ],
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            -0.5,
+            1.5,
+            11.0
+          ],
+          "size": [
+            1.0,
+            3.0,
+            4.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              17.0,
+              39.0,
+              -4.0,
+              3.0
+            ],
+            "east": [
+              22.0,
+              39.0,
+              -4.0,
+              3.0
+            ],
+            "north": [
+              18.0,
+              39.0,
+              -1.0,
+              3.0
+            ],
+            "south": [
+              23.0,
+              39.0,
+              -1.0,
+              3.0
+            ],
+            "up": [
+              18.0,
+              35.0,
+              -1.0,
+              4.0
+            ],
+            "down": [
+              19.0,
+              39.0,
+              -1.0,
+              -4.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Caudalfin2",
+      "parent": null,
+      "pivot": [
+        0,
+        10,
+        5
+      ],
+      "rotation": [
+        46.8639025597,
+        0,
+        0
+      ],
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            -0.5,
+            0.5,
+            11.0
+          ],
+          "size": [
+            1.0,
+            4.0,
+            3.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              18.0,
+              38.0,
+              -3.0,
+              4.0
+            ],
+            "east": [
+              22.0,
+              38.0,
+              -3.0,
+              4.0
+            ],
+            "north": [
+              19.0,
+              38.0,
+              -1.0,
+              4.0
+            ],
+            "south": [
+              23.0,
+              38.0,
+              -1.0,
+              4.0
+            ],
+            "up": [
+              19.0,
+              35.0,
+              -1.0,
+              3.0
+            ],
+            "down": [
+              20.0,
+              38.0,
+              -1.0,
+              -3.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Dorsalfin",
+      "parent": null,
+      "pivot": [
+        0,
+        10,
+        -5
+      ],
+      "rotation": null,
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            0.0,
+            12.0,
+            -5.0
+          ],
+          "size": [
+            0.0,
+            4.0,
+            10.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              39.0,
+              10.0,
+              -10.0,
+              4.0
+            ],
+            "east": [
+              49.0,
+              10.0,
+              -10.0,
+              4.0
+            ],
+            "north": [
+              39.0,
+              10.0,
+              0.0,
+              4.0
+            ],
+            "south": [
+              49.0,
+              10.0,
+              0.0,
+              4.0
+            ],
+            "up": [
+              39.0,
+              0.0,
+              0.0,
+              10.0
+            ],
+            "down": [
+              39.0,
+              10.0,
+              0.0,
+              -10.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Head",
+      "parent": null,
+      "pivot": [
+        0,
+        10,
+        -5
+      ],
+      "rotation": null,
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            -1.5,
+            8.0,
+            -8.0
+          ],
+          "size": [
+            3.0,
+            4.0,
+            3.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              3.0,
+              33.0,
+              -3.0,
+              4.0
+            ],
+            "east": [
+              9.0,
+              33.0,
+              -3.0,
+              4.0
+            ],
+            "north": [
+              6.0,
+              33.0,
+              -3.0,
+              4.0
+            ],
+            "south": [
+              12.0,
+              33.0,
+              -3.0,
+              4.0
+            ],
+            "up": [
+              6.0,
+              30.0,
+              -3.0,
+              3.0
+            ],
+            "down": [
+              9.0,
+              33.0,
+              -3.0,
+              -3.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Jaw",
+      "parent": null,
+      "pivot": [
+        0.5,
+        8.4,
+        -7.4
+      ],
+      "rotation": [
+        -13.0887567339,
+        0,
+        0
+      ],
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            -1.5,
+            7.4,
+            -10.4
+          ],
+          "size": [
+            3.0,
+            1.0,
+            3.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              16.0,
+              33.0,
+              -3.0,
+              1.0
+            ],
+            "east": [
+              22.0,
+              33.0,
+              -3.0,
+              1.0
+            ],
+            "north": [
+              19.0,
+              33.0,
+              -3.0,
+              1.0
+            ],
+            "south": [
+              25.0,
+              33.0,
+              -3.0,
+              1.0
+            ],
+            "up": [
+              19.0,
+              30.0,
+              -3.0,
+              3.0
+            ],
+            "down": [
+              22.0,
+              33.0,
+              -3.0,
+              -3.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Mouth",
+      "parent": null,
+      "pivot": [
+        0,
+        10,
+        -5
+      ],
+      "rotation": [
+        -45.0000020972,
+        0,
+        0
+      ],
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            -1.5,
+            6.4,
+            -8.5
+          ],
+          "size": [
+            3.0,
+            3.0,
+            3.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              3.0,
+              41.0,
+              -3.0,
+              3.0
+            ],
+            "east": [
+              9.0,
+              41.0,
+              -3.0,
+              3.0
+            ],
+            "north": [
+              6.0,
+              41.0,
+              -3.0,
+              3.0
+            ],
+            "south": [
+              12.0,
+              41.0,
+              -3.0,
+              3.0
+            ],
+            "up": [
+              6.0,
+              38.0,
+              -3.0,
+              3.0
+            ],
+            "down": [
+              9.0,
+              41.0,
+              -3.0,
+              -3.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Pectoralfin1",
+      "parent": null,
+      "pivot": [
+        2,
+        10,
+        -3
+      ],
+      "rotation": [
+        -17.0414206752,
+        19.1715975434,
+        0
+      ],
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            2.0,
+            8.5,
+            -3.0
+          ],
+          "size": [
+            0.0,
+            3.0,
+            5.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              5.0,
+              5.0,
+              -5.0,
+              3.0
+            ],
+            "east": [
+              10.0,
+              5.0,
+              -5.0,
+              3.0
+            ],
+            "north": [
+              5.0,
+              5.0,
+              0.0,
+              3.0
+            ],
+            "south": [
+              10.0,
+              5.0,
+              0.0,
+              3.0
+            ],
+            "up": [
+              5.0,
+              0.0,
+              0.0,
+              5.0
+            ],
+            "down": [
+              5.0,
+              5.0,
+              0.0,
+              -5.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Pectoralfin2",
+      "parent": null,
+      "pivot": [
+        -2,
+        10,
+        -3
+      ],
+      "rotation": [
+        -17.041002416,
+        -19.1719986139,
+        0
+      ],
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            -2.0,
+            8.5,
+            -3.0
+          ],
+          "size": [
+            0.0,
+            3.0,
+            5.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              5.0,
+              5.0,
+              -5.0,
+              3.0
+            ],
+            "east": [
+              10.0,
+              5.0,
+              -5.0,
+              3.0
+            ],
+            "north": [
+              5.0,
+              5.0,
+              0.0,
+              3.0
+            ],
+            "south": [
+              10.0,
+              5.0,
+              0.0,
+              3.0
+            ],
+            "up": [
+              5.0,
+              0.0,
+              0.0,
+              5.0
+            ],
+            "down": [
+              5.0,
+              5.0,
+              0.0,
+              -5.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Pectoralfin3",
+      "parent": null,
+      "pivot": [
+        2,
+        10,
+        1
+      ],
+      "rotation": [
+        -17.0414206752,
+        19.1715975434,
+        0
+      ],
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            2.0,
+            8.5,
+            1.0
+          ],
+          "size": [
+            0.0,
+            3.0,
+            5.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              5.0,
+              5.0,
+              -5.0,
+              3.0
+            ],
+            "east": [
+              10.0,
+              5.0,
+              -5.0,
+              3.0
+            ],
+            "north": [
+              5.0,
+              5.0,
+              0.0,
+              3.0
+            ],
+            "south": [
+              10.0,
+              5.0,
+              0.0,
+              3.0
+            ],
+            "up": [
+              5.0,
+              0.0,
+              0.0,
+              5.0
+            ],
+            "down": [
+              5.0,
+              5.0,
+              0.0,
+              -5.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Pectoralfin4",
+      "parent": null,
+      "pivot": [
+        -2,
+        10,
+        1
+      ],
+      "rotation": [
+        -17.0414206752,
+        -19.1719986139,
+        0
+      ],
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            -2.0,
+            8.5,
+            1.0
+          ],
+          "size": [
+            0.0,
+            3.0,
+            5.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              5.0,
+              5.0,
+              -5.0,
+              3.0
+            ],
+            "east": [
+              10.0,
+              5.0,
+              -5.0,
+              3.0
+            ],
+            "north": [
+              5.0,
+              5.0,
+              0.0,
+              3.0
+            ],
+            "south": [
+              10.0,
+              5.0,
+              0.0,
+              3.0
+            ],
+            "up": [
+              5.0,
+              0.0,
+              0.0,
+              5.0
+            ],
+            "down": [
+              5.0,
+              5.0,
+              0.0,
+              -5.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Tail1",
+      "parent": null,
+      "pivot": [
+        0,
+        10,
+        5
+      ],
+      "rotation": null,
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            -1.5,
+            8.0,
+            5.0
+          ],
+          "size": [
+            3.0,
+            4.0,
+            6.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              35.0,
+              21.0,
+              -6.0,
+              4.0
+            ],
+            "east": [
+              44.0,
+              21.0,
+              -6.0,
+              4.0
+            ],
+            "north": [
+              38.0,
+              21.0,
+              -3.0,
+              4.0
+            ],
+            "south": [
+              47.0,
+              21.0,
+              -3.0,
+              4.0
+            ],
+            "up": [
+              38.0,
+              15.0,
+              -3.0,
+              6.0
+            ],
+            "down": [
+              41.0,
+              21.0,
+              -3.0,
+              -6.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Tail2",
+      "parent": null,
+      "pivot": [
+        0,
+        10,
+        5
+      ],
+      "rotation": null,
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            -1.0,
+            8.5,
+            11.0
+          ],
+          "size": [
+            2.0,
+            3.0,
+            4.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              4.0,
+              12.0,
+              -4.0,
+              3.0
+            ],
+            "east": [
+              10.0,
+              12.0,
+              -4.0,
+              3.0
+            ],
+            "north": [
+              6.0,
+              12.0,
+              -2.0,
+              3.0
+            ],
+            "south": [
+              12.0,
+              12.0,
+              -2.0,
+              3.0
+            ],
+            "up": [
+              6.0,
+              8.0,
+              -2.0,
+              4.0
+            ],
+            "down": [
+              8.0,
+              12.0,
+              -2.0,
+              -4.0
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "locked_bones": [],
+  "lock_mode": "warn",
+  "lock_policy": "warn-keyed, refuse-structural",
+  "lock_policy_text": "Keying a locked bone is allowed; the checker warns, and the hitbox part follows the bone in-game (the consequence, so keep such keys deliberate). Renaming, re-parenting or deleting a locked bone is refused.",
+  "keyed_locked_by_shipped_clip": {},
+  "native": false,
+  "controller_kind": "phase_locked",
+  "clips": [
+    {
+      "name": "idle",
+      "loop": "true",
+      "role": "contract",
+      "code_triggered": false,
+      "required": true,
+      "length_rule": "near:1.0",
+      "length_seconds": 1.0,
+      "verdict": "author"
+    },
+    {
+      "name": "idle_pectoral2",
+      "loop": "true",
+      "role": "contract",
+      "code_triggered": false,
+      "required": false,
+      "length_rule": "near:1.0",
+      "length_seconds": 1.0,
+      "verdict": "leave"
+    },
+    {
+      "name": "idle_pectoral3",
+      "loop": "true",
+      "role": "contract",
+      "code_triggered": false,
+      "required": false,
+      "length_rule": "near:1.0",
+      "length_seconds": 1.0,
+      "verdict": "leave"
+    },
+    {
+      "name": "idle_pectoral4",
+      "loop": "true",
+      "role": "contract",
+      "code_triggered": false,
+      "required": false,
+      "length_rule": "near:1.0",
+      "length_seconds": 1.0,
+      "verdict": "leave"
+    },
+    {
+      "name": "idle_bottomfins",
+      "loop": "true",
+      "role": "contract",
+      "code_triggered": false,
+      "required": false,
+      "length_rule": "near:1.0",
+      "length_seconds": 1.0,
+      "verdict": "leave"
+    },
+    {
+      "name": "idle_jaw",
+      "loop": "true",
+      "role": "contract",
+      "code_triggered": false,
+      "required": false,
+      "length_rule": "near:1.0",
+      "length_seconds": 1.0,
+      "verdict": "leave"
+    },
+    {
+      "name": "walk",
+      "loop": "true",
+      "role": "contract",
+      "code_triggered": false,
+      "required": true,
+      "length_rule": "near:1.0",
+      "length_seconds": 1.0,
+      "verdict": "leave"
+    },
+    {
+      "name": "walk_pectoral2",
+      "loop": "true",
+      "role": "contract",
+      "code_triggered": false,
+      "required": false,
+      "length_rule": "near:1.0",
+      "length_seconds": 1.0,
+      "verdict": "leave"
+    },
+    {
+      "name": "walk_pectoral3",
+      "loop": "true",
+      "role": "contract",
+      "code_triggered": false,
+      "required": false,
+      "length_rule": "near:1.0",
+      "length_seconds": 1.0,
+      "verdict": "leave"
+    },
+    {
+      "name": "walk_pectoral4",
+      "loop": "true",
+      "role": "contract",
+      "code_triggered": false,
+      "required": false,
+      "length_rule": "near:1.0",
+      "length_seconds": 1.0,
+      "verdict": "leave"
+    },
+    {
+      "name": "walk_bottomfins",
+      "loop": "true",
+      "role": "contract",
+      "code_triggered": false,
+      "required": false,
+      "length_rule": "near:1.0",
+      "length_seconds": 1.0,
+      "verdict": "leave"
+    },
+    {
+      "name": "walk_jaw",
+      "loop": "true",
+      "role": "contract",
+      "code_triggered": false,
+      "required": false,
+      "length_rule": "near:1.0",
+      "length_seconds": 1.0,
+      "verdict": "leave"
+    },
+    {
+      "name": "swim",
+      "loop": "true",
+      "role": "contract",
+      "code_triggered": false,
+      "required": false,
+      "length_rule": "near:1.0",
+      "length_seconds": 1.0,
+      "verdict": "author"
+    },
+    {
+      "name": "calm_idle",
+      "loop": "true",
+      "role": "contract",
+      "code_triggered": false,
+      "required": false,
+      "length_rule": "near:1.0",
+      "length_seconds": 1.0,
+      "verdict": "covered by idle"
+    },
+    {
+      "name": "hurt",
+      "loop": "false",
+      "role": "contract",
+      "code_triggered": true,
+      "required": false,
+      "length_rule": "near:0.3",
+      "length_seconds": 0.3,
+      "verdict": "author"
+    },
+    {
+      "name": "death",
+      "loop": "hold_on_last_frame",
+      "role": "contract",
+      "code_triggered": true,
+      "required": false,
+      "length_rule": "near:1.0",
+      "length_seconds": 1.0,
+      "verdict": "author"
+    }
+  ],
+  "allow_idle_alt": true,
+  "textures": [
+    {
+      "canonical": "goldfish.png",
+      "width": 64,
+      "height": 64,
+      "aliases": []
+    }
+  ],
+  "effort_hours": 11.2,
+  "effort_source": "generator: 4 h + 0.2 h/bone x 16 + 1 h/clip x 4 to author or improve (owner adjusts)",
+  "reference_clip": {
+    "file": "gold_fish_reference.animation.json",
+    "sha256": "6cae73dde761e72141ca7f85c78edeccd0ece11d53b9d21d2017f18983002799",
+    "clip": "reference",
+    "reference_only": true,
+    "rule": "period_multiple",
+    "rule_note": "the manifest's channels: 6 distinct frequency group(s) [0.91, 0.84, 0.77, 0.7, 1.19, 0.49] rad/tick (omega x wingspeed): the slowest group's period 2 pi / 0.49 = 12.822827 ticks; closes at k = 7 (89.75979 ticks): every bone returns within 0 degrees of its start at k x T (the 5-degree test under the 6 s cap; k = 1: 85.541996 deg, k = 2: 51.3252 deg, k = 3: 55.01104 deg, k = 4: 55.015246 deg, k = 5: 51.326324 deg, k = 6: 85.543868 deg, k = 7: 0 deg)",
+    "span_ticks": 89.7597901026,
+    "period_ticks": 12.8228271575,
+    "period_multiple_k": 7,
+    "animation_length_seconds": 4.4879895051,
+    "keys_per_bone": 91,
+    "sampled_inputs": "limbSwingAmount 1.0; limbSwing = t (advancing 1.0 per tick from 0: vanilla WalkAnimationState.update does speed += (movementSpeed - speed) * multiplier; position += speed, and the classic renderer hands walkAnimation.position(partialTick) as limbSwing and min(1, speed) as limbSwingAmount, so at speed 1 the position advances exactly 1.0 per tick); ageInTicks = t (getBob: tickCount + partialTick, partialTick 0); netHeadYaw 0; headPitch 0 (looking ahead); every entity-state flag at its rest value (attacking 0, ri1 0, rock_type 0, rf1 0: a ProbeSubject built from an empty state); the entity RNG seeded 0 once per clip and evolving across the keys; one pose call per key, 20 keys per second; full health (no shipped hook reads health)",
+    "hook": "danger.orespawn.entity.client.GoldFishGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the shipped replacement, registry-free, on explicit PoseInputs)",
+    "moving_bones": [
+      "Bottomfin1",
+      "Bottomfin2",
+      "Jaw",
+      "Pectoralfin1",
+      "Pectoralfin2",
+      "Pectoralfin3",
+      "Pectoralfin4"
+    ],
+    "position_bones": [],
+    "hidden_bones_at_rest": [],
+    "seam_delta_degrees": 0.0
+  },
+  "exact_transcription": true,
+  "rig_source": "shipped",
+  "in_game": true,
+  "reference_id": null,
+  "locked_bones_source": "none",
+  "locked_bones_provisional": []
+}

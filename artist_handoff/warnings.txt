@@ -1,5 +1,20 @@
-[the_queen] LOCKED_BONES_KEYED: the shipped clips key 26 of the 27 SPEC-locked bones (LHead, LHead12, LHead4, Lwing1, NeckL1, NeckL13...): allowed and warned — Keying a locked bone is allowed; the checker warns, and the hitbox part follows the bone in-game (the consequence, so keep such keys deliberate). Renaming, re-parenting or deleting a locked bone is refused.
+[global] ARTIST_TIER_UNPACKAGED: 4 artist-tier species have no rig to package (no shipped geo, no reference-leg geo) — giant_robot: the converter refused reference_giantrobot (ValueError: reference_giantrobot capture bind draws [...], which are not cube-bearing geo bones (a part drawn more than once without render_instances, or a part the rig lacks)); jeffery: the converter refused reference_giantrobot (ValueError: reference_giantrobot capture bind draws [...], which are not cube-bearing geo bones (a part drawn more than once without render_instances, or a part the rig lacks)); boyfriend: no entry whose class is ModelBoyfriend in reference_model_proofs.json — no reference-leg geo can exist for it until the reference leg covers the model; girlfriend: no entry whose class is ModelGirlfriend in reference_model_proofs.json — no reference-leg geo can exist for it until the reference leg covers the model
+[alien] GOAL_UNCLASSIFIED: goal MoveThroughVillageGoal (Alien.java:92) has no dictionary entry
+[alien] GOAL_UNCLASSIFIED: goal AlienTorchSeekGoal (Alien.java:96) has no dictionary entry
+[alosaurus] GOAL_UNCLASSIFIED: goal MoveThroughVillageGoal (Alosaurus.java:84) has no dictionary entry
+[band_p] GOAL_UNCLASSIFIED: goal MoveThroughVillageGoal (BandP.java:78) has no dictionary entry
+[band_p] GOAL_UNCLASSIFIED: goal OpenDoorGoal (BandP.java:83) has no dictionary entry
+[basilisk] GOAL_UNCLASSIFIED: goal MoveThroughVillageGoal (Basilisk.java:81) has no dictionary entry
+[cave_fisher] WISHLIST_UNACCEPTED: wishlist names clip(s) ['aggro_idle'] that the manifest does not accept
+[creeping_horror] GOAL_UNCLASSIFIED: goal MoveThroughVillageGoal (CreepingHorror.java:78) has no dictionary entry
+[ender_knight] WISHLIST_UNACCEPTED: wishlist names clip(s) ['attack'] that the manifest does not accept
+[ender_knight] WISHLIST_UNACCEPTED: wishlist names clip(s) ['aggro_idle'] that the manifest does not accept
+[ender_reaper] WISHLIST_UNACCEPTED: wishlist names clip(s) ['aggro_idle'] that the manifest does not accept
+[ender_reaper] WISHLIST_UNACCEPTED: wishlist names clip(s) ['attack'] that the manifest does not accept
 [irukandji] GOAL_UNCLASSIFIED: goal MyEntityAIWander (Irukandji.java:82) has no dictionary entry
+[nastysaurus] WISHLIST_UNACCEPTED: wishlist names clip(s) ['aggro_idle'] that the manifest does not accept
+[pointysaurus] GOAL_UNCLASSIFIED: goal PointysaurusStareGoal (Pointysaurus.java:84) has no dictionary entry
+[pointysaurus] WISHLIST_UNACCEPTED: wishlist names clip(s) ['aggro_idle'] that the manifest does not accept
 [robot_1] BONE_UNLABELLED: bone Shape1 has no glossary label
 [robot_1] BONE_UNLABELLED: bone Shape10 has no glossary label
 [robot_1] BONE_UNLABELLED: bone Shape11 has no glossary label
@@ -26,12 +41,77 @@
 [robot_2] BONE_UNLABELLED: bone Shape8 has no glossary label
 [robot_3] ATTACKING_UNCLASSIFIED: DATA_ATTACKING classified MIXED: a 10-tick pulse per in-range think tick: the flag is raised at line(s) [155] every 35 ticks (reloadTicker reset) while a target is in range — before the line-of-sight gate, so it pulses whether or not a shot fires — and cleared when reloadTicker < 25 at line(s) [144] AND cleared on target loss at line(s) [162]
 [robot_5] ATTACKING_UNCLASSIFIED: DATA_ATTACKING classified MIXED: a 5-tick pulse per in-range think tick: the flag is raised at line(s) [143] every 20 ticks (reloadTicker reset) while a target is in range — before the line-of-sight gate, so it pulses whether or not a shot fires — and cleared when reloadTicker < 15 at line(s) [131] AND cleared on target loss at line(s) [152]
+[sea_viper] GOAL_UNCLASSIFIED: goal SeaViperBiteGoal (SeaViper.java:119) has no dictionary entry
+[sea_viper] GOAL_UNCLASSIFIED: goal RandomSwimmingGoal (SeaViper.java:120) has no dictionary entry
+[sea_viper] WISHLIST_UNACCEPTED: wishlist names clip(s) ['aggro_idle'] that the manifest does not accept
 [skate] GOAL_UNCLASSIFIED: goal MyEntityAIWander (Skate.java:76) has no dictionary entry
+[kraken] ATTACKING_UNCLASSIFIED: DATA_ATTACKING classified STATE?: cleared unconditionally at line(s) [450] (the enclosing branch decides; read the source)
+[the_king] GOAL_UNCLASSIFIED: goal KingEndGameGoal (TheKing.java:215) has no dictionary entry
+[the_king] GOAL_UNCLASSIFIED: goal KingPrimaryGoal (TheKing.java:216) has no dictionary entry
+[the_queen] LOCKED_BONES_KEYED: the shipped clips key 26 of the 27 SPEC-locked bones (LHead, LHead12, LHead4, Lwing1, NeckL1, NeckL13...): allowed and warned — Keying a locked bone is allowed; the checker warns, and the hitbox part follows the bone in-game (the consequence, so keep such keys deliberate). Renaming, re-parenting or deleting a locked bone is refused.
+[emperor_scorpion] GOAL_UNCLASSIFIED: goal EmperorScorpionPoisonGoal (EntityEmperorScorpion.java:96) has no dictionary entry
+[scorpion] WISHLIST_UNACCEPTED: wishlist names clip(s) ['aggro_idle'] that the manifest does not accept
+[spit_bug] GOAL_UNCLASSIFIED: goal SpitBugAcidAttackGoal (EntitySpitBug.java:86) has no dictionary entry
+[trooper_bug] GOAL_UNCLASSIFIED: goal TrooperBugLeapAttackGoal (EntityTrooperBug.java:88) has no dictionary entry
+[trooper_bug] WISHLIST_UNACCEPTED: wishlist names clip(s) ['aggro_idle'] that the manifest does not accept
+[baryonyx] GOAL_UNCLASSIFIED: goal MyEntityAIWander (Baryonyx.java:62) has no dictionary entry
+[cassowary] GOAL_UNCLASSIFIED: goal MyEntityAIWander (Cassowary.java:51) has no dictionary entry
+[chipmunk] GOAL_UNCLASSIFIED: goal FollowOwnerGoal (Chipmunk.java:67) has no dictionary entry
+[chipmunk] GOAL_UNCLASSIFIED: goal TemptGoal (Chipmunk.java:71) has no dictionary entry
+[flounder] GOAL_UNCLASSIFIED: goal MyEntityAIWander (Flounder.java:61) has no dictionary entry
+[frog] GOAL_UNCLASSIFIED: goal MyEntityAIWander (Frog.java:67) has no dictionary entry
+[gazelle] GOAL_UNCLASSIFIED: goal FollowOwnerGoal (Gazelle.java:72) has no dictionary entry
+[gazelle] GOAL_UNCLASSIFIED: goal TemptGoal (Gazelle.java:74) has no dictionary entry
+[gazelle] GOAL_UNCLASSIFIED: goal MyEntityAIWander (Gazelle.java:78) has no dictionary entry
+[peacock] WISHLIST_UNACCEPTED: wishlist names clip(s) ['attack'] that the manifest does not accept
+[whale] GOAL_UNCLASSIFIED: goal TemptGoal (Whale.java:62) has no dictionary entry
+[whale] GOAL_UNCLASSIFIED: goal MyEntityAIWander (Whale.java:65) has no dictionary entry
 [dragonfly] GOAL_UNCLASSIFIED: goal DragonflyHuntGoal (EntityDragonfly.java:65) has no dictionary entry
+[camarasaurus] GOAL_UNCLASSIFIED: goal FollowOwnerGoal (Camarasaurus.java:69) has no dictionary entry
+[camarasaurus] GOAL_UNCLASSIFIED: goal TemptGoal (Camarasaurus.java:71) has no dictionary entry
+[camarasaurus] GOAL_UNCLASSIFIED: goal MyEntityAIWander (Camarasaurus.java:74) has no dictionary entry
+[dragon] GOAL_UNCLASSIFIED: goal SitWhenOrderedToGoal (Dragon.java:141) has no dictionary entry
+[dragon] GOAL_UNCLASSIFIED: goal FollowOwnerGoal (Dragon.java:142) has no dictionary entry
+[dragon] GOAL_UNCLASSIFIED: goal TemptGoal (Dragon.java:144) has no dictionary entry
 [gamma_metroid] GOAL_UNCLASSIFIED: goal FollowOwnerGoal (EntityGammaMetroid.java:78) has no dictionary entry
 [gamma_metroid] GOAL_UNCLASSIFIED: goal TemptGoal (EntityGammaMetroid.java:79) has no dictionary entry
+[hydrolisc] GOAL_UNCLASSIFIED: goal FollowOwnerGoal (EntityHydrolisc.java:70) has no dictionary entry
+[hydrolisc] GOAL_UNCLASSIFIED: goal TemptGoal (EntityHydrolisc.java:71) has no dictionary entry
+[leon] GOAL_UNCLASSIFIED: goal FollowOwnerGoal (EntityLeon.java:154) has no dictionary entry
+[leon] GOAL_UNCLASSIFIED: goal TemptGoal (EntityLeon.java:155) has no dictionary entry
+[leonopteryx] GOAL_UNCLASSIFIED: goal FollowOwnerGoal (EntityLeon.java:154) has no dictionary entry
+[leonopteryx] GOAL_UNCLASSIFIED: goal TemptGoal (EntityLeon.java:155) has no dictionary entry
+[lizard] GOAL_UNCLASSIFIED: goal FollowOwnerGoal (Lizard.java:80) has no dictionary entry
+[lizard] GOAL_UNCLASSIFIED: goal TemptGoal (Lizard.java:82) has no dictionary entry
+[lizard] WISHLIST_UNACCEPTED: wishlist names clip(s) ['aggro_idle'] that the manifest does not accept
+[ostrich] GOAL_UNCLASSIFIED: goal FollowOwnerGoal (Ostrich.java:129) has no dictionary entry
+[ostrich] GOAL_UNCLASSIFIED: goal TemptGoal (Ostrich.java:131) has no dictionary entry
 [rubber_ducky] GOAL_UNCLASSIFIED: goal FollowOwnerGoal (EntityRubberDucky.java:86) has no dictionary entry
 [rubber_ducky] GOAL_UNCLASSIFIED: goal TemptGoal (EntityRubberDucky.java:87) has no dictionary entry
+[spyro] GOAL_UNCLASSIFIED: goal MyEntityAIFollowOwner (EntitySpyro.java:95) has no dictionary entry
+[spyro] GOAL_UNCLASSIFIED: goal TemptGoal (EntitySpyro.java:96) has no dictionary entry
+[stinky] GOAL_UNCLASSIFIED: goal MyEntityAIFollowOwner (EntityStinky.java:102) has no dictionary entry
+[stinky] GOAL_UNCLASSIFIED: goal TemptGoal (EntityStinky.java:103) has no dictionary entry
+[the_prince] GOAL_UNCLASSIFIED: goal FollowOwnerGoal (ThePrince.java:108) has no dictionary entry
+[the_prince] GOAL_UNCLASSIFIED: goal TemptGoal (ThePrince.java:109) has no dictionary entry
+[the_prince] GOAL_UNCLASSIFIED: goal MyEntityAIWander (ThePrince.java:111) has no dictionary entry
+[the_prince_adult] GOAL_UNCLASSIFIED: goal FollowOwnerGoal (ThePrinceAdult.java:138) has no dictionary entry
+[the_prince_adult] GOAL_UNCLASSIFIED: goal TemptGoal (ThePrinceAdult.java:139) has no dictionary entry
+[the_prince_adult] GOAL_UNCLASSIFIED: goal MyEntityAIWander (ThePrinceAdult.java:140) has no dictionary entry
+[the_princess] GOAL_UNCLASSIFIED: goal FollowOwnerGoal (ThePrincess.java:106) has no dictionary entry
+[the_princess] GOAL_UNCLASSIFIED: goal TemptGoal (ThePrincess.java:107) has no dictionary entry
+[the_princess] GOAL_UNCLASSIFIED: goal MyEntityAIWander (ThePrincess.java:109) has no dictionary entry
+[the_prince_teen] GOAL_UNCLASSIFIED: goal FollowOwnerGoal (ThePrinceTeen.java:149) has no dictionary entry
+[the_prince_teen] GOAL_UNCLASSIFIED: goal TemptGoal (ThePrinceTeen.java:150) has no dictionary entry
+[the_prince_teen] GOAL_UNCLASSIFIED: goal MyEntityAIWander (ThePrinceTeen.java:151) has no dictionary entry
+[velocity_raptor] GOAL_UNCLASSIFIED: goal FollowOwnerGoal (VelocityRaptor.java:64) has no dictionary entry
+[velocity_raptor] GOAL_UNCLASSIFIED: goal TemptGoal (VelocityRaptor.java:66) has no dictionary entry
+[water_dragon] GOAL_UNCLASSIFIED: goal TemptGoal (WaterDragon.java:133) has no dictionary entry
+[water_dragon] GOAL_UNCLASSIFIED: goal WaterCanonAttackGoal (WaterDragon.java:134) has no dictionary entry
+[water_dragon] GOAL_UNCLASSIFIED: goal RandomSwimmingGoal (WaterDragon.java:135) has no dictionary entry
+[water_dragon] ATTACKING_UNCLASSIFIED: DATA_ATTACKING classified UNCLASSIFIED: the clear sites' guards match neither the pulse nor the target-loss pattern; other clears at line(s) [622] (guards: NOT(if (this.streamCount > 0))) — the owner reads them
+[butterfly] GOAL_UNCLASSIFIED: goal ButterflyIslandsHuntGoal (EntityButterfly.java:74) has no dictionary entry
+[luna_moth] GOAL_UNCLASSIFIED: goal LunaMothFlightGoal (EntityLunaMoth.java:55) has no dictionary entry
 [mosquito] GOAL_UNCLASSIFIED: goal MosquitoFlightGoal (EntityMosquito.java:49) has no dictionary entry
 [elevator] BONE_UNLABELLED: bone shape1 has no glossary label
 [elevator] BONE_UNLABELLED: bone shape2 has no glossary label

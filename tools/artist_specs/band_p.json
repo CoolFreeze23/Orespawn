@@ -1,0 +1,144 @@
+{
+  "registry": "band_p",
+  "display_name": "Bandit / Pirate (BandP)",
+  "status": "DRAFT — authored by a seed lane from the entity code, 2026-09-13; the owner's edit pending",
+  "locomotion": "walker",
+  "artist_scope": "full contract (Tier 2, the gait-scaled class (with a standing branch of small sways): geckolib_migration_design.md section 5); the rig is not yet in-game (it lands through the seam in a later slice)",
+  "character_sheet": "A stocky human thief: a belly block, a chest block, a head that turns with the look, two arms splayed 28 degrees and two legs (ModelBandP.java:31-79; 7 parts on a 64x128 sheet). The same rig wears one of two skins, bandit or pirate, rolled once on its first tick and synched (BandP.java:121-128, BandPRenderer.java:39). It is hostile but tough rather than deadly: 100 HP, 1 damage, 18 armour, speed 0.32 (MobStats.BANDP, :89-98), 1000 XP. Every twelfth tick it picks a non-creative player, a villager, a girlfriend or a boyfriend in sight within 20 blocks (:243-265), walks at it at 1.25 (:164) and, within 3 blocks, hits it (:159-160, doHurtTarget); a hit that lands on a player steals one item - armour first, helmet to boots, else the last filled inventory slot - into a 100-slot stash that spills on death (:178-212, :219-241). It opens doors (:83), heads indoors (:86), walks through villages (:78) and strolls (:80); it spawns by day above y 100 within 36 blocks of a villager, never near another (:300-311). Read it as a swaggering brigand: a heavy stride with the arms swinging opposite the legs and the torso twisting, a fidget at rest, a snatch when it hits.",
+  "size_notes": "Drawn at x1.0 of the rig (BandPRenderer.java:29; no scale override) on a 64x128 sheet (ModelBandP.java:79); the hitbox is 0.75 x 1.75 (ModEntities.java:45-47); shadow 1.0 (BandPRenderer.java:31). Two textures on one rig: bandp_bandit.png (getWhat() == 0) and bandp_pirate.png.",
+  "labels": {
+    "belly": "belly (the lower torso; bounces and twists with the stride)",
+    "chest": "chest (the upper torso)",
+    "head": "head (turns and pitches with the look)",
+    "larm": "left arm (splayed 28 deg)",
+    "rarm": "right arm (splayed -28 deg)",
+    "lleg": "left leg",
+    "rleg": "right leg"
+  },
+  "groups": [
+    {
+      "name": "gait",
+      "bones": [
+        "lleg",
+        "rleg",
+        "larm",
+        "rarm",
+        "belly"
+      ],
+      "omega": 0.52,
+      "axis": "x (legs and arms) / y (the belly's twist)",
+      "gait_scaled": true,
+      "amplitude": "legs: pi x 0.25 = 0.785 rad (45 deg) x the walking speed above the 0.1 threshold; arms: the same angle in opposition to the legs; belly: half of it as a twist about y (22 deg); standing (at or below the threshold): the legs and the belly twist hold 0 and the arms take the arm_sway rhythm instead",
+      "plain": "a marching stride: the legs swing in opposition, the arms swing against the legs, and the belly twists with the step",
+      "math": "walking: a = cos(t * 1.3 * 0.4) * pi * 0.25 * limbSwingAmount; lleg.xRot = a; rleg.xRot = -a; larm.xRot = -a; rarm.xRot = a; belly.yRot = -a / 2; standing: a = 0",
+      "source": "ModelBandP.java:87-101",
+      "wingspeed": 0.4,
+      "omega_note": "the classic phase is ageInTicks x 1.3 x 0.4 (wingspeed, ModelBandP.java:21): the natural period is 2 pi / 0.52 = 12.1 ticks"
+    },
+    {
+      "name": "belly_bounce",
+      "bones": [
+        "belly"
+      ],
+      "omega": 1.04,
+      "axis": "x",
+      "gait_scaled": false,
+      "amplitude": "0.07 rad rest (4 deg forward), then walking: pi x 0.025 = 0.079 rad (4.5 deg) x the walking speed at 2.6 x 0.4 - twice the gait rate; standing: pi x 0.005 = 0.016 rad (0.9 deg) at 0.6 x 0.4 (omega 0.24, period 26.2 ticks)",
+      "plain": "the belly bounces twice per stride on the move and breathes barely at rest",
+      "math": "belly.xRot = 0.07 + (walking ? cos(t * 2.6 * 0.4) * pi * 0.025 * limbSwingAmount : cos(t * 0.6 * 0.4) * pi * 0.005)",
+      "source": "ModelBandP.java:89, 93, 98",
+      "phase": "the walking-speed threshold selects the rhythm (ModelBandP.java:87, 91)",
+      "wingspeed": 0.4,
+      "omega_note": "the walking phase is ageInTicks x 2.6 x 0.4: the natural period is 2 pi / 1.04 = 6 ticks (twice the gait rate); standing 2 pi / 0.24 = 26.2 ticks"
+    },
+    {
+      "name": "arm_sway",
+      "bones": [
+        "larm",
+        "rarm"
+      ],
+      "omega": 0.12,
+      "axis": "x",
+      "gait_scaled": false,
+      "amplitude": "standing only: pi x 0.02 = 0.063 rad (3.6 deg) at 0.3 x 0.4, the arms in opposition; walking, the arms follow the gait group instead",
+      "plain": "at rest the arms sway slowly against each other",
+      "math": "standing: s = cos(t * 0.3 * 0.4) * pi * 0.02; larm.xRot = -s; rarm.xRot = s",
+      "source": "ModelBandP.java:94, 99-100",
+      "phase": "the standing branch only (ModelBandP.java:91-95)",
+      "wingspeed": 0.4,
+      "omega_note": "the classic phase is ageInTicks x 0.3 x 0.4: the natural period is 2 pi / 0.12 = 52.4 ticks"
+    }
+  ],
+  "behaviour": [
+    "Two branches on the walking speed (ModelBandP.java:87-95). Walking (above 0.1): the cosine of the age x 1.3 x 0.4 (wingspeed, :21), x pi x 0.25, x the walking speed swings the left leg forward and the right back (45 degrees at full speed every 12.1 ticks); the arms take the same angle the other way (left arm back with the left leg forward, :99-100); the belly twists about the vertical by half of it (:101) and bounces about x at twice the rate - 0.07 rad plus the cosine of the age x 2.6 x 0.4 x pi x 0.025 x the walking speed (:98).",
+    "Standing (at or below 0.1): the legs and the belly twist hold 0; the belly breathes 0.9 degrees at 0.6 x 0.4 (:93, :98) and the arms sway 3.6 degrees against each other at 0.3 x 0.4 (:94, :99-100) - a fidget every 52 ticks.",
+    "The head follows the look in yaw and pitch (:102-103), so the LookAtPlayerGoal and RandomLookAroundGoal (BandP.java:81-82) are visible; the chest never moves.",
+    "There is no attacking flag: the synched DATA_WHAT (BandP.java:42-43) is the skin roll, not a state; the hit (doHurtTarget :160, within 3 blocks every twelfth tick) and the theft (:161, :178-212) have no pose of their own.",
+    "Nothing floats it: no FloatGoal is registered (:70-87) and its stroll avoids water (:80)."
+  ],
+  "clips": [
+    {
+      "name": "idle",
+      "verdict": "author",
+      "note": "REQUIRED with walk: the gate opens on the pair (today nothing ships; the classic code plays) - the standing fidget: legs still, the belly's 0.9-degree breath, the arms' 3.6-degree sway (ModelBandP.java:91-95)"
+    },
+    {
+      "name": "walk",
+      "verdict": "author",
+      "note": "REQUIRED with idle: the locomotion loop - the gait group's 45-degree march with the arms against the legs and the belly twisting and bouncing (ModelBandP.java:87-101), scaled by walking speed in-game"
+    },
+    {
+      "name": "swim",
+      "verdict": "leave",
+      "note": "no swim state: no FloatGoal is registered (BandP.java:70-87) and the stroll avoids water (:80) - the fallback to walk then idle covers it (section 2.4)"
+    },
+    {
+      "name": "calm_idle",
+      "verdict": "leave",
+      "note": "= idle: no synched attacking flag in BandP.java (DATA_WHAT at :42-43 is the bandit / pirate skin roll), so calm_idle is covered by idle until this creature's SPEC adds the byte (ruled 2026-09-06, Q12 (a))"
+    },
+    {
+      "name": "attack",
+      "verdict": "author",
+      "note": "a punch: doHurtTarget within 3 blocks every twelfth tick with a target in sight (BandP.java:155-162); no attacking flag, so the strike is transport 1 (the server LivingDamageEvent.Post) - an arm swung on the impact frame",
+      "length_seconds": 0.5
+    },
+    {
+      "name": "hurt",
+      "verdict": "author",
+      "note": "a flinch: no hurt() override (vanilla LivingEntity.hurt; the villager hurt sound at BandP.java:135-138); the hurtTime edge is client-observed",
+      "length_seconds": 0.3
+    },
+    {
+      "name": "death",
+      "verdict": "author",
+      "note": "ruled 2026-09-06, Q3 (a): the vanilla death flip stays; a creature whose JSON ships a `death` clip gets the clip-replaces-flip mode, designed when the first such clip arrives (the Queen's own death clip the precedent) - a `death` delivered here plays under the flip until then",
+      "length_seconds": 1.0
+    }
+  ],
+  "extras": [
+    {
+      "name": "steal",
+      "loop": "false",
+      "layer": "overlay",
+      "bones": [
+        "larm",
+        "rarm",
+        "chest",
+        "head"
+      ],
+      "length_seconds": 0.6,
+      "code_triggered": false,
+      "trigger": "tryStealFromPlayer after a hit that lands on a player (BandP.java:160-161): one item taken - armour first, helmet to boots, else the last filled inventory slot (:178-212) - into the stash; a server-side event with no trigger by name today (the seam would need a named site)",
+      "note": "the snatch: a grab and a tuck-away after the punch - reads the theft the player otherwise only notices from the missing helmet"
+    }
+  ],
+  "wishlist": [
+    "in `walk`: a swagger - the legs and arms are single rigid blocks swinging 45 deg (ModelBandP.java:96-100); a slight roll of the chest (static today) and a heavier footfall sell a brigand",
+    "in `attack`: a punch with the shoulder behind it - the hit (BandP.java:160) has no pose today",
+    "the `steal` extra: make the grab read - it is the creature's whole point (BandP.java:178-212) and today nothing shows it",
+    "in `idle`: a look-around and a hitch of the belt on top of the code's tiny sway (:91-95); it lingers near villagers and doors (:78-86), so a loiter fits",
+    "the two skins share one rig (BandPRenderer.java:39): author nothing that depends on the texture"
+  ],
+  "effort_hours": null
+}

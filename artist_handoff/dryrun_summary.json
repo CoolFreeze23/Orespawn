@@ -1,11 +1,1436 @@
 {
-  "tool": "0.2.8 (the fourth-set tooling commit, 2026-09-13: the sheets of ANIM-021 to 024 carry 'the original moved more' under section 4 from the register entries; the Terrible Terror's sampler row folds its |cos| period)",
+  "tool": "0.2.9 (the full folder, 2026-09-13, fourth set, items 5, 7 and 8: every artist-tier species packaged - a rig not yet in-game from the reference leg's converter output, bone names final; the Tier-1 bosses' intended locked bones from the design's section 6 rendered in section 7 and validated against the geo; the README's priority table the full list, bosses first, closing with the deliverable count)",
   "out_dir": "artist_handoff",
   "entities": [
+    {
+      "registry": "alien",
+      "tier": 1,
+      "tier_label": "Tier 1 (boss)",
+      "rig_source": "reference-leg converter output",
+      "in_game": false,
+      "seed": true,
+      "files": [
+        "SPEC.md",
+        "alien.animation.json",
+        "alien.bbmodel",
+        "reference/SLOTS.md",
+        "reference_alien.geo.json",
+        "roundtrip.report.json",
+        "spec.manifest.json",
+        "textures/alien.png"
+      ],
+      "bones": 55,
+      "cubes": 55,
+      "clips_shipped": 0,
+      "clips_in_spec": 16,
+      "goals": 7,
+      "flags": 1,
+      "attacking": "STATE",
+      "strike_sites": 2,
+      "textures_mapped": 1,
+      "locked_bones": 16,
+      "lock_mode": "warn",
+      "keyed_locked_bones": 0,
+      "effort_hours": 38.8,
+      "unlabelled_bones": 0,
+      "roundtrip": {
+        "equal": true,
+        "bone_order_preserved": true,
+        "differences": 0,
+        "dropped_keys": 0,
+        "reattached": [
+          "orespawn:bone_draw_order"
+        ]
+      },
+      "warnings": [
+        "GOAL_UNCLASSIFIED: goal MoveThroughVillageGoal (Alien.java:92) has no dictionary entry",
+        "GOAL_UNCLASSIFIED: goal AlienTorchSeekGoal (Alien.java:96) has no dictionary entry"
+      ]
+    },
+    {
+      "registry": "alien_boss",
+      "tier": 1,
+      "tier_label": "Tier 1 (boss)",
+      "rig_source": "reference-leg converter output",
+      "in_game": false,
+      "seed": true,
+      "files": [
+        "SPEC.md",
+        "alien_boss.animation.json",
+        "alien_boss.bbmodel",
+        "reference/SLOTS.md",
+        "reference_alien.geo.json",
+        "roundtrip.report.json",
+        "spec.manifest.json",
+        "textures/alien.png"
+      ],
+      "bones": 55,
+      "cubes": 55,
+      "clips_shipped": 0,
+      "clips_in_spec": 16,
+      "goals": 1,
+      "flags": 0,
+      "attacking": "NONE",
+      "strike_sites": 1,
+      "textures_mapped": 1,
+      "locked_bones": 16,
+      "lock_mode": "warn",
+      "keyed_locked_bones": 0,
+      "effort_hours": 37.2,
+      "unlabelled_bones": 0,
+      "roundtrip": {
+        "equal": true,
+        "bone_order_preserved": true,
+        "differences": 0,
+        "dropped_keys": 0,
+        "reattached": [
+          "orespawn:bone_draw_order"
+        ]
+      },
+      "warnings": []
+    },
+    {
+      "registry": "alosaurus",
+      "tier": 2,
+      "tier_label": "Tier 2",
+      "rig_source": "reference-leg converter output",
+      "in_game": false,
+      "seed": true,
+      "files": [
+        "SPEC.md",
+        "alosaurus.animation.json",
+        "alosaurus.bbmodel",
+        "reference/SLOTS.md",
+        "reference_alosaurus.geo.json",
+        "roundtrip.report.json",
+        "spec.manifest.json",
+        "textures/alosaurus.png"
+      ],
+      "bones": 21,
+      "cubes": 21,
+      "clips_shipped": 0,
+      "clips_in_spec": 12,
+      "goals": 6,
+      "flags": 1,
+      "attacking": "STATE",
+      "strike_sites": 1,
+      "textures_mapped": 1,
+      "locked_bones": 0,
+      "lock_mode": "warn",
+      "keyed_locked_bones": 0,
+      "effort_hours": 20.2,
+      "unlabelled_bones": 0,
+      "roundtrip": {
+        "equal": true,
+        "bone_order_preserved": true,
+        "differences": 0,
+        "dropped_keys": 0,
+        "reattached": [
+          "orespawn:bone_draw_order"
+        ]
+      },
+      "warnings": [
+        "GOAL_UNCLASSIFIED: goal MoveThroughVillageGoal (Alosaurus.java:84) has no dictionary entry"
+      ]
+    },
+    {
+      "registry": "attack_squid",
+      "tier": 2,
+      "tier_label": "Tier 2",
+      "rig_source": "reference-leg converter output",
+      "in_game": false,
+      "seed": true,
+      "files": [
+        "SPEC.md",
+        "attack_squid.animation.json",
+        "attack_squid.bbmodel",
+        "reference/SLOTS.md",
+        "reference_attacksquid.geo.json",
+        "roundtrip.report.json",
+        "spec.manifest.json",
+        "textures/attacksquid.png"
+      ],
+      "bones": 9,
+      "cubes": 9,
+      "clips_shipped": 0,
+      "clips_in_spec": 13,
+      "goals": 5,
+      "flags": 1,
+      "attacking": "STATE",
+      "strike_sites": 2,
+      "textures_mapped": 1,
+      "locked_bones": 0,
+      "lock_mode": "warn",
+      "keyed_locked_bones": 0,
+      "effort_hours": 18.8,
+      "unlabelled_bones": 0,
+      "roundtrip": {
+        "equal": true,
+        "bone_order_preserved": true,
+        "differences": 0,
+        "dropped_keys": 0,
+        "reattached": [
+          "orespawn:bone_draw_order"
+        ]
+      },
+      "warnings": []
+    },
+    {
+      "registry": "band_p",
+      "tier": 2,
+      "tier_label": "Tier 2",
+      "rig_source": "reference-leg converter output",
+      "in_game": false,
+      "seed": true,
+      "files": [
+        "SPEC.md",
+        "band_p.animation.json",
+        "band_p.bbmodel",
+        "reference/SLOTS.md",
+        "reference_bandp.geo.json",
+        "roundtrip.report.json",
+        "spec.manifest.json",
+        "textures/bandp_bandit.png",
+        "textures/bandp_pirate.png"
+      ],
+      "bones": 7,
+      "cubes": 7,
+      "clips_shipped": 0,
+      "clips_in_spec": 12,
+      "goals": 6,
+      "flags": 1,
+      "attacking": "NONE",
+      "strike_sites": 1,
+      "textures_mapped": 2,
+      "locked_bones": 0,
+      "lock_mode": "warn",
+      "keyed_locked_bones": 0,
+      "effort_hours": 15.4,
+      "unlabelled_bones": 0,
+      "roundtrip": {
+        "equal": true,
+        "bone_order_preserved": true,
+        "differences": 0,
+        "dropped_keys": 0,
+        "reattached": [
+          "orespawn:bone_draw_order"
+        ]
+      },
+      "warnings": [
+        "GOAL_UNCLASSIFIED: goal MoveThroughVillageGoal (BandP.java:78) has no dictionary entry",
+        "GOAL_UNCLASSIFIED: goal OpenDoorGoal (BandP.java:83) has no dictionary entry"
+      ]
+    },
+    {
+      "registry": "basilisk",
+      "tier": 1,
+      "tier_label": "Tier 1 (boss)",
+      "rig_source": "reference-leg converter output",
+      "in_game": false,
+      "seed": true,
+      "files": [
+        "SPEC.md",
+        "basilisk.animation.json",
+        "basilisk.bbmodel",
+        "reference/SLOTS.md",
+        "reference_basilisk.geo.json",
+        "roundtrip.report.json",
+        "spec.manifest.json",
+        "textures/basilisk.png"
+      ],
+      "bones": 21,
+      "cubes": 21,
+      "clips_shipped": 0,
+      "clips_in_spec": 10,
+      "goals": 6,
+      "flags": 1,
+      "attacking": "STATE",
+      "strike_sites": 2,
+      "textures_mapped": 1,
+      "locked_bones": 8,
+      "lock_mode": "warn",
+      "keyed_locked_bones": 0,
+      "effort_hours": 24.6,
+      "unlabelled_bones": 0,
+      "roundtrip": {
+        "equal": true,
+        "bone_order_preserved": true,
+        "differences": 0,
+        "dropped_keys": 0,
+        "reattached": [
+          "orespawn:bone_draw_order"
+        ]
+      },
+      "warnings": [
+        "GOAL_UNCLASSIFIED: goal MoveThroughVillageGoal (Basilisk.java:81) has no dictionary entry"
+      ]
+    },
+    {
+      "registry": "cave_fisher",
+      "tier": 2,
+      "tier_label": "Tier 2",
+      "rig_source": "reference-leg converter output",
+      "in_game": false,
+      "seed": true,
+      "files": [
+        "SPEC.md",
+        "cave_fisher.animation.json",
+        "cave_fisher.bbmodel",
+        "reference/SLOTS.md",
+        "reference_cavefisher.geo.json",
+        "roundtrip.report.json",
+        "spec.manifest.json",
+        "textures/cavefisher.png"
+      ],
+      "bones": 75,
+      "cubes": 75,
+      "clips_shipped": 0,
+      "clips_in_spec": 10,
+      "goals": 5,
+      "flags": 1,
+      "attacking": "NONE",
+      "strike_sites": 1,
+      "textures_mapped": 1,
+      "locked_bones": 0,
+      "lock_mode": "warn",
+      "keyed_locked_bones": 0,
+      "effort_hours": 29.0,
+      "unlabelled_bones": 0,
+      "roundtrip": {
+        "equal": true,
+        "bone_order_preserved": true,
+        "differences": 0,
+        "dropped_keys": 0,
+        "reattached": [
+          "orespawn:bone_draw_order"
+        ]
+      },
+      "warnings": [
+        "WISHLIST_UNACCEPTED: wishlist names clip(s) ['aggro_idle'] that the manifest does not accept"
+      ]
+    },
+    {
+      "registry": "cloud_shark",
+      "tier": 2,
+      "tier_label": "Tier 2",
+      "rig_source": "shipped",
+      "in_game": true,
+      "seed": true,
+      "files": [
+        "SPEC.md",
+        "cloud_shark.bbmodel",
+        "cloud_shark_reference.animation.json",
+        "cloudshark.animation.json",
+        "cloudshark.geo.json",
+        "reference/SLOTS.md",
+        "roundtrip.report.json",
+        "spec.manifest.json",
+        "textures/cloudshark.png"
+      ],
+      "bones": 8,
+      "cubes": 8,
+      "clips_shipped": 0,
+      "clips_in_spec": 11,
+      "goals": 0,
+      "flags": 0,
+      "attacking": "NONE",
+      "strike_sites": 1,
+      "textures_mapped": 1,
+      "locked_bones": 0,
+      "lock_mode": "warn",
+      "keyed_locked_bones": 0,
+      "effort_hours": 15.6,
+      "unlabelled_bones": 0,
+      "roundtrip": {
+        "equal": true,
+        "bone_order_preserved": true,
+        "differences": 0,
+        "dropped_keys": 0,
+        "reattached": [
+          "orespawn:bone_draw_order",
+          "orespawn:cube_face_order"
+        ]
+      },
+      "warnings": []
+    },
+    {
+      "registry": "crab",
+      "tier": 2,
+      "tier_label": "Tier 2",
+      "rig_source": "reference-leg converter output",
+      "in_game": false,
+      "seed": true,
+      "files": [
+        "SPEC.md",
+        "crab.animation.json",
+        "crab.bbmodel",
+        "reference/SLOTS.md",
+        "reference_crab.geo.json",
+        "roundtrip.report.json",
+        "spec.manifest.json",
+        "textures/crab.png"
+      ],
+      "bones": 25,
+      "cubes": 25,
+      "clips_shipped": 0,
+      "clips_in_spec": 14,
+      "goals": 5,
+      "flags": 2,
+      "attacking": "STATE",
+      "strike_sites": 1,
+      "textures_mapped": 1,
+      "locked_bones": 0,
+      "lock_mode": "warn",
+      "keyed_locked_bones": 0,
+      "effort_hours": 23.0,
+      "unlabelled_bones": 0,
+      "roundtrip": {
+        "equal": true,
+        "bone_order_preserved": true,
+        "differences": 0,
+        "dropped_keys": 0,
+        "reattached": [
+          "orespawn:bone_draw_order"
+        ]
+      },
+      "warnings": []
+    },
+    {
+      "registry": "creeping_horror",
+      "tier": 2,
+      "tier_label": "Tier 2",
+      "rig_source": "reference-leg converter output",
+      "in_game": false,
+      "seed": true,
+      "files": [
+        "SPEC.md",
+        "creeping_horror.animation.json",
+        "creeping_horror.bbmodel",
+        "reference/SLOTS.md",
+        "reference_creepinghorror.geo.json",
+        "roundtrip.report.json",
+        "spec.manifest.json",
+        "textures/creepinghorror.png"
+      ],
+      "bones": 26,
+      "cubes": 26,
+      "clips_shipped": 0,
+      "clips_in_spec": 13,
+      "goals": 7,
+      "flags": 0,
+      "attacking": "NONE",
+      "strike_sites": 1,
+      "textures_mapped": 1,
+      "locked_bones": 0,
+      "lock_mode": "warn",
+      "keyed_locked_bones": 0,
+      "effort_hours": 21.2,
+      "unlabelled_bones": 0,
+      "roundtrip": {
+        "equal": true,
+        "bone_order_preserved": true,
+        "differences": 0,
+        "dropped_keys": 0,
+        "reattached": [
+          "orespawn:bone_draw_order"
+        ]
+      },
+      "warnings": [
+        "GOAL_UNCLASSIFIED: goal MoveThroughVillageGoal (CreepingHorror.java:78) has no dictionary entry"
+      ]
+    },
+    {
+      "registry": "cryolophosaurus",
+      "tier": 2,
+      "tier_label": "Tier 2",
+      "rig_source": "reference-leg converter output",
+      "in_game": false,
+      "seed": true,
+      "files": [
+        "SPEC.md",
+        "cryolophosaurus.animation.json",
+        "cryolophosaurus.bbmodel",
+        "reference/SLOTS.md",
+        "reference_cryolophosaurus.geo.json",
+        "roundtrip.report.json",
+        "spec.manifest.json",
+        "textures/cryolophosaurus.png"
+      ],
+      "bones": 20,
+      "cubes": 20,
+      "clips_shipped": 0,
+      "clips_in_spec": 9,
+      "goals": 7,
+      "flags": 0,
+      "attacking": "NONE",
+      "strike_sites": 1,
+      "textures_mapped": 1,
+      "locked_bones": 0,
+      "lock_mode": "warn",
+      "keyed_locked_bones": 0,
+      "effort_hours": 16.0,
+      "unlabelled_bones": 0,
+      "roundtrip": {
+        "equal": true,
+        "bone_order_preserved": true,
+        "differences": 0,
+        "dropped_keys": 0,
+        "reattached": [
+          "orespawn:bone_draw_order"
+        ]
+      },
+      "warnings": []
+    },
+    {
+      "registry": "dungeon_beast",
+      "tier": 2,
+      "tier_label": "Tier 2",
+      "rig_source": "reference-leg converter output",
+      "in_game": false,
+      "seed": true,
+      "files": [
+        "SPEC.md",
+        "dungeon_beast.animation.json",
+        "dungeon_beast.bbmodel",
+        "reference/SLOTS.md",
+        "reference_dungeonbeast.geo.json",
+        "roundtrip.report.json",
+        "spec.manifest.json",
+        "textures/dungeonbeast.png"
+      ],
+      "bones": 64,
+      "cubes": 64,
+      "clips_shipped": 0,
+      "clips_in_spec": 14,
+      "goals": 5,
+      "flags": 1,
+      "attacking": "NONE",
+      "strike_sites": 1,
+      "textures_mapped": 1,
+      "locked_bones": 0,
+      "lock_mode": "warn",
+      "keyed_locked_bones": 0,
+      "effort_hours": 30.8,
+      "unlabelled_bones": 0,
+      "roundtrip": {
+        "equal": true,
+        "bone_order_preserved": true,
+        "differences": 0,
+        "dropped_keys": 0,
+        "reattached": [
+          "orespawn:bone_draw_order"
+        ]
+      },
+      "warnings": []
+    },
+    {
+      "registry": "ender_knight",
+      "tier": 2,
+      "tier_label": "Tier 2",
+      "rig_source": "reference-leg converter output",
+      "in_game": false,
+      "seed": true,
+      "files": [
+        "SPEC.md",
+        "ender_knight.animation.json",
+        "ender_knight.bbmodel",
+        "reference/SLOTS.md",
+        "reference_enderknight.geo.json",
+        "roundtrip.report.json",
+        "spec.manifest.json",
+        "textures/enderknight.png"
+      ],
+      "bones": 40,
+      "cubes": 40,
+      "clips_shipped": 0,
+      "clips_in_spec": 11,
+      "goals": 7,
+      "flags": 1,
+      "attacking": "NONE",
+      "strike_sites": 0,
+      "textures_mapped": 1,
+      "locked_bones": 0,
+      "lock_mode": "warn",
+      "keyed_locked_bones": 0,
+      "effort_hours": 23.0,
+      "unlabelled_bones": 0,
+      "roundtrip": {
+        "equal": true,
+        "bone_order_preserved": true,
+        "differences": 0,
+        "dropped_keys": 0,
+        "reattached": [
+          "orespawn:bone_draw_order"
+        ]
+      },
+      "warnings": [
+        "WISHLIST_UNACCEPTED: wishlist names clip(s) ['attack'] that the manifest does not accept",
+        "WISHLIST_UNACCEPTED: wishlist names clip(s) ['aggro_idle'] that the manifest does not accept"
+      ]
+    },
+    {
+      "registry": "ender_reaper",
+      "tier": 2,
+      "tier_label": "Tier 2",
+      "rig_source": "reference-leg converter output",
+      "in_game": false,
+      "seed": true,
+      "files": [
+        "SPEC.md",
+        "ender_reaper.animation.json",
+        "ender_reaper.bbmodel",
+        "reference/SLOTS.md",
+        "reference_enderreaper.geo.json",
+        "roundtrip.report.json",
+        "spec.manifest.json",
+        "textures/enderreaper.png"
+      ],
+      "bones": 66,
+      "cubes": 66,
+      "clips_shipped": 0,
+      "clips_in_spec": 12,
+      "goals": 7,
+      "flags": 1,
+      "attacking": "NONE",
+      "strike_sites": 0,
+      "textures_mapped": 1,
+      "locked_bones": 0,
+      "lock_mode": "warn",
+      "keyed_locked_bones": 0,
+      "effort_hours": 28.2,
+      "unlabelled_bones": 0,
+      "roundtrip": {
+        "equal": true,
+        "bone_order_preserved": true,
+        "differences": 0,
+        "dropped_keys": 0,
+        "reattached": [
+          "orespawn:bone_draw_order"
+        ]
+      },
+      "warnings": [
+        "WISHLIST_UNACCEPTED: wishlist names clip(s) ['aggro_idle'] that the manifest does not accept",
+        "WISHLIST_UNACCEPTED: wishlist names clip(s) ['attack'] that the manifest does not accept"
+      ]
+    },
+    {
+      "registry": "hammerhead",
+      "tier": 1,
+      "tier_label": "Tier 1 (boss)",
+      "rig_source": "reference-leg converter output",
+      "in_game": false,
+      "seed": true,
+      "files": [
+        "SPEC.md",
+        "hammerhead.animation.json",
+        "hammerhead.bbmodel",
+        "reference/SLOTS.md",
+        "reference_hammerhead.geo.json",
+        "roundtrip.report.json",
+        "spec.manifest.json",
+        "textures/hammerhead.png"
+      ],
+      "bones": 37,
+      "cubes": 37,
+      "clips_shipped": 0,
+      "clips_in_spec": 12,
+      "goals": 4,
+      "flags": 1,
+      "attacking": "STATE",
+      "strike_sites": 2,
+      "textures_mapped": 1,
+      "locked_bones": 18,
+      "lock_mode": "warn",
+      "keyed_locked_bones": 0,
+      "effort_hours": 30.1,
+      "unlabelled_bones": 0,
+      "roundtrip": {
+        "equal": true,
+        "bone_order_preserved": true,
+        "differences": 0,
+        "dropped_keys": 0,
+        "reattached": [
+          "orespawn:bone_draw_order"
+        ]
+      },
+      "warnings": []
+    },
+    {
+      "registry": "irukandji",
+      "tier": 2,
+      "tier_label": "Tier 2",
+      "rig_source": "shipped",
+      "in_game": true,
+      "seed": true,
+      "files": [
+        "SPEC.md",
+        "irukandji.animation.json",
+        "irukandji.bbmodel",
+        "irukandji.geo.json",
+        "irukandji_reference.animation.json",
+        "reference/SLOTS.md",
+        "roundtrip.report.json",
+        "spec.manifest.json",
+        "textures/irukandji.png"
+      ],
+      "bones": 9,
+      "cubes": 9,
+      "clips_shipped": 0,
+      "clips_in_spec": 14,
+      "goals": 5,
+      "flags": 1,
+      "attacking": "STATE",
+      "strike_sites": 1,
+      "textures_mapped": 1,
+      "locked_bones": 0,
+      "lock_mode": "warn",
+      "keyed_locked_bones": 0,
+      "effort_hours": 19.8,
+      "unlabelled_bones": 0,
+      "roundtrip": {
+        "equal": true,
+        "bone_order_preserved": true,
+        "differences": 0,
+        "dropped_keys": 0,
+        "reattached": [
+          "orespawn:bone_draw_order"
+        ]
+      },
+      "warnings": [
+        "GOAL_UNCLASSIFIED: goal MyEntityAIWander (Irukandji.java:82) has no dictionary entry"
+      ]
+    },
+    {
+      "registry": "nastysaurus",
+      "tier": 2,
+      "tier_label": "Tier 2",
+      "rig_source": "reference-leg converter output",
+      "in_game": false,
+      "seed": true,
+      "files": [
+        "SPEC.md",
+        "nastysaurus.animation.json",
+        "nastysaurus.bbmodel",
+        "reference/SLOTS.md",
+        "reference_nastysaurus.geo.json",
+        "roundtrip.report.json",
+        "spec.manifest.json",
+        "textures/nastysaurus.png"
+      ],
+      "bones": 59,
+      "cubes": 59,
+      "clips_shipped": 0,
+      "clips_in_spec": 13,
+      "goals": 6,
+      "flags": 1,
+      "attacking": "NONE",
+      "strike_sites": 1,
+      "textures_mapped": 1,
+      "locked_bones": 0,
+      "lock_mode": "warn",
+      "keyed_locked_bones": 0,
+      "effort_hours": 27.8,
+      "unlabelled_bones": 0,
+      "roundtrip": {
+        "equal": true,
+        "bone_order_preserved": true,
+        "differences": 0,
+        "dropped_keys": 0,
+        "reattached": [
+          "orespawn:bone_draw_order"
+        ]
+      },
+      "warnings": [
+        "WISHLIST_UNACCEPTED: wishlist names clip(s) ['aggro_idle'] that the manifest does not accept"
+      ]
+    },
+    {
+      "registry": "pitch_black",
+      "tier": 1,
+      "tier_label": "Tier 1 (boss)",
+      "rig_source": "reference-leg converter output",
+      "in_game": false,
+      "seed": true,
+      "files": [
+        "SPEC.md",
+        "pitch_black.animation.json",
+        "pitch_black.bbmodel",
+        "reference/SLOTS.md",
+        "reference_pitchblack.geo.json",
+        "roundtrip.report.json",
+        "spec.manifest.json",
+        "textures/pitchblack.png"
+      ],
+      "bones": 101,
+      "cubes": 101,
+      "clips_shipped": 0,
+      "clips_in_spec": 16,
+      "goals": 4,
+      "flags": 4,
+      "attacking": "STATE",
+      "strike_sites": 1,
+      "textures_mapped": 1,
+      "locked_bones": 14,
+      "lock_mode": "warn",
+      "keyed_locked_bones": 0,
+      "effort_hours": 47.1,
+      "unlabelled_bones": 0,
+      "roundtrip": {
+        "equal": true,
+        "bone_order_preserved": true,
+        "differences": 0,
+        "dropped_keys": 0,
+        "reattached": [
+          "orespawn:bone_draw_order"
+        ]
+      },
+      "warnings": []
+    },
+    {
+      "registry": "pointysaurus",
+      "tier": 2,
+      "tier_label": "Tier 2",
+      "rig_source": "reference-leg converter output",
+      "in_game": false,
+      "seed": true,
+      "files": [
+        "SPEC.md",
+        "pointysaurus.animation.json",
+        "pointysaurus.bbmodel",
+        "reference/SLOTS.md",
+        "reference_pointysaurus.geo.json",
+        "roundtrip.report.json",
+        "spec.manifest.json",
+        "textures/pointysaurus.png"
+      ],
+      "bones": 30,
+      "cubes": 30,
+      "clips_shipped": 0,
+      "clips_in_spec": 13,
+      "goals": 8,
+      "flags": 1,
+      "attacking": "NONE",
+      "strike_sites": 1,
+      "textures_mapped": 1,
+      "locked_bones": 0,
+      "lock_mode": "warn",
+      "keyed_locked_bones": 0,
+      "effort_hours": 22.0,
+      "unlabelled_bones": 0,
+      "roundtrip": {
+        "equal": true,
+        "bone_order_preserved": true,
+        "differences": 0,
+        "dropped_keys": 0,
+        "reattached": [
+          "orespawn:bone_draw_order"
+        ]
+      },
+      "warnings": [
+        "GOAL_UNCLASSIFIED: goal PointysaurusStareGoal (Pointysaurus.java:84) has no dictionary entry",
+        "WISHLIST_UNACCEPTED: wishlist names clip(s) ['aggro_idle'] that the manifest does not accept"
+      ]
+    },
+    {
+      "registry": "robot_1",
+      "tier": 3,
+      "tier_label": "Tier 3",
+      "rig_source": "shipped",
+      "in_game": true,
+      "seed": true,
+      "files": [
+        "SPEC.md",
+        "reference/SLOTS.md",
+        "robot1.animation.json",
+        "robot1.geo.json",
+        "robot_1.bbmodel",
+        "robot_1_reference.animation.json",
+        "roundtrip.report.json",
+        "spec.manifest.json",
+        "textures/robot1.png"
+      ],
+      "bones": 27,
+      "cubes": 27,
+      "clips_shipped": 0,
+      "clips_in_spec": 0,
+      "goals": 5,
+      "flags": 1,
+      "attacking": "STATE",
+      "strike_sites": 0,
+      "textures_mapped": 1,
+      "locked_bones": 0,
+      "lock_mode": "warn",
+      "keyed_locked_bones": 0,
+      "effort_hours": 0.0,
+      "unlabelled_bones": 20,
+      "roundtrip": {
+        "equal": true,
+        "bone_order_preserved": true,
+        "differences": 0,
+        "dropped_keys": 0,
+        "reattached": [
+          "orespawn:bone_draw_order"
+        ]
+      },
+      "warnings": [
+        "BONE_UNLABELLED: bone Shape1 has no glossary label",
+        "BONE_UNLABELLED: bone Shape10 has no glossary label",
+        "BONE_UNLABELLED: bone Shape11 has no glossary label",
+        "BONE_UNLABELLED: bone Shape12 has no glossary label",
+        "BONE_UNLABELLED: bone Shape13 has no glossary label",
+        "BONE_UNLABELLED: bone Shape14 has no glossary label",
+        "BONE_UNLABELLED: bone Shape15 has no glossary label",
+        "BONE_UNLABELLED: bone Shape15a has no glossary label",
+        "BONE_UNLABELLED: bone Shape16 has no glossary label",
+        "BONE_UNLABELLED: bone Shape17 has no glossary label",
+        "BONE_UNLABELLED: bone Shape18 has no glossary label",
+        "BONE_UNLABELLED: bone Shape2 has no glossary label",
+        "BONE_UNLABELLED: bone Shape2a has no glossary label",
+        "BONE_UNLABELLED: bone Shape3 has no glossary label",
+        "BONE_UNLABELLED: bone Shape4 has no glossary label",
+        "BONE_UNLABELLED: bone Shape5 has no glossary label",
+        "BONE_UNLABELLED: bone Shape6 has no glossary label",
+        "BONE_UNLABELLED: bone Shape7 has no glossary label",
+        "BONE_UNLABELLED: bone Shape8 has no glossary label",
+        "BONE_UNLABELLED: bone Shape9 has no glossary label"
+      ]
+    },
+    {
+      "registry": "robot_2",
+      "tier": 3,
+      "tier_label": "Tier 3",
+      "rig_source": "shipped",
+      "in_game": true,
+      "seed": true,
+      "files": [
+        "SPEC.md",
+        "reference/SLOTS.md",
+        "robot2.animation.json",
+        "robot2.geo.json",
+        "robot_2.bbmodel",
+        "robot_2_reference.animation.json",
+        "roundtrip.report.json",
+        "spec.manifest.json",
+        "textures/robot2.png"
+      ],
+      "bones": 15,
+      "cubes": 15,
+      "clips_shipped": 0,
+      "clips_in_spec": 0,
+      "goals": 5,
+      "flags": 1,
+      "attacking": "STATE",
+      "strike_sites": 1,
+      "textures_mapped": 1,
+      "locked_bones": 0,
+      "lock_mode": "warn",
+      "keyed_locked_bones": 0,
+      "effort_hours": 0.0,
+      "unlabelled_bones": 4,
+      "roundtrip": {
+        "equal": true,
+        "bone_order_preserved": true,
+        "differences": 0,
+        "dropped_keys": 0,
+        "reattached": [
+          "orespawn:bone_draw_order"
+        ]
+      },
+      "warnings": [
+        "BONE_UNLABELLED: bone Shape3 has no glossary label",
+        "BONE_UNLABELLED: bone Shape6 has no glossary label",
+        "BONE_UNLABELLED: bone Shape7 has no glossary label",
+        "BONE_UNLABELLED: bone Shape8 has no glossary label"
+      ]
+    },
+    {
+      "registry": "robot_3",
+      "tier": 3,
+      "tier_label": "Tier 3",
+      "rig_source": "shipped",
+      "in_game": true,
+      "seed": true,
+      "files": [
+        "SPEC.md",
+        "reference/SLOTS.md",
+        "robot3.animation.json",
+        "robot3.geo.json",
+        "robot_3.bbmodel",
+        "robot_3_reference.animation.json",
+        "roundtrip.report.json",
+        "spec.manifest.json",
+        "textures/robot3.png"
+      ],
+      "bones": 19,
+      "cubes": 19,
+      "clips_shipped": 0,
+      "clips_in_spec": 0,
+      "goals": 5,
+      "flags": 1,
+      "attacking": "MIXED",
+      "strike_sites": 1,
+      "textures_mapped": 1,
+      "locked_bones": 0,
+      "lock_mode": "warn",
+      "keyed_locked_bones": 0,
+      "effort_hours": 0.0,
+      "unlabelled_bones": 0,
+      "roundtrip": {
+        "equal": true,
+        "bone_order_preserved": true,
+        "differences": 0,
+        "dropped_keys": 0,
+        "reattached": [
+          "orespawn:bone_draw_order"
+        ]
+      },
+      "warnings": [
+        "ATTACKING_UNCLASSIFIED: DATA_ATTACKING classified MIXED: a 10-tick pulse per in-range think tick: the flag is raised at line(s) [155] every 35 ticks (reloadTicker reset) while a target is in range — before the line-of-sight gate, so it pulses whether or not a shot fires — and cleared when reloadTicker < 25 at line(s) [144] AND cleared on target loss at line(s) [162]"
+      ]
+    },
+    {
+      "registry": "robot_4",
+      "tier": 3,
+      "tier_label": "Tier 3",
+      "rig_source": "shipped",
+      "in_game": true,
+      "seed": true,
+      "files": [
+        "SPEC.md",
+        "reference/SLOTS.md",
+        "robot4.animation.json",
+        "robot4.geo.json",
+        "robot_4.bbmodel",
+        "robot_4_reference.animation.json",
+        "roundtrip.report.json",
+        "spec.manifest.json",
+        "textures/robot4.png"
+      ],
+      "bones": 56,
+      "cubes": 56,
+      "clips_shipped": 0,
+      "clips_in_spec": 0,
+      "goals": 5,
+      "flags": 2,
+      "attacking": "EVENT",
+      "strike_sites": 3,
+      "textures_mapped": 1,
+      "locked_bones": 0,
+      "lock_mode": "warn",
+      "keyed_locked_bones": 0,
+      "effort_hours": 0.0,
+      "unlabelled_bones": 0,
+      "roundtrip": {
+        "equal": true,
+        "bone_order_preserved": true,
+        "differences": 0,
+        "dropped_keys": 0,
+        "reattached": [
+          "orespawn:bone_draw_order"
+        ]
+      },
+      "warnings": []
+    },
+    {
+      "registry": "robot_5",
+      "tier": 3,
+      "tier_label": "Tier 3",
+      "rig_source": "shipped",
+      "in_game": true,
+      "seed": true,
+      "files": [
+        "SPEC.md",
+        "reference/SLOTS.md",
+        "robot5.animation.json",
+        "robot5.geo.json",
+        "robot_5.bbmodel",
+        "robot_5_reference.animation.json",
+        "roundtrip.report.json",
+        "spec.manifest.json",
+        "textures/robot5.png"
+      ],
+      "bones": 11,
+      "cubes": 11,
+      "clips_shipped": 0,
+      "clips_in_spec": 0,
+      "goals": 5,
+      "flags": 1,
+      "attacking": "MIXED",
+      "strike_sites": 1,
+      "textures_mapped": 1,
+      "locked_bones": 0,
+      "lock_mode": "warn",
+      "keyed_locked_bones": 0,
+      "effort_hours": 0.0,
+      "unlabelled_bones": 0,
+      "roundtrip": {
+        "equal": true,
+        "bone_order_preserved": true,
+        "differences": 0,
+        "dropped_keys": 0,
+        "reattached": [
+          "orespawn:bone_draw_order"
+        ]
+      },
+      "warnings": [
+        "ATTACKING_UNCLASSIFIED: DATA_ATTACKING classified MIXED: a 5-tick pulse per in-range think tick: the flag is raised at line(s) [143] every 20 ticks (reloadTicker reset) while a target is in range — before the line-of-sight gate, so it pulses whether or not a shot fires — and cleared when reloadTicker < 15 at line(s) [131] AND cleared on target loss at line(s) [152]"
+      ]
+    },
+    {
+      "registry": "sea_monster",
+      "tier": 1,
+      "tier_label": "Tier 1 (boss)",
+      "rig_source": "reference-leg converter output",
+      "in_game": false,
+      "seed": true,
+      "files": [
+        "SPEC.md",
+        "reference/SLOTS.md",
+        "reference_seamonster.geo.json",
+        "roundtrip.report.json",
+        "sea_monster.animation.json",
+        "sea_monster.bbmodel",
+        "spec.manifest.json",
+        "textures/seamonster.png"
+      ],
+      "bones": 23,
+      "cubes": 23,
+      "clips_shipped": 0,
+      "clips_in_spec": 14,
+      "goals": 6,
+      "flags": 1,
+      "attacking": "STATE",
+      "strike_sites": 2,
+      "textures_mapped": 1,
+      "locked_bones": 13,
+      "lock_mode": "warn",
+      "keyed_locked_bones": 0,
+      "effort_hours": 32.5,
+      "unlabelled_bones": 0,
+      "roundtrip": {
+        "equal": true,
+        "bone_order_preserved": true,
+        "differences": 0,
+        "dropped_keys": 0,
+        "reattached": [
+          "orespawn:bone_draw_order"
+        ]
+      },
+      "warnings": []
+    },
+    {
+      "registry": "sea_viper",
+      "tier": 2,
+      "tier_label": "Tier 2",
+      "rig_source": "reference-leg converter output",
+      "in_game": false,
+      "seed": true,
+      "files": [
+        "SPEC.md",
+        "reference/SLOTS.md",
+        "reference_seaviper.geo.json",
+        "roundtrip.report.json",
+        "sea_viper.animation.json",
+        "sea_viper.bbmodel",
+        "spec.manifest.json",
+        "textures/seaviper.png"
+      ],
+      "bones": 34,
+      "cubes": 34,
+      "clips_shipped": 0,
+      "clips_in_spec": 13,
+      "goals": 8,
+      "flags": 1,
+      "attacking": "NONE",
+      "strike_sites": 1,
+      "textures_mapped": 1,
+      "locked_bones": 0,
+      "lock_mode": "warn",
+      "keyed_locked_bones": 0,
+      "effort_hours": 23.8,
+      "unlabelled_bones": 0,
+      "roundtrip": {
+        "equal": true,
+        "bone_order_preserved": true,
+        "differences": 0,
+        "dropped_keys": 0,
+        "reattached": [
+          "orespawn:bone_draw_order"
+        ]
+      },
+      "warnings": [
+        "GOAL_UNCLASSIFIED: goal SeaViperBiteGoal (SeaViper.java:119) has no dictionary entry",
+        "GOAL_UNCLASSIFIED: goal RandomSwimmingGoal (SeaViper.java:120) has no dictionary entry",
+        "WISHLIST_UNACCEPTED: wishlist names clip(s) ['aggro_idle'] that the manifest does not accept"
+      ]
+    },
+    {
+      "registry": "skate",
+      "tier": 2,
+      "tier_label": "Tier 2",
+      "rig_source": "shipped",
+      "in_game": true,
+      "seed": true,
+      "files": [
+        "SPEC.md",
+        "reference/SLOTS.md",
+        "roundtrip.report.json",
+        "skate.animation.json",
+        "skate.bbmodel",
+        "skate.geo.json",
+        "skate_reference.animation.json",
+        "spec.manifest.json",
+        "textures/skate.png"
+      ],
+      "bones": 3,
+      "cubes": 3,
+      "clips_shipped": 0,
+      "clips_in_spec": 8,
+      "goals": 5,
+      "flags": 1,
+      "attacking": "STATE",
+      "strike_sites": 1,
+      "textures_mapped": 1,
+      "locked_bones": 0,
+      "lock_mode": "warn",
+      "keyed_locked_bones": 0,
+      "effort_hours": 12.6,
+      "unlabelled_bones": 0,
+      "roundtrip": {
+        "equal": true,
+        "bone_order_preserved": true,
+        "differences": 0,
+        "dropped_keys": 0,
+        "reattached": [
+          "orespawn:bone_draw_order"
+        ]
+      },
+      "warnings": [
+        "GOAL_UNCLASSIFIED: goal MyEntityAIWander (Skate.java:76) has no dictionary entry"
+      ]
+    },
+    {
+      "registry": "trex",
+      "tier": 1,
+      "tier_label": "Tier 1 (boss)",
+      "rig_source": "reference-leg converter output",
+      "in_game": false,
+      "seed": true,
+      "files": [
+        "SPEC.md",
+        "reference/SLOTS.md",
+        "reference_trex.geo.json",
+        "roundtrip.report.json",
+        "spec.manifest.json",
+        "textures/trex.png",
+        "trex.animation.json",
+        "trex.bbmodel"
+      ],
+      "bones": 27,
+      "cubes": 27,
+      "clips_shipped": 0,
+      "clips_in_spec": 11,
+      "goals": 6,
+      "flags": 1,
+      "attacking": "NONE",
+      "strike_sites": 1,
+      "textures_mapped": 1,
+      "locked_bones": 8,
+      "lock_mode": "warn",
+      "keyed_locked_bones": 0,
+      "effort_hours": 25.6,
+      "unlabelled_bones": 0,
+      "roundtrip": {
+        "equal": true,
+        "bone_order_preserved": true,
+        "differences": 0,
+        "dropped_keys": 0,
+        "reattached": [
+          "orespawn:bone_draw_order"
+        ]
+      },
+      "warnings": []
+    },
+    {
+      "registry": "urchin",
+      "tier": 2,
+      "tier_label": "Tier 2",
+      "rig_source": "reference-leg converter output",
+      "in_game": false,
+      "seed": true,
+      "files": [
+        "SPEC.md",
+        "reference/SLOTS.md",
+        "reference_urchin.geo.json",
+        "roundtrip.report.json",
+        "spec.manifest.json",
+        "textures/urchin.png",
+        "urchin.animation.json",
+        "urchin.bbmodel"
+      ],
+      "bones": 17,
+      "cubes": 17,
+      "clips_shipped": 0,
+      "clips_in_spec": 13,
+      "goals": 4,
+      "flags": 1,
+      "attacking": "STATE",
+      "strike_sites": 3,
+      "textures_mapped": 1,
+      "locked_bones": 0,
+      "lock_mode": "warn",
+      "keyed_locked_bones": 0,
+      "effort_hours": 19.4,
+      "unlabelled_bones": 0,
+      "roundtrip": {
+        "equal": true,
+        "bone_order_preserved": true,
+        "differences": 0,
+        "dropped_keys": 0,
+        "reattached": [
+          "orespawn:bone_draw_order"
+        ]
+      },
+      "warnings": []
+    },
+    {
+      "registry": "godzilla",
+      "tier": 1,
+      "tier_label": "Tier 1 (boss)",
+      "rig_source": "reference-leg converter output",
+      "in_game": false,
+      "seed": true,
+      "files": [
+        "SPEC.md",
+        "godzilla.animation.json",
+        "godzilla.bbmodel",
+        "reference/SLOTS.md",
+        "reference_godzilla.geo.json",
+        "roundtrip.report.json",
+        "spec.manifest.json",
+        "textures/godzillatexture.png"
+      ],
+      "bones": 71,
+      "cubes": 71,
+      "clips_shipped": 0,
+      "clips_in_spec": 18,
+      "goals": 5,
+      "flags": 2,
+      "attacking": "STATE",
+      "strike_sites": 6,
+      "textures_mapped": 1,
+      "locked_bones": 12,
+      "lock_mode": "warn",
+      "keyed_locked_bones": 0,
+      "effort_hours": 44.1,
+      "unlabelled_bones": 0,
+      "roundtrip": {
+        "equal": true,
+        "bone_order_preserved": true,
+        "differences": 0,
+        "dropped_keys": 0,
+        "reattached": [
+          "orespawn:bone_draw_order"
+        ]
+      },
+      "warnings": []
+    },
+    {
+      "registry": "kraken",
+      "tier": 1,
+      "tier_label": "Tier 1 (boss)",
+      "rig_source": "reference-leg converter output",
+      "in_game": false,
+      "seed": true,
+      "files": [
+        "SPEC.md",
+        "kraken.animation.json",
+        "kraken.bbmodel",
+        "reference/SLOTS.md",
+        "reference_kraken.geo.json",
+        "roundtrip.report.json",
+        "spec.manifest.json",
+        "textures/kraken.png"
+      ],
+      "bones": 111,
+      "cubes": 111,
+      "clips_shipped": 0,
+      "clips_in_spec": 18,
+      "goals": 2,
+      "flags": 2,
+      "attacking": "STATE?",
+      "strike_sites": 1,
+      "textures_mapped": 1,
+      "locked_bones": 14,
+      "lock_mode": "warn",
+      "keyed_locked_bones": 0,
+      "effort_hours": 50.1,
+      "unlabelled_bones": 0,
+      "roundtrip": {
+        "equal": true,
+        "bone_order_preserved": true,
+        "differences": 0,
+        "dropped_keys": 0,
+        "reattached": [
+          "orespawn:bone_draw_order"
+        ]
+      },
+      "warnings": [
+        "ATTACKING_UNCLASSIFIED: DATA_ATTACKING classified STATE?: cleared unconditionally at line(s) [450] (the enclosing branch decides; read the source)"
+      ]
+    },
+    {
+      "registry": "the_king",
+      "tier": 1,
+      "tier_label": "Tier 1 (boss)",
+      "rig_source": "reference-leg converter output",
+      "in_game": false,
+      "seed": true,
+      "files": [
+        "SPEC.md",
+        "reference/SLOTS.md",
+        "reference_theking.geo.json",
+        "roundtrip.report.json",
+        "spec.manifest.json",
+        "textures/theprinceadult.png",
+        "the_king.animation.json",
+        "the_king.bbmodel"
+      ],
+      "bones": 119,
+      "cubes": 119,
+      "clips_shipped": 0,
+      "clips_in_spec": 23,
+      "goals": 5,
+      "flags": 3,
+      "attacking": "STATE",
+      "strike_sites": 5,
+      "textures_mapped": 1,
+      "locked_bones": 15,
+      "lock_mode": "warn",
+      "keyed_locked_bones": 0,
+      "effort_hours": 60.3,
+      "unlabelled_bones": 0,
+      "roundtrip": {
+        "equal": true,
+        "bone_order_preserved": true,
+        "differences": 0,
+        "dropped_keys": 0,
+        "reattached": [
+          "orespawn:bone_draw_order"
+        ]
+      },
+      "warnings": [
+        "GOAL_UNCLASSIFIED: goal KingEndGameGoal (TheKing.java:215) has no dictionary entry",
+        "GOAL_UNCLASSIFIED: goal KingPrimaryGoal (TheKing.java:216) has no dictionary entry"
+      ]
+    },
     {
       "registry": "the_queen",
       "tier": 0,
       "tier_label": "Tier 1 (boss; the design's 'done' row)",
+      "rig_source": "shipped",
+      "in_game": true,
+      "seed": true,
       "files": [
         "SPEC.md",
         "reference/SLOTS.md",
@@ -43,9 +1468,960 @@
       ]
     },
     {
+      "registry": "bee",
+      "tier": 2,
+      "tier_label": "Tier 2",
+      "rig_source": "shipped",
+      "in_game": true,
+      "seed": true,
+      "files": [
+        "SPEC.md",
+        "bee.animation.json",
+        "bee.bbmodel",
+        "bee.geo.json",
+        "bee_reference.animation.json",
+        "reference/SLOTS.md",
+        "roundtrip.report.json",
+        "spec.manifest.json",
+        "textures/bee.png"
+      ],
+      "bones": 23,
+      "cubes": 23,
+      "clips_shipped": 0,
+      "clips_in_spec": 16,
+      "goals": 0,
+      "flags": 1,
+      "attacking": "STATE",
+      "strike_sites": 2,
+      "textures_mapped": 1,
+      "locked_bones": 0,
+      "lock_mode": "warn",
+      "keyed_locked_bones": 0,
+      "effort_hours": 24.6,
+      "unlabelled_bones": 0,
+      "roundtrip": {
+        "equal": true,
+        "bone_order_preserved": true,
+        "differences": 0,
+        "dropped_keys": 0,
+        "reattached": [
+          "orespawn:bone_draw_order",
+          "orespawn:cube_face_order"
+        ]
+      },
+      "warnings": []
+    },
+    {
+      "registry": "brutalfly",
+      "tier": 2,
+      "tier_label": "Tier 2",
+      "rig_source": "shipped",
+      "in_game": true,
+      "seed": true,
+      "files": [
+        "SPEC.md",
+        "brutalfly.animation.json",
+        "brutalfly.bbmodel",
+        "brutalfly.geo.json",
+        "brutalfly_reference.animation.json",
+        "reference/SLOTS.md",
+        "roundtrip.report.json",
+        "spec.manifest.json",
+        "textures/brutalfly.png"
+      ],
+      "bones": 14,
+      "cubes": 14,
+      "clips_shipped": 2,
+      "clips_in_spec": 7,
+      "goals": 0,
+      "flags": 0,
+      "attacking": "NONE",
+      "strike_sites": 3,
+      "textures_mapped": 1,
+      "locked_bones": 0,
+      "lock_mode": "warn",
+      "keyed_locked_bones": 0,
+      "effort_hours": 11.8,
+      "unlabelled_bones": 0,
+      "roundtrip": {
+        "equal": true,
+        "bone_order_preserved": true,
+        "differences": 0,
+        "dropped_keys": 0,
+        "reattached": [
+          "orespawn:bone_draw_order"
+        ]
+      },
+      "warnings": []
+    },
+    {
+      "registry": "cater_killer",
+      "tier": 2,
+      "tier_label": "Tier 2",
+      "rig_source": "shipped",
+      "in_game": true,
+      "seed": true,
+      "files": [
+        "SPEC.md",
+        "cater_killer.bbmodel",
+        "cater_killer_reference.animation.json",
+        "caterkiller.animation.json",
+        "caterkiller.geo.json",
+        "reference/SLOTS.md",
+        "roundtrip.report.json",
+        "spec.manifest.json",
+        "textures/caterkiller.png"
+      ],
+      "bones": 80,
+      "cubes": 80,
+      "clips_shipped": 0,
+      "clips_in_spec": 21,
+      "goals": 6,
+      "flags": 1,
+      "attacking": "NONE",
+      "strike_sites": 2,
+      "textures_mapped": 1,
+      "locked_bones": 0,
+      "lock_mode": "warn",
+      "keyed_locked_bones": 0,
+      "effort_hours": 40.0,
+      "unlabelled_bones": 0,
+      "roundtrip": {
+        "equal": true,
+        "bone_order_preserved": true,
+        "differences": 0,
+        "dropped_keys": 0,
+        "reattached": [
+          "orespawn:bone_draw_order"
+        ]
+      },
+      "warnings": []
+    },
+    {
+      "registry": "emperor_scorpion",
+      "tier": 1,
+      "tier_label": "Tier 1 (boss)",
+      "rig_source": "reference-leg converter output",
+      "in_game": false,
+      "seed": true,
+      "files": [
+        "SPEC.md",
+        "emperor_scorpion.animation.json",
+        "emperor_scorpion.bbmodel",
+        "reference/SLOTS.md",
+        "reference_emperorscorpion.geo.json",
+        "roundtrip.report.json",
+        "spec.manifest.json",
+        "textures/emperorscorpion.png"
+      ],
+      "bones": 78,
+      "cubes": 78,
+      "clips_shipped": 0,
+      "clips_in_spec": 12,
+      "goals": 6,
+      "flags": 1,
+      "attacking": "NONE",
+      "strike_sites": 1,
+      "textures_mapped": 1,
+      "locked_bones": 48,
+      "lock_mode": "warn",
+      "keyed_locked_bones": 0,
+      "effort_hours": 34.7,
+      "unlabelled_bones": 0,
+      "roundtrip": {
+        "equal": true,
+        "bone_order_preserved": true,
+        "differences": 0,
+        "dropped_keys": 0,
+        "reattached": [
+          "orespawn:bone_draw_order"
+        ]
+      },
+      "warnings": [
+        "GOAL_UNCLASSIFIED: goal EmperorScorpionPoisonGoal (EntityEmperorScorpion.java:96) has no dictionary entry"
+      ]
+    },
+    {
+      "registry": "hercules_beetle",
+      "tier": 2,
+      "tier_label": "Tier 2",
+      "rig_source": "shipped",
+      "in_game": true,
+      "seed": true,
+      "files": [
+        "SPEC.md",
+        "hercules_beetle.bbmodel",
+        "hercules_beetle_reference.animation.json",
+        "herculesbeetle.animation.json",
+        "herculesbeetle.geo.json",
+        "reference/SLOTS.md",
+        "roundtrip.report.json",
+        "spec.manifest.json",
+        "textures/herculesbeetle.png"
+      ],
+      "bones": 37,
+      "cubes": 37,
+      "clips_shipped": 0,
+      "clips_in_spec": 9,
+      "goals": 6,
+      "flags": 1,
+      "attacking": "NONE",
+      "strike_sites": 2,
+      "textures_mapped": 1,
+      "locked_bones": 0,
+      "lock_mode": "warn",
+      "keyed_locked_bones": 0,
+      "effort_hours": 19.4,
+      "unlabelled_bones": 0,
+      "roundtrip": {
+        "equal": true,
+        "bone_order_preserved": true,
+        "differences": 0,
+        "dropped_keys": 0,
+        "reattached": [
+          "orespawn:bone_draw_order"
+        ]
+      },
+      "warnings": []
+    },
+    {
+      "registry": "kyuubi",
+      "tier": 2,
+      "tier_label": "Tier 2",
+      "rig_source": "reference-leg converter output",
+      "in_game": false,
+      "seed": true,
+      "files": [
+        "SPEC.md",
+        "kyuubi.animation.json",
+        "kyuubi.bbmodel",
+        "reference/SLOTS.md",
+        "reference_kyuubi.geo.json",
+        "roundtrip.report.json",
+        "spec.manifest.json",
+        "textures/kyuubi.png"
+      ],
+      "bones": 42,
+      "cubes": 42,
+      "clips_shipped": 0,
+      "clips_in_spec": 15,
+      "goals": 6,
+      "flags": 0,
+      "attacking": "NONE",
+      "strike_sites": 2,
+      "textures_mapped": 1,
+      "locked_bones": 0,
+      "lock_mode": "warn",
+      "keyed_locked_bones": 0,
+      "effort_hours": 26.4,
+      "unlabelled_bones": 0,
+      "roundtrip": {
+        "equal": true,
+        "bone_order_preserved": true,
+        "differences": 0,
+        "dropped_keys": 0,
+        "reattached": [
+          "orespawn:bone_draw_order"
+        ]
+      },
+      "warnings": []
+    },
+    {
+      "registry": "leaf_monster",
+      "tier": 2,
+      "tier_label": "Tier 2",
+      "rig_source": "reference-leg converter output",
+      "in_game": false,
+      "seed": true,
+      "files": [
+        "SPEC.md",
+        "leaf_monster.animation.json",
+        "leaf_monster.bbmodel",
+        "reference/SLOTS.md",
+        "reference_leafmonster.geo.json",
+        "roundtrip.report.json",
+        "spec.manifest.json",
+        "textures/leafmonster.png"
+      ],
+      "bones": 5,
+      "cubes": 5,
+      "clips_shipped": 0,
+      "clips_in_spec": 12,
+      "goals": 3,
+      "flags": 1,
+      "attacking": "STATE",
+      "strike_sites": 1,
+      "textures_mapped": 1,
+      "locked_bones": 0,
+      "lock_mode": "warn",
+      "keyed_locked_bones": 0,
+      "effort_hours": 17.0,
+      "unlabelled_bones": 0,
+      "roundtrip": {
+        "equal": true,
+        "bone_order_preserved": true,
+        "differences": 0,
+        "dropped_keys": 0,
+        "reattached": [
+          "orespawn:bone_draw_order"
+        ]
+      },
+      "warnings": []
+    },
+    {
+      "registry": "lurking_terror",
+      "tier": 2,
+      "tier_label": "Tier 2",
+      "rig_source": "reference-leg converter output",
+      "in_game": false,
+      "seed": true,
+      "files": [
+        "SPEC.md",
+        "lurking_terror.animation.json",
+        "lurking_terror.bbmodel",
+        "reference/SLOTS.md",
+        "reference_lurkingterror.geo.json",
+        "roundtrip.report.json",
+        "spec.manifest.json",
+        "textures/lurkingterror.png"
+      ],
+      "bones": 59,
+      "cubes": 59,
+      "clips_shipped": 0,
+      "clips_in_spec": 15,
+      "goals": 0,
+      "flags": 1,
+      "attacking": "STATE",
+      "strike_sites": 1,
+      "textures_mapped": 1,
+      "locked_bones": 0,
+      "lock_mode": "warn",
+      "keyed_locked_bones": 0,
+      "effort_hours": 30.8,
+      "unlabelled_bones": 0,
+      "roundtrip": {
+        "equal": true,
+        "bone_order_preserved": true,
+        "differences": 0,
+        "dropped_keys": 0,
+        "reattached": [
+          "orespawn:bone_draw_order"
+        ]
+      },
+      "warnings": []
+    },
+    {
+      "registry": "mantis",
+      "tier": 2,
+      "tier_label": "Tier 2",
+      "rig_source": "reference-leg converter output",
+      "in_game": false,
+      "seed": true,
+      "files": [
+        "SPEC.md",
+        "mantis.animation.json",
+        "mantis.bbmodel",
+        "reference/SLOTS.md",
+        "reference_mantis.geo.json",
+        "roundtrip.report.json",
+        "spec.manifest.json",
+        "textures/mantis.png"
+      ],
+      "bones": 36,
+      "cubes": 36,
+      "clips_shipped": 0,
+      "clips_in_spec": 10,
+      "goals": 0,
+      "flags": 1,
+      "attacking": "STATE",
+      "strike_sites": 2,
+      "textures_mapped": 1,
+      "locked_bones": 0,
+      "lock_mode": "warn",
+      "keyed_locked_bones": 0,
+      "effort_hours": 21.2,
+      "unlabelled_bones": 0,
+      "roundtrip": {
+        "equal": true,
+        "bone_order_preserved": true,
+        "differences": 0,
+        "dropped_keys": 0,
+        "reattached": [
+          "orespawn:bone_draw_order"
+        ]
+      },
+      "warnings": []
+    },
+    {
+      "registry": "molenoid",
+      "tier": 2,
+      "tier_label": "Tier 2",
+      "rig_source": "reference-leg converter output",
+      "in_game": false,
+      "seed": true,
+      "files": [
+        "SPEC.md",
+        "molenoid.animation.json",
+        "molenoid.bbmodel",
+        "reference/SLOTS.md",
+        "reference_molenoid.geo.json",
+        "roundtrip.report.json",
+        "spec.manifest.json",
+        "textures/molenoid.png"
+      ],
+      "bones": 37,
+      "cubes": 37,
+      "clips_shipped": 0,
+      "clips_in_spec": 12,
+      "goals": 5,
+      "flags": 1,
+      "attacking": "STATE",
+      "strike_sites": 2,
+      "textures_mapped": 1,
+      "locked_bones": 0,
+      "lock_mode": "warn",
+      "keyed_locked_bones": 0,
+      "effort_hours": 22.4,
+      "unlabelled_bones": 0,
+      "roundtrip": {
+        "equal": true,
+        "bone_order_preserved": true,
+        "differences": 0,
+        "dropped_keys": 0,
+        "reattached": [
+          "orespawn:bone_draw_order"
+        ]
+      },
+      "warnings": []
+    },
+    {
+      "registry": "rat",
+      "tier": 2,
+      "tier_label": "Tier 2",
+      "rig_source": "reference-leg converter output",
+      "in_game": false,
+      "seed": true,
+      "files": [
+        "SPEC.md",
+        "rat.animation.json",
+        "rat.bbmodel",
+        "reference/SLOTS.md",
+        "reference_rat.geo.json",
+        "roundtrip.report.json",
+        "spec.manifest.json",
+        "textures/rat.png"
+      ],
+      "bones": 12,
+      "cubes": 12,
+      "clips_shipped": 0,
+      "clips_in_spec": 11,
+      "goals": 6,
+      "flags": 1,
+      "attacking": "STATE",
+      "strike_sites": 1,
+      "textures_mapped": 1,
+      "locked_bones": 0,
+      "lock_mode": "warn",
+      "keyed_locked_bones": 0,
+      "effort_hours": 16.4,
+      "unlabelled_bones": 0,
+      "roundtrip": {
+        "equal": true,
+        "bone_order_preserved": true,
+        "differences": 0,
+        "dropped_keys": 0,
+        "reattached": [
+          "orespawn:bone_draw_order"
+        ]
+      },
+      "warnings": []
+    },
+    {
+      "registry": "rotator",
+      "tier": 3,
+      "tier_label": "Tier 3",
+      "rig_source": "shipped",
+      "in_game": true,
+      "seed": true,
+      "files": [
+        "SPEC.md",
+        "reference/SLOTS.md",
+        "rotator.animation.json",
+        "rotator.bbmodel",
+        "rotator.geo.json",
+        "rotator_reference.animation.json",
+        "roundtrip.report.json",
+        "spec.manifest.json",
+        "textures/rotator.png"
+      ],
+      "bones": 27,
+      "cubes": 24,
+      "clips_shipped": 0,
+      "clips_in_spec": 0,
+      "goals": 0,
+      "flags": 0,
+      "attacking": "NONE",
+      "strike_sites": 1,
+      "textures_mapped": 1,
+      "locked_bones": 0,
+      "lock_mode": "warn",
+      "keyed_locked_bones": 0,
+      "effort_hours": 0.0,
+      "unlabelled_bones": 0,
+      "roundtrip": {
+        "equal": true,
+        "bone_order_preserved": true,
+        "differences": 0,
+        "dropped_keys": 0,
+        "reattached": [
+          "orespawn:bone_draw_order"
+        ]
+      },
+      "warnings": []
+    },
+    {
+      "registry": "scorpion",
+      "tier": 2,
+      "tier_label": "Tier 2",
+      "rig_source": "reference-leg converter output",
+      "in_game": false,
+      "seed": true,
+      "files": [
+        "SPEC.md",
+        "reference/SLOTS.md",
+        "reference_scorpion.geo.json",
+        "roundtrip.report.json",
+        "scorpion.animation.json",
+        "scorpion.bbmodel",
+        "spec.manifest.json",
+        "textures/scorpion.png"
+      ],
+      "bones": 22,
+      "cubes": 22,
+      "clips_shipped": 0,
+      "clips_in_spec": 13,
+      "goals": 5,
+      "flags": 1,
+      "attacking": "NONE",
+      "strike_sites": 2,
+      "textures_mapped": 1,
+      "locked_bones": 0,
+      "lock_mode": "warn",
+      "keyed_locked_bones": 0,
+      "effort_hours": 20.4,
+      "unlabelled_bones": 0,
+      "roundtrip": {
+        "equal": true,
+        "bone_order_preserved": true,
+        "differences": 0,
+        "dropped_keys": 0,
+        "reattached": [
+          "orespawn:bone_draw_order"
+        ]
+      },
+      "warnings": [
+        "WISHLIST_UNACCEPTED: wishlist names clip(s) ['aggro_idle'] that the manifest does not accept"
+      ]
+    },
+    {
+      "registry": "spit_bug",
+      "tier": 2,
+      "tier_label": "Tier 2",
+      "rig_source": "reference-leg converter output",
+      "in_game": false,
+      "seed": true,
+      "files": [
+        "SPEC.md",
+        "reference/SLOTS.md",
+        "reference_spitbug.geo.json",
+        "roundtrip.report.json",
+        "spec.manifest.json",
+        "spit_bug.animation.json",
+        "spit_bug.bbmodel",
+        "textures/spitbug.png"
+      ],
+      "bones": 93,
+      "cubes": 93,
+      "clips_shipped": 0,
+      "clips_in_spec": 11,
+      "goals": 6,
+      "flags": 1,
+      "attacking": "NONE",
+      "strike_sites": 3,
+      "textures_mapped": 1,
+      "locked_bones": 0,
+      "lock_mode": "warn",
+      "keyed_locked_bones": 0,
+      "effort_hours": 32.6,
+      "unlabelled_bones": 0,
+      "roundtrip": {
+        "equal": true,
+        "bone_order_preserved": true,
+        "differences": 0,
+        "dropped_keys": 0,
+        "reattached": [
+          "orespawn:bone_draw_order"
+        ]
+      },
+      "warnings": [
+        "GOAL_UNCLASSIFIED: goal SpitBugAcidAttackGoal (EntitySpitBug.java:86) has no dictionary entry"
+      ]
+    },
+    {
+      "registry": "terrible_terror",
+      "tier": 2,
+      "tier_label": "Tier 2",
+      "rig_source": "shipped",
+      "in_game": true,
+      "seed": true,
+      "files": [
+        "SPEC.md",
+        "reference/SLOTS.md",
+        "roundtrip.report.json",
+        "spec.manifest.json",
+        "terrible_terror.bbmodel",
+        "terrible_terror_reference.animation.json",
+        "terribleterror.animation.json",
+        "terribleterror.geo.json",
+        "textures/terribleterror.png"
+      ],
+      "bones": 21,
+      "cubes": 21,
+      "clips_shipped": 0,
+      "clips_in_spec": 11,
+      "goals": 0,
+      "flags": 0,
+      "attacking": "NONE",
+      "strike_sites": 1,
+      "textures_mapped": 1,
+      "locked_bones": 0,
+      "lock_mode": "warn",
+      "keyed_locked_bones": 0,
+      "effort_hours": 18.2,
+      "unlabelled_bones": 0,
+      "roundtrip": {
+        "equal": true,
+        "bone_order_preserved": true,
+        "differences": 0,
+        "dropped_keys": 0,
+        "reattached": [
+          "orespawn:bone_draw_order",
+          "orespawn:cube_face_order"
+        ]
+      },
+      "warnings": []
+    },
+    {
+      "registry": "triffid",
+      "tier": 2,
+      "tier_label": "Tier 2",
+      "rig_source": "reference-leg converter output",
+      "in_game": false,
+      "seed": true,
+      "files": [
+        "SPEC.md",
+        "reference/SLOTS.md",
+        "reference_triffid.geo.json",
+        "roundtrip.report.json",
+        "spec.manifest.json",
+        "textures/triffid.png",
+        "triffid.animation.json",
+        "triffid.bbmodel"
+      ],
+      "bones": 178,
+      "cubes": 178,
+      "clips_shipped": 0,
+      "clips_in_spec": 11,
+      "goals": 4,
+      "flags": 2,
+      "attacking": "STATE",
+      "strike_sites": 1,
+      "textures_mapped": 1,
+      "locked_bones": 0,
+      "lock_mode": "warn",
+      "keyed_locked_bones": 0,
+      "effort_hours": 50.6,
+      "unlabelled_bones": 0,
+      "roundtrip": {
+        "equal": true,
+        "bone_order_preserved": true,
+        "differences": 0,
+        "dropped_keys": 0,
+        "reattached": [
+          "orespawn:bone_draw_order"
+        ]
+      },
+      "warnings": []
+    },
+    {
+      "registry": "trooper_bug",
+      "tier": 2,
+      "tier_label": "Tier 2",
+      "rig_source": "reference-leg converter output",
+      "in_game": false,
+      "seed": true,
+      "files": [
+        "SPEC.md",
+        "reference/SLOTS.md",
+        "reference_trooperbug.geo.json",
+        "roundtrip.report.json",
+        "spec.manifest.json",
+        "textures/trooperbug.png",
+        "trooper_bug.animation.json",
+        "trooper_bug.bbmodel"
+      ],
+      "bones": 134,
+      "cubes": 134,
+      "clips_shipped": 0,
+      "clips_in_spec": 19,
+      "goals": 6,
+      "flags": 1,
+      "attacking": "NONE",
+      "strike_sites": 1,
+      "textures_mapped": 1,
+      "locked_bones": 0,
+      "lock_mode": "warn",
+      "keyed_locked_bones": 0,
+      "effort_hours": 48.8,
+      "unlabelled_bones": 0,
+      "roundtrip": {
+        "equal": true,
+        "bone_order_preserved": true,
+        "differences": 0,
+        "dropped_keys": 0,
+        "reattached": [
+          "orespawn:bone_draw_order"
+        ]
+      },
+      "warnings": [
+        "GOAL_UNCLASSIFIED: goal TrooperBugLeapAttackGoal (EntityTrooperBug.java:88) has no dictionary entry",
+        "WISHLIST_UNACCEPTED: wishlist names clip(s) ['aggro_idle'] that the manifest does not accept"
+      ]
+    },
+    {
+      "registry": "vortex",
+      "tier": 3,
+      "tier_label": "Tier 3",
+      "rig_source": "shipped",
+      "in_game": true,
+      "seed": true,
+      "files": [
+        "SPEC.md",
+        "reference/SLOTS.md",
+        "roundtrip.report.json",
+        "spec.manifest.json",
+        "textures/vortex.png",
+        "vortex.animation.json",
+        "vortex.bbmodel",
+        "vortex.geo.json",
+        "vortex_reference.animation.json"
+      ],
+      "bones": 1,
+      "cubes": 1,
+      "clips_shipped": 0,
+      "clips_in_spec": 0,
+      "goals": 0,
+      "flags": 0,
+      "attacking": "NONE",
+      "strike_sites": 1,
+      "textures_mapped": 1,
+      "locked_bones": 0,
+      "lock_mode": "warn",
+      "keyed_locked_bones": 0,
+      "effort_hours": 0.0,
+      "unlabelled_bones": 0,
+      "roundtrip": {
+        "equal": true,
+        "bone_order_preserved": true,
+        "differences": 0,
+        "dropped_keys": 0,
+        "reattached": [
+          "orespawn:bone_draw_order",
+          "orespawn:cube_face_order"
+        ]
+      },
+      "warnings": []
+    },
+    {
+      "registry": "worm_small",
+      "tier": 2,
+      "tier_label": "Tier 2",
+      "rig_source": "shipped",
+      "in_game": true,
+      "seed": true,
+      "files": [
+        "SPEC.md",
+        "reference/SLOTS.md",
+        "roundtrip.report.json",
+        "spec.manifest.json",
+        "textures/wormsmall.png",
+        "worm_small.bbmodel",
+        "worm_small_reference.animation.json",
+        "wormsmall.animation.json",
+        "wormsmall.geo.json"
+      ],
+      "bones": 3,
+      "cubes": 3,
+      "clips_shipped": 0,
+      "clips_in_spec": 11,
+      "goals": 0,
+      "flags": 0,
+      "attacking": "NONE",
+      "strike_sites": 1,
+      "textures_mapped": 1,
+      "locked_bones": 0,
+      "lock_mode": "warn",
+      "keyed_locked_bones": 0,
+      "effort_hours": 14.6,
+      "unlabelled_bones": 0,
+      "roundtrip": {
+        "equal": true,
+        "bone_order_preserved": true,
+        "differences": 0,
+        "dropped_keys": 0,
+        "reattached": [
+          "orespawn:bone_draw_order"
+        ]
+      },
+      "warnings": []
+    },
+    {
+      "registry": "worm_medium",
+      "tier": 2,
+      "tier_label": "Tier 2",
+      "rig_source": "shipped",
+      "in_game": true,
+      "seed": true,
+      "files": [
+        "SPEC.md",
+        "reference/SLOTS.md",
+        "roundtrip.report.json",
+        "spec.manifest.json",
+        "textures/wormmedium.png",
+        "worm_medium.bbmodel",
+        "worm_medium_reference.animation.json",
+        "wormmedium.animation.json",
+        "wormmedium.geo.json"
+      ],
+      "bones": 8,
+      "cubes": 8,
+      "clips_shipped": 0,
+      "clips_in_spec": 13,
+      "goals": 0,
+      "flags": 0,
+      "attacking": "NONE",
+      "strike_sites": 1,
+      "textures_mapped": 1,
+      "locked_bones": 0,
+      "lock_mode": "warn",
+      "keyed_locked_bones": 0,
+      "effort_hours": 17.6,
+      "unlabelled_bones": 0,
+      "roundtrip": {
+        "equal": true,
+        "bone_order_preserved": true,
+        "differences": 0,
+        "dropped_keys": 0,
+        "reattached": [
+          "orespawn:bone_draw_order"
+        ]
+      },
+      "warnings": []
+    },
+    {
+      "registry": "worm_large",
+      "tier": 2,
+      "tier_label": "Tier 2",
+      "rig_source": "shipped",
+      "in_game": true,
+      "seed": true,
+      "files": [
+        "SPEC.md",
+        "reference/SLOTS.md",
+        "roundtrip.report.json",
+        "spec.manifest.json",
+        "textures/wormlarge.png",
+        "worm_large.bbmodel",
+        "worm_large_reference.animation.json",
+        "wormlarge.animation.json",
+        "wormlarge.geo.json"
+      ],
+      "bones": 23,
+      "cubes": 23,
+      "clips_shipped": 0,
+      "clips_in_spec": 13,
+      "goals": 4,
+      "flags": 0,
+      "attacking": "NONE",
+      "strike_sites": 1,
+      "textures_mapped": 1,
+      "locked_bones": 0,
+      "lock_mode": "warn",
+      "keyed_locked_bones": 0,
+      "effort_hours": 20.6,
+      "unlabelled_bones": 0,
+      "roundtrip": {
+        "equal": true,
+        "bone_order_preserved": true,
+        "differences": 0,
+        "dropped_keys": 0,
+        "reattached": [
+          "orespawn:bone_draw_order"
+        ]
+      },
+      "warnings": []
+    },
+    {
+      "registry": "baryonyx",
+      "tier": 2,
+      "tier_label": "Tier 2",
+      "rig_source": "reference-leg converter output",
+      "in_game": false,
+      "seed": true,
+      "files": [
+        "SPEC.md",
+        "baryonyx.animation.json",
+        "baryonyx.bbmodel",
+        "reference/SLOTS.md",
+        "reference_baryonyx.geo.json",
+        "roundtrip.report.json",
+        "spec.manifest.json",
+        "textures/baryonyx.png"
+      ],
+      "bones": 52,
+      "cubes": 52,
+      "clips_shipped": 0,
+      "clips_in_spec": 9,
+      "goals": 7,
+      "flags": 0,
+      "attacking": "NONE",
+      "strike_sites": 0,
+      "textures_mapped": 1,
+      "locked_bones": 0,
+      "lock_mode": "warn",
+      "keyed_locked_bones": 0,
+      "effort_hours": 22.4,
+      "unlabelled_bones": 0,
+      "roundtrip": {
+        "equal": true,
+        "bone_order_preserved": true,
+        "differences": 0,
+        "dropped_keys": 0,
+        "reattached": [
+          "orespawn:bone_draw_order"
+        ]
+      },
+      "warnings": [
+        "GOAL_UNCLASSIFIED: goal MyEntityAIWander (Baryonyx.java:62) has no dictionary entry"
+      ]
+    },
+    {
       "registry": "beaver",
       "tier": 2,
       "tier_label": "Tier 2",
+      "rig_source": "shipped",
+      "in_game": true,
+      "seed": true,
       "files": [
         "SPEC.md",
         "beaver.animation.json",
@@ -81,6 +2457,2526 @@
         ]
       },
       "warnings": []
+    },
+    {
+      "registry": "cassowary",
+      "tier": 2,
+      "tier_label": "Tier 2",
+      "rig_source": "reference-leg converter output",
+      "in_game": false,
+      "seed": true,
+      "files": [
+        "SPEC.md",
+        "cassowary.animation.json",
+        "cassowary.bbmodel",
+        "reference/SLOTS.md",
+        "reference_cassowary.geo.json",
+        "roundtrip.report.json",
+        "spec.manifest.json",
+        "textures/cassowary.png"
+      ],
+      "bones": 12,
+      "cubes": 12,
+      "clips_shipped": 0,
+      "clips_in_spec": 8,
+      "goals": 8,
+      "flags": 0,
+      "attacking": "NONE",
+      "strike_sites": 0,
+      "textures_mapped": 1,
+      "locked_bones": 0,
+      "lock_mode": "warn",
+      "keyed_locked_bones": 0,
+      "effort_hours": 13.4,
+      "unlabelled_bones": 0,
+      "roundtrip": {
+        "equal": true,
+        "bone_order_preserved": true,
+        "differences": 0,
+        "dropped_keys": 0,
+        "reattached": [
+          "orespawn:bone_draw_order"
+        ]
+      },
+      "warnings": [
+        "GOAL_UNCLASSIFIED: goal MyEntityAIWander (Cassowary.java:51) has no dictionary entry"
+      ]
+    },
+    {
+      "registry": "chipmunk",
+      "tier": 2,
+      "tier_label": "Tier 2",
+      "rig_source": "reference-leg converter output",
+      "in_game": false,
+      "seed": true,
+      "files": [
+        "SPEC.md",
+        "chipmunk.animation.json",
+        "chipmunk.bbmodel",
+        "reference/SLOTS.md",
+        "reference_chipmunk.geo.json",
+        "roundtrip.report.json",
+        "spec.manifest.json",
+        "textures/chipmunk.png"
+      ],
+      "bones": 18,
+      "cubes": 18,
+      "clips_shipped": 0,
+      "clips_in_spec": 9,
+      "goals": 12,
+      "flags": 0,
+      "attacking": "NONE",
+      "strike_sites": 0,
+      "textures_mapped": 1,
+      "locked_bones": 0,
+      "lock_mode": "warn",
+      "keyed_locked_bones": 0,
+      "effort_hours": 15.6,
+      "unlabelled_bones": 0,
+      "roundtrip": {
+        "equal": true,
+        "bone_order_preserved": true,
+        "differences": 0,
+        "dropped_keys": 0,
+        "reattached": [
+          "orespawn:bone_draw_order"
+        ]
+      },
+      "warnings": [
+        "GOAL_UNCLASSIFIED: goal FollowOwnerGoal (Chipmunk.java:67) has no dictionary entry",
+        "GOAL_UNCLASSIFIED: goal TemptGoal (Chipmunk.java:71) has no dictionary entry"
+      ]
+    },
+    {
+      "registry": "cockateil",
+      "tier": 2,
+      "tier_label": "Tier 2",
+      "rig_source": "shipped",
+      "in_game": true,
+      "seed": true,
+      "files": [
+        "SPEC.md",
+        "cockateil.animation.json",
+        "cockateil.bbmodel",
+        "cockateil.geo.json",
+        "cockateil_reference.animation.json",
+        "reference/SLOTS.md",
+        "roundtrip.report.json",
+        "spec.manifest.json",
+        "textures/bird1.png",
+        "textures/bird2.png",
+        "textures/bird3.png",
+        "textures/bird4.png",
+        "textures/bird5.png",
+        "textures/bird6.png"
+      ],
+      "bones": 16,
+      "cubes": 16,
+      "clips_shipped": 6,
+      "clips_in_spec": 14,
+      "goals": 0,
+      "flags": 1,
+      "attacking": "NONE",
+      "strike_sites": 0,
+      "textures_mapped": 6,
+      "locked_bones": 0,
+      "lock_mode": "warn",
+      "keyed_locked_bones": 0,
+      "effort_hours": 11.2,
+      "unlabelled_bones": 0,
+      "roundtrip": {
+        "equal": true,
+        "bone_order_preserved": true,
+        "differences": 0,
+        "dropped_keys": 0,
+        "reattached": [
+          "orespawn:bone_draw_order"
+        ]
+      },
+      "warnings": []
+    },
+    {
+      "registry": "coin",
+      "tier": 3,
+      "tier_label": "Tier 3",
+      "rig_source": "shipped",
+      "in_game": true,
+      "seed": true,
+      "files": [
+        "SPEC.md",
+        "coin.animation.json",
+        "coin.bbmodel",
+        "coin.geo.json",
+        "coin_reference.animation.json",
+        "reference/SLOTS.md",
+        "roundtrip.report.json",
+        "spec.manifest.json",
+        "textures/coin.png"
+      ],
+      "bones": 1,
+      "cubes": 1,
+      "clips_shipped": 0,
+      "clips_in_spec": 0,
+      "goals": 1,
+      "flags": 0,
+      "attacking": "NONE",
+      "strike_sites": 0,
+      "textures_mapped": 1,
+      "locked_bones": 0,
+      "lock_mode": "warn",
+      "keyed_locked_bones": 0,
+      "effort_hours": 0.0,
+      "unlabelled_bones": 0,
+      "roundtrip": {
+        "equal": true,
+        "bone_order_preserved": true,
+        "differences": 0,
+        "dropped_keys": 0,
+        "reattached": [
+          "orespawn:bone_draw_order"
+        ]
+      },
+      "warnings": []
+    },
+    {
+      "registry": "easter_bunny",
+      "tier": 2,
+      "tier_label": "Tier 2",
+      "rig_source": "reference-leg converter output",
+      "in_game": false,
+      "seed": true,
+      "files": [
+        "SPEC.md",
+        "easter_bunny.animation.json",
+        "easter_bunny.bbmodel",
+        "reference/SLOTS.md",
+        "reference_easterbunny.geo.json",
+        "roundtrip.report.json",
+        "spec.manifest.json",
+        "textures/easterbunny.png"
+      ],
+      "bones": 13,
+      "cubes": 13,
+      "clips_shipped": 0,
+      "clips_in_spec": 9,
+      "goals": 8,
+      "flags": 0,
+      "attacking": "NONE",
+      "strike_sites": 0,
+      "textures_mapped": 1,
+      "locked_bones": 0,
+      "lock_mode": "warn",
+      "keyed_locked_bones": 0,
+      "effort_hours": 14.6,
+      "unlabelled_bones": 0,
+      "roundtrip": {
+        "equal": true,
+        "bone_order_preserved": true,
+        "differences": 0,
+        "dropped_keys": 0,
+        "reattached": [
+          "orespawn:bone_draw_order"
+        ]
+      },
+      "warnings": []
+    },
+    {
+      "registry": "flounder",
+      "tier": 2,
+      "tier_label": "Tier 2",
+      "rig_source": "reference-leg converter output",
+      "in_game": false,
+      "seed": true,
+      "files": [
+        "SPEC.md",
+        "flounder.animation.json",
+        "flounder.bbmodel",
+        "reference/SLOTS.md",
+        "reference_flounder.geo.json",
+        "roundtrip.report.json",
+        "spec.manifest.json",
+        "textures/flounder.png"
+      ],
+      "bones": 6,
+      "cubes": 6,
+      "clips_shipped": 0,
+      "clips_in_spec": 7,
+      "goals": 7,
+      "flags": 0,
+      "attacking": "NONE",
+      "strike_sites": 0,
+      "textures_mapped": 1,
+      "locked_bones": 0,
+      "lock_mode": "warn",
+      "keyed_locked_bones": 0,
+      "effort_hours": 11.2,
+      "unlabelled_bones": 0,
+      "roundtrip": {
+        "equal": true,
+        "bone_order_preserved": true,
+        "differences": 0,
+        "dropped_keys": 0,
+        "reattached": [
+          "orespawn:bone_draw_order"
+        ]
+      },
+      "warnings": [
+        "GOAL_UNCLASSIFIED: goal MyEntityAIWander (Flounder.java:61) has no dictionary entry"
+      ]
+    },
+    {
+      "registry": "frog",
+      "tier": 2,
+      "tier_label": "Tier 2",
+      "rig_source": "reference-leg converter output",
+      "in_game": false,
+      "seed": true,
+      "files": [
+        "SPEC.md",
+        "frog.animation.json",
+        "frog.bbmodel",
+        "reference/SLOTS.md",
+        "reference_frog.geo.json",
+        "roundtrip.report.json",
+        "spec.manifest.json",
+        "textures/frogtexture.png"
+      ],
+      "bones": 10,
+      "cubes": 10,
+      "clips_shipped": 0,
+      "clips_in_spec": 13,
+      "goals": 3,
+      "flags": 1,
+      "attacking": "NONE",
+      "strike_sites": 1,
+      "textures_mapped": 1,
+      "locked_bones": 0,
+      "lock_mode": "warn",
+      "keyed_locked_bones": 0,
+      "effort_hours": 18.0,
+      "unlabelled_bones": 0,
+      "roundtrip": {
+        "equal": true,
+        "bone_order_preserved": true,
+        "differences": 0,
+        "dropped_keys": 0,
+        "reattached": [
+          "orespawn:bone_draw_order"
+        ]
+      },
+      "warnings": [
+        "GOAL_UNCLASSIFIED: goal MyEntityAIWander (Frog.java:67) has no dictionary entry"
+      ]
+    },
+    {
+      "registry": "gazelle",
+      "tier": 2,
+      "tier_label": "Tier 2",
+      "rig_source": "reference-leg converter output",
+      "in_game": false,
+      "seed": true,
+      "files": [
+        "SPEC.md",
+        "gazelle.animation.json",
+        "gazelle.bbmodel",
+        "reference/SLOTS.md",
+        "reference_gazelle.geo.json",
+        "roundtrip.report.json",
+        "spec.manifest.json",
+        "textures/gazelletexture.png"
+      ],
+      "bones": 34,
+      "cubes": 34,
+      "clips_shipped": 0,
+      "clips_in_spec": 12,
+      "goals": 10,
+      "flags": 0,
+      "attacking": "NONE",
+      "strike_sites": 0,
+      "textures_mapped": 1,
+      "locked_bones": 0,
+      "lock_mode": "warn",
+      "keyed_locked_bones": 0,
+      "effort_hours": 20.8,
+      "unlabelled_bones": 0,
+      "roundtrip": {
+        "equal": true,
+        "bone_order_preserved": true,
+        "differences": 0,
+        "dropped_keys": 0,
+        "reattached": [
+          "orespawn:bone_draw_order"
+        ]
+      },
+      "warnings": [
+        "GOAL_UNCLASSIFIED: goal FollowOwnerGoal (Gazelle.java:72) has no dictionary entry",
+        "GOAL_UNCLASSIFIED: goal TemptGoal (Gazelle.java:74) has no dictionary entry",
+        "GOAL_UNCLASSIFIED: goal MyEntityAIWander (Gazelle.java:78) has no dictionary entry"
+      ]
+    },
+    {
+      "registry": "gold_fish",
+      "tier": 2,
+      "tier_label": "Tier 2",
+      "rig_source": "shipped",
+      "in_game": true,
+      "seed": true,
+      "files": [
+        "SPEC.md",
+        "gold_fish.bbmodel",
+        "gold_fish_reference.animation.json",
+        "goldfish.animation.json",
+        "goldfish.geo.json",
+        "reference/SLOTS.md",
+        "roundtrip.report.json",
+        "spec.manifest.json",
+        "textures/goldfish.png"
+      ],
+      "bones": 16,
+      "cubes": 16,
+      "clips_shipped": 7,
+      "clips_in_spec": 16,
+      "goals": 0,
+      "flags": 0,
+      "attacking": "NONE",
+      "strike_sites": 0,
+      "textures_mapped": 1,
+      "locked_bones": 0,
+      "lock_mode": "warn",
+      "keyed_locked_bones": 0,
+      "effort_hours": 11.2,
+      "unlabelled_bones": 0,
+      "roundtrip": {
+        "equal": true,
+        "bone_order_preserved": true,
+        "differences": 0,
+        "dropped_keys": 0,
+        "reattached": [
+          "orespawn:bone_draw_order",
+          "orespawn:cube_face_order"
+        ]
+      },
+      "warnings": []
+    },
+    {
+      "registry": "island",
+      "tier": 3,
+      "tier_label": "Tier 3",
+      "rig_source": "shipped",
+      "in_game": true,
+      "seed": true,
+      "files": [
+        "SPEC.md",
+        "island.animation.json",
+        "island.bbmodel",
+        "island.geo.json",
+        "island_reference.animation.json",
+        "reference/SLOTS.md",
+        "roundtrip.report.json",
+        "spec.manifest.json",
+        "textures/island.png"
+      ],
+      "bones": 3,
+      "cubes": 3,
+      "clips_shipped": 0,
+      "clips_in_spec": 0,
+      "goals": 0,
+      "flags": 0,
+      "attacking": "NONE",
+      "strike_sites": 0,
+      "textures_mapped": 1,
+      "locked_bones": 0,
+      "lock_mode": "warn",
+      "keyed_locked_bones": 0,
+      "effort_hours": 0.0,
+      "unlabelled_bones": 0,
+      "roundtrip": {
+        "equal": true,
+        "bone_order_preserved": true,
+        "differences": 0,
+        "dropped_keys": 0,
+        "reattached": [
+          "orespawn:bone_draw_order"
+        ]
+      },
+      "warnings": []
+    },
+    {
+      "registry": "island_too",
+      "tier": 3,
+      "tier_label": "Tier 3",
+      "rig_source": "shipped",
+      "in_game": true,
+      "seed": true,
+      "files": [
+        "SPEC.md",
+        "island_too.bbmodel",
+        "island_too_reference.animation.json",
+        "islandtoo.animation.json",
+        "islandtoo.geo.json",
+        "reference/SLOTS.md",
+        "roundtrip.report.json",
+        "spec.manifest.json",
+        "textures/islandtoo.png"
+      ],
+      "bones": 3,
+      "cubes": 3,
+      "clips_shipped": 0,
+      "clips_in_spec": 0,
+      "goals": 0,
+      "flags": 0,
+      "attacking": "NONE",
+      "strike_sites": 0,
+      "textures_mapped": 1,
+      "locked_bones": 0,
+      "lock_mode": "warn",
+      "keyed_locked_bones": 0,
+      "effort_hours": 0.0,
+      "unlabelled_bones": 0,
+      "roundtrip": {
+        "equal": true,
+        "bone_order_preserved": true,
+        "differences": 0,
+        "dropped_keys": 0,
+        "reattached": [
+          "orespawn:bone_draw_order"
+        ]
+      },
+      "warnings": []
+    },
+    {
+      "registry": "peacock",
+      "tier": 2,
+      "tier_label": "Tier 2",
+      "rig_source": "reference-leg converter output",
+      "in_game": false,
+      "seed": true,
+      "files": [
+        "SPEC.md",
+        "peacock.animation.json",
+        "peacock.bbmodel",
+        "reference/SLOTS.md",
+        "reference_peacock.geo.json",
+        "roundtrip.report.json",
+        "spec.manifest.json",
+        "textures/peacock.png"
+      ],
+      "bones": 16,
+      "cubes": 16,
+      "clips_shipped": 0,
+      "clips_in_spec": 10,
+      "goals": 7,
+      "flags": 0,
+      "attacking": "NONE",
+      "strike_sites": 0,
+      "textures_mapped": 1,
+      "locked_bones": 0,
+      "lock_mode": "warn",
+      "keyed_locked_bones": 0,
+      "effort_hours": 15.2,
+      "unlabelled_bones": 0,
+      "roundtrip": {
+        "equal": true,
+        "bone_order_preserved": true,
+        "differences": 0,
+        "dropped_keys": 0,
+        "reattached": [
+          "orespawn:bone_draw_order"
+        ]
+      },
+      "warnings": [
+        "WISHLIST_UNACCEPTED: wishlist names clip(s) ['attack'] that the manifest does not accept"
+      ]
+    },
+    {
+      "registry": "whale",
+      "tier": 2,
+      "tier_label": "Tier 2",
+      "rig_source": "reference-leg converter output",
+      "in_game": false,
+      "seed": true,
+      "files": [
+        "SPEC.md",
+        "reference/SLOTS.md",
+        "reference_whale.geo.json",
+        "roundtrip.report.json",
+        "spec.manifest.json",
+        "textures/whale.png",
+        "whale.animation.json",
+        "whale.bbmodel"
+      ],
+      "bones": 14,
+      "cubes": 14,
+      "clips_shipped": 0,
+      "clips_in_spec": 10,
+      "goals": 7,
+      "flags": 0,
+      "attacking": "NONE",
+      "strike_sites": 0,
+      "textures_mapped": 1,
+      "locked_bones": 0,
+      "lock_mode": "warn",
+      "keyed_locked_bones": 0,
+      "effort_hours": 15.8,
+      "unlabelled_bones": 0,
+      "roundtrip": {
+        "equal": true,
+        "bone_order_preserved": true,
+        "differences": 0,
+        "dropped_keys": 0,
+        "reattached": [
+          "orespawn:bone_draw_order"
+        ]
+      },
+      "warnings": [
+        "GOAL_UNCLASSIFIED: goal TemptGoal (Whale.java:62) has no dictionary entry",
+        "GOAL_UNCLASSIFIED: goal MyEntityAIWander (Whale.java:65) has no dictionary entry"
+      ]
+    },
+    {
+      "registry": "ant",
+      "tier": 2,
+      "tier_label": "Tier 2",
+      "rig_source": "shipped",
+      "in_game": true,
+      "seed": true,
+      "files": [
+        "SPEC.md",
+        "ant.animation.json",
+        "ant.bbmodel",
+        "ant.geo.json",
+        "ant_reference.animation.json",
+        "reference/SLOTS.md",
+        "roundtrip.report.json",
+        "spec.manifest.json",
+        "textures/ant.png"
+      ],
+      "bones": 20,
+      "cubes": 20,
+      "clips_shipped": 3,
+      "clips_in_spec": 8,
+      "goals": 2,
+      "flags": 0,
+      "attacking": "NONE",
+      "strike_sites": 0,
+      "textures_mapped": 1,
+      "locked_bones": 0,
+      "lock_mode": "warn",
+      "keyed_locked_bones": 0,
+      "effort_hours": 12.0,
+      "unlabelled_bones": 0,
+      "roundtrip": {
+        "equal": true,
+        "bone_order_preserved": true,
+        "differences": 0,
+        "dropped_keys": 0,
+        "reattached": [
+          "orespawn:bone_draw_order"
+        ]
+      },
+      "warnings": []
+    },
+    {
+      "registry": "cliff_racer",
+      "tier": 2,
+      "tier_label": "Tier 2",
+      "rig_source": "shipped",
+      "in_game": true,
+      "seed": true,
+      "files": [
+        "SPEC.md",
+        "cliff_racer.bbmodel",
+        "cliff_racer_reference.animation.json",
+        "cliffracer.animation.json",
+        "cliffracer.geo.json",
+        "reference/SLOTS.md",
+        "roundtrip.report.json",
+        "spec.manifest.json",
+        "textures/cliffracer.png"
+      ],
+      "bones": 8,
+      "cubes": 8,
+      "clips_shipped": 2,
+      "clips_in_spec": 6,
+      "goals": 0,
+      "flags": 0,
+      "attacking": "NONE",
+      "strike_sites": 0,
+      "textures_mapped": 1,
+      "locked_bones": 0,
+      "lock_mode": "warn",
+      "keyed_locked_bones": 0,
+      "effort_hours": 9.6,
+      "unlabelled_bones": 0,
+      "roundtrip": {
+        "equal": true,
+        "bone_order_preserved": true,
+        "differences": 0,
+        "dropped_keys": 0,
+        "reattached": [
+          "orespawn:bone_draw_order"
+        ]
+      },
+      "warnings": []
+    },
+    {
+      "registry": "cricket",
+      "tier": 2,
+      "tier_label": "Tier 2",
+      "rig_source": "shipped",
+      "in_game": true,
+      "seed": true,
+      "files": [
+        "SPEC.md",
+        "cricket.animation.json",
+        "cricket.bbmodel",
+        "cricket.geo.json",
+        "cricket_reference.animation.json",
+        "reference/SLOTS.md",
+        "roundtrip.report.json",
+        "spec.manifest.json",
+        "textures/cricket.png"
+      ],
+      "bones": 11,
+      "cubes": 11,
+      "clips_shipped": 0,
+      "clips_in_spec": 8,
+      "goals": 3,
+      "flags": 1,
+      "attacking": "NONE",
+      "strike_sites": 0,
+      "textures_mapped": 1,
+      "locked_bones": 0,
+      "lock_mode": "warn",
+      "keyed_locked_bones": 0,
+      "effort_hours": 13.2,
+      "unlabelled_bones": 0,
+      "roundtrip": {
+        "equal": true,
+        "bone_order_preserved": true,
+        "differences": 0,
+        "dropped_keys": 0,
+        "reattached": [
+          "orespawn:bone_draw_order"
+        ]
+      },
+      "warnings": []
+    },
+    {
+      "registry": "dragonfly",
+      "tier": 2,
+      "tier_label": "Tier 2",
+      "rig_source": "shipped",
+      "in_game": true,
+      "seed": true,
+      "files": [
+        "SPEC.md",
+        "dragonfly.animation.json",
+        "dragonfly.bbmodel",
+        "dragonfly.geo.json",
+        "dragonfly_reference.animation.json",
+        "reference/SLOTS.md",
+        "roundtrip.report.json",
+        "spec.manifest.json",
+        "textures/dragonfly.png"
+      ],
+      "bones": 26,
+      "cubes": 26,
+      "clips_shipped": 3,
+      "clips_in_spec": 9,
+      "goals": 1,
+      "flags": 0,
+      "attacking": "NONE",
+      "strike_sites": 1,
+      "textures_mapped": 1,
+      "locked_bones": 0,
+      "lock_mode": "warn",
+      "keyed_locked_bones": 0,
+      "effort_hours": 14.2,
+      "unlabelled_bones": 0,
+      "roundtrip": {
+        "equal": true,
+        "bone_order_preserved": true,
+        "differences": 0,
+        "dropped_keys": 0,
+        "reattached": [
+          "orespawn:bone_draw_order"
+        ]
+      },
+      "warnings": [
+        "GOAL_UNCLASSIFIED: goal DragonflyHuntGoal (EntityDragonfly.java:65) has no dictionary entry"
+      ]
+    },
+    {
+      "registry": "red_ant",
+      "tier": 2,
+      "tier_label": "Tier 2",
+      "rig_source": "shipped",
+      "in_game": true,
+      "seed": true,
+      "files": [
+        "SPEC.md",
+        "ant.animation.json",
+        "ant.geo.json",
+        "red_ant.bbmodel",
+        "red_ant_reference.animation.json",
+        "reference/SLOTS.md",
+        "roundtrip.report.json",
+        "spec.manifest.json",
+        "textures/red_ant.png"
+      ],
+      "bones": 20,
+      "cubes": 20,
+      "clips_shipped": 3,
+      "clips_in_spec": 9,
+      "goals": 4,
+      "flags": 0,
+      "attacking": "NONE",
+      "strike_sites": 1,
+      "textures_mapped": 1,
+      "locked_bones": 0,
+      "lock_mode": "warn",
+      "keyed_locked_bones": 0,
+      "effort_hours": 13.0,
+      "unlabelled_bones": 0,
+      "roundtrip": {
+        "equal": true,
+        "bone_order_preserved": true,
+        "differences": 0,
+        "dropped_keys": 0,
+        "reattached": [
+          "orespawn:bone_draw_order"
+        ]
+      },
+      "warnings": []
+    },
+    {
+      "registry": "rainbow_ant",
+      "tier": 2,
+      "tier_label": "Tier 2",
+      "rig_source": "shipped",
+      "in_game": true,
+      "seed": true,
+      "files": [
+        "SPEC.md",
+        "ant.animation.json",
+        "ant.geo.json",
+        "rainbow_ant.bbmodel",
+        "rainbow_ant_reference.animation.json",
+        "reference/SLOTS.md",
+        "roundtrip.report.json",
+        "spec.manifest.json",
+        "textures/rainbow_ant.png"
+      ],
+      "bones": 20,
+      "cubes": 20,
+      "clips_shipped": 3,
+      "clips_in_spec": 8,
+      "goals": 2,
+      "flags": 0,
+      "attacking": "NONE",
+      "strike_sites": 0,
+      "textures_mapped": 1,
+      "locked_bones": 0,
+      "lock_mode": "warn",
+      "keyed_locked_bones": 0,
+      "effort_hours": 12.0,
+      "unlabelled_bones": 0,
+      "roundtrip": {
+        "equal": true,
+        "bone_order_preserved": true,
+        "differences": 0,
+        "dropped_keys": 0,
+        "reattached": [
+          "orespawn:bone_draw_order"
+        ]
+      },
+      "warnings": []
+    },
+    {
+      "registry": "stink_bug",
+      "tier": 2,
+      "tier_label": "Tier 2",
+      "rig_source": "reference-leg converter output",
+      "in_game": false,
+      "seed": true,
+      "files": [
+        "SPEC.md",
+        "reference/SLOTS.md",
+        "reference_stinkbug.geo.json",
+        "roundtrip.report.json",
+        "spec.manifest.json",
+        "stink_bug.animation.json",
+        "stink_bug.bbmodel",
+        "textures/stinkbug.png"
+      ],
+      "bones": 50,
+      "cubes": 50,
+      "clips_shipped": 0,
+      "clips_in_spec": 14,
+      "goals": 7,
+      "flags": 0,
+      "attacking": "NONE",
+      "strike_sites": 0,
+      "textures_mapped": 1,
+      "locked_bones": 0,
+      "lock_mode": "warn",
+      "keyed_locked_bones": 0,
+      "effort_hours": 26.0,
+      "unlabelled_bones": 0,
+      "roundtrip": {
+        "equal": true,
+        "bone_order_preserved": true,
+        "differences": 0,
+        "dropped_keys": 0,
+        "reattached": [
+          "orespawn:bone_draw_order"
+        ]
+      },
+      "warnings": []
+    },
+    {
+      "registry": "termite",
+      "tier": 2,
+      "tier_label": "Tier 2",
+      "rig_source": "shipped",
+      "in_game": true,
+      "seed": true,
+      "files": [
+        "SPEC.md",
+        "ant.animation.json",
+        "ant.geo.json",
+        "reference/SLOTS.md",
+        "roundtrip.report.json",
+        "spec.manifest.json",
+        "termite.bbmodel",
+        "termite_reference.animation.json",
+        "textures/termite.png"
+      ],
+      "bones": 20,
+      "cubes": 20,
+      "clips_shipped": 3,
+      "clips_in_spec": 9,
+      "goals": 4,
+      "flags": 0,
+      "attacking": "NONE",
+      "strike_sites": 1,
+      "textures_mapped": 1,
+      "locked_bones": 0,
+      "lock_mode": "warn",
+      "keyed_locked_bones": 0,
+      "effort_hours": 13.0,
+      "unlabelled_bones": 0,
+      "roundtrip": {
+        "equal": true,
+        "bone_order_preserved": true,
+        "differences": 0,
+        "dropped_keys": 0,
+        "reattached": [
+          "orespawn:bone_draw_order"
+        ]
+      },
+      "warnings": []
+    },
+    {
+      "registry": "tshirt",
+      "tier": 2,
+      "tier_label": "Tier 2",
+      "rig_source": "shipped",
+      "in_game": true,
+      "seed": true,
+      "files": [
+        "SPEC.md",
+        "reference/SLOTS.md",
+        "roundtrip.report.json",
+        "spec.manifest.json",
+        "textures/tshirt.png",
+        "tshirt.animation.json",
+        "tshirt.bbmodel",
+        "tshirt.geo.json",
+        "tshirt_reference.animation.json"
+      ],
+      "bones": 2,
+      "cubes": 2,
+      "clips_shipped": 2,
+      "clips_in_spec": 5,
+      "goals": 0,
+      "flags": 0,
+      "attacking": "NONE",
+      "strike_sites": 0,
+      "textures_mapped": 1,
+      "locked_bones": 0,
+      "lock_mode": "warn",
+      "keyed_locked_bones": 0,
+      "effort_hours": 7.4,
+      "unlabelled_bones": 0,
+      "roundtrip": {
+        "equal": true,
+        "bone_order_preserved": true,
+        "differences": 0,
+        "dropped_keys": 0,
+        "reattached": [
+          "orespawn:bone_draw_order"
+        ]
+      },
+      "warnings": []
+    },
+    {
+      "registry": "unstable_ant",
+      "tier": 2,
+      "tier_label": "Tier 2",
+      "rig_source": "shipped",
+      "in_game": true,
+      "seed": true,
+      "files": [
+        "SPEC.md",
+        "ant.animation.json",
+        "ant.geo.json",
+        "reference/SLOTS.md",
+        "roundtrip.report.json",
+        "spec.manifest.json",
+        "textures/unstable_ant.png",
+        "unstable_ant.bbmodel",
+        "unstable_ant_reference.animation.json"
+      ],
+      "bones": 20,
+      "cubes": 20,
+      "clips_shipped": 3,
+      "clips_in_spec": 8,
+      "goals": 2,
+      "flags": 0,
+      "attacking": "NONE",
+      "strike_sites": 0,
+      "textures_mapped": 1,
+      "locked_bones": 0,
+      "lock_mode": "warn",
+      "keyed_locked_bones": 0,
+      "effort_hours": 12.0,
+      "unlabelled_bones": 0,
+      "roundtrip": {
+        "equal": true,
+        "bone_order_preserved": true,
+        "differences": 0,
+        "dropped_keys": 0,
+        "reattached": [
+          "orespawn:bone_draw_order"
+        ]
+      },
+      "warnings": []
+    },
+    {
+      "registry": "camarasaurus",
+      "tier": 2,
+      "tier_label": "Tier 2",
+      "rig_source": "reference-leg converter output",
+      "in_game": false,
+      "seed": true,
+      "files": [
+        "SPEC.md",
+        "camarasaurus.animation.json",
+        "camarasaurus.bbmodel",
+        "reference/SLOTS.md",
+        "reference_camarasaurus.geo.json",
+        "roundtrip.report.json",
+        "spec.manifest.json",
+        "textures/camarasaurus.png"
+      ],
+      "bones": 21,
+      "cubes": 21,
+      "clips_shipped": 0,
+      "clips_in_spec": 10,
+      "goals": 10,
+      "flags": 0,
+      "attacking": "NONE",
+      "strike_sites": 0,
+      "textures_mapped": 1,
+      "locked_bones": 0,
+      "lock_mode": "warn",
+      "keyed_locked_bones": 0,
+      "effort_hours": 17.2,
+      "unlabelled_bones": 0,
+      "roundtrip": {
+        "equal": true,
+        "bone_order_preserved": true,
+        "differences": 0,
+        "dropped_keys": 0,
+        "reattached": [
+          "orespawn:bone_draw_order"
+        ]
+      },
+      "warnings": [
+        "GOAL_UNCLASSIFIED: goal FollowOwnerGoal (Camarasaurus.java:69) has no dictionary entry",
+        "GOAL_UNCLASSIFIED: goal TemptGoal (Camarasaurus.java:71) has no dictionary entry",
+        "GOAL_UNCLASSIFIED: goal MyEntityAIWander (Camarasaurus.java:74) has no dictionary entry"
+      ]
+    },
+    {
+      "registry": "dragon",
+      "tier": 1,
+      "tier_label": "Tier 1 (boss)",
+      "rig_source": "reference-leg converter output",
+      "in_game": false,
+      "seed": true,
+      "files": [
+        "SPEC.md",
+        "dragon.animation.json",
+        "dragon.bbmodel",
+        "reference/SLOTS.md",
+        "reference_dragon.geo.json",
+        "roundtrip.report.json",
+        "spec.manifest.json",
+        "textures/dragon.png",
+        "textures/white_dragon.png"
+      ],
+      "bones": 55,
+      "cubes": 55,
+      "clips_shipped": 0,
+      "clips_in_spec": 17,
+      "goals": 9,
+      "flags": 4,
+      "attacking": "STATE",
+      "strike_sites": 9,
+      "textures_mapped": 2,
+      "locked_bones": 11,
+      "lock_mode": "warn",
+      "keyed_locked_bones": 0,
+      "effort_hours": 41.8,
+      "unlabelled_bones": 0,
+      "roundtrip": {
+        "equal": true,
+        "bone_order_preserved": true,
+        "differences": 0,
+        "dropped_keys": 0,
+        "reattached": [
+          "orespawn:bone_draw_order"
+        ]
+      },
+      "warnings": [
+        "GOAL_UNCLASSIFIED: goal SitWhenOrderedToGoal (Dragon.java:141) has no dictionary entry",
+        "GOAL_UNCLASSIFIED: goal FollowOwnerGoal (Dragon.java:142) has no dictionary entry",
+        "GOAL_UNCLASSIFIED: goal TemptGoal (Dragon.java:144) has no dictionary entry"
+      ]
+    },
+    {
+      "registry": "baby_dragon",
+      "tier": 1,
+      "tier_label": "Tier 1 (boss)",
+      "rig_source": "reference-leg converter output",
+      "in_game": false,
+      "seed": true,
+      "files": [
+        "SPEC.md",
+        "baby_dragon.animation.json",
+        "baby_dragon.bbmodel",
+        "reference/SLOTS.md",
+        "reference_dragon.geo.json",
+        "roundtrip.report.json",
+        "spec.manifest.json",
+        "textures/dragon.png",
+        "textures/white_dragon.png"
+      ],
+      "bones": 55,
+      "cubes": 55,
+      "clips_shipped": 0,
+      "clips_in_spec": 15,
+      "goals": 0,
+      "flags": 0,
+      "attacking": "NONE",
+      "strike_sites": 0,
+      "textures_mapped": 2,
+      "locked_bones": 11,
+      "lock_mode": "warn",
+      "keyed_locked_bones": 0,
+      "effort_hours": 37.2,
+      "unlabelled_bones": 0,
+      "roundtrip": {
+        "equal": true,
+        "bone_order_preserved": true,
+        "differences": 0,
+        "dropped_keys": 0,
+        "reattached": [
+          "orespawn:bone_draw_order"
+        ]
+      },
+      "warnings": []
+    },
+    {
+      "registry": "cannon_fodder",
+      "tier": 2,
+      "tier_label": "Tier 2",
+      "rig_source": "shipped",
+      "in_game": true,
+      "seed": true,
+      "files": [
+        "SPEC.md",
+        "cannon_fodder.bbmodel",
+        "cannon_fodder_reference.animation.json",
+        "cannonfodder.animation.json",
+        "cannonfodder.geo.json",
+        "reference/SLOTS.md",
+        "roundtrip.report.json",
+        "spec.manifest.json",
+        "textures/dungeonbeast.png"
+      ],
+      "bones": 6,
+      "cubes": 6,
+      "clips_shipped": 0,
+      "clips_in_spec": 8,
+      "goals": 0,
+      "flags": 2,
+      "attacking": "NONE",
+      "strike_sites": 0,
+      "textures_mapped": 1,
+      "locked_bones": 0,
+      "lock_mode": "warn",
+      "keyed_locked_bones": 0,
+      "effort_hours": 12.2,
+      "unlabelled_bones": 0,
+      "roundtrip": {
+        "equal": true,
+        "bone_order_preserved": true,
+        "differences": 0,
+        "dropped_keys": 0,
+        "reattached": [
+          "orespawn:bone_draw_order"
+        ]
+      },
+      "warnings": []
+    },
+    {
+      "registry": "gamma_metroid",
+      "tier": 2,
+      "tier_label": "Tier 2",
+      "rig_source": "shipped",
+      "in_game": true,
+      "seed": true,
+      "files": [
+        "SPEC.md",
+        "gamma_metroid.bbmodel",
+        "gamma_metroid_reference.animation.json",
+        "gammametroid.animation.json",
+        "gammametroid.geo.json",
+        "reference/SLOTS.md",
+        "roundtrip.report.json",
+        "spec.manifest.json",
+        "textures/gammametroid.png"
+      ],
+      "bones": 21,
+      "cubes": 21,
+      "clips_shipped": 0,
+      "clips_in_spec": 11,
+      "goals": 11,
+      "flags": 0,
+      "attacking": "NONE",
+      "strike_sites": 1,
+      "textures_mapped": 1,
+      "locked_bones": 0,
+      "lock_mode": "warn",
+      "keyed_locked_bones": 0,
+      "effort_hours": 18.2,
+      "unlabelled_bones": 0,
+      "roundtrip": {
+        "equal": true,
+        "bone_order_preserved": true,
+        "differences": 0,
+        "dropped_keys": 0,
+        "reattached": [
+          "orespawn:bone_draw_order"
+        ]
+      },
+      "warnings": [
+        "GOAL_UNCLASSIFIED: goal FollowOwnerGoal (EntityGammaMetroid.java:78) has no dictionary entry",
+        "GOAL_UNCLASSIFIED: goal TemptGoal (EntityGammaMetroid.java:79) has no dictionary entry"
+      ]
+    },
+    {
+      "registry": "hydrolisc",
+      "tier": 2,
+      "tier_label": "Tier 2",
+      "rig_source": "reference-leg converter output",
+      "in_game": false,
+      "seed": true,
+      "files": [
+        "SPEC.md",
+        "hydrolisc.animation.json",
+        "hydrolisc.bbmodel",
+        "reference/SLOTS.md",
+        "reference_hydrolisc.geo.json",
+        "roundtrip.report.json",
+        "spec.manifest.json",
+        "textures/hydrolisc.png"
+      ],
+      "bones": 40,
+      "cubes": 40,
+      "clips_shipped": 0,
+      "clips_in_spec": 13,
+      "goals": 12,
+      "flags": 0,
+      "attacking": "NONE",
+      "strike_sites": 0,
+      "textures_mapped": 1,
+      "locked_bones": 0,
+      "lock_mode": "warn",
+      "keyed_locked_bones": 0,
+      "effort_hours": 24.0,
+      "unlabelled_bones": 0,
+      "roundtrip": {
+        "equal": true,
+        "bone_order_preserved": true,
+        "differences": 0,
+        "dropped_keys": 0,
+        "reattached": [
+          "orespawn:bone_draw_order"
+        ]
+      },
+      "warnings": [
+        "GOAL_UNCLASSIFIED: goal FollowOwnerGoal (EntityHydrolisc.java:70) has no dictionary entry",
+        "GOAL_UNCLASSIFIED: goal TemptGoal (EntityHydrolisc.java:71) has no dictionary entry"
+      ]
+    },
+    {
+      "registry": "leon",
+      "tier": 1,
+      "tier_label": "Tier 1 (boss)",
+      "rig_source": "reference-leg converter output",
+      "in_game": false,
+      "seed": true,
+      "files": [
+        "SPEC.md",
+        "leon.animation.json",
+        "leon.bbmodel",
+        "reference/SLOTS.md",
+        "reference_leon.geo.json",
+        "roundtrip.report.json",
+        "spec.manifest.json",
+        "textures/leon.png"
+      ],
+      "bones": 98,
+      "cubes": 98,
+      "clips_shipped": 0,
+      "clips_in_spec": 22,
+      "goals": 10,
+      "flags": 3,
+      "attacking": "STATE",
+      "strike_sites": 2,
+      "textures_mapped": 1,
+      "locked_bones": 22,
+      "lock_mode": "warn",
+      "keyed_locked_bones": 0,
+      "effort_hours": 55.7,
+      "unlabelled_bones": 0,
+      "roundtrip": {
+        "equal": true,
+        "bone_order_preserved": true,
+        "differences": 0,
+        "dropped_keys": 0,
+        "reattached": [
+          "orespawn:bone_draw_order"
+        ]
+      },
+      "warnings": [
+        "GOAL_UNCLASSIFIED: goal FollowOwnerGoal (EntityLeon.java:154) has no dictionary entry",
+        "GOAL_UNCLASSIFIED: goal TemptGoal (EntityLeon.java:155) has no dictionary entry"
+      ]
+    },
+    {
+      "registry": "leonopteryx",
+      "tier": 1,
+      "tier_label": "Tier 1 (boss)",
+      "rig_source": "reference-leg converter output",
+      "in_game": false,
+      "seed": true,
+      "files": [
+        "SPEC.md",
+        "leonopteryx.animation.json",
+        "leonopteryx.bbmodel",
+        "reference/SLOTS.md",
+        "reference_leon.geo.json",
+        "roundtrip.report.json",
+        "spec.manifest.json",
+        "textures/leon.png"
+      ],
+      "bones": 98,
+      "cubes": 98,
+      "clips_shipped": 0,
+      "clips_in_spec": 22,
+      "goals": 10,
+      "flags": 3,
+      "attacking": "STATE",
+      "strike_sites": 2,
+      "textures_mapped": 1,
+      "locked_bones": 22,
+      "lock_mode": "warn",
+      "keyed_locked_bones": 0,
+      "effort_hours": 55.7,
+      "unlabelled_bones": 0,
+      "roundtrip": {
+        "equal": true,
+        "bone_order_preserved": true,
+        "differences": 0,
+        "dropped_keys": 0,
+        "reattached": [
+          "orespawn:bone_draw_order"
+        ]
+      },
+      "warnings": [
+        "GOAL_UNCLASSIFIED: goal FollowOwnerGoal (EntityLeon.java:154) has no dictionary entry",
+        "GOAL_UNCLASSIFIED: goal TemptGoal (EntityLeon.java:155) has no dictionary entry"
+      ]
+    },
+    {
+      "registry": "lizard",
+      "tier": 2,
+      "tier_label": "Tier 2",
+      "rig_source": "reference-leg converter output",
+      "in_game": false,
+      "seed": true,
+      "files": [
+        "SPEC.md",
+        "lizard.animation.json",
+        "lizard.bbmodel",
+        "reference/SLOTS.md",
+        "reference_lizard.geo.json",
+        "roundtrip.report.json",
+        "spec.manifest.json",
+        "textures/lizard.png"
+      ],
+      "bones": 71,
+      "cubes": 71,
+      "clips_shipped": 0,
+      "clips_in_spec": 11,
+      "goals": 8,
+      "flags": 1,
+      "attacking": "STATE",
+      "strike_sites": 1,
+      "textures_mapped": 1,
+      "locked_bones": 0,
+      "lock_mode": "warn",
+      "keyed_locked_bones": 0,
+      "effort_hours": 29.2,
+      "unlabelled_bones": 0,
+      "roundtrip": {
+        "equal": true,
+        "bone_order_preserved": true,
+        "differences": 0,
+        "dropped_keys": 0,
+        "reattached": [
+          "orespawn:bone_draw_order"
+        ]
+      },
+      "warnings": [
+        "GOAL_UNCLASSIFIED: goal FollowOwnerGoal (Lizard.java:80) has no dictionary entry",
+        "GOAL_UNCLASSIFIED: goal TemptGoal (Lizard.java:82) has no dictionary entry",
+        "WISHLIST_UNACCEPTED: wishlist names clip(s) ['aggro_idle'] that the manifest does not accept"
+      ]
+    },
+    {
+      "registry": "ostrich",
+      "tier": 2,
+      "tier_label": "Tier 2",
+      "rig_source": "reference-leg converter output",
+      "in_game": false,
+      "seed": true,
+      "files": [
+        "SPEC.md",
+        "ostrich.animation.json",
+        "ostrich.bbmodel",
+        "reference/SLOTS.md",
+        "reference_ostrich.geo.json",
+        "roundtrip.report.json",
+        "spec.manifest.json",
+        "textures/ostrich.png"
+      ],
+      "bones": 38,
+      "cubes": 38,
+      "clips_shipped": 0,
+      "clips_in_spec": 13,
+      "goals": 10,
+      "flags": 0,
+      "attacking": "NONE",
+      "strike_sites": 0,
+      "textures_mapped": 1,
+      "locked_bones": 0,
+      "lock_mode": "warn",
+      "keyed_locked_bones": 0,
+      "effort_hours": 22.6,
+      "unlabelled_bones": 0,
+      "roundtrip": {
+        "equal": true,
+        "bone_order_preserved": true,
+        "differences": 0,
+        "dropped_keys": 0,
+        "reattached": [
+          "orespawn:bone_draw_order"
+        ]
+      },
+      "warnings": [
+        "GOAL_UNCLASSIFIED: goal FollowOwnerGoal (Ostrich.java:129) has no dictionary entry",
+        "GOAL_UNCLASSIFIED: goal TemptGoal (Ostrich.java:131) has no dictionary entry"
+      ]
+    },
+    {
+      "registry": "rubber_ducky",
+      "tier": 2,
+      "tier_label": "Tier 2",
+      "rig_source": "shipped",
+      "in_game": true,
+      "seed": true,
+      "files": [
+        "SPEC.md",
+        "reference/SLOTS.md",
+        "roundtrip.report.json",
+        "rubber_ducky.bbmodel",
+        "rubber_ducky_reference.animation.json",
+        "rubberducky.animation.json",
+        "rubberducky.geo.json",
+        "spec.manifest.json",
+        "textures/rubberducky.png"
+      ],
+      "bones": 8,
+      "cubes": 8,
+      "clips_shipped": 0,
+      "clips_in_spec": 10,
+      "goals": 8,
+      "flags": 2,
+      "attacking": "STATE",
+      "strike_sites": 1,
+      "textures_mapped": 1,
+      "locked_bones": 0,
+      "lock_mode": "warn",
+      "keyed_locked_bones": 0,
+      "effort_hours": 15.6,
+      "unlabelled_bones": 0,
+      "roundtrip": {
+        "equal": true,
+        "bone_order_preserved": true,
+        "differences": 0,
+        "dropped_keys": 0,
+        "reattached": [
+          "orespawn:bone_draw_order"
+        ]
+      },
+      "warnings": [
+        "GOAL_UNCLASSIFIED: goal FollowOwnerGoal (EntityRubberDucky.java:86) has no dictionary entry",
+        "GOAL_UNCLASSIFIED: goal TemptGoal (EntityRubberDucky.java:87) has no dictionary entry"
+      ]
+    },
+    {
+      "registry": "spyro",
+      "tier": 2,
+      "tier_label": "Tier 2",
+      "rig_source": "reference-leg converter output",
+      "in_game": false,
+      "seed": true,
+      "files": [
+        "SPEC.md",
+        "reference/SLOTS.md",
+        "reference_spyro.geo.json",
+        "roundtrip.report.json",
+        "spec.manifest.json",
+        "spyro.animation.json",
+        "spyro.bbmodel",
+        "textures/spyro.png"
+      ],
+      "bones": 37,
+      "cubes": 37,
+      "clips_shipped": 0,
+      "clips_in_spec": 13,
+      "goals": 12,
+      "flags": 2,
+      "attacking": "NONE",
+      "strike_sites": 2,
+      "textures_mapped": 1,
+      "locked_bones": 0,
+      "lock_mode": "warn",
+      "keyed_locked_bones": 0,
+      "effort_hours": 23.4,
+      "unlabelled_bones": 0,
+      "roundtrip": {
+        "equal": true,
+        "bone_order_preserved": true,
+        "differences": 0,
+        "dropped_keys": 0,
+        "reattached": [
+          "orespawn:bone_draw_order"
+        ]
+      },
+      "warnings": [
+        "GOAL_UNCLASSIFIED: goal MyEntityAIFollowOwner (EntitySpyro.java:95) has no dictionary entry",
+        "GOAL_UNCLASSIFIED: goal TemptGoal (EntitySpyro.java:96) has no dictionary entry"
+      ]
+    },
+    {
+      "registry": "stinky",
+      "tier": 2,
+      "tier_label": "Tier 2",
+      "rig_source": "reference-leg converter output",
+      "in_game": false,
+      "seed": true,
+      "files": [
+        "SPEC.md",
+        "reference/SLOTS.md",
+        "reference_stinky.geo.json",
+        "roundtrip.report.json",
+        "spec.manifest.json",
+        "stinky.animation.json",
+        "stinky.bbmodel",
+        "textures/stinky.png"
+      ],
+      "bones": 20,
+      "cubes": 20,
+      "clips_shipped": 0,
+      "clips_in_spec": 13,
+      "goals": 12,
+      "flags": 3,
+      "attacking": "NONE",
+      "strike_sites": 1,
+      "textures_mapped": 1,
+      "locked_bones": 0,
+      "lock_mode": "warn",
+      "keyed_locked_bones": 0,
+      "effort_hours": 20.0,
+      "unlabelled_bones": 0,
+      "roundtrip": {
+        "equal": true,
+        "bone_order_preserved": true,
+        "differences": 0,
+        "dropped_keys": 0,
+        "reattached": [
+          "orespawn:bone_draw_order"
+        ]
+      },
+      "warnings": [
+        "GOAL_UNCLASSIFIED: goal MyEntityAIFollowOwner (EntityStinky.java:102) has no dictionary entry",
+        "GOAL_UNCLASSIFIED: goal TemptGoal (EntityStinky.java:103) has no dictionary entry"
+      ]
+    },
+    {
+      "registry": "the_prince",
+      "tier": 1,
+      "tier_label": "Tier 1 (boss)",
+      "rig_source": "reference-leg converter output",
+      "in_game": false,
+      "seed": true,
+      "files": [
+        "SPEC.md",
+        "reference/SLOTS.md",
+        "reference_theprince.geo.json",
+        "roundtrip.report.json",
+        "spec.manifest.json",
+        "textures/theprince.png",
+        "the_prince.animation.json",
+        "the_prince.bbmodel"
+      ],
+      "bones": 35,
+      "cubes": 35,
+      "clips_shipped": 0,
+      "clips_in_spec": 15,
+      "goals": 10,
+      "flags": 3,
+      "attacking": "STATE",
+      "strike_sites": 4,
+      "textures_mapped": 1,
+      "locked_bones": 10,
+      "lock_mode": "warn",
+      "keyed_locked_bones": 0,
+      "effort_hours": 35.8,
+      "unlabelled_bones": 0,
+      "roundtrip": {
+        "equal": true,
+        "bone_order_preserved": true,
+        "differences": 0,
+        "dropped_keys": 0,
+        "reattached": [
+          "orespawn:bone_draw_order"
+        ]
+      },
+      "warnings": [
+        "GOAL_UNCLASSIFIED: goal FollowOwnerGoal (ThePrince.java:108) has no dictionary entry",
+        "GOAL_UNCLASSIFIED: goal TemptGoal (ThePrince.java:109) has no dictionary entry",
+        "GOAL_UNCLASSIFIED: goal MyEntityAIWander (ThePrince.java:111) has no dictionary entry"
+      ]
+    },
+    {
+      "registry": "the_prince_adult",
+      "tier": 1,
+      "tier_label": "Tier 1 (boss)",
+      "rig_source": "reference-leg converter output",
+      "in_game": false,
+      "seed": true,
+      "files": [
+        "SPEC.md",
+        "reference/SLOTS.md",
+        "reference_theprinceadult.geo.json",
+        "roundtrip.report.json",
+        "spec.manifest.json",
+        "textures/theprinceadult.png",
+        "the_prince_adult.animation.json",
+        "the_prince_adult.bbmodel"
+      ],
+      "bones": 119,
+      "cubes": 119,
+      "clips_shipped": 0,
+      "clips_in_spec": 23,
+      "goals": 10,
+      "flags": 6,
+      "attacking": "STATE",
+      "strike_sites": 8,
+      "textures_mapped": 1,
+      "locked_bones": 17,
+      "lock_mode": "warn",
+      "keyed_locked_bones": 0,
+      "effort_hours": 60.3,
+      "unlabelled_bones": 0,
+      "roundtrip": {
+        "equal": true,
+        "bone_order_preserved": true,
+        "differences": 0,
+        "dropped_keys": 0,
+        "reattached": [
+          "orespawn:bone_draw_order"
+        ]
+      },
+      "warnings": [
+        "GOAL_UNCLASSIFIED: goal FollowOwnerGoal (ThePrinceAdult.java:138) has no dictionary entry",
+        "GOAL_UNCLASSIFIED: goal TemptGoal (ThePrinceAdult.java:139) has no dictionary entry",
+        "GOAL_UNCLASSIFIED: goal MyEntityAIWander (ThePrinceAdult.java:140) has no dictionary entry"
+      ]
+    },
+    {
+      "registry": "the_princess",
+      "tier": 1,
+      "tier_label": "Tier 1 (boss)",
+      "rig_source": "reference-leg converter output",
+      "in_game": false,
+      "seed": true,
+      "files": [
+        "SPEC.md",
+        "reference/SLOTS.md",
+        "reference_theprincess.geo.json",
+        "roundtrip.report.json",
+        "spec.manifest.json",
+        "textures/theprincess.png",
+        "the_princess.animation.json",
+        "the_princess.bbmodel"
+      ],
+      "bones": 37,
+      "cubes": 37,
+      "clips_shipped": 0,
+      "clips_in_spec": 19,
+      "goals": 10,
+      "flags": 4,
+      "attacking": "STATE",
+      "strike_sites": 4,
+      "textures_mapped": 1,
+      "locked_bones": 10,
+      "lock_mode": "warn",
+      "keyed_locked_bones": 0,
+      "effort_hours": 42.0,
+      "unlabelled_bones": 0,
+      "roundtrip": {
+        "equal": true,
+        "bone_order_preserved": true,
+        "differences": 0,
+        "dropped_keys": 0,
+        "reattached": [
+          "orespawn:bone_draw_order"
+        ]
+      },
+      "warnings": [
+        "GOAL_UNCLASSIFIED: goal FollowOwnerGoal (ThePrincess.java:106) has no dictionary entry",
+        "GOAL_UNCLASSIFIED: goal TemptGoal (ThePrincess.java:107) has no dictionary entry",
+        "GOAL_UNCLASSIFIED: goal MyEntityAIWander (ThePrincess.java:109) has no dictionary entry"
+      ]
+    },
+    {
+      "registry": "the_prince_teen",
+      "tier": 1,
+      "tier_label": "Tier 1 (boss)",
+      "rig_source": "reference-leg converter output",
+      "in_game": false,
+      "seed": true,
+      "files": [
+        "SPEC.md",
+        "reference/SLOTS.md",
+        "reference_theprinceteen.geo.json",
+        "roundtrip.report.json",
+        "spec.manifest.json",
+        "textures/theprince_teen.png",
+        "the_prince_teen.animation.json",
+        "the_prince_teen.bbmodel"
+      ],
+      "bones": 71,
+      "cubes": 71,
+      "clips_shipped": 0,
+      "clips_in_spec": 15,
+      "goals": 10,
+      "flags": 6,
+      "attacking": "STATE",
+      "strike_sites": 8,
+      "textures_mapped": 1,
+      "locked_bones": 16,
+      "lock_mode": "warn",
+      "keyed_locked_bones": 0,
+      "effort_hours": 41.1,
+      "unlabelled_bones": 0,
+      "roundtrip": {
+        "equal": true,
+        "bone_order_preserved": true,
+        "differences": 0,
+        "dropped_keys": 0,
+        "reattached": [
+          "orespawn:bone_draw_order"
+        ]
+      },
+      "warnings": [
+        "GOAL_UNCLASSIFIED: goal FollowOwnerGoal (ThePrinceTeen.java:149) has no dictionary entry",
+        "GOAL_UNCLASSIFIED: goal TemptGoal (ThePrinceTeen.java:150) has no dictionary entry",
+        "GOAL_UNCLASSIFIED: goal MyEntityAIWander (ThePrinceTeen.java:151) has no dictionary entry"
+      ]
+    },
+    {
+      "registry": "velocity_raptor",
+      "tier": 2,
+      "tier_label": "Tier 2",
+      "rig_source": "reference-leg converter output",
+      "in_game": false,
+      "seed": true,
+      "files": [
+        "SPEC.md",
+        "reference/SLOTS.md",
+        "reference_velocityraptor.geo.json",
+        "roundtrip.report.json",
+        "spec.manifest.json",
+        "textures/velocityraptor.png",
+        "velocity_raptor.animation.json",
+        "velocity_raptor.bbmodel"
+      ],
+      "bones": 34,
+      "cubes": 34,
+      "clips_shipped": 0,
+      "clips_in_spec": 16,
+      "goals": 12,
+      "flags": 0,
+      "attacking": "NONE",
+      "strike_sites": 0,
+      "textures_mapped": 1,
+      "locked_bones": 0,
+      "lock_mode": "warn",
+      "keyed_locked_bones": 0,
+      "effort_hours": 24.8,
+      "unlabelled_bones": 0,
+      "roundtrip": {
+        "equal": true,
+        "bone_order_preserved": true,
+        "differences": 0,
+        "dropped_keys": 0,
+        "reattached": [
+          "orespawn:bone_draw_order"
+        ]
+      },
+      "warnings": [
+        "GOAL_UNCLASSIFIED: goal FollowOwnerGoal (VelocityRaptor.java:64) has no dictionary entry",
+        "GOAL_UNCLASSIFIED: goal TemptGoal (VelocityRaptor.java:66) has no dictionary entry"
+      ]
+    },
+    {
+      "registry": "water_dragon",
+      "tier": 1,
+      "tier_label": "Tier 1 (boss)",
+      "rig_source": "reference-leg converter output",
+      "in_game": false,
+      "seed": true,
+      "files": [
+        "SPEC.md",
+        "reference/SLOTS.md",
+        "reference_waterdragon.geo.json",
+        "roundtrip.report.json",
+        "spec.manifest.json",
+        "textures/waterdragon.png",
+        "water_dragon.animation.json",
+        "water_dragon.bbmodel"
+      ],
+      "bones": 24,
+      "cubes": 24,
+      "clips_shipped": 0,
+      "clips_in_spec": 16,
+      "goals": 10,
+      "flags": 1,
+      "attacking": "UNCLASSIFIED",
+      "strike_sites": 2,
+      "textures_mapped": 1,
+      "locked_bones": 11,
+      "lock_mode": "warn",
+      "keyed_locked_bones": 0,
+      "effort_hours": 34.1,
+      "unlabelled_bones": 0,
+      "roundtrip": {
+        "equal": true,
+        "bone_order_preserved": true,
+        "differences": 0,
+        "dropped_keys": 0,
+        "reattached": [
+          "orespawn:bone_draw_order"
+        ]
+      },
+      "warnings": [
+        "GOAL_UNCLASSIFIED: goal TemptGoal (WaterDragon.java:133) has no dictionary entry",
+        "GOAL_UNCLASSIFIED: goal WaterCanonAttackGoal (WaterDragon.java:134) has no dictionary entry",
+        "GOAL_UNCLASSIFIED: goal RandomSwimmingGoal (WaterDragon.java:135) has no dictionary entry",
+        "ATTACKING_UNCLASSIFIED: DATA_ATTACKING classified UNCLASSIFIED: the clear sites' guards match neither the pulse nor the target-loss pattern; other clears at line(s) [622] (guards: NOT(if (this.streamCount > 0))) — the owner reads them"
+      ]
+    },
+    {
+      "registry": "butterfly",
+      "tier": 1,
+      "tier_label": "Tier 1 (boss)",
+      "rig_source": "reference-leg converter output",
+      "in_game": false,
+      "seed": true,
+      "files": [
+        "SPEC.md",
+        "butterfly.animation.json",
+        "butterfly.bbmodel",
+        "reference/SLOTS.md",
+        "reference_butterfly.geo.json",
+        "roundtrip.report.json",
+        "spec.manifest.json",
+        "textures/butterfly.png",
+        "textures/butterfly2.png",
+        "textures/butterfly3.png",
+        "textures/butterfly4.png"
+      ],
+      "bones": 10,
+      "cubes": 10,
+      "clips_shipped": 0,
+      "clips_in_spec": 7,
+      "goals": 1,
+      "flags": 1,
+      "attacking": "NONE",
+      "strike_sites": 1,
+      "textures_mapped": 4,
+      "locked_bones": 0,
+      "lock_mode": "warn",
+      "keyed_locked_bones": 0,
+      "effort_hours": 18.5,
+      "unlabelled_bones": 0,
+      "roundtrip": {
+        "equal": true,
+        "bone_order_preserved": true,
+        "differences": 0,
+        "dropped_keys": 0,
+        "reattached": [
+          "orespawn:bone_draw_order"
+        ]
+      },
+      "warnings": [
+        "GOAL_UNCLASSIFIED: goal ButterflyIslandsHuntGoal (EntityButterfly.java:74) has no dictionary entry"
+      ]
+    },
+    {
+      "registry": "luna_moth",
+      "tier": 1,
+      "tier_label": "Tier 1 (boss)",
+      "rig_source": "reference-leg converter output",
+      "in_game": false,
+      "seed": true,
+      "files": [
+        "SPEC.md",
+        "luna_moth.animation.json",
+        "luna_moth.bbmodel",
+        "reference/SLOTS.md",
+        "reference_butterfly.geo.json",
+        "roundtrip.report.json",
+        "spec.manifest.json",
+        "textures/darkmoth.png",
+        "textures/eyemoth.png",
+        "textures/firemoth.png",
+        "textures/lunamoth.png"
+      ],
+      "bones": 10,
+      "cubes": 10,
+      "clips_shipped": 0,
+      "clips_in_spec": 6,
+      "goals": 1,
+      "flags": 0,
+      "attacking": "NONE",
+      "strike_sites": 0,
+      "textures_mapped": 4,
+      "locked_bones": 0,
+      "lock_mode": "warn",
+      "keyed_locked_bones": 0,
+      "effort_hours": 17.0,
+      "unlabelled_bones": 0,
+      "roundtrip": {
+        "equal": true,
+        "bone_order_preserved": true,
+        "differences": 0,
+        "dropped_keys": 0,
+        "reattached": [
+          "orespawn:bone_draw_order"
+        ]
+      },
+      "warnings": [
+        "GOAL_UNCLASSIFIED: goal LunaMothFlightGoal (EntityLunaMoth.java:55) has no dictionary entry"
+      ]
+    },
+    {
+      "registry": "mosquito",
+      "tier": 2,
+      "tier_label": "Tier 2",
+      "rig_source": "shipped",
+      "in_game": true,
+      "seed": true,
+      "files": [
+        "SPEC.md",
+        "mosquito.animation.json",
+        "mosquito.bbmodel",
+        "mosquito.geo.json",
+        "mosquito_reference.animation.json",
+        "reference/SLOTS.md",
+        "roundtrip.report.json",
+        "spec.manifest.json",
+        "textures/mosquito.png"
+      ],
+      "bones": 5,
+      "cubes": 5,
+      "clips_shipped": 2,
+      "clips_in_spec": 6,
+      "goals": 1,
+      "flags": 0,
+      "attacking": "NONE",
+      "strike_sites": 0,
+      "textures_mapped": 1,
+      "locked_bones": 0,
+      "lock_mode": "warn",
+      "keyed_locked_bones": 0,
+      "effort_hours": 9.0,
+      "unlabelled_bones": 0,
+      "roundtrip": {
+        "equal": true,
+        "bone_order_preserved": true,
+        "differences": 0,
+        "dropped_keys": 0,
+        "reattached": [
+          "orespawn:bone_draw_order"
+        ]
+      },
+      "warnings": [
+        "GOAL_UNCLASSIFIED: goal MosquitoFlightGoal (EntityMosquito.java:49) has no dictionary entry"
+      ]
+    },
+    {
+      "registry": "fairy",
+      "tier": 2,
+      "tier_label": "Tier 2",
+      "rig_source": "shipped",
+      "in_game": true,
+      "seed": true,
+      "files": [
+        "SPEC.md",
+        "fairy.animation.json",
+        "fairy.bbmodel",
+        "fairy.geo.json",
+        "fairy_reference.animation.json",
+        "reference/SLOTS.md",
+        "roundtrip.report.json",
+        "spec.manifest.json",
+        "textures/fairytexture.png",
+        "textures/fairytexture2.png",
+        "textures/fairytexture3.png",
+        "textures/fairytexture4.png",
+        "textures/fairytexture5.png",
+        "textures/fairytexture6.png",
+        "textures/fairytexture7.png",
+        "textures/fairytexture8.png",
+        "textures/fairytexture9.png"
+      ],
+      "bones": 15,
+      "cubes": 15,
+      "clips_shipped": 0,
+      "clips_in_spec": 13,
+      "goals": 2,
+      "flags": 1,
+      "attacking": "NONE",
+      "strike_sites": 1,
+      "textures_mapped": 9,
+      "locked_bones": 0,
+      "lock_mode": "warn",
+      "keyed_locked_bones": 0,
+      "effort_hours": 19.0,
+      "unlabelled_bones": 0,
+      "roundtrip": {
+        "equal": true,
+        "bone_order_preserved": true,
+        "differences": 0,
+        "dropped_keys": 0,
+        "reattached": [
+          "orespawn:bone_draw_order",
+          "orespawn:cube_face_order"
+        ]
+      },
+      "warnings": []
+    },
+    {
+      "registry": "firefly",
+      "tier": 2,
+      "tier_label": "Tier 2",
+      "rig_source": "shipped",
+      "in_game": true,
+      "seed": true,
+      "files": [
+        "SPEC.md",
+        "firefly.animation.json",
+        "firefly.bbmodel",
+        "firefly.geo.json",
+        "firefly_reference.animation.json",
+        "reference/SLOTS.md",
+        "roundtrip.report.json",
+        "spec.manifest.json",
+        "textures/fireflytexture.png"
+      ],
+      "bones": 12,
+      "cubes": 12,
+      "clips_shipped": 2,
+      "clips_in_spec": 6,
+      "goals": 1,
+      "flags": 0,
+      "attacking": "NONE",
+      "strike_sites": 0,
+      "textures_mapped": 1,
+      "locked_bones": 0,
+      "lock_mode": "warn",
+      "keyed_locked_bones": 0,
+      "effort_hours": 10.4,
+      "unlabelled_bones": 0,
+      "roundtrip": {
+        "equal": true,
+        "bone_order_preserved": true,
+        "differences": 0,
+        "dropped_keys": 0,
+        "reattached": [
+          "orespawn:bone_draw_order",
+          "orespawn:cube_face_order"
+        ]
+      },
+      "warnings": []
+    },
+    {
+      "registry": "ghost",
+      "tier": 2,
+      "tier_label": "Tier 2",
+      "rig_source": "reference-leg converter output",
+      "in_game": false,
+      "seed": true,
+      "files": [
+        "SPEC.md",
+        "ghost.animation.json",
+        "ghost.bbmodel",
+        "reference/SLOTS.md",
+        "reference_ghost.geo.json",
+        "roundtrip.report.json",
+        "spec.manifest.json",
+        "textures/ghost.png"
+      ],
+      "bones": 3,
+      "cubes": 3,
+      "clips_shipped": 0,
+      "clips_in_spec": 13,
+      "goals": 2,
+      "flags": 0,
+      "attacking": "NONE",
+      "strike_sites": 1,
+      "textures_mapped": 1,
+      "locked_bones": 0,
+      "lock_mode": "warn",
+      "keyed_locked_bones": 0,
+      "effort_hours": 16.6,
+      "unlabelled_bones": 0,
+      "roundtrip": {
+        "equal": true,
+        "bone_order_preserved": true,
+        "differences": 0,
+        "dropped_keys": 0,
+        "reattached": [
+          "orespawn:bone_draw_order"
+        ]
+      },
+      "warnings": []
+    },
+    {
+      "registry": "ghost_skelly",
+      "tier": 2,
+      "tier_label": "Tier 2",
+      "rig_source": "reference-leg converter output",
+      "in_game": false,
+      "seed": true,
+      "files": [
+        "SPEC.md",
+        "ghost_skelly.animation.json",
+        "ghost_skelly.bbmodel",
+        "reference/SLOTS.md",
+        "reference_ghostskelly.geo.json",
+        "roundtrip.report.json",
+        "spec.manifest.json",
+        "textures/ghost_skelly.png"
+      ],
+      "bones": 10,
+      "cubes": 10,
+      "clips_shipped": 0,
+      "clips_in_spec": 14,
+      "goals": 2,
+      "flags": 0,
+      "attacking": "NONE",
+      "strike_sites": 1,
+      "textures_mapped": 1,
+      "locked_bones": 0,
+      "lock_mode": "warn",
+      "keyed_locked_bones": 0,
+      "effort_hours": 19.0,
+      "unlabelled_bones": 0,
+      "roundtrip": {
+        "equal": true,
+        "bone_order_preserved": true,
+        "differences": 0,
+        "dropped_keys": 0,
+        "reattached": [
+          "orespawn:bone_draw_order"
+        ]
+      },
+      "warnings": []
+    },
+    {
+      "registry": "mothra",
+      "tier": 1,
+      "tier_label": "Tier 1 (boss)",
+      "rig_source": "reference-leg converter output",
+      "in_game": false,
+      "seed": true,
+      "files": [
+        "SPEC.md",
+        "mothra.animation.json",
+        "mothra.bbmodel",
+        "reference/SLOTS.md",
+        "reference_butterfly.geo.json",
+        "roundtrip.report.json",
+        "spec.manifest.json",
+        "textures/eyemoth.png"
+      ],
+      "bones": 10,
+      "cubes": 10,
+      "clips_shipped": 0,
+      "clips_in_spec": 7,
+      "goals": 0,
+      "flags": 0,
+      "attacking": "NONE",
+      "strike_sites": 2,
+      "textures_mapped": 1,
+      "locked_bones": 4,
+      "lock_mode": "warn",
+      "keyed_locked_bones": 0,
+      "effort_hours": 18.5,
+      "unlabelled_bones": 0,
+      "roundtrip": {
+        "equal": true,
+        "bone_order_preserved": true,
+        "differences": 0,
+        "dropped_keys": 0,
+        "reattached": [
+          "orespawn:bone_draw_order"
+        ]
+      },
+      "warnings": []
+    },
+    {
+      "registry": "vampire_butterfly",
+      "tier": 1,
+      "tier_label": "Tier 1 (boss)",
+      "rig_source": "reference-leg converter output",
+      "in_game": false,
+      "seed": true,
+      "files": [
+        "SPEC.md",
+        "reference/SLOTS.md",
+        "reference_butterfly.geo.json",
+        "roundtrip.report.json",
+        "spec.manifest.json",
+        "textures/butterfly.png",
+        "vampire_butterfly.animation.json",
+        "vampire_butterfly.bbmodel"
+      ],
+      "bones": 10,
+      "cubes": 10,
+      "clips_shipped": 0,
+      "clips_in_spec": 7,
+      "goals": 3,
+      "flags": 1,
+      "attacking": "NONE",
+      "strike_sites": 1,
+      "textures_mapped": 1,
+      "locked_bones": 0,
+      "lock_mode": "warn",
+      "keyed_locked_bones": 0,
+      "effort_hours": 18.5,
+      "unlabelled_bones": 0,
+      "roundtrip": {
+        "equal": true,
+        "bone_order_preserved": true,
+        "differences": 0,
+        "dropped_keys": 0,
+        "reattached": [
+          "orespawn:bone_draw_order"
+        ]
+      },
+      "warnings": []
+    },
+    {
+      "registry": "elevator",
+      "tier": 3,
+      "tier_label": "Tier 3",
+      "rig_source": "shipped",
+      "in_game": true,
+      "seed": true,
+      "files": [
+        "SPEC.md",
+        "elevator.animation.json",
+        "elevator.bbmodel",
+        "elevator.geo.json",
+        "elevator_reference.animation.json",
+        "reference/SLOTS.md",
+        "roundtrip.report.json",
+        "spec.manifest.json",
+        "textures/elevator1.png",
+        "textures/elevator10.png",
+        "textures/elevator2.png",
+        "textures/elevator3.png",
+        "textures/elevator4.png",
+        "textures/elevator5.png",
+        "textures/elevator6.png",
+        "textures/elevator7.png",
+        "textures/elevator8.png",
+        "textures/elevator9.png"
+      ],
+      "bones": 5,
+      "cubes": 5,
+      "clips_shipped": 0,
+      "clips_in_spec": 0,
+      "goals": 0,
+      "flags": 5,
+      "attacking": "NONE",
+      "strike_sites": 0,
+      "textures_mapped": 10,
+      "locked_bones": 0,
+      "lock_mode": "warn",
+      "keyed_locked_bones": 0,
+      "effort_hours": 0.0,
+      "unlabelled_bones": 5,
+      "roundtrip": {
+        "equal": true,
+        "bone_order_preserved": true,
+        "differences": 0,
+        "dropped_keys": 0,
+        "reattached": [
+          "orespawn:bone_draw_order"
+        ]
+      },
+      "warnings": [
+        "BONE_UNLABELLED: bone shape1 has no glossary label",
+        "BONE_UNLABELLED: bone shape2 has no glossary label",
+        "BONE_UNLABELLED: bone shape3 has no glossary label",
+        "BONE_UNLABELLED: bone shape4 has no glossary label",
+        "BONE_UNLABELLED: bone shape5 has no glossary label"
+      ]
+    },
+    {
+      "registry": "purple_power",
+      "tier": 3,
+      "tier_label": "Tier 3",
+      "rig_source": "shipped",
+      "in_game": true,
+      "seed": true,
+      "files": [
+        "SPEC.md",
+        "purple_power.bbmodel",
+        "purple_power_reference.animation.json",
+        "purplepower.animation.json",
+        "purplepower.geo.json",
+        "reference/SLOTS.md",
+        "roundtrip.report.json",
+        "spec.manifest.json",
+        "textures/purplepowertexture.png",
+        "textures/purplepowertexture10.png",
+        "textures/purplepowertexture2.png",
+        "textures/purplepowertexture3.png",
+        "textures/purplepowertexture4.png"
+      ],
+      "bones": 27,
+      "cubes": 18,
+      "clips_shipped": 0,
+      "clips_in_spec": 0,
+      "goals": 0,
+      "flags": 1,
+      "attacking": "NONE",
+      "strike_sites": 1,
+      "textures_mapped": 5,
+      "locked_bones": 0,
+      "lock_mode": "warn",
+      "keyed_locked_bones": 0,
+      "effort_hours": 0.0,
+      "unlabelled_bones": 0,
+      "roundtrip": {
+        "equal": true,
+        "bone_order_preserved": true,
+        "differences": 0,
+        "dropped_keys": 0,
+        "reattached": [
+          "orespawn:bone_draw_order",
+          "orespawn:cube_face_order"
+        ]
+      },
+      "warnings": []
+    },
+    {
+      "registry": "rock_base",
+      "tier": 3,
+      "tier_label": "Tier 3",
+      "rig_source": "shipped",
+      "in_game": true,
+      "seed": true,
+      "files": [
+        "SPEC.md",
+        "reference/SLOTS.md",
+        "rock_base.bbmodel",
+        "rock_base_reference.animation.json",
+        "rockbase.animation.json",
+        "rockbase.geo.json",
+        "roundtrip.report.json",
+        "spec.manifest.json",
+        "textures/rockbluetexture.png",
+        "textures/rockcrystalbluetexture.png",
+        "textures/rockcrystalgreentexture.png",
+        "textures/rockcrystaltexture.png",
+        "textures/rockcrystaltnttexture.png",
+        "textures/rockgreentexture.png",
+        "textures/rockpurpletexture.png",
+        "textures/rockredtexture.png",
+        "textures/rocktexture.png",
+        "textures/rocktnttexture.png"
+      ],
+      "bones": 22,
+      "cubes": 22,
+      "clips_shipped": 0,
+      "clips_in_spec": 0,
+      "goals": 0,
+      "flags": 1,
+      "attacking": "NONE",
+      "strike_sites": 0,
+      "textures_mapped": 10,
+      "locked_bones": 0,
+      "lock_mode": "warn",
+      "keyed_locked_bones": 0,
+      "effort_hours": 0.0,
+      "unlabelled_bones": 0,
+      "roundtrip": {
+        "equal": true,
+        "bone_order_preserved": true,
+        "differences": 0,
+        "dropped_keys": 0,
+        "reattached": [
+          "orespawn:bone_draw_order"
+        ]
+      },
+      "warnings": []
+    },
+    {
+      "registry": "cephadrome",
+      "tier": 1,
+      "tier_label": "Tier 1 (boss)",
+      "rig_source": "reference-leg converter output",
+      "in_game": false,
+      "seed": true,
+      "files": [
+        "SPEC.md",
+        "cephadrome.animation.json",
+        "cephadrome.bbmodel",
+        "reference/SLOTS.md",
+        "reference_cephadrome.geo.json",
+        "roundtrip.report.json",
+        "spec.manifest.json",
+        "textures/cephadrome.png"
+      ],
+      "bones": 50,
+      "cubes": 50,
+      "clips_shipped": 0,
+      "clips_in_spec": 16,
+      "goals": 5,
+      "flags": 2,
+      "attacking": "STATE",
+      "strike_sites": 1,
+      "textures_mapped": 1,
+      "locked_bones": 15,
+      "lock_mode": "warn",
+      "keyed_locked_bones": 0,
+      "effort_hours": 39.5,
+      "unlabelled_bones": 0,
+      "roundtrip": {
+        "equal": true,
+        "bone_order_preserved": true,
+        "differences": 0,
+        "dropped_keys": 0,
+        "reattached": [
+          "orespawn:bone_draw_order"
+        ]
+      },
+      "warnings": []
+    },
+    {
+      "registry": "ruby_bird",
+      "tier": 2,
+      "tier_label": "Tier 2",
+      "rig_source": "shipped",
+      "in_game": true,
+      "seed": true,
+      "files": [
+        "SPEC.md",
+        "cockateil.animation.json",
+        "cockateil.geo.json",
+        "reference/SLOTS.md",
+        "roundtrip.report.json",
+        "ruby_bird.bbmodel",
+        "ruby_bird_reference.animation.json",
+        "spec.manifest.json",
+        "textures/bird1.png",
+        "textures/bird2.png",
+        "textures/bird3.png",
+        "textures/bird4.png",
+        "textures/bird5.png",
+        "textures/bird6.png"
+      ],
+      "bones": 16,
+      "cubes": 16,
+      "clips_shipped": 6,
+      "clips_in_spec": 14,
+      "goals": 0,
+      "flags": 0,
+      "attacking": "NONE",
+      "strike_sites": 0,
+      "textures_mapped": 6,
+      "locked_bones": 0,
+      "lock_mode": "warn",
+      "keyed_locked_bones": 0,
+      "effort_hours": 11.2,
+      "unlabelled_bones": 0,
+      "roundtrip": {
+        "equal": true,
+        "bone_order_preserved": true,
+        "differences": 0,
+        "dropped_keys": 0,
+        "reattached": [
+          "orespawn:bone_draw_order"
+        ]
+      },
+      "warnings": []
     }
   ],
   "texture_map": {
@@ -98,8 +4994,23 @@
     }
   },
   "warnings": [
-    "[the_queen] LOCKED_BONES_KEYED: the shipped clips key 26 of the 27 SPEC-locked bones (LHead, LHead12, LHead4, Lwing1, NeckL1, NeckL13...): allowed and warned — Keying a locked bone is allowed; the checker warns, and the hitbox part follows the bone in-game (the consequence, so keep such keys deliberate). Renaming, re-parenting or deleting a locked bone is refused.",
+    "[global] ARTIST_TIER_UNPACKAGED: 4 artist-tier species have no rig to package (no shipped geo, no reference-leg geo) — giant_robot: the converter refused reference_giantrobot (ValueError: reference_giantrobot capture bind draws [...], which are not cube-bearing geo bones (a part drawn more than once without render_instances, or a part the rig lacks)); jeffery: the converter refused reference_giantrobot (ValueError: reference_giantrobot capture bind draws [...], which are not cube-bearing geo bones (a part drawn more than once without render_instances, or a part the rig lacks)); boyfriend: no entry whose class is ModelBoyfriend in reference_model_proofs.json — no reference-leg geo can exist for it until the reference leg covers the model; girlfriend: no entry whose class is ModelGirlfriend in reference_model_proofs.json — no reference-leg geo can exist for it until the reference leg covers the model",
+    "[alien] GOAL_UNCLASSIFIED: goal MoveThroughVillageGoal (Alien.java:92) has no dictionary entry",
+    "[alien] GOAL_UNCLASSIFIED: goal AlienTorchSeekGoal (Alien.java:96) has no dictionary entry",
+    "[alosaurus] GOAL_UNCLASSIFIED: goal MoveThroughVillageGoal (Alosaurus.java:84) has no dictionary entry",
+    "[band_p] GOAL_UNCLASSIFIED: goal MoveThroughVillageGoal (BandP.java:78) has no dictionary entry",
+    "[band_p] GOAL_UNCLASSIFIED: goal OpenDoorGoal (BandP.java:83) has no dictionary entry",
+    "[basilisk] GOAL_UNCLASSIFIED: goal MoveThroughVillageGoal (Basilisk.java:81) has no dictionary entry",
+    "[cave_fisher] WISHLIST_UNACCEPTED: wishlist names clip(s) ['aggro_idle'] that the manifest does not accept",
+    "[creeping_horror] GOAL_UNCLASSIFIED: goal MoveThroughVillageGoal (CreepingHorror.java:78) has no dictionary entry",
+    "[ender_knight] WISHLIST_UNACCEPTED: wishlist names clip(s) ['attack'] that the manifest does not accept",
+    "[ender_knight] WISHLIST_UNACCEPTED: wishlist names clip(s) ['aggro_idle'] that the manifest does not accept",
+    "[ender_reaper] WISHLIST_UNACCEPTED: wishlist names clip(s) ['aggro_idle'] that the manifest does not accept",
+    "[ender_reaper] WISHLIST_UNACCEPTED: wishlist names clip(s) ['attack'] that the manifest does not accept",
     "[irukandji] GOAL_UNCLASSIFIED: goal MyEntityAIWander (Irukandji.java:82) has no dictionary entry",
+    "[nastysaurus] WISHLIST_UNACCEPTED: wishlist names clip(s) ['aggro_idle'] that the manifest does not accept",
+    "[pointysaurus] GOAL_UNCLASSIFIED: goal PointysaurusStareGoal (Pointysaurus.java:84) has no dictionary entry",
+    "[pointysaurus] WISHLIST_UNACCEPTED: wishlist names clip(s) ['aggro_idle'] that the manifest does not accept",
     "[robot_1] BONE_UNLABELLED: bone Shape1 has no glossary label",
     "[robot_1] BONE_UNLABELLED: bone Shape10 has no glossary label",
     "[robot_1] BONE_UNLABELLED: bone Shape11 has no glossary label",
@@ -126,17 +5037,131 @@
     "[robot_2] BONE_UNLABELLED: bone Shape8 has no glossary label",
     "[robot_3] ATTACKING_UNCLASSIFIED: DATA_ATTACKING classified MIXED: a 10-tick pulse per in-range think tick: the flag is raised at line(s) [155] every 35 ticks (reloadTicker reset) while a target is in range — before the line-of-sight gate, so it pulses whether or not a shot fires — and cleared when reloadTicker < 25 at line(s) [144] AND cleared on target loss at line(s) [162]",
     "[robot_5] ATTACKING_UNCLASSIFIED: DATA_ATTACKING classified MIXED: a 5-tick pulse per in-range think tick: the flag is raised at line(s) [143] every 20 ticks (reloadTicker reset) while a target is in range — before the line-of-sight gate, so it pulses whether or not a shot fires — and cleared when reloadTicker < 15 at line(s) [131] AND cleared on target loss at line(s) [152]",
+    "[sea_viper] GOAL_UNCLASSIFIED: goal SeaViperBiteGoal (SeaViper.java:119) has no dictionary entry",
+    "[sea_viper] GOAL_UNCLASSIFIED: goal RandomSwimmingGoal (SeaViper.java:120) has no dictionary entry",
+    "[sea_viper] WISHLIST_UNACCEPTED: wishlist names clip(s) ['aggro_idle'] that the manifest does not accept",
     "[skate] GOAL_UNCLASSIFIED: goal MyEntityAIWander (Skate.java:76) has no dictionary entry",
+    "[kraken] ATTACKING_UNCLASSIFIED: DATA_ATTACKING classified STATE?: cleared unconditionally at line(s) [450] (the enclosing branch decides; read the source)",
+    "[the_king] GOAL_UNCLASSIFIED: goal KingEndGameGoal (TheKing.java:215) has no dictionary entry",
+    "[the_king] GOAL_UNCLASSIFIED: goal KingPrimaryGoal (TheKing.java:216) has no dictionary entry",
+    "[the_queen] LOCKED_BONES_KEYED: the shipped clips key 26 of the 27 SPEC-locked bones (LHead, LHead12, LHead4, Lwing1, NeckL1, NeckL13...): allowed and warned — Keying a locked bone is allowed; the checker warns, and the hitbox part follows the bone in-game (the consequence, so keep such keys deliberate). Renaming, re-parenting or deleting a locked bone is refused.",
+    "[emperor_scorpion] GOAL_UNCLASSIFIED: goal EmperorScorpionPoisonGoal (EntityEmperorScorpion.java:96) has no dictionary entry",
+    "[scorpion] WISHLIST_UNACCEPTED: wishlist names clip(s) ['aggro_idle'] that the manifest does not accept",
+    "[spit_bug] GOAL_UNCLASSIFIED: goal SpitBugAcidAttackGoal (EntitySpitBug.java:86) has no dictionary entry",
+    "[trooper_bug] GOAL_UNCLASSIFIED: goal TrooperBugLeapAttackGoal (EntityTrooperBug.java:88) has no dictionary entry",
+    "[trooper_bug] WISHLIST_UNACCEPTED: wishlist names clip(s) ['aggro_idle'] that the manifest does not accept",
+    "[baryonyx] GOAL_UNCLASSIFIED: goal MyEntityAIWander (Baryonyx.java:62) has no dictionary entry",
+    "[cassowary] GOAL_UNCLASSIFIED: goal MyEntityAIWander (Cassowary.java:51) has no dictionary entry",
+    "[chipmunk] GOAL_UNCLASSIFIED: goal FollowOwnerGoal (Chipmunk.java:67) has no dictionary entry",
+    "[chipmunk] GOAL_UNCLASSIFIED: goal TemptGoal (Chipmunk.java:71) has no dictionary entry",
+    "[flounder] GOAL_UNCLASSIFIED: goal MyEntityAIWander (Flounder.java:61) has no dictionary entry",
+    "[frog] GOAL_UNCLASSIFIED: goal MyEntityAIWander (Frog.java:67) has no dictionary entry",
+    "[gazelle] GOAL_UNCLASSIFIED: goal FollowOwnerGoal (Gazelle.java:72) has no dictionary entry",
+    "[gazelle] GOAL_UNCLASSIFIED: goal TemptGoal (Gazelle.java:74) has no dictionary entry",
+    "[gazelle] GOAL_UNCLASSIFIED: goal MyEntityAIWander (Gazelle.java:78) has no dictionary entry",
+    "[peacock] WISHLIST_UNACCEPTED: wishlist names clip(s) ['attack'] that the manifest does not accept",
+    "[whale] GOAL_UNCLASSIFIED: goal TemptGoal (Whale.java:62) has no dictionary entry",
+    "[whale] GOAL_UNCLASSIFIED: goal MyEntityAIWander (Whale.java:65) has no dictionary entry",
     "[dragonfly] GOAL_UNCLASSIFIED: goal DragonflyHuntGoal (EntityDragonfly.java:65) has no dictionary entry",
+    "[camarasaurus] GOAL_UNCLASSIFIED: goal FollowOwnerGoal (Camarasaurus.java:69) has no dictionary entry",
+    "[camarasaurus] GOAL_UNCLASSIFIED: goal TemptGoal (Camarasaurus.java:71) has no dictionary entry",
+    "[camarasaurus] GOAL_UNCLASSIFIED: goal MyEntityAIWander (Camarasaurus.java:74) has no dictionary entry",
+    "[dragon] GOAL_UNCLASSIFIED: goal SitWhenOrderedToGoal (Dragon.java:141) has no dictionary entry",
+    "[dragon] GOAL_UNCLASSIFIED: goal FollowOwnerGoal (Dragon.java:142) has no dictionary entry",
+    "[dragon] GOAL_UNCLASSIFIED: goal TemptGoal (Dragon.java:144) has no dictionary entry",
     "[gamma_metroid] GOAL_UNCLASSIFIED: goal FollowOwnerGoal (EntityGammaMetroid.java:78) has no dictionary entry",
     "[gamma_metroid] GOAL_UNCLASSIFIED: goal TemptGoal (EntityGammaMetroid.java:79) has no dictionary entry",
+    "[hydrolisc] GOAL_UNCLASSIFIED: goal FollowOwnerGoal (EntityHydrolisc.java:70) has no dictionary entry",
+    "[hydrolisc] GOAL_UNCLASSIFIED: goal TemptGoal (EntityHydrolisc.java:71) has no dictionary entry",
+    "[leon] GOAL_UNCLASSIFIED: goal FollowOwnerGoal (EntityLeon.java:154) has no dictionary entry",
+    "[leon] GOAL_UNCLASSIFIED: goal TemptGoal (EntityLeon.java:155) has no dictionary entry",
+    "[leonopteryx] GOAL_UNCLASSIFIED: goal FollowOwnerGoal (EntityLeon.java:154) has no dictionary entry",
+    "[leonopteryx] GOAL_UNCLASSIFIED: goal TemptGoal (EntityLeon.java:155) has no dictionary entry",
+    "[lizard] GOAL_UNCLASSIFIED: goal FollowOwnerGoal (Lizard.java:80) has no dictionary entry",
+    "[lizard] GOAL_UNCLASSIFIED: goal TemptGoal (Lizard.java:82) has no dictionary entry",
+    "[lizard] WISHLIST_UNACCEPTED: wishlist names clip(s) ['aggro_idle'] that the manifest does not accept",
+    "[ostrich] GOAL_UNCLASSIFIED: goal FollowOwnerGoal (Ostrich.java:129) has no dictionary entry",
+    "[ostrich] GOAL_UNCLASSIFIED: goal TemptGoal (Ostrich.java:131) has no dictionary entry",
     "[rubber_ducky] GOAL_UNCLASSIFIED: goal FollowOwnerGoal (EntityRubberDucky.java:86) has no dictionary entry",
     "[rubber_ducky] GOAL_UNCLASSIFIED: goal TemptGoal (EntityRubberDucky.java:87) has no dictionary entry",
+    "[spyro] GOAL_UNCLASSIFIED: goal MyEntityAIFollowOwner (EntitySpyro.java:95) has no dictionary entry",
+    "[spyro] GOAL_UNCLASSIFIED: goal TemptGoal (EntitySpyro.java:96) has no dictionary entry",
+    "[stinky] GOAL_UNCLASSIFIED: goal MyEntityAIFollowOwner (EntityStinky.java:102) has no dictionary entry",
+    "[stinky] GOAL_UNCLASSIFIED: goal TemptGoal (EntityStinky.java:103) has no dictionary entry",
+    "[the_prince] GOAL_UNCLASSIFIED: goal FollowOwnerGoal (ThePrince.java:108) has no dictionary entry",
+    "[the_prince] GOAL_UNCLASSIFIED: goal TemptGoal (ThePrince.java:109) has no dictionary entry",
+    "[the_prince] GOAL_UNCLASSIFIED: goal MyEntityAIWander (ThePrince.java:111) has no dictionary entry",
+    "[the_prince_adult] GOAL_UNCLASSIFIED: goal FollowOwnerGoal (ThePrinceAdult.java:138) has no dictionary entry",
+    "[the_prince_adult] GOAL_UNCLASSIFIED: goal TemptGoal (ThePrinceAdult.java:139) has no dictionary entry",
+    "[the_prince_adult] GOAL_UNCLASSIFIED: goal MyEntityAIWander (ThePrinceAdult.java:140) has no dictionary entry",
+    "[the_princess] GOAL_UNCLASSIFIED: goal FollowOwnerGoal (ThePrincess.java:106) has no dictionary entry",
+    "[the_princess] GOAL_UNCLASSIFIED: goal TemptGoal (ThePrincess.java:107) has no dictionary entry",
+    "[the_princess] GOAL_UNCLASSIFIED: goal MyEntityAIWander (ThePrincess.java:109) has no dictionary entry",
+    "[the_prince_teen] GOAL_UNCLASSIFIED: goal FollowOwnerGoal (ThePrinceTeen.java:149) has no dictionary entry",
+    "[the_prince_teen] GOAL_UNCLASSIFIED: goal TemptGoal (ThePrinceTeen.java:150) has no dictionary entry",
+    "[the_prince_teen] GOAL_UNCLASSIFIED: goal MyEntityAIWander (ThePrinceTeen.java:151) has no dictionary entry",
+    "[velocity_raptor] GOAL_UNCLASSIFIED: goal FollowOwnerGoal (VelocityRaptor.java:64) has no dictionary entry",
+    "[velocity_raptor] GOAL_UNCLASSIFIED: goal TemptGoal (VelocityRaptor.java:66) has no dictionary entry",
+    "[water_dragon] GOAL_UNCLASSIFIED: goal TemptGoal (WaterDragon.java:133) has no dictionary entry",
+    "[water_dragon] GOAL_UNCLASSIFIED: goal WaterCanonAttackGoal (WaterDragon.java:134) has no dictionary entry",
+    "[water_dragon] GOAL_UNCLASSIFIED: goal RandomSwimmingGoal (WaterDragon.java:135) has no dictionary entry",
+    "[water_dragon] ATTACKING_UNCLASSIFIED: DATA_ATTACKING classified UNCLASSIFIED: the clear sites' guards match neither the pulse nor the target-loss pattern; other clears at line(s) [622] (guards: NOT(if (this.streamCount > 0))) — the owner reads them",
+    "[butterfly] GOAL_UNCLASSIFIED: goal ButterflyIslandsHuntGoal (EntityButterfly.java:74) has no dictionary entry",
+    "[luna_moth] GOAL_UNCLASSIFIED: goal LunaMothFlightGoal (EntityLunaMoth.java:55) has no dictionary entry",
     "[mosquito] GOAL_UNCLASSIFIED: goal MosquitoFlightGoal (EntityMosquito.java:49) has no dictionary entry",
     "[elevator] BONE_UNLABELLED: bone shape1 has no glossary label",
     "[elevator] BONE_UNLABELLED: bone shape2 has no glossary label",
     "[elevator] BONE_UNLABELLED: bone shape3 has no glossary label",
     "[elevator] BONE_UNLABELLED: bone shape4 has no glossary label",
     "[elevator] BONE_UNLABELLED: bone shape5 has no glossary label"
-  ]
+  ],
+  "counts": {
+    "folders": 112,
+    "entity_files": 989,
+    "package_wide_files": 6,
+    "files": 995,
+    "per_tier": {
+      "tier_1": {
+        "registries": 26,
+        "rigs": 20,
+        "not_in_game_registries": 25,
+        "not_in_game_rigs": 19
+      },
+      "tier_2": {
+        "registries": 73,
+        "rigs": 68,
+        "not_in_game_registries": 43,
+        "not_in_game_rigs": 43
+      },
+      "tier_3": {
+        "registries": 13,
+        "rigs": 12,
+        "not_in_game_registries": 0,
+        "not_in_game_rigs": 0
+      }
+    },
+    "rig_sources": {
+      "reference-leg converter output": 68,
+      "shipped": 44
+    },
+    "seed_missing": [],
+    "artist_tier_not_packaged": [
+      {
+        "registry": "giant_robot",
+        "why": "the converter refused reference_giantrobot (ValueError: reference_giantrobot capture bind draws [...], which are not cube-bearing geo bones (a part drawn more than once without render_instances, or a part the rig lacks))"
+      },
+      {
+        "registry": "jeffery",
+        "why": "the converter refused reference_giantrobot (ValueError: reference_giantrobot capture bind draws [...], which are not cube-bearing geo bones (a part drawn more than once without render_instances, or a part the rig lacks))"
+      },
+      {
+        "registry": "boyfriend",
+        "why": "no entry whose class is ModelBoyfriend in reference_model_proofs.json — no reference-leg geo can exist for it until the reference leg covers the model"
+      },
+      {
+        "registry": "girlfriend",
+        "why": "no entry whose class is ModelGirlfriend in reference_model_proofs.json — no reference-leg geo can exist for it until the reference leg covers the model"
+      }
+    ]
+  }
 }

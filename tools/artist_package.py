@@ -2307,6 +2307,16 @@ def effort_estimate(species: "Species", bones: int, clips: list[dict[str, Any]])
     return round(4 + 0.2 * bones + 1.0 * n, 1), f"generator: 4 h + 0.2 h/bone x {bones} + 1 h/clip x {n} to author or improve (owner adjusts)"
 
 
+
+def draft_banner(seed: dict[str, Any]) -> list[str]:
+    """Owner 2026-09-13, fourth set, item 6: a seed drafted by a seed lane (its `status` starts with "DRAFT") marks its sheet
+    DRAFT above every AUTHORED section, so the reader sees which sentences await the owner's edit."""
+    status = str((seed or {}).get("status", ""))
+    if not status.startswith("DRAFT"):
+        return []
+    return ["> **DRAFT** — " + status + ". Nothing in this section is ruled: it was drafted from the entity code and the model, "
+            "every claim citing its line, for the owner's edit.", ""]
+
 def spec_document(species: "Species", repo: "Repo", catalog: "TextureCatalog", inv: dict[str, Any]) -> tuple[str, dict[str, Any]]:
     """SPEC.md text and the machine-readable manifest for `check`."""
     seed = species.seed or {}
@@ -2371,6 +2381,7 @@ def spec_document(species: "Species", repo: "Repo", catalog: "TextureCatalog", i
              "one (\"ruled 2026-09-06, Q14 (a)\") states that ruling — nothing here invents an answer. The one open item is the lock reject mode (§7, README rule 6).")
     L.append("")
     L.append("## 1. What this mob is (AUTHORED — draft for the owner's edit)")
+    L.extend(draft_banner(seed))
     L.append("")
     L.append(seed.get("character_sheet", "_(no character sheet yet — the owner or the lane authors this paragraph in the seed)_"))
     L.append("")
@@ -2480,6 +2491,7 @@ def spec_document(species: "Species", repo: "Repo", catalog: "TextureCatalog", i
         L.append(f"- **The port today:** {omm.get('port', '')}")
         L.append("")
     L.append("## 5. Clips: what to improve, what to leave (AUTHORED verdicts on generated rows)")
+    L.extend(draft_banner(seed))
     L.append("")
     if not clips:
         why = "Tier 3 (P2 / Amendment 1 point 1): this rig stays code-driven; its animation JSON stays `{}` and no artist clips are accepted (ruled 2026-09-06, Q7 (a): Tier 3 gets no artist clips, extras included)." if species.tier == 3 else "no clips"
@@ -2510,12 +2522,14 @@ def spec_document(species: "Species", repo: "Repo", catalog: "TextureCatalog", i
         L.append("")
     if seed.get("wishlist"):
         L.append("### 5.1 Wishlist (AUTHORED — only what `check` accepts today; anything else is marked)")
+        L.extend(draft_banner(seed))
         L.append("")
         for w in wishlist_notes:
             L.append(f"- {w}")
         L.append("")
     if seed.get("future"):
         L.append("### 5.2 Not accepted today (AUTHORED — needs a code change and the owner's ruling first; do not deliver these)")
+        L.extend(draft_banner(seed))
         L.append("")
         for w in seed["future"]:
             L.append(f"- {w}")

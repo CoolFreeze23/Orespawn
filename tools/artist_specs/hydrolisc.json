@@ -1,0 +1,234 @@
+{
+  "registry": "hydrolisc",
+  "display_name": "Hydrolisc",
+  "status": "DRAFT — authored by a seed lane from the entity code, 2026-09-13; the owner's edit pending",
+  "locomotion": "walker",
+  "artist_scope": "full contract (Tier 2, the state-branching class (a sitting branch on the tail; the crest scaled by health): geckolib_migration_design.md section 5); the rig is not yet in-game (it lands through the seam in a later slice)",
+  "character_sheet": "A water-loving four-legged pet lizard: a three-part body with a four-spine ridge down its back, a three-part head crowned by three fanned feathers, four legs of six cubes each sharing one hip pivot, and a three-segment tail (HydroliscModel.java createBodyLayer; 40 parts on a 64x128 sheet). It is passive and tameable with cod - one chance in two per fish (EntityHydrolisc.java:222-232) - then follows its owner (:70), sits and stands on a click (:273-278), breeds (:68), is untamed with a glass block (:247-261) and slowly heals its owner at the cost of its own health (:123-130). It flees monsters (:69), panics when hurt (:72), floats (:67) and bobs up in water (:102-105), seeks the nearest water when hurt or at random and heals in it (:117-121, :133-153); every hit is capped at 10 (:204-207). It never attacks: the attack attribute is 1.0 (:95) and no goal strikes. Read it as a wet, skittish pet: legs paddling with the stride, the tail sweeping, the crest fanning - fast and wide when healthy, slow and small when hurt.",
+  "size_notes": "Drawn at x0.65 of the rig, x0.325 as a baby (HydroliscRenderer.java:24, 37-41) on a 64x128 sheet (HydroliscModel.java:310); the hitbox is 0.5 x 0.5 (ModEntities.java:525-526); shadow 0.65 x 0.65 (HydroliscRenderer.java:26).",
+  "labels": {
+    "body0": "body, upper block (pitched 3 deg)",
+    "body1": "body, core block",
+    "body2": "body, lower block (pitched -3 deg)",
+    "feather1": "crest feather, left (fanned 15 deg)",
+    "feather2": "crest feather, centre",
+    "feather3": "crest feather, right (fanned -15 deg)",
+    "head1": "head, snout block",
+    "head2": "head, base block (at the origin)",
+    "head3": "head, brow block (pitched 30 deg)",
+    "lb1": "left back leg, part 1 (hip block)",
+    "lb2": "left back leg, part 2 (thigh, -28 deg)",
+    "lb3": "left back leg, part 3 (shin, folded -134 deg)",
+    "lb4": "left back leg, part 4 (foot, -36 deg)",
+    "lb5": "left back leg, part 5 (foot, -36 deg)",
+    "lb6": "left back leg, part 6 (toe, +10 deg)",
+    "lf1": "left front leg, part 1 (shoulder block)",
+    "lf2": "left front leg, part 2 (upper leg, -28 deg)",
+    "lf3": "left front leg, part 3 (forearm, folded -134 deg)",
+    "lf4": "left front leg, part 4 (paw, -36 deg)",
+    "lf5": "left front leg, part 5 (paw, -36 deg)",
+    "lf6": "left front leg, part 6 (toe, +10 deg)",
+    "rb1": "right back leg, part 1 (hip block)",
+    "rb2": "right back leg, part 2 (thigh, -28 deg)",
+    "rb3": "right back leg, part 3 (shin, folded -134 deg)",
+    "rb4": "right back leg, part 4 (foot, -36 deg)",
+    "rb5": "right back leg, part 5 (foot, -36 deg)",
+    "rb6": "right back leg, part 6 (toe, +10 deg)",
+    "rf1": "right front leg, part 1 (shoulder block)",
+    "rf2": "right front leg, part 2 (upper leg, -28 deg)",
+    "rf3": "right front leg, part 3 (forearm, folded -134 deg)",
+    "rf4": "right front leg, part 4 (paw, -36 deg)",
+    "rf5": "right front leg, part 5 (paw, -36 deg)",
+    "rf6": "right front leg, part 6 (toe, +10 deg)",
+    "spine1": "back spine 1 (front, -49 deg)",
+    "spine2": "back spine 2 (-67 deg)",
+    "spine3": "back spine 3 (-64 deg)",
+    "spine4": "back spine 4 (rear, -77 deg)",
+    "tail1": "tail segment 1 (base)",
+    "tail2": "tail segment 2 (middle; the code places it 5 units along segment 1's angle)",
+    "tail3": "tail segment 3 (tip; placed 8 units along segment 2's angle)"
+  },
+  "groups": [
+    {
+      "name": "gait",
+      "bones": [
+        "lf1",
+        "lf2",
+        "lf3",
+        "lf4",
+        "lf5",
+        "lf6",
+        "rf1",
+        "rf2",
+        "rf3",
+        "rf4",
+        "rf5",
+        "rf6",
+        "lb1",
+        "lb2",
+        "lb3",
+        "lb4",
+        "lb5",
+        "lb6",
+        "rb1",
+        "rb2",
+        "rb3",
+        "rb4",
+        "rb5",
+        "rb6"
+      ],
+      "omega": 0.845,
+      "axis": "x",
+      "gait_scaled": true,
+      "amplitude": "rests per part 0 / -0.488 / -2.347 / -0.628 / -0.628 / +0.174 rad (parts 1-6 of every leg), then pi x 0.25 = 0.785 rad (45 deg) x the walking speed at 1.3 x 0.65 - still (rests only) below the 0.1 threshold",
+      "plain": "the four six-part legs swing fore and aft with the stride, every part of a leg together: the left front and right back legs one way, the right front and left back the other",
+      "math": "a = limbSwingAmount > 0.1 ? cos(ageInTicks * 1.3 * 0.65) * pi * 0.25 * limbSwingAmount : 0; lf*/rb*.xRot = rest + a; rf*/lb*.xRot = rest - a",
+      "source": "HydroliscModel.java:317-341",
+      "wingspeed": 0.65,
+      "omega_note": "the classic phase is ageInTicks x 1.3 x 0.65 (wingspeed, HydroliscModel.java:20-21): the natural period is 2 pi / 0.845 = 7.4 ticks"
+    },
+    {
+      "name": "tail",
+      "bones": [
+        "tail1",
+        "tail2",
+        "tail3"
+      ],
+      "omega": 0.65,
+      "axis": "y",
+      "gait_scaled": false,
+      "amplitude": "pi x 0.15 = 0.471 rad, taken x 0.25 / 0.5 / 0.75 along the chain (7 / 13 / 20 deg); ZERO while sitting (the branch)",
+      "plain": "the tail sweeps side to side, each segment swinging wider than the one before it, and hangs still while the pet sits",
+      "math": "s = sitting ? 0 : cos(ageInTicks * 1.0 * 0.65) * pi * 0.15; tail1.yRot = s * 0.25; tail2.yRot = s * 0.5; tail3.yRot = s * 0.75; tail2 and tail3 positions re-derived along the previous segment's angle (5 and 8 units)",
+      "source": "HydroliscModel.java:342-352",
+      "phase": "isInSittingPose() zeroes it (HydroliscModel.java:343-345)",
+      "wingspeed": 0.65,
+      "omega_note": "the classic phase is ageInTicks x 1.0 x 0.65: the natural period is 2 pi / 0.65 = 9.7 ticks"
+    },
+    {
+      "name": "crest_outer",
+      "bones": [
+        "feather1",
+        "feather3"
+      ],
+      "omega": 0.4875,
+      "axis": "y",
+      "gait_scaled": false,
+      "amplitude": "-0.9 rad rest (left) / +0.9 (right, mirrored), then pi x 0.2 = 0.628 rad (36 deg) at full health; BOTH the rate and the amplitude are multiplied by the health fraction (half health: 0.244 rad/tick, 18 deg)",
+      "plain": "the two outer crest feathers fan open and closed in mirror, wide and quick when healthy, slow and shallow as the pet is hurt",
+      "math": "hf = health / maxHealth; c = cos(ageInTicks * 0.75 * 0.65 * hf) * pi * 0.2 * hf; feather1.yRot = c - 0.9; feather3.yRot = -c + 0.9",
+      "source": "HydroliscModel.java:353, 355-357",
+      "wingspeed": 0.65,
+      "omega_note": "the classic phase is ageInTicks x 0.75 x 0.65 x hf: the natural period at full health is 2 pi / 0.4875 = 12.9 ticks"
+    },
+    {
+      "name": "crest_centre",
+      "bones": [
+        "feather2"
+      ],
+      "omega": 0.8125,
+      "axis": "y",
+      "gait_scaled": false,
+      "amplitude": "pi x 0.2 = 0.628 rad (36 deg) at full health, rate and amplitude both x the health fraction",
+      "plain": "the centre feather wags faster than the outer pair, and slows and shrinks with the pet's health",
+      "math": "hf = health / maxHealth; feather2.yRot = cos(ageInTicks * 1.25 * 0.65 * hf) * pi * 0.2 * hf",
+      "source": "HydroliscModel.java:353-354",
+      "wingspeed": 0.65,
+      "omega_note": "the classic phase is ageInTicks x 1.25 x 0.65 x hf: the natural period at full health is 2 pi / 0.8125 = 7.7 ticks"
+    }
+  ],
+  "behaviour": [
+    "One gait rhythm on the legs (HydroliscModel.java:317-341): above a walking speed of 0.1 the cosine of the age x 1.3 x 0.65 (wingspeed), x pi x 0.25, x the walking speed, is added to every part of the left front and right back legs and subtracted from the right front and left back - a 45-degree swing at full stride every 7.4 ticks, nothing at all when standing (the ternary at :317 gives 0 below the threshold, so the legs snap to their rests).",
+    "Each leg is six cubes on one pivot with fixed rest angles (0, -0.488, -2.347, -0.628, -0.628, +0.174 rad: the shoulder, an upper leg, a folded forearm, two paw cubes and a toe), all swinging as one rigid unit; the three body blocks, the three head blocks and the four back spines never move.",
+    "The tail sweeps side to side (HydroliscModel.java:342-352): the cosine of the age x 1.0 x 0.65, x pi x 0.15, taken at a quarter, a half and three quarters along the three segments, each next segment's position re-derived 5 and 8 units along the previous segment's yaw (an FK chain written by hand on flat bones: when this rig lands, a keyframed sweep must either key the positions too or the tail bones must be parented). While the pet sits (isInSittingPose, :343-345) the sweep is zeroed - the ONLY visible sitting pose the code has; the legs and body do not change.",
+    "The crest reads the pet's health (HydroliscModel.java:353-357): the health fraction multiplies both the rate and the amplitude of the three feathers - the outer pair mirror each other around +-0.9 rad (52 deg) at 0.75 x 0.65 x hf, the centre feather wags at 1.25 x 0.65 x hf, each pi x 0.2 x hf. At full health a 36-degree fan every 12.9 (outer) and 7.7 (centre) ticks; near death almost still.",
+    "The head does not turn: netHeadYaw and headPitch are unused, so the LookAtPlayerGoal and RandomLookAroundGoal (EntityHydrolisc.java:73, 75) move nothing visible.",
+    "In water it bobs upward every tick (EntityHydrolisc.java:102-105) with the FloatGoal at the surface (:67); the renderer halves the scale for a baby (HydroliscRenderer.java:37-41)."
+  ],
+  "clips": [
+    {
+      "name": "idle",
+      "verdict": "author",
+      "note": "REQUIRED with walk: the gate opens on the pair (today nothing ships; the classic code plays) - the standing loop: legs at their rests (the code snaps them still below the 0.1 threshold), the tail and crest at their rhythms"
+    },
+    {
+      "name": "walk",
+      "verdict": "author",
+      "note": "REQUIRED with idle: the locomotion loop - the gait group's 45-degree leg swing at full stride (HydroliscModel.java:317-341), scaled by walking speed in-game"
+    },
+    {
+      "name": "swim",
+      "verdict": "author",
+      "note": "it has the state: a FloatGoal keeps it at the surface (EntityHydrolisc.java:67), it bobs upward in water (:102-105) and it seeks water to heal (:133-153) - a paddling loop; optional: falls back to walk then idle when absent (section 2.4)"
+    },
+    {
+      "name": "calm_idle",
+      "verdict": "leave",
+      "note": "= idle: no synched attacking flag in EntityHydrolisc.java (no DATA_ATTACKING) and no attack at all, so calm_idle is covered by idle (ruled 2026-09-06, Q12 (a))"
+    },
+    {
+      "name": "attack",
+      "verdict": "leave",
+      "note": "no attack: the entity never strikes - no melee or ranged goal, no doHurtTarget call (the owner-defence target goals at EntityHydrolisc.java:82-86 register but nothing consumes the target, :77-81); the generator offers no attack row"
+    },
+    {
+      "name": "hurt",
+      "verdict": "author",
+      "note": "a flinch: hurt() at EntityHydrolisc.java:204-207 caps every hit at 10; the hurtTime edge is client-observed; it also plays when the pet spends its own health healing its owner (:128)",
+      "length_seconds": 0.3
+    },
+    {
+      "name": "death",
+      "verdict": "author",
+      "note": "ruled 2026-09-06, Q3 (a): the vanilla death flip stays; a creature whose JSON ships a `death` clip gets the clip-replaces-flip mode, designed when the first such clip arrives (the Queen's own death clip the precedent) - a `death` delivered here plays under the flip until then",
+      "length_seconds": 1.0
+    }
+  ],
+  "extras": [
+    {
+      "name": "sit",
+      "loop": "true",
+      "layer": "overlay",
+      "bones": [
+        "lf1",
+        "lf2",
+        "lf3",
+        "lf4",
+        "lf5",
+        "lf6",
+        "rf1",
+        "rf2",
+        "rf3",
+        "rf4",
+        "rf5",
+        "rf6",
+        "lb1",
+        "lb2",
+        "lb3",
+        "lb4",
+        "lb5",
+        "lb6",
+        "rb1",
+        "rb2",
+        "rb3",
+        "rb4",
+        "rb5",
+        "rb6",
+        "tail1",
+        "tail2",
+        "tail3"
+      ],
+      "code_triggered": false,
+      "trigger": "state: isInSittingPose() - TamableAnimal's synched sitting flag, toggled by the owner's click (EntityHydrolisc.java:273-278) and cleared on untaming (:253-254); today its only visible effect is the tail sweep zeroed (HydroliscModel.java:343-345) - the seam needs a state selector for it",
+      "note": "a sitting pose: haunches down, tail still (the code's branch), crest still fanning; needs the seam to select it on the sitting flag"
+    }
+  ],
+  "wishlist": [
+    "a real sitting pose: today the pet 'sits' standing up with only its tail frozen (HydroliscModel.java:343-345) - haunches down, front legs planted",
+    "in `walk`: unfold the legs - the six parts of each leg swing as one rigid, folded unit (HydroliscModel.java:318-341); let the forearm and paw parts lag the shoulder so the stride reads as a paddle",
+    "in `swim`: a paddling loop with the tail as the propeller (the code plays the same leg swing in water; the FloatGoal at EntityHydrolisc.java:67 keeps it at the surface)",
+    "keep the crest's health rule readable: fast and wide when healthy, slow and small when hurt (HydroliscModel.java:353-357) - the seam plays a fixed loop, so give the owner a calm (healthy) crest in `idle` and note that the hurt scaling is lost unless the seam adds a health input",
+    "in `hurt`: a whole-body cringe and a snap of the crest closed - it is what a hurt pet does before it runs for water (:117-121)"
+  ],
+  "effort_hours": null
+}

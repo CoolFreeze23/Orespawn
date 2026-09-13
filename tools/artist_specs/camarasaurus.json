@@ -1,0 +1,168 @@
+{
+  "registry": "camarasaurus",
+  "display_name": "Camarasaurus",
+  "status": "DRAFT — authored by a seed lane from the entity code, 2026-09-13; the owner's edit pending",
+  "locomotion": "walker",
+  "artist_scope": "full contract (Tier 2, the gait-scaled class (the tail scaled by health; a hand-written FK chain on the neck and tail): geckolib_migration_design.md section 5); the rig is not yet in-game (it lands through the seam in a later slice)",
+  "character_sheet": "A long-necked sauropod pet: four body blocks, a three-piece neck rising to a two-piece head, a four-segment tail and four two-part legs (ModelCamarasaurus.java:48-68; 21 parts on a 256x256 sheet). It is passive and tameable with an apple - one chance in two (Camarasaurus.java:201-224) - then follows its owner (:69), sits and stands on a click (:238-243), takes a name tag (:226-234) and breeds on apples (:68, :276-278); 20 HP, speed 0.2, an unused 1-damage attribute (:83-88) and no target goals at all (:76-79). It floats (:67), flees monsters (:70), panics when hurt (:72), wanders (:74) and heads indoors (:80); when hurt or now and then it browses - it walks to the nearest leaves, vine, grass, fern, cactus or tall flower within 10 blocks and, within 3.5 blocks, eats the block (mobGriefing), heals 1 and burps (:161-194), never while sitting. It spawns above y 50 by day (:295-301); a baby is drawn at half size (CamarasaurusRenderer.java:30-31). Read it as a gentle giant on a tiny hitbox: a slow four-legged stride, the neck curling to follow you, the tail swinging wide when healthy and barely when hurt.",
+  "size_notes": "Drawn at x0.65 of the rig, x0.325 as a baby (CamarasaurusRenderer.java:20, 30-31) on a 256x256 sheet (ModelCamarasaurus.java:180); the hitbox is a tiny 0.5 x 1.2 under a huge model (ModEntities.java:481-484: the original's quirk, kept); shadow 0.65 x 0.65 (CamarasaurusRenderer.java:23).",
+  "labels": {
+    "Body1": "body 1 (the rear block, at the origin)",
+    "Body2": "body 2 (pitched -11 deg)",
+    "Body3": "body 3 (the shoulders, pitched -19 deg)",
+    "Body4": "body 4 (the rump)",
+    "Neck1": "neck, base piece (takes an eighth of the look yaw)",
+    "Neck2": "neck, middle piece (a quarter of the look yaw; shares the base's position)",
+    "Neck3": "neck, top piece (0.38 of the look yaw; placed 6 units along the middle piece's yaw)",
+    "Head1": "head, back half (the full look yaw; placed 7 units along the top neck piece)",
+    "Head2": "head, snout (the full look yaw; placed 5 units along the head)",
+    "Tail0": "tail segment 0 (base)",
+    "Tail1": "tail segment 1 (placed 5 units along the base's yaw)",
+    "Tail2": "tail segment 2 (placed 8 units along segment 1)",
+    "Tail3": "tail segment 3, the tip (placed 7 units along segment 2)",
+    "FLegupleft": "front left leg, upper",
+    "FLegdownleft": "front left leg, lower",
+    "FLegupright": "front right leg, upper",
+    "FLegdownright": "front right leg, lower",
+    "BLegupleft": "back left leg, upper (rest -0.15 rad)",
+    "BLegdownleft": "back left leg, lower",
+    "BLegupright": "back right leg, upper (rest -0.15 rad)",
+    "BLegdownright": "back right leg, lower"
+  },
+  "groups": [
+    {
+      "name": "gait",
+      "bones": [
+        "FLegupleft",
+        "FLegdownleft",
+        "FLegupright",
+        "FLegdownright",
+        "BLegupleft",
+        "BLegdownleft",
+        "BLegupright",
+        "BLegdownright"
+      ],
+      "omega": 0.845,
+      "axis": "x",
+      "gait_scaled": true,
+      "amplitude": "rests 0 (front legs, back lowers) and -0.15 rad (back uppers), then pi x 0.25 = 0.785 rad (45 deg) x the walking speed at 1.3 x 0.65 - still (rests only) below the 0.1 threshold",
+      "plain": "the four legs stride, upper and lower parts of a leg together: front left with back right, front right with back left",
+      "math": "a = limbSwingAmount > 0.1 ? cos(ageInTicks * 1.3 * 0.65) * pi * 0.25 * limbSwingAmount : 0; FLegupleft/FLegdownleft.xRot = a; FLegupright/FLegdownright.xRot = -a; BLegupleft.xRot = -0.15 - a; BLegdownleft.xRot = -a; BLegupright.xRot = -0.15 + a; BLegdownright.xRot = a",
+      "source": "ModelCamarasaurus.java:188-196",
+      "wingspeed": 0.65,
+      "omega_note": "the classic phase is ageInTicks x 1.3 x 0.65 (wingspeed, ModelCamarasaurus.java:24): the natural period is 2 pi / 0.845 = 7.4 ticks"
+    },
+    {
+      "name": "tail",
+      "bones": [
+        "Tail0",
+        "Tail1",
+        "Tail2",
+        "Tail3"
+      ],
+      "omega": 0.975,
+      "axis": "y",
+      "gait_scaled": false,
+      "amplitude": "pi x 0.25 = 0.785 rad at full health, taken x 0.25 / 0.5 / 0.75 / 1.0 along the chain (11 / 22 / 34 / 45 deg); BOTH the rate and the amplitude are multiplied by the health fraction (half health: 0.49 rad/tick, 22 deg at the tip)",
+      "plain": "the tail sweeps side to side, each segment wider than the one before - wide and quick when healthy, slow and small when hurt",
+      "math": "hf = health / maxHealth; n = cos(ageInTicks * 1.5 * 0.65 * hf) * pi * 0.25 * hf; Tail0.yRot = n * 0.25; Tail1.yRot = n * 0.5; Tail2.yRot = n * 0.75; Tail3.yRot = n; each segment's x/z placed along the previous segment's yaw (5, 8, 7 units)",
+      "source": "ModelCamarasaurus.java:198-212",
+      "wingspeed": 0.65,
+      "omega_note": "the classic phase is ageInTicks x 1.5 x 0.65 x hf: the natural period at full health is 2 pi / 0.975 = 6.4 ticks"
+    }
+  ],
+  "behaviour": [
+    "One gait rhythm on the legs (ModelCamarasaurus.java:188-196): above a walking speed of 0.1 the cosine of the age x 1.3 x 0.65 (wingspeed, :24), x pi x 0.25, x the walking speed swings the front left and back right legs one way and the other two the opposite way - 45 degrees at full stride every 7.4 ticks, the upper and lower parts of each leg as one rigid unit (the back uppers around a -0.15 rad rest). Below the threshold the legs snap to their rests.",
+    "The tail reads the pet's health (:198-212): the health fraction multiplies both the rate (1.5 x 0.65 x hf) and the amplitude (pi x 0.25 x hf) of a sweep taken at a quarter, a half, three quarters and the whole along the four segments, each next segment's position re-derived 5, 8 and 7 units along the previous segment's yaw - an FK chain written by hand on flat bones (when this rig lands a keyframed sweep must key positions too, or the tail must be parented). At full health a 45-degree tip sweep every 6.4 ticks; near death almost still. The `if (false)` at :200-202 is dead code.",
+    "The neck and head follow the look yaw in a curl with no pitch (:214-226): the base piece takes an eighth, the middle a quarter (at the base's position), the top 0.38 (placed 6 units along the middle piece's yaw), and both head pieces the full yaw (placed 7 and 5 units along the previous piece) - so the LookAtPlayerGoal (Camarasaurus.java:73) bends the whole neck toward you. Positions again re-derived by the code.",
+    "The four body blocks never move; there is no sitting branch in the model (the synched sitting flag, toggled at Camarasaurus.java:238-243, changes nothing visible) and no attacking flag or strike.",
+    "The renderer draws it at 0.65 and a baby at half that (CamarasaurusRenderer.java:30-31) over a 0.5 x 1.2 hitbox (ModEntities.java:481-484)."
+  ],
+  "clips": [
+    {
+      "name": "idle",
+      "verdict": "author",
+      "note": "REQUIRED with walk: the gate opens on the pair (today nothing ships; the classic code plays) - the standing loop: legs at their rests, the tail at its healthy sweep"
+    },
+    {
+      "name": "walk",
+      "verdict": "author",
+      "note": "REQUIRED with idle: the locomotion loop - the gait group's 45-degree four-legged stride (ModelCamarasaurus.java:188-196), scaled by walking speed in-game"
+    },
+    {
+      "name": "swim",
+      "verdict": "author",
+      "note": "it has the state: a FloatGoal keeps it at the surface (Camarasaurus.java:67) - a wading paddle, the tail sculling; optional: falls back to walk then idle when absent (section 2.4)"
+    },
+    {
+      "name": "calm_idle",
+      "verdict": "leave",
+      "note": "= idle: no synched attacking flag in Camarasaurus.java (no DATA_ATTACKING) and no attack at all, so calm_idle is covered by idle (ruled 2026-09-06, Q12 (a))"
+    },
+    {
+      "name": "attack",
+      "verdict": "leave",
+      "note": "no attack: the entity never strikes - no melee or ranged goal, no target goals (Camarasaurus.java:76-79), no doHurtTarget call (the 1-damage attribute at :87 is unused); the generator offers no attack row"
+    },
+    {
+      "name": "hurt",
+      "verdict": "author",
+      "note": "a flinch: no hurt() override (vanilla LivingEntity.hurt; the cryo_hurt sound at Camarasaurus.java:253-256); the hurtTime edge is client-observed - it panics after (:72)",
+      "length_seconds": 0.3
+    },
+    {
+      "name": "death",
+      "verdict": "author",
+      "note": "ruled 2026-09-06, Q3 (a): the vanilla death flip stays; a creature whose JSON ships a `death` clip gets the clip-replaces-flip mode, designed when the first such clip arrives (the Queen's own death clip the precedent) - a `death` delivered here plays under the flip until then",
+      "length_seconds": 1.0
+    }
+  ],
+  "extras": [
+    {
+      "name": "sit",
+      "loop": "true",
+      "layer": "overlay",
+      "bones": [
+        "FLegupleft",
+        "FLegdownleft",
+        "FLegupright",
+        "FLegdownright",
+        "BLegupleft",
+        "BLegdownleft",
+        "BLegupright",
+        "BLegdownright",
+        "Body1",
+        "Body2",
+        "Body3",
+        "Body4"
+      ],
+      "code_triggered": false,
+      "trigger": "state: isInSittingPose() - TamableAnimal's synched sitting flag, toggled by the owner's click (Camarasaurus.java:238-243); today it changes nothing visible (ModelCamarasaurus.setupAnim has no sitting branch) - the seam needs a state selector for it",
+      "note": "a sitting pose: legs folded under, the body lowered, the neck still curling to the look; needs the seam to select it on the sitting flag"
+    },
+    {
+      "name": "graze",
+      "loop": "false",
+      "layer": "overlay",
+      "bones": [
+        "Neck1",
+        "Neck2",
+        "Neck3",
+        "Head1",
+        "Head2"
+      ],
+      "length_seconds": 0.8,
+      "code_triggered": false,
+      "trigger": "the browse: when hurt (1 in 20 ticks) or at random (1 in 250) it scans 10 blocks for leaves, vine, grass, fern, cactus or a tall flower, walks there and, within 3.5 blocks, eats the block (mobGriefing), heals 1 and burps (Camarasaurus.java:161-194); a server-side event with no trigger by name today (the seam would need a named site)",
+      "note": "a reach of the neck to the food and a bite - the neck pieces are flat bones the code positions along each other: key all five together"
+    }
+  ],
+  "wishlist": [
+    "a real sitting pose: the pet 'sits' standing (no branch in ModelCamarasaurus.setupAnim) - legs folded, belly down",
+    "in `walk`: bend the legs - upper and lower parts swing as one unit (ModelCamarasaurus.java:189-196); a knee that lags the hip, and a slow sway of the four body blocks (static today), make a sauropod's walk",
+    "the neck curl and tail sweep (ModelCamarasaurus.java:198-226) are hand-written FK on flat bones: author them as rotations and flag to the owner that the seam must parent the chains or key the positions when the rig lands",
+    "keep the tail's health rule readable: wide and quick when healthy, small when hurt (ModelCamarasaurus.java:198-212) - the seam plays a fixed loop, so give the owner the healthy sweep in `idle` and note that the hurt scaling is lost unless the seam adds a health input",
+    "in `hurt`: a startled head-up and a step back before the panic run (Camarasaurus.java:72)"
+  ],
+  "effort_hours": null
+}

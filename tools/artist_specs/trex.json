@@ -1,0 +1,153 @@
+{
+  "registry": "trex",
+  "display_name": "T-Rex",
+  "status": "DRAFT — authored by a seed lane from the entity code, 2026-09-13; the owner's edit pending",
+  "locomotion": "walker",
+  "artist_scope": "full contract (Tier 1, the gait-scaled class: geckolib_migration_design.md section 5) with the §8.1 locks; the rig is not yet in-game (it lands through the seam in a later slice)",
+  "character_sheet": "The T-Rex is a hostile tyrannosaur: a long torso and hips with five back spines, a neck to a head with a snout, a hinged jaw and two head spikes, two tiny arms, two hip spikes, a tail with an extension, and two four-piece legs (ModelTRex.createBodyLayer, ModelTRex.java:80-219 — the parts carry the modeller's opaque names, shape1 to shape21, mapped to anatomy in the glossary). It has 160 HP, 22 attack and 14 armour (MobStats.TREX, createAttributes TRex.java:249-257; a 200 constant for its own health checks, :272-274), fights on the dinosaur melee goal — a bite within four blocks plus half the target's width on two dice, a chase at 1.25, prey found in a 20-block box (DinosaurMeleeAttackGoal.Presets.trex, TRex.java:76-77) — with a 1.2 knockback (doHurtTarget :314-328), re-picks its target every fifth tick and avenges hits (selectTarget :124-131, RevengeGoal :186), and wanders and looks about between (:78-80). Cactus cannot hurt it (hurt :331-345). It spawns at night in the dark above y 50 under a clear air column with no other T-Rex within 24 blocks (checkSpawnRules :356-365) in the Chaos and Mining biomes (chaos_biome.json, mining_biome.json). Read it as a heavy two-legged stalker: a swinging stride, a snapping jaw, the little arms twitching.",
+  "size_notes": "Drawn at x1.2 of the rig (TRexRenderer.java:28, applied :40; shadow 1.0 x 1.2) on a 128x128 sheet (ModelTRex.java:219); 2.0 x 4.2 block hitbox (ModEntities.java:168-169). The design's row says: rename nothing — the opaque shape names are final; this glossary maps them to anatomy.",
+  "labels": {
+    "shape1": "torso (the 10x18x31 body block; static; intended hitbox part 'shape1')",
+    "shape2": "hips (static)",
+    "shape3": "tail (the 7x7x25 tail block; static; intended hitbox part 'shape3')",
+    "tail_extension": "tail extension (the 3x3x10 tip; static; intended hitbox part 'tail_extension')",
+    "shape4": "neck (static)",
+    "shape5": "head (static — the code never turns it; intended hitbox part 'shape5')",
+    "shape6": "snout (static)",
+    "jaw": "lower jaw (hinged: still at 0.1, chomps 32 degrees about 0.52 while attacking)",
+    "shape18": "right head spike (static)",
+    "shape19": "left head spike (static)",
+    "shape11": "right arm (the tiny forelimb; waves 9 degrees about −0.523)",
+    "shape17": "left arm (the tiny forelimb; waves with the right)",
+    "shape20": "left hip spike (static)",
+    "shape21": "right hip spike (static)",
+    "spine1": "back spine 1 (static)",
+    "spine2": "back spine 2 (static)",
+    "spine3": "back spine 3 (static)",
+    "spine4": "neck spine 4 (static)",
+    "spine5": "neck spine 5 (static)",
+    "leftleg": "left thigh (the stride, 45 degrees at top speed about −0.174; intended hitbox part 'leftleg')",
+    "leftleg2": "left shin (about 0.506; intended hitbox part 'leftleg2')",
+    "leftleg3": "left ankle (about −0.401)",
+    "leftleg4": "left foot (the stride about 0)",
+    "rightleg": "right thigh (opposite the left; intended hitbox part 'rightleg')",
+    "rightleg2": "right shin (intended hitbox part 'rightleg2')",
+    "rightleg3": "right ankle",
+    "rightleg4": "right foot"
+  },
+  "groups": [
+    {
+      "name": "gait",
+      "bones": [
+        "rightleg", "rightleg2", "rightleg3", "rightleg4", "leftleg", "leftleg2", "leftleg3", "leftleg4"
+      ],
+      "omega": 1.3,
+      "axis": "x",
+      "gait_scaled": true,
+      "amplitude": "pi x 0.25 = 0.785 rad (45 deg) x the walking speed above a 0.1 threshold (zero below it): every piece of a leg swings together about its rest (thigh −0.174, shin 0.506, ankle −0.401, foot 0), the right leg +a and the left −a",
+      "plain": "the two legs stride with the walking speed, each leg swinging as one stiff four-piece chain, the left opposite the right",
+      "math": "a = amount > 0.1 ? cos(t * 1.3) * pi * 0.25 * amount : 0; rightleg.xRot = -0.174 + a, rightleg2.xRot = 0.506 + a, rightleg3.xRot = -0.401 + a, rightleg4.xRot = a; leftleg.xRot = -0.174 - a, leftleg2.xRot = 0.506 - a, leftleg3.xRot = -0.401 - a, leftleg4.xRot = -a",
+      "source": "ModelTRex.java:224-236; ANIM_SPEED 1.0 (:20)",
+      "omega_note": "the classic phase is ageInTicks x 1.3 (ANIM_SPEED 1.0): the natural period is 2 pi / 1.3 = 4.83 ticks"
+    },
+    {
+      "name": "jaw",
+      "bones": [
+        "jaw"
+      ],
+      "omega": 0.45,
+      "axis": "x",
+      "gait_scaled": false,
+      "amplitude": "attacking: pi x 0.18 = 0.565 rad (32 deg) about 0.52; not attacking: still at 0.1",
+      "plain": "the jaw chomps while the attacking flag is set and hangs nearly shut otherwise",
+      "math": "jaw.xRot = attacking ? 0.52 + cos(t * 0.45) * pi * 0.18 : 0.1",
+      "source": "ModelTRex.java:238-240",
+      "phase": "the synced DATA_ATTACKING byte (TRex.java:33, set by the melee goal's IntConsumer at :76) selects; note the phase is ageInTicks x 0.45 without the ANIM_SPEED factor",
+      "omega_note": "the classic phase is ageInTicks x 0.45: the natural period is 13.96 ticks"
+    },
+    {
+      "name": "arms",
+      "bones": [
+        "shape11", "shape17"
+      ],
+      "omega": 0.1,
+      "axis": "x",
+      "gait_scaled": false,
+      "amplitude": "pi x 0.05 = 0.157 rad (9 deg) about −0.523, both arms together, at all times",
+      "plain": "the two tiny arms wave slowly up and down together whatever the creature does",
+      "math": "shape11.xRot = shape17.xRot = -0.523 + cos(t * 0.1) * pi * 0.05",
+      "source": "ModelTRex.java:242-243",
+      "omega_note": "the classic phase is ageInTicks x 0.1: the natural period is 62.8 ticks"
+    }
+  ],
+  "behaviour": [
+    "One speed-scaled stride at 1.3 rad/tick (a 4.8-tick period) above a walking-speed threshold of 0.1: the two legs swing 45 degrees at top speed as stiff four-piece chains, the left opposite the right (ModelTRex.java:224-236). Standing still the legs rest.",
+    "The jaw chomps 32 degrees at 0.45 rad/tick about 0.52 while the synced DATA_ATTACKING byte is set (TRex.java:33; the melee goal at :76 sets it within reach) and hangs at 0.1 otherwise (:238-240). The two tiny arms wave 9 degrees at 0.1 rad/tick at all times (:242-243).",
+    "The torso, hips, tail and its extension, neck, head, snout, the head and hip spikes and the five back spines are static; the head does not track the look, and the walk position plays no part.",
+    "The bite is the melee goal's (DinosaurMeleeAttackGoal, TRex.java:76-77; doHurtTarget :314-328) — nothing in the code fires an animation for it."
+  ],
+  "clips": [
+    {
+      "name": "idle",
+      "verdict": "author",
+      "note": "REQUIRED with walk: the gate opens on the pair — the standing rest: the little arms' wave, a breath, the jaw shut"
+    },
+    {
+      "name": "walk",
+      "verdict": "author",
+      "note": "REQUIRED with idle: the gait group's two-legged stride (:224-236)"
+    },
+    {
+      "name": "swim",
+      "verdict": "leave",
+      "note": "no swim state: FloatGoal (TRex.java:75) only bobs it to the surface; the contract's fallback to walk stands"
+    },
+    {
+      "name": "aggro_idle",
+      "verdict": "author",
+      "note": "the attacking flag (set by the melee goal, TRex.java:76): the jaw chomping (ModelTRex.java:239) — a lowered, stalking head to go with it; NOT offered by the trigger inventory today (the flag is set through the goal's IntConsumer, so the inventory classifies it NONE) — kept here for the owner"
+    },
+    {
+      "name": "calm_idle",
+      "verdict": "covered by idle",
+      "note": "covered by idle while the inventory offers no aggro_idle / calm_idle pair (DATA_ATTACKING classified NONE: the flag is set through the goal's IntConsumer, TRex.java:76); the rest with the flag clear is the jaw at 0.1 (:240) and the arms waving (:242-243)"
+    },
+    {
+      "name": "attack",
+      "verdict": "author",
+      "note": "the bite: the dinosaur melee goal (TRex.java:76-77, reach four blocks plus half the target's width on two dice) lands doHurtTarget (:314-328) — 22 of damage and a 1.2 knockback; author a lunging bite with the jaw's chomp",
+      "length_seconds": 0.5
+    },
+    {
+      "name": "hurt",
+      "verdict": "author",
+      "note": "a flinch to alo_hurt (getHurtSound :285-289); hurt() (:331-345) stores the attacker for revenge",
+      "length_seconds": 0.4
+    },
+    {
+      "name": "death",
+      "verdict": "author",
+      "note": "ruled 2026-09-06, Q3 (a): the vanilla death flip stays; a creature whose JSON ships a `death` clip gets the clip-replaces-flip mode, designed when the first such clip arrives (the Queen's own death clip the precedent) - a `death` delivered here plays under the flip until then",
+      "length_seconds": 1.5
+    }
+  ],
+  "extras": [],
+  "wishlist": [
+    "in `walk`: the code swings each leg as one stiff chain (ModelTRex.java:228-236); bend the knee and ankle on the forward swing and let the torso and tail counter-sway — the head is static in the code, so a head bob is all yours",
+    "in `attack`'s wind-up: the jaw chomp (:239) with the head lowered and turned on the target — the code never turns the head; the contract's aggro_idle would carry it, but the trigger inventory does not offer it here (the flag is set through the goal's IntConsumer, TRex.java:76)",
+    "in `attack`: a lunging bite; the reach is four blocks plus half the target's width (DinosaurMeleeAttackGoal.Presets.trex, TRex.java:76-77)",
+    "in `idle`: keep the tiny arms' slow wave (:242-243) and add a breath on the torso"
+  ],
+  "locked_bones_provisional": [
+    {"bone": "shape5", "size": [1.3, 1.1], "damage": 1},
+    {"bone": "shape1", "size": [2, 2.5], "damage": 0.5},
+    {"bone": "leftleg", "size": [0.7, 1.8], "damage": 0.5},
+    {"bone": "leftleg2", "size": [0.7, 1.8], "damage": 0.5},
+    {"bone": "rightleg", "size": [0.7, 1.8], "damage": 0.5},
+    {"bone": "rightleg2", "size": [0.7, 1.8], "damage": 0.5},
+    {"bone": "shape3", "size": [1.2, 1.2], "damage": 0.25},
+    {"bone": "tail_extension", "size": [0.7, 0.8], "damage": 0.25}
+  ],
+  "locked_bones_note": "The design's section 6 ModelTRex row (geckolib_migration_design.md:458): 'shape5 [1.3,1.1] @1 (head), shape1 [2,2.5] @0.5 (torso), left/right upper/lower legs [0.7,1.8] @0.5, shape3 [1.2,1.2] @0.25 (tail), tail_extension [0.7,0.8] @0.25'. shape5, shape1, shape3 and tail_extension resolve as written (ModelTRex.createBodyLayer; the field names at ModelTRex.java:55-77 confirm shape5 = head, shape1 = torso, shape3 = tail). 'left/right upper/lower legs' is not a bone name: taken as the thigh and shin of each leg — leftleg / leftleg2 and rightleg / rightleg2 (the ankle leftleg3 / rightleg3 and the foot leftleg4 / rightleg4 stay visual). The row: 'Rename nothing in conversion'.",
+  "effort_hours": null
+}

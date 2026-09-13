@@ -1,0 +1,820 @@
+{
+  "generated_by": "tools/artist_package.py 0.2.9 (the full folder, 2026-09-13, fourth set, items 5, 7 and 8: every artist-tier species packaged - a rig not yet in-game from the reference leg's converter output, bone names final; the Tier-1 bosses' intended locked bones from the design's section 6 rendered in section 7 and validated against the geo; the README's priority table the full list, bosses first, closing with the deliverable count)",
+  "registry": "irukandji",
+  "display_name": "Irukandji",
+  "tier": 2,
+  "tier_label": "Tier 2",
+  "geo_file": "irukandji.geo.json",
+  "animation_file": "irukandji.animation.json",
+  "bbmodel_file": "irukandji.bbmodel",
+  "texture_size": [
+    64,
+    32
+  ],
+  "bones": [
+    {
+      "name": "body",
+      "parent": null,
+      "pivot": [
+        0,
+        18,
+        0
+      ],
+      "rotation": null,
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            -2.0,
+            14.0,
+            -2.0
+          ],
+          "size": [
+            4.0,
+            4.0,
+            4.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              4.0,
+              13.0,
+              -4.0,
+              4.0
+            ],
+            "east": [
+              12.0,
+              13.0,
+              -4.0,
+              4.0
+            ],
+            "north": [
+              8.0,
+              13.0,
+              -4.0,
+              4.0
+            ],
+            "south": [
+              16.0,
+              13.0,
+              -4.0,
+              4.0
+            ],
+            "up": [
+              8.0,
+              9.0,
+              -4.0,
+              4.0
+            ],
+            "down": [
+              12.0,
+              13.0,
+              -4.0,
+              -4.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "t11",
+      "parent": null,
+      "pivot": [
+        -1,
+        14,
+        -2
+      ],
+      "rotation": null,
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            -2.0,
+            7.0,
+            -2.0
+          ],
+          "size": [
+            1.0,
+            7.0,
+            1.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              26.0,
+              1.0,
+              -1.0,
+              7.0
+            ],
+            "east": [
+              28.0,
+              1.0,
+              -1.0,
+              7.0
+            ],
+            "north": [
+              27.0,
+              1.0,
+              -1.0,
+              7.0
+            ],
+            "south": [
+              29.0,
+              1.0,
+              -1.0,
+              7.0
+            ],
+            "up": [
+              27.0,
+              0.0,
+              -1.0,
+              1.0
+            ],
+            "down": [
+              28.0,
+              1.0,
+              -1.0,
+              -1.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "t12",
+      "parent": null,
+      "pivot": [
+        -1,
+        7,
+        -2
+      ],
+      "rotation": null,
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            -2.0,
+            0.0,
+            -2.0
+          ],
+          "size": [
+            1.0,
+            7.0,
+            1.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              6.0,
+              1.0,
+              -1.0,
+              7.0
+            ],
+            "east": [
+              8.0,
+              1.0,
+              -1.0,
+              7.0
+            ],
+            "north": [
+              7.0,
+              1.0,
+              -1.0,
+              7.0
+            ],
+            "south": [
+              9.0,
+              1.0,
+              -1.0,
+              7.0
+            ],
+            "up": [
+              7.0,
+              0.0,
+              -1.0,
+              1.0
+            ],
+            "down": [
+              8.0,
+              1.0,
+              -1.0,
+              -1.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "t21",
+      "parent": null,
+      "pivot": [
+        2,
+        14,
+        -2
+      ],
+      "rotation": null,
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            1.0,
+            7.0,
+            -2.0
+          ],
+          "size": [
+            1.0,
+            7.0,
+            1.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              1.0,
+              1.0,
+              -1.0,
+              7.0
+            ],
+            "east": [
+              3.0,
+              1.0,
+              -1.0,
+              7.0
+            ],
+            "north": [
+              2.0,
+              1.0,
+              -1.0,
+              7.0
+            ],
+            "south": [
+              4.0,
+              1.0,
+              -1.0,
+              7.0
+            ],
+            "up": [
+              2.0,
+              0.0,
+              -1.0,
+              1.0
+            ],
+            "down": [
+              3.0,
+              1.0,
+              -1.0,
+              -1.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "t22",
+      "parent": null,
+      "pivot": [
+        2,
+        7,
+        -2
+      ],
+      "rotation": null,
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            1.0,
+            0.0,
+            -2.0
+          ],
+          "size": [
+            1.0,
+            7.0,
+            1.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              21.0,
+              1.0,
+              -1.0,
+              7.0
+            ],
+            "east": [
+              23.0,
+              1.0,
+              -1.0,
+              7.0
+            ],
+            "north": [
+              22.0,
+              1.0,
+              -1.0,
+              7.0
+            ],
+            "south": [
+              24.0,
+              1.0,
+              -1.0,
+              7.0
+            ],
+            "up": [
+              22.0,
+              0.0,
+              -1.0,
+              1.0
+            ],
+            "down": [
+              23.0,
+              1.0,
+              -1.0,
+              -1.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "t31",
+      "parent": null,
+      "pivot": [
+        -1,
+        14,
+        1
+      ],
+      "rotation": null,
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            -2.0,
+            7.0,
+            1.0
+          ],
+          "size": [
+            1.0,
+            7.0,
+            1.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              31.0,
+              1.0,
+              -1.0,
+              7.0
+            ],
+            "east": [
+              33.0,
+              1.0,
+              -1.0,
+              7.0
+            ],
+            "north": [
+              32.0,
+              1.0,
+              -1.0,
+              7.0
+            ],
+            "south": [
+              34.0,
+              1.0,
+              -1.0,
+              7.0
+            ],
+            "up": [
+              32.0,
+              0.0,
+              -1.0,
+              1.0
+            ],
+            "down": [
+              33.0,
+              1.0,
+              -1.0,
+              -1.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "t32",
+      "parent": null,
+      "pivot": [
+        -1,
+        7,
+        1
+      ],
+      "rotation": null,
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            -2.0,
+            0.0,
+            1.0
+          ],
+          "size": [
+            1.0,
+            7.0,
+            1.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              11.0,
+              1.0,
+              -1.0,
+              7.0
+            ],
+            "east": [
+              13.0,
+              1.0,
+              -1.0,
+              7.0
+            ],
+            "north": [
+              12.0,
+              1.0,
+              -1.0,
+              7.0
+            ],
+            "south": [
+              14.0,
+              1.0,
+              -1.0,
+              7.0
+            ],
+            "up": [
+              12.0,
+              0.0,
+              -1.0,
+              1.0
+            ],
+            "down": [
+              13.0,
+              1.0,
+              -1.0,
+              -1.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "t41",
+      "parent": null,
+      "pivot": [
+        2,
+        14,
+        1
+      ],
+      "rotation": null,
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            1.0,
+            7.0,
+            1.0
+          ],
+          "size": [
+            1.0,
+            7.0,
+            1.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              36.0,
+              1.0,
+              -1.0,
+              7.0
+            ],
+            "east": [
+              38.0,
+              1.0,
+              -1.0,
+              7.0
+            ],
+            "north": [
+              37.0,
+              1.0,
+              -1.0,
+              7.0
+            ],
+            "south": [
+              39.0,
+              1.0,
+              -1.0,
+              7.0
+            ],
+            "up": [
+              37.0,
+              0.0,
+              -1.0,
+              1.0
+            ],
+            "down": [
+              38.0,
+              1.0,
+              -1.0,
+              -1.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "t42",
+      "parent": null,
+      "pivot": [
+        2,
+        7,
+        1
+      ],
+      "rotation": null,
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            1.0,
+            0.0,
+            1.0
+          ],
+          "size": [
+            1.0,
+            7.0,
+            1.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              16.0,
+              1.0,
+              -1.0,
+              7.0
+            ],
+            "east": [
+              18.0,
+              1.0,
+              -1.0,
+              7.0
+            ],
+            "north": [
+              17.0,
+              1.0,
+              -1.0,
+              7.0
+            ],
+            "south": [
+              19.0,
+              1.0,
+              -1.0,
+              7.0
+            ],
+            "up": [
+              17.0,
+              0.0,
+              -1.0,
+              1.0
+            ],
+            "down": [
+              18.0,
+              1.0,
+              -1.0,
+              -1.0
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "locked_bones": [],
+  "lock_mode": "warn",
+  "lock_policy": "warn-keyed, refuse-structural",
+  "lock_policy_text": "Keying a locked bone is allowed; the checker warns, and the hitbox part follows the bone in-game (the consequence, so keep such keys deliberate). Renaming, re-parenting or deleting a locked bone is refused.",
+  "keyed_locked_by_shipped_clip": {},
+  "native": false,
+  "controller_kind": "phase_locked",
+  "clips": [
+    {
+      "name": "idle",
+      "loop": "true",
+      "role": "contract",
+      "code_triggered": false,
+      "required": true,
+      "length_rule": "near:1.0",
+      "length_seconds": 1.0,
+      "verdict": "author"
+    },
+    {
+      "name": "idle_tentacle_2",
+      "loop": "true",
+      "role": "contract",
+      "code_triggered": false,
+      "required": false,
+      "length_rule": "near:1.0",
+      "length_seconds": 1.0,
+      "verdict": "author"
+    },
+    {
+      "name": "idle_tentacle_3",
+      "loop": "true",
+      "role": "contract",
+      "code_triggered": false,
+      "required": false,
+      "length_rule": "near:1.0",
+      "length_seconds": 1.0,
+      "verdict": "author"
+    },
+    {
+      "name": "idle_tentacle_4",
+      "loop": "true",
+      "role": "contract",
+      "code_triggered": false,
+      "required": false,
+      "length_rule": "near:1.0",
+      "length_seconds": 1.0,
+      "verdict": "author"
+    },
+    {
+      "name": "walk",
+      "loop": "true",
+      "role": "contract",
+      "code_triggered": false,
+      "required": true,
+      "length_rule": "near:1.0",
+      "length_seconds": 1.0,
+      "verdict": "author"
+    },
+    {
+      "name": "walk_tentacle_2",
+      "loop": "true",
+      "role": "contract",
+      "code_triggered": false,
+      "required": false,
+      "length_rule": "near:1.0",
+      "length_seconds": 1.0,
+      "verdict": "author"
+    },
+    {
+      "name": "walk_tentacle_3",
+      "loop": "true",
+      "role": "contract",
+      "code_triggered": false,
+      "required": false,
+      "length_rule": "near:1.0",
+      "length_seconds": 1.0,
+      "verdict": "author"
+    },
+    {
+      "name": "walk_tentacle_4",
+      "loop": "true",
+      "role": "contract",
+      "code_triggered": false,
+      "required": false,
+      "length_rule": "near:1.0",
+      "length_seconds": 1.0,
+      "verdict": "author"
+    },
+    {
+      "name": "swim",
+      "loop": "true",
+      "role": "contract",
+      "code_triggered": false,
+      "required": false,
+      "length_rule": "near:1.0",
+      "length_seconds": 1.0,
+      "verdict": "author"
+    },
+    {
+      "name": "aggro_idle",
+      "loop": "true",
+      "role": "contract",
+      "code_triggered": false,
+      "required": false,
+      "length_rule": "near:1.0",
+      "length_seconds": 1.0,
+      "verdict": "author"
+    },
+    {
+      "name": "calm_idle",
+      "loop": "true",
+      "role": "contract",
+      "code_triggered": false,
+      "required": false,
+      "length_rule": "near:1.0",
+      "length_seconds": 1.0,
+      "verdict": "author"
+    },
+    {
+      "name": "attack",
+      "loop": "false",
+      "role": "contract",
+      "code_triggered": true,
+      "required": false,
+      "length_rule": "near:0.5",
+      "length_seconds": 0.5,
+      "verdict": "author"
+    },
+    {
+      "name": "hurt",
+      "loop": "false",
+      "role": "contract",
+      "code_triggered": true,
+      "required": false,
+      "length_rule": "near:0.3",
+      "length_seconds": 0.3,
+      "verdict": "author"
+    },
+    {
+      "name": "death",
+      "loop": "hold_on_last_frame",
+      "role": "contract",
+      "code_triggered": true,
+      "required": false,
+      "length_rule": "near:1.0",
+      "length_seconds": 1.0,
+      "verdict": "author"
+    }
+  ],
+  "allow_idle_alt": true,
+  "textures": [
+    {
+      "canonical": "irukandji.png",
+      "width": 64,
+      "height": 32,
+      "aliases": [
+        "irukandjitexture.png"
+      ]
+    }
+  ],
+  "effort_hours": 19.8,
+  "effort_source": "generator: 4 h + 0.2 h/bone x 9 + 1 h/clip x 14 to author or improve (owner adjusts)",
+  "reference_clip": {
+    "file": "irukandji_reference.animation.json",
+    "sha256": "d4d33cab0bf84ef64643ddcea5b8b74151a6cdd50787a97748c5c1a889738b0c",
+    "clip": "reference",
+    "reference_only": true,
+    "rule": "two_seconds_past_cap",
+    "rule_note": "sixteen cosines over four tentacles - root pitch 0.55 / 0.65 / 0.5 / 0.57, root roll 0.35 / 0.45 / 0.3 / 0.37, tip pitch 0.45 / 0.55 / 0.4 / 0.48, tip roll 0.25 / 0.35 / 0.2 / 0.29 rad/tick (IrukandjiGeoReplacement.tentacle, ModelIrukandji.setupAnim; orig ModelIrukandji.java:90-133): the slowest 0.2 rad/tick; the tips' pivots follow the roots (position channels); no multiple of the slowest group's period 31.415926 ticks up to the 6 s cap (120 ticks) brings every group back within 5 degrees of its start (k = 1: 54.000005 deg / 6.355867 units, k = 2: 54.000005 deg / 6.355867 units, k = 3: 54.000005 deg / 6.355867 units): a two-second window (40 ticks), not a loop - the sheet states the closing key's seam",
+    "span_ticks": 40.0,
+    "period_ticks": 31.4159260678,
+    "period_multiple_k": null,
+    "animation_length_seconds": 2.0,
+    "keys_per_bone": 41,
+    "sampled_inputs": "limbSwingAmount 1.0; limbSwing = t (advancing 1.0 per tick from 0: vanilla WalkAnimationState.update does speed += (movementSpeed - speed) * multiplier; position += speed, and the classic renderer hands walkAnimation.position(partialTick) as limbSwing and min(1, speed) as limbSwingAmount, so at speed 1 the position advances exactly 1.0 per tick); ageInTicks = t (getBob: tickCount + partialTick, partialTick 0); netHeadYaw 0; headPitch 0 (looking ahead); every entity-state flag at its rest value (attacking 0, ri1 0, rock_type 0, rf1 0: a ProbeSubject built from an empty state); the entity RNG seeded 0 once per clip and evolving across the keys; one pose call per key, 20 keys per second; full health (no shipped hook reads health)",
+    "hook": "danger.orespawn.entity.client.IrukandjiGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the shipped replacement, registry-free, on explicit PoseInputs)",
+    "moving_bones": [
+      "t11",
+      "t12",
+      "t21",
+      "t22",
+      "t31",
+      "t32",
+      "t41",
+      "t42"
+    ],
+    "position_bones": [
+      "t12",
+      "t22",
+      "t32",
+      "t42"
+    ],
+    "hidden_bones_at_rest": [],
+    "seam_delta_degrees": 53.9989530687
+  },
+  "exact_transcription": false,
+  "rig_source": "shipped",
+  "in_game": true,
+  "reference_id": null,
+  "locked_bones_source": "none",
+  "locked_bones_provisional": []
+}

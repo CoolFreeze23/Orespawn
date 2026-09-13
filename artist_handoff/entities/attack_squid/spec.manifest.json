@@ -1,0 +1,812 @@
+{
+  "generated_by": "tools/artist_package.py 0.2.9 (the full folder, 2026-09-13, fourth set, items 5, 7 and 8: every artist-tier species packaged - a rig not yet in-game from the reference leg's converter output, bone names final; the Tier-1 bosses' intended locked bones from the design's section 6 rendered in section 7 and validated against the geo; the README's priority table the full list, bosses first, closing with the deliverable count)",
+  "registry": "attack_squid",
+  "display_name": "Attack Squid",
+  "tier": 2,
+  "tier_label": "Tier 2",
+  "geo_file": "reference_attacksquid.geo.json",
+  "animation_file": "attack_squid.animation.json",
+  "bbmodel_file": "attack_squid.bbmodel",
+  "texture_size": [
+    64,
+    32
+  ],
+  "bones": [
+    {
+      "name": "body",
+      "parent": null,
+      "pivot": [
+        -1,
+        8,
+        -1
+      ],
+      "rotation": [
+        -10.9999989848,
+        38.9999995257,
+        0
+      ],
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            -5.0,
+            8.0,
+            -5.0
+          ],
+          "size": [
+            8.0,
+            10.0,
+            8.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              8.0,
+              8.0,
+              -8.0,
+              10.0
+            ],
+            "east": [
+              24.0,
+              8.0,
+              -8.0,
+              10.0
+            ],
+            "north": [
+              16.0,
+              8.0,
+              -8.0,
+              10.0
+            ],
+            "south": [
+              32.0,
+              8.0,
+              -8.0,
+              10.0
+            ],
+            "up": [
+              16.0,
+              0.0,
+              -8.0,
+              8.0
+            ],
+            "down": [
+              24.0,
+              8.0,
+              -8.0,
+              -8.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "tent1",
+      "parent": null,
+      "pivot": [
+        -5,
+        9,
+        -1
+      ],
+      "rotation": [
+        -52.9999997962,
+        99.9999855618,
+        0
+      ],
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            -6.0,
+            0.0,
+            -2.0
+          ],
+          "size": [
+            2.0,
+            9.0,
+            2.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              2.0,
+              20.0,
+              -2.0,
+              9.0
+            ],
+            "east": [
+              6.0,
+              20.0,
+              -2.0,
+              9.0
+            ],
+            "north": [
+              4.0,
+              20.0,
+              -2.0,
+              9.0
+            ],
+            "south": [
+              8.0,
+              20.0,
+              -2.0,
+              9.0
+            ],
+            "up": [
+              4.0,
+              18.0,
+              -2.0,
+              2.0
+            ],
+            "down": [
+              6.0,
+              20.0,
+              -2.0,
+              -2.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "tent2",
+      "parent": null,
+      "pivot": [
+        2,
+        9,
+        -3
+      ],
+      "rotation": [
+        -9.9999985562,
+        37.9999990971,
+        14.0000002705
+      ],
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            2.0,
+            8.0,
+            -4.0
+          ],
+          "size": [
+            8.0,
+            2.0,
+            2.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              2.0,
+              20.0,
+              -2.0,
+              2.0
+            ],
+            "east": [
+              12.0,
+              20.0,
+              -2.0,
+              2.0
+            ],
+            "north": [
+              10.0,
+              20.0,
+              -8.0,
+              2.0
+            ],
+            "south": [
+              20.0,
+              20.0,
+              -8.0,
+              2.0
+            ],
+            "up": [
+              10.0,
+              18.0,
+              -8.0,
+              2.0
+            ],
+            "down": [
+              18.0,
+              20.0,
+              -8.0,
+              -2.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "tent3",
+      "parent": null,
+      "pivot": [
+        -1,
+        9,
+        -4
+      ],
+      "rotation": [
+        -64.9999992095,
+        -19.0000024134,
+        0
+      ],
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            -2.0,
+            -1.0,
+            -5.0
+          ],
+          "size": [
+            2.0,
+            10.0,
+            2.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              2.0,
+              20.0,
+              -2.0,
+              10.0
+            ],
+            "east": [
+              6.0,
+              20.0,
+              -2.0,
+              10.0
+            ],
+            "north": [
+              4.0,
+              20.0,
+              -2.0,
+              10.0
+            ],
+            "south": [
+              8.0,
+              20.0,
+              -2.0,
+              10.0
+            ],
+            "up": [
+              4.0,
+              18.0,
+              -2.0,
+              2.0
+            ],
+            "down": [
+              6.0,
+              20.0,
+              -2.0,
+              -2.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "tent4",
+      "parent": null,
+      "pivot": [
+        3,
+        9,
+        -1
+      ],
+      "rotation": [
+        32.0000022553,
+        96.9999785465,
+        0
+      ],
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            2.0,
+            -1.0,
+            -2.0
+          ],
+          "size": [
+            2.0,
+            10.0,
+            2.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              2.0,
+              20.0,
+              -2.0,
+              10.0
+            ],
+            "east": [
+              6.0,
+              20.0,
+              -2.0,
+              10.0
+            ],
+            "north": [
+              4.0,
+              20.0,
+              -2.0,
+              10.0
+            ],
+            "south": [
+              8.0,
+              20.0,
+              -2.0,
+              10.0
+            ],
+            "up": [
+              4.0,
+              18.0,
+              -2.0,
+              2.0
+            ],
+            "down": [
+              6.0,
+              20.0,
+              -2.0,
+              -2.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "tent5",
+      "parent": null,
+      "pivot": [
+        -1,
+        9,
+        3
+      ],
+      "rotation": [
+        31.0000018267,
+        -12.9999998419,
+        0
+      ],
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            -2.0,
+            -1.0,
+            2.0
+          ],
+          "size": [
+            2.0,
+            10.0,
+            2.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              2.0,
+              20.0,
+              -2.0,
+              10.0
+            ],
+            "east": [
+              6.0,
+              20.0,
+              -2.0,
+              10.0
+            ],
+            "north": [
+              4.0,
+              20.0,
+              -2.0,
+              10.0
+            ],
+            "south": [
+              8.0,
+              20.0,
+              -2.0,
+              10.0
+            ],
+            "up": [
+              4.0,
+              18.0,
+              -2.0,
+              2.0
+            ],
+            "down": [
+              6.0,
+              20.0,
+              -2.0,
+              -2.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "tent6",
+      "parent": null,
+      "pivot": [
+        2,
+        9,
+        2
+      ],
+      "rotation": [
+        -23.9999988267,
+        38.9999995257,
+        0
+      ],
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            1.0,
+            8.0,
+            2.0
+          ],
+          "size": [
+            2.0,
+            2.0,
+            8.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              8.0,
+              26.0,
+              -8.0,
+              2.0
+            ],
+            "east": [
+              18.0,
+              26.0,
+              -8.0,
+              2.0
+            ],
+            "north": [
+              10.0,
+              26.0,
+              -2.0,
+              2.0
+            ],
+            "south": [
+              20.0,
+              26.0,
+              -2.0,
+              2.0
+            ],
+            "up": [
+              10.0,
+              18.0,
+              -2.0,
+              8.0
+            ],
+            "down": [
+              12.0,
+              26.0,
+              -2.0,
+              -8.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "tent7",
+      "parent": null,
+      "pivot": [
+        -3,
+        9,
+        1
+      ],
+      "rotation": [
+        -10.9999989848,
+        37.9999990971,
+        -23.9999988267
+      ],
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            -11.0,
+            8.0,
+            0.0
+          ],
+          "size": [
+            8.0,
+            2.0,
+            2.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              2.0,
+              20.0,
+              -2.0,
+              2.0
+            ],
+            "east": [
+              12.0,
+              20.0,
+              -2.0,
+              2.0
+            ],
+            "north": [
+              10.0,
+              20.0,
+              -8.0,
+              2.0
+            ],
+            "south": [
+              20.0,
+              20.0,
+              -8.0,
+              2.0
+            ],
+            "up": [
+              10.0,
+              18.0,
+              -8.0,
+              2.0
+            ],
+            "down": [
+              18.0,
+              20.0,
+              -8.0,
+              -2.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "tent8",
+      "parent": null,
+      "pivot": [
+        -3,
+        9,
+        -4
+      ],
+      "rotation": [
+        10.9999989848,
+        38.9999995257,
+        0
+      ],
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            -4.0,
+            8.0,
+            -12.0
+          ],
+          "size": [
+            2.0,
+            2.0,
+            8.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              8.0,
+              26.0,
+              -8.0,
+              2.0
+            ],
+            "east": [
+              18.0,
+              26.0,
+              -8.0,
+              2.0
+            ],
+            "north": [
+              10.0,
+              26.0,
+              -2.0,
+              2.0
+            ],
+            "south": [
+              20.0,
+              26.0,
+              -2.0,
+              2.0
+            ],
+            "up": [
+              10.0,
+              18.0,
+              -2.0,
+              8.0
+            ],
+            "down": [
+              12.0,
+              26.0,
+              -2.0,
+              -8.0
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "locked_bones": [],
+  "lock_mode": "warn",
+  "lock_policy": "warn-keyed, refuse-structural",
+  "lock_policy_text": "Keying a locked bone is allowed; the checker warns, and the hitbox part follows the bone in-game (the consequence, so keep such keys deliberate). Renaming, re-parenting or deleting a locked bone is refused.",
+  "keyed_locked_by_shipped_clip": {},
+  "native": false,
+  "controller_kind": "phase_locked",
+  "clips": [
+    {
+      "name": "idle",
+      "loop": "true",
+      "role": "contract",
+      "code_triggered": false,
+      "required": true,
+      "length_rule": "near:1.0",
+      "length_seconds": 1.0,
+      "verdict": "author"
+    },
+    {
+      "name": "idle_body_pitch",
+      "loop": "true",
+      "role": "contract",
+      "code_triggered": false,
+      "required": false,
+      "length_rule": "near:1.0",
+      "length_seconds": 1.0,
+      "verdict": "author"
+    },
+    {
+      "name": "idle_body_roll",
+      "loop": "true",
+      "role": "contract",
+      "code_triggered": false,
+      "required": false,
+      "length_rule": "near:1.0",
+      "length_seconds": 1.0,
+      "verdict": "author"
+    },
+    {
+      "name": "walk",
+      "loop": "true",
+      "role": "contract",
+      "code_triggered": false,
+      "required": true,
+      "length_rule": "near:1.0",
+      "length_seconds": 1.0,
+      "verdict": "author"
+    },
+    {
+      "name": "walk_body_pitch",
+      "loop": "true",
+      "role": "contract",
+      "code_triggered": false,
+      "required": false,
+      "length_rule": "near:1.0",
+      "length_seconds": 1.0,
+      "verdict": "author"
+    },
+    {
+      "name": "walk_body_roll",
+      "loop": "true",
+      "role": "contract",
+      "code_triggered": false,
+      "required": false,
+      "length_rule": "near:1.0",
+      "length_seconds": 1.0,
+      "verdict": "author"
+    },
+    {
+      "name": "swim",
+      "loop": "true",
+      "role": "contract",
+      "code_triggered": false,
+      "required": false,
+      "length_rule": "near:1.0",
+      "length_seconds": 1.0,
+      "verdict": "author"
+    },
+    {
+      "name": "aggro_idle",
+      "loop": "true",
+      "role": "contract",
+      "code_triggered": false,
+      "required": false,
+      "length_rule": "near:1.0",
+      "length_seconds": 1.0,
+      "verdict": "author"
+    },
+    {
+      "name": "calm_idle",
+      "loop": "true",
+      "role": "contract",
+      "code_triggered": false,
+      "required": false,
+      "length_rule": "near:1.0",
+      "length_seconds": 1.0,
+      "verdict": "author"
+    },
+    {
+      "name": "attack",
+      "loop": "false",
+      "role": "contract",
+      "code_triggered": true,
+      "required": false,
+      "length_rule": "near:0.5",
+      "length_seconds": 0.5,
+      "verdict": "author"
+    },
+    {
+      "name": "hurt",
+      "loop": "false",
+      "role": "contract",
+      "code_triggered": true,
+      "required": false,
+      "length_rule": "near:0.3",
+      "length_seconds": 0.3,
+      "verdict": "author"
+    },
+    {
+      "name": "death",
+      "loop": "hold_on_last_frame",
+      "role": "contract",
+      "code_triggered": true,
+      "required": false,
+      "length_rule": "near:1.0",
+      "length_seconds": 1.0,
+      "verdict": "author"
+    },
+    {
+      "name": "spit",
+      "loop": "false",
+      "role": "extra",
+      "code_triggered": false,
+      "required": false,
+      "length_rule": "near:0.5",
+      "length_seconds": 0.5,
+      "verdict": "author"
+    }
+  ],
+  "allow_idle_alt": true,
+  "textures": [
+    {
+      "canonical": "attacksquid.png",
+      "width": 64,
+      "height": 32,
+      "aliases": []
+    }
+  ],
+  "effort_hours": 18.8,
+  "effort_source": "generator: 4 h + 0.2 h/bone x 9 + 1 h/clip x 13 to author or improve (owner adjusts)",
+  "reference_clip": null,
+  "exact_transcription": false,
+  "rig_source": "reference-leg converter output",
+  "in_game": false,
+  "reference_id": "reference_attacksquid",
+  "locked_bones_source": "none",
+  "locked_bones_provisional": []
+}

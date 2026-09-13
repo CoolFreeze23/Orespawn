@@ -1,0 +1,176 @@
+{
+  "registry": "hammerhead",
+  "display_name": "Hammerhead",
+  "status": "DRAFT — authored by a seed lane from the entity code, 2026-09-13; the owner's edit pending",
+  "locomotion": "walker",
+  "artist_scope": "full contract (Tier 1, the gait-scaled class: geckolib_migration_design.md section 5) with the §8.1 locks; the rig is not yet in-game (it lands through the seam in a later slice)",
+  "character_sheet": "The Hammerhead is a wide, armoured six-legged beast with a hammer for a head: a chest and abdomen under three rows of back armour and two rear fins, a neck in a collar of armour, a head and snout carrying a horn base with two great horn bars and a horn tip each side, a three-blade crest fan and two whisker ears, six two-piece legs (front, middle and rear pairs) and a stub tail (ModelHammerhead.createBodyLayer, ModelHammerhead.java:100-252). It has 240 HP, 75 attack and 20 armour (MobStats.HAMMERHEAD, createAttributes Hammerhead.java:76-85) and no boss bar (:47-48), wanders far and looks about (:65-69), and every third tick takes its revenge target, its stored target or the nearest living thing in an 18-block box — players, monsters and the attackable non-mobs (customServerAiStep :127-164, isSuitableTarget :189-196) — closing at 1.25 and, within seven blocks plus half the target's width, raising the attacking flag and biting on two dice (:152-156) for 75 with a knockback (doHurtTarget :101-113). Cactus cannot hurt it and whoever does becomes its revenge target (hurt :116-124). It spawns at night in the dark above y 50 under a clear air column with no other Hammerhead within 16 blocks (checkSpawnRules :228-237) in the Chaos biome (chaos_biome.json). Read it as a low, heavy charger: the six legs scissor, the hammer head swings on the neck, and everything nods with the bite.",
+  "size_notes": "Drawn at x2.5 of the rig (HammerheadRenderer.java:25, applied :34-39; shadow 1.0 x 2.5) on a 222x256 sheet (ModelHammerhead.java:252); 3.0 x 5.0 block hitbox (ModEntities.java:107-109; the design's row writes [2.8,1.8] — the profile takes the registered size). The head assembly — neck, collar, horns, head, snout, fan and ears — is posed as one unit about the neck's pivot (:277-311).",
+  "labels": {
+    "chest": "chest (static; intended hitbox part 'chest')",
+    "abdomen": "abdomen (static; intended hitbox part 'abdomen')",
+    "neck": "neck (turns a quarter of the look yaw; nods 23 degrees about 0.157 while attacking)",
+    "neck_armour": "neck collar armour (with the neck)",
+    "head": "head (with the neck; about 0.209; intended hitbox part 'head')",
+    "snout": "snout (with the neck; about 0.611; intended hitbox part 'snout')",
+    "horn_base": "horn base plate (with the neck; about 0.087)",
+    "horn_1": "horn bar 1 (the 25-wide upper bar; with the neck)",
+    "horn_2": "horn bar 2 (the 37-wide lower bar; with the neck)",
+    "horn_L": "left horn tip (with the neck)",
+    "horn_R": "right horn tip (with the neck)",
+    "fan1": "crest fan, centre blade (with the neck; about −0.139; intended hitbox part 'fan1')",
+    "Lfan2": "crest fan, left blade 2 (with the neck, yawed −0.122)",
+    "Lfan3": "crest fan, left blade 3 (with the neck, yawed −0.226)",
+    "Rfan2": "crest fan, right blade 2 (with the neck, yawed +0.122)",
+    "Rfan3": "crest fan, right blade 3 (with the neck, yawed +0.226)",
+    "Lear": "left whisker ear (with the neck, yawed +0.227)",
+    "Rear": "right whisker ear (with the neck, yawed −0.227)",
+    "back_armour1": "back armour, front plate (static)",
+    "back_armour_2": "back armour, main plate (static)",
+    "back_armour_3": "back armour, left side rail (static)",
+    "back_armour_3R": "back armour, right side rail (static)",
+    "back_armour_4": "left rear fin (sways 5 degrees about +0.349)",
+    "back_armour_4R": "right rear fin (sways 5 degrees about −0.349)",
+    "tail": "tail stub (static; intended hitbox part 'tail')",
+    "leg_1": "front left leg, upper (the stride about −0.087; intended hitbox part)",
+    "leg_1b": "front left leg, lower (intended hitbox part)",
+    "leg_1R": "front right leg, upper (opposite the left; intended hitbox part)",
+    "leg_1Rb": "front right leg, lower (intended hitbox part)",
+    "leg_2": "middle left leg, upper (an eighth of a period ahead; about −0.052; intended hitbox part)",
+    "leg_2b": "middle left leg, lower (intended hitbox part)",
+    "leg_2R": "middle right leg, upper (intended hitbox part)",
+    "leg_2Rb": "middle right leg, lower (intended hitbox part)",
+    "leg_3": "rear left leg, upper (opposite the front left; about −0.349; intended hitbox part)",
+    "leg_3b": "rear left leg, lower (intended hitbox part)",
+    "leg_3R": "rear right leg, upper (intended hitbox part)",
+    "leg_3Rb": "rear right leg, lower (intended hitbox part)"
+  },
+  "groups": [
+    {
+      "name": "gait",
+      "bones": [
+        "leg_1", "leg_1b", "leg_1R", "leg_1Rb", "leg_2", "leg_2b", "leg_2R", "leg_2Rb", "leg_3", "leg_3b", "leg_3R", "leg_3Rb"
+      ],
+      "omega": 0.429,
+      "axis": "x",
+      "gait_scaled": true,
+      "amplitude": "pi x 0.1 = 0.314 rad (18 deg) x the walking speed above a 0.1 threshold (zero below it): the front left and rear right legs swing +a about their rests (−0.087 / −0.349 on the upper piece, 0 on the lower), the front right and rear left −a; the middle pair swings on a wave an eighth of a period ahead (+pi/4), left +, right −",
+      "plain": "the six legs scissor with the walking speed, upper and lower piece together: front-left with rear-right, front-right with rear-left, the middle pair on its own phase",
+      "math": "a = amount > 0.1 ? cos(t * 1.3 * 0.33) * pi * 0.1 * amount : 0; a2 = amount > 0.1 ? cos(t * 1.3 * 0.33 + pi/4) * pi * 0.1 * amount : 0; leg_1.xRot = -0.087 + a, leg_1b.xRot = a; leg_1R.xRot = -0.087 - a, leg_1Rb.xRot = -a; leg_2.xRot = -0.052 + a2, leg_2b.xRot = a2; leg_2R.xRot = -0.052 - a2, leg_2Rb.xRot = -a2; leg_3.xRot = -0.349 - a, leg_3b.xRot = -a; leg_3R.xRot = -0.349 + a, leg_3Rb.xRot = a",
+      "source": "ModelHammerhead.java:259-276; wingspeed 0.33 (:21)",
+      "wingspeed": 0.33,
+      "omega_note": "the classic phase is ageInTicks x 1.3 x wingspeed 0.33 = 0.429 rad/tick: the natural period is 2 pi / 0.429 = 14.65 ticks"
+    },
+    {
+      "name": "rear_fins",
+      "bones": [
+        "back_armour_4", "back_armour_4R"
+      ],
+      "omega": 0.099,
+      "axis": "y",
+      "gait_scaled": false,
+      "amplitude": "pi x 0.03 = 0.094 rad (5.4 deg) about +0.349 (left) and −0.349 (right, the negative wave)",
+      "plain": "the two rear fins sway slowly in and out together",
+      "math": "f = cos(t * 0.3 * 0.33) * pi * 0.03; back_armour_4.yRot = 0.349 + f; back_armour_4R.yRot = -0.349 - f",
+      "source": "ModelHammerhead.java:292-294",
+      "wingspeed": 0.33,
+      "omega_note": "the classic phase is ageInTicks x 0.3 x wingspeed 0.33 = 0.099 rad/tick: the natural period is 63.5 ticks"
+    },
+    {
+      "name": "head_nod",
+      "bones": [
+        "neck", "neck_armour", "horn_base", "horn_1", "horn_2", "horn_L", "horn_R", "head", "snout", "fan1", "Lfan2", "Lfan3", "Rfan2", "Rfan3", "Lear", "Rear"
+      ],
+      "omega": 0.429,
+      "axis": "x",
+      "gait_scaled": false,
+      "amplitude": "attacking: pi x 0.13 = 0.408 rad (23 deg) added to every part's rest pitch (neck and collar 0.157, horn base 0.087, horn bars and tips 0.192, head 0.209, snout 0.611, fan centre −0.139, fan blades −0.209 / −0.331, ears 0.366); not attacking: the rests, still",
+      "plain": "the whole head assembly — neck, collar, horns, head, snout, fan and ears — nods as one while the attacking flag is set and holds its rest otherwise; it also turns a quarter of the look yaw at all times",
+      "math": "n = attacking ? cos(t * 1.3 * 0.33) * pi * 0.13 : 0; neck.xRot = neck_armour.xRot = n + 0.157; horn_base.xRot = n + 0.087; horn_1/2/L/R.xRot = n + 0.192; head.xRot = n + 0.209; snout.xRot = n + 0.611; fan1.xRot = n - 0.139; Lfan2/Rfan2.xRot = n - 0.209; Lfan3/Rfan3.xRot = n - 0.331; Lear/Rear.xRot = n + 0.366; every part's yRot = look yaw x 0.25 (fans and ears with their own offsets)",
+      "source": "ModelHammerhead.java:277-291 (the yaw), :295-311 (the nod)",
+      "phase": "the synced DATA_ATTACKING byte (Hammerhead.java:42, set at :153 within reach, cleared at :161) selects the nod",
+      "wingspeed": 0.33,
+      "omega_note": "the classic phase is ageInTicks x 1.3 x wingspeed 0.33 = 0.429 rad/tick — the same rhythm as the stride (period 14.65 ticks)"
+    }
+  ],
+  "behaviour": [
+    "One speed-scaled stride at 0.429 rad/tick (a 14.7-tick period) above a walking-speed threshold of 0.1: the six legs scissor 18 degrees at top speed, upper and lower piece together, the front left with the rear right, the front right with the rear left, and the middle pair an eighth of a period ahead (ModelHammerhead.java:259-276). Standing still every leg rests.",
+    "The head assembly — neck, collar, horn base, two horn bars and two tips, head, snout, the three-blade fan and the two whisker ears — turns a quarter of the look yaw as one unit at all times (:277-291) and, while the synced DATA_ATTACKING byte is set (Hammerhead.java:42, raised at :153 within seven blocks plus half the target's width), nods 23 degrees at the stride's own 0.429 rad/tick about every part's rest pitch (:295-311); with the flag clear it holds the rest.",
+    "The two rear fins sway 5 degrees at 0.099 rad/tick (a 64-tick period) about ±0.349 (:292-294). The chest, abdomen, the three back armour plates and the tail stub are static; the walk position and the head pitch play no part.",
+    "The bite (doHurtTarget, Hammerhead.java:101-113) is rolled by the third-tick scan (:131-163) — nothing in the code fires an animation for it."
+  ],
+  "clips": [
+    {
+      "name": "idle",
+      "verdict": "author",
+      "note": "REQUIRED with walk: the gate opens on the pair — the standing rest: the rear fins' slow sway, the head on the look, the legs planted"
+    },
+    {
+      "name": "walk",
+      "verdict": "author",
+      "note": "REQUIRED with idle: the gait group's six-legged scissor (three phases, :259-276)"
+    },
+    {
+      "name": "swim",
+      "verdict": "leave",
+      "note": "no swim state: FloatGoal (Hammerhead.java:66) only bobs it to the surface; the contract's fallback to walk stands"
+    },
+    {
+      "name": "aggro_idle",
+      "verdict": "author",
+      "note": "the attacking flag (Hammerhead.java:153, within seven blocks plus half the target's width): the whole head assembly nodding 23 degrees at the stride's rhythm (ModelHammerhead.java:295-311)"
+    },
+    {
+      "name": "calm_idle",
+      "verdict": "author",
+      "note": "the flag clear (:161): the head at rest (:295, the zero branch), the fins swaying"
+    },
+    {
+      "name": "attack",
+      "verdict": "author",
+      "note": "the bite: doHurtTarget (Hammerhead.java:101-113) from customServerAiStep :154-155 on two dice within seven blocks plus half the target's width — 75 of damage and a 1.1 / 0.85 knockback; author a hammer-head swing with a snap of the snout",
+      "length_seconds": 0.6
+    },
+    {
+      "name": "hurt",
+      "verdict": "author",
+      "note": "a flinch to alo_hurt (getHurtSound :212-215); hurt() (:116-124) stores the attacker as the revenge target",
+      "length_seconds": 0.4
+    },
+    {
+      "name": "death",
+      "verdict": "author",
+      "note": "ruled 2026-09-06, Q3 (a): the vanilla death flip stays; a creature whose JSON ships a `death` clip gets the clip-replaces-flip mode, designed when the first such clip arrives (the Queen's own death clip the precedent) - a `death` delivered here plays under the flip until then",
+      "length_seconds": 1.5
+    }
+  ],
+  "extras": [],
+  "wishlist": [
+    "in `walk`: a low, heavy charge — the six-leg scissor (ModelHammerhead.java:259-276) with the chest rolling a few degrees and the hammer head swaying against the stride",
+    "in `aggro_idle`: the head-nod the attacking branch shows (:295-311) made into a menacing bob, the fan blades spreading",
+    "in `attack`: a hammer-head swing — the head assembly swept sideways on the neck and a snap of the snout; the bite lands within seven blocks plus half the target's width (Hammerhead.java:151-155)",
+    "in `idle`: a slow breath on the chest and abdomen; the code holds the body static"
+  ],
+  "locked_bones_provisional": [
+    {"bone": "head", "size": [1.5, 1], "damage": 1},
+    {"bone": "snout", "size": [1.5, 1], "damage": 1},
+    {"bone": "chest", "size": [2.5, 1.3], "damage": 0.5},
+    {"bone": "abdomen", "size": [2.5, 1.3], "damage": 0.5},
+    {"bone": "leg_1", "size": [0.4, 0.8], "damage": 0.5},
+    {"bone": "leg_1b", "size": [0.4, 0.8], "damage": 0.5},
+    {"bone": "leg_1R", "size": [0.4, 0.8], "damage": 0.5},
+    {"bone": "leg_1Rb", "size": [0.4, 0.8], "damage": 0.5},
+    {"bone": "leg_2", "size": [0.4, 0.8], "damage": 0.5},
+    {"bone": "leg_2b", "size": [0.4, 0.8], "damage": 0.5},
+    {"bone": "leg_2R", "size": [0.4, 0.8], "damage": 0.5},
+    {"bone": "leg_2Rb", "size": [0.4, 0.8], "damage": 0.5},
+    {"bone": "leg_3", "size": [0.4, 0.8], "damage": 0.5},
+    {"bone": "leg_3b", "size": [0.4, 0.8], "damage": 0.5},
+    {"bone": "leg_3R", "size": [0.4, 0.8], "damage": 0.5},
+    {"bone": "leg_3Rb", "size": [0.4, 0.8], "damage": 0.5},
+    {"bone": "tail", "size": [0.8, 0.6], "damage": 0.25},
+    {"bone": "fan1", "size": [1, 0.4], "damage": 0.25}
+  ],
+  "locked_bones_note": "The design's section 6 ModelHammerhead row (geckolib_migration_design.md:449): 'head/snout [1.5,1] @1; chest/abdomen [2.5,1.3] @0.5; six upper/lower leg pairs [0.4,0.8] @0.5; tail [0.8,0.6] @0.25; fan root [1,0.4] @0.25'. head, snout, chest, abdomen and tail resolve as written. 'six upper/lower leg pairs' is not a bone name: taken as the twelve leg pieces — leg_1 / leg_1b, leg_1R / leg_1Rb, leg_2 / leg_2b, leg_2R / leg_2Rb, leg_3 / leg_3b, leg_3R / leg_3Rb (upper and lower, ModelHammerhead.createBodyLayer; the 'b' suffix is the lower piece). 'fan root' is not a bone name: taken as fan1, the centre blade of the crest fan (the blades Lfan2 / Lfan3 / Rfan2 / Rfan3 stay visual). The row writes the main size as [2.8,1.8]; the registration is 3.0 x 5.0 (ModEntities.java:107-109) — the profile takes the registered size (the shared laws).",
+  "effort_hours": null
+}

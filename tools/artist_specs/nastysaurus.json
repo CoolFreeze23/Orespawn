@@ -1,0 +1,194 @@
+{
+  "registry": "nastysaurus",
+  "display_name": "Nastysaurus",
+  "status": "DRAFT — authored by a seed lane from the entity code, 2026-09-13; the owner's edit pending",
+  "locomotion": "walker",
+  "artist_scope": "full contract (Tier 2, the state-branching class: geckolib_migration_design.md section 5); the rig is not yet in-game (it lands through the seam in a later slice)",
+  "character_sheet": "A hostile theropod the size of a house: a chest and a belly, a three-piece neck to a long skull with a hinged two-piece lower jaw and twenty-three teeth, two three-piece legs on seven-piece clawed feet, a four-piece tail and three back spikes (ModelNastysaurus.java:152-386, 59 parts), drawn at x1.5. 200 HP, 32 damage, 17 armour, speed 0.35 (Nastysaurus.java:266-275). On a 1-in-5 tick it picks the nearest living thing in a 32-block box - anything but its own kind, the Cryolophosaurus, the Velocity Raptor and a creative player (:141-175, :240-264) - chases it at 1.25 and, within 4.5 blocks plus half the target's width, rolls its bite on a 1-in-5 cadence (:89-90; DinosaurMeleeAttackGoal.Presets.nastysaurus; BugMeleeAttackGoal.java:159-174), landing 32 with a 1.2 knockback (:311-326). The synched DATA_ATTACKING int (:41-42) is held at 1 while it stands in reach and dropped when it chases or stands down (BugMeleeAttackGoal.java:132, :145, :168, :176). It spawns in the dark at night above y 50 under five blocks of clear air, no other within 16 (:358-368; ModEntities.java:117-118). Read it as a big theropod: a heavy two-legged stride with the feet lifting and sliding, the tail counter-swinging, the jaws working.",
+  "size_notes": "Drawn at x1.5 of the rig (NastysaurusRenderer.java:20, :30; shadow 1.5, :23) on a 512x256 sheet (ModelNastysaurus.java:388), nastysaurus.png (NastysaurusRenderer.java:15); the hitbox is 2.2 x 4.6 (ModEntities.java:117-118). The legs are position chains the code re-places each tick (ModelNastysaurus.java:472-492, :503-523): key the joints, not the positions.",
+  "labels": {
+    "body": "chest (12x17x9, pitched back 18 deg; static)",
+    "body2": "belly (12x18x16 behind the chest; static)",
+    "neck1": "neck, base (10x12x15 raked up 48 deg; static)",
+    "neck2": "neck, middle (raked 45 deg; yaws with half the head's turn)",
+    "neck3": "neck, top (6x6x8; yaws with the head)",
+    "head7": "skull, back (8x7x10; yaws with the head)",
+    "head3": "skull, upper jaw (6x6x17, pitched down 14 deg; yaws with the look at 0.35 of the head yaw; no pitch)",
+    "jaw1": "lower jaw, main piece (6x3x15; the jaw group)",
+    "jaw5": "lower jaw, second piece (the jaw group)",
+    "tooth1": "upper tooth 1 (rides the upper jaw)",
+    "tooth2": "upper tooth 2 (rides the upper jaw)",
+    "tooth3": "upper tooth 3 (rides the upper jaw)",
+    "tooth4": "upper tooth 4 (rides the upper jaw)",
+    "tooth5": "upper tooth 5 (rides the upper jaw)",
+    "tooth6": "upper tooth 6 (rides the upper jaw)",
+    "tooth7": "upper tooth 7 (rides the upper jaw)",
+    "tooth8": "upper tooth 8 (rides the upper jaw)",
+    "tooth9": "upper tooth 9 (rides the upper jaw)",
+    "tooth10": "upper tooth 10 (rides the upper jaw)",
+    "tooth11": "upper tooth 11 (rides the upper jaw)",
+    "tooth12": "upper tooth 12 (rides the upper jaw)",
+    "tooth13": "upper tooth 13 (rides the upper jaw)",
+    "tooth14": "lower tooth 14 (rides the lower jaw; the jaw group)",
+    "tooth15": "lower tooth 15 (the jaw group)",
+    "tooth16": "lower tooth 16 (the jaw group)",
+    "tooth17": "lower tooth 17 (the jaw group)",
+    "tooth18": "lower tooth 18 (the jaw group)",
+    "tooth19": "lower tooth 19 (the jaw group)",
+    "tooth20": "lower tooth 20 (the jaw group)",
+    "tooth21": "lower tooth 21 (the jaw group)",
+    "tooth22": "lower tooth 22 (the jaw group)",
+    "tooth23": "lower tooth 23 (the jaw group)",
+    "leftleg1": "left thigh (6x11x11, rest -0.576; the gait, placed 17 up the lower leg each tick)",
+    "leftleg2": "left shin (5x13x7, rest 0.977; the gait, placed with the thigh)",
+    "leftleg3": "left lower leg (4x18x6 from the foot, rest -0.523; the gait's main swing)",
+    "lclaw1": "left foot, centre pad (2x3x6; the foot the code lifts and slides with the stride)",
+    "lclaw2": "left foot, middle toe (4x4x13; rides the foot)",
+    "lclaw3": "left foot, inner toe (rides the foot)",
+    "lclaw4": "left foot, toe tip (rides the foot)",
+    "lclaw5": "left foot, inner claw (rides the foot)",
+    "lclaw6": "left foot, outer claw (rides the foot)",
+    "lclaw7": "left foot, heel spur (rides the foot)",
+    "rightleg1": "right thigh (the gait, half a cycle behind the left)",
+    "rightleg2": "right shin (the gait)",
+    "rightleg3": "right lower leg (the gait's main swing)",
+    "rclaw1": "right foot, centre pad (lifted and slid with the stride)",
+    "rclaw2": "right foot, middle toe (rides the foot)",
+    "rclaw3": "right foot, inner toe (rides the foot)",
+    "rclaw4": "right foot, toe tip (rides the foot)",
+    "rclaw5": "right foot, inner claw (rides the foot)",
+    "rclaw6": "right foot, outer claw (rides the foot)",
+    "rclaw7": "right foot, heel spur (rides the foot)",
+    "tail1": "tail, base (10x12x14; static)",
+    "tail2": "tail, second piece (static)",
+    "tail3": "tail, third piece (6x8x12; sways at half the tail wave)",
+    "tail4": "tail, tip (4x6x16, placed 11 along the third piece's yaw; sways at the full wave)",
+    "Spike1": "back spike, front (4x16x18 on the chest, raked 29 deg; static)",
+    "Spike2": "back spike, middle (raked 28 deg; static)",
+    "Spike3": "back spike, rear (2x8x7 on the tail base; static)"
+  },
+  "groups": [
+    {
+      "name": "gait",
+      "bones": ["leftleg1", "leftleg2", "leftleg3", "lclaw1", "lclaw2", "lclaw3", "lclaw4", "lclaw5", "lclaw6", "lclaw7", "rightleg1", "rightleg2", "rightleg3", "rclaw1", "rclaw2", "rclaw3", "rclaw4", "rclaw5", "rclaw6", "rclaw7"],
+      "omega": 0.325,
+      "axis": "x (and the foot's y / z position)",
+      "gait_scaled": true,
+      "amplitude": "lower leg: pi x 0.15 = 0.471 rad (27 deg) x the walking speed about -0.523; thigh and shin: pi x 0.06 = 0.188 rad (11 deg) x the speed about -0.576 and 0.977; the foot (all seven claw pieces) slides 10 px fore-aft (5 x pscale 2) with the cosine and lifts 4 px (2 x 2) x the speed on the positive half of the sine; the thigh and shin are placed 17 px up the lower leg's angle each tick; the right leg runs half a cycle behind (+ pi); no threshold (> 0.001)",
+      "plain": "a heavy two-legged stride: each lower leg swings from its foot, the foot sliding forward and back and lifting on the up-swing, the thigh and shin following at a smaller angle; the right leg in counter-phase",
+      "math": "c = cos(t * 0.65 / 2) (right: + pi), s = sin(...), both 0 when amount <= 0.001; lclaw*.y = 21 - (s > 0 ? s * 4 * amount : 0); lclaw*.z = 15 + 10 * c * amount; leftleg3.y/z = lclaw1.y/z; leftleg3.xRot = -0.523 + c * pi * 0.15 * amount; leftleg1.xRot = -0.576 + c * pi * 0.06 * amount; leftleg2.xRot = 0.977 + c * pi * 0.06 * amount; leftleg1/2.y = leftleg3.y - cos(leftleg3.xRot) * 17; leftleg1/2.z = leftleg3.z - sin(leftleg3.xRot) * 17; the right leg likewise; every claw xRot = 0",
+      "source": "ModelNastysaurus.java:461-529; wingspeed 0.65 (:25), pscale 2 (:394), clawZ 15 / clawY 21 / clawZamp 10 / clawYamp 4 (:397-400)",
+      "wingspeed": 0.65,
+      "omega_note": "the classic phase is ageInTicks x 0.65 / 2 = 0.325: the natural period is 2 pi / 0.325 = 19.3 ticks"
+    },
+    {
+      "name": "jaw",
+      "bones": ["jaw1", "jaw5", "tooth14", "tooth15", "tooth16", "tooth17", "tooth18", "tooth19", "tooth20", "tooth21", "tooth22", "tooth23"],
+      "omega": 0.5525,
+      "axis": "x",
+      "gait_scaled": false,
+      "amplitude": "attacking: pi x 0.16 = 0.503 rad (29 deg) about a 0.5 rad open rest at 0.85 x 0.65 = 0.5525 rad/tick; not attacking: shut at pi/16 = 0.196 rad, except that on one wrap in twenty of a 13.8-tick phase clock (0.7 x 0.65) the jaw runs one sine cycle of the same 29-degree chomp (a per-entity latch)",
+      "plain": "the lower jaw and its ten teeth chomp wide and fast while the attacking flag is up; shut at rest, with a random single chomp now and then",
+      "math": "a = attacking ? 0.5 + cos(t * 0.85 * 0.65) * pi * 0.16 : (latch ? 0.5 + sin(t * 0.85 * 0.65) * pi * 0.16 : pi / 16); jaw1.xRot = jaw5.xRot = tooth14..23.xRot = a; the latch: phase = |t * 0.7 * 0.65 mod 2pi|; on each wrap (phase < last) ri1 = nextInt(20) == 1",
+      "source": "ModelNastysaurus.java:431-459; the RenderInfo latch (:404; Nastysaurus.java:46-55, :346-349)",
+      "phase": "the synched DATA_ATTACKING int (Nastysaurus.java:41-42, held at 1 within reach: BugMeleeAttackGoal.java:168, dropped :132 / :145 / :176) selects the chomp; the idle twitch is a client-side roll",
+      "wingspeed": 0.65,
+      "omega_note": "the classic phase is ageInTicks x 0.85 x 0.65 = 0.5525: the natural period is 11.4 ticks; the idle latch's clock is x 0.7 x 0.65 = 0.455 (13.8 ticks per wrap)"
+    },
+    {
+      "name": "tail",
+      "bones": ["tail3", "tail4"],
+      "omega": 0.169,
+      "axis": "y",
+      "gait_scaled": false,
+      "amplitude": "calm: tail3 pi x 0.08 / 2 = 0.126 rad (7 deg), tail4 pi x 0.08 = 0.251 rad (14 deg) at 0.26 x 0.65 = 0.169 rad/tick; attacking: tail3 pi x 0.25 / 2 = 0.393 rad (22 deg), tail4 pi x 0.25 = 0.785 rad (45 deg) at 0.76 x 0.65 = 0.494 rad/tick; the tip is placed 11 px along the third piece's yaw",
+      "plain": "the last two tail pieces sway side to side, the tip twice as far as the piece before it: slow and small at rest, fast and wide while attacking",
+      "math": "ts, amp = attacking ? (0.76, 0.25) : (0.26, 0.08); tail3.yRot = cos(t * ts * 0.65) * pi * amp / 2; tail4.z = tail3.z + cos(tail3.yRot) * 11; tail4.x = tail3.x + sin(tail3.yRot) * 11; tail4.yRot = cos(t * ts * 0.65) * pi * amp",
+      "source": "ModelNastysaurus.java:540-551",
+      "phase": "the synched DATA_ATTACKING int selects the rate and width",
+      "wingspeed": 0.65,
+      "omega_note": "the classic phase is ageInTicks x 0.26 x 0.65 calm (a 37-tick period) and x 0.76 x 0.65 attacking (a 12.7-tick period)"
+    }
+  ],
+  "behaviour": [
+    "One gait rhythm with no threshold (ModelNastysaurus.java:461-529): each lower leg swings 27 degrees x the walking speed from its foot at 0.325 rad/tick (a 19-tick period), the thigh and shin 11 degrees, the whole foot of seven claw pieces sliding 10 px fore-aft and lifting 4 px on the up-swing; the thigh and shin are re-placed 17 px up the lower leg each tick; the right leg runs half a cycle behind the left.",
+    "Two branches on the synched DATA_ATTACKING int (Nastysaurus.java:41-42), which the melee goal holds at 1 while the dinosaur stands within 4.5 blocks plus half the target's width and drops when it chases or the goal stops (BugMeleeAttackGoal.java:132, :145, :168, :176): attacking, the lower jaw and its ten teeth chomp 29 degrees about a half-open rest at 0.5525 rad/tick (:431-433, :452-459) and the last two tail pieces lash 22 and 45 degrees at 0.494 rad/tick (:540-543, :548-551); calm, the jaw sits shut at 11 degrees and the tail sways 7 and 14 degrees at 0.169 rad/tick (:544-546).",
+    "At rest the jaw has a random twitch: a per-entity latch (:404, :437-450; Nastysaurus.java:46-55) rerolls one chance in twenty on every wrap of a 13.8-tick phase clock and, when it hits, runs one sine cycle of the attacking chomp - a client-side roll, not a synched state.",
+    "The head turns with the look at 0.35 of the head yaw: the middle neck takes half of it, the top neck, both skull pieces, the lower jaw and all twenty-three teeth the full angle (:406-429); nothing pitches. The chest, belly, neck base, the first two tail pieces and the three back spikes are static.",
+    "The bite is doHurtTarget (Nastysaurus.java:311-326: 32 of damage and a 1.2 knockback) from the goal's swing roll (BugMeleeAttackGoal.java:170-173, nextInt(4) == 0 or nextInt(5) == 1 on a 1-in-5 cadence tick in reach) - no animation event today."
+  ],
+  "clips": [
+    {
+      "name": "idle",
+      "verdict": "author",
+      "note": "REQUIRED with walk: the gate opens on the pair (today nothing ships; the classic code plays) — the calm stand: jaw shut (ModelNastysaurus.java:457), the tail's slow 7/14-degree sway (:544-551), the legs at their rests"
+    },
+    {
+      "name": "walk",
+      "verdict": "author",
+      "note": "REQUIRED with idle: the locomotion loop — the two-legged stride with the feet lifting and sliding at 0.325 rad/tick (:461-529); the reference clip is that stride at full walking speed"
+    },
+    {
+      "name": "swim",
+      "verdict": "leave",
+      "note": "no swim behaviour beyond the FloatGoal that keeps it at the surface (Nastysaurus.java:88); the code draws the same stride in water; the fallback to walk covers it (section 2.4)"
+    },
+    {
+      "name": "aggro_idle",
+      "verdict": "author",
+      "note": "DATA_ATTACKING held at 1 while it stands in reach of its target (Nastysaurus.java:41-42, :351-353; BugMeleeAttackGoal.java:168): the jaw chomping 29 degrees at 0.5525/tick (ModelNastysaurus.java:431-433) and the tail lashing 45 degrees at 0.494/tick (:540-543)"
+    },
+    {
+      "name": "calm_idle",
+      "verdict": "author",
+      "note": "the flag at 0 (BugMeleeAttackGoal.java:132, :145, :176): the jaw shut at pi/16 (ModelNastysaurus.java:457) and the tail's slow sway (:544-546); the random idle chomp (:437-450) is the `jaw_twitch` extra"
+    },
+    {
+      "name": "attack",
+      "verdict": "author",
+      "note": "the bite: doHurtTarget (Nastysaurus.java:311-326) for 32 with a 1.2 knockback, rolled by the melee goal within 4.5 blocks plus half the target's width on a 1-in-5 cadence tick (BugMeleeAttackGoal.java:159-174; Presets.nastysaurus); the flag is held while in reach, not pulsed at the strike, so the strike is transport 1 (the server LivingDamageEvent.Post) — a head lunge with the jaws closing",
+      "length_seconds": 0.6
+    },
+    {
+      "name": "hurt",
+      "verdict": "author",
+      "note": "a flinch: hurt() (Nastysaurus.java:328-340) refuses cactus and stores the attacker as the revenge target; the alo_hurt sound at 1.5 volume (:296-299, :306-309); the hurtTime edge is client-observed",
+      "length_seconds": 0.4
+    },
+    {
+      "name": "death",
+      "verdict": "author",
+      "note": "ruled 2026-09-06, Q3 (a): the vanilla death flip stays; a creature whose JSON ships a `death` clip gets the clip-replaces-flip mode, designed when the first such clip arrives (the Queen's own death clip the precedent) - a `death` delivered here plays under the flip until then",
+      "length_seconds": 1.5
+    }
+  ],
+  "extras": [
+    {
+      "name": "jaw_twitch",
+      "loop": "false",
+      "layer": "overlay",
+      "bones": ["jaw1", "jaw5", "tooth14", "tooth15", "tooth16", "tooth17", "tooth18", "tooth19", "tooth20", "tooth21", "tooth22", "tooth23", "head3", "head7"],
+      "length_seconds": 0.7,
+      "code_triggered": false,
+      "trigger": "the idle jaw latch (ModelNastysaurus.java:437-450): on every wrap of a 13.8-tick phase clock, one chance in twenty (nextInt(20) == 1) runs a single sine cycle of the 29-degree chomp while the attacking flag is 0; a client-side roll on the per-entity RenderInfo (Nastysaurus.java:46-55) — an idle variant when the rig lands (the idle_alt_N roll, ruled 2026-09-06, Q5 (a), is the natural home)",
+      "note": "one lazy chomp at rest"
+    },
+    {
+      "name": "roar",
+      "loop": "false",
+      "layer": "overlay",
+      "bones": ["neck2", "neck3", "head3", "head7", "jaw1", "jaw5"],
+      "length_seconds": 1.0,
+      "code_triggered": false,
+      "trigger": "getAmbientSound (Nastysaurus.java:288-294): the vanilla ambient roll answers alo_living one time in four, at 1.5 volume (:306-309); a sound the server plays, no animation hook today — a named site (transport 3) when the rig lands",
+      "note": "a head-up roar with the jaw wide"
+    }
+  ],
+  "wishlist": [
+    "in `walk`: the code's stride is stiff — the thigh and shin swing only 11 degrees (ModelNastysaurus.java:489-490) and the foot slides on the ground (:476, :485-487); a real theropod step with a knee bend and a foot plant, and a body bob to match the 1.5x scale",
+    "in `aggro_idle`: the 45-degree tail lash (:540-543, :551) and the chomp (:431-433) are there — add a lowered head and a stance shift so the reach-of-bite state reads as a threat",
+    "in `attack`: a head lunge on the bite — the neck is yaw-only in the code (:406-410); the bite lands 32 within 4.5 blocks plus half the target's width (Nastysaurus.java:311-326)",
+    "in `idle`: the back spikes and the first two tail pieces are static (:376-386, :200-207); a breath through the belly and a tail root sway"
+  ],
+  "effort_hours": null
+}

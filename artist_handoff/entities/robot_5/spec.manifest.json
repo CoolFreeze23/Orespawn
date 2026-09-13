@@ -1,0 +1,812 @@
+{
+  "generated_by": "tools/artist_package.py 0.2.9 (the full folder, 2026-09-13, fourth set, items 5, 7 and 8: every artist-tier species packaged - a rig not yet in-game from the reference leg's converter output, bone names final; the Tier-1 bosses' intended locked bones from the design's section 6 rendered in section 7 and validated against the geo; the README's priority table the full list, bosses first, closing with the deliverable count)",
+  "registry": "robot_5",
+  "display_name": "RoboSniper (Robot5)",
+  "tier": 3,
+  "tier_label": "Tier 3",
+  "geo_file": "robot5.geo.json",
+  "animation_file": "robot5.animation.json",
+  "bbmodel_file": "robot_5.bbmodel",
+  "texture_size": [
+    128,
+    128
+  ],
+  "bones": [
+    {
+      "name": "ammobox",
+      "parent": null,
+      "pivot": [
+        0,
+        24,
+        0
+      ],
+      "rotation": null,
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            -2.0,
+            23.0,
+            3.0
+          ],
+          "size": [
+            4.0,
+            3.0,
+            5.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              5.0,
+              5.0,
+              -5.0,
+              3.0
+            ],
+            "east": [
+              14.0,
+              5.0,
+              -5.0,
+              3.0
+            ],
+            "north": [
+              9.0,
+              5.0,
+              -4.0,
+              3.0
+            ],
+            "south": [
+              18.0,
+              5.0,
+              -4.0,
+              3.0
+            ],
+            "up": [
+              9.0,
+              0.0,
+              -4.0,
+              5.0
+            ],
+            "down": [
+              13.0,
+              5.0,
+              -4.0,
+              -5.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "axle",
+      "parent": null,
+      "pivot": [
+        0,
+        5,
+        0
+      ],
+      "rotation": null,
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            -6.0,
+            4.5,
+            -0.5
+          ],
+          "size": [
+            12.0,
+            1.0,
+            1.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              43.0,
+              1.0,
+              -1.0,
+              1.0
+            ],
+            "east": [
+              56.0,
+              1.0,
+              -1.0,
+              1.0
+            ],
+            "north": [
+              55.0,
+              1.0,
+              -12.0,
+              1.0
+            ],
+            "south": [
+              68.0,
+              1.0,
+              -12.0,
+              1.0
+            ],
+            "up": [
+              55.0,
+              0.0,
+              -12.0,
+              1.0
+            ],
+            "down": [
+              67.0,
+              1.0,
+              -12.0,
+              -1.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "barrel1",
+      "parent": null,
+      "pivot": [
+        0,
+        24,
+        0
+      ],
+      "rotation": null,
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            -1.0,
+            24.0,
+            -10.0
+          ],
+          "size": [
+            2.0,
+            2.0,
+            13.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              37.0,
+              38.0,
+              -13.0,
+              2.0
+            ],
+            "east": [
+              52.0,
+              38.0,
+              -13.0,
+              2.0
+            ],
+            "north": [
+              39.0,
+              38.0,
+              -2.0,
+              2.0
+            ],
+            "south": [
+              54.0,
+              38.0,
+              -2.0,
+              2.0
+            ],
+            "up": [
+              39.0,
+              25.0,
+              -2.0,
+              13.0
+            ],
+            "down": [
+              41.0,
+              38.0,
+              -2.0,
+              -13.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "barrel2",
+      "parent": null,
+      "pivot": [
+        0,
+        24,
+        0
+      ],
+      "rotation": null,
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            -0.5,
+            24.5,
+            -19.0
+          ],
+          "size": [
+            1.0,
+            1.0,
+            9.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              36.0,
+              52.0,
+              -9.0,
+              1.0
+            ],
+            "east": [
+              46.0,
+              52.0,
+              -9.0,
+              1.0
+            ],
+            "north": [
+              37.0,
+              52.0,
+              -1.0,
+              1.0
+            ],
+            "south": [
+              47.0,
+              52.0,
+              -1.0,
+              1.0
+            ],
+            "up": [
+              37.0,
+              43.0,
+              -1.0,
+              9.0
+            ],
+            "down": [
+              38.0,
+              52.0,
+              -1.0,
+              -9.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "drivebox",
+      "parent": null,
+      "pivot": [
+        0,
+        5,
+        0
+      ],
+      "rotation": null,
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            -2.0,
+            3.5,
+            -1.5
+          ],
+          "size": [
+            4.0,
+            3.0,
+            3.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              50.0,
+              7.0,
+              -3.0,
+              3.0
+            ],
+            "east": [
+              57.0,
+              7.0,
+              -3.0,
+              3.0
+            ],
+            "north": [
+              54.0,
+              7.0,
+              -4.0,
+              3.0
+            ],
+            "south": [
+              61.0,
+              7.0,
+              -4.0,
+              3.0
+            ],
+            "up": [
+              54.0,
+              4.0,
+              -4.0,
+              3.0
+            ],
+            "down": [
+              58.0,
+              7.0,
+              -4.0,
+              -3.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "lwheel1",
+      "parent": null,
+      "pivot": [
+        -6,
+        5,
+        0
+      ],
+      "rotation": null,
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            -8.0,
+            1.0,
+            -4.0
+          ],
+          "size": [
+            2.0,
+            8.0,
+            8.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              8.0,
+              31.0,
+              -8.0,
+              8.0
+            ],
+            "east": [
+              18.0,
+              31.0,
+              -8.0,
+              8.0
+            ],
+            "north": [
+              10.0,
+              31.0,
+              -2.0,
+              8.0
+            ],
+            "south": [
+              20.0,
+              31.0,
+              -2.0,
+              8.0
+            ],
+            "up": [
+              10.0,
+              23.0,
+              -2.0,
+              8.0
+            ],
+            "down": [
+              12.0,
+              31.0,
+              -2.0,
+              -8.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "lwheel2",
+      "parent": null,
+      "pivot": [
+        -6,
+        5,
+        0
+      ],
+      "rotation": [
+        45.0000020972,
+        0,
+        0
+      ],
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            -8.0,
+            1.0,
+            -4.0
+          ],
+          "size": [
+            2.0,
+            8.0,
+            8.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              8.0,
+              51.0,
+              -8.0,
+              8.0
+            ],
+            "east": [
+              18.0,
+              51.0,
+              -8.0,
+              8.0
+            ],
+            "north": [
+              10.0,
+              51.0,
+              -2.0,
+              8.0
+            ],
+            "south": [
+              20.0,
+              51.0,
+              -2.0,
+              8.0
+            ],
+            "up": [
+              10.0,
+              43.0,
+              -2.0,
+              8.0
+            ],
+            "down": [
+              12.0,
+              51.0,
+              -2.0,
+              -8.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "rwheel1",
+      "parent": null,
+      "pivot": [
+        8,
+        5,
+        0
+      ],
+      "rotation": null,
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            6.0,
+            1.0,
+            -4.0
+          ],
+          "size": [
+            2.0,
+            8.0,
+            8.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              8.0,
+              31.0,
+              -8.0,
+              8.0
+            ],
+            "east": [
+              18.0,
+              31.0,
+              -8.0,
+              8.0
+            ],
+            "north": [
+              10.0,
+              31.0,
+              -2.0,
+              8.0
+            ],
+            "south": [
+              20.0,
+              31.0,
+              -2.0,
+              8.0
+            ],
+            "up": [
+              10.0,
+              23.0,
+              -2.0,
+              8.0
+            ],
+            "down": [
+              12.0,
+              31.0,
+              -2.0,
+              -8.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "rwheel2",
+      "parent": null,
+      "pivot": [
+        8,
+        5,
+        0
+      ],
+      "rotation": [
+        45.0000020972,
+        0,
+        0
+      ],
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            6.0,
+            1.0,
+            -4.0
+          ],
+          "size": [
+            2.0,
+            8.0,
+            8.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              8.0,
+              51.0,
+              -8.0,
+              8.0
+            ],
+            "east": [
+              18.0,
+              51.0,
+              -8.0,
+              8.0
+            ],
+            "north": [
+              10.0,
+              51.0,
+              -2.0,
+              8.0
+            ],
+            "south": [
+              20.0,
+              51.0,
+              -2.0,
+              8.0
+            ],
+            "up": [
+              10.0,
+              43.0,
+              -2.0,
+              8.0
+            ],
+            "down": [
+              12.0,
+              51.0,
+              -2.0,
+              -8.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "stand",
+      "parent": null,
+      "pivot": [
+        0,
+        24,
+        0
+      ],
+      "rotation": null,
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            -0.5,
+            6.0,
+            -0.5
+          ],
+          "size": [
+            1.0,
+            18.0,
+            1.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              36.0,
+              1.0,
+              -1.0,
+              18.0
+            ],
+            "east": [
+              38.0,
+              1.0,
+              -1.0,
+              18.0
+            ],
+            "north": [
+              37.0,
+              1.0,
+              -1.0,
+              18.0
+            ],
+            "south": [
+              39.0,
+              1.0,
+              -1.0,
+              18.0
+            ],
+            "up": [
+              37.0,
+              0.0,
+              -1.0,
+              1.0
+            ],
+            "down": [
+              38.0,
+              1.0,
+              -1.0,
+              -1.0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "swivel",
+      "parent": null,
+      "pivot": [
+        0,
+        24,
+        0
+      ],
+      "rotation": null,
+      "locked": false,
+      "mirror": false,
+      "cubes": [
+        {
+          "origin": [
+            -1.0,
+            23.0,
+            -1.0
+          ],
+          "size": [
+            2.0,
+            1.0,
+            2.0
+          ],
+          "inflate": 0,
+          "pivot": null,
+          "rotation": null,
+          "faces": {
+            "west": [
+              24.0,
+              2.0,
+              -2.0,
+              1.0
+            ],
+            "east": [
+              28.0,
+              2.0,
+              -2.0,
+              1.0
+            ],
+            "north": [
+              26.0,
+              2.0,
+              -2.0,
+              1.0
+            ],
+            "south": [
+              30.0,
+              2.0,
+              -2.0,
+              1.0
+            ],
+            "up": [
+              26.0,
+              0.0,
+              -2.0,
+              2.0
+            ],
+            "down": [
+              28.0,
+              2.0,
+              -2.0,
+              -2.0
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "locked_bones": [],
+  "lock_mode": "warn",
+  "lock_policy": "warn-keyed, refuse-structural",
+  "lock_policy_text": "Keying a locked bone is allowed; the checker warns, and the hitbox part follows the bone in-game (the consequence, so keep such keys deliberate). Renaming, re-parenting or deleting a locked bone is refused.",
+  "keyed_locked_by_shipped_clip": {},
+  "native": false,
+  "controller_kind": "phase_locked",
+  "clips": [],
+  "allow_idle_alt": false,
+  "textures": [
+    {
+      "canonical": "robot5.png",
+      "width": 128,
+      "height": 128,
+      "aliases": [
+        "robot5texture.png"
+      ]
+    }
+  ],
+  "effort_hours": 0.0,
+  "effort_source": "seed (owner-set)",
+  "reference_clip": {
+    "file": "robot_5_reference.animation.json",
+    "sha256": "36f79313fcfa268ba9fe7ca9e1c8eb9c9bad9b30f9b3e649b4c2c66c6b272cb5",
+    "clip": "reference",
+    "reference_only": true,
+    "rule": "period_multiple",
+    "rule_note": "one channel: the wheels |limbSwing * 0.15F mod 2 pi| (a sawtooth that wraps every 2 pi / 0.15 = 41.9 ticks at limbSwing +1 per tick; Robot5GeoReplacement.java:32-41, ModelRobot5.java:104-113; orig ModelRobot5.java:104-112 reads f2 = ageInTicks there); the turret yaw follows netHeadYaw / 2 = 0; closes at k = 1 (41.8879 ticks): every bone returns within 0 degrees of its start at k x T (the 5-degree test under the 6 s cap; k = 1: 0 deg)",
+    "span_ticks": 41.8879003834,
+    "period_ticks": 41.8879003834,
+    "period_multiple_k": 1,
+    "animation_length_seconds": 2.0943950192,
+    "keys_per_bone": 43,
+    "sampled_inputs": "limbSwingAmount 1.0; limbSwing = t (advancing 1.0 per tick from 0: vanilla WalkAnimationState.update does speed += (movementSpeed - speed) * multiplier; position += speed, and the classic renderer hands walkAnimation.position(partialTick) as limbSwing and min(1, speed) as limbSwingAmount, so at speed 1 the position advances exactly 1.0 per tick); ageInTicks = t (getBob: tickCount + partialTick, partialTick 0); netHeadYaw 0; headPitch 0 (looking ahead); every entity-state flag at its rest value (attacking 0, ri1 0, rock_type 0, rf1 0: a ProbeSubject built from an empty state); the entity RNG seeded 0 once per clip and evolving across the keys; one pose call per key, 20 keys per second; full health (no shipped hook reads health)",
+    "hook": "danger.orespawn.entity.client.Robot5GeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the shipped replacement, registry-free, on explicit PoseInputs)",
+    "moving_bones": [
+      "lwheel1",
+      "lwheel2",
+      "rwheel1",
+      "rwheel2"
+    ],
+    "position_bones": [],
+    "hidden_bones_at_rest": [],
+    "seam_delta_degrees": 0.0
+  },
+  "exact_transcription": false,
+  "rig_source": "shipped",
+  "in_game": true,
+  "reference_id": null,
+  "locked_bones_source": "none",
+  "locked_bones_provisional": []
+}

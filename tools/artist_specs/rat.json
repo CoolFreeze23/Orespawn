@@ -1,0 +1,121 @@
+{
+  "registry": "rat",
+  "display_name": "Rat",
+  "status": "DRAFT — authored by a seed lane from the entity code, 2026-09-13; the owner's edit pending",
+  "locomotion": "walker",
+  "artist_scope": "full contract (Tier 2, the gait-scaled (with an attacking branch) class: geckolib_migration_design.md section 5); the rig is not yet in-game (it lands through the seam in a later slice)",
+  "character_sheet": "A small hostile rat: a 5x3x10 body with a spine ridge, a 3x2x4 head with a nose and two nub ears, two stub front legs, two haunches and a two-piece tail 21 long (RatModel.java:55-77, twelve parts), drawn at x0.75. 5 HP, 3 damage, 1 armour, speed 0.25 (EntityRat.java:77-84). On a 1-in-5 tick it picks the nearest living thing in a 9-block box - not the water creatures, other rats, the dungeon beast or a creative player (:157-165, :200-233) - runs at it at 1.25 with its attacking flag up and, within 2 blocks, bites on a double dice (:160-165); a rat with an owner (the summons of the Rat Sword, setOwner :114-118) spares the owner, their pets and, by config, all players (:212-222), follows the owner beyond 8 blocks at 1.75 and teleports to them beyond 16 (:168-181); wild rats despawn, owned rats stay (:100-104). It spawns in the dark, in the Crystal dimension only below y 50 with air around its head, at most eight together (:261-278; ModEntities.java:277-279). Read it as a rat: a scurry on four stubs, the tail whipping when it hunts.",
+  "size_notes": "Drawn at x0.75 of the rig (RatRenderer.java:25, :38; shadow 0.075, :27) on a 64x64 sheet (RatModel.java:78), rat.png (RatRenderer.java:20); the hitbox is 0.25 x 0.5 (ModEntities.java:277-279). The original's ModelRat(1.0f) argument was the wingspeed (RatRenderer.java:15-16), not a scale. The tail's second piece is placed 9 px along the first each tick (RatModel.java:100-101) - key the joint, not the position.",
+  "labels": {
+    "body": "body (5x3x10; static)",
+    "body2": "spine ridge (a 1x1x6 strip along the back; static)",
+    "head": "head (3x2x4 ahead of the body; static — no look)",
+    "nose": "nose (1x1x2; static)",
+    "lear": "left ear (a 1x1x1 nub; static)",
+    "rear": "right ear (a 1x1x1 nub; static)",
+    "lfleg": "left front leg (a 1x2x1 stub; the gait, with the right haunch)",
+    "rfleg": "right front leg (the gait, with the left haunch)",
+    "lrleg": "left haunch (2x4x2; the gait, with the right front leg)",
+    "rrleg": "right haunch (the gait, with the left front leg)",
+    "tail1": "tail, first piece (2x2x9; yaws at half the tail wave)",
+    "tail2": "tail, second piece (1x1x12, placed 9 along the first; yaws at 1.25x the wave)"
+  },
+  "groups": [
+    {
+      "name": "gait",
+      "bones": ["lfleg", "rfleg", "lrleg", "rrleg"],
+      "omega": 1.7,
+      "axis": "x",
+      "gait_scaled": true,
+      "amplitude": "pi x 0.25 = 0.785 rad (45 deg) x the walking speed above a limbSwingAmount of 0.1; the right front and left haunch one way, the left front and right haunch the other; 0 below the threshold",
+      "plain": "the four stubs scurry fore and aft in diagonal pairs with the stride",
+      "math": "a = amount > 0.1 ? cos(t * 1.7 * 1.0) * pi * 0.25 * amount : 0; rfleg.xRot = lrleg.xRot = a; lfleg.xRot = rrleg.xRot = -a",
+      "source": "RatModel.java:86-90; wingspeed 1.0 (:83-84)",
+      "phase": "the limbSwingAmount threshold of 0.1 gates it",
+      "wingspeed": 1.0,
+      "omega_note": "the classic phase is ageInTicks x 1.7: the natural period is 2 pi / 1.7 = 3.70 ticks"
+    },
+    {
+      "name": "tail",
+      "bones": ["tail1", "tail2"],
+      "omega": 0.4,
+      "axis": "y (and the second piece's x / z position)",
+      "gait_scaled": false,
+      "amplitude": "calm: pi x 0.05 = 0.157 rad (9 deg) at 0.4 rad/tick - the first piece at 0.5x (4.5 deg), the second at 1.25x (11 deg); attacking: pi x 0.25 = 0.785 rad (45 deg) at 1.5 rad/tick (22 and 56 deg); the second piece is placed 9 px along the first's yaw",
+      "plain": "the tail sways side to side, the tip more than the root: a gentle sway at rest, a fast wide thrash while the attacking flag is up",
+      "math": "a = attacking ? cos(t * 1.5) * pi * 0.25 : cos(t * 0.4) * pi * 0.05; tail1.yRot = a * 0.5; tail2.yRot = a * 1.25; tail2.z = tail1.z + cos(tail1.yRot) * 9; tail2.x = tail1.x + sin(tail1.yRot) * 9",
+      "source": "RatModel.java:95-101",
+      "phase": "the synched DATA_ATTACKING int (EntityRat.java:47-48, set 1 whenever the 1-in-5 pass finds prey in its 9-block box :157-160, 0 when it finds none :167) selects the branch",
+      "omega_note": "the classic phase is ageInTicks x 0.4 calm (a 15.7-tick period) and x 1.5 attacking (4.19 ticks)"
+    }
+  ],
+  "behaviour": [
+    "One gait rhythm above a limbSwingAmount of 0.1 (RatModel.java:86-90): the four stubs scurry 45 degrees x the walking speed in diagonal pairs at 1.7 rad/tick, a 3.7-tick period - a fast patter at the 0.25 speed (EntityRat.java:81).",
+    "One branch on the synched DATA_ATTACKING int (EntityRat.java:47-48), raised on the 1-in-5 pass whenever prey is found in the 9-block box - at any distance, through the whole chase (:157-160) - and dropped when the pass finds none (:167): the two-piece tail sways 4.5 and 11 degrees at 0.4 rad/tick at rest and thrashes 22 and 56 degrees at 1.5 rad/tick while the flag is up, the second piece placed 9 px along the first (RatModel.java:95-101).",
+    "The body, spine ridge, head, nose and ears are static; the head does not follow the look. The bite (doHurtTarget within 2 blocks when nextInt(8) == 0 or nextInt(7) == 1, EntityRat.java:162-165) and the owned rat's teleport to its owner (:174-179) draw no pose."
+  ],
+  "clips": [
+    {
+      "name": "idle",
+      "verdict": "author",
+      "note": "REQUIRED with walk: the gate opens on the pair (today nothing ships; the classic code plays) — the rest: the tail's gentle sway at 0.4 rad/tick (RatModel.java:97-101), the legs still"
+    },
+    {
+      "name": "walk",
+      "verdict": "author",
+      "note": "REQUIRED with idle: the locomotion loop — the diagonal scurry of the four stubs at 1.7 rad/tick, 45 degrees x the walking speed (:86-90); the reference clip is that patter at full stride"
+    },
+    {
+      "name": "swim",
+      "verdict": "leave",
+      "note": "no swim behaviour beyond the FloatGoal that keeps it at the surface (EntityRat.java:69); the code draws the same scurry in water; the fallback to walk covers it (section 2.4)"
+    },
+    {
+      "name": "aggro_idle",
+      "verdict": "author",
+      "note": "DATA_ATTACKING held at 1 by the 1-in-5 pass while prey is in its 9-block box (EntityRat.java:157-160, :96-98): the tail thrashing 45 degrees at 1.5 rad/tick (RatModel.java:95-96, :98-99) — a hunting crouch would carry it"
+    },
+    {
+      "name": "calm_idle",
+      "verdict": "author",
+      "note": "the flag at 0 (EntityRat.java:167): the tail's 9-degree sway at 0.4 rad/tick (RatModel.java:97) — the same rest as idle"
+    },
+    {
+      "name": "attack",
+      "verdict": "author",
+      "note": "the bite: doHurtTarget (vanilla, 3 of damage from MobStats.RAT, EntityRat.java:82) within 2 blocks on the 1-in-5 pass when nextInt(8) == 0 or nextInt(7) == 1 (:162-165); the flag is held while prey is found, not pulsed at the strike, so the strike is transport 1 (the server LivingDamageEvent.Post) — a lunge and a nip",
+      "length_seconds": 0.3
+    },
+    {
+      "name": "hurt",
+      "verdict": "author",
+      "note": "a flinch: hurt() (EntityRat.java:106-112) refuses wall suffocation; the rathit sound at 0.45 volume (:241-244, :251-254); the PanicGoal at 1.35 speed (:70) and the HurtByTargetGoal (:74) follow; the hurtTime edge is client-observed",
+      "length_seconds": 0.3
+    },
+    {
+      "name": "death",
+      "verdict": "author",
+      "note": "ruled 2026-09-06, Q3 (a): the vanilla death flip stays; a creature whose JSON ships a `death` clip gets the clip-replaces-flip mode, designed when the first such clip arrives (the Queen's own death clip the precedent) - a `death` delivered here plays under the flip until then",
+      "length_seconds": 1.0
+    }
+  ],
+  "extras": [
+    {
+      "name": "teleport",
+      "loop": "false",
+      "layer": "overlay",
+      "bones": ["body", "body2", "head", "nose", "lear", "rear", "tail1", "tail2"],
+      "length_seconds": 0.3,
+      "code_triggered": false,
+      "trigger": "customServerAiStep (EntityRat.java:168-181): an owned rat with no prey, more than 16 blocks from its owner, is teleported to within a block of them (:174-179; beyond 8 it runs at 1.75, :171-173); an instant move with no packet today — a named site (transport 3) when the rig lands",
+      "note": "a shake and a settle on arrival beside the owner"
+    }
+  ],
+  "wishlist": [
+    "in `walk`: the scurry the code has (RatModel.java:86-90) with a body bob and the head low - four stubs swung 45 degrees read as a hop without it",
+    "in `aggro_idle`: keep the 45-degree tail thrash (:95-96) and add a crouch with the ears back; the flag is up for the whole chase (EntityRat.java:157-160)",
+    "in `attack`: a lunge with a nip - the head is static in the code (:71); the bite lands within 2 blocks (EntityRat.java:162-165)",
+    "in `idle`: a sniff of the nose and an ear twitch over the tail's sway (:97-101)"
+  ],
+  "effort_hours": null
+}

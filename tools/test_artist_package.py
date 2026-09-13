@@ -1650,6 +1650,32 @@ class FixtureCase(unittest.TestCase):
         self.assertLess(spec.index("### 4.3 Reference clip"), spec.index("### 4.4 The original moved more"))
         self.assertLess(spec.index("### 4.4 The original moved more"), spec.index("## 5. Clips"))
 
+    def test_spec_marks_draft_above_every_authored_section(self):
+        # owner 2026-09-13, fourth set, item 6: a seed drafted by a seed lane (status starting with DRAFT) marks its sheet
+        # DRAFT above each AUTHORED section; a seed that is not a draft carries no such banner
+        seed_path = self.root / "tools/artist_specs/fixture.json"
+        original = seed_path.read_text(encoding="utf-8")
+        try:
+            seed = json.loads(original)
+            seed["status"] = "DRAFT — authored by a seed lane from the entity code, 2026-09-13; the owner's edit pending"
+            seed["wishlist"] = ["a slower tail wag when sitting"]
+            seed_path.write_text(json.dumps(seed), encoding="utf-8")
+            out = self.tmp / "out_draft"
+            ap.build_package(ap.Repo(self.root), out, ["fixture"], with_roundtrip=False)
+            spec = (out / "entities/fixture/SPEC.md").read_text(encoding="utf-8")
+            headers = [h for h in ("## 1. What this mob is (AUTHORED", "## 5. Clips: what to improve", "### 5.1 Wishlist (AUTHORED",
+                                   "### 5.2 Not accepted today (AUTHORED") if h in spec]
+            self.assertGreaterEqual(len(headers), 3, spec[:2000])
+            banner = "> **DRAFT** — DRAFT — authored by a seed lane from the entity code, 2026-09-13; the owner's edit pending. Nothing in this section is ruled"
+            self.assertEqual(spec.count(banner), len(headers), spec)
+            for h in headers:
+                i = spec.index(h)
+                self.assertIn(banner, spec[i:i + len(h) + 400], h)
+        finally:
+            seed_path.write_text(original, encoding="utf-8")
+        plain = (self.tmp / "out/entities/fixture/SPEC.md").read_text(encoding="utf-8") if (self.tmp / "out/entities/fixture/SPEC.md").exists() else ""
+        self.assertNotIn("> **DRAFT**", plain)
+
     def test_check_refuses_a_locked_bone_renamed_reparented_or_deleted(self):
         """The second half of the ruled policy (2026-09-06): a key on a locked bone warns; its name, parent and presence are refused.
         A rename is told from a deletion by the bone's body (pivot, bind rotation, cubes) reappearing under another name."""
