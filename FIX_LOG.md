@@ -6254,3 +6254,196 @@ IN-GAME: nothing — a sheet section, a seed field and a sampler comment-and-con
 behaviour changed (the sampler's constant feeds the reference clip's span rule only, and the span did not move).
 
 GATE: (tool4, 2026-09-13 15:57-16:07; no refuter - tooling): `gradle referenceClips` run twice (the second with `--rerun-tasks`), the two runs byte-identical (44 files; one file changed against HEAD - the index, the Terrible Terror row's `period_ticks` 20.944 -> 10.472 and its `rule_note`; no clip changed); `gradle referenceClipsVerify` on its own `REFERENCE CLIPS VERIFIED: 44 files`; g1ConvertModels / g1WriteRuntimeClasspath / g1Benchmark and the benchmark proof re-pinned (the g1tool class directory moved by the row's text; `G1 BENCHMARK EVIDENCE VERIFIED: SMOKE_ONLY / COMPONENT_PROXY_ONLY / PENDING_LIVE_PRECUTOVER; checked-in proof updated`); `asset_audit.py` 0 errors / 0 advisories / 4 acknowledged (39 shipped geo: 38 seam + 1 outside-seam); staged 20 modified; then `gate_wrapped.sh tool4`: the drift check verified the re-pinned proof, `gradlew build` SUCCESSFUL (1m 53s; `check` with `referenceClipsVerify` green), `runGameTestServer` All 1278 required tests passed (unchanged: no gametest added). The tool checked outside the gate: 36 tool tests OK, the dry run 44 of 44 PASS, the pilot pair PASS. Stray-process check: only the Gradle daemon.
+
+## THE FULL FOLDER, THE TOOLING (2026-09-13) — every artist-tier species packaged: a rig not yet in-game from the reference leg's converter output (gradle referenceConvertModels; the sheet states it and that bone names are final), a reference clip only where a hook exists ("sampled when the rig lands" otherwise), the Tier-1 bosses' intended locked bones from the design's section 6 rendered provisional and validated against the geo, the README's priority table the full list bosses first with the deliverable count; 112 of 116 folders today, the four without a rig named (owner 2026-09-13, fourth set, items 5, 7 and 8; tooling, no refuter)
+
+RULING. Owner 2026-09-13, fourth set (addendum item 29 (5), (7), (8)): (5) every artist-tier species not yet packaged is packaged
+now — the rig from the converter's proven output where none is shipped (the reference leg's geo; the sheet states the rig is not
+yet in-game and that bone names are final), textures, the SPEC, the .bbmodel; a reference clip only where a hook exists, the sheet
+saying "sampled when the rig lands" otherwise. (7) Each Tier-1 boss's sheet pre-declares its intended locked bones from the
+design's section 6, marked provisional, the Queen's profile as the template where the design has none. (8) The README's priority
+table becomes the full list, bosses first; every folder check PASS; the package count is the deliverable count. The seeds (item 6)
+are drafted by other lanes after this lands; until they exist a species without a seed renders with the generator's SEED_MISSING
+fallback. The cost rules of 2026-09-12 (item 25 (5)): a tooling lane takes no refuter — the tool's own tests and one dry run are
+the check. One implementation lane (r18), the orchestrator's gate and commit.
+
+WHAT LANDED:
+- ITEM 5, THE RIG OF A SPECIES NOT YET IN-GAME (`build.gradle`; `tools/layer_definition_to_geo.py`; `tools/artist_package.py` 0.2.9):
+  - `referenceConvertModels` (`build.gradle`: an Exec like `t2ConvertModels`, group verification, `dependsOn
+    referenceDumpCompiledModels`; `python tools/layer_definition_to_geo.py --manifest tools/reference_model_proofs.json --dump-dir
+    build/reference/vanilla --output-dir build/reference/generated --continue-on-refusal`) — the package generator's INPUT,
+    deliberately NOT a `check` dependency (its comment says so). Written, never run (the lane's constraint).
+  - THE CONVERTER: a manifest without `ticks_per_second` is accepted when every entry is static (the reference manifest is geometry
+    only and never carried the key; the value feeds clip sampling, which a static entry has none of) and refused, naming the
+    entries, when any is not — before, the whole reference manifest was refused at its first entry (KeyError). `--continue-on-refusal`:
+    each entry the converter refuses is named on stdout (`G1 CONVERT REFUSED: <id> - <why>`) and in `<output-dir>/refusals.json`
+    (`{id, class, reason}`), no stale output is left for it, the run continues and exits 0 (`G1 CONVERT: N of M entries converted,
+    K refused`); the g1 / s4 / t2 tasks keep the strict default (the first refusal stops the run, exit 1 — the t2 manifest converts
+    as before, 29 geos, exit 0; a manifest without the key that declares a non-static entry is refused by name).
+  - THE GENERATOR: `Species.rig_source` (`shipped` | `reference-leg converter output` | `none`), `reference_id`, `rig_reason`;
+    `landed` is now `rig_source == shipped` (a shipped geo: the seam's rigs and the native boss), `packageable` a geo to package,
+    `in_game` = landed. `Repo(root, warnings, reference_geo_dir)` reads `tools/reference_model_proofs.json` (model class ->
+    `reference_<name>`, 109 entries; the ButterflyModel's one entry serves its four registries) and the converter's `refusals.json`;
+    `_attach_reference_rig`: an artist-tier species (the design's Tier 1 / Tier 2 rows) without a shipped geo — not a head sidecar,
+    not a vanilla reuse — takes `<reference-geo-dir>/<id>.geo.json` where it exists (`geo_path`; `geo_stem` the id; `anim_path`
+    None; `proof` the reference manifest's name; the converter's `.conversion.json` as its sidecar, so the glossary's classic-part
+    column reads "ModelPart of the same name"); the shipped geo is preferred wherever one exists (a seam rig's shipped geo carries
+    the seam's keys — the 44 shipped rigs are untouched); a species whose model has no reference entry, or whose entry the converter
+    refused or has not converted, keeps `rig_reason` and no rig, and one global `ARTIST_TIER_UNPACKAGED` warning names each with its
+    reason. `packageable_species()` beside `landed_species()`; `build_package`, the `readme` subcommand and INVENTORY.csv run over the
+    packageable set; `--reference-geo-dir` on `package` / `spec` / `bbmodel` / `roundtrip` (default `build/reference/generated` under
+    `--root`); `spec` / `bbmodel` / `roundtrip` refuse a species with no rig to package by name (`get_packageable`; before: a TypeError).
+  - THE SHEET of a rig not yet in-game: "This rig is NOT yet in-game: the geometry is the converter's output over the port's compiled
+    model, proven part for part against the 1.7.10 source by the reference-geometry leg; it lands through the seam in a later slice.
+    Bone names are FINAL — the seam, the hitbox profiles and the transcriptions find bones by name." in bold right under the title,
+    again under §3's rule sentence and at the head of §11 (`NOT_IN_GAME_STATEMENT`); §11's item 1 "returned UNCHANGED" over the
+    packaged file ("the reference leg's geo; the rule is the shipped rig's"). The animation file is written empty in the s4 hook form
+    (`{"format_version": "1.8.0", "animations": {}}`). §4.3: "_no reference clip yet: it is sampled from the classic hook when the
+    rig lands through the seam; until then §4.1 / §4.2 and the plain-language formulas (where the seed carries them) are the
+    motion's description._", then that the plain-language transcription is authored when the rig lands on its hook (the seed's
+    formulas printed where present) — neither REFERENCE_CLIP_MISSING nor FORMULAS_MISSING is raised (the sampler samples seam rigs
+    only). The manifest: `rig_source`, `in_game` false, `reference_id`, `geo_file` the reference geo's own name
+    (`reference_alien.geo.json`), `reference_clip` null, `exact_transcription` false, `controller_kind` phase_locked; the .bbmodel
+    from the reference geo, the round trip EQUAL (68 of 68, order kept), the textures from the catalog as for a landed species. The
+    checker on the untouched folder: the geo "returned UNCHANGED" rule as for a shipped rig (the WARN), the empty file "not delivered
+    yet" (the T2c rule; the required pair WARNs) — PASS. A landed species' manifest says `rig_source: shipped`, `in_game: true`.
+  - THE SEED_MISSING FALLBACK kept: the display name from the registry row (its Java class), the authored sections empty, the
+    placeholders in the sheet; the dry run's counts list which species rendered that way.
+  - INVENTORY.csv: `rig_source` and `in_game` columns after `geo_file`; a species packaged from the reference leg fills its rig
+    columns (bones, cubes, locked, effort; status "classic only", the note "... packaged from the reference leg's converter output
+    (<geo>: the rig is not yet in-game, its bone names final)"); a species with no rig to package says why in its status note.
+- ITEM 7, THE PROVISIONAL LOCKS (`tools/artist_package.py`): the seed field `locked_bones_provisional` — `[{"bone", "size": [w, h],
+  "damage"}]`, the seed lanes' reading of the design's section 6 per-rig table; `provisional_lock_entries(species)`;
+  `locked_bones(species, geo, warnings)`: a profile's synched-bones and their ancestors as before; without a profile, the named
+  bones the geo has and every ancestor are locked the same way (contract §8.1's law, the Queen's profile the template), the reason
+  "intended hitbox part 'X' (size [w, h], damage xd) — provisional — the design's section 6 proposal, not yet a profile; the Queen's
+  profile (`the_queen`) is the template for the profile's form" / "ancestor of the intended part bone 'X' — provisional, as the part
+  is"; a named bone the geo lacks locks nothing and is a `LOCKED_BONE_UNKNOWN` warning naming it. SPEC §7 for a Tier-1 boss with the
+  field: "Intended locked bones — provisional — ..." citing the design's section 6 table and the seed field, "the named bones and
+  every ancestor are SPEC-locked now, as they will be when the profile lands (contract §8.1)", LOCK_POLICY and LOCK_REJECT_MODE, the
+  bones the design names that the geo lacks listed by name, then the bone / why table; §3's locked column "yes: intended hitbox part
+  ..."; a Tier-1 boss without the field (no design row): "No MultiHitboxLib profile yet, and no intended locked bones pre-declared
+  (the design's section 6 has no row for this rig): the Queen's profile (`the_queen`) is the template for the profile when it is
+  written, and the bones it locks are decided then ..."; a Tier-2 species without a profile keeps the plain sentence. The manifest:
+  `locked_bones` carries the named bones and their ancestors (the rig's order), `locked_bones_source` (`profile` | `provisional (the
+  design's section 6)` | `none`), `locked_bones_provisional` (each entry with `in_geo`); the checker is unchanged — a key on one WARNs
+  under the standing policy, a rename / re-parent / delete is refused by name, the reject mode stays available. The word is lower
+  case and used for this marking only (TOOL_VERSION's text, emitted into every generated file, names the change without it); the
+  marker tests stay as they are.
+- ITEM 8, THE README AND THE COUNTS (`readme_document`, `package_counts`, `summary_markdown`): the priority table lists every packaged
+  folder (the pilot's packaged-set mechanism unchanged: an `--entities` run keeps "More folders follow as creatures land through the
+  seam; this package carries N"), bosses first (Tier 1, the Queen's 'done' row among them, then Tier 2, then Tier 3; by registry
+  within a tier), a `rig in-game` column ("yes" / "not yet"), the intro sentence explaining a not-yet-in-game folder; a run over every
+  species with a rig closes with "This package carries every artist-tier species (N Tier 1, M Tier 2) and the K Tier-3 props; rigs
+  marked not-yet-in-game land through the seam in later slices." — and, while any artist-tier species has no rig to package, "...every
+  artist-tier species with a rig to package (N Tier 1, M Tier 2) and the K Tier-3 props; ... Not packaged yet — P artist-tier species
+  without a rig to package: `x` (why); ..." (never silently dropped). `dryrun_summary.json` / `.md` gain `counts` ("## Counts (the
+  deliverable)"): per tier the registries and the rigs (a shared rig — one model class serving several registries — counted once)
+  and how many of each are not yet in-game, folders, files (the entity folders' + the 6 package-wide files), the rig sources, the
+  species packaged without a seed, the artist-tier species not packaged with the reason; the summary table gains a `rig` column.
+- `tools/test_artist_package.py` 39 tests (+3): the fixture gains four registrations — a Tier-1 `boss` with no shipped geo whose seed
+  carries `locked_bones_provisional` (one bone, `horn`, the rig lacks), a seedless Tier-2 `critter`, an `orphan` model with no
+  reference entry, a `refused` model the fixture's refusals.json names — plus the fixture's reference manifest and its
+  `build/reference/generated` (a geo for the fixture too: its shipped geo must win). The pins: the unlanded species packaged from the
+  reference geo with the statement three times (under the title, §3, §11), the empty file in the s4 form, no reference clip, no
+  REFERENCE_CLIP_MISSING / FORMULAS_MISSING, the manifest's fields, the shipped-wins rule, the Tier-3 exclusion, the SEED_MISSING
+  fallback and its count, `check` PASS on both untouched folders and a renamed bone of the reference rig refused by name; the
+  provisional locks rendered, validated (`LOCKED_BONE_UNKNOWN` naming `horn`), carried in the rig's order, warned when keyed,
+  rejected under the reject mode, the Queen-template sentence without a row, the Tier-2 and the native boss untouched; the full
+  table's order (boss, native, critter, fixture), the column, the closing line naming the two unpackaged with their reasons, the
+  global warning, the counts per tier and the file count against the tree, the partial run's line. Three existing pins re-counted
+  (twelve registrations; 17 shipped textures / 15 payloads) and `test_inventory_rows` extended (the rig columns, the notes).
+
+THE CONVERTER OVER THE 109 (headless, `--continue-on-refusal`, over the orchestrator's last reference dumps, into the lane's
+scratch): 106 of 109 entries converted (106 geos; 424 files + refusals.json); 3 refused, all for one reason — a part drawn more than
+once with no `render_instances` form in the reference entry ("capture bind draws [...], which are not cube-bearing geo bones (a part
+drawn more than once without render_instances, or a part the rig lacks)"): `reference_giantrobot` (ModelGiantRobot: `giant_robot` and
+`jeffery`, Tier 1 — the design's section 6 row says the legacy model replays shared leg / arm parts at two transforms and G1 must
+create distinct left / right bones first), `reference_purplepower` and `reference_rotator` (Tier 3, landed in s4 under the
+render_instances form: their shipped geos carry it and are preferred, so nothing is lost). Two artist-tier registries have NO
+reference entry at all: `boyfriend` and `girlfriend` (ModelBoyfriend / ModelGirlfriend extend HumanoidModel; their 1.7.10 renderers
+drew vanilla ModelBiped, so the reference manifest — every port model paired with a 1.7.10 model — never listed them). So 68 of the 72
+unseeded registries (63 of the 65 rigs) have a rig to package today; the four are named in the README's closing line, the global
+warning and the counts. A reference entry has no seam options (the t2 lanes used `channels: []` the same way) and none of the 106
+needed one.
+
+THE DRY RUN (`package --out <scratch>/pkg --reference-geo-dir <scratch>/generated`; exit 0, 13 s): 112 folders — 44 shipped rigs +
+68 from the reference leg (116 expected, minus the four) — and 995 files (989 in the entity folders + the 6 package-wide files).
+Registries / rigs per tier: Tier 1 26 / 20 (25 / 19 not yet in-game; the Queen the one in-game), Tier 2 73 / 68 (43 / 43 not yet
+in-game), Tier 3 13 / 12. `check` on all 112 folders: PASS, 0 REJECT (the WARNs: 580 optional-clip, 166 "not delivered yet" — the 68
+and the 15 hook species, the pair each — 112 returned-geo, 43 untouched reference clips, the Queen's 8 locked-bone lines and her
+summary). SEED_MISSING 68 (the 72 minus the four); no REFERENCE_CLIP_MISSING / FORMULAS_MISSING / LOCKED_BONE_UNKNOWN /
+NOT_PACKAGEABLE; 0 `PROVISIONAL` / "open question" hits in the tree; every one of the 68 sheets carries the statement three times;
+the 68 animation files are the empty s4 form; the 68 round trips EQUAL, order kept. The 44 landed folders against the orchestrator's
+r17 dry run: SPEC.md identical but the version line (see THE CHECKS); the manifests gain only the six new fields; the README the
+column and the closing line. The pilot pair regenerated into scratch: both SPECs identical but the version line, both PASS.
+
+DEVIATIONS:
+- The converter refused the WHOLE reference manifest at its first entry (KeyError `ticks_per_second`): fixed in the converter (the
+  static-only acceptance), not by adding the key to `tools/reference_model_proofs.json` — one line either way; the manifest is the
+  standing reference gate's input and stays untouched.
+- The converter stopped at the first refusal by design (the proof chains' rule): the reference task needs the rest converted, so
+  `--continue-on-refusal` exists and only `referenceConvertModels` passes it.
+- 112 folders, not 116: `giant_robot` / `jeffery` (their entry refused), `boyfriend` / `girlfriend` (no entry) — presented, not
+  worked around; each is named wherever the package counts itself.
+- The packaged geo keeps the converter's file name (`reference_<name>.geo.json`; the manifest's `geo_file` with it): the seam names a
+  shipped geo when the rig lands (a shared rig's name is the model's, not any one registry's), and §11 asks for the packaged file back
+  unchanged, whatever its name.
+- The provisional lock set includes the named bones' ancestors — contract §8.1's law for a profile, the Queen's §7 the template; one
+  condition in `locked_bones` lists the named bones only.
+- The Queen is counted under Tier 1 in the README's closing line and the dry-run counts (her row reads Tier 1; `prio` sorts her so).
+- README_FIRST, INVENTORY.csv and warnings.txt stay package-wide as before, now over 112 species: an `--entities` run's warnings.txt
+  carries the 68 unseeded species' SEED_MISSING and BONE_UNLABELLED lines (2,874 unlabelled bones today) until the seeds land.
+- `NOT_LANDED` is `NOT_PACKAGEABLE` (the `--entities` warning for a species with no rig; the message says which reason).
+- `spec` / `bbmodel` / `roundtrip` on a species with no rig: a named refusal, exit 1 (before: a TypeError on the missing geo path).
+
+NOT DONE / OPEN:
+- Gradle never ran (the lane's constraint): `referenceConvertModels`'s first run is the orchestrator's chain (dump -> convert ->
+  package -> check); `build.gradle` moved, so the benchmark proof re-pins at the gate.
+- The seeds (item 6) are other lanes' work; `locked_bones_provisional` for the twenty Tier-1 rigs is theirs to author from the
+  design's section 6 (nineteen rigs packaged today; the GiantRobot pair waits).
+- `giant_robot` / `jeffery` need a `render_instances` form for `reference_giantrobot` (the Slice 4c seam option the t2 lanes wrote for
+  the fan rigs) or the Tier-1 slice's distinct left / right bones; `boyfriend` / `girlfriend` need a reference entry for a
+  HumanoidModel subclass (no 1.7.10 ModelPart source to compare against) — the owner's call; until then the package names them.
+- A rig not yet in-game has no shipped animation file: the generator writes the empty one; the shipped file appears when the rig lands.
+
+THE CHECKS (the tool's own tests and one dry run): `python tools/test_artist_package.py` 39 tests OK; the converter over the 109
+reference dumps (106 converted, 3 refused by name; the t2 manifest 29 geos exit 0 under the strict default); the dry run 112 folders,
+112 of 112 `check` PASS, 995 files, the counts above; the pilot pair into scratch PASS; the 44 landed sheets diff-clean against the
+orchestrator's r17 dry run but the version line; `python tools/asset_audit.py` 0 errors / 0 advisories / 4 acknowledged (39 shipped
+geo: 38 seam + 1 outside-seam) — nothing under `src/` moved; stray-process check: no python, java or gradle process left.
+
+IN-GAME: nothing — a gradle task, the converter's two accept / continue rules, the generator, its tests; no shipped resource or class
+changed (the package is generated into the lane's scratch; `artist_handoff/` untouched, regenerated by the orchestrator after the
+seeds land).
+
+PRESENTED BY THE ORCHESTRATOR (nothing here is a new ruling; each is reversible):
+- FOUR REGISTRIES HAVE NO RIG TO PACKAGE, against the ruling's "every artist-tier species": `giant_robot` and `jeffery`
+  (TEST-009: the converter refuses `reference_giantrobot`, whose replayed leg and arm parts have no `render_instances`
+  form on the reference entry) and `boyfriend` and `girlfriend` (TEST-010: no reference entry — HumanoidModel subclasses
+  that 1.7.10 drew with vanilla ModelBiped). Both are the owner's call between a manifest route and a slice route; the
+  package states the gap in its README, warnings and counts. The folder therefore carries 112 species folders today
+  (Tier 1: 26 registries over 20 rigs, the Queen among them; Tier 2: 73 over 68; Tier 3: 13 over 12) — every other
+  artist-tier species, 68 of them not yet in-game from the reference leg's converter output.
+- THE CONVERTER accepts the reference manifest (decided under doctrine — the smallest change that lets the ruled task
+  run): a manifest without `ticks_per_second` is accepted when every entry is `static` (the value feeds clip sampling
+  only) and refused by name otherwise; a new `--continue-on-refusal` flag names a refused entry (`G1 CONVERT REFUSED`
+  on stdout and in `refusals.json`) and continues — used by `referenceConvertModels` only; the g1 / s4 / t2 chains keep
+  the strict default (verified by the lane: the t2 manifest converts as before, 29 geos). The converter's g1 / s4 / t2
+  outputs are unchanged (the gate's parity and reference legs verify them).
+- THE PROVISIONAL LOCK SET INCLUDES ANCESTORS: the design's section 6 names the parts; the generator locks each named
+  bone the geo has AND its ancestors, contract §8.1's law (a hitbox part follows every bone above it), the Queen's §7
+  the template — one condition to drop if the owner wants the named bones alone. A named bone the geo lacks locks
+  nothing and is a `LOCKED_BONE_UNKNOWN` warning (none in the dry run: the seeds do not carry the field yet; the seed
+  lanes author it, the boss refuter checks it).
+- THE PACKAGED GEO OF AN UNLANDED RIG keeps the converter's file name (`reference_<name>.geo.json`): the seam names the
+  shipped geo when the rig lands (§11 asks the packaged file back unchanged, under whatever name it carries).
+- `referenceConvertModels` is NOT a `check` dependency (the package generator's input; the reference-geometry leg stays
+  the gate) — the orchestrator's regeneration runs it before every package build; a stale `build/reference/generated`
+  cannot reach the jar (nothing under `src/` reads it).
+- THE SEEDS ARE ITEM 6's: 68 species render with the `SEED_MISSING` fallback until the seed lanes land (the display name
+  from the registry, empty authored sections, 2,874 BONE_UNLABELLED warnings in the dry run); the folder is committed
+  after the seeds, not in this commit (this commit carries the tooling only; the pilot pair's `artist_handoff/` is
+  untouched here and regenerated with the full folder).
+
+GATE: (folder, 2026-09-13 21:07-21:18; no refuter - tooling): `gradle referenceDumpCompiledModels referenceConvertModels` (the new task's first run under gradle): 106 reference geos generated into build/reference/generated, 3 entries refused by name (`reference_giantrobot`, `reference_purplepower`, `reference_rotator` - parts drawn more than once without a render_instances form; the last two ship their s4 geos), exit 0 by design; `test_artist_package.py` 39 tests OK; the dry run `package --reference-geo-dir build/reference/generated` into scratch: 112 folders, 995 files, every one of the 112 folders `check` PASS; g1ConvertModels / g1WriteRuntimeClasspath / g1Benchmark and the benchmark proof re-pinned (build.gradle moved; `G1 BENCHMARK EVIDENCE VERIFIED: SMOKE_ONLY / COMPONENT_PROXY_ONLY / PENDING_LIVE_PRECUTOVER; checked-in proof updated`); `asset_audit.py` 0 errors / 0 advisories / 4 acknowledged (39 shipped geo: 38 seam + 1 outside-seam; nothing under src/ moved); staged 6 modified; then `gate_wrapped.sh folder`: the drift check verified the re-pinned proof, `gradlew build` SUCCESSFUL (2m 51s; `check` green, the reference-geometry leg and `referenceClipsVerify` among it), `runGameTestServer` All 1278 required tests passed (unchanged: no gametest added). Stray-process check: only the Gradle daemon (restarted at 21:07 for this run).
