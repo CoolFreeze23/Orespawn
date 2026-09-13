@@ -5715,3 +5715,59 @@ PASS lines, 29 package rows - instead), and the "dropped_keys N -> 0 on 22 regis
 step's dry run in its own scratch, not a pre-drop run beside it; N5 its status snapshot predates the gate's staging.
 
 GATE: (drop, 2026-09-13 12:52-13:02; the refuter running beside it): the proof rule honoured in ORDER this time — every tree VERIFIED first, then rewritten: the gradle chains (g1 / s4 / t2 probe renderers, the s4 / t2 reference-geometry dumps, the standing reference dump of 109 models through the patched probe, the benchmark, the runtime classpath) exit 0; the standing reference-geometry leg's verify-only pass failed fast on the first rewritten report (`reference_alien`; the Chainsaw's pin read `REFERENCE GEOMETRY PASS (pinned divergences {MISSING_IN_PORT: 2, EXTRA_IN_PORT: 1})`), then `--write-proof`: 97 files (89 rewritten, 8 new); the g1 / s4 / t2 verify-only passes each failed fast on the first regenerated geo (`model_elevator.geo.json` in g1 and s4, `model_brutalfly.geo.json` in t2 — the expected drift of the drop, the lane's per-rig list above), then `--write-proof` on all three (`G1 PARITY PASS: 2 / 13 / 14 models`; 25 / 124 / 85 files changed); `gradle referenceClips` reproduced the 29 checked-in clip files byte-identically; the benchmark proof re-pinned (`G1 BENCHMARK EVIDENCE VERIFIED: SMOKE_ONLY / COMPONENT_PROXY_ONLY / PENDING_LIVE_PRECUTOVER; checked-in proof updated` — the g1tool class directory moved with the probe); `asset_audit.py` 0 errors / 0 advisories / 4 acknowledged after staging (the 18 GECKO_GEO_PROOF_DRIFT the lane saw are gone: the shipped geos equal the rewritten proof copies); staged 19 added / 431 modified (src: 90 entity/client, 7 client/model, G1ModelProbe; 17 geos; 2 manifests; proof trees: g1 27, s4 124, t2 85, reference 97); then `gate_wrapped.sh drop`: the drift check verified the re-pinned proof, `gradlew build` SUCCESSFUL (1m 36s; `check` ran the s4 / t2 parity, the 109-model reference leg and the renderer pins green), `runGameTestServer` All 1277 required tests passed (unchanged: the drop adds no gametest and re-pins none). Stray-process check: only the Gradle daemon.
+
+## THE PILOT PAIR'S ARTIST PACKAGE (2026-09-13) — the Queen (scoped to `idle` and `attack`) and the Beaver generated into `artist_handoff/` after the mirror drop, both folders checking PASS; the 2026-09-05 refusal lifted (tooling, no refuter)
+
+RULING. Owner 2026-09-13, second set, item 10: "The pilot pair's package (the Queen: idle and one attack; the Beaver) is
+generated into `artist_handoff/` after the drop, checker PASS, reported with its file list; species packages per slice;
+the full package when the last rig lands." The 2026-09-05 rule it supersedes (addendum item 23 (8)(f)): nothing under
+`artist_handoff/` is committed until the mirror drop lands — the drop landed at d51f06f. The cost rules of 2026-09-12
+(item 25 (5)): a tooling lane takes no refuter; the tool's own tests and one dry run are the check. Executed by the
+orchestrator directly (a scripted patch, `scratchpad/pilot/patch_pilot.py`, exact-match guarded).
+
+WHAT LANDED:
+- `tools/artist_package.py` 0.2.6: the `build_package` guard that refused an `--out` under the repository's
+  `artist_handoff/` is gone (a comment records why: the drop landed, the pilot pair's package lives there); the module
+  docstring says the same; nothing else in the generator moved. `tools/test_artist_package.py`: the test that pinned
+  the refusal (`test_package_refuses_repository_artist_handoff`) is flipped into `test_package_writes_repository_artist_handoff`
+  (the fixture packages into `<root>/artist_handoff/` and its SPEC exists); 30 tests.
+- THE QUEEN'S PILOT SCOPE, in her seed (`tools/artist_specs/the_queen.json`) and so on her sheet: `artist_scope` now reads
+  "PILOT (owner 2026-09-13, second set, item 10): two clips to improve - `idle` (the dormant hover) and one attack, the
+  `attack` clip (the awake stance loop); the other six (`idle_to_attack`, `bite`, `tail_whip_right`, `tail_whip_left`,
+  `roar`, `death`) come back EXACTLY as shipped inside the same `the_queen.animation.json` (the checker requires every
+  code-triggered clip present by name; a clip you did not touch is simply the shipped one). Beyond the pilot: the full
+  contract with the §8.1 locks (open question 16) …" (SPEC §10); the four strike clips' verdicts `improve` -> `leave`
+  with the note "outside the pilot scope (owner 2026-09-13): return as shipped - later, <the earlier note>" (SPEC §5,
+  four rows); the strikes' wishlist bullet prefixed "(beyond the pilot - not now)" (§5.1); the seed's `status` prefixed.
+  `idle` and `attack` keep their `improve` verdicts and wishlist lines. The Beaver's seed is untouched (her full contract:
+  `idle`, `walk` + the optional clips).
+- `artist_handoff/` (24 files, 8.4 MB): `README_FIRST.md`, `INVENTORY.csv`, `TEXTURE_MAP.csv`, `dryrun_summary.md` /
+  `.json`, `warnings.txt` (the package-wide files the generator writes with every run; the inventory and texture map
+  cover the whole mod by design); `entities/the_queen/`: `SPEC.md`, `spec.manifest.json`, `the_queen.geo.json`,
+  `the_queen.animation.json` (her eight native clips), `the_queen.bbmodel` (6.3 MB), `roundtrip.report.json` (EQUAL,
+  order kept), `reference/SLOTS.md`, `textures/blue_queen.png`, `textures/red_queen.png` — no reference clip (a native
+  rig: her own clips are her reference, the SPEC's §4.3 says so); `entities/beaver/`: `SPEC.md`, `spec.manifest.json`,
+  `beaver.geo.json` (the drop's regenerated geo), `beaver.animation.json` (the exact transcription), `beaver.bbmodel`,
+  `beaver_reference.animation.json` (the sampler's reference-only clip, sha-pinned in the manifest),
+  `roundtrip.report.json` (EQUAL, order kept), `reference/SLOTS.md`, `textures/beaver.png`.
+- `.gitattributes`: `/artist_handoff/**` text files LF (`*.json`, `*.bbmodel`, `*.md`, `*.csv`, `*.txt`), `*.png` binary —
+  the sheets and manifests are sha-pinned and byte-compared by `check`, the same reason the proof trees and the
+  reference clips carry the rule.
+
+DECIDED UNDER DOCTRINE (reversible, one seed line): "one attack" is read as the clip NAMED `attack` — the awake stance
+loop the contract calls `aggro_idle`, the natural pair to `idle` (two loops, the self-gate's shape) — not one of the
+four one-shot strikes; flipping the pilot to `bite` (or any strike) is one line in the seed and a regeneration.
+The package is committed as generated (the ruling: "generated into artist_handoff/"); a regeneration on a later landing
+is a diff, not a new package.
+
+THE CHECKS (tooling: the tool's tests and one dry run): `python tools/test_artist_package.py` 30 tests OK; the dry run
+`package --out <scratch>/pilot/pkg`: 29 species, every one of the 29 folders `check` PASS (the Queen's locked-bone
+WARN and the hook species' untouched-reference-copy WARN as before); the handoff `package --out artist_handoff
+--entities the_queen beaver` exit 0; `check artist_handoff/entities/the_queen` PASS (8 clips, 47,559 keyframe values,
+2 textures; the locked-bone WARN) and `check artist_handoff/entities/beaver` PASS (4 clips, 243 keyframe values, 1
+texture; the four optional-clip WARNs); `python tools/asset_audit.py` 0 errors (the jar untouched: nothing under
+`src/` moved).
+
+IN-GAME: nothing — no shipped resource or class changed; the package is a repository directory for the artist.
+
+GATE: not run - a tooling step with no build input (the cost rules of 2026-09-12, item 25 (5): the tool's own tests and one dry run are the check; nothing under src/ or build.gradle moved): `test_artist_package.py` 30 OK, the dry run 29 species / 29 folders `check` PASS, `artist_handoff/entities/the_queen` and `/beaver` `check` PASS, `asset_audit.py` 0 errors (2026-09-13 13:05-13:12). KNOWN_ISSUES count 1277 unchanged.
