@@ -5385,6 +5385,73 @@ Entries: **79 total** — ANIM 20 (DIVERGENT 8 · PARTIAL 10 · MISSING 2) · BU
 
 ---
 
+### ANIM-021 — GammaMetroid: the port's setupAnim keeps three of 1.7.10's eleven animated channels and drops the gait
+
+- **Status:** DIVERGENT — REPORT (the third Tier-2 slice, 2026-09-13; parity lanes frozen: a register line and stop)
+- **Original:** `ModelGammaMetroid.java:173-207` (`render`, wingspeed 0.45f from `ClientProxyOreSpawn.java:429 new ModelGammaMetroid(0.45f)`):
+  the three tusks pitch on their OWN cosines (0.81 / 0.87 / 0.99 x ws, PI x 0.08) and yaw on three more (1.11 / 1.17 / 1.25 x ws; :175-180);
+  a GAIT - `cos(f2 * 2.0 * ws) * PI * 0.12 * f1` with an up-lift `0.47 * f1 - |angle|` while the next sample rises, applied to the four
+  upper / lower leg pairs through `doLeftFLeg` .. `doRightRLeg` (:183-192); the shell sway `cos(f2 * 0.4 * ws) * PI * 0.05` is ZEROED
+  while sitting (`func_70906_o()`, :193-196) and drives shell1 X (/4) and Y (-/4), shell2 X (-0.49) and Y (0.33 - angle), shell3 X
+  (-0.96) and Y (0.63 - angle), shell4 X (-0.28) (:197-203); the lower beak's `|cos(f2 * 0.75 * ws) * PI * 0.1| + 0.14` is written to
+  BOTH its X and its Z (:204-207).
+- **Port:** `entity/client/GammaMetroidModel.java` `setupAnim`: one tusk cosine at 0.81 (no wingspeed multiply) on all three tusks' X,
+  shell1 X = `cos(0.4) * PI * 0.05 / 4` only, the lower beak's `|cos(0.75) * PI * 0.1| + 0.14` on X only; no tusk yaw, no gait, no
+  sitting check, no shell1 Y / shell2 / shell3 / shell4, no beak Z, and every frequency runs at 1.0 where 1.7.10 multiplied by 0.45
+  (the tusks 0.81 vs 0.3645 rad/tick, the shell 0.4 vs 0.18, the beak 0.75 vs 0.3375). Not in ANIM-001's list (the port never
+  multiplied by limbSwingAmount; it dropped the constant altogether).
+- **Fix (a parity lane's, later):** transcribe `render:173-207` in full into `setupAnim` (and the seam's hook with it: the third slice's
+  descriptor is the port's pose verbatim, so it changes when the port changes), the wingspeed 0.45f restored, the sitting check through
+  the entity (an entity-state read: `GammaMetroidPose` per the Slice 4b form), the gait on `limbSwingAmount`.
+- **Resolution:** OPEN
+
+### ANIM-022 — RubberDucky: the port's setupAnim drops 1.7.10's wing latch, sitting check, head-look factors and wing yaw
+
+- **Status:** DIVERGENT — REPORT (the third Tier-2 slice, 2026-09-13; parity lanes frozen: a register line and stop)
+- **Original:** `ModelRubberDucky.java:86-116` (`render`, wingspeed 1.0f, `ClientProxyOreSpawn.java:502`): the head AND beak yaw by
+  `toRadians(f3) * 0.45` and pitch by `toRadians(f4) * 0.65` (:88-89); the wing angle `cos(f2 * 1.0 * ws) * PI * 0.15` is LATCHED
+  through the entity's RenderInfo - at every upward zero crossing (the sample 0.3 ticks ahead positive while the current is negative)
+  `ri1` resets to 0 and re-rolls to 1 with probability 1/3 from the level random, or 1/2 (and the angle x4) once the duck's kill count
+  is 5 or more (:90-104); the wings hold 0 while `ri1` is 0 or the duck sits (`func_70906_o()`, :105-110); then `|angle|` goes to the
+  wings' Z (mirrored) AND half of it to their Y (mirrored, :111-115); the RenderInfo is written back (:116).
+- **Port:** `entity/client/RubberDuckyModel.java` `setupAnim`: head and beak yaw by `netHeadYaw` in radians (factor 1, not 0.45), no
+  pitch; the wings fold on `|cos(ageInTicks * 1.0) * PI * 0.15|` about Z every frame - no latch, no random flap, no kill-count
+  quadruple, no sitting check, no wing Y. The port entity carries no RenderInfo for the duck.
+- **Fix (a parity lane's, later):** transcribe `render:86-116` in full - a RenderInfo latch and the level random through a
+  `RubberDuckyPose` (the Slice 4b form: `getRenderInfo`, `getLevelRandom`, `getKillCount`, `isInSittingPose`), the head factors, the
+  wing Y; the seam's hook follows the port.
+- **Resolution:** OPEN
+
+### ANIM-023 — TerribleTerror: the port's setupAnim drops four leg parts and the whole tail chain of 1.7.10's pose
+
+- **Status:** DIVERGENT — REPORT (the third Tier-2 slice, 2026-09-13; parity lanes frozen: a register line and stop)
+- **Original:** `ModelTerribleTerror.java:170-198` (`render`, wingspeed 1.0f, `ClientProxyOreSpawn.java:457`): the wings about Z
+  (`-2.0 + / 2.0 - cos(f2 * 1.3 * ws) * PI * 0.25`, :171-173), the jaw `|cos(f2 * 0.3 * ws) * PI * 0.1|` (:174-175), EIGHT leg parts on
+  `cos(f2 * 1.25) * PI * 0.35` - FL21 (0.349 +), FL22 (-0.296 +), BL21 (-0.349 -), BL22 (0.174 -), FL11 (0.349 -), FL12 (-0.296 -),
+  BL11 (-0.349 +), BL12 (0.174 +) (:176-184) - and a TAIL CHAIN: Tail1 pitches / yaws on 0.71 / 0.77 x ws cosines (PI x 0.1), Tail2's
+  pivot follows Tail1 by 6 units along (cos, sin) of those angles and pitches / yaws on 0.81 / 0.87 (PI x 0.15), Tail3 and Tail4 follow
+  Tail2 the same way and pitch / yaw on 0.91 / 0.97 (PI x 0.2) (:185-198).
+- **Port:** `entity/client/TerribleTerrorModel.java` `setupAnim`: the wings, the jaw and FOUR leg parts (fl21, fl11, bl21, bl11); the
+  lower leg parts fl22 / fl12 / bl22 / bl12 and the four tail parts are never posed (they hold their LayerDefinition rest).
+- **Fix (a parity lane's, later):** transcribe `render:176-198` in full (the four lower legs, the tail chain with its position follow -
+  the seam's `moveTo` idiom); the seam's hook follows the port.
+- **Resolution:** OPEN
+
+### ANIM-024 — Cricket: the port's setupAnim runs the legs at 1.0 rad/tick where 1.7.10 ran at wingspeed 2.5, and drops the singing branch
+
+- **Status:** DIVERGENT — REPORT (the third Tier-2 slice, 2026-09-13; parity lanes frozen: a register line and stop)
+- **Original:** `ModelCricket.java:102-125` (`render`, wingspeed 2.5f from `ClientProxyOreSpawn.java:510 new ModelCricket(2.5f)`): above
+  a walking speed of a tenth the four front / rear legs yaw on `cos(f2 * ws) * PI * 0.25 * f1` - 2.5 rad/tick - around 0.47 / -0.54 /
+  -0.296 / 0.384 (:104-108); while SINGING (`getSinging() != 0`) the four hind legs yaw to -/+0.035 and -/+0.105 and pitch on
+  `cos(f2 * 3.0 * ws) * PI * 0.25` (7.5 rad/tick) around 0.558 / -0.366, else they hold 0.436 / 0.349 / -0.436 / -0.349 in yaw and
+  0.558 / -0.366 / 0.558 / -0.366 in pitch (:109-125).
+- **Port:** `entity/client/CricketModel.java` `setupAnim`: the gait at `ageInTicks * 1.0F` (no wingspeed: 1.0 rad/tick, 2.5 times
+  slower than 1.7.10); the hind legs always at the not-singing constants (no `getSinging()` read - the port entity's singing state,
+  if any, never reaches the model). Not in ANIM-001's list (the port never multiplied by limbSwingAmount; the constant is missing).
+- **Fix (a parity lane's, later):** the wingspeed 2.5f on the gait; the singing branch through a `CricketPose` (the Slice 4b form,
+  an entity-state read); the seam's hook follows the port.
+- **Resolution:** OPEN
+
 ## BUG — Port-code bugs (from 09_bugs.md)
 
 ### BUG-001 — MHLib `EntityEventHandler` on MOD bus with GAME-bus events
@@ -10238,6 +10305,42 @@ keeps BUG-036. Commit 4ea395c's message retains the old number.)*
   which the rig waits; the rule recorded; the tooling follow-up open.
 - **Ruled (owner, 2026-09-13, second set, item 6):** the converter or the audit refuses a cutout rig with a zero-thickness cube that omits the classic face order; tooling, no refuter. Lands in the tooling step (the asset audit's rule; the Vortex — the one shipped cutout rig with a zero-thickness cube — declared and regenerated).
 - **FIXED (2026-09-13, the tooling step; tooling, no refuter):** `tools/asset_audit.py` — `GECKO_GEO_FLAT_CUBE_FACE_ORDER_MISSING` (never acknowledgeable): a rig drawn by the replacement seam that has a zero-thickness cube (a 0 size component and no inflation, its own or its bone's — `_flat_cubes`) and whose description lacks `orespawn:cube_face_order` is a build error, worded with the fix (declare `cube_face_order: "classic"` in the manifest entry and `cubeFaceOrderRequired()` in the descriptor, regenerate); a rig whose descriptor requires the key is covered by the existing `GECKO_GEO_FACE_ORDER_INVALID` rule. The one shipped cutout rig with a flat cube, the Vortex (its 128x64x0 plate), declared and regenerated in the same step: `tools/s4_model_proofs.json` `cube_face_order: "classic"`, `VortexGeoReplacement.cubeFaceOrderRequired()`, the converter's geo copied into the jar, the s4 proof rewritten for its face-order leg (`G1 FACE ORDER PASS: model_vortex`), its other numbers identical. The rule fired on the undeclared Vortex before the declaration (1 error) and is green after. FIX_LOG "THE TOOLING STEP".
+
+### TEST-008 — The visual leg's rasteriser triangulates a quad along the diagonal its renderer's vertex order gives, so a flat cube's
+two coplanar faces interpolate depth along OPPOSITE diagonals on the two sides and the "nearer" face flips past the 1e-6 contest window
+
+- **Status:** OPEN (draft; found by the third Tier-2 slice on the Bee's right wing at bind)
+- **Where:** `tools/g1_render_parity.py` `render_capture` - every quad is rasterised as the triangles (0, 1, 2) and (0, 2, 3) of the vertex
+  order each renderer emitted; vanilla's `ModelPart.Polygon` and GeckoLib's `buildQuads` start a face's four vertices at different corners,
+  so the same face is split along the other diagonal on the other side. For a planar quad the two triangulations agree only up to the
+  corners' float32 non-planarity, which the barycentric depth amplifies.
+- **Measured (the Bee, `model_bee`, sample `bind`, camera yaw 34 / pitch -28; run 1 of the T2c chain, `scratchpad/r16/lane/run1`):**
+  the right wing (`WingRight`, a 0 x 8 x 24 cube, quads 54-59 of 138; the classic face order `[up, down, west, north, east, south]` on
+  both sides, `G1 FACE ORDER PASS 1518 faces over 11 captures`; corners equal to 2e-7 blocks, `G1 GEOMETRY PASS max delta 5.11e-07`):
+  at pixel (103, 59) the +normal face (quad 56) interpolates depth 0.6727422660 on the vanilla side and 0.6727409420 on the geo side, the
+  -normal face (quad 58) the other way round - the SAME two numbers, swapped between the faces, because vanilla's quad 56 has the
+  vertex order the geo's quad 58 has (diagonal A-C vs B-D). The gap, 1.3e-6 blocks, is past `CONTEST_DEPTH_EPSILON` (1e-6): on each
+  side the later face is "decisively nearer" or "decisively farther", never inside the window, so no pixel is flagged contested and the
+  two sides paint the two faces' DIFFERENT texel islands (u 0-0.094 vs 0.094-0.1875 of bee.png): 72 pixels of 65,536 = changed fraction
+  1.0986e-3 > the 1e-3 threshold (MAE 0.038, contested 0.011 - the flagged pixels are elsewhere). The four posed samples of the same
+  rig pass (changed 1.5e-5 / 2.0e-4 / 0 / 9.0e-4): at those wing angles the diagonal gap falls inside the window or the faces' texels
+  agree.
+- **Why it is a harness finding, not a rig divergence:** the two renderers agree on every corner (2e-7), every normal (2.5e-7), every UV
+  (0), the draw order and the within-cube face order; only the rasteriser's triangulation choice differs, and the real GPU also splits
+  quads per vertex order - in-game the LEQUAL depth test resolves a 1.3e-6 gap the same way on both renderers only if their triangle
+  diagonals agree, which they do not, so the two faces' z-fight on a flat cube is decided by sub-texel depth noise in-game too
+  (invisible at 1.3e-6 blocks, but not identical). TEST-006 (first-wins throughout the window) closed the SAME class of flip for gaps
+  INSIDE the window (the Cloud Shark's fins); this is the gap just OUTSIDE it.
+- **Options (the owner's; none applied):** (a) triangulate every quad along a canonical diagonal chosen from the corner POSITIONS
+  (e.g. the diagonal whose first corner is lexicographically smallest), independent of the emitted vertex order - both sides then
+  interpolate the same depth and the flip cannot happen; a harness-semantics change (existing proofs re-verify, expected identical
+  where no flat cube is viewed at such an angle); (b) widen the contest window to cover the triangulation gap (2e-6 would cover this
+  case; a tolerance ruling); (c) leave it and exclude bind for flat-cube rigs where bind is not a rendered frame (what this slice does
+  for the Bee: its hook writes both wings every frame, so bind is never drawn - the Robot2 / PurplePower precedent; recorded in the
+  entry's `visual_note`).
+- **What the slice did:** the Bee's `visual_sample_ids` are its four posed samples, bind excluded with the note above; every other
+  flat-cube rig of the slice (the Cloud Shark's three fins, the Fairy's four wings, the Terrible Terror's horns / wings / tail tip)
+  passes its visual leg at bind and posed.
 
 ### TEST-003 — Config-flipping gametests in the concurrent default batch
 

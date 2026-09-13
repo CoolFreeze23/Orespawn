@@ -5960,3 +5960,235 @@ THE CHECKS (the tool's own tests and one dry run): javac x3 into fresh scratch c
 IN-GAME: nothing — the sampler, its clips, the generator, its tests, the seeds and the gradle task are tooling; no shipped resource or class changed (the jar carries no reference clip).
 
 GATE: (tool3, 2026-09-13 14:03-14:09; no refuter - tooling): `gradle referenceClips` reproduced the lane's 29 regenerated files byte-identically (a first regeneration run had stopped on the orchestrator's own check - it compared the tracked, modified clips against HEAD instead of against the lane's run; nothing was regenerated wrongly, the check was corrected to compare against the lane's scratch run and the run repeated); `gradle referenceClipsVerify` on its own: `REFERENCE CLIPS VERIFIED: 29 files` (the new task's first run under gradle); g1ConvertModels / g1WriteRuntimeClasspath / g1Benchmark and the benchmark proof re-pinned (`G1 BENCHMARK EVIDENCE VERIFIED: SMOKE_ONLY / COMPONENT_PROXY_ONLY / PENDING_LIVE_PRECUTOVER; checked-in proof updated` - the g1tool class directory and build.gradle moved); `asset_audit.py` 0 errors / 0 advisories / 4 acknowledged (24 shipped geo: 23 seam + 1 outside-seam); staged 47 modified (the lane's 45 and the benchmark proof); then `gate_wrapped.sh tool3`: the drift check verified the re-pinned proof, `gradlew build` SUCCESSFUL (1m 36s; `check` ran `referenceClipsVerify` green - one VERIFIED line in the build log - beside the parity, reference-geometry and renderer-pin tasks), `runGameTestServer` All 1277 required tests passed (unchanged: no gametest added). Stray-process check: only the Gradle daemon.
+
+## PHASE G — THE THIRD TIER-2 SLICE, T2c (2026-09-13): fifteen rigs on the hook — the Cloud Shark and the fourteen named (Bee, Fairy, Gamma Metroid, Irukandji, Skate, Rubber Ducky, Terrible Terror, the three Worms, Cannon Fodder, CaterKiller, Cricket, Hercules Beetle) through the seam behind the dev switch on their classic hooks under Amendment 2; no keyframe layer, no transcription; the fifteen packages with the SPEC's plain-language formulas and the sampler's reference-only clips; one harness finding (the flat-quad diagonal) and four pose divergences drafted, nothing fixed
+
+RULING. Owner 2026-09-13, third set, item 8: "The Cloud Shark and the fourteen named: fifteen rigs on the hook, one refuter, the
+counts open the report." Amendment 2 to Amendment 1 (second set, item 2; addendum item 27): a rig lands when it draws through the
+seam on the classic hook with the geometry, surface, visual and draw-order legs, the animation leg at 0 rad against the hook, and
+the reference leg where a 1.7.10 pair exists; an exact transcription ships only where the current form fits without a harness
+extension - every other artist-tier species runs on its hook until an artist delivers idle and walk, and no harness or controller
+extension is built to transcribe it (the threshold, |cos| / Mth.sin, attacking-branch, head-look, position-write and
+health-frequency idioms are not extensions to schedule); the second set's item 4 (c): the Cricket lands under the threshold as the
+code has it. The package (second set, item 3; third set, items 2-6): a species without an exact transcription carries the SPEC's
+plain-language transcription of its source formulas (the seed's `formulas`) and the sampler's reference-only clip, the clips
+regenerated under the span rule (third set, item 5) and verified at `check` (item 6). Parity lanes frozen: a divergence gets a
+draft register line and stops. One refuter for the whole slice (the cost rules of 2026-09-12, item 25 (3)).
+
+WHAT LANDED (fifteen descriptors, fifteen geos, fifteen empty animation files, fifteen manifest entries, fifteen seeds, fifteen
+reference clips; the design's order):
+- THE HOOKS (`entity/client/<Name>GeoReplacement.java`: lazy suppliers; the classic renderer's shadow / scale / texture / render-type
+  facts; the classic `setupAnim` VERBATIM in `applyCustomAnimations(processor, PoseInputs)`; NO `keyframeLayers()` - the base's empty
+  list, the self-gate closed; `cubeFaceOrderRequired()` on the four rigs with a zero-thickness cube):
+  cloud_shark (three frequencies at wingspeed 1.0: leftfin Y 0.7 base 1.15, rightfin Y 1.5 base -0.9, fins Y 1.5, jaw X 0.5 base
+  0.5; shadow the classic constructor's literal 0.5f; face order); bee (wingspeed 2.0: wings Z 1.1, pincers Y 0.3, the antennae's
+  X 0.21 / 0.27 and Z 0.31 / 0.37, the ATTACKING-branch abdomen curl 0.021 x PI x 0.023 at rest / 0.11 x PI x 0.055 attacking folded
+  down the five-part chain with a -0.35 step and a POSITION follow through `moveTo` (10 / 10 / 6 / 5 / 7 units), the entity read
+  through `BeePose`; scale 1.1, shadow 0.9 x 1.1; face order); fairy (wingspeed 1.5: outer wings Y at 1.5, inner at 0.85 ws, arms X
+  0.15 / 0.12 ws and Z 0.1 / 0.11 ws, the HEAD-LOOK idiom yaw x 0.45 clamped to +-0.45 and pitch; scale 0.35, shadow 0.1 x 0.35; the
+  nine-sheet texture through `texture(entity)`; the render type the classic model's own `FairyModel.RENDER_TYPE` (translucent); face
+  order); gamma_metroid (tusks X 0.81, shell1 X 0.4 / 4, the beak's |cos| at 0.75 + 0.14; scale 0.9 halved for a baby, shadow 0.75 x
+  0.9); irukandji (four tentacles: root X / Z, the tip's pivot FOLLOWING the root by 7 units through `moveTo`, tip X / Z; scale 0.25,
+  shadow 0.1 x 0.25); skate (the THRESHOLD idiom: `(double) limbSwingAmount > 0.1` selects cos(1.2) x PI x 0.15 x amount, else
+  cos(0.4) x PI x 0.05, about 0.785; scale 0.75, shadow 0.075); rubber_ducky (the head and beak yaw by netHeadYaw; the wings' |cos|
+  at 1.0 x PI x 0.15 mirrored; scale 0.75 halved for a baby, shadow 0.15 x 0.75); terrible_terror (wings Z 1.3 around +-2.0, the
+  jaw's |cos| at 0.3, four leg parts X 1.25 around +-0.349; scale 0.75, shadow 0.45 x 0.75; face order); worm_large (the neck's X 0.25
+  - 0.698 and Y 0.15 on five rings, the five head rings FOLLOWING the neck by 32 units, X 0.35 / Y 0.45, the eight teeth following
+  the head by 19 units with fixed offsets and sine shifts, gnashing at 0.57, the tail tip X / Y at 0.63 a quarter turn apart; shadow
+  0.9); worm_medium (a three-link 12-unit chain: tail X 0.45 / Z 0.25, body following and X 0.35 / Z 0.15, the head pair following and
+  X 0.55 + 0.62 / Z 0.25, the four teeth following and snapping at 0.55 about 0.4; shadow 0.25); worm_small (a two-link 5-unit chain:
+  tail 0.55 / 0.35, body 0.45 / 0.25, head 0.65 + 0.62 / 0.3; shadow 0.1); cannon_fodder (the head-look idiom in radians; a
+  limbSwing-DISTANCE gait cos(limbSwing x 0.6662) x 1.2 x amount, the Amendment 1 code-driven form; shadow the literal 0.4f; a
+  port-authored rig with no 1.7.10 pair); cater_killer (wingspeed 0.22: the ATTACKING branch on the jaws Z, the head bob (a POSITION
+  write carried down the head group and, divided by i + 1, the three front segments), and the front legs; the tusk tips Y 2.11 / 2.3;
+  the front spikes Z 0.91; the six rear segments' z FOLLOWING the walking speed (39 + (16 + cos(1.7 ws + i PI/4) x 1.5 x amount) x i),
+  their spikes Z 0.4; the last segment 16 past the sixth with back spikes X 0.81 / 0.87 and Y 1.11 / 1.3; the entity read through
+  `CaterKillerPose`; scale 1.25 halved under PLAY_NICELY, shadow 1.0 x 1.25); cricket (the THRESHOLD idiom on the four legs' Y at 1.0 x
+  PI x 0.25 x amount around 0.47 / -0.54 / -0.296 / 0.384, eight constant hind-leg writes; NO `limb_swing_threshold` property; scale
+  0.5, shadow 0.15 x 0.5); hercules_beetle (wingspeed 1.0: the GAIT-scaled legs Y cos(ws x 0.45) x PI x 0.12 x amount over eighteen
+  parts around +-0.349 / 0, no threshold; the ATTACKING branch on nine jaw parts X 0.051 x PI x 0.01 at rest / 0.51 x PI x 0.07; the
+  entity read through `HerculesBeetlePose`; scale 1.1, shadow 0.99 x 1.1).
+- THE ENTITY-STATE SEAM (the Slice 4b form, not a transcription extension): `entity/pose/BeePose`, `CaterKillerPose`,
+  `HerculesBeetlePose` (`int getAttacking()`), the three entities implement them, `BeeModel` / `CaterKillerModel` /
+  `HerculesBeetleModel` gain `poseFrom(<Pose>, six floats)` with `setupAnim` delegating (the ModelRobot2 form), the harness's
+  `ProbeSubject` implements the three (its `getAttacking()` already answers); their manifest entries are `entity_state` with the
+  states `idle` (attacking 0) and `attacking` (1).
+- THE FAIRY'S RENDER STATE: `FairyModel.RENDER_TYPE = RenderType::entityTranslucent` stored through `super(RENDER_TYPE)` (the
+  ModelPurplePower form; `Model.renderType` is consulted only by `LivingEntityRenderer.getRenderType`, which `FairyRenderer`
+  overrides with the same factory - no classic behaviour changes) so the descriptor hands back the classic model's own object and the
+  harness proves the two renderers equal by identity (`G1 RENDER STATE PASS: model_fairy entity_translucent`); `FairyRenderer.textureFor(type)`
+  exposed for the descriptor's per-type texture. The manifest entry declares `visual_mode` entity_translucent / white / world.
+- THE SHIPPED GEOS: the converter's output byte for byte (`geo/entity/<id-stem>.geo.json`: cloudshark, bee, fairy, gammametroid,
+  irukandji, skate, rubberducky, terribleterror, wormlarge, wormmedium, wormsmall, cannonfodder, caterkiller, cricket,
+  herculesbeetle - the t2b naming, the manifest id's stem), `orespawn:bone_draw_order` on all, `orespawn:cube_face_order` on the four
+  with a zero-thickness cube (cloud_shark: the three fins; bee: the two wings; fairy: the four wings; terrible_terror: the horns, wings
+  and tail tip - TEST-007's rule, declared `cube_face_order: "classic"` with a `face_order_note`); the fifteen empty animation files
+  (the s4 hook rigs' `{"format_version": "1.8.0", "animations": {}}`); the dev-switch wiring (`PhaseGDevRenderers` fifteen providers,
+  `OreSpawnClient` fifteen registrations through them; the classic renderers the default); `tools/reference_renderer_pins.json`
+  naming fourteen candidates (the Cannon Fodder has no 1.7.10 registration and no pin entry; PASS 120 / DIVERGES 0 / MANIFEST_DRIFT 0).
+- THE MANIFEST (`tools/t2_model_proofs.json` +15 entries, 29 models): `code_driven` (twelve) or `entity_state` (three), the hook path,
+  `channels: []` on every entry (the converter refuses channels on a hook entry without a keyframe leg: `hook_note` on each, a
+  top-level `hook_rig_note`), `reference_source` on fourteen (the CaterKiller with the standing row's `unrolled_parts`, the seg1_i /
+  seg2_i copies folded onto their source parts), the Cannon Fodder a `reference_note`; the sample matrix: the simple-cyclic rigs on
+  the first slice's five fractions of their slowest rhythm's period at limbSwingAmount 0; the rigs whose hook reads limbSwingAmount
+  (skate, cannon_fodder, cater_killer, cricket, hercules_beetle) on the Beaver's amplitude matrix 0 / 0.25 / 0.5 / 1 with the Ant's
+  visual samples; the head-look rigs sampled at netHeadYaw 75 / headPitch 12 (the Fairy: the clamp exercised) and 30 / 10 (Rubber
+  Ducky, Cannon Fodder); the Cannon Fodder's limbSwing 3.0 (its gait reads the walk position); the Bee's visual samples its four
+  posed ones (below).
+- THE SAMPLER (`ReferenceClipSampler`: fifteen `REGISTRIES` rows and fifteen `RULES` rows with the source lines; the clips into
+  `tools/reference_clips/`, the index 43 clips, 44 files): cloud_shark period_multiple k = 5 (T 12.566, span 62.832 t / 3.142 s, 64
+  keys, 4 of 8 bones, seam 0); bee two_seconds_past_cap (T 149.6 > 120: the abdomen's rest rhythm 0.021 x 2.0; 41 keys, 20 of 23
+  moving, 5 positioned, seam 27.5 deg / 7.04 u); fairy two_seconds_past_cap (T 41.888, k = 1: 90.0 deg, k = 2: 16.3 deg; seam 123.0
+  deg); gamma_metroid period_multiple k = 4 (T 15.708, 62.832 t, closure 2.75 deg); irukandji two_seconds_past_cap (T 31.416, k = 1..3:
+  54.0 deg / 6.36 u; seam 54.0 deg / 6.36 u); skate period_multiple k = 1 (T 5.236, 7 keys, seam 0); rubber_ducky period_multiple
+  k = 1 (T pi / 1.0 = 3.142 - the |cos| fold - 5 keys, seam 0); terrible_terror two_seconds_past_cap (T 20.944, k = 1..5: 67.5 / 94.5 /
+  126.0 / 94.5 / 67.5 deg; seam 52.3 deg); worm_large two_seconds_past_cap (T 41.888, k = 1: 84.0 deg / 22.7 u, k = 2: 154.5 deg; seam
+  129.8 deg / 18.8 u, 13 positioned); worm_medium two_seconds_past_cap (T 41.888; seam 108.0 deg / 13.3 u, 7 positioned); worm_small
+  two_seconds_past_cap (T 25.133, k = 1..4: 48.8 deg; seam 54.0 deg / 5.28 u); cannon_fodder period_multiple k = 1 (T 9.431 on the walk
+  position, 11 keys, seam 0); cater_killer two_seconds_past_cap (T 95.2, k = 1: 21.6 deg / 9.0 u; seam 24.3 deg / 12.8 u, 80 bones
+  positioned); cricket period_multiple k = 1 (T 6.283, 8 keys, seam 0); hercules_beetle two_seconds_past_cap (T 123.2 > 120: the jaws'
+  rest rhythm 0.051; seam 7.34 deg). Two headless runs diff-clean, the repository tree equal to run A, `--verify` VERIFIED 44 files;
+  the 28 existing clips byte-identical to HEAD (only the index changed).
+- THE PACKAGES (`tools/artist_specs/<registry>.json`, fifteen seeds in the s4 form: the character sheet, every bone labelled (the
+  CaterKiller's 80), the rhythms as groups, the behaviour, the clips the artist delivers - `idle` and `walk` REQUIRED together - and
+  `formulas`: the source method and line quoted, orig cited, every formula and constant in words); the dry run 44 species folders, no
+  FORMULAS_MISSING / REFERENCE_CLIP_* / SEED_MISSING warning on the fifteen, every reference clip carried; `test_artist_package.py` 34 OK.
+- THE GAMETESTS: `T2SeamTests.t2_005` (one new row, the required-test count 1277 -> 1278): each of the fifteen descriptors constructs
+  registry-free, declares NO keyframe layer, its shipped animation file bakes to no clip, the self-gate registers nothing under the
+  modern keys, its shadow is the classic renderer's, the classic face order is required exactly where the shipped geo carries it, and
+  the classic hook poses a fresh bake of the shipped geo off its bind (a rest-state subject for the three attacking hooks);
+  `KeyframeLegTests.kf_007` forty-three replacements (the fifteen in the classic-source branch; fourteen Tier-2 descriptors with layers
+  unchanged).
+
+THE PROOF (this lane's `--validate-only` evidence over the t2 chain, run 1, `G1 PARITY STAGING PASS: 29 models`; the t2 proof tree is
+the orchestrator's to regenerate): cloud_shark geometry 2.34e-7 blocks (48 cube-samples), surface UV 0 / normal 1.17e-7 (72 zero-area
+faces ignored), animation 0 rad, draw order 6 captures / 48 draws, face order 288 faces, reference 8 parts, visual 0 / 0 / contested
+0.049; bee 5.11e-7 (253), UV 0 / normal 2.52e-7 (88 ignored), 0 rad, 11 captures / 253 draws, face order 1518, reference 23, visual
+9.31e-4 / MAE 0.0395 / contested 0.0134 over its four posed samples; fairy 2.32e-7 (90), 0 / 1.20e-7 (96 ignored), 0 rad, 6 / 90,
+face order 540, reference 15, visual 0 / 0 / 0.0072, render state entity_translucent on both sides; gamma_metroid 3.64e-7 (126), 0 /
+2.00e-7, 0 rad, 6 / 126, reference 21, visual 1.53e-5 / 4.6e-4 / 7.3e-4; irukandji 3.02e-7 (54), 0 / 1.51e-7, 0 rad, 6 / 54, reference
+9, visual 0 / 0 / 0; skate 3.00e-7 (63), 0 / 0, 0 rad at every amplitude, 21 / 63, reference 3, visual 0 / 0 / 0.0045; rubber_ducky
+6.16e-8 (48), 0 / 0, 0 rad, 6 / 48, reference 8, visual 1.53e-5 / 2.3e-4 / 1.53e-5; terrible_terror 3.01e-7 (126), 0 / 1.50e-7 (120
+ignored), 0 rad, 6 / 126, face order 756, reference 21, visual 0 / 0 / 0.077; worm_large 5.13e-7 (138), 0 / 1.89e-7, 0 rad, 6 / 138,
+reference 23, visual 0 / 0 / 1.53e-5; worm_medium 3.02e-7 (48), 0 / 1.50e-7, 0 rad, 6 / 48, reference 8, visual 0 / 0 / 0; worm_small
+1.98e-7 (18), 0 / 1.51e-7, 0 rad, 6 / 18, reference 3, visual 1.53e-5 / 1.2e-4 / 1.53e-5; cannon_fodder 2.00e-7 (126), 0 / 1.00e-7, 0
+rad at every amplitude, 21 / 126, no reference leg, visual 0 / 0 / 0; cater_killer 1.10e-6 (3280), 0 / 1.63e-7, 0 rad at every amplitude
+and state, 41 / 3280, reference 31 parts (the copies folded), visual 0 / 0 / 0.0087; cricket 3.32e-7 (231), 0 / 2.04e-7, 0 rad at
+every amplitude, 21 / 231, reference 11, visual 0 / 0 / 7.6e-5; hercules_beetle 6.08e-7 (1517), 0 / 1.57e-7, 0 rad at every amplitude
+and state, 41 / 1517, reference 37, visual 0 / 0 / 0. The fourteen entries landed before: identical numbers, the shipped geos equal to
+the converter's output. THE CHAIN REPEAT: the t2 chain run 2 and run 3 (`run_t2_chain.sh t2c2 run2|run3 validate`, the final classes) each `G1 PARITY STAGING PASS: 29 models`, `diff -rq run2 run3` 0 lines (dumps, generated geos, reference reports and evidence identical); the s4 chain twice in verify mode `G1 PARITY PASS: 13 models; checked-in proof verified`, `diff -rq s4a s4b` 0 lines; the g1 chain twice `G1 PARITY PASS: 2 models; checked-in proof verified`, `diff -rq g1a g1b` 0 lines - the existing proofs unchanged on the slice's classes (the harness gained no comparison; `ProbeSubject` three interfaces, the sampler its rows).
+
+DECIDED UNDER DOCTRINE, REVERSIBLE (one line each): (i) the geo file names follow the t2b naming (the manifest id's stem: goldfish for
+gold_fish), not the registry name; (ii) the sample periods per entry are each rig's slowest rest rhythm (or the Beaver's 2 pi / 0.1
+where a t2b precedent existed), a probe choice, nothing proven by them; (iii) the head-look inputs per entry (75 / 12 on the Fairy so
+its clamp is exercised, 30 / 10 elsewhere); (iv) the Skate, though inventoried simple-cyclic, runs on the amplitude matrix because its
+hook reads limbSwingAmount; (v) the Bee's visual samples are its four posed ones - bind is never a rendered frame (the hook writes both
+wings every frame) and at bind the harness's own triangulation flips the right wing's two faces past the contest window (TEST-008,
+below); (vi) the sampler's period for a |cos| channel is the folded pi / f (the Rubber Ducky), and the CaterKiller's / Bee's /
+Hercules Beetle's rest rhythms (the head bob 0.066, the abdomen 0.042, the jaws 0.051 rad/tick) are the slowest groups the rules name;
+(vii) the classic renderers' shadow literals (Cloud Shark 0.5f, Cannon Fodder 0.4f) are passed as equal literals (the t2b Cloud Shark
+precedent), no SHADOW constant added; (viii) `FairyModel` stores its render-type function (no behaviour change) rather than the
+renderer's override moving into the model.
+
+DEVIATIONS PRESENTED: (1) `channels` on no entry: the converter refuses channels on a code_driven / entity_state entry without a
+keyframe leg (`layer_definition_to_geo.py:969`), so the Cloud Shark's pure-cosine channels could not be declared and every rig carries
+a `RULES` row instead (the brief anticipated channels where the hook is pure cosine); (2) the Cannon Fodder has NO 1.7.10 pair (1.7.10's
+EntityCannonFodder was an unregistered tameable base class; the port's six-part quadruped is port-authored) - it lands without a
+reference leg and without a renderer pin, as Amendment 2 allows ("where a 1.7.10 pair exists"); (3) the CaterKiller's reference leg
+needed the standing row's `unrolled_parts` declaration on the t2 entry (run 1 stopped on EXTRA_IN_PORT 49 without it: the port's
+unrolled seg1_i / seg2_i copies); (4) the Bee's bind visual sample fails the 1e-3 threshold by a triangulation artefact of the
+harness (72 pixels, 1.0986e-3): TEST-008 drafted, bind excluded from its visual samples with the note; (5) the package dry run: the
+fifteen hook folders `check` REJECT on exactly the required `idle` / `walk` rows (the shipped file carries no clip and rule 3 makes the
+bare pair required on every artist-tier sheet - the first Tier-2 packages without a transcription meet the rule; the s4 hook rigs pass
+because a Tier-3 sheet has no contract rows) - a tooling finding drafted (`audit_TOOL_hook_package_check.txt`, a one-line severity
+rule proposed), the tool untouched, the brief's "every folder check PASS" not met for the fifteen (29 of 44 PASS); (6) the asset
+audit's 30 errors are the untracked-file precedent (TEXTURE_REF_CASE on the fifteen geos and fifteen animation files until the
+orchestrator stages them), nothing else - no FLAT_CUBE, no DRAW_ORDER, no PROOF_DRIFT row.
+
+DIVERGENCES NOTICED, DRAFTED, NOT FIXED (the parity freeze; the seam carries the PORT's pose verbatim, proven against the port's classic
+model): the Gamma Metroid (the port keeps three of 1.7.10's eleven channels and drops the gait, the tusk yaws, the shell sway, the
+sitting check and the beak Z; no wingspeed 0.45), the Rubber Ducky (the port drops the RenderInfo flap latch, the random roll, the
+kill-count quadruple, the sitting check, the wing Y and the head factors 0.45 / 0.65), the Terrible Terror (the port drops the four
+lower legs and the tail chain), the Cricket (the port's gait at 1.0 rad/tick where 1.7.10 ran at wingspeed 2.5; the singing branch
+dropped) - `audit_ANIM_*_pose.txt`, four draft register lines. Not registered anywhere before this slice.
+
+IN-GAME: nothing for a default install. Behind `-Dorespawn.dev.geckolibRenderers=<species>` the fifteen draw the converted rigs posed by
+their classic code through the seam (the Fairy translucent with its type's sheet, the Gamma Metroid and Rubber Ducky halved as babies,
+the CaterKiller halved under play-nicely); no artist clip plays until idle and walk are delivered.
+
+NOT DONE (by design): the gametest suite not run (no gradle); the t2 proof tree (the orchestrator's `--write-proof`); the package
+checker's rule for an undelivered hook folder (presented); TEST-008 (presented); the four pose divergences (drafted); `fly` / `swim` /
+weights / triggers (later slices).
+
+PRESENTED BY THE ORCHESTRATOR (nothing here is a new ruling; each is reversible):
+- THE PACKAGE CHECKER'S "NOT DELIVERED YET" RULE (tooling, decided under the sampler step's doctrine — "the generated folder
+  itself checks PASS, for the dry run's check to mean anything" — ratified by the third set's item 7 "the sampler's other
+  choices stand"): the lane's dry run found the first Tier-2 packages without a transcription REJECTED on the required bare
+  `idle` / `walk` rows, because the shipped animation file of a species on its classic code carries no clip (Amendment 2)
+  and rule 3 makes the pair required on every artist-tier sheet. Applied (the lane's option (a), the smallest change; no
+  refuter — the tool's own tests and one dry run are the check): in `check_folder`, a returned file that carries NO clip at
+  all, for a species with `exact_transcription: false` whose controllers are not native, is "nothing delivered yet" — every
+  required row (the contract pair, and a code-triggered row if a phase-locked sheet ever carries one) is a WARN naming it
+  ("required clip 'idle' not delivered yet — the file carries no clip at all … idle and walk open the game's switch only
+  together — deliver both"); a file with SOME clips but not the pair is a partial delivery and REJECTs exactly as before; a
+  native creature's empty return (the Queen's shipped file carries her clips) is a deletion and REJECTs as before.
+  `tools/test_artist_package.py` 35 tests (+1: the fixture's empty file passes with the two WARNs; its `idle`-only file
+  REJECTs on `walk`). The dry run re-checked: 44 of 44 folders PASS (the fifteen hook folders with the two WARNs beside the
+  untouched-reference-copy WARN); `artist_handoff/entities/the_queen` PASS unchanged; a hand-made partial return for the
+  Cloud Shark REJECTs. Flipping the WARN back to a REJECT is one line. (Options (b) and (c) of the lane's draft are the
+  record of the alternatives; no register line — the fix is the smallest green change, and no better fix is known.)
+- TEST-008, a new harness finding (the register entry, presented; the parity freeze: a register line and stop): the visual
+  leg's rasteriser triangulates each quad along the diagonal the renderer's vertex order gives, so a flat cube's two
+  coplanar faces interpolate depth along opposite diagonals on the two sides; on the Bee's right wing at bind the gap
+  (1.3e-6 blocks) sits just past the 1e-6 contest window, so 72 pixels swap texel islands unflagged (changed fraction
+  1.0986e-3 against the 1e-3 threshold). The lane's mitigation is decided under doctrine (the Robot2 / PurplePower
+  precedent: bind is never a rendered frame for a rig whose hook writes the part every frame — the Bee's hook writes both
+  wings every frame): the Bee's visual samples are its four posed ones, bind excluded with a `visual_note`; every other
+  flat-cube rig of the slice passes its visual leg at bind. The owner's options are in the entry: a canonical diagonal from
+  the corner positions (a harness-semantics change, presented before its gate if chosen), a wider window (a tolerance
+  ruling), or the exclusion as done. The Cloud Shark's earlier tie-rule case (TEST-006) was the same class of flip INSIDE
+  the window; this is the gap just outside it.
+- FOUR POSE DIVERGENCES (ANIM-021 the Gamma Metroid, ANIM-022 the Rubber Ducky, ANIM-023 the Terrible Terror, ANIM-024 the
+  Cricket): the port's classic models simplify their 1.7.10 poses (channels, gaits, wingspeeds, latches and chains dropped
+  when the models were first ported); the seam carries the PORT's pose verbatim and is proven against the port's classic
+  model, so the four rigs land as ruled and the divergences are register lines under the freeze — a parity lane's later
+  work, each entry naming the source lines and the fix's shape.
+- THE CANNON FODDER has no 1.7.10 pair (1.7.10's `EntityCannonFodder` was an unregistered tameable base class; the port's
+  six-part quadruped is port-authored): it lands without a reference leg and without a renderer pin, as Amendment 2 reads
+  ("where a 1.7.10 pair exists"); the inventory's row order kept it in this slice.
+- `channels` ON NO ENTRY: the converter refuses declared channels on a hook entry without a keyframe leg
+  (`layer_definition_to_geo.py:969`), so the sampler's span for every rig of this slice comes from a `RULES` row with the
+  source lines (fifteen rows), not from declared channels — the brief had anticipated channels for the pure-cosine rigs; the
+  effect on the clips is nil (the same period structure, stated in code instead of the manifest); noted, not changed.
+- THE REQUIRED-TEST COUNT moves 1277 -> 1278 (`T2SeamTests.t2_005`, one new row over the fifteen descriptors);
+  `KeyframeLegTests.kf_007` re-pinned (the fifteen hook descriptors in the classic-source branch; fourteen Tier-2
+  descriptors with layers unchanged) — the refuter's reading of that re-pin is in its notes below.
+- THE COUNTS after this slice: rigs through the seam 38 / 106; artist-tier species with an exact transcription shipped
+  15 / 90 (informational); artist-tier species packaged 30 / 90 (31 folders with the Queen's; the dry run 44 folders, every
+  one PASS under the rule above).
+
+REFUTER NOTES: one refuter (2026-09-13), beside the gate. NO MUST-FIX; all nine claims CONFIRMED by independent measurement:
+every `applyCustomAnimations` diffed statement by statement against its classic `setupAnim` / `poseFrom` (every constant, axis,
+sign, branch, threshold, `|cos|`, head-look and position chain matched; the shadows and scales against the port renderers, the
+baby halves and the play-nicely half); no keyframe machinery (0 hits over the fifteen; the fifteen empty animation files
+`cmp`-identical to the s4 form; `t2_005` asserts the zero registration and the empty controller list); the converter re-run over
+the lane's dumps: 24 of 24 geos identical to the shipped ones and to the lane's three runs, the face-order key exactly on the four
+flat-cube rigs and nowhere else, 0 mirrored cubes, the audit's flat-cube rule live; the manifest's fourteen existing entries
+unchanged in content and order (a `hook_rig_note` added), `reference_source` on fourteen, the Cannon Fodder's reference note
+verified against 1.7.10 (an unregistered base of the Chipmunk / Lizard / Ostrich / Velocity Raptor, no model, renderer or
+registration), the `RULES` periods matched to the hooks' frequencies; the legs PASS on all fifteen in the lane's run 3 and in the
+orchestrator's staged proof tree, the numbers to the digit; eleven seeds' formulas checked against the cited 1.7.10 lines; its own
+headless sampler run over the lane's classes 44 of 44 `cmp`-identical and `--verify` VERIFIED, the fifteen clips' sha256 equal to
+the index rows, the 28 earlier clips untouched; `kf_007` = 28 + 15 with the fourteen Tier-2 layered descriptors unchanged; the
+`@GameTest` count 432 -> 433; the wiring, the fourteen renderer-pin candidates (PASS 120 / DIVERGES 0 / MANIFEST_DRIFT 0) and the
+delta entirely in scope. Its notes, folded in: N1 the orchestrator's staging (the proof tree, the benchmark re-pin) and the package
+checker's rule were verified beside the lane's delta (35 tool tests OK, the dry run 44 of 44 PASS); N2 a process slip of its own -
+a heredoc-mangled javac dumped two crash argfiles into the repository root; it removed exactly those two (its own, by mtime; the
+tree back to 0 untracked) and its recompile was byte-identical to the lane's classes; N3 the Terrible Terror's `RULES` row writes
+its slowest period as 2 pi / 0.3 where the 0.3 channel is a |cos| (the natural period is the fold, pi / 0.3, as the Rubber Ducky's
+row folds): the outcome is unchanged - the 1.25 rad/tick legs prevent closure under either base, so the index's `two_seconds_past_cap`
+is right - a wording fix for the next tooling commit; N4 the simple-cyclic entries' per-rig sample periods are a probe choice
+(disclosed above, doctrine (ii)); N5 the Bee's bind exclusion is disclosed in its `visual_note`, TEST-008's mismatch is real
+(0.00109863281 = 72 / 65,536) and its mechanism plausible - the owner's call; N6 the four ANIM drafts' orig line citations checked.
+
+GATE: (t2c, 2026-09-13 15:21-15:31, the refuter running beside it; a first run at 15:17 stopped between its steps 3 and 4 on a shell fault of the orchestrator's own regeneration script — an apostrophe inside a parameter expansion — after the g1 / s4 verify passes and the t2 rewrite had already run identically; the script was corrected and rerun from the start): the gradle chains (the t2 probe and reference-geometry dumps for the 29 entries, the g1 and s4 probes and reference dumps, the runtime classpath) exit 0; the g1 and s4 trees VERIFIED byte-identical first (`G1 PARITY PASS: 2 models; checked-in proof verified` / `13 models; checked-in proof verified` — the slice adds no comparison and moves no existing proof); the t2 tree rewritten (`G1 PARITY PASS: 29 models; checked-in proof updated`; 91 proof files changed: the fifteen new models' reports, geos, reference-leg reports and evidence images, the tree's summary); `gradle referenceClips` reproduced the lane's 44 files byte-identically against its own scratch run (the 28 clips of the sampler step untouched, the fifteen new ones and the index as the lane wrote them) and `gradle referenceClipsVerify` on its own `REFERENCE CLIPS VERIFIED: 44 files`; the benchmark proof DRIFTED as expected on one pinned input — the g1tool class directory (the sampler's fifteen `REGISTRIES` / `RULES` rows and `ProbeSubject`'s three pose interfaces; the g1 manifest, `G1AnimationRuntime` and `build.gradle` untouched) — and was re-pinned (`G1 BENCHMARK EVIDENCE VERIFIED: SMOKE_ONLY / COMPONENT_PROXY_ONLY / PENDING_LIVE_PRECUTOVER; checked-in proof updated`); `asset_audit.py` 0 errors / 0 advisories / 4 acknowledged after staging (draw order: 39 shipped geo, 38 seam + 1 outside-seam; the 30 TEXTURE_REF_CASE rows the lane saw were the untracked-file precedent); staged 374 added / 23 modified; then `gate_wrapped.sh t2c`: the drift check verified the re-pinned proof, `gradlew build` SUCCESSFUL (1m 57s; `check` ran the s4 / t2 parity over 29 t2 models, the 109-model reference leg, the renderer pins and `referenceClipsVerify` green), `runGameTestServer` All 1278 required tests passed (1277 -> 1278: `T2SeamTests.t2_005`). The package checker's rule (tooling) checked outside the gate: 35 tool tests OK, the dry run 44 of 44 PASS. Stray-process check: only the Gradle daemon.
