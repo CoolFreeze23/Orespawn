@@ -5323,3 +5323,60 @@ pilot pair's package into `artist_handoff/` (the Queen: idle and one attack; the
 reported) → stop and report with the counts (the second count now "artist-tier species with an exact transcription
 shipped / 90", informational; the third, packaged, the deliverable) and the next slice's species list. Nothing else
 runs; the changelog is written once, before the next push.
+
+## THE TOOLING STEP (2026-09-13) — TEST-006 adopted (the visual leg's tie rule first-wins throughout the contest window; one refuter), TEST-007 landed (the audit refuses a cutout rig with a zero-thickness cube that omits the classic face order; the Vortex declared and regenerated)
+
+RULING. Owner 2026-09-13, second set (addendum item 27 (5)-(6), (12)): TEST-006 adopted as measured, one refuter; TEST-007
+tooling, no refuter; both in the tooling step before the mirror drop. (The step's third item, the reference-clip sampler
+(item 27 (3)), lands in its own lane and gate next — its record follows.) Executed by the orchestrator directly.
+
+WHAT LANDED:
+- `tools/g1_render_parity.py render_capture`: inside the contest window (`abs(depth - current_depth) <= CONTEST_DEPTH_EPSILON`,
+  1e-6) a fragment is flagged contested when it is a different quad with a different texel — as before — and then NEVER
+  replaces the front (before: it replaced the front when nearer by more than 1e-9). The far branch and the decisively-nearer
+  branch are unchanged; the translucent mode's blended rasteriser (`coplanar_depth_epsilon_blocks`) is untouched; the
+  docstring states the rule and its date.
+- `tools/asset_audit.py`: `_flat_cubes(geometry)` (a cube with a 0 size component and no inflation, its own or its bone's) and
+  the rule `GECKO_GEO_FLAT_CUBE_FACE_ORDER_MISSING` after the face-order check — a seam rig with such a cube, a descriptor
+  that does not require the key, and no `orespawn:cube_face_order` in its description is an ERROR naming the cubes and the
+  fix; added to `NEVER_ACKNOWLEDGED`. Before the Vortex's declaration the audit reported exactly one error (the Vortex);
+  after, `RESULT: 0 error(s)`.
+- The Vortex: `tools/s4_model_proofs.json` `cube_face_order: "classic"` with a `face_order_note`; `VortexGeoReplacement`'s
+  descriptor overrides `cubeFaceOrderRequired()` (the Firefly's form); `src/main/resources/assets/orespawn/geo/entity/vortex.geo.json`
+  is the converter's regenerated output (the key on every cube); the s4 proof rewritten by hand under the proof rule for the
+  Vortex's face-order leg (`G1 FACE ORDER PASS: model_vortex`) — its geometry / surface / animation / visual / draw-order
+  numbers identical (an axis-aligned plate's within-cube order is invisible to the cutout leg).
+
+THE PROOFS UNDER THE TIE RULE — THE BEFORE/AFTER AS IT TURNED OUT (decided under doctrine, reversible): the ruling
+adopted the rule "as measured (every existing proof identical)"; the measurement (the lane's, then refuter A's, then
+this step's refuter's) was of every VERDICT number — changed fraction, MAE, contested fraction — and those are identical
+on every sample of every model, the models that report contested fragments included (the g1 Beaver 1.5e-5; s4 Island /
+IslandToo 0.225 / 0.464, Robot5 0.0116, Robot3 0.0025, Robot1 5.5e-4, Robot4 4.1e-4; the t2 Gold Fish 0.0086-0.0097, the
+Unstable Ant 0.0043). The checked-in EVIDENCE IMAGES are another matter: a contested pixel whose two faces are not an
+exact tie on one side shows the first-emitted face under the new rule where it showed the nearer one before, and where
+that happens on both sides the images change while the comparison does not. Measured (a fresh capture of every tree
+diffed against the checked-in PNGs pixel by pixel; the step's refuter re-rendered every affected capture with BOTH
+versions of `render_capture` and matched the HEAD render to the HEAD PNG and the new render to the rewritten PNG):
+FOURTEEN images in all — the g1 tree 0 files; the t2 tree ten, the Gold Fish's five samples on both sides
+(`model_goldfish/{bind,t0,t_quarter,t_half,t_three_quarter}.{vanilla,geo}.png`), sixteen pixels each; the s4 tree four,
+Robot3's two samples on both sides (`model_robot3/s_attacking_ri0_a0_5_t_0_230000.{vanilla,geo}.png`,
+`s_idle_ri1_a0_5_t_0_100000.{vanilla,geo}.png`), ten pixels each — every differing pixel a contested one under both
+rules, the same set on both sides, both sides agreeing at it under both rules, the contested mask identical, so every
+number stays identical. A PROCESS FAULT, admitted: the regeneration script wrote the s4 proof for the Vortex's new
+face-order leg BEFORE running the verify-only checks, so Robot3's four images rode into that rewrite unpresented (the
+script's own rule was "a drift here is presented, never silently regenerated"); the t2 verify then stopped on the Gold
+Fish drift as designed, the ten t2 images were measured before the second run rewrote them, and Robot3's four were found
+by the refuter and re-measured here. The s4 tree also carries the Vortex's `model_vortex.conversion.json` (the
+converter's face-order record, 21 lines) and `geo.json` (the key) and two `report.json` leaves (the Vortex's
+`cube_face_order` block and its geometry hash). The before/after of the fourteen images is this paragraph — the
+ruling's premise "every existing proof identical" held for every verdict and failed for fourteen evidence images by
+sixteen or ten pixels each; presented here rather than a further ruling asked for, since the rule itself is ruled and
+the captures follow it (reversible by commit). No benchmark re-pin (g1tool, the g1 manifest and build.gradle untouched).
+
+IN-GAME: nothing — both changes are harness and audit tooling; the Vortex's regenerated geo differs from the shipped one
+by the face-order key alone (its cubes, UVs and draw order byte-identical), which the seam applies to a plate whose two
+faces carry the same texture.
+
+REFUTER NOTES: one refuter (2026-09-13), on the tie rule, beside the gate. CONFIRMED — the code change is the ruled rule and nothing else: two hunks inside `render_capture` (the docstring; the window branch `if depth >= current_depth - 1.0e-9: continue` → `continue`), the window test, the contested flag (a different quad AND a different texel), the far branch and the decisively-nearer branch unchanged, the translucent mode's blended rasteriser (`render_capture_blended`, `coplanar_depth_epsilon_blocks`) without a hunk; the measured premise for every NUMBER: the Cloud Shark's five samples with the changed tool 0.00320 / 0.00447 / 0.00522 / 0.00774 / 0.01018 → 0 (MAE → 0), the contested fractions 0.0256 / 0.0213 / 0.0246 / 0.0491 / 0.0246 unchanged; the Firefly 0 / 0 / 0; the Gold Fish 0 / 0 with contested 0.0086-0.0097; the Unstable Ant 0.0043; the t2 report 0 differing leaves and 0 numbers moved; the g1 report 0 / 0 with all 30 PNGs identical; the s4 report differing from HEAD in exactly the Vortex's two leaves (`draw_order.cube_face_order`, `geometry_sha256`), Island / IslandToo 0.225 / 0.464, Robot5 0.0116, Robot3 0.0025, Robot1 5.5e-4, Robot4 4.1e-4 and the Beaver 1.5e-5 identical; the docstring states the rule and its date. REFUTED (MUST-FIX, records and process): "every existing proof identical" is true of every number and false of the captures — FOURTEEN checked-in PNGs change under the rule (the Gold Fish's ten, 16 px per side per capture; Robot3's four, 10 px per side per capture), re-rendered with the real `render_capture` of BOTH versions: the differing pixels are the same set on both sides, every one contested under both rules, both sides agreeing at them under both rules, the contested mask identical (examples: Gold Fish (38, 198) 213 / 210 / 0 → 241 / 238 / 0; Robot3 (164, 30) 125 / 122 / 122 → 0 / 0 / 0); and the s4 write for the Vortex ran before the verify checks, absorbing Robot3's four unpresented while the t2 verify stopped on the Gold Fish's ten — the script's own "presented, never silently regenerated" rule not followed — APPLIED: the fourteen images and the fault recorded in THE PROOFS paragraph and the register line as the before/after (the rule ruled, the captures its consequence, reversible), the s4 tree's `model_vortex.conversion.json` (the converter's face-order record) named beside its geo, and the unstaged delta staged by the commit script. NOTES: the TEST-007 audit rule fires on exactly the undeclared Vortex (HEAD's geo: `flat=['Shape1[0] 128x64x0'] required=False key_present=False`) and is silent on the declared tree; only three of the 24 shipped geos carry a zero-size cube (the Firefly's two wings, the Gold Fish's eight fins, the Vortex's plate), all declared, `cubeFaceOrderRequired` true on exactly the Firefly, Gold Fish, PurplePower and Vortex; the inflate exemption right by construction (cube-then-bone as GeckoLib reads it; a 1e-9 size not flat; a missing size skipped) though no shipped flat cube has inflation; an OUTSIDE_SEAM rig with a flat cube would go unchecked (none has one); the Vortex's visual numbers identical before and after (changed 1.3733e-4 on its nine uncontested silhouette pixels, MAE 4.2267e-3, contested 0 on all ten captures), its shipped geo byte-equal to the converter's output and differing from HEAD by the key alone; the structural note that the front can no longer walk forward inside the window (a chained third fragment could flag differently) measured to change no contested mask on any capture.
+
+GATE: (tool → tool2, 2026-09-13 09:58-10:13, two runs, the tie-rule refuter running beside them): FIRST RUN (tool): the s4 chain converted the Vortex with the classic face order and its geo was copied into the jar (the key on every cube; the draw order kept), the s4 / g1 / t2 probes and the s4 / t2 reference legs re-run, the s4 proof written by hand under the proof rule for the Vortex's new face-order leg (`G1 FACE ORDER PASS: model_vortex 36 faces over 6 captures in the classic cube order`; `G1 PARITY PASS: 13 models; checked-in proof updated`) — and that write ran BEFORE the verify-only checks, so it silently absorbed the tie rule's four Robot3 images (the process fault admitted in THE PROOFS paragraph; found by the refuter); the g1 proof VERIFIED unchanged under the new tie rule (`2 models; checked-in proof verified`); the t2 verify STOPPED on a drift by the verify-only guard (`checked-in G1 proof drift: evidence/visual/model_goldfish/bind.vanilla.png`) — measured before the second run rewrote anything: the t2 tree's ten Gold Fish images, sixteen pixels each on both sides; every verdict number identical. SECOND RUN (tool2, 10:04-10:13): the t2 proof rewritten under the ruled rule (`G1 PARITY PASS: 14 models; checked-in proof updated`; the t2 diff is those ten PNGs, 0 report lines), the asset audit `RESULT: 0 error(s), 0 advisory(ies), 4 acknowledged; draw order: 24 shipped geo: 23 seam + 1 outside-seam` (the Vortex declared; the new rule green), the drift check green, the build green (`G1 PARITY PASS: 2 models; checked-in proof verified`, `13 models … verified`, `14 models … verified`), the suite `All 1277 required tests passed` (the count unchanged; no row added). javac of main / g1tool / gametest rc 0 (961 / 63 / 244 class files) before the gate; the audit fired its new rule on the undeclared Vortex before the declaration (`RESULT: 1 error(s)`).
