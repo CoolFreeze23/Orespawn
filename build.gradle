@@ -442,6 +442,24 @@ tasks.register('referenceGeometry', Exec) {
             '--proof-dir', file('phase_g_reports/reference_proof').absolutePath
 }
 tasks.named('check') { dependsOn tasks.named('referenceGeometry') }
+// The full folder: the reference leg's converter output is the artist package generator's rig for every artist-tier
+// species without a shipped geo (tools/artist_package.py package --reference-geo-dir
+// build/reference/generated; the sheet states the rig is not yet in-game and that bone names are final; the
+// shipped geo is preferred wherever one exists). Same converter and form as t2ConvertModels over the reference
+// manifest's dumps; --continue-on-refusal names each entry the converter refuses (an entry drawn from shared parts
+// without the render_instances form) in build/reference/generated/refusals.json and converts the rest. This is the
+// package generator's INPUT, not a gate: deliberately NOT a `check` dependency.
+tasks.register('referenceConvertModels', Exec) {
+    group = 'verification'
+    description = 'Convert every dumped reference model to Bedrock geo: the artist package\'s rig for a species not yet in-game.'
+    dependsOn tasks.named('referenceDumpCompiledModels')
+    workingDir = projectDir
+    commandLine 'python', 'tools/layer_definition_to_geo.py',
+            '--manifest', referenceManifest.absolutePath,
+            '--dump-dir', referenceBuildDir.get().dir('vanilla').asFile.absolutePath,
+            '--output-dir', referenceBuildDir.get().dir('generated').asFile.absolutePath,
+            '--continue-on-refusal'
+}
 // ENT-S-092 (2026-09-03): every 1.7.10 renderer registration's shadow radius and world scale are pinned
 // against the port renderer constants (and the GeckoLib candidate descriptors) by
 // tools/reference_renderer_pins.py; a PENDING entry is a batch not yet landed (none since 2026-09-03).
