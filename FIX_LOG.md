@@ -5380,3 +5380,156 @@ faces carry the same texture.
 REFUTER NOTES: one refuter (2026-09-13), on the tie rule, beside the gate. CONFIRMED — the code change is the ruled rule and nothing else: two hunks inside `render_capture` (the docstring; the window branch `if depth >= current_depth - 1.0e-9: continue` → `continue`), the window test, the contested flag (a different quad AND a different texel), the far branch and the decisively-nearer branch unchanged, the translucent mode's blended rasteriser (`render_capture_blended`, `coplanar_depth_epsilon_blocks`) without a hunk; the measured premise for every NUMBER: the Cloud Shark's five samples with the changed tool 0.00320 / 0.00447 / 0.00522 / 0.00774 / 0.01018 → 0 (MAE → 0), the contested fractions 0.0256 / 0.0213 / 0.0246 / 0.0491 / 0.0246 unchanged; the Firefly 0 / 0 / 0; the Gold Fish 0 / 0 with contested 0.0086-0.0097; the Unstable Ant 0.0043; the t2 report 0 differing leaves and 0 numbers moved; the g1 report 0 / 0 with all 30 PNGs identical; the s4 report differing from HEAD in exactly the Vortex's two leaves (`draw_order.cube_face_order`, `geometry_sha256`), Island / IslandToo 0.225 / 0.464, Robot5 0.0116, Robot3 0.0025, Robot1 5.5e-4, Robot4 4.1e-4 and the Beaver 1.5e-5 identical; the docstring states the rule and its date. REFUTED (MUST-FIX, records and process): "every existing proof identical" is true of every number and false of the captures — FOURTEEN checked-in PNGs change under the rule (the Gold Fish's ten, 16 px per side per capture; Robot3's four, 10 px per side per capture), re-rendered with the real `render_capture` of BOTH versions: the differing pixels are the same set on both sides, every one contested under both rules, both sides agreeing at them under both rules, the contested mask identical (examples: Gold Fish (38, 198) 213 / 210 / 0 → 241 / 238 / 0; Robot3 (164, 30) 125 / 122 / 122 → 0 / 0 / 0); and the s4 write for the Vortex ran before the verify checks, absorbing Robot3's four unpresented while the t2 verify stopped on the Gold Fish's ten — the script's own "presented, never silently regenerated" rule not followed — APPLIED: the fourteen images and the fault recorded in THE PROOFS paragraph and the register line as the before/after (the rule ruled, the captures its consequence, reversible), the s4 tree's `model_vortex.conversion.json` (the converter's face-order record) named beside its geo, and the unstaged delta staged by the commit script. NOTES: the TEST-007 audit rule fires on exactly the undeclared Vortex (HEAD's geo: `flat=['Shape1[0] 128x64x0'] required=False key_present=False`) and is silent on the declared tree; only three of the 24 shipped geos carry a zero-size cube (the Firefly's two wings, the Gold Fish's eight fins, the Vortex's plate), all declared, `cubeFaceOrderRequired` true on exactly the Firefly, Gold Fish, PurplePower and Vortex; the inflate exemption right by construction (cube-then-bone as GeckoLib reads it; a 1e-9 size not flat; a missing size skipped) though no shipped flat cube has inflation; an OUTSIDE_SEAM rig with a flat cube would go unchecked (none has one); the Vortex's visual numbers identical before and after (changed 1.3733e-4 on its nine uncontested silhouette pixels, MAE 4.2267e-3, contested 0 on all ten captures), its shipped geo byte-equal to the converter's output and differing from HEAD by the key alone; the structural note that the front can no longer walk forward inside the window (a chained third fragment could flag differently) measured to change no contested mask on any capture.
 
 GATE: (tool → tool2, 2026-09-13 09:58-10:13, two runs, the tie-rule refuter running beside them): FIRST RUN (tool): the s4 chain converted the Vortex with the classic face order and its geo was copied into the jar (the key on every cube; the draw order kept), the s4 / g1 / t2 probes and the s4 / t2 reference legs re-run, the s4 proof written by hand under the proof rule for the Vortex's new face-order leg (`G1 FACE ORDER PASS: model_vortex 36 faces over 6 captures in the classic cube order`; `G1 PARITY PASS: 13 models; checked-in proof updated`) — and that write ran BEFORE the verify-only checks, so it silently absorbed the tie rule's four Robot3 images (the process fault admitted in THE PROOFS paragraph; found by the refuter); the g1 proof VERIFIED unchanged under the new tie rule (`2 models; checked-in proof verified`); the t2 verify STOPPED on a drift by the verify-only guard (`checked-in G1 proof drift: evidence/visual/model_goldfish/bind.vanilla.png`) — measured before the second run rewrote anything: the t2 tree's ten Gold Fish images, sixteen pixels each on both sides; every verdict number identical. SECOND RUN (tool2, 10:04-10:13): the t2 proof rewritten under the ruled rule (`G1 PARITY PASS: 14 models; checked-in proof updated`; the t2 diff is those ten PNGs, 0 report lines), the asset audit `RESULT: 0 error(s), 0 advisory(ies), 4 acknowledged; draw order: 24 shipped geo: 23 seam + 1 outside-seam` (the Vortex declared; the new rule green), the drift check green, the build green (`G1 PARITY PASS: 2 models; checked-in proof verified`, `13 models … verified`, `14 models … verified`), the suite `All 1277 required tests passed` (the count unchanged; no row added). javac of main / g1tool / gametest rc 0 (961 / 63 / 244 class files) before the gate; the audit fired its new rule on the undeclared Vortex before the declaration (`RESULT: 1 error(s)`).
+
+## THE REFERENCE-CLIP SAMPLER (2026-09-13) — every packaged species with a classic hook carries a reference-only clip sampled from that hook at fixed inputs, the SPEC's plain-language transcription where no exact transcription ships, the checker's and the audit's refusals (owner 2026-09-13, second set, item 3; tooling, no refuter)
+
+RULING. Owner 2026-09-13, second set (addendum item 27 (3)): "The package for a species without an exact transcription
+carries the SPEC's plain-language transcription of its source formulas (design section 5) and a reference-only clip
+sampled from the hook at fixed inputs (limbSwingAmount 1, not attacking, looking ahead, full health; one natural period
+where there is one, two seconds otherwise), named `<species>_reference.animation.json`, marked reference-only in the SPEC
+and refused in the jar by the checker as `_preview` is. One tooling item, no refuter: the sampler in the generator,
+applied to every packaged species." The cost rules of 2026-09-12 (item 25 (5)): a tooling lane takes no refuter — the
+tool's own tests and one dry run are the check. One implementation lane (its stream stalled after its last check; every
+product was on disk and was verified by the orchestrator: below), the orchestrator's regeneration and gate.
+
+WHAT LANDED:
+- THE SAMPLER: `src/g1tool/java/danger/orespawn/g1/ReferenceClipSampler.java` (new; the g1 harness is the only place the
+  classic hook runs headlessly) and the gradle task `referenceClips` (`build.gradle`: a JavaExec on the g1tool classes and
+  the g1 runtime classpath like `g1ProbeGeoRenderer`; group verification; NOT a `check` dependency — the clips are the
+  package generator's input, regenerated when a hook or a rig changes). For every seam rig with a manifest entry (the g1,
+  s4 and t2 manifests: 28 registries over 23 rigs) the SHIPPED replacement named by the manifest's `candidate_class` is
+  instantiated registry-free (`S4CandidateRuntime.instantiate`, the S4 doctrine) and posed through
+  `OreSpawnGeoReplacement.pose` on explicit `PoseInputs` over a fresh bake of the shipped geo, exactly as the harness's
+  geo dumps pose it; the Beaver's shipped hook takes the renderer's `AnimationState` and has no `PoseInputs` form, so she
+  is sampled through the probe's accepted Beaver path (`G1AnimationRuntime.Evaluator.evaluateBeaverCodeDriven`, the G1
+  legacy-parity exception: the same `Mth.cos` formulas). THE FIXED INPUTS, pinned in the index and every SPEC:
+  limbSwingAmount 1.0; limbSwing advancing 1.0 per tick from 0 — the classic renderer's own feed at full walking speed
+  (vanilla `WalkAnimationState.update`: `speed += (movementSpeed - speed) * multiplier; position += speed`; both
+  `LivingEntityRenderer` and GeckoLib's `GeoReplacedEntityRenderer` hand `walkAnimation.position(partialTick)` as
+  limbSwing and `min(1, speed)` as limbSwingAmount, so at speed 1 the position advances exactly 1.0 per tick);
+  ageInTicks advancing 1.0 per tick from 0 (`getBob`, partialTick 0); netHeadYaw 0, headPitch 0; every entity-state
+  flag at its rest value (a `ProbeSubject` from an EMPTY state: attacking 0, ri1 0, rock_type 0, rf1 0), the entity
+  RNG `RandomSource.create(0)` seeded once per clip and evolving across the keys, one pose call per key; full health
+  (no shipped hook reads health); 20 samples per second, one key per tick. THE SPAN per rig: a rig whose manifest
+  declares `channels` derives its rule from them (the effective frequency omega x wingspeed per channel: one distinct
+  frequency = its natural period 2 pi / f; several = the slowest group's period, capped at 40 ticks); a hook rig without
+  declared channels (the Slice 4 rigs) carries its rule in `ReferenceClipSampler.RULES`, each with the source lines it
+  was read from; a static rig one key at bind. THE KEYS: one Bedrock 1.8.0 clip `reference` (`loop: true`,
+  `animation_length` the span in seconds, `lerp_mode: linear`), a rotation key per bone per sample as the DELTA from
+  the bone's bind under the converter's sign rule (authored X = +classic degrees, Y and Z negated — the rule
+  `tools/keyframe_clip.py` and `KeyframeLeg` document; the bake's internal rotation is classic `(-x, y, -z)`, so the
+  authored key is `(-dIx, -dIy, +dIz)` in internal terms, exactly what GeckoLib 4.8.4 undoes at load), a position key
+  per bone per sample where the hook writes positions (`moveTo`: the Robot4's cannon assembly, 12 bones — every other
+  packaged hook writes rotations only; GeckoLib reads position keys unnegated and sets them absolutely, a fresh bake's
+  offsets are 0, so the authored key is the internal offset itself); deterministic (LF, two-space JSON, 1e-10 rounding,
+  no `-0.0`). Output `tools/reference_clips/<registry>_reference.animation.json`, one file per REGISTRY (a shared rig's
+  consumers get identical content under their own names: the Ruby Bird's file = the Cockateil's, the four ant
+  consumers' = the Ant's), plus the index `tools/reference_clips/reference_clips.json` (per registry: the model id, the
+  manifest, the hook, the rule and its note, the span in ticks and seconds, keys per bone, the bones that move / are
+  positioned / are hidden at rest, the loop-seam delta in degrees, the subject's state after the last call, the
+  sampled inputs, the file's sha256). The Queen (native GeckoLib, no manifest entry, no classic hook) gets NO sampled
+  clip: her eight native clips are her reference, and her SPEC says so. `.gitattributes`: `tools/reference_clips/*.json`
+  LF (the files are sha-pinned and byte-compared).
+- THE PACKAGE GENERATOR (`tools/artist_package.py` 0.2.5): `load_reference_clip_index` reads the index;
+  `exact_transcription(species)` is true where the shipped `.animation.json` carries the species' exact keyframe
+  transcription (a clip manifest `tools/keyframe_clips/<registry>.json` exists and every clip its groups name — and
+  `idle` where it declares one — is in the shipped file: the 15 registries today), false on the hook and for a native
+  rig; `reference_clip_facts` verifies the index row's sha256 against the file (a missing row for a hook species, a
+  missing file or a stale hash is a WARNING — `REFERENCE_CLIP_MISSING` / `REFERENCE_CLIP_STALE` — never a silent
+  omission); `package` copies the clip byte for byte beside the sheet as `entities/<registry>/<registry>_reference.animation.json`;
+  the SPEC gains "### 4.3 Reference clip (reference-only)": what the file is (the classic code sampled at the fixed
+  inputs, the inputs stated, the span rule in words, the key count, linear keys, the sign rule), that it is NOT to be
+  edited, returned or shipped, the hook it was sampled from, the rule applied, the bones that move (and the position
+  bones, and the bones the code hides at rest), the loop-seam delta, and — for a native rig — that its own clips are
+  its reference; for a species WITH an exact transcription — that the transcription is what the artist improves and
+  the reference clip is the code itself for comparison; for a species WITHOUT one — Amendment 2 stated and the
+  plain-language transcription of its source formulas per design section 5: the seed's new `formulas` list (the source
+  method and line quoted, the `orig:` line cited, each formula and constant in words), AUTHORED for the 13 packaged
+  species on their hook (`tools/artist_specs/`: coin, elevator, island, island_too, purple_power, robot_1..5, rock_base,
+  rotator, vortex; a seed without `formulas` for such a species is a `FORMULAS_MISSING` warning). The manifest records
+  `reference_clip` (file, sha256, clip, reference_only, rule, rule_note, span_ticks, animation_length_seconds,
+  keys_per_bone, sampled_inputs, hook, moving_bones, position_bones, hidden_bones_at_rest, seam_delta_degrees; null
+  where the species has none) and `exact_transcription`. README_FIRST carries the reference sentence beside the
+  `_preview` sentence and the file-tree line. THE CHECKER: a returned `*_reference.animation.json` that is not the
+  package's own untouched copy (its bytes differ from the sheet's, or a name the sheet never gave) is a REJECT naming
+  the file; the package's own copy coming back untouched (the manifest's file name and sha256, line endings
+  normalised) is a WARN naming it — not a delivery, never shipped, leave it out — so the generated folder itself checks
+  PASS; neither counts as the delivered animation file. `tools/test_artist_package.py` 30 pins (+2: the copy, the SPEC
+  section, the manifest fields, the README sentence; the refusal — the fixture's synthetic reference clip edited is a
+  REJECT, a foreign name is a REJECT, the untouched copy a WARN).
+- THE JAR NEVER CARRIES ONE: `tools/asset_audit.py` `GECKO_REFERENCE_CLIP_SHIPPED` — a `*_reference.animation.json`
+  anywhere under `src/main/resources` is an ERROR naming the file, in NEVER_ACKNOWLEDGED.
+- THE BENCHMARK PROOF re-pinned (`phase_g_reports/g1_proof/benchmark`: the g1tool class directory and `build.gradle`
+  moved; `G1 BENCHMARK EVIDENCE VERIFIED: SMOKE_ONLY / COMPONENT_PROXY_ONLY / PENDING_LIVE_PRECUTOVER`).
+
+THE SAMPLING RULE, SPAN AND KEY COUNT PER REGISTRY (the index carries the full sha256; the first 16 hex digits here):
+| registry | rule (the index's `rule_note` says why, with the source lines) | span | keys / bone | bones moving (positioned) | seam delta |
+|---|---|---|---|---|---|
+| ant, rainbow_ant, red_ant, termite, unstable_ant | slowest of 2 groups [2.7, 0.4] rad/tick: 2 pi / 0.4 | 15.708 t (0.785 s) | 17 | 14 of 20 | 81.0 deg | e588d61634365cda (one content, five files) |
+| beaver | slowest of 3 groups [3.7, 2.7, 0.5]: 2 pi / 0.5 (the probe's Beaver path) | 12.566 t (0.628 s) | 14 | 6 of 9 | 146.5 deg | e5e19ebb913b7654 |
+| brutalfly | one frequency 0.26: natural period | 24.166 t (1.208 s) | 26 | 12 of 14 | 0 | 19b8cf926b88b602 |
+| cliff_racer | one frequency 1.3: natural period | 4.833 t (0.242 s) | 6 | 2 of 8 | 0 | 161b120da346a88c |
+| cockateil, ruby_bird | slowest of 5 groups [1.5, 0.3, 1.1, 1.2, 1.3]: 2 pi / 0.3 | 20.944 t (1.047 s) | 22 | 10 of 16 | 21.6 deg | 3da37cd8e2f44814 (one content, two files) |
+| coin | one channel cos(age x 0.05 x 0.22) x PI: natural period 2 pi / 0.011 | 571.199 t (28.560 s) | 573 | 1 of 1 | 0 | e85cd267e8a8b3bd |
+| dragonfly | slowest of 2 groups [2.6, 0.6]: 2 pi / 0.6 | 10.472 t (0.524 s) | 12 | 6 of 26 | 67.5 deg | 20da067c3885471d |
+| elevator | static rig, no hook: one key at bind | 0 (0.05 s) | 1 | 0 of 5 | 0 | be0f631fbd6defbe |
+| firefly | one frequency 2.5: natural period | 2.513 t (0.126 s) | 4 | 2 of 12 | 0 | 5e519eeefa55de37 |
+| gold_fish | slowest of 6 groups [0.91, 0.84, 0.77, 0.7, 1.19, 0.49]: 2 pi / 0.49 | 12.823 t (0.641 s) | 14 | 7 of 16 | 85.5 deg | 9e06e5669101083d |
+| island, island_too | nine channels 0.05..0.058 x 1.0: the slowest's period 125.66 t exceeds 40 — capped, a two-second window, not a loop | 40 t (2 s) | 41 | 3 of 3 | 105.1 deg | c5e524fb44329f06 (one content, two files) |
+| mosquito | one frequency 3: natural period | 2.094 t (0.105 s) | 4 | 4 of 5 | 0 | de6e778c50d17e49 |
+| purple_power | no period: three fresh rolls of the level random per pose call (RNG seeded 0) — two seconds | 40 t (2 s) | 41 | 9 of 27 | 174.2 deg (random) | e70c944288bcefad |
+| robot_1 | two frequencies: the feet 2 pi / 1.5 = 4.19 t and the five keys one turn per 480 t — the slowest exceeds 40, capped | 40 t (2 s) | 41 | 7 of 27 | 96.4 deg | c56ae535cd44c2be |
+| robot_2 | at rest one channel live: the legs cos(age x 0.3): 2 pi / 0.3 (the arms' windmill needs ri1 while attacking; the head follows netHeadYaw 0) | 20.944 t (1.047 s) | 22 | 4 of 15 | 0 | 6f556b298d08430a |
+| robot_3 | at rest one channel live: the legs cos(age x 0.55): 2 pi / 0.55 (the arms latched at their bent rest while ri1 is 0) | 11.424 t (0.571 s) | 13 | 4 of 19 | 0 | c248aa39ef8c510f |
+| robot_4 | at rest one channel live: the legs cos(age x 0.5): 2 pi / 0.5 (the shield pump and the cannon aim need attacking; the cannon assembly's pivot a constant position at rest) | 12.566 t (0.628 s) | 14 | 35 of 56 (12 positioned) | 0 | 9c1d3a508b2d77cd |
+| robot_5 | one channel: the wheels |limbSwing x 0.15 mod 2 pi|, a sawtooth wrapping every 2 pi / 0.15 (the turret follows netHeadYaw / 2 = 0) | 41.888 t (2.094 s) | 43 | 4 of 11 | 0 | 36f79313fcfa268b |
+| rock_base | no rotation or position channel: the pose is which cubes are visible per rock type — one key at bind, 22 bones hidden at rest (type 0); visibility has no Bedrock channel, the SPEC's transcription carries it | 0 (0.05 s) | 1 | 0 of 22 | 0 | dccbb5fb4a84040f |
+| rotator | the three fans turn by rf1, +2 deg per pose call wrapped past 359: the call sequence closes every 180 calls — one call per key, so 180 ticks (in-game the advance is per rendered frame, ENT-S-147) | 180 t (9 s) | 181 | 3 of 27 | 0 | 3fd552eab9160d7b |
+| tshirt | one frequency 0.011: natural period | 571.199 t (28.560 s) | 573 | 2 of 2 | 0 | 44be1dabc8c8e674 |
+| vortex | static rig, no hook: one key at bind | 0 (0.05 s) | 1 | 0 of 1 | 0 | 6e7f166a037efcef |
+(28 registries; 25 clips with motion, 3 one-key; the Queen none by design.)
+
+DECIDED UNDER DOCTRINE (reversible, one line each):
+- THE CLOSING KEY: keys sit at every whole tick inside the span PLUS a closing key AT the span's end (the pose sampled at
+  the period, which a periodic hook returns to its first key's pose) — Bedrock and GeckoLib hold the last key until
+  `animation_length`, so without it a loop would hitch by up to a tick; the ruling's "one key per tick" is kept and one
+  key added. The index records the seam delta so the addition is measurable.
+- THE SLOWEST-GROUP SPAN'S SEAM: the ruling's rule for a multi-frequency rig (the slowest group's period, up to 40
+  ticks) does not close the faster groups — the Beaver's 3.7 and 2.7 rad/tick channels are 7.4 and 5.4 cycles into
+  12.566 ticks — so those loops hitch at the seam by the recorded delta (Beaver 146.5 deg, Island 105.1, Robot1 96.4,
+  Gold Fish 85.5, the Ant rig 81.0, Dragonfly 67.5, Cockateil / Ruby Bird 21.6; Purple Power 174.2 is random flicker).
+  Recorded in each SPEC's §4.3 line "Loop seam", not hidden; the rule is the owner's.
+- THE CHECKER'S "AS `_PREVIEW` IS": `_preview` is a WARN today (open question 15); the ruling's word is "refused", so a
+  returned reference clip that is not the package's own untouched copy is a REJECT, and the untouched copy a WARN — the
+  generated folder must check PASS for the dry run's `check` to mean anything. Flipping the untouched copy to REJECT is
+  one line.
+- THE BEAVER through the probe's Beaver path rather than `PoseInputs` (her shipped hook's signature); the rest through
+  the S4 doctrine's `pose` on `PoseInputs`.
+- THE ROTATOR's clip advances the fans one step per key (per tick), where the game advances them per rendered frame
+  (ENT-S-147: a frame-rate-dependent spin); the SPEC's transcription says so. The PURPLE POWER's clip is one 40-tick
+  window of the seeded random flicker — a different roll every run of the game, the same every run of the sampler.
+- `referenceClips` is NOT a `check` dependency (a hook or rig change must be followed by a regeneration; the package
+  generator warns on a missing row or a stale hash but cannot see a changed hook — an open tooling item below).
+
+NOT DONE / OPEN:
+- A standing gate row that regenerates the reference clips at `check` and requires identity (the twin idiom) — a
+  changed hook whose clip is not regenerated goes unnoticed today; presented for the owner, not built (tooling; the
+  mirror drop's lane re-runs the sampler and compares as a one-off).
+- The `formulas` seeds exist for the 13 hook species packaged today; a species landing on its hook in a later slice
+  needs its `formulas` authored in that slice (the generator warns `FORMULAS_MISSING` until then).
+- The Queen's package carries no sampled clip by design; the pilot package (next) scopes her clips separately.
+
+THE CHECKS (the tool's own tests and one dry run; the orchestrator's regeneration): the lane's javac x3 (fresh scratch
+class directories; the three source sets compile, warnings only), the sampler twice headlessly diff-clean (28 clips +
+the index) and a THIRD time under `gradle referenceClips` at the gate: every checked-in file reproduced byte-identically
+(29 files); `python tools/test_artist_package.py`: 30 tests OK; `python tools/asset_audit.py`: 0 errors, 0 advisories,
+4 acknowledged; the dry run `package --out <scratch>/pkg`: 29 species folders, 28 carrying their reference clip beside the
+sheet (the Queen's SPEC saying why hers has none), no `FORMULAS_MISSING` / `REFERENCE_CLIP_*` warning, every species'
+folder `check` PASS (the untouched reference copy's WARN on each hook species; the Queen's locked-bone WARN as before);
+the orchestrator's spot-check of four authored `formulas` seeds against their cited source lines (coin, robot_5, rotator,
+rock_base: the text matches the code).
+
+IN-GAME: nothing — the sampler, its clips, the generator, the checker and the audit rule are tooling; no shipped
+resource or renderer changed (the jar carries no reference clip, and the audit now refuses one).
+
+GATE: (sampler, 2026-09-13 11:47-11:55): `gradle referenceClips` reproduced every checked-in clip byte-identically (29 files: 28 clips + the index; the lane's two headless runs were already diff-clean); g1ConvertModels / g1WriteRuntimeClasspath / g1Benchmark and the benchmark proof re-pinned (`G1 BENCHMARK EVIDENCE VERIFIED: SMOKE_ONLY / COMPONENT_PROXY_ONLY / PENDING_LIVE_PRECUTOVER; checked-in proof updated` - the g1tool class directory and build.gradle moved); `asset_audit.py` 0 errors / 0 advisories / 4 acknowledged (24 shipped geo: 23 seam + 1 outside-seam); then `gate_wrapped.sh sampler`: the drift check verified the re-pinned proof, `gradlew build` SUCCESSFUL (1m 58s), `runGameTestServer` All 1277 required tests passed (the count unchanged: the step adds no gametest - it is tooling). Stray-process check: only the Gradle daemon.
