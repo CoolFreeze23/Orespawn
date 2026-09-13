@@ -6879,3 +6879,247 @@ PRESENTED BY THE ORCHESTRATOR (nothing here is a new ruling; each is reversible)
   draw fix with the Crab's slice, the line staying).
 
 GATE: (tool5, 2026-09-14 00:59-01:08; no refuter - tooling): the goal dictionary merged (21 entries from the dictionary lane, then 3 more the orchestrator authored for the two new folders, 24 in all); `test_artist_package.py` 46 OK; `gradle referenceDumpCompiledModels referenceConvertModels`: 111 entries dumped, 109 geos (the same two fan-rig refusals as before; the GiantRobot, Crab, Boyfriend and Girlfriend converted); the reference-geometry leg verify-only: 109 compared and PASS, 2 UNPAIRED (the Boyfriend, the Girlfriend), `REFERENCE GEOMETRY PROOF: 109 checked-in reports verified` - no proof moved, `--write-proof` rewrote the same 109 files byte-identically (0 changed); the folder regenerated fresh: 116 folders, 1,115 files, 43 MB, 116 of 116 `check` PASS, ARTIST_TIER_UNPACKAGED 0, WISHLIST_UNACCEPTED 0, SEED_MISSING 0, GOAL_UNCLASSIFIED 0 after the last three entries (5 before them); the benchmark proof drifted on the g1tool class directory (the probe's explicit scope and pinned draw count) and was re-pinned; `asset_audit.py` 0 errors / 0 advisories / 4 acknowledged (39 shipped geo: 38 seam + 1 outside-seam); then `gate_wrapped.sh tool5`: the drift check verified the re-pinned proof, `gradlew build` SUCCESSFUL (2m 4s; `check` green with the 111-entry reference leg and `referenceClipsVerify`), `runGameTestServer` All 1278 required tests passed (unchanged). The folder regenerated once more after the three entries (tests 46 OK, 116 of 116 PASS, the audit green) without a second gradle gate: no build input moved between the runs. Stray-process check: only the Gradle daemon.
+
+## THE HOOKS (2026-09-14) — every unlanded artist-tier species' classic setupAnim transcribed verbatim into its GeoReplacement descriptor's PoseInputs form, as a landing slice writes it; four lanes in parallel, no refuter; 69 descriptors over 62 rigs, 3 species held (owner 2026-09-14, addendum item 10)
+
+RULING. Owner 2026-09-14, addendum (item 31 (10) and (14)): "Every unlanded artist-tier species gets its hook now: the
+classic setupAnim transcribed verbatim into its GeoReplacement descriptor's PoseInputs form, exactly as a landing slice
+writes it, by lanes in parallel. No refuter now: the landing slice's animation leg, 0 rad against the classic model, is
+the hook's proof, and the sheet says the clip is sampled from a transcription proven when the rig lands. A species whose
+code reads state the PoseInputs form cannot carry stays 'sampled when the rig lands'; report the count." "The landing
+slices reuse the hooks from item 10; a slice adds the geo, the renderer registration, the layers and the proofs." Four
+hook lanes over the 65 unlanded rigs (72 registries) in inventory order, two at a time; the orchestrator merged every
+new pose interface into the harness's `ProbeSubject`, verified the parity trees and the reference clips unchanged,
+re-pinned the benchmark and gated.
+
+WHAT LANDED:
+- LANE 2 (17 rigs, 18 registries: boyfriend, camarasaurus, cassowary, cave_fisher, cephadrome, chipmunk, crab,
+  creeping_horror, cryolophosaurus, dragon + baby_dragon, dungeon_beast, easter_bunny, ender_knight, ender_reaper,
+  flounder, frog, gazelle): 17 descriptors over 16 rigs — the Camarasaurus (a threshold on eight legs, a
+  health-frequency tail, position writes down the tail and neck, head look at five factors, wingspeed 0.65; a
+  `CamarasaurusPose` for the health reads), the Cassowary (a threshold, the crest and beak following the neck by
+  (sin, cos)), the Cave Fisher (thirty-six gait-scaled legs in three phases, the RenderInfo claw-snap latch with RNG
+  re-rolls by the attacking flag — the Robot2 precedent — through the existing `CaveFisherPose`), the Cephadrome (a
+  movement-delta walk amplitude, activity and attacking branches over legs, wings and tail, the tail chain's position
+  writes, the RenderInfo ridden-flight neck latch — the Rotator precedent — head look at four factors; a
+  `CephadromePose` of nine getters, three one-line delegates added to the entity; nine zero-thickness cubes), the
+  Chipmunk (a threshold, head look on nine parts, the sitting branch, hats hidden; `ChipmunkPose`), the CRAB in the
+  render-instance form — the classic's eight poses over leg1 / leg2 / leg3 landing on the explicit-form clones
+  `leg<n>__i0..7` through `moveTo` and `rotateY`, every clone posed directly, the attacking branch on the eyes,
+  mouths and claw tips (`CrabPose`; the port's `renderToBuffer` untouched, ANIM-025 standing), the Creeping Horror
+  (eight gait-scaled legs, five spikes on fifteen cosines; seven zero-thickness cubes), the Cryolophosaurus (a
+  threshold, a jaw cosine, wingspeed 0.75), the Dragon and the Baby Dragon (one hook as a static `poseDragon`, the Baby
+  delegating with its own registry, shadow and scale: the movement-delta amplitude, activity and attacking-by-activity
+  branches over fourteen legs and the wings with wing-chain position writes, the tail rhythm by state, the RenderInfo
+  neck latch, head look, the attacking jaw; a `DragonPose` of ten getters; the texture by dragon type; one
+  zero-thickness cube), the Dungeon Beast (ten gait-scaled legs, fourteen phased spine segments, the attacking tail,
+  the RenderInfo jaw latch with an RNG re-roll; `DungeonBeastPose` with the RNG), the Easter Bunny (a threshold with a
+  live idle ear branch), the Ender Knight (a threshold on fourteen leg parts, the cape, head look clamped, the screaming
+  branch, forearm and blade position writes; `EnderKnightPose`), the Ender Reaper (a threshold feeding `|cos|` on the
+  scythe, the screaming branch, head look clamped; `EnderReaperPose`; four zero-thickness cubes), the Flounder (a
+  threshold with an idle tail sway), the Frog (a threshold, the singing jaw, the jump branch on the vertical velocity,
+  lower-leg position writes; `FrogPose` with a `Vec3` rest), the Gazelle (a threshold on eighteen legs, head look on
+  eleven parts, the crouch branch — the port's read where 1.7.10 read sitting, transcribed as the port has it;
+  `GazellePose`). HELD: the Boyfriend — `ModelBoyfriend` declares no `setupAnim`; its pose is vanilla
+  `HumanoidModel.setupAnim`, outside the repository, reading renderer-set per-frame fields (`attackTime`, `swimAmount`,
+  `riding`, `young`, `crouching`, the arm poses) and entity reads outside the six floats, with a `HumanoidArmorLayer`
+  on the renderer. Ten pose interfaces (plus the existing `CaveFisherPose` flagged for the harness). Its javac of
+  `src/main`: rc 1 on two other lanes' in-progress files (`AlienGeoReplacement`, `LeonGeoReplacement`: a static
+  `pose(AnimationProcessor, PoseInputs)` colliding with the base's final method — lane 1's, fixed there), rc 0 over
+  1,132 classes with those two and their dependents excluded; every descriptor and interface present. Read back
+  statement by statement with a literal-multiset diff of each classic body against its hook: no constant drift.
+- LANE 1 (17 rigs, 22 registries: the Butterfly rig's four, the Emperor Scorpion, Ghost, Ghost Skelly, Hydrolisc,
+  Kyuubi, Leaf Monster, the Leon pair, Lizard, Lurking Terror, Mantis, the Alien pair, Alosaurus, Attack Squid, Band P,
+  Baryonyx, Basilisk): 22 descriptors over 17 rigs, nothing held — the Butterfly rig (one hook in
+  `ButterflyGeoReplacement`, one Z cosine on eight mirrored wings; the Luna Moth, Mothra and Vampire Butterfly
+  delegating with their own wingspeed 1.0 / 0.75 / 0.2 / 1.0, texture, shadow and scale, the per-type texture switches
+  transcribed), the Emperor Scorpion (gait-scaled four-phase legs with a look-ahead lift and position follows, the
+  attacking mandibles, the RenderInfo `ri1` / `ri2` latch rolled on the entity RNG at a zero crossing — the Robot2
+  precedent; `EmperorScorpionPose`), the Ghost (four slow cosines; translucent), the Ghost Skelly (an arm sway, the
+  head-swivel latch on the entity RNG; `GhostSkellyPose`), the Hydrolisc (a threshold gait over twenty-four parts, the
+  sitting-stilled tail with follows, health-frequency feathers; `HydroliscPose`), the Kyuubi (a threshold gait, arm
+  sway, head look, two horn chains, a nine-ring tail — one `moveTo` per ring), the Leaf Monster (an attacking branch
+  with y position writes, threshold legs, `|cos|` arms; `LeafMonsterPose`), the Leon pair (one hook, the Leonopteryx
+  delegating: part-set visibility over two skeletons through `setVisible`, a threshold gait, sitting, many follows, the
+  flight beat with attacking speed and amplitude, the ridden bob gate, the ridden yaw accumulator `rf1` — the Rotator
+  precedent — the attacking jaw; `LeonPose` of seven getters, a one-line `getYRotO()` delegate on the entity; four
+  zero-thickness sails), the Lizard (a threshold gait over twenty parts, the attacking jaw and teeth, the attacking
+  tail rhythm with five-ring follows, head look with neck and jaw follows over twenty-three followers; `LizardPose`;
+  eight fins), the Lurking Terror (leg and mouth phase-wrap latches on the entity RNG, `Mth.sin` legs while bits are
+  set, `|sin|` jaws, tongue position writes, the thorax breath; `LurkingTerrorPose`; four wings), the Mantis (wings,
+  attacking-branch forearms with follows; `MantisPose`), the Alien pair (one hook, the Alien Boss delegating: the
+  leg / jaw / tail / claw helpers under their names, the attacking fan branch, head look with follows, the latch with
+  a 0.2-tick look-ahead on the entity RNG; `AlienPose`, the Alien Boss inheriting), the Alosaurus (a threshold gait,
+  the attacking jaw, the forelimb sway; `AlosaurusPose`), the Attack Squid (a threshold on both branches, head look at
+  0.75), the Band P (a threshold on both branches, head look, the texture by `getWhat()`), the Baryonyx (a threshold
+  gait, a claw wave, the baby halving; twenty-six flat cubes), the Basilisk (a gait-scaled ten-ring serpentine with
+  follows, the attacking jaw; `BasiliskPose`). Eleven pose interfaces, eleven `poseFrom` refactors, eleven entities
+  implementing. Its javac of `src/main` rc 0 over 1,147 classes (a first run's two errors — `static pose(processor,
+  PoseInputs)` on the Leon and Alien colliding with the base's final method — renamed to `poseRig`). Its read-back: the
+  numeric-literal multisets, the (part, axis) rotation multisets and the position-part sets of each classic body and its
+  hook equal, up to loop structure.
+- LANE 4 (14 rigs, 14 registries: urchin, water_dragon, whale, molenoid, ostrich, rat, scorpion, spit_bug, spyro,
+  stink_bug, stinky, triffid, trooper_bug, velocity_raptor): 14 descriptors over 14 rigs, nothing held — the Urchin (a
+  threshold, the attacking branch, the centre spin `(age x 0.2) mod 2 pi`; `UrchinPose`), the Water Dragon (a
+  threshold, a pi/4-phased body wave, chained position writes down the body and tail, the ears adding the head yaw,
+  three sitting branches, the three-way attacking jaw, head look at 0.75 with the nose, jaw, head fin and ears
+  following the head's bind pivot; `WaterDragonPose`; five fins), the Whale (two thresholds, a tail position chain, the
+  baby halving), the Molenoid (attacking-over-threshold arms, threshold legs, four three-link chains from bind pivots,
+  the nose stars; `MolenoidPose`), the Ostrich (the position-delta speed gait clamped at 0.75, the RenderInfo `rf1`
+  accumulation when ridden, the `ri1` latch rolled from the entity RNG at a zero crossing, the sitting-and-not-activated
+  inversion, head look at 0.65, `|cos|` wings, the hats through `setVisible`; the existing `OstrichPose`; eleven
+  zero-thickness cubes), the Rat (a threshold gait, the attacking tail, the tail follow; `RatPose`), the Scorpion (a
+  pi/2-phased gait, the RenderInfo `ri1` / `ri2` latch rolled from the entity RNG with attacking-picked ranges, the claw
+  and tail helpers under their names; `ScorpionPose`), the Spit Bug (a `Mth.sin` gait, the `|cos|` lift on the rising
+  half-cycle, four leg helpers over bind pivots and chains, the `|cos|` attacking jaw; `SpitBugPose`), the Spyro (the
+  port's `ws = limbSwingAmount`, a threshold, the activity 3 / 2 branches, sitting, a tail chain, head look on twelve
+  parts; `SpyroPose`; two wings), the Stink Bug (`Mth.sin` on every channel, wingspeed 0.75), the Stinky (the port's
+  `ws = limbSwingAmount`, a threshold, the activity-2 fold, sitting, a tail chain, head look; `StinkyPose`; two wings),
+  the Triffid (the open / closed branch, four leaf chains through state-carrying helpers, the `l44` chain, the
+  attacking `|cos|` tentacle with its alternating roll; `TriffidPose`; ten tips), the Trooper Bug (five attacking
+  branches, a `Mth.sin` gait with the `|cos|` lift, four leg helpers; `TrooperBugPose`; two jaw parts), the Velocity
+  Raptor (a threshold, the health-frequency idiom scaling rate and amplitude, sitting; `VelocityRaptorPose`; ten
+  feathers). Eleven new pose interfaces (plus the existing `OstrichPose` flagged for the harness), eleven `poseFrom`
+  refactors with bodies byte-identical, eleven entities implementing (every getter existing or inherited). Its javac
+  of `src/main` rc 0 over 1,247 classes. Its read-back: the ordered numeric literals and part sets of each classic
+  body and its hook equal for all fourteen (partial position writes through `moveXZ` / `moveYZ` / `moveXY` / `moveZ`
+  helpers keeping the untouched coordinate from the bind; never-written bind rotations read back). Port divergences
+  noticed and left (the Spyro's and Stinky's frequency times limbSwingAmount where 1.7.10 used wingspeed 0.65): the
+  hook transcribes the port.
+- LANE 3 (17 rigs, 18 registries: giant_robot + jeffery, girlfriend, godzilla, hammerhead, kraken, nastysaurus,
+  peacock, pitch_black, pointysaurus, sea_monster, sea_viper, the_king, the_prince, the_prince_adult, the_princess,
+  the_prince_teen, trex): 16 descriptors over 15 rigs, two held (the Girlfriend, the Princess; below) - the GiantRobot
+  pair (`GiantRobotGeoReplacement` with the static `poseRig`, `JefferyGeoReplacement` delegating as the Ant's form;
+  the render-instance explicit form's twenty-two clones `<part>__i0` / `__i1` posed directly by `renderLeg` /
+  `renderArm` transcribed as private helpers, the movescale clamp, the hip sway and quarter turn, the hip bob followed
+  by the back, shoulders, neck and head, the two-phase thigh and shin, the attacking shoulder twist and windmill punch,
+  head look with pitch / 3, wingspeed 0.25; `GiantRobotPose`), the Godzilla (a per-leg threshold, the toe lift and
+  sweep position writes on nine toes, the upper leg following by 55, the attacking tail fan through a `doTail` helper
+  with seven follows, the jaw and arms, head look at 0.55 with the lower jaw following by 11, the arm chains with the
+  fingers riding the hand; scale 2.0 from the PlayNicely quarter; `GodzillaPose`; twelve flat spikes), the Hammerhead
+  (a `(double) > 0.1` gait on twelve leg parts, head look at 0.25 on sixteen parts, the armour sway, the attacking nod;
+  wingspeed 0.33, scale 2.5; `HammerheadPose`), the Kraken (the fins; six eight-ring tentacles through a
+  `dangleTentacle` helper with `moveTo` chains and attacking stiffening, the suction cups riding ring eight; the
+  RenderInfo `ri1` / `ri2` latch re-rolled from the entity RNG on the 0.66 zero crossing, the Robot2 precedent; the
+  mouth and teeth twitch; scale a third of PlayNicely; `KrakenPose`), the Nastysaurus (head look at 0.35 on the
+  360-modulus, the attacking jaw else the RenderInfo chew latch rolled from the LEVEL RNG through the new one-line
+  delegate `Nastysaurus.getLevelRandom()` in the PurplePower form, the threshold gait with claw position writes, the
+  leg and tail follows; `NastysaurusPose`), the Peacock (threshold legs, the display branch on `getBlink() > 0`, the
+  baby halving; `PeacockPose`; ten flat feathers), the Pitch Black (the activity wings with three-link follows, head
+  look at 0.2 / 0.55, the attacking jaw else the RenderInfo chomp latch, the walking and flying leg branches with
+  pscale-scaled claw writes, the forked tail chain; scale `getPitchBlackScale()`; the existing `PitchBlackPose` of
+  ENT-S-093, model and entity untouched), the Pointysaurus (a threshold gait, head look at 0.45 on twenty-two parts,
+  the attacking tail yaw, the tail pitch sway; `PointysaurusPose`), the Sea Monster (threshold-or-attacking on the
+  seven-follow tail fan, the fins and the five-follow neck chain with the jaws and eyes riding the sixth neck, head
+  look at 0.5, the attacking jaw; `SeaMonsterPose`), the Sea Viper (the negative-swing clamp, the twenty-one-segment
+  `doseg` chain reading each segment's bind pitch back, the attacking jaw and tongue, the port's offsetZ fold, head
+  look at 0.5 with the jaw following by 2; `SeaViperPose`; two bind-read helpers documented in the descriptor), the
+  King (everything on attacking: ten wing parts with 84 / 184 follows, fourteen claws, the legs, the eight-link tail
+  chain, the three heads through one `moveHead` helper the three classic helpers reduce to; scale 2.1; the port's
+  WING_SPEED 1.0; `TheKingPose`), the Prince (threshold-or-attacking wings, threshold legs under activity, the sitting
+  still, the attacking lash, the tail fan, the three-head look split, the jaw chatter, the necks by the head
+  extensions, the head groups following by 7; `ThePrincePose`; six flat wings), the Prince Adult (the King's rig with
+  its own branches - wings by attacking / activity / sitting, the gait while walking and not sitting, the tail zeroed
+  while sitting, the heads pitched by `getHeadNExt() - 30` in every state, its own jaw form; `ThePrinceAdultPose`),
+  the Prince Teen (wings by activity and attacking, legs by threshold / attacking / activity, the claws following leg
+  three by 17, the tail chain and spikes, the sitting zero, the flight yaw latch on RenderInfo `rf1` in the Rotator /
+  Leon precedent through the new one-line delegate `ThePrinceTeen.yRotO()` in the Ostrich / Cephadrome form, the
+  three-head look split, the jaw chatter, the nine-unit neck and head chains; scale 1.25; `ThePrinceTeenPose`), the
+  T-Rex (a float-compare threshold gait on eight leg parts, the attacking jaw, the arm sway; scale 1.2; `TRexPose`).
+  Fourteen new pose interfaces (plus the existing `PitchBlackPose` flagged for the harness), fourteen `poseFrom`
+  refactors with bodies byte-identical (the King's and the Prince Adult's two-line signatures edited by hand), fourteen
+  entities implementing, two one-line entity delegates. Its javac of `src/main` rc 0 over 1,262 classes. Its
+  read-back: the literal sets of each classic body and its hook equal for all fifteen, every count difference traced
+  (bind reads, chained assignments, the King's and the Prince Adult's three helpers against one, the toe / claw /
+  bump loops). Not carried, flagged in the javadocs for the landing slices: the Kraken's whole-model render-time
+  `mulPose(Axis.XP.rotationDegrees(90))` (`ModelKraken.renderToBuffer`, no root bone in the 111-bone rig; the Dungeon
+  Beast's shape, lane 2, likewise), the King's second `entityTranslucent` wing-membrane pass with its tint (a per-part
+  render state the descriptor's single `renderType()` cannot express), the Prince's dead early jaw position writes
+  (overwritten by the neck follow before any read; transcribed as such).
+- THE HARNESS: `ProbeSubject` (g1tool) implements every pose interface the lanes added (49 interfaces,
+  25 new rest-value getters), merged by one script from the lanes' `pose_interfaces.json` files, so the
+  sampler and the landing slices' probes pose every hook on a rest-state subject; nothing else in the harness moved.
+- NOTHING SHIPS: the descriptors are unregistered classes in the jar (`PhaseGDevRenderers` / `OreSpawnClient`
+  untouched; no geo, no manifest entry, no layer, no proof) — the g1 / s4 / t2 parity trees verified byte-identical, the
+  reference clips reproduced byte-identically, the audit green; the classic models' `poseFrom` refactors and the
+  entities' `implements` change no behaviour (the classic `setupAnim` delegates to the same statements).
+
+HELD (item 10's count: 3 species whose code reads state the PoseInputs form cannot carry — "sampled when the rig lands"):
+- THE BOYFRIEND (lane 2): `ModelBoyfriend` declares no `setupAnim` - the classic pose is vanilla
+  `HumanoidModel.setupAnim`, outside the repository, reading renderer-set per-frame model fields (`attackTime` from
+  `getAttackAnim(entity, partialTick)`, `swimAmount`, `riding`, `young`, `crouching`, the arm poses) and entity reads
+  outside the six floats; a `HumanoidArmorLayer` on the renderer. Sampled when the rig lands (2026-09-14 item 4: on the
+  hook as the Cannon Fodder was); the landing slice decides how the vanilla base pose is carried.
+- THE GIRLFRIEND (lane 3): the same case decided the same way - `ModelGirlfriend` extends vanilla `HumanoidModel` with
+  no `setupAnim`; `GirlfriendRenderer` a `HumanoidMobRenderer` with a `HumanoidArmorLayer`, the valentine-angry 5x
+  scale and the per-skin texture; 1.7.10 drew her with vanilla `ModelBiped` (reference_girlfriend geometry-only,
+  TEST-010 (a)). Sampled when the rig lands.
+- THE PRINCESS (lane 3): `ModelThePrincess.setupAnim` is the Prince's pose plus the three power orbs whose rotations
+  accumulate per rendered frame on the model singleton's own parts (`Lpower` / `Cpower` / `Rpower` `.xRot / .yRot /
+  .zRot += 0.03 ... 0.13f`, wrapping at pi; `ModelThePrincess.java:319-354`) - state that changes per rendered frame
+  inside the renderer, shared by every Princess drawn through the one model instance, on no entity field, so no pose
+  getter can carry it (the Rotator's precedent accumulates on the ENTITY's RenderInfo, the PurplePower's rolls the
+  subject's RNG; adding entity state would be new behaviour). Sampled when the rig lands; the rest of her pose is the
+  Prince's form, which `ThePrinceGeoReplacement` carries.
+
+PRESENTED BY THE ORCHESTRATOR (nothing here is a new ruling; each is reversible):
+- THE ASSET AUDIT AND THE HOOKS (a harness-semantics change, presented before its gate; decided under doctrine,
+  reversible): the first gate of this landing went red at `assetAudit` - 134 `TEXTURE_REF_MISSING` errors, two per
+  hook descriptor, because each hook references its own `geo/entity/<rig>.geo.json` and
+  `animations/entity/<rig>.animation.json` exactly as a landing slice writes it (item 10) while the ruling lands
+  those files with the slice (item 14); the audit's rule that every Java asset literal exists on disk is doing its
+  job, and the descriptors are unregistered, so the references are dead at runtime. The audit gained a `HOOKS` list
+  (descriptor class name to the rig it names, 67 entries, one dated justification) through its own acknowledgement
+  mechanism: a listed descriptor's two pending references are acknowledged, every other reference it makes (a
+  texture, another rig) stays an error as anywhere else, and a `HOOKS` entry whose rig ships, or that names no
+  descriptor, is `HOOK_STALE` (an error, never acknowledgeable), so each landing slice removes its entry and the list
+  empties as the slices land. Before: 134 errors, 4 acknowledged, exit 1. After: 0 errors, 138 acknowledged (134
+  hook-pending), exit 0; the stale path tried on a temporary copy with a shipped rig's entry and a nonexistent
+  descriptor's entry, both reported `HOOK_STALE`, exit 1. The two delegating descriptors (`AlienBossGeoReplacement`
+  on the Alien's constants, `LeonopteryxGeoReplacement` on the Leon's) carry no literal of their own and are not
+  listed. The alternative - the audit treating unregistered descriptors as outside the seam - would have changed the
+  seam reconciliation itself; the list keeps the audit's design and is the owner's to reverse.
+- THE HELD SPECIES ARE HELD FOR ONE REASON EACH, stated per species below; the count is the owner's number for item 10.
+  The Boyfriend and the Girlfriend (lane 3 read her the same way): `ModelBoyfriend` / `ModelGirlfriend` declare no `setupAnim` - the
+  classic pose is vanilla `HumanoidModel.setupAnim`, outside the repository, reading renderer-set per-frame fields
+  (`attackTime` from `getAttackAnim(entity, partialTick)`, `swimAmount`, `riding`, `young`, `crouching`, the arm poses)
+  and entity reads outside the six floats; a `HumanoidArmorLayer` on the renderer. The PoseInputs form carries the six
+  floats and entity state through a pose interface, not per-frame renderer fields — the pair stays "sampled when the rig
+  lands", and their landing slice (2026-09-14, item 4: on the hook as the Cannon Fodder) decides how the vanilla base
+  pose is carried; TEST-010's line stands.
+- RENDERER CONSTANTS THAT ARE PRIVATE OR LITERAL were carried into the descriptors as EQUAL LITERALS with a comment
+  naming the renderer line (the Leon's scale and shadow, the Alosaurus's, Baryonyx's, Basilisk's, Vampire Butterfly's,
+  the Camarasaurus's, Cassowary's, Cryolophosaurus's, Dragon's texture constants, the Frog's baby halving …); the
+  per-type texture switches of the Butterfly, Luna Moth, Band P and Dragon transcribed into `texture(entity)` where the
+  renderer keeps its sheets private — the landing slices may lift them into the renderers as the Fairy's `textureFor`
+  was (the T2c form), one line each; nothing behavioural.
+- THE GHOST AND GHOST SKELLY DESCRIPTORS return `RenderType::entityTranslucent` (the classic renderers' factory) because
+  the classic models carry no `RENDER_TYPE` object and adding one is outside the hook-only edit; the landing slice
+  re-bases it onto the model's own function object (the Fairy / ENT-S-146 form) for the identity proof.
+- THE CRAB'S HOOK POSES THE TWENTY-FOUR INSTANCE BONES DIRECTLY (the classic's eight poses landing on the explicit-form
+  clones through `moveTo` and `rotateY`), the port's `renderToBuffer` untouched — ANIM-025 stands until the Crab's
+  slice; the GiantRobot pair's hook likewise poses its twenty-two instance bones (lane 3).
+- STATIC HELPER NAMING: a hook's static helper must not be `pose(AnimationProcessor, PoseInputs)` — that is the base's
+  final harness entry; the lanes renamed theirs (`poseRig`, `poseDragon`) when the collision surfaced in the compile.
+- EVERYTHING THE HOOKS CARRY IS THE PORT'S CLASSIC CODE AS IT IS (a threshold, a sitting read where 1.7.10 read
+  something else, the Dragon's wingspeed 1.0 where 1.7.10 passed 0.65, the Frog's baby halving): the parity findings
+  the seeds record stay findings; a hook transcribes, it does not fix.
+- NOT CARRIED BY A HOOK, FLAGGED IN THE JAVADOC FOR THE LANDING SLICE (a hook transcribes setupAnim; these are not
+  setupAnim statements): the Kraken's and the Dungeon Beast's whole-model render-time rotation in `renderToBuffer`
+  (a descriptor transform or a root bone is the slice's call), the King's second `entityTranslucent` wing-membrane
+  pass with its tint (a per-part render state the single `renderType()` cannot express).
+- TWO ONE-LINE ENTITY DELEGATES were added where a hook's read had no accessor (the brief's allowed form):
+  `Nastysaurus.getLevelRandom()` returning `level().random` (the PurplePower form) and `ThePrinceTeen.yRotO()`
+  returning the field (the Ostrich / Cephadrome form); the classic models' reads swapped to them (the same object).
+- THE SEA VIPER'S DESCRIPTOR carries two bind-read helpers beyond the base (`classicXRot(bone) = -bone.getRotX()` for
+  the never-written segment pitch, `classicBindZ(bone) = bone.getPivotZ()` for the classic's `getInitialPose().z` on
+  a top-level bone); if the landing slices meet the same reads, the base gains them then.
+
+THE CHECKS: each lane's javac of `src/main` rc 0 with its batch in place; the audit green with the `HOOKS` list (its one
+dry run and the stale-path trial above); the orchestrator's `ProbeSubject` merge and the
+gate's build (every source set compiles); the g1 / s4 / t2 verify-only passes identical; `gradle referenceClips`
+reproducing the checked-in clips and `referenceClipsVerify` green; the benchmark re-pinned; `asset_audit.py` green.
+
+IN-GAME: nothing — unregistered classes; the classic renderers draw every unlanded species exactly as before.
+
+GATE: GATE: hooks (first run) red at assetAudit - 134 TEXTURE_REF_MISSING, two per hook descriptor (the pending geo and clip, presented above) -> the HOOKS list -> gate hooks2 green: drift 0, build 0 (the audit 0 errors / 138 acknowledged, 134 hook-pending; g1 2, s4 13, t2 29 PARITY PASS), suite: all 1278 required tests passed; before the gate the g1 / s4 / t2 verify-only passes identical, the 44 reference clips reproduced byte for byte and referenceClipsVerify green, the benchmark re-pinned.
