@@ -105,12 +105,12 @@
     {
       "name": "aggro_idle",
       "verdict": "author",
-      "note": "the attacking flag (set by the melee goal, TRex.java:76): the jaw chomping (ModelTRex.java:239) — a lowered, stalking head to go with it; NOT offered by the trigger inventory today (the flag is set through the goal's IntConsumer, so the inventory classifies it NONE) — kept here for the owner"
+      "note": "the attacking flag (set by the melee goal, TRex.java:76): the jaw chomping (ModelTRex.java:239) — a lowered, stalking head to go with it; offered by the trigger inventory now (TEST-011 (b)): the flag's writes are traced into the goal the entity hands its setter to (DinosaurMeleeAttackGoal, a BugMeleeAttackGoal: raised in reach at BugMeleeAttackGoal.java:168, cleared out of reach and on target loss at :176 / :145) — classified STATE, so w_aggro drives this pair"
     },
     {
       "name": "calm_idle",
-      "verdict": "covered by idle",
-      "note": "covered by idle while the inventory offers no aggro_idle / calm_idle pair (DATA_ATTACKING classified NONE: the flag is set through the goal's IntConsumer, TRex.java:76); the rest with the flag clear is the jaw at 0.1 (:240) and the arms waving (:242-243)"
+      "verdict": "author",
+      "note": "the pair is offered now (TEST-011 (b), the flag's writes traced into the goal, BugMeleeAttackGoal.java:145-176, from the setter handed at TRex.java:76); the rest with the flag clear is the jaw at 0.1 (:240) and the arms waving (:242-243)"
     },
     {
       "name": "attack",
@@ -134,7 +134,7 @@
   "extras": [],
   "wishlist": [
     "in `walk`: the code swings each leg as one stiff chain (ModelTRex.java:228-236); bend the knee and ankle on the forward swing and let the torso and tail counter-sway — the head is static in the code, so a head bob is all yours",
-    "in `attack`'s wind-up: the jaw chomp (:239) with the head lowered and turned on the target — the code never turns the head; the contract's aggro_idle would carry it, but the trigger inventory does not offer it here (the flag is set through the goal's IntConsumer, TRex.java:76)",
+    "in `attack`'s wind-up: the jaw chomp (:239) with the head lowered and turned on the target — the code never turns the head; the contract's aggro_idle carries it — offered now (TEST-011 (b): the flag's writes traced into the goal, from the setter handed at TRex.java:76)",
     "in `attack`: a lunging bite; the reach is four blocks plus half the target's width (DinosaurMeleeAttackGoal.Presets.trex, TRex.java:76-77)",
     "in `idle`: keep the tiny arms' slow wave (:242-243) and add a breath on the torso"
   ],

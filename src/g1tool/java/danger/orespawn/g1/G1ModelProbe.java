@@ -705,6 +705,7 @@ public final class G1ModelProbe {
         }
         String id = spec.get("id").getAsString();
         Map<String, Integer> counts = new TreeMap<>();
+        Map<String, Integer> expectedCounts = new TreeMap<>();
         for (Map.Entry<String, JsonElement> entry : spec.getAsJsonObject("render_instances").entrySet()) {
             String part = entry.getKey();
             JsonObject declaration = entry.getValue().getAsJsonObject();
@@ -721,9 +722,38 @@ public final class G1ModelProbe {
                 throw new IllegalStateException(id + ": render_instances." + part + ".count must be at least 2");
             }
             String scope = declaration.get("step_scope").getAsString();
-            if (!scope.equals("part") && !scope.equals("stack")) {
-                throw new IllegalStateException(id + ": render_instances." + part + ".step_scope must be part or stack");
+            if (!scope.equals("part") && !scope.equals("stack") && !scope.equals("explicit")) {
+                throw new IllegalStateException(id + ": render_instances." + part + ".step_scope must be part, stack or explicit");
             }
+            if (scope.equals("explicit")) {
+                // The folder's gaps: the classic re-poses the part between its draws from code (the GiantRobot's
+                // second leg and arm, the Crab's eight leg positions) - no pose-stack step about one axis expresses
+                // that, so the declaration lists every draw's bind transform for the converter (explicit per-instance
+                // transforms). The probe needs only the count; the list's length is held to it.
+                JsonElement instances = declaration.get("instances");
+                if (instances == null || !instances.isJsonArray() || instances.getAsJsonArray().size() != count) {
+                    throw new IllegalStateException(id + ": render_instances." + part + ".instances must list exactly "
+                            + count + " draws (step_scope explicit)");
+                }
+                if (declaration.has("group_chain")) {
+                    throw new IllegalStateException(id + ": render_instances." + part + ".group_chain needs step_scope part");
+                }
+            }
+            int expected = count;
+            if (declaration.has("pinned_draw_count")) {
+                // ANIM-025: the port draws the part FEWER times than the declaration until its slice's draw fix lands
+                // (the Crab's renderToBuffer draws each leg part once where 1.7.10 drew it eight times). The manifest
+                // pins the port's count, so the dump proves exactly that shortfall and the rig still carries every
+                // declared draw; the moment the fix lands the observed count returns to the declaration, this pin
+                // fails the run and is removed with the fix (the reference leg's pinned_divergences
+                // rule). An undeclared shortfall still fails as before.
+                expected = declaration.get("pinned_draw_count").getAsInt();
+                if (expected < 1 || expected >= count) {
+                    throw new IllegalStateException(id + ": render_instances." + part
+                            + ".pinned_draw_count must be between 1 and count - 1");
+                }
+            }
+            expectedCounts.put(part, expected);
             if (declaration.has("group_chain")) {
                 // ENT-S-146: nested hook-spun groups (outermost first) above the clones, step_scope part only.
                 if (!scope.equals("part")) {
@@ -776,7 +806,7 @@ public final class G1ModelProbe {
             }
             signatures.put(part, new PartSignature(part, namesToPaths.get(part), uvKey, vertexCounts));
         }
-        return new RenderInstanceContext(counts, signatures, partsByUvKey);
+        return new RenderInstanceContext(counts, expectedCounts, signatures, partsByUvKey);
     }
 
     private static String uvToken(CapturedVertex vertex) {
@@ -804,12 +834,15 @@ public final class G1ModelProbe {
 
     private static final class RenderInstanceContext {
         private final Map<String, Integer> declaredCounts;
+        /** The draw count the port must show per declared part: the declaration's, or its {@code pinned_draw_count}. */
+        private final Map<String, Integer> expectedCounts;
         private final Map<String, PartSignature> signatures;
         private final Map<String, String> partsByUvKey;
 
-        private RenderInstanceContext(Map<String, Integer> declaredCounts, Map<String, PartSignature> signatures,
-                                      Map<String, String> partsByUvKey) {
+        private RenderInstanceContext(Map<String, Integer> declaredCounts, Map<String, Integer> expectedCounts,
+                                      Map<String, PartSignature> signatures, Map<String, String> partsByUvKey) {
             this.declaredCounts = declaredCounts;
+            this.expectedCounts = expectedCounts;
             this.signatures = signatures;
             this.partsByUvKey = partsByUvKey;
         }
@@ -879,10 +912,16 @@ public final class G1ModelProbe {
                 String part = entry.getKey();
                 int observed = drawn.getOrDefault(part, 0);
                 int expected = hiddenByPath(entry.getValue().path(), hiddenBones)
-                        ? 0 : this.declaredCounts.getOrDefault(part, 1);
+                        ? 0 : this.expectedCounts.getOrDefault(part, 1);
                 if (observed != expected) {
-                    throw new IllegalStateException(part + " drawn " + observed + " times; expected " + expected
-                            + (this.declaredCounts.containsKey(part) ? " (declared render_instances count)" : ""));
+                    String why = "";
+                    if (this.declaredCounts.containsKey(part)) {
+                        why = expected == this.declaredCounts.get(part)
+                                ? " (declared render_instances count)"
+                                : " (pinned_draw_count: the port's draw count pinned under the " + this.declaredCounts.get(part)
+                                        + "-draw declaration; a change means the draw fix landed and the pin must go)";
+                    }
+                    throw new IllegalStateException(part + " drawn " + observed + " times; expected " + expected + why);
                 }
             }
             sample.add("render_vertices", consumer.verticesJson());

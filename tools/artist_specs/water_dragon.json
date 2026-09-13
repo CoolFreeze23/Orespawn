@@ -138,12 +138,12 @@
     {
       "name": "aggro_idle",
       "verdict": "author",
-      "note": "the attacking flag set — 1 in reach (the melee goal), 2 while the cannon fires (WaterCanonAttackGoal :572): the jaw chomping or held open (ModelWaterDragon.java:221), the body wave running; NOT offered by the trigger inventory today (the setAttacking sites sit in the inner cannon goal and the melee goal's IntConsumer, so the inventory offers no pair) — kept here for the owner"
+      "note": "the attacking flag set — 1 in reach (the melee goal), 2 while the cannon fires (WaterCanonAttackGoal :572): the jaw chomping or held open (ModelWaterDragon.java:221), the body wave running; offered by the trigger inventory now (TEST-011 (b)): the inner WaterCanonAttackGoal hands the setter to its parent BugMeleeAttackGoal, whose writes are traced (raised in reach at BugMeleeAttackGoal.java:168, cleared out of reach and on target loss at :176 / :145) beside the cannon's own :572 / :622 — classified STATE, so w_aggro drives this pair"
     },
     {
       "name": "calm_idle",
-      "verdict": "covered by idle",
-      "note": "covered by idle while the inventory offers no aggro_idle / calm_idle pair (the setAttacking sites sit in the inner WaterCanonAttackGoal, :572 / :622, and the melee goal's IntConsumer, :561); the rest with the flag clear is the jaw shut at −0.25 (:221) and the fins' slow sway"
+      "verdict": "author",
+      "note": "the pair is offered now (TEST-011 (b), the melee goal's writes traced through the inner WaterCanonAttackGoal's setter,561, beside its own:572 /:622); the rest with the flag clear is the jaw shut at −0.25 (:221) and the fins' slow sway"
     },
     {
       "name": "attack",

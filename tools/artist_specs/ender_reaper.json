@@ -143,12 +143,12 @@
     {
       "name": "aggro_idle",
       "verdict": "author",
-      "note": "the screaming branch — a held synched state the model reads (ModelEnderReaper.java:434-440): the wings beating 54 degrees at 0.621/tick, the scythe swinging 45 degrees each way, the left forearm thrust forward; the byte is DATA_SCREAMING (EnderReaper.java:39-40, up at :116 and :341, down at :121 / :251 / :259 / :282), not DATA_ATTACKING, so the generator's inventory offers calm_idle only and the seam's w_aggro waits for this creature's SPEC to name the byte; author it now against that byte"
+      "note": "the screaming branch — a held synched state the model reads (ModelEnderReaper.java:434-440): the wings beating 54 degrees at 0.621/tick, the scythe swinging 45 degrees each way, the left forearm thrust forward; the byte is DATA_SCREAMING (EnderReaper.java:39-40, up at :116 and :341, down at :121 / :251 / :259 / :282), read by the generator's inventory as the held aggro state under the entity's own name (TEST-011 (c), raised in the target goal's findTarget at:116, cleared on target loss at:121 /:282 — classified STATE), so w_aggro drives this pair now; author it against that byte"
     },
     {
       "name": "calm_idle",
       "verdict": "author",
-      "note": "the calm branch (ModelEnderReaper.java:441-445) — the same stance as `idle`; listed because the code has the two-state split on DATA_SCREAMING (see aggro_idle): until the SPEC names that byte the generator reads calm_idle as covered by idle, and the pair plays as one"
+      "note": "the calm branch (ModelEnderReaper.java:441-445) — the same stance as `idle`; the code has the two-state split on DATA_SCREAMING (see aggro_idle), which the generator reads as the held state now (TEST-011 (c)), so the pair is offered — may be delivered as a copy of idle"
     },
     {
       "name": "attack",

@@ -46,7 +46,7 @@
     "One rhythm runs at all times: the eight wing panels roll about the body's long axis at 0.975 rad/tick (a 6.44-tick beat — the butterfly's 1.3 scaled by this renderer's wingspeed 0.75, LunaMothRenderer.java:29), 45 degrees each way, the left set mirroring the right (ButterflyModel.java:109-115). The body and the head are static; the walk position, the walking speed, the head angles and the entity's state play no part.",
     "The flight is the entity's: LunaMothFlightGoal (EntityLunaMoth.java:55) steers the delta movement toward torches when sheltered and wanders on the butterfly preset otherwise, and tick :58-63 damps the vertical speed by 0.6 each tick. The model never banks or bobs the body with that motion.",
     "The renderer draws the head, then the body, then the wing pairs inner to outer (renderToBuffer, ButterflyModel.java:119-130).",
-    "No `attack` row: the moth's only strike is the Islands nip it inherits — LunaMothFlightGoal extends ButterflyIslandsHuntGoal (LunaMothFlightGoal.java:43), whose :83 calls EntityButterfly.doHurtTarget (EntityButterfly.java:161-165) — and the trigger inventory, which reads the entity file and the goal file it names, does not see the parent goal's call; the owner decides whether the nip earns a strike clip when the rig lands."
+    "The `attack` row is offered from the inherited nip: LunaMothFlightGoal extends ButterflyIslandsHuntGoal (LunaMothFlightGoal.java:43), whose :83 calls EntityButterfly.doHurtTarget (EntityButterfly.java:161-165) — the trigger inventory follows the registered goal's parent class now (TEST-011); the nip's clip is left unauthored (verdict `leave` below) until the owner decides whether it earns a strike clip when the rig lands."
   ],
   "clips": [
     {
@@ -63,6 +63,11 @@
       "name": "fly",
       "verdict": "author",
       "note": "the true locomotion: airborne on LunaMothFlightGoal from spawn (EntityLunaMoth.java:55) — a softer, slower flutter than the butterfly's"
+    },
+    {
+      "name": "attack",
+      "verdict": "leave",
+      "note": "offered now (the inherited Islands nip, ButterflyIslandsHuntGoal.java:83 — TEST-011): a 1-damage nip on a player or a horse in the Islands, no attacking flag, so the strike would be transport 1 (the server LivingDamageEvent.Post) — left unauthored until the owner decides whether the nip earns a strike clip when the rig lands"
     },
     {
       "name": "hurt",

@@ -237,10 +237,130 @@ def render_instance_angles(part_name: str, declaration: dict[str, Any]) -> tuple
     return step, angles
 
 
+def resolve_axes(values: Any, defaults: list[float], where: str) -> list[float]:
+    """A declared 3-vector whose ``null`` entries keep the part's own value on that axis."""
+    if not isinstance(values, list) or len(values) != 3:
+        raise ValueError(f"{where} must be a list of three numbers or nulls")
+    out: list[float] = []
+    for index, value in enumerate(values):
+        if value is None:
+            out.append(float(defaults[index]))
+        elif isinstance(value, (int, float)) and not isinstance(value, bool):
+            out.append(float(value))
+        else:
+            raise ValueError(f"{where}[{index}] must be a number or null")
+    return out
+
+
+def explicit_instance_transforms(part_name: str, declaration: dict[str, Any], absolute_pivot: list[float],
+                                 initial_rotation: list[float]) -> list[dict[str, Any]]:
+    """The per-draw bind transforms of an explicit render-instance list, in classic ModelPart coordinates.
+
+    ``instances`` lists exactly ``count`` draws in the classic draw order; draw k carries ``pivot``
+    (the rotation point the classic sets for that draw at bind) and an optional ``rotation``
+    (radians; a ``null`` axis keeps the part's own initial rotation), plus a ``note``.
+    """
+    count = int(declaration["count"])
+    if count < 2:
+        raise ValueError(f"render_instances.{part_name}.count must be at least 2")
+    for key in ("axis", "step_radians", "step_degrees", "step_arithmetic", "group_chain"):
+        if key in declaration:
+            raise ValueError(f"render_instances.{part_name}.{key} does not apply to step_scope explicit")
+    instances = declaration.get("instances")
+    if not isinstance(instances, list) or len(instances) != count:
+        raise ValueError(f"render_instances.{part_name}.instances must list exactly count = {count} draws")
+    out: list[dict[str, Any]] = []
+    for k, instance in enumerate(instances):
+        where = f"render_instances.{part_name}.instances[{k}]"
+        if not isinstance(instance, dict) or "pivot" not in instance:
+            raise ValueError(f"{where} needs a pivot (classic ModelPart rotation point at bind)")
+        entry = {
+            "draw_index": k,
+            "pivot": resolve_axes(instance["pivot"], absolute_pivot, f"{where}.pivot"),
+            "rotation": resolve_axes(instance.get("rotation", [None, None, None]), initial_rotation, f"{where}.rotation"),
+        }
+        if "note" in instance:
+            entry["note"] = instance["note"]
+        out.append(entry)
+    return out
+
+
+def expand_explicit_instances(name: str, part: dict[str, Any], absolute_pivot: list[float],
+                              initial_rotation: list[float], declaration: dict[str, Any]) -> dict[str, Any]:
+    """The folder's gaps: ``step_scope: explicit``.
+
+    The classic re-poses the part between its draws from code - the GiantRobot's ``renderLeg`` /
+    ``renderArm`` set the shared leg and arm parts' rotation point and pitch per side (orig
+    ModelGiantRobot.java:173-266), the 1.7.10 Crab's ``render`` sets the three leg parts' position and
+    yaw eight times (orig ModelCrab.java:195-289) - a translation and a mirrored yaw that no rotation
+    step about one axis expresses, so the declaration lists every draw's bind transform explicitly.
+    Emitted as one TOP-LEVEL clone per draw, ``<part>__i<k>`` (no group: there is no pose-stack
+    transform for a hook to spin), its pivot the declared rotation point, its bind rotation the
+    declared rotation (the part's own on every ``null`` axis), the part's cubes local to that pivot
+    exactly as ``ModelPart.render`` draws them; the hook, when the rig lands, animates each clone
+    directly. The fan forms (``part`` / ``stack``) are untouched.
+    """
+    transforms = explicit_instance_transforms(name, declaration, absolute_pivot, initial_rotation)
+    bones: list[dict[str, Any]] = []
+    mapping: dict[str, dict[str, Any]] = {}
+    clone_bones: list[str] = []
+    for entry in transforms:
+        k = entry["draw_index"]
+        pivot = entry["pivot"]
+        rotation = entry["rotation"]
+        clone_name = f"{name}__i{k}"
+        bone: dict[str, Any] = {
+            "name": clone_name,
+            "pivot": clean_vector([-pivot[0], 24.0 - pivot[1], pivot[2]]),
+        }
+        if nonzero(rotation):
+            bone["rotation"] = json_rotation(rotation)
+        bone["cubes"] = [convert_cube(cube, pivot) for cube in part["cubes"]]
+        bones.append(bone)
+        clone_bones.append(clone_name)
+        mapping[clone_name] = {
+            "role": "clone",
+            "source_part": name,
+            "draw_index": k,
+            "group_bone": None,
+            "static_rotation_radians": rotation,
+            "static_channel": None,
+            "static_pivot_classic": pivot,
+        }
+        if "note" in entry:
+            mapping[clone_name]["instance_note"] = entry["note"]
+    summary = {
+        "count": len(transforms),
+        "step_scope": "explicit",
+        "instances": transforms,
+        "group_bones": [],
+        "clone_bones": clone_bones,
+        "cubes_per_draw": len(part["cubes"]),
+    }
+    if "note" in declaration:
+        summary["note"] = declaration["note"]
+    if "pinned_draw_count" in declaration:
+        # ANIM-025: the port draws the part fewer times than the classic declaration until its slice's fix lands;
+        # the probe holds the dump to the pin (G1ModelProbe.renderInstanceContext), the rig still carries every draw.
+        summary["pinned_draw_count"] = int(declaration["pinned_draw_count"])
+        if "pinned_draw_note" in declaration:
+            summary["pinned_draw_note"] = declaration["pinned_draw_note"]
+    return {
+        "bones": bones,
+        "mapping": mapping,
+        "summary": summary,
+        "cube_count": len(part["cubes"]) * len(transforms),
+    }
+
+
 def expand_render_instances(name: str, part: dict[str, Any], parent: str | None,
                             absolute_pivot: list[float], initial_rotation: list[float],
                             declaration: dict[str, Any]) -> dict[str, Any]:
     """Slice 4c: one bone per DRAW of a part the classic model renders N times per frame.
+
+    ``step_scope: explicit`` (the folder's gaps, 2026-09-14): the classic re-poses the part
+    between draws from code, so the declaration lists each draw's bind transform; see
+    ``expand_explicit_instances``. The two fan forms follow.
 
     ``step_scope: part`` (Rotator): the loop assigns the part's own ``<axis>Rot`` to
     draw k's step inside ONE pose-stack rotation the hook animates. Emitted as a
@@ -265,12 +385,14 @@ def expand_render_instances(name: str, part: dict[str, Any], parent: str | None,
         raise ValueError(f"render_instances part {name} must not have children")
     if not part["cubes"]:
         raise ValueError(f"render_instances part {name} has no cubes")
+    scope = declaration["step_scope"]
+    if scope not in ("part", "stack", "explicit"):
+        raise ValueError(f"render_instances.{name}.step_scope {scope!r} is not part, stack or explicit")
+    if scope == "explicit":
+        return expand_explicit_instances(name, part, absolute_pivot, initial_rotation, declaration)
     axis = declaration["axis"]
     if axis not in AXIS_INDEX:
         raise ValueError(f"render_instances.{name}.axis {axis!r} is not x, y or z")
-    scope = declaration["step_scope"]
-    if scope not in ("part", "stack"):
-        raise ValueError(f"render_instances.{name}.step_scope {scope!r} is not part or stack")
     step, angles = render_instance_angles(name, declaration)
     axis_index = AXIS_INDEX[axis]
     pivot_json = clean_vector([-absolute_pivot[0], 24.0 - absolute_pivot[1], absolute_pivot[2]])
@@ -620,8 +742,8 @@ def convert_geometry(compiled: dict[str, Any],
                 if entry["role"] != "clone":
                     continue
                 mirror_flags[clone_name] = [bool(cube["mirror"]) for cube in part["cubes"]]
-                group_entry = expanded["mapping"][entry["group_bone"]]
-                group_static = group_entry.get("static_rotation_radians")
+                group_bone = entry.get("group_bone")  # None for an explicit-form clone (top-level, no group)
+                group_static = expanded["mapping"][group_bone].get("static_rotation_radians") if group_bone else None
                 if lineage_unrotated and not nonzero(entry["static_rotation_radians"]) and (
                         group_static is None or not nonzero(group_static)):
                     unrotated_at_bind.add(clone_name)
@@ -729,6 +851,15 @@ def convert_geometry(compiled: dict[str, Any],
                 "<part>__fan<k> and the clone carries the part's animated channels"
             ),
         }
+        if any(parts.get("step_scope") == "explicit" for parts in expansion_parts.values()):
+            # the folder's gaps (2026-09-14): written only for a rig with an explicit-form part, so the fan rigs'
+            # reports stay byte-identical
+            summary["render_instances"]["semantics_explicit"] = (
+                "step_scope explicit = the classic re-poses the part between its draws from code (a rotation point "
+                "and rotation set per draw, no pose-stack step), so draw k is a top-level clone <part>__i<k> whose "
+                "bind pivot and rotation are the declared per-draw transform at bind and whose cubes are the part's, "
+                "local to that pivot; a hook animates each clone directly"
+            )
     return geometry, summary
 
 

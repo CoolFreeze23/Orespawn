@@ -153,17 +153,17 @@
     {
       "name": "aggro_idle",
       "verdict": "author",
-      "note": "the attacking flag (Dragon.java:685 in flight, :588 ridden): the jaw chomping (ModelDragon.java:618-619), the tail at 0.96 and 0.75 wide (:516-519), on the ground the wings half-raised and flapping (:472); NOT offered by the trigger inventory for the baby today (the setAttacking sites are in Dragon.java, the parent) — kept here for the owner"
+      "note": "the attacking flag (Dragon.java:685 in flight, :588 ridden): the jaw chomping (ModelDragon.java:618-619), the tail at 0.96 and 0.75 wide (:516-519), on the ground the wings half-raised and flapping (:472); offered by the trigger inventory now (TEST-011 (b)): DATA_ATTACKING is read from the parent class Dragon.java — raised at :588 / :685, cleared on target loss at :594 / :704 — and classified STATE, so w_aggro drives this pair"
     },
     {
       "name": "calm_idle",
-      "verdict": "covered by idle",
-      "note": "covered by idle while the inventory offers no aggro_idle / calm_idle pair for the baby (the setAttacking sites are in Dragon.java, the parent); the rest with the flag clear (Dragon.java:704) is the jaw at rest (:619), the tail slow on the ground (:520-522), the wings folded (:476)"
+      "verdict": "author",
+      "note": "the pair is offered now (TEST-011 (b), the flag's sites read from the parent class Dragon.java); the rest with the flag clear (Dragon.java:704) is the jaw at rest (:619), the tail slow on the ground (:520-522), the wings folded (:476)"
     },
     {
       "name": "attack",
       "verdict": "author",
-      "note": "the bite: doHurtTarget (Dragon.java:285-302) from handleAIFlight :691-695 within five blocks plus half the target's width, or handleRiderCombat :589-592 within seven — 5 of damage for the baby (BabyDragon.java:32, though doHurtTarget writes 35 directly at Dragon.java:289) and a 1.75 knockback; a head lunge with the jaw's chomp; the shot is the `breath` extra; NOT offered by the trigger inventory for the baby today (the strike call sites are in Dragon.java, the parent) — kept here for the owner",
+      "note": "the bite: doHurtTarget (Dragon.java:285-302) from handleAIFlight :691-695 within five blocks plus half the target's width, or handleRiderCombat :589-592 within seven — 5 of damage for the baby (BabyDragon.java:32, though doHurtTarget writes 35 directly at Dragon.java:289) and a 1.75 knockback; a head lunge with the jaw's chomp; the shot is the `breath` extra; offered by the trigger inventory now (TEST-011 (b)): the strike sites are read from the parent class Dragon.java (:591, :693)",
       "length_seconds": 0.5
     },
     {
@@ -214,7 +214,7 @@
   "wishlist": [
     "in `fly`: a quicker, bouncier beat than the adult's — the code's 50-degree flap (ModelDragon.java:471, :475) reads heavy at 0.45 scale; add a body bob and let the tail whip",
     "in `walk`: a hatchling's scamper — the four stiff chains (:451-466) with the knees bent and the head bobbing",
-    "the bite (the contract's attack clip, which the trigger inventory does not offer for the baby: the strike call sites are in Dragon.java, the parent): the lower jaw's chomp (:618-619) and a head lunge; the bite lands within five blocks plus half the target's width (Dragon.java:691-693)",
+    "the bite (the contract's attack clip, offered now from the parent class's strike sites, Dragon.java:591 / :693 — TEST-011 (b)): the lower jaw's chomp (:618-619) and a head lunge; the bite lands within five blocks plus half the target's width (Dragon.java:691-693)",
     "in `breath`: a head rear and a small jaw snap timed to the SmallFireball (Dragon.java:821-826)"
   ],
   "locked_bones_provisional": [
