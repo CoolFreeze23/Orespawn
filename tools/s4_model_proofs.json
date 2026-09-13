@@ -48,6 +48,8 @@
       "class": "danger.orespawn.entity.client.VortexModel",
       "texture": "src/main/resources/assets/orespawn/textures/entity/vortex.png",
       "animation_kind": "static",
+      "cube_face_order": "classic",
+      "face_order_note": "TEST-007 (owner 2026-09-13, second set, item 6): a cutout rig with a zero-thickness cube (the 128x64x0 plate) ships the classic within-cube face order, so the candidate's coplanar pair is emitted in the classic renderer's order; the audit refuses the omission.",
       "loop_period_age_ticks": 20.0,
       "sample_fractions": [
         0.0,

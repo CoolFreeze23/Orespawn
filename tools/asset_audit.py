@@ -107,7 +107,7 @@ ACKNOWLEDGED = {
 # a shipped rig that is neither a seam rig nor a dated OUTSIDE_SEAM exception is a rig
 # outside the contract nobody decided on (refuter B on the landing, 2026-09-06).
 NEVER_ACKNOWLEDGED = {"GECKO_GEO_DRAW_ORDER_MISSING", "GECKO_GEO_SEAM_UNRECONCILED",
-                      "GECKO_GEO_FACE_ORDER_INVALID"}
+                      "GECKO_GEO_FACE_ORDER_INVALID", "GECKO_GEO_FLAT_CUBE_FACE_ORDER_MISSING"}
 
 findings = []      # list of dicts: level, category, name, detail, path
 skipped = []       # things the static parser could not verify
@@ -840,6 +840,28 @@ def _descriptor_requires_face_order(java_text):
     return DESCRIPTOR_REQUIRES_FACE_ORDER_RE.search(_strip_java_comments(java_text)) is not None
 
 
+def _flat_cubes(geometry):
+    """The rig's ZERO-THICKNESS cubes as "bone[index] WxHxD" (TEST-007, owner 2026-09-13): a cube with a 0 size
+    component and no inflation (its own or its bone's) has two coplanar real faces that both draw under
+    entityCutoutNoCull; the z-fight winner is the face emitted last in-game, and for a mirrored cube flat in X the
+    classic renderer emits the two in the opposite order from GeckoLib, so such a rig must ship the classic
+    within-cube order (the Cloud Shark's fins showed the other texture island without it)."""
+    out = []
+    bones = geometry.get("bones") if isinstance(geometry, dict) else None
+    for bone in bones or []:
+        if not isinstance(bone, dict):
+            continue
+        bone_inflate = bone.get("inflate", 0) or 0
+        for index, cube in enumerate(bone.get("cubes") or []):
+            if not isinstance(cube, dict):
+                continue
+            size = cube.get("size")
+            inflate = cube.get("inflate", bone_inflate)
+            if isinstance(size, list) and len(size) == 3 and any(s == 0 for s in size) and not inflate:
+                out.append("%s[%d] %sx%sx%s" % (bone.get("name", "?"), index, size[0], size[1], size[2]))
+    return out
+
+
 def _face_order_problem(description, bone_cubes, required):
     """None when description[FACE_ORDER_KEY] is right, else the reason, worded after the key - exactly what
     the client's FaceOrder.read + FaceOrder.apply refuse (ENT-S-146; refuter B, D1): the key's bones must be
@@ -1003,6 +1025,19 @@ def check_geckolib(java_texts):
                 'rig drawn by the replacement seam (%s): description["%s"] %s - the client '
                 "would fall back to GeckoLib's own within-cube face order; regenerate it with "
                 "tools/layer_definition_to_geo.py" % (rel(java_path), FACE_ORDER_KEY, problem),
+                geo_path)
+        # TEST-007 (owner 2026-09-13, second set, item 6): a cutout rig with a zero-thickness cube that omits the
+        # classic within-cube face order is refused - the key is what keeps the candidate's coplanar pair in the
+        # classic renderer's order (the Cloud Shark's fins showed the other texture island without it). A rig whose
+        # descriptor requires the key is covered by the rule above; this one catches the omission.
+        flat = _flat_cubes(geoms[0])
+        description = geoms[0].get("description")
+        if flat and not required and not (isinstance(description, dict) and FACE_ORDER_KEY in description):
+            err("GECKO_GEO_FLAT_CUBE_FACE_ORDER_MISSING", geo_path.stem,
+                'rig drawn by the replacement seam (%s) has zero-thickness cube(s) %s and no description["%s"]: '
+                'declare cube_face_order "classic" in its manifest entry and cubeFaceOrderRequired() in its '
+                "descriptor, then regenerate it with tools/layer_definition_to_geo.py (TEST-007)"
+                % (rel(java_path), ", ".join(flat[:6]) + (" ..." if len(flat) > 6 else ""), FACE_ORDER_KEY),
                 geo_path)
 
     clips = {}  # clip name -> [(file, loop declaration)]; loop is False / True / "hold_on_last_frame"

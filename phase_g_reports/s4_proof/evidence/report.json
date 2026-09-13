@@ -191,7 +191,7 @@
       "compiled_dump_sha256": "40ef9260c8bbbddd0d02eb0e51fef4ac617bb39b7447d86dda5ce1cbd2df287c",
       "bone_count": 1,
       "cube_count": 1,
-      "geometry_sha256": "14b101cb86dcc2669870ad6d9804229c8d85199eab880e2e44559d984098007e",
+      "geometry_sha256": "8d0832a75d52dd4f42914734cfb4be08d298f497fa4d7147d95eae4b76eb204a",
       "animation_sha256": "7882082857fdb11e02f158ebc3a6d3f970e2ac60d54813f0e903ee97b2293749",
       "animation_contract_sha256": "ef25a2b4eb7640daad7b902fc72c12e0e99737cd0882ac83ea702e72c92a7acd",
       "geometry": {
@@ -251,7 +251,33 @@
         "draws_checked": 6,
         "classic_source": "classic EntityModel.renderToBuffer on a second bake posed identically; every ModelPart.render is one pose-stack push, attributed to its part by ModelPart.skipDraw elimination (one run per cube-bearing part with every other part's skipDraw set); a part drawn n > 1 times is named <part>__i<k> by draw ordinal",
         "unobserved_units": [],
-        "policy": "the shipped model sorts GeckoLib's topLevelBones / childBones lists into the classic renderToBuffer order (DrawOrder.apply); both renderers traverse in pre-order, so equal sibling orders are equal draw orders"
+        "policy": "the shipped model sorts GeckoLib's topLevelBones / childBones lists into the classic renderToBuffer order (DrawOrder.apply); both renderers traverse in pre-order, so equal sibling orders are equal draw orders",
+        "cube_face_order": {
+          "status": "PASS",
+          "cube_face_order": {
+            "Shape1": [
+              [
+                "up",
+                "down",
+                "east",
+                "north",
+                "west",
+                "south"
+              ]
+            ]
+          },
+          "captures_checked": 6,
+          "faces_checked": 36,
+          "normal_epsilon": 1e-06,
+          "evidence": {
+            "rule": "NeoForge 21.1.223 ModelPart.Cube.<init> polygon order DOWN, UP, WEST, NORTH, EAST, SOUTH (offsets 365-785: DOWN 365, UP 436, WEST 507, NORTH 578, EAST 649, SOUTH 720), mirror negating the X normals; GeckoLib labels by the direction whose step is the classic normal reflected in Y",
+            "cube_bearing_bones": 1,
+            "cubes": 1,
+            "verified_unrotated_cubes_at_bind": 1,
+            "verification": "captured normals of every cube unrotated at bind equal the rule's, in order; the parity tool's draw-order leg compares the per-quad normal sequences of both renderers on every capture"
+          },
+          "policy": "the shipped model permutes every cube's quads into the classic ModelPart.Cube order (FaceOrder.apply), so under a blending render type a cube's back face shows through its front face - or is rejected by the depth test - exactly as it does on the classic renderer"
+        }
       },
       "visual": {
         "status": "PASS",

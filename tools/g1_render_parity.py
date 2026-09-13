@@ -1730,10 +1730,15 @@ def render_capture(sample: dict[str, Any], texture: Image.Image,
     contract the order is equal on both sides, so the mask is a diagnostic
     (the contested fraction is reported, every pixel compared); the opt-in
     `--contested-exclusion` uses it to skip exactly those pixels, as ruling 2
-    (2026-09-02) did before the contract. The rasteriser's own tie rule at an
-    EXACT depth tie is first-wins (a later fragment replaces the front only when
-    nearer by more than 1e-9) where the game's LEQUAL depth test is last-wins;
-    parity is unaffected because both captures share the rule and the order.
+    (2026-09-02) did before the contract. The rasteriser's own tie rule is
+    first-wins THROUGHOUT the contest window (a later fragment within
+    CONTEST_DEPTH_EPSILON of the front never replaces it; TEST-006, owner
+    2026-09-13) where the game's LEQUAL depth test is last-wins; parity holds
+    because both captures share the rule and the order, and the decision inside
+    the window is emission order alone, never the two renderers' sub-window
+    depth noise (before 2026-09-13 a fragment nearer by more than 1e-9 replaced
+    the front, which let a thin fin's two coplanar faces swap between the
+    renderers - the Cloud Shark).
     """
     pixels = [BACKGROUND] * (IMAGE_SIZE * IMAGE_SIZE)
     depth_buffer = [math.inf] * (IMAGE_SIZE * IMAGE_SIZE)
@@ -1789,11 +1794,15 @@ def render_capture(sample: dict[str, Any], texture: Image.Image,
                     colour = (source[0], source[1], source[2], 255)
                     if abs(depth - current_depth) <= CONTEST_DEPTH_EPSILON:
                         # Same depth as the current front fragment: a z-fight unless it
-                        # is the same quad (shared diagonal) or the same texel.
+                        # is the same quad (shared diagonal) or the same texel. TEST-006
+                        # (owner 2026-09-13, second set, item 5): first-wins THROUGHOUT the
+                        # contest window - a fragment inside it never replaces the front, so
+                        # emission order alone decides a coplanar pair (the G2 root-order
+                        # contract's premise) instead of sub-window depth noise that differs
+                        # between the two renderers' float paths (the Cloud Shark's fins).
                         if owner_quad[pixel_index] != quad_index and pixels[pixel_index] != colour:
                             contested[pixel_index] = True
-                        if depth >= current_depth - 1.0e-9:
-                            continue
+                        continue
                     else:
                         # Decisively nearer: whatever was contested behind it no longer shows.
                         contested[pixel_index] = False
