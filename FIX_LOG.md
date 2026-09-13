@@ -6447,3 +6447,170 @@ PRESENTED BY THE ORCHESTRATOR (nothing here is a new ruling; each is reversible)
   untouched here and regenerated with the full folder).
 
 GATE: (folder, 2026-09-13 21:07-21:18; no refuter - tooling): `gradle referenceDumpCompiledModels referenceConvertModels` (the new task's first run under gradle): 106 reference geos generated into build/reference/generated, 3 entries refused by name (`reference_giantrobot`, `reference_purplepower`, `reference_rotator` - parts drawn more than once without a render_instances form; the last two ship their s4 geos), exit 0 by design; `test_artist_package.py` 39 tests OK; the dry run `package --reference-geo-dir build/reference/generated` into scratch: 112 folders, 995 files, every one of the 112 folders `check` PASS; g1ConvertModels / g1WriteRuntimeClasspath / g1Benchmark and the benchmark proof re-pinned (build.gradle moved; `G1 BENCHMARK EVIDENCE VERIFIED: SMOKE_ONLY / COMPONENT_PROXY_ONLY / PENDING_LIVE_PRECUTOVER; checked-in proof updated`); `asset_audit.py` 0 errors / 0 advisories / 4 acknowledged (39 shipped geo: 38 seam + 1 outside-seam; nothing under src/ moved); staged 6 modified; then `gate_wrapped.sh folder`: the drift check verified the re-pinned proof, `gradlew build` SUCCESSFUL (2m 51s; `check` green, the reference-geometry leg and `referenceClipsVerify` among it), `runGameTestServer` All 1278 required tests passed (unchanged: no gametest added). Stray-process check: only the Gradle daemon (restarted at 21:07 for this run).
+
+## THE FULL ARTIST FOLDER (2026-09-13) — every artist-tier species with a rig packaged into `artist_handoff/`; the 72 unseeded species' seeds drafted by three seed lanes from the entity code, DRAFT-marked; the twenty boss seeds refuted once; the Tier-1 bosses' provisional locked bones; the README's full priority table, bosses first; every folder PASS (owner 2026-09-13, fourth set, items 5 to 8)
+
+RULING. Owner 2026-09-13, fourth set (addendum item 29 (5)-(8)): every artist-tier species not yet packaged is packaged
+now — the rig from the converter's proven output where none is shipped (the reference leg's geo; the sheet states the
+rig is not yet in-game and that bone names are final), textures, the SPEC, the .bbmodel; a reference clip only where a
+hook exists, the sheet saying "sampled when the rig lands" otherwise; seeds for the unseeded species drafted by lanes
+from the entity code — the description, the clip verdicts, the wishlist — each sheet marked DRAFT above its authored
+sections; one refuter over the twenty boss seeds only, none over the rest; each Tier-1 boss's sheet pre-declares its
+intended locked bones from the design's section 6, marked provisional, the Queen's profile as the template where the
+design has none; the README's priority table the full list, bosses first; every folder check PASS; the package count
+the deliverable count. The tooling landed first (FIX_LOG "THE FULL FOLDER, THE TOOLING (2026-09-13)"); this section is
+the seeds and the folder.
+
+WHAT LANDED:
+- THE SEEDS, three lanes (`tools/artist_specs/<registry>.json`, 72 files: the 27 Tier-1 boss registries — one lane; the
+  45 Tier-2 registries — two lanes of 23 and 22), each seed `status` "DRAFT — authored by a seed lane from the entity code,
+  2026-09-13; the owner's edit pending" (the sheet prints the DRAFT banner above its authored sections), the description
+  (`character_sheet`, `size_notes`), every bone labelled (`labels`, validated against the reference geo), the rhythms as
+  `groups` from `setupAnim`, the `behaviour` (the motion the code draws today, lines cited), the `clips` with a verdict
+  each (`idle` and `walk` `author`, REQUIRED together; `author` where the entity code has the state the clip needs, `leave`
+  where it does not, the entity line cited), at most four `extras` (one-shots the code fires, triggers cited), the
+  `wishlist`, `effort_hours` null (the generator estimates), no `formulas` (authored when the rig lands on its hook).
+  The boss batch (Tier 1, 27 registries over 20 rigs, one lane): 25 folders in its batch dry run, 25 PASS (the GiantRobot
+  pair has no rig — TEST-009; its seeds map the design's families onto the shared bones, which lock nothing until the
+  Tier-1 slice splits left and right); every geo bone labelled (0 BONE_UNLABELLED), 0 WISHLIST_UNACCEPTED; every Tier-1
+  row's locks pre-declared from the design's section 6 table — `locked_bones_provisional` with sizes and damage
+  fractions, every entry `in_geo` (no LOCKED_BONE_UNKNOWN), the design's family names resolved to the port models' part
+  names with a `locked_bones_note` per rig (the Leon's two skeletons, the Alien's arm and leg pairs, the Cephadrome's
+  `lefwingfin1` spelling, the Godzilla's asymmetric `LLowerLeg` / `RLegLower`, the Hammerhead's twelve leg pieces, the
+  Kraken's SIX tentacle chains where the design counts eight — for the owner, the Pitch Black's three-piece legs, the
+  Princess's `Tail5`, the T-Rex's leftleg / leftleg2 pairs, the Water Dragon's Leg1 / 2 / 7 / 8; the Baby Dragon's sizes
+  the adult's at 0.45; the Butterfly family single-box but the Mothra with four locks); the design's main sizes and
+  scales against the port's noted in `size_notes` where they differ (the Emperor Scorpion, Hammerhead, Sea Monster,
+  Godzilla, Dragon, GiantRobot); the clips authored where the entity has the state (fly for the flyers, swim for the Sea
+  Monster and Water Dragon, the strikes and the extras — the Godzilla's jump / land / cannon / lightning, the King's
+  stomp / cannon / purple_power, the Kraken's grab / summon / bolt, the Leon's takeoff / land, the Dragon's breath), the
+  aggro_idle / calm_idle pair NOT offered by the generator's inventory for the Emperor Scorpion and T-Rex (a
+  consumer-set flag), the Alien Boss and Baby Dragon (strike sites in the parent class), the Kraken and Water Dragon
+  (sites in an inner goal), and no attack row for the Baby Dragon and Luna Moth — the seeds keep the verdict marked
+  "NOT offered" and word their wishlists to what `check` accepts (the TEST-011 family of reader gaps); model quirks
+  recorded in the seeds (the Dragon's tail segment named `neck1`; the Water Dragon's head-fin wave overwritten by the
+  head yaw; the Princess's power orbs spinning per render frame, a group without omega; the Pitch Black's rates divided
+  by the size scale; the Leon's and Prince Teen's claw and fan parts posed on the opposite side's chain). The lane's
+  batch dry run hit another lane's in-progress `flounder` seed at the package-wide summary stage (more than one
+  gait-scaled group) after every boss folder was written — not its file (batch B, below).
+  Batch A (Tier 2, 23 registries: ghost, ghost_skelly, hydrolisc, kyuubi, leaf_monster, lizard, lurking_terror, mantis,
+  alosaurus, attack_squid, band_p, baryonyx, boyfriend, camarasaurus, cassowary, cave_fisher, chipmunk, crab,
+  creeping_horror, cryolophosaurus, dungeon_beast, easter_bunny, ender_knight): 22 folders in its batch dry run, 22 PASS
+  (the Boyfriend has no rig — TEST-010; its seed is written with the vanilla HumanoidModel's part names as labels);
+  every label and group validated against the reference geos (a helper script in the lane's scratch); the multi-rate
+  rigs (the Attack Squid's eight tentacles at 1.0-1.9 rad/tick, the Creeping Horror's five spikes at fifteen rates, the
+  Crab's eyestalks at four) carry one gait group at the nominal rate with every rate in the group's note; the `shapeNN`
+  models (Alosaurus, Baryonyx, Cryolophosaurus) labelled through their constructors' bindings, misspelled part names kept
+  as final (they are the bone names); the Dungeon Beast's sideways build (turned 90 degrees at render) noted, its stride
+  a Z rotation. Findings the lane noticed, presented (below): the generator's trigger inventory misses three flag idioms
+  (TEST-011: the Lizard's `ATTACKING`, the Cave Fisher's and Dungeon Beast's consumer-set flag, the Ender Knight's vanilla
+  strike and `DATA_SCREAMING`), so four sheets mark an `attack` / `aggro_idle` wishlist line "NOT accepted by `check`
+  today"; the Crab's three leg parts drawn once where 1.7.10 drew them eight times (ANIM-025). Fourteen
+  `GOAL_UNCLASSIFIED` warnings across nine species are the generator's goal dictionary (FollowOwnerGoal, TemptGoal,
+  MoveThroughVillageGoal, OpenDoorGoal, MyEntityAIWander), not the seeds.
+    Batch B (Tier 2, 22 registries: ender_reaper, flounder, frog, gazelle, girlfriend, nastysaurus, peacock, pointysaurus,
+  sea_viper, urchin, whale, molenoid, ostrich, rat, scorpion, spit_bug, spyro, stink_bug, stinky, triffid, trooper_bug,
+  velocity_raptor): 21 folders in its batch dry run, 21 PASS (the Girlfriend has no rig — TEST-010; its seed written with
+  the vanilla HumanoidModel's seven parts as labels, as the Boyfriend's); every bone of every packaged rig labelled (the
+  Triffid's 178, the Trooper Bug's 134, the Spit Bug's 93 — the non-animated plates, palps and eyes labelled by group and
+  number where the code gives no side); the generator's one-gait-group rule met by merging the Flounder's, Whale's,
+  Spyro's, Stinky's and Molenoid's several gait-scaled rhythms into one `gait` group each, the separate rates kept in
+  the group's amplitude, math and note (the boss lane's and the refuter's batch runs had stopped at the package-wide
+  summary on the Flounder's and then the Molenoid's in-progress seeds — resolved by this merge before the lane finished);
+  the TEST-011 family again: DATA_ATTACKING set through `BugMeleeAttackGoal`'s consumer for the Nastysaurus, Pointysaurus,
+  Sea Viper, Scorpion, Spit Bug and Trooper Bug (no `aggro_idle` row offered; the seeds keep the verdict with the byte
+  and lines named), the Ender Reaper's `DATA_SCREAMING` state and vanilla `MeleeAttackGoal` strike (neither row offered),
+  the Peacock's `prey.hurt` peck (no `attack` row); rig quirks recorded in the seeds (the Stink Bug's `f5` foot never
+  written; the Ostrich's dormant sitting head-flip branch and never-visible hats; the Spyro's activity 3 never set; the
+  Spyro's and Stinky's frequencies as k x limbSwingAmount, their tails held bent at rest; the Triffid stationary, its
+  `walk` authored but noted as never playing); `swim` left where the only water code is a FloatGoal, `attack` left
+  unoffered where no attack goal exists (the Flounder, Gazelle, Whale, Ostrich, Stink Bug, Velocity Raptor). Its deviation
+  5 — the DRAFT marking echoed once in the sheet's header line, not above the authored sections — was the orchestrator's
+  omission from the tooling lane's brief, fixed by the orchestrator before the folder was generated (below).
+- THE BOSS SEEDS' REFUTER: one refuter over the twenty boss seeds (2026-09-13), as ruled. Every lock, verdict, form and dry-run
+  claim HELD: all 27 seeds parse in the required form; every `locked_bones_provisional` entry verified against the
+  design's section 6 row (sizes and damage fractions to the digit; the Baby Dragon's at 0.45 of the adult's) and
+  against the geo (every entry `in_geo`; the family resolutions — the Leon's two skeletons, the Alien's arm and shin
+  pairs, the Godzilla's asymmetric names, the Prince Adult's eight leg bones, the Princess's `Tail5`, the T-Rex's shape
+  numbers, the Water Dragon's four flippers — each explained and right; the Kraken's six chains a design error, the
+  seed says so); every cited entity, model and renderer line read and found to say what the seed claims across the
+  twenty rigs; every clip verdict matched to the state the code has; 25 folders `check` PASS with the lane's warning
+  counts to the number. FOUR MUST-FIX items, all description-level, applied by the orchestrator with exact-match
+  replacements and the four folders re-checked PASS: the Alien Boss's speed (its createAttributes 0.55 is overridden to
+  the Alien's 0.65 by the shared constructor, `Alien.java:73`); the Baby Dragon's speed (0.30 overridden to the adult's
+  0.32 by `Dragon.java:133`) in four places; the Dragon's spawn sentence (by day, no other Dragon within 16 blocks,
+  the Islands or else above y 50 — `checkSpawnRules :1242-1249`); the Pitch Black's spawn sentence (at night in the
+  dark, in Chaos never within 16 blocks of another, above scale 1 under a clear air pocket sized by its tier —
+  `checkSpawnRules :672-690`). Its notes, folded in: the generator's inventory gaps the seeds worked around (TEST-011:
+  the Luna Moth's §6 "no attack clip" is false — the Islands nip is inherited through `ButterflyIslandsHuntGoal.java:83`;
+  the Baby Dragon's strike sites in `Dragon.java`; the aggro / calm pair unoffered for six bosses); the lock-resolution
+  judgment calls, all explained and defensible, for the owner to reconcile (the Godzilla's thighs plus lower legs with
+  the upper legs left visual; the King's legs without the thighs against the Prince Adult's with; the T-Rex's thigh plus
+  shin without the foot; the Leon's both skeletons; the Kraken's six); the design main-size mismatches the seeds flag
+  (registration wins per the shared laws); minor inaccuracies not worth an edit cycle (the Emperor Scorpion's spawn list
+  without the desert `__direct` rule, the Butterfly and Luna Moth swarm lists without their `__direct` biomes, the
+  Basilisk's "Slowness V" being amplifier 5 = level VI, the King's `doHurtTarget` cited at :938-957 with its signature
+  at :930, the Mothra's hurt retarget needing an existing flight target); the Cephadrome and Kraken declared `flyer`
+  (ridden-only flight) accepted as the animator's reading. Its package run stopped at the summary stage on another
+  lane's in-progress Tier-2 seed (`molenoid`, two gait-scaled groups) after the 25 boss folders were written — batch B's
+  file, below.
+- THE FOLDER (`artist_handoff/`, regenerated fresh — the pilot pair's folder replaced by the full run):
+  `gradle referenceDumpCompiledModels referenceConvertModels` (106 reference geos; the three refusals by name), the
+  tool's tests (40 OK), then `package --out artist_handoff --reference-geo-dir build/reference/generated` over every
+  species with a rig: 112 species folders (44 shipped rigs, 68 from the reference leg's converter output), 995 files
+  (989 in the entity folders + README_FIRST.md, INVENTORY.csv, TEXTURE_MAP.csv, dryrun_summary.json / .md, warnings.txt),
+  42 MB; every folder `check` PASS (112 of 112; the WARNs the untouched-folder kind: the returned geo, the required pair
+  "not delivered yet" on the 83 species with no clip, the optional clips, the 43 untouched reference copies, the Queen's
+  locked-bone lines); 0 SEED_MISSING; the DRAFT banner above every authored section of the 68 drafted sheets (0 on the
+  44 owner-seeded ones); the Tier-1 sheets' §7 provisional locks (the King's fifteen, the Emperor Scorpion's 48 …);
+  every not-yet-in-game sheet with the statement three times; the README's priority table the full list, bosses first,
+  closing with the counts and the four unpackaged names; `warnings.txt` 73 GOAL_UNCLASSIFIED (the generator's goal
+  dictionary), 29 BONE_UNLABELLED (the sub-parts the seeds could not name), 12 WISHLIST_UNACCEPTED (the TEST-011
+  family), 4 ATTACKING_UNCLASSIFIED, the Queen's LOCKED_BONES_KEYED, 1 ARTIST_TIER_UNPACKAGED naming the four; the audit
+  green (nothing under `src/` moved); staged 971 added / 11 modified (the fresh tree replaces the pilot pair's folder).
+
+THE COUNTS (the deliverable): 112 species folders / 995 files. Artist-tier: Tier 1 — 26 registries over 20 rigs (the Queen among them; 25
+registries / 19 rigs not yet in-game); Tier 2 — 73 registries over 68 rigs (43 / 43 not yet in-game); the 13 Tier-3
+props over 12 rigs beside them. Against the design's 90 artist-tier rigs: 87 packaged (19 of the 20 Tier-1 rigs — the
+GiantRobot outstanding; 68 of the 70 Tier-2 rigs — the Boyfriend and Girlfriend outstanding), 98 registries, plus the
+Queen (the design's Tier 0). Rigs through the seam 38 / 106 (unchanged by this landing); artist-tier species with an
+exact transcription shipped 15 / 90 (informational, unchanged).
+
+PRESENTED BY THE ORCHESTRATOR (nothing here is a new ruling; each is reversible):
+- FOUR REGISTRIES HAVE NO FOLDER: `giant_robot`, `jeffery` (TEST-009), `boyfriend`, `girlfriend` (TEST-010) — the owner's
+  call, the seeds written and waiting; the package names them.
+- TEST-011 and ANIM-025 (above): register lines and stop (the cost rules; a parity lane's later work for the Crab, the
+  generator's readers or the seeds for the four sheets).
+- THE DRAFT BANNER, added by the orchestrator in this landing (tooling, no refuter): the tooling brief for the generator
+  had omitted the ruling's "marked DRAFT above its authored sections", so the sheets carried the DRAFT status in their
+  header line only (batch B's deviation 5); `draft_banner(seed)` now prints the banner under §1, §5, §5.1 and §5.2 when
+  the seed's `status` starts with "DRAFT" (a test pin), the 68 drafted sheets regenerated with it before the folder was
+  written.
+- THE SEEDS ARE DRAFTS: the owner's edit pending on every one of the 72 (the ruling's DRAFT marking); the boss seeds
+  refuted once as ruled, the Tier-2 seeds unrefuted — the lanes' own dry runs and checks are their check.
+- THE DESIGN'S SECTION 6 AGAINST THE PORT'S RIGS (from the boss seeds' `locked_bones_note`s; for the owner, nothing
+  changed): the Kraken's rig has SIX tentacle chains (`Tent11`..`Tent61`) where the design's row counts eight structural
+  tentacle roots; the design's family names resolved to the port models' part names where the spelling differs (the
+  Cephadrome's `lefwingfin1`, the Godzilla's `LLowerLeg` beside `RLegLower`, the Princess's `Tail5`); the design's main
+  sizes and render scales differ from the port's for the Emperor Scorpion (design [1.5, 1.5], the port 3.5 x 3.0), the
+  Hammerhead ([2.8, 1.8] vs 3.0 x 5.0), the Sea Monster ([5, 5] and x3 vs 1.25 x 2.5 and x1.0), the Godzilla ([10, 25]
+  vs 9.9 x 25), the Dragon ([1.5, 2] vs 1.5 x 1.25) and the GiantRobot ([4, 10] vs 3.0 x 9.75) — noted in each sheet's
+  `size_notes`, the profiles' numbers the Tier-1 slices' work.
+- THE GIANTROBOT PAIR'S SEEDS lock nothing today (no geo to lock in; the design's families mapped onto the shared thigh /
+  shin / foot / arm bones) until the Tier-1 slice splits left and right or TEST-009's manifest route lands.
+- THE SEED LANES' READING OF THE RIGS' RHYTHMS is a DRAFT like the rest: the `groups` (omega, axis, amplitude) come from
+  `setupAnim` by hand and are not proven by any leg; the exact transcriptions and the reference clips remain the only
+  proven motion records; a group the generator's one-gait-group rule cannot express carries the extra rates in its note.
+
+THE CHECKS: the three seed lanes' own batch dry runs and per-folder checks (25 + 22 + 21 folders PASS); the boss
+refuter over the 27 boss seeds (one, as ruled; four description fixes applied and re-checked); the tool's tests 40 OK
+(+1 this landing: the DRAFT banner above every authored section — the orchestrator's addition after batch B found the
+marking echoed only in the header line, an omission of the tooling brief); `gradle referenceDumpCompiledModels
+referenceConvertModels` exit 0; the package run exit 0; 112 of 112 folders `check` PASS; `python tools/asset_audit.py`
+0 errors / 0 advisories / 4 acknowledged (39 shipped geo: 38 seam + 1 outside-seam); stray-process check: only the
+Gradle daemon. No gradle gate: no build input moved (`build.gradle`, `src/` untouched; the generator and its test are
+python; the package is a repository directory) — the cost rules' tooling check applies.
+
+IN-GAME: nothing — seeds and a generated package; no shipped resource or class changed.
+
+GATE: not run - no build input moved (the seeds, the generator's DRAFT banner and its test, and the generated artist_handoff/ are outside the jar: `build.gradle` and `src/` untouched); the cost rules' tooling check applies: `gradle referenceDumpCompiledModels referenceConvertModels` exit 0 (106 geos, the three refusals by name), `test_artist_package.py` 40 OK, the package run exit 0 (112 folders, 995 files, 42 MB), 112 of 112 folders `check` PASS, `asset_audit.py` 0 errors (2026-09-13 23:00-23:01). KNOWN_ISSUES count 1278 unchanged. Stray-process check: only the Gradle daemon.
