@@ -33,7 +33,8 @@
   "groups": [],
   "formulas": [
     "No rotation channels. Visibility by rock type (ModelRockBase.java:180-230; RockBaseGeoReplacement.java:46-83): type 1 -> the two RockSmall pieces; 7 -> the three RockSpikey pieces; 8 -> the four RockTNT pieces; 9-12 -> the ten Crystal pieces; every other type 2-6 -> the three Rock pieces; type 0 -> nothing.",
-    "Texture by type (RockBaseRenderer.textureFor:56-69): 3 red, 4 green, 5 blue, 6 purple, 8 TNT, 9 crystal, 10 crystal green, 11 crystal blue, 12 crystal TNT, otherwise rocktexture."
+    "Texture by type (RockBaseRenderer.textureFor:56-69): 3 red, 4 green, 5 blue, 6 purple, 8 TNT, 9 crystal, 10 crystal green, 11 crystal blue, 12 crystal TNT, otherwise rocktexture.",
+    "`ModelRockBase.poseFrom` (ModelRockBase.java:186-221, called from `setupAnim` :180-184; orig ModelRockBase.java:177-222, `render`, draws the type's parts directly): every part hidden, then the type's parts shown — no angle is ever written, so the reference clip holds one key at bind and the visible set is the sentence above; the entity zeroes its own rotation every tick (RockBase.tick)."
   ],
   "behaviour": [
     "Static: the entity zeroes its own rotation every tick (RockBase.tick)."

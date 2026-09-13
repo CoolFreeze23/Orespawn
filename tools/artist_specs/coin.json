@@ -31,5 +31,8 @@
   "clips": [],
   "extras": [],
   "wishlist": [],
-  "effort_hours": 0
+  "effort_hours": 0,
+  "formulas": [
+    "`ModelCoin.setupAnim` (ModelCoin.java:47-50; orig ModelCoin.java:28-32, `render`, the `f2 * 0.05f * wingspeed` line): the disc's yaw is the cosine of the age in ticks times 0.05, times the wingspeed 0.22 (ModelCoin.java:26; the Coin's registration in orig ClientProxyOreSpawn), times pi — a swing from +180 degrees through -180 and back, one full swing every 571.2 ticks (2 pi / 0.011, 28.6 s), never a constant-rate spin; the walk position, the walking speed, the head angles and the entity's state play no part. The GeckoLib hook is the same line (CoinGeoReplacement.java:37-40)."
+  ]
 }

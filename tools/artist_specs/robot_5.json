@@ -61,5 +61,8 @@
   "clips": [],
   "extras": [],
   "wishlist": [],
-  "effort_hours": 0
+  "effort_hours": 0,
+  "formulas": [
+    "`ModelRobot5.setupAnim` (ModelRobot5.java:102-119; orig ModelRobot5.java:98-114, `render`): while the walking speed is above a tenth, the wheel angle is the walk position times 0.15, wrapped at 2 pi and made positive — a rolling turn every 41.9 units of walk position (the port reads limbSwing where the original's `f2 * 0.15f` read the age in ticks) — the two first wheels pitch by that angle and the two second wheels by that angle plus 0.7853982 radians (45 degrees ahead); below a tenth every wheel holds 0; the two barrels and the ammunition box yaw by half the head yaw, in radians (orig :113-114 `f3 / 2.0`). The GeckoLib hook is the same (Robot5GeoReplacement.java:26-47)."
+  ]
 }

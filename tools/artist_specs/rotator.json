@@ -32,5 +32,8 @@
   "clips": [],
   "extras": [],
   "wishlist": [],
-  "effort_hours": 0
+  "effort_hours": 0,
+  "formulas": [
+    "`RotatorGeoReplacement.applyCustomAnimations` (RotatorGeoReplacement.java:58-67) and the classic `RotatorModel.renderToBuffer` (RotatorModel.java:93-118; orig ModelRotator.java:44-78, `render`): no angle is computed from the inputs — the pose reads the per-entity `RenderInfo.rf1` in degrees and turns fan 1 about X, fan 2 about Y and fan 3 about Z by it (each fan is one blade drawn eight times at 0.7853982-radian steps, orig :53-57 / :61-65 / :69-73), then advances `rf1` by 2 degrees and wraps it to 0 once past 359 (RotatorModel.advanceFanSpin :85-90; orig :75-78) — once per draw, so the spin is per rendered frame, not per tick (ENT-S-147); the walk, head and attack inputs play no part."
+  ]
 }

@@ -76,5 +76,8 @@
   "clips": [],
   "extras": [],
   "wishlist": [],
-  "effort_hours": 0
+  "effort_hours": 0,
+  "formulas": [
+    "`ModelRobot2.poseFrom` (ModelRobot2.java:137-188, called from `setupAnim` :131-135; orig ModelRobot2.java:133-170, `render`): (1) the legs — while the walking speed is above a tenth, the cosine of the age in ticks times 0.3, times pi, times 0.12, times the walking speed (up to 21.6 degrees; orig :133-137), the left leg's two parts positive and the right leg's the negative, still below a tenth; (2) the head yaws by the head yaw in radians; (3) the arm choice — at every upward zero crossing of the sine of the age times 20 degrees (the sine 1.5 degrees ahead positive while the sine now is negative) the per-entity `ri1` is reset to 0 and, while attacking, re-rolled from the entity's random until it is 1, 2 or 3 (orig :139-151); (4) the arms — the right arm's three parts pitch by the age times 20 degrees (a full turn every 18 ticks) when `ri1` is 1 or 3, the left arm's when it is 2 or 3, otherwise 0 (orig :152-170). At rest (not attacking) `ri1` stays 0 and only the legs move. The GeckoLib hook is the same (Robot2GeoReplacement.java:34-71)."
+  ]
 }

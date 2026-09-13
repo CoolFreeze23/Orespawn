@@ -59,5 +59,8 @@
   "clips": [],
   "extras": [],
   "wishlist": [],
-  "effort_hours": 0
+  "effort_hours": 0,
+  "formulas": [
+    "`ModelIsland.setupAnim` (ModelIsland.java:61-72; orig ModelIsland.java:41-53, `render`): nine cosines, one per axis of each of the three cubes — cube 1's X, Y and Z at 0.05, 0.051 and 0.052 radians per tick, cube 2's at 0.053, 0.054 and 0.055, cube 3's at 0.056, 0.057 and 0.058 — each of the age in ticks times that rate, times the wingspeed 1.0 (ModelIsland.java:25), times pi: every angle swings between +180 and -180 degrees with its own period (125.7 ticks for the slowest rate down to 108.3 for the fastest), so the three cubes tumble on all three axes and never line up again; nothing reads the walk, the head or the entity. The GeckoLib hook is `IslandGeoReplacement.poseIslandRig` (IslandGeoReplacement.java:32-43)."
+  ]
 }
