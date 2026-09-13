@@ -1,5 +1,5 @@
 {
-  "generated_by": "tools/artist_package.py 0.2.9 (the full folder, 2026-09-13, fourth set, items 5, 7 and 8: every artist-tier species packaged - a rig not yet in-game from the reference leg's converter output, bone names final; the Tier-1 bosses' intended locked bones from the design's section 6 rendered in section 7 and validated against the geo; the README's priority table the full list, bosses first, closing with the deliverable count)",
+  "generated_by": "tools/artist_package.py 0.3.0 (the reference clips for every species, 2026-09-14, addendum items 11 to 13: every hook's reference_walk, reference_idle and - where the code reads an attack - reference_attack clip beside the sheet, landed or not; the clips loaded through Blockbench's Import Animations (README_FIRST, Toolchain); a reference clip's keys as the starting point of a delivered idle / walk / aggro_idle, only the reference file itself under its own name refused)",
   "registry": "bee",
   "display_name": "Bee",
   "tier": 2,
@@ -1812,11 +1812,195 @@
   ],
   "effort_hours": 24.6,
   "effort_source": "generator: 4 h + 0.2 h/bone x 23 + 1 h/clip x 16 to author or improve (owner adjusts)",
+  "reference_clips": [
+    {
+      "state": "walk",
+      "file": "bee_reference_walk.animation.json",
+      "sha256": "863783c7682ed340506e8ce914799c35c54793c791e6f855a37e6f61bf5ef612",
+      "clip": "reference",
+      "reference_only": true,
+      "delivered_clip": "walk",
+      "rule": "two_seconds_past_cap",
+      "rule_note": "at rest (attacking 0) the slowest channel is the abdomen curl cos(ageInTicks * 0.021F * ws) * PI * 0.023 at wingspeed 2.0 (BeeGeoReplacement.applyCustomAnimations, BeeModel.poseFrom; orig ModelBee.java:214): 0.042 rad/tick, a 149.6-tick period over the 6 s cap; the wings at 2.2 (orig :188-190), the pincers at 0.6 (:191-195), the antennae at 0.42 / 0.54 / 0.62 / 0.74 (:196-213); the abdomen chain follows the curl (position channels, orig :215-230); the slowest group's period 149.599652 ticks exceeds the 6 s cap (120 ticks): a two-second window (40 ticks), not a loop - the sheet states the closing key's seam",
+      "span_ticks": 40.0,
+      "period_ticks": 149.5996521878,
+      "period_multiple_k": null,
+      "animation_length_seconds": 2.0,
+      "keys_per_bone": 41,
+      "sampled_inputs": "limbSwingAmount 1.0; limbSwing = t (advancing 1.0 per tick from 0: vanilla WalkAnimationState.update does speed += (movementSpeed - speed) * multiplier; position += speed, and the classic renderer hands walkAnimation.position(partialTick) as limbSwing and min(1, speed) as limbSwingAmount, so at speed 1 the position advances exactly 1.0 per tick); ageInTicks = t (getBob: tickCount + partialTick, partialTick 0); netHeadYaw 0; headPitch 0 (looking ahead); every entity-state flag at its rest value (attacking 0, ri1 0, rock_type 0, rf1 0: a ProbeSubject built from an empty state); the entity RNG seeded 0 once per clip and evolving across the keys; one pose call per key, 20 keys per second; full health (no shipped hook reads health)",
+      "hook": "danger.orespawn.entity.client.BeeGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the shipped replacement, registry-free, on explicit PoseInputs)",
+      "landed": true,
+      "moving_bones": [
+        "Abdomnem1",
+        "Abdomnem2",
+        "Abdomnem3",
+        "Abdomnem4",
+        "Abdomnem5",
+        "LA1",
+        "LA2",
+        "LA3",
+        "LeftPincerExtra",
+        "LeftPincerMain",
+        "LeftPom",
+        "RA1",
+        "RA2",
+        "RA3",
+        "RightPincerExtra",
+        "RightPincerMain",
+        "RightPom",
+        "Sting",
+        "WingLeft",
+        "WingRight"
+      ],
+      "position_bones": [
+        "Abdomnem1",
+        "Abdomnem2",
+        "Abdomnem3",
+        "Abdomnem4",
+        "Sting"
+      ],
+      "hidden_bones_at_rest": [],
+      "seam_delta_degrees": 27.5471450076,
+      "attacking": {
+        "declared_pose_interfaces": [
+          "BeePose"
+        ],
+        "getters": [
+          "BeePose.getAttacking()"
+        ],
+        "outside_pose_interface": [],
+        "reads_attacking": true,
+        "read_at_inputs": true
+      }
+    },
+    {
+      "state": "idle",
+      "file": "bee_reference_idle.animation.json",
+      "sha256": "c0e87d21f75281bd1234759be7c113e055ce3b34bf52865e6cdd8851a579333e",
+      "clip": "reference_idle",
+      "reference_only": true,
+      "delivered_clip": "idle",
+      "rule": "two_seconds_past_cap",
+      "rule_note": "at rest (attacking 0) the slowest channel is the abdomen curl cos(ageInTicks * 0.021F * ws) * PI * 0.023 at wingspeed 2.0 (BeeGeoReplacement.applyCustomAnimations, BeeModel.poseFrom; orig ModelBee.java:214): 0.042 rad/tick, a 149.6-tick period over the 6 s cap; the wings at 2.2 (orig :188-190), the pincers at 0.6 (:191-195), the antennae at 0.42 / 0.54 / 0.62 / 0.74 (:196-213); the abdomen chain follows the curl (position channels, orig :215-230); the slowest group's period 149.599652 ticks exceeds the 6 s cap (120 ticks): a two-second window (40 ticks), not a loop - the sheet states the closing key's seam",
+      "span_ticks": 40.0,
+      "period_ticks": 149.5996521878,
+      "period_multiple_k": null,
+      "animation_length_seconds": 2.0,
+      "keys_per_bone": 41,
+      "sampled_inputs": "limbSwingAmount 0.0; limbSwing 0 (the walk position at rest: vanilla WalkAnimationState holds its position while the speed is 0, and a creature that has not walked since it spawned carries 0); ageInTicks = t (getBob: tickCount + partialTick, partialTick 0; advancing 1.0 per tick from 0); netHeadYaw 0; headPitch 0 (looking ahead); every entity-state flag at its rest value (attacking 0, ri1 0, rock_type 0, rf1 0: a ProbeSubject built from an empty state); the entity RNG seeded 0 once per clip and evolving across the keys; one pose call per key, 20 keys per second; full health",
+      "hook": "danger.orespawn.entity.client.BeeGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the shipped replacement, registry-free, on explicit PoseInputs)",
+      "landed": true,
+      "moving_bones": [
+        "Abdomnem1",
+        "Abdomnem2",
+        "Abdomnem3",
+        "Abdomnem4",
+        "Abdomnem5",
+        "LA1",
+        "LA2",
+        "LA3",
+        "LeftPincerExtra",
+        "LeftPincerMain",
+        "LeftPom",
+        "RA1",
+        "RA2",
+        "RA3",
+        "RightPincerExtra",
+        "RightPincerMain",
+        "RightPom",
+        "Sting",
+        "WingLeft",
+        "WingRight"
+      ],
+      "position_bones": [
+        "Abdomnem1",
+        "Abdomnem2",
+        "Abdomnem3",
+        "Abdomnem4",
+        "Sting"
+      ],
+      "hidden_bones_at_rest": [],
+      "seam_delta_degrees": 27.5471450076,
+      "attacking": {
+        "declared_pose_interfaces": [
+          "BeePose"
+        ],
+        "getters": [
+          "BeePose.getAttacking()"
+        ],
+        "outside_pose_interface": [],
+        "reads_attacking": true,
+        "read_at_inputs": true
+      }
+    },
+    {
+      "state": "attack",
+      "file": "bee_reference_attack.animation.json",
+      "sha256": "244d59fd107d24bbc810dcaa5b830e2ce0e9b4ca3aebd73d6417f65b8a45104b",
+      "clip": "reference_attack",
+      "reference_only": true,
+      "delivered_clip": "aggro_idle",
+      "rule": "two_seconds_past_cap",
+      "rule_note": "at rest (attacking 0) the slowest channel is the abdomen curl cos(ageInTicks * 0.021F * ws) * PI * 0.023 at wingspeed 2.0 (BeeGeoReplacement.applyCustomAnimations, BeeModel.poseFrom; orig ModelBee.java:214): 0.042 rad/tick, a 149.6-tick period over the 6 s cap; the wings at 2.2 (orig :188-190), the pincers at 0.6 (:191-195), the antennae at 0.42 / 0.54 / 0.62 / 0.74 (:196-213); the abdomen chain follows the curl (position channels, orig :215-230); the slowest group's period 149.599652 ticks exceeds the 6 s cap (120 ticks): a two-second window (40 ticks), not a loop - the sheet states the closing key's seam",
+      "span_ticks": 40.0,
+      "period_ticks": 149.5996521878,
+      "period_multiple_k": null,
+      "animation_length_seconds": 2.0,
+      "keys_per_bone": 41,
+      "sampled_inputs": "attacking 1 (the pose interface's getAttacking() answers 1: the hook's attacking branch); limbSwingAmount 0.0; limbSwing 0 (the walk position at rest); ageInTicks = t (getBob: tickCount + partialTick, partialTick 0; advancing 1.0 per tick from 0); netHeadYaw 0; headPitch 0 (looking ahead); every other entity-state flag at its rest value (ri1 0, rock_type 0, rf1 0: a ProbeSubject built from the attack state); the entity RNG seeded 0 once per clip and evolving across the keys; one pose call per key, 20 keys per second; full health",
+      "hook": "danger.orespawn.entity.client.BeeGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the shipped replacement, registry-free, on explicit PoseInputs)",
+      "landed": true,
+      "moving_bones": [
+        "Abdomnem1",
+        "Abdomnem2",
+        "Abdomnem3",
+        "Abdomnem4",
+        "Abdomnem5",
+        "LA1",
+        "LA2",
+        "LA3",
+        "LeftPincerExtra",
+        "LeftPincerMain",
+        "LeftPom",
+        "RA1",
+        "RA2",
+        "RA3",
+        "RightPincerExtra",
+        "RightPincerMain",
+        "RightPom",
+        "Sting",
+        "WingLeft",
+        "WingRight"
+      ],
+      "position_bones": [
+        "Abdomnem1",
+        "Abdomnem2",
+        "Abdomnem3",
+        "Abdomnem4",
+        "Sting"
+      ],
+      "hidden_bones_at_rest": [],
+      "seam_delta_degrees": 107.5778341354,
+      "attacking": {
+        "declared_pose_interfaces": [
+          "BeePose"
+        ],
+        "getters": [
+          "BeePose.getAttacking()"
+        ],
+        "outside_pose_interface": [],
+        "reads_attacking": true,
+        "read_at_inputs": true
+      }
+    }
+  ],
   "reference_clip": {
-    "file": "bee_reference.animation.json",
+    "state": "walk",
+    "file": "bee_reference_walk.animation.json",
     "sha256": "863783c7682ed340506e8ce914799c35c54793c791e6f855a37e6f61bf5ef612",
     "clip": "reference",
     "reference_only": true,
+    "delivered_clip": "walk",
     "rule": "two_seconds_past_cap",
     "rule_note": "at rest (attacking 0) the slowest channel is the abdomen curl cos(ageInTicks * 0.021F * ws) * PI * 0.023 at wingspeed 2.0 (BeeGeoReplacement.applyCustomAnimations, BeeModel.poseFrom; orig ModelBee.java:214): 0.042 rad/tick, a 149.6-tick period over the 6 s cap; the wings at 2.2 (orig :188-190), the pincers at 0.6 (:191-195), the antennae at 0.42 / 0.54 / 0.62 / 0.74 (:196-213); the abdomen chain follows the curl (position channels, orig :215-230); the slowest group's period 149.599652 ticks exceeds the 6 s cap (120 ticks): a two-second window (40 ticks), not a loop - the sheet states the closing key's seam",
     "span_ticks": 40.0,
@@ -1826,6 +2010,7 @@
     "keys_per_bone": 41,
     "sampled_inputs": "limbSwingAmount 1.0; limbSwing = t (advancing 1.0 per tick from 0: vanilla WalkAnimationState.update does speed += (movementSpeed - speed) * multiplier; position += speed, and the classic renderer hands walkAnimation.position(partialTick) as limbSwing and min(1, speed) as limbSwingAmount, so at speed 1 the position advances exactly 1.0 per tick); ageInTicks = t (getBob: tickCount + partialTick, partialTick 0); netHeadYaw 0; headPitch 0 (looking ahead); every entity-state flag at its rest value (attacking 0, ri1 0, rock_type 0, rf1 0: a ProbeSubject built from an empty state); the entity RNG seeded 0 once per clip and evolving across the keys; one pose call per key, 20 keys per second; full health (no shipped hook reads health)",
     "hook": "danger.orespawn.entity.client.BeeGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the shipped replacement, registry-free, on explicit PoseInputs)",
+    "landed": true,
     "moving_bones": [
       "Abdomnem1",
       "Abdomnem2",
@@ -1856,7 +2041,18 @@
       "Sting"
     ],
     "hidden_bones_at_rest": [],
-    "seam_delta_degrees": 27.5471450076
+    "seam_delta_degrees": 27.5471450076,
+    "attacking": {
+      "declared_pose_interfaces": [
+        "BeePose"
+      ],
+      "getters": [
+        "BeePose.getAttacking()"
+      ],
+      "outside_pose_interface": [],
+      "reads_attacking": true,
+      "read_at_inputs": true
+    }
   },
   "exact_transcription": false,
   "rig_source": "shipped",

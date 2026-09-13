@@ -1,0 +1,485 @@
+{
+  "format_version": "1.8.0",
+  "animations": {
+    "reference_idle": {
+      "loop": true,
+      "animation_length": 0.05,
+      "bones": {
+        "HeadPieceBottom": {
+          "rotation": {
+            "0.0": {
+              "post": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "lerp_mode": "linear"
+            }
+          }
+        },
+        "HeadPieceTop": {
+          "rotation": {
+            "0.0": {
+              "post": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "lerp_mode": "linear"
+            }
+          }
+        },
+        "HornLeftBottom": {
+          "rotation": {
+            "0.0": {
+              "post": [
+                0.0228128318,
+                -0.0228128318,
+                0.0
+              ],
+              "lerp_mode": "linear"
+            }
+          }
+        },
+        "HornLeftTop": {
+          "rotation": {
+            "0.0": {
+              "post": [
+                0.0228128318,
+                -0.0228128318,
+                0.0
+              ],
+              "lerp_mode": "linear"
+            }
+          }
+        },
+        "HornRightBottom": {
+          "rotation": {
+            "0.0": {
+              "post": [
+                0.0228128318,
+                0.0228128318,
+                0.0
+              ],
+              "lerp_mode": "linear"
+            }
+          }
+        },
+        "HornRightTop": {
+          "rotation": {
+            "0.0": {
+              "post": [
+                0.0228128318,
+                0.0228128318,
+                0.0
+              ],
+              "lerp_mode": "linear"
+            }
+          }
+        },
+        "JawPiece": {
+          "rotation": {
+            "0.0": {
+              "post": [
+                -9.9999988553,
+                0.0,
+                0.0
+              ],
+              "lerp_mode": "linear"
+            }
+          }
+        },
+        "LeftBackPaw": {
+          "rotation": {
+            "0.0": {
+              "post": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "lerp_mode": "linear"
+            }
+          }
+        },
+        "LeftFrontPaw": {
+          "rotation": {
+            "0.0": {
+              "post": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "lerp_mode": "linear"
+            }
+          }
+        },
+        "LegLeftBackBottom": {
+          "rotation": {
+            "0.0": {
+              "post": [
+                17.9641121257,
+                0.0,
+                0.0
+              ],
+              "lerp_mode": "linear"
+            }
+          }
+        },
+        "LegLeftBackTop": {
+          "rotation": {
+            "0.0": {
+              "post": [
+                -17.9694627251,
+                0.0,
+                0.0
+              ],
+              "lerp_mode": "linear"
+            }
+          }
+        },
+        "LegLeftFrontBottom": {
+          "rotation": {
+            "0.0": {
+              "post": [
+                0.2597162356,
+                0.0,
+                0.0
+              ],
+              "lerp_mode": "linear"
+            }
+          }
+        },
+        "LegLeftFrontTop": {
+          "rotation": {
+            "0.0": {
+              "post": [
+                0.0152693148,
+                0.0,
+                0.0
+              ],
+              "lerp_mode": "linear"
+            }
+          }
+        },
+        "LegRightBackBottom": {
+          "rotation": {
+            "0.0": {
+              "post": [
+                17.9641121257,
+                0.0,
+                0.0
+              ],
+              "lerp_mode": "linear"
+            }
+          }
+        },
+        "LegRightBackTop": {
+          "rotation": {
+            "0.0": {
+              "post": [
+                -17.9694627251,
+                0.0,
+                0.0
+              ],
+              "lerp_mode": "linear"
+            }
+          }
+        },
+        "LegRightFrontBottom": {
+          "rotation": {
+            "0.0": {
+              "post": [
+                0.2597162356,
+                0.0,
+                0.0
+              ],
+              "lerp_mode": "linear"
+            }
+          }
+        },
+        "LegRightFrontTop": {
+          "rotation": {
+            "0.0": {
+              "post": [
+                0.0152693148,
+                0.0,
+                0.0
+              ],
+              "lerp_mode": "linear"
+            }
+          }
+        },
+        "Neck": {
+          "rotation": {
+            "0.0": {
+              "post": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "lerp_mode": "linear"
+            }
+          }
+        },
+        "RightBackPaw": {
+          "rotation": {
+            "0.0": {
+              "post": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "lerp_mode": "linear"
+            }
+          }
+        },
+        "RightFrontPaw": {
+          "rotation": {
+            "0.0": {
+              "post": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "lerp_mode": "linear"
+            }
+          }
+        },
+        "ScaleBackHead": {
+          "rotation": {
+            "0.0": {
+              "post": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "lerp_mode": "linear"
+            }
+          }
+        },
+        "ScaleBackPiece1": {
+          "rotation": {
+            "0.0": {
+              "post": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "lerp_mode": "linear"
+            }
+          }
+        },
+        "ScaleBackPiece2": {
+          "rotation": {
+            "0.0": {
+              "post": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "lerp_mode": "linear"
+            }
+          }
+        },
+        "ScaleHead": {
+          "rotation": {
+            "0.0": {
+              "post": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "lerp_mode": "linear"
+            }
+          }
+        },
+        "ScaleTailPiece": {
+          "rotation": {
+            "0.0": {
+              "post": [
+                0.0,
+                -45.0000012522,
+                0.0
+              ],
+              "lerp_mode": "linear"
+            }
+          }
+        },
+        "ScaleTop1": {
+          "rotation": {
+            "0.0": {
+              "post": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "lerp_mode": "linear"
+            }
+          }
+        },
+        "SnoutLeft": {
+          "rotation": {
+            "0.0": {
+              "post": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "lerp_mode": "linear"
+            }
+          }
+        },
+        "SnoutRight": {
+          "rotation": {
+            "0.0": {
+              "post": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "lerp_mode": "linear"
+            }
+          }
+        },
+        "TailBack": {
+          "rotation": {
+            "0.0": {
+              "post": [
+                0.0,
+                -45.0000012522,
+                0.0
+              ],
+              "lerp_mode": "linear"
+            }
+          }
+        },
+        "TailFront": {
+          "rotation": {
+            "0.0": {
+              "post": [
+                0.0,
+                -72.0000020036,
+                0.0
+              ],
+              "lerp_mode": "linear"
+            }
+          },
+          "position": {
+            "0.0": {
+              "post": [
+                -2.1213202477,
+                0.0,
+                0.1213202477
+              ],
+              "lerp_mode": "linear"
+            }
+          }
+        },
+        "TailPieceLarge": {
+          "rotation": {
+            "0.0": {
+              "post": [
+                0.0,
+                -72.0000020036,
+                0.0
+              ],
+              "lerp_mode": "linear"
+            }
+          },
+          "position": {
+            "0.0": {
+              "post": [
+                -2.1213202477,
+                0.0,
+                0.1213202477
+              ],
+              "lerp_mode": "linear"
+            }
+          }
+        },
+        "TailPieceSmall": {
+          "rotation": {
+            "0.0": {
+              "post": [
+                0.0,
+                -72.0000020036,
+                0.0
+              ],
+              "lerp_mode": "linear"
+            }
+          },
+          "position": {
+            "0.0": {
+              "post": [
+                -2.1213202477,
+                0.0,
+                0.1213202477
+              ],
+              "lerp_mode": "linear"
+            }
+          }
+        },
+        "Torso": {
+          "rotation": {
+            "0.0": {
+              "post": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "lerp_mode": "linear"
+            }
+          }
+        },
+        "WingLeft": {
+          "rotation": {
+            "0.0": {
+              "post": [
+                0.0,
+                0.0,
+                -9.9999988553
+              ],
+              "lerp_mode": "linear"
+            }
+          }
+        },
+        "WingPieceLeft": {
+          "rotation": {
+            "0.0": {
+              "post": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "lerp_mode": "linear"
+            }
+          }
+        },
+        "WingPieceRight": {
+          "rotation": {
+            "0.0": {
+              "post": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "lerp_mode": "linear"
+            }
+          }
+        },
+        "WingRight": {
+          "rotation": {
+            "0.0": {
+              "post": [
+                0.0,
+                0.0,
+                9.9999988553
+              ],
+              "lerp_mode": "linear"
+            }
+          }
+        }
+      }
+    }
+  }
+}

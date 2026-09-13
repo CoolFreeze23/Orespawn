@@ -1,5 +1,5 @@
 {
-  "generated_by": "tools/artist_package.py 0.2.9 (the full folder, 2026-09-13, fourth set, items 5, 7 and 8: every artist-tier species packaged - a rig not yet in-game from the reference leg's converter output, bone names final; the Tier-1 bosses' intended locked bones from the design's section 6 rendered in section 7 and validated against the geo; the README's priority table the full list, bosses first, closing with the deliverable count)",
+  "generated_by": "tools/artist_package.py 0.3.0 (the reference clips for every species, 2026-09-14, addendum items 11 to 13: every hook's reference_walk, reference_idle and - where the code reads an attack - reference_attack clip beside the sheet, landed or not; the clips loaded through Blockbench's Import Animations (README_FIRST, Toolchain); a reference clip's keys as the starting point of a delivered idle / walk / aggro_idle, only the reference file itself under its own name refused)",
   "registry": "purple_power",
   "display_name": "Purple Power",
   "tier": 3,
@@ -1439,11 +1439,97 @@
   ],
   "effort_hours": 0.0,
   "effort_source": "seed (owner-set)",
+  "reference_clips": [
+    {
+      "state": "walk",
+      "file": "purple_power_reference_walk.animation.json",
+      "sha256": "e70c944288bcefad54f9bcf8ece7bfc8165bbce4f8d0304178a8220e65274b9a",
+      "clip": "reference",
+      "reference_only": true,
+      "delivered_clip": "walk",
+      "rule": "two_seconds_no_period",
+      "rule_note": "no period: the three fans take three fresh rolls of the level random per pose call (nextFloat() * 360 in X, Y, Z order; PurplePowerGeoReplacement.java:121-136, ModelPurplePower.java:187-194; orig ModelPurplePower.java:57 / :66 / :75) - two seconds from the seed-0 random",
+      "span_ticks": 40.0,
+      "period_ticks": null,
+      "period_multiple_k": null,
+      "animation_length_seconds": 2.0,
+      "keys_per_bone": 41,
+      "sampled_inputs": "limbSwingAmount 1.0; limbSwing = t (advancing 1.0 per tick from 0: vanilla WalkAnimationState.update does speed += (movementSpeed - speed) * multiplier; position += speed, and the classic renderer hands walkAnimation.position(partialTick) as limbSwing and min(1, speed) as limbSwingAmount, so at speed 1 the position advances exactly 1.0 per tick); ageInTicks = t (getBob: tickCount + partialTick, partialTick 0); netHeadYaw 0; headPitch 0 (looking ahead); every entity-state flag at its rest value (attacking 0, ri1 0, rock_type 0, rf1 0: a ProbeSubject built from an empty state); the entity RNG seeded 0 once per clip and evolving across the keys; one pose call per key, 20 keys per second; full health (no shipped hook reads health)",
+      "hook": "danger.orespawn.entity.client.PurplePowerGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the shipped replacement, registry-free, on explicit PoseInputs)",
+      "landed": true,
+      "moving_bones": [
+        "Shape1__fan",
+        "Shape2__carry_x1",
+        "Shape2__carry_x2",
+        "Shape2__fan",
+        "Shape3__carry_x1",
+        "Shape3__carry_x2",
+        "Shape3__carry_y1",
+        "Shape3__carry_y2",
+        "Shape3__fan"
+      ],
+      "position_bones": [],
+      "hidden_bones_at_rest": [],
+      "seam_delta_degrees": 174.1531103624,
+      "attacking": {
+        "declared_pose_interfaces": [
+          "PurplePowerPose"
+        ],
+        "getters": [],
+        "outside_pose_interface": [],
+        "reads_attacking": false,
+        "read_at_inputs": false
+      }
+    },
+    {
+      "state": "idle",
+      "file": "purple_power_reference_idle.animation.json",
+      "sha256": "ffa114338529a90d1c9e17ff62a2ff6ce50846aff8ad21a5ea58c9e79517d6dd",
+      "clip": "reference_idle",
+      "reference_only": true,
+      "delivered_clip": "idle",
+      "rule": "two_seconds_no_period",
+      "rule_note": "no period: the three fans take three fresh rolls of the level random per pose call (nextFloat() * 360 in X, Y, Z order; PurplePowerGeoReplacement.java:121-136, ModelPurplePower.java:187-194; orig ModelPurplePower.java:57 / :66 / :75) - two seconds from the seed-0 random",
+      "span_ticks": 40.0,
+      "period_ticks": null,
+      "period_multiple_k": null,
+      "animation_length_seconds": 2.0,
+      "keys_per_bone": 41,
+      "sampled_inputs": "limbSwingAmount 0.0; limbSwing 0 (the walk position at rest: vanilla WalkAnimationState holds its position while the speed is 0, and a creature that has not walked since it spawned carries 0); ageInTicks = t (getBob: tickCount + partialTick, partialTick 0; advancing 1.0 per tick from 0); netHeadYaw 0; headPitch 0 (looking ahead); every entity-state flag at its rest value (attacking 0, ri1 0, rock_type 0, rf1 0: a ProbeSubject built from an empty state); the entity RNG seeded 0 once per clip and evolving across the keys; one pose call per key, 20 keys per second; full health",
+      "hook": "danger.orespawn.entity.client.PurplePowerGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the shipped replacement, registry-free, on explicit PoseInputs)",
+      "landed": true,
+      "moving_bones": [
+        "Shape1__fan",
+        "Shape2__carry_x1",
+        "Shape2__carry_x2",
+        "Shape2__fan",
+        "Shape3__carry_x1",
+        "Shape3__carry_x2",
+        "Shape3__carry_y1",
+        "Shape3__carry_y2",
+        "Shape3__fan"
+      ],
+      "position_bones": [],
+      "hidden_bones_at_rest": [],
+      "seam_delta_degrees": 174.1531103624,
+      "attacking": {
+        "declared_pose_interfaces": [
+          "PurplePowerPose"
+        ],
+        "getters": [],
+        "outside_pose_interface": [],
+        "reads_attacking": false,
+        "read_at_inputs": false
+      }
+    }
+  ],
   "reference_clip": {
-    "file": "purple_power_reference.animation.json",
+    "state": "walk",
+    "file": "purple_power_reference_walk.animation.json",
     "sha256": "e70c944288bcefad54f9bcf8ece7bfc8165bbce4f8d0304178a8220e65274b9a",
     "clip": "reference",
     "reference_only": true,
+    "delivered_clip": "walk",
     "rule": "two_seconds_no_period",
     "rule_note": "no period: the three fans take three fresh rolls of the level random per pose call (nextFloat() * 360 in X, Y, Z order; PurplePowerGeoReplacement.java:121-136, ModelPurplePower.java:187-194; orig ModelPurplePower.java:57 / :66 / :75) - two seconds from the seed-0 random",
     "span_ticks": 40.0,
@@ -1453,6 +1539,7 @@
     "keys_per_bone": 41,
     "sampled_inputs": "limbSwingAmount 1.0; limbSwing = t (advancing 1.0 per tick from 0: vanilla WalkAnimationState.update does speed += (movementSpeed - speed) * multiplier; position += speed, and the classic renderer hands walkAnimation.position(partialTick) as limbSwing and min(1, speed) as limbSwingAmount, so at speed 1 the position advances exactly 1.0 per tick); ageInTicks = t (getBob: tickCount + partialTick, partialTick 0); netHeadYaw 0; headPitch 0 (looking ahead); every entity-state flag at its rest value (attacking 0, ri1 0, rock_type 0, rf1 0: a ProbeSubject built from an empty state); the entity RNG seeded 0 once per clip and evolving across the keys; one pose call per key, 20 keys per second; full health (no shipped hook reads health)",
     "hook": "danger.orespawn.entity.client.PurplePowerGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the shipped replacement, registry-free, on explicit PoseInputs)",
+    "landed": true,
     "moving_bones": [
       "Shape1__fan",
       "Shape2__carry_x1",
@@ -1466,7 +1553,16 @@
     ],
     "position_bones": [],
     "hidden_bones_at_rest": [],
-    "seam_delta_degrees": 174.1531103624
+    "seam_delta_degrees": 174.1531103624,
+    "attacking": {
+      "declared_pose_interfaces": [
+        "PurplePowerPose"
+      ],
+      "getters": [],
+      "outside_pose_interface": [],
+      "reads_attacking": false,
+      "read_at_inputs": false
+    }
   },
   "exact_transcription": false,
   "rig_source": "shipped",

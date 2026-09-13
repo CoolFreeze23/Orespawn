@@ -1,5 +1,5 @@
 {
-  "generated_by": "tools/artist_package.py 0.2.9 (the full folder, 2026-09-13, fourth set, items 5, 7 and 8: every artist-tier species packaged - a rig not yet in-game from the reference leg's converter output, bone names final; the Tier-1 bosses' intended locked bones from the design's section 6 rendered in section 7 and validated against the geo; the README's priority table the full list, bosses first, closing with the deliverable count)",
+  "generated_by": "tools/artist_package.py 0.3.0 (the reference clips for every species, 2026-09-14, addendum items 11 to 13: every hook's reference_walk, reference_idle and - where the code reads an attack - reference_attack clip beside the sheet, landed or not; the clips loaded through Blockbench's Import Animations (README_FIRST, Toolchain); a reference clip's keys as the starting point of a delivered idle / walk / aggro_idle, only the reference file itself under its own name refused)",
   "registry": "whale",
   "display_name": "Whale",
   "tier": 2,
@@ -1105,7 +1105,137 @@
   ],
   "effort_hours": 15.8,
   "effort_source": "generator: 4 h + 0.2 h/bone x 14 + 1 h/clip x 9 to author or improve (owner adjusts)",
-  "reference_clip": null,
+  "reference_clips": [
+    {
+      "state": "walk",
+      "file": "whale_reference_walk.animation.json",
+      "sha256": "472b19b773250fc874a9bb2824952d818bfbd36b63e8f990616b69f7f1ea8c55",
+      "clip": "reference",
+      "reference_only": true,
+      "delivered_clip": "walk",
+      "rule": "two_seconds_past_cap",
+      "rule_note": "the slowest rhythm is cos(ageInTicks * 0.03) * PI * 0.02 (WhaleGeoReplacement.applyCustomAnimations:72, every state) at 0.03 rad/tick, 209.44 ticks - over the 6 s cap; the two thresholds cos(ageInTicks * 0.3) * PI * 0.2 * limbSwingAmount else cos(ageInTicks * 0.08) * PI * 0.05 (:62-63) and cos(ageInTicks * 0.4) * PI * 0.16 * limbSwingAmount else cos(ageInTicks * 0.05) * PI * 0.03 (:76-77); the tail position chain follows (:88-93); the slowest group's period 209.439515 ticks exceeds the 6 s cap (120 ticks): a two-second window (40 ticks), not a loop - the sheet states the closing key's seam",
+      "span_ticks": 40.0,
+      "period_ticks": 209.4395149207,
+      "period_multiple_k": null,
+      "animation_length_seconds": 2.0,
+      "keys_per_bone": 41,
+      "sampled_inputs": "limbSwingAmount 1.0; limbSwing = t (advancing 1.0 per tick from 0: vanilla WalkAnimationState.update does speed += (movementSpeed - speed) * multiplier; position += speed, and the classic renderer hands walkAnimation.position(partialTick) as limbSwing and min(1, speed) as limbSwingAmount, so at speed 1 the position advances exactly 1.0 per tick); ageInTicks = t (getBob: tickCount + partialTick, partialTick 0); netHeadYaw 0; headPitch 0 (looking ahead); every entity-state flag at its rest value (attacking 0, ri1 0, rock_type 0, rf1 0: a ProbeSubject built from an empty state); the entity RNG seeded 0 once per clip and evolving across the keys; one pose call per key, 20 keys per second; full health (no shipped hook reads health)",
+      "hook": "danger.orespawn.entity.client.WhaleGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the unlanded hook of owner 2026-09-14, addendum item 10 - the classic setupAnim transcribed into the descriptor's PoseInputs form, proven when the rig lands - registry-free, on explicit PoseInputs, over the reference leg's converter output reference_whale.geo.json baked without the face-order strictness the landing slice's TEST-007 adds)",
+      "landed": false,
+      "moving_bones": [
+        "jaw",
+        "lfin1",
+        "lfin2",
+        "rfin1",
+        "rfin2",
+        "tail1",
+        "tail2",
+        "tailfin1",
+        "tailfin2"
+      ],
+      "position_bones": [
+        "tail2",
+        "tailfin1",
+        "tailfin2"
+      ],
+      "hidden_bones_at_rest": [],
+      "seam_delta_degrees": 126.8564340962,
+      "attacking": {
+        "declared_pose_interfaces": [],
+        "getters": [],
+        "outside_pose_interface": [],
+        "reads_attacking": false,
+        "read_at_inputs": false
+      }
+    },
+    {
+      "state": "idle",
+      "file": "whale_reference_idle.animation.json",
+      "sha256": "9200bdf7c289a88b9ad92e0576a59158ce40d680c2964e1d36d616e243bf7ff3",
+      "clip": "reference_idle",
+      "reference_only": true,
+      "delivered_clip": "idle",
+      "rule": "two_seconds_past_cap",
+      "rule_note": "the slowest rhythm is cos(ageInTicks * 0.03) * PI * 0.02 (WhaleGeoReplacement.applyCustomAnimations:72, every state) at 0.03 rad/tick, 209.44 ticks - over the 6 s cap; the two thresholds cos(ageInTicks * 0.3) * PI * 0.2 * limbSwingAmount else cos(ageInTicks * 0.08) * PI * 0.05 (:62-63) and cos(ageInTicks * 0.4) * PI * 0.16 * limbSwingAmount else cos(ageInTicks * 0.05) * PI * 0.03 (:76-77); the tail position chain follows (:88-93); the slowest group's period 209.439515 ticks exceeds the 6 s cap (120 ticks): a two-second window (40 ticks), not a loop - the sheet states the closing key's seam",
+      "span_ticks": 40.0,
+      "period_ticks": 209.4395149207,
+      "period_multiple_k": null,
+      "animation_length_seconds": 2.0,
+      "keys_per_bone": 41,
+      "sampled_inputs": "limbSwingAmount 0.0; limbSwing 0 (the walk position at rest: vanilla WalkAnimationState holds its position while the speed is 0, and a creature that has not walked since it spawned carries 0); ageInTicks = t (getBob: tickCount + partialTick, partialTick 0; advancing 1.0 per tick from 0); netHeadYaw 0; headPitch 0 (looking ahead); every entity-state flag at its rest value (attacking 0, ri1 0, rock_type 0, rf1 0: a ProbeSubject built from an empty state); the entity RNG seeded 0 once per clip and evolving across the keys; one pose call per key, 20 keys per second; full health",
+      "hook": "danger.orespawn.entity.client.WhaleGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the unlanded hook of owner 2026-09-14, addendum item 10 - the classic setupAnim transcribed into the descriptor's PoseInputs form, proven when the rig lands - registry-free, on explicit PoseInputs, over the reference leg's converter output reference_whale.geo.json baked without the face-order strictness the landing slice's TEST-007 adds)",
+      "landed": false,
+      "moving_bones": [
+        "jaw",
+        "lfin1",
+        "lfin2",
+        "rfin1",
+        "rfin2",
+        "tail1",
+        "tail2",
+        "tailfin1",
+        "tailfin2"
+      ],
+      "position_bones": [
+        "tail2",
+        "tailfin1",
+        "tailfin2"
+      ],
+      "hidden_bones_at_rest": [],
+      "seam_delta_degrees": 17.9846633111,
+      "attacking": {
+        "declared_pose_interfaces": [],
+        "getters": [],
+        "outside_pose_interface": [],
+        "reads_attacking": false,
+        "read_at_inputs": false
+      }
+    }
+  ],
+  "reference_clip": {
+    "state": "walk",
+    "file": "whale_reference_walk.animation.json",
+    "sha256": "472b19b773250fc874a9bb2824952d818bfbd36b63e8f990616b69f7f1ea8c55",
+    "clip": "reference",
+    "reference_only": true,
+    "delivered_clip": "walk",
+    "rule": "two_seconds_past_cap",
+    "rule_note": "the slowest rhythm is cos(ageInTicks * 0.03) * PI * 0.02 (WhaleGeoReplacement.applyCustomAnimations:72, every state) at 0.03 rad/tick, 209.44 ticks - over the 6 s cap; the two thresholds cos(ageInTicks * 0.3) * PI * 0.2 * limbSwingAmount else cos(ageInTicks * 0.08) * PI * 0.05 (:62-63) and cos(ageInTicks * 0.4) * PI * 0.16 * limbSwingAmount else cos(ageInTicks * 0.05) * PI * 0.03 (:76-77); the tail position chain follows (:88-93); the slowest group's period 209.439515 ticks exceeds the 6 s cap (120 ticks): a two-second window (40 ticks), not a loop - the sheet states the closing key's seam",
+    "span_ticks": 40.0,
+    "period_ticks": 209.4395149207,
+    "period_multiple_k": null,
+    "animation_length_seconds": 2.0,
+    "keys_per_bone": 41,
+    "sampled_inputs": "limbSwingAmount 1.0; limbSwing = t (advancing 1.0 per tick from 0: vanilla WalkAnimationState.update does speed += (movementSpeed - speed) * multiplier; position += speed, and the classic renderer hands walkAnimation.position(partialTick) as limbSwing and min(1, speed) as limbSwingAmount, so at speed 1 the position advances exactly 1.0 per tick); ageInTicks = t (getBob: tickCount + partialTick, partialTick 0); netHeadYaw 0; headPitch 0 (looking ahead); every entity-state flag at its rest value (attacking 0, ri1 0, rock_type 0, rf1 0: a ProbeSubject built from an empty state); the entity RNG seeded 0 once per clip and evolving across the keys; one pose call per key, 20 keys per second; full health (no shipped hook reads health)",
+    "hook": "danger.orespawn.entity.client.WhaleGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the unlanded hook of owner 2026-09-14, addendum item 10 - the classic setupAnim transcribed into the descriptor's PoseInputs form, proven when the rig lands - registry-free, on explicit PoseInputs, over the reference leg's converter output reference_whale.geo.json baked without the face-order strictness the landing slice's TEST-007 adds)",
+    "landed": false,
+    "moving_bones": [
+      "jaw",
+      "lfin1",
+      "lfin2",
+      "rfin1",
+      "rfin2",
+      "tail1",
+      "tail2",
+      "tailfin1",
+      "tailfin2"
+    ],
+    "position_bones": [
+      "tail2",
+      "tailfin1",
+      "tailfin2"
+    ],
+    "hidden_bones_at_rest": [],
+    "seam_delta_degrees": 126.8564340962,
+    "attacking": {
+      "declared_pose_interfaces": [],
+      "getters": [],
+      "outside_pose_interface": [],
+      "reads_attacking": false,
+      "read_at_inputs": false
+    }
+  },
   "exact_transcription": false,
   "rig_source": "reference-leg converter output",
   "in_game": false,

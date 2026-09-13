@@ -1,5 +1,5 @@
 {
-  "generated_by": "tools/artist_package.py 0.2.9 (the full folder, 2026-09-13, fourth set, items 5, 7 and 8: every artist-tier species packaged - a rig not yet in-game from the reference leg's converter output, bone names final; the Tier-1 bosses' intended locked bones from the design's section 6 rendered in section 7 and validated against the geo; the README's priority table the full list, bosses first, closing with the deliverable count)",
+  "generated_by": "tools/artist_package.py 0.3.0 (the reference clips for every species, 2026-09-14, addendum items 11 to 13: every hook's reference_walk, reference_idle and - where the code reads an attack - reference_attack clip beside the sheet, landed or not; the clips loaded through Blockbench's Import Animations (README_FIRST, Toolchain); a reference clip's keys as the starting point of a delivered idle / walk / aggro_idle, only the reference file itself under its own name refused)",
   "registry": "stinky",
   "display_name": "Stinky",
   "tier": 2,
@@ -1529,7 +1529,136 @@
   ],
   "effort_hours": 20.0,
   "effort_source": "generator: 4 h + 0.2 h/bone x 20 + 1 h/clip x 12 to author or improve (owner adjusts)",
-  "reference_clip": null,
+  "reference_clips": [
+    {
+      "state": "walk",
+      "file": "stinky_reference_walk.animation.json",
+      "sha256": "a5067e3880009997924c528a894fbf94baad2b6aa31aaa5e5d8b0b52257d2858",
+      "clip": "reference",
+      "reference_only": true,
+      "delivered_clip": "walk",
+      "rule": "period_multiple",
+      "rule_note": "the port's ws = limbSwingAmount (StinkyGeoReplacement.applyCustomAnimations:63): every rhythm scales by the walking speed, so nothing moves at limbSwingAmount 0; at 1 the slowest is the tail cos(ageInTicks * 1.0 * ws) * PI * 0.2 (:85; the tail chain follows, :91-97) at 1.0 rad/tick, 6.28 ticks; the threshold gait cos(ageInTicks * 2.3 * ws) * PI * 0.4 * limbSwingAmount and cos(ageInTicks * 2.0 * ws) * PI * 0.25 * limbSwingAmount (:65, :69); the activity-2 fold and the sitting still are off on the probe; the head look follows netHeadYaw / headPitch = 0 (:101-115); closes at k = 10 (62.831853 ticks): every bone returns within 0 degrees of its start at k x T (the 5-degree test under the 6 s cap; k = 1: 94.243975 deg, k = 2: 130.251666 deg, k = 3: 13.752401 deg, k = 4: 49.749465 deg, k = 5: 144.000004 deg, k = 6: 49.756033 deg, k = 7: 13.748338 deg, k = 8: 130.247603 deg, k = 9: 94.250542 deg, k = 10: 0 deg)",
+      "span_ticks": 62.8318530718,
+      "period_ticks": 6.2831853072,
+      "period_multiple_k": 10,
+      "animation_length_seconds": 3.1415926536,
+      "keys_per_bone": 64,
+      "sampled_inputs": "limbSwingAmount 1.0; limbSwing = t (advancing 1.0 per tick from 0: vanilla WalkAnimationState.update does speed += (movementSpeed - speed) * multiplier; position += speed, and the classic renderer hands walkAnimation.position(partialTick) as limbSwing and min(1, speed) as limbSwingAmount, so at speed 1 the position advances exactly 1.0 per tick); ageInTicks = t (getBob: tickCount + partialTick, partialTick 0); netHeadYaw 0; headPitch 0 (looking ahead); every entity-state flag at its rest value (attacking 0, ri1 0, rock_type 0, rf1 0: a ProbeSubject built from an empty state); the entity RNG seeded 0 once per clip and evolving across the keys; one pose call per key, 20 keys per second; full health (no shipped hook reads health)",
+      "hook": "danger.orespawn.entity.client.StinkyGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the unlanded hook of owner 2026-09-14, addendum item 10 - the classic setupAnim transcribed into the descriptor's PoseInputs form, proven when the rig lands - registry-free, on explicit PoseInputs, over the reference leg's converter output reference_stinky.geo.json baked without the face-order strictness the landing slice's TEST-007 adds)",
+      "landed": false,
+      "moving_bones": [
+        "Lleg1",
+        "Lleg2",
+        "Lwing",
+        "Rleg1",
+        "Rleg2",
+        "Rwing",
+        "tail2",
+        "tail3",
+        "tail4"
+      ],
+      "position_bones": [
+        "tail3",
+        "tail4"
+      ],
+      "hidden_bones_at_rest": [],
+      "seam_delta_degrees": 0.0,
+      "attacking": {
+        "declared_pose_interfaces": [
+          "StinkyPose"
+        ],
+        "getters": [],
+        "outside_pose_interface": [],
+        "reads_attacking": false,
+        "read_at_inputs": false
+      }
+    },
+    {
+      "state": "idle",
+      "file": "stinky_reference_idle.animation.json",
+      "sha256": "f77ecc477164cab64c48d8eef64e2f51b84375688aa9d431a20737fefbbc9133",
+      "clip": "reference_idle",
+      "reference_only": true,
+      "delivered_clip": "idle",
+      "rule": "one_key",
+      "rule_note": "nothing moves at the idle inputs: every bone's rotation and position is the same at every sample of the span the closure test settled (period_multiple; the port's ws = limbSwingAmount (StinkyGeoReplacement.applyCustomAnimations:63): every rhythm scales by the walking speed, so nothing moves at limbSwingAmount 0; at 1 the slowest is the tail cos(ageInTicks * 1.0 * ws) * PI * 0.2 (:85; the tail chain follows, :91-97) at 1.0 rad/tick, 6.28 ticks; the threshold gait cos(ageInTicks * 2.3 * ws) * PI * 0.4 * limbSwingAmount and cos(ageInTicks * 2.0 * ws) * PI * 0.25 * limbSwingAmount (:65, :69); the activity-2 fold and the sitting still are off on the probe; the head look follows netHeadYaw / headPitch = 0 (:101-115); closes at k = 1 (6.283185 ticks): every bone returns within 0 degrees of its start at k x T (the 5-degree test under the 6 s cap; k = 1: 0 deg)), so this state is one key",
+      "span_ticks": 0.0,
+      "period_ticks": null,
+      "period_multiple_k": null,
+      "animation_length_seconds": 0.05,
+      "keys_per_bone": 1,
+      "sampled_inputs": "limbSwingAmount 0.0; limbSwing 0 (the walk position at rest: vanilla WalkAnimationState holds its position while the speed is 0, and a creature that has not walked since it spawned carries 0); ageInTicks = t (getBob: tickCount + partialTick, partialTick 0; advancing 1.0 per tick from 0); netHeadYaw 0; headPitch 0 (looking ahead); every entity-state flag at its rest value (attacking 0, ri1 0, rock_type 0, rf1 0: a ProbeSubject built from an empty state); the entity RNG seeded 0 once per clip and evolving across the keys; one pose call per key, 20 keys per second; full health",
+      "hook": "danger.orespawn.entity.client.StinkyGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the unlanded hook of owner 2026-09-14, addendum item 10 - the classic setupAnim transcribed into the descriptor's PoseInputs form, proven when the rig lands - registry-free, on explicit PoseInputs, over the reference leg's converter output reference_stinky.geo.json baked without the face-order strictness the landing slice's TEST-007 adds)",
+      "landed": false,
+      "moving_bones": [
+        "Lwing",
+        "Rwing",
+        "tail2",
+        "tail3",
+        "tail4"
+      ],
+      "position_bones": [
+        "tail3",
+        "tail4"
+      ],
+      "hidden_bones_at_rest": [],
+      "seam_delta_degrees": 0.0,
+      "attacking": {
+        "declared_pose_interfaces": [
+          "StinkyPose"
+        ],
+        "getters": [],
+        "outside_pose_interface": [],
+        "reads_attacking": false,
+        "read_at_inputs": false
+      }
+    }
+  ],
+  "reference_clip": {
+    "state": "walk",
+    "file": "stinky_reference_walk.animation.json",
+    "sha256": "a5067e3880009997924c528a894fbf94baad2b6aa31aaa5e5d8b0b52257d2858",
+    "clip": "reference",
+    "reference_only": true,
+    "delivered_clip": "walk",
+    "rule": "period_multiple",
+    "rule_note": "the port's ws = limbSwingAmount (StinkyGeoReplacement.applyCustomAnimations:63): every rhythm scales by the walking speed, so nothing moves at limbSwingAmount 0; at 1 the slowest is the tail cos(ageInTicks * 1.0 * ws) * PI * 0.2 (:85; the tail chain follows, :91-97) at 1.0 rad/tick, 6.28 ticks; the threshold gait cos(ageInTicks * 2.3 * ws) * PI * 0.4 * limbSwingAmount and cos(ageInTicks * 2.0 * ws) * PI * 0.25 * limbSwingAmount (:65, :69); the activity-2 fold and the sitting still are off on the probe; the head look follows netHeadYaw / headPitch = 0 (:101-115); closes at k = 10 (62.831853 ticks): every bone returns within 0 degrees of its start at k x T (the 5-degree test under the 6 s cap; k = 1: 94.243975 deg, k = 2: 130.251666 deg, k = 3: 13.752401 deg, k = 4: 49.749465 deg, k = 5: 144.000004 deg, k = 6: 49.756033 deg, k = 7: 13.748338 deg, k = 8: 130.247603 deg, k = 9: 94.250542 deg, k = 10: 0 deg)",
+    "span_ticks": 62.8318530718,
+    "period_ticks": 6.2831853072,
+    "period_multiple_k": 10,
+    "animation_length_seconds": 3.1415926536,
+    "keys_per_bone": 64,
+    "sampled_inputs": "limbSwingAmount 1.0; limbSwing = t (advancing 1.0 per tick from 0: vanilla WalkAnimationState.update does speed += (movementSpeed - speed) * multiplier; position += speed, and the classic renderer hands walkAnimation.position(partialTick) as limbSwing and min(1, speed) as limbSwingAmount, so at speed 1 the position advances exactly 1.0 per tick); ageInTicks = t (getBob: tickCount + partialTick, partialTick 0); netHeadYaw 0; headPitch 0 (looking ahead); every entity-state flag at its rest value (attacking 0, ri1 0, rock_type 0, rf1 0: a ProbeSubject built from an empty state); the entity RNG seeded 0 once per clip and evolving across the keys; one pose call per key, 20 keys per second; full health (no shipped hook reads health)",
+    "hook": "danger.orespawn.entity.client.StinkyGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the unlanded hook of owner 2026-09-14, addendum item 10 - the classic setupAnim transcribed into the descriptor's PoseInputs form, proven when the rig lands - registry-free, on explicit PoseInputs, over the reference leg's converter output reference_stinky.geo.json baked without the face-order strictness the landing slice's TEST-007 adds)",
+    "landed": false,
+    "moving_bones": [
+      "Lleg1",
+      "Lleg2",
+      "Lwing",
+      "Rleg1",
+      "Rleg2",
+      "Rwing",
+      "tail2",
+      "tail3",
+      "tail4"
+    ],
+    "position_bones": [
+      "tail3",
+      "tail4"
+    ],
+    "hidden_bones_at_rest": [],
+    "seam_delta_degrees": 0.0,
+    "attacking": {
+      "declared_pose_interfaces": [
+        "StinkyPose"
+      ],
+      "getters": [],
+      "outside_pose_interface": [],
+      "reads_attacking": false,
+      "read_at_inputs": false
+    }
+  },
   "exact_transcription": false,
   "rig_source": "reference-leg converter output",
   "in_game": false,

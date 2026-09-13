@@ -1,5 +1,5 @@
 {
-  "generated_by": "tools/artist_package.py 0.2.9 (the full folder, 2026-09-13, fourth set, items 5, 7 and 8: every artist-tier species packaged - a rig not yet in-game from the reference leg's converter output, bone names final; the Tier-1 bosses' intended locked bones from the design's section 6 rendered in section 7 and validated against the geo; the README's priority table the full list, bosses first, closing with the deliverable count)",
+  "generated_by": "tools/artist_package.py 0.3.0 (the reference clips for every species, 2026-09-14, addendum items 11 to 13: every hook's reference_walk, reference_idle and - where the code reads an attack - reference_attack clip beside the sheet, landed or not; the clips loaded through Blockbench's Import Animations (README_FIRST, Toolchain); a reference clip's keys as the starting point of a delivered idle / walk / aggro_idle, only the reference file itself under its own name refused)",
   "registry": "gold_fish",
   "display_name": "Gold Fish",
   "tier": 2,
@@ -1305,11 +1305,89 @@
   ],
   "effort_hours": 11.2,
   "effort_source": "generator: 4 h + 0.2 h/bone x 16 + 1 h/clip x 4 to author or improve (owner adjusts)",
+  "reference_clips": [
+    {
+      "state": "walk",
+      "file": "gold_fish_reference_walk.animation.json",
+      "sha256": "6cae73dde761e72141ca7f85c78edeccd0ece11d53b9d21d2017f18983002799",
+      "clip": "reference",
+      "reference_only": true,
+      "delivered_clip": "walk",
+      "rule": "period_multiple",
+      "rule_note": "the manifest's channels: 6 distinct frequency group(s) [0.91, 0.84, 0.77, 0.7, 1.19, 0.49] rad/tick (omega x wingspeed): the slowest group's period 2 pi / 0.49 = 12.822827 ticks; closes at k = 7 (89.75979 ticks): every bone returns within 0 degrees of its start at k x T (the 5-degree test under the 6 s cap; k = 1: 85.541996 deg, k = 2: 51.3252 deg, k = 3: 55.01104 deg, k = 4: 55.015246 deg, k = 5: 51.326324 deg, k = 6: 85.543868 deg, k = 7: 0 deg)",
+      "span_ticks": 89.7597901026,
+      "period_ticks": 12.8228271575,
+      "period_multiple_k": 7,
+      "animation_length_seconds": 4.4879895051,
+      "keys_per_bone": 91,
+      "sampled_inputs": "limbSwingAmount 1.0; limbSwing = t (advancing 1.0 per tick from 0: vanilla WalkAnimationState.update does speed += (movementSpeed - speed) * multiplier; position += speed, and the classic renderer hands walkAnimation.position(partialTick) as limbSwing and min(1, speed) as limbSwingAmount, so at speed 1 the position advances exactly 1.0 per tick); ageInTicks = t (getBob: tickCount + partialTick, partialTick 0); netHeadYaw 0; headPitch 0 (looking ahead); every entity-state flag at its rest value (attacking 0, ri1 0, rock_type 0, rf1 0: a ProbeSubject built from an empty state); the entity RNG seeded 0 once per clip and evolving across the keys; one pose call per key, 20 keys per second; full health (no shipped hook reads health)",
+      "hook": "danger.orespawn.entity.client.GoldFishGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the shipped replacement, registry-free, on explicit PoseInputs)",
+      "landed": true,
+      "moving_bones": [
+        "Bottomfin1",
+        "Bottomfin2",
+        "Jaw",
+        "Pectoralfin1",
+        "Pectoralfin2",
+        "Pectoralfin3",
+        "Pectoralfin4"
+      ],
+      "position_bones": [],
+      "hidden_bones_at_rest": [],
+      "seam_delta_degrees": 0.0,
+      "attacking": {
+        "declared_pose_interfaces": [],
+        "getters": [],
+        "outside_pose_interface": [],
+        "reads_attacking": false,
+        "read_at_inputs": false
+      }
+    },
+    {
+      "state": "idle",
+      "file": "gold_fish_reference_idle.animation.json",
+      "sha256": "7d621695c80096b21a98660d7b205fbd5c4e11de60c0f8eaa3a32089f30fe8a4",
+      "clip": "reference_idle",
+      "reference_only": true,
+      "delivered_clip": "idle",
+      "rule": "period_multiple",
+      "rule_note": "the manifest's channels: 6 distinct frequency group(s) [0.91, 0.84, 0.77, 0.7, 1.19, 0.49] rad/tick (omega x wingspeed): the slowest group's period 2 pi / 0.49 = 12.822827 ticks; closes at k = 7 (89.75979 ticks): every bone returns within 0 degrees of its start at k x T (the 5-degree test under the 6 s cap; k = 1: 85.541996 deg, k = 2: 51.3252 deg, k = 3: 55.01104 deg, k = 4: 55.015246 deg, k = 5: 51.326324 deg, k = 6: 85.543868 deg, k = 7: 0 deg)",
+      "span_ticks": 89.7597901026,
+      "period_ticks": 12.8228271575,
+      "period_multiple_k": 7,
+      "animation_length_seconds": 4.4879895051,
+      "keys_per_bone": 91,
+      "sampled_inputs": "limbSwingAmount 0.0; limbSwing 0 (the walk position at rest: vanilla WalkAnimationState holds its position while the speed is 0, and a creature that has not walked since it spawned carries 0); ageInTicks = t (getBob: tickCount + partialTick, partialTick 0; advancing 1.0 per tick from 0); netHeadYaw 0; headPitch 0 (looking ahead); every entity-state flag at its rest value (attacking 0, ri1 0, rock_type 0, rf1 0: a ProbeSubject built from an empty state); the entity RNG seeded 0 once per clip and evolving across the keys; one pose call per key, 20 keys per second; full health",
+      "hook": "danger.orespawn.entity.client.GoldFishGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the shipped replacement, registry-free, on explicit PoseInputs)",
+      "landed": true,
+      "moving_bones": [
+        "Bottomfin1",
+        "Bottomfin2",
+        "Jaw",
+        "Pectoralfin1",
+        "Pectoralfin2",
+        "Pectoralfin3",
+        "Pectoralfin4"
+      ],
+      "position_bones": [],
+      "hidden_bones_at_rest": [],
+      "seam_delta_degrees": 0.0,
+      "attacking": {
+        "declared_pose_interfaces": [],
+        "getters": [],
+        "outside_pose_interface": [],
+        "reads_attacking": false,
+        "read_at_inputs": false
+      }
+    }
+  ],
   "reference_clip": {
-    "file": "gold_fish_reference.animation.json",
+    "state": "walk",
+    "file": "gold_fish_reference_walk.animation.json",
     "sha256": "6cae73dde761e72141ca7f85c78edeccd0ece11d53b9d21d2017f18983002799",
     "clip": "reference",
     "reference_only": true,
+    "delivered_clip": "walk",
     "rule": "period_multiple",
     "rule_note": "the manifest's channels: 6 distinct frequency group(s) [0.91, 0.84, 0.77, 0.7, 1.19, 0.49] rad/tick (omega x wingspeed): the slowest group's period 2 pi / 0.49 = 12.822827 ticks; closes at k = 7 (89.75979 ticks): every bone returns within 0 degrees of its start at k x T (the 5-degree test under the 6 s cap; k = 1: 85.541996 deg, k = 2: 51.3252 deg, k = 3: 55.01104 deg, k = 4: 55.015246 deg, k = 5: 51.326324 deg, k = 6: 85.543868 deg, k = 7: 0 deg)",
     "span_ticks": 89.7597901026,
@@ -1319,6 +1397,7 @@
     "keys_per_bone": 91,
     "sampled_inputs": "limbSwingAmount 1.0; limbSwing = t (advancing 1.0 per tick from 0: vanilla WalkAnimationState.update does speed += (movementSpeed - speed) * multiplier; position += speed, and the classic renderer hands walkAnimation.position(partialTick) as limbSwing and min(1, speed) as limbSwingAmount, so at speed 1 the position advances exactly 1.0 per tick); ageInTicks = t (getBob: tickCount + partialTick, partialTick 0); netHeadYaw 0; headPitch 0 (looking ahead); every entity-state flag at its rest value (attacking 0, ri1 0, rock_type 0, rf1 0: a ProbeSubject built from an empty state); the entity RNG seeded 0 once per clip and evolving across the keys; one pose call per key, 20 keys per second; full health (no shipped hook reads health)",
     "hook": "danger.orespawn.entity.client.GoldFishGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the shipped replacement, registry-free, on explicit PoseInputs)",
+    "landed": true,
     "moving_bones": [
       "Bottomfin1",
       "Bottomfin2",
@@ -1330,7 +1409,14 @@
     ],
     "position_bones": [],
     "hidden_bones_at_rest": [],
-    "seam_delta_degrees": 0.0
+    "seam_delta_degrees": 0.0,
+    "attacking": {
+      "declared_pose_interfaces": [],
+      "getters": [],
+      "outside_pose_interface": [],
+      "reads_attacking": false,
+      "read_at_inputs": false
+    }
   },
   "exact_transcription": true,
   "rig_source": "shipped",

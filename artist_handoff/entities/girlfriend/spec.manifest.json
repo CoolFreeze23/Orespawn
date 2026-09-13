@@ -1,5 +1,5 @@
 {
-  "generated_by": "tools/artist_package.py 0.2.9 (the full folder, 2026-09-13, fourth set, items 5, 7 and 8: every artist-tier species packaged - a rig not yet in-game from the reference leg's converter output, bone names final; the Tier-1 bosses' intended locked bones from the design's section 6 rendered in section 7 and validated against the geo; the README's priority table the full list, bosses first, closing with the deliverable count)",
+  "generated_by": "tools/artist_package.py 0.3.0 (the reference clips for every species, 2026-09-14, addendum items 11 to 13: every hook's reference_walk, reference_idle and - where the code reads an attack - reference_attack clip beside the sheet, landed or not; the clips loaded through Blockbench's Import Animations (README_FIRST, Toolchain); a reference clip's keys as the starting point of a delivered idle / walk / aggro_idle, only the reference file itself under its own name refused)",
   "registry": "girlfriend",
   "display_name": "Girlfriend",
   "tier": 2,
@@ -888,6 +888,7 @@
   ],
   "effort_hours": 17.4,
   "effort_source": "generator: 4 h + 0.2 h/bone x 7 + 1 h/clip x 12 to author or improve (owner adjusts)",
+  "reference_clips": [],
   "reference_clip": null,
   "exact_transcription": false,
   "rig_source": "reference-leg converter output",

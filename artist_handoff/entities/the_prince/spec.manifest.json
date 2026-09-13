@@ -1,5 +1,5 @@
 {
-  "generated_by": "tools/artist_package.py 0.2.9 (the full folder, 2026-09-13, fourth set, items 5, 7 and 8: every artist-tier species packaged - a rig not yet in-game from the reference leg's converter output, bone names final; the Tier-1 bosses' intended locked bones from the design's section 6 rendered in section 7 and validated against the geo; the README's priority table the full list, bosses first, closing with the deliverable count)",
+  "generated_by": "tools/artist_package.py 0.3.0 (the reference clips for every species, 2026-09-14, addendum items 11 to 13: every hook's reference_walk, reference_idle and - where the code reads an attack - reference_attack clip beside the sheet, landed or not; the clips loaded through Blockbench's Import Animations (README_FIRST, Toolchain); a reference clip's keys as the starting point of a delivered idle / walk / aggro_idle, only the reference file itself under its own name refused)",
   "registry": "the_prince",
   "display_name": "The Prince",
   "tier": 1,
@@ -2621,7 +2621,252 @@
   ],
   "effort_hours": 35.8,
   "effort_source": "generator: 8 h + 0.15 h/bone x 35 + 1.5 h/clip x 15 to author or improve (owner adjusts)",
-  "reference_clip": null,
+  "reference_clips": [
+    {
+      "state": "walk",
+      "file": "the_prince_reference_walk.animation.json",
+      "sha256": "bbf113694ef08e301bf9a8860a942d32c41dac1796f32b2b48483e34043b6a70",
+      "clip": "reference",
+      "reference_only": true,
+      "delivered_clip": "walk",
+      "rule": "period_multiple",
+      "rule_note": "wingspeed 0.65: the slowest rhythm is the resting wings cos(ageInTicks * 0.3 * WINGSPEED) * PI * 0.04 (ThePrinceGeoReplacement.applyCustomAnimations:86, below the threshold and not attacking) at 0.195 rad/tick, 32.22 ticks; the threshold-or-attacking wings cos(ageInTicks * 2.3 * WINGSPEED) * PI * 0.4 * limbSwingAmount (:85) and the threshold legs cos(ageInTicks * 2.0 * WINGSPEED) * PI * 0.25 * limbSwingAmount (:95, walk); the attacking lash cos(ageInTicks * 0.9 * WINGSPEED) * PI * 0.06 (:106) and the tail fan cos(ageInTicks * 1.3 * WINGSPEED) * PI * 0.12 (:111; four follows :116-132); the jaw chatter cos(ageInTicks * 1.9 / 2.1 / 2.3 * WINGSPEED) * PI * 0.2 (:191-195); the three heads' look and the necks by the head extensions (0 on the probe, :149-244); closes at k = 3 (96.664386 ticks): every bone returns within 0 degrees of its start at k x T (the 5-degree test under the 6 s cap; k = 1: 108.003992 deg, k = 2: 107.998009 deg, k = 3: 0 deg)",
+      "span_ticks": 96.6643855001,
+      "period_ticks": 32.2214618334,
+      "period_multiple_k": 3,
+      "animation_length_seconds": 4.833219275,
+      "keys_per_bone": 98,
+      "sampled_inputs": "limbSwingAmount 1.0; limbSwing = t (advancing 1.0 per tick from 0: vanilla WalkAnimationState.update does speed += (movementSpeed - speed) * multiplier; position += speed, and the classic renderer hands walkAnimation.position(partialTick) as limbSwing and min(1, speed) as limbSwingAmount, so at speed 1 the position advances exactly 1.0 per tick); ageInTicks = t (getBob: tickCount + partialTick, partialTick 0); netHeadYaw 0; headPitch 0 (looking ahead); every entity-state flag at its rest value (attacking 0, ri1 0, rock_type 0, rf1 0: a ProbeSubject built from an empty state); the entity RNG seeded 0 once per clip and evolving across the keys; one pose call per key, 20 keys per second; full health (no shipped hook reads health)",
+      "hook": "danger.orespawn.entity.client.ThePrinceGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the unlanded hook of owner 2026-09-14, addendum item 10 - the classic setupAnim transcribed into the descriptor's PoseInputs form, proven when the rig lands - registry-free, on explicit PoseInputs, over the reference leg's converter output reference_theprince.geo.json baked without the face-order strictness the landing slice's TEST-007 adds)",
+      "landed": false,
+      "moving_bones": [
+        "Lhead",
+        "Lheadfin",
+        "Ljaw",
+        "Lleg1",
+        "Lwing",
+        "Lwing2",
+        "Lwing3",
+        "Rheadfin",
+        "Rjaw",
+        "Rleg1",
+        "Rwing",
+        "Rwing2",
+        "Rwing3",
+        "Tail5",
+        "Tail6",
+        "headfin",
+        "jaw",
+        "tail2",
+        "tail3",
+        "tail4"
+      ],
+      "position_bones": [
+        "Ljaw",
+        "Rjaw",
+        "Tail5",
+        "Tail6",
+        "jaw",
+        "tail3",
+        "tail4"
+      ],
+      "hidden_bones_at_rest": [],
+      "seam_delta_degrees": 0.0,
+      "attacking": {
+        "declared_pose_interfaces": [
+          "ThePrincePose"
+        ],
+        "getters": [
+          "ThePrincePose.getAttacking()"
+        ],
+        "outside_pose_interface": [],
+        "reads_attacking": true,
+        "read_at_inputs": true
+      }
+    },
+    {
+      "state": "idle",
+      "file": "the_prince_reference_idle.animation.json",
+      "sha256": "35df7a9ed2e442893d879801db5600ca526814ecaef773a462a801329b0ef836",
+      "clip": "reference_idle",
+      "reference_only": true,
+      "delivered_clip": "idle",
+      "rule": "period_multiple",
+      "rule_note": "wingspeed 0.65: the slowest rhythm is the resting wings cos(ageInTicks * 0.3 * WINGSPEED) * PI * 0.04 (ThePrinceGeoReplacement.applyCustomAnimations:86, below the threshold and not attacking) at 0.195 rad/tick, 32.22 ticks; the threshold-or-attacking wings cos(ageInTicks * 2.3 * WINGSPEED) * PI * 0.4 * limbSwingAmount (:85) and the threshold legs cos(ageInTicks * 2.0 * WINGSPEED) * PI * 0.25 * limbSwingAmount (:95, walk); the attacking lash cos(ageInTicks * 0.9 * WINGSPEED) * PI * 0.06 (:106) and the tail fan cos(ageInTicks * 1.3 * WINGSPEED) * PI * 0.12 (:111; four follows :116-132); the jaw chatter cos(ageInTicks * 1.9 / 2.1 / 2.3 * WINGSPEED) * PI * 0.2 (:191-195); the three heads' look and the necks by the head extensions (0 on the probe, :149-244); closes at k = 1 (32.221462 ticks): every bone returns within 0 degrees of its start at k x T (the 5-degree test under the 6 s cap; k = 1: 0 deg)",
+      "span_ticks": 32.2214618334,
+      "period_ticks": 32.2214618334,
+      "period_multiple_k": 1,
+      "animation_length_seconds": 1.6110730917,
+      "keys_per_bone": 34,
+      "sampled_inputs": "limbSwingAmount 0.0; limbSwing 0 (the walk position at rest: vanilla WalkAnimationState holds its position while the speed is 0, and a creature that has not walked since it spawned carries 0); ageInTicks = t (getBob: tickCount + partialTick, partialTick 0; advancing 1.0 per tick from 0); netHeadYaw 0; headPitch 0 (looking ahead); every entity-state flag at its rest value (attacking 0, ri1 0, rock_type 0, rf1 0: a ProbeSubject built from an empty state); the entity RNG seeded 0 once per clip and evolving across the keys; one pose call per key, 20 keys per second; full health",
+      "hook": "danger.orespawn.entity.client.ThePrinceGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the unlanded hook of owner 2026-09-14, addendum item 10 - the classic setupAnim transcribed into the descriptor's PoseInputs form, proven when the rig lands - registry-free, on explicit PoseInputs, over the reference leg's converter output reference_theprince.geo.json baked without the face-order strictness the landing slice's TEST-007 adds)",
+      "landed": false,
+      "moving_bones": [
+        "Lhead",
+        "Lheadfin",
+        "Ljaw",
+        "Lwing",
+        "Lwing2",
+        "Lwing3",
+        "Rheadfin",
+        "Rjaw",
+        "Rwing",
+        "Rwing2",
+        "Rwing3",
+        "Tail5",
+        "Tail6",
+        "headfin",
+        "jaw",
+        "tail2",
+        "tail3",
+        "tail4"
+      ],
+      "position_bones": [
+        "Ljaw",
+        "Rjaw",
+        "Tail5",
+        "Tail6",
+        "jaw",
+        "tail3",
+        "tail4"
+      ],
+      "hidden_bones_at_rest": [],
+      "seam_delta_degrees": 0.0,
+      "attacking": {
+        "declared_pose_interfaces": [
+          "ThePrincePose"
+        ],
+        "getters": [
+          "ThePrincePose.getAttacking()"
+        ],
+        "outside_pose_interface": [],
+        "reads_attacking": true,
+        "read_at_inputs": true
+      }
+    },
+    {
+      "state": "attack",
+      "file": "the_prince_reference_attack.animation.json",
+      "sha256": "ccdc771bef22074a7b4e565d94fc341456528d059e52b415ff22fecea94bd7dc",
+      "clip": "reference_attack",
+      "reference_only": true,
+      "delivered_clip": "aggro_idle",
+      "rule": "period_multiple",
+      "rule_note": "wingspeed 0.65: the slowest rhythm is the resting wings cos(ageInTicks * 0.3 * WINGSPEED) * PI * 0.04 (ThePrinceGeoReplacement.applyCustomAnimations:86, below the threshold and not attacking) at 0.195 rad/tick, 32.22 ticks; the threshold-or-attacking wings cos(ageInTicks * 2.3 * WINGSPEED) * PI * 0.4 * limbSwingAmount (:85) and the threshold legs cos(ageInTicks * 2.0 * WINGSPEED) * PI * 0.25 * limbSwingAmount (:95, walk); the attacking lash cos(ageInTicks * 0.9 * WINGSPEED) * PI * 0.06 (:106) and the tail fan cos(ageInTicks * 1.3 * WINGSPEED) * PI * 0.12 (:111; four follows :116-132); the jaw chatter cos(ageInTicks * 1.9 / 2.1 / 2.3 * WINGSPEED) * PI * 0.2 (:191-195); the three heads' look and the necks by the head extensions (0 on the probe, :149-244); closes at k = 3 (96.664386 ticks): every bone returns within 0 degrees of its start at k x T (the 5-degree test under the 6 s cap; k = 1: 149.037245 deg / 19.279271 units, k = 2: 149.045499 deg / 19.280334 units, k = 3: 0 deg)",
+      "span_ticks": 96.6643855001,
+      "period_ticks": 32.2214618334,
+      "period_multiple_k": 3,
+      "animation_length_seconds": 4.833219275,
+      "keys_per_bone": 98,
+      "sampled_inputs": "attacking 1 (the pose interface's getAttacking() answers 1: the hook's attacking branch); limbSwingAmount 0.0; limbSwing 0 (the walk position at rest); ageInTicks = t (getBob: tickCount + partialTick, partialTick 0; advancing 1.0 per tick from 0); netHeadYaw 0; headPitch 0 (looking ahead); every other entity-state flag at its rest value (ri1 0, rock_type 0, rf1 0: a ProbeSubject built from the attack state); the entity RNG seeded 0 once per clip and evolving across the keys; one pose call per key, 20 keys per second; full health",
+      "hook": "danger.orespawn.entity.client.ThePrinceGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the unlanded hook of owner 2026-09-14, addendum item 10 - the classic setupAnim transcribed into the descriptor's PoseInputs form, proven when the rig lands - registry-free, on explicit PoseInputs, over the reference leg's converter output reference_theprince.geo.json baked without the face-order strictness the landing slice's TEST-007 adds)",
+      "landed": false,
+      "moving_bones": [
+        "Lhead",
+        "Lheadfin",
+        "Ljaw",
+        "Lwing",
+        "Lwing2",
+        "Lwing3",
+        "Rheadfin",
+        "Rjaw",
+        "Rwing",
+        "Rwing2",
+        "Rwing3",
+        "Tail5",
+        "Tail6",
+        "headfin",
+        "jaw",
+        "tail2",
+        "tail3",
+        "tail4"
+      ],
+      "position_bones": [
+        "Ljaw",
+        "Rjaw",
+        "Tail5",
+        "Tail6",
+        "jaw",
+        "tail3",
+        "tail4"
+      ],
+      "hidden_bones_at_rest": [],
+      "seam_delta_degrees": 0.0,
+      "attacking": {
+        "declared_pose_interfaces": [
+          "ThePrincePose"
+        ],
+        "getters": [
+          "ThePrincePose.getAttacking()"
+        ],
+        "outside_pose_interface": [],
+        "reads_attacking": true,
+        "read_at_inputs": true
+      }
+    }
+  ],
+  "reference_clip": {
+    "state": "walk",
+    "file": "the_prince_reference_walk.animation.json",
+    "sha256": "bbf113694ef08e301bf9a8860a942d32c41dac1796f32b2b48483e34043b6a70",
+    "clip": "reference",
+    "reference_only": true,
+    "delivered_clip": "walk",
+    "rule": "period_multiple",
+    "rule_note": "wingspeed 0.65: the slowest rhythm is the resting wings cos(ageInTicks * 0.3 * WINGSPEED) * PI * 0.04 (ThePrinceGeoReplacement.applyCustomAnimations:86, below the threshold and not attacking) at 0.195 rad/tick, 32.22 ticks; the threshold-or-attacking wings cos(ageInTicks * 2.3 * WINGSPEED) * PI * 0.4 * limbSwingAmount (:85) and the threshold legs cos(ageInTicks * 2.0 * WINGSPEED) * PI * 0.25 * limbSwingAmount (:95, walk); the attacking lash cos(ageInTicks * 0.9 * WINGSPEED) * PI * 0.06 (:106) and the tail fan cos(ageInTicks * 1.3 * WINGSPEED) * PI * 0.12 (:111; four follows :116-132); the jaw chatter cos(ageInTicks * 1.9 / 2.1 / 2.3 * WINGSPEED) * PI * 0.2 (:191-195); the three heads' look and the necks by the head extensions (0 on the probe, :149-244); closes at k = 3 (96.664386 ticks): every bone returns within 0 degrees of its start at k x T (the 5-degree test under the 6 s cap; k = 1: 108.003992 deg, k = 2: 107.998009 deg, k = 3: 0 deg)",
+    "span_ticks": 96.6643855001,
+    "period_ticks": 32.2214618334,
+    "period_multiple_k": 3,
+    "animation_length_seconds": 4.833219275,
+    "keys_per_bone": 98,
+    "sampled_inputs": "limbSwingAmount 1.0; limbSwing = t (advancing 1.0 per tick from 0: vanilla WalkAnimationState.update does speed += (movementSpeed - speed) * multiplier; position += speed, and the classic renderer hands walkAnimation.position(partialTick) as limbSwing and min(1, speed) as limbSwingAmount, so at speed 1 the position advances exactly 1.0 per tick); ageInTicks = t (getBob: tickCount + partialTick, partialTick 0); netHeadYaw 0; headPitch 0 (looking ahead); every entity-state flag at its rest value (attacking 0, ri1 0, rock_type 0, rf1 0: a ProbeSubject built from an empty state); the entity RNG seeded 0 once per clip and evolving across the keys; one pose call per key, 20 keys per second; full health (no shipped hook reads health)",
+    "hook": "danger.orespawn.entity.client.ThePrinceGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the unlanded hook of owner 2026-09-14, addendum item 10 - the classic setupAnim transcribed into the descriptor's PoseInputs form, proven when the rig lands - registry-free, on explicit PoseInputs, over the reference leg's converter output reference_theprince.geo.json baked without the face-order strictness the landing slice's TEST-007 adds)",
+    "landed": false,
+    "moving_bones": [
+      "Lhead",
+      "Lheadfin",
+      "Ljaw",
+      "Lleg1",
+      "Lwing",
+      "Lwing2",
+      "Lwing3",
+      "Rheadfin",
+      "Rjaw",
+      "Rleg1",
+      "Rwing",
+      "Rwing2",
+      "Rwing3",
+      "Tail5",
+      "Tail6",
+      "headfin",
+      "jaw",
+      "tail2",
+      "tail3",
+      "tail4"
+    ],
+    "position_bones": [
+      "Ljaw",
+      "Rjaw",
+      "Tail5",
+      "Tail6",
+      "jaw",
+      "tail3",
+      "tail4"
+    ],
+    "hidden_bones_at_rest": [],
+    "seam_delta_degrees": 0.0,
+    "attacking": {
+      "declared_pose_interfaces": [
+        "ThePrincePose"
+      ],
+      "getters": [
+        "ThePrincePose.getAttacking()"
+      ],
+      "outside_pose_interface": [],
+      "reads_attacking": true,
+      "read_at_inputs": true
+    }
+  },
   "exact_transcription": false,
   "rig_source": "reference-leg converter output",
   "in_game": false,

@@ -375,22 +375,33 @@ tasks.register('t2Parity', Exec) {
 }
 tasks.named('check') { dependsOn tasks.named('t2Parity') }
 
+// The standing reference leg's manifest and build directory (declared here: the sampler tasks below take them too).
+def referenceManifest = file('tools/reference_model_proofs.json')
+def referenceBuildDir = layout.buildDirectory.dir('reference')
+
 // The reference-clip sampler (owner 2026-09-13, second set, addendum item 27 (3); the span rule of the third set,
-// item 28 (5)): every seam rig with a manifest entry (the g1, s4 and t2 manifests) has its shipped classic hook
-// sampled at fixed inputs into ONE reference-only clip per registry under tools/reference_clips/ (never shipped,
-// never returned: the package checker and the asset audit refuse it); tools/artist_package.py package copies it into
-// each species' folder. `referenceClips` is the WRITER (regeneration after a hook, a rig or the rule changes);
-// `referenceClipsVerify` below is the `check` dependency (third set, item 28 (6)).
+// item 28 (5); every hook and every reachable state since owner 2026-09-14, addendum item 31 (11)): every seam rig
+// with a manifest entry (the g1, s4 and t2 manifests) has its shipped classic hook sampled at fixed inputs, and every
+// UNLANDED hook (a reference entry whose model class has a <Name>GeoReplacement descriptor; the sampler's
+// HOOK_DESCRIPTORS, the audit's HOOKS list) is sampled over the reference leg's converter output
+// (build/reference/generated/reference_<rig>.geo.json: referenceConvertModels, below - a dependency here, so `check`
+// converts the reference models before it verifies the clips) - into reference-only clips per registry AND state under
+// tools/reference_clips/ (<registry>_reference_walk / _idle / _attack.animation.json; never shipped, never returned
+// under their own names: the package checker and the asset audit refuse them; a clip's keys may start a delivered
+// idle / walk / aggro_idle, item 31 (13)); tools/artist_package.py package copies them into each species' folder.
+// `referenceClips` is the WRITER (regeneration after a hook, a rig or the rule changes); `referenceClipsVerify` below
+// is the `check` dependency (third set, item 28 (6)).
 tasks.register('referenceClips', JavaExec) {
     group = 'verification'
-    description = 'Sample every seam rig\'s classic hook at fixed inputs into tools/reference_clips/<registry>_reference.animation.json (reference-only; never shipped).'
-    dependsOn tasks.named('g1toolClasses')
+    description = 'Sample every hook, landed or not, at fixed inputs per reachable state into tools/reference_clips/<registry>_reference_<state>.animation.json (reference-only; never shipped).'
+    dependsOn tasks.named('g1toolClasses'), tasks.named('referenceConvertModels')
     classpath = sourceSets.g1tool.runtimeClasspath
     mainClass = 'danger.orespawn.g1.ReferenceClipSampler'
     args file('tools/reference_clips').absolutePath,
             g1Manifest.absolutePath,
             s4Manifest.absolutePath,
-            t2Manifest.absolutePath
+            t2Manifest.absolutePath,
+            '--reference', referenceManifest.absolutePath, referenceBuildDir.get().dir('generated').asFile.absolutePath
 }
 // Owner 2026-09-13, third set, addendum item 28 (6): the build regenerates the reference clips into
 // build/reference_clips/ and compares every file byte for byte with tools/reference_clips/ (the sampler's own
@@ -402,7 +413,7 @@ def referenceClipsBuildDir = layout.buildDirectory.dir('reference_clips')
 tasks.register('referenceClipsVerify', JavaExec) {
     group = 'verification'
     description = 'Regenerate the reference clips into build/reference_clips/ and compare them byte for byte with tools/reference_clips/ (drift fails the build).'
-    dependsOn tasks.named('g1toolClasses')
+    dependsOn tasks.named('g1toolClasses'), tasks.named('referenceConvertModels')
     classpath = sourceSets.g1tool.runtimeClasspath
     mainClass = 'danger.orespawn.g1.ReferenceClipSampler'
     args '--verify',
@@ -410,15 +421,14 @@ tasks.register('referenceClipsVerify', JavaExec) {
             referenceClipsBuildDir.get().asFile.absolutePath,
             g1Manifest.absolutePath,
             s4Manifest.absolutePath,
-            t2Manifest.absolutePath
+            t2Manifest.absolutePath,
+            '--reference', referenceManifest.absolutePath, referenceBuildDir.get().dir('generated').asFile.absolutePath
 }
 tasks.named('check') { dependsOn tasks.named('referenceClipsVerify') }
 
 // Standing reference-geometry gate (owner ruling 2026-09-02, BUG-041 / ENT-S-091): every port
 // entity model with a 1.7.10 source is compiled, dumped and compared against the parsed original;
 // models still carrying ruled parity bugs pin their exact divergence counts until the fix lands.
-def referenceManifest = file('tools/reference_model_proofs.json')
-def referenceBuildDir = layout.buildDirectory.dir('reference')
 
 tasks.register('referenceDumpCompiledModels', JavaExec) {
     group = 'verification'

@@ -201,11 +201,13 @@ NEVER_ACKNOWLEDGED = {"HOOK_STALE", "GECKO_GEO_DRAW_ORDER_MISSING", "GECKO_GEO_S
                       "GECKO_GEO_FACE_ORDER_INVALID", "GECKO_GEO_FLAT_CUBE_FACE_ORDER_MISSING",
                       "GECKO_REFERENCE_CLIP_SHIPPED"}
 
-# The reference-only clip (owner 2026-09-13, second set, addendum item 27 (3)): the package sampler's output,
-# tools/reference_clips/<registry>_reference.animation.json - the classic hook sampled at fixed inputs for the
-# artist to look at - is carried beside each species' sheet and NEVER shipped; the package checker refuses a
-# returned one, and this audit refuses one anywhere under src/main/resources (never acknowledgeable).
-REFERENCE_CLIP_SUFFIX = "_reference.animation.json"
+# The reference-only clips (owner 2026-09-13, second set, addendum item 27 (3); one per reachable state since owner
+# 2026-09-14, addendum item 31 (11)): the package sampler's output, tools/reference_clips/<registry>_reference_walk /
+# _idle / _attack.animation.json (the single <registry>_reference.animation.json before 2026-09-14) - the classic hook
+# sampled at fixed inputs for the artist to look at - is carried beside each species' sheet and NEVER shipped; the
+# package checker refuses a returned one under its own name, and this audit refuses one anywhere under
+# src/main/resources (never acknowledgeable).
+REFERENCE_CLIP_RE = re.compile(r"_reference(?:_(?:walk|idle|attack))?\.animation\.json$")
 
 findings = []      # list of dicts: level, category, name, detail, path
 skipped = []       # things the static parser could not verify
@@ -1161,11 +1163,12 @@ def check_geckolib(java_texts):
                 % (rel(java_path), ", ".join(flat[:6]) + (" ..." if len(flat) > 6 else ""), FACE_ORDER_KEY),
                 geo_path)
 
-    # The reference-only clip never ships (owner 2026-09-13, second set, item 27 (3)): a *_reference.animation.json
-    # anywhere under src/main/resources is an ERROR naming the file, never acknowledgeable - the package copies it
-    # beside the sheet from tools/reference_clips/ and the checker refuses a returned one; the jar carries none.
+    # The reference-only clips never ship (owner 2026-09-13, second set, item 27 (3); per state since 2026-09-14, item 31
+    # (11)): a *_reference_<state>.animation.json (or the old single *_reference.animation.json) anywhere under
+    # src/main/resources is an ERROR naming the file, never acknowledgeable - the package copies them beside the sheet
+    # from tools/reference_clips/ and the checker refuses a returned one under its own name; the jar carries none.
     resources = ROOT / "src" / "main" / "resources"
-    for path in (sorted(resources.rglob("*" + REFERENCE_CLIP_SUFFIX)) if resources.is_dir() else []):
+    for path in (sorted(p for p in resources.rglob("*.animation.json") if REFERENCE_CLIP_RE.search(p.name)) if resources.is_dir() else []):
         err("GECKO_REFERENCE_CLIP_SHIPPED", path.name[:-len(".animation.json")],
             "a reference-only clip (the package sampler's output, tools/reference_clips/) is shipped under "
             "src/main/resources - it is sampled from the classic hook for the artist to look at and is never "

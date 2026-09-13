@@ -1,5 +1,5 @@
 {
-  "generated_by": "tools/artist_package.py 0.2.9 (the full folder, 2026-09-13, fourth set, items 5, 7 and 8: every artist-tier species packaged - a rig not yet in-game from the reference leg's converter output, bone names final; the Tier-1 bosses' intended locked bones from the design's section 6 rendered in section 7 and validated against the geo; the README's priority table the full list, bosses first, closing with the deliverable count)",
+  "generated_by": "tools/artist_package.py 0.3.0 (the reference clips for every species, 2026-09-14, addendum items 11 to 13: every hook's reference_walk, reference_idle and - where the code reads an attack - reference_attack clip beside the sheet, landed or not; the clips loaded through Blockbench's Import Animations (README_FIRST, Toolchain); a reference clip's keys as the starting point of a delivered idle / walk / aggro_idle, only the reference file itself under its own name refused)",
   "registry": "leaf_monster",
   "display_name": "Leaf Monster",
   "tier": 2,
@@ -490,7 +490,155 @@
   ],
   "effort_hours": 17.0,
   "effort_source": "generator: 4 h + 0.2 h/bone x 5 + 1 h/clip x 12 to author or improve (owner adjusts)",
-  "reference_clip": null,
+  "reference_clips": [
+    {
+      "state": "walk",
+      "file": "leaf_monster_reference_walk.animation.json",
+      "sha256": "5a079b441d97389d96da19704a9315891582a13eecc4e621e836abd4700d41f3",
+      "clip": "reference",
+      "reference_only": true,
+      "delivered_clip": "walk",
+      "rule": "one_key",
+      "rule_note": "nothing moves at the walk inputs: every bone's rotation and position is the same at every sample of the span the closure test settled (period_multiple; the threshold gait cos(ageInTicks * 0.95) * PI * 0.25 * limbSwingAmount (LeafMonsterGeoReplacement.applyCustomAnimations:64, walk in the attacking branch) at 0.95 rad/tick, 6.61 ticks - the slowest by period; the |cos| arms cos(ageInTicks * 0.7) * PI * 0.55 through Math.abs (:67-71, attacking) fold to a 4.49-tick half period; at rest the bush (attacking 0) holds still; closes at k = 1 (6.613879 ticks): every bone returns within 0 degrees of its start at k x T (the 5-degree test under the 6 s cap; k = 1: 0 deg)), so this state is one key",
+      "span_ticks": 0.0,
+      "period_ticks": null,
+      "period_multiple_k": null,
+      "animation_length_seconds": 0.05,
+      "keys_per_bone": 1,
+      "sampled_inputs": "limbSwingAmount 1.0; limbSwing = t (advancing 1.0 per tick from 0: vanilla WalkAnimationState.update does speed += (movementSpeed - speed) * multiplier; position += speed, and the classic renderer hands walkAnimation.position(partialTick) as limbSwing and min(1, speed) as limbSwingAmount, so at speed 1 the position advances exactly 1.0 per tick); ageInTicks = t (getBob: tickCount + partialTick, partialTick 0); netHeadYaw 0; headPitch 0 (looking ahead); every entity-state flag at its rest value (attacking 0, ri1 0, rock_type 0, rf1 0: a ProbeSubject built from an empty state); the entity RNG seeded 0 once per clip and evolving across the keys; one pose call per key, 20 keys per second; full health (no shipped hook reads health)",
+      "hook": "danger.orespawn.entity.client.LeafMonsterGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the unlanded hook of owner 2026-09-14, addendum item 10 - the classic setupAnim transcribed into the descriptor's PoseInputs form, proven when the rig lands - registry-free, on explicit PoseInputs, over the reference leg's converter output reference_leafmonster.geo.json baked without the face-order strictness the landing slice's TEST-007 adds)",
+      "landed": false,
+      "moving_bones": [],
+      "position_bones": [
+        "body",
+        "larm",
+        "rarm"
+      ],
+      "hidden_bones_at_rest": [],
+      "seam_delta_degrees": 0.0,
+      "attacking": {
+        "declared_pose_interfaces": [
+          "LeafMonsterPose"
+        ],
+        "getters": [
+          "LeafMonsterPose.getAttacking()"
+        ],
+        "outside_pose_interface": [],
+        "reads_attacking": true,
+        "read_at_inputs": true
+      }
+    },
+    {
+      "state": "idle",
+      "file": "leaf_monster_reference_idle.animation.json",
+      "sha256": "4698dcfb85a44e948b26dddf08537d487d3fcad96a9c2820929d4c2758c33aed",
+      "clip": "reference_idle",
+      "reference_only": true,
+      "delivered_clip": "idle",
+      "rule": "one_key",
+      "rule_note": "nothing moves at the idle inputs: every bone's rotation and position is the same at every sample of the span the closure test settled (period_multiple; the threshold gait cos(ageInTicks * 0.95) * PI * 0.25 * limbSwingAmount (LeafMonsterGeoReplacement.applyCustomAnimations:64, walk in the attacking branch) at 0.95 rad/tick, 6.61 ticks - the slowest by period; the |cos| arms cos(ageInTicks * 0.7) * PI * 0.55 through Math.abs (:67-71, attacking) fold to a 4.49-tick half period; at rest the bush (attacking 0) holds still; closes at k = 1 (6.613879 ticks): every bone returns within 0 degrees of its start at k x T (the 5-degree test under the 6 s cap; k = 1: 0 deg)), so this state is one key",
+      "span_ticks": 0.0,
+      "period_ticks": null,
+      "period_multiple_k": null,
+      "animation_length_seconds": 0.05,
+      "keys_per_bone": 1,
+      "sampled_inputs": "limbSwingAmount 0.0; limbSwing 0 (the walk position at rest: vanilla WalkAnimationState holds its position while the speed is 0, and a creature that has not walked since it spawned carries 0); ageInTicks = t (getBob: tickCount + partialTick, partialTick 0; advancing 1.0 per tick from 0); netHeadYaw 0; headPitch 0 (looking ahead); every entity-state flag at its rest value (attacking 0, ri1 0, rock_type 0, rf1 0: a ProbeSubject built from an empty state); the entity RNG seeded 0 once per clip and evolving across the keys; one pose call per key, 20 keys per second; full health",
+      "hook": "danger.orespawn.entity.client.LeafMonsterGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the unlanded hook of owner 2026-09-14, addendum item 10 - the classic setupAnim transcribed into the descriptor's PoseInputs form, proven when the rig lands - registry-free, on explicit PoseInputs, over the reference leg's converter output reference_leafmonster.geo.json baked without the face-order strictness the landing slice's TEST-007 adds)",
+      "landed": false,
+      "moving_bones": [],
+      "position_bones": [
+        "body",
+        "larm",
+        "rarm"
+      ],
+      "hidden_bones_at_rest": [],
+      "seam_delta_degrees": 0.0,
+      "attacking": {
+        "declared_pose_interfaces": [
+          "LeafMonsterPose"
+        ],
+        "getters": [
+          "LeafMonsterPose.getAttacking()"
+        ],
+        "outside_pose_interface": [],
+        "reads_attacking": true,
+        "read_at_inputs": true
+      }
+    },
+    {
+      "state": "attack",
+      "file": "leaf_monster_reference_attack.animation.json",
+      "sha256": "eb513b89e36ddb87585955e9cb89d7e98f8975f70a567939213788339be118f4",
+      "clip": "reference_attack",
+      "reference_only": true,
+      "delivered_clip": "aggro_idle",
+      "rule": "period_multiple",
+      "rule_note": "the threshold gait cos(ageInTicks * 0.95) * PI * 0.25 * limbSwingAmount (LeafMonsterGeoReplacement.applyCustomAnimations:64, walk in the attacking branch) at 0.95 rad/tick, 6.61 ticks - the slowest by period; the |cos| arms cos(ageInTicks * 0.7) * PI * 0.55 through Math.abs (:67-71, attacking) fold to a 4.49-tick half period; at rest the bush (attacking 0) holds still; closes at k = 2 (13.227759 ticks): every bone returns within 1.350807 degrees of its start at k x T (the 5-degree test under the 6 s cap; k = 1: 90.818179 deg, k = 2: 1.350807 deg)",
+      "span_ticks": 13.2277587074,
+      "period_ticks": 6.6138793537,
+      "period_multiple_k": 2,
+      "animation_length_seconds": 0.6613879354,
+      "keys_per_bone": 15,
+      "sampled_inputs": "attacking 1 (the pose interface's getAttacking() answers 1: the hook's attacking branch); limbSwingAmount 0.0; limbSwing 0 (the walk position at rest); ageInTicks = t (getBob: tickCount + partialTick, partialTick 0; advancing 1.0 per tick from 0); netHeadYaw 0; headPitch 0 (looking ahead); every other entity-state flag at its rest value (ri1 0, rock_type 0, rf1 0: a ProbeSubject built from the attack state); the entity RNG seeded 0 once per clip and evolving across the keys; one pose call per key, 20 keys per second; full health",
+      "hook": "danger.orespawn.entity.client.LeafMonsterGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the unlanded hook of owner 2026-09-14, addendum item 10 - the classic setupAnim transcribed into the descriptor's PoseInputs form, proven when the rig lands - registry-free, on explicit PoseInputs, over the reference leg's converter output reference_leafmonster.geo.json baked without the face-order strictness the landing slice's TEST-007 adds)",
+      "landed": false,
+      "moving_bones": [
+        "larm",
+        "rarm"
+      ],
+      "position_bones": [],
+      "hidden_bones_at_rest": [],
+      "seam_delta_degrees": 1.3508065121,
+      "attacking": {
+        "declared_pose_interfaces": [
+          "LeafMonsterPose"
+        ],
+        "getters": [
+          "LeafMonsterPose.getAttacking()"
+        ],
+        "outside_pose_interface": [],
+        "reads_attacking": true,
+        "read_at_inputs": true
+      }
+    }
+  ],
+  "reference_clip": {
+    "state": "walk",
+    "file": "leaf_monster_reference_walk.animation.json",
+    "sha256": "5a079b441d97389d96da19704a9315891582a13eecc4e621e836abd4700d41f3",
+    "clip": "reference",
+    "reference_only": true,
+    "delivered_clip": "walk",
+    "rule": "one_key",
+    "rule_note": "nothing moves at the walk inputs: every bone's rotation and position is the same at every sample of the span the closure test settled (period_multiple; the threshold gait cos(ageInTicks * 0.95) * PI * 0.25 * limbSwingAmount (LeafMonsterGeoReplacement.applyCustomAnimations:64, walk in the attacking branch) at 0.95 rad/tick, 6.61 ticks - the slowest by period; the |cos| arms cos(ageInTicks * 0.7) * PI * 0.55 through Math.abs (:67-71, attacking) fold to a 4.49-tick half period; at rest the bush (attacking 0) holds still; closes at k = 1 (6.613879 ticks): every bone returns within 0 degrees of its start at k x T (the 5-degree test under the 6 s cap; k = 1: 0 deg)), so this state is one key",
+    "span_ticks": 0.0,
+    "period_ticks": null,
+    "period_multiple_k": null,
+    "animation_length_seconds": 0.05,
+    "keys_per_bone": 1,
+    "sampled_inputs": "limbSwingAmount 1.0; limbSwing = t (advancing 1.0 per tick from 0: vanilla WalkAnimationState.update does speed += (movementSpeed - speed) * multiplier; position += speed, and the classic renderer hands walkAnimation.position(partialTick) as limbSwing and min(1, speed) as limbSwingAmount, so at speed 1 the position advances exactly 1.0 per tick); ageInTicks = t (getBob: tickCount + partialTick, partialTick 0); netHeadYaw 0; headPitch 0 (looking ahead); every entity-state flag at its rest value (attacking 0, ri1 0, rock_type 0, rf1 0: a ProbeSubject built from an empty state); the entity RNG seeded 0 once per clip and evolving across the keys; one pose call per key, 20 keys per second; full health (no shipped hook reads health)",
+    "hook": "danger.orespawn.entity.client.LeafMonsterGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the unlanded hook of owner 2026-09-14, addendum item 10 - the classic setupAnim transcribed into the descriptor's PoseInputs form, proven when the rig lands - registry-free, on explicit PoseInputs, over the reference leg's converter output reference_leafmonster.geo.json baked without the face-order strictness the landing slice's TEST-007 adds)",
+    "landed": false,
+    "moving_bones": [],
+    "position_bones": [
+      "body",
+      "larm",
+      "rarm"
+    ],
+    "hidden_bones_at_rest": [],
+    "seam_delta_degrees": 0.0,
+    "attacking": {
+      "declared_pose_interfaces": [
+        "LeafMonsterPose"
+      ],
+      "getters": [
+        "LeafMonsterPose.getAttacking()"
+      ],
+      "outside_pose_interface": [],
+      "reads_attacking": true,
+      "read_at_inputs": true
+    }
+  },
   "exact_transcription": false,
   "rig_source": "reference-leg converter output",
   "in_game": false,

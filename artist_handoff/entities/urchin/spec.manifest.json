@@ -1,5 +1,5 @@
 {
-  "generated_by": "tools/artist_package.py 0.2.9 (the full folder, 2026-09-13, fourth set, items 5, 7 and 8: every artist-tier species packaged - a rig not yet in-game from the reference leg's converter output, bone names final; the Tier-1 bosses' intended locked bones from the design's section 6 rendered in section 7 and validated against the geo; the README's priority table the full list, bosses first, closing with the deliverable count)",
+  "generated_by": "tools/artist_package.py 0.3.0 (the reference clips for every species, 2026-09-14, addendum items 11 to 13: every hook's reference_walk, reference_idle and - where the code reads an attack - reference_attack clip beside the sheet, landed or not; the clips loaded through Blockbench's Import Animations (README_FIRST, Toolchain); a reference clip's keys as the starting point of a delivered idle / walk / aggro_idle, only the reference file itself under its own name refused)",
   "registry": "urchin",
   "display_name": "Urchin",
   "tier": 2,
@@ -1368,7 +1368,208 @@
   ],
   "effort_hours": 19.4,
   "effort_source": "generator: 4 h + 0.2 h/bone x 17 + 1 h/clip x 12 to author or improve (owner adjusts)",
-  "reference_clip": null,
+  "reference_clips": [
+    {
+      "state": "walk",
+      "file": "urchin_reference_walk.animation.json",
+      "sha256": "9a2be389867afb57efa4a70dc9bd38fcdf3505ae162cbfd1d168884700d81fc2",
+      "clip": "reference",
+      "reference_only": true,
+      "delivered_clip": "walk",
+      "rule": "two_seconds_past_cap",
+      "rule_note": "wingspeed 1.0: the slowest rhythm is the slow centre spin (ageInTicks * 0.02) mod 2 pi with its eight spikes cos(ageInTicks * 0.07 / 0.065 / 0.075 / 0.08 / 0.055 / 0.045 / 0.035 / 0.04 * WINGSPEED) * PI * 0.02 (UrchinGeoReplacement.applyCustomAnimations:94-102, one branch of the state switch) at 0.02 rad/tick, 314.16 ticks - over the 6 s cap; the other branch spins (ageInTicks * 0.2) mod 2 pi with the spikes at 0.7 / 0.65 / 0.75 / 0.8 / 0.55 / 0.45 / 0.35 / 0.4 * PI * 0.06 (:84-92); the threshold spikes cos(ageInTicks * 0.7 / 1.7 / 1.65 / 1.75 / 1.8 * WINGSPEED) * PI * 0.15 * limbSwingAmount (:63-67, walk); the slowest group's period 314.159272 ticks exceeds the 6 s cap (120 ticks): a two-second window (40 ticks), not a loop - the sheet states the closing key's seam",
+      "span_ticks": 40.0,
+      "period_ticks": 314.159272381,
+      "period_multiple_k": null,
+      "animation_length_seconds": 2.0,
+      "keys_per_bone": 41,
+      "sampled_inputs": "limbSwingAmount 1.0; limbSwing = t (advancing 1.0 per tick from 0: vanilla WalkAnimationState.update does speed += (movementSpeed - speed) * multiplier; position += speed, and the classic renderer hands walkAnimation.position(partialTick) as limbSwing and min(1, speed) as limbSwingAmount, so at speed 1 the position advances exactly 1.0 per tick); ageInTicks = t (getBob: tickCount + partialTick, partialTick 0); netHeadYaw 0; headPitch 0 (looking ahead); every entity-state flag at its rest value (attacking 0, ri1 0, rock_type 0, rf1 0: a ProbeSubject built from an empty state); the entity RNG seeded 0 once per clip and evolving across the keys; one pose call per key, 20 keys per second; full health (no shipped hook reads health)",
+      "hook": "danger.orespawn.entity.client.UrchinGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the unlanded hook of owner 2026-09-14, addendum item 10 - the classic setupAnim transcribed into the descriptor's PoseInputs form, proven when the rig lands - registry-free, on explicit PoseInputs, over the reference leg's converter output reference_urchin.geo.json baked without the face-order strictness the landing slice's TEST-007 adds)",
+      "landed": false,
+      "moving_bones": [
+        "center",
+        "if1",
+        "if2",
+        "if3",
+        "if4",
+        "of1",
+        "of2",
+        "of3",
+        "of4",
+        "tis1",
+        "tis2",
+        "tis3",
+        "tis4",
+        "tos1",
+        "tos2",
+        "tos3",
+        "tos4"
+      ],
+      "position_bones": [],
+      "hidden_bones_at_rest": [],
+      "seam_delta_degrees": 53.990551936,
+      "attacking": {
+        "declared_pose_interfaces": [
+          "UrchinPose"
+        ],
+        "getters": [
+          "UrchinPose.getAttacking()"
+        ],
+        "outside_pose_interface": [],
+        "reads_attacking": true,
+        "read_at_inputs": true
+      }
+    },
+    {
+      "state": "idle",
+      "file": "urchin_reference_idle.animation.json",
+      "sha256": "d0e821b9050f3594ec99f58d1869e29b534d8d8672a2181f2643552f3ad28c4f",
+      "clip": "reference_idle",
+      "reference_only": true,
+      "delivered_clip": "idle",
+      "rule": "two_seconds_past_cap",
+      "rule_note": "wingspeed 1.0: the slowest rhythm is the slow centre spin (ageInTicks * 0.02) mod 2 pi with its eight spikes cos(ageInTicks * 0.07 / 0.065 / 0.075 / 0.08 / 0.055 / 0.045 / 0.035 / 0.04 * WINGSPEED) * PI * 0.02 (UrchinGeoReplacement.applyCustomAnimations:94-102, one branch of the state switch) at 0.02 rad/tick, 314.16 ticks - over the 6 s cap; the other branch spins (ageInTicks * 0.2) mod 2 pi with the spikes at 0.7 / 0.65 / 0.75 / 0.8 / 0.55 / 0.45 / 0.35 / 0.4 * PI * 0.06 (:84-92); the threshold spikes cos(ageInTicks * 0.7 / 1.7 / 1.65 / 1.75 / 1.8 * WINGSPEED) * PI * 0.15 * limbSwingAmount (:63-67, walk); the slowest group's period 314.159272 ticks exceeds the 6 s cap (120 ticks): a two-second window (40 ticks), not a loop - the sheet states the closing key's seam",
+      "span_ticks": 40.0,
+      "period_ticks": 314.159272381,
+      "period_multiple_k": null,
+      "animation_length_seconds": 2.0,
+      "keys_per_bone": 41,
+      "sampled_inputs": "limbSwingAmount 0.0; limbSwing 0 (the walk position at rest: vanilla WalkAnimationState holds its position while the speed is 0, and a creature that has not walked since it spawned carries 0); ageInTicks = t (getBob: tickCount + partialTick, partialTick 0; advancing 1.0 per tick from 0); netHeadYaw 0; headPitch 0 (looking ahead); every entity-state flag at its rest value (attacking 0, ri1 0, rock_type 0, rf1 0: a ProbeSubject built from an empty state); the entity RNG seeded 0 once per clip and evolving across the keys; one pose call per key, 20 keys per second; full health",
+      "hook": "danger.orespawn.entity.client.UrchinGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the unlanded hook of owner 2026-09-14, addendum item 10 - the classic setupAnim transcribed into the descriptor's PoseInputs form, proven when the rig lands - registry-free, on explicit PoseInputs, over the reference leg's converter output reference_urchin.geo.json baked without the face-order strictness the landing slice's TEST-007 adds)",
+      "landed": false,
+      "moving_bones": [
+        "center",
+        "if1",
+        "if2",
+        "of1",
+        "of2",
+        "of3",
+        "of4",
+        "tis1",
+        "tis2",
+        "tis3",
+        "tis4",
+        "tos1",
+        "tos2",
+        "tos3",
+        "tos4"
+      ],
+      "position_bones": [],
+      "hidden_bones_at_rest": [],
+      "seam_delta_degrees": 45.8366208784,
+      "attacking": {
+        "declared_pose_interfaces": [
+          "UrchinPose"
+        ],
+        "getters": [
+          "UrchinPose.getAttacking()"
+        ],
+        "outside_pose_interface": [],
+        "reads_attacking": true,
+        "read_at_inputs": true
+      }
+    },
+    {
+      "state": "attack",
+      "file": "urchin_reference_attack.animation.json",
+      "sha256": "2f495f50e3cee482b90791ed831fac754e7d7b722d2c469137e8b232fb5aadb4",
+      "clip": "reference_attack",
+      "reference_only": true,
+      "delivered_clip": "aggro_idle",
+      "rule": "two_seconds_past_cap",
+      "rule_note": "wingspeed 1.0: the slowest rhythm is the slow centre spin (ageInTicks * 0.02) mod 2 pi with its eight spikes cos(ageInTicks * 0.07 / 0.065 / 0.075 / 0.08 / 0.055 / 0.045 / 0.035 / 0.04 * WINGSPEED) * PI * 0.02 (UrchinGeoReplacement.applyCustomAnimations:94-102, one branch of the state switch) at 0.02 rad/tick, 314.16 ticks - over the 6 s cap; the other branch spins (ageInTicks * 0.2) mod 2 pi with the spikes at 0.7 / 0.65 / 0.75 / 0.8 / 0.55 / 0.45 / 0.35 / 0.4 * PI * 0.06 (:84-92); the threshold spikes cos(ageInTicks * 0.7 / 1.7 / 1.65 / 1.75 / 1.8 * WINGSPEED) * PI * 0.15 * limbSwingAmount (:63-67, walk); the slowest group's period 314.159272 ticks exceeds the 6 s cap (120 ticks): a two-second window (40 ticks), not a loop - the sheet states the closing key's seam",
+      "span_ticks": 40.0,
+      "period_ticks": 314.159272381,
+      "period_multiple_k": null,
+      "animation_length_seconds": 2.0,
+      "keys_per_bone": 41,
+      "sampled_inputs": "attacking 1 (the pose interface's getAttacking() answers 1: the hook's attacking branch); limbSwingAmount 0.0; limbSwing 0 (the walk position at rest); ageInTicks = t (getBob: tickCount + partialTick, partialTick 0; advancing 1.0 per tick from 0); netHeadYaw 0; headPitch 0 (looking ahead); every other entity-state flag at its rest value (ri1 0, rock_type 0, rf1 0: a ProbeSubject built from the attack state); the entity RNG seeded 0 once per clip and evolving across the keys; one pose call per key, 20 keys per second; full health",
+      "hook": "danger.orespawn.entity.client.UrchinGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the unlanded hook of owner 2026-09-14, addendum item 10 - the classic setupAnim transcribed into the descriptor's PoseInputs form, proven when the rig lands - registry-free, on explicit PoseInputs, over the reference leg's converter output reference_urchin.geo.json baked without the face-order strictness the landing slice's TEST-007 adds)",
+      "landed": false,
+      "moving_bones": [
+        "center",
+        "if1",
+        "if2",
+        "of1",
+        "of2",
+        "of3",
+        "of4",
+        "tis1",
+        "tis2",
+        "tis3",
+        "tis4",
+        "tos1",
+        "tos2",
+        "tos3",
+        "tos4"
+      ],
+      "position_bones": [],
+      "hidden_bones_at_rest": [],
+      "seam_delta_degrees": 98.3662329169,
+      "attacking": {
+        "declared_pose_interfaces": [
+          "UrchinPose"
+        ],
+        "getters": [
+          "UrchinPose.getAttacking()"
+        ],
+        "outside_pose_interface": [],
+        "reads_attacking": true,
+        "read_at_inputs": true
+      }
+    }
+  ],
+  "reference_clip": {
+    "state": "walk",
+    "file": "urchin_reference_walk.animation.json",
+    "sha256": "9a2be389867afb57efa4a70dc9bd38fcdf3505ae162cbfd1d168884700d81fc2",
+    "clip": "reference",
+    "reference_only": true,
+    "delivered_clip": "walk",
+    "rule": "two_seconds_past_cap",
+    "rule_note": "wingspeed 1.0: the slowest rhythm is the slow centre spin (ageInTicks * 0.02) mod 2 pi with its eight spikes cos(ageInTicks * 0.07 / 0.065 / 0.075 / 0.08 / 0.055 / 0.045 / 0.035 / 0.04 * WINGSPEED) * PI * 0.02 (UrchinGeoReplacement.applyCustomAnimations:94-102, one branch of the state switch) at 0.02 rad/tick, 314.16 ticks - over the 6 s cap; the other branch spins (ageInTicks * 0.2) mod 2 pi with the spikes at 0.7 / 0.65 / 0.75 / 0.8 / 0.55 / 0.45 / 0.35 / 0.4 * PI * 0.06 (:84-92); the threshold spikes cos(ageInTicks * 0.7 / 1.7 / 1.65 / 1.75 / 1.8 * WINGSPEED) * PI * 0.15 * limbSwingAmount (:63-67, walk); the slowest group's period 314.159272 ticks exceeds the 6 s cap (120 ticks): a two-second window (40 ticks), not a loop - the sheet states the closing key's seam",
+    "span_ticks": 40.0,
+    "period_ticks": 314.159272381,
+    "period_multiple_k": null,
+    "animation_length_seconds": 2.0,
+    "keys_per_bone": 41,
+    "sampled_inputs": "limbSwingAmount 1.0; limbSwing = t (advancing 1.0 per tick from 0: vanilla WalkAnimationState.update does speed += (movementSpeed - speed) * multiplier; position += speed, and the classic renderer hands walkAnimation.position(partialTick) as limbSwing and min(1, speed) as limbSwingAmount, so at speed 1 the position advances exactly 1.0 per tick); ageInTicks = t (getBob: tickCount + partialTick, partialTick 0); netHeadYaw 0; headPitch 0 (looking ahead); every entity-state flag at its rest value (attacking 0, ri1 0, rock_type 0, rf1 0: a ProbeSubject built from an empty state); the entity RNG seeded 0 once per clip and evolving across the keys; one pose call per key, 20 keys per second; full health (no shipped hook reads health)",
+    "hook": "danger.orespawn.entity.client.UrchinGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the unlanded hook of owner 2026-09-14, addendum item 10 - the classic setupAnim transcribed into the descriptor's PoseInputs form, proven when the rig lands - registry-free, on explicit PoseInputs, over the reference leg's converter output reference_urchin.geo.json baked without the face-order strictness the landing slice's TEST-007 adds)",
+    "landed": false,
+    "moving_bones": [
+      "center",
+      "if1",
+      "if2",
+      "if3",
+      "if4",
+      "of1",
+      "of2",
+      "of3",
+      "of4",
+      "tis1",
+      "tis2",
+      "tis3",
+      "tis4",
+      "tos1",
+      "tos2",
+      "tos3",
+      "tos4"
+    ],
+    "position_bones": [],
+    "hidden_bones_at_rest": [],
+    "seam_delta_degrees": 53.990551936,
+    "attacking": {
+      "declared_pose_interfaces": [
+        "UrchinPose"
+      ],
+      "getters": [
+        "UrchinPose.getAttacking()"
+      ],
+      "outside_pose_interface": [],
+      "reads_attacking": true,
+      "read_at_inputs": true
+    }
+  },
   "exact_transcription": false,
   "rig_source": "reference-leg converter output",
   "in_game": false,
