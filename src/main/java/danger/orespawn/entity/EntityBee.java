@@ -1,5 +1,6 @@
 package danger.orespawn.entity;
 
+import danger.orespawn.entity.pose.BeePose;
 import danger.orespawn.MobStats;
 
 import danger.orespawn.OreSpawnConfig;
@@ -33,7 +34,7 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraft.util.Mth;
 import danger.orespawn.entity.ai.TargetSelection;
 
-public class EntityBee extends Monster {
+public class EntityBee extends Monster implements BeePose {
     // OPT-011: cached SoundEvents — identical createVariableRangeEvent ids,
     // allocated once per class instead of on every sound query.
     private static final SoundEvent SND_BEEBUZZ = SoundEvent.createVariableRangeEvent(

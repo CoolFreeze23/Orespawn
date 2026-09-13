@@ -789,7 +789,7 @@
       "expected_scale": 1.1,
       "ref_derivation": "shadow: RenderBee.java:22-23 `super((ModelBase)par1ModelBase, par2 * par3)` with ClientProxyOreSpawn.java:425 args (new ModelBee(2.0f), 0.9f, 1.1f) => 0.9f * 1.1f = 0.99 (confirmed) | scale: RenderBee.java:24 `this.scale = par3` (1.1f); :39-41 preRenderScale -> glScalef(1.1) via func_77041_b (:43-45); no isChild branch. ModelBee(2.0f) is wingspeed (ModelBee.java:14,39-40), not a size. Confirmed.",
       "port_renderer": "src/main/java/danger/orespawn/entity/client/BeeRenderer.java",
-      "port_candidate": "none",
+      "port_candidate": "src/main/java/danger/orespawn/entity/client/BeeGeoReplacement.java",
       "truth_verdicts": {
         "shadow": "DIVERGES",
         "scale": "DIVERGES"
@@ -876,7 +876,7 @@
       "expected_scale": 0.9,
       "ref_derivation": "shadow: RenderGammaMetroid.java:22-23 `super((ModelBase)par1ModelBase, par2 * par3)` with ClientProxyOreSpawn.java:429 `new RenderGammaMetroid(new ModelGammaMetroid(0.45f), 0.75f, 0.9f)` -> 0.75*0.9 = 0.675 (re-read, confirmed) | scale: RenderGammaMetroid.java:24 `this.scale = par3` (=0.9f); :39-45 preRenderScale: isChild -> glScalef(scale/2.0f) = 0.45, else glScalef(0.9). Adult 0.9, baby 0.45. Babies exist: GammaMetroid.func_90011_a -> spawnBabyAnimal (GammaMetroid.java:462-466).",
       "port_renderer": "src/main/java/danger/orespawn/entity/client/GammaMetroidRenderer.java",
-      "port_candidate": "none",
+      "port_candidate": "src/main/java/danger/orespawn/entity/client/GammaMetroidGeoReplacement.java",
       "truth_verdicts": {
         "shadow": "DIVERGES",
         "scale": "DIVERGES"
@@ -1486,7 +1486,7 @@
       "expected_scale": 0.75,
       "ref_derivation": "shadow: RenderTerribleTerror.java:22-23 `super((ModelBase)par1ModelBase, par2 * par3)` with ClientProxyOreSpawn.java:457 args (0.45f, 0.75f) -> 0.45f * 0.75f = 0.3375 (re-read, confirmed) | scale: RenderTerribleTerror.java:24 `this.scale = par3` = 0.75f; func_77041_b (:43-45) -> preRenderScale (:39-41) `GL11.glScalef(scale, scale, scale)` unconditionally = 0.75 (no baby branch; TerribleTerror extends EntityMob, TerribleTerror.java:45)",
       "port_renderer": "src/main/java/danger/orespawn/entity/client/TerribleTerrorRenderer.java",
-      "port_candidate": "none",
+      "port_candidate": "src/main/java/danger/orespawn/entity/client/TerribleTerrorGeoReplacement.java",
       "truth_verdicts": {
         "shadow": "DIVERGES",
         "scale": "DIVERGES"
@@ -1675,7 +1675,7 @@
       "expected_scale": 1,
       "ref_derivation": "shadow: RenderWormSmall.java:22-23 `super((ModelBase)par1ModelBase, par2 * par3)` with registration args (ClientProxyOreSpawn.java:466 `new RenderWormSmall(new ModelWormSmall(), 0.1f, 1.0f)`) par2=0.1f, par3=1.0f -> RenderLiving shadowSize = 0.1f*1.0f = 0.1 | scale: RenderWormSmall.java:19 field default 1.0f, :24 `this.scale = par3` = 1.0f; preRenderScale (:39-41) `GL11.glScalef(scale, scale, scale)` reached via func_77041_b (:43-45) -> uniform 1.0. WormSmall extends EntityMob (WormSmall.java:21), no child branch.",
       "port_renderer": "src/main/java/danger/orespawn/entity/client/WormSmallRenderer.java",
-      "port_candidate": "none",
+      "port_candidate": "src/main/java/danger/orespawn/entity/client/WormSmallGeoReplacement.java",
       "truth_verdicts": {
         "shadow": "DIVERGES",
         "scale": "MATCH"
@@ -1698,7 +1698,7 @@
       "expected_scale": 1,
       "ref_derivation": "shadow: RenderWormMedium.java:22-23 `super((ModelBase)par1ModelBase, par2 * par3)` with ClientProxyOreSpawn.java:467 `new RenderWormMedium(new ModelWormMedium(), 0.25f, 1.0f)` par2=0.25f, par3=1.0f -> shadowSize = 0.25 | scale: RenderWormMedium.java:19 default 1.0f, :24 `this.scale = par3` = 1.0f; preRenderScale (:39-41) glScalef(1.0,1.0,1.0) via func_77041_b (:43-45). WormMedium extends EntityMob (WormMedium.java:23), no child branch.",
       "port_renderer": "src/main/java/danger/orespawn/entity/client/WormMediumRenderer.java",
-      "port_candidate": "none",
+      "port_candidate": "src/main/java/danger/orespawn/entity/client/WormMediumGeoReplacement.java",
       "truth_verdicts": {
         "shadow": "DIVERGES",
         "scale": "MATCH"
@@ -1721,7 +1721,7 @@
       "expected_scale": 1,
       "ref_derivation": "shadow: RenderWormLarge.java:22-23 `super((ModelBase)par1ModelBase, par2 * par3)` with ClientProxyOreSpawn.java:468 `new RenderWormLarge(new ModelWormLarge(), 0.9f, 1.0f)` par2=0.9f, par3=1.0f -> shadowSize = 0.9 | scale: RenderWormLarge.java:19 default 1.0f, :24 `this.scale = par3` = 1.0f; preRenderScale (:39-41) glScalef(1.0,1.0,1.0) via func_77041_b (:43-45). WormLarge extends EntityMob (WormLarge.java:37), no child branch.",
       "port_renderer": "src/main/java/danger/orespawn/entity/client/WormLargeRenderer.java",
-      "port_candidate": "none",
+      "port_candidate": "src/main/java/danger/orespawn/entity/client/WormLargeGeoReplacement.java",
       "truth_verdicts": {
         "shadow": "DIVERGES",
         "scale": "MATCH"
@@ -1785,7 +1785,7 @@
       "expected_scale": 1,
       "ref_derivation": "shadow: RenderCloudShark.java:22-23 `super((ModelBase)par1ModelBase, par2 * par3)` with ClientProxyOreSpawn.java:471 `new RenderCloudShark(new ModelCloudShark(1.0f), 0.5f, 1.0f)` par2=0.5f, par3=1.0f -> shadowSize = 0.5. ... | scale: RenderCloudShark.java:19 default 1.0f, :24 `this.scale = par3` = 1.0f; preRenderScale (:39-41) glScalef(1.0,1.0,1.0) via func_77041_b (:43-45). CloudShark extends EntityMob (CloudShark.java:35), no child branch.",
       "port_renderer": "src/main/java/danger/orespawn/entity/client/CloudSharkRenderer.java",
-      "port_candidate": "none",
+      "port_candidate": "src/main/java/danger/orespawn/entity/client/CloudSharkGeoReplacement.java",
       "truth_verdicts": {
         "shadow": "MATCH",
         "scale": "MATCH"
@@ -1913,7 +1913,7 @@
       "expected_scale": 0.35,
       "ref_derivation": "shadow: RenderFairy.java:21-22 `super((ModelBase)par1ModelBase, par2 * par3)`; ClientProxyOreSpawn.java:477 passes par2=0.1f, par3=0.35f -> shadowSize = 0.1f*0.35f = 0.035 (float32 0.03500000015). Re-read and confirmed. | scale: RenderFairy.java:23 `this.scale = par3` = 0.35f; preRenderScale (RenderFairy.java:38-40, bound via func_77041_b :42-44) glScalef(0.35,0.35,0.35). ModelFairy ctor arg 1.5f is not a scale (reference ModelFairy: 15 func_78789_a boxes, 0 glScale/glTranslate). ...",
       "port_renderer": "src/main/java/danger/orespawn/entity/client/FairyRenderer.java",
-      "port_candidate": "none",
+      "port_candidate": "src/main/java/danger/orespawn/entity/client/FairyGeoReplacement.java",
       "truth_verdicts": {
         "shadow": "DIVERGES",
         "scale": "DIVERGES"
@@ -2097,7 +2097,7 @@
       "expected_scale": 0.25,
       "ref_derivation": "shadow: RenderIrukandji.java:22-23 `super((ModelBase)par1ModelBase, par2 * par3)` with ClientProxyOreSpawn.java:485 args (0.1f, 0.25f): shadowSize = 0.1f * 0.25f = 0.025f (float32 0.0250000004). Verified. | scale: RenderIrukandji.java:24 `this.scale = par3` = 0.25f; RenderIrukandji.java:39-41 preRenderScale `GL11.glScalef(this.scale, this.scale, this.scale)` via func_77041_b :43-45. Uniform 0.25, no baby branch. ...",
       "port_renderer": "src/main/java/danger/orespawn/entity/client/IrukandjiRenderer.java",
-      "port_candidate": "none",
+      "port_candidate": "src/main/java/danger/orespawn/entity/client/IrukandjiGeoReplacement.java",
       "truth_verdicts": {
         "shadow": "DIVERGES",
         "scale": "DIVERGES"
@@ -2120,7 +2120,7 @@
       "expected_scale": 0.75,
       "ref_derivation": "shadow: RenderSkate.java:22-23 `super((ModelBase)par1ModelBase, par2 * par3)` with ClientProxyOreSpawn.java:486 args (0.1f, 0.75f): shadowSize = 0.1f * 0.75f = 0.075f (float32 0.07500000298, identical to the literal 0.075F). Verified. | scale: RenderSkate.java:24 `this.scale = par3` = 0.75f; RenderSkate.java:39-41 preRenderScale `GL11.glScalef(this.scale, this.scale, this.scale)` via func_77041_b :43-45. Uniform 0.75, no baby branch. ...",
       "port_renderer": "src/main/java/danger/orespawn/entity/client/SkateRenderer.java",
-      "port_candidate": "none",
+      "port_candidate": "src/main/java/danger/orespawn/entity/client/SkateGeoReplacement.java",
       "truth_verdicts": {
         "shadow": "MATCH",
         "scale": "MATCH"
@@ -2184,7 +2184,7 @@
       "expected_scale": 1.1,
       "ref_derivation": "shadow: RenderHerculesBeetle.java:22-23 `super((ModelBase)par1ModelBase, par2 * par3)` with ClientProxyOreSpawn.java:489 args (0.99f, 1.1f): shadowSize = 0.99f * 1.1f = 1.089f (float32 1.08899999, identical to the literal 1.089f). Verified. | scale: RenderHerculesBeetle.java:24 `this.scale = par3` = 1.1f; RenderHerculesBeetle.java:39-41 preRenderScale `GL11.glScalef(this.scale, this.scale, this.scale)` via func_77041_b :43-45. Uniform 1.1, no baby branch. ...",
       "port_renderer": "src/main/java/danger/orespawn/entity/client/HerculesBeetleRenderer.java",
-      "port_candidate": "none",
+      "port_candidate": "src/main/java/danger/orespawn/entity/client/HerculesBeetleGeoReplacement.java",
       "truth_verdicts": {
         "shadow": "DIVERGES",
         "scale": "DIVERGES"
@@ -2392,7 +2392,7 @@
       "expected_scale": 1.25,
       "ref_derivation": "shadow: RenderCaterKiller.java:22-25 `super((ModelBase)par1ModelBase, par2 * par3)` with ClientProxyOreSpawn.java:499 args (1.0f, 1.25f) -> Render.shadowSize = 1.0f * 1.25f = 1.25. ... | scale: RenderCaterKiller.java:24 `this.scale = par3` = 1.25f; preRenderScale :39-45: `if (getPlayNicely() != 0) glScalef(scale/2)` = 0.625 else `glScalef(1.25,1.25,1.25)`. Called via func_77041_b :47-49 (preRenderCallback slot).",
       "port_renderer": "src/main/java/danger/orespawn/entity/client/CaterKillerRenderer.java",
-      "port_candidate": "none",
+      "port_candidate": "src/main/java/danger/orespawn/entity/client/CaterKillerGeoReplacement.java",
       "truth_verdicts": {
         "shadow": "DIVERGES",
         "scale": "DIVERGES"
@@ -2456,7 +2456,7 @@
       "expected_scale": 0.75,
       "ref_derivation": "shadow: RenderRubberDucky.java:23-26 `super((ModelBase)par1ModelBase, par2 * par3)` with ClientProxyOreSpawn.java:502 args (0.15f, 0.75f) -> Render.shadowSize = 0.15f * 0.75f = 0.1125 (float 0.11249999...). ... | scale: RenderRubberDucky.java:25 `this.scale = par3` = 0.75f; preRenderScale :40-46: child (func_70631_g_) `glScalef(scale/2)` = 0.375, else `glScalef(0.75,0.75,0.75)`; via func_77041_b :48-50.",
       "port_renderer": "src/main/java/danger/orespawn/entity/client/RubberDuckyRenderer.java",
-      "port_candidate": "none",
+      "port_candidate": "src/main/java/danger/orespawn/entity/client/RubberDuckyGeoReplacement.java",
       "truth_verdicts": {
         "shadow": "DIVERGES",
         "scale": "DIVERGES"
@@ -2630,7 +2630,7 @@
       "expected_scale": 0.5,
       "ref_derivation": "shadow: RenderCricket.java:22-23 `super((ModelBase)par1ModelBase, par2 * par3)` with registration args (0.15f, 0.5f) at ClientProxyOreSpawn.java:510 => 0.15 * 0.5 = 0.075. Confirmed. | scale: RenderCricket.java:24 this.scale = par3 = 0.5; :43-45 func_77041_b -> preRenderScale :39-41 glScalef(this.scale x3) => 0.5; ModelCricket(2.5f) arg is wingspeed only (ModelCricket.java:27-28). No isChild/field_78091_s use in ModelCricket. Confirmed.",
       "port_renderer": "src/main/java/danger/orespawn/entity/client/CricketRenderer.java",
-      "port_candidate": "none",
+      "port_candidate": "src/main/java/danger/orespawn/entity/client/CricketGeoReplacement.java",
       "truth_verdicts": {
         "shadow": "DIVERGES",
         "scale": "DIVERGES"

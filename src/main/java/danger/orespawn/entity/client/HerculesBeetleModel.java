@@ -3,6 +3,7 @@ package danger.orespawn.entity.client;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import danger.orespawn.entity.EntityHerculesBeetle;
+import danger.orespawn.entity.pose.HerculesBeetlePose;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
@@ -291,6 +292,13 @@ public class HerculesBeetleModel extends EntityModel<EntityHerculesBeetle> {
 
     @Override
     public void setupAnim(EntityHerculesBeetle entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
+        // The body lives in poseFrom so the parity harness can drive it from a declared state without a live
+        // entity (the Slice 4b form; the third Tier-2 slice, 2026-09-13): the entity satisfies the interface.
+        poseFrom(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
+    }
+
+    /** The classic pose over what the model reads from its entity (orig ModelHerculesBeetle.java:293 {@code getAttacking()}). */
+    public void poseFrom(HerculesBeetlePose entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
         float newangle = 0.0f;
         newangle = Mth.cos((float)(ageInTicks * this.wingspeed * 0.45f)) * (float)Math.PI * 0.12f * limbSwingAmount;
         this.lfleg3.yRot = this.lfleg2.yRot = (this.lfleg1.yRot = 0.349f + newangle);

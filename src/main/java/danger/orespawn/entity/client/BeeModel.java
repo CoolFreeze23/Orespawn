@@ -3,6 +3,7 @@ package danger.orespawn.entity.client;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import danger.orespawn.entity.EntityBee;
+import danger.orespawn.entity.pose.BeePose;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
@@ -193,6 +194,13 @@ public class BeeModel extends EntityModel<EntityBee> {
 
     @Override
     public void setupAnim(EntityBee entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
+        // The body lives in poseFrom so the parity harness can drive it from a declared state without a live
+        // entity (the Slice 4b form; the third Tier-2 slice, 2026-09-13): the entity satisfies the interface.
+        poseFrom(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
+    }
+
+    /** The classic pose over what the model reads from its entity (orig ModelBee.java:214 {@code getAttacking()}). */
+    public void poseFrom(BeePose entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
         float newangle = 0.0f;
         newangle = Mth.cos((float)(ageInTicks * 1.1f * this.wingspeed)) * (float)Math.PI * 0.3f;
         this.WingLeft.zRot = -1.745f - newangle;

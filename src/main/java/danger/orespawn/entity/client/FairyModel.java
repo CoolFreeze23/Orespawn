@@ -7,7 +7,10 @@ import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
+import java.util.function.Function;
 /**
  * BUG-041 stage 2 (2026-09-13): the 1.7.10 export sets {@code mirror = true} AFTER {@code addBox} (orig ModelFairy.java:
  * 15 stores, all inert - 1.7.10's ModelBox reads the flag in its constructor, law 11 from Mojang's 1.7.10 jar),
@@ -18,6 +21,15 @@ import net.minecraft.util.Mth;
 
 public class FairyModel extends EntityModel<Fairy> {
     /** Animation frequency constant; orig ModelFairy.java:16,34 (wingspeed), value from orig ClientProxyOreSpawn.java:477. */
+    /**
+     * The third Tier-2 slice (2026-09-13): the render-type FUNCTION the fairy is drawn with - {@code RenderType::entityTranslucent},
+     * the same factory {@link FairyRenderer#getRenderType} applies (gradient wing alpha; the 1.7.10 look) - stored on the model
+     * as {@code EntityModel(Function)} does (the {@link ModelPurplePower#RENDER_TYPE} form) so the GeckoLib descriptor hands over
+     * this very object and the parity harness proves the two renderers' render type equal by identity (ENT-S-146). The classic
+     * path is unchanged: {@code Model.renderType} is consulted only by {@code LivingEntityRenderer.getRenderType}, which the
+     * fairy renderer overrides with the same factory.
+     */
+    public static final Function<ResourceLocation, RenderType> RENDER_TYPE = RenderType::entityTranslucent;
     private final float wingspeed = 1.5f;
     private final ModelPart head;
     private final ModelPart chest;
@@ -36,6 +48,7 @@ public class FairyModel extends EntityModel<Fairy> {
     private final ModelPart rwing1;
 
     public FairyModel(ModelPart root) {
+        super(RENDER_TYPE);
         this.head = root.getChild("head");
         this.chest = root.getChild("chest");
         this.waist = root.getChild("waist");

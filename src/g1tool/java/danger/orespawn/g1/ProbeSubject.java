@@ -2,6 +2,9 @@ package danger.orespawn.g1;
 
 import com.google.gson.JsonObject;
 import danger.orespawn.entity.client.RenderInfo;
+import danger.orespawn.entity.pose.BeePose;
+import danger.orespawn.entity.pose.CaterKillerPose;
+import danger.orespawn.entity.pose.HerculesBeetlePose;
 import danger.orespawn.entity.pose.PurplePowerPose;
 import danger.orespawn.entity.pose.Robot2Pose;
 import danger.orespawn.entity.pose.Robot3Pose;
@@ -24,7 +27,8 @@ import net.minecraft.util.RandomSource;
  * proven through the resulting pose (a roll drawn out of order or in excess moves a fan);
  * {@link #after()} is unchanged.</p>
  */
-final class ProbeSubject implements Robot2Pose, Robot3Pose, Robot4Pose, RockBasePose, RotatorPose, PurplePowerPose {
+final class ProbeSubject implements Robot2Pose, Robot3Pose, Robot4Pose, RockBasePose, RotatorPose, PurplePowerPose,
+        BeePose, CaterKillerPose, HerculesBeetlePose {
     private final RenderInfo renderInfo = new RenderInfo();
     private final int attacking;
     private final int rockType;

@@ -45,11 +45,15 @@ public class FairyRenderer extends MobRenderer<Fairy, FairyModel> {
         poseStack.scale(SCALE, SCALE, SCALE);
     }
 
-    @Override
-    public ResourceLocation getTextureLocation(Fairy entity) {
-        int type = entity.getFairyType();
+    /** The sheet for a fairy type (orig RenderFairy.getEntityTexture: nine numbered sheets, the first for any other value); shared with the GeckoLib descriptor. */
+    public static ResourceLocation textureFor(int type) {
         if (type >= 0 && type < TEXTURES.length) return TEXTURES[type];
         return TEXTURES[0];
+    }
+
+    @Override
+    public ResourceLocation getTextureLocation(Fairy entity) {
+        return textureFor(entity.getFairyType());
     }
 
     // Fairy sprites use gradient wing alpha; the cutout pipeline would
