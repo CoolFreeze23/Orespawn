@@ -1,0 +1,136 @@
+{
+  "tool": "0.2.6 (the pilot package, 2026-09-13: artist_handoff/ writable after the mirror drop; the Queen's pilot scope - idle and attack - marked in her seed and sheet)",
+  "out_dir": "artist_handoff",
+  "entities": [
+    {
+      "registry": "the_queen",
+      "tier": 0,
+      "tier_label": "Tier 1 (boss; the design's 'done' row)",
+      "files": [
+        "SPEC.md",
+        "reference/SLOTS.md",
+        "roundtrip.report.json",
+        "spec.manifest.json",
+        "textures/blue_queen.png",
+        "textures/red_queen.png",
+        "the_queen.animation.json",
+        "the_queen.bbmodel",
+        "the_queen.geo.json"
+      ],
+      "bones": 110,
+      "cubes": 130,
+      "clips_shipped": 8,
+      "clips_in_spec": 8,
+      "goals": 5,
+      "flags": 6,
+      "attacking": "STATE",
+      "strike_sites": 6,
+      "textures_mapped": 2,
+      "locked_bones": 27,
+      "lock_mode": "warn",
+      "keyed_locked_bones": 26,
+      "effort_hours": 27.5,
+      "unlabelled_bones": 0,
+      "roundtrip": {
+        "equal": true,
+        "bone_order_preserved": true,
+        "differences": 0,
+        "dropped_keys": 0,
+        "reattached": []
+      },
+      "warnings": [
+        "LOCKED_BONES_KEYED: the shipped clips key 26 of the 27 SPEC-locked bones (LHead, LHead12, LHead4, Lwing1, NeckL1, NeckL13...): allowed and warned — Keying a locked bone is allowed; the checker warns, and the hitbox part follows the bone in-game (the consequence, so keep such keys deliberate). Renaming, re-parenting or deleting a locked bone is refused."
+      ]
+    },
+    {
+      "registry": "beaver",
+      "tier": 2,
+      "tier_label": "Tier 2",
+      "files": [
+        "SPEC.md",
+        "beaver.animation.json",
+        "beaver.bbmodel",
+        "beaver.geo.json",
+        "beaver_reference.animation.json",
+        "reference/SLOTS.md",
+        "roundtrip.report.json",
+        "spec.manifest.json",
+        "textures/beaver.png"
+      ],
+      "bones": 9,
+      "cubes": 9,
+      "clips_shipped": 4,
+      "clips_in_spec": 11,
+      "goals": 8,
+      "flags": 0,
+      "attacking": "NONE",
+      "strike_sites": 0,
+      "textures_mapped": 1,
+      "locked_bones": 0,
+      "lock_mode": "warn",
+      "keyed_locked_bones": 0,
+      "effort_hours": 12.8,
+      "unlabelled_bones": 0,
+      "roundtrip": {
+        "equal": true,
+        "bone_order_preserved": true,
+        "differences": 0,
+        "dropped_keys": 0,
+        "reattached": [
+          "orespawn:bone_draw_order"
+        ]
+      },
+      "warnings": []
+    }
+  ],
+  "texture_map": {
+    "shipped": 428,
+    "unique_payloads": 338,
+    "duplicate_groups": 86,
+    "redundant_names": 90,
+    "referenced_by_java": 262,
+    "strays": 42,
+    "law_series": {
+      "boyfriend": true,
+      "elevator": true,
+      "girlfriend": true,
+      "swimshorts": true
+    }
+  },
+  "warnings": [
+    "[the_queen] LOCKED_BONES_KEYED: the shipped clips key 26 of the 27 SPEC-locked bones (LHead, LHead12, LHead4, Lwing1, NeckL1, NeckL13...): allowed and warned — Keying a locked bone is allowed; the checker warns, and the hitbox part follows the bone in-game (the consequence, so keep such keys deliberate). Renaming, re-parenting or deleting a locked bone is refused.",
+    "[robot_1] BONE_UNLABELLED: bone Shape1 has no glossary label",
+    "[robot_1] BONE_UNLABELLED: bone Shape10 has no glossary label",
+    "[robot_1] BONE_UNLABELLED: bone Shape11 has no glossary label",
+    "[robot_1] BONE_UNLABELLED: bone Shape12 has no glossary label",
+    "[robot_1] BONE_UNLABELLED: bone Shape13 has no glossary label",
+    "[robot_1] BONE_UNLABELLED: bone Shape14 has no glossary label",
+    "[robot_1] BONE_UNLABELLED: bone Shape15 has no glossary label",
+    "[robot_1] BONE_UNLABELLED: bone Shape15a has no glossary label",
+    "[robot_1] BONE_UNLABELLED: bone Shape16 has no glossary label",
+    "[robot_1] BONE_UNLABELLED: bone Shape17 has no glossary label",
+    "[robot_1] BONE_UNLABELLED: bone Shape18 has no glossary label",
+    "[robot_1] BONE_UNLABELLED: bone Shape2 has no glossary label",
+    "[robot_1] BONE_UNLABELLED: bone Shape2a has no glossary label",
+    "[robot_1] BONE_UNLABELLED: bone Shape3 has no glossary label",
+    "[robot_1] BONE_UNLABELLED: bone Shape4 has no glossary label",
+    "[robot_1] BONE_UNLABELLED: bone Shape5 has no glossary label",
+    "[robot_1] BONE_UNLABELLED: bone Shape6 has no glossary label",
+    "[robot_1] BONE_UNLABELLED: bone Shape7 has no glossary label",
+    "[robot_1] BONE_UNLABELLED: bone Shape8 has no glossary label",
+    "[robot_1] BONE_UNLABELLED: bone Shape9 has no glossary label",
+    "[robot_2] BONE_UNLABELLED: bone Shape3 has no glossary label",
+    "[robot_2] BONE_UNLABELLED: bone Shape6 has no glossary label",
+    "[robot_2] BONE_UNLABELLED: bone Shape7 has no glossary label",
+    "[robot_2] BONE_UNLABELLED: bone Shape8 has no glossary label",
+    "[robot_3] ATTACKING_UNCLASSIFIED: DATA_ATTACKING classified MIXED: a 10-tick pulse per in-range think tick: the flag is raised at line(s) [155] every 35 ticks (reloadTicker reset) while a target is in range — before the line-of-sight gate, so it pulses whether or not a shot fires — and cleared when reloadTicker < 25 at line(s) [144] AND cleared on target loss at line(s) [162]",
+    "[robot_5] ATTACKING_UNCLASSIFIED: DATA_ATTACKING classified MIXED: a 5-tick pulse per in-range think tick: the flag is raised at line(s) [143] every 20 ticks (reloadTicker reset) while a target is in range — before the line-of-sight gate, so it pulses whether or not a shot fires — and cleared when reloadTicker < 15 at line(s) [131] AND cleared on target loss at line(s) [152]",
+    "[dragonfly] GOAL_UNCLASSIFIED: goal DragonflyHuntGoal (EntityDragonfly.java:65) has no dictionary entry",
+    "[mosquito] GOAL_UNCLASSIFIED: goal MosquitoFlightGoal (EntityMosquito.java:49) has no dictionary entry",
+    "[elevator] BONE_UNLABELLED: bone shape1 has no glossary label",
+    "[elevator] BONE_UNLABELLED: bone shape2 has no glossary label",
+    "[elevator] BONE_UNLABELLED: bone shape3 has no glossary label",
+    "[elevator] BONE_UNLABELLED: bone shape4 has no glossary label",
+    "[elevator] BONE_UNLABELLED: bone shape5 has no glossary label"
+  ]
+}

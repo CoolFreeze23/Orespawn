@@ -1,0 +1,429 @@
+file,sha256_12,canonical_id,canonical_name,is_canonical,twins,twins_elsewhere,width,height,series,stray_class,consumers,entity_folders,provenance_1_7_10,fan_out_targets
+alien.png,3e274d9e4553,img_3e274d9e4553,alien.png,yes,myalien.png,,256,128,,,AlienRenderer,alien;alien_boss,MyAlien.png,myalien.png
+alosaurus.png,2c03ee764782,img_2c03ee764782,alosaurus.png,yes,,,128,128,,,AlosaurusRenderer,alosaurus,alosaurus.png,
+amethyst_1.png,929708899e95,img_929708899e95,amethyst_1.png,yes,,models/armor/amethyst_layer_1.png,64,32,amethyst_1..2 x2,armor sheet stray: the shipped armor layer is textures/models/armor/amethyst_layer_1.png (byte-identical),,,amethyst_1.png,
+amethyst_2.png,e6b6ffd10324,img_e6b6ffd10324,amethyst_2.png,yes,,models/armor/amethyst_layer_2.png,64,32,amethyst_1..2 x2,armor sheet stray: the shipped armor layer is textures/models/armor/amethyst_layer_2.png (byte-identical),,,amethyst_2.png,
+ant.png,2223e19e6634,img_2223e19e6634,ant.png,yes,,,64,32,,,AntGeoReplacement;AntRenderer,ant,ant.png,
+antrobot.png,c66c9d0e9900,img_c66c9d0e9900,antrobot.png,yes,antrobottexture.png,,128,256,,,AntRobotRenderer,ant_robot,AntRobottexture.png,antrobottexture.png
+antrobottexture.png,c66c9d0e9900,img_c66c9d0e9900,antrobot.png,no,antrobot.png,,128,256,,,,ant_robot,AntRobottexture.png,
+apple_cow.png,ba0b1a53460f,img_ba0b1a53460f,redcow.png,no,red_cow.png;redcow.png,,64,32,,,AppleCowRenderer,apple_cow;red_cow,red_cow.png,
+attacksquid.png,dd8a058f39b7,img_dd8a058f39b7,attacksquid.png,yes,,,64,32,,,AttackSquidRenderer,attack_squid,AttackSquid.png,
+attitudeadjustertexture.png,4f0b66f127d4,img_4f0b66f127d4,attitudeadjustertexture.png,yes,,item/attitudeadjustertexture.png,128,256,,"item-renderer texture (a held weapon/tool model), not a mob",OreSpawnItemRenderer,,AttitudeAdjustertexture.png,
+bandp_bandit.png,bdb327b3e7ef,img_bdb327b3e7ef,bandp_bandit.png,yes,bandptexture.png,,64,128,,,BandPRenderer,band_p,BandPtexture.png,bandptexture.png
+bandp_pirate.png,69e11d73d5f1,img_69e11d73d5f1,bandp_pirate.png,yes,squidzookatexture.png,item/squidzookatexture.png,128,128,,,BandPRenderer,band_p,SquidZookatexture.png,squidzookatexture.png
+bandptexture.png,bdb327b3e7ef,img_bdb327b3e7ef,bandp_bandit.png,no,bandp_bandit.png,,64,128,,,,band_p,BandPtexture.png,
+baryonyx.png,76ba9dd1b2b2,img_76ba9dd1b2b2,baryonyx.png,yes,,,128,128,,,BaryonyxRenderer,baryonyx,Baryonyx.png,
+basilisk.png,ab568d4e0020,img_ab568d4e0020,basilisk.png,yes,,,256,64,,,BasiliskRenderer,basilisk,basilisk.png,
+battleaxetexture.png,036706e86a25,img_036706e86a25,battleaxetexture.png,yes,,item/battleaxetexture.png,128,64,,"item-renderer texture (a held weapon/tool model), not a mob",OreSpawnItemRenderer,,BattleAxetexture.png,
+beaver.png,aeb70cb65ebd,img_aeb70cb65ebd,beaver.png,yes,beavertexture.png,,64,32,,,BeaverGeoReplacement;BeaverRenderer,beaver,Beavertexture.png,beavertexture.png
+beavertexture.png,aeb70cb65ebd,img_aeb70cb65ebd,beaver.png,no,beaver.png,,64,32,,,,beaver,Beavertexture.png,
+bee.png,a70beb634a7a,img_a70beb634a7a,bee.png,yes,beetexture.png,,256,256,,,BeeRenderer,bee,Beetexture.png,beetexture.png
+beetexture.png,a70beb634a7a,img_a70beb634a7a,bee.png,no,bee.png,,256,256,,,,bee,Beetexture.png,
+beetletexture.png,512775db3c80,img_512775db3c80,herculesbeetle.png,no,herculesbeetle.png,,256,256,,,,hercules_beetle,Beetletexture.png,
+berthatexture.png,0e17bbdac178,img_0e17bbdac178,berthatexture.png,yes,,item/berthatexture.png,64,128,,"item-renderer texture (a held weapon/tool model), not a mob",OreSpawnItemRenderer,,Berthatexture.png,
+bikini0.png,667e4ea6071d,img_667e4ea6071d,bikini0.png,yes,,,64,32,bikini0..17 x18,,,,bikini0.png,
+bikini1.png,3362470e711d,img_3362470e711d,bikini1.png,yes,,,64,32,bikini0..17 x18,,,,bikini1.png,
+bikini10.png,06052b869a80,img_06052b869a80,bikini10.png,yes,,,64,32,bikini0..17 x18,,,,bikini10.png,
+bikini11.png,b724b012de4b,img_b724b012de4b,bikini11.png,yes,,,64,32,bikini0..17 x18,,,,bikini11.png,
+bikini12.png,4cad96f14cc1,img_4cad96f14cc1,bikini12.png,yes,,,64,32,bikini0..17 x18,,,,bikini12.png,
+bikini13.png,923b354826ed,img_923b354826ed,bikini13.png,yes,,,64,32,bikini0..17 x18,,,,bikini13.png,
+bikini14.png,b12c6225c9d4,img_b12c6225c9d4,bikini14.png,yes,,,64,32,bikini0..17 x18,,,,bikini14.png,
+bikini15.png,cde04e378953,img_cde04e378953,bikini15.png,yes,,,64,32,bikini0..17 x18,,,,bikini15.png,
+bikini16.png,8090228ec6f0,img_8090228ec6f0,bikini16.png,yes,,,64,32,bikini0..17 x18,,,,bikini16.png,
+bikini17.png,32a2d695549f,img_32a2d695549f,bikini17.png,yes,,,64,32,bikini0..17 x18,,,,bikini17.png,
+bikini2.png,ee762ce4729c,img_ee762ce4729c,bikini2.png,yes,,,64,32,bikini0..17 x18,,,,bikini2.png,
+bikini3.png,ae042f687b94,img_ae042f687b94,bikini3.png,yes,,,64,32,bikini0..17 x18,,,,bikini3.png,
+bikini4.png,d3719b430e0a,img_d3719b430e0a,bikini4.png,yes,,,64,32,bikini0..17 x18,,,,bikini4.png,
+bikini5.png,c99b73f293b4,img_c99b73f293b4,bikini5.png,yes,,,64,32,bikini0..17 x18,,,,bikini5.png,
+bikini6.png,8dff7db6d579,img_8dff7db6d579,bikini6.png,yes,,,64,32,bikini0..17 x18,,,,bikini6.png,
+bikini7.png,6df664d676c1,img_6df664d676c1,bikini7.png,yes,,,64,32,bikini0..17 x18,,,,bikini7.png,
+bikini8.png,ba6219fde958,img_ba6219fde958,bikini8.png,yes,,,64,32,bikini0..17 x18,,,,bikini8.png,
+bikini9.png,06fd7daaefff,img_06fd7daaefff,bikini9.png,yes,,,64,32,bikini0..17 x18,,,,bikini9.png,
+bird1.png,1eb0c1b175ef,img_1eb0c1b175ef,bird1.png,yes,,,64,32,bird1..6 x6,,CockateilGeoReplacement;CockateilRenderer;RubyBirdGeoReplacement,cockateil;ruby_bird,Bird1.png,
+bird2.png,ca1827a61b2e,img_ca1827a61b2e,bird2.png,yes,,,64,32,bird1..6 x6,,CockateilRenderer,cockateil;ruby_bird,Bird2.png,
+bird3.png,0e327e96fda2,img_0e327e96fda2,bird3.png,yes,,,64,32,bird1..6 x6,,CockateilRenderer,cockateil;ruby_bird,Bird3.png,
+bird4.png,d197a5fafa3a,img_d197a5fafa3a,bird4.png,yes,,,64,32,bird1..6 x6,,CockateilRenderer,cockateil;ruby_bird,Bird4.png,
+bird5.png,ebc187d05712,img_ebc187d05712,bird5.png,yes,,,64,32,bird1..6 x6,,CockateilRenderer,cockateil;ruby_bird,Bird5.png,
+bird6.png,f8d2fae70e42,img_f8d2fae70e42,bird6.png,yes,,,64,32,bird1..6 x6,,CockateilRenderer,cockateil;ruby_bird,Bird6.png,
+blisterbug.png,1ddd3674bd31,img_1ddd3674bd31,spitbug.png,no,spitbug.png,,512,256,,,,spit_bug,BlisterBug.png,
+blue_queen.png,d20ca5ae8d1a,img_d20ca5ae8d1a,blue_queen.png,yes,,,2048,2048,,,QueenModel,the_queen,,
+botwtexture.png,32b8477c377e,img_32b8477c377e,dungeonbeast.png,no,cannon_fodder.png;dungeonbeast.png,,128,64,,,,cannon_fodder;dungeon_beast,Botwtexture.png,
+boyfriend0.png,1090856f4066,img_1090856f4066,boyfriend0.png,yes,,,64,32,boyfriend0..27 x28 (law 0..27: ok),,BoyfriendRenderer,boyfriend,boyfriend0.png,
+boyfriend1.png,606a03dbdf3d,img_606a03dbdf3d,boyfriend1.png,yes,,,64,32,boyfriend0..27 x28 (law 0..27: ok),,BoyfriendRenderer,boyfriend,boyfriend1.png,
+boyfriend10.png,abdd2db96992,img_abdd2db96992,boyfriend10.png,yes,,,64,32,boyfriend0..27 x28 (law 0..27: ok),,BoyfriendRenderer,boyfriend,boyfriend10.png,
+boyfriend11.png,38c9a459b837,img_38c9a459b837,boyfriend11.png,yes,,,64,32,boyfriend0..27 x28 (law 0..27: ok),,BoyfriendRenderer,boyfriend,boyfriend11.png,
+boyfriend12.png,bd9a163b5d86,img_bd9a163b5d86,boyfriend12.png,yes,,,64,32,boyfriend0..27 x28 (law 0..27: ok),,BoyfriendRenderer,boyfriend,boyfriend12.png,
+boyfriend13.png,93a53e6e4a51,img_93a53e6e4a51,boyfriend13.png,yes,,,64,32,boyfriend0..27 x28 (law 0..27: ok),,BoyfriendRenderer,boyfriend,boyfriend13.png,
+boyfriend14.png,de9c8332856b,img_de9c8332856b,boyfriend14.png,yes,,,64,32,boyfriend0..27 x28 (law 0..27: ok),,BoyfriendRenderer,boyfriend,boyfriend14.png,
+boyfriend15.png,c713bf907693,img_c713bf907693,boyfriend15.png,yes,,,64,32,boyfriend0..27 x28 (law 0..27: ok),,BoyfriendRenderer,boyfriend,boyfriend15.png,
+boyfriend16.png,6ed5628fa0da,img_6ed5628fa0da,boyfriend16.png,yes,,,64,32,boyfriend0..27 x28 (law 0..27: ok),,BoyfriendRenderer,boyfriend,boyfriend16.png,
+boyfriend17.png,eff4f1279dcb,img_eff4f1279dcb,boyfriend17.png,yes,,,64,32,boyfriend0..27 x28 (law 0..27: ok),,BoyfriendRenderer,boyfriend,boyfriend17.png,
+boyfriend18.png,a1601c9f4eb2,img_a1601c9f4eb2,boyfriend18.png,yes,,,64,32,boyfriend0..27 x28 (law 0..27: ok),,BoyfriendRenderer,boyfriend,boyfriend18.png,
+boyfriend19.png,a25cf518c214,img_a25cf518c214,boyfriend19.png,yes,,,64,32,boyfriend0..27 x28 (law 0..27: ok),,BoyfriendRenderer,boyfriend,boyfriend19.png,
+boyfriend2.png,853fb4fed165,img_853fb4fed165,boyfriend2.png,yes,,,64,32,boyfriend0..27 x28 (law 0..27: ok),,BoyfriendRenderer,boyfriend,boyfriend2.png,
+boyfriend20.png,6644ec428eed,img_6644ec428eed,boyfriend20.png,yes,,,64,32,boyfriend0..27 x28 (law 0..27: ok),,BoyfriendRenderer,boyfriend,boyfriend20.png,
+boyfriend21.png,355fa9857f67,img_355fa9857f67,boyfriend21.png,yes,,,64,32,boyfriend0..27 x28 (law 0..27: ok),,BoyfriendRenderer,boyfriend,boyfriend21.png,
+boyfriend22.png,b05ae05e0443,img_b05ae05e0443,boyfriend22.png,yes,,,64,32,boyfriend0..27 x28 (law 0..27: ok),,BoyfriendRenderer,boyfriend,boyfriend22.png,
+boyfriend23.png,54a0b51455ef,img_54a0b51455ef,boyfriend23.png,yes,,,64,32,boyfriend0..27 x28 (law 0..27: ok),,BoyfriendRenderer,boyfriend,boyfriend23.png,
+boyfriend24.png,9b18447b7436,img_9b18447b7436,boyfriend24.png,yes,,,64,32,boyfriend0..27 x28 (law 0..27: ok),,BoyfriendRenderer,boyfriend,boyfriend24.png,
+boyfriend25.png,1ed872452477,img_1ed872452477,boyfriend25.png,yes,,,64,32,boyfriend0..27 x28 (law 0..27: ok),,BoyfriendRenderer,boyfriend,boyfriend25.png,
+boyfriend26.png,e88a15995996,img_e88a15995996,boyfriend26.png,yes,,,64,32,boyfriend0..27 x28 (law 0..27: ok),,BoyfriendRenderer,boyfriend,boyfriend26.png,
+boyfriend27.png,e7742217b78f,img_e7742217b78f,boyfriend27.png,yes,,,64,32,boyfriend0..27 x28 (law 0..27: ok),,BoyfriendRenderer,boyfriend,boyfriend27.png,
+boyfriend3.png,7a4a960a7b8d,img_7a4a960a7b8d,boyfriend3.png,yes,,,64,32,boyfriend0..27 x28 (law 0..27: ok),,BoyfriendRenderer,boyfriend,boyfriend3.png,
+boyfriend4.png,700e1d68e25e,img_700e1d68e25e,boyfriend4.png,yes,,,64,32,boyfriend0..27 x28 (law 0..27: ok),,BoyfriendRenderer,boyfriend,boyfriend4.png,
+boyfriend5.png,ba89e3275c95,img_ba89e3275c95,boyfriend5.png,yes,,,64,32,boyfriend0..27 x28 (law 0..27: ok),,BoyfriendRenderer,boyfriend,boyfriend5.png,
+boyfriend6.png,58bdcb77cdb9,img_58bdcb77cdb9,boyfriend6.png,yes,,,64,32,boyfriend0..27 x28 (law 0..27: ok),,BoyfriendRenderer,boyfriend,boyfriend6.png,
+boyfriend7.png,b4230eec5153,img_b4230eec5153,boyfriend7.png,yes,,,64,32,boyfriend0..27 x28 (law 0..27: ok),,BoyfriendRenderer,boyfriend,boyfriend7.png,
+boyfriend8.png,02d1e8b4c860,img_02d1e8b4c860,boyfriend8.png,yes,,,64,32,boyfriend0..27 x28 (law 0..27: ok),,BoyfriendRenderer,boyfriend,boyfriend8.png,
+boyfriend9.png,bc67b1782625,img_bc67b1782625,boyfriend9.png,yes,,,64,32,boyfriend0..27 x28 (law 0..27: ok),,BoyfriendRenderer,boyfriend,boyfriend9.png,
+brutalfly.png,3913c04ff154,img_3913c04ff154,brutalfly.png,yes,brutalflytexture.png,,64,32,,,BrutalflyGeoReplacement;BrutalflyRenderer,brutalfly,Brutalflytexture.png,brutalflytexture.png
+brutalfly_overlay2.png,44711a3f8a23,img_44711a3f8a23,brutalfly_overlay2.png,yes,,,64,32,brutalfly_overlay2..2 x1,,,,Brutalfly_overlay2.png,
+brutalflytexture.png,3913c04ff154,img_3913c04ff154,brutalfly.png,no,brutalfly.png,,64,32,,,,brutalfly,Brutalflytexture.png,
+butterfly.png,c0eb382b339b,img_c0eb382b339b,butterfly.png,yes,vampire_butterfly.png,,64,32,,,ButterflyRenderer,butterfly;vampire_butterfly,butterfly.png,vampire_butterfly.png
+butterfly2.png,8c7343448add,img_8c7343448add,butterfly2.png,yes,,,64,32,butterfly2..4 x3,,ButterflyRenderer,butterfly,butterfly2.png,
+butterfly3.png,55ec4dbdc656,img_55ec4dbdc656,butterfly3.png,yes,,,64,32,butterfly2..4 x3,,ButterflyRenderer,butterfly,butterfly3.png,
+butterfly4.png,6c3b1063d64e,img_6c3b1063d64e,butterfly4.png,yes,,,64,32,butterfly2..4 x3,,ButterflyRenderer,butterfly,butterfly4.png,
+camarasaurus.png,ce7069a6a1da,img_ce7069a6a1da,camarasaurus.png,yes,,,256,256,,,CamarasaurusRenderer,camarasaurus,camarasaurus.png,
+cannon_fodder.png,32b8477c377e,img_32b8477c377e,dungeonbeast.png,no,botwtexture.png;dungeonbeast.png,,128,64,,,CannonFodderRenderer,cannon_fodder;dungeon_beast,Botwtexture.png,
+cassowary.png,bc1b31068cdc,img_bc1b31068cdc,cassowary.png,yes,,,64,32,,,CassowaryRenderer,cassowary,Cassowary.png,
+caterkiller.png,45c2aef57eca,img_45c2aef57eca,caterkiller.png,yes,caterkillertexture.png,,256,512,,,CaterKillerRenderer,cater_killer,CaterKillertexture.png,caterkillertexture.png
+caterkillertexture.png,45c2aef57eca,img_45c2aef57eca,caterkiller.png,no,caterkiller.png,,256,512,,,,cater_killer,CaterKillertexture.png,
+cavefisher.png,e22eef895663,img_e22eef895663,cavefisher.png,yes,,,64,32,,,CaveFisherRenderer,cave_fisher,CaveFisher.png,
+cephadrome.png,183938535646,img_183938535646,cephadrome.png,yes,,,512,256,,,CephadromeRenderer,cephadrome,Cephadrome.png,
+chainsawtexture.png,43b3143f28a5,img_43b3143f28a5,chainsawtexture.png,yes,,item/chainsawtexture.png,64,64,,"item-renderer texture (a held weapon/tool model), not a mob",OreSpawnItemRenderer,,Chainsawtexture.png,
+chipmunk.png,dfc88fa34ea1,img_dfc88fa34ea1,chipmunk.png,yes,chipmunktexture.png,,64,32,,,ChipmunkRenderer,chipmunk,chipmunktexture.png,chipmunktexture.png
+chipmunktexture.png,dfc88fa34ea1,img_dfc88fa34ea1,chipmunk.png,no,chipmunk.png,,64,32,,,,chipmunk,chipmunktexture.png,
+chipmunktexture2.png,ac93128a9a90,img_ac93128a9a90,chipmunktexture2.png,yes,,,64,32,chipmunktexture2..3 x2,,,,chipmunktexture2.png,
+chipmunktexture3.png,5b47405e6e46,img_5b47405e6e46,chipmunktexture3.png,yes,,,64,32,chipmunktexture2..3 x2,,,,chipmunktexture3.png,
+cliffracer.png,9bf2ecfd94ac,img_9bf2ecfd94ac,cliffracer.png,yes,cliffracertexture.png,,64,64,,,CliffRacerGeoReplacement;CliffRacerRenderer,cliff_racer,Cliffracertexture.png,cliffracertexture.png
+cliffracertexture.png,9bf2ecfd94ac,img_9bf2ecfd94ac,cliffracer.png,no,cliffracer.png,,64,64,,,,cliff_racer,Cliffracertexture.png,
+cloudshark.png,245b7a905d95,img_245b7a905d95,cloudshark.png,yes,,,64,64,,,CloudSharkRenderer,cloud_shark,CloudShark.png,
+coin.png,c6f6d07a72ba,img_c6f6d07a72ba,coin.png,yes,cointexture.png,,512,512,,,CoinGeoReplacement;CoinRenderer,coin,Cointexture.png,cointexture.png
+cointexture.png,c6f6d07a72ba,img_c6f6d07a72ba,coin.png,no,coin.png,,512,512,,,,coin,Cointexture.png,
+crab.png,bfb3f081a720,img_bfb3f081a720,crab.png,yes,robotcrabtexture.png,,256,512,,,CrabRenderer,crab,RobotCrabtexture.png,robotcrabtexture.png
+creepinghorror.png,3fd0ecb6e185,img_3fd0ecb6e185,creepinghorror.png,yes,,,128,128,,,CreepingHorrorRenderer,creeping_horror,CreepingHorror.png,
+cricket.png,c7916610dabd,img_c7916610dabd,cricket.png,yes,crickettexture.png,,64,64,,,CricketRenderer,cricket,Crickettexture.png,crickettexture.png
+crickettexture.png,c7916610dabd,img_c7916610dabd,cricket.png,no,cricket.png,,64,64,,,,cricket,Crickettexture.png,
+cryolophosaurus.png,cffe8c1cc7de,img_cffe8c1cc7de,cryolophosaurus.png,yes,,,128,128,,,CryolophosaurusRenderer,cryolophosaurus,cryolophosaurus.png,
+crystal_cow.png,6b2f3337f149,img_6b2f3337f149,crystal_cow.png,yes,,,64,32,,,CrystalCowRenderer,crystal_cow,crystal_cow.png,
+darkmoth.png,e097e4cca22c,img_e097e4cca22c,darkmoth.png,yes,,,64,32,,,LunaMothRenderer,luna_moth,darkmoth.png,
+dragon.png,370eca467777,img_370eca467777,dragon.png,yes,,,256,128,,,BabyDragonRenderer;DragonRenderer,baby_dragon;dragon,Dragon.png,
+dragonfly.png,4bf8669cff81,img_4bf8669cff81,dragonfly.png,yes,,,64,64,,,DragonflyGeoReplacement;DragonflyRenderer,dragonfly,dragonfly.png,
+dungeonbeast.png,32b8477c377e,img_32b8477c377e,dungeonbeast.png,yes,botwtexture.png;cannon_fodder.png,,128,64,,,DungeonBeastRenderer,cannon_fodder;dungeon_beast,Botwtexture.png,botwtexture.png;cannon_fodder.png
+easterbunny.png,204190d1dc7e,img_204190d1dc7e,easterbunny.png,yes,easterbunnytexture.png,,64,128,,,EasterBunnyRenderer,easter_bunny,EasterBunnytexture.png,easterbunnytexture.png
+easterbunnytexture.png,204190d1dc7e,img_204190d1dc7e,easterbunny.png,no,easterbunny.png,,64,128,,,,easter_bunny,EasterBunnytexture.png,
+elevator.png,5201b295c1b1,img_5201b295c1b1,elevator1.png,no,elevator1.png,,64,64,,,,elevator,Elevator1.png,
+elevator1.png,5201b295c1b1,img_5201b295c1b1,elevator1.png,yes,elevator.png,,64,64,elevator1..10 x10 (law 1..10: ok),,ElevatorGeoReplacement;ElevatorRenderer,elevator,Elevator1.png,elevator.png
+elevator10.png,7b1211925b7c,img_7b1211925b7c,elevator10.png,yes,,,64,64,elevator1..10 x10 (law 1..10: ok),,ElevatorGeoReplacement;ElevatorRenderer,elevator,Elevator10.png,
+elevator2.png,ccb2b966b0e9,img_ccb2b966b0e9,elevator2.png,yes,,,64,64,elevator1..10 x10 (law 1..10: ok),,ElevatorGeoReplacement;ElevatorRenderer,elevator,Elevator2.png,
+elevator3.png,4f7f4addad6c,img_4f7f4addad6c,elevator3.png,yes,,,64,64,elevator1..10 x10 (law 1..10: ok),,ElevatorGeoReplacement;ElevatorRenderer,elevator,Elevator3.png,
+elevator4.png,880ced359200,img_880ced359200,elevator4.png,yes,,,64,64,elevator1..10 x10 (law 1..10: ok),,ElevatorGeoReplacement;ElevatorRenderer,elevator,Elevator4.png,
+elevator5.png,672ce96651b7,img_672ce96651b7,elevator5.png,yes,,,64,64,elevator1..10 x10 (law 1..10: ok),,ElevatorGeoReplacement;ElevatorRenderer,elevator,Elevator5.png,
+elevator6.png,21f3d61441f3,img_21f3d61441f3,elevator6.png,yes,,,64,64,elevator1..10 x10 (law 1..10: ok),,ElevatorGeoReplacement;ElevatorRenderer,elevator,Elevator6.png,
+elevator7.png,31cea7cb70ec,img_31cea7cb70ec,elevator7.png,yes,,,64,64,elevator1..10 x10 (law 1..10: ok),,ElevatorGeoReplacement;ElevatorRenderer,elevator,Elevator7.png,
+elevator8.png,51a130981eb4,img_51a130981eb4,elevator8.png,yes,,,64,64,elevator1..10 x10 (law 1..10: ok),,ElevatorGeoReplacement;ElevatorRenderer,elevator,Elevator8.png,
+elevator9.png,7d9836f0de5c,img_7d9836f0de5c,elevator9.png,yes,,,64,64,elevator1..10 x10 (law 1..10: ok),,ElevatorGeoReplacement;ElevatorRenderer,elevator,Elevator9.png,
+emerald_1.png,58f0e7a00915,img_58f0e7a00915,emerald_1.png,yes,,models/armor/emerald_layer_1.png,64,32,emerald_1..2 x2,armor sheet stray: the shipped armor layer is textures/models/armor/emerald_layer_1.png (byte-identical),,,emerald_1.png,
+emerald_2.png,7dd41dd86d62,img_7dd41dd86d62,emerald_2.png,yes,,models/armor/emerald_layer_2.png,64,32,emerald_1..2 x2,armor sheet stray: the shipped armor layer is textures/models/armor/emerald_layer_2.png (byte-identical),,,emerald_2.png,
+emperorscorpion.png,356142327e6f,img_356142327e6f,emperorscorpion.png,yes,,,256,128,,,EmperorScorpionRenderer,emperor_scorpion,emperorscorpion.png,
+enchanted_apple_cow.png,25438f060885,img_25438f060885,gold_cow.png,no,gold_cow.png;golden_apple_cow.png,,64,32,,,EnchantedAppleCowRenderer,enchanted_apple_cow;gold_cow;golden_apple_cow,gold_cow.png,
+enderknight.png,b09ceb988fab,img_b09ceb988fab,enderknight.png,yes,enderknighttexture.png,,512,512,,,EnderKnightRenderer,ender_knight,EnderKnighttexture.png,enderknighttexture.png
+enderknighttexture.png,b09ceb988fab,img_b09ceb988fab,enderknight.png,no,enderknight.png,,512,512,,,,ender_knight,EnderKnighttexture.png,
+enderreaper.png,60d40c214084,img_60d40c214084,enderreaper.png,yes,enderreapertexture.png,,512,512,,,EnderReaperRenderer,ender_reaper,EnderReapertexture.png,enderreapertexture.png
+enderreapertexture.png,60d40c214084,img_60d40c214084,enderreaper.png,no,enderreaper.png,,512,512,,,,ender_reaper,EnderReapertexture.png,
+evilrubberduckytexture.png,4d8c0d688f06,img_4d8c0d688f06,queenhead.png,no,queenhead.png,,64,64,,,,queen_head,EvilRubberDuckytexture.png,
+experience_1.png,309df0c4e4c3,img_309df0c4e4c3,experience_1.png,yes,,models/armor/experience_layer_1.png,64,32,experience_1..2 x2,armor sheet stray: the shipped armor layer is textures/models/armor/experience_layer_1.png (byte-identical),,,experience_1.png,
+experience_2.png,ec90d2b3e557,img_ec90d2b3e557,experience_2.png,yes,,models/armor/experience_layer_2.png,64,32,experience_1..2 x2,armor sheet stray: the shipped armor layer is textures/models/armor/experience_layer_2.png (byte-identical),,,experience_2.png,
+eyemoth.png,6ea344647870,img_6ea344647870,eyemoth.png,yes,,,64,32,,,LunaMothRenderer;MothraRenderer,luna_moth;mothra,eyemoth.png,
+fairytexture.png,932c3a9d811c,img_932c3a9d811c,fairytexture.png,yes,,,64,64,,,FairyRenderer,fairy,fairytexture.png,
+fairytexture2.png,f25f7d557f46,img_f25f7d557f46,fairytexture2.png,yes,,,64,64,fairytexture2..9 x8,,FairyRenderer,fairy,fairytexture2.png,
+fairytexture3.png,8abc707b1ef3,img_8abc707b1ef3,fairytexture3.png,yes,,,64,64,fairytexture2..9 x8,,FairyRenderer,fairy,fairytexture3.png,
+fairytexture4.png,4ef1d0fb15eb,img_4ef1d0fb15eb,fairytexture4.png,yes,,,64,64,fairytexture2..9 x8,,FairyRenderer,fairy,fairytexture4.png,
+fairytexture5.png,728f38704a36,img_728f38704a36,fairytexture5.png,yes,,,64,64,fairytexture2..9 x8,,FairyRenderer,fairy,fairytexture5.png,
+fairytexture6.png,df309ae37110,img_df309ae37110,fairytexture6.png,yes,,,64,64,fairytexture2..9 x8,,FairyRenderer,fairy,fairytexture6.png,
+fairytexture7.png,f577bdd44061,img_f577bdd44061,fairytexture7.png,yes,,,64,64,fairytexture2..9 x8,,FairyRenderer,fairy,fairytexture7.png,
+fairytexture8.png,54ba3d1b282f,img_54ba3d1b282f,fairytexture8.png,yes,,,64,64,fairytexture2..9 x8,,FairyRenderer,fairy,fairytexture8.png,
+fairytexture9.png,dbf7ad5e7587,img_dbf7ad5e7587,fairytexture9.png,yes,,,64,64,fairytexture2..9 x8,,FairyRenderer,fairy,fairytexture9.png,
+fireflytexture.png,02c5d8c32b28,img_02c5d8c32b28,fireflytexture.png,yes,,,64,128,,,FireflyGeoReplacement;FireflyRenderer,firefly,Fireflytexture.png,
+firemoth.png,361e95818701,img_361e95818701,firemoth.png,yes,,,64,32,,,LunaMothRenderer,luna_moth,firemoth.png,
+flounder.png,4ab9b1064eea,img_4ab9b1064eea,flounder.png,yes,floundertexture.png,,64,32,,,FlounderRenderer,flounder,Floundertexture.png,floundertexture.png
+floundertexture.png,4ab9b1064eea,img_4ab9b1064eea,flounder.png,no,flounder.png,,64,32,,,,flounder,Floundertexture.png,
+frogprince.png,63cc38074372,img_63cc38074372,frogprince.png,yes,,,64,32,,,BoyfriendRenderer,boyfriend,FrogPrince.png,
+frogprince2.png,1a7e8fa24ef7,img_1a7e8fa24ef7,frogprince2.png,yes,,,64,32,frogprince2..2 x1,,BoyfriendRenderer,boyfriend,FrogPrince2.png,
+frogprincess.png,30b8a9c45700,img_30b8a9c45700,frogprincess.png,yes,,,64,32,,,,,FrogPrincess.png,
+frogprincess2.png,aa2f82385b93,img_aa2f82385b93,frogprincess2.png,yes,,,64,32,frogprincess2..2 x1,,,,FrogPrincess2.png,
+frogtexture.png,46faf9748218,img_46faf9748218,frogtexture.png,yes,,,64,64,,,FrogRenderer,frog,Frogtexture.png,
+gammametroid.png,f60ece0e98f1,img_f60ece0e98f1,gammametroid.png,yes,,,256,64,,,GammaMetroidRenderer,gamma_metroid,GammaMetroid.png,
+gazelletexture.png,37944832100a,img_37944832100a,gazelletexture.png,yes,,,64,64,,,GazelleRenderer,gazelle,Gazelletexture.png,
+ghost.png,105f04d40d68,img_105f04d40d68,ghost.png,yes,ghosttexture.png,,64,64,,,GhostRenderer,ghost,Ghosttexture.png,ghosttexture.png
+ghost_skelly.png,fcbd6e91dffd,img_fcbd6e91dffd,ghost_skelly.png,yes,ghostskellytexture.png,,128,64,,,GhostSkellyRenderer,ghost_skelly,GhostSkellytexture.png,ghostskellytexture.png
+ghostskellytexture.png,fcbd6e91dffd,img_fcbd6e91dffd,ghost_skelly.png,no,ghost_skelly.png,,128,64,,,,ghost_skelly,GhostSkellytexture.png,
+ghosttexture.png,105f04d40d68,img_105f04d40d68,ghost.png,no,ghost.png,,64,64,,,,ghost,Ghosttexture.png,
+giantrobot.png,7b971080da98,img_7b971080da98,giantrobot.png,yes,giantrobottexture.png,,256,512,,,GiantRobotRenderer,giant_robot;jeffery,GiantRobottexture.png,giantrobottexture.png
+giantrobottexture.png,7b971080da98,img_7b971080da98,giantrobot.png,no,giantrobot.png,,256,512,,,,giant_robot;jeffery,GiantRobottexture.png,
+girlfriend0.png,11659bd18cd2,img_11659bd18cd2,girlfriend0.png,yes,,,64,32,girlfriend0..40 x41 (law 0..40: ok),,GirlfriendRenderer,girlfriend,girlfriend0.png,
+girlfriend1.png,144ea2d730ec,img_144ea2d730ec,girlfriend1.png,yes,,,64,32,girlfriend0..40 x41 (law 0..40: ok),,GirlfriendRenderer,girlfriend,girlfriend1.png,
+girlfriend10.png,37b0edd1b56b,img_37b0edd1b56b,girlfriend10.png,yes,,,64,32,girlfriend0..40 x41 (law 0..40: ok),,GirlfriendRenderer,girlfriend,girlfriend10.png,
+girlfriend11.png,2559481e3ffe,img_2559481e3ffe,girlfriend11.png,yes,,,64,32,girlfriend0..40 x41 (law 0..40: ok),,GirlfriendRenderer,girlfriend,girlfriend11.png,
+girlfriend12.png,42aa7791662c,img_42aa7791662c,girlfriend12.png,yes,,,64,32,girlfriend0..40 x41 (law 0..40: ok),,GirlfriendRenderer,girlfriend,girlfriend12.png,
+girlfriend13.png,33396f6fa990,img_33396f6fa990,girlfriend13.png,yes,,,64,32,girlfriend0..40 x41 (law 0..40: ok),,GirlfriendRenderer,girlfriend,girlfriend13.png,
+girlfriend14.png,88dfb9ce3324,img_88dfb9ce3324,girlfriend14.png,yes,,,64,32,girlfriend0..40 x41 (law 0..40: ok),,GirlfriendRenderer,girlfriend,girlfriend14.png,
+girlfriend15.png,fd001667122a,img_fd001667122a,girlfriend15.png,yes,,,64,32,girlfriend0..40 x41 (law 0..40: ok),,GirlfriendRenderer,girlfriend,girlfriend15.png,
+girlfriend16.png,4281cf11f18f,img_4281cf11f18f,girlfriend16.png,yes,,,64,32,girlfriend0..40 x41 (law 0..40: ok),,GirlfriendRenderer,girlfriend,girlfriend16.png,
+girlfriend17.png,885d65fcc47a,img_885d65fcc47a,girlfriend17.png,yes,,,64,32,girlfriend0..40 x41 (law 0..40: ok),,GirlfriendRenderer,girlfriend,girlfriend17.png,
+girlfriend18.png,0c3d7c722e62,img_0c3d7c722e62,girlfriend18.png,yes,,,64,32,girlfriend0..40 x41 (law 0..40: ok),,GirlfriendRenderer,girlfriend,girlfriend18.png,
+girlfriend19.png,93703ff86033,img_93703ff86033,girlfriend19.png,yes,,,64,32,girlfriend0..40 x41 (law 0..40: ok),,GirlfriendRenderer,girlfriend,girlfriend19.png,
+girlfriend2.png,25d2272b8dfc,img_25d2272b8dfc,girlfriend2.png,yes,,,64,32,girlfriend0..40 x41 (law 0..40: ok),,GirlfriendRenderer,girlfriend,girlfriend2.png,
+girlfriend20.png,3f03c274dfd9,img_3f03c274dfd9,girlfriend20.png,yes,,,64,32,girlfriend0..40 x41 (law 0..40: ok),,GirlfriendRenderer,girlfriend,girlfriend20.png,
+girlfriend21.png,1af0ddd15e0f,img_1af0ddd15e0f,girlfriend21.png,yes,,,64,32,girlfriend0..40 x41 (law 0..40: ok),,GirlfriendRenderer,girlfriend,girlfriend21.png,
+girlfriend22.png,d388c979ad93,img_d388c979ad93,girlfriend22.png,yes,,,64,32,girlfriend0..40 x41 (law 0..40: ok),,GirlfriendRenderer,girlfriend,girlfriend22.png,
+girlfriend23.png,4b88de049a61,img_4b88de049a61,girlfriend23.png,yes,,,64,32,girlfriend0..40 x41 (law 0..40: ok),,GirlfriendRenderer,girlfriend,girlfriend23.png,
+girlfriend24.png,9db6ef22481c,img_9db6ef22481c,girlfriend24.png,yes,,,64,32,girlfriend0..40 x41 (law 0..40: ok),,GirlfriendRenderer,girlfriend,girlfriend24.png,
+girlfriend25.png,d77caf663fa7,img_d77caf663fa7,girlfriend25.png,yes,,,64,32,girlfriend0..40 x41 (law 0..40: ok),,GirlfriendRenderer,girlfriend,girlfriend25.png,
+girlfriend26.png,60d16f324a5d,img_60d16f324a5d,girlfriend26.png,yes,,,64,32,girlfriend0..40 x41 (law 0..40: ok),,GirlfriendRenderer,girlfriend,girlfriend26.png,
+girlfriend27.png,9a54f6742cef,img_9a54f6742cef,girlfriend27.png,yes,,,64,32,girlfriend0..40 x41 (law 0..40: ok),,GirlfriendRenderer,girlfriend,girlfriend27.png,
+girlfriend28.png,4dcdd5fcb89c,img_4dcdd5fcb89c,girlfriend28.png,yes,,,64,32,girlfriend0..40 x41 (law 0..40: ok),,GirlfriendRenderer,girlfriend,girlfriend28.png,
+girlfriend29.png,60d695a4ffc0,img_60d695a4ffc0,girlfriend29.png,yes,,,64,32,girlfriend0..40 x41 (law 0..40: ok),,GirlfriendRenderer,girlfriend,girlfriend29.png,
+girlfriend3.png,e6b2d3c7efe9,img_e6b2d3c7efe9,girlfriend3.png,yes,,,64,32,girlfriend0..40 x41 (law 0..40: ok),,GirlfriendRenderer,girlfriend,girlfriend3.png,
+girlfriend30.png,4874ba232b09,img_4874ba232b09,girlfriend30.png,yes,,,64,32,girlfriend0..40 x41 (law 0..40: ok),,GirlfriendRenderer,girlfriend,girlfriend30.png,
+girlfriend31.png,543b461b710f,img_543b461b710f,girlfriend31.png,yes,,,64,32,girlfriend0..40 x41 (law 0..40: ok),,GirlfriendRenderer,girlfriend,girlfriend31.png,
+girlfriend32.png,7c690c63aad5,img_7c690c63aad5,girlfriend32.png,yes,,,64,32,girlfriend0..40 x41 (law 0..40: ok),,GirlfriendRenderer,girlfriend,girlfriend32.png,
+girlfriend33.png,12825b88fa59,img_12825b88fa59,girlfriend33.png,yes,,,64,32,girlfriend0..40 x41 (law 0..40: ok),,GirlfriendRenderer,girlfriend,girlfriend33.png,
+girlfriend34.png,a48ce5aa4f3d,img_a48ce5aa4f3d,girlfriend34.png,yes,,,64,32,girlfriend0..40 x41 (law 0..40: ok),,GirlfriendRenderer,girlfriend,girlfriend34.png,
+girlfriend35.png,54aac7fa4bd8,img_54aac7fa4bd8,girlfriend35.png,yes,,,64,32,girlfriend0..40 x41 (law 0..40: ok),,GirlfriendRenderer,girlfriend,girlfriend35.png,
+girlfriend36.png,879033b715f1,img_879033b715f1,girlfriend36.png,yes,,,64,32,girlfriend0..40 x41 (law 0..40: ok),,GirlfriendRenderer,girlfriend,girlfriend36.png,
+girlfriend37.png,093ca28eff78,img_093ca28eff78,girlfriend37.png,yes,,,64,32,girlfriend0..40 x41 (law 0..40: ok),,GirlfriendRenderer,girlfriend,girlfriend37.png,
+girlfriend38.png,99aa54a7aa7e,img_99aa54a7aa7e,girlfriend38.png,yes,,,64,32,girlfriend0..40 x41 (law 0..40: ok),,GirlfriendRenderer,girlfriend,girlfriend38.png,
+girlfriend39.png,c119b60a7697,img_c119b60a7697,girlfriend39.png,yes,,,64,32,girlfriend0..40 x41 (law 0..40: ok),,GirlfriendRenderer,girlfriend,girlfriend39.png,
+girlfriend4.png,4c485366b031,img_4c485366b031,girlfriend4.png,yes,,,64,32,girlfriend0..40 x41 (law 0..40: ok),,GirlfriendRenderer,girlfriend,girlfriend4.png,
+girlfriend40.png,2038bf8920cd,img_2038bf8920cd,girlfriend40.png,yes,,,64,32,girlfriend0..40 x41 (law 0..40: ok),,GirlfriendRenderer,girlfriend,girlfriend40.png,
+girlfriend5.png,46997fd8462f,img_46997fd8462f,girlfriend5.png,yes,,,64,32,girlfriend0..40 x41 (law 0..40: ok),,GirlfriendRenderer,girlfriend,girlfriend5.png,
+girlfriend6.png,2a19f2e09091,img_2a19f2e09091,girlfriend6.png,yes,,,64,32,girlfriend0..40 x41 (law 0..40: ok),,GirlfriendRenderer,girlfriend,girlfriend6.png,
+girlfriend7.png,70153c88cea6,img_70153c88cea6,girlfriend7.png,yes,,,64,32,girlfriend0..40 x41 (law 0..40: ok),,GirlfriendRenderer,girlfriend,girlfriend7.png,
+girlfriend8.png,68372b5e5330,img_68372b5e5330,girlfriend8.png,yes,,,64,32,girlfriend0..40 x41 (law 0..40: ok),,GirlfriendRenderer,girlfriend,girlfriend8.png,
+girlfriend9.png,213049f0301f,img_213049f0301f,girlfriend9.png,yes,,,64,32,girlfriend0..40 x41 (law 0..40: ok),,GirlfriendRenderer,girlfriend,girlfriend9.png,
+girlfriendgui.png,6d2a3a59eca8,img_6d2a3a59eca8,girlfriendgui.png,yes,,gui/girlfriendgui.png,256,256,,GUI/atlas stray (gui/girlfriendgui.png),,,girlfriendgui.png,
+girlfriendv.png,49758524dfc8,img_49758524dfc8,girlfriendv.png,yes,,,64,32,,,GirlfriendRenderer,girlfriend,girlfriendv.png,
+godzillahead.png,d8a6e153288b,img_d8a6e153288b,kinghead.png,no,hammytexture.png;kinghead.png,item/hammytexture.png,256,128,,,GodzillaHeadRenderer,godzilla_head;king_head,Hammytexture.png,
+godzillatexture.png,4f65f500fb59,img_4f65f500fb59,godzillatexture.png,yes,,,1024,1024,,,GodzillaRenderer,godzilla,Godzillatexture.png,
+gold_cow.png,25438f060885,img_25438f060885,gold_cow.png,yes,enchanted_apple_cow.png;golden_apple_cow.png,,64,32,,,GoldCowRenderer,enchanted_apple_cow;gold_cow;golden_apple_cow,gold_cow.png,enchanted_apple_cow.png;golden_apple_cow.png
+golden_apple_cow.png,25438f060885,img_25438f060885,gold_cow.png,no,enchanted_apple_cow.png;gold_cow.png,,64,32,,,GoldenAppleCowRenderer,enchanted_apple_cow;gold_cow;golden_apple_cow,gold_cow.png,
+goldfish.png,3b9d8a688c24,img_3b9d8a688c24,goldfish.png,yes,,,64,64,,,GoldFishGeoReplacement;GoldFishRenderer,gold_fish,GoldFish.png,
+hammerhead.png,12fdb01677a0,img_12fdb01677a0,hammerhead.png,yes,hammerheadtexture.png,,222,256,,,HammerheadRenderer,hammerhead,Hammerheadtexture.png,hammerheadtexture.png
+hammerheadtexture.png,12fdb01677a0,img_12fdb01677a0,hammerhead.png,no,hammerhead.png,,222,256,,,,hammerhead,Hammerheadtexture.png,
+hammytexture.png,d8a6e153288b,img_d8a6e153288b,kinghead.png,no,godzillahead.png;kinghead.png,item/hammytexture.png,256,128,,dormant twin of item/hammytexture.png,,godzilla_head;king_head,Hammytexture.png,
+herculesbeetle.png,512775db3c80,img_512775db3c80,herculesbeetle.png,yes,beetletexture.png,,256,256,,,HerculesBeetleRenderer,hercules_beetle,Beetletexture.png,beetletexture.png
+hydrolisc.png,baba358f1f76,img_baba358f1f76,hydrolisc.png,yes,,,64,128,,,HydroliscRenderer,hydrolisc,hydrolisc.png,
+irukandji.png,f03920a37c89,img_f03920a37c89,irukandji.png,yes,irukandjitexture.png,,64,32,,,IrukandjiRenderer,irukandji,Irukandjitexture.png,irukandjitexture.png
+irukandjitexture.png,f03920a37c89,img_f03920a37c89,irukandji.png,no,irukandji.png,,64,32,,,,irukandji,Irukandjitexture.png,
+island.png,3a3308f57703,img_3a3308f57703,island.png,yes,,,64,32,,,IslandGeoReplacement;IslandRenderer,island,Island.png,
+islandtoo.png,3db38554b8ff,img_3db38554b8ff,islandtoo.png,yes,,,64,32,,,IslandTooGeoReplacement;IslandTooRenderer,island_too,IslandToo.png,
+items.png,b76a22dd43be,img_b76a22dd43be,items.png,yes,,,256,256,,GUI/atlas stray (no twin outside textures/entity),,,items.png,
+kinghead.png,d8a6e153288b,img_d8a6e153288b,kinghead.png,yes,godzillahead.png;hammytexture.png,item/hammytexture.png,256,128,,,KingHeadRenderer,godzilla_head;king_head,Hammytexture.png,godzillahead.png;hammytexture.png
+kraken.png,0e135c93bf0d,img_0e135c93bf0d,kraken.png,yes,,,512,512,,,KrakenRenderer,kraken,Kraken.png,
+kyuubi.png,78b2daa3ddd7,img_78b2daa3ddd7,kyuubi.png,yes,,,512,256,,,KyuubiRenderer,kyuubi,Kyuubi.png,
+lapis_1.png,1e3d5a1c9539,img_1e3d5a1c9539,lapis_1.png,yes,,models/armor/lapis_layer_1.png,64,32,lapis_1..2 x2,armor sheet stray: the shipped armor layer is textures/models/armor/lapis_layer_1.png (byte-identical),,,lapis_1.png,
+lapis_2.png,7c09c5f9ba99,img_7c09c5f9ba99,lapis_2.png,yes,,models/armor/lapis_layer_2.png,64,32,lapis_1..2 x2,armor sheet stray: the shipped armor layer is textures/models/armor/lapis_layer_2.png (byte-identical),,,lapis_2.png,
+lavaeel_1.png,e8e4d5d7e051,img_e8e4d5d7e051,lavaeel_1.png,yes,,models/armor/lavaeel_layer_1.png,64,32,lavaeel_1..2 x2,armor sheet stray: the shipped armor layer is textures/models/armor/lavaeel_layer_1.png (byte-identical),,,lavaeel_1.png,
+lavaeel_2.png,917c1e09545b,img_917c1e09545b,lavaeel_2.png,yes,,models/armor/lavaeel_layer_2.png,64,32,lavaeel_1..2 x2,armor sheet stray: the shipped armor layer is textures/models/armor/lavaeel_layer_2.png (byte-identical),,,lavaeel_2.png,
+leafmonster.png,b16a0b3ee82b,img_b16a0b3ee82b,leafmonster.png,yes,leafmonstertexture.png,,128,128,,,LeafMonsterRenderer,leaf_monster,LeafMonstertexture.png,leafmonstertexture.png
+leafmonstertexture.png,b16a0b3ee82b,img_b16a0b3ee82b,leafmonster.png,no,leafmonster.png,,128,128,,,,leaf_monster,LeafMonstertexture.png,
+leon.png,99465263c2ea,img_99465263c2ea,leon.png,yes,,,256,256,,,LeonRenderer,leon;leonopteryx,Leon.png,
+lizard.png,d36f698896c0,img_d36f698896c0,lizard.png,yes,,,128,128,,,LizardRenderer,lizard,Lizard.png,
+lizard2.png,5708b9491495,img_5708b9491495,lizard2.png,yes,,,128,128,lizard2..3 x2,,,,Lizard2.png,
+lizard3.png,d296fe5a192c,img_d296fe5a192c,lizard3.png,yes,,,128,128,lizard2..3 x2,,,,Lizard3.png,
+logo.png,f82ffa90fc14,img_f82ffa90fc14,logo.png,yes,,,791,450,,GUI/atlas stray (no twin outside textures/entity),,,logo.png,
+lunamoth.png,743dda0057cf,img_743dda0057cf,lunamoth.png,yes,,,64,32,,,LunaMothRenderer,luna_moth,lunamoth.png,
+lurkingterror.png,394bd0efa557,img_394bd0efa557,lurkingterror.png,yes,,,256,64,,,LurkingTerrorRenderer,lurking_terror,LurkingTerror.png,
+mantis.png,82e87d9d07e5,img_82e87d9d07e5,mantis.png,yes,mantistexture.png,,256,256,,,MantisRenderer,mantis,Mantistexture.png,mantistexture.png
+mantistexture.png,82e87d9d07e5,img_82e87d9d07e5,mantis.png,no,mantis.png,,256,256,,,,mantis,Mantistexture.png,
+mobzilla_1.png,ad2dba949bd4,img_ad2dba949bd4,mobzilla_1.png,yes,,models/armor/mobzilla_layer_1.png,64,32,mobzilla_1..2 x2,armor sheet stray: the shipped armor layer is textures/models/armor/mobzilla_layer_1.png (byte-identical),,,mobzilla_1.png,
+mobzilla_2.png,20cdb851af03,img_20cdb851af03,mobzilla_2.png,yes,,models/armor/mobzilla_layer_2.png,64,32,mobzilla_1..2 x2,armor sheet stray: the shipped armor layer is textures/models/armor/mobzilla_layer_2.png (byte-identical),,,mobzilla_2.png,
+molenoid.png,0b40eaa90750,img_0b40eaa90750,molenoid.png,yes,molenoidtexture.png,,256,256,,,MolenoidRenderer,molenoid,Molenoidtexture.png,molenoidtexture.png
+molenoidtexture.png,0b40eaa90750,img_0b40eaa90750,molenoid.png,no,molenoid.png,,256,256,,,,molenoid,Molenoidtexture.png,
+mosquito.png,8c4458caf0b1,img_8c4458caf0b1,mosquito.png,yes,,,32,32,,,MosquitoGeoReplacement;MosquitoRenderer,mosquito,mosquito.png,
+mothscale_1.png,0966865c8570,img_0966865c8570,mothscale_1.png,yes,,models/armor/mothscale_layer_1.png,64,32,mothscale_1..2 x2,armor sheet stray: the shipped armor layer is textures/models/armor/mothscale_layer_1.png (byte-identical),,,mothscale_1.png,
+mothscale_2.png,fcb6807147f5,img_fcb6807147f5,mothscale_2.png,yes,,models/armor/mothscale_layer_2.png,64,32,mothscale_1..2 x2,armor sheet stray: the shipped armor layer is textures/models/armor/mothscale_layer_2.png (byte-identical),,,mothscale_2.png,
+myalien.png,3e274d9e4553,img_3e274d9e4553,alien.png,no,alien.png,,256,128,,,,alien;alien_boss,MyAlien.png,
+nastysaurus.png,25beae46f709,img_25beae46f709,nastysaurus.png,yes,nastysaurustexture.png,,512,256,,,NastysaurusRenderer,nastysaurus,Nastysaurustexture.png,nastysaurustexture.png
+nastysaurustexture.png,25beae46f709,img_25beae46f709,nastysaurus.png,no,nastysaurus.png,,512,256,,,,nastysaurus,Nastysaurustexture.png,
+ostrich.png,3c273e9c0f7c,img_3c273e9c0f7c,ostrich.png,yes,ostrichtexture.png,,256,128,,,OstrichRenderer,ostrich,Ostrichtexture.png,ostrichtexture.png
+ostrich2.png,b5bd7db0b2bf,img_b5bd7db0b2bf,ostrich2.png,yes,ostrichtexture2.png,,256,128,ostrich2..3 x2,,,,Ostrichtexture2.png,ostrichtexture2.png
+ostrich3.png,b65eec69a969,img_b65eec69a969,ostrich3.png,yes,ostrichtexture3.png,,256,128,ostrich2..3 x2,,,,Ostrichtexture3.png,ostrichtexture3.png
+ostrichtexture.png,3c273e9c0f7c,img_3c273e9c0f7c,ostrich.png,no,ostrich.png,,256,128,,,,ostrich,Ostrichtexture.png,
+ostrichtexture2.png,b5bd7db0b2bf,img_b5bd7db0b2bf,ostrich2.png,no,ostrich2.png,,256,128,ostrichtexture2..3 x2,,,,Ostrichtexture2.png,
+ostrichtexture3.png,b65eec69a969,img_b65eec69a969,ostrich3.png,no,ostrich3.png,,256,128,ostrichtexture2..3 x2,,,,Ostrichtexture3.png,
+peacock.png,1b3f7642769b,img_1b3f7642769b,peacock.png,yes,peacocktexture.png,,128,128,,,PeacockRenderer,peacock,peacocktexture.png,peacocktexture.png
+peacock_1.png,0c2084a6d0fc,img_0c2084a6d0fc,peacock_1.png,yes,,models/armor/peacock_layer_1.png,64,32,peacock_1..2 x2,armor sheet stray: the shipped armor layer is textures/models/armor/peacock_layer_1.png (byte-identical),,,peacock_1.png,
+peacock_2.png,18f7fcd3fe10,img_18f7fcd3fe10,peacock_2.png,yes,,models/armor/peacock_layer_2.png,64,32,peacock_1..2 x2,armor sheet stray: the shipped armor layer is textures/models/armor/peacock_layer_2.png (byte-identical),,,peacock_2.png,
+peacocktexture.png,1b3f7642769b,img_1b3f7642769b,peacock.png,no,peacock.png,,128,128,,,,peacock,peacocktexture.png,
+pink_1.png,e7cb06456a99,img_e7cb06456a99,pink_1.png,yes,,models/armor/pink_layer_1.png,64,32,pink_1..2 x2,armor sheet stray: the shipped armor layer is textures/models/armor/pink_layer_1.png (byte-identical),,,pink_1.png,
+pink_2.png,0ba94ca47f90,img_0ba94ca47f90,pink_2.png,yes,,models/armor/pink_layer_2.png,64,32,pink_1..2 x2,armor sheet stray: the shipped armor layer is textures/models/armor/pink_layer_2.png (byte-identical),,,pink_2.png,
+pitchblack.png,6f33467f542c,img_6f33467f542c,pitchblack.png,yes,pitchblacktexture.png,,512,256,,,PitchBlackRenderer,pitch_black,PitchBlacktexture.png,pitchblacktexture.png
+pitchblacktexture.png,6f33467f542c,img_6f33467f542c,pitchblack.png,no,pitchblack.png,,512,256,,,,pitch_black,PitchBlacktexture.png,
+pointysaurus.png,46463e03543b,img_46463e03543b,pointysaurus.png,yes,pointysaurustexture.png,,128,128,,,PointysaurusRenderer,pointysaurus,Pointysaurustexture.png,pointysaurustexture.png
+pointysaurustexture.png,46463e03543b,img_46463e03543b,pointysaurus.png,no,pointysaurus.png,,128,128,,,,pointysaurus,Pointysaurustexture.png,
+princeteentexture.png,ce9fa395419e,img_ce9fa395419e,theprince_teen.png,no,theprince_teen.png,,512,256,,,,the_prince_teen,PrinceTeentexture.png,
+purplepowertexture.png,34c6d593cdd7,img_34c6d593cdd7,purplepowertexture.png,yes,,,64,32,,,PurplePowerGeoReplacement;PurplePowerRenderer,purple_power,PurplePowertexture.png,
+purplepowertexture10.png,d9d807c7af6f,img_d9d807c7af6f,purplepowertexture10.png,yes,,,64,32,purplepowertexture2..10 x4 (non-contiguous),,PurplePowerRenderer,purple_power,PurplePowertexture10.png,
+purplepowertexture2.png,559ae7959c62,img_559ae7959c62,purplepowertexture2.png,yes,,,64,32,purplepowertexture2..10 x4 (non-contiguous),,PurplePowerRenderer,purple_power,PurplePowertexture2.png,
+purplepowertexture3.png,b1a752d77199,img_b1a752d77199,purplepowertexture3.png,yes,,,64,32,purplepowertexture2..10 x4 (non-contiguous),,PurplePowerRenderer,purple_power,PurplePowertexture3.png,
+purplepowertexture4.png,cc759f456d70,img_cc759f456d70,purplepowertexture4.png,yes,,,64,32,purplepowertexture2..10 x4 (non-contiguous),,PurplePowerRenderer,purple_power,PurplePowertexture4.png,
+queen_1.png,ffb11f159da0,img_ffb11f159da0,queen_1.png,yes,,models/armor/queen_layer_1.png,64,32,queen_1..2 x2,armor sheet stray: the shipped armor layer is textures/models/armor/queen_layer_1.png (byte-identical),,,queen_1.png,
+queen_2.png,3ed0663f446c,img_3ed0663f446c,queen_2.png,yes,,models/armor/queen_layer_2.png,64,32,queen_1..2 x2,armor sheet stray: the shipped armor layer is textures/models/armor/queen_layer_2.png (byte-identical),,,queen_2.png,
+queenbattleaxetexture.png,bad33b065b1c,img_bad33b065b1c,queenbattleaxetexture.png,yes,,item/queenbattleaxetexture.png,128,64,,"item-renderer texture (a held weapon/tool model), not a mob",OreSpawnItemRenderer,,QueenBattleAxetexture.png,
+queenhead.png,4d8c0d688f06,img_4d8c0d688f06,queenhead.png,yes,evilrubberduckytexture.png,,64,64,,,QueenHeadRenderer,queen_head,EvilRubberDuckytexture.png,evilrubberduckytexture.png
+rainbow_ant.png,1c2a77b99ae6,img_1c2a77b99ae6,rainbow_ant.png,yes,,,64,32,,,RainbowAntGeoReplacement;RainbowAntRenderer,rainbow_ant,rainbow_ant.png,
+rat.png,c815e0b4bc16,img_c815e0b4bc16,rat.png,yes,rattexture.png,,64,64,,,RatRenderer,rat,Rattexture.png,rattexture.png
+rattexture.png,c815e0b4bc16,img_c815e0b4bc16,rat.png,no,rat.png,,64,64,,,,rat,Rattexture.png,
+red_ant.png,cf2c76d29627,img_cf2c76d29627,red_ant.png,yes,,,64,32,,,RedAntGeoReplacement;RedAntRenderer,red_ant,red_ant.png,
+red_cow.png,ba0b1a53460f,img_ba0b1a53460f,redcow.png,no,apple_cow.png;redcow.png,,64,32,,,,apple_cow;red_cow,red_cow.png,
+red_queen.png,e3a4da5f9230,img_e3a4da5f9230,red_queen.png,yes,,,2048,2048,,,QueenModel,the_queen,,
+redcow.png,ba0b1a53460f,img_ba0b1a53460f,redcow.png,yes,apple_cow.png;red_cow.png,,64,32,,,RedCowRenderer,apple_cow;red_cow,red_cow.png,apple_cow.png;red_cow.png
+robot1.png,94267f9dc7b0,img_94267f9dc7b0,robot1.png,yes,,,64,32,robot1..5 x5,,Robot1GeoReplacement;Robot1Renderer,robot_1,Robot1.png,
+robot2.png,c13408b3e127,img_c13408b3e127,robot2.png,yes,,,256,512,robot1..5 x5,,Robot2GeoReplacement;Robot2Renderer,robot_2,Robot2.png,
+robot3.png,dc1c30aa7a47,img_dc1c30aa7a47,robot3.png,yes,,,512,512,robot1..5 x5,,Robot3GeoReplacement;Robot3Renderer,robot_3,Robot3.png,
+robot4.png,b5337a64b594,img_b5337a64b594,robot4.png,yes,,,512,512,robot1..5 x5,,Robot4GeoReplacement;Robot4Renderer,robot_4,Robot4.png,
+robot5.png,082a6bd38fe1,img_082a6bd38fe1,robot5.png,yes,robot5texture.png,,128,128,robot1..5 x5,,Robot5GeoReplacement;Robot5Renderer,robot_5,Robot5texture.png,robot5texture.png
+robot5texture.png,082a6bd38fe1,img_082a6bd38fe1,robot5.png,no,robot5.png,,128,128,,,,robot_5,Robot5texture.png,
+robotcrabtexture.png,bfb3f081a720,img_bfb3f081a720,crab.png,no,crab.png,,256,512,,,,crab,RobotCrabtexture.png,
+rockbluetexture.png,aefdc6149fb9,img_aefdc6149fb9,rockbluetexture.png,yes,,,64,64,,,RockBaseRenderer,rock_base,RockBluetexture.png,
+rockcrystalbluetexture.png,6c7e21d66143,img_6c7e21d66143,rockcrystalbluetexture.png,yes,,,64,64,,,RockBaseRenderer,rock_base,rockcrystalbluetexture.png,
+rockcrystalgreentexture.png,38f205954ed9,img_38f205954ed9,rockcrystalgreentexture.png,yes,,,64,64,,,RockBaseRenderer,rock_base,rockcrystalgreentexture.png,
+rockcrystaltexture.png,a1ae33c6c5ef,img_a1ae33c6c5ef,rockcrystaltexture.png,yes,,,64,64,,,RockBaseRenderer,rock_base,rockcrystaltexture.png,
+rockcrystaltnttexture.png,c471349f3401,img_c471349f3401,rockcrystaltnttexture.png,yes,,,64,64,,,RockBaseRenderer,rock_base,rockcrystaltnttexture.png,
+rockgreentexture.png,0296032f8570,img_0296032f8570,rockgreentexture.png,yes,,,64,64,,,RockBaseRenderer,rock_base,RockGreentexture.png,
+rockpurpletexture.png,7ddd7d234471,img_7ddd7d234471,rockpurpletexture.png,yes,,,64,64,,,RockBaseRenderer,rock_base,RockPurpletexture.png,
+rockredtexture.png,81b02ea41005,img_81b02ea41005,rockredtexture.png,yes,,,64,64,,,RockBaseRenderer,rock_base,RockRedtexture.png,
+rocktexture.png,d5cfef173ce8,img_d5cfef173ce8,rocktexture.png,yes,,,64,64,,,RockBaseGeoReplacement;RockBaseRenderer,rock_base,Rocktexture.png,
+rocktnttexture.png,82e913052dac,img_82e913052dac,rocktnttexture.png,yes,,,64,64,,,RockBaseRenderer,rock_base,RockTNTtexture.png,
+rotator.png,0b4171c7d11f,img_0b4171c7d11f,rotator.png,yes,rotatortexture.png,,64,32,,,RotatorGeoReplacement;RotatorRenderer,rotator,Rotatortexture.png,rotatortexture.png
+rotatortexture.png,0b4171c7d11f,img_0b4171c7d11f,rotator.png,no,rotator.png,,64,32,,,,rotator,Rotatortexture.png,
+royal_1.png,558888d745b7,img_558888d745b7,royal_1.png,yes,,models/armor/royal_layer_1.png,64,32,royal_1..2 x2,armor sheet stray: the shipped armor layer is textures/models/armor/royal_layer_1.png (byte-identical),,,royal_1.png,
+royal_2.png,f35cf593cc6c,img_f35cf593cc6c,royal_2.png,yes,,models/armor/royal_layer_2.png,64,32,royal_1..2 x2,armor sheet stray: the shipped armor layer is textures/models/armor/royal_layer_2.png (byte-identical),,,royal_2.png,
+royaltexture.png,56ddeae69445,img_56ddeae69445,royaltexture.png,yes,,item/royaltexture.png,64,128,,"item-renderer texture (a held weapon/tool model), not a mob",OreSpawnItemRenderer,,Royaltexture.png,
+rubberducky.png,47a5baf8fa73,img_47a5baf8fa73,rubberducky.png,yes,rubberduckytexture.png,,64,64,,,RubberDuckyRenderer,rubber_ducky,RubberDuckytexture.png,rubberduckytexture.png
+rubberduckytexture.png,47a5baf8fa73,img_47a5baf8fa73,rubberducky.png,no,rubberducky.png,,64,64,,,,rubber_ducky,RubberDuckytexture.png,
+ruby_1.png,a454c2b1fbc8,img_a454c2b1fbc8,ruby_1.png,yes,,models/armor/ruby_layer_1.png,64,32,ruby_1..2 x2,armor sheet stray: the shipped armor layer is textures/models/armor/ruby_layer_1.png (byte-identical),,,ruby_1.png,
+ruby_2.png,f864d1acfef6,img_f864d1acfef6,ruby_2.png,yes,,models/armor/ruby_layer_2.png,64,32,ruby_1..2 x2,armor sheet stray: the shipped armor layer is textures/models/armor/ruby_layer_2.png (byte-identical),,,ruby_2.png,
+scorpion.png,e514c30756ea,img_e514c30756ea,scorpion.png,yes,,,88,24,,,ScorpionRenderer,scorpion,Scorpion.png,
+seamonster.png,00dc17aa0c3d,img_00dc17aa0c3d,seamonster.png,yes,seamonstertexture.png,,256,128,,,SeaMonsterRenderer,sea_monster,SeaMonstertexture.png,seamonstertexture.png
+seamonstertexture.png,00dc17aa0c3d,img_00dc17aa0c3d,seamonster.png,no,seamonster.png,,256,128,,,,sea_monster,SeaMonstertexture.png,
+seaviper.png,e8878b9c8a43,img_e8878b9c8a43,seaviper.png,yes,seavipertexture.png,,128,128,,,SeaViperRenderer,sea_viper,SeaVipertexture.png,seavipertexture.png
+seavipertexture.png,e8878b9c8a43,img_e8878b9c8a43,seaviper.png,no,seaviper.png,,128,128,,,,sea_viper,SeaVipertexture.png,
+skate.png,828e8a8632dd,img_828e8a8632dd,skate.png,yes,skatetexture.png,,64,32,,,SkateRenderer,skate,Skatetexture.png,skatetexture.png
+skatetexture.png,828e8a8632dd,img_828e8a8632dd,skate.png,no,skate.png,,64,32,,,,skate,Skatetexture.png,
+slicetexture.png,455a78cca61a,img_455a78cca61a,slicetexture.png,yes,,item/slicetexture.png,64,128,,"item-renderer texture (a held weapon/tool model), not a mob",OreSpawnItemRenderer,,Slicetexture.png,
+spider_driver.png,b6804ef7a2c4,img_b6804ef7a2c4,spider_driver.png,yes,spiderdriver.png,,64,32,,,SpiderDriverRenderer,spider_driver,spiderdriver.png,spiderdriver.png
+spiderdriver.png,b6804ef7a2c4,img_b6804ef7a2c4,spider_driver.png,no,spider_driver.png,,64,32,,,,spider_driver,spiderdriver.png,
+spiderrobot.png,fa6e7a23fe75,img_fa6e7a23fe75,spiderrobot.png,yes,spiderrobottexture.png,,256,512,,,SpiderRobotRenderer,spider_robot,SpiderRobottexture.png,spiderrobottexture.png
+spiderrobottexture.png,fa6e7a23fe75,img_fa6e7a23fe75,spiderrobot.png,no,spiderrobot.png,,256,512,,,,spider_robot,SpiderRobottexture.png,
+spinners.png,be838feb9aac,img_be838feb9aac,spinners.png,yes,,,256,256,,GUI/atlas stray (no twin outside textures/entity),,,spinners.png,
+spitbug.png,1ddd3674bd31,img_1ddd3674bd31,spitbug.png,yes,blisterbug.png,,512,256,,,SpitBugRenderer,spit_bug,BlisterBug.png,blisterbug.png
+spyro.png,2400690ff30a,img_2400690ff30a,spyro.png,yes,spyrotexture.png,,64,64,,,SpyroRenderer,spyro,spyrotexture.png,spyrotexture.png
+spyrotexture.png,2400690ff30a,img_2400690ff30a,spyro.png,no,spyro.png,,64,64,,,,spyro,spyrotexture.png,
+squidzookatexture.png,69e11d73d5f1,img_69e11d73d5f1,bandp_pirate.png,no,bandp_pirate.png,item/squidzookatexture.png,128,128,,"item-renderer texture (a held weapon/tool model), not a mob",OreSpawnItemRenderer,band_p,SquidZookatexture.png,
+stinkbug.png,76f154fd8ab4,img_76f154fd8ab4,stinkbug.png,yes,,,64,32,,,StinkBugRenderer,stink_bug,StinkBug.png,
+stinky.png,1e0a31b08a53,img_1e0a31b08a53,stinky.png,yes,stinkytexture1.png,,128,64,,,StinkyRenderer,stinky,Stinkytexture1.png,stinkytexture1.png
+stinky10.png,817bc1e771da,img_817bc1e771da,stinky10.png,yes,stinkytexture10.png,,128,64,stinky2..19 x18,,,,Stinkytexture10.png,stinkytexture10.png
+stinky11.png,12e09e1db1ea,img_12e09e1db1ea,stinky11.png,yes,stinkytexture11.png,,128,64,stinky2..19 x18,,,,Stinkytexture11.png,stinkytexture11.png
+stinky12.png,bc382aa218c4,img_bc382aa218c4,stinky12.png,yes,stinkytexture12.png,,128,64,stinky2..19 x18,,,,Stinkytexture12.png,stinkytexture12.png
+stinky13.png,a773e45599f1,img_a773e45599f1,stinky13.png,yes,stinkytexture13.png,,128,64,stinky2..19 x18,,,,Stinkytexture13.png,stinkytexture13.png
+stinky14.png,5751034aa997,img_5751034aa997,stinky14.png,yes,stinkytexture14.png,,128,64,stinky2..19 x18,,,,Stinkytexture14.png,stinkytexture14.png
+stinky15.png,0d5d7a8351e4,img_0d5d7a8351e4,stinky15.png,yes,stinkytexture15.png,,128,64,stinky2..19 x18,,,,Stinkytexture15.png,stinkytexture15.png
+stinky16.png,3438077f1e10,img_3438077f1e10,stinky16.png,yes,stinkytexture16.png,,128,64,stinky2..19 x18,,,,Stinkytexture16.png,stinkytexture16.png
+stinky17.png,40b3f3f9448a,img_40b3f3f9448a,stinky17.png,yes,stinkytexture17.png,,128,64,stinky2..19 x18,,,,Stinkytexture17.png,stinkytexture17.png
+stinky18.png,e49fe31b4c15,img_e49fe31b4c15,stinky18.png,yes,stinkytexture18.png,,128,64,stinky2..19 x18,,,,Stinkytexture18.png,stinkytexture18.png
+stinky19.png,40da3e1a2f6b,img_40da3e1a2f6b,stinky19.png,yes,stinkytexture19.png,,128,64,stinky2..19 x18,,,,Stinkytexture19.png,stinkytexture19.png
+stinky2.png,c3c135e378c4,img_c3c135e378c4,stinky2.png,yes,stinkytexture2.png,,128,64,stinky2..19 x18,,,,Stinkytexture2.png,stinkytexture2.png
+stinky3.png,807941222e42,img_807941222e42,stinky3.png,yes,stinkytexture3.png,,128,64,stinky2..19 x18,,,,Stinkytexture3.png,stinkytexture3.png
+stinky4.png,71651ce3a7b1,img_71651ce3a7b1,stinky4.png,yes,stinkytexture4.png,,128,64,stinky2..19 x18,,,,Stinkytexture4.png,stinkytexture4.png
+stinky5.png,8174cde16ee7,img_8174cde16ee7,stinky5.png,yes,stinkytexture5.png,,128,64,stinky2..19 x18,,,,Stinkytexture5.png,stinkytexture5.png
+stinky6.png,ac540ec32551,img_ac540ec32551,stinky6.png,yes,stinkytexture6.png,,128,64,stinky2..19 x18,,,,Stinkytexture6.png,stinkytexture6.png
+stinky7.png,97046b5546e4,img_97046b5546e4,stinky7.png,yes,stinkytexture7.png,,128,64,stinky2..19 x18,,,,Stinkytexture7.png,stinkytexture7.png
+stinky8.png,7b51f029fabc,img_7b51f029fabc,stinky8.png,yes,stinkytexture8.png,,128,64,stinky2..19 x18,,,,Stinkytexture8.png,stinkytexture8.png
+stinky9.png,8472d3059869,img_8472d3059869,stinky9.png,yes,stinkytexture9.png,,128,64,stinky2..19 x18,,,,Stinkytexture9.png,stinkytexture9.png
+stinkytexture1.png,1e0a31b08a53,img_1e0a31b08a53,stinky.png,no,stinky.png,,128,64,stinkytexture1..19 x19,,,stinky,Stinkytexture1.png,
+stinkytexture10.png,817bc1e771da,img_817bc1e771da,stinky10.png,no,stinky10.png,,128,64,stinkytexture1..19 x19,,,,Stinkytexture10.png,
+stinkytexture11.png,12e09e1db1ea,img_12e09e1db1ea,stinky11.png,no,stinky11.png,,128,64,stinkytexture1..19 x19,,,,Stinkytexture11.png,
+stinkytexture12.png,bc382aa218c4,img_bc382aa218c4,stinky12.png,no,stinky12.png,,128,64,stinkytexture1..19 x19,,,,Stinkytexture12.png,
+stinkytexture13.png,a773e45599f1,img_a773e45599f1,stinky13.png,no,stinky13.png,,128,64,stinkytexture1..19 x19,,,,Stinkytexture13.png,
+stinkytexture14.png,5751034aa997,img_5751034aa997,stinky14.png,no,stinky14.png,,128,64,stinkytexture1..19 x19,,,,Stinkytexture14.png,
+stinkytexture15.png,0d5d7a8351e4,img_0d5d7a8351e4,stinky15.png,no,stinky15.png,,128,64,stinkytexture1..19 x19,,,,Stinkytexture15.png,
+stinkytexture16.png,3438077f1e10,img_3438077f1e10,stinky16.png,no,stinky16.png,,128,64,stinkytexture1..19 x19,,,,Stinkytexture16.png,
+stinkytexture17.png,40b3f3f9448a,img_40b3f3f9448a,stinky17.png,no,stinky17.png,,128,64,stinkytexture1..19 x19,,,,Stinkytexture17.png,
+stinkytexture18.png,e49fe31b4c15,img_e49fe31b4c15,stinky18.png,no,stinky18.png,,128,64,stinkytexture1..19 x19,,,,Stinkytexture18.png,
+stinkytexture19.png,40da3e1a2f6b,img_40da3e1a2f6b,stinky19.png,no,stinky19.png,,128,64,stinkytexture1..19 x19,,,,Stinkytexture19.png,
+stinkytexture2.png,c3c135e378c4,img_c3c135e378c4,stinky2.png,no,stinky2.png,,128,64,stinkytexture1..19 x19,,,,Stinkytexture2.png,
+stinkytexture3.png,807941222e42,img_807941222e42,stinky3.png,no,stinky3.png,,128,64,stinkytexture1..19 x19,,,,Stinkytexture3.png,
+stinkytexture4.png,71651ce3a7b1,img_71651ce3a7b1,stinky4.png,no,stinky4.png,,128,64,stinkytexture1..19 x19,,,,Stinkytexture4.png,
+stinkytexture5.png,8174cde16ee7,img_8174cde16ee7,stinky5.png,no,stinky5.png,,128,64,stinkytexture1..19 x19,,,,Stinkytexture5.png,
+stinkytexture6.png,ac540ec32551,img_ac540ec32551,stinky6.png,no,stinky6.png,,128,64,stinkytexture1..19 x19,,,,Stinkytexture6.png,
+stinkytexture7.png,97046b5546e4,img_97046b5546e4,stinky7.png,no,stinky7.png,,128,64,stinkytexture1..19 x19,,,,Stinkytexture7.png,
+stinkytexture8.png,7b51f029fabc,img_7b51f029fabc,stinky8.png,no,stinky8.png,,128,64,stinkytexture1..19 x19,,,,Stinkytexture8.png,
+stinkytexture9.png,8472d3059869,img_8472d3059869,stinky9.png,no,stinky9.png,,128,64,stinkytexture1..19 x19,,,,Stinkytexture9.png,
+swimshorts0.png,3949a7e2e10f,img_3949a7e2e10f,swimshorts0.png,yes,,,64,32,swimshorts0..17 x18 (law 0..17: ok),,BoyfriendRenderer,boyfriend,swimshorts0.png,
+swimshorts1.png,68cd333a7bd8,img_68cd333a7bd8,swimshorts1.png,yes,,,64,32,swimshorts0..17 x18 (law 0..17: ok),,BoyfriendRenderer,boyfriend,swimshorts1.png,
+swimshorts10.png,26caeead5958,img_26caeead5958,swimshorts10.png,yes,,,64,32,swimshorts0..17 x18 (law 0..17: ok),,BoyfriendRenderer,boyfriend,swimshorts10.png,
+swimshorts11.png,f26f8c4ec8db,img_f26f8c4ec8db,swimshorts11.png,yes,,,64,32,swimshorts0..17 x18 (law 0..17: ok),,BoyfriendRenderer,boyfriend,swimshorts11.png,
+swimshorts12.png,268db0427489,img_268db0427489,swimshorts12.png,yes,,,64,32,swimshorts0..17 x18 (law 0..17: ok),,BoyfriendRenderer,boyfriend,swimshorts12.png,
+swimshorts13.png,af810383d9e2,img_af810383d9e2,swimshorts13.png,yes,,,64,32,swimshorts0..17 x18 (law 0..17: ok),,BoyfriendRenderer,boyfriend,swimshorts13.png,
+swimshorts14.png,a8460abfde45,img_a8460abfde45,swimshorts14.png,yes,,,64,32,swimshorts0..17 x18 (law 0..17: ok),,BoyfriendRenderer,boyfriend,swimshorts14.png,
+swimshorts15.png,7adceda9850c,img_7adceda9850c,swimshorts15.png,yes,,,64,32,swimshorts0..17 x18 (law 0..17: ok),,BoyfriendRenderer,boyfriend,swimshorts15.png,
+swimshorts16.png,6a6472826881,img_6a6472826881,swimshorts16.png,yes,,,64,32,swimshorts0..17 x18 (law 0..17: ok),,BoyfriendRenderer,boyfriend,swimshorts16.png,
+swimshorts17.png,0d7695dfddc9,img_0d7695dfddc9,swimshorts17.png,yes,,,64,32,swimshorts0..17 x18 (law 0..17: ok),,BoyfriendRenderer,boyfriend,swimshorts17.png,
+swimshorts2.png,b029d2fcf930,img_b029d2fcf930,swimshorts2.png,yes,,,64,32,swimshorts0..17 x18 (law 0..17: ok),,BoyfriendRenderer,boyfriend,swimshorts2.png,
+swimshorts3.png,2bc0a79f0a6e,img_2bc0a79f0a6e,swimshorts3.png,yes,,,64,32,swimshorts0..17 x18 (law 0..17: ok),,BoyfriendRenderer,boyfriend,swimshorts3.png,
+swimshorts4.png,c5f631b017e8,img_c5f631b017e8,swimshorts4.png,yes,,,64,32,swimshorts0..17 x18 (law 0..17: ok),,BoyfriendRenderer,boyfriend,swimshorts4.png,
+swimshorts5.png,fb840abef799,img_fb840abef799,swimshorts5.png,yes,,,64,32,swimshorts0..17 x18 (law 0..17: ok),,BoyfriendRenderer,boyfriend,swimshorts5.png,
+swimshorts6.png,59d08ddbf809,img_59d08ddbf809,swimshorts6.png,yes,,,64,32,swimshorts0..17 x18 (law 0..17: ok),,BoyfriendRenderer,boyfriend,swimshorts6.png,
+swimshorts7.png,3a7b68966cdd,img_3a7b68966cdd,swimshorts7.png,yes,,,64,32,swimshorts0..17 x18 (law 0..17: ok),,BoyfriendRenderer,boyfriend,swimshorts7.png,
+swimshorts8.png,ef832cf6f7f0,img_ef832cf6f7f0,swimshorts8.png,yes,,,64,32,swimshorts0..17 x18 (law 0..17: ok),,BoyfriendRenderer,boyfriend,swimshorts8.png,
+swimshorts9.png,58f7c0dea81b,img_58f7c0dea81b,swimshorts9.png,yes,,,64,32,swimshorts0..17 x18 (law 0..17: ok),,BoyfriendRenderer,boyfriend,swimshorts9.png,
+termite.png,794dc6f678f4,img_794dc6f678f4,termite.png,yes,,,64,32,,,TermiteGeoReplacement;TermiteRenderer,termite,termite.png,
+terribleterror.png,1b91d631e49b,img_1b91d631e49b,terribleterror.png,yes,,,119,72,,,TerribleTerrorRenderer,terrible_terror,TerribleTerror.png,
+textures.png,bae30b921fb6,img_bae30b921fb6,textures.png,yes,,,256,256,,GUI/atlas stray (no twin outside textures/entity),,,textures.png,
+thekingtexture.png,d78624bba58e,img_d78624bba58e,theprinceadult.png,no,theprinceadult.png,,2048,2048,,,TheKingRenderer,the_king;the_prince_adult,TheKingtexture.png,
+theprince.png,d2f46315201e,img_d2f46315201e,theprince.png,yes,theprincetexture.png,,128,128,,,ThePrinceRenderer,the_prince,ThePrincetexture.png,theprincetexture.png
+theprince_teen.png,ce9fa395419e,img_ce9fa395419e,theprince_teen.png,yes,princeteentexture.png,,512,256,,,ThePrinceTeenRenderer,the_prince_teen,PrinceTeentexture.png,princeteentexture.png
+theprinceadult.png,d78624bba58e,img_d78624bba58e,theprinceadult.png,yes,thekingtexture.png,,2048,2048,,,ThePrinceAdultRenderer,the_king;the_prince_adult,TheKingtexture.png,thekingtexture.png
+theprincess.png,71ebc538aef9,img_71ebc538aef9,theprincess.png,yes,theprincesstexture.png,,128,128,,,ThePrincessRenderer,the_princess,ThePrincesstexture.png,theprincesstexture.png
+theprincess2.png,b0231393affc,img_b0231393affc,theprincess2.png,yes,theprincesstexture2.png,,128,128,theprincess2..2 x1,,,,ThePrincesstexture2.png,theprincesstexture2.png
+theprincesstexture.png,71ebc538aef9,img_71ebc538aef9,theprincess.png,no,theprincess.png,,128,128,,,,the_princess,ThePrincesstexture.png,
+theprincesstexture2.png,b0231393affc,img_b0231393affc,theprincess2.png,no,theprincess2.png,,128,128,theprincesstexture2..2 x1,,,,ThePrincesstexture2.png,
+theprincetexture.png,d2f46315201e,img_d2f46315201e,theprince.png,no,theprince.png,,128,128,,,,the_prince,ThePrincetexture.png,
+thequeentexture.png,4b25b9429b95,img_4b25b9429b95,thequeentexture.png,yes,,,2048,2048,,,,,TheQueentexture.png,
+thequeentexture2.png,6aeffe7bf708,img_6aeffe7bf708,thequeentexture2.png,yes,,,2048,2048,thequeentexture2..2 x1,,,,TheQueentexture2.png,
+tigerseye_1.png,6523d15bcfc2,img_6523d15bcfc2,tigerseye_1.png,yes,,models/armor/tigerseye_layer_1.png,64,32,tigerseye_1..2 x2,armor sheet stray: the shipped armor layer is textures/models/armor/tigerseye_layer_1.png (byte-identical),,,tigerseye_1.png,
+tigerseye_2.png,17aa80dfba4f,img_17aa80dfba4f,tigerseye_2.png,yes,,models/armor/tigerseye_layer_2.png,64,32,tigerseye_1..2 x2,armor sheet stray: the shipped armor layer is textures/models/armor/tigerseye_layer_2.png (byte-identical),,,tigerseye_2.png,
+trex.png,5f77deabb38d,img_5f77deabb38d,trex.png,yes,trextexture.png,,128,128,,,TRexRenderer,trex,TRextexture.png,trextexture.png
+trextexture.png,5f77deabb38d,img_5f77deabb38d,trex.png,no,trex.png,,128,128,,,,trex,TRextexture.png,
+triffid.png,7c91a5ced0a6,img_7c91a5ced0a6,triffid.png,yes,triffidtexture.png,,532,715,,,TriffidRenderer,triffid,Triffidtexture.png,triffidtexture.png
+triffidtexture.png,7c91a5ced0a6,img_7c91a5ced0a6,triffid.png,no,triffid.png,,532,715,,,,triffid,Triffidtexture.png,
+trooperbug.png,7486b83c3e37,img_7486b83c3e37,trooperbug.png,yes,,,512,256,,,TrooperBugRenderer,trooper_bug,TrooperBug.png,
+tshirt.png,5ddc58e02f5d,img_5ddc58e02f5d,tshirt.png,yes,tshirttexture.png,,320,160,,,TshirtGeoReplacement;TshirtRenderer,tshirt,Tshirttexture.png,tshirttexture.png
+tshirttexture.png,5ddc58e02f5d,img_5ddc58e02f5d,tshirt.png,no,tshirt.png,,320,160,,,,tshirt,Tshirttexture.png,
+ultimate_1.png,e015fcf94976,img_e015fcf94976,ultimate_1.png,yes,,models/armor/ultimate_layer_1.png,64,32,ultimate_1..2 x2,armor sheet stray: the shipped armor layer is textures/models/armor/ultimate_layer_1.png (byte-identical),,,ultimate_1.png,
+ultimate_2.png,e78dcc1ac879,img_e78dcc1ac879,ultimate_2.png,yes,,models/armor/ultimate_layer_2.png,64,32,ultimate_1..2 x2,armor sheet stray: the shipped armor layer is textures/models/armor/ultimate_layer_2.png (byte-identical),,,ultimate_2.png,
+unstable_ant.png,804a59d0192b,img_804a59d0192b,unstable_ant.png,yes,unstableant.png,,64,32,,,UnstableAntGeoReplacement;UnstableAntRenderer,unstable_ant,unstableant.png,unstableant.png
+unstableant.png,804a59d0192b,img_804a59d0192b,unstable_ant.png,no,unstable_ant.png,,64,32,,,,unstable_ant,unstableant.png,
+urchin.png,01e0721eee4c,img_01e0721eee4c,urchin.png,yes,urchintexture.png,,128,128,,,UrchinRenderer,urchin,Urchintexture.png,urchintexture.png
+urchintexture.png,01e0721eee4c,img_01e0721eee4c,urchin.png,no,urchin.png,,128,128,,,,urchin,Urchintexture.png,
+vampire_butterfly.png,c0eb382b339b,img_c0eb382b339b,butterfly.png,no,butterfly.png,,64,32,,,VampireButterflyRenderer,butterfly;vampire_butterfly,butterfly.png,
+vbutterfly1.png,51ec831fb9d0,img_51ec831fb9d0,vbutterfly1.png,yes,,,64,32,vbutterfly1..1 x1,,,,vbutterfly1.png,
+velocityraptor.png,e41f4e6c61b4,img_e41f4e6c61b4,velocityraptor.png,yes,,,128,128,,,VelocityRaptorRenderer,velocity_raptor,velocityraptor.png,
+velocityraptor2.png,6593aa226ce9,img_6593aa226ce9,velocityraptor2.png,yes,,,128,128,velocityraptor2..3 x2,,,,velocityraptor2.png,
+velocityraptor3.png,3a7e4c06701c,img_3a7e4c06701c,velocityraptor3.png,yes,,,128,128,velocityraptor2..3 x2,,,,velocityraptor3.png,
+vortex.png,023ef1a05f90,img_023ef1a05f90,vortex.png,yes,vortextexture.png,,256,128,,,VortexGeoReplacement;VortexRenderer,vortex,Vortextexture.png,vortextexture.png
+vortextexture.png,023ef1a05f90,img_023ef1a05f90,vortex.png,no,vortex.png,,256,128,,,,vortex,Vortextexture.png,
+waterdragon.png,51398be9700d,img_51398be9700d,waterdragon.png,yes,,,128,128,,,WaterDragonRenderer,water_dragon,WaterDragon.png,
+whale.png,5d7400a4f9da,img_5d7400a4f9da,whale.png,yes,whaletexture.png,,256,256,,,WhaleRenderer,whale,Whaletexture.png,whaletexture.png
+whaletexture.png,5d7400a4f9da,img_5d7400a4f9da,whale.png,no,whale.png,,256,256,,,,whale,Whaletexture.png,
+white_dragon.png,c835158f9ada,img_c835158f9ada,white_dragon.png,yes,whitedragon.png,,256,128,,,BabyDragonRenderer;DragonRenderer,baby_dragon;dragon,WhiteDragon.png,whitedragon.png
+whitedragon.png,c835158f9ada,img_c835158f9ada,white_dragon.png,no,white_dragon.png,,256,128,,,,baby_dragon;dragon,WhiteDragon.png,
+wormlarge.png,f342791f647e,img_f342791f647e,wormlarge.png,yes,wormlargetexture.png,,256,256,,,WormLargeRenderer,worm_large,WormLargetexture.png,wormlargetexture.png
+wormlargetexture.png,f342791f647e,img_f342791f647e,wormlarge.png,no,wormlarge.png,,256,256,,,,worm_large,WormLargetexture.png,
+wormmedium.png,07e214032b51,img_07e214032b51,wormmedium.png,yes,wormmediumtexture.png,,64,32,,,WormMediumRenderer,worm_medium,WormMediumtexture.png,wormmediumtexture.png
+wormmediumtexture.png,07e214032b51,img_07e214032b51,wormmedium.png,no,wormmedium.png,,64,32,,,,worm_medium,WormMediumtexture.png,
+wormsmall.png,9ac4635bcb39,img_9ac4635bcb39,wormsmall.png,yes,wormsmalltexture.png,,64,32,,,WormSmallRenderer,worm_small,WormSmalltexture.png,wormsmalltexture.png
+wormsmalltexture.png,9ac4635bcb39,img_9ac4635bcb39,wormsmall.png,no,wormsmall.png,,64,32,,,,worm_small,WormSmalltexture.png,

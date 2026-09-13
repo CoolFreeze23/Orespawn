@@ -1695,10 +1695,11 @@ class FixtureCase(unittest.TestCase):
         self.assertFalse(passed)
         self.assertTrue(self._has(findings, "REJECT", "the reject mode, kept for the day the server-side hitbox evaluator lands"), findings)
 
-    def test_package_refuses_repository_artist_handoff(self):
-        with self.assertRaises(SystemExit):
-            ap.build_package(self.repo, self.root / "artist_handoff", ["fixture"])
-        self.assertFalse((self.root / "artist_handoff").exists())
+    def test_package_writes_repository_artist_handoff(self):
+        # owner 2026-09-13, second set, item 10: since the mirror drop landed the repository's artist_handoff/ is an
+        # ordinary output (the pilot pair's package lives there); the 2026-09-05 refusal is gone.
+        ap.build_package(self.repo, self.root / "artist_handoff", ["fixture"], with_roundtrip=False)
+        self.assertTrue((self.root / "artist_handoff" / "entities" / "fixture" / "SPEC.md").exists())
 
     def test_inventory_rows(self):
         header, rows = ap.inventory_rows(self.repo, self.catalog)

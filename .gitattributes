@@ -32,3 +32,10 @@
 /tools/keyframe_clips/*.json text eol=lf
 # The reference-only clips the sampler writes (ReferenceClipSampler, gradle referenceClips) and their index are sha-pinned by the package manifests and byte-compared between runs; keep them LF (owner 2026-09-13, second set, item 27 (3)).
 /tools/reference_clips/*.json text eol=lf
+# The pilot pair's artist package (owner 2026-09-13, second set, item 10) lives in the repository: generated LF by tools/artist_package.py, its sheets and manifests sha-pinned and byte-compared by `check`; keep every text file LF and the textures binary (2026-09-13).
+/artist_handoff/**/*.json text eol=lf
+/artist_handoff/**/*.bbmodel text eol=lf
+/artist_handoff/**/*.md text eol=lf
+/artist_handoff/**/*.csv text eol=lf
+/artist_handoff/**/*.txt text eol=lf
+/artist_handoff/**/*.png binary

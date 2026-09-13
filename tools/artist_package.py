@@ -6,9 +6,11 @@ the animation contract's SPEC additions, `phase_g_reports/animation_contract/con
 from the repository's own sources, mechanically wherever the data exists and from an
 AUTHORED seed (`tools/artist_specs/<registry>.json`) where a human sentence is needed.
 
-Nothing here writes into the repository's `artist_handoff/` (owner 2026-09-05, addendum item
-23 (8)(f): nothing under `artist_handoff/` is committed until the mirror drop lands); the
-`package` subcommand writes wherever `--out` points.
+The repository's `artist_handoff/` is written by `package --out artist_handoff --entities ...` since
+the mirror drop landed (d51f06f; owner 2026-09-13, second set, item 10: the pilot pair first - the Queen's
+`idle` and `attack`, the Beaver); until then (owner 2026-09-05, addendum item 23 (8)(f)) nothing under
+`artist_handoff/` was committed and the generator refused the path. The `package` subcommand writes
+wherever `--out` points.
 
 Subcommands (standard library only; Python 3.11+):
 
@@ -43,7 +45,7 @@ from collections import Counter, OrderedDict, defaultdict
 from pathlib import Path
 from typing import Any, Iterable
 
-TOOL_VERSION = "0.2.5 (the reference-clip sampler, 2026-09-13: the reference-only clip per packaged species, the SPEC's reference-clip section with the plain-language transcription, the manifest's reference_clip / exact_transcription, the checker's refusal)"
+TOOL_VERSION = "0.2.6 (the pilot package, 2026-09-13: artist_handoff/ writable after the mirror drop; the Queen's pilot scope - idle and attack - marked in her seed and sheet)"
 
 ROOT = Path(__file__).resolve().parent.parent
 BB_NAMESPACE = uuid.UUID("6f0b4b2e-9d1c-4a7e-8f3a-2c5e1d7b9a10")  # deterministic .bbmodel uuids
@@ -3096,9 +3098,9 @@ def readme_document(repo: "Repo", manifests: dict[str, dict[str, Any]]) -> str:
 
 def build_package(repo: "Repo", out_dir: Path, registries: list[str] | None = None, with_roundtrip: bool = True) -> dict[str, Any]:
     """The whole tree for the landed species (the dry run); returns the summary."""
-    if repo.paths.root in out_dir.resolve().parents or out_dir.resolve() == repo.paths.root / "artist_handoff":
-        if out_dir.resolve() == (repo.paths.root / "artist_handoff").resolve() or (repo.paths.root / "artist_handoff") in out_dir.resolve().parents:
-            raise SystemExit("refusing to write into the repository's artist_handoff/ (owner 2026-09-05: nothing there until the mirror drop lands)")
+    # The repository's artist_handoff/ was refused as an output until the mirror drop landed (owner 2026-09-05, addendum
+    # item 23 (8)(f)); the drop landed (d51f06f) and the pilot pair's package is generated there (owner 2026-09-13, second
+    # set, item 10) - an --out under it is an ordinary output now.
     catalog = TextureCatalog(repo)
     out_dir.mkdir(parents=True, exist_ok=True)
     species = [repo.get(r) for r in registries] if registries else repo.landed_species()
