@@ -1491,6 +1491,21 @@ class FixtureCase(unittest.TestCase):
             self.assertIn(rule, readme)
             self.assertIn(rule, (self.tmp / "out/entities/fixture/SPEC.md").read_text(encoding="utf-8"))
 
+    def test_check_hook_species_untouched_folder_passes(self):
+        # T2c (2026-09-13, decided under the sampler step's doctrine): a creature on its classic code ships a file with no clip;
+        # its generated folder is not a delivery - the required pair WARNs "not delivered yet"; a PARTIAL file still REJECTs.
+        manifest = self._package_fixture()
+        self.assertIs(json.loads(manifest.read_text(encoding="utf-8"))["exact_transcription"], False)
+        empty = {"format_version": "1.8.0", "animations": {}}
+        findings, passed = ap.check_folder(self._returned(empty), manifest)
+        self.assertTrue(passed, findings)
+        for name in ("idle", "walk"):
+            self.assertTrue(self._has(findings, "WARN", f"required clip '{name}' not delivered yet"), findings)
+        partial = {"format_version": "1.8.0", "animations": {"idle": self.GOOD["animations"]["idle"]}}
+        findings, passed = ap.check_folder(self._returned(partial), manifest)
+        self.assertFalse(passed)
+        self.assertTrue(self._has(findings, "REJECT", "required clip 'walk' is missing (idle and walk open the game's switch only together"), findings)
+
     def test_check_refuses_a_locked_bone_renamed_reparented_or_deleted(self):
         """The second half of the ruled policy (2026-09-06): a key on a locked bone warns; its name, parent and presence are refused.
         A rename is told from a deletion by the bone's body (pivot, bind rotation, cubes) reappearing under another name."""

@@ -1,0 +1,144 @@
+{
+  "registry": "worm_large",
+  "display_name": "Large Worm",
+  "status": "draft for the owner's edit (the third Tier-2 slice, 2026-09-13: on the hook under Amendment 2)",
+  "locomotion": "walker",
+  "artist_scope": "full contract (Tier 2, the simple-cyclic (with position chains) class: geckolib_migration_design.md section 5); ON THE HOOK until idle and walk are delivered (Amendment 2)",
+  "character_sheet": "The largest of the three burrowing worms: a five-ring neck, a five-ring head, eight teeth around the maw, a five-part tail and a tail tip. It erupts from the ground and bites. Read it as a rearing worm: the neck swaying, the head rings following it as one block, the teeth gnashing around the maw, the tail tip circling.",
+  "size_notes": "Drawn at x1.0 of the rig on a 256x256 sheet.",
+  "labels": {
+    "head1": "head 1",
+    "head2": "head 2",
+    "head3": "head 3",
+    "head4": "head 4",
+    "head5": "head 5",
+    "neck1": "neck 1",
+    "neck2": "neck 2",
+    "neck3": "neck 3",
+    "neck4": "neck 4",
+    "neck5": "neck 5",
+    "tail1": "tail 1",
+    "tailtip": "tail tip",
+    "tail2": "tail 2",
+    "tail3": "tail 3",
+    "tail4": "tail 4",
+    "tooth1": "tooth 1 (top)",
+    "tooth2": "tooth 2 (bottom)",
+    "tooth3": "tooth 3 (right)",
+    "tooth4": "tooth 4 (left)",
+    "tooth5": "tooth 5 (corner)",
+    "tooth6": "tooth 6 (corner)",
+    "tooth7": "tooth 7 (corner)",
+    "tooth8": "tooth 8 (corner)"
+  },
+  "groups": [
+    {
+      "name": "neck",
+      "bones": [
+        "neck1",
+        "neck2",
+        "neck3",
+        "neck4",
+        "neck5"
+      ],
+      "omega": 0.25,
+      "axis": "x and y",
+      "gait_scaled": false,
+      "amplitude": "pitch: -0.698 rad rest, then pi x 0.08 = 0.251 rad (14 deg) at 0.25; yaw: pi x 0.07 = 0.220 rad (13 deg) at 0.15",
+      "plain": "the five neck rings sway as one: a slow pitch around a 40-degree rear, a slower yaw",
+      "math": "neck*.xRot = cos(t*0.25)*pi*0.08 - 0.698; neck*.yRot = cos(t*0.15)*pi*0.07",
+      "source": "WormLargeModel.setupAnim; WormLargeGeoReplacement.java"
+    },
+    {
+      "name": "head",
+      "bones": [
+        "head1",
+        "head2",
+        "head3",
+        "head4",
+        "head5"
+      ],
+      "omega": 0.35,
+      "axis": "x and y",
+      "gait_scaled": false,
+      "amplitude": "pitch pi x 0.15 = 0.471 rad (27 deg) at 0.35; yaw pi x 0.05 = 0.157 rad (9 deg) at 0.45; the pivot follows the neck by 32 units",
+      "plain": "the five head rings sit 32 units along the neck's direction (a position follow) and sway as one on their own two rhythms",
+      "math": "head*.pos = neck1.pos + (-sin(neckY)*cos(neckX), sin(neckX), -cos(neckX)) * 32 (x, y, z); head*.xRot = cos(t*0.35)*pi*0.15; head*.yRot = cos(t*0.45)*pi*0.05",
+      "source": "WormLargeModel.setupAnim; WormLargeGeoReplacement.java"
+    },
+    {
+      "name": "teeth",
+      "bones": [
+        "tooth1",
+        "tooth2",
+        "tooth3",
+        "tooth4",
+        "tooth5",
+        "tooth6",
+        "tooth7",
+        "tooth8"
+      ],
+      "omega": 0.57,
+      "axis": "x and y",
+      "gait_scaled": false,
+      "amplitude": "pi x 0.35 = 1.100 rad (63 deg) about the head's angles; the pivots follow the head by 19 units with fixed offsets (+-9 / +-6 units) and a sine shift",
+      "plain": "the eight teeth ride 19 units on from the head (a position follow with fixed offsets) and gnash: the top / bottom pair about X, the side pair about Y, the four corners about both",
+      "math": "tooth*.pos = head1.pos + (follow 19 along the head's angles) + offsets; tooth1/2.xRot = headX +- a; tooth3/4.yRot = headY +- a; tooth5..8 both; a = cos(t*0.57)*pi*0.35",
+      "source": "WormLargeModel.setupAnim; WormLargeGeoReplacement.java"
+    },
+    {
+      "name": "tail_tip",
+      "bones": [
+        "tailtip"
+      ],
+      "omega": 0.63,
+      "axis": "x and y",
+      "gait_scaled": false,
+      "amplitude": "pitch: 0.35 rad rest, then pi x 0.15; yaw: pi x 0.15 a quarter turn ahead",
+      "plain": "the tail tip circles on one rhythm, its yaw a quarter turn ahead of its pitch",
+      "math": "tailtip.xRot = cos(t*0.63)*pi*0.15 + 0.35; tailtip.yRot = cos(t*0.63 + 1.57075)*pi*0.15",
+      "source": "WormLargeModel.setupAnim; WormLargeGeoReplacement.java"
+    }
+  ],
+  "behaviour": [
+    "This creature runs on its CLASSIC code (owner 2026-09-13, Amendment 2 to Amendment 1): its motion does not fit the exact transcription form, so the GeckoLib candidate poses it from the same formulas the classic renderer uses, and the shipped animation file carries NO clip. The self-gate opens when you deliver `idle` AND `walk` together (README rule, item 12); until then the game plays the classic code. The reference-only clip beside this sheet is that code sampled at fixed inputs - copy its timing, do not return it.",
+    "Six always-on rhythms; nothing is scaled by walking speed; the four tail rings are static. The head rings and the teeth are POSITION follows (their pivots move every frame): a keyframed version needs position keys on those thirteen bones, or a re-parented rig (heads under the neck, teeth under the head).",
+    "The default renderer poses it from the classic code; the GeckoLib candidate sits behind the dev switch (-Dorespawn.dev.geckolibRenderers) and poses it from the same code until your clips arrive."
+  ],
+  "clips": [
+    {
+      "name": "idle",
+      "verdict": "author",
+      "note": "REQUIRED with walk: the gate opens on the pair (today nothing ships; the classic code plays)"
+    },
+    {
+      "name": "walk",
+      "verdict": "author",
+      "note": "REQUIRED with idle: the locomotion loop (the reference clip is the classic code's rhythm at full walking speed)"
+    },
+    {
+      "name": "attack",
+      "verdict": "author",
+      "note": "a strike",
+      "length_seconds": 0.5
+    },
+    {
+      "name": "hurt",
+      "verdict": "author",
+      "note": "a flinch",
+      "length_seconds": 0.3
+    },
+    {
+      "name": "death",
+      "verdict": "author",
+      "note": "ruled 2026-09-06, Q3 (a): the vanilla death flip stays; a creature whose JSON ships a `death` clip gets the clip-replaces-flip mode, designed when the first such clip arrives (the Queen's own death clip the precedent) - a `death` delivered here plays under the flip until then",
+      "length_seconds": 1.0
+    }
+  ],
+  "extras": [],
+  "wishlist": [],
+  "effort_hours": null,
+  "formulas": [
+    "`WormLargeModel.setupAnim` (WormLargeModel.java; orig ModelWormLarge.java:185-274, `render`): (1) the neck's pitch is the cosine of the age in ticks times 0.25, times pi, times 0.08, minus 0.698 radians (a 14-degree sway every 25 ticks around a 40-degree rear); its yaw the cosine of the age times 0.15, times pi, times 0.07 (13 degrees every 42 ticks); all five neck rings take both (orig :185-193); (2) the head rings' pivot is the first neck ring's pivot moved 32 units along the neck's direction - z minus the cosine of the pitch times 32, x minus the sine of the yaw times that cosine times 32, y plus the sine of the pitch times 32 - a POSITION write on all five (orig :194-200, :203-211); the head rings pitch by the cosine of the age times 0.35, times pi, times 0.15 (27 degrees every 18 ticks) and yaw by the cosine of the age times 0.45, times pi, times 0.05 (orig :201-202, :212-217); (3) the eight teeth's pivots are the head's pivot moved 19 units the same way, the first tooth 9 units up, the second 18 units below it, the third and fourth 9 units to either side and 9 down, the corners 6 units aside and 3 or 15 down (orig :218-246), then shifted in z by the sine of the head's pitch times 9 (the top / bottom pair, opposite ways), of its yaw times 9 (the side pair) and of both times 6 (the corners) (orig :247-258); the gnash is the cosine of the age times 0.57, times pi, times 0.35 (63 degrees every 11 ticks): the top tooth pitches by the head's pitch plus it and the bottom by the head's pitch minus it, the right tooth yaws by the head's yaw plus it and the left minus it, the four corners pitch and yaw by the head's angles plus or minus it (orig :259-271); (4) the tail tip pitches by the cosine of the age times 0.63, times pi, times 0.15, plus 0.35 radians, and yaws by the cosine of the age times 0.63 plus 1.57075, times pi, times 0.15 - a circle every 10 ticks (orig :272-274). The walk position, the walking speed, the head angles and the entity's state play no part. The GeckoLib hook is the same (WormLargeGeoReplacement.applyCustomAnimations, the follows through `moveTo`)."
+  ]
+}

@@ -6,34 +6,69 @@ import danger.orespawn.OreSpawnConfig;
 import danger.orespawn.OreSpawnMod;
 import danger.orespawn.entity.client.AntGeoReplacement;
 import danger.orespawn.entity.client.AntRenderer;
+import danger.orespawn.entity.client.BeeGeoReplacement;
+import danger.orespawn.entity.client.BeeRenderer;
 import danger.orespawn.entity.client.BrutalflyGeoReplacement;
 import danger.orespawn.entity.client.BrutalflyRenderer;
+import danger.orespawn.entity.client.CannonFodderGeoReplacement;
+import danger.orespawn.entity.client.CaterKillerGeoReplacement;
+import danger.orespawn.entity.client.CaterKillerRenderer;
 import danger.orespawn.entity.client.CliffRacerGeoReplacement;
 import danger.orespawn.entity.client.CliffRacerRenderer;
+import danger.orespawn.entity.client.CloudSharkGeoReplacement;
 import danger.orespawn.entity.client.CockateilGeoReplacement;
 import danger.orespawn.entity.client.CockateilRenderer;
+import danger.orespawn.entity.client.CricketGeoReplacement;
+import danger.orespawn.entity.client.CricketRenderer;
 import danger.orespawn.entity.client.DragonflyGeoReplacement;
 import danger.orespawn.entity.client.DragonflyRenderer;
+import danger.orespawn.entity.client.DrawOrder;
+import danger.orespawn.entity.client.FaceOrder;
+import danger.orespawn.entity.client.FairyGeoReplacement;
+import danger.orespawn.entity.client.FairyRenderer;
 import danger.orespawn.entity.client.FireflyGeoReplacement;
 import danger.orespawn.entity.client.FireflyRenderer;
+import danger.orespawn.entity.client.GammaMetroidGeoReplacement;
+import danger.orespawn.entity.client.GammaMetroidRenderer;
 import danger.orespawn.entity.client.GoldFishGeoReplacement;
 import danger.orespawn.entity.client.GoldFishRenderer;
+import danger.orespawn.entity.client.HerculesBeetleGeoReplacement;
+import danger.orespawn.entity.client.HerculesBeetleRenderer;
+import danger.orespawn.entity.client.IrukandjiGeoReplacement;
+import danger.orespawn.entity.client.IrukandjiRenderer;
 import danger.orespawn.entity.client.MosquitoGeoReplacement;
 import danger.orespawn.entity.client.MosquitoRenderer;
 import danger.orespawn.entity.client.OreSpawnGeoReplacement;
+import danger.orespawn.entity.client.OreSpawnGeoReplacementModel;
+import danger.orespawn.entity.client.PoseInputs;
 import danger.orespawn.entity.client.RainbowAntGeoReplacement;
 import danger.orespawn.entity.client.RainbowAntRenderer;
 import danger.orespawn.entity.client.RedAntGeoReplacement;
 import danger.orespawn.entity.client.RedAntRenderer;
+import danger.orespawn.entity.client.RubberDuckyGeoReplacement;
+import danger.orespawn.entity.client.RubberDuckyRenderer;
 import danger.orespawn.entity.client.RubyBirdGeoReplacement;
+import danger.orespawn.entity.client.SkateGeoReplacement;
+import danger.orespawn.entity.client.SkateRenderer;
 import danger.orespawn.entity.client.TermiteGeoReplacement;
 import danger.orespawn.entity.client.TermiteRenderer;
+import danger.orespawn.entity.client.TerribleTerrorGeoReplacement;
+import danger.orespawn.entity.client.TerribleTerrorRenderer;
 import danger.orespawn.entity.client.TshirtGeoReplacement;
 import danger.orespawn.entity.client.TshirtRenderer;
 import danger.orespawn.entity.client.UnstableAntGeoReplacement;
 import danger.orespawn.entity.client.UnstableAntRenderer;
+import danger.orespawn.entity.client.WormLargeGeoReplacement;
+import danger.orespawn.entity.client.WormLargeRenderer;
+import danger.orespawn.entity.client.WormMediumGeoReplacement;
+import danger.orespawn.entity.client.WormMediumRenderer;
+import danger.orespawn.entity.client.WormSmallGeoReplacement;
+import danger.orespawn.entity.client.WormSmallRenderer;
 import danger.orespawn.entity.client.animation.KeyframeLayer;
 import danger.orespawn.entity.client.animation.PhaseLockedKeyframeController;
+import danger.orespawn.entity.pose.BeePose;
+import danger.orespawn.entity.pose.CaterKillerPose;
+import danger.orespawn.entity.pose.HerculesBeetlePose;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -41,17 +76,25 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import net.minecraft.core.Direction;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.util.GsonHelper;
+import net.minecraft.world.entity.Entity;
 import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 import software.bernie.geckolib.animatable.GeoAnimatable;
 import software.bernie.geckolib.animation.AnimatableManager;
 import software.bernie.geckolib.animation.Animation;
 import software.bernie.geckolib.animation.AnimationController;
+import software.bernie.geckolib.animation.AnimationProcessor;
+import software.bernie.geckolib.cache.object.BakedGeoModel;
+import software.bernie.geckolib.cache.object.GeoBone;
+import software.bernie.geckolib.loading.json.raw.Model;
 import software.bernie.geckolib.loading.json.typeadapter.KeyFramesAdapter;
 import software.bernie.geckolib.loading.object.BakedAnimations;
+import software.bernie.geckolib.loading.object.BakedModelFactory;
+import software.bernie.geckolib.loading.object.GeometryTree;
 
 /**
  * The Tier-2 slices (2026-09-13): what the dedicated game-test server can pin of the fourteen Tier-2 descriptors behind
@@ -75,6 +118,12 @@ import software.bernie.geckolib.loading.object.BakedAnimations;
  *     primary group's), the gait group's amplitude-scaled and additive over its bones (the Ant family), every other
  *     unscaled - so the Dragonfly, Cockateil and Ruby Bird gates the first slice pinned CLOSED are now OPEN; the
  *     config gate still closes them all.</li>
+ * <li>{@code t2_005} (the third Tier-2 slice, 2026-09-13; owner's third set item 8 under Amendment 2): the fifteen HOOK
+ *     species - each descriptor constructs registry-free and declares NO keyframe layer, its shipped animation file bakes
+ *     to no clip (the s4 hook rigs' empty file), the self-gate registers nothing under the modern keys, its shadow is the
+ *     classic renderer's (ENT-S-092), the classic face order is required exactly where the shipped geo carries it
+ *     (TEST-007: the Cloud Shark, Bee, Fairy and Terrible Terror), and the classic hook poses a fresh bake of the shipped
+ *     geo through {@code OreSpawnGeoReplacement.pose} on explicit {@code PoseInputs} - the pose source is the hook.</li>
  * <li>{@code t2_004}: the render facts the 4c precedent pinned in code - each descriptor's shadow radius is its
  *     classic renderer's constant (ENT-S-092; the Ant family's {@code 0.1 / 0.15 x SCALE} products where the classic
  *     renderer declares no SHADOW), the Cockateil and Ruby Bird sharing the Cockateil renderer's - and each shared
@@ -86,6 +135,7 @@ import software.bernie.geckolib.loading.object.BakedAnimations;
 public class T2SeamTests {
     private static final String BATCH = "t2Seam";
     private static final String CLIPS = "/assets/orespawn/animations/entity/";
+    private static final String GEO = "/assets/orespawn/geo/entity/";
     private static final Set<String> ANT_GAIT_BONES = Set.of("llegtop1", "llegbot1", "llegtop2", "llegbot2", "llegtop3", "llegbot3",
             "rlegtop1", "rlegbot1", "rlegtop2", "rlegbot2", "rlegtop3", "rlegbot3");
 
@@ -275,6 +325,98 @@ public class T2SeamTests {
         helper.succeed();
     }
 
+    // ------------------------------------------------------------------ row 5: the hook species of the third slice
+
+    /**
+     * One hook species of the third Tier-2 slice: the descriptor, its shipped geo / animation file stem, the classic
+     * renderer's shadow, whether the classic face order is required (a zero-thickness cube), the pose subject the hook
+     * asks for (the rest state; null for a hook that reads no entity) and a bone the hook moves off its bind.
+     */
+    private record HookSpecies(String name, OreSpawnGeoReplacement<?> replacement, String file, float shadow, boolean faceOrder,
+                               Object subject, String movingBone) {
+    }
+
+    /** The declared rest state of the three hooks that read {@code getAttacking()} (the harness's ProbeSubject at rest). */
+    private static final class RestSubject implements BeePose, CaterKillerPose, HerculesBeetlePose {
+        @Override
+        public int getAttacking() {
+            return 0;
+        }
+    }
+
+    private static List<HookSpecies> hookSpecies() {
+        RestSubject rest = new RestSubject();
+        return List.of(
+                // orig RenderCloudShark.java:22-23 super(model, par2 * par3) 0.5f x 1.0f: the literal the classic renderer passes (no SHADOW constant)
+                new HookSpecies("cloud_shark", new CloudSharkGeoReplacement(), "cloudshark", 0.5F, true, null, "leftfin"),
+                new HookSpecies("bee", new BeeGeoReplacement(), "bee", BeeRenderer.SHADOW, true, rest, "WingLeft"),
+                new HookSpecies("fairy", new FairyGeoReplacement(), "fairy", FairyRenderer.SHADOW, true, null, "lwing1"),
+                new HookSpecies("gamma_metroid", new GammaMetroidGeoReplacement(), "gammametroid", GammaMetroidRenderer.SHADOW, false, null, "lefttusk"),
+                new HookSpecies("irukandji", new IrukandjiGeoReplacement(), "irukandji", IrukandjiRenderer.SHADOW, false, null, "t11"),
+                new HookSpecies("skate", new SkateGeoReplacement(), "skate", SkateRenderer.SHADOW, false, null, "Shape1"),
+                new HookSpecies("rubber_ducky", new RubberDuckyGeoReplacement(), "rubberducky", RubberDuckyRenderer.SHADOW, false, null, "lwing"),
+                new HookSpecies("terrible_terror", new TerribleTerrorGeoReplacement(), "terribleterror", TerribleTerrorRenderer.SHADOW, true, null, "wing1"),
+                new HookSpecies("worm_large", new WormLargeGeoReplacement(), "wormlarge", WormLargeRenderer.SHADOW, false, null, "tailtip"),
+                new HookSpecies("worm_medium", new WormMediumGeoReplacement(), "wormmedium", WormMediumRenderer.SHADOW, false, null, "tail"),
+                new HookSpecies("worm_small", new WormSmallGeoReplacement(), "wormsmall", WormSmallRenderer.SHADOW, false, null, "tail"),
+                // CannonFodderRenderer's constructor passes the literal 0.4f (no SHADOW constant; a port-authored rig with no 1.7.10 pin)
+                new HookSpecies("cannon_fodder", new CannonFodderGeoReplacement(), "cannonfodder", 0.4F, false, null, "leg_front_left"),
+                new HookSpecies("cater_killer", new CaterKillerGeoReplacement(), "caterkiller", CaterKillerRenderer.SHADOW, false, rest, "ljaw"),
+                new HookSpecies("cricket", new CricketGeoReplacement(), "cricket", CricketRenderer.SHADOW, false, null, "lfleg"),
+                new HookSpecies("hercules_beetle", new HerculesBeetleGeoReplacement(), "herculesbeetle", HerculesBeetleRenderer.SHADOW, false, rest, "lfleg1"));
+    }
+
+    @GameTest(template = "empty", batch = BATCH)
+    public static void t2_005_hook_species_declare_no_layer_register_nothing_and_pose_through_their_hooks(GameTestHelper helper) {
+        Flags flags = Flags.read();
+        try {
+            OreSpawnConfig.MODERN_ENABLED.set(true);
+            OreSpawnConfig.MODERN_ARTIST_ANIMATIONS.set(true);
+            OreSpawnConfig.MODERN_CLASSIC_ANIMATION_SPECIES.set(List.of());
+            List<HookSpecies> all = hookSpecies();
+            helper.assertTrue(all.size() == 15, "the fifteen hook descriptors of the third Tier-2 slice (owner 2026-09-13, third set item 8)");
+            for (HookSpecies species : all) {
+                helper.assertTrue(species.replacement().keyframeLayers().isEmpty(),
+                        species.name() + " declares no keyframe layer: on the hook until an artist delivers idle and walk (Amendment 2)");
+                BakedAnimations shipped = bakeClips(resource(CLIPS + species.file() + ".animation.json"));
+                helper.assertTrue(shipped.animations().isEmpty(),
+                        species.name() + ": the shipped " + species.file() + ".animation.json carries no clip (the s4 hook rigs' empty file)");
+                helper.assertTrue(species.replacement().registerKeyframeLayers(registrar(), shipped) == 0,
+                        species.name() + ": under the modern keys the self-gate registers nothing - no layer declared, no clip shipped");
+                helper.assertTrue(new AnimatableManager<>(species.replacement()).getAnimationControllers().isEmpty(),
+                        species.name() + ": the production registerControllers registers nothing on this server");
+                helper.assertTrue(species.replacement().descriptor().shadowRadius() == species.shadow(),
+                        species.name() + ": the descriptor's shadow radius is the classic renderer's " + species.shadow() + " (ENT-S-092)");
+                helper.assertTrue(species.replacement().descriptor().cubeFaceOrderRequired() == species.faceOrder(),
+                        species.name() + (species.faceOrder() ? " requires the classic face order (a zero-thickness cube, TEST-007)" : " requires no face-order key"));
+                // The shipped geo bakes through GeckoLib's own loader, sorted into the G2 draw order and (where required) the
+                // classic face order by the production statics, and the classic hook poses it off its bind.
+                String geoJson = resource(GEO + species.file() + ".geo.json");
+                JsonObject geo = JsonParser.parseString(geoJson).getAsJsonObject();
+                List<String> drawOrder = DrawOrder.read(geo);
+                helper.assertTrue(!drawOrder.isEmpty(), species.name() + ": the shipped geo carries orespawn:bone_draw_order (the G2 contract)");
+                Map<String, List<List<Direction>>> faceOrder = FaceOrder.read(geo);
+                helper.assertTrue(faceOrder.isEmpty() != species.faceOrder(),
+                        species.name() + ": the shipped geo carries orespawn:cube_face_order exactly where the descriptor requires it");
+                BakedGeoModel baked = bakeRig(geoJson);
+                DrawOrder.apply(baked, drawOrder);
+                if (!faceOrder.isEmpty()) {
+                    FaceOrder.apply(baked, faceOrder);
+                }
+                AnimationProcessor<?> processor = poseThroughHook(species.replacement(), baked,
+                        new PoseInputs(species.subject(), 7.0F, 3.0F, 1.0F, 0.0F, 0.0F));
+                GeoBone bone = processor.getBone(species.movingBone());
+                helper.assertTrue(bone != null, species.name() + ": the shipped geo carries the bone " + species.movingBone());
+                GeoBone bind = bakeRig(geoJson).getBone(species.movingBone()).orElseThrow();
+                helper.assertTrue(bone.getRotX() != bind.getRotX() || bone.getRotY() != bind.getRotY() || bone.getRotZ() != bind.getRotZ(),
+                        species.name() + ": the classic hook moved " + species.movingBone() + " off its bind at age 7 (the pose source is the hook)");
+            }
+        } finally {
+            flags.restore();
+        }
+        helper.succeed();
+    }
+
     // ------------------------------------------------------------------ row 4: the render facts and the shared rigs
 
     @GameTest(template = "empty", batch = BATCH)
@@ -351,5 +493,20 @@ public class T2SeamTests {
     private static BakedAnimations bakeClips(String json) {
         JsonObject root = JsonParser.parseString(json).getAsJsonObject();
         return KeyFramesAdapter.GEO_GSON.fromJson(GsonHelper.getAsJsonObject(root, "animations"), BakedAnimations.class);
+    }
+
+    /** The shipped geo through GeckoLib's own loader and factory (the KeyframeLegTests idiom). */
+    private static BakedGeoModel bakeRig(String json) {
+        Model model = KeyFramesAdapter.GEO_GSON.fromJson(json, Model.class);
+        return BakedModelFactory.DEFAULT_FACTORY.constructGeoModel(GeometryTree.fromModel(model));
+    }
+
+    /** The production hook on explicit inputs over a fresh bake: the S4CandidateRuntime form, registry-free. */
+    private static <E extends Entity> AnimationProcessor<?> poseThroughHook(OreSpawnGeoReplacement<E> replacement, BakedGeoModel baked,
+                                                                           PoseInputs inputs) {
+        OreSpawnGeoReplacementModel<E, OreSpawnGeoReplacement<E>> model = new OreSpawnGeoReplacementModel<>(replacement.descriptor());
+        model.getAnimationProcessor().setActiveModel(baked);
+        replacement.pose(model.getAnimationProcessor(), inputs);
+        return model.getAnimationProcessor();
     }
 }

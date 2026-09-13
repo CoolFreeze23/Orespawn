@@ -1,5 +1,6 @@
 package danger.orespawn.entity;
 
+import danger.orespawn.entity.pose.CaterKillerPose;
 import danger.orespawn.MobStats;
 
 import danger.orespawn.ModEntities;
@@ -41,7 +42,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 
-public class EntityCaterKiller extends Monster {
+public class EntityCaterKiller extends Monster implements CaterKillerPose {
     // OPT-011: cached SoundEvents — identical createVariableRangeEvent ids,
     // allocated once per class instead of on every sound query.
     private static final SoundEvent SND_CATERKILLER_LIVING = SoundEvent.createVariableRangeEvent(

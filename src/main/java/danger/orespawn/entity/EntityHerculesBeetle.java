@@ -1,5 +1,6 @@
 package danger.orespawn.entity;
 
+import danger.orespawn.entity.pose.HerculesBeetlePose;
 import danger.orespawn.MobStats;
 
 import danger.orespawn.OreSpawnConfig;
@@ -33,7 +34,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 
-public class EntityHerculesBeetle extends Monster {
+public class EntityHerculesBeetle extends Monster implements HerculesBeetlePose {
     // OPT-011: cached SoundEvents — identical createVariableRangeEvent ids,
     // allocated once per class instead of on every sound query.
     private static final SoundEvent SND_ALO_HURT = SoundEvent.createVariableRangeEvent(

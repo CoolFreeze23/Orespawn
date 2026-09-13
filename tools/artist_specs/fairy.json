@@ -1,0 +1,130 @@
+{
+  "registry": "fairy",
+  "display_name": "Fairy",
+  "status": "draft for the owner's edit (the third Tier-2 slice, 2026-09-13: on the hook under Amendment 2)",
+  "locomotion": "flyer",
+  "artist_scope": "full contract (Tier 2, the simple-cyclic (with a head look) class: geckolib_migration_design.md section 5); ON THE HOOK until idle and walk are delivered (Amendment 2)",
+  "character_sheet": "A tiny winged humanoid in one of nine colours: a head, chest, waist and hips, two legs, two arms, two wing pairs standing out behind, and two small back pieces. It flits about, tameable and harmless. Read it as a hovering sprite: four wings beating, arms drifting, the head following your gaze.",
+  "size_notes": "Drawn at x0.35 of the rig on nine 64x64 sheets (fairytexture.png .. fairytexture9.png, one per fairy type), translucent.",
+  "labels": {
+    "head": "head",
+    "chest": "chest",
+    "waist": "waist",
+    "hips": "hips",
+    "lleg1": "left leg (upper)",
+    "lleg2": "left leg (lower)",
+    "rleg": "right leg",
+    "b1": "back piece 1",
+    "b2": "back piece 2",
+    "larm": "left arm",
+    "rarm": "right arm",
+    "lwing2": "left inner wing",
+    "lwing1": "left outer wing",
+    "rwing2": "right inner wing",
+    "rwing1": "right outer wing"
+  },
+  "groups": [
+    {
+      "name": "outer_wings",
+      "bones": [
+        "lwing1",
+        "rwing1"
+      ],
+      "omega": 1.0,
+      "axis": "y",
+      "gait_scaled": false,
+      "amplitude": "-0.6 / -2.55 rad rests, then pi x 0.35 = 1.100 rad (63 deg)",
+      "plain": "the outer wings beat about the vertical, mirrored around their rests",
+      "math": "lwing1.yRot = -0.6 + cos(ageInTicks * 1.0 * 1.5) * pi * 0.35; rwing1.yRot = -2.55 - (that)",
+      "source": "FairyModel.setupAnim; FairyGeoReplacement.java",
+      "wingspeed": 1.5,
+      "omega_note": "the classic phase is ageInTicks x 1 x 1.5 (two float multiplies, left to right): the natural period is 2 pi / 1.5"
+    },
+    {
+      "name": "inner_wings",
+      "bones": [
+        "lwing2",
+        "rwing2"
+      ],
+      "omega": 0.85,
+      "axis": "y",
+      "gait_scaled": false,
+      "amplitude": "-0.6 / -2.55 rad rests, then pi x 0.25 = 0.785 rad (45 deg)",
+      "plain": "the inner wings beat a little slower and shallower",
+      "math": "lwing2.yRot = -0.6 + cos(ageInTicks * 1.5 * 0.85) * pi * 0.25; rwing2.yRot = -2.55 - (that)",
+      "source": "FairyModel.setupAnim; FairyGeoReplacement.java",
+      "wingspeed": 1.5,
+      "omega_note": "the classic phase is ageInTicks x 0.85 x 1.5 (two float multiplies, left to right): the natural period is 2 pi / 1.275"
+    },
+    {
+      "name": "arms",
+      "bones": [
+        "larm",
+        "rarm"
+      ],
+      "omega": 0.15,
+      "axis": "x",
+      "gait_scaled": false,
+      "amplitude": "pitch: -0.2 rad rest, then pi x 0.05 = 0.157 rad (9 deg) at 0.15 / 0.12 x 1.5; roll: -0.15 / +0.15 rad rests, then pi x 0.03 at 0.1 / 0.11 x 1.5",
+      "plain": "the arms drift slowly, each on its own pitch and roll rhythms",
+      "math": "larm.xRot = -0.2 + cos(ageInTicks * 1.5 * 0.15) * pi * 0.05; rarm.xRot = -0.2 + cos(ageInTicks * 1.5 * 0.12) * pi * 0.05; larm.zRot = -0.15 + cos(ageInTicks * 1.5 * 0.1) * pi * 0.03; rarm.zRot = 0.15 + cos(ageInTicks * 1.5 * 0.11) * pi * 0.03",
+      "source": "FairyModel.setupAnim; FairyGeoReplacement.java",
+      "wingspeed": 1.5,
+      "omega_note": "the classic phase is ageInTicks x 0.15 x 1.5 (two float multiplies, left to right): the natural period is 2 pi / 0.225"
+    },
+    {
+      "name": "head",
+      "bones": [
+        "head"
+      ],
+      "omega": null,
+      "axis": "y and x",
+      "gait_scaled": false,
+      "amplitude": "yaw: 0.45 x the head yaw, clamped to +-0.45 rad (26 deg); pitch: the head pitch",
+      "plain": "the head follows the gaze at 0.45 rate, never more than 26 degrees to either side, and nods with the pitch",
+      "math": "head.yRot = clamp(rad(netHeadYaw) * 0.45, -0.45, 0.45); head.xRot = rad(headPitch)",
+      "source": "FairyModel.setupAnim; FairyGeoReplacement.java",
+      "phase": "the entity's head look (not a cycle)"
+    }
+  ],
+  "behaviour": [
+    "This creature runs on its CLASSIC code (owner 2026-09-13, Amendment 2 to Amendment 1): its motion does not fit the exact transcription form, so the GeckoLib candidate poses it from the same formulas the classic renderer uses, and the shipped animation file carries NO clip. The self-gate opens when you deliver `idle` AND `walk` together (README rule, item 12); until then the game plays the classic code. The reference-only clip beside this sheet is that code sampled at fixed inputs - copy its timing, do not return it.",
+    "Six always-on rhythms and a head look; nothing is scaled by walking speed. The four wings are zero-thickness cubes drawn translucent (the classic look; the seam hands over the classic model's own render-type function).",
+    "The default renderer poses it from the classic code; the GeckoLib candidate sits behind the dev switch (-Dorespawn.dev.geckolibRenderers) and poses it from the same code until your clips arrive."
+  ],
+  "clips": [
+    {
+      "name": "idle",
+      "verdict": "author",
+      "note": "REQUIRED with walk: the gate opens on the pair (today nothing ships; the classic code plays)"
+    },
+    {
+      "name": "walk",
+      "verdict": "author",
+      "note": "REQUIRED with idle: the locomotion loop (the reference clip is the classic code's rhythm at full walking speed)"
+    },
+    {
+      "name": "fly",
+      "verdict": "author",
+      "note": "optional: falls back to walk (section 2.4)"
+    },
+    {
+      "name": "hurt",
+      "verdict": "author",
+      "note": "a flinch",
+      "length_seconds": 0.3
+    },
+    {
+      "name": "death",
+      "verdict": "author",
+      "note": "ruled 2026-09-06, Q3 (a): the vanilla death flip stays; a creature whose JSON ships a `death` clip gets the clip-replaces-flip mode, designed when the first such clip arrives (the Queen's own death clip the precedent) - a `death` delivered here plays under the flip until then",
+      "length_seconds": 1.0
+    }
+  ],
+  "extras": [],
+  "wishlist": [],
+  "effort_hours": null,
+  "formulas": [
+    "`FairyModel.setupAnim` (FairyModel.java; orig ModelFairy.java:134-149, `render`, wingspeed 1.5 from `new ModelFairy(1.5f)` in orig ClientProxyOreSpawn.java:477): (1) the outer wings yaw by the cosine of the age in ticks times 1.5, times pi, times 0.35 - 63 degrees each way every 4.19 ticks - the left around -0.6 radians (plus), the right around -2.55 (minus) (orig :134-135); (2) the inner wings yaw by the cosine of the age times 1.5 times 0.85, times pi, times 0.25 - 45 degrees every 4.93 ticks - around the same rests (orig :136-137); (3) the head yaws by the head yaw in radians times 0.45, held between -0.45 and 0.45 radians, and pitches by the head pitch in radians (orig :138-145); (4) the left arm pitches by -0.2 radians plus the cosine of the age times 1.5 times 0.15, times pi, times 0.05, the right arm by -0.2 plus the cosine of the age times 1.5 times 0.12, times pi, times 0.05; the left arm rolls by -0.15 plus the cosine of the age times 1.5 times 0.1, times pi, times 0.03, the right by 0.15 plus the cosine of the age times 1.5 times 0.11, times pi, times 0.03 (orig :146-149). The walk position, the walking speed and the entity's state play no part (orig :154-156 also pulsed the lightmap with the fairy's blink - a render effect, not a pose). The GeckoLib hook is the same (FairyGeoReplacement.applyCustomAnimations)."
+  ]
+}

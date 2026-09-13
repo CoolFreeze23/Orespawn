@@ -3,6 +3,7 @@ package danger.orespawn.entity.client;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import danger.orespawn.entity.EntityCaterKiller;
+import danger.orespawn.entity.pose.CaterKillerPose;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
@@ -263,6 +264,13 @@ public class CaterKillerModel extends EntityModel<EntityCaterKiller> {
 
     @Override
     public void setupAnim(EntityCaterKiller entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
+        // The body lives in poseFrom so the parity harness can drive it from a declared state without a live
+        // entity (the Slice 4b form; the third Tier-2 slice, 2026-09-13): the entity satisfies the interface.
+        poseFrom(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
+    }
+
+    /** The classic pose over what the model reads from its entity (orig ModelCaterKiller.java:248, 251, 289 {@code getAttacking()}). */
+    public void poseFrom(CaterKillerPose entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
         boolean attacking = entity.getAttacking() != 0;
 
         float jawAngle = attacking

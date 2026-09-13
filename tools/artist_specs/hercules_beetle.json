@@ -1,0 +1,147 @@
+{
+  "registry": "hercules_beetle",
+  "display_name": "Hercules Beetle",
+  "status": "draft for the owner's edit (the third Tier-2 slice, 2026-09-13: on the hook under Amendment 2)",
+  "locomotion": "walker",
+  "artist_scope": "full contract (Tier 2, the gait-scaled (with an attacking branch) class: geckolib_migration_design.md section 5); ON THE HOOK until idle and walk are delivered (Amendment 2)",
+  "character_sheet": "A giant hostile beetle: a two-part body, an eight-part head, a nine-part horn and jaw assembly, and six three-part legs. It charges and bites. Read it as an armoured beetle: the legs sweeping with its stride, the horn and jaws working - slowly at rest, fast when it attacks.",
+  "size_notes": "Drawn at x1.1 of the rig on a 256x256 sheet.",
+  "labels": {
+    "body1": "body 1",
+    "body2": "body 2",
+    "head1": "head 1",
+    "head2": "head 2",
+    "head3": "head 3",
+    "head4": "head 4",
+    "head5": "head 5",
+    "head6": "head 6",
+    "head7": "head 7",
+    "head8": "head 8",
+    "jaw1": "jaw 1",
+    "jaw2": "jaw 2",
+    "jaw3": "jaw 3",
+    "jaw4": "jaw 4",
+    "jaw5": "jaw 5",
+    "jaw6": "jaw 6",
+    "jaw7": "jaw 7",
+    "jaw8": "jaw 8",
+    "jaw9": "jaw 9 (horn tip)",
+    "lfleg1": "left front leg, part 1",
+    "lfleg2": "left front leg, part 2",
+    "lfleg3": "left front leg, part 3",
+    "lmleg1": "left middle leg, part 1",
+    "lmleg2": "left middle leg, part 2",
+    "lmleg3": "left middle leg, part 3",
+    "lrleg1": "left rear leg, part 1",
+    "lrleg2": "left rear leg, part 2",
+    "lrleg3": "left rear leg, part 3",
+    "rfleg1": "right front leg, part 1",
+    "rfleg2": "right front leg, part 2",
+    "rfleg3": "right front leg, part 3",
+    "rmleg1": "right middle leg, part 1",
+    "rmleg2": "right middle leg, part 2",
+    "rmleg3": "right middle leg, part 3",
+    "rrleg1": "right rear leg, part 1",
+    "rrleg2": "right rear leg, part 2",
+    "rrleg3": "right rear leg, part 3"
+  },
+  "groups": [
+    {
+      "name": "gait",
+      "bones": [
+        "lfleg1",
+        "lfleg2",
+        "lfleg3",
+        "lmleg1",
+        "lmleg2",
+        "lmleg3",
+        "lrleg1",
+        "lrleg2",
+        "lrleg3",
+        "rfleg1",
+        "rfleg2",
+        "rfleg3",
+        "rmleg1",
+        "rmleg2",
+        "rmleg3",
+        "rrleg1",
+        "rrleg2",
+        "rrleg3"
+      ],
+      "omega": 0.45,
+      "axis": "y",
+      "gait_scaled": true,
+      "amplitude": "+-0.349 rad rests (front and rear pairs), 0 (middle), then pi x 0.12 = 0.377 rad (22 deg) x the walking speed at 0.45 x 1.0 - no threshold",
+      "plain": "the six legs sweep about the vertical with the walk, every part of a leg together: the left front and right rear pairs one way, the left rear and right front the other, the middle pair opposite",
+      "math": "a = cos(t * 1.0 * 0.45) * pi * 0.12 * amount; lfleg*/rrleg*.yRot = 0.349 + a; lmleg*/rmleg*.yRot = -a; lrleg*/rfleg*.yRot = -0.349 + a",
+      "source": "HerculesBeetleModel.poseFrom; HerculesBeetleGeoReplacement.java",
+      "wingspeed": 1.0,
+      "omega_note": "the classic phase is ageInTicks x 0.45 x 1 (two float multiplies, left to right): the natural period is 2 pi / 0.45"
+    },
+    {
+      "name": "jaws",
+      "bones": [
+        "jaw1",
+        "jaw2",
+        "jaw3",
+        "jaw4",
+        "jaw5",
+        "jaw6",
+        "jaw7",
+        "jaw8",
+        "jaw9"
+      ],
+      "omega": 0.051,
+      "axis": "x",
+      "gait_scaled": false,
+      "amplitude": "0.122 / 0 / 0.314 rad rests, then pi x 0.01 = 0.031 rad (2 deg) at 0.051 x 1.0 at rest; pi x 0.07 = 0.220 rad (13 deg) at 0.51 x 1.0 attacking",
+      "plain": "the nine horn and jaw parts nod together: a slow shallow breathing at rest, a fast wide chomp when attacking",
+      "math": "a = attacking ? cos(t*0.51*1.0)*pi*0.07 : cos(t*0.051*1.0)*pi*0.01; jaw1/2/5/6.xRot = 0.122 + a; jaw3/4/7/8.xRot = 0 + a; jaw9.xRot = 0.314 + a",
+      "source": "HerculesBeetleModel.poseFrom; HerculesBeetleGeoReplacement.java",
+      "phase": "the attacking flag selects the rhythm",
+      "wingspeed": 1.0,
+      "omega_note": "the classic phase is ageInTicks x 0.051 x 1 (two float multiplies, left to right): the natural period is 2 pi / 0.051"
+    }
+  ],
+  "behaviour": [
+    "This creature runs on its CLASSIC code (owner 2026-09-13, Amendment 2 to Amendment 1): its motion does not fit the exact transcription form, so the GeckoLib candidate poses it from the same formulas the classic renderer uses, and the shipped animation file carries NO clip. The self-gate opens when you deliver `idle` AND `walk` together (README rule, item 12); until then the game plays the classic code. The reference-only clip beside this sheet is that code sampled at fixed inputs - copy its timing, do not return it.",
+    "One gait rhythm scaled by walking speed (no threshold: still when standing, full at a run) and one state-selected jaw rhythm; the bodies and heads are static.",
+    "The default renderer poses it from the classic code; the GeckoLib candidate sits behind the dev switch (-Dorespawn.dev.geckolibRenderers) and poses it from the same code until your clips arrive."
+  ],
+  "clips": [
+    {
+      "name": "idle",
+      "verdict": "author",
+      "note": "REQUIRED with walk: the gate opens on the pair (today nothing ships; the classic code plays)"
+    },
+    {
+      "name": "walk",
+      "verdict": "author",
+      "note": "REQUIRED with idle: the locomotion loop (the reference clip is the classic code's rhythm at full walking speed)"
+    },
+    {
+      "name": "attack",
+      "verdict": "author",
+      "note": "a strike",
+      "length_seconds": 0.5
+    },
+    {
+      "name": "hurt",
+      "verdict": "author",
+      "note": "a flinch",
+      "length_seconds": 0.3
+    },
+    {
+      "name": "death",
+      "verdict": "author",
+      "note": "ruled 2026-09-06, Q3 (a): the vanilla death flip stays; a creature whose JSON ships a `death` clip gets the clip-replaces-flip mode, designed when the first such clip arrives (the Queen's own death clip the precedent) - a `death` delivered here plays under the flip until then",
+      "length_seconds": 1.0
+    }
+  ],
+  "extras": [],
+  "wishlist": [],
+  "effort_hours": null,
+  "formulas": [
+    "`HerculesBeetleModel.poseFrom` (HerculesBeetleModel.java:301-323, called from `setupAnim`; orig ModelHerculesBeetle.java:286-302, `render`, wingspeed 1.0 from `new ModelHerculesBeetle(1.0f)` in orig ClientProxyOreSpawn.java:489): (1) the leg sweep is the cosine of the age in ticks times 1.0 times 0.45, times pi, times 0.12, times the walking speed (up to 22 degrees each way every 14 ticks; no threshold): the three parts of the left front leg and of the right rear leg yaw by 0.349 radians plus it, the left middle and right middle by its negative, the left rear and right front by -0.349 plus it (orig :286-292); (2) the jaw angle - at rest the cosine of the age times 0.051 times 1.0, times pi, times 0.01 (2 degrees every 123 ticks); attacking the cosine of the age times 0.51 times 1.0, times pi, times 0.07 (13 degrees every 12.3 ticks) - jaws 1, 2, 5 and 6 pitch by 0.122 radians plus it, jaws 3, 4, 7 and 8 by it, jaw 9 by 0.314 plus it (orig :293-302). The walk position and the head angles play no part. The GeckoLib hook is the same (HerculesBeetleGeoReplacement.applyCustomAnimations)."
+  ]
+}

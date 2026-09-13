@@ -6103,13 +6103,3787 @@
           }
         ]
       }
+    },
+    {
+      "model_id": "model_cloudshark",
+      "tier": 2,
+      "proof_scope": "production_proof_model",
+      "source_class": "danger.orespawn.entity.client.ModelCloudShark",
+      "source_class_sha256": "e9b87462654da89326344bd9543c8a24ac46efbdadabc04160d09941e75f01d3",
+      "compiled_dump_sha256": "4f87c9ff65d9148809dec32732c369e76b03b64e95ed98ded3f904aa425a81e4",
+      "bone_count": 8,
+      "cube_count": 8,
+      "geometry_sha256": "58608db22b66050d3db1dd68266b78487815c44aeea89682b9640be83cb77166",
+      "animation_sha256": "7882082857fdb11e02f158ebc3a6d3f970e2ac60d54813f0e903ee97b2293749",
+      "animation_contract_sha256": "82dae47be29f3263628e70f33264d99492dfdadcde4b7c51e2722f6392444984",
+      "geometry": {
+        "status": "PASS",
+        "epsilon_blocks": 1e-05,
+        "max_corner_delta_blocks": 2.3430749040737045e-07,
+        "worst_case": "t_half:fins#0",
+        "sample_count": 6,
+        "cube_sample_count": 48
+      },
+      "surface_mapping": {
+        "status": "PASS",
+        "position_epsilon_blocks": 1e-05,
+        "normal_epsilon": 1e-06,
+        "uv_epsilon_normalized": 1e-07,
+        "max_position_delta_blocks": 2.3430749040737045e-07,
+        "max_normal_delta": 1.1661903789740344e-07,
+        "max_uv_delta_normalized": 0.0,
+        "vertex_samples": 864,
+        "ignored_zero_area_faces": 72,
+        "worst_case": "t_half:fins#0",
+        "evidence": "position/normal/UV tuples from baked ModelPart.Cube.compile versus pinned GeckoLib BakedModelFactory rendered through GeoRenderer; faces of exactly zero area are excluded (ruling 2026-09-02)"
+      },
+      "animation": {
+        "status": "PASS",
+        "epsilon_radians": 2e-06,
+        "accepted_pose_comparison": "compiled setupAnim versus actual fresh-baked GeckoLib candidate",
+        "reference_animation_used_for_acceptance": false,
+        "sample_count": 6,
+        "max_rotation_delta_radians": 0.0,
+        "max_dense_rotation_delta_radians": 0.0,
+        "max_unexpected_position_or_scale_delta": 0.0,
+        "worst_case": "exact",
+        "dense_worst_case": "exact",
+        "rotation_channel_samples": 144,
+        "dense_rotation_channel_samples": 0,
+        "contract": {
+          "kind": "code_driven",
+          "accepted_runtime_path": "production OreSpawnGeoReplacement.applyCustomAnimations through OreSpawnGeoReplacementModel.setCustomAnimations",
+          "candidate_class": "danger.orespawn.entity.client.CloudSharkGeoReplacement",
+          "inputs": {
+            "limb_swing": 0.0,
+            "limb_swing_amounts": [
+              0.0
+            ],
+            "net_head_yaw_degrees": 0.0,
+            "head_pitch_degrees": 0.0
+          },
+          "max_position_delta_model_units": 0.0,
+          "position_epsilon_model_units": 0.0001,
+          "position_worst_case": "exact",
+          "position_channel_samples": 144,
+          "hidden_bone_checks": 5
+        }
+      },
+      "reference_animation": {
+        "status": "SCHEMA_VALID_REFERENCE_ONLY",
+        "role": "NOT_APPLICABLE_CODE_DRIVEN_MODEL",
+        "clip_count": 0,
+        "constant_vector_count": 0,
+        "runtime_acceptance": false
+      },
+      "draw_order": {
+        "status": "PASS",
+        "bone_draw_order": [
+          "body",
+          "head",
+          "jaw",
+          "topfin",
+          "bbody",
+          "fins",
+          "leftfin",
+          "rightfin"
+        ],
+        "captures_checked": 6,
+        "draws_checked": 48,
+        "classic_source": "classic EntityModel.renderToBuffer on a second bake posed identically; every ModelPart.render is one pose-stack push, attributed to its part by ModelPart.skipDraw elimination (one run per cube-bearing part with every other part's skipDraw set); a part drawn n > 1 times is named <part>__i<k> by draw ordinal",
+        "unobserved_units": [],
+        "policy": "the shipped model sorts GeckoLib's topLevelBones / childBones lists into the classic renderToBuffer order (DrawOrder.apply); both renderers traverse in pre-order, so equal sibling orders are equal draw orders",
+        "cube_face_order": {
+          "status": "PASS",
+          "cube_face_order": {
+            "bbody": [
+              [
+                "up",
+                "down",
+                "west",
+                "north",
+                "east",
+                "south"
+              ]
+            ],
+            "body": [
+              [
+                "up",
+                "down",
+                "west",
+                "north",
+                "east",
+                "south"
+              ]
+            ],
+            "fins": [
+              [
+                "up",
+                "down",
+                "west",
+                "north",
+                "east",
+                "south"
+              ]
+            ],
+            "head": [
+              [
+                "up",
+                "down",
+                "west",
+                "north",
+                "east",
+                "south"
+              ]
+            ],
+            "jaw": [
+              [
+                "up",
+                "down",
+                "west",
+                "north",
+                "east",
+                "south"
+              ]
+            ],
+            "leftfin": [
+              [
+                "up",
+                "down",
+                "west",
+                "north",
+                "east",
+                "south"
+              ]
+            ],
+            "rightfin": [
+              [
+                "up",
+                "down",
+                "west",
+                "north",
+                "east",
+                "south"
+              ]
+            ],
+            "topfin": [
+              [
+                "up",
+                "down",
+                "west",
+                "north",
+                "east",
+                "south"
+              ]
+            ]
+          },
+          "captures_checked": 6,
+          "faces_checked": 288,
+          "normal_epsilon": 1e-06,
+          "evidence": {
+            "rule": "NeoForge 21.1.223 ModelPart.Cube.<init> polygon order DOWN, UP, WEST, NORTH, EAST, SOUTH (offsets 365-785: DOWN 365, UP 436, WEST 507, NORTH 578, EAST 649, SOUTH 720), mirror negating the X normals; GeckoLib labels by the direction whose step is the classic normal reflected in Y",
+            "cube_bearing_bones": 8,
+            "cubes": 8,
+            "verified_unrotated_cubes_at_bind": 3,
+            "verification": "captured normals of every cube unrotated at bind equal the rule's, in order; the parity tool's draw-order leg compares the per-quad normal sequences of both renderers on every capture"
+          },
+          "policy": "the shipped model permutes every cube's quads into the classic ModelPart.Cube order (FaceOrder.apply), so under a blending render type a cube's back face shows through its front face - or is rejected by the depth test - exactly as it does on the classic renderer"
+        }
+      },
+      "reference_geometry": {
+        "status": "PASS",
+        "reference_source": "reference_1_7_10_source/sources/danger/orespawn/ModelCloudShark.java",
+        "matched_parts": 8,
+        "ground_truth": "1.7.10 decompiled ModelBase constructor, parsed; never the port"
+      },
+      "visual": {
+        "status": "PASS",
+        "image_size": [
+          256,
+          256
+        ],
+        "camera": {
+          "yaw_degrees": 34.0,
+          "pitch_degrees": -28.0
+        },
+        "channel_tolerance": 2,
+        "changed_fraction_threshold": 0.001,
+        "mean_absolute_error_threshold": 0.25,
+        "minimum_foreground_fraction_threshold": 0.001,
+        "max_changed_fraction": 0.0,
+        "max_mean_absolute_error": 0.0,
+        "z_fight_policy": "pixels where two different quads meet the front within 1e-06 depth with different texels are counted as a diagnostic only; every pixel is compared, the draw order being contracted equal on both sides (G2 root-order contract, landed 2026-09-06)",
+        "contested_exclusion_applied": false,
+        "max_contested_fraction": 0.0490264892578125,
+        "cutout_alpha_threshold": 0.1,
+        "minimum_observed_foreground_fraction": 1.0,
+        "samples": [
+          {
+            "sample": "bind",
+            "camera": null,
+            "changed_fraction": 0.0,
+            "mean_absolute_error": 0.0,
+            "contested_fraction": 0.025604248046875,
+            "contested_excluded": false,
+            "vanilla_foreground_fraction": 0.2165985107421875,
+            "geo_foreground_fraction": 0.2165985107421875,
+            "vanilla_capture": "visual/model_cloudshark/bind.vanilla.png",
+            "geo_capture": "visual/model_cloudshark/bind.geo.png",
+            "diff_capture": "visual/model_cloudshark/bind.diff.png"
+          },
+          {
+            "sample": "t0",
+            "camera": null,
+            "changed_fraction": 0.0,
+            "mean_absolute_error": 0.0,
+            "contested_fraction": 0.0212554931640625,
+            "contested_excluded": false,
+            "vanilla_foreground_fraction": 0.2164764404296875,
+            "geo_foreground_fraction": 0.2164764404296875,
+            "vanilla_capture": "visual/model_cloudshark/t0.vanilla.png",
+            "geo_capture": "visual/model_cloudshark/t0.geo.png",
+            "diff_capture": "visual/model_cloudshark/t0.diff.png"
+          },
+          {
+            "sample": "t_quarter",
+            "camera": null,
+            "changed_fraction": 0.0,
+            "mean_absolute_error": 0.0,
+            "contested_fraction": 0.024627685546875,
+            "contested_excluded": false,
+            "vanilla_foreground_fraction": 0.215850830078125,
+            "geo_foreground_fraction": 0.215850830078125,
+            "vanilla_capture": "visual/model_cloudshark/t_quarter.vanilla.png",
+            "geo_capture": "visual/model_cloudshark/t_quarter.geo.png",
+            "diff_capture": "visual/model_cloudshark/t_quarter.diff.png"
+          },
+          {
+            "sample": "t_half",
+            "camera": null,
+            "changed_fraction": 0.0,
+            "mean_absolute_error": 0.0,
+            "contested_fraction": 0.0490264892578125,
+            "contested_excluded": false,
+            "vanilla_foreground_fraction": 0.2344970703125,
+            "geo_foreground_fraction": 0.2344970703125,
+            "vanilla_capture": "visual/model_cloudshark/t_half.vanilla.png",
+            "geo_capture": "visual/model_cloudshark/t_half.geo.png",
+            "diff_capture": "visual/model_cloudshark/t_half.diff.png"
+          },
+          {
+            "sample": "t_three_quarter",
+            "camera": null,
+            "changed_fraction": 0.0,
+            "mean_absolute_error": 0.0,
+            "contested_fraction": 0.024627685546875,
+            "contested_excluded": false,
+            "vanilla_foreground_fraction": 0.215850830078125,
+            "geo_foreground_fraction": 0.215850830078125,
+            "vanilla_capture": "visual/model_cloudshark/t_three_quarter.vanilla.png",
+            "geo_capture": "visual/model_cloudshark/t_three_quarter.geo.png",
+            "diff_capture": "visual/model_cloudshark/t_three_quarter.diff.png"
+          }
+        ]
+      }
+    },
+    {
+      "model_id": "model_bee",
+      "tier": 2,
+      "proof_scope": "production_proof_model",
+      "source_class": "danger.orespawn.entity.client.BeeModel",
+      "source_class_sha256": "dd1901e80d07df5f897911b5cecedf759b690fe84233827c1fc1a4598bb592d5",
+      "compiled_dump_sha256": "309b5e9e2255fc611ce8a8bc0ef86931270df5ec67576637bd7da5c7de75e735",
+      "bone_count": 23,
+      "cube_count": 23,
+      "geometry_sha256": "1d9dfa46ed2b1cea2b738892be99551d80c313a79aefe7491ac762bc8ec8dde2",
+      "animation_sha256": "7882082857fdb11e02f158ebc3a6d3f970e2ac60d54813f0e903ee97b2293749",
+      "animation_contract_sha256": "5846cb3eb1ba1dfff98e360fb004199b9c1669b036ff50d4767f13755e3aadff",
+      "geometry": {
+        "status": "PASS",
+        "epsilon_blocks": 1e-05,
+        "max_corner_delta_blocks": 5.111751164039164e-07,
+        "worst_case": "s_idle_t_quarter:RightPincerExtra#0",
+        "sample_count": 11,
+        "cube_sample_count": 253
+      },
+      "surface_mapping": {
+        "status": "PASS",
+        "position_epsilon_blocks": 1e-05,
+        "normal_epsilon": 1e-06,
+        "uv_epsilon_normalized": 1e-07,
+        "max_position_delta_blocks": 5.111751164039164e-07,
+        "max_normal_delta": 2.5186504326686065e-07,
+        "max_uv_delta_normalized": 0.0,
+        "vertex_samples": 5720,
+        "ignored_zero_area_faces": 88,
+        "worst_case": "s_idle_t_quarter:RightPincerExtra#0",
+        "evidence": "position/normal/UV tuples from baked ModelPart.Cube.compile versus pinned GeckoLib BakedModelFactory rendered through GeoRenderer; faces of exactly zero area are excluded (ruling 2026-09-02)"
+      },
+      "animation": {
+        "status": "PASS",
+        "epsilon_radians": 2e-06,
+        "accepted_pose_comparison": "compiled setupAnim versus actual fresh-baked GeckoLib candidate",
+        "reference_animation_used_for_acceptance": false,
+        "sample_count": 11,
+        "max_rotation_delta_radians": 0.0,
+        "max_dense_rotation_delta_radians": 0.0,
+        "max_unexpected_position_or_scale_delta": 0.0,
+        "worst_case": "exact",
+        "dense_worst_case": "exact",
+        "rotation_channel_samples": 759,
+        "dense_rotation_channel_samples": 0,
+        "contract": {
+          "kind": "entity_state",
+          "accepted_runtime_path": "production OreSpawnGeoReplacement.applyCustomAnimations posed from declared entity states through the entity's pose interface; compiled poseFrom on the same states",
+          "candidate_class": "danger.orespawn.entity.client.BeeGeoReplacement",
+          "entity_states": [
+            {
+              "name": "idle",
+              "attacking": 0
+            },
+            {
+              "name": "attacking",
+              "attacking": 1
+            }
+          ],
+          "inputs": {
+            "limb_swing": 0.0,
+            "limb_swing_amounts": [
+              0.0
+            ],
+            "net_head_yaw_degrees": 0.0,
+            "head_pitch_degrees": 0.0
+          },
+          "max_position_delta_model_units": 2.0000000011677344e-07,
+          "position_epsilon_model_units": 0.0001,
+          "position_worst_case": "s_attacking_t_three_quarter:Abdomnem3",
+          "position_channel_samples": 759,
+          "hidden_bone_checks": 10
+        }
+      },
+      "reference_animation": {
+        "status": "SCHEMA_VALID_REFERENCE_ONLY",
+        "role": "NOT_APPLICABLE_CODE_DRIVEN_MODEL",
+        "clip_count": 0,
+        "constant_vector_count": 0,
+        "runtime_acceptance": false
+      },
+      "draw_order": {
+        "status": "PASS",
+        "bone_draw_order": [
+          "Sting",
+          "Abdomnem1",
+          "Abdomnem2",
+          "Abdomnem3",
+          "Abdomnem4",
+          "Abdomnem5",
+          "MainBody",
+          "Neck",
+          "Head",
+          "WingRight",
+          "WingLeft",
+          "RA1",
+          "LA1",
+          "LA2",
+          "RA2",
+          "RA3",
+          "LA3",
+          "LeftPom",
+          "RightPom",
+          "LeftPincerExtra",
+          "LeftPincerMain",
+          "RightPincerMain",
+          "RightPincerExtra"
+        ],
+        "captures_checked": 11,
+        "draws_checked": 253,
+        "classic_source": "classic EntityModel.renderToBuffer on a second bake posed identically; every ModelPart.render is one pose-stack push, attributed to its part by ModelPart.skipDraw elimination (one run per cube-bearing part with every other part's skipDraw set); a part drawn n > 1 times is named <part>__i<k> by draw ordinal",
+        "unobserved_units": [],
+        "policy": "the shipped model sorts GeckoLib's topLevelBones / childBones lists into the classic renderToBuffer order (DrawOrder.apply); both renderers traverse in pre-order, so equal sibling orders are equal draw orders",
+        "cube_face_order": {
+          "status": "PASS",
+          "cube_face_order": {
+            "Abdomnem1": [
+              [
+                "up",
+                "down",
+                "west",
+                "north",
+                "east",
+                "south"
+              ]
+            ],
+            "Abdomnem2": [
+              [
+                "up",
+                "down",
+                "west",
+                "north",
+                "east",
+                "south"
+              ]
+            ],
+            "Abdomnem3": [
+              [
+                "up",
+                "down",
+                "west",
+                "north",
+                "east",
+                "south"
+              ]
+            ],
+            "Abdomnem4": [
+              [
+                "up",
+                "down",
+                "west",
+                "north",
+                "east",
+                "south"
+              ]
+            ],
+            "Abdomnem5": [
+              [
+                "up",
+                "down",
+                "west",
+                "north",
+                "east",
+                "south"
+              ]
+            ],
+            "Head": [
+              [
+                "up",
+                "down",
+                "west",
+                "north",
+                "east",
+                "south"
+              ]
+            ],
+            "LA1": [
+              [
+                "up",
+                "down",
+                "west",
+                "north",
+                "east",
+                "south"
+              ]
+            ],
+            "LA2": [
+              [
+                "up",
+                "down",
+                "west",
+                "north",
+                "east",
+                "south"
+              ]
+            ],
+            "LA3": [
+              [
+                "up",
+                "down",
+                "west",
+                "north",
+                "east",
+                "south"
+              ]
+            ],
+            "LeftPincerExtra": [
+              [
+                "up",
+                "down",
+                "west",
+                "north",
+                "east",
+                "south"
+              ]
+            ],
+            "LeftPincerMain": [
+              [
+                "up",
+                "down",
+                "west",
+                "north",
+                "east",
+                "south"
+              ]
+            ],
+            "LeftPom": [
+              [
+                "up",
+                "down",
+                "west",
+                "north",
+                "east",
+                "south"
+              ]
+            ],
+            "MainBody": [
+              [
+                "up",
+                "down",
+                "west",
+                "north",
+                "east",
+                "south"
+              ]
+            ],
+            "Neck": [
+              [
+                "up",
+                "down",
+                "west",
+                "north",
+                "east",
+                "south"
+              ]
+            ],
+            "RA1": [
+              [
+                "up",
+                "down",
+                "west",
+                "north",
+                "east",
+                "south"
+              ]
+            ],
+            "RA2": [
+              [
+                "up",
+                "down",
+                "west",
+                "north",
+                "east",
+                "south"
+              ]
+            ],
+            "RA3": [
+              [
+                "up",
+                "down",
+                "west",
+                "north",
+                "east",
+                "south"
+              ]
+            ],
+            "RightPincerExtra": [
+              [
+                "up",
+                "down",
+                "west",
+                "north",
+                "east",
+                "south"
+              ]
+            ],
+            "RightPincerMain": [
+              [
+                "up",
+                "down",
+                "west",
+                "north",
+                "east",
+                "south"
+              ]
+            ],
+            "RightPom": [
+              [
+                "up",
+                "down",
+                "west",
+                "north",
+                "east",
+                "south"
+              ]
+            ],
+            "Sting": [
+              [
+                "up",
+                "down",
+                "west",
+                "north",
+                "east",
+                "south"
+              ]
+            ],
+            "WingLeft": [
+              [
+                "up",
+                "down",
+                "west",
+                "north",
+                "east",
+                "south"
+              ]
+            ],
+            "WingRight": [
+              [
+                "up",
+                "down",
+                "west",
+                "north",
+                "east",
+                "south"
+              ]
+            ]
+          },
+          "captures_checked": 11,
+          "faces_checked": 1518,
+          "normal_epsilon": 1e-06,
+          "evidence": {
+            "rule": "NeoForge 21.1.223 ModelPart.Cube.<init> polygon order DOWN, UP, WEST, NORTH, EAST, SOUTH (offsets 365-785: DOWN 365, UP 436, WEST 507, NORTH 578, EAST 649, SOUTH 720), mirror negating the X normals; GeckoLib labels by the direction whose step is the classic normal reflected in Y",
+            "cube_bearing_bones": 23,
+            "cubes": 23,
+            "verified_unrotated_cubes_at_bind": 4,
+            "verification": "captured normals of every cube unrotated at bind equal the rule's, in order; the parity tool's draw-order leg compares the per-quad normal sequences of both renderers on every capture"
+          },
+          "policy": "the shipped model permutes every cube's quads into the classic ModelPart.Cube order (FaceOrder.apply), so under a blending render type a cube's back face shows through its front face - or is rejected by the depth test - exactly as it does on the classic renderer"
+        }
+      },
+      "reference_geometry": {
+        "status": "PASS",
+        "reference_source": "reference_1_7_10_source/sources/danger/orespawn/ModelBee.java",
+        "matched_parts": 23,
+        "ground_truth": "1.7.10 decompiled ModelBase constructor, parsed; never the port"
+      },
+      "visual": {
+        "status": "PASS",
+        "image_size": [
+          256,
+          256
+        ],
+        "camera": {
+          "yaw_degrees": 34.0,
+          "pitch_degrees": -28.0
+        },
+        "channel_tolerance": 2,
+        "changed_fraction_threshold": 0.001,
+        "mean_absolute_error_threshold": 0.25,
+        "minimum_foreground_fraction_threshold": 0.001,
+        "max_changed_fraction": 0.0009307861328125,
+        "max_mean_absolute_error": 0.039499918619791664,
+        "z_fight_policy": "pixels where two different quads meet the front within 1e-06 depth with different texels are counted as a diagnostic only; every pixel is compared, the draw order being contracted equal on both sides (G2 root-order contract, landed 2026-09-06)",
+        "contested_exclusion_applied": false,
+        "max_contested_fraction": 0.0133819580078125,
+        "cutout_alpha_threshold": 0.1,
+        "minimum_observed_foreground_fraction": 1.0,
+        "samples": [
+          {
+            "sample": "s_idle_t0",
+            "camera": null,
+            "changed_fraction": 0.0,
+            "mean_absolute_error": 0.0,
+            "contested_fraction": 0.0133819580078125,
+            "contested_excluded": false,
+            "vanilla_foreground_fraction": 0.131805419921875,
+            "geo_foreground_fraction": 0.131805419921875,
+            "vanilla_capture": "visual/model_bee/s_idle_t0.vanilla.png",
+            "geo_capture": "visual/model_bee/s_idle_t0.geo.png",
+            "diff_capture": "visual/model_bee/s_idle_t0.diff.png"
+          },
+          {
+            "sample": "s_idle_t_half",
+            "camera": null,
+            "changed_fraction": 0.000213623046875,
+            "mean_absolute_error": 0.005345662434895833,
+            "contested_fraction": 0.0069427490234375,
+            "contested_excluded": false,
+            "vanilla_foreground_fraction": 0.1259765625,
+            "geo_foreground_fraction": 0.1259765625,
+            "vanilla_capture": "visual/model_bee/s_idle_t_half.vanilla.png",
+            "geo_capture": "visual/model_bee/s_idle_t_half.geo.png",
+            "diff_capture": "visual/model_bee/s_idle_t_half.diff.png"
+          },
+          {
+            "sample": "s_attacking_t_quarter",
+            "camera": null,
+            "changed_fraction": 0.0,
+            "mean_absolute_error": 0.0,
+            "contested_fraction": 0.010406494140625,
+            "contested_excluded": false,
+            "vanilla_foreground_fraction": 0.12994384765625,
+            "geo_foreground_fraction": 0.12994384765625,
+            "vanilla_capture": "visual/model_bee/s_attacking_t_quarter.vanilla.png",
+            "geo_capture": "visual/model_bee/s_attacking_t_quarter.geo.png",
+            "diff_capture": "visual/model_bee/s_attacking_t_quarter.diff.png"
+          },
+          {
+            "sample": "s_attacking_t_three_quarter",
+            "camera": null,
+            "changed_fraction": 0.0009307861328125,
+            "mean_absolute_error": 0.039499918619791664,
+            "contested_fraction": 0.0040130615234375,
+            "contested_excluded": false,
+            "vanilla_foreground_fraction": 0.1194000244140625,
+            "geo_foreground_fraction": 0.1194000244140625,
+            "vanilla_capture": "visual/model_bee/s_attacking_t_three_quarter.vanilla.png",
+            "geo_capture": "visual/model_bee/s_attacking_t_three_quarter.geo.png",
+            "diff_capture": "visual/model_bee/s_attacking_t_three_quarter.diff.png"
+          }
+        ]
+      }
+    },
+    {
+      "model_id": "model_fairy",
+      "tier": 2,
+      "proof_scope": "production_proof_model",
+      "source_class": "danger.orespawn.entity.client.FairyModel",
+      "source_class_sha256": "1f319e6c0d3c31a44c677de673f4d7f8db13fe65d2e4bb9b961ddf88aa6c241b",
+      "compiled_dump_sha256": "3b1fede8fde666e16229684f7204a80bb947250e842cf3c9c2dcafaa817dce9a",
+      "bone_count": 15,
+      "cube_count": 15,
+      "geometry_sha256": "0af00fe1b0ae624919ee121910e61c2b463130901b5ba609292ecdd077cbaa6e",
+      "animation_sha256": "7882082857fdb11e02f158ebc3a6d3f970e2ac60d54813f0e903ee97b2293749",
+      "animation_contract_sha256": "086fab95bc9251c72f52612d5be429c09559e9fca2d5badebadd31e621bfdf94",
+      "geometry": {
+        "status": "PASS",
+        "epsilon_blocks": 1e-05,
+        "max_corner_delta_blocks": 2.3151673798189864e-07,
+        "worst_case": "t_half:lwing2#0",
+        "sample_count": 6,
+        "cube_sample_count": 90
+      },
+      "surface_mapping": {
+        "status": "PASS",
+        "position_epsilon_blocks": 1e-05,
+        "normal_epsilon": 1e-06,
+        "uv_epsilon_normalized": 1e-07,
+        "max_position_delta_blocks": 2.3151673798189864e-07,
+        "max_normal_delta": 1.2001666544630633e-07,
+        "max_uv_delta_normalized": 0.0,
+        "vertex_samples": 1776,
+        "ignored_zero_area_faces": 96,
+        "worst_case": "t_half:lwing2#0",
+        "evidence": "position/normal/UV tuples from baked ModelPart.Cube.compile versus pinned GeckoLib BakedModelFactory rendered through GeoRenderer; faces of exactly zero area are excluded (ruling 2026-09-02)"
+      },
+      "animation": {
+        "status": "PASS",
+        "epsilon_radians": 2e-06,
+        "accepted_pose_comparison": "compiled setupAnim versus actual fresh-baked GeckoLib candidate",
+        "reference_animation_used_for_acceptance": false,
+        "sample_count": 6,
+        "max_rotation_delta_radians": 0.0,
+        "max_dense_rotation_delta_radians": 0.0,
+        "max_unexpected_position_or_scale_delta": 0.0,
+        "worst_case": "exact",
+        "dense_worst_case": "exact",
+        "rotation_channel_samples": 270,
+        "dense_rotation_channel_samples": 0,
+        "contract": {
+          "kind": "code_driven",
+          "accepted_runtime_path": "production OreSpawnGeoReplacement.applyCustomAnimations through OreSpawnGeoReplacementModel.setCustomAnimations",
+          "candidate_class": "danger.orespawn.entity.client.FairyGeoReplacement",
+          "inputs": {
+            "limb_swing": 0.0,
+            "limb_swing_amounts": [
+              0.0
+            ],
+            "net_head_yaw_degrees": 75.0,
+            "head_pitch_degrees": 12.0
+          },
+          "max_position_delta_model_units": 0.0,
+          "position_epsilon_model_units": 0.0001,
+          "position_worst_case": "exact",
+          "position_channel_samples": 270,
+          "hidden_bone_checks": 5
+        }
+      },
+      "reference_animation": {
+        "status": "SCHEMA_VALID_REFERENCE_ONLY",
+        "role": "NOT_APPLICABLE_CODE_DRIVEN_MODEL",
+        "clip_count": 0,
+        "constant_vector_count": 0,
+        "runtime_acceptance": false
+      },
+      "draw_order": {
+        "status": "PASS",
+        "bone_draw_order": [
+          "lwing2",
+          "lwing1",
+          "rwing2",
+          "rwing1",
+          "head",
+          "chest",
+          "waist",
+          "hips",
+          "lleg1",
+          "lleg2",
+          "rleg",
+          "b1",
+          "b2",
+          "larm",
+          "rarm"
+        ],
+        "captures_checked": 6,
+        "draws_checked": 90,
+        "classic_source": "classic EntityModel.renderToBuffer on a second bake posed identically; every ModelPart.render is one pose-stack push, attributed to its part by ModelPart.skipDraw elimination (one run per cube-bearing part with every other part's skipDraw set); a part drawn n > 1 times is named <part>__i<k> by draw ordinal",
+        "unobserved_units": [],
+        "policy": "the shipped model sorts GeckoLib's topLevelBones / childBones lists into the classic renderToBuffer order (DrawOrder.apply); both renderers traverse in pre-order, so equal sibling orders are equal draw orders",
+        "cube_face_order": {
+          "status": "PASS",
+          "cube_face_order": {
+            "b1": [
+              [
+                "up",
+                "down",
+                "west",
+                "north",
+                "east",
+                "south"
+              ]
+            ],
+            "b2": [
+              [
+                "up",
+                "down",
+                "west",
+                "north",
+                "east",
+                "south"
+              ]
+            ],
+            "chest": [
+              [
+                "up",
+                "down",
+                "west",
+                "north",
+                "east",
+                "south"
+              ]
+            ],
+            "head": [
+              [
+                "up",
+                "down",
+                "west",
+                "north",
+                "east",
+                "south"
+              ]
+            ],
+            "hips": [
+              [
+                "up",
+                "down",
+                "west",
+                "north",
+                "east",
+                "south"
+              ]
+            ],
+            "larm": [
+              [
+                "up",
+                "down",
+                "west",
+                "north",
+                "east",
+                "south"
+              ]
+            ],
+            "lleg1": [
+              [
+                "up",
+                "down",
+                "west",
+                "north",
+                "east",
+                "south"
+              ]
+            ],
+            "lleg2": [
+              [
+                "up",
+                "down",
+                "west",
+                "north",
+                "east",
+                "south"
+              ]
+            ],
+            "lwing1": [
+              [
+                "up",
+                "down",
+                "west",
+                "north",
+                "east",
+                "south"
+              ]
+            ],
+            "lwing2": [
+              [
+                "up",
+                "down",
+                "west",
+                "north",
+                "east",
+                "south"
+              ]
+            ],
+            "rarm": [
+              [
+                "up",
+                "down",
+                "west",
+                "north",
+                "east",
+                "south"
+              ]
+            ],
+            "rleg": [
+              [
+                "up",
+                "down",
+                "west",
+                "north",
+                "east",
+                "south"
+              ]
+            ],
+            "rwing1": [
+              [
+                "up",
+                "down",
+                "west",
+                "north",
+                "east",
+                "south"
+              ]
+            ],
+            "rwing2": [
+              [
+                "up",
+                "down",
+                "west",
+                "north",
+                "east",
+                "south"
+              ]
+            ],
+            "waist": [
+              [
+                "up",
+                "down",
+                "west",
+                "north",
+                "east",
+                "south"
+              ]
+            ]
+          },
+          "captures_checked": 6,
+          "faces_checked": 540,
+          "normal_epsilon": 1e-06,
+          "evidence": {
+            "rule": "NeoForge 21.1.223 ModelPart.Cube.<init> polygon order DOWN, UP, WEST, NORTH, EAST, SOUTH (offsets 365-785: DOWN 365, UP 436, WEST 507, NORTH 578, EAST 649, SOUTH 720), mirror negating the X normals; GeckoLib labels by the direction whose step is the classic normal reflected in Y",
+            "cube_bearing_bones": 15,
+            "cubes": 15,
+            "verified_unrotated_cubes_at_bind": 7,
+            "verification": "captured normals of every cube unrotated at bind equal the rule's, in order; the parity tool's draw-order leg compares the per-quad normal sequences of both renderers on every capture"
+          },
+          "policy": "the shipped model permutes every cube's quads into the classic ModelPart.Cube order (FaceOrder.apply), so under a blending render type a cube's back face shows through its front face - or is rejected by the depth test - exactly as it does on the classic renderer"
+        }
+      },
+      "reference_geometry": {
+        "status": "PASS",
+        "reference_source": "reference_1_7_10_source/sources/danger/orespawn/ModelFairy.java",
+        "matched_parts": 15,
+        "ground_truth": "1.7.10 decompiled ModelBase constructor, parsed; never the port"
+      },
+      "visual": {
+        "status": "PASS",
+        "image_size": [
+          256,
+          256
+        ],
+        "camera": {
+          "yaw_degrees": 34.0,
+          "pitch_degrees": -28.0
+        },
+        "channel_tolerance": 2,
+        "changed_fraction_threshold": 0.001,
+        "mean_absolute_error_threshold": 0.25,
+        "minimum_foreground_fraction_threshold": 0.001,
+        "max_changed_fraction": 0.0,
+        "max_mean_absolute_error": 0.0,
+        "z_fight_policy": "blended mode: fragments within the coplanar depth epsilon (1e-05 blocks, the manifest's own named tolerance) of the last written depth are one plane and all pass, in emission order, on both sides (the classic side's coplanar spokes tie to <= 1e-9; the cross-side same-fragment noise is ~1e-7 genuine plus up to ~1e-6 from the harness projector's 6-decimal rounding); a pixel where another quad's fragment passed within that window is counted as contested, whatever its texel, as a diagnostic only - every pixel is compared, the draw and face orders being contracted equal on both sides (G2 root-order contract; ENT-S-146 face order)",
+        "contested_exclusion_applied": false,
+        "max_contested_fraction": 0.0072479248046875,
+        "cutout_alpha_threshold": 0.1,
+        "minimum_observed_foreground_fraction": 1.0,
+        "samples": [
+          {
+            "sample": "bind",
+            "camera": null,
+            "changed_fraction": 0.0,
+            "mean_absolute_error": 0.0,
+            "contested_fraction": 0.0072479248046875,
+            "contested_excluded": false,
+            "vanilla_foreground_fraction": 0.1128082275390625,
+            "geo_foreground_fraction": 0.1128082275390625,
+            "vanilla_capture": "visual/model_fairy/bind.vanilla.png",
+            "geo_capture": "visual/model_fairy/bind.geo.png",
+            "diff_capture": "visual/model_fairy/bind.diff.png"
+          },
+          {
+            "sample": "t0",
+            "camera": null,
+            "changed_fraction": 0.0,
+            "mean_absolute_error": 0.0,
+            "contested_fraction": 0.0051727294921875,
+            "contested_excluded": false,
+            "vanilla_foreground_fraction": 0.1269073486328125,
+            "geo_foreground_fraction": 0.1269073486328125,
+            "vanilla_capture": "visual/model_fairy/t0.vanilla.png",
+            "geo_capture": "visual/model_fairy/t0.geo.png",
+            "diff_capture": "visual/model_fairy/t0.diff.png"
+          },
+          {
+            "sample": "t_quarter",
+            "camera": null,
+            "changed_fraction": 0.0,
+            "mean_absolute_error": 0.0,
+            "contested_fraction": 0.0052032470703125,
+            "contested_excluded": false,
+            "vanilla_foreground_fraction": 0.114837646484375,
+            "geo_foreground_fraction": 0.114837646484375,
+            "vanilla_capture": "visual/model_fairy/t_quarter.vanilla.png",
+            "geo_capture": "visual/model_fairy/t_quarter.geo.png",
+            "diff_capture": "visual/model_fairy/t_quarter.diff.png"
+          },
+          {
+            "sample": "t_half",
+            "camera": null,
+            "changed_fraction": 0.0,
+            "mean_absolute_error": 0.0,
+            "contested_fraction": 0.0051727294921875,
+            "contested_excluded": false,
+            "vanilla_foreground_fraction": 0.1185150146484375,
+            "geo_foreground_fraction": 0.1185150146484375,
+            "vanilla_capture": "visual/model_fairy/t_half.vanilla.png",
+            "geo_capture": "visual/model_fairy/t_half.geo.png",
+            "diff_capture": "visual/model_fairy/t_half.diff.png"
+          },
+          {
+            "sample": "t_three_quarter",
+            "camera": null,
+            "changed_fraction": 0.0,
+            "mean_absolute_error": 0.0,
+            "contested_fraction": 0.0052032470703125,
+            "contested_excluded": false,
+            "vanilla_foreground_fraction": 0.0902252197265625,
+            "geo_foreground_fraction": 0.0902252197265625,
+            "vanilla_capture": "visual/model_fairy/t_three_quarter.vanilla.png",
+            "geo_capture": "visual/model_fairy/t_three_quarter.geo.png",
+            "diff_capture": "visual/model_fairy/t_three_quarter.diff.png"
+          }
+        ],
+        "visual_mode": {
+          "render_type": "entity_translucent",
+          "vertex_color": [
+            255,
+            255,
+            255,
+            255
+          ],
+          "light": "world",
+          "emulated_states": {
+            "blend": [
+              "SRC_ALPHA",
+              "ONE_MINUS_SRC_ALPHA",
+              "ONE",
+              "ONE_MINUS_SRC_ALPHA"
+            ],
+            "depth_test": "LEQUAL",
+            "depth_write": true,
+            "cull": false,
+            "alpha_discard": 0.1,
+            "coplanar_depth_epsilon_blocks": 1e-05
+          },
+          "rasteriser": "render_capture_blended"
+        },
+        "render_state": {
+          "status": "PASS",
+          "expected": {
+            "render_type": "entity_translucent",
+            "vertex_color": [
+              255,
+              255,
+              255,
+              255
+            ],
+            "packed_light": 0,
+            "light": "world"
+          },
+          "classic": {
+            "render_type": "entity_translucent",
+            "render_type_factory": "entityTranslucent",
+            "render_type_owner": "danger.orespawn.entity.client.FairyModel",
+            "vertex_color": [
+              255,
+              255,
+              255,
+              255
+            ],
+            "packed_light": 0,
+            "vertices_observed": 2160
+          },
+          "candidate": {
+            "render_type": "entity_translucent",
+            "render_type_factory": "entityTranslucent",
+            "render_type_owner": "danger.orespawn.entity.client.FairyModel",
+            "vertex_color": [
+              255,
+              255,
+              255,
+              255
+            ],
+            "packed_light": 0,
+            "vertices_observed": 2160,
+            "same_function_object_as_classic": true,
+            "source": "descriptor.renderType(entity), applied to the texture by OreSpawnGeoReplacedEntityRenderer.getRenderType for a visible body"
+          },
+          "classic_light_source": "the probe's light (no classic_renderer declared: the renderer decides nothing), observed at addVertex",
+          "observation": "the render type is the RenderType factory the render-type function's owner class references (the probe cannot initialise RenderType: OPT-029 R0); the colour and light are the values every captured vertex carried after each side was handed what its renderer would hand it"
+        }
+      }
+    },
+    {
+      "model_id": "model_gammametroid",
+      "tier": 2,
+      "proof_scope": "production_proof_model",
+      "source_class": "danger.orespawn.entity.client.GammaMetroidModel",
+      "source_class_sha256": "9e56c7f10e90879aa9dff1fecff42698c21c31e95f26e4198ddf34ae9a56ae65",
+      "compiled_dump_sha256": "c84dd3dc1f7507060d6e1ad03dbf5316ec44a8ff8a9f3b855f413917d81c5445",
+      "bone_count": 21,
+      "cube_count": 21,
+      "geometry_sha256": "e4f5ae794cfa37a346cd9ebc5eeedbe689fddf4d03e8b01a635a2393aee523e3",
+      "animation_sha256": "7882082857fdb11e02f158ebc3a6d3f970e2ac60d54813f0e903ee97b2293749",
+      "animation_contract_sha256": "9ad1aef40704f37cb3b5e8a0071d788bf52c9d047d8f33234ca93a2be974fc05",
+      "geometry": {
+        "status": "PASS",
+        "epsilon_blocks": 1e-05,
+        "max_corner_delta_blocks": 3.6400549437155503e-07,
+        "worst_case": "bind:lrlowerleg#0",
+        "sample_count": 6,
+        "cube_sample_count": 126
+      },
+      "surface_mapping": {
+        "status": "PASS",
+        "position_epsilon_blocks": 1e-05,
+        "normal_epsilon": 1e-06,
+        "uv_epsilon_normalized": 1e-07,
+        "max_position_delta_blocks": 3.6400549437155503e-07,
+        "max_normal_delta": 2.0037215376000017e-07,
+        "max_uv_delta_normalized": 0.0,
+        "vertex_samples": 3024,
+        "ignored_zero_area_faces": 0,
+        "worst_case": "bind:lrlowerleg#0",
+        "evidence": "position/normal/UV tuples from baked ModelPart.Cube.compile versus pinned GeckoLib BakedModelFactory rendered through GeoRenderer; faces of exactly zero area are excluded (ruling 2026-09-02)"
+      },
+      "animation": {
+        "status": "PASS",
+        "epsilon_radians": 2e-06,
+        "accepted_pose_comparison": "compiled setupAnim versus actual fresh-baked GeckoLib candidate",
+        "reference_animation_used_for_acceptance": false,
+        "sample_count": 6,
+        "max_rotation_delta_radians": 0.0,
+        "max_dense_rotation_delta_radians": 0.0,
+        "max_unexpected_position_or_scale_delta": 0.0,
+        "worst_case": "exact",
+        "dense_worst_case": "exact",
+        "rotation_channel_samples": 378,
+        "dense_rotation_channel_samples": 0,
+        "contract": {
+          "kind": "code_driven",
+          "accepted_runtime_path": "production OreSpawnGeoReplacement.applyCustomAnimations through OreSpawnGeoReplacementModel.setCustomAnimations",
+          "candidate_class": "danger.orespawn.entity.client.GammaMetroidGeoReplacement",
+          "inputs": {
+            "limb_swing": 0.0,
+            "limb_swing_amounts": [
+              0.0
+            ],
+            "net_head_yaw_degrees": 0.0,
+            "head_pitch_degrees": 0.0
+          },
+          "max_position_delta_model_units": 0.0,
+          "position_epsilon_model_units": 0.0001,
+          "position_worst_case": "exact",
+          "position_channel_samples": 378,
+          "hidden_bone_checks": 5
+        }
+      },
+      "reference_animation": {
+        "status": "SCHEMA_VALID_REFERENCE_ONLY",
+        "role": "NOT_APPLICABLE_CODE_DRIVEN_MODEL",
+        "clip_count": 0,
+        "constant_vector_count": 0,
+        "runtime_acceptance": false
+      },
+      "draw_order": {
+        "status": "PASS",
+        "bone_draw_order": [
+          "core",
+          "shell1",
+          "shell2",
+          "shell3",
+          "shell4",
+          "head",
+          "beakupper",
+          "beaklower",
+          "lefttusk",
+          "middletusk",
+          "righttusk",
+          "lfupperleg",
+          "lflowerleg",
+          "lrupperleg",
+          "lrlowerleg",
+          "rfupperleg",
+          "rflowerleg",
+          "rrupperleg",
+          "rrlowerleg",
+          "bellyinside",
+          "bellyoutside"
+        ],
+        "captures_checked": 6,
+        "draws_checked": 126,
+        "classic_source": "classic EntityModel.renderToBuffer on a second bake posed identically; every ModelPart.render is one pose-stack push, attributed to its part by ModelPart.skipDraw elimination (one run per cube-bearing part with every other part's skipDraw set); a part drawn n > 1 times is named <part>__i<k> by draw ordinal",
+        "unobserved_units": [],
+        "policy": "the shipped model sorts GeckoLib's topLevelBones / childBones lists into the classic renderToBuffer order (DrawOrder.apply); both renderers traverse in pre-order, so equal sibling orders are equal draw orders"
+      },
+      "reference_geometry": {
+        "status": "PASS",
+        "reference_source": "reference_1_7_10_source/sources/danger/orespawn/ModelGammaMetroid.java",
+        "matched_parts": 21,
+        "ground_truth": "1.7.10 decompiled ModelBase constructor, parsed; never the port"
+      },
+      "visual": {
+        "status": "PASS",
+        "image_size": [
+          256,
+          256
+        ],
+        "camera": {
+          "yaw_degrees": 34.0,
+          "pitch_degrees": -28.0
+        },
+        "channel_tolerance": 2,
+        "changed_fraction_threshold": 0.001,
+        "mean_absolute_error_threshold": 0.25,
+        "minimum_foreground_fraction_threshold": 0.001,
+        "max_changed_fraction": 1.52587890625e-05,
+        "max_mean_absolute_error": 0.0004628499348958333,
+        "z_fight_policy": "pixels where two different quads meet the front within 1e-06 depth with different texels are counted as a diagnostic only; every pixel is compared, the draw order being contracted equal on both sides (G2 root-order contract, landed 2026-09-06)",
+        "contested_exclusion_applied": false,
+        "max_contested_fraction": 0.000732421875,
+        "cutout_alpha_threshold": 0.1,
+        "minimum_observed_foreground_fraction": 1.0,
+        "samples": [
+          {
+            "sample": "bind",
+            "camera": null,
+            "changed_fraction": 0.0,
+            "mean_absolute_error": 0.0,
+            "contested_fraction": 0.0006561279296875,
+            "contested_excluded": false,
+            "vanilla_foreground_fraction": 0.37261962890625,
+            "geo_foreground_fraction": 0.37261962890625,
+            "vanilla_capture": "visual/model_gammametroid/bind.vanilla.png",
+            "geo_capture": "visual/model_gammametroid/bind.geo.png",
+            "diff_capture": "visual/model_gammametroid/bind.diff.png"
+          },
+          {
+            "sample": "t0",
+            "camera": null,
+            "changed_fraction": 1.52587890625e-05,
+            "mean_absolute_error": 0.0004628499348958333,
+            "contested_fraction": 0.000732421875,
+            "contested_excluded": false,
+            "vanilla_foreground_fraction": 0.3707122802734375,
+            "geo_foreground_fraction": 0.3707122802734375,
+            "vanilla_capture": "visual/model_gammametroid/t0.vanilla.png",
+            "geo_capture": "visual/model_gammametroid/t0.geo.png",
+            "diff_capture": "visual/model_gammametroid/t0.diff.png"
+          },
+          {
+            "sample": "t_quarter",
+            "camera": null,
+            "changed_fraction": 1.52587890625e-05,
+            "mean_absolute_error": 0.0004628499348958333,
+            "contested_fraction": 0.000732421875,
+            "contested_excluded": false,
+            "vanilla_foreground_fraction": 0.3707733154296875,
+            "geo_foreground_fraction": 0.3707733154296875,
+            "vanilla_capture": "visual/model_gammametroid/t_quarter.vanilla.png",
+            "geo_capture": "visual/model_gammametroid/t_quarter.geo.png",
+            "diff_capture": "visual/model_gammametroid/t_quarter.diff.png"
+          },
+          {
+            "sample": "t_half",
+            "camera": null,
+            "changed_fraction": 1.52587890625e-05,
+            "mean_absolute_error": 0.0004628499348958333,
+            "contested_fraction": 0.000732421875,
+            "contested_excluded": false,
+            "vanilla_foreground_fraction": 0.371002197265625,
+            "geo_foreground_fraction": 0.371002197265625,
+            "vanilla_capture": "visual/model_gammametroid/t_half.vanilla.png",
+            "geo_capture": "visual/model_gammametroid/t_half.geo.png",
+            "diff_capture": "visual/model_gammametroid/t_half.diff.png"
+          },
+          {
+            "sample": "t_three_quarter",
+            "camera": null,
+            "changed_fraction": 1.52587890625e-05,
+            "mean_absolute_error": 0.0004628499348958333,
+            "contested_fraction": 0.000732421875,
+            "contested_excluded": false,
+            "vanilla_foreground_fraction": 0.3712615966796875,
+            "geo_foreground_fraction": 0.3712615966796875,
+            "vanilla_capture": "visual/model_gammametroid/t_three_quarter.vanilla.png",
+            "geo_capture": "visual/model_gammametroid/t_three_quarter.geo.png",
+            "diff_capture": "visual/model_gammametroid/t_three_quarter.diff.png"
+          }
+        ]
+      }
+    },
+    {
+      "model_id": "model_irukandji",
+      "tier": 2,
+      "proof_scope": "production_proof_model",
+      "source_class": "danger.orespawn.entity.client.ModelIrukandji",
+      "source_class_sha256": "f8e58c70940b704ba784af1314aaad91221786789458d383ce85c7ba3c5ae32f",
+      "compiled_dump_sha256": "f98ced37e34f780f132fd84aaa8e97b1ad31bf84c4153144e6320df99e77ec51",
+      "bone_count": 9,
+      "cube_count": 9,
+      "geometry_sha256": "986d930d73edda8bb00200b12bd0318e5af4bf00e03ad9b75a8de442e124b7a4",
+      "animation_sha256": "7882082857fdb11e02f158ebc3a6d3f970e2ac60d54813f0e903ee97b2293749",
+      "animation_contract_sha256": "53199be33c47ed0cc4fbea36f7183b3d4b1ebb404e0289bd526bc3dc87a0e001",
+      "geometry": {
+        "status": "PASS",
+        "epsilon_blocks": 1e-05,
+        "max_corner_delta_blocks": 3.0166206253159616e-07,
+        "worst_case": "t_quarter:t11#0",
+        "sample_count": 6,
+        "cube_sample_count": 54
+      },
+      "surface_mapping": {
+        "status": "PASS",
+        "position_epsilon_blocks": 1e-05,
+        "normal_epsilon": 1e-06,
+        "uv_epsilon_normalized": 1e-07,
+        "max_position_delta_blocks": 3.0166206253159616e-07,
+        "max_normal_delta": 1.5132745948325595e-07,
+        "max_uv_delta_normalized": 0.0,
+        "vertex_samples": 1296,
+        "ignored_zero_area_faces": 0,
+        "worst_case": "t_quarter:t11#0",
+        "evidence": "position/normal/UV tuples from baked ModelPart.Cube.compile versus pinned GeckoLib BakedModelFactory rendered through GeoRenderer; faces of exactly zero area are excluded (ruling 2026-09-02)"
+      },
+      "animation": {
+        "status": "PASS",
+        "epsilon_radians": 2e-06,
+        "accepted_pose_comparison": "compiled setupAnim versus actual fresh-baked GeckoLib candidate",
+        "reference_animation_used_for_acceptance": false,
+        "sample_count": 6,
+        "max_rotation_delta_radians": 0.0,
+        "max_dense_rotation_delta_radians": 0.0,
+        "max_unexpected_position_or_scale_delta": 0.0,
+        "worst_case": "exact",
+        "dense_worst_case": "exact",
+        "rotation_channel_samples": 162,
+        "dense_rotation_channel_samples": 0,
+        "contract": {
+          "kind": "code_driven",
+          "accepted_runtime_path": "production OreSpawnGeoReplacement.applyCustomAnimations through OreSpawnGeoReplacementModel.setCustomAnimations",
+          "candidate_class": "danger.orespawn.entity.client.IrukandjiGeoReplacement",
+          "inputs": {
+            "limb_swing": 0.0,
+            "limb_swing_amounts": [
+              0.0
+            ],
+            "net_head_yaw_degrees": 0.0,
+            "head_pitch_degrees": 0.0
+          },
+          "max_position_delta_model_units": 0.0,
+          "position_epsilon_model_units": 0.0001,
+          "position_worst_case": "exact",
+          "position_channel_samples": 162,
+          "hidden_bone_checks": 5
+        }
+      },
+      "reference_animation": {
+        "status": "SCHEMA_VALID_REFERENCE_ONLY",
+        "role": "NOT_APPLICABLE_CODE_DRIVEN_MODEL",
+        "clip_count": 0,
+        "constant_vector_count": 0,
+        "runtime_acceptance": false
+      },
+      "draw_order": {
+        "status": "PASS",
+        "bone_draw_order": [
+          "body",
+          "t11",
+          "t12",
+          "t21",
+          "t22",
+          "t31",
+          "t32",
+          "t41",
+          "t42"
+        ],
+        "captures_checked": 6,
+        "draws_checked": 54,
+        "classic_source": "classic EntityModel.renderToBuffer on a second bake posed identically; every ModelPart.render is one pose-stack push, attributed to its part by ModelPart.skipDraw elimination (one run per cube-bearing part with every other part's skipDraw set); a part drawn n > 1 times is named <part>__i<k> by draw ordinal",
+        "unobserved_units": [],
+        "policy": "the shipped model sorts GeckoLib's topLevelBones / childBones lists into the classic renderToBuffer order (DrawOrder.apply); both renderers traverse in pre-order, so equal sibling orders are equal draw orders"
+      },
+      "reference_geometry": {
+        "status": "PASS",
+        "reference_source": "reference_1_7_10_source/sources/danger/orespawn/ModelIrukandji.java",
+        "matched_parts": 9,
+        "ground_truth": "1.7.10 decompiled ModelBase constructor, parsed; never the port"
+      },
+      "visual": {
+        "status": "PASS",
+        "image_size": [
+          256,
+          256
+        ],
+        "camera": {
+          "yaw_degrees": 34.0,
+          "pitch_degrees": -28.0
+        },
+        "channel_tolerance": 2,
+        "changed_fraction_threshold": 0.001,
+        "mean_absolute_error_threshold": 0.25,
+        "minimum_foreground_fraction_threshold": 0.001,
+        "max_changed_fraction": 0.0,
+        "max_mean_absolute_error": 0.0,
+        "z_fight_policy": "pixels where two different quads meet the front within 1e-06 depth with different texels are counted as a diagnostic only; every pixel is compared, the draw order being contracted equal on both sides (G2 root-order contract, landed 2026-09-06)",
+        "contested_exclusion_applied": false,
+        "max_contested_fraction": 0.0,
+        "cutout_alpha_threshold": 0.1,
+        "minimum_observed_foreground_fraction": 1.0,
+        "samples": [
+          {
+            "sample": "bind",
+            "camera": null,
+            "changed_fraction": 0.0,
+            "mean_absolute_error": 0.0,
+            "contested_fraction": 0.0,
+            "contested_excluded": false,
+            "vanilla_foreground_fraction": 0.199859619140625,
+            "geo_foreground_fraction": 0.199859619140625,
+            "vanilla_capture": "visual/model_irukandji/bind.vanilla.png",
+            "geo_capture": "visual/model_irukandji/bind.geo.png",
+            "diff_capture": "visual/model_irukandji/bind.diff.png"
+          },
+          {
+            "sample": "t0",
+            "camera": null,
+            "changed_fraction": 0.0,
+            "mean_absolute_error": 0.0,
+            "contested_fraction": 0.0,
+            "contested_excluded": false,
+            "vanilla_foreground_fraction": 0.19482421875,
+            "geo_foreground_fraction": 0.19482421875,
+            "vanilla_capture": "visual/model_irukandji/t0.vanilla.png",
+            "geo_capture": "visual/model_irukandji/t0.geo.png",
+            "diff_capture": "visual/model_irukandji/t0.diff.png"
+          },
+          {
+            "sample": "t_quarter",
+            "camera": null,
+            "changed_fraction": 0.0,
+            "mean_absolute_error": 0.0,
+            "contested_fraction": 0.0,
+            "contested_excluded": false,
+            "vanilla_foreground_fraction": 0.1890869140625,
+            "geo_foreground_fraction": 0.1890869140625,
+            "vanilla_capture": "visual/model_irukandji/t_quarter.vanilla.png",
+            "geo_capture": "visual/model_irukandji/t_quarter.geo.png",
+            "diff_capture": "visual/model_irukandji/t_quarter.diff.png"
+          },
+          {
+            "sample": "t_half",
+            "camera": null,
+            "changed_fraction": 0.0,
+            "mean_absolute_error": 0.0,
+            "contested_fraction": 0.0,
+            "contested_excluded": false,
+            "vanilla_foreground_fraction": 0.184356689453125,
+            "geo_foreground_fraction": 0.184356689453125,
+            "vanilla_capture": "visual/model_irukandji/t_half.vanilla.png",
+            "geo_capture": "visual/model_irukandji/t_half.geo.png",
+            "diff_capture": "visual/model_irukandji/t_half.diff.png"
+          },
+          {
+            "sample": "t_three_quarter",
+            "camera": null,
+            "changed_fraction": 0.0,
+            "mean_absolute_error": 0.0,
+            "contested_fraction": 0.0,
+            "contested_excluded": false,
+            "vanilla_foreground_fraction": 0.172882080078125,
+            "geo_foreground_fraction": 0.172882080078125,
+            "vanilla_capture": "visual/model_irukandji/t_three_quarter.vanilla.png",
+            "geo_capture": "visual/model_irukandji/t_three_quarter.geo.png",
+            "diff_capture": "visual/model_irukandji/t_three_quarter.diff.png"
+          }
+        ]
+      }
+    },
+    {
+      "model_id": "model_skate",
+      "tier": 2,
+      "proof_scope": "production_proof_model",
+      "source_class": "danger.orespawn.entity.client.ModelSkate",
+      "source_class_sha256": "c1255dc7a798eb70e109916d0230c3ad796c0f3f74700d8af2188a8b70e29cdc",
+      "compiled_dump_sha256": "1de650bbfe6d80b9ad58823df3905f86fb30c405c7144549a0f7226693fd587d",
+      "bone_count": 3,
+      "cube_count": 3,
+      "geometry_sha256": "45f55b5035fc14c4f388be33fe5299be14a18205ff4f8592e3a867517ef6cbdd",
+      "animation_sha256": "7882082857fdb11e02f158ebc3a6d3f970e2ac60d54813f0e903ee97b2293749",
+      "animation_contract_sha256": "febd221eea3c01987020e0665ab8df2b727242666764dccc36d0e8ebb88299be",
+      "geometry": {
+        "status": "PASS",
+        "epsilon_blocks": 1e-05,
+        "max_corner_delta_blocks": 2.9999999995311555e-07,
+        "worst_case": "bind:Shape1#0",
+        "sample_count": 21,
+        "cube_sample_count": 63
+      },
+      "surface_mapping": {
+        "status": "PASS",
+        "position_epsilon_blocks": 1e-05,
+        "normal_epsilon": 1e-06,
+        "uv_epsilon_normalized": 1e-07,
+        "max_position_delta_blocks": 2.9999999995311555e-07,
+        "max_normal_delta": 0.0,
+        "max_uv_delta_normalized": 0.0,
+        "vertex_samples": 1512,
+        "ignored_zero_area_faces": 0,
+        "worst_case": "bind:Shape1#0",
+        "evidence": "position/normal/UV tuples from baked ModelPart.Cube.compile versus pinned GeckoLib BakedModelFactory rendered through GeoRenderer; faces of exactly zero area are excluded (ruling 2026-09-02)"
+      },
+      "animation": {
+        "status": "PASS",
+        "epsilon_radians": 2e-06,
+        "accepted_pose_comparison": "compiled setupAnim versus actual fresh-baked GeckoLib candidate",
+        "reference_animation_used_for_acceptance": false,
+        "sample_count": 21,
+        "max_rotation_delta_radians": 0.0,
+        "max_dense_rotation_delta_radians": 0.0,
+        "max_unexpected_position_or_scale_delta": 0.0,
+        "worst_case": "exact",
+        "dense_worst_case": "exact",
+        "rotation_channel_samples": 189,
+        "dense_rotation_channel_samples": 0,
+        "contract": {
+          "kind": "code_driven",
+          "accepted_runtime_path": "production OreSpawnGeoReplacement.applyCustomAnimations through OreSpawnGeoReplacementModel.setCustomAnimations",
+          "candidate_class": "danger.orespawn.entity.client.SkateGeoReplacement",
+          "inputs": {
+            "limb_swing": 0.0,
+            "limb_swing_amounts": [
+              0.0,
+              0.25,
+              0.5,
+              1.0
+            ],
+            "net_head_yaw_degrees": 0.0,
+            "head_pitch_degrees": 0.0
+          },
+          "max_position_delta_model_units": 0.0,
+          "position_epsilon_model_units": 0.0001,
+          "position_worst_case": "exact",
+          "position_channel_samples": 189,
+          "hidden_bone_checks": 20
+        }
+      },
+      "reference_animation": {
+        "status": "SCHEMA_VALID_REFERENCE_ONLY",
+        "role": "NOT_APPLICABLE_CODE_DRIVEN_MODEL",
+        "clip_count": 0,
+        "constant_vector_count": 0,
+        "runtime_acceptance": false
+      },
+      "draw_order": {
+        "status": "PASS",
+        "bone_draw_order": [
+          "body",
+          "tail1",
+          "Shape1"
+        ],
+        "captures_checked": 21,
+        "draws_checked": 63,
+        "classic_source": "classic EntityModel.renderToBuffer on a second bake posed identically; every ModelPart.render is one pose-stack push, attributed to its part by ModelPart.skipDraw elimination (one run per cube-bearing part with every other part's skipDraw set); a part drawn n > 1 times is named <part>__i<k> by draw ordinal",
+        "unobserved_units": [],
+        "policy": "the shipped model sorts GeckoLib's topLevelBones / childBones lists into the classic renderToBuffer order (DrawOrder.apply); both renderers traverse in pre-order, so equal sibling orders are equal draw orders"
+      },
+      "reference_geometry": {
+        "status": "PASS",
+        "reference_source": "reference_1_7_10_source/sources/danger/orespawn/ModelSkate.java",
+        "matched_parts": 3,
+        "ground_truth": "1.7.10 decompiled ModelBase constructor, parsed; never the port"
+      },
+      "visual": {
+        "status": "PASS",
+        "image_size": [
+          256,
+          256
+        ],
+        "camera": {
+          "yaw_degrees": 34.0,
+          "pitch_degrees": -28.0
+        },
+        "channel_tolerance": 2,
+        "changed_fraction_threshold": 0.001,
+        "mean_absolute_error_threshold": 0.25,
+        "minimum_foreground_fraction_threshold": 0.001,
+        "max_changed_fraction": 0.0,
+        "max_mean_absolute_error": 0.0,
+        "z_fight_policy": "pixels where two different quads meet the front within 1e-06 depth with different texels are counted as a diagnostic only; every pixel is compared, the draw order being contracted equal on both sides (G2 root-order contract, landed 2026-09-06)",
+        "contested_exclusion_applied": false,
+        "max_contested_fraction": 0.0045013427734375,
+        "cutout_alpha_threshold": 0.1,
+        "minimum_observed_foreground_fraction": 1.0,
+        "samples": [
+          {
+            "sample": "bind",
+            "camera": null,
+            "changed_fraction": 0.0,
+            "mean_absolute_error": 0.0,
+            "contested_fraction": 0.0014801025390625,
+            "contested_excluded": false,
+            "vanilla_foreground_fraction": 0.208526611328125,
+            "geo_foreground_fraction": 0.208526611328125,
+            "vanilla_capture": "visual/model_skate/bind.vanilla.png",
+            "geo_capture": "visual/model_skate/bind.geo.png",
+            "diff_capture": "visual/model_skate/bind.diff.png"
+          },
+          {
+            "sample": "a1_t0",
+            "camera": null,
+            "changed_fraction": 0.0,
+            "mean_absolute_error": 0.0,
+            "contested_fraction": 0.0004730224609375,
+            "contested_excluded": false,
+            "vanilla_foreground_fraction": 0.210968017578125,
+            "geo_foreground_fraction": 0.210968017578125,
+            "vanilla_capture": "visual/model_skate/a1_t0.vanilla.png",
+            "geo_capture": "visual/model_skate/a1_t0.geo.png",
+            "diff_capture": "visual/model_skate/a1_t0.diff.png"
+          },
+          {
+            "sample": "a1_t_quarter",
+            "camera": null,
+            "changed_fraction": 0.0,
+            "mean_absolute_error": 0.0,
+            "contested_fraction": 0.0014801025390625,
+            "contested_excluded": false,
+            "vanilla_foreground_fraction": 0.2085113525390625,
+            "geo_foreground_fraction": 0.2085113525390625,
+            "vanilla_capture": "visual/model_skate/a1_t_quarter.vanilla.png",
+            "geo_capture": "visual/model_skate/a1_t_quarter.geo.png",
+            "diff_capture": "visual/model_skate/a1_t_quarter.diff.png"
+          },
+          {
+            "sample": "a1_t_half",
+            "camera": null,
+            "changed_fraction": 0.0,
+            "mean_absolute_error": 0.0,
+            "contested_fraction": 0.0045013427734375,
+            "contested_excluded": false,
+            "vanilla_foreground_fraction": 0.201995849609375,
+            "geo_foreground_fraction": 0.201995849609375,
+            "vanilla_capture": "visual/model_skate/a1_t_half.vanilla.png",
+            "geo_capture": "visual/model_skate/a1_t_half.geo.png",
+            "diff_capture": "visual/model_skate/a1_t_half.diff.png"
+          },
+          {
+            "sample": "a1_t_three_quarter",
+            "camera": null,
+            "changed_fraction": 0.0,
+            "mean_absolute_error": 0.0,
+            "contested_fraction": 0.0014801025390625,
+            "contested_excluded": false,
+            "vanilla_foreground_fraction": 0.2085113525390625,
+            "geo_foreground_fraction": 0.2085113525390625,
+            "vanilla_capture": "visual/model_skate/a1_t_three_quarter.vanilla.png",
+            "geo_capture": "visual/model_skate/a1_t_three_quarter.geo.png",
+            "diff_capture": "visual/model_skate/a1_t_three_quarter.diff.png"
+          }
+        ]
+      }
+    },
+    {
+      "model_id": "model_rubberducky",
+      "tier": 2,
+      "proof_scope": "production_proof_model",
+      "source_class": "danger.orespawn.entity.client.RubberDuckyModel",
+      "source_class_sha256": "cea718327b782e8c3f86e5512d2cf6574f1a80bfbafba2194708d5674155a450",
+      "compiled_dump_sha256": "cfb6b4d7bfa4ebc29a08bdd5516f935387359f98bd5574bea799f2e5e7b834f3",
+      "bone_count": 8,
+      "cube_count": 8,
+      "geometry_sha256": "d85ea8c87264943cb1929adc1d2083b3ab9d85470cebfabbf44d41ba7518b25b",
+      "animation_sha256": "7882082857fdb11e02f158ebc3a6d3f970e2ac60d54813f0e903ee97b2293749",
+      "animation_contract_sha256": "5ae970fe531a627f640c88b3c8b8d73ab9b78e76a807e4f366eef013f5519c54",
+      "geometry": {
+        "status": "PASS",
+        "epsilon_blocks": 1e-05,
+        "max_corner_delta_blocks": 6.161168717372123e-08,
+        "worst_case": "t0:head#0",
+        "sample_count": 6,
+        "cube_sample_count": 48
+      },
+      "surface_mapping": {
+        "status": "PASS",
+        "position_epsilon_blocks": 1e-05,
+        "normal_epsilon": 1e-06,
+        "uv_epsilon_normalized": 1e-07,
+        "max_position_delta_blocks": 6.161168717372123e-08,
+        "max_normal_delta": 0.0,
+        "max_uv_delta_normalized": 0.0,
+        "vertex_samples": 1152,
+        "ignored_zero_area_faces": 0,
+        "worst_case": "t0:head#0",
+        "evidence": "position/normal/UV tuples from baked ModelPart.Cube.compile versus pinned GeckoLib BakedModelFactory rendered through GeoRenderer; faces of exactly zero area are excluded (ruling 2026-09-02)"
+      },
+      "animation": {
+        "status": "PASS",
+        "epsilon_radians": 2e-06,
+        "accepted_pose_comparison": "compiled setupAnim versus actual fresh-baked GeckoLib candidate",
+        "reference_animation_used_for_acceptance": false,
+        "sample_count": 6,
+        "max_rotation_delta_radians": 0.0,
+        "max_dense_rotation_delta_radians": 0.0,
+        "max_unexpected_position_or_scale_delta": 0.0,
+        "worst_case": "exact",
+        "dense_worst_case": "exact",
+        "rotation_channel_samples": 144,
+        "dense_rotation_channel_samples": 0,
+        "contract": {
+          "kind": "code_driven",
+          "accepted_runtime_path": "production OreSpawnGeoReplacement.applyCustomAnimations through OreSpawnGeoReplacementModel.setCustomAnimations",
+          "candidate_class": "danger.orespawn.entity.client.RubberDuckyGeoReplacement",
+          "inputs": {
+            "limb_swing": 0.0,
+            "limb_swing_amounts": [
+              0.0
+            ],
+            "net_head_yaw_degrees": 30.0,
+            "head_pitch_degrees": 10.0
+          },
+          "max_position_delta_model_units": 0.0,
+          "position_epsilon_model_units": 0.0001,
+          "position_worst_case": "exact",
+          "position_channel_samples": 144,
+          "hidden_bone_checks": 5
+        }
+      },
+      "reference_animation": {
+        "status": "SCHEMA_VALID_REFERENCE_ONLY",
+        "role": "NOT_APPLICABLE_CODE_DRIVEN_MODEL",
+        "clip_count": 0,
+        "constant_vector_count": 0,
+        "runtime_acceptance": false
+      },
+      "draw_order": {
+        "status": "PASS",
+        "bone_draw_order": [
+          "bottom",
+          "body",
+          "back",
+          "neck",
+          "head",
+          "beak",
+          "lwing",
+          "rwing"
+        ],
+        "captures_checked": 6,
+        "draws_checked": 48,
+        "classic_source": "classic EntityModel.renderToBuffer on a second bake posed identically; every ModelPart.render is one pose-stack push, attributed to its part by ModelPart.skipDraw elimination (one run per cube-bearing part with every other part's skipDraw set); a part drawn n > 1 times is named <part>__i<k> by draw ordinal",
+        "unobserved_units": [],
+        "policy": "the shipped model sorts GeckoLib's topLevelBones / childBones lists into the classic renderToBuffer order (DrawOrder.apply); both renderers traverse in pre-order, so equal sibling orders are equal draw orders"
+      },
+      "reference_geometry": {
+        "status": "PASS",
+        "reference_source": "reference_1_7_10_source/sources/danger/orespawn/ModelRubberDucky.java",
+        "matched_parts": 8,
+        "ground_truth": "1.7.10 decompiled ModelBase constructor, parsed; never the port"
+      },
+      "visual": {
+        "status": "PASS",
+        "image_size": [
+          256,
+          256
+        ],
+        "camera": {
+          "yaw_degrees": 34.0,
+          "pitch_degrees": -28.0
+        },
+        "channel_tolerance": 2,
+        "changed_fraction_threshold": 0.001,
+        "mean_absolute_error_threshold": 0.25,
+        "minimum_foreground_fraction_threshold": 0.001,
+        "max_changed_fraction": 1.52587890625e-05,
+        "max_mean_absolute_error": 0.00023396809895833334,
+        "z_fight_policy": "pixels where two different quads meet the front within 1e-06 depth with different texels are counted as a diagnostic only; every pixel is compared, the draw order being contracted equal on both sides (G2 root-order contract, landed 2026-09-06)",
+        "contested_exclusion_applied": false,
+        "max_contested_fraction": 1.52587890625e-05,
+        "cutout_alpha_threshold": 0.1,
+        "minimum_observed_foreground_fraction": 1.0,
+        "samples": [
+          {
+            "sample": "bind",
+            "camera": null,
+            "changed_fraction": 1.52587890625e-05,
+            "mean_absolute_error": 0.00023396809895833334,
+            "contested_fraction": 1.52587890625e-05,
+            "contested_excluded": false,
+            "vanilla_foreground_fraction": 0.482940673828125,
+            "geo_foreground_fraction": 0.482940673828125,
+            "vanilla_capture": "visual/model_rubberducky/bind.vanilla.png",
+            "geo_capture": "visual/model_rubberducky/bind.geo.png",
+            "diff_capture": "visual/model_rubberducky/bind.diff.png"
+          },
+          {
+            "sample": "t0",
+            "camera": null,
+            "changed_fraction": 1.52587890625e-05,
+            "mean_absolute_error": 0.00023396809895833334,
+            "contested_fraction": 1.52587890625e-05,
+            "contested_excluded": false,
+            "vanilla_foreground_fraction": 0.4454193115234375,
+            "geo_foreground_fraction": 0.4454193115234375,
+            "vanilla_capture": "visual/model_rubberducky/t0.vanilla.png",
+            "geo_capture": "visual/model_rubberducky/t0.geo.png",
+            "diff_capture": "visual/model_rubberducky/t0.diff.png"
+          },
+          {
+            "sample": "t_quarter",
+            "camera": null,
+            "changed_fraction": 1.52587890625e-05,
+            "mean_absolute_error": 0.00023396809895833334,
+            "contested_fraction": 1.52587890625e-05,
+            "contested_excluded": false,
+            "vanilla_foreground_fraction": 0.444061279296875,
+            "geo_foreground_fraction": 0.444061279296875,
+            "vanilla_capture": "visual/model_rubberducky/t_quarter.vanilla.png",
+            "geo_capture": "visual/model_rubberducky/t_quarter.geo.png",
+            "diff_capture": "visual/model_rubberducky/t_quarter.diff.png"
+          },
+          {
+            "sample": "t_half",
+            "camera": null,
+            "changed_fraction": 1.52587890625e-05,
+            "mean_absolute_error": 0.00023396809895833334,
+            "contested_fraction": 1.52587890625e-05,
+            "contested_excluded": false,
+            "vanilla_foreground_fraction": 0.4454193115234375,
+            "geo_foreground_fraction": 0.4454193115234375,
+            "vanilla_capture": "visual/model_rubberducky/t_half.vanilla.png",
+            "geo_capture": "visual/model_rubberducky/t_half.geo.png",
+            "diff_capture": "visual/model_rubberducky/t_half.diff.png"
+          },
+          {
+            "sample": "t_three_quarter",
+            "camera": null,
+            "changed_fraction": 1.52587890625e-05,
+            "mean_absolute_error": 0.00023396809895833334,
+            "contested_fraction": 1.52587890625e-05,
+            "contested_excluded": false,
+            "vanilla_foreground_fraction": 0.444061279296875,
+            "geo_foreground_fraction": 0.444061279296875,
+            "vanilla_capture": "visual/model_rubberducky/t_three_quarter.vanilla.png",
+            "geo_capture": "visual/model_rubberducky/t_three_quarter.geo.png",
+            "diff_capture": "visual/model_rubberducky/t_three_quarter.diff.png"
+          }
+        ]
+      }
+    },
+    {
+      "model_id": "model_terribleterror",
+      "tier": 2,
+      "proof_scope": "production_proof_model",
+      "source_class": "danger.orespawn.entity.client.TerribleTerrorModel",
+      "source_class_sha256": "f710b78947af304d3a3fc6955b5bf40f0ffbbdd5c58c9972b9baec7a693b4265",
+      "compiled_dump_sha256": "727ea9a25aba94437c6aa48afcf536e6cdedf6267a41249ec5dd5af60f76f870",
+      "bone_count": 21,
+      "cube_count": 21,
+      "geometry_sha256": "b1ac785e1823cbc9ecdf2740e23903f2dba35af440b9e53e7071475c7a35ea36",
+      "animation_sha256": "7882082857fdb11e02f158ebc3a6d3f970e2ac60d54813f0e903ee97b2293749",
+      "animation_contract_sha256": "9de5b1260ffbcca85d8f21e86a35b693ec2bccd0dd455ee13569e34c0191c0aa",
+      "geometry": {
+        "status": "PASS",
+        "epsilon_blocks": 1e-05,
+        "max_corner_delta_blocks": 3.014962688118699e-07,
+        "worst_case": "t_half:bl11#0",
+        "sample_count": 6,
+        "cube_sample_count": 126
+      },
+      "surface_mapping": {
+        "status": "PASS",
+        "position_epsilon_blocks": 1e-05,
+        "normal_epsilon": 1e-06,
+        "uv_epsilon_normalized": 1e-07,
+        "max_position_delta_blocks": 3.014962688118699e-07,
+        "max_normal_delta": 1.5008331017451946e-07,
+        "max_uv_delta_normalized": 0.0,
+        "vertex_samples": 2544,
+        "ignored_zero_area_faces": 120,
+        "worst_case": "t_half:bl11#0",
+        "evidence": "position/normal/UV tuples from baked ModelPart.Cube.compile versus pinned GeckoLib BakedModelFactory rendered through GeoRenderer; faces of exactly zero area are excluded (ruling 2026-09-02)"
+      },
+      "animation": {
+        "status": "PASS",
+        "epsilon_radians": 2e-06,
+        "accepted_pose_comparison": "compiled setupAnim versus actual fresh-baked GeckoLib candidate",
+        "reference_animation_used_for_acceptance": false,
+        "sample_count": 6,
+        "max_rotation_delta_radians": 0.0,
+        "max_dense_rotation_delta_radians": 0.0,
+        "max_unexpected_position_or_scale_delta": 0.0,
+        "worst_case": "exact",
+        "dense_worst_case": "exact",
+        "rotation_channel_samples": 378,
+        "dense_rotation_channel_samples": 0,
+        "contract": {
+          "kind": "code_driven",
+          "accepted_runtime_path": "production OreSpawnGeoReplacement.applyCustomAnimations through OreSpawnGeoReplacementModel.setCustomAnimations",
+          "candidate_class": "danger.orespawn.entity.client.TerribleTerrorGeoReplacement",
+          "inputs": {
+            "limb_swing": 0.0,
+            "limb_swing_amounts": [
+              0.0
+            ],
+            "net_head_yaw_degrees": 0.0,
+            "head_pitch_degrees": 0.0
+          },
+          "max_position_delta_model_units": 0.0,
+          "position_epsilon_model_units": 0.0001,
+          "position_worst_case": "exact",
+          "position_channel_samples": 378,
+          "hidden_bone_checks": 5
+        }
+      },
+      "reference_animation": {
+        "status": "SCHEMA_VALID_REFERENCE_ONLY",
+        "role": "NOT_APPLICABLE_CODE_DRIVEN_MODEL",
+        "clip_count": 0,
+        "constant_vector_count": 0,
+        "runtime_acceptance": false
+      },
+      "draw_order": {
+        "status": "PASS",
+        "bone_draw_order": [
+          "horn1",
+          "horn2",
+          "snout",
+          "head",
+          "jaw",
+          "neck",
+          "body",
+          "wing1",
+          "wing2",
+          "tail1",
+          "tail2",
+          "tail3",
+          "tail4",
+          "fl11",
+          "fl12",
+          "fl21",
+          "fl22",
+          "bl21",
+          "bl22",
+          "bl11",
+          "bl12"
+        ],
+        "captures_checked": 6,
+        "draws_checked": 126,
+        "classic_source": "classic EntityModel.renderToBuffer on a second bake posed identically; every ModelPart.render is one pose-stack push, attributed to its part by ModelPart.skipDraw elimination (one run per cube-bearing part with every other part's skipDraw set); a part drawn n > 1 times is named <part>__i<k> by draw ordinal",
+        "unobserved_units": [],
+        "policy": "the shipped model sorts GeckoLib's topLevelBones / childBones lists into the classic renderToBuffer order (DrawOrder.apply); both renderers traverse in pre-order, so equal sibling orders are equal draw orders",
+        "cube_face_order": {
+          "status": "PASS",
+          "cube_face_order": {
+            "bl11": [
+              [
+                "up",
+                "down",
+                "west",
+                "north",
+                "east",
+                "south"
+              ]
+            ],
+            "bl12": [
+              [
+                "up",
+                "down",
+                "west",
+                "north",
+                "east",
+                "south"
+              ]
+            ],
+            "bl21": [
+              [
+                "up",
+                "down",
+                "west",
+                "north",
+                "east",
+                "south"
+              ]
+            ],
+            "bl22": [
+              [
+                "up",
+                "down",
+                "west",
+                "north",
+                "east",
+                "south"
+              ]
+            ],
+            "body": [
+              [
+                "up",
+                "down",
+                "west",
+                "north",
+                "east",
+                "south"
+              ]
+            ],
+            "fl11": [
+              [
+                "up",
+                "down",
+                "west",
+                "north",
+                "east",
+                "south"
+              ]
+            ],
+            "fl12": [
+              [
+                "up",
+                "down",
+                "west",
+                "north",
+                "east",
+                "south"
+              ]
+            ],
+            "fl21": [
+              [
+                "up",
+                "down",
+                "west",
+                "north",
+                "east",
+                "south"
+              ]
+            ],
+            "fl22": [
+              [
+                "up",
+                "down",
+                "west",
+                "north",
+                "east",
+                "south"
+              ]
+            ],
+            "head": [
+              [
+                "up",
+                "down",
+                "west",
+                "north",
+                "east",
+                "south"
+              ]
+            ],
+            "horn1": [
+              [
+                "up",
+                "down",
+                "west",
+                "north",
+                "east",
+                "south"
+              ]
+            ],
+            "horn2": [
+              [
+                "up",
+                "down",
+                "west",
+                "north",
+                "east",
+                "south"
+              ]
+            ],
+            "jaw": [
+              [
+                "up",
+                "down",
+                "west",
+                "north",
+                "east",
+                "south"
+              ]
+            ],
+            "neck": [
+              [
+                "up",
+                "down",
+                "west",
+                "north",
+                "east",
+                "south"
+              ]
+            ],
+            "snout": [
+              [
+                "up",
+                "down",
+                "west",
+                "north",
+                "east",
+                "south"
+              ]
+            ],
+            "tail1": [
+              [
+                "up",
+                "down",
+                "west",
+                "north",
+                "east",
+                "south"
+              ]
+            ],
+            "tail2": [
+              [
+                "up",
+                "down",
+                "west",
+                "north",
+                "east",
+                "south"
+              ]
+            ],
+            "tail3": [
+              [
+                "up",
+                "down",
+                "west",
+                "north",
+                "east",
+                "south"
+              ]
+            ],
+            "tail4": [
+              [
+                "up",
+                "down",
+                "west",
+                "north",
+                "east",
+                "south"
+              ]
+            ],
+            "wing1": [
+              [
+                "up",
+                "down",
+                "west",
+                "north",
+                "east",
+                "south"
+              ]
+            ],
+            "wing2": [
+              [
+                "up",
+                "down",
+                "west",
+                "north",
+                "east",
+                "south"
+              ]
+            ]
+          },
+          "captures_checked": 6,
+          "faces_checked": 756,
+          "normal_epsilon": 1e-06,
+          "evidence": {
+            "rule": "NeoForge 21.1.223 ModelPart.Cube.<init> polygon order DOWN, UP, WEST, NORTH, EAST, SOUTH (offsets 365-785: DOWN 365, UP 436, WEST 507, NORTH 578, EAST 649, SOUTH 720), mirror negating the X normals; GeckoLib labels by the direction whose step is the classic normal reflected in Y",
+            "cube_bearing_bones": 21,
+            "cubes": 21,
+            "verified_unrotated_cubes_at_bind": 7,
+            "verification": "captured normals of every cube unrotated at bind equal the rule's, in order; the parity tool's draw-order leg compares the per-quad normal sequences of both renderers on every capture"
+          },
+          "policy": "the shipped model permutes every cube's quads into the classic ModelPart.Cube order (FaceOrder.apply), so under a blending render type a cube's back face shows through its front face - or is rejected by the depth test - exactly as it does on the classic renderer"
+        }
+      },
+      "reference_geometry": {
+        "status": "PASS",
+        "reference_source": "reference_1_7_10_source/sources/danger/orespawn/ModelTerribleTerror.java",
+        "matched_parts": 21,
+        "ground_truth": "1.7.10 decompiled ModelBase constructor, parsed; never the port"
+      },
+      "visual": {
+        "status": "PASS",
+        "image_size": [
+          256,
+          256
+        ],
+        "camera": {
+          "yaw_degrees": 34.0,
+          "pitch_degrees": -28.0
+        },
+        "channel_tolerance": 2,
+        "changed_fraction_threshold": 0.001,
+        "mean_absolute_error_threshold": 0.25,
+        "minimum_foreground_fraction_threshold": 0.001,
+        "max_changed_fraction": 0.0,
+        "max_mean_absolute_error": 0.0,
+        "z_fight_policy": "pixels where two different quads meet the front within 1e-06 depth with different texels are counted as a diagnostic only; every pixel is compared, the draw order being contracted equal on both sides (G2 root-order contract, landed 2026-09-06)",
+        "contested_exclusion_applied": false,
+        "max_contested_fraction": 0.0770263671875,
+        "cutout_alpha_threshold": 0.1,
+        "minimum_observed_foreground_fraction": 1.0,
+        "samples": [
+          {
+            "sample": "bind",
+            "camera": null,
+            "changed_fraction": 0.0,
+            "mean_absolute_error": 0.0,
+            "contested_fraction": 0.0594940185546875,
+            "contested_excluded": false,
+            "vanilla_foreground_fraction": 0.1318511962890625,
+            "geo_foreground_fraction": 0.1318511962890625,
+            "vanilla_capture": "visual/model_terribleterror/bind.vanilla.png",
+            "geo_capture": "visual/model_terribleterror/bind.geo.png",
+            "diff_capture": "visual/model_terribleterror/bind.diff.png"
+          },
+          {
+            "sample": "t0",
+            "camera": null,
+            "changed_fraction": 0.0,
+            "mean_absolute_error": 0.0,
+            "contested_fraction": 0.072540283203125,
+            "contested_excluded": false,
+            "vanilla_foreground_fraction": 0.1440887451171875,
+            "geo_foreground_fraction": 0.1440887451171875,
+            "vanilla_capture": "visual/model_terribleterror/t0.vanilla.png",
+            "geo_capture": "visual/model_terribleterror/t0.geo.png",
+            "diff_capture": "visual/model_terribleterror/t0.diff.png"
+          },
+          {
+            "sample": "t_quarter",
+            "camera": null,
+            "changed_fraction": 0.0,
+            "mean_absolute_error": 0.0,
+            "contested_fraction": 0.07464599609375,
+            "contested_excluded": false,
+            "vanilla_foreground_fraction": 0.145751953125,
+            "geo_foreground_fraction": 0.145751953125,
+            "vanilla_capture": "visual/model_terribleterror/t_quarter.vanilla.png",
+            "geo_capture": "visual/model_terribleterror/t_quarter.geo.png",
+            "diff_capture": "visual/model_terribleterror/t_quarter.diff.png"
+          },
+          {
+            "sample": "t_half",
+            "camera": null,
+            "changed_fraction": 0.0,
+            "mean_absolute_error": 0.0,
+            "contested_fraction": 0.0770263671875,
+            "contested_excluded": false,
+            "vanilla_foreground_fraction": 0.1487274169921875,
+            "geo_foreground_fraction": 0.1487274169921875,
+            "vanilla_capture": "visual/model_terribleterror/t_half.vanilla.png",
+            "geo_capture": "visual/model_terribleterror/t_half.geo.png",
+            "diff_capture": "visual/model_terribleterror/t_half.diff.png"
+          },
+          {
+            "sample": "t_three_quarter",
+            "camera": null,
+            "changed_fraction": 0.0,
+            "mean_absolute_error": 0.0,
+            "contested_fraction": 0.0688629150390625,
+            "contested_excluded": false,
+            "vanilla_foreground_fraction": 0.14044189453125,
+            "geo_foreground_fraction": 0.14044189453125,
+            "vanilla_capture": "visual/model_terribleterror/t_three_quarter.vanilla.png",
+            "geo_capture": "visual/model_terribleterror/t_three_quarter.geo.png",
+            "diff_capture": "visual/model_terribleterror/t_three_quarter.diff.png"
+          }
+        ]
+      }
+    },
+    {
+      "model_id": "model_wormlarge",
+      "tier": 2,
+      "proof_scope": "production_proof_model",
+      "source_class": "danger.orespawn.entity.client.WormLargeModel",
+      "source_class_sha256": "f668fc6df1c1ea137f0da41893010a5e46d6c03a12b7167038defe07d4179563",
+      "compiled_dump_sha256": "a8f94df21915dc213e996327aa0bfd31a05b4f7459e87c0e402ab5f526a26f5d",
+      "bone_count": 23,
+      "cube_count": 23,
+      "geometry_sha256": "20bf571533b077e47b186f7c901f23d916c3a8b39e6c0158d8fe2c52163ba568",
+      "animation_sha256": "7882082857fdb11e02f158ebc3a6d3f970e2ac60d54813f0e903ee97b2293749",
+      "animation_contract_sha256": "768ad7e73064f9bf132ef83c5e5662e1745b39a02f3f89c87e29d1403ab2a823",
+      "geometry": {
+        "status": "PASS",
+        "epsilon_blocks": 1e-05,
+        "max_corner_delta_blocks": 5.134199061771005e-07,
+        "worst_case": "t_half:tailtip#0",
+        "sample_count": 6,
+        "cube_sample_count": 138
+      },
+      "surface_mapping": {
+        "status": "PASS",
+        "position_epsilon_blocks": 1e-05,
+        "normal_epsilon": 1e-06,
+        "uv_epsilon_normalized": 1e-07,
+        "max_position_delta_blocks": 5.134199061771005e-07,
+        "max_normal_delta": 1.8867962269480786e-07,
+        "max_uv_delta_normalized": 0.0,
+        "vertex_samples": 3312,
+        "ignored_zero_area_faces": 0,
+        "worst_case": "t_half:tailtip#0",
+        "evidence": "position/normal/UV tuples from baked ModelPart.Cube.compile versus pinned GeckoLib BakedModelFactory rendered through GeoRenderer; faces of exactly zero area are excluded (ruling 2026-09-02)"
+      },
+      "animation": {
+        "status": "PASS",
+        "epsilon_radians": 2e-06,
+        "accepted_pose_comparison": "compiled setupAnim versus actual fresh-baked GeckoLib candidate",
+        "reference_animation_used_for_acceptance": false,
+        "sample_count": 6,
+        "max_rotation_delta_radians": 0.0,
+        "max_dense_rotation_delta_radians": 0.0,
+        "max_unexpected_position_or_scale_delta": 0.0,
+        "worst_case": "exact",
+        "dense_worst_case": "exact",
+        "rotation_channel_samples": 414,
+        "dense_rotation_channel_samples": 0,
+        "contract": {
+          "kind": "code_driven",
+          "accepted_runtime_path": "production OreSpawnGeoReplacement.applyCustomAnimations through OreSpawnGeoReplacementModel.setCustomAnimations",
+          "candidate_class": "danger.orespawn.entity.client.WormLargeGeoReplacement",
+          "inputs": {
+            "limb_swing": 0.0,
+            "limb_swing_amounts": [
+              0.0
+            ],
+            "net_head_yaw_degrees": 0.0,
+            "head_pitch_degrees": 0.0
+          },
+          "max_position_delta_model_units": 2.9999999995311555e-06,
+          "position_epsilon_model_units": 0.0001,
+          "position_worst_case": "t0:tooth2",
+          "position_channel_samples": 414,
+          "hidden_bone_checks": 5
+        }
+      },
+      "reference_animation": {
+        "status": "SCHEMA_VALID_REFERENCE_ONLY",
+        "role": "NOT_APPLICABLE_CODE_DRIVEN_MODEL",
+        "clip_count": 0,
+        "constant_vector_count": 0,
+        "runtime_acceptance": false
+      },
+      "draw_order": {
+        "status": "PASS",
+        "bone_draw_order": [
+          "head1",
+          "head2",
+          "head3",
+          "head4",
+          "head5",
+          "neck1",
+          "neck4",
+          "neck5",
+          "neck2",
+          "neck3",
+          "tail1",
+          "tailtip",
+          "tail2",
+          "tail3",
+          "tail4",
+          "tooth1",
+          "tooth2",
+          "tooth3",
+          "tooth4",
+          "tooth5",
+          "tooth6",
+          "tooth7",
+          "tooth8"
+        ],
+        "captures_checked": 6,
+        "draws_checked": 138,
+        "classic_source": "classic EntityModel.renderToBuffer on a second bake posed identically; every ModelPart.render is one pose-stack push, attributed to its part by ModelPart.skipDraw elimination (one run per cube-bearing part with every other part's skipDraw set); a part drawn n > 1 times is named <part>__i<k> by draw ordinal",
+        "unobserved_units": [],
+        "policy": "the shipped model sorts GeckoLib's topLevelBones / childBones lists into the classic renderToBuffer order (DrawOrder.apply); both renderers traverse in pre-order, so equal sibling orders are equal draw orders"
+      },
+      "reference_geometry": {
+        "status": "PASS",
+        "reference_source": "reference_1_7_10_source/sources/danger/orespawn/ModelWormLarge.java",
+        "matched_parts": 23,
+        "ground_truth": "1.7.10 decompiled ModelBase constructor, parsed; never the port"
+      },
+      "visual": {
+        "status": "PASS",
+        "image_size": [
+          256,
+          256
+        ],
+        "camera": {
+          "yaw_degrees": 34.0,
+          "pitch_degrees": -28.0
+        },
+        "channel_tolerance": 2,
+        "changed_fraction_threshold": 0.001,
+        "mean_absolute_error_threshold": 0.25,
+        "minimum_foreground_fraction_threshold": 0.001,
+        "max_changed_fraction": 0.0,
+        "max_mean_absolute_error": 0.0,
+        "z_fight_policy": "pixels where two different quads meet the front within 1e-06 depth with different texels are counted as a diagnostic only; every pixel is compared, the draw order being contracted equal on both sides (G2 root-order contract, landed 2026-09-06)",
+        "contested_exclusion_applied": false,
+        "max_contested_fraction": 1.52587890625e-05,
+        "cutout_alpha_threshold": 0.1,
+        "minimum_observed_foreground_fraction": 1.0,
+        "samples": [
+          {
+            "sample": "bind",
+            "camera": null,
+            "changed_fraction": 0.0,
+            "mean_absolute_error": 0.0,
+            "contested_fraction": 1.52587890625e-05,
+            "contested_excluded": false,
+            "vanilla_foreground_fraction": 0.224212646484375,
+            "geo_foreground_fraction": 0.224212646484375,
+            "vanilla_capture": "visual/model_wormlarge/bind.vanilla.png",
+            "geo_capture": "visual/model_wormlarge/bind.geo.png",
+            "diff_capture": "visual/model_wormlarge/bind.diff.png"
+          },
+          {
+            "sample": "t0",
+            "camera": null,
+            "changed_fraction": 0.0,
+            "mean_absolute_error": 0.0,
+            "contested_fraction": 1.52587890625e-05,
+            "contested_excluded": false,
+            "vanilla_foreground_fraction": 0.1911163330078125,
+            "geo_foreground_fraction": 0.1911163330078125,
+            "vanilla_capture": "visual/model_wormlarge/t0.vanilla.png",
+            "geo_capture": "visual/model_wormlarge/t0.geo.png",
+            "diff_capture": "visual/model_wormlarge/t0.diff.png"
+          },
+          {
+            "sample": "t_quarter",
+            "camera": null,
+            "changed_fraction": 0.0,
+            "mean_absolute_error": 0.0,
+            "contested_fraction": 1.52587890625e-05,
+            "contested_excluded": false,
+            "vanilla_foreground_fraction": 0.2357177734375,
+            "geo_foreground_fraction": 0.2357177734375,
+            "vanilla_capture": "visual/model_wormlarge/t_quarter.vanilla.png",
+            "geo_capture": "visual/model_wormlarge/t_quarter.geo.png",
+            "diff_capture": "visual/model_wormlarge/t_quarter.diff.png"
+          },
+          {
+            "sample": "t_half",
+            "camera": null,
+            "changed_fraction": 0.0,
+            "mean_absolute_error": 0.0,
+            "contested_fraction": 0.0,
+            "contested_excluded": false,
+            "vanilla_foreground_fraction": 0.2288665771484375,
+            "geo_foreground_fraction": 0.2288665771484375,
+            "vanilla_capture": "visual/model_wormlarge/t_half.vanilla.png",
+            "geo_capture": "visual/model_wormlarge/t_half.geo.png",
+            "diff_capture": "visual/model_wormlarge/t_half.diff.png"
+          },
+          {
+            "sample": "t_three_quarter",
+            "camera": null,
+            "changed_fraction": 0.0,
+            "mean_absolute_error": 0.0,
+            "contested_fraction": 0.0,
+            "contested_excluded": false,
+            "vanilla_foreground_fraction": 0.227508544921875,
+            "geo_foreground_fraction": 0.227508544921875,
+            "vanilla_capture": "visual/model_wormlarge/t_three_quarter.vanilla.png",
+            "geo_capture": "visual/model_wormlarge/t_three_quarter.geo.png",
+            "diff_capture": "visual/model_wormlarge/t_three_quarter.diff.png"
+          }
+        ]
+      }
+    },
+    {
+      "model_id": "model_wormmedium",
+      "tier": 2,
+      "proof_scope": "production_proof_model",
+      "source_class": "danger.orespawn.entity.client.WormMediumModel",
+      "source_class_sha256": "5a3faf9be2f758da19f720f697e532d0e34d104cd26a2d4d28d19c24c023cfd7",
+      "compiled_dump_sha256": "904dbf2fecbbc3570d243f4e6998833b74dfb3ca0b3749a5ba87e69b9f90e679",
+      "bone_count": 8,
+      "cube_count": 8,
+      "geometry_sha256": "71e22aa18616d7d6f2b84ded6499807e09dadb0c19d183deacbd68053b1aac4d",
+      "animation_sha256": "7882082857fdb11e02f158ebc3a6d3f970e2ac60d54813f0e903ee97b2293749",
+      "animation_contract_sha256": "b6b70f14b7cd0513d535b06edee2dcd654c15f412c92cfd695807a822071bd35",
+      "geometry": {
+        "status": "PASS",
+        "epsilon_blocks": 1e-05,
+        "max_corner_delta_blocks": 3.0152280174292795e-07,
+        "worst_case": "t0:tooth2#0",
+        "sample_count": 6,
+        "cube_sample_count": 48
+      },
+      "surface_mapping": {
+        "status": "PASS",
+        "position_epsilon_blocks": 1e-05,
+        "normal_epsilon": 1e-06,
+        "uv_epsilon_normalized": 1e-07,
+        "max_position_delta_blocks": 3.0152280174292795e-07,
+        "max_normal_delta": 1.4999999997655777e-07,
+        "max_uv_delta_normalized": 0.0,
+        "vertex_samples": 1152,
+        "ignored_zero_area_faces": 0,
+        "worst_case": "t0:tooth2#0",
+        "evidence": "position/normal/UV tuples from baked ModelPart.Cube.compile versus pinned GeckoLib BakedModelFactory rendered through GeoRenderer; faces of exactly zero area are excluded (ruling 2026-09-02)"
+      },
+      "animation": {
+        "status": "PASS",
+        "epsilon_radians": 2e-06,
+        "accepted_pose_comparison": "compiled setupAnim versus actual fresh-baked GeckoLib candidate",
+        "reference_animation_used_for_acceptance": false,
+        "sample_count": 6,
+        "max_rotation_delta_radians": 0.0,
+        "max_dense_rotation_delta_radians": 0.0,
+        "max_unexpected_position_or_scale_delta": 0.0,
+        "worst_case": "exact",
+        "dense_worst_case": "exact",
+        "rotation_channel_samples": 144,
+        "dense_rotation_channel_samples": 0,
+        "contract": {
+          "kind": "code_driven",
+          "accepted_runtime_path": "production OreSpawnGeoReplacement.applyCustomAnimations through OreSpawnGeoReplacementModel.setCustomAnimations",
+          "candidate_class": "danger.orespawn.entity.client.WormMediumGeoReplacement",
+          "inputs": {
+            "limb_swing": 0.0,
+            "limb_swing_amounts": [
+              0.0
+            ],
+            "net_head_yaw_degrees": 0.0,
+            "head_pitch_degrees": 0.0
+          },
+          "max_position_delta_model_units": 4.999999996257998e-07,
+          "position_epsilon_model_units": 0.0001,
+          "position_worst_case": "t0:tooth1",
+          "position_channel_samples": 144,
+          "hidden_bone_checks": 5
+        }
+      },
+      "reference_animation": {
+        "status": "SCHEMA_VALID_REFERENCE_ONLY",
+        "role": "NOT_APPLICABLE_CODE_DRIVEN_MODEL",
+        "clip_count": 0,
+        "constant_vector_count": 0,
+        "runtime_acceptance": false
+      },
+      "draw_order": {
+        "status": "PASS",
+        "bone_draw_order": [
+          "head",
+          "body",
+          "tail",
+          "tooth1",
+          "tooth2",
+          "tooth3",
+          "tooth4",
+          "head2"
+        ],
+        "captures_checked": 6,
+        "draws_checked": 48,
+        "classic_source": "classic EntityModel.renderToBuffer on a second bake posed identically; every ModelPart.render is one pose-stack push, attributed to its part by ModelPart.skipDraw elimination (one run per cube-bearing part with every other part's skipDraw set); a part drawn n > 1 times is named <part>__i<k> by draw ordinal",
+        "unobserved_units": [],
+        "policy": "the shipped model sorts GeckoLib's topLevelBones / childBones lists into the classic renderToBuffer order (DrawOrder.apply); both renderers traverse in pre-order, so equal sibling orders are equal draw orders"
+      },
+      "reference_geometry": {
+        "status": "PASS",
+        "reference_source": "reference_1_7_10_source/sources/danger/orespawn/ModelWormMedium.java",
+        "matched_parts": 8,
+        "ground_truth": "1.7.10 decompiled ModelBase constructor, parsed; never the port"
+      },
+      "visual": {
+        "status": "PASS",
+        "image_size": [
+          256,
+          256
+        ],
+        "camera": {
+          "yaw_degrees": 34.0,
+          "pitch_degrees": -28.0
+        },
+        "channel_tolerance": 2,
+        "changed_fraction_threshold": 0.001,
+        "mean_absolute_error_threshold": 0.25,
+        "minimum_foreground_fraction_threshold": 0.001,
+        "max_changed_fraction": 0.0,
+        "max_mean_absolute_error": 0.0,
+        "z_fight_policy": "pixels where two different quads meet the front within 1e-06 depth with different texels are counted as a diagnostic only; every pixel is compared, the draw order being contracted equal on both sides (G2 root-order contract, landed 2026-09-06)",
+        "contested_exclusion_applied": false,
+        "max_contested_fraction": 0.0,
+        "cutout_alpha_threshold": 0.1,
+        "minimum_observed_foreground_fraction": 1.0,
+        "samples": [
+          {
+            "sample": "bind",
+            "camera": null,
+            "changed_fraction": 0.0,
+            "mean_absolute_error": 0.0,
+            "contested_fraction": 0.0,
+            "contested_excluded": false,
+            "vanilla_foreground_fraction": 0.0908203125,
+            "geo_foreground_fraction": 0.0908203125,
+            "vanilla_capture": "visual/model_wormmedium/bind.vanilla.png",
+            "geo_capture": "visual/model_wormmedium/bind.geo.png",
+            "diff_capture": "visual/model_wormmedium/bind.diff.png"
+          },
+          {
+            "sample": "t0",
+            "camera": null,
+            "changed_fraction": 0.0,
+            "mean_absolute_error": 0.0,
+            "contested_fraction": 0.0,
+            "contested_excluded": false,
+            "vanilla_foreground_fraction": 0.0906524658203125,
+            "geo_foreground_fraction": 0.0906524658203125,
+            "vanilla_capture": "visual/model_wormmedium/t0.vanilla.png",
+            "geo_capture": "visual/model_wormmedium/t0.geo.png",
+            "diff_capture": "visual/model_wormmedium/t0.diff.png"
+          },
+          {
+            "sample": "t_quarter",
+            "camera": null,
+            "changed_fraction": 0.0,
+            "mean_absolute_error": 0.0,
+            "contested_fraction": 0.0,
+            "contested_excluded": false,
+            "vanilla_foreground_fraction": 0.08892822265625,
+            "geo_foreground_fraction": 0.08892822265625,
+            "vanilla_capture": "visual/model_wormmedium/t_quarter.vanilla.png",
+            "geo_capture": "visual/model_wormmedium/t_quarter.geo.png",
+            "diff_capture": "visual/model_wormmedium/t_quarter.diff.png"
+          },
+          {
+            "sample": "t_half",
+            "camera": null,
+            "changed_fraction": 0.0,
+            "mean_absolute_error": 0.0,
+            "contested_fraction": 0.0,
+            "contested_excluded": false,
+            "vanilla_foreground_fraction": 0.0906524658203125,
+            "geo_foreground_fraction": 0.0906524658203125,
+            "vanilla_capture": "visual/model_wormmedium/t_half.vanilla.png",
+            "geo_capture": "visual/model_wormmedium/t_half.geo.png",
+            "diff_capture": "visual/model_wormmedium/t_half.diff.png"
+          },
+          {
+            "sample": "t_three_quarter",
+            "camera": null,
+            "changed_fraction": 0.0,
+            "mean_absolute_error": 0.0,
+            "contested_fraction": 0.0,
+            "contested_excluded": false,
+            "vanilla_foreground_fraction": 0.0951690673828125,
+            "geo_foreground_fraction": 0.0951690673828125,
+            "vanilla_capture": "visual/model_wormmedium/t_three_quarter.vanilla.png",
+            "geo_capture": "visual/model_wormmedium/t_three_quarter.geo.png",
+            "diff_capture": "visual/model_wormmedium/t_three_quarter.diff.png"
+          }
+        ]
+      }
+    },
+    {
+      "model_id": "model_wormsmall",
+      "tier": 2,
+      "proof_scope": "production_proof_model",
+      "source_class": "danger.orespawn.entity.client.WormSmallModel",
+      "source_class_sha256": "5fe7bf38d5d4f3cf7c0b3def888624833ed9f2fa7bc0b2468806c7c75790a593",
+      "compiled_dump_sha256": "8523bde1b2a449cb535fca06478c353cdfdca96e16a5a99956002434a39e064f",
+      "bone_count": 3,
+      "cube_count": 3,
+      "geometry_sha256": "8a9f07a5b69bf656df3b50e62909feab4b038c37373713adf29eca9a4563e682",
+      "animation_sha256": "7882082857fdb11e02f158ebc3a6d3f970e2ac60d54813f0e903ee97b2293749",
+      "animation_contract_sha256": "2430eb6fd1e63d94391b0c05da39b37d35e910afff4c3afcd899f69b56549ff8",
+      "geometry": {
+        "status": "PASS",
+        "epsilon_blocks": 1e-05,
+        "max_corner_delta_blocks": 1.9849433238661854e-07,
+        "worst_case": "t0:head#0",
+        "sample_count": 6,
+        "cube_sample_count": 18
+      },
+      "surface_mapping": {
+        "status": "PASS",
+        "position_epsilon_blocks": 1e-05,
+        "normal_epsilon": 1e-06,
+        "uv_epsilon_normalized": 1e-07,
+        "max_position_delta_blocks": 1.9849433238661854e-07,
+        "max_normal_delta": 1.5138031573665516e-07,
+        "max_uv_delta_normalized": 0.0,
+        "vertex_samples": 432,
+        "ignored_zero_area_faces": 0,
+        "worst_case": "t0:head#0",
+        "evidence": "position/normal/UV tuples from baked ModelPart.Cube.compile versus pinned GeckoLib BakedModelFactory rendered through GeoRenderer; faces of exactly zero area are excluded (ruling 2026-09-02)"
+      },
+      "animation": {
+        "status": "PASS",
+        "epsilon_radians": 2e-06,
+        "accepted_pose_comparison": "compiled setupAnim versus actual fresh-baked GeckoLib candidate",
+        "reference_animation_used_for_acceptance": false,
+        "sample_count": 6,
+        "max_rotation_delta_radians": 0.0,
+        "max_dense_rotation_delta_radians": 0.0,
+        "max_unexpected_position_or_scale_delta": 0.0,
+        "worst_case": "exact",
+        "dense_worst_case": "exact",
+        "rotation_channel_samples": 54,
+        "dense_rotation_channel_samples": 0,
+        "contract": {
+          "kind": "code_driven",
+          "accepted_runtime_path": "production OreSpawnGeoReplacement.applyCustomAnimations through OreSpawnGeoReplacementModel.setCustomAnimations",
+          "candidate_class": "danger.orespawn.entity.client.WormSmallGeoReplacement",
+          "inputs": {
+            "limb_swing": 0.0,
+            "limb_swing_amounts": [
+              0.0
+            ],
+            "net_head_yaw_degrees": 0.0,
+            "head_pitch_degrees": 0.0
+          },
+          "max_position_delta_model_units": 0.0,
+          "position_epsilon_model_units": 0.0001,
+          "position_worst_case": "exact",
+          "position_channel_samples": 54,
+          "hidden_bone_checks": 5
+        }
+      },
+      "reference_animation": {
+        "status": "SCHEMA_VALID_REFERENCE_ONLY",
+        "role": "NOT_APPLICABLE_CODE_DRIVEN_MODEL",
+        "clip_count": 0,
+        "constant_vector_count": 0,
+        "runtime_acceptance": false
+      },
+      "draw_order": {
+        "status": "PASS",
+        "bone_draw_order": [
+          "head",
+          "body",
+          "tail"
+        ],
+        "captures_checked": 6,
+        "draws_checked": 18,
+        "classic_source": "classic EntityModel.renderToBuffer on a second bake posed identically; every ModelPart.render is one pose-stack push, attributed to its part by ModelPart.skipDraw elimination (one run per cube-bearing part with every other part's skipDraw set); a part drawn n > 1 times is named <part>__i<k> by draw ordinal",
+        "unobserved_units": [],
+        "policy": "the shipped model sorts GeckoLib's topLevelBones / childBones lists into the classic renderToBuffer order (DrawOrder.apply); both renderers traverse in pre-order, so equal sibling orders are equal draw orders"
+      },
+      "reference_geometry": {
+        "status": "PASS",
+        "reference_source": "reference_1_7_10_source/sources/danger/orespawn/ModelWormSmall.java",
+        "matched_parts": 3,
+        "ground_truth": "1.7.10 decompiled ModelBase constructor, parsed; never the port"
+      },
+      "visual": {
+        "status": "PASS",
+        "image_size": [
+          256,
+          256
+        ],
+        "camera": {
+          "yaw_degrees": 34.0,
+          "pitch_degrees": -28.0
+        },
+        "channel_tolerance": 2,
+        "changed_fraction_threshold": 0.001,
+        "mean_absolute_error_threshold": 0.25,
+        "minimum_foreground_fraction_threshold": 0.001,
+        "max_changed_fraction": 1.52587890625e-05,
+        "max_mean_absolute_error": 0.0001220703125,
+        "z_fight_policy": "pixels where two different quads meet the front within 1e-06 depth with different texels are counted as a diagnostic only; every pixel is compared, the draw order being contracted equal on both sides (G2 root-order contract, landed 2026-09-06)",
+        "contested_exclusion_applied": false,
+        "max_contested_fraction": 1.52587890625e-05,
+        "cutout_alpha_threshold": 0.1,
+        "minimum_observed_foreground_fraction": 1.0,
+        "samples": [
+          {
+            "sample": "bind",
+            "camera": null,
+            "changed_fraction": 0.0,
+            "mean_absolute_error": 0.0,
+            "contested_fraction": 0.0,
+            "contested_excluded": false,
+            "vanilla_foreground_fraction": 0.065093994140625,
+            "geo_foreground_fraction": 0.065093994140625,
+            "vanilla_capture": "visual/model_wormsmall/bind.vanilla.png",
+            "geo_capture": "visual/model_wormsmall/bind.geo.png",
+            "diff_capture": "visual/model_wormsmall/bind.diff.png"
+          },
+          {
+            "sample": "t0",
+            "camera": null,
+            "changed_fraction": 0.0,
+            "mean_absolute_error": 0.0,
+            "contested_fraction": 0.0,
+            "contested_excluded": false,
+            "vanilla_foreground_fraction": 0.0646209716796875,
+            "geo_foreground_fraction": 0.0646209716796875,
+            "vanilla_capture": "visual/model_wormsmall/t0.vanilla.png",
+            "geo_capture": "visual/model_wormsmall/t0.geo.png",
+            "diff_capture": "visual/model_wormsmall/t0.diff.png"
+          },
+          {
+            "sample": "t_quarter",
+            "camera": null,
+            "changed_fraction": 0.0,
+            "mean_absolute_error": 0.0,
+            "contested_fraction": 0.0,
+            "contested_excluded": false,
+            "vanilla_foreground_fraction": 0.05889892578125,
+            "geo_foreground_fraction": 0.05889892578125,
+            "vanilla_capture": "visual/model_wormsmall/t_quarter.vanilla.png",
+            "geo_capture": "visual/model_wormsmall/t_quarter.geo.png",
+            "diff_capture": "visual/model_wormsmall/t_quarter.diff.png"
+          },
+          {
+            "sample": "t_half",
+            "camera": null,
+            "changed_fraction": 0.0,
+            "mean_absolute_error": 0.0,
+            "contested_fraction": 0.0,
+            "contested_excluded": false,
+            "vanilla_foreground_fraction": 0.071044921875,
+            "geo_foreground_fraction": 0.071044921875,
+            "vanilla_capture": "visual/model_wormsmall/t_half.vanilla.png",
+            "geo_capture": "visual/model_wormsmall/t_half.geo.png",
+            "diff_capture": "visual/model_wormsmall/t_half.diff.png"
+          },
+          {
+            "sample": "t_three_quarter",
+            "camera": null,
+            "changed_fraction": 1.52587890625e-05,
+            "mean_absolute_error": 0.0001220703125,
+            "contested_fraction": 1.52587890625e-05,
+            "contested_excluded": false,
+            "vanilla_foreground_fraction": 0.05609130859375,
+            "geo_foreground_fraction": 0.05609130859375,
+            "vanilla_capture": "visual/model_wormsmall/t_three_quarter.vanilla.png",
+            "geo_capture": "visual/model_wormsmall/t_three_quarter.geo.png",
+            "diff_capture": "visual/model_wormsmall/t_three_quarter.diff.png"
+          }
+        ]
+      }
+    },
+    {
+      "model_id": "model_cannonfodder",
+      "tier": 2,
+      "proof_scope": "production_proof_model",
+      "source_class": "danger.orespawn.entity.client.CannonFodderModel",
+      "source_class_sha256": "f0d1164c3002f649540e3bbf1e48fe3ae6de155092d72e1d3ade66d2112b3758",
+      "compiled_dump_sha256": "942b95a5e57ca5f1630f1ee131a1c2200123f537fb9f6a14a45cf761280e906b",
+      "bone_count": 6,
+      "cube_count": 6,
+      "geometry_sha256": "b6416f15940e85c13d1366fd20364d33fa145c38a828bc3b8b74d4d1b889014a",
+      "animation_sha256": "7882082857fdb11e02f158ebc3a6d3f970e2ac60d54813f0e903ee97b2293749",
+      "animation_contract_sha256": "e537824352a860329e7a2ad3634cff06600d6d3a03487d2f6c6f012f0123c47e",
+      "geometry": {
+        "status": "PASS",
+        "epsilon_blocks": 1e-05,
+        "max_corner_delta_blocks": 2.0000000011677344e-07,
+        "worst_case": "a0_5_t0:leg_back_right#0",
+        "sample_count": 21,
+        "cube_sample_count": 126
+      },
+      "surface_mapping": {
+        "status": "PASS",
+        "position_epsilon_blocks": 1e-05,
+        "normal_epsilon": 1e-06,
+        "uv_epsilon_normalized": 1e-07,
+        "max_position_delta_blocks": 2.0000000011677344e-07,
+        "max_normal_delta": 9.999999994736442e-08,
+        "max_uv_delta_normalized": 0.0,
+        "vertex_samples": 3024,
+        "ignored_zero_area_faces": 0,
+        "worst_case": "a0_5_t0:leg_back_right#0",
+        "evidence": "position/normal/UV tuples from baked ModelPart.Cube.compile versus pinned GeckoLib BakedModelFactory rendered through GeoRenderer; faces of exactly zero area are excluded (ruling 2026-09-02)"
+      },
+      "animation": {
+        "status": "PASS",
+        "epsilon_radians": 2e-06,
+        "accepted_pose_comparison": "compiled setupAnim versus actual fresh-baked GeckoLib candidate",
+        "reference_animation_used_for_acceptance": false,
+        "sample_count": 21,
+        "max_rotation_delta_radians": 0.0,
+        "max_dense_rotation_delta_radians": 0.0,
+        "max_unexpected_position_or_scale_delta": 0.0,
+        "worst_case": "exact",
+        "dense_worst_case": "exact",
+        "rotation_channel_samples": 378,
+        "dense_rotation_channel_samples": 0,
+        "contract": {
+          "kind": "code_driven",
+          "accepted_runtime_path": "production OreSpawnGeoReplacement.applyCustomAnimations through OreSpawnGeoReplacementModel.setCustomAnimations",
+          "candidate_class": "danger.orespawn.entity.client.CannonFodderGeoReplacement",
+          "inputs": {
+            "limb_swing": 3.0,
+            "limb_swing_amounts": [
+              0.0,
+              0.25,
+              0.5,
+              1.0
+            ],
+            "net_head_yaw_degrees": 30.0,
+            "head_pitch_degrees": 10.0
+          },
+          "max_position_delta_model_units": 0.0,
+          "position_epsilon_model_units": 0.0001,
+          "position_worst_case": "exact",
+          "position_channel_samples": 378,
+          "hidden_bone_checks": 20
+        }
+      },
+      "reference_animation": {
+        "status": "SCHEMA_VALID_REFERENCE_ONLY",
+        "role": "NOT_APPLICABLE_CODE_DRIVEN_MODEL",
+        "clip_count": 0,
+        "constant_vector_count": 0,
+        "runtime_acceptance": false
+      },
+      "draw_order": {
+        "status": "PASS",
+        "bone_draw_order": [
+          "head",
+          "body",
+          "leg_front_left",
+          "leg_front_right",
+          "leg_back_left",
+          "leg_back_right"
+        ],
+        "captures_checked": 21,
+        "draws_checked": 126,
+        "classic_source": "classic EntityModel.renderToBuffer on a second bake posed identically; every ModelPart.render is one pose-stack push, attributed to its part by ModelPart.skipDraw elimination (one run per cube-bearing part with every other part's skipDraw set); a part drawn n > 1 times is named <part>__i<k> by draw ordinal",
+        "unobserved_units": [],
+        "policy": "the shipped model sorts GeckoLib's topLevelBones / childBones lists into the classic renderToBuffer order (DrawOrder.apply); both renderers traverse in pre-order, so equal sibling orders are equal draw orders"
+      },
+      "visual": {
+        "status": "PASS",
+        "image_size": [
+          256,
+          256
+        ],
+        "camera": {
+          "yaw_degrees": 34.0,
+          "pitch_degrees": -28.0
+        },
+        "channel_tolerance": 2,
+        "changed_fraction_threshold": 0.001,
+        "mean_absolute_error_threshold": 0.25,
+        "minimum_foreground_fraction_threshold": 0.001,
+        "max_changed_fraction": 0.0,
+        "max_mean_absolute_error": 0.0,
+        "z_fight_policy": "pixels where two different quads meet the front within 1e-06 depth with different texels are counted as a diagnostic only; every pixel is compared, the draw order being contracted equal on both sides (G2 root-order contract, landed 2026-09-06)",
+        "contested_exclusion_applied": false,
+        "max_contested_fraction": 0.0,
+        "cutout_alpha_threshold": 0.1,
+        "minimum_observed_foreground_fraction": 1.0,
+        "samples": [
+          {
+            "sample": "bind",
+            "camera": null,
+            "changed_fraction": 0.0,
+            "mean_absolute_error": 0.0,
+            "contested_fraction": 0.0,
+            "contested_excluded": false,
+            "vanilla_foreground_fraction": 0.154083251953125,
+            "geo_foreground_fraction": 0.154083251953125,
+            "vanilla_capture": "visual/model_cannonfodder/bind.vanilla.png",
+            "geo_capture": "visual/model_cannonfodder/bind.geo.png",
+            "diff_capture": "visual/model_cannonfodder/bind.diff.png"
+          },
+          {
+            "sample": "a1_t0",
+            "camera": null,
+            "changed_fraction": 0.0,
+            "mean_absolute_error": 0.0,
+            "contested_fraction": 0.0,
+            "contested_excluded": false,
+            "vanilla_foreground_fraction": 0.131561279296875,
+            "geo_foreground_fraction": 0.131561279296875,
+            "vanilla_capture": "visual/model_cannonfodder/a1_t0.vanilla.png",
+            "geo_capture": "visual/model_cannonfodder/a1_t0.geo.png",
+            "diff_capture": "visual/model_cannonfodder/a1_t0.diff.png"
+          },
+          {
+            "sample": "a1_t_quarter",
+            "camera": null,
+            "changed_fraction": 0.0,
+            "mean_absolute_error": 0.0,
+            "contested_fraction": 0.0,
+            "contested_excluded": false,
+            "vanilla_foreground_fraction": 0.131561279296875,
+            "geo_foreground_fraction": 0.131561279296875,
+            "vanilla_capture": "visual/model_cannonfodder/a1_t_quarter.vanilla.png",
+            "geo_capture": "visual/model_cannonfodder/a1_t_quarter.geo.png",
+            "diff_capture": "visual/model_cannonfodder/a1_t_quarter.diff.png"
+          },
+          {
+            "sample": "a1_t_half",
+            "camera": null,
+            "changed_fraction": 0.0,
+            "mean_absolute_error": 0.0,
+            "contested_fraction": 0.0,
+            "contested_excluded": false,
+            "vanilla_foreground_fraction": 0.131561279296875,
+            "geo_foreground_fraction": 0.131561279296875,
+            "vanilla_capture": "visual/model_cannonfodder/a1_t_half.vanilla.png",
+            "geo_capture": "visual/model_cannonfodder/a1_t_half.geo.png",
+            "diff_capture": "visual/model_cannonfodder/a1_t_half.diff.png"
+          },
+          {
+            "sample": "a1_t_three_quarter",
+            "camera": null,
+            "changed_fraction": 0.0,
+            "mean_absolute_error": 0.0,
+            "contested_fraction": 0.0,
+            "contested_excluded": false,
+            "vanilla_foreground_fraction": 0.131561279296875,
+            "geo_foreground_fraction": 0.131561279296875,
+            "vanilla_capture": "visual/model_cannonfodder/a1_t_three_quarter.vanilla.png",
+            "geo_capture": "visual/model_cannonfodder/a1_t_three_quarter.geo.png",
+            "diff_capture": "visual/model_cannonfodder/a1_t_three_quarter.diff.png"
+          }
+        ]
+      }
+    },
+    {
+      "model_id": "model_caterkiller",
+      "tier": 2,
+      "proof_scope": "production_proof_model",
+      "source_class": "danger.orespawn.entity.client.CaterKillerModel",
+      "source_class_sha256": "ff95a1a7232a874dc2dc80cbd6b3a24fe251adf3c750be92c41e9d03cbf311ca",
+      "compiled_dump_sha256": "9590ab9f862d1d35e6b06e8679782c3138a69ba37eecf8d1eed71769cc615e63",
+      "bone_count": 80,
+      "cube_count": 80,
+      "geometry_sha256": "cd0bd8ac154313bf39cc61ae2531f71b3285cfc7e4937f715b2a271830876783",
+      "animation_sha256": "7882082857fdb11e02f158ebc3a6d3f970e2ac60d54813f0e903ee97b2293749",
+      "animation_contract_sha256": "d46620d1362277cd5b1b9e3f4c89f5c40841bdd2a454fe2d100d58dcfcac6246",
+      "geometry": {
+        "status": "PASS",
+        "epsilon_blocks": 1e-05,
+        "max_corner_delta_blocks": 1.0954451143121195e-06,
+        "worst_case": "s_idle_a0_t_quarter:seg3lbackspike#0",
+        "sample_count": 41,
+        "cube_sample_count": 3280
+      },
+      "surface_mapping": {
+        "status": "PASS",
+        "position_epsilon_blocks": 1e-05,
+        "normal_epsilon": 1e-06,
+        "uv_epsilon_normalized": 1e-07,
+        "max_position_delta_blocks": 1.0954451143121195e-06,
+        "max_normal_delta": 1.6278820598443328e-07,
+        "max_uv_delta_normalized": 0.0,
+        "vertex_samples": 78720,
+        "ignored_zero_area_faces": 0,
+        "worst_case": "s_idle_a0_t_quarter:seg3lbackspike#0",
+        "evidence": "position/normal/UV tuples from baked ModelPart.Cube.compile versus pinned GeckoLib BakedModelFactory rendered through GeoRenderer; faces of exactly zero area are excluded (ruling 2026-09-02)"
+      },
+      "animation": {
+        "status": "PASS",
+        "epsilon_radians": 2e-06,
+        "accepted_pose_comparison": "compiled setupAnim versus actual fresh-baked GeckoLib candidate",
+        "reference_animation_used_for_acceptance": false,
+        "sample_count": 41,
+        "max_rotation_delta_radians": 0.0,
+        "max_dense_rotation_delta_radians": 0.0,
+        "max_unexpected_position_or_scale_delta": 0.0,
+        "worst_case": "exact",
+        "dense_worst_case": "exact",
+        "rotation_channel_samples": 9840,
+        "dense_rotation_channel_samples": 0,
+        "contract": {
+          "kind": "entity_state",
+          "accepted_runtime_path": "production OreSpawnGeoReplacement.applyCustomAnimations posed from declared entity states through the entity's pose interface; compiled poseFrom on the same states",
+          "candidate_class": "danger.orespawn.entity.client.CaterKillerGeoReplacement",
+          "entity_states": [
+            {
+              "name": "idle",
+              "attacking": 0
+            },
+            {
+              "name": "attacking",
+              "attacking": 1
+            }
+          ],
+          "inputs": {
+            "limb_swing": 0.0,
+            "limb_swing_amounts": [
+              0.0,
+              0.25,
+              0.5,
+              1.0
+            ],
+            "net_head_yaw_degrees": 0.0,
+            "head_pitch_degrees": 0.0
+          },
+          "max_position_delta_model_units": 0.0,
+          "position_epsilon_model_units": 0.0001,
+          "position_worst_case": "exact",
+          "position_channel_samples": 9840,
+          "hidden_bone_checks": 40
+        }
+      },
+      "reference_animation": {
+        "status": "SCHEMA_VALID_REFERENCE_ONLY",
+        "role": "NOT_APPLICABLE_CODE_DRIVEN_MODEL",
+        "clip_count": 0,
+        "constant_vector_count": 0,
+        "runtime_acceptance": false
+      },
+      "draw_order": {
+        "status": "PASS",
+        "bone_draw_order": [
+          "Head",
+          "falsehead",
+          "ltusk1",
+          "ltusk2",
+          "rtusk1",
+          "rtusk2",
+          "ljaw",
+          "rjaw",
+          "seg1_0",
+          "seg1lspike_0",
+          "seg1rspike_0",
+          "seg1ltopspike_0",
+          "seg1rtopspike_0",
+          "seg1lleg_0",
+          "seg1rleg_0",
+          "seg1_1",
+          "seg1lspike_1",
+          "seg1rspike_1",
+          "seg1ltopspike_1",
+          "seg1rtopspike_1",
+          "seg1lleg_1",
+          "seg1rleg_1",
+          "seg1_2",
+          "seg1lspike_2",
+          "seg1rspike_2",
+          "seg1ltopspike_2",
+          "seg1rtopspike_2",
+          "seg1lleg_2",
+          "seg1rleg_2",
+          "seg2_0",
+          "seg2lfoot_0",
+          "seg2rfoot_0",
+          "seg2ltopspike_0",
+          "seg2rtopspike_0",
+          "seg2lspike_0",
+          "seg2rspike_0",
+          "seg2_1",
+          "seg2lfoot_1",
+          "seg2rfoot_1",
+          "seg2ltopspike_1",
+          "seg2rtopspike_1",
+          "seg2lspike_1",
+          "seg2rspike_1",
+          "seg2_2",
+          "seg2lfoot_2",
+          "seg2rfoot_2",
+          "seg2ltopspike_2",
+          "seg2rtopspike_2",
+          "seg2lspike_2",
+          "seg2rspike_2",
+          "seg2_3",
+          "seg2lfoot_3",
+          "seg2rfoot_3",
+          "seg2ltopspike_3",
+          "seg2rtopspike_3",
+          "seg2lspike_3",
+          "seg2rspike_3",
+          "seg2_4",
+          "seg2lfoot_4",
+          "seg2rfoot_4",
+          "seg2ltopspike_4",
+          "seg2rtopspike_4",
+          "seg2lspike_4",
+          "seg2rspike_4",
+          "seg2_5",
+          "seg2lfoot_5",
+          "seg2rfoot_5",
+          "seg2ltopspike_5",
+          "seg2rtopspike_5",
+          "seg2lspike_5",
+          "seg2rspike_5",
+          "seg3",
+          "seg3lfoot",
+          "seg3rfoot",
+          "seg3lspike",
+          "seg3rspike",
+          "seg3ltopspike",
+          "seg3rtopspike",
+          "seg3lbackspike",
+          "seg3rbackspike"
+        ],
+        "captures_checked": 41,
+        "draws_checked": 3280,
+        "classic_source": "classic EntityModel.renderToBuffer on a second bake posed identically; every ModelPart.render is one pose-stack push, attributed to its part by ModelPart.skipDraw elimination (one run per cube-bearing part with every other part's skipDraw set); a part drawn n > 1 times is named <part>__i<k> by draw ordinal",
+        "unobserved_units": [],
+        "policy": "the shipped model sorts GeckoLib's topLevelBones / childBones lists into the classic renderToBuffer order (DrawOrder.apply); both renderers traverse in pre-order, so equal sibling orders are equal draw orders"
+      },
+      "reference_geometry": {
+        "status": "PASS",
+        "reference_source": "reference_1_7_10_source/sources/danger/orespawn/ModelCaterKiller.java",
+        "matched_parts": 31,
+        "ground_truth": "1.7.10 decompiled ModelBase constructor, parsed; never the port"
+      },
+      "visual": {
+        "status": "PASS",
+        "image_size": [
+          256,
+          256
+        ],
+        "camera": {
+          "yaw_degrees": 34.0,
+          "pitch_degrees": -28.0
+        },
+        "channel_tolerance": 2,
+        "changed_fraction_threshold": 0.001,
+        "mean_absolute_error_threshold": 0.25,
+        "minimum_foreground_fraction_threshold": 0.001,
+        "max_changed_fraction": 0.0,
+        "max_mean_absolute_error": 0.0,
+        "z_fight_policy": "pixels where two different quads meet the front within 1e-06 depth with different texels are counted as a diagnostic only; every pixel is compared, the draw order being contracted equal on both sides (G2 root-order contract, landed 2026-09-06)",
+        "contested_exclusion_applied": false,
+        "max_contested_fraction": 0.0087127685546875,
+        "cutout_alpha_threshold": 0.1,
+        "minimum_observed_foreground_fraction": 1.0,
+        "samples": [
+          {
+            "sample": "bind",
+            "camera": null,
+            "changed_fraction": 0.0,
+            "mean_absolute_error": 0.0,
+            "contested_fraction": 0.0,
+            "contested_excluded": false,
+            "vanilla_foreground_fraction": 0.0986480712890625,
+            "geo_foreground_fraction": 0.0986480712890625,
+            "vanilla_capture": "visual/model_caterkiller/bind.vanilla.png",
+            "geo_capture": "visual/model_caterkiller/bind.geo.png",
+            "diff_capture": "visual/model_caterkiller/bind.diff.png"
+          },
+          {
+            "sample": "s_idle_a1_t0",
+            "camera": null,
+            "changed_fraction": 0.0,
+            "mean_absolute_error": 0.0,
+            "contested_fraction": 0.00860595703125,
+            "contested_excluded": false,
+            "vanilla_foreground_fraction": 0.195098876953125,
+            "geo_foreground_fraction": 0.195098876953125,
+            "vanilla_capture": "visual/model_caterkiller/s_idle_a1_t0.vanilla.png",
+            "geo_capture": "visual/model_caterkiller/s_idle_a1_t0.geo.png",
+            "diff_capture": "visual/model_caterkiller/s_idle_a1_t0.diff.png"
+          },
+          {
+            "sample": "s_idle_a1_t_half",
+            "camera": null,
+            "changed_fraction": 0.0,
+            "mean_absolute_error": 0.0,
+            "contested_fraction": 0.0087127685546875,
+            "contested_excluded": false,
+            "vanilla_foreground_fraction": 0.198638916015625,
+            "geo_foreground_fraction": 0.198638916015625,
+            "vanilla_capture": "visual/model_caterkiller/s_idle_a1_t_half.vanilla.png",
+            "geo_capture": "visual/model_caterkiller/s_idle_a1_t_half.geo.png",
+            "diff_capture": "visual/model_caterkiller/s_idle_a1_t_half.diff.png"
+          },
+          {
+            "sample": "s_attacking_a1_t_quarter",
+            "camera": null,
+            "changed_fraction": 0.0,
+            "mean_absolute_error": 0.0,
+            "contested_fraction": 0.0030975341796875,
+            "contested_excluded": false,
+            "vanilla_foreground_fraction": 0.2152099609375,
+            "geo_foreground_fraction": 0.2152099609375,
+            "vanilla_capture": "visual/model_caterkiller/s_attacking_a1_t_quarter.vanilla.png",
+            "geo_capture": "visual/model_caterkiller/s_attacking_a1_t_quarter.geo.png",
+            "diff_capture": "visual/model_caterkiller/s_attacking_a1_t_quarter.diff.png"
+          },
+          {
+            "sample": "s_attacking_a1_t_three_quarter",
+            "camera": null,
+            "changed_fraction": 0.0,
+            "mean_absolute_error": 0.0,
+            "contested_fraction": 0.0058135986328125,
+            "contested_excluded": false,
+            "vanilla_foreground_fraction": 0.20635986328125,
+            "geo_foreground_fraction": 0.20635986328125,
+            "vanilla_capture": "visual/model_caterkiller/s_attacking_a1_t_three_quarter.vanilla.png",
+            "geo_capture": "visual/model_caterkiller/s_attacking_a1_t_three_quarter.geo.png",
+            "diff_capture": "visual/model_caterkiller/s_attacking_a1_t_three_quarter.diff.png"
+          }
+        ]
+      }
+    },
+    {
+      "model_id": "model_cricket",
+      "tier": 2,
+      "proof_scope": "production_proof_model",
+      "source_class": "danger.orespawn.entity.client.CricketModel",
+      "source_class_sha256": "5b7201fb1c7f8980a506af80347fc709f293f516c6c6ea60cdfbeff9b501dad1",
+      "compiled_dump_sha256": "a7b22fa38d0b67f6985b663bffcd55abb1a8f647858b1fe11bbbde1676867645",
+      "bone_count": 11,
+      "cube_count": 11,
+      "geometry_sha256": "ce8f2df09d3d0cdba418601291418749dc3a2115bfeaf588ca4214c0b270de97",
+      "animation_sha256": "7882082857fdb11e02f158ebc3a6d3f970e2ac60d54813f0e903ee97b2293749",
+      "animation_contract_sha256": "dc5d8d466b279255af380ac6a3fc52d2d60bc7db3ad3a02053f5930cf2bdf123",
+      "geometry": {
+        "status": "PASS",
+        "epsilon_blocks": 1e-05,
+        "max_corner_delta_blocks": 3.324154026971204e-07,
+        "worst_case": "a0_t0:rleg2#0",
+        "sample_count": 21,
+        "cube_sample_count": 231
+      },
+      "surface_mapping": {
+        "status": "PASS",
+        "position_epsilon_blocks": 1e-05,
+        "normal_epsilon": 1e-06,
+        "uv_epsilon_normalized": 1e-07,
+        "max_position_delta_blocks": 3.324154026971204e-07,
+        "max_normal_delta": 2.0396078054522177e-07,
+        "max_uv_delta_normalized": 0.0,
+        "vertex_samples": 5544,
+        "ignored_zero_area_faces": 0,
+        "worst_case": "a0_t0:rleg2#0",
+        "evidence": "position/normal/UV tuples from baked ModelPart.Cube.compile versus pinned GeckoLib BakedModelFactory rendered through GeoRenderer; faces of exactly zero area are excluded (ruling 2026-09-02)"
+      },
+      "animation": {
+        "status": "PASS",
+        "epsilon_radians": 2e-06,
+        "accepted_pose_comparison": "compiled setupAnim versus actual fresh-baked GeckoLib candidate",
+        "reference_animation_used_for_acceptance": false,
+        "sample_count": 21,
+        "max_rotation_delta_radians": 0.0,
+        "max_dense_rotation_delta_radians": 0.0,
+        "max_unexpected_position_or_scale_delta": 0.0,
+        "worst_case": "exact",
+        "dense_worst_case": "exact",
+        "rotation_channel_samples": 693,
+        "dense_rotation_channel_samples": 0,
+        "contract": {
+          "kind": "code_driven",
+          "accepted_runtime_path": "production OreSpawnGeoReplacement.applyCustomAnimations through OreSpawnGeoReplacementModel.setCustomAnimations",
+          "candidate_class": "danger.orespawn.entity.client.CricketGeoReplacement",
+          "inputs": {
+            "limb_swing": 0.0,
+            "limb_swing_amounts": [
+              0.0,
+              0.25,
+              0.5,
+              1.0
+            ],
+            "net_head_yaw_degrees": 0.0,
+            "head_pitch_degrees": 0.0
+          },
+          "max_position_delta_model_units": 0.0,
+          "position_epsilon_model_units": 0.0001,
+          "position_worst_case": "exact",
+          "position_channel_samples": 693,
+          "hidden_bone_checks": 20
+        }
+      },
+      "reference_animation": {
+        "status": "SCHEMA_VALID_REFERENCE_ONLY",
+        "role": "NOT_APPLICABLE_CODE_DRIVEN_MODEL",
+        "clip_count": 0,
+        "constant_vector_count": 0,
+        "runtime_acceptance": false
+      },
+      "draw_order": {
+        "status": "PASS",
+        "bone_draw_order": [
+          "body",
+          "head",
+          "abdomen",
+          "lfleg",
+          "lrleg",
+          "rfleg",
+          "rrleg",
+          "lleg1",
+          "rleg1",
+          "lleg2",
+          "rleg2"
+        ],
+        "captures_checked": 21,
+        "draws_checked": 231,
+        "classic_source": "classic EntityModel.renderToBuffer on a second bake posed identically; every ModelPart.render is one pose-stack push, attributed to its part by ModelPart.skipDraw elimination (one run per cube-bearing part with every other part's skipDraw set); a part drawn n > 1 times is named <part>__i<k> by draw ordinal",
+        "unobserved_units": [],
+        "policy": "the shipped model sorts GeckoLib's topLevelBones / childBones lists into the classic renderToBuffer order (DrawOrder.apply); both renderers traverse in pre-order, so equal sibling orders are equal draw orders"
+      },
+      "reference_geometry": {
+        "status": "PASS",
+        "reference_source": "reference_1_7_10_source/sources/danger/orespawn/ModelCricket.java",
+        "matched_parts": 11,
+        "ground_truth": "1.7.10 decompiled ModelBase constructor, parsed; never the port"
+      },
+      "visual": {
+        "status": "PASS",
+        "image_size": [
+          256,
+          256
+        ],
+        "camera": {
+          "yaw_degrees": 34.0,
+          "pitch_degrees": -28.0
+        },
+        "channel_tolerance": 2,
+        "changed_fraction_threshold": 0.001,
+        "mean_absolute_error_threshold": 0.25,
+        "minimum_foreground_fraction_threshold": 0.001,
+        "max_changed_fraction": 0.0,
+        "max_mean_absolute_error": 0.0,
+        "z_fight_policy": "pixels where two different quads meet the front within 1e-06 depth with different texels are counted as a diagnostic only; every pixel is compared, the draw order being contracted equal on both sides (G2 root-order contract, landed 2026-09-06)",
+        "contested_exclusion_applied": false,
+        "max_contested_fraction": 7.62939453125e-05,
+        "cutout_alpha_threshold": 0.1,
+        "minimum_observed_foreground_fraction": 1.0,
+        "samples": [
+          {
+            "sample": "bind",
+            "camera": null,
+            "changed_fraction": 0.0,
+            "mean_absolute_error": 0.0,
+            "contested_fraction": 7.62939453125e-05,
+            "contested_excluded": false,
+            "vanilla_foreground_fraction": 0.1605072021484375,
+            "geo_foreground_fraction": 0.1605072021484375,
+            "vanilla_capture": "visual/model_cricket/bind.vanilla.png",
+            "geo_capture": "visual/model_cricket/bind.geo.png",
+            "diff_capture": "visual/model_cricket/bind.diff.png"
+          },
+          {
+            "sample": "a1_t0",
+            "camera": null,
+            "changed_fraction": 0.0,
+            "mean_absolute_error": 0.0,
+            "contested_fraction": 7.62939453125e-05,
+            "contested_excluded": false,
+            "vanilla_foreground_fraction": 0.146759033203125,
+            "geo_foreground_fraction": 0.146759033203125,
+            "vanilla_capture": "visual/model_cricket/a1_t0.vanilla.png",
+            "geo_capture": "visual/model_cricket/a1_t0.geo.png",
+            "diff_capture": "visual/model_cricket/a1_t0.diff.png"
+          },
+          {
+            "sample": "a1_t_quarter",
+            "camera": null,
+            "changed_fraction": 0.0,
+            "mean_absolute_error": 0.0,
+            "contested_fraction": 7.62939453125e-05,
+            "contested_excluded": false,
+            "vanilla_foreground_fraction": 0.1604461669921875,
+            "geo_foreground_fraction": 0.1604461669921875,
+            "vanilla_capture": "visual/model_cricket/a1_t_quarter.vanilla.png",
+            "geo_capture": "visual/model_cricket/a1_t_quarter.geo.png",
+            "diff_capture": "visual/model_cricket/a1_t_quarter.diff.png"
+          },
+          {
+            "sample": "a1_t_half",
+            "camera": null,
+            "changed_fraction": 0.0,
+            "mean_absolute_error": 0.0,
+            "contested_fraction": 7.62939453125e-05,
+            "contested_excluded": false,
+            "vanilla_foreground_fraction": 0.1528167724609375,
+            "geo_foreground_fraction": 0.1528167724609375,
+            "vanilla_capture": "visual/model_cricket/a1_t_half.vanilla.png",
+            "geo_capture": "visual/model_cricket/a1_t_half.geo.png",
+            "diff_capture": "visual/model_cricket/a1_t_half.diff.png"
+          },
+          {
+            "sample": "a1_t_three_quarter",
+            "camera": null,
+            "changed_fraction": 0.0,
+            "mean_absolute_error": 0.0,
+            "contested_fraction": 7.62939453125e-05,
+            "contested_excluded": false,
+            "vanilla_foreground_fraction": 0.1604461669921875,
+            "geo_foreground_fraction": 0.1604461669921875,
+            "vanilla_capture": "visual/model_cricket/a1_t_three_quarter.vanilla.png",
+            "geo_capture": "visual/model_cricket/a1_t_three_quarter.geo.png",
+            "diff_capture": "visual/model_cricket/a1_t_three_quarter.diff.png"
+          }
+        ]
+      }
+    },
+    {
+      "model_id": "model_herculesbeetle",
+      "tier": 2,
+      "proof_scope": "production_proof_model",
+      "source_class": "danger.orespawn.entity.client.HerculesBeetleModel",
+      "source_class_sha256": "70d198f212a69aad8a5bbdcbbb60155faa4c2edc15f4509cc8f491bf1725b311",
+      "compiled_dump_sha256": "9a7182e0a592683fce01db691e9d1cefe79aea86c25feac30907c2d6628251d7",
+      "bone_count": 37,
+      "cube_count": 37,
+      "geometry_sha256": "0119ace65fb7b63f869b4c67066aa0d3a78f5ae059e2818992a49b095d8d6251",
+      "animation_sha256": "7882082857fdb11e02f158ebc3a6d3f970e2ac60d54813f0e903ee97b2293749",
+      "animation_contract_sha256": "7e0e23627514cfb32dc6afeea37bbe5988489e18bfb438f34a8518c579f7ce65",
+      "geometry": {
+        "status": "PASS",
+        "epsilon_blocks": 1e-05,
+        "max_corner_delta_blocks": 6.082762529469276e-07,
+        "worst_case": "s_attacking_a0_t0:jaw2#0",
+        "sample_count": 41,
+        "cube_sample_count": 1517
+      },
+      "surface_mapping": {
+        "status": "PASS",
+        "position_epsilon_blocks": 1e-05,
+        "normal_epsilon": 1e-06,
+        "uv_epsilon_normalized": 1e-07,
+        "max_position_delta_blocks": 6.082762529469276e-07,
+        "max_normal_delta": 1.5748015753129416e-07,
+        "max_uv_delta_normalized": 0.0,
+        "vertex_samples": 36408,
+        "ignored_zero_area_faces": 0,
+        "worst_case": "s_attacking_a0_t0:jaw2#0",
+        "evidence": "position/normal/UV tuples from baked ModelPart.Cube.compile versus pinned GeckoLib BakedModelFactory rendered through GeoRenderer; faces of exactly zero area are excluded (ruling 2026-09-02)"
+      },
+      "animation": {
+        "status": "PASS",
+        "epsilon_radians": 2e-06,
+        "accepted_pose_comparison": "compiled setupAnim versus actual fresh-baked GeckoLib candidate",
+        "reference_animation_used_for_acceptance": false,
+        "sample_count": 41,
+        "max_rotation_delta_radians": 0.0,
+        "max_dense_rotation_delta_radians": 0.0,
+        "max_unexpected_position_or_scale_delta": 0.0,
+        "worst_case": "exact",
+        "dense_worst_case": "exact",
+        "rotation_channel_samples": 4551,
+        "dense_rotation_channel_samples": 0,
+        "contract": {
+          "kind": "entity_state",
+          "accepted_runtime_path": "production OreSpawnGeoReplacement.applyCustomAnimations posed from declared entity states through the entity's pose interface; compiled poseFrom on the same states",
+          "candidate_class": "danger.orespawn.entity.client.HerculesBeetleGeoReplacement",
+          "entity_states": [
+            {
+              "name": "idle",
+              "attacking": 0
+            },
+            {
+              "name": "attacking",
+              "attacking": 1
+            }
+          ],
+          "inputs": {
+            "limb_swing": 0.0,
+            "limb_swing_amounts": [
+              0.0,
+              0.25,
+              0.5,
+              1.0
+            ],
+            "net_head_yaw_degrees": 0.0,
+            "head_pitch_degrees": 0.0
+          },
+          "max_position_delta_model_units": 0.0,
+          "position_epsilon_model_units": 0.0001,
+          "position_worst_case": "exact",
+          "position_channel_samples": 4551,
+          "hidden_bone_checks": 40
+        }
+      },
+      "reference_animation": {
+        "status": "SCHEMA_VALID_REFERENCE_ONLY",
+        "role": "NOT_APPLICABLE_CODE_DRIVEN_MODEL",
+        "clip_count": 0,
+        "constant_vector_count": 0,
+        "runtime_acceptance": false
+      },
+      "draw_order": {
+        "status": "PASS",
+        "bone_draw_order": [
+          "body1",
+          "body2",
+          "head1",
+          "head2",
+          "head3",
+          "head4",
+          "head5",
+          "head6",
+          "head8",
+          "jaw1",
+          "jaw2",
+          "jaw3",
+          "jaw4",
+          "head7",
+          "lfleg1",
+          "lfleg2",
+          "lfleg3",
+          "lmleg1",
+          "lmleg2",
+          "lmleg3",
+          "lrleg1",
+          "lrleg2",
+          "lrleg3",
+          "jaw5",
+          "jaw6",
+          "jaw7",
+          "jaw8",
+          "rfleg1",
+          "rfleg2",
+          "rfleg3",
+          "rmleg1",
+          "rmleg2",
+          "rmleg3",
+          "rrleg1",
+          "rrleg2",
+          "rrleg3",
+          "jaw9"
+        ],
+        "captures_checked": 41,
+        "draws_checked": 1517,
+        "classic_source": "classic EntityModel.renderToBuffer on a second bake posed identically; every ModelPart.render is one pose-stack push, attributed to its part by ModelPart.skipDraw elimination (one run per cube-bearing part with every other part's skipDraw set); a part drawn n > 1 times is named <part>__i<k> by draw ordinal",
+        "unobserved_units": [],
+        "policy": "the shipped model sorts GeckoLib's topLevelBones / childBones lists into the classic renderToBuffer order (DrawOrder.apply); both renderers traverse in pre-order, so equal sibling orders are equal draw orders"
+      },
+      "reference_geometry": {
+        "status": "PASS",
+        "reference_source": "reference_1_7_10_source/sources/danger/orespawn/ModelHerculesBeetle.java",
+        "matched_parts": 37,
+        "ground_truth": "1.7.10 decompiled ModelBase constructor, parsed; never the port"
+      },
+      "visual": {
+        "status": "PASS",
+        "image_size": [
+          256,
+          256
+        ],
+        "camera": {
+          "yaw_degrees": 34.0,
+          "pitch_degrees": -28.0
+        },
+        "channel_tolerance": 2,
+        "changed_fraction_threshold": 0.001,
+        "mean_absolute_error_threshold": 0.25,
+        "minimum_foreground_fraction_threshold": 0.001,
+        "max_changed_fraction": 0.0,
+        "max_mean_absolute_error": 0.0,
+        "z_fight_policy": "pixels where two different quads meet the front within 1e-06 depth with different texels are counted as a diagnostic only; every pixel is compared, the draw order being contracted equal on both sides (G2 root-order contract, landed 2026-09-06)",
+        "contested_exclusion_applied": false,
+        "max_contested_fraction": 0.0,
+        "cutout_alpha_threshold": 0.1,
+        "minimum_observed_foreground_fraction": 1.0,
+        "samples": [
+          {
+            "sample": "bind",
+            "camera": null,
+            "changed_fraction": 0.0,
+            "mean_absolute_error": 0.0,
+            "contested_fraction": 0.0,
+            "contested_excluded": false,
+            "vanilla_foreground_fraction": 0.1921539306640625,
+            "geo_foreground_fraction": 0.1921539306640625,
+            "vanilla_capture": "visual/model_herculesbeetle/bind.vanilla.png",
+            "geo_capture": "visual/model_herculesbeetle/bind.geo.png",
+            "diff_capture": "visual/model_herculesbeetle/bind.diff.png"
+          },
+          {
+            "sample": "s_idle_a1_t0",
+            "camera": null,
+            "changed_fraction": 0.0,
+            "mean_absolute_error": 0.0,
+            "contested_fraction": 0.0,
+            "contested_excluded": false,
+            "vanilla_foreground_fraction": 0.1872711181640625,
+            "geo_foreground_fraction": 0.1872711181640625,
+            "vanilla_capture": "visual/model_herculesbeetle/s_idle_a1_t0.vanilla.png",
+            "geo_capture": "visual/model_herculesbeetle/s_idle_a1_t0.geo.png",
+            "diff_capture": "visual/model_herculesbeetle/s_idle_a1_t0.diff.png"
+          },
+          {
+            "sample": "s_idle_a1_t_half",
+            "camera": null,
+            "changed_fraction": 0.0,
+            "mean_absolute_error": 0.0,
+            "contested_fraction": 0.0,
+            "contested_excluded": false,
+            "vanilla_foreground_fraction": 0.1829376220703125,
+            "geo_foreground_fraction": 0.1829376220703125,
+            "vanilla_capture": "visual/model_herculesbeetle/s_idle_a1_t_half.vanilla.png",
+            "geo_capture": "visual/model_herculesbeetle/s_idle_a1_t_half.geo.png",
+            "diff_capture": "visual/model_herculesbeetle/s_idle_a1_t_half.diff.png"
+          },
+          {
+            "sample": "s_attacking_a1_t_quarter",
+            "camera": null,
+            "changed_fraction": 0.0,
+            "mean_absolute_error": 0.0,
+            "contested_fraction": 0.0,
+            "contested_excluded": false,
+            "vanilla_foreground_fraction": 0.1914825439453125,
+            "geo_foreground_fraction": 0.1914825439453125,
+            "vanilla_capture": "visual/model_herculesbeetle/s_attacking_a1_t_quarter.vanilla.png",
+            "geo_capture": "visual/model_herculesbeetle/s_attacking_a1_t_quarter.geo.png",
+            "diff_capture": "visual/model_herculesbeetle/s_attacking_a1_t_quarter.diff.png"
+          },
+          {
+            "sample": "s_attacking_a1_t_three_quarter",
+            "camera": null,
+            "changed_fraction": 0.0,
+            "mean_absolute_error": 0.0,
+            "contested_fraction": 0.0,
+            "contested_excluded": false,
+            "vanilla_foreground_fraction": 0.1822052001953125,
+            "geo_foreground_fraction": 0.1822052001953125,
+            "vanilla_capture": "visual/model_herculesbeetle/s_attacking_a1_t_three_quarter.vanilla.png",
+            "geo_capture": "visual/model_herculesbeetle/s_attacking_a1_t_three_quarter.geo.png",
+            "diff_capture": "visual/model_herculesbeetle/s_attacking_a1_t_three_quarter.diff.png"
+          }
+        ]
+      }
     }
   ],
   "fixtures": [],
   "deterministic_text_outputs": {
     "status": "PASS",
     "line_ending": "LF",
-    "file_count": 112,
+    "file_count": 216,
     "files": [
       "model_tshirt.compiled.json",
       "model_tshirt.geo-render.json",
@@ -6222,9 +9996,113 @@
       "model_unstable_ant.animation-contract.json",
       "model_unstable_ant.conversion.json",
       "ant.animation.json",
-      "model_unstable_ant.reference-geometry.json"
+      "model_unstable_ant.reference-geometry.json",
+      "model_cloudshark.compiled.json",
+      "model_cloudshark.geo-render.json",
+      "model_cloudshark.geo.json",
+      "model_cloudshark.animation.json",
+      "model_cloudshark.animation-contract.json",
+      "model_cloudshark.conversion.json",
+      "model_cloudshark.reference-geometry.json",
+      "model_bee.compiled.json",
+      "model_bee.geo-render.json",
+      "model_bee.geo.json",
+      "model_bee.animation.json",
+      "model_bee.animation-contract.json",
+      "model_bee.conversion.json",
+      "model_bee.reference-geometry.json",
+      "model_fairy.compiled.json",
+      "model_fairy.geo-render.json",
+      "model_fairy.geo.json",
+      "model_fairy.animation.json",
+      "model_fairy.animation-contract.json",
+      "model_fairy.conversion.json",
+      "model_fairy.reference-geometry.json",
+      "model_gammametroid.compiled.json",
+      "model_gammametroid.geo-render.json",
+      "model_gammametroid.geo.json",
+      "model_gammametroid.animation.json",
+      "model_gammametroid.animation-contract.json",
+      "model_gammametroid.conversion.json",
+      "model_gammametroid.reference-geometry.json",
+      "model_irukandji.compiled.json",
+      "model_irukandji.geo-render.json",
+      "model_irukandji.geo.json",
+      "model_irukandji.animation.json",
+      "model_irukandji.animation-contract.json",
+      "model_irukandji.conversion.json",
+      "model_irukandji.reference-geometry.json",
+      "model_skate.compiled.json",
+      "model_skate.geo-render.json",
+      "model_skate.geo.json",
+      "model_skate.animation.json",
+      "model_skate.animation-contract.json",
+      "model_skate.conversion.json",
+      "model_skate.reference-geometry.json",
+      "model_rubberducky.compiled.json",
+      "model_rubberducky.geo-render.json",
+      "model_rubberducky.geo.json",
+      "model_rubberducky.animation.json",
+      "model_rubberducky.animation-contract.json",
+      "model_rubberducky.conversion.json",
+      "model_rubberducky.reference-geometry.json",
+      "model_terribleterror.compiled.json",
+      "model_terribleterror.geo-render.json",
+      "model_terribleterror.geo.json",
+      "model_terribleterror.animation.json",
+      "model_terribleterror.animation-contract.json",
+      "model_terribleterror.conversion.json",
+      "model_terribleterror.reference-geometry.json",
+      "model_wormlarge.compiled.json",
+      "model_wormlarge.geo-render.json",
+      "model_wormlarge.geo.json",
+      "model_wormlarge.animation.json",
+      "model_wormlarge.animation-contract.json",
+      "model_wormlarge.conversion.json",
+      "model_wormlarge.reference-geometry.json",
+      "model_wormmedium.compiled.json",
+      "model_wormmedium.geo-render.json",
+      "model_wormmedium.geo.json",
+      "model_wormmedium.animation.json",
+      "model_wormmedium.animation-contract.json",
+      "model_wormmedium.conversion.json",
+      "model_wormmedium.reference-geometry.json",
+      "model_wormsmall.compiled.json",
+      "model_wormsmall.geo-render.json",
+      "model_wormsmall.geo.json",
+      "model_wormsmall.animation.json",
+      "model_wormsmall.animation-contract.json",
+      "model_wormsmall.conversion.json",
+      "model_wormsmall.reference-geometry.json",
+      "model_cannonfodder.compiled.json",
+      "model_cannonfodder.geo-render.json",
+      "model_cannonfodder.geo.json",
+      "model_cannonfodder.animation.json",
+      "model_cannonfodder.animation-contract.json",
+      "model_cannonfodder.conversion.json",
+      "model_caterkiller.compiled.json",
+      "model_caterkiller.geo-render.json",
+      "model_caterkiller.geo.json",
+      "model_caterkiller.animation.json",
+      "model_caterkiller.animation-contract.json",
+      "model_caterkiller.conversion.json",
+      "model_caterkiller.reference-geometry.json",
+      "model_cricket.compiled.json",
+      "model_cricket.geo-render.json",
+      "model_cricket.geo.json",
+      "model_cricket.animation.json",
+      "model_cricket.animation-contract.json",
+      "model_cricket.conversion.json",
+      "model_cricket.reference-geometry.json",
+      "model_herculesbeetle.compiled.json",
+      "model_herculesbeetle.geo-render.json",
+      "model_herculesbeetle.geo.json",
+      "model_herculesbeetle.animation.json",
+      "model_herculesbeetle.animation-contract.json",
+      "model_herculesbeetle.conversion.json",
+      "model_herculesbeetle.reference-geometry.json"
     ]
   },
-  "visual_artifact_count": 210,
+  "visual_artifact_count": 432,
   "visual_artifact_policy": "output cleared first; exact report-referenced PNG set only"
 }

@@ -1,0 +1,81 @@
+{
+  "schema_version": 1,
+  "model_id": "model_wormmedium",
+  "tier": 2,
+  "proof_scope": "production_proof_model",
+  "ground_truth": "executed compiled LayerDefinition and baked ModelPart",
+  "source_class": "danger.orespawn.entity.client.WormMediumModel",
+  "source_class_sha256": "5a3faf9be2f758da19f720f697e532d0e34d104cd26a2d4d28d19c24c023cfd7",
+  "compiled_dump_sha256": "904dbf2fecbbc3570d243f4e6998833b74dfb3ca0b3749a5ba87e69b9f90e679",
+  "geometry_sha256": "71e22aa18616d7d6f2b84ded6499807e09dadb0c19d183deacbd68053b1aac4d",
+  "animation_sha256": "7882082857fdb11e02f158ebc3a6d3f970e2ac60d54813f0e903ee97b2293749",
+  "animation_contract_sha256": "b6b70f14b7cd0513d535b06edee2dcd654c15f412c92cfd695807a822071bd35",
+  "bone_count": 8,
+  "cube_count": 8,
+  "mirrored_cube_count": 0,
+  "mirrored_uv_strategy": "source flag retained as modelpart_mirror; semantics baked into explicit faces; incompatible GeckoLib native mirror disabled",
+  "exact_bone_names": [
+    "body",
+    "head",
+    "head2",
+    "tail",
+    "tooth1",
+    "tooth2",
+    "tooth3",
+    "tooth4"
+  ],
+  "bone_draw_order": [
+    "head",
+    "body",
+    "tail",
+    "tooth1",
+    "tooth2",
+    "tooth3",
+    "tooth4",
+    "head2"
+  ],
+  "draw_order_evidence": {
+    "source": "classic EntityModel.renderToBuffer on a second bake posed identically; every ModelPart.render is one pose-stack push, attributed to its part by ModelPart.skipDraw elimination (one run per cube-bearing part with every other part's skipDraw set); a part drawn n > 1 times is named <part>__i<k> by draw ordinal",
+    "captures": [
+      "bind",
+      "t0",
+      "t_quarter",
+      "t_half",
+      "t_three_quarter",
+      "t_end"
+    ],
+    "cube_bearing_units": 8,
+    "observed_units": 8,
+    "unobserved_units": [],
+    "ordered_pairs": 28,
+    "tie_break": "converter emission order for pairs never drawn together in any capture",
+    "lifting": "pre-order over the geo bone tree, siblings by their subtree's first classic draw"
+  },
+  "animation_contract": {
+    "schema_version": 1,
+    "kind": "code_driven",
+    "controller_required": false,
+    "candidate_animation_path": "production_replacement_hook",
+    "candidate_class": "danger.orespawn.entity.client.WormMediumGeoReplacement",
+    "candidate_acceptance_path": "production OreSpawnGeoReplacementModel.setCustomAnimations (Amendment 1 Tier-3 code-driven)",
+    "sample_ids": [
+      "bind",
+      "t0",
+      "t_quarter",
+      "t_half",
+      "t_three_quarter",
+      "t_end"
+    ]
+  },
+  "reference_animation_schema": {
+    "status": "SCHEMA_VALID_REFERENCE_ONLY",
+    "clip_count": 0,
+    "constant_vector_count": 0,
+    "runtime_acceptance": false
+  },
+  "accepted_animation_evidence": "production OreSpawnGeoReplacement hook through OreSpawnGeoReplacementModel.setCustomAnimations (Amendment 1 Tier-3 code-driven)",
+  "artist_editable_math_to_keyframes_status": "NOT_APPLICABLE_TIER3_CODE_DRIVEN",
+  "compiled_animation_bake_sample_count": 0,
+  "reference_clip_keys_source": "compiled setupAnim output; no Python formula evaluation",
+  "source_animation_channel_inventory": []
+}

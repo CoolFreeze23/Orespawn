@@ -1,0 +1,118 @@
+{
+  "registry": "worm_medium",
+  "display_name": "Medium Worm",
+  "status": "draft for the owner's edit (the third Tier-2 slice, 2026-09-13: on the hook under Amendment 2)",
+  "locomotion": "walker",
+  "artist_scope": "full contract (Tier 2, the simple-cyclic (with position chains) class: geckolib_migration_design.md section 5); ON THE HOOK until idle and walk are delivered (Amendment 2)",
+  "character_sheet": "The middle burrowing worm: a tail, a body, a head with an inner copy and four teeth. It erupts and bites. Read it as a three-link chain rearing up: the tail swaying at the root, the body hanging from it, the head from the body, the teeth snapping around the maw.",
+  "size_notes": "Drawn at x1.0 of the rig on a 64x32 sheet.",
+  "labels": {
+    "head": "head",
+    "head2": "head (inner copy)",
+    "body": "body",
+    "tail": "tail (the root)",
+    "tooth1": "tooth 1 (top)",
+    "tooth2": "tooth 2 (bottom)",
+    "tooth3": "tooth 3 (right)",
+    "tooth4": "tooth 4 (left)"
+  },
+  "groups": [
+    {
+      "name": "tail",
+      "bones": [
+        "tail"
+      ],
+      "omega": 0.45,
+      "axis": "x and z",
+      "gait_scaled": false,
+      "amplitude": "pitch pi x 0.1 = 0.314 rad (18 deg) at 0.45; roll pi x 0.08 = 0.251 rad (14 deg) at 0.25",
+      "plain": "the root link sways on a pitch and a roll rhythm",
+      "math": "tail.xRot = cos(t*0.45)*pi*0.1; tail.zRot = cos(t*0.25)*pi*0.08",
+      "source": "WormMediumModel.setupAnim; WormMediumGeoReplacement.java"
+    },
+    {
+      "name": "body",
+      "bones": [
+        "body"
+      ],
+      "omega": 0.35,
+      "axis": "x and z",
+      "gait_scaled": false,
+      "amplitude": "pitch pi x 0.1 at 0.35; roll pi x 0.07 = 0.220 rad (13 deg) at 0.15; the pivot follows the tail by 12 units",
+      "plain": "the body hangs 12 units along the tail's direction (a position follow) and sways on its own two rhythms",
+      "math": "body.z = tail.z - sin(tailX)*12; body.x = tail.x + sin(tailZ)*cos(tailX)*12; body.y = tail.y - 12 + (12 - cos(tailZ)*cos(tailX)*12); body.xRot = cos(t*0.35)*pi*0.1; body.zRot = cos(t*0.15)*pi*0.07",
+      "source": "WormMediumModel.setupAnim; WormMediumGeoReplacement.java"
+    },
+    {
+      "name": "head",
+      "bones": [
+        "head",
+        "head2"
+      ],
+      "omega": 0.55,
+      "axis": "x and z",
+      "gait_scaled": false,
+      "amplitude": "pitch: 0.62 rad rest, then pi x 0.15 = 0.471 rad (27 deg) at 0.55; roll pi x 0.05 at 0.25; the pivot follows the body by 12 units",
+      "plain": "the head and its inner copy hang 12 units along the body's direction and nod around a 36-degree rear",
+      "math": "head.pos = body.pos followed the same way by 12; head.xRot = 0.62 + cos(t*0.55)*pi*0.15; head.zRot = cos(t*0.25)*pi*0.05",
+      "source": "WormMediumModel.setupAnim; WormMediumGeoReplacement.java"
+    },
+    {
+      "name": "teeth",
+      "bones": [
+        "tooth1",
+        "tooth2",
+        "tooth3",
+        "tooth4"
+      ],
+      "omega": 0.55,
+      "axis": "x and z",
+      "gait_scaled": false,
+      "amplitude": "+-0.4 rad, then pi x 0.15 about the head's angles; the pivots follow the head by 12 units, +-1 unit apart",
+      "plain": "the four teeth ride one link past the head and snap: the top / bottom pair about X, the side pair about Z",
+      "math": "tooth*.pos = head.pos followed by 12 (+-1 in z for the top / bottom pair, +-1 in x for the side pair); tooth1/2.xRot = headX -/+ (0.4 + a); tooth3/4.zRot = headZ +/- (0.4 + a); a = cos(t*0.55)*pi*0.15",
+      "source": "WormMediumModel.setupAnim; WormMediumGeoReplacement.java"
+    }
+  ],
+  "behaviour": [
+    "This creature runs on its CLASSIC code (owner 2026-09-13, Amendment 2 to Amendment 1): its motion does not fit the exact transcription form, so the GeckoLib candidate poses it from the same formulas the classic renderer uses, and the shipped animation file carries NO clip. The self-gate opens when you deliver `idle` AND `walk` together (README rule, item 12); until then the game plays the classic code. The reference-only clip beside this sheet is that code sampled at fixed inputs - copy its timing, do not return it.",
+    "Five always-on rhythms; nothing is scaled by walking speed. The body, the head pair and the teeth are POSITION follows: a keyframed version needs position keys on seven bones, or a re-parented rig (body under tail, heads under body, teeth under head).",
+    "The default renderer poses it from the classic code; the GeckoLib candidate sits behind the dev switch (-Dorespawn.dev.geckolibRenderers) and poses it from the same code until your clips arrive."
+  ],
+  "clips": [
+    {
+      "name": "idle",
+      "verdict": "author",
+      "note": "REQUIRED with walk: the gate opens on the pair (today nothing ships; the classic code plays)"
+    },
+    {
+      "name": "walk",
+      "verdict": "author",
+      "note": "REQUIRED with idle: the locomotion loop (the reference clip is the classic code's rhythm at full walking speed)"
+    },
+    {
+      "name": "attack",
+      "verdict": "author",
+      "note": "a strike",
+      "length_seconds": 0.5
+    },
+    {
+      "name": "hurt",
+      "verdict": "author",
+      "note": "a flinch",
+      "length_seconds": 0.3
+    },
+    {
+      "name": "death",
+      "verdict": "author",
+      "note": "ruled 2026-09-06, Q3 (a): the vanilla death flip stays; a creature whose JSON ships a `death` clip gets the clip-replaces-flip mode, designed when the first such clip arrives (the Queen's own death clip the precedent) - a `death` delivered here plays under the flip until then",
+      "length_seconds": 1.0
+    }
+  ],
+  "extras": [],
+  "wishlist": [],
+  "effort_hours": null,
+  "formulas": [
+    "`WormMediumModel.setupAnim` (WormMediumModel.java; orig ModelWormMedium.java:79-125, `render`): (1) the tail pitches by the cosine of the age in ticks times 0.45, times pi, times 0.1 (18 degrees every 14 ticks) and rolls by the cosine of the age times 0.25, times pi, times 0.08 (orig :79, :83); (2) the body's pivot is the tail's moved 12 units along the tail's angles - z minus the sine of the pitch times 12, x plus the sine of the roll times the cosine of the pitch times 12, y minus 12 plus (12 minus the cosine of the roll times the cosine of the pitch times 12) - a POSITION write (orig :80-87); the body pitches by the cosine of the age times 0.35, times pi, times 0.1 and rolls by the cosine of the age times 0.15, times pi, times 0.07 (orig :88, :92); (3) the head and its inner copy follow the body the same way by 12 units (orig :89-96), pitch by 0.62 radians plus the cosine of the age times 0.55, times pi, times 0.15 (27 degrees every 11.4 ticks around a 36-degree rear) and roll by the cosine of the age times 0.25, times pi, times 0.05 (orig :97-98); (4) the four teeth take the head's pitch and roll and follow it by 12 units the same way (orig :99-117), the top tooth a unit forward and the bottom a unit back in z, the right a unit out and the left a unit in along x (orig :118-119, :122-123); the snap is the cosine of the age times 0.55, times pi, times 0.15: the top tooth's pitch loses 0.4 radians plus it, the bottom's gains it; the right tooth's roll gains 0.4 plus it, the left's loses it (orig :120-121, :124-125). The walk position, the walking speed, the head angles and the entity's state play no part. The GeckoLib hook is the same (WormMediumGeoReplacement.applyCustomAnimations, the follows through `moveTo`)."
+  ]
+}

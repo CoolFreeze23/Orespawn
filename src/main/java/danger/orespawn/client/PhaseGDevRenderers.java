@@ -2,23 +2,37 @@ package danger.orespawn.client;
 
 import danger.orespawn.OreSpawnMod;
 import danger.orespawn.entity.Beaver;
+import danger.orespawn.entity.CloudShark;
 import danger.orespawn.entity.Cockateil;
 import danger.orespawn.entity.Coin;
 import danger.orespawn.entity.Elevator;
 import danger.orespawn.entity.EntityAnt;
+import danger.orespawn.entity.EntityBee;
 import danger.orespawn.entity.EntityBrutalfly;
+import danger.orespawn.entity.EntityCannonFodder;
+import danger.orespawn.entity.EntityCaterKiller;
 import danger.orespawn.entity.EntityCliffRacer;
+import danger.orespawn.entity.EntityCricket;
 import danger.orespawn.entity.EntityDragonfly;
+import danger.orespawn.entity.EntityGammaMetroid;
+import danger.orespawn.entity.EntityHerculesBeetle;
 import danger.orespawn.entity.EntityMosquito;
 import danger.orespawn.entity.EntityRainbowAnt;
 import danger.orespawn.entity.EntityRedAnt;
 import danger.orespawn.entity.EntityRotator;
+import danger.orespawn.entity.EntityRubberDucky;
 import danger.orespawn.entity.EntityTermite;
+import danger.orespawn.entity.EntityTerribleTerror;
 import danger.orespawn.entity.EntityTshirt;
 import danger.orespawn.entity.EntityUnstableAnt;
 import danger.orespawn.entity.EntityVortex;
+import danger.orespawn.entity.EntityWormLarge;
+import danger.orespawn.entity.EntityWormMedium;
+import danger.orespawn.entity.EntityWormSmall;
+import danger.orespawn.entity.Fairy;
 import danger.orespawn.entity.Firefly;
 import danger.orespawn.entity.GoldFish;
+import danger.orespawn.entity.Irukandji;
 import danger.orespawn.entity.Island;
 import danger.orespawn.entity.IslandToo;
 import danger.orespawn.entity.PurplePower;
@@ -28,26 +42,45 @@ import danger.orespawn.entity.Robot3;
 import danger.orespawn.entity.Robot4;
 import danger.orespawn.entity.Robot5;
 import danger.orespawn.entity.RockBase;
+import danger.orespawn.entity.Skate;
 import danger.orespawn.entity.client.AntGeoReplacement;
 import danger.orespawn.entity.client.AntRenderer;
 import danger.orespawn.entity.client.BeaverGeoReplacedRenderer;
 import danger.orespawn.entity.client.BeaverRenderer;
+import danger.orespawn.entity.client.BeeGeoReplacement;
+import danger.orespawn.entity.client.BeeRenderer;
 import danger.orespawn.entity.client.BrutalflyGeoReplacement;
 import danger.orespawn.entity.client.BrutalflyRenderer;
+import danger.orespawn.entity.client.CannonFodderGeoReplacement;
+import danger.orespawn.entity.client.CannonFodderRenderer;
+import danger.orespawn.entity.client.CaterKillerGeoReplacement;
+import danger.orespawn.entity.client.CaterKillerRenderer;
 import danger.orespawn.entity.client.CliffRacerGeoReplacement;
 import danger.orespawn.entity.client.CliffRacerRenderer;
+import danger.orespawn.entity.client.CloudSharkGeoReplacement;
+import danger.orespawn.entity.client.CloudSharkRenderer;
 import danger.orespawn.entity.client.CockateilGeoReplacement;
 import danger.orespawn.entity.client.CockateilRenderer;
 import danger.orespawn.entity.client.CoinGeoReplacement;
 import danger.orespawn.entity.client.CoinRenderer;
+import danger.orespawn.entity.client.CricketGeoReplacement;
+import danger.orespawn.entity.client.CricketRenderer;
 import danger.orespawn.entity.client.DragonflyGeoReplacement;
 import danger.orespawn.entity.client.DragonflyRenderer;
 import danger.orespawn.entity.client.ElevatorGeoReplacement;
 import danger.orespawn.entity.client.ElevatorRenderer;
+import danger.orespawn.entity.client.FairyGeoReplacement;
+import danger.orespawn.entity.client.FairyRenderer;
 import danger.orespawn.entity.client.FireflyGeoReplacement;
 import danger.orespawn.entity.client.FireflyRenderer;
+import danger.orespawn.entity.client.GammaMetroidGeoReplacement;
+import danger.orespawn.entity.client.GammaMetroidRenderer;
 import danger.orespawn.entity.client.GoldFishGeoReplacement;
 import danger.orespawn.entity.client.GoldFishRenderer;
+import danger.orespawn.entity.client.HerculesBeetleGeoReplacement;
+import danger.orespawn.entity.client.HerculesBeetleRenderer;
+import danger.orespawn.entity.client.IrukandjiGeoReplacement;
+import danger.orespawn.entity.client.IrukandjiRenderer;
 import danger.orespawn.entity.client.IslandGeoReplacement;
 import danger.orespawn.entity.client.IslandRenderer;
 import danger.orespawn.entity.client.IslandTooGeoReplacement;
@@ -74,15 +107,27 @@ import danger.orespawn.entity.client.RockBaseGeoReplacement;
 import danger.orespawn.entity.client.RockBaseRenderer;
 import danger.orespawn.entity.client.RotatorGeoReplacement;
 import danger.orespawn.entity.client.RotatorRenderer;
+import danger.orespawn.entity.client.RubberDuckyGeoReplacement;
+import danger.orespawn.entity.client.RubberDuckyRenderer;
 import danger.orespawn.entity.client.RubyBirdGeoReplacement;
+import danger.orespawn.entity.client.SkateGeoReplacement;
+import danger.orespawn.entity.client.SkateRenderer;
 import danger.orespawn.entity.client.TermiteGeoReplacement;
 import danger.orespawn.entity.client.TermiteRenderer;
+import danger.orespawn.entity.client.TerribleTerrorGeoReplacement;
+import danger.orespawn.entity.client.TerribleTerrorRenderer;
 import danger.orespawn.entity.client.TshirtGeoReplacement;
 import danger.orespawn.entity.client.TshirtRenderer;
 import danger.orespawn.entity.client.UnstableAntGeoReplacement;
 import danger.orespawn.entity.client.UnstableAntRenderer;
 import danger.orespawn.entity.client.VortexGeoReplacement;
 import danger.orespawn.entity.client.VortexRenderer;
+import danger.orespawn.entity.client.WormLargeGeoReplacement;
+import danger.orespawn.entity.client.WormLargeRenderer;
+import danger.orespawn.entity.client.WormMediumGeoReplacement;
+import danger.orespawn.entity.client.WormMediumRenderer;
+import danger.orespawn.entity.client.WormSmallGeoReplacement;
+import danger.orespawn.entity.client.WormSmallRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.world.entity.Entity;
 
@@ -209,6 +254,68 @@ public final class PhaseGDevRenderers {
 
     public static EntityRendererProvider<EntityUnstableAnt> unstableAntRenderer() {
         return select("unstable_ant", UnstableAntRenderer::new, UnstableAntGeoReplacement.Renderer::new);
+    }
+
+
+    /** The third Tier-2 slice (2026-09-13): the fifteen rigs ON THE HOOK (Amendment 2), the classic renderers the default. */
+    public static EntityRendererProvider<CloudShark> cloudSharkRenderer() {
+        return select("cloud_shark", CloudSharkRenderer::new, CloudSharkGeoReplacement.Renderer::new);
+    }
+
+    public static EntityRendererProvider<EntityBee> beeRenderer() {
+        return select("bee", BeeRenderer::new, BeeGeoReplacement.Renderer::new);
+    }
+
+    public static EntityRendererProvider<Fairy> fairyRenderer() {
+        return select("fairy", FairyRenderer::new, FairyGeoReplacement.Renderer::new);
+    }
+
+    public static EntityRendererProvider<EntityGammaMetroid> gammaMetroidRenderer() {
+        return select("gamma_metroid", GammaMetroidRenderer::new, GammaMetroidGeoReplacement.Renderer::new);
+    }
+
+    public static EntityRendererProvider<Irukandji> irukandjiRenderer() {
+        return select("irukandji", IrukandjiRenderer::new, IrukandjiGeoReplacement.Renderer::new);
+    }
+
+    public static EntityRendererProvider<Skate> skateRenderer() {
+        return select("skate", SkateRenderer::new, SkateGeoReplacement.Renderer::new);
+    }
+
+    public static EntityRendererProvider<EntityRubberDucky> rubberDuckyRenderer() {
+        return select("rubber_ducky", RubberDuckyRenderer::new, RubberDuckyGeoReplacement.Renderer::new);
+    }
+
+    public static EntityRendererProvider<EntityTerribleTerror> terribleTerrorRenderer() {
+        return select("terrible_terror", TerribleTerrorRenderer::new, TerribleTerrorGeoReplacement.Renderer::new);
+    }
+
+    public static EntityRendererProvider<EntityWormLarge> wormLargeRenderer() {
+        return select("worm_large", WormLargeRenderer::new, WormLargeGeoReplacement.Renderer::new);
+    }
+
+    public static EntityRendererProvider<EntityWormMedium> wormMediumRenderer() {
+        return select("worm_medium", WormMediumRenderer::new, WormMediumGeoReplacement.Renderer::new);
+    }
+
+    public static EntityRendererProvider<EntityWormSmall> wormSmallRenderer() {
+        return select("worm_small", WormSmallRenderer::new, WormSmallGeoReplacement.Renderer::new);
+    }
+
+    public static EntityRendererProvider<EntityCannonFodder> cannonFodderRenderer() {
+        return select("cannon_fodder", CannonFodderRenderer::new, CannonFodderGeoReplacement.Renderer::new);
+    }
+
+    public static EntityRendererProvider<EntityCaterKiller> caterKillerRenderer() {
+        return select("cater_killer", CaterKillerRenderer::new, CaterKillerGeoReplacement.Renderer::new);
+    }
+
+    public static EntityRendererProvider<EntityCricket> cricketRenderer() {
+        return select("cricket", CricketRenderer::new, CricketGeoReplacement.Renderer::new);
+    }
+
+    public static EntityRendererProvider<EntityHerculesBeetle> herculesBeetleRenderer() {
+        return select("hercules_beetle", HerculesBeetleRenderer::new, HerculesBeetleGeoReplacement.Renderer::new);
     }
 
 

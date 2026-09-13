@@ -1,0 +1,364 @@
+{
+  "schema_version": 1,
+  "model_id": "model_bee",
+  "tier": 2,
+  "proof_scope": "production_proof_model",
+  "ground_truth": "executed compiled LayerDefinition and baked ModelPart",
+  "source_class": "danger.orespawn.entity.client.BeeModel",
+  "source_class_sha256": "dd1901e80d07df5f897911b5cecedf759b690fe84233827c1fc1a4598bb592d5",
+  "compiled_dump_sha256": "309b5e9e2255fc611ce8a8bc0ef86931270df5ec67576637bd7da5c7de75e735",
+  "geometry_sha256": "1d9dfa46ed2b1cea2b738892be99551d80c313a79aefe7491ac762bc8ec8dde2",
+  "animation_sha256": "7882082857fdb11e02f158ebc3a6d3f970e2ac60d54813f0e903ee97b2293749",
+  "animation_contract_sha256": "5846cb3eb1ba1dfff98e360fb004199b9c1669b036ff50d4767f13755e3aadff",
+  "bone_count": 23,
+  "cube_count": 23,
+  "mirrored_cube_count": 0,
+  "mirrored_uv_strategy": "source flag retained as modelpart_mirror; semantics baked into explicit faces; incompatible GeckoLib native mirror disabled",
+  "exact_bone_names": [
+    "Abdomnem1",
+    "Abdomnem2",
+    "Abdomnem3",
+    "Abdomnem4",
+    "Abdomnem5",
+    "Head",
+    "LA1",
+    "LA2",
+    "LA3",
+    "LeftPincerExtra",
+    "LeftPincerMain",
+    "LeftPom",
+    "MainBody",
+    "Neck",
+    "RA1",
+    "RA2",
+    "RA3",
+    "RightPincerExtra",
+    "RightPincerMain",
+    "RightPom",
+    "Sting",
+    "WingLeft",
+    "WingRight"
+  ],
+  "bone_draw_order": [
+    "Sting",
+    "Abdomnem1",
+    "Abdomnem2",
+    "Abdomnem3",
+    "Abdomnem4",
+    "Abdomnem5",
+    "MainBody",
+    "Neck",
+    "Head",
+    "WingRight",
+    "WingLeft",
+    "RA1",
+    "LA1",
+    "LA2",
+    "RA2",
+    "RA3",
+    "LA3",
+    "LeftPom",
+    "RightPom",
+    "LeftPincerExtra",
+    "LeftPincerMain",
+    "RightPincerMain",
+    "RightPincerExtra"
+  ],
+  "draw_order_evidence": {
+    "source": "classic EntityModel.renderToBuffer on a second bake posed identically; every ModelPart.render is one pose-stack push, attributed to its part by ModelPart.skipDraw elimination (one run per cube-bearing part with every other part's skipDraw set); a part drawn n > 1 times is named <part>__i<k> by draw ordinal",
+    "captures": [
+      "bind",
+      "s_idle_t0",
+      "s_idle_t_quarter",
+      "s_idle_t_half",
+      "s_idle_t_three_quarter",
+      "s_idle_t_end",
+      "s_attacking_t0",
+      "s_attacking_t_quarter",
+      "s_attacking_t_half",
+      "s_attacking_t_three_quarter",
+      "s_attacking_t_end"
+    ],
+    "cube_bearing_units": 23,
+    "observed_units": 23,
+    "unobserved_units": [],
+    "ordered_pairs": 253,
+    "tie_break": "converter emission order for pairs never drawn together in any capture",
+    "lifting": "pre-order over the geo bone tree, siblings by their subtree's first classic draw"
+  },
+  "cube_face_order": {
+    "Abdomnem1": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "Abdomnem2": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "Abdomnem3": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "Abdomnem4": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "Abdomnem5": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "Head": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "LA1": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "LA2": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "LA3": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "LeftPincerExtra": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "LeftPincerMain": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "LeftPom": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "MainBody": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "Neck": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "RA1": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "RA2": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "RA3": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "RightPincerExtra": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "RightPincerMain": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "RightPom": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "Sting": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "WingLeft": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "WingRight": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ]
+  },
+  "cube_face_order_evidence": {
+    "rule": "NeoForge 21.1.223 ModelPart.Cube.<init> polygon order DOWN, UP, WEST, NORTH, EAST, SOUTH (offsets 365-785: DOWN 365, UP 436, WEST 507, NORTH 578, EAST 649, SOUTH 720), mirror negating the X normals; GeckoLib labels by the direction whose step is the classic normal reflected in Y",
+    "cube_bearing_bones": 23,
+    "cubes": 23,
+    "verified_unrotated_cubes_at_bind": 4,
+    "verification": "captured normals of every cube unrotated at bind equal the rule's, in order; the parity tool's draw-order leg compares the per-quad normal sequences of both renderers on every capture"
+  },
+  "animation_contract": {
+    "schema_version": 1,
+    "kind": "entity_state",
+    "controller_required": false,
+    "candidate_animation_path": "production_replacement_hook",
+    "candidate_class": "danger.orespawn.entity.client.BeeGeoReplacement",
+    "candidate_acceptance_path": "production OreSpawnGeoReplacementModel.setCustomAnimations (Amendment 1 Tier-3 code-driven)",
+    "sample_ids": [
+      "bind",
+      "s_idle_t0",
+      "s_idle_t_quarter",
+      "s_idle_t_half",
+      "s_idle_t_three_quarter",
+      "s_idle_t_end",
+      "s_attacking_t0",
+      "s_attacking_t_quarter",
+      "s_attacking_t_half",
+      "s_attacking_t_three_quarter",
+      "s_attacking_t_end"
+    ],
+    "entity_states": [
+      "idle",
+      "attacking"
+    ]
+  },
+  "reference_animation_schema": {
+    "status": "SCHEMA_VALID_REFERENCE_ONLY",
+    "clip_count": 0,
+    "constant_vector_count": 0,
+    "runtime_acceptance": false
+  },
+  "accepted_animation_evidence": "production OreSpawnGeoReplacement hook posed from declared entity states through the entity's pose interface (Amendment 1 Tier-3 code-driven)",
+  "artist_editable_math_to_keyframes_status": "NOT_APPLICABLE_TIER3_CODE_DRIVEN",
+  "compiled_animation_bake_sample_count": 0,
+  "reference_clip_keys_source": "compiled setupAnim output; no Python formula evaluation",
+  "source_animation_channel_inventory": []
+}

@@ -1,0 +1,116 @@
+{
+  "registry": "gamma_metroid",
+  "display_name": "Gamma Metroid",
+  "status": "draft for the owner's edit (the third Tier-2 slice, 2026-09-13: on the hook under Amendment 2)",
+  "locomotion": "walker",
+  "artist_scope": "full contract (Tier 2, the simple-cyclic (with a |cos| channel) class: geckolib_migration_design.md section 5); ON THE HOOK until idle and walk are delivered (Amendment 2)",
+  "character_sheet": "A hostile four-legged crawler with a segmented shell, a head with an upper and lower beak, three tusks, a glowing core and two belly plates. Read it as a scuttling armoured beast: tusks quivering, the shell breathing, the lower beak chattering.",
+  "size_notes": "Drawn at x0.9 of the rig (halved for a baby) on a 256x64 sheet.",
+  "labels": {
+    "shell1": "shell segment 1",
+    "shell2": "shell segment 2",
+    "shell3": "shell segment 3",
+    "shell4": "shell segment 4",
+    "head": "head",
+    "beakupper": "upper beak",
+    "beaklower": "lower beak",
+    "lefttusk": "left tusk",
+    "middletusk": "middle tusk",
+    "righttusk": "right tusk",
+    "core": "core",
+    "bellyinside": "belly plate, inner",
+    "bellyoutside": "belly plate, outer",
+    "lfupperleg": "left front leg (upper)",
+    "lflowerleg": "left front leg (lower)",
+    "lrupperleg": "left rear leg (upper)",
+    "lrlowerleg": "left rear leg (lower)",
+    "rfupperleg": "right front leg (upper)",
+    "rflowerleg": "right front leg (lower)",
+    "rrupperleg": "right rear leg (upper)",
+    "rrlowerleg": "right rear leg (lower)"
+  },
+  "groups": [
+    {
+      "name": "tusks",
+      "bones": [
+        "lefttusk",
+        "middletusk",
+        "righttusk"
+      ],
+      "omega": 0.81,
+      "axis": "x",
+      "gait_scaled": false,
+      "amplitude": "pi x 0.08 = 0.251 rad (14 deg)",
+      "plain": "the three tusks quiver together",
+      "math": "*tusk.xRot = cos(ageInTicks * 0.81) * pi * 0.08",
+      "source": "GammaMetroidModel.setupAnim; GammaMetroidGeoReplacement.java"
+    },
+    {
+      "name": "shell",
+      "bones": [
+        "shell1"
+      ],
+      "omega": 0.4,
+      "axis": "x",
+      "gait_scaled": false,
+      "amplitude": "pi x 0.05 / 4 = 0.039 rad (2 deg)",
+      "plain": "the first shell segment breathes slowly",
+      "math": "shell1.xRot = cos(ageInTicks * 0.4) * pi * 0.05 / 4",
+      "source": "GammaMetroidModel.setupAnim; GammaMetroidGeoReplacement.java"
+    },
+    {
+      "name": "beak",
+      "bones": [
+        "beaklower"
+      ],
+      "omega": 0.75,
+      "axis": "x",
+      "gait_scaled": false,
+      "amplitude": "|cos| x pi x 0.1 = 0 .. 0.314 rad (0 .. 18 deg), plus 0.14 rad",
+      "plain": "the lower beak chatters open (the absolute value: it never closes past its rest)",
+      "math": "beaklower.xRot = |cos(ageInTicks * 0.75) * pi * 0.1| + 0.14",
+      "source": "GammaMetroidModel.setupAnim; GammaMetroidGeoReplacement.java"
+    }
+  ],
+  "behaviour": [
+    "This creature runs on its CLASSIC code (owner 2026-09-13, Amendment 2 to Amendment 1): its motion does not fit the exact transcription form, so the GeckoLib candidate poses it from the same formulas the classic renderer uses, and the shipped animation file carries NO clip. The self-gate opens when you deliver `idle` AND `walk` together (README rule, item 12); until then the game plays the classic code. The reference-only clip beside this sheet is that code sampled at fixed inputs - copy its timing, do not return it.",
+    "Three always-on rhythms; the legs, head, core, belly and the other shell segments are static in the port's classic code (the register line of this slice records the 1.7.10 pose it simplifies). Nothing is scaled by walking speed.",
+    "The default renderer poses it from the classic code; the GeckoLib candidate sits behind the dev switch (-Dorespawn.dev.geckolibRenderers) and poses it from the same code until your clips arrive."
+  ],
+  "clips": [
+    {
+      "name": "idle",
+      "verdict": "author",
+      "note": "REQUIRED with walk: the gate opens on the pair (today nothing ships; the classic code plays)"
+    },
+    {
+      "name": "walk",
+      "verdict": "author",
+      "note": "REQUIRED with idle: the locomotion loop (the reference clip is the classic code's rhythm at full walking speed)"
+    },
+    {
+      "name": "attack",
+      "verdict": "author",
+      "note": "a strike",
+      "length_seconds": 0.5
+    },
+    {
+      "name": "hurt",
+      "verdict": "author",
+      "note": "a flinch",
+      "length_seconds": 0.3
+    },
+    {
+      "name": "death",
+      "verdict": "author",
+      "note": "ruled 2026-09-06, Q3 (a): the vanilla death flip stays; a creature whose JSON ships a `death` clip gets the clip-replaces-flip mode, designed when the first such clip arrives (the Queen's own death clip the precedent) - a `death` delivered here plays under the flip until then",
+      "length_seconds": 1.0
+    }
+  ],
+  "extras": [],
+  "wishlist": [],
+  "effort_hours": null,
+  "formulas": [
+    "`GammaMetroidModel.setupAnim` (GammaMetroidModel.java; orig ModelGammaMetroid.java:175, 193-197, 204-206 for the lines the port keeps, `render`, wingspeed 0.45 from `new ModelGammaMetroid(0.45f)` in orig ClientProxyOreSpawn.java:429 - the port multiplies by no wingspeed): (1) the three tusks pitch by the cosine of the age in ticks times 0.81, times pi, times 0.08 - 14 degrees each way every 7.76 ticks (orig :175, the left tusk's line; 1.7.10 gave each tusk its own rhythm and a yaw besides); (2) the first shell segment pitches by the cosine of the age times 0.4, times pi, times 0.05, divided by 4 - 2 degrees every 15.7 ticks (orig :193, :197); (3) the lower beak pitches by the absolute value of the cosine of the age times 0.75, times pi, times 0.1, plus 0.14 radians - a chatter between 8 and 26 degrees, twice per 8.38 ticks (orig :204-206). The walk position, the walking speed, the head angles and the entity's state play no part in the port's pose (1.7.10 also walked the legs on the walking speed, swayed the other shell segments and stilled them while sitting - the register line). The GeckoLib hook is the same (GammaMetroidGeoReplacement.applyCustomAnimations)."
+  ]
+}

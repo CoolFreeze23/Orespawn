@@ -1,0 +1,96 @@
+{
+  "registry": "worm_small",
+  "display_name": "Small Worm",
+  "status": "draft for the owner's edit (the third Tier-2 slice, 2026-09-13: on the hook under Amendment 2)",
+  "locomotion": "walker",
+  "artist_scope": "full contract (Tier 2, the simple-cyclic (with position chains) class: geckolib_migration_design.md section 5); ON THE HOOK until idle and walk are delivered (Amendment 2)",
+  "character_sheet": "The smallest burrowing worm: a tail, a body and a head. It pops up and nips. Read it as a two-link chain: the tail swaying at the root, the body hanging from it, the head nodding from the body.",
+  "size_notes": "Drawn at x1.0 of the rig on a 64x32 sheet.",
+  "labels": {
+    "head": "head",
+    "body": "body",
+    "tail": "tail (the root)"
+  },
+  "groups": [
+    {
+      "name": "tail",
+      "bones": [
+        "tail"
+      ],
+      "omega": 0.55,
+      "axis": "x and z",
+      "gait_scaled": false,
+      "amplitude": "pitch pi x 0.15 = 0.471 rad (27 deg) at 0.55; roll pi x 0.1 = 0.314 rad (18 deg) at 0.35",
+      "plain": "the root link sways on a pitch and a roll rhythm",
+      "math": "tail.xRot = cos(t*0.55)*pi*0.15; tail.zRot = cos(t*0.35)*pi*0.1",
+      "source": "WormSmallModel.setupAnim; WormSmallGeoReplacement.java"
+    },
+    {
+      "name": "body",
+      "bones": [
+        "body"
+      ],
+      "omega": 0.45,
+      "axis": "x and z",
+      "gait_scaled": false,
+      "amplitude": "pitch pi x 0.15 at 0.45; roll pi x 0.1 at 0.25; the pivot follows the tail by 5 units",
+      "plain": "the body hangs 5 units along the tail's direction (a position follow) and sways on its own two rhythms",
+      "math": "body.z = tail.z - sin(tailX)*5; body.x = tail.x + sin(tailZ)*cos(tailX)*5; body.y = tail.y - 5 + (5 - cos(tailZ)*cos(tailX)*5); body.xRot = cos(t*0.45)*pi*0.15; body.zRot = cos(t*0.25)*pi*0.1",
+      "source": "WormSmallModel.setupAnim; WormSmallGeoReplacement.java"
+    },
+    {
+      "name": "head",
+      "bones": [
+        "head"
+      ],
+      "omega": 0.65,
+      "axis": "x and z",
+      "gait_scaled": false,
+      "amplitude": "pitch: 0.62 rad rest, then pi x 0.15 at 0.65; roll pi x 0.05 at 0.3; the pivot follows the body by 5 units",
+      "plain": "the head hangs 5 units along the body's direction and nods around a 36-degree rear",
+      "math": "head.pos = body.pos followed the same way by 5; head.xRot = 0.62 + cos(t*0.65)*pi*0.15; head.zRot = cos(t*0.3)*pi*0.05",
+      "source": "WormSmallModel.setupAnim; WormSmallGeoReplacement.java"
+    }
+  ],
+  "behaviour": [
+    "This creature runs on its CLASSIC code (owner 2026-09-13, Amendment 2 to Amendment 1): its motion does not fit the exact transcription form, so the GeckoLib candidate poses it from the same formulas the classic renderer uses, and the shipped animation file carries NO clip. The self-gate opens when you deliver `idle` AND `walk` together (README rule, item 12); until then the game plays the classic code. The reference-only clip beside this sheet is that code sampled at fixed inputs - copy its timing, do not return it.",
+    "Six always-on rhythms; nothing is scaled by walking speed. The body and the head are POSITION follows: a keyframed version needs position keys on both, or a re-parented rig (body under tail, head under body).",
+    "The default renderer poses it from the classic code; the GeckoLib candidate sits behind the dev switch (-Dorespawn.dev.geckolibRenderers) and poses it from the same code until your clips arrive."
+  ],
+  "clips": [
+    {
+      "name": "idle",
+      "verdict": "author",
+      "note": "REQUIRED with walk: the gate opens on the pair (today nothing ships; the classic code plays)"
+    },
+    {
+      "name": "walk",
+      "verdict": "author",
+      "note": "REQUIRED with idle: the locomotion loop (the reference clip is the classic code's rhythm at full walking speed)"
+    },
+    {
+      "name": "attack",
+      "verdict": "author",
+      "note": "a strike",
+      "length_seconds": 0.5
+    },
+    {
+      "name": "hurt",
+      "verdict": "author",
+      "note": "a flinch",
+      "length_seconds": 0.3
+    },
+    {
+      "name": "death",
+      "verdict": "author",
+      "note": "ruled 2026-09-06, Q3 (a): the vanilla death flip stays; a creature whose JSON ships a `death` clip gets the clip-replaces-flip mode, designed when the first such clip arrives (the Queen's own death clip the precedent) - a `death` delivered here plays under the flip until then",
+      "length_seconds": 1.0
+    }
+  ],
+  "extras": [],
+  "wishlist": [],
+  "effort_hours": null,
+  "formulas": [
+    "`WormSmallModel.setupAnim` (WormSmallModel.java; orig ModelWormSmall.java:44-63, `render`): (1) the tail pitches by the cosine of the age in ticks times 0.55, times pi, times 0.15 (27 degrees every 11.4 ticks) and rolls by the cosine of the age times 0.35, times pi, times 0.1 (orig :44, :48); (2) the body's pivot is the tail's moved 5 units along the tail's angles - z minus the sine of the pitch times 5, x plus the sine of the roll times the cosine of the pitch times 5, y minus 5 plus (5 minus the cosine of the roll times the cosine of the pitch times 5) - a POSITION write (orig :45-52); the body pitches by the cosine of the age times 0.45, times pi, times 0.15 and rolls by the cosine of the age times 0.25, times pi, times 0.1 (orig :53, :57); (3) the head follows the body the same way by 5 units (orig :54-61), pitches by 0.62 radians plus the cosine of the age times 0.65, times pi, times 0.15 (27 degrees every 9.7 ticks around a 36-degree rear) and rolls by the cosine of the age times 0.3, times pi, times 0.05 (orig :62-63). The walk position, the walking speed, the head angles and the entity's state play no part. The GeckoLib hook is the same (WormSmallGeoReplacement.applyCustomAnimations, the follows through `moveTo`)."
+  ]
+}

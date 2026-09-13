@@ -171,7 +171,23 @@ public final class ReferenceClipSampler {
             Map.entry("model_rainbow_ant", "rainbow_ant"),
             Map.entry("model_red_ant", "red_ant"),
             Map.entry("model_termite", "termite"),
-            Map.entry("model_unstable_ant", "unstable_ant")));
+            Map.entry("model_unstable_ant", "unstable_ant"),
+            // the third Tier-2 slice (2026-09-13): the fifteen hook rigs
+            Map.entry("model_cloudshark", "cloud_shark"),
+            Map.entry("model_bee", "bee"),
+            Map.entry("model_fairy", "fairy"),
+            Map.entry("model_gammametroid", "gamma_metroid"),
+            Map.entry("model_irukandji", "irukandji"),
+            Map.entry("model_skate", "skate"),
+            Map.entry("model_rubberducky", "rubber_ducky"),
+            Map.entry("model_terribleterror", "terrible_terror"),
+            Map.entry("model_wormlarge", "worm_large"),
+            Map.entry("model_wormmedium", "worm_medium"),
+            Map.entry("model_wormsmall", "worm_small"),
+            Map.entry("model_cannonfodder", "cannon_fodder"),
+            Map.entry("model_caterkiller", "cater_killer"),
+            Map.entry("model_cricket", "cricket"),
+            Map.entry("model_herculesbeetle", "hercules_beetle")));
 
     /**
      * A rig's span rule. {@code kind}: {@link #RULE_ONE_KEY} (a static rig, or nothing to sample), {@link #RULE_PERIODIC}
@@ -247,7 +263,75 @@ public final class ReferenceClipSampler {
             Map.entry("model_purplepower", Rule.twoSecondsNoPeriod(
                     "no period: the three fans take three fresh rolls of the level random per pose call (nextFloat() * 360 in X, Y, Z "
                             + "order; PurplePowerGeoReplacement.java:121-136, ModelPurplePower.java:187-194; orig ModelPurplePower.java:57 / "
-                            + ":66 / :75) - two seconds from the seed-0 random"))));
+                            + ":66 / :75) - two seconds from the seed-0 random")),
+            // the third Tier-2 slice (2026-09-13): the fifteen hook rigs (owner's third set item 8 under Amendment 2) - a hook rig
+            // declares no channels (the converter refuses them without a keyframe leg), so each states its slowest rhythm here
+            // with the lines it was read from; the closure test (item 28 (5)) settles the multiple or the two-second window.
+            Map.entry("model_cloudshark", Rule.periodic(TWO_PI / (double) (0.5F * 1.0F),
+                    "three frequencies at wingspeed 1.0: leftfin.yRot = 1.15 + cos(ageInTicks * 0.7F * ws) * PI * 0.15, rightfin.yRot = -0.9 + "
+                            + "cos(ageInTicks * 1.5F * ws) * PI * 0.15 and fins.yRot = cos(ageInTicks * 1.5F * ws) * PI * 0.25, jaw.xRot = 0.5 + "
+                            + "cos(ageInTicks * 0.5F * ws) * PI * 0.1 (CloudSharkGeoReplacement.applyCustomAnimations, ModelCloudShark.setupAnim:83-89; "
+                            + "orig ModelCloudShark.java:81-87): the slowest 0.5 rad/tick")),
+            Map.entry("model_bee", Rule.periodic(TWO_PI / (double) (0.021F * 2.0F),
+                    "at rest (attacking 0) the slowest channel is the abdomen curl cos(ageInTicks * 0.021F * ws) * PI * 0.023 at wingspeed 2.0 "
+                            + "(BeeGeoReplacement.applyCustomAnimations, BeeModel.poseFrom; orig ModelBee.java:214): 0.042 rad/tick, a 149.6-tick period over "
+                            + "the 6 s cap; the wings at 2.2 (orig :188-190), the pincers at 0.6 (:191-195), the antennae at 0.42 / 0.54 / 0.62 / 0.74 "
+                            + "(:196-213); the abdomen chain follows the curl (position channels, orig :215-230)")),
+            Map.entry("model_fairy", Rule.periodic(TWO_PI / (double) (1.5F * 0.1F),
+                    "six frequencies at wingspeed 1.5 (ageInTicks * ws * k, two float multiplies left to right): the outer wings at 1.5 and the "
+                            + "inner at 0.85 ws = 1.275, the arms' pitch at 0.15 / 0.12 ws = 0.225 / 0.18 and roll at 0.1 / 0.11 ws = 0.15 / 0.165 "
+                            + "(FairyGeoReplacement.applyCustomAnimations, FairyModel.setupAnim; orig ModelFairy.java:134-137, 146-149): the slowest "
+                            + "0.15 rad/tick; the head follows netHeadYaw / headPitch = 0 (orig :138-145)")),
+            Map.entry("model_gammametroid", Rule.periodic(TWO_PI / (double) 0.4F,
+                    "three channels: the three tusks cos(ageInTicks * 0.81F) * PI * 0.08 about X, shell1 cos(ageInTicks * 0.4F) * PI * 0.05 / 4 "
+                            + "about X, the lower beak |cos(ageInTicks * 0.75F) * PI * 0.1| + 0.14 about X (GammaMetroidGeoReplacement.applyCustomAnimations, "
+                            + "GammaMetroidModel.setupAnim; orig ModelGammaMetroid.java:175, 193-197, 204-206 for the lines the port keeps): the slowest 0.4 rad/tick")),
+            Map.entry("model_irukandji", Rule.periodic(TWO_PI / (double) 0.2F,
+                    "sixteen cosines over four tentacles - root pitch 0.55 / 0.65 / 0.5 / 0.57, root roll 0.35 / 0.45 / 0.3 / 0.37, tip pitch "
+                            + "0.45 / 0.55 / 0.4 / 0.48, tip roll 0.25 / 0.35 / 0.2 / 0.29 rad/tick (IrukandjiGeoReplacement.tentacle, ModelIrukandji.setupAnim; "
+                            + "orig ModelIrukandji.java:90-133): the slowest 0.2 rad/tick; the tips' pivots follow the roots (position channels)")),
+            Map.entry("model_skate", Rule.periodic(TWO_PI / (double) 1.2F,
+                    "at limbSwingAmount 1 (above the 0.1 threshold) one channel: Shape1.xRot = 0.785 + cos(ageInTicks * 1.2F) * PI * 0.15 * "
+                            + "limbSwingAmount (SkateGeoReplacement.applyCustomAnimations, ModelSkate.setupAnim; orig ModelSkate.java:48-49); the idle "
+                            + "branch's cos(ageInTicks * 0.4F) * PI * 0.05 needs limbSwingAmount <= 0.1")),
+            Map.entry("model_rubberducky", Rule.periodic(Math.PI / (double) 1.0F,
+                    "one channel: the wings |cos(ageInTicks * 1.0F) * PI * 0.15| about Z, mirrored (RubberDuckyGeoReplacement.applyCustomAnimations, "
+                            + "RubberDuckyModel.setupAnim; orig ModelRubberDucky.java:91, 111-114 for the lines the port keeps): the absolute value folds "
+                            + "the cosine, so the natural period is pi / 1.0 = 3.14 ticks; the head and beak follow netHeadYaw = 0")),
+            Map.entry("model_terribleterror", Rule.periodic(TWO_PI / (double) 0.3F,
+                    "three frequencies: the wings cos(ageInTicks * 1.3F) * PI * 0.25 about Z around +-2.0, the jaw |cos(ageInTicks * 0.3F) * PI * 0.1| "
+                            + "about X, four leg parts cos(ageInTicks * 1.25F) * PI * 0.35 about X around +-0.349 (TerribleTerrorGeoReplacement.applyCustomAnimations, "
+                            + "TerribleTerrorModel.setupAnim; orig ModelTerribleTerror.java:171-183 for the lines the port keeps): the slowest 0.3 rad/tick "
+                            + "(the jaw's |cos| closes twice per period)")),
+            Map.entry("model_wormlarge", Rule.periodic(TWO_PI / (double) 0.15F,
+                    "six frequencies: the neck's pitch 0.25 and yaw 0.15, the head's pitch 0.35 and yaw 0.45, the teeth 0.57, the tail tip 0.63 rad/tick "
+                            + "(WormLargeGeoReplacement.applyCustomAnimations, WormLargeModel.setupAnim; orig ModelWormLarge.java:185-274): the slowest 0.15; "
+                            + "the five heads follow the neck and the eight teeth the head (position channels)")),
+            Map.entry("model_wormmedium", Rule.periodic(TWO_PI / (double) 0.15F,
+                    "five frequencies: the tail's pitch 0.45 and roll 0.25, the body's pitch 0.35 and roll 0.15, the head's pitch 0.55 and roll 0.25 rad/tick "
+                            + "(WormMediumGeoReplacement.applyCustomAnimations, WormMediumModel.setupAnim; orig ModelWormMedium.java:79-125): the slowest 0.15; "
+                            + "the body, the head pair and the four teeth follow the tail link by link (position channels)")),
+            Map.entry("model_wormsmall", Rule.periodic(TWO_PI / (double) 0.25F,
+                    "six frequencies: the tail's pitch 0.55 and roll 0.35, the body's pitch 0.45 and roll 0.25, the head's pitch 0.65 and roll 0.3 rad/tick "
+                            + "(WormSmallGeoReplacement.applyCustomAnimations, WormSmallModel.setupAnim; orig ModelWormSmall.java:44-63): the slowest 0.25; "
+                            + "the body and the head follow the tail link by link (position channels)")),
+            Map.entry("model_cannonfodder", Rule.periodic(TWO_PI / (double) 0.6662F,
+                    "one channel on the walk POSITION: the four legs cos(limbSwing * 0.6662F) * 1.2 * limbSwingAmount about X (CannonFodderGeoReplacement"
+                            + ".applyCustomAnimations, CannonFodderModel.setupAnim: a port-authored rig, no 1.7.10 line): at limbSwing +1 per tick the period "
+                            + "is 2 pi / 0.6662 = 9.43 ticks; the head follows netHeadYaw / headPitch = 0")),
+            Map.entry("model_caterkiller", Rule.periodic(TWO_PI / (double) (0.3F * 0.22F),
+                    "at rest (attacking 0) the slowest channel is the head bob cos(ageInTicks * 0.3F * ws) * 2 units at wingspeed 0.22 "
+                            + "(CaterKillerGeoReplacement.applyCustomAnimations, CaterKillerModel.poseFrom; orig ModelCaterKiller.java:251): 0.066 rad/tick, "
+                            + "95.2 ticks; the other rest rhythms 0.077 .. 0.506 rad/tick (orig :248-338); the head bob and the segments' z are position "
+                            + "channels, the rear segments' z scaled by limbSwingAmount = 1 (orig :301-308)")),
+            Map.entry("model_cricket", Rule.periodic(TWO_PI / (double) 1.0F,
+                    "at limbSwingAmount 1 (above the 0.1 threshold) one channel: the four front / rear legs cos(ageInTicks * 1.0F) * PI * 0.25 * "
+                            + "limbSwingAmount about Y (CricketGeoReplacement.applyCustomAnimations, CricketModel.setupAnim; orig ModelCricket.java:104-108, "
+                            + "at wingspeed 2.5 there where the port's frequency is 1.0); the hind legs hold constants (orig :117-125)")),
+            Map.entry("model_herculesbeetle", Rule.periodic(TWO_PI / (double) (0.051F * 1.0F),
+                    "at rest (attacking 0) the slowest channel is the jaws cos(ageInTicks * 0.051F * ws) * PI * 0.01 at wingspeed 1.0 "
+                            + "(HerculesBeetleGeoReplacement.applyCustomAnimations, HerculesBeetleModel.poseFrom; orig ModelHerculesBeetle.java:293): 123.2 ticks, "
+                            + "over the 6 s cap; the eighteen leg parts cos(ageInTicks * ws * 0.45F) * PI * 0.12 * limbSwingAmount about Y (orig :286-292)"))));
 
     private ReferenceClipSampler() {
     }

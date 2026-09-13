@@ -1,0 +1,123 @@
+{
+  "registry": "terrible_terror",
+  "display_name": "Terrible Terror",
+  "status": "draft for the owner's edit (the third Tier-2 slice, 2026-09-13: on the hook under Amendment 2)",
+  "locomotion": "flyer",
+  "artist_scope": "full contract (Tier 2, the simple-cyclic (with a |cos| channel) class: geckolib_migration_design.md section 5); ON THE HOOK until idle and walk are delivered (Amendment 2)",
+  "character_sheet": "A small hostile dragon: two horns, a snout, a head with a jaw, a neck, a body, two flat wings, a four-part tail and four two-part legs. It flaps about and snaps. Read it as a hand-sized dragon: wings beating, jaw chattering, the front and back legs trotting.",
+  "size_notes": "Drawn at x0.75 of the rig on a 119x72 sheet.",
+  "labels": {
+    "horn1": "horn (left)",
+    "horn2": "horn (right)",
+    "snout": "snout",
+    "head": "head",
+    "jaw": "jaw",
+    "neck": "neck",
+    "body": "body",
+    "wing1": "wing (left)",
+    "wing2": "wing (right)",
+    "tail1": "tail 1",
+    "tail2": "tail 2",
+    "tail3": "tail 3",
+    "tail4": "tail 4 (tip)",
+    "fl11": "front leg 1 (upper)",
+    "fl12": "front leg 1 (lower)",
+    "fl21": "front leg 2 (upper)",
+    "fl22": "front leg 2 (lower)",
+    "bl21": "back leg 2 (upper)",
+    "bl22": "back leg 2 (lower)",
+    "bl11": "back leg 1 (upper)",
+    "bl12": "back leg 1 (lower)"
+  },
+  "groups": [
+    {
+      "name": "wings",
+      "bones": [
+        "wing1",
+        "wing2"
+      ],
+      "omega": 1.3,
+      "axis": "z",
+      "gait_scaled": false,
+      "amplitude": "-2.0 / +2.0 rad rests, then pi x 0.25 = 0.785 rad (45 deg), mirrored",
+      "plain": "the two flat wings beat about the body's long axis, mirrored",
+      "math": "wing1.zRot = -2.0 + cos(ageInTicks * 1.3) * pi * 0.25; wing2.zRot = 2.0 - (that)",
+      "source": "TerribleTerrorModel.setupAnim; TerribleTerrorGeoReplacement.java"
+    },
+    {
+      "name": "jaw",
+      "bones": [
+        "jaw"
+      ],
+      "omega": 0.3,
+      "axis": "x",
+      "gait_scaled": false,
+      "amplitude": "|cos| x pi x 0.1 = 0 .. 0.314 rad (0 .. 18 deg)",
+      "plain": "the jaw chatters open (the absolute value: never past closed)",
+      "math": "jaw.xRot = |cos(ageInTicks * 0.3) * pi * 0.1|",
+      "source": "TerribleTerrorModel.setupAnim; TerribleTerrorGeoReplacement.java"
+    },
+    {
+      "name": "legs",
+      "bones": [
+        "fl21",
+        "fl11",
+        "bl21",
+        "bl11"
+      ],
+      "omega": 1.25,
+      "axis": "x",
+      "gait_scaled": false,
+      "amplitude": "+-0.349 rad rests, then pi x 0.35 = 1.100 rad (63 deg)",
+      "plain": "the four upper legs trot: front 2 and back 1 forward while front 1 and back 2 swing back",
+      "math": "fl21.xRot = 0.349 + a; fl11.xRot = 0.349 - a; bl21.xRot = -0.349 - a; bl11.xRot = -0.349 + a; a = cos(ageInTicks * 1.25) * pi * 0.35",
+      "source": "TerribleTerrorModel.setupAnim; TerribleTerrorGeoReplacement.java"
+    }
+  ],
+  "behaviour": [
+    "This creature runs on its CLASSIC code (owner 2026-09-13, Amendment 2 to Amendment 1): its motion does not fit the exact transcription form, so the GeckoLib candidate poses it from the same formulas the classic renderer uses, and the shipped animation file carries NO clip. The self-gate opens when you deliver `idle` AND `walk` together (README rule, item 12); until then the game plays the classic code. The reference-only clip beside this sheet is that code sampled at fixed inputs - copy its timing, do not return it.",
+    "Three always-on rhythms; nothing is scaled by walking speed; the horns, snout, head, neck, body, the lower legs and the tail are static in the port's classic code (the register line of this slice records the 1.7.10 tail chain and lower legs the port drops). The horns, wings and tail tip are zero-thickness cubes (true normals, ENT-S-161; the classic face order).",
+    "The default renderer poses it from the classic code; the GeckoLib candidate sits behind the dev switch (-Dorespawn.dev.geckolibRenderers) and poses it from the same code until your clips arrive."
+  ],
+  "clips": [
+    {
+      "name": "idle",
+      "verdict": "author",
+      "note": "REQUIRED with walk: the gate opens on the pair (today nothing ships; the classic code plays)"
+    },
+    {
+      "name": "walk",
+      "verdict": "author",
+      "note": "REQUIRED with idle: the locomotion loop (the reference clip is the classic code's rhythm at full walking speed)"
+    },
+    {
+      "name": "fly",
+      "verdict": "author",
+      "note": "optional: falls back to walk (section 2.4)"
+    },
+    {
+      "name": "attack",
+      "verdict": "author",
+      "note": "a strike",
+      "length_seconds": 0.5
+    },
+    {
+      "name": "hurt",
+      "verdict": "author",
+      "note": "a flinch",
+      "length_seconds": 0.3
+    },
+    {
+      "name": "death",
+      "verdict": "author",
+      "note": "ruled 2026-09-06, Q3 (a): the vanilla death flip stays; a creature whose JSON ships a `death` clip gets the clip-replaces-flip mode, designed when the first such clip arrives (the Queen's own death clip the precedent) - a `death` delivered here plays under the flip until then",
+      "length_seconds": 1.0
+    }
+  ],
+  "extras": [],
+  "wishlist": [],
+  "effort_hours": null,
+  "formulas": [
+    "`TerribleTerrorModel.setupAnim` (TerribleTerrorModel.java; orig ModelTerribleTerror.java:171-177, 179, 181, 183 for the lines the port keeps, `render`, wingspeed 1.0 from `new ModelTerribleTerror()` in orig ClientProxyOreSpawn.java:457): (1) the wings roll by the cosine of the age in ticks times 1.3, times pi, times 0.25 - 45 degrees each way every 4.83 ticks - the left around -2.0 radians (plus), the right around 2.0 (minus) (orig :171-173); (2) the jaw pitches by the absolute value of the cosine of the age times 0.3, times pi, times 0.1 - a chatter between 0 and 18 degrees twice per 20.9 ticks (orig :174-175); (3) the leg swing is the cosine of the age times 1.25, times pi, times 0.35 (63 degrees every 5.03 ticks): front leg 2 pitches by 0.349 radians plus it, front leg 1 by 0.349 minus it, back leg 2 by -0.349 minus it, back leg 1 by -0.349 plus it (orig :176-177, :179, :181, :183; 1.7.10 also swung the four lower legs and chained the tail - the register line). The walk position, the walking speed, the head angles and the entity's state play no part. The GeckoLib hook is the same (TerribleTerrorGeoReplacement.applyCustomAnimations)."
+  ]
+}

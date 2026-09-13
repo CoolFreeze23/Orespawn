@@ -1,0 +1,91 @@
+{
+  "registry": "rubber_ducky",
+  "display_name": "Rubber Ducky",
+  "status": "draft for the owner's edit (the third Tier-2 slice, 2026-09-13: on the hook under Amendment 2)",
+  "locomotion": "walker",
+  "artist_scope": "full contract (Tier 2, the simple-cyclic (with a |cos| channel and a head look) class: geckolib_migration_design.md section 5); ON THE HOOK until idle and walk are delivered (Amendment 2)",
+  "character_sheet": "A giant tameable rubber duck: a flat bottom, a body, a back, a neck, a head with a beak, and two wings. It waddles and, if you are not careful, bites. Read it as a bath toy come alive: the head following your gaze, the wings flapping.",
+  "size_notes": "Drawn at x0.75 of the rig (halved for a baby) on a 64x64 sheet.",
+  "labels": {
+    "bottom": "bottom",
+    "body": "body",
+    "back": "back",
+    "neck": "neck",
+    "head": "head",
+    "beak": "beak",
+    "lwing": "left wing",
+    "rwing": "right wing"
+  },
+  "groups": [
+    {
+      "name": "wings",
+      "bones": [
+        "lwing",
+        "rwing"
+      ],
+      "omega": 1.0,
+      "axis": "z",
+      "gait_scaled": false,
+      "amplitude": "|cos| x pi x 0.15 = 0 .. 0.471 rad (0 .. 27 deg), mirrored",
+      "plain": "the wings flap out and back (the absolute value: they never cross under), mirrored",
+      "math": "lwing.zRot = -|cos(ageInTicks * 1.0) * pi * 0.15|; rwing.zRot = +that",
+      "source": "RubberDuckyModel.setupAnim; RubberDuckyGeoReplacement.java"
+    },
+    {
+      "name": "head",
+      "bones": [
+        "head",
+        "beak"
+      ],
+      "omega": null,
+      "axis": "y",
+      "gait_scaled": false,
+      "amplitude": "the head yaw",
+      "plain": "the head and beak turn with the gaze",
+      "math": "head.yRot = beak.yRot = rad(netHeadYaw)",
+      "source": "RubberDuckyModel.setupAnim; RubberDuckyGeoReplacement.java",
+      "phase": "the entity's head look (not a cycle)"
+    }
+  ],
+  "behaviour": [
+    "This creature runs on its CLASSIC code (owner 2026-09-13, Amendment 2 to Amendment 1): its motion does not fit the exact transcription form, so the GeckoLib candidate poses it from the same formulas the classic renderer uses, and the shipped animation file carries NO clip. The self-gate opens when you deliver `idle` AND `walk` together (README rule, item 12); until then the game plays the classic code. The reference-only clip beside this sheet is that code sampled at fixed inputs - copy its timing, do not return it.",
+    "One always-on rhythm and a head look; nothing is scaled by walking speed; the bottom, body, back and neck are static (the register line of this slice records the 1.7.10 pose the port simplifies: a latched, random flap and a sitting check).",
+    "The default renderer poses it from the classic code; the GeckoLib candidate sits behind the dev switch (-Dorespawn.dev.geckolibRenderers) and poses it from the same code until your clips arrive."
+  ],
+  "clips": [
+    {
+      "name": "idle",
+      "verdict": "author",
+      "note": "REQUIRED with walk: the gate opens on the pair (today nothing ships; the classic code plays)"
+    },
+    {
+      "name": "walk",
+      "verdict": "author",
+      "note": "REQUIRED with idle: the locomotion loop (the reference clip is the classic code's rhythm at full walking speed)"
+    },
+    {
+      "name": "attack",
+      "verdict": "author",
+      "note": "a strike",
+      "length_seconds": 0.5
+    },
+    {
+      "name": "hurt",
+      "verdict": "author",
+      "note": "a flinch",
+      "length_seconds": 0.3
+    },
+    {
+      "name": "death",
+      "verdict": "author",
+      "note": "ruled 2026-09-06, Q3 (a): the vanilla death flip stays; a creature whose JSON ships a `death` clip gets the clip-replaces-flip mode, designed when the first such clip arrives (the Queen's own death clip the precedent) - a `death` delivered here plays under the flip until then",
+      "length_seconds": 1.0
+    }
+  ],
+  "extras": [],
+  "wishlist": [],
+  "effort_hours": null,
+  "formulas": [
+    "`RubberDuckyModel.setupAnim` (RubberDuckyModel.java; orig ModelRubberDucky.java:88, 91, 111-114 for the lines the port keeps, `render`, wingspeed 1.0 from `new ModelRubberDucky(1.0f)` in orig ClientProxyOreSpawn.java:502): (1) the head and the beak yaw by the head yaw in radians (orig :88 multiplied it by 0.45 and pitched by 0.65 of the head pitch besides); (2) the wing angle is the cosine of the age in ticks times 1.0, times pi, times 0.15, made positive - a flap between 0 and 27 degrees twice per 6.28 ticks - the left wing rolls by its negative, the right by it (orig :91, :111-114; 1.7.10 latched the flap on a random roll, quadrupled it past five kills, stilled it while sitting and yawed the wings by half the angle - the register line). The walk position, the walking speed and the entity's state play no part in the port's pose. The GeckoLib hook is the same (RubberDuckyGeoReplacement.applyCustomAnimations)."
+  ]
+}

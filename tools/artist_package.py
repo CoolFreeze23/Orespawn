@@ -3640,9 +3640,18 @@ def check_folder(folder: Path, manifest_path: Path | None = None, lock_mode_over
                     findings.append(("WARN", f"{ap_.name}: clip '{name}' has no animation_length; the game takes the last key ({fmt(last_key, 3)} s) — declare it"))
             elif _finite_number(declared) and last_key > length + 1e-6:
                 findings.append(("REJECT", f"{ap_.name}: clip '{name}' has a key at {fmt(last_key, 3)} s beyond its animation_length {fmt(length, 3)} s (the declared length is shorter than the last key)"))
+        # T2c (2026-09-13, decided under the sampler step's doctrine): a phase-locked creature on its classic code ships a file with
+        # NO clip; its generated folder is not a delivery - every required row is "not delivered yet", a WARN, so the package's own
+        # untouched folder checks PASS. A file with some clips but not the pair is a partial delivery and REJECTs as before; a native
+        # creature's shipped file carries its clips, so an empty return from it is a deletion and REJECTs as before.
+        nothing_delivered = (not clips) and m.get("exact_transcription") is False and not native_controllers
         for name, spec in clips_by_name.items():
             if name not in clips:
-                if spec.get("code_triggered") and spec.get("required"):
+                if spec.get("required") and nothing_delivered:
+                    findings.append(("WARN", f"{ap_.name}: required clip '{name}' not delivered yet - the file carries no clip at all "
+                                             "(the package's own copy of a creature on its classic code, not a delivery; idle and walk "
+                                             "open the game's switch only together - deliver both)"))
+                elif spec.get("code_triggered") and spec.get("required"):
                     findings.append(("REJECT", f"{ap_.name}: code-triggered clip '{name}' is missing (renamed or removed)"))
                 elif spec.get("required"):
                     findings.append(("REJECT", f"{ap_.name}: required clip '{name}' is missing (idle and walk open the game's switch only "

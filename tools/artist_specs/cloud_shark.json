@@ -1,0 +1,113 @@
+{
+  "registry": "cloud_shark",
+  "display_name": "Cloud Shark",
+  "status": "draft for the owner's edit (the third Tier-2 slice, 2026-09-13: on the hook under Amendment 2)",
+  "locomotion": "flyer",
+  "artist_scope": "full contract (Tier 2, the simple-cyclic class: geckolib_migration_design.md section 5); ON THE HOOK until idle and walk are delivered (Amendment 2)",
+  "character_sheet": "A hostile shark that swims through the sky: a boxy body and rear body, a head with a hinged jaw, a top fin, a tail fin and two side fins. It hunts from the clouds. Read it as a shark in the air: side fins sculling, the tail fin sweeping, the jaw working.",
+  "size_notes": "Drawn at x1.0 of the rig on a 64x64 sheet.",
+  "labels": {
+    "body": "body",
+    "head": "head",
+    "jaw": "lower jaw",
+    "topfin": "dorsal fin",
+    "bbody": "rear body",
+    "fins": "tail fin",
+    "leftfin": "left side fin",
+    "rightfin": "right side fin"
+  },
+  "groups": [
+    {
+      "name": "leftfin",
+      "bones": [
+        "leftfin"
+      ],
+      "omega": 0.7,
+      "axis": "y",
+      "gait_scaled": false,
+      "amplitude": "+1.15 rad offset, then pi x 0.15 = 0.471 rad (27 deg)",
+      "plain": "the left side fin sculls slowly about the vertical around its rest angle",
+      "math": "leftfin.yRot = 1.15 + cos(ageInTicks * 0.7 * 1.0) * pi * 0.15",
+      "source": "ModelCloudShark.java:83-84; CloudSharkGeoReplacement.java",
+      "wingspeed": 1.0,
+      "omega_note": "the classic phase is ageInTicks x 0.7 x 1 (two float multiplies, left to right): the natural period is 2 pi / 0.7"
+    },
+    {
+      "name": "fins",
+      "bones": [
+        "rightfin",
+        "fins"
+      ],
+      "omega": 1.5,
+      "axis": "y",
+      "gait_scaled": false,
+      "amplitude": "rightfin: -0.9 rad offset, then pi x 0.15 = 0.471 rad (27 deg); fins: pi x 0.25 = 0.785 rad (45 deg)",
+      "plain": "the right side fin and the tail fin sweep together at one faster rhythm, each with its own amplitude and rest angle",
+      "math": "rightfin.yRot = -0.9 + cos(ageInTicks * 1.5 * 1.0) * pi * 0.15; fins.yRot = cos(ageInTicks * 1.5 * 1.0) * pi * 0.25",
+      "source": "ModelCloudShark.java:85-87; CloudSharkGeoReplacement.java",
+      "wingspeed": 1.0,
+      "omega_note": "the classic phase is ageInTicks x 1.5 x 1 (two float multiplies, left to right): the natural period is 2 pi / 1.5"
+    },
+    {
+      "name": "jaw",
+      "bones": [
+        "jaw"
+      ],
+      "omega": 0.5,
+      "axis": "x",
+      "gait_scaled": false,
+      "amplitude": "+0.5 rad offset, then pi x 0.1 = 0.314 rad (18 deg)",
+      "plain": "the jaw works slowly open and shut around a half-open rest",
+      "math": "jaw.xRot = 0.5 + cos(ageInTicks * 0.5 * 1.0) * pi * 0.1",
+      "source": "ModelCloudShark.java:88-89; CloudSharkGeoReplacement.java",
+      "wingspeed": 1.0,
+      "omega_note": "the classic phase is ageInTicks x 0.5 x 1 (two float multiplies, left to right): the natural period is 2 pi / 0.5"
+    }
+  ],
+  "behaviour": [
+    "This creature runs on its CLASSIC code (owner 2026-09-13, Amendment 2 to Amendment 1): its motion does not fit the exact transcription form, so the GeckoLib candidate poses it from the same formulas the classic renderer uses, and the shipped animation file carries NO clip. The self-gate opens when you deliver `idle` AND `walk` together (README rule, item 12); until then the game plays the classic code. The reference-only clip beside this sheet is that code sampled at fixed inputs - copy its timing, do not return it.",
+    "Three rhythms run at all times, none scaled by walking speed: a slow left-fin scull, a faster right-fin-and-tail sweep, a slow jaw; the body, head and dorsal fin are static. The side fins and the tail fin are zero-thickness cubes: the seam lights them by their true normals (ENT-S-161) and draws their two faces in the classic order.",
+    "The default renderer poses it from the classic code; the GeckoLib candidate sits behind the dev switch (-Dorespawn.dev.geckolibRenderers) and poses it from the same code until your clips arrive."
+  ],
+  "clips": [
+    {
+      "name": "idle",
+      "verdict": "author",
+      "note": "REQUIRED with walk: the gate opens on the pair (today nothing ships; the classic code plays)"
+    },
+    {
+      "name": "walk",
+      "verdict": "author",
+      "note": "REQUIRED with idle: the locomotion loop (the reference clip is the classic code's rhythm at full walking speed)"
+    },
+    {
+      "name": "fly",
+      "verdict": "author",
+      "note": "optional: falls back to walk (section 2.4)"
+    },
+    {
+      "name": "attack",
+      "verdict": "author",
+      "note": "a strike",
+      "length_seconds": 0.5
+    },
+    {
+      "name": "hurt",
+      "verdict": "author",
+      "note": "a flinch",
+      "length_seconds": 0.3
+    },
+    {
+      "name": "death",
+      "verdict": "author",
+      "note": "ruled 2026-09-06, Q3 (a): the vanilla death flip stays; a creature whose JSON ships a `death` clip gets the clip-replaces-flip mode, designed when the first such clip arrives (the Queen's own death clip the precedent) - a `death` delivered here plays under the flip until then",
+      "length_seconds": 1.0
+    }
+  ],
+  "extras": [],
+  "wishlist": [],
+  "effort_hours": null,
+  "formulas": [
+    "`ModelCloudShark.setupAnim` (ModelCloudShark.java:82-90; orig ModelCloudShark.java:80-87, `render`, wingspeed 1.0 from `new ModelCloudShark(1.0f)` in orig ClientProxyOreSpawn.java:471): (1) the left side fin yaws by 1.15 radians plus the cosine of the age in ticks times 0.7 (times the wingspeed 1.0), times pi, times 0.15 - a 27-degree scull every 8.98 ticks around a 66-degree rest (orig :81-82); (2) the right side fin yaws by -0.9 radians plus the cosine of the age times 1.5, times pi, times 0.15 - the same 27 degrees every 4.19 ticks around a -52-degree rest (orig :83-84); (3) the tail fin yaws by the cosine of the age times 1.5, times pi, times 0.25 - 45 degrees each way at the right fin's rhythm (orig :85); (4) the jaw pitches by 0.5 radians plus the cosine of the age times 0.5, times pi, times 0.1 - 18 degrees every 12.57 ticks around a 29-degree open rest (orig :86-87). The walk position, the walking speed, the head angles and the entity's state play no part. The GeckoLib hook is the same (CloudSharkGeoReplacement.applyCustomAnimations)."
+  ]
+}

@@ -1,0 +1,69 @@
+{
+  "registry": "skate",
+  "display_name": "Skate",
+  "status": "draft for the owner's edit (the third Tier-2 slice, 2026-09-13: on the hook under Amendment 2)",
+  "locomotion": "swimmer",
+  "artist_scope": "full contract (Tier 2, the simple-cyclic (with the threshold idiom) class: geckolib_migration_design.md section 5); ON THE HOOK until idle and walk are delivered (Amendment 2)",
+  "character_sheet": "A flat ray-like fish: a wide body, a tail and a tail tip. It glides along the water. Read it as a skate: the tail tip flicking with the swimming speed, idling with a slow twitch when still.",
+  "size_notes": "Drawn at x0.75 of the rig on a 64x32 sheet.",
+  "labels": {
+    "body": "body",
+    "tail1": "tail",
+    "Shape1": "tail tip"
+  },
+  "groups": [
+    {
+      "name": "tail",
+      "bones": [
+        "Shape1"
+      ],
+      "omega": 1.2,
+      "axis": "x",
+      "gait_scaled": true,
+      "amplitude": "moving (walking speed above a tenth): 0.785 rad rest, then pi x 0.15 = 0.471 rad (27 deg) x the walking speed at 1.2 rad/tick; idle: pi x 0.05 = 0.157 rad (9 deg) at 0.4 rad/tick",
+      "plain": "the tail tip flicks fast and wide when the skate moves (the swing scaled by its speed) and twitches slowly and shallowly when it is still, around a 45-degree rest",
+      "math": "Shape1.xRot = 0.785 + (amount > 0.1 ? cos(t * 1.2) * pi * 0.15 * amount : cos(t * 0.4) * pi * 0.05)",
+      "source": "ModelSkate.setupAnim; SkateGeoReplacement.java"
+    }
+  ],
+  "behaviour": [
+    "This creature runs on its CLASSIC code (owner 2026-09-13, Amendment 2 to Amendment 1): its motion does not fit the exact transcription form, so the GeckoLib candidate poses it from the same formulas the classic renderer uses, and the shipped animation file carries NO clip. The self-gate opens when you deliver `idle` AND `walk` together (README rule, item 12); until then the game plays the classic code. The reference-only clip beside this sheet is that code sampled at fixed inputs - copy its timing, do not return it.",
+    "One rhythm with a threshold: above a walking speed of a tenth the fast, speed-scaled flick; at or below it the slow idle twitch (the second set's item 4 (c): the threshold stays as the code has it; a keyframed walk cannot carry the two branches, so the artist's `walk` is the moving flick and `idle` the still twitch - the controller's speed blend replaces the threshold).",
+    "The default renderer poses it from the classic code; the GeckoLib candidate sits behind the dev switch (-Dorespawn.dev.geckolibRenderers) and poses it from the same code until your clips arrive."
+  ],
+  "clips": [
+    {
+      "name": "idle",
+      "verdict": "author",
+      "note": "REQUIRED with walk: the gate opens on the pair (today nothing ships; the classic code plays)"
+    },
+    {
+      "name": "walk",
+      "verdict": "author",
+      "note": "REQUIRED with idle: the locomotion loop (the reference clip is the classic code's rhythm at full walking speed)"
+    },
+    {
+      "name": "swim",
+      "verdict": "author",
+      "note": "optional: falls back to walk (section 2.4)"
+    },
+    {
+      "name": "hurt",
+      "verdict": "author",
+      "note": "a flinch",
+      "length_seconds": 0.3
+    },
+    {
+      "name": "death",
+      "verdict": "author",
+      "note": "ruled 2026-09-06, Q3 (a): the vanilla death flip stays; a creature whose JSON ships a `death` clip gets the clip-replaces-flip mode, designed when the first such clip arrives (the Queen's own death clip the precedent) - a `death` delivered here plays under the flip until then",
+      "length_seconds": 1.0
+    }
+  ],
+  "extras": [],
+  "wishlist": [],
+  "effort_hours": null,
+  "formulas": [
+    "`ModelSkate.setupAnim` (ModelSkate.java; orig ModelSkate.java:48-49, `render`, wingspeed 1.0 from `new ModelSkate(1.0f)` in orig ClientProxyOreSpawn.java:486, unused by the pose): while the walking speed is above a tenth, the tail tip's swing is the cosine of the age in ticks times 1.2, times pi, times 0.15, times the walking speed (up to 27 degrees each way every 5.24 ticks); at or below a tenth it is the cosine of the age times 0.4, times pi, times 0.05 (9 degrees every 15.7 ticks); the tail tip pitches by 0.785 radians plus that swing. The walk position, the head angles and the entity's state play no part. The GeckoLib hook is the same (SkateGeoReplacement.applyCustomAnimations)."
+  ]
+}

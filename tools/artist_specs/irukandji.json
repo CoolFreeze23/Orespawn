@@ -1,0 +1,124 @@
+{
+  "registry": "irukandji",
+  "display_name": "Irukandji",
+  "status": "draft for the owner's edit (the third Tier-2 slice, 2026-09-13: on the hook under Amendment 2)",
+  "locomotion": "swimmer",
+  "artist_scope": "full contract (Tier 2, the simple-cyclic (with position chains) class: geckolib_migration_design.md section 5); ON THE HOOK until idle and walk are delivered (Amendment 2)",
+  "character_sheet": "A small hostile jellyfish: a bell body and four two-part tentacles. It drifts and stings. Read it as a drifting jelly: every tentacle root swaying on its own pair of rhythms, every tip hanging from its root and swaying on two more.",
+  "size_notes": "Drawn at x0.25 of the rig on a 64x32 sheet.",
+  "labels": {
+    "body": "bell",
+    "t11": "tentacle 1, root",
+    "t12": "tentacle 1, tip",
+    "t21": "tentacle 2, root",
+    "t22": "tentacle 2, tip",
+    "t31": "tentacle 3, root",
+    "t32": "tentacle 3, tip",
+    "t41": "tentacle 4, root",
+    "t42": "tentacle 4, tip"
+  },
+  "groups": [
+    {
+      "name": "tentacle_1",
+      "bones": [
+        "t11",
+        "t12"
+      ],
+      "omega": 0.55,
+      "axis": "x and z",
+      "gait_scaled": false,
+      "amplitude": "root pitch pi x 0.15 at 0.55, root roll pi x 0.1 at 0.35; tip pitch pi x 0.15 at 0.45, tip roll pi x 0.1 at 0.25; the tip's pivot follows the root by 7 units",
+      "plain": "the first tentacle's root sways on two rhythms; its tip hangs 7 units down the root's direction and sways on two more",
+      "math": "t11.xRot = cos(t*0.55)*pi*0.15; t11.zRot = cos(t*0.35)*pi*0.1; t12.z = t11.z + sin(t11.xRot)*7; t12.x = t11.x - sin(t11.zRot)*cos(t11.xRot)*7; t12.y = t11.y + cos(t11.zRot)*cos(t11.xRot)*7; t12.xRot = cos(t*0.45)*pi*0.15; t12.zRot = cos(t*0.25)*pi*0.1",
+      "source": "ModelIrukandji.setupAnim; IrukandjiGeoReplacement.tentacle"
+    },
+    {
+      "name": "tentacle_2",
+      "bones": [
+        "t21",
+        "t22"
+      ],
+      "omega": 0.65,
+      "axis": "x and z",
+      "gait_scaled": false,
+      "amplitude": "the same shape at 0.65 / 0.45 (root) and 0.55 / 0.35 (tip)",
+      "plain": "the second tentacle the same shape at its own rhythms",
+      "math": "as tentacle_1 with 0.65, 0.45, 0.55, 0.35",
+      "source": "ModelIrukandji.setupAnim; IrukandjiGeoReplacement.tentacle"
+    },
+    {
+      "name": "tentacle_3",
+      "bones": [
+        "t31",
+        "t32"
+      ],
+      "omega": 0.5,
+      "axis": "x and z",
+      "gait_scaled": false,
+      "amplitude": "the same shape at 0.5 / 0.3 (root) and 0.4 / 0.2 (tip)",
+      "plain": "the third tentacle the same shape at its own rhythms",
+      "math": "as tentacle_1 with 0.5, 0.3, 0.4, 0.2",
+      "source": "ModelIrukandji.setupAnim; IrukandjiGeoReplacement.tentacle"
+    },
+    {
+      "name": "tentacle_4",
+      "bones": [
+        "t41",
+        "t42"
+      ],
+      "omega": 0.57,
+      "axis": "x and z",
+      "gait_scaled": false,
+      "amplitude": "the same shape at 0.57 / 0.37 (root) and 0.48 / 0.29 (tip)",
+      "plain": "the fourth tentacle the same shape at its own rhythms",
+      "math": "as tentacle_1 with 0.57, 0.37, 0.48, 0.29",
+      "source": "ModelIrukandji.setupAnim; IrukandjiGeoReplacement.tentacle"
+    }
+  ],
+  "behaviour": [
+    "This creature runs on its CLASSIC code (owner 2026-09-13, Amendment 2 to Amendment 1): its motion does not fit the exact transcription form, so the GeckoLib candidate poses it from the same formulas the classic renderer uses, and the shipped animation file carries NO clip. The self-gate opens when you deliver `idle` AND `walk` together (README rule, item 12); until then the game plays the classic code. The reference-only clip beside this sheet is that code sampled at fixed inputs - copy its timing, do not return it.",
+    "Sixteen always-on rhythms; nothing is scaled by walking speed; the bell is static. Each tentacle tip's pivot FOLLOWS its root (a position write): a keyframed version needs position keys on the four tips, or a re-parented rig with the tips as children of the roots.",
+    "The default renderer poses it from the classic code; the GeckoLib candidate sits behind the dev switch (-Dorespawn.dev.geckolibRenderers) and poses it from the same code until your clips arrive."
+  ],
+  "clips": [
+    {
+      "name": "idle",
+      "verdict": "author",
+      "note": "REQUIRED with walk: the gate opens on the pair (today nothing ships; the classic code plays)"
+    },
+    {
+      "name": "walk",
+      "verdict": "author",
+      "note": "REQUIRED with idle: the locomotion loop (the reference clip is the classic code's rhythm at full walking speed)"
+    },
+    {
+      "name": "swim",
+      "verdict": "author",
+      "note": "optional: falls back to walk (section 2.4)"
+    },
+    {
+      "name": "attack",
+      "verdict": "author",
+      "note": "a strike",
+      "length_seconds": 0.5
+    },
+    {
+      "name": "hurt",
+      "verdict": "author",
+      "note": "a flinch",
+      "length_seconds": 0.3
+    },
+    {
+      "name": "death",
+      "verdict": "author",
+      "note": "ruled 2026-09-06, Q3 (a): the vanilla death flip stays; a creature whose JSON ships a `death` clip gets the clip-replaces-flip mode, designed when the first such clip arrives (the Queen's own death clip the precedent) - a `death` delivered here plays under the flip until then",
+      "length_seconds": 1.0
+    }
+  ],
+  "extras": [],
+  "wishlist": [],
+  "effort_hours": null,
+  "formulas": [
+    "`ModelIrukandji.setupAnim` (ModelIrukandji.java; orig ModelIrukandji.java:90-133, `render`): four identical blocks, one per tentacle, each with four rhythms - for tentacle 1 (root t11, tip t12): the root pitches by the cosine of the age in ticks times 0.55, times pi, times 0.15 (27 degrees every 11.4 ticks); the tip's z becomes the root's z plus the sine of that pitch times 7; the root rolls by the cosine of the age times 0.35, times pi, times 0.1 (18 degrees every 18 ticks); the tip's x becomes the root's x minus the sine of that roll times the cosine of the pitch times 7, and its y the root's y plus the cosine of the roll times the cosine of the pitch times 7 - the tip hangs 7 units along the root's direction, a POSITION write (orig :90-98); the tip then pitches by the cosine of the age times 0.45, times pi, times 0.15 and rolls by the cosine of the age times 0.25, times pi, times 0.1 (orig :99-100). Tentacle 2 uses 0.65 / 0.45 (root) and 0.55 / 0.35 (tip) (orig :101-111), tentacle 3 0.5 / 0.3 and 0.4 / 0.2 (orig :112-122), tentacle 4 0.57 / 0.37 and 0.48 / 0.29 (orig :123-133). The roots' pivots are never written (the bind). The walk position, the walking speed, the head angles and the entity's state play no part. The GeckoLib hook is the same (IrukandjiGeoReplacement.tentacle, the follow through `moveTo`)."
+  ]
+}

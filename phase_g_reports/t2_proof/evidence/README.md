@@ -256,5 +256,202 @@ The independent gates are:
 - Keyframe density search (an output): gait fewest 15 keys/bone at 0.00216275 over 3157296 comparisons, one fewer 0.00271118; jaws fewest 8 keys/bone at 0.00229527 over 526216 comparisons, one fewer 0.00398448; dense schedule of the shipped-candidate clip: gait 0.00216275, jaws 0.00229527; reversed schedule max delta 0.
 - Keyframe late-prime twin (TEST-005): a manager built before its clips were served (unserved through the slot at age 137.371, no tick, bone motion 0), primed at age 138.371: gait declared 20 ticks, 8.59437 clip ticks per age tick, LUT index 30183, clip tick 9.21112; jaws declared 20 ticks, 1.27324 clip ticks per age tick, LUT index 53016, clip tick 16.1792 - every fact the from-zero prime's; pose delta 0 at the prime, 0 over the follow-ups.
 
+## model_cloudshark (Tier 2)
+
+- Exact bones: 8; cubes: 8.
+- Geometry maximum corner delta: 2.34307490407e-07 blocks (epsilon 1e-05).
+- Surface maximum UV delta: 0; normal delta: 1.16619037897e-07.
+- Animation maximum rotation delta: 0 radians (epsilon 2e-06).
+- Visual maximum changed fraction: 0; maximum mean absolute error: 0.
+- Draw order: GeckoLib bone order equals the classic draw order over 6 captures (48 draws).
+
+- Accepted path: production OreSpawnGeoReplacement.applyCustomAnimations through OreSpawnGeoReplacementModel.setCustomAnimations (`danger.orespawn.entity.client.CloudSharkGeoReplacement`).
+- Rotation maximum delta 0 radians; position maximum delta 0 model units over 144 position channels; inputs {'limb_swing': 0.0, 'limb_swing_amounts': [0.0], 'net_head_yaw_degrees': 0.0, 'head_pitch_degrees': 0.0}.
+- Visual z-fight pixels compared, none excluded (G2 root-order contract): maximum contested fraction 0.0490264892578, a diagnostic.
+
+## model_bee (Tier 2)
+
+- Exact bones: 23; cubes: 23.
+- Geometry maximum corner delta: 5.11175116404e-07 blocks (epsilon 1e-05).
+- Surface maximum UV delta: 0; normal delta: 2.51865043267e-07.
+- Animation maximum rotation delta: 0 radians (epsilon 2e-06).
+- Visual maximum changed fraction: 0.000930786132812; maximum mean absolute error: 0.0394999186198.
+- Draw order: GeckoLib bone order equals the classic draw order over 11 captures (253 draws).
+
+- Accepted path: production OreSpawnGeoReplacement.applyCustomAnimations posed from declared entity states through the entity's pose interface; compiled poseFrom on the same states (`danger.orespawn.entity.client.BeeGeoReplacement`).
+- Entity states: ['idle', 'attacking']; rotation maximum delta 0 radians; position maximum delta 2.00000000117e-07 model units; hidden-bone checks 10.
+- Visual z-fight pixels compared, none excluded (G2 root-order contract): maximum contested fraction 0.0133819580078, a diagnostic.
+
+## model_fairy (Tier 2)
+
+- Exact bones: 15; cubes: 15.
+- Geometry maximum corner delta: 2.31516737982e-07 blocks (epsilon 1e-05).
+- Surface maximum UV delta: 0; normal delta: 1.20016665446e-07.
+- Animation maximum rotation delta: 0 radians (epsilon 2e-06).
+- Visual maximum changed fraction: 0; maximum mean absolute error: 0.
+- Draw order: GeckoLib bone order equals the classic draw order over 6 captures (90 draws).
+
+- Accepted path: production OreSpawnGeoReplacement.applyCustomAnimations through OreSpawnGeoReplacementModel.setCustomAnimations (`danger.orespawn.entity.client.FairyGeoReplacement`).
+- Rotation maximum delta 0 radians; position maximum delta 0 model units over 270 position channels; inputs {'limb_swing': 0.0, 'limb_swing_amounts': [0.0], 'net_head_yaw_degrees': 75.0, 'head_pitch_degrees': 12.0}.
+- Visual z-fight pixels compared, none excluded (G2 root-order contract): maximum contested fraction 0.00724792480469, a diagnostic.
+- Render mode: entity_translucent (vertex colour (255, 255, 255, 255), light world): blend SRC_ALPHA / ONE_MINUS_SRC_ALPHA / ONE / ONE_MINUS_SRC_ALPHA over the background in emission order, LEQUAL depth test with the depth written (fragments within 1e-05 blocks are one plane and all pass), texel alpha < 0.1 discarded; the same emulation on both sides.
+- Render state observed: both sides request entity_translucent (RenderType.entityTranslucent, the classic model's own render-type function - the same object on the candidate), vertex colour (255, 255, 255, 255) and packed light 0 at every captured vertex (2160 classic + 2160 candidate).
+
+## model_gammametroid (Tier 2)
+
+- Exact bones: 21; cubes: 21.
+- Geometry maximum corner delta: 3.64005494372e-07 blocks (epsilon 1e-05).
+- Surface maximum UV delta: 0; normal delta: 2.0037215376e-07.
+- Animation maximum rotation delta: 0 radians (epsilon 2e-06).
+- Visual maximum changed fraction: 1.52587890625e-05; maximum mean absolute error: 0.000462849934896.
+- Draw order: GeckoLib bone order equals the classic draw order over 6 captures (126 draws).
+
+- Accepted path: production OreSpawnGeoReplacement.applyCustomAnimations through OreSpawnGeoReplacementModel.setCustomAnimations (`danger.orespawn.entity.client.GammaMetroidGeoReplacement`).
+- Rotation maximum delta 0 radians; position maximum delta 0 model units over 378 position channels; inputs {'limb_swing': 0.0, 'limb_swing_amounts': [0.0], 'net_head_yaw_degrees': 0.0, 'head_pitch_degrees': 0.0}.
+- Visual z-fight pixels compared, none excluded (G2 root-order contract): maximum contested fraction 0.000732421875, a diagnostic.
+
+## model_irukandji (Tier 2)
+
+- Exact bones: 9; cubes: 9.
+- Geometry maximum corner delta: 3.01662062532e-07 blocks (epsilon 1e-05).
+- Surface maximum UV delta: 0; normal delta: 1.51327459483e-07.
+- Animation maximum rotation delta: 0 radians (epsilon 2e-06).
+- Visual maximum changed fraction: 0; maximum mean absolute error: 0.
+- Draw order: GeckoLib bone order equals the classic draw order over 6 captures (54 draws).
+
+- Accepted path: production OreSpawnGeoReplacement.applyCustomAnimations through OreSpawnGeoReplacementModel.setCustomAnimations (`danger.orespawn.entity.client.IrukandjiGeoReplacement`).
+- Rotation maximum delta 0 radians; position maximum delta 0 model units over 162 position channels; inputs {'limb_swing': 0.0, 'limb_swing_amounts': [0.0], 'net_head_yaw_degrees': 0.0, 'head_pitch_degrees': 0.0}.
+- Visual z-fight pixels compared, none excluded (G2 root-order contract): maximum contested fraction 0, a diagnostic.
+
+## model_skate (Tier 2)
+
+- Exact bones: 3; cubes: 3.
+- Geometry maximum corner delta: 2.99999999953e-07 blocks (epsilon 1e-05).
+- Surface maximum UV delta: 0; normal delta: 0.
+- Animation maximum rotation delta: 0 radians (epsilon 2e-06).
+- Visual maximum changed fraction: 0; maximum mean absolute error: 0.
+- Draw order: GeckoLib bone order equals the classic draw order over 21 captures (63 draws).
+
+- Accepted path: production OreSpawnGeoReplacement.applyCustomAnimations through OreSpawnGeoReplacementModel.setCustomAnimations (`danger.orespawn.entity.client.SkateGeoReplacement`).
+- Rotation maximum delta 0 radians; position maximum delta 0 model units over 189 position channels; inputs {'limb_swing': 0.0, 'limb_swing_amounts': [0.0, 0.25, 0.5, 1.0], 'net_head_yaw_degrees': 0.0, 'head_pitch_degrees': 0.0}.
+- Visual z-fight pixels compared, none excluded (G2 root-order contract): maximum contested fraction 0.00450134277344, a diagnostic.
+
+## model_rubberducky (Tier 2)
+
+- Exact bones: 8; cubes: 8.
+- Geometry maximum corner delta: 6.16116871737e-08 blocks (epsilon 1e-05).
+- Surface maximum UV delta: 0; normal delta: 0.
+- Animation maximum rotation delta: 0 radians (epsilon 2e-06).
+- Visual maximum changed fraction: 1.52587890625e-05; maximum mean absolute error: 0.000233968098958.
+- Draw order: GeckoLib bone order equals the classic draw order over 6 captures (48 draws).
+
+- Accepted path: production OreSpawnGeoReplacement.applyCustomAnimations through OreSpawnGeoReplacementModel.setCustomAnimations (`danger.orespawn.entity.client.RubberDuckyGeoReplacement`).
+- Rotation maximum delta 0 radians; position maximum delta 0 model units over 144 position channels; inputs {'limb_swing': 0.0, 'limb_swing_amounts': [0.0], 'net_head_yaw_degrees': 30.0, 'head_pitch_degrees': 10.0}.
+- Visual z-fight pixels compared, none excluded (G2 root-order contract): maximum contested fraction 1.52587890625e-05, a diagnostic.
+
+## model_terribleterror (Tier 2)
+
+- Exact bones: 21; cubes: 21.
+- Geometry maximum corner delta: 3.01496268812e-07 blocks (epsilon 1e-05).
+- Surface maximum UV delta: 0; normal delta: 1.50083310175e-07.
+- Animation maximum rotation delta: 0 radians (epsilon 2e-06).
+- Visual maximum changed fraction: 0; maximum mean absolute error: 0.
+- Draw order: GeckoLib bone order equals the classic draw order over 6 captures (126 draws).
+
+- Accepted path: production OreSpawnGeoReplacement.applyCustomAnimations through OreSpawnGeoReplacementModel.setCustomAnimations (`danger.orespawn.entity.client.TerribleTerrorGeoReplacement`).
+- Rotation maximum delta 0 radians; position maximum delta 0 model units over 378 position channels; inputs {'limb_swing': 0.0, 'limb_swing_amounts': [0.0], 'net_head_yaw_degrees': 0.0, 'head_pitch_degrees': 0.0}.
+- Visual z-fight pixels compared, none excluded (G2 root-order contract): maximum contested fraction 0.0770263671875, a diagnostic.
+
+## model_wormlarge (Tier 2)
+
+- Exact bones: 23; cubes: 23.
+- Geometry maximum corner delta: 5.13419906177e-07 blocks (epsilon 1e-05).
+- Surface maximum UV delta: 0; normal delta: 1.88679622695e-07.
+- Animation maximum rotation delta: 0 radians (epsilon 2e-06).
+- Visual maximum changed fraction: 0; maximum mean absolute error: 0.
+- Draw order: GeckoLib bone order equals the classic draw order over 6 captures (138 draws).
+
+- Accepted path: production OreSpawnGeoReplacement.applyCustomAnimations through OreSpawnGeoReplacementModel.setCustomAnimations (`danger.orespawn.entity.client.WormLargeGeoReplacement`).
+- Rotation maximum delta 0 radians; position maximum delta 2.99999999953e-06 model units over 414 position channels; inputs {'limb_swing': 0.0, 'limb_swing_amounts': [0.0], 'net_head_yaw_degrees': 0.0, 'head_pitch_degrees': 0.0}.
+- Visual z-fight pixels compared, none excluded (G2 root-order contract): maximum contested fraction 1.52587890625e-05, a diagnostic.
+
+## model_wormmedium (Tier 2)
+
+- Exact bones: 8; cubes: 8.
+- Geometry maximum corner delta: 3.01522801743e-07 blocks (epsilon 1e-05).
+- Surface maximum UV delta: 0; normal delta: 1.49999999977e-07.
+- Animation maximum rotation delta: 0 radians (epsilon 2e-06).
+- Visual maximum changed fraction: 0; maximum mean absolute error: 0.
+- Draw order: GeckoLib bone order equals the classic draw order over 6 captures (48 draws).
+
+- Accepted path: production OreSpawnGeoReplacement.applyCustomAnimations through OreSpawnGeoReplacementModel.setCustomAnimations (`danger.orespawn.entity.client.WormMediumGeoReplacement`).
+- Rotation maximum delta 0 radians; position maximum delta 4.99999999626e-07 model units over 144 position channels; inputs {'limb_swing': 0.0, 'limb_swing_amounts': [0.0], 'net_head_yaw_degrees': 0.0, 'head_pitch_degrees': 0.0}.
+- Visual z-fight pixels compared, none excluded (G2 root-order contract): maximum contested fraction 0, a diagnostic.
+
+## model_wormsmall (Tier 2)
+
+- Exact bones: 3; cubes: 3.
+- Geometry maximum corner delta: 1.98494332387e-07 blocks (epsilon 1e-05).
+- Surface maximum UV delta: 0; normal delta: 1.51380315737e-07.
+- Animation maximum rotation delta: 0 radians (epsilon 2e-06).
+- Visual maximum changed fraction: 1.52587890625e-05; maximum mean absolute error: 0.0001220703125.
+- Draw order: GeckoLib bone order equals the classic draw order over 6 captures (18 draws).
+
+- Accepted path: production OreSpawnGeoReplacement.applyCustomAnimations through OreSpawnGeoReplacementModel.setCustomAnimations (`danger.orespawn.entity.client.WormSmallGeoReplacement`).
+- Rotation maximum delta 0 radians; position maximum delta 0 model units over 54 position channels; inputs {'limb_swing': 0.0, 'limb_swing_amounts': [0.0], 'net_head_yaw_degrees': 0.0, 'head_pitch_degrees': 0.0}.
+- Visual z-fight pixels compared, none excluded (G2 root-order contract): maximum contested fraction 1.52587890625e-05, a diagnostic.
+
+## model_cannonfodder (Tier 2)
+
+- Exact bones: 6; cubes: 6.
+- Geometry maximum corner delta: 2.00000000117e-07 blocks (epsilon 1e-05).
+- Surface maximum UV delta: 0; normal delta: 9.99999999474e-08.
+- Animation maximum rotation delta: 0 radians (epsilon 2e-06).
+- Visual maximum changed fraction: 0; maximum mean absolute error: 0.
+- Draw order: GeckoLib bone order equals the classic draw order over 21 captures (126 draws).
+
+- Accepted path: production OreSpawnGeoReplacement.applyCustomAnimations through OreSpawnGeoReplacementModel.setCustomAnimations (`danger.orespawn.entity.client.CannonFodderGeoReplacement`).
+- Rotation maximum delta 0 radians; position maximum delta 0 model units over 378 position channels; inputs {'limb_swing': 3.0, 'limb_swing_amounts': [0.0, 0.25, 0.5, 1.0], 'net_head_yaw_degrees': 30.0, 'head_pitch_degrees': 10.0}.
+- Visual z-fight pixels compared, none excluded (G2 root-order contract): maximum contested fraction 0, a diagnostic.
+
+## model_caterkiller (Tier 2)
+
+- Exact bones: 80; cubes: 80.
+- Geometry maximum corner delta: 1.09544511431e-06 blocks (epsilon 1e-05).
+- Surface maximum UV delta: 0; normal delta: 1.62788205984e-07.
+- Animation maximum rotation delta: 0 radians (epsilon 2e-06).
+- Visual maximum changed fraction: 0; maximum mean absolute error: 0.
+- Draw order: GeckoLib bone order equals the classic draw order over 41 captures (3280 draws).
+
+- Accepted path: production OreSpawnGeoReplacement.applyCustomAnimations posed from declared entity states through the entity's pose interface; compiled poseFrom on the same states (`danger.orespawn.entity.client.CaterKillerGeoReplacement`).
+- Entity states: ['idle', 'attacking']; rotation maximum delta 0 radians; position maximum delta 0 model units; hidden-bone checks 40.
+- Visual z-fight pixels compared, none excluded (G2 root-order contract): maximum contested fraction 0.00871276855469, a diagnostic.
+
+## model_cricket (Tier 2)
+
+- Exact bones: 11; cubes: 11.
+- Geometry maximum corner delta: 3.32415402697e-07 blocks (epsilon 1e-05).
+- Surface maximum UV delta: 0; normal delta: 2.03960780545e-07.
+- Animation maximum rotation delta: 0 radians (epsilon 2e-06).
+- Visual maximum changed fraction: 0; maximum mean absolute error: 0.
+- Draw order: GeckoLib bone order equals the classic draw order over 21 captures (231 draws).
+
+- Accepted path: production OreSpawnGeoReplacement.applyCustomAnimations through OreSpawnGeoReplacementModel.setCustomAnimations (`danger.orespawn.entity.client.CricketGeoReplacement`).
+- Rotation maximum delta 0 radians; position maximum delta 0 model units over 693 position channels; inputs {'limb_swing': 0.0, 'limb_swing_amounts': [0.0, 0.25, 0.5, 1.0], 'net_head_yaw_degrees': 0.0, 'head_pitch_degrees': 0.0}.
+- Visual z-fight pixels compared, none excluded (G2 root-order contract): maximum contested fraction 7.62939453125e-05, a diagnostic.
+
+## model_herculesbeetle (Tier 2)
+
+- Exact bones: 37; cubes: 37.
+- Geometry maximum corner delta: 6.08276252947e-07 blocks (epsilon 1e-05).
+- Surface maximum UV delta: 0; normal delta: 1.57480157531e-07.
+- Animation maximum rotation delta: 0 radians (epsilon 2e-06).
+- Visual maximum changed fraction: 0; maximum mean absolute error: 0.
+- Draw order: GeckoLib bone order equals the classic draw order over 41 captures (1517 draws).
+
+- Accepted path: production OreSpawnGeoReplacement.applyCustomAnimations posed from declared entity states through the entity's pose interface; compiled poseFrom on the same states (`danger.orespawn.entity.client.HerculesBeetleGeoReplacement`).
+- Entity states: ['idle', 'attacking']; rotation maximum delta 0 radians; position maximum delta 0 model units; hidden-bone checks 40.
+- Visual z-fight pixels compared, none excluded (G2 root-order contract): maximum contested fraction 0, a diagnostic.
+
 Reproduce with `gradlew.bat g1Parity`. Any mismatch exits nonzero before
 proof evidence can be updated.

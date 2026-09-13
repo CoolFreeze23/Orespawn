@@ -1,0 +1,173 @@
+{
+  "registry": "bee",
+  "display_name": "Bee",
+  "status": "draft for the owner's edit (the third Tier-2 slice, 2026-09-13: on the hook under Amendment 2)",
+  "locomotion": "flyer",
+  "artist_scope": "full contract (Tier 2, the simple-cyclic (with an attacking branch and a position chain) class: geckolib_migration_design.md section 5); ON THE HOOK until idle and walk are delivered (Amendment 2)",
+  "character_sheet": "A giant hostile bee: a five-part curling abdomen ending in a sting, a main body, a neck and head, two flat wings, two three-part antennae with pom tips, and four pincer plates around the mouth. It hunts on the wing. Read it as a hovering wasp: wings shivering, pincers working, antennae drifting, the abdomen curling under - slowly at rest, fast when it strikes.",
+  "size_notes": "Drawn at x1.1 of the rig on a 256x256 sheet.",
+  "labels": {
+    "Sting": "sting",
+    "Abdomnem1": "abdomen segment 1 (tip)",
+    "Abdomnem2": "abdomen segment 2",
+    "Abdomnem3": "abdomen segment 3",
+    "Abdomnem4": "abdomen segment 4",
+    "Abdomnem5": "abdomen segment 5 (root)",
+    "MainBody": "main body",
+    "Neck": "neck",
+    "Head": "head",
+    "WingRight": "right wing",
+    "WingLeft": "left wing",
+    "RA1": "right antenna, base",
+    "RA2": "right antenna, middle",
+    "RA3": "right antenna, tip",
+    "LA1": "left antenna, base",
+    "LA2": "left antenna, middle",
+    "LA3": "left antenna, tip",
+    "LeftPom": "left antenna pom",
+    "RightPom": "right antenna pom",
+    "LeftPincerExtra": "left pincer, outer",
+    "LeftPincerMain": "left pincer, main",
+    "RightPincerMain": "right pincer, main",
+    "RightPincerExtra": "right pincer, outer"
+  },
+  "groups": [
+    {
+      "name": "wings",
+      "bones": [
+        "WingLeft",
+        "WingRight"
+      ],
+      "omega": 1.1,
+      "axis": "z",
+      "gait_scaled": false,
+      "amplitude": "-1.745 / +1.754 rad rests, then pi x 0.3 = 0.942 rad (54 deg)",
+      "plain": "the two flat wings shiver fast about the body's long axis, mirrored",
+      "math": "WingLeft.zRot = -1.745 - cos(ageInTicks * 1.1 * 2.0) * pi * 0.3; WingRight.zRot = 1.754 + (that cosine) * pi * 0.3",
+      "source": "BeeModel.poseFrom (the classic setupAnim); BeeGeoReplacement.java",
+      "wingspeed": 2.0,
+      "omega_note": "the classic phase is ageInTicks x 1.1 x 2 (two float multiplies, left to right): the natural period is 2 pi / 2.2"
+    },
+    {
+      "name": "pincers",
+      "bones": [
+        "LeftPincerMain",
+        "LeftPincerExtra",
+        "RightPincerMain",
+        "RightPincerExtra"
+      ],
+      "omega": 0.3,
+      "axis": "y",
+      "gait_scaled": false,
+      "amplitude": "+0.274 rad offset, then pi x 0.1 = 0.314 rad (18 deg)",
+      "plain": "the four pincer plates open and close about the vertical around a +-0.274 rad rest, mirrored",
+      "math": "Left*.yRot = -0.274 + cos(ageInTicks * 0.3 * 2.0) * pi * 0.1; Right*.yRot = 0.274 - (that)",
+      "source": "BeeModel.poseFrom; BeeGeoReplacement.java",
+      "wingspeed": 2.0,
+      "omega_note": "the classic phase is ageInTicks x 0.3 x 2 (two float multiplies, left to right): the natural period is 2 pi / 0.6"
+    },
+    {
+      "name": "left_antenna",
+      "bones": [
+        "LA1",
+        "LA2",
+        "LA3",
+        "LeftPom"
+      ],
+      "omega": 0.21,
+      "axis": "x",
+      "gait_scaled": false,
+      "amplitude": "pitch: 0.261 / 0.436 / 0.611 / 0 rad rests, then pi x 0.06 = 0.188 rad (11 deg); roll (a second rhythm at 0.31 x 2.0): pi x 0.06",
+      "plain": "the left antenna's three parts and pom nod together (each part a little more bent than the last) and roll together at a second rhythm",
+      "math": "LA1/LA2/LA3/LeftPom.xRot = 0.261 / 0.436 / 0.611 / 0 + cos(ageInTicks * 0.21 * 2.0) * pi * 0.06; all four .zRot = cos(ageInTicks * 0.31 * 2.0) * pi * 0.06",
+      "source": "BeeModel.poseFrom; BeeGeoReplacement.java",
+      "wingspeed": 2.0,
+      "omega_note": "the classic phase is ageInTicks x 0.21 x 2 (two float multiplies, left to right): the natural period is 2 pi / 0.42"
+    },
+    {
+      "name": "right_antenna",
+      "bones": [
+        "RA1",
+        "RA2",
+        "RA3",
+        "RightPom"
+      ],
+      "omega": 0.27,
+      "axis": "x",
+      "gait_scaled": false,
+      "amplitude": "pitch: 0.261 / 0.436 / 0.611 / 0 rad rests, then pi x 0.06; roll (a second rhythm at 0.37 x 2.0): pi x 0.06",
+      "plain": "the right antenna the same shape at its own two rhythms",
+      "math": "RA1/RA2/RA3/RightPom.xRot = 0.261 / 0.436 / 0.611 / 0 + cos(ageInTicks * 0.27 * 2.0) * pi * 0.06; all four .zRot = cos(ageInTicks * 0.37 * 2.0) * pi * 0.06",
+      "source": "BeeModel.poseFrom; BeeGeoReplacement.java",
+      "wingspeed": 2.0,
+      "omega_note": "the classic phase is ageInTicks x 0.27 x 2 (two float multiplies, left to right): the natural period is 2 pi / 0.54"
+    },
+    {
+      "name": "abdomen",
+      "bones": [
+        "Abdomnem5",
+        "Abdomnem4",
+        "Abdomnem3",
+        "Abdomnem2",
+        "Abdomnem1",
+        "Sting"
+      ],
+      "omega": 0.021,
+      "axis": "x",
+      "gait_scaled": false,
+      "amplitude": "at rest pi x 0.023 = 0.072 rad (4 deg) at 0.021 x 2.0; attacking pi x 0.055 = 0.173 rad (10 deg) at 0.11 x 2.0; each segment adds the angle minus 0.35 rad to the last (1.099 rad at the root), and its pivot follows the previous segment by 10 / 10 / 6 / 5 / 7 units",
+      "plain": "the abdomen curls under in a chain: the root segment pitches, each next segment pitches a step further and hangs from the previous one's end; slow and shallow at rest, fast and deep when attacking",
+      "math": "a = attacking ? cos(t * 0.11 * 2.0) * pi * 0.055 : cos(t * 0.021 * 2.0) * pi * 0.023; Abdomnem5.xRot = 1.099 + a; each next .xRot = previous.xRot + a - 0.35; each next (y, z) = previous (y, z) + (cos, sin)(previous.xRot) * length; Sting.z + 1",
+      "source": "BeeModel.poseFrom; BeeGeoReplacement.java",
+      "phase": "the attacking flag selects the rhythm (a state, not a cycle)",
+      "wingspeed": 2.0,
+      "omega_note": "the classic phase is ageInTicks x 0.021 x 2 (two float multiplies, left to right): the natural period is 2 pi / 0.042"
+    }
+  ],
+  "behaviour": [
+    "This creature runs on its CLASSIC code (owner 2026-09-13, Amendment 2 to Amendment 1): its motion does not fit the exact transcription form, so the GeckoLib candidate poses it from the same formulas the classic renderer uses, and the shipped animation file carries NO clip. The self-gate opens when you deliver `idle` AND `walk` together (README rule, item 12); until then the game plays the classic code. The reference-only clip beside this sheet is that code sampled at fixed inputs - copy its timing, do not return it.",
+    "Six always-on rhythms and one state-selected chain; nothing is scaled by walking speed. The wings are zero-thickness cubes (true normals, ENT-S-161; the classic face order). The abdomen chain is a POSITION follow: each segment's pivot sits at the end of the previous one - a keyframed version needs position keys on the five segments and the sting, or a re-parented rig.",
+    "The default renderer poses it from the classic code; the GeckoLib candidate sits behind the dev switch (-Dorespawn.dev.geckolibRenderers) and poses it from the same code until your clips arrive."
+  ],
+  "clips": [
+    {
+      "name": "idle",
+      "verdict": "author",
+      "note": "REQUIRED with walk: the gate opens on the pair (today nothing ships; the classic code plays)"
+    },
+    {
+      "name": "walk",
+      "verdict": "author",
+      "note": "REQUIRED with idle: the locomotion loop (the reference clip is the classic code's rhythm at full walking speed)"
+    },
+    {
+      "name": "fly",
+      "verdict": "author",
+      "note": "optional: falls back to walk (section 2.4)"
+    },
+    {
+      "name": "attack",
+      "verdict": "author",
+      "note": "a strike",
+      "length_seconds": 0.5
+    },
+    {
+      "name": "hurt",
+      "verdict": "author",
+      "note": "a flinch",
+      "length_seconds": 0.3
+    },
+    {
+      "name": "death",
+      "verdict": "author",
+      "note": "ruled 2026-09-06, Q3 (a): the vanilla death flip stays; a creature whose JSON ships a `death` clip gets the clip-replaces-flip mode, designed when the first such clip arrives (the Queen's own death clip the precedent) - a `death` delivered here plays under the flip until then",
+      "length_seconds": 1.0
+    }
+  ],
+  "extras": [],
+  "wishlist": [],
+  "effort_hours": null,
+  "formulas": [
+    "`BeeModel.poseFrom` (BeeModel.java:203-262, called from `setupAnim`; orig ModelBee.java:187-230, `render`, wingspeed 2.0 from `new ModelBee(2.0f)` in orig ClientProxyOreSpawn.java:425): (1) the wings roll about the body's long axis by the cosine of the age in ticks times 1.1 times 2.0, times pi, times 0.3 - 54 degrees each way every 2.86 ticks - the left around -1.745 radians (minus the swing), the right around 1.754 (plus it) (orig :188-190); (2) the four pincer plates yaw by the cosine of the age times 0.3 times 2.0, times pi, times 0.1 - 18 degrees every 10.5 ticks - the left pair around -0.274 radians (plus), the right pair around 0.274 (minus) (orig :191-195); (3) the left antenna's base, middle, tip and pom pitch by 0.261 / 0.436 / 0.611 / 0 radians plus the cosine of the age times 0.21 times 2.0, times pi, times 0.06 (11 degrees every 15 ticks), and all four roll by the cosine of the age times 0.31 times 2.0, times pi, times 0.06 (orig :196-200, :206-209); (4) the right antenna the same with 0.27 (pitch) and 0.37 (roll) (orig :201-205, :210-213); (5) the abdomen - while not attacking the curl angle is the cosine of the age times 0.021 times 2.0, times pi, times 0.023 (4 degrees every 150 ticks); while attacking the cosine of the age times 0.11 times 2.0, times pi, times 0.055 (10 degrees every 28.6 ticks) (orig :214); the root segment pitches by 1.099 radians plus that angle; each next segment (4, 3, 2, 1, then the sting) pitches by the previous segment's pitch plus the angle minus 0.35 radians, and its pivot moves to the previous segment's pivot plus (cos, sin) of the previous pitch times 10, 10, 6, 5 and 7 units in y and z, the sting a further unit back in z (orig :215-230) - POSITION writes. The walk position, the walking speed and the head angles play no part. The GeckoLib hook is the same (BeeGeoReplacement.applyCustomAnimations, the chain through `moveTo`)."
+  ]
+}

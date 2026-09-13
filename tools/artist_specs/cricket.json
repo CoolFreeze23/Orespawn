@@ -1,0 +1,92 @@
+{
+  "registry": "cricket",
+  "display_name": "Cricket",
+  "status": "draft for the owner's edit (the third Tier-2 slice, 2026-09-13: on the hook under Amendment 2)",
+  "locomotion": "walker",
+  "artist_scope": "full contract (Tier 2, the gait-scaled (with the threshold idiom) class: geckolib_migration_design.md section 5); ON THE HOOK until idle and walk are delivered (Amendment 2)",
+  "character_sheet": "A small passive cricket: a body, a head, an abdomen, four front / rear legs and four hind-leg parts. It hops about and chirps. Read it as a cricket at a walk: the four front / rear legs swinging with its speed, the big hind legs held cocked.",
+  "size_notes": "Drawn at x0.5 of the rig on a 64x64 sheet.",
+  "labels": {
+    "body": "body",
+    "head": "head",
+    "abdomen": "abdomen",
+    "lfleg": "left front leg",
+    "lrleg": "left rear leg",
+    "rfleg": "right front leg",
+    "rrleg": "right rear leg",
+    "lleg1": "left hind leg (upper)",
+    "lleg2": "left hind leg (lower)",
+    "rleg1": "right hind leg (upper)",
+    "rleg2": "right hind leg (lower)"
+  },
+  "groups": [
+    {
+      "name": "gait",
+      "bones": [
+        "lfleg",
+        "rfleg",
+        "lrleg",
+        "rrleg"
+      ],
+      "omega": 1.0,
+      "axis": "y",
+      "gait_scaled": true,
+      "amplitude": "0.47 / -0.54 / -0.296 / 0.384 rad rests, then pi x 0.25 = 0.785 rad (45 deg) x the walking speed while it is above a tenth; 0 at or below",
+      "plain": "the four front / rear legs swing about the vertical with the walk - the front pair one way, the rear pair the other - and hold still below a tenth of walking speed",
+      "math": "a = amount > 0.1 ? cos(t * 1.0) * pi * 0.25 * amount : 0; lfleg.yRot = 0.47 + a; rfleg.yRot = -0.54 + a; lrleg.yRot = -0.296 - a; rrleg.yRot = 0.384 - a",
+      "source": "CricketModel.setupAnim; CricketGeoReplacement.java"
+    },
+    {
+      "name": "hind_legs",
+      "bones": [
+        "lleg1",
+        "lleg2",
+        "rleg1",
+        "rleg2"
+      ],
+      "omega": null,
+      "axis": "y and x",
+      "gait_scaled": false,
+      "amplitude": "constants: yaw +-0.436 (upper) / +-0.349 (lower) rad, pitch 0.558 (upper) / -0.366 (lower) rad",
+      "plain": "the hind legs hold a cocked pose (written every frame)",
+      "math": "lleg1/rleg1.yRot = +-0.436; lleg2/rleg2.yRot = +-0.349; upper .xRot = 0.558; lower .xRot = -0.366",
+      "source": "CricketModel.setupAnim; CricketGeoReplacement.java",
+      "phase": "constants (no cycle)"
+    }
+  ],
+  "behaviour": [
+    "This creature runs on its CLASSIC code (owner 2026-09-13, Amendment 2 to Amendment 1): its motion does not fit the exact transcription form, so the GeckoLib candidate poses it from the same formulas the classic renderer uses, and the shipped animation file carries NO clip. The self-gate opens when you deliver `idle` AND `walk` together (README rule, item 12); until then the game plays the classic code. The reference-only clip beside this sheet is that code sampled at fixed inputs - copy its timing, do not return it.",
+    "One gait rhythm with the threshold idiom (the second set's item 4 (c): the Cricket lands on its hook with no limb_swing_threshold property; a keyframed walk cannot carry the threshold - the controller's speed blend replaces it) and eight constant hind-leg writes; the body, head and abdomen are static (the register line of this slice records the 1.7.10 singing branch and wingspeed the port drops).",
+    "The default renderer poses it from the classic code; the GeckoLib candidate sits behind the dev switch (-Dorespawn.dev.geckolibRenderers) and poses it from the same code until your clips arrive."
+  ],
+  "clips": [
+    {
+      "name": "idle",
+      "verdict": "author",
+      "note": "REQUIRED with walk: the gate opens on the pair (today nothing ships; the classic code plays)"
+    },
+    {
+      "name": "walk",
+      "verdict": "author",
+      "note": "REQUIRED with idle: the locomotion loop (the reference clip is the classic code's rhythm at full walking speed)"
+    },
+    {
+      "name": "hurt",
+      "verdict": "author",
+      "note": "a flinch",
+      "length_seconds": 0.3
+    },
+    {
+      "name": "death",
+      "verdict": "author",
+      "note": "ruled 2026-09-06, Q3 (a): the vanilla death flip stays; a creature whose JSON ships a `death` clip gets the clip-replaces-flip mode, designed when the first such clip arrives (the Queen's own death clip the precedent) - a `death` delivered here plays under the flip until then",
+      "length_seconds": 1.0
+    }
+  ],
+  "extras": [],
+  "wishlist": [],
+  "effort_hours": null,
+  "formulas": [
+    "`CricketModel.setupAnim` (CricketModel.java; orig ModelCricket.java:104-108, 117-125, `render`, wingspeed 2.5 from `new ModelCricket(2.5f)` in orig ClientProxyOreSpawn.java:510 - the port's frequency is 1.0): while the walking speed is above a tenth, the leg swing is the cosine of the age in ticks times 1.0, times pi, times 0.25, times the walking speed (up to 45 degrees each way every 6.28 ticks); at or below a tenth it is 0; the left front leg yaws by 0.47 radians plus it, the right front by -0.54 plus it, the left rear by -0.296 minus it, the right rear by 0.384 minus it (orig :104-108); the hind legs are written to constants every frame - the upper parts yaw by 0.436 (left) / -0.436 (right) and pitch by 0.558, the lower parts yaw by 0.349 / -0.349 and pitch by -0.366 (orig :117-125, the not-singing branch; 1.7.10 swung them while singing - the register line). The walk position, the head angles and the entity's state play no part in the port's pose. The GeckoLib hook is the same (CricketGeoReplacement.applyCustomAnimations)."
+  ]
+}

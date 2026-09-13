@@ -1,0 +1,85 @@
+{
+  "registry": "cannon_fodder",
+  "display_name": "Cannon Fodder",
+  "status": "draft for the owner's edit (the third Tier-2 slice, 2026-09-13: on the hook under Amendment 2)",
+  "locomotion": "walker",
+  "artist_scope": "full contract (Tier 2, the gait-scaled (a walk-distance gait) class: geckolib_migration_design.md section 5); ON THE HOOK until idle and walk are delivered (Amendment 2)",
+  "character_sheet": "A plain four-legged tameable creature the port draws with a simple boxy body, a head and four straight legs (the 1.7.10 mod had no model of its own for this base class). Read it as a generic quadruped: legs trotting with the walk, the head following your gaze.",
+  "size_notes": "Drawn at x1.0 of the rig on a 128x64 sheet (cannon_fodder.png).",
+  "labels": {
+    "head": "head",
+    "body": "body",
+    "leg_front_left": "front left leg",
+    "leg_front_right": "front right leg",
+    "leg_back_left": "back left leg",
+    "leg_back_right": "back right leg"
+  },
+  "groups": [
+    {
+      "name": "gait",
+      "bones": [
+        "leg_front_left",
+        "leg_front_right",
+        "leg_back_left",
+        "leg_back_right"
+      ],
+      "omega": null,
+      "axis": "x",
+      "gait_scaled": true,
+      "amplitude": "1.2 rad (69 deg) x the walking speed, on the walk DISTANCE (limbSwing x 0.6662, the vanilla quadruped gait)",
+      "plain": "the legs trot with the walk: front-left and back-right forward while the other two swing back, the swing growing with the walking speed",
+      "math": "swing = cos(limbSwing * 0.6662) * 1.2 * amount; leg_front_left/leg_back_right.xRot = swing; leg_front_right/leg_back_left.xRot = -swing",
+      "source": "CannonFodderModel.setupAnim; CannonFodderGeoReplacement.java",
+      "phase": "the walk distance (limbSwing), not the age: a vanilla-style gait"
+    },
+    {
+      "name": "head",
+      "bones": [
+        "head"
+      ],
+      "omega": null,
+      "axis": "y and x",
+      "gait_scaled": false,
+      "amplitude": "the head yaw and pitch",
+      "plain": "the head follows the gaze",
+      "math": "head.yRot = rad(netHeadYaw); head.xRot = rad(headPitch)",
+      "source": "CannonFodderModel.setupAnim; CannonFodderGeoReplacement.java",
+      "phase": "the entity's head look (not a cycle)"
+    }
+  ],
+  "behaviour": [
+    "This creature runs on its CLASSIC code (owner 2026-09-13, Amendment 2 to Amendment 1): its motion does not fit the exact transcription form, so the GeckoLib candidate poses it from the same formulas the classic renderer uses, and the shipped animation file carries NO clip. The self-gate opens when you deliver `idle` AND `walk` together (README rule, item 12); until then the game plays the classic code. The reference-only clip beside this sheet is that code sampled at fixed inputs - copy its timing, do not return it.",
+    "A walk-distance gait (the vanilla quadruped idiom, code-driven under Amendment 1) and a head look; the body is static; it has no rhythm of its own when standing still. No 1.7.10 pair: the port authored this rig (1.7.10's EntityCannonFodder was a tameable base class with no model or renderer), so it has no reference-geometry leg.",
+    "The default renderer poses it from the classic code; the GeckoLib candidate sits behind the dev switch (-Dorespawn.dev.geckolibRenderers) and poses it from the same code until your clips arrive."
+  ],
+  "clips": [
+    {
+      "name": "idle",
+      "verdict": "author",
+      "note": "REQUIRED with walk: the gate opens on the pair (today nothing ships; the classic code plays)"
+    },
+    {
+      "name": "walk",
+      "verdict": "author",
+      "note": "REQUIRED with idle: the locomotion loop (the reference clip is the classic code's rhythm at full walking speed)"
+    },
+    {
+      "name": "hurt",
+      "verdict": "author",
+      "note": "a flinch",
+      "length_seconds": 0.3
+    },
+    {
+      "name": "death",
+      "verdict": "author",
+      "note": "ruled 2026-09-06, Q3 (a): the vanilla death flip stays; a creature whose JSON ships a `death` clip gets the clip-replaces-flip mode, designed when the first such clip arrives (the Queen's own death clip the precedent) - a `death` delivered here plays under the flip until then",
+      "length_seconds": 1.0
+    }
+  ],
+  "extras": [],
+  "wishlist": [],
+  "effort_hours": null,
+  "formulas": [
+    "`CannonFodderModel.setupAnim` (CannonFodderModel.java; a port-authored model - 1.7.10 registered no renderer for EntityCannonFodder, so there is no orig line): (1) the head yaws by the head yaw in radians and pitches by the head pitch in radians; (2) the leg swing is the cosine of the walk DISTANCE times 0.6662, times 1.2, times the walking speed (up to 69 degrees each way, one stride every 9.43 units of walk distance - the vanilla quadruped gait): the front-left and back-right legs pitch by it, the front-right and back-left by its negative. The age in ticks and the entity's state play no part; standing still, nothing moves. The GeckoLib hook is the same (CannonFodderGeoReplacement.applyCustomAnimations)."
+  ]
+}
