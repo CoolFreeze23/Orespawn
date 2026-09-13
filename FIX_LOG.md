@@ -7123,3 +7123,319 @@ reproducing the checked-in clips and `referenceClipsVerify` green; the benchmark
 IN-GAME: nothing — unregistered classes; the classic renderers draw every unlanded species exactly as before.
 
 GATE: GATE: hooks (first run) red at assetAudit - 134 TEXTURE_REF_MISSING, two per hook descriptor (the pending geo and clip, presented above) -> the HOOKS list -> gate hooks2 green: drift 0, build 0 (the audit 0 errors / 138 acknowledged, 134 hook-pending; g1 2, s4 13, t2 29 PARITY PASS), suite: all 1278 required tests passed; before the gate the g1 / s4 / t2 verify-only passes identical, the 44 reference clips reproduced byte for byte and referenceClipsVerify green, the benchmark re-pinned.
+
+## THE REFERENCE CLIPS FOR EVERY SPECIES (2026-09-14) — the sampler over every hook, landed or not, one clip per reachable state (reference_walk, reference_idle, reference_attack where the hook reads attacking); the 43 earlier clips reproduced byte for byte as reference_walk; the clips loaded through Blockbench's Import Animations, not embedded in the .bbmodel; a reference clip's keys as the starting point of a delivered idle / walk / aggro_idle, only the file itself under its own name refused (owner 2026-09-14, addendum items 11 to 13)
+
+RULING. Owner 2026-09-14, addendum (item 31 (11) to (13)): "(11) The sampler runs over every hook, landed or not, and emits one
+clip per reachable state: reference_walk (limbSwingAmount 1), reference_idle (0), reference_attack where the hook reads
+attacking (true, limbSwingAmount 0), each under the span rule; the sheet's §4.3 lists them. Every existing reference clip
+regenerates under the same path and must reproduce byte for byte as reference_walk. (12) The generator embeds each folder's
+clips in its .bbmodel so the Animation tab is populated on opening. If that cannot be trusted without a real Blockbench
+round-trip, README_FIRST gains the Import Animations instruction under Toolchain instead and §4.3 names the file to import.
+Either way the README says how the clips are loaded. (13) A reference clip's keys may be the starting point of a delivered
+clip: the animator copies them into idle, walk or aggro_idle and improves from there; README rule 7 and §4.3 say so. Only the
+reference file itself coming back under its own name is refused." One tooling item, no refuter (the cost rules of 2026-09-12,
+item 25 (5)): the tool's own tests and one dry run are the check. One implementation lane; the orchestrator's regeneration
+under gradle, the folder and the gate.
+
+WHAT LANDED:
+- ITEM 11, THE SAMPLER (`src/g1tool/java/danger/orespawn/g1/ReferenceClipSampler.java`): THE POPULATION is every hook, landed
+  or not - the g1 / s4 / t2 manifests' seam rigs as before (43 registries on their shipped geo) PLUS every reference entry
+  whose model class has a `<Name>GeoReplacement` descriptor: `HOOK_DESCRIPTORS`, 69 rows (descriptor -> ModEntities registry
+  -> rig), the audit's `HOOKS` list (67, untouched) plus the two delegating descriptors it does not list (the Alien Boss's on
+  the Alien's rig, the Leonopteryx's on the Leon's - each packages under its own registry, so each gets its own files); the
+  reference entry is `reference_<rig>`, its geo `build/reference/generated/reference_<rig>.geo.json` (a fourth argument:
+  `--reference <reference-manifest> <geo-dir>`, on the writer and on `--verify`). A row is refused as stale when its descriptor
+  is gone, its reference entry is gone, its rig ships (the descriptor's geo exists under src/main/resources) or its registry
+  is already sampled from a seam manifest - the audit's `HOOK_STALE` rule mirrored, so the list empties as the slices land.
+  A reference entry with neither a descriptor nor a landed class is skipped and named on the console and in the index
+  (`reference_entries_skipped`, 12): the three held species (reference_boyfriend, reference_girlfriend, reference_theprincess),
+  the two solver rigs (reference_antrobot, reference_spiderrobot) and the seven weapon / item models the reference leg carries
+  (reference_battleaxe, reference_bertha, reference_chainsaw, reference_hammy, reference_queenbattleaxe, reference_slice,
+  reference_squidzooka); the native Queen has no reference entry and no seam manifest entry (her own clips are her reference,
+  as before). An unlanded hook is posed exactly as a landed one (`S4CandidateRuntime.evaluateProductionHook`, registry-free,
+  explicit `PoseInputs`) over a fresh bake of the reference leg's geo, baked WITHOUT the face-order strictness its descriptor
+  may declare: none of the 109 converted reference geos carries `orespawn:cube_face_order` (the landing slice's TEST-007
+  writes it), the key orders cube vertices for rendering and moves no bone - a new overload
+  `evaluateProductionHook(..., boolean requireFaceOrder)` in `S4CandidateRuntime` (g1tool), the old signature delegating with
+  the descriptor's own requirement, so every landed rig is baked exactly as before.
+  THE STATES, per hook: `walk` (the fixed inputs of 2026-09-13 exactly: limbSwingAmount 1, limbSwing advancing 1.0 per tick),
+  `idle` (limbSwingAmount 0, limbSwing 0, everything else as the walk: the age advancing, the RNG seeded 0 once per clip, every
+  flag at rest) and `attack` (the subject's `attacking` 1, limbSwingAmount 0, limbSwing 0) where the hook READS an attacking
+  state through a pose interface it declares - detected statically from the `inputs.subject(<X>Pose.class)` casts of the
+  descriptor's `applyCustomAnimations` and of the static pose helpers it delegates to (`<Other>GeoReplacement.poseRig` /
+  `poseDragon` / `pose`), followed into that interface's public getters whose names match
+  `(?i)^(get|is)?(is)?attack(ing)?$`. The one name matched, on all 42 interfaces that declare one: `int getAttacking()` (no
+  `isAttacking` or kin exists); no hook reads attacking outside a pose interface (every cast is a `danger.orespawn.entity.pose`
+  interface; `entity(inputs)` is used by no hook; the index's `attacking.outside_pose_interface` is empty for every clip). The
+  probe cross-checks the declaration: `ProbeSubject.getAttacking()` now records that it was read (`attackingRead()`), reported
+  per clip as `attacking.read_at_inputs`; six attack clips declare the read but do not reach it at these inputs (the read sits
+  in a latch branch rolled at a zero crossing or behind an activity: cave_fisher, leon, leonopteryx, robot_2, robot_3,
+  scorpion) - the clip is still emitted (the state is declared and reachable in-game) and the sheet says which branch it shows.
+  The attacking VALUE is declared through the probe's state JSON (`attacking`, the Slice 4b presets' field) - the sampler's
+  attack state declares 1 - so no new setter was needed on the probe (the brief's "settable attacking value" exists there).
+  THE FILES: `<registry>_reference_walk.animation.json`, `_reference_idle`, `_reference_attack`; the walk file's Bedrock clip
+  name stays `reference` (its bytes are pinned), the others are `reference_idle` and `reference_attack` so the three import
+  beside each other without a collision. THE SPAN per state (item 28 (5) unchanged): the closure test runs on each state's own
+  inputs and fresh subject; a state whose hook writes nothing that MOVES (every bone's rotation and position identical at
+  every sample of the settled span) is one key, the note keeping the structure the closure test settled and saying it is not
+  live at those inputs. THE INDEX (`reference_clips.json`, schema 3): one row per clip with `state`, `clip_name`, `landed`,
+  `rig_source`, the state's `sampled_inputs`, the rule, the span, the seam, the sha256, `attacking` (the declared interfaces,
+  the getters, the outside casts, `reads_attacking`, `read_at_inputs`), plus `states`, `attacking_rule`,
+  `hooks_sampled_from_reference_manifest` (69) and `reference_entries_skipped` at the top. `--verify` and
+  `referenceClipsVerify` cover the whole set (271 files).
+  THE NUMBERS: 270 clips over 112 registries (43 landed, 69 unlanded) - walk 112, idle 112, attack 46 (40 unlanded hooks and
+  six landed: bee, cater_killer, hercules_beetle, robot_2, robot_3, robot_4). Rules: walk - period_multiple 54,
+  two_seconds_past_cap 52, one_key 5 (elevator, rock_base, vortex as before; leaf_monster and triffid, whose code holds still
+  unless attacking), two_seconds_no_period 1 (purple_power); idle - period_multiple 48, two_seconds_past_cap 42, one_key 21
+  (basilisk, cannon_fodder, cassowary, cave_fisher, cricket, elevator, frog, giant_robot, jeffery, leaf_monster, peacock,
+  robot_2, robot_3, robot_4, robot_5, rock_base, scorpion, spyro, stinky, triffid, vortex: threshold gaits and ws =
+  limbSwingAmount forms with nothing else live), two_seconds_no_period 1; attack - period_multiple 14, two_seconds_past_cap
+  28, one_key 4 (cave_fisher, robot_2, robot_3, scorpion: the latch not reached). Three hooks read the entity's movement delta
+  for their gait (the Cephadrome, the Dragon / Baby Dragon, the Ostrich: `xOld() - getX()`, 0 on a probe that does not move),
+  so their walk clips carry the other rhythms but no gait; their rule rows say so.
+- ITEM 11 (3), THE RULES: `HOOK_RULES`, 69 rows keyed by descriptor (a delegating descriptor shares its rig's row; the
+  Butterfly rig's four consumers carry their own wingspeed and period), each stating the hook's slowest rhythm - the smallest
+  effective frequency (the literal times the descriptor's wingspeed; a |cos| fold halving the period: the Spit Bug's and
+  Triffid's rows) among the rhythms live in any sampled state, a rhythm gated on state the probe never enters (sitting,
+  ridden, an activity, a singing frog, a blinking peacock) named and left out - with the `applyCustomAnimations` lines it was
+  read from, the T2c form. Authored by the lane, not derived by the sampler: a script extracted every `cos` / `sin` /
+  `toRadians` / `%` expression of each hook's pose code with its line number, the wingspeed constants and the state gates
+  (1,525 lines over 69 hooks, in the lane's scratch), and each row was written from that listing against the hook's code. The
+  closure test settles the multiple or the two-second window per state from the row's period; a row's T being slower than
+  a state's live rhythms only costs that state a two-second window (the sheet states the seam), never a wrong key.
+- THE IDENTITY (the ruling): the 43 clips of 536f330 (`tools/reference_clips/<registry>_reference.animation.json`, 44 files
+  with the index) byte-compared with the regenerated `<registry>_reference_walk.animation.json`: 43 of 43 IDENTICAL (cmp, the
+  per-file list in the lane's scratch: ant, beaver, bee, brutalfly, cannon_fodder, cater_killer, cliff_racer, cloud_shark,
+  cockateil, coin, cricket, dragonfly, elevator, fairy, firefly, gamma_metroid, gold_fish, hercules_beetle, irukandji, island,
+  island_too, mosquito, purple_power, rainbow_ant, red_ant, robot_1, robot_2, robot_3, robot_4, robot_5, rock_base, rotator,
+  rubber_ducky, ruby_bird, skate, termite, terrible_terror, tshirt, unstable_ant, vortex, worm_large, worm_medium,
+  worm_small); the old files are replaced by the walk files; two headless runs byte-identical (271 files).
+- `build.gradle` (written, not run): `referenceClips` and `referenceClipsVerify` take `--reference
+  tools/reference_model_proofs.json build/reference/generated` and depend on `referenceConvertModels` (the reference manifest
+  and build directory declared above them), so `check` converts the reference models before it verifies the clips.
+- ITEM 12, THE DECISION: NOT embedded; README_FIRST's Toolchain gains the **Import Animations** instruction and §4.3 names the
+  files. WHY (the Blockbench format detail the emulation does not cover): the emulated round trip is the generator's own
+  writer against its own importer, and its importer (`bbmodel_to_animation`) writes keyframe times through `time_key` at four
+  decimals and collapses a linear single-point key to a bare vector `[x, y, z]`, while the sampler's files carry ten-decimal
+  times (a closing key at 62.8318530718 ticks is `3.1415926536` s) and `{"post": [...], "lerp_mode": "linear"}` objects - so the
+  embedded keys cannot come back byte for byte through the generator's own reader (proven in the tests: the round-trip report
+  is EQUAL within `ROUNDTRIP_TIME_TOLERANCE_SECONDS`, the bytes differ, `0.084906585` becomes `0.0849`), and Blockbench's real
+  timecode precision is still unread from its exporter (`ROUNDTRIP_TIME_NOTE`). The 116 .bbmodels carry the shipped clips as
+  before (round-trip EQUAL 116 / 116) and no reference clip; the README bullet gives the menu path (open the .bbmodel, the
+  Animate tab, Animation -> Import Animations..., pick `<registry>_reference_walk.animation.json` and the `_idle` /
+  `_attack` files), what appears (`reference`, `reference_idle`, `reference_attack` beside the shipped clips) and why the
+  clips are not embedded; the folder listing names the three files; every §4.3 repeats the path and names that creature's
+  files.
+- ITEM 13, THE STARTING POINT: no checker rule compares a delivered clip's keys with a reference clip's (confirmed by reading
+  `check_folder`: the reference rule matches names, and the package's own copies by name and sha256; the clip rules check
+  loop, bones, channels, values, lengths) - a delivered `idle` / `walk` / `aggro_idle` whose keys equal a reference clip's is
+  a valid delivery, tested on the fixture and on the Bee (her `walk`, `idle` and `aggro_idle` built from her three reference
+  clips: PASS, 3 clips, 10,332 keyframe values). The checker's reference rule now matches
+  `_reference(_(walk|idle|attack))?\.animation\.json$`: the package's own untouched copies (every block of the manifest's
+  `reference_clips`, by name and sha256) come back as a WARN each, not a delivery, so every generated folder checks PASS (the
+  sampler step's doctrine); any other such file - edited, another registry's, or the pre-2026-09-14 single name - is a REJECT
+  naming it; neither counts as a second animation file. README rule 7 (`README_REFERENCE_SENTENCE`) and §4.3 say the keys may
+  be copied into `walk` (from `_reference_walk`), `idle` (from `_reference_idle`) or `aggro_idle` (from `_reference_attack`)
+  and improved from there, and that only the reference file itself under its own name is refused; the checker's rule table
+  (`CHECK_REJECTS`, quoted by the README and §11) says the same.
+- THE PACKAGE GENERATOR (`tools/artist_package.py` 0.3.0): `load_reference_clip_index` (registry -> state -> row; a row without
+  a state is a pre-2026-09-14 walk clip), `reference_clip_facts` (every state's sha256 verified; the warnings per file as
+  before), `reference_span_sentence` (the span rule in words per clip, the one-key case included), `reference_clip_section`
+  (§4.3 "Reference clips (reference-only)": the files, the state each shows, how to load them, the starting-point rule, one
+  entry per clip with its sha256, clip name, the delivered clip it may start, span, hook, rule, moving / position / hidden
+  bones, seam, and for the attack clip the getter it reads attacking through and whether that read is reached; the
+  item-10 sentence for an unlanded hook; "sampled when the rig lands" kept for a held species, with no REFERENCE_CLIP_MISSING or
+  FORMULAS_MISSING for it), the manifest's `reference_clips` (one block per state, `delivered_clip`, `landed`, `attacking`)
+  with `reference_clip` the walk block, `build_package` (every state's file copied byte for byte), `readme_document` (the
+  Toolchain bullet, the folder listing, rule 7), `check_folder` (above), `package_counts` / `summary_markdown` (the reference
+  clips per state, the artist-tier species with clips, the held ones). `tools/asset_audit.py`: `REFERENCE_CLIP_RE` refuses
+  the per-state names and the old single name under src/main/resources (`GECKO_REFERENCE_CLIP_SHIPPED`, never acknowledgeable).
+- THE TESTS (`tools/test_artist_package.py`, 48, all passing; 46 before): the fixture writes the three state files with
+  schema-3 rows for the landed fixture (its hook reads attacking) and walk + idle for the critter (an unlanded hook species,
+  its reference geo), the boss held; the five reference tests updated to the new names, the §4.3 wording, the
+  `reference_clips` blocks and the critter's unlanded path; new: `test_reference_keys_as_a_starting_point_are_a_valid_delivery`
+  (item 13) and `test_bbmodel_keeps_the_reference_clips_out_and_the_readme_says_how_to_import_them` (item 12: no reference
+  clip in the .bbmodel; the emulation EQUAL within tolerance but not byte for byte, the two format details pinned; the README
+  bullet); the old single name refused inside the reference-clip test.
+
+THE COUNTS after this item: rigs through the seam 38 / 106 (unchanged: nothing under src/main moves; the sampler is g1tool);
+artist-tier species with an exact transcription shipped 15 / 90 (informational, unchanged); artist-tier species packaged
+90 / 90 rigs (103 registries: 28 Tier-1 registries over 21 rigs with the Queen, 75 Tier-2 over 70; 116 folders, 1,342 files
+with the 13 Tier-3 props, every folder `check` PASS). Reference clips: 87 of the 90 artist-tier rigs carry them (99
+registries; 112 registries over 99 rigs with the props: 37 landed rigs, 62 unlanded); held under item 10: 3 (the Boyfriend,
+the Girlfriend, the Princess: "sampled when the rig lands"); the Queen native, her own clips.
+
+THE PER-REGISTRY TABLE (rule per state: k = the period multiple x the slowest period in ticks; "2 s past cap" = the
+two-second window past the 6 s cap; keys per bone; the loop seam in degrees; the attack column names the getter the hook
+reads attacking through, "not read at these inputs" where the read sits in a branch the sampled inputs do not reach):
+
+| registry | rig | walk | idle | attack (declared through) |
+|---|---|---|---|---|
+| alien | reference leg | k=1 x 28.56 t, 30 keys, seam 0.00 deg | k=1 x 28.56 t, 30 keys, seam 0.00 deg | 2 s past cap, 41 keys, seam 96.69 deg (AlienPose.getAttacking()) |
+| alien_boss | reference leg | k=1 x 28.56 t, 30 keys, seam 0.00 deg | k=1 x 28.56 t, 30 keys, seam 0.00 deg | 2 s past cap, 41 keys, seam 96.69 deg (AlienPose.getAttacking()) |
+| alosaurus | reference leg | 2 s past cap, 41 keys, seam 25.65 deg | k=1 x 62.83 t, 64 keys, seam 0.00 deg | 2 s past cap, 41 keys, seam 14.88 deg (AlosaurusPose.getAttacking()) |
+| ant | shipped | k=4 x 15.71 t, 64 keys, seam 0.00 deg | k=1 x 15.71 t, 17 keys, seam 0.00 deg | - |
+| attack_squid | reference leg | 2 s past cap, 41 keys, seam 141.64 deg | 2 s past cap, 41 keys, seam 35.41 deg | - |
+| baby_dragon | reference leg | 2 s past cap, 41 keys, seam 53.79 deg | 2 s past cap, 41 keys, seam 53.79 deg | 2 s past cap, 41 keys, seam 99.82 deg (DragonPose.getAttacking()) |
+| band_p | reference leg | 2 s past cap, 41 keys, seam 61.67 deg | k=1 x 52.36 t, 54 keys, seam 0.00 deg | - |
+| baryonyx | reference leg | 2 s past cap, 41 keys, seam 11.07 deg | k=1 x 35.90 t, 37 keys, seam 0.00 deg | - |
+| basilisk | reference leg | k=1 x 16.11 t, 18 keys, seam 0.00 deg | one key, 1 keys, seam 0.00 deg | k=6 x 16.11 t, 98 keys, seam 3.71 deg (BasiliskPose.getAttacking()) |
+| beaver | shipped | k=5 x 12.57 t, 64 keys, seam 0.00 deg | k=5 x 12.57 t, 64 keys, seam 0.00 deg | - |
+| bee | shipped | 2 s past cap, 41 keys, seam 27.55 deg | 2 s past cap, 41 keys, seam 27.55 deg | 2 s past cap, 41 keys, seam 107.58 deg (BeePose.getAttacking()) |
+| brutalfly | shipped | k=1 x 24.17 t, 26 keys, seam 0.00 deg | k=1 x 24.17 t, 26 keys, seam 0.00 deg | - |
+| butterfly | reference leg | k=1 x 4.83 t, 6 keys, seam 0.00 deg | k=1 x 4.83 t, 6 keys, seam 0.00 deg | - |
+| camarasaurus | reference leg | k=13 x 7.44 t, 98 keys, seam 0.00 deg | k=13 x 7.44 t, 98 keys, seam 0.00 deg | - |
+| cannon_fodder | shipped | k=1 x 9.43 t, 11 keys, seam 0.00 deg | one key, 1 keys, seam 0.00 deg | - |
+| cassowary | reference leg | k=1 x 8.79 t, 10 keys, seam 0.00 deg | one key, 1 keys, seam 0.00 deg | - |
+| cater_killer | shipped | 2 s past cap, 41 keys, seam 24.31 deg | 2 s past cap, 41 keys, seam 24.31 deg | 2 s past cap, 41 keys, seam 24.31 deg (CaterKillerPose.getAttacking()) |
+| cave_fisher | reference leg | k=1 x 5.07 t, 7 keys, seam 0.00 deg | one key, 1 keys, seam 0.00 deg | one key, 1 keys, seam 0.00 deg (CaveFisherPose.getAttacking(); not read at these inputs) |
+| cephadrome | reference leg | 2 s past cap, 41 keys, seam 7.12 deg | 2 s past cap, 41 keys, seam 7.12 deg | 2 s past cap, 41 keys, seam 30.27 deg (CephadromePose.getAttacking()) |
+| chipmunk | reference leg | 2 s past cap, 41 keys, seam 73.19 deg | k=1 x 25.13 t, 27 keys, seam 0.00 deg | - |
+| cliff_racer | shipped | k=1 x 4.83 t, 6 keys, seam 0.00 deg | k=1 x 4.83 t, 6 keys, seam 0.00 deg | - |
+| cloud_shark | shipped | k=5 x 12.57 t, 64 keys, seam 0.00 deg | k=5 x 12.57 t, 64 keys, seam 0.00 deg | - |
+| cockateil | shipped | k=3 x 20.94 t, 64 keys, seam 0.00 deg | k=3 x 20.94 t, 64 keys, seam 0.00 deg | - |
+| coin | shipped | 2 s past cap, 41 keys, seam 17.14 deg | 2 s past cap, 41 keys, seam 17.14 deg | - |
+| crab | reference leg | 2 s past cap, 41 keys, seam 16.55 deg | 2 s past cap, 41 keys, seam 16.55 deg | 2 s past cap, 41 keys, seam 36.00 deg (CrabPose.getAttacking()) |
+| creeping_horror | reference leg | 2 s past cap, 41 keys, seam 31.17 deg | 2 s past cap, 41 keys, seam 31.17 deg | - |
+| cricket | shipped | k=1 x 6.28 t, 8 keys, seam 0.00 deg | one key, 1 keys, seam 0.00 deg | - |
+| cryolophosaurus | reference leg | k=2 x 22.44 t, 46 keys, seam 1.13 deg | k=1 x 22.44 t, 24 keys, seam 0.00 deg | - |
+| dragon | reference leg | 2 s past cap, 41 keys, seam 53.79 deg | 2 s past cap, 41 keys, seam 53.79 deg | 2 s past cap, 41 keys, seam 99.82 deg (DragonPose.getAttacking()) |
+| dragonfly | shipped | k=3 x 10.47 t, 33 keys, seam 0.00 deg | k=3 x 10.47 t, 33 keys, seam 0.00 deg | - |
+| dungeon_beast | reference leg | 2 s past cap, 41 keys, seam 78.68 deg | k=1 x 20.27 t, 22 keys, seam 0.00 deg | k=2 x 20.27 t, 42 keys, seam 0.00 deg (DungeonBeastPose.getAttacking()) |
+| easter_bunny | reference leg | k=1 x 8.79 t, 10 keys, seam 0.00 deg | k=1 x 8.79 t, 10 keys, seam 0.00 deg | - |
+| elevator | shipped | one key, 1 keys, seam 0.00 deg | one key, 1 keys, seam 0.00 deg | - |
+| emperor_scorpion | reference leg | k=1 x 57.12 t, 59 keys, seam 0.00 deg | k=1 x 57.12 t, 59 keys, seam 0.00 deg | k=1 x 57.12 t, 59 keys, seam 0.00 deg (EmperorScorpionPose.getAttacking()) |
+| ender_knight | reference leg | 2 s past cap, 41 keys, seam 48.40 deg | k=1 x 42.74 t, 44 keys, seam 0.00 deg | - |
+| ender_reaper | reference leg | k=3 x 39.03 t, 119 keys, seam 4.46 deg | k=1 x 39.03 t, 41 keys, seam 0.00 deg | - |
+| fairy | shipped | 2 s past cap, 41 keys, seam 123.00 deg | 2 s past cap, 41 keys, seam 123.00 deg | - |
+| firefly | shipped | k=1 x 2.51 t, 4 keys, seam 0.00 deg | k=1 x 2.51 t, 4 keys, seam 0.00 deg | - |
+| flounder | reference leg | k=7 x 8.98 t, 64 keys, seam 0.00 deg | k=1 x 8.98 t, 10 keys, seam 0.00 deg | - |
+| frog | reference leg | k=1 x 4.49 t, 6 keys, seam 0.00 deg | one key, 1 keys, seam 0.00 deg | - |
+| gamma_metroid | shipped | k=4 x 15.71 t, 64 keys, seam 2.75 deg | k=4 x 15.71 t, 64 keys, seam 2.75 deg | - |
+| gazelle | reference leg | 2 s past cap, 41 keys, seam 42.07 deg | k=1 x 62.83 t, 64 keys, seam 0.00 deg | - |
+| ghost | reference leg | 2 s past cap, 41 keys, seam 11.34 deg | 2 s past cap, 41 keys, seam 11.34 deg | - |
+| ghost_skelly | reference leg | 2 s past cap, 41 keys, seam 17.86 deg | 2 s past cap, 41 keys, seam 17.86 deg | - |
+| giant_robot | reference leg | k=1 x 25.13 t, 27 keys, seam 0.00 deg | one key, 1 keys, seam 0.00 deg | k=1 x 25.13 t, 27 keys, seam 0.00 deg (GiantRobotPose.getAttacking()) |
+| godzilla | reference leg | 2 s past cap, 41 keys, seam 17.13 deg | 2 s past cap, 41 keys, seam 17.13 deg | 2 s past cap, 41 keys, seam 66.86 deg (GodzillaPose.getAttacking()) |
+| gold_fish | shipped | k=7 x 12.82 t, 91 keys, seam 0.00 deg | k=7 x 12.82 t, 91 keys, seam 0.00 deg | - |
+| hammerhead | reference leg | 2 s past cap, 41 keys, seam 20.13 deg | k=1 x 63.47 t, 65 keys, seam 0.00 deg | 2 s past cap, 41 keys, seam 26.17 deg (HammerheadPose.getAttacking()) |
+| hercules_beetle | shipped | 2 s past cap, 41 keys, seam 7.34 deg | 2 s past cap, 41 keys, seam 2.61 deg | 2 s past cap, 41 keys, seam 12.34 deg (HerculesBeetlePose.getAttacking()) |
+| hydrolisc | reference leg | 2 s past cap, 41 keys, seam 77.69 deg | k=3 x 12.89 t, 40 keys, seam 0.00 deg | - |
+| irukandji | shipped | 2 s past cap, 41 keys, seam 54.00 deg | 2 s past cap, 41 keys, seam 54.00 deg | - |
+| island | shipped | 2 s past cap, 41 keys, seam 105.11 deg | 2 s past cap, 41 keys, seam 105.11 deg | - |
+| island_too | shipped | 2 s past cap, 41 keys, seam 105.11 deg | 2 s past cap, 41 keys, seam 105.11 deg | - |
+| jeffery | reference leg | k=1 x 25.13 t, 27 keys, seam 0.00 deg | one key, 1 keys, seam 0.00 deg | k=1 x 25.13 t, 27 keys, seam 0.00 deg (GiantRobotPose.getAttacking()) |
+| kraken | reference leg | 2 s past cap, 41 keys, seam 35.11 deg | 2 s past cap, 41 keys, seam 35.11 deg | 2 s past cap, 41 keys, seam 35.11 deg (KrakenPose.getAttacking()) |
+| kyuubi | reference leg | 2 s past cap, 41 keys, seam 72.00 deg | 2 s past cap, 41 keys, seam 33.10 deg | - |
+| leaf_monster | reference leg | one key, 1 keys, seam 0.00 deg | one key, 1 keys, seam 0.00 deg | k=2 x 6.61 t, 15 keys, seam 1.35 deg (LeafMonsterPose.getAttacking()) |
+| leon | reference leg | k=2 x 47.60 t, 97 keys, seam 0.00 deg | k=1 x 47.60 t, 49 keys, seam 3.60 deg | k=1 x 47.60 t, 49 keys, seam 3.60 deg (LeonPose.getAttacking(); not read at these inputs) |
+| leonopteryx | reference leg | k=2 x 47.60 t, 97 keys, seam 0.00 deg | k=1 x 47.60 t, 49 keys, seam 3.60 deg | k=1 x 47.60 t, 49 keys, seam 3.60 deg (LeonPose.getAttacking(); not read at these inputs) |
+| lizard | reference leg | k=1 x 38.67 t, 40 keys, seam 0.00 deg | k=1 x 38.67 t, 40 keys, seam 0.00 deg | 2 s past cap, 41 keys, seam 41.91 deg (LizardPose.getAttacking()) |
+| luna_moth | reference leg | k=1 x 6.44 t, 8 keys, seam 0.00 deg | k=1 x 6.44 t, 8 keys, seam 0.00 deg | - |
+| lurking_terror | reference leg | k=1 x 62.83 t, 64 keys, seam 0.00 deg | k=1 x 62.83 t, 64 keys, seam 0.00 deg | k=1 x 62.83 t, 64 keys, seam 0.01 deg (LurkingTerrorPose.getAttacking()) |
+| mantis | reference leg | 2 s past cap, 41 keys, seam 123.94 deg | 2 s past cap, 41 keys, seam 123.94 deg | 2 s past cap, 41 keys, seam 123.94 deg (MantisPose.getAttacking()) |
+| molenoid | reference leg | 2 s past cap, 41 keys, seam 105.11 deg | 2 s past cap, 41 keys, seam 105.11 deg | 2 s past cap, 41 keys, seam 124.78 deg (MolenoidPose.getAttacking()) |
+| mosquito | shipped | k=1 x 2.09 t, 4 keys, seam 0.00 deg | k=1 x 2.09 t, 4 keys, seam 0.00 deg | - |
+| mothra | reference leg | k=1 x 24.17 t, 26 keys, seam 0.00 deg | k=1 x 24.17 t, 26 keys, seam 0.00 deg | - |
+| nastysaurus | reference leg | 2 s past cap, 41 keys, seam 2.50 deg | k=1 x 37.18 t, 39 keys, seam 0.00 deg | 2 s past cap, 41 keys, seam 57.43 deg (NastysaurusPose.getAttacking()) |
+| ostrich | reference leg | 2 s past cap, 41 keys, seam 28.31 deg | 2 s past cap, 41 keys, seam 28.31 deg | - |
+| peacock | reference leg | k=1 x 6.44 t, 8 keys, seam 0.00 deg | one key, 1 keys, seam 0.00 deg | - |
+| pitch_black | reference leg | 2 s past cap, 41 keys, seam 17.43 deg | 2 s past cap, 41 keys, seam 17.43 deg | 2 s past cap, 41 keys, seam 112.29 deg (PitchBlackPose.getAttacking()) |
+| pointysaurus | reference leg | 2 s past cap, 41 keys, seam 52.33 deg | 2 s past cap, 41 keys, seam 8.19 deg | 2 s past cap, 41 keys, seam 52.33 deg (PointysaurusPose.getAttacking()) |
+| purple_power | shipped | 2 s no period, 41 keys, seam 174.15 deg | 2 s no period, 41 keys, seam 174.15 deg | - |
+| rainbow_ant | shipped | k=4 x 15.71 t, 64 keys, seam 0.00 deg | k=1 x 15.71 t, 17 keys, seam 0.00 deg | - |
+| rat | reference leg | k=4 x 15.71 t, 64 keys, seam 0.00 deg | k=1 x 15.71 t, 17 keys, seam 0.00 deg | k=4 x 15.71 t, 64 keys, seam 0.00 deg (RatPose.getAttacking()) |
+| red_ant | shipped | k=4 x 15.71 t, 64 keys, seam 0.00 deg | k=1 x 15.71 t, 17 keys, seam 0.00 deg | - |
+| robot_1 | shipped | 2 s past cap, 41 keys, seam 96.42 deg | 2 s past cap, 41 keys, seam 30.00 deg | - |
+| robot_2 | shipped | k=1 x 20.94 t, 22 keys, seam 0.00 deg | one key, 1 keys, seam 0.00 deg | one key, 1 keys, seam 0.00 deg (Robot2Pose.getAttacking(); not read at these inputs) |
+| robot_3 | shipped | k=1 x 11.42 t, 13 keys, seam 0.00 deg | one key, 1 keys, seam 0.00 deg | one key, 1 keys, seam 0.00 deg (Robot3Pose.getAttacking(); not read at these inputs) |
+| robot_4 | shipped | k=1 x 12.57 t, 14 keys, seam 0.00 deg | one key, 1 keys, seam 0.00 deg | k=5 x 12.57 t, 64 keys, seam 1.96 deg (Robot4Pose.getAttacking()) |
+| robot_5 | shipped | k=1 x 41.89 t, 43 keys, seam 0.00 deg | one key, 1 keys, seam 0.00 deg | - |
+| rock_base | shipped | one key, 1 keys, seam 0.00 deg | one key, 1 keys, seam 0.00 deg | - |
+| rotator | shipped | 2 s past cap, 41 keys, seam 80.00 deg | 2 s past cap, 41 keys, seam 80.00 deg | - |
+| rubber_ducky | shipped | k=1 x 3.14 t, 5 keys, seam 0.00 deg | k=1 x 3.14 t, 5 keys, seam 0.00 deg | - |
+| ruby_bird | shipped | k=3 x 20.94 t, 64 keys, seam 0.00 deg | k=3 x 20.94 t, 64 keys, seam 0.00 deg | - |
+| scorpion | reference leg | k=1 x 5.07 t, 7 keys, seam 0.00 deg | one key, 1 keys, seam 0.00 deg | one key, 1 keys, seam 0.00 deg (ScorpionPose.getAttacking(); not read at these inputs) |
+| sea_monster | reference leg | 2 s past cap, 41 keys, seam 20.73 deg | 2 s past cap, 41 keys, seam 14.88 deg | 2 s past cap, 41 keys, seam 56.56 deg (SeaMonsterPose.getAttacking()) |
+| sea_viper | reference leg | 2 s past cap, 41 keys, seam 28.40 deg | 2 s past cap, 41 keys, seam 9.98 deg | 2 s past cap, 41 keys, seam 56.56 deg (SeaViperPose.getAttacking()) |
+| skate | shipped | k=1 x 5.24 t, 7 keys, seam 0.00 deg | k=3 x 5.24 t, 17 keys, seam 0.00 deg | - |
+| spit_bug | reference leg | k=3 x 19.04 t, 59 keys, seam 0.00 deg | k=1 x 19.04 t, 21 keys, seam 0.00 deg | k=3 x 19.04 t, 59 keys, seam 0.00 deg (SpitBugPose.getAttacking()) |
+| spyro | reference leg | k=12 x 5.24 t, 64 keys, seam 0.00 deg | one key, 1 keys, seam 0.00 deg | - |
+| stink_bug | reference leg | 2 s past cap, 41 keys, seam 51.21 deg | 2 s past cap, 41 keys, seam 25.48 deg | - |
+| stinky | reference leg | k=10 x 6.28 t, 64 keys, seam 0.00 deg | one key, 1 keys, seam 0.00 deg | - |
+| termite | shipped | k=4 x 15.71 t, 64 keys, seam 0.00 deg | k=1 x 15.71 t, 17 keys, seam 0.00 deg | - |
+| terrible_terror | shipped | 2 s past cap, 41 keys, seam 52.33 deg | 2 s past cap, 41 keys, seam 52.33 deg | - |
+| the_king | reference leg | 2 s past cap, 41 keys, seam 54.38 deg | 2 s past cap, 41 keys, seam 54.38 deg | 2 s past cap, 41 keys, seam 128.66 deg (TheKingPose.getAttacking()) |
+| the_prince | reference leg | k=3 x 32.22 t, 98 keys, seam 0.00 deg | k=1 x 32.22 t, 34 keys, seam 0.00 deg | k=3 x 32.22 t, 98 keys, seam 0.00 deg (ThePrincePose.getAttacking()) |
+| the_prince_adult | reference leg | 2 s past cap, 41 keys, seam 122.71 deg | 2 s past cap, 41 keys, seam 20.33 deg | 2 s past cap, 41 keys, seam 168.48 deg (ThePrinceAdultPose.getAttacking()) |
+| the_prince_teen | reference leg | 2 s past cap, 41 keys, seam 77.69 deg | 2 s past cap, 41 keys, seam 15.01 deg | 2 s past cap, 41 keys, seam 145.08 deg (ThePrinceTeenPose.getAttacking()) |
+| trex | reference leg | k=1 x 62.83 t, 64 keys, seam 0.00 deg | k=1 x 62.83 t, 64 keys, seam 0.00 deg | 2 s past cap, 41 keys, seam 14.88 deg (TRexPose.getAttacking()) |
+| triffid | reference leg | one key, 1 keys, seam 0.00 deg | one key, 1 keys, seam 0.00 deg | k=1 x 12.57 t, 14 keys, seam 0.00 deg (TriffidPose.getAttacking()) |
+| trooper_bug | reference leg | 2 s past cap, 41 keys, seam 20.50 deg | 2 s past cap, 41 keys, seam 17.36 deg | 2 s past cap, 41 keys, seam 58.69 deg (TrooperBugPose.getAttacking()) |
+| tshirt | shipped | 2 s past cap, 41 keys, seam 17.14 deg | 2 s past cap, 41 keys, seam 17.14 deg | - |
+| unstable_ant | shipped | k=4 x 15.71 t, 64 keys, seam 0.00 deg | k=1 x 15.71 t, 17 keys, seam 0.00 deg | - |
+| urchin | reference leg | 2 s past cap, 41 keys, seam 53.99 deg | 2 s past cap, 41 keys, seam 45.84 deg | 2 s past cap, 41 keys, seam 98.37 deg (UrchinPose.getAttacking()) |
+| vampire_butterfly | reference leg | k=1 x 4.83 t, 6 keys, seam 0.00 deg | k=1 x 4.83 t, 6 keys, seam 0.00 deg | - |
+| velocity_raptor | reference leg | 2 s past cap, 41 keys, seam 70.31 deg | 2 s past cap, 41 keys, seam 28.12 deg | - |
+| vortex | shipped | one key, 1 keys, seam 0.00 deg | one key, 1 keys, seam 0.00 deg | - |
+| water_dragon | reference leg | 2 s past cap, 41 keys, seam 56.79 deg | 2 s past cap, 41 keys, seam 35.24 deg | 2 s past cap, 41 keys, seam 35.24 deg (WaterDragonPose.getAttacking()) |
+| whale | reference leg | 2 s past cap, 41 keys, seam 126.86 deg | 2 s past cap, 41 keys, seam 17.98 deg | - |
+| worm_large | shipped | 2 s past cap, 41 keys, seam 129.80 deg | 2 s past cap, 41 keys, seam 129.80 deg | - |
+| worm_medium | shipped | 2 s past cap, 41 keys, seam 108.00 deg | 2 s past cap, 41 keys, seam 108.00 deg | - |
+| worm_small | shipped | 2 s past cap, 41 keys, seam 54.00 deg | 2 s past cap, 41 keys, seam 54.00 deg | - |
+
+THE CHECKS (the lane, headless, no gradle): javac x3 into fresh scratch class directories - src/main rc 0, src/g1tool rc 0
+(72 classes; the sampler, `ProbeSubject`, `S4CandidateRuntime`), src/gametest rc 0 (246 classes); the sampler over every hook
+twice into scratch, the two runs diff-clean (271 files), the 43 old clips cmp-equal to the new walk clips (43 / 43), the
+result installed into `tools/reference_clips/` and `--verify` against it VERIFIED (271 files); `python
+tools/test_artist_package.py` OK (48 tests); the dry run `package --out <scratch>/pkg --reference-geo-dir
+build/reference/generated` over every species: 116 folders, `check` PASS 116 / 0 (walk 112, idle 112, attack 46 files in the
+folder, 0 under the old name; every §4.3 with the new header, 69 sheets with the item-10 sentence, 3 with "sampled when the
+rig lands", the Queen's with her native sentence; README_FIRST with the Import Animations bullet, the listing and rule 7; no
+.bbmodel with a reference clip; round-trip EQUAL 116 / 116); a starting-point delivery on the Bee PASS; `python
+tools/asset_audit.py` 0 errors, 138 acknowledged, exit 0 (nothing under src/main moves).
+
+DEVIATIONS (each reversible, presented):
+- THE PROBE'S ATTACKING VALUE is declared through the state JSON the probe already takes (`attacking`, the Slice 4b presets'
+  field) rather than a new setter: the sampler's attack state builds the subject with `attacking` 1. Added instead: the read
+  flag (`attackingRead()`), the cross-check the index reports.
+- `referenceClipsVerify` (a `check` dependency) now depends on `referenceConvertModels`, which the earlier comment kept out of
+  `check` as "the package generator's INPUT, not a gate": the unlanded hooks sample over its output, so `check` now converts
+  the reference models first. Written, not run.
+- AN UNLANDED HOOK IS BAKED LENIENTLY about the face-order key (the `S4CandidateRuntime` overload); a landed rig keeps the
+  strict bake. The key moves no bone.
+- THE DECLARED POSE INTERFACES are read from the descriptors' sources (`src/main/java/danger/orespawn/entity/client/*.java`,
+  the `subject(<X>.class)` casts, delegation followed) - the sampler already resolves shipped geo under the repository root
+  from the manifest path; a hook whose source is missing fails loudly.
+- THE WALK CLIP'S BEDROCK CLIP NAME stays `reference` (pinned bytes); the idle and attack clips are named by their state.
+- AN ATTACK CLIP IS EMITTED FOR EVERY HOOK THAT DECLARES THE READ, six of them showing the resting branch (the read not
+  reached at the inputs); the sheet and the index say so rather than dropping a declared state.
+- `HOOK_RULES` was authored by the lane from the extracted rhythm lines, not derived by the sampler; three rows (the
+  Cephadrome, the Dragon, the Ostrich) state that the gait reads the movement delta and shows no gait on the probe.
+
+THE ORCHESTRATOR ON THE DEVIATIONS (decided under doctrine, reversible): the `check` dependency on
+`referenceConvertModels` is accepted as the smallest way to let a `check` dependency the owner ruled (the third set:
+`referenceClips` under `check`) verify the unlanded hooks' clips - their bake reads the reference leg's geo, which is a
+build output, not a checked-in file; the alternative, 62 reference geos checked in as build inputs, would have made the
+reference leg's output part of the repository. The converter keeps `--continue-on-refusal` (the PurplePower and the
+Rotator refused as before), so a refusal does not fail `check`; the gate's build time carries the conversion (below).
+The lenient face-order bake applies to unlanded hooks only (their reference geos carry no `orespawn:cube_face_order`;
+the key moves no bone); a landing slice's proof keeps the strict bake. The other five deviations are the lane's
+transcriptions of the ruling into the sampler's terms and stand as written.
+
+THE ORCHESTRATOR'S ONE FIX (g1tool): the first regeneration's `referenceClipsVerify` went red with 43 old-name clips
+"produced by the sampler, not checked in" - not the sampler's output but files left in `build/reference_clips/` by the
+hooks landing's verify an hour earlier; the verifier regenerated into its scratch directory without clearing it, so
+after a renaming every stale file read as drift. `ReferenceClipSampler.verify` now deletes the sampler's own outputs
+(`*.animation.json`, the index) from the scratch directory before regenerating; nothing else in the comparison moved.
+`gradle referenceClipsVerify` alone: VERIFIED 271 files, the scratch directory 271 files (the 43 stale gone). The lane's
+headless verify ran into fresh scratch directories, which is why it never met the trap.
+
+NOT DONE (the orchestrator's): gradle (`referenceDumpCompiledModels referenceConvertModels referenceClips` twice,
+`referenceClipsVerify`, the benchmark re-pin - g1tool moved); the repository's `artist_handoff/` regenerated; the records
+(this section, KNOWN_ISSUES's count); the commit.
+
+IN-GAME: nothing - the sampler is g1tool, the descriptors stay unregistered; nothing under src/main moves.
+
+GATE: GATE: clips2 (first run) red at referenceClipsVerify - 43 old-name clips left in build/reference_clips/ by the hooks landing's verify read as drift (the fix above) -> clips2b green: the clips deterministic across two gradle runs (271 files), the 43 clips of 536f330 identical to their registries' new walk clips (0 differing or missing), referenceClipsVerify VERIFIED 271 on its own, the tests OK (48), the folder fresh (116 folders, 1,342 files, every check PASS; 270 reference clips: walk 112, idle 112, attack 46), the benchmark re-pinned, the audit 0 errors / 138 acknowledged; drift 0, build 0 (g1 2, s4 13, t2 29 PARITY PASS), suite: all 1278 required tests passed.
