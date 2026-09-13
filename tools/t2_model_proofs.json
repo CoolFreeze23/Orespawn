@@ -227,6 +227,7 @@
       "tier": 2,
       "class": "danger.orespawn.entity.client.BrutalflyModel",
       "texture": "src/main/resources/assets/orespawn/textures/entity/brutalfly.png",
+      "reference_source": "reference_1_7_10_source/sources/danger/orespawn/ModelBrutalfly.java",
       "animation_kind": "code_driven",
       "candidate_animation_path": "production_replacement_hook",
       "candidate_class": "danger.orespawn.entity.client.BrutalflyGeoReplacement",
@@ -299,14 +300,14 @@
           "late_start_age_ticks": 137.371,
           "span_age_ticks": 40.5
         }
-      },
-      "reference_note": "no reference_source here: the parsed 1.7.10 source diverges from the port by the MIRROR pins the standing reference gate carries (tools/reference_model_proofs.json; BUG-041, cleared by the mirror drop), and tools/g1_render_parity.py accepts only an exact reference match - the s4 precedent (model_coin only)"
+      }
     },
     {
       "id": "model_dragonfly",
       "tier": 2,
       "class": "danger.orespawn.entity.client.DragonflyModel",
       "texture": "src/main/resources/assets/orespawn/textures/entity/dragonfly.png",
+      "reference_source": "reference_1_7_10_source/sources/danger/orespawn/ModelDragonfly.java",
       "animation_kind": "code_driven",
       "candidate_animation_path": "production_replacement_hook",
       "candidate_class": "danger.orespawn.entity.client.DragonflyGeoReplacement",
@@ -422,14 +423,14 @@
           "late_start_age_ticks": 137.371,
           "span_age_ticks": 40.5
         }
-      },
-      "reference_note": "no reference_source here: the parsed 1.7.10 source diverges from the port by the MIRROR pins the standing reference gate carries (tools/reference_model_proofs.json; BUG-041, cleared by the mirror drop), and tools/g1_render_parity.py accepts only an exact reference match - the s4 precedent (model_coin only)"
+      }
     },
     {
       "id": "model_cockateil",
       "tier": 2,
       "class": "danger.orespawn.entity.client.ModelCockateil",
       "texture": "src/main/resources/assets/orespawn/textures/entity/bird1.png",
+      "reference_source": "reference_1_7_10_source/sources/danger/orespawn/ModelCockateil.java",
       "animation_kind": "code_driven",
       "candidate_animation_path": "production_replacement_hook",
       "candidate_class": "danger.orespawn.entity.client.CockateilGeoReplacement",
@@ -573,14 +574,14 @@
           "late_start_age_ticks": 137.371,
           "span_age_ticks": 40.5
         }
-      },
-      "reference_note": "no reference_source here: the parsed 1.7.10 source diverges from the port by the MIRROR pins the standing reference gate carries (tools/reference_model_proofs.json; BUG-041, cleared by the mirror drop), and tools/g1_render_parity.py accepts only an exact reference match - the s4 precedent (model_coin only)"
+      }
     },
     {
       "id": "model_ruby_bird",
       "tier": 2,
       "class": "danger.orespawn.entity.client.ModelCockateil",
       "texture": "src/main/resources/assets/orespawn/textures/entity/bird1.png",
+      "reference_source": "reference_1_7_10_source/sources/danger/orespawn/ModelCockateil.java",
       "rig_note": "one rig, two consumers (orig ClientProxyOreSpawn.java:430-431, identical registrations): the Ruby Bird's descriptor shares the Cockateil's shipped geo, clip file, layers and hook under its own registry path (design Q9); proven here on its own entry",
       "animation_kind": "code_driven",
       "candidate_animation_path": "production_replacement_hook",
@@ -725,14 +726,14 @@
           "late_start_age_ticks": 137.371,
           "span_age_ticks": 40.5
         }
-      },
-      "reference_note": "no reference_source here: the parsed 1.7.10 source diverges from the port by the MIRROR pins the standing reference gate carries (tools/reference_model_proofs.json; BUG-041, cleared by the mirror drop), and tools/g1_render_parity.py accepts only an exact reference match - the s4 precedent (model_coin only)"
+      }
     },
     {
       "id": "model_firefly",
       "tier": 2,
       "class": "danger.orespawn.entity.client.FireflyModel",
       "texture": "src/main/resources/assets/orespawn/textures/entity/fireflytexture.png",
+      "reference_source": "reference_1_7_10_source/sources/danger/orespawn/ModelFirefly.java",
       "animation_kind": "code_driven",
       "candidate_animation_path": "production_replacement_hook",
       "candidate_class": "danger.orespawn.entity.client.FireflyGeoReplacement",
@@ -797,14 +798,14 @@
           "late_start_age_ticks": 137.371,
           "span_age_ticks": 40.5
         }
-      },
-      "reference_note": "no reference_source here: the parsed 1.7.10 source diverges from the port by the MIRROR pins the standing reference gate carries (tools/reference_model_proofs.json; BUG-041, cleared by the mirror drop), and tools/g1_render_parity.py accepts only an exact reference match - the s4 precedent (model_coin only)"
+      }
     },
     {
       "id": "model_goldfish",
       "tier": 2,
       "class": "danger.orespawn.entity.client.ModelGoldFish",
       "texture": "src/main/resources/assets/orespawn/textures/entity/goldfish.png",
+      "reference_source": "reference_1_7_10_source/sources/danger/orespawn/ModelGoldFish.java",
       "animation_kind": "code_driven",
       "candidate_animation_path": "production_replacement_hook",
       "candidate_class": "danger.orespawn.entity.client.GoldFishGeoReplacement",
@@ -939,14 +940,14 @@
           "late_start_age_ticks": 137.371,
           "span_age_ticks": 40.5
         }
-      },
-      "reference_note": "no reference_source here: the parsed 1.7.10 source diverges from the port by the MIRROR pins the standing reference gate carries (tools/reference_model_proofs.json; BUG-041, cleared by the mirror drop), and tools/g1_render_parity.py accepts only an exact reference match - the s4 precedent (model_coin only)"
+      }
     },
     {
       "id": "model_ant",
       "tier": 2,
       "class": "danger.orespawn.entity.client.AntModel",
       "texture": "src/main/resources/assets/orespawn/textures/entity/ant.png",
+      "reference_source": "reference_1_7_10_source/sources/danger/orespawn/ModelAnt.java",
       "rig_note": "the first gait-scaled Tier-2 rig after the Beaver: the gait channels are scaled by limbSwingAmount, so the setupAnim and visual legs run the Beaver's amplitude matrix (limb_swing_amount_samples) and the keyframe leg its own",
       "animation_kind": "code_driven",
       "candidate_animation_path": "production_replacement_hook",
@@ -1056,14 +1057,14 @@
           "late_start_age_ticks": 137.371,
           "span_age_ticks": 40.5
         }
-      },
-      "reference_note": "no reference_source here: the parsed 1.7.10 source diverges from the port by the MIRROR pins the standing reference gate carries (tools/reference_model_proofs.json; BUG-041, cleared by the mirror drop), and tools/g1_render_parity.py accepts only an exact reference match - the s4 precedent (model_coin only)"
+      }
     },
     {
       "id": "model_rainbow_ant",
       "tier": 2,
       "class": "danger.orespawn.entity.client.AntModel",
       "texture": "src/main/resources/assets/orespawn/textures/entity/rainbow_ant.png",
+      "reference_source": "reference_1_7_10_source/sources/danger/orespawn/ModelAnt.java",
       "rig_note": "one rig, five consumers (orig ClientProxyOreSpawn.java:412-415, 476: RenderAnt(new ModelAnt(), shadow, scale) with 0.1f / 0.25f for the Ant, Rainbow Ant and Unstable Ant and 0.15f / 0.35f for the Red Ant and Termite): the Rainbow Ant's descriptor shares the Ant's shipped geo, clip file, layers and hook under its own registry path (design Q9); proven here on its own entry",
       "animation_kind": "code_driven",
       "candidate_animation_path": "production_replacement_hook",
@@ -1173,14 +1174,14 @@
           "late_start_age_ticks": 137.371,
           "span_age_ticks": 40.5
         }
-      },
-      "reference_note": "no reference_source here: the parsed 1.7.10 source diverges from the port by the MIRROR pins the standing reference gate carries (tools/reference_model_proofs.json; BUG-041, cleared by the mirror drop), and tools/g1_render_parity.py accepts only an exact reference match - the s4 precedent (model_coin only)"
+      }
     },
     {
       "id": "model_red_ant",
       "tier": 2,
       "class": "danger.orespawn.entity.client.AntModel",
       "texture": "src/main/resources/assets/orespawn/textures/entity/red_ant.png",
+      "reference_source": "reference_1_7_10_source/sources/danger/orespawn/ModelAnt.java",
       "rig_note": "one rig, five consumers (orig ClientProxyOreSpawn.java:412-415, 476: RenderAnt(new ModelAnt(), shadow, scale) with 0.1f / 0.25f for the Ant, Rainbow Ant and Unstable Ant and 0.15f / 0.35f for the Red Ant and Termite): the Red Ant's descriptor shares the Ant's shipped geo, clip file, layers and hook under its own registry path (design Q9); proven here on its own entry",
       "animation_kind": "code_driven",
       "candidate_animation_path": "production_replacement_hook",
@@ -1290,14 +1291,14 @@
           "late_start_age_ticks": 137.371,
           "span_age_ticks": 40.5
         }
-      },
-      "reference_note": "no reference_source here: the parsed 1.7.10 source diverges from the port by the MIRROR pins the standing reference gate carries (tools/reference_model_proofs.json; BUG-041, cleared by the mirror drop), and tools/g1_render_parity.py accepts only an exact reference match - the s4 precedent (model_coin only)"
+      }
     },
     {
       "id": "model_termite",
       "tier": 2,
       "class": "danger.orespawn.entity.client.AntModel",
       "texture": "src/main/resources/assets/orespawn/textures/entity/termite.png",
+      "reference_source": "reference_1_7_10_source/sources/danger/orespawn/ModelAnt.java",
       "rig_note": "one rig, five consumers (orig ClientProxyOreSpawn.java:412-415, 476: RenderAnt(new ModelAnt(), shadow, scale) with 0.1f / 0.25f for the Ant, Rainbow Ant and Unstable Ant and 0.15f / 0.35f for the Red Ant and Termite): the Termite's descriptor shares the Ant's shipped geo, clip file, layers and hook under its own registry path (design Q9); proven here on its own entry",
       "animation_kind": "code_driven",
       "candidate_animation_path": "production_replacement_hook",
@@ -1407,14 +1408,14 @@
           "late_start_age_ticks": 137.371,
           "span_age_ticks": 40.5
         }
-      },
-      "reference_note": "no reference_source here: the parsed 1.7.10 source diverges from the port by the MIRROR pins the standing reference gate carries (tools/reference_model_proofs.json; BUG-041, cleared by the mirror drop), and tools/g1_render_parity.py accepts only an exact reference match - the s4 precedent (model_coin only)"
+      }
     },
     {
       "id": "model_unstable_ant",
       "tier": 2,
       "class": "danger.orespawn.entity.client.AntModel",
       "texture": "src/main/resources/assets/orespawn/textures/entity/unstable_ant.png",
+      "reference_source": "reference_1_7_10_source/sources/danger/orespawn/ModelAnt.java",
       "rig_note": "one rig, five consumers (orig ClientProxyOreSpawn.java:412-415, 476: RenderAnt(new ModelAnt(), shadow, scale) with 0.1f / 0.25f for the Ant, Rainbow Ant and Unstable Ant and 0.15f / 0.35f for the Red Ant and Termite): the Unstable Ant's descriptor shares the Ant's shipped geo, clip file, layers and hook under its own registry path (design Q9); proven here on its own entry",
       "animation_kind": "code_driven",
       "candidate_animation_path": "production_replacement_hook",
@@ -1524,8 +1525,7 @@
           "late_start_age_ticks": 137.371,
           "span_age_ticks": 40.5
         }
-      },
-      "reference_note": "no reference_source here: the parsed 1.7.10 source diverges from the port by the MIRROR pins the standing reference gate carries (tools/reference_model_proofs.json; BUG-041, cleared by the mirror drop), and tools/g1_render_parity.py accepts only an exact reference match - the s4 precedent (model_coin only)"
+      }
     }
   ],
   "fixtures": [],

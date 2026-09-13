@@ -29,9 +29,9 @@
             [
               "up",
               "down",
-              "east",
-              "north",
               "west",
+              "north",
+              "east",
               "south"
             ]
           ],
@@ -39,9 +39,9 @@
             [
               "up",
               "down",
-              "east",
-              "north",
               "west",
+              "north",
+              "east",
               "south"
             ]
           ],
@@ -49,9 +49,9 @@
             [
               "up",
               "down",
-              "east",
-              "north",
               "west",
+              "north",
+              "east",
               "south"
             ]
           ],
@@ -59,9 +59,9 @@
             [
               "up",
               "down",
-              "east",
-              "north",
               "west",
+              "north",
+              "east",
               "south"
             ]
           ],
@@ -69,9 +69,9 @@
             [
               "up",
               "down",
-              "east",
-              "north",
               "west",
+              "north",
+              "east",
               "south"
             ]
           ],
@@ -79,9 +79,9 @@
             [
               "up",
               "down",
-              "east",
-              "north",
               "west",
+              "north",
+              "east",
               "south"
             ]
           ],
@@ -89,9 +89,9 @@
             [
               "up",
               "down",
-              "east",
-              "north",
               "west",
+              "north",
+              "east",
               "south"
             ]
           ],
@@ -99,9 +99,9 @@
             [
               "up",
               "down",
-              "east",
-              "north",
               "west",
+              "north",
+              "east",
               "south"
             ]
           ],
@@ -109,9 +109,9 @@
             [
               "up",
               "down",
-              "east",
-              "north",
               "west",
+              "north",
+              "east",
               "south"
             ]
           ],
@@ -119,9 +119,9 @@
             [
               "up",
               "down",
-              "east",
-              "north",
               "west",
+              "north",
+              "east",
               "south"
             ]
           ],
@@ -129,9 +129,9 @@
             [
               "up",
               "down",
-              "east",
-              "north",
               "west",
+              "north",
+              "east",
               "south"
             ]
           ],
@@ -139,9 +139,9 @@
             [
               "up",
               "down",
-              "east",
-              "north",
               "west",
+              "north",
+              "east",
               "south"
             ]
           ],
@@ -149,9 +149,9 @@
             [
               "up",
               "down",
-              "east",
-              "north",
               "west",
+              "north",
+              "east",
               "south"
             ]
           ],
@@ -159,9 +159,9 @@
             [
               "up",
               "down",
-              "east",
-              "north",
               "west",
+              "north",
+              "east",
               "south"
             ]
           ],
@@ -169,9 +169,9 @@
             [
               "up",
               "down",
-              "east",
-              "north",
               "west",
+              "north",
+              "east",
               "south"
             ]
           ],
@@ -179,9 +179,9 @@
             [
               "up",
               "down",
-              "east",
-              "north",
               "west",
+              "north",
+              "east",
               "south"
             ]
           ]
@@ -210,66 +210,65 @@
               "uv": {
                 "west": {
                   "uv": [
-                    14,
+                    10,
                     25
                   ],
                   "uv_size": [
-                    10,
+                    -10,
                     4
                   ]
                 },
                 "east": {
                   "uv": [
-                    0,
+                    24,
                     25
                   ],
                   "uv_size": [
-                    10,
+                    -10,
                     4
                   ]
                 },
                 "north": {
                   "uv": [
-                    10,
+                    14,
                     25
                   ],
                   "uv_size": [
-                    4,
+                    -4,
                     4
                   ]
                 },
                 "south": {
                   "uv": [
-                    24,
+                    28,
                     25
                   ],
                   "uv_size": [
-                    4,
+                    -4,
                     4
                   ]
                 },
                 "up": {
                   "uv": [
-                    10,
+                    14,
                     15
                   ],
                   "uv_size": [
-                    4,
+                    -4,
                     10
                   ]
                 },
                 "down": {
                   "uv": [
-                    14,
+                    18,
                     25
                   ],
                   "uv_size": [
-                    4,
+                    -4,
                     -10
                   ]
                 }
-              },
-              "modelpart_mirror": true
+              }
             }
           ]
         },
@@ -299,17 +298,17 @@
                     12
                   ],
                   "uv_size": [
-                    4,
+                    -4,
                     3
                   ]
                 },
                 "east": {
                   "uv": [
-                    20,
+                    28,
                     12
                   ],
                   "uv_size": [
-                    4,
+                    -4,
                     3
                   ]
                 },
@@ -353,8 +352,7 @@
                     -4
                   ]
                 }
-              },
-              "modelpart_mirror": true
+              }
             }
           ]
         },
@@ -389,17 +387,17 @@
                     2
                   ],
                   "uv_size": [
-                    2,
+                    -2,
                     5
                   ]
                 },
                 "east": {
                   "uv": [
-                    20,
+                    24,
                     2
                   ],
                   "uv_size": [
-                    2,
+                    -2,
                     5
                   ]
                 },
@@ -443,8 +441,7 @@
                     -2
                   ]
                 }
-              },
-              "modelpart_mirror": true
+              }
             }
           ]
         },
@@ -479,17 +476,17 @@
                     2
                   ],
                   "uv_size": [
-                    2,
+                    -2,
                     5
                   ]
                 },
                 "east": {
                   "uv": [
-                    20,
+                    24,
                     2
                   ],
                   "uv_size": [
-                    2,
+                    -2,
                     5
                   ]
                 },
@@ -533,8 +530,7 @@
                     -2
                   ]
                 }
-              },
-              "modelpart_mirror": true
+              }
             }
           ]
         },
@@ -565,66 +561,65 @@
               "uv": {
                 "west": {
                   "uv": [
-                    18,
+                    17,
                     39
                   ],
                   "uv_size": [
-                    4,
+                    -4,
                     3
                   ]
                 },
                 "east": {
                   "uv": [
-                    13,
+                    22,
                     39
                   ],
                   "uv_size": [
-                    4,
+                    -4,
                     3
                   ]
                 },
                 "north": {
                   "uv": [
-                    17,
+                    18,
                     39
                   ],
                   "uv_size": [
-                    1,
+                    -1,
                     3
                   ]
                 },
                 "south": {
                   "uv": [
-                    22,
+                    23,
                     39
                   ],
                   "uv_size": [
-                    1,
+                    -1,
                     3
                   ]
                 },
                 "up": {
                   "uv": [
-                    17,
+                    18,
                     35
                   ],
                   "uv_size": [
-                    1,
+                    -1,
                     4
                   ]
                 },
                 "down": {
                   "uv": [
-                    18,
+                    19,
                     39
                   ],
                   "uv_size": [
-                    1,
+                    -1,
                     -4
                   ]
                 }
-              },
-              "modelpart_mirror": true
+              }
             }
           ]
         },
@@ -655,66 +650,65 @@
               "uv": {
                 "west": {
                   "uv": [
-                    19,
+                    18,
                     38
                   ],
                   "uv_size": [
-                    3,
+                    -3,
                     4
                   ]
                 },
                 "east": {
                   "uv": [
-                    15,
+                    22,
                     38
                   ],
                   "uv_size": [
-                    3,
+                    -3,
                     4
                   ]
                 },
                 "north": {
                   "uv": [
-                    18,
+                    19,
                     38
                   ],
                   "uv_size": [
-                    1,
+                    -1,
                     4
                   ]
                 },
                 "south": {
                   "uv": [
-                    22,
+                    23,
                     38
                   ],
                   "uv_size": [
-                    1,
+                    -1,
                     4
                   ]
                 },
                 "up": {
                   "uv": [
-                    18,
+                    19,
                     35
                   ],
                   "uv_size": [
-                    1,
+                    -1,
                     3
                   ]
                 },
                 "down": {
                   "uv": [
-                    19,
+                    20,
                     38
                   ],
                   "uv_size": [
-                    1,
+                    -1,
                     -3
                   ]
                 }
-              },
-              "modelpart_mirror": true
+              }
             }
           ]
         },
@@ -744,17 +738,17 @@
                     10
                   ],
                   "uv_size": [
-                    10,
+                    -10,
                     4
                   ]
                 },
                 "east": {
                   "uv": [
-                    29,
+                    49,
                     10
                   ],
                   "uv_size": [
-                    10,
+                    -10,
                     4
                   ]
                 },
@@ -798,8 +792,7 @@
                     -10
                   ]
                 }
-              },
-              "modelpart_mirror": true
+              }
             }
           ]
         },
@@ -825,66 +818,65 @@
               "uv": {
                 "west": {
                   "uv": [
-                    6,
+                    3,
                     33
                   ],
                   "uv_size": [
-                    3,
+                    -3,
                     4
                   ]
                 },
                 "east": {
                   "uv": [
-                    0,
+                    9,
                     33
                   ],
                   "uv_size": [
-                    3,
+                    -3,
                     4
                   ]
                 },
                 "north": {
                   "uv": [
-                    3,
+                    6,
                     33
                   ],
                   "uv_size": [
-                    3,
+                    -3,
                     4
                   ]
                 },
                 "south": {
                   "uv": [
-                    9,
+                    12,
                     33
                   ],
                   "uv_size": [
-                    3,
+                    -3,
                     4
                   ]
                 },
                 "up": {
                   "uv": [
-                    3,
+                    6,
                     30
                   ],
                   "uv_size": [
-                    3,
+                    -3,
                     3
                   ]
                 },
                 "down": {
                   "uv": [
-                    6,
+                    9,
                     33
                   ],
                   "uv_size": [
-                    3,
+                    -3,
                     -3
                   ]
                 }
-              },
-              "modelpart_mirror": true
+              }
             }
           ]
         },
@@ -915,66 +907,65 @@
               "uv": {
                 "west": {
                   "uv": [
-                    19,
+                    16,
                     33
                   ],
                   "uv_size": [
-                    3,
+                    -3,
                     1
                   ]
                 },
                 "east": {
                   "uv": [
-                    13,
+                    22,
                     33
                   ],
                   "uv_size": [
-                    3,
+                    -3,
                     1
                   ]
                 },
                 "north": {
                   "uv": [
-                    16,
+                    19,
                     33
                   ],
                   "uv_size": [
-                    3,
+                    -3,
                     1
                   ]
                 },
                 "south": {
                   "uv": [
-                    22,
+                    25,
                     33
                   ],
                   "uv_size": [
-                    3,
+                    -3,
                     1
                   ]
                 },
                 "up": {
                   "uv": [
-                    16,
+                    19,
                     30
                   ],
                   "uv_size": [
-                    3,
+                    -3,
                     3
                   ]
                 },
                 "down": {
                   "uv": [
-                    19,
+                    22,
                     33
                   ],
                   "uv_size": [
-                    3,
+                    -3,
                     -3
                   ]
                 }
-              },
-              "modelpart_mirror": true
+              }
             }
           ]
         },
@@ -1005,66 +996,65 @@
               "uv": {
                 "west": {
                   "uv": [
-                    6,
+                    3,
                     41
                   ],
                   "uv_size": [
-                    3,
+                    -3,
                     3
                   ]
                 },
                 "east": {
                   "uv": [
-                    0,
+                    9,
                     41
                   ],
                   "uv_size": [
-                    3,
+                    -3,
                     3
                   ]
                 },
                 "north": {
                   "uv": [
-                    3,
+                    6,
                     41
                   ],
                   "uv_size": [
-                    3,
+                    -3,
                     3
                   ]
                 },
                 "south": {
                   "uv": [
-                    9,
+                    12,
                     41
                   ],
                   "uv_size": [
-                    3,
+                    -3,
                     3
                   ]
                 },
                 "up": {
                   "uv": [
-                    3,
+                    6,
                     38
                   ],
                   "uv_size": [
-                    3,
+                    -3,
                     3
                   ]
                 },
                 "down": {
                   "uv": [
-                    6,
+                    9,
                     41
                   ],
                   "uv_size": [
-                    3,
+                    -3,
                     -3
                   ]
                 }
-              },
-              "modelpart_mirror": true
+              }
             }
           ]
         },
@@ -1099,17 +1089,17 @@
                     5
                   ],
                   "uv_size": [
-                    5,
+                    -5,
                     3
                   ]
                 },
                 "east": {
                   "uv": [
-                    0,
+                    10,
                     5
                   ],
                   "uv_size": [
-                    5,
+                    -5,
                     3
                   ]
                 },
@@ -1153,8 +1143,7 @@
                     -5
                   ]
                 }
-              },
-              "modelpart_mirror": true
+              }
             }
           ]
         },
@@ -1189,17 +1178,17 @@
                     5
                   ],
                   "uv_size": [
-                    5,
+                    -5,
                     3
                   ]
                 },
                 "east": {
                   "uv": [
-                    0,
+                    10,
                     5
                   ],
                   "uv_size": [
-                    5,
+                    -5,
                     3
                   ]
                 },
@@ -1243,8 +1232,7 @@
                     -5
                   ]
                 }
-              },
-              "modelpart_mirror": true
+              }
             }
           ]
         },
@@ -1279,17 +1267,17 @@
                     5
                   ],
                   "uv_size": [
-                    5,
+                    -5,
                     3
                   ]
                 },
                 "east": {
                   "uv": [
-                    0,
+                    10,
                     5
                   ],
                   "uv_size": [
-                    5,
+                    -5,
                     3
                   ]
                 },
@@ -1333,8 +1321,7 @@
                     -5
                   ]
                 }
-              },
-              "modelpart_mirror": true
+              }
             }
           ]
         },
@@ -1369,17 +1356,17 @@
                     5
                   ],
                   "uv_size": [
-                    5,
+                    -5,
                     3
                   ]
                 },
                 "east": {
                   "uv": [
-                    0,
+                    10,
                     5
                   ],
                   "uv_size": [
-                    5,
+                    -5,
                     3
                   ]
                 },
@@ -1423,8 +1410,7 @@
                     -5
                   ]
                 }
-              },
-              "modelpart_mirror": true
+              }
             }
           ]
         },
@@ -1450,66 +1436,65 @@
               "uv": {
                 "west": {
                   "uv": [
-                    38,
+                    35,
                     21
                   ],
                   "uv_size": [
-                    6,
+                    -6,
                     4
                   ]
                 },
                 "east": {
                   "uv": [
-                    29,
+                    44,
                     21
                   ],
                   "uv_size": [
-                    6,
+                    -6,
                     4
                   ]
                 },
                 "north": {
                   "uv": [
-                    35,
+                    38,
                     21
                   ],
                   "uv_size": [
-                    3,
+                    -3,
                     4
                   ]
                 },
                 "south": {
                   "uv": [
-                    44,
+                    47,
                     21
                   ],
                   "uv_size": [
-                    3,
+                    -3,
                     4
                   ]
                 },
                 "up": {
                   "uv": [
-                    35,
+                    38,
                     15
                   ],
                   "uv_size": [
-                    3,
+                    -3,
                     6
                   ]
                 },
                 "down": {
                   "uv": [
-                    38,
+                    41,
                     21
                   ],
                   "uv_size": [
-                    3,
+                    -3,
                     -6
                   ]
                 }
-              },
-              "modelpart_mirror": true
+              }
             }
           ]
         },
@@ -1535,66 +1520,65 @@
               "uv": {
                 "west": {
                   "uv": [
-                    6,
+                    4,
                     12
                   ],
                   "uv_size": [
-                    4,
+                    -4,
                     3
                   ]
                 },
                 "east": {
                   "uv": [
-                    0,
+                    10,
                     12
                   ],
                   "uv_size": [
-                    4,
+                    -4,
                     3
                   ]
                 },
                 "north": {
                   "uv": [
-                    4,
+                    6,
                     12
                   ],
                   "uv_size": [
-                    2,
+                    -2,
                     3
                   ]
                 },
                 "south": {
                   "uv": [
-                    10,
+                    12,
                     12
                   ],
                   "uv_size": [
-                    2,
+                    -2,
                     3
                   ]
                 },
                 "up": {
                   "uv": [
-                    4,
+                    6,
                     8
                   ],
                   "uv_size": [
-                    2,
+                    -2,
                     4
                   ]
                 },
                 "down": {
                   "uv": [
-                    6,
+                    8,
                     12
                   ],
                   "uv_size": [
-                    2,
+                    -2,
                     -4
                   ]
                 }
-              },
-              "modelpart_mirror": true
+              }
             }
           ]
         }

@@ -858,58 +858,13 @@
   },
   "ground_truth": "1.7.10 decompiled ModelBase constructor, parsed; never the port",
   "comparison": {
-    "status": "DIVERGES_TEXTURE_MAPPING",
+    "status": "PASS",
     "reference_parts_with_boxes": 18,
     "port_parts_with_boxes": 18,
     "matched_parts": 18,
-    "categories": {
-      "MIRROR": 18
-    },
-    "differences": [
-      "Cheek2 -> cheek2: reference box mirror=False (flag at addBox time), port True",
-      "Leg1 -> leg1: reference box mirror=False (flag at addBox time), port True",
-      "Leg2 -> leg2: reference box mirror=False (flag at addBox time), port True",
-      "Leg3 -> leg3: reference box mirror=False (flag at addBox time), port True",
-      "Leg4 -> leg4: reference box mirror=False (flag at addBox time), port True",
-      "Tail2 -> tail2: reference box mirror=False (flag at addBox time), port True",
-      "Neck -> neck: reference box mirror=False (flag at addBox time), port True",
-      "Head -> head: reference box mirror=False (flag at addBox time), port True",
-      "MouthUnder -> mouth_under: reference box mirror=False (flag at addBox time), port True",
-      "Cheek1 -> cheek1: reference box mirror=False (flag at addBox time), port True",
-      "Ear2 -> ear2: reference box mirror=False (flag at addBox time), port True",
-      "Nose -> nose: reference box mirror=False (flag at addBox time), port True",
-      "Ear1 -> ear1: reference box mirror=False (flag at addBox time), port True",
-      "Body -> body: reference box mirror=False (flag at addBox time), port True",
-      "BodyTail -> body_tail: reference box mirror=False (flag at addBox time), port True",
-      "Tail1 -> tail1: reference box mirror=False (flag at addBox time), port True",
-      "Hat1 -> hat1: reference box mirror=False (flag at addBox time), port True",
-      "Hat2 -> hat2: reference box mirror=False (flag at addBox time), port True"
-    ],
-    "by_category": {
-      "MIRROR": [
-        "Cheek2 -> cheek2: reference box mirror=False (flag at addBox time), port True",
-        "Leg1 -> leg1: reference box mirror=False (flag at addBox time), port True",
-        "Leg2 -> leg2: reference box mirror=False (flag at addBox time), port True",
-        "Leg3 -> leg3: reference box mirror=False (flag at addBox time), port True",
-        "Leg4 -> leg4: reference box mirror=False (flag at addBox time), port True",
-        "Tail2 -> tail2: reference box mirror=False (flag at addBox time), port True",
-        "Neck -> neck: reference box mirror=False (flag at addBox time), port True",
-        "Head -> head: reference box mirror=False (flag at addBox time), port True",
-        "MouthUnder -> mouth_under: reference box mirror=False (flag at addBox time), port True",
-        "Cheek1 -> cheek1: reference box mirror=False (flag at addBox time), port True",
-        "Ear2 -> ear2: reference box mirror=False (flag at addBox time), port True",
-        "Nose -> nose: reference box mirror=False (flag at addBox time), port True",
-        "Ear1 -> ear1: reference box mirror=False (flag at addBox time), port True",
-        "Body -> body: reference box mirror=False (flag at addBox time), port True",
-        "BodyTail -> body_tail: reference box mirror=False (flag at addBox time), port True",
-        "Tail1 -> tail1: reference box mirror=False (flag at addBox time), port True",
-        "Hat1 -> hat1: reference box mirror=False (flag at addBox time), port True",
-        "Hat2 -> hat2: reference box mirror=False (flag at addBox time), port True"
-      ]
-    }
+    "categories": {},
+    "differences": [],
+    "by_category": {}
   },
-  "status": "PASS_WITH_PINNED_DIVERGENCES",
-  "pinned_divergences": {
-    "MIRROR": 18
-  }
+  "status": "PASS"
 }

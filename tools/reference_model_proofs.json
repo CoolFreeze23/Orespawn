@@ -18,10 +18,7 @@
         "pitch_degrees": -28.0
       },
       "channels": [],
-      "pinned_divergences": {
-        "MIRROR": 20
-      },
-      "pin_note": "parity bugs per the owner's ruling of 2026-09-02 (BUG-041 mirror, ENT-S-091 geometry); pinned so the count can only shrink; cleared when the fix lands"
+      "fixed": "BUG-041 stage 2 (2026-09-13): mirror flags dropped; exact match required"
     },
     {
       "id": "reference_bee",
@@ -39,10 +36,7 @@
         "pitch_degrees": -28.0
       },
       "channels": [],
-      "pinned_divergences": {
-        "MIRROR": 23
-      },
-      "pin_note": "parity bugs per the owner's ruling of 2026-09-02 (BUG-041 mirror, ENT-S-091 geometry); pinned so the count can only shrink; cleared when the fix lands"
+      "fixed": "BUG-041 stage 2 (2026-09-13): mirror flags dropped; exact match required"
     },
     {
       "id": "reference_brutalfly",
@@ -60,10 +54,7 @@
         "pitch_degrees": -28.0
       },
       "channels": [],
-      "pinned_divergences": {
-        "MIRROR": 14
-      },
-      "pin_note": "parity bugs per the owner's ruling of 2026-09-02 (BUG-041 mirror, ENT-S-091 geometry); pinned so the count can only shrink; cleared when the fix lands"
+      "fixed": "BUG-041 stage 2 (2026-09-13): mirror flags dropped; exact match required"
     },
     {
       "id": "reference_caterkiller",
@@ -81,10 +72,6 @@
         "pitch_degrees": -28.0
       },
       "channels": [],
-      "pinned_divergences": {
-        "MIRROR": 31
-      },
-      "pin_note": "parity bug per the owner's ruling of 2026-09-02 (BUG-041 mirror only); the unroll is declared and checked",
       "unrolled_parts": {
         "seg1": 3,
         "seg1lspike": 3,
@@ -106,7 +93,8 @@
         "reference": "ModelCaterKiller.java render: pose-and-draw loops, seg1 parts x3 and seg2 parts x6",
         "port": "CaterKillerModel.java setupAnim + renderToBuffer (unrolled copies)",
         "verdict": "equivalent re-expression per the ENT-S-091 read (refuted once, upheld): per-copy y = base + headoff/(i+1) + 8*i and z = base + 14*i for i=0..2; seg2 phase accumulator as (PI/4)*i for i=0..5; seg3 follows seg2rspike[5]; draw order preserved. The per-copy pivots the leg cannot see are pinned by this read; a harness pin follows when CaterKiller enters Phase G (its classic model reads the entity)."
-      }
+      },
+      "fixed": "BUG-041 stage 2 (2026-09-13): mirror flags dropped; exact match required"
     },
     {
       "id": "reference_cliffracer",
@@ -141,10 +129,7 @@
         "pitch_degrees": -28.0
       },
       "channels": [],
-      "pinned_divergences": {
-        "MIRROR": 11
-      },
-      "pin_note": "parity bugs per the owner's ruling of 2026-09-02 (BUG-041 mirror, ENT-S-091 geometry); pinned so the count can only shrink; cleared when the fix lands"
+      "fixed": "BUG-041 stage 2 (2026-09-13): mirror flags dropped; exact match required"
     },
     {
       "id": "reference_dragonfly",
@@ -162,10 +147,7 @@
         "pitch_degrees": -28.0
       },
       "channels": [],
-      "pinned_divergences": {
-        "MIRROR": 26
-      },
-      "pin_note": "parity bugs per the owner's ruling of 2026-09-02 (BUG-041 mirror, ENT-S-091 geometry); pinned so the count can only shrink; cleared when the fix lands"
+      "fixed": "BUG-041 stage 2 (2026-09-13): mirror flags dropped; exact match required"
     },
     {
       "id": "reference_emperorscorpion",
@@ -183,10 +165,7 @@
         "pitch_degrees": -28.0
       },
       "channels": [],
-      "pinned_divergences": {
-        "MIRROR": 78
-      },
-      "pin_note": "parity bugs per the owner's ruling of 2026-09-02 (BUG-041 mirror, ENT-S-091 geometry); pinned so the count can only shrink; cleared when the fix lands"
+      "fixed": "BUG-041 stage 2 (2026-09-13): mirror flags dropped; exact match required"
     },
     {
       "id": "reference_fairy",
@@ -204,10 +183,7 @@
         "pitch_degrees": -28.0
       },
       "channels": [],
-      "pinned_divergences": {
-        "MIRROR": 15
-      },
-      "pin_note": "parity bugs per the owner's ruling of 2026-09-02 (BUG-041 mirror, ENT-S-091 geometry); pinned so the count can only shrink; cleared when the fix lands"
+      "fixed": "BUG-041 stage 2 (2026-09-13): mirror flags dropped; exact match required"
     },
     {
       "id": "reference_firefly",
@@ -225,10 +201,7 @@
         "pitch_degrees": -28.0
       },
       "channels": [],
-      "pinned_divergences": {
-        "MIRROR": 12
-      },
-      "pin_note": "parity bugs per the owner's ruling of 2026-09-02 (BUG-041 mirror, ENT-S-091 geometry); pinned so the count can only shrink; cleared when the fix lands"
+      "fixed": "BUG-041 stage 2 (2026-09-13): mirror flags dropped; exact match required"
     },
     {
       "id": "reference_gammametroid",
@@ -246,10 +219,7 @@
         "pitch_degrees": -28.0
       },
       "channels": [],
-      "pinned_divergences": {
-        "MIRROR": 21
-      },
-      "pin_note": "parity bugs per the owner's ruling of 2026-09-02 (BUG-041 mirror, ENT-S-091 geometry); pinned so the count can only shrink; cleared when the fix lands"
+      "fixed": "BUG-041 stage 2 (2026-09-13): mirror flags dropped; exact match required"
     },
     {
       "id": "reference_ghost",
@@ -285,10 +255,7 @@
         "pitch_degrees": -28.0
       },
       "channels": [],
-      "pinned_divergences": {
-        "MIRROR": 10
-      },
-      "pin_note": "parity bugs per the owner's ruling of 2026-09-02 (BUG-041 mirror, ENT-S-091 geometry); pinned so the count can only shrink; cleared when the fix lands"
+      "fixed": "BUG-041 stage 2 (2026-09-13): mirror flags dropped; exact match required"
     },
     {
       "id": "reference_herculesbeetle",
@@ -306,10 +273,7 @@
         "pitch_degrees": -28.0
       },
       "channels": [],
-      "pinned_divergences": {
-        "MIRROR": 37
-      },
-      "pin_note": "parity bugs per the owner's ruling of 2026-09-02 (BUG-041 mirror, ENT-S-091 geometry); pinned so the count can only shrink; cleared when the fix lands"
+      "fixed": "BUG-041 stage 2 (2026-09-13): mirror flags dropped; exact match required"
     },
     {
       "id": "reference_hydrolisc",
@@ -327,10 +291,7 @@
         "pitch_degrees": -28.0
       },
       "channels": [],
-      "pinned_divergences": {
-        "MIRROR": 40
-      },
-      "pin_note": "parity bugs per the owner's ruling of 2026-09-02 (BUG-041 mirror, ENT-S-091 geometry); pinned so the count can only shrink; cleared when the fix lands"
+      "fixed": "BUG-041 stage 2 (2026-09-13): mirror flags dropped; exact match required"
     },
     {
       "id": "reference_kyuubi",
@@ -366,10 +327,7 @@
         "pitch_degrees": -28.0
       },
       "channels": [],
-      "pinned_divergences": {
-        "MIRROR": 5
-      },
-      "pin_note": "parity bugs per the owner's ruling of 2026-09-02 (BUG-041 mirror, ENT-S-091 geometry); pinned so the count can only shrink; cleared when the fix lands"
+      "fixed": "BUG-041 stage 2 (2026-09-13): mirror flags dropped; exact match required"
     },
     {
       "id": "reference_leon",
@@ -387,10 +345,7 @@
         "pitch_degrees": -28.0
       },
       "channels": [],
-      "pinned_divergences": {
-        "MIRROR": 98
-      },
-      "pin_note": "parity bugs per the owner's ruling of 2026-09-02 (BUG-041 mirror, ENT-S-091 geometry); pinned so the count can only shrink; cleared when the fix lands"
+      "fixed": "BUG-041 stage 2 (2026-09-13): mirror flags dropped; exact match required"
     },
     {
       "id": "reference_lizard",
@@ -408,10 +363,7 @@
         "pitch_degrees": -28.0
       },
       "channels": [],
-      "pinned_divergences": {
-        "MIRROR": 71
-      },
-      "pin_note": "parity bugs per the owner's ruling of 2026-09-02 (BUG-041 mirror, ENT-S-091 geometry); pinned so the count can only shrink; cleared when the fix lands"
+      "fixed": "BUG-041 stage 2 (2026-09-13): mirror flags dropped; exact match required"
     },
     {
       "id": "reference_lurkingterror",
@@ -429,10 +381,7 @@
         "pitch_degrees": -28.0
       },
       "channels": [],
-      "pinned_divergences": {
-        "MIRROR": 59
-      },
-      "pin_note": "parity bugs per the owner's ruling of 2026-09-02 (BUG-041 mirror, ENT-S-091 geometry); pinned so the count can only shrink; cleared when the fix lands"
+      "fixed": "BUG-041 stage 2 (2026-09-13): mirror flags dropped; exact match required"
     },
     {
       "id": "reference_mantis",
@@ -450,10 +399,7 @@
         "pitch_degrees": -28.0
       },
       "channels": [],
-      "pinned_divergences": {
-        "MIRROR": 36
-      },
-      "pin_note": "parity bugs per the owner's ruling of 2026-09-02 (BUG-041 mirror, ENT-S-091 geometry); pinned so the count can only shrink; cleared when the fix lands"
+      "fixed": "BUG-041 stage 2 (2026-09-13): mirror flags dropped; exact match required"
     },
     {
       "id": "reference_alien",
@@ -471,10 +417,7 @@
         "pitch_degrees": -28.0
       },
       "channels": [],
-      "pinned_divergences": {
-        "MIRROR": 55
-      },
-      "pin_note": "parity bugs per the owner's ruling of 2026-09-02 (BUG-041 mirror, ENT-S-091 geometry); pinned so the count can only shrink; cleared when the fix lands"
+      "fixed": "BUG-041 stage 2 (2026-09-13): mirror flags dropped; exact match required"
     },
     {
       "id": "reference_alosaurus",
@@ -492,10 +435,7 @@
         "pitch_degrees": -28.0
       },
       "channels": [],
-      "pinned_divergences": {
-        "MIRROR": 21
-      },
-      "pin_note": "parity bugs per the owner's ruling of 2026-09-02 (BUG-041 mirror, ENT-S-091 geometry); pinned so the count can only shrink; cleared when the fix lands"
+      "fixed": "BUG-041 stage 2 (2026-09-13): mirror flags dropped; exact match required"
     },
     {
       "id": "reference_antrobot",
@@ -513,10 +453,7 @@
         "pitch_degrees": -28.0
       },
       "channels": [],
-      "pinned_divergences": {
-        "MIRROR": 27
-      },
-      "pin_note": "parity bugs per the owner's ruling of 2026-09-02 (BUG-041 mirror, ENT-S-091 geometry); pinned so the count can only shrink; cleared when the fix lands"
+      "fixed": "BUG-041 stage 2 (2026-09-13): mirror flags dropped; exact match required"
     },
     {
       "id": "reference_attacksquid",
@@ -534,10 +471,7 @@
         "pitch_degrees": -28.0
       },
       "channels": [],
-      "pinned_divergences": {
-        "MIRROR": 9
-      },
-      "pin_note": "parity bugs per the owner's ruling of 2026-09-02 (BUG-041 mirror, ENT-S-091 geometry); pinned so the count can only shrink; cleared when the fix lands"
+      "fixed": "BUG-041 stage 2 (2026-09-13): mirror flags dropped; exact match required"
     },
     {
       "id": "reference_bandp",
@@ -555,10 +489,7 @@
         "pitch_degrees": -28.0
       },
       "channels": [],
-      "pinned_divergences": {
-        "MIRROR": 7
-      },
-      "pin_note": "parity bugs per the owner's ruling of 2026-09-02 (BUG-041 mirror, ENT-S-091 geometry); pinned so the count can only shrink; cleared when the fix lands"
+      "fixed": "BUG-041 stage 2 (2026-09-13): mirror flags dropped; exact match required"
     },
     {
       "id": "reference_baryonyx",
@@ -576,10 +507,7 @@
         "pitch_degrees": -28.0
       },
       "channels": [],
-      "pinned_divergences": {
-        "MIRROR": 52
-      },
-      "pin_note": "parity bugs per the owner's ruling of 2026-09-02 (BUG-041 mirror, ENT-S-091 geometry); pinned so the count can only shrink; cleared when the fix lands"
+      "fixed": "BUG-041 stage 2 (2026-09-13): mirror flags dropped; exact match required"
     },
     {
       "id": "reference_basilisk",
@@ -597,10 +525,7 @@
         "pitch_degrees": -28.0
       },
       "channels": [],
-      "pinned_divergences": {
-        "MIRROR": 21
-      },
-      "pin_note": "parity bugs per the owner's ruling of 2026-09-02 (BUG-041 mirror, ENT-S-091 geometry); pinned so the count can only shrink; cleared when the fix lands"
+      "fixed": "BUG-041 stage 2 (2026-09-13): mirror flags dropped; exact match required"
     },
     {
       "id": "reference_beaver",
@@ -618,10 +543,7 @@
         "pitch_degrees": -28.0
       },
       "channels": [],
-      "pinned_divergences": {
-        "MIRROR": 9
-      },
-      "pin_note": "parity bugs per the owner's ruling of 2026-09-02 (BUG-041 mirror, ENT-S-091 geometry); pinned so the count can only shrink; cleared when the fix lands"
+      "fixed": "BUG-041 stage 2 (2026-09-13): mirror flags dropped; exact match required"
     },
     {
       "id": "reference_camarasaurus",
@@ -639,10 +561,7 @@
         "pitch_degrees": -28.0
       },
       "channels": [],
-      "pinned_divergences": {
-        "MIRROR": 21
-      },
-      "pin_note": "parity bugs per the owner's ruling of 2026-09-02 (BUG-041 mirror, ENT-S-091 geometry); pinned so the count can only shrink; cleared when the fix lands"
+      "fixed": "BUG-041 stage 2 (2026-09-13): mirror flags dropped; exact match required"
     },
     {
       "id": "reference_cassowary",
@@ -660,10 +579,7 @@
         "pitch_degrees": -28.0
       },
       "channels": [],
-      "pinned_divergences": {
-        "MIRROR": 12
-      },
-      "pin_note": "parity bugs per the owner's ruling of 2026-09-02 (BUG-041 mirror, ENT-S-091 geometry); pinned so the count can only shrink; cleared when the fix lands"
+      "fixed": "BUG-041 stage 2 (2026-09-13): mirror flags dropped; exact match required"
     },
     {
       "id": "reference_cavefisher",
@@ -681,10 +597,7 @@
         "pitch_degrees": -28.0
       },
       "channels": [],
-      "pinned_divergences": {
-        "MIRROR": 75
-      },
-      "pin_note": "parity bugs per the owner's ruling of 2026-09-02 (BUG-041 mirror, ENT-S-091 geometry); pinned so the count can only shrink; cleared when the fix lands"
+      "fixed": "BUG-041 stage 2 (2026-09-13): mirror flags dropped; exact match required"
     },
     {
       "id": "reference_cephadrome",
@@ -702,10 +615,7 @@
         "pitch_degrees": -28.0
       },
       "channels": [],
-      "pinned_divergences": {
-        "MIRROR": 50
-      },
-      "pin_note": "parity bugs per the owner's ruling of 2026-09-02 (BUG-041 mirror, ENT-S-091 geometry); pinned so the count can only shrink; cleared when the fix lands"
+      "fixed": "BUG-041 stage 2 (2026-09-13): mirror flags dropped; exact match required"
     },
     {
       "id": "reference_chipmunk",
@@ -723,10 +633,7 @@
         "pitch_degrees": -28.0
       },
       "channels": [],
-      "pinned_divergences": {
-        "MIRROR": 18
-      },
-      "pin_note": "parity bugs per the owner's ruling of 2026-09-02 (BUG-041 mirror, ENT-S-091 geometry); pinned so the count can only shrink; cleared when the fix lands"
+      "fixed": "BUG-041 stage 2 (2026-09-13): mirror flags dropped; exact match required"
     },
     {
       "id": "reference_cloudshark",
@@ -744,10 +651,7 @@
         "pitch_degrees": -28.0
       },
       "channels": [],
-      "pinned_divergences": {
-        "MIRROR": 8
-      },
-      "pin_note": "parity bugs per the owner's ruling of 2026-09-02 (BUG-041 mirror, ENT-S-091 geometry); pinned so the count can only shrink; cleared when the fix lands"
+      "fixed": "BUG-041 stage 2 (2026-09-13): mirror flags dropped; exact match required"
     },
     {
       "id": "reference_cockateil",
@@ -765,10 +669,7 @@
         "pitch_degrees": -28.0
       },
       "channels": [],
-      "pinned_divergences": {
-        "MIRROR": 16
-      },
-      "pin_note": "parity bugs per the owner's ruling of 2026-09-02 (BUG-041 mirror, ENT-S-091 geometry); pinned so the count can only shrink; cleared when the fix lands"
+      "fixed": "BUG-041 stage 2 (2026-09-13): mirror flags dropped; exact match required"
     },
     {
       "id": "reference_coin",
@@ -804,10 +705,7 @@
         "pitch_degrees": -28.0
       },
       "channels": [],
-      "pinned_divergences": {
-        "MIRROR": 25
-      },
-      "pin_note": "parity bugs per the owner's ruling of 2026-09-02 (BUG-041 mirror, ENT-S-091 geometry); pinned so the count can only shrink; cleared when the fix lands"
+      "fixed": "BUG-041 stage 2 (2026-09-13): mirror flags dropped; exact match required"
     },
     {
       "id": "reference_creepinghorror",
@@ -825,10 +723,7 @@
         "pitch_degrees": -28.0
       },
       "channels": [],
-      "pinned_divergences": {
-        "MIRROR": 26
-      },
-      "pin_note": "parity bugs per the owner's ruling of 2026-09-02 (BUG-041 mirror, ENT-S-091 geometry); pinned so the count can only shrink; cleared when the fix lands"
+      "fixed": "BUG-041 stage 2 (2026-09-13): mirror flags dropped; exact match required"
     },
     {
       "id": "reference_cryolophosaurus",
@@ -846,10 +741,7 @@
         "pitch_degrees": -28.0
       },
       "channels": [],
-      "pinned_divergences": {
-        "MIRROR": 20
-      },
-      "pin_note": "parity bugs per the owner's ruling of 2026-09-02 (BUG-041 mirror, ENT-S-091 geometry); pinned so the count can only shrink; cleared when the fix lands"
+      "fixed": "BUG-041 stage 2 (2026-09-13): mirror flags dropped; exact match required"
     },
     {
       "id": "reference_dragon",
@@ -867,10 +759,7 @@
         "pitch_degrees": -28.0
       },
       "channels": [],
-      "pinned_divergences": {
-        "MIRROR": 55
-      },
-      "pin_note": "parity bugs per the owner's ruling of 2026-09-02 (BUG-041 mirror, ENT-S-091 geometry); pinned so the count can only shrink; cleared when the fix lands"
+      "fixed": "BUG-041 stage 2 (2026-09-13): mirror flags dropped; exact match required"
     },
     {
       "id": "reference_dungeonbeast",
@@ -888,10 +777,7 @@
         "pitch_degrees": -28.0
       },
       "channels": [],
-      "pinned_divergences": {
-        "MIRROR": 64
-      },
-      "pin_note": "parity bugs per the owner's ruling of 2026-09-02 (BUG-041 mirror, ENT-S-091 geometry); pinned so the count can only shrink; cleared when the fix lands"
+      "fixed": "BUG-041 stage 2 (2026-09-13): mirror flags dropped; exact match required"
     },
     {
       "id": "reference_easterbunny",
@@ -909,10 +795,7 @@
         "pitch_degrees": -28.0
       },
       "channels": [],
-      "pinned_divergences": {
-        "MIRROR": 13
-      },
-      "pin_note": "parity bugs per the owner's ruling of 2026-09-02 (BUG-041 mirror, ENT-S-091 geometry); pinned so the count can only shrink; cleared when the fix lands"
+      "fixed": "BUG-041 stage 2 (2026-09-13): mirror flags dropped; exact match required"
     },
     {
       "id": "reference_elevator",
@@ -930,11 +813,7 @@
         "pitch_degrees": -28.0
       },
       "channels": [],
-      "fixed": "ENT-S-091 (2026-09-02): pivots restored to the original's 0 with the living lift cancelled in the renderer",
-      "pinned_divergences": {
-        "MIRROR": 5
-      },
-      "pin_note": "BUG-041 mirror only (port-wide drop pending the owner's A/B); geometry exact since ENT-S-091 slice B"
+      "fixed": "ENT-S-091 (2026-09-02): pivots restored to the original's 0 with the living lift cancelled in the renderer"
     },
     {
       "id": "reference_enderknight",
@@ -952,10 +831,7 @@
         "pitch_degrees": -28.0
       },
       "channels": [],
-      "pinned_divergences": {
-        "MIRROR": 40
-      },
-      "pin_note": "parity bugs per the owner's ruling of 2026-09-02 (BUG-041 mirror, ENT-S-091 geometry); pinned so the count can only shrink; cleared when the fix lands"
+      "fixed": "BUG-041 stage 2 (2026-09-13): mirror flags dropped; exact match required"
     },
     {
       "id": "reference_enderreaper",
@@ -991,10 +867,7 @@
         "pitch_degrees": -28.0
       },
       "channels": [],
-      "pinned_divergences": {
-        "MIRROR": 6
-      },
-      "pin_note": "parity bugs per the owner's ruling of 2026-09-02 (BUG-041 mirror, ENT-S-091 geometry); pinned so the count can only shrink; cleared when the fix lands"
+      "fixed": "BUG-041 stage 2 (2026-09-13): mirror flags dropped; exact match required"
     },
     {
       "id": "reference_frog",
@@ -1012,10 +885,7 @@
         "pitch_degrees": -28.0
       },
       "channels": [],
-      "pinned_divergences": {
-        "MIRROR": 10
-      },
-      "pin_note": "parity bugs per the owner's ruling of 2026-09-02 (BUG-041 mirror, ENT-S-091 geometry); pinned so the count can only shrink; cleared when the fix lands"
+      "fixed": "BUG-041 stage 2 (2026-09-13): mirror flags dropped; exact match required"
     },
     {
       "id": "reference_gazelle",
@@ -1033,10 +903,7 @@
         "pitch_degrees": -28.0
       },
       "channels": [],
-      "pinned_divergences": {
-        "MIRROR": 33
-      },
-      "pin_note": "parity bugs per the owner's ruling of 2026-09-02 (BUG-041 mirror, ENT-S-091 geometry); pinned so the count can only shrink; cleared when the fix lands"
+      "fixed": "BUG-041 stage 2 (2026-09-13): mirror flags dropped; exact match required"
     },
     {
       "id": "reference_giantrobot",
@@ -1054,10 +921,7 @@
         "pitch_degrees": -28.0
       },
       "channels": [],
-      "pinned_divergences": {
-        "MIRROR": 18
-      },
-      "pin_note": "parity bugs per the owner's ruling of 2026-09-02 (BUG-041 mirror, ENT-S-091 geometry); pinned so the count can only shrink; cleared when the fix lands"
+      "fixed": "BUG-041 stage 2 (2026-09-13): mirror flags dropped; exact match required"
     },
     {
       "id": "reference_godzilla",
@@ -1075,10 +939,7 @@
         "pitch_degrees": -28.0
       },
       "channels": [],
-      "pinned_divergences": {
-        "MIRROR": 71
-      },
-      "pin_note": "parity bugs per the owner's ruling of 2026-09-02 (BUG-041 mirror, ENT-S-091 geometry); pinned so the count can only shrink; cleared when the fix lands"
+      "fixed": "BUG-041 stage 2 (2026-09-13): mirror flags dropped; exact match required"
     },
     {
       "id": "reference_goldfish",
@@ -1096,10 +957,7 @@
         "pitch_degrees": -28.0
       },
       "channels": [],
-      "pinned_divergences": {
-        "MIRROR": 16
-      },
-      "pin_note": "parity bugs per the owner's ruling of 2026-09-02 (BUG-041 mirror, ENT-S-091 geometry); pinned so the count can only shrink; cleared when the fix lands"
+      "fixed": "BUG-041 stage 2 (2026-09-13): mirror flags dropped; exact match required"
     },
     {
       "id": "reference_hammerhead",
@@ -1117,10 +975,7 @@
         "pitch_degrees": -28.0
       },
       "channels": [],
-      "pinned_divergences": {
-        "MIRROR": 37
-      },
-      "pin_note": "parity bugs per the owner's ruling of 2026-09-02 (BUG-041 mirror, ENT-S-091 geometry); pinned so the count can only shrink; cleared when the fix lands"
+      "fixed": "BUG-041 stage 2 (2026-09-13): mirror flags dropped; exact match required"
     },
     {
       "id": "reference_irukandji",
@@ -1138,10 +993,7 @@
         "pitch_degrees": -28.0
       },
       "channels": [],
-      "pinned_divergences": {
-        "MIRROR": 9
-      },
-      "pin_note": "parity bugs per the owner's ruling of 2026-09-02 (BUG-041 mirror, ENT-S-091 geometry); pinned so the count can only shrink; cleared when the fix lands"
+      "fixed": "BUG-041 stage 2 (2026-09-13): mirror flags dropped; exact match required"
     },
     {
       "id": "reference_island",
@@ -1195,10 +1047,7 @@
         "pitch_degrees": -28.0
       },
       "channels": [],
-      "pinned_divergences": {
-        "MIRROR": 111
-      },
-      "pin_note": "parity bugs per the owner's ruling of 2026-09-02 (BUG-041 mirror, ENT-S-091 geometry); pinned so the count can only shrink; cleared when the fix lands"
+      "fixed": "BUG-041 stage 2 (2026-09-13): mirror flags dropped; exact match required"
     },
     {
       "id": "reference_nastysaurus",
@@ -1216,10 +1065,7 @@
         "pitch_degrees": -28.0
       },
       "channels": [],
-      "pinned_divergences": {
-        "MIRROR": 59
-      },
-      "pin_note": "parity bugs per the owner's ruling of 2026-09-02 (BUG-041 mirror, ENT-S-091 geometry); pinned so the count can only shrink; cleared when the fix lands"
+      "fixed": "BUG-041 stage 2 (2026-09-13): mirror flags dropped; exact match required"
     },
     {
       "id": "reference_peacock",
@@ -1237,10 +1083,7 @@
         "pitch_degrees": -28.0
       },
       "channels": [],
-      "pinned_divergences": {
-        "MIRROR": 16
-      },
-      "pin_note": "parity bugs per the owner's ruling of 2026-09-02 (BUG-041 mirror, ENT-S-091 geometry); pinned so the count can only shrink; cleared when the fix lands"
+      "fixed": "BUG-041 stage 2 (2026-09-13): mirror flags dropped; exact match required"
     },
     {
       "id": "reference_pitchblack",
@@ -1258,10 +1101,7 @@
         "pitch_degrees": -28.0
       },
       "channels": [],
-      "pinned_divergences": {
-        "MIRROR": 101
-      },
-      "pin_note": "parity bugs per the owner's ruling of 2026-09-02 (BUG-041 mirror, ENT-S-091 geometry); pinned so the count can only shrink; cleared when the fix lands"
+      "fixed": "BUG-041 stage 2 (2026-09-13): mirror flags dropped; exact match required"
     },
     {
       "id": "reference_pointysaurus",
@@ -1279,10 +1119,7 @@
         "pitch_degrees": -28.0
       },
       "channels": [],
-      "pinned_divergences": {
-        "MIRROR": 30
-      },
-      "pin_note": "parity bugs per the owner's ruling of 2026-09-02 (BUG-041 mirror, ENT-S-091 geometry); pinned so the count can only shrink; cleared when the fix lands"
+      "fixed": "BUG-041 stage 2 (2026-09-13): mirror flags dropped; exact match required"
     },
     {
       "id": "reference_purplepower",
@@ -1300,10 +1137,7 @@
         "pitch_degrees": -28.0
       },
       "channels": [],
-      "pinned_divergences": {
-        "MIRROR": 3
-      },
-      "pin_note": "parity bugs per the owner's ruling of 2026-09-02 (BUG-041 mirror, ENT-S-091 geometry); pinned so the count can only shrink; cleared when the fix lands"
+      "fixed": "BUG-041 stage 2 (2026-09-13): mirror flags dropped; exact match required"
     },
     {
       "id": "reference_robot1",
@@ -1321,10 +1155,7 @@
         "pitch_degrees": -28.0
       },
       "channels": [],
-      "pinned_divergences": {
-        "MIRROR": 27
-      },
-      "pin_note": "parity bugs per the owner's ruling of 2026-09-02 (BUG-041 mirror, ENT-S-091 geometry); pinned so the count can only shrink; cleared when the fix lands"
+      "fixed": "BUG-041 stage 2 (2026-09-13): mirror flags dropped; exact match required"
     },
     {
       "id": "reference_robot2",
@@ -1342,10 +1173,7 @@
         "pitch_degrees": -28.0
       },
       "channels": [],
-      "pinned_divergences": {
-        "MIRROR": 15
-      },
-      "pin_note": "parity bugs per the owner's ruling of 2026-09-02 (BUG-041 mirror, ENT-S-091 geometry); pinned so the count can only shrink; cleared when the fix lands"
+      "fixed": "BUG-041 stage 2 (2026-09-13): mirror flags dropped; exact match required"
     },
     {
       "id": "reference_robot3",
@@ -1363,10 +1191,7 @@
         "pitch_degrees": -28.0
       },
       "channels": [],
-      "pinned_divergences": {
-        "MIRROR": 19
-      },
-      "pin_note": "parity bugs per the owner's ruling of 2026-09-02 (BUG-041 mirror, ENT-S-091 geometry); pinned so the count can only shrink; cleared when the fix lands"
+      "fixed": "BUG-041 stage 2 (2026-09-13): mirror flags dropped; exact match required"
     },
     {
       "id": "reference_robot4",
@@ -1384,10 +1209,7 @@
         "pitch_degrees": -28.0
       },
       "channels": [],
-      "pinned_divergences": {
-        "MIRROR": 55
-      },
-      "pin_note": "parity bugs per the owner's ruling of 2026-09-02 (BUG-041 mirror, ENT-S-091 geometry); pinned so the count can only shrink; cleared when the fix lands"
+      "fixed": "BUG-041 stage 2 (2026-09-13): mirror flags dropped; exact match required"
     },
     {
       "id": "reference_robot5",
@@ -1405,10 +1227,7 @@
         "pitch_degrees": -28.0
       },
       "channels": [],
-      "pinned_divergences": {
-        "MIRROR": 11
-      },
-      "pin_note": "parity bugs per the owner's ruling of 2026-09-02 (BUG-041 mirror, ENT-S-091 geometry); pinned so the count can only shrink; cleared when the fix lands"
+      "fixed": "BUG-041 stage 2 (2026-09-13): mirror flags dropped; exact match required"
     },
     {
       "id": "reference_rockbase",
@@ -1426,10 +1245,7 @@
         "pitch_degrees": -28.0
       },
       "channels": [],
-      "pinned_divergences": {
-        "MIRROR": 22
-      },
-      "pin_note": "parity bugs per the owner's ruling of 2026-09-02 (BUG-041 mirror, ENT-S-091 geometry); pinned so the count can only shrink; cleared when the fix lands"
+      "fixed": "BUG-041 stage 2 (2026-09-13): mirror flags dropped; exact match required"
     },
     {
       "id": "reference_seamonster",
@@ -1447,10 +1263,7 @@
         "pitch_degrees": -28.0
       },
       "channels": [],
-      "pinned_divergences": {
-        "MIRROR": 23
-      },
-      "pin_note": "parity bugs per the owner's ruling of 2026-09-02 (BUG-041 mirror, ENT-S-091 geometry); pinned so the count can only shrink; cleared when the fix lands"
+      "fixed": "BUG-041 stage 2 (2026-09-13): mirror flags dropped; exact match required"
     },
     {
       "id": "reference_seaviper",
@@ -1504,10 +1317,7 @@
         "pitch_degrees": -28.0
       },
       "channels": [],
-      "pinned_divergences": {
-        "MIRROR": 39
-      },
-      "pin_note": "parity bugs per the owner's ruling of 2026-09-02 (BUG-041 mirror, ENT-S-091 geometry); pinned so the count can only shrink; cleared when the fix lands"
+      "fixed": "BUG-041 stage 2 (2026-09-13): mirror flags dropped; exact match required"
     },
     {
       "id": "reference_trex",
@@ -1525,10 +1335,7 @@
         "pitch_degrees": -28.0
       },
       "channels": [],
-      "pinned_divergences": {
-        "MIRROR": 27
-      },
-      "pin_note": "parity bugs per the owner's ruling of 2026-09-02 (BUG-041 mirror, ENT-S-091 geometry); pinned so the count can only shrink; cleared when the fix lands"
+      "fixed": "BUG-041 stage 2 (2026-09-13): mirror flags dropped; exact match required"
     },
     {
       "id": "reference_theking",
@@ -1546,10 +1353,7 @@
         "pitch_degrees": -28.0
       },
       "channels": [],
-      "pinned_divergences": {
-        "MIRROR": 119
-      },
-      "pin_note": "parity bugs per the owner's ruling of 2026-09-02 (BUG-041 mirror, ENT-S-091 geometry); pinned so the count can only shrink; cleared when the fix lands"
+      "fixed": "BUG-041 stage 2 (2026-09-13): mirror flags dropped; exact match required"
     },
     {
       "id": "reference_theprince",
@@ -1567,10 +1371,7 @@
         "pitch_degrees": -28.0
       },
       "channels": [],
-      "pinned_divergences": {
-        "MIRROR": 35
-      },
-      "pin_note": "parity bugs per the owner's ruling of 2026-09-02 (BUG-041 mirror, ENT-S-091 geometry); pinned so the count can only shrink; cleared when the fix lands"
+      "fixed": "BUG-041 stage 2 (2026-09-13): mirror flags dropped; exact match required"
     },
     {
       "id": "reference_theprinceadult",
@@ -1588,10 +1389,7 @@
         "pitch_degrees": -28.0
       },
       "channels": [],
-      "pinned_divergences": {
-        "MIRROR": 119
-      },
-      "pin_note": "parity bugs per the owner's ruling of 2026-09-02 (BUG-041 mirror, ENT-S-091 geometry); pinned so the count can only shrink; cleared when the fix lands"
+      "fixed": "BUG-041 stage 2 (2026-09-13): mirror flags dropped; exact match required"
     },
     {
       "id": "reference_theprinceteen",
@@ -1609,10 +1407,7 @@
         "pitch_degrees": -28.0
       },
       "channels": [],
-      "pinned_divergences": {
-        "MIRROR": 71
-      },
-      "pin_note": "parity bugs per the owner's ruling of 2026-09-02 (BUG-041 mirror, ENT-S-091 geometry); pinned so the count can only shrink; cleared when the fix lands"
+      "fixed": "BUG-041 stage 2 (2026-09-13): mirror flags dropped; exact match required"
     },
     {
       "id": "reference_theprincess",
@@ -1630,10 +1425,7 @@
         "pitch_degrees": -28.0
       },
       "channels": [],
-      "pinned_divergences": {
-        "MIRROR": 37
-      },
-      "pin_note": "parity bugs per the owner's ruling of 2026-09-02 (BUG-041 mirror, ENT-S-091 geometry); pinned so the count can only shrink; cleared when the fix lands"
+      "fixed": "BUG-041 stage 2 (2026-09-13): mirror flags dropped; exact match required"
     },
     {
       "id": "reference_urchin",
@@ -1651,10 +1443,7 @@
         "pitch_degrees": -28.0
       },
       "channels": [],
-      "pinned_divergences": {
-        "MIRROR": 17
-      },
-      "pin_note": "parity bugs per the owner's ruling of 2026-09-02 (BUG-041 mirror, ENT-S-091 geometry); pinned so the count can only shrink; cleared when the fix lands"
+      "fixed": "BUG-041 stage 2 (2026-09-13): mirror flags dropped; exact match required"
     },
     {
       "id": "reference_waterdragon",
@@ -1672,10 +1461,7 @@
         "pitch_degrees": -28.0
       },
       "channels": [],
-      "pinned_divergences": {
-        "MIRROR": 24
-      },
-      "pin_note": "parity bugs per the owner's ruling of 2026-09-02 (BUG-041 mirror, ENT-S-091 geometry); pinned so the count can only shrink; cleared when the fix lands"
+      "fixed": "BUG-041 stage 2 (2026-09-13): mirror flags dropped; exact match required"
     },
     {
       "id": "reference_whale",
@@ -1693,10 +1479,7 @@
         "pitch_degrees": -28.0
       },
       "channels": [],
-      "pinned_divergences": {
-        "MIRROR": 14
-      },
-      "pin_note": "parity bugs per the owner's ruling of 2026-09-02 (BUG-041 mirror, ENT-S-091 geometry); pinned so the count can only shrink; cleared when the fix lands"
+      "fixed": "BUG-041 stage 2 (2026-09-13): mirror flags dropped; exact match required"
     },
     {
       "id": "reference_molenoid",
@@ -1714,10 +1497,7 @@
         "pitch_degrees": -28.0
       },
       "channels": [],
-      "pinned_divergences": {
-        "MIRROR": 37
-      },
-      "pin_note": "parity bugs per the owner's ruling of 2026-09-02 (BUG-041 mirror, ENT-S-091 geometry); pinned so the count can only shrink; cleared when the fix lands"
+      "fixed": "BUG-041 stage 2 (2026-09-13): mirror flags dropped; exact match required"
     },
     {
       "id": "reference_mosquito",
@@ -1753,10 +1533,7 @@
         "pitch_degrees": -28.0
       },
       "channels": [],
-      "pinned_divergences": {
-        "MIRROR": 38
-      },
-      "pin_note": "parity bugs per the owner's ruling of 2026-09-02 (BUG-041 mirror, ENT-S-091 geometry); pinned so the count can only shrink; cleared when the fix lands"
+      "fixed": "BUG-041 stage 2 (2026-09-13): mirror flags dropped; exact match required"
     },
     {
       "id": "reference_rat",
@@ -1774,10 +1551,7 @@
         "pitch_degrees": -28.0
       },
       "channels": [],
-      "pinned_divergences": {
-        "MIRROR": 12
-      },
-      "pin_note": "parity bugs per the owner's ruling of 2026-09-02 (BUG-041 mirror, ENT-S-091 geometry); pinned so the count can only shrink; cleared when the fix lands"
+      "fixed": "BUG-041 stage 2 (2026-09-13): mirror flags dropped; exact match required"
     },
     {
       "id": "reference_rotator",
@@ -1795,10 +1569,7 @@
         "pitch_degrees": -28.0
       },
       "channels": [],
-      "pinned_divergences": {
-        "MIRROR": 3
-      },
-      "pin_note": "parity bugs per the owner's ruling of 2026-09-02 (BUG-041 mirror, ENT-S-091 geometry); pinned so the count can only shrink; cleared when the fix lands"
+      "fixed": "BUG-041 stage 2 (2026-09-13): mirror flags dropped; exact match required"
     },
     {
       "id": "reference_rubberducky",
@@ -1816,10 +1587,7 @@
         "pitch_degrees": -28.0
       },
       "channels": [],
-      "pinned_divergences": {
-        "MIRROR": 8
-      },
-      "pin_note": "parity bugs per the owner's ruling of 2026-09-02 (BUG-041 mirror, ENT-S-091 geometry); pinned so the count can only shrink; cleared when the fix lands"
+      "fixed": "BUG-041 stage 2 (2026-09-13): mirror flags dropped; exact match required"
     },
     {
       "id": "reference_scorpion",
@@ -1837,10 +1605,7 @@
         "pitch_degrees": -28.0
       },
       "channels": [],
-      "pinned_divergences": {
-        "MIRROR": 22
-      },
-      "pin_note": "parity bugs per the owner's ruling of 2026-09-02 (BUG-041 mirror, ENT-S-091 geometry); pinned so the count can only shrink; cleared when the fix lands"
+      "fixed": "BUG-041 stage 2 (2026-09-13): mirror flags dropped; exact match required"
     },
     {
       "id": "reference_spitbug",
@@ -1858,10 +1623,7 @@
         "pitch_degrees": -28.0
       },
       "channels": [],
-      "pinned_divergences": {
-        "MIRROR": 93
-      },
-      "pin_note": "parity bugs per the owner's ruling of 2026-09-02 (BUG-041 mirror, ENT-S-091 geometry); pinned so the count can only shrink; cleared when the fix lands"
+      "fixed": "BUG-041 stage 2 (2026-09-13): mirror flags dropped; exact match required"
     },
     {
       "id": "reference_spyro",
@@ -1879,10 +1641,7 @@
         "pitch_degrees": -28.0
       },
       "channels": [],
-      "pinned_divergences": {
-        "MIRROR": 37
-      },
-      "pin_note": "parity bugs per the owner's ruling of 2026-09-02 (BUG-041 mirror, ENT-S-091 geometry); pinned so the count can only shrink; cleared when the fix lands"
+      "fixed": "BUG-041 stage 2 (2026-09-13): mirror flags dropped; exact match required"
     },
     {
       "id": "reference_stinkbug",
@@ -1918,10 +1677,7 @@
         "pitch_degrees": -28.0
       },
       "channels": [],
-      "pinned_divergences": {
-        "MIRROR": 20
-      },
-      "pin_note": "parity bugs per the owner's ruling of 2026-09-02 (BUG-041 mirror, ENT-S-091 geometry); pinned so the count can only shrink; cleared when the fix lands"
+      "fixed": "BUG-041 stage 2 (2026-09-13): mirror flags dropped; exact match required"
     },
     {
       "id": "reference_terribleterror",
@@ -1939,10 +1695,7 @@
         "pitch_degrees": -28.0
       },
       "channels": [],
-      "pinned_divergences": {
-        "MIRROR": 21
-      },
-      "pin_note": "parity bugs per the owner's ruling of 2026-09-02 (BUG-041 mirror, ENT-S-091 geometry); pinned so the count can only shrink; cleared when the fix lands"
+      "fixed": "BUG-041 stage 2 (2026-09-13): mirror flags dropped; exact match required"
     },
     {
       "id": "reference_triffid",
@@ -1960,10 +1713,7 @@
         "pitch_degrees": -28.0
       },
       "channels": [],
-      "pinned_divergences": {
-        "MIRROR": 178
-      },
-      "pin_note": "parity bugs per the owner's ruling of 2026-09-02 (BUG-041 mirror, ENT-S-091 geometry); pinned so the count can only shrink; cleared when the fix lands"
+      "fixed": "BUG-041 stage 2 (2026-09-13): mirror flags dropped; exact match required"
     },
     {
       "id": "reference_trooperbug",
@@ -1981,10 +1731,7 @@
         "pitch_degrees": -28.0
       },
       "channels": [],
-      "pinned_divergences": {
-        "MIRROR": 134
-      },
-      "pin_note": "parity bugs per the owner's ruling of 2026-09-02 (BUG-041 mirror, ENT-S-091 geometry); pinned so the count can only shrink; cleared when the fix lands"
+      "fixed": "BUG-041 stage 2 (2026-09-13): mirror flags dropped; exact match required"
     },
     {
       "id": "reference_tshirt",
@@ -2025,10 +1772,7 @@
         "pitch_degrees": -28.0
       },
       "channels": [],
-      "pinned_divergences": {
-        "MIRROR": 34
-      },
-      "pin_note": "parity bugs per the owner's ruling of 2026-09-02 (BUG-041 mirror, ENT-S-091 geometry); pinned so the count can only shrink; cleared when the fix lands"
+      "fixed": "BUG-041 stage 2 (2026-09-13): mirror flags dropped; exact match required"
     },
     {
       "id": "reference_vortex",
@@ -2046,10 +1790,7 @@
         "pitch_degrees": -28.0
       },
       "channels": [],
-      "pinned_divergences": {
-        "MIRROR": 1
-      },
-      "pin_note": "parity bugs per the owner's ruling of 2026-09-02 (BUG-041 mirror, ENT-S-091 geometry); pinned so the count can only shrink; cleared when the fix lands"
+      "fixed": "BUG-041 stage 2 (2026-09-13): mirror flags dropped; exact match required"
     },
     {
       "id": "reference_wormlarge",
@@ -2067,10 +1808,7 @@
         "pitch_degrees": -28.0
       },
       "channels": [],
-      "pinned_divergences": {
-        "MIRROR": 23
-      },
-      "pin_note": "parity bugs per the owner's ruling of 2026-09-02 (BUG-041 mirror, ENT-S-091 geometry); pinned so the count can only shrink; cleared when the fix lands"
+      "fixed": "BUG-041 stage 2 (2026-09-13): mirror flags dropped; exact match required"
     },
     {
       "id": "reference_wormmedium",
@@ -2088,10 +1826,7 @@
         "pitch_degrees": -28.0
       },
       "channels": [],
-      "pinned_divergences": {
-        "MIRROR": 8
-      },
-      "pin_note": "parity bugs per the owner's ruling of 2026-09-02 (BUG-041 mirror, ENT-S-091 geometry); pinned so the count can only shrink; cleared when the fix lands"
+      "fixed": "BUG-041 stage 2 (2026-09-13): mirror flags dropped; exact match required"
     },
     {
       "id": "reference_wormsmall",
@@ -2109,10 +1844,181 @@
         "pitch_degrees": -28.0
       },
       "channels": [],
-      "pinned_divergences": {
-        "MIRROR": 3
+      "fixed": "BUG-041 stage 2 (2026-09-13): mirror flags dropped; exact match required"
+    },
+    {
+      "id": "reference_butterfly",
+      "tier": 0,
+      "class": "danger.orespawn.entity.client.ButterflyModel",
+      "texture": "src/main/resources/assets/orespawn/textures/entity/butterfly.png",
+      "reference_source": "reference_1_7_10_source/sources/danger/orespawn/ModelButterfly.java",
+      "animation_kind": "static",
+      "loop_period_age_ticks": 20.0,
+      "sample_fractions": [],
+      "limb_swing": 0.0,
+      "limb_swing_amount": 0.0,
+      "camera": {
+        "yaw_degrees": 34.0,
+        "pitch_degrees": -28.0
       },
-      "pin_note": "parity bugs per the owner's ruling of 2026-09-02 (BUG-041 mirror, ENT-S-091 geometry); pinned so the count can only shrink; cleared when the fix lands"
+      "channels": [],
+      "constructor_arguments": [
+        1.0
+      ],
+      "rig_note": "the shared parameterised rig of Butterfly / LunaMoth / Mothra / VampireButterfly (ButterflyModel(root, wingspeed); orig ClientProxyOreSpawn.java:405-411 gives 1.0 / 0.75 / 0.2 / 1.0): the wingspeed scales the hook's phase only, the compiled layer is one; dumped at the Butterfly's 1.0, skipped at 6b10b14 as parameterised, added by the mirror drop (BUG-041 stage 2)",
+      "fixed": "BUG-041 stage 2 (2026-09-13): mirror flags dropped; exact match required"
+    },
+    {
+      "id": "reference_battleaxe",
+      "tier": 0,
+      "class": "danger.orespawn.client.model.BattleAxeItemModel",
+      "texture": "src/main/resources/assets/orespawn/textures/entity/battleaxetexture.png",
+      "reference_source": "reference_1_7_10_source/sources/danger/orespawn/ModelBattleAxe.java",
+      "animation_kind": "static",
+      "loop_period_age_ticks": 20.0,
+      "sample_fractions": [],
+      "limb_swing": 0.0,
+      "limb_swing_amount": 0.0,
+      "camera": {
+        "yaw_degrees": 34.0,
+        "pitch_degrees": -28.0
+      },
+      "channels": [],
+      "layer_factory": "createLayerDefinition",
+      "geometry_only": true,
+      "rig_note": "a client/model item model: a static LayerDefinition holder drawn by OreSpawnItemRenderer from createLayerDefinition().bakeRoot() (no model class, no hook); dumped geometry-only through its own factory; never surveyed before the mirror drop (BUG-041 stage 2)",
+      "fixed": "BUG-041 stage 2 (2026-09-13): mirror flags dropped; exact match required"
+    },
+    {
+      "id": "reference_bertha",
+      "tier": 0,
+      "class": "danger.orespawn.client.model.BerthaItemModel",
+      "texture": "src/main/resources/assets/orespawn/textures/entity/berthatexture.png",
+      "reference_source": "reference_1_7_10_source/sources/danger/orespawn/ModelBertha.java",
+      "animation_kind": "static",
+      "loop_period_age_ticks": 20.0,
+      "sample_fractions": [],
+      "limb_swing": 0.0,
+      "limb_swing_amount": 0.0,
+      "camera": {
+        "yaw_degrees": 34.0,
+        "pitch_degrees": -28.0
+      },
+      "channels": [],
+      "layer_factory": "createLayerDefinition",
+      "geometry_only": true,
+      "rig_note": "a client/model item model: a static LayerDefinition holder drawn by OreSpawnItemRenderer from createLayerDefinition().bakeRoot() (no model class, no hook); dumped geometry-only through its own factory; never surveyed before the mirror drop (BUG-041 stage 2)",
+      "fixed": "BUG-041 stage 2 (2026-09-13): mirror flags dropped; exact match required"
+    },
+    {
+      "id": "reference_chainsaw",
+      "tier": 0,
+      "class": "danger.orespawn.client.model.ChainsawItemModel",
+      "texture": "src/main/resources/assets/orespawn/textures/entity/chainsawtexture.png",
+      "reference_source": "reference_1_7_10_source/sources/danger/orespawn/ModelChainsaw.java",
+      "animation_kind": "static",
+      "loop_period_age_ticks": 20.0,
+      "sample_fractions": [],
+      "limb_swing": 0.0,
+      "limb_swing_amount": 0.0,
+      "camera": {
+        "yaw_degrees": 34.0,
+        "pitch_degrees": -28.0
+      },
+      "channels": [],
+      "layer_factory": "createLayerDefinition",
+      "geometry_only": true,
+      "rig_note": "a client/model item model: a static LayerDefinition holder drawn by OreSpawnItemRenderer from createLayerDefinition().bakeRoot() (no model class, no hook); dumped geometry-only through its own factory; never surveyed before the mirror drop (BUG-041 stage 2)",
+      "fixed": "BUG-041 stage 2 (2026-09-13): mirror flags dropped (0 MIRROR divergences); the remaining geometry divergence is pinned (see pin_note)",
+      "pinned_divergences": {
+        "MISSING_IN_PORT": 2,
+        "EXTRA_IN_PORT": 1
+      },
+      "pin_note": "found by the mirror drop (BUG-041 stage 2, 2026-09-13), not a mirror divergence: orig ModelChainsaw.java draws a tooth part (lines 78-81, animated along the blade by renderTooth*) the port lacks, and the port's blade2 box sits at x -2.5 where the original's is at x 0.0 (origin (-2.5,-2.5,-2.5) vs (0,-2.5,-2.5); the leg reports the pair as one MISSING and one EXTRA) - a geometry note for the owner, pinned so the count can only shrink"
+    },
+    {
+      "id": "reference_hammy",
+      "tier": 0,
+      "class": "danger.orespawn.client.model.HammyItemModel",
+      "texture": "src/main/resources/assets/orespawn/textures/entity/attitudeadjustertexture.png",
+      "reference_source": "reference_1_7_10_source/sources/danger/orespawn/ModelHammy.java",
+      "animation_kind": "static",
+      "loop_period_age_ticks": 20.0,
+      "sample_fractions": [],
+      "limb_swing": 0.0,
+      "limb_swing_amount": 0.0,
+      "camera": {
+        "yaw_degrees": 34.0,
+        "pitch_degrees": -28.0
+      },
+      "channels": [],
+      "layer_factory": "createLayerDefinition",
+      "geometry_only": true,
+      "rig_note": "a client/model item model: a static LayerDefinition holder drawn by OreSpawnItemRenderer from createLayerDefinition().bakeRoot() (no model class, no hook); dumped geometry-only through its own factory; never surveyed before the mirror drop (BUG-041 stage 2)",
+      "fixed": "BUG-041 stage 2 (2026-09-13): mirror flags dropped; exact match required"
+    },
+    {
+      "id": "reference_queenbattleaxe",
+      "tier": 0,
+      "class": "danger.orespawn.client.model.QueenBattleAxeItemModel",
+      "texture": "src/main/resources/assets/orespawn/textures/entity/queenbattleaxetexture.png",
+      "reference_source": "reference_1_7_10_source/sources/danger/orespawn/ModelQueenBattleAxe.java",
+      "animation_kind": "static",
+      "loop_period_age_ticks": 20.0,
+      "sample_fractions": [],
+      "limb_swing": 0.0,
+      "limb_swing_amount": 0.0,
+      "camera": {
+        "yaw_degrees": 34.0,
+        "pitch_degrees": -28.0
+      },
+      "channels": [],
+      "layer_factory": "createLayerDefinition",
+      "geometry_only": true,
+      "rig_note": "a client/model item model: a static LayerDefinition holder drawn by OreSpawnItemRenderer from createLayerDefinition().bakeRoot() (no model class, no hook); dumped geometry-only through its own factory; never surveyed before the mirror drop (BUG-041 stage 2)",
+      "fixed": "BUG-041 stage 2 (2026-09-13): mirror flags dropped; exact match required"
+    },
+    {
+      "id": "reference_slice",
+      "tier": 0,
+      "class": "danger.orespawn.client.model.SliceItemModel",
+      "texture": "src/main/resources/assets/orespawn/textures/entity/slicetexture.png",
+      "reference_source": "reference_1_7_10_source/sources/danger/orespawn/ModelSlice.java",
+      "animation_kind": "static",
+      "loop_period_age_ticks": 20.0,
+      "sample_fractions": [],
+      "limb_swing": 0.0,
+      "limb_swing_amount": 0.0,
+      "camera": {
+        "yaw_degrees": 34.0,
+        "pitch_degrees": -28.0
+      },
+      "channels": [],
+      "layer_factory": "createLayerDefinition",
+      "geometry_only": true,
+      "rig_note": "a client/model item model: a static LayerDefinition holder drawn by OreSpawnItemRenderer from createLayerDefinition().bakeRoot() (no model class, no hook); dumped geometry-only through its own factory; never surveyed before the mirror drop (BUG-041 stage 2)",
+      "fixed": "BUG-041 stage 2 (2026-09-13): mirror flags dropped; exact match required"
+    },
+    {
+      "id": "reference_squidzooka",
+      "tier": 0,
+      "class": "danger.orespawn.client.model.SquidZookaItemModel",
+      "texture": "src/main/resources/assets/orespawn/textures/entity/squidzookatexture.png",
+      "reference_source": "reference_1_7_10_source/sources/danger/orespawn/ModelSquidZooka.java",
+      "animation_kind": "static",
+      "loop_period_age_ticks": 20.0,
+      "sample_fractions": [],
+      "limb_swing": 0.0,
+      "limb_swing_amount": 0.0,
+      "camera": {
+        "yaw_degrees": 34.0,
+        "pitch_degrees": -28.0
+      },
+      "channels": [],
+      "layer_factory": "createLayerDefinition",
+      "geometry_only": true,
+      "rig_note": "a client/model item model: a static LayerDefinition holder drawn by OreSpawnItemRenderer from createLayerDefinition().bakeRoot() (no model class, no hook); dumped geometry-only through its own factory; never surveyed before the mirror drop (BUG-041 stage 2)",
+      "fixed": "BUG-041 stage 2 (2026-09-13): mirror flags dropped; exact match required"
     }
   ]
 }

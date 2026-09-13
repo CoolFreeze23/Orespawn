@@ -811,56 +811,13 @@
   },
   "ground_truth": "1.7.10 decompiled ModelBase constructor, parsed; never the port",
   "comparison": {
-    "status": "DIVERGES_TEXTURE_MAPPING",
+    "status": "PASS",
     "reference_parts_with_boxes": 17,
     "port_parts_with_boxes": 17,
     "matched_parts": 17,
-    "categories": {
-      "MIRROR": 17
-    },
-    "differences": [
-      "if1 -> if1: reference box mirror=False (flag at addBox time), port True",
-      "if2 -> if2: reference box mirror=False (flag at addBox time), port True",
-      "if3 -> if3: reference box mirror=False (flag at addBox time), port True",
-      "if4 -> if4: reference box mirror=False (flag at addBox time), port True",
-      "of1 -> of1: reference box mirror=False (flag at addBox time), port True",
-      "of2 -> of2: reference box mirror=False (flag at addBox time), port True",
-      "of3 -> of3: reference box mirror=False (flag at addBox time), port True",
-      "of4 -> of4: reference box mirror=False (flag at addBox time), port True",
-      "center -> center: reference box mirror=False (flag at addBox time), port True",
-      "tis1 -> tis1: reference box mirror=False (flag at addBox time), port True",
-      "tis2 -> tis2: reference box mirror=False (flag at addBox time), port True",
-      "tis3 -> tis3: reference box mirror=False (flag at addBox time), port True",
-      "tis4 -> tis4: reference box mirror=False (flag at addBox time), port True",
-      "tos1 -> tos1: reference box mirror=False (flag at addBox time), port True",
-      "tos2 -> tos2: reference box mirror=False (flag at addBox time), port True",
-      "tos3 -> tos3: reference box mirror=False (flag at addBox time), port True",
-      "tos4 -> tos4: reference box mirror=False (flag at addBox time), port True"
-    ],
-    "by_category": {
-      "MIRROR": [
-        "if1 -> if1: reference box mirror=False (flag at addBox time), port True",
-        "if2 -> if2: reference box mirror=False (flag at addBox time), port True",
-        "if3 -> if3: reference box mirror=False (flag at addBox time), port True",
-        "if4 -> if4: reference box mirror=False (flag at addBox time), port True",
-        "of1 -> of1: reference box mirror=False (flag at addBox time), port True",
-        "of2 -> of2: reference box mirror=False (flag at addBox time), port True",
-        "of3 -> of3: reference box mirror=False (flag at addBox time), port True",
-        "of4 -> of4: reference box mirror=False (flag at addBox time), port True",
-        "center -> center: reference box mirror=False (flag at addBox time), port True",
-        "tis1 -> tis1: reference box mirror=False (flag at addBox time), port True",
-        "tis2 -> tis2: reference box mirror=False (flag at addBox time), port True",
-        "tis3 -> tis3: reference box mirror=False (flag at addBox time), port True",
-        "tis4 -> tis4: reference box mirror=False (flag at addBox time), port True",
-        "tos1 -> tos1: reference box mirror=False (flag at addBox time), port True",
-        "tos2 -> tos2: reference box mirror=False (flag at addBox time), port True",
-        "tos3 -> tos3: reference box mirror=False (flag at addBox time), port True",
-        "tos4 -> tos4: reference box mirror=False (flag at addBox time), port True"
-      ]
-    }
+    "categories": {},
+    "differences": [],
+    "by_category": {}
   },
-  "status": "PASS_WITH_PINNED_DIVERGENCES",
-  "pinned_divergences": {
-    "MIRROR": 17
-  }
+  "status": "PASS"
 }

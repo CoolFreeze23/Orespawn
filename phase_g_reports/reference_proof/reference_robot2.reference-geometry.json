@@ -717,52 +717,13 @@
   },
   "ground_truth": "1.7.10 decompiled ModelBase constructor, parsed; never the port",
   "comparison": {
-    "status": "DIVERGES_TEXTURE_MAPPING",
+    "status": "PASS",
     "reference_parts_with_boxes": 15,
     "port_parts_with_boxes": 15,
     "matched_parts": 15,
-    "categories": {
-      "MIRROR": 15
-    },
-    "differences": [
-      "rleg1 -> rleg1: reference box mirror=False (flag at addBox time), port True",
-      "rleg2 -> rleg2: reference box mirror=False (flag at addBox time), port True",
-      "Shape3 -> Shape3: reference box mirror=False (flag at addBox time), port True",
-      "lleg2 -> lleg2: reference box mirror=False (flag at addBox time), port True",
-      "lleg1 -> lleg1: reference box mirror=False (flag at addBox time), port True",
-      "Shape6 -> Shape6: reference box mirror=False (flag at addBox time), port True",
-      "Shape7 -> Shape7: reference box mirror=False (flag at addBox time), port True",
-      "Shape8 -> Shape8: reference box mirror=False (flag at addBox time), port True",
-      "rarm3 -> rarm3: reference box mirror=False (flag at addBox time), port True",
-      "rarm2 -> rarm2: reference box mirror=False (flag at addBox time), port True",
-      "rarm1 -> rarm1: reference box mirror=False (flag at addBox time), port True",
-      "larm3 -> larm3: reference box mirror=False (flag at addBox time), port True",
-      "larm2 -> larm2: reference box mirror=False (flag at addBox time), port True",
-      "larm1 -> larm1: reference box mirror=False (flag at addBox time), port True",
-      "head -> head: reference box mirror=False (flag at addBox time), port True"
-    ],
-    "by_category": {
-      "MIRROR": [
-        "rleg1 -> rleg1: reference box mirror=False (flag at addBox time), port True",
-        "rleg2 -> rleg2: reference box mirror=False (flag at addBox time), port True",
-        "Shape3 -> Shape3: reference box mirror=False (flag at addBox time), port True",
-        "lleg2 -> lleg2: reference box mirror=False (flag at addBox time), port True",
-        "lleg1 -> lleg1: reference box mirror=False (flag at addBox time), port True",
-        "Shape6 -> Shape6: reference box mirror=False (flag at addBox time), port True",
-        "Shape7 -> Shape7: reference box mirror=False (flag at addBox time), port True",
-        "Shape8 -> Shape8: reference box mirror=False (flag at addBox time), port True",
-        "rarm3 -> rarm3: reference box mirror=False (flag at addBox time), port True",
-        "rarm2 -> rarm2: reference box mirror=False (flag at addBox time), port True",
-        "rarm1 -> rarm1: reference box mirror=False (flag at addBox time), port True",
-        "larm3 -> larm3: reference box mirror=False (flag at addBox time), port True",
-        "larm2 -> larm2: reference box mirror=False (flag at addBox time), port True",
-        "larm1 -> larm1: reference box mirror=False (flag at addBox time), port True",
-        "head -> head: reference box mirror=False (flag at addBox time), port True"
-      ]
-    }
+    "categories": {},
+    "differences": [],
+    "by_category": {}
   },
-  "status": "PASS_WITH_PINNED_DIVERGENCES",
-  "pinned_divergences": {
-    "MIRROR": 15
-  }
+  "status": "PASS"
 }

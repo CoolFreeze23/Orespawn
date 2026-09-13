@@ -1422,82 +1422,13 @@
   },
   "ground_truth": "1.7.10 decompiled ModelBase constructor, parsed; never the port",
   "comparison": {
-    "status": "DIVERGES_TEXTURE_MAPPING",
+    "status": "PASS",
     "reference_parts_with_boxes": 30,
     "port_parts_with_boxes": 30,
     "matched_parts": 30,
-    "categories": {
-      "MIRROR": 30
-    },
-    "differences": [
-      "lfleg -> lfleg: reference box mirror=False (flag at addBox time), port True",
-      "rfleg -> rfleg: reference box mirror=False (flag at addBox time), port True",
-      "lrleg -> lrleg: reference box mirror=False (flag at addBox time), port True",
-      "rrleg -> rrleg: reference box mirror=False (flag at addBox time), port True",
-      "body1 -> body1: reference box mirror=False (flag at addBox time), port True",
-      "head -> head: reference box mirror=False (flag at addBox time), port True",
-      "body2 -> body2: reference box mirror=False (flag at addBox time), port True",
-      "body3 -> body3: reference box mirror=False (flag at addBox time), port True",
-      "guard -> guard: reference box mirror=False (flag at addBox time), port True",
-      "nose -> nose: reference box mirror=False (flag at addBox time), port True",
-      "lhorn -> lhorn: reference box mirror=False (flag at addBox time), port True",
-      "rhorn -> rhorn: reference box mirror=False (flag at addBox time), port True",
-      "chorn -> chorn: reference box mirror=False (flag at addBox time), port True",
-      "tail -> tail: reference box mirror=False (flag at addBox time), port True",
-      "bump1 -> bump1: reference box mirror=False (flag at addBox time), port True",
-      "bump2 -> bump2: reference box mirror=False (flag at addBox time), port True",
-      "bump3 -> bump3: reference box mirror=False (flag at addBox time), port True",
-      "bump4 -> bump4: reference box mirror=False (flag at addBox time), port True",
-      "bump5 -> bump5: reference box mirror=False (flag at addBox time), port True",
-      "bump6 -> bump6: reference box mirror=False (flag at addBox time), port True",
-      "bump7 -> bump7: reference box mirror=False (flag at addBox time), port True",
-      "bump8 -> bump8: reference box mirror=False (flag at addBox time), port True",
-      "bump9 -> bump9: reference box mirror=False (flag at addBox time), port True",
-      "bump10 -> bump10: reference box mirror=False (flag at addBox time), port True",
-      "bump11 -> bump11: reference box mirror=False (flag at addBox time), port True",
-      "bump12 -> bump12: reference box mirror=False (flag at addBox time), port True",
-      "bump13 -> bump13: reference box mirror=False (flag at addBox time), port True",
-      "bump14 -> bump14: reference box mirror=False (flag at addBox time), port True",
-      "bump15 -> bump15: reference box mirror=False (flag at addBox time), port True",
-      "bump16 -> bump16: reference box mirror=False (flag at addBox time), port True"
-    ],
-    "by_category": {
-      "MIRROR": [
-        "lfleg -> lfleg: reference box mirror=False (flag at addBox time), port True",
-        "rfleg -> rfleg: reference box mirror=False (flag at addBox time), port True",
-        "lrleg -> lrleg: reference box mirror=False (flag at addBox time), port True",
-        "rrleg -> rrleg: reference box mirror=False (flag at addBox time), port True",
-        "body1 -> body1: reference box mirror=False (flag at addBox time), port True",
-        "head -> head: reference box mirror=False (flag at addBox time), port True",
-        "body2 -> body2: reference box mirror=False (flag at addBox time), port True",
-        "body3 -> body3: reference box mirror=False (flag at addBox time), port True",
-        "guard -> guard: reference box mirror=False (flag at addBox time), port True",
-        "nose -> nose: reference box mirror=False (flag at addBox time), port True",
-        "lhorn -> lhorn: reference box mirror=False (flag at addBox time), port True",
-        "rhorn -> rhorn: reference box mirror=False (flag at addBox time), port True",
-        "chorn -> chorn: reference box mirror=False (flag at addBox time), port True",
-        "tail -> tail: reference box mirror=False (flag at addBox time), port True",
-        "bump1 -> bump1: reference box mirror=False (flag at addBox time), port True",
-        "bump2 -> bump2: reference box mirror=False (flag at addBox time), port True",
-        "bump3 -> bump3: reference box mirror=False (flag at addBox time), port True",
-        "bump4 -> bump4: reference box mirror=False (flag at addBox time), port True",
-        "bump5 -> bump5: reference box mirror=False (flag at addBox time), port True",
-        "bump6 -> bump6: reference box mirror=False (flag at addBox time), port True",
-        "bump7 -> bump7: reference box mirror=False (flag at addBox time), port True",
-        "bump8 -> bump8: reference box mirror=False (flag at addBox time), port True",
-        "bump9 -> bump9: reference box mirror=False (flag at addBox time), port True",
-        "bump10 -> bump10: reference box mirror=False (flag at addBox time), port True",
-        "bump11 -> bump11: reference box mirror=False (flag at addBox time), port True",
-        "bump12 -> bump12: reference box mirror=False (flag at addBox time), port True",
-        "bump13 -> bump13: reference box mirror=False (flag at addBox time), port True",
-        "bump14 -> bump14: reference box mirror=False (flag at addBox time), port True",
-        "bump15 -> bump15: reference box mirror=False (flag at addBox time), port True",
-        "bump16 -> bump16: reference box mirror=False (flag at addBox time), port True"
-      ]
-    }
+    "categories": {},
+    "differences": [],
+    "by_category": {}
   },
-  "status": "PASS_WITH_PINNED_DIVERGENCES",
-  "pinned_divergences": {
-    "MIRROR": 30
-  }
+  "status": "PASS"
 }

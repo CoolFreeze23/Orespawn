@@ -72,6 +72,18 @@ import software.bernie.geckolib.renderer.GeoRenderer;
  * parsed. The {@code geo} mode loads the generated file through GeckoLib
  * 4.8.4's own JSON adapter/baker and captures vertices through the real
  * {@link GeoRenderer} recursive cube path.</p>
+ *
+ * <p>BUG-041 stage 2 (2026-09-13), vanilla mode only: three optional manifest keys let the standing
+ * reference-geometry leg dump a classic model the default path cannot construct. {@code layer_factory}
+ * names the static {@link LayerDefinition} factory when it is not {@code createBodyLayer} (the
+ * {@code client/model} item models expose {@code createLayerDefinition}); {@code constructor_arguments}
+ * (a JSON array of numbers or booleans) appends the declared arguments after the {@link ModelPart} when
+ * the model's constructor is parameterised ({@code ButterflyModel(ModelPart, float wingspeed)}: the
+ * shared rig of four renderers, the value only scales the hook's phase); {@code geometry_only} (true)
+ * dumps the compiled definition tree, the texture and the bone names of a static LayerDefinition holder
+ * that has no model class to instantiate (the item models, drawn by {@code OreSpawnItemRenderer} from
+ * {@code createLayerDefinition().bakeRoot()}): no samples, no draw order, no render state. An entry
+ * without the keys takes the unchanged path.</p>
  */
 public final class G1ModelProbe {
     private static final Gson GSON = new GsonBuilder()
@@ -131,12 +143,7 @@ public final class G1ModelProbe {
     private static JsonObject dumpVanillaModel(Path repositoryRoot, JsonObject spec, JsonObject renderState) throws Exception {
         String id = spec.get("id").getAsString();
         Class<?> modelClass = Class.forName(spec.get("class").getAsString());
-        Method layerFactory = modelClass.getDeclaredMethod("createBodyLayer");
-        if (!Modifier.isStatic(layerFactory.getModifiers())
-                || !LayerDefinition.class.isAssignableFrom(layerFactory.getReturnType())) {
-            throw new IllegalStateException(modelClass.getName() + ".createBodyLayer is not a static LayerDefinition factory");
-        }
-        layerFactory.setAccessible(true);
+        Method layerFactory = layerFactory(modelClass, spec);
 
         LayerDefinition layer = (LayerDefinition) layerFactory.invoke(null);
         MeshDefinition mesh = fieldValue(layer, "mesh", MeshDefinition.class);
@@ -201,11 +208,22 @@ public final class G1ModelProbe {
             out.add("render_instances", spec.getAsJsonObject("render_instances").deepCopy());
         }
 
+        if (spec.has("geometry_only") && spec.get("geometry_only").getAsBoolean()) {
+            // BUG-041 stage 2: a static LayerDefinition holder (the client/model item models) has no model
+            // class, no setupAnim and no render type: the compiled tree above is the whole dump.
+            out.addProperty("geometry_only", true);
+            out.add("samples", new JsonArray());
+            out.add("animation_bake_samples", new JsonArray());
+            renderState.addProperty("schema_version", 1);
+            renderState.addProperty("model_id", id);
+            renderState.addProperty("side", "classic");
+            renderState.addProperty("geometry_only", true);
+            return out;
+        }
+
         out.addProperty("draw_order_source", DrawOrderObserver.SOURCE);
 
-        Constructor<?> constructor = modelClass.getDeclaredConstructor(ModelPart.class);
-        constructor.setAccessible(true);
-        Object model = constructor.newInstance(bakedRoot);
+        Object model = newClassicModel(modelClass, spec, bakedRoot);
         Method setupAnim = findSetupAnim(modelClass);
         // ENT-S-146 (refuter B, D3): the render state this side actually requests, OBSERVED. The light is
         // the classic RENDERER's decision in 1.21.1 (EntityRenderer.getPackedLightCoords), so when the
@@ -225,7 +243,7 @@ public final class G1ModelProbe {
         // captured model's state (the Rotator advances its fan angle inside renderToBuffer and
         // subject_after pins that advance).
         ModelPart shadowRoot = layer.bakeRoot();
-        DrawOrderObserver drawOrder = new DrawOrderObserver(constructor.newInstance(shadowRoot), shadowRoot,
+        DrawOrderObserver drawOrder = new DrawOrderObserver(newClassicModel(modelClass, spec, shadowRoot), shadowRoot,
                 namesToPaths, instances == null ? Map.of() : instances.declaredCounts);
 
         JsonArray samples = new JsonArray();
@@ -1393,12 +1411,69 @@ public final class G1ModelProbe {
     /** The classic model named by the manifest entry, on a fresh bake of its own layer (for the render-state identity check). */
     private static Object classicModel(JsonObject spec) throws Exception {
         Class<?> modelClass = Class.forName(spec.get("class").getAsString());
-        Method layerFactory = modelClass.getDeclaredMethod("createBodyLayer");
+        LayerDefinition layer = (LayerDefinition) layerFactory(modelClass, spec).invoke(null);
+        return newClassicModel(modelClass, spec, layer.bakeRoot());
+    }
+
+    /** The static LayerDefinition factory the entry names ({@code layer_factory}; {@code createBodyLayer} by default). */
+    private static Method layerFactory(Class<?> modelClass, JsonObject spec) throws Exception {
+        String name = spec.has("layer_factory") ? spec.get("layer_factory").getAsString() : "createBodyLayer";
+        Method layerFactory = modelClass.getDeclaredMethod(name);
+        if (!Modifier.isStatic(layerFactory.getModifiers())
+                || !LayerDefinition.class.isAssignableFrom(layerFactory.getReturnType())) {
+            throw new IllegalStateException(modelClass.getName() + "." + name + " is not a static LayerDefinition factory");
+        }
         layerFactory.setAccessible(true);
-        LayerDefinition layer = (LayerDefinition) layerFactory.invoke(null);
-        Constructor<?> constructor = modelClass.getDeclaredConstructor(ModelPart.class);
-        constructor.setAccessible(true);
-        return constructor.newInstance(layer.bakeRoot());
+        return layerFactory;
+    }
+
+    /**
+     * The classic model on the given root: {@code (ModelPart)} by default, or {@code (ModelPart, <declared
+     * arguments>)} when the entry carries {@code constructor_arguments} (each JSON number or boolean converted to
+     * the declared primitive; a wrong count or type is refused, never guessed).
+     */
+    private static Object newClassicModel(Class<?> modelClass, JsonObject spec, ModelPart root) throws Exception {
+        if (!spec.has("constructor_arguments")) {
+            Constructor<?> constructor = modelClass.getDeclaredConstructor(ModelPart.class);
+            constructor.setAccessible(true);
+            return constructor.newInstance(root);
+        }
+        JsonArray declared = spec.getAsJsonArray("constructor_arguments");
+        for (Constructor<?> constructor : modelClass.getDeclaredConstructors()) {
+            Class<?>[] types = constructor.getParameterTypes();
+            if (types.length != declared.size() + 1 || types[0] != ModelPart.class) {
+                continue;
+            }
+            Object[] arguments = new Object[types.length];
+            arguments[0] = root;
+            for (int i = 0; i < declared.size(); i++) {
+                arguments[i + 1] = constructorArgument(types[i + 1], declared.get(i), modelClass, i);
+            }
+            constructor.setAccessible(true);
+            return constructor.newInstance(arguments);
+        }
+        throw new IllegalStateException(modelClass.getName() + " has no (ModelPart, " + declared.size()
+                + " more) constructor for constructor_arguments " + declared);
+    }
+
+    private static Object constructorArgument(Class<?> type, JsonElement value, Class<?> modelClass, int index) {
+        if (type == float.class || type == Float.class) {
+            return value.getAsFloat();
+        }
+        if (type == double.class || type == Double.class) {
+            return value.getAsDouble();
+        }
+        if (type == int.class || type == Integer.class) {
+            return value.getAsInt();
+        }
+        if (type == long.class || type == Long.class) {
+            return value.getAsLong();
+        }
+        if (type == boolean.class || type == Boolean.class) {
+            return value.getAsBoolean();
+        }
+        throw new IllegalStateException(modelClass.getName() + ": constructor_arguments[" + index + "] " + value
+                + " cannot be converted to " + type.getName());
     }
 
     /**

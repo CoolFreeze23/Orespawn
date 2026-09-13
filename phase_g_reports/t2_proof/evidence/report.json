@@ -943,11 +943,11 @@
       "tier": 2,
       "proof_scope": "production_proof_model",
       "source_class": "danger.orespawn.entity.client.BrutalflyModel",
-      "source_class_sha256": "1f39a2690fba13ceac5b9686b4dc11e9adae257c0dc3b65f6d8c79fcab9d5340",
-      "compiled_dump_sha256": "008b7f427ad062d39eb377dc77a380941b4416438c7ea07827ab51408f9d0997",
+      "source_class_sha256": "091299d9c3580b5996ca89589b158a679b3a3be8cea48941c19cdb7b85a46a95",
+      "compiled_dump_sha256": "67621ff9c358ec728b954fd8cc9712e1f6aaef4a0fb07b2ad981a37ee6012020",
       "bone_count": 14,
       "cube_count": 14,
-      "geometry_sha256": "760ad35b9c0d40caffc87ddb6c0ebee79c96ee8665c68a288b1e7b087d6f2534",
+      "geometry_sha256": "fb6b42724c885a9c316814b14a8434153d8b778987eecd1c961dd2bcd95eb846",
       "animation_sha256": "7882082857fdb11e02f158ebc3a6d3f970e2ac60d54813f0e903ee97b2293749",
       "animation_contract_sha256": "b08ae0ce8b05511de6b9b8efc87d898c1a7ab5a0f72e178d2029eb9f7d751ba4",
       "geometry": {
@@ -1177,6 +1177,12 @@
           "holds": true
         }
       },
+      "reference_geometry": {
+        "status": "PASS",
+        "reference_source": "reference_1_7_10_source/sources/danger/orespawn/ModelBrutalfly.java",
+        "matched_parts": 14,
+        "ground_truth": "1.7.10 decompiled ModelBase constructor, parsed; never the port"
+      },
       "visual": {
         "status": "PASS",
         "image_size": [
@@ -1272,11 +1278,11 @@
       "tier": 2,
       "proof_scope": "production_proof_model",
       "source_class": "danger.orespawn.entity.client.DragonflyModel",
-      "source_class_sha256": "8d3379f03d5408303abc62fc566402878edf250887a949c2e9ad98402bf5c153",
-      "compiled_dump_sha256": "9e1412bf5b9e38afd1cc2b5c5c4702d5247d49c877469ae38679d1ff7e0d9924",
+      "source_class_sha256": "4ca21de80e852f57407460d316d51cecf2801e6284d3c076fe7a13c4a1b238bc",
+      "compiled_dump_sha256": "200c47ebc56df96b7b49d592706c5837cb1b13af785e3d4099a286de6292501c",
       "bone_count": 26,
       "cube_count": 26,
-      "geometry_sha256": "8485df31bea1f0686d04d64030fabcc8dde9dd20f3795a32e88674766828855f",
+      "geometry_sha256": "86cbc4129d4cec4d39b5f87db7e2ad9bb57cc53c0a2526b931ec12fd6390be02",
       "animation_sha256": "7882082857fdb11e02f158ebc3a6d3f970e2ac60d54813f0e903ee97b2293749",
       "animation_contract_sha256": "e68ba33db5a3d1ad5c75074f344e0808c2746c669176f0acf2151fde0556fce9",
       "geometry": {
@@ -1567,6 +1573,12 @@
           "holds": true
         }
       },
+      "reference_geometry": {
+        "status": "PASS",
+        "reference_source": "reference_1_7_10_source/sources/danger/orespawn/ModelDragonfly.java",
+        "matched_parts": 26,
+        "ground_truth": "1.7.10 decompiled ModelBase constructor, parsed; never the port"
+      },
       "visual": {
         "status": "PASS",
         "image_size": [
@@ -1662,11 +1674,11 @@
       "tier": 2,
       "proof_scope": "production_proof_model",
       "source_class": "danger.orespawn.entity.client.ModelCockateil",
-      "source_class_sha256": "d3b77c279ad289d722a0caa84ac6c2c2ac6bd109aad62ceb0f13a4766a6514ad",
-      "compiled_dump_sha256": "e274592fbd1f0f8589b710ac08cda3ff0953bbeec5262dab49089bc81705f0b2",
+      "source_class_sha256": "2be20f7e1ccc195add3a2ee82e74d20afe07a844cf03fe2bf9d1523f6673db36",
+      "compiled_dump_sha256": "fe66768f3f38f077358228eb9ee942e2ab52891afd487b1715f8d9a60cd269f7",
       "bone_count": 16,
       "cube_count": 16,
-      "geometry_sha256": "846a77fbeef1eade4cad046d3f58c1ffb17842830b861964a0d7aeee1edadccd",
+      "geometry_sha256": "2baa27cae7265cd674e5f63cb47aba3f37d96fc639b9f26ac645c85f9bd78f0a",
       "animation_sha256": "7882082857fdb11e02f158ebc3a6d3f970e2ac60d54813f0e903ee97b2293749",
       "animation_contract_sha256": "341aaa64ee3ee6861c7a2980573d8cf6e5bc0bfab9a7ed4df1cd2beaca023e44",
       "geometry": {
@@ -2133,6 +2145,12 @@
           "holds": true
         }
       },
+      "reference_geometry": {
+        "status": "PASS",
+        "reference_source": "reference_1_7_10_source/sources/danger/orespawn/ModelCockateil.java",
+        "matched_parts": 16,
+        "ground_truth": "1.7.10 decompiled ModelBase constructor, parsed; never the port"
+      },
       "visual": {
         "status": "PASS",
         "image_size": [
@@ -2228,11 +2246,11 @@
       "tier": 2,
       "proof_scope": "production_proof_model",
       "source_class": "danger.orespawn.entity.client.ModelCockateil",
-      "source_class_sha256": "d3b77c279ad289d722a0caa84ac6c2c2ac6bd109aad62ceb0f13a4766a6514ad",
-      "compiled_dump_sha256": "f08a5cf59d90ad6373d01e99901b4d859d846bd4f9a695e6d80f5c21b3944932",
+      "source_class_sha256": "2be20f7e1ccc195add3a2ee82e74d20afe07a844cf03fe2bf9d1523f6673db36",
+      "compiled_dump_sha256": "b686cefdfd72e99697f2aed12ebada369f3c1ac1be5d529f2d5e56dd754f18da",
       "bone_count": 16,
       "cube_count": 16,
-      "geometry_sha256": "6d346071c2da4f87408d30e5905696c5b73fa6ecfcf481200581ab08e015daf4",
+      "geometry_sha256": "73d5231f008e7bb64711ee16fc7f4a7cd22932b37424a785eae6f805c69d06af",
       "animation_sha256": "7882082857fdb11e02f158ebc3a6d3f970e2ac60d54813f0e903ee97b2293749",
       "animation_contract_sha256": "59771856942bef696398f007a757b8c2639471628e5cbb20b57760b288c17652",
       "geometry": {
@@ -2699,6 +2717,12 @@
           "holds": true
         }
       },
+      "reference_geometry": {
+        "status": "PASS",
+        "reference_source": "reference_1_7_10_source/sources/danger/orespawn/ModelCockateil.java",
+        "matched_parts": 16,
+        "ground_truth": "1.7.10 decompiled ModelBase constructor, parsed; never the port"
+      },
       "visual": {
         "status": "PASS",
         "image_size": [
@@ -2794,11 +2818,11 @@
       "tier": 2,
       "proof_scope": "production_proof_model",
       "source_class": "danger.orespawn.entity.client.FireflyModel",
-      "source_class_sha256": "5102c14c19ba4067fe7f4b0e759c9a638f9b4f03cea007b670a57659f492db07",
-      "compiled_dump_sha256": "d547606e07bee26c19fdb8206778b51b51032592ee01b5927338078b7aaac08e",
+      "source_class_sha256": "908740fe6b2c637e64f7f223ae889e25f186e344e21905ba23608237dcec5c9a",
+      "compiled_dump_sha256": "79da823c9ff9f88f88c4dff961d28865c244bdd5f8412852436830e055a57729",
       "bone_count": 12,
       "cube_count": 12,
-      "geometry_sha256": "ba4132ff092606a720b7c046a898dd58631dfa70488023069164c2160e9e15fc",
+      "geometry_sha256": "8fdc3aa03233c975efe59cec98f4e6ab90eafd5aee911e89ef2d59d5c75e9ffc",
       "animation_sha256": "7882082857fdb11e02f158ebc3a6d3f970e2ac60d54813f0e903ee97b2293749",
       "animation_contract_sha256": "d00ec0d919d5798453aeb235041f8be447153b6834dc925ab47ce9d31b1a4dc3",
       "geometry": {
@@ -2889,9 +2913,9 @@
               [
                 "up",
                 "down",
-                "east",
-                "north",
                 "west",
+                "north",
+                "east",
                 "south"
               ]
             ],
@@ -2899,9 +2923,9 @@
               [
                 "up",
                 "down",
-                "east",
-                "north",
                 "west",
+                "north",
+                "east",
                 "south"
               ]
             ],
@@ -2909,9 +2933,9 @@
               [
                 "up",
                 "down",
-                "east",
-                "north",
                 "west",
+                "north",
+                "east",
                 "south"
               ]
             ],
@@ -2919,9 +2943,9 @@
               [
                 "up",
                 "down",
-                "east",
-                "north",
                 "west",
+                "north",
+                "east",
                 "south"
               ]
             ],
@@ -2929,9 +2953,9 @@
               [
                 "up",
                 "down",
-                "east",
-                "north",
                 "west",
+                "north",
+                "east",
                 "south"
               ]
             ],
@@ -2939,9 +2963,9 @@
               [
                 "up",
                 "down",
-                "east",
-                "north",
                 "west",
+                "north",
+                "east",
                 "south"
               ]
             ],
@@ -2949,9 +2973,9 @@
               [
                 "up",
                 "down",
-                "east",
-                "north",
                 "west",
+                "north",
+                "east",
                 "south"
               ]
             ],
@@ -2959,9 +2983,9 @@
               [
                 "up",
                 "down",
-                "east",
-                "north",
                 "west",
+                "north",
+                "east",
                 "south"
               ]
             ],
@@ -2969,9 +2993,9 @@
               [
                 "up",
                 "down",
-                "east",
-                "north",
                 "west",
+                "north",
+                "east",
                 "south"
               ]
             ],
@@ -2979,9 +3003,9 @@
               [
                 "up",
                 "down",
-                "east",
-                "north",
                 "west",
+                "north",
+                "east",
                 "south"
               ]
             ],
@@ -2989,9 +3013,9 @@
               [
                 "up",
                 "down",
-                "east",
-                "north",
                 "west",
+                "north",
+                "east",
                 "south"
               ]
             ],
@@ -2999,9 +3023,9 @@
               [
                 "up",
                 "down",
-                "east",
-                "north",
                 "west",
+                "north",
+                "east",
                 "south"
               ]
             ]
@@ -3141,6 +3165,12 @@
           "holds": true
         }
       },
+      "reference_geometry": {
+        "status": "PASS",
+        "reference_source": "reference_1_7_10_source/sources/danger/orespawn/ModelFirefly.java",
+        "matched_parts": 12,
+        "ground_truth": "1.7.10 decompiled ModelBase constructor, parsed; never the port"
+      },
       "visual": {
         "status": "PASS",
         "image_size": [
@@ -3236,11 +3266,11 @@
       "tier": 2,
       "proof_scope": "production_proof_model",
       "source_class": "danger.orespawn.entity.client.ModelGoldFish",
-      "source_class_sha256": "3a43b5c75a80ad7aa874d9e2f95bfea449a9a6def7d076bbd2f2f2122d62239e",
-      "compiled_dump_sha256": "cc38c84dce1b049f30154d65d420bb6dfa8b3b84dbd6056fc6921f78f1b92cc7",
+      "source_class_sha256": "e992aa31ef2d58c37d6a61eab4037a9e07e370192ab0bccf8dbf517880c0590c",
+      "compiled_dump_sha256": "d3f5d867a94403ad91e00cc1caac5aa4a27021ebe519f80df96f5763d77752a3",
       "bone_count": 16,
       "cube_count": 16,
-      "geometry_sha256": "2c9c098f1b83ff8b8fc63e3a00660e0aeffd20a7956fcf4573434d62648730e3",
+      "geometry_sha256": "6b8ac5790d6fb417c7252a01b106179448b7f6e2a903d9cf2296c9f27e3df30a",
       "animation_sha256": "7882082857fdb11e02f158ebc3a6d3f970e2ac60d54813f0e903ee97b2293749",
       "animation_contract_sha256": "052e47ef568422526a200621c6d3f3fc206b47173157634566be67db0d90679c",
       "geometry": {
@@ -3335,9 +3365,9 @@
               [
                 "up",
                 "down",
-                "east",
-                "north",
                 "west",
+                "north",
+                "east",
                 "south"
               ]
             ],
@@ -3345,9 +3375,9 @@
               [
                 "up",
                 "down",
-                "east",
-                "north",
                 "west",
+                "north",
+                "east",
                 "south"
               ]
             ],
@@ -3355,9 +3385,9 @@
               [
                 "up",
                 "down",
-                "east",
-                "north",
                 "west",
+                "north",
+                "east",
                 "south"
               ]
             ],
@@ -3365,9 +3395,9 @@
               [
                 "up",
                 "down",
-                "east",
-                "north",
                 "west",
+                "north",
+                "east",
                 "south"
               ]
             ],
@@ -3375,9 +3405,9 @@
               [
                 "up",
                 "down",
-                "east",
-                "north",
                 "west",
+                "north",
+                "east",
                 "south"
               ]
             ],
@@ -3385,9 +3415,9 @@
               [
                 "up",
                 "down",
-                "east",
-                "north",
                 "west",
+                "north",
+                "east",
                 "south"
               ]
             ],
@@ -3395,9 +3425,9 @@
               [
                 "up",
                 "down",
-                "east",
-                "north",
                 "west",
+                "north",
+                "east",
                 "south"
               ]
             ],
@@ -3405,9 +3435,9 @@
               [
                 "up",
                 "down",
-                "east",
-                "north",
                 "west",
+                "north",
+                "east",
                 "south"
               ]
             ],
@@ -3415,9 +3445,9 @@
               [
                 "up",
                 "down",
-                "east",
-                "north",
                 "west",
+                "north",
+                "east",
                 "south"
               ]
             ],
@@ -3425,9 +3455,9 @@
               [
                 "up",
                 "down",
-                "east",
-                "north",
                 "west",
+                "north",
+                "east",
                 "south"
               ]
             ],
@@ -3435,9 +3465,9 @@
               [
                 "up",
                 "down",
-                "east",
-                "north",
                 "west",
+                "north",
+                "east",
                 "south"
               ]
             ],
@@ -3445,9 +3475,9 @@
               [
                 "up",
                 "down",
-                "east",
-                "north",
                 "west",
+                "north",
+                "east",
                 "south"
               ]
             ],
@@ -3455,9 +3485,9 @@
               [
                 "up",
                 "down",
-                "east",
-                "north",
                 "west",
+                "north",
+                "east",
                 "south"
               ]
             ],
@@ -3465,9 +3495,9 @@
               [
                 "up",
                 "down",
-                "east",
-                "north",
                 "west",
+                "north",
+                "east",
                 "south"
               ]
             ],
@@ -3475,9 +3505,9 @@
               [
                 "up",
                 "down",
-                "east",
-                "north",
                 "west",
+                "north",
+                "east",
                 "south"
               ]
             ],
@@ -3485,9 +3515,9 @@
               [
                 "up",
                 "down",
-                "east",
-                "north",
                 "west",
+                "north",
+                "east",
                 "south"
               ]
             ]
@@ -3943,6 +3973,12 @@
           "holds": true
         }
       },
+      "reference_geometry": {
+        "status": "PASS",
+        "reference_source": "reference_1_7_10_source/sources/danger/orespawn/ModelGoldFish.java",
+        "matched_parts": 16,
+        "ground_truth": "1.7.10 decompiled ModelBase constructor, parsed; never the port"
+      },
       "visual": {
         "status": "PASS",
         "image_size": [
@@ -3961,7 +3997,7 @@
         "max_mean_absolute_error": 0.0,
         "z_fight_policy": "pixels where two different quads meet the front within 1e-06 depth with different texels are counted as a diagnostic only; every pixel is compared, the draw order being contracted equal on both sides (G2 root-order contract, landed 2026-09-06)",
         "contested_exclusion_applied": false,
-        "max_contested_fraction": 0.0096588134765625,
+        "max_contested_fraction": 0.010223388671875,
         "cutout_alpha_threshold": 0.1,
         "minimum_observed_foreground_fraction": 1.0,
         "samples": [
@@ -3970,7 +4006,7 @@
             "camera": null,
             "changed_fraction": 0.0,
             "mean_absolute_error": 0.0,
-            "contested_fraction": 0.008819580078125,
+            "contested_fraction": 0.0095672607421875,
             "contested_excluded": false,
             "vanilla_foreground_fraction": 0.2768402099609375,
             "geo_foreground_fraction": 0.2768402099609375,
@@ -3983,7 +4019,7 @@
             "camera": null,
             "changed_fraction": 0.0,
             "mean_absolute_error": 0.0,
-            "contested_fraction": 0.0086212158203125,
+            "contested_fraction": 0.00927734375,
             "contested_excluded": false,
             "vanilla_foreground_fraction": 0.27960205078125,
             "geo_foreground_fraction": 0.27960205078125,
@@ -3996,7 +4032,7 @@
             "camera": null,
             "changed_fraction": 0.0,
             "mean_absolute_error": 0.0,
-            "contested_fraction": 0.008819580078125,
+            "contested_fraction": 0.0095672607421875,
             "contested_excluded": false,
             "vanilla_foreground_fraction": 0.2767333984375,
             "geo_foreground_fraction": 0.2767333984375,
@@ -4009,7 +4045,7 @@
             "camera": null,
             "changed_fraction": 0.0,
             "mean_absolute_error": 0.0,
-            "contested_fraction": 0.0096588134765625,
+            "contested_fraction": 0.010223388671875,
             "contested_excluded": false,
             "vanilla_foreground_fraction": 0.27490234375,
             "geo_foreground_fraction": 0.27490234375,
@@ -4022,7 +4058,7 @@
             "camera": null,
             "changed_fraction": 0.0,
             "mean_absolute_error": 0.0,
-            "contested_fraction": 0.0090789794921875,
+            "contested_fraction": 0.0098419189453125,
             "contested_excluded": false,
             "vanilla_foreground_fraction": 0.2762451171875,
             "geo_foreground_fraction": 0.2762451171875,
@@ -4038,11 +4074,11 @@
       "tier": 2,
       "proof_scope": "production_proof_model",
       "source_class": "danger.orespawn.entity.client.AntModel",
-      "source_class_sha256": "5411c319f6c9de4945b77979b0a6bd29d185193afa4ad952b0821dc35fd8ba89",
-      "compiled_dump_sha256": "d352c3a81898f136c1bc302ae13c36dce0d831089e28cc4628f3b3973705d021",
+      "source_class_sha256": "7f89bc74cad96f7bfa1babfa3825d44128c37bad7a947842f3ac0f6036562444",
+      "compiled_dump_sha256": "0d4a42fda81d3566f1ebeb8ec91b2f5b6887e47e34c64c64207c49da64c199ad",
       "bone_count": 20,
       "cube_count": 20,
-      "geometry_sha256": "f1019f7ded95ba2ea815bc750567153b246b62ab5d2de478be2d9d7d939e9aab",
+      "geometry_sha256": "fda28cc88ea0c6a00d29148f8330a8508858897af865bf7b68f0f70869b204bc",
       "animation_sha256": "7882082857fdb11e02f158ebc3a6d3f970e2ac60d54813f0e903ee97b2293749",
       "animation_contract_sha256": "711b98fc1959f06c27eebc45cc3295d9540ea1515e974a8d61218292ff548107",
       "geometry": {
@@ -4344,6 +4380,12 @@
           "holds": true
         }
       },
+      "reference_geometry": {
+        "status": "PASS",
+        "reference_source": "reference_1_7_10_source/sources/danger/orespawn/ModelAnt.java",
+        "matched_parts": 20,
+        "ground_truth": "1.7.10 decompiled ModelBase constructor, parsed; never the port"
+      },
       "visual": {
         "status": "PASS",
         "image_size": [
@@ -4439,11 +4481,11 @@
       "tier": 2,
       "proof_scope": "production_proof_model",
       "source_class": "danger.orespawn.entity.client.AntModel",
-      "source_class_sha256": "5411c319f6c9de4945b77979b0a6bd29d185193afa4ad952b0821dc35fd8ba89",
-      "compiled_dump_sha256": "82647f5d09c0106f27c4f0e86fee986ddbb18993d7f6eb68df4eb9ea4168d4bc",
+      "source_class_sha256": "7f89bc74cad96f7bfa1babfa3825d44128c37bad7a947842f3ac0f6036562444",
+      "compiled_dump_sha256": "d7ff34a43b77608c15789198e1b2e74552dcb9dd4189e11807b3c6a6487ac5dd",
       "bone_count": 20,
       "cube_count": 20,
-      "geometry_sha256": "1d5e2a99edca5bb3e5480e9eb36638b7858c7ea03aa5b8eaba253518ea2965ee",
+      "geometry_sha256": "66ef144e3f9bf4bb84d17d1089f6e9c37e612312068cb6027296eb757c3e0908",
       "animation_sha256": "7882082857fdb11e02f158ebc3a6d3f970e2ac60d54813f0e903ee97b2293749",
       "animation_contract_sha256": "81f33a33ca10041b6756312f5f021dc31e753950488ec3c95ee8c75985b08b8d",
       "geometry": {
@@ -4745,6 +4787,12 @@
           "holds": true
         }
       },
+      "reference_geometry": {
+        "status": "PASS",
+        "reference_source": "reference_1_7_10_source/sources/danger/orespawn/ModelAnt.java",
+        "matched_parts": 20,
+        "ground_truth": "1.7.10 decompiled ModelBase constructor, parsed; never the port"
+      },
       "visual": {
         "status": "PASS",
         "image_size": [
@@ -4840,11 +4888,11 @@
       "tier": 2,
       "proof_scope": "production_proof_model",
       "source_class": "danger.orespawn.entity.client.AntModel",
-      "source_class_sha256": "5411c319f6c9de4945b77979b0a6bd29d185193afa4ad952b0821dc35fd8ba89",
-      "compiled_dump_sha256": "4f54cb4cc870dd5a3dd818ed14bd679ebb162681a06638622bb33ae69c641c50",
+      "source_class_sha256": "7f89bc74cad96f7bfa1babfa3825d44128c37bad7a947842f3ac0f6036562444",
+      "compiled_dump_sha256": "15038f52bf7105585f7cbcbc57f37be7fa2c678f74221eca8872f854a11e9e25",
       "bone_count": 20,
       "cube_count": 20,
-      "geometry_sha256": "d47144c0cbc10c8d486aa309210f5a92e1d0bfff8f1c6902a59fc497c388623d",
+      "geometry_sha256": "f9723495844cc53e98491e4628ec7ba89f59002feacdbbb483b61553e2f001d2",
       "animation_sha256": "7882082857fdb11e02f158ebc3a6d3f970e2ac60d54813f0e903ee97b2293749",
       "animation_contract_sha256": "2bfe3528561e3cf5be49cdba4cba58892f90f2d5cd8ff1f113fbb14b8f6004e8",
       "geometry": {
@@ -5146,6 +5194,12 @@
           "holds": true
         }
       },
+      "reference_geometry": {
+        "status": "PASS",
+        "reference_source": "reference_1_7_10_source/sources/danger/orespawn/ModelAnt.java",
+        "matched_parts": 20,
+        "ground_truth": "1.7.10 decompiled ModelBase constructor, parsed; never the port"
+      },
       "visual": {
         "status": "PASS",
         "image_size": [
@@ -5241,11 +5295,11 @@
       "tier": 2,
       "proof_scope": "production_proof_model",
       "source_class": "danger.orespawn.entity.client.AntModel",
-      "source_class_sha256": "5411c319f6c9de4945b77979b0a6bd29d185193afa4ad952b0821dc35fd8ba89",
-      "compiled_dump_sha256": "77c29c98e09ce73ba5e506e45baa64306666884eb50068eab7b86ef80f29eca3",
+      "source_class_sha256": "7f89bc74cad96f7bfa1babfa3825d44128c37bad7a947842f3ac0f6036562444",
+      "compiled_dump_sha256": "928dd9b48ad2bf593419f3aee01a0f66b40db256a9adc782c0a9184544773431",
       "bone_count": 20,
       "cube_count": 20,
-      "geometry_sha256": "3f06026bfaf81bfd77e542f8a5f008c7d52fb4b97a18baa7e4087f8728de9639",
+      "geometry_sha256": "acd416528759cd02c71d6ff5181d227e462431d66d0e4872a77f4f7a2073a7a9",
       "animation_sha256": "7882082857fdb11e02f158ebc3a6d3f970e2ac60d54813f0e903ee97b2293749",
       "animation_contract_sha256": "e7615f5acd67ddb7588e9ede5e4b35e46593bc3cea56065daaacc633158af5fa",
       "geometry": {
@@ -5547,6 +5601,12 @@
           "holds": true
         }
       },
+      "reference_geometry": {
+        "status": "PASS",
+        "reference_source": "reference_1_7_10_source/sources/danger/orespawn/ModelAnt.java",
+        "matched_parts": 20,
+        "ground_truth": "1.7.10 decompiled ModelBase constructor, parsed; never the port"
+      },
       "visual": {
         "status": "PASS",
         "image_size": [
@@ -5642,11 +5702,11 @@
       "tier": 2,
       "proof_scope": "production_proof_model",
       "source_class": "danger.orespawn.entity.client.AntModel",
-      "source_class_sha256": "5411c319f6c9de4945b77979b0a6bd29d185193afa4ad952b0821dc35fd8ba89",
-      "compiled_dump_sha256": "0c5aa13588f8f6cea9c2653387c165666c429443b53e340d5aca501e7cb34474",
+      "source_class_sha256": "7f89bc74cad96f7bfa1babfa3825d44128c37bad7a947842f3ac0f6036562444",
+      "compiled_dump_sha256": "3fd250482f330cbb2e375e4cc80b18a48f0a01ab8e8f59596ef446ed3bec8839",
       "bone_count": 20,
       "cube_count": 20,
-      "geometry_sha256": "3b3893b9e79f5bf4dc35debcc82b79161c3b0a43671e479c34dcae2ce0ccfcf1",
+      "geometry_sha256": "569bea3c4876adba122097d1cf3612311425f79276c11b9db1854e8c2c7630bc",
       "animation_sha256": "7882082857fdb11e02f158ebc3a6d3f970e2ac60d54813f0e903ee97b2293749",
       "animation_contract_sha256": "c586d28b3d54ef7c1beca00375a9c2d94e2eb451720a956265b9506b887b36c9",
       "geometry": {
@@ -5948,6 +6008,12 @@
           "holds": true
         }
       },
+      "reference_geometry": {
+        "status": "PASS",
+        "reference_source": "reference_1_7_10_source/sources/danger/orespawn/ModelAnt.java",
+        "matched_parts": 20,
+        "ground_truth": "1.7.10 decompiled ModelBase constructor, parsed; never the port"
+      },
       "visual": {
         "status": "PASS",
         "image_size": [
@@ -6043,7 +6109,7 @@
   "deterministic_text_outputs": {
     "status": "PASS",
     "line_ending": "LF",
-    "file_count": 101,
+    "file_count": 112,
     "files": [
       "model_tshirt.compiled.json",
       "model_tshirt.geo-render.json",
@@ -6076,6 +6142,7 @@
       "model_brutalfly.animation-contract.json",
       "model_brutalfly.conversion.json",
       "brutalfly.animation.json",
+      "model_brutalfly.reference-geometry.json",
       "model_dragonfly.compiled.json",
       "model_dragonfly.geo-render.json",
       "model_dragonfly.geo.json",
@@ -6083,6 +6150,7 @@
       "model_dragonfly.animation-contract.json",
       "model_dragonfly.conversion.json",
       "dragonfly.animation.json",
+      "model_dragonfly.reference-geometry.json",
       "model_cockateil.compiled.json",
       "model_cockateil.geo-render.json",
       "model_cockateil.geo.json",
@@ -6090,6 +6158,7 @@
       "model_cockateil.animation-contract.json",
       "model_cockateil.conversion.json",
       "cockateil.animation.json",
+      "model_cockateil.reference-geometry.json",
       "model_ruby_bird.compiled.json",
       "model_ruby_bird.geo-render.json",
       "model_ruby_bird.geo.json",
@@ -6097,6 +6166,7 @@
       "model_ruby_bird.animation-contract.json",
       "model_ruby_bird.conversion.json",
       "cockateil.animation.json",
+      "model_ruby_bird.reference-geometry.json",
       "model_firefly.compiled.json",
       "model_firefly.geo-render.json",
       "model_firefly.geo.json",
@@ -6104,6 +6174,7 @@
       "model_firefly.animation-contract.json",
       "model_firefly.conversion.json",
       "firefly.animation.json",
+      "model_firefly.reference-geometry.json",
       "model_goldfish.compiled.json",
       "model_goldfish.geo-render.json",
       "model_goldfish.geo.json",
@@ -6111,6 +6182,7 @@
       "model_goldfish.animation-contract.json",
       "model_goldfish.conversion.json",
       "goldfish.animation.json",
+      "model_goldfish.reference-geometry.json",
       "model_ant.compiled.json",
       "model_ant.geo-render.json",
       "model_ant.geo.json",
@@ -6118,6 +6190,7 @@
       "model_ant.animation-contract.json",
       "model_ant.conversion.json",
       "ant.animation.json",
+      "model_ant.reference-geometry.json",
       "model_rainbow_ant.compiled.json",
       "model_rainbow_ant.geo-render.json",
       "model_rainbow_ant.geo.json",
@@ -6125,6 +6198,7 @@
       "model_rainbow_ant.animation-contract.json",
       "model_rainbow_ant.conversion.json",
       "ant.animation.json",
+      "model_rainbow_ant.reference-geometry.json",
       "model_red_ant.compiled.json",
       "model_red_ant.geo-render.json",
       "model_red_ant.geo.json",
@@ -6132,6 +6206,7 @@
       "model_red_ant.animation-contract.json",
       "model_red_ant.conversion.json",
       "ant.animation.json",
+      "model_red_ant.reference-geometry.json",
       "model_termite.compiled.json",
       "model_termite.geo-render.json",
       "model_termite.geo.json",
@@ -6139,13 +6214,15 @@
       "model_termite.animation-contract.json",
       "model_termite.conversion.json",
       "ant.animation.json",
+      "model_termite.reference-geometry.json",
       "model_unstable_ant.compiled.json",
       "model_unstable_ant.geo-render.json",
       "model_unstable_ant.geo.json",
       "model_unstable_ant.animation.json",
       "model_unstable_ant.animation-contract.json",
       "model_unstable_ant.conversion.json",
-      "ant.animation.json"
+      "ant.animation.json",
+      "model_unstable_ant.reference-geometry.json"
     ]
   },
   "visual_artifact_count": 210,

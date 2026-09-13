@@ -8,6 +8,13 @@ import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.util.Mth;
+/**
+ * BUG-041 stage 2 (2026-09-13): the 1.7.10 export sets {@code mirror = true} AFTER {@code addBox} (orig ModelCockateil.java:
+ * 16 stores, all inert - 1.7.10's ModelBox reads the flag in its constructor, law 11 from Mojang's 1.7.10 jar),
+ * so the original rendered UNMIRRORED. The port's 16 {@code .mirror()} calls preceded {@code addBox} and flipped
+ * every face's U: dropped port-wide as the EnderReaper precedent was (5354420); geometry unchanged; proven by the
+ * reference-geometry leg.
+ */
 
 public class ModelCockateil extends EntityModel<Cockateil> {
     /** Animation frequency constant; orig ModelCockateil.java:13,32 (wingspeed), value from orig ClientProxyOreSpawn.java:430-431 (Cockateil and RubyBird both 1.0f). */
@@ -53,67 +60,67 @@ public class ModelCockateil extends EntityModel<Cockateil> {
         PartDefinition partdefinition = meshdefinition.getRoot();
 
         partdefinition.addOrReplaceChild("Body",
-                CubeListBuilder.create().texOffs(0, 0).mirror().addBox(0.0F, 0.0F, 0.0F, 5, 3, 6),
+                CubeListBuilder.create().texOffs(0, 0).addBox(0.0F, 0.0F, 0.0F, 5, 3, 6),
                 PartPose.offset(-1.0F, 18.0F, 0.0F));
 
         partdefinition.addOrReplaceChild("Head",
-                CubeListBuilder.create().texOffs(22, 0).mirror().addBox(0.0F, 0.0F, 0.0F, 3, 3, 4),
+                CubeListBuilder.create().texOffs(22, 0).addBox(0.0F, 0.0F, 0.0F, 3, 3, 4),
                 PartPose.offset(0.0F, 16.0F, -3.0F));
 
         partdefinition.addOrReplaceChild("Beak",
-                CubeListBuilder.create().texOffs(0, 21).mirror().addBox(0.0F, 0.0F, 0.0F, 1, 1, 3),
+                CubeListBuilder.create().texOffs(0, 21).addBox(0.0F, 0.0F, 0.0F, 1, 1, 3),
                 PartPose.offset(1.0F, 17.0F, -6.0F));
 
         partdefinition.addOrReplaceChild("LowerBeak",
-                CubeListBuilder.create().texOffs(1, 17).mirror().addBox(0.0F, 0.0F, 0.0F, 1, 1, 1),
+                CubeListBuilder.create().texOffs(1, 17).addBox(0.0F, 0.0F, 0.0F, 1, 1, 1),
                 PartPose.offset(1.0F, 18.0F, -4.0F));
 
         partdefinition.addOrReplaceChild("feather2",
-                CubeListBuilder.create().texOffs(15, 9).mirror().addBox(0.0F, -2.5F, -0.75F, 1, 3, 1),
+                CubeListBuilder.create().texOffs(15, 9).addBox(0.0F, -2.5F, -0.75F, 1, 3, 1),
                 PartPose.offsetAndRotation(1.0F, 16.0F, 0.0F, -0.6426736F, 0.0F, 0.0F));
 
         partdefinition.addOrReplaceChild("feather1",
-                CubeListBuilder.create().texOffs(11, 9).mirror().addBox(0.0F, -2.5F, -0.5F, 1, 3, 1),
+                CubeListBuilder.create().texOffs(11, 9).addBox(0.0F, -2.5F, -0.5F, 1, 3, 1),
                 PartPose.offsetAndRotation(1.0F, 16.0F, -2.0F, -0.2230717F, 0.0F, 0.0F));
 
         partdefinition.addOrReplaceChild("feather3",
-                CubeListBuilder.create().texOffs(19, 9).mirror().addBox(0.0F, -3.0F, 0.5F, 1, 4, 1),
+                CubeListBuilder.create().texOffs(19, 9).addBox(0.0F, -3.0F, 0.5F, 1, 4, 1),
                 PartPose.offsetAndRotation(1.0F, 16.0F, 1.0F, -1.276259F, 0.0F, 0.0F));
 
         partdefinition.addOrReplaceChild("tailfeather1",
-                CubeListBuilder.create().texOffs(46, 15).mirror().addBox(0.0F, 0.0F, 0.0F, 3, 2, 3),
+                CubeListBuilder.create().texOffs(46, 15).addBox(0.0F, 0.0F, 0.0F, 3, 2, 3),
                 PartPose.offset(0.0F, 18.0F, 6.0F));
 
         partdefinition.addOrReplaceChild("rwing1",
-                CubeListBuilder.create().texOffs(23, 9).mirror().addBox(0.0F, 0.0F, 0.0F, 1, 4, 4),
+                CubeListBuilder.create().texOffs(23, 9).addBox(0.0F, 0.0F, 0.0F, 1, 4, 4),
                 PartPose.offsetAndRotation(-1.0F, 18.0F, 1.0F, 0.0F, 0.0F, 1.595066F));
 
         partdefinition.addOrReplaceChild("lwing1",
-                CubeListBuilder.create().texOffs(33, 9).mirror().addBox(-1.0F, 0.0F, 0.0F, 1, 4, 4),
+                CubeListBuilder.create().texOffs(33, 9).addBox(-1.0F, 0.0F, 0.0F, 1, 4, 4),
                 PartPose.offsetAndRotation(4.0F, 18.0F, 1.0F, 0.0F, 0.0F, -1.561488F));
 
         partdefinition.addOrReplaceChild("leg",
-                CubeListBuilder.create().texOffs(4, 12).mirror().addBox(0.0F, 0.0F, 0.0F, 1, 3, 1),
+                CubeListBuilder.create().texOffs(4, 12).addBox(0.0F, 0.0F, 0.0F, 1, 3, 1),
                 PartPose.offsetAndRotation(2.0F, 21.0F, 3.0F, 0.8726646F, 0.0F, 0.0F));
 
         partdefinition.addOrReplaceChild("otherleg",
-                CubeListBuilder.create().texOffs(0, 12).mirror().addBox(0.0F, 0.0F, 0.0F, 1, 3, 1),
+                CubeListBuilder.create().texOffs(0, 12).addBox(0.0F, 0.0F, 0.0F, 1, 3, 1),
                 PartPose.offsetAndRotation(0.0F, 21.0F, 3.0F, 0.6108652F, 0.0F, 0.0F));
 
         partdefinition.addOrReplaceChild("lwing2",
-                CubeListBuilder.create().texOffs(10, 14).mirror().addBox(4.0F, 0.0F, 0.0F, 3, 1, 3),
+                CubeListBuilder.create().texOffs(10, 14).addBox(4.0F, 0.0F, 0.0F, 3, 1, 3),
                 PartPose.offset(4.0F, 18.0F, 1.0F));
 
         partdefinition.addOrReplaceChild("rwing2",
-                CubeListBuilder.create().texOffs(10, 19).mirror().addBox(-7.0F, 0.0F, 0.0F, 3, 1, 3),
+                CubeListBuilder.create().texOffs(10, 19).addBox(-7.0F, 0.0F, 0.0F, 3, 1, 3),
                 PartPose.offset(-1.0F, 18.0F, 1.0F));
 
         partdefinition.addOrReplaceChild("tailfeather2",
-                CubeListBuilder.create().texOffs(44, 20).mirror().addBox(-0.5F, 0.0F, 3.0F, 4, 1, 4),
+                CubeListBuilder.create().texOffs(44, 20).addBox(-0.5F, 0.0F, 3.0F, 4, 1, 4),
                 PartPose.offset(0.0F, 18.0F, 6.0F));
 
         partdefinition.addOrReplaceChild("tailfeather3",
-                CubeListBuilder.create().texOffs(36, 26).mirror().addBox(-1.0F, 0.0F, 7.0F, 5, 1, 4),
+                CubeListBuilder.create().texOffs(36, 26).addBox(-1.0F, 0.0F, 7.0F, 5, 1, 4),
                 PartPose.offset(0.0F, 18.0F, 6.0F));
 
         return LayerDefinition.create(meshdefinition, 64, 32);

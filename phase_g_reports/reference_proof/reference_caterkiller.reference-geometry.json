@@ -1469,81 +1469,13 @@
   },
   "ground_truth": "1.7.10 decompiled ModelBase constructor, parsed; never the port",
   "comparison": {
-    "status": "DIVERGES_TEXTURE_MAPPING",
+    "status": "PASS",
     "reference_parts_with_boxes": 31,
     "port_parts_with_boxes": 80,
     "matched_parts": 31,
-    "categories": {
-      "MIRROR": 31
-    },
-    "differences": [
-      "Head -> Head: reference box mirror=False (flag at addBox time), port True",
-      "falsehead -> falsehead: reference box mirror=False (flag at addBox time), port True",
-      "seg1 -> seg1_0 (x3): reference box mirror=False (flag at addBox time), port True",
-      "ltusk1 -> ltusk1: reference box mirror=False (flag at addBox time), port True",
-      "ltusk2 -> ltusk2: reference box mirror=False (flag at addBox time), port True",
-      "rtusk1 -> rtusk1: reference box mirror=False (flag at addBox time), port True",
-      "rtusk2 -> rtusk2: reference box mirror=False (flag at addBox time), port True",
-      "ljaw -> ljaw: reference box mirror=False (flag at addBox time), port True",
-      "rjaw -> rjaw: reference box mirror=False (flag at addBox time), port True",
-      "seg1lspike -> seg1lspike_0 (x3): reference box mirror=False (flag at addBox time), port True",
-      "seg1rspike -> seg1rspike_0 (x3): reference box mirror=False (flag at addBox time), port True",
-      "seg1ltopspike -> seg1ltopspike_0 (x3): reference box mirror=False (flag at addBox time), port True",
-      "seg1rtopspike -> seg1rtopspike_0 (x3): reference box mirror=False (flag at addBox time), port True",
-      "seg1lleg -> seg1lleg_0 (x3): reference box mirror=False (flag at addBox time), port True",
-      "seg1rleg -> seg1rleg_0 (x3): reference box mirror=False (flag at addBox time), port True",
-      "seg2 -> seg2_0 (x6): reference box mirror=False (flag at addBox time), port True",
-      "seg2lfoot -> seg2lfoot_0 (x6): reference box mirror=False (flag at addBox time), port True",
-      "seg2rfoot -> seg2rfoot_0 (x6): reference box mirror=False (flag at addBox time), port True",
-      "seg2ltopspike -> seg2ltopspike_0 (x6): reference box mirror=False (flag at addBox time), port True",
-      "seg2rtopspike -> seg2rtopspike_0 (x6): reference box mirror=False (flag at addBox time), port True",
-      "seg2lspike -> seg2lspike_0 (x6): reference box mirror=False (flag at addBox time), port True",
-      "seg2rspike -> seg2rspike_0 (x6): reference box mirror=False (flag at addBox time), port True",
-      "seg3 -> seg3: reference box mirror=False (flag at addBox time), port True",
-      "seg3lfoot -> seg3lfoot: reference box mirror=False (flag at addBox time), port True",
-      "seg3rfoot -> seg3rfoot: reference box mirror=False (flag at addBox time), port True",
-      "seg3lspike -> seg3lspike: reference box mirror=False (flag at addBox time), port True",
-      "seg3rspike -> seg3rspike: reference box mirror=False (flag at addBox time), port True",
-      "seg3ltopspike -> seg3ltopspike: reference box mirror=False (flag at addBox time), port True",
-      "seg3rtopspike -> seg3rtopspike: reference box mirror=False (flag at addBox time), port True",
-      "seg3lbackspike -> seg3lbackspike: reference box mirror=False (flag at addBox time), port True",
-      "seg3rbackspike -> seg3rbackspike: reference box mirror=False (flag at addBox time), port True"
-    ],
-    "by_category": {
-      "MIRROR": [
-        "Head -> Head: reference box mirror=False (flag at addBox time), port True",
-        "falsehead -> falsehead: reference box mirror=False (flag at addBox time), port True",
-        "seg1 -> seg1_0 (x3): reference box mirror=False (flag at addBox time), port True",
-        "ltusk1 -> ltusk1: reference box mirror=False (flag at addBox time), port True",
-        "ltusk2 -> ltusk2: reference box mirror=False (flag at addBox time), port True",
-        "rtusk1 -> rtusk1: reference box mirror=False (flag at addBox time), port True",
-        "rtusk2 -> rtusk2: reference box mirror=False (flag at addBox time), port True",
-        "ljaw -> ljaw: reference box mirror=False (flag at addBox time), port True",
-        "rjaw -> rjaw: reference box mirror=False (flag at addBox time), port True",
-        "seg1lspike -> seg1lspike_0 (x3): reference box mirror=False (flag at addBox time), port True",
-        "seg1rspike -> seg1rspike_0 (x3): reference box mirror=False (flag at addBox time), port True",
-        "seg1ltopspike -> seg1ltopspike_0 (x3): reference box mirror=False (flag at addBox time), port True",
-        "seg1rtopspike -> seg1rtopspike_0 (x3): reference box mirror=False (flag at addBox time), port True",
-        "seg1lleg -> seg1lleg_0 (x3): reference box mirror=False (flag at addBox time), port True",
-        "seg1rleg -> seg1rleg_0 (x3): reference box mirror=False (flag at addBox time), port True",
-        "seg2 -> seg2_0 (x6): reference box mirror=False (flag at addBox time), port True",
-        "seg2lfoot -> seg2lfoot_0 (x6): reference box mirror=False (flag at addBox time), port True",
-        "seg2rfoot -> seg2rfoot_0 (x6): reference box mirror=False (flag at addBox time), port True",
-        "seg2ltopspike -> seg2ltopspike_0 (x6): reference box mirror=False (flag at addBox time), port True",
-        "seg2rtopspike -> seg2rtopspike_0 (x6): reference box mirror=False (flag at addBox time), port True",
-        "seg2lspike -> seg2lspike_0 (x6): reference box mirror=False (flag at addBox time), port True",
-        "seg2rspike -> seg2rspike_0 (x6): reference box mirror=False (flag at addBox time), port True",
-        "seg3 -> seg3: reference box mirror=False (flag at addBox time), port True",
-        "seg3lfoot -> seg3lfoot: reference box mirror=False (flag at addBox time), port True",
-        "seg3rfoot -> seg3rfoot: reference box mirror=False (flag at addBox time), port True",
-        "seg3lspike -> seg3lspike: reference box mirror=False (flag at addBox time), port True",
-        "seg3rspike -> seg3rspike: reference box mirror=False (flag at addBox time), port True",
-        "seg3ltopspike -> seg3ltopspike: reference box mirror=False (flag at addBox time), port True",
-        "seg3rtopspike -> seg3rtopspike: reference box mirror=False (flag at addBox time), port True",
-        "seg3lbackspike -> seg3lbackspike: reference box mirror=False (flag at addBox time), port True",
-        "seg3rbackspike -> seg3rbackspike: reference box mirror=False (flag at addBox time), port True"
-      ]
-    }
+    "categories": {},
+    "differences": [],
+    "by_category": {}
   },
   "unrolled_parts": {
     "seg1": 3,
@@ -1567,8 +1499,5 @@
     "port": "CaterKillerModel.java setupAnim + renderToBuffer (unrolled copies)",
     "verdict": "equivalent re-expression per the ENT-S-091 read (refuted once, upheld): per-copy y = base + headoff/(i+1) + 8*i and z = base + 14*i for i=0..2; seg2 phase accumulator as (PI/4)*i for i=0..5; seg3 follows seg2rspike[5]; draw order preserved. The per-copy pivots the leg cannot see are pinned by this read; a harness pin follows when CaterKiller enters Phase G (its classic model reads the entity)."
   },
-  "status": "PASS_WITH_PINNED_DIVERGENCES",
-  "pinned_divergences": {
-    "MIRROR": 31
-  }
+  "status": "PASS"
 }

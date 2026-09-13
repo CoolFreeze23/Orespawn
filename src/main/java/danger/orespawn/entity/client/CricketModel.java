@@ -8,6 +8,13 @@ import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Mob;
+/**
+ * BUG-041 stage 2 (2026-09-13): the 1.7.10 export sets {@code mirror = true} AFTER {@code addBox} (orig ModelCricket.java:
+ * 11 stores, all inert - 1.7.10's ModelBox reads the flag in its constructor, law 11 from Mojang's 1.7.10 jar),
+ * so the original rendered UNMIRRORED. The port's 11 {@code .mirror()} calls preceded {@code addBox} and flipped
+ * every face's U: dropped port-wide as the EnderReaper precedent was (5354420); geometry unchanged; proven by the
+ * reference-geometry leg.
+ */
 
 public class CricketModel<T extends Mob> extends EntityModel<T> {
     private final ModelPart body;
@@ -41,57 +48,57 @@ public class CricketModel<T extends Mob> extends EntityModel<T> {
         PartDefinition partdefinition = meshdefinition.getRoot();
 
         partdefinition.addOrReplaceChild("body",
-                CubeListBuilder.create().texOffs(0, 25).mirror()
+                CubeListBuilder.create().texOffs(0, 25)
                         .addBox(-1.0F, -1.0F, -3.0F, 3, 3, 6),
                 PartPose.offset(0.0F, 21.0F, 0.0F));
 
         partdefinition.addOrReplaceChild("head",
-                CubeListBuilder.create().texOffs(0, 17).mirror()
+                CubeListBuilder.create().texOffs(0, 17)
                         .addBox(-1.0F, -2.0F, -1.0F, 3, 4, 3),
                 PartPose.offsetAndRotation(0.0F, 21.0F, -5.0F, -0.1745329F, 0.0F, 0.0F));
 
         partdefinition.addOrReplaceChild("abdomen",
-                CubeListBuilder.create().texOffs(0, 36).mirror()
+                CubeListBuilder.create().texOffs(0, 36)
                         .addBox(-0.5F, -1.0F, 3.0F, 2, 2, 3),
                 PartPose.offset(0.0F, 21.0F, 0.0F));
 
         partdefinition.addOrReplaceChild("lfleg",
-                CubeListBuilder.create().texOffs(25, 0).mirror()
+                CubeListBuilder.create().texOffs(25, 0)
                         .addBox(2.0F, 0.0F, 0.0F, 5, 1, 1),
                 PartPose.offsetAndRotation(0.0F, 21.0F, -2.0F, 0.0F, 0.4712389F, 0.418879F));
 
         partdefinition.addOrReplaceChild("lrleg",
-                CubeListBuilder.create().texOffs(23, 4).mirror()
+                CubeListBuilder.create().texOffs(23, 4)
                         .addBox(1.0F, 0.0F, -2.0F, 6, 1, 1),
                 PartPose.offsetAndRotation(0.0F, 21.0F, 0.0F, 0.0F, -0.296706F, 0.418879F));
 
         partdefinition.addOrReplaceChild("rfleg",
-                CubeListBuilder.create().texOffs(25, 8).mirror()
+                CubeListBuilder.create().texOffs(25, 8)
                         .addBox(-7.0F, 0.0F, 0.0F, 5, 1, 1),
                 PartPose.offsetAndRotation(1.0F, 21.0F, -2.0F, 0.0F, -0.5410521F, -0.4363323F));
 
         partdefinition.addOrReplaceChild("rrleg",
-                CubeListBuilder.create().texOffs(25, 12).mirror()
+                CubeListBuilder.create().texOffs(25, 12)
                         .addBox(-7.0F, -1.0F, 0.0F, 5, 1, 1),
                 PartPose.offsetAndRotation(1.0F, 22.0F, -2.0F, 0.0F, 0.3839724F, -0.418879F));
 
         partdefinition.addOrReplaceChild("lleg1",
-                CubeListBuilder.create().texOffs(40, 0).mirror()
+                CubeListBuilder.create().texOffs(40, 0)
                         .addBox(-1.0F, -1.0F, 0.0F, 1, 2, 8),
                 PartPose.offsetAndRotation(2.0F, 22.0F, 0.0F, 0.5585054F, 0.4363323F, 0.0F));
 
         partdefinition.addOrReplaceChild("rleg1",
-                CubeListBuilder.create().texOffs(40, 11).mirror()
+                CubeListBuilder.create().texOffs(40, 11)
                         .addBox(0.0F, -1.0F, 0.0F, 1, 2, 8),
                 PartPose.offsetAndRotation(-1.0F, 22.0F, 0.0F, 0.5585054F, -0.4363323F, 0.0F));
 
         partdefinition.addOrReplaceChild("lleg2",
-                CubeListBuilder.create().texOffs(21, 23).mirror()
+                CubeListBuilder.create().texOffs(21, 23)
                         .addBox(-0.5F, -6.5F, 4.5F, 1, 1, 8),
                 PartPose.offsetAndRotation(2.0F, 22.0F, 0.0F, -0.3665191F, 0.3490659F, 0.0F));
 
         partdefinition.addOrReplaceChild("rleg2",
-                CubeListBuilder.create().texOffs(21, 34).mirror()
+                CubeListBuilder.create().texOffs(21, 34)
                         .addBox(-0.5F, -6.5F, 4.0F, 1, 1, 8),
                 PartPose.offsetAndRotation(-1.0F, 22.0F, 0.0F, -0.3665191F, -0.3490659F, 0.0F));
 

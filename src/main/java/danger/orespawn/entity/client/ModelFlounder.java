@@ -8,6 +8,13 @@ import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.util.Mth;
+/**
+ * BUG-041 stage 2 (2026-09-13): the 1.7.10 export sets {@code mirror = true} AFTER {@code addBox} (orig ModelFlounder.java:
+ * 6 stores, all inert - 1.7.10's ModelBox reads the flag in its constructor, law 11 from Mojang's 1.7.10 jar),
+ * so the original rendered UNMIRRORED. The port's 6 {@code .mirror()} calls preceded {@code addBox} and flipped
+ * every face's U: dropped port-wide as the EnderReaper precedent was (5354420); geometry unchanged; proven by the
+ * reference-geometry leg.
+ */
 
 public class ModelFlounder extends EntityModel<Flounder> {
     private final ModelPart body;
@@ -31,27 +38,27 @@ public class ModelFlounder extends EntityModel<Flounder> {
         PartDefinition partdefinition = meshdefinition.getRoot();
 
         partdefinition.addOrReplaceChild("body",
-                CubeListBuilder.create().texOffs(0, 16).mirror().addBox(-4.0F, 0.0F, -5.0F, 8, 1, 12),
+                CubeListBuilder.create().texOffs(0, 16).addBox(-4.0F, 0.0F, -5.0F, 8, 1, 12),
                 PartPose.offset(0.0F, 22.0F, 0.0F));
 
         partdefinition.addOrReplaceChild("head",
-                CubeListBuilder.create().texOffs(0, 5).mirror().addBox(-2.0F, 0.0F, 0.0F, 4, 1, 2),
+                CubeListBuilder.create().texOffs(0, 5).addBox(-2.0F, 0.0F, 0.0F, 4, 1, 2),
                 PartPose.offset(0.0F, 22.0F, -7.0F));
 
         partdefinition.addOrReplaceChild("tail1",
-                CubeListBuilder.create().texOffs(30, 0).mirror().addBox(-2.0F, 0.0F, 0.0F, 4, 1, 2),
+                CubeListBuilder.create().texOffs(30, 0).addBox(-2.0F, 0.0F, 0.0F, 4, 1, 2),
                 PartPose.offset(0.0F, 22.0F, 7.0F));
 
         partdefinition.addOrReplaceChild("tail2",
-                CubeListBuilder.create().texOffs(30, 4).mirror().addBox(-3.0F, 0.0F, 2.0F, 6, 1, 3),
+                CubeListBuilder.create().texOffs(30, 4).addBox(-3.0F, 0.0F, 2.0F, 6, 1, 3),
                 PartPose.offset(0.0F, 22.0F, 7.0F));
 
         partdefinition.addOrReplaceChild("rfin",
-                CubeListBuilder.create().texOffs(12, 0).mirror().addBox(-3.0F, 0.0F, 0.0F, 3, 1, 2),
+                CubeListBuilder.create().texOffs(12, 0).addBox(-3.0F, 0.0F, 0.0F, 3, 1, 2),
                 PartPose.offset(-4.0F, 22.0F, -2.0F));
 
         partdefinition.addOrReplaceChild("lfin",
-                CubeListBuilder.create().texOffs(0, 0).mirror().addBox(0.0F, 0.0F, 0.0F, 3, 1, 2),
+                CubeListBuilder.create().texOffs(0, 0).addBox(0.0F, 0.0F, 0.0F, 3, 1, 2),
                 PartPose.offset(4.0F, 22.0F, -2.0F));
 
         return LayerDefinition.create(meshdefinition, 64, 32);

@@ -435,40 +435,13 @@
   },
   "ground_truth": "1.7.10 decompiled ModelBase constructor, parsed; never the port",
   "comparison": {
-    "status": "DIVERGES_TEXTURE_MAPPING",
+    "status": "PASS",
     "reference_parts_with_boxes": 9,
     "port_parts_with_boxes": 9,
     "matched_parts": 9,
-    "categories": {
-      "MIRROR": 9
-    },
-    "differences": [
-      "tent1 -> tent1: reference box mirror=False (flag at addBox time), port True",
-      "tent2 -> tent2: reference box mirror=False (flag at addBox time), port True",
-      "tent3 -> tent3: reference box mirror=False (flag at addBox time), port True",
-      "tent4 -> tent4: reference box mirror=False (flag at addBox time), port True",
-      "tent5 -> tent5: reference box mirror=False (flag at addBox time), port True",
-      "tent6 -> tent6: reference box mirror=False (flag at addBox time), port True",
-      "tent7 -> tent7: reference box mirror=False (flag at addBox time), port True",
-      "body -> body: reference box mirror=False (flag at addBox time), port True",
-      "tent8 -> tent8: reference box mirror=False (flag at addBox time), port True"
-    ],
-    "by_category": {
-      "MIRROR": [
-        "tent1 -> tent1: reference box mirror=False (flag at addBox time), port True",
-        "tent2 -> tent2: reference box mirror=False (flag at addBox time), port True",
-        "tent3 -> tent3: reference box mirror=False (flag at addBox time), port True",
-        "tent4 -> tent4: reference box mirror=False (flag at addBox time), port True",
-        "tent5 -> tent5: reference box mirror=False (flag at addBox time), port True",
-        "tent6 -> tent6: reference box mirror=False (flag at addBox time), port True",
-        "tent7 -> tent7: reference box mirror=False (flag at addBox time), port True",
-        "body -> body: reference box mirror=False (flag at addBox time), port True",
-        "tent8 -> tent8: reference box mirror=False (flag at addBox time), port True"
-      ]
-    }
+    "categories": {},
+    "differences": [],
+    "by_category": {}
   },
-  "status": "PASS_WITH_PINNED_DIVERGENCES",
-  "pinned_divergences": {
-    "MIRROR": 9
-  }
+  "status": "PASS"
 }

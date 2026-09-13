@@ -1281,76 +1281,13 @@
   },
   "ground_truth": "1.7.10 decompiled ModelBase constructor, parsed; never the port",
   "comparison": {
-    "status": "DIVERGES_TEXTURE_MAPPING",
+    "status": "PASS",
     "reference_parts_with_boxes": 27,
     "port_parts_with_boxes": 27,
     "matched_parts": 27,
-    "categories": {
-      "MIRROR": 27
-    },
-    "differences": [
-      "Leg1 -> Leg1: reference box mirror=False (flag at addBox time), port True",
-      "Leg2 -> Leg2: reference box mirror=False (flag at addBox time), port True",
-      "Leg3 -> Leg3: reference box mirror=False (flag at addBox time), port True",
-      "Foot1 -> Foot1: reference box mirror=False (flag at addBox time), port True",
-      "Foot2 -> Foot2: reference box mirror=False (flag at addBox time), port True",
-      "Foot3 -> Foot3: reference box mirror=False (flag at addBox time), port True",
-      "Foot4 -> Foot4: reference box mirror=False (flag at addBox time), port True",
-      "Foot5 -> Foot5: reference box mirror=False (flag at addBox time), port True",
-      "Foot6 -> Foot6: reference box mirror=False (flag at addBox time), port True",
-      "Foot7 -> Foot7: reference box mirror=False (flag at addBox time), port True",
-      "Body -> Body: reference box mirror=False (flag at addBox time), port True",
-      "Abdomen -> Abdomen: reference box mirror=False (flag at addBox time), port True",
-      "Head -> Head: reference box mirror=False (flag at addBox time), port True",
-      "Jet1 -> Jet1: reference box mirror=False (flag at addBox time), port True",
-      "Jet2 -> Jet2: reference box mirror=False (flag at addBox time), port True",
-      "Hip1 -> Hip1: reference box mirror=False (flag at addBox time), port True",
-      "Hip2 -> Hip2: reference box mirror=False (flag at addBox time), port True",
-      "LJaw1 -> LJaw1: reference box mirror=False (flag at addBox time), port True",
-      "RJaw1 -> RJaw1: reference box mirror=False (flag at addBox time), port True",
-      "LJaw2 -> LJaw2: reference box mirror=False (flag at addBox time), port True",
-      "RJaw2 -> RJaw2: reference box mirror=False (flag at addBox time), port True",
-      "LAntenna -> LAntenna: reference box mirror=False (flag at addBox time), port True",
-      "RAntenna -> RAntenna: reference box mirror=False (flag at addBox time), port True",
-      "Hip3 -> Hip3: reference box mirror=False (flag at addBox time), port True",
-      "Hip4 -> Hip4: reference box mirror=False (flag at addBox time), port True",
-      "Hip5 -> Hip5: reference box mirror=False (flag at addBox time), port True",
-      "Hip6 -> Hip6: reference box mirror=False (flag at addBox time), port True"
-    ],
-    "by_category": {
-      "MIRROR": [
-        "Leg1 -> Leg1: reference box mirror=False (flag at addBox time), port True",
-        "Leg2 -> Leg2: reference box mirror=False (flag at addBox time), port True",
-        "Leg3 -> Leg3: reference box mirror=False (flag at addBox time), port True",
-        "Foot1 -> Foot1: reference box mirror=False (flag at addBox time), port True",
-        "Foot2 -> Foot2: reference box mirror=False (flag at addBox time), port True",
-        "Foot3 -> Foot3: reference box mirror=False (flag at addBox time), port True",
-        "Foot4 -> Foot4: reference box mirror=False (flag at addBox time), port True",
-        "Foot5 -> Foot5: reference box mirror=False (flag at addBox time), port True",
-        "Foot6 -> Foot6: reference box mirror=False (flag at addBox time), port True",
-        "Foot7 -> Foot7: reference box mirror=False (flag at addBox time), port True",
-        "Body -> Body: reference box mirror=False (flag at addBox time), port True",
-        "Abdomen -> Abdomen: reference box mirror=False (flag at addBox time), port True",
-        "Head -> Head: reference box mirror=False (flag at addBox time), port True",
-        "Jet1 -> Jet1: reference box mirror=False (flag at addBox time), port True",
-        "Jet2 -> Jet2: reference box mirror=False (flag at addBox time), port True",
-        "Hip1 -> Hip1: reference box mirror=False (flag at addBox time), port True",
-        "Hip2 -> Hip2: reference box mirror=False (flag at addBox time), port True",
-        "LJaw1 -> LJaw1: reference box mirror=False (flag at addBox time), port True",
-        "RJaw1 -> RJaw1: reference box mirror=False (flag at addBox time), port True",
-        "LJaw2 -> LJaw2: reference box mirror=False (flag at addBox time), port True",
-        "RJaw2 -> RJaw2: reference box mirror=False (flag at addBox time), port True",
-        "LAntenna -> LAntenna: reference box mirror=False (flag at addBox time), port True",
-        "RAntenna -> RAntenna: reference box mirror=False (flag at addBox time), port True",
-        "Hip3 -> Hip3: reference box mirror=False (flag at addBox time), port True",
-        "Hip4 -> Hip4: reference box mirror=False (flag at addBox time), port True",
-        "Hip5 -> Hip5: reference box mirror=False (flag at addBox time), port True",
-        "Hip6 -> Hip6: reference box mirror=False (flag at addBox time), port True"
-      ]
-    }
+    "categories": {},
+    "differences": [],
+    "by_category": {}
   },
-  "status": "PASS_WITH_PINNED_DIVERGENCES",
-  "pinned_divergences": {
-    "MIRROR": 27
-  }
+  "status": "PASS"
 }

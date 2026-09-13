@@ -8,6 +8,13 @@ import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.util.Mth;
+/**
+ * BUG-041 stage 2 (2026-09-13): the 1.7.10 export sets {@code mirror = true} AFTER {@code addBox} (orig ModelIrukandji.java:
+ * 9 stores, all inert - 1.7.10's ModelBox reads the flag in its constructor, law 11 from Mojang's 1.7.10 jar),
+ * so the original rendered UNMIRRORED. The port's 9 {@code .mirror()} calls preceded {@code addBox} and flipped
+ * every face's U: dropped port-wide as the EnderReaper precedent was (5354420); geometry unchanged; proven by the
+ * reference-geometry leg.
+ */
 
 public class ModelIrukandji extends EntityModel<Irukandji> {
     private final ModelPart body;
@@ -37,39 +44,39 @@ public class ModelIrukandji extends EntityModel<Irukandji> {
         PartDefinition partdefinition = meshdefinition.getRoot();
 
         partdefinition.addOrReplaceChild("body",
-                CubeListBuilder.create().texOffs(0, 9).mirror().addBox(-2.0F, 0.0F, -2.0F, 4, 4, 4),
+                CubeListBuilder.create().texOffs(0, 9).addBox(-2.0F, 0.0F, -2.0F, 4, 4, 4),
                 PartPose.offset(0.0F, 6.0F, 0.0F));
 
         partdefinition.addOrReplaceChild("t11",
-                CubeListBuilder.create().texOffs(25, 0).mirror().addBox(0.0F, 0.0F, 0.0F, 1, 7, 1),
+                CubeListBuilder.create().texOffs(25, 0).addBox(0.0F, 0.0F, 0.0F, 1, 7, 1),
                 PartPose.offset(1.0F, 10.0F, -2.0F));
 
         partdefinition.addOrReplaceChild("t12",
-                CubeListBuilder.create().texOffs(5, 0).mirror().addBox(0.0F, 0.0F, 0.0F, 1, 7, 1),
+                CubeListBuilder.create().texOffs(5, 0).addBox(0.0F, 0.0F, 0.0F, 1, 7, 1),
                 PartPose.offset(1.0F, 17.0F, -2.0F));
 
         partdefinition.addOrReplaceChild("t21",
-                CubeListBuilder.create().texOffs(0, 0).mirror().addBox(0.0F, 0.0F, 0.0F, 1, 7, 1),
+                CubeListBuilder.create().texOffs(0, 0).addBox(0.0F, 0.0F, 0.0F, 1, 7, 1),
                 PartPose.offset(-2.0F, 10.0F, -2.0F));
 
         partdefinition.addOrReplaceChild("t22",
-                CubeListBuilder.create().texOffs(20, 0).mirror().addBox(0.0F, 0.0F, 0.0F, 1, 7, 1),
+                CubeListBuilder.create().texOffs(20, 0).addBox(0.0F, 0.0F, 0.0F, 1, 7, 1),
                 PartPose.offset(-2.0F, 17.0F, -2.0F));
 
         partdefinition.addOrReplaceChild("t31",
-                CubeListBuilder.create().texOffs(30, 0).mirror().addBox(0.0F, 0.0F, 0.0F, 1, 7, 1),
+                CubeListBuilder.create().texOffs(30, 0).addBox(0.0F, 0.0F, 0.0F, 1, 7, 1),
                 PartPose.offset(1.0F, 10.0F, 1.0F));
 
         partdefinition.addOrReplaceChild("t32",
-                CubeListBuilder.create().texOffs(10, 0).mirror().addBox(0.0F, 0.0F, 0.0F, 1, 7, 1),
+                CubeListBuilder.create().texOffs(10, 0).addBox(0.0F, 0.0F, 0.0F, 1, 7, 1),
                 PartPose.offset(1.0F, 17.0F, 1.0F));
 
         partdefinition.addOrReplaceChild("t41",
-                CubeListBuilder.create().texOffs(35, 0).mirror().addBox(0.0F, 0.0F, 0.0F, 1, 7, 1),
+                CubeListBuilder.create().texOffs(35, 0).addBox(0.0F, 0.0F, 0.0F, 1, 7, 1),
                 PartPose.offset(-2.0F, 10.0F, 1.0F));
 
         partdefinition.addOrReplaceChild("t42",
-                CubeListBuilder.create().texOffs(15, 0).mirror().addBox(0.0F, 0.0F, 0.0F, 1, 7, 1),
+                CubeListBuilder.create().texOffs(15, 0).addBox(0.0F, 0.0F, 0.0F, 1, 7, 1),
                 PartPose.offset(-2.0F, 17.0F, 1.0F));
 
         return LayerDefinition.create(meshdefinition, 64, 32);

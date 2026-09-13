@@ -1,0 +1,588 @@
+{
+  "schema_version": 1,
+  "model_id": "reference_bertha",
+  "reference_source": "reference_1_7_10_source/sources/danger/orespawn/ModelBertha.java",
+  "reference": {
+    "status": "PARSED",
+    "class": "ModelBertha",
+    "texture_width": 64,
+    "texture_height": 128,
+    "parts": [
+      {
+        "name": "Grip",
+        "tex_u": 0,
+        "tex_v": 0,
+        "boxes": [
+          {
+            "origin": [
+              0.0,
+              -6.0,
+              0.0
+            ],
+            "size": [
+              1,
+              12,
+              1
+            ],
+            "uv": [
+              0,
+              0
+            ],
+            "mirror": false,
+            "texture_size": [
+              64,
+              128
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          128
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "Blade",
+        "tex_u": 6,
+        "tex_v": 0,
+        "boxes": [
+          {
+            "origin": [
+              0.0,
+              -41.0,
+              -1.0
+            ],
+            "size": [
+              1,
+              34,
+              3
+            ],
+            "uv": [
+              6,
+              0
+            ],
+            "mirror": false,
+            "texture_size": [
+              64,
+              128
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          128
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "Handguard2",
+        "tex_u": 16,
+        "tex_v": 0,
+        "boxes": [
+          {
+            "origin": [
+              0.0,
+              -7.0,
+              -4.0
+            ],
+            "size": [
+              1,
+              1,
+              9
+            ],
+            "uv": [
+              16,
+              0
+            ],
+            "mirror": false,
+            "texture_size": [
+              64,
+              128
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          128
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "Handguard1",
+        "tex_u": 18,
+        "tex_v": 12,
+        "boxes": [
+          {
+            "origin": [
+              -3.0,
+              -7.0,
+              0.0
+            ],
+            "size": [
+              7,
+              1,
+              1
+            ],
+            "uv": [
+              18,
+              12
+            ],
+            "mirror": false,
+            "texture_size": [
+              64,
+              128
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          128
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "hg2",
+        "tex_u": 0,
+        "tex_v": 15,
+        "boxes": [
+          {
+            "origin": [
+              0.0,
+              -8.0,
+              -5.0
+            ],
+            "size": [
+              1,
+              1,
+              1
+            ],
+            "uv": [
+              0,
+              15
+            ],
+            "mirror": false,
+            "texture_size": [
+              64,
+              128
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          128
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "hg4",
+        "tex_u": 0,
+        "tex_v": 18,
+        "boxes": [
+          {
+            "origin": [
+              0.0,
+              -8.0,
+              5.0
+            ],
+            "size": [
+              1,
+              1,
+              1
+            ],
+            "uv": [
+              0,
+              18
+            ],
+            "mirror": false,
+            "texture_size": [
+              64,
+              128
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          128
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "hg3",
+        "tex_u": 0,
+        "tex_v": 21,
+        "boxes": [
+          {
+            "origin": [
+              -4.0,
+              -8.0,
+              0.0
+            ],
+            "size": [
+              1,
+              1,
+              1
+            ],
+            "uv": [
+              0,
+              21
+            ],
+            "mirror": false,
+            "texture_size": [
+              64,
+              128
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          128
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "hg1",
+        "tex_u": 0,
+        "tex_v": 24,
+        "boxes": [
+          {
+            "origin": [
+              4.0,
+              -8.0,
+              0.0
+            ],
+            "size": [
+              1,
+              1,
+              1
+            ],
+            "uv": [
+              0,
+              24
+            ],
+            "mirror": false,
+            "texture_size": [
+              64,
+              128
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          128
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "BaseGrip",
+        "tex_u": 0,
+        "tex_v": 39,
+        "boxes": [
+          {
+            "origin": [
+              -1.0,
+              5.0,
+              -1.0
+            ],
+            "size": [
+              3,
+              1,
+              3
+            ],
+            "uv": [
+              0,
+              39
+            ],
+            "mirror": false,
+            "texture_size": [
+              64,
+              128
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          128
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "Tip1",
+        "tex_u": 21,
+        "tex_v": 16,
+        "boxes": [
+          {
+            "origin": [
+              0.0,
+              -42.0,
+              -0.5
+            ],
+            "size": [
+              1,
+              1,
+              2
+            ],
+            "uv": [
+              21,
+              16
+            ],
+            "mirror": false,
+            "texture_size": [
+              64,
+              128
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          128
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "Tip2",
+        "tex_u": 22,
+        "tex_v": 20,
+        "boxes": [
+          {
+            "origin": [
+              0.0,
+              -43.0,
+              0.0
+            ],
+            "size": [
+              1,
+              1,
+              1
+            ],
+            "uv": [
+              22,
+              20
+            ],
+            "mirror": false,
+            "texture_size": [
+              64,
+              128
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          128
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "Bottom",
+        "tex_u": 0,
+        "tex_v": 45,
+        "boxes": [
+          {
+            "origin": [
+              0.0,
+              6.0,
+              0.0
+            ],
+            "size": [
+              1,
+              1,
+              1
+            ],
+            "uv": [
+              0,
+              45
+            ],
+            "mirror": false,
+            "texture_size": [
+              64,
+              128
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          128
+        ],
+        "children": [],
+        "parent": null
+      }
+    ]
+  },
+  "ground_truth": "1.7.10 decompiled ModelBase constructor, parsed; never the port",
+  "comparison": {
+    "status": "PASS",
+    "reference_parts_with_boxes": 12,
+    "port_parts_with_boxes": 12,
+    "matched_parts": 12,
+    "categories": {},
+    "differences": [],
+    "by_category": {}
+  },
+  "status": "PASS"
+}

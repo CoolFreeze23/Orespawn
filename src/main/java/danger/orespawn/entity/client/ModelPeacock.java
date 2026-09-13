@@ -8,6 +8,13 @@ import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.util.Mth;
+/**
+ * BUG-041 stage 2 (2026-09-13): the 1.7.10 export sets {@code mirror = true} AFTER {@code addBox} (orig ModelPeacock.java:
+ * 16 stores, all inert - 1.7.10's ModelBox reads the flag in its constructor, law 11 from Mojang's 1.7.10 jar),
+ * so the original rendered UNMIRRORED. The port's 16 {@code .mirror()} calls preceded {@code addBox} and flipped
+ * every face's U: dropped port-wide as the EnderReaper precedent was (5354420); geometry unchanged; proven by the
+ * reference-geometry leg.
+ */
 
 public class ModelPeacock extends EntityModel<Peacock> {
     /** Animation frequency constant; orig ModelPeacock.java:14,33 (wingspeed), value from orig ClientProxyOreSpawn.java:478. */
@@ -53,67 +60,67 @@ public class ModelPeacock extends EntityModel<Peacock> {
         PartDefinition partdefinition = meshdefinition.getRoot();
 
         partdefinition.addOrReplaceChild("lleg",
-                CubeListBuilder.create().texOffs(0, 20).mirror().addBox(0.0F, 0.0F, 0.0F, 1, 7, 1),
+                CubeListBuilder.create().texOffs(0, 20).addBox(0.0F, 0.0F, 0.0F, 1, 7, 1),
                 PartPose.offset(1.0F, 17.0F, 0.0F));
 
         partdefinition.addOrReplaceChild("rleg",
-                CubeListBuilder.create().texOffs(5, 20).mirror().addBox(0.0F, 0.0F, 0.0F, 1, 7, 1),
+                CubeListBuilder.create().texOffs(5, 20).addBox(0.0F, 0.0F, 0.0F, 1, 7, 1),
                 PartPose.offset(-1.0F, 17.0F, 0.0F));
 
         partdefinition.addOrReplaceChild("body",
-                CubeListBuilder.create().texOffs(88, 0).mirror().addBox(-2.0F, -2.0F, -5.0F, 5, 4, 11),
+                CubeListBuilder.create().texOffs(88, 0).addBox(-2.0F, -2.0F, -5.0F, 5, 4, 11),
                 PartPose.offsetAndRotation(0.0F, 15.0F, 1.0F, -0.1396263F, 0.0F, 0.0F));
 
         partdefinition.addOrReplaceChild("neck",
-                CubeListBuilder.create().texOffs(70, 0).mirror().addBox(-0.5F, -1.0F, -6.0F, 2, 2, 6),
+                CubeListBuilder.create().texOffs(70, 0).addBox(-0.5F, -1.0F, -6.0F, 2, 2, 6),
                 PartPose.offsetAndRotation(0.0F, 14.0F, -3.0F, -0.5585054F, 0.0F, 0.0F));
 
         partdefinition.addOrReplaceChild("head1",
-                CubeListBuilder.create().texOffs(56, 0).mirror().addBox(-0.5F, -2.0F, -2.0F, 2, 2, 4),
+                CubeListBuilder.create().texOffs(56, 0).addBox(-0.5F, -2.0F, -2.0F, 2, 2, 4),
                 PartPose.offset(0.0F, 12.0F, -8.0F));
 
         partdefinition.addOrReplaceChild("head2",
-                CubeListBuilder.create().texOffs(48, 0).mirror().addBox(0.0F, -1.0F, -4.0F, 1, 1, 2),
+                CubeListBuilder.create().texOffs(48, 0).addBox(0.0F, -1.0F, -4.0F, 1, 1, 2),
                 PartPose.offset(0.0F, 12.0F, -8.0F));
 
         partdefinition.addOrReplaceChild("hf1",
-                CubeListBuilder.create().texOffs(8, 0).mirror().addBox(0.5F, -9.0F, -1.5F, 0, 7, 3),
+                CubeListBuilder.create().texOffs(8, 0).addBox(0.5F, -9.0F, -1.5F, 0, 7, 3),
                 PartPose.offsetAndRotation(0.0F, 12.0F, -8.0F, 0.4014257F, 0.0F, 0.0F));
 
         partdefinition.addOrReplaceChild("hf2",
-                CubeListBuilder.create().texOffs(8, 0).mirror().addBox(0.5F, -9.0F, -1.5F, 0, 7, 3),
+                CubeListBuilder.create().texOffs(8, 0).addBox(0.5F, -9.0F, -1.5F, 0, 7, 3),
                 PartPose.offsetAndRotation(0.0F, 12.0F, -8.0F, -0.1745329F, 0.0F, 0.0F));
 
         partdefinition.addOrReplaceChild("hf3",
-                CubeListBuilder.create().texOffs(8, 0).mirror().addBox(0.5F, -9.0F, -1.5F, 0, 7, 3),
+                CubeListBuilder.create().texOffs(8, 0).addBox(0.5F, -9.0F, -1.5F, 0, 7, 3),
                 PartPose.offsetAndRotation(0.0F, 12.0F, -8.0F, -0.6981317F, 0.0F, 0.0F));
 
         partdefinition.addOrReplaceChild("tailf1",
-                CubeListBuilder.create().texOffs(0, 50).mirror().addBox(-4.0F, 0.0F, 0.0F, 8, 0, 30),
+                CubeListBuilder.create().texOffs(0, 50).addBox(-4.0F, 0.0F, 0.0F, 8, 0, 30),
                 PartPose.offset(0.5F, 14.0F, 7.0F));
 
         partdefinition.addOrReplaceChild("tailf2",
-                CubeListBuilder.create().texOffs(0, 50).mirror().addBox(-4.0F, 0.0F, 0.0F, 8, 0, 30),
+                CubeListBuilder.create().texOffs(0, 50).addBox(-4.0F, 0.0F, 0.0F, 8, 0, 30),
                 PartPose.offset(0.5F, 14.0F, 7.0F));
 
         partdefinition.addOrReplaceChild("tailf3",
-                CubeListBuilder.create().texOffs(0, 50).mirror().addBox(-4.0F, 0.0F, 0.0F, 8, 0, 30),
+                CubeListBuilder.create().texOffs(0, 50).addBox(-4.0F, 0.0F, 0.0F, 8, 0, 30),
                 PartPose.offset(0.5F, 14.0F, 7.0F));
 
         partdefinition.addOrReplaceChild("tailf4",
-                CubeListBuilder.create().texOffs(0, 50).mirror().addBox(-4.0F, 0.0F, 0.0F, 8, 0, 30),
+                CubeListBuilder.create().texOffs(0, 50).addBox(-4.0F, 0.0F, 0.0F, 8, 0, 30),
                 PartPose.offset(0.5F, 14.0F, 7.0F));
 
         partdefinition.addOrReplaceChild("tailf5",
-                CubeListBuilder.create().texOffs(0, 50).mirror().addBox(-4.0F, 0.0F, 0.0F, 8, 0, 30),
+                CubeListBuilder.create().texOffs(0, 50).addBox(-4.0F, 0.0F, 0.0F, 8, 0, 30),
                 PartPose.offset(0.5F, 14.0F, 7.0F));
 
         partdefinition.addOrReplaceChild("tailf6",
-                CubeListBuilder.create().texOffs(0, 50).mirror().addBox(-4.0F, 0.0F, 0.0F, 8, 0, 30),
+                CubeListBuilder.create().texOffs(0, 50).addBox(-4.0F, 0.0F, 0.0F, 8, 0, 30),
                 PartPose.offset(0.5F, 14.0F, 7.0F));
 
         partdefinition.addOrReplaceChild("tailf7",
-                CubeListBuilder.create().texOffs(0, 50).mirror().addBox(-4.0F, 0.0F, 0.0F, 8, 0, 30),
+                CubeListBuilder.create().texOffs(0, 50).addBox(-4.0F, 0.0F, 0.0F, 8, 0, 30),
                 PartPose.offset(0.514F, 14.0F, 7.0F));
 
         return LayerDefinition.create(meshdefinition, 128, 128);

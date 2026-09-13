@@ -1,0 +1,494 @@
+{
+  "schema_version": 1,
+  "model_id": "reference_butterfly",
+  "reference_source": "reference_1_7_10_source/sources/danger/orespawn/ModelButterfly.java",
+  "reference": {
+    "status": "PARSED",
+    "class": "ModelButterfly",
+    "texture_width": 64,
+    "texture_height": 32,
+    "parts": [
+      {
+        "name": "body",
+        "tex_u": 21,
+        "tex_v": 19,
+        "boxes": [
+          {
+            "origin": [
+              0.0,
+              0.0,
+              -4.0
+            ],
+            "size": [
+              1,
+              1,
+              8
+            ],
+            "uv": [
+              21,
+              19
+            ],
+            "mirror": false,
+            "texture_size": [
+              64,
+              32
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          17.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          32
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "leftwing",
+        "tex_u": 43,
+        "tex_v": 24,
+        "boxes": [
+          {
+            "origin": [
+              0.0,
+              0.0,
+              -4.0
+            ],
+            "size": [
+              5,
+              1,
+              5
+            ],
+            "uv": [
+              43,
+              24
+            ],
+            "mirror": false,
+            "texture_size": [
+              64,
+              32
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          1.0,
+          17.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          32
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "rightwing",
+        "tex_u": 43,
+        "tex_v": 17,
+        "boxes": [
+          {
+            "origin": [
+              -5.0,
+              0.0,
+              -4.0
+            ],
+            "size": [
+              5,
+              1,
+              5
+            ],
+            "uv": [
+              43,
+              17
+            ],
+            "mirror": false,
+            "texture_size": [
+              64,
+              32
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          17.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          32
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "leftwing2",
+        "tex_u": 0,
+        "tex_v": 0,
+        "boxes": [
+          {
+            "origin": [
+              1.0,
+              0.0,
+              -6.0
+            ],
+            "size": [
+              6,
+              1,
+              7
+            ],
+            "uv": [
+              0,
+              0
+            ],
+            "mirror": false,
+            "texture_size": [
+              64,
+              32
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          1.0,
+          17.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          32
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "rightwing2",
+        "tex_u": 29,
+        "tex_v": 0,
+        "boxes": [
+          {
+            "origin": [
+              -7.0,
+              0.0,
+              -6.0
+            ],
+            "size": [
+              6,
+              1,
+              7
+            ],
+            "uv": [
+              29,
+              0
+            ],
+            "mirror": false,
+            "texture_size": [
+              64,
+              32
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          17.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          32
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "leftwing3",
+        "tex_u": 0,
+        "tex_v": 9,
+        "boxes": [
+          {
+            "origin": [
+              0.0,
+              0.0,
+              1.0
+            ],
+            "size": [
+              5,
+              1,
+              5
+            ],
+            "uv": [
+              0,
+              9
+            ],
+            "mirror": false,
+            "texture_size": [
+              64,
+              32
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          1.0,
+          17.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          32
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "rightwing3",
+        "tex_u": 27,
+        "tex_v": 9,
+        "boxes": [
+          {
+            "origin": [
+              -5.0,
+              0.0,
+              1.0
+            ],
+            "size": [
+              5,
+              1,
+              5
+            ],
+            "uv": [
+              27,
+              9
+            ],
+            "mirror": false,
+            "texture_size": [
+              64,
+              32
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          17.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          32
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "head",
+        "tex_u": 21,
+        "tex_v": 11,
+        "boxes": [
+          {
+            "origin": [
+              0.0,
+              0.0,
+              -6.0
+            ],
+            "size": [
+              1,
+              1,
+              1
+            ],
+            "uv": [
+              21,
+              11
+            ],
+            "mirror": false,
+            "texture_size": [
+              64,
+              32
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          17.0,
+          1.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          32
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "leftwing4",
+        "tex_u": 2,
+        "tex_v": 24,
+        "boxes": [
+          {
+            "origin": [
+              0.0,
+              0.0,
+              6.0
+            ],
+            "size": [
+              1,
+              1,
+              7
+            ],
+            "uv": [
+              2,
+              24
+            ],
+            "mirror": false,
+            "texture_size": [
+              64,
+              32
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          1.0,
+          17.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          32
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "rightwing4",
+        "tex_u": 2,
+        "tex_v": 16,
+        "boxes": [
+          {
+            "origin": [
+              -1.0,
+              0.0,
+              6.0
+            ],
+            "size": [
+              1,
+              1,
+              7
+            ],
+            "uv": [
+              2,
+              16
+            ],
+            "mirror": false,
+            "texture_size": [
+              64,
+              32
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          17.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          64,
+          32
+        ],
+        "children": [],
+        "parent": null
+      }
+    ]
+  },
+  "ground_truth": "1.7.10 decompiled ModelBase constructor, parsed; never the port",
+  "comparison": {
+    "status": "PASS",
+    "reference_parts_with_boxes": 10,
+    "port_parts_with_boxes": 10,
+    "matched_parts": 10,
+    "categories": {},
+    "differences": [],
+    "by_category": {}
+  },
+  "status": "PASS"
+}

@@ -529,44 +529,13 @@
   },
   "ground_truth": "1.7.10 decompiled ModelBase constructor, parsed; never the port",
   "comparison": {
-    "status": "DIVERGES_TEXTURE_MAPPING",
+    "status": "PASS",
     "reference_parts_with_boxes": 11,
     "port_parts_with_boxes": 11,
     "matched_parts": 11,
-    "categories": {
-      "MIRROR": 11
-    },
-    "differences": [
-      "lwheel1 -> lwheel1: reference box mirror=False (flag at addBox time), port True",
-      "lwheel2 -> lwheel2: reference box mirror=False (flag at addBox time), port True",
-      "rwheel1 -> rwheel1: reference box mirror=False (flag at addBox time), port True",
-      "rwheel2 -> rwheel2: reference box mirror=False (flag at addBox time), port True",
-      "axle -> axle: reference box mirror=False (flag at addBox time), port True",
-      "drivebox -> drivebox: reference box mirror=False (flag at addBox time), port True",
-      "stand -> stand: reference box mirror=False (flag at addBox time), port True",
-      "swivel -> swivel: reference box mirror=False (flag at addBox time), port True",
-      "barrel1 -> barrel1: reference box mirror=False (flag at addBox time), port True",
-      "barrel2 -> barrel2: reference box mirror=False (flag at addBox time), port True",
-      "ammobox -> ammobox: reference box mirror=False (flag at addBox time), port True"
-    ],
-    "by_category": {
-      "MIRROR": [
-        "lwheel1 -> lwheel1: reference box mirror=False (flag at addBox time), port True",
-        "lwheel2 -> lwheel2: reference box mirror=False (flag at addBox time), port True",
-        "rwheel1 -> rwheel1: reference box mirror=False (flag at addBox time), port True",
-        "rwheel2 -> rwheel2: reference box mirror=False (flag at addBox time), port True",
-        "axle -> axle: reference box mirror=False (flag at addBox time), port True",
-        "drivebox -> drivebox: reference box mirror=False (flag at addBox time), port True",
-        "stand -> stand: reference box mirror=False (flag at addBox time), port True",
-        "swivel -> swivel: reference box mirror=False (flag at addBox time), port True",
-        "barrel1 -> barrel1: reference box mirror=False (flag at addBox time), port True",
-        "barrel2 -> barrel2: reference box mirror=False (flag at addBox time), port True",
-        "ammobox -> ammobox: reference box mirror=False (flag at addBox time), port True"
-      ]
-    }
+    "categories": {},
+    "differences": [],
+    "by_category": {}
   },
-  "status": "PASS_WITH_PINNED_DIVERGENCES",
-  "pinned_divergences": {
-    "MIRROR": 11
-  }
+  "status": "PASS"
 }

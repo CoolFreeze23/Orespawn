@@ -576,46 +576,13 @@
   },
   "ground_truth": "1.7.10 decompiled ModelBase constructor, parsed; never the port",
   "comparison": {
-    "status": "DIVERGES_TEXTURE_MAPPING",
+    "status": "PASS",
     "reference_parts_with_boxes": 12,
     "port_parts_with_boxes": 12,
     "matched_parts": 12,
-    "categories": {
-      "MIRROR": 12
-    },
-    "differences": [
-      "body -> body: reference box mirror=False (flag at addBox time), port True",
-      "wing_left -> wing_left: reference box mirror=False (flag at addBox time), port True",
-      "wing_right -> wing_right: reference box mirror=False (flag at addBox time), port True",
-      "head -> head: reference box mirror=False (flag at addBox time), port True",
-      "mouth -> mouth: reference box mirror=False (flag at addBox time), port True",
-      "eye_left -> eye_left: reference box mirror=False (flag at addBox time), port True",
-      "eye_right -> eye_right: reference box mirror=False (flag at addBox time), port True",
-      "front_leg_left_ -> front_leg_left_: reference box mirror=False (flag at addBox time), port True",
-      "front_leg_right -> front_leg_right: reference box mirror=False (flag at addBox time), port True",
-      "back_leg_left -> back_leg_left: reference box mirror=False (flag at addBox time), port True",
-      "back_leg_right -> back_leg_right: reference box mirror=False (flag at addBox time), port True",
-      "TailLight -> TailLight: reference box mirror=False (flag at addBox time), port True"
-    ],
-    "by_category": {
-      "MIRROR": [
-        "body -> body: reference box mirror=False (flag at addBox time), port True",
-        "wing_left -> wing_left: reference box mirror=False (flag at addBox time), port True",
-        "wing_right -> wing_right: reference box mirror=False (flag at addBox time), port True",
-        "head -> head: reference box mirror=False (flag at addBox time), port True",
-        "mouth -> mouth: reference box mirror=False (flag at addBox time), port True",
-        "eye_left -> eye_left: reference box mirror=False (flag at addBox time), port True",
-        "eye_right -> eye_right: reference box mirror=False (flag at addBox time), port True",
-        "front_leg_left_ -> front_leg_left_: reference box mirror=False (flag at addBox time), port True",
-        "front_leg_right -> front_leg_right: reference box mirror=False (flag at addBox time), port True",
-        "back_leg_left -> back_leg_left: reference box mirror=False (flag at addBox time), port True",
-        "back_leg_right -> back_leg_right: reference box mirror=False (flag at addBox time), port True",
-        "TailLight -> TailLight: reference box mirror=False (flag at addBox time), port True"
-      ]
-    }
+    "categories": {},
+    "differences": [],
+    "by_category": {}
   },
-  "status": "PASS_WITH_PINNED_DIVERGENCES",
-  "pinned_divergences": {
-    "MIRROR": 12
-  }
+  "status": "PASS"
 }

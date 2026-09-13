@@ -68,6 +68,12 @@ import net.minecraft.util.RandomSource;
  * <p>The GeckoLib candidate ({@link PurplePowerGeoReplacement}) reproduces the same frame on the
  * render-instance-expanded rig ({@code tools/s4_model_proofs.json}): the clones carry the step, the
  * fan groups the rolls and the carried doublings.</p>
+ *
+ * BUG-041 stage 2 (2026-09-13): the 1.7.10 export sets {@code mirror = true} AFTER {@code addBox} (orig ModelPurplePower.java:
+ * 3 stores, all inert - 1.7.10's ModelBox reads the flag in its constructor, law 11 from Mojang's 1.7.10 jar),
+ * so the original rendered UNMIRRORED. The port's 3 {@code .mirror()} calls preceded {@code addBox} and flipped
+ * every face's U: dropped port-wide as the EnderReaper precedent was (5354420); geometry unchanged; proven by the
+ * reference-geometry leg.
  */
 public class ModelPurplePower extends EntityModel<PurplePower> {
     /** orig :53-54 - the blend state, as the model's render type (see the class comment). */
@@ -113,17 +119,17 @@ public class ModelPurplePower extends EntityModel<PurplePower> {
         PartDefinition partdefinition = meshdefinition.getRoot();
 
         partdefinition.addOrReplaceChild("Shape1",
-                CubeListBuilder.create().texOffs(0, 12).mirror()
+                CubeListBuilder.create().texOffs(0, 12)
                         .addBox(-2.0F, -0.5F, -0.5F, 4, 1, 1),
                 PartPose.offset(0.0F, 0.0F, 0.0F));
 
         partdefinition.addOrReplaceChild("Shape2",
-                CubeListBuilder.create().texOffs(0, 7).mirror()
+                CubeListBuilder.create().texOffs(0, 7)
                         .addBox(-4.0F, -0.5F, -0.5F, 8, 1, 1),
                 PartPose.offset(0.0F, 0.0F, 0.0F));
 
         partdefinition.addOrReplaceChild("Shape3",
-                CubeListBuilder.create().texOffs(0, 0).mirror()
+                CubeListBuilder.create().texOffs(0, 0)
                         .addBox(-7.0F, -0.5F, -0.5F, 14, 1, 1),
                 PartPose.offset(0.0F, 0.0F, 0.0F));
 

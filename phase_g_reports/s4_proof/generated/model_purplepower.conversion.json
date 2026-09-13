@@ -5,14 +5,14 @@
   "proof_scope": "production_proof_model",
   "ground_truth": "executed compiled LayerDefinition and baked ModelPart",
   "source_class": "danger.orespawn.entity.client.ModelPurplePower",
-  "source_class_sha256": "139bb827e2c9153ac5f439c570a5862078b39a461fd6d7c599dd1d2157dfaca4",
-  "compiled_dump_sha256": "f5ca924dd9ec8a37a9242209cb27aff0beed00742205a05a04c0f132d1151b6f",
-  "geometry_sha256": "a5072b041314c93f6b4fc0a97022d8044d01fc7fff21f601ac3c18e00d21ea1a",
+  "source_class_sha256": "98e8241e3b4a8bdde31cd36bf134d834ec6561c37e65fe3b8420a028cc0c9864",
+  "compiled_dump_sha256": "e77744aba8a906c82fe38273caf2c3235001a92bda46310700be49d0072699e3",
+  "geometry_sha256": "246b7f24bec2a800908e7d980db923c3486f1a30a571d32ee33713b724011794",
   "animation_sha256": "7882082857fdb11e02f158ebc3a6d3f970e2ac60d54813f0e903ee97b2293749",
   "animation_contract_sha256": "32fa4b5cdb442c15c16b565a8ec2fc07f8823dfd9172d5340857118b20f1d3d0",
   "bone_count": 27,
   "cube_count": 18,
-  "mirrored_cube_count": 18,
+  "mirrored_cube_count": 0,
   "mirrored_uv_strategy": "source flag retained as modelpart_mirror; semantics baked into explicit faces; incompatible GeckoLib native mirror disabled",
   "exact_bone_names": [
     "Shape1__fan",
@@ -97,9 +97,9 @@
       [
         "up",
         "down",
-        "east",
-        "north",
         "west",
+        "north",
+        "east",
         "south"
       ]
     ],
@@ -107,9 +107,9 @@
       [
         "up",
         "down",
-        "east",
-        "north",
         "west",
+        "north",
+        "east",
         "south"
       ]
     ],
@@ -117,9 +117,9 @@
       [
         "up",
         "down",
-        "east",
-        "north",
         "west",
+        "north",
+        "east",
         "south"
       ]
     ],
@@ -127,9 +127,9 @@
       [
         "up",
         "down",
-        "east",
-        "north",
         "west",
+        "north",
+        "east",
         "south"
       ]
     ],
@@ -137,9 +137,9 @@
       [
         "up",
         "down",
-        "east",
-        "north",
         "west",
+        "north",
+        "east",
         "south"
       ]
     ],
@@ -147,9 +147,9 @@
       [
         "up",
         "down",
-        "east",
-        "north",
         "west",
+        "north",
+        "east",
         "south"
       ]
     ],
@@ -157,9 +157,9 @@
       [
         "up",
         "down",
-        "east",
-        "north",
         "west",
+        "north",
+        "east",
         "south"
       ]
     ],
@@ -167,9 +167,9 @@
       [
         "up",
         "down",
-        "east",
-        "north",
         "west",
+        "north",
+        "east",
         "south"
       ]
     ],
@@ -177,9 +177,9 @@
       [
         "up",
         "down",
-        "east",
-        "north",
         "west",
+        "north",
+        "east",
         "south"
       ]
     ],
@@ -187,9 +187,9 @@
       [
         "up",
         "down",
-        "east",
-        "north",
         "west",
+        "north",
+        "east",
         "south"
       ]
     ],
@@ -197,9 +197,9 @@
       [
         "up",
         "down",
-        "east",
-        "north",
         "west",
+        "north",
+        "east",
         "south"
       ]
     ],
@@ -207,9 +207,9 @@
       [
         "up",
         "down",
-        "east",
-        "north",
         "west",
+        "north",
+        "east",
         "south"
       ]
     ],
@@ -217,9 +217,9 @@
       [
         "up",
         "down",
-        "east",
-        "north",
         "west",
+        "north",
+        "east",
         "south"
       ]
     ],
@@ -227,9 +227,9 @@
       [
         "up",
         "down",
-        "east",
-        "north",
         "west",
+        "north",
+        "east",
         "south"
       ]
     ],
@@ -237,9 +237,9 @@
       [
         "up",
         "down",
-        "east",
-        "north",
         "west",
+        "north",
+        "east",
         "south"
       ]
     ],
@@ -247,9 +247,9 @@
       [
         "up",
         "down",
-        "east",
-        "north",
         "west",
+        "north",
+        "east",
         "south"
       ]
     ],
@@ -257,9 +257,9 @@
       [
         "up",
         "down",
-        "east",
-        "north",
         "west",
+        "north",
+        "east",
         "south"
       ]
     ],
@@ -267,9 +267,9 @@
       [
         "up",
         "down",
-        "east",
-        "north",
         "west",
+        "north",
+        "east",
         "south"
       ]
     ]

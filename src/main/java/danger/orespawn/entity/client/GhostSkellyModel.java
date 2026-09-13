@@ -8,6 +8,13 @@ import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.util.Mth;
+/**
+ * BUG-041 stage 2 (2026-09-13): the 1.7.10 export sets {@code mirror = true} AFTER {@code addBox} (orig ModelGhostSkelly.java:
+ * 10 stores, all inert - 1.7.10's ModelBox reads the flag in its constructor, law 11 from Mojang's 1.7.10 jar),
+ * so the original rendered UNMIRRORED. The port's 10 {@code .mirror()} calls preceded {@code addBox} and flipped
+ * every face's U: dropped port-wide as the EnderReaper precedent was (5354420); geometry unchanged; proven by the
+ * reference-geometry leg.
+ */
 
 public class GhostSkellyModel extends EntityModel<GhostSkelly> {
     private final ModelPart body;
@@ -39,52 +46,52 @@ public class GhostSkellyModel extends EntityModel<GhostSkelly> {
         PartDefinition partdefinition = meshdefinition.getRoot();
 
         partdefinition.addOrReplaceChild("body",
-                CubeListBuilder.create().texOffs(0, 0).mirror()
+                CubeListBuilder.create().texOffs(0, 0)
                         .addBox(0.0F, 0.0F, 0.0F, 1, 21, 1),
                 PartPose.offset(0.0F, -1.0F, 0.0F));
 
         partdefinition.addOrReplaceChild("shirt",
-                CubeListBuilder.create().texOffs(42, 43).mirror()
+                CubeListBuilder.create().texOffs(42, 43)
                         .addBox(-2.0F, 0.0F, -2.0F, 5, 12, 5),
                 PartPose.offset(0.0F, 0.0F, 0.0F));
 
         partdefinition.addOrReplaceChild("head",
-                CubeListBuilder.create().texOffs(40, 29).mirror()
+                CubeListBuilder.create().texOffs(40, 29)
                         .addBox(-3.0F, 0.0F, -3.0F, 7, 5, 7),
                 PartPose.offset(0.0F, -6.0F, 0.0F));
 
         partdefinition.addOrReplaceChild("stem",
-                CubeListBuilder.create().texOffs(49, 23).mirror()
+                CubeListBuilder.create().texOffs(49, 23)
                         .addBox(0.0F, 0.0F, 0.0F, 1, 2, 1),
                 PartPose.offsetAndRotation(0.0F, -8.0F, 0.0F, 0.1745329F, 0.0F, 0.1745329F));
 
         partdefinition.addOrReplaceChild("rarm",
-                CubeListBuilder.create().texOffs(26, 0).mirror()
+                CubeListBuilder.create().texOffs(26, 0)
                         .addBox(-14.0F, 0.0F, 0.0F, 15, 1, 1),
                 PartPose.offset(0.0F, 0.0F, 0.0F));
 
         partdefinition.addOrReplaceChild("larm",
-                CubeListBuilder.create().texOffs(63, 0).mirror()
+                CubeListBuilder.create().texOffs(63, 0)
                         .addBox(0.0F, 0.0F, 0.0F, 15, 1, 1),
                 PartPose.offset(0.0F, 0.0F, 0.0F));
 
         partdefinition.addOrReplaceChild("rsleeve",
-                CubeListBuilder.create().texOffs(31, 7).mirror()
+                CubeListBuilder.create().texOffs(31, 7)
                         .addBox(-11.0F, 0.0F, -1.0F, 9, 8, 3),
                 PartPose.offset(0.0F, 0.0F, 0.0F));
 
         partdefinition.addOrReplaceChild("lsleeve",
-                CubeListBuilder.create().texOffs(71, 7).mirror()
+                CubeListBuilder.create().texOffs(71, 7)
                         .addBox(3.0F, 0.0F, -1.0F, 9, 8, 3),
                 PartPose.offset(0.0F, 0.0F, 0.0F));
 
         partdefinition.addOrReplaceChild("lchains",
-                CubeListBuilder.create().texOffs(98, 0).mirror()
+                CubeListBuilder.create().texOffs(98, 0)
                         .addBox(11.0F, -1.0F, 0.0F, 3, 16, 1),
                 PartPose.offset(0.0F, 0.0F, 0.0F));
 
         partdefinition.addOrReplaceChild("rchains",
-                CubeListBuilder.create().texOffs(12, 0).mirror()
+                CubeListBuilder.create().texOffs(12, 0)
                         .addBox(-13.0F, -1.0F, 0.0F, 3, 10, 1),
                 PartPose.offset(0.0F, 0.0F, 0.0F));
 

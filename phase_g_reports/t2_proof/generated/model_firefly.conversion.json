@@ -5,14 +5,14 @@
   "proof_scope": "production_proof_model",
   "ground_truth": "executed compiled LayerDefinition and baked ModelPart",
   "source_class": "danger.orespawn.entity.client.FireflyModel",
-  "source_class_sha256": "5102c14c19ba4067fe7f4b0e759c9a638f9b4f03cea007b670a57659f492db07",
-  "compiled_dump_sha256": "d547606e07bee26c19fdb8206778b51b51032592ee01b5927338078b7aaac08e",
-  "geometry_sha256": "ba4132ff092606a720b7c046a898dd58631dfa70488023069164c2160e9e15fc",
+  "source_class_sha256": "908740fe6b2c637e64f7f223ae889e25f186e344e21905ba23608237dcec5c9a",
+  "compiled_dump_sha256": "79da823c9ff9f88f88c4dff961d28865c244bdd5f8412852436830e055a57729",
+  "geometry_sha256": "8fdc3aa03233c975efe59cec98f4e6ab90eafd5aee911e89ef2d59d5c75e9ffc",
   "animation_sha256": "7882082857fdb11e02f158ebc3a6d3f970e2ac60d54813f0e903ee97b2293749",
   "animation_contract_sha256": "d00ec0d919d5798453aeb235041f8be447153b6834dc925ab47ce9d31b1a4dc3",
   "bone_count": 12,
   "cube_count": 12,
-  "mirrored_cube_count": 12,
+  "mirrored_cube_count": 0,
   "mirrored_uv_strategy": "source flag retained as modelpart_mirror; semantics baked into explicit faces; incompatible GeckoLib native mirror disabled",
   "exact_bone_names": [
     "TailLight",
@@ -64,9 +64,9 @@
       [
         "up",
         "down",
-        "east",
-        "north",
         "west",
+        "north",
+        "east",
         "south"
       ]
     ],
@@ -74,9 +74,9 @@
       [
         "up",
         "down",
-        "east",
-        "north",
         "west",
+        "north",
+        "east",
         "south"
       ]
     ],
@@ -84,9 +84,9 @@
       [
         "up",
         "down",
-        "east",
-        "north",
         "west",
+        "north",
+        "east",
         "south"
       ]
     ],
@@ -94,9 +94,9 @@
       [
         "up",
         "down",
-        "east",
-        "north",
         "west",
+        "north",
+        "east",
         "south"
       ]
     ],
@@ -104,9 +104,9 @@
       [
         "up",
         "down",
-        "east",
-        "north",
         "west",
+        "north",
+        "east",
         "south"
       ]
     ],
@@ -114,9 +114,9 @@
       [
         "up",
         "down",
-        "east",
-        "north",
         "west",
+        "north",
+        "east",
         "south"
       ]
     ],
@@ -124,9 +124,9 @@
       [
         "up",
         "down",
-        "east",
-        "north",
         "west",
+        "north",
+        "east",
         "south"
       ]
     ],
@@ -134,9 +134,9 @@
       [
         "up",
         "down",
-        "east",
-        "north",
         "west",
+        "north",
+        "east",
         "south"
       ]
     ],
@@ -144,9 +144,9 @@
       [
         "up",
         "down",
-        "east",
-        "north",
         "west",
+        "north",
+        "east",
         "south"
       ]
     ],
@@ -154,9 +154,9 @@
       [
         "up",
         "down",
-        "east",
-        "north",
         "west",
+        "north",
+        "east",
         "south"
       ]
     ],
@@ -164,9 +164,9 @@
       [
         "up",
         "down",
-        "east",
-        "north",
         "west",
+        "north",
+        "east",
         "south"
       ]
     ],
@@ -174,9 +174,9 @@
       [
         "up",
         "down",
-        "east",
-        "north",
         "west",
+        "north",
+        "east",
         "south"
       ]
     ]

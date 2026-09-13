@@ -5,14 +5,14 @@
   "proof_scope": "production_proof_model",
   "ground_truth": "executed compiled LayerDefinition and baked ModelPart",
   "source_class": "danger.orespawn.entity.client.ModelGoldFish",
-  "source_class_sha256": "3a43b5c75a80ad7aa874d9e2f95bfea449a9a6def7d076bbd2f2f2122d62239e",
-  "compiled_dump_sha256": "cc38c84dce1b049f30154d65d420bb6dfa8b3b84dbd6056fc6921f78f1b92cc7",
-  "geometry_sha256": "2c9c098f1b83ff8b8fc63e3a00660e0aeffd20a7956fcf4573434d62648730e3",
+  "source_class_sha256": "e992aa31ef2d58c37d6a61eab4037a9e07e370192ab0bccf8dbf517880c0590c",
+  "compiled_dump_sha256": "d3f5d867a94403ad91e00cc1caac5aa4a27021ebe519f80df96f5763d77752a3",
+  "geometry_sha256": "6b8ac5790d6fb417c7252a01b106179448b7f6e2a903d9cf2296c9f27e3df30a",
   "animation_sha256": "7882082857fdb11e02f158ebc3a6d3f970e2ac60d54813f0e903ee97b2293749",
   "animation_contract_sha256": "052e47ef568422526a200621c6d3f3fc206b47173157634566be67db0d90679c",
   "bone_count": 16,
   "cube_count": 16,
-  "mirrored_cube_count": 16,
+  "mirrored_cube_count": 0,
   "mirrored_uv_strategy": "source flag retained as modelpart_mirror; semantics baked into explicit faces; incompatible GeckoLib native mirror disabled",
   "exact_bone_names": [
     "Body",
@@ -72,9 +72,9 @@
       [
         "up",
         "down",
-        "east",
-        "north",
         "west",
+        "north",
+        "east",
         "south"
       ]
     ],
@@ -82,9 +82,9 @@
       [
         "up",
         "down",
-        "east",
-        "north",
         "west",
+        "north",
+        "east",
         "south"
       ]
     ],
@@ -92,9 +92,9 @@
       [
         "up",
         "down",
-        "east",
-        "north",
         "west",
+        "north",
+        "east",
         "south"
       ]
     ],
@@ -102,9 +102,9 @@
       [
         "up",
         "down",
-        "east",
-        "north",
         "west",
+        "north",
+        "east",
         "south"
       ]
     ],
@@ -112,9 +112,9 @@
       [
         "up",
         "down",
-        "east",
-        "north",
         "west",
+        "north",
+        "east",
         "south"
       ]
     ],
@@ -122,9 +122,9 @@
       [
         "up",
         "down",
-        "east",
-        "north",
         "west",
+        "north",
+        "east",
         "south"
       ]
     ],
@@ -132,9 +132,9 @@
       [
         "up",
         "down",
-        "east",
-        "north",
         "west",
+        "north",
+        "east",
         "south"
       ]
     ],
@@ -142,9 +142,9 @@
       [
         "up",
         "down",
-        "east",
-        "north",
         "west",
+        "north",
+        "east",
         "south"
       ]
     ],
@@ -152,9 +152,9 @@
       [
         "up",
         "down",
-        "east",
-        "north",
         "west",
+        "north",
+        "east",
         "south"
       ]
     ],
@@ -162,9 +162,9 @@
       [
         "up",
         "down",
-        "east",
-        "north",
         "west",
+        "north",
+        "east",
         "south"
       ]
     ],
@@ -172,9 +172,9 @@
       [
         "up",
         "down",
-        "east",
-        "north",
         "west",
+        "north",
+        "east",
         "south"
       ]
     ],
@@ -182,9 +182,9 @@
       [
         "up",
         "down",
-        "east",
-        "north",
         "west",
+        "north",
+        "east",
         "south"
       ]
     ],
@@ -192,9 +192,9 @@
       [
         "up",
         "down",
-        "east",
-        "north",
         "west",
+        "north",
+        "east",
         "south"
       ]
     ],
@@ -202,9 +202,9 @@
       [
         "up",
         "down",
-        "east",
-        "north",
         "west",
+        "north",
+        "east",
         "south"
       ]
     ],
@@ -212,9 +212,9 @@
       [
         "up",
         "down",
-        "east",
-        "north",
         "west",
+        "north",
+        "east",
         "south"
       ]
     ],
@@ -222,9 +222,9 @@
       [
         "up",
         "down",
-        "east",
-        "north",
         "west",
+        "north",
+        "east",
         "south"
       ]
     ]

@@ -8,6 +8,13 @@ import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.util.Mth;
+/**
+ * BUG-041 stage 2 (2026-09-13): the 1.7.10 export sets {@code mirror = true} AFTER {@code addBox} (orig ModelWormMedium.java:
+ * 8 stores, all inert - 1.7.10's ModelBox reads the flag in its constructor, law 11 from Mojang's 1.7.10 jar),
+ * so the original rendered UNMIRRORED. The port's 8 {@code .mirror()} calls preceded {@code addBox} and flipped
+ * every face's U: dropped port-wide as the EnderReaper precedent was (5354420); geometry unchanged; proven by the
+ * reference-geometry leg.
+ */
 
 public class WormMediumModel extends EntityModel<EntityWormMedium> {
     private final ModelPart head;
@@ -35,42 +42,42 @@ public class WormMediumModel extends EntityModel<EntityWormMedium> {
         PartDefinition partdefinition = meshdefinition.getRoot();
 
         partdefinition.addOrReplaceChild("head",
-                CubeListBuilder.create().texOffs(24, 0).mirror()
+                CubeListBuilder.create().texOffs(24, 0)
                         .addBox(-1.5F, -12.0F, -1.5F, 3, 12, 3),
                 PartPose.offset(0.0F, 1.0F, 0.0F));
 
         partdefinition.addOrReplaceChild("body",
-                CubeListBuilder.create().texOffs(37, 0).mirror()
+                CubeListBuilder.create().texOffs(37, 0)
                         .addBox(-1.5F, -12.0F, -1.5F, 3, 12, 3),
                 PartPose.offset(0.0F, 13.0F, 0.0F));
 
         partdefinition.addOrReplaceChild("tail",
-                CubeListBuilder.create().texOffs(50, 0).mirror()
+                CubeListBuilder.create().texOffs(50, 0)
                         .addBox(-1.5F, -12.0F, -1.5F, 3, 12, 3),
                 PartPose.offset(0.0F, 25.0F, 0.0F));
 
         partdefinition.addOrReplaceChild("tooth1",
-                CubeListBuilder.create().texOffs(15, 0).mirror()
+                CubeListBuilder.create().texOffs(15, 0)
                         .addBox(-0.5F, -3.0F, -0.5F, 1, 3, 1),
                 PartPose.offset(1.0F, -11.0F, 0.0F));
 
         partdefinition.addOrReplaceChild("tooth2",
-                CubeListBuilder.create().texOffs(5, 0).mirror()
+                CubeListBuilder.create().texOffs(5, 0)
                         .addBox(-0.5F, -3.0F, -0.5F, 1, 3, 1),
                 PartPose.offset(-1.0F, -11.0F, 0.0F));
 
         partdefinition.addOrReplaceChild("tooth3",
-                CubeListBuilder.create().texOffs(0, 0).mirror()
+                CubeListBuilder.create().texOffs(0, 0)
                         .addBox(-0.5F, -3.0F, -0.5F, 1, 3, 1),
                 PartPose.offset(0.0F, -11.0F, 1.0F));
 
         partdefinition.addOrReplaceChild("tooth4",
-                CubeListBuilder.create().texOffs(10, 0).mirror()
+                CubeListBuilder.create().texOffs(10, 0)
                         .addBox(-0.5F, -3.0F, -0.5F, 1, 3, 1),
                 PartPose.offset(0.0F, -11.0F, -1.0F));
 
         partdefinition.addOrReplaceChild("head2",
-                CubeListBuilder.create().texOffs(0, 6).mirror()
+                CubeListBuilder.create().texOffs(0, 6)
                         .addBox(-2.0F, -8.0F, -2.0F, 4, 8, 4),
                 PartPose.offset(0.0F, 0.0F, 0.0F));
 
