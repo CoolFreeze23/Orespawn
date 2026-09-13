@@ -1093,68 +1093,13 @@
   },
   "ground_truth": "1.7.10 decompiled ModelBase constructor, parsed; never the port",
   "comparison": {
-    "status": "DIVERGES_TEXTURE_MAPPING",
+    "status": "PASS",
     "reference_parts_with_boxes": 23,
     "port_parts_with_boxes": 23,
     "matched_parts": 23,
-    "categories": {
-      "MIRROR": 23
-    },
-    "differences": [
-      "Sting -> Sting: reference box mirror=False (flag at addBox time), port True",
-      "Abdomnem1 -> Abdomnem1: reference box mirror=False (flag at addBox time), port True",
-      "Abdomnem2 -> Abdomnem2: reference box mirror=False (flag at addBox time), port True",
-      "Abdomnem3 -> Abdomnem3: reference box mirror=False (flag at addBox time), port True",
-      "Abdomnem4 -> Abdomnem4: reference box mirror=False (flag at addBox time), port True",
-      "Abdomnem5 -> Abdomnem5: reference box mirror=False (flag at addBox time), port True",
-      "MainBody -> MainBody: reference box mirror=False (flag at addBox time), port True",
-      "Neck -> Neck: reference box mirror=False (flag at addBox time), port True",
-      "Head -> Head: reference box mirror=False (flag at addBox time), port True",
-      "WingRight -> WingRight: reference box mirror=False (flag at addBox time), port True",
-      "WingLeft -> WingLeft: reference box mirror=False (flag at addBox time), port True",
-      "RA1 -> RA1: reference box mirror=False (flag at addBox time), port True",
-      "LA1 -> LA1: reference box mirror=False (flag at addBox time), port True",
-      "LA2 -> LA2: reference box mirror=False (flag at addBox time), port True",
-      "RA2 -> RA2: reference box mirror=False (flag at addBox time), port True",
-      "RA3 -> RA3: reference box mirror=False (flag at addBox time), port True",
-      "LA3 -> LA3: reference box mirror=False (flag at addBox time), port True",
-      "LeftPom -> LeftPom: reference box mirror=False (flag at addBox time), port True",
-      "RightPom -> RightPom: reference box mirror=False (flag at addBox time), port True",
-      "LeftPincerExtra -> LeftPincerExtra: reference box mirror=False (flag at addBox time), port True",
-      "LeftPincerMain -> LeftPincerMain: reference box mirror=False (flag at addBox time), port True",
-      "RightPincerMain -> RightPincerMain: reference box mirror=False (flag at addBox time), port True",
-      "RightPincerExtra -> RightPincerExtra: reference box mirror=False (flag at addBox time), port True"
-    ],
-    "by_category": {
-      "MIRROR": [
-        "Sting -> Sting: reference box mirror=False (flag at addBox time), port True",
-        "Abdomnem1 -> Abdomnem1: reference box mirror=False (flag at addBox time), port True",
-        "Abdomnem2 -> Abdomnem2: reference box mirror=False (flag at addBox time), port True",
-        "Abdomnem3 -> Abdomnem3: reference box mirror=False (flag at addBox time), port True",
-        "Abdomnem4 -> Abdomnem4: reference box mirror=False (flag at addBox time), port True",
-        "Abdomnem5 -> Abdomnem5: reference box mirror=False (flag at addBox time), port True",
-        "MainBody -> MainBody: reference box mirror=False (flag at addBox time), port True",
-        "Neck -> Neck: reference box mirror=False (flag at addBox time), port True",
-        "Head -> Head: reference box mirror=False (flag at addBox time), port True",
-        "WingRight -> WingRight: reference box mirror=False (flag at addBox time), port True",
-        "WingLeft -> WingLeft: reference box mirror=False (flag at addBox time), port True",
-        "RA1 -> RA1: reference box mirror=False (flag at addBox time), port True",
-        "LA1 -> LA1: reference box mirror=False (flag at addBox time), port True",
-        "LA2 -> LA2: reference box mirror=False (flag at addBox time), port True",
-        "RA2 -> RA2: reference box mirror=False (flag at addBox time), port True",
-        "RA3 -> RA3: reference box mirror=False (flag at addBox time), port True",
-        "LA3 -> LA3: reference box mirror=False (flag at addBox time), port True",
-        "LeftPom -> LeftPom: reference box mirror=False (flag at addBox time), port True",
-        "RightPom -> RightPom: reference box mirror=False (flag at addBox time), port True",
-        "LeftPincerExtra -> LeftPincerExtra: reference box mirror=False (flag at addBox time), port True",
-        "LeftPincerMain -> LeftPincerMain: reference box mirror=False (flag at addBox time), port True",
-        "RightPincerMain -> RightPincerMain: reference box mirror=False (flag at addBox time), port True",
-        "RightPincerExtra -> RightPincerExtra: reference box mirror=False (flag at addBox time), port True"
-      ]
-    }
+    "categories": {},
+    "differences": [],
+    "by_category": {}
   },
-  "status": "PASS_WITH_PINNED_DIVERGENCES",
-  "pinned_divergences": {
-    "MIRROR": 23
-  }
+  "status": "PASS"
 }

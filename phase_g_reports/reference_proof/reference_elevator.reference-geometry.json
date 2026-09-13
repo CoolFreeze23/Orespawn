@@ -247,32 +247,13 @@
   },
   "ground_truth": "1.7.10 decompiled ModelBase constructor, parsed; never the port",
   "comparison": {
-    "status": "DIVERGES_TEXTURE_MAPPING",
+    "status": "PASS",
     "reference_parts_with_boxes": 5,
     "port_parts_with_boxes": 5,
     "matched_parts": 5,
-    "categories": {
-      "MIRROR": 5
-    },
-    "differences": [
-      "Shape2 -> shape2: reference box mirror=False (flag at addBox time), port True",
-      "Shape3 -> shape3: reference box mirror=False (flag at addBox time), port True",
-      "Shape4 -> shape4: reference box mirror=False (flag at addBox time), port True",
-      "Shape5 -> shape5: reference box mirror=False (flag at addBox time), port True",
-      "Shape1 -> shape1: reference box mirror=False (flag at addBox time), port True"
-    ],
-    "by_category": {
-      "MIRROR": [
-        "Shape2 -> shape2: reference box mirror=False (flag at addBox time), port True",
-        "Shape3 -> shape3: reference box mirror=False (flag at addBox time), port True",
-        "Shape4 -> shape4: reference box mirror=False (flag at addBox time), port True",
-        "Shape5 -> shape5: reference box mirror=False (flag at addBox time), port True",
-        "Shape1 -> shape1: reference box mirror=False (flag at addBox time), port True"
-      ]
-    }
+    "categories": {},
+    "differences": [],
+    "by_category": {}
   },
-  "status": "PASS_WITH_PINNED_DIVERGENCES",
-  "pinned_divergences": {
-    "MIRROR": 5
-  }
+  "status": "PASS"
 }

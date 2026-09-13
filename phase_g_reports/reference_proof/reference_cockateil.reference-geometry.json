@@ -764,54 +764,13 @@
   },
   "ground_truth": "1.7.10 decompiled ModelBase constructor, parsed; never the port",
   "comparison": {
-    "status": "DIVERGES_TEXTURE_MAPPING",
+    "status": "PASS",
     "reference_parts_with_boxes": 16,
     "port_parts_with_boxes": 16,
     "matched_parts": 16,
-    "categories": {
-      "MIRROR": 16
-    },
-    "differences": [
-      "Body -> Body: reference box mirror=False (flag at addBox time), port True",
-      "Head -> Head: reference box mirror=False (flag at addBox time), port True",
-      "Beak -> Beak: reference box mirror=False (flag at addBox time), port True",
-      "LowerBeak -> LowerBeak: reference box mirror=False (flag at addBox time), port True",
-      "feather2 -> feather2: reference box mirror=False (flag at addBox time), port True",
-      "feather1 -> feather1: reference box mirror=False (flag at addBox time), port True",
-      "feather3 -> feather3: reference box mirror=False (flag at addBox time), port True",
-      "tailfeather1 -> tailfeather1: reference box mirror=False (flag at addBox time), port True",
-      "rwing1 -> rwing1: reference box mirror=False (flag at addBox time), port True",
-      "lwing1 -> lwing1: reference box mirror=False (flag at addBox time), port True",
-      "leg -> leg: reference box mirror=False (flag at addBox time), port True",
-      "otherleg -> otherleg: reference box mirror=False (flag at addBox time), port True",
-      "lwing2 -> lwing2: reference box mirror=False (flag at addBox time), port True",
-      "rwing2 -> rwing2: reference box mirror=False (flag at addBox time), port True",
-      "tailfeather2 -> tailfeather2: reference box mirror=False (flag at addBox time), port True",
-      "tailfeather3 -> tailfeather3: reference box mirror=False (flag at addBox time), port True"
-    ],
-    "by_category": {
-      "MIRROR": [
-        "Body -> Body: reference box mirror=False (flag at addBox time), port True",
-        "Head -> Head: reference box mirror=False (flag at addBox time), port True",
-        "Beak -> Beak: reference box mirror=False (flag at addBox time), port True",
-        "LowerBeak -> LowerBeak: reference box mirror=False (flag at addBox time), port True",
-        "feather2 -> feather2: reference box mirror=False (flag at addBox time), port True",
-        "feather1 -> feather1: reference box mirror=False (flag at addBox time), port True",
-        "feather3 -> feather3: reference box mirror=False (flag at addBox time), port True",
-        "tailfeather1 -> tailfeather1: reference box mirror=False (flag at addBox time), port True",
-        "rwing1 -> rwing1: reference box mirror=False (flag at addBox time), port True",
-        "lwing1 -> lwing1: reference box mirror=False (flag at addBox time), port True",
-        "leg -> leg: reference box mirror=False (flag at addBox time), port True",
-        "otherleg -> otherleg: reference box mirror=False (flag at addBox time), port True",
-        "lwing2 -> lwing2: reference box mirror=False (flag at addBox time), port True",
-        "rwing2 -> rwing2: reference box mirror=False (flag at addBox time), port True",
-        "tailfeather2 -> tailfeather2: reference box mirror=False (flag at addBox time), port True",
-        "tailfeather3 -> tailfeather3: reference box mirror=False (flag at addBox time), port True"
-      ]
-    }
+    "categories": {},
+    "differences": [],
+    "by_category": {}
   },
-  "status": "PASS_WITH_PINNED_DIVERGENCES",
-  "pinned_divergences": {
-    "MIRROR": 16
-  }
+  "status": "PASS"
 }

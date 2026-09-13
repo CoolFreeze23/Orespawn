@@ -8,6 +8,13 @@ import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.util.Mth;
 import danger.orespawn.entity.Robot5;
+/**
+ * BUG-041 stage 2 (2026-09-13): the 1.7.10 export sets {@code mirror = true} AFTER {@code addBox} (orig ModelRobot5.java:
+ * 11 stores, all inert - 1.7.10's ModelBox reads the flag in its constructor, law 11 from Mojang's 1.7.10 jar),
+ * so the original rendered UNMIRRORED. The port's 11 {@code .mirror()} calls preceded {@code addBox} and flipped
+ * every face's U: dropped port-wide as the EnderReaper precedent was (5354420); geometry unchanged; proven by the
+ * reference-geometry leg.
+ */
 
 public class ModelRobot5 extends EntityModel<Robot5> {
     private final ModelPart lwheel1;
@@ -41,57 +48,57 @@ public class ModelRobot5 extends EntityModel<Robot5> {
         PartDefinition partdefinition = meshdefinition.getRoot();
 
         partdefinition.addOrReplaceChild("lwheel1",
-                CubeListBuilder.create().texOffs(0, 23).mirror()
+                CubeListBuilder.create().texOffs(0, 23)
                         .addBox(0.0F, -4.0F, -4.0F, 2, 8, 8),
                 PartPose.offset(6.0F, 19.0F, 0.0F));
 
         partdefinition.addOrReplaceChild("lwheel2",
-                CubeListBuilder.create().texOffs(0, 43).mirror()
+                CubeListBuilder.create().texOffs(0, 43)
                         .addBox(0.0F, -4.0F, -4.0F, 2, 8, 8),
                 PartPose.offsetAndRotation(6.0F, 19.0F, 0.0F, 0.7853982F, 0.0F, 0.0F));
 
         partdefinition.addOrReplaceChild("rwheel1",
-                CubeListBuilder.create().texOffs(0, 23).mirror()
+                CubeListBuilder.create().texOffs(0, 23)
                         .addBox(0.0F, -4.0F, -4.0F, 2, 8, 8),
                 PartPose.offset(-8.0F, 19.0F, 0.0F));
 
         partdefinition.addOrReplaceChild("rwheel2",
-                CubeListBuilder.create().texOffs(0, 43).mirror()
+                CubeListBuilder.create().texOffs(0, 43)
                         .addBox(0.0F, -4.0F, -4.0F, 2, 8, 8),
                 PartPose.offsetAndRotation(-8.0F, 19.0F, 0.0F, 0.7853982F, 0.0F, 0.0F));
 
         partdefinition.addOrReplaceChild("axle",
-                CubeListBuilder.create().texOffs(42, 0).mirror()
+                CubeListBuilder.create().texOffs(42, 0)
                         .addBox(-6.0F, -0.5F, -0.5F, 12, 1, 1),
                 PartPose.offset(0.0F, 19.0F, 0.0F));
 
         partdefinition.addOrReplaceChild("drivebox",
-                CubeListBuilder.create().texOffs(47, 4).mirror()
+                CubeListBuilder.create().texOffs(47, 4)
                         .addBox(-2.0F, -1.5F, -1.5F, 4, 3, 3),
                 PartPose.offset(0.0F, 19.0F, 0.0F));
 
         partdefinition.addOrReplaceChild("stand",
-                CubeListBuilder.create().texOffs(35, 0).mirror()
+                CubeListBuilder.create().texOffs(35, 0)
                         .addBox(-0.5F, 0.0F, -0.5F, 1, 18, 1),
                 PartPose.offset(0.0F, 0.0F, 0.0F));
 
         partdefinition.addOrReplaceChild("swivel",
-                CubeListBuilder.create().texOffs(22, 0).mirror()
+                CubeListBuilder.create().texOffs(22, 0)
                         .addBox(-1.0F, 0.0F, -1.0F, 2, 1, 2),
                 PartPose.offset(0.0F, 0.0F, 0.0F));
 
         partdefinition.addOrReplaceChild("barrel1",
-                CubeListBuilder.create().texOffs(24, 25).mirror()
+                CubeListBuilder.create().texOffs(24, 25)
                         .addBox(-1.0F, -2.0F, -10.0F, 2, 2, 13),
                 PartPose.offset(0.0F, 0.0F, 0.0F));
 
         partdefinition.addOrReplaceChild("barrel2",
-                CubeListBuilder.create().texOffs(27, 43).mirror()
+                CubeListBuilder.create().texOffs(27, 43)
                         .addBox(-0.5F, -1.5F, -19.0F, 1, 1, 9),
                 PartPose.offset(0.0F, 0.0F, 0.0F));
 
         partdefinition.addOrReplaceChild("ammobox",
-                CubeListBuilder.create().texOffs(0, 0).mirror()
+                CubeListBuilder.create().texOffs(0, 0)
                         .addBox(-2.0F, -2.0F, 3.0F, 4, 3, 5),
                 PartPose.offset(0.0F, 0.0F, 0.0F));
 

@@ -435,40 +435,13 @@
   },
   "ground_truth": "1.7.10 decompiled ModelBase constructor, parsed; never the port",
   "comparison": {
-    "status": "DIVERGES_TEXTURE_MAPPING",
+    "status": "PASS",
     "reference_parts_with_boxes": 9,
     "port_parts_with_boxes": 9,
     "matched_parts": 9,
-    "categories": {
-      "MIRROR": 9
-    },
-    "differences": [
-      "head -> head: reference box mirror=False (flag at addBox time), port True",
-      "nose -> nose: reference box mirror=False (flag at addBox time), port True",
-      "teeth -> teeth: reference box mirror=False (flag at addBox time), port True",
-      "body -> body: reference box mirror=False (flag at addBox time), port True",
-      "tail -> tail: reference box mirror=False (flag at addBox time), port True",
-      "rff -> rff: reference box mirror=False (flag at addBox time), port True",
-      "lff -> lff: reference box mirror=False (flag at addBox time), port True",
-      "rrf -> rrf: reference box mirror=False (flag at addBox time), port True",
-      "lrf -> lrf: reference box mirror=False (flag at addBox time), port True"
-    ],
-    "by_category": {
-      "MIRROR": [
-        "head -> head: reference box mirror=False (flag at addBox time), port True",
-        "nose -> nose: reference box mirror=False (flag at addBox time), port True",
-        "teeth -> teeth: reference box mirror=False (flag at addBox time), port True",
-        "body -> body: reference box mirror=False (flag at addBox time), port True",
-        "tail -> tail: reference box mirror=False (flag at addBox time), port True",
-        "rff -> rff: reference box mirror=False (flag at addBox time), port True",
-        "lff -> lff: reference box mirror=False (flag at addBox time), port True",
-        "rrf -> rrf: reference box mirror=False (flag at addBox time), port True",
-        "lrf -> lrf: reference box mirror=False (flag at addBox time), port True"
-      ]
-    }
+    "categories": {},
+    "differences": [],
+    "by_category": {}
   },
-  "status": "PASS_WITH_PINNED_DIVERGENCES",
-  "pinned_divergences": {
-    "MIRROR": 9
-  }
+  "status": "PASS"
 }

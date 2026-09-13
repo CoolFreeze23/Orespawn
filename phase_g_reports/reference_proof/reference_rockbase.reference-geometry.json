@@ -1046,66 +1046,13 @@
   },
   "ground_truth": "1.7.10 decompiled ModelBase constructor, parsed; never the port",
   "comparison": {
-    "status": "DIVERGES_TEXTURE_MAPPING",
+    "status": "PASS",
     "reference_parts_with_boxes": 22,
     "port_parts_with_boxes": 22,
     "matched_parts": 22,
-    "categories": {
-      "MIRROR": 22
-    },
-    "differences": [
-      "RockShape1 -> RockShape1: reference box mirror=False (flag at addBox time), port True",
-      "RockShape2 -> RockShape2: reference box mirror=False (flag at addBox time), port True",
-      "RockShape3 -> RockShape3: reference box mirror=False (flag at addBox time), port True",
-      "RockSmallShape2 -> RockSmallShape2: reference box mirror=False (flag at addBox time), port True",
-      "RockSmallShape1 -> RockSmallShape1: reference box mirror=False (flag at addBox time), port True",
-      "RockTNTShape1 -> RockSpikeyShape1: reference box mirror=False (flag at addBox time), port True",
-      "RockTNTShape2 -> RockTNTShape2: reference box mirror=False (flag at addBox time), port True",
-      "RockTNTShape3 -> RockTNTShape3: reference box mirror=False (flag at addBox time), port True",
-      "RockTNTShape4 -> RockTNTShape4: reference box mirror=False (flag at addBox time), port True",
-      "RockSpikeyShape1 -> RockTNTShape1: reference box mirror=False (flag at addBox time), port True",
-      "RockSpikeyShape2 -> RockSpikeyShape2: reference box mirror=False (flag at addBox time), port True",
-      "RockSpikeyShape3 -> RockSpikeyShape3: reference box mirror=False (flag at addBox time), port True",
-      "CrystalShape1 -> CrystalShape1: reference box mirror=False (flag at addBox time), port True",
-      "CrystalShape2 -> CrystalShape2: reference box mirror=False (flag at addBox time), port True",
-      "CrystalShape3a -> CrystalShape3a: reference box mirror=False (flag at addBox time), port True",
-      "CrystalShape3b -> CrystalShape3b: reference box mirror=False (flag at addBox time), port True",
-      "CrystalShape3c -> CrystalShape3c: reference box mirror=False (flag at addBox time), port True",
-      "CrystalShape3d -> CrystalShape3d: reference box mirror=False (flag at addBox time), port True",
-      "CrystalShape4a -> CrystalShape4a: reference box mirror=False (flag at addBox time), port True",
-      "CrystalShape4b -> CrystalShape4b: reference box mirror=False (flag at addBox time), port True",
-      "CrystalShape4c -> CrystalShape4c: reference box mirror=False (flag at addBox time), port True",
-      "CrystalShape4d -> CrystalShape4d: reference box mirror=False (flag at addBox time), port True"
-    ],
-    "by_category": {
-      "MIRROR": [
-        "RockShape1 -> RockShape1: reference box mirror=False (flag at addBox time), port True",
-        "RockShape2 -> RockShape2: reference box mirror=False (flag at addBox time), port True",
-        "RockShape3 -> RockShape3: reference box mirror=False (flag at addBox time), port True",
-        "RockSmallShape2 -> RockSmallShape2: reference box mirror=False (flag at addBox time), port True",
-        "RockSmallShape1 -> RockSmallShape1: reference box mirror=False (flag at addBox time), port True",
-        "RockTNTShape1 -> RockSpikeyShape1: reference box mirror=False (flag at addBox time), port True",
-        "RockTNTShape2 -> RockTNTShape2: reference box mirror=False (flag at addBox time), port True",
-        "RockTNTShape3 -> RockTNTShape3: reference box mirror=False (flag at addBox time), port True",
-        "RockTNTShape4 -> RockTNTShape4: reference box mirror=False (flag at addBox time), port True",
-        "RockSpikeyShape1 -> RockTNTShape1: reference box mirror=False (flag at addBox time), port True",
-        "RockSpikeyShape2 -> RockSpikeyShape2: reference box mirror=False (flag at addBox time), port True",
-        "RockSpikeyShape3 -> RockSpikeyShape3: reference box mirror=False (flag at addBox time), port True",
-        "CrystalShape1 -> CrystalShape1: reference box mirror=False (flag at addBox time), port True",
-        "CrystalShape2 -> CrystalShape2: reference box mirror=False (flag at addBox time), port True",
-        "CrystalShape3a -> CrystalShape3a: reference box mirror=False (flag at addBox time), port True",
-        "CrystalShape3b -> CrystalShape3b: reference box mirror=False (flag at addBox time), port True",
-        "CrystalShape3c -> CrystalShape3c: reference box mirror=False (flag at addBox time), port True",
-        "CrystalShape3d -> CrystalShape3d: reference box mirror=False (flag at addBox time), port True",
-        "CrystalShape4a -> CrystalShape4a: reference box mirror=False (flag at addBox time), port True",
-        "CrystalShape4b -> CrystalShape4b: reference box mirror=False (flag at addBox time), port True",
-        "CrystalShape4c -> CrystalShape4c: reference box mirror=False (flag at addBox time), port True",
-        "CrystalShape4d -> CrystalShape4d: reference box mirror=False (flag at addBox time), port True"
-      ]
-    }
+    "categories": {},
+    "differences": [],
+    "by_category": {}
   },
-  "status": "PASS_WITH_PINNED_DIVERGENCES",
-  "pinned_divergences": {
-    "MIRROR": 22
-  }
+  "status": "PASS"
 }

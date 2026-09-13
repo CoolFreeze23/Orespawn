@@ -623,48 +623,13 @@
   },
   "ground_truth": "1.7.10 decompiled ModelBase constructor, parsed; never the port",
   "comparison": {
-    "status": "DIVERGES_TEXTURE_MAPPING",
+    "status": "PASS",
     "reference_parts_with_boxes": 13,
     "port_parts_with_boxes": 13,
     "matched_parts": 13,
-    "categories": {
-      "MIRROR": 13
-    },
-    "differences": [
-      "body -> body: reference box mirror=False (flag at addBox time), port True",
-      "tail -> tail: reference box mirror=False (flag at addBox time), port True",
-      "lfoot -> lfoot: reference box mirror=False (flag at addBox time), port True",
-      "lleg -> lleg: reference box mirror=False (flag at addBox time), port True",
-      "upperbody -> upperbody: reference box mirror=False (flag at addBox time), port True",
-      "head -> head: reference box mirror=False (flag at addBox time), port True",
-      "nose -> nose: reference box mirror=False (flag at addBox time), port True",
-      "lear -> lear: reference box mirror=False (flag at addBox time), port True",
-      "lpaw -> lpaw: reference box mirror=False (flag at addBox time), port True",
-      "rleg -> rleg: reference box mirror=False (flag at addBox time), port True",
-      "rfoot -> rfoot: reference box mirror=False (flag at addBox time), port True",
-      "rear -> rear: reference box mirror=False (flag at addBox time), port True",
-      "rpaw -> rpaw: reference box mirror=False (flag at addBox time), port True"
-    ],
-    "by_category": {
-      "MIRROR": [
-        "body -> body: reference box mirror=False (flag at addBox time), port True",
-        "tail -> tail: reference box mirror=False (flag at addBox time), port True",
-        "lfoot -> lfoot: reference box mirror=False (flag at addBox time), port True",
-        "lleg -> lleg: reference box mirror=False (flag at addBox time), port True",
-        "upperbody -> upperbody: reference box mirror=False (flag at addBox time), port True",
-        "head -> head: reference box mirror=False (flag at addBox time), port True",
-        "nose -> nose: reference box mirror=False (flag at addBox time), port True",
-        "lear -> lear: reference box mirror=False (flag at addBox time), port True",
-        "lpaw -> lpaw: reference box mirror=False (flag at addBox time), port True",
-        "rleg -> rleg: reference box mirror=False (flag at addBox time), port True",
-        "rfoot -> rfoot: reference box mirror=False (flag at addBox time), port True",
-        "rear -> rear: reference box mirror=False (flag at addBox time), port True",
-        "rpaw -> rpaw: reference box mirror=False (flag at addBox time), port True"
-      ]
-    }
+    "categories": {},
+    "differences": [],
+    "by_category": {}
   },
-  "status": "PASS_WITH_PINNED_DIVERGENCES",
-  "pinned_divergences": {
-    "MIRROR": 13
-  }
+  "status": "PASS"
 }

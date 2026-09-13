@@ -952,62 +952,13 @@
   },
   "ground_truth": "1.7.10 decompiled ModelBase constructor, parsed; never the port",
   "comparison": {
-    "status": "DIVERGES_TEXTURE_MAPPING",
+    "status": "PASS",
     "reference_parts_with_boxes": 20,
     "port_parts_with_boxes": 20,
     "matched_parts": 20,
-    "categories": {
-      "MIRROR": 20
-    },
-    "differences": [
-      "body -> body: reference box mirror=False (flag at addBox time), port True",
-      "neck1 -> neck1: reference box mirror=False (flag at addBox time), port True",
-      "neck -> neck: reference box mirror=False (flag at addBox time), port True",
-      "neckbase -> neckbase: reference box mirror=False (flag at addBox time), port True",
-      "head -> head: reference box mirror=False (flag at addBox time), port True",
-      "Rleg1 -> Rleg1: reference box mirror=False (flag at addBox time), port True",
-      "Lleg1 -> Lleg1: reference box mirror=False (flag at addBox time), port True",
-      "Lhorn1 -> Lhorn1: reference box mirror=False (flag at addBox time), port True",
-      "Rhorn1 -> Rhorn1: reference box mirror=False (flag at addBox time), port True",
-      "snout -> snout: reference box mirror=False (flag at addBox time), port True",
-      "Lhorn2 -> Lhorn2: reference box mirror=False (flag at addBox time), port True",
-      "Rhorn2 -> Rhorn2: reference box mirror=False (flag at addBox time), port True",
-      "tail1 -> tail1: reference box mirror=False (flag at addBox time), port True",
-      "Rleg2 -> Rleg2: reference box mirror=False (flag at addBox time), port True",
-      "Lleg2 -> Lleg2: reference box mirror=False (flag at addBox time), port True",
-      "tail2 -> tail2: reference box mirror=False (flag at addBox time), port True",
-      "tail3 -> tail3: reference box mirror=False (flag at addBox time), port True",
-      "tail4 -> tail4: reference box mirror=False (flag at addBox time), port True",
-      "Lwing -> Lwing: reference box mirror=False (flag at addBox time), port True",
-      "Rwing -> Rwing: reference box mirror=False (flag at addBox time), port True"
-    ],
-    "by_category": {
-      "MIRROR": [
-        "body -> body: reference box mirror=False (flag at addBox time), port True",
-        "neck1 -> neck1: reference box mirror=False (flag at addBox time), port True",
-        "neck -> neck: reference box mirror=False (flag at addBox time), port True",
-        "neckbase -> neckbase: reference box mirror=False (flag at addBox time), port True",
-        "head -> head: reference box mirror=False (flag at addBox time), port True",
-        "Rleg1 -> Rleg1: reference box mirror=False (flag at addBox time), port True",
-        "Lleg1 -> Lleg1: reference box mirror=False (flag at addBox time), port True",
-        "Lhorn1 -> Lhorn1: reference box mirror=False (flag at addBox time), port True",
-        "Rhorn1 -> Rhorn1: reference box mirror=False (flag at addBox time), port True",
-        "snout -> snout: reference box mirror=False (flag at addBox time), port True",
-        "Lhorn2 -> Lhorn2: reference box mirror=False (flag at addBox time), port True",
-        "Rhorn2 -> Rhorn2: reference box mirror=False (flag at addBox time), port True",
-        "tail1 -> tail1: reference box mirror=False (flag at addBox time), port True",
-        "Rleg2 -> Rleg2: reference box mirror=False (flag at addBox time), port True",
-        "Lleg2 -> Lleg2: reference box mirror=False (flag at addBox time), port True",
-        "tail2 -> tail2: reference box mirror=False (flag at addBox time), port True",
-        "tail3 -> tail3: reference box mirror=False (flag at addBox time), port True",
-        "tail4 -> tail4: reference box mirror=False (flag at addBox time), port True",
-        "Lwing -> Lwing: reference box mirror=False (flag at addBox time), port True",
-        "Rwing -> Rwing: reference box mirror=False (flag at addBox time), port True"
-      ]
-    }
+    "categories": {},
+    "differences": [],
+    "by_category": {}
   },
-  "status": "PASS_WITH_PINNED_DIVERGENCES",
-  "pinned_divergences": {
-    "MIRROR": 20
-  }
+  "status": "PASS"
 }

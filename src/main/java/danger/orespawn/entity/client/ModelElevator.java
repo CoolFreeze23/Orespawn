@@ -8,6 +8,13 @@ import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import danger.orespawn.entity.Elevator;
+/**
+ * BUG-041 stage 2 (2026-09-13): the 1.7.10 export sets {@code mirror = true} AFTER {@code addBox} (orig ModelElevator.java:
+ * 5 stores, all inert - 1.7.10's ModelBox reads the flag in its constructor, law 11 from Mojang's 1.7.10 jar),
+ * so the original rendered UNMIRRORED. The port's 5 {@code .mirror()} calls preceded {@code addBox} and flipped
+ * every face's U: dropped port-wide as the EnderReaper precedent was (5354420); geometry unchanged; proven by the
+ * reference-geometry leg.
+ */
 
 public class ModelElevator extends EntityModel<Elevator> {
     private final ModelPart shape1;
@@ -34,27 +41,27 @@ public class ModelElevator extends EntityModel<Elevator> {
         // (was TF-029's +24 px pivot bake, an equivalent re-expression the reference leg could
         // not see through). What renders is unchanged.
         partdefinition.addOrReplaceChild("shape1",
-                CubeListBuilder.create().texOffs(0, 0).mirror()
+                CubeListBuilder.create().texOffs(0, 0)
                         .addBox(-4.0F, 0.0F, -8.0F, 8, 1, 16),
                 PartPose.offset(0.0F, 0.0F, 0.0F));
 
         partdefinition.addOrReplaceChild("shape2",
-                CubeListBuilder.create().texOffs(0, 18).mirror()
+                CubeListBuilder.create().texOffs(0, 18)
                         .addBox(-3.0F, 0.0F, -9.0F, 6, 1, 1),
                 PartPose.offset(0.0F, 0.0F, 0.0F));
 
         partdefinition.addOrReplaceChild("shape3",
-                CubeListBuilder.create().texOffs(0, 21).mirror()
+                CubeListBuilder.create().texOffs(0, 21)
                         .addBox(-1.0F, 0.0F, -10.0F, 2, 1, 1),
                 PartPose.offset(0.0F, 0.0F, 0.0F));
 
         partdefinition.addOrReplaceChild("shape4",
-                CubeListBuilder.create().texOffs(17, 18).mirror()
+                CubeListBuilder.create().texOffs(17, 18)
                         .addBox(-3.0F, 0.0F, 8.0F, 6, 1, 1),
                 PartPose.offset(0.0F, 0.0F, 0.0F));
 
         partdefinition.addOrReplaceChild("shape5",
-                CubeListBuilder.create().texOffs(17, 21).mirror()
+                CubeListBuilder.create().texOffs(17, 21)
                         .addBox(-1.0F, 0.0F, 9.0F, 2, 1, 1),
                 PartPose.offset(0.0F, 0.0F, 0.0F));
 

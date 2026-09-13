@@ -8,6 +8,13 @@ import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
+/**
+ * BUG-041 stage 2 (2026-09-13): the 1.7.10 export sets {@code mirror = true} AFTER {@code addBox} (orig ModelRockBase.java:
+ * 22 stores, all inert - 1.7.10's ModelBox reads the flag in its constructor, law 11 from Mojang's 1.7.10 jar),
+ * so the original rendered UNMIRRORED. The port's 22 {@code .mirror()} calls preceded {@code addBox} and flipped
+ * every face's U: dropped port-wide as the EnderReaper precedent was (5354420); geometry unchanged; proven by the
+ * reference-geometry leg.
+ */
 public class ModelRockBase extends EntityModel<RockBase> {
     private final ModelPart RockShape1;
     private final ModelPart RockShape2;
@@ -64,112 +71,112 @@ public class ModelRockBase extends EntityModel<RockBase> {
         PartDefinition partdefinition = meshdefinition.getRoot();
 
         partdefinition.addOrReplaceChild("RockShape1",
-                CubeListBuilder.create().texOffs(0, 0).mirror()
+                CubeListBuilder.create().texOffs(0, 0)
                         .addBox(-3.0F, 0.0F, -1.0F, 6, 1, 2),
                 PartPose.offset(0.0F, 23.0F, 0.0F));
 
         partdefinition.addOrReplaceChild("RockShape2",
-                CubeListBuilder.create().texOffs(0, 4).mirror()
+                CubeListBuilder.create().texOffs(0, 4)
                         .addBox(-3.0F, 0.0F, 1.0F, 3, 1, 1),
                 PartPose.offset(0.0F, 23.0F, 0.0F));
 
         partdefinition.addOrReplaceChild("RockShape3",
-                CubeListBuilder.create().texOffs(0, 7).mirror()
+                CubeListBuilder.create().texOffs(0, 7)
                         .addBox(0.0F, 0.0F, -2.0F, 2, 1, 1),
                 PartPose.offset(0.0F, 23.0F, 0.0F));
 
         partdefinition.addOrReplaceChild("RockSmallShape2",
-                CubeListBuilder.create().texOffs(0, 4).mirror()
+                CubeListBuilder.create().texOffs(0, 4)
                         .addBox(-2.0F, 0.0F, 0.0F, 3, 1, 1),
                 PartPose.offset(0.0F, 23.0F, 0.0F));
 
         partdefinition.addOrReplaceChild("RockSmallShape1",
-                CubeListBuilder.create().texOffs(0, 7).mirror()
+                CubeListBuilder.create().texOffs(0, 7)
                         .addBox(0.0F, 0.0F, -1.0F, 2, 1, 1),
                 PartPose.offset(0.0F, 23.0F, 0.0F));
 
         partdefinition.addOrReplaceChild("RockTNTShape1",
-                CubeListBuilder.create().texOffs(0, 0).mirror()
+                CubeListBuilder.create().texOffs(0, 0)
                         .addBox(-3.0F, 0.0F, -1.0F, 6, 1, 2),
                 PartPose.offset(0.0F, 23.0F, 0.0F));
 
         partdefinition.addOrReplaceChild("RockTNTShape2",
-                CubeListBuilder.create().texOffs(0, 4).mirror()
+                CubeListBuilder.create().texOffs(0, 4)
                         .addBox(-3.0F, 0.0F, 1.0F, 3, 1, 1),
                 PartPose.offset(0.0F, 23.0F, 0.0F));
 
         partdefinition.addOrReplaceChild("RockTNTShape3",
-                CubeListBuilder.create().texOffs(0, 7).mirror()
+                CubeListBuilder.create().texOffs(0, 7)
                         .addBox(0.0F, 0.0F, -2.0F, 2, 1, 1),
                 PartPose.offset(0.0F, 23.0F, 0.0F));
 
         partdefinition.addOrReplaceChild("RockTNTShape4",
-                CubeListBuilder.create().texOffs(0, 10).mirror()
+                CubeListBuilder.create().texOffs(0, 10)
                         .addBox(-4.0F, 0.0F, -2.0F, 3, 1, 3),
                 PartPose.offset(0.0F, 22.0F, 0.0F));
 
         partdefinition.addOrReplaceChild("RockSpikeyShape1",
-                CubeListBuilder.create().texOffs(0, 0).mirror()
+                CubeListBuilder.create().texOffs(0, 0)
                         .addBox(-3.0F, 0.0F, -1.0F, 6, 1, 2),
                 PartPose.offset(0.0F, 23.0F, 0.0F));
 
         partdefinition.addOrReplaceChild("RockSpikeyShape2",
-                CubeListBuilder.create().texOffs(0, 4).mirror()
+                CubeListBuilder.create().texOffs(0, 4)
                         .addBox(-4.0F, 0.0F, -1.0F, 3, 1, 1),
                 PartPose.offsetAndRotation(0.0F, 23.0F, 0.0F, 0.0F, 1.570796F, 0.0F));
 
         partdefinition.addOrReplaceChild("RockSpikeyShape3",
-                CubeListBuilder.create().texOffs(0, 7).mirror()
+                CubeListBuilder.create().texOffs(0, 7)
                         .addBox(1.0F, 0.0F, 1.0F, 2, 1, 1),
                 PartPose.offsetAndRotation(0.0F, 23.0F, 0.0F, 0.0F, 1.570796F, 0.0F));
 
         partdefinition.addOrReplaceChild("CrystalShape1",
-                CubeListBuilder.create().texOffs(0, 0).mirror()
+                CubeListBuilder.create().texOffs(0, 0)
                         .addBox(-1.0F, -4.0F, -1.0F, 2, 5, 2),
                 PartPose.offset(0.0F, 23.0F, 0.0F));
 
         partdefinition.addOrReplaceChild("CrystalShape2",
-                CubeListBuilder.create().texOffs(10, 0).mirror()
+                CubeListBuilder.create().texOffs(10, 0)
                         .addBox(-0.5F, -7.0F, -0.5F, 1, 3, 1),
                 PartPose.offset(0.0F, 23.0F, 0.0F));
 
         partdefinition.addOrReplaceChild("CrystalShape3a",
-                CubeListBuilder.create().texOffs(0, 8).mirror()
+                CubeListBuilder.create().texOffs(0, 8)
                         .addBox(-1.0F, -5.0F, -1.0F, 1, 5, 1),
                 PartPose.offsetAndRotation(0.0F, 23.0F, 0.0F, 0.5410521F, 0.0F, 0.0F));
 
         partdefinition.addOrReplaceChild("CrystalShape3b",
-                CubeListBuilder.create().texOffs(0, 8).mirror()
+                CubeListBuilder.create().texOffs(0, 8)
                         .addBox(0.0F, -5.0F, 0.0F, 1, 5, 1),
                 PartPose.offsetAndRotation(0.0F, 23.0F, 0.0F, -0.5410521F, 0.0F, 0.0F));
 
         partdefinition.addOrReplaceChild("CrystalShape3c",
-                CubeListBuilder.create().texOffs(0, 8).mirror()
+                CubeListBuilder.create().texOffs(0, 8)
                         .addBox(0.0F, -5.0F, -1.0F, 1, 5, 1),
                 PartPose.offsetAndRotation(0.0F, 23.0F, 0.0F, 0.0F, 0.0F, 0.5410521F));
 
         partdefinition.addOrReplaceChild("CrystalShape3d",
-                CubeListBuilder.create().texOffs(0, 8).mirror()
+                CubeListBuilder.create().texOffs(0, 8)
                         .addBox(-1.0F, -5.0F, 0.0F, 1, 5, 1),
                 PartPose.offsetAndRotation(0.0F, 23.0F, 0.0F, 0.0F, 0.0F, -0.5410521F));
 
         partdefinition.addOrReplaceChild("CrystalShape4a",
-                CubeListBuilder.create().texOffs(0, 16).mirror()
+                CubeListBuilder.create().texOffs(0, 16)
                         .addBox(0.0F, -3.0F, -1.0F, 1, 3, 1),
                 PartPose.offsetAndRotation(0.0F, 23.0F, 0.0F, 1.308997F, 0.0F, 0.0F));
 
         partdefinition.addOrReplaceChild("CrystalShape4b",
-                CubeListBuilder.create().texOffs(0, 16).mirror()
+                CubeListBuilder.create().texOffs(0, 16)
                         .addBox(-1.0F, -3.0F, 0.0F, 1, 3, 1),
                 PartPose.offsetAndRotation(0.0F, 23.0F, 0.0F, -1.308997F, 0.0F, 0.0F));
 
         partdefinition.addOrReplaceChild("CrystalShape4c",
-                CubeListBuilder.create().texOffs(0, 16).mirror()
+                CubeListBuilder.create().texOffs(0, 16)
                         .addBox(0.0F, -3.0F, 0.0F, 1, 3, 1),
                 PartPose.offsetAndRotation(0.0F, 23.0F, 0.0F, 0.0F, 0.0F, 1.308997F));
 
         partdefinition.addOrReplaceChild("CrystalShape4d",
-                CubeListBuilder.create().texOffs(0, 16).mirror()
+                CubeListBuilder.create().texOffs(0, 16)
                         .addBox(-1.0F, -3.0F, -1.0F, 1, 3, 1),
                 PartPose.offsetAndRotation(0.0F, 23.0F, 0.0F, 0.0F, 0.0F, -1.308997F));
 

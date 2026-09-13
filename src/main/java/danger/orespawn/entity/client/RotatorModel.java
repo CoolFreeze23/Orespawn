@@ -18,6 +18,12 @@ import net.minecraft.client.model.geom.builders.*;
  * accumulating per-entity angle {@code ri.rf1} advanced 2° per rendered frame
  * and wrapped at 359° (orig ModelRotator.java:75-78) — 24 blades total forming
  * the signature gyroscope ball.
+ *
+ * BUG-041 stage 2 (2026-09-13): the 1.7.10 export sets {@code mirror = true} AFTER {@code addBox} (orig ModelRotator.java:
+ * 3 stores, all inert - 1.7.10's ModelBox reads the flag in its constructor, law 11 from Mojang's 1.7.10 jar),
+ * so the original rendered UNMIRRORED. The port's 3 {@code .mirror()} calls preceded {@code addBox} and flipped
+ * every face's U: dropped port-wide as the EnderReaper precedent was (5354420); geometry unchanged; proven by the
+ * reference-geometry leg.
  */
 public class RotatorModel<T extends EntityRotator> extends EntityModel<T> {
     /** orig ModelRotator.java:56 — 45° fan step between successive blades. */
@@ -44,9 +50,9 @@ public class RotatorModel<T extends EntityRotator> extends EntityModel<T> {
         MeshDefinition mesh = new MeshDefinition();
         PartDefinition root = mesh.getRoot();
         // orig ModelRotator.java:24-41 — three blade boxes at increasing radius.
-        root.addOrReplaceChild("shape1", CubeListBuilder.create().texOffs(0, 12).mirror().addBox(-2.0F, 3.9F, 0.0F, 4, 1, 1), PartPose.offset(0.0F, 0.0F, 0.0F));
-        root.addOrReplaceChild("shape2", CubeListBuilder.create().texOffs(0, 7).mirror().addBox(-4.0F, 7.6F, 0.0F, 8, 2, 2), PartPose.offset(0.0F, 0.0F, -0.5F));
-        root.addOrReplaceChild("shape3", CubeListBuilder.create().texOffs(0, 0).mirror().addBox(-7.0F, 13.7F, 0.0F, 14, 3, 3), PartPose.offset(0.0F, 0.0F, -1.0F));
+        root.addOrReplaceChild("shape1", CubeListBuilder.create().texOffs(0, 12).addBox(-2.0F, 3.9F, 0.0F, 4, 1, 1), PartPose.offset(0.0F, 0.0F, 0.0F));
+        root.addOrReplaceChild("shape2", CubeListBuilder.create().texOffs(0, 7).addBox(-4.0F, 7.6F, 0.0F, 8, 2, 2), PartPose.offset(0.0F, 0.0F, -0.5F));
+        root.addOrReplaceChild("shape3", CubeListBuilder.create().texOffs(0, 0).addBox(-7.0F, 13.7F, 0.0F, 14, 3, 3), PartPose.offset(0.0F, 0.0F, -1.0F));
         return LayerDefinition.create(mesh, 64, 32);
     }
 

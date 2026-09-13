@@ -1234,74 +1234,13 @@
   },
   "ground_truth": "1.7.10 decompiled ModelBase constructor, parsed; never the port",
   "comparison": {
-    "status": "DIVERGES_TEXTURE_MAPPING",
+    "status": "PASS",
     "reference_parts_with_boxes": 26,
     "port_parts_with_boxes": 26,
     "matched_parts": 26,
-    "categories": {
-      "MIRROR": 26
-    },
-    "differences": [
-      "Shape1 -> Shape1: reference box mirror=False (flag at addBox time), port True",
-      "lfwing -> lfwing: reference box mirror=False (flag at addBox time), port True",
-      "Shape3 -> Shape3: reference box mirror=False (flag at addBox time), port True",
-      "Shape4 -> Shape4: reference box mirror=False (flag at addBox time), port True",
-      "Shape5 -> Shape5: reference box mirror=False (flag at addBox time), port True",
-      "rjaw -> rjaw: reference box mirror=False (flag at addBox time), port True",
-      "ljaw -> ljaw: reference box mirror=False (flag at addBox time), port True",
-      "tail1 -> tail1: reference box mirror=False (flag at addBox time), port True",
-      "tail2 -> tail2: reference box mirror=False (flag at addBox time), port True",
-      "Shape10 -> Shape10: reference box mirror=False (flag at addBox time), port True",
-      "Shape11 -> Shape11: reference box mirror=False (flag at addBox time), port True",
-      "Shape12 -> Shape12: reference box mirror=False (flag at addBox time), port True",
-      "Shape13 -> Shape13: reference box mirror=False (flag at addBox time), port True",
-      "Shape14 -> Shape14: reference box mirror=False (flag at addBox time), port True",
-      "Shape15 -> Shape15: reference box mirror=False (flag at addBox time), port True",
-      "Shape16 -> Shape16: reference box mirror=False (flag at addBox time), port True",
-      "Shape17 -> Shape17: reference box mirror=False (flag at addBox time), port True",
-      "Shape18 -> Shape18: reference box mirror=False (flag at addBox time), port True",
-      "Shape19 -> Shape19: reference box mirror=False (flag at addBox time), port True",
-      "Shape20 -> Shape20: reference box mirror=False (flag at addBox time), port True",
-      "Shape21 -> Shape21: reference box mirror=False (flag at addBox time), port True",
-      "Shape22 -> Shape22: reference box mirror=False (flag at addBox time), port True",
-      "Shape23 -> Shape23: reference box mirror=False (flag at addBox time), port True",
-      "lrwing -> lrwing: reference box mirror=False (flag at addBox time), port True",
-      "rfwing -> rfwing: reference box mirror=False (flag at addBox time), port True",
-      "rrwing -> rrwing: reference box mirror=False (flag at addBox time), port True"
-    ],
-    "by_category": {
-      "MIRROR": [
-        "Shape1 -> Shape1: reference box mirror=False (flag at addBox time), port True",
-        "lfwing -> lfwing: reference box mirror=False (flag at addBox time), port True",
-        "Shape3 -> Shape3: reference box mirror=False (flag at addBox time), port True",
-        "Shape4 -> Shape4: reference box mirror=False (flag at addBox time), port True",
-        "Shape5 -> Shape5: reference box mirror=False (flag at addBox time), port True",
-        "rjaw -> rjaw: reference box mirror=False (flag at addBox time), port True",
-        "ljaw -> ljaw: reference box mirror=False (flag at addBox time), port True",
-        "tail1 -> tail1: reference box mirror=False (flag at addBox time), port True",
-        "tail2 -> tail2: reference box mirror=False (flag at addBox time), port True",
-        "Shape10 -> Shape10: reference box mirror=False (flag at addBox time), port True",
-        "Shape11 -> Shape11: reference box mirror=False (flag at addBox time), port True",
-        "Shape12 -> Shape12: reference box mirror=False (flag at addBox time), port True",
-        "Shape13 -> Shape13: reference box mirror=False (flag at addBox time), port True",
-        "Shape14 -> Shape14: reference box mirror=False (flag at addBox time), port True",
-        "Shape15 -> Shape15: reference box mirror=False (flag at addBox time), port True",
-        "Shape16 -> Shape16: reference box mirror=False (flag at addBox time), port True",
-        "Shape17 -> Shape17: reference box mirror=False (flag at addBox time), port True",
-        "Shape18 -> Shape18: reference box mirror=False (flag at addBox time), port True",
-        "Shape19 -> Shape19: reference box mirror=False (flag at addBox time), port True",
-        "Shape20 -> Shape20: reference box mirror=False (flag at addBox time), port True",
-        "Shape21 -> Shape21: reference box mirror=False (flag at addBox time), port True",
-        "Shape22 -> Shape22: reference box mirror=False (flag at addBox time), port True",
-        "Shape23 -> Shape23: reference box mirror=False (flag at addBox time), port True",
-        "lrwing -> lrwing: reference box mirror=False (flag at addBox time), port True",
-        "rfwing -> rfwing: reference box mirror=False (flag at addBox time), port True",
-        "rrwing -> rrwing: reference box mirror=False (flag at addBox time), port True"
-      ]
-    }
+    "categories": {},
+    "differences": [],
+    "by_category": {}
   },
-  "status": "PASS_WITH_PINNED_DIVERGENCES",
-  "pinned_divergences": {
-    "MIRROR": 26
-  }
+  "status": "PASS"
 }

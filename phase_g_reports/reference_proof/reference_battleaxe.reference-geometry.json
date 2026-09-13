@@ -1,0 +1,729 @@
+{
+  "schema_version": 1,
+  "model_id": "reference_battleaxe",
+  "reference_source": "reference_1_7_10_source/sources/danger/orespawn/ModelBattleAxe.java",
+  "reference": {
+    "status": "PARSED",
+    "class": "ModelBattleAxe",
+    "texture_width": 128,
+    "texture_height": 64,
+    "parts": [
+      {
+        "name": "Handle1",
+        "tex_u": 0,
+        "tex_v": 0,
+        "boxes": [
+          {
+            "origin": [
+              -7.0,
+              -0.5,
+              0.0
+            ],
+            "size": [
+              31,
+              2,
+              1
+            ],
+            "uv": [
+              0,
+              0
+            ],
+            "mirror": false,
+            "texture_size": [
+              128,
+              64
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          -12.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          1.570796
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          128,
+          64
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "Head1",
+        "tex_u": 29,
+        "tex_v": 18,
+        "boxes": [
+          {
+            "origin": [
+              -2.0,
+              -4.5,
+              -0.5
+            ],
+            "size": [
+              3,
+              4,
+              2
+            ],
+            "uv": [
+              29,
+              18
+            ],
+            "mirror": false,
+            "texture_size": [
+              128,
+              64
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          -12.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          128,
+          64
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "Grip",
+        "tex_u": 0,
+        "tex_v": 7,
+        "boxes": [
+          {
+            "origin": [
+              -1.92,
+              13.0,
+              -0.5
+            ],
+            "size": [
+              3,
+              11,
+              2
+            ],
+            "uv": [
+              0,
+              7
+            ],
+            "mirror": false,
+            "texture_size": [
+              128,
+              64
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          -12.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          128,
+          64
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "Pin",
+        "tex_u": 38,
+        "tex_v": 11,
+        "boxes": [
+          {
+            "origin": [
+              -1.0,
+              -3.0,
+              -1.0
+            ],
+            "size": [
+              1,
+              1,
+              3
+            ],
+            "uv": [
+              38,
+              11
+            ],
+            "mirror": false,
+            "texture_size": [
+              128,
+              64
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          -12.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          128,
+          64
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "Top",
+        "tex_u": 24,
+        "tex_v": 11,
+        "boxes": [
+          {
+            "origin": [
+              -2.0,
+              -8.0,
+              -0.5
+            ],
+            "size": [
+              3,
+              2,
+              2
+            ],
+            "uv": [
+              24,
+              11
+            ],
+            "mirror": false,
+            "texture_size": [
+              128,
+              64
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          -12.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          128,
+          64
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "Blade1",
+        "tex_u": 70,
+        "tex_v": 0,
+        "boxes": [
+          {
+            "origin": [
+              6.0,
+              -8.0,
+              0.0
+            ],
+            "size": [
+              3,
+              10,
+              1
+            ],
+            "uv": [
+              70,
+              0
+            ],
+            "mirror": false,
+            "texture_size": [
+              128,
+              64
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          -12.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.5061455
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          128,
+          64
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "Blade2",
+        "tex_u": 70,
+        "tex_v": 0,
+        "boxes": [
+          {
+            "origin": [
+              8.5,
+              -6.9,
+              0.0
+            ],
+            "size": [
+              3,
+              10,
+              1
+            ],
+            "uv": [
+              70,
+              0
+            ],
+            "mirror": false,
+            "texture_size": [
+              128,
+              64
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          -12.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          -0.5061455
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          128,
+          64
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "Blade3",
+        "tex_u": 0,
+        "tex_v": 0,
+        "boxes": [
+          {
+            "origin": [
+              -1.5,
+              -3.0,
+              0.0
+            ],
+            "size": [
+              10,
+              1,
+              1
+            ],
+            "uv": [
+              0,
+              0
+            ],
+            "mirror": false,
+            "texture_size": [
+              128,
+              64
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          -12.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          128,
+          64
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "Blade4",
+        "tex_u": 0,
+        "tex_v": 0,
+        "boxes": [
+          {
+            "origin": [
+              -1.0,
+              -2.0,
+              0.0
+            ],
+            "size": [
+              7,
+              1,
+              1
+            ],
+            "uv": [
+              0,
+              0
+            ],
+            "mirror": false,
+            "texture_size": [
+              128,
+              64
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          -12.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.5061455
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          128,
+          64
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "Blade5",
+        "tex_u": 0,
+        "tex_v": 0,
+        "boxes": [
+          {
+            "origin": [
+              0.5,
+              -3.5,
+              0.0
+            ],
+            "size": [
+              8,
+              1,
+              1
+            ],
+            "uv": [
+              0,
+              0
+            ],
+            "mirror": false,
+            "texture_size": [
+              128,
+              64
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          -12.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          -0.5061455
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          128,
+          64
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "Blade6",
+        "tex_u": 70,
+        "tex_v": 0,
+        "boxes": [
+          {
+            "origin": [
+              -12.2,
+              -5.2,
+              0.0
+            ],
+            "size": [
+              3,
+              10,
+              1
+            ],
+            "uv": [
+              70,
+              0
+            ],
+            "mirror": false,
+            "texture_size": [
+              128,
+              64
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          -13.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.5061455
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          128,
+          64
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "Blade7",
+        "tex_u": 0,
+        "tex_v": 0,
+        "boxes": [
+          {
+            "origin": [
+              -9.9,
+              -3.0,
+              0.0
+            ],
+            "size": [
+              8,
+              1,
+              1
+            ],
+            "uv": [
+              0,
+              0
+            ],
+            "mirror": false,
+            "texture_size": [
+              128,
+              64
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          -12.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.5061455
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          128,
+          64
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "Blade8",
+        "tex_u": 0,
+        "tex_v": 0,
+        "boxes": [
+          {
+            "origin": [
+              -10.0,
+              -3.0,
+              0.0
+            ],
+            "size": [
+              10,
+              1,
+              1
+            ],
+            "uv": [
+              0,
+              0
+            ],
+            "mirror": false,
+            "texture_size": [
+              128,
+              64
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          -12.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          128,
+          64
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "Blade9",
+        "tex_u": 70,
+        "tex_v": 0,
+        "boxes": [
+          {
+            "origin": [
+              -10.0,
+              -8.5,
+              0.0
+            ],
+            "size": [
+              3,
+              10,
+              1
+            ],
+            "uv": [
+              70,
+              0
+            ],
+            "mirror": false,
+            "texture_size": [
+              128,
+              64
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          -12.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          -0.5061455
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          128,
+          64
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "Blade10",
+        "tex_u": 0,
+        "tex_v": 0,
+        "boxes": [
+          {
+            "origin": [
+              -7.0,
+              -2.5,
+              0.0
+            ],
+            "size": [
+              7,
+              1,
+              1
+            ],
+            "uv": [
+              0,
+              0
+            ],
+            "mirror": false,
+            "texture_size": [
+              128,
+              64
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          -12.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          -0.5061455
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          128,
+          64
+        ],
+        "children": [],
+        "parent": null
+      }
+    ]
+  },
+  "ground_truth": "1.7.10 decompiled ModelBase constructor, parsed; never the port",
+  "comparison": {
+    "status": "PASS",
+    "reference_parts_with_boxes": 15,
+    "port_parts_with_boxes": 15,
+    "matched_parts": 15,
+    "categories": {},
+    "differences": [],
+    "by_category": {}
+  },
+  "status": "PASS"
+}

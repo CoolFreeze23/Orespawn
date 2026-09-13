@@ -8,6 +8,13 @@ import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Mob;
+/**
+ * BUG-041 stage 2 (2026-09-13): the 1.7.10 export sets {@code mirror = true} AFTER {@code addBox} (orig ModelButterfly.java:
+ * 10 stores, all inert - 1.7.10's ModelBox reads the flag in its constructor, law 11 from Mojang's 1.7.10 jar),
+ * so the original rendered UNMIRRORED. The port's 10 {@code .mirror()} calls preceded {@code addBox} and flipped
+ * every face's U: dropped port-wide as the EnderReaper precedent was (5354420); geometry unchanged; proven by the
+ * reference-geometry leg.
+ */
 
 public class ButterflyModel<T extends Mob> extends EntityModel<T> {
     /**
@@ -45,52 +52,52 @@ public class ButterflyModel<T extends Mob> extends EntityModel<T> {
         PartDefinition partdefinition = meshdefinition.getRoot();
 
         partdefinition.addOrReplaceChild("body",
-                CubeListBuilder.create().texOffs(21, 19).mirror()
+                CubeListBuilder.create().texOffs(21, 19)
                         .addBox(0.0F, 0.0F, -4.0F, 1, 1, 8),
                 PartPose.offset(0.0F, 17.0F, 0.0F));
 
         partdefinition.addOrReplaceChild("leftwing",
-                CubeListBuilder.create().texOffs(43, 24).mirror()
+                CubeListBuilder.create().texOffs(43, 24)
                         .addBox(0.0F, 0.0F, -4.0F, 5, 1, 5),
                 PartPose.offset(1.0F, 17.0F, 0.0F));
 
         partdefinition.addOrReplaceChild("rightwing",
-                CubeListBuilder.create().texOffs(43, 17).mirror()
+                CubeListBuilder.create().texOffs(43, 17)
                         .addBox(-5.0F, 0.0F, -4.0F, 5, 1, 5),
                 PartPose.offset(0.0F, 17.0F, 0.0F));
 
         partdefinition.addOrReplaceChild("leftwing2",
-                CubeListBuilder.create().texOffs(0, 0).mirror()
+                CubeListBuilder.create().texOffs(0, 0)
                         .addBox(1.0F, 0.0F, -6.0F, 6, 1, 7),
                 PartPose.offset(1.0F, 17.0F, 0.0F));
 
         partdefinition.addOrReplaceChild("rightwing2",
-                CubeListBuilder.create().texOffs(29, 0).mirror()
+                CubeListBuilder.create().texOffs(29, 0)
                         .addBox(-7.0F, 0.0F, -6.0F, 6, 1, 7),
                 PartPose.offset(0.0F, 17.0F, 0.0F));
 
         partdefinition.addOrReplaceChild("leftwing3",
-                CubeListBuilder.create().texOffs(0, 9).mirror()
+                CubeListBuilder.create().texOffs(0, 9)
                         .addBox(0.0F, 0.0F, 1.0F, 5, 1, 5),
                 PartPose.offset(1.0F, 17.0F, 0.0F));
 
         partdefinition.addOrReplaceChild("rightwing3",
-                CubeListBuilder.create().texOffs(27, 9).mirror()
+                CubeListBuilder.create().texOffs(27, 9)
                         .addBox(-5.0F, 0.0F, 1.0F, 5, 1, 5),
                 PartPose.offset(0.0F, 17.0F, 0.0F));
 
         partdefinition.addOrReplaceChild("head",
-                CubeListBuilder.create().texOffs(21, 11).mirror()
+                CubeListBuilder.create().texOffs(21, 11)
                         .addBox(0.0F, 0.0F, -6.0F, 1, 1, 1),
                 PartPose.offset(0.0F, 17.0F, 1.0F));
 
         partdefinition.addOrReplaceChild("leftwing4",
-                CubeListBuilder.create().texOffs(2, 24).mirror()
+                CubeListBuilder.create().texOffs(2, 24)
                         .addBox(0.0F, 0.0F, 6.0F, 1, 1, 7),
                 PartPose.offset(1.0F, 17.0F, 0.0F));
 
         partdefinition.addOrReplaceChild("rightwing4",
-                CubeListBuilder.create().texOffs(2, 16).mirror()
+                CubeListBuilder.create().texOffs(2, 16)
                         .addBox(-1.0F, 0.0F, 6.0F, 1, 1, 7),
                 PartPose.offset(0.0F, 17.0F, 0.0F));
 

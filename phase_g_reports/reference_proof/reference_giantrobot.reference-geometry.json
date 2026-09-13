@@ -858,58 +858,13 @@
   },
   "ground_truth": "1.7.10 decompiled ModelBase constructor, parsed; never the port",
   "comparison": {
-    "status": "DIVERGES_TEXTURE_MAPPING",
+    "status": "PASS",
     "reference_parts_with_boxes": 18,
     "port_parts_with_boxes": 18,
     "matched_parts": 18,
-    "categories": {
-      "MIRROR": 18
-    },
-    "differences": [
-      "Hip -> hip: reference box mirror=False (flag at addBox time), port True",
-      "Thigh -> thigh: reference box mirror=False (flag at addBox time), port True",
-      "Shin -> shin: reference box mirror=False (flag at addBox time), port True",
-      "Foot1 -> foot1: reference box mirror=False (flag at addBox time), port True",
-      "Foot2 -> foot2: reference box mirror=False (flag at addBox time), port True",
-      "Foot3 -> foot3: reference box mirror=False (flag at addBox time), port True",
-      "Thigh2 -> thigh2: reference box mirror=False (flag at addBox time), port True",
-      "Thigh3 -> thigh3: reference box mirror=False (flag at addBox time), port True",
-      "Back1 -> back1: reference box mirror=False (flag at addBox time), port True",
-      "Back2 -> back2: reference box mirror=False (flag at addBox time), port True",
-      "Back3 -> back3: reference box mirror=False (flag at addBox time), port True",
-      "Shoulders -> shoulders: reference box mirror=False (flag at addBox time), port True",
-      "Neck -> neck: reference box mirror=False (flag at addBox time), port True",
-      "Head -> head: reference box mirror=False (flag at addBox time), port True",
-      "Arm1 -> arm1: reference box mirror=False (flag at addBox time), port True",
-      "Arm2 -> arm2: reference box mirror=False (flag at addBox time), port True",
-      "Arm3 -> arm3: reference box mirror=False (flag at addBox time), port True",
-      "Knuckles -> knuckles: reference box mirror=False (flag at addBox time), port True"
-    ],
-    "by_category": {
-      "MIRROR": [
-        "Hip -> hip: reference box mirror=False (flag at addBox time), port True",
-        "Thigh -> thigh: reference box mirror=False (flag at addBox time), port True",
-        "Shin -> shin: reference box mirror=False (flag at addBox time), port True",
-        "Foot1 -> foot1: reference box mirror=False (flag at addBox time), port True",
-        "Foot2 -> foot2: reference box mirror=False (flag at addBox time), port True",
-        "Foot3 -> foot3: reference box mirror=False (flag at addBox time), port True",
-        "Thigh2 -> thigh2: reference box mirror=False (flag at addBox time), port True",
-        "Thigh3 -> thigh3: reference box mirror=False (flag at addBox time), port True",
-        "Back1 -> back1: reference box mirror=False (flag at addBox time), port True",
-        "Back2 -> back2: reference box mirror=False (flag at addBox time), port True",
-        "Back3 -> back3: reference box mirror=False (flag at addBox time), port True",
-        "Shoulders -> shoulders: reference box mirror=False (flag at addBox time), port True",
-        "Neck -> neck: reference box mirror=False (flag at addBox time), port True",
-        "Head -> head: reference box mirror=False (flag at addBox time), port True",
-        "Arm1 -> arm1: reference box mirror=False (flag at addBox time), port True",
-        "Arm2 -> arm2: reference box mirror=False (flag at addBox time), port True",
-        "Arm3 -> arm3: reference box mirror=False (flag at addBox time), port True",
-        "Knuckles -> knuckles: reference box mirror=False (flag at addBox time), port True"
-      ]
-    }
+    "categories": {},
+    "differences": [],
+    "by_category": {}
   },
-  "status": "PASS_WITH_PINNED_DIVERGENCES",
-  "pinned_divergences": {
-    "MIRROR": 18
-  }
+  "status": "PASS"
 }

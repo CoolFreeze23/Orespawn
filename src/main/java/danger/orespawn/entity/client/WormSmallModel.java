@@ -8,6 +8,13 @@ import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.util.Mth;
+/**
+ * BUG-041 stage 2 (2026-09-13): the 1.7.10 export sets {@code mirror = true} AFTER {@code addBox} (orig ModelWormSmall.java:
+ * 3 stores, all inert - 1.7.10's ModelBox reads the flag in its constructor, law 11 from Mojang's 1.7.10 jar),
+ * so the original rendered UNMIRRORED. The port's 3 {@code .mirror()} calls preceded {@code addBox} and flipped
+ * every face's U: dropped port-wide as the EnderReaper precedent was (5354420); geometry unchanged; proven by the
+ * reference-geometry leg.
+ */
 
 public class WormSmallModel<T extends EntityWormSmall> extends EntityModel<T> {
     private final ModelPart head;
@@ -25,17 +32,17 @@ public class WormSmallModel<T extends EntityWormSmall> extends EntityModel<T> {
         PartDefinition partdefinition = meshdefinition.getRoot();
 
         partdefinition.addOrReplaceChild("head",
-                CubeListBuilder.create().texOffs(0, 0).mirror()
+                CubeListBuilder.create().texOffs(0, 0)
                         .addBox(-0.5F, -5.0F, -0.5F, 1, 5, 1),
                 PartPose.offset(0.0F, 14.0F, 0.0F));
 
         partdefinition.addOrReplaceChild("body",
-                CubeListBuilder.create().texOffs(6, 0).mirror()
+                CubeListBuilder.create().texOffs(6, 0)
                         .addBox(-0.5F, -5.0F, -0.5F, 1, 5, 1),
                 PartPose.offset(0.0F, 19.0F, 0.0F));
 
         partdefinition.addOrReplaceChild("tail",
-                CubeListBuilder.create().texOffs(12, 0).mirror()
+                CubeListBuilder.create().texOffs(12, 0)
                         .addBox(-0.5F, -5.0F, -0.5F, 1, 5, 1),
                 PartPose.offset(0.0F, 24.0F, 0.0F));
 

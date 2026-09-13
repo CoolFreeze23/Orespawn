@@ -5,14 +5,14 @@
   "proof_scope": "production_proof_model",
   "ground_truth": "executed compiled LayerDefinition and baked ModelPart",
   "source_class": "danger.orespawn.entity.client.VortexModel",
-  "source_class_sha256": "3af9aa95b4d7912f55bd841c4c7812fefa9096407966c10676faa8ad40563b84",
-  "compiled_dump_sha256": "40ef9260c8bbbddd0d02eb0e51fef4ac617bb39b7447d86dda5ce1cbd2df287c",
-  "geometry_sha256": "8d0832a75d52dd4f42914734cfb4be08d298f497fa4d7147d95eae4b76eb204a",
+  "source_class_sha256": "75057c78feb46bdb1cf43b9127bd8b349dcc71cd41ea623445a8a7e48e668490",
+  "compiled_dump_sha256": "9fee1bdab26394a5aea9ed72e6a9b0618c150b3aab470c78c3ac746c2106c9c4",
+  "geometry_sha256": "153a1829938c03435911c0bd8d7263d39d91668417ea4ae8416c28eecd8b5883",
   "animation_sha256": "7882082857fdb11e02f158ebc3a6d3f970e2ac60d54813f0e903ee97b2293749",
   "animation_contract_sha256": "ef25a2b4eb7640daad7b902fc72c12e0e99737cd0882ac83ea702e72c92a7acd",
   "bone_count": 1,
   "cube_count": 1,
-  "mirrored_cube_count": 1,
+  "mirrored_cube_count": 0,
   "mirrored_uv_strategy": "source flag retained as modelpart_mirror; semantics baked into explicit faces; incompatible GeckoLib native mirror disabled",
   "exact_bone_names": [
     "Shape1"
@@ -42,9 +42,9 @@
       [
         "up",
         "down",
-        "east",
-        "north",
         "west",
+        "north",
+        "east",
         "south"
       ]
     ]

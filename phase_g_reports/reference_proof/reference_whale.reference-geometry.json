@@ -670,50 +670,13 @@
   },
   "ground_truth": "1.7.10 decompiled ModelBase constructor, parsed; never the port",
   "comparison": {
-    "status": "DIVERGES_TEXTURE_MAPPING",
+    "status": "PASS",
     "reference_parts_with_boxes": 14,
     "port_parts_with_boxes": 14,
     "matched_parts": 14,
-    "categories": {
-      "MIRROR": 14
-    },
-    "differences": [
-      "belly -> belly: reference box mirror=False (flag at addBox time), port True",
-      "body -> body: reference box mirror=False (flag at addBox time), port True",
-      "back -> back: reference box mirror=False (flag at addBox time), port True",
-      "tail1 -> tail1: reference box mirror=False (flag at addBox time), port True",
-      "tail2 -> tail2: reference box mirror=False (flag at addBox time), port True",
-      "tailfin1 -> tailfin1: reference box mirror=False (flag at addBox time), port True",
-      "tailfin2 -> tailfin2: reference box mirror=False (flag at addBox time), port True",
-      "backfin -> backfin: reference box mirror=False (flag at addBox time), port True",
-      "head -> head: reference box mirror=False (flag at addBox time), port True",
-      "jaw -> jaw: reference box mirror=False (flag at addBox time), port True",
-      "lfin1 -> lfin1: reference box mirror=False (flag at addBox time), port True",
-      "lfin2 -> lfin2: reference box mirror=False (flag at addBox time), port True",
-      "rfin1 -> rfin1: reference box mirror=False (flag at addBox time), port True",
-      "rfin2 -> rfin2: reference box mirror=False (flag at addBox time), port True"
-    ],
-    "by_category": {
-      "MIRROR": [
-        "belly -> belly: reference box mirror=False (flag at addBox time), port True",
-        "body -> body: reference box mirror=False (flag at addBox time), port True",
-        "back -> back: reference box mirror=False (flag at addBox time), port True",
-        "tail1 -> tail1: reference box mirror=False (flag at addBox time), port True",
-        "tail2 -> tail2: reference box mirror=False (flag at addBox time), port True",
-        "tailfin1 -> tailfin1: reference box mirror=False (flag at addBox time), port True",
-        "tailfin2 -> tailfin2: reference box mirror=False (flag at addBox time), port True",
-        "backfin -> backfin: reference box mirror=False (flag at addBox time), port True",
-        "head -> head: reference box mirror=False (flag at addBox time), port True",
-        "jaw -> jaw: reference box mirror=False (flag at addBox time), port True",
-        "lfin1 -> lfin1: reference box mirror=False (flag at addBox time), port True",
-        "lfin2 -> lfin2: reference box mirror=False (flag at addBox time), port True",
-        "rfin1 -> rfin1: reference box mirror=False (flag at addBox time), port True",
-        "rfin2 -> rfin2: reference box mirror=False (flag at addBox time), port True"
-      ]
-    }
+    "categories": {},
+    "differences": [],
+    "by_category": {}
   },
-  "status": "PASS_WITH_PINNED_DIVERGENCES",
-  "pinned_divergences": {
-    "MIRROR": 14
-  }
+  "status": "PASS"
 }

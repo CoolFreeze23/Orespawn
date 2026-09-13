@@ -1281,76 +1281,13 @@
   },
   "ground_truth": "1.7.10 decompiled ModelBase constructor, parsed; never the port",
   "comparison": {
-    "status": "DIVERGES_TEXTURE_MAPPING",
+    "status": "PASS",
     "reference_parts_with_boxes": 27,
     "port_parts_with_boxes": 27,
     "matched_parts": 27,
-    "categories": {
-      "MIRROR": 27
-    },
-    "differences": [
-      "Shape18 -> shape18: reference box mirror=False (flag at addBox time), port True",
-      "Shape19 -> shape19: reference box mirror=False (flag at addBox time), port True",
-      "Shape20 -> shape20: reference box mirror=False (flag at addBox time), port True",
-      "Shape21 -> shape21: reference box mirror=False (flag at addBox time), port True",
-      "Shape1 -> shape1: reference box mirror=False (flag at addBox time), port True",
-      "Shape2 -> shape2: reference box mirror=False (flag at addBox time), port True",
-      "Shape3 -> shape3: reference box mirror=False (flag at addBox time), port True",
-      "Shape4 -> shape4: reference box mirror=False (flag at addBox time), port True",
-      "Shape5 -> shape5: reference box mirror=False (flag at addBox time), port True",
-      "Shape6 -> shape6: reference box mirror=False (flag at addBox time), port True",
-      "jaw -> jaw: reference box mirror=False (flag at addBox time), port True",
-      "leftleg -> leftleg: reference box mirror=False (flag at addBox time), port True",
-      "leftleg2 -> leftleg2: reference box mirror=False (flag at addBox time), port True",
-      "leftleg3 -> leftleg3: reference box mirror=False (flag at addBox time), port True",
-      "Shape11 -> shape11: reference box mirror=False (flag at addBox time), port True",
-      "rightleg -> rightleg: reference box mirror=False (flag at addBox time), port True",
-      "rightleg2 -> rightleg2: reference box mirror=False (flag at addBox time), port True",
-      "rightleg3 -> rightleg3: reference box mirror=False (flag at addBox time), port True",
-      "leftleg4 -> leftleg4: reference box mirror=False (flag at addBox time), port True",
-      "rightleg4 -> rightleg4: reference box mirror=False (flag at addBox time), port True",
-      "Shape17 -> shape17: reference box mirror=False (flag at addBox time), port True",
-      "TailExtension -> tail_extension: reference box mirror=False (flag at addBox time), port True",
-      "Spine1 -> spine1: reference box mirror=False (flag at addBox time), port True",
-      "Spine2 -> spine2: reference box mirror=False (flag at addBox time), port True",
-      "Spine3 -> spine3: reference box mirror=False (flag at addBox time), port True",
-      "Spine4 -> spine4: reference box mirror=False (flag at addBox time), port True",
-      "Spine5 -> spine5: reference box mirror=False (flag at addBox time), port True"
-    ],
-    "by_category": {
-      "MIRROR": [
-        "Shape18 -> shape18: reference box mirror=False (flag at addBox time), port True",
-        "Shape19 -> shape19: reference box mirror=False (flag at addBox time), port True",
-        "Shape20 -> shape20: reference box mirror=False (flag at addBox time), port True",
-        "Shape21 -> shape21: reference box mirror=False (flag at addBox time), port True",
-        "Shape1 -> shape1: reference box mirror=False (flag at addBox time), port True",
-        "Shape2 -> shape2: reference box mirror=False (flag at addBox time), port True",
-        "Shape3 -> shape3: reference box mirror=False (flag at addBox time), port True",
-        "Shape4 -> shape4: reference box mirror=False (flag at addBox time), port True",
-        "Shape5 -> shape5: reference box mirror=False (flag at addBox time), port True",
-        "Shape6 -> shape6: reference box mirror=False (flag at addBox time), port True",
-        "jaw -> jaw: reference box mirror=False (flag at addBox time), port True",
-        "leftleg -> leftleg: reference box mirror=False (flag at addBox time), port True",
-        "leftleg2 -> leftleg2: reference box mirror=False (flag at addBox time), port True",
-        "leftleg3 -> leftleg3: reference box mirror=False (flag at addBox time), port True",
-        "Shape11 -> shape11: reference box mirror=False (flag at addBox time), port True",
-        "rightleg -> rightleg: reference box mirror=False (flag at addBox time), port True",
-        "rightleg2 -> rightleg2: reference box mirror=False (flag at addBox time), port True",
-        "rightleg3 -> rightleg3: reference box mirror=False (flag at addBox time), port True",
-        "leftleg4 -> leftleg4: reference box mirror=False (flag at addBox time), port True",
-        "rightleg4 -> rightleg4: reference box mirror=False (flag at addBox time), port True",
-        "Shape17 -> shape17: reference box mirror=False (flag at addBox time), port True",
-        "TailExtension -> tail_extension: reference box mirror=False (flag at addBox time), port True",
-        "Spine1 -> spine1: reference box mirror=False (flag at addBox time), port True",
-        "Spine2 -> spine2: reference box mirror=False (flag at addBox time), port True",
-        "Spine3 -> spine3: reference box mirror=False (flag at addBox time), port True",
-        "Spine4 -> spine4: reference box mirror=False (flag at addBox time), port True",
-        "Spine5 -> spine5: reference box mirror=False (flag at addBox time), port True"
-      ]
-    }
+    "categories": {},
+    "differences": [],
+    "by_category": {}
   },
-  "status": "PASS_WITH_PINNED_DIVERGENCES",
-  "pinned_divergences": {
-    "MIRROR": 27
-  }
+  "status": "PASS"
 }

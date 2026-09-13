@@ -8,6 +8,13 @@ import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.util.Mth;
+/**
+ * BUG-041 stage 2 (2026-09-13): the 1.7.10 export sets {@code mirror = true} AFTER {@code addBox} (orig ModelAttackSquid.java:
+ * 9 stores, all inert - 1.7.10's ModelBox reads the flag in its constructor, law 11 from Mojang's 1.7.10 jar),
+ * so the original rendered UNMIRRORED. The port's 9 {@code .mirror()} calls preceded {@code addBox} and flipped
+ * every face's U: dropped port-wide as the EnderReaper precedent was (5354420); geometry unchanged; proven by the
+ * reference-geometry leg.
+ */
 
 public class ModelAttackSquid extends EntityModel<AttackSquid> {
     /** Animation frequency constant; orig ModelAttackSquid.java:14,26 (wingspeed), value from orig ClientProxyOreSpawn.java:437. */
@@ -39,39 +46,39 @@ public class ModelAttackSquid extends EntityModel<AttackSquid> {
         PartDefinition partdefinition = meshdefinition.getRoot();
 
         partdefinition.addOrReplaceChild("tent1",
-                CubeListBuilder.create().texOffs(0, 18).mirror().addBox(-1.0F, 0.0F, -1.0F, 2, 9, 2),
+                CubeListBuilder.create().texOffs(0, 18).addBox(-1.0F, 0.0F, -1.0F, 2, 9, 2),
                 PartPose.offsetAndRotation(5.0F, 15.0F, -1.0F, -0.9250245F, -1.745329F, 0.0F));
 
         partdefinition.addOrReplaceChild("tent2",
-                CubeListBuilder.create().texOffs(0, 18).mirror().addBox(-8.0F, -1.0F, -1.0F, 8, 2, 2),
+                CubeListBuilder.create().texOffs(0, 18).addBox(-8.0F, -1.0F, -1.0F, 8, 2, 2),
                 PartPose.offsetAndRotation(-2.0F, 15.0F, -3.0F, -0.1745329F, -0.6632251F, -0.2443461F));
 
         partdefinition.addOrReplaceChild("tent3",
-                CubeListBuilder.create().texOffs(0, 18).mirror().addBox(-1.0F, 0.0F, -1.0F, 2, 10, 2),
+                CubeListBuilder.create().texOffs(0, 18).addBox(-1.0F, 0.0F, -1.0F, 2, 10, 2),
                 PartPose.offsetAndRotation(1.0F, 15.0F, -4.0F, -1.134464F, 0.3316126F, 0.0F));
 
         partdefinition.addOrReplaceChild("tent4",
-                CubeListBuilder.create().texOffs(0, 18).mirror().addBox(-1.0F, 0.0F, -1.0F, 2, 10, 2),
+                CubeListBuilder.create().texOffs(0, 18).addBox(-1.0F, 0.0F, -1.0F, 2, 10, 2),
                 PartPose.offsetAndRotation(-3.0F, 15.0F, -1.0F, 0.5585054F, -1.692969F, 0.0F));
 
         partdefinition.addOrReplaceChild("tent5",
-                CubeListBuilder.create().texOffs(0, 18).mirror().addBox(-1.0F, 0.0F, -1.0F, 2, 10, 2),
+                CubeListBuilder.create().texOffs(0, 18).addBox(-1.0F, 0.0F, -1.0F, 2, 10, 2),
                 PartPose.offsetAndRotation(1.0F, 15.0F, 3.0F, 0.5410521F, 0.2268928F, 0.0F));
 
         partdefinition.addOrReplaceChild("tent6",
-                CubeListBuilder.create().texOffs(0, 18).mirror().addBox(-1.0F, -1.0F, 0.0F, 2, 2, 8),
+                CubeListBuilder.create().texOffs(0, 18).addBox(-1.0F, -1.0F, 0.0F, 2, 2, 8),
                 PartPose.offsetAndRotation(-2.0F, 15.0F, 2.0F, -0.418879F, -0.6806784F, 0.0F));
 
         partdefinition.addOrReplaceChild("tent7",
-                CubeListBuilder.create().texOffs(0, 18).mirror().addBox(0.0F, -1.0F, -1.0F, 8, 2, 2),
+                CubeListBuilder.create().texOffs(0, 18).addBox(0.0F, -1.0F, -1.0F, 8, 2, 2),
                 PartPose.offsetAndRotation(3.0F, 15.0F, 1.0F, -0.1919862F, -0.6632251F, 0.418879F));
 
         partdefinition.addOrReplaceChild("body",
-                CubeListBuilder.create().texOffs(0, 0).mirror().addBox(-4.0F, -10.0F, -4.0F, 8, 10, 8),
+                CubeListBuilder.create().texOffs(0, 0).addBox(-4.0F, -10.0F, -4.0F, 8, 10, 8),
                 PartPose.offsetAndRotation(1.0F, 16.0F, -1.0F, -0.1919862F, -0.6806784F, 0.0F));
 
         partdefinition.addOrReplaceChild("tent8",
-                CubeListBuilder.create().texOffs(0, 18).mirror().addBox(-1.0F, -1.0F, -8.0F, 2, 2, 8),
+                CubeListBuilder.create().texOffs(0, 18).addBox(-1.0F, -1.0F, -8.0F, 2, 2, 8),
                 PartPose.offsetAndRotation(3.0F, 15.0F, -4.0F, 0.1919862F, -0.6806784F, 0.0F));
 
         return LayerDefinition.create(meshdefinition, 64, 32);

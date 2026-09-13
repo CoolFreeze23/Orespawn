@@ -8,6 +8,13 @@ import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.util.Mth;
+/**
+ * BUG-041 stage 2 (2026-09-13): the 1.7.10 export sets {@code mirror = true} AFTER {@code addBox} (orig ModelLeafMonster.java:
+ * 5 stores, all inert - 1.7.10's ModelBox reads the flag in its constructor, law 11 from Mojang's 1.7.10 jar),
+ * so the original rendered UNMIRRORED. The port's 5 {@code .mirror()} calls preceded {@code addBox} and flipped
+ * every face's U: dropped port-wide as the EnderReaper precedent was (5354420); geometry unchanged; proven by the
+ * reference-geometry leg.
+ */
 
 public class LeafMonsterModel<T extends EntityLeafMonster> extends EntityModel<T> {
     private final ModelPart body;
@@ -27,11 +34,11 @@ public class LeafMonsterModel<T extends EntityLeafMonster> extends EntityModel<T
     public static LayerDefinition createBodyLayer() {
         MeshDefinition mesh = new MeshDefinition();
         PartDefinition root = mesh.getRoot();
-        root.addOrReplaceChild("body", CubeListBuilder.create().texOffs(32, 32).mirror().addBox(-8.0F, -8.0F, -8.0F, 16, 16, 16), PartPose.offset(0.0F, 0.0F, 0.0F));
-        root.addOrReplaceChild("larm", CubeListBuilder.create().texOffs(64, 0).mirror().addBox(0.0F, -16.0F, -8.0F, 16, 16, 16), PartPose.offset(8.0F, -8.0F, 0.0F));
-        root.addOrReplaceChild("rarm", CubeListBuilder.create().texOffs(0, 0).mirror().addBox(-16.0F, -16.0F, -8.0F, 16, 16, 16), PartPose.offset(-8.0F, -8.0F, 0.0F));
-        root.addOrReplaceChild("lleg", CubeListBuilder.create().texOffs(64, 64).mirror().addBox(0.0F, 0.0F, -8.0F, 16, 16, 16), PartPose.offset(8.0F, 8.0F, 0.0F));
-        root.addOrReplaceChild("rleg", CubeListBuilder.create().texOffs(0, 64).mirror().addBox(-16.0F, 0.0F, -8.0F, 16, 16, 16), PartPose.offset(-8.0F, 8.0F, 0.0F));
+        root.addOrReplaceChild("body", CubeListBuilder.create().texOffs(32, 32).addBox(-8.0F, -8.0F, -8.0F, 16, 16, 16), PartPose.offset(0.0F, 0.0F, 0.0F));
+        root.addOrReplaceChild("larm", CubeListBuilder.create().texOffs(64, 0).addBox(0.0F, -16.0F, -8.0F, 16, 16, 16), PartPose.offset(8.0F, -8.0F, 0.0F));
+        root.addOrReplaceChild("rarm", CubeListBuilder.create().texOffs(0, 0).addBox(-16.0F, -16.0F, -8.0F, 16, 16, 16), PartPose.offset(-8.0F, -8.0F, 0.0F));
+        root.addOrReplaceChild("lleg", CubeListBuilder.create().texOffs(64, 64).addBox(0.0F, 0.0F, -8.0F, 16, 16, 16), PartPose.offset(8.0F, 8.0F, 0.0F));
+        root.addOrReplaceChild("rleg", CubeListBuilder.create().texOffs(0, 64).addBox(-16.0F, 0.0F, -8.0F, 16, 16, 16), PartPose.offset(-8.0F, 8.0F, 0.0F));
         return LayerDefinition.create(mesh, 128, 128);
     }
 

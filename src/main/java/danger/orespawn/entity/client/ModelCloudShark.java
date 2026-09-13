@@ -8,6 +8,13 @@ import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.util.Mth;
+/**
+ * BUG-041 stage 2 (2026-09-13): the 1.7.10 export sets {@code mirror = true} AFTER {@code addBox} (orig ModelCloudShark.java:
+ * 8 stores, all inert - 1.7.10's ModelBox reads the flag in its constructor, law 11 from Mojang's 1.7.10 jar),
+ * so the original rendered UNMIRRORED. The port's 8 {@code .mirror()} calls preceded {@code addBox} and flipped
+ * every face's U: dropped port-wide as the EnderReaper precedent was (5354420); geometry unchanged; proven by the
+ * reference-geometry leg.
+ */
 
 public class ModelCloudShark extends EntityModel<CloudShark> {
     /** Animation frequency constant; orig ModelCloudShark.java:13,24 (wingspeed), value from orig ClientProxyOreSpawn.java:471. */
@@ -37,35 +44,35 @@ public class ModelCloudShark extends EntityModel<CloudShark> {
         PartDefinition partdefinition = meshdefinition.getRoot();
 
         partdefinition.addOrReplaceChild("body",
-                CubeListBuilder.create().texOffs(0, 0).mirror().addBox(0.0F, 0.0F, 0.0F, 6, 8, 15),
+                CubeListBuilder.create().texOffs(0, 0).addBox(0.0F, 0.0F, 0.0F, 6, 8, 15),
                 PartPose.offset(-4.0F, 11.0F, 0.0F));
 
         partdefinition.addOrReplaceChild("head",
-                CubeListBuilder.create().texOffs(0, 51).mirror().addBox(-2.5F, 0.0F, -8.0F, 5, 5, 8),
+                CubeListBuilder.create().texOffs(0, 51).addBox(-2.5F, 0.0F, -8.0F, 5, 5, 8),
                 PartPose.offset(-1.0F, 11.0F, 0.0F));
 
         partdefinition.addOrReplaceChild("jaw",
-                CubeListBuilder.create().texOffs(42, 0).mirror().addBox(-2.5F, 0.0F, -6.0F, 5, 2, 6),
+                CubeListBuilder.create().texOffs(42, 0).addBox(-2.5F, 0.0F, -6.0F, 5, 2, 6),
                 PartPose.offsetAndRotation(-1.0F, 15.0F, 0.0F, 0.5056291F, 0.0F, 0.0F));
 
         partdefinition.addOrReplaceChild("topfin",
-                CubeListBuilder.create().texOffs(0, 0).mirror().addBox(0.0F, 0.0F, 0.0F, 1, 3, 6),
+                CubeListBuilder.create().texOffs(0, 0).addBox(0.0F, 0.0F, 0.0F, 1, 3, 6),
                 PartPose.offsetAndRotation(-1.5F, 11.0F, 5.0F, 0.935765F, 0.0F, 0.0F));
 
         partdefinition.addOrReplaceChild("bbody",
-                CubeListBuilder.create().texOffs(0, 9).mirror().addBox(-2.0F, 0.0F, 0.0F, 4, 8, 6),
+                CubeListBuilder.create().texOffs(0, 9).addBox(-2.0F, 0.0F, 0.0F, 4, 8, 6),
                 PartPose.offset(-1.0F, 11.0F, 15.0F));
 
         partdefinition.addOrReplaceChild("fins",
-                CubeListBuilder.create().texOffs(0, 24).mirror().addBox(0.0F, 0.0F, 0.0F, 0, 10, 10),
+                CubeListBuilder.create().texOffs(0, 24).addBox(0.0F, 0.0F, 0.0F, 0, 10, 10),
                 PartPose.offsetAndRotation(-1.0F, 16.0F, 16.0F, 0.9220296F, 0.0F, 0.0F));
 
         partdefinition.addOrReplaceChild("leftfin",
-                CubeListBuilder.create().texOffs(0, 0).mirror().addBox(0.0F, 0.0F, 0.0F, 0, 3, 7),
+                CubeListBuilder.create().texOffs(0, 0).addBox(0.0F, 0.0F, 0.0F, 0, 3, 7),
                 PartPose.offsetAndRotation(2.0F, 16.0F, 6.0F, -0.6108652F, 1.134464F, -0.6108652F));
 
         partdefinition.addOrReplaceChild("rightfin",
-                CubeListBuilder.create().texOffs(0, 0).mirror().addBox(0.0F, 0.0F, 0.0F, 0, 3, 7),
+                CubeListBuilder.create().texOffs(0, 0).addBox(0.0F, 0.0F, 0.0F, 0, 3, 7),
                 PartPose.offsetAndRotation(-4.0F, 16.0F, 6.0F, -0.6283185F, -1.134464F, 0.6108652F));
 
         return LayerDefinition.create(meshdefinition, 64, 64);

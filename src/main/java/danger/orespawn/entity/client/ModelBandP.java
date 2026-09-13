@@ -8,6 +8,13 @@ import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.util.Mth;
+/**
+ * BUG-041 stage 2 (2026-09-13): the 1.7.10 export sets {@code mirror = true} AFTER {@code addBox} (orig ModelBandP.java:
+ * 7 stores, all inert - 1.7.10's ModelBox reads the flag in its constructor, law 11 from Mojang's 1.7.10 jar),
+ * so the original rendered UNMIRRORED. The port's 7 {@code .mirror()} calls preceded {@code addBox} and flipped
+ * every face's U: dropped port-wide as the EnderReaper precedent was (5354420); geometry unchanged; proven by the
+ * reference-geometry leg.
+ */
 
 public class ModelBandP extends EntityModel<BandP> {
     /** Animation frequency constant; orig ModelBandP.java:14,24 (wingspeed), value from orig ClientProxyOreSpawn.java:504. */
@@ -35,37 +42,37 @@ public class ModelBandP extends EntityModel<BandP> {
         PartDefinition partdefinition = meshdefinition.getRoot();
 
         partdefinition.addOrReplaceChild("belly",
-                CubeListBuilder.create().texOffs(0, 61).mirror()
+                CubeListBuilder.create().texOffs(0, 61)
                         .addBox(-8.0F, -5.0F, -7.0F, 16, 10, 16),
                 PartPose.offsetAndRotation(0.0F, 12.0F, 0.0F, 0.0698132F, 0.0F, 0.0F));
 
         partdefinition.addOrReplaceChild("chest",
-                CubeListBuilder.create().texOffs(0, 42).mirror()
+                CubeListBuilder.create().texOffs(0, 42)
                         .addBox(-5.0F, -3.0F, -5.0F, 10, 6, 10),
                 PartPose.offset(0.0F, 5.0F, 2.0F));
 
         partdefinition.addOrReplaceChild("head",
-                CubeListBuilder.create().texOffs(0, 11).mirror()
+                CubeListBuilder.create().texOffs(0, 11)
                         .addBox(-3.0F, -5.0F, -3.0F, 6, 6, 6),
                 PartPose.offset(0.0F, 1.0F, 3.0F));
 
         partdefinition.addOrReplaceChild("lleg",
-                CubeListBuilder.create().texOffs(25, 90).mirror()
+                CubeListBuilder.create().texOffs(25, 90)
                         .addBox(-2.0F, 0.0F, -3.0F, 6, 8, 6),
                 PartPose.offset(2.0F, 16.0F, 2.0F));
 
         partdefinition.addOrReplaceChild("rleg",
-                CubeListBuilder.create().texOffs(0, 90).mirror()
+                CubeListBuilder.create().texOffs(0, 90)
                         .addBox(-4.0F, 0.0F, -3.0F, 6, 8, 6),
                 PartPose.offset(-2.0F, 16.0F, 2.0F));
 
         partdefinition.addOrReplaceChild("larm",
-                CubeListBuilder.create().texOffs(0, 25).mirror()
+                CubeListBuilder.create().texOffs(0, 25)
                         .addBox(-1.0F, -1.0F, -2.0F, 4, 10, 4),
                 PartPose.offsetAndRotation(6.0F, 4.0F, 3.0F, 0.0F, 0.0F, -0.4886922F));
 
         partdefinition.addOrReplaceChild("rarm",
-                CubeListBuilder.create().texOffs(18, 25).mirror()
+                CubeListBuilder.create().texOffs(18, 25)
                         .addBox(-3.0F, -1.0F, -2.0F, 4, 10, 4),
                 PartPose.offsetAndRotation(-6.0F, 4.0F, 3.0F, 0.0F, 0.0F, 0.4886922F));
 

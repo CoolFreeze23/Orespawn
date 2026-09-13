@@ -8,6 +8,13 @@ import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.util.Mth;
+/**
+ * BUG-041 stage 2 (2026-09-13): the 1.7.10 export sets {@code mirror = true} AFTER {@code addBox} (orig ModelMolenoid.java:
+ * 37 stores, all inert - 1.7.10's ModelBox reads the flag in its constructor, law 11 from Mojang's 1.7.10 jar),
+ * so the original rendered UNMIRRORED. The port's 37 {@code .mirror()} calls preceded {@code addBox} and flipped
+ * every face's U: dropped port-wide as the EnderReaper precedent was (5354420); geometry unchanged; proven by the
+ * reference-geometry leg.
+ */
 
 public class MolenoidModel extends EntityModel<EntityMolenoid> {
     /** Animation frequency constant; orig ModelMolenoid.java:14,54 (wingspeed), value from orig ClientProxyOreSpawn.java:495. */
@@ -95,187 +102,187 @@ public class MolenoidModel extends EntityModel<EntityMolenoid> {
         PartDefinition partdefinition = meshdefinition.getRoot();
 
         partdefinition.addOrReplaceChild("body",
-                CubeListBuilder.create().texOffs(0, 176).mirror()
+                CubeListBuilder.create().texOffs(0, 176)
                         .addBox(-16.0F, 0.0F, 0.0F, 32, 20, 56),
                 PartPose.offset(0.0F, 1.0F, 6.0F));
 
         partdefinition.addOrReplaceChild("shoulders",
-                CubeListBuilder.create().texOffs(0, 143).mirror()
+                CubeListBuilder.create().texOffs(0, 143)
                         .addBox(-17.0F, 0.0F, 0.0F, 34, 17, 10),
                 PartPose.offset(0.0F, 3.0F, -4.0F));
 
         partdefinition.addOrReplaceChild("head1",
-                CubeListBuilder.create().texOffs(0, 114).mirror()
+                CubeListBuilder.create().texOffs(0, 114)
                         .addBox(-14.0F, 0.0F, 0.0F, 28, 14, 10),
                 PartPose.offset(0.0F, 5.0F, -14.0F));
 
         partdefinition.addOrReplaceChild("head2",
-                CubeListBuilder.create().texOffs(0, 89).mirror()
+                CubeListBuilder.create().texOffs(0, 89)
                         .addBox(-11.0F, 0.0F, 0.0F, 22, 10, 10),
                 PartPose.offset(0.0F, 6.0F, -24.0F));
 
         partdefinition.addOrReplaceChild("head3",
-                CubeListBuilder.create().texOffs(0, 67).mirror()
+                CubeListBuilder.create().texOffs(0, 67)
                         .addBox(-4.0F, 0.0F, 0.0F, 8, 8, 10),
                 PartPose.offset(0.0F, 7.0F, -34.0F));
 
         partdefinition.addOrReplaceChild("nosestar1",
-                CubeListBuilder.create().texOffs(0, 32).mirror()
+                CubeListBuilder.create().texOffs(0, 32)
                         .addBox(-0.5F, -8.0F, 0.0F, 1, 16, 1),
                 PartPose.offset(0.0F, 11.0F, -35.0F));
 
         partdefinition.addOrReplaceChild("nosestar2",
-                CubeListBuilder.create().texOffs(20, 32).mirror()
+                CubeListBuilder.create().texOffs(20, 32)
                         .addBox(-0.5F, -8.0F, 0.0F, 1, 16, 1),
                 PartPose.offsetAndRotation(0.0F, 11.0F, -35.0F, 0.0F, 0.0F, 1.047198F));
 
         partdefinition.addOrReplaceChild("nosestar3",
-                CubeListBuilder.create().texOffs(40, 32).mirror()
+                CubeListBuilder.create().texOffs(40, 32)
                         .addBox(-0.5F, -8.0F, 0.0F, 1, 16, 1),
                 PartPose.offsetAndRotation(0.0F, 11.0F, -35.0F, 0.0F, 0.0F, -1.047198F));
 
         partdefinition.addOrReplaceChild("larm",
-                CubeListBuilder.create().texOffs(80, 0).mirror()
+                CubeListBuilder.create().texOffs(80, 0)
                         .addBox(0.0F, 0.0F, -2.0F, 17, 11, 5),
                 PartPose.offsetAndRotation(13.0F, 8.0F, 0.0F, 0.0F, 0.6283185F, 0.0F));
 
         partdefinition.addOrReplaceChild("lhand",
-                CubeListBuilder.create().texOffs(80, 20).mirror()
+                CubeListBuilder.create().texOffs(80, 20)
                         .addBox(0.0F, 0.0F, -2.0F, 12, 14, 4),
                 PartPose.offset(25.0F, 7.0F, -9.0F));
 
         partdefinition.addOrReplaceChild("lclaw1",
-                CubeListBuilder.create().texOffs(80, 42).mirror()
+                CubeListBuilder.create().texOffs(80, 42)
                         .addBox(0.0F, 0.0F, -1.0F, 13, 3, 2),
                 PartPose.offsetAndRotation(35.0F, 20.0F, -9.0F, 0.0F, -0.1745329F, 0.0F));
 
         partdefinition.addOrReplaceChild("lclaw2",
-                CubeListBuilder.create().texOffs(80, 52).mirror()
+                CubeListBuilder.create().texOffs(80, 52)
                         .addBox(0.0F, 0.0F, -1.0F, 13, 3, 2),
                 PartPose.offsetAndRotation(35.0F, 15.0F, -9.0F, 0.0F, -0.1745329F, 0.0F));
 
         partdefinition.addOrReplaceChild("lclaw3",
-                CubeListBuilder.create().texOffs(80, 62).mirror()
+                CubeListBuilder.create().texOffs(80, 62)
                         .addBox(0.0F, 0.0F, -1.0F, 13, 3, 2),
                 PartPose.offsetAndRotation(35.0F, 10.0F, -9.0F, 0.0F, -0.1745329F, 0.0F));
 
         partdefinition.addOrReplaceChild("lclaw4",
-                CubeListBuilder.create().texOffs(80, 72).mirror()
+                CubeListBuilder.create().texOffs(80, 72)
                         .addBox(0.0F, 0.0F, -1.0F, 13, 3, 2),
                 PartPose.offsetAndRotation(35.0F, 5.0F, -9.0F, 0.0F, -0.1745329F, 0.0F));
 
         partdefinition.addOrReplaceChild("nosestar4",
-                CubeListBuilder.create().texOffs(10, 32).mirror()
+                CubeListBuilder.create().texOffs(10, 32)
                         .addBox(-0.5F, -8.0F, 0.0F, 1, 16, 1),
                 PartPose.offsetAndRotation(0.0F, 11.0F, -35.0F, 0.0F, 0.0F, 0.5235988F));
 
         partdefinition.addOrReplaceChild("nosestar5",
-                CubeListBuilder.create().texOffs(30, 32).mirror()
+                CubeListBuilder.create().texOffs(30, 32)
                         .addBox(-0.5F, -8.0F, 0.0F, 1, 16, 1),
                 PartPose.offsetAndRotation(0.0F, 11.0F, -35.0F, 0.0F, 0.0F, 1.570796F));
 
         partdefinition.addOrReplaceChild("nosestar6",
-                CubeListBuilder.create().texOffs(50, 32).mirror()
+                CubeListBuilder.create().texOffs(50, 32)
                         .addBox(-0.5F, -8.0F, 0.0F, 1, 16, 1),
                 PartPose.offsetAndRotation(0.0F, 11.0F, -35.0F, 0.0F, 0.0F, -0.5235988F));
 
         partdefinition.addOrReplaceChild("butt",
-                CubeListBuilder.create().texOffs(196, 215).mirror()
+                CubeListBuilder.create().texOffs(196, 215)
                         .addBox(-11.0F, 0.0F, 0.0F, 22, 11, 5),
                 PartPose.offset(0.0F, 6.0F, 62.0F));
 
         partdefinition.addOrReplaceChild("tail",
-                CubeListBuilder.create().texOffs(196, 200).mirror()
+                CubeListBuilder.create().texOffs(196, 200)
                         .addBox(-2.0F, 0.0F, 0.0F, 4, 3, 5),
                 PartPose.offset(0.0F, 7.0F, 67.0F));
 
         partdefinition.addOrReplaceChild("lleg",
-                CubeListBuilder.create().texOffs(90, 80).mirror()
+                CubeListBuilder.create().texOffs(90, 80)
                         .addBox(0.0F, 0.0F, -2.0F, 17, 11, 5),
                 PartPose.offsetAndRotation(14.0F, 9.0F, 58.0F, 0.0F, 0.6283185F, 0.0F));
 
         partdefinition.addOrReplaceChild("lfoot",
-                CubeListBuilder.create().texOffs(90, 100).mirror()
+                CubeListBuilder.create().texOffs(90, 100)
                         .addBox(0.0F, 0.0F, -2.0F, 12, 14, 4),
                 PartPose.offset(26.0F, 8.0F, 49.0F));
 
         partdefinition.addOrReplaceChild("ltoe1",
-                CubeListBuilder.create().texOffs(90, 120).mirror()
+                CubeListBuilder.create().texOffs(90, 120)
                         .addBox(0.0F, 0.0F, -1.0F, 13, 3, 2),
                 PartPose.offsetAndRotation(36.0F, 21.0F, 48.0F, 0.0F, -0.2617994F, 0.0F));
 
         partdefinition.addOrReplaceChild("ltoe2",
-                CubeListBuilder.create().texOffs(90, 130).mirror()
+                CubeListBuilder.create().texOffs(90, 130)
                         .addBox(0.0F, 0.0F, -1.0F, 13, 3, 2),
                 PartPose.offsetAndRotation(36.0F, 16.0F, 48.0F, 0.0F, -0.2617994F, 0.0F));
 
         partdefinition.addOrReplaceChild("ltoe3",
-                CubeListBuilder.create().texOffs(90, 140).mirror()
+                CubeListBuilder.create().texOffs(90, 140)
                         .addBox(0.0F, 0.0F, -1.0F, 13, 3, 2),
                 PartPose.offsetAndRotation(36.0F, 11.0F, 48.0F, 0.0F, -0.2617994F, 0.0F));
 
         partdefinition.addOrReplaceChild("ltoe4",
-                CubeListBuilder.create().texOffs(90, 150).mirror()
+                CubeListBuilder.create().texOffs(90, 150)
                         .addBox(0.0F, 0.0F, -1.0F, 13, 3, 2),
                 PartPose.offsetAndRotation(36.0F, 6.0F, 48.0F, 0.0F, -0.2617994F, 0.0F));
 
         partdefinition.addOrReplaceChild("rarm",
-                CubeListBuilder.create().texOffs(130, 0).mirror()
+                CubeListBuilder.create().texOffs(130, 0)
                         .addBox(-17.0F, 0.0F, -2.0F, 17, 11, 5),
                 PartPose.offsetAndRotation(-14.0F, 8.0F, 0.0F, 0.0F, -0.6283185F, 0.0F));
 
         partdefinition.addOrReplaceChild("rhand",
-                CubeListBuilder.create().texOffs(130, 20).mirror()
+                CubeListBuilder.create().texOffs(130, 20)
                         .addBox(-12.0F, 0.0F, -2.0F, 12, 14, 4),
                 PartPose.offset(-26.0F, 7.0F, -9.0F));
 
         partdefinition.addOrReplaceChild("rclaw1",
-                CubeListBuilder.create().texOffs(130, 42).mirror()
+                CubeListBuilder.create().texOffs(130, 42)
                         .addBox(-13.0F, 0.0F, -1.0F, 13, 3, 2),
                 PartPose.offsetAndRotation(-36.0F, 20.0F, -9.0F, 0.0F, 0.1745329F, 0.0F));
 
         partdefinition.addOrReplaceChild("rclaw2",
-                CubeListBuilder.create().texOffs(130, 52).mirror()
+                CubeListBuilder.create().texOffs(130, 52)
                         .addBox(-13.0F, 0.0F, -1.0F, 13, 3, 2),
                 PartPose.offsetAndRotation(-36.0F, 15.0F, -9.0F, 0.0F, 0.1745329F, 0.0F));
 
         partdefinition.addOrReplaceChild("rclaw3",
-                CubeListBuilder.create().texOffs(130, 62).mirror()
+                CubeListBuilder.create().texOffs(130, 62)
                         .addBox(-13.0F, 0.0F, -1.0F, 13, 3, 2),
                 PartPose.offsetAndRotation(-36.0F, 10.0F, -9.0F, 0.0F, 0.1745329F, 0.0F));
 
         partdefinition.addOrReplaceChild("rclaw4",
-                CubeListBuilder.create().texOffs(130, 72).mirror()
+                CubeListBuilder.create().texOffs(130, 72)
                         .addBox(-13.0F, 0.0F, -1.0F, 13, 3, 2),
                 PartPose.offsetAndRotation(-36.0F, 5.0F, -9.0F, 0.0F, 0.1745329F, 0.0F));
 
         partdefinition.addOrReplaceChild("rleg",
-                CubeListBuilder.create().texOffs(150, 80).mirror()
+                CubeListBuilder.create().texOffs(150, 80)
                         .addBox(-17.0F, 0.0F, -2.0F, 17, 11, 5),
                 PartPose.offsetAndRotation(-14.0F, 9.0F, 58.0F, 0.0F, -0.6283185F, 0.0F));
 
         partdefinition.addOrReplaceChild("rfoot",
-                CubeListBuilder.create().texOffs(150, 100).mirror()
+                CubeListBuilder.create().texOffs(150, 100)
                         .addBox(-12.0F, 0.0F, -2.0F, 12, 14, 4),
                 PartPose.offset(-26.0F, 8.0F, 49.0F));
 
         partdefinition.addOrReplaceChild("rtoe1",
-                CubeListBuilder.create().texOffs(150, 120).mirror()
+                CubeListBuilder.create().texOffs(150, 120)
                         .addBox(-13.0F, 0.0F, -1.0F, 13, 3, 2),
                 PartPose.offsetAndRotation(-36.0F, 21.0F, 48.0F, 0.0F, 0.2617994F, 0.0F));
 
         partdefinition.addOrReplaceChild("rtoe2",
-                CubeListBuilder.create().texOffs(150, 130).mirror()
+                CubeListBuilder.create().texOffs(150, 130)
                         .addBox(-13.0F, 0.0F, -1.0F, 13, 3, 2),
                 PartPose.offsetAndRotation(-36.0F, 16.0F, 48.0F, 0.0F, 0.2617994F, 0.0F));
 
         partdefinition.addOrReplaceChild("rtoe3",
-                CubeListBuilder.create().texOffs(150, 140).mirror()
+                CubeListBuilder.create().texOffs(150, 140)
                         .addBox(-13.0F, 0.0F, -1.0F, 13, 3, 2),
                 PartPose.offsetAndRotation(-36.0F, 11.0F, 48.0F, 0.0F, 0.2617994F, 0.0F));
 
         partdefinition.addOrReplaceChild("rtoe4",
-                CubeListBuilder.create().texOffs(150, 150).mirror()
+                CubeListBuilder.create().texOffs(150, 150)
                         .addBox(-13.0F, 0.0F, -1.0F, 13, 3, 2),
                 PartPose.offsetAndRotation(-36.0F, 6.0F, 48.0F, 0.0F, 0.2617994F, 0.0F));
 

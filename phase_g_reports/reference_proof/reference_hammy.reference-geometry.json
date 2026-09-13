@@ -1,0 +1,1575 @@
+{
+  "schema_version": 1,
+  "model_id": "reference_hammy",
+  "reference_source": "reference_1_7_10_source/sources/danger/orespawn/ModelHammy.java",
+  "reference": {
+    "status": "PARSED",
+    "class": "ModelHammy",
+    "texture_width": 128,
+    "texture_height": 256,
+    "parts": [
+      {
+        "name": "Handle1",
+        "tex_u": 0,
+        "tex_v": 0,
+        "boxes": [
+          {
+            "origin": [
+              -0.5,
+              -12.0,
+              -1.0
+            ],
+            "size": [
+              1,
+              36,
+              2
+            ],
+            "uv": [
+              0,
+              0
+            ],
+            "mirror": false,
+            "texture_size": [
+              128,
+              256
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          128,
+          256
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "Handle2",
+        "tex_u": 7,
+        "tex_v": 0,
+        "boxes": [
+          {
+            "origin": [
+              -0.5,
+              -12.0,
+              -1.0
+            ],
+            "size": [
+              1,
+              36,
+              2
+            ],
+            "uv": [
+              7,
+              0
+            ],
+            "mirror": false,
+            "texture_size": [
+              128,
+              256
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          1.047198,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          128,
+          256
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "Handle3",
+        "tex_u": 14,
+        "tex_v": 0,
+        "boxes": [
+          {
+            "origin": [
+              -0.5,
+              -12.0,
+              -1.0
+            ],
+            "size": [
+              1,
+              36,
+              2
+            ],
+            "uv": [
+              14,
+              0
+            ],
+            "mirror": false,
+            "texture_size": [
+              128,
+              256
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          -1.047198,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          128,
+          256
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "Head1",
+        "tex_u": 0,
+        "tex_v": 230,
+        "boxes": [
+          {
+            "origin": [
+              -20.0,
+              -22.0,
+              -7.0
+            ],
+            "size": [
+              40,
+              6,
+              14
+            ],
+            "uv": [
+              0,
+              230
+            ],
+            "mirror": false,
+            "texture_size": [
+              128,
+              256
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          128,
+          256
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "Head2",
+        "tex_u": 0,
+        "tex_v": 184,
+        "boxes": [
+          {
+            "origin": [
+              -20.0,
+              -26.0,
+              -3.0
+            ],
+            "size": [
+              40,
+              14,
+              6
+            ],
+            "uv": [
+              0,
+              184
+            ],
+            "mirror": false,
+            "texture_size": [
+              128,
+              256
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          128,
+          256
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "Head3",
+        "tex_u": 0,
+        "tex_v": 161,
+        "boxes": [
+          {
+            "origin": [
+              -20.0,
+              -16.5,
+              6.4
+            ],
+            "size": [
+              40,
+              6,
+              14
+            ],
+            "uv": [
+              0,
+              161
+            ],
+            "mirror": false,
+            "texture_size": [
+              128,
+              256
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "rotation": [
+          0.7853982,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          128,
+          256
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "Head4",
+        "tex_u": 0,
+        "tex_v": 207,
+        "boxes": [
+          {
+            "origin": [
+              -20.0,
+              -16.5,
+              -20.4
+            ],
+            "size": [
+              40,
+              6,
+              14
+            ],
+            "uv": [
+              0,
+              207
+            ],
+            "mirror": false,
+            "texture_size": [
+              128,
+              256
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "rotation": [
+          -0.7853982,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          128,
+          256
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "Band1",
+        "tex_u": 0,
+        "tex_v": 88,
+        "boxes": [
+          {
+            "origin": [
+              12.0,
+              -22.5,
+              -8.0
+            ],
+            "size": [
+              5,
+              7,
+              1
+            ],
+            "uv": [
+              0,
+              88
+            ],
+            "mirror": false,
+            "texture_size": [
+              128,
+              256
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          128,
+          256
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "Band2",
+        "tex_u": 0,
+        "tex_v": 128,
+        "boxes": [
+          {
+            "origin": [
+              12.0,
+              -22.5,
+              7.0
+            ],
+            "size": [
+              5,
+              7,
+              1
+            ],
+            "uv": [
+              0,
+              128
+            ],
+            "mirror": false,
+            "texture_size": [
+              128,
+              256
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          128,
+          256
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "Band3",
+        "tex_u": 0,
+        "tex_v": 98,
+        "boxes": [
+          {
+            "origin": [
+              12.0,
+              -17.0,
+              5.4
+            ],
+            "size": [
+              5,
+              7,
+              1
+            ],
+            "uv": [
+              0,
+              98
+            ],
+            "mirror": false,
+            "texture_size": [
+              128,
+              256
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "rotation": [
+          0.7853982,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          128,
+          256
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "Band4",
+        "tex_u": 0,
+        "tex_v": 118,
+        "boxes": [
+          {
+            "origin": [
+              12.0,
+              -16.9,
+              -6.4
+            ],
+            "size": [
+              5,
+              7,
+              1
+            ],
+            "uv": [
+              0,
+              118
+            ],
+            "mirror": false,
+            "texture_size": [
+              128,
+              256
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "rotation": [
+          -0.7853982,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          128,
+          256
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "Band5",
+        "tex_u": 0,
+        "tex_v": 108,
+        "boxes": [
+          {
+            "origin": [
+              12.0,
+              -12.0,
+              -3.5
+            ],
+            "size": [
+              5,
+              1,
+              7
+            ],
+            "uv": [
+              0,
+              108
+            ],
+            "mirror": false,
+            "texture_size": [
+              128,
+              256
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          128,
+          256
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "Band6",
+        "tex_u": 0,
+        "tex_v": 79,
+        "boxes": [
+          {
+            "origin": [
+              12.0,
+              -16.5,
+              -21.4
+            ],
+            "size": [
+              5,
+              6,
+              1
+            ],
+            "uv": [
+              0,
+              79
+            ],
+            "mirror": false,
+            "texture_size": [
+              128,
+              256
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "rotation": [
+          -0.7853982,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          128,
+          256
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "Band7",
+        "tex_u": 0,
+        "tex_v": 138,
+        "boxes": [
+          {
+            "origin": [
+              12.0,
+              -17.0,
+              20.4
+            ],
+            "size": [
+              5,
+              7,
+              1
+            ],
+            "uv": [
+              0,
+              138
+            ],
+            "mirror": false,
+            "texture_size": [
+              128,
+              256
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "rotation": [
+          0.7853982,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          128,
+          256
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "Band8",
+        "tex_u": 0,
+        "tex_v": 148,
+        "boxes": [
+          {
+            "origin": [
+              12.0,
+              -27.0,
+              -3.5
+            ],
+            "size": [
+              5,
+              1,
+              7
+            ],
+            "uv": [
+              0,
+              148
+            ],
+            "mirror": false,
+            "texture_size": [
+              128,
+              256
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          128,
+          256
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "Point1",
+        "tex_u": 28,
+        "tex_v": 130,
+        "boxes": [
+          {
+            "origin": [
+              -2.5,
+              -29.5,
+              -0.5
+            ],
+            "size": [
+              5,
+              5,
+              1
+            ],
+            "uv": [
+              28,
+              130
+            ],
+            "mirror": false,
+            "texture_size": [
+              128,
+              256
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.7853982
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          128,
+          256
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "Spike1",
+        "tex_u": 67,
+        "tex_v": 0,
+        "boxes": [
+          {
+            "origin": [
+              14.0,
+              -20.0,
+              -10.0
+            ],
+            "size": [
+              1,
+              1,
+              20
+            ],
+            "uv": [
+              67,
+              0
+            ],
+            "mirror": false,
+            "texture_size": [
+              128,
+              256
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          128,
+          256
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "Spike2",
+        "tex_u": 49,
+        "tex_v": 0,
+        "boxes": [
+          {
+            "origin": [
+              14.0,
+              -29.0,
+              0.0
+            ],
+            "size": [
+              1,
+              20,
+              1
+            ],
+            "uv": [
+              49,
+              0
+            ],
+            "mirror": false,
+            "texture_size": [
+              128,
+              256
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          128,
+          256
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "Spike3",
+        "tex_u": 55,
+        "tex_v": 0,
+        "boxes": [
+          {
+            "origin": [
+              14.0,
+              -23.5,
+              13.0
+            ],
+            "size": [
+              1,
+              20,
+              1
+            ],
+            "uv": [
+              55,
+              0
+            ],
+            "mirror": false,
+            "texture_size": [
+              128,
+              256
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "rotation": [
+          0.7853982,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          128,
+          256
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "Spike4",
+        "tex_u": 61,
+        "tex_v": 0,
+        "boxes": [
+          {
+            "origin": [
+              -15.0,
+              -23.5,
+              -14.0
+            ],
+            "size": [
+              1,
+              20,
+              1
+            ],
+            "uv": [
+              61,
+              0
+            ],
+            "mirror": false,
+            "texture_size": [
+              128,
+              256
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "rotation": [
+          -0.7853982,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          128,
+          256
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "Band1b",
+        "tex_u": 0,
+        "tex_v": 88,
+        "boxes": [
+          {
+            "origin": [
+              -17.0,
+              -22.5,
+              -8.0
+            ],
+            "size": [
+              5,
+              7,
+              1
+            ],
+            "uv": [
+              0,
+              88
+            ],
+            "mirror": false,
+            "texture_size": [
+              128,
+              256
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          128,
+          256
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "Band2b",
+        "tex_u": 0,
+        "tex_v": 128,
+        "boxes": [
+          {
+            "origin": [
+              -17.0,
+              -22.5,
+              7.0
+            ],
+            "size": [
+              5,
+              7,
+              1
+            ],
+            "uv": [
+              0,
+              128
+            ],
+            "mirror": false,
+            "texture_size": [
+              128,
+              256
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          128,
+          256
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "Band3b",
+        "tex_u": 0,
+        "tex_v": 98,
+        "boxes": [
+          {
+            "origin": [
+              -17.0,
+              -17.0,
+              5.4
+            ],
+            "size": [
+              5,
+              7,
+              1
+            ],
+            "uv": [
+              0,
+              98
+            ],
+            "mirror": false,
+            "texture_size": [
+              128,
+              256
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "rotation": [
+          0.7853982,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          128,
+          256
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "Band4b",
+        "tex_u": 0,
+        "tex_v": 118,
+        "boxes": [
+          {
+            "origin": [
+              -17.0,
+              -16.9,
+              -6.4
+            ],
+            "size": [
+              5,
+              7,
+              1
+            ],
+            "uv": [
+              0,
+              118
+            ],
+            "mirror": false,
+            "texture_size": [
+              128,
+              256
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "rotation": [
+          -0.7853982,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          128,
+          256
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "Band5b",
+        "tex_u": 0,
+        "tex_v": 108,
+        "boxes": [
+          {
+            "origin": [
+              -17.0,
+              -12.0,
+              -3.5
+            ],
+            "size": [
+              5,
+              1,
+              7
+            ],
+            "uv": [
+              0,
+              108
+            ],
+            "mirror": false,
+            "texture_size": [
+              128,
+              256
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          128,
+          256
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "Band6b",
+        "tex_u": 0,
+        "tex_v": 79,
+        "boxes": [
+          {
+            "origin": [
+              -17.0,
+              -16.5,
+              -21.4
+            ],
+            "size": [
+              5,
+              6,
+              1
+            ],
+            "uv": [
+              0,
+              79
+            ],
+            "mirror": false,
+            "texture_size": [
+              128,
+              256
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "rotation": [
+          -0.7853982,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          128,
+          256
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "Band7b",
+        "tex_u": 0,
+        "tex_v": 138,
+        "boxes": [
+          {
+            "origin": [
+              -17.0,
+              -17.0,
+              20.4
+            ],
+            "size": [
+              5,
+              7,
+              1
+            ],
+            "uv": [
+              0,
+              138
+            ],
+            "mirror": false,
+            "texture_size": [
+              128,
+              256
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "rotation": [
+          0.7853982,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          128,
+          256
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "Band8b",
+        "tex_u": 0,
+        "tex_v": 148,
+        "boxes": [
+          {
+            "origin": [
+              -17.0,
+              -27.0,
+              -3.5
+            ],
+            "size": [
+              5,
+              1,
+              7
+            ],
+            "uv": [
+              0,
+              148
+            ],
+            "mirror": false,
+            "texture_size": [
+              128,
+              256
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          128,
+          256
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "Point1b",
+        "tex_u": 28,
+        "tex_v": 130,
+        "boxes": [
+          {
+            "origin": [
+              -29.5,
+              -2.5,
+              -0.5
+            ],
+            "size": [
+              5,
+              5,
+              1
+            ],
+            "uv": [
+              28,
+              130
+            ],
+            "mirror": false,
+            "texture_size": [
+              128,
+              256
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.7853982
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          128,
+          256
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "Spike2b",
+        "tex_u": 49,
+        "tex_v": 0,
+        "boxes": [
+          {
+            "origin": [
+              -15.0,
+              -29.0,
+              0.0
+            ],
+            "size": [
+              1,
+              20,
+              1
+            ],
+            "uv": [
+              49,
+              0
+            ],
+            "mirror": false,
+            "texture_size": [
+              128,
+              256
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          128,
+          256
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "Spike1b",
+        "tex_u": 67,
+        "tex_v": 0,
+        "boxes": [
+          {
+            "origin": [
+              -15.0,
+              -20.0,
+              -10.0
+            ],
+            "size": [
+              1,
+              1,
+              20
+            ],
+            "uv": [
+              67,
+              0
+            ],
+            "mirror": false,
+            "texture_size": [
+              128,
+              256
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          128,
+          256
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "Spike3b",
+        "tex_u": 55,
+        "tex_v": 0,
+        "boxes": [
+          {
+            "origin": [
+              -15.0,
+              -23.5,
+              13.0
+            ],
+            "size": [
+              1,
+              20,
+              1
+            ],
+            "uv": [
+              55,
+              0
+            ],
+            "mirror": false,
+            "texture_size": [
+              128,
+              256
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "rotation": [
+          0.7853982,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          128,
+          256
+        ],
+        "children": [],
+        "parent": null
+      },
+      {
+        "name": "Spike4b",
+        "tex_u": 61,
+        "tex_v": 0,
+        "boxes": [
+          {
+            "origin": [
+              14.0,
+              -23.5,
+              -14.0
+            ],
+            "size": [
+              1,
+              20,
+              1
+            ],
+            "uv": [
+              61,
+              0
+            ],
+            "mirror": false,
+            "texture_size": [
+              128,
+              256
+            ],
+            "delta": 0.0
+          }
+        ],
+        "rotation_point": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "rotation": [
+          -0.7853982,
+          0.0,
+          0.0
+        ],
+        "mirror": true,
+        "show": true,
+        "texture_size": [
+          128,
+          256
+        ],
+        "children": [],
+        "parent": null
+      }
+    ]
+  },
+  "ground_truth": "1.7.10 decompiled ModelBase constructor, parsed; never the port",
+  "comparison": {
+    "status": "PASS",
+    "reference_parts_with_boxes": 33,
+    "port_parts_with_boxes": 33,
+    "matched_parts": 33,
+    "categories": {},
+    "differences": [],
+    "by_category": {}
+  },
+  "status": "PASS"
+}

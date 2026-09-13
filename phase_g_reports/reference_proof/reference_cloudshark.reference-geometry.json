@@ -388,38 +388,13 @@
   },
   "ground_truth": "1.7.10 decompiled ModelBase constructor, parsed; never the port",
   "comparison": {
-    "status": "DIVERGES_TEXTURE_MAPPING",
+    "status": "PASS",
     "reference_parts_with_boxes": 8,
     "port_parts_with_boxes": 8,
     "matched_parts": 8,
-    "categories": {
-      "MIRROR": 8
-    },
-    "differences": [
-      "body -> body: reference box mirror=False (flag at addBox time), port True",
-      "head -> head: reference box mirror=False (flag at addBox time), port True",
-      "jaw -> jaw: reference box mirror=False (flag at addBox time), port True",
-      "topfin -> topfin: reference box mirror=False (flag at addBox time), port True",
-      "bbody -> bbody: reference box mirror=False (flag at addBox time), port True",
-      "fins -> fins: reference box mirror=False (flag at addBox time), port True",
-      "leftfin -> leftfin: reference box mirror=False (flag at addBox time), port True",
-      "rightfin -> rightfin: reference box mirror=False (flag at addBox time), port True"
-    ],
-    "by_category": {
-      "MIRROR": [
-        "body -> body: reference box mirror=False (flag at addBox time), port True",
-        "head -> head: reference box mirror=False (flag at addBox time), port True",
-        "jaw -> jaw: reference box mirror=False (flag at addBox time), port True",
-        "topfin -> topfin: reference box mirror=False (flag at addBox time), port True",
-        "bbody -> bbody: reference box mirror=False (flag at addBox time), port True",
-        "fins -> fins: reference box mirror=False (flag at addBox time), port True",
-        "leftfin -> leftfin: reference box mirror=False (flag at addBox time), port True",
-        "rightfin -> rightfin: reference box mirror=False (flag at addBox time), port True"
-      ]
-    }
+    "categories": {},
+    "differences": [],
+    "by_category": {}
   },
-  "status": "PASS_WITH_PINNED_DIVERGENCES",
-  "pinned_divergences": {
-    "MIRROR": 8
-  }
+  "status": "PASS"
 }

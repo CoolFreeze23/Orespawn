@@ -952,62 +952,13 @@
   },
   "ground_truth": "1.7.10 decompiled ModelBase constructor, parsed; never the port",
   "comparison": {
-    "status": "DIVERGES_TEXTURE_MAPPING",
+    "status": "PASS",
     "reference_parts_with_boxes": 20,
     "port_parts_with_boxes": 20,
     "matched_parts": 20,
-    "categories": {
-      "MIRROR": 20
-    },
-    "differences": [
-      "thorax -> thorax: reference box mirror=False (flag at addBox time), port True",
-      "thorax1 -> thorax1: reference box mirror=False (flag at addBox time), port True",
-      "thorax3 -> thorax3: reference box mirror=False (flag at addBox time), port True",
-      "abdomen -> abdomen: reference box mirror=False (flag at addBox time), port True",
-      "abdomen1 -> abdomen1: reference box mirror=False (flag at addBox time), port True",
-      "head -> head: reference box mirror=False (flag at addBox time), port True",
-      "jawsr -> jawsr: reference box mirror=False (flag at addBox time), port True",
-      "jawsl -> jawsl: reference box mirror=False (flag at addBox time), port True",
-      "llegtop1 -> llegtop1: reference box mirror=False (flag at addBox time), port True",
-      "llegbot1 -> llegbot1: reference box mirror=False (flag at addBox time), port True",
-      "llegtop2 -> llegtop2: reference box mirror=False (flag at addBox time), port True",
-      "llegbot2 -> llegbot2: reference box mirror=False (flag at addBox time), port True",
-      "llegtop3 -> llegtop3: reference box mirror=False (flag at addBox time), port True",
-      "llegbot3 -> llegbot3: reference box mirror=False (flag at addBox time), port True",
-      "rlegtop1 -> rlegtop1: reference box mirror=False (flag at addBox time), port True",
-      "rlegbot1 -> rlegbot1: reference box mirror=False (flag at addBox time), port True",
-      "rlegtop2 -> rlegtop2: reference box mirror=False (flag at addBox time), port True",
-      "rlegbot2 -> rlegbot2: reference box mirror=False (flag at addBox time), port True",
-      "rlegtop3 -> rlegtop3: reference box mirror=False (flag at addBox time), port True",
-      "rlegbot3 -> rlegbot3: reference box mirror=False (flag at addBox time), port True"
-    ],
-    "by_category": {
-      "MIRROR": [
-        "thorax -> thorax: reference box mirror=False (flag at addBox time), port True",
-        "thorax1 -> thorax1: reference box mirror=False (flag at addBox time), port True",
-        "thorax3 -> thorax3: reference box mirror=False (flag at addBox time), port True",
-        "abdomen -> abdomen: reference box mirror=False (flag at addBox time), port True",
-        "abdomen1 -> abdomen1: reference box mirror=False (flag at addBox time), port True",
-        "head -> head: reference box mirror=False (flag at addBox time), port True",
-        "jawsr -> jawsr: reference box mirror=False (flag at addBox time), port True",
-        "jawsl -> jawsl: reference box mirror=False (flag at addBox time), port True",
-        "llegtop1 -> llegtop1: reference box mirror=False (flag at addBox time), port True",
-        "llegbot1 -> llegbot1: reference box mirror=False (flag at addBox time), port True",
-        "llegtop2 -> llegtop2: reference box mirror=False (flag at addBox time), port True",
-        "llegbot2 -> llegbot2: reference box mirror=False (flag at addBox time), port True",
-        "llegtop3 -> llegtop3: reference box mirror=False (flag at addBox time), port True",
-        "llegbot3 -> llegbot3: reference box mirror=False (flag at addBox time), port True",
-        "rlegtop1 -> rlegtop1: reference box mirror=False (flag at addBox time), port True",
-        "rlegbot1 -> rlegbot1: reference box mirror=False (flag at addBox time), port True",
-        "rlegtop2 -> rlegtop2: reference box mirror=False (flag at addBox time), port True",
-        "rlegbot2 -> rlegbot2: reference box mirror=False (flag at addBox time), port True",
-        "rlegtop3 -> rlegtop3: reference box mirror=False (flag at addBox time), port True",
-        "rlegbot3 -> rlegbot3: reference box mirror=False (flag at addBox time), port True"
-      ]
-    }
+    "categories": {},
+    "differences": [],
+    "by_category": {}
   },
-  "status": "PASS_WITH_PINNED_DIVERGENCES",
-  "pinned_divergences": {
-    "MIRROR": 20
-  }
+  "status": "PASS"
 }
