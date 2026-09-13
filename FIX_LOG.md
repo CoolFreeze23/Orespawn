@@ -6640,3 +6640,242 @@ Import Animations instruction with §4.3 naming the file, and the rule that a re
 clip (only the reference file under its own name refused) — one tooling commit → the folder regenerated, every check
 PASS → stop and report with the counts, the number of species carrying reference clips over 90, and the number held
 under item 10. Nothing else runs.
+
+## THE FOLDER'S GAPS (2026-09-14) — the GiantRobot pair's and the Crab's reference entries with the render_instances form (a minimal explicit-transform extension of the Slice 4c form), geometry-only entries for the Boyfriend and Girlfriend (the leg reporting them unpaired), the trigger inventory's three readers extended (the ATTACKING accessor, the consumer-set flag traced into the goal and the parent class's sites, vanilla MeleeAttackGoal with the entity's own state name); 116 of 116 folders, no ARTIST_TIER_UNPACKAGED line, the WISHLIST_UNACCEPTED count 0 (owner 2026-09-14, item 30 (2)-(5); tooling, no refuter)
+
+RULING. Owner 2026-09-14 (addendum item 30 (2)-(5)): (2) TEST-009 (a) — the GiantRobot pair's reference entries gain the
+render_instances form the fan rigs use; the pair packages from the converter's output with its instance bones, which are
+the FINAL bone set; the Tier-1 slice lands the same rig. (3) ANIM-025 — the Crab's reference entry gains the same form now,
+so its folder carries the twenty-four leg bones with the sheet corrected; the port's renderToBuffer fix lands with the Crab's
+slice (one refuter, exempt from the freeze as a rig matter); the register line stays. (4) TEST-010 (a) — geometry-only
+entries for the Boyfriend and Girlfriend; they package now and land on the hook in a Tier-2 slice as the Cannon Fodder did.
+(5) TEST-011 — the readers extended (the ATTACKING accessor, the consumer-set flag traced into the goal, vanilla
+MeleeAttackGoal with the entity's state name); the affected sheets regenerate with their rows offered and the wishlist
+warnings cleared. The cost rules (2026-09-12, item 25 (5)): tooling, no refuter — the tool's own tests and one dry run are
+the check. One implementation lane (r19); the orchestrator regenerates the folder, gates and commits items 2 to 6 as one
+commit (item 6, the goal dictionary, is another lane's draft).
+
+WHAT LANDED:
+- ITEM 2, THE GIANTROBOT (`tools/reference_model_proofs.json` `reference_giantrobot`; `tools/layer_definition_to_geo.py`;
+  `src/g1tool/.../G1ModelProbe.java`): the entry declares `render_instances` for the eleven shared parts the port's
+  `renderLeg` / `renderArm` draw twice (thigh, thigh2, thigh3, shin, foot1, foot2, foot3, arm1, arm2, arm3, knuckles —
+  `ModelGiantRobot.java:241-320`, orig :150-279). THE FAN FORM CANNOT EXPRESS THE SECOND TRANSFORM: the two draws differ by
+  a translation (the leg pair 13 units either side of the hip, the arm pair 26; the walk then gives each side its own
+  angles), not by a rotation step about one axis, and a turn of pi about Y would mirror the parts' orientation. The form
+  is therefore extended MINIMALLY with a third `step_scope`, `explicit`: `instances` lists exactly `count` draws in the
+  classic draw order, each with the draw's bind `pivot` (the classic ModelPart rotation point) and an optional `rotation`
+  (radians; a `null` axis keeps the part's own initial rotation) and a `note`; the converter (`expand_explicit_instances`)
+  emits one TOP-LEVEL clone per draw, `<part>__i<k>`, its pivot the declared point, its bind rotation the declared one, the
+  part's cubes local to that pivot exactly as `ModelPart.render` draws them — no group bone (there is no pose-stack
+  transform for a hook to spin; the hook animates each clone directly when the rig lands). The declared bind transforms
+  are the probe's constructor-pose draws (`resetBakedTree`, no `setupAnim`): the legs at (0, -60, +13) / (0, -60, -13),
+  the shins and feet at (0, -20, ±13), the upper arms at (±26, -120, 0), the forearms and knuckles at (±26, -79, 0) pitched
+  -0.19634954 rad (the forearm's constant lead, present at bind); in-game `setupAnim`'s constant quarter turn of the hip
+  (:208) carries the legs to x ±13. Draw 0 is the sign +1 pass (x / z +: the model's LEFT side under vanilla's left_arm-at-+x
+  convention; the port's renderToBuffer comment words that pass "right arm" from the viewer's side — the seeds say so),
+  draw 1 the sign -1 pass. The dump's declaration and the converter's report carry the form (`render_instances.parts.<part>`:
+  count, step_scope explicit, the resolved instances; `.bones.<clone>`: role clone, draw_index, `static_pivot_classic`,
+  `static_rotation_radians`, group_bone null); `semantics_explicit` is written only for a rig with an explicit part, so the
+  fan rigs' reports are untouched. The converted rig: 29 bones / 29 cubes (the 7 unshared parts + 22 clones), every unit in
+  the observed draw order. SELF-CHECK: the 22 declared bind transforms against the probe's captured `draw_pose` of every
+  draw (T(pivot/16) · R_zyx) — worst deviation 3.0e-8.
+- THE PROBE (`renderInstanceContext`): `step_scope explicit` accepted (the `instances` list held to `count`; no
+  `group_chain`); `pinned_draw_count` (item 3, below). Nothing else under `src/` moved.
+- THE FAN RIGS' OUTPUT: the converter over `build/s4/vanilla` and `build/t2/vanilla` into the lane's scratch — every geo
+  byte-identical to the shipped one (s4: 13 of 13; t2: 24 of 24 shipped, the five t2 entries without a shipped geo of their
+  own as before) and every generated file byte-identical to the orchestrator's last outputs (`build/s4/generated` 56 of
+  56, `build/t2/generated` 116 of 116).
+- ITEM 3, THE CRAB (`reference_crab`): `render_instances` for leg1, leg2, leg3 — eight explicit instances each, read from
+  the eight unrolled blocks of 1.7.10's `render` (orig `ModelCrab.java:195-289`): the part's rotation point (36, 3, z) for
+  z = 0 / 10 / 20 / 30 with yaw -pi/2 + a, -pi/2 - a, -pi/2 + a, -pi/2 - a, then (-36, 3, z) with the yaw negated (pi/2 - a,
+  pi/2 + a, ...), a = cos(age 1.7) pi 0.15 swing = 0 at bind; the pitch each segment's own (`rotation: [null, ∓pi/2,
+  null]`). NOT a rotational step about Y at the body's centre: a turn of pi about Y maps z +10 to z -10 where 1.7.10 drew both
+  sides at z +10 — a translation series with a mirrored yaw, the explicit form. The rig: 46 bones / 46 cubes (22 + the
+  twenty-four leg bones `leg1__i0..7`, `leg2__i0..7`, `leg3__i0..7`: draws 0-3 the left side front to back, 4-7 the right).
+  THE PORT DRAWS EACH LEG PART ONCE TODAY (ANIM-025): the probe's Slice 4c law fails a declared part drawn any other number
+  of times, so the declaration carries `pinned_draw_count: 1` (with a `pinned_draw_note`) and the probe holds the port to
+  the PIN instead of the declaration — an undeclared shortfall still fails; the moment the Crab's slice lands the draw fix
+  the observed count returns to 8, the pin fails the run by name and is removed with the fix (the reference leg's
+  pinned_divergences rule). The interim dump attributes the single draw per part as `<part>__i0` at the CONSTRUCTOR pose
+  (yaw -1.500983 where the declared draw 0 holds -pi/2: 0.0698 in the rotation entries — the same ANIM-025 divergence,
+  visible in the dump); the converter orders the 21 unobserved clones by emission (its standing tie-break).
+- ITEM 4, THE BOYFRIEND AND GIRLFRIEND (`reference_boyfriend`, `reference_girlfriend`; `tools/reference_geometry_leg.py`):
+  two entries (class `ModelBoyfriend` / `ModelGirlfriend`, the renderers' skin 0 textures `boyfriend0.png` /
+  `girlfriend0.png` — every skin 64x32, the LayerDefinition's sheet; `animation_kind` static, `channels: []`,
+  `geometry_only: true`, NO `reference_source`, a `rig_note`). The probe dumps them geometry-only (the compiled tree, no
+  samples); the converter produces `reference_boyfriend.geo.json` / `reference_girlfriend.geo.json` — the seven HumanoidModel
+  bones (head, hat, body, right_arm, left_arm, right_leg, left_leg), every unit unobserved (no capture), ordered by emission.
+  THE LEG: an entry without `reference_source` was SKIPPED SILENTLY (`continue`); it now prints `REFERENCE GEOMETRY
+  UNPAIRED: <id>: no reference_source (geometry-only entry, no 1.7.10 model to compare against; not compared)` and a closing
+  `REFERENCE GEOMETRY: 109 entries compared, 2 unpaired ...` line, writes no report file for it (the checked-in proof set
+  stays the paired entries' alone) and the survey counts gain `UNPAIRED`. The manifest has 111 entries; the standing chain
+  stays green: 109 PASS (the chainsaw with its pinned divergences), 2 unpaired, exit 0.
+- THE LEG'S RESULT over the 111 (headless, the lane's own javac classes, no gradle): `REFERENCE GEOMETRY PROOF: 109 checked-in
+  reports verified` byte-for-byte — the render_instances declarations change NOTHING in the GiantRobot's and the Crab's
+  reports (`compare` reads the definition tree and the sheet size only); no proof rewrite is needed.
+- ITEM 5, THE READERS (`tools/artist_package.py` — `flag_write_sites` (the generalised `attacking_sites`),
+  `ATTACKING_FLAG_NAMES`, `class_extends`, `entity_parent_chain`, `goal_class_chain`, `inner_class_body`,
+  `goal_passes_consumer`, `consumer_sites`, `held_state_flag`, `VANILLA_MELEE_GOAL` / `VANILLA_MELEE_STRIKE`;
+  `build_trigger_inventory`, `combat_sites`, `melee_transport_note`, `contract_drives`, `clip_rows`, the SPEC's §6):
+  (a) a synched accessor named `ATTACKING` is the attacking flag (the Lizard, `Lizard.java:57-58`) — `flag_name` travels
+  with the inventory and the sheet names it. (b) a registration that hands the setter to a goal (`this::setAttacking` or a
+  lambda; an inner goal class whose body hands it to its parent's constructor, the Water Dragon's `WaterCanonAttackGoal`)
+  is traced INTO the goal class and its parents under `ai/`: every `<IntConsumer>.accept(N)` site becomes the entity's site,
+  labelled `ai/<Goal>.java:<line>` with `[via <Goal> (registered at line N)]`; the sheet lists the trace. A parent entity
+  class under `entity/` contributes its synched flags (marked "of <Parent>.java, the parent class") and its
+  `setAttacking(N)` sites (labelled), and its file joins the strike-site scan (the Alien Boss's `Alien.java`, the Baby
+  Dragon's `Dragon.java`; Jeffery gains the GiantRobot's). (c) a vanilla `new MeleeAttackGoal(...)` registration with no
+  `doHurtTarget` override in the entity or its parents is a strike site — `combat.vanilla_melee`, beside the melee list so the
+  standing pins stay (the strike VERIFIED from the NeoForge 21.1.223 bytecode: `checkAndPerformAttack` offsets 2-27 —
+  canPerformAttack (isWithinMeleeAttackRange, hasLineOfSight, the cooldown), resetAttackCooldown (bipush 20), swing,
+  doHurtTarget); the `attack` row is offered from it and its signal names the registration. The entity's own state name is
+  read as the held aggro state when — the recognition, mechanical like every verdict — the entity declares no attacking
+  flag, registers vanilla MeleeAttackGoal, and one synched Boolean / Byte / Integer flag `DATA_<NAME>` has a `set<Name>`
+  setter raised INSIDE the target-selection code (a site within `registerGoals`' span — the anonymous target goal's body —
+  or a `setTarget` override) and cleared on target loss (`classify_attacking`'s STATE pattern): `DATA_SCREAMING` for the
+  Ender Knight (raised at :119 in the target goal's findTarget, cleared at :124 / :283; the hurt() raise at :342 keeps the
+  standing caveat) and the Ender Reaper (:116; :121 / :282). A direct mob-attack hurt on a victim held in a local or a
+  parameter (`prey.hurt(this.damageSources().mobAttack(this), 6.0f)`, `Peacock.java:146`) is a strike site (`kind: direct`;
+  a `this.<field>` receiver — the Queen's health-tracked part at `TheQueen.java:600` — is not a victim; inside `doHurtTarget`
+  or an area helper the call IS that strike, already counted); the goal-file scan follows the registered goal's parent
+  chain, so the Luna Moth's inherited nip (`ButterflyIslandsHuntGoal.java:83` under `LunaMothFlightGoal`) is found.
+  BEFORE / AFTER (the lane's probe over the inventory, `inv_before.json` / `inv_after.json` in its scratch): NONE → STATE with
+  the pair and `attack` offered for the Cave Fisher, Dungeon Beast, Emperor Scorpion, T-Rex, Nastysaurus, Pointysaurus, Sea
+  Viper, Scorpion, Spit Bug, Trooper Bug (and the CaterKiller, Hercules Beetle, Alosaurus, Cryolophosaurus of the same
+  goal family); UNCLASSIFIED → STATE for the Water Dragon (its inner goal's :572 / :622 beside the traced sites; the
+  ATTACKING_UNCLASSIFIED line gone); no flag → STATE from the parent for the Alien Boss, Baby Dragon and Jeffery (the Baby
+  Dragon's and Jeffery's `attack` from the parent's sites too); ATTACKING → STATE for the Lizard; DATA_SCREAMING → STATE with
+  the vanilla strike for the Ender Knight and Ender Reaper; `attack` offered for the Peacock (the peck), the Luna Moth (the
+  nip), the Cannon Fodder and the Chipmunk (`EntityCannonFodder.java:290`, a direct hurt on the Chipmunk's own row of the
+  species table — the chipmunk seed's "never strikes" was a seed-lane misreading, corrected). The Kraken (STATE?, its clear
+  unconditional at :450) is outside the ruling and unchanged.
+- THE TESTS (`tools/test_artist_package.py`, 46 = 40 + 6): a second fixture (`build_reader_fixture`: the standing fixture
+  plus Lizardish / LizardishJr / Bugger / Screamer / Pecker / Mothling and the goals FixtureBugGoal → FixtureBugChildGoal,
+  FixtureHuntGoal → FixtureChildHuntGoal) so the 40 standing pins are untouched; `ReaderCase` pins (a) the ATTACKING accessor
+  (flag name, STATE, the sites' guards, the rows), (b) the parent class's flags and sites (labelled, STATE, the strike from
+  the parent) and the consumer trace through the child goal into its parent (the chain, the `via` rows, the four writes, STATE,
+  the goal's strike), (c) DATA_SCREAMING recognised (the setter, the recognition text, the four writes incl. hurt()'s, the
+  vanilla strike's registration and bytecode line, the rows' signals), the direct hurt and the parent goal's strike, and the
+  standing fixture reading as before (one melee site, one vanilla_melee beside it, no parents, no traces).
+- THE SEEDS (`tools/artist_specs/`): `giant_robot` / `jeffery` — labels for every one of the 29 bones (the 22 instance bones
+  named by side, draw and bind position), the gait and arm groups on the instance bones, `locked_bones_provisional` 25
+  entries (head, shoulders, hip + the 22 clones with the design's sizes and fractions, every one in the geo),
+  `locked_bones_note` rewritten (the left / right convention stated, the port comment's opposite wording noted), the
+  artist_scope / character_sheet / size_notes / behaviour sentences that said "no geo is packaged" corrected to the fact;
+  `crab` — labels for the 24 leg bones (side, leg 1-4 front to back, segment, draw, yaw), the gait group the 24, its
+  plain / math / amplitude the eight legs, the character_sheet and behaviour saying twenty-four leg bones from three parts and
+  that the game draws three segments today until the slice's fix (ANIM-025 kept), the wishlist's first line to the ruling;
+  `boyfriend` / `girlfriend` — labels already the seven HumanoidModel parts (they match the geo), the artist_scope sentence
+  "no rig to package" corrected; the ten seeds whose notes said the row was NOT offered (alien_boss, baby_dragon,
+  emperor_scorpion, trex, water_dragon, cave_fisher, dungeon_beast, ender_knight, ender_reaper, luna_moth) reworded to the
+  fact with the signal named, the five boss `calm_idle` verdicts "covered by idle" → "author" now that the pair is offered,
+  the Luna Moth given an explicit `attack` entry (verdict `leave`: the owner's decision on the nip stands), the chipmunk's
+  attack note corrected to the strike the code has.
+- THE SHEETS THAT CHANGED (the dry run against the shipped `artist_handoff/`, the version line ignored): 83 unchanged, 29
+  changed, 4 new (giant_robot, jeffery, boyfriend, girlfriend). Changed: the nineteen of the readers (alien_boss,
+  baby_dragon, cave_fisher, dungeon_beast, emperor_scorpion, ender_knight, ender_reaper, lizard, luna_moth, nastysaurus,
+  peacock, pointysaurus, scorpion, sea_viper, spit_bug, trex, trooper_bug, water_dragon, crab), the Crab's rig, and ten more
+  the same readers reach: alosaurus, cryolophosaurus (the Dinosaur goal's traced writes and its parent's strike), cater_killer,
+  hercules_beetle (the Bug goal: NONE → STATE, the pair offered), cannon_fodder, chipmunk (the direct hurt at
+  EntityCannonFodder.java:290), godzilla (the lightning attack's direct hurt at :562), irukandji (the empty-hand retaliation's
+  hurt at :118, inside hurt()), mothra, ruby_bird (the parent's synched flag listed).
+
+THE DRY RUN (`package --out <scratch>/pkg --reference-geo-dir <scratch>/ref1/generated`; exit 0): 116 folders, 1115 files
+(1109 in the entity folders + the 6 package-wide files); `check` on all 116: PASS, 0 REJECT. Registries / rigs per tier:
+Tier 1 28 / 21 (27 / 20 not yet in-game; the Queen in-game), Tier 2 75 / 70 (45 / 45 not yet in-game), Tier 3 13 / 12; rig
+sources 72 reference-leg + 44 shipped; ARTIST_TIER_UNPACKAGED 0 (the README closes "every artist-tier species (28 Tier 1,
+75 Tier 2) and the 13 Tier-3 props"); WISHLIST_UNACCEPTED 0 (was 12); ATTACKING_UNCLASSIFIED 3 (robot_3, robot_5 MIXED,
+kraken STATE? — the water_dragon line cleared); GOAL_UNCLASSIFIED 85 (was 73: the four new folders' goals, item 6's
+dictionary); BONE_UNLABELLED 29 (unchanged); LOCKED_BONES_KEYED 1 (the Queen); SEED_MISSING 0. The GiantRobot sheet: 29
+bones, §7 the 25 provisional locks every one in the geo; the Crab: 46 bones, the gait group the 24; the Boyfriend /
+Girlfriend: 7 bones, the not-in-game statement three times.
+
+DEVIATIONS:
+- The manifest was edited by a scratch script that round-trips the file byte-identically but for the added entries (verified
+  before writing), not by hand: 656 lines of declarations. The seeds were edited by exact-match replacements.
+- The probe changed (`src/g1tool/`, two changes): the explicit scope, and `pinned_draw_count` — a HARNESS-SEMANTICS change
+  presented here before the gate: the count law is unchanged for every existing declaration (none carries a pin); with a pin
+  the probe demands exactly the pinned count and names the pin when it fails. Before: the Crab's entry with the eight-draw
+  declaration fails the dump ("leg1 drawn 1 times; expected 8"); after: the dump passes with the pin and records the
+  shortfall in its declaration; the Crab's slice removes the pin with the draw fix.
+- `tools/g1_render_parity.py` is NOT extended: `candidate_bone_names` would refuse an explicit-form clone (`group_bone` null)
+  and the composition leg has no explicit case — the reference chain never runs it, and the Tier-1 slice that puts the
+  GiantRobot on the hook extends it then.
+- The readers are applied to every species, not the named ones alone: ten more sheets changed (above), each a truer
+  inventory. The Kraken stays unoffered (its idiom — an unconditional clear inside a helper — is not one of the three).
+- Five boss seeds' `calm_idle` verdicts flipped to `author` (the pair is offered now); the Luna Moth gained an `attack` entry
+  (`leave`); the chipmunk's `attack` verdict flipped to `author` with the strike named — three seed edits beyond rewording.
+- The GiantRobot's `__i0` / `__i1` labelled left / right by the model's own convention (+x = left, vanilla's left_arm); the
+  port's renderToBuffer comment calls the +1 pass the right arm — for the owner, stated in the seeds' lock note.
+- A direct hurt inside `hurt()` (the Irukandji's retaliation on an empty-handed puncher) counts as a strike site: the code
+  hurts the victim, so LivingDamageEvent.Post fires on it as on any strike; a caveat, not a filter.
+
+NOT DONE / OPEN:
+- Gradle never ran (the lane's constraint): the orchestrator's `referenceDumpCompiledModels` dumps the four entries with
+  the new probe (the two new ones fresh), `referenceConvertModels` produces the four geos, the folder regenerates; the
+  reference proof needs NO rewrite (verified byte-for-byte here).
+- The goal dictionary (item 6) is the other lane's; the 85 GOAL_UNCLASSIFIED lines are its.
+- The Crab's draw fix (ANIM-025) lands with the Crab's slice, which removes the three `pinned_draw_count` pins.
+- The Tier-1 slice extends the parity tool's composition leg for the explicit form and puts the GiantRobot on the hook.
+
+THE CHECKS (the tool's own tests and one dry run): `python tools/test_artist_package.py` 46 tests OK; javac of main and
+g1tool (the r16 recipe, no gradle) rc 0; the probe over the 111-entry manifest 111 dumps rc 0; the converter
+`--continue-on-refusal` 109 of 111 converted (purplepower and rotator refused as before, their s4 geos shipped); the leg
+109 PASS + 2 UNPAIRED, 109 checked-in proofs verified, rc 0; the s4 / t2 converter outputs byte-identical; the dry run 116
+folders / 1115 files / 116 of 116 `check` PASS, the counts above; `python tools/asset_audit.py` 0 errors / 0 advisories /
+4 acknowledged (39 shipped geo: 38 seam + 1 outside-seam) — nothing under `src/` moved but the probe; stray-process check:
+no python or javac process left, the one java process the orchestrator's Gradle daemon (PID 62144, started 2026-09-13
+21:07).
+
+IN-GAME: nothing — a manifest, the converter's third scope, the probe's two changes, the leg's report line, the generator's
+readers and their tests, sixteen seeds; no shipped resource or class changed.
+
+WHAT LANDED, ITEM 6:
+- ITEM 6, THE GOAL DICTIONARY (one lane, as ruled; its draft merged by the orchestrator's script into `GOAL_ROLES`
+  before its closing brace, under a dated comment): 21 entries for the 21 goal classes behind the full folder's 73
+  `GOAL_UNCLASSIFIED` rows, one line each in the dictionary's form (category, the goal's behaviour in plain English from
+  its own code with the file and lines cited, the contract clip it drives) — the OreSpawn goals read from their sources
+  (AlienTorchSeekGoal, ButterflyIslandsHuntGoal, DragonflyHuntGoal, EmperorScorpionPoisonGoal, KingEndGameGoal and
+  KingPrimaryGoal with their TheKing delegate bodies, LunaMothFlightGoal, MosquitoFlightGoal, MyEntityAIFollowOwner,
+  MyEntityAIWander, PointysaurusStareGoal, SeaViperBiteGoal, SpitBugAcidAttackGoal, TrooperBugLeapAttackGoal,
+  WaterCanonAttackGoal), the six vanilla goals (FollowOwnerGoal, MoveThroughVillageGoal, OpenDoorGoal, RandomSwimmingGoal,
+  SitWhenOrderedToGoal, TemptGoal) from their well-known contracts with the class name cited only (the Gradle cache
+  not crawled); categories locomotion / social / attack / boss / targeting, all from the dictionary's existing set; no
+  goal unreadable. The lane's simulated merge over the 41 registries that carried the rows: 73 -> 0 GOAL_UNCLASSIFIED,
+  every §6 goal table rendering the new line, the other warnings byte-identical; the orchestrator's folder regeneration
+  confirms 0 rows over all species (the counts below).
+  After the merge the two new folders (the Boyfriend's and Girlfriend's) surfaced three more goal classes the lane's
+  list could not have carried — vanilla `RangedAttackGoal`, the Girlfriend's `ValentineTargetGoal` and `MyEntityAIDance`
+  — authored by the orchestrator from their code under the same form (24 entries in all); the regenerated folder
+  carries 0 GOAL_UNCLASSIFIED rows.
+
+PRESENTED BY THE ORCHESTRATOR (nothing here is a new ruling; each is reversible):
+- A HARNESS-SEMANTICS CHANGE, presented before its gate as the cost rules require: `G1ModelProbe` (g1tool) gained the
+  render-instance form's third scope, `explicit` (instances held to `count`, no `group_chain`), and a declared
+  `pinned_draw_count` — the probe's Slice 4c law ("a part declared with N instances is drawn N times") holds the port to
+  the PIN where one is declared instead of failing the dump. BEFORE: the Crab's dump fails the law ("leg1 drawn 1 times;
+  expected 8") the moment its entry declares eight instances, because the port draws each leg once (ANIM-025). AFTER:
+  the dump passes on the pin, an undeclared shortfall still fails, and the pin fails by name the moment the Crab's slice
+  lands the draw fix — the reference leg's `pinned_divergences` idiom transplanted. Every unpinned declaration (the
+  fan rigs, the GiantRobot's explicit instances) is unchanged: the s4 and t2 converter outputs are byte-identical to the
+  shipped geos, the 109 reference proofs verified byte for byte, the parity trees untouched. The probe's change moves
+  the g1tool class directory: the benchmark proof re-pins at the gate.
+- THE CONVERTER'S THIRD SCOPE (decided under doctrine — the smallest extension that lets the ruled form carry a
+  translation per side): `step_scope: explicit` lists exactly `count` draws, each a bind pivot and an optional rotation,
+  in classic draw order; the converter emits one top-level clone per draw with the part's cubes local to that pivot,
+  exactly as `ModelPart.render` draws them; `tools/g1_render_parity.py` is NOT extended for it (its composition leg has
+  no explicit case; the reference chain never runs it) — the Tier-1 slice that lands the GiantRobot, and the Crab's
+  slice, extend it with the hook (an open item, named).
+- LEFT AND RIGHT BY THE MODEL'S CONVENTION: the GiantRobot's `__i0` is the sign +1 pass, +x, vanilla's `left_arm`
+  convention, where the port's `renderToBuffer` comment words it "right arm" — the seeds say so; for the owner.
+- THE READERS APPLY TO EVERY SPECIES, not only the fourteen sheets the ruling named: ten more sheets gained a truer
+  inventory (the CaterKiller, Hercules Beetle, Alosaurus and Cryolophosaurus through the same goal family; the
+  Cannon Fodder's and Chipmunk's direct hurt; the Godzilla's lightning; the Irukandji's sting-back; the Mothra's and
+  Ruby Bird's parent flags), five boss `calm_idle` verdicts flipped to `author` with the pair offered, and the Chipmunk's
+  `attack` from `leave` to `author` (the seed lane's "never strikes" was a misreading of a direct hurt) — every one a
+  consequence of reading the code as the ruling asks, none a new invention; 29 sheets changed, 4 new, 83 unchanged.
+- THE GOAL DICTIONARY after the merge: 0 GOAL_UNCLASSIFIED rows over 116 folders (the lane's dry run still showed 5, from the four new folders' goals, before the three entries above).
+- THE FOUR REGISTER ENTRIES carry their LANDED lines (TEST-009, TEST-010, TEST-011 FIXED; ANIM-025 the rig landed, the
+  draw fix with the Crab's slice, the line staying).
+
+GATE: (tool5, 2026-09-14 00:59-01:08; no refuter - tooling): the goal dictionary merged (21 entries from the dictionary lane, then 3 more the orchestrator authored for the two new folders, 24 in all); `test_artist_package.py` 46 OK; `gradle referenceDumpCompiledModels referenceConvertModels`: 111 entries dumped, 109 geos (the same two fan-rig refusals as before; the GiantRobot, Crab, Boyfriend and Girlfriend converted); the reference-geometry leg verify-only: 109 compared and PASS, 2 UNPAIRED (the Boyfriend, the Girlfriend), `REFERENCE GEOMETRY PROOF: 109 checked-in reports verified` - no proof moved, `--write-proof` rewrote the same 109 files byte-identically (0 changed); the folder regenerated fresh: 116 folders, 1,115 files, 43 MB, 116 of 116 `check` PASS, ARTIST_TIER_UNPACKAGED 0, WISHLIST_UNACCEPTED 0, SEED_MISSING 0, GOAL_UNCLASSIFIED 0 after the last three entries (5 before them); the benchmark proof drifted on the g1tool class directory (the probe's explicit scope and pinned draw count) and was re-pinned; `asset_audit.py` 0 errors / 0 advisories / 4 acknowledged (39 shipped geo: 38 seam + 1 outside-seam); then `gate_wrapped.sh tool5`: the drift check verified the re-pinned proof, `gradlew build` SUCCESSFUL (2m 4s; `check` green with the 111-entry reference leg and `referenceClipsVerify`), `runGameTestServer` All 1278 required tests passed (unchanged). The folder regenerated once more after the three entries (tests 46 OK, 116 of 116 PASS, the audit green) without a second gradle gate: no build input moved between the runs. Stray-process check: only the Gradle daemon.
