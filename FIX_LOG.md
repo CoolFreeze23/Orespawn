@@ -5784,3 +5784,179 @@ tooling commit (the pilot's second clip `bite`; the PROVISIONAL markers and open
 open item; the priority table the packaged folders only; the reference clips regenerated under the new span rule;
 `referenceClips` verified in `check`), the package regenerated and its file list reported → the next slice (the Cloud
 Shark and the fourteen named, on the hook, one refuter, the counts opening the report). Nothing else runs.
+
+## THE THIRD-SET TOOLING COMMIT (2026-09-13) — the pilot's second clip `bite`; every PROVISIONAL marker and open-question reference in README_FIRST and the sheets resolved to the 2026-09-06 rulings, README rule 5 split by controller kind, the lock reject mode the one open item; the priority table the packaged folders only; the reference clip's span rule (a period multiple closing within 5 degrees, capped at 6 s) and the 28 clips regenerated; `referenceClipsVerify` a `check` dependency (owner 2026-09-13, third set, items 2–6; tooling, no refuter)
+
+RULING. Owner 2026-09-13, third set (addendum item 28 (2)–(6)): (2) the pilot's second clip is `bite`, not `attack`: the
+seed flips, `attack` returns to "leave, later", the wishlist's impact-frame line for `bite` moves into scope (the hurt lands
+8 ticks after the trigger — the impact at 0.4 s). (3) Every PROVISIONAL marker and open-question reference in README_FIRST
+and the sheets is resolved to the 2026-09-06 ruling it depends on (Q3 the flip kept; Q4 the overlay kept; Q5 the idle_alt
+cadence; Q6 four extras; Q11 the transport; Q12 aggro_idle; Q14 loops at 1.0 s; Q15 the `_preview` export; Q16 the Queen);
+README rule 5 splits by controller kind; the README's PROVISIONAL section goes; the lock reject mode stays marked as the one
+open item. (4) The README's priority table lists the packaged folders only, with one line that more folders follow; the
+Queen's row is her pilot scope. (5) The reference clip's span: the smallest multiple of the slowest group's period at which
+every group returns within 5 degrees of its start, capped at 6 s; past the cap, 2 s and the sheet states the seam; the 28
+clips regenerate; this replaces item 27 (3)'s span wording. (6) `referenceClips` becomes a `check` dependency: the build
+regenerates the clips and compares byte for byte; drift fails the build as proof drift does. The cost rules of 2026-09-12
+(item 25 (5)): a tooling lane takes no refuter — the tool's own tests and one dry run are the check. One implementation lane
+(r15), the orchestrator's gate and commit.
+
+WHAT LANDED:
+- ITEM 2, THE QUEEN'S SEED (`tools/artist_specs/the_queen.json`): `artist_scope` names `idle` and the `bite` strike ("two clips
+  to improve - `idle` (the dormant hover) and one attack, the `bite` strike, its impact frame where the hurt lands: 8 ticks
+  after the trigger, the impact at 0.4 s; the other six (`idle_to_attack`, `attack`, `tail_whip_right`, `tail_whip_left`,
+  `roar`, `death`) come back EXACTLY as shipped …", the rest of the sentence as it was; its "(open question 16)" tail resolved
+  to "ruled 2026-09-06, Q16 (a): the Queen is the pilot boss, scoped to `idle` and one attack; the Beaver the other pilot");
+  `clips`: `bite` verdict `improve`, note "the hurt lands 8 ticks after the trigger — put the impact at 0.4 s"; `attack`
+  verdict `leave`, note "outside the pilot scope (owner 2026-09-13, third set): return as shipped - later, the awake stance
+  loop, not a strike; this is the contract's aggro_idle"; the tail whips and the roar stay `leave` with their "outside the
+  pilot scope" notes; `wishlist`: the `attack` bullet prefixed "(beyond the pilot - not now)", the strikes' bullet split into
+  "in `bite`: put the impact frame exactly where the hurt lands (8 ticks after the trigger — the impact at 0.4 s)" and
+  "(beyond the pilot - not now) in `tail_whip_left` / `tail_whip_right` / `roar`: … (12 / 12 / 16 ticks after the trigger)";
+  `status` names the third set. The effort re-estimates itself from the verdicts: SPEC §10 "Estimated effort: 27.5 h
+  (generator: 8 h + 0.15 h/bone x 110 + 1.5 h/clip x 2 to author or improve)"; the manifest's `effort_hours` 27.5.
+- ITEM 3, THE MARKERS (`tools/artist_package.py` 0.2.7; the seeds): 34 `PROVISIONAL` markers and 33 "open question N"
+  references in the generator, 19 in the seeds (16 death notes, the Beaver's `chop` trigger, the Queen's scope and future
+  bullet), each replaced by the ruled statement with its date ("ruled 2026-09-06, Q14 (a): …") — the list below. The SPEC's
+  header sentence ("Fields marked PROVISIONAL depend on an open question …") is now "Every contract decision this sheet
+  rests on was ruled by the mod's owner on 2026-09-06 (`phase_g_reports/animation_contract/open_questions.md` records each
+  ruling); a line that cites one states that ruling — nothing here invents an answer. The one open item is the lock reject
+  mode (§7, README rule 6)."; the README's footer says the same; the README's "## PROVISIONAL items (decided before a gig
+  starts)" section is GONE; `LOCK_REJECT_MODE` (README rule 6 and SPEC §7) ends "it is not today's policy — the one open
+  item in this package: whether and when that mode becomes the policy is the owner's later ruling; everything else here
+  rests on the rulings of 2026-09-06." The manifest's per-clip `provisional` flags are gone; `verdict` travels per clip
+  instead (the README's priority table reads it). README RULE 5 SPLITS BY CONTROLLER KIND (the text below); the clip rows
+  follow it: a phase-locked creature's loop rows carry `length_seconds` 1.0 and `length_rule` `near:1.0` (the SPEC's §4.1
+  paragraph: "Author every loop at 1.0 s (README rule 5, the phase-locked kind; ruled 2026-09-06, Q14 (a)) …"; a looping
+  extra likewise), a native creature's rows keep `near:<shipped length>`, one-shots the length their row states; the
+  checker's length WARN follows the split and names the kind ("rule 5, a phase-locked creature: author every loop at 1.0 s
+  (ruled 2026-09-06, Q14 (a)); in-game the length is free …" / "rule 5, a native creature: keep each clip's shipped length —
+  its controllers play the clip as authored" / "the length the sheet's row states for this one-shot"), and loses
+  "(PROVISIONAL rule)". The `_preview` WARN keeps its level: "a _preview file is a Blockbench-only aid, never in the jar
+  (ruled 2026-09-06, Q15 (a)); leave it out of the delivery". The DATA_ATTACKING classifier's caveat, which depended on no
+  question, loses the word and keeps the caveat in plain words ("a mechanical reading; the owner confirms it against the
+  sites"). The seeds' resolved notes flow into the sheets (they are what the sheets are generated from). `tools/test_artist_package.py`
+  34 tests (+4): every pin that asserted a marker string is updated to the ruled text; new pins — a generated README, SPEC,
+  manifest and INVENTORY (the fixture and the native boss) contain neither `PROVISIONAL` nor `open question`, the rulings are
+  cited where they apply, `LOCK_REJECT_MODE` says "the one open item" and sits in README rule 6 and SPEC §7; rule 5 carries
+  both kinds; the length WARN follows the kind; the native fixture seed's scope resolved.
+- ITEM 4, THE PRIORITY TABLE: `readme_document(repo, manifests, packaged=None)` takes the packaged set (`build_package` passes
+  the registries it wrote: the `--entities` set, the whole landed set when none; the `readme` subcommand and the tests' bare
+  call use the manifests' keys); rows for those folders only, then "More folders follow as creatures land through the seam;
+  this package carries N." A native creature's row is its pilot scope — the clips the seed marks improve / author, then
+  "her other N clips: later, returned as shipped" ("its" for a boss other than the Queen), the effort the verdict
+  re-estimate: `| the_queen | The Queen | Tier 1 (boss; the design's 'done' row) | 110 | `idle`, `bite` — her other 6 clips:
+  later, returned as shipped | 27.5 h |`. INVENTORY.csv and TEXTURE_MAP.csv stay package-wide (unchanged).
+- ITEM 5, THE SPAN RULE (`src/g1tool/java/danger/orespawn/g1/ReferenceClipSampler.java`): `ruleFor` returns a base rule
+  (`one_key`, `periodic` with the slowest group's period T, or `two_seconds_no_period`); `resolveSpan` runs THE CLOSURE TEST
+  on a periodic base: T over 120 ticks → `two_seconds_past_cap` at once; otherwise the pose at t = 0 and then at each
+  candidate t = k·T (k = 1, 2, … while k·T ≤ 120) in sequence on one fresh rest-state `ProbeSubject`, the authored rotation
+  deltas of the two poses compared per bone and axis, the difference reduced mod 360 (`wrapDegrees`, exactly as the loop
+  seam is measured), the maximum ≤ 5.0 degrees (`CLOSURE_TOLERANCE_DEGREES`) AND every position channel within 1.0 model
+  unit (`CLOSURE_TOLERANCE_UNITS`: one sixteenth of a block, the model grid's pixel — the visual order of 5 degrees on a
+  16-unit bone; only Robot4's cannon assembly writes positions and it is constant at rest, so that half is stated, not
+  exercised); the first passing k gives `period_multiple` with span k·T; none → `two_seconds_past_cap` (40 ticks). The clip
+  is then sampled on a fresh subject exactly as before (one pose call per key, the RNG seeded 0 once per clip); keys at
+  every whole tick inside the span plus the closing key at its end. `authoredKeys` factors the per-pose delta computation
+  the closure test and the sampling pass share; `Poser` is the one pose call per hook form. The index (`schema_version` 2):
+  `span_rule` restated; `rule` values `one_key` / `period_multiple` (with `period_multiple_k`, `period_ticks`,
+  `closure_delta_degrees`) / `two_seconds_past_cap` (with `period_ticks`) / `two_seconds_no_period`; `rule_note` carries the
+  closure test's result with every candidate tried ("closes at k = 4 (62.831853 ticks): every bone returns within 0 degrees
+  of its start at k x T (the 5-degree test under the 6 s cap; k = 1: 81.007765 deg, k = 2: 161.999998 deg, k = 3: 80.999999
+  deg, k = 4: 0 deg)"); `seam_delta_degrees` as before. The sheet's §4.3 (`reference_clip_section`) says the rule in words
+  per kind — k = 1: "one period of its slowest rhythm — X ticks (Y s): every moving bone is back within 5 degrees of its
+  start there, so the last key closes the loop"; k > 1: "k periods of its slowest rhythm (T ticks each) — X ticks (Y s): the
+  smallest multiple at which EVERY rhythm returns within 5 degrees of its start (the rule caps this search at 6 s), so the
+  last key closes the loop"; past the cap: "two seconds (40 ticks): this motion does not close within 6 s (its slowest
+  rhythm is T ticks, and no multiple of it under 6 s brings every rhythm back within 5 degrees) — a two-second window, not a
+  loop; the closing key differs from the first by X degrees"; no period: "… this motion has no natural period — a two-second
+  window, not a loop; the closing key differs from the first by X degrees" — and the manifest's `reference_clip` block gains
+  `period_ticks` and `period_multiple_k`. The class javadoc's span paragraph states the rule. The 28 clips + the index
+  regenerated headlessly into `tools/reference_clips/` (13 clips and the index changed: the Ant rig's five, the Beaver, the
+  Cockateil pair, the Coin, the Dragonfly, the Gold Fish, the Rotator, the T-shirt; 15 clips byte-identical to before),
+  twice diff-clean (two scratch runs against each other and against the repository tree).
+- ITEM 6, `referenceClipsVerify` (`build.gradle`; the sampler's `--verify <checked-in-dir> <scratch-out-dir> <manifests…>`):
+  the sampler writes the scratch directory, then compares every regular file of both directories byte for byte; a
+  difference, a file produced but not checked in, or a checked-in file not produced prints one line `REFERENCE CLIPS DRIFT:
+  <name> (differs | produced by the sampler, not checked in | checked in, not produced by the sampler), … - <dirs>:
+  regenerate with gradle referenceClips and commit the result` and exits 1; success prints `REFERENCE CLIPS VERIFIED: N
+  files (…)`. The gradle task `referenceClipsVerify` (JavaExec on the g1tool classes and runtime classpath, like
+  `referenceClips`; group verification) runs `--verify tools/reference_clips build/reference_clips <the g1, s4, t2
+  manifests>`; `check` depends on it; `referenceClips` (the writer) stays for regeneration, its comment updated. No python
+  in the loop. Written, never run under gradle (the lane's constraint); demonstrated headlessly: exit 0 on the regenerated
+  tree (29 files), exit 1 on a scratch copy with one altered key (`REFERENCE CLIPS DRIFT: ant_reference.animation.json
+  (differs) …`).
+
+THE SPAN PER REGISTRY (the closure test's result; T the slowest group's period; the index carries the full sha256, the first 16 hex digits here):
+| registry | rule | T (ticks) | k | span (ticks / s) | keys / bone | seam (deg) | candidates tried (max delta, deg) | sha256 |
+|---|---|---|---|---|---|---|---|---|
+| ant, rainbow_ant, red_ant, termite, unstable_ant | period_multiple | 15.708 | 4 | 62.832 / 3.142 | 64 | 0 | k=1 81.0, k=2 162.0, k=3 81.0, k=4 0 | 7942fd420869303d (one content, five files) |
+| beaver | period_multiple | 12.566 | 5 | 62.832 / 3.142 | 64 | 0 | k=1 146.5, k=2 56.0, k=3 56.0, k=4 146.5, k=5 0 | ba49c7fac1f0546e |
+| brutalfly | period_multiple | 24.166 | 1 | 24.166 / 1.208 | 26 | 0 | k=1 0 | 19b8cf926b88b602 (unchanged) |
+| cliff_racer | period_multiple | 4.833 | 1 | 4.833 / 0.242 | 6 | 0 | k=1 0 | 161b120da346a88c (unchanged) |
+| cockateil, ruby_bird | period_multiple | 20.944 | 3 | 62.832 / 3.142 | 64 | 0 | k=1 21.6, k=2 21.6, k=3 0 | 8d5829f305411720 (one content, two files) |
+| coin | two_seconds_past_cap | 571.199 (> 120) | - | 40 / 2 | 41 | 17.142 | (T over the cap) | c00f6600b7e5ed75 |
+| dragonfly | period_multiple | 10.472 | 3 | 31.416 / 1.571 | 33 | 0 | k=1 67.5, k=2 67.5, k=3 0 | aff25e35ed8fa76d |
+| elevator | one_key | - | - | 0 / 0.05 | 1 | 0 | - | be0f631fbd6defbe (unchanged) |
+| firefly | period_multiple | 2.513 | 1 | 2.513 / 0.126 | 4 | 0 | k=1 0 | 5e519eeefa55de37 (unchanged) |
+| gold_fish | period_multiple | 12.823 | 7 | 89.760 / 4.488 | 91 | 0 | k=1 85.5, k=2 51.3, k=3 55.0, k=4 55.0, k=5 51.3, k=6 85.5, k=7 0 | 6cae73dde761e721 |
+| island, island_too | two_seconds_past_cap | 125.664 (> 120) | - | 40 / 2 | 41 | 105.105 | (T over the cap) | c5e524fb44329f06 (unchanged; one content, two files) |
+| mosquito | period_multiple | 2.094 | 1 | 2.094 / 0.105 | 4 | 0 | k=1 0 | de6e778c50d17e49 (unchanged) |
+| purple_power | two_seconds_no_period | - | - | 40 / 2 | 41 | 174.153 (random) | - | e70c944288bcefad (unchanged) |
+| robot_1 | two_seconds_past_cap | 480 (> 120) | - | 40 / 2 | 41 | 96.421 | (T over the cap) | c56ae535cd44c2be (unchanged) |
+| robot_2 | period_multiple | 20.944 | 1 | 20.944 / 1.047 | 22 | 0 | k=1 0 | 6f556b298d08430a (unchanged) |
+| robot_3 | period_multiple | 11.424 | 1 | 11.424 / 0.571 | 13 | 0 | k=1 0 | c248aa39ef8c510f (unchanged) |
+| robot_4 | period_multiple | 12.566 | 1 | 12.566 / 0.628 | 14 (12 bones positioned; position delta 0) | 0 | k=1 0 | 9c1d3a508b2d77cd (unchanged) |
+| robot_5 | period_multiple | 41.888 | 1 | 41.888 / 2.094 | 43 | 0 | k=1 0 | 36f79313fcfa268b (unchanged) |
+| rock_base | one_key | - | - | 0 / 0.05 | 1 | 0 | - | dccbb5fb4a84040f (unchanged) |
+| rotator | two_seconds_past_cap | 180 (> 120) | - | 40 / 2 | 41 | 80.000 | (T over the cap) | 8feace86c4d3bb4e |
+| tshirt | two_seconds_past_cap | 571.199 (> 120) | - | 40 / 2 | 41 | 17.142 | (T over the cap) | 46effcfd93a2d46d |
+| vortex | one_key | - | - | 0 / 0.05 | 1 | 0 | - | 6e7f166a037efcef (unchanged) |
+(28 registries: 19 period_multiple — 14 at k = 1, the Ant rig k = 4, the Beaver k = 5, the Cockateil pair k = 3, the Dragonfly k = 3, the Gold Fish k = 7; 6 two_seconds_past_cap; 1 two_seconds_no_period; 2 one_key + the Rock Base's one key. Every period_multiple seam is exactly 0: the shipped hooks pose through `Mth.cos` / `Mth.sin`, a 65536-entry table, so phases within ~1e-4 rad of a multiple of 2 pi index the same entry. No candidate failed under the cap: every rig with T ≤ 120 closed at some k·T ≤ 120.)
+
+THE RESOLVED MARKERS (before → after, grouped by the ruling; "sheet" = SPEC / manifest / README text, "code" = a comment or docstring the grep counted):
+- Q3 (a), the death flip: drives row "hold_on_last_frame; the vanilla death flip is open question 3 — PROVISIONAL" → "hold_on_last_frame; the vanilla death flip stays and the pilot ships no death clip (ruled 2026-09-06, Q3 (a)); a creature whose JSON ships a `death` clip gets the clip-replaces-flip mode, designed when the first such clip arrives (the Queen's own death clip the precedent) — until then a delivered `death` plays under the flip"; clip row trigger "event: deathTime > 0; the vanilla death flip is open question 3" → "event: deathTime > 0; the vanilla death flip stays — the pilot ships no death clip (ruled 2026-09-06, Q3 (a)); a creature whose JSON ships one gets the clip-replaces-flip mode when the first such clip arrives, so a `death` delivered here plays under the flip until then"; 15 hook seeds' death note "PROVISIONAL: the vanilla death flip is open question 3" → "ruled 2026-09-06, Q3 (a): the vanilla death flip stays; a creature whose JSON ships a `death` clip gets the clip-replaces-flip mode, designed when the first such clip arrives (the Queen's own death clip the precedent) — a `death` delivered here plays under the flip until then"; the Queen's death note "… PROVISIONAL: the vanilla death flip is open question 3" → "… ruled 2026-09-06, Q3 (a): the vanilla death flip stays for the pilot and no death clip is authored - the later rule, a death clip replacing the flip for a creature whose JSON ships one, is designed when the first such clip arrives, with this clip (the Queen's own) as the precedent".
+- Q4 (a), the overlay: drives row "always available; the red overlay stays — PROVISIONAL (open question 4)" → "… the red overlay stays (ruled 2026-09-06, Q4 (a))"; the native table's hurt cue "vanilla's red overlay is the only cue (open question 4); adding it …" → "… (ruled 2026-09-06, Q4 (a): the overlay stays); adding a hurt clip …"; clip row trigger "… the red overlay stays (open question 4)" → "… (ruled 2026-09-06, Q4 (a))".
+- Q5 (a), idle_alt: drives row "optional — PROVISIONAL (open question 5)" → "optional; one roll per idle loop boundary, p = 0.15, a uniform choice, only while the idle weight is above 0.9 and no triggered clip plays, keyed on the clip-clock cycle index (ruled 2026-09-06, Q5 (a))".
+- Q6 (a), the extras cap: the extras row's contract "extra (§2.3; cap of four is open question 6)" → "extra (§2.3; four per creature without a ruling — ruled 2026-09-06, Q6 (a))"; the EXTRAS_CAP warning "exceed the proposed cap of four (open question 6)" → "exceed the cap of four per creature without a ruling (ruled 2026-09-06, Q6 (a): more needs the owner)"; the §5 paragraph under a phase-locked clip table gains "A sheet may carry up to four extra clips of this creature's own beyond the contract's names (§2.3; ruled 2026-09-06, Q6 (a)) — more needs the owner's ruling" (the ruling had no sentence in the sheet before: the old marker lived in a field the sheet never printed).
+- Q7 (a), Tier 3: the §5 sentence "… no artist clips are accepted (open question 7 records the option of extras) — PROVISIONAL." → "… (ruled 2026-09-06, Q7 (a): Tier 3 gets no artist clips, extras included)."; code comment "(P2; open question 7)" → "(P2; ruled 2026-09-06, Q7 (a): Tier 3 gets no artist clips)".
+- Q9 (a) / Q10, the density statement: "… (Beaver: 54 / 41 / 19 linear or 15 / 13 / 8 catmullrom with repaired spline arguments — open questions 9 and 10) — PROVISIONAL." → "Density statement (the harness's, not the artist's; ruled 2026-09-06, Q9 (a) and Q10): the classic transcription is verified at 2.5e-3 rad — Beaver reference leg 15 / 13 / 8 catmullrom keys per bone with spline arguments repaired at load; wrap sample T−ε vs 0+ε included; the key counts per bone are an output of the harness, re-derived on every re-transcription."
+- Q11 (a), the attack transport: drives rows "PROVISIONAL (open question 11)" (a STATE flag; no flag) → "the transport per species by the trigger inventory (ruled 2026-09-06, Q11 (a)): this flag is held, not pulsed at the strike, so the signal column's transport applies — the server LivingDamageEvent.Post -> triggerAnim packet for melee, a named launch site for ranged" / "…: no attacking flag here, so the signal column's transport applies — …"; the EVENT row "… transport 2 (§4.4)… — PROVISIONAL (open question 11)" → "… — the transport per species by the trigger inventory (ruled 2026-09-06, Q11 (a)): the client-observed edge where the flag pulses at the strike, this species"; clip row trigger "event: a strike (transport per the trigger inventory; open question 11)" → "event: a strike (the transport per species by the trigger inventory — ruled 2026-09-06, Q11 (a); §6 says which applies here)"; the area-helper caveat "(transport 1 caveat, open question 11)" → "(the transport 1 caveat; ruled 2026-09-06, Q11 (a): the transport is chosen per species by this inventory, and this caveat is what the choice weighs)"; the Beaver's `chop` trigger "… needs a one-line trigger call, PROVISIONAL" → "… needs a one-line trigger call (the transport per species by the trigger inventory, ruled 2026-09-06, Q11 (a); the call is wired when this clip lands)".
+- Q12 (a), calm_idle: drives rows "calm_idle only until a synched byte mirrors getTarget() != null — PROVISIONAL (open question 12)" and "calm_idle only — PROVISIONAL (open question 12)" → "calm_idle only until this creature's SPEC adds a synched byte mirroring getTarget() != null (ruled 2026-09-06, Q12 (a): aggro_idle waits for that byte)"; the calm_idle clip row's trigger "= idle until an aggro flag exists (open question 12)" → "= idle until this creature's SPEC adds a synched attacking byte (ruled 2026-09-06, Q12 (a))".
+- Q14 (a), loops at 1.0 s: README rule 5 (the text below); CHECK_WARNS "a clip length far from the stated one (PROVISIONAL rule)" → "a clip length far from the one the sheet states (rule 5: a phase-locked creature's loops at 1.0 s — ruled 2026-09-06, Q14 (a); a native creature's clips at their shipped length; a one-shot at the length its row states)"; the loop rows' length rule "free (P6: …; convention open question 14)" → `near:1.0` with `length_seconds` 1.0; the §4.1 paragraph "… (contract §9; the authoring-length convention is open question 14, a `_preview` export is open question 15) — PROVISIONAL." → "Author every loop at 1.0 s (README rule 5, the phase-locked kind; ruled 2026-09-06, Q14 (a)). In-game each loop plays once per natural period whatever its length; … (contract §9); a `_preview` copy stretched to the natural periods is a Blockbench-only aid, never in the jar and never in a delivery (ruled 2026-09-06, Q15 (a))."; the checker's length WARN "(PROVISIONAL rule)" → the kind's sentence (above).
+- Q15 (a), the `_preview` export: CHECK_WARNS "a `_preview` file delivered (a Blockbench-only aid; whether the package ships one is open question 15) — PROVISIONAL" → "a `_preview` file delivered (a Blockbench-only aid, never in the jar — ruled 2026-09-06, Q15 (a); leave it out of the delivery)"; README rule 7 "no `_preview` files in a delivery (a Blockbench-only aid — the checker warns; PROVISIONAL, open question 15)" → "… (a Blockbench-only aid, never in the jar — ruled 2026-09-06, Q15 (a); the checker warns)"; the checker's WARN "a _preview file is a Blockbench-only aid and is not delivered — PROVISIONAL (open question 15)" → "a _preview file is a Blockbench-only aid, never in the jar (ruled 2026-09-06, Q15 (a)); leave it out of the delivery"; the round-trip note "when the _preview export (open question 15) is built" → "when the _preview export (ruled 2026-09-06, Q15 (a): Blockbench-only, never shipped) is built" (the roundtrip.report.json carries it); code comment "`_preview` stays a WARN (open question 15)" → "… (ruled 2026-09-06, Q15 (a): a Blockbench-only export, never in the jar)".
+- Q16 (a), the Queen: the native drives' stand-in "(seed mapping — PROVISIONAL, open question 16)" → "(the seed's mapping — ruled 2026-09-06, Q16 (a): the pilot boss keeps its native clip set)"; every native clip row's appended note "PROVISIONAL (its contract mapping: open question 16)" → "mapped to the contract's `<role>` by the seed (ruled 2026-09-06, Q16 (a): the pilot boss keeps its native clip set)" (or "no contract role in the seed (…)"), still preceding the lock note; the row's `contract` default "PROVISIONAL (open question 16)" → "unmapped (a native clip the seed gives no contract role)"; the wishlist guard "; a new clip on a native rig needs a controller change and the owner's ruling (open question 16) — PROVISIONAL" → "; … the owner's ruling (the pilot boss keeps its native clip set: ruled 2026-09-06, Q16 (a))"; the native §5 paragraph "Its mapping onto the standard contract is PROVISIONAL (open question 16 names it the pilot boss candidate)" → "Its mapping onto the standard contract is the seed's, row by row (ruled 2026-09-06, Q16 (a): this species is the pilot boss and keeps its native clip set; the pilot's scope is in §10)"; the Queen's seed: `artist_scope` "… the §8.1 locks (open question 16)" → "… the §8.1 locks (ruled 2026-09-06, Q16 (a): the Queen is the pilot boss, scoped to `idle` and one attack; the Beaver the other pilot)", the future bullet "(open question 16)" → "(ruled 2026-09-06, Q16 (a): she is the pilot boss and keeps her native clip set; the mapping of that set onto the contract names is a later ruling)"; `tier_label`'s docstring "(§8.1, open question 16)" → "(§8.1; ruled 2026-09-06, Q16 (a): the pilot boss)"; the test fixture's native seed "pilot boss candidate (open question 16)" → "pilot boss (ruled 2026-09-06, Q16 (a)): idle and one attack".
+- No open question behind it (the classifier): `classify_attacking`'s "Heuristic: PROVISIONAL." → "Heuristic: a mechanical reading — the owner confirms it against the sites (no ruling is pending behind it)."; the SPEC §6 line "— PROVISIONAL (a mechanical heuristic; the owner verifies against the sites):" → "— a mechanical reading; the owner confirms it against the sites:"; the MIXED / UNCLASSIFIED drives row "OWNER READS THE SITES (listed below) — PROVISIONAL" → "OWNER READS THE SITES (listed below) — a mechanical reading; the owner confirms which of the ruled transports applies (ruled 2026-09-06, Q11 (a) / Q12 (a))".
+- The framing sentences and flags: the SPEC header's "Fields marked PROVISIONAL …" and the README footer's "Sections marked PROVISIONAL follow decisions the mod's owner has not made yet …" → the rulings sentences above; the README's "## PROVISIONAL items (decided before a gig starts)" section (five bullets) removed; the §5.2 bullets' " — PROVISIONAL" suffix and the clip table's appended " PROVISIONAL" gone; the manifest's `provisional` flags gone; `LOCK_REJECT_MODE` gains "— the one open item …"; the naming-rule and stale-manifest comments reworded; `TOOL_VERSION` 0.2.7 (its text is emitted into every generated file, so it names the change without either word).
+
+README RULE 5 (verbatim): "5. **Loop length by controller kind.** A phase-locked creature (every sheet but the Queen's today): author every loop at 1.0 s — in-game the length is free, the loop plays at the creature's own tempo and the sheet's tempo table gives the rate (contract §9; ruled 2026-09-06, Q14 (a)). A native creature (the Queen): keep each clip's shipped length — her controllers play the clip as authored. Each sheet's manifest says which kind applies (`controller_kind`: `phase_locked` or `native`), and one-shot clips keep the length their row states."
+
+`artist_handoff/` (24 files, 8,769,342 bytes; 11 changed by the regeneration — the sheets, manifests, README, INVENTORY, the summaries, the round-trip reports, the Beaver's reference clip):
+INVENTORY.csv 41,700 · README_FIRST.md 10,733 · TEXTURE_MAP.csv 64,586 · dryrun_summary.json 6,383 · dryrun_summary.md 4,344 · warnings.txt 3,127 ·
+entities/beaver/: SPEC.md 21,686 · beaver.animation.json 16,364 · beaver.bbmodel 37,664 · beaver.geo.json 17,015 · beaver_reference.animation.json 105,788 (k = 5, 64 keys per bone) · reference/SLOTS.md 685 · roundtrip.report.json 1,104 · spec.manifest.json 16,898 · textures/beaver.png 705 ·
+entities/the_queen/: SPEC.md 48,298 · reference/SLOTS.md 688 · roundtrip.report.json 1,070 · spec.manifest.json 83,945 · textures/blue_queen.png 663,788 · textures/red_queen.png 319,022 · the_queen.animation.json 935,198 · the_queen.bbmodel 6,339,801 · the_queen.geo.json 28,750.
+`check artist_handoff/entities/the_queen` PASS (8 clips, 47,559 keyframe values, 2 textures; the locked-bone WARNs as before); `check artist_handoff/entities/beaver` PASS (4 clips, 243 keyframe values, 1 texture; the untouched-reference-copy WARN and the seven optional-clip WARNs). `grep -r -i "PROVISIONAL\|open question" artist_handoff/`: 0 hits (the lock-reject sentence says "the one open item" and carries neither word).
+
+DECIDED UNDER DOCTRINE (reversible, one line each):
+- THE POSITION TOLERANCE of the closure test: 1.0 model unit (one sixteenth of a block, the model grid's pixel — the visual order of 5 degrees on a 16-unit bone); the ruling asked the lane to state the rule it applies. Stated in the javadoc, the index's `span_rule` and the sheet; exercised by no rig today (Robot4's cannon assembly is constant at rest).
+- THE CLOSURE TEST'S SUBJECT: its own fresh rest-state `ProbeSubject`, the candidates posed in sequence after t = 0; the clip is then sampled on another fresh subject exactly as before, so the sampled keys of every unchanged-rule rig are byte-identical to the previous run (15 clips unchanged). Every periodic hook is a pure function of t; the one call-sequence rig (the Rotator) is past the cap before any candidate is posed.
+- THE VERIFY LINE names the kind of drift per file (differs / produced but not checked in / checked in but not produced) and the two directories after the file list, on the one line.
+- THE README'S PHASE-LOCKED ROWS still list every clip name of the sheet, as before; the verdict split (deliver / later, returned as shipped) is applied to native rows only — the ruling names the Queen's row. Extending it to every row is one condition.
+
+DEVIATIONS:
+- `fmt(40.0, 0)` rendered "4": the generator's number formatter stripped trailing zeros from an integer-valued float at zero digits, so the two-second sheets of the earlier dry runs (island, island_too, robot_1, purple_power) read "two seconds (4 ticks)". Found by the new §4.3 pin; fixed in `fmt` (zeros are stripped only after a decimal point) — every other caller formats with ≥ 1 digit or an integer and is unchanged (`fmt(1.0, 3)` "1", `fmt(0.5, 3)` "0.5", `fmt(17.142012628, 4)` "17.142" as before).
+- The seeds carried markers too (16 death notes, the Beaver's `chop` trigger, the Queen's scope and future bullet — 19 in all); the brief counted the generator's 34 / 33. Resolved in the seeds, since the sheets are generated from them and the ruling covers the sheets.
+- The old `natural_period` / `multi_frequency_*` rule names are read by nothing but `artist_package.py` (updated); the index's `schema_version` is 2.
+- The manifest's `reference_clip` block gains `period_ticks` and `period_multiple_k`; the manifest's clip entries gain `verdict` (the README reads it) and lose `provisional`.
+- The Queen's §5 `death` row states both halves of Q3 (a) (her JSON ships a death clip: the flip stays for the pilot; her clip is the precedent for the later mode).
+
+NOT DONE / OPEN:
+- Gradle never ran (the lane's constraint): `referenceClipsVerify` is written and its Java path demonstrated headlessly (exit 0 / exit 1); the task's first run is the orchestrator's gate (`check`). `build.gradle` moved, so the benchmark proof re-pins at the gate.
+- The priority table's phase-locked rows (above): every clip name, as before.
+- The `readme` subcommand has no `--entities`; its table is the whole landed set by construction (the manifests' keys).
+
+THE CHECKS (the tool's own tests and one dry run): javac x3 into fresh scratch class directories (`-g`, `--release 21`, C:/ argfiles): main 961 classes, g1tool 67, gametest 244, rc 0 each, no stray javac; the sampler twice headlessly into scratch, diff-clean against each other, then into `tools/reference_clips/` (29 files; diff-clean against the scratch run; 14 files changed against HEAD); `--verify tools/reference_clips <scratch>` exit 0 (`REFERENCE CLIPS VERIFIED: 29 files`); `--verify <scratch copy with the Ant's first key altered> <scratch>` exit 1 (`REFERENCE CLIPS DRIFT: ant_reference.animation.json (differs) …`); `python tools/test_artist_package.py` 34 tests OK; the dry run `package --out <scratch>/pkg`: 29 species, 29 folders `check` PASS, 0 REJECTs, 28 reference clips carried, no FORMULAS_MISSING / REFERENCE_CLIP_* warning, 0 markers in the tree, the past-cap sheets say "two seconds (40 ticks)", the README's table 29 rows and "this package carries 29"; the handoff `package --out artist_handoff --entities the_queen beaver` exit 0, both folders `check` PASS (above); the marker grep over `artist_handoff/` 0 hits; `python tools/asset_audit.py` 0 errors, 0 advisories, 4 acknowledged (24 shipped geo: 23 seam + 1 outside-seam); stray-process check: no java, javac, python or gradle process left.
+
+IN-GAME: nothing — the sampler, its clips, the generator, its tests, the seeds and the gradle task are tooling; no shipped resource or class changed (the jar carries no reference clip).
+
+GATE: (tool3, 2026-09-13 14:03-14:09; no refuter - tooling): `gradle referenceClips` reproduced the lane's 29 regenerated files byte-identically (a first regeneration run had stopped on the orchestrator's own check - it compared the tracked, modified clips against HEAD instead of against the lane's run; nothing was regenerated wrongly, the check was corrected to compare against the lane's scratch run and the run repeated); `gradle referenceClipsVerify` on its own: `REFERENCE CLIPS VERIFIED: 29 files` (the new task's first run under gradle); g1ConvertModels / g1WriteRuntimeClasspath / g1Benchmark and the benchmark proof re-pinned (`G1 BENCHMARK EVIDENCE VERIFIED: SMOKE_ONLY / COMPONENT_PROXY_ONLY / PENDING_LIVE_PRECUTOVER; checked-in proof updated` - the g1tool class directory and build.gradle moved); `asset_audit.py` 0 errors / 0 advisories / 4 acknowledged (24 shipped geo: 23 seam + 1 outside-seam); staged 47 modified (the lane's 45 and the benchmark proof); then `gate_wrapped.sh tool3`: the drift check verified the re-pinned proof, `gradlew build` SUCCESSFUL (1m 36s; `check` ran `referenceClipsVerify` green - one VERIFIED line in the build log - beside the parity, reference-geometry and renderer-pin tasks), `runGameTestServer` All 1277 required tests passed (unchanged: no gametest added). Stray-process check: only the Gradle daemon.
