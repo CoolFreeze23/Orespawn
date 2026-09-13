@@ -5,6 +5,7 @@ import danger.orespawn.MobStats;
 import danger.orespawn.OreSpawnConfig;
 import danger.orespawn.OreSpawnMod;
 import danger.orespawn.entity.ai.GenericTargetSorter;
+import danger.orespawn.entity.pose.MantisPose;
 import danger.orespawn.util.MyUtils;
 import java.util.List;
 import javax.annotation.Nullable;
@@ -30,7 +31,7 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraft.util.Mth;
 import danger.orespawn.entity.ai.TargetSelection;
 
-public class EntityMantis extends Monster {
+public class EntityMantis extends Monster implements MantisPose {
     // OPT-011: cached SoundEvents — identical createVariableRangeEvent ids,
     // allocated once per class instead of on every sound query.
     private static final SoundEvent SND_BEEBUZZ = SoundEvent.createVariableRangeEvent(

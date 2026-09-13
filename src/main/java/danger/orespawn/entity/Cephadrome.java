@@ -39,7 +39,7 @@ import danger.orespawn.entity.ai.GenericTargetSorter;
 import danger.orespawn.entity.ai.TargetSelection;
 
 public class Cephadrome extends PathfinderMob
-        implements danger.orespawn.network.RiderInputPayload.RideableFlyer {
+        implements danger.orespawn.network.RiderInputPayload.RideableFlyer, danger.orespawn.entity.pose.CephadromePose {
     // OPT-011: cached SoundEvents — identical createVariableRangeEvent ids,
     // allocated once per class instead of on every sound query.
     private static final SoundEvent SND_MOTHRAWINGS = SoundEvent.createVariableRangeEvent(
@@ -121,9 +121,22 @@ public class Cephadrome extends PathfinderMob
     }
 
     /** Mirrors orig Cephadrome.java:156-158 {@code getRenderInfo()} (ENT-S-093). */
+    @Override
     public danger.orespawn.entity.client.RenderInfo getRenderInfo() {
         return this.renderInfo;
     }
+
+    /** orig ModelCephadrome.java:385 {@code field_70169_q} (prevPosX): the CephadromePose read of the public field (the Ostrich form). */
+    @Override
+    public double xOld() { return this.xOld; }
+
+    /** orig ModelCephadrome.java:385 {@code field_70166_s} (prevPosZ). */
+    @Override
+    public double zOld() { return this.zOld; }
+
+    /** orig ModelCephadrome.java:470 {@code field_70126_B} (prevRotationYaw). */
+    @Override
+    public float yRotO() { return this.yRotO; }
 
     @Override
     protected void registerGoals() {

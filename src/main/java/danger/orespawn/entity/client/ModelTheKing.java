@@ -3,6 +3,7 @@ package danger.orespawn.entity.client;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import danger.orespawn.entity.TheKing;
+import danger.orespawn.entity.pose.TheKingPose;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
@@ -943,6 +944,14 @@ public class ModelTheKing extends EntityModel<TheKing> {
     @Override
     public void setupAnim(TheKing entity, float limbSwing, float limbSwingAmount,
                           float ageInTicks, float netHeadYaw, float headPitch) {
+        // The body lives in poseFrom so the parity harness can drive it from a declared state without a live
+        // entity (the Slice 4b form; the hooks, 2026-09-14): the entity satisfies the interface.
+        poseFrom(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
+    }
+
+    /** The classic pose over what the model reads from its entity (the port's {@code entity.getAttacking() != 0}; orig ModelTheKing.java setRotationAngles). */
+    public void poseFrom(TheKingPose entity, float limbSwing, float limbSwingAmount,
+                         float ageInTicks, float netHeadYaw, float headPitch) {
         boolean attacking = entity.getAttacking() != 0;
 
         // --- Wing animation ---

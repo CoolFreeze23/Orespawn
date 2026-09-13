@@ -1,5 +1,6 @@
 package danger.orespawn.entity;
 
+import danger.orespawn.entity.pose.UrchinPose;
 import danger.orespawn.MobStats;
 
 import danger.orespawn.ModItems;
@@ -33,7 +34,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 
-public class Urchin extends Monster {
+public class Urchin extends Monster implements UrchinPose {
     // OPT-011: cached SoundEvents — identical createVariableRangeEvent ids,
     // allocated once per class instead of on every sound query.
     private static final SoundEvent SND_KYUUBI_LIVING = SoundEvent.createVariableRangeEvent(

@@ -3,6 +3,7 @@ package danger.orespawn.entity.client;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import danger.orespawn.entity.EntityRat;
+import danger.orespawn.entity.pose.RatPose;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
@@ -80,6 +81,13 @@ public class RatModel<T extends EntityRat> extends EntityModel<T> {
 
     @Override
     public void setupAnim(T entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
+        // The body lives in poseFrom so the parity harness can drive it from a declared state without a live
+        // entity (the Slice 4b form; the hooks): the entity satisfies the interface.
+        poseFrom(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
+    }
+
+    /** The classic pose over what the model reads from its entity (orig ModelRat.java:116 {@code getAttacking()}). */
+    public void poseFrom(RatPose entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
         // orig ModelRat.java:111-115 — legs scurry on time at 1.7*wingspeed
         // (wingspeed 1.0, orig ClientProxyOreSpawn.java:482), amplitude scaled
         // by limbSwingAmount, frozen below the 0.1 movement threshold.

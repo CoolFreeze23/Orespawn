@@ -42,7 +42,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 
-public class Gazelle extends TamableAnimal {
+public class Gazelle extends TamableAnimal implements danger.orespawn.entity.pose.GazellePose {
     // OPT-011: cached SoundEvents — identical createVariableRangeEvent ids,
     // allocated once per class instead of on every sound query.
     private static final SoundEvent SND_SCORPION_HIT = SoundEvent.createVariableRangeEvent(

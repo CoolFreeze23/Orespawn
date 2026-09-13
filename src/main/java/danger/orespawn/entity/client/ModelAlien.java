@@ -3,6 +3,7 @@ package danger.orespawn.entity.client;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import danger.orespawn.entity.Alien;
+import danger.orespawn.entity.pose.AlienPose;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
@@ -362,6 +363,13 @@ public class ModelAlien extends EntityModel<Alien> {
 
     @Override
     public void setupAnim(Alien entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
+        // The body lives in poseFrom so the parity harness can drive it from a declared state without a live
+        // entity (the Slice 4b form; the hook survey, 2026-09-14): the entity satisfies the interface.
+        poseFrom(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
+    }
+
+    /** The classic pose over what the model reads from its entity (orig ModelAlien.java {@code getAttacking()}, :512-552 the tail / jaw / claw latch on {@code getRenderInfo()} and {@code getRandom()}). */
+    public void poseFrom(AlienPose entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
         float newangle = 0.0f;
         float nextangle = 0.0f;
         newangle = Mth.cos((float)(ageInTicks * 4.0f * this.wingspeed)) * (float)Math.PI * 0.5f * limbSwingAmount;

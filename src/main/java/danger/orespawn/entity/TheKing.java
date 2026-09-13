@@ -50,6 +50,7 @@ import danger.orespawn.OreSpawnConfig;
 import danger.orespawn.ModSounds;
 import danger.orespawn.util.MyUtils;
 import danger.orespawn.entity.ai.TargetSelection;
+import danger.orespawn.entity.pose.TheKingPose;
 import net.neoforged.neoforge.entity.PartEntity;
 
 /**
@@ -100,7 +101,7 @@ import net.neoforged.neoforge.entity.PartEntity;
  * @see OreSpawnPartEntity for the part implementation and the full 1.7.10
  *   paradigm-shift commentary.
  */
-public class TheKing extends Monster implements OreSpawnPartEntity.MultipartBoss {
+public class TheKing extends Monster implements OreSpawnPartEntity.MultipartBoss, TheKingPose {
     private static final EntityDataAccessor<Integer> DATA_ATTACKING =
             SynchedEntityData.defineId(TheKing.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Integer> DATA_PLAY_NICELY =

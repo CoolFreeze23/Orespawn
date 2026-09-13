@@ -1,5 +1,6 @@
 package danger.orespawn.entity;
 
+import danger.orespawn.entity.pose.TriffidPose;
 import danger.orespawn.MobStats;
 
 import danger.orespawn.OreSpawnMod;
@@ -30,7 +31,7 @@ import danger.orespawn.entity.ai.GenericTargetSorter;
 import danger.orespawn.entity.ai.TargetSelection;
 import danger.orespawn.util.MyUtils;
 
-public class EntityTriffid extends Monster {
+public class EntityTriffid extends Monster implements TriffidPose {
     // OPT-011: cached SoundEvents — identical createVariableRangeEvent ids,
     // allocated once per class instead of on every sound query.
     private static final SoundEvent SND_TRIFFID_LIVING = SoundEvent.createVariableRangeEvent(

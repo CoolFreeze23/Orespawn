@@ -22,13 +22,14 @@ import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import danger.orespawn.OreSpawnMod;
+import danger.orespawn.entity.pose.GhostSkellyPose;
 
 /**
  * GhostSkelly — sister mob to {@link Ghost} with a heavier silhouette and
  * stronger contact damage. See Ghost.java for the rationale behind the
  * 1.7.10 -> 1.21.1 monster-category upgrade.
  */
-public class GhostSkelly extends AmbientCreature {
+public class GhostSkelly extends AmbientCreature implements GhostSkellyPose {
     // OPT-011: cached SoundEvents — identical createVariableRangeEvent ids,
     // allocated once per class instead of on every sound query.
     private static final SoundEvent SND_CHAIN_RATTLES = SoundEvent.createVariableRangeEvent(

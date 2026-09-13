@@ -4,6 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import danger.orespawn.entity.DungeonBeast;
+import danger.orespawn.entity.pose.DungeonBeastPose;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
@@ -417,6 +418,13 @@ public class ModelDungeonBeast extends EntityModel<DungeonBeast> {
 
     @Override
     public void setupAnim(DungeonBeast entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
+        // The body lives in poseFrom so the parity harness can drive it from a declared state without a live
+        // entity (the Slice 4b form; the hooks): the entity satisfies the interface.
+        poseFrom(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
+    }
+
+    /** The classic pose over what the model reads from its entity (orig ModelDungeonBeast.java:506, :550 {@code getAttacking()}, :546 {@code getRenderInfo()}, :551-552 the RNG). */
+    public void poseFrom(DungeonBeastPose entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
         float newangle = 0.0f;
         float upangle = 0.0f;
         float nextangle = 0.0f;

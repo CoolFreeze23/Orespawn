@@ -46,8 +46,9 @@ import danger.orespawn.OreSpawnMod;
 import danger.orespawn.OreSpawnConfig;
 import danger.orespawn.entity.ai.GenericTargetSorter;
 import danger.orespawn.entity.ai.TargetSelection;
+import danger.orespawn.entity.pose.LizardPose;
 
-public class Lizard extends TamableAnimal {
+public class Lizard extends TamableAnimal implements LizardPose {
     // OPT-011: cached SoundEvents — identical createVariableRangeEvent ids,
     // allocated once per class instead of on every sound query.
     private static final SoundEvent SND_ALO_HURT = SoundEvent.createVariableRangeEvent(

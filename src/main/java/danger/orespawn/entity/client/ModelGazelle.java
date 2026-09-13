@@ -3,6 +3,7 @@ package danger.orespawn.entity.client;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import danger.orespawn.entity.Gazelle;
+import danger.orespawn.entity.pose.GazellePose;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
@@ -273,6 +274,13 @@ public class ModelGazelle extends EntityModel<Gazelle> {
 
     @Override
     public void setupAnim(Gazelle entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
+        // The body lives in poseFrom so the parity harness can drive it from a declared state without a live
+        // entity (the Slice 4b form; the hooks): the entity satisfies the interface.
+        poseFrom(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
+    }
+
+    /** The classic pose over what the model reads from its entity (orig ModelGazelle.java:297 {@code func_70906_o()}, the port's {@code isCrouching()}). */
+    public void poseFrom(GazellePose entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
         float newangle = limbSwingAmount > 0.1F
             ? Mth.cos(ageInTicks * 1.1F * this.wingspeed) * (float) Math.PI * 0.12F * limbSwingAmount
             : 0.0F;

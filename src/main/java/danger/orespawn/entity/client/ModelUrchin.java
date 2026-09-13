@@ -3,6 +3,7 @@ package danger.orespawn.entity.client;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import danger.orespawn.entity.Urchin;
+import danger.orespawn.entity.pose.UrchinPose;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
@@ -134,6 +135,13 @@ public class ModelUrchin extends EntityModel<Urchin> {
 
     @Override
     public void setupAnim(Urchin entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
+        // The body lives in poseFrom so the parity harness can drive it from a declared state without a live
+        // entity (the Slice 4b form; the hooks): the entity satisfies the interface.
+        poseFrom(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
+    }
+
+    /** The classic pose over what the model reads from its entity (orig ModelUrchin.java:175 {@code getAttacking()}). */
+    public void poseFrom(UrchinPose entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
         float newangle8;
         float newangle7;
         float newangle6;

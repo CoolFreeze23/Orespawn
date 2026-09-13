@@ -27,8 +27,9 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.util.Mth;
 import danger.orespawn.entity.ai.TargetSelection;
+import danger.orespawn.entity.pose.LurkingTerrorPose;
 
-public class EntityLurkingTerror extends Monster {
+public class EntityLurkingTerror extends Monster implements LurkingTerrorPose {
     // OPT-011: cached SoundEvents — identical createVariableRangeEvent ids,
     // allocated once per class instead of on every sound query.
     private static final SoundEvent SND_LURKINGHORROR_LIVING = SoundEvent.createVariableRangeEvent(

@@ -48,9 +48,10 @@ import danger.orespawn.ModEntities;
 import danger.orespawn.OreSpawnConfig;
 import danger.orespawn.OreSpawnMod;
 import danger.orespawn.entity.ai.TargetSelection;
+import danger.orespawn.entity.pose.ThePrinceAdultPose;
 
 public class ThePrinceAdult extends TamableAnimal
-        implements danger.orespawn.network.RiderInputPayload.RideableFlyer {
+        implements danger.orespawn.network.RiderInputPayload.RideableFlyer, ThePrinceAdultPose {
     // OPT-011: cached SoundEvents — identical createVariableRangeEvent ids,
     // allocated once per class instead of on every sound query.
     private static final SoundEvent SND_MOTHRAWINGS = SoundEvent.createVariableRangeEvent(

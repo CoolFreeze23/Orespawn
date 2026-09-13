@@ -3,6 +3,7 @@ package danger.orespawn.entity.client;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import danger.orespawn.entity.EntityLeon;
+import danger.orespawn.entity.pose.LeonPose;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
@@ -753,6 +754,13 @@ public class LeonModel extends EntityModel<EntityLeon> {
 
     @Override
     public void setupAnim(EntityLeon entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
+        // The body lives in poseFrom so the parity harness can drive it from a declared state without a live
+        // entity (the Slice 4b form; the hook survey, 2026-09-14): the entity satisfies the interface.
+        poseFrom(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
+    }
+
+    /** The classic pose over what the model reads from its entity (orig ModelLeon.java:729/852 {@code getActivity()}, {@code getAttacking()}, {@code getBeingRidden()}, {@code isSitting()}, :1013-1024 the ridden yaw accumulator on {@code getRenderInfo()} and the yaw pair). */
+    public void poseFrom(LeonPose entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
         float newangle = 0.0f;
         float newangle2 = 0.0f;
         float newangle3 = 0.0f;
@@ -1013,7 +1021,7 @@ public class LeonModel extends EntityModel<EntityLeon> {
         // orig ModelLeon.java:1013-1024) instead of one rf1 shared on the model;
         // yaw source is prevRotationYaw/rotationYaw (orig ModelLeon.java:1014).
         RenderInfo r = entity.getRenderInfo();
-        netHeadYaw = (entity.yRotO - entity.getYRot()) * 8.0f;
+        netHeadYaw = (entity.getYRotO() - entity.getYRot()) * 8.0f;
         netHeadYaw = -netHeadYaw;
         r.rf1 += (netHeadYaw - r.rf1) / 60.0f;
         if (r.rf1 > 50.0f) {

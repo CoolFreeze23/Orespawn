@@ -25,8 +25,9 @@ import net.minecraft.world.level.Level;
 import danger.orespawn.ModEntities;
 import danger.orespawn.ModItems;
 import danger.orespawn.OreSpawnMod;
+import danger.orespawn.entity.pose.PeacockPose;
 
-public class Peacock extends Animal {
+public class Peacock extends Animal implements PeacockPose {
     // OPT-011: cached SoundEvents — identical createVariableRangeEvent ids,
     // allocated once per class instead of on every sound query.
     private static final SoundEvent SND_PEACOCKLIVE = SoundEvent.createVariableRangeEvent(

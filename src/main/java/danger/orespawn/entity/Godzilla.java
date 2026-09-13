@@ -10,6 +10,7 @@ import danger.orespawn.MobzillaSpawnTracker;
 import danger.orespawn.OreSpawnConfig;
 import danger.orespawn.util.MyUtils;
 import danger.orespawn.OreSpawnMod;
+import danger.orespawn.entity.pose.GodzillaPose;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.resources.ResourceLocation;
@@ -54,7 +55,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
 import net.neoforged.neoforge.entity.PartEntity;
 
-public class Godzilla extends Monster implements OreSpawnPartEntity.MultipartBoss {
+public class Godzilla extends Monster implements OreSpawnPartEntity.MultipartBoss, GodzillaPose {
     // OPT-011: cached SoundEvents — identical createVariableRangeEvent ids,
     // allocated once per class instead of on every sound query.
     private static final SoundEvent SND_GODZILLA_LIVING = SoundEvent.createVariableRangeEvent(

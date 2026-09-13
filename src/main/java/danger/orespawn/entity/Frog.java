@@ -37,7 +37,7 @@ import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 
-public class Frog extends Animal {
+public class Frog extends Animal implements danger.orespawn.entity.pose.FrogPose {
     // OPT-011: cached SoundEvents — identical createVariableRangeEvent ids,
     // allocated once per class instead of on every sound query.
     private static final SoundEvent SND_FROG = SoundEvent.createVariableRangeEvent(

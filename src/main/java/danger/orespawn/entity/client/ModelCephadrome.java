@@ -3,6 +3,7 @@ package danger.orespawn.entity.client;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import danger.orespawn.entity.Cephadrome;
+import danger.orespawn.entity.pose.CephadromePose;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
@@ -285,6 +286,18 @@ public class ModelCephadrome extends EntityModel<Cephadrome> {
 
     @Override
     public void setupAnim(Cephadrome entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
+        // The body lives in poseFrom so the parity harness can drive it from a declared state without a live
+        // entity (the Slice 4b form; the hooks): the entity satisfies the interface.
+        poseFrom(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
+    }
+
+    /**
+     * The classic pose over what the model reads from its entity (orig ModelCephadrome.java:383 {@code getRenderInfo()},
+     * :385 the previous / current x and z, :397 / :417 / :437 / :469 {@code getActivity()} and {@code getAttacking()},
+     * :470 the previous / current yaw); the public fields {@code xOld} / {@code zOld} / {@code yRotO} read through the
+     * interface's delegates, the same values.
+     */
+    public void poseFrom(CephadromePose entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
         float newangle = 0.0f;
         float lspeed = 0.0f;
         float pi4 = 0.7853982f;
@@ -296,7 +309,7 @@ public class ModelCephadrome extends EntityModel<Cephadrome> {
         RenderInfo r = entity.getRenderInfo();
 
         if ((double)limbSwingAmount > 0.001) {
-            lspeed = (float)((entity.xOld - entity.getX()) * (entity.xOld - entity.getX()) + (entity.zOld - entity.getZ()) * (entity.zOld - entity.getZ()));
+            lspeed = (float)((entity.xOld() - entity.getX()) * (entity.xOld() - entity.getX()) + (entity.zOld() - entity.getZ()) * (entity.zOld() - entity.getZ()));
             lspeed = (float)Math.sqrt(lspeed);
             newangle = Mth.cos(ageInTicks * 0.75f * this.wingspeed) * (float)Math.PI * lspeed * 0.4f;
             if ((double)newangle > 0.5) {
@@ -393,7 +406,7 @@ public class ModelCephadrome extends EntityModel<Cephadrome> {
         // delta (orig :470 field_70126_B - field_70177_z = yRotO - getYRot()) into
         // the entity's rf1 with a +/-50 clamp (ENT-S-093).
         if (entity.getActivity() == 1) {
-            headYaw = (entity.yRotO - entity.getYRot()) * 10.0f;
+            headYaw = (entity.yRotO() - entity.getYRot()) * 10.0f;
             headYaw = -headYaw;
             r.rf1 += (headYaw - r.rf1) / 50.0f;
             if (r.rf1 > 50.0f) {

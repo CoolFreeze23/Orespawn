@@ -35,7 +35,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import danger.orespawn.OreSpawnMod;
-public class Camarasaurus extends TamableAnimal {
+public class Camarasaurus extends TamableAnimal implements danger.orespawn.entity.pose.CamarasaurusPose {
     // OPT-011: cached SoundEvents — identical createVariableRangeEvent ids,
     // allocated once per class instead of on every sound query.
     private static final SoundEvent SND_CRYO_HURT = SoundEvent.createVariableRangeEvent(

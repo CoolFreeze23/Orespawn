@@ -8,6 +8,7 @@ import danger.orespawn.OreSpawnConfig;
 import danger.orespawn.entity.ai.GenericTargetSorter;
 import danger.orespawn.entity.ai.TargetSelection;
 import danger.orespawn.util.MyUtils;
+import danger.orespawn.entity.pose.SeaMonsterPose;
 import java.util.List;
 import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
@@ -37,7 +38,7 @@ import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 
-public class SeaMonster extends Monster {
+public class SeaMonster extends Monster implements SeaMonsterPose {
     // OPT-011: cached SoundEvents — identical createVariableRangeEvent ids,
     // allocated once per class instead of on every sound query.
     private static final SoundEvent SND_SEAMONSTER_LIVING = SoundEvent.createVariableRangeEvent(

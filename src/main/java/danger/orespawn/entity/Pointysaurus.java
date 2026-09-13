@@ -31,8 +31,9 @@ import danger.orespawn.entity.ai.GenericTargetSorter;
 import danger.orespawn.entity.ai.PointysaurusStareGoal;
 import danger.orespawn.entity.ai.TargetSelection;
 import danger.orespawn.util.MyUtils;
+import danger.orespawn.entity.pose.PointysaurusPose;
 
-public class Pointysaurus extends Monster {
+public class Pointysaurus extends Monster implements PointysaurusPose {
     // OPT-011: cached SoundEvents — identical createVariableRangeEvent ids,
     // allocated once per class instead of on every sound query.
     private static final SoundEvent SND_ALO_LIVING = SoundEvent.createVariableRangeEvent(

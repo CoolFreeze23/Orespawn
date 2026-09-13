@@ -3,6 +3,7 @@ package danger.orespawn.entity.client;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import danger.orespawn.entity.Dragon;
+import danger.orespawn.entity.pose.DragonPose;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
@@ -417,14 +418,26 @@ public class ModelDragon extends EntityModel<Dragon> {
 
     @Override
     public void setupAnim(Dragon entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
+        // The body lives in poseFrom so the parity harness can drive it from a declared state without a live
+        // entity (the Slice 4b form; the hooks): the entity satisfies the interface.
+        poseFrom(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
+    }
+
+    /**
+     * The classic pose over what the model reads from its entity (orig ModelDragon.java:417 {@code getRenderInfo()}, :419
+     * the previous / current x and z, :425 / :457 / :492 / :496 / :538 / :575 {@code getActivity()} and
+     * {@code getAttacking()}, :500 the sitting flag, :539 the previous / current yaw); the public fields {@code xOld} /
+     * {@code zOld} / {@code yRotO} read through the interface's delegates, the same values.
+     */
+    public void poseFrom(DragonPose entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
         float newangle;
         float lspeed = 0.0F;
         float tailspeed = 0.76F;
         float tailamp = 0.45F;
 
         if (limbSwingAmount > 0.001F) {
-            lspeed = (float) ((entity.xOld - entity.getX()) * (entity.xOld - entity.getX())
-                    + (entity.zOld - entity.getZ()) * (entity.zOld - entity.getZ()));
+            lspeed = (float) ((entity.xOld() - entity.getX()) * (entity.xOld() - entity.getX())
+                    + (entity.zOld() - entity.getZ()) * (entity.zOld() - entity.getZ()));
             lspeed = (float) Math.sqrt(lspeed);
             newangle = Mth.cos(ageInTicks * 1.25F * ANIM_SPEED) * (float) Math.PI * lspeed * 0.6F;
         } else {
@@ -575,7 +588,7 @@ public class ModelDragon extends EntityModel<Dragon> {
         RenderInfo r = entity.getRenderInfo();
         float headYaw = netHeadYaw;
         if (entity.getActivity() == 1) {
-            headYaw = (entity.yRotO - entity.getYRot()) * 8.0F;   // orig :539 (field_70126_B - field_70177_z)
+            headYaw = (entity.yRotO() - entity.getYRot()) * 8.0F;   // orig :539 (field_70126_B - field_70177_z)
             headYaw = -headYaw;                                    // orig :540
             r.rf1 += (headYaw - r.rf1) / 60.0F;                    // orig :541
             if (r.rf1 > 50.0F) {                                   // orig :542-544

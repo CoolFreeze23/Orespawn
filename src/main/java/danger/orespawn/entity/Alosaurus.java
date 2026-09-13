@@ -27,10 +27,11 @@ import danger.orespawn.OreSpawnConfig;
 import danger.orespawn.OreSpawnMod;
 import danger.orespawn.entity.ai.DinosaurMeleeAttackGoal;
 import danger.orespawn.entity.ai.GenericTargetSorter;
+import danger.orespawn.entity.pose.AlosaurusPose;
 import danger.orespawn.util.MyUtils;
 import danger.orespawn.entity.ai.TargetSelection;
 
-public class Alosaurus extends Monster {
+public class Alosaurus extends Monster implements AlosaurusPose {
     // OPT-011: cached SoundEvents — identical createVariableRangeEvent ids,
     // allocated once per class instead of on every sound query.
     private static final SoundEvent SND_ALO_LIVING = SoundEvent.createVariableRangeEvent(

@@ -36,7 +36,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.Vec3;
 
-public class EnderKnight extends Monster {
+public class EnderKnight extends Monster implements danger.orespawn.entity.pose.EnderKnightPose {
     private static final EntityDataAccessor<Boolean> DATA_SCREAMING =
             SynchedEntityData.defineId(EnderKnight.class, EntityDataSerializers.BOOLEAN);
 

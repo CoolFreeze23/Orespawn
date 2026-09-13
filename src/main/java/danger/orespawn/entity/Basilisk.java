@@ -5,6 +5,7 @@ import danger.orespawn.MobStats;
 import danger.orespawn.OreSpawnConfig;
 import danger.orespawn.OreSpawnMod;
 import danger.orespawn.entity.ai.GenericTargetSorter;
+import danger.orespawn.entity.pose.BasiliskPose;
 import danger.orespawn.util.MyUtils;
 
 import java.util.List;
@@ -33,7 +34,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import danger.orespawn.entity.ai.TargetSelection;
 
-public class Basilisk extends Monster {
+public class Basilisk extends Monster implements BasiliskPose {
     // OPT-011: cached SoundEvents — identical createVariableRangeEvent ids,
     // allocated once per class instead of on every sound query.
     private static final SoundEvent SND_BASILISK_LIVING = SoundEvent.createVariableRangeEvent(

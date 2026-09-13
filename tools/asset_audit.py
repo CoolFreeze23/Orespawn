@@ -50,6 +50,16 @@ reported under a separate ACKNOWLEDGED section and never affect the exit code
 (the verified-faithful / known-false-positive whitelist); categories listed in
 NEVER_ACKNOWLEDGED cannot be whitelisted at all.
 
+Hooks: a GeoReplacementDescriptor written ahead of its rig - the classic
+setupAnim transcribed into the PoseInputs form, unregistered, its geo and clip
+landing with the species' slice (item 14). A descriptor listed in HOOKS below
+has the TEXTURE_REF_MISSING findings for ITS OWN geo/entity/<rig>.geo.json and
+animations/entity/<rig>.animation.json acknowledged while the rig is
+pending; every other reference it makes (textures, another rig) is audited as
+usual. A HOOKS entry whose rig ships, or that names no descriptor, is HOOK_STALE
+- an ERROR, never acknowledgeable - so the list empties as the slices land.
+
+
 Exit code 1 if any non-acknowledged ERROR-level findings, else 0.
 --json (alias: --write) refreshes tools/asset_audit_report.json.
 """
@@ -103,6 +113,83 @@ ACKNOWLEDGED = {
     ("GECKO_TRIGGER_NEVER_FINISHES", "death"),
 }
 
+# Hooks: descriptor class name -> the rig it names. Each is the classic setupAnim
+# transcribed verbatim into the PoseInputs form ahead of its rig, unregistered (no
+# renderer binds it, so the references are dead at runtime); its
+# geo/entity/<rig>.geo.json and animations/entity/<rig>.animation.json land with the
+# species' slice (item 14), which removes the entry. Only those two references are
+# acknowledged (see is_acknowledged in main); a texture or another rig's asset missing
+# from a hook is an ERROR as anywhere else. check_hooks reports a stale entry.
+HOOKS = {
+    "AlienGeoReplacement": "alien",
+    "AlosaurusGeoReplacement": "alosaurus",
+    "AttackSquidGeoReplacement": "attacksquid",
+    "BabyDragonGeoReplacement": "dragon",
+    "BandPGeoReplacement": "bandp",
+    "BaryonyxGeoReplacement": "baryonyx",
+    "BasiliskGeoReplacement": "basilisk",
+    "ButterflyGeoReplacement": "butterfly",
+    "CamarasaurusGeoReplacement": "camarasaurus",
+    "CassowaryGeoReplacement": "cassowary",
+    "CaveFisherGeoReplacement": "cavefisher",
+    "CephadromeGeoReplacement": "cephadrome",
+    "ChipmunkGeoReplacement": "chipmunk",
+    "CrabGeoReplacement": "crab",
+    "CreepingHorrorGeoReplacement": "creepinghorror",
+    "CryolophosaurusGeoReplacement": "cryolophosaurus",
+    "DragonGeoReplacement": "dragon",
+    "DungeonBeastGeoReplacement": "dungeonbeast",
+    "EasterBunnyGeoReplacement": "easterbunny",
+    "EmperorScorpionGeoReplacement": "emperorscorpion",
+    "EnderKnightGeoReplacement": "enderknight",
+    "EnderReaperGeoReplacement": "enderreaper",
+    "FlounderGeoReplacement": "flounder",
+    "FrogGeoReplacement": "frog",
+    "GazelleGeoReplacement": "gazelle",
+    "GhostGeoReplacement": "ghost",
+    "GhostSkellyGeoReplacement": "ghostskelly",
+    "GiantRobotGeoReplacement": "giantrobot",
+    "GodzillaGeoReplacement": "godzilla",
+    "HammerheadGeoReplacement": "hammerhead",
+    "HydroliscGeoReplacement": "hydrolisc",
+    "JefferyGeoReplacement": "giantrobot",
+    "KrakenGeoReplacement": "kraken",
+    "KyuubiGeoReplacement": "kyuubi",
+    "LeafMonsterGeoReplacement": "leafmonster",
+    "LeonGeoReplacement": "leon",
+    "LizardGeoReplacement": "lizard",
+    "LunaMothGeoReplacement": "butterfly",
+    "LurkingTerrorGeoReplacement": "lurkingterror",
+    "MantisGeoReplacement": "mantis",
+    "MolenoidGeoReplacement": "molenoid",
+    "MothraGeoReplacement": "butterfly",
+    "NastysaurusGeoReplacement": "nastysaurus",
+    "OstrichGeoReplacement": "ostrich",
+    "PeacockGeoReplacement": "peacock",
+    "PitchBlackGeoReplacement": "pitchblack",
+    "PointysaurusGeoReplacement": "pointysaurus",
+    "RatGeoReplacement": "rat",
+    "ScorpionGeoReplacement": "scorpion",
+    "SeaMonsterGeoReplacement": "seamonster",
+    "SeaViperGeoReplacement": "seaviper",
+    "SpitBugGeoReplacement": "spitbug",
+    "SpyroGeoReplacement": "spyro",
+    "StinkBugGeoReplacement": "stinkbug",
+    "StinkyGeoReplacement": "stinky",
+    "TRexGeoReplacement": "trex",
+    "TheKingGeoReplacement": "theking",
+    "ThePrinceAdultGeoReplacement": "theprinceadult",
+    "ThePrinceGeoReplacement": "theprince",
+    "ThePrinceTeenGeoReplacement": "theprinceteen",
+    "TriffidGeoReplacement": "triffid",
+    "TrooperBugGeoReplacement": "trooperbug",
+    "UrchinGeoReplacement": "urchin",
+    "VampireButterflyGeoReplacement": "butterfly",
+    "VelocityRaptorGeoReplacement": "velocityraptor",
+    "WaterDragonGeoReplacement": "waterdragon",
+    "WhaleGeoReplacement": "whale",
+}
+
 # Categories no ACKNOWLEDGED entry may whitelist (an entry naming one is FATAL):
 # a rig the replacement seam draws that ships without the G2 draw-order key, or with
 # a wrong one, would take the client's logged fallback to GeckoLib's own bone order -
@@ -110,7 +197,7 @@ ACKNOWLEDGED = {
 # it is a build error, full stop; and a shipped rig that is neither a seam rig nor a
 # dated OUTSIDE_SEAM exception is a rig outside the contract nobody decided on (on the
 # landing).
-NEVER_ACKNOWLEDGED = {"GECKO_GEO_DRAW_ORDER_MISSING", "GECKO_GEO_SEAM_UNRECONCILED",
+NEVER_ACKNOWLEDGED = {"HOOK_STALE", "GECKO_GEO_DRAW_ORDER_MISSING", "GECKO_GEO_SEAM_UNRECONCILED",
                       "GECKO_GEO_FACE_ORDER_INVALID", "GECKO_GEO_FLAT_CUBE_FACE_ORDER_MISSING",
                       "GECKO_REFERENCE_CLIP_SHIPPED"}
 
@@ -522,6 +609,29 @@ def check_entity_renderers(entities, java_texts):
                 "ModEntities.%s (MobCategory.%s) is bound to %s - a deliberate "
                 "do-nothing renderer, so the entity is INVISIBLE in-game (the "
                 "thrown-rock/shoe/ball projectile class)" % (const, cat, cls), path)
+
+
+def hook_assets(name):
+    """The two asset paths a HOOKS descriptor may reference ahead of its rig, else ()."""
+    rig = HOOKS.get(name)
+    if not rig:
+        return ()
+    return ("geo/entity/%s.geo.json" % rig, "animations/entity/%s.animation.json" % rig)
+
+
+def check_hooks():
+    """Every HOOKS entry names a descriptor that exists and a rig that does not ship yet."""
+    for name in sorted(HOOKS):
+        java = JAVA / "entity" / "client" / (name + ".java")
+        if not java.is_file():
+            err("HOOK_STALE", name, "HOOKS names a descriptor that does not exist (%s) - remove "
+                "the entry" % rel(java), java)
+            continue
+        geo = ASSETS / hook_assets(name)[0]
+        if geo.is_file():
+            err("HOOK_STALE", name, "HOOKS lists this descriptor as a hook pending its rig, but "
+                "%s ships - the slice landed; remove the entry so the descriptor's references "
+                "are audited as every other's" % rel(geo), java)
 
 
 def check_texture_refs(java_texts):
@@ -1177,6 +1287,7 @@ def main():
     check_items(items, block_items, spawn_eggs, block_terminals)
     check_entity_renderers(entities, java_texts)
     check_menu_screens(menus, java_texts)
+    check_hooks()
     check_texture_refs(java_texts)
     check_additional_models(java_texts)
     sound_keys = check_sounds()
@@ -1185,9 +1296,16 @@ def main():
     check_geckolib(java_texts)
 
     # ---- report ----
+    def is_hook_pending(f):
+        # A HOOKS descriptor's own geo and clip, pending until its slice (item 10).
+        return f["category"] == "TEXTURE_REF_MISSING" and any(
+            f["detail"] == "Java references missing asset orespawn:%s" % asset
+            for asset in hook_assets(f["name"]))
+
     def is_acknowledged(f):
-        return (f["category"], f["name"]) in ACKNOWLEDGED \
-            and f["category"] not in NEVER_ACKNOWLEDGED
+        if f["category"] in NEVER_ACKNOWLEDGED:
+            return False
+        return (f["category"], f["name"]) in ACKNOWLEDGED or is_hook_pending(f)
 
     acknowledged = [f for f in findings if is_acknowledged(f)]
     active = [f for f in findings if not is_acknowledged(f)]
@@ -1222,7 +1340,7 @@ def main():
 
     if acknowledged:
         print()
-        print("ACKNOWLEDGED (see ACKNOWLEDGED set in %s for justifications):"
+        print("ACKNOWLEDGED (see the ACKNOWLEDGED set and the HOOKS list in %s for justifications):"
               % rel(__file__))
         for f in acknowledged:
             print("[K] %s: %s — %s — %s" % (

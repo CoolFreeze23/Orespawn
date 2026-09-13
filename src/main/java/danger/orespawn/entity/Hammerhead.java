@@ -7,6 +7,7 @@ import danger.orespawn.OreSpawnConfig;
 import danger.orespawn.entity.ai.GenericTargetSorter;
 import danger.orespawn.entity.ai.TargetSelection;
 import danger.orespawn.util.MyUtils;
+import danger.orespawn.entity.pose.HammerheadPose;
 import java.util.List;
 import javax.annotation.Nullable;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -30,7 +31,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 
-public class Hammerhead extends Monster {
+public class Hammerhead extends Monster implements HammerheadPose {
     // OPT-011: cached SoundEvents — identical createVariableRangeEvent ids,
     // allocated once per class instead of on every sound query.
     private static final SoundEvent SND_HAMMERHEAD_LIVING = SoundEvent.createVariableRangeEvent(

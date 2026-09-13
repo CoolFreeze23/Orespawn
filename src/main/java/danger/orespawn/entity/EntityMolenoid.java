@@ -1,5 +1,6 @@
 package danger.orespawn.entity;
 
+import danger.orespawn.entity.pose.MolenoidPose;
 import danger.orespawn.MobStats;
 import danger.orespawn.ModBlocks;
 import danger.orespawn.OreSpawnConfig;
@@ -39,7 +40,7 @@ import net.minecraft.network.syncher.SynchedEntityData;
 import danger.orespawn.OreSpawnMod;
 import danger.orespawn.entity.ai.TargetSelection;
 
-public class EntityMolenoid extends Monster {
+public class EntityMolenoid extends Monster implements MolenoidPose {
     // OPT-011: cached SoundEvents — identical createVariableRangeEvent ids,
     // allocated once per class instead of on every sound query.
     private static final SoundEvent SND_MOLENOID_LIVING = SoundEvent.createVariableRangeEvent(

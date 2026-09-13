@@ -8,6 +8,7 @@ import danger.orespawn.entity.ai.GenericTargetSorter;
 import danger.orespawn.entity.ai.SeaViperBiteGoal;
 import danger.orespawn.entity.ai.TargetSelection;
 import danger.orespawn.util.MyUtils;
+import danger.orespawn.entity.pose.SeaViperPose;
 import java.util.List;
 import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
@@ -44,7 +45,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.pathfinder.PathType;
 
-public class SeaViper extends Monster {
+public class SeaViper extends Monster implements SeaViperPose {
     // OPT-011: cached SoundEvents — identical createVariableRangeEvent ids,
     // allocated once per class instead of on every sound query.
     private static final SoundEvent SND_SEAVIPER_LIVING = SoundEvent.createVariableRangeEvent(

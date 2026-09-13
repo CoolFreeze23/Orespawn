@@ -1,5 +1,6 @@
 package danger.orespawn.entity;
 
+import danger.orespawn.entity.pose.SpitBugPose;
 import danger.orespawn.MobStats;
 
 import danger.orespawn.OreSpawnConfig;
@@ -33,7 +34,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 
-public class EntitySpitBug extends Monster {
+public class EntitySpitBug extends Monster implements SpitBugPose {
     // OPT-011: cached SoundEvents — identical createVariableRangeEvent ids,
     // allocated once per class instead of on every sound query.
     private static final SoundEvent SND_CLATTER = SoundEvent.createVariableRangeEvent(

@@ -3,6 +3,7 @@ package danger.orespawn.entity.client;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import danger.orespawn.entity.Pointysaurus;
+import danger.orespawn.entity.pose.PointysaurusPose;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
@@ -244,6 +245,13 @@ public class ModelPointysaurus extends EntityModel<Pointysaurus> {
 
     @Override
     public void setupAnim(Pointysaurus entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
+        // The body lives in poseFrom so the parity harness can drive it from a declared state without a live
+        // entity (the Slice 4b form; the hooks, 2026-09-14): the entity satisfies the interface.
+        poseFrom(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
+    }
+
+    /** The classic pose over what the model reads from its entity (the port's {@code entity.getAttacking() != 0}; orig ModelPointysaurus.java setRotationAngles). */
+    public void poseFrom(PointysaurusPose entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
         float newangle = 0.0f;
 
         newangle = (double)limbSwingAmount > 0.1 ? Mth.cos(ageInTicks * 1.3f * this.wingspeed) * (float)Math.PI * 0.25f * limbSwingAmount : 0.0f;

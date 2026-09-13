@@ -49,9 +49,10 @@ import danger.orespawn.util.MyUtils;
 import danger.orespawn.util.OrigTargets;
 import danger.orespawn.entity.ai.GenericTargetSorter;
 import danger.orespawn.entity.ai.TargetSelection;
+import danger.orespawn.entity.pose.ThePrinceTeenPose;
 
 public class ThePrinceTeen extends TamableAnimal
-        implements danger.orespawn.network.RiderInputPayload.RideableFlyer {
+        implements danger.orespawn.network.RiderInputPayload.RideableFlyer, ThePrinceTeenPose {
     // OPT-011: cached SoundEvents — identical createVariableRangeEvent ids,
     // allocated once per class instead of on every sound query.
     private static final SoundEvent SND_MOTHRAWINGS = SoundEvent.createVariableRangeEvent(
@@ -224,6 +225,9 @@ public class ThePrinceTeen extends TamableAnimal
     public danger.orespawn.entity.client.RenderInfo getRenderInfo() {
         return this.renderInfo;
     }
+
+    /** {@code ThePrinceTeenPose}: the {@code yRotO} field the classic flight yaw latch differences (ModelThePrinceTeen.poseFrom; orig :669), the Ostrich form. */
+    public float yRotO() { return this.yRotO; }
 
     @Override
     public void tick() {

@@ -4,6 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import danger.orespawn.entity.Kraken;
+import danger.orespawn.entity.pose.KrakenPose;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
@@ -596,6 +597,13 @@ public class ModelKraken extends EntityModel<Kraken> {
 
     @Override
     public void setupAnim(Kraken entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
+        // The body lives in poseFrom so the parity harness can drive it from a declared state without a live
+        // entity (the Slice 4b form; the hooks, 2026-09-14): the entity satisfies the interface.
+        poseFrom(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
+    }
+
+    /** The classic pose over what the model reads from its entity (orig ModelKraken.java:1045-1058 {@code getAttacking()}, {@code getRenderInfo()}, the entity's RNG). */
+    public void poseFrom(KrakenPose entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
         this.Finright.zRot = Mth.cos(ageInTicks * 0.43F * ANIM_SPEED) * (float) Math.PI * 0.15F;
         this.Finleft.zRot = Mth.cos(ageInTicks * 0.32F * ANIM_SPEED) * (float) Math.PI * 0.14F;
 
