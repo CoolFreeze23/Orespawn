@@ -3,6 +3,7 @@ package danger.orespawn.entity.client;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import danger.orespawn.entity.Frog;
+import danger.orespawn.entity.pose.FrogPose;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
@@ -104,6 +105,13 @@ public class ModelFrog extends EntityModel<Frog> {
 
     @Override
     public void setupAnim(Frog entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
+        // The body lives in poseFrom so the parity harness can drive it from a declared state without a live
+        // entity (the Slice 4b form; the hooks, owner 2026-09-14, addendum item 10): the entity satisfies the interface.
+        poseFrom(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
+    }
+
+    /** The classic pose over what the model reads from its entity (orig ModelFrog.java:102 {@code getSinging()}, :104 {@code field_70181_x} - motionY). */
+    public void poseFrom(FrogPose entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
         float newangle = limbSwingAmount > 0.1F
             ? Mth.cos(ageInTicks * this.wingspeed * 1.4F) * (float) Math.PI * 0.55F * limbSwingAmount
             : 0.0F;

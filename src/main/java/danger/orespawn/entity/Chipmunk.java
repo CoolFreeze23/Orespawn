@@ -44,7 +44,7 @@ import danger.orespawn.entity.ai.MoveIndoorsGoal;
 
 // orig Chipmunk.java:40-41 — extends EntityCannonFodder, which carries the shared
 // hat-taming / activated-guard behavior a chipmunk shares with the other fodder pets.
-public class Chipmunk extends EntityCannonFodder {
+public class Chipmunk extends EntityCannonFodder implements danger.orespawn.entity.pose.ChipmunkPose {
     // OPT-011: cached SoundEvents — identical createVariableRangeEvent ids,
     // allocated once per class instead of on every sound query.
     private static final SoundEvent SND_SCORPION_HIT = SoundEvent.createVariableRangeEvent(

@@ -1,6 +1,7 @@
 package danger.orespawn.entity.client;
 
 import danger.orespawn.entity.ThePrinceTeen;
+import danger.orespawn.entity.pose.ThePrinceTeenPose;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.model.EntityModel;
@@ -532,6 +533,13 @@ public class ModelThePrinceTeen extends EntityModel<ThePrinceTeen> {
 
     @Override
     public void setupAnim(ThePrinceTeen entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
+        // The body lives in poseFrom so the parity harness can drive it from a declared state without a live
+        // entity (the Slice 4b form; the hooks, 2026-09-14): the entity satisfies the interface.
+        poseFrom(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
+    }
+
+    /** The classic pose over what the model reads from its entity (orig ModelThePrinceTeen.java:525/538,669-678 {@code getActivity()}, {@code getAttacking()}, {@code getRenderInfo()}, {@code isOrderedToSit()}, {@code getHead1Ext / 2 / 3}, the yaw pair). */
+    public void poseFrom(ThePrinceTeenPose entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
         float d3;
         float h3;
         float newangle;
@@ -692,7 +700,7 @@ public class ModelThePrinceTeen extends EntityModel<ThePrinceTeen> {
             // ENT-S-093: body-yaw delta as the original (orig ModelThePrinceTeen.java:669
             // field_70126_B - field_70177_z = yRotO - getYRot()), not the head pair;
             // latch/clamp orig :671-678 on the entity's own RenderInfo.
-            yaw = (entity.yRotO - entity.getYRot()) * 10.0f;
+            yaw = (entity.yRotO() - entity.getYRot()) * 10.0f;
             yaw = -yaw;
             r.rf1 += (yaw - r.rf1) / 50.0f;
             if (r.rf1 > 50.0f) {

@@ -8,6 +8,7 @@ import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.util.Mth;
 import danger.orespawn.entity.GiantRobot;
+import danger.orespawn.entity.pose.GiantRobotPose;
 
 /**
  * GiantRobot model. The original (orig ModelGiantRobot.java:150-279) drew the
@@ -183,6 +184,13 @@ public class ModelGiantRobot extends EntityModel<GiantRobot> {
 
     @Override
     public void setupAnim(GiantRobot entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
+        // The body lives in poseFrom so the parity harness can drive it from a declared state without a live
+        // entity (the Slice 4b form; the hooks, 2026-09-14): the entity satisfies the interface.
+        poseFrom(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
+    }
+
+    /** The classic pose over what the model reads from its entity (orig ModelGiantRobot.java:230 {@code getAttacking()}). */
+    public void poseFrom(GiantRobotPose entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
         // orig ModelGiantRobot.java:158-161 — movescale = limbSwingAmount * 0.65 clamped to 1.
         float movescale = limbSwingAmount * 0.65f;
         if (movescale > 1.0f) {

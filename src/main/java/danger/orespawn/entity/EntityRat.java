@@ -1,5 +1,6 @@
 package danger.orespawn.entity;
 
+import danger.orespawn.entity.pose.RatPose;
 import danger.orespawn.MobStats;
 
 import java.util.List;
@@ -35,7 +36,7 @@ import danger.orespawn.entity.ai.GenericTargetSorter;
 import danger.orespawn.entity.ai.TargetSelection;
 import danger.orespawn.util.MyUtils;
 
-public class EntityRat extends Monster {
+public class EntityRat extends Monster implements RatPose {
     // OPT-011: cached SoundEvents — identical createVariableRangeEvent ids,
     // allocated once per class instead of on every sound query.
     private static final SoundEvent SND_RATLIVE = SoundEvent.createVariableRangeEvent(

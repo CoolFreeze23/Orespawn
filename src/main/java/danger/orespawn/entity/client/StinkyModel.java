@@ -3,6 +3,7 @@ package danger.orespawn.entity.client;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import danger.orespawn.entity.EntityStinky;
+import danger.orespawn.entity.pose.StinkyPose;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
@@ -170,6 +171,13 @@ public class StinkyModel extends EntityModel<EntityStinky> {
 
     @Override
     public void setupAnim(EntityStinky entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
+        // The body lives in poseFrom so the parity harness can drive it from a declared state without a live
+        // entity (the Slice 4b form; the hooks, owner 2026-09-14, addendum item 10): the entity satisfies the interface.
+        poseFrom(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
+    }
+
+    /** The classic pose over what the model reads from its entity (orig ModelStinky.java:166 {@code getActivity()}, :185 {@code func_70906_o()}). */
+    public void poseFrom(StinkyPose entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
         float ws = limbSwingAmount;
 
         float newangle = (double) limbSwingAmount > 0.1 ? Mth.cos(ageInTicks * 2.3F * ws) * (float) Math.PI * 0.4F * limbSwingAmount : 0.0F;

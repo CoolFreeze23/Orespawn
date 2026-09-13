@@ -41,7 +41,7 @@ import danger.orespawn.util.MyUtils;
 import net.minecraft.world.entity.npc.Villager;
 import danger.orespawn.entity.ai.TargetSelection;
 
-public class Crab extends Monster {
+public class Crab extends Monster implements danger.orespawn.entity.pose.CrabPose {
     // OPT-011: cached SoundEvents — identical createVariableRangeEvent ids,
     // allocated once per class instead of on every sound query.
     private static final SoundEvent SND_SCORPION_ATTACK = SoundEvent.createVariableRangeEvent(

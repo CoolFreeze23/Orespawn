@@ -1,5 +1,6 @@
 package danger.orespawn.entity;
 
+import danger.orespawn.entity.pose.WaterDragonPose;
 import danger.orespawn.MobStats;
 
 import danger.orespawn.ModEntities;
@@ -61,7 +62,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.pathfinder.PathType;
 import net.minecraft.world.phys.Vec3;
 
-public class WaterDragon extends TamableAnimal {
+public class WaterDragon extends TamableAnimal implements WaterDragonPose {
     // OPT-011: cached SoundEvents — identical createVariableRangeEvent ids,
     // allocated once per class instead of on every sound query.
     private static final SoundEvent SND_WATERDRAGON_HURT = SoundEvent.createVariableRangeEvent(

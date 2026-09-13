@@ -1,5 +1,6 @@
 package danger.orespawn.entity;
 
+import danger.orespawn.entity.pose.VelocityRaptorPose;
 import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
@@ -41,7 +42,7 @@ import danger.orespawn.ModEntities;
 import danger.orespawn.OreSpawnConfig;
 import danger.orespawn.OreSpawnMod;
 
-public class VelocityRaptor extends TamableAnimal {
+public class VelocityRaptor extends TamableAnimal implements VelocityRaptorPose {
     // OPT-011: cached SoundEvents — identical createVariableRangeEvent ids,
     // allocated once per class instead of on every sound query.
     private static final SoundEvent SND_CRYO_HURT = SoundEvent.createVariableRangeEvent(

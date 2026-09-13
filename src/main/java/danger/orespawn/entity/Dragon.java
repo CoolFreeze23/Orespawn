@@ -55,7 +55,7 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import danger.orespawn.entity.ai.TargetSelection;
 
-public class Dragon extends TamableAnimal implements danger.orespawn.network.RiderInputPayload.RideableFlyer {
+public class Dragon extends TamableAnimal implements danger.orespawn.network.RiderInputPayload.RideableFlyer, danger.orespawn.entity.pose.DragonPose {
     // OPT-011: cached SoundEvent — identical createVariableRangeEvent id,
     // allocated once per class instead of on every wing-flap sound.
     private static final SoundEvent SND_MOTHRAWINGS = SoundEvent.createVariableRangeEvent(
@@ -197,9 +197,22 @@ public class Dragon extends TamableAnimal implements danger.orespawn.network.Rid
     }
 
     /** Mirrors orig Dragon.java:199-201 {@code getRenderInfo()} (ENT-S-093). */
+    @Override
     public danger.orespawn.entity.client.RenderInfo getRenderInfo() {
         return this.renderInfo;
     }
+
+    /** orig ModelDragon.java:419 {@code field_70169_q} (prevPosX): the DragonPose read of the public field (the Ostrich form). */
+    @Override
+    public double xOld() { return this.xOld; }
+
+    /** orig ModelDragon.java:419 {@code field_70166_s} (prevPosZ). */
+    @Override
+    public double zOld() { return this.zOld; }
+
+    /** orig ModelDragon.java:539 {@code field_70126_B} (prevRotationYaw). */
+    @Override
+    public float yRotO() { return this.yRotO; }
 
     @Override
     public boolean isPushable() {

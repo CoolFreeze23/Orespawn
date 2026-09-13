@@ -1,5 +1,6 @@
 package danger.orespawn.entity;
 
+import danger.orespawn.entity.pose.SpyroPose;
 import java.util.List;
 
 import javax.annotation.Nullable;
@@ -53,7 +54,7 @@ import danger.orespawn.OreSpawnConfig;
 import danger.orespawn.entity.ai.GenericTargetSorter;
 import danger.orespawn.entity.ai.TargetSelection;
 
-public class EntitySpyro extends TamableAnimal {
+public class EntitySpyro extends TamableAnimal implements SpyroPose {
     // OPT-011: cached SoundEvents — identical createVariableRangeEvent ids,
     // allocated once per class instead of on every sound query.
     private static final SoundEvent SND_ROAR = SoundEvent.createVariableRangeEvent(

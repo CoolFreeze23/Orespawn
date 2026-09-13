@@ -3,6 +3,7 @@ package danger.orespawn.entity.client;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import danger.orespawn.entity.SeaViper;
+import danger.orespawn.entity.pose.SeaViperPose;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
@@ -235,6 +236,13 @@ public class ModelSeaViper extends EntityModel<SeaViper> {
     // bytecode) into zRot; it is folded into z as initialPose.z + offsetZ * 16 here.
     @Override
     public void setupAnim(SeaViper entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
+        // The body lives in poseFrom so the parity harness can drive it from a declared state without a live
+        // entity (the Slice 4b form; the hooks, 2026-09-14): the entity satisfies the interface.
+        poseFrom(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
+    }
+
+    /** The classic pose over what the model reads from its entity (orig ModelSeaViper.java:324 {@code getAttacking()}). */
+    public void poseFrom(SeaViperPose entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
         // orig ModelSeaViper.java:295 — cast to SeaViper (typed parameter here).
         // orig :296 super.render is ModelBase's no-op; orig :297 / :410-412 setRotationAngles
         // is a pure super call (no-op). Nothing to transcribe for either.

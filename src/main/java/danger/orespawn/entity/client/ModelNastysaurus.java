@@ -3,6 +3,7 @@ package danger.orespawn.entity.client;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import danger.orespawn.entity.Nastysaurus;
+import danger.orespawn.entity.pose.NastysaurusPose;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
@@ -390,6 +391,13 @@ public class ModelNastysaurus extends EntityModel<Nastysaurus> {
 
     @Override
     public void setupAnim(Nastysaurus entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
+        // The body lives in poseFrom so the parity harness can drive it from a declared state without a live
+        // entity (the Slice 4b form; the hooks, 2026-09-14): the entity satisfies the interface.
+        poseFrom(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
+    }
+
+    /** The classic pose over what the model reads from its entity (orig ModelNastysaurus.java:438,450 {@code getRenderInfo()}, {@code getAttacking()}, the level's RNG). */
+    public void poseFrom(NastysaurusPose entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
         float newangle;
         float pscale = 2.0F;
         float tailspeed;
@@ -436,7 +444,7 @@ public class ModelNastysaurus extends EntityModel<Nastysaurus> {
             newangle = Math.abs(newangle);
             if (newangle < r.rf1) {
                 r.ri1 = 0;
-                if (entity.level().random.nextInt(20) == 1) {
+                if (entity.getLevelRandom().nextInt(20) == 1) {
                     r.ri1 |= 1;
                 }
             }

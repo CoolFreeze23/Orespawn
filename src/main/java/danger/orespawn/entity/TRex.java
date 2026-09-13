@@ -28,8 +28,9 @@ import danger.orespawn.entity.ai.DinosaurMeleeAttackGoal;
 import danger.orespawn.entity.ai.GenericTargetSorter;
 import danger.orespawn.entity.ai.TargetSelection;
 import danger.orespawn.util.MyUtils;
+import danger.orespawn.entity.pose.TRexPose;
 
-public class TRex extends Monster {
+public class TRex extends Monster implements TRexPose {
     private static final EntityDataAccessor<Integer> DATA_ATTACKING =
             SynchedEntityData.defineId(TRex.class, EntityDataSerializers.INT);
 

@@ -26,8 +26,9 @@ import net.minecraft.world.level.Level;
 import danger.orespawn.OreSpawnConfig;
 import danger.orespawn.OreSpawnMod;
 import danger.orespawn.entity.ai.TargetSelection;
+import danger.orespawn.entity.pose.LeafMonsterPose;
 
-public class EntityLeafMonster extends Monster {
+public class EntityLeafMonster extends Monster implements LeafMonsterPose {
     // OPT-011: cached SoundEvents — identical createVariableRangeEvent ids,
     // allocated once per class instead of on every sound query.
     private static final SoundEvent SND_LEAVES_HIT = SoundEvent.createVariableRangeEvent(

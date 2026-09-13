@@ -3,6 +3,7 @@ package danger.orespawn.entity.client;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import danger.orespawn.entity.WaterDragon;
+import danger.orespawn.entity.pose.WaterDragonPose;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
@@ -176,6 +177,13 @@ public class ModelWaterDragon extends EntityModel<WaterDragon> {
 
     @Override
     public void setupAnim(WaterDragon entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
+        // The body lives in poseFrom so the parity harness can drive it from a declared state without a live
+        // entity (the Slice 4b form; the hooks, owner 2026-09-14, addendum item 10): the entity satisfies the interface.
+        poseFrom(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
+    }
+
+    /** The classic pose over what the model reads from its entity (orig ModelWaterDragon.java:222, :227, :232 {@code func_70906_o()}, :236 {@code getAttacking()}). */
+    public void poseFrom(WaterDragonPose entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
         float newangle = 0.0f;
         float pi4 = 0.7853982f;
         float root13 = (float)Math.sqrt(13.0);

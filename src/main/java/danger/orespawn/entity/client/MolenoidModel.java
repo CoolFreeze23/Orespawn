@@ -3,6 +3,7 @@ package danger.orespawn.entity.client;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import danger.orespawn.entity.EntityMolenoid;
+import danger.orespawn.entity.pose.MolenoidPose;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
@@ -291,6 +292,13 @@ public class MolenoidModel extends EntityModel<EntityMolenoid> {
 
     @Override
     public void setupAnim(EntityMolenoid entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
+        // The body lives in poseFrom so the parity harness can drive it from a declared state without a live
+        // entity (the Slice 4b form; the hooks, owner 2026-09-14, addendum item 10): the entity satisfies the interface.
+        poseFrom(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
+    }
+
+    /** The classic pose over what the model reads from its entity (orig ModelMolenoid.java:286 {@code getAttacking()}). */
+    public void poseFrom(MolenoidPose entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
         float newangle = 0.0f;
         newangle = entity.getAttacking() != 0 ? Mth.cos((float)(ageInTicks * 1.7f * this.wingspeed)) * (float)Math.PI * 0.25f : (limbSwingAmount > 0.1f ? Mth.cos((float)(ageInTicks * 1.3f * this.wingspeed)) * (float)Math.PI * 0.25f * limbSwingAmount : 0.0f);
         this.larm.yRot = newangle + 0.628f;

@@ -3,6 +3,7 @@ package danger.orespawn.entity.client;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import danger.orespawn.entity.EntityEmperorScorpion;
+import danger.orespawn.entity.pose.EmperorScorpionPose;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
@@ -578,6 +579,13 @@ public class EmperorScorpionModel extends EntityModel<EntityEmperorScorpion> {
 
     @Override
     public void setupAnim(EntityEmperorScorpion entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
+        // The body lives in poseFrom so the parity harness can drive it from a declared state without a live
+        // entity (the Slice 4b form; the hook lanes, 2026-09-14): the entity satisfies the interface.
+        poseFrom(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
+    }
+
+    /** The classic pose over what the model reads from its entity (orig ModelEmperorScorpion.java:613 {@code getAttacking()}, :613-641 the claw / tail latch on {@code getRenderInfo()} and {@code getRandom()}). */
+    public void poseFrom(EmperorScorpionPose entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
         float newangle = 0.0f;
         float upangle = 0.0f;
         float nextangle = 0.0f;

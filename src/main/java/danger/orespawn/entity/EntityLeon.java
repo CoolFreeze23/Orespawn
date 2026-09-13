@@ -51,6 +51,7 @@ import danger.orespawn.OreSpawnConfig;
 import danger.orespawn.OreSpawnMod;
 import danger.orespawn.entity.ai.GenericTargetSorter;
 import danger.orespawn.entity.ai.TargetSelection;
+import danger.orespawn.entity.pose.LeonPose;
 import danger.orespawn.util.MyUtils;
 import danger.orespawn.util.OrigTargets;
 
@@ -65,7 +66,7 @@ import danger.orespawn.util.OrigTargets;
  * orig Leon.java and were dropped in favor of this faithful port.
  */
 public class EntityLeon extends TamableAnimal
-        implements danger.orespawn.network.RiderInputPayload.RideableFlyer {
+        implements danger.orespawn.network.RiderInputPayload.RideableFlyer, LeonPose {
     // OPT-011: cached SoundEvents — identical createVariableRangeEvent ids,
     // allocated once per class instead of on every sound query.
     private static final SoundEvent SND_LEON_LIVING = SoundEvent.createVariableRangeEvent(
@@ -279,6 +280,11 @@ public class EntityLeon extends TamableAnimal
     /** Mirrors orig Leon.java:176-178 {@code getRenderInfo()}. ENT-S-093. */
     public danger.orespawn.entity.client.RenderInfo getRenderInfo() {
         return this.renderInfo;
+    }
+
+    /** The previous tick's yaw ({@code yRotO}, orig ModelLeon.java:1014 {@code prevRotationYaw}) for {@link LeonPose}: a one-line delegate to the field. */
+    public float getYRotO() {
+        return this.yRotO;
     }
 
     @Override

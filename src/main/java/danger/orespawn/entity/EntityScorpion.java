@@ -1,5 +1,6 @@
 package danger.orespawn.entity;
 
+import danger.orespawn.entity.pose.ScorpionPose;
 import danger.orespawn.MobStats;
 
 import danger.orespawn.OreSpawnConfig;
@@ -31,7 +32,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import danger.orespawn.entity.ai.TargetSelection;
 
-public class EntityScorpion extends Monster {
+public class EntityScorpion extends Monster implements ScorpionPose {
     // OPT-011: cached SoundEvents — identical createVariableRangeEvent ids,
     // allocated once per class instead of on every sound query.
     private static final SoundEvent SND_SCORPION_HIT = SoundEvent.createVariableRangeEvent(

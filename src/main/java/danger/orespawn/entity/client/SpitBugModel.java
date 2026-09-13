@@ -3,6 +3,7 @@ package danger.orespawn.entity.client;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import danger.orespawn.entity.EntitySpitBug;
+import danger.orespawn.entity.pose.SpitBugPose;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
@@ -683,6 +684,13 @@ public class SpitBugModel extends EntityModel<EntitySpitBug> {
 
     @Override
     public void setupAnim(EntitySpitBug entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
+        // The body lives in poseFrom so the parity harness can drive it from a declared state without a live
+        // entity (the Slice 4b form; the hooks, owner 2026-09-14, addendum item 10): the entity satisfies the interface.
+        poseFrom(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
+    }
+
+    /** The classic pose over what the model reads from its entity (orig ModelSpitBug.java:698 {@code getAttacking()}). */
+    public void poseFrom(SpitBugPose entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
         Object r = null;
         float newangle = 0.0f;
         float upangle = 0.0f;

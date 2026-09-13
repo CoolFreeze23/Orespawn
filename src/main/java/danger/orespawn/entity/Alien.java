@@ -34,8 +34,9 @@ import danger.orespawn.OreSpawnConfig;
 import danger.orespawn.OreSpawnMod;
 import danger.orespawn.entity.ai.GenericTargetSorter;
 import danger.orespawn.entity.ai.TargetSelection;
+import danger.orespawn.entity.pose.AlienPose;
 
-public class Alien extends Monster {
+public class Alien extends Monster implements AlienPose {
     // OPT-011: cached SoundEvents — identical createVariableRangeEvent ids,
     // allocated once per class instead of on every sound query.
     private static final SoundEvent SND_ALIEN_LIVING = SoundEvent.createVariableRangeEvent(

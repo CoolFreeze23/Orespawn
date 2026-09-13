@@ -41,8 +41,9 @@ import net.minecraft.world.phys.Vec3;
 import danger.orespawn.ModEntities;
 import danger.orespawn.OreSpawnConfig;
 import danger.orespawn.OreSpawnMod;
+import danger.orespawn.entity.pose.HydroliscPose;
 
-public class EntityHydrolisc extends TamableAnimal {
+public class EntityHydrolisc extends TamableAnimal implements HydroliscPose {
     // OPT-011: cached SoundEvents — identical createVariableRangeEvent ids,
     // allocated once per class instead of on every sound query.
     private static final SoundEvent SND_CRYO_HURT = SoundEvent.createVariableRangeEvent(

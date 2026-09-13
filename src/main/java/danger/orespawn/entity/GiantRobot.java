@@ -32,8 +32,9 @@ import danger.orespawn.OreSpawnConfig;
 import danger.orespawn.entity.ai.GenericTargetSorter;
 import danger.orespawn.entity.ai.TargetSelection;
 import danger.orespawn.util.MyUtils;
+import danger.orespawn.entity.pose.GiantRobotPose;
 
-public class GiantRobot extends Monster {
+public class GiantRobot extends Monster implements GiantRobotPose {
     // OPT-011: cached SoundEvents — identical createVariableRangeEvent ids,
     // allocated once per class instead of on every sound query.
     private static final SoundEvent SND_ROBOT_LIVING = SoundEvent.createVariableRangeEvent(

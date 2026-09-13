@@ -28,7 +28,7 @@ import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 
-public class DungeonBeast extends Monster {
+public class DungeonBeast extends Monster implements danger.orespawn.entity.pose.DungeonBeastPose {
     // OPT-011: cached SoundEvents — identical createVariableRangeEvent ids,
     // allocated once per class instead of on every sound query.
     private static final SoundEvent SND_DBHIT = SoundEvent.createVariableRangeEvent(

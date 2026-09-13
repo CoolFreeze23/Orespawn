@@ -35,7 +35,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.Vec3;
 
-public class EnderReaper extends Monster {
+public class EnderReaper extends Monster implements danger.orespawn.entity.pose.EnderReaperPose {
     private static final EntityDataAccessor<Boolean> DATA_SCREAMING =
             SynchedEntityData.defineId(EnderReaper.class, EntityDataSerializers.BOOLEAN);
 

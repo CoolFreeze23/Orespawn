@@ -3,6 +3,7 @@ package danger.orespawn.entity.client;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import danger.orespawn.entity.Chipmunk;
+import danger.orespawn.entity.pose.ChipmunkPose;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
@@ -158,6 +159,13 @@ public class ModelChipmunk extends EntityModel<Chipmunk> {
 
     @Override
     public void setupAnim(Chipmunk entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
+        // The body lives in poseFrom so the parity harness can drive it from a declared state without a live
+        // entity (the Slice 4b form; the hooks, owner 2026-09-14, addendum item 10): the entity satisfies the interface.
+        poseFrom(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
+    }
+
+    /** The classic pose over what the model reads from its entity (orig ModelChipmunk.java:168 {@code func_70906_o()}, the sitting flag). */
+    public void poseFrom(ChipmunkPose entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
         float newangle = limbSwingAmount > 0.1F
                 ? Mth.cos(ageInTicks * 2.3F * ANIM_SPEED) * (float) Math.PI * 0.25F * limbSwingAmount
                 : 0.0F;

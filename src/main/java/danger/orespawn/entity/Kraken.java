@@ -39,8 +39,9 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.BossEvent;
 import net.minecraft.network.chat.Component;
 import danger.orespawn.entity.ai.TargetSelection;
+import danger.orespawn.entity.pose.KrakenPose;
 
-public class Kraken extends Monster {
+public class Kraken extends Monster implements KrakenPose {
     private static final EntityDataAccessor<Integer> DATA_ATTACKING =
             SynchedEntityData.defineId(Kraken.class, EntityDataSerializers.INT);
     /**

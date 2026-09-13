@@ -28,8 +28,9 @@ import danger.orespawn.entity.ai.DinosaurMeleeAttackGoal;
 import danger.orespawn.entity.ai.GenericTargetSorter;
 import danger.orespawn.entity.ai.TargetSelection;
 import danger.orespawn.util.MyUtils;
+import danger.orespawn.entity.pose.NastysaurusPose;
 
-public class Nastysaurus extends Monster {
+public class Nastysaurus extends Monster implements NastysaurusPose {
     // OPT-011: cached SoundEvents — identical createVariableRangeEvent ids,
     // allocated once per class instead of on every sound query.
     private static final SoundEvent SND_ALO_LIVING = SoundEvent.createVariableRangeEvent(
@@ -346,6 +347,11 @@ public class Nastysaurus extends Monster {
     /** Mirrors orig Nastysaurus.java:84-86 {@code getRenderInfo()}. ENT-S-093. */
     public danger.orespawn.entity.client.RenderInfo getRenderInfo() {
         return this.renderInfo;
+    }
+
+    /** {@code NastysaurusPose}: the level's RNG the classic chew latch rolls (ModelNastysaurus.poseFrom; orig ModelNastysaurus.java:450 world RNG). */
+    public net.minecraft.util.RandomSource getLevelRandom() {
+        return this.level().random;
     }
 
     public void setAttacking(int value) {
