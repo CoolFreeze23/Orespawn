@@ -5771,3 +5771,16 @@ texture; the four optional-clip WARNs); `python tools/asset_audit.py` 0 errors (
 IN-GAME: nothing — no shipped resource or class changed; the package is a repository directory for the artist.
 
 GATE: not run - a tooling step with no build input (the cost rules of 2026-09-12, item 25 (5): the tool's own tests and one dry run are the check; nothing under src/ or build.gradle moved): `test_artist_package.py` 30 OK, the dry run 29 species / 29 folders `check` PASS, `artist_handoff/entities/the_queen` and `/beaver` `check` PASS, `asset_audit.py` 0 errors (2026-09-13 13:05-13:12). KNOWN_ISSUES count 1277 unchanged.
+
+## RULINGS 2026-09-13 (THIRD SET) RECORDED (docs-only) — push; the pilot's second clip `bite`; every PROVISIONAL marker resolved to the 2026-09-06 rulings and README rule 5 split by controller kind; the priority table the packaged folders only; the reference clip's span rule (5 degrees, 6 s cap); `referenceClips` a `check` dependency; the probe extension ratified and ITEM-071 deferred; the next slice fifteen rigs on the hook
+
+Recorded in `phase_g_reports/phase_g_scope_addendum_2026-09-03.md` item 28 (the rulings in full) and `PHASE_G_PROMPT.md`
+§6b (the bullet); the register carries a dated line under ITEM-071 (deferred with the parity lanes, the one-number
+`blade2` fix included). Executed here, docs-only: the push (origin/master ba4d2c0, the nine commits after e7e916e,
+before anything else landed). The sampler's span rule of item 27 (3) is superseded by item 28 (5) the way earlier
+rulings were: the earlier text stands as written, one ruling stands. The order of work from here: items 2 to 6 as one
+tooling commit (the pilot's second clip `bite`; the PROVISIONAL markers and open-question references resolved to the
+2026-09-06 rulings, README rule 5 split by controller kind, the PROVISIONAL section gone, the lock reject mode the one
+open item; the priority table the packaged folders only; the reference clips regenerated under the new span rule;
+`referenceClips` verified in `check`), the package regenerated and its file list reported → the next slice (the Cloud
+Shark and the fourteen named, on the hook, one refuter, the counts opening the report). Nothing else runs.

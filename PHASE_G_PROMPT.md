@@ -724,6 +724,23 @@ root-order slice with the GeckoLib per-entity cache eviction, then Slice 4c). Th
   the pilot pair's package → stop and report with the counts and the next slice's species list (the Cloud Shark plus
   the next ten to fourteen in the design's order, on the hook). Nothing else runs.
 
+- Rulings of 2026-09-13, third set (addendum item 28): the push (origin/master ba4d2c0). The pilot package, one
+  tooling commit, no refuter, both folders regenerated and checking PASS: the pilot's second clip is `bite` (the seed
+  flips, `attack` back to "leave, later", the bite impact-frame wishlist line in scope); every PROVISIONAL marker and
+  open-question reference in README_FIRST and the sheets resolved to the 2026-09-06 ruling it depends on (Q3 the flip
+  kept, Q4 the overlay kept, Q5 the idle_alt cadence, Q6 four extras, Q11 the transport, Q12 aggro_idle, Q14 loops at
+  1.0 s, Q15 the `_preview` export, Q16 the Queen); README rule 5 split by controller kind (phase-locked: every loop
+  authored at 1.0 s, the length free in-game, the tempo table gives the rate; native: each clip keeps its shipped
+  length); the README's PROVISIONAL section gone, the lock reject mode the one open item; the priority table the
+  packaged folders only plus one line that more follow, the Queen's row her pilot scope with the effort re-estimated
+  for two clips; the reference clip's span = the smallest multiple of the slowest group's period at which every group
+  returns within 5 degrees of its start, capped at 6 s, past the cap 2 s with the seam stated (the 28 clips
+  regenerate); `referenceClips` a `check` dependency (the build regenerates and compares byte for byte; drift fails the
+  build as proof drift does). The probe extension ratified; ITEM-071 deferred with the parity lanes, the one-number fix
+  included; the sampler's other choices stand. The next slice: the Cloud Shark and the fourteen named, fifteen rigs on
+  the hook, one refuter, the counts open the report. Order of work: push → items 2 to 6 as one tooling commit with the
+  package regenerated, its file list in the report → the slice. Nothing else runs.
+
 ## 7. Standing traps checklist (things that have actually bitten this project)
 
 - Uppercase in resource filenames → `ResourceLocation` crash. Lowercase all geo/

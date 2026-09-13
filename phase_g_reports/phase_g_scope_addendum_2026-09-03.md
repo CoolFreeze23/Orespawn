@@ -404,6 +404,28 @@ that slice, not a task for now.
     slice's species list (the Cloud Shark plus the next ten to fourteen in the design's order, on the hook). Nothing
     else runs.
 
+28. **Rulings of 2026-09-13, third set (owner, through the advisor):** (1) **Push:** master pushed now, the nine
+    commits after origin/master e7e916e (origin/master ba4d2c0). **The pilot package (tooling, no refuter; both folders
+    regenerated and checking PASS):** (2) the pilot's second clip is `bite`, not `attack`: the seed flips; `attack`
+    returns to "leave, later"; the wishlist's impact-frame line for `bite` moves into scope (the hurt lands 8 ticks after
+    the trigger — the impact at 0.4 s). (3) Every PROVISIONAL marker and open-question reference in README_FIRST and the
+    sheets is resolved to the 2026-09-06 ruling it depends on (Q3 the flip kept; Q4 the overlay kept; Q5 the idle_alt
+    cadence; Q6 four extras; Q11 the transport; Q12 aggro_idle; Q14 loops at 1.0 s; Q15 the `_preview` export; Q16 the
+    Queen). README rule 5 splits by controller kind: a phase-locked creature authors every loop at 1.0 s — the length is
+    free in-game, the sheet's tempo table gives the rate; a native creature (the Queen) keeps each clip's shipped
+    length. The README's PROVISIONAL section goes; the lock reject mode stays marked as the one open item. (4) The
+    README's priority table lists the packaged folders only, with one line that more folders follow as creatures land.
+    The Queen's row is her pilot scope — idle and bite, the effort re-estimated for two clips — with her other six
+    marked later. (5) The reference clip's span: the smallest multiple of the slowest group's period at which every
+    group returns within 5 degrees of its start, capped at 6 s; past the cap, 2 s and the sheet states the seam. The
+    28 clips regenerate; this replaces item 27 (3)'s span wording. (6) `referenceClips` becomes a `check` dependency:
+    the build regenerates the clips and compares byte for byte; drift fails the build as proof drift does. **The drop
+    and the findings:** (7) the reference leg's probe extension: ratified. ITEM-071: a register line, deferred with the
+    parity lanes, the one-number fix included. The sampler's other choices stand. **The next slice:** (8) the Cloud
+    Shark and the fourteen named: fifteen rigs on the hook, one refuter, the counts open the report. **Order of work:**
+    (9) push → items 2 to 6 as one tooling commit with the package regenerated, its file list in the report → the
+    slice. Nothing else runs.
+
 ## D. Rulings executed the same day (for cross-reference)
 
 - ENT-S-098 fixed (shot BetterFireballs carry the mod's own type; save/load round-trip pinned) and its
