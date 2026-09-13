@@ -298,11 +298,12 @@ public final class ReferenceClipSampler {
                     "one channel: the wings |cos(ageInTicks * 1.0F) * PI * 0.15| about Z, mirrored (RubberDuckyGeoReplacement.applyCustomAnimations, "
                             + "RubberDuckyModel.setupAnim; orig ModelRubberDucky.java:91, 111-114 for the lines the port keeps): the absolute value folds "
                             + "the cosine, so the natural period is pi / 1.0 = 3.14 ticks; the head and beak follow netHeadYaw = 0")),
-            Map.entry("model_terribleterror", Rule.periodic(TWO_PI / (double) 0.3F,
+            Map.entry("model_terribleterror", Rule.periodic(Math.PI / (double) 0.3F,
                     "three frequencies: the wings cos(ageInTicks * 1.3F) * PI * 0.25 about Z around +-2.0, the jaw |cos(ageInTicks * 0.3F) * PI * 0.1| "
                             + "about X, four leg parts cos(ageInTicks * 1.25F) * PI * 0.35 about X around +-0.349 (TerribleTerrorGeoReplacement.applyCustomAnimations, "
-                            + "TerribleTerrorModel.setupAnim; orig ModelTerribleTerror.java:171-183 for the lines the port keeps): the slowest 0.3 rad/tick "
-                            + "(the jaw's |cos| closes twice per period)")),
+                            + "TerribleTerrorModel.setupAnim; orig ModelTerribleTerror.java:171-183 for the lines the port keeps): the slowest is the jaw's "
+                            + "|cos| at 0.3 rad/tick, which the absolute value folds to a period of pi / 0.3 = 10.47 ticks (the Rubber Ducky's row folds the "
+                            + "same way; owner 2026-09-13, fourth set, item 4)")),
             Map.entry("model_wormlarge", Rule.periodic(TWO_PI / (double) 0.15F,
                     "six frequencies: the neck's pitch 0.25 and yaw 0.15, the head's pitch 0.35 and yaw 0.45, the teeth 0.57, the tail tip 0.63 rad/tick "
                             + "(WormLargeGeoReplacement.applyCustomAnimations, WormLargeModel.setupAnim; orig ModelWormLarge.java:185-274): the slowest 0.15; "

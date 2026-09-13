@@ -17,7 +17,7 @@ basilisk.png,ab568d4e0020,img_ab568d4e0020,basilisk.png,yes,,,256,64,,,BasiliskR
 battleaxetexture.png,036706e86a25,img_036706e86a25,battleaxetexture.png,yes,,item/battleaxetexture.png,128,64,,"item-renderer texture (a held weapon/tool model), not a mob",OreSpawnItemRenderer,,BattleAxetexture.png,
 beaver.png,aeb70cb65ebd,img_aeb70cb65ebd,beaver.png,yes,beavertexture.png,,64,32,,,BeaverGeoReplacement;BeaverRenderer,beaver,Beavertexture.png,beavertexture.png
 beavertexture.png,aeb70cb65ebd,img_aeb70cb65ebd,beaver.png,no,beaver.png,,64,32,,,,beaver,Beavertexture.png,
-bee.png,a70beb634a7a,img_a70beb634a7a,bee.png,yes,beetexture.png,,256,256,,,BeeRenderer,bee,Beetexture.png,beetexture.png
+bee.png,a70beb634a7a,img_a70beb634a7a,bee.png,yes,beetexture.png,,256,256,,,BeeGeoReplacement;BeeRenderer,bee,Beetexture.png,beetexture.png
 beetexture.png,a70beb634a7a,img_a70beb634a7a,bee.png,no,bee.png,,256,256,,,,bee,Beetexture.png,
 beetletexture.png,512775db3c80,img_512775db3c80,herculesbeetle.png,no,herculesbeetle.png,,256,256,,,,hercules_beetle,Beetletexture.png,
 berthatexture.png,0e17bbdac178,img_0e17bbdac178,berthatexture.png,yes,,item/berthatexture.png,64,128,,"item-renderer texture (a held weapon/tool model), not a mob",OreSpawnItemRenderer,,Berthatexture.png,
@@ -84,9 +84,9 @@ butterfly2.png,8c7343448add,img_8c7343448add,butterfly2.png,yes,,,64,32,butterfl
 butterfly3.png,55ec4dbdc656,img_55ec4dbdc656,butterfly3.png,yes,,,64,32,butterfly2..4 x3,,ButterflyRenderer,butterfly,butterfly3.png,
 butterfly4.png,6c3b1063d64e,img_6c3b1063d64e,butterfly4.png,yes,,,64,32,butterfly2..4 x3,,ButterflyRenderer,butterfly,butterfly4.png,
 camarasaurus.png,ce7069a6a1da,img_ce7069a6a1da,camarasaurus.png,yes,,,256,256,,,CamarasaurusRenderer,camarasaurus,camarasaurus.png,
-cannon_fodder.png,32b8477c377e,img_32b8477c377e,dungeonbeast.png,no,botwtexture.png;dungeonbeast.png,,128,64,,,CannonFodderRenderer,cannon_fodder;dungeon_beast,Botwtexture.png,
+cannon_fodder.png,32b8477c377e,img_32b8477c377e,dungeonbeast.png,no,botwtexture.png;dungeonbeast.png,,128,64,,,CannonFodderGeoReplacement;CannonFodderRenderer,cannon_fodder;dungeon_beast,Botwtexture.png,
 cassowary.png,bc1b31068cdc,img_bc1b31068cdc,cassowary.png,yes,,,64,32,,,CassowaryRenderer,cassowary,Cassowary.png,
-caterkiller.png,45c2aef57eca,img_45c2aef57eca,caterkiller.png,yes,caterkillertexture.png,,256,512,,,CaterKillerRenderer,cater_killer,CaterKillertexture.png,caterkillertexture.png
+caterkiller.png,45c2aef57eca,img_45c2aef57eca,caterkiller.png,yes,caterkillertexture.png,,256,512,,,CaterKillerGeoReplacement;CaterKillerRenderer,cater_killer,CaterKillertexture.png,caterkillertexture.png
 caterkillertexture.png,45c2aef57eca,img_45c2aef57eca,caterkiller.png,no,caterkiller.png,,256,512,,,,cater_killer,CaterKillertexture.png,
 cavefisher.png,e22eef895663,img_e22eef895663,cavefisher.png,yes,,,64,32,,,CaveFisherRenderer,cave_fisher,CaveFisher.png,
 cephadrome.png,183938535646,img_183938535646,cephadrome.png,yes,,,512,256,,,CephadromeRenderer,cephadrome,Cephadrome.png,
@@ -97,12 +97,12 @@ chipmunktexture2.png,ac93128a9a90,img_ac93128a9a90,chipmunktexture2.png,yes,,,64
 chipmunktexture3.png,5b47405e6e46,img_5b47405e6e46,chipmunktexture3.png,yes,,,64,32,chipmunktexture2..3 x2,,,,chipmunktexture3.png,
 cliffracer.png,9bf2ecfd94ac,img_9bf2ecfd94ac,cliffracer.png,yes,cliffracertexture.png,,64,64,,,CliffRacerGeoReplacement;CliffRacerRenderer,cliff_racer,Cliffracertexture.png,cliffracertexture.png
 cliffracertexture.png,9bf2ecfd94ac,img_9bf2ecfd94ac,cliffracer.png,no,cliffracer.png,,64,64,,,,cliff_racer,Cliffracertexture.png,
-cloudshark.png,245b7a905d95,img_245b7a905d95,cloudshark.png,yes,,,64,64,,,CloudSharkRenderer,cloud_shark,CloudShark.png,
+cloudshark.png,245b7a905d95,img_245b7a905d95,cloudshark.png,yes,,,64,64,,,CloudSharkGeoReplacement;CloudSharkRenderer,cloud_shark,CloudShark.png,
 coin.png,c6f6d07a72ba,img_c6f6d07a72ba,coin.png,yes,cointexture.png,,512,512,,,CoinGeoReplacement;CoinRenderer,coin,Cointexture.png,cointexture.png
 cointexture.png,c6f6d07a72ba,img_c6f6d07a72ba,coin.png,no,coin.png,,512,512,,,,coin,Cointexture.png,
 crab.png,bfb3f081a720,img_bfb3f081a720,crab.png,yes,robotcrabtexture.png,,256,512,,,CrabRenderer,crab,RobotCrabtexture.png,robotcrabtexture.png
 creepinghorror.png,3fd0ecb6e185,img_3fd0ecb6e185,creepinghorror.png,yes,,,128,128,,,CreepingHorrorRenderer,creeping_horror,CreepingHorror.png,
-cricket.png,c7916610dabd,img_c7916610dabd,cricket.png,yes,crickettexture.png,,64,64,,,CricketRenderer,cricket,Crickettexture.png,crickettexture.png
+cricket.png,c7916610dabd,img_c7916610dabd,cricket.png,yes,crickettexture.png,,64,64,,,CricketGeoReplacement;CricketRenderer,cricket,Crickettexture.png,crickettexture.png
 crickettexture.png,c7916610dabd,img_c7916610dabd,cricket.png,no,cricket.png,,64,64,,,,cricket,Crickettexture.png,
 cryolophosaurus.png,cffe8c1cc7de,img_cffe8c1cc7de,cryolophosaurus.png,yes,,,128,128,,,CryolophosaurusRenderer,cryolophosaurus,cryolophosaurus.png,
 crystal_cow.png,6b2f3337f149,img_6b2f3337f149,crystal_cow.png,yes,,,64,32,,,CrystalCowRenderer,crystal_cow,crystal_cow.png,
@@ -135,7 +135,7 @@ evilrubberduckytexture.png,4d8c0d688f06,img_4d8c0d688f06,queenhead.png,no,queenh
 experience_1.png,309df0c4e4c3,img_309df0c4e4c3,experience_1.png,yes,,models/armor/experience_layer_1.png,64,32,experience_1..2 x2,armor sheet stray: the shipped armor layer is textures/models/armor/experience_layer_1.png (byte-identical),,,experience_1.png,
 experience_2.png,ec90d2b3e557,img_ec90d2b3e557,experience_2.png,yes,,models/armor/experience_layer_2.png,64,32,experience_1..2 x2,armor sheet stray: the shipped armor layer is textures/models/armor/experience_layer_2.png (byte-identical),,,experience_2.png,
 eyemoth.png,6ea344647870,img_6ea344647870,eyemoth.png,yes,,,64,32,,,LunaMothRenderer;MothraRenderer,luna_moth;mothra,eyemoth.png,
-fairytexture.png,932c3a9d811c,img_932c3a9d811c,fairytexture.png,yes,,,64,64,,,FairyRenderer,fairy,fairytexture.png,
+fairytexture.png,932c3a9d811c,img_932c3a9d811c,fairytexture.png,yes,,,64,64,,,FairyGeoReplacement;FairyRenderer,fairy,fairytexture.png,
 fairytexture2.png,f25f7d557f46,img_f25f7d557f46,fairytexture2.png,yes,,,64,64,fairytexture2..9 x8,,FairyRenderer,fairy,fairytexture2.png,
 fairytexture3.png,8abc707b1ef3,img_8abc707b1ef3,fairytexture3.png,yes,,,64,64,fairytexture2..9 x8,,FairyRenderer,fairy,fairytexture3.png,
 fairytexture4.png,4ef1d0fb15eb,img_4ef1d0fb15eb,fairytexture4.png,yes,,,64,64,fairytexture2..9 x8,,FairyRenderer,fairy,fairytexture4.png,
@@ -153,7 +153,7 @@ frogprince2.png,1a7e8fa24ef7,img_1a7e8fa24ef7,frogprince2.png,yes,,,64,32,frogpr
 frogprincess.png,30b8a9c45700,img_30b8a9c45700,frogprincess.png,yes,,,64,32,,,,,FrogPrincess.png,
 frogprincess2.png,aa2f82385b93,img_aa2f82385b93,frogprincess2.png,yes,,,64,32,frogprincess2..2 x1,,,,FrogPrincess2.png,
 frogtexture.png,46faf9748218,img_46faf9748218,frogtexture.png,yes,,,64,64,,,FrogRenderer,frog,Frogtexture.png,
-gammametroid.png,f60ece0e98f1,img_f60ece0e98f1,gammametroid.png,yes,,,256,64,,,GammaMetroidRenderer,gamma_metroid,GammaMetroid.png,
+gammametroid.png,f60ece0e98f1,img_f60ece0e98f1,gammametroid.png,yes,,,256,64,,,GammaMetroidGeoReplacement;GammaMetroidRenderer,gamma_metroid,GammaMetroid.png,
 gazelletexture.png,37944832100a,img_37944832100a,gazelletexture.png,yes,,,64,64,,,GazelleRenderer,gazelle,Gazelletexture.png,
 ghost.png,105f04d40d68,img_105f04d40d68,ghost.png,yes,ghosttexture.png,,64,64,,,GhostRenderer,ghost,Ghosttexture.png,ghosttexture.png
 ghost_skelly.png,fcbd6e91dffd,img_fcbd6e91dffd,ghost_skelly.png,yes,ghostskellytexture.png,,128,64,,,GhostSkellyRenderer,ghost_skelly,GhostSkellytexture.png,ghostskellytexture.png
@@ -212,9 +212,9 @@ goldfish.png,3b9d8a688c24,img_3b9d8a688c24,goldfish.png,yes,,,64,64,,,GoldFishGe
 hammerhead.png,12fdb01677a0,img_12fdb01677a0,hammerhead.png,yes,hammerheadtexture.png,,222,256,,,HammerheadRenderer,hammerhead,Hammerheadtexture.png,hammerheadtexture.png
 hammerheadtexture.png,12fdb01677a0,img_12fdb01677a0,hammerhead.png,no,hammerhead.png,,222,256,,,,hammerhead,Hammerheadtexture.png,
 hammytexture.png,d8a6e153288b,img_d8a6e153288b,kinghead.png,no,godzillahead.png;kinghead.png,item/hammytexture.png,256,128,,dormant twin of item/hammytexture.png,,godzilla_head;king_head,Hammytexture.png,
-herculesbeetle.png,512775db3c80,img_512775db3c80,herculesbeetle.png,yes,beetletexture.png,,256,256,,,HerculesBeetleRenderer,hercules_beetle,Beetletexture.png,beetletexture.png
+herculesbeetle.png,512775db3c80,img_512775db3c80,herculesbeetle.png,yes,beetletexture.png,,256,256,,,HerculesBeetleGeoReplacement;HerculesBeetleRenderer,hercules_beetle,Beetletexture.png,beetletexture.png
 hydrolisc.png,baba358f1f76,img_baba358f1f76,hydrolisc.png,yes,,,64,128,,,HydroliscRenderer,hydrolisc,hydrolisc.png,
-irukandji.png,f03920a37c89,img_f03920a37c89,irukandji.png,yes,irukandjitexture.png,,64,32,,,IrukandjiRenderer,irukandji,Irukandjitexture.png,irukandjitexture.png
+irukandji.png,f03920a37c89,img_f03920a37c89,irukandji.png,yes,irukandjitexture.png,,64,32,,,IrukandjiGeoReplacement;IrukandjiRenderer,irukandji,Irukandjitexture.png,irukandjitexture.png
 irukandjitexture.png,f03920a37c89,img_f03920a37c89,irukandji.png,no,irukandji.png,,64,32,,,,irukandji,Irukandjitexture.png,
 island.png,3a3308f57703,img_3a3308f57703,island.png,yes,,,64,32,,,IslandGeoReplacement;IslandRenderer,island,Island.png,
 islandtoo.png,3db38554b8ff,img_3db38554b8ff,islandtoo.png,yes,,,64,32,,,IslandTooGeoReplacement;IslandTooRenderer,island_too,IslandToo.png,
@@ -302,7 +302,7 @@ rotatortexture.png,0b4171c7d11f,img_0b4171c7d11f,rotator.png,no,rotator.png,,64,
 royal_1.png,558888d745b7,img_558888d745b7,royal_1.png,yes,,models/armor/royal_layer_1.png,64,32,royal_1..2 x2,armor sheet stray: the shipped armor layer is textures/models/armor/royal_layer_1.png (byte-identical),,,royal_1.png,
 royal_2.png,f35cf593cc6c,img_f35cf593cc6c,royal_2.png,yes,,models/armor/royal_layer_2.png,64,32,royal_1..2 x2,armor sheet stray: the shipped armor layer is textures/models/armor/royal_layer_2.png (byte-identical),,,royal_2.png,
 royaltexture.png,56ddeae69445,img_56ddeae69445,royaltexture.png,yes,,item/royaltexture.png,64,128,,"item-renderer texture (a held weapon/tool model), not a mob",OreSpawnItemRenderer,,Royaltexture.png,
-rubberducky.png,47a5baf8fa73,img_47a5baf8fa73,rubberducky.png,yes,rubberduckytexture.png,,64,64,,,RubberDuckyRenderer,rubber_ducky,RubberDuckytexture.png,rubberduckytexture.png
+rubberducky.png,47a5baf8fa73,img_47a5baf8fa73,rubberducky.png,yes,rubberduckytexture.png,,64,64,,,RubberDuckyGeoReplacement;RubberDuckyRenderer,rubber_ducky,RubberDuckytexture.png,rubberduckytexture.png
 rubberduckytexture.png,47a5baf8fa73,img_47a5baf8fa73,rubberducky.png,no,rubberducky.png,,64,64,,,,rubber_ducky,RubberDuckytexture.png,
 ruby_1.png,a454c2b1fbc8,img_a454c2b1fbc8,ruby_1.png,yes,,models/armor/ruby_layer_1.png,64,32,ruby_1..2 x2,armor sheet stray: the shipped armor layer is textures/models/armor/ruby_layer_1.png (byte-identical),,,ruby_1.png,
 ruby_2.png,f864d1acfef6,img_f864d1acfef6,ruby_2.png,yes,,models/armor/ruby_layer_2.png,64,32,ruby_1..2 x2,armor sheet stray: the shipped armor layer is textures/models/armor/ruby_layer_2.png (byte-identical),,,ruby_2.png,
@@ -311,7 +311,7 @@ seamonster.png,00dc17aa0c3d,img_00dc17aa0c3d,seamonster.png,yes,seamonstertextur
 seamonstertexture.png,00dc17aa0c3d,img_00dc17aa0c3d,seamonster.png,no,seamonster.png,,256,128,,,,sea_monster,SeaMonstertexture.png,
 seaviper.png,e8878b9c8a43,img_e8878b9c8a43,seaviper.png,yes,seavipertexture.png,,128,128,,,SeaViperRenderer,sea_viper,SeaVipertexture.png,seavipertexture.png
 seavipertexture.png,e8878b9c8a43,img_e8878b9c8a43,seaviper.png,no,seaviper.png,,128,128,,,,sea_viper,SeaVipertexture.png,
-skate.png,828e8a8632dd,img_828e8a8632dd,skate.png,yes,skatetexture.png,,64,32,,,SkateRenderer,skate,Skatetexture.png,skatetexture.png
+skate.png,828e8a8632dd,img_828e8a8632dd,skate.png,yes,skatetexture.png,,64,32,,,SkateGeoReplacement;SkateRenderer,skate,Skatetexture.png,skatetexture.png
 skatetexture.png,828e8a8632dd,img_828e8a8632dd,skate.png,no,skate.png,,64,32,,,,skate,Skatetexture.png,
 slicetexture.png,455a78cca61a,img_455a78cca61a,slicetexture.png,yes,,item/slicetexture.png,64,128,,"item-renderer texture (a held weapon/tool model), not a mob",OreSpawnItemRenderer,,Slicetexture.png,
 spider_driver.png,b6804ef7a2c4,img_b6804ef7a2c4,spider_driver.png,yes,spiderdriver.png,,64,32,,,SpiderDriverRenderer,spider_driver,spiderdriver.png,spiderdriver.png
@@ -381,7 +381,7 @@ swimshorts7.png,3a7b68966cdd,img_3a7b68966cdd,swimshorts7.png,yes,,,64,32,swimsh
 swimshorts8.png,ef832cf6f7f0,img_ef832cf6f7f0,swimshorts8.png,yes,,,64,32,swimshorts0..17 x18 (law 0..17: ok),,BoyfriendRenderer,boyfriend,swimshorts8.png,
 swimshorts9.png,58f7c0dea81b,img_58f7c0dea81b,swimshorts9.png,yes,,,64,32,swimshorts0..17 x18 (law 0..17: ok),,BoyfriendRenderer,boyfriend,swimshorts9.png,
 termite.png,794dc6f678f4,img_794dc6f678f4,termite.png,yes,,,64,32,,,TermiteGeoReplacement;TermiteRenderer,termite,termite.png,
-terribleterror.png,1b91d631e49b,img_1b91d631e49b,terribleterror.png,yes,,,119,72,,,TerribleTerrorRenderer,terrible_terror,TerribleTerror.png,
+terribleterror.png,1b91d631e49b,img_1b91d631e49b,terribleterror.png,yes,,,119,72,,,TerribleTerrorGeoReplacement;TerribleTerrorRenderer,terrible_terror,TerribleTerror.png,
 textures.png,bae30b921fb6,img_bae30b921fb6,textures.png,yes,,,256,256,,GUI/atlas stray (no twin outside textures/entity),,,textures.png,
 thekingtexture.png,d78624bba58e,img_d78624bba58e,theprinceadult.png,no,theprinceadult.png,,2048,2048,,,TheKingRenderer,the_king;the_prince_adult,TheKingtexture.png,
 theprince.png,d2f46315201e,img_d2f46315201e,theprince.png,yes,theprincetexture.png,,128,128,,,ThePrinceRenderer,the_prince,ThePrincetexture.png,theprincetexture.png
@@ -421,9 +421,9 @@ whale.png,5d7400a4f9da,img_5d7400a4f9da,whale.png,yes,whaletexture.png,,256,256,
 whaletexture.png,5d7400a4f9da,img_5d7400a4f9da,whale.png,no,whale.png,,256,256,,,,whale,Whaletexture.png,
 white_dragon.png,c835158f9ada,img_c835158f9ada,white_dragon.png,yes,whitedragon.png,,256,128,,,BabyDragonRenderer;DragonRenderer,baby_dragon;dragon,WhiteDragon.png,whitedragon.png
 whitedragon.png,c835158f9ada,img_c835158f9ada,white_dragon.png,no,white_dragon.png,,256,128,,,,baby_dragon;dragon,WhiteDragon.png,
-wormlarge.png,f342791f647e,img_f342791f647e,wormlarge.png,yes,wormlargetexture.png,,256,256,,,WormLargeRenderer,worm_large,WormLargetexture.png,wormlargetexture.png
+wormlarge.png,f342791f647e,img_f342791f647e,wormlarge.png,yes,wormlargetexture.png,,256,256,,,WormLargeGeoReplacement;WormLargeRenderer,worm_large,WormLargetexture.png,wormlargetexture.png
 wormlargetexture.png,f342791f647e,img_f342791f647e,wormlarge.png,no,wormlarge.png,,256,256,,,,worm_large,WormLargetexture.png,
-wormmedium.png,07e214032b51,img_07e214032b51,wormmedium.png,yes,wormmediumtexture.png,,64,32,,,WormMediumRenderer,worm_medium,WormMediumtexture.png,wormmediumtexture.png
+wormmedium.png,07e214032b51,img_07e214032b51,wormmedium.png,yes,wormmediumtexture.png,,64,32,,,WormMediumGeoReplacement;WormMediumRenderer,worm_medium,WormMediumtexture.png,wormmediumtexture.png
 wormmediumtexture.png,07e214032b51,img_07e214032b51,wormmedium.png,no,wormmedium.png,,64,32,,,,worm_medium,WormMediumtexture.png,
-wormsmall.png,9ac4635bcb39,img_9ac4635bcb39,wormsmall.png,yes,wormsmalltexture.png,,64,32,,,WormSmallRenderer,worm_small,WormSmalltexture.png,wormsmalltexture.png
+wormsmall.png,9ac4635bcb39,img_9ac4635bcb39,wormsmall.png,yes,wormsmalltexture.png,,64,32,,,WormSmallGeoReplacement;WormSmallRenderer,worm_small,WormSmalltexture.png,wormsmalltexture.png
 wormsmalltexture.png,9ac4635bcb39,img_9ac4635bcb39,wormsmall.png,no,wormsmall.png,,64,32,,,,worm_small,WormSmalltexture.png,

@@ -88,5 +88,10 @@
   "effort_hours": null,
   "formulas": [
     "`CricketModel.setupAnim` (CricketModel.java; orig ModelCricket.java:104-108, 117-125, `render`, wingspeed 2.5 from `new ModelCricket(2.5f)` in orig ClientProxyOreSpawn.java:510 - the port's frequency is 1.0): while the walking speed is above a tenth, the leg swing is the cosine of the age in ticks times 1.0, times pi, times 0.25, times the walking speed (up to 45 degrees each way every 6.28 ticks); at or below a tenth it is 0; the left front leg yaws by 0.47 radians plus it, the right front by -0.54 plus it, the left rear by -0.296 minus it, the right rear by 0.384 minus it (orig :104-108); the hind legs are written to constants every frame - the upper parts yaw by 0.436 (left) / -0.436 (right) and pitch by 0.558, the lower parts yaw by 0.349 / -0.349 and pitch by -0.366 (orig :117-125, the not-singing branch; 1.7.10 swung them while singing - the register line). The walk position, the head angles and the entity's state play no part in the port's pose. The GeckoLib hook is the same (CricketGeoReplacement.applyCustomAnimations)."
-  ]
+  ],
+  "original_moved_more": {
+    "register": "ANIM-024",
+    "original": "`ModelCricket.java:102-125` (`render`, wingspeed 2.5f from `ClientProxyOreSpawn.java:510 new ModelCricket(2.5f)`): above a walking speed of a tenth the four front / rear legs yaw on `cos(f2 * ws) * PI * 0.25 * f1` - 2.5 rad/tick - around 0.47 / -0.54 / -0.296 / 0.384 (:104-108); while SINGING (`getSinging() != 0`) the four hind legs yaw to -/+0.035 and -/+0.105 and pitch on `cos(f2 * 3.0 * ws) * PI * 0.25` (7.5 rad/tick) around 0.558 / -0.366, else they hold 0.436 / 0.349 / -0.436 / -0.349 in yaw and 0.558 / -0.366 / 0.558 / -0.366 in pitch (:109-125).",
+    "port": "`entity/client/CricketModel.java` `setupAnim`: the gait at `ageInTicks * 1.0F` (no wingspeed: 1.0 rad/tick, 2.5 times slower than 1.7.10); the hind legs always at the not-singing constants (no `getSinging()` read - the port entity's singing state, if any, never reaches the model). Not in ANIM-001's list (the port never multiplied by limbSwingAmount; the constant is missing)."
+  }
 }

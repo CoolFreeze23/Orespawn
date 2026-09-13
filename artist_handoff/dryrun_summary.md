@@ -1,4 +1,4 @@
-# Dry-run summary — 0.2.7 (the third-set tooling commit, 2026-09-13: the pilot's second clip is bite; every contract marker resolved to the 2026-09-06 rulings, README rule 5 split by controller kind; the priority table lists the packaged folders only; the reference clip's span rule - a period multiple closing within 5 degrees, capped at 6 s)
+# Dry-run summary — 0.2.8 (the fourth-set tooling commit, 2026-09-13: the sheets of ANIM-021 to 024 carry 'the original moved more' under section 4 from the register entries; the Terrible Terror's sampler row folds its |cos| period)
 
 Output: `artist_handoff`
 
@@ -12,6 +12,7 @@ TEXTURE_MAP: 428 shipped, 338 unique payloads, 86 duplicate groups, 90 redundant
 ## Warnings
 
 - [the_queen] LOCKED_BONES_KEYED: the shipped clips key 26 of the 27 SPEC-locked bones (LHead, LHead12, LHead4, Lwing1, NeckL1, NeckL13...): allowed and warned — Keying a locked bone is allowed; the checker warns, and the hitbox part follows the bone in-game (the consequence, so keep such keys deliberate). Renaming, re-parenting or deleting a locked bone is refused.
+- [irukandji] GOAL_UNCLASSIFIED: goal MyEntityAIWander (Irukandji.java:82) has no dictionary entry
 - [robot_1] BONE_UNLABELLED: bone Shape1 has no glossary label
 - [robot_1] BONE_UNLABELLED: bone Shape10 has no glossary label
 - [robot_1] BONE_UNLABELLED: bone Shape11 has no glossary label
@@ -38,7 +39,12 @@ TEXTURE_MAP: 428 shipped, 338 unique payloads, 86 duplicate groups, 90 redundant
 - [robot_2] BONE_UNLABELLED: bone Shape8 has no glossary label
 - [robot_3] ATTACKING_UNCLASSIFIED: DATA_ATTACKING classified MIXED: a 10-tick pulse per in-range think tick: the flag is raised at line(s) [155] every 35 ticks (reloadTicker reset) while a target is in range — before the line-of-sight gate, so it pulses whether or not a shot fires — and cleared when reloadTicker < 25 at line(s) [144] AND cleared on target loss at line(s) [162]
 - [robot_5] ATTACKING_UNCLASSIFIED: DATA_ATTACKING classified MIXED: a 5-tick pulse per in-range think tick: the flag is raised at line(s) [143] every 20 ticks (reloadTicker reset) while a target is in range — before the line-of-sight gate, so it pulses whether or not a shot fires — and cleared when reloadTicker < 15 at line(s) [131] AND cleared on target loss at line(s) [152]
+- [skate] GOAL_UNCLASSIFIED: goal MyEntityAIWander (Skate.java:76) has no dictionary entry
 - [dragonfly] GOAL_UNCLASSIFIED: goal DragonflyHuntGoal (EntityDragonfly.java:65) has no dictionary entry
+- [gamma_metroid] GOAL_UNCLASSIFIED: goal FollowOwnerGoal (EntityGammaMetroid.java:78) has no dictionary entry
+- [gamma_metroid] GOAL_UNCLASSIFIED: goal TemptGoal (EntityGammaMetroid.java:79) has no dictionary entry
+- [rubber_ducky] GOAL_UNCLASSIFIED: goal FollowOwnerGoal (EntityRubberDucky.java:86) has no dictionary entry
+- [rubber_ducky] GOAL_UNCLASSIFIED: goal TemptGoal (EntityRubberDucky.java:87) has no dictionary entry
 - [mosquito] GOAL_UNCLASSIFIED: goal MosquitoFlightGoal (EntityMosquito.java:49) has no dictionary entry
 - [elevator] BONE_UNLABELLED: bone shape1 has no glossary label
 - [elevator] BONE_UNLABELLED: bone shape2 has no glossary label

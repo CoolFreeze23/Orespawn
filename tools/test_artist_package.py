@@ -144,6 +144,9 @@ FIXTURE_SEED = {
                 "amplitude": "|cos| x 0.785 + 0.75 rad", "plain": "the arm pumps", "math": "arm = |cos(rad(t % 360) * 6)| * 0.7854 + 0.75",
                 "source": "Fixture.java"}],
     "behaviour": ["it wags"], "clips": [{"name": "walk", "verdict": "improve"}], "extras": [], "wishlist": [],
+    # owner 2026-09-13, fourth set, item 3: a register entry recording that the 1.7.10 original moved more than the port's pose
+    "original_moved_more": {"register": "ANIM-999", "original": "the tail also nodded on a 0.5 cosine (Fixture.java:10)",
+                            "port": "the tail wags only; the nod was dropped"},
 }
 
 NATIVE_SEED = {
@@ -1505,6 +1508,18 @@ class FixtureCase(unittest.TestCase):
         findings, passed = ap.check_folder(self._returned(partial), manifest)
         self.assertFalse(passed)
         self.assertTrue(self._has(findings, "REJECT", "required clip 'walk' is missing (idle and walk open the game's switch only together"), findings)
+
+    def test_spec_carries_the_original_moved_more_section(self):
+        # owner 2026-09-13, fourth set, item 3: a seed with `original_moved_more` (the register entry's description) puts
+        # "the original moved more" under section 4, quoting the entry, so the animator can animate toward the 1.7.10 motion
+        self._package_fixture()
+        spec = (self.tmp / "out/entities/fixture/SPEC.md").read_text(encoding="utf-8")
+        self.assertIn("### 4.4 The original moved more (from the register; animate toward the 1.7.10 motion)", spec)
+        self.assertIn("register entry ANIM-999, deferred with the parity lanes", spec)
+        self.assertIn("- **The original (1.7.10):** the tail also nodded on a 0.5 cosine (Fixture.java:10)", spec)
+        self.assertIn("- **The port today:** the tail wags only; the nod was dropped", spec)
+        self.assertLess(spec.index("### 4.3 Reference clip"), spec.index("### 4.4 The original moved more"))
+        self.assertLess(spec.index("### 4.4 The original moved more"), spec.index("## 5. Clips"))
 
     def test_check_refuses_a_locked_bone_renamed_reparented_or_deleted(self):
         """The second half of the ruled policy (2026-09-06): a key on a locked bone warns; its name, parent and presence are refused.

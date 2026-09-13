@@ -45,9 +45,8 @@ from collections import Counter, OrderedDict, defaultdict
 from pathlib import Path
 from typing import Any, Iterable
 
-TOOL_VERSION = ("0.2.7 (the third-set tooling commit, 2026-09-13: the pilot's second clip is bite; every contract marker resolved to the "
-                "2026-09-06 rulings, README rule 5 split by controller kind; the priority table lists the packaged folders only; the reference "
-                "clip's span rule - a period multiple closing within 5 degrees, capped at 6 s)")
+TOOL_VERSION = ("0.2.8 (the fourth-set tooling commit, 2026-09-13: the sheets of ANIM-021 to 024 carry 'the original moved more' under "
+                "section 4 from the register entries; the Terrible Terror's sampler row folds its |cos| period)")
 
 ROOT = Path(__file__).resolve().parent.parent
 BB_NAMESPACE = uuid.UUID("6f0b4b2e-9d1c-4a7e-8f3a-2c5e1d7b9a10")  # deterministic .bbmodel uuids
@@ -2284,6 +2283,21 @@ def spec_document(species: "Species", repo: "Repo", catalog: "TextureCatalog", i
     exact = exact_transcription(species, repo)
     section, reference_clip = reference_clip_section(species, repo, seed, exact, is_native_rig)
     L.extend(section)
+    # §4.4 (owner 2026-09-13, fourth set, item 3): where the register records that the 1.7.10 original moved MORE than the
+    # port's classic pose does (ANIM-021 to 024, deferred with the parity lanes), the sheet carries that description so the
+    # animator can animate toward the 1.7.10 motion. The seed's `original_moved_more` {register, original, port} is the
+    # register entry's description, quoted.
+    omm = seed.get("original_moved_more")
+    if omm:
+        L.append("### 4.4 The original moved more (from the register; animate toward the 1.7.10 motion)")
+        L.append("")
+        L.append(f"The port's classic code — what §4.1 to §4.3 describe and the game draws today — keeps LESS of this creature's motion "
+                 f"than the 1.7.10 original had (register entry {omm.get('register', '?')}, deferred with the parity lanes: the game's "
+                 "pose is unchanged until that lane runs). Animate toward the original where the two differ:")
+        L.append("")
+        L.append(f"- **The original (1.7.10):** {omm.get('original', '')}")
+        L.append(f"- **The port today:** {omm.get('port', '')}")
+        L.append("")
     L.append("## 5. Clips: what to improve, what to leave (AUTHORED verdicts on generated rows)")
     L.append("")
     if not clips:

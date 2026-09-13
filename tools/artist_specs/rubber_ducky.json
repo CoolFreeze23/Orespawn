@@ -87,5 +87,10 @@
   "effort_hours": null,
   "formulas": [
     "`RubberDuckyModel.setupAnim` (RubberDuckyModel.java; orig ModelRubberDucky.java:88, 91, 111-114 for the lines the port keeps, `render`, wingspeed 1.0 from `new ModelRubberDucky(1.0f)` in orig ClientProxyOreSpawn.java:502): (1) the head and the beak yaw by the head yaw in radians (orig :88 multiplied it by 0.45 and pitched by 0.65 of the head pitch besides); (2) the wing angle is the cosine of the age in ticks times 1.0, times pi, times 0.15, made positive - a flap between 0 and 27 degrees twice per 6.28 ticks - the left wing rolls by its negative, the right by it (orig :91, :111-114; 1.7.10 latched the flap on a random roll, quadrupled it past five kills, stilled it while sitting and yawed the wings by half the angle - the register line). The walk position, the walking speed and the entity's state play no part in the port's pose. The GeckoLib hook is the same (RubberDuckyGeoReplacement.applyCustomAnimations)."
-  ]
+  ],
+  "original_moved_more": {
+    "register": "ANIM-022",
+    "original": "`ModelRubberDucky.java:86-116` (`render`, wingspeed 1.0f, `ClientProxyOreSpawn.java:502`): the head AND beak yaw by `toRadians(f3) * 0.45` and pitch by `toRadians(f4) * 0.65` (:88-89); the wing angle `cos(f2 * 1.0 * ws) * PI * 0.15` is LATCHED through the entity's RenderInfo - at every upward zero crossing (the sample 0.3 ticks ahead positive while the current is negative) `ri1` resets to 0 and re-rolls to 1 with probability 1/3 from the level random, or 1/2 (and the angle x4) once the duck's kill count is 5 or more (:90-104); the wings hold 0 while `ri1` is 0 or the duck sits (`func_70906_o()`, :105-110); then `|angle|` goes to the wings' Z (mirrored) AND half of it to their Y (mirrored, :111-115); the RenderInfo is written back (:116).",
+    "port": "`entity/client/RubberDuckyModel.java` `setupAnim`: head and beak yaw by `netHeadYaw` in radians (factor 1, not 0.45), no pitch; the wings fold on `|cos(ageInTicks * 1.0) * PI * 0.15|` about Z every frame - no latch, no random flap, no kill-count quadruple, no sitting check, no wing Y. The port entity carries no RenderInfo for the duck."
+  }
 }

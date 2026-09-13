@@ -119,5 +119,10 @@
   "effort_hours": null,
   "formulas": [
     "`TerribleTerrorModel.setupAnim` (TerribleTerrorModel.java; orig ModelTerribleTerror.java:171-177, 179, 181, 183 for the lines the port keeps, `render`, wingspeed 1.0 from `new ModelTerribleTerror()` in orig ClientProxyOreSpawn.java:457): (1) the wings roll by the cosine of the age in ticks times 1.3, times pi, times 0.25 - 45 degrees each way every 4.83 ticks - the left around -2.0 radians (plus), the right around 2.0 (minus) (orig :171-173); (2) the jaw pitches by the absolute value of the cosine of the age times 0.3, times pi, times 0.1 - a chatter between 0 and 18 degrees twice per 20.9 ticks (orig :174-175); (3) the leg swing is the cosine of the age times 1.25, times pi, times 0.35 (63 degrees every 5.03 ticks): front leg 2 pitches by 0.349 radians plus it, front leg 1 by 0.349 minus it, back leg 2 by -0.349 minus it, back leg 1 by -0.349 plus it (orig :176-177, :179, :181, :183; 1.7.10 also swung the four lower legs and chained the tail - the register line). The walk position, the walking speed, the head angles and the entity's state play no part. The GeckoLib hook is the same (TerribleTerrorGeoReplacement.applyCustomAnimations)."
-  ]
+  ],
+  "original_moved_more": {
+    "register": "ANIM-023",
+    "original": "`ModelTerribleTerror.java:170-198` (`render`, wingspeed 1.0f, `ClientProxyOreSpawn.java:457`): the wings about Z (`-2.0 + / 2.0 - cos(f2 * 1.3 * ws) * PI * 0.25`, :171-173), the jaw `|cos(f2 * 0.3 * ws) * PI * 0.1|` (:174-175), EIGHT leg parts on `cos(f2 * 1.25) * PI * 0.35` - FL21 (0.349 +), FL22 (-0.296 +), BL21 (-0.349 -), BL22 (0.174 -), FL11 (0.349 -), FL12 (-0.296 -), BL11 (-0.349 +), BL12 (0.174 +) (:176-184) - and a TAIL CHAIN: Tail1 pitches / yaws on 0.71 / 0.77 x ws cosines (PI x 0.1), Tail2's pivot follows Tail1 by 6 units along (cos, sin) of those angles and pitches / yaws on 0.81 / 0.87 (PI x 0.15), Tail3 and Tail4 follow Tail2 the same way and pitch / yaw on 0.91 / 0.97 (PI x 0.2) (:185-198).",
+    "port": "`entity/client/TerribleTerrorModel.java` `setupAnim`: the wings, the jaw and FOUR leg parts (fl21, fl11, bl21, bl11); the lower leg parts fl22 / fl12 / bl22 / bl12 and the four tail parts are never posed (they hold their LayerDefinition rest)."
+  }
 }
