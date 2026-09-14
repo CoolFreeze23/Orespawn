@@ -15,6 +15,8 @@ The independent gates are:
   its emitted clip is reference-only, not runtime acceptance, and editable keyframes remain G3 work;
 - visual: independent software rasterization of concrete `EntityModel.renderToBuffer` and `GeoRenderer` streams using the shipped texture;
   every pixel is compared (G2 root-order contract, 2026-09-06) and the z-fight contested fraction is reported as a diagnostic only;
+  a changed pixel whose two front fragments on both sides are the same pair of faces within 1e-5 blocks is pair-contested
+  (owner 2026-09-15): reported per sample, never a mismatch, capped at 1 percent of the image;
 - draw order: per full capture, the sequence of parts the classic `renderToBuffer` drew equals the sequence of bones `GeoRenderer` emitted,
   and the order shipped in each geo (`orespawn:bone_draw_order`) equals the converter's, the probe's and the fresh bake's traversal.
 
@@ -24,7 +26,7 @@ The independent gates are:
 - Geometry maximum corner delta: 0 blocks (epsilon 1e-05).
 - Surface maximum UV delta: 0; normal delta: 0.
 - Animation maximum rotation delta: 0 radians (epsilon 2e-06).
-- Visual maximum changed fraction: 0; maximum mean absolute error: 0.
+- Visual maximum changed fraction: 0; maximum mean absolute error: 0; maximum pair-contested fraction: 0 (never a mismatch; cap 0.01).
 - Draw order: GeckoLib bone order equals the classic draw order over 6 captures (30 draws).
 
 - Static identity maximum rotation motion: 0 radians; no controller emitted.
@@ -35,7 +37,7 @@ The independent gates are:
 - Geometry maximum corner delta: 2.00000000117e-07 blocks (epsilon 1e-05).
 - Surface maximum UV delta: 0; normal delta: 0.
 - Animation maximum rotation delta: 0 radians (epsilon 2e-06).
-- Visual maximum changed fraction: 0; maximum mean absolute error: 0.
+- Visual maximum changed fraction: 0; maximum mean absolute error: 0; maximum pair-contested fraction: 0 (never a mismatch; cap 0.01).
 - Draw order: GeckoLib bone order equals the classic draw order over 21 captures (189 draws).
 
 - Accepted path: exact Mth.cos GeoModel.setCustomAnimations legacy-parity exception.

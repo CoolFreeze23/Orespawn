@@ -29,13 +29,10 @@ import software.bernie.geckolib.animation.AnimationProcessor;
  * (the Slice 4b doctrine). Every value the classic reads back from a part it just wrote is held in a local; the six
  * root rings' pivots, never written, are read through {@link #classicPosition} (the bind).
  *
- * <p>NOT A SETUPANIM STATEMENT, NOT CARRIED HERE: the classic {@code ModelKraken.renderToBuffer} draws every part under
- * a whole-model {@code mulPose(Axis.XP.rotationDegrees(90))} (ModelKraken.java:725) - a render-time transform of the
- * pose stack after the renderer's flip and lift, which no bone of the converted rig (111 top-level bones, no root)
- * can pose; the landing slice decides its form (a descriptor-level transform or a root bone) and proves it.</p>
- *
- * <p>Scale and shadow follow {@link KrakenRenderer}: 1.0 render scale, a third of it while {@code getPlayNicely() != 0},
- * and a 1.0 x 1.0 shadow (ENT-S-092). No zero-thickness cube.</p>
+ * <p>THE WHOLE-MODEL RENDER TRANSFORM (TEST-013; owner 2026-09-15, item 2): {@code ModelKraken.renderToBuffer} draws every part
+ * under {@code mulPose(Axis.XP.rotationDegrees(90))} (ModelKraken.java:733, orig :1137), which no bone of the converted rig can pose;
+ * {@code DESCRIPTOR.renderTransform()} declares it in the classic's terms and the seam applies its slot form. Scale and shadow follow
+ * {@link KrakenRenderer}: 1.0, a third of it while {@code getPlayNicely() != 0}, a 1.0 x 1.0 shadow (ENT-S-092). No zero-thickness cube.</p>
  */
 public final class KrakenGeoReplacement extends OreSpawnGeoReplacement<Kraken> {
     /** The port's {@code ModelKraken.ANIM_SPEED} = 1.0f (orig ClientProxyOreSpawn.java:444 {@code new ModelKraken(1.0f)}). */
@@ -54,6 +51,9 @@ public final class KrakenGeoReplacement extends OreSpawnGeoReplacement<Kraken> {
             float effectiveScale = entity.getPlayNicely() != 0 ? KrakenRenderer.SCALE / 3.0F : KrakenRenderer.SCALE;
             poseStack.scale(effectiveScale, effectiveScale, effectiveScale);
         }
+
+        @Override
+        public RenderTransform renderTransform() { return RenderTransform.rotationDegrees(90.0F, 0.0F, 0.0F); }  // renderToBuffer:733
     };
 
     public KrakenGeoReplacement() {

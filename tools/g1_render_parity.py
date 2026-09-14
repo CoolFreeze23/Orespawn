@@ -29,6 +29,21 @@ CONTEST_DEPTH_EPSILON = 1.0e-6
 # so a pin cannot linger silently (the owner's ruling 2026-09-06 removed all fifteen).
 RETIRED_MANIFEST_FIELDS = ("max_contested_fraction_pin", "in_game_acceptance")
 CONTESTED_MARKER = (40, 90, 255, 255)
+# The PAIR-CONTESTED rule of the visual leg (owner 2026-09-15, closing set continued, item 1; addendum item 34 (1):
+# TEST-012 the Lurking Terror's posed flat wings and coincident leg pairs, TEST-014 the Scorpion's two overlapping leg
+# cubes at the gait's quarter pose, TEST-008 the Bee's flat wing at bind): a changed pixel whose two front fragments on
+# BOTH sides are the same pair of faces - the nearest fragment and the next one behind it within PAIR_ATTRIBUTION_WINDOW
+# blocks of it, the same two face identities in either order - is PAIR-CONTESTED: counted and reported per sample
+# (`pair_contested_fraction`, over the image) beside the contested fraction, never a mismatch (the changed fraction the
+# threshold judges is computed without those pixels), and capped - a pair-contested fraction above PAIR_CONTESTED_CAP of
+# the image is a VISUAL MISMATCH, so a rig that ties everywhere still fails. The window and the cap are the ruling's own
+# numbers; neither is the contest window (CONTEST_DEPTH_EPSILON, the rasteriser's tie rule), which does not move. A face
+# identity is the quad's owner - the drawn unit the capture's draw order attributes it to (a classic part or a
+# render-instance clone; the geo's bones carry the same names, the draw-order leg's proof), its cube's ordinal within
+# that unit and the quad's face direction (its normal, quantised to a tenth) - built the same way on both sides.
+PAIR_ATTRIBUTION_WINDOW = 1.0e-5
+PAIR_CONTESTED_CAP = 0.01
+PAIR_CONTESTED_MARKER = (255, 40, 200, 255)
 # G2 root-order contract: the geo description key the converter writes and the shipped model applies.
 DRAW_ORDER_KEY = "orespawn:bone_draw_order"
 # ENT-S-146: the within-cube face order key (bone -> one array per cube of GeckoLib direction names in
@@ -143,9 +158,14 @@ def amplitude_sample_id(amplitude: float, fraction: float) -> str:
     return f"a{amount}_{sample_id(fraction)}"
 
 
-def cube_map(sample: dict[str, Any]) -> dict[tuple[str, int], dict[str, Any]]:
+def cube_map(sample: dict[str, Any], undrawn: frozenset[str] = frozenset()) -> dict[tuple[str, int], dict[str, Any]]:
+    """The capture's cubes keyed by (bone, cube index). A compiled part the manifest lists under ``undrawn_parts`` is
+    left out: the classic capture's ``root.visit`` compiles it, the classic ``renderToBuffer`` never draws it and the
+    geo carries no bone for it (owner 2026-09-15, closing set continued, item 2; TEST-013)."""
     result: dict[tuple[str, int], dict[str, Any]] = {}
     for cube in sample["cubes"]:
+        if cube["bone"] in undrawn:
+            continue
         key = (cube["bone"], int(cube["cube_index"]))
         if key in result:
             raise AssertionError(f"duplicate captured cube {key}")
@@ -202,7 +222,7 @@ def hausdorff(left: list[tuple[float, float, float]],
 
 
 def geometry_parity(model_id: str, compiled: dict[str, Any], geo_render: dict[str, Any],
-                    epsilon: float) -> dict[str, Any]:
+                    epsilon: float, undrawn: frozenset[str] = frozenset()) -> dict[str, Any]:
     vanilla_samples = full_sample_map(compiled)
     geo_samples = full_sample_map(geo_render)
     if vanilla_samples.keys() != geo_samples.keys():
@@ -215,7 +235,7 @@ def geometry_parity(model_id: str, compiled: dict[str, Any], geo_render: dict[st
     compared_samples = 0
     worst = ""
     for sample_id in vanilla_samples:
-        vanilla_cubes = cube_map(vanilla_samples[sample_id])
+        vanilla_cubes = cube_map(vanilla_samples[sample_id], undrawn)
         geo_cubes = cube_map(geo_samples[sample_id])
         assert_same_cube_set(model_id, sample_id, vanilla_cubes, geo_cubes)
         if vanilla_cubes.keys() != geo_cubes.keys():
@@ -252,7 +272,8 @@ def geometry_parity(model_id: str, compiled: dict[str, Any], geo_render: dict[st
 
 def surface_mapping_parity(model_id: str, compiled: dict[str, Any],
                            geo_render: dict[str, Any], position_epsilon: float,
-                           normal_epsilon: float, uv_epsilon: float) -> dict[str, Any]:
+                           normal_epsilon: float, uv_epsilon: float,
+                           undrawn: frozenset[str] = frozenset()) -> dict[str, Any]:
     """Compare baked position/normal/UV tuples without relying on quad order."""
     vanilla_samples = full_sample_map(compiled)
     geo_samples = full_sample_map(geo_render)
@@ -265,7 +286,7 @@ def surface_mapping_parity(model_id: str, compiled: dict[str, Any],
     ignored_zero_area_faces = 0
 
     for sample_name, vanilla_sample in vanilla_samples.items():
-        vanilla_cubes = cube_map(vanilla_sample)
+        vanilla_cubes = cube_map(vanilla_sample, undrawn)
         geo_cubes = cube_map(geo_samples[sample_name])
         assert_same_cube_set(model_id, sample_name, vanilla_cubes, geo_cubes)
         for key, vanilla_cube in vanilla_cubes.items():
@@ -371,7 +392,7 @@ AXIS_INDEX = {"x": 0, "y": 1, "z": 2}
 
 def cube_face_order_parity(model_id: str, compiled: dict[str, Any], geo_render: dict[str, Any],
                            generated_geometry: dict[str, Any], conversion: dict[str, Any],
-                           normal_epsilon: float) -> dict[str, Any] | None:
+                           normal_epsilon: float, undrawn: frozenset[str] = frozenset()) -> dict[str, Any] | None:
     """ENT-S-146: the within-cube face order, for a rig that ships one (``FACE_ORDER_KEY``).
 
     Four things must agree: the order the converter derived (``conversion.json``), the order shipped
@@ -403,7 +424,7 @@ def cube_face_order_parity(model_id: str, compiled: dict[str, Any], geo_render: 
     geo_samples = full_sample_map(geo_render)
     faces_checked = 0
     for sample_id, vanilla_sample in vanilla_samples.items():
-        vanilla_cubes = cube_map(vanilla_sample)
+        vanilla_cubes = cube_map(vanilla_sample, undrawn)
         geo_cubes = cube_map(geo_samples[sample_id])
         assert_same_cube_set(model_id, sample_id, vanilla_cubes, geo_cubes)
         for key, vanilla_cube in vanilla_cubes.items():
@@ -435,7 +456,7 @@ def cube_face_order_parity(model_id: str, compiled: dict[str, Any], geo_render: 
 
 def draw_order_parity(model_id: str, compiled: dict[str, Any], geo_render: dict[str, Any],
                       generated_geometry: dict[str, Any], conversion: dict[str, Any],
-                      normal_epsilon: float = 1.0e-6) -> dict[str, Any]:
+                      normal_epsilon: float = 1.0e-6, undrawn: frozenset[str] = frozenset()) -> dict[str, Any]:
     """G2 root-order contract: GeckoLib draws the bones in the classic part order.
 
     Three things must agree: the order the converter derived from the classic captures
@@ -445,7 +466,11 @@ def draw_order_parity(model_id: str, compiled: dict[str, Any], geo_render: dict[
     sequence of parts the classic ``renderToBuffer`` drew (``draw_order``, attributed by
     skipDraw elimination in the probe) must equal the sequence of bones ``GeoRenderer``
     emitted cubes for. ENT-S-146: a rig shipping a within-cube face order is checked by
-    ``cube_face_order_parity`` as well (reported under ``cube_face_order``).
+    ``cube_face_order_parity`` as well (reported under ``cube_face_order``). A manifest
+    ``undrawn_parts`` list (TEST-013; owner 2026-09-15, closing set continued, item 2) names
+    compiled parts the classic never draws: the geo and the key carry the drawn bones only,
+    so both lists compare as today without them - and a capture that DOES draw a listed part
+    is a harness error (``UNDRAWN PART DRAWN``), never silent.
     """
     description = generated_geometry["minecraft:geometry"][0]["description"]
     order = description.get(DRAW_ORDER_KEY)
@@ -473,6 +498,12 @@ def draw_order_parity(model_id: str, compiled: dict[str, Any], geo_render: dict[
         gecko = geo_samples[sample_id].get("draw_order")
         if classic is None or gecko is None:
             raise AssertionError(f"{model_id}/{sample_id} capture carries no draw_order")
+        drawn_undrawn = [unit for unit in classic if instance_source(unit) in undrawn]
+        if drawn_undrawn:
+            raise AssertionError(
+                f"UNDRAWN PART DRAWN {model_id}/{sample_id}: the classic renderToBuffer drew {drawn_undrawn}, which the "
+                "manifest lists under undrawn_parts (a part listed as undrawn is never drawn by the classic capture)"
+            )
         if classic != gecko:
             raise AssertionError(
                 f"DRAW ORDER MISMATCH {model_id}/{sample_id}: classic renderToBuffer drew {classic}; "
@@ -502,7 +533,14 @@ def draw_order_parity(model_id: str, compiled: dict[str, Any], geo_render: dict[
             "sibling orders are equal draw orders"
         ),
     }
-    face_order = cube_face_order_parity(model_id, compiled, geo_render, generated_geometry, conversion, normal_epsilon)
+    if undrawn:
+        report["undrawn_parts"] = sorted(undrawn)
+        report["undrawn_parts_policy"] = (
+            "compiled parts the classic renderToBuffer never draws (the manifest's undrawn_parts): omitted from the geo "
+            "and the draw-order key by the converter, left out of the geometry / surface / face-order / animation legs, "
+            "kept in the reference leg (1.7.10 compiles them too); a capture that draws one is UNDRAWN PART DRAWN"
+        )
+    face_order = cube_face_order_parity(model_id, compiled, geo_render, generated_geometry, conversion, normal_epsilon, undrawn)
     if face_order is not None:
         report["cube_face_order"] = face_order
     return report
@@ -548,11 +586,39 @@ def render_instance_expansion(conversion: dict[str, Any] | None) -> dict[str, An
     return conversion.get("render_instances")
 
 
+def instance_source(unit: str) -> str:
+    """A draw-order unit's compiled part: a render-instance clone ``<part>__i<k>`` names its part, anything else itself."""
+    marker = unit.rfind("__i")
+    return unit[:marker] if marker > 0 and unit[marker + 3:].isdigit() else unit
+
+
+def undrawn_parts(model_id: str, spec: dict[str, Any], compiled: dict[str, Any]) -> frozenset[str]:
+    """The manifest's ``undrawn_parts`` (owner 2026-09-15, closing set continued, item 2; addendum item 34 (2); TEST-013):
+    compiled parts the classic ``renderToBuffer`` never draws - the Dungeon Beast's ltoe1 / ltoe3 / rtoe1 / rtoe3, built by
+    the classic model and never rendered, in 1.7.10 and the port alike. The converter omits them from the geo and from the
+    draw-order key (the key still names exactly the rig's bones: the audit's rule holds unchanged), so the geo's bone set is
+    the compiled parts minus this list; the geometry / surface / face-order legs leave their compiled cubes out, the
+    animation leg their channels, and the draw-order leg refuses a capture that draws one (UNDRAWN PART DRAWN). The
+    reference leg is untouched: the reference entry compares every compiled part against 1.7.10, which compiles them too."""
+    declared = spec.get("undrawn_parts", [])
+    if not isinstance(declared, list) or any(not isinstance(name, str) or not name for name in declared):
+        raise AssertionError(f"{model_id} undrawn_parts must be a list of compiled part names")
+    if len(set(declared)) != len(declared):
+        raise AssertionError(f"{model_id} undrawn_parts repeats a part: {declared}")
+    unknown = sorted(set(declared) - set(compiled["bone_names"]))
+    if unknown:
+        raise AssertionError(f"{model_id} undrawn_parts names parts the compiled model lacks: {unknown}")
+    overlap = sorted(set(declared) & set(spec.get("render_instances") or {}))
+    if overlap:
+        raise AssertionError(f"{model_id} undrawn_parts overlaps render_instances: {overlap}")
+    return frozenset(declared)
+
+
 def candidate_bone_names(model_id: str, spec: dict[str, Any], compiled: dict[str, Any],
                          conversion: dict[str, Any]) -> list[str]:
-    """The bone set the generated rig must carry: the compiled parts, with every render-instance
-    part replaced by the converter's group and clone bones (Slice 4c)."""
-    names = set(compiled["bone_names"])
+    """The bone set the generated rig must carry: the compiled parts minus the manifest's undrawn parts, with every
+    render-instance part replaced by the converter's group and clone bones (Slice 4c)."""
+    names = set(compiled["bone_names"]) - undrawn_parts(model_id, spec, compiled)
     expansion = render_instance_expansion(conversion)
     declared = spec.get("render_instances")
     if compiled.get("render_instances") != declared:
@@ -1073,7 +1139,8 @@ def animation_parity(model_id: str, spec: dict[str, Any], compiled: dict[str, An
                      geo_render: dict[str, Any], contract: dict[str, Any],
                      epsilon: float, position_epsilon: float = 1.0e-4,
                      repository_root: Path | None = None,
-                     conversion: dict[str, Any] | None = None) -> dict[str, Any]:
+                     conversion: dict[str, Any] | None = None,
+                     undrawn: frozenset[str] = frozenset()) -> dict[str, Any]:
     """Compare independent compiled setupAnim output with the actual candidate hook.
 
     Slice 4c: for a model with render_instances the compiled ``transforms`` stay per PART (the
@@ -1125,10 +1192,13 @@ def animation_parity(model_id: str, spec: dict[str, Any], compiled: dict[str, An
                 raise AssertionError(f"{model_id}/{current_id} candidate metadata drift for {field}")
         candidate_rotations = candidate_sample["java_rotations"]
         transforms = vanilla_sample["transforms"]
-        expected_bones = (set(transforms) - expanded_parts) | set(mapping)
+        expected_bones = (set(transforms) - expanded_parts - undrawn) | set(mapping)
         if set(candidate_rotations) != expected_bones:
             raise AssertionError(f"{model_id}/{current_id} candidate bone set differs from compiled model")
         for bone, transform in transforms.items():
+            if bone in undrawn:
+                # never drawn by the classic (undrawn_parts): no geo bone, no channel to compare
+                continue
             if bone in expanded_parts:
                 # Slice 4c: compared through its clones below; the part itself never scales.
                 max_static_delta = max(
@@ -1229,7 +1299,7 @@ def animation_parity(model_id: str, spec: dict[str, Any], compiled: dict[str, An
             if current_id == "bind":
                 continue
             candidate_sample = candidate_samples[current_id]
-            expected_hidden = sorted(vanilla_sample["hidden_bones"])
+            expected_hidden = sorted(bone for bone in vanilla_sample["hidden_bones"] if bone not in undrawn)
             actual_hidden = sorted(candidate_sample["hidden_bones"])
             if mapping:
                 # Slice 4c: a hidden expanded part hides all its clones and groups; compare by source part.
@@ -1759,9 +1829,55 @@ def edge(a: tuple[float, float], b: tuple[float, float], p: tuple[float, float])
     return (p[0] - a[0]) * (b[1] - a[1]) - (p[1] - a[1]) * (b[0] - a[0])
 
 
-def render_capture(sample: dict[str, Any], texture: Image.Image,
-                   camera: Camera) -> tuple[Image.Image, list[bool]]:
-    """Rasterise one capture; also returns the per-pixel z-fight mask.
+def quad_face_ids(model_id: str, sample_id: str, sample: dict[str, Any],
+                  faces: dict[tuple[Any, ...], int]) -> list[int]:
+    """The pair-contested rule's FACE IDENTITY per quad of ``sample["render_vertices"]``, as an id in the table
+    ``faces`` (one table per sample, shared by both sides, so an equal identity gets an equal id on both).
+
+    The capture's ``draw_order`` names the drawn units in emission order - a classic part or a render-instance clone on
+    the classic side, the same names on the geo side, whose bones the draw-order leg proves are emitted in that order -
+    and each unit's cubes are its own ``cubes`` groups in cube order (``ModelPart.compile`` and GeckoLib's ``renderCube``
+    both emit a unit's cubes in definition order, each cube its quads in one run). The identity is (unit, the cube's
+    ordinal within the unit, the quad's face direction) with the direction the quad's normal rounded to a tenth: the two
+    sides agree on every normal to the surface leg's epsilon, so a face carries the same identity on both sides except at
+    a rounding boundary, where the pair goes unrecognised and the pixel stays a changed pixel - the conservative side. A
+    capture whose quads do not add up from its draw order is a harness error, never attributed silently."""
+    quads_per_cube: dict[str, list[int]] = {}
+    for cube in sorted(sample["cubes"], key=lambda group: (group["bone"], int(group["cube_index"]))):
+        quads_per_cube.setdefault(cube["bone"], []).append(len(cube["vertices"]) // 4)
+    vertices = sample["render_vertices"]
+    quad_count = len(vertices) // 4
+    ids: list[int] = []
+    for unit in sample["draw_order"]:
+        counts = quads_per_cube.get(unit)
+        if counts is None:
+            raise AssertionError(f"{model_id}/{sample_id}: the draw order names {unit}, which the capture's cubes do not carry")
+        for cube_ordinal, count in enumerate(counts):
+            for _quad in range(count):
+                if len(ids) >= quad_count:
+                    raise AssertionError(
+                        f"{model_id}/{sample_id}: the draw order accounts for more quads than the capture holds "
+                        f"({quad_count}); the pair-contested rule cannot attribute its faces"
+                    )
+                normal = vertex_normal(vertices[len(ids) * 4])
+                direction = tuple(round(component, 1) + 0.0 for component in normal)
+                ids.append(faces.setdefault((unit, cube_ordinal, direction), len(faces)))
+    if len(ids) != quad_count:
+        raise AssertionError(
+            f"{model_id}/{sample_id}: the capture holds {quad_count} quads but its draw order accounts for "
+            f"{len(ids)}; the pair-contested rule cannot attribute its faces"
+        )
+    return ids
+
+
+def render_capture(sample: dict[str, Any], texture: Image.Image, camera: Camera,
+                   quad_faces: list[int] | None = None) -> tuple[Image.Image, list[bool], list[tuple[int, int] | None]]:
+    """Rasterise one capture; also returns the per-pixel z-fight mask and, when ``quad_faces`` (``quad_face_ids``)
+    is given, the per-pixel FRONT PAIR for the pair-contested rule (owner 2026-09-15): the two nearest fragments of
+    different faces where the second lies within PAIR_ATTRIBUTION_WINDOW behind the first, as a sorted pair of face
+    ids, else None. The pair is tracked by depth alone - the shown fragment is one of the two by construction
+    (first-wins inside the contest window keeps a fragment within 1e-6 of the nearest) - and a fragment the cutout
+    shader discards (alpha < 0.1, no depth write on either renderer) is never a member.
 
     A pixel is CONTESTED when two fragments from different quads land within
     CONTEST_DEPTH_EPSILON of each other at the front with different texels.
@@ -1783,6 +1899,13 @@ def render_capture(sample: dict[str, Any], texture: Image.Image,
     depth_buffer = [math.inf] * (IMAGE_SIZE * IMAGE_SIZE)
     owner_quad = [-1] * (IMAGE_SIZE * IMAGE_SIZE)
     contested = [False] * (IMAGE_SIZE * IMAGE_SIZE)
+    # the pair-contested rule's two nearest faces per pixel (face id and depth), tracked when quad_faces is given
+    near_face = [-1] * (IMAGE_SIZE * IMAGE_SIZE)
+    near_depth = [math.inf] * (IMAGE_SIZE * IMAGE_SIZE)
+    second_face = [-1] * (IMAGE_SIZE * IMAGE_SIZE)
+    second_depth = [math.inf] * (IMAGE_SIZE * IMAGE_SIZE)
+    # a fragment farther behind the front than this can neither show nor be one of the two front fragments
+    reach = PAIR_ATTRIBUTION_WINDOW if quad_faces is not None else CONTEST_DEPTH_EPSILON
     texture = texture.convert("RGBA")
     texture_pixels = texture.load()
     texture_width, texture_height = texture.size
@@ -1790,9 +1913,12 @@ def render_capture(sample: dict[str, Any], texture: Image.Image,
     vertices = sample["render_vertices"]
     if len(vertices) % 4:
         raise AssertionError("captured renderer vertex count is not quad-aligned")
+    if quad_faces is not None and len(quad_faces) != len(vertices) // 4:
+        raise AssertionError("quad face identities do not match the captured quad count")
     for offset in range(0, len(vertices), 4):
         quad = vertices[offset:offset + 4]
         quad_index = offset // 4
+        face = quad_faces[quad_index] if quad_faces is not None else -1
         for indices in ((0, 1, 2), (0, 2, 3)):
             triangle = [quad[index] for index in indices]
             projected = [camera.project(vertex_position(vertex)) for vertex in triangle]
@@ -1817,7 +1943,7 @@ def render_capture(sample: dict[str, Any], texture: Image.Image,
                     depth = w0 * projected[0][2] + w1 * projected[1][2] + w2 * projected[2][2]
                     pixel_index = pixel_y * IMAGE_SIZE + pixel_x
                     current_depth = depth_buffer[pixel_index]
-                    if depth > current_depth + CONTEST_DEPTH_EPSILON:
+                    if depth > current_depth + reach:
                         continue
                     u = w0 * uvs[0][0] + w1 * uvs[1][0] + w2 * uvs[2][0]
                     v = w0 * uvs[0][1] + w1 * uvs[1][1] + w2 * uvs[2][1]
@@ -1830,6 +1956,25 @@ def render_capture(sample: dict[str, Any], texture: Image.Image,
                     # result depend on draw order (Slice 4b Island finding).
                     if source[3] < CUTOUT_ALPHA_THRESHOLD:
                         continue
+                    if face >= 0:
+                        # the pair-contested rule: keep the two nearest DISTINCT faces by depth
+                        first = near_face[pixel_index]
+                        if face == first:
+                            if depth < near_depth[pixel_index]:
+                                near_depth[pixel_index] = depth
+                        elif depth < near_depth[pixel_index]:
+                            second_face[pixel_index] = first
+                            second_depth[pixel_index] = near_depth[pixel_index]
+                            near_face[pixel_index] = face
+                            near_depth[pixel_index] = depth
+                        elif face == second_face[pixel_index]:
+                            if depth < second_depth[pixel_index]:
+                                second_depth[pixel_index] = depth
+                        elif depth < second_depth[pixel_index]:
+                            second_face[pixel_index] = face
+                            second_depth[pixel_index] = depth
+                    if depth > current_depth + CONTEST_DEPTH_EPSILON:
+                        continue  # decisively behind the front: hidden (the tie rule below never reaches it)
                     colour = (source[0], source[1], source[2], 255)
                     if abs(depth - current_depth) <= CONTEST_DEPTH_EPSILON:
                         # Same depth as the current front fragment: a z-fight unless it
@@ -1851,11 +1996,27 @@ def render_capture(sample: dict[str, Any], texture: Image.Image,
 
     image = Image.new("RGBA", (IMAGE_SIZE, IMAGE_SIZE))
     image.putdata(pixels)
-    return image, contested
+    return image, contested, front_pairs(quad_faces, near_face, near_depth, second_face, second_depth)
+
+
+def front_pairs(quad_faces: list[int] | None, near_face: list[int], near_depth: list[float],
+                second_face: list[int], second_depth: list[float]) -> list[tuple[int, int] | None]:
+    """The pair-contested rule's front pair per pixel: the two nearest faces when the second lies within
+    PAIR_ATTRIBUTION_WINDOW behind the nearest, as a sorted pair of face ids; None where there is no such pair."""
+    pairs: list[tuple[int, int] | None] = [None] * (IMAGE_SIZE * IMAGE_SIZE)
+    if quad_faces is None:
+        return pairs
+    for index in range(IMAGE_SIZE * IMAGE_SIZE):
+        second = second_face[index]
+        if second >= 0 and second_depth[index] - near_depth[index] <= PAIR_ATTRIBUTION_WINDOW:
+            first = near_face[index]
+            pairs[index] = (first, second) if first < second else (second, first)
+    return pairs
 
 
 def render_capture_blended(sample: dict[str, Any], texture: Image.Image, camera: Camera,
-                           mode: dict[str, Any], depth_epsilon: float) -> tuple[Image.Image, list[bool]]:
+                           mode: dict[str, Any], depth_epsilon: float,
+                           quad_faces: list[int] | None = None) -> tuple[Image.Image, list[bool], list[tuple[int, int] | None]]:
     """ENT-S-146: rasterise one capture under ``entity_translucent`` - what the GPU does for ONE model's
     quads, in emission order, under that RenderType's states (VISUAL_MODES, bytecode-cited):
 
@@ -1890,6 +2051,17 @@ def render_capture_blended(sample: dict[str, Any], texture: Image.Image, camera:
     within ``depth_epsilon`` of the front - whatever its texel, because under blending a second
     layer changes the pixel even when its colour is the same - and it is never cleared by a nearer
     fragment, since every earlier layer still contributes.
+
+    The pair-contested rule (owner 2026-09-15) applies here as in the cutout mode, as far as this
+    capture can attribute: the two nearest fragments of different faces per pixel, tracked by depth,
+    are the pixel's front pair when the second lies within PAIR_ATTRIBUTION_WINDOW of the first (the
+    window is the ruling's, not this mode's ``depth_epsilon``). What it cannot attribute: under
+    blending the pixel's colour is the composite of EVERY layer that passed, in emission order, so a
+    changed pixel whose front pair matches on both sides may still differ through a third layer within
+    the window or through the order the two layers blended in - the rule excludes it all the same, on
+    the ruling's premise that both renderers resolve the same pair alike in-game under the contracted
+    draw and face orders; and a fragment the shader discards writes no depth on either side and is
+    never a member.
     """
     colour_scale = [value / 255.0 for value in mode["vertex_color"]]
     pixels = [BACKGROUND] * (IMAGE_SIZE * IMAGE_SIZE)
@@ -1897,6 +2069,11 @@ def render_capture_blended(sample: dict[str, Any], texture: Image.Image, camera:
     owner_quad = [-1] * (IMAGE_SIZE * IMAGE_SIZE)
     front_texel: list[tuple[int, int, int] | None] = [None] * (IMAGE_SIZE * IMAGE_SIZE)
     contested = [False] * (IMAGE_SIZE * IMAGE_SIZE)
+    near_face = [-1] * (IMAGE_SIZE * IMAGE_SIZE)
+    near_depth = [math.inf] * (IMAGE_SIZE * IMAGE_SIZE)
+    second_face = [-1] * (IMAGE_SIZE * IMAGE_SIZE)
+    second_depth = [math.inf] * (IMAGE_SIZE * IMAGE_SIZE)
+    reach = max(depth_epsilon, PAIR_ATTRIBUTION_WINDOW) if quad_faces is not None else depth_epsilon
     texture = texture.convert("RGBA")
     texture_pixels = texture.load()
     texture_width, texture_height = texture.size
@@ -1904,9 +2081,12 @@ def render_capture_blended(sample: dict[str, Any], texture: Image.Image, camera:
     vertices = sample["render_vertices"]
     if len(vertices) % 4:
         raise AssertionError("captured renderer vertex count is not quad-aligned")
+    if quad_faces is not None and len(quad_faces) != len(vertices) // 4:
+        raise AssertionError("quad face identities do not match the captured quad count")
     for offset in range(0, len(vertices), 4):
         quad = vertices[offset:offset + 4]
         quad_index = offset // 4
+        face = quad_faces[quad_index] if quad_faces is not None else -1
         for indices in ((0, 1, 2), (0, 2, 3)):
             triangle = [quad[index] for index in indices]
             projected = [camera.project(vertex_position(vertex)) for vertex in triangle]
@@ -1931,8 +2111,8 @@ def render_capture_blended(sample: dict[str, Any], texture: Image.Image, camera:
                     depth = w0 * projected[0][2] + w1 * projected[1][2] + w2 * projected[2][2]
                     pixel_index = pixel_y * IMAGE_SIZE + pixel_x
                     current_depth = depth_buffer[pixel_index]
-                    if depth > current_depth + depth_epsilon:
-                        continue  # LEQUAL, held to the geometry epsilon (see the docstring)
+                    if depth > current_depth + reach:
+                        continue  # beyond the window (and the pair window): rejected by LEQUAL, never a front fragment
                     u = w0 * uvs[0][0] + w1 * uvs[1][0] + w2 * uvs[2][0]
                     v = w0 * uvs[0][1] + w1 * uvs[1][1] + w2 * uvs[2][1]
                     texture_x = min(texture_width - 1, max(0, int(math.floor(u * texture_width))))
@@ -1940,6 +2120,25 @@ def render_capture_blended(sample: dict[str, Any], texture: Image.Image, camera:
                     source = texture_pixels[texture_x, texture_y]
                     if source[3] < CUTOUT_ALPHA_THRESHOLD:
                         continue  # the shader's discard, on the texture alpha
+                    if face >= 0:
+                        # the pair-contested rule: keep the two nearest DISTINCT faces by depth
+                        first = near_face[pixel_index]
+                        if face == first:
+                            if depth < near_depth[pixel_index]:
+                                near_depth[pixel_index] = depth
+                        elif depth < near_depth[pixel_index]:
+                            second_face[pixel_index] = first
+                            second_depth[pixel_index] = near_depth[pixel_index]
+                            near_face[pixel_index] = face
+                            near_depth[pixel_index] = depth
+                        elif face == second_face[pixel_index]:
+                            if depth < second_depth[pixel_index]:
+                                second_depth[pixel_index] = depth
+                        elif depth < second_depth[pixel_index]:
+                            second_face[pixel_index] = face
+                            second_depth[pixel_index] = depth
+                    if depth > current_depth + depth_epsilon:
+                        continue  # LEQUAL, held to the geometry epsilon (see the docstring)
                     texel = (source[0], source[1], source[2])
                     if abs(depth - current_depth) <= depth_epsilon and owner_quad[pixel_index] != quad_index:
                         contested[pixel_index] = True
@@ -1958,7 +2157,7 @@ def render_capture_blended(sample: dict[str, Any], texture: Image.Image, camera:
 
     image = Image.new("RGBA", (IMAGE_SIZE, IMAGE_SIZE))
     image.putdata(pixels)
-    return image, contested
+    return image, contested, front_pairs(quad_faces, near_face, near_depth, second_face, second_depth)
 
 
 def save_png(image: Image.Image, path: Path) -> None:
@@ -1967,24 +2166,37 @@ def save_png(image: Image.Image, path: Path) -> None:
 
 
 def pixel_diff(vanilla: Image.Image, geo: Image.Image, channel_tolerance: int,
-               excluded: list[bool] | None = None) -> tuple[float, float, Image.Image]:
-    """Changed fraction and MAE over the pixels not excluded; excluded pixels are painted CONTESTED_MARKER."""
+               excluded: list[bool] | None = None,
+               pair_eligible: list[bool] | None = None) -> tuple[float, float, Image.Image, float]:
+    """Changed fraction and MAE over the pixels compared, the diff image, and the pair-contested fraction (over the image).
+
+    Excluded pixels (the ``--contested-exclusion`` diagnostic) are not compared and are painted CONTESTED_MARKER. A pixel
+    that is CHANGED (a channel beyond the tolerance) and pair-eligible - both sides' front pairs are the same two faces
+    within PAIR_ATTRIBUTION_WINDOW - is PAIR-CONTESTED (owner 2026-09-15, closing set continued, item 1): not compared,
+    painted PAIR_CONTESTED_MARKER and counted, never a mismatch; an unchanged pixel is compared whatever its pair."""
     vanilla_pixels = list(vanilla.convert("RGB").get_flattened_data())
     geo_pixels = list(geo.convert("RGB").get_flattened_data())
     if excluded is None:
         excluded = [False] * len(vanilla_pixels)
+    if pair_eligible is None:
+        pair_eligible = [False] * len(vanilla_pixels)
     changed = 0
     absolute_sum = 0
     compared = 0
+    pair_contested = 0
     diff_pixels: list[tuple[int, int, int, int]] = []
-    for left, right, skip in zip(vanilla_pixels, geo_pixels, excluded):
+    for left, right, skip, eligible in zip(vanilla_pixels, geo_pixels, excluded, pair_eligible):
         if skip:
             diff_pixels.append(CONTESTED_MARKER)
             continue
-        compared += 1
         delta = tuple(abs(left[index] - right[index]) for index in range(3))
         if max(delta) > channel_tolerance:
+            if eligible:
+                pair_contested += 1
+                diff_pixels.append(PAIR_CONTESTED_MARKER)
+                continue
             changed += 1
+        compared += 1
         absolute_sum += sum(delta)
         diff_pixels.append((min(255, delta[0] * 8), min(255, delta[1] * 8),
                             min(255, delta[2] * 8), 255))
@@ -1992,7 +2204,7 @@ def pixel_diff(vanilla: Image.Image, geo: Image.Image, channel_tolerance: int,
         raise AssertionError("every pixel is contested; nothing left to compare")
     image = Image.new("RGBA", vanilla.size)
     image.putdata(diff_pixels)
-    return changed / compared, absolute_sum / (compared * 3), image
+    return changed / compared, absolute_sum / (compared * 3), image, pair_contested / len(vanilla_pixels)
 
 
 def foreground_fraction(image: Image.Image) -> float:
@@ -2039,12 +2251,17 @@ def visual_parity(model_id: str, spec: dict[str, Any], compiled: dict[str, Any],
     max_changed = 0.0
     max_mae = 0.0
     max_contested = 0.0
+    max_pair_contested = 0.0
     min_foreground = 1.0
 
     for sample_id, (camera_name, camera) in (
         (sample_id, camera_entry) for sample_id in visual_sample_ids for camera_entry in cameras
     ):
         capture_id = sample_id if camera_name is None else f"{sample_id}.{camera_name}"
+        # The pair-contested rule (owner 2026-09-15): one face-identity table per sample, shared by both sides.
+        faces: dict[tuple[Any, ...], int] = {}
+        vanilla_faces = quad_face_ids(model_id, sample_id, vanilla_samples[sample_id], faces)
+        geo_faces = quad_face_ids(model_id, sample_id, geo_samples[sample_id], faces)
         if mode is not None and mode["rasteriser"] == "render_capture_blended":
             # ENT-S-146 (refuter B, D2a): the depth-tie window is its OWN named tolerance, never a reuse of the
             # geometry epsilon and never defaulted - a manifest that declares a blended model without it fails.
@@ -2055,17 +2272,21 @@ def visual_parity(model_id: str, spec: dict[str, Any], compiled: dict[str, Any],
                     "(an owner ruling, presented with its number) and has no default"
                 )
             depth_epsilon = float(thresholds["coplanar_depth_epsilon_blocks"])
-            vanilla_image, vanilla_contested = render_capture_blended(
-                vanilla_samples[sample_id], texture, camera, mode, depth_epsilon)
-            geo_image, geo_contested = render_capture_blended(geo_samples[sample_id], texture, camera, mode, depth_epsilon)
+            vanilla_image, vanilla_contested, vanilla_pairs = render_capture_blended(
+                vanilla_samples[sample_id], texture, camera, mode, depth_epsilon, vanilla_faces)
+            geo_image, geo_contested, geo_pairs = render_capture_blended(
+                geo_samples[sample_id], texture, camera, mode, depth_epsilon, geo_faces)
         else:
-            vanilla_image, vanilla_contested = render_capture(vanilla_samples[sample_id], texture, camera)
-            geo_image, geo_contested = render_capture(geo_samples[sample_id], texture, camera)
+            vanilla_image, vanilla_contested, vanilla_pairs = render_capture(
+                vanilla_samples[sample_id], texture, camera, vanilla_faces)
+            geo_image, geo_contested, geo_pairs = render_capture(geo_samples[sample_id], texture, camera, geo_faces)
         contested = [left or right for left, right in zip(vanilla_contested, geo_contested)]
         contested_fraction = sum(contested) / (IMAGE_SIZE * IMAGE_SIZE)
-        changed, mae, diff_image = pixel_diff(
+        # pair-eligible: both sides' two front fragments are the same pair of faces (either order) within the window
+        pair_eligible = [left is not None and left == right for left, right in zip(vanilla_pairs, geo_pairs)]
+        changed, mae, diff_image, pair_contested = pixel_diff(
             vanilla_image, geo_image, int(thresholds["pixel_channel_tolerance"]),
-            contested if exclude_contested else None,
+            contested if exclude_contested else None, pair_eligible,
         )
         vanilla_foreground = foreground_fraction(vanilla_image)
         geo_foreground = foreground_fraction(geo_image)
@@ -2074,6 +2295,12 @@ def visual_parity(model_id: str, spec: dict[str, Any], compiled: dict[str, Any],
             raise AssertionError(
                 f"VISIBILITY MISMATCH {model_id}/{capture_id}: foreground fraction "
                 f"{min(vanilla_foreground, geo_foreground):.9g} < {required_foreground}"
+            )
+        if pair_contested > PAIR_CONTESTED_CAP:
+            # the cap: never a mismatch pixel by pixel, but a rig that ties everywhere still fails
+            raise AssertionError(
+                f"VISUAL MISMATCH {model_id}/{capture_id}: pair-contested fraction {pair_contested:.9g} > "
+                f"{PAIR_CONTESTED_CAP}"
             )
         if changed > float(thresholds["pixel_changed_fraction"]):
             raise AssertionError(
@@ -2100,6 +2327,7 @@ def visual_parity(model_id: str, spec: dict[str, Any], compiled: dict[str, Any],
                 "changed_fraction": changed,
                 "mean_absolute_error": mae,
                 "contested_fraction": contested_fraction,
+                "pair_contested_fraction": pair_contested,
                 "contested_excluded": exclude_contested,
                 "vanilla_foreground_fraction": vanilla_foreground,
                 "geo_foreground_fraction": geo_foreground,
@@ -2111,10 +2339,18 @@ def visual_parity(model_id: str, spec: dict[str, Any], compiled: dict[str, Any],
         max_changed = max(max_changed, changed)
         max_mae = max(max_mae, mae)
         max_contested = max(max_contested, contested_fraction)
+        max_pair_contested = max(max_pair_contested, pair_contested)
     # The contested fraction is not gated: with every pixel compared, a contested pixel
     # that resolves differently is a changed pixel and fails above; one that resolves the
-    # same way (the ordinary case under the contract) is nothing to a player.
+    # same way (the ordinary case under the contract) is nothing to a player. The
+    # pair-contested fraction is gated by its own cap only (PAIR_CONTESTED_CAP).
 
+    pair_policy = (
+        "; a CHANGED pixel whose two front fragments on both sides are the same pair of faces within "
+        f"{PAIR_ATTRIBUTION_WINDOW:g} blocks is pair-contested (owner 2026-09-15, closing set continued, item 1): "
+        "counted per sample, excluded from the changed fraction and the MAE, painted in the diff, never a mismatch, "
+        f"and capped at {PAIR_CONTESTED_CAP:g} of the image"
+    )
     report = {
         "status": "PASS",
         "image_size": [IMAGE_SIZE, IMAGE_SIZE],
@@ -2123,21 +2359,24 @@ def visual_parity(model_id: str, spec: dict[str, Any], compiled: dict[str, Any],
         "changed_fraction_threshold": thresholds["pixel_changed_fraction"],
         "mean_absolute_error_threshold": thresholds["pixel_mean_absolute_error"],
         "minimum_foreground_fraction_threshold": thresholds["minimum_foreground_fraction"],
+        "pair_attribution_window_blocks": PAIR_ATTRIBUTION_WINDOW,
+        "pair_contested_cap": PAIR_CONTESTED_CAP,
         "max_changed_fraction": max_changed,
         "max_mean_absolute_error": max_mae,
         "z_fight_policy": (
             "pixels where two different quads meet the front within "
             f"{CONTEST_DEPTH_EPSILON:g} depth with different texels are draw-order z-fights, "
             "excluded from the comparison and painted in the diff (--contested-exclusion: the "
-            "ruling-2 exclusion of 2026-09-02 run as a diagnostic; not the gate's policy)"
+            "ruling-2 exclusion of 2026-09-02 run as a diagnostic; not the gate's policy)" + pair_policy
         ) if exclude_contested else (
             "pixels where two different quads meet the front within "
             f"{CONTEST_DEPTH_EPSILON:g} depth with different texels are counted as a diagnostic only; "
             "every pixel is compared, the draw order being contracted equal on both sides "
-            "(G2 root-order contract, landed 2026-09-06)"
+            "(G2 root-order contract, landed 2026-09-06)" + pair_policy
         ),
         "contested_exclusion_applied": exclude_contested,
         "max_contested_fraction": max_contested,
+        "max_pair_contested_fraction": max_pair_contested,
         "cutout_alpha_threshold": CUTOUT_ALPHA_THRESHOLD / 255.0,
         "minimum_observed_foreground_fraction": min_foreground,
         "samples": rows,
@@ -2157,7 +2396,7 @@ def visual_parity(model_id: str, spec: dict[str, Any], compiled: dict[str, Any],
                 "~1e-6 from the harness projector's 6-decimal rounding); a pixel where another quad's fragment passed "
                 "within that window is counted as contested, whatever its texel, as a diagnostic only - every pixel is "
                 "compared, the draw and face orders being contracted equal on both sides (G2 root-order contract; "
-                "ENT-S-146 face order)"
+                "ENT-S-146 face order)" + pair_policy
             )
     return report
 
@@ -2313,11 +2552,14 @@ def render_instance_lines(contract: dict[str, Any]) -> list[str]:
 
 
 def contested_line(visual: dict[str, Any]) -> str:
+    pair = (f" Pair-contested pixels (the same two front faces on both sides within "
+            f"{visual['pair_attribution_window_blocks']:g} blocks; owner 2026-09-15) never a mismatch: maximum fraction "
+            f"{visual['max_pair_contested_fraction']:.12g} under the cap {visual['pair_contested_cap']:g}.")
     if visual.get("contested_exclusion_applied", False):
         return (f"- Visual z-fight pixels excluded (--contested-exclusion diagnostic run, not the gate's policy): "
-                f"maximum contested fraction {visual['max_contested_fraction']:.12g}.")
+                f"maximum contested fraction {visual['max_contested_fraction']:.12g}." + pair)
     return (f"- Visual z-fight pixels compared, none excluded (G2 root-order contract): maximum contested "
-            f"fraction {visual['max_contested_fraction']:.12g}, a diagnostic.")
+            f"fraction {visual['max_contested_fraction']:.12g}, a diagnostic." + pair)
 
 
 def markdown_report(report: dict[str, Any]) -> str:
@@ -2339,6 +2581,8 @@ def markdown_report(report: dict[str, Any]) -> str:
         "  its emitted clip is reference-only, not runtime acceptance, and editable keyframes remain G3 work;",
         "- visual: independent software rasterization of concrete `EntityModel.renderToBuffer` and `GeoRenderer` streams using the shipped texture;",
         "  every pixel is compared (G2 root-order contract, 2026-09-06) and the z-fight contested fraction is reported as a diagnostic only;",
+        "  a changed pixel whose two front fragments on both sides are the same pair of faces within 1e-5 blocks is pair-contested",
+        "  (owner 2026-09-15): reported per sample, never a mismatch, capped at 1 percent of the image;",
         "- draw order: per full capture, the sequence of parts the classic `renderToBuffer` drew equals the sequence of bones `GeoRenderer` emitted,",
         "  and the order shipped in each geo (`orespawn:bone_draw_order`) equals the converter's, the probe's and the fresh bake's traversal.",
         "",
@@ -2356,7 +2600,9 @@ def markdown_report(report: dict[str, Any]) -> str:
                 f"- Animation maximum rotation delta: {model['animation']['max_rotation_delta_radians']:.12g} radians "
                 f"(epsilon {model['animation']['epsilon_radians']:.12g}).",
                 f"- Visual maximum changed fraction: {model['visual']['max_changed_fraction']:.12g}; "
-                f"maximum mean absolute error: {model['visual']['max_mean_absolute_error']:.12g}.",
+                f"maximum mean absolute error: {model['visual']['max_mean_absolute_error']:.12g}; "
+                f"maximum pair-contested fraction: {model['visual']['max_pair_contested_fraction']:.12g} "
+                f"(never a mismatch; cap {model['visual']['pair_contested_cap']:g}).",
                 f"- Draw order: GeckoLib bone order equals the classic draw order over "
                 f"{model['draw_order']['captures_checked']} captures ({model['draw_order']['draws_checked']} draws).",
                 "",
@@ -2619,9 +2865,20 @@ def main() -> int:
             raise AssertionError(f"{model_id} converter changed exact bone names")
         if sorted(geo_render["bone_names"]) != expected_names:
             raise AssertionError(f"{model_id} GeckoLib bake changed exact bone names")
+        undrawn = undrawn_parts(model_id, spec, compiled)
+        if sorted(conversion.get("undrawn_parts", [])) != sorted(undrawn):
+            raise AssertionError(f"{model_id} undrawn_parts drift between the manifest and the converter")
+        # The constant render transform (owner 2026-09-15, closing set continued, item 2; TEST-013): both probes read
+        # it from the candidate descriptor without an entity and record it; the two records must agree.
+        render_transform = compiled.get("render_transform")
+        if render_transform != geo_render.get("render_transform"):
+            raise AssertionError(
+                f"{model_id} render transform drift between the probes: classic {render_transform}, "
+                f"candidate {geo_render.get('render_transform')}"
+            )
 
         geometry = geometry_parity(
-            model_id, compiled, geo_render, float(thresholds["geometry_epsilon_blocks"])
+            model_id, compiled, geo_render, float(thresholds["geometry_epsilon_blocks"]), undrawn
         )
         print(
             f"G1 GEOMETRY PASS: {model_id} {geometry['cube_sample_count']} cube-samples, "
@@ -2634,6 +2891,7 @@ def main() -> int:
             float(thresholds["geometry_epsilon_blocks"]),
             float(thresholds["normal_epsilon"]),
             float(thresholds["uv_epsilon_normalized"]),
+            undrawn,
         )
         print(
             f"G1 SURFACE PASS: {model_id} {surface_mapping['vertex_samples']} vertex-samples, "
@@ -2647,6 +2905,7 @@ def main() -> int:
             position_epsilon=float(thresholds.get("position_epsilon_model_units", 1.0e-4)),
             repository_root=repository_root,
             conversion=conversion,
+            undrawn=undrawn,
         )
         print(
             f"G1 ANIMATION PASS: {model_id} max delta "
@@ -2673,10 +2932,11 @@ def main() -> int:
             conversion, float(manifest["ticks_per_second"]),
         )
         draw_order = draw_order_parity(model_id, compiled, geo_render, generated_geometry, conversion,
-                                       float(thresholds["normal_epsilon"]))
+                                       float(thresholds["normal_epsilon"]), undrawn)
         print(
             f"G1 DRAW ORDER PASS: {model_id} {draw_order['captures_checked']} captures, "
             f"{draw_order['draws_checked']} draws in the classic order"
+            + (f" (undrawn parts left out of the geo: {sorted(undrawn)})" if undrawn else "")
         )
         if "cube_face_order" in draw_order:
             print(
@@ -2710,6 +2970,8 @@ def main() -> int:
             "reference_animation": reference_schema,
             "draw_order": draw_order,
         }
+        if render_transform is not None:
+            common_report["render_transform"] = render_transform
         if keyframe_leg is not None:
             common_report[KEYFRAME_LEG_KEY] = keyframe_leg
         if "reference_source" in spec:
@@ -2750,7 +3012,8 @@ def main() -> int:
                 f"G1 VISUAL PASS: {model_id} max changed {visual['max_changed_fraction']:.12g}, "
                 f"max MAE {visual['max_mean_absolute_error']:.12g}, "
                 f"max contested {visual['max_contested_fraction']:.12g} "
-                f"({'excluded: --contested-exclusion diagnostic run' if visual['contested_exclusion_applied'] else 'compared, not excluded; a diagnostic'})"
+                f"({'excluded: --contested-exclusion diagnostic run' if visual['contested_exclusion_applied'] else 'compared, not excluded; a diagnostic'}), "
+                f"max pair-contested {visual['max_pair_contested_fraction']:.12g} (never a mismatch; cap {PAIR_CONTESTED_CAP:g})"
             )
             # ENT-S-146 (refuter B, D3): the render state both sides actually requested, against the mode the
             # visual leg emulated - for EVERY model (a cutout rig reporting anything but cutout / white / the

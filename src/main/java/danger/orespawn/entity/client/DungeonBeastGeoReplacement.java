@@ -26,9 +26,8 @@ import software.bernie.geckolib.animation.AnimationProcessor;
  * +-0.523 rad, else they rest. Tail1's pivot is never written (the bind), read through {@link #classicPosition}; every
  * value the classic reads back from a part it just wrote is held in a local; a part whose x / z the classic writes keeps
  * its bind y. Orig :573's {@code e.setRenderInfo(r)} is the port's omitted self-copy (ENT-S-093).
- *
- * <p>Shadow follows {@link DungeonBeastRenderer}: a 0.25 x 1.0 shadow (ENT-S-092); the classic renderer scales by 1.0, so
- * no scale hook.</p>
+ * <p>Shadow follows {@link DungeonBeastRenderer}: a 0.25 x 1.0 shadow (ENT-S-092); the classic renderer scales by 1.0, so no
+ * scale hook. {@code DESCRIPTOR.renderTransform()}: the classic renderToBuffer's YP 90 (:535, orig :574; TEST-013, owner 2026-09-15).</p>
  */
 public final class DungeonBeastGeoReplacement extends OreSpawnGeoReplacement<DungeonBeast> {
     /** orig ModelDungeonBeast.java:16,83 {@code wingspeed} = 0.62f (ClientProxyOreSpawn.java:481): the chain's third multiply. */
@@ -40,6 +39,7 @@ public final class DungeonBeastGeoReplacement extends OreSpawnGeoReplacement<Dun
             ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "animations/entity/dungeonbeast.animation.json"),
             ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "textures/entity/dungeonbeast.png"),
             DungeonBeastRenderer.SHADOW) {
+        @Override public RenderTransform renderTransform() { return RenderTransform.rotationDegrees(0.0F, 90.0F, 0.0F); }  // renderToBuffer:535
     };
 
     public DungeonBeastGeoReplacement() {
