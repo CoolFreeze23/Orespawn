@@ -7971,3 +7971,217 @@ and the final report. The advisor stops only if a gate cannot be made green in t
 half its rigs, or a decision outside the recorded doctrine blocks more than one rig.
 
 GATE: docs-only (no gate; nothing under src or tools moves).
+
+## PHASE G — THE FIFTH TIER-2 SLICE, T2e (2026-09-15): fifteen rigs on their written hooks — eight gait-scaled and seven state-branching Tier-2 rigs in the design's order, the Stinky's activity 2 named — fourteen landed on the hooks already written (the Pointysaurus, Whale, Molenoid, Rat, Spit Bug, Stink Bug, Trooper Bug, Velocity Raptor, Ghost Skelly, Hydrolisc, Lizard, Mantis, Cave Fisher, Chipmunk) through the seam behind the dev switch; the Lurking Terror HELD on the visual leg (a harness depth-tie finding on its posed flat wings, the register line); the fourteen packages with the SPEC's formulas and the sampler's clips; the Stinky's activity 2 named legs_folded; no gameplay touched
+
+RULING. Owner 2026-09-15, closing set, item 4 (addendum item 33 (4)): "Each slice in the standing form: fifteen rigs on their written
+hooks, the geo shipped, the renderer registered behind the switch, the four legs and the reference leg where a pair exists, one refuter,
+the gate, records as the cost rules, the package rows regenerated. ... A rig that fails a leg is held with a register line and rejoins at
+the remainder; one still failing there is reported, not forced." This slice: the first fifteen of the twenty-nine remaining Tier-2 rigs in
+the design's order (simple cyclic, then gait-scaled, then state-branching; the §1 inventory row order within a class; the Ghost stays in
+the remainder under ENT-S-160). Amendment 2 (owner 2026-09-13, second set, item 2): every rig lands ON ITS HOOK - no clip manifest, no
+transcription, no keyframeLayers(). Addendum items 10 and 14 (FIX_LOG "THE HOOKS (2026-09-14)"): the hooks exist and are reused; the slice
+adds the geo, the wiring, the pins, the manifest entry and the proofs, and moves the rig out of the hook state. Item 2 of the closing set:
+the Stinky's activity 2 named in its seed from the code's own word. Parity lanes frozen: a divergence gets a draft register line and stops.
+One refuter for the whole slice (the cost rules of 2026-09-12, item 25 (3)).
+
+WHAT LANDED (fourteen rigs on their hooks; fourteen geos, fourteen empty animation files, fourteen manifest entries, fourteen pin
+candidates, fourteen seeds with formulas, the sampler's clips per state; the design's order):
+- THE HOOKS (`entity/client/<Name>GeoReplacement.java`, written by the hook lanes and reused - the descriptor's javadoc gains the landing
+  line; every hook diffed against its classic poseFrom / setupAnim (hook_diff_t2e.py: the numeric-literal multisets of the hook body and
+  its helpers against the classic body and its helpers - eleven MATCH exactly (whale, molenoid, rat, stink_bug, velocity_raptor, ghost_skelly,
+  hydrolisc, lizard, mantis, cave_fisher, chipmunk), the four differences all structural: the Pointysaurus's WINGSPEED constant (1.0 x 4)
+  standing in for the classic's `this.wingspeed` field, the Spit Bug's and Trooper Bug's classic unused local `float pi4 = 1.570795f` (and
+  `Object r = null`) not declared in the hook, the Lurking Terror's classic chained writes `leg2.zRot = leg2part2.zRot = 0.191f + newangle`
+  written per part by the hook (the Creeping Horror precedent)); the animation leg's 0 rad over every sample, amplitude and state is the
+  ruled proof; no drift found, none fixed):
+  pointysaurus (the THRESHOLD gait 1.3 ws x 0.25 on the four legs, the HEAD-LOOK yaw and pitch at 0.45 on twenty-two parts (the side horns
+  -+0.14 / -0.16, the guard and sixteen bumps at -0.262), the ATTACKING tail yaw 1.3 ws x 0.25 else 0.3 ws x 0.05 over the 0.02 ws pitch
+  sway around 0.28; PointysaurusPose; the renderer's literal 1.0f shadow, the private identity SCALE left - the Alosaurus form); whale (the
+  THRESHOLD idiom twice - the fins 0.3 x 0.2 else 0.08 x 0.05 about +-0.436, the tail 0.4 x 0.16 else 0.05 x 0.03 at 0.5 / 1.25 / 2.25 - the
+  jaw 0.03 x 0.02 about 0.087, the POSITION chain down the tail (14 / 8 units, y and z through moveYZ); shadow WhaleRenderer.SHADOW 0.1,
+  WhaleRenderer.SCALE 1.0 halved for a baby - the constant made public by this slice); molenoid (the ATTACKING arms 1.7 ws x 0.25 over the
+  THRESHOLD 1.3 ws x 0.25 x limbSwingAmount, the threshold legs, four three-link yaw chains from the bind pivots (15 / 10 units, moveXZ; the
+  claws and toes at 1.5 about -+0.174 / -+0.261), the six nose stars 0.1 ws x PI at 0.523 steps; MolenoidPose; shadow 1.0, no scale);
+  rat (the THRESHOLD gait 1.7 x 0.25, the ATTACKING tail 1.5 x 0.25 else 0.4 x 0.05 at 0.5 / 1.25 with the second link following 9 units;
+  RatPose; shadow 0.1 x 0.75, RatRenderer.SCALE 0.75); spit_bug (the Mth.sin gait 2.0 ws x 0.12 x limbSwingAmount with the 0.1-tick
+  look-ahead and the |cos| lift on the rising half-cycle through the four leg helpers - seven-part chains over the bind pivots and pitches,
+  14 / 14 / 8 units - and the |cos| ATTACKING jaw 0.3 ws x 0.015 else 2.6 ws x 0.1 with the teeth about 0.26; SpitBugPose; shadow 0.55 x
+  0.75, SCALE 0.75); stink_bug (Mth.sin on every channel: the GAIT-scaled legs 3.1 ws x 0.3 x limbSwingAmount without a threshold, the
+  antennae 0.4 ws x 0.2, the jaw 0.2 ws x 0.04 about 0.18, the horns 0.4 / 0.43 / 0.46 / 0.49 ws x 0.15, the twenty-three tail parts 0.1 ws x
+  0.1 about -0.2; shadow 0.2975, SCALE 0.85); trooper_bug (five ATTACKING branches - the antennae, the six upper-arm parts, the four
+  forearm tips, the ridges, the fourteen jaw parts - the Mth.sin gait 2.0 ws x 0.12 with the |cos| lift through the four leg helpers, ten-part
+  chains at 26 / 32 units; TrooperBugPose; two zero-thickness upper-arm parts (arm3part1c / arm4part1c 3 x 5 x 0) so the classic face order;
+  shadow 0.95 x 1.1, SCALE 1.1); velocity_raptor (the THRESHOLD gait 1.3 ws x 0.25 on eight leg parts, the HEALTH-FREQUENCY idiom hf scaling
+  the rate and amplitude of the four head feathers (1.25 ws x 0.1) and the four tail feathers (1.4 ws x 0.25, stilled by the SITTING check),
+  the bare 0.3 cosine on the arm feathers and fingers, the fingers' yaw 1.3 ws x 0.1; VelocityRaptorPose; fourteen zero-thickness feathers so
+  the classic face order; shadow 0.55 x 0.75, SCALE 0.75 halved for a baby); ghost_skelly (the arm groups about Z at 0.2 / 0.22 and Y at
+  0.24 / 0.26, every one PI x 0.05, the HEAD-SWIVEL LATCH on the render scratch - |age x 0.05 mod 2 PI| against rf2, the entity RNG rolling
+  ri2 at one in three, cos x PI x 2 while set; GhostSkellyPose; shadow 0.0, SCALE 1.05; the render type entity_translucent through
+  GhostSkellyModel.RENDER_TYPE - re-based by this slice); hydrolisc (the THRESHOLD gait 1.3 ws x 0.25 on twenty-four leg parts around their
+  rests, the SITTING-stilled tail 1.0 ws x 0.15 folded 0.25 / 0.5 / 0.75 with a POSITION follow (5 / 8 units), the HEALTH-FREQUENCY feathers
+  1.25 / 0.75 ws x hf about +-0.9; HydroliscPose; shadow 0.65 x 0.65, SCALE 0.65 halved for a baby); lizard (the THRESHOLD gait 1.0 ws x 0.25
+  on twenty parts, the ATTACKING lower jaw 0.52 + cos 0.45 x 0.35 else 0.25 copied to six teeth, the ATTACKING tail 0.25 ws x 0.05 else
+  1.25 ws x 0.35 folded down five rings with POSITION follows (12 / 9 / 7 / 7), the HEAD-LOOK neck a quarter and the jaws with their
+  followers a half following by 2 / 3 units; LizardPose; eight zero-thickness fins so the classic face order; shadow 0.75, SCALE 1.0 halved
+  for a baby); mantis (the wings 0.9 ws x 0.25 / 0.35 about -+0.698 / -+0.349, the ATTACKING forearms 0.051 ws x 0.013 about -0.2 else 0.51 ws
+  x 0.25 about -0.698 folded down each three-part arm with POSITION follows (22 / 17 units, the classic's double chain); MantisPose; shadow
+  0.9 x 1.1, SCALE 1.1); cave_fisher (the GAIT-scaled thirty-six leg parts 2.0 ws x 0.12 x limbSwingAmount in three phases (k x 1.570795), the
+  CLAW-SNAP LATCH on the 3.0 ws cosine's zero crossing with the 0.1-tick look-ahead re-rolled from the RNG with the ranges by the ATTACKING
+  flag (20 / 25 else 4 / 3), the claws lifting on |cos| while ri1 is 1 or 3 about 0 / -0.54 / 0.35; CaveFisherPose; shadow 0.35 x 0.75, SCALE
+  0.75); chipmunk (the THRESHOLD gait 2.3 x 0.25 on the four legs, the HEAD-LOOK yaw at 0.45 on nine head parts, the SITTING branch on the
+  tail (0.306 + cos 0.25 x 0.06 plus the 1.3 gait x limbSwingAmount, the second segment 0.306 further), the two hat parts hidden every frame on
+  both sides; ChipmunkPose; shadow 0.15 x 0.9, SCALE 0.9 halved for a baby).
+- THE HOOK-LANE NOTES ACTED ON: the Ghost Skelly's render type re-based onto the classic model's own function object - `GhostSkellyModel`
+  gains `public static final Function<ResourceLocation, RenderType> RENDER_TYPE = RenderType::entityTranslucent` and `super(RENDER_TYPE)`
+  (the FairyModel / ModelPurplePower form, ENT-S-146), the descriptor's `renderType(entity)` returns it, the harness proves the two sides
+  equal by identity (RENDER STATE PASS entity_translucent); `WhaleRenderer.SCALE` made public and the descriptor scales by it (its own
+  equal literal dropped; the pins tool passes a candidate's scale only through <Renderer>.SCALE - the T2d form for the Baryonyx and
+  Cassowary); the Pointysaurus's private identity SCALE left with no scale hook (the Alosaurus form); the shadow literals stay equal literals
+  (the T2c doctrine (vii)); no whole-model render transform among the fourteen. Two hook javadoc wordings corrected against the shipped geo
+  (the Trooper Bug's flat cubes are the upper-arm parts arm3part1c / arm4part1c, not "jaw parts"; the Velocity Raptor's flat feathers are
+  fourteen, not "ten": hf1-4, lff1-3, rff1-3, tf1-4). Noticed, not changed: the Cave Fisher hook's javadoc says "falling zero-crossing" where
+  the code tests newangle < 0 && nextangle > 0 (a rising crossing, as the sampler's ATTACK_GATES row says).
+- THE SHIPPED GEOS: the converter's output byte for byte (`geo/entity/<stem>.geo.json`: pointysaurus, whale, molenoid, rat, spitbug,
+  stinkbug, trooperbug, velocityraptor, ghostskelly, hydrolisc, lizard, mantis, cavefisher, chipmunk - the manifest id's stem),
+  `orespawn:bone_draw_order` on all fourteen, `orespawn:cube_face_order` on the Trooper Bug (arm3part1c / arm4part1c 3 x 5 x 0), the Velocity
+  Raptor (hf1 0 x 1 x 2, thirteen feathers 0 x 1 x 3), the Lizard (Fin2 / Fin3 / Fin5-10, 0 x 7..12 x 3..6), and the Ghost Skelly (no flat cube;
+  a BLENDING rig - the harness refuses a blending mode whose generated geo carries no key, so cube_face_order classic and
+  cubeFaceOrderRequired() in the Fairy form) - TEST-007 / ENT-S-146; the thirty-seven already-shipped t2 geos equal the converter's output;
+  fourteen empty animation files (the s4 form, byte-identical to cricket's); the dev-switch wiring (`PhaseGDevRenderers` fourteen
+  providers, `OreSpawnClient` fourteen registrations through them; the classic renderers the default);
+  `tools/reference_renderer_pins.json` naming fourteen port_candidates (PASS 120 / DIVERGES 0 / MANIFEST_DRIFT 0; 69 candidates named).
+- THE MANIFEST (`tools/t2_model_proofs.json` +14 entries, 56 models): `entity_state` on every hook that reads its entity (the probe poses an
+  entity_state entry's classic side through poseFrom on a fresh subject per sample and a code_driven entry's through setupAnim(null, ...)):
+  idle / attacking for the Pointysaurus, Molenoid, Rat, Spit Bug, Trooper Bug, Lizard and Mantis; full_health / sitting for the Velocity
+  Raptor and Hydrolisc (the health ratio not enumerable, the Camarasaurus form; the sitting flag through the state's `getters` object);
+  idle / sitting for the Chipmunk; idle / claws_snapping (ri1 1, the Robot2 preset form) / attacking for the Cave Fisher (the attacking read
+  inside the latch's re-roll, never reached at the probe's inputs - the ATTACK_GATES row); one rest state for the Ghost Skelly (its ri2 bit is
+  rolled on the RNG at a phase wrap the fresh subject never reaches, and ProbeSubject presets ri1 / rf1 only); `code_driven` for the Whale and
+  Stink Bug; the hook path, `channels: []` on every entry, `reference_source` on all fourteen, the Beaver's amplitude matrix 0 / 0.25 / 0.5 / 1
+  on the twelve hooks that read limbSwingAmount (the Ghost Skelly and Mantis read none), the head-look rigs sampled at netHeadYaw 30 /
+  headPitch 10 (pointysaurus, lizard, chipmunk); bind EXCLUDED from the visual samples of the two rigs whose hook writes a flat bone every
+  frame with the Bee-form note (trooper_bug, velocity_raptor; TEST-008 (c)) - the Lizard's fins are never written, so it keeps bind (the
+  Baryonyx form); the Ghost Skelly's `visual_mode` entity_translucent (the Fairy form); the hook_rig_note extended.
+- THE AUDIT AND THE SAMPLER OUT OF THE HOOK STATE: fourteen `HOOKS` entries removed from `tools/asset_audit.py` (54 -> 40);
+  `ReferenceClipSampler`: fourteen `HOOK_DESCRIPTORS` rows removed, fourteen `REGISTRIES` rows added (model_<stem> -> registry), fourteen
+  `HOOK_RULES` rows carried verbatim into `RULES` keyed by the manifest id (the same rule, the same source lines), the javadoc count
+  sentence. The clips of the fourteen reproduce IDENTICALLY over the shipped geo: `cmp` of all 38 files against the pre-slice files - 38
+  identical, 0 differing; the held Lurking Terror's 3 and the other 255 clips unchanged; the index (schema 4) marks the fourteen landed on
+  the shipped rig. Two headless runs diff-clean (sA2 == sB2), installed, `--verify` VERIFIED 298 files.
+- THE SAMPLER'S RULES AND SPANS (the carried rows; `tools/reference_clips/reference_clips.json`): pointysaurus two_seconds_past_cap (T
+  314.16 at 0.02 x 1.0; walk / idle / attack), whale two_seconds_past_cap (T 209.44 at 0.03; walk / idle), molenoid two_seconds_past_cap (T
+  125.66 at 0.1 x 0.5; walk / idle / attack), rat period_multiple (T 15.71 at 0.4, the walk k = 4; walk / idle / attack), spit_bug
+  period_multiple (the |cos| half period 19.04 at 0.3 x 0.55, the walk k = 3; walk / idle / attack), stink_bug two_seconds_past_cap (T 83.78
+  at 0.1 x 0.75; walk / idle), trooper_bug two_seconds_past_cap (T 285.60 at 0.1 x 0.22; walk / idle / attack), velocity_raptor
+  two_seconds_past_cap (T 20.94 at 0.3; walk / idle; the sit period_multiple k = 5), ghost_skelly two_seconds_past_cap (T 125.66 at 0.05;
+  walk / idle), hydrolisc two_seconds_past_cap on the walk, period_multiple k = 3 on idle / sit (T 12.89 at 0.75 x 0.65 x hf), lizard
+  period_multiple (T 38.67 at 0.25 x 0.65; walk / idle, the attack two_seconds_past_cap), mantis two_seconds_past_cap (T 61.60 at 0.051 x
+  2.0; walk / idle / attack), cave_fisher period_multiple on the walk (T 5.07 at 2.0 x 0.62) and one_key on idle (no attack clip: the
+  ATTACK_GATES row records the latch gate), chipmunk two_seconds_past_cap on the walk, period_multiple on idle, one_key on sit (T 25.13 at
+  0.25) - every span exactly as the hooks' landing sampled it (the clips are byte-identical).
+- THE STINKY'S ACTIVITY 2 (item 2): `tools/artist_specs/stinky.json` reference_states gains `legs_folded: {getActivity: 2}` - the code's
+  own word (StinkyPose.java: "the activity that folds the four legs under the body at 2"; StinkyGeoReplacement's javadoc: "the ACTIVITY
+  branch folds them at -1 / +1 rad at 2"), lower snake case; the sampler regenerates the clip as
+  `stinky_reference_legs_folded.animation.json` (the old `stinky_reference_activity_2` file gone, the index row named, name_source
+  "stinky.json reference_states.legs_folded = {getActivity: 2}", rule one_key; the sheet no longer flags it). EntityStinky.java:459-460 and the
+  seed's behaviour call activity 2 "the flight": `fly` is the alternative the owner may prefer (ten seeds use it).
+- THE PACKAGES (`tools/artist_specs/<registry>.json`): fourteen seeds gain `formulas` (the port pose method and its real lines quoted,
+  declaration to closing brace, the 1.7.10 pose statements in `render` (func_78088_a; func_78087_a a bare super call in all fourteen) cited
+  `orig:` with the wingspeed's ClientProxyOreSpawn line, every formula and constant in words), their status / artist_scope say the rig is
+  in-game on its hook since T2e; the four that round-trip through json.dumps rewritten through it, the ten hand-compacted ones by
+  exact-string replacement. The dry run: 116 folders, 1,369 files, `check` PASS 116 / 0; Tier 2 in-game 52 rigs; EXTRAS_CAP on the spyro
+  (as before) and the stinky (its offered legs_folded, 5 > 4, listed, none dropped - the Spyro precedent); `test_artist_package.py` 50 OK.
+- THE GAMETESTS: `T2SeamTests.t2_007` (one new row, the required-test count 1279 -> 1280): each of the fourteen descriptors constructs
+  registry-free, declares NO keyframe layer, its shipped animation file bakes to no clip, the self-gate registers nothing under the modern
+  keys, its shadow is the classic renderer's, the classic face order is required exactly where the shipped geo carries it (the Trooper Bug,
+  Velocity Raptor, Lizard, Ghost Skelly), and the classic hook poses a fresh bake of the shipped geo off its bind at age 7 (a RestSubjectT2e
+  implementing the twelve pose interfaces at rest - attacking 0, full health, not sitting, a fresh RenderInfo and the RNG seeded 0 - one
+  instance per entity-reading hook so no latch scratch is shared); the assertions shared through assertHookSpecies.
+  `KeyframeLegTests.kf_007` seventy replacements (56 + 14; the fourteen Tier-2 descriptors with layers unchanged).
+- THE LURKING TERROR (HELD - audit_lurking_terror_held.txt): the t2 chain's run 2 FAILED its visual leg (`VISUAL MISMATCH
+  model_lurkingterror/s_idle_t0: changed fraction 2.03e-3 > 1e-3`) after geometry 3.61e-7, surface 0 / 2.10e-7, animation 0 rad, draw order
+  16 / 944, face order 5,664 faces and reference 59 parts all PASSED. The lane's read-back with the harness's own rasteriser
+  (probe_visual.py): 121 of the 133 changed pixels are owned by wing_1 on BOTH sides (an 8 x 22 zero-thickness wing at 1.083 rad whose two
+  coplanar faces swap under the rasteriser's diagonal depth noise past the 1e-6 contest window - TEST-008's mechanism at a POSED sample,
+  which the fourth set's bind exclusion does not reach), the rest the coincident leg pairs (leg N / leg N part2 at the same pivot and pose);
+  12 of the 133 inside the contested mask; the other samples 9.0e-4 / 5.2e-4 / 9.8e-4 / 9.8e-4. Not forced: every landing piece taken back
+  (hold_lurking_terror.py - the wiring, the pin, the audit row restored, the sampler's HOOK_DESCRIPTORS and HOOK_RULES rows restored
+  verbatim, the manifest entry, the gametest rows, the descriptor's javadoc; the geo and animation file deleted, the seed restored from
+  HEAD); its hook state stands as the hook lanes left it, its three clips byte-identical. The remainder slice needs the owner's call among
+  the register line's three options (a rasteriser change presented before the gate; a ruling extending TEST-008 (c) to a posed sample whose
+  changed pixels are one coplanar pair on both sides; a camera choice).
+
+THE PROOF (this lane's `--validate-only` evidence over the t2 chain, run 3, `G1 PARITY STAGING PASS: 56 models`; the t2 proof tree is the
+orchestrator's to regenerate): pointysaurus geometry 3.51e-7 blocks (1230 cube-samples over 41 samples), surface UV 0 / normal 1.53e-7
+(29,520 vertices), animation 0 rad over 3690 channel samples at every amplitude and state, position 0, draw order 41 captures / 1230 draws,
+reference 30 parts, visual 1.53e-5 / MAE 4.07e-5 / contested 0; whale 1.02e-6 (294), 0 / 1.40e-7, 0 rad over 882, 21 / 294, 14 parts, 0 / 0 /
+0; molenoid 7.28e-7 (1517), 0 / 0, 0 rad over 4551 (position 1e-6 units), 41 / 1517, 37 parts, 0 / 0 / 7.17e-4; rat 3.0e-7 (492), 0 / 0, 0 rad
+over 1476, 41 / 492, 12 parts, 0 / 0 / 5.19e-4; spitbug 6.4e-7 (3813), 0 / 2.6e-7, 0 rad over 11,439 (position 6e-7), 41 / 3813, 93 parts,
+6.1e-5 / 2.85e-4 / 8.39e-4; stinkbug 2.02e-7 (1050), 0 / 1.2e-7, 0 rad over 3150, 21 / 1050, 50 parts, 1.53e-5 / 1.82e-3 / 1.79e-3;
+trooperbug 8.06e-7 (5494), 0 / 2.01e-7 (328 zero-area faces ignored), 6e-13 rad over 16,482 (the double chain's rounding, within 2e-6),
+41 / 5494, face order 32,964 faces over 41 captures, 134 parts, 0 / 0 / 3.8e-3; velocityraptor 3.17e-7 (1394), 0 / 2.0e-7 (2296 ignored), 0
+rad over 4182 in full_health and sitting, 41 / 1394, face order 8364 faces over 41 captures, 34 parts, 0 / 0 / 4.78e-3; ghostskelly 2.24e-7
+(60), 0 / 1.5e-7, 0 rad over 180, 6 / 60, face order 360 faces over 6 captures, 10 parts, 1.53e-5 / 2.69e-3 / 1.48e-3, render state
+entity_translucent on both sides; hydrolisc 3.17e-7 (1640), 0 / 1.42e-7, 0 rad over 4920 (position 6e-8) in full_health and sitting, 41 /
+1640, 40 parts, 0 / 0 / 1.03e-2; lizard 3.16e-7 (2911), 0 / 2.0e-7 (1312 ignored), 0 rad over 8733, 41 / 2911, face order 17,466 faces over
+41 captures, 71 parts, 0 / 0 / 9.74e-3; mantis 6.08e-7 (396), 0 / 1.41e-7, 0 rad over 1188 (position 1e-6), 11 / 396, 36 parts, 0 / 0 /
+2.18e-3; cavefisher 3.06e-7 (4575), 0 / 1.71e-7, 0 rad over 13,725 in idle / claws_snapping / attacking, 61 / 4575, 75 parts, 0 / 0 / 2.9e-3;
+chipmunk 3.0e-7 (658), 0 / 3.59e-8, 0 rad over 2214 in idle / sitting, 41 / 658, 18 parts, 0 / 0 / 7.02e-3. Render state
+entity_cutout_no_cull / white / light 0 on both sides for thirteen, entity_translucent for the Ghost Skelly. The forty-two entries landed
+before: identical numbers, the shipped geos equal to the converter's output. THE CHAIN REPEAT: run 4 (`run_t2_chain.sh t2e3 run4 validate`)
+`G1 PARITY STAGING PASS: 56 models` rc 0, `diff -rq run3 run4` 0 lines; the s4 chain twice in verify mode `G1 PARITY PASS: 13 models;
+checked-in proof verified`, `diff -rq s4a s4b` 0 lines; the g1 chain twice `G1 PARITY PASS: 2 models; checked-in proof verified`, `diff -rq
+g1a g1b` 0 lines.
+
+DECIDED UNDER DOCTRINE, REVERSIBLE (one line each): (i) the geo file names follow the t2b naming (the manifest id's stem); (ii) the sample
+periods per entry are each rig's slowest rest rhythm (the HOOK_RULES row's), a probe choice; (iii) the head-look inputs 30 / 10 on the three
+rigs that read netHeadYaw (the Lizard and Chipmunk read no pitch); (iv) every entity-reading hook is an entity_state entry because the
+probe poses a code_driven entry's classic side through setupAnim(null, ...) - the Ghost Skelly on one rest state (its latch bit is not
+enumerable), the two latch rigs with an ri1-preset state (the Robot2 form), the sitting flags through the states' getters object; (v)
+WhaleRenderer.SCALE made public rather than copied (the T2d form); (vi) the Ghost Skelly's geo carries the face-order key although no cube
+is flat - a blending rig (the harness's rule, the Fairy form); (vii) the Lurking Terror is HELD rather than a posed sample excluded or a
+threshold moved (a tolerance is an owner ruling); (viii) t2_007 is a new row sharing assertHookSpecies (the count moves by one); (ix) bind
+excluded from the visual samples of the two flat-writing rigs and kept for the Lizard (TEST-008 (c)); (x) the Stinky's state named
+legs_folded from the pose interface's and hook's own words, `fly` presented as the alternative.
+
+THE REFUTER (one, per the cost rules; its report in the advisor's scratch `r21/t2e_ref/`): CONFIRMED the fourteen hooks
+as the classic code verbatim by a normalised statement-stream diff (four rigs statement-exact, the other ten differing
+only in read-backs held in locals, split chained assignments and the classic's unused locals), the geos as the
+converter's output on all fifty-one shipped rigs, the legs' numbers by its own chain (`G1 PARITY STAGING PASS: 56
+models`, the evidence identical), the held Lurking Terror's visual mismatch re-measured (133 pixels, `wing_1` 121 on
+both sides), the hook state moved (the fourteen carried rules character-identical), the gametest count by construction
+(1279 → 1280), the sampler's 298 files byte-identical. MUST-FIX, all citation defects the slice's own javadoc
+insertions shifted, fixed by the orchestrator before the second regeneration: the Ghost Skelly seed's port citations
++14 (the `RENDER_TYPE` field and its imports moved `poseFrom` to 124-153), the Whale seed's renderer citations +4
+(`SCALE` at 31, the baby branch 43-47), the two new visual notes +2 (the Trooper Bug's flat-part writes at 82 and 85,
+the Velocity Raptor's at 85-88 / 92-94 / 97-99 / 101-111), the Cave Fisher rig note's crossing "rising". Presented, not
+a blocker (decided under doctrine, reversible): the fourteen carried `RULES` rows cite descriptor lines from the hooks'
+landing, which this slice's javadoc edits shifted by one to sixteen lines — carried verbatim as the brief demanded,
+the T2d precedent the same; a re-cite pass over every carried rule is a tooling item for the package phase (item 9),
+where the rows are re-derived from the descriptors as they then are.
+
+DEVIATIONS PRESENTED: (1) the Lurking Terror did NOT land - the visual leg (audit_lurking_terror_held.txt); fourteen rigs landed, not
+fifteen; (2) the t2 chain's run 1 failed the Ghost Skelly's render-state leg on an undeclared translucent visual mode (the fix: visual_mode
+entity_translucent, cube_face_order classic, cubeFaceOrderRequired() - the Fairy form) and run 2 the Lurking Terror's visual leg; run 3
+and run 4 pass; (3) the asset audit's 28 errors are the untracked-file precedent (TEXTURE_REF_CASE on the fourteen geos and fourteen
+animation files until the orchestrator stages them), nothing else - no HOOK_STALE, no FLAT_CUBE, no DRAW_ORDER, no PROOF_DRIFT, no
+FACE_ORDER_INVALID row; (4) the Stinky's EXTRAS_CAP flag (its offered legs_folded state beside four seed extras, the Spyro precedent); (5)
+the ten hand-compacted seeds were edited by exact-string replacement rather than a json round trip (their inline arrays kept); (6) the
+sampler's HOOK_DESCRIPTORS javadoc count sentence updated in place; (7) two hook javadoc wordings corrected against the shipped geo (the
+Trooper Bug's flat cubes, the Velocity Raptor's fourteen feathers); (8) the Trooper Bug's animation leg reads 6e-13 rad, not 0 - the
+classic's double chain rounded on one channel, within the 2e-6 epsilon.
+
+DIVERGENCES NOTICED, DRAFTED, NOT FIXED: TEST-011 (draft) - the Lurking Terror's visual-leg finding above, a harness mechanism (the
+rasteriser's triangulation-dependent depth past the contest window on large posed flat cubes and coincident cubes), not a rig fault; the
+hooks transcribe the port's classic models, whose earlier findings (the seeds' original_moved_more where present) stand.
+
+IN-GAME: for a default install nothing changes (the classic renderers the default). Behind `-Dorespawn.dev.geckolibRenderers=<species>` the
+fourteen draw the converted rigs posed by their classic code through the seam (the Ghost Skelly translucent; the Whale, Velocity Raptor,
+Hydrolisc, Lizard and Chipmunk halved as babies; the Lurking Terror not among them); no artist clip plays until idle and walk are delivered.
+
+NOT DONE (by design): the gametest suite not run (no gradle); the t2 proof tree (the orchestrator's `--write-proof`, +14 entries); the
+reference folder's regeneration (the Stinky's folder carries the renamed clip); the Lurking Terror's landing (held; the owner's options in
+the draft); the artist_handoff folder (the orchestrator's).
+
+GATE: GATE: t2e green on the first run (drift 0, build 0, suite: all 1280 required tests passed; the g1 / s4 verify-only passes identical, the t2 write-proof G1 PARITY PASS: 56 models, the clips deterministic across two gradle runs (298 files; the fourteen's clips byte-identical, the Stinky's clip renamed, the index's rows moved), referenceClipsVerify VERIFIED 298, the folder fresh (116 folders, 1,369 files, every check PASS), the benchmark proof re-pinned for g1tool's move (the sampler's rows), the audit 0 errors / 84 acknowledged with HOOKS at 40); t2e2 green again after the refuter's citation fixes (the same numbers, the benchmark verified unchanged, the audit the same).
