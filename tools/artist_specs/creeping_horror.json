@@ -1,9 +1,9 @@
 {
   "registry": "creeping_horror",
   "display_name": "Creeping Horror",
-  "status": "DRAFT — authored by a first pass from the entity code, 2026-09-13; edit pending",
+  "status": "DRAFT — authored by a first pass from the entity code, 2026-09-13; edit pending, landed on its hook by the fourth Tier-2 slice (T2d, 2026-09-14)",
   "locomotion": "walker",
-  "artist_scope": "full contract (Tier 2, the gait-scaled class: geckolib_migration_design.md section 5); the rig is not yet in-game (it lands through the seam in a later slice)",
+  "artist_scope": "full contract (Tier 2, the gait-scaled class: geckolib_migration_design.md section 5); ON THE HOOK until idle and walk are delivered: in-game through the seam behind the dev switch since the fourth Tier-2 slice (T2d, 2026-09-14)",
   "character_sheet": "A low, creeping insect horror: a body block with five 'insides' pieces at its centre, four two-part legs splayed out to the sides, two two-part pincers at the front, a three-segment tail curling up behind and five spikes on its back (ModelCreepingHorror.java:48-73; 26 parts on a 128x128 sheet). It is hostile but weak: 10 HP, 3 damage, 2 armour, speed 0.25 (MobStats.CREEPING_HORROR, CreepingHorror.java:85-93). Every fifth tick it hunts anything alive and in sight within 16 blocks - its own kind, the mod's scenery and ally mobs and creative players excepted (:145-200) - walks at it at 1.25 and bites within 2.2 blocks on 1-in-12-or-1-in-14 dice (:153-163, doHurtTarget :159); it retaliates when hit (:82), floats (:69), panics (:70), walks through villages (:78) and strolls avoiding water (:79). It spawns in darkness at night in the Chaos dimension or below y 15 (:100-112) and tends to vanish by day (:114-123). Read it as a skittering bug: legs sweeping wide with the stride, pincers working, the tail pumping up and down, the five spikes quivering on fifteen different beats.",
   "size_notes": "Drawn at x0.75 of the rig (CreepingHorrorRenderer.java:25, 38) on a 128x128 sheet (ModelCreepingHorror.java:184); the hitbox is 0.75 x 0.5 (ModEntities.java:73-75); shadow 0.45 x 0.75 (CreepingHorrorRenderer.java:27).",
   "labels": {
@@ -163,6 +163,9 @@
     "in `attack`: a lunge - the bite (CreepingHorror.java:159) has no pose today; close both pincers on the impact frame and pump the tail up",
     "in `idle`: a breath in the body block and a shift of the insides pieces (they never move) so the horror reads as something alive under the shell",
     "in `hurt`: a scuttle back with the tail thrown high"
+  ],
+  "formulas": [
+    "`ModelCreepingHorror.setupAnim` (ModelCreepingHorror.java:188-223; orig ModelCreepingHorror.java:204-237 in `render` (func_78088_a, :201-264; func_78087_a at :272-274 is a bare super call); no wingspeed): the leg swing is the cosine of the age in ticks times 1.25, times pi, times 0.35, times the walking speed (no threshold); the left front (leg1) and right back (leg4) legs and their lower parts yaw by 0.576 plus it, the other two (leg2, leg3) and their lower parts by -0.576 minus it; the pincer beat is the cosine of the age times 0.48, times pi, times 0.15 - pincer1 and its second piece yaw by it, pincer2 and its piece by its negative; the tail pump is the absolute value of the cosine of the age times 0.11, times pi, times 0.25 - the tail's base pitches by -0.55 plus it, the middle by it and the tip by -0.22 plus it; the five spikes pitch by 0.7 plus the cosine of the age times 0.81, 0.87, 0.99, 0.103 and 0.107, times pi, times 0.08, yaw by the cosine of the age times 1.11, 1.17, 1.25, 1.28 and 1.31, times pi, times 0.08, and roll by the cosine of the age times 1.41, 1.47, 1.55, 1.58 and 1.61, times pi, times 0.08. The walk position, the head angles and the entity's state play no part. The GeckoLib hook is the same (CreepingHorrorGeoReplacement.applyCustomAnimations)."
   ],
   "effort_hours": null
 }

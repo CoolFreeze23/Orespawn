@@ -816,8 +816,6 @@
               "note": "draw 7: the right (x -36) side, z 30, yaw +pi/2 +a (orig ModelCrab.java:269-272; port setupAnim's pose 8 of 8, ModelCrab.java:183-234)"
             }
           ],
-          "pinned_draw_count": 1,
-          "pinned_draw_note": "ANIM-025: the port's renderToBuffer (ModelCrab.java:269-295) draws each leg part ONCE (its setupAnim re-poses the part eight times and the last pose is drawn) where 1.7.10 drew it at each of the eight; the fix lands with the Crab's slice (exempt from the freeze as a rig matter), when this pin is removed and the probe holds the port to the eight draws",
           "note": "the upper leg segment (pitch -1.343904): 1.7.10 ModelCrab.render (orig :195-289) sets the part's rotation point and yaw and draws it eight times - four on the left side (x 36) at z 0 / 10 / 20 / 30 with yaw -pi/2 + a, -pi/2 - a, -pi/2 + a, -pi/2 - a, then four on the right (x -36) with the yaw negated, a = cos(age 1.7) pi 0.15 swing (0 at bind); the pitch is the part's own (the constructor's), never reset by the render"
         },
         "leg2": {
@@ -929,8 +927,6 @@
               "note": "draw 7: the right (x -36) side, z 30, yaw +pi/2 +a (orig ModelCrab.java:269-272; port setupAnim's pose 8 of 8, ModelCrab.java:183-234)"
             }
           ],
-          "pinned_draw_count": 1,
-          "pinned_draw_note": "ANIM-025: the port's renderToBuffer (ModelCrab.java:269-295) draws each leg part ONCE (its setupAnim re-poses the part eight times and the last pose is drawn) where 1.7.10 drew it at each of the eight; the fix lands with the Crab's slice (exempt from the freeze as a rig matter), when this pin is removed and the probe holds the port to the eight draws",
           "note": "the middle leg segment (pitch -0.9599311): 1.7.10 ModelCrab.render (orig :195-289) sets the part's rotation point and yaw and draws it eight times - four on the left side (x 36) at z 0 / 10 / 20 / 30 with yaw -pi/2 + a, -pi/2 - a, -pi/2 + a, -pi/2 - a, then four on the right (x -36) with the yaw negated, a = cos(age 1.7) pi 0.15 swing (0 at bind); the pitch is the part's own (the constructor's), never reset by the render"
         },
         "leg3": {
@@ -1042,12 +1038,10 @@
               "note": "draw 7: the right (x -36) side, z 30, yaw +pi/2 +a (orig ModelCrab.java:269-272; port setupAnim's pose 8 of 8, ModelCrab.java:183-234)"
             }
           ],
-          "pinned_draw_count": 1,
-          "pinned_draw_note": "ANIM-025: the port's renderToBuffer (ModelCrab.java:269-295) draws each leg part ONCE (its setupAnim re-poses the part eight times and the last pose is drawn) where 1.7.10 drew it at each of the eight; the fix lands with the Crab's slice (exempt from the freeze as a rig matter), when this pin is removed and the probe holds the port to the eight draws",
           "note": "the lower leg segment (pitch -0.5759587): 1.7.10 ModelCrab.render (orig :195-289) sets the part's rotation point and yaw and draws it eight times - four on the left side (x 36) at z 0 / 10 / 20 / 30 with yaw -pi/2 + a, -pi/2 - a, -pi/2 + a, -pi/2 - a, then four on the right (x -36) with the yaw negated, a = cos(age 1.7) pi 0.15 swing (0 at bind); the pitch is the part's own (the constructor's), never reset by the render"
         }
       },
-      "render_instances_note": "ANIM-025: the render_instances form in its explicit step_scope (a translation series with a mirrored yaw, not a rotation step about the body's centre: a turn of pi about Y maps z +10 to z -10 where 1.7.10 drew both sides at z +10) - eight declared draws per leg part, so the converter's rig carries the twenty-four leg bones (leg1__i0..7, leg2__i0..7, leg3__i0..7: eight three-segment legs, draws 0-3 the left side front to back, 4-7 the right). The port draws each part once today (pinned_draw_count 1 per part; the register line stays until the Crab's slice lands the draw fix and removes the pins). The leg's comparison of the parts is unchanged."
+      "render_instances_note": "ANIM-025: the render_instances form in its explicit step_scope (a translation series with a mirrored yaw, not a rotation step about the body's centre: a turn of pi about Y maps z +10 to z -10 where 1.7.10 drew both sides at z +10) - eight declared draws per leg part, so the converter's rig carries the twenty-four leg bones (leg1__i0..7, leg2__i0..7, leg3__i0..7: eight three-segment legs, draws 0-3 the left side front to back, 4-7 the right). The draw fix landed with the Crab's slice (T2d, 2026-09-14): the port's renderToBuffer re-poses and draws each leg part at all eight poses as 1.7.10's render did (orig ModelCrab.java:199-274), so the probe holds the port to the declared count (the pinned_draw_count pins of the folder's-gaps landing removed with the fix); a fresh model draws the legs at a swing of 0, the declared bind transforms. The leg's comparison of the parts is unchanged."
     },
     {
       "id": "reference_creepinghorror",

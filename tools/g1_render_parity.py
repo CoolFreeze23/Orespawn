@@ -572,9 +572,24 @@ def candidate_bone_names(model_id: str, spec: dict[str, Any], compiled: dict[str
     for bone, entry in expansion["bones"].items():
         if entry["source_part"] not in parts:
             raise AssertionError(f"{model_id} expansion bone {bone} maps to an undeclared part")
+        if entry["role"] == "clone" and explicit_clone(entry):
+            # the explicit scope (the folder's gaps, 2026-09-14; the Crab's slice T2d): a top-level clone with no group
+            # bone, its bind pivot the declared rotation point the composition leg reads back
+            if not entry.get("static_pivot_classic"):
+                raise AssertionError(f"{model_id} explicit clone {bone} carries no static_pivot_classic")
+            continue
         if entry["role"] == "clone" and entry["group_bone"] not in expansion["bones"]:
             raise AssertionError(f"{model_id} clone {bone} names an unknown group bone")
     return sorted((names - set(parts)) | set(expansion["bones"]))
+
+
+def explicit_clone(entry: dict[str, Any]) -> bool:
+    """A clone of the explicit render-instance scope (``step_scope: explicit``): no group bone - the classic re-poses the
+    part from code between its draws (the Crab's eight leg poses, orig ModelCrab.java:195-289; the GiantRobot's per-side
+    legs and arms), so there is no pose-stack transform to spin and the hook animates the clone directly. Its rotation and
+    position are proven per draw by ``render_instance_pose_parity`` against the classic model's measured draw pose, never
+    per part."""
+    return entry["role"] == "clone" and entry.get("group_bone") is None
 
 
 def definition_parts(root: dict[str, Any]) -> dict[str, dict[str, Any]]:
@@ -648,6 +663,7 @@ def render_instance_pose_parity(model_id: str, compiled: dict[str, Any],
     max_draw_linear = max_draw_translation = 0.0
     worst = "exact"
     draws_checked = 0
+    explicit_draws = 0
     samples_checked = 0
     for sample_id, vanilla_sample in vanilla_samples.items():
         if vanilla_sample.get("capture_kind") != "full":
@@ -669,24 +685,33 @@ def render_instance_pose_parity(model_id: str, compiled: dict[str, Any],
                 raise AssertionError(f"{model_id}/{sample_id} draw {clone} disagrees with the converter mapping")
             seen.append(clone)
             group = entry["group_bone"]
-            instance = matrix_rows(draw["instance_pose"], f"{model_id}/{sample_id}/{clone} instance_pose")
-            group_pose = matrix_rows(poses[group], f"{model_id}/{sample_id}/{group} bone pose")
-            linear, translation = matrix_delta(instance, group_pose)
-            if linear > max(max_instance_linear, max_draw_linear) or translation > max(
-                    max_instance_translation, max_draw_translation):
-                worst = f"{sample_id}:{clone} (instance vs {group})"
-            max_instance_linear = max(max_instance_linear, linear)
-            max_instance_translation = max(max_instance_translation, translation)
-            if linear > rotation_epsilon or translation * 16.0 > position_epsilon:
-                raise AssertionError(
-                    f"RENDER INSTANCE MISMATCH {model_id}/{sample_id}/{clone}: the classic per-draw "
-                    f"transform differs from group bone {group} (linear {linear:.12g}, translation "
-                    f"{translation * 16.0:.12g} model units)"
-                )
+            if explicit_clone(entry):
+                # the explicit scope (T2d, the Crab): no group bone and no per-draw pose-stack transform of the model's
+                # (the classic re-poses the part itself between its draws), so the draw pose alone is the proof - the
+                # clone's cubes are local to the DECLARED rotation point (the converter's static_pivot_classic), which the
+                # hook's position write lands on, so that pivot closes the comparison below
+                explicit_draws += 1
+                pivot = [float(value) / 16.0 for value in entry["static_pivot_classic"]]
+            else:
+                instance = matrix_rows(draw["instance_pose"], f"{model_id}/{sample_id}/{clone} instance_pose")
+                group_pose = matrix_rows(poses[group], f"{model_id}/{sample_id}/{group} bone pose")
+                linear, translation = matrix_delta(instance, group_pose)
+                if linear > max(max_instance_linear, max_draw_linear) or translation > max(
+                        max_instance_translation, max_draw_translation):
+                    worst = f"{sample_id}:{clone} (instance vs {group})"
+                max_instance_linear = max(max_instance_linear, linear)
+                max_instance_translation = max(max_instance_translation, translation)
+                if linear > rotation_epsilon or translation * 16.0 > position_epsilon:
+                    raise AssertionError(
+                        f"RENDER INSTANCE MISMATCH {model_id}/{sample_id}/{clone}: the classic per-draw "
+                        f"transform differs from group bone {group} (linear {linear:.12g}, translation "
+                        f"{translation * 16.0:.12g} model units)"
+                    )
+                pivot = pivots[entry["source_part"]]
             draw_pose = matrix_rows(draw["draw_pose"], f"{model_id}/{sample_id}/{clone} draw_pose")
             clone_pose = matrix_translate(
                 matrix_rows(poses[clone], f"{model_id}/{sample_id}/{clone} bone pose"),
-                pivots[entry["source_part"]],
+                pivot,
             )
             linear, translation = matrix_delta(draw_pose, clone_pose)
             if linear > max(max_instance_linear, max_draw_linear) or translation > max(
@@ -708,14 +733,16 @@ def render_instance_pose_parity(model_id: str, compiled: dict[str, Any],
         samples_checked += 1
     if draws_checked == 0:
         raise AssertionError(f"{model_id} render-instance composition leg compared no draws")
-    return {
+    explicit_clone_bones = sum(1 for entry in mapping.values() if explicit_clone(entry))
+    metrics: dict[str, Any] = {
         "parts": {
             name: {
                 "count": part["count"],
-                "axis": part["axis"],
+                # the explicit scope declares per-draw transforms, no axis / step (None)
+                "axis": part.get("axis"),
                 "step_scope": part["step_scope"],
-                "step_radians": part["step_radians"],
-                "step_arithmetic": part["step_arithmetic"],
+                "step_radians": part.get("step_radians"),
+                "step_arithmetic": part.get("step_arithmetic"),
                 "group_bones": part["group_bones"],
             }
             for name, part in expansion["parts"].items()
@@ -737,6 +764,13 @@ def render_instance_pose_parity(model_id: str, compiled: dict[str, Any],
             "(bone_poses_classic): instance == group bone, draw == clone bone * T(pivot)"
         ),
     }
+    if explicit_clone_bones:
+        # the explicit scope only (T2d, the Crab): the fan rigs' checked-in metrics stay byte-identical
+        metrics["explicit_clone_bones"] = explicit_clone_bones
+        metrics["explicit_draws_checked"] = explicit_draws
+        metrics["evidence"] += ("; an explicit clone (step_scope explicit, no group bone) by its draw pose alone: "
+                                "draw == clone bone * T(its declared pivot)")
+    return metrics
 
 
 def resolve_repository_path(repository_root: Path, text: str) -> Path:
@@ -1146,6 +1180,11 @@ def animation_parity(model_id: str, spec: dict[str, Any], compiled: dict[str, An
             # Slice 4c expansion bones (see the docstring); positions are in the parent's frame,
             # so a clone under a group at the origin expects the part's own x/y/z.
             source = transforms[entry["source_part"]]
+            if explicit_clone(entry):
+                # the explicit scope (T2d, the Crab): the hook animates the clone directly, so the compiled part's
+                # transforms (its last classic pose) are no expectation for it - its rotation AND position are proven
+                # per draw by render_instance_pose_parity against the classic's measured draw pose
+                continue
             if entry["role"] == "clone":
                 expected_rotation = [float(value) for value in source["rotation"]]
                 channel = entry.get("static_channel")
@@ -2255,11 +2294,16 @@ def render_instance_lines(contract: dict[str, Any]) -> list[str]:
     if not expansion:
         return []
     parts = ", ".join(
-        f"{name} x{part['count']} ({part['step_scope']}, {part['axis']})"
+        f"{name} x{part['count']} ({part['step_scope']}, {part['axis'] or 'per-draw transforms'})"
         for name, part in expansion["parts"].items()
     )
+    explicit = expansion.get("explicit_clone_bones", 0)
+    explicit_note = (
+        f" ({explicit} explicit clones, {expansion.get('explicit_draws_checked', 0)} of the draws proven by draw pose alone: no group bone)"
+        if explicit else ""
+    )
     return [
-        f"- Render instances: {parts}; {expansion['clone_bones']} clone and {expansion['group_bones']} group bones; "
+        f"- Render instances: {parts}; {expansion['clone_bones']} clone and {expansion['group_bones']} group bones{explicit_note}; "
         f"{expansion['draws_checked']} measured draws over {expansion['samples_checked']} captures: instance pose "
         f"linear delta {expansion['max_instance_pose_linear_delta']:.12g}, translation "
         f"{expansion['max_instance_pose_translation_delta_model_units']:.12g} model units; draw pose linear "

@@ -1,9 +1,9 @@
 {
   "registry": "baryonyx",
   "display_name": "Baryonyx",
-  "status": "DRAFT — authored by a first pass from the entity code, 2026-09-13; edit pending",
+  "status": "DRAFT — authored by a first pass from the entity code, 2026-09-13; edit pending, landed on its hook by the fourth Tier-2 slice (T2d, 2026-09-14)",
   "locomotion": "walker",
-  "artist_scope": "full contract (Tier 2, the gait-scaled class: geckolib_migration_design.md section 5); the rig is not yet in-game (it lands through the seam in a later slice)",
+  "artist_scope": "full contract (Tier 2, the gait-scaled class: geckolib_migration_design.md section 5); ON THE HOOK until idle and walk are delivered: in-game through the seam behind the dev switch since the fourth Tier-2 slice (T2d, 2026-09-14)",
   "character_sheet": "A sail-backed, crocodile-snouted dinosaur: a torso, a rump and a tail, a neck base rising to a head top, an upper snout, a long snout and a snout tip, a six-piece crest with a ridge piece above the eyes, nineteen sail plates in a row down the spine, two arms of thigh, knee, shin, two toes and a big hooked claw (the model calls them front legs), and two hind legs of leg, calf and foot (ModelBaryonyx.java:79-130; 52 parts on a 128x128 sheet). It is a peaceful grazer: 40 HP, speed 0.25, an 8-damage attribute it never uses (Baryonyx.java:66-71) - no goal strikes. It floats (:57), breeds on crystal apples (:58, :170-173), flees monsters (:59), panics when hurt (:60), watches players (:61) and wanders (:62); every sixty ticks or so it looks for a grass block, walks to it and, within 3.5 blocks, eats it - the block turns to dirt under mobGriefing, it heals 1 and burps (:141-164). It spawns above y 50 by day with at most eight others nearby (:181-188); a baby is drawn at half size (BaryonyxRenderer.java:30-31). Read it as a placid fish-eater: a slow stride on the hind legs, the big front claws waving, the sail and the long snout carried still.",
   "size_notes": "Drawn at x1.0 of the rig, x0.5 as a baby (BaryonyxRenderer.java:20, 30-31) on a 128x128 sheet (ModelBaryonyx.java:397); the hitbox is 1.5 x 2.8 (ModEntities.java:338-340); shadow 1.0 (BaryonyxRenderer.java:23).",
   "labels": {
@@ -174,6 +174,9 @@
     "the `graze` extra: the animal's one habit (Baryonyx.java:141-164) has no pose today - a neck dip to the ground with the sail plates staying rigid",
     "in `idle`: a head turn to the player (the LookAtPlayerGoal runs, Baryonyx.java:61, but the model ignores netHeadYaw) and a slow breath in the torso",
     "in `hurt`: a startled rear-back before the panic run (Baryonyx.java:60)"
+  ],
+  "formulas": [
+    "`ModelBaryonyx.setupAnim` (ModelBaryonyx.java:401-413; orig ModelBaryonyx.java:391-399 in `render` (func_78088_a, :386-452; func_78087_a at :460-462 is a bare super call), wingspeed 0.25 from `new ModelBaryonyx(0.25f)` in orig ClientProxyOreSpawn.java:428): while the walking speed is above a tenth the leg swing is the cosine of the age in ticks times 1.3 times 0.25, times pi, times 0.15, times the walking speed, else 0; the right thigh (shape24) and foot (shape26) pitch by it and the right calf (shape25) by -0.17 plus it, the left thigh (shape13) and foot (shape17) by its negative and the left calf (shape15) by -0.17 minus it; the claw wave is the cosine of the age times 0.7 times 0.25, times pi, times 0.25, always: the right claw (shape21) rolls by it and the left (shape16) by its negative. The walk position, the head angles and the entity's state play no part. The GeckoLib hook is the same (BaryonyxGeoReplacement.applyCustomAnimations)."
   ],
   "effort_hours": null
 }

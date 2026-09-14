@@ -34,8 +34,13 @@ public class BandPRenderer extends MobRenderer<BandP, ModelBandP> {
         super(context, new ModelBandP(context.bakeLayer(MODEL_LAYER)), SHADOW);
     }
 
+    /** The sheet for a {@code getWhat()} value: 0 the bandit, otherwise the pirate (the GeckoLib descriptor reads the same switch; T2d). */
+    public static ResourceLocation textureFor(int what) {
+        return what == 0 ? TEXTURE_BANDIT : TEXTURE_PIRATE;
+    }
+
     @Override
     public ResourceLocation getTextureLocation(BandP entity) {
-        return entity.getWhat() == 0 ? TEXTURE_BANDIT : TEXTURE_PIRATE;
+        return textureFor(entity.getWhat());
     }
 }

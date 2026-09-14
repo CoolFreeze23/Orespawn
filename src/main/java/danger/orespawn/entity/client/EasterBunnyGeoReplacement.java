@@ -10,11 +10,12 @@ import net.minecraft.util.Mth;
 import software.bernie.geckolib.animation.AnimationProcessor;
 
 /**
- * GeckoLib Easter Bunny (the hooks): {@link ModelEasterBunny#setupAnim} verbatim on the converted rig, ON THE HOOK (no
- * keyframe layer, no transcription - the self-gate stays closed until an artist delivers {@code idle} and {@code
- * walk}). Wingspeed 0.55f (orig ModelEasterBunny.java:14,30 / ClientProxyOreSpawn.java:498): the THRESHOLD idiom with
- * a live idle branch - above a walking speed of a tenth the two legs and two feet pitch on {@code cos(age * 2.6f * ws)
- * * PI * 0.15f * limbSwingAmount} (the right pair the negative) and the ears on {@code cos(age * 1.3f * ws) * PI * 0.1f *
+ * GeckoLib Easter Bunny (the hooks, landed by the fourth Tier-2 slice T2d): {@link ModelEasterBunny#setupAnim}
+ * verbatim on the converted rig, ON THE HOOK (no keyframe layer, no transcription
+ * - the self-gate stays closed until an artist delivers {@code idle} and {@code walk}). Wingspeed 0.55f (orig
+ * ModelEasterBunny.java:14,30 / ClientProxyOreSpawn.java:498): the THRESHOLD idiom with a live idle branch - above a
+ * walking speed of a tenth the two legs and two feet pitch on {@code cos(age * 2.6f * ws) * PI * 0.15f *
+ * limbSwingAmount} (the right pair the negative) and the ears on {@code cos(age * 1.3f * ws) * PI * 0.1f *
  * limbSwingAmount}; at or below it the legs hold 0 and the ears twitch on the same 1.3 ws cosine x 0.01 (orig
  * :151-167); the ears around -0.226 / -0.418 rad, the right one the negative.
  *

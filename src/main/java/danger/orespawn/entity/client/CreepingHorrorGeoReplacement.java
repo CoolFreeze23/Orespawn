@@ -10,14 +10,15 @@ import net.minecraft.util.Mth;
 import software.bernie.geckolib.animation.AnimationProcessor;
 
 /**
- * GeckoLib Creeping Horror (the hooks): {@link ModelCreepingHorror#setupAnim} verbatim on the converted rig, ON THE HOOK
- * (no keyframe layer, no transcription - the self-gate stays closed until an artist delivers {@code idle} and {@code
- * walk}). No wingspeed (orig ModelCreepingHorror.java has none): the GAIT-scaled idiom on the eight leg parts about Y -
- * {@code cos(age * 1.25f) * PI * 0.35f * limbSwingAmount} around +-0.576 rad (orig :272-277; no threshold); the four
- * pincer parts about Y on a 0.48 cosine x 0.15 (orig :278-281); the {@code |cos|} idiom on the three tail segments
- * about X - {@code |cos(age * 0.11f) * PI * 0.25f|} around -0.55 / 0 / -0.22 rad (orig :282-286); and the five spikes on
- * their own 0.08 cosines about all three axes - X at 0.81 / 0.87 / 0.99 / 0.103 / 0.107 around 0.7 rad, Y at 1.11 / 1.17 /
- * 1.25 / 1.28 / 1.31, Z at 1.41 / 1.47 / 1.55 / 1.58 / 1.61 (orig :287-306).
+ * GeckoLib Creeping Horror (the hooks, landed by the fourth Tier-2 slice T2d): {@link
+ * ModelCreepingHorror#setupAnim} verbatim on the converted rig, ON THE HOOK (no
+ * keyframe layer, no transcription - the self-gate stays closed until an artist delivers {@code idle} and {@code walk}).
+ * No wingspeed (orig ModelCreepingHorror.java has none): the GAIT-scaled idiom on the eight leg parts about Y - {@code
+ * cos(age * 1.25f) * PI * 0.35f * limbSwingAmount} around +-0.576 rad (orig :272-277; no threshold); the four pincer
+ * parts about Y on a 0.48 cosine x 0.15 (orig :278-281); the {@code |cos|} idiom on the three tail segments about X -
+ * {@code |cos(age * 0.11f) * PI * 0.25f|} around -0.55 / 0 / -0.22 rad (orig :282-286); and the five spikes on their own
+ * 0.08 cosines about all three axes - X at 0.81 / 0.87 / 0.99 / 0.103 / 0.107 around 0.7 rad, Y at 1.11 / 1.17 / 1.25 /
+ * 1.28 / 1.31, Z at 1.41 / 1.47 / 1.55 / 1.58 / 1.61 (orig :287-306).
  *
  * <p>Scale and shadow follow {@link CreepingHorrorRenderer}: 0.75 render scale and a 0.45 x 0.75 shadow (ENT-S-092). The
  * rig has zero-thickness cubes (seven, among the pincers and spikes), so the shipped geo carries the classic within-cube

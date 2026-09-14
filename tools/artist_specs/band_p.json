@@ -1,9 +1,9 @@
 {
   "registry": "band_p",
   "display_name": "Bandit / Pirate (BandP)",
-  "status": "DRAFT — authored by a first pass from the entity code, 2026-09-13; edit pending",
+  "status": "DRAFT — authored by a first pass from the entity code, 2026-09-13; edit pending, landed on its hook by the fourth Tier-2 slice (T2d, 2026-09-14)",
   "locomotion": "walker",
-  "artist_scope": "full contract (Tier 2, the gait-scaled class (with a standing branch of small sways): geckolib_migration_design.md section 5); the rig is not yet in-game (it lands through the seam in a later slice)",
+  "artist_scope": "full contract (Tier 2, the gait-scaled class (with a standing branch of small sways): geckolib_migration_design.md section 5); ON THE HOOK until idle and walk are delivered: in-game through the seam behind the dev switch since the fourth Tier-2 slice (T2d, 2026-09-14)",
   "character_sheet": "A stocky human thief: a belly block, a chest block, a head that turns with the look, two arms splayed 28 degrees and two legs (ModelBandP.java:31-79; 7 parts on a 64x128 sheet). The same rig wears one of two skins, bandit or pirate, rolled once on its first tick and synched (BandP.java:121-128, BandPRenderer.java:39). It is hostile but tough rather than deadly: 100 HP, 1 damage, 18 armour, speed 0.32 (MobStats.BANDP, :89-98), 1000 XP. Every twelfth tick it picks a non-creative player, a villager, a girlfriend or a boyfriend in sight within 20 blocks (:243-265), walks at it at 1.25 (:164) and, within 3 blocks, hits it (:159-160, doHurtTarget); a hit that lands on a player steals one item - armour first, helmet to boots, else the last filled inventory slot - into a 100-slot stash that spills on death (:178-212, :219-241). It opens doors (:83), heads indoors (:86), walks through villages (:78) and strolls (:80); it spawns by day above y 100 within 36 blocks of a villager, never near another (:300-311). Read it as a swaggering brigand: a heavy stride with the arms swinging opposite the legs and the torso twisting, a fidget at rest, a snatch when it hits.",
   "size_notes": "Drawn at x1.0 of the rig (BandPRenderer.java:29; no scale override) on a 64x128 sheet (ModelBandP.java:79); the hitbox is 0.75 x 1.75 (ModEntities.java:45-47); shadow 1.0 (BandPRenderer.java:31). Two textures on one rig: bandp_bandit.png (getWhat() == 0) and bandp_pirate.png.",
   "labels": {
@@ -139,6 +139,9 @@
     "the `steal` extra: make the grab read - it is the creature's whole point (BandP.java:178-212) and today nothing shows it",
     "in `idle`: a look-around and a hitch of the belt on top of the code's tiny sway (:91-95); it lingers near villagers and doors (:78-86), so a loiter fits",
     "the two skins share one rig (BandPRenderer.java:39): author nothing that depends on the texture"
+  ],
+  "formulas": [
+    "`ModelBandP.setupAnim` (ModelBandP.java:83-104; orig ModelBandP.java:79-94 in `render` (func_78088_a, :71-102; func_78087_a at :110-112 is a bare super call), wingspeed 0.4 from `new ModelBandP(0.4f)` in orig ClientProxyOreSpawn.java:504): while the walking speed is above a tenth the leg swing is the cosine of the age in ticks times 1.3 times 0.4, times pi, times 0.25, times the walking speed, the belly bounce the cosine of the age times 2.6 times 0.4, times pi, times 0.025, times the walking speed, and the arm swing equals the leg swing; at or below it the leg swing is 0, the belly breathes by the cosine of the age times 0.6 times 0.4, times pi, times 0.005 and the arms sway by the cosine of the age times 0.3 times 0.4, times pi, times 0.02; the left leg pitches by the leg swing and the right by its negative, the belly pitches by 0.07 plus the bounce and yaws by minus half the leg swing, the left arm pitches by the negative of the arm swing and the right by it, and the head yaws by the look yaw in radians and pitches by the look pitch in radians. The walk position and the entity's state play no part. The GeckoLib hook is the same (BandPGeoReplacement.applyCustomAnimations)."
   ],
   "effort_hours": null
 }

@@ -11,29 +11,28 @@ import net.minecraft.util.Mth;
 import software.bernie.geckolib.animation.AnimationProcessor;
 
 /**
- * GeckoLib Camarasaurus (the hooks): {@link ModelCamarasaurus#poseFrom} verbatim on the converted rig, ON THE HOOK (no
- * keyframe layer, no transcription - the self-gate stays closed until an artist delivers {@code idle} and {@code
- * walk}). Wingspeed 0.65f (orig ModelCamarasaurus.java:14,38 / ClientProxyOreSpawn.java:421): the THRESHOLD idiom on
- * the eight leg parts about X - above a walking speed of a tenth {@code cos(age * 1.3f * ws) * PI * 0.25f *
- * limbSwingAmount} around 0 / -0.15 rad rests, 0 at or below it (orig :175-183); the HEALTH-FREQUENCY idiom on the four
- * tail parts about Y - {@code cos(age * 1.5f * ws * hf) * PI * 0.25f * hf} with {@code hf = health / maxHealth} (orig
- * :184-185, read through {@link CamarasaurusPose}; orig :186's sitting check is the port's {@code if (false)}, kept),
- * scaled 0.25 / 0.5 / 0.75 / 1 down the chain; the POSITION-write idiom (through {@link #moveTo}) - each tail
- * part's pivot FOLLOWS the previous 5 / 8 / 7 units along (sin, cos) of its yaw and each neck / head part the previous 6 /
- * 7 / 5 units back (orig :189-217); and the HEAD-LOOK idiom about Y at 0.125 / 0.25 / 0.38 / 1 / 1 of {@code
- * toRadians(netHeadYaw)} on the three necks and two heads (orig :198-217; no pitch). Tail0's and Neck1's pivots are never
- * written (the bind), read through {@link #classicPosition}; every value the classic reads back from a part it just
- * wrote is held in a local; a part whose x / z the classic writes keeps its bind y.
+ * GeckoLib Camarasaurus (the hooks, landed by the fourth Tier-2 slice T2d): {@link ModelCamarasaurus#poseFrom}
+ * verbatim on the converted rig, ON THE HOOK (no keyframe layer, no transcription
+ * - the self-gate stays closed until an artist delivers {@code idle} and {@code walk}). Wingspeed 0.65f (orig
+ * ModelCamarasaurus.java:14,38 / ClientProxyOreSpawn.java:421): the THRESHOLD idiom on the eight leg parts about X -
+ * above a walking speed of a tenth {@code cos(age * 1.3f * ws) * PI * 0.25f * limbSwingAmount} around 0 / -0.15 rad
+ * rests, 0 at or below it (orig :175-183); the HEALTH-FREQUENCY idiom on the four tail parts about Y - {@code cos(age *
+ * 1.5f * ws * hf) * PI * 0.25f * hf} with {@code hf = health / maxHealth} (orig :184-185, read through {@link
+ * CamarasaurusPose}; orig :186's sitting check is the port's {@code if (false)}, kept), scaled 0.25 / 0.5 / 0.75 / 1 down
+ * the chain; the POSITION-write idiom (through {@link #moveTo}) - each tail part's pivot FOLLOWS the previous 5 /
+ * 8 / 7 units along (sin, cos) of its yaw and each neck / head part the previous 6 / 7 / 5 units back (orig :189-217); and
+ * the HEAD-LOOK idiom about Y at 0.125 / 0.25 / 0.38 / 1 / 1 of {@code toRadians(netHeadYaw)} on the three necks and
+ * two heads (orig :198-217; no pitch). Tail0's and Neck1's pivots are never written (the bind), read through {@link
+ * #classicPosition}; every value the classic reads back from a part it just wrote is held in a local; a part whose x /
+ * z the classic writes keeps its bind y.
  *
- * <p>Scale and shadow follow {@link CamarasaurusRenderer}: 0.65 render scale, halved for a baby, and a 0.65 x 0.65 shadow
- * (ENT-S-092; orig RenderCamarasaurus.java:23-24, 39-44). The renderer's SCALE is private and its shadow a constructor
- * literal, so both are the equal literals here.</p>
+ * <p>Scale and shadow follow {@link CamarasaurusRenderer}: {@link CamarasaurusRenderer#SCALE} (0.65, lifted to public by
+ * the landing slice so both renderers read the one constant), halved for a baby, and a 0.65 x 0.65 shadow (ENT-S-092;
+ * orig RenderCamarasaurus.java:23-24, 39-44) - the shadow a constructor literal there, so the equal literal here.</p>
  */
 public final class CamarasaurusGeoReplacement extends OreSpawnGeoReplacement<Camarasaurus> {
     /** orig ModelCamarasaurus.java:14,38 {@code wingspeed} = 0.65f (ClientProxyOreSpawn.java:421): the chain's third multiply. */
     static final float WINGSPEED = 0.65F;
-    /** CamarasaurusRenderer.SCALE (private) = 0.65f: orig RenderCamarasaurus.java:24 {@code scale = par3}, ClientProxyOreSpawn.java:421. */
-    static final float SCALE = 0.65F;
     private static final GeoReplacementDescriptor<Camarasaurus> DESCRIPTOR = new GeoReplacementDescriptor<>(
             () -> ModEntities.CAMARASAURUS.get(),  // lambda: a bound method ref would initialise ModEntities eagerly
             Camarasaurus.class,
@@ -47,8 +46,11 @@ public final class CamarasaurusGeoReplacement extends OreSpawnGeoReplacement<Cam
         public void applyScale(Camarasaurus entity, PoseStack poseStack, float partialTick) {
             // orig RenderCamarasaurus.preRenderScale (:39-44): a child gets glScalef(scale / 2), otherwise glScalef(scale)
             // (CamarasaurusRenderer.render: isBaby() ? SCALE / 2 : SCALE)
-            float scale = entity.isBaby() ? SCALE / 2.0F : SCALE;
-            poseStack.scale(scale, scale, scale);
+            if (entity.isBaby()) {
+                poseStack.scale(CamarasaurusRenderer.SCALE / 2.0F, CamarasaurusRenderer.SCALE / 2.0F, CamarasaurusRenderer.SCALE / 2.0F);
+                return;
+            }
+            poseStack.scale(CamarasaurusRenderer.SCALE, CamarasaurusRenderer.SCALE, CamarasaurusRenderer.SCALE);
         }
     };
 

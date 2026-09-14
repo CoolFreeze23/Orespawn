@@ -9,19 +9,20 @@ import net.minecraft.util.Mth;
 import software.bernie.geckolib.animation.AnimationProcessor;
 
 /**
- * GeckoLib Kyuubi (the hook survey): {@link KyuubiModel#setupAnim} verbatim on the converted rig, ON THE HOOK
- * (no keyframe layer, no transcription - the self-gate stays closed until an artist delivers {@code idle} and
- * {@code walk}). Wingspeed 0.5f (orig ModelKyuubi.java:15,60 / ClientProxyOreSpawn.java:432): the THRESHOLD gait on the
- * legs ({@code cos(age * 1.1 ws) * PI * 0.2 * limbSwingAmount} above a walking speed of a tenth, the right leg
- * positive around 0.59 / -0.15, the left the negative around 0.26 / -0.44, each lower leg's z FOLLOWING the
- * upper's pitch by 8 units of sine - a POSITION write through {@link #moveTo}); the arms' gait-scaled 1.1 ws swing
- * at {@code PI * 0.08 * limbSwingAmount} plus an always-on 0.5 ws sway at {@code PI * 0.01}, the lower arms around 0.48
- * following by 8 units; the HEAD-LOOK idiom ({@code toRadians(netHeadYaw)}, the flesh head a further {@code 4 *
- * pi4}); the two five-part horn chains sprouting from the fire head's yaw +-pi4 at 3.6 units and following each other
- * (2 / 4 / 3 / 2 units), each ring's yaw the head's +-0.244 plus a 1.3 ws cosine a quarter turn behind the last; and
- * the nine-ring tail chain following itself (3 / 4 / 3.5 / 5 / 4 / 3 / 2 / 1 units) with a 0.9 ws yaw wave and a 0.5 ws
- * pitch wave around rising rests (-0.26 ... 2.0), each ring a quarter turn behind the last. Every part the fire
- * twin doubles (the {@code *Fire} parts) is written with the same values. No entity state.
+ * GeckoLib Kyuubi (the hook survey, landed by the fourth Tier-2 slice T2d): {@link KyuubiModel#setupAnim} verbatim
+ * on the converted rig, ON THE HOOK (no keyframe layer, no
+ * transcription - the self-gate stays closed until an artist delivers {@code idle} and {@code walk}).
+ * Wingspeed 0.5f (orig ModelKyuubi.java:15,60 / ClientProxyOreSpawn.java:432): the THRESHOLD gait on the legs ({@code
+ * cos(age * 1.1 ws) * PI * 0.2 * limbSwingAmount} above a walking speed of a tenth, the right leg positive around
+ * 0.59 / -0.15, the left the negative around 0.26 / -0.44, each lower leg's z FOLLOWING the upper's pitch by 8
+ * units of sine - a POSITION write through {@link #moveTo}); the arms' gait-scaled 1.1 ws swing at {@code PI * 0.08
+ * * limbSwingAmount} plus an always-on 0.5 ws sway at {@code PI * 0.01}, the lower arms around 0.48 following by 8
+ * units; the HEAD-LOOK idiom ({@code toRadians(netHeadYaw)}, the flesh head a further {@code 4 * pi4}); the two
+ * five-part horn chains sprouting from the fire head's yaw +-pi4 at 3.6 units and following each other (2 / 4 / 3 / 2
+ * units), each ring's yaw the head's +-0.244 plus a 1.3 ws cosine a quarter turn behind the last; and the nine-ring
+ * tail chain following itself (3 / 4 / 3.5 / 5 / 4 / 3 / 2 / 1 units) with a 0.9 ws yaw wave and a 0.5 ws pitch wave
+ * around rising rests (-0.26 ... 2.0), each ring a quarter turn behind the last. Every part the fire twin doubles
+ * (the {@code *Fire} parts) is written with the same values. No entity state.
  *
  * <p>Scale and shadow follow {@link KyuubiRenderer}: 1.0 render scale (identity - no scale override, so no scale hook)
  * and a 0.1 x 1.0 shadow (ENT-S-092).</p>

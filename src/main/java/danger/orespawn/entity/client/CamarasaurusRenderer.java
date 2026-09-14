@@ -17,7 +17,8 @@ public class CamarasaurusRenderer extends MobRenderer<Camarasaurus, ModelCamaras
     public static final ModelLayerLocation MODEL_LAYER =
             new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "camarasaurus"), "main");
 
-    private static final float SCALE = 0.65f;
+    /** orig RenderCamarasaurus.java:24 scale = par3 = 0.65f (ClientProxyOreSpawn.java:421); public since T2d: the GeckoLib descriptor scales by the same constant. */
+    public static final float SCALE = 0.65f;
 
     public CamarasaurusRenderer(EntityRendererProvider.Context context) {
         super(context, new ModelCamarasaurus(context.bakeLayer(MODEL_LAYER)), 0.65f * 0.65f);

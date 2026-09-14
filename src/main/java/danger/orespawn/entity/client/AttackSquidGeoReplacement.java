@@ -10,10 +10,11 @@ import net.minecraft.util.Mth;
 import software.bernie.geckolib.animation.AnimationProcessor;
 
 /**
- * GeckoLib Attack Squid (the hook survey): {@link ModelAttackSquid#setupAnim} verbatim on the converted rig, ON THE
- * HOOK (no keyframe layer, no transcription - the self-gate stays closed until an artist delivers {@code idle} and
- * {@code walk}). Wingspeed 1.0f (orig ModelAttackSquid.java:14,26 / ClientProxyOreSpawn.java: 437): the THRESHOLD idiom
- * on all ten channels - above a walking speed of a tenth the eight tentacles swing at {@code PI * 0.4 *
+ * GeckoLib Attack Squid (the hook survey, landed by the fourth Tier-2 slice T2d): {@link
+ * ModelAttackSquid#setupAnim} verbatim on the converted rig, ON THE HOOK (no
+ * keyframe layer, no transcription - the self-gate stays closed until an artist delivers {@code idle} and {@code
+ * walk}). Wingspeed 1.0f (orig ModelAttackSquid.java:14,26 / ClientProxyOreSpawn.java: 437): the THRESHOLD idiom on all
+ * ten channels - above a walking speed of a tenth the eight tentacles swing at {@code PI * 0.4 *
  * limbSwingAmount} on their own frequencies (1.2 / 1.1 / 1.0 / 1.9 / 1.8 / 1.7 / 1.6 / 1.5 ws) and the body pitches and
  * rolls at {@code PI * 0.04 * limbSwingAmount} on 0.25 / 0.39 ws; at or below it the same frequencies at {@code PI *
  * 0.1} and {@code PI * 0.01} - around the tentacles' rests (-1.03 / 0.37 / 0.6 / -0.48 / 0.63 / -0.26 / -1.03 / 0.43;

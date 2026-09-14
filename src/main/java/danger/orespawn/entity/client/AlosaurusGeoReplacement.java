@@ -10,14 +10,15 @@ import net.minecraft.util.Mth;
 import software.bernie.geckolib.animation.AnimationProcessor;
 
 /**
- * GeckoLib Alosaurus (the hook survey): {@link ModelAlosaurus#poseFrom} verbatim on the converted rig, ON THE HOOK
- * (no keyframe layer, no transcription - the self-gate stays closed until an artist delivers {@code idle} and
- * {@code walk}). The classic model carries its wingspeed inline ({@code 1.3f * 0.22f}, orig
- * ClientProxyOreSpawn.java:428's 0.22f): the THRESHOLD gait on the eight leg parts ({@code cos(age * 1.3 * 0.22) * PI *
- * 0.25 * limbSwingAmount} above a walking speed of a tenth, the right leg positive around -0.174 / 0.506 / -0.401 / 0,
- * the left the negative); the ATTACKING-branch jaw ({@code 0.52 + cos(age * 0.45) * PI * 0.18} attacking, 0.1 at rest);
- * and the two forelimbs' always-on sway ({@code cos(age * 0.1) * PI * 0.05} around -0.523). The entity is read through
- * {@link AlosaurusPose}.
+ * GeckoLib Alosaurus (the hook survey, landed by the fourth Tier-2 slice T2d): {@link ModelAlosaurus#poseFrom}
+ * verbatim on the converted rig, ON THE HOOK (no keyframe layer, no
+ * transcription - the self-gate stays closed until an artist delivers {@code idle} and {@code walk}). The
+ * classic model carries its wingspeed inline ({@code 1.3f * 0.22f}, orig ClientProxyOreSpawn.java:428's 0.22f): the
+ * THRESHOLD gait on the eight leg parts ({@code cos(age * 1.3 * 0.22) * PI * 0.25 * limbSwingAmount} above a walking
+ * speed of a tenth, the right leg positive around -0.174 / 0.506 / -0.401 / 0, the left the negative); the
+ * ATTACKING-branch jaw ({@code 0.52 + cos(age * 0.45) * PI * 0.18} attacking, 0.1 at rest); and the two forelimbs'
+ * always-on sway ({@code cos(age * 0.1) * PI * 0.05} around -0.523). The entity is read through {@link AlosaurusPose}.
+ *
  *
  * <p>Shadow follows {@link AlosaurusRenderer}'s constructor ({@code super(context, model, 1.0f)}: the literal it passes -
  * it declares no SHADOW constant); its render scale is a private 1.0 applied around {@code super.render} - the identity,

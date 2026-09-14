@@ -10,25 +10,24 @@ import net.minecraft.util.Mth;
 import software.bernie.geckolib.animation.AnimationProcessor;
 
 /**
- * GeckoLib Cassowary (the hooks): {@link ModelCassowary#setupAnim} verbatim on the converted rig, ON THE HOOK (no
- * keyframe layer, no transcription - the self-gate stays closed until an artist delivers {@code idle} and {@code walk}).
- * Wingspeed 0.55f (orig ModelCassowary.java:14,29 / ClientProxyOreSpawn.java:469): the THRESHOLD idiom -
- * above a walking speed of a tenth the two legs and two feet pitch on {@code cos(age * 1.3f * ws) * PI * 0.15f *
- * limbSwingAmount} (one pair the negative) and the neck / gobbler on {@code cos(age * 2.6f * ws) * PI * 0.1f *
- * limbSwingAmount} around -2.827 / 0 rad, both 0 at or below it (orig :147-167); and the POSITION-write idiom (through
- * {@link #moveTo}) - the crest, beak and head pivots FOLLOW the neck 7 units along (sin, cos) of its pitch (orig
- * :168-173). The neck's pivot is never written (the bind), read through {@link #classicPosition}; the
- * neck's pitch the classic reads back is held in a local; the three followers keep their bind x.
+ * GeckoLib Cassowary (the hooks, landed by the fourth Tier-2 slice T2d): {@link ModelCassowary#setupAnim} verbatim on
+ * the converted rig, ON THE HOOK (no keyframe layer, no transcription -
+ * the self-gate stays closed until an artist delivers {@code idle} and {@code walk}). Wingspeed 0.55f (orig
+ * ModelCassowary.java:14,29 / ClientProxyOreSpawn.java:469): the THRESHOLD idiom - above a walking speed of
+ * a tenth the two legs and two feet pitch on {@code cos(age * 1.3f * ws) * PI * 0.15f * limbSwingAmount} (one pair the
+ * negative) and the neck / gobbler on {@code cos(age * 2.6f * ws) * PI * 0.1f * limbSwingAmount} around -2.827
+ * / 0 rad, both 0 at or below it (orig :147-167); and the POSITION-write idiom (through {@link #moveTo}) - the crest, beak
+ * and head pivots FOLLOW the neck 7 units along (sin, cos) of its pitch (orig :168-173). The neck's pivot is never
+ * written (the bind), read through {@link #classicPosition}; the neck's pitch the classic reads back
+ * is held in a local; the three followers keep their bind x.
  *
- * <p>Scale and shadow follow {@link CassowaryRenderer}: 1.0 render scale, halved for a baby, and a 0.5 x 1.0 shadow
- * (ENT-S-092; orig RenderCassowary.java:23-24, 39-44). The renderer's SCALE is private and its shadow a constructor
- * literal, so both are the equal literals here.</p>
+ * <p>Scale and shadow follow {@link CassowaryRenderer}: {@link CassowaryRenderer#SCALE} (1.0, lifted to public by the
+ * landing slice so both renderers read the one constant), halved for a baby, and a 0.5 x 1.0 shadow (ENT-S-092; orig
+ * RenderCassowary.java:23-24, 39-44) - the shadow a constructor literal there, so the equal literal here.</p>
  */
 public final class CassowaryGeoReplacement extends OreSpawnGeoReplacement<Cassowary> {
     /** orig ModelCassowary.java:14,29 {@code wingspeed} = 0.55f (ClientProxyOreSpawn.java:469): the chain's third multiply. */
     static final float WINGSPEED = 0.55F;
-    /** CassowaryRenderer.SCALE (private) = 1.0f: orig RenderCassowary.java:24 {@code scale = par3}, ClientProxyOreSpawn.java:469. */
-    static final float SCALE = 1.0F;
     private static final GeoReplacementDescriptor<Cassowary> DESCRIPTOR = new GeoReplacementDescriptor<>(
             () -> ModEntities.CASSOWARY.get(),  // lambda: a bound method ref would initialise ModEntities eagerly
             Cassowary.class,
@@ -42,8 +41,11 @@ public final class CassowaryGeoReplacement extends OreSpawnGeoReplacement<Cassow
         public void applyScale(Cassowary entity, PoseStack poseStack, float partialTick) {
             // orig RenderCassowary.preRenderScale (:39-44): a child gets glScalef(scale / 2), otherwise glScalef(scale)
             // (CassowaryRenderer.render: isBaby() ? SCALE / 2 : SCALE)
-            float scale = entity.isBaby() ? SCALE / 2.0F : SCALE;
-            poseStack.scale(scale, scale, scale);
+            if (entity.isBaby()) {
+                poseStack.scale(CassowaryRenderer.SCALE / 2.0F, CassowaryRenderer.SCALE / 2.0F, CassowaryRenderer.SCALE / 2.0F);
+                return;
+            }
+            poseStack.scale(CassowaryRenderer.SCALE, CassowaryRenderer.SCALE, CassowaryRenderer.SCALE);
         }
     };
 

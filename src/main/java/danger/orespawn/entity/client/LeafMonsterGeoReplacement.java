@@ -10,10 +10,11 @@ import net.minecraft.util.Mth;
 import software.bernie.geckolib.animation.AnimationProcessor;
 
 /**
- * GeckoLib Leaf Monster (the hook survey): {@link LeafMonsterModel#poseFrom} verbatim on the converted rig, ON THE
- * HOOK (no keyframe layer, no transcription - the self-gate stays closed until an artist delivers {@code idle} and
- * {@code walk}). No wingspeed: the ATTACKING branch is the whole pose - at rest the body sits at y 16 and both arms at
- * y 8 with every rotation 0 (the bush); attacking, the body rises to y 0 and the arms to y -8 (POSITION writes through
+ * GeckoLib Leaf Monster (the hook survey, landed by the fourth Tier-2 slice T2d): {@link
+ * LeafMonsterModel#poseFrom} verbatim on the converted rig, ON THE HOOK (no
+ * keyframe layer, no transcription - the self-gate stays closed until an artist delivers {@code idle} and {@code
+ * walk}). No wingspeed: the ATTACKING branch is the whole pose - at rest the body sits at y 16 and both arms at y 8
+ * with every rotation 0 (the bush); attacking, the body rises to y 0 and the arms to y -8 (POSITION writes through
  * {@link #moveTo}), the legs take the THRESHOLD gait ({@code cos(age * 0.95) * PI * 0.25 * limbSwingAmount} above a
  * walking speed of a tenth, mirrored) and the arms wave on the {@code |cos|} idiom ({@code |cos(age * 0.7)
  * * PI * 0.55|}: the right arm's yaw and both pitches the negative, the left arm's yaw positive). The entity

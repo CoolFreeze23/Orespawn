@@ -1,9 +1,9 @@
 {
   "registry": "leaf_monster",
   "display_name": "Leaf Monster",
-  "status": "DRAFT — authored by a first pass from the entity code, 2026-09-13; edit pending",
+  "status": "DRAFT — authored by a first pass from the entity code, 2026-09-13; edit pending, landed on its hook by the fourth Tier-2 slice (T2d, 2026-09-14)",
   "locomotion": "walker",
-  "artist_scope": "full contract (Tier 2, the gait-scaled class (with an attacking branch that raises the figure): geckolib_migration_design.md section 5); the rig is not yet in-game (it lands through the seam in a later slice)",
+  "artist_scope": "full contract (Tier 2, the gait-scaled class (with an attacking branch that raises the figure): geckolib_migration_design.md section 5); ON THE HOOK until idle and walk are delivered: in-game through the seam behind the dev switch since the fourth Tier-2 slice (T2d, 2026-09-14)",
   "character_sheet": "A leaf-block mimic built of five one-block leaf cubes: a body cube, an arm cube at each side and a leg cube under each arm (LeafMonsterModel.java:37-41, a 128x128 sheet). Calm, it is a pile: the body cube drops to the ground between the two leg cubes with the arm cubes sitting on top of them, and the entity snaps itself to the block grid and to a 90-degree yaw every tick (EntityLeafMonster.java:89-104), so it passes for leaves. When prey - an ant, a butterfly, a luna moth or a non-creative player - comes within 4 blocks and in sight (:143-170) it raises the synched attacking flag (:130), rises a full block so the body hangs between the arms above the legs, flails both arms, walks at the prey and bites within 2.2 blocks (:126-139, doHurtTarget :134) for 2 damage; 6 HP, 1 armour (MobStats.LEAF_MONSTER, :57-64). It floats (:52), panics when hurt (:53) and spawns in darkness at night above y 50 (below y 20 in the Islands) with at most four others nearby (:194-206). Read it as an ambush: dead-still leaves, then a two-block figure of flailing blocks.",
   "size_notes": "Drawn at x1.0 of the rig (LeafMonsterRenderer.java:24; no scale override) on a 128x128 sheet (LeafMonsterModel.java:42); the hitbox is 1.0 x 2.5 (ModEntities.java:257-259); shadow 0.65 (LeafMonsterRenderer.java:26). The bind pose is the RISEN figure (body at 0, arms at -8): the calm pile is a position offset the code applies.",
   "labels": {
@@ -136,6 +136,9 @@
     "in `aggro_idle`: keep the 99-degree arm flail (:65-69) but give the body a menace lean toward the prey; the code moves only the arms",
     "in `attack`: a lunge - the bite (EntityLeafMonster.java:134) has no pose of its own today",
     "in `idle`: nothing - the disguise must be dead still (the entity is pinned to the block grid, EntityLeafMonster.java:89-104); resist adding a breath"
+  ],
+  "formulas": [
+    "`LeafMonsterModel.poseFrom` (LeafMonsterModel.java:54-79; orig ModelLeafMonster.java:59-81 in `render` (func_78088_a, :55-87; func_78087_a at :95-97 is a bare super call); no wingspeed): while the attacking flag is 0 the body sits at y 16 and both arms at y 8 (their x and z the bind) with every rotation of the arms and legs 0 - the bush; while attacking the body sits at y 0 and the arms at y -8, the legs pitch by the cosine of the age in ticks times 0.95, times pi, times 0.25, times the walking speed while the walking speed is above a tenth (else 0), the left leg positive and the right its negative, and the arms take the absolute value of the cosine of the age times 0.7, times pi, times 0.55: the right arm yaws by its negative and the left by it, and both arms pitch by its negative. The walk position and the head angles play no part. The GeckoLib hook is the same (LeafMonsterGeoReplacement.applyCustomAnimations)."
   ],
   "effort_hours": null
 }

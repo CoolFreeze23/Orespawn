@@ -15,6 +15,20 @@ import net.minecraft.util.Mth;
  * so the original rendered UNMIRRORED. The port's 25 {@code .mirror()} calls preceded {@code addBox} and flipped
  * every face's U: dropped port-wide as the EnderReaper precedent was (5354420); geometry unchanged; proven by the
  * reference-geometry leg.
+ *
+ * <p>ANIM-025, THE DRAW FIX (the fourth Tier-2 slice T2d): 1.7.10's {@code render} (orig ModelCrab.java:195-289)
+ * set the three leg parts' rotation point and yaw and DREW them at each of eight poses - four on the left side (x
+ * 36) at z 0 / 10 / 20 / 30 with yaw -pi/2 + a, -pi/2 - a, -pi/2 + a, -pi/2 - a, then four on the right (x -36) with the
+ * yaw negated, {@code a = cos(f2 * 1.7f) * PI * 0.15f * f1} - eight three-segment legs. The port had moved the eight
+ * re-poses into {@code setupAnim} and drew each part ONCE at the last pose (one leg). Now {@link #poseFrom} keeps the
+ * two inputs those poses read ({@code f1} = limbSwingAmount, {@code f2} = ageInTicks) and {@link
+ * #renderToBuffer} re-poses and draws {@code leg1}, {@code leg2}, {@code leg3} eight times from them with the
+ * classic's own expressions, in the original's order, before the body parts - as the original did. A fresh model (no
+ * {@code setupAnim} yet) draws the legs at a swing of 0: yaw -+pi/2 exactly, the reference entry's declared bind
+ * transforms ({@code reference_crab}, {@code render_instances}, twenty-four leg bones). orig :310-311 drew
+ * {@code leg2} and {@code leg3} a NINTH time at the eighth pose - a coincident duplicate (the same pose, the same
+ * triangles) the decided declaration's count of eight per part does not carry; not reproduced.</p>
+ *
  */
 
 public class ModelCrab extends EntityModel<Crab> {
@@ -43,6 +57,13 @@ public class ModelCrab extends EntityModel<Crab> {
     private final ModelPart Rclaw5;
     private final ModelPart Rmouth;
     private final ModelPart Lmouth;
+    /**
+     * The two inputs 1.7.10's {@code render} read for the eight leg poses (orig ModelCrab.java:199-274: {@code f1} the
+     * walking speed, {@code f2} the age), kept by {@link #poseFrom} for {@link #renderToBuffer}'s draw loop (ANIM-025). A
+     * fresh model holds 0 / 0: the legs at a swing of 0, the bind.
+     */
+    private float legLimbSwingAmount;
+    private float legAgeInTicks;
 
     public ModelCrab(ModelPart root) {
         this.body1 = root.getChild("body1");
@@ -186,60 +207,14 @@ public class ModelCrab extends EntityModel<Crab> {
         poseFrom(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
     }
 
-    /** The classic pose over what the model reads from its entity (orig ModelCrab.java:275 {@code getAttacking()}). */
+    /**
+     * The classic pose over what the model reads from its entity (orig ModelCrab.java:275 {@code getAttacking()}). The
+     * eight leg poses live in {@link #renderToBuffer}'s draw loop, where 1.7.10 wrote them between its draws (orig
+     * :199-274); this keeps the two inputs they read (ANIM-025, the Crab's slice).
+     */
     public void poseFrom(CrabPose entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
-        this.leg3.x = 36.0f;
-        this.leg2.x = 36.0f;
-        this.leg1.x = 36.0f;
-        this.leg3.y = 3.0f;
-        this.leg2.y = 3.0f;
-        this.leg1.y = 3.0f;
-        this.leg3.z = 0.0f;
-        this.leg2.z = 0.0f;
-        this.leg1.z = 0.0f;
-        this.leg2.yRot = this.leg3.yRot = (float)(-1.5707963267948966 + (double)(Mth.cos((float)(ageInTicks * 1.7f)) * (float)Math.PI * 0.15f * limbSwingAmount));
-        this.leg1.yRot = this.leg3.yRot;
-        this.leg3.z = 10.0f;
-        this.leg2.z = 10.0f;
-        this.leg1.z = 10.0f;
-        this.leg2.yRot = this.leg3.yRot = (float)(-1.5707963267948966 - (double)(Mth.cos((float)(ageInTicks * 1.7f)) * (float)Math.PI * 0.15f * limbSwingAmount));
-        this.leg1.yRot = this.leg3.yRot;
-        this.leg3.z = 20.0f;
-        this.leg2.z = 20.0f;
-        this.leg1.z = 20.0f;
-        this.leg2.yRot = this.leg3.yRot = (float)(-1.5707963267948966 + (double)(Mth.cos((float)(ageInTicks * 1.7f)) * (float)Math.PI * 0.15f * limbSwingAmount));
-        this.leg1.yRot = this.leg3.yRot;
-        this.leg3.z = 30.0f;
-        this.leg2.z = 30.0f;
-        this.leg1.z = 30.0f;
-        this.leg2.yRot = this.leg3.yRot = (float)(-1.5707963267948966 - (double)(Mth.cos((float)(ageInTicks * 1.7f)) * (float)Math.PI * 0.15f * limbSwingAmount));
-        this.leg1.yRot = this.leg3.yRot;
-        this.leg3.x = -36.0f;
-        this.leg2.x = -36.0f;
-        this.leg1.x = -36.0f;
-        this.leg3.y = 3.0f;
-        this.leg2.y = 3.0f;
-        this.leg1.y = 3.0f;
-        this.leg3.z = 0.0f;
-        this.leg2.z = 0.0f;
-        this.leg1.z = 0.0f;
-        this.leg2.yRot = this.leg3.yRot = (float)(-(-1.5707963267948966 + (double)(Mth.cos((float)(ageInTicks * 1.7f)) * (float)Math.PI * 0.15f * limbSwingAmount)));
-        this.leg1.yRot = this.leg3.yRot;
-        this.leg3.z = 10.0f;
-        this.leg2.z = 10.0f;
-        this.leg1.z = 10.0f;
-        this.leg2.yRot = this.leg3.yRot = (float)(-(-1.5707963267948966 - (double)(Mth.cos((float)(ageInTicks * 1.7f)) * (float)Math.PI * 0.15f * limbSwingAmount)));
-        this.leg1.yRot = this.leg3.yRot;
-        this.leg3.z = 20.0f;
-        this.leg2.z = 20.0f;
-        this.leg1.z = 20.0f;
-        this.leg2.yRot = this.leg3.yRot = (float)(-(-1.5707963267948966 + (double)(Mth.cos((float)(ageInTicks * 1.7f)) * (float)Math.PI * 0.15f * limbSwingAmount)));
-        this.leg1.yRot = this.leg3.yRot;
-        this.leg3.z = 30.0f;
-        this.leg2.z = 30.0f;
-        this.leg1.z = 30.0f;
-        this.leg2.yRot = this.leg3.yRot = (float)(-(-1.5707963267948966 - (double)(Mth.cos((float)(ageInTicks * 1.7f)) * (float)Math.PI * 0.15f * limbSwingAmount)));
-        this.leg1.yRot = this.leg3.yRot;
+        this.legLimbSwingAmount = limbSwingAmount;
+        this.legAgeInTicks = ageInTicks;
         if (entity.getAttacking() == 0) {
         this.Leye1.xRot = this.Leye2.xRot = Mth.cos((float)(ageInTicks * 0.35f)) * (float)Math.PI * 0.05f;
         this.Leye1.zRot = this.Leye2.zRot = 0.54f + Mth.cos((float)(ageInTicks * 0.25f)) * (float)Math.PI * 0.05f;
@@ -273,11 +248,101 @@ public class ModelCrab extends EntityModel<Crab> {
         }
     }
 
+    /**
+     * orig ModelCrab.java:199-274 (ANIM-025, the Crab's slice): the three leg parts re-posed and drawn at each of the eight
+     * poses - the classic's own expressions from the inputs {@link #poseFrom} kept ({@code f1} = limbSwingAmount, {@code f2}
+     * = ageInTicks) - then the body parts in the original's order (orig :306-329, less the ninth coincident draw of
+     * {@code leg2} / {@code leg3} at :310-311: the same pose, the same triangles; the reference declaration's count is eight).
+     */
     @Override
     public void renderToBuffer(PoseStack poseStack, VertexConsumer vertexConsumer, int packedLight, int packedOverlay, int color) {
+        float limbSwingAmount = this.legLimbSwingAmount;
+        float ageInTicks = this.legAgeInTicks;
+        // pose 1 of 8 (orig :199-212): the left side, z 0, yaw -pi/2 + a
+        this.leg3.x = 36.0f;
+        this.leg2.x = 36.0f;
+        this.leg1.x = 36.0f;
+        this.leg3.y = 3.0f;
+        this.leg2.y = 3.0f;
+        this.leg1.y = 3.0f;
+        this.leg3.z = 0.0f;
+        this.leg2.z = 0.0f;
+        this.leg1.z = 0.0f;
+        this.leg2.yRot = this.leg3.yRot = (float)(-1.5707963267948966 + (double)(Mth.cos((float)(ageInTicks * 1.7f)) * (float)Math.PI * 0.15f * limbSwingAmount));
+        this.leg1.yRot = this.leg3.yRot;
         this.leg1.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
         this.leg2.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
         this.leg3.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        // pose 2 of 8 (orig :213-220): z 10, yaw -pi/2 - a
+        this.leg3.z = 10.0f;
+        this.leg2.z = 10.0f;
+        this.leg1.z = 10.0f;
+        this.leg2.yRot = this.leg3.yRot = (float)(-1.5707963267948966 - (double)(Mth.cos((float)(ageInTicks * 1.7f)) * (float)Math.PI * 0.15f * limbSwingAmount));
+        this.leg1.yRot = this.leg3.yRot;
+        this.leg1.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.leg2.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.leg3.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        // pose 3 of 8 (orig :221-228): z 20, yaw -pi/2 + a
+        this.leg3.z = 20.0f;
+        this.leg2.z = 20.0f;
+        this.leg1.z = 20.0f;
+        this.leg2.yRot = this.leg3.yRot = (float)(-1.5707963267948966 + (double)(Mth.cos((float)(ageInTicks * 1.7f)) * (float)Math.PI * 0.15f * limbSwingAmount));
+        this.leg1.yRot = this.leg3.yRot;
+        this.leg1.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.leg2.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.leg3.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        // pose 4 of 8 (orig :229-236): z 30, yaw -pi/2 - a
+        this.leg3.z = 30.0f;
+        this.leg2.z = 30.0f;
+        this.leg1.z = 30.0f;
+        this.leg2.yRot = this.leg3.yRot = (float)(-1.5707963267948966 - (double)(Mth.cos((float)(ageInTicks * 1.7f)) * (float)Math.PI * 0.15f * limbSwingAmount));
+        this.leg1.yRot = this.leg3.yRot;
+        this.leg1.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.leg2.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.leg3.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        // pose 5 of 8 (orig :237-250): the right side (x -36), z 0, yaw -(-pi/2 + a)
+        this.leg3.x = -36.0f;
+        this.leg2.x = -36.0f;
+        this.leg1.x = -36.0f;
+        this.leg3.y = 3.0f;
+        this.leg2.y = 3.0f;
+        this.leg1.y = 3.0f;
+        this.leg3.z = 0.0f;
+        this.leg2.z = 0.0f;
+        this.leg1.z = 0.0f;
+        this.leg2.yRot = this.leg3.yRot = (float)(-(-1.5707963267948966 + (double)(Mth.cos((float)(ageInTicks * 1.7f)) * (float)Math.PI * 0.15f * limbSwingAmount)));
+        this.leg1.yRot = this.leg3.yRot;
+        this.leg1.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.leg2.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.leg3.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        // pose 6 of 8 (orig :251-258): z 10, yaw -(-pi/2 - a)
+        this.leg3.z = 10.0f;
+        this.leg2.z = 10.0f;
+        this.leg1.z = 10.0f;
+        this.leg2.yRot = this.leg3.yRot = (float)(-(-1.5707963267948966 - (double)(Mth.cos((float)(ageInTicks * 1.7f)) * (float)Math.PI * 0.15f * limbSwingAmount)));
+        this.leg1.yRot = this.leg3.yRot;
+        this.leg1.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.leg2.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.leg3.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        // pose 7 of 8 (orig :259-266): z 20, yaw -(-pi/2 + a)
+        this.leg3.z = 20.0f;
+        this.leg2.z = 20.0f;
+        this.leg1.z = 20.0f;
+        this.leg2.yRot = this.leg3.yRot = (float)(-(-1.5707963267948966 + (double)(Mth.cos((float)(ageInTicks * 1.7f)) * (float)Math.PI * 0.15f * limbSwingAmount)));
+        this.leg1.yRot = this.leg3.yRot;
+        this.leg1.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.leg2.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.leg3.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        // pose 8 of 8 (orig :267-274): z 30, yaw -(-pi/2 - a)
+        this.leg3.z = 30.0f;
+        this.leg2.z = 30.0f;
+        this.leg1.z = 30.0f;
+        this.leg2.yRot = this.leg3.yRot = (float)(-(-1.5707963267948966 - (double)(Mth.cos((float)(ageInTicks * 1.7f)) * (float)Math.PI * 0.15f * limbSwingAmount)));
+        this.leg1.yRot = this.leg3.yRot;
+        this.leg1.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.leg2.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        this.leg3.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        // orig :306-329: the body parts (the ninth draw of leg2 / leg3 at :310-311 not reproduced, above)
         this.body1.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
         this.body2.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
         this.body3.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);

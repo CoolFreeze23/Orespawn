@@ -1,9 +1,9 @@
 {
   "registry": "cryolophosaurus",
   "display_name": "Cryolophosaurus",
-  "status": "DRAFT — authored by a first pass from the entity code, 2026-09-13; edit pending",
+  "status": "DRAFT — authored by a first pass from the entity code, 2026-09-13; edit pending, landed on its hook by the fourth Tier-2 slice (T2d, 2026-09-14)",
   "locomotion": "walker",
-  "artist_scope": "full contract (Tier 2, the gait-scaled class: geckolib_migration_design.md section 5); the rig is not yet in-game (it lands through the seam in a later slice)",
+  "artist_scope": "full contract (Tier 2, the gait-scaled class: geckolib_migration_design.md section 5); ON THE HOOK until idle and walk are delivered: in-game through the seam behind the dev switch since the fourth Tier-2 slice (T2d, 2026-09-14)",
   "character_sheet": "A small crested theropod: a body with hips and a tail behind, a neck to a head with a snout, a jaw beneath and the crest on top, two two-piece arms and two legs of thigh, shin, heel spur and foot (ModelCryolophosaurus.java:47-66; 20 parts on a 128x128 sheet, drawn at half size). It is a timid hunter: 10 HP, 3 damage, 1 armour, speed 0.25 (MobStats.CRYOLOPHOSAURUS, Cryolophosaurus.java:79-87). Every fifth tick it looks 9 blocks around for prey in sight - the big dinosaurs, ghosts, cave fishers, gamma metroids, butterflies, fireflies, mosquitoes, rock bases and creative players excepted (:117-136) - walks at it at 1.25 and bites within 2.2 blocks on timid 1-in-12-or-1-in-14 dice (:94-115, doHurtTarget :111); it retaliates when hit (:71) and, under a modern option, chases its attacker with a dinosaur melee goal whose attacking callback is a no-op (:57-67, :74-77 - it has no attacking flag). It floats (:55), panics (:56), wanders (:68) and spawns in darkness at night or below y 50 (:172-178). Read it as a nervous little raptor: a quick stride on rigid legs, the jaw working slowly all the time, the arms and tail carried still.",
   "size_notes": "Drawn at x0.5 of the rig (CryolophosaurusRenderer.java:20, 30) on a 128x128 sheet (ModelCryolophosaurus.java:173); the hitbox is 0.75 x 0.75 (ModEntities.java:78-79); shadow 0.75 x 0.5 (CryolophosaurusRenderer.java:23).",
   "labels": {
@@ -118,6 +118,9 @@
     "in `attack`: a snap - the bite (Cryolophosaurus.java:111) has no pose today; a head-down lunge with the jaw closing on the impact frame",
     "in `idle`: a head turn to the player (the LookAtPlayerGoal runs, Cryolophosaurus.java:69, but the model ignores netHeadYaw) and a twitch of the little arms",
     "in `hurt`: a startled hop back - it is timid and panics (Cryolophosaurus.java:56)"
+  ],
+  "formulas": [
+    "`ModelCryolophosaurus.setupAnim` (ModelCryolophosaurus.java:177-189; orig ModelCryolophosaurus.java:165-174 in `render` (func_78088_a, :161-195; func_78087_a at :203-205 is a bare super call), wingspeed 0.75 from `new ModelCryolophosaurus(0.75f)` in orig ClientProxyOreSpawn.java:419): while the walking speed is above a tenth the leg swing is the cosine of the age in ticks times 1.3 times 0.75, times pi, times 0.25, times the walking speed, else 0; the right leg's four parts pitch by their rests -0.2792527, 0.384, -0.68 and 0 plus it and the left leg's by the same rests minus it; the jaw pitches by -1.15 plus the cosine of the age times 0.28, times pi, times 0.1, always. The walk position, the head angles and the entity's state play no part. The GeckoLib hook is the same (CryolophosaurusGeoReplacement.applyCustomAnimations)."
   ],
   "effort_hours": null
 }

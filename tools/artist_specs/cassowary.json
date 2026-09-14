@@ -1,9 +1,9 @@
 {
   "registry": "cassowary",
   "display_name": "Cassowary",
-  "status": "DRAFT — authored by a first pass from the entity code, 2026-09-13; edit pending",
+  "status": "DRAFT — authored by a first pass from the entity code, 2026-09-13; edit pending, landed on its hook by the fourth Tier-2 slice (T2d, 2026-09-14)",
   "locomotion": "walker",
-  "artist_scope": "full contract (Tier 2, the gait-scaled class: geckolib_migration_design.md section 5); the rig is not yet in-game (it lands through the seam in a later slice)",
+  "artist_scope": "full contract (Tier 2, the gait-scaled class: geckolib_migration_design.md section 5); ON THE HOOK until idle and walk are delivered: in-game through the seam behind the dev switch since the fourth Tier-2 slice (T2d, 2026-09-14)",
   "character_sheet": "A cassowary: a body angled up with a tail behind, a neck base and a long neck bent up and back over it, a head with a beak and a casque crest on top, a wattle ('gobbler') under the throat, and two legs with feet (ModelCassowary.java:39-117; 12 parts on a 64x32 sheet). It is a skittish bird: 10 HP, speed 0.25, an unused 8-damage attribute (Cassowary.java:55-60) - no goal strikes. It floats (:45), breeds on crystal apples (:46, :93-96), runs from monsters AND players (:47-48), panics when hurt (:49), watches other mobs (:50) and wanders (:51); it spawns by day (:104-109) and a chick is drawn at half size (CassowaryRenderer.java:30-31). Read it as a nervous flightless bird: a quick two-legged stride with the neck and wattle bobbing at twice the step, frozen still when it stops.",
   "size_notes": "Drawn at x1.0 of the rig, x0.5 as a chick (CassowaryRenderer.java:20, 30-31) on a 64x32 sheet (ModelCassowary.java:117); the hitbox is 0.5 x 1.2 (ModEntities.java:347-348); shadow 0.5 (CassowaryRenderer.java:23).",
   "labels": {
@@ -111,6 +111,9 @@
     "in `walk`: a bird's stride - a knee that lags the hip (leg and foot swing as one, ModelCassowary.java:131-134) and a forward lunge of the neck on each step instead of the up-and-down bob",
     "the head, beak and crest ride the neck's end as code-placed positions (ModelCassowary.java:137-142): author the neck as a rotation and flag to the owner that the seam must parent the three head parts to the neck or key their positions when the rig lands",
     "in `hurt` / before the panic (Cassowary.java:49): a startled leap with the tail flaring"
+  ],
+  "formulas": [
+    "`ModelCassowary.setupAnim` (ModelCassowary.java:121-143; orig ModelCassowary.java:113-126 in `render` (func_78088_a, :106-139; func_78087_a at :147-149 is a bare super call), wingspeed 0.55 from `new ModelCassowary(0.55f)` in orig ClientProxyOreSpawn.java:469): while the walking speed is above a tenth the leg swing is the cosine of the age in ticks times 1.3 times 0.55, times pi, times 0.15, times the walking speed and the neck bob the cosine of the age times 2.6 times 0.55, times pi, times 0.1, times the walking speed; at or below it both are 0; leg1 and foot2 pitch by the leg swing, leg2 and foot1 by its negative, the neck by -2.827 plus the bob and the gobbler by the bob; the crest, beak and head are placed from the neck's bind pivot 7 units along the neck's pitch - their z the neck's z plus 7 times the sine of the neck's pitch, their y the neck's y plus 7 times its cosine (Mth.sin and Mth.cos, the float table). The walk position, the head angles and the entity's state play no part. The GeckoLib hook is the same (CassowaryGeoReplacement.applyCustomAnimations)."
   ],
   "effort_hours": null
 }

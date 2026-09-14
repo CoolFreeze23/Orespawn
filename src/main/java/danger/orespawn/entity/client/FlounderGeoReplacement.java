@@ -10,12 +10,13 @@ import net.minecraft.util.Mth;
 import software.bernie.geckolib.animation.AnimationProcessor;
 
 /**
- * GeckoLib Flounder (the hooks): {@link ModelFlounder#setupAnim} verbatim on the converted rig, ON THE HOOK (no
- * keyframe layer, no transcription - the self-gate stays closed until an artist delivers {@code idle} and {@code walk}).
- * No wingspeed (orig ModelFlounder.java has none): the THRESHOLD idiom with a live idle branch - above a walking speed of
- * a tenth the two fins roll on {@code cos(age * 1.3f) * PI * 0.25f * limbSwingAmount} and {@code cos(age * 1.7f) * PI
- * * 0.25f * limbSwingAmount} and the two tail parts pitch on a 1.2 cosine x 0.25 x limbSwingAmount; at or below it the
- * fins hold 0 and the tail sways on a 0.7 cosine x 0.05 (orig :91-103).
+ * GeckoLib Flounder (the hooks, landed by the fourth Tier-2 slice T2d): {@link ModelFlounder#setupAnim} verbatim on
+ * the converted rig, ON THE HOOK (no keyframe layer, no transcription
+ * - the self-gate stays closed until an artist delivers {@code idle} and {@code walk}). No wingspeed (orig
+ * ModelFlounder.java has none): the THRESHOLD idiom with a live idle branch - above a walking speed of a tenth the two
+ * fins roll on {@code cos(age * 1.3f) * PI * 0.25f * limbSwingAmount} and {@code cos(age * 1.7f) * PI * 0.25f *
+ * limbSwingAmount} and the two tail parts pitch on a 1.2 cosine x 0.25 x limbSwingAmount; at or below it the fins hold
+ * 0 and the tail sways on a 0.7 cosine x 0.05 (orig :91-103).
  *
  *
  * <p>Scale and shadow follow {@link FlounderRenderer}: 1.0 render scale, halved for a baby, and a 0.1 x 1.0 shadow

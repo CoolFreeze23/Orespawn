@@ -10,23 +10,22 @@ import net.minecraft.util.Mth;
 import software.bernie.geckolib.animation.AnimationProcessor;
 
 /**
- * GeckoLib Cryolophosaurus (the hooks): {@link ModelCryolophosaurus#setupAnim} verbatim on the converted rig, ON
- * THE HOOK (no keyframe layer, no transcription - the self-gate stays closed until an artist delivers {@code idle}
- * and {@code walk}). Wingspeed 0.75f (orig ModelCryolophosaurus.java:13,38 /
- * ClientProxyOreSpawn.java:419): the THRESHOLD idiom on the eight leg parts about X - above a walking speed of a tenth
- * {@code cos(age * 1.3f * ws) * PI * 0.25f * limbSwingAmount} around the -0.279 / 0.384 / -0.68 / 0 rad rests, the left
- * side the negative, 0 at or below it (orig :203-214) - and the jaw about X on a 0.28 cosine x 0.1 around -1.15 rad,
- * always (orig :215; no wingspeed on that one).
+ * GeckoLib Cryolophosaurus (the hooks, landed by the fourth Tier-2 slice T2d): {@link
+ * ModelCryolophosaurus#setupAnim} verbatim on the converted rig, ON THE
+ * HOOK (no keyframe layer, no transcription - the self-gate stays closed until an artist delivers {@code idle} and
+ * {@code walk}). Wingspeed 0.75f (orig ModelCryolophosaurus.java:13,38 / ClientProxyOreSpawn.java:419):
+ * the THRESHOLD idiom on the eight leg parts about X - above a walking speed of a tenth {@code cos(age * 1.3f * ws) *
+ * PI * 0.25f * limbSwingAmount} around the -0.279 / 0.384 / -0.68 / 0 rad rests, the left side the negative, 0 at or
+ * below it (orig :203-214) - and the jaw about X on a 0.28 cosine x 0.1 around -1.15 rad, always (orig :215; no
+ * wingspeed on that one).
  *
- * <p>Scale and shadow follow {@link CryolophosaurusRenderer}: 0.5 render scale and a 0.75 x 0.5 shadow (ENT-S-092; orig
- * RenderCryolophosaurus.java:23-24, 40). The renderer's SCALE is private and its shadow a constructor literal, so both are
- * the equal literals here.</p>
+ * <p>Scale and shadow follow {@link CryolophosaurusRenderer}: {@link CryolophosaurusRenderer#SCALE} (0.5, lifted to public
+ * by the landing slice so both renderers read the one constant) and a 0.75 x 0.5 shadow (ENT-S-092; orig
+ * RenderCryolophosaurus.java:23-24, 40) - the shadow a constructor literal there, so the equal literal here.</p>
  */
 public final class CryolophosaurusGeoReplacement extends OreSpawnGeoReplacement<Cryolophosaurus> {
     /** orig ModelCryolophosaurus.java:13,38 {@code wingspeed} = 0.75f (ClientProxyOreSpawn.java:419): the chain's third multiply. */
     static final float WINGSPEED = 0.75F;
-    /** CryolophosaurusRenderer.SCALE (private) = 0.5f: orig RenderCryolophosaurus.java:24 {@code scale = par3}, ClientProxyOreSpawn.java:419. */
-    static final float SCALE = 0.5F;
     private static final GeoReplacementDescriptor<Cryolophosaurus> DESCRIPTOR = new GeoReplacementDescriptor<>(
             () -> ModEntities.CRYOLOPHOSAURUS.get(),  // lambda: a bound method ref would initialise ModEntities eagerly
             Cryolophosaurus.class,
@@ -39,7 +38,7 @@ public final class CryolophosaurusGeoReplacement extends OreSpawnGeoReplacement<
         @Override
         public void applyScale(Cryolophosaurus entity, PoseStack poseStack, float partialTick) {
             // orig RenderCryolophosaurus.preRenderScale (:40): GL11.glScalef(scale, scale, scale) (CryolophosaurusRenderer.render)
-            poseStack.scale(SCALE, SCALE, SCALE);
+            poseStack.scale(CryolophosaurusRenderer.SCALE, CryolophosaurusRenderer.SCALE, CryolophosaurusRenderer.SCALE);
         }
     };
 
