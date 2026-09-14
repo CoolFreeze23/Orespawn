@@ -222,6 +222,15 @@ public final class G1ModelProbe {
         }
 
         out.addProperty("draw_order_source", DrawOrderObserver.SOURCE);
+        // The constant render transform (TEST-013): read from the candidate descriptor WITHOUT an entity (the
+        // renderType(null) form) and applied to this side's root.visit capture in the classic renderer's own
+        // terms, so the geometry / surface legs compare like with like; the render_vertices come from
+        // renderToBuffer itself, the classic's OWN rotation included - the visual leg is what proves the declaration
+        // equals it. Recorded so the parity tool can check both sides read the same one.
+        GeoReplacementDescriptor.RenderTransform transform = constantRenderTransform(spec);
+        if (!transform.isIdentity()) {
+            out.add("render_transform", renderTransformJson(transform));
+        }
 
         Object model = newClassicModel(modelClass, spec, bakedRoot);
         Method setupAnim = findSetupAnim(modelClass);
@@ -250,7 +259,7 @@ public final class G1ModelProbe {
         resetBakedTree(bakedRoot);
         JsonObject bindSample = captureVanillaSample(
                 new SampleRequest("bind", 0.0F, 0.0F, true, false),
-                model, bakedRoot, namesToPaths, Set.of(), instances, observed, packedLight);
+                model, bakedRoot, namesToPaths, Set.of(), instances, observed, packedLight, transform);
         drawOrder.observe(bindSample, (shadowModel, root) -> resetBakedTree(root));
         samples.add(bindSample);
 
@@ -277,7 +286,7 @@ public final class G1ModelProbe {
                             request.ageTicks(), netHeadYaw, headPitch);
                     Set<String> hidden = hiddenParts(bakedRoot, namesToPaths);
                     JsonObject sample = captureVanillaSample(stateRequest(state, request), model, bakedRoot,
-                            namesToPaths, hidden, instances, observed, packedLight);
+                            namesToPaths, hidden, instances, observed, packedLight, transform);
                     sample.add("entity_state", state.deepCopy());
                     sample.add("subject_after", subject.after());
                     sample.add("hidden_bones", names(hidden));
@@ -299,7 +308,7 @@ public final class G1ModelProbe {
                         request.ageTicks(), netHeadYaw, headPitch);
                 Set<String> hidden = productionHook ? hiddenParts(bakedRoot, namesToPaths) : Set.of();
                 JsonObject sample = captureVanillaSample(request, model, bakedRoot, namesToPaths, hidden, instances,
-                        observed, packedLight);
+                        observed, packedLight, transform);
                 if (productionHook) {
                     sample.add("hidden_bones", names(hidden));
                 }
@@ -364,6 +373,29 @@ public final class G1ModelProbe {
 
     private static float optionalFloat(JsonObject spec, String field) {
         return spec.has(field) ? spec.get(field).getAsFloat() : 0.0F;
+    }
+
+    /**
+     * The candidate descriptor's constant render transform (TEST-013), read without an entity through the
+     * production-hook class the manifest names; the identity for an entry without one.
+     */
+    private static GeoReplacementDescriptor.RenderTransform constantRenderTransform(JsonObject spec) throws Exception {
+        String kind = spec.get("animation_kind").getAsString();
+        if (!CODE_DRIVEN_KIND.equals(kind) && !ENTITY_STATE_KIND.equals(kind)) {
+            return GeoReplacementDescriptor.RenderTransform.IDENTITY;
+        }
+        return S4CandidateRuntime.renderTransform(spec.get("candidate_class").getAsString());
+    }
+
+    /** The declared transform as recorded in both dumps (the parity tool requires the two records equal). */
+    private static JsonObject renderTransformJson(GeoReplacementDescriptor.RenderTransform transform) {
+        JsonObject out = new JsonObject();
+        out.add("rotation_degrees_xyz", floats(transform.xDegrees(), transform.yDegrees(), transform.zDegrees()));
+        out.add("translation", floats(transform.x(), transform.y(), transform.z()));
+        out.addProperty("form", "the classic renderToBuffer's own terms: translate, then mulPose about X, Y, Z (GeoReplacementDescriptor.RenderTransform)");
+        out.addProperty("source", "descriptor.renderTransform(), read without an entity; the replaced renderer applies its slot form "
+                + "(F C F^-1 through the seam frame: the bake's Y flip and the classic lift) in applyRotations");
+        return out;
     }
 
     /** Declared entity states (attacking, ri1, seed, rock_type) for models whose classic pose reads the entity. */
@@ -482,7 +514,8 @@ public final class G1ModelProbe {
                                                     Map<String, String> namesToPaths,
                                                     Set<String> hiddenBones,
                                                     RenderInstanceContext instances,
-                                                    RenderStateProbe.Observed observed, int packedLight) throws Exception {
+                                                    RenderStateProbe.Observed observed, int packedLight,
+                                                    GeoReplacementDescriptor.RenderTransform transform) throws Exception {
         JsonObject sample = new JsonObject();
         sample.addProperty("id", request.id());
         sample.addProperty("capture_kind", request.fullCapture() ? "full" : "transform_only");
@@ -495,6 +528,12 @@ public final class G1ModelProbe {
             return sample;
         }
         if (instances != null) {
+            if (!transform.isIdentity()) {
+                // the instance capture takes its cubes from renderToBuffer itself, the classic's own rotation included;
+                // applying the declared transform again would double it - no rig declares both, and none may silently
+                throw new IllegalStateException(request.id() + ": a render_instances rig with a constant render transform "
+                        + "has no capture form (its classic cubes already carry the renderToBuffer rotation)");
+            }
             // Slice 4c: the classic model draws some parts N times per frame under a per-draw
             // transform, so root.visit (one group per part) cannot stand for what it draws.
             // Capture renderToBuffer itself, one cube group per ModelPart.render call.
@@ -507,7 +546,12 @@ public final class G1ModelProbe {
         sample.add("render_vertices", renderConsumer.verticesJson());
 
         CapturingVertexConsumer consumer = new CapturingVertexConsumer();
-        root.visit(new PoseStack(), (pose, path, index, cube) -> {
+        PoseStack visit = new PoseStack();
+        // The constant render transform (TEST-013): root.visit compiles the tree with no renderToBuffer around it, so the
+        // DECLARED classic form is applied here for the geometry / surface legs (the render_vertices above carry the
+        // classic's own rotation; the visual leg is what proves the declaration equals it).
+        transform.applyClassic(visit);
+        root.visit(visit, (pose, path, index, cube) -> {
             String boneName = boneNameForPath(path, namesToPaths);
             if (hiddenByPath(path, hiddenBones)) {
                 // ModelPart.visit ignores `visible`; ModelPart.render does not.
@@ -1284,8 +1328,11 @@ public final class G1ModelProbe {
         boolean fullBright = false;
         JsonObject candidateRenderType;
         String colourSource;
+        GeoReplacementDescriptor.RenderTransform transform = GeoReplacementDescriptor.RenderTransform.IDENTITY;
         if (productionHook) {
             GeoReplacementDescriptor<?> descriptor = S4CandidateRuntime.instantiate(candidateClass).descriptor();
+            // the constant render transform (TEST-013), read without an entity like the hooks below
+            transform = descriptor.renderTransform();
             Function<ResourceLocation, RenderType> own = descriptor.renderType(null);
             if (own != null) {
                 candidateRenderType = RenderStateProbe.describeFunction(own, entityModelDefault);
@@ -1349,6 +1396,9 @@ public final class G1ModelProbe {
         JsonArray boneNames = new JsonArray();
         bind.bones().keySet().forEach(boneNames::add);
         out.add("bone_names", boneNames);
+        if (!transform.isIdentity()) {
+            out.add("render_transform", renderTransformJson(transform));
+        }
         // G2: the order read from the geo, and the traversal a fresh bake actually has after DrawOrder.apply.
         out.add("bone_draw_order", names(drawOrder));
         out.add("baked_bone_order", names(DrawOrder.traversal(bind.model())));
@@ -1364,7 +1414,8 @@ public final class G1ModelProbe {
 
         JsonArray samples = new JsonArray();
         SampleRequest bindRequest = new SampleRequest("bind", 0.0F, 0.0F, true, false);
-        samples.add(captureGeoSample(bindRequest, bind, productionHook, recordBonePoses, observed, candidateColour, candidateLight));
+        samples.add(captureGeoSample(bindRequest, bind, productionHook, recordBonePoses, observed, candidateColour, candidateLight,
+                transform));
 
         float limbSwing = spec.get("limb_swing").getAsFloat();
         float netHeadYaw = optionalFloat(spec, "net_head_yaw");
@@ -1381,7 +1432,7 @@ public final class G1ModelProbe {
                                     request.limbSwingAmount(), netHeadYaw, headPitch),
                             subject);
                     JsonObject sample = captureGeoSample(stateRequest(state, request), candidate, true,
-                            recordBonePoses, observed, candidateColour, candidateLight);
+                            recordBonePoses, observed, candidateColour, candidateLight, transform);
                     sample.add("entity_state", state.deepCopy());
                     sample.add("subject_after", subject.after());
                     samples.add(sample);
@@ -1408,7 +1459,7 @@ public final class G1ModelProbe {
                     throw new IllegalStateException("Unsupported G1 candidate animation path " + candidatePath);
                 }
                 JsonObject sample = captureGeoSample(request, candidate, productionHook, recordBonePoses, observed,
-                        candidateColour, candidateLight);
+                        candidateColour, candidateLight, transform);
                 if (keyframeLeg != null) {
                     sample.add(KeyframeLeg.SAMPLE_FIELD, keyframeLeg.classicRotations(request));
                     JsonObject wrap = keyframeLeg.wrapProvenance(request);
@@ -1545,7 +1596,8 @@ public final class G1ModelProbe {
 
     private static JsonObject captureGeoSample(
             SampleRequest request, G1AnimationRuntime.EvaluatedModel evaluated, boolean productionHook,
-            boolean recordBonePoses, RenderStateProbe.Observed observed, int colour, int packedLight) {
+            boolean recordBonePoses, RenderStateProbe.Observed observed, int colour, int packedLight,
+            GeoReplacementDescriptor.RenderTransform transform) {
         JsonObject sample = new JsonObject();
         sample.addProperty("id", request.id());
         sample.addProperty("capture_kind", request.fullCapture() ? "full" : "transform_only");
@@ -1570,6 +1622,17 @@ public final class G1ModelProbe {
         CapturingVertexConsumer consumer = new CapturingVertexConsumer(observed);
         CapturingGeoRenderer renderer = new CapturingGeoRenderer(consumer, recordBonePoses);
         PoseStack poseStack = new PoseStack();
+        if (!transform.isIdentity()) {
+            // The constant render transform (TEST-013), measured as the seam applies it: the SLOT form (M C M^-1, the
+            // renderer's own applySlot) wrapped in the classic path's flip and lift M that surround the slot in-game, so the
+            // ModelPart-space capture below equals C in classic terms - M^-1 (M C M^-1) M = C - exactly when the
+            // conjugation is right; a wrong one turns the geo side the other way and the geometry leg fails at every
+            // sample (the classic side's cubes carry C in its own terms).
+            Matrix4f frame = GeoReplacementDescriptor.RenderTransform.seamFrame();  // F: the wrap measures that applySlot is the F-conjugate of the declared form, not the frame itself (the bytecode is)
+            poseStack.mulPose(new Matrix4f(frame).invert());
+            transform.applySlot(poseStack);
+            poseStack.mulPose(frame);
+        }
         // Bedrock geometry is Y-up around the 24px baseline. This fixed,
         // bytecode-derived normalization maps it into ModelPart's Y-down space.
         poseStack.translate(0.0, 1.5, 0.0);

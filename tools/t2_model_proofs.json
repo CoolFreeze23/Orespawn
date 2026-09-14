@@ -1580,12 +1580,13 @@
       "limb_swing": 0.0,
       "limb_swing_amount": 0.0,
       "visual_sample_ids": [
+        "bind",
         "s_idle_t0",
         "s_idle_t_half",
         "s_attacking_t_quarter",
         "s_attacking_t_three_quarter"
       ],
-      "visual_note": "the four posed samples, two per state (the rest curl and the attack curl are the player-visible states); bind is NOT a visual sample: it is never a rendered frame (the hook writes both wings' roll and the abdomen every frame), and at bind the two renderers' unposed right wing - a zero-thickness cube whose two coplanar faces the two renderers emit with their four vertices starting at different corners - triangulates along opposite diagonals in the harness's rasteriser, whose interpolated depths then differ by 1.3e-6 blocks, just past the 1e-6 contest window, so each side's nearer face flips and 72 pixels (1.1e-3) swap the two faces' texel islands unflagged (the draft register line TEST-008 of the third slice: a harness finding, presented, not fixed; the four posed samples pass at 1.5e-5 / 2.0e-4 / 0 / 9.0e-4)",
+      "visual_note": "the four posed samples, two per state (the rest curl and the attack curl are the player-visible states); bind WAS excluded (TEST-008 (c)): it is never a rendered frame (the hook writes both wings' roll and the abdomen every frame), and at bind the two renderers' unposed right wing - a zero-thickness cube whose two coplanar faces the two renderers emit with their four vertices starting at different corners - triangulates along opposite diagonals in the harness's rasteriser, whose interpolated depths then differ by 1.3e-6 blocks, just past the 1e-6 contest window, so each side's nearer face flips and 72 pixels (1.1e-3) swap the two faces' texel islands unflagged (the draft register line TEST-008 of the third slice: a harness finding, presented, not fixed; the four posed samples pass at 1.5e-5 / 2.0e-4 / 0 / 9.0e-4); bind included since 2026-09-15: the TEST-008 (c) exclusion retired under the pair-contested rule; pair-contested fraction at bind 0.00109863 (72 px; changed 0, MAE 1.018e-05, contested 0.01102; under the old rule changed 0.00109863, MAE 0.03826)",
       "net_head_yaw": 0.0,
       "head_pitch": 0.0,
       "entity_states": [
@@ -2914,12 +2915,13 @@
         1.0
       ],
       "visual_sample_ids": [
+        "bind",
         "a1_t0",
         "a1_t_quarter",
         "a1_t_half",
         "a1_t_three_quarter"
       ],
-      "visual_note": "the four full-amplitude fractions of the Beaver's matrix; bind is NOT a visual sample: it is never a rendered frame - the hook writes the two pincer blades (pincer1part2 / pincer2part2, 2x1x0 zero-thickness cubes) every frame (CreepingHorrorGeoReplacement.java:68,70, cos(age x 0.48) x pi x 0.15) - and at bind a flat cube's two coplanar faces triangulate along opposite diagonals in the two renderers (TEST-008 (c), the rule of: bind excluded from a flat-bone rig's visual samples with this note; the four posed samples are compared)",
+      "visual_note": "the four full-amplitude fractions of the Beaver's matrix; bind WAS excluded (TEST-008 (c)): it is never a rendered frame - the hook writes the two pincer blades (pincer1part2 / pincer2part2, 2x1x0 zero-thickness cubes) every frame (CreepingHorrorGeoReplacement.java:68,70, cos(age x 0.48) x pi x 0.15) - and at bind a flat cube's two coplanar faces triangulate along opposite diagonals in the two renderers (TEST-008 (c), the rule of: bind excluded from a flat-bone rig's visual samples with this note; the four posed samples are compared); bind included since 2026-09-15: the TEST-008 (c) exclusion retired under the pair-contested rule; pair-contested fraction at bind 0 (0 px; changed 0, MAE 0, contested 0.001907; under the old rule changed 0, MAE 0)",
       "net_head_yaw": 0.0,
       "head_pitch": 0.0,
       "camera": {
@@ -3395,12 +3397,13 @@
         1.0
       ],
       "visual_sample_ids": [
+        "bind",
         "s_idle_a1_t0",
         "s_idle_a1_t_half",
         "s_attacking_a1_t_quarter",
         "s_attacking_a1_t_three_quarter"
       ],
-      "visual_note": "two full-amplitude ages per state (the rest branch and the attacking branch are the player-visible states; the amplitude matrix is the setupAnim leg's); bind is NOT a visual sample: it is never a rendered frame - the hook writes the two zero-thickness upper-arm parts arm3part1c / arm4part1c (3 x 5 x 0; TrooperBugGeoReplacement.java:82, :85, the arms' yaw branch) every frame - and at bind a flat cube's two coplanar faces triangulate along opposite diagonals in the two renderers (TEST-008 (c), the rule of: bind excluded from a flat-bone rig's visual samples with this note; the posed samples are compared)",
+      "visual_note": "two full-amplitude ages per state (the rest branch and the attacking branch are the player-visible states; the amplitude matrix is the setupAnim leg's); bind WAS excluded (TEST-008 (c)): it is never a rendered frame - the hook writes the two zero-thickness upper-arm parts arm3part1c / arm4part1c (3 x 5 x 0; TrooperBugGeoReplacement.java:82, :85, the arms' yaw branch) every frame - and at bind a flat cube's two coplanar faces triangulate along opposite diagonals in the two renderers (TEST-008 (c), the rule of: bind excluded from a flat-bone rig's visual samples with this note; the posed samples are compared); bind included since 2026-09-15: the TEST-008 (c) exclusion retired under the pair-contested rule; pair-contested fraction at bind 0 (0 px; changed 0, MAE 0, contested 0.00209; under the old rule changed 0, MAE 0)",
       "net_head_yaw": 0.0,
       "head_pitch": 0.0,
       "entity_states": [
@@ -3450,12 +3453,13 @@
         1.0
       ],
       "visual_sample_ids": [
+        "bind",
         "s_full_health_a1_t0",
         "s_full_health_a1_t_half",
         "s_sitting_a1_t_quarter",
         "s_sitting_a1_t_three_quarter"
       ],
-      "visual_note": "two full-amplitude ages per state (full health standing, full health sitting; the amplitude matrix is the setupAnim leg's); bind is NOT a visual sample: it is never a rendered frame - the hook writes the fourteen zero-thickness feathers (the four head feathers hf1-4, the six fingers lff1-3 / rff1-3, the four tail feathers tf1-4; VelocityRaptorGeoReplacement.java:85-88, :92-94, :97-99, :101-111) every frame - and at bind a flat cube's two coplanar faces triangulate along opposite diagonals in the two renderers (TEST-008 (c), the rule of: bind excluded from a flat-bone rig's visual samples with this note; the posed samples are compared)",
+      "visual_note": "two full-amplitude ages per state (full health standing, full health sitting; the amplitude matrix is the setupAnim leg's); bind WAS excluded (TEST-008 (c)): it is never a rendered frame - the hook writes the fourteen zero-thickness feathers (the four head feathers hf1-4, the six fingers lff1-3 / rff1-3, the four tail feathers tf1-4; VelocityRaptorGeoReplacement.java:85-88, :92-94, :97-99, :101-111) every frame - and at bind a flat cube's two coplanar faces triangulate along opposite diagonals in the two renderers (TEST-008 (c), the rule of: bind excluded from a flat-bone rig's visual samples with this note; the posed samples are compared); bind included since 2026-09-15: the TEST-008 (c) exclusion retired under the pair-contested rule; pair-contested fraction at bind 0 (0 px; changed 0, MAE 0, contested 0.004532; under the old rule changed 0, MAE 0)",
       "net_head_yaw": 0.0,
       "head_pitch": 0.0,
       "entity_states": [
@@ -3839,12 +3843,13 @@
         1.0
       ],
       "visual_sample_ids": [
+        "bind",
         "s_idle_a1_t0",
         "s_idle_a1_t_half",
         "s_screaming_a1_t_quarter",
         "s_screaming_a1_t_three_quarter"
       ],
-      "visual_note": "two full-amplitude ages per state (the rest branch and the screaming branch are the player-visible states; the amplitude matrix is the setupAnim leg's); bind is NOT a visual sample: it is never a rendered frame - the hook writes the zero-thickness cape piece cape2 (9 x 24 x 0; EnderKnightGeoReplacement.java:78-79, the roll on a quarter of the gait and the 0.7 ws pitch) every frame - and at bind a flat cube's two coplanar faces triangulate along opposite diagonals in the two renderers (TEST-008 (c), the rule of: bind excluded from a flat-bone rig's visual samples with this note; the posed samples are compared)",
+      "visual_note": "two full-amplitude ages per state (the rest branch and the screaming branch are the player-visible states; the amplitude matrix is the setupAnim leg's); bind WAS excluded (TEST-008 (c)): it is never a rendered frame - the hook writes the zero-thickness cape piece cape2 (9 x 24 x 0; EnderKnightGeoReplacement.java:78-79, the roll on a quarter of the gait and the 0.7 ws pitch) every frame - and at bind a flat cube's two coplanar faces triangulate along opposite diagonals in the two renderers (TEST-008 (c), the rule of: bind excluded from a flat-bone rig's visual samples with this note; the posed samples are compared); bind included since 2026-09-15: the TEST-008 (c) exclusion retired under the pair-contested rule; pair-contested fraction at bind 0 (0 px; changed 0, MAE 0, contested 0.001984; under the old rule changed 0, MAE 0)",
       "net_head_yaw": 30.0,
       "head_pitch": 10.0,
       "entity_states": [
@@ -3895,12 +3900,13 @@
         1.0
       ],
       "visual_sample_ids": [
+        "bind",
         "s_idle_a1_t0",
         "s_idle_a1_t_half",
         "s_screaming_a1_t_quarter",
         "s_screaming_a1_t_three_quarter"
       ],
-      "visual_note": "two full-amplitude ages per state (the rest branch and the screaming branch are the player-visible states; the amplitude matrix is the setupAnim leg's); bind is NOT a visual sample: it is never a rendered frame - the hook writes the four zero-thickness parts - the wing membranes lwing1 / rwing1 (EnderReaperGeoReplacement.java:76-81, the yaw about +-0.785) and the blade pieces scythe2 / scythe3 (:59-61, :65-67, the roll 1.0 - |gait| or the screaming swing) every frame - and at bind a flat cube's two coplanar faces triangulate along opposite diagonals in the two renderers (TEST-008 (c), the rule of: bind excluded from a flat-bone rig's visual samples with this note; the posed samples are compared)",
+      "visual_note": "two full-amplitude ages per state (the rest branch and the screaming branch are the player-visible states; the amplitude matrix is the setupAnim leg's); bind WAS excluded (TEST-008 (c)): it is never a rendered frame - the hook writes the four zero-thickness parts - the wing membranes lwing1 / rwing1 (EnderReaperGeoReplacement.java:76-81, the yaw about +-0.785) and the blade pieces scythe2 / scythe3 (:59-61, :65-67, the roll 1.0 - |gait| or the screaming swing) every frame - and at bind a flat cube's two coplanar faces triangulate along opposite diagonals in the two renderers (TEST-008 (c), the rule of: bind excluded from a flat-bone rig's visual samples with this note; the posed samples are compared); bind included since 2026-09-15: the TEST-008 (c) exclusion retired under the pair-contested rule; pair-contested fraction at bind 0 (0 px; changed 0, MAE 0, contested 0.001419; under the old rule changed 0, MAE 0)",
       "net_head_yaw": 30.0,
       "head_pitch": 10.0,
       "entity_states": [
@@ -4124,12 +4130,13 @@
         1.0
       ],
       "visual_sample_ids": [
+        "bind",
         "s_idle_a1_t0",
         "s_idle_a1_t_half",
         "s_display_a1_t_quarter",
         "s_display_a1_t_three_quarter"
       ],
-      "visual_note": "two full-amplitude ages per state (the folded rest and the display are the player-visible states; the amplitude matrix is the setupAnim leg's); bind is NOT a visual sample: it is never a rendered frame - the hook writes the ten zero-thickness feathers - the three head feathers hf1-3 and the seven tail feathers tailf1-7 (PeacockGeoReplacement.java:74-89 and :91-106, the display branch and the folded rest, constants every frame; tailf7's roll is never written) every frame - and at bind a flat cube's two coplanar faces triangulate along opposite diagonals in the two renderers (TEST-008 (c), the rule of: bind excluded from a flat-bone rig's visual samples with this note; the posed samples are compared)",
+      "visual_note": "two full-amplitude ages per state (the folded rest and the display are the player-visible states; the amplitude matrix is the setupAnim leg's); bind WAS excluded (TEST-008 (c)): it is never a rendered frame - the hook writes the ten zero-thickness feathers - the three head feathers hf1-3 and the seven tail feathers tailf1-7 (PeacockGeoReplacement.java:74-89 and :91-106, the display branch and the folded rest, constants every frame; tailf7's roll is never written) every frame - and at bind a flat cube's two coplanar faces triangulate along opposite diagonals in the two renderers (TEST-008 (c), the rule of: bind excluded from a flat-bone rig's visual samples with this note; the posed samples are compared); bind included since 2026-09-15: the TEST-008 (c) exclusion retired under the pair-contested rule; pair-contested fraction at bind 0 (0 px; changed 0, MAE 0, contested 0.0005188; under the old rule changed 0, MAE 0)",
       "net_head_yaw": 0.0,
       "head_pitch": 0.0,
       "entity_states": [
@@ -4282,6 +4289,7 @@
       "limb_swing": 0.0,
       "limb_swing_amount": 0.0,
       "visual_sample_ids": [
+        "bind",
         "s_idle_t0",
         "s_idle_t_half",
         "s_wings_flapping_t_quarter",
@@ -4291,7 +4299,7 @@
         "s_activated_t_quarter",
         "s_activated_t_three_quarter"
       ],
-      "visual_note": "two ages per state (the latch at rest, the wings on the preset, sitting, activated with both hats shown); bind is NOT a visual sample: it is never a rendered frame - the hook writes the eleven zero-thickness parts - the eight claws LClaw1-4 / Rclaw1-4 (OstrichGeoReplacement.java:87-90, :98-101, the gait's pitch, 0 on the probe) and the three tail feathers Tail1-3 (:102-107) every frame - and at bind a flat cube's two coplanar faces triangulate along opposite diagonals in the two renderers (TEST-008 (c), the rule of: bind excluded from a flat-bone rig's visual samples with this note; the posed samples are compared)",
+      "visual_note": "two ages per state (the latch at rest, the wings on the preset, sitting, activated with both hats shown); bind WAS excluded (TEST-008 (c)): it is never a rendered frame - the hook writes the eleven zero-thickness parts - the eight claws LClaw1-4 / Rclaw1-4 (OstrichGeoReplacement.java:87-90, :98-101, the gait's pitch, 0 on the probe) and the three tail feathers Tail1-3 (:102-107) every frame - and at bind a flat cube's two coplanar faces triangulate along opposite diagonals in the two renderers (TEST-008 (c), the rule of: bind excluded from a flat-bone rig's visual samples with this note; the posed samples are compared); bind included since 2026-09-15: the TEST-008 (c) exclusion retired under the pair-contested rule; pair-contested fraction at bind 0 (0 px; changed 0, MAE 0, contested 0.02196; under the old rule changed 0, MAE 0)",
       "net_head_yaw": 30.0,
       "head_pitch": 10.0,
       "entity_states": [
@@ -4353,6 +4361,7 @@
         1.0
       ],
       "visual_sample_ids": [
+        "bind",
         "s_idle_a1_t0",
         "s_idle_a1_t_half",
         "s_flying_a1_t_quarter",
@@ -4362,7 +4371,7 @@
         "s_sitting_a1_t_quarter",
         "s_sitting_a1_t_three_quarter"
       ],
-      "visual_note": "two full-amplitude ages per state (at rest, flying, the legs folded, sitting; the amplitude matrix is the setupAnim leg's); bind is NOT a visual sample: it is never a rendered frame - the hook writes the two zero-thickness wings WingLeft / WingRight (SpyroGeoReplacement.java:77-78) every frame - and at bind a flat cube's two coplanar faces triangulate along opposite diagonals in the two renderers (TEST-008 (c), the rule of: bind excluded from a flat-bone rig's visual samples with this note; the posed samples are compared)",
+      "visual_note": "two full-amplitude ages per state (at rest, flying, the legs folded, sitting; the amplitude matrix is the setupAnim leg's); bind WAS excluded (TEST-008 (c)): it is never a rendered frame - the hook writes the two zero-thickness wings WingLeft / WingRight (SpyroGeoReplacement.java:77-78) every frame - and at bind a flat cube's two coplanar faces triangulate along opposite diagonals in the two renderers (TEST-008 (c), the rule of: bind excluded from a flat-bone rig's visual samples with this note; the posed samples are compared); bind included since 2026-09-15: the TEST-008 (c) exclusion retired under the pair-contested rule; pair-contested fraction at bind 0 (0 px; changed 0, MAE 0, contested 0.001648; under the old rule changed 0, MAE 0)",
       "net_head_yaw": 30.0,
       "head_pitch": 10.0,
       "entity_states": [
@@ -4425,6 +4434,7 @@
         1.0
       ],
       "visual_sample_ids": [
+        "bind",
         "s_idle_a1_t0",
         "s_idle_a1_t_half",
         "s_legs_folded_a1_t_quarter",
@@ -4432,7 +4442,7 @@
         "s_sitting_a1_t_quarter",
         "s_sitting_a1_t_three_quarter"
       ],
-      "visual_note": "two full-amplitude ages per state (at rest, the legs folded, sitting; the amplitude matrix is the setupAnim leg's); bind is NOT a visual sample: it is never a rendered frame - the hook writes the two zero-thickness wings Rwing / Lwing (StinkyGeoReplacement.java:66-67) every frame - and at bind a flat cube's two coplanar faces triangulate along opposite diagonals in the two renderers (TEST-008 (c), the rule of: bind excluded from a flat-bone rig's visual samples with this note; the posed samples are compared)",
+      "visual_note": "two full-amplitude ages per state (at rest, the legs folded, sitting; the amplitude matrix is the setupAnim leg's); bind WAS excluded (TEST-008 (c)): it is never a rendered frame - the hook writes the two zero-thickness wings Rwing / Lwing (StinkyGeoReplacement.java:66-67) every frame - and at bind a flat cube's two coplanar faces triangulate along opposite diagonals in the two renderers (TEST-008 (c), the rule of: bind excluded from a flat-bone rig's visual samples with this note; the posed samples are compared); bind included since 2026-09-15: the TEST-008 (c) exclusion retired under the pair-contested rule; pair-contested fraction at bind 0 (0 px; changed 0, MAE 0, contested 0.002045; under the old rule changed 0, MAE 0)",
       "net_head_yaw": 30.0,
       "head_pitch": 10.0,
       "entity_states": [

@@ -115,6 +115,14 @@ final class S4CandidateRuntime {
         return baked;
     }
 
+    /**
+     * The descriptor's constant render transform (TEST-013), read WITHOUT an entity - the renderType(null) form: a descriptor
+     * answers it from constants, and both probe sides apply it.
+     */
+    static danger.orespawn.entity.client.GeoReplacementDescriptor.RenderTransform renderTransform(String candidateClass) throws Exception {
+        return instantiate(candidateClass).descriptor().renderTransform();
+    }
+
     /** The shipped replacement, constructed registry-free (OPT-029 R0); the probe also reads its descriptor's render-state hooks through it. */
     static OreSpawnGeoReplacement<?> instantiate(String className) throws Exception {
         Class<?> type = Class.forName(className);

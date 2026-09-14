@@ -152,6 +152,10 @@ public abstract class OreSpawnGeoReplacedEntityRenderer<E extends Entity, A exte
             super.applyRotations(animatable, poseStack, ageInTicks, rotationYaw, partialTick, nativeScale);
         }
         this.descriptor.applyRotations(currentEntity(), poseStack, ageInTicks, partialTick);
+        // The constant render transform (TEST-013): the classic renderToBuffer's whole-model rotation in its
+        // SLOT form - conjugated through the seam frame (the bake's Y flip and the classic lift; TEST-013), and lift, GeoReplacementDescriptor.RenderTransform -
+        // innermost here, as the classic applies it last before its parts.
+        this.descriptor.renderTransform().applySlot(poseStack);
     }
 
     /**

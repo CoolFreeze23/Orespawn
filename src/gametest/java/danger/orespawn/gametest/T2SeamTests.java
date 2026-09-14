@@ -40,6 +40,7 @@ import danger.orespawn.entity.client.CryolophosaurusGeoReplacement;
 import danger.orespawn.entity.client.DragonflyGeoReplacement;
 import danger.orespawn.entity.client.DragonflyRenderer;
 import danger.orespawn.entity.client.DrawOrder;
+import danger.orespawn.entity.client.DungeonBeastGeoReplacement;
 import danger.orespawn.entity.client.EasterBunnyGeoReplacement;
 import danger.orespawn.entity.client.EasterBunnyRenderer;
 import danger.orespawn.entity.client.EnderKnightGeoReplacement;
@@ -59,6 +60,7 @@ import danger.orespawn.entity.client.GammaMetroidGeoReplacement;
 import danger.orespawn.entity.client.GammaMetroidRenderer;
 import danger.orespawn.entity.client.GazelleGeoReplacement;
 import danger.orespawn.entity.client.GazelleRenderer;
+import danger.orespawn.entity.client.GeoReplacementDescriptor;
 import danger.orespawn.entity.client.GhostSkellyGeoReplacement;
 import danger.orespawn.entity.client.GhostSkellyRenderer;
 import danger.orespawn.entity.client.GoldFishGeoReplacement;
@@ -69,6 +71,7 @@ import danger.orespawn.entity.client.HydroliscGeoReplacement;
 import danger.orespawn.entity.client.HydroliscRenderer;
 import danger.orespawn.entity.client.IrukandjiGeoReplacement;
 import danger.orespawn.entity.client.IrukandjiRenderer;
+import danger.orespawn.entity.client.KrakenGeoReplacement;
 import danger.orespawn.entity.client.KyuubiGeoReplacement;
 import danger.orespawn.entity.client.KyuubiRenderer;
 import danger.orespawn.entity.client.LeafMonsterGeoReplacement;
@@ -185,6 +188,8 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
+import org.joml.Matrix4f;
+import org.joml.Vector4f;
 import software.bernie.geckolib.animatable.GeoAnimatable;
 import software.bernie.geckolib.animation.AnimatableManager;
 import software.bernie.geckolib.animation.Animation;
@@ -249,6 +254,13 @@ import software.bernie.geckolib.loading.object.GeometryTree;
  * and Triffid (their zero-thickness cubes), the hook moving a named bone off its bind at age 7; every hook of the
  * slice reads its entity, so each poses on its own declared rest subject - a fresh one per species, so no RenderInfo
  * latch scratch is shared).</li>
+ * <li>{@code t2_009} (the constant render transform, TEST-013): the descriptor's {@code renderTransform()} - the
+ * identity by default; the Dungeon Beast's classic YP 90 and the Kraken's XP 90 declared in the classic
+ * renderer's own terms - and its SLOT form, what {@code
+ * OreSpawnGeoReplacedEntityRenderer.applyRotations} multiplies onto the pose stack: the rotation conjugated through
+ * the seam frame (S_y R_y(90) S_y = R_y(90): the bake flips nothing in x; the Kraken's about the classic origin
+ * 1.501 up), measured on a pose stack against the analysis's closed form and, on sample points, the classic chain (the
+ * classic flip and lift, the classic rotation) against the seam chain (the slot, then the seam frame).</li>
  * <li>{@code t2_004}: the render facts the 4c precedent pinned in code - each descriptor's shadow radius is its
  *     classic renderer's constant (ENT-S-092; the Ant family's {@code 0.1 / 0.15 x SCALE} products where the classic
  *     renderer declares no SHADOW), the Cockateil and Ruby Bird sharing the Cockateil renderer's - and each shared
@@ -823,6 +835,60 @@ public class T2SeamTests {
             flags.restore();
         }
         helper.succeed();
+    }
+
+    // ------------------------------------------------------------------ row 9: the constant render transform's slot
+
+    /**
+     * The constant render transform's conjugation, measured on matrices (TEST-013; the seam's {@code
+     * OreSpawnGeoReplacedEntityRenderer.applyRotations} path, whose one line is {@code
+     * descriptor.renderTransform.applySlot(poseStack)} after the entity yaw and the descriptor's own rotations). The
+     * classic path rotates INSIDE {@code renderToBuffer}, after {@code LivingEntityRenderer.render}'s
+     * {@code scale(-1, -1, 1)} flip and {@code translate(0, -1.501, 0)} lift; the slot runs in entity space before the
+     * SEAM's frame F = scale(1, -1, 1) translate(0, -1.501, 0) (the bake's Y flip and the classic lift - GeckoLib's baker
+     * undoes the converter's x negation, so nothing flips in x), so it carries F C F^-1: S_y R_y(90) S_y = R_y(90) for
+     * the Dungeon Beast's YP 90, and translate(0, 1.501, 1.501) R_x(-90) for the Kraken's XP 90 (the rotation about the
+     * classic origin, 1.501 up; the y-mirror reverses a rotation about X). Asserted two ways: the slot matrix against the
+     * closed form, and the two chains on sample points - F, C against slot, F (the frame is the bytecode's, TEST-013).
+     */
+    @GameTest(template = "empty", batch = BATCH)
+    public static void t2_009_constant_render_transform_slot_is_the_conjugated_classic_rotation(GameTestHelper helper) {
+        GeoReplacementDescriptor.RenderTransform none = new AntGeoReplacement().descriptor().renderTransform();
+        helper.assertTrue(none.isIdentity(), "a descriptor that declares no render transform answers the identity (the default)");
+        helper.assertTrue(new Matrix4f().equals(none.slotMatrix(), 0.0F), "the identity's slot form is the identity matrix");
+
+        GeoReplacementDescriptor.RenderTransform beast = new DungeonBeastGeoReplacement().descriptor().renderTransform();
+        helper.assertTrue(beast.equals(GeoReplacementDescriptor.RenderTransform.rotationDegrees(0.0F, 90.0F, 0.0F)),
+                "the Dungeon Beast declares the classic renderToBuffer's YP 90 (ModelDungeonBeast.java:535, orig :574)");
+        assertSlot(helper, "dungeon_beast", beast, new Matrix4f().rotateY((float) Math.toRadians(90.0)));
+
+        GeoReplacementDescriptor.RenderTransform kraken = new KrakenGeoReplacement().descriptor().renderTransform();
+        helper.assertTrue(kraken.equals(GeoReplacementDescriptor.RenderTransform.rotationDegrees(90.0F, 0.0F, 0.0F)),
+                "the Kraken declares the classic renderToBuffer's XP 90 (ModelKraken.java:733, orig :1137)");
+        assertSlot(helper, "kraken", kraken,
+                new Matrix4f().translate(0.0F, 1.501F, 1.501F).rotateX((float) Math.toRadians(-90.0)));
+        helper.succeed();
+    }
+
+    /** The slot matrix equals the analysis's closed form, and the classic and seam chains agree on sample points. */
+    private static void assertSlot(GameTestHelper helper, String name, GeoReplacementDescriptor.RenderTransform transform,
+                                   Matrix4f analysis) {
+        Matrix4f slot = transform.slotMatrix();
+        helper.assertTrue(analysis.equals(slot, 1.0e-5F),
+                name + ": the slot form is the conjugated rotation the order analysis gives, " + analysis + " (found "
+                        + slot + ")");
+        // The chains on matrices (the pose-stack calls post-multiply exactly as these do; PoseStack is a client class the
+        // dedicated-server gametests cannot load): the seam frame F then the classic rotation, against the slot then F.
+        Matrix4f frame = GeoReplacementDescriptor.RenderTransform.seamFrame();
+        Matrix4f classicChain = new Matrix4f(frame).mul(transform.classicMatrix());
+        Matrix4f seamChain = new Matrix4f(slot).mul(frame);
+        for (Vector4f point : List.of(new Vector4f(0.0F, 0.0F, 0.0F, 1.0F), new Vector4f(1.0F, 2.0F, 3.0F, 1.0F),
+                new Vector4f(-0.5F, 1.25F, -2.0F, 1.0F))) {
+            Vector4f left = new Vector4f(point).mul(classicChain);
+            Vector4f right = new Vector4f(point).mul(seamChain);
+            helper.assertTrue(left.distance(right) < 1.0e-5F, name + ": the classic chain (flip, lift, then the classic rotation) "
+                    + "and the seam chain (the slot, then the seam frame) place " + point + " alike: " + left + " vs " + right);
+        }
     }
 
     /** The t2_005 pins on one hook species (shared by the third, fourth, fifth and sixth slices' rows). */

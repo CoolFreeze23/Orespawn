@@ -505,8 +505,41 @@ def expand_render_instances(name: str, part: dict[str, Any], parent: str | None,
     }
 
 
+def instance_source(unit: str) -> str:
+    """A draw-order unit's compiled part: a render-instance clone ``<part>__i<k>`` names its part, anything else itself."""
+    marker = unit.rfind("__i")
+    return unit[:marker] if marker > 0 and unit[marker + 3:].isdigit() else unit
+
+
+def undrawn_parts_declared(spec: dict[str, Any], compiled: dict[str, Any]) -> frozenset[str]:
+    """The manifest's ``undrawn_parts`` (TEST-013): compiled parts the classic ``renderToBuffer`` never draws - the
+    Dungeon Beast's ltoe1 / ltoe3 / rtoe1 / rtoe3, built by
+    the classic model and never rendered, in 1.7.10 and the port alike. The converter OMITS them from the geo: no bone, no
+    cubes, no entry in the draw-order key (which therefore still names exactly the rig's bones). Validated here: compiled
+    part names, unique, not render-instance parts, and without children (a child's parent must be a bone the geo carries)."""
+    declared = spec.get("undrawn_parts", [])
+    model_id = spec["id"]
+    if not isinstance(declared, list) or any(not isinstance(name, str) or not name for name in declared):
+        raise ValueError(f"{model_id} undrawn_parts must be a list of compiled part names")
+    if len(set(declared)) != len(declared):
+        raise ValueError(f"{model_id} undrawn_parts repeats a part: {declared}")
+    unknown = sorted(set(declared) - set(compiled["bone_names"]))
+    if unknown:
+        raise ValueError(f"{model_id} undrawn_parts names parts the compiled model lacks: {unknown}")
+    overlap = sorted(set(declared) & set(spec.get("render_instances") or {}))
+    if overlap:
+        raise ValueError(f"{model_id} undrawn_parts overlaps render_instances: {overlap}")
+    with_children = sorted({parent for _part, parent in iter_parts(compiled["definition"]) if parent in declared})
+    if with_children:
+        raise ValueError(
+            f"{model_id} undrawn_parts lists parts with children, whose subtree the geo could not carry: {with_children}"
+        )
+    return frozenset(declared)
+
+
 def derive_bone_draw_order(compiled: dict[str, Any],
-                           bones: list[dict[str, Any]]) -> tuple[list[str], dict[str, Any]]:
+                           bones: list[dict[str, Any]],
+                           undrawn_parts: frozenset[str] = frozenset()) -> tuple[list[str], dict[str, Any]]:
     """G2 root-order contract: the geo bones in the order the classic renderer draws the parts.
 
     The probe records, for every full capture, the classic ``renderToBuffer`` draw
@@ -535,6 +568,12 @@ def derive_bone_draw_order(compiled: dict[str, Any],
     units = [bone["name"] for bone in bones if bone.get("cubes")]
     unit_set = set(units)
     for sample, sequence in zip(full_samples, sequences):
+        drawn_undrawn = sorted({token for token in sequence if instance_source(token) in undrawn_parts})
+        if drawn_undrawn:
+            raise ValueError(
+                f"UNDRAWN PART DRAWN {compiled['model_id']}: capture {sample['id']} draws {drawn_undrawn}, which the "
+                "manifest lists under undrawn_parts (a part listed as undrawn is never drawn by the classic renderToBuffer)"
+            )
         unknown = [token for token in sequence if token not in unit_set]
         if unknown:
             raise ValueError(
@@ -706,7 +745,8 @@ def derive_cube_face_order(compiled: dict[str, Any], bones: list[dict[str, Any]]
 
 def convert_geometry(compiled: dict[str, Any],
                      render_instances: dict[str, Any] | None = None,
-                     cube_face_order: str | None = None) -> tuple[dict[str, Any], dict[str, Any]]:
+                     cube_face_order: str | None = None,
+                     undrawn_parts: frozenset[str] = frozenset()) -> tuple[dict[str, Any], dict[str, Any]]:
     root = compiled["definition"]
     if root["cubes"]:
         raise ValueError("unnamed MeshDefinition root contains cubes")
@@ -727,6 +767,9 @@ def convert_geometry(compiled: dict[str, Any],
         absolute_pivot = [float(value) for value in part["absolute_pivot"]]
         initial_rotation = [float(value) for value in part["initial_rotation_radians"]]
         ancestors[name] = ([] if parent is None else ancestors[parent] + [parent])
+        if name in undrawn_parts:
+            # never drawn by the classic renderToBuffer (the manifest's undrawn_parts): no bone, no cubes, no key entry
+            continue
         lineage_unrotated = all(
             not nonzero(bind_rotations.get(ancestor, initial_rotation)) for ancestor in ancestors[name]
         ) and not nonzero(bind_rotations.get(name, initial_rotation))
@@ -786,16 +829,16 @@ def convert_geometry(compiled: dict[str, Any],
         if missing:
             raise ValueError(f"render_instances names parts the compiled model lacks: {missing}")
         # Expanded parts leave the rig; their group and clone bones join it.
-        expected_names = sorted((set(input_names) - set(render_instances)) | set(expansion_bones))
+        expected_names = sorted((set(input_names) - set(render_instances) - undrawn_parts) | set(expansion_bones))
     else:
-        expected_names = input_names
+        expected_names = sorted(set(input_names) - undrawn_parts)
     if output_names != expected_names:
         raise ValueError(f"bone-name drift: expected {expected_names} != output {output_names}")
     if len(output_names) != len(set(output_names)):
         raise ValueError("duplicate bone names cannot be preserved by GeckoLib")
 
     model_id = compiled["model_id"]
-    bone_draw_order, draw_order_evidence = derive_bone_draw_order(compiled, bones)
+    bone_draw_order, draw_order_evidence = derive_bone_draw_order(compiled, bones, undrawn_parts)
     description: dict[str, Any] = {
         "identifier": f"geometry.orespawn.g1.{model_id}",
         "texture_width": compiled["texture_width"],
@@ -835,6 +878,8 @@ def convert_geometry(compiled: dict[str, Any],
         "bone_draw_order": bone_draw_order,
         "draw_order_evidence": draw_order_evidence,
     }
+    if undrawn_parts:
+        summary["undrawn_parts"] = sorted(undrawn_parts)
     if face_order is not None:
         summary["cube_face_order"] = face_order
         summary["cube_face_order_evidence"] = face_order_evidence
@@ -1188,7 +1233,8 @@ def convert_model(manifest: dict[str, Any], spec: dict[str, Any],
             f"{model_id} render_instances drift between the probe dump and the manifest: "
             f"{compiled.get('render_instances')} != {render_instances}"
         )
-    geometry, geometry_summary = convert_geometry(compiled, render_instances, spec.get("cube_face_order"))
+    undrawn = undrawn_parts_declared(spec, compiled)
+    geometry, geometry_summary = convert_geometry(compiled, render_instances, spec.get("cube_face_order"), undrawn)
     animation, animation_contract = convert_animation(
         spec, compiled, float(manifest["ticks_per_second"])
     )
@@ -1221,6 +1267,7 @@ def convert_model(manifest: dict[str, Any], spec: dict[str, Any],
         "exact_bone_names": geometry_summary["exact_bone_names"],
         "bone_draw_order": geometry_summary["bone_draw_order"],
         "draw_order_evidence": geometry_summary["draw_order_evidence"],
+        **({"undrawn_parts": geometry_summary["undrawn_parts"]} if "undrawn_parts" in geometry_summary else {}),
         **({"cube_face_order": geometry_summary["cube_face_order"],
             "cube_face_order_evidence": geometry_summary["cube_face_order_evidence"]}
            if "cube_face_order" in geometry_summary else {}),
