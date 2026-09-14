@@ -793,6 +793,25 @@ root-order slice with the GeckoLib per-entity cache eviction, then Slice 4c). Th
   and report with the counts, the number of species carrying reference clips over 90, and the number held under item
   10. Nothing else runs.
 
+- Rulings of 2026-09-14, second set, revised (addendum item 32; supersedes item 31 where they overlap): master pushed
+  (the nine commits after ced24f8). Every state a hook reads is sampled, not only attacking — for each pose-interface
+  getter the hook reads, each value the code branches on, alone at rest otherwise, one clip per value that moves the
+  pose; the seed names the states in the animator's words (fly, swim, sit, sleep, a species word) mapped to the getter
+  values, and an unnamed state is emitted as reference_<getter>_<value> with the sheet flagging it (the Baby Dragon's
+  reference_fly must show the beat). Clip names inside the files: reference_walk / _idle / _attack / _fly / _swim and
+  the seed's names; the walk clip's byte-identity pin moves to the sampled values. The starting-point rule covers fly
+  and swim; a species state with no contract clip (sit, sleep) is offered as a SPEC extra under §2.3. The clips are
+  embedded in each .bbmodel to the ruled round-trip tolerance (times 5e-5 s, values 1e-6), never byte identity; the
+  files beside the sheet stay the pinned source and the README says both; a .bbmodel opens with every clip listed.
+  Reference clips are keyed through the exact transcriptions' density search (catmullrom, 1 degree of rotation, 1/32
+  block of position, the closing key kept), the sheets stating the tolerance; one tracked copy in tools/reference_clips,
+  the folder's copies generator output ignored by git; sizes in the report. Ratified: the audit's HOOKS list with
+  HOOK_STALE, the converter inside check, the lenient bake for unlanded hooks, the verifier's stale-file fix; the three
+  held species' clips come with their landing; the six resting attack clips are re-examined for the flag that gates
+  them. Order of work: push → items 2 to 6 as one tooling commit with the folder regenerated, every check PASS → the
+  fifteen-rig slice T2d as briefed (the Crab with its draw fix, on the hooks, one refuter, the counts opening the
+  report) → stop and report with the clip count per state. Nothing else runs.
+
 ## 7. Standing traps checklist (things that have actually bitten this project)
 
 - Uppercase in resource filenames → `ResourceLocation` crash. Lowercase all geo/

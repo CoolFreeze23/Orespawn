@@ -487,6 +487,30 @@ that slice, not a task for now.
     stop and report with the counts, the number of species carrying reference clips over 90, and the number held under
     item 10. Nothing else runs.
 
+32. **Rulings of 2026-09-14, second set, revised (owner, through the advisor):** supersedes the 2026-09-14 second set
+    (item 31) where they overlap. (1) **Push:** master pushed now, the nine commits after origin/master ced24f8.
+    **The reference clips (tooling, no refuter):** (2) Every state a hook reads is sampled, not only attacking: for each
+    pose-interface getter the hook reads, each value the code branches on, alone at rest otherwise, one clip per value
+    that moves the pose. The seed names the states in the animator's words (fly, swim, sit, sleep, and any species
+    word), mapped to the getter values; a state the seed does not name is emitted as reference_<getter>_<value> and the
+    sheet flags it, so nothing is silently missing. The Baby Dragon's flight is the test case: reference_fly must show
+    the beat. (3) Clip names inside the files: reference_walk, reference_idle, reference_attack, reference_fly,
+    reference_swim and the seed's names; the walk clip's byte-identity pin moves to the sampled values. (4) The
+    starting-point rule extends: fly from _reference_fly, swim from _reference_swim; a species state with no contract
+    clip (sit, sleep) is offered as a SPEC extra under §2.3, the sheet saying so. (5) The clips are embedded in each
+    .bbmodel, verified to the round-trip tolerance already ruled (times 5e-5 s, values 1e-6), not byte identity; the
+    files beside the sheet stay the pinned source, the README says both. A .bbmodel must open with every clip listed.
+    (6) Weight: reference clips are keyed through the density search the exact transcriptions use, catmullrom, at 1
+    degree of rotation and 1/32 block of position, the closing key kept; the sheets state the tolerance. One tracked
+    copy, tools/reference_clips; the folder's copies are written by the generator and ignored by git. Sizes in the
+    report. **The landing's decisions:** (7) The audit's HOOKS list with HOOK_STALE, the converter inside check, the
+    lenient bake for unlanded hooks, the verifier's stale-file fix: ratified. The three held (Boyfriend, Girlfriend,
+    Princess): their clips come with their landing. The six attack clips at the resting branch: re-examined under item
+    2, since a resting attack usually means another flag gates it. **Order of work:** (8) Push → items 2 to 6 as one
+    tooling commit, the folder regenerated, every check PASS → the fifteen-rig slice T2d as briefed, the Crab with its
+    draw fix, on the hooks already written, one refuter, the counts open the report → stop and report with the clip
+    count per state. Nothing else runs.
+
 ## D. Rulings executed the same day (for cross-reference)
 
 - ENT-S-098 fixed (shot BetterFireballs carry the mod's own type; save/load round-trip pinned) and its

@@ -7439,3 +7439,23 @@ NOT DONE (the orchestrator's): gradle (`referenceDumpCompiledModels referenceCon
 IN-GAME: nothing - the sampler is g1tool, the descriptors stay unregistered; nothing under src/main moves.
 
 GATE: GATE: clips2 (first run) red at referenceClipsVerify - 43 old-name clips left in build/reference_clips/ by the hooks landing's verify read as drift (the fix above) -> clips2b green: the clips deterministic across two gradle runs (271 files), the 43 clips of 536f330 identical to their registries' new walk clips (0 differing or missing), referenceClipsVerify VERIFIED 271 on its own, the tests OK (48), the folder fresh (116 folders, 1,342 files, every check PASS; 270 reference clips: walk 112, idle 112, attack 46), the benchmark re-pinned, the audit 0 errors / 138 acknowledged; drift 0, build 0 (g1 2, s4 13, t2 29 PARITY PASS), suite: all 1278 required tests passed.
+
+## RULINGS 2026-09-14, SECOND SET (REVISED) RECORDED (docs-only) — every state a hook reads sampled and named by the seed; the clips keyed by the density search, embedded in the .bbmodel to the round-trip tolerance, one tracked copy; the landing's decisions ratified; then the fifteen-rig slice T2d
+
+Recorded in `phase_g_reports/phase_g_scope_addendum_2026-09-03.md` item 32 (the rulings in full; supersedes item 31 where
+they overlap) and `PHASE_G_PROMPT.md` §6b (the bullet). Executed here, docs-only, after the push (origin/master
+fc5e23c, the nine commits after ced24f8). Ratified as they landed: the audit's `HOOKS` list with `HOOK_STALE`, the
+converter inside `check`, the lenient bake for unlanded hooks, the verifier's stale-file fix; the three held species'
+clips come with their landing. The order of work from here: items 2 to 6 as one tooling commit — every state a hook
+reads sampled (each pose-interface getter's branched-on values, alone at rest otherwise, one clip per value that moves
+the pose; the seed naming the states in the animator's words, an unnamed state emitted as reference_<getter>_<value>
+and flagged; the Baby Dragon's reference_fly showing the beat), the clip names inside the files, the walk pin at the
+sampled values, the starting-point rule extended to fly and swim with sit / sleep offered as SPEC extras under §2.3,
+the clips embedded in each .bbmodel to the ruled round-trip tolerance with the files beside the sheet the pinned source,
+the clips keyed through the exact transcriptions' density search (catmullrom, 1 degree, 1/32 block, the closing key
+kept), one tracked copy with the folder's copies ignored by git, the six resting attack clips re-examined for the flag
+that gates them — the folder regenerated, every check PASS → the fifteen-rig slice T2d as briefed (the Crab with its
+draw fix, on the hooks already written, one refuter, the counts opening the report) → stop and report with the clip
+count per state. Nothing else runs.
+
+GATE: docs-only (no gate; nothing under src or tools moves).
