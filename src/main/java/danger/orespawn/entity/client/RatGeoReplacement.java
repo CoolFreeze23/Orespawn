@@ -11,16 +11,17 @@ import net.minecraft.util.Mth;
 import software.bernie.geckolib.animation.AnimationProcessor;
 
 /**
- * GeckoLib Rat (the hooks): {@link RatModel#poseFrom} verbatim on the rig the landing slice converts, ON THE HOOK
- * (no keyframe layer, no transcription - the self-gate stays closed until an artist delivers {@code idle} and {@code
- * walk}). The port's classic model as it is (wingspeed 1.0, folded into the literals): the THRESHOLD idiom on the
- * four legs about X - above a walking speed of a tenth {@code cos(age x 1.7) x PI x 0.25 x limbSwingAmount}, the
- * right-front and left-rear positive, the other two the negative, 0 at or below it (orig ModelRat.java:111-115);
- * the ATTACKING branch on the tail about Y (orig :116 {@code getAttacking() != 0}: {@code cos(age x 1.5) x PI
- * x 0.25} attacking, {@code cos(age x 0.4) x PI x 0.05} at rest) at 0.5 of it on the first link and 1.25 on the
- * second; and the POSITION-write idiom: the second link's pivot FOLLOWS the first 9 units along (sin, cos) of its
- * yaw (x and z only, through {@link #moveXZ}; the first link's pivot is never written - the bind, read through {@link
- * #classicPosition}). The entity is read through {@link RatPose} (the Slice 4b form).
+ * GeckoLib Rat (the hooks, landed by the fifth Tier-2 slice T2e): {@link RatModel#poseFrom} verbatim on the converted rig, ON THE HOOK (no
+ * keyframe layer, no transcription - the
+ * self-gate stays closed until an artist delivers {@code idle} and {@code walk}). The port's classic model as
+ * it is (wingspeed 1.0, folded into the literals): the THRESHOLD idiom on the four legs about X - above a walking
+ * speed of a tenth {@code cos(age x 1.7) x PI x 0.25 x limbSwingAmount}, the right-front and left-rear positive,
+ * the other two the negative, 0 at or below it (orig ModelRat.java:111-115); the ATTACKING branch on the tail
+ * about Y (orig :116 {@code getAttacking() != 0}: {@code cos(age x 1.5) x PI x 0.25} attacking, {@code cos(age
+ * x 0.4) x PI x 0.05} at rest) at 0.5 of it on the first link and 1.25 on the second; and the POSITION-write
+ * idiom: the second link's pivot FOLLOWS the first 9 units along (sin, cos) of its yaw (x and z only, through {@link
+ * #moveXZ}; the first link's pivot is never written - the bind, read through {@link #classicPosition}). The entity is
+ * read through {@link RatPose} (the Slice 4b form).
  *
  *
  * <p>Scale and shadow follow {@link RatRenderer}: 0.75 render scale and a 0.1 x 0.75 shadow (ENT-S-092).</p>

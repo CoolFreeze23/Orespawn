@@ -11,17 +11,18 @@ import net.minecraft.util.Mth;
 import software.bernie.geckolib.animation.AnimationProcessor;
 
 /**
- * GeckoLib Cave Fisher (the hooks): {@link ModelCaveFisher#poseFrom} verbatim on the converted rig, ON THE HOOK (no
- * keyframe layer, no transcription - the self-gate stays closed until an artist delivers {@code idle} and {@code walk}).
- * Wingspeed 0.62f (orig ModelCaveFisher.java:15,93 / ClientProxyOreSpawn.java:434): the GAIT-scaled idiom on
- * the thirty-six leg parts about Y - the front, middle and back pairs on {@code cos(age * 2.0f * ws - k * 1.570795f) *
- * PI * 0.12f * limbSwingAmount}, k = 0 / 1 / 2, the right side the negative (orig :551-592; no threshold) - and the
- * CLAW-SNAP LATCH (orig :593-612, the Robot2 precedent): at each falling zero-crossing of a 3.0 ws cosine the per-entity
- * {@link RenderInfo}'s {@code ri1} / {@code ri2} are re-rolled from the entity's RNG, the ranges by the ATTACKING flag
- * (20 / 25 at rest, 4 / 3 attacking), and while {@code ri1} is 1 or 3 the two claws lift on {@code |cos|} through {@link
- * #doLeftClaw} / {@link #doRightClaw} (orig :701-721, the helpers transcribed under their names), else they rest
- * at 0 / -0.54 / +0.35. The entity is read through {@link CaveFisherPose} (ENT-S-093's interface, already on the entity:
- * the render scratch, the attacking flag, the RNG).
+ * GeckoLib Cave Fisher (the hooks, landed by the fifth Tier-2 slice T2e): {@link ModelCaveFisher#poseFrom} verbatim on the converted rig, ON THE HOOK (no
+ * keyframe layer, no transcription - the self-gate
+ * stays closed until an artist delivers {@code idle} and {@code walk}). Wingspeed 0.62f (orig ModelCaveFisher.java:15,93 /
+ * ClientProxyOreSpawn.java:434): the GAIT-scaled idiom on the thirty-six leg parts about Y - the front,
+ * middle and back pairs on {@code cos(age * 2.0f * ws - k * 1.570795f) * PI * 0.12f * limbSwingAmount}, k = 0 / 1 / 2,
+ * the right side the negative (orig :551-592; no threshold) - and the CLAW-SNAP LATCH (orig :593-612, the Robot2
+ * precedent): at each falling zero-crossing of a 3.0 ws cosine the per-entity {@link RenderInfo}'s {@code ri1} / {@code
+ * ri2} are re-rolled from the entity's RNG, the ranges by the ATTACKING flag (20 / 25 at rest, 4 / 3 attacking), and
+ * while {@code ri1} is 1 or 3 the two claws lift on {@code |cos|} through {@link #doLeftClaw} / {@link #doRightClaw}
+ * (orig :701-721, the helpers transcribed under their names), else they rest at 0 / -0.54 / +0.35. The entity is
+ * read through {@link CaveFisherPose} (ENT-S-093's interface, already on the entity: the render scratch, the attacking
+ * flag, the RNG).
  *
  * <p>Scale and shadow follow {@link CaveFisherRenderer}: 0.75 render scale and a 0.35 x 0.75 shadow (ENT-S-092).</p>
  */

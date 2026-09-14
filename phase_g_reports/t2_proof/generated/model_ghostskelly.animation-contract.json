@@ -1,0 +1,19 @@
+{
+  "schema_version": 1,
+  "kind": "entity_state",
+  "controller_required": false,
+  "candidate_animation_path": "production_replacement_hook",
+  "candidate_class": "danger.orespawn.entity.client.GhostSkellyGeoReplacement",
+  "candidate_acceptance_path": "production OreSpawnGeoReplacementModel.setCustomAnimations (Tier-3 code-driven)",
+  "sample_ids": [
+    "bind",
+    "s_idle_t0",
+    "s_idle_t_quarter",
+    "s_idle_t_half",
+    "s_idle_t_three_quarter",
+    "s_idle_t_end"
+  ],
+  "entity_states": [
+    "idle"
+  ]
+}

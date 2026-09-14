@@ -23,8 +23,12 @@ public class WhaleRenderer extends MobRenderer<Whale, ModelWhale> {
     public static final ModelLayerLocation MODEL_LAYER =
             new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "whale"), "main");
 
-    /** orig RenderWhale.scale = 1.0f (third constructor argument, ClientProxyOreSpawn.java:484). */
-    private static final float SCALE = 1.0f;
+    /**
+     * orig RenderWhale.scale = 1.0f (third constructor argument, ClientProxyOreSpawn.java:484). Public since the fifth
+     * Tier-2 slice (T2e, 2026-09-15): the GeckoLib descriptor scales by this constant (the pins tool's candidate check
+     * passes a scale only through {@code <Renderer>.SCALE}; the T2d form for the Baryonyx and Cassowary).
+     */
+    public static final float SCALE = 1.0f;
     /** orig RenderLiving shadow = 0.1f * 1.0f (RenderWhale.java:23). */
     public static final float SHADOW = 0.1F * 1.0F;
 

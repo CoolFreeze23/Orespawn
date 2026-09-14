@@ -10,14 +10,15 @@ import net.minecraft.util.Mth;
 import software.bernie.geckolib.animation.AnimationProcessor;
 
 /**
- * GeckoLib Stink Bug (the hooks): {@link StinkBugModel#setupAnim} verbatim on the rig the landing slice converts, ON
- * THE HOOK (no keyframe layer, no transcription - the self-gate stays closed until an artist delivers {@code idle}
- * and {@code walk}). Wingspeed 0.75f (orig ModelStinkBug.java:13,66 / ClientProxyOreSpawn.java:453),
- * every channel a {@code Mth.sin}: the GAIT-scaled legs about X at {@code sin(age x 3.1 x ws) x PI x 0.3 x
- * limbSwingAmount} (f1 and f3 positive; f2, f4 and f6 the negative; f5 untouched; no threshold); the two antennae
- * about Z on 0.4 x ws at 0.2 x PI, mirrored; the jaw about X on 0.2 x ws at 0.04 x PI about 0.18 rad; the two horns
- * about X (0.4 / 0.46 x ws) and Y (0.43 / 0.49 x ws) at 0.15 x PI about 0.52 and -+0.3 rad; and the tail's
- * twenty-three parts about X on one 0.1 x ws sine at 0.1 x PI about -0.2 rad.
+ * GeckoLib Stink Bug (the hooks, landed by the fifth Tier-2 slice T2e): {@link StinkBugModel#setupAnim} verbatim on the converted rig, ON THE HOOK (no
+ * keyframe layer, no transcription - the
+ * self-gate stays closed until an artist delivers {@code idle} and {@code walk}). Wingspeed 0.75f
+ * (orig ModelStinkBug.java:13,66 / ClientProxyOreSpawn.java:453), every channel a {@code Mth.sin}: the
+ * GAIT-scaled legs about X at {@code sin(age x 3.1 x ws) x PI x 0.3 x limbSwingAmount} (f1 and f3 positive; f2, f4 and
+ * f6 the negative; f5 untouched; no threshold); the two antennae about Z on 0.4 x ws at 0.2 x PI, mirrored; the jaw
+ * about X on 0.2 x ws at 0.04 x PI about 0.18 rad; the two horns about X (0.4 / 0.46 x ws) and Y (0.43 / 0.49 x ws) at
+ * 0.15 x PI about 0.52 and -+0.3 rad; and the tail's twenty-three parts about X on one 0.1 x ws sine at 0.1 x PI
+ * about -0.2 rad.
  *
  * <p>Scale and shadow follow {@link StinkBugRenderer}: 0.85 render scale and a 0.35 x 0.85 shadow (0.2975, ENT-S-092).</p>
  */

@@ -4,10 +4,13 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import danger.orespawn.entity.GhostSkelly;
 import danger.orespawn.entity.pose.GhostSkellyPose;
+import java.util.function.Function;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 /**
  * BUG-041 stage 2 (2026-09-13): the 1.7.10 export sets {@code mirror = true} AFTER {@code addBox} (orig ModelGhostSkelly.java:
@@ -18,6 +21,16 @@ import net.minecraft.util.Mth;
  */
 
 public class GhostSkellyModel extends EntityModel<GhostSkelly> {
+    /**
+     * The fifth Tier-2 slice (T2e, 2026-09-15): the render-type FUNCTION the ghost skelly is drawn with -
+     * {@code RenderType::entityTranslucent}, the same factory {@link GhostSkellyRenderer#getRenderType} applies (the soft
+     * alpha edges; the 1.7.10 look) - stored on the model as {@code EntityModel(Function)} does (the
+     * {@link FairyModel#RENDER_TYPE} form, ENT-S-146) so the GeckoLib descriptor hands over this very object and the parity
+     * harness proves the two renderers' render type equal by identity. The classic path is unchanged: {@code Model.renderType}
+     * is consulted only by {@code LivingEntityRenderer.getRenderType}, which the ghost skelly renderer overrides with the same
+     * factory.
+     */
+    public static final Function<ResourceLocation, RenderType> RENDER_TYPE = RenderType::entityTranslucent;
     private final ModelPart body;
     private final ModelPart shirt;
     private final ModelPart head;
@@ -30,6 +43,7 @@ public class GhostSkellyModel extends EntityModel<GhostSkelly> {
     private final ModelPart rchains;
 
     public GhostSkellyModel(ModelPart root) {
+        super(RENDER_TYPE);
         this.body = root.getChild("body");
         this.shirt = root.getChild("shirt");
         this.head = root.getChild("head");

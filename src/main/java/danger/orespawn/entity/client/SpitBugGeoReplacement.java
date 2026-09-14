@@ -12,21 +12,22 @@ import software.bernie.geckolib.animation.AnimationProcessor;
 import software.bernie.geckolib.cache.object.GeoBone;
 
 /**
- * GeckoLib Spit Bug (the hooks): {@link SpitBugModel#poseFrom} verbatim on the rig the landing slice converts, ON THE
- * HOOK (no keyframe layer, no transcription - the self-gate stays closed until an artist delivers {@code idle}
- * and {@code walk}). Wingspeed 0.55f (orig ModelSpitBug.java:14,110 / ClientProxyOreSpawn.java:452):
- * the {@code Mth.sin} gait on the four legs - {@code sin(age x 2.0 x ws) x PI x 0.12 x
- * limbSwingAmount}, the right pair a half turn behind ({@code + PI}), the lift {@code |cos|} of the same rhythm on the
- * rising half-cycle ({@code nextangle > newangle}) - through the four leg helpers transcribed below (the same
- * names): the seven parts of a leg share the root's yaw (about -+1.2 / +-2.1 rad), the four second-link parts' pivots
- * FOLLOW the root 14 units along (cos, sin) of that yaw scaled by cos of the ROOT's pitch, the third link follows the
- * second by 14 scaled by cos of the second's pitch, and the two tips follow the third by 8 scaled by |cos| of the
- * third's pitch (the POSITION-write idiom, x and z through {@link #moveXZ}; the root's pivot and pitch are never
- * written - the bind, read through {@link #classicPosition} and {@link #classicRotX}); every
- * value the classic reads back from a part it just wrote is held in a local. The ATTACKING branch on the three
- * upper-jaw parts and the three teeth about X (orig :698 {@code getAttacking() == 0}: 0.3 x ws at 0.015 x PI at rest,
- * 2.6 x ws at 0.1 x PI attacking, folded by {@code |cos|}, the teeth about 0.26 rad). The entity is read through
- * {@link SpitBugPose} (the Slice 4b form).
+ * GeckoLib Spit Bug (the hooks, landed by the fifth Tier-2 slice T2e): {@link SpitBugModel#poseFrom} verbatim on the converted rig, ON THE HOOK (no
+ * keyframe layer, no transcription - the
+ * self-gate stays closed until an artist delivers {@code idle} and {@code walk}). Wingspeed 0.55f
+ * (orig ModelSpitBug.java:14,110 / ClientProxyOreSpawn.java:452): the {@code Mth.sin} gait on the four
+ * legs - {@code sin(age x 2.0 x ws) x PI x 0.12 x limbSwingAmount}, the right pair a half turn behind
+ * ({@code + PI}), the lift {@code |cos|} of the same rhythm on the rising half-cycle ({@code nextangle > newangle}) -
+ * through the four leg helpers transcribed below (the same names): the seven parts of a leg share the root's yaw
+ * (about -+1.2 / +-2.1 rad), the four second-link parts' pivots FOLLOW the root 14 units along (cos, sin) of that yaw
+ * scaled by cos of the ROOT's pitch, the third link follows the second by 14 scaled by cos of the second's pitch, and
+ * the two tips follow the third by 8 scaled by |cos| of the third's pitch (the POSITION-write idiom, x and z
+ * through {@link #moveXZ}; the root's pivot and pitch are never written - the bind, read through {@link
+ * #classicPosition} and {@link #classicRotX}); every value the classic reads back from a part it
+ * just wrote is held in a local. The ATTACKING branch on the three upper-jaw parts and the three teeth about X (orig
+ * :698 {@code getAttacking() == 0}: 0.3 x ws at 0.015 x PI at rest, 2.6 x ws at 0.1 x PI attacking, folded by {@code
+ * |cos|}, the teeth about 0.26 rad). The entity is read through {@link SpitBugPose} (the Slice 4b form).
+ *
  *
  * <p>Scale and shadow follow {@link SpitBugRenderer}: 0.75 render scale and a 0.55 x 0.75 shadow (ENT-S-092).</p>
  */

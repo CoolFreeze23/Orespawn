@@ -11,15 +11,16 @@ import net.minecraft.util.Mth;
 import software.bernie.geckolib.animation.AnimationProcessor;
 
 /**
- * GeckoLib Mantis (the hook survey): {@link MantisModel#poseFrom} verbatim on the converted rig, ON THE HOOK
- * (no keyframe layer, no transcription - the self-gate stays closed until an artist delivers {@code idle} and
- * {@code walk}). Wingspeed 2.0f (orig ModelMantis.java:14,53 / ClientProxyOreSpawn.java:488): the four wings about Z at
- * 0.9 ws - the front pair {@code PI * 0.25} around -+0.698, the rear pair {@code PI * 0.35} around -+0.349, mirrored;
- * and the ATTACKING-branch forearms - at rest {@code cos(age * 0.051 ws) * PI * 0.013} around a1 = -0.2, attacking
- * {@code cos(age * 0.51 ws) * PI * 0.25} around a1 = -0.698 - folded down each three-part arm as pitch (a1 + angle,
- * -a1 - angle, a1 + angle; the right arm's angle the negative) with a POSITION follow through {@link #moveTo}:
- * the second part 22 units along the first's pitch from one unit ahead, the third 17 units back along the second's.
- * The entity is read through {@link MantisPose}.
+ * GeckoLib Mantis (the hook survey, landed by the fifth Tier-2 slice T2e): {@link MantisModel#poseFrom} verbatim on the converted rig, ON THE HOOK
+ * (no keyframe layer, no transcription - the
+ * self-gate stays closed until an artist delivers {@code idle} and {@code walk}). Wingspeed 2.0f (orig
+ * ModelMantis.java:14,53 / ClientProxyOreSpawn.java:488): the four wings about Z at 0.9 ws - the front pair {@code PI *
+ * 0.25} around -+0.698, the rear pair {@code PI * 0.35} around -+0.349, mirrored; and the ATTACKING-branch forearms -
+ * at rest {@code cos(age * 0.051 ws) * PI * 0.013} around a1 = -0.2, attacking {@code cos(age * 0.51 ws) * PI * 0.25}
+ * around a1 = -0.698 - folded down each three-part arm as pitch (a1 + angle, -a1 - angle, a1 + angle; the right arm's
+ * angle the negative) with a POSITION follow through {@link #moveTo}: the second part 22 units along the first's
+ * pitch from one unit ahead, the third 17 units back along the second's. The entity is read through {@link
+ * MantisPose}.
  *
  * <p>Scale and shadow follow {@link MantisRenderer}: 1.1 render scale and a 0.9 x 1.1 shadow (ENT-S-092).</p>
  */

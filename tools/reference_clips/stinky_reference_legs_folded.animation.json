@@ -1,7 +1,7 @@
 {
   "format_version": "1.8.0",
   "animations": {
-    "reference_activity_2": {
+    "reference_legs_folded": {
       "loop": true,
       "animation_length": 0.05,
       "bones": {

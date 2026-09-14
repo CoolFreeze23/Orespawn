@@ -10,16 +10,17 @@ import net.minecraft.util.Mth;
 import software.bernie.geckolib.animation.AnimationProcessor;
 
 /**
- * GeckoLib Pointysaurus (the hooks): {@link ModelPointysaurus#poseFrom} verbatim on the converted rig, ON THE HOOK (no
- * keyframe layer, no transcription - the self-gate stays closed until an artist delivers {@code idle} and {@code
- * walk}; the landing slice adds the geo, the wiring and the proofs). Wingspeed 1.0f (the port's model field): the
- * THRESHOLD idiom on the four legs' pitch - above a walking speed of a tenth ({@code (double)
- * limbSwingAmount > 0.1}) {@code cos(age x 1.3 ws) x PI x 0.25 x amount}, the diagonal pairs opposed, 0 at or below
- * it; the HEAD-LOOK idiom (yaw and pitch {@code toRadians x 0.45} on the head, the nose, the three horns (the side
- * horns -+0.14 yaw / -0.16 pitch), the guard and the sixteen bumps at the guard's -0.262 pitch); and the ATTACKING
- * branch on the tail's yaw ({@code getAttacking() != 0}: a 1.3 ws cosine x PI x 0.25, else 0.3 ws x PI x 0.05)
- * over its 0.02 ws pitch sway around 0.28 rad. The entity is read through {@link PointysaurusPose} (the Slice 4b
- * doctrine).
+ * GeckoLib Pointysaurus (the hooks, landed by the fifth Tier-2 slice T2e): {@link ModelPointysaurus#poseFrom} verbatim on the converted rig, ON THE HOOK
+ * (no keyframe layer, no transcription - the
+ * self-gate stays closed until an artist delivers {@code idle} and {@code walk}; the geo, the wiring and the
+ * proofs landed with T2e). Wingspeed 1.0f (the port's model field): the THRESHOLD idiom on the four legs'
+ * pitch - above a walking speed of a tenth ({@code (double) limbSwingAmount > 0.1}) {@code cos(age x 1.3
+ * ws) x PI x 0.25 x amount}, the diagonal pairs opposed, 0 at or below it; the HEAD-LOOK idiom (yaw and pitch {@code
+ * toRadians x 0.45} on the head, the nose, the three horns (the side horns -+0.14 yaw / -0.16 pitch), the guard and
+ * the sixteen bumps at the guard's -0.262 pitch); and the ATTACKING branch on the tail's yaw ({@code
+ * getAttacking() != 0}: a 1.3 ws cosine x PI x 0.25, else 0.3 ws x PI x 0.05) over its 0.02 ws pitch sway around
+ * 0.28 rad. The entity is read through {@link PointysaurusPose} (the Slice 4b doctrine).
+ *
  *
  * <p>Shadow follows {@link PointysaurusRenderer}'s constructor ({@code super(context, model, 1.0f)}: the literal it
  * passes - no SHADOW constant); its private {@code SCALE} is 1.0 (identity, applied around {@code super.render}), so

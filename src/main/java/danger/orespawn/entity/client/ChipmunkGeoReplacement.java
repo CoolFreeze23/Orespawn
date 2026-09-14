@@ -11,16 +11,17 @@ import net.minecraft.util.Mth;
 import software.bernie.geckolib.animation.AnimationProcessor;
 
 /**
- * GeckoLib Chipmunk (the hooks): {@link ModelChipmunk#poseFrom} verbatim on the converted rig, ON THE HOOK (no
- * keyframe layer, no transcription - the self-gate stays closed until an artist delivers {@code idle} and {@code walk}).
- * ANIM_SPEED 1.0f (ModelChipmunk.java:20; orig ModelChipmunk.java: 15,36 wingspeed 1.0f from ClientProxyOreSpawn.java:448):
- * the THRESHOLD idiom on the four legs about X - above a walking speed of a tenth {@code cos(age * 2.3f) * PI * 0.25f *
- * limbSwingAmount}, 0 at or below it (orig :204-211); the HEAD-LOOK idiom about Y at 0.45 of {@code toRadians(netHeadYaw)}
- * on the nine head parts (orig :160-167; no clamp, no pitch); the SITTING branch (orig :168-173, read through {@link
- * ChipmunkPose}): while not sitting the tail pitches on a 0.25 cosine around 0.306 rad plus a gait-scaled 1.3 cosine,
- * the second segment 0.306 rad further; and the two hat parts hidden every frame (through {@link #setVisible}). While
- * sitting the classic leaves the tail's pitch where the last frame left it (a singleton-model latch); the hook leaves
- * the two bones at bind.
+ * GeckoLib Chipmunk (the hooks, landed by the fifth Tier-2 slice T2e): {@link ModelChipmunk#poseFrom} verbatim on the converted rig, ON THE HOOK (no
+ * keyframe layer, no transcription - the
+ * self-gate stays closed until an artist delivers {@code idle} and {@code walk}). ANIM_SPEED 1.0f (ModelChipmunk.java:20;
+ * orig ModelChipmunk.java: 15,36 wingspeed 1.0f from ClientProxyOreSpawn.java:448): the THRESHOLD idiom on the four legs
+ * about X - above a walking speed of a tenth {@code cos(age * 2.3f) * PI * 0.25f * limbSwingAmount}, 0 at or below it
+ * (orig :204-211); the HEAD-LOOK idiom about Y at 0.45 of {@code toRadians(netHeadYaw)} on the nine head parts (orig
+ * :160-167; no clamp, no pitch); the SITTING branch (orig :168-173, read through {@link ChipmunkPose}): while not
+ * sitting the tail pitches on a 0.25 cosine around 0.306 rad plus a gait-scaled 1.3 cosine, the second segment 0.306 rad
+ * further; and the two hat parts hidden every frame (through {@link #setVisible}). While sitting the classic leaves the
+ * tail's pitch where the last frame left it (a singleton-model latch); the hook leaves the two bones at bind.
+ *
  *
  * <p>Scale and shadow follow {@link ChipmunkRenderer}: 0.9 render scale, halved for a baby, and a 0.15 x 0.9 shadow
  * (ENT-S-092).</p>

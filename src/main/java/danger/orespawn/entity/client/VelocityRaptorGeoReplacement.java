@@ -11,18 +11,20 @@ import net.minecraft.util.Mth;
 import software.bernie.geckolib.animation.AnimationProcessor;
 
 /**
- * GeckoLib Velocity Raptor (the hooks): {@link VelocityRaptorModel#poseFrom} verbatim on the rig the landing
- * slice converts, ON THE HOOK (no keyframe layer, no transcription - the self-gate stays closed until an artist
- * delivers {@code idle} and {@code walk}). Wingspeed 1.25f (orig ModelVelocityRaptor.java:15,52 /
- * ClientProxyOreSpawn.java:423): the THRESHOLD idiom on the eight leg parts about X - above a walking speed of a
- * tenth {@code cos(age x 1.3 x ws) x PI x 0.25 x limbSwingAmount} (the left positive, the right the negative)
- * about 0 / 0.488 / 0 / 0.628 rad, 0 at or below it; the HEALTH-FREQUENCY idiom {@code hf = getHealth() /
- * getMaxHealth()} scaling both the rate and the amplitude of the four head feathers' yaw ({@code cos(age x 1.25 x
- * ws x hf) x PI x 0.1 x hf}, alternating) and of the four tail feathers' roll ({@code cos(age x 1.4 x
- * ws x hf) x PI x 0.25 x hf}, alternating, stilled by the SITTING check, orig :298); the two arm feathers and the
- * six fingers about X on a bare 0.3 cosine at 0.05 x PI about their rests, the fingers about Y on 1.3 x ws at 0.1 x
- * PI, alternating. The entity is read through {@link VelocityRaptorPose} (the Slice 4b form). Ten feathers are
- * zero-thickness cubes (ENT-S-161; the classic face order required below).
+ * GeckoLib Velocity Raptor (the hooks, landed by the fifth Tier-2 slice T2e): {@link VelocityRaptorModel#poseFrom} verbatim on the converted rig, ON THE HOOK
+ * (no keyframe layer, no transcription
+ * - the self-gate stays closed until an artist delivers {@code idle} and {@code walk}).
+ * Wingspeed 1.25f (orig ModelVelocityRaptor.java:15,52 / ClientProxyOreSpawn.java:423): the THRESHOLD idiom on the
+ * eight leg parts about X - above a walking speed of a tenth {@code cos(age x 1.3 x ws) x PI x 0.25 x
+ * limbSwingAmount} (the left positive, the right the negative) about 0 / 0.488 / 0 / 0.628 rad, 0 at or below
+ * it; the HEALTH-FREQUENCY idiom {@code hf = getHealth() / getMaxHealth()} scaling both the rate and the
+ * amplitude of the four head feathers' yaw ({@code cos(age x 1.25 x ws x hf) x PI x 0.1 x hf}, alternating) and of
+ * the four tail feathers' roll ({@code cos(age x 1.4 x ws x hf) x PI x 0.25 x hf}, alternating,
+ * stilled by the SITTING check, orig :298); the two arm feathers and the six fingers about X on a bare 0.3 cosine at
+ * 0.05 x PI about their rests, the fingers about Y on 1.3 x ws at 0.1 x PI, alternating. The entity is read through
+ * {@link VelocityRaptorPose} (the Slice 4b form). Fourteen feathers - the four head feathers, the six fingers and the
+ * four tail feathers, every one written each frame - are zero-thickness cubes (ENT-S-161; the classic face order
+ * required below; the shipped geo's count, T2e).
  *
  * <p>Scale and shadow follow {@link VelocityRaptorRenderer}: 0.75 render scale, halved for a baby, and a 0.55 x 0.75
  * shadow (ENT-S-092).</p>
@@ -48,8 +50,8 @@ public final class VelocityRaptorGeoReplacement extends OreSpawnGeoReplacement<V
         }
 
         /**
-         * A rig with zero-thickness cubes (the ten feathers, 0 x 1 x 3 and 0 x 1 x 2): the shipped geo carries the
-         * classic within-cube face order ({@link FaceOrder#KEY}; TEST-007) and the seam expects it.
+         * A rig with zero-thickness cubes (the fourteen feathers hf1-4 / lff1-3 / rff1-3 / tf1-4, 0 x 1 x 3 and hf1 0 x 1 x 2):
+         * the shipped geo carries the classic within-cube face order ({@link FaceOrder#KEY}; TEST-007) and the seam expects it.
          */
         @Override
         public boolean cubeFaceOrderRequired() {

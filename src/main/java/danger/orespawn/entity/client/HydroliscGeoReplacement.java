@@ -11,16 +11,17 @@ import net.minecraft.util.Mth;
 import software.bernie.geckolib.animation.AnimationProcessor;
 
 /**
- * GeckoLib Hydrolisc (the hook survey): {@link HydroliscModel#poseFrom} verbatim on the converted rig, ON THE HOOK
- * (no keyframe layer, no transcription - the self-gate stays closed until an artist delivers {@code idle} and {@code
- * walk}). Wingspeed 0.65f (orig ModelHydrolisc.java:14,57 / ClientProxyOreSpawn.java:422): the THRESHOLD idiom on the
- * four six-part legs' pitch - above a walking speed of a tenth {@code cos(age * 1.3 ws) * PI * 0.25 *
- * limbSwingAmount} around each part's rest offset (0 / -0.488 / -2.347 / -0.628 / -0.628 / +0.174), the front left
- * and rear right positive, the other two the negative, 0 at or below it; the SITTING-stilled tail sway
- * ({@code cos(age * 1.0 ws) * PI * 0.15}, or 0 when the entity sits) folded down three rings as 0.25 / 0.5 / 0.75 of the
- * yaw with a POSITION follow through {@link #moveTo} (5 and 8 units along cos / sin); and the HEALTH-FREQUENCY idiom on
- * the three feathers: {@code hf = health / maxHealth} scales the 1.25 ws and 0.75 ws rhythms' frequency and their
- * {@code PI * 0.2} amplitude, the outer pair around +-0.9 rad. The entity is read through {@link HydroliscPose}.
+ * GeckoLib Hydrolisc (the hook survey, landed by the fifth Tier-2 slice T2e): {@link HydroliscModel#poseFrom} verbatim on the converted rig, ON THE
+ * HOOK (no keyframe layer, no transcription - the
+ * self-gate stays closed until an artist delivers {@code idle} and {@code walk}). Wingspeed 0.65f (orig
+ * ModelHydrolisc.java:14,57 / ClientProxyOreSpawn.java:422): the THRESHOLD idiom on the four six-part legs' pitch -
+ * above a walking speed of a tenth {@code cos(age * 1.3 ws) * PI * 0.25 * limbSwingAmount} around each part's rest
+ * offset (0 / -0.488 / -2.347 / -0.628 / -0.628 / +0.174), the front left and rear right positive, the other two the
+ * negative, 0 at or below it; the SITTING-stilled tail sway ({@code cos(age * 1.0 ws) * PI * 0.15}, or 0
+ * when the entity sits) folded down three rings as 0.25 / 0.5 / 0.75 of the yaw with a POSITION follow through {@link
+ * #moveTo} (5 and 8 units along cos / sin); and the HEALTH-FREQUENCY idiom on the three feathers: {@code hf = health /
+ * maxHealth} scales the 1.25 ws and 0.75 ws rhythms' frequency and their {@code PI * 0.2} amplitude, the outer
+ * pair around +-0.9 rad. The entity is read through {@link HydroliscPose}.
  *
  * <p>Scale and shadow follow {@link HydroliscRenderer}: 0.65 render scale, halved for a baby, and a 0.65 x 0.65 shadow
  * (ENT-S-092).</p>

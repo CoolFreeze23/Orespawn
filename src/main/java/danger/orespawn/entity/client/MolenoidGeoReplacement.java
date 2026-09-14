@@ -10,18 +10,19 @@ import net.minecraft.util.Mth;
 import software.bernie.geckolib.animation.AnimationProcessor;
 
 /**
- * GeckoLib Molenoid (the hooks): {@link MolenoidModel#poseFrom} verbatim on the rig the landing slice converts, ON
- * THE HOOK (no keyframe layer, no transcription - the self-gate stays closed until an artist delivers {@code idle}
- * and {@code walk}). Wingspeed 0.5f (orig ModelMolenoid.java:14,54 / ClientProxyOreSpawn.java:495):
- * the ATTACKING branch over the THRESHOLD idiom on the arms (orig :286 {@code getAttacking() != 0}: {@code cos(age x
- * 1.7 x ws) x PI x 0.25} attacking, else above a walking speed of a tenth {@code cos(age x 1.3 x ws) x PI x 0.25
- * x limbSwingAmount}, else 0), the threshold gait alone on the legs (the negative); each limb a three-link yaw chain
- * (the upper link about its rest +-0.628 rad, the hand / foot at 1.25 of the angle, the four claws / toes at 1.5 about
- * -+0.174 / -+0.261) whose POSITION-write idiom carries the hand 15 units along (cos, -sin) of the upper link's
- * yaw and the claws 10 units along the hand's (x and z only, through {@link #moveXZ}; the upper links' pivots
- * are never written - the bind, read through {@link #classicPosition}); every value the
- * classic reads back from a part it just wrote is held in a local. The six nose stars spin about Z on {@code cos(age
- * x 0.1 x ws) x PI} at 0.523-rad steps. The entity is read through {@link MolenoidPose} (the Slice 4b form).
+ * GeckoLib Molenoid (the hooks, landed by the fifth Tier-2 slice T2e): {@link MolenoidModel#poseFrom} verbatim on the converted rig, ON THE HOOK (no
+ * keyframe layer, no transcription - the
+ * self-gate stays closed until an artist delivers {@code idle} and {@code walk}). Wingspeed 0.5f
+ * (orig ModelMolenoid.java:14,54 / ClientProxyOreSpawn.java:495): the ATTACKING branch over the
+ * THRESHOLD idiom on the arms (orig :286 {@code getAttacking() != 0}: {@code cos(age x 1.7 x ws) x PI x 0.25}
+ * attacking, else above a walking speed of a tenth {@code cos(age x 1.3 x ws) x PI x 0.25 x limbSwingAmount},
+ * else 0), the threshold gait alone on the legs (the negative); each limb a three-link yaw chain (the upper link about
+ * its rest +-0.628 rad, the hand / foot at 1.25 of the angle, the four claws / toes at 1.5 about -+0.174 / -+0.261)
+ * whose POSITION-write idiom carries the hand 15 units along (cos, -sin) of the upper link's yaw and the claws 10
+ * units along the hand's (x and z only, through {@link #moveXZ}; the upper links' pivots are never written - the
+ * bind, read through {@link #classicPosition}); every value the classic reads back from a
+ * part it just wrote is held in a local. The six nose stars spin about Z on {@code cos(age x 0.1 x ws) x PI} at
+ * 0.523-rad steps. The entity is read through {@link MolenoidPose} (the Slice 4b form).
  *
  *
  * <p>Shadow follows {@link MolenoidRenderer}: a 1.0 x 1.0 shadow (ENT-S-092); the classic renderer scales by 1.0 with no

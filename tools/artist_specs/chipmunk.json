@@ -1,9 +1,9 @@
 {
   "registry": "chipmunk",
   "display_name": "Chipmunk",
-  "status": "DRAFT — authored by a first pass from the entity code, 2026-09-13; edit pending",
+  "status": "DRAFT — authored by a first pass from the entity code, 2026-09-13; edit pending, landed on its hook by the fifth Tier-2 slice (T2e, 2026-09-15)",
   "locomotion": "walker",
-  "artist_scope": "full contract (Tier 2, the state-branching class (a sitting branch freezes the tail): geckolib_migration_design.md section 5); the rig is not yet in-game (it lands through the seam in a later slice)",
+  "artist_scope": "full contract (Tier 2, the state-branching class (a sitting branch freezes the tail): geckolib_migration_design.md section 5); ON THE HOOK until idle and walk are delivered: in-game through the seam behind the dev switch since the fifth Tier-2 slice (T2e, 2026-09-15)",
   "character_sheet": "A tiny chipmunk: a body and a body-tail block, a neck, a head with a nose, two cheeks, a mouth and two ears, two hidden hat pieces, four legs and a two-segment tail (ModelChipmunk.java:42-59; 18 parts on a 64x32 sheet, drawn at 0.9 and half that as a baby). It is a skittish pet from the cannon-fodder family (Chipmunk.java:45-47): 5 HP, speed 0.38, an unused 1-damage attribute (:82-87) - it never strikes. An apple tames it one time in two (:131-155), a dead bush releases it (:157-172), a name tag names it, a click sits it (:184-189); a carrot, potato or quinoa gives it a team hat and activates it (EntityCannonFodder.java:83-136). It floats (:65), breeds (:66), follows its owner (:67), runs from monsters and players (:68, :73), panics (:72), watches players and mobs (:74-75), wanders (:76), shelters indoors (:79), heals slowly (:107-109) and now and then digs the dirt or farmland out from under itself (:111-118). It spawns above y 50 with at most two others near (:227-232). Read it as a nervous rodent: a quick scamper, the head swivelling with the look, the tail wagging - frozen mid-wag when it sits.",
   "size_notes": "Drawn at x0.9 of the rig, x0.45 as a baby (ChipmunkRenderer.java:26, 39-43) on a 64x32 sheet (ModelChipmunk.java:156); the hitbox is 0.35 x 0.35 (ModEntities.java:353-354; the AMBIENT category); shadow 0.15 x 0.9 (ChipmunkRenderer.java:28). The two hat pieces are hidden by the model (visible = false, ModelChipmunk.java:187-188).",
   "labels": {
@@ -135,6 +135,9 @@
     "in `walk`: a bounding scamper - the legs are four rigid blocks swinging 45 deg (:164-167); a hop of the body block with each stride reads as a chipmunk",
     "in `hurt`: a startled jump straight up before the panic run (Chipmunk.java:72)",
     "the hat pieces are hidden by the model (:187-188): key nothing on hat1 / hat2"
+  ],
+  "formulas": [
+    "`ModelChipmunk.poseFrom` (ModelChipmunk.java:168-197; orig ModelChipmunk.java:155-172 in `render` (func_78088_a, :149-196; func_78087_a at :204-206 is a bare super call), wingspeed 1.0 from `new ModelChipmunk(1.0f)` in orig ClientProxyOreSpawn.java:448 - the port's ANIM_SPEED): while the walking speed is above a tenth the leg angle is the cosine of the age in ticks times 2.3 times the speed, times pi, times 0.25, times the walking speed, else 0; legs 1 and 3 pitch by it and legs 2 and 4 by its negative. The nose, head, two ears, under-mouth, two cheeks and two hat parts yaw by the look yaw in radians times 0.45. While not sitting the first tail segment pitches by 0.306 plus the cosine of the age times 0.25, times pi, times 0.06, plus the cosine of the age times 1.3 times the speed, times pi, times 0.25, times the walking speed, and the second segment by 0.306 more; while sitting the tail is left where the last frame put it (the hook leaves it at the bind). The two hat parts are hidden every frame. The walk position and the head pitch play no part. The GeckoLib hook is the same (ChipmunkGeoReplacement.applyCustomAnimations)."
   ],
   "effort_hours": null,
   "reference_states": {

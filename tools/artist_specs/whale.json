@@ -1,11 +1,11 @@
 {
   "registry": "whale",
   "display_name": "Whale",
-  "status": "DRAFT — authored by a first pass from the entity code, 2026-09-13; edit pending",
+  "status": "DRAFT — authored by a first pass from the entity code, 2026-09-13; edit pending, landed on its hook by the fifth Tier-2 slice (T2e, 2026-09-15)",
   "locomotion": "swimmer",
-  "artist_scope": "full contract (Tier 2, the gait-scaled class: geckolib_migration_design.md section 5); the rig is not yet in-game (it lands through the seam in a later slice)",
+  "artist_scope": "full contract (Tier 2, the gait-scaled class: geckolib_migration_design.md section 5); ON THE HOOK until idle and walk are delivered: in-game through the seam behind the dev switch since the fifth Tier-2 slice (T2e, 2026-09-15)",
   "character_sheet": "A passive whale: a 20x12x52 body with a belly slab and a back ridge, a 16x8x22 head with a hinged lower jaw plate, a small dorsal fin, two flippers of a root and a 22-long blade, and a tail of two pieces ending in a pair of flukes (ModelWhale.java:56-124, fourteen parts). 100 HP, speed 0.35, no attack (Whale.java:69-74). It drifts with the current (pushed by fluid, :120-123), is tempted by cod (:62), panics when hurt (:63), breeds on a crystal apple (:61, :239-242) and, stranded, scans up to ten blocks for water and heads there at 1.0, drying out 4 HP at a time when none is found (:134-159); in water it splashes and heals (:161-165). Every 250-500 ticks it blows: a 25-50-tick spout of bubble and splash particles above its back (:46-47, :80-113). It spawns in daylight above y 50 on a 1-in-50 roll with no other whale within 32 (:203-211; ModEntities.java:414-415). Read it as a whale: a slow flipper beat, the tail flukes pumping up and down with a lag along the chain, the jaw barely breathing.",
-  "size_notes": "Drawn at x1.0 of the rig, x0.5 as a baby (WhaleRenderer.java:27, :39-43; shadow 0.1, :29) on a 256x256 sheet (ModelWhale.java:126), whale.png (WhaleRenderer.java:21); the hitbox is 1.5 x 2.5 (ModEntities.java:414-415). The tail is a position chain: the code places the second piece 14 px along the first and the flukes 8 px along the second each tick (ModelWhale.java:152-156) - key the joints, not the positions.",
+  "size_notes": "Drawn at x1.0 of the rig, x0.5 as a baby (WhaleRenderer.java:31, :43-47; shadow 0.1, :29) on a 256x256 sheet (ModelWhale.java:126), whale.png (WhaleRenderer.java:21); the hitbox is 1.5 x 2.5 (ModEntities.java:414-415). The tail is a position chain: the code places the second piece 14 px along the first and the flukes 8 px along the second each tick (ModelWhale.java:152-156) - key the joints, not the positions.",
   "labels": {
     "body": "body (the 20x12x52 barrel; static)",
     "belly": "belly slab (12x2x32 under the body; static)",
@@ -115,6 +115,9 @@
     "in `idle`: the slow waft the code has (:134, :146) plus a rise and fall of the whole body, as a whale hangs at the surface",
     "in `spout`: an arch of the back and a lift of the flukes timed to the 25-50-tick particle spout (Whale.java:84-87)",
     "in `walk` (the stranded crawl, Whale.java:134-159): a heave with the flippers rather than the swim beat"
+  ],
+  "formulas": [
+    "`ModelWhale.setupAnim` (ModelWhale.java:130-157; orig ModelWhale.java:120-135 in `render` (func_78088_a, :117-150; func_78087_a at :158-160 is a bare super call); no wingspeed - `new ModelWhale()` in orig ClientProxyOreSpawn.java:484): the fin angle is the cosine of the age in ticks times 0.3, times pi, times 0.2, times the walking speed while the walking speed is above a tenth, else the cosine of the age times 0.08, times pi, times 0.05; the left outer fin rolls by 0.436 plus it and the left inner fin by half of that, the right outer fin by -0.436 minus it and the right inner fin by half of that. The jaw pitches by 0.087 plus the cosine of the age times 0.03, times pi, times 0.02. The tail angle is the cosine of the age times 0.4, times pi, times 0.16, times the walking speed above the threshold, else the cosine of the age times 0.05, times pi, times 0.03; the first tail link pitches by half of it, the second by 1.25 of it and both flukes by 2.25 of it; the second link is placed 14 units along the cosine of the first link's pitch in z and 14 units back along its sine in y from the first link's bind pivot, and the two flukes 8 units along the second link's pitch the same way from the second link. The head angles and the entity's state play no part. The GeckoLib hook is the same (WhaleGeoReplacement.applyCustomAnimations)."
   ],
   "effort_hours": null
 }

@@ -156,6 +156,7 @@
   ],
   "effort_hours": null,
   "reference_states": {
-    "sit": {"isInSittingPose": true}
+    "sit": {"isInSittingPose": true},
+    "legs_folded": {"getActivity": 2}
   }
 }

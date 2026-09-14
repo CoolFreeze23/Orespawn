@@ -11,19 +11,20 @@ import net.minecraft.util.Mth;
 import software.bernie.geckolib.animation.AnimationProcessor;
 
 /**
- * GeckoLib Lizard (the hook survey): {@link LizardModel#poseFrom} verbatim on the converted rig, ON THE HOOK
- * (no keyframe layer, no transcription - the self-gate stays closed until an artist delivers {@code idle} and
- * {@code walk}). Wingspeed 0.65f (orig ModelLizard.java:15,89 / ClientProxyOreSpawn.java:445): the THRESHOLD gait on the
- * twenty leg, foot and toe parts ({@code cos(age * 1.0 ws) * PI * 0.25 * limbSwingAmount} above a walking speed of
- * a tenth, the front pair positive, the rear pair the negative, the lower legs about X and the rest about Y); the
- * ATTACKING-branch lower jaw ({@code 0.52 + cos(age * 0.45) * 0.35} attacking, 0.25 at rest, copied to its six teeth) and
- * the ATTACKING-branch tail rhythm ({@code 0.25 ws x PI x 0.05} at rest, {@code 1.25 ws x PI x 0.35} attacking) folded
- * down five rings as 0.25 / 0.5 / 0.75 / 1.0 / 1.25 of the yaw with a POSITION follow through {@link #moveTo}
- * (12 / 9 / 7 / 7 units along cos / sin); and the HEAD-LOOK idiom: the neck yaws a quarter of {@code
- * toRadians(netHeadYaw)}, the upper jaw and its eighteen followers (noses, eyes at +-0.78, teeth, hat) a half, their
- * pivots FOLLOWING the neck by 2 units, the lower jaw and its six teeth a half following by 3 units. The entity is read
- * through {@link LizardPose}. The eight fins are zero-thickness cubes (the seam draws every cube with its true
- * transformed normal, ENT-S-161, and its two coplanar faces in the classic order - below).
+ * GeckoLib Lizard (the hook survey, landed by the fifth Tier-2 slice T2e): {@link LizardModel#poseFrom} verbatim on the converted rig, ON THE HOOK
+ * (no keyframe layer, no transcription - the
+ * self-gate stays closed until an artist delivers {@code idle} and {@code walk}). Wingspeed 0.65f (orig
+ * ModelLizard.java:15,89 / ClientProxyOreSpawn.java:445): the THRESHOLD gait on the twenty leg, foot and toe parts
+ * ({@code cos(age * 1.0 ws) * PI * 0.25 * limbSwingAmount} above a walking speed of a tenth, the front pair
+ * positive, the rear pair the negative, the lower legs about X and the rest about Y); the ATTACKING-branch lower jaw
+ * ({@code 0.52 + cos(age * 0.45) * 0.35} attacking, 0.25 at rest, copied to its six teeth) and the ATTACKING-branch tail
+ * rhythm ({@code 0.25 ws x PI x 0.05} at rest, {@code 1.25 ws x PI x 0.35} attacking) folded down five rings as 0.25 /
+ * 0.5 / 0.75 / 1.0 / 1.25 of the yaw with a POSITION follow through {@link #moveTo} (12 / 9 / 7 / 7 units along
+ * cos / sin); and the HEAD-LOOK idiom: the neck yaws a quarter of {@code toRadians(netHeadYaw)}, the upper
+ * jaw and its eighteen followers (noses, eyes at +-0.78, teeth, hat) a half, their pivots FOLLOWING the neck by 2
+ * units, the lower jaw and its six teeth a half following by 3 units. The entity is read through {@link LizardPose}. The
+ * eight fins are zero-thickness cubes (the seam draws every cube with its true transformed normal, ENT-S-161, and
+ * its two coplanar faces in the classic order - below).
  *
  * <p>Scale and shadow follow {@link LizardRenderer}: 1.0 render scale, halved for a baby, and a 0.75 x 1.0 shadow
  * (ENT-S-092).</p>

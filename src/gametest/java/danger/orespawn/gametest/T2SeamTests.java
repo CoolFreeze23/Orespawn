@@ -21,6 +21,10 @@ import danger.orespawn.entity.client.CannonFodderGeoReplacement;
 import danger.orespawn.entity.client.CassowaryGeoReplacement;
 import danger.orespawn.entity.client.CaterKillerGeoReplacement;
 import danger.orespawn.entity.client.CaterKillerRenderer;
+import danger.orespawn.entity.client.CaveFisherGeoReplacement;
+import danger.orespawn.entity.client.CaveFisherRenderer;
+import danger.orespawn.entity.client.ChipmunkGeoReplacement;
+import danger.orespawn.entity.client.ChipmunkRenderer;
 import danger.orespawn.entity.client.CliffRacerGeoReplacement;
 import danger.orespawn.entity.client.CliffRacerRenderer;
 import danger.orespawn.entity.client.CloudSharkGeoReplacement;
@@ -47,38 +51,62 @@ import danger.orespawn.entity.client.FlounderGeoReplacement;
 import danger.orespawn.entity.client.FlounderRenderer;
 import danger.orespawn.entity.client.GammaMetroidGeoReplacement;
 import danger.orespawn.entity.client.GammaMetroidRenderer;
+import danger.orespawn.entity.client.GhostSkellyGeoReplacement;
+import danger.orespawn.entity.client.GhostSkellyRenderer;
 import danger.orespawn.entity.client.GoldFishGeoReplacement;
 import danger.orespawn.entity.client.GoldFishRenderer;
 import danger.orespawn.entity.client.HerculesBeetleGeoReplacement;
 import danger.orespawn.entity.client.HerculesBeetleRenderer;
+import danger.orespawn.entity.client.HydroliscGeoReplacement;
+import danger.orespawn.entity.client.HydroliscRenderer;
 import danger.orespawn.entity.client.IrukandjiGeoReplacement;
 import danger.orespawn.entity.client.IrukandjiRenderer;
 import danger.orespawn.entity.client.KyuubiGeoReplacement;
 import danger.orespawn.entity.client.KyuubiRenderer;
 import danger.orespawn.entity.client.LeafMonsterGeoReplacement;
 import danger.orespawn.entity.client.LeafMonsterRenderer;
+import danger.orespawn.entity.client.LizardGeoReplacement;
+import danger.orespawn.entity.client.LizardRenderer;
+import danger.orespawn.entity.client.MantisGeoReplacement;
+import danger.orespawn.entity.client.MantisRenderer;
+import danger.orespawn.entity.client.MolenoidGeoReplacement;
+import danger.orespawn.entity.client.MolenoidRenderer;
 import danger.orespawn.entity.client.MosquitoGeoReplacement;
 import danger.orespawn.entity.client.MosquitoRenderer;
 import danger.orespawn.entity.client.OreSpawnGeoReplacement;
 import danger.orespawn.entity.client.OreSpawnGeoReplacementModel;
+import danger.orespawn.entity.client.PointysaurusGeoReplacement;
 import danger.orespawn.entity.client.PoseInputs;
 import danger.orespawn.entity.client.RainbowAntGeoReplacement;
 import danger.orespawn.entity.client.RainbowAntRenderer;
+import danger.orespawn.entity.client.RatGeoReplacement;
+import danger.orespawn.entity.client.RatRenderer;
 import danger.orespawn.entity.client.RedAntGeoReplacement;
 import danger.orespawn.entity.client.RedAntRenderer;
+import danger.orespawn.entity.client.RenderInfo;
 import danger.orespawn.entity.client.RubberDuckyGeoReplacement;
 import danger.orespawn.entity.client.RubberDuckyRenderer;
 import danger.orespawn.entity.client.RubyBirdGeoReplacement;
 import danger.orespawn.entity.client.SkateGeoReplacement;
 import danger.orespawn.entity.client.SkateRenderer;
+import danger.orespawn.entity.client.SpitBugGeoReplacement;
+import danger.orespawn.entity.client.SpitBugRenderer;
+import danger.orespawn.entity.client.StinkBugGeoReplacement;
+import danger.orespawn.entity.client.StinkBugRenderer;
 import danger.orespawn.entity.client.TermiteGeoReplacement;
 import danger.orespawn.entity.client.TermiteRenderer;
 import danger.orespawn.entity.client.TerribleTerrorGeoReplacement;
 import danger.orespawn.entity.client.TerribleTerrorRenderer;
+import danger.orespawn.entity.client.TrooperBugGeoReplacement;
+import danger.orespawn.entity.client.TrooperBugRenderer;
 import danger.orespawn.entity.client.TshirtGeoReplacement;
 import danger.orespawn.entity.client.TshirtRenderer;
 import danger.orespawn.entity.client.UnstableAntGeoReplacement;
 import danger.orespawn.entity.client.UnstableAntRenderer;
+import danger.orespawn.entity.client.VelocityRaptorGeoReplacement;
+import danger.orespawn.entity.client.VelocityRaptorRenderer;
+import danger.orespawn.entity.client.WhaleGeoReplacement;
+import danger.orespawn.entity.client.WhaleRenderer;
 import danger.orespawn.entity.client.WormLargeGeoReplacement;
 import danger.orespawn.entity.client.WormLargeRenderer;
 import danger.orespawn.entity.client.WormMediumGeoReplacement;
@@ -91,9 +119,21 @@ import danger.orespawn.entity.pose.AlosaurusPose;
 import danger.orespawn.entity.pose.BeePose;
 import danger.orespawn.entity.pose.CamarasaurusPose;
 import danger.orespawn.entity.pose.CaterKillerPose;
+import danger.orespawn.entity.pose.CaveFisherPose;
+import danger.orespawn.entity.pose.ChipmunkPose;
 import danger.orespawn.entity.pose.CrabPose;
+import danger.orespawn.entity.pose.GhostSkellyPose;
 import danger.orespawn.entity.pose.HerculesBeetlePose;
+import danger.orespawn.entity.pose.HydroliscPose;
 import danger.orespawn.entity.pose.LeafMonsterPose;
+import danger.orespawn.entity.pose.LizardPose;
+import danger.orespawn.entity.pose.MantisPose;
+import danger.orespawn.entity.pose.MolenoidPose;
+import danger.orespawn.entity.pose.PointysaurusPose;
+import danger.orespawn.entity.pose.RatPose;
+import danger.orespawn.entity.pose.SpitBugPose;
+import danger.orespawn.entity.pose.TrooperBugPose;
+import danger.orespawn.entity.pose.VelocityRaptorPose;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -105,6 +145,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.util.GsonHelper;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
 import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
@@ -156,6 +197,14 @@ import software.bernie.geckolib.loading.object.GeometryTree;
  * registered, the classic shadow, the face order on the Baryonyx and Creeping Horror, the hook moving a named bone off
  * its bind at age 7; the four entity-reading hooks on a declared subject - the Leaf Monster's attacking, since its
  * rest pose is the still bush).</li>
+ * <li>{@code t2_007} (the fifth Tier-2 slice T2e, on the hooks already written): the fourteen HOOK species landed on
+ * their hooks - the Pointysaurus, Whale, Molenoid, Rat, Spit Bug, Stink Bug, Trooper Bug, Velocity Raptor, Ghost Skelly,
+ * Hydrolisc, Lizard, Mantis, Cave Fisher and Chipmunk (the Lurking Terror held on the visual leg, its register line) -
+ * each pinned exactly as {@code t2_005} pins the third slice's (no layer, an empty file, nothing registered, the classic
+ * shadow, the face order on the Trooper Bug, Velocity Raptor and Lizard (their zero-thickness cubes) and on the Ghost
+ * Skelly (a blending rig, the Fairy form), the hook moving a named bone off its bind at age 7; the twelve
+ * entity-reading hooks on a declared rest subject - a fresh one per RenderInfo-reading hook, so no latch scratch is
+ * shared between species).</li>
  * <li>{@code t2_004}: the render facts the 4c precedent pinned in code - each descriptor's shadow radius is its
  *     classic renderer's constant (ENT-S-092; the Ant family's {@code 0.1 / 0.15 x SCALE} products where the classic
  *     renderer declares no SHADOW), the Cockateil and Ruby Bird sharing the Cockateil renderer's - and each shared
@@ -489,7 +538,94 @@ public class T2SeamTests {
         helper.succeed();
     }
 
-    /** The t2_005 pins on one hook species (shared by the third and fourth slices' rows). */
+    // ------------------------------------------------------------------ row 7: the hook species of the fifth slice (T2e)
+
+    /**
+     * The declared rest state of the twelve T2e hooks that read their entity: the attacking flag 0, full health (the
+     * harness's ProbeSubject: 20 / 20), not sitting, a fresh RenderInfo latch and the entity RNG seeded 0 (the probe's rest
+     * subject). One instance per RenderInfo-reading hook (the Ghost Skelly and Cave Fisher write the
+     * latch's scratch), so the species do not share it.
+     */
+    private static final class RestSubjectT2e implements PointysaurusPose, MolenoidPose, RatPose, SpitBugPose, TrooperBugPose,
+            VelocityRaptorPose, GhostSkellyPose, HydroliscPose, LizardPose, MantisPose, CaveFisherPose,
+            ChipmunkPose {
+        private final RenderInfo renderInfo = new RenderInfo();
+        private final RandomSource random = RandomSource.create(0L);
+
+        @Override
+        public int getAttacking() {
+            return 0;
+        }
+
+        @Override
+        public float getHealth() {
+            return 20.0F;
+        }
+
+        @Override
+        public float getMaxHealth() {
+            return 20.0F;
+        }
+
+        @Override
+        public boolean isInSittingPose() {
+            return false;
+        }
+
+        @Override
+        public RenderInfo getRenderInfo() {
+            return this.renderInfo;
+        }
+
+        @Override
+        public RandomSource getRandom() {
+            return this.random;
+        }
+    }
+
+    private static List<HookSpecies> hookSpeciesT2e() {
+        return List.of(
+                // PointysaurusRenderer's constructor passes the literal 1.0f (no SHADOW constant)
+                new HookSpecies("pointysaurus", new PointysaurusGeoReplacement(), "pointysaurus", 1.0F, false, new RestSubjectT2e(), "lfleg"),
+                new HookSpecies("whale", new WhaleGeoReplacement(), "whale", WhaleRenderer.SHADOW, false, null, "lfin2"),
+                new HookSpecies("molenoid", new MolenoidGeoReplacement(), "molenoid", MolenoidRenderer.SHADOW, false, new RestSubjectT2e(), "lleg"),
+                new HookSpecies("rat", new RatGeoReplacement(), "rat", RatRenderer.SHADOW, false, new RestSubjectT2e(), "rfleg"),
+                new HookSpecies("spit_bug", new SpitBugGeoReplacement(), "spitbug", SpitBugRenderer.SHADOW, false, new RestSubjectT2e(), "leg2"),
+                new HookSpecies("stink_bug", new StinkBugGeoReplacement(), "stinkbug", StinkBugRenderer.SHADOW, false, null, "f1"),
+                // the Trooper Bug's two zero-thickness upper-arm parts; the antenna moves on the resting branch
+                new HookSpecies("trooper_bug", new TrooperBugGeoReplacement(), "trooperbug", TrooperBugRenderer.SHADOW, true, new RestSubjectT2e(), "antenna2part2"),
+                // the Velocity Raptor's fourteen zero-thickness feathers
+                new HookSpecies("velocity_raptor", new VelocityRaptorGeoReplacement(), "velocityraptor", VelocityRaptorRenderer.SHADOW, true, new RestSubjectT2e(), "bl1"),
+                // the Ghost Skelly at rest: the head latch holds 0, the arm groups sway; a blending rig, so the classic face order
+                // is required although no cube is zero-thickness (the Fairy form, ENT-S-146)
+                new HookSpecies("ghost_skelly", new GhostSkellyGeoReplacement(), "ghostskelly", GhostSkellyRenderer.SHADOW, true, new RestSubjectT2e(), "larm"),
+                new HookSpecies("hydrolisc", new HydroliscGeoReplacement(), "hydrolisc", HydroliscRenderer.SHADOW, false, new RestSubjectT2e(), "lf1"),
+                // the Lizard's eight zero-thickness fins (never written by the hook)
+                new HookSpecies("lizard", new LizardGeoReplacement(), "lizard", LizardRenderer.SHADOW, true, new RestSubjectT2e(), "TopFrontLeftLeg"),
+                new HookSpecies("mantis", new MantisGeoReplacement(), "mantis", MantisRenderer.SHADOW, false, new RestSubjectT2e(), "lfwing"),
+                new HookSpecies("cave_fisher", new CaveFisherGeoReplacement(), "cavefisher", CaveFisherRenderer.SHADOW, false, new RestSubjectT2e(), "LFLeg1"),
+                new HookSpecies("chipmunk", new ChipmunkGeoReplacement(), "chipmunk", ChipmunkRenderer.SHADOW, false, new RestSubjectT2e(), "leg1"));
+    }
+
+    @GameTest(template = "empty", batch = BATCH)
+    public static void t2_007_fifth_slice_hook_species_declare_no_layer_register_nothing_and_pose_through_their_hooks(GameTestHelper helper) {
+        Flags flags = Flags.read();
+        try {
+            OreSpawnConfig.MODERN_ENABLED.set(true);
+            OreSpawnConfig.MODERN_ARTIST_ANIMATIONS.set(true);
+            OreSpawnConfig.MODERN_CLASSIC_ANIMATION_SPECIES.set(List.of());
+            List<HookSpecies> all = hookSpeciesT2e();
+            helper.assertTrue(all.size() == 14, "the fourteen hook descriptors landed by the fifth Tier-2 slice (the Lurking Terror held on the visual leg)");
+            for (HookSpecies species : all) {
+                assertHookSpecies(helper, species);
+            }
+        } finally {
+            flags.restore();
+        }
+        helper.succeed();
+    }
+
+    /** The t2_005 pins on one hook species (shared by the third, fourth and fifth slices' rows). */
     private static void assertHookSpecies(GameTestHelper helper, HookSpecies species) {
         helper.assertTrue(species.replacement().keyframeLayers().isEmpty(),
                 species.name() + " declares no keyframe layer: on the hook until an artist delivers idle and walk");

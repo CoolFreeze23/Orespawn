@@ -13,21 +13,22 @@ import net.minecraft.util.Mth;
 import software.bernie.geckolib.animation.AnimationProcessor;
 
 /**
- * GeckoLib Ghost Skelly (the hook survey): {@link GhostSkellyModel#poseFrom} verbatim on the converted rig, ON THE
- * HOOK (no keyframe layer, no transcription - the self-gate stays closed until an artist delivers {@code idle} and
- * {@code walk}). No wingspeed: the two arm groups (sleeve, chains, arm) sway about Z at 0.2 / 0.22 and about Y at 0.24
- * / 0.26, every one {@code PI * 0.05}; and the HEAD-SWIVEL LATCH (orig ModelGhostSkelly.java: 99-122): the 0.05
- * rhythm's phase {@code |age * 0.05 mod 2 PI|} is compared with the last frame's ({@code rf2}) and on each wrap the
- * entity's own random decides ({@code nextInt(3) == 1}) whether {@code ri2} carries the swivel bit; the head yaws a
- * full {@code cos(age * 0.05) * PI * 2} while it does and holds 0 otherwise. The entity is read through {@link
- * GhostSkellyPose} (the Robot2 precedent for a per-entity RenderInfo latch).
+ * GeckoLib Ghost Skelly (the hook survey, landed by the fifth Tier-2 slice T2e): {@link GhostSkellyModel#poseFrom}
+ * verbatim on the converted rig, ON THE HOOK (no keyframe layer, no
+ * transcription - the self-gate stays closed until an artist delivers {@code idle} and {@code walk}). No
+ * wingspeed: the two arm groups (sleeve, chains, arm) sway about Z at 0.2 / 0.22 and about Y at 0.24 / 0.26, every one
+ * {@code PI * 0.05}; and the HEAD-SWIVEL LATCH (orig ModelGhostSkelly.java: 99-122): the 0.05 rhythm's phase {@code
+ * |age * 0.05 mod 2 PI|} is compared with the last frame's ({@code rf2}) and on each wrap the entity's own random
+ * decides ({@code nextInt(3) == 1}) whether {@code ri2} carries the swivel bit; the head yaws a full {@code cos(age *
+ * 0.05) * PI * 2} while it does and holds 0 otherwise. The entity is read through {@link GhostSkellyPose} (the
+ * Robot2 precedent for a per-entity RenderInfo latch).
  *
  * <p>Scale and shadow follow {@link GhostSkellyRenderer}: 1.05 render scale and a 0.0 x 1.05 shadow (ENT-S-092: no
  * shadow under the hovering skelly). The render type is the classic renderer's translucent pipeline
- * ({@link GhostSkellyRenderer#getRenderType}: {@code RenderType.entityTranslucent}) - handed over as the factory the
- * renderer applies, because {@link GhostSkellyModel} carries no {@code RENDER_TYPE} function object of its own; the
- * landing slice re-bases it onto the classic model's own object in the ENT-S-146 form ({@link FairyModel#RENDER_TYPE})
- * so the harness can prove the two renderers equal by identity.</p>
+ * ({@link GhostSkellyRenderer#getRenderType}: {@code RenderType.entityTranslucent}) - handed over as the classic model's
+ * own function object {@link GhostSkellyModel#RENDER_TYPE} (the ENT-S-146 form, {@link FairyModel#RENDER_TYPE}; the hook
+ * survey returned the bare factory because the model carried no such object, and the landing slice T2e re-based it)
+ * so the harness proves the two renderers' render type equal by identity.</p>
  */
 public final class GhostSkellyGeoReplacement extends OreSpawnGeoReplacement<GhostSkelly> {
     private static final GeoReplacementDescriptor<GhostSkelly> DESCRIPTOR = new GeoReplacementDescriptor<>(
@@ -43,10 +44,25 @@ public final class GhostSkellyGeoReplacement extends OreSpawnGeoReplacement<Ghos
             poseStack.scale(GhostSkellyRenderer.SCALE, GhostSkellyRenderer.SCALE, GhostSkellyRenderer.SCALE);
         }
 
-        /** GhostSkellyRenderer.getRenderType: {@code RenderType.entityTranslucent(texture)} - the soft alpha edges kept. */
+        /**
+         * GhostSkellyRenderer.getRenderType: {@code RenderType.entityTranslucent(texture)} - the soft alpha edges kept. The
+         * fifth Tier-2 slice (T2e, 2026-09-15) re-based it onto the classic model's own function object
+         * ({@link GhostSkellyModel#RENDER_TYPE}, the ENT-S-146 / Fairy form): the very {@code Function} the classic path
+         * applies, so the harness proves the two sides equal by identity.
+         */
         @Override
         public Function<ResourceLocation, RenderType> renderType(GhostSkelly entity) {
-            return RenderType::entityTranslucent;
+            return GhostSkellyModel.RENDER_TYPE;
+        }
+
+        /**
+         * A blending rig (entity_translucent) with no zero-thickness cube: the order a cube's six faces are emitted in is
+         * visible in the blend, so the shipped geo carries the classic within-cube order ({@link FaceOrder#KEY}; ENT-S-146,
+         * the Fairy form - the harness refuses a blending rig whose generated geo carries none) and the seam expects it (T2e).
+         */
+        @Override
+        public boolean cubeFaceOrderRequired() {
+            return true;
         }
     };
 
