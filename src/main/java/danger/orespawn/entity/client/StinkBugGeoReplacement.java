@@ -10,8 +10,9 @@ import net.minecraft.util.Mth;
 import software.bernie.geckolib.animation.AnimationProcessor;
 
 /**
- * GeckoLib Stink Bug (the hooks, owner 2026-09-14, addendum item 10): {@link StinkBugModel#setupAnim} verbatim on the
- * rig the landing slice converts, ON THE HOOK (Amendment 2 to Amendment 1: no keyframe layer, no transcription - the
+ * GeckoLib Stink Bug (the hooks, owner 2026-09-14, addendum item 10; landed by the fifth Tier-2 slice T2e, 2026-09-15, the owner's closing set item 4):
+ * {@link StinkBugModel#setupAnim} verbatim on the
+ * converted rig, ON THE HOOK (Amendment 2 to Amendment 1: no keyframe layer, no transcription - the
  * self-gate stays closed until an artist delivers {@code idle} and {@code walk}). Wingspeed 0.75f (orig
  * ModelStinkBug.java:13,66 / ClientProxyOreSpawn.java:453), every channel a {@code Mth.sin}: the GAIT-scaled legs about
  * X at {@code sin(age x 3.1 x ws) x PI x 0.3 x limbSwingAmount} (f1 and f3 positive; f2, f4 and f6 the negative; f5

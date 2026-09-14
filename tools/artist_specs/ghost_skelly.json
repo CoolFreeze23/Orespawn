@@ -1,11 +1,11 @@
 {
   "registry": "ghost_skelly",
   "display_name": "Ghost Skelly",
-  "status": "DRAFT — authored by a seed lane from the entity code, 2026-09-13; the owner's edit pending",
+  "status": "DRAFT — authored by a seed lane from the entity code, 2026-09-13; the owner's edit pending, landed on its hook by the fifth Tier-2 slice (T2e, 2026-09-15)",
   "locomotion": "flyer",
-  "artist_scope": "full contract (Tier 2, the state-branching class (a client-side head-swivel latch): geckolib_migration_design.md section 5); the rig is not yet in-game (it lands through the seam in a later slice)",
-  "character_sheet": "The Ghost's heavier sister: a pumpkin-headed scarecrow ghost on a one-block-wide stem body - a 7x5x7 head with a 1x2x1 stem on top, a 5x12x5 shirt over a 1x21x1 body pole, two 15-long arm bars, two 9x8x3 sleeves and a chain hanging from each arm, 16 tall on the left and 10 on the right (GhostSkellyModel.java:48-96), drawn translucent (GhostSkellyRenderer.java:49-51). It passes through blocks (noPhysics, GhostSkelly.java:62), drifts toward a spot beside the nearest player within 16 blocks or to a random air pocket (GhostSkelly.java:123-164) and hurts whoever it touches: 4 contact damage within 1.8 blocks every 20 ticks, no melee goal (GhostSkelly.java:108-121, doHurtTarget :80-83). It spawns at night, in Halloween week anywhere and year-round in snowy taiga, taiga, frozen river, jungle and dark forest (GhostSkelly.java:200-213). Read it as a hanged scarecrow adrift: arms and chains swaying on slow, unequal beats, the pumpkin head spinning full circle now and then.",
-  "size_notes": "Drawn at x1.05 of the rig (GhostSkellyRenderer.java:26, 38) on a 128x64 sheet (GhostSkellyModel.java:98); the hitbox is 1.5 x 2.0 (ModEntities.java:644-645); no shadow (SHADOW 0.0 x 1.05, GhostSkellyRenderer.java:28).",
+  "artist_scope": "full contract (Tier 2, the state-branching class (a client-side head-swivel latch): geckolib_migration_design.md section 5); ON THE HOOK until idle and walk are delivered (Amendment 2): in-game through the seam behind the dev switch since the fifth Tier-2 slice (T2e, 2026-09-15)",
+  "character_sheet": "The Ghost's heavier sister: a pumpkin-headed scarecrow ghost on a one-block-wide stem body - a 7x5x7 head with a 1x2x1 stem on top, a 5x12x5 shirt over a 1x21x1 body pole, two 15-long arm bars, two 9x8x3 sleeves and a chain hanging from each arm, 16 tall on the left and 10 on the right (GhostSkellyModel.java:62-110), drawn translucent (GhostSkellyRenderer.java:49-51). It passes through blocks (noPhysics, GhostSkelly.java:62), drifts toward a spot beside the nearest player within 16 blocks or to a random air pocket (GhostSkelly.java:123-164) and hurts whoever it touches: 4 contact damage within 1.8 blocks every 20 ticks, no melee goal (GhostSkelly.java:108-121, doHurtTarget :80-83). It spawns at night, in Halloween week anywhere and year-round in snowy taiga, taiga, frozen river, jungle and dark forest (GhostSkelly.java:200-213). Read it as a hanged scarecrow adrift: arms and chains swaying on slow, unequal beats, the pumpkin head spinning full circle now and then.",
+  "size_notes": "Drawn at x1.05 of the rig (GhostSkellyRenderer.java:26, 38) on a 128x64 sheet (GhostSkellyModel.java:112); the hitbox is 1.5 x 2.0 (ModEntities.java:644-645); no shadow (SHADOW 0.0 x 1.05, GhostSkellyRenderer.java:28).",
   "labels": {
     "body": "body pole (the 1x21x1 stem the shirt hangs on)",
     "shirt": "shirt",
@@ -33,7 +33,7 @@
       "amplitude": "pi x 0.05 = 0.157 rad (9 deg), no rest offset",
       "plain": "the left arm, its sleeve and its chain roll up and down together as one unit about the body's centre line",
       "math": "larm.zRot = lsleeve.zRot = lchains.zRot = cos(ageInTicks * 0.2) * pi * 0.05",
-      "source": "GhostSkellyModel.java:109-110",
+      "source": "GhostSkellyModel.java:123-124",
       "omega_note": "the natural period is 2 pi / 0.2 = 31.4 ticks"
     },
     {
@@ -49,7 +49,7 @@
       "amplitude": "pi x 0.05 = 0.157 rad (9 deg), no rest offset",
       "plain": "the right arm, sleeve and chain roll together at a slightly faster beat than the left",
       "math": "rarm.zRot = rsleeve.zRot = rchains.zRot = cos(ageInTicks * 0.22) * pi * 0.05",
-      "source": "GhostSkellyModel.java:111-112",
+      "source": "GhostSkellyModel.java:125-126",
       "omega_note": "the natural period is 2 pi / 0.22 = 28.6 ticks"
     },
     {
@@ -65,7 +65,7 @@
       "amplitude": "pi x 0.05 = 0.157 rad (9 deg), no rest offset",
       "plain": "the left arm unit also sways fore and aft about the vertical, on its own beat",
       "math": "larm.yRot = lsleeve.yRot = lchains.yRot = cos(ageInTicks * 0.24) * pi * 0.05",
-      "source": "GhostSkellyModel.java:113-114",
+      "source": "GhostSkellyModel.java:127-128",
       "omega_note": "the natural period is 2 pi / 0.24 = 26.2 ticks"
     },
     {
@@ -81,14 +81,14 @@
       "amplitude": "pi x 0.05 = 0.157 rad (9 deg), no rest offset",
       "plain": "the right arm unit sways fore and aft about the vertical, fastest of the four beats",
       "math": "rarm.yRot = rsleeve.yRot = rchains.yRot = cos(ageInTicks * 0.26) * pi * 0.05",
-      "source": "GhostSkellyModel.java:115-116",
+      "source": "GhostSkellyModel.java:129-130",
       "omega_note": "the natural period is 2 pi / 0.26 = 24.2 ticks"
     }
   ],
   "behaviour": [
-    "Two arm assemblies swing as rigid units (GhostSkellyModel.java:109-116): the left arm bar, left sleeve and left chain share one roll about z (cos(t x 0.2) x pi x 0.05, 9 deg) and one sway about y (cos(t x 0.24) x pi x 0.05); the right bar, sleeve and chain share a roll at 0.22 and a sway at 0.26. Four unequal beats, so the two sides never keep step.",
-    "Every arm, sleeve and chain part pivots at the rig's origin (PartPose.offset(0, 0, 0), GhostSkellyModel.java:68-96), so the 15-long arm bars and the hanging chains swing from the body's centre line, not from a shoulder.",
-    "The head swivels in one cycle of three (GhostSkellyModel.java:117-130): newangle = cos(t x 0.05) x 2 pi - two full turns out and back over a 125.7-tick (6.28 s) cycle - applied only in a cycle whose boundary roll (1 in 3, entity.getRandom().nextInt(3) == 1 at :122) set the per-entity latch (RenderInfo rf2 / ri2, GhostSkelly.java:51-57); in the other cycles the head sits square (newangle = 0, :127-129). A client-side roll, not a server state.",
+    "Two arm assemblies swing as rigid units (GhostSkellyModel.java:123-130): the left arm bar, left sleeve and left chain share one roll about z (cos(t x 0.2) x pi x 0.05, 9 deg) and one sway about y (cos(t x 0.24) x pi x 0.05); the right bar, sleeve and chain share a roll at 0.22 and a sway at 0.26. Four unequal beats, so the two sides never keep step.",
+    "Every arm, sleeve and chain part pivots at the rig's origin (PartPose.offset(0, 0, 0), GhostSkellyModel.java:82-110), so the 15-long arm bars and the hanging chains swing from the body's centre line, not from a shoulder.",
+    "The head swivels in one cycle of three (GhostSkellyModel.java:131-144): newangle = cos(t x 0.05) x 2 pi - two full turns out and back over a 125.7-tick (6.28 s) cycle - applied only in a cycle whose boundary roll (1 in 3, entity.getRandom().nextInt(3) == 1 at :122) set the per-entity latch (RenderInfo rf2 / ri2, GhostSkelly.java:51-57); in the other cycles the head sits square (newangle = 0, :127-129). A client-side roll, not a server state.",
     "The body pole, the shirt and the stem never move; nothing scales with walking speed (limbSwingAmount unused); the head ignores netHeadYaw, so the LookAtPlayerGoal (GhostSkelly.java:67) turns nothing.",
     "The visible travel is the entity's own drift, not a pose: customServerAiStep eases the motion toward a flight target beside the nearest player or a random air pocket (GhostSkelly.java:123-164), turns the yaw a sixth of the way per tick (:166-169) and damps the vertical motion to 0.65 each tick (:86-91); it hovers with noPhysics (:62).",
     "Drawn translucent through entityTranslucent (GhostSkellyRenderer.java:49-51) at x1.05 (GhostSkellyRenderer.java:38)."
@@ -143,16 +143,19 @@
       ],
       "length_seconds": 6.3,
       "code_triggered": false,
-      "trigger": "today a client-side roll in the model, not a server call: at each 125.7-tick cycle boundary of cos(t x 0.05) a 1-in-3 roll latches the swivel for that cycle (GhostSkellyModel.java:117-130, the latch in RenderInfo rf2 / ri2, GhostSkelly.java:51-57); the seam needs a trigger or an idle-variant roll to play it",
+      "trigger": "today a client-side roll in the model, not a server call: at each 125.7-tick cycle boundary of cos(t x 0.05) a 1-in-3 roll latches the swivel for that cycle (GhostSkellyModel.java:131-144, the latch in RenderInfo rf2 / ri2, GhostSkelly.java:51-57); the seam needs a trigger or an idle-variant roll to play it",
       "note": "the pumpkin head's full spin: yRot = cos(t x 0.05) x 2 pi, two turns out and back over one 6.28 s cycle, in one cycle of three - alternatively deliver it as `idle_alt_1` (the contract's idle-variant roll, p = 0.15 per loop boundary; ruled 2026-09-06, Q5 (a)); the owner picks which"
     }
   ],
   "wishlist": [
-    "the head swivel: keep it rare and whole - a full spin that starts and ends square, never a half-turn left hanging (the code's cos(t x 0.05) x 2 pi always returns to its start, GhostSkellyModel.java:117-130)",
+    "the head swivel: keep it rare and whole - a full spin that starts and ends square, never a half-turn left hanging (the code's cos(t x 0.05) x 2 pi always returns to its start, GhostSkellyModel.java:131-144)",
     "in `fly`: a slow bob of the whole figure and a lean into the direction of travel - the code moves the entity (GhostSkelly.java:157-164) but never poses the body, so today it drifts stiff",
     "in `attack`: the chains lash toward the victim at the strike - the contact damage (GhostSkelly.java:108-121) has no visible strike today",
     "in `idle`: a faint settle of the chains after each roll so they read as hanging metal, not welded bars (today the chain, sleeve and arm share one rigid angle, :109-116)",
     "in `hurt`: a recoil that keeps the translucent silhouette readable (the vanilla red overlay stays; ruled 2026-09-06, Q4 (a))"
+  ],
+  "formulas": [
+    "`GhostSkellyModel.poseFrom` (GhostSkellyModel.java:124-153; orig ModelGhostSkelly.java:100-121 in `render` (func_78088_a, :92-140; func_78087_a at :148-150 is a bare super call); no wingspeed - `new ModelGhostSkelly()` in orig ClientProxyOreSpawn.java:410): the left sleeve, chains and arm roll by the cosine of the age in ticks times 0.2, times pi, times 0.05 and yaw by the cosine of the age times 0.24 at the same amplitude; the right sleeve, chains and arm roll by the cosine at 0.22 and yaw by the cosine at 0.26. The head's swivel is the cosine of the age times 0.05, times pi, times 2 (a full turn), gated by a latch on the entity's render scratch: the phase of the age times 0.05 modulo two pi is compared with the last frame's, and when it has wrapped the entity's own random rolls one in three to set the swivel bit; the head yaws by the swivel while the bit is set and holds 0 otherwise. The walk position, the walking speed and the head angles play no part. The GeckoLib hook is the same (GhostSkellyGeoReplacement.applyCustomAnimations)."
   ],
   "effort_hours": null
 }

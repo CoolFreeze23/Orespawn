@@ -11,8 +11,9 @@ import net.minecraft.util.Mth;
 import software.bernie.geckolib.animation.AnimationProcessor;
 
 /**
- * GeckoLib Trooper Bug (the hooks, owner 2026-09-14, addendum item 10): {@link TrooperBugModel#poseFrom} verbatim on
- * the rig the landing slice converts, ON THE HOOK (Amendment 2 to Amendment 1: no keyframe layer, no transcription -
+ * GeckoLib Trooper Bug (the hooks, owner 2026-09-14, addendum item 10; landed by the fifth Tier-2 slice T2e, 2026-09-15, the owner's closing set item 4):
+ * {@link TrooperBugModel#poseFrom} verbatim on
+ * the converted rig, ON THE HOOK (Amendment 2 to Amendment 1: no keyframe layer, no transcription -
  * the self-gate stays closed until an artist delivers {@code idle} and {@code walk}). Wingspeed 0.22f (orig
  * ModelTrooperBug.java:14,151 / ClientProxyOreSpawn.java:451): five ATTACKING branches (orig :969-989
  * {@code getAttacking() == 0}) - the antennae about Y (0.4 x ws at 0.05 x PI at rest, 1.4 at 0.1 attacking, about
@@ -26,8 +27,9 @@ import software.bernie.geckolib.animation.AnimationProcessor;
  * units along (cos, sin) of that yaw scaled by cos of the link's pitch (the POSITION-write idiom, x and z through
  * {@link #moveXZ}; the upper link's pivot is never written - the bind, read through {@link #classicPosition}); every
  * value the classic reads back from a part it just wrote is held in a local. The entity is read through
- * {@link TrooperBugPose} (the Slice 4b form). Two jaw parts are zero-thickness cubes (3 x 5 x 0; ENT-S-161; the
- * classic face order required below).
+ * {@link TrooperBugPose} (the Slice 4b form). Two upper-arm parts (arm3part1c / arm4part1c, written by the arms' yaw
+ * branch) are zero-thickness cubes (3 x 5 x 0; ENT-S-161; the classic face order required below - the shipped geo's
+ * only flat cubes, T2e).
  *
  * <p>Scale and shadow follow {@link TrooperBugRenderer}: 1.1 render scale and a 0.95 x 1.1 shadow (ENT-S-092).</p>
  */
@@ -48,8 +50,8 @@ public final class TrooperBugGeoReplacement extends OreSpawnGeoReplacement<Entit
         }
 
         /**
-         * A rig with zero-thickness cubes (two jaw parts, 3 x 5 x 0): the shipped geo carries the classic within-cube
-         * face order ({@link FaceOrder#KEY}; TEST-007) and the seam expects it.
+         * A rig with zero-thickness cubes (the two upper-arm parts arm3part1c / arm4part1c, 3 x 5 x 0): the shipped geo
+         * carries the classic within-cube face order ({@link FaceOrder#KEY}; TEST-007) and the seam expects it.
          */
         @Override
         public boolean cubeFaceOrderRequired() {

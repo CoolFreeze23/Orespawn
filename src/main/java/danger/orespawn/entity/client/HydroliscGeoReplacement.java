@@ -11,7 +11,8 @@ import net.minecraft.util.Mth;
 import software.bernie.geckolib.animation.AnimationProcessor;
 
 /**
- * GeckoLib Hydrolisc (the hook lanes, 2026-09-14, addendum item 10): {@link HydroliscModel#poseFrom} verbatim on the
+ * GeckoLib Hydrolisc (the hook lanes, 2026-09-14, addendum item 10; landed by the fifth Tier-2 slice T2e, 2026-09-15, the owner's closing set item 4):
+ * {@link HydroliscModel#poseFrom} verbatim on the
  * converted rig, ON THE HOOK (no keyframe layer, no transcription - the self-gate stays closed until an artist delivers
  * {@code idle} and {@code walk}). Wingspeed 0.65f (orig ModelHydrolisc.java:14,57 / ClientProxyOreSpawn.java:422): the
  * THRESHOLD idiom on the four six-part legs' pitch - above a walking speed of a tenth {@code cos(age * 1.3 ws) * PI *

@@ -27,6 +27,7 @@
 [kraken] ATTACKING_UNCLASSIFIED: DATA_ATTACKING classified STATE?: cleared unconditionally at line(s) [451] (the enclosing branch decides; read the source)
 [the_queen] LOCKED_BONES_KEYED: the shipped clips key 26 of the 27 SPEC-locked bones (LHead, LHead12, LHead4, Lwing1, NeckL1, NeckL13...): allowed and warned — Keying a locked bone is allowed; the checker warns, and the hitbox part follows the bone in-game (the consequence, so keep such keys deliberate). Renaming, re-parenting or deleting a locked bone is refused.
 [spyro] EXTRAS_CAP: 5 extras (4 from the seed + 1 offered from the reference states: sitting_flat) exceed the cap of four per creature without a ruling (ruled 2026-09-06, Q6 (a): more needs the owner; every one is listed, none dropped)
+[stinky] EXTRAS_CAP: 5 extras (4 from the seed + 1 offered from the reference states: legs_folded) exceed the cap of four per creature without a ruling (ruled 2026-09-06, Q6 (a): more needs the owner; every one is listed, none dropped)
 [elevator] BONE_UNLABELLED: bone shape1 has no glossary label
 [elevator] BONE_UNLABELLED: bone shape2 has no glossary label
 [elevator] BONE_UNLABELLED: bone shape3 has no glossary label

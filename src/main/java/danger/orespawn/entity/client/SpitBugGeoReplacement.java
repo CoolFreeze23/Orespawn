@@ -12,8 +12,9 @@ import software.bernie.geckolib.animation.AnimationProcessor;
 import software.bernie.geckolib.cache.object.GeoBone;
 
 /**
- * GeckoLib Spit Bug (the hooks, owner 2026-09-14, addendum item 10): {@link SpitBugModel#poseFrom} verbatim on the rig
- * the landing slice converts, ON THE HOOK (Amendment 2 to Amendment 1: no keyframe layer, no transcription - the
+ * GeckoLib Spit Bug (the hooks, owner 2026-09-14, addendum item 10; landed by the fifth Tier-2 slice T2e, 2026-09-15, the owner's closing set item 4):
+ * {@link SpitBugModel#poseFrom} verbatim on the
+ * converted rig, ON THE HOOK (Amendment 2 to Amendment 1: no keyframe layer, no transcription - the
  * self-gate stays closed until an artist delivers {@code idle} and {@code walk}). Wingspeed 0.55f (orig
  * ModelSpitBug.java:14,110 / ClientProxyOreSpawn.java:452): the {@code Mth.sin} gait on the four legs -
  * {@code sin(age x 2.0 x ws) x PI x 0.12 x limbSwingAmount}, the right pair a half turn behind ({@code + PI}), the lift

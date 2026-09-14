@@ -11,7 +11,8 @@ import net.minecraft.util.Mth;
 import software.bernie.geckolib.animation.AnimationProcessor;
 
 /**
- * GeckoLib Chipmunk (the hooks, owner 2026-09-14, addendum item 10): {@link ModelChipmunk#poseFrom} verbatim on the
+ * GeckoLib Chipmunk (the hooks, owner 2026-09-14, addendum item 10; landed by the fifth Tier-2 slice T2e, 2026-09-15, the owner's closing set item 4):
+ * {@link ModelChipmunk#poseFrom} verbatim on the
  * converted rig, ON THE HOOK (Amendment 2 to Amendment 1: no keyframe layer, no transcription - the self-gate stays closed
  * until an artist delivers {@code idle} and {@code walk}). ANIM_SPEED 1.0f (ModelChipmunk.java:20; orig ModelChipmunk.java:
  * 15,36 wingspeed 1.0f from ClientProxyOreSpawn.java:448): the THRESHOLD idiom on the four legs about X - above a walking

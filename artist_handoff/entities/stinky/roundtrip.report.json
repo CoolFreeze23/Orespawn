@@ -19,7 +19,7 @@
       "keys": 22,
       "reference_only": true
     },
-    "reference_activity_2": {
+    "reference_legs_folded": {
       "equal_within_tolerance": true,
       "differences": [],
       "keys": 22,

@@ -11,7 +11,8 @@ import net.minecraft.util.Mth;
 import software.bernie.geckolib.animation.AnimationProcessor;
 
 /**
- * GeckoLib Lizard (the hook lanes, 2026-09-14, addendum item 10): {@link LizardModel#poseFrom} verbatim on the
+ * GeckoLib Lizard (the hook lanes, 2026-09-14, addendum item 10; landed by the fifth Tier-2 slice T2e, 2026-09-15, the owner's closing set item 4):
+ * {@link LizardModel#poseFrom} verbatim on the
  * converted rig, ON THE HOOK (no keyframe layer, no transcription - the self-gate stays closed until an artist
  * delivers {@code idle} and {@code walk}). Wingspeed 0.65f (orig ModelLizard.java:15,89 / ClientProxyOreSpawn.java:445):
  * the THRESHOLD gait on the twenty leg, foot and toe parts ({@code cos(age * 1.0 ws) * PI * 0.25 * limbSwingAmount}

@@ -1527,6 +1527,17 @@
       "length_seconds": 1.0,
       "verdict": "author",
       "offered_from_reference": "reference_sit"
+    },
+    {
+      "name": "legs_folded",
+      "loop": "true",
+      "role": "extra",
+      "code_triggered": false,
+      "required": false,
+      "length_rule": "near:1.0",
+      "length_seconds": 1.0,
+      "verdict": "author",
+      "offered_from_reference": "reference_legs_folded"
     }
   ],
   "allow_idle_alt": true,
@@ -1540,8 +1551,8 @@
       ]
     }
   ],
-  "effort_hours": 20.0,
-  "effort_source": "generator: 4 h + 0.2 h/bone x 20 + 1 h/clip x 12 to author or improve (owner adjusts)",
+  "effort_hours": 21.0,
+  "effort_source": "generator: 4 h + 0.2 h/bone x 20 + 1 h/clip x 13 to author or improve (owner adjusts)",
   "reference_clips": [
     {
       "state": "walk",
@@ -1660,19 +1671,19 @@
       }
     },
     {
-      "state": "activity_2",
-      "file": "stinky_reference_activity_2.animation.json",
-      "sha256": "02ffe657ca7a509e4d373909392a16605b7cbf507d187f872d0f0d6a35d10ca5",
-      "clip": "reference_activity_2",
+      "state": "legs_folded",
+      "file": "stinky_reference_legs_folded.animation.json",
+      "sha256": "23fb3fedfc8df4fd3750b444779a564ff1128763f88ae0072332c1971c4e10fb",
+      "clip": "reference_legs_folded",
       "reference_only": true,
       "delivered_clip": null,
-      "offered_extra": null,
-      "named": false,
-      "name_source": "unnamed: reference_<getter>_<value> (the seed's reference_states should name it)",
+      "offered_extra": "legs_folded",
+      "named": true,
+      "name_source": "stinky.json reference_states.legs_folded = {getActivity: 2}",
       "getter": "getActivity",
       "value": 2,
       "rule": "one_key",
-      "rule_note": "nothing moves at the activity_2 inputs: every bone's rotation and position is the same at every sample of the span the closure test settled (period_multiple; the port's ws = limbSwingAmount (StinkyGeoReplacement.applyCustomAnimations:63): every rhythm scales by the walking speed, so nothing moves at limbSwingAmount 0; at 1 the slowest is the tail cos(ageInTicks * 1.0 * ws) * PI * 0.2 (:85; the tail chain follows, :91-97) at 1.0 rad/tick, 6.28 ticks; the threshold gait cos(ageInTicks * 2.3 * ws) * PI * 0.4 * limbSwingAmount and cos(ageInTicks * 2.0 * ws) * PI * 0.25 * limbSwingAmount (:65, :69); the activity-2 fold and the sitting still are off on the probe; the head look follows netHeadYaw / headPitch = 0 (:101-115); closes at k = 1 (6.283185 ticks): every bone returns within 0 degrees of its start at k x T (the 5-degree test under the 6 s cap; k = 1: 0 deg)), so this state is one key",
+      "rule_note": "nothing moves at the legs_folded inputs: every bone's rotation and position is the same at every sample of the span the closure test settled (period_multiple; the port's ws = limbSwingAmount (StinkyGeoReplacement.applyCustomAnimations:63): every rhythm scales by the walking speed, so nothing moves at limbSwingAmount 0; at 1 the slowest is the tail cos(ageInTicks * 1.0 * ws) * PI * 0.2 (:85; the tail chain follows, :91-97) at 1.0 rad/tick, 6.28 ticks; the threshold gait cos(ageInTicks * 2.3 * ws) * PI * 0.4 * limbSwingAmount and cos(ageInTicks * 2.0 * ws) * PI * 0.25 * limbSwingAmount (:65, :69); the activity-2 fold and the sitting still are off on the probe; the head look follows netHeadYaw / headPitch = 0 (:101-115); closes at k = 1 (6.283185 ticks): every bone returns within 0 degrees of its start at k x T (the 5-degree test under the 6 s cap; k = 1: 0 deg)), so this state is one key",
       "span_ticks": 0.0,
       "period_ticks": null,
       "period_multiple_k": null,
@@ -1689,7 +1700,7 @@
         "within_tolerance": true,
         "keys_total": 22
       },
-      "sampled_inputs": "getActivity() answers 2 (an unnamed state: the seed's reference_states should name it; every other getter at its rest value); limbSwingAmount 0.0; limbSwing 0 (the walk position at rest: vanilla WalkAnimationState holds its position while the speed is 0, and a creature that has not walked since it spawned carries 0); ageInTicks = t (getBob: tickCount + partialTick, partialTick 0; advancing 1.0 per tick from 0); netHeadYaw 0; headPitch 0 (looking ahead); every other entity-state flag at its rest value (ri1 0, rock_type 0, rf1 0); the entity RNG seeded 0 once per clip and evolving across the keys; one pose call per key, 20 keys per second; full health",
+      "sampled_inputs": "getActivity() answers 2 (the state the seed names `legs_folded`; every other getter at its rest value); limbSwingAmount 0.0; limbSwing 0 (the walk position at rest: vanilla WalkAnimationState holds its position while the speed is 0, and a creature that has not walked since it spawned carries 0); ageInTicks = t (getBob: tickCount + partialTick, partialTick 0; advancing 1.0 per tick from 0); netHeadYaw 0; headPitch 0 (looking ahead); every other entity-state flag at its rest value (ri1 0, rock_type 0, rf1 0); the entity RNG seeded 0 once per clip and evolving across the keys; one pose call per key, 20 keys per second; full health",
       "hook": "danger.orespawn.entity.client.StinkyGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the unlanded hook of owner 2026-09-14, addendum item 10 - the classic setupAnim transcribed into the descriptor's PoseInputs form, proven when the rig lands - registry-free, on explicit PoseInputs, over the reference leg's converter output reference_stinky.geo.json baked without the face-order strictness the landing slice's TEST-007 adds)",
       "landed": false,
       "moving_bones": [
@@ -1834,6 +1845,7 @@
     }
   },
   "reference_offers": [
+    "legs_folded",
     "sit"
   ],
   "exact_transcription": false,

@@ -11,7 +11,8 @@ import net.minecraft.util.Mth;
 import software.bernie.geckolib.animation.AnimationProcessor;
 
 /**
- * GeckoLib Cave Fisher (the hooks, owner 2026-09-14, addendum item 10): {@link ModelCaveFisher#poseFrom} verbatim on the
+ * GeckoLib Cave Fisher (the hooks, owner 2026-09-14, addendum item 10; landed by the fifth Tier-2 slice T2e, 2026-09-15, the owner's closing set item 4):
+ * {@link ModelCaveFisher#poseFrom} verbatim on the
  * converted rig, ON THE HOOK (Amendment 2 to Amendment 1: no keyframe layer, no transcription - the self-gate stays closed
  * until an artist delivers {@code idle} and {@code walk}). Wingspeed 0.62f (orig ModelCaveFisher.java:15,93 /
  * ClientProxyOreSpawn.java:434): the GAIT-scaled idiom on the thirty-six leg parts about Y - the front, middle and back

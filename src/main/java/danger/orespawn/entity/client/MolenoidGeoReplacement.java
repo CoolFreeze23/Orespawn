@@ -10,8 +10,9 @@ import net.minecraft.util.Mth;
 import software.bernie.geckolib.animation.AnimationProcessor;
 
 /**
- * GeckoLib Molenoid (the hooks, owner 2026-09-14, addendum item 10): {@link MolenoidModel#poseFrom} verbatim on the
- * rig the landing slice converts, ON THE HOOK (Amendment 2 to Amendment 1: no keyframe layer, no transcription - the
+ * GeckoLib Molenoid (the hooks, owner 2026-09-14, addendum item 10; landed by the fifth Tier-2 slice T2e, 2026-09-15, the owner's closing set item 4):
+ * {@link MolenoidModel#poseFrom} verbatim on the
+ * converted rig, ON THE HOOK (Amendment 2 to Amendment 1: no keyframe layer, no transcription - the
  * self-gate stays closed until an artist delivers {@code idle} and {@code walk}). Wingspeed 0.5f (orig
  * ModelMolenoid.java:14,54 / ClientProxyOreSpawn.java:495): the ATTACKING branch over the THRESHOLD idiom on the arms
  * (orig :286 {@code getAttacking() != 0}: {@code cos(age x 1.7 x ws) x PI x 0.25} attacking, else above a walking

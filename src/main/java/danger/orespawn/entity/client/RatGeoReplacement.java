@@ -11,8 +11,9 @@ import net.minecraft.util.Mth;
 import software.bernie.geckolib.animation.AnimationProcessor;
 
 /**
- * GeckoLib Rat (the hooks, owner 2026-09-14, addendum item 10): {@link RatModel#poseFrom} verbatim on the rig the
- * landing slice converts, ON THE HOOK (Amendment 2 to Amendment 1: no keyframe layer, no transcription - the self-gate
+ * GeckoLib Rat (the hooks, owner 2026-09-14, addendum item 10; landed by the fifth Tier-2 slice T2e, 2026-09-15, the owner's closing set item 4):
+ * {@link RatModel#poseFrom} verbatim on the
+ * converted rig, ON THE HOOK (Amendment 2 to Amendment 1: no keyframe layer, no transcription - the self-gate
  * stays closed until an artist delivers {@code idle} and {@code walk}). The port's classic model as it is (wingspeed
  * 1.0, folded into the literals): the THRESHOLD idiom on the four legs about X - above a walking speed of a tenth
  * {@code cos(age x 1.7) x PI x 0.25 x limbSwingAmount}, the right-front and left-rear positive, the other two the

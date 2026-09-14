@@ -11,7 +11,8 @@ import net.minecraft.util.Mth;
 import software.bernie.geckolib.animation.AnimationProcessor;
 
 /**
- * GeckoLib Mantis (the hook lanes, 2026-09-14, addendum item 10): {@link MantisModel#poseFrom} verbatim on the
+ * GeckoLib Mantis (the hook lanes, 2026-09-14, addendum item 10; landed by the fifth Tier-2 slice T2e, 2026-09-15, the owner's closing set item 4):
+ * {@link MantisModel#poseFrom} verbatim on the
  * converted rig, ON THE HOOK (no keyframe layer, no transcription - the self-gate stays closed until an artist
  * delivers {@code idle} and {@code walk}). Wingspeed 2.0f (orig ModelMantis.java:14,53 / ClientProxyOreSpawn.java:488):
  * the four wings about Z at 0.9 ws - the front pair {@code PI * 0.25} around -+0.698, the rear pair {@code PI * 0.35}

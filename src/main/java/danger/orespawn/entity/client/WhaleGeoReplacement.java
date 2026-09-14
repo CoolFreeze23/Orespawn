@@ -10,8 +10,9 @@ import net.minecraft.util.Mth;
 import software.bernie.geckolib.animation.AnimationProcessor;
 
 /**
- * GeckoLib Whale (the hooks, owner 2026-09-14, addendum item 10): {@link ModelWhale#setupAnim} verbatim on the rig the
- * landing slice converts, ON THE HOOK (Amendment 2 to Amendment 1: no keyframe layer, no transcription - the self-gate
+ * GeckoLib Whale (the hooks, owner 2026-09-14, addendum item 10; landed by the fifth Tier-2 slice T2e, 2026-09-15, the
+ * owner's closing set item 4): {@link ModelWhale#setupAnim} verbatim on the
+ * converted rig, ON THE HOOK (Amendment 2 to Amendment 1: no keyframe layer, no transcription - the self-gate
  * stays closed until an artist delivers {@code idle} and {@code walk}). No wingspeed: the THRESHOLD idiom twice -
  * above a walking speed of a tenth the fins roll on {@code cos(age x 0.3) x PI x 0.2 x limbSwingAmount} (idle
  * {@code cos(age x 0.08) x PI x 0.05}) about +-0.436 rad, the inner fins at half the outer; the tail pitches on
@@ -25,11 +26,10 @@ import software.bernie.geckolib.animation.AnimationProcessor;
  * <p>Scale and shadow follow {@link WhaleRenderer}: a 0.1 x 1.0 shadow (ENT-S-092) and a render scale of 1.0 halved
  * for a baby (orig RenderWhale.preRenderScale :39-45, which the port's renderer applies around {@code super.render};
  * uniform, so it commutes with the flip and the yaw and the {@link GeoReplacementDescriptor#applyScale} slot is the
- * same transform). {@code WhaleRenderer.SCALE} is private, so the equal literal 1.0f is passed.</p>
+ * same transform). The descriptor scales by {@link WhaleRenderer#SCALE} (made public by the landing slice T2e - the hook
+ * lanes passed an equal literal while it was private; the T2d form for the Baryonyx and Cassowary).</p>
  */
 public final class WhaleGeoReplacement extends OreSpawnGeoReplacement<Whale> {
-    /** orig RenderWhale.scale = 1.0f (ClientProxyOreSpawn.java:484), the private {@code WhaleRenderer.SCALE}: the equal literal. */
-    static final float SCALE = 1.0F;
     private static final GeoReplacementDescriptor<Whale> DESCRIPTOR = new GeoReplacementDescriptor<>(
             () -> ModEntities.WHALE.get(),  // lambda: a bound method ref would initialise ModEntities eagerly
             Whale.class,
@@ -41,10 +41,10 @@ public final class WhaleGeoReplacement extends OreSpawnGeoReplacement<Whale> {
         public void applyScale(Whale entity, PoseStack poseStack, float partialTick) {
             // orig RenderWhale.preRenderScale (:39-45; WhaleRenderer.render): a child gets glScalef(scale / 2), otherwise glScalef(scale)
             if (entity.isBaby()) {
-                poseStack.scale(SCALE / 2.0f, SCALE / 2.0f, SCALE / 2.0f);
+                poseStack.scale(WhaleRenderer.SCALE / 2.0f, WhaleRenderer.SCALE / 2.0f, WhaleRenderer.SCALE / 2.0f);
                 return;
             }
-            poseStack.scale(SCALE, SCALE, SCALE);
+            poseStack.scale(WhaleRenderer.SCALE, WhaleRenderer.SCALE, WhaleRenderer.SCALE);
         }
     };
 
