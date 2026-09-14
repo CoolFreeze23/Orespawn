@@ -236,5 +236,9 @@
     {"bone": "tail5", "size": [0.9, 0.9], "damage": 0.25}
   ],
   "locked_bones_note": "The design's section 6 ModelThePrinceTeen row (geckolib_migration_design.md:457): 'body/body2 [2,2] @0.5; head3/head3L/head3R [1.1,1] @1; left/right segmented legs [0.7,1.8] @0.5; wing1/rwing1 [2.3,0.7] @0.25; tail1/tail3/tail5 [0.9,0.9] @0.25'. body, body2, head3, head3L, head3R, wing1, rwing1, tail1, tail3 and tail5 resolve as written (ModelThePrinceTeen.createBodyLayer). 'left/right segmented legs' is not a bone name: taken as the three leg segments a side — leftleg1, leftleg2, leftleg3 and rightleg1, rightleg2, rightleg3 (the claw pieces stay visual). The row: 'Preserve three-head names and separate membrane visuals from damage roots.'",
-  "effort_hours": null
+  "effort_hours": null,
+  "reference_states": {
+    "fly": {"getActivity": 1},
+    "sit": {"isOrderedToSit": true}
+  }
 }

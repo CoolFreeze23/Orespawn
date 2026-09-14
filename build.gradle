@@ -386,9 +386,14 @@ def referenceBuildDir = layout.buildDirectory.dir('reference')
 // HOOK_DESCRIPTORS, the audit's HOOKS list) is sampled over the reference leg's converter output
 // (build/reference/generated/reference_<rig>.geo.json: referenceConvertModels, below - a dependency here, so `check`
 // converts the reference models before it verifies the clips) - into reference-only clips per registry AND state under
-// tools/reference_clips/ (<registry>_reference_walk / _idle / _attack.animation.json; never shipped, never returned
+// tools/reference_clips/ (<registry>_reference_<state>.animation.json: walk, idle, attack, fly, swim and the states the
+// seeds name under reference_states - every value the hook's code branches on, each alone, keyed by the exact
+// transcriptions' density search; owner 2026-09-14, second set revised, item 32 (2)-(6); never shipped, never returned
 // under their own names: the package checker and the asset audit refuse them; a clip's keys may start a delivered
-// idle / walk / aggro_idle, item 31 (13)); tools/artist_package.py package copies them into each species' folder.
+// idle / walk / aggro_idle / fly / swim or an offered extra); tools/artist_package.py package copies them into each
+// species' folder (the one tracked copy is here; the folder's copies are ignored by git) and embeds them in the .bbmodel.
+// The sampler reads the seeds from tools/artist_specs (--specs overrides) and can dump the dense samples (--dump-samples,
+// the walk pin's proof; never shipped).
 // `referenceClips` is the WRITER (regeneration after a hook, a rig or the rule changes); `referenceClipsVerify` below
 // is the `check` dependency (third set, item 28 (6)).
 tasks.register('referenceClips', JavaExec) {

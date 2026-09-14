@@ -6,6 +6,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.google.gson.JsonPrimitive;
 import danger.orespawn.entity.client.DrawOrder;
 import danger.orespawn.entity.client.FaceOrder;
 import danger.orespawn.entity.client.GeoReplacementDescriptor;
@@ -17,13 +18,11 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.TreeSet;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import net.minecraft.core.Direction;
 import software.bernie.geckolib.cache.object.GeoBone;
@@ -32,19 +31,17 @@ import software.bernie.geckolib.loading.json.typeadapter.KeyFramesAdapter;
 
 /**
  * The reference-clip sampler (owner 2026-09-13, second set, addendum item 27 (3); every hook and every reachable state
- * since 2026-09-14, addendum item 31 (11)): for every seam rig with a manifest entry AND every unlanded hook (a reference
- * entry whose model class has a {@code <Name>GeoReplacement} descriptor, {@link #HOOK_DESCRIPTORS}), the classic hook
- * sampled at FIXED inputs into reference-only Bedrock clips, one file per REGISTRY and STATE:
- * {@code tools/reference_clips/<registry>_reference_walk.animation.json} (limbSwingAmount 1, the walk position advancing:
- * the fixed inputs of 2026-09-13 exactly - every earlier {@code <registry>_reference.animation.json} reproduces byte for
- * byte under this name, the ruling), {@code <registry>_reference_idle.animation.json} (limbSwingAmount 0, the walk
- * position 0, everything else as the walk) and {@code <registry>_reference_attack.animation.json} where the hook READS
- * an attacking state through the pose interface it declares (attacking 1, limbSwingAmount 0) - plus the index
- * {@code reference_clips.json} the package generator ({@code tools/artist_package.py package}) reads for the SPEC's
- * "Reference clips (reference-only)" section and the manifest's {@code reference_clips} block. A clip is never shipped
- * and never returned under its own name: the package checker refuses it and the asset audit refuses it under
+ * since 2026-09-14, addendum item 31 (11); EVERY STATE A HOOK READS, named by the seed, keyed by the density search, since
+ * owner 2026-09-14, second set revised, item 32 (2)-(6)): for every seam rig with a manifest entry AND every unlanded hook
+ * (a reference entry whose model class has a {@code <Name>GeoReplacement} descriptor, {@link #HOOK_DESCRIPTORS}), the
+ * classic hook sampled at FIXED inputs into reference-only Bedrock clips, one file per REGISTRY and STATE:
+ * {@code tools/reference_clips/<registry>_reference_<state>.animation.json}, the Bedrock clip inside each named
+ * {@code reference_<state>} - plus the index {@code reference_clips.json} the package generator
+ * ({@code tools/artist_package.py package}) reads for the SPEC's "Reference clips (reference-only)" section, the
+ * manifest's {@code reference_clips} block and the .bbmodel's embedded animations. A clip is never shipped and never
+ * returned under its own name: the package checker refuses it and the asset audit refuses it under
  * {@code src/main/resources}; its keys may be the starting point of a delivered {@code idle} / {@code walk} /
- * {@code aggro_idle} (item 31 (13)).
+ * {@code aggro_idle} / {@code fly} / {@code swim} or of an offered extra (item 32 (4)).
  *
  * <p>THE POSE SOURCE (the S4 doctrine): the {@code OreSpawnGeoReplacement} named by the manifest's
  * {@code candidate_class} - or, for an unlanded hook, the descriptor {@link #HOOK_DESCRIPTORS} names - instantiated
@@ -71,12 +68,25 @@ import software.bernie.geckolib.loading.json.typeadapter.KeyFramesAdapter;
  * {@link ProbeSubject} built from an EMPTY state: {@code attacking} 0, {@code ri1} 0, {@code rock_type} 0,
  * {@code rf1} 0 - with its entity RNG seeded 0 ({@code RandomSource.create(0)}) ONCE per clip and evolving across
  * the keys, one pose call per key (a fan angle or a roll advances per call, as it advances per rendered frame
- * in-game); full health (no hook reads health below the maximum). Twenty samples per second: one key per tick. THE
- * STATES (item 31 (11)): {@code walk} is exactly the above; {@code idle} sets limbSwingAmount 0 and limbSwing 0 (the
- * walk position at rest); {@code attack} sets the subject's {@code attacking} to 1 with limbSwingAmount 0 and
- * limbSwing 0, and exists only where the hook reads attacking through a pose interface it declares
- * ({@link #declaredAttacking}: the {@code inputs.subject(<X>Pose.class)} casts of the hook and of the static helpers it
- * delegates to, followed into the interface's getters named like {@link #ATTACKING_GETTER}).</p>
+ * in-game); full health (no hook reads health below the maximum). Twenty samples per second: one pose per tick.</p>
+ *
+ * <p>THE STATES (item 32 (2)): {@code walk} is exactly the above; {@code idle} sets limbSwingAmount 0 and limbSwing 0
+ * (the walk position at rest); then ONE STATE PER VALUE THE HOOK'S CODE BRANCHES ON - every pose-interface getter the
+ * hook reads ({@link HookGetterReader}: the {@code inputs.subject(<X>Pose.class)} casts of the descriptor and of the
+ * static helpers it delegates to, the interfaces' getters, the comparisons with literals - an {@code int} getter's
+ * literal set plus the value that takes the other side, a {@code boolean} getter's {@code true}; a getter used only
+ * arithmetically, a RenderInfo latch, an RNG or a movement delta is named as not enumerable), each value ALONE: every
+ * other getter at rest, the idle inputs, the age advancing. {@code getAttacking} 1 is the contract's {@code attack}. A
+ * value whose dense samples equal the idle state's on every bone and channel yields NO clip: the index records it under
+ * the hook's {@code no_motion} (with the branch that gates the read where the read is not reached - the six resting
+ * attacks of the 2026-09-14 landing), so nothing is silently missing; combinations of values are never sampled.
+ * THE NAMES: the seed ({@code tools/artist_specs/<registry>.json}, {@code reference_states}: an object mapping a state
+ * name in the animator's words to the getter value that produces it - {@code {"fly": {"getActivity": 1}}}) names a
+ * value's state; the contract names are {@code walk}, {@code idle}, {@code attack} ({@code getAttacking} 1), {@code fly},
+ * {@code swim}; a value the seed does not name is emitted as {@code reference_<getter>_<value>} (the getter's name without
+ * its {@code get} / {@code is} prefix, lower snake case, then the value, {@code true} as {@code 1}) and flagged in the
+ * index ({@code named} false), so the sheet can say so. A seed mapping that names a value the hook does not enumerate, a
+ * contract name for the wrong value, two values under one name, or a combination of getters is refused.</p>
  *
  * <p>THE SPAN, per rig and per state (owner 2026-09-13, third set, addendum item 28 (5), replacing item 27 (3)'s
  * wording): a rig with a period structure - a manifest that declares {@code channels} (the effective frequency
@@ -95,44 +105,59 @@ import software.bernie.geckolib.loading.json.typeadapter.KeyFramesAdapter;
  * with no period (the Purple Power's fresh random rolls) is two seconds ({@code two_seconds_no_period}). The closure
  * test runs PER STATE on that state's inputs and its own fresh subject, and a state whose hook writes nothing that
  * MOVES - every bone's rotation and position identical at every sample - is one key ({@code one_key}, the note saying
- * which structure is not live at those inputs: a threshold gait at limbSwingAmount 0, for one). Keys sit at every
- * whole tick inside the span plus a CLOSING key at the span's end (the pose sampled AT {@code k * T} - Bedrock and
- * GeckoLib hold the last key until {@code animation_length}, so without it the loop would hitch by up to a tick); the
- * index records the seam delta (closing key against first key, degrees, reduced mod 360) so a past-cap window's seam
- * and a sawtooth channel's wrap are visible.</p>
+ * which structure is not live at those inputs: a threshold gait at limbSwingAmount 0, for one). The DENSE SAMPLES sit
+ * at every whole tick inside the span plus a CLOSING sample at the span's end (the pose sampled AT {@code k * T} -
+ * Bedrock and GeckoLib hold the last key until {@code animation_length}, so without it the loop would hitch by up to a
+ * tick); the index records the seam delta (closing sample against first, degrees, reduced mod 360) so a past-cap
+ * window's seam and a sawtooth channel's wrap are visible.</p>
  *
- * <p>THE KEYS: a rotation key per bone per sample, DELTAS from the bone's bind under the converter's sign rule
- * (authored X = +classic degrees, Y and Z negated; the rule {@code tools/keyframe_clip.py} and {@link KeyframeLeg}
- * document): the bake's internal rotation is classic {@code (-x, y, -z)} ({@code OreSpawnGeoReplacement}'s basis
- * facts), so the classic delta is {@code (-(Ix - Bx), Iy - By, -(Iz - Bz))} and the authored key
- * {@code (+dCx, -dCy, -dCz)} - equivalently {@code (-dIx, -dIy, +dIz)} in internal terms, which is exactly what
- * GeckoLib 4.8.4 undoes at load (X and Y rotation keys negated, Z kept) before adding the key to the bone's initial
- * snapshot. A position key per bone per sample where the hook writes positions ({@code moveTo}): GeckoLib reads
- * position keys unnegated and sets them absolutely, and a fresh bake's offsets are 0, so the authored key is the
- * internal offset itself - {@code (-dx, -dy, +dz)} of the classic pivot move {@code (dx, dy, dz)}, the numbers
- * {@code moveTo} writes. Values rounded to 1e-10 (degrees / model units), never {@code -0.0}; {@code lerp_mode}
- * linear; two-space JSON, LF, UTF-8; deterministic, so two runs compare byte for byte. The walk clip's Bedrock clip
- * name stays {@code reference} (the pinned bytes); the idle and attack clips are {@code reference_idle} and
- * {@code reference_attack}, so the three files import beside each other without a name collision.</p>
+ * <p>THE SAMPLES AND THE KEYS: a rotation sample per bone per tick, DELTAS from the bone's bind under the converter's
+ * sign rule (authored X = +classic degrees, Y and Z negated; the rule {@code tools/keyframe_clip.py} and
+ * {@link KeyframeLeg} document): the bake's internal rotation is classic {@code (-x, y, -z)}
+ * ({@code OreSpawnGeoReplacement}'s basis facts), so the classic delta is {@code (-(Ix - Bx), Iy - By, -(Iz - Bz))}
+ * and the authored value {@code (+dCx, -dCy, -dCz)} - equivalently {@code (-dIx, -dIy, +dIz)} in internal terms, which
+ * is exactly what GeckoLib 4.8.4 undoes at load (X and Y rotation keys negated, Z kept) before adding the key to the
+ * bone's initial snapshot. A position sample per bone per tick where the hook writes positions ({@code moveTo}):
+ * GeckoLib reads position keys unnegated and sets them absolutely, and a fresh bake's offsets are 0, so the authored
+ * value is the internal offset itself - {@code (-dx, -dy, +dz)} of the classic pivot move {@code (dx, dy, dz)}, the
+ * numbers {@code moveTo} writes. Values rounded to 1e-10 (degrees / model units), never {@code -0.0}. THE WALK PIN
+ * (item 32 (3)): the dense per-tick samples of every walk state, after this rounding, equal number for number the keys
+ * of the walk clips checked in at {@code fc5e23c} (whose keys were the samples at every whole tick plus the closing
+ * key); {@code --dump-samples <dir>} writes them as JSON ({@code <registry>_samples_<state>.json}, never shipped) for
+ * that proof. THE KEYS (item 32 (6)) are chosen from the samples by the density search the exact transcriptions use
+ * ({@link ReferenceClipKeying}: catmullrom, the fewest keys per bone and channel within 1 degree of rotation and 1/32
+ * block of position of the samples, the closing key always kept) and written with {@code lerp_mode} catmullrom; the
+ * index records per clip the key counts, the sample count, the tolerance and the measured maximum error. Two-space
+ * JSON, LF, UTF-8; deterministic, so two runs compare byte for byte.</p>
  *
- * <p>Usage: {@code ReferenceClipSampler <output-dir> <manifest>... [--reference <reference-manifest> <geo-dir>]}
- * (build.gradle {@code referenceClips}, the writer) and {@code ReferenceClipSampler --verify <checked-in-dir>
- * <scratch-out-dir> <manifest>... [--reference <reference-manifest> <geo-dir>]} (build.gradle
- * {@code referenceClipsVerify}, a {@code check} dependency - owner 2026-09-13, third set, addendum item 28 (6)): the
- * clips are regenerated into the scratch directory and every file is compared byte for byte with the checked-in
- * directory; a difference, a file the sampler produced that is not checked in, or a checked-in file the sampler did
- * not produce prints one {@code REFERENCE CLIPS DRIFT: <files>} line and exits 1 (the build fails, as proof drift
- * does); success prints {@code REFERENCE CLIPS VERIFIED: N files}. No python in the loop.</p>
+ * <p>Usage: {@code ReferenceClipSampler <output-dir> <manifest>... [--reference <reference-manifest> <geo-dir>]
+ * [--specs <seed-dir>] [--dump-samples <dir>]} (build.gradle {@code referenceClips}, the writer) and
+ * {@code ReferenceClipSampler --verify <checked-in-dir> <scratch-out-dir> <manifest>... [--reference <reference-manifest>
+ * <geo-dir>] [--specs <seed-dir>]} (build.gradle {@code referenceClipsVerify}, a {@code check} dependency - owner
+ * 2026-09-13, third set, addendum item 28 (6)): the clips are regenerated into the scratch directory and every file is
+ * compared byte for byte with the checked-in directory; a difference, a file the sampler produced that is not checked
+ * in, or a checked-in file the sampler did not produce prints one {@code REFERENCE CLIPS DRIFT: <files>} line and exits
+ * 1 (the build fails, as proof drift does); success prints {@code REFERENCE CLIPS VERIFIED: N files}. The seeds are read
+ * from {@code <repository>/tools/artist_specs} unless {@code --specs} points elsewhere. No python in the loop.</p>
  */
 public final class ReferenceClipSampler {
-    static final String CLIP_NAME = "reference";
+    /** Every clip's Bedrock name is {@code reference_<state>} (item 32 (3)). */
+    static final String CLIP_PREFIX = "reference_";
     static final String INDEX_FILE = "reference_clips.json";
+    static final int SCHEMA_VERSION = 4;
     /** The state file names: {@code <registry>_reference_<state>.animation.json}. */
     static final String FILE_INFIX = "_reference_";
     static final String FILE_EXTENSION = ".animation.json";
+    static final String SAMPLES_INFIX = "_samples_";
     static final String STATE_WALK = "walk";
     static final String STATE_IDLE = "idle";
     static final String STATE_ATTACK = "attack";
+    /** The contract's names (item 32 (2)-(4)): the seed may map {@code fly} and {@code swim}; {@code attack} is {@code getAttacking} 1. */
+    static final List<String> CONTRACT_STATES = List.of(STATE_WALK, STATE_IDLE, STATE_ATTACK, "fly", "swim");
+    static final String ATTACKING_GETTER_NAME = "getAttacking";
+    static final Pattern STATE_NAME = Pattern.compile("[a-z][a-z0-9_]*");
+    static final String SPECS_DIR = "tools/artist_specs";
+    static final String REFERENCE_STATES_KEY = "reference_states";
     static final double TICKS_PER_SECOND = 20.0D;
     static final double TWO_SECONDS_TICKS = 40.0D;
     /** The cap on a period multiple: 6 s (owner 2026-09-13, third set, item 28 (5)); past it, two seconds. */
@@ -171,23 +196,44 @@ public final class ReferenceClipSampler {
             + "netHeadYaw 0; headPitch 0 (looking ahead); every entity-state flag at its rest value (attacking 0, ri1 0, "
             + "rock_type 0, rf1 0: a ProbeSubject built from an empty state); the entity RNG seeded 0 once per clip and evolving "
             + "across the keys; one pose call per key, 20 keys per second; full health";
-    static final String ATTACK_INPUTS_STATEMENT = "attacking 1 (the pose interface's getAttacking() answers 1: the hook's "
-            + "attacking branch); limbSwingAmount 0.0; limbSwing 0 (the walk position at rest); ageInTicks = t (getBob: "
-            + "tickCount + partialTick, partialTick 0; advancing 1.0 per tick from 0); netHeadYaw 0; headPitch 0 (looking "
-            + "ahead); every other entity-state flag at its rest value (ri1 0, rock_type 0, rf1 0: a ProbeSubject built from "
-            + "the attack state); the entity RNG seeded 0 once per clip and evolving across the keys; one pose call per key, "
-            + "20 keys per second; full health";
-    /** The getter names that read an attacking state on a pose interface (item 31 (11): getAttacking / isAttacking and kin). */
-    static final Pattern ATTACKING_GETTER = Pattern.compile("(?i)^(get|is)?(is)?attack(ing)?$");
-    /** The hook's declared pose interface: {@code inputs.subject(<X>.class)} in the descriptor or a helper it delegates to. */
-    static final Pattern SUBJECT_CAST = Pattern.compile("subject\\(\\s*([A-Za-z0-9_.]+)\\.class\\s*\\)");
-    /** A hook delegating to another descriptor's static pose helper ({@code <Other>GeoReplacement.poseRig(...)}, for one). */
-    static final Pattern DELEGATION = Pattern.compile("\\b([A-Z][A-Za-z0-9]*GeoReplacement)\\.(pose[A-Za-z0-9]*)\\s*\\(");
-    static final String POSE_PACKAGE = "danger.orespawn.entity.pose.";
     static final String CLIENT_PACKAGE = "danger.orespawn.entity.client.";
-    static final String CLIENT_SOURCE_DIR = "src/main/java/danger/orespawn/entity/client";
+    static final String CLIENT_SOURCE_DIR = HookGetterReader.CLIENT_SOURCE_DIR;
     static final String SHIPPED_ASSETS = "src/main/resources/assets/orespawn";
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
+
+    /**
+     * The branch that gates the attacking read of the six hooks whose attack state moved nothing at the 2026-09-14
+     * landing (owner 2026-09-14, second set revised, item 32 (7): "re-examined under item 2, since a resting attack
+     * usually means another flag gates it"), authored from the code: what the code tests before it reads
+     * {@code getAttacking()}. Reported in the index and the sheet when {@code getAttacking} 1 alone moves nothing (the
+     * computed result, never assumed); the combination of values is the owner's to sample.
+     */
+    static final Map<String, String> ATTACK_GATES = new TreeMap<>(Map.ofEntries(
+            Map.entry("CaveFisherGeoReplacement", "getAttacking() is read only inside the claw-snap latch's re-roll, "
+                    + "if (nextangle > 0 && newangle < 0) on cos(ageInTicks * 3.0 * WINGSPEED) with its 0.1-tick look-ahead "
+                    + "(CaveFisherGeoReplacement.java:100-110): the read happens only when a rising zero crossing of that 1.86 rad/tick "
+                    + "rhythm falls within 0.1 tick after a whole-tick sample, which no sampled tick does, so ri1 stays 0, the claws hold "
+                    + "their rest and attacking alone moves nothing"),
+            Map.entry("ScorpionGeoReplacement", "getAttacking() is read only inside the claw and tail latch's re-roll, "
+                    + "if (nextangle > 0 && newangle < 0) on cos(ageInTicks * 3.0 * WINGSPEED) with its 0.1-tick look-ahead "
+                    + "(ScorpionGeoReplacement.java:82-92): the read happens only when a rising zero crossing of that 1.86 rad/tick rhythm "
+                    + "falls within 0.1 tick after a whole-tick sample, which no sampled tick does, so ri1 stays 0, the claws and tail hold "
+                    + "their rest and attacking alone moves nothing"),
+            Map.entry("Robot2GeoReplacement", "getAttacking() is read only inside the windmill latch's re-roll, if (nextangle > 0 && "
+                    + "newangle < 0) on sin(toRadians(ageInTicks * 20)) with a 1.5-degree look-ahead (Robot2GeoReplacement.java:51-59): at "
+                    + "a whole-tick sample the phase is a multiple of 20 degrees and Mth.sin's table answers exactly 0 at the crossing, never "
+                    + "below it, so the read is never reached, ri1 stays 0 and attacking alone moves nothing"),
+            Map.entry("Robot3GeoReplacement", "getAttacking() is read only at the arm swing's rising zero crossing, if (nextangle > 0 && "
+                    + "armSwing < 0) on cos(ageInTicks) with a 0.3-tick look-ahead (Robot3GeoReplacement.java:56-60): no whole tick of the "
+                    + "sampled span falls within 0.3 tick before a crossing (they sit at 4.71, 11.0, 17.3 ... ticks), so ri1 stays 0, the arms "
+                    + "hold their bent rest and attacking alone moves nothing"),
+            Map.entry("LeonGeoReplacement", "every getAttacking() read sits in the flying branch - if (entity.getActivity() == 0) { standing } "
+                    + "else { flying: LeonGeoReplacement.java:255, :286, :465 } (the branch at :161) - so with activity 0 attacking alone moves "
+                    + "nothing; the combination (getActivity 1 with getAttacking 1) is the owner's to sample"),
+            Map.entry("LeonopteryxGeoReplacement", "every getAttacking() read sits in the flying branch of the Leon rig's helper - "
+                    + "if (entity.getActivity() == 0) { standing } else { flying: LeonGeoReplacement.java:255, :286, :465 } (the branch at "
+                    + ":161; LeonopteryxGeoReplacement.applyCustomAnimations:41 -> LeonGeoReplacement.poseRig) - so with activity 0 attacking "
+                    + "alone moves nothing; the combination (getActivity 1 with getAttacking 1) is the owner's to sample")));
 
     /** The registry each manifest id packages under (the file name); an id without a row is refused. */
     static final Map<String, String> REGISTRIES = new TreeMap<>(Map.ofEntries(
@@ -337,29 +383,74 @@ public final class ReferenceClipSampler {
         return out;
     }
 
-    /** One sampled state: its file suffix and clip name, the walk inputs and the subject's attacking value. */
-    record State(String name, float limbSwingAmount, double limbSwingPerTick, int attacking, String statement) {
-        static final State WALK = new State(STATE_WALK, LIMB_SWING_AMOUNT, LIMB_SWING_PER_TICK, 0, INPUTS_STATEMENT);
-        static final State IDLE = new State(STATE_IDLE, 0.0F, 0.0D, 0, IDLE_INPUTS_STATEMENT);
-        static final State ATTACK = new State(STATE_ATTACK, 0.0F, 0.0D, 1, ATTACK_INPUTS_STATEMENT);
+    /**
+     * One sampled state: its name (the file suffix and the clip name {@code reference_<name>}), the walk inputs, and - for
+     * a value state - the getter raised and the value it answers (every other getter at rest), whether the seed named it.
+     */
+    record State(String name, float limbSwingAmount, double limbSwingPerTick, String getter, JsonPrimitive value, boolean named,
+                 String nameSource) {
+        static final State WALK = new State(STATE_WALK, LIMB_SWING_AMOUNT, LIMB_SWING_PER_TICK, null, null, true, "the contract");
+        static final State IDLE = new State(STATE_IDLE, 0.0F, 0.0D, null, null, true, "the contract");
 
-        /** The walk clip keeps the pinned name {@code reference}; the others carry their state. */
+        /** A value state: the idle inputs with one getter raised (item 32 (2): each value alone). */
+        static State ofValue(String name, String getter, JsonPrimitive value, boolean named, String nameSource) {
+            return new State(name, 0.0F, 0.0D, getter, value, named, nameSource);
+        }
+
+        boolean isValueState() {
+            return this.getter != null;
+        }
+
+        boolean isAttack() {
+            return STATE_ATTACK.equals(this.name);
+        }
+
         String clipName() {
-            return STATE_WALK.equals(this.name) ? CLIP_NAME : CLIP_NAME + "_" + this.name;
+            return CLIP_PREFIX + this.name;
         }
 
         String fileName(String registry) {
             return registry + FILE_INFIX + this.name + FILE_EXTENSION;
         }
 
-        /** The subject's declared state: the rest state, with {@code attacking} raised for the attack state. */
+        String samplesFileName(String registry) {
+            return registry + SAMPLES_INFIX + this.name + ".json";
+        }
+
+        String valueToken() {
+            return this.value == null ? "" : HookGetterReader.valueToken(this.value);
+        }
+
+        /** The inputs in words: the walk's, the idle's, or the idle's with the one getter raised. */
+        String statement() {
+            if (STATE_WALK.equals(this.name)) {
+                return INPUTS_STATEMENT;
+            }
+            if (!isValueState()) {
+                return IDLE_INPUTS_STATEMENT;
+            }
+            return this.getter + "() answers " + valueToken() + " (" + (this.named ? "the state the seed names `" + this.name + "`"
+                    : "an unnamed state: the seed's reference_states should name it") + "; every other getter at its rest value); "
+                    + IDLE_INPUTS_STATEMENT.replace("every entity-state flag at its rest value (attacking 0, ri1 0, rock_type 0, rf1 0: a "
+                    + "ProbeSubject built from an empty state)", "every other entity-state flag at its rest value (ri1 0, rock_type 0, rf1 0)");
+        }
+
+        /** The subject's declared state: the rest state, with the one getter raised ({@code attacking} kept in step for {@code getAttacking}). */
         JsonObject subjectState() {
             JsonObject state = restState();
             state.addProperty("name", this.name);
-            state.addProperty("attacking", this.attacking);
+            JsonObject getters = new JsonObject();
+            if (isValueState()) {
+                getters.add(this.getter, this.value);
+                if (ATTACKING_GETTER_NAME.equals(this.getter)) {
+                    state.addProperty("attacking", this.value.isBoolean() ? (this.value.getAsBoolean() ? 1 : 0) : this.value.getAsInt());
+                }
+            }
+            state.add(ProbeSubject.GETTERS_KEY, getters);
             return state;
         }
     }
+
     /**
      * A rig's span rule. {@code kind}: {@link #RULE_ONE_KEY} (a static rig, or nothing to sample), {@link #RULE_PERIODIC}
      * (a period structure - {@code periodTicks} is the slowest group's period {@code T} - which {@link #resolveSpan}
@@ -872,15 +963,22 @@ public final class ReferenceClipSampler {
     private ReferenceClipSampler() {
     }
 
-    static final String USAGE = "Usage: ReferenceClipSampler <output-dir> <manifest>... [--reference <reference-manifest> <geo-dir>] | "
-            + "--verify <checked-in-dir> <scratch-out-dir> <manifest>... [--reference <reference-manifest> <geo-dir>]";
+    static final String USAGE = "Usage: ReferenceClipSampler <output-dir> <manifest>... [--reference <reference-manifest> <geo-dir>] "
+            + "[--specs <seed-dir>] [--dump-samples <dir>] | --verify <checked-in-dir> <scratch-out-dir> <manifest>... "
+            + "[--reference <reference-manifest> <geo-dir>] [--specs <seed-dir>]";
 
-    /** The command line past the mode arguments: the seam manifests and, optionally, the reference manifest with its geo directory. */
-    record Options(List<Path> manifests, Path referenceManifest, Path referenceGeoDir) {
+    /**
+     * The command line past the mode arguments: the seam manifests; optionally the reference manifest with its geo
+     * directory, the seed directory (default {@code <repository>/tools/artist_specs}) and a directory for the dense
+     * samples (the walk pin's proof; never shipped).
+     */
+    record Options(List<Path> manifests, Path referenceManifest, Path referenceGeoDir, Path specsDir, Path samplesDir) {
         static Options parse(String[] args, int from) {
             List<Path> manifests = new ArrayList<>();
             Path referenceManifest = null;
             Path referenceGeoDir = null;
+            Path specsDir = null;
+            Path samplesDir = null;
             for (int i = from; i < args.length; i++) {
                 if ("--reference".equals(args[i])) {
                     if (i + 2 >= args.length) {
@@ -889,6 +987,18 @@ public final class ReferenceClipSampler {
                     referenceManifest = Path.of(args[i + 1]).toAbsolutePath().normalize();
                     referenceGeoDir = Path.of(args[i + 2]).toAbsolutePath().normalize();
                     i += 2;
+                } else if ("--specs".equals(args[i])) {
+                    if (i + 1 >= args.length) {
+                        throw new IllegalArgumentException("--specs takes <seed-dir>. " + USAGE);
+                    }
+                    specsDir = Path.of(args[i + 1]).toAbsolutePath().normalize();
+                    i += 1;
+                } else if ("--dump-samples".equals(args[i])) {
+                    if (i + 1 >= args.length) {
+                        throw new IllegalArgumentException("--dump-samples takes <dir>. " + USAGE);
+                    }
+                    samplesDir = Path.of(args[i + 1]).toAbsolutePath().normalize();
+                    i += 1;
                 } else {
                     manifests.add(Path.of(args[i]));
                 }
@@ -896,7 +1006,11 @@ public final class ReferenceClipSampler {
             if (manifests.isEmpty()) {
                 throw new IllegalArgumentException(USAGE);
             }
-            return new Options(manifests, referenceManifest, referenceGeoDir);
+            return new Options(manifests, referenceManifest, referenceGeoDir, specsDir, samplesDir);
+        }
+
+        Path specs(Path repositoryRoot) {
+            return this.specsDir != null ? this.specsDir : repositoryRoot.resolve(SPECS_DIR);
         }
     }
 
@@ -985,10 +1099,17 @@ public final class ReferenceClipSampler {
     static final String RIG_SOURCE_SHIPPED = "shipped";
     static final String RIG_SOURCE_REFERENCE = "reference-leg converter output";
 
+    /** What one registry's sampling produced: its clip rows and the hook facts (the getters read, the states, the values without motion). */
+    record Sampled(List<JsonObject> rows, JsonObject hook) {
+    }
+
     /** The writer: every manifest's rigs, then every unlanded hook of the reference manifest, sampled into {@code outputDir} plus the index. */
     static void write(Path outputDir, Options options) throws Exception {
         Files.createDirectories(outputDir);
-        Map<String, List<JsonObject>> index = new TreeMap<>();
+        if (options.samplesDir() != null) {
+            Files.createDirectories(options.samplesDir());
+        }
+        Map<String, Sampled> index = new TreeMap<>();
         Map<String, String> sampledClasses = new TreeMap<>();
         Map<String, String> landedClasses = new TreeMap<>();  // model class -> registry sampled from a manifest
         Path repositoryRoot = null;
@@ -1019,7 +1140,7 @@ public final class ReferenceClipSampler {
                 sampledClasses.put(registry, modelClass);
                 landedClasses.put(modelClass, registry);
                 if (entry != null) {
-                    index.put(registry, sample(entry, outputDir));
+                    index.put(registry, sample(entry, outputDir, options));
                 }
             }
         }
@@ -1068,7 +1189,7 @@ public final class ReferenceClipSampler {
                                 + "descriptor's PoseInputs form, proven when the rig lands - registry-free, on explicit PoseInputs, over the reference leg's "
                                 + "converter output " + geo.getFileName() + " baked without the face-order strictness the landing slice's TEST-007 adds)",
                         false, RIG_SOURCE_REFERENCE);
-                index.put(hook.registry(), sample(entry, outputDir));
+                index.put(hook.registry(), sample(entry, outputDir, options));
                 sampledClasses.put(hook.registry(), modelClass);
                 hooked.add(hook.referenceId());
                 hooksSampled++;
@@ -1086,33 +1207,49 @@ public final class ReferenceClipSampler {
             }
         }
         JsonObject root = new JsonObject();
-        root.addProperty("schema_version", 3);
+        root.addProperty("schema_version", SCHEMA_VERSION);
         root.addProperty("generated_by", "danger.orespawn.g1.ReferenceClipSampler (build.gradle referenceClips; verified at check by referenceClipsVerify)");
-        root.addProperty("purpose", "reference-only clips sampled from every hook, landed or not, one clip per reachable state (owner 2026-09-13, "
-                + "second set, addendum item 27 (3); owner 2026-09-14, addendum item 31 (11)): the seam manifests' rigs on their shipped geo and every "
-                + "unlanded hook (a reference entry whose model class has a <Name>GeoReplacement descriptor) on the reference leg's converter output; "
-                + "never shipped, never returned under its own name - the package checker and the asset audit refuse it; its keys may be the starting "
-                + "point of a delivered idle / walk / aggro_idle (item 31 (13))");
+        root.addProperty("purpose", "reference-only clips sampled from every hook, landed or not, one clip per state the hook's code reads that moves "
+                + "the pose (owner 2026-09-13, second set, addendum item 27 (3); owner 2026-09-14, addendum item 31 (11); owner 2026-09-14, second set "
+                + "revised, item 32 (2)-(6)): the seam manifests' rigs on their shipped geo and every unlanded hook (a reference entry whose model class "
+                + "has a <Name>GeoReplacement descriptor) on the reference leg's converter output; never shipped, never returned under its own name - "
+                + "the package checker and the asset audit refuse it; its keys may be the starting point of a delivered idle / walk / aggro_idle / fly / "
+                + "swim or of an offered extra (item 32 (4))");
         JsonObject states = new JsonObject();
-        for (State state : List.of(State.WALK, State.IDLE, State.ATTACK)) {
-            JsonObject description = new JsonObject();
-            description.addProperty("file", "<registry>" + FILE_INFIX + state.name() + FILE_EXTENSION);
-            description.addProperty("clip_name", state.clipName());
-            description.addProperty("inputs", state.statement());
-            description.addProperty("when", STATE_WALK.equals(state.name()) ? "every sampled rig (the fixed inputs of 2026-09-13; every earlier "
-                    + "<registry>_reference.animation.json reproduces byte for byte under this name)"
-                    : STATE_IDLE.equals(state.name()) ? "every sampled rig"
-                    : "where the hook reads an attacking state through a pose interface it declares (the attacking_rule)");
-            states.add(state.name(), description);
-        }
+        JsonObject walk = new JsonObject();
+        walk.addProperty("file", "<registry>" + FILE_INFIX + STATE_WALK + FILE_EXTENSION);
+        walk.addProperty("clip_name", State.WALK.clipName());
+        walk.addProperty("inputs", INPUTS_STATEMENT);
+        walk.addProperty("when", "every sampled rig (the fixed inputs of 2026-09-13; the dense samples of every walk state equal number for number "
+                + "the keys of the walk clips checked in at fc5e23c - item 32 (3), the pin at the sampled values)");
+        states.add(STATE_WALK, walk);
+        JsonObject idle = new JsonObject();
+        idle.addProperty("file", "<registry>" + FILE_INFIX + STATE_IDLE + FILE_EXTENSION);
+        idle.addProperty("clip_name", State.IDLE.clipName());
+        idle.addProperty("inputs", IDLE_INPUTS_STATEMENT);
+        idle.addProperty("when", "every sampled rig");
+        states.add(STATE_IDLE, idle);
+        JsonObject value = new JsonObject();
+        value.addProperty("file", "<registry>" + FILE_INFIX + "<state>" + FILE_EXTENSION);
+        value.addProperty("clip_name", CLIP_PREFIX + "<state>");
+        value.addProperty("inputs", "the idle inputs with ONE pose-interface getter answering one value the hook's code branches on, every other "
+                + "getter at its rest value (item 32 (2): each value alone; combinations are never sampled)");
+        value.addProperty("when", "one clip per enumerated value that MOVES the pose (its dense samples differ from the idle state's on some bone or "
+                + "channel); a value that moves nothing yields no clip and is listed under hooks.<registry>.no_motion; the state's name is the "
+                + "contract's (attack = getAttacking 1; fly, swim as the seed maps them) or the seed's reference_states word, else "
+                + "<getter>_<value> with named false");
+        states.add("<state>", value);
         root.add("states", states);
-        root.addProperty("attacking_rule", "reference_attack exists where the hook READS an attacking state through a pose interface it declares: the "
-                + "inputs.subject(<X>Pose.class) casts of the descriptor's applyCustomAnimations and of the static pose helpers it delegates to "
-                + "(<Other>GeoReplacement.poseRig / poseDragon / pose), followed into that interface's public getters whose names match "
-                + ATTACKING_GETTER.pattern() + " (getAttacking / isAttacking and kin; today every match is int getAttacking()); a cast to a type outside "
-                + "danger.orespawn.entity.pose is reported per clip under attacking.outside_pose_interface (none today); attacking.read_at_inputs says "
-                + "whether the pose actually called the probe's getAttacking() at that state's inputs (the cross-check)");
-        root.addProperty("clip_name", CLIP_NAME);
+        root.addProperty("naming_rule", "the seed tools/artist_specs/<registry>.json names a value's state under reference_states - an object "
+                + "mapping a state name in the animator's words to the getter value that produces it, {\"fly\": {\"getActivity\": 1}} - from the "
+                + "code's own words only; walk, idle and attack (getAttacking 1) are the contract's; a value the seed does not name is emitted as "
+                + "reference_<getter>_<value> (the getter's name without its get / is prefix, lower snake case, then the value; true as 1) with "
+                + "named false, and the sheet flags it (item 32 (2))");
+        root.addProperty("getter_rule", "every pose-interface getter the hook reads (HookGetterReader: the inputs.subject(<X>Pose.class) casts of "
+                + "the descriptor's applyCustomAnimations and of the static helpers it delegates to, followed into the interfaces' getters) and, per "
+                + "getter, the values the code branches on: an int getter compared with literals yields the literal set plus the value that takes the "
+                + "other side (!= 0 -> 1, > 0 -> 1, == 2 -> 2; the rest value 0 is the idle state, never a clip); a boolean getter yields true; a getter "
+                + "used only arithmetically, a RenderInfo latch, an RNG or a movement delta is not enumerable and is named per hook with the reason");
         root.addProperty("samples_per_second", TICKS_PER_SECOND);
         root.addProperty("fixed_inputs", INPUTS_STATEMENT);
         root.addProperty("span_rule", "owner 2026-09-13, third set, addendum item 28 (5): a rig with a period structure spans the smallest "
@@ -1121,30 +1258,40 @@ public final class ReferenceClipSampler {
                 + "maximum at most 5.0 degrees; a position channel within 1.0 model unit), capped at 6 s (120 ticks): the first k >= 1 with "
                 + "k x T <= 120 that passes (rule period_multiple, period_multiple_k = k; a single-group rig passes at k = 1, its seam 0 by "
                 + "construction). Past the cap - no such k, or T itself over 120 ticks - two seconds (rule two_seconds_past_cap, 40 ticks) "
-                + "and the sheet states the seam (seam_delta_degrees: the closing key's delta at 40 ticks). A static rig one key (one_key); "
-                + "a rig with no period two seconds (two_seconds_no_period). Keys at every whole tick inside the span plus the closing key "
-                + "at its end. Per state (owner 2026-09-14, item 31 (11)): the closure test runs on each state's own inputs and subject, and a "
+                + "and the sheet states the seam (seam_delta_degrees: the closing sample's delta at 40 ticks). A static rig one key (one_key); "
+                + "a rig with no period two seconds (two_seconds_no_period). Dense samples at every whole tick inside the span plus the closing "
+                + "sample at its end. Per state (owner 2026-09-14, item 31 (11)): the closure test runs on each state's own inputs and subject, and a "
                 + "state whose hook writes nothing that moves - every bone's rotation and position the same at every sample - is one key (one_key)");
-        root.addProperty("rotation_rule", "a rotation key per bone per sample as the DELTA from the bone's bind under the converter's "
+        root.addProperty("keying_rule", ReferenceClipKeying.SEARCH_RULE + "; tolerance " + ReferenceClipKeying.ROTATION_TOLERANCE_DEGREES
+                + " degree of rotation and 1/32 block (" + ReferenceClipKeying.POSITION_TOLERANCE_UNITS + " model units) of position; lerp_mode "
+                + ReferenceClipKeying.LERP_MODE + " (owner 2026-09-14, second set revised, item 32 (6))");
+        root.addProperty("rotation_rule", "a rotation sample per bone per tick as the DELTA from the bone's bind under the converter's "
                 + "sign rule: authored X = +classic degrees, Y and Z negated (tools/keyframe_clip.py; KeyframeLeg); rounded to 1e-10 "
-                + "degrees, never -0.0; lerp_mode linear");
-        root.addProperty("position_rule", "a position key per bone per sample where the hook writes positions (OreSpawnGeoReplacement.moveTo): "
+                + "degrees, never -0.0; the keys the density search keeps, lerp_mode catmullrom");
+        root.addProperty("position_rule", "a position sample per bone per tick where the hook writes positions (OreSpawnGeoReplacement.moveTo): "
                 + "the internal offset the hook wrote, (-dx, -dy, +dz) of the classic pivot move (dx, dy, dz) in model units - GeckoLib reads "
-                + "position keys unnegated and sets them absolutely over a fresh bake's zero offsets");
+                + "position keys unnegated and sets them absolutely over a fresh bake's zero offsets; the keys the density search keeps");
         root.addProperty("hooks_sampled_from_reference_manifest", hooksSampled);
         root.add("reference_entries_skipped", names(skipped));
+        JsonObject hooks = new JsonObject();
         JsonArray clips = new JsonArray();
+        TreeMap<String, Integer> perState = new TreeMap<>();
         int files = 0;
-        for (List<JsonObject> rows : index.values()) {
-            for (JsonObject row : rows) {
+        for (Map.Entry<String, Sampled> sampled : index.entrySet()) {
+            hooks.add(sampled.getKey(), sampled.getValue().hook());
+            for (JsonObject row : sampled.getValue().rows()) {
                 clips.add(row);
+                perState.merge(row.get("state").getAsString(), 1, Integer::sum);
                 files++;
             }
         }
+        root.add("hooks", hooks);
         root.add("clips", clips);
         writeJson(outputDir.resolve(INDEX_FILE), root);
-        System.out.println("wrote " + outputDir.resolve(INDEX_FILE) + " (" + files + " clips over " + index.size() + " registries; " + hooksSampled
-                + " unlanded hooks from the reference manifest; " + skipped.size() + " reference entries skipped)");
+        StringBuilder counts = new StringBuilder();
+        perState.forEach((state, count) -> counts.append(counts.length() == 0 ? "" : ", ").append(state).append(' ').append(count));
+        System.out.println("wrote " + outputDir.resolve(INDEX_FILE) + " (" + files + " clips over " + index.size() + " registries: " + counts + "; "
+                + hooksSampled + " unlanded hooks from the reference manifest; " + skipped.size() + " reference entries skipped)");
     }
 
     /** One seam-manifest entry as an {@link Entry}, or {@code null} for a species without a classic hook (said so). */
@@ -1189,8 +1336,98 @@ public final class ReferenceClipSampler {
                 geoPath, faceOrderRequired, hook, true, RIG_SOURCE_SHIPPED);
     }
 
-    /** One rig: its states sampled into their clip files; the index rows in walk, idle, attack order. */
-    private static List<JsonObject> sample(Entry entry, Path outputDir) throws Exception {
+    /** The seed's names for a registry's value states: {@code (getter=value) -> name} with the mapping's text, from {@code reference_states}. */
+    record StateNames(Map<String, String> names, Map<String, String> sources) {
+        static final StateNames NONE = new StateNames(Map.of(), Map.of());
+    }
+
+    static StateNames stateNames(String registry, Path specsDir) throws IOException {
+        Path seed = specsDir.resolve(registry + ".json");
+        if (!Files.isRegularFile(seed)) {
+            return StateNames.NONE;
+        }
+        JsonObject spec = readJson(seed);
+        if (!spec.has(REFERENCE_STATES_KEY)) {
+            return StateNames.NONE;
+        }
+        if (!spec.get(REFERENCE_STATES_KEY).isJsonObject()) {
+            throw new IllegalStateException(seed.getFileName() + ": " + REFERENCE_STATES_KEY + " must be an object mapping a state name to {getter: value}");
+        }
+        Map<String, String> names = new LinkedHashMap<>();
+        Map<String, String> sources = new LinkedHashMap<>();
+        for (Map.Entry<String, JsonElement> mapping : spec.getAsJsonObject(REFERENCE_STATES_KEY).entrySet()) {
+            String name = mapping.getKey();
+            if (!STATE_NAME.matcher(name).matches()) {
+                throw new IllegalStateException(seed.getFileName() + ": " + REFERENCE_STATES_KEY + " name `" + name + "` is not lower snake case");
+            }
+            if (STATE_WALK.equals(name) || STATE_IDLE.equals(name)) {
+                throw new IllegalStateException(seed.getFileName() + ": " + REFERENCE_STATES_KEY + " may not rename the contract's `" + name + "`");
+            }
+            if (!mapping.getValue().isJsonObject() || mapping.getValue().getAsJsonObject().size() != 1) {
+                throw new IllegalStateException(seed.getFileName() + ": " + REFERENCE_STATES_KEY + "." + name + " must map ONE getter to one value "
+                        + "(the ruling samples each value alone; a combination is the owner's)");
+            }
+            Map.Entry<String, JsonElement> getter = mapping.getValue().getAsJsonObject().entrySet().iterator().next();
+            if (!getter.getValue().isJsonPrimitive()
+                    || !(getter.getValue().getAsJsonPrimitive().isNumber() || getter.getValue().getAsJsonPrimitive().isBoolean())) {
+                throw new IllegalStateException(seed.getFileName() + ": " + REFERENCE_STATES_KEY + "." + name + "." + getter.getKey()
+                        + " must be an int or a boolean");
+            }
+            String key = getter.getKey() + "=" + HookGetterReader.valueToken(getter.getValue().getAsJsonPrimitive());
+            if (STATE_ATTACK.equals(name) && !key.equals(ATTACKING_GETTER_NAME + "=1")) {
+                throw new IllegalStateException(seed.getFileName() + ": `attack` is the contract's name for " + ATTACKING_GETTER_NAME + " 1, not " + key);
+            }
+            if (names.containsKey(key)) {
+                throw new IllegalStateException(seed.getFileName() + ": " + REFERENCE_STATES_KEY + " names " + key + " twice (`" + names.get(key)
+                        + "` and `" + name + "`)");
+            }
+            if (names.containsValue(name)) {
+                throw new IllegalStateException(seed.getFileName() + ": " + REFERENCE_STATES_KEY + " uses the name `" + name + "` twice");
+            }
+            names.put(key, name);
+            sources.put(key, seed.getFileName() + " " + REFERENCE_STATES_KEY + "." + name + " = {" + getter.getKey() + ": " + getter.getValue() + "}");
+        }
+        return new StateNames(names, sources);
+    }
+
+    /** The dense samples of one state: the closure test's rule, the ticks, every bone's rotation and position per tick, the subject after. */
+    record Dense(State state, Rule rule, List<Double> ticks, Map<String, List<double[]>> rotation, Map<String, List<double[]>> position,
+                 TreeSet<String> hidden, ProbeSubject subject) {
+        /** Whether another state's samples equal these on every bone and channel (the "no motion" test of item 32 (2)). */
+        boolean sameMotionAs(Dense other) {
+            if (this.ticks.size() != other.ticks.size()) {
+                return false;
+            }
+            for (int i = 0; i < this.ticks.size(); i++) {
+                if (this.ticks.get(i).doubleValue() != other.ticks.get(i).doubleValue()) {
+                    return false;
+                }
+            }
+            return sameValues(this.rotation, other.rotation) && sameValues(this.position, other.position);
+        }
+
+        private static boolean sameValues(Map<String, List<double[]>> a, Map<String, List<double[]>> b) {
+            if (!a.keySet().equals(b.keySet())) {
+                return false;
+            }
+            for (Map.Entry<String, List<double[]>> bone : a.entrySet()) {
+                List<double[]> mine = bone.getValue();
+                List<double[]> theirs = b.get(bone.getKey());
+                if (mine.size() != theirs.size()) {
+                    return false;
+                }
+                for (int i = 0; i < mine.size(); i++) {
+                    if (!java.util.Arrays.equals(mine.get(i), theirs.get(i))) {
+                        return false;
+                    }
+                }
+            }
+            return true;
+        }
+    }
+
+    /** One rig: walk, idle, then one state per enumerated value; the clips of the states that move; the hook facts. */
+    private static Sampled sample(Entry entry, Path outputDir, Options options) throws Exception {
         Rule base = ruleFor(entry);
         Model rawModel = KeyFramesAdapter.GEO_GSON.fromJson(Files.readString(entry.geoPath(), StandardCharsets.UTF_8), Model.class);
         JsonObject geoJson = readJson(entry.geoPath());
@@ -1204,39 +1441,139 @@ public final class ReferenceClipSampler {
             bindRotations.put(name, new float[]{bone.getRotX(), bone.getRotY(), bone.getRotZ()});
             bindPositions.put(name, new float[]{bone.getPosX(), bone.getPosY(), bone.getPosZ()});
         });
-        Attacking attacking = entry.candidateClass() != null ? declaredAttacking(entry.descriptorName(), entry.repositoryRoot()) : Attacking.NONE;
+        HookGetterReader.Declared declared = entry.candidateClass() != null
+                ? HookGetterReader.read(entry.descriptorName(), entry.repositoryRoot()) : HookGetterReader.Declared.NONE;
+        StateNames names = stateNames(entry.registry(), options.specs(entry.repositoryRoot()));
+
+        // The states: walk, idle, then one per enumerated value (getAttacking 1 first, as the contract's attack, then the rest in
+        // interface / getter / value order), named by the seed or emitted unnamed.
         List<State> states = new ArrayList<>(List.of(State.WALK, State.IDLE));
-        if (attacking.reads()) {
-            states.add(State.ATTACK);
+        TreeSet<String> enumerated = new TreeSet<>();
+        List<State> valueStates = new ArrayList<>();
+        for (HookGetterReader.GetterRead read : declared.enumerable()) {
+            for (JsonPrimitive value : read.values()) {
+                String key = read.getter() + "=" + HookGetterReader.valueToken(value);
+                if (!enumerated.add(key)) {
+                    continue;  // the same getter through two interfaces (a delegating helper's cast): one state
+                }
+                State state;
+                if (read.isAttacking() && key.endsWith("=1")) {
+                    state = State.ofValue(STATE_ATTACK, read.getter(), value, true, "the contract (" + read.getter() + " 1)");
+                } else if (names.names().containsKey(key)) {
+                    state = State.ofValue(names.names().get(key), read.getter(), value, true, names.sources().get(key));
+                } else {
+                    state = State.ofValue(HookGetterReader.bareName(read.getter()) + "_" + HookGetterReader.valueToken(value), read.getter(), value,
+                            false, "unnamed: reference_<getter>_<value> (the seed's reference_states should name it)");
+                }
+                if (state.isAttack()) {
+                    valueStates.add(0, state);
+                } else {
+                    valueStates.add(state);
+                }
+            }
         }
+        for (String key : names.names().keySet()) {
+            if (!enumerated.contains(key)) {
+                throw new IllegalStateException(entry.registry() + ": the seed's " + REFERENCE_STATES_KEY + " names " + key + " as `" + names.names().get(key)
+                        + "`, but the hook " + (entry.descriptorName() == null ? "(none)" : entry.descriptorName()) + " enumerates no such value ("
+                        + enumerated + ") - a stale mapping; fix the seed");
+            }
+        }
+        TreeSet<String> stateNames = new TreeSet<>();
+        for (State state : valueStates) {
+            if (!stateNames.add(state.name()) || STATE_WALK.equals(state.name()) || STATE_IDLE.equals(state.name())) {
+                throw new IllegalStateException(entry.registry() + ": two states would share the name `" + state.name() + "`");
+            }
+        }
+        states.addAll(valueStates);
+
+        Poser poser = (state, t, subject) -> {
+            if (entry.candidateClass() != null) {
+                return S4CandidateRuntime.evaluateProductionHook(rawModel, drawOrder, faceOrder, entry.candidateClass(),
+                        new S4CandidateRuntime.Inputs((float) t, (float) (t * state.limbSwingPerTick()), state.limbSwingAmount(),
+                                NET_HEAD_YAW, HEAD_PITCH), subject, entry.strictFaceOrder());
+            }
+            if (entry.beaverPath()) {
+                return evaluator.evaluateBeaverCodeDriven(t, state.limbSwingAmount());
+            }
+            return evaluator.bindPose();
+        };
         List<JsonObject> rows = new ArrayList<>();
+        JsonArray noMotion = new JsonArray();
+        JsonArray emitted = new JsonArray();
+        JsonArray unnamed = new JsonArray();
+        Dense idle = null;
         for (State state : states) {
-            // One pose call at t on a subject: the replacement on explicit PoseInputs, the probe's Beaver path, or bind.
-            Poser poser = (t, subject) -> {
-                if (entry.candidateClass() != null) {
-                    return S4CandidateRuntime.evaluateProductionHook(rawModel, drawOrder, faceOrder, entry.candidateClass(),
-                            new S4CandidateRuntime.Inputs((float) t, (float) (t * state.limbSwingPerTick()), state.limbSwingAmount(),
-                                    NET_HEAD_YAW, HEAD_PITCH), subject, entry.strictFaceOrder());
-                }
-                if (entry.beaverPath()) {
-                    return evaluator.evaluateBeaverCodeDriven(t, state.limbSwingAmount());
-                }
-                return evaluator.bindPose();
-            };
-            rows.add(sampleState(entry, state, base, poser, bindRotations, bindPositions, attacking, outputDir));
+            Dense dense = sampleDense(entry, state, base, poser, bindRotations, bindPositions);
+            if (options.samplesDir() != null) {
+                writeJson(options.samplesDir().resolve(state.samplesFileName(entry.registry())), samplesJson(entry, dense));
+            }
+            if (STATE_IDLE.equals(state.name())) {
+                idle = dense;
+            }
+            if (state.isValueState() && dense.sameMotionAs(idle)) {
+                JsonObject skipped = new JsonObject();
+                skipped.addProperty("getter", state.getter());
+                skipped.add("value", state.value());
+                skipped.addProperty("state", state.name());
+                skipped.addProperty("named", state.named());
+                boolean read = dense.subject().readGetters().contains(state.getter());
+                skipped.addProperty("read_at_inputs", read);
+                String gate = ATTACK_GATES.get(entry.descriptorName());
+                String why = state.isAttack() && gate != null ? gate
+                        : read ? state.getter() + " " + state.valueToken() + ": no motion at rest - the read is reached but the value changes no bone's "
+                                + "rotation or position at the idle inputs (a visibility or texture choice, or a branch whose bones the rest pose already holds)"
+                        : state.getter() + " " + state.valueToken() + ": no motion at rest - the read is not reached at the idle inputs (it sits in a "
+                                + "branch another value or a latch gates), so the value alone moves nothing";
+                skipped.addProperty("why", why);
+                skipped.addProperty("note", state.getter() + " " + state.valueToken() + ": no motion at rest");
+                noMotion.add(skipped);
+                System.out.println(String.format(Locale.ROOT, "none  %s %s: %s %s moves nothing at the idle inputs (read at inputs: %s) - no clip",
+                        entry.registry(), state.name(), state.getter(), state.valueToken(), read));
+                continue;
+            }
+            rows.add(emit(entry, state, dense, declared, outputDir));
+            emitted.add(state.name());
+            if (!state.named()) {
+                unnamed.add(state.name());
+            }
         }
-        return rows;
+        JsonObject hook = new JsonObject();
+        hook.addProperty("registry", entry.registry());
+        hook.addProperty("descriptor", entry.descriptorName());
+        hook.addProperty("landed", entry.landed());
+        hook.add("declared", declared.json());
+        JsonArray notEnumerable = new JsonArray();
+        for (HookGetterReader.GetterRead read : declared.getters()) {
+            if (!read.enumerable()) {
+                JsonObject row = new JsonObject();
+                row.addProperty("getter", read.qualified());
+                row.addProperty("type", read.type());
+                row.addProperty("reason", read.reason());
+                notEnumerable.add(row);
+            }
+        }
+        hook.add("not_enumerable", notEnumerable);
+        hook.add("states", emitted);
+        hook.add("unnamed_states", unnamed);
+        hook.add("no_motion", noMotion);
+        int gettersRead = declared.getters().size();
+        int valuesEnumerated = enumerated.size();
+        hook.addProperty("getters_read", gettersRead);
+        hook.addProperty("values_enumerated", valuesEnumerated);
+        hook.addProperty("getters_not_enumerable", notEnumerable.size());
+        return new Sampled(rows, hook);
     }
 
-    /** One state of one rig: the closure test on its inputs, the keys, the file, the index row. */
-    private static JsonObject sampleState(Entry entry, State state, Rule base, Poser poser, Map<String, float[]> bindRotations,
-                                          Map<String, float[]> bindPositions, Attacking attacking, Path outputDir) throws Exception {
+    /** One state of one rig densely sampled: the closure test on its inputs, then every whole tick plus the closing sample. */
+    private static Dense sampleDense(Entry entry, State state, Rule base, Poser poser, Map<String, float[]> bindRotations,
+                                     Map<String, float[]> bindPositions) throws Exception {
         String id = entry.id();
         // The span rule (owner 2026-09-13, third set, item 28 (5)): the closure test settles a period structure into the
         // smallest multiple of the slowest period that closes within 5 degrees, or two seconds past the 6 s cap - per state.
         Rule rule = resolveSpan(base, id, poser, bindRotations, bindPositions, state);
 
-        // The sample times: every whole tick inside the span, then the closing key at the span's end.
+        // The sample times: every whole tick inside the span, then the closing sample at the span's end.
         List<Double> ticks = new ArrayList<>();
         if (RULE_ONE_KEY.equals(rule.kind())) {
             ticks.add(0.0D);
@@ -1248,53 +1585,105 @@ public final class ReferenceClipSampler {
             ticks.add(rule.spanTicks());
         }
 
-        ProbeSubject subject = new ProbeSubject(state.subjectState());  // every flag at the state's value; the RNG seeded 0, once
-        Map<String, List<double[]>> rotationKeys = new TreeMap<>();   // bone -> authored (x, y, z) degrees per sample
-        Map<String, List<double[]>> positionKeys = new TreeMap<>();   // bone -> authored (x, y, z) units per sample
+        ProbeSubject subject = new ProbeSubject(state.subjectState());  // every getter at the state's value; the RNG seeded 0, once
+        Map<String, List<double[]>> rotation = new TreeMap<>();   // bone -> authored (x, y, z) degrees per sample
+        Map<String, List<double[]>> position = new TreeMap<>();   // bone -> authored (x, y, z) units per sample
         TreeSet<String> hiddenBones = new TreeSet<>();
         for (double t : ticks) {
-            Sample sample = authoredKeys(id, poser.pose(t, subject), bindRotations, bindPositions);
-            sample.rotation().forEach((name, key) -> rotationKeys.computeIfAbsent(name, k -> new ArrayList<>()).add(key));
-            sample.position().forEach((name, key) -> positionKeys.computeIfAbsent(name, k -> new ArrayList<>()).add(key));
+            Sample sample = authoredKeys(id, poser.pose(state, t, subject), bindRotations, bindPositions);
+            sample.rotation().forEach((name, key) -> rotation.computeIfAbsent(name, k -> new ArrayList<>()).add(key));
+            sample.position().forEach((name, key) -> position.computeIfAbsent(name, k -> new ArrayList<>()).add(key));
             hiddenBones.addAll(sample.hidden());
         }
         // Item 31 (11): a state whose hook writes nothing that MOVES - every bone's rotation and position the same at every
         // sample - is one key; the note keeps the structure the closure test settled and says it is not live at these inputs.
-        if (ticks.size() > 1 && !varies(rotationKeys) && !varies(positionKeys)) {
-            rotationKeys.replaceAll((name, keys) -> new ArrayList<>(keys.subList(0, 1)));
-            positionKeys.replaceAll((name, keys) -> new ArrayList<>(keys.subList(0, 1)));
+        if (ticks.size() > 1 && !varies(rotation) && !varies(position)) {
+            rotation.replaceAll((name, keys) -> new ArrayList<>(keys.subList(0, 1)));
+            position.replaceAll((name, keys) -> new ArrayList<>(keys.subList(0, 1)));
             ticks = new ArrayList<>(List.of(0.0D));
             rule = Rule.oneKey("nothing moves at the " + state.name() + " inputs: every bone's rotation and position is the same at every sample of "
                     + "the span the closure test settled (" + rule.kind() + "; " + rule.note() + "), so this state is one key");
         }
-        // Position keys only where the hook wrote a position on the bone at any sample.
-        List<String> positionBones = new ArrayList<>();
-        for (Map.Entry<String, List<double[]>> keyed : positionKeys.entrySet()) {
+        return new Dense(state, rule, ticks, rotation, position, hiddenBones, subject);
+    }
+
+    /** The dense samples as JSON ({@code --dump-samples}): the ticks, their time keys, every bone's rotation and the positioned bones' positions. */
+    private static JsonObject samplesJson(Entry entry, Dense dense) {
+        JsonObject out = new JsonObject();
+        out.addProperty("registry", entry.registry());
+        out.addProperty("state", dense.state().name());
+        out.addProperty("clip_name", dense.state().clipName());
+        out.addProperty("rule", dense.rule().kind());
+        out.addProperty("span_ticks", RULE_ONE_KEY.equals(dense.rule().kind()) ? 0.0D : round(dense.rule().spanTicks()));
+        JsonArray ticks = new JsonArray();
+        JsonArray timeKeys = new JsonArray();
+        for (double tick : dense.ticks()) {
+            ticks.add(tick);
+            timeKeys.add(timeKey(tick));
+        }
+        out.add("ticks", ticks);
+        out.add("time_keys", timeKeys);
+        List<String> positionBones = positionBones(dense.position());
+        JsonObject bones = new JsonObject();
+        for (Map.Entry<String, List<double[]>> bone : dense.rotation().entrySet()) {
+            JsonObject channels = new JsonObject();
+            channels.add(ReferenceClipKeying.CHANNEL_ROTATION, samples(bone.getValue()));
+            if (positionBones.contains(bone.getKey())) {
+                channels.add(ReferenceClipKeying.CHANNEL_POSITION, samples(dense.position().get(bone.getKey())));
+            }
+            bones.add(bone.getKey(), channels);
+        }
+        out.add("bones", bones);
+        return out;
+    }
+
+    private static JsonArray samples(List<double[]> values) {
+        JsonArray out = new JsonArray();
+        for (double[] value : values) {
+            JsonArray row = new JsonArray();
+            for (int axis = 0; axis < 3; axis++) {
+                row.add(value[axis]);
+            }
+            out.add(row);
+        }
+        return out;
+    }
+
+    /** The bones the hook wrote a position on at any sample (the clip's position channels). */
+    private static List<String> positionBones(Map<String, List<double[]>> position) {
+        List<String> out = new ArrayList<>();
+        for (Map.Entry<String, List<double[]>> keyed : position.entrySet()) {
             if (keyed.getValue().stream().anyMatch(v -> v[0] != 0.0D || v[1] != 0.0D || v[2] != 0.0D)) {
-                positionBones.add(keyed.getKey());
+                out.add(keyed.getKey());
             }
         }
+        return out;
+    }
+
+    /** One state that moves: the keys chosen by the density search, the file, the index row. */
+    private static JsonObject emit(Entry entry, State state, Dense dense, HookGetterReader.Declared declared, Path outputDir) throws Exception {
+        Rule rule = dense.rule();
+        List<Double> ticks = dense.ticks();
+        Map<String, List<double[]>> rotationKeys = dense.rotation();
+        Map<String, List<double[]>> positionKeys = dense.position();
+        List<String> positionBones = positionBones(positionKeys);
         List<String> movingBones = new ArrayList<>();
         for (Map.Entry<String, List<double[]>> keyed : rotationKeys.entrySet()) {
             if (keyed.getValue().stream().anyMatch(v -> v[0] != 0.0D || v[1] != 0.0D || v[2] != 0.0D)) {
                 movingBones.add(keyed.getKey());
             }
         }
+        Map<String, List<double[]>> positioned = new TreeMap<>();
+        for (String bone : positionBones) {
+            positioned.put(bone, positionKeys.get(bone));
+        }
+        ReferenceClipKeying.Keyed keyed = ReferenceClipKeying.key(ticks, rotationKeys, positioned);
 
         double spanSeconds = RULE_ONE_KEY.equals(rule.kind()) ? 1.0D / TICKS_PER_SECOND : round(rule.spanTicks() / TICKS_PER_SECOND);
-        JsonObject bones = new JsonObject();
-        for (Map.Entry<String, List<double[]>> keyed : rotationKeys.entrySet()) {
-            JsonObject bone = new JsonObject();
-            bone.add("rotation", keys(ticks, keyed.getValue()));
-            if (positionBones.contains(keyed.getKey())) {
-                bone.add("position", keys(ticks, positionKeys.get(keyed.getKey())));
-            }
-            bones.add(keyed.getKey(), bone);
-        }
         JsonObject clip = new JsonObject();
         clip.addProperty("loop", true);
         clip.addProperty("animation_length", spanSeconds);
-        clip.add("bones", bones);
+        clip.add("bones", keyed.bones(rotationKeys, positioned));
         JsonObject animations = new JsonObject();
         animations.add(state.clipName(), clip);
         JsonObject document = new JsonObject();
@@ -1304,13 +1693,13 @@ public final class ReferenceClipSampler {
         writeJson(clipPath, document);
         String sha256 = sha256(Files.readAllBytes(clipPath));
 
-        // The seam: the closing key against the first key, per bone and axis, degrees reduced to (-180, 180].
+        // The seam: the closing sample against the first, per bone and axis, degrees reduced to (-180, 180].
         double seamRotation = 0.0D;
         double seamPosition = 0.0D;
         if (ticks.size() > 1) {
-            for (Map.Entry<String, List<double[]>> keyed : rotationKeys.entrySet()) {
-                double[] first = keyed.getValue().get(0);
-                double[] last = keyed.getValue().get(keyed.getValue().size() - 1);
+            for (Map.Entry<String, List<double[]>> bone : rotationKeys.entrySet()) {
+                double[] first = bone.getValue().get(0);
+                double[] last = bone.getValue().get(bone.getValue().size() - 1);
                 for (int axis = 0; axis < 3; axis++) {
                     seamRotation = Math.max(seamRotation, Math.abs(wrapDegrees(last[axis] - first[axis])));
                 }
@@ -1325,10 +1714,18 @@ public final class ReferenceClipSampler {
             }
         }
 
+        ProbeSubject subject = dense.subject();
         JsonObject row = new JsonObject();
         row.addProperty("registry", entry.registry());
         row.addProperty("state", state.name());
-        row.addProperty("model_id", id);
+        row.addProperty("named", state.named());
+        row.addProperty("name_source", state.nameSource());
+        if (state.isValueState()) {
+            row.addProperty("getter", state.getter());
+            row.add("value", state.value());
+            row.addProperty("getter_read_at_inputs", subject.readGetters().contains(state.getter()));
+        }
+        row.addProperty("model_id", entry.id());
         row.addProperty("manifest", entry.manifestPath().getFileName().toString());
         row.addProperty("model_class", entry.modelClass());
         row.addProperty("landed", entry.landed());
@@ -1349,19 +1746,33 @@ public final class ReferenceClipSampler {
         }
         row.addProperty("span_ticks", RULE_ONE_KEY.equals(rule.kind()) ? 0.0D : round(rule.spanTicks()));
         row.addProperty("animation_length_seconds", spanSeconds);
-        row.addProperty("keys_per_bone", ticks.size());
+        row.addProperty("dense_samples", ticks.size());
+        row.addProperty("keys_per_bone", keyed.keysMax());
+        row.addProperty("keys_per_bone_min", keyed.keysMin());
+        row.addProperty("keys_total", keyed.keysTotal());
+        row.addProperty("lerp_mode", ReferenceClipKeying.LERP_MODE);
+        row.add("keying", keyed.json());
         row.addProperty("bones", rotationKeys.size());
         row.add("moving_bones", names(movingBones));
         row.add("position_bones", names(positionBones));
-        row.add("hidden_bones_at_rest", names(new ArrayList<>(hiddenBones)));
+        row.add("hidden_bones_at_rest", names(new ArrayList<>(dense.hidden())));
         row.addProperty("seam_delta_degrees", round(seamRotation));
         row.addProperty("seam_delta_position_units", round(seamPosition));
         row.add("subject_after", subject.after());
-        row.add("attacking", attacking.json(subject.attackingRead()));
+        row.add("getters_read_at_inputs", names(new ArrayList<>(subject.readGetters())));
+        JsonObject attacking = new JsonObject();
+        attacking.add("declared_pose_interfaces", names(declared.interfaces()));
+        attacking.add("getters", names(declared.attackingGetters()));
+        attacking.add("outside_pose_interface", names(declared.outside()));
+        attacking.addProperty("reads_attacking", declared.readsAttacking());
+        attacking.addProperty("read_at_inputs", subject.attackingRead());
+        row.add("attacking", attacking);
         row.addProperty("sampled_inputs", state.statement());
-        System.out.println(String.format(Locale.ROOT, "wrote %s: %s%s, %d keys per bone over %d bones (%d moving, %d positioned), span %s ticks, seam %s deg, sha256 %s",
+        System.out.println(String.format(Locale.ROOT, "wrote %s: %s%s, %d samples, %d..%d keys per bone over %d bones (%d moving, %d positioned), "
+                        + "span %s ticks, seam %s deg, max error %s deg / %s units, sha256 %s",
                 clipPath.getFileName(), rule.kind(), RULE_PERIOD_MULTIPLE.equals(rule.kind()) ? " (k = " + rule.k() + " x " + fmt(rule.periodTicks()) + " ticks)" : "",
-                ticks.size(), rotationKeys.size(), movingBones.size(), positionBones.size(), fmt(rule.spanTicks()), fmt(seamRotation), sha256));
+                ticks.size(), keyed.keysMin(), keyed.keysMax(), rotationKeys.size(), movingBones.size(), positionBones.size(), fmt(rule.spanTicks()),
+                fmt(seamRotation), fmt(keyed.maxRotationError()), fmt(keyed.maxPositionError()), sha256));
         return row;
     }
 
@@ -1378,88 +1789,10 @@ public final class ReferenceClipSampler {
         return false;
     }
 
-    /**
-     * What the hook declares about attacking (item 31 (11)): the pose interfaces its {@code inputs.subject(...)} casts name
-     * (following the static pose helpers it delegates to), the attacking getters those interfaces declare, and any cast to a
-     * type outside the pose package (a read outside a pose interface - none today).
-     */
-    record Attacking(List<String> interfaces, List<String> getters, List<String> outside) {
-        static final Attacking NONE = new Attacking(List.of(), List.of(), List.of());
-
-        boolean reads() {
-            return !this.getters.isEmpty();
-        }
-
-        JsonObject json(boolean readAtInputs) {
-            JsonObject out = new JsonObject();
-            out.add("declared_pose_interfaces", names(this.interfaces));
-            out.add("getters", names(this.getters));
-            out.add("outside_pose_interface", names(this.outside));
-            out.addProperty("reads_attacking", reads());
-            out.addProperty("read_at_inputs", readAtInputs);
-            return out;
-        }
-    }
-
-    static Attacking declaredAttacking(String descriptor, Path repositoryRoot) throws IOException {
-        LinkedHashSet<String> visited = new LinkedHashSet<>();
-        LinkedHashSet<String> casts = new LinkedHashSet<>();
-        collectCasts(descriptor, repositoryRoot, visited, casts, 0);
-        List<String> interfaces = new ArrayList<>();
-        TreeSet<String> getters = new TreeSet<>();
-        List<String> outside = new ArrayList<>();
-        for (String cast : casts) {
-            String name = cast.substring(cast.lastIndexOf('.') + 1);
-            Class<?> type = null;
-            try {
-                type = Class.forName(POSE_PACKAGE + name, false, ReferenceClipSampler.class.getClassLoader());
-            } catch (ClassNotFoundException notAPoseInterface) {
-                type = null;
-            }
-            if (type == null || !type.isInterface()) {
-                outside.add(cast);
-                continue;
-            }
-            interfaces.add(name);
-            for (java.lang.reflect.Method method : type.getMethods()) {
-                if (ATTACKING_GETTER.matcher(method.getName()).matches()) {
-                    getters.add(name + "." + method.getName() + "()");
-                }
-            }
-        }
-        return new Attacking(interfaces, new ArrayList<>(getters), outside);
-    }
-
-    /** The {@code subject(<X>.class)} casts of a descriptor's source and of the descriptors whose static pose helpers it calls. */
-    private static void collectCasts(String descriptor, Path repositoryRoot, LinkedHashSet<String> visited, LinkedHashSet<String> casts, int depth)
-            throws IOException {
-        if (!visited.add(descriptor) || depth > 3) {
-            return;
-        }
-        Path source = repositoryRoot.resolve(CLIENT_SOURCE_DIR).resolve(descriptor + ".java");
-        if (!Files.isRegularFile(source)) {
-            throw new IllegalStateException(descriptor + ": no source at " + source + " to read the declared pose interfaces from");
-        }
-        String text = Files.readString(source, StandardCharsets.UTF_8)
-                .replaceAll("(?s)/\\*.*?\\*/", " ")
-                .replaceAll("//[^\\n]*", " ");
-        Matcher cast = SUBJECT_CAST.matcher(text);
-        while (cast.find()) {
-            casts.add(cast.group(1));
-        }
-        Matcher delegation = DELEGATION.matcher(text);
-        while (delegation.find()) {
-            String other = delegation.group(1);
-            if (!other.equals(descriptor)) {
-                collectCasts(other, repositoryRoot, visited, casts, depth + 1);
-            }
-        }
-    }
-
-    /** One pose call at tick {@code t} on {@code subject}, whichever hook form the rig has. */
+    /** One pose call at tick {@code t} on {@code subject} in {@code state}, whichever hook form the rig has. */
     @FunctionalInterface
     interface Poser {
-        G1AnimationRuntime.EvaluatedModel pose(double t, ProbeSubject subject) throws Exception;
+        G1AnimationRuntime.EvaluatedModel pose(State state, double t, ProbeSubject subject) throws Exception;
     }
 
     /** The authored keys of one pose: rotation deltas (degrees, the converter's sign rule) and position offsets per bone; the hidden bones. */
@@ -1515,10 +1848,10 @@ public final class ReferenceClipSampler {
                     + "(40 ticks), not a loop - the sheet states the closing key's seam");
         }
         ProbeSubject subject = new ProbeSubject(state.subjectState());
-        Sample start = authoredKeys(id, poser.pose(0.0D, subject), bindRotations, bindPositions);
+        Sample start = authoredKeys(id, poser.pose(state, 0.0D, subject), bindRotations, bindPositions);
         List<String> tried = new ArrayList<>();
         for (int k = 1; k * period <= SPAN_CAP_TICKS + 1.0e-9D; k++) {
-            Sample candidate = authoredKeys(id, poser.pose(k * period, subject), bindRotations, bindPositions);
+            Sample candidate = authoredKeys(id, poser.pose(state, k * period, subject), bindRotations, bindPositions);
             double rotation = 0.0D;
             for (Map.Entry<String, double[]> bone : start.rotation().entrySet()) {
                 double[] first = bone.getValue();
@@ -1599,21 +1932,6 @@ public final class ReferenceClipSampler {
                     + " - state its sampling rule (one natural period, or two seconds) with the source line it is read from");
         }
         return rule;
-    }
-
-    private static JsonObject keys(List<Double> ticks, List<double[]> values) {
-        JsonObject out = new JsonObject();
-        for (int i = 0; i < ticks.size(); i++) {
-            JsonObject key = new JsonObject();
-            JsonArray post = new JsonArray();
-            for (int axis = 0; axis < 3; axis++) {
-                post.add(values.get(i)[axis]);
-            }
-            key.add("post", post);
-            key.addProperty("lerp_mode", "linear");
-            out.add(timeKey(ticks.get(i)), key);
-        }
-        return out;
     }
 
     /** The key's time in seconds as {@link KeyframeLeg} writes it: ten decimals, trailing zeros dropped, {@code 0.0} at zero. */

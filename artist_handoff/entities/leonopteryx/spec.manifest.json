@@ -1,5 +1,5 @@
 {
-  "generated_by": "tools/artist_package.py 0.3.0 (the reference clips for every species, 2026-09-14, addendum items 11 to 13: every hook's reference_walk, reference_idle and - where the code reads an attack - reference_attack clip beside the sheet, landed or not; the clips loaded through Blockbench's Import Animations (README_FIRST, Toolchain); a reference clip's keys as the starting point of a delivered idle / walk / aggro_idle, only the reference file itself under its own name refused)",
+  "generated_by": "tools/artist_package.py 0.4.0 (the reference clips revised, 2026-09-14, second set revised, items 2 to 6: every state a hook reads sampled and named by the seed - reference_walk, reference_idle, reference_attack, reference_fly, reference_swim, the species' own states, an unnamed one flagged - keyed by the exact transcriptions' density search (catmullrom, 1 degree, 1/32 block), embedded in every .bbmodel within the round-trip tolerance with the files beside the sheet the pinned source; a reference clip's keys as the starting point of idle / walk / aggro_idle / fly / swim, a species state offered as a SPEC extra; only the reference file itself under its own name refused; one tracked copy, the folder's copies ignored by git)",
   "registry": "leonopteryx",
   "display_name": "Leonopteryx",
   "tier": 1,
@@ -6994,7 +6994,8 @@
       "required": true,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "idle_wing_fold",
@@ -7004,7 +7005,8 @@
       "required": false,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "idle_breath",
@@ -7014,7 +7016,8 @@
       "required": false,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "idle_fly_body",
@@ -7024,7 +7027,8 @@
       "required": false,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "idle_fly_wings",
@@ -7034,7 +7038,8 @@
       "required": false,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "idle_fly_legs",
@@ -7044,7 +7049,8 @@
       "required": false,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "idle_fly_jaw",
@@ -7054,7 +7060,8 @@
       "required": false,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "walk",
@@ -7064,7 +7071,8 @@
       "required": true,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "walk_wing_fold",
@@ -7074,7 +7082,8 @@
       "required": false,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "walk_breath",
@@ -7084,7 +7093,8 @@
       "required": false,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "walk_fly_body",
@@ -7094,7 +7104,8 @@
       "required": false,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "walk_fly_wings",
@@ -7104,7 +7115,8 @@
       "required": false,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "walk_fly_legs",
@@ -7114,7 +7126,8 @@
       "required": false,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "walk_fly_jaw",
@@ -7124,7 +7137,8 @@
       "required": false,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "fly",
@@ -7134,7 +7148,8 @@
       "required": false,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "aggro_idle",
@@ -7144,7 +7159,8 @@
       "required": false,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "calm_idle",
@@ -7154,7 +7170,8 @@
       "required": false,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "attack",
@@ -7164,7 +7181,8 @@
       "required": false,
       "length_rule": "near:0.6",
       "length_seconds": 0.6,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "hurt",
@@ -7174,7 +7192,8 @@
       "required": false,
       "length_rule": "near:0.4",
       "length_seconds": 0.4,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "death",
@@ -7184,7 +7203,8 @@
       "required": false,
       "length_rule": "near:2.0",
       "length_seconds": 2.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "takeoff",
@@ -7194,7 +7214,8 @@
       "required": false,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "land",
@@ -7204,7 +7225,19 @@
       "required": false,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
+    },
+    {
+      "name": "sit",
+      "loop": "true",
+      "role": "extra",
+      "code_triggered": false,
+      "required": false,
+      "length_rule": "near:1.0",
+      "length_seconds": 1.0,
+      "verdict": "author",
+      "offered_from_reference": "reference_sit"
     }
   ],
   "allow_idle_alt": true,
@@ -7216,23 +7249,39 @@
       "aliases": []
     }
   ],
-  "effort_hours": 55.7,
-  "effort_source": "generator: 8 h + 0.15 h/bone x 98 + 1.5 h/clip x 22 to author or improve (owner adjusts)",
+  "effort_hours": 57.2,
+  "effort_source": "generator: 8 h + 0.15 h/bone x 98 + 1.5 h/clip x 23 to author or improve (owner adjusts)",
   "reference_clips": [
     {
       "state": "walk",
       "file": "leonopteryx_reference_walk.animation.json",
-      "sha256": "799ad8ad6bacff56d0da9f5d3b88e51909dbd90c2f4591a71a306976062a47be",
-      "clip": "reference",
+      "sha256": "939fb94f4c1552aee9818da727f66cc73f085ade519350c5825d4c0f3ff6c522",
+      "clip": "reference_walk",
       "reference_only": true,
       "delivered_clip": "walk",
+      "offered_extra": null,
+      "named": true,
+      "name_source": "the contract",
+      "getter": null,
+      "value": null,
       "rule": "period_multiple",
       "rule_note": "wingspeed 0.22: the slowest rhythm is the standing sway cos(ageInTicks * 0.6 * WINGSPEED) * PI * 0.02 (LeonGeoReplacement.poseRig:224, activity 0) at 0.132 rad/tick, 47.60 ticks; the standing threshold gait cos(ageInTicks * 1.8 * WINGSPEED) * PI * 0.25 * limbSwingAmount and cos(ageInTicks * 0.9 * WINGSPEED) * PI * 0.25 * limbSwingAmount (:143-144, walk; the feet follow, :170-179) with the idle 0.9 * 0.22 sway at amplitude 0.02 (:147); the flight beat cos(ageInTicks * 1.6 * WINGSPEED * spd) * PI * 0.06 / 0.26 * amp with spd 1.7 and amp 1.4 while attacking (:259, :344, :256-257), the flying legs at 3.6 * 0.22 (:316) and the flying jaw at 2.6 * 0.22 (:468) need activity != 0 (0 on the probe); the ridden yaw accumulator rf1 needs getBeingRidden() != 0; the head look follows netHeadYaw = 0 (:232-253); closes at k = 2 (95.199778 ticks): every bone returns within 0 degrees of its start at k x T (the 5-degree test under the 6 s cap; k = 1: 45 deg, k = 2: 0 deg)",
       "span_ticks": 95.1997778974,
       "period_ticks": 47.5998889487,
       "period_multiple_k": 2,
       "animation_length_seconds": 4.7599888949,
-      "keys_per_bone": 97,
+      "keys_per_bone": 49,
+      "keys_per_bone_min": 2,
+      "dense_samples": 97,
+      "lerp_mode": "catmullrom",
+      "keying": {
+        "rotation_tolerance_degrees": 1.0,
+        "position_tolerance_blocks": 0.03125,
+        "max_error_degrees": 0.9966180723,
+        "max_error_blocks": 0.029794395,
+        "within_tolerance": true,
+        "keys_total": 1664
+      },
       "sampled_inputs": "limbSwingAmount 1.0; limbSwing = t (advancing 1.0 per tick from 0: vanilla WalkAnimationState.update does speed += (movementSpeed - speed) * multiplier; position += speed, and the classic renderer hands walkAnimation.position(partialTick) as limbSwing and min(1, speed) as limbSwingAmount, so at speed 1 the position advances exactly 1.0 per tick); ageInTicks = t (getBob: tickCount + partialTick, partialTick 0); netHeadYaw 0; headPitch 0 (looking ahead); every entity-state flag at its rest value (attacking 0, ri1 0, rock_type 0, rf1 0: a ProbeSubject built from an empty state); the entity RNG seeded 0 once per clip and evolving across the keys; one pose call per key, 20 keys per second; full health (no shipped hook reads health)",
       "hook": "danger.orespawn.entity.client.LeonopteryxGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the unlanded hook of owner 2026-09-14, addendum item 10 - the classic setupAnim transcribed into the descriptor's PoseInputs form, proven when the rig lands - registry-free, on explicit PoseInputs, over the reference leg's converter output reference_leon.geo.json baked without the face-order strictness the landing slice's TEST-007 adds)",
       "landed": false,
@@ -7357,17 +7406,33 @@
     {
       "state": "idle",
       "file": "leonopteryx_reference_idle.animation.json",
-      "sha256": "59763c52591a309b50c26805da38f4e0d3080875c37a7e41f37b2e0e19833e7d",
+      "sha256": "21240411f4b567f1c820f6ac48fee1d3e864c1b36f8d355737142012834fd486",
       "clip": "reference_idle",
       "reference_only": true,
       "delivered_clip": "idle",
+      "offered_extra": null,
+      "named": true,
+      "name_source": "the contract",
+      "getter": null,
+      "value": null,
       "rule": "period_multiple",
       "rule_note": "wingspeed 0.22: the slowest rhythm is the standing sway cos(ageInTicks * 0.6 * WINGSPEED) * PI * 0.02 (LeonGeoReplacement.poseRig:224, activity 0) at 0.132 rad/tick, 47.60 ticks; the standing threshold gait cos(ageInTicks * 1.8 * WINGSPEED) * PI * 0.25 * limbSwingAmount and cos(ageInTicks * 0.9 * WINGSPEED) * PI * 0.25 * limbSwingAmount (:143-144, walk; the feet follow, :170-179) with the idle 0.9 * 0.22 sway at amplitude 0.02 (:147); the flight beat cos(ageInTicks * 1.6 * WINGSPEED * spd) * PI * 0.06 / 0.26 * amp with spd 1.7 and amp 1.4 while attacking (:259, :344, :256-257), the flying legs at 3.6 * 0.22 (:316) and the flying jaw at 2.6 * 0.22 (:468) need activity != 0 (0 on the probe); the ridden yaw accumulator rf1 needs getBeingRidden() != 0; the head look follows netHeadYaw = 0 (:232-253); closes at k = 1 (47.599889 ticks): every bone returns within 3.600001 degrees of its start at k x T (the 5-degree test under the 6 s cap; k = 1: 3.600001 deg)",
       "span_ticks": 47.5998889487,
       "period_ticks": 47.5998889487,
       "period_multiple_k": 1,
       "animation_length_seconds": 2.3799944474,
-      "keys_per_bone": 49,
+      "keys_per_bone": 4,
+      "keys_per_bone_min": 2,
+      "dense_samples": 49,
+      "lerp_mode": "catmullrom",
+      "keying": {
+        "rotation_tolerance_degrees": 1.0,
+        "position_tolerance_blocks": 0.03125,
+        "max_error_degrees": 0.8998432722,
+        "max_error_blocks": 0.0,
+        "within_tolerance": true,
+        "keys_total": 244
+      },
       "sampled_inputs": "limbSwingAmount 0.0; limbSwing 0 (the walk position at rest: vanilla WalkAnimationState holds its position while the speed is 0, and a creature that has not walked since it spawned carries 0); ageInTicks = t (getBob: tickCount + partialTick, partialTick 0; advancing 1.0 per tick from 0); netHeadYaw 0; headPitch 0 (looking ahead); every entity-state flag at its rest value (attacking 0, ri1 0, rock_type 0, rf1 0: a ProbeSubject built from an empty state); the entity RNG seeded 0 once per clip and evolving across the keys; one pose call per key, 20 keys per second; full health",
       "hook": "danger.orespawn.entity.client.LeonopteryxGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the unlanded hook of owner 2026-09-14, addendum item 10 - the classic setupAnim transcribed into the descriptor's PoseInputs form, proven when the rig lands - registry-free, on explicit PoseInputs, over the reference leg's converter output reference_leon.geo.json baked without the face-order strictness the landing slice's TEST-007 adds)",
       "landed": false,
@@ -7490,20 +7555,222 @@
       }
     },
     {
-      "state": "attack",
-      "file": "leonopteryx_reference_attack.animation.json",
-      "sha256": "a5af70f3cb660e8dfa85b32f954958976f2a683e590769a50e7d17a835fa733a",
-      "clip": "reference_attack",
+      "state": "fly",
+      "file": "leonopteryx_reference_fly.animation.json",
+      "sha256": "df0cc17348d47be8b7b17d449af2ae392be87e9bf88428a7c0455906989cc3f1",
+      "clip": "reference_fly",
       "reference_only": true,
-      "delivered_clip": "aggro_idle",
+      "delivered_clip": "fly",
+      "offered_extra": null,
+      "named": true,
+      "name_source": "leonopteryx.json reference_states.fly = {getActivity: 1}",
+      "getter": "getActivity",
+      "value": 1,
+      "rule": "two_seconds_past_cap",
+      "rule_note": "wingspeed 0.22: the slowest rhythm is the standing sway cos(ageInTicks * 0.6 * WINGSPEED) * PI * 0.02 (LeonGeoReplacement.poseRig:224, activity 0) at 0.132 rad/tick, 47.60 ticks; the standing threshold gait cos(ageInTicks * 1.8 * WINGSPEED) * PI * 0.25 * limbSwingAmount and cos(ageInTicks * 0.9 * WINGSPEED) * PI * 0.25 * limbSwingAmount (:143-144, walk; the feet follow, :170-179) with the idle 0.9 * 0.22 sway at amplitude 0.02 (:147); the flight beat cos(ageInTicks * 1.6 * WINGSPEED * spd) * PI * 0.06 / 0.26 * amp with spd 1.7 and amp 1.4 while attacking (:259, :344, :256-257), the flying legs at 3.6 * 0.22 (:316) and the flying jaw at 2.6 * 0.22 (:468) need activity != 0 (0 on the probe); the ridden yaw accumulator rf1 needs getBeingRidden() != 0; the head look follows netHeadYaw = 0 (:232-253); no multiple of the slowest group's period 47.599889 ticks up to the 6 s cap (120 ticks) brings every group back within 5 degrees of its start (k = 1: 115.834274 deg / 43.359172 units, k = 2: 115.827857 deg / 43.356779 units): a two-second window (40 ticks), not a loop - the sheet states the closing key's seam",
+      "span_ticks": 40.0,
+      "period_ticks": 47.5998889487,
+      "period_multiple_k": null,
+      "animation_length_seconds": 2.0,
+      "keys_per_bone": 41,
+      "keys_per_bone_min": 2,
+      "dense_samples": 41,
+      "lerp_mode": "catmullrom",
+      "keying": {
+        "rotation_tolerance_degrees": 1.0,
+        "position_tolerance_blocks": 0.03125,
+        "max_error_degrees": 0.9705453976,
+        "max_error_blocks": 0.0271657743,
+        "within_tolerance": true,
+        "keys_total": 1537
+      },
+      "sampled_inputs": "getActivity() answers 1 (the state the seed names `fly`; every other getter at its rest value); limbSwingAmount 0.0; limbSwing 0 (the walk position at rest: vanilla WalkAnimationState holds its position while the speed is 0, and a creature that has not walked since it spawned carries 0); ageInTicks = t (getBob: tickCount + partialTick, partialTick 0; advancing 1.0 per tick from 0); netHeadYaw 0; headPitch 0 (looking ahead); every other entity-state flag at its rest value (ri1 0, rock_type 0, rf1 0); the entity RNG seeded 0 once per clip and evolving across the keys; one pose call per key, 20 keys per second; full health",
+      "hook": "danger.orespawn.entity.client.LeonopteryxGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the unlanded hook of owner 2026-09-14, addendum item 10 - the classic setupAnim transcribed into the descriptor's PoseInputs form, proven when the rig lands - registry-free, on explicit PoseInputs, over the reference leg's converter output reference_leon.geo.json baked without the face-order strictness the landing slice's TEST-007 adds)",
+      "landed": false,
+      "moving_bones": [
+        "fabdomen",
+        "fanntena_1_L",
+        "fanntena_1_R",
+        "fanntena_2_L",
+        "fanntena_2_R",
+        "farm_1_L",
+        "farm_1_R",
+        "farm_2_L",
+        "farm_2_R",
+        "fbottom_jaw",
+        "fchest",
+        "fchest_ridge",
+        "feye_ridge_L",
+        "feye_ridge_R",
+        "ffootL",
+        "ffootR",
+        "fleg_1_L",
+        "fleg_1_R",
+        "fleg_2_L",
+        "fleg_2_R",
+        "flower_sail1",
+        "flower_sail2",
+        "flower_sail_3",
+        "fneck_1",
+        "fneck_2",
+        "fneck_3",
+        "fwing_1_L",
+        "fwing_1_R",
+        "fwing_2_L",
+        "fwing_2_R",
+        "fwing_3_L",
+        "fwing_3_R",
+        "fwing_4_L",
+        "fwing_4_R",
+        "fwing_5_L",
+        "fwing_5_R",
+        "fwing_6_L",
+        "fwing_6_R",
+        "fwing_7_L",
+        "fwing_7_R"
+      ],
+      "position_bones": [
+        "fabdomen",
+        "fanntena_1_L",
+        "fanntena_1_R",
+        "fanntena_2_L",
+        "fanntena_2_R",
+        "farm_2_L",
+        "farm_2_R",
+        "fbottom_jaw",
+        "fchest",
+        "fchest_ridge",
+        "fclaw_L",
+        "fclaw_L2",
+        "fclaw_R",
+        "fclaw_R_2",
+        "feye_ridge_L",
+        "feye_ridge_R",
+        "ffootL",
+        "ffootR",
+        "fhead",
+        "fleg_1_L",
+        "fleg_1_R",
+        "fleg_2_L",
+        "fleg_2_R",
+        "flower_sail1",
+        "flower_sail2",
+        "flower_sail_3",
+        "fneck_1",
+        "fneck_2",
+        "fneck_3",
+        "fupper_jaw",
+        "fupper_sail2_",
+        "fupper_sail3",
+        "fupper_sail_1",
+        "fwing_2_L",
+        "fwing_2_R",
+        "fwing_3_L",
+        "fwing_3_R",
+        "fwing_4_L",
+        "fwing_4_R",
+        "fwing_5_L",
+        "fwing_5_R",
+        "fwing_6_L",
+        "fwing_6_R",
+        "fwing_7_L",
+        "fwing_7_R"
+      ],
+      "hidden_bones_at_rest": [
+        "abdomen",
+        "anntena_1_L",
+        "anntena_1_R",
+        "anntena_2_L",
+        "anntena_2_R",
+        "arm_1_L",
+        "arm_1_R",
+        "arm_2_L",
+        "arm_2_R",
+        "bottom_jaw",
+        "chest",
+        "chest_ridge",
+        "claw_L",
+        "claw_L2",
+        "claw_R",
+        "claw_R_2",
+        "eye_ridge_L",
+        "eye_ridge_R",
+        "footL",
+        "footR",
+        "head",
+        "leg_1_L",
+        "leg_1_R",
+        "leg_2_L",
+        "leg_2_R",
+        "lower_sail1",
+        "lower_sail2",
+        "lower_sail_3",
+        "neck_1",
+        "neck_2",
+        "neck_3",
+        "upper_jaw",
+        "upper_sail2_",
+        "upper_sail3",
+        "upper_sail_1",
+        "wing_1_L",
+        "wing_1_R",
+        "wing_2_L",
+        "wing_2_R",
+        "wing_3_L",
+        "wing_3_R",
+        "wing_4_L",
+        "wing_4_R",
+        "wing_5_L",
+        "wing_5_R",
+        "wing_6_L",
+        "wing_6_R",
+        "wing_7_L",
+        "wing_7_R"
+      ],
+      "seam_delta_degrees": 72.8025970424,
+      "attacking": {
+        "declared_pose_interfaces": [
+          "LeonPose"
+        ],
+        "getters": [
+          "LeonPose.getAttacking()"
+        ],
+        "outside_pose_interface": [],
+        "reads_attacking": true,
+        "read_at_inputs": true
+      }
+    },
+    {
+      "state": "sit",
+      "file": "leonopteryx_reference_sit.animation.json",
+      "sha256": "a92b5abb2855b5203447960c1d6cb73c3d616cb39dfbb971b03137af03637896",
+      "clip": "reference_sit",
+      "reference_only": true,
+      "delivered_clip": null,
+      "offered_extra": "sit",
+      "named": true,
+      "name_source": "leonopteryx.json reference_states.sit = {isInSittingPose: true}",
+      "getter": "isInSittingPose",
+      "value": true,
       "rule": "period_multiple",
-      "rule_note": "wingspeed 0.22: the slowest rhythm is the standing sway cos(ageInTicks * 0.6 * WINGSPEED) * PI * 0.02 (LeonGeoReplacement.poseRig:224, activity 0) at 0.132 rad/tick, 47.60 ticks; the standing threshold gait cos(ageInTicks * 1.8 * WINGSPEED) * PI * 0.25 * limbSwingAmount and cos(ageInTicks * 0.9 * WINGSPEED) * PI * 0.25 * limbSwingAmount (:143-144, walk; the feet follow, :170-179) with the idle 0.9 * 0.22 sway at amplitude 0.02 (:147); the flight beat cos(ageInTicks * 1.6 * WINGSPEED * spd) * PI * 0.06 / 0.26 * amp with spd 1.7 and amp 1.4 while attacking (:259, :344, :256-257), the flying legs at 3.6 * 0.22 (:316) and the flying jaw at 2.6 * 0.22 (:468) need activity != 0 (0 on the probe); the ridden yaw accumulator rf1 needs getBeingRidden() != 0; the head look follows netHeadYaw = 0 (:232-253); closes at k = 1 (47.599889 ticks): every bone returns within 3.600001 degrees of its start at k x T (the 5-degree test under the 6 s cap; k = 1: 3.600001 deg)",
+      "rule_note": "wingspeed 0.22: the slowest rhythm is the standing sway cos(ageInTicks * 0.6 * WINGSPEED) * PI * 0.02 (LeonGeoReplacement.poseRig:224, activity 0) at 0.132 rad/tick, 47.60 ticks; the standing threshold gait cos(ageInTicks * 1.8 * WINGSPEED) * PI * 0.25 * limbSwingAmount and cos(ageInTicks * 0.9 * WINGSPEED) * PI * 0.25 * limbSwingAmount (:143-144, walk; the feet follow, :170-179) with the idle 0.9 * 0.22 sway at amplitude 0.02 (:147); the flight beat cos(ageInTicks * 1.6 * WINGSPEED * spd) * PI * 0.06 / 0.26 * amp with spd 1.7 and amp 1.4 while attacking (:259, :344, :256-257), the flying legs at 3.6 * 0.22 (:316) and the flying jaw at 2.6 * 0.22 (:468) need activity != 0 (0 on the probe); the ridden yaw accumulator rf1 needs getBeingRidden() != 0; the head look follows netHeadYaw = 0 (:232-253); closes at k = 1 (47.599889 ticks): every bone returns within 0 degrees of its start at k x T (the 5-degree test under the 6 s cap; k = 1: 0 deg)",
       "span_ticks": 47.5998889487,
       "period_ticks": 47.5998889487,
       "period_multiple_k": 1,
       "animation_length_seconds": 2.3799944474,
-      "keys_per_bone": 49,
-      "sampled_inputs": "attacking 1 (the pose interface's getAttacking() answers 1: the hook's attacking branch); limbSwingAmount 0.0; limbSwing 0 (the walk position at rest); ageInTicks = t (getBob: tickCount + partialTick, partialTick 0; advancing 1.0 per tick from 0); netHeadYaw 0; headPitch 0 (looking ahead); every other entity-state flag at its rest value (ri1 0, rock_type 0, rf1 0: a ProbeSubject built from the attack state); the entity RNG seeded 0 once per clip and evolving across the keys; one pose call per key, 20 keys per second; full health",
+      "keys_per_bone": 3,
+      "keys_per_bone_min": 2,
+      "dense_samples": 49,
+      "lerp_mode": "catmullrom",
+      "keying": {
+        "rotation_tolerance_degrees": 1.0,
+        "position_tolerance_blocks": 0.03125,
+        "max_error_degrees": 0.8998432722,
+        "max_error_blocks": 0.0,
+        "within_tolerance": true,
+        "keys_total": 236
+      },
+      "sampled_inputs": "isInSittingPose() answers 1 (the state the seed names `sit`; every other getter at its rest value); limbSwingAmount 0.0; limbSwing 0 (the walk position at rest: vanilla WalkAnimationState holds its position while the speed is 0, and a creature that has not walked since it spawned carries 0); ageInTicks = t (getBob: tickCount + partialTick, partialTick 0; advancing 1.0 per tick from 0); netHeadYaw 0; headPitch 0 (looking ahead); every other entity-state flag at its rest value (ri1 0, rock_type 0, rf1 0); the entity RNG seeded 0 once per clip and evolving across the keys; one pose call per key, 20 keys per second; full health",
       "hook": "danger.orespawn.entity.client.LeonopteryxGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the unlanded hook of owner 2026-09-14, addendum item 10 - the classic setupAnim transcribed into the descriptor's PoseInputs form, proven when the rig lands - registry-free, on explicit PoseInputs, over the reference leg's converter output reference_leon.geo.json baked without the face-order strictness the landing slice's TEST-007 adds)",
       "landed": false,
       "moving_bones": [
@@ -7611,7 +7878,7 @@
         "fwing_7_L",
         "fwing_7_R"
       ],
-      "seam_delta_degrees": 3.6000014662,
+      "seam_delta_degrees": 0.0,
       "attacking": {
         "declared_pose_interfaces": [
           "LeonPose"
@@ -7628,17 +7895,33 @@
   "reference_clip": {
     "state": "walk",
     "file": "leonopteryx_reference_walk.animation.json",
-    "sha256": "799ad8ad6bacff56d0da9f5d3b88e51909dbd90c2f4591a71a306976062a47be",
-    "clip": "reference",
+    "sha256": "939fb94f4c1552aee9818da727f66cc73f085ade519350c5825d4c0f3ff6c522",
+    "clip": "reference_walk",
     "reference_only": true,
     "delivered_clip": "walk",
+    "offered_extra": null,
+    "named": true,
+    "name_source": "the contract",
+    "getter": null,
+    "value": null,
     "rule": "period_multiple",
     "rule_note": "wingspeed 0.22: the slowest rhythm is the standing sway cos(ageInTicks * 0.6 * WINGSPEED) * PI * 0.02 (LeonGeoReplacement.poseRig:224, activity 0) at 0.132 rad/tick, 47.60 ticks; the standing threshold gait cos(ageInTicks * 1.8 * WINGSPEED) * PI * 0.25 * limbSwingAmount and cos(ageInTicks * 0.9 * WINGSPEED) * PI * 0.25 * limbSwingAmount (:143-144, walk; the feet follow, :170-179) with the idle 0.9 * 0.22 sway at amplitude 0.02 (:147); the flight beat cos(ageInTicks * 1.6 * WINGSPEED * spd) * PI * 0.06 / 0.26 * amp with spd 1.7 and amp 1.4 while attacking (:259, :344, :256-257), the flying legs at 3.6 * 0.22 (:316) and the flying jaw at 2.6 * 0.22 (:468) need activity != 0 (0 on the probe); the ridden yaw accumulator rf1 needs getBeingRidden() != 0; the head look follows netHeadYaw = 0 (:232-253); closes at k = 2 (95.199778 ticks): every bone returns within 0 degrees of its start at k x T (the 5-degree test under the 6 s cap; k = 1: 45 deg, k = 2: 0 deg)",
     "span_ticks": 95.1997778974,
     "period_ticks": 47.5998889487,
     "period_multiple_k": 2,
     "animation_length_seconds": 4.7599888949,
-    "keys_per_bone": 97,
+    "keys_per_bone": 49,
+    "keys_per_bone_min": 2,
+    "dense_samples": 97,
+    "lerp_mode": "catmullrom",
+    "keying": {
+      "rotation_tolerance_degrees": 1.0,
+      "position_tolerance_blocks": 0.03125,
+      "max_error_degrees": 0.9966180723,
+      "max_error_blocks": 0.029794395,
+      "within_tolerance": true,
+      "keys_total": 1664
+    },
     "sampled_inputs": "limbSwingAmount 1.0; limbSwing = t (advancing 1.0 per tick from 0: vanilla WalkAnimationState.update does speed += (movementSpeed - speed) * multiplier; position += speed, and the classic renderer hands walkAnimation.position(partialTick) as limbSwing and min(1, speed) as limbSwingAmount, so at speed 1 the position advances exactly 1.0 per tick); ageInTicks = t (getBob: tickCount + partialTick, partialTick 0); netHeadYaw 0; headPitch 0 (looking ahead); every entity-state flag at its rest value (attacking 0, ri1 0, rock_type 0, rf1 0: a ProbeSubject built from an empty state); the entity RNG seeded 0 once per clip and evolving across the keys; one pose call per key, 20 keys per second; full health (no shipped hook reads health)",
     "hook": "danger.orespawn.entity.client.LeonopteryxGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the unlanded hook of owner 2026-09-14, addendum item 10 - the classic setupAnim transcribed into the descriptor's PoseInputs form, proven when the rig lands - registry-free, on explicit PoseInputs, over the reference leg's converter output reference_leon.geo.json baked without the face-order strictness the landing slice's TEST-007 adds)",
     "landed": false,
@@ -7760,6 +8043,9 @@
       "read_at_inputs": false
     }
   },
+  "reference_offers": [
+    "sit"
+  ],
   "exact_transcription": false,
   "rig_source": "reference-leg converter output",
   "in_game": false,

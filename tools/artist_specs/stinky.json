@@ -154,5 +154,8 @@
     "in `idle`: the curled tail (:195, :199) is a quirk of the code, not a pose - a slow tail sway and a sniff of the snout read better",
     "in `attack`: a swoop and a head snap on the bite (EntityStinky.java:450-453); the head is look-only today (StinkyModel.java:207-221)"
   ],
-  "effort_hours": null
+  "effort_hours": null,
+  "reference_states": {
+    "sit": {"isInSittingPose": true}
+  }
 }

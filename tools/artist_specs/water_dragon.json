@@ -196,5 +196,9 @@
     {"bone": "Bodyfin", "size": [0.7, 0.3], "damage": 0.25}
   ],
   "locked_bones_note": "The design's section 6 ModelWaterDragon row (geckolib_migration_design.md:459): 'Head [0.8,0.7] @1; body1/body3 [1.2,0.9] @0.5; four leg roots [0.32,0.7] @0.5; tail1/tailmiddle/tailtop [0.45,0.5] @0.25; Bodyfin [0.7,0.3] @0.25'. Head, body1, body3, tail1, tailmiddle, tailtop and Bodyfin resolve as written (ModelWaterDragon.createBodyLayer). 'four leg roots' is not a bone name: the rig's flippers are single parts — Leg1, Leg2, Leg7, Leg8 (the port keeps the modeller's numbering; there are no Leg3-Leg6) — so each is its own root. The row pins the renderer x1.1 and the mounted / flight presentation (WaterDragonRenderer.java:28; the port's dragon is a swimmer, not ridden).",
-  "effort_hours": null
+  "effort_hours": null,
+  "reference_states": {
+    "sit": {"isInSittingPose": true},
+    "mouth_open": {"getAttacking": 2}
+  }
 }

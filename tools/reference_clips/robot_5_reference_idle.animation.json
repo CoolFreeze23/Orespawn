@@ -13,7 +13,7 @@
                 0.0,
                 0.0
               ],
-              "lerp_mode": "linear"
+              "lerp_mode": "catmullrom"
             }
           }
         },
@@ -25,7 +25,7 @@
                 0.0,
                 0.0
               ],
-              "lerp_mode": "linear"
+              "lerp_mode": "catmullrom"
             }
           }
         },
@@ -37,7 +37,7 @@
                 0.0,
                 0.0
               ],
-              "lerp_mode": "linear"
+              "lerp_mode": "catmullrom"
             }
           }
         },
@@ -49,7 +49,7 @@
                 0.0,
                 0.0
               ],
-              "lerp_mode": "linear"
+              "lerp_mode": "catmullrom"
             }
           }
         },
@@ -61,7 +61,7 @@
                 0.0,
                 0.0
               ],
-              "lerp_mode": "linear"
+              "lerp_mode": "catmullrom"
             }
           }
         },
@@ -73,7 +73,7 @@
                 0.0,
                 0.0
               ],
-              "lerp_mode": "linear"
+              "lerp_mode": "catmullrom"
             }
           }
         },
@@ -85,7 +85,7 @@
                 0.0,
                 0.0
               ],
-              "lerp_mode": "linear"
+              "lerp_mode": "catmullrom"
             }
           }
         },
@@ -97,7 +97,7 @@
                 0.0,
                 0.0
               ],
-              "lerp_mode": "linear"
+              "lerp_mode": "catmullrom"
             }
           }
         },
@@ -109,7 +109,7 @@
                 0.0,
                 0.0
               ],
-              "lerp_mode": "linear"
+              "lerp_mode": "catmullrom"
             }
           }
         },
@@ -121,7 +121,7 @@
                 0.0,
                 0.0
               ],
-              "lerp_mode": "linear"
+              "lerp_mode": "catmullrom"
             }
           }
         },
@@ -133,7 +133,7 @@
                 0.0,
                 0.0
               ],
-              "lerp_mode": "linear"
+              "lerp_mode": "catmullrom"
             }
           }
         }

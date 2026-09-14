@@ -177,5 +177,8 @@
     "in `graze`: a peck at the flower (VelocityRaptor.java:151-157); nothing in the rig reaches the ground today",
     "in `hurt`: a startled hop before the 1.6-speed bolt (VelocityRaptor.java:67)"
   ],
-  "effort_hours": null
+  "effort_hours": null,
+  "reference_states": {
+    "sit": {"isInSittingPose": true}
+  }
 }

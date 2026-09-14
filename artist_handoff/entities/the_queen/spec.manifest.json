@@ -1,5 +1,5 @@
 {
-  "generated_by": "tools/artist_package.py 0.3.0 (the reference clips for every species, 2026-09-14, addendum items 11 to 13: every hook's reference_walk, reference_idle and - where the code reads an attack - reference_attack clip beside the sheet, landed or not; the clips loaded through Blockbench's Import Animations (README_FIRST, Toolchain); a reference clip's keys as the starting point of a delivered idle / walk / aggro_idle, only the reference file itself under its own name refused)",
+  "generated_by": "tools/artist_package.py 0.4.0 (the reference clips revised, 2026-09-14, second set revised, items 2 to 6: every state a hook reads sampled and named by the seed - reference_walk, reference_idle, reference_attack, reference_fly, reference_swim, the species' own states, an unnamed one flagged - keyed by the exact transcriptions' density search (catmullrom, 1 degree, 1/32 block), embedded in every .bbmodel within the round-trip tolerance with the files beside the sheet the pinned source; a reference clip's keys as the starting point of idle / walk / aggro_idle / fly / swim, a species state offered as a SPEC extra; only the reference file itself under its own name refused; one tracked copy, the folder's copies ignored by git)",
   "registry": "the_queen",
   "display_name": "The Queen",
   "tier": 0,
@@ -4735,7 +4735,8 @@
       "required": true,
       "length_rule": "near:3.5833",
       "length_seconds": 3.5833,
-      "verdict": "improve"
+      "verdict": "improve",
+      "offered_from_reference": null
     },
     {
       "name": "idle_to_attack",
@@ -4745,7 +4746,8 @@
       "required": true,
       "length_rule": "near:3.5833",
       "length_seconds": 3.5833,
-      "verdict": "leave"
+      "verdict": "leave",
+      "offered_from_reference": null
     },
     {
       "name": "attack",
@@ -4755,7 +4757,8 @@
       "required": true,
       "length_rule": "near:3.5833",
       "length_seconds": 3.5833,
-      "verdict": "leave"
+      "verdict": "leave",
+      "offered_from_reference": null
     },
     {
       "name": "bite",
@@ -4765,7 +4768,8 @@
       "required": true,
       "length_rule": "near:0.8958",
       "length_seconds": 0.8958,
-      "verdict": "improve"
+      "verdict": "improve",
+      "offered_from_reference": null
     },
     {
       "name": "tail_whip_right",
@@ -4775,7 +4779,8 @@
       "required": true,
       "length_rule": "near:1.75",
       "length_seconds": 1.75,
-      "verdict": "leave"
+      "verdict": "leave",
+      "offered_from_reference": null
     },
     {
       "name": "tail_whip_left",
@@ -4785,7 +4790,8 @@
       "required": true,
       "length_rule": "near:1.7917",
       "length_seconds": 1.7917,
-      "verdict": "leave"
+      "verdict": "leave",
+      "offered_from_reference": null
     },
     {
       "name": "roar",
@@ -4795,7 +4801,8 @@
       "required": true,
       "length_rule": "near:3.5833",
       "length_seconds": 3.5833,
-      "verdict": "leave"
+      "verdict": "leave",
+      "offered_from_reference": null
     },
     {
       "name": "death",
@@ -4805,7 +4812,8 @@
       "required": true,
       "length_rule": "near:3.5833",
       "length_seconds": 3.5833,
-      "verdict": "leave"
+      "verdict": "leave",
+      "offered_from_reference": null
     }
   ],
   "allow_idle_alt": false,
@@ -4827,6 +4835,7 @@
   "effort_source": "generator: 8 h + 0.15 h/bone x 110 + 1.5 h/clip x 2 to author or improve (owner adjusts)",
   "reference_clips": [],
   "reference_clip": null,
+  "reference_offers": [],
   "exact_transcription": false,
   "rig_source": "shipped",
   "in_game": true,

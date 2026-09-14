@@ -1,5 +1,5 @@
 {
-  "generated_by": "tools/artist_package.py 0.3.0 (the reference clips for every species, 2026-09-14, addendum items 11 to 13: every hook's reference_walk, reference_idle and - where the code reads an attack - reference_attack clip beside the sheet, landed or not; the clips loaded through Blockbench's Import Animations (README_FIRST, Toolchain); a reference clip's keys as the starting point of a delivered idle / walk / aggro_idle, only the reference file itself under its own name refused)",
+  "generated_by": "tools/artist_package.py 0.4.0 (the reference clips revised, 2026-09-14, second set revised, items 2 to 6: every state a hook reads sampled and named by the seed - reference_walk, reference_idle, reference_attack, reference_fly, reference_swim, the species' own states, an unnamed one flagged - keyed by the exact transcriptions' density search (catmullrom, 1 degree, 1/32 block), embedded in every .bbmodel within the round-trip tolerance with the files beside the sheet the pinned source; a reference clip's keys as the starting point of idle / walk / aggro_idle / fly / swim, a species state offered as a SPEC extra; only the reference file itself under its own name refused; one tracked copy, the folder's copies ignored by git)",
   "registry": "cephadrome",
   "display_name": "Cephadrome",
   "tier": 1,
@@ -3587,7 +3587,8 @@
       "required": true,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "idle_wing_fins",
@@ -3597,7 +3598,8 @@
       "required": false,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "idle_top_fins",
@@ -3607,7 +3609,8 @@
       "required": false,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "idle_tail",
@@ -3617,7 +3620,8 @@
       "required": false,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "idle_mouth",
@@ -3627,7 +3631,8 @@
       "required": false,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "walk",
@@ -3637,7 +3642,8 @@
       "required": true,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "walk_wing_fins",
@@ -3647,7 +3653,8 @@
       "required": false,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "walk_top_fins",
@@ -3657,7 +3664,8 @@
       "required": false,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "walk_tail",
@@ -3667,7 +3675,8 @@
       "required": false,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "walk_mouth",
@@ -3677,7 +3686,8 @@
       "required": false,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "fly",
@@ -3687,7 +3697,8 @@
       "required": false,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "aggro_idle",
@@ -3697,7 +3708,8 @@
       "required": false,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "calm_idle",
@@ -3707,7 +3719,8 @@
       "required": false,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "attack",
@@ -3717,7 +3730,8 @@
       "required": false,
       "length_rule": "near:0.6",
       "length_seconds": 0.6,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "hurt",
@@ -3727,7 +3741,8 @@
       "required": false,
       "length_rule": "near:0.4",
       "length_seconds": 0.4,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "death",
@@ -3737,7 +3752,8 @@
       "required": false,
       "length_rule": "near:1.5",
       "length_seconds": 1.5,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     }
   ],
   "allow_idle_alt": true,
@@ -3755,17 +3771,33 @@
     {
       "state": "walk",
       "file": "cephadrome_reference_walk.animation.json",
-      "sha256": "6b1299b61d8a53a7a5743605e9834d8f102b9e4380c4ea4aa29062410f935755",
-      "clip": "reference",
+      "sha256": "a054071e21bab4ef3963849ad533b064aba1c685d0dd2f2c76ae90c975503e02",
+      "clip": "reference_walk",
       "reference_only": true,
       "delivered_clip": "walk",
+      "offered_extra": null,
+      "named": true,
+      "name_source": "the contract",
+      "getter": null,
+      "value": null,
       "rule": "two_seconds_past_cap",
       "rule_note": "wingspeed 0.55: the slowest rhythm is the resting wing beat -0.85 + cos(ageInTicks * 0.2 * WINGSPEED) * PI * ... (CephadromeGeoReplacement.applyCustomAnimations:112, activity 0 and not attacking) at 0.11 rad/tick, 57.12 ticks; the fins' sway cos(ageInTicks * 0.15 * WINGSPEED) * PI * 0.05 (:124) folds through Math.abs on the fins and membranes (:125-132) to a 38.08-tick period; the tail chain at tailspeed 0.76 (:72, :139-156; 0.22 in the ridden branch :135); the jaw cos(ageInTicks * 0.5 * WINGSPEED) * PI * 0.14 (:217); the legs cos(ageInTicks * 0.75 * WINGSPEED) * PI * lspeed * 0.4 (:80) scale by the movement delta lspeed = |xOld - x, zOld - z| (:70-79), 0 on the probe, so the gait does not move at these inputs; no multiple of the slowest group's period 57.119863 ticks up to the 6 s cap (120 ticks) brings every group back within 5 degrees of its start (k = 1: 9 deg / 0.586385 units, k = 2: 6.269833 deg / 1.12461 units): a two-second window (40 ticks), not a loop - the sheet states the closing key's seam",
       "span_ticks": 40.0,
       "period_ticks": 57.1198628695,
       "period_multiple_k": null,
       "animation_length_seconds": 2.0,
-      "keys_per_bone": 41,
+      "keys_per_bone": 5,
+      "keys_per_bone_min": 2,
+      "dense_samples": 41,
+      "lerp_mode": "catmullrom",
+      "keying": {
+        "rotation_tolerance_degrees": 1.0,
+        "position_tolerance_blocks": 0.03125,
+        "max_error_degrees": 0.9882652484,
+        "max_error_blocks": 0.0247578198,
+        "within_tolerance": true,
+        "keys_total": 205
+      },
       "sampled_inputs": "limbSwingAmount 1.0; limbSwing = t (advancing 1.0 per tick from 0: vanilla WalkAnimationState.update does speed += (movementSpeed - speed) * multiplier; position += speed, and the classic renderer hands walkAnimation.position(partialTick) as limbSwing and min(1, speed) as limbSwingAmount, so at speed 1 the position advances exactly 1.0 per tick); ageInTicks = t (getBob: tickCount + partialTick, partialTick 0); netHeadYaw 0; headPitch 0 (looking ahead); every entity-state flag at its rest value (attacking 0, ri1 0, rock_type 0, rf1 0: a ProbeSubject built from an empty state); the entity RNG seeded 0 once per clip and evolving across the keys; one pose call per key, 20 keys per second; full health (no shipped hook reads health)",
       "hook": "danger.orespawn.entity.client.CephadromeGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the unlanded hook of owner 2026-09-14, addendum item 10 - the classic setupAnim transcribed into the descriptor's PoseInputs form, proven when the rig lands - registry-free, on explicit PoseInputs, over the reference leg's converter output reference_cephadrome.geo.json baked without the face-order strictness the landing slice's TEST-007 adds)",
       "landed": false,
@@ -3840,17 +3872,33 @@
     {
       "state": "idle",
       "file": "cephadrome_reference_idle.animation.json",
-      "sha256": "fb9468a21596867f1d24a0cd6a9bc005d9a43372e287d402bc62337bc393a214",
+      "sha256": "e4fbb8e582c89081f3cf73d1fbddaeafce9fbfd1a7a13e6901230538c977cc2b",
       "clip": "reference_idle",
       "reference_only": true,
       "delivered_clip": "idle",
+      "offered_extra": null,
+      "named": true,
+      "name_source": "the contract",
+      "getter": null,
+      "value": null,
       "rule": "two_seconds_past_cap",
       "rule_note": "wingspeed 0.55: the slowest rhythm is the resting wing beat -0.85 + cos(ageInTicks * 0.2 * WINGSPEED) * PI * ... (CephadromeGeoReplacement.applyCustomAnimations:112, activity 0 and not attacking) at 0.11 rad/tick, 57.12 ticks; the fins' sway cos(ageInTicks * 0.15 * WINGSPEED) * PI * 0.05 (:124) folds through Math.abs on the fins and membranes (:125-132) to a 38.08-tick period; the tail chain at tailspeed 0.76 (:72, :139-156; 0.22 in the ridden branch :135); the jaw cos(ageInTicks * 0.5 * WINGSPEED) * PI * 0.14 (:217); the legs cos(ageInTicks * 0.75 * WINGSPEED) * PI * lspeed * 0.4 (:80) scale by the movement delta lspeed = |xOld - x, zOld - z| (:70-79), 0 on the probe, so the gait does not move at these inputs; no multiple of the slowest group's period 57.119863 ticks up to the 6 s cap (120 ticks) brings every group back within 5 degrees of its start (k = 1: 9 deg / 0.586385 units, k = 2: 6.269833 deg / 1.12461 units): a two-second window (40 ticks), not a loop - the sheet states the closing key's seam",
       "span_ticks": 40.0,
       "period_ticks": 57.1198628695,
       "period_multiple_k": null,
       "animation_length_seconds": 2.0,
-      "keys_per_bone": 41,
+      "keys_per_bone": 5,
+      "keys_per_bone_min": 2,
+      "dense_samples": 41,
+      "lerp_mode": "catmullrom",
+      "keying": {
+        "rotation_tolerance_degrees": 1.0,
+        "position_tolerance_blocks": 0.03125,
+        "max_error_degrees": 0.9882652484,
+        "max_error_blocks": 0.0247578198,
+        "within_tolerance": true,
+        "keys_total": 205
+      },
       "sampled_inputs": "limbSwingAmount 0.0; limbSwing 0 (the walk position at rest: vanilla WalkAnimationState holds its position while the speed is 0, and a creature that has not walked since it spawned carries 0); ageInTicks = t (getBob: tickCount + partialTick, partialTick 0; advancing 1.0 per tick from 0); netHeadYaw 0; headPitch 0 (looking ahead); every entity-state flag at its rest value (attacking 0, ri1 0, rock_type 0, rf1 0: a ProbeSubject built from an empty state); the entity RNG seeded 0 once per clip and evolving across the keys; one pose call per key, 20 keys per second; full health",
       "hook": "danger.orespawn.entity.client.CephadromeGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the unlanded hook of owner 2026-09-14, addendum item 10 - the classic setupAnim transcribed into the descriptor's PoseInputs form, proven when the rig lands - registry-free, on explicit PoseInputs, over the reference leg's converter output reference_cephadrome.geo.json baked without the face-order strictness the landing slice's TEST-007 adds)",
       "landed": false,
@@ -3925,18 +3973,34 @@
     {
       "state": "attack",
       "file": "cephadrome_reference_attack.animation.json",
-      "sha256": "1ea05409b8ee5164b9af329d3bd3069e79d0b9618785774fa6a143d4a6af79de",
+      "sha256": "4b0bc9bd67e0cb4688b3301605790e2326781be3ad53641e0e30f1a60a9d49f1",
       "clip": "reference_attack",
       "reference_only": true,
       "delivered_clip": "aggro_idle",
+      "offered_extra": null,
+      "named": true,
+      "name_source": "the contract (getAttacking 1)",
+      "getter": "getAttacking",
+      "value": 1,
       "rule": "two_seconds_past_cap",
       "rule_note": "wingspeed 0.55: the slowest rhythm is the resting wing beat -0.85 + cos(ageInTicks * 0.2 * WINGSPEED) * PI * ... (CephadromeGeoReplacement.applyCustomAnimations:112, activity 0 and not attacking) at 0.11 rad/tick, 57.12 ticks; the fins' sway cos(ageInTicks * 0.15 * WINGSPEED) * PI * 0.05 (:124) folds through Math.abs on the fins and membranes (:125-132) to a 38.08-tick period; the tail chain at tailspeed 0.76 (:72, :139-156; 0.22 in the ridden branch :135); the jaw cos(ageInTicks * 0.5 * WINGSPEED) * PI * 0.14 (:217); the legs cos(ageInTicks * 0.75 * WINGSPEED) * PI * lspeed * 0.4 (:80) scale by the movement delta lspeed = |xOld - x, zOld - z| (:70-79), 0 on the probe, so the gait does not move at these inputs; no multiple of the slowest group's period 57.119863 ticks up to the 6 s cap (120 ticks) brings every group back within 5 degrees of its start (k = 1: 50.400003 deg / 8.780713 units, k = 2: 30.506152 deg / 11.618222 units): a two-second window (40 ticks), not a loop - the sheet states the closing key's seam",
       "span_ticks": 40.0,
       "period_ticks": 57.1198628695,
       "period_multiple_k": null,
       "animation_length_seconds": 2.0,
-      "keys_per_bone": 41,
-      "sampled_inputs": "attacking 1 (the pose interface's getAttacking() answers 1: the hook's attacking branch); limbSwingAmount 0.0; limbSwing 0 (the walk position at rest); ageInTicks = t (getBob: tickCount + partialTick, partialTick 0; advancing 1.0 per tick from 0); netHeadYaw 0; headPitch 0 (looking ahead); every other entity-state flag at its rest value (ri1 0, rock_type 0, rf1 0: a ProbeSubject built from the attack state); the entity RNG seeded 0 once per clip and evolving across the keys; one pose call per key, 20 keys per second; full health",
+      "keys_per_bone": 34,
+      "keys_per_bone_min": 2,
+      "dense_samples": 41,
+      "lerp_mode": "catmullrom",
+      "keying": {
+        "rotation_tolerance_degrees": 1.0,
+        "position_tolerance_blocks": 0.03125,
+        "max_error_degrees": 0.9955297934,
+        "max_error_blocks": 0.0309359792,
+        "within_tolerance": true,
+        "keys_total": 788
+      },
+      "sampled_inputs": "getAttacking() answers 1 (the state the seed names `attack`; every other getter at its rest value); limbSwingAmount 0.0; limbSwing 0 (the walk position at rest: vanilla WalkAnimationState holds its position while the speed is 0, and a creature that has not walked since it spawned carries 0); ageInTicks = t (getBob: tickCount + partialTick, partialTick 0; advancing 1.0 per tick from 0); netHeadYaw 0; headPitch 0 (looking ahead); every other entity-state flag at its rest value (ri1 0, rock_type 0, rf1 0); the entity RNG seeded 0 once per clip and evolving across the keys; one pose call per key, 20 keys per second; full health",
       "hook": "danger.orespawn.entity.client.CephadromeGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the unlanded hook of owner 2026-09-14, addendum item 10 - the classic setupAnim transcribed into the descriptor's PoseInputs form, proven when the rig lands - registry-free, on explicit PoseInputs, over the reference leg's converter output reference_cephadrome.geo.json baked without the face-order strictness the landing slice's TEST-007 adds)",
       "landed": false,
       "moving_bones": [
@@ -4006,22 +4070,141 @@
         "reads_attacking": true,
         "read_at_inputs": true
       }
+    },
+    {
+      "state": "fly",
+      "file": "cephadrome_reference_fly.animation.json",
+      "sha256": "9b13bead64c31959bad54e614a4b028fc006d48cba4b4f563ba22b2dd3c66124",
+      "clip": "reference_fly",
+      "reference_only": true,
+      "delivered_clip": "fly",
+      "offered_extra": null,
+      "named": true,
+      "name_source": "cephadrome.json reference_states.fly = {getActivity: 1}",
+      "getter": "getActivity",
+      "value": 1,
+      "rule": "two_seconds_past_cap",
+      "rule_note": "wingspeed 0.55: the slowest rhythm is the resting wing beat -0.85 + cos(ageInTicks * 0.2 * WINGSPEED) * PI * ... (CephadromeGeoReplacement.applyCustomAnimations:112, activity 0 and not attacking) at 0.11 rad/tick, 57.12 ticks; the fins' sway cos(ageInTicks * 0.15 * WINGSPEED) * PI * 0.05 (:124) folds through Math.abs on the fins and membranes (:125-132) to a 38.08-tick period; the tail chain at tailspeed 0.76 (:72, :139-156; 0.22 in the ridden branch :135); the jaw cos(ageInTicks * 0.5 * WINGSPEED) * PI * 0.14 (:217); the legs cos(ageInTicks * 0.75 * WINGSPEED) * PI * lspeed * 0.4 (:80) scale by the movement delta lspeed = |xOld - x, zOld - z| (:70-79), 0 on the probe, so the gait does not move at these inputs; no multiple of the slowest group's period 57.119863 ticks up to the 6 s cap (120 ticks) brings every group back within 5 degrees of its start (k = 1: 50.404832 deg / 8.780713 units, k = 2: 100.8 deg / 11.618222 units): a two-second window (40 ticks), not a loop - the sheet states the closing key's seam",
+      "span_ticks": 40.0,
+      "period_ticks": 57.1198628695,
+      "period_multiple_k": null,
+      "animation_length_seconds": 2.0,
+      "keys_per_bone": 34,
+      "keys_per_bone_min": 2,
+      "dense_samples": 41,
+      "lerp_mode": "catmullrom",
+      "keying": {
+        "rotation_tolerance_degrees": 1.0,
+        "position_tolerance_blocks": 0.03125,
+        "max_error_degrees": 0.9955297934,
+        "max_error_blocks": 0.0309359792,
+        "within_tolerance": true,
+        "keys_total": 762
+      },
+      "sampled_inputs": "getActivity() answers 1 (the state the seed names `fly`; every other getter at its rest value); limbSwingAmount 0.0; limbSwing 0 (the walk position at rest: vanilla WalkAnimationState holds its position while the speed is 0, and a creature that has not walked since it spawned carries 0); ageInTicks = t (getBob: tickCount + partialTick, partialTick 0; advancing 1.0 per tick from 0); netHeadYaw 0; headPitch 0 (looking ahead); every other entity-state flag at its rest value (ri1 0, rock_type 0, rf1 0); the entity RNG seeded 0 once per clip and evolving across the keys; one pose call per key, 20 keys per second; full health",
+      "hook": "danger.orespawn.entity.client.CephadromeGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the unlanded hook of owner 2026-09-14, addendum item 10 - the classic setupAnim transcribed into the descriptor's PoseInputs form, proven when the rig lands - registry-free, on explicit PoseInputs, over the reference leg's converter output reference_cephadrome.geo.json baked without the face-order strictness the landing slice's TEST-007 adds)",
+      "landed": false,
+      "moving_bones": [
+        "leftfoot",
+        "leftleg1",
+        "leftleg2",
+        "leftleg3",
+        "leftwingfin2",
+        "leftwingfin3",
+        "leftwingfin4",
+        "leftwingmembrane",
+        "lefwingfin1",
+        "mouth",
+        "rightfoot",
+        "rightleg1",
+        "rightleg2",
+        "rightleg3",
+        "rightwingfin1",
+        "rightwingfin2",
+        "rightwingfin3",
+        "rightwingfin4",
+        "rightwingmembrane",
+        "tail1",
+        "tail2",
+        "tail3",
+        "tailfin1",
+        "tailfin2",
+        "tailfin3",
+        "tailfin4",
+        "tailmembrane1",
+        "tailmembrane2",
+        "tailmembrane3",
+        "topfin1",
+        "topfin2",
+        "topfin3",
+        "topfin4",
+        "topmem1",
+        "topmem2",
+        "topmem3",
+        "topmem4"
+      ],
+      "position_bones": [
+        "hammerhead",
+        "hammerhead2",
+        "head",
+        "mouth",
+        "neck1",
+        "neck2",
+        "tail2",
+        "tail3",
+        "tailfin1",
+        "tailfin2",
+        "tailfin3",
+        "tailfin4",
+        "tailmembrane1",
+        "tailmembrane2",
+        "tailmembrane3"
+      ],
+      "hidden_bones_at_rest": [],
+      "seam_delta_degrees": 30.2679730616,
+      "attacking": {
+        "declared_pose_interfaces": [
+          "CephadromePose"
+        ],
+        "getters": [
+          "CephadromePose.getAttacking()"
+        ],
+        "outside_pose_interface": [],
+        "reads_attacking": true,
+        "read_at_inputs": true
+      }
     }
   ],
   "reference_clip": {
     "state": "walk",
     "file": "cephadrome_reference_walk.animation.json",
-    "sha256": "6b1299b61d8a53a7a5743605e9834d8f102b9e4380c4ea4aa29062410f935755",
-    "clip": "reference",
+    "sha256": "a054071e21bab4ef3963849ad533b064aba1c685d0dd2f2c76ae90c975503e02",
+    "clip": "reference_walk",
     "reference_only": true,
     "delivered_clip": "walk",
+    "offered_extra": null,
+    "named": true,
+    "name_source": "the contract",
+    "getter": null,
+    "value": null,
     "rule": "two_seconds_past_cap",
     "rule_note": "wingspeed 0.55: the slowest rhythm is the resting wing beat -0.85 + cos(ageInTicks * 0.2 * WINGSPEED) * PI * ... (CephadromeGeoReplacement.applyCustomAnimations:112, activity 0 and not attacking) at 0.11 rad/tick, 57.12 ticks; the fins' sway cos(ageInTicks * 0.15 * WINGSPEED) * PI * 0.05 (:124) folds through Math.abs on the fins and membranes (:125-132) to a 38.08-tick period; the tail chain at tailspeed 0.76 (:72, :139-156; 0.22 in the ridden branch :135); the jaw cos(ageInTicks * 0.5 * WINGSPEED) * PI * 0.14 (:217); the legs cos(ageInTicks * 0.75 * WINGSPEED) * PI * lspeed * 0.4 (:80) scale by the movement delta lspeed = |xOld - x, zOld - z| (:70-79), 0 on the probe, so the gait does not move at these inputs; no multiple of the slowest group's period 57.119863 ticks up to the 6 s cap (120 ticks) brings every group back within 5 degrees of its start (k = 1: 9 deg / 0.586385 units, k = 2: 6.269833 deg / 1.12461 units): a two-second window (40 ticks), not a loop - the sheet states the closing key's seam",
     "span_ticks": 40.0,
     "period_ticks": 57.1198628695,
     "period_multiple_k": null,
     "animation_length_seconds": 2.0,
-    "keys_per_bone": 41,
+    "keys_per_bone": 5,
+    "keys_per_bone_min": 2,
+    "dense_samples": 41,
+    "lerp_mode": "catmullrom",
+    "keying": {
+      "rotation_tolerance_degrees": 1.0,
+      "position_tolerance_blocks": 0.03125,
+      "max_error_degrees": 0.9882652484,
+      "max_error_blocks": 0.0247578198,
+      "within_tolerance": true,
+      "keys_total": 205
+    },
     "sampled_inputs": "limbSwingAmount 1.0; limbSwing = t (advancing 1.0 per tick from 0: vanilla WalkAnimationState.update does speed += (movementSpeed - speed) * multiplier; position += speed, and the classic renderer hands walkAnimation.position(partialTick) as limbSwing and min(1, speed) as limbSwingAmount, so at speed 1 the position advances exactly 1.0 per tick); ageInTicks = t (getBob: tickCount + partialTick, partialTick 0); netHeadYaw 0; headPitch 0 (looking ahead); every entity-state flag at its rest value (attacking 0, ri1 0, rock_type 0, rf1 0: a ProbeSubject built from an empty state); the entity RNG seeded 0 once per clip and evolving across the keys; one pose call per key, 20 keys per second; full health (no shipped hook reads health)",
     "hook": "danger.orespawn.entity.client.CephadromeGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the unlanded hook of owner 2026-09-14, addendum item 10 - the classic setupAnim transcribed into the descriptor's PoseInputs form, proven when the rig lands - registry-free, on explicit PoseInputs, over the reference leg's converter output reference_cephadrome.geo.json baked without the face-order strictness the landing slice's TEST-007 adds)",
     "landed": false,
@@ -4093,6 +4276,7 @@
       "read_at_inputs": true
     }
   },
+  "reference_offers": [],
   "exact_transcription": false,
   "rig_source": "reference-leg converter output",
   "in_game": false,

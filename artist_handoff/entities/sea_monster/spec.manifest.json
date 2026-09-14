@@ -1,5 +1,5 @@
 {
-  "generated_by": "tools/artist_package.py 0.3.0 (the reference clips for every species, 2026-09-14, addendum items 11 to 13: every hook's reference_walk, reference_idle and - where the code reads an attack - reference_attack clip beside the sheet, landed or not; the clips loaded through Blockbench's Import Animations (README_FIRST, Toolchain); a reference clip's keys as the starting point of a delivered idle / walk / aggro_idle, only the reference file itself under its own name refused)",
+  "generated_by": "tools/artist_package.py 0.4.0 (the reference clips revised, 2026-09-14, second set revised, items 2 to 6: every state a hook reads sampled and named by the seed - reference_walk, reference_idle, reference_attack, reference_fly, reference_swim, the species' own states, an unnamed one flagged - keyed by the exact transcriptions' density search (catmullrom, 1 degree, 1/32 block), embedded in every .bbmodel within the round-trip tolerance with the files beside the sheet the pinned source; a reference clip's keys as the starting point of idle / walk / aggro_idle / fly / swim, a species state offered as a SPEC extra; only the reference file itself under its own name refused; one tracked copy, the folder's copies ignored by git)",
   "registry": "sea_monster",
   "display_name": "Sea Monster",
   "tier": 1,
@@ -1628,7 +1628,8 @@
       "required": true,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "idle_fins",
@@ -1638,7 +1639,8 @@
       "required": false,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "idle_neck",
@@ -1648,7 +1650,8 @@
       "required": false,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "idle_jaw",
@@ -1658,7 +1661,8 @@
       "required": false,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "walk",
@@ -1668,7 +1672,8 @@
       "required": true,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "walk_fins",
@@ -1678,7 +1683,8 @@
       "required": false,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "walk_neck",
@@ -1688,7 +1694,8 @@
       "required": false,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "walk_jaw",
@@ -1698,7 +1705,8 @@
       "required": false,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "swim",
@@ -1708,7 +1716,8 @@
       "required": false,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "aggro_idle",
@@ -1718,7 +1727,8 @@
       "required": false,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "calm_idle",
@@ -1728,7 +1738,8 @@
       "required": false,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "attack",
@@ -1738,7 +1749,8 @@
       "required": false,
       "length_rule": "near:0.5",
       "length_seconds": 0.5,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "hurt",
@@ -1748,7 +1760,8 @@
       "required": false,
       "length_rule": "near:0.4",
       "length_seconds": 0.4,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "death",
@@ -1758,7 +1771,8 @@
       "required": false,
       "length_rule": "near:1.5",
       "length_seconds": 1.5,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     }
   ],
   "allow_idle_alt": true,
@@ -1778,10 +1792,15 @@
     {
       "state": "walk",
       "file": "sea_monster_reference_walk.animation.json",
-      "sha256": "3862402a51ce2df429ff61110c0eb7b6dc8af9ebe5d2df83d43780d55c4645fd",
-      "clip": "reference",
+      "sha256": "ecf020047b42c4810feb2f4a467eefb45fb852d3a1ea58e43cabb4f105adc58c",
+      "clip": "reference_walk",
       "reference_only": true,
       "delivered_clip": "walk",
+      "offered_extra": null,
+      "named": true,
+      "name_source": "the contract",
+      "getter": null,
+      "value": null,
       "rule": "two_seconds_past_cap",
       "rule_note": "wingspeed 0.5: the slowest rhythm is the eye twitch cos(ageInTicks * 0.2 * WINGSPEED) * PI * 0.05 (SeaMonsterGeoReplacement.applyCustomAnimations:144, every state) at 0.1 rad/tick, 62.83 ticks; the tail fan cos(ageInTicks * 1.3 * WINGSPEED) * PI * 0.2 * limbSwingAmount (:58, walking or attacking; seven follows :62-88), the fins cos(ageInTicks * 1.2 * WINGSPEED) * PI * 0.2 * limbSwingAmount (:91) and the neck chain 0.455 * limbSwingAmount + cos(ageInTicks * 0.9 * WINGSPEED) * PI * 0.25 * limbSwingAmount (:100; five follows :104-130) - each with its own idle alternative below the threshold; the attacking jaw cos(ageInTicks * 1.7 * WINGSPEED) * PI * 0.17 (:141); the head look at 0.5 follows netHeadYaw = 0 (:135); no multiple of the slowest group's period 62.831852 ticks up to the 6 s cap (120 ticks) brings every group back within 5 degrees of its start (k = 1: 115.500011 deg / 32.242563 units): a two-second window (40 ticks), not a loop - the sheet states the closing key's seam",
       "span_ticks": 40.0,
@@ -1789,6 +1808,17 @@
       "period_multiple_k": null,
       "animation_length_seconds": 2.0,
       "keys_per_bone": 41,
+      "keys_per_bone_min": 2,
+      "dense_samples": 41,
+      "lerp_mode": "catmullrom",
+      "keying": {
+        "rotation_tolerance_degrees": 1.0,
+        "position_tolerance_blocks": 0.03125,
+        "max_error_degrees": 0.9770915244,
+        "max_error_blocks": 0.03044364,
+        "within_tolerance": true,
+        "keys_total": 963
+      },
       "sampled_inputs": "limbSwingAmount 1.0; limbSwing = t (advancing 1.0 per tick from 0: vanilla WalkAnimationState.update does speed += (movementSpeed - speed) * multiplier; position += speed, and the classic renderer hands walkAnimation.position(partialTick) as limbSwing and min(1, speed) as limbSwingAmount, so at speed 1 the position advances exactly 1.0 per tick); ageInTicks = t (getBob: tickCount + partialTick, partialTick 0); netHeadYaw 0; headPitch 0 (looking ahead); every entity-state flag at its rest value (attacking 0, ri1 0, rock_type 0, rf1 0: a ProbeSubject built from an empty state); the entity RNG seeded 0 once per clip and evolving across the keys; one pose call per key, 20 keys per second; full health (no shipped hook reads health)",
       "hook": "danger.orespawn.entity.client.SeaMonsterGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the unlanded hook of owner 2026-09-14, addendum item 10 - the classic setupAnim transcribed into the descriptor's PoseInputs form, proven when the rig lands - registry-free, on explicit PoseInputs, over the reference leg's converter output reference_seamonster.geo.json baked without the face-order strictness the landing slice's TEST-007 adds)",
       "landed": false,
@@ -1846,17 +1876,33 @@
     {
       "state": "idle",
       "file": "sea_monster_reference_idle.animation.json",
-      "sha256": "1de9a9124419d39ee9c78ca588367b1d532c2439a51045121353913c7ca30a8c",
+      "sha256": "59438690a52e6a282111eb2fe37f857a9087cc9d9b7f8fefe1ea6cba0055ab97",
       "clip": "reference_idle",
       "reference_only": true,
       "delivered_clip": "idle",
+      "offered_extra": null,
+      "named": true,
+      "name_source": "the contract",
+      "getter": null,
+      "value": null,
       "rule": "two_seconds_past_cap",
       "rule_note": "wingspeed 0.5: the slowest rhythm is the eye twitch cos(ageInTicks * 0.2 * WINGSPEED) * PI * 0.05 (SeaMonsterGeoReplacement.applyCustomAnimations:144, every state) at 0.1 rad/tick, 62.83 ticks; the tail fan cos(ageInTicks * 1.3 * WINGSPEED) * PI * 0.2 * limbSwingAmount (:58, walking or attacking; seven follows :62-88), the fins cos(ageInTicks * 1.2 * WINGSPEED) * PI * 0.2 * limbSwingAmount (:91) and the neck chain 0.455 * limbSwingAmount + cos(ageInTicks * 0.9 * WINGSPEED) * PI * 0.25 * limbSwingAmount (:100; five follows :104-130) - each with its own idle alternative below the threshold; the attacking jaw cos(ageInTicks * 1.7 * WINGSPEED) * PI * 0.17 (:141); the head look at 0.5 follows netHeadYaw = 0 (:135); no multiple of the slowest group's period 62.831852 ticks up to the 6 s cap (120 ticks) brings every group back within 5 degrees of its start (k = 1: 9.239999 deg / 3.45396 units): a two-second window (40 ticks), not a loop - the sheet states the closing key's seam",
       "span_ticks": 40.0,
       "period_ticks": 62.8318521355,
       "period_multiple_k": null,
       "animation_length_seconds": 2.0,
-      "keys_per_bone": 41,
+      "keys_per_bone": 15,
+      "keys_per_bone_min": 2,
+      "dense_samples": 41,
+      "lerp_mode": "catmullrom",
+      "keying": {
+        "rotation_tolerance_degrees": 1.0,
+        "position_tolerance_blocks": 0.03125,
+        "max_error_degrees": 0.8937755029,
+        "max_error_blocks": 0.0195954591,
+        "within_tolerance": true,
+        "keys_total": 144
+      },
       "sampled_inputs": "limbSwingAmount 0.0; limbSwing 0 (the walk position at rest: vanilla WalkAnimationState holds its position while the speed is 0, and a creature that has not walked since it spawned carries 0); ageInTicks = t (getBob: tickCount + partialTick, partialTick 0; advancing 1.0 per tick from 0); netHeadYaw 0; headPitch 0 (looking ahead); every entity-state flag at its rest value (attacking 0, ri1 0, rock_type 0, rf1 0: a ProbeSubject built from an empty state); the entity RNG seeded 0 once per clip and evolving across the keys; one pose call per key, 20 keys per second; full health",
       "hook": "danger.orespawn.entity.client.SeaMonsterGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the unlanded hook of owner 2026-09-14, addendum item 10 - the classic setupAnim transcribed into the descriptor's PoseInputs form, proven when the rig lands - registry-free, on explicit PoseInputs, over the reference leg's converter output reference_seamonster.geo.json baked without the face-order strictness the landing slice's TEST-007 adds)",
       "landed": false,
@@ -1907,10 +1953,15 @@
     {
       "state": "attack",
       "file": "sea_monster_reference_attack.animation.json",
-      "sha256": "3f46612ac6e34c0b811f9bfb66669218b4c71f71fe0d54fe6c9af8a459bea3d9",
+      "sha256": "f7d51ccfcb3afbc2d243eba603dfc7e1e26913bb2469485567e240dc9898d1b4",
       "clip": "reference_attack",
       "reference_only": true,
       "delivered_clip": "aggro_idle",
+      "offered_extra": null,
+      "named": true,
+      "name_source": "the contract (getAttacking 1)",
+      "getter": "getAttacking",
+      "value": 1,
       "rule": "two_seconds_past_cap",
       "rule_note": "wingspeed 0.5: the slowest rhythm is the eye twitch cos(ageInTicks * 0.2 * WINGSPEED) * PI * 0.05 (SeaMonsterGeoReplacement.applyCustomAnimations:144, every state) at 0.1 rad/tick, 62.83 ticks; the tail fan cos(ageInTicks * 1.3 * WINGSPEED) * PI * 0.2 * limbSwingAmount (:58, walking or attacking; seven follows :62-88), the fins cos(ageInTicks * 1.2 * WINGSPEED) * PI * 0.2 * limbSwingAmount (:91) and the neck chain 0.455 * limbSwingAmount + cos(ageInTicks * 0.9 * WINGSPEED) * PI * 0.25 * limbSwingAmount (:100; five follows :104-130) - each with its own idle alternative below the threshold; the attacking jaw cos(ageInTicks * 1.7 * WINGSPEED) * PI * 0.17 (:141); the head look at 0.5 follows netHeadYaw = 0 (:135); no multiple of the slowest group's period 62.831852 ticks up to the 6 s cap (120 ticks) brings every group back within 5 degrees of its start (k = 1: 61.200004 deg): a two-second window (40 ticks), not a loop - the sheet states the closing key's seam",
       "span_ticks": 40.0,
@@ -1918,7 +1969,18 @@
       "period_multiple_k": null,
       "animation_length_seconds": 2.0,
       "keys_per_bone": 41,
-      "sampled_inputs": "attacking 1 (the pose interface's getAttacking() answers 1: the hook's attacking branch); limbSwingAmount 0.0; limbSwing 0 (the walk position at rest); ageInTicks = t (getBob: tickCount + partialTick, partialTick 0; advancing 1.0 per tick from 0); netHeadYaw 0; headPitch 0 (looking ahead); every other entity-state flag at its rest value (ri1 0, rock_type 0, rf1 0: a ProbeSubject built from the attack state); the entity RNG seeded 0 once per clip and evolving across the keys; one pose call per key, 20 keys per second; full health",
+      "keys_per_bone_min": 2,
+      "dense_samples": 41,
+      "lerp_mode": "catmullrom",
+      "keying": {
+        "rotation_tolerance_degrees": 1.0,
+        "position_tolerance_blocks": 0.03125,
+        "max_error_degrees": 0.0,
+        "max_error_blocks": 0.0,
+        "within_tolerance": true,
+        "keys_total": 115
+      },
+      "sampled_inputs": "getAttacking() answers 1 (the state the seed names `attack`; every other getter at its rest value); limbSwingAmount 0.0; limbSwing 0 (the walk position at rest: vanilla WalkAnimationState holds its position while the speed is 0, and a creature that has not walked since it spawned carries 0); ageInTicks = t (getBob: tickCount + partialTick, partialTick 0; advancing 1.0 per tick from 0); netHeadYaw 0; headPitch 0 (looking ahead); every other entity-state flag at its rest value (ri1 0, rock_type 0, rf1 0); the entity RNG seeded 0 once per clip and evolving across the keys; one pose call per key, 20 keys per second; full health",
       "hook": "danger.orespawn.entity.client.SeaMonsterGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the unlanded hook of owner 2026-09-14, addendum item 10 - the classic setupAnim transcribed into the descriptor's PoseInputs form, proven when the rig lands - registry-free, on explicit PoseInputs, over the reference leg's converter output reference_seamonster.geo.json baked without the face-order strictness the landing slice's TEST-007 adds)",
       "landed": false,
       "moving_bones": [
@@ -1969,10 +2031,15 @@
   "reference_clip": {
     "state": "walk",
     "file": "sea_monster_reference_walk.animation.json",
-    "sha256": "3862402a51ce2df429ff61110c0eb7b6dc8af9ebe5d2df83d43780d55c4645fd",
-    "clip": "reference",
+    "sha256": "ecf020047b42c4810feb2f4a467eefb45fb852d3a1ea58e43cabb4f105adc58c",
+    "clip": "reference_walk",
     "reference_only": true,
     "delivered_clip": "walk",
+    "offered_extra": null,
+    "named": true,
+    "name_source": "the contract",
+    "getter": null,
+    "value": null,
     "rule": "two_seconds_past_cap",
     "rule_note": "wingspeed 0.5: the slowest rhythm is the eye twitch cos(ageInTicks * 0.2 * WINGSPEED) * PI * 0.05 (SeaMonsterGeoReplacement.applyCustomAnimations:144, every state) at 0.1 rad/tick, 62.83 ticks; the tail fan cos(ageInTicks * 1.3 * WINGSPEED) * PI * 0.2 * limbSwingAmount (:58, walking or attacking; seven follows :62-88), the fins cos(ageInTicks * 1.2 * WINGSPEED) * PI * 0.2 * limbSwingAmount (:91) and the neck chain 0.455 * limbSwingAmount + cos(ageInTicks * 0.9 * WINGSPEED) * PI * 0.25 * limbSwingAmount (:100; five follows :104-130) - each with its own idle alternative below the threshold; the attacking jaw cos(ageInTicks * 1.7 * WINGSPEED) * PI * 0.17 (:141); the head look at 0.5 follows netHeadYaw = 0 (:135); no multiple of the slowest group's period 62.831852 ticks up to the 6 s cap (120 ticks) brings every group back within 5 degrees of its start (k = 1: 115.500011 deg / 32.242563 units): a two-second window (40 ticks), not a loop - the sheet states the closing key's seam",
     "span_ticks": 40.0,
@@ -1980,6 +2047,17 @@
     "period_multiple_k": null,
     "animation_length_seconds": 2.0,
     "keys_per_bone": 41,
+    "keys_per_bone_min": 2,
+    "dense_samples": 41,
+    "lerp_mode": "catmullrom",
+    "keying": {
+      "rotation_tolerance_degrees": 1.0,
+      "position_tolerance_blocks": 0.03125,
+      "max_error_degrees": 0.9770915244,
+      "max_error_blocks": 0.03044364,
+      "within_tolerance": true,
+      "keys_total": 963
+    },
     "sampled_inputs": "limbSwingAmount 1.0; limbSwing = t (advancing 1.0 per tick from 0: vanilla WalkAnimationState.update does speed += (movementSpeed - speed) * multiplier; position += speed, and the classic renderer hands walkAnimation.position(partialTick) as limbSwing and min(1, speed) as limbSwingAmount, so at speed 1 the position advances exactly 1.0 per tick); ageInTicks = t (getBob: tickCount + partialTick, partialTick 0); netHeadYaw 0; headPitch 0 (looking ahead); every entity-state flag at its rest value (attacking 0, ri1 0, rock_type 0, rf1 0: a ProbeSubject built from an empty state); the entity RNG seeded 0 once per clip and evolving across the keys; one pose call per key, 20 keys per second; full health (no shipped hook reads health)",
     "hook": "danger.orespawn.entity.client.SeaMonsterGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the unlanded hook of owner 2026-09-14, addendum item 10 - the classic setupAnim transcribed into the descriptor's PoseInputs form, proven when the rig lands - registry-free, on explicit PoseInputs, over the reference leg's converter output reference_seamonster.geo.json baked without the face-order strictness the landing slice's TEST-007 adds)",
     "landed": false,
@@ -2034,6 +2112,7 @@
       "read_at_inputs": true
     }
   },
+  "reference_offers": [],
   "exact_transcription": false,
   "rig_source": "reference-leg converter output",
   "in_game": false,

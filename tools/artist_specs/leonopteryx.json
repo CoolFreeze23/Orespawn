@@ -338,5 +338,9 @@
     {"bone": "fwing_1_R", "size": [4, 1], "damage": 0.25}
   ],
   "locked_bones_note": "The design's section 6 LeonModel row (geckolib_migration_design.md:442): 'Active-form head/fhead [2,1.8] @1; chest/fchest [3,3] @0.5; abdomen/fabdomen [2.5,2.5] @0.5; upper/lower legs/feet [1,2.5] @0.5; structural wing roots [4,1] @0.25' — 'Only the active normal/f* skeleton receives parts'. head, fhead, chest, fchest, abdomen and fabdomen resolve as written. 'upper/lower legs/feet' is not a bone name: taken as both skeletons' thighs, shins and feet — leg_1_L/R, leg_2_L/R, footL/R and fleg_1_L/R, fleg_2_L/R, ffootL/R (LeonModel.createBodyLayer :406-433, :651-678). 'structural wing roots' is not a bone name: taken as the root wing panel a side on each skeleton — wing_1_L/R and fwing_1_L/R (the panel posed with the upper arm at the shoulder, :794-795 / :928-929); the arms (arm_1_*, farm_1_*) and the outer panels and fans stay visual. Both registries (leon, leonopteryx) carry the same list: 'Separate equal-size registry profiles, one server-fed form/flight pose'.",
-  "effort_hours": null
+  "effort_hours": null,
+  "reference_states": {
+    "fly": {"getActivity": 1},
+    "sit": {"isInSittingPose": true}
+  }
 }

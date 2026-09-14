@@ -1,5 +1,5 @@
 {
-  "generated_by": "tools/artist_package.py 0.3.0 (the reference clips for every species, 2026-09-14, addendum items 11 to 13: every hook's reference_walk, reference_idle and - where the code reads an attack - reference_attack clip beside the sheet, landed or not; the clips loaded through Blockbench's Import Animations (README_FIRST, Toolchain); a reference clip's keys as the starting point of a delivered idle / walk / aggro_idle, only the reference file itself under its own name refused)",
+  "generated_by": "tools/artist_package.py 0.4.0 (the reference clips revised, 2026-09-14, second set revised, items 2 to 6: every state a hook reads sampled and named by the seed - reference_walk, reference_idle, reference_attack, reference_fly, reference_swim, the species' own states, an unnamed one flagged - keyed by the exact transcriptions' density search (catmullrom, 1 degree, 1/32 block), embedded in every .bbmodel within the round-trip tolerance with the files beside the sheet the pinned source; a reference clip's keys as the starting point of idle / walk / aggro_idle / fly / swim, a species state offered as a SPEC extra; only the reference file itself under its own name refused; one tracked copy, the folder's copies ignored by git)",
   "registry": "kyuubi",
   "display_name": "Kyuubi",
   "tier": 2,
@@ -3007,7 +3007,8 @@
       "required": true,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "idle_arm_breath",
@@ -3017,7 +3018,8 @@
       "required": false,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "idle_horns",
@@ -3027,7 +3029,8 @@
       "required": false,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "idle_tail_sway",
@@ -3037,7 +3040,8 @@
       "required": false,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "idle_tail_curl",
@@ -3047,7 +3051,8 @@
       "required": false,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "walk",
@@ -3057,7 +3062,8 @@
       "required": true,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "walk_arm_breath",
@@ -3067,7 +3073,8 @@
       "required": false,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "walk_horns",
@@ -3077,7 +3084,8 @@
       "required": false,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "walk_tail_sway",
@@ -3087,7 +3095,8 @@
       "required": false,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "walk_tail_curl",
@@ -3097,7 +3106,8 @@
       "required": false,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "swim",
@@ -3107,7 +3117,8 @@
       "required": false,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "calm_idle",
@@ -3117,7 +3128,8 @@
       "required": false,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "leave"
+      "verdict": "leave",
+      "offered_from_reference": null
     },
     {
       "name": "attack",
@@ -3127,7 +3139,8 @@
       "required": false,
       "length_rule": "near:0.5",
       "length_seconds": 0.5,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "hurt",
@@ -3137,7 +3150,8 @@
       "required": false,
       "length_rule": "near:0.3",
       "length_seconds": 0.3,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "death",
@@ -3147,7 +3161,8 @@
       "required": false,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     }
   ],
   "allow_idle_alt": true,
@@ -3165,10 +3180,15 @@
     {
       "state": "walk",
       "file": "kyuubi_reference_walk.animation.json",
-      "sha256": "57b841607315de9cc0638558a45f68ed199e5232df8c18977960f31527af977b",
-      "clip": "reference",
+      "sha256": "ae66605a7947469785fb6c81551b7c8f5da52f3e510411510ae3d34d68f2c3f2",
+      "clip": "reference_walk",
       "reference_only": true,
       "delivered_clip": "walk",
+      "offered_extra": null,
+      "named": true,
+      "name_source": "the contract",
+      "getter": null,
+      "value": null,
       "rule": "two_seconds_past_cap",
       "rule_note": "wingspeed 0.5: the slowest rhythms are the arm sway cos(ageInTicks * 0.5 * WINGSPEED) * PI * 0.01 (KyuubiGeoReplacement.applyCustomAnimations:86, every state) and the nine-ring tail's pitch chain -0.26 .. 2.0 + cos(ageInTicks * 0.5 * WINGSPEED - n * pi/4) * PI * 0.1 (:184-216) at 0.25 rad/tick, 25.13 ticks; the tail's yaw chain cos(ageInTicks * 0.9 * WINGSPEED - n * pi/4) * PI * 0.2 (:159-183) at 0.45; the two horn chains cos(ageInTicks * 1.3 * WINGSPEED - n * pi/4) * PI * 0.1 (:110-156) at 0.65; the threshold gait cos(ageInTicks * 1.1 * WINGSPEED) * PI * 0.2 * limbSwingAmount (:70, walk; the lower legs and arms move by sin of the upper joint, :76-99) at 0.55; the head follows netHeadYaw = 0 (:101-102); no multiple of the slowest group's period 25.132741 ticks up to the 6 s cap (120 ticks) brings every group back within 5 degrees of its start (k = 1: 41.804405 deg / 6.505194 units, k = 2: 65.125833 deg / 8.532152 units, k = 3: 65.125837 deg / 8.439928 units, k = 4: 41.796448 deg / 6.324801 units): a two-second window (40 ticks), not a loop - the sheet states the closing key's seam",
       "span_ticks": 40.0,
@@ -3176,6 +3196,17 @@
       "period_multiple_k": null,
       "animation_length_seconds": 2.0,
       "keys_per_bone": 41,
+      "keys_per_bone_min": 2,
+      "dense_samples": 41,
+      "lerp_mode": "catmullrom",
+      "keying": {
+        "rotation_tolerance_degrees": 1.0,
+        "position_tolerance_blocks": 0.03125,
+        "max_error_degrees": 0.9602388198,
+        "max_error_blocks": 0.0278150412,
+        "within_tolerance": true,
+        "keys_total": 1599
+      },
       "sampled_inputs": "limbSwingAmount 1.0; limbSwing = t (advancing 1.0 per tick from 0: vanilla WalkAnimationState.update does speed += (movementSpeed - speed) * multiplier; position += speed, and the classic renderer hands walkAnimation.position(partialTick) as limbSwing and min(1, speed) as limbSwingAmount, so at speed 1 the position advances exactly 1.0 per tick); ageInTicks = t (getBob: tickCount + partialTick, partialTick 0); netHeadYaw 0; headPitch 0 (looking ahead); every entity-state flag at its rest value (attacking 0, ri1 0, rock_type 0, rf1 0: a ProbeSubject built from an empty state); the entity RNG seeded 0 once per clip and evolving across the keys; one pose call per key, 20 keys per second; full health (no shipped hook reads health)",
       "hook": "danger.orespawn.entity.client.KyuubiGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the unlanded hook of owner 2026-09-14, addendum item 10 - the classic setupAnim transcribed into the descriptor's PoseInputs form, proven when the rig lands - registry-free, on explicit PoseInputs, over the reference leg's converter output reference_kyuubi.geo.json baked without the face-order strictness the landing slice's TEST-007 adds)",
       "landed": false,
@@ -3258,10 +3289,15 @@
     {
       "state": "idle",
       "file": "kyuubi_reference_idle.animation.json",
-      "sha256": "7c2745fd0c0509b9d0033ecf22fb3fdcc9333a6933b1234532c2516ca14356c2",
+      "sha256": "cbc2b0c9e88591bcec0bfaf07938a2eb8e817c51624da739dfb575504da0a50c",
       "clip": "reference_idle",
       "reference_only": true,
       "delivered_clip": "idle",
+      "offered_extra": null,
+      "named": true,
+      "name_source": "the contract",
+      "getter": null,
+      "value": null,
       "rule": "two_seconds_past_cap",
       "rule_note": "wingspeed 0.5: the slowest rhythms are the arm sway cos(ageInTicks * 0.5 * WINGSPEED) * PI * 0.01 (KyuubiGeoReplacement.applyCustomAnimations:86, every state) and the nine-ring tail's pitch chain -0.26 .. 2.0 + cos(ageInTicks * 0.5 * WINGSPEED - n * pi/4) * PI * 0.1 (:184-216) at 0.25 rad/tick, 25.13 ticks; the tail's yaw chain cos(ageInTicks * 0.9 * WINGSPEED - n * pi/4) * PI * 0.2 (:159-183) at 0.45; the two horn chains cos(ageInTicks * 1.3 * WINGSPEED - n * pi/4) * PI * 0.1 (:110-156) at 0.65; the threshold gait cos(ageInTicks * 1.1 * WINGSPEED) * PI * 0.2 * limbSwingAmount (:70, walk; the lower legs and arms move by sin of the upper joint, :76-99) at 0.55; the head follows netHeadYaw = 0 (:101-102); no multiple of the slowest group's period 25.132741 ticks up to the 6 s cap (120 ticks) brings every group back within 5 degrees of its start (k = 1: 41.804405 deg / 6.505194 units, k = 2: 65.125833 deg / 8.532152 units, k = 3: 65.123801 deg / 6.866609 units, k = 4: 41.796448 deg / 6.324801 units): a two-second window (40 ticks), not a loop - the sheet states the closing key's seam",
       "span_ticks": 40.0,
@@ -3269,6 +3305,17 @@
       "period_multiple_k": null,
       "animation_length_seconds": 2.0,
       "keys_per_bone": 41,
+      "keys_per_bone_min": 2,
+      "dense_samples": 41,
+      "lerp_mode": "catmullrom",
+      "keying": {
+        "rotation_tolerance_degrees": 1.0,
+        "position_tolerance_blocks": 0.03125,
+        "max_error_degrees": 0.9763131097,
+        "max_error_blocks": 0.0278150412,
+        "within_tolerance": true,
+        "keys_total": 1115
+      },
       "sampled_inputs": "limbSwingAmount 0.0; limbSwing 0 (the walk position at rest: vanilla WalkAnimationState holds its position while the speed is 0, and a creature that has not walked since it spawned carries 0); ageInTicks = t (getBob: tickCount + partialTick, partialTick 0; advancing 1.0 per tick from 0); netHeadYaw 0; headPitch 0 (looking ahead); every entity-state flag at its rest value (attacking 0, ri1 0, rock_type 0, rf1 0: a ProbeSubject built from an empty state); the entity RNG seeded 0 once per clip and evolving across the keys; one pose call per key, 20 keys per second; full health",
       "hook": "danger.orespawn.entity.client.KyuubiGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the unlanded hook of owner 2026-09-14, addendum item 10 - the classic setupAnim transcribed into the descriptor's PoseInputs form, proven when the rig lands - registry-free, on explicit PoseInputs, over the reference leg's converter output reference_kyuubi.geo.json baked without the face-order strictness the landing slice's TEST-007 adds)",
       "landed": false,
@@ -3352,10 +3399,15 @@
   "reference_clip": {
     "state": "walk",
     "file": "kyuubi_reference_walk.animation.json",
-    "sha256": "57b841607315de9cc0638558a45f68ed199e5232df8c18977960f31527af977b",
-    "clip": "reference",
+    "sha256": "ae66605a7947469785fb6c81551b7c8f5da52f3e510411510ae3d34d68f2c3f2",
+    "clip": "reference_walk",
     "reference_only": true,
     "delivered_clip": "walk",
+    "offered_extra": null,
+    "named": true,
+    "name_source": "the contract",
+    "getter": null,
+    "value": null,
     "rule": "two_seconds_past_cap",
     "rule_note": "wingspeed 0.5: the slowest rhythms are the arm sway cos(ageInTicks * 0.5 * WINGSPEED) * PI * 0.01 (KyuubiGeoReplacement.applyCustomAnimations:86, every state) and the nine-ring tail's pitch chain -0.26 .. 2.0 + cos(ageInTicks * 0.5 * WINGSPEED - n * pi/4) * PI * 0.1 (:184-216) at 0.25 rad/tick, 25.13 ticks; the tail's yaw chain cos(ageInTicks * 0.9 * WINGSPEED - n * pi/4) * PI * 0.2 (:159-183) at 0.45; the two horn chains cos(ageInTicks * 1.3 * WINGSPEED - n * pi/4) * PI * 0.1 (:110-156) at 0.65; the threshold gait cos(ageInTicks * 1.1 * WINGSPEED) * PI * 0.2 * limbSwingAmount (:70, walk; the lower legs and arms move by sin of the upper joint, :76-99) at 0.55; the head follows netHeadYaw = 0 (:101-102); no multiple of the slowest group's period 25.132741 ticks up to the 6 s cap (120 ticks) brings every group back within 5 degrees of its start (k = 1: 41.804405 deg / 6.505194 units, k = 2: 65.125833 deg / 8.532152 units, k = 3: 65.125837 deg / 8.439928 units, k = 4: 41.796448 deg / 6.324801 units): a two-second window (40 ticks), not a loop - the sheet states the closing key's seam",
     "span_ticks": 40.0,
@@ -3363,6 +3415,17 @@
     "period_multiple_k": null,
     "animation_length_seconds": 2.0,
     "keys_per_bone": 41,
+    "keys_per_bone_min": 2,
+    "dense_samples": 41,
+    "lerp_mode": "catmullrom",
+    "keying": {
+      "rotation_tolerance_degrees": 1.0,
+      "position_tolerance_blocks": 0.03125,
+      "max_error_degrees": 0.9602388198,
+      "max_error_blocks": 0.0278150412,
+      "within_tolerance": true,
+      "keys_total": 1599
+    },
     "sampled_inputs": "limbSwingAmount 1.0; limbSwing = t (advancing 1.0 per tick from 0: vanilla WalkAnimationState.update does speed += (movementSpeed - speed) * multiplier; position += speed, and the classic renderer hands walkAnimation.position(partialTick) as limbSwing and min(1, speed) as limbSwingAmount, so at speed 1 the position advances exactly 1.0 per tick); ageInTicks = t (getBob: tickCount + partialTick, partialTick 0); netHeadYaw 0; headPitch 0 (looking ahead); every entity-state flag at its rest value (attacking 0, ri1 0, rock_type 0, rf1 0: a ProbeSubject built from an empty state); the entity RNG seeded 0 once per clip and evolving across the keys; one pose call per key, 20 keys per second; full health (no shipped hook reads health)",
     "hook": "danger.orespawn.entity.client.KyuubiGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the unlanded hook of owner 2026-09-14, addendum item 10 - the classic setupAnim transcribed into the descriptor's PoseInputs form, proven when the rig lands - registry-free, on explicit PoseInputs, over the reference leg's converter output reference_kyuubi.geo.json baked without the face-order strictness the landing slice's TEST-007 adds)",
     "landed": false,
@@ -3442,6 +3505,7 @@
       "read_at_inputs": false
     }
   },
+  "reference_offers": [],
   "exact_transcription": false,
   "rig_source": "reference-leg converter output",
   "in_game": false,

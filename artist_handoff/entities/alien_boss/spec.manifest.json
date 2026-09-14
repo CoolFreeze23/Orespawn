@@ -1,5 +1,5 @@
 {
-  "generated_by": "tools/artist_package.py 0.3.0 (the reference clips for every species, 2026-09-14, addendum items 11 to 13: every hook's reference_walk, reference_idle and - where the code reads an attack - reference_attack clip beside the sheet, landed or not; the clips loaded through Blockbench's Import Animations (README_FIRST, Toolchain); a reference clip's keys as the starting point of a delivered idle / walk / aggro_idle, only the reference file itself under its own name refused)",
+  "generated_by": "tools/artist_package.py 0.4.0 (the reference clips revised, 2026-09-14, second set revised, items 2 to 6: every state a hook reads sampled and named by the seed - reference_walk, reference_idle, reference_attack, reference_fly, reference_swim, the species' own states, an unnamed one flagged - keyed by the exact transcriptions' density search (catmullrom, 1 degree, 1/32 block), embedded in every .bbmodel within the round-trip tolerance with the files beside the sheet the pinned source; a reference clip's keys as the starting point of idle / walk / aggro_idle / fly / swim, a species state offered as a SPEC extra; only the reference file itself under its own name refused; one tracked copy, the folder's copies ignored by git)",
   "registry": "alien_boss",
   "display_name": "Alien Boss",
   "tier": 1,
@@ -3911,7 +3911,8 @@
       "required": true,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "idle_fan",
@@ -3921,7 +3922,8 @@
       "required": false,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "idle_tail",
@@ -3931,7 +3933,8 @@
       "required": false,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "idle_jaw",
@@ -3941,7 +3944,8 @@
       "required": false,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "idle_claws",
@@ -3951,7 +3955,8 @@
       "required": false,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "walk",
@@ -3961,7 +3966,8 @@
       "required": true,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "walk_fan",
@@ -3971,7 +3977,8 @@
       "required": false,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "walk_tail",
@@ -3981,7 +3988,8 @@
       "required": false,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "walk_jaw",
@@ -3991,7 +3999,8 @@
       "required": false,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "walk_claws",
@@ -4001,7 +4010,8 @@
       "required": false,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "swim",
@@ -4011,7 +4021,8 @@
       "required": false,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "leave"
+      "verdict": "leave",
+      "offered_from_reference": null
     },
     {
       "name": "aggro_idle",
@@ -4021,7 +4032,8 @@
       "required": false,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "calm_idle",
@@ -4031,7 +4043,8 @@
       "required": false,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "attack",
@@ -4041,7 +4054,8 @@
       "required": false,
       "length_rule": "near:0.5",
       "length_seconds": 0.5,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "hurt",
@@ -4051,7 +4065,8 @@
       "required": false,
       "length_rule": "near:0.4",
       "length_seconds": 0.4,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "death",
@@ -4061,7 +4076,8 @@
       "required": false,
       "length_rule": "near:1.5",
       "length_seconds": 1.5,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "summon",
@@ -4071,7 +4087,8 @@
       "required": false,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     }
   ],
   "allow_idle_alt": true,
@@ -4091,10 +4108,15 @@
     {
       "state": "walk",
       "file": "alien_boss_reference_walk.animation.json",
-      "sha256": "a41fbdec006ee292e1518d8256cca85ae5a60521a7bcdbc166c176fc35f0e063",
-      "clip": "reference",
+      "sha256": "e686ccb816ccb1369226af1bb5f7df74a51d5c08a873bac9b54815afa333a6ce",
+      "clip": "reference_walk",
       "reference_only": true,
       "delivered_clip": "walk",
+      "offered_extra": null,
+      "named": true,
+      "name_source": "the contract",
+      "getter": null,
+      "value": null,
       "rule": "period_multiple",
       "rule_note": "wingspeed 0.22: the slowest rhythms are the jaw, tail and claw sways cos(ageInTicks * WINGSPEED) * PI * 0.05 / 0.02 / 0.03 (AlienGeoReplacement.poseRig:192, 199, 206, 212; the jaws fold it through Math.abs at :235-236, a half period) at 0.22 rad/tick, 28.56 ticks; the gait cos(ageInTicks * 4.0 * WINGSPEED) * PI * 0.5 * limbSwingAmount (:78) at 0.88; the head fan cos(ageInTicks * fanspeed * WINGSPEED) with fanspeed 1.22 (:114-130) at 0.268 in the attacking branch; the leg latch at 3.5 * 0.22 = 0.77 with its 0.2-tick look-ahead (:176-177) rolled on the entity RNG at a zero crossing; closes at k = 1 (28.559933 ticks): every bone returns within 0 degrees of its start at k x T (the 5-degree test under the 6 s cap; k = 1: 0 deg)",
       "span_ticks": 28.5599333692,
@@ -4102,6 +4124,17 @@
       "period_multiple_k": 1,
       "animation_length_seconds": 1.4279966685,
       "keys_per_bone": 30,
+      "keys_per_bone_min": 2,
+      "dense_samples": 30,
+      "lerp_mode": "catmullrom",
+      "keying": {
+        "rotation_tolerance_degrees": 1.0,
+        "position_tolerance_blocks": 0.03125,
+        "max_error_degrees": 0.9361562633,
+        "max_error_blocks": 0.0280740564,
+        "within_tolerance": true,
+        "keys_total": 605
+      },
       "sampled_inputs": "limbSwingAmount 1.0; limbSwing = t (advancing 1.0 per tick from 0: vanilla WalkAnimationState.update does speed += (movementSpeed - speed) * multiplier; position += speed, and the classic renderer hands walkAnimation.position(partialTick) as limbSwing and min(1, speed) as limbSwingAmount, so at speed 1 the position advances exactly 1.0 per tick); ageInTicks = t (getBob: tickCount + partialTick, partialTick 0); netHeadYaw 0; headPitch 0 (looking ahead); every entity-state flag at its rest value (attacking 0, ri1 0, rock_type 0, rf1 0: a ProbeSubject built from an empty state); the entity RNG seeded 0 once per clip and evolving across the keys; one pose call per key, 20 keys per second; full health (no shipped hook reads health)",
       "hook": "danger.orespawn.entity.client.AlienBossGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the unlanded hook of owner 2026-09-14, addendum item 10 - the classic setupAnim transcribed into the descriptor's PoseInputs form, proven when the rig lands - registry-free, on explicit PoseInputs, over the reference leg's converter output reference_alien.geo.json baked without the face-order strictness the landing slice's TEST-007 adds)",
       "landed": false,
@@ -4187,17 +4220,33 @@
     {
       "state": "idle",
       "file": "alien_boss_reference_idle.animation.json",
-      "sha256": "7184437301295bd7605fb7e96f2f0de42b18b66457cd073e5eea5591e58c23ae",
+      "sha256": "1ca63018999af0a70b726884155b981e2c2cae2595b30821b4022fc34bdcbd5c",
       "clip": "reference_idle",
       "reference_only": true,
       "delivered_clip": "idle",
+      "offered_extra": null,
+      "named": true,
+      "name_source": "the contract",
+      "getter": null,
+      "value": null,
       "rule": "period_multiple",
       "rule_note": "wingspeed 0.22: the slowest rhythms are the jaw, tail and claw sways cos(ageInTicks * WINGSPEED) * PI * 0.05 / 0.02 / 0.03 (AlienGeoReplacement.poseRig:192, 199, 206, 212; the jaws fold it through Math.abs at :235-236, a half period) at 0.22 rad/tick, 28.56 ticks; the gait cos(ageInTicks * 4.0 * WINGSPEED) * PI * 0.5 * limbSwingAmount (:78) at 0.88; the head fan cos(ageInTicks * fanspeed * WINGSPEED) with fanspeed 1.22 (:114-130) at 0.268 in the attacking branch; the leg latch at 3.5 * 0.22 = 0.77 with its 0.2-tick look-ahead (:176-177) rolled on the entity RNG at a zero crossing; closes at k = 1 (28.559933 ticks): every bone returns within 0 degrees of its start at k x T (the 5-degree test under the 6 s cap; k = 1: 0 deg)",
       "span_ticks": 28.5599333692,
       "period_ticks": 28.5599333692,
       "period_multiple_k": 1,
       "animation_length_seconds": 1.4279966685,
-      "keys_per_bone": 30,
+      "keys_per_bone": 22,
+      "keys_per_bone_min": 2,
+      "dense_samples": 30,
+      "lerp_mode": "catmullrom",
+      "keying": {
+        "rotation_tolerance_degrees": 1.0,
+        "position_tolerance_blocks": 0.03125,
+        "max_error_degrees": 0.9361562633,
+        "max_error_blocks": 0.0280740564,
+        "within_tolerance": true,
+        "keys_total": 381
+      },
       "sampled_inputs": "limbSwingAmount 0.0; limbSwing 0 (the walk position at rest: vanilla WalkAnimationState holds its position while the speed is 0, and a creature that has not walked since it spawned carries 0); ageInTicks = t (getBob: tickCount + partialTick, partialTick 0; advancing 1.0 per tick from 0); netHeadYaw 0; headPitch 0 (looking ahead); every entity-state flag at its rest value (attacking 0, ri1 0, rock_type 0, rf1 0: a ProbeSubject built from an empty state); the entity RNG seeded 0 once per clip and evolving across the keys; one pose call per key, 20 keys per second; full health",
       "hook": "danger.orespawn.entity.client.AlienBossGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the unlanded hook of owner 2026-09-14, addendum item 10 - the classic setupAnim transcribed into the descriptor's PoseInputs form, proven when the rig lands - registry-free, on explicit PoseInputs, over the reference leg's converter output reference_alien.geo.json baked without the face-order strictness the landing slice's TEST-007 adds)",
       "landed": false,
@@ -4281,10 +4330,15 @@
     {
       "state": "attack",
       "file": "alien_boss_reference_attack.animation.json",
-      "sha256": "38eb98fa2a93a906d3579313709c31acba80fdbd25a66991dd4d7412db9fa561",
+      "sha256": "2202f7102e2722af33bd888481e19939ad9371d832ec428f061d7deb4814b945",
       "clip": "reference_attack",
       "reference_only": true,
       "delivered_clip": "aggro_idle",
+      "offered_extra": null,
+      "named": true,
+      "name_source": "the contract (getAttacking 1)",
+      "getter": "getAttacking",
+      "value": 1,
       "rule": "two_seconds_past_cap",
       "rule_note": "wingspeed 0.22: the slowest rhythms are the jaw, tail and claw sways cos(ageInTicks * WINGSPEED) * PI * 0.05 / 0.02 / 0.03 (AlienGeoReplacement.poseRig:192, 199, 206, 212; the jaws fold it through Math.abs at :235-236, a half period) at 0.22 rad/tick, 28.56 ticks; the gait cos(ageInTicks * 4.0 * WINGSPEED) * PI * 0.5 * limbSwingAmount (:78) at 0.88; the head fan cos(ageInTicks * fanspeed * WINGSPEED) with fanspeed 1.22 (:114-130) at 0.268 in the attacking branch; the leg latch at 3.5 * 0.22 = 0.77 with its 0.2-tick look-ahead (:176-177) rolled on the entity RNG at a zero crossing; no multiple of the slowest group's period 28.559933 ticks up to the 6 s cap (120 ticks) brings every group back within 5 degrees of its start (k = 1: 22.624751 deg, k = 2: 34.735444 deg, k = 3: 31.540751 deg, k = 4: 13.10984 deg): a two-second window (40 ticks), not a loop - the sheet states the closing key's seam",
       "span_ticks": 40.0,
@@ -4292,7 +4346,18 @@
       "period_multiple_k": null,
       "animation_length_seconds": 2.0,
       "keys_per_bone": 41,
-      "sampled_inputs": "attacking 1 (the pose interface's getAttacking() answers 1: the hook's attacking branch); limbSwingAmount 0.0; limbSwing 0 (the walk position at rest); ageInTicks = t (getBob: tickCount + partialTick, partialTick 0; advancing 1.0 per tick from 0); netHeadYaw 0; headPitch 0 (looking ahead); every other entity-state flag at its rest value (ri1 0, rock_type 0, rf1 0: a ProbeSubject built from the attack state); the entity RNG seeded 0 once per clip and evolving across the keys; one pose call per key, 20 keys per second; full health",
+      "keys_per_bone_min": 2,
+      "dense_samples": 41,
+      "lerp_mode": "catmullrom",
+      "keying": {
+        "rotation_tolerance_degrees": 1.0,
+        "position_tolerance_blocks": 0.03125,
+        "max_error_degrees": 0.819622487,
+        "max_error_blocks": 0.0237483867,
+        "within_tolerance": true,
+        "keys_total": 1520
+      },
+      "sampled_inputs": "getAttacking() answers 1 (the state the seed names `attack`; every other getter at its rest value); limbSwingAmount 0.0; limbSwing 0 (the walk position at rest: vanilla WalkAnimationState holds its position while the speed is 0, and a creature that has not walked since it spawned carries 0); ageInTicks = t (getBob: tickCount + partialTick, partialTick 0; advancing 1.0 per tick from 0); netHeadYaw 0; headPitch 0 (looking ahead); every other entity-state flag at its rest value (ri1 0, rock_type 0, rf1 0); the entity RNG seeded 0 once per clip and evolving across the keys; one pose call per key, 20 keys per second; full health",
       "hook": "danger.orespawn.entity.client.AlienBossGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the unlanded hook of owner 2026-09-14, addendum item 10 - the classic setupAnim transcribed into the descriptor's PoseInputs form, proven when the rig lands - registry-free, on explicit PoseInputs, over the reference leg's converter output reference_alien.geo.json baked without the face-order strictness the landing slice's TEST-007 adds)",
       "landed": false,
       "moving_bones": [
@@ -4376,10 +4441,15 @@
   "reference_clip": {
     "state": "walk",
     "file": "alien_boss_reference_walk.animation.json",
-    "sha256": "a41fbdec006ee292e1518d8256cca85ae5a60521a7bcdbc166c176fc35f0e063",
-    "clip": "reference",
+    "sha256": "e686ccb816ccb1369226af1bb5f7df74a51d5c08a873bac9b54815afa333a6ce",
+    "clip": "reference_walk",
     "reference_only": true,
     "delivered_clip": "walk",
+    "offered_extra": null,
+    "named": true,
+    "name_source": "the contract",
+    "getter": null,
+    "value": null,
     "rule": "period_multiple",
     "rule_note": "wingspeed 0.22: the slowest rhythms are the jaw, tail and claw sways cos(ageInTicks * WINGSPEED) * PI * 0.05 / 0.02 / 0.03 (AlienGeoReplacement.poseRig:192, 199, 206, 212; the jaws fold it through Math.abs at :235-236, a half period) at 0.22 rad/tick, 28.56 ticks; the gait cos(ageInTicks * 4.0 * WINGSPEED) * PI * 0.5 * limbSwingAmount (:78) at 0.88; the head fan cos(ageInTicks * fanspeed * WINGSPEED) with fanspeed 1.22 (:114-130) at 0.268 in the attacking branch; the leg latch at 3.5 * 0.22 = 0.77 with its 0.2-tick look-ahead (:176-177) rolled on the entity RNG at a zero crossing; closes at k = 1 (28.559933 ticks): every bone returns within 0 degrees of its start at k x T (the 5-degree test under the 6 s cap; k = 1: 0 deg)",
     "span_ticks": 28.5599333692,
@@ -4387,6 +4457,17 @@
     "period_multiple_k": 1,
     "animation_length_seconds": 1.4279966685,
     "keys_per_bone": 30,
+    "keys_per_bone_min": 2,
+    "dense_samples": 30,
+    "lerp_mode": "catmullrom",
+    "keying": {
+      "rotation_tolerance_degrees": 1.0,
+      "position_tolerance_blocks": 0.03125,
+      "max_error_degrees": 0.9361562633,
+      "max_error_blocks": 0.0280740564,
+      "within_tolerance": true,
+      "keys_total": 605
+    },
     "sampled_inputs": "limbSwingAmount 1.0; limbSwing = t (advancing 1.0 per tick from 0: vanilla WalkAnimationState.update does speed += (movementSpeed - speed) * multiplier; position += speed, and the classic renderer hands walkAnimation.position(partialTick) as limbSwing and min(1, speed) as limbSwingAmount, so at speed 1 the position advances exactly 1.0 per tick); ageInTicks = t (getBob: tickCount + partialTick, partialTick 0); netHeadYaw 0; headPitch 0 (looking ahead); every entity-state flag at its rest value (attacking 0, ri1 0, rock_type 0, rf1 0: a ProbeSubject built from an empty state); the entity RNG seeded 0 once per clip and evolving across the keys; one pose call per key, 20 keys per second; full health (no shipped hook reads health)",
     "hook": "danger.orespawn.entity.client.AlienBossGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the unlanded hook of owner 2026-09-14, addendum item 10 - the classic setupAnim transcribed into the descriptor's PoseInputs form, proven when the rig lands - registry-free, on explicit PoseInputs, over the reference leg's converter output reference_alien.geo.json baked without the face-order strictness the landing slice's TEST-007 adds)",
     "landed": false,
@@ -4469,6 +4550,7 @@
       "read_at_inputs": true
     }
   },
+  "reference_offers": [],
   "exact_transcription": false,
   "rig_source": "reference-leg converter output",
   "in_game": false,

@@ -1,5 +1,5 @@
 {
-  "generated_by": "tools/artist_package.py 0.3.0 (the reference clips for every species, 2026-09-14, addendum items 11 to 13: every hook's reference_walk, reference_idle and - where the code reads an attack - reference_attack clip beside the sheet, landed or not; the clips loaded through Blockbench's Import Animations (README_FIRST, Toolchain); a reference clip's keys as the starting point of a delivered idle / walk / aggro_idle, only the reference file itself under its own name refused)",
+  "generated_by": "tools/artist_package.py 0.4.0 (the reference clips revised, 2026-09-14, second set revised, items 2 to 6: every state a hook reads sampled and named by the seed - reference_walk, reference_idle, reference_attack, reference_fly, reference_swim, the species' own states, an unnamed one flagged - keyed by the exact transcriptions' density search (catmullrom, 1 degree, 1/32 block), embedded in every .bbmodel within the round-trip tolerance with the files beside the sheet the pinned source; a reference clip's keys as the starting point of idle / walk / aggro_idle / fly / swim, a species state offered as a SPEC extra; only the reference file itself under its own name refused; one tracked copy, the folder's copies ignored by git)",
   "registry": "bee",
   "display_name": "Bee",
   "tier": 2,
@@ -1646,7 +1646,8 @@
       "required": true,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "idle_pincers",
@@ -1656,7 +1657,8 @@
       "required": false,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "idle_left_antenna",
@@ -1666,7 +1668,8 @@
       "required": false,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "idle_right_antenna",
@@ -1676,7 +1679,8 @@
       "required": false,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "idle_abdomen",
@@ -1686,7 +1690,8 @@
       "required": false,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "walk",
@@ -1696,7 +1701,8 @@
       "required": true,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "walk_pincers",
@@ -1706,7 +1712,8 @@
       "required": false,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "walk_left_antenna",
@@ -1716,7 +1723,8 @@
       "required": false,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "walk_right_antenna",
@@ -1726,7 +1734,8 @@
       "required": false,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "walk_abdomen",
@@ -1736,7 +1745,8 @@
       "required": false,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "fly",
@@ -1746,7 +1756,8 @@
       "required": false,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "aggro_idle",
@@ -1756,7 +1767,8 @@
       "required": false,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "calm_idle",
@@ -1766,7 +1778,8 @@
       "required": false,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "attack",
@@ -1776,7 +1789,8 @@
       "required": false,
       "length_rule": "near:0.5",
       "length_seconds": 0.5,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "hurt",
@@ -1786,7 +1800,8 @@
       "required": false,
       "length_rule": "near:0.3",
       "length_seconds": 0.3,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "death",
@@ -1796,7 +1811,8 @@
       "required": false,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     }
   ],
   "allow_idle_alt": true,
@@ -1816,10 +1832,15 @@
     {
       "state": "walk",
       "file": "bee_reference_walk.animation.json",
-      "sha256": "863783c7682ed340506e8ce914799c35c54793c791e6f855a37e6f61bf5ef612",
-      "clip": "reference",
+      "sha256": "c21efcd94a13e35acb3b5d05c379dc3a421aac9278c3548acb8fa8ebcf68461e",
+      "clip": "reference_walk",
       "reference_only": true,
       "delivered_clip": "walk",
+      "offered_extra": null,
+      "named": true,
+      "name_source": "the contract",
+      "getter": null,
+      "value": null,
       "rule": "two_seconds_past_cap",
       "rule_note": "at rest (attacking 0) the slowest channel is the abdomen curl cos(ageInTicks * 0.021F * ws) * PI * 0.023 at wingspeed 2.0 (BeeGeoReplacement.applyCustomAnimations, BeeModel.poseFrom; orig ModelBee.java:214): 0.042 rad/tick, a 149.6-tick period over the 6 s cap; the wings at 2.2 (orig :188-190), the pincers at 0.6 (:191-195), the antennae at 0.42 / 0.54 / 0.62 / 0.74 (:196-213); the abdomen chain follows the curl (position channels, orig :215-230); the slowest group's period 149.599652 ticks exceeds the 6 s cap (120 ticks): a two-second window (40 ticks), not a loop - the sheet states the closing key's seam",
       "span_ticks": 40.0,
@@ -1827,6 +1848,17 @@
       "period_multiple_k": null,
       "animation_length_seconds": 2.0,
       "keys_per_bone": 41,
+      "keys_per_bone_min": 2,
+      "dense_samples": 41,
+      "lerp_mode": "catmullrom",
+      "keying": {
+        "rotation_tolerance_degrees": 1.0,
+        "position_tolerance_blocks": 0.03125,
+        "max_error_degrees": 0.9956340072,
+        "max_error_blocks": 0.0304553462,
+        "within_tolerance": true,
+        "keys_total": 553
+      },
       "sampled_inputs": "limbSwingAmount 1.0; limbSwing = t (advancing 1.0 per tick from 0: vanilla WalkAnimationState.update does speed += (movementSpeed - speed) * multiplier; position += speed, and the classic renderer hands walkAnimation.position(partialTick) as limbSwing and min(1, speed) as limbSwingAmount, so at speed 1 the position advances exactly 1.0 per tick); ageInTicks = t (getBob: tickCount + partialTick, partialTick 0); netHeadYaw 0; headPitch 0 (looking ahead); every entity-state flag at its rest value (attacking 0, ri1 0, rock_type 0, rf1 0: a ProbeSubject built from an empty state); the entity RNG seeded 0 once per clip and evolving across the keys; one pose call per key, 20 keys per second; full health (no shipped hook reads health)",
       "hook": "danger.orespawn.entity.client.BeeGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the shipped replacement, registry-free, on explicit PoseInputs)",
       "landed": true,
@@ -1876,10 +1908,15 @@
     {
       "state": "idle",
       "file": "bee_reference_idle.animation.json",
-      "sha256": "c0e87d21f75281bd1234759be7c113e055ce3b34bf52865e6cdd8851a579333e",
+      "sha256": "b60fea1e74408691e5158ff35c6b38506008f55ee0b906048cd4c3e6f6461104",
       "clip": "reference_idle",
       "reference_only": true,
       "delivered_clip": "idle",
+      "offered_extra": null,
+      "named": true,
+      "name_source": "the contract",
+      "getter": null,
+      "value": null,
       "rule": "two_seconds_past_cap",
       "rule_note": "at rest (attacking 0) the slowest channel is the abdomen curl cos(ageInTicks * 0.021F * ws) * PI * 0.023 at wingspeed 2.0 (BeeGeoReplacement.applyCustomAnimations, BeeModel.poseFrom; orig ModelBee.java:214): 0.042 rad/tick, a 149.6-tick period over the 6 s cap; the wings at 2.2 (orig :188-190), the pincers at 0.6 (:191-195), the antennae at 0.42 / 0.54 / 0.62 / 0.74 (:196-213); the abdomen chain follows the curl (position channels, orig :215-230); the slowest group's period 149.599652 ticks exceeds the 6 s cap (120 ticks): a two-second window (40 ticks), not a loop - the sheet states the closing key's seam",
       "span_ticks": 40.0,
@@ -1887,6 +1924,17 @@
       "period_multiple_k": null,
       "animation_length_seconds": 2.0,
       "keys_per_bone": 41,
+      "keys_per_bone_min": 2,
+      "dense_samples": 41,
+      "lerp_mode": "catmullrom",
+      "keying": {
+        "rotation_tolerance_degrees": 1.0,
+        "position_tolerance_blocks": 0.03125,
+        "max_error_degrees": 0.9956340072,
+        "max_error_blocks": 0.0304553462,
+        "within_tolerance": true,
+        "keys_total": 553
+      },
       "sampled_inputs": "limbSwingAmount 0.0; limbSwing 0 (the walk position at rest: vanilla WalkAnimationState holds its position while the speed is 0, and a creature that has not walked since it spawned carries 0); ageInTicks = t (getBob: tickCount + partialTick, partialTick 0; advancing 1.0 per tick from 0); netHeadYaw 0; headPitch 0 (looking ahead); every entity-state flag at its rest value (attacking 0, ri1 0, rock_type 0, rf1 0: a ProbeSubject built from an empty state); the entity RNG seeded 0 once per clip and evolving across the keys; one pose call per key, 20 keys per second; full health",
       "hook": "danger.orespawn.entity.client.BeeGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the shipped replacement, registry-free, on explicit PoseInputs)",
       "landed": true,
@@ -1936,10 +1984,15 @@
     {
       "state": "attack",
       "file": "bee_reference_attack.animation.json",
-      "sha256": "244d59fd107d24bbc810dcaa5b830e2ce0e9b4ca3aebd73d6417f65b8a45104b",
+      "sha256": "e0e580a89c676239d458b2d003b37a97f94849e52c6106ff65b1f05a2c6d032d",
       "clip": "reference_attack",
       "reference_only": true,
       "delivered_clip": "aggro_idle",
+      "offered_extra": null,
+      "named": true,
+      "name_source": "the contract (getAttacking 1)",
+      "getter": "getAttacking",
+      "value": 1,
       "rule": "two_seconds_past_cap",
       "rule_note": "at rest (attacking 0) the slowest channel is the abdomen curl cos(ageInTicks * 0.021F * ws) * PI * 0.023 at wingspeed 2.0 (BeeGeoReplacement.applyCustomAnimations, BeeModel.poseFrom; orig ModelBee.java:214): 0.042 rad/tick, a 149.6-tick period over the 6 s cap; the wings at 2.2 (orig :188-190), the pincers at 0.6 (:191-195), the antennae at 0.42 / 0.54 / 0.62 / 0.74 (:196-213); the abdomen chain follows the curl (position channels, orig :215-230); the slowest group's period 149.599652 ticks exceeds the 6 s cap (120 ticks): a two-second window (40 ticks), not a loop - the sheet states the closing key's seam",
       "span_ticks": 40.0,
@@ -1947,7 +2000,18 @@
       "period_multiple_k": null,
       "animation_length_seconds": 2.0,
       "keys_per_bone": 41,
-      "sampled_inputs": "attacking 1 (the pose interface's getAttacking() answers 1: the hook's attacking branch); limbSwingAmount 0.0; limbSwing 0 (the walk position at rest); ageInTicks = t (getBob: tickCount + partialTick, partialTick 0; advancing 1.0 per tick from 0); netHeadYaw 0; headPitch 0 (looking ahead); every other entity-state flag at its rest value (ri1 0, rock_type 0, rf1 0: a ProbeSubject built from the attack state); the entity RNG seeded 0 once per clip and evolving across the keys; one pose call per key, 20 keys per second; full health",
+      "keys_per_bone_min": 2,
+      "dense_samples": 41,
+      "lerp_mode": "catmullrom",
+      "keying": {
+        "rotation_tolerance_degrees": 1.0,
+        "position_tolerance_blocks": 0.03125,
+        "max_error_degrees": 0.9956340072,
+        "max_error_blocks": 0.0308911521,
+        "within_tolerance": true,
+        "keys_total": 664
+      },
+      "sampled_inputs": "getAttacking() answers 1 (the state the seed names `attack`; every other getter at its rest value); limbSwingAmount 0.0; limbSwing 0 (the walk position at rest: vanilla WalkAnimationState holds its position while the speed is 0, and a creature that has not walked since it spawned carries 0); ageInTicks = t (getBob: tickCount + partialTick, partialTick 0; advancing 1.0 per tick from 0); netHeadYaw 0; headPitch 0 (looking ahead); every other entity-state flag at its rest value (ri1 0, rock_type 0, rf1 0); the entity RNG seeded 0 once per clip and evolving across the keys; one pose call per key, 20 keys per second; full health",
       "hook": "danger.orespawn.entity.client.BeeGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the shipped replacement, registry-free, on explicit PoseInputs)",
       "landed": true,
       "moving_bones": [
@@ -1997,10 +2061,15 @@
   "reference_clip": {
     "state": "walk",
     "file": "bee_reference_walk.animation.json",
-    "sha256": "863783c7682ed340506e8ce914799c35c54793c791e6f855a37e6f61bf5ef612",
-    "clip": "reference",
+    "sha256": "c21efcd94a13e35acb3b5d05c379dc3a421aac9278c3548acb8fa8ebcf68461e",
+    "clip": "reference_walk",
     "reference_only": true,
     "delivered_clip": "walk",
+    "offered_extra": null,
+    "named": true,
+    "name_source": "the contract",
+    "getter": null,
+    "value": null,
     "rule": "two_seconds_past_cap",
     "rule_note": "at rest (attacking 0) the slowest channel is the abdomen curl cos(ageInTicks * 0.021F * ws) * PI * 0.023 at wingspeed 2.0 (BeeGeoReplacement.applyCustomAnimations, BeeModel.poseFrom; orig ModelBee.java:214): 0.042 rad/tick, a 149.6-tick period over the 6 s cap; the wings at 2.2 (orig :188-190), the pincers at 0.6 (:191-195), the antennae at 0.42 / 0.54 / 0.62 / 0.74 (:196-213); the abdomen chain follows the curl (position channels, orig :215-230); the slowest group's period 149.599652 ticks exceeds the 6 s cap (120 ticks): a two-second window (40 ticks), not a loop - the sheet states the closing key's seam",
     "span_ticks": 40.0,
@@ -2008,6 +2077,17 @@
     "period_multiple_k": null,
     "animation_length_seconds": 2.0,
     "keys_per_bone": 41,
+    "keys_per_bone_min": 2,
+    "dense_samples": 41,
+    "lerp_mode": "catmullrom",
+    "keying": {
+      "rotation_tolerance_degrees": 1.0,
+      "position_tolerance_blocks": 0.03125,
+      "max_error_degrees": 0.9956340072,
+      "max_error_blocks": 0.0304553462,
+      "within_tolerance": true,
+      "keys_total": 553
+    },
     "sampled_inputs": "limbSwingAmount 1.0; limbSwing = t (advancing 1.0 per tick from 0: vanilla WalkAnimationState.update does speed += (movementSpeed - speed) * multiplier; position += speed, and the classic renderer hands walkAnimation.position(partialTick) as limbSwing and min(1, speed) as limbSwingAmount, so at speed 1 the position advances exactly 1.0 per tick); ageInTicks = t (getBob: tickCount + partialTick, partialTick 0); netHeadYaw 0; headPitch 0 (looking ahead); every entity-state flag at its rest value (attacking 0, ri1 0, rock_type 0, rf1 0: a ProbeSubject built from an empty state); the entity RNG seeded 0 once per clip and evolving across the keys; one pose call per key, 20 keys per second; full health (no shipped hook reads health)",
     "hook": "danger.orespawn.entity.client.BeeGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the shipped replacement, registry-free, on explicit PoseInputs)",
     "landed": true,
@@ -2054,6 +2134,7 @@
       "read_at_inputs": true
     }
   },
+  "reference_offers": [],
   "exact_transcription": false,
   "rig_source": "shipped",
   "in_game": true,

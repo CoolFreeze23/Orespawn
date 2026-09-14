@@ -1,5 +1,5 @@
 {
-  "generated_by": "tools/artist_package.py 0.3.0 (the reference clips for every species, 2026-09-14, addendum items 11 to 13: every hook's reference_walk, reference_idle and - where the code reads an attack - reference_attack clip beside the sheet, landed or not; the clips loaded through Blockbench's Import Animations (README_FIRST, Toolchain); a reference clip's keys as the starting point of a delivered idle / walk / aggro_idle, only the reference file itself under its own name refused)",
+  "generated_by": "tools/artist_package.py 0.4.0 (the reference clips revised, 2026-09-14, second set revised, items 2 to 6: every state a hook reads sampled and named by the seed - reference_walk, reference_idle, reference_attack, reference_fly, reference_swim, the species' own states, an unnamed one flagged - keyed by the exact transcriptions' density search (catmullrom, 1 degree, 1/32 block), embedded in every .bbmodel within the round-trip tolerance with the files beside the sheet the pinned source; a reference clip's keys as the starting point of idle / walk / aggro_idle / fly / swim, a species state offered as a SPEC extra; only the reference file itself under its own name refused; one tracked copy, the folder's copies ignored by git)",
   "registry": "godzilla",
   "display_name": "Mobzilla",
   "tier": 1,
@@ -5055,7 +5055,8 @@
       "required": true,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "idle_tail",
@@ -5065,7 +5066,8 @@
       "required": false,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "idle_arms",
@@ -5075,7 +5077,8 @@
       "required": false,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "idle_jaw",
@@ -5085,7 +5088,8 @@
       "required": false,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "walk",
@@ -5095,7 +5099,8 @@
       "required": true,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "walk_tail",
@@ -5105,7 +5110,8 @@
       "required": false,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "walk_arms",
@@ -5115,7 +5121,8 @@
       "required": false,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "walk_jaw",
@@ -5125,7 +5132,8 @@
       "required": false,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "swim",
@@ -5135,7 +5143,8 @@
       "required": false,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "leave"
+      "verdict": "leave",
+      "offered_from_reference": null
     },
     {
       "name": "aggro_idle",
@@ -5145,7 +5154,8 @@
       "required": false,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "calm_idle",
@@ -5155,7 +5165,8 @@
       "required": false,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "attack",
@@ -5165,7 +5176,8 @@
       "required": false,
       "length_rule": "near:0.8",
       "length_seconds": 0.8,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "hurt",
@@ -5175,7 +5187,8 @@
       "required": false,
       "length_rule": "near:0.5",
       "length_seconds": 0.5,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "death",
@@ -5185,7 +5198,8 @@
       "required": false,
       "length_rule": "near:3.0",
       "length_seconds": 3.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "jump",
@@ -5195,7 +5209,8 @@
       "required": false,
       "length_rule": "near:0.6",
       "length_seconds": 0.6,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "land",
@@ -5205,7 +5220,8 @@
       "required": false,
       "length_rule": "near:0.8",
       "length_seconds": 0.8,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "cannon",
@@ -5215,7 +5231,8 @@
       "required": false,
       "length_rule": "near:0.6",
       "length_seconds": 0.6,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "lightning",
@@ -5225,7 +5242,8 @@
       "required": false,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     }
   ],
   "allow_idle_alt": true,
@@ -5243,10 +5261,15 @@
     {
       "state": "walk",
       "file": "godzilla_reference_walk.animation.json",
-      "sha256": "eff2f3e3058bee22f69328ec533ad7843a4064323cf59aa6ea451a38acb654bd",
-      "clip": "reference",
+      "sha256": "70861b111a104e3dd1df9a0529c6fc0ba8071ee9f756f23aa9869a3aa91f3e6f",
+      "clip": "reference_walk",
       "reference_only": true,
       "delivered_clip": "walk",
+      "offered_extra": null,
+      "named": true,
+      "name_source": "the contract",
+      "getter": null,
+      "value": null,
       "rule": "two_seconds_past_cap",
       "rule_note": "ANIM_SPEED 1.0: the slowest rhythm is the idle arm drift sin(ageInTicks * ANIM_SPEED * 0.1) * PI * 0.02 (GodzillaGeoReplacement.applyCustomAnimations:209, attacking 0) at 0.1 rad/tick, 62.83 ticks; the per-leg threshold gait cos / sin(ageInTicks * 0.75 * ANIM_SPEED + n * pi/4) with the toe lift and sweep position writes (:97-99, :135-137, walk) at 0.75; the idle tail cos(ageInTicks * 0.75) * PI * 0.05 and the attacking tail fan cos(ageInTicks * 1.75) * PI * 0.2 (:182-183); the attacking jaw cos(ageInTicks * 1.5) * PI * 0.12 (:202) and arms sin(ageInTicks * 1.75) * PI * 0.16 (:208); the head look follows netHeadYaw * 0.55 = 0 (:187); no multiple of the slowest group's period 62.831852 ticks up to the 6 s cap (120 ticks) brings every group back within 5 degrees of its start (k = 1: 40.500003 deg / 70 units): a two-second window (40 ticks), not a loop - the sheet states the closing key's seam",
       "span_ticks": 40.0,
@@ -5254,6 +5277,17 @@
       "period_multiple_k": null,
       "animation_length_seconds": 2.0,
       "keys_per_bone": 41,
+      "keys_per_bone_min": 2,
+      "dense_samples": 41,
+      "lerp_mode": "catmullrom",
+      "keying": {
+        "rotation_tolerance_degrees": 1.0,
+        "position_tolerance_blocks": 0.03125,
+        "max_error_degrees": 0.998608528,
+        "max_error_blocks": 0.0306544127,
+        "within_tolerance": true,
+        "keys_total": 2253
+      },
       "sampled_inputs": "limbSwingAmount 1.0; limbSwing = t (advancing 1.0 per tick from 0: vanilla WalkAnimationState.update does speed += (movementSpeed - speed) * multiplier; position += speed, and the classic renderer hands walkAnimation.position(partialTick) as limbSwing and min(1, speed) as limbSwingAmount, so at speed 1 the position advances exactly 1.0 per tick); ageInTicks = t (getBob: tickCount + partialTick, partialTick 0); netHeadYaw 0; headPitch 0 (looking ahead); every entity-state flag at its rest value (attacking 0, ri1 0, rock_type 0, rf1 0: a ProbeSubject built from an empty state); the entity RNG seeded 0 once per clip and evolving across the keys; one pose call per key, 20 keys per second; full health (no shipped hook reads health)",
       "hook": "danger.orespawn.entity.client.GodzillaGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the unlanded hook of owner 2026-09-14, addendum item 10 - the classic setupAnim transcribed into the descriptor's PoseInputs form, proven when the rig lands - registry-free, on explicit PoseInputs, over the reference leg's converter output reference_godzilla.geo.json baked without the face-order strictness the landing slice's TEST-007 adds)",
       "landed": false,
@@ -5366,10 +5400,15 @@
     {
       "state": "idle",
       "file": "godzilla_reference_idle.animation.json",
-      "sha256": "1535ae6ce5360642c370f7ff3e6408e9e7a0da17dccb44a4b612832981fe78fc",
+      "sha256": "e391168367da0d49329751905b7c0f9e3f07f6837a7fb924662f4dc89460d395",
       "clip": "reference_idle",
       "reference_only": true,
       "delivered_clip": "idle",
+      "offered_extra": null,
+      "named": true,
+      "name_source": "the contract",
+      "getter": null,
+      "value": null,
       "rule": "two_seconds_past_cap",
       "rule_note": "ANIM_SPEED 1.0: the slowest rhythm is the idle arm drift sin(ageInTicks * ANIM_SPEED * 0.1) * PI * 0.02 (GodzillaGeoReplacement.applyCustomAnimations:209, attacking 0) at 0.1 rad/tick, 62.83 ticks; the per-leg threshold gait cos / sin(ageInTicks * 0.75 * ANIM_SPEED + n * pi/4) with the toe lift and sweep position writes (:97-99, :135-137, walk) at 0.75; the idle tail cos(ageInTicks * 0.75) * PI * 0.05 and the attacking tail fan cos(ageInTicks * 1.75) * PI * 0.2 (:182-183); the attacking jaw cos(ageInTicks * 1.5) * PI * 0.12 (:202) and arms sin(ageInTicks * 1.75) * PI * 0.16 (:208); the head look follows netHeadYaw * 0.55 = 0 (:187); no multiple of the slowest group's period 62.831852 ticks up to the 6 s cap (120 ticks) brings every group back within 5 degrees of its start (k = 1: 40.500003 deg / 58.475327 units): a two-second window (40 ticks), not a loop - the sheet states the closing key's seam",
       "span_ticks": 40.0,
@@ -5377,6 +5416,17 @@
       "period_multiple_k": null,
       "animation_length_seconds": 2.0,
       "keys_per_bone": 41,
+      "keys_per_bone_min": 2,
+      "dense_samples": 41,
+      "lerp_mode": "catmullrom",
+      "keying": {
+        "rotation_tolerance_degrees": 1.0,
+        "position_tolerance_blocks": 0.03125,
+        "max_error_degrees": 0.998608528,
+        "max_error_blocks": 0.0306544127,
+        "within_tolerance": true,
+        "keys_total": 1041
+      },
       "sampled_inputs": "limbSwingAmount 0.0; limbSwing 0 (the walk position at rest: vanilla WalkAnimationState holds its position while the speed is 0, and a creature that has not walked since it spawned carries 0); ageInTicks = t (getBob: tickCount + partialTick, partialTick 0; advancing 1.0 per tick from 0); netHeadYaw 0; headPitch 0 (looking ahead); every entity-state flag at its rest value (attacking 0, ri1 0, rock_type 0, rf1 0: a ProbeSubject built from an empty state); the entity RNG seeded 0 once per clip and evolving across the keys; one pose call per key, 20 keys per second; full health",
       "hook": "danger.orespawn.entity.client.GodzillaGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the unlanded hook of owner 2026-09-14, addendum item 10 - the classic setupAnim transcribed into the descriptor's PoseInputs form, proven when the rig lands - registry-free, on explicit PoseInputs, over the reference leg's converter output reference_godzilla.geo.json baked without the face-order strictness the landing slice's TEST-007 adds)",
       "landed": false,
@@ -5468,10 +5518,15 @@
     {
       "state": "attack",
       "file": "godzilla_reference_attack.animation.json",
-      "sha256": "0a0f8975f7fe63609e717a361995e879136090c4fb110e0938cec055e1bf10db",
+      "sha256": "60bf96e181832e943da8494aadd0ea76c4d1389b2cb2913584aa5386051f691c",
       "clip": "reference_attack",
       "reference_only": true,
       "delivered_clip": "aggro_idle",
+      "offered_extra": null,
+      "named": true,
+      "name_source": "the contract (getAttacking 1)",
+      "getter": "getAttacking",
+      "value": 1,
       "rule": "two_seconds_past_cap",
       "rule_note": "ANIM_SPEED 1.0: the slowest rhythm is the idle arm drift sin(ageInTicks * ANIM_SPEED * 0.1) * PI * 0.02 (GodzillaGeoReplacement.applyCustomAnimations:209, attacking 0) at 0.1 rad/tick, 62.83 ticks; the per-leg threshold gait cos / sin(ageInTicks * 0.75 * ANIM_SPEED + n * pi/4) with the toe lift and sweep position writes (:97-99, :135-137, walk) at 0.75; the idle tail cos(ageInTicks * 0.75) * PI * 0.05 and the attacking tail fan cos(ageInTicks * 1.75) * PI * 0.2 (:182-183); the attacking jaw cos(ageInTicks * 1.5) * PI * 0.12 (:202) and arms sin(ageInTicks * 1.75) * PI * 0.16 (:208); the head look follows netHeadYaw * 0.55 = 0 (:187); no multiple of the slowest group's period 62.831852 ticks up to the 6 s cap (120 ticks) brings every group back within 5 degrees of its start (k = 1: 162.000011 deg / 201.509796 units): a two-second window (40 ticks), not a loop - the sheet states the closing key's seam",
       "span_ticks": 40.0,
@@ -5479,7 +5534,18 @@
       "period_multiple_k": null,
       "animation_length_seconds": 2.0,
       "keys_per_bone": 41,
-      "sampled_inputs": "attacking 1 (the pose interface's getAttacking() answers 1: the hook's attacking branch); limbSwingAmount 0.0; limbSwing 0 (the walk position at rest); ageInTicks = t (getBob: tickCount + partialTick, partialTick 0; advancing 1.0 per tick from 0); netHeadYaw 0; headPitch 0 (looking ahead); every other entity-state flag at its rest value (ri1 0, rock_type 0, rf1 0: a ProbeSubject built from the attack state); the entity RNG seeded 0 once per clip and evolving across the keys; one pose call per key, 20 keys per second; full health",
+      "keys_per_bone_min": 2,
+      "dense_samples": 41,
+      "lerp_mode": "catmullrom",
+      "keying": {
+        "rotation_tolerance_degrees": 1.0,
+        "position_tolerance_blocks": 0.03125,
+        "max_error_degrees": 0.0,
+        "max_error_blocks": 0.0,
+        "within_tolerance": true,
+        "keys_total": 2382
+      },
+      "sampled_inputs": "getAttacking() answers 1 (the state the seed names `attack`; every other getter at its rest value); limbSwingAmount 0.0; limbSwing 0 (the walk position at rest: vanilla WalkAnimationState holds its position while the speed is 0, and a creature that has not walked since it spawned carries 0); ageInTicks = t (getBob: tickCount + partialTick, partialTick 0; advancing 1.0 per tick from 0); netHeadYaw 0; headPitch 0 (looking ahead); every other entity-state flag at its rest value (ri1 0, rock_type 0, rf1 0); the entity RNG seeded 0 once per clip and evolving across the keys; one pose call per key, 20 keys per second; full health",
       "hook": "danger.orespawn.entity.client.GodzillaGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the unlanded hook of owner 2026-09-14, addendum item 10 - the classic setupAnim transcribed into the descriptor's PoseInputs form, proven when the rig lands - registry-free, on explicit PoseInputs, over the reference leg's converter output reference_godzilla.geo.json baked without the face-order strictness the landing slice's TEST-007 adds)",
       "landed": false,
       "moving_bones": [
@@ -5571,10 +5637,15 @@
   "reference_clip": {
     "state": "walk",
     "file": "godzilla_reference_walk.animation.json",
-    "sha256": "eff2f3e3058bee22f69328ec533ad7843a4064323cf59aa6ea451a38acb654bd",
-    "clip": "reference",
+    "sha256": "70861b111a104e3dd1df9a0529c6fc0ba8071ee9f756f23aa9869a3aa91f3e6f",
+    "clip": "reference_walk",
     "reference_only": true,
     "delivered_clip": "walk",
+    "offered_extra": null,
+    "named": true,
+    "name_source": "the contract",
+    "getter": null,
+    "value": null,
     "rule": "two_seconds_past_cap",
     "rule_note": "ANIM_SPEED 1.0: the slowest rhythm is the idle arm drift sin(ageInTicks * ANIM_SPEED * 0.1) * PI * 0.02 (GodzillaGeoReplacement.applyCustomAnimations:209, attacking 0) at 0.1 rad/tick, 62.83 ticks; the per-leg threshold gait cos / sin(ageInTicks * 0.75 * ANIM_SPEED + n * pi/4) with the toe lift and sweep position writes (:97-99, :135-137, walk) at 0.75; the idle tail cos(ageInTicks * 0.75) * PI * 0.05 and the attacking tail fan cos(ageInTicks * 1.75) * PI * 0.2 (:182-183); the attacking jaw cos(ageInTicks * 1.5) * PI * 0.12 (:202) and arms sin(ageInTicks * 1.75) * PI * 0.16 (:208); the head look follows netHeadYaw * 0.55 = 0 (:187); no multiple of the slowest group's period 62.831852 ticks up to the 6 s cap (120 ticks) brings every group back within 5 degrees of its start (k = 1: 40.500003 deg / 70 units): a two-second window (40 ticks), not a loop - the sheet states the closing key's seam",
     "span_ticks": 40.0,
@@ -5582,6 +5653,17 @@
     "period_multiple_k": null,
     "animation_length_seconds": 2.0,
     "keys_per_bone": 41,
+    "keys_per_bone_min": 2,
+    "dense_samples": 41,
+    "lerp_mode": "catmullrom",
+    "keying": {
+      "rotation_tolerance_degrees": 1.0,
+      "position_tolerance_blocks": 0.03125,
+      "max_error_degrees": 0.998608528,
+      "max_error_blocks": 0.0306544127,
+      "within_tolerance": true,
+      "keys_total": 2253
+    },
     "sampled_inputs": "limbSwingAmount 1.0; limbSwing = t (advancing 1.0 per tick from 0: vanilla WalkAnimationState.update does speed += (movementSpeed - speed) * multiplier; position += speed, and the classic renderer hands walkAnimation.position(partialTick) as limbSwing and min(1, speed) as limbSwingAmount, so at speed 1 the position advances exactly 1.0 per tick); ageInTicks = t (getBob: tickCount + partialTick, partialTick 0); netHeadYaw 0; headPitch 0 (looking ahead); every entity-state flag at its rest value (attacking 0, ri1 0, rock_type 0, rf1 0: a ProbeSubject built from an empty state); the entity RNG seeded 0 once per clip and evolving across the keys; one pose call per key, 20 keys per second; full health (no shipped hook reads health)",
     "hook": "danger.orespawn.entity.client.GodzillaGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the unlanded hook of owner 2026-09-14, addendum item 10 - the classic setupAnim transcribed into the descriptor's PoseInputs form, proven when the rig lands - registry-free, on explicit PoseInputs, over the reference leg's converter output reference_godzilla.geo.json baked without the face-order strictness the landing slice's TEST-007 adds)",
     "landed": false,
@@ -5691,6 +5773,7 @@
       "read_at_inputs": true
     }
   },
+  "reference_offers": [],
   "exact_transcription": false,
   "rig_source": "reference-leg converter output",
   "in_game": false,

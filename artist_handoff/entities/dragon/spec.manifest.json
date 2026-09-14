@@ -1,5 +1,5 @@
 {
-  "generated_by": "tools/artist_package.py 0.3.0 (the reference clips for every species, 2026-09-14, addendum items 11 to 13: every hook's reference_walk, reference_idle and - where the code reads an attack - reference_attack clip beside the sheet, landed or not; the clips loaded through Blockbench's Import Animations (README_FIRST, Toolchain); a reference clip's keys as the starting point of a delivered idle / walk / aggro_idle, only the reference file itself under its own name refused)",
+  "generated_by": "tools/artist_package.py 0.4.0 (the reference clips revised, 2026-09-14, second set revised, items 2 to 6: every state a hook reads sampled and named by the seed - reference_walk, reference_idle, reference_attack, reference_fly, reference_swim, the species' own states, an unnamed one flagged - keyed by the exact transcriptions' density search (catmullrom, 1 degree, 1/32 block), embedded in every .bbmodel within the round-trip tolerance with the files beside the sheet the pinned source; a reference clip's keys as the starting point of idle / walk / aggro_idle / fly / swim, a species state offered as a SPEC extra; only the reference file itself under its own name refused; one tracked copy, the folder's copies ignored by git)",
   "registry": "dragon",
   "display_name": "Dragon",
   "tier": 1,
@@ -3854,7 +3854,8 @@
       "required": true,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "idle_wings",
@@ -3864,7 +3865,8 @@
       "required": false,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "idle_tail",
@@ -3874,7 +3876,8 @@
       "required": false,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "idle_mouth",
@@ -3884,7 +3887,8 @@
       "required": false,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "walk",
@@ -3894,7 +3898,8 @@
       "required": true,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "walk_wings",
@@ -3904,7 +3909,8 @@
       "required": false,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "walk_tail",
@@ -3914,7 +3920,8 @@
       "required": false,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "walk_mouth",
@@ -3924,7 +3931,8 @@
       "required": false,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "fly",
@@ -3934,7 +3942,8 @@
       "required": false,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "aggro_idle",
@@ -3944,7 +3953,8 @@
       "required": false,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "calm_idle",
@@ -3954,7 +3964,8 @@
       "required": false,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "attack",
@@ -3964,7 +3975,8 @@
       "required": false,
       "length_rule": "near:0.5",
       "length_seconds": 0.5,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "hurt",
@@ -3974,7 +3986,8 @@
       "required": false,
       "length_rule": "near:0.4",
       "length_seconds": 0.4,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "death",
@@ -3984,7 +3997,8 @@
       "required": false,
       "length_rule": "near:1.5",
       "length_seconds": 1.5,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "breath",
@@ -3994,7 +4008,8 @@
       "required": false,
       "length_rule": "near:0.5",
       "length_seconds": 0.5,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "takeoff",
@@ -4004,7 +4019,8 @@
       "required": false,
       "length_rule": "near:0.8",
       "length_seconds": 0.8,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "land",
@@ -4014,7 +4030,19 @@
       "required": false,
       "length_rule": "near:0.8",
       "length_seconds": 0.8,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
+    },
+    {
+      "name": "sit",
+      "loop": "true",
+      "role": "extra",
+      "code_triggered": false,
+      "required": false,
+      "length_rule": "near:1.0",
+      "length_seconds": 1.0,
+      "verdict": "author",
+      "offered_from_reference": "reference_sit"
     }
   ],
   "allow_idle_alt": true,
@@ -4034,23 +4062,39 @@
       ]
     }
   ],
-  "effort_hours": 41.8,
-  "effort_source": "generator: 8 h + 0.15 h/bone x 55 + 1.5 h/clip x 17 to author or improve (owner adjusts)",
+  "effort_hours": 43.2,
+  "effort_source": "generator: 8 h + 0.15 h/bone x 55 + 1.5 h/clip x 18 to author or improve (owner adjusts)",
   "reference_clips": [
     {
       "state": "walk",
       "file": "dragon_reference_walk.animation.json",
-      "sha256": "b4d73395f1e9dc81a50f378c538e57593fcf4c5fdbb1e7776d7adbbb24a82c3a",
-      "clip": "reference",
+      "sha256": "b32eaca1c760f8c91dec4a76849e804ea3d78348f53147915374aee9351519c2",
+      "clip": "reference_walk",
       "reference_only": true,
       "delivered_clip": "walk",
+      "offered_extra": null,
+      "named": true,
+      "name_source": "the contract",
+      "getter": null,
+      "value": null,
       "rule": "two_seconds_past_cap",
       "rule_note": "ANIM_SPEED 1.0: the slowest rhythm is the resting wing beat -0.85 + cos(ageInTicks * 0.2 * ANIM_SPEED) * PI * 0.028 (DragonGeoReplacement.poseDragon:151, activity 0 and not attacking) at 0.2 rad/tick, 31.42 ticks; the activity beat cos(ageInTicks * 0.75) * PI * 0.28 (:146, :150) and the attacking-by-activity -0.45 + cos(ageInTicks * 0.85) * PI * 0.2 (:147); the tail chain cos(ageInTicks * tailspeed) with tailspeed 0.76 at rest, 0.96 attacking, 0.22 sitting (:97-98, :198-208, :211-258); the attacking jaw cos(ageInTicks * 1.5) * PI * 0.14 (:309); the fourteen legs cos(ageInTicks * 1.25 * ANIM_SPEED) * PI * lspeed * 0.6 (:104) scale by the movement delta lspeed = |xOld - x, zOld - z| (:96-103), 0 on the probe, so the gait does not move at these inputs; no multiple of the slowest group's period 31.415926 ticks up to the 6 s cap (120 ticks) brings every group back within 5 degrees of its start (k = 1: 5.671191 deg / 1.560194 units, k = 2: 20.521655 deg / 5.75186 units, k = 3: 38.87564 deg / 11.014196 units): a two-second window (40 ticks), not a loop - the sheet states the closing key's seam",
       "span_ticks": 40.0,
       "period_ticks": 31.4159260678,
       "period_multiple_k": null,
       "animation_length_seconds": 2.0,
-      "keys_per_bone": 41,
+      "keys_per_bone": 28,
+      "keys_per_bone_min": 2,
+      "dense_samples": 41,
+      "lerp_mode": "catmullrom",
+      "keying": {
+        "rotation_tolerance_degrees": 1.0,
+        "position_tolerance_blocks": 0.03125,
+        "max_error_degrees": 0.9776513137,
+        "max_error_blocks": 0.028291181,
+        "within_tolerance": true,
+        "keys_total": 500
+      },
       "sampled_inputs": "limbSwingAmount 1.0; limbSwing = t (advancing 1.0 per tick from 0: vanilla WalkAnimationState.update does speed += (movementSpeed - speed) * multiplier; position += speed, and the classic renderer hands walkAnimation.position(partialTick) as limbSwing and min(1, speed) as limbSwingAmount, so at speed 1 the position advances exactly 1.0 per tick); ageInTicks = t (getBob: tickCount + partialTick, partialTick 0); netHeadYaw 0; headPitch 0 (looking ahead); every entity-state flag at its rest value (attacking 0, ri1 0, rock_type 0, rf1 0: a ProbeSubject built from an empty state); the entity RNG seeded 0 once per clip and evolving across the keys; one pose call per key, 20 keys per second; full health (no shipped hook reads health)",
       "hook": "danger.orespawn.entity.client.DragonGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the unlanded hook of owner 2026-09-14, addendum item 10 - the classic setupAnim transcribed into the descriptor's PoseInputs form, proven when the rig lands - registry-free, on explicit PoseInputs, over the reference leg's converter output reference_dragon.geo.json baked without the face-order strictness the landing slice's TEST-007 adds)",
       "landed": false,
@@ -4135,17 +4179,33 @@
     {
       "state": "idle",
       "file": "dragon_reference_idle.animation.json",
-      "sha256": "aed4577ce2d2f03b6b2f11fe4570720c5ddff4ef1fc44f52772d86071d1fb1c0",
+      "sha256": "df11c0622561bdb41fe60cfeceab225a4dc05611bb9de727d86a5896411232c7",
       "clip": "reference_idle",
       "reference_only": true,
       "delivered_clip": "idle",
+      "offered_extra": null,
+      "named": true,
+      "name_source": "the contract",
+      "getter": null,
+      "value": null,
       "rule": "two_seconds_past_cap",
       "rule_note": "ANIM_SPEED 1.0: the slowest rhythm is the resting wing beat -0.85 + cos(ageInTicks * 0.2 * ANIM_SPEED) * PI * 0.028 (DragonGeoReplacement.poseDragon:151, activity 0 and not attacking) at 0.2 rad/tick, 31.42 ticks; the activity beat cos(ageInTicks * 0.75) * PI * 0.28 (:146, :150) and the attacking-by-activity -0.45 + cos(ageInTicks * 0.85) * PI * 0.2 (:147); the tail chain cos(ageInTicks * tailspeed) with tailspeed 0.76 at rest, 0.96 attacking, 0.22 sitting (:97-98, :198-208, :211-258); the attacking jaw cos(ageInTicks * 1.5) * PI * 0.14 (:309); the fourteen legs cos(ageInTicks * 1.25 * ANIM_SPEED) * PI * lspeed * 0.6 (:104) scale by the movement delta lspeed = |xOld - x, zOld - z| (:96-103), 0 on the probe, so the gait does not move at these inputs; no multiple of the slowest group's period 31.415926 ticks up to the 6 s cap (120 ticks) brings every group back within 5 degrees of its start (k = 1: 5.671191 deg / 1.560194 units, k = 2: 20.521655 deg / 5.75186 units, k = 3: 38.87564 deg / 11.014196 units): a two-second window (40 ticks), not a loop - the sheet states the closing key's seam",
       "span_ticks": 40.0,
       "period_ticks": 31.4159260678,
       "period_multiple_k": null,
       "animation_length_seconds": 2.0,
-      "keys_per_bone": 41,
+      "keys_per_bone": 28,
+      "keys_per_bone_min": 2,
+      "dense_samples": 41,
+      "lerp_mode": "catmullrom",
+      "keying": {
+        "rotation_tolerance_degrees": 1.0,
+        "position_tolerance_blocks": 0.03125,
+        "max_error_degrees": 0.9776513137,
+        "max_error_blocks": 0.028291181,
+        "within_tolerance": true,
+        "keys_total": 500
+      },
       "sampled_inputs": "limbSwingAmount 0.0; limbSwing 0 (the walk position at rest: vanilla WalkAnimationState holds its position while the speed is 0, and a creature that has not walked since it spawned carries 0); ageInTicks = t (getBob: tickCount + partialTick, partialTick 0; advancing 1.0 per tick from 0); netHeadYaw 0; headPitch 0 (looking ahead); every entity-state flag at its rest value (attacking 0, ri1 0, rock_type 0, rf1 0: a ProbeSubject built from an empty state); the entity RNG seeded 0 once per clip and evolving across the keys; one pose call per key, 20 keys per second; full health",
       "hook": "danger.orespawn.entity.client.DragonGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the unlanded hook of owner 2026-09-14, addendum item 10 - the classic setupAnim transcribed into the descriptor's PoseInputs form, proven when the rig lands - registry-free, on explicit PoseInputs, over the reference leg's converter output reference_dragon.geo.json baked without the face-order strictness the landing slice's TEST-007 adds)",
       "landed": false,
@@ -4230,10 +4290,15 @@
     {
       "state": "attack",
       "file": "dragon_reference_attack.animation.json",
-      "sha256": "4a8291fd06c6d14753af8d22b5643c4f9b8c32b3eb5cad1e85e189b9329609af",
+      "sha256": "2898ecc5adecf20758ffd1fbab24b239108980ff80be62754a408bc4e2ec9d2b",
       "clip": "reference_attack",
       "reference_only": true,
       "delivered_clip": "aggro_idle",
+      "offered_extra": null,
+      "named": true,
+      "name_source": "the contract (getAttacking 1)",
+      "getter": "getAttacking",
+      "value": 1,
       "rule": "two_seconds_past_cap",
       "rule_note": "ANIM_SPEED 1.0: the slowest rhythm is the resting wing beat -0.85 + cos(ageInTicks * 0.2 * ANIM_SPEED) * PI * 0.028 (DragonGeoReplacement.poseDragon:151, activity 0 and not attacking) at 0.2 rad/tick, 31.42 ticks; the activity beat cos(ageInTicks * 0.75) * PI * 0.28 (:146, :150) and the attacking-by-activity -0.45 + cos(ageInTicks * 0.85) * PI * 0.2 (:147); the tail chain cos(ageInTicks * tailspeed) with tailspeed 0.76 at rest, 0.96 attacking, 0.22 sitting (:97-98, :198-208, :211-258); the attacking jaw cos(ageInTicks * 1.5) * PI * 0.14 (:309); the fourteen legs cos(ageInTicks * 1.25 * ANIM_SPEED) * PI * lspeed * 0.6 (:104) scale by the movement delta lspeed = |xOld - x, zOld - z| (:96-103), 0 on the probe, so the gait does not move at these inputs; no multiple of the slowest group's period 31.415926 ticks up to the 6 s cap (120 ticks) brings every group back within 5 degrees of its start (k = 1: 69.969414 deg / 13.725591 units, k = 2: 176.833601 deg / 41.155027 units, k = 3: 176.839311 deg / 41.154072 units): a two-second window (40 ticks), not a loop - the sheet states the closing key's seam",
       "span_ticks": 40.0,
@@ -4241,7 +4306,18 @@
       "period_multiple_k": null,
       "animation_length_seconds": 2.0,
       "keys_per_bone": 41,
-      "sampled_inputs": "attacking 1 (the pose interface's getAttacking() answers 1: the hook's attacking branch); limbSwingAmount 0.0; limbSwing 0 (the walk position at rest); ageInTicks = t (getBob: tickCount + partialTick, partialTick 0; advancing 1.0 per tick from 0); netHeadYaw 0; headPitch 0 (looking ahead); every other entity-state flag at its rest value (ri1 0, rock_type 0, rf1 0: a ProbeSubject built from the attack state); the entity RNG seeded 0 once per clip and evolving across the keys; one pose call per key, 20 keys per second; full health",
+      "keys_per_bone_min": 2,
+      "dense_samples": 41,
+      "lerp_mode": "catmullrom",
+      "keying": {
+        "rotation_tolerance_degrees": 1.0,
+        "position_tolerance_blocks": 0.03125,
+        "max_error_degrees": 0.0,
+        "max_error_blocks": 0.0306890181,
+        "within_tolerance": true,
+        "keys_total": 1925
+      },
+      "sampled_inputs": "getAttacking() answers 1 (the state the seed names `attack`; every other getter at its rest value); limbSwingAmount 0.0; limbSwing 0 (the walk position at rest: vanilla WalkAnimationState holds its position while the speed is 0, and a creature that has not walked since it spawned carries 0); ageInTicks = t (getBob: tickCount + partialTick, partialTick 0; advancing 1.0 per tick from 0); netHeadYaw 0; headPitch 0 (looking ahead); every other entity-state flag at its rest value (ri1 0, rock_type 0, rf1 0); the entity RNG seeded 0 once per clip and evolving across the keys; one pose call per key, 20 keys per second; full health",
       "hook": "danger.orespawn.entity.client.DragonGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the unlanded hook of owner 2026-09-14, addendum item 10 - the classic setupAnim transcribed into the descriptor's PoseInputs form, proven when the rig lands - registry-free, on explicit PoseInputs, over the reference leg's converter output reference_dragon.geo.json baked without the face-order strictness the landing slice's TEST-007 adds)",
       "landed": false,
       "moving_bones": [
@@ -4321,22 +4397,254 @@
         "reads_attacking": true,
         "read_at_inputs": true
       }
+    },
+    {
+      "state": "fly",
+      "file": "dragon_reference_fly.animation.json",
+      "sha256": "7f5ae17c98ead1060dff840d77fbd86efc79fc3949f96fc1aad9d00b8823c5ff",
+      "clip": "reference_fly",
+      "reference_only": true,
+      "delivered_clip": "fly",
+      "offered_extra": null,
+      "named": true,
+      "name_source": "dragon.json reference_states.fly = {getActivity: 1}",
+      "getter": "getActivity",
+      "value": 1,
+      "rule": "two_seconds_past_cap",
+      "rule_note": "ANIM_SPEED 1.0: the slowest rhythm is the resting wing beat -0.85 + cos(ageInTicks * 0.2 * ANIM_SPEED) * PI * 0.028 (DragonGeoReplacement.poseDragon:151, activity 0 and not attacking) at 0.2 rad/tick, 31.42 ticks; the activity beat cos(ageInTicks * 0.75) * PI * 0.28 (:146, :150) and the attacking-by-activity -0.45 + cos(ageInTicks * 0.85) * PI * 0.2 (:147); the tail chain cos(ageInTicks * tailspeed) with tailspeed 0.76 at rest, 0.96 attacking, 0.22 sitting (:97-98, :198-208, :211-258); the attacking jaw cos(ageInTicks * 1.5) * PI * 0.14 (:309); the fourteen legs cos(ageInTicks * 1.25 * ANIM_SPEED) * PI * lspeed * 0.6 (:104) scale by the movement delta lspeed = |xOld - x, zOld - z| (:96-103), 0 on the probe, so the gait does not move at these inputs; no multiple of the slowest group's period 31.415926 ticks up to the 6 s cap (120 ticks) brings every group back within 5 degrees of its start (k = 1: 75.607252 deg / 10.926037 units, k = 2: 151.200007 deg / 28.28406 units, k = 3: 109.896408 deg / 28.283254 units): a two-second window (40 ticks), not a loop - the sheet states the closing key's seam",
+      "span_ticks": 40.0,
+      "period_ticks": 31.4159260678,
+      "period_multiple_k": null,
+      "animation_length_seconds": 2.0,
+      "keys_per_bone": 41,
+      "keys_per_bone_min": 2,
+      "dense_samples": 41,
+      "lerp_mode": "catmullrom",
+      "keying": {
+        "rotation_tolerance_degrees": 1.0,
+        "position_tolerance_blocks": 0.03125,
+        "max_error_degrees": 0.7418077426,
+        "max_error_blocks": 0.0261621227,
+        "within_tolerance": true,
+        "keys_total": 1772
+      },
+      "sampled_inputs": "getActivity() answers 1 (the state the seed names `fly`; every other getter at its rest value); limbSwingAmount 0.0; limbSwing 0 (the walk position at rest: vanilla WalkAnimationState holds its position while the speed is 0, and a creature that has not walked since it spawned carries 0); ageInTicks = t (getBob: tickCount + partialTick, partialTick 0; advancing 1.0 per tick from 0); netHeadYaw 0; headPitch 0 (looking ahead); every other entity-state flag at its rest value (ri1 0, rock_type 0, rf1 0); the entity RNG seeded 0 once per clip and evolving across the keys; one pose call per key, 20 keys per second; full health",
+      "hook": "danger.orespawn.entity.client.DragonGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the unlanded hook of owner 2026-09-14, addendum item 10 - the classic setupAnim transcribed into the descriptor's PoseInputs form, proven when the rig lands - registry-free, on explicit PoseInputs, over the reference leg's converter output reference_dragon.geo.json baked without the face-order strictness the landing slice's TEST-007 adds)",
+      "landed": false,
+      "moving_bones": [
+        "foot1",
+        "foot2",
+        "foot3",
+        "foot4",
+        "horn1",
+        "horn2",
+        "leg1",
+        "leg10",
+        "leg11",
+        "leg2",
+        "leg3",
+        "leg4",
+        "leg5",
+        "leg6",
+        "leg7",
+        "leg9",
+        "mouth2",
+        "neck1",
+        "spike10",
+        "spike3",
+        "spike7",
+        "spike8",
+        "spike9",
+        "tail1",
+        "tail2",
+        "tail3",
+        "tail4",
+        "tail5",
+        "tail6",
+        "wing1",
+        "wing10",
+        "wing11",
+        "wing12",
+        "wing14",
+        "wing15",
+        "wing2",
+        "wing3",
+        "wing4",
+        "wing5",
+        "wing6",
+        "wing7",
+        "wing8",
+        "wing9"
+      ],
+      "position_bones": [
+        "neck1",
+        "spike10",
+        "spike3",
+        "spike7",
+        "spike8",
+        "spike9",
+        "tail2",
+        "tail3",
+        "tail4",
+        "tail5",
+        "tail6",
+        "wing10",
+        "wing11",
+        "wing12",
+        "wing2",
+        "wing3",
+        "wing5",
+        "wing6",
+        "wing7",
+        "wing8",
+        "wing9"
+      ],
+      "hidden_bones_at_rest": [],
+      "seam_delta_degrees": 63.9411036368,
+      "attacking": {
+        "declared_pose_interfaces": [
+          "DragonPose"
+        ],
+        "getters": [
+          "DragonPose.getAttacking()"
+        ],
+        "outside_pose_interface": [],
+        "reads_attacking": true,
+        "read_at_inputs": true
+      }
+    },
+    {
+      "state": "sit",
+      "file": "dragon_reference_sit.animation.json",
+      "sha256": "3c76614a42ef753d2fbfaa39ba30817466bf2de125f2f7daf12b2040c1a4aa59",
+      "clip": "reference_sit",
+      "reference_only": true,
+      "delivered_clip": null,
+      "offered_extra": "sit",
+      "named": true,
+      "name_source": "dragon.json reference_states.sit = {isInSittingPose: true}",
+      "getter": "isInSittingPose",
+      "value": true,
+      "rule": "period_multiple",
+      "rule_note": "ANIM_SPEED 1.0: the slowest rhythm is the resting wing beat -0.85 + cos(ageInTicks * 0.2 * ANIM_SPEED) * PI * 0.028 (DragonGeoReplacement.poseDragon:151, activity 0 and not attacking) at 0.2 rad/tick, 31.42 ticks; the activity beat cos(ageInTicks * 0.75) * PI * 0.28 (:146, :150) and the attacking-by-activity -0.45 + cos(ageInTicks * 0.85) * PI * 0.2 (:147); the tail chain cos(ageInTicks * tailspeed) with tailspeed 0.76 at rest, 0.96 attacking, 0.22 sitting (:97-98, :198-208, :211-258); the attacking jaw cos(ageInTicks * 1.5) * PI * 0.14 (:309); the fourteen legs cos(ageInTicks * 1.25 * ANIM_SPEED) * PI * lspeed * 0.6 (:104) scale by the movement delta lspeed = |xOld - x, zOld - z| (:96-103), 0 on the probe, so the gait does not move at these inputs; closes at k = 1 (31.415926 ticks): every bone returns within 0 degrees of its start at k x T (the 5-degree test under the 6 s cap; k = 1: 0 deg)",
+      "span_ticks": 31.4159260678,
+      "period_ticks": 31.4159260678,
+      "period_multiple_k": 1,
+      "animation_length_seconds": 1.5707963034,
+      "keys_per_bone": 3,
+      "keys_per_bone_min": 2,
+      "dense_samples": 33,
+      "lerp_mode": "catmullrom",
+      "keying": {
+        "rotation_tolerance_degrees": 1.0,
+        "position_tolerance_blocks": 0.03125,
+        "max_error_degrees": 0.4053116329,
+        "max_error_blocks": 0.0052569313,
+        "within_tolerance": true,
+        "keys_total": 176
+      },
+      "sampled_inputs": "isInSittingPose() answers 1 (the state the seed names `sit`; every other getter at its rest value); limbSwingAmount 0.0; limbSwing 0 (the walk position at rest: vanilla WalkAnimationState holds its position while the speed is 0, and a creature that has not walked since it spawned carries 0); ageInTicks = t (getBob: tickCount + partialTick, partialTick 0; advancing 1.0 per tick from 0); netHeadYaw 0; headPitch 0 (looking ahead); every other entity-state flag at its rest value (ri1 0, rock_type 0, rf1 0); the entity RNG seeded 0 once per clip and evolving across the keys; one pose call per key, 20 keys per second; full health",
+      "hook": "danger.orespawn.entity.client.DragonGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the unlanded hook of owner 2026-09-14, addendum item 10 - the classic setupAnim transcribed into the descriptor's PoseInputs form, proven when the rig lands - registry-free, on explicit PoseInputs, over the reference leg's converter output reference_dragon.geo.json baked without the face-order strictness the landing slice's TEST-007 adds)",
+      "landed": false,
+      "moving_bones": [
+        "horn1",
+        "horn2",
+        "leg1",
+        "leg10",
+        "leg11",
+        "leg2",
+        "leg3",
+        "leg4",
+        "leg5",
+        "leg6",
+        "leg7",
+        "leg9",
+        "mouth2",
+        "spike10",
+        "tail1",
+        "wing1",
+        "wing10",
+        "wing11",
+        "wing12",
+        "wing14",
+        "wing15",
+        "wing2",
+        "wing3",
+        "wing4",
+        "wing5",
+        "wing6",
+        "wing7",
+        "wing8",
+        "wing9"
+      ],
+      "position_bones": [
+        "neck1",
+        "spike10",
+        "spike3",
+        "spike7",
+        "spike8",
+        "spike9",
+        "tail2",
+        "tail3",
+        "tail4",
+        "tail5",
+        "tail6",
+        "wing10",
+        "wing11",
+        "wing12",
+        "wing2",
+        "wing3",
+        "wing5",
+        "wing6",
+        "wing7",
+        "wing8",
+        "wing9"
+      ],
+      "hidden_bones_at_rest": [],
+      "seam_delta_degrees": 0.0,
+      "attacking": {
+        "declared_pose_interfaces": [
+          "DragonPose"
+        ],
+        "getters": [
+          "DragonPose.getAttacking()"
+        ],
+        "outside_pose_interface": [],
+        "reads_attacking": true,
+        "read_at_inputs": true
+      }
     }
   ],
   "reference_clip": {
     "state": "walk",
     "file": "dragon_reference_walk.animation.json",
-    "sha256": "b4d73395f1e9dc81a50f378c538e57593fcf4c5fdbb1e7776d7adbbb24a82c3a",
-    "clip": "reference",
+    "sha256": "b32eaca1c760f8c91dec4a76849e804ea3d78348f53147915374aee9351519c2",
+    "clip": "reference_walk",
     "reference_only": true,
     "delivered_clip": "walk",
+    "offered_extra": null,
+    "named": true,
+    "name_source": "the contract",
+    "getter": null,
+    "value": null,
     "rule": "two_seconds_past_cap",
     "rule_note": "ANIM_SPEED 1.0: the slowest rhythm is the resting wing beat -0.85 + cos(ageInTicks * 0.2 * ANIM_SPEED) * PI * 0.028 (DragonGeoReplacement.poseDragon:151, activity 0 and not attacking) at 0.2 rad/tick, 31.42 ticks; the activity beat cos(ageInTicks * 0.75) * PI * 0.28 (:146, :150) and the attacking-by-activity -0.45 + cos(ageInTicks * 0.85) * PI * 0.2 (:147); the tail chain cos(ageInTicks * tailspeed) with tailspeed 0.76 at rest, 0.96 attacking, 0.22 sitting (:97-98, :198-208, :211-258); the attacking jaw cos(ageInTicks * 1.5) * PI * 0.14 (:309); the fourteen legs cos(ageInTicks * 1.25 * ANIM_SPEED) * PI * lspeed * 0.6 (:104) scale by the movement delta lspeed = |xOld - x, zOld - z| (:96-103), 0 on the probe, so the gait does not move at these inputs; no multiple of the slowest group's period 31.415926 ticks up to the 6 s cap (120 ticks) brings every group back within 5 degrees of its start (k = 1: 5.671191 deg / 1.560194 units, k = 2: 20.521655 deg / 5.75186 units, k = 3: 38.87564 deg / 11.014196 units): a two-second window (40 ticks), not a loop - the sheet states the closing key's seam",
     "span_ticks": 40.0,
     "period_ticks": 31.4159260678,
     "period_multiple_k": null,
     "animation_length_seconds": 2.0,
-    "keys_per_bone": 41,
+    "keys_per_bone": 28,
+    "keys_per_bone_min": 2,
+    "dense_samples": 41,
+    "lerp_mode": "catmullrom",
+    "keying": {
+      "rotation_tolerance_degrees": 1.0,
+      "position_tolerance_blocks": 0.03125,
+      "max_error_degrees": 0.9776513137,
+      "max_error_blocks": 0.028291181,
+      "within_tolerance": true,
+      "keys_total": 500
+    },
     "sampled_inputs": "limbSwingAmount 1.0; limbSwing = t (advancing 1.0 per tick from 0: vanilla WalkAnimationState.update does speed += (movementSpeed - speed) * multiplier; position += speed, and the classic renderer hands walkAnimation.position(partialTick) as limbSwing and min(1, speed) as limbSwingAmount, so at speed 1 the position advances exactly 1.0 per tick); ageInTicks = t (getBob: tickCount + partialTick, partialTick 0); netHeadYaw 0; headPitch 0 (looking ahead); every entity-state flag at its rest value (attacking 0, ri1 0, rock_type 0, rf1 0: a ProbeSubject built from an empty state); the entity RNG seeded 0 once per clip and evolving across the keys; one pose call per key, 20 keys per second; full health (no shipped hook reads health)",
     "hook": "danger.orespawn.entity.client.DragonGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the unlanded hook of owner 2026-09-14, addendum item 10 - the classic setupAnim transcribed into the descriptor's PoseInputs form, proven when the rig lands - registry-free, on explicit PoseInputs, over the reference leg's converter output reference_dragon.geo.json baked without the face-order strictness the landing slice's TEST-007 adds)",
     "landed": false,
@@ -4418,6 +4726,9 @@
       "read_at_inputs": true
     }
   },
+  "reference_offers": [
+    "sit"
+  ],
   "exact_transcription": false,
   "rig_source": "reference-leg converter output",
   "in_game": false,

@@ -1,5 +1,5 @@
 {
-  "generated_by": "tools/artist_package.py 0.3.0 (the reference clips for every species, 2026-09-14, addendum items 11 to 13: every hook's reference_walk, reference_idle and - where the code reads an attack - reference_attack clip beside the sheet, landed or not; the clips loaded through Blockbench's Import Animations (README_FIRST, Toolchain); a reference clip's keys as the starting point of a delivered idle / walk / aggro_idle, only the reference file itself under its own name refused)",
+  "generated_by": "tools/artist_package.py 0.4.0 (the reference clips revised, 2026-09-14, second set revised, items 2 to 6: every state a hook reads sampled and named by the seed - reference_walk, reference_idle, reference_attack, reference_fly, reference_swim, the species' own states, an unnamed one flagged - keyed by the exact transcriptions' density search (catmullrom, 1 degree, 1/32 block), embedded in every .bbmodel within the round-trip tolerance with the files beside the sheet the pinned source; a reference clip's keys as the starting point of idle / walk / aggro_idle / fly / swim, a species state offered as a SPEC extra; only the reference file itself under its own name refused; one tracked copy, the folder's copies ignored by git)",
   "registry": "kraken",
   "display_name": "Kraken",
   "tier": 1,
@@ -7877,7 +7877,8 @@
       "required": true,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "idle_fin_left",
@@ -7887,7 +7888,8 @@
       "required": false,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "idle_tentacles",
@@ -7897,7 +7899,8 @@
       "required": false,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "idle_arms",
@@ -7907,7 +7910,8 @@
       "required": false,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "idle_mouth",
@@ -7917,7 +7921,8 @@
       "required": false,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "walk",
@@ -7927,7 +7932,8 @@
       "required": true,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "walk_fin_left",
@@ -7937,7 +7943,8 @@
       "required": false,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "walk_tentacles",
@@ -7947,7 +7954,8 @@
       "required": false,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "walk_arms",
@@ -7957,7 +7965,8 @@
       "required": false,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "walk_mouth",
@@ -7967,7 +7976,8 @@
       "required": false,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "fly",
@@ -7977,7 +7987,8 @@
       "required": false,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "calm_idle",
@@ -7987,7 +7998,8 @@
       "required": false,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "covered by idle"
+      "verdict": "covered by idle",
+      "offered_from_reference": null
     },
     {
       "name": "attack",
@@ -7997,7 +8009,8 @@
       "required": false,
       "length_rule": "near:0.6",
       "length_seconds": 0.6,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "hurt",
@@ -8007,7 +8020,8 @@
       "required": false,
       "length_rule": "near:0.5",
       "length_seconds": 0.5,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "death",
@@ -8017,7 +8031,8 @@
       "required": false,
       "length_rule": "near:3.0",
       "length_seconds": 3.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "grab",
@@ -8027,7 +8042,8 @@
       "required": false,
       "length_rule": "near:0.8",
       "length_seconds": 0.8,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "summon",
@@ -8037,7 +8053,8 @@
       "required": false,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "bolt",
@@ -8047,7 +8064,8 @@
       "required": false,
       "length_rule": "near:0.5",
       "length_seconds": 0.5,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     }
   ],
   "allow_idle_alt": true,
@@ -8065,10 +8083,15 @@
     {
       "state": "walk",
       "file": "kraken_reference_walk.animation.json",
-      "sha256": "dbd3e543b7730738fa674e7b8996ea77b03e53b790edc80b2795921491d6bcbb",
-      "clip": "reference",
+      "sha256": "94ffbd85776f9f101d547e6a3776ca8d57c386b1553951d51375293e5e9cbaae",
+      "clip": "reference_walk",
       "reference_only": true,
       "delivered_clip": "walk",
+      "offered_extra": null,
+      "named": true,
+      "name_source": "the contract",
+      "getter": null,
+      "value": null,
       "rule": "two_seconds_past_cap",
       "rule_note": "ANIM_SPEED 1.0: the slowest rhythm is the fourth tentacle pair's pitch cos(ageInTicks * differ * ANIM_SPEED - n * pi/4) * PI * amp with differ 0.087 (KrakenGeoReplacement.dangleTentacle:245-310; differ 0.1 / 0.101 / 0.097 / 0.093 / 0.087 and ydiffer 0.1 / 0.102 / 0.098 / 0.092 / 0.088 per tentacle, :215-229; 0.2 for the two rear ones, :234-235; 0.5 with amp 0.03 while attacking, :241-242) at 0.087 rad/tick, 72.22 ticks; the fins cos(ageInTicks * 0.43 / 0.32 * ANIM_SPEED) * PI * 0.15 / 0.14 (:68-69); the mouth latch cos(ageInTicks * 0.66) * PI * 0.15 with its 0.1-tick look-ahead (:93-94) re-rolled on the entity RNG at the zero crossing (the Robot2 precedent); the teeth twitch cos(ageInTicks * 0.5 * ANIM_SPEED) * PI * 0.015 (:109); no multiple of the slowest group's period 72.220523 ticks up to the 6 s cap (120 ticks) brings every group back within 5 degrees of its start (k = 1: 36.19447 deg / 31.377533 units): a two-second window (40 ticks), not a loop - the sheet states the closing key's seam",
       "span_ticks": 40.0,
@@ -8076,6 +8099,17 @@
       "period_multiple_k": null,
       "animation_length_seconds": 2.0,
       "keys_per_bone": 41,
+      "keys_per_bone_min": 2,
+      "dense_samples": 41,
+      "lerp_mode": "catmullrom",
+      "keying": {
+        "rotation_tolerance_degrees": 1.0,
+        "position_tolerance_blocks": 0.03125,
+        "max_error_degrees": 0.9944457293,
+        "max_error_blocks": 0.0302598923,
+        "within_tolerance": true,
+        "keys_total": 2670
+      },
       "sampled_inputs": "limbSwingAmount 1.0; limbSwing = t (advancing 1.0 per tick from 0: vanilla WalkAnimationState.update does speed += (movementSpeed - speed) * multiplier; position += speed, and the classic renderer hands walkAnimation.position(partialTick) as limbSwing and min(1, speed) as limbSwingAmount, so at speed 1 the position advances exactly 1.0 per tick); ageInTicks = t (getBob: tickCount + partialTick, partialTick 0); netHeadYaw 0; headPitch 0 (looking ahead); every entity-state flag at its rest value (attacking 0, ri1 0, rock_type 0, rf1 0: a ProbeSubject built from an empty state); the entity RNG seeded 0 once per clip and evolving across the keys; one pose call per key, 20 keys per second; full health (no shipped hook reads health)",
       "hook": "danger.orespawn.entity.client.KrakenGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the unlanded hook of owner 2026-09-14, addendum item 10 - the classic setupAnim transcribed into the descriptor's PoseInputs form, proven when the rig lands - registry-free, on explicit PoseInputs, over the reference leg's converter output reference_kraken.geo.json baked without the face-order strictness the landing slice's TEST-007 adds)",
       "landed": false,
@@ -8245,10 +8279,15 @@
     {
       "state": "idle",
       "file": "kraken_reference_idle.animation.json",
-      "sha256": "494391066ea120b029fccc3d7c7938c433572cae191cfc9dca98001883eb1790",
+      "sha256": "578ef058d236b3afb3d7427b31f1734cbe9350df539d0389c99eb14538e32edd",
       "clip": "reference_idle",
       "reference_only": true,
       "delivered_clip": "idle",
+      "offered_extra": null,
+      "named": true,
+      "name_source": "the contract",
+      "getter": null,
+      "value": null,
       "rule": "two_seconds_past_cap",
       "rule_note": "ANIM_SPEED 1.0: the slowest rhythm is the fourth tentacle pair's pitch cos(ageInTicks * differ * ANIM_SPEED - n * pi/4) * PI * amp with differ 0.087 (KrakenGeoReplacement.dangleTentacle:245-310; differ 0.1 / 0.101 / 0.097 / 0.093 / 0.087 and ydiffer 0.1 / 0.102 / 0.098 / 0.092 / 0.088 per tentacle, :215-229; 0.2 for the two rear ones, :234-235; 0.5 with amp 0.03 while attacking, :241-242) at 0.087 rad/tick, 72.22 ticks; the fins cos(ageInTicks * 0.43 / 0.32 * ANIM_SPEED) * PI * 0.15 / 0.14 (:68-69); the mouth latch cos(ageInTicks * 0.66) * PI * 0.15 with its 0.1-tick look-ahead (:93-94) re-rolled on the entity RNG at the zero crossing (the Robot2 precedent); the teeth twitch cos(ageInTicks * 0.5 * ANIM_SPEED) * PI * 0.015 (:109); no multiple of the slowest group's period 72.220523 ticks up to the 6 s cap (120 ticks) brings every group back within 5 degrees of its start (k = 1: 36.19447 deg / 31.377533 units): a two-second window (40 ticks), not a loop - the sheet states the closing key's seam",
       "span_ticks": 40.0,
@@ -8256,6 +8295,17 @@
       "period_multiple_k": null,
       "animation_length_seconds": 2.0,
       "keys_per_bone": 41,
+      "keys_per_bone_min": 2,
+      "dense_samples": 41,
+      "lerp_mode": "catmullrom",
+      "keying": {
+        "rotation_tolerance_degrees": 1.0,
+        "position_tolerance_blocks": 0.03125,
+        "max_error_degrees": 0.9944457293,
+        "max_error_blocks": 0.0302598923,
+        "within_tolerance": true,
+        "keys_total": 2670
+      },
       "sampled_inputs": "limbSwingAmount 0.0; limbSwing 0 (the walk position at rest: vanilla WalkAnimationState holds its position while the speed is 0, and a creature that has not walked since it spawned carries 0); ageInTicks = t (getBob: tickCount + partialTick, partialTick 0; advancing 1.0 per tick from 0); netHeadYaw 0; headPitch 0 (looking ahead); every entity-state flag at its rest value (attacking 0, ri1 0, rock_type 0, rf1 0: a ProbeSubject built from an empty state); the entity RNG seeded 0 once per clip and evolving across the keys; one pose call per key, 20 keys per second; full health",
       "hook": "danger.orespawn.entity.client.KrakenGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the unlanded hook of owner 2026-09-14, addendum item 10 - the classic setupAnim transcribed into the descriptor's PoseInputs form, proven when the rig lands - registry-free, on explicit PoseInputs, over the reference leg's converter output reference_kraken.geo.json baked without the face-order strictness the landing slice's TEST-007 adds)",
       "landed": false,
@@ -8425,10 +8475,15 @@
     {
       "state": "attack",
       "file": "kraken_reference_attack.animation.json",
-      "sha256": "ac1116cd62f64bf452ec66a1334d59ea1ed6fe50ac587e1fb14ab4170580d0e0",
+      "sha256": "b34b0d6a5ed3db0c8593020c90f466c4d4340d1b59c2945882bbfa8f0c7c77a7",
       "clip": "reference_attack",
       "reference_only": true,
       "delivered_clip": "aggro_idle",
+      "offered_extra": null,
+      "named": true,
+      "name_source": "the contract (getAttacking 1)",
+      "getter": "getAttacking",
+      "value": 1,
       "rule": "two_seconds_past_cap",
       "rule_note": "ANIM_SPEED 1.0: the slowest rhythm is the fourth tentacle pair's pitch cos(ageInTicks * differ * ANIM_SPEED - n * pi/4) * PI * amp with differ 0.087 (KrakenGeoReplacement.dangleTentacle:245-310; differ 0.1 / 0.101 / 0.097 / 0.093 / 0.087 and ydiffer 0.1 / 0.102 / 0.098 / 0.092 / 0.088 per tentacle, :215-229; 0.2 for the two rear ones, :234-235; 0.5 with amp 0.03 while attacking, :241-242) at 0.087 rad/tick, 72.22 ticks; the fins cos(ageInTicks * 0.43 / 0.32 * ANIM_SPEED) * PI * 0.15 / 0.14 (:68-69); the mouth latch cos(ageInTicks * 0.66) * PI * 0.15 with its 0.1-tick look-ahead (:93-94) re-rolled on the entity RNG at the zero crossing (the Robot2 precedent); the teeth twitch cos(ageInTicks * 0.5 * ANIM_SPEED) * PI * 0.015 (:109); no multiple of the slowest group's period 72.220523 ticks up to the 6 s cap (120 ticks) brings every group back within 5 degrees of its start (k = 1: 36.19447 deg / 23.158043 units): a two-second window (40 ticks), not a loop - the sheet states the closing key's seam",
       "span_ticks": 40.0,
@@ -8436,7 +8491,18 @@
       "period_multiple_k": null,
       "animation_length_seconds": 2.0,
       "keys_per_bone": 41,
-      "sampled_inputs": "attacking 1 (the pose interface's getAttacking() answers 1: the hook's attacking branch); limbSwingAmount 0.0; limbSwing 0 (the walk position at rest); ageInTicks = t (getBob: tickCount + partialTick, partialTick 0; advancing 1.0 per tick from 0); netHeadYaw 0; headPitch 0 (looking ahead); every other entity-state flag at its rest value (ri1 0, rock_type 0, rf1 0: a ProbeSubject built from the attack state); the entity RNG seeded 0 once per clip and evolving across the keys; one pose call per key, 20 keys per second; full health",
+      "keys_per_bone_min": 2,
+      "dense_samples": 41,
+      "lerp_mode": "catmullrom",
+      "keying": {
+        "rotation_tolerance_degrees": 1.0,
+        "position_tolerance_blocks": 0.03125,
+        "max_error_degrees": 0.9944457293,
+        "max_error_blocks": 0.028237568,
+        "within_tolerance": true,
+        "keys_total": 2464
+      },
+      "sampled_inputs": "getAttacking() answers 1 (the state the seed names `attack`; every other getter at its rest value); limbSwingAmount 0.0; limbSwing 0 (the walk position at rest: vanilla WalkAnimationState holds its position while the speed is 0, and a creature that has not walked since it spawned carries 0); ageInTicks = t (getBob: tickCount + partialTick, partialTick 0; advancing 1.0 per tick from 0); netHeadYaw 0; headPitch 0 (looking ahead); every other entity-state flag at its rest value (ri1 0, rock_type 0, rf1 0); the entity RNG seeded 0 once per clip and evolving across the keys; one pose call per key, 20 keys per second; full health",
       "hook": "danger.orespawn.entity.client.KrakenGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the unlanded hook of owner 2026-09-14, addendum item 10 - the classic setupAnim transcribed into the descriptor's PoseInputs form, proven when the rig lands - registry-free, on explicit PoseInputs, over the reference leg's converter output reference_kraken.geo.json baked without the face-order strictness the landing slice's TEST-007 adds)",
       "landed": false,
       "moving_bones": [
@@ -8606,10 +8672,15 @@
   "reference_clip": {
     "state": "walk",
     "file": "kraken_reference_walk.animation.json",
-    "sha256": "dbd3e543b7730738fa674e7b8996ea77b03e53b790edc80b2795921491d6bcbb",
-    "clip": "reference",
+    "sha256": "94ffbd85776f9f101d547e6a3776ca8d57c386b1553951d51375293e5e9cbaae",
+    "clip": "reference_walk",
     "reference_only": true,
     "delivered_clip": "walk",
+    "offered_extra": null,
+    "named": true,
+    "name_source": "the contract",
+    "getter": null,
+    "value": null,
     "rule": "two_seconds_past_cap",
     "rule_note": "ANIM_SPEED 1.0: the slowest rhythm is the fourth tentacle pair's pitch cos(ageInTicks * differ * ANIM_SPEED - n * pi/4) * PI * amp with differ 0.087 (KrakenGeoReplacement.dangleTentacle:245-310; differ 0.1 / 0.101 / 0.097 / 0.093 / 0.087 and ydiffer 0.1 / 0.102 / 0.098 / 0.092 / 0.088 per tentacle, :215-229; 0.2 for the two rear ones, :234-235; 0.5 with amp 0.03 while attacking, :241-242) at 0.087 rad/tick, 72.22 ticks; the fins cos(ageInTicks * 0.43 / 0.32 * ANIM_SPEED) * PI * 0.15 / 0.14 (:68-69); the mouth latch cos(ageInTicks * 0.66) * PI * 0.15 with its 0.1-tick look-ahead (:93-94) re-rolled on the entity RNG at the zero crossing (the Robot2 precedent); the teeth twitch cos(ageInTicks * 0.5 * ANIM_SPEED) * PI * 0.015 (:109); no multiple of the slowest group's period 72.220523 ticks up to the 6 s cap (120 ticks) brings every group back within 5 degrees of its start (k = 1: 36.19447 deg / 31.377533 units): a two-second window (40 ticks), not a loop - the sheet states the closing key's seam",
     "span_ticks": 40.0,
@@ -8617,6 +8688,17 @@
     "period_multiple_k": null,
     "animation_length_seconds": 2.0,
     "keys_per_bone": 41,
+    "keys_per_bone_min": 2,
+    "dense_samples": 41,
+    "lerp_mode": "catmullrom",
+    "keying": {
+      "rotation_tolerance_degrees": 1.0,
+      "position_tolerance_blocks": 0.03125,
+      "max_error_degrees": 0.9944457293,
+      "max_error_blocks": 0.0302598923,
+      "within_tolerance": true,
+      "keys_total": 2670
+    },
     "sampled_inputs": "limbSwingAmount 1.0; limbSwing = t (advancing 1.0 per tick from 0: vanilla WalkAnimationState.update does speed += (movementSpeed - speed) * multiplier; position += speed, and the classic renderer hands walkAnimation.position(partialTick) as limbSwing and min(1, speed) as limbSwingAmount, so at speed 1 the position advances exactly 1.0 per tick); ageInTicks = t (getBob: tickCount + partialTick, partialTick 0); netHeadYaw 0; headPitch 0 (looking ahead); every entity-state flag at its rest value (attacking 0, ri1 0, rock_type 0, rf1 0: a ProbeSubject built from an empty state); the entity RNG seeded 0 once per clip and evolving across the keys; one pose call per key, 20 keys per second; full health (no shipped hook reads health)",
     "hook": "danger.orespawn.entity.client.KrakenGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the unlanded hook of owner 2026-09-14, addendum item 10 - the classic setupAnim transcribed into the descriptor's PoseInputs form, proven when the rig lands - registry-free, on explicit PoseInputs, over the reference leg's converter output reference_kraken.geo.json baked without the face-order strictness the landing slice's TEST-007 adds)",
     "landed": false,
@@ -8783,6 +8865,7 @@
       "read_at_inputs": true
     }
   },
+  "reference_offers": [],
   "exact_transcription": false,
   "rig_source": "reference-leg converter output",
   "in_game": false,

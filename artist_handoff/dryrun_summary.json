@@ -1,5 +1,5 @@
 {
-  "tool": "0.3.0 (the reference clips for every species, 2026-09-14, addendum items 11 to 13: every hook's reference_walk, reference_idle and - where the code reads an attack - reference_attack clip beside the sheet, landed or not; the clips loaded through Blockbench's Import Animations (README_FIRST, Toolchain); a reference clip's keys as the starting point of a delivered idle / walk / aggro_idle, only the reference file itself under its own name refused)",
+  "tool": "0.4.0 (the reference clips revised, 2026-09-14, second set revised, items 2 to 6: every state a hook reads sampled and named by the seed - reference_walk, reference_idle, reference_attack, reference_fly, reference_swim, the species' own states, an unnamed one flagged - keyed by the exact transcriptions' density search (catmullrom, 1 degree, 1/32 block), embedded in every .bbmodel within the round-trip tolerance with the files beside the sheet the pinned source; a reference clip's keys as the starting point of idle / walk / aggro_idle / fly / swim, a species state offered as a SPEC extra; only the reference file itself under its own name refused; one tracked copy, the folder's copies ignored by git)",
   "out_dir": "artist_handoff",
   "entities": [
     {
@@ -26,6 +26,9 @@
       "cubes": 55,
       "clips_shipped": 0,
       "clips_in_spec": 16,
+      "reference_clip_files": 3,
+      "clips_embedded": 3,
+      "reference_offers": [],
       "goals": 7,
       "flags": 1,
       "attacking": "STATE",
@@ -43,7 +46,10 @@
         "dropped_keys": 0,
         "reattached": [
           "orespawn:bone_draw_order"
-        ]
+        ],
+        "clips_embedded": 3,
+        "clips_equal_within_tolerance": 3,
+        "reference_clips_embedded": 3
       },
       "warnings": []
     },
@@ -71,6 +77,9 @@
       "cubes": 55,
       "clips_shipped": 0,
       "clips_in_spec": 17,
+      "reference_clip_files": 3,
+      "clips_embedded": 3,
+      "reference_offers": [],
       "goals": 1,
       "flags": 1,
       "attacking": "STATE",
@@ -88,7 +97,10 @@
         "dropped_keys": 0,
         "reattached": [
           "orespawn:bone_draw_order"
-        ]
+        ],
+        "clips_embedded": 3,
+        "clips_equal_within_tolerance": 3,
+        "reference_clips_embedded": 3
       },
       "warnings": []
     },
@@ -116,6 +128,9 @@
       "cubes": 21,
       "clips_shipped": 0,
       "clips_in_spec": 12,
+      "reference_clip_files": 3,
+      "clips_embedded": 3,
+      "reference_offers": [],
       "goals": 6,
       "flags": 1,
       "attacking": "STATE",
@@ -133,7 +148,10 @@
         "dropped_keys": 0,
         "reattached": [
           "orespawn:bone_draw_order"
-        ]
+        ],
+        "clips_embedded": 3,
+        "clips_equal_within_tolerance": 3,
+        "reference_clips_embedded": 3
       },
       "warnings": []
     },
@@ -160,6 +178,9 @@
       "cubes": 9,
       "clips_shipped": 0,
       "clips_in_spec": 13,
+      "reference_clip_files": 2,
+      "clips_embedded": 2,
+      "reference_offers": [],
       "goals": 5,
       "flags": 1,
       "attacking": "STATE",
@@ -177,7 +198,10 @@
         "dropped_keys": 0,
         "reattached": [
           "orespawn:bone_draw_order"
-        ]
+        ],
+        "clips_embedded": 2,
+        "clips_equal_within_tolerance": 2,
+        "reference_clips_embedded": 2
       },
       "warnings": []
     },
@@ -205,6 +229,9 @@
       "cubes": 7,
       "clips_shipped": 0,
       "clips_in_spec": 12,
+      "reference_clip_files": 2,
+      "clips_embedded": 2,
+      "reference_offers": [],
       "goals": 6,
       "flags": 1,
       "attacking": "NONE",
@@ -222,7 +249,10 @@
         "dropped_keys": 0,
         "reattached": [
           "orespawn:bone_draw_order"
-        ]
+        ],
+        "clips_embedded": 2,
+        "clips_equal_within_tolerance": 2,
+        "reference_clips_embedded": 2
       },
       "warnings": []
     },
@@ -250,6 +280,9 @@
       "cubes": 21,
       "clips_shipped": 0,
       "clips_in_spec": 10,
+      "reference_clip_files": 3,
+      "clips_embedded": 3,
+      "reference_offers": [],
       "goals": 6,
       "flags": 1,
       "attacking": "STATE",
@@ -267,7 +300,10 @@
         "dropped_keys": 0,
         "reattached": [
           "orespawn:bone_draw_order"
-        ]
+        ],
+        "clips_embedded": 3,
+        "clips_equal_within_tolerance": 3,
+        "reference_clips_embedded": 3
       },
       "warnings": []
     },
@@ -282,7 +318,6 @@
         "SPEC.md",
         "cave_fisher.animation.json",
         "cave_fisher.bbmodel",
-        "cave_fisher_reference_attack.animation.json",
         "cave_fisher_reference_idle.animation.json",
         "cave_fisher_reference_walk.animation.json",
         "reference/SLOTS.md",
@@ -295,6 +330,9 @@
       "cubes": 75,
       "clips_shipped": 0,
       "clips_in_spec": 11,
+      "reference_clip_files": 2,
+      "clips_embedded": 2,
+      "reference_offers": [],
       "goals": 5,
       "flags": 1,
       "attacking": "STATE",
@@ -312,7 +350,10 @@
         "dropped_keys": 0,
         "reattached": [
           "orespawn:bone_draw_order"
-        ]
+        ],
+        "clips_embedded": 2,
+        "clips_equal_within_tolerance": 2,
+        "reference_clips_embedded": 2
       },
       "warnings": []
     },
@@ -339,6 +380,9 @@
       "cubes": 8,
       "clips_shipped": 0,
       "clips_in_spec": 11,
+      "reference_clip_files": 2,
+      "clips_embedded": 2,
+      "reference_offers": [],
       "goals": 0,
       "flags": 0,
       "attacking": "NONE",
@@ -357,7 +401,10 @@
         "reattached": [
           "orespawn:bone_draw_order",
           "orespawn:cube_face_order"
-        ]
+        ],
+        "clips_embedded": 2,
+        "clips_equal_within_tolerance": 2,
+        "reference_clips_embedded": 2
       },
       "warnings": []
     },
@@ -385,6 +432,9 @@
       "cubes": 46,
       "clips_shipped": 0,
       "clips_in_spec": 14,
+      "reference_clip_files": 3,
+      "clips_embedded": 3,
+      "reference_offers": [],
       "goals": 5,
       "flags": 2,
       "attacking": "STATE",
@@ -402,7 +452,10 @@
         "dropped_keys": 0,
         "reattached": [
           "orespawn:bone_draw_order"
-        ]
+        ],
+        "clips_embedded": 3,
+        "clips_equal_within_tolerance": 3,
+        "reference_clips_embedded": 3
       },
       "warnings": []
     },
@@ -429,6 +482,9 @@
       "cubes": 26,
       "clips_shipped": 0,
       "clips_in_spec": 13,
+      "reference_clip_files": 2,
+      "clips_embedded": 2,
+      "reference_offers": [],
       "goals": 7,
       "flags": 0,
       "attacking": "NONE",
@@ -446,7 +502,10 @@
         "dropped_keys": 0,
         "reattached": [
           "orespawn:bone_draw_order"
-        ]
+        ],
+        "clips_embedded": 2,
+        "clips_equal_within_tolerance": 2,
+        "reference_clips_embedded": 2
       },
       "warnings": []
     },
@@ -473,6 +532,9 @@
       "cubes": 20,
       "clips_shipped": 0,
       "clips_in_spec": 9,
+      "reference_clip_files": 2,
+      "clips_embedded": 2,
+      "reference_offers": [],
       "goals": 7,
       "flags": 0,
       "attacking": "NONE",
@@ -490,7 +552,10 @@
         "dropped_keys": 0,
         "reattached": [
           "orespawn:bone_draw_order"
-        ]
+        ],
+        "clips_embedded": 2,
+        "clips_equal_within_tolerance": 2,
+        "reference_clips_embedded": 2
       },
       "warnings": []
     },
@@ -518,6 +583,9 @@
       "cubes": 64,
       "clips_shipped": 0,
       "clips_in_spec": 15,
+      "reference_clip_files": 3,
+      "clips_embedded": 3,
+      "reference_offers": [],
       "goals": 5,
       "flags": 1,
       "attacking": "STATE",
@@ -535,7 +603,10 @@
         "dropped_keys": 0,
         "reattached": [
           "orespawn:bone_draw_order"
-        ]
+        ],
+        "clips_embedded": 3,
+        "clips_equal_within_tolerance": 3,
+        "reference_clips_embedded": 3
       },
       "warnings": []
     },
@@ -551,6 +622,7 @@
         "ender_knight.animation.json",
         "ender_knight.bbmodel",
         "ender_knight_reference_idle.animation.json",
+        "ender_knight_reference_scream.animation.json",
         "ender_knight_reference_walk.animation.json",
         "reference/SLOTS.md",
         "reference_enderknight.geo.json",
@@ -561,7 +633,12 @@
       "bones": 40,
       "cubes": 40,
       "clips_shipped": 0,
-      "clips_in_spec": 13,
+      "clips_in_spec": 14,
+      "reference_clip_files": 3,
+      "clips_embedded": 3,
+      "reference_offers": [
+        "scream"
+      ],
       "goals": 7,
       "flags": 1,
       "attacking": "STATE",
@@ -570,7 +647,7 @@
       "locked_bones": 0,
       "lock_mode": "warn",
       "keyed_locked_bones": 0,
-      "effort_hours": 25.0,
+      "effort_hours": 26.0,
       "unlabelled_bones": 0,
       "roundtrip": {
         "equal": true,
@@ -579,7 +656,10 @@
         "dropped_keys": 0,
         "reattached": [
           "orespawn:bone_draw_order"
-        ]
+        ],
+        "clips_embedded": 3,
+        "clips_equal_within_tolerance": 3,
+        "reference_clips_embedded": 3
       },
       "warnings": []
     },
@@ -595,6 +675,7 @@
         "ender_reaper.animation.json",
         "ender_reaper.bbmodel",
         "ender_reaper_reference_idle.animation.json",
+        "ender_reaper_reference_scream.animation.json",
         "ender_reaper_reference_walk.animation.json",
         "reference/SLOTS.md",
         "reference_enderreaper.geo.json",
@@ -605,7 +686,12 @@
       "bones": 66,
       "cubes": 66,
       "clips_shipped": 0,
-      "clips_in_spec": 14,
+      "clips_in_spec": 15,
+      "reference_clip_files": 3,
+      "clips_embedded": 3,
+      "reference_offers": [
+        "scream"
+      ],
       "goals": 7,
       "flags": 1,
       "attacking": "STATE",
@@ -614,7 +700,7 @@
       "locked_bones": 0,
       "lock_mode": "warn",
       "keyed_locked_bones": 0,
-      "effort_hours": 30.2,
+      "effort_hours": 31.2,
       "unlabelled_bones": 0,
       "roundtrip": {
         "equal": true,
@@ -623,7 +709,10 @@
         "dropped_keys": 0,
         "reattached": [
           "orespawn:bone_draw_order"
-        ]
+        ],
+        "clips_embedded": 3,
+        "clips_equal_within_tolerance": 3,
+        "reference_clips_embedded": 3
       },
       "warnings": []
     },
@@ -651,6 +740,9 @@
       "cubes": 29,
       "clips_shipped": 0,
       "clips_in_spec": 11,
+      "reference_clip_files": 3,
+      "clips_embedded": 3,
+      "reference_offers": [],
       "goals": 6,
       "flags": 1,
       "attacking": "STATE",
@@ -668,7 +760,10 @@
         "dropped_keys": 0,
         "reattached": [
           "orespawn:bone_draw_order"
-        ]
+        ],
+        "clips_embedded": 3,
+        "clips_equal_within_tolerance": 3,
+        "reference_clips_embedded": 3
       },
       "warnings": []
     },
@@ -696,6 +791,9 @@
       "cubes": 29,
       "clips_shipped": 0,
       "clips_in_spec": 11,
+      "reference_clip_files": 3,
+      "clips_embedded": 3,
+      "reference_offers": [],
       "goals": 0,
       "flags": 1,
       "attacking": "STATE",
@@ -713,7 +811,10 @@
         "dropped_keys": 0,
         "reattached": [
           "orespawn:bone_draw_order"
-        ]
+        ],
+        "clips_embedded": 3,
+        "clips_equal_within_tolerance": 3,
+        "reference_clips_embedded": 3
       },
       "warnings": []
     },
@@ -741,6 +842,9 @@
       "cubes": 37,
       "clips_shipped": 0,
       "clips_in_spec": 12,
+      "reference_clip_files": 3,
+      "clips_embedded": 3,
+      "reference_offers": [],
       "goals": 4,
       "flags": 1,
       "attacking": "STATE",
@@ -758,7 +862,10 @@
         "dropped_keys": 0,
         "reattached": [
           "orespawn:bone_draw_order"
-        ]
+        ],
+        "clips_embedded": 3,
+        "clips_equal_within_tolerance": 3,
+        "reference_clips_embedded": 3
       },
       "warnings": []
     },
@@ -785,6 +892,9 @@
       "cubes": 9,
       "clips_shipped": 0,
       "clips_in_spec": 14,
+      "reference_clip_files": 2,
+      "clips_embedded": 2,
+      "reference_offers": [],
       "goals": 5,
       "flags": 1,
       "attacking": "STATE",
@@ -802,7 +912,10 @@
         "dropped_keys": 0,
         "reattached": [
           "orespawn:bone_draw_order"
-        ]
+        ],
+        "clips_embedded": 2,
+        "clips_equal_within_tolerance": 2,
+        "reference_clips_embedded": 2
       },
       "warnings": []
     },
@@ -830,6 +943,9 @@
       "cubes": 59,
       "clips_shipped": 0,
       "clips_in_spec": 14,
+      "reference_clip_files": 3,
+      "clips_embedded": 3,
+      "reference_offers": [],
       "goals": 6,
       "flags": 1,
       "attacking": "STATE",
@@ -847,7 +963,10 @@
         "dropped_keys": 0,
         "reattached": [
           "orespawn:bone_draw_order"
-        ]
+        ],
+        "clips_embedded": 3,
+        "clips_equal_within_tolerance": 3,
+        "reference_clips_embedded": 3
       },
       "warnings": []
     },
@@ -863,6 +982,7 @@
         "pitch_black.animation.json",
         "pitch_black.bbmodel",
         "pitch_black_reference_attack.animation.json",
+        "pitch_black_reference_fly.animation.json",
         "pitch_black_reference_idle.animation.json",
         "pitch_black_reference_walk.animation.json",
         "reference/SLOTS.md",
@@ -875,6 +995,9 @@
       "cubes": 101,
       "clips_shipped": 0,
       "clips_in_spec": 16,
+      "reference_clip_files": 4,
+      "clips_embedded": 4,
+      "reference_offers": [],
       "goals": 4,
       "flags": 4,
       "attacking": "STATE",
@@ -892,7 +1015,10 @@
         "dropped_keys": 0,
         "reattached": [
           "orespawn:bone_draw_order"
-        ]
+        ],
+        "clips_embedded": 4,
+        "clips_equal_within_tolerance": 4,
+        "reference_clips_embedded": 4
       },
       "warnings": []
     },
@@ -920,6 +1046,9 @@
       "cubes": 30,
       "clips_shipped": 0,
       "clips_in_spec": 14,
+      "reference_clip_files": 3,
+      "clips_embedded": 3,
+      "reference_offers": [],
       "goals": 8,
       "flags": 1,
       "attacking": "STATE",
@@ -937,7 +1066,10 @@
         "dropped_keys": 0,
         "reattached": [
           "orespawn:bone_draw_order"
-        ]
+        ],
+        "clips_embedded": 3,
+        "clips_equal_within_tolerance": 3,
+        "reference_clips_embedded": 3
       },
       "warnings": []
     },
@@ -964,6 +1096,9 @@
       "cubes": 27,
       "clips_shipped": 0,
       "clips_in_spec": 0,
+      "reference_clip_files": 2,
+      "clips_embedded": 2,
+      "reference_offers": [],
       "goals": 5,
       "flags": 1,
       "attacking": "STATE",
@@ -981,7 +1116,10 @@
         "dropped_keys": 0,
         "reattached": [
           "orespawn:bone_draw_order"
-        ]
+        ],
+        "clips_embedded": 2,
+        "clips_equal_within_tolerance": 2,
+        "reference_clips_embedded": 2
       },
       "warnings": [
         "BONE_UNLABELLED: bone Shape1 has no glossary label",
@@ -1019,7 +1157,6 @@
         "robot2.animation.json",
         "robot2.geo.json",
         "robot_2.bbmodel",
-        "robot_2_reference_attack.animation.json",
         "robot_2_reference_idle.animation.json",
         "robot_2_reference_walk.animation.json",
         "roundtrip.report.json",
@@ -1030,6 +1167,9 @@
       "cubes": 15,
       "clips_shipped": 0,
       "clips_in_spec": 0,
+      "reference_clip_files": 2,
+      "clips_embedded": 2,
+      "reference_offers": [],
       "goals": 5,
       "flags": 1,
       "attacking": "STATE",
@@ -1047,7 +1187,10 @@
         "dropped_keys": 0,
         "reattached": [
           "orespawn:bone_draw_order"
-        ]
+        ],
+        "clips_embedded": 2,
+        "clips_equal_within_tolerance": 2,
+        "reference_clips_embedded": 2
       },
       "warnings": [
         "BONE_UNLABELLED: bone Shape3 has no glossary label",
@@ -1069,7 +1212,6 @@
         "robot3.animation.json",
         "robot3.geo.json",
         "robot_3.bbmodel",
-        "robot_3_reference_attack.animation.json",
         "robot_3_reference_idle.animation.json",
         "robot_3_reference_walk.animation.json",
         "roundtrip.report.json",
@@ -1080,6 +1222,9 @@
       "cubes": 19,
       "clips_shipped": 0,
       "clips_in_spec": 0,
+      "reference_clip_files": 2,
+      "clips_embedded": 2,
+      "reference_offers": [],
       "goals": 5,
       "flags": 1,
       "attacking": "MIXED",
@@ -1097,7 +1242,10 @@
         "dropped_keys": 0,
         "reattached": [
           "orespawn:bone_draw_order"
-        ]
+        ],
+        "clips_embedded": 2,
+        "clips_equal_within_tolerance": 2,
+        "reference_clips_embedded": 2
       },
       "warnings": [
         "ATTACKING_UNCLASSIFIED: DATA_ATTACKING classified MIXED: a 10-tick pulse per in-range think tick: the flag is raised at line(s) [155] every 35 ticks (reloadTicker reset) while a target is in range — before the line-of-sight gate, so it pulses whether or not a shot fires — and cleared when reloadTicker < 25 at line(s) [144] AND cleared on target loss at line(s) [162]"
@@ -1127,6 +1275,9 @@
       "cubes": 56,
       "clips_shipped": 0,
       "clips_in_spec": 0,
+      "reference_clip_files": 3,
+      "clips_embedded": 3,
+      "reference_offers": [],
       "goals": 5,
       "flags": 2,
       "attacking": "EVENT",
@@ -1144,7 +1295,10 @@
         "dropped_keys": 0,
         "reattached": [
           "orespawn:bone_draw_order"
-        ]
+        ],
+        "clips_embedded": 3,
+        "clips_equal_within_tolerance": 3,
+        "reference_clips_embedded": 3
       },
       "warnings": []
     },
@@ -1171,6 +1325,9 @@
       "cubes": 11,
       "clips_shipped": 0,
       "clips_in_spec": 0,
+      "reference_clip_files": 2,
+      "clips_embedded": 2,
+      "reference_offers": [],
       "goals": 5,
       "flags": 1,
       "attacking": "MIXED",
@@ -1188,7 +1345,10 @@
         "dropped_keys": 0,
         "reattached": [
           "orespawn:bone_draw_order"
-        ]
+        ],
+        "clips_embedded": 2,
+        "clips_equal_within_tolerance": 2,
+        "reference_clips_embedded": 2
       },
       "warnings": [
         "ATTACKING_UNCLASSIFIED: DATA_ATTACKING classified MIXED: a 5-tick pulse per in-range think tick: the flag is raised at line(s) [143] every 20 ticks (reloadTicker reset) while a target is in range — before the line-of-sight gate, so it pulses whether or not a shot fires — and cleared when reloadTicker < 15 at line(s) [131] AND cleared on target loss at line(s) [152]"
@@ -1218,6 +1378,9 @@
       "cubes": 23,
       "clips_shipped": 0,
       "clips_in_spec": 14,
+      "reference_clip_files": 3,
+      "clips_embedded": 3,
+      "reference_offers": [],
       "goals": 6,
       "flags": 1,
       "attacking": "STATE",
@@ -1235,7 +1398,10 @@
         "dropped_keys": 0,
         "reattached": [
           "orespawn:bone_draw_order"
-        ]
+        ],
+        "clips_embedded": 3,
+        "clips_equal_within_tolerance": 3,
+        "reference_clips_embedded": 3
       },
       "warnings": []
     },
@@ -1263,6 +1429,9 @@
       "cubes": 34,
       "clips_shipped": 0,
       "clips_in_spec": 14,
+      "reference_clip_files": 3,
+      "clips_embedded": 3,
+      "reference_offers": [],
       "goals": 8,
       "flags": 1,
       "attacking": "STATE",
@@ -1280,7 +1449,10 @@
         "dropped_keys": 0,
         "reattached": [
           "orespawn:bone_draw_order"
-        ]
+        ],
+        "clips_embedded": 3,
+        "clips_equal_within_tolerance": 3,
+        "reference_clips_embedded": 3
       },
       "warnings": []
     },
@@ -1307,6 +1479,9 @@
       "cubes": 3,
       "clips_shipped": 0,
       "clips_in_spec": 8,
+      "reference_clip_files": 2,
+      "clips_embedded": 2,
+      "reference_offers": [],
       "goals": 5,
       "flags": 1,
       "attacking": "STATE",
@@ -1324,7 +1499,10 @@
         "dropped_keys": 0,
         "reattached": [
           "orespawn:bone_draw_order"
-        ]
+        ],
+        "clips_embedded": 2,
+        "clips_equal_within_tolerance": 2,
+        "reference_clips_embedded": 2
       },
       "warnings": []
     },
@@ -1352,6 +1530,9 @@
       "cubes": 27,
       "clips_shipped": 0,
       "clips_in_spec": 12,
+      "reference_clip_files": 3,
+      "clips_embedded": 3,
+      "reference_offers": [],
       "goals": 6,
       "flags": 1,
       "attacking": "STATE",
@@ -1369,7 +1550,10 @@
         "dropped_keys": 0,
         "reattached": [
           "orespawn:bone_draw_order"
-        ]
+        ],
+        "clips_embedded": 3,
+        "clips_equal_within_tolerance": 3,
+        "reference_clips_embedded": 3
       },
       "warnings": []
     },
@@ -1397,6 +1581,9 @@
       "cubes": 17,
       "clips_shipped": 0,
       "clips_in_spec": 13,
+      "reference_clip_files": 3,
+      "clips_embedded": 3,
+      "reference_offers": [],
       "goals": 4,
       "flags": 1,
       "attacking": "STATE",
@@ -1414,7 +1601,10 @@
         "dropped_keys": 0,
         "reattached": [
           "orespawn:bone_draw_order"
-        ]
+        ],
+        "clips_embedded": 3,
+        "clips_equal_within_tolerance": 3,
+        "reference_clips_embedded": 3
       },
       "warnings": []
     },
@@ -1442,6 +1632,9 @@
       "cubes": 71,
       "clips_shipped": 0,
       "clips_in_spec": 18,
+      "reference_clip_files": 3,
+      "clips_embedded": 3,
+      "reference_offers": [],
       "goals": 5,
       "flags": 2,
       "attacking": "STATE",
@@ -1459,7 +1652,10 @@
         "dropped_keys": 0,
         "reattached": [
           "orespawn:bone_draw_order"
-        ]
+        ],
+        "clips_embedded": 3,
+        "clips_equal_within_tolerance": 3,
+        "reference_clips_embedded": 3
       },
       "warnings": []
     },
@@ -1487,6 +1683,9 @@
       "cubes": 111,
       "clips_shipped": 0,
       "clips_in_spec": 18,
+      "reference_clip_files": 3,
+      "clips_embedded": 3,
+      "reference_offers": [],
       "goals": 2,
       "flags": 2,
       "attacking": "STATE?",
@@ -1504,7 +1703,10 @@
         "dropped_keys": 0,
         "reattached": [
           "orespawn:bone_draw_order"
-        ]
+        ],
+        "clips_embedded": 3,
+        "clips_equal_within_tolerance": 3,
+        "reference_clips_embedded": 3
       },
       "warnings": [
         "ATTACKING_UNCLASSIFIED: DATA_ATTACKING classified STATE?: cleared unconditionally at line(s) [451] (the enclosing branch decides; read the source)"
@@ -1534,6 +1736,9 @@
       "cubes": 119,
       "clips_shipped": 0,
       "clips_in_spec": 23,
+      "reference_clip_files": 3,
+      "clips_embedded": 3,
+      "reference_offers": [],
       "goals": 5,
       "flags": 3,
       "attacking": "STATE",
@@ -1551,7 +1756,10 @@
         "dropped_keys": 0,
         "reattached": [
           "orespawn:bone_draw_order"
-        ]
+        ],
+        "clips_embedded": 3,
+        "clips_equal_within_tolerance": 3,
+        "reference_clips_embedded": 3
       },
       "warnings": []
     },
@@ -1577,6 +1785,9 @@
       "cubes": 130,
       "clips_shipped": 8,
       "clips_in_spec": 8,
+      "reference_clip_files": 0,
+      "clips_embedded": 8,
+      "reference_offers": [],
       "goals": 5,
       "flags": 6,
       "attacking": "STATE",
@@ -1592,7 +1803,10 @@
         "bone_order_preserved": true,
         "differences": 0,
         "dropped_keys": 0,
-        "reattached": []
+        "reattached": [],
+        "clips_embedded": 8,
+        "clips_equal_within_tolerance": 8,
+        "reference_clips_embedded": 0
       },
       "warnings": [
         "LOCKED_BONES_KEYED: the shipped clips key 26 of the 27 SPEC-locked bones (LHead, LHead12, LHead4, Lwing1, NeckL1, NeckL13...): allowed and warned — Keying a locked bone is allowed; the checker warns, and the hitbox part follows the bone in-game (the consequence, so keep such keys deliberate). Renaming, re-parenting or deleting a locked bone is refused."
@@ -1622,6 +1836,9 @@
       "cubes": 23,
       "clips_shipped": 0,
       "clips_in_spec": 16,
+      "reference_clip_files": 3,
+      "clips_embedded": 3,
+      "reference_offers": [],
       "goals": 0,
       "flags": 1,
       "attacking": "STATE",
@@ -1640,7 +1857,10 @@
         "reattached": [
           "orespawn:bone_draw_order",
           "orespawn:cube_face_order"
-        ]
+        ],
+        "clips_embedded": 3,
+        "clips_equal_within_tolerance": 3,
+        "reference_clips_embedded": 3
       },
       "warnings": []
     },
@@ -1667,6 +1887,9 @@
       "cubes": 14,
       "clips_shipped": 2,
       "clips_in_spec": 7,
+      "reference_clip_files": 2,
+      "clips_embedded": 4,
+      "reference_offers": [],
       "goals": 0,
       "flags": 0,
       "attacking": "NONE",
@@ -1684,7 +1907,10 @@
         "dropped_keys": 0,
         "reattached": [
           "orespawn:bone_draw_order"
-        ]
+        ],
+        "clips_embedded": 4,
+        "clips_equal_within_tolerance": 4,
+        "reference_clips_embedded": 2
       },
       "warnings": []
     },
@@ -1712,6 +1938,9 @@
       "cubes": 80,
       "clips_shipped": 0,
       "clips_in_spec": 22,
+      "reference_clip_files": 3,
+      "clips_embedded": 3,
+      "reference_offers": [],
       "goals": 6,
       "flags": 1,
       "attacking": "STATE",
@@ -1729,7 +1958,10 @@
         "dropped_keys": 0,
         "reattached": [
           "orespawn:bone_draw_order"
-        ]
+        ],
+        "clips_embedded": 3,
+        "clips_equal_within_tolerance": 3,
+        "reference_clips_embedded": 3
       },
       "warnings": []
     },
@@ -1757,6 +1989,9 @@
       "cubes": 78,
       "clips_shipped": 0,
       "clips_in_spec": 13,
+      "reference_clip_files": 3,
+      "clips_embedded": 3,
+      "reference_offers": [],
       "goals": 6,
       "flags": 1,
       "attacking": "STATE",
@@ -1774,7 +2009,10 @@
         "dropped_keys": 0,
         "reattached": [
           "orespawn:bone_draw_order"
-        ]
+        ],
+        "clips_embedded": 3,
+        "clips_equal_within_tolerance": 3,
+        "reference_clips_embedded": 3
       },
       "warnings": []
     },
@@ -1802,6 +2040,9 @@
       "cubes": 37,
       "clips_shipped": 0,
       "clips_in_spec": 10,
+      "reference_clip_files": 3,
+      "clips_embedded": 3,
+      "reference_offers": [],
       "goals": 6,
       "flags": 1,
       "attacking": "STATE",
@@ -1819,7 +2060,10 @@
         "dropped_keys": 0,
         "reattached": [
           "orespawn:bone_draw_order"
-        ]
+        ],
+        "clips_embedded": 3,
+        "clips_equal_within_tolerance": 3,
+        "reference_clips_embedded": 3
       },
       "warnings": []
     },
@@ -1846,6 +2090,9 @@
       "cubes": 42,
       "clips_shipped": 0,
       "clips_in_spec": 15,
+      "reference_clip_files": 2,
+      "clips_embedded": 2,
+      "reference_offers": [],
       "goals": 6,
       "flags": 0,
       "attacking": "NONE",
@@ -1863,7 +2110,10 @@
         "dropped_keys": 0,
         "reattached": [
           "orespawn:bone_draw_order"
-        ]
+        ],
+        "clips_embedded": 2,
+        "clips_equal_within_tolerance": 2,
+        "reference_clips_embedded": 2
       },
       "warnings": []
     },
@@ -1891,6 +2141,9 @@
       "cubes": 5,
       "clips_shipped": 0,
       "clips_in_spec": 12,
+      "reference_clip_files": 3,
+      "clips_embedded": 3,
+      "reference_offers": [],
       "goals": 3,
       "flags": 1,
       "attacking": "STATE",
@@ -1908,7 +2161,10 @@
         "dropped_keys": 0,
         "reattached": [
           "orespawn:bone_draw_order"
-        ]
+        ],
+        "clips_embedded": 3,
+        "clips_equal_within_tolerance": 3,
+        "reference_clips_embedded": 3
       },
       "warnings": []
     },
@@ -1936,6 +2192,9 @@
       "cubes": 59,
       "clips_shipped": 0,
       "clips_in_spec": 15,
+      "reference_clip_files": 3,
+      "clips_embedded": 3,
+      "reference_offers": [],
       "goals": 0,
       "flags": 1,
       "attacking": "STATE",
@@ -1953,7 +2212,10 @@
         "dropped_keys": 0,
         "reattached": [
           "orespawn:bone_draw_order"
-        ]
+        ],
+        "clips_embedded": 3,
+        "clips_equal_within_tolerance": 3,
+        "reference_clips_embedded": 3
       },
       "warnings": []
     },
@@ -1981,6 +2243,9 @@
       "cubes": 36,
       "clips_shipped": 0,
       "clips_in_spec": 10,
+      "reference_clip_files": 3,
+      "clips_embedded": 3,
+      "reference_offers": [],
       "goals": 0,
       "flags": 1,
       "attacking": "STATE",
@@ -1998,7 +2263,10 @@
         "dropped_keys": 0,
         "reattached": [
           "orespawn:bone_draw_order"
-        ]
+        ],
+        "clips_embedded": 3,
+        "clips_equal_within_tolerance": 3,
+        "reference_clips_embedded": 3
       },
       "warnings": []
     },
@@ -2026,6 +2294,9 @@
       "cubes": 37,
       "clips_shipped": 0,
       "clips_in_spec": 12,
+      "reference_clip_files": 3,
+      "clips_embedded": 3,
+      "reference_offers": [],
       "goals": 5,
       "flags": 1,
       "attacking": "STATE",
@@ -2043,7 +2314,10 @@
         "dropped_keys": 0,
         "reattached": [
           "orespawn:bone_draw_order"
-        ]
+        ],
+        "clips_embedded": 3,
+        "clips_equal_within_tolerance": 3,
+        "reference_clips_embedded": 3
       },
       "warnings": []
     },
@@ -2071,6 +2345,9 @@
       "cubes": 12,
       "clips_shipped": 0,
       "clips_in_spec": 11,
+      "reference_clip_files": 3,
+      "clips_embedded": 3,
+      "reference_offers": [],
       "goals": 6,
       "flags": 1,
       "attacking": "STATE",
@@ -2088,7 +2365,10 @@
         "dropped_keys": 0,
         "reattached": [
           "orespawn:bone_draw_order"
-        ]
+        ],
+        "clips_embedded": 3,
+        "clips_equal_within_tolerance": 3,
+        "reference_clips_embedded": 3
       },
       "warnings": []
     },
@@ -2115,6 +2395,9 @@
       "cubes": 24,
       "clips_shipped": 0,
       "clips_in_spec": 0,
+      "reference_clip_files": 2,
+      "clips_embedded": 2,
+      "reference_offers": [],
       "goals": 0,
       "flags": 0,
       "attacking": "NONE",
@@ -2132,7 +2415,10 @@
         "dropped_keys": 0,
         "reattached": [
           "orespawn:bone_draw_order"
-        ]
+        ],
+        "clips_embedded": 2,
+        "clips_equal_within_tolerance": 2,
+        "reference_clips_embedded": 2
       },
       "warnings": []
     },
@@ -2150,7 +2436,6 @@
         "roundtrip.report.json",
         "scorpion.animation.json",
         "scorpion.bbmodel",
-        "scorpion_reference_attack.animation.json",
         "scorpion_reference_idle.animation.json",
         "scorpion_reference_walk.animation.json",
         "spec.manifest.json",
@@ -2160,6 +2445,9 @@
       "cubes": 22,
       "clips_shipped": 0,
       "clips_in_spec": 14,
+      "reference_clip_files": 2,
+      "clips_embedded": 2,
+      "reference_offers": [],
       "goals": 5,
       "flags": 1,
       "attacking": "STATE",
@@ -2177,7 +2465,10 @@
         "dropped_keys": 0,
         "reattached": [
           "orespawn:bone_draw_order"
-        ]
+        ],
+        "clips_embedded": 2,
+        "clips_equal_within_tolerance": 2,
+        "reference_clips_embedded": 2
       },
       "warnings": []
     },
@@ -2205,6 +2496,9 @@
       "cubes": 93,
       "clips_shipped": 0,
       "clips_in_spec": 12,
+      "reference_clip_files": 3,
+      "clips_embedded": 3,
+      "reference_offers": [],
       "goals": 6,
       "flags": 1,
       "attacking": "STATE",
@@ -2222,7 +2516,10 @@
         "dropped_keys": 0,
         "reattached": [
           "orespawn:bone_draw_order"
-        ]
+        ],
+        "clips_embedded": 3,
+        "clips_equal_within_tolerance": 3,
+        "reference_clips_embedded": 3
       },
       "warnings": []
     },
@@ -2249,6 +2546,9 @@
       "cubes": 21,
       "clips_shipped": 0,
       "clips_in_spec": 11,
+      "reference_clip_files": 2,
+      "clips_embedded": 2,
+      "reference_offers": [],
       "goals": 0,
       "flags": 0,
       "attacking": "NONE",
@@ -2267,7 +2567,10 @@
         "reattached": [
           "orespawn:bone_draw_order",
           "orespawn:cube_face_order"
-        ]
+        ],
+        "clips_embedded": 2,
+        "clips_equal_within_tolerance": 2,
+        "reference_clips_embedded": 2
       },
       "warnings": []
     },
@@ -2289,12 +2592,18 @@
         "triffid.bbmodel",
         "triffid_reference_attack.animation.json",
         "triffid_reference_idle.animation.json",
+        "triffid_reference_open.animation.json",
         "triffid_reference_walk.animation.json"
       ],
       "bones": 178,
       "cubes": 178,
       "clips_shipped": 0,
       "clips_in_spec": 11,
+      "reference_clip_files": 4,
+      "clips_embedded": 4,
+      "reference_offers": [
+        "open"
+      ],
       "goals": 4,
       "flags": 2,
       "attacking": "STATE",
@@ -2312,7 +2621,10 @@
         "dropped_keys": 0,
         "reattached": [
           "orespawn:bone_draw_order"
-        ]
+        ],
+        "clips_embedded": 4,
+        "clips_equal_within_tolerance": 4,
+        "reference_clips_embedded": 4
       },
       "warnings": []
     },
@@ -2340,6 +2652,9 @@
       "cubes": 134,
       "clips_shipped": 0,
       "clips_in_spec": 20,
+      "reference_clip_files": 3,
+      "clips_embedded": 3,
+      "reference_offers": [],
       "goals": 6,
       "flags": 1,
       "attacking": "STATE",
@@ -2357,7 +2672,10 @@
         "dropped_keys": 0,
         "reattached": [
           "orespawn:bone_draw_order"
-        ]
+        ],
+        "clips_embedded": 3,
+        "clips_equal_within_tolerance": 3,
+        "reference_clips_embedded": 3
       },
       "warnings": []
     },
@@ -2384,6 +2702,9 @@
       "cubes": 1,
       "clips_shipped": 0,
       "clips_in_spec": 0,
+      "reference_clip_files": 2,
+      "clips_embedded": 2,
+      "reference_offers": [],
       "goals": 0,
       "flags": 0,
       "attacking": "NONE",
@@ -2402,7 +2723,10 @@
         "reattached": [
           "orespawn:bone_draw_order",
           "orespawn:cube_face_order"
-        ]
+        ],
+        "clips_embedded": 2,
+        "clips_equal_within_tolerance": 2,
+        "reference_clips_embedded": 2
       },
       "warnings": []
     },
@@ -2429,6 +2753,9 @@
       "cubes": 3,
       "clips_shipped": 0,
       "clips_in_spec": 11,
+      "reference_clip_files": 2,
+      "clips_embedded": 2,
+      "reference_offers": [],
       "goals": 0,
       "flags": 0,
       "attacking": "NONE",
@@ -2446,7 +2773,10 @@
         "dropped_keys": 0,
         "reattached": [
           "orespawn:bone_draw_order"
-        ]
+        ],
+        "clips_embedded": 2,
+        "clips_equal_within_tolerance": 2,
+        "reference_clips_embedded": 2
       },
       "warnings": []
     },
@@ -2473,6 +2803,9 @@
       "cubes": 8,
       "clips_shipped": 0,
       "clips_in_spec": 13,
+      "reference_clip_files": 2,
+      "clips_embedded": 2,
+      "reference_offers": [],
       "goals": 0,
       "flags": 0,
       "attacking": "NONE",
@@ -2490,7 +2823,10 @@
         "dropped_keys": 0,
         "reattached": [
           "orespawn:bone_draw_order"
-        ]
+        ],
+        "clips_embedded": 2,
+        "clips_equal_within_tolerance": 2,
+        "reference_clips_embedded": 2
       },
       "warnings": []
     },
@@ -2517,6 +2853,9 @@
       "cubes": 23,
       "clips_shipped": 0,
       "clips_in_spec": 13,
+      "reference_clip_files": 2,
+      "clips_embedded": 2,
+      "reference_offers": [],
       "goals": 4,
       "flags": 0,
       "attacking": "NONE",
@@ -2534,7 +2873,10 @@
         "dropped_keys": 0,
         "reattached": [
           "orespawn:bone_draw_order"
-        ]
+        ],
+        "clips_embedded": 2,
+        "clips_equal_within_tolerance": 2,
+        "reference_clips_embedded": 2
       },
       "warnings": []
     },
@@ -2561,6 +2903,9 @@
       "cubes": 52,
       "clips_shipped": 0,
       "clips_in_spec": 9,
+      "reference_clip_files": 2,
+      "clips_embedded": 2,
+      "reference_offers": [],
       "goals": 7,
       "flags": 0,
       "attacking": "NONE",
@@ -2578,7 +2923,10 @@
         "dropped_keys": 0,
         "reattached": [
           "orespawn:bone_draw_order"
-        ]
+        ],
+        "clips_embedded": 2,
+        "clips_equal_within_tolerance": 2,
+        "reference_clips_embedded": 2
       },
       "warnings": []
     },
@@ -2605,6 +2953,9 @@
       "cubes": 9,
       "clips_shipped": 4,
       "clips_in_spec": 11,
+      "reference_clip_files": 2,
+      "clips_embedded": 6,
+      "reference_offers": [],
       "goals": 8,
       "flags": 0,
       "attacking": "NONE",
@@ -2622,7 +2973,10 @@
         "dropped_keys": 0,
         "reattached": [
           "orespawn:bone_draw_order"
-        ]
+        ],
+        "clips_embedded": 6,
+        "clips_equal_within_tolerance": 6,
+        "reference_clips_embedded": 2
       },
       "warnings": []
     },
@@ -2649,6 +3003,9 @@
       "cubes": 12,
       "clips_shipped": 0,
       "clips_in_spec": 8,
+      "reference_clip_files": 2,
+      "clips_embedded": 2,
+      "reference_offers": [],
       "goals": 8,
       "flags": 0,
       "attacking": "NONE",
@@ -2666,7 +3023,10 @@
         "dropped_keys": 0,
         "reattached": [
           "orespawn:bone_draw_order"
-        ]
+        ],
+        "clips_embedded": 2,
+        "clips_equal_within_tolerance": 2,
+        "reference_clips_embedded": 2
       },
       "warnings": []
     },
@@ -2682,6 +3042,7 @@
         "chipmunk.animation.json",
         "chipmunk.bbmodel",
         "chipmunk_reference_idle.animation.json",
+        "chipmunk_reference_sit.animation.json",
         "chipmunk_reference_walk.animation.json",
         "reference/SLOTS.md",
         "reference_chipmunk.geo.json",
@@ -2693,6 +3054,11 @@
       "cubes": 18,
       "clips_shipped": 0,
       "clips_in_spec": 10,
+      "reference_clip_files": 3,
+      "clips_embedded": 3,
+      "reference_offers": [
+        "sit"
+      ],
       "goals": 12,
       "flags": 2,
       "attacking": "NONE",
@@ -2710,7 +3076,10 @@
         "dropped_keys": 0,
         "reattached": [
           "orespawn:bone_draw_order"
-        ]
+        ],
+        "clips_embedded": 3,
+        "clips_equal_within_tolerance": 3,
+        "reference_clips_embedded": 3
       },
       "warnings": []
     },
@@ -2742,6 +3111,9 @@
       "cubes": 16,
       "clips_shipped": 6,
       "clips_in_spec": 14,
+      "reference_clip_files": 2,
+      "clips_embedded": 8,
+      "reference_offers": [],
       "goals": 0,
       "flags": 1,
       "attacking": "NONE",
@@ -2759,7 +3131,10 @@
         "dropped_keys": 0,
         "reattached": [
           "orespawn:bone_draw_order"
-        ]
+        ],
+        "clips_embedded": 8,
+        "clips_equal_within_tolerance": 8,
+        "reference_clips_embedded": 2
       },
       "warnings": []
     },
@@ -2786,6 +3161,9 @@
       "cubes": 1,
       "clips_shipped": 0,
       "clips_in_spec": 0,
+      "reference_clip_files": 2,
+      "clips_embedded": 2,
+      "reference_offers": [],
       "goals": 1,
       "flags": 0,
       "attacking": "NONE",
@@ -2803,7 +3181,10 @@
         "dropped_keys": 0,
         "reattached": [
           "orespawn:bone_draw_order"
-        ]
+        ],
+        "clips_embedded": 2,
+        "clips_equal_within_tolerance": 2,
+        "reference_clips_embedded": 2
       },
       "warnings": []
     },
@@ -2830,6 +3211,9 @@
       "cubes": 13,
       "clips_shipped": 0,
       "clips_in_spec": 9,
+      "reference_clip_files": 2,
+      "clips_embedded": 2,
+      "reference_offers": [],
       "goals": 8,
       "flags": 0,
       "attacking": "NONE",
@@ -2847,7 +3231,10 @@
         "dropped_keys": 0,
         "reattached": [
           "orespawn:bone_draw_order"
-        ]
+        ],
+        "clips_embedded": 2,
+        "clips_equal_within_tolerance": 2,
+        "reference_clips_embedded": 2
       },
       "warnings": []
     },
@@ -2874,6 +3261,9 @@
       "cubes": 6,
       "clips_shipped": 0,
       "clips_in_spec": 7,
+      "reference_clip_files": 2,
+      "clips_embedded": 2,
+      "reference_offers": [],
       "goals": 7,
       "flags": 0,
       "attacking": "NONE",
@@ -2891,7 +3281,10 @@
         "dropped_keys": 0,
         "reattached": [
           "orespawn:bone_draw_order"
-        ]
+        ],
+        "clips_embedded": 2,
+        "clips_equal_within_tolerance": 2,
+        "reference_clips_embedded": 2
       },
       "warnings": []
     },
@@ -2907,6 +3300,7 @@
         "frog.animation.json",
         "frog.bbmodel",
         "frog_reference_idle.animation.json",
+        "frog_reference_sing.animation.json",
         "frog_reference_walk.animation.json",
         "reference/SLOTS.md",
         "reference_frog.geo.json",
@@ -2918,6 +3312,11 @@
       "cubes": 10,
       "clips_shipped": 0,
       "clips_in_spec": 13,
+      "reference_clip_files": 3,
+      "clips_embedded": 3,
+      "reference_offers": [
+        "sing"
+      ],
       "goals": 3,
       "flags": 1,
       "attacking": "NONE",
@@ -2935,7 +3334,10 @@
         "dropped_keys": 0,
         "reattached": [
           "orespawn:bone_draw_order"
-        ]
+        ],
+        "clips_embedded": 3,
+        "clips_equal_within_tolerance": 3,
+        "reference_clips_embedded": 3
       },
       "warnings": []
     },
@@ -2950,6 +3352,7 @@
         "SPEC.md",
         "gazelle.animation.json",
         "gazelle.bbmodel",
+        "gazelle_reference_crouch.animation.json",
         "gazelle_reference_idle.animation.json",
         "gazelle_reference_walk.animation.json",
         "reference/SLOTS.md",
@@ -2961,7 +3364,12 @@
       "bones": 34,
       "cubes": 34,
       "clips_shipped": 0,
-      "clips_in_spec": 12,
+      "clips_in_spec": 13,
+      "reference_clip_files": 3,
+      "clips_embedded": 3,
+      "reference_offers": [
+        "crouch"
+      ],
       "goals": 10,
       "flags": 0,
       "attacking": "NONE",
@@ -2970,7 +3378,7 @@
       "locked_bones": 0,
       "lock_mode": "warn",
       "keyed_locked_bones": 0,
-      "effort_hours": 20.8,
+      "effort_hours": 21.8,
       "unlabelled_bones": 0,
       "roundtrip": {
         "equal": true,
@@ -2979,7 +3387,10 @@
         "dropped_keys": 0,
         "reattached": [
           "orespawn:bone_draw_order"
-        ]
+        ],
+        "clips_embedded": 3,
+        "clips_equal_within_tolerance": 3,
+        "reference_clips_embedded": 3
       },
       "warnings": []
     },
@@ -3006,6 +3417,9 @@
       "cubes": 16,
       "clips_shipped": 7,
       "clips_in_spec": 16,
+      "reference_clip_files": 2,
+      "clips_embedded": 9,
+      "reference_offers": [],
       "goals": 0,
       "flags": 0,
       "attacking": "NONE",
@@ -3024,7 +3438,10 @@
         "reattached": [
           "orespawn:bone_draw_order",
           "orespawn:cube_face_order"
-        ]
+        ],
+        "clips_embedded": 9,
+        "clips_equal_within_tolerance": 9,
+        "reference_clips_embedded": 2
       },
       "warnings": []
     },
@@ -3051,6 +3468,9 @@
       "cubes": 3,
       "clips_shipped": 0,
       "clips_in_spec": 0,
+      "reference_clip_files": 2,
+      "clips_embedded": 2,
+      "reference_offers": [],
       "goals": 0,
       "flags": 0,
       "attacking": "NONE",
@@ -3068,7 +3488,10 @@
         "dropped_keys": 0,
         "reattached": [
           "orespawn:bone_draw_order"
-        ]
+        ],
+        "clips_embedded": 2,
+        "clips_equal_within_tolerance": 2,
+        "reference_clips_embedded": 2
       },
       "warnings": []
     },
@@ -3095,6 +3518,9 @@
       "cubes": 3,
       "clips_shipped": 0,
       "clips_in_spec": 0,
+      "reference_clip_files": 2,
+      "clips_embedded": 2,
+      "reference_offers": [],
       "goals": 0,
       "flags": 0,
       "attacking": "NONE",
@@ -3112,7 +3538,10 @@
         "dropped_keys": 0,
         "reattached": [
           "orespawn:bone_draw_order"
-        ]
+        ],
+        "clips_embedded": 2,
+        "clips_equal_within_tolerance": 2,
+        "reference_clips_embedded": 2
       },
       "warnings": []
     },
@@ -3127,6 +3556,7 @@
         "SPEC.md",
         "peacock.animation.json",
         "peacock.bbmodel",
+        "peacock_reference_display.animation.json",
         "peacock_reference_idle.animation.json",
         "peacock_reference_walk.animation.json",
         "reference/SLOTS.md",
@@ -3139,6 +3569,11 @@
       "cubes": 16,
       "clips_shipped": 0,
       "clips_in_spec": 11,
+      "reference_clip_files": 3,
+      "clips_embedded": 3,
+      "reference_offers": [
+        "display"
+      ],
       "goals": 7,
       "flags": 0,
       "attacking": "NONE",
@@ -3156,7 +3591,10 @@
         "dropped_keys": 0,
         "reattached": [
           "orespawn:bone_draw_order"
-        ]
+        ],
+        "clips_embedded": 3,
+        "clips_equal_within_tolerance": 3,
+        "reference_clips_embedded": 3
       },
       "warnings": []
     },
@@ -3183,6 +3621,9 @@
       "cubes": 14,
       "clips_shipped": 0,
       "clips_in_spec": 10,
+      "reference_clip_files": 2,
+      "clips_embedded": 2,
+      "reference_offers": [],
       "goals": 7,
       "flags": 0,
       "attacking": "NONE",
@@ -3200,7 +3641,10 @@
         "dropped_keys": 0,
         "reattached": [
           "orespawn:bone_draw_order"
-        ]
+        ],
+        "clips_embedded": 2,
+        "clips_equal_within_tolerance": 2,
+        "reference_clips_embedded": 2
       },
       "warnings": []
     },
@@ -3227,6 +3671,9 @@
       "cubes": 20,
       "clips_shipped": 3,
       "clips_in_spec": 8,
+      "reference_clip_files": 2,
+      "clips_embedded": 5,
+      "reference_offers": [],
       "goals": 2,
       "flags": 0,
       "attacking": "NONE",
@@ -3244,7 +3691,10 @@
         "dropped_keys": 0,
         "reattached": [
           "orespawn:bone_draw_order"
-        ]
+        ],
+        "clips_embedded": 5,
+        "clips_equal_within_tolerance": 5,
+        "reference_clips_embedded": 2
       },
       "warnings": []
     },
@@ -3271,6 +3721,9 @@
       "cubes": 8,
       "clips_shipped": 2,
       "clips_in_spec": 6,
+      "reference_clip_files": 2,
+      "clips_embedded": 4,
+      "reference_offers": [],
       "goals": 0,
       "flags": 0,
       "attacking": "NONE",
@@ -3288,7 +3741,10 @@
         "dropped_keys": 0,
         "reattached": [
           "orespawn:bone_draw_order"
-        ]
+        ],
+        "clips_embedded": 4,
+        "clips_equal_within_tolerance": 4,
+        "reference_clips_embedded": 2
       },
       "warnings": []
     },
@@ -3315,6 +3771,9 @@
       "cubes": 11,
       "clips_shipped": 0,
       "clips_in_spec": 8,
+      "reference_clip_files": 2,
+      "clips_embedded": 2,
+      "reference_offers": [],
       "goals": 3,
       "flags": 1,
       "attacking": "NONE",
@@ -3332,7 +3791,10 @@
         "dropped_keys": 0,
         "reattached": [
           "orespawn:bone_draw_order"
-        ]
+        ],
+        "clips_embedded": 2,
+        "clips_equal_within_tolerance": 2,
+        "reference_clips_embedded": 2
       },
       "warnings": []
     },
@@ -3359,6 +3821,9 @@
       "cubes": 26,
       "clips_shipped": 3,
       "clips_in_spec": 9,
+      "reference_clip_files": 2,
+      "clips_embedded": 5,
+      "reference_offers": [],
       "goals": 1,
       "flags": 0,
       "attacking": "NONE",
@@ -3376,7 +3841,10 @@
         "dropped_keys": 0,
         "reattached": [
           "orespawn:bone_draw_order"
-        ]
+        ],
+        "clips_embedded": 5,
+        "clips_equal_within_tolerance": 5,
+        "reference_clips_embedded": 2
       },
       "warnings": []
     },
@@ -3403,6 +3871,9 @@
       "cubes": 20,
       "clips_shipped": 3,
       "clips_in_spec": 9,
+      "reference_clip_files": 2,
+      "clips_embedded": 5,
+      "reference_offers": [],
       "goals": 4,
       "flags": 0,
       "attacking": "NONE",
@@ -3420,7 +3891,10 @@
         "dropped_keys": 0,
         "reattached": [
           "orespawn:bone_draw_order"
-        ]
+        ],
+        "clips_embedded": 5,
+        "clips_equal_within_tolerance": 5,
+        "reference_clips_embedded": 2
       },
       "warnings": []
     },
@@ -3447,6 +3921,9 @@
       "cubes": 20,
       "clips_shipped": 3,
       "clips_in_spec": 8,
+      "reference_clip_files": 2,
+      "clips_embedded": 5,
+      "reference_offers": [],
       "goals": 2,
       "flags": 0,
       "attacking": "NONE",
@@ -3464,7 +3941,10 @@
         "dropped_keys": 0,
         "reattached": [
           "orespawn:bone_draw_order"
-        ]
+        ],
+        "clips_embedded": 5,
+        "clips_equal_within_tolerance": 5,
+        "reference_clips_embedded": 2
       },
       "warnings": []
     },
@@ -3491,6 +3971,9 @@
       "cubes": 50,
       "clips_shipped": 0,
       "clips_in_spec": 14,
+      "reference_clip_files": 2,
+      "clips_embedded": 2,
+      "reference_offers": [],
       "goals": 7,
       "flags": 0,
       "attacking": "NONE",
@@ -3508,7 +3991,10 @@
         "dropped_keys": 0,
         "reattached": [
           "orespawn:bone_draw_order"
-        ]
+        ],
+        "clips_embedded": 2,
+        "clips_equal_within_tolerance": 2,
+        "reference_clips_embedded": 2
       },
       "warnings": []
     },
@@ -3535,6 +4021,9 @@
       "cubes": 20,
       "clips_shipped": 3,
       "clips_in_spec": 9,
+      "reference_clip_files": 2,
+      "clips_embedded": 5,
+      "reference_offers": [],
       "goals": 4,
       "flags": 0,
       "attacking": "NONE",
@@ -3552,7 +4041,10 @@
         "dropped_keys": 0,
         "reattached": [
           "orespawn:bone_draw_order"
-        ]
+        ],
+        "clips_embedded": 5,
+        "clips_equal_within_tolerance": 5,
+        "reference_clips_embedded": 2
       },
       "warnings": []
     },
@@ -3579,6 +4071,9 @@
       "cubes": 2,
       "clips_shipped": 2,
       "clips_in_spec": 5,
+      "reference_clip_files": 2,
+      "clips_embedded": 4,
+      "reference_offers": [],
       "goals": 0,
       "flags": 0,
       "attacking": "NONE",
@@ -3596,7 +4091,10 @@
         "dropped_keys": 0,
         "reattached": [
           "orespawn:bone_draw_order"
-        ]
+        ],
+        "clips_embedded": 4,
+        "clips_equal_within_tolerance": 4,
+        "reference_clips_embedded": 2
       },
       "warnings": []
     },
@@ -3623,6 +4121,9 @@
       "cubes": 20,
       "clips_shipped": 3,
       "clips_in_spec": 8,
+      "reference_clip_files": 2,
+      "clips_embedded": 5,
+      "reference_offers": [],
       "goals": 2,
       "flags": 0,
       "attacking": "NONE",
@@ -3640,7 +4141,10 @@
         "dropped_keys": 0,
         "reattached": [
           "orespawn:bone_draw_order"
-        ]
+        ],
+        "clips_embedded": 5,
+        "clips_equal_within_tolerance": 5,
+        "reference_clips_embedded": 2
       },
       "warnings": []
     },
@@ -3712,6 +4216,9 @@
       "cubes": 7,
       "clips_shipped": 0,
       "clips_in_spec": 12,
+      "reference_clip_files": 0,
+      "clips_embedded": 0,
+      "reference_offers": [],
       "goals": 16,
       "flags": 5,
       "attacking": "NONE",
@@ -3729,7 +4236,10 @@
         "dropped_keys": 2,
         "reattached": [
           "orespawn:bone_draw_order"
-        ]
+        ],
+        "clips_embedded": 0,
+        "clips_equal_within_tolerance": 0,
+        "reference_clips_embedded": 0
       },
       "warnings": []
     },
@@ -3756,6 +4266,9 @@
       "cubes": 21,
       "clips_shipped": 0,
       "clips_in_spec": 10,
+      "reference_clip_files": 2,
+      "clips_embedded": 2,
+      "reference_offers": [],
       "goals": 10,
       "flags": 0,
       "attacking": "NONE",
@@ -3773,7 +4286,10 @@
         "dropped_keys": 0,
         "reattached": [
           "orespawn:bone_draw_order"
-        ]
+        ],
+        "clips_embedded": 2,
+        "clips_equal_within_tolerance": 2,
+        "reference_clips_embedded": 2
       },
       "warnings": []
     },
@@ -3789,7 +4305,9 @@
         "dragon.animation.json",
         "dragon.bbmodel",
         "dragon_reference_attack.animation.json",
+        "dragon_reference_fly.animation.json",
         "dragon_reference_idle.animation.json",
+        "dragon_reference_sit.animation.json",
         "dragon_reference_walk.animation.json",
         "reference/SLOTS.md",
         "reference_dragon.geo.json",
@@ -3801,7 +4319,12 @@
       "bones": 55,
       "cubes": 55,
       "clips_shipped": 0,
-      "clips_in_spec": 17,
+      "clips_in_spec": 18,
+      "reference_clip_files": 5,
+      "clips_embedded": 5,
+      "reference_offers": [
+        "sit"
+      ],
       "goals": 9,
       "flags": 4,
       "attacking": "STATE",
@@ -3810,7 +4333,7 @@
       "locked_bones": 11,
       "lock_mode": "warn",
       "keyed_locked_bones": 0,
-      "effort_hours": 41.8,
+      "effort_hours": 43.2,
       "unlabelled_bones": 0,
       "roundtrip": {
         "equal": true,
@@ -3819,7 +4342,10 @@
         "dropped_keys": 0,
         "reattached": [
           "orespawn:bone_draw_order"
-        ]
+        ],
+        "clips_embedded": 5,
+        "clips_equal_within_tolerance": 5,
+        "reference_clips_embedded": 5
       },
       "warnings": []
     },
@@ -3835,7 +4361,9 @@
         "baby_dragon.animation.json",
         "baby_dragon.bbmodel",
         "baby_dragon_reference_attack.animation.json",
+        "baby_dragon_reference_fly.animation.json",
         "baby_dragon_reference_idle.animation.json",
+        "baby_dragon_reference_sit.animation.json",
         "baby_dragon_reference_walk.animation.json",
         "reference/SLOTS.md",
         "reference_dragon.geo.json",
@@ -3847,7 +4375,12 @@
       "bones": 55,
       "cubes": 55,
       "clips_shipped": 0,
-      "clips_in_spec": 17,
+      "clips_in_spec": 18,
+      "reference_clip_files": 5,
+      "clips_embedded": 5,
+      "reference_offers": [
+        "sit"
+      ],
       "goals": 0,
       "flags": 4,
       "attacking": "STATE",
@@ -3856,7 +4389,7 @@
       "locked_bones": 11,
       "lock_mode": "warn",
       "keyed_locked_bones": 0,
-      "effort_hours": 41.8,
+      "effort_hours": 43.2,
       "unlabelled_bones": 0,
       "roundtrip": {
         "equal": true,
@@ -3865,7 +4398,10 @@
         "dropped_keys": 0,
         "reattached": [
           "orespawn:bone_draw_order"
-        ]
+        ],
+        "clips_embedded": 5,
+        "clips_equal_within_tolerance": 5,
+        "reference_clips_embedded": 5
       },
       "warnings": []
     },
@@ -3892,6 +4428,9 @@
       "cubes": 6,
       "clips_shipped": 0,
       "clips_in_spec": 9,
+      "reference_clip_files": 2,
+      "clips_embedded": 2,
+      "reference_offers": [],
       "goals": 0,
       "flags": 2,
       "attacking": "NONE",
@@ -3909,7 +4448,10 @@
         "dropped_keys": 0,
         "reattached": [
           "orespawn:bone_draw_order"
-        ]
+        ],
+        "clips_embedded": 2,
+        "clips_equal_within_tolerance": 2,
+        "reference_clips_embedded": 2
       },
       "warnings": []
     },
@@ -3936,6 +4478,9 @@
       "cubes": 21,
       "clips_shipped": 0,
       "clips_in_spec": 11,
+      "reference_clip_files": 2,
+      "clips_embedded": 2,
+      "reference_offers": [],
       "goals": 11,
       "flags": 0,
       "attacking": "NONE",
@@ -3953,7 +4498,10 @@
         "dropped_keys": 0,
         "reattached": [
           "orespawn:bone_draw_order"
-        ]
+        ],
+        "clips_embedded": 2,
+        "clips_equal_within_tolerance": 2,
+        "reference_clips_embedded": 2
       },
       "warnings": []
     },
@@ -4019,6 +4567,9 @@
       "cubes": 7,
       "clips_shipped": 0,
       "clips_in_spec": 14,
+      "reference_clip_files": 0,
+      "clips_embedded": 0,
+      "reference_offers": [],
       "goals": 19,
       "flags": 4,
       "attacking": "NONE",
@@ -4036,7 +4587,10 @@
         "dropped_keys": 2,
         "reattached": [
           "orespawn:bone_draw_order"
-        ]
+        ],
+        "clips_embedded": 0,
+        "clips_equal_within_tolerance": 0,
+        "reference_clips_embedded": 0
       },
       "warnings": []
     },
@@ -4052,6 +4606,7 @@
         "hydrolisc.animation.json",
         "hydrolisc.bbmodel",
         "hydrolisc_reference_idle.animation.json",
+        "hydrolisc_reference_sit.animation.json",
         "hydrolisc_reference_walk.animation.json",
         "reference/SLOTS.md",
         "reference_hydrolisc.geo.json",
@@ -4063,6 +4618,11 @@
       "cubes": 40,
       "clips_shipped": 0,
       "clips_in_spec": 13,
+      "reference_clip_files": 3,
+      "clips_embedded": 3,
+      "reference_offers": [
+        "sit"
+      ],
       "goals": 12,
       "flags": 0,
       "attacking": "NONE",
@@ -4080,7 +4640,10 @@
         "dropped_keys": 0,
         "reattached": [
           "orespawn:bone_draw_order"
-        ]
+        ],
+        "clips_embedded": 3,
+        "clips_equal_within_tolerance": 3,
+        "reference_clips_embedded": 3
       },
       "warnings": []
     },
@@ -4095,8 +4658,9 @@
         "SPEC.md",
         "leon.animation.json",
         "leon.bbmodel",
-        "leon_reference_attack.animation.json",
+        "leon_reference_fly.animation.json",
         "leon_reference_idle.animation.json",
+        "leon_reference_sit.animation.json",
         "leon_reference_walk.animation.json",
         "reference/SLOTS.md",
         "reference_leon.geo.json",
@@ -4107,7 +4671,12 @@
       "bones": 98,
       "cubes": 98,
       "clips_shipped": 0,
-      "clips_in_spec": 22,
+      "clips_in_spec": 23,
+      "reference_clip_files": 4,
+      "clips_embedded": 4,
+      "reference_offers": [
+        "sit"
+      ],
       "goals": 10,
       "flags": 3,
       "attacking": "STATE",
@@ -4116,7 +4685,7 @@
       "locked_bones": 22,
       "lock_mode": "warn",
       "keyed_locked_bones": 0,
-      "effort_hours": 55.7,
+      "effort_hours": 57.2,
       "unlabelled_bones": 0,
       "roundtrip": {
         "equal": true,
@@ -4125,7 +4694,10 @@
         "dropped_keys": 0,
         "reattached": [
           "orespawn:bone_draw_order"
-        ]
+        ],
+        "clips_embedded": 4,
+        "clips_equal_within_tolerance": 4,
+        "reference_clips_embedded": 4
       },
       "warnings": []
     },
@@ -4140,8 +4712,9 @@
         "SPEC.md",
         "leonopteryx.animation.json",
         "leonopteryx.bbmodel",
-        "leonopteryx_reference_attack.animation.json",
+        "leonopteryx_reference_fly.animation.json",
         "leonopteryx_reference_idle.animation.json",
+        "leonopteryx_reference_sit.animation.json",
         "leonopteryx_reference_walk.animation.json",
         "reference/SLOTS.md",
         "reference_leon.geo.json",
@@ -4152,7 +4725,12 @@
       "bones": 98,
       "cubes": 98,
       "clips_shipped": 0,
-      "clips_in_spec": 22,
+      "clips_in_spec": 23,
+      "reference_clip_files": 4,
+      "clips_embedded": 4,
+      "reference_offers": [
+        "sit"
+      ],
       "goals": 10,
       "flags": 3,
       "attacking": "STATE",
@@ -4161,7 +4739,7 @@
       "locked_bones": 22,
       "lock_mode": "warn",
       "keyed_locked_bones": 0,
-      "effort_hours": 55.7,
+      "effort_hours": 57.2,
       "unlabelled_bones": 0,
       "roundtrip": {
         "equal": true,
@@ -4170,7 +4748,10 @@
         "dropped_keys": 0,
         "reattached": [
           "orespawn:bone_draw_order"
-        ]
+        ],
+        "clips_embedded": 4,
+        "clips_equal_within_tolerance": 4,
+        "reference_clips_embedded": 4
       },
       "warnings": []
     },
@@ -4198,6 +4779,9 @@
       "cubes": 71,
       "clips_shipped": 0,
       "clips_in_spec": 12,
+      "reference_clip_files": 3,
+      "clips_embedded": 3,
+      "reference_offers": [],
       "goals": 8,
       "flags": 1,
       "attacking": "STATE",
@@ -4215,7 +4799,10 @@
         "dropped_keys": 0,
         "reattached": [
           "orespawn:bone_draw_order"
-        ]
+        ],
+        "clips_embedded": 3,
+        "clips_equal_within_tolerance": 3,
+        "reference_clips_embedded": 3
       },
       "warnings": []
     },
@@ -4231,6 +4818,7 @@
         "ostrich.animation.json",
         "ostrich.bbmodel",
         "ostrich_reference_idle.animation.json",
+        "ostrich_reference_sit.animation.json",
         "ostrich_reference_walk.animation.json",
         "reference/SLOTS.md",
         "reference_ostrich.geo.json",
@@ -4242,6 +4830,11 @@
       "cubes": 38,
       "clips_shipped": 0,
       "clips_in_spec": 13,
+      "reference_clip_files": 3,
+      "clips_embedded": 3,
+      "reference_offers": [
+        "sit"
+      ],
       "goals": 10,
       "flags": 0,
       "attacking": "NONE",
@@ -4259,7 +4852,10 @@
         "dropped_keys": 0,
         "reattached": [
           "orespawn:bone_draw_order"
-        ]
+        ],
+        "clips_embedded": 3,
+        "clips_equal_within_tolerance": 3,
+        "reference_clips_embedded": 3
       },
       "warnings": []
     },
@@ -4286,6 +4882,9 @@
       "cubes": 8,
       "clips_shipped": 0,
       "clips_in_spec": 10,
+      "reference_clip_files": 2,
+      "clips_embedded": 2,
+      "reference_offers": [],
       "goals": 8,
       "flags": 2,
       "attacking": "STATE",
@@ -4303,7 +4902,10 @@
         "dropped_keys": 0,
         "reattached": [
           "orespawn:bone_draw_order"
-        ]
+        ],
+        "clips_embedded": 2,
+        "clips_equal_within_tolerance": 2,
+        "reference_clips_embedded": 2
       },
       "warnings": []
     },
@@ -4322,14 +4924,23 @@
         "spec.manifest.json",
         "spyro.animation.json",
         "spyro.bbmodel",
+        "spyro_reference_fly.animation.json",
         "spyro_reference_idle.animation.json",
+        "spyro_reference_sit.animation.json",
+        "spyro_reference_sitting_flat.animation.json",
         "spyro_reference_walk.animation.json",
         "textures/spyro.png"
       ],
       "bones": 37,
       "cubes": 37,
       "clips_shipped": 0,
-      "clips_in_spec": 13,
+      "clips_in_spec": 14,
+      "reference_clip_files": 5,
+      "clips_embedded": 5,
+      "reference_offers": [
+        "sitting_flat",
+        "sit"
+      ],
       "goals": 12,
       "flags": 2,
       "attacking": "NONE",
@@ -4338,7 +4949,7 @@
       "locked_bones": 0,
       "lock_mode": "warn",
       "keyed_locked_bones": 0,
-      "effort_hours": 23.4,
+      "effort_hours": 24.4,
       "unlabelled_bones": 0,
       "roundtrip": {
         "equal": true,
@@ -4347,9 +4958,14 @@
         "dropped_keys": 0,
         "reattached": [
           "orespawn:bone_draw_order"
-        ]
+        ],
+        "clips_embedded": 5,
+        "clips_equal_within_tolerance": 5,
+        "reference_clips_embedded": 5
       },
-      "warnings": []
+      "warnings": [
+        "EXTRAS_CAP: 5 extras (4 from the seed + 1 offered from the reference states: sitting_flat) exceed the cap of four per creature without a ruling (ruled 2026-09-06, Q6 (a): more needs the owner; every one is listed, none dropped)"
+      ]
     },
     {
       "registry": "stinky",
@@ -4366,7 +4982,9 @@
         "spec.manifest.json",
         "stinky.animation.json",
         "stinky.bbmodel",
+        "stinky_reference_activity_2.animation.json",
         "stinky_reference_idle.animation.json",
+        "stinky_reference_sit.animation.json",
         "stinky_reference_walk.animation.json",
         "textures/stinky.png"
       ],
@@ -4374,6 +4992,11 @@
       "cubes": 20,
       "clips_shipped": 0,
       "clips_in_spec": 13,
+      "reference_clip_files": 4,
+      "clips_embedded": 4,
+      "reference_offers": [
+        "sit"
+      ],
       "goals": 12,
       "flags": 3,
       "attacking": "NONE",
@@ -4391,7 +5014,10 @@
         "dropped_keys": 0,
         "reattached": [
           "orespawn:bone_draw_order"
-        ]
+        ],
+        "clips_embedded": 4,
+        "clips_equal_within_tolerance": 4,
+        "reference_clips_embedded": 4
       },
       "warnings": []
     },
@@ -4412,13 +5038,20 @@
         "the_prince.animation.json",
         "the_prince.bbmodel",
         "the_prince_reference_attack.animation.json",
+        "the_prince_reference_fly.animation.json",
         "the_prince_reference_idle.animation.json",
+        "the_prince_reference_sit.animation.json",
         "the_prince_reference_walk.animation.json"
       ],
       "bones": 35,
       "cubes": 35,
       "clips_shipped": 0,
-      "clips_in_spec": 15,
+      "clips_in_spec": 16,
+      "reference_clip_files": 5,
+      "clips_embedded": 5,
+      "reference_offers": [
+        "sit"
+      ],
       "goals": 10,
       "flags": 3,
       "attacking": "STATE",
@@ -4427,7 +5060,7 @@
       "locked_bones": 10,
       "lock_mode": "warn",
       "keyed_locked_bones": 0,
-      "effort_hours": 35.8,
+      "effort_hours": 37.2,
       "unlabelled_bones": 0,
       "roundtrip": {
         "equal": true,
@@ -4436,7 +5069,10 @@
         "dropped_keys": 0,
         "reattached": [
           "orespawn:bone_draw_order"
-        ]
+        ],
+        "clips_embedded": 5,
+        "clips_equal_within_tolerance": 5,
+        "reference_clips_embedded": 5
       },
       "warnings": []
     },
@@ -4457,13 +5093,20 @@
         "the_prince_adult.animation.json",
         "the_prince_adult.bbmodel",
         "the_prince_adult_reference_attack.animation.json",
+        "the_prince_adult_reference_fly.animation.json",
         "the_prince_adult_reference_idle.animation.json",
+        "the_prince_adult_reference_sit.animation.json",
         "the_prince_adult_reference_walk.animation.json"
       ],
       "bones": 119,
       "cubes": 119,
       "clips_shipped": 0,
-      "clips_in_spec": 23,
+      "clips_in_spec": 24,
+      "reference_clip_files": 5,
+      "clips_embedded": 5,
+      "reference_offers": [
+        "sit"
+      ],
       "goals": 10,
       "flags": 6,
       "attacking": "STATE",
@@ -4472,7 +5115,7 @@
       "locked_bones": 17,
       "lock_mode": "warn",
       "keyed_locked_bones": 0,
-      "effort_hours": 60.3,
+      "effort_hours": 61.8,
       "unlabelled_bones": 0,
       "roundtrip": {
         "equal": true,
@@ -4481,7 +5124,10 @@
         "dropped_keys": 0,
         "reattached": [
           "orespawn:bone_draw_order"
-        ]
+        ],
+        "clips_embedded": 5,
+        "clips_equal_within_tolerance": 5,
+        "reference_clips_embedded": 5
       },
       "warnings": []
     },
@@ -4506,6 +5152,9 @@
       "cubes": 37,
       "clips_shipped": 0,
       "clips_in_spec": 19,
+      "reference_clip_files": 0,
+      "clips_embedded": 0,
+      "reference_offers": [],
       "goals": 10,
       "flags": 4,
       "attacking": "STATE",
@@ -4523,7 +5172,10 @@
         "dropped_keys": 0,
         "reattached": [
           "orespawn:bone_draw_order"
-        ]
+        ],
+        "clips_embedded": 0,
+        "clips_equal_within_tolerance": 0,
+        "reference_clips_embedded": 0
       },
       "warnings": []
     },
@@ -4544,13 +5196,20 @@
         "the_prince_teen.animation.json",
         "the_prince_teen.bbmodel",
         "the_prince_teen_reference_attack.animation.json",
+        "the_prince_teen_reference_fly.animation.json",
         "the_prince_teen_reference_idle.animation.json",
+        "the_prince_teen_reference_sit.animation.json",
         "the_prince_teen_reference_walk.animation.json"
       ],
       "bones": 71,
       "cubes": 71,
       "clips_shipped": 0,
-      "clips_in_spec": 15,
+      "clips_in_spec": 16,
+      "reference_clip_files": 5,
+      "clips_embedded": 5,
+      "reference_offers": [
+        "sit"
+      ],
       "goals": 10,
       "flags": 6,
       "attacking": "STATE",
@@ -4559,7 +5218,7 @@
       "locked_bones": 16,
       "lock_mode": "warn",
       "keyed_locked_bones": 0,
-      "effort_hours": 41.1,
+      "effort_hours": 42.6,
       "unlabelled_bones": 0,
       "roundtrip": {
         "equal": true,
@@ -4568,7 +5227,10 @@
         "dropped_keys": 0,
         "reattached": [
           "orespawn:bone_draw_order"
-        ]
+        ],
+        "clips_embedded": 5,
+        "clips_equal_within_tolerance": 5,
+        "reference_clips_embedded": 5
       },
       "warnings": []
     },
@@ -4589,12 +5251,18 @@
         "velocity_raptor.animation.json",
         "velocity_raptor.bbmodel",
         "velocity_raptor_reference_idle.animation.json",
+        "velocity_raptor_reference_sit.animation.json",
         "velocity_raptor_reference_walk.animation.json"
       ],
       "bones": 34,
       "cubes": 34,
       "clips_shipped": 0,
       "clips_in_spec": 16,
+      "reference_clip_files": 3,
+      "clips_embedded": 3,
+      "reference_offers": [
+        "sit"
+      ],
       "goals": 12,
       "flags": 0,
       "attacking": "NONE",
@@ -4612,7 +5280,10 @@
         "dropped_keys": 0,
         "reattached": [
           "orespawn:bone_draw_order"
-        ]
+        ],
+        "clips_embedded": 3,
+        "clips_equal_within_tolerance": 3,
+        "reference_clips_embedded": 3
       },
       "warnings": []
     },
@@ -4634,12 +5305,20 @@
         "water_dragon.bbmodel",
         "water_dragon_reference_attack.animation.json",
         "water_dragon_reference_idle.animation.json",
+        "water_dragon_reference_mouth_open.animation.json",
+        "water_dragon_reference_sit.animation.json",
         "water_dragon_reference_walk.animation.json"
       ],
       "bones": 24,
       "cubes": 24,
       "clips_shipped": 0,
-      "clips_in_spec": 17,
+      "clips_in_spec": 19,
+      "reference_clip_files": 5,
+      "clips_embedded": 5,
+      "reference_offers": [
+        "mouth_open",
+        "sit"
+      ],
       "goals": 10,
       "flags": 1,
       "attacking": "STATE",
@@ -4648,7 +5327,7 @@
       "locked_bones": 11,
       "lock_mode": "warn",
       "keyed_locked_bones": 0,
-      "effort_hours": 37.1,
+      "effort_hours": 40.1,
       "unlabelled_bones": 0,
       "roundtrip": {
         "equal": true,
@@ -4657,7 +5336,10 @@
         "dropped_keys": 0,
         "reattached": [
           "orespawn:bone_draw_order"
-        ]
+        ],
+        "clips_embedded": 5,
+        "clips_equal_within_tolerance": 5,
+        "reference_clips_embedded": 5
       },
       "warnings": []
     },
@@ -4687,6 +5369,9 @@
       "cubes": 10,
       "clips_shipped": 0,
       "clips_in_spec": 7,
+      "reference_clip_files": 2,
+      "clips_embedded": 2,
+      "reference_offers": [],
       "goals": 1,
       "flags": 1,
       "attacking": "NONE",
@@ -4704,7 +5389,10 @@
         "dropped_keys": 0,
         "reattached": [
           "orespawn:bone_draw_order"
-        ]
+        ],
+        "clips_embedded": 2,
+        "clips_equal_within_tolerance": 2,
+        "reference_clips_embedded": 2
       },
       "warnings": []
     },
@@ -4734,6 +5422,9 @@
       "cubes": 10,
       "clips_shipped": 0,
       "clips_in_spec": 7,
+      "reference_clip_files": 2,
+      "clips_embedded": 2,
+      "reference_offers": [],
       "goals": 1,
       "flags": 1,
       "attacking": "NONE",
@@ -4751,7 +5442,10 @@
         "dropped_keys": 0,
         "reattached": [
           "orespawn:bone_draw_order"
-        ]
+        ],
+        "clips_embedded": 2,
+        "clips_equal_within_tolerance": 2,
+        "reference_clips_embedded": 2
       },
       "warnings": []
     },
@@ -4778,6 +5472,9 @@
       "cubes": 5,
       "clips_shipped": 2,
       "clips_in_spec": 6,
+      "reference_clip_files": 2,
+      "clips_embedded": 4,
+      "reference_offers": [],
       "goals": 1,
       "flags": 0,
       "attacking": "NONE",
@@ -4795,7 +5492,10 @@
         "dropped_keys": 0,
         "reattached": [
           "orespawn:bone_draw_order"
-        ]
+        ],
+        "clips_embedded": 4,
+        "clips_equal_within_tolerance": 4,
+        "reference_clips_embedded": 2
       },
       "warnings": []
     },
@@ -4830,6 +5530,9 @@
       "cubes": 15,
       "clips_shipped": 0,
       "clips_in_spec": 13,
+      "reference_clip_files": 2,
+      "clips_embedded": 2,
+      "reference_offers": [],
       "goals": 2,
       "flags": 1,
       "attacking": "NONE",
@@ -4848,7 +5551,10 @@
         "reattached": [
           "orespawn:bone_draw_order",
           "orespawn:cube_face_order"
-        ]
+        ],
+        "clips_embedded": 2,
+        "clips_equal_within_tolerance": 2,
+        "reference_clips_embedded": 2
       },
       "warnings": []
     },
@@ -4875,6 +5581,9 @@
       "cubes": 12,
       "clips_shipped": 2,
       "clips_in_spec": 6,
+      "reference_clip_files": 2,
+      "clips_embedded": 4,
+      "reference_offers": [],
       "goals": 1,
       "flags": 0,
       "attacking": "NONE",
@@ -4893,7 +5602,10 @@
         "reattached": [
           "orespawn:bone_draw_order",
           "orespawn:cube_face_order"
-        ]
+        ],
+        "clips_embedded": 4,
+        "clips_equal_within_tolerance": 4,
+        "reference_clips_embedded": 2
       },
       "warnings": []
     },
@@ -4920,6 +5632,9 @@
       "cubes": 3,
       "clips_shipped": 0,
       "clips_in_spec": 13,
+      "reference_clip_files": 2,
+      "clips_embedded": 2,
+      "reference_offers": [],
       "goals": 2,
       "flags": 0,
       "attacking": "NONE",
@@ -4937,7 +5652,10 @@
         "dropped_keys": 0,
         "reattached": [
           "orespawn:bone_draw_order"
-        ]
+        ],
+        "clips_embedded": 2,
+        "clips_equal_within_tolerance": 2,
+        "reference_clips_embedded": 2
       },
       "warnings": []
     },
@@ -4964,6 +5682,9 @@
       "cubes": 10,
       "clips_shipped": 0,
       "clips_in_spec": 14,
+      "reference_clip_files": 2,
+      "clips_embedded": 2,
+      "reference_offers": [],
       "goals": 2,
       "flags": 0,
       "attacking": "NONE",
@@ -4981,7 +5702,10 @@
         "dropped_keys": 0,
         "reattached": [
           "orespawn:bone_draw_order"
-        ]
+        ],
+        "clips_embedded": 2,
+        "clips_equal_within_tolerance": 2,
+        "reference_clips_embedded": 2
       },
       "warnings": []
     },
@@ -5008,6 +5732,9 @@
       "cubes": 10,
       "clips_shipped": 0,
       "clips_in_spec": 7,
+      "reference_clip_files": 2,
+      "clips_embedded": 2,
+      "reference_offers": [],
       "goals": 0,
       "flags": 1,
       "attacking": "NONE",
@@ -5025,7 +5752,10 @@
         "dropped_keys": 0,
         "reattached": [
           "orespawn:bone_draw_order"
-        ]
+        ],
+        "clips_embedded": 2,
+        "clips_equal_within_tolerance": 2,
+        "reference_clips_embedded": 2
       },
       "warnings": []
     },
@@ -5052,6 +5782,9 @@
       "cubes": 10,
       "clips_shipped": 0,
       "clips_in_spec": 7,
+      "reference_clip_files": 2,
+      "clips_embedded": 2,
+      "reference_offers": [],
       "goals": 3,
       "flags": 1,
       "attacking": "NONE",
@@ -5069,7 +5802,10 @@
         "dropped_keys": 0,
         "reattached": [
           "orespawn:bone_draw_order"
-        ]
+        ],
+        "clips_embedded": 2,
+        "clips_equal_within_tolerance": 2,
+        "reference_clips_embedded": 2
       },
       "warnings": []
     },
@@ -5105,6 +5841,9 @@
       "cubes": 5,
       "clips_shipped": 0,
       "clips_in_spec": 0,
+      "reference_clip_files": 2,
+      "clips_embedded": 2,
+      "reference_offers": [],
       "goals": 0,
       "flags": 5,
       "attacking": "NONE",
@@ -5122,7 +5861,10 @@
         "dropped_keys": 0,
         "reattached": [
           "orespawn:bone_draw_order"
-        ]
+        ],
+        "clips_embedded": 2,
+        "clips_equal_within_tolerance": 2,
+        "reference_clips_embedded": 2
       },
       "warnings": [
         "BONE_UNLABELLED: bone shape1 has no glossary label",
@@ -5159,6 +5901,9 @@
       "cubes": 18,
       "clips_shipped": 0,
       "clips_in_spec": 0,
+      "reference_clip_files": 2,
+      "clips_embedded": 2,
+      "reference_offers": [],
       "goals": 0,
       "flags": 1,
       "attacking": "NONE",
@@ -5177,7 +5922,10 @@
         "reattached": [
           "orespawn:bone_draw_order",
           "orespawn:cube_face_order"
-        ]
+        ],
+        "clips_embedded": 2,
+        "clips_equal_within_tolerance": 2,
+        "reference_clips_embedded": 2
       },
       "warnings": []
     },
@@ -5213,6 +5961,9 @@
       "cubes": 22,
       "clips_shipped": 0,
       "clips_in_spec": 0,
+      "reference_clip_files": 2,
+      "clips_embedded": 2,
+      "reference_offers": [],
       "goals": 0,
       "flags": 1,
       "attacking": "NONE",
@@ -5230,7 +5981,10 @@
         "dropped_keys": 0,
         "reattached": [
           "orespawn:bone_draw_order"
-        ]
+        ],
+        "clips_embedded": 2,
+        "clips_equal_within_tolerance": 2,
+        "reference_clips_embedded": 2
       },
       "warnings": []
     },
@@ -5246,6 +6000,7 @@
         "cephadrome.animation.json",
         "cephadrome.bbmodel",
         "cephadrome_reference_attack.animation.json",
+        "cephadrome_reference_fly.animation.json",
         "cephadrome_reference_idle.animation.json",
         "cephadrome_reference_walk.animation.json",
         "reference/SLOTS.md",
@@ -5258,6 +6013,9 @@
       "cubes": 50,
       "clips_shipped": 0,
       "clips_in_spec": 16,
+      "reference_clip_files": 4,
+      "clips_embedded": 4,
+      "reference_offers": [],
       "goals": 5,
       "flags": 2,
       "attacking": "STATE",
@@ -5275,7 +6033,10 @@
         "dropped_keys": 0,
         "reattached": [
           "orespawn:bone_draw_order"
-        ]
+        ],
+        "clips_embedded": 4,
+        "clips_equal_within_tolerance": 4,
+        "reference_clips_embedded": 4
       },
       "warnings": []
     },
@@ -5307,6 +6068,9 @@
       "cubes": 16,
       "clips_shipped": 6,
       "clips_in_spec": 14,
+      "reference_clip_files": 2,
+      "clips_embedded": 8,
+      "reference_offers": [],
       "goals": 0,
       "flags": 1,
       "attacking": "NONE",
@@ -5324,7 +6088,10 @@
         "dropped_keys": 0,
         "reattached": [
           "orespawn:bone_draw_order"
-        ]
+        ],
+        "clips_embedded": 8,
+        "clips_equal_within_tolerance": 8,
+        "reference_clips_embedded": 2
       },
       "warnings": []
     }
@@ -5372,6 +6139,7 @@
     "[robot_5] ATTACKING_UNCLASSIFIED: DATA_ATTACKING classified MIXED: a 5-tick pulse per in-range think tick: the flag is raised at line(s) [143] every 20 ticks (reloadTicker reset) while a target is in range — before the line-of-sight gate, so it pulses whether or not a shot fires — and cleared when reloadTicker < 15 at line(s) [131] AND cleared on target loss at line(s) [152]",
     "[kraken] ATTACKING_UNCLASSIFIED: DATA_ATTACKING classified STATE?: cleared unconditionally at line(s) [451] (the enclosing branch decides; read the source)",
     "[the_queen] LOCKED_BONES_KEYED: the shipped clips key 26 of the 27 SPEC-locked bones (LHead, LHead12, LHead4, Lwing1, NeckL1, NeckL13...): allowed and warned — Keying a locked bone is allowed; the checker warns, and the hitbox part follows the bone in-game (the consequence, so keep such keys deliberate). Renaming, re-parenting or deleting a locked bone is refused.",
+    "[spyro] EXTRAS_CAP: 5 extras (4 from the seed + 1 offered from the reference states: sitting_flat) exceed the cap of four per creature without a ruling (ruled 2026-09-06, Q6 (a): more needs the owner; every one is listed, none dropped)",
     "[elevator] BONE_UNLABELLED: bone shape1 has no glossary label",
     "[elevator] BONE_UNLABELLED: bone shape2 has no glossary label",
     "[elevator] BONE_UNLABELLED: bone shape3 has no glossary label",
@@ -5380,9 +6148,9 @@
   ],
   "counts": {
     "folders": 116,
-    "entity_files": 1336,
+    "entity_files": 1363,
     "package_wide_files": 6,
-    "files": 1342,
+    "files": 1369,
     "per_tier": {
       "tier_1": {
         "registries": 28,
@@ -5407,7 +6175,32 @@
       "species_with_clips": 112,
       "walk": 112,
       "idle": 112,
-      "attack": 46,
+      "attack": 40,
+      "fly": 10,
+      "swim": 0,
+      "per_state": {
+        "idle": 112,
+        "walk": 112,
+        "attack": 40,
+        "sit": 14,
+        "fly": 10,
+        "scream": 2,
+        "activity_2": 1,
+        "crouch": 1,
+        "display": 1,
+        "mouth_open": 1,
+        "open": 1,
+        "sing": 1,
+        "sitting_flat": 1
+      },
+      "files": 297,
+      "files_written": 297,
+      "unnamed_states": [
+        "stinky:activity_2"
+      ],
+      "values_without_motion": 11,
+      "offered_extras": 22,
+      "clips_embedded": 356,
       "artist_tier_with_clips": 99,
       "artist_tier_held": [
         "boyfriend",

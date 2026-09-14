@@ -1,5 +1,5 @@
 {
-  "generated_by": "tools/artist_package.py 0.3.0 (the reference clips for every species, 2026-09-14, addendum items 11 to 13: every hook's reference_walk, reference_idle and - where the code reads an attack - reference_attack clip beside the sheet, landed or not; the clips loaded through Blockbench's Import Animations (README_FIRST, Toolchain); a reference clip's keys as the starting point of a delivered idle / walk / aggro_idle, only the reference file itself under its own name refused)",
+  "generated_by": "tools/artist_package.py 0.4.0 (the reference clips revised, 2026-09-14, second set revised, items 2 to 6: every state a hook reads sampled and named by the seed - reference_walk, reference_idle, reference_attack, reference_fly, reference_swim, the species' own states, an unnamed one flagged - keyed by the exact transcriptions' density search (catmullrom, 1 degree, 1/32 block), embedded in every .bbmodel within the round-trip tolerance with the files beside the sheet the pinned source; a reference clip's keys as the starting point of idle / walk / aggro_idle / fly / swim, a species state offered as a SPEC extra; only the reference file itself under its own name refused; one tracked copy, the folder's copies ignored by git)",
   "registry": "cannon_fodder",
   "display_name": "Cannon Fodder",
   "tier": 2,
@@ -431,7 +431,8 @@
       "required": true,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "idle_head",
@@ -441,7 +442,8 @@
       "required": false,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "walk",
@@ -451,7 +453,8 @@
       "required": true,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "walk_head",
@@ -461,7 +464,8 @@
       "required": false,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "swim",
@@ -471,7 +475,8 @@
       "required": false,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "calm_idle",
@@ -481,7 +486,8 @@
       "required": false,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "covered by idle"
+      "verdict": "covered by idle",
+      "offered_from_reference": null
     },
     {
       "name": "attack",
@@ -491,7 +497,8 @@
       "required": false,
       "length_rule": "near:0.5",
       "length_seconds": 0.5,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "hurt",
@@ -501,7 +508,8 @@
       "required": false,
       "length_rule": "near:0.3",
       "length_seconds": 0.3,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "death",
@@ -511,7 +519,8 @@
       "required": false,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     }
   ],
   "allow_idle_alt": true,
@@ -532,10 +541,15 @@
     {
       "state": "walk",
       "file": "cannon_fodder_reference_walk.animation.json",
-      "sha256": "bf6eb49c23cead8130fe6f220b8d2194c731ae2aa51bd0f4da9f575f0a51d90b",
-      "clip": "reference",
+      "sha256": "5baa0dbdb0ce335e7bc480e6cc45c164b4f850ac7e212fc732675d2e2750e292",
+      "clip": "reference_walk",
       "reference_only": true,
       "delivered_clip": "walk",
+      "offered_extra": null,
+      "named": true,
+      "name_source": "the contract",
+      "getter": null,
+      "value": null,
       "rule": "period_multiple",
       "rule_note": "one channel on the walk POSITION: the four legs cos(limbSwing * 0.6662F) * 1.2 * limbSwingAmount about X (CannonFodderGeoReplacement.applyCustomAnimations, CannonFodderModel.setupAnim: a port-authored rig, no 1.7.10 line): at limbSwing +1 per tick the period is 2 pi / 0.6662 = 9.43 ticks; the head follows netHeadYaw / headPitch = 0; closes at k = 1 (9.43138 ticks): every bone returns within 0 degrees of its start at k x T (the 5-degree test under the 6 s cap; k = 1: 0 deg)",
       "span_ticks": 9.4313801792,
@@ -543,6 +557,17 @@
       "period_multiple_k": 1,
       "animation_length_seconds": 0.471569009,
       "keys_per_bone": 11,
+      "keys_per_bone_min": 2,
+      "dense_samples": 11,
+      "lerp_mode": "catmullrom",
+      "keying": {
+        "rotation_tolerance_degrees": 1.0,
+        "position_tolerance_blocks": 0.03125,
+        "max_error_degrees": 0.0,
+        "max_error_blocks": 0.0,
+        "within_tolerance": true,
+        "keys_total": 48
+      },
       "sampled_inputs": "limbSwingAmount 1.0; limbSwing = t (advancing 1.0 per tick from 0: vanilla WalkAnimationState.update does speed += (movementSpeed - speed) * multiplier; position += speed, and the classic renderer hands walkAnimation.position(partialTick) as limbSwing and min(1, speed) as limbSwingAmount, so at speed 1 the position advances exactly 1.0 per tick); ageInTicks = t (getBob: tickCount + partialTick, partialTick 0); netHeadYaw 0; headPitch 0 (looking ahead); every entity-state flag at its rest value (attacking 0, ri1 0, rock_type 0, rf1 0: a ProbeSubject built from an empty state); the entity RNG seeded 0 once per clip and evolving across the keys; one pose call per key, 20 keys per second; full health (no shipped hook reads health)",
       "hook": "danger.orespawn.entity.client.CannonFodderGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the shipped replacement, registry-free, on explicit PoseInputs)",
       "landed": true,
@@ -566,10 +591,15 @@
     {
       "state": "idle",
       "file": "cannon_fodder_reference_idle.animation.json",
-      "sha256": "a1ffb3620f0427af34dbbe0a9e1a2211556c2708325eedec41c11bdd9ceae4da",
+      "sha256": "6983e1f6631caeb4e8ec2efeb177cfdf6a5fd44cf3078211d4d68d2091e1529a",
       "clip": "reference_idle",
       "reference_only": true,
       "delivered_clip": "idle",
+      "offered_extra": null,
+      "named": true,
+      "name_source": "the contract",
+      "getter": null,
+      "value": null,
       "rule": "one_key",
       "rule_note": "nothing moves at the idle inputs: every bone's rotation and position is the same at every sample of the span the closure test settled (period_multiple; one channel on the walk POSITION: the four legs cos(limbSwing * 0.6662F) * 1.2 * limbSwingAmount about X (CannonFodderGeoReplacement.applyCustomAnimations, CannonFodderModel.setupAnim: a port-authored rig, no 1.7.10 line): at limbSwing +1 per tick the period is 2 pi / 0.6662 = 9.43 ticks; the head follows netHeadYaw / headPitch = 0; closes at k = 1 (9.43138 ticks): every bone returns within 0 degrees of its start at k x T (the 5-degree test under the 6 s cap; k = 1: 0 deg)), so this state is one key",
       "span_ticks": 0.0,
@@ -577,6 +607,17 @@
       "period_multiple_k": null,
       "animation_length_seconds": 0.05,
       "keys_per_bone": 1,
+      "keys_per_bone_min": 1,
+      "dense_samples": 1,
+      "lerp_mode": "catmullrom",
+      "keying": {
+        "rotation_tolerance_degrees": 1.0,
+        "position_tolerance_blocks": 0.03125,
+        "max_error_degrees": 0.0,
+        "max_error_blocks": 0.0,
+        "within_tolerance": true,
+        "keys_total": 6
+      },
       "sampled_inputs": "limbSwingAmount 0.0; limbSwing 0 (the walk position at rest: vanilla WalkAnimationState holds its position while the speed is 0, and a creature that has not walked since it spawned carries 0); ageInTicks = t (getBob: tickCount + partialTick, partialTick 0; advancing 1.0 per tick from 0); netHeadYaw 0; headPitch 0 (looking ahead); every entity-state flag at its rest value (attacking 0, ri1 0, rock_type 0, rf1 0: a ProbeSubject built from an empty state); the entity RNG seeded 0 once per clip and evolving across the keys; one pose call per key, 20 keys per second; full health",
       "hook": "danger.orespawn.entity.client.CannonFodderGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the shipped replacement, registry-free, on explicit PoseInputs)",
       "landed": true,
@@ -596,10 +637,15 @@
   "reference_clip": {
     "state": "walk",
     "file": "cannon_fodder_reference_walk.animation.json",
-    "sha256": "bf6eb49c23cead8130fe6f220b8d2194c731ae2aa51bd0f4da9f575f0a51d90b",
-    "clip": "reference",
+    "sha256": "5baa0dbdb0ce335e7bc480e6cc45c164b4f850ac7e212fc732675d2e2750e292",
+    "clip": "reference_walk",
     "reference_only": true,
     "delivered_clip": "walk",
+    "offered_extra": null,
+    "named": true,
+    "name_source": "the contract",
+    "getter": null,
+    "value": null,
     "rule": "period_multiple",
     "rule_note": "one channel on the walk POSITION: the four legs cos(limbSwing * 0.6662F) * 1.2 * limbSwingAmount about X (CannonFodderGeoReplacement.applyCustomAnimations, CannonFodderModel.setupAnim: a port-authored rig, no 1.7.10 line): at limbSwing +1 per tick the period is 2 pi / 0.6662 = 9.43 ticks; the head follows netHeadYaw / headPitch = 0; closes at k = 1 (9.43138 ticks): every bone returns within 0 degrees of its start at k x T (the 5-degree test under the 6 s cap; k = 1: 0 deg)",
     "span_ticks": 9.4313801792,
@@ -607,6 +653,17 @@
     "period_multiple_k": 1,
     "animation_length_seconds": 0.471569009,
     "keys_per_bone": 11,
+    "keys_per_bone_min": 2,
+    "dense_samples": 11,
+    "lerp_mode": "catmullrom",
+    "keying": {
+      "rotation_tolerance_degrees": 1.0,
+      "position_tolerance_blocks": 0.03125,
+      "max_error_degrees": 0.0,
+      "max_error_blocks": 0.0,
+      "within_tolerance": true,
+      "keys_total": 48
+    },
     "sampled_inputs": "limbSwingAmount 1.0; limbSwing = t (advancing 1.0 per tick from 0: vanilla WalkAnimationState.update does speed += (movementSpeed - speed) * multiplier; position += speed, and the classic renderer hands walkAnimation.position(partialTick) as limbSwing and min(1, speed) as limbSwingAmount, so at speed 1 the position advances exactly 1.0 per tick); ageInTicks = t (getBob: tickCount + partialTick, partialTick 0); netHeadYaw 0; headPitch 0 (looking ahead); every entity-state flag at its rest value (attacking 0, ri1 0, rock_type 0, rf1 0: a ProbeSubject built from an empty state); the entity RNG seeded 0 once per clip and evolving across the keys; one pose call per key, 20 keys per second; full health (no shipped hook reads health)",
     "hook": "danger.orespawn.entity.client.CannonFodderGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the shipped replacement, registry-free, on explicit PoseInputs)",
     "landed": true,
@@ -627,6 +684,7 @@
       "read_at_inputs": false
     }
   },
+  "reference_offers": [],
   "exact_transcription": false,
   "rig_source": "shipped",
   "in_game": true,

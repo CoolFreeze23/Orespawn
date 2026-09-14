@@ -1,5 +1,5 @@
 {
-  "generated_by": "tools/artist_package.py 0.3.0 (the reference clips for every species, 2026-09-14, addendum items 11 to 13: every hook's reference_walk, reference_idle and - where the code reads an attack - reference_attack clip beside the sheet, landed or not; the clips loaded through Blockbench's Import Animations (README_FIRST, Toolchain); a reference clip's keys as the starting point of a delivered idle / walk / aggro_idle, only the reference file itself under its own name refused)",
+  "generated_by": "tools/artist_package.py 0.4.0 (the reference clips revised, 2026-09-14, second set revised, items 2 to 6: every state a hook reads sampled and named by the seed - reference_walk, reference_idle, reference_attack, reference_fly, reference_swim, the species' own states, an unnamed one flagged - keyed by the exact transcriptions' density search (catmullrom, 1 degree, 1/32 block), embedded in every .bbmodel within the round-trip tolerance with the files beside the sheet the pinned source; a reference clip's keys as the starting point of idle / walk / aggro_idle / fly / swim, a species state offered as a SPEC extra; only the reference file itself under its own name refused; one tracked copy, the folder's copies ignored by git)",
   "registry": "molenoid",
   "display_name": "Molenoid",
   "tier": 2,
@@ -2608,7 +2608,8 @@
       "required": true,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "idle_nose_star",
@@ -2618,7 +2619,8 @@
       "required": false,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "walk",
@@ -2628,7 +2630,8 @@
       "required": true,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "walk_nose_star",
@@ -2638,7 +2641,8 @@
       "required": false,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "swim",
@@ -2648,7 +2652,8 @@
       "required": false,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "leave"
+      "verdict": "leave",
+      "offered_from_reference": null
     },
     {
       "name": "aggro_idle",
@@ -2658,7 +2663,8 @@
       "required": false,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "calm_idle",
@@ -2668,7 +2674,8 @@
       "required": false,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "attack",
@@ -2678,7 +2685,8 @@
       "required": false,
       "length_rule": "near:0.5",
       "length_seconds": 0.5,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "hurt",
@@ -2688,7 +2696,8 @@
       "required": false,
       "length_rule": "near:0.4",
       "length_seconds": 0.4,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "death",
@@ -2698,7 +2707,8 @@
       "required": false,
       "length_rule": "near:1.5",
       "length_seconds": 1.5,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "lob",
@@ -2708,7 +2718,8 @@
       "required": false,
       "length_rule": "near:0.6",
       "length_seconds": 0.6,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "dig",
@@ -2718,7 +2729,8 @@
       "required": false,
       "length_rule": "near:0.5",
       "length_seconds": 0.5,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     }
   ],
   "allow_idle_alt": true,
@@ -2738,10 +2750,15 @@
     {
       "state": "walk",
       "file": "molenoid_reference_walk.animation.json",
-      "sha256": "55c367e0be5eceecf07b936d818da4db8f41522cd44cb532f1a0fe490a3c3700",
-      "clip": "reference",
+      "sha256": "ba45fa723107bc05c157693557c8d2cf772c08fdaaa68933cf2cb908116b1760",
+      "clip": "reference_walk",
       "reference_only": true,
       "delivered_clip": "walk",
+      "offered_extra": null,
+      "named": true,
+      "name_source": "the contract",
+      "getter": null,
+      "value": null,
       "rule": "two_seconds_past_cap",
       "rule_note": "wingspeed 0.5: the slowest rhythm is the nose stars cos(ageInTicks * 0.1 * WINGSPEED) * PI (MolenoidGeoReplacement.applyCustomAnimations:131, every state) at 0.05 rad/tick, 125.66 ticks - over the 6 s cap; the attacking arms cos(ageInTicks * 1.7 * WINGSPEED) * PI * 0.25 else the threshold arms cos(ageInTicks * 1.3 * WINGSPEED) * PI * 0.25 * limbSwingAmount (:53) and the threshold legs (:92) at 0.65, each with a three-link chain from the bind pivot (:57-121); the slowest group's period 125.663704 ticks exceeds the 6 s cap (120 ticks): a two-second window (40 ticks), not a loop - the sheet states the closing key's seam",
       "span_ticks": 40.0,
@@ -2749,6 +2766,17 @@
       "period_multiple_k": null,
       "animation_length_seconds": 2.0,
       "keys_per_bone": 41,
+      "keys_per_bone_min": 2,
+      "dense_samples": 41,
+      "lerp_mode": "catmullrom",
+      "keying": {
+        "rotation_tolerance_degrees": 1.0,
+        "position_tolerance_blocks": 0.03125,
+        "max_error_degrees": 0.1389823968,
+        "max_error_blocks": 0.0,
+        "within_tolerance": true,
+        "keys_total": 1986
+      },
       "sampled_inputs": "limbSwingAmount 1.0; limbSwing = t (advancing 1.0 per tick from 0: vanilla WalkAnimationState.update does speed += (movementSpeed - speed) * multiplier; position += speed, and the classic renderer hands walkAnimation.position(partialTick) as limbSwing and min(1, speed) as limbSwingAmount, so at speed 1 the position advances exactly 1.0 per tick); ageInTicks = t (getBob: tickCount + partialTick, partialTick 0); netHeadYaw 0; headPitch 0 (looking ahead); every entity-state flag at its rest value (attacking 0, ri1 0, rock_type 0, rf1 0: a ProbeSubject built from an empty state); the entity RNG seeded 0 once per clip and evolving across the keys; one pose call per key, 20 keys per second; full health (no shipped hook reads health)",
       "hook": "danger.orespawn.entity.client.MolenoidGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the unlanded hook of owner 2026-09-14, addendum item 10 - the classic setupAnim transcribed into the descriptor's PoseInputs form, proven when the rig lands - registry-free, on explicit PoseInputs, over the reference leg's converter output reference_molenoid.geo.json baked without the face-order strictness the landing slice's TEST-007 adds)",
       "landed": false,
@@ -2823,17 +2851,33 @@
     {
       "state": "idle",
       "file": "molenoid_reference_idle.animation.json",
-      "sha256": "ff4e9fddba526a70eb7e288626e5e3cb64dd035d47e11570872ef34ab872ec7e",
+      "sha256": "224d5a64dcbf70c75ff5c401f106e1943b713a91971de6568944eca536c862dd",
       "clip": "reference_idle",
       "reference_only": true,
       "delivered_clip": "idle",
+      "offered_extra": null,
+      "named": true,
+      "name_source": "the contract",
+      "getter": null,
+      "value": null,
       "rule": "two_seconds_past_cap",
       "rule_note": "wingspeed 0.5: the slowest rhythm is the nose stars cos(ageInTicks * 0.1 * WINGSPEED) * PI (MolenoidGeoReplacement.applyCustomAnimations:131, every state) at 0.05 rad/tick, 125.66 ticks - over the 6 s cap; the attacking arms cos(ageInTicks * 1.7 * WINGSPEED) * PI * 0.25 else the threshold arms cos(ageInTicks * 1.3 * WINGSPEED) * PI * 0.25 * limbSwingAmount (:53) and the threshold legs (:92) at 0.65, each with a three-link chain from the bind pivot (:57-121); the slowest group's period 125.663704 ticks exceeds the 6 s cap (120 ticks): a two-second window (40 ticks), not a loop - the sheet states the closing key's seam",
       "span_ticks": 40.0,
       "period_ticks": 125.6637042711,
       "period_multiple_k": null,
       "animation_length_seconds": 2.0,
-      "keys_per_bone": 41,
+      "keys_per_bone": 28,
+      "keys_per_bone_min": 2,
+      "dense_samples": 41,
+      "lerp_mode": "catmullrom",
+      "keying": {
+        "rotation_tolerance_degrees": 1.0,
+        "position_tolerance_blocks": 0.03125,
+        "max_error_degrees": 0.1389823968,
+        "max_error_blocks": 0.0,
+        "within_tolerance": true,
+        "keys_total": 270
+      },
       "sampled_inputs": "limbSwingAmount 0.0; limbSwing 0 (the walk position at rest: vanilla WalkAnimationState holds its position while the speed is 0, and a creature that has not walked since it spawned carries 0); ageInTicks = t (getBob: tickCount + partialTick, partialTick 0; advancing 1.0 per tick from 0); netHeadYaw 0; headPitch 0 (looking ahead); every entity-state flag at its rest value (attacking 0, ri1 0, rock_type 0, rf1 0: a ProbeSubject built from an empty state); the entity RNG seeded 0 once per clip and evolving across the keys; one pose call per key, 20 keys per second; full health",
       "hook": "danger.orespawn.entity.client.MolenoidGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the unlanded hook of owner 2026-09-14, addendum item 10 - the classic setupAnim transcribed into the descriptor's PoseInputs form, proven when the rig lands - registry-free, on explicit PoseInputs, over the reference leg's converter output reference_molenoid.geo.json baked without the face-order strictness the landing slice's TEST-007 adds)",
       "landed": false,
@@ -2904,10 +2948,15 @@
     {
       "state": "attack",
       "file": "molenoid_reference_attack.animation.json",
-      "sha256": "c2d2b76d7f44915c5cd0b3fc466edcebff8d941c8509bb6a1b79129df03fb691",
+      "sha256": "ce9454039972291d7745845c8d160ddba226e6bcb9c3f7ee521184d4b56426eb",
       "clip": "reference_attack",
       "reference_only": true,
       "delivered_clip": "aggro_idle",
+      "offered_extra": null,
+      "named": true,
+      "name_source": "the contract (getAttacking 1)",
+      "getter": "getAttacking",
+      "value": 1,
       "rule": "two_seconds_past_cap",
       "rule_note": "wingspeed 0.5: the slowest rhythm is the nose stars cos(ageInTicks * 0.1 * WINGSPEED) * PI (MolenoidGeoReplacement.applyCustomAnimations:131, every state) at 0.05 rad/tick, 125.66 ticks - over the 6 s cap; the attacking arms cos(ageInTicks * 1.7 * WINGSPEED) * PI * 0.25 else the threshold arms cos(ageInTicks * 1.3 * WINGSPEED) * PI * 0.25 * limbSwingAmount (:53) and the threshold legs (:92) at 0.65, each with a three-link chain from the bind pivot (:57-121); the slowest group's period 125.663704 ticks exceeds the 6 s cap (120 ticks): a two-second window (40 ticks), not a loop - the sheet states the closing key's seam",
       "span_ticks": 40.0,
@@ -2915,7 +2964,18 @@
       "period_multiple_k": null,
       "animation_length_seconds": 2.0,
       "keys_per_bone": 41,
-      "sampled_inputs": "attacking 1 (the pose interface's getAttacking() answers 1: the hook's attacking branch); limbSwingAmount 0.0; limbSwing 0 (the walk position at rest); ageInTicks = t (getBob: tickCount + partialTick, partialTick 0; advancing 1.0 per tick from 0); netHeadYaw 0; headPitch 0 (looking ahead); every other entity-state flag at its rest value (ri1 0, rock_type 0, rf1 0: a ProbeSubject built from the attack state); the entity RNG seeded 0 once per clip and evolving across the keys; one pose call per key, 20 keys per second; full health",
+      "keys_per_bone_min": 2,
+      "dense_samples": 41,
+      "lerp_mode": "catmullrom",
+      "keying": {
+        "rotation_tolerance_degrees": 1.0,
+        "position_tolerance_blocks": 0.03125,
+        "max_error_degrees": 0.1389823968,
+        "max_error_blocks": 0.0,
+        "within_tolerance": true,
+        "keys_total": 1128
+      },
+      "sampled_inputs": "getAttacking() answers 1 (the state the seed names `attack`; every other getter at its rest value); limbSwingAmount 0.0; limbSwing 0 (the walk position at rest: vanilla WalkAnimationState holds its position while the speed is 0, and a creature that has not walked since it spawned carries 0); ageInTicks = t (getBob: tickCount + partialTick, partialTick 0; advancing 1.0 per tick from 0); netHeadYaw 0; headPitch 0 (looking ahead); every other entity-state flag at its rest value (ri1 0, rock_type 0, rf1 0); the entity RNG seeded 0 once per clip and evolving across the keys; one pose call per key, 20 keys per second; full health",
       "hook": "danger.orespawn.entity.client.MolenoidGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the unlanded hook of owner 2026-09-14, addendum item 10 - the classic setupAnim transcribed into the descriptor's PoseInputs form, proven when the rig lands - registry-free, on explicit PoseInputs, over the reference leg's converter output reference_molenoid.geo.json baked without the face-order strictness the landing slice's TEST-007 adds)",
       "landed": false,
       "moving_bones": [
@@ -2988,10 +3048,15 @@
   "reference_clip": {
     "state": "walk",
     "file": "molenoid_reference_walk.animation.json",
-    "sha256": "55c367e0be5eceecf07b936d818da4db8f41522cd44cb532f1a0fe490a3c3700",
-    "clip": "reference",
+    "sha256": "ba45fa723107bc05c157693557c8d2cf772c08fdaaa68933cf2cb908116b1760",
+    "clip": "reference_walk",
     "reference_only": true,
     "delivered_clip": "walk",
+    "offered_extra": null,
+    "named": true,
+    "name_source": "the contract",
+    "getter": null,
+    "value": null,
     "rule": "two_seconds_past_cap",
     "rule_note": "wingspeed 0.5: the slowest rhythm is the nose stars cos(ageInTicks * 0.1 * WINGSPEED) * PI (MolenoidGeoReplacement.applyCustomAnimations:131, every state) at 0.05 rad/tick, 125.66 ticks - over the 6 s cap; the attacking arms cos(ageInTicks * 1.7 * WINGSPEED) * PI * 0.25 else the threshold arms cos(ageInTicks * 1.3 * WINGSPEED) * PI * 0.25 * limbSwingAmount (:53) and the threshold legs (:92) at 0.65, each with a three-link chain from the bind pivot (:57-121); the slowest group's period 125.663704 ticks exceeds the 6 s cap (120 ticks): a two-second window (40 ticks), not a loop - the sheet states the closing key's seam",
     "span_ticks": 40.0,
@@ -2999,6 +3064,17 @@
     "period_multiple_k": null,
     "animation_length_seconds": 2.0,
     "keys_per_bone": 41,
+    "keys_per_bone_min": 2,
+    "dense_samples": 41,
+    "lerp_mode": "catmullrom",
+    "keying": {
+      "rotation_tolerance_degrees": 1.0,
+      "position_tolerance_blocks": 0.03125,
+      "max_error_degrees": 0.1389823968,
+      "max_error_blocks": 0.0,
+      "within_tolerance": true,
+      "keys_total": 1986
+    },
     "sampled_inputs": "limbSwingAmount 1.0; limbSwing = t (advancing 1.0 per tick from 0: vanilla WalkAnimationState.update does speed += (movementSpeed - speed) * multiplier; position += speed, and the classic renderer hands walkAnimation.position(partialTick) as limbSwing and min(1, speed) as limbSwingAmount, so at speed 1 the position advances exactly 1.0 per tick); ageInTicks = t (getBob: tickCount + partialTick, partialTick 0); netHeadYaw 0; headPitch 0 (looking ahead); every entity-state flag at its rest value (attacking 0, ri1 0, rock_type 0, rf1 0: a ProbeSubject built from an empty state); the entity RNG seeded 0 once per clip and evolving across the keys; one pose call per key, 20 keys per second; full health (no shipped hook reads health)",
     "hook": "danger.orespawn.entity.client.MolenoidGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the unlanded hook of owner 2026-09-14, addendum item 10 - the classic setupAnim transcribed into the descriptor's PoseInputs form, proven when the rig lands - registry-free, on explicit PoseInputs, over the reference leg's converter output reference_molenoid.geo.json baked without the face-order strictness the landing slice's TEST-007 adds)",
     "landed": false,
@@ -3070,6 +3146,7 @@
       "read_at_inputs": true
     }
   },
+  "reference_offers": [],
   "exact_transcription": false,
   "rig_source": "reference-leg converter output",
   "in_game": false,

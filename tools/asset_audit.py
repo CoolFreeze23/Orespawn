@@ -202,12 +202,13 @@ NEVER_ACKNOWLEDGED = {"HOOK_STALE", "GECKO_GEO_DRAW_ORDER_MISSING", "GECKO_GEO_S
                       "GECKO_REFERENCE_CLIP_SHIPPED"}
 
 # The reference-only clips (owner 2026-09-13, second set, addendum item 27 (3); one per reachable state since owner
-# 2026-09-14, addendum item 31 (11)): the package sampler's output, tools/reference_clips/<registry>_reference_walk /
-# _idle / _attack.animation.json (the single <registry>_reference.animation.json before 2026-09-14) - the classic hook
-# sampled at fixed inputs for the artist to look at - is carried beside each species' sheet and NEVER shipped; the
-# package checker refuses a returned one under its own name, and this audit refuses one anywhere under
-# src/main/resources (never acknowledgeable).
-REFERENCE_CLIP_RE = re.compile(r"_reference(?:_(?:walk|idle|attack))?\.animation\.json$")
+# 2026-09-14, addendum item 31 (11); every state a hook reads - walk, idle, attack, fly, swim, the seed's names and the
+# unnamed <getter>_<value> states - since owner 2026-09-14, second set revised, item 32 (2)-(3)): the package sampler's
+# output, tools/reference_clips/<registry>_reference_<state>.animation.json (the single <registry>_reference.animation.json
+# before 2026-09-14) - the classic hook sampled at fixed inputs for the artist to look at - is carried beside each
+# species' sheet and NEVER shipped; the package checker refuses a returned one under its own name, and this audit
+# refuses one anywhere under src/main/resources (never acknowledgeable).
+REFERENCE_CLIP_RE = re.compile(r"_reference(?:_[a-z0-9_]+)?\.animation\.json$")
 
 findings = []      # list of dicts: level, category, name, detail, path
 skipped = []       # things the static parser could not verify

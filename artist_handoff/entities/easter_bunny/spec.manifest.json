@@ -1,5 +1,5 @@
 {
-  "generated_by": "tools/artist_package.py 0.3.0 (the reference clips for every species, 2026-09-14, addendum items 11 to 13: every hook's reference_walk, reference_idle and - where the code reads an attack - reference_attack clip beside the sheet, landed or not; the clips loaded through Blockbench's Import Animations (README_FIRST, Toolchain); a reference clip's keys as the starting point of a delivered idle / walk / aggro_idle, only the reference file itself under its own name refused)",
+  "generated_by": "tools/artist_package.py 0.4.0 (the reference clips revised, 2026-09-14, second set revised, items 2 to 6: every state a hook reads sampled and named by the seed - reference_walk, reference_idle, reference_attack, reference_fly, reference_swim, the species' own states, an unnamed one flagged - keyed by the exact transcriptions' density search (catmullrom, 1 degree, 1/32 block), embedded in every .bbmodel within the round-trip tolerance with the files beside the sheet the pinned source; a reference clip's keys as the starting point of idle / walk / aggro_idle / fly / swim, a species state offered as a SPEC extra; only the reference file itself under its own name refused; one tracked copy, the folder's copies ignored by git)",
   "registry": "easter_bunny",
   "display_name": "Easter Bunny",
   "tier": 2,
@@ -908,7 +908,8 @@
       "required": true,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "idle_ears",
@@ -918,7 +919,8 @@
       "required": false,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "walk",
@@ -928,7 +930,8 @@
       "required": true,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "walk_ears",
@@ -938,7 +941,8 @@
       "required": false,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "swim",
@@ -948,7 +952,8 @@
       "required": false,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "calm_idle",
@@ -958,7 +963,8 @@
       "required": false,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "leave"
+      "verdict": "leave",
+      "offered_from_reference": null
     },
     {
       "name": "hurt",
@@ -968,7 +974,8 @@
       "required": false,
       "length_rule": "near:0.3",
       "length_seconds": 0.3,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "death",
@@ -978,7 +985,8 @@
       "required": false,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "lay_egg",
@@ -988,7 +996,8 @@
       "required": false,
       "length_rule": "near:0.8",
       "length_seconds": 0.8,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     }
   ],
   "allow_idle_alt": true,
@@ -1008,10 +1017,15 @@
     {
       "state": "walk",
       "file": "easter_bunny_reference_walk.animation.json",
-      "sha256": "b674ea411cc507764a0f28a41427c4d8038a05deab209744feb0c55df21a8559",
-      "clip": "reference",
+      "sha256": "0ec9850fbf2869ec88b4ce5cb7581dbfe82ca6f8f94ca67ee2a93771a06280f6",
+      "clip": "reference_walk",
       "reference_only": true,
       "delivered_clip": "walk",
+      "offered_extra": null,
+      "named": true,
+      "name_source": "the contract",
+      "getter": null,
+      "value": null,
       "rule": "period_multiple",
       "rule_note": "wingspeed 0.55: the threshold gait cos(ageInTicks * 1.3 * WINGSPEED) * PI * 0.1 * limbSwingAmount and its 2.6 harmonic (EasterBunnyGeoReplacement.applyCustomAnimations:56-57, walk), and the idle ear branch cos(ageInTicks * 1.3 * WINGSPEED) * PI * 0.01 (:60, below the threshold): the slowest 0.715 rad/tick, 8.79 ticks; closes at k = 1 (8.787672 ticks): every bone returns within 0 degrees of its start at k x T (the 5-degree test under the 6 s cap; k = 1: 0 deg)",
       "span_ticks": 8.7876720806,
@@ -1019,6 +1033,17 @@
       "period_multiple_k": 1,
       "animation_length_seconds": 0.439383604,
       "keys_per_bone": 10,
+      "keys_per_bone_min": 2,
+      "dense_samples": 10,
+      "lerp_mode": "catmullrom",
+      "keying": {
+        "rotation_tolerance_degrees": 1.0,
+        "position_tolerance_blocks": 0.03125,
+        "max_error_degrees": 0.8861250507,
+        "max_error_blocks": 0.0,
+        "within_tolerance": true,
+        "keys_total": 70
+      },
       "sampled_inputs": "limbSwingAmount 1.0; limbSwing = t (advancing 1.0 per tick from 0: vanilla WalkAnimationState.update does speed += (movementSpeed - speed) * multiplier; position += speed, and the classic renderer hands walkAnimation.position(partialTick) as limbSwing and min(1, speed) as limbSwingAmount, so at speed 1 the position advances exactly 1.0 per tick); ageInTicks = t (getBob: tickCount + partialTick, partialTick 0); netHeadYaw 0; headPitch 0 (looking ahead); every entity-state flag at its rest value (attacking 0, ri1 0, rock_type 0, rf1 0: a ProbeSubject built from an empty state); the entity RNG seeded 0 once per clip and evolving across the keys; one pose call per key, 20 keys per second; full health (no shipped hook reads health)",
       "hook": "danger.orespawn.entity.client.EasterBunnyGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the unlanded hook of owner 2026-09-14, addendum item 10 - the classic setupAnim transcribed into the descriptor's PoseInputs form, proven when the rig lands - registry-free, on explicit PoseInputs, over the reference leg's converter output reference_easterbunny.geo.json baked without the face-order strictness the landing slice's TEST-007 adds)",
       "landed": false,
@@ -1044,17 +1069,33 @@
     {
       "state": "idle",
       "file": "easter_bunny_reference_idle.animation.json",
-      "sha256": "b82734e35b97590e6afdc0f52912065525775429136497897efd9a572e0615e6",
+      "sha256": "8e699cb501772c188401deccc2d8bbda04ff921c8ad0662b2988c53bfb4413f0",
       "clip": "reference_idle",
       "reference_only": true,
       "delivered_clip": "idle",
+      "offered_extra": null,
+      "named": true,
+      "name_source": "the contract",
+      "getter": null,
+      "value": null,
       "rule": "period_multiple",
       "rule_note": "wingspeed 0.55: the threshold gait cos(ageInTicks * 1.3 * WINGSPEED) * PI * 0.1 * limbSwingAmount and its 2.6 harmonic (EasterBunnyGeoReplacement.applyCustomAnimations:56-57, walk), and the idle ear branch cos(ageInTicks * 1.3 * WINGSPEED) * PI * 0.01 (:60, below the threshold): the slowest 0.715 rad/tick, 8.79 ticks; closes at k = 1 (8.787672 ticks): every bone returns within 0 degrees of its start at k x T (the 5-degree test under the 6 s cap; k = 1: 0 deg)",
       "span_ticks": 8.7876720806,
       "period_ticks": 8.7876720806,
       "period_multiple_k": 1,
       "animation_length_seconds": 0.439383604,
-      "keys_per_bone": 10,
+      "keys_per_bone": 3,
+      "keys_per_bone_min": 2,
+      "dense_samples": 10,
+      "lerp_mode": "catmullrom",
+      "keying": {
+        "rotation_tolerance_degrees": 1.0,
+        "position_tolerance_blocks": 0.03125,
+        "max_error_degrees": 0.5526940309,
+        "max_error_blocks": 0.0,
+        "within_tolerance": true,
+        "keys_total": 28
+      },
       "sampled_inputs": "limbSwingAmount 0.0; limbSwing 0 (the walk position at rest: vanilla WalkAnimationState holds its position while the speed is 0, and a creature that has not walked since it spawned carries 0); ageInTicks = t (getBob: tickCount + partialTick, partialTick 0; advancing 1.0 per tick from 0); netHeadYaw 0; headPitch 0 (looking ahead); every entity-state flag at its rest value (attacking 0, ri1 0, rock_type 0, rf1 0: a ProbeSubject built from an empty state); the entity RNG seeded 0 once per clip and evolving across the keys; one pose call per key, 20 keys per second; full health",
       "hook": "danger.orespawn.entity.client.EasterBunnyGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the unlanded hook of owner 2026-09-14, addendum item 10 - the classic setupAnim transcribed into the descriptor's PoseInputs form, proven when the rig lands - registry-free, on explicit PoseInputs, over the reference leg's converter output reference_easterbunny.geo.json baked without the face-order strictness the landing slice's TEST-007 adds)",
       "landed": false,
@@ -1077,10 +1118,15 @@
   "reference_clip": {
     "state": "walk",
     "file": "easter_bunny_reference_walk.animation.json",
-    "sha256": "b674ea411cc507764a0f28a41427c4d8038a05deab209744feb0c55df21a8559",
-    "clip": "reference",
+    "sha256": "0ec9850fbf2869ec88b4ce5cb7581dbfe82ca6f8f94ca67ee2a93771a06280f6",
+    "clip": "reference_walk",
     "reference_only": true,
     "delivered_clip": "walk",
+    "offered_extra": null,
+    "named": true,
+    "name_source": "the contract",
+    "getter": null,
+    "value": null,
     "rule": "period_multiple",
     "rule_note": "wingspeed 0.55: the threshold gait cos(ageInTicks * 1.3 * WINGSPEED) * PI * 0.1 * limbSwingAmount and its 2.6 harmonic (EasterBunnyGeoReplacement.applyCustomAnimations:56-57, walk), and the idle ear branch cos(ageInTicks * 1.3 * WINGSPEED) * PI * 0.01 (:60, below the threshold): the slowest 0.715 rad/tick, 8.79 ticks; closes at k = 1 (8.787672 ticks): every bone returns within 0 degrees of its start at k x T (the 5-degree test under the 6 s cap; k = 1: 0 deg)",
     "span_ticks": 8.7876720806,
@@ -1088,6 +1134,17 @@
     "period_multiple_k": 1,
     "animation_length_seconds": 0.439383604,
     "keys_per_bone": 10,
+    "keys_per_bone_min": 2,
+    "dense_samples": 10,
+    "lerp_mode": "catmullrom",
+    "keying": {
+      "rotation_tolerance_degrees": 1.0,
+      "position_tolerance_blocks": 0.03125,
+      "max_error_degrees": 0.8861250507,
+      "max_error_blocks": 0.0,
+      "within_tolerance": true,
+      "keys_total": 70
+    },
     "sampled_inputs": "limbSwingAmount 1.0; limbSwing = t (advancing 1.0 per tick from 0: vanilla WalkAnimationState.update does speed += (movementSpeed - speed) * multiplier; position += speed, and the classic renderer hands walkAnimation.position(partialTick) as limbSwing and min(1, speed) as limbSwingAmount, so at speed 1 the position advances exactly 1.0 per tick); ageInTicks = t (getBob: tickCount + partialTick, partialTick 0); netHeadYaw 0; headPitch 0 (looking ahead); every entity-state flag at its rest value (attacking 0, ri1 0, rock_type 0, rf1 0: a ProbeSubject built from an empty state); the entity RNG seeded 0 once per clip and evolving across the keys; one pose call per key, 20 keys per second; full health (no shipped hook reads health)",
     "hook": "danger.orespawn.entity.client.EasterBunnyGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the unlanded hook of owner 2026-09-14, addendum item 10 - the classic setupAnim transcribed into the descriptor's PoseInputs form, proven when the rig lands - registry-free, on explicit PoseInputs, over the reference leg's converter output reference_easterbunny.geo.json baked without the face-order strictness the landing slice's TEST-007 adds)",
     "landed": false,
@@ -1110,6 +1167,7 @@
       "read_at_inputs": false
     }
   },
+  "reference_offers": [],
   "exact_transcription": false,
   "rig_source": "reference-leg converter output",
   "in_game": false,

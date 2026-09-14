@@ -200,5 +200,8 @@
     "in `aggro_idle`: keep the arms-up scream (:301-308) but let the head follow the stare - the code clamps the look to 0.45 rad (:293-299)",
     "the `teleport` extra: the code snaps the position (EnderKnight.java:308-318); a half-second wind-up would have to play BEFORE the jump, which the seam cannot know - keep it to a landing settle"
   ],
-  "effort_hours": null
+  "effort_hours": null,
+  "reference_states": {
+    "scream": {"isScreaming": true}
+  }
 }

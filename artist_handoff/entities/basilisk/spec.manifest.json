@@ -1,5 +1,5 @@
 {
-  "generated_by": "tools/artist_package.py 0.3.0 (the reference clips for every species, 2026-09-14, addendum items 11 to 13: every hook's reference_walk, reference_idle and - where the code reads an attack - reference_attack clip beside the sheet, landed or not; the clips loaded through Blockbench's Import Animations (README_FIRST, Toolchain); a reference clip's keys as the starting point of a delivered idle / walk / aggro_idle, only the reference file itself under its own name refused)",
+  "generated_by": "tools/artist_package.py 0.4.0 (the reference clips revised, 2026-09-14, second set revised, items 2 to 6: every state a hook reads sampled and named by the seed - reference_walk, reference_idle, reference_attack, reference_fly, reference_swim, the species' own states, an unnamed one flagged - keyed by the exact transcriptions' density search (catmullrom, 1 degree, 1/32 block), embedded in every .bbmodel within the round-trip tolerance with the files beside the sheet the pinned source; a reference clip's keys as the starting point of idle / walk / aggro_idle / fly / swim, a species state offered as a SPEC extra; only the reference file itself under its own name refused; one tracked copy, the folder's copies ignored by git)",
   "registry": "basilisk",
   "display_name": "Basilisk",
   "tier": 1,
@@ -1521,7 +1521,8 @@
       "required": true,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "idle_jaw",
@@ -1531,7 +1532,8 @@
       "required": false,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "walk",
@@ -1541,7 +1543,8 @@
       "required": true,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "walk_jaw",
@@ -1551,7 +1554,8 @@
       "required": false,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "swim",
@@ -1561,7 +1565,8 @@
       "required": false,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "leave"
+      "verdict": "leave",
+      "offered_from_reference": null
     },
     {
       "name": "aggro_idle",
@@ -1571,7 +1576,8 @@
       "required": false,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "calm_idle",
@@ -1581,7 +1587,8 @@
       "required": false,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "attack",
@@ -1591,7 +1598,8 @@
       "required": false,
       "length_rule": "near:0.5",
       "length_seconds": 0.5,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "hurt",
@@ -1601,7 +1609,8 @@
       "required": false,
       "length_rule": "near:0.4",
       "length_seconds": 0.4,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "death",
@@ -1611,7 +1620,8 @@
       "required": false,
       "length_rule": "near:1.5",
       "length_seconds": 1.5,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     }
   ],
   "allow_idle_alt": true,
@@ -1629,17 +1639,33 @@
     {
       "state": "walk",
       "file": "basilisk_reference_walk.animation.json",
-      "sha256": "dca59d1a1617b1d59a6c53acd795b5bbb721db84ef04229eb7d446f889f57f60",
-      "clip": "reference",
+      "sha256": "4865518e03b1a0b748b999e4c7bc24435269d4f3e3e1b4061d789b4779f7c967",
+      "clip": "reference_walk",
       "reference_only": true,
       "delivered_clip": "walk",
+      "offered_extra": null,
+      "named": true,
+      "name_source": "the contract",
+      "getter": null,
+      "value": null,
       "rule": "period_multiple",
       "rule_note": "wingspeed 0.3: the ten-ring serpentine cos(ageInTicks * 1.3 * WINGSPEED - n * pi/4) * PI * 0.1 * limbSwingAmount (BasiliskGeoReplacement.applyCustomAnimations:66-111, walk; the rings' pivots follow, position channels) at 0.39 rad/tick, 16.11 ticks - the slowest; the attacking jaw -1.0 + cos(ageInTicks * 0.45) * PI * 0.18 (:112) at 0.45; closes at k = 1 (16.110731 ticks): every bone returns within 0.001726 degrees and 0.000511 model units of its start at k x T (the 5-degree test under the 6 s cap; k = 1: 0.001726 deg / 0.000511 units)",
       "span_ticks": 16.1107309167,
       "period_ticks": 16.1107309167,
       "period_multiple_k": 1,
       "animation_length_seconds": 0.8055365458,
-      "keys_per_bone": 18,
+      "keys_per_bone": 10,
+      "keys_per_bone_min": 2,
+      "dense_samples": 18,
+      "lerp_mode": "catmullrom",
+      "keying": {
+        "rotation_tolerance_degrees": 1.0,
+        "position_tolerance_blocks": 0.03125,
+        "max_error_degrees": 0.982858341,
+        "max_error_blocks": 0.03115719,
+        "within_tolerance": true,
+        "keys_total": 181
+      },
       "sampled_inputs": "limbSwingAmount 1.0; limbSwing = t (advancing 1.0 per tick from 0: vanilla WalkAnimationState.update does speed += (movementSpeed - speed) * multiplier; position += speed, and the classic renderer hands walkAnimation.position(partialTick) as limbSwing and min(1, speed) as limbSwingAmount, so at speed 1 the position advances exactly 1.0 per tick); ageInTicks = t (getBob: tickCount + partialTick, partialTick 0); netHeadYaw 0; headPitch 0 (looking ahead); every entity-state flag at its rest value (attacking 0, ri1 0, rock_type 0, rf1 0: a ProbeSubject built from an empty state); the entity RNG seeded 0 once per clip and evolving across the keys; one pose call per key, 20 keys per second; full health (no shipped hook reads health)",
       "hook": "danger.orespawn.entity.client.BasiliskGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the unlanded hook of owner 2026-09-14, addendum item 10 - the classic setupAnim transcribed into the descriptor's PoseInputs form, proven when the rig lands - registry-free, on explicit PoseInputs, over the reference leg's converter output reference_basilisk.geo.json baked without the face-order strictness the landing slice's TEST-007 adds)",
       "landed": false,
@@ -1684,10 +1710,15 @@
     {
       "state": "idle",
       "file": "basilisk_reference_idle.animation.json",
-      "sha256": "11c6819c969496bfe03bccb5fcdd4c5024fd43a851081d1e828c03d73eddd5ea",
+      "sha256": "2c9b9b70f37e7103e87b837a3eb78869ac3fd1b859d545c69717e428286eaa93",
       "clip": "reference_idle",
       "reference_only": true,
       "delivered_clip": "idle",
+      "offered_extra": null,
+      "named": true,
+      "name_source": "the contract",
+      "getter": null,
+      "value": null,
       "rule": "one_key",
       "rule_note": "nothing moves at the idle inputs: every bone's rotation and position is the same at every sample of the span the closure test settled (period_multiple; wingspeed 0.3: the ten-ring serpentine cos(ageInTicks * 1.3 * WINGSPEED - n * pi/4) * PI * 0.1 * limbSwingAmount (BasiliskGeoReplacement.applyCustomAnimations:66-111, walk; the rings' pivots follow, position channels) at 0.39 rad/tick, 16.11 ticks - the slowest; the attacking jaw -1.0 + cos(ageInTicks * 0.45) * PI * 0.18 (:112) at 0.45; closes at k = 1 (16.110731 ticks): every bone returns within 0 degrees of its start at k x T (the 5-degree test under the 6 s cap; k = 1: 0 deg)), so this state is one key",
       "span_ticks": 0.0,
@@ -1695,6 +1726,17 @@
       "period_multiple_k": null,
       "animation_length_seconds": 0.05,
       "keys_per_bone": 1,
+      "keys_per_bone_min": 1,
+      "dense_samples": 1,
+      "lerp_mode": "catmullrom",
+      "keying": {
+        "rotation_tolerance_degrees": 1.0,
+        "position_tolerance_blocks": 0.03125,
+        "max_error_degrees": 0.0,
+        "max_error_blocks": 0.0,
+        "within_tolerance": true,
+        "keys_total": 30
+      },
       "sampled_inputs": "limbSwingAmount 0.0; limbSwing 0 (the walk position at rest: vanilla WalkAnimationState holds its position while the speed is 0, and a creature that has not walked since it spawned carries 0); ageInTicks = t (getBob: tickCount + partialTick, partialTick 0; advancing 1.0 per tick from 0); netHeadYaw 0; headPitch 0 (looking ahead); every entity-state flag at its rest value (attacking 0, ri1 0, rock_type 0, rf1 0: a ProbeSubject built from an empty state); the entity RNG seeded 0 once per clip and evolving across the keys; one pose call per key, 20 keys per second; full health",
       "hook": "danger.orespawn.entity.client.BasiliskGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the unlanded hook of owner 2026-09-14, addendum item 10 - the classic setupAnim transcribed into the descriptor's PoseInputs form, proven when the rig lands - registry-free, on explicit PoseInputs, over the reference leg's converter output reference_basilisk.geo.json baked without the face-order strictness the landing slice's TEST-007 adds)",
       "landed": false,
@@ -1729,18 +1771,34 @@
     {
       "state": "attack",
       "file": "basilisk_reference_attack.animation.json",
-      "sha256": "8e8d29ad80fa62ca25ea3c742e18e7e668c7a15f55d74d3fa291550b8b07b1a0",
+      "sha256": "c3393345b652e9492aa49f7676c69afdda8df773fd1d9ba27ff0817318807de8",
       "clip": "reference_attack",
       "reference_only": true,
       "delivered_clip": "aggro_idle",
+      "offered_extra": null,
+      "named": true,
+      "name_source": "the contract (getAttacking 1)",
+      "getter": "getAttacking",
+      "value": 1,
       "rule": "period_multiple",
       "rule_note": "wingspeed 0.3: the ten-ring serpentine cos(ageInTicks * 1.3 * WINGSPEED - n * pi/4) * PI * 0.1 * limbSwingAmount (BasiliskGeoReplacement.applyCustomAnimations:66-111, walk; the rings' pivots follow, position channels) at 0.39 rad/tick, 16.11 ticks - the slowest; the attacking jaw -1.0 + cos(ageInTicks * 0.45) * PI * 0.18 (:112) at 0.45; closes at k = 6 (96.664386 ticks): every bone returns within 3.712338 degrees of its start at k x T (the 5-degree test under the 6 s cap; k = 1: 13.993524 deg, k = 2: 43.886523 deg, k = 3: 63.858236 deg, k = 4: 56.653499 deg, k = 5: 28.495563 deg, k = 6: 3.712338 deg)",
       "span_ticks": 96.6643855001,
       "period_ticks": 16.1107309167,
       "period_multiple_k": 6,
       "animation_length_seconds": 4.833219275,
-      "keys_per_bone": 98,
-      "sampled_inputs": "attacking 1 (the pose interface's getAttacking() answers 1: the hook's attacking branch); limbSwingAmount 0.0; limbSwing 0 (the walk position at rest); ageInTicks = t (getBob: tickCount + partialTick, partialTick 0; advancing 1.0 per tick from 0); netHeadYaw 0; headPitch 0 (looking ahead); every other entity-state flag at its rest value (ri1 0, rock_type 0, rf1 0: a ProbeSubject built from the attack state); the entity RNG seeded 0 once per clip and evolving across the keys; one pose call per key, 20 keys per second; full health",
+      "keys_per_bone": 50,
+      "keys_per_bone_min": 2,
+      "dense_samples": 98,
+      "lerp_mode": "catmullrom",
+      "keying": {
+        "rotation_tolerance_degrees": 1.0,
+        "position_tolerance_blocks": 0.03125,
+        "max_error_degrees": 0.9398952509,
+        "max_error_blocks": 0.0,
+        "within_tolerance": true,
+        "keys_total": 108
+      },
+      "sampled_inputs": "getAttacking() answers 1 (the state the seed names `attack`; every other getter at its rest value); limbSwingAmount 0.0; limbSwing 0 (the walk position at rest: vanilla WalkAnimationState holds its position while the speed is 0, and a creature that has not walked since it spawned carries 0); ageInTicks = t (getBob: tickCount + partialTick, partialTick 0; advancing 1.0 per tick from 0); netHeadYaw 0; headPitch 0 (looking ahead); every other entity-state flag at its rest value (ri1 0, rock_type 0, rf1 0); the entity RNG seeded 0 once per clip and evolving across the keys; one pose call per key, 20 keys per second; full health",
       "hook": "danger.orespawn.entity.client.BasiliskGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the unlanded hook of owner 2026-09-14, addendum item 10 - the classic setupAnim transcribed into the descriptor's PoseInputs form, proven when the rig lands - registry-free, on explicit PoseInputs, over the reference leg's converter output reference_basilisk.geo.json baked without the face-order strictness the landing slice's TEST-007 adds)",
       "landed": false,
       "moving_bones": [
@@ -1775,17 +1833,33 @@
   "reference_clip": {
     "state": "walk",
     "file": "basilisk_reference_walk.animation.json",
-    "sha256": "dca59d1a1617b1d59a6c53acd795b5bbb721db84ef04229eb7d446f889f57f60",
-    "clip": "reference",
+    "sha256": "4865518e03b1a0b748b999e4c7bc24435269d4f3e3e1b4061d789b4779f7c967",
+    "clip": "reference_walk",
     "reference_only": true,
     "delivered_clip": "walk",
+    "offered_extra": null,
+    "named": true,
+    "name_source": "the contract",
+    "getter": null,
+    "value": null,
     "rule": "period_multiple",
     "rule_note": "wingspeed 0.3: the ten-ring serpentine cos(ageInTicks * 1.3 * WINGSPEED - n * pi/4) * PI * 0.1 * limbSwingAmount (BasiliskGeoReplacement.applyCustomAnimations:66-111, walk; the rings' pivots follow, position channels) at 0.39 rad/tick, 16.11 ticks - the slowest; the attacking jaw -1.0 + cos(ageInTicks * 0.45) * PI * 0.18 (:112) at 0.45; closes at k = 1 (16.110731 ticks): every bone returns within 0.001726 degrees and 0.000511 model units of its start at k x T (the 5-degree test under the 6 s cap; k = 1: 0.001726 deg / 0.000511 units)",
     "span_ticks": 16.1107309167,
     "period_ticks": 16.1107309167,
     "period_multiple_k": 1,
     "animation_length_seconds": 0.8055365458,
-    "keys_per_bone": 18,
+    "keys_per_bone": 10,
+    "keys_per_bone_min": 2,
+    "dense_samples": 18,
+    "lerp_mode": "catmullrom",
+    "keying": {
+      "rotation_tolerance_degrees": 1.0,
+      "position_tolerance_blocks": 0.03125,
+      "max_error_degrees": 0.982858341,
+      "max_error_blocks": 0.03115719,
+      "within_tolerance": true,
+      "keys_total": 181
+    },
     "sampled_inputs": "limbSwingAmount 1.0; limbSwing = t (advancing 1.0 per tick from 0: vanilla WalkAnimationState.update does speed += (movementSpeed - speed) * multiplier; position += speed, and the classic renderer hands walkAnimation.position(partialTick) as limbSwing and min(1, speed) as limbSwingAmount, so at speed 1 the position advances exactly 1.0 per tick); ageInTicks = t (getBob: tickCount + partialTick, partialTick 0); netHeadYaw 0; headPitch 0 (looking ahead); every entity-state flag at its rest value (attacking 0, ri1 0, rock_type 0, rf1 0: a ProbeSubject built from an empty state); the entity RNG seeded 0 once per clip and evolving across the keys; one pose call per key, 20 keys per second; full health (no shipped hook reads health)",
     "hook": "danger.orespawn.entity.client.BasiliskGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the unlanded hook of owner 2026-09-14, addendum item 10 - the classic setupAnim transcribed into the descriptor's PoseInputs form, proven when the rig lands - registry-free, on explicit PoseInputs, over the reference leg's converter output reference_basilisk.geo.json baked without the face-order strictness the landing slice's TEST-007 adds)",
     "landed": false,
@@ -1827,6 +1901,7 @@
       "read_at_inputs": true
     }
   },
+  "reference_offers": [],
   "exact_transcription": false,
   "rig_source": "reference-leg converter output",
   "in_game": false,

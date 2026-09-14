@@ -1,5 +1,5 @@
 {
-  "generated_by": "tools/artist_package.py 0.3.0 (the reference clips for every species, 2026-09-14, addendum items 11 to 13: every hook's reference_walk, reference_idle and - where the code reads an attack - reference_attack clip beside the sheet, landed or not; the clips loaded through Blockbench's Import Animations (README_FIRST, Toolchain); a reference clip's keys as the starting point of a delivered idle / walk / aggro_idle, only the reference file itself under its own name refused)",
+  "generated_by": "tools/artist_package.py 0.4.0 (the reference clips revised, 2026-09-14, second set revised, items 2 to 6: every state a hook reads sampled and named by the seed - reference_walk, reference_idle, reference_attack, reference_fly, reference_swim, the species' own states, an unnamed one flagged - keyed by the exact transcriptions' density search (catmullrom, 1 degree, 1/32 block), embedded in every .bbmodel within the round-trip tolerance with the files beside the sheet the pinned source; a reference clip's keys as the starting point of idle / walk / aggro_idle / fly / swim, a species state offered as a SPEC extra; only the reference file itself under its own name refused; one tracked copy, the folder's copies ignored by git)",
   "registry": "dragonfly",
   "display_name": "Dragonfly",
   "tier": 2,
@@ -1839,7 +1839,8 @@
       "required": true,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "idle_jaws",
@@ -1849,7 +1850,8 @@
       "required": false,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "leave"
+      "verdict": "leave",
+      "offered_from_reference": null
     },
     {
       "name": "walk",
@@ -1859,7 +1861,8 @@
       "required": true,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "leave"
+      "verdict": "leave",
+      "offered_from_reference": null
     },
     {
       "name": "walk_jaws",
@@ -1869,7 +1872,8 @@
       "required": false,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "leave"
+      "verdict": "leave",
+      "offered_from_reference": null
     },
     {
       "name": "fly",
@@ -1879,7 +1883,8 @@
       "required": false,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "calm_idle",
@@ -1889,7 +1894,8 @@
       "required": false,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "covered by idle"
+      "verdict": "covered by idle",
+      "offered_from_reference": null
     },
     {
       "name": "attack",
@@ -1899,7 +1905,8 @@
       "required": false,
       "length_rule": "near:0.4",
       "length_seconds": 0.4,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "hurt",
@@ -1909,7 +1916,8 @@
       "required": false,
       "length_rule": "near:0.4",
       "length_seconds": 0.4,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "death",
@@ -1919,7 +1927,8 @@
       "required": false,
       "length_rule": "near:1.5",
       "length_seconds": 1.5,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     }
   ],
   "allow_idle_alt": true,
@@ -1937,10 +1946,15 @@
     {
       "state": "walk",
       "file": "dragonfly_reference_walk.animation.json",
-      "sha256": "aff25e35ed8fa76d1e27d2495aebbcf42b84a09113b0be80e6127dd2e2a9d01e",
-      "clip": "reference",
+      "sha256": "95f0246e9829a38289f4940cad8d92a77703d627e9ec908bb425fa51ecffe82d",
+      "clip": "reference_walk",
       "reference_only": true,
       "delivered_clip": "walk",
+      "offered_extra": null,
+      "named": true,
+      "name_source": "the contract",
+      "getter": null,
+      "value": null,
       "rule": "period_multiple",
       "rule_note": "the manifest's channels: 2 distinct frequency group(s) [2.6, 0.6] rad/tick (omega x wingspeed): the slowest group's period 2 pi / 0.6 = 10.471976 ticks; closes at k = 3 (31.415927 ticks): every bone returns within 0 degrees of its start at k x T (the 5-degree test under the 6 s cap; k = 1: 67.498757 deg, k = 2: 67.5025 deg, k = 3: 0 deg)",
       "span_ticks": 31.4159265359,
@@ -1948,6 +1962,17 @@
       "period_multiple_k": 3,
       "animation_length_seconds": 1.5707963268,
       "keys_per_bone": 33,
+      "keys_per_bone_min": 2,
+      "dense_samples": 33,
+      "lerp_mode": "catmullrom",
+      "keying": {
+        "rotation_tolerance_degrees": 1.0,
+        "position_tolerance_blocks": 0.03125,
+        "max_error_degrees": 0.9752679574,
+        "max_error_blocks": 0.0,
+        "within_tolerance": true,
+        "keys_total": 206
+      },
       "sampled_inputs": "limbSwingAmount 1.0; limbSwing = t (advancing 1.0 per tick from 0: vanilla WalkAnimationState.update does speed += (movementSpeed - speed) * multiplier; position += speed, and the classic renderer hands walkAnimation.position(partialTick) as limbSwing and min(1, speed) as limbSwingAmount, so at speed 1 the position advances exactly 1.0 per tick); ageInTicks = t (getBob: tickCount + partialTick, partialTick 0); netHeadYaw 0; headPitch 0 (looking ahead); every entity-state flag at its rest value (attacking 0, ri1 0, rock_type 0, rf1 0: a ProbeSubject built from an empty state); the entity RNG seeded 0 once per clip and evolving across the keys; one pose call per key, 20 keys per second; full health (no shipped hook reads health)",
       "hook": "danger.orespawn.entity.client.DragonflyGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the shipped replacement, registry-free, on explicit PoseInputs)",
       "landed": true,
@@ -1973,10 +1998,15 @@
     {
       "state": "idle",
       "file": "dragonfly_reference_idle.animation.json",
-      "sha256": "c0f5c0b692d96658ee6d27452f28d0651d130f85d2f2065b3a92e1b91aab6c74",
+      "sha256": "404f45035987a29b8865ff0e37a5b7d59134e612d88698724ed21594264c52f9",
       "clip": "reference_idle",
       "reference_only": true,
       "delivered_clip": "idle",
+      "offered_extra": null,
+      "named": true,
+      "name_source": "the contract",
+      "getter": null,
+      "value": null,
       "rule": "period_multiple",
       "rule_note": "the manifest's channels: 2 distinct frequency group(s) [2.6, 0.6] rad/tick (omega x wingspeed): the slowest group's period 2 pi / 0.6 = 10.471976 ticks; closes at k = 3 (31.415927 ticks): every bone returns within 0 degrees of its start at k x T (the 5-degree test under the 6 s cap; k = 1: 67.498757 deg, k = 2: 67.5025 deg, k = 3: 0 deg)",
       "span_ticks": 31.4159265359,
@@ -1984,6 +2014,17 @@
       "period_multiple_k": 3,
       "animation_length_seconds": 1.5707963268,
       "keys_per_bone": 33,
+      "keys_per_bone_min": 2,
+      "dense_samples": 33,
+      "lerp_mode": "catmullrom",
+      "keying": {
+        "rotation_tolerance_degrees": 1.0,
+        "position_tolerance_blocks": 0.03125,
+        "max_error_degrees": 0.9752679574,
+        "max_error_blocks": 0.0,
+        "within_tolerance": true,
+        "keys_total": 206
+      },
       "sampled_inputs": "limbSwingAmount 0.0; limbSwing 0 (the walk position at rest: vanilla WalkAnimationState holds its position while the speed is 0, and a creature that has not walked since it spawned carries 0); ageInTicks = t (getBob: tickCount + partialTick, partialTick 0; advancing 1.0 per tick from 0); netHeadYaw 0; headPitch 0 (looking ahead); every entity-state flag at its rest value (attacking 0, ri1 0, rock_type 0, rf1 0: a ProbeSubject built from an empty state); the entity RNG seeded 0 once per clip and evolving across the keys; one pose call per key, 20 keys per second; full health",
       "hook": "danger.orespawn.entity.client.DragonflyGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the shipped replacement, registry-free, on explicit PoseInputs)",
       "landed": true,
@@ -2010,10 +2051,15 @@
   "reference_clip": {
     "state": "walk",
     "file": "dragonfly_reference_walk.animation.json",
-    "sha256": "aff25e35ed8fa76d1e27d2495aebbcf42b84a09113b0be80e6127dd2e2a9d01e",
-    "clip": "reference",
+    "sha256": "95f0246e9829a38289f4940cad8d92a77703d627e9ec908bb425fa51ecffe82d",
+    "clip": "reference_walk",
     "reference_only": true,
     "delivered_clip": "walk",
+    "offered_extra": null,
+    "named": true,
+    "name_source": "the contract",
+    "getter": null,
+    "value": null,
     "rule": "period_multiple",
     "rule_note": "the manifest's channels: 2 distinct frequency group(s) [2.6, 0.6] rad/tick (omega x wingspeed): the slowest group's period 2 pi / 0.6 = 10.471976 ticks; closes at k = 3 (31.415927 ticks): every bone returns within 0 degrees of its start at k x T (the 5-degree test under the 6 s cap; k = 1: 67.498757 deg, k = 2: 67.5025 deg, k = 3: 0 deg)",
     "span_ticks": 31.4159265359,
@@ -2021,6 +2067,17 @@
     "period_multiple_k": 3,
     "animation_length_seconds": 1.5707963268,
     "keys_per_bone": 33,
+    "keys_per_bone_min": 2,
+    "dense_samples": 33,
+    "lerp_mode": "catmullrom",
+    "keying": {
+      "rotation_tolerance_degrees": 1.0,
+      "position_tolerance_blocks": 0.03125,
+      "max_error_degrees": 0.9752679574,
+      "max_error_blocks": 0.0,
+      "within_tolerance": true,
+      "keys_total": 206
+    },
     "sampled_inputs": "limbSwingAmount 1.0; limbSwing = t (advancing 1.0 per tick from 0: vanilla WalkAnimationState.update does speed += (movementSpeed - speed) * multiplier; position += speed, and the classic renderer hands walkAnimation.position(partialTick) as limbSwing and min(1, speed) as limbSwingAmount, so at speed 1 the position advances exactly 1.0 per tick); ageInTicks = t (getBob: tickCount + partialTick, partialTick 0); netHeadYaw 0; headPitch 0 (looking ahead); every entity-state flag at its rest value (attacking 0, ri1 0, rock_type 0, rf1 0: a ProbeSubject built from an empty state); the entity RNG seeded 0 once per clip and evolving across the keys; one pose call per key, 20 keys per second; full health (no shipped hook reads health)",
     "hook": "danger.orespawn.entity.client.DragonflyGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the shipped replacement, registry-free, on explicit PoseInputs)",
     "landed": true,
@@ -2043,6 +2100,7 @@
       "read_at_inputs": false
     }
   },
+  "reference_offers": [],
   "exact_transcription": true,
   "rig_source": "shipped",
   "in_game": true,

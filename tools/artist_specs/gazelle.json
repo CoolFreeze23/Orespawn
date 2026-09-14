@@ -151,5 +151,8 @@
     "in `sit`: the owner's sit toggle (Gazelle.java:277-282) is invisible today; a folded rest pose",
     "in `hurt`: a startled leap before the PanicGoal's bolt (Gazelle.java:75)"
   ],
-  "effort_hours": null
+  "effort_hours": null,
+  "reference_states": {
+    "crouch": {"isCrouching": true}
+  }
 }

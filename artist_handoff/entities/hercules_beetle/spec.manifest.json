@@ -1,5 +1,5 @@
 {
-  "generated_by": "tools/artist_package.py 0.3.0 (the reference clips for every species, 2026-09-14, addendum items 11 to 13: every hook's reference_walk, reference_idle and - where the code reads an attack - reference_attack clip beside the sheet, landed or not; the clips loaded through Blockbench's Import Animations (README_FIRST, Toolchain); a reference clip's keys as the starting point of a delivered idle / walk / aggro_idle, only the reference file itself under its own name refused)",
+  "generated_by": "tools/artist_package.py 0.4.0 (the reference clips revised, 2026-09-14, second set revised, items 2 to 6: every state a hook reads sampled and named by the seed - reference_walk, reference_idle, reference_attack, reference_fly, reference_swim, the species' own states, an unnamed one flagged - keyed by the exact transcriptions' density search (catmullrom, 1 degree, 1/32 block), embedded in every .bbmodel within the round-trip tolerance with the files beside the sheet the pinned source; a reference clip's keys as the starting point of idle / walk / aggro_idle / fly / swim, a species state offered as a SPEC extra; only the reference file itself under its own name refused; one tracked copy, the folder's copies ignored by git)",
   "registry": "hercules_beetle",
   "display_name": "Hercules Beetle",
   "tier": 2,
@@ -2636,7 +2636,8 @@
       "required": true,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "idle_jaws",
@@ -2646,7 +2647,8 @@
       "required": false,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "walk",
@@ -2656,7 +2658,8 @@
       "required": true,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "walk_jaws",
@@ -2666,7 +2669,8 @@
       "required": false,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "swim",
@@ -2676,7 +2680,8 @@
       "required": false,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "aggro_idle",
@@ -2686,7 +2691,8 @@
       "required": false,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "calm_idle",
@@ -2696,7 +2702,8 @@
       "required": false,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "attack",
@@ -2706,7 +2713,8 @@
       "required": false,
       "length_rule": "near:0.5",
       "length_seconds": 0.5,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "hurt",
@@ -2716,7 +2724,8 @@
       "required": false,
       "length_rule": "near:0.3",
       "length_seconds": 0.3,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "death",
@@ -2726,7 +2735,8 @@
       "required": false,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     }
   ],
   "allow_idle_alt": true,
@@ -2746,17 +2756,33 @@
     {
       "state": "walk",
       "file": "hercules_beetle_reference_walk.animation.json",
-      "sha256": "f53ace9bf992411c47b79d4e94a4432ea846974035bd967d78d186820db520cb",
-      "clip": "reference",
+      "sha256": "3a2fd50984198d4b974c3f62eb11ccf9b2ccfe7e5a98d03860a78eba1de67439",
+      "clip": "reference_walk",
       "reference_only": true,
       "delivered_clip": "walk",
+      "offered_extra": null,
+      "named": true,
+      "name_source": "the contract",
+      "getter": null,
+      "value": null,
       "rule": "two_seconds_past_cap",
       "rule_note": "at rest (attacking 0) the slowest channel is the jaws cos(ageInTicks * 0.051F * ws) * PI * 0.01 at wingspeed 1.0 (HerculesBeetleGeoReplacement.applyCustomAnimations, HerculesBeetleModel.poseFrom; orig ModelHerculesBeetle.java:293): 123.2 ticks, over the 6 s cap; the eighteen leg parts cos(ageInTicks * ws * 0.45F) * PI * 0.12 * limbSwingAmount about Y (orig :286-292); the slowest group's period 123.199714 ticks exceeds the 6 s cap (120 ticks): a two-second window (40 ticks), not a loop - the sheet states the closing key's seam",
       "span_ticks": 40.0,
       "period_ticks": 123.1997142093,
       "period_multiple_k": null,
       "animation_length_seconds": 2.0,
-      "keys_per_bone": 41,
+      "keys_per_bone": 21,
+      "keys_per_bone_min": 2,
+      "dense_samples": 41,
+      "lerp_mode": "catmullrom",
+      "keying": {
+        "rotation_tolerance_degrees": 1.0,
+        "position_tolerance_blocks": 0.03125,
+        "max_error_degrees": 0.7993510191,
+        "max_error_blocks": 0.0,
+        "within_tolerance": true,
+        "keys_total": 416
+      },
       "sampled_inputs": "limbSwingAmount 1.0; limbSwing = t (advancing 1.0 per tick from 0: vanilla WalkAnimationState.update does speed += (movementSpeed - speed) * multiplier; position += speed, and the classic renderer hands walkAnimation.position(partialTick) as limbSwing and min(1, speed) as limbSwingAmount, so at speed 1 the position advances exactly 1.0 per tick); ageInTicks = t (getBob: tickCount + partialTick, partialTick 0); netHeadYaw 0; headPitch 0 (looking ahead); every entity-state flag at its rest value (attacking 0, ri1 0, rock_type 0, rf1 0: a ProbeSubject built from an empty state); the entity RNG seeded 0 once per clip and evolving across the keys; one pose call per key, 20 keys per second; full health (no shipped hook reads health)",
       "hook": "danger.orespawn.entity.client.HerculesBeetleGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the shipped replacement, registry-free, on explicit PoseInputs)",
       "landed": true,
@@ -2807,17 +2833,33 @@
     {
       "state": "idle",
       "file": "hercules_beetle_reference_idle.animation.json",
-      "sha256": "1389d1cd36113670fae0b59dc15146b62a20d0830b10c1fd979b5b431592bdde",
+      "sha256": "87eae49d734e81bb1efdead655ab7b3ccf39938282694f260f32a185bd98ca73",
       "clip": "reference_idle",
       "reference_only": true,
       "delivered_clip": "idle",
+      "offered_extra": null,
+      "named": true,
+      "name_source": "the contract",
+      "getter": null,
+      "value": null,
       "rule": "two_seconds_past_cap",
       "rule_note": "at rest (attacking 0) the slowest channel is the jaws cos(ageInTicks * 0.051F * ws) * PI * 0.01 at wingspeed 1.0 (HerculesBeetleGeoReplacement.applyCustomAnimations, HerculesBeetleModel.poseFrom; orig ModelHerculesBeetle.java:293): 123.2 ticks, over the 6 s cap; the eighteen leg parts cos(ageInTicks * ws * 0.45F) * PI * 0.12 * limbSwingAmount about Y (orig :286-292); the slowest group's period 123.199714 ticks exceeds the 6 s cap (120 ticks): a two-second window (40 ticks), not a loop - the sheet states the closing key's seam",
       "span_ticks": 40.0,
       "period_ticks": 123.1997142093,
       "period_multiple_k": null,
       "animation_length_seconds": 2.0,
-      "keys_per_bone": 41,
+      "keys_per_bone": 2,
+      "keys_per_bone_min": 2,
+      "dense_samples": 41,
+      "lerp_mode": "catmullrom",
+      "keying": {
+        "rotation_tolerance_degrees": 1.0,
+        "position_tolerance_blocks": 0.03125,
+        "max_error_degrees": 0.4513089792,
+        "max_error_blocks": 0.0,
+        "within_tolerance": true,
+        "keys_total": 74
+      },
       "sampled_inputs": "limbSwingAmount 0.0; limbSwing 0 (the walk position at rest: vanilla WalkAnimationState holds its position while the speed is 0, and a creature that has not walked since it spawned carries 0); ageInTicks = t (getBob: tickCount + partialTick, partialTick 0; advancing 1.0 per tick from 0); netHeadYaw 0; headPitch 0 (looking ahead); every entity-state flag at its rest value (attacking 0, ri1 0, rock_type 0, rf1 0: a ProbeSubject built from an empty state); the entity RNG seeded 0 once per clip and evolving across the keys; one pose call per key, 20 keys per second; full health",
       "hook": "danger.orespawn.entity.client.HerculesBeetleGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the shipped replacement, registry-free, on explicit PoseInputs)",
       "landed": true,
@@ -2862,18 +2904,34 @@
     {
       "state": "attack",
       "file": "hercules_beetle_reference_attack.animation.json",
-      "sha256": "8bb9b677ed219c210c7ee44b9201645814fe85fd3dd794e0460eb91814e75ac1",
+      "sha256": "5382aff2e8fc370f19a18f69b28dc9b316aee3d77494122ad3b9e3e0a7aaadd9",
       "clip": "reference_attack",
       "reference_only": true,
       "delivered_clip": "aggro_idle",
+      "offered_extra": null,
+      "named": true,
+      "name_source": "the contract (getAttacking 1)",
+      "getter": "getAttacking",
+      "value": 1,
       "rule": "two_seconds_past_cap",
       "rule_note": "at rest (attacking 0) the slowest channel is the jaws cos(ageInTicks * 0.051F * ws) * PI * 0.01 at wingspeed 1.0 (HerculesBeetleGeoReplacement.applyCustomAnimations, HerculesBeetleModel.poseFrom; orig ModelHerculesBeetle.java:293): 123.2 ticks, over the 6 s cap; the eighteen leg parts cos(ageInTicks * ws * 0.45F) * PI * 0.12 * limbSwingAmount about Y (orig :286-292); the slowest group's period 123.199714 ticks exceeds the 6 s cap (120 ticks): a two-second window (40 ticks), not a loop - the sheet states the closing key's seam",
       "span_ticks": 40.0,
       "period_ticks": 123.1997142093,
       "period_multiple_k": null,
       "animation_length_seconds": 2.0,
-      "keys_per_bone": 41,
-      "sampled_inputs": "attacking 1 (the pose interface's getAttacking() answers 1: the hook's attacking branch); limbSwingAmount 0.0; limbSwing 0 (the walk position at rest); ageInTicks = t (getBob: tickCount + partialTick, partialTick 0; advancing 1.0 per tick from 0); netHeadYaw 0; headPitch 0 (looking ahead); every other entity-state flag at its rest value (ri1 0, rock_type 0, rf1 0: a ProbeSubject built from the attack state); the entity RNG seeded 0 once per clip and evolving across the keys; one pose call per key, 20 keys per second; full health",
+      "keys_per_bone": 28,
+      "keys_per_bone_min": 2,
+      "dense_samples": 41,
+      "lerp_mode": "catmullrom",
+      "keying": {
+        "rotation_tolerance_degrees": 1.0,
+        "position_tolerance_blocks": 0.03125,
+        "max_error_degrees": 0.9087677681,
+        "max_error_blocks": 0.0,
+        "within_tolerance": true,
+        "keys_total": 308
+      },
+      "sampled_inputs": "getAttacking() answers 1 (the state the seed names `attack`; every other getter at its rest value); limbSwingAmount 0.0; limbSwing 0 (the walk position at rest: vanilla WalkAnimationState holds its position while the speed is 0, and a creature that has not walked since it spawned carries 0); ageInTicks = t (getBob: tickCount + partialTick, partialTick 0; advancing 1.0 per tick from 0); netHeadYaw 0; headPitch 0 (looking ahead); every other entity-state flag at its rest value (ri1 0, rock_type 0, rf1 0); the entity RNG seeded 0 once per clip and evolving across the keys; one pose call per key, 20 keys per second; full health",
       "hook": "danger.orespawn.entity.client.HerculesBeetleGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the shipped replacement, registry-free, on explicit PoseInputs)",
       "landed": true,
       "moving_bones": [
@@ -2918,17 +2976,33 @@
   "reference_clip": {
     "state": "walk",
     "file": "hercules_beetle_reference_walk.animation.json",
-    "sha256": "f53ace9bf992411c47b79d4e94a4432ea846974035bd967d78d186820db520cb",
-    "clip": "reference",
+    "sha256": "3a2fd50984198d4b974c3f62eb11ccf9b2ccfe7e5a98d03860a78eba1de67439",
+    "clip": "reference_walk",
     "reference_only": true,
     "delivered_clip": "walk",
+    "offered_extra": null,
+    "named": true,
+    "name_source": "the contract",
+    "getter": null,
+    "value": null,
     "rule": "two_seconds_past_cap",
     "rule_note": "at rest (attacking 0) the slowest channel is the jaws cos(ageInTicks * 0.051F * ws) * PI * 0.01 at wingspeed 1.0 (HerculesBeetleGeoReplacement.applyCustomAnimations, HerculesBeetleModel.poseFrom; orig ModelHerculesBeetle.java:293): 123.2 ticks, over the 6 s cap; the eighteen leg parts cos(ageInTicks * ws * 0.45F) * PI * 0.12 * limbSwingAmount about Y (orig :286-292); the slowest group's period 123.199714 ticks exceeds the 6 s cap (120 ticks): a two-second window (40 ticks), not a loop - the sheet states the closing key's seam",
     "span_ticks": 40.0,
     "period_ticks": 123.1997142093,
     "period_multiple_k": null,
     "animation_length_seconds": 2.0,
-    "keys_per_bone": 41,
+    "keys_per_bone": 21,
+    "keys_per_bone_min": 2,
+    "dense_samples": 41,
+    "lerp_mode": "catmullrom",
+    "keying": {
+      "rotation_tolerance_degrees": 1.0,
+      "position_tolerance_blocks": 0.03125,
+      "max_error_degrees": 0.7993510191,
+      "max_error_blocks": 0.0,
+      "within_tolerance": true,
+      "keys_total": 416
+    },
     "sampled_inputs": "limbSwingAmount 1.0; limbSwing = t (advancing 1.0 per tick from 0: vanilla WalkAnimationState.update does speed += (movementSpeed - speed) * multiplier; position += speed, and the classic renderer hands walkAnimation.position(partialTick) as limbSwing and min(1, speed) as limbSwingAmount, so at speed 1 the position advances exactly 1.0 per tick); ageInTicks = t (getBob: tickCount + partialTick, partialTick 0); netHeadYaw 0; headPitch 0 (looking ahead); every entity-state flag at its rest value (attacking 0, ri1 0, rock_type 0, rf1 0: a ProbeSubject built from an empty state); the entity RNG seeded 0 once per clip and evolving across the keys; one pose call per key, 20 keys per second; full health (no shipped hook reads health)",
     "hook": "danger.orespawn.entity.client.HerculesBeetleGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the shipped replacement, registry-free, on explicit PoseInputs)",
     "landed": true,
@@ -2976,6 +3050,7 @@
       "read_at_inputs": true
     }
   },
+  "reference_offers": [],
   "exact_transcription": false,
   "rig_source": "shipped",
   "in_game": true,

@@ -1,5 +1,5 @@
 {
-  "generated_by": "tools/artist_package.py 0.3.0 (the reference clips for every species, 2026-09-14, addendum items 11 to 13: every hook's reference_walk, reference_idle and - where the code reads an attack - reference_attack clip beside the sheet, landed or not; the clips loaded through Blockbench's Import Animations (README_FIRST, Toolchain); a reference clip's keys as the starting point of a delivered idle / walk / aggro_idle, only the reference file itself under its own name refused)",
+  "generated_by": "tools/artist_package.py 0.4.0 (the reference clips revised, 2026-09-14, second set revised, items 2 to 6: every state a hook reads sampled and named by the seed - reference_walk, reference_idle, reference_attack, reference_fly, reference_swim, the species' own states, an unnamed one flagged - keyed by the exact transcriptions' density search (catmullrom, 1 degree, 1/32 block), embedded in every .bbmodel within the round-trip tolerance with the files beside the sheet the pinned source; a reference clip's keys as the starting point of idle / walk / aggro_idle / fly / swim, a species state offered as a SPEC extra; only the reference file itself under its own name refused; one tracked copy, the folder's copies ignored by git)",
   "registry": "worm_large",
   "display_name": "Large Worm",
   "tier": 2,
@@ -1594,7 +1594,8 @@
       "required": true,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "idle_head",
@@ -1604,7 +1605,8 @@
       "required": false,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "idle_teeth",
@@ -1614,7 +1616,8 @@
       "required": false,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "idle_tail_tip",
@@ -1624,7 +1627,8 @@
       "required": false,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "walk",
@@ -1634,7 +1638,8 @@
       "required": true,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "walk_head",
@@ -1644,7 +1649,8 @@
       "required": false,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "walk_teeth",
@@ -1654,7 +1660,8 @@
       "required": false,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "walk_tail_tip",
@@ -1664,7 +1671,8 @@
       "required": false,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "swim",
@@ -1674,7 +1682,8 @@
       "required": false,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "calm_idle",
@@ -1684,7 +1693,8 @@
       "required": false,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "covered by idle"
+      "verdict": "covered by idle",
+      "offered_from_reference": null
     },
     {
       "name": "attack",
@@ -1694,7 +1704,8 @@
       "required": false,
       "length_rule": "near:0.5",
       "length_seconds": 0.5,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "hurt",
@@ -1704,7 +1715,8 @@
       "required": false,
       "length_rule": "near:0.3",
       "length_seconds": 0.3,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "death",
@@ -1714,7 +1726,8 @@
       "required": false,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     }
   ],
   "allow_idle_alt": true,
@@ -1734,10 +1747,15 @@
     {
       "state": "walk",
       "file": "worm_large_reference_walk.animation.json",
-      "sha256": "fc33e70bc2d96522d0ea98e4465b4fd4f9bf6eebbd7c1fc43379edf55885b7aa",
-      "clip": "reference",
+      "sha256": "711e28c48f360df948cf412ad77fcc26fa852735082dcc5dfffa1037b2f6e42a",
+      "clip": "reference_walk",
       "reference_only": true,
       "delivered_clip": "walk",
+      "offered_extra": null,
+      "named": true,
+      "name_source": "the contract",
+      "getter": null,
+      "value": null,
       "rule": "two_seconds_past_cap",
       "rule_note": "six frequencies: the neck's pitch 0.25 and yaw 0.15, the head's pitch 0.35 and yaw 0.45, the teeth 0.57, the tail tip 0.63 rad/tick (WormLargeGeoReplacement.applyCustomAnimations, WormLargeModel.setupAnim; orig ModelWormLarge.java:185-274): the slowest 0.15; the five heads follow the neck and the eight teeth the head (position channels); no multiple of the slowest group's period 41.8879 ticks up to the 6 s cap (120 ticks) brings every group back within 5 degrees of its start (k = 1: 84.035781 deg / 22.714895 units, k = 2: 154.471702 deg / 22.715164 units): a two-second window (40 ticks), not a loop - the sheet states the closing key's seam",
       "span_ticks": 40.0,
@@ -1745,6 +1763,17 @@
       "period_multiple_k": null,
       "animation_length_seconds": 2.0,
       "keys_per_bone": 41,
+      "keys_per_bone_min": 2,
+      "dense_samples": 41,
+      "lerp_mode": "catmullrom",
+      "keying": {
+        "rotation_tolerance_degrees": 1.0,
+        "position_tolerance_blocks": 0.03125,
+        "max_error_degrees": 0.9961008614,
+        "max_error_blocks": 0.0267011347,
+        "within_tolerance": true,
+        "keys_total": 831
+      },
       "sampled_inputs": "limbSwingAmount 1.0; limbSwing = t (advancing 1.0 per tick from 0: vanilla WalkAnimationState.update does speed += (movementSpeed - speed) * multiplier; position += speed, and the classic renderer hands walkAnimation.position(partialTick) as limbSwing and min(1, speed) as limbSwingAmount, so at speed 1 the position advances exactly 1.0 per tick); ageInTicks = t (getBob: tickCount + partialTick, partialTick 0); netHeadYaw 0; headPitch 0 (looking ahead); every entity-state flag at its rest value (attacking 0, ri1 0, rock_type 0, rf1 0: a ProbeSubject built from an empty state); the entity RNG seeded 0 once per clip and evolving across the keys; one pose call per key, 20 keys per second; full health (no shipped hook reads health)",
       "hook": "danger.orespawn.entity.client.WormLargeGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the shipped replacement, registry-free, on explicit PoseInputs)",
       "landed": true,
@@ -1797,10 +1826,15 @@
     {
       "state": "idle",
       "file": "worm_large_reference_idle.animation.json",
-      "sha256": "8e5df5afac2c9f1b1427c1c935a42d3596dfd9c79390fed342a72b18db20787f",
+      "sha256": "352efee5ef2fea1a565884632ab56696bca2c2a981916682af4a3a2cb7a2ae20",
       "clip": "reference_idle",
       "reference_only": true,
       "delivered_clip": "idle",
+      "offered_extra": null,
+      "named": true,
+      "name_source": "the contract",
+      "getter": null,
+      "value": null,
       "rule": "two_seconds_past_cap",
       "rule_note": "six frequencies: the neck's pitch 0.25 and yaw 0.15, the head's pitch 0.35 and yaw 0.45, the teeth 0.57, the tail tip 0.63 rad/tick (WormLargeGeoReplacement.applyCustomAnimations, WormLargeModel.setupAnim; orig ModelWormLarge.java:185-274): the slowest 0.15; the five heads follow the neck and the eight teeth the head (position channels); no multiple of the slowest group's period 41.8879 ticks up to the 6 s cap (120 ticks) brings every group back within 5 degrees of its start (k = 1: 84.035781 deg / 22.714895 units, k = 2: 154.471702 deg / 22.715164 units): a two-second window (40 ticks), not a loop - the sheet states the closing key's seam",
       "span_ticks": 40.0,
@@ -1808,6 +1842,17 @@
       "period_multiple_k": null,
       "animation_length_seconds": 2.0,
       "keys_per_bone": 41,
+      "keys_per_bone_min": 2,
+      "dense_samples": 41,
+      "lerp_mode": "catmullrom",
+      "keying": {
+        "rotation_tolerance_degrees": 1.0,
+        "position_tolerance_blocks": 0.03125,
+        "max_error_degrees": 0.9961008614,
+        "max_error_blocks": 0.0267011347,
+        "within_tolerance": true,
+        "keys_total": 831
+      },
       "sampled_inputs": "limbSwingAmount 0.0; limbSwing 0 (the walk position at rest: vanilla WalkAnimationState holds its position while the speed is 0, and a creature that has not walked since it spawned carries 0); ageInTicks = t (getBob: tickCount + partialTick, partialTick 0; advancing 1.0 per tick from 0); netHeadYaw 0; headPitch 0 (looking ahead); every entity-state flag at its rest value (attacking 0, ri1 0, rock_type 0, rf1 0: a ProbeSubject built from an empty state); the entity RNG seeded 0 once per clip and evolving across the keys; one pose call per key, 20 keys per second; full health",
       "hook": "danger.orespawn.entity.client.WormLargeGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the shipped replacement, registry-free, on explicit PoseInputs)",
       "landed": true,
@@ -1861,10 +1906,15 @@
   "reference_clip": {
     "state": "walk",
     "file": "worm_large_reference_walk.animation.json",
-    "sha256": "fc33e70bc2d96522d0ea98e4465b4fd4f9bf6eebbd7c1fc43379edf55885b7aa",
-    "clip": "reference",
+    "sha256": "711e28c48f360df948cf412ad77fcc26fa852735082dcc5dfffa1037b2f6e42a",
+    "clip": "reference_walk",
     "reference_only": true,
     "delivered_clip": "walk",
+    "offered_extra": null,
+    "named": true,
+    "name_source": "the contract",
+    "getter": null,
+    "value": null,
     "rule": "two_seconds_past_cap",
     "rule_note": "six frequencies: the neck's pitch 0.25 and yaw 0.15, the head's pitch 0.35 and yaw 0.45, the teeth 0.57, the tail tip 0.63 rad/tick (WormLargeGeoReplacement.applyCustomAnimations, WormLargeModel.setupAnim; orig ModelWormLarge.java:185-274): the slowest 0.15; the five heads follow the neck and the eight teeth the head (position channels); no multiple of the slowest group's period 41.8879 ticks up to the 6 s cap (120 ticks) brings every group back within 5 degrees of its start (k = 1: 84.035781 deg / 22.714895 units, k = 2: 154.471702 deg / 22.715164 units): a two-second window (40 ticks), not a loop - the sheet states the closing key's seam",
     "span_ticks": 40.0,
@@ -1872,6 +1922,17 @@
     "period_multiple_k": null,
     "animation_length_seconds": 2.0,
     "keys_per_bone": 41,
+    "keys_per_bone_min": 2,
+    "dense_samples": 41,
+    "lerp_mode": "catmullrom",
+    "keying": {
+      "rotation_tolerance_degrees": 1.0,
+      "position_tolerance_blocks": 0.03125,
+      "max_error_degrees": 0.9961008614,
+      "max_error_blocks": 0.0267011347,
+      "within_tolerance": true,
+      "keys_total": 831
+    },
     "sampled_inputs": "limbSwingAmount 1.0; limbSwing = t (advancing 1.0 per tick from 0: vanilla WalkAnimationState.update does speed += (movementSpeed - speed) * multiplier; position += speed, and the classic renderer hands walkAnimation.position(partialTick) as limbSwing and min(1, speed) as limbSwingAmount, so at speed 1 the position advances exactly 1.0 per tick); ageInTicks = t (getBob: tickCount + partialTick, partialTick 0); netHeadYaw 0; headPitch 0 (looking ahead); every entity-state flag at its rest value (attacking 0, ri1 0, rock_type 0, rf1 0: a ProbeSubject built from an empty state); the entity RNG seeded 0 once per clip and evolving across the keys; one pose call per key, 20 keys per second; full health (no shipped hook reads health)",
     "hook": "danger.orespawn.entity.client.WormLargeGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the shipped replacement, registry-free, on explicit PoseInputs)",
     "landed": true,
@@ -1921,6 +1982,7 @@
       "read_at_inputs": false
     }
   },
+  "reference_offers": [],
   "exact_transcription": false,
   "rig_source": "shipped",
   "in_game": true,

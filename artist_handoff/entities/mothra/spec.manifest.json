@@ -1,5 +1,5 @@
 {
-  "generated_by": "tools/artist_package.py 0.3.0 (the reference clips for every species, 2026-09-14, addendum items 11 to 13: every hook's reference_walk, reference_idle and - where the code reads an attack - reference_attack clip beside the sheet, landed or not; the clips loaded through Blockbench's Import Animations (README_FIRST, Toolchain); a reference clip's keys as the starting point of a delivered idle / walk / aggro_idle, only the reference file itself under its own name refused)",
+  "generated_by": "tools/artist_package.py 0.4.0 (the reference clips revised, 2026-09-14, second set revised, items 2 to 6: every state a hook reads sampled and named by the seed - reference_walk, reference_idle, reference_attack, reference_fly, reference_swim, the species' own states, an unnamed one flagged - keyed by the exact transcriptions' density search (catmullrom, 1 degree, 1/32 block), embedded in every .bbmodel within the round-trip tolerance with the files beside the sheet the pinned source; a reference clip's keys as the starting point of idle / walk / aggro_idle / fly / swim, a species state offered as a SPEC extra; only the reference file itself under its own name refused; one tracked copy, the folder's copies ignored by git)",
   "registry": "mothra",
   "display_name": "Mothra",
   "tier": 1,
@@ -704,7 +704,8 @@
       "required": true,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "walk",
@@ -714,7 +715,8 @@
       "required": true,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "fly",
@@ -724,7 +726,8 @@
       "required": false,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "calm_idle",
@@ -734,7 +737,8 @@
       "required": false,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "covered by idle"
+      "verdict": "covered by idle",
+      "offered_from_reference": null
     },
     {
       "name": "attack",
@@ -744,7 +748,8 @@
       "required": false,
       "length_rule": "near:0.5",
       "length_seconds": 0.5,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "hurt",
@@ -754,7 +759,8 @@
       "required": false,
       "length_rule": "near:0.3",
       "length_seconds": 0.3,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "death",
@@ -764,7 +770,8 @@
       "required": false,
       "length_rule": "near:1.5",
       "length_seconds": 1.5,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     }
   ],
   "allow_idle_alt": true,
@@ -782,17 +789,33 @@
     {
       "state": "walk",
       "file": "mothra_reference_walk.animation.json",
-      "sha256": "7b974ea1736a98f01116a3ae8a1c9e41785b43edcbc4abce7937335699e41a15",
-      "clip": "reference",
+      "sha256": "c78fbca7e7c5151775b79c38bef90867393eefa28edc811fec3aad922f978444",
+      "clip": "reference_walk",
       "reference_only": true,
       "delivered_clip": "walk",
+      "offered_extra": null,
+      "named": true,
+      "name_source": "the contract",
+      "getter": null,
+      "value": null,
       "rule": "period_multiple",
       "rule_note": "the Butterfly rig's one rhythm at Mothra's wingspeed 0.2: cos(ageInTicks * 1.3 * 0.2) * PI * 0.25 on the eight wings (MothraGeoReplacement.applyCustomAnimations:45 -> ButterflyGeoReplacement.pose:69) at 0.26 rad/tick, 24.17 ticks; closes at k = 1 (24.166098 ticks): every bone returns within 0 degrees of its start at k x T (the 5-degree test under the 6 s cap; k = 1: 0 deg)",
       "span_ticks": 24.1660982217,
       "period_ticks": 24.1660982217,
       "period_multiple_k": 1,
       "animation_length_seconds": 1.2083049111,
-      "keys_per_bone": 26,
+      "keys_per_bone": 14,
+      "keys_per_bone_min": 2,
+      "dense_samples": 26,
+      "lerp_mode": "catmullrom",
+      "keying": {
+        "rotation_tolerance_degrees": 1.0,
+        "position_tolerance_blocks": 0.03125,
+        "max_error_degrees": 0.3352428667,
+        "max_error_blocks": 0.0,
+        "within_tolerance": true,
+        "keys_total": 116
+      },
       "sampled_inputs": "limbSwingAmount 1.0; limbSwing = t (advancing 1.0 per tick from 0: vanilla WalkAnimationState.update does speed += (movementSpeed - speed) * multiplier; position += speed, and the classic renderer hands walkAnimation.position(partialTick) as limbSwing and min(1, speed) as limbSwingAmount, so at speed 1 the position advances exactly 1.0 per tick); ageInTicks = t (getBob: tickCount + partialTick, partialTick 0); netHeadYaw 0; headPitch 0 (looking ahead); every entity-state flag at its rest value (attacking 0, ri1 0, rock_type 0, rf1 0: a ProbeSubject built from an empty state); the entity RNG seeded 0 once per clip and evolving across the keys; one pose call per key, 20 keys per second; full health (no shipped hook reads health)",
       "hook": "danger.orespawn.entity.client.MothraGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the unlanded hook of owner 2026-09-14, addendum item 10 - the classic setupAnim transcribed into the descriptor's PoseInputs form, proven when the rig lands - registry-free, on explicit PoseInputs, over the reference leg's converter output reference_butterfly.geo.json baked without the face-order strictness the landing slice's TEST-007 adds)",
       "landed": false,
@@ -820,17 +843,33 @@
     {
       "state": "idle",
       "file": "mothra_reference_idle.animation.json",
-      "sha256": "9dba32a4f06b216519302df6dde4f403027c3a617b83d8444389ae052f5f414a",
+      "sha256": "601d4bf6049f59d708f809da17ff2dcc36b5604013c653e41221de7d176fb728",
       "clip": "reference_idle",
       "reference_only": true,
       "delivered_clip": "idle",
+      "offered_extra": null,
+      "named": true,
+      "name_source": "the contract",
+      "getter": null,
+      "value": null,
       "rule": "period_multiple",
       "rule_note": "the Butterfly rig's one rhythm at Mothra's wingspeed 0.2: cos(ageInTicks * 1.3 * 0.2) * PI * 0.25 on the eight wings (MothraGeoReplacement.applyCustomAnimations:45 -> ButterflyGeoReplacement.pose:69) at 0.26 rad/tick, 24.17 ticks; closes at k = 1 (24.166098 ticks): every bone returns within 0 degrees of its start at k x T (the 5-degree test under the 6 s cap; k = 1: 0 deg)",
       "span_ticks": 24.1660982217,
       "period_ticks": 24.1660982217,
       "period_multiple_k": 1,
       "animation_length_seconds": 1.2083049111,
-      "keys_per_bone": 26,
+      "keys_per_bone": 14,
+      "keys_per_bone_min": 2,
+      "dense_samples": 26,
+      "lerp_mode": "catmullrom",
+      "keying": {
+        "rotation_tolerance_degrees": 1.0,
+        "position_tolerance_blocks": 0.03125,
+        "max_error_degrees": 0.3352428667,
+        "max_error_blocks": 0.0,
+        "within_tolerance": true,
+        "keys_total": 116
+      },
       "sampled_inputs": "limbSwingAmount 0.0; limbSwing 0 (the walk position at rest: vanilla WalkAnimationState holds its position while the speed is 0, and a creature that has not walked since it spawned carries 0); ageInTicks = t (getBob: tickCount + partialTick, partialTick 0; advancing 1.0 per tick from 0); netHeadYaw 0; headPitch 0 (looking ahead); every entity-state flag at its rest value (attacking 0, ri1 0, rock_type 0, rf1 0: a ProbeSubject built from an empty state); the entity RNG seeded 0 once per clip and evolving across the keys; one pose call per key, 20 keys per second; full health",
       "hook": "danger.orespawn.entity.client.MothraGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the unlanded hook of owner 2026-09-14, addendum item 10 - the classic setupAnim transcribed into the descriptor's PoseInputs form, proven when the rig lands - registry-free, on explicit PoseInputs, over the reference leg's converter output reference_butterfly.geo.json baked without the face-order strictness the landing slice's TEST-007 adds)",
       "landed": false,
@@ -859,17 +898,33 @@
   "reference_clip": {
     "state": "walk",
     "file": "mothra_reference_walk.animation.json",
-    "sha256": "7b974ea1736a98f01116a3ae8a1c9e41785b43edcbc4abce7937335699e41a15",
-    "clip": "reference",
+    "sha256": "c78fbca7e7c5151775b79c38bef90867393eefa28edc811fec3aad922f978444",
+    "clip": "reference_walk",
     "reference_only": true,
     "delivered_clip": "walk",
+    "offered_extra": null,
+    "named": true,
+    "name_source": "the contract",
+    "getter": null,
+    "value": null,
     "rule": "period_multiple",
     "rule_note": "the Butterfly rig's one rhythm at Mothra's wingspeed 0.2: cos(ageInTicks * 1.3 * 0.2) * PI * 0.25 on the eight wings (MothraGeoReplacement.applyCustomAnimations:45 -> ButterflyGeoReplacement.pose:69) at 0.26 rad/tick, 24.17 ticks; closes at k = 1 (24.166098 ticks): every bone returns within 0 degrees of its start at k x T (the 5-degree test under the 6 s cap; k = 1: 0 deg)",
     "span_ticks": 24.1660982217,
     "period_ticks": 24.1660982217,
     "period_multiple_k": 1,
     "animation_length_seconds": 1.2083049111,
-    "keys_per_bone": 26,
+    "keys_per_bone": 14,
+    "keys_per_bone_min": 2,
+    "dense_samples": 26,
+    "lerp_mode": "catmullrom",
+    "keying": {
+      "rotation_tolerance_degrees": 1.0,
+      "position_tolerance_blocks": 0.03125,
+      "max_error_degrees": 0.3352428667,
+      "max_error_blocks": 0.0,
+      "within_tolerance": true,
+      "keys_total": 116
+    },
     "sampled_inputs": "limbSwingAmount 1.0; limbSwing = t (advancing 1.0 per tick from 0: vanilla WalkAnimationState.update does speed += (movementSpeed - speed) * multiplier; position += speed, and the classic renderer hands walkAnimation.position(partialTick) as limbSwing and min(1, speed) as limbSwingAmount, so at speed 1 the position advances exactly 1.0 per tick); ageInTicks = t (getBob: tickCount + partialTick, partialTick 0); netHeadYaw 0; headPitch 0 (looking ahead); every entity-state flag at its rest value (attacking 0, ri1 0, rock_type 0, rf1 0: a ProbeSubject built from an empty state); the entity RNG seeded 0 once per clip and evolving across the keys; one pose call per key, 20 keys per second; full health (no shipped hook reads health)",
     "hook": "danger.orespawn.entity.client.MothraGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the unlanded hook of owner 2026-09-14, addendum item 10 - the classic setupAnim transcribed into the descriptor's PoseInputs form, proven when the rig lands - registry-free, on explicit PoseInputs, over the reference leg's converter output reference_butterfly.geo.json baked without the face-order strictness the landing slice's TEST-007 adds)",
     "landed": false,
@@ -894,6 +949,7 @@
       "read_at_inputs": false
     }
   },
+  "reference_offers": [],
   "exact_transcription": false,
   "rig_source": "reference-leg converter output",
   "in_game": false,

@@ -356,5 +356,9 @@
     {"bone": "RFoot", "size": [1.2, 3], "damage": 0.5}
   ],
   "locked_bones_note": "The design's section 6 ModelThePrinceAdult row (geckolib_migration_design.md:455): 'Body1 [3.5,3.5] @0.5; three *Head1 [1.6,1.6] @1; Lwing1/Rwing1 [4,1.4] @0.25; Tail1/Tail4/Tail7 [1.5,1.5] @0.25; segmented legs [1.2,3] @0.5'. Body1, Lwing1, Rwing1, Tail1, Tail4 and Tail7 resolve as written; 'three *Head1' is CHead1, LHead1 and RHead1. 'segmented legs' is not a bone name: taken as every segment of each leg — LThigh, LUpperLeg, LLowerLeg, LFoot and RThigh, RUpperLeg, RLowerLeg, RFoot (ModelThePrinceAdult.createBodyLayer; the claws stay visual). The row: 'Same rig family as King but its own exact main size and measured part envelopes.'",
-  "effort_hours": null
+  "effort_hours": null,
+  "reference_states": {
+    "fly": {"getActivity": 1},
+    "sit": {"isOrderedToSit": true}
+  }
 }

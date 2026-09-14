@@ -171,5 +171,10 @@
     "in `idle`: the cocked tail (:337, :341) is a quirk of the code, not a pose - a slow tail sway and a head bob read better",
     "in `breath`: a head rear and a jaw snap on the fireball (EntitySpyro.java:480-487); the jaw is look-only today (SpyroModel.java:355, :368)"
   ],
-  "effort_hours": null
+  "effort_hours": null,
+  "reference_states": {
+    "fly": {"getActivity": 3},
+    "sitting_flat": {"getActivity": 2},
+    "sit": {"isInSittingPose": true}
+  }
 }

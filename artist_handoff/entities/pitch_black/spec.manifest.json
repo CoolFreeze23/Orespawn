@@ -1,5 +1,5 @@
 {
-  "generated_by": "tools/artist_package.py 0.3.0 (the reference clips for every species, 2026-09-14, addendum items 11 to 13: every hook's reference_walk, reference_idle and - where the code reads an attack - reference_attack clip beside the sheet, landed or not; the clips loaded through Blockbench's Import Animations (README_FIRST, Toolchain); a reference clip's keys as the starting point of a delivered idle / walk / aggro_idle, only the reference file itself under its own name refused)",
+  "generated_by": "tools/artist_package.py 0.4.0 (the reference clips revised, 2026-09-14, second set revised, items 2 to 6: every state a hook reads sampled and named by the seed - reference_walk, reference_idle, reference_attack, reference_fly, reference_swim, the species' own states, an unnamed one flagged - keyed by the exact transcriptions' density search (catmullrom, 1 degree, 1/32 block), embedded in every .bbmodel within the round-trip tolerance with the files beside the sheet the pinned source; a reference clip's keys as the starting point of idle / walk / aggro_idle / fly / swim, a species state offered as a SPEC extra; only the reference file itself under its own name refused; one tracked copy, the folder's copies ignored by git)",
   "registry": "pitch_black",
   "display_name": "Nightmare",
   "tier": 1,
@@ -7167,7 +7167,8 @@
       "required": true,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "idle_wings",
@@ -7177,7 +7178,8 @@
       "required": false,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "idle_jaw",
@@ -7187,7 +7189,8 @@
       "required": false,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "idle_tail",
@@ -7197,7 +7200,8 @@
       "required": false,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "walk",
@@ -7207,7 +7211,8 @@
       "required": true,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "walk_wings",
@@ -7217,7 +7222,8 @@
       "required": false,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "walk_jaw",
@@ -7227,7 +7233,8 @@
       "required": false,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "walk_tail",
@@ -7237,7 +7244,8 @@
       "required": false,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "fly",
@@ -7247,7 +7255,8 @@
       "required": false,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "aggro_idle",
@@ -7257,7 +7266,8 @@
       "required": false,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "calm_idle",
@@ -7267,7 +7277,8 @@
       "required": false,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "attack",
@@ -7277,7 +7288,8 @@
       "required": false,
       "length_rule": "near:0.6",
       "length_seconds": 0.6,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "hurt",
@@ -7287,7 +7299,8 @@
       "required": false,
       "length_rule": "near:0.4",
       "length_seconds": 0.4,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "death",
@@ -7297,7 +7310,8 @@
       "required": false,
       "length_rule": "near:2.0",
       "length_seconds": 2.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "takeoff",
@@ -7307,7 +7321,8 @@
       "required": false,
       "length_rule": "near:0.8",
       "length_seconds": 0.8,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "land",
@@ -7317,7 +7332,8 @@
       "required": false,
       "length_rule": "near:0.8",
       "length_seconds": 0.8,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     }
   ],
   "allow_idle_alt": true,
@@ -7337,10 +7353,15 @@
     {
       "state": "walk",
       "file": "pitch_black_reference_walk.animation.json",
-      "sha256": "22f7d1af05b77dd8c0958d9c094d13330ba0bd13ee09b1d4e8050bbbe6acfe0b",
-      "clip": "reference",
+      "sha256": "2fa7013bae5dc5f784761f67013839064fe88593cd70f52f4e29f05c633a3f1a",
+      "clip": "reference_walk",
       "reference_only": true,
       "delivered_clip": "walk",
+      "offered_extra": null,
+      "named": true,
+      "name_source": "the contract",
+      "getter": null,
+      "value": null,
       "rule": "two_seconds_past_cap",
       "rule_note": "wingspeed 0.65, pscale 1.0 on the probe: the slowest rhythm is the resting wing sway -pi/4 + cos(ageInTicks * 0.05 * WINGSPEED / pscale) * PI * ... (PitchBlackGeoReplacement.applyCustomAnimations:86, activity 0) at 0.0325 rad/tick, 193.33 ticks - over the 6 s cap; the activity wings cos(ageInTicks * 0.45 * WINGSPEED / pscale) * PI * 0.24 (:86, activity != 0); the attacking jaw cos(ageInTicks * 0.85 * WINGSPEED) * PI * 0.16 (:179) else the RenderInfo chomp latch gated by |ageInTicks * 0.7 * WINGSPEED mod 2 pi| (:184-185); the walking legs cos / sin(ageInTicks * 0.75 * WINGSPEED / pscale) with the pscale-scaled claw writes (:222-285, walk) at 0.4875 and the flying legs cos(ageInTicks * 0.85 * WINGSPEED / pscale) * 0.2 while attacking (:305); the forked tail chain at tailspeed 0.76 / pscale walking and 0.26 / pscale at rest (:349-353, :355-416); the slowest group's period 193.328786 ticks exceeds the 6 s cap (120 ticks): a two-second window (40 ticks), not a loop - the sheet states the closing key's seam",
       "span_ticks": 40.0,
@@ -7348,6 +7369,17 @@
       "period_multiple_k": null,
       "animation_length_seconds": 2.0,
       "keys_per_bone": 41,
+      "keys_per_bone_min": 2,
+      "dense_samples": 41,
+      "lerp_mode": "catmullrom",
+      "keying": {
+        "rotation_tolerance_degrees": 1.0,
+        "position_tolerance_blocks": 0.03125,
+        "max_error_degrees": 0.973233609,
+        "max_error_blocks": 0.02973813,
+        "within_tolerance": true,
+        "keys_total": 1773
+      },
       "sampled_inputs": "limbSwingAmount 1.0; limbSwing = t (advancing 1.0 per tick from 0: vanilla WalkAnimationState.update does speed += (movementSpeed - speed) * multiplier; position += speed, and the classic renderer hands walkAnimation.position(partialTick) as limbSwing and min(1, speed) as limbSwingAmount, so at speed 1 the position advances exactly 1.0 per tick); ageInTicks = t (getBob: tickCount + partialTick, partialTick 0); netHeadYaw 0; headPitch 0 (looking ahead); every entity-state flag at its rest value (attacking 0, ri1 0, rock_type 0, rf1 0: a ProbeSubject built from an empty state); the entity RNG seeded 0 once per clip and evolving across the keys; one pose call per key, 20 keys per second; full health (no shipped hook reads health)",
       "hook": "danger.orespawn.entity.client.PitchBlackGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the unlanded hook of owner 2026-09-14, addendum item 10 - the classic setupAnim transcribed into the descriptor's PoseInputs form, proven when the rig lands - registry-free, on explicit PoseInputs, over the reference leg's converter output reference_pitchblack.geo.json baked without the face-order strictness the landing slice's TEST-007 adds)",
       "landed": false,
@@ -7482,17 +7514,33 @@
     {
       "state": "idle",
       "file": "pitch_black_reference_idle.animation.json",
-      "sha256": "95767f2d968f54cf885412d5f92a9dc0ac0e53e1e2d0a6667365ac0184071d06",
+      "sha256": "9f240d3bc2c1dce7def4835902cb95dfa4d9d0dac4c22d6f0e67d302bb8f6ca8",
       "clip": "reference_idle",
       "reference_only": true,
       "delivered_clip": "idle",
+      "offered_extra": null,
+      "named": true,
+      "name_source": "the contract",
+      "getter": null,
+      "value": null,
       "rule": "two_seconds_past_cap",
       "rule_note": "wingspeed 0.65, pscale 1.0 on the probe: the slowest rhythm is the resting wing sway -pi/4 + cos(ageInTicks * 0.05 * WINGSPEED / pscale) * PI * ... (PitchBlackGeoReplacement.applyCustomAnimations:86, activity 0) at 0.0325 rad/tick, 193.33 ticks - over the 6 s cap; the activity wings cos(ageInTicks * 0.45 * WINGSPEED / pscale) * PI * 0.24 (:86, activity != 0); the attacking jaw cos(ageInTicks * 0.85 * WINGSPEED) * PI * 0.16 (:179) else the RenderInfo chomp latch gated by |ageInTicks * 0.7 * WINGSPEED mod 2 pi| (:184-185); the walking legs cos / sin(ageInTicks * 0.75 * WINGSPEED / pscale) with the pscale-scaled claw writes (:222-285, walk) at 0.4875 and the flying legs cos(ageInTicks * 0.85 * WINGSPEED / pscale) * 0.2 while attacking (:305); the forked tail chain at tailspeed 0.76 / pscale walking and 0.26 / pscale at rest (:349-353, :355-416); the slowest group's period 193.328786 ticks exceeds the 6 s cap (120 ticks): a two-second window (40 ticks), not a loop - the sheet states the closing key's seam",
       "span_ticks": 40.0,
       "period_ticks": 193.3287857737,
       "period_multiple_k": null,
       "animation_length_seconds": 2.0,
-      "keys_per_bone": 41,
+      "keys_per_bone": 24,
+      "keys_per_bone_min": 2,
+      "dense_samples": 41,
+      "lerp_mode": "catmullrom",
+      "keying": {
+        "rotation_tolerance_degrees": 1.0,
+        "position_tolerance_blocks": 0.03125,
+        "max_error_degrees": 0.973233609,
+        "max_error_blocks": 0.02973813,
+        "within_tolerance": true,
+        "keys_total": 655
+      },
       "sampled_inputs": "limbSwingAmount 0.0; limbSwing 0 (the walk position at rest: vanilla WalkAnimationState holds its position while the speed is 0, and a creature that has not walked since it spawned carries 0); ageInTicks = t (getBob: tickCount + partialTick, partialTick 0; advancing 1.0 per tick from 0); netHeadYaw 0; headPitch 0 (looking ahead); every entity-state flag at its rest value (attacking 0, ri1 0, rock_type 0, rf1 0: a ProbeSubject built from an empty state); the entity RNG seeded 0 once per clip and evolving across the keys; one pose call per key, 20 keys per second; full health",
       "hook": "danger.orespawn.entity.client.PitchBlackGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the unlanded hook of owner 2026-09-14, addendum item 10 - the classic setupAnim transcribed into the descriptor's PoseInputs form, proven when the rig lands - registry-free, on explicit PoseInputs, over the reference leg's converter output reference_pitchblack.geo.json baked without the face-order strictness the landing slice's TEST-007 adds)",
       "landed": false,
@@ -7627,10 +7675,15 @@
     {
       "state": "attack",
       "file": "pitch_black_reference_attack.animation.json",
-      "sha256": "f20581e39c258b7e49fd63c52d94d5779b6436f0566887dd7b23f3a2f0bfbcea",
+      "sha256": "5dbad1287479d793fe7a832495d114b2681d9dcea5dd99143285e048dab22a33",
       "clip": "reference_attack",
       "reference_only": true,
       "delivered_clip": "aggro_idle",
+      "offered_extra": null,
+      "named": true,
+      "name_source": "the contract (getAttacking 1)",
+      "getter": "getAttacking",
+      "value": 1,
       "rule": "two_seconds_past_cap",
       "rule_note": "wingspeed 0.65, pscale 1.0 on the probe: the slowest rhythm is the resting wing sway -pi/4 + cos(ageInTicks * 0.05 * WINGSPEED / pscale) * PI * ... (PitchBlackGeoReplacement.applyCustomAnimations:86, activity 0) at 0.0325 rad/tick, 193.33 ticks - over the 6 s cap; the activity wings cos(ageInTicks * 0.45 * WINGSPEED / pscale) * PI * 0.24 (:86, activity != 0); the attacking jaw cos(ageInTicks * 0.85 * WINGSPEED) * PI * 0.16 (:179) else the RenderInfo chomp latch gated by |ageInTicks * 0.7 * WINGSPEED mod 2 pi| (:184-185); the walking legs cos / sin(ageInTicks * 0.75 * WINGSPEED / pscale) with the pscale-scaled claw writes (:222-285, walk) at 0.4875 and the flying legs cos(ageInTicks * 0.85 * WINGSPEED / pscale) * 0.2 while attacking (:305); the forked tail chain at tailspeed 0.76 / pscale walking and 0.26 / pscale at rest (:349-353, :355-416); the slowest group's period 193.328786 ticks exceeds the 6 s cap (120 ticks): a two-second window (40 ticks), not a loop - the sheet states the closing key's seam",
       "span_ticks": 40.0,
@@ -7638,7 +7691,18 @@
       "period_multiple_k": null,
       "animation_length_seconds": 2.0,
       "keys_per_bone": 41,
-      "sampled_inputs": "attacking 1 (the pose interface's getAttacking() answers 1: the hook's attacking branch); limbSwingAmount 0.0; limbSwing 0 (the walk position at rest); ageInTicks = t (getBob: tickCount + partialTick, partialTick 0; advancing 1.0 per tick from 0); netHeadYaw 0; headPitch 0 (looking ahead); every other entity-state flag at its rest value (ri1 0, rock_type 0, rf1 0: a ProbeSubject built from the attack state); the entity RNG seeded 0 once per clip and evolving across the keys; one pose call per key, 20 keys per second; full health",
+      "keys_per_bone_min": 2,
+      "dense_samples": 41,
+      "lerp_mode": "catmullrom",
+      "keying": {
+        "rotation_tolerance_degrees": 1.0,
+        "position_tolerance_blocks": 0.03125,
+        "max_error_degrees": 0.9073292319,
+        "max_error_blocks": 0.0308100693,
+        "within_tolerance": true,
+        "keys_total": 2062
+      },
+      "sampled_inputs": "getAttacking() answers 1 (the state the seed names `attack`; every other getter at its rest value); limbSwingAmount 0.0; limbSwing 0 (the walk position at rest: vanilla WalkAnimationState holds its position while the speed is 0, and a creature that has not walked since it spawned carries 0); ageInTicks = t (getBob: tickCount + partialTick, partialTick 0; advancing 1.0 per tick from 0); netHeadYaw 0; headPitch 0 (looking ahead); every other entity-state flag at its rest value (ri1 0, rock_type 0, rf1 0); the entity RNG seeded 0 once per clip and evolving across the keys; one pose call per key, 20 keys per second; full health",
       "hook": "danger.orespawn.entity.client.PitchBlackGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the unlanded hook of owner 2026-09-14, addendum item 10 - the classic setupAnim transcribed into the descriptor's PoseInputs form, proven when the rig lands - registry-free, on explicit PoseInputs, over the reference leg's converter output reference_pitchblack.geo.json baked without the face-order strictness the landing slice's TEST-007 adds)",
       "landed": false,
       "moving_bones": [
@@ -7768,15 +7832,195 @@
         "reads_attacking": true,
         "read_at_inputs": true
       }
+    },
+    {
+      "state": "fly",
+      "file": "pitch_black_reference_fly.animation.json",
+      "sha256": "d5558b3f1efc2cd75eccd30f598c10ef6551efa8954e67c94e8d2ce07255f149",
+      "clip": "reference_fly",
+      "reference_only": true,
+      "delivered_clip": "fly",
+      "offered_extra": null,
+      "named": true,
+      "name_source": "pitch_black.json reference_states.fly = {getActivity: 1}",
+      "getter": "getActivity",
+      "value": 1,
+      "rule": "two_seconds_past_cap",
+      "rule_note": "wingspeed 0.65, pscale 1.0 on the probe: the slowest rhythm is the resting wing sway -pi/4 + cos(ageInTicks * 0.05 * WINGSPEED / pscale) * PI * ... (PitchBlackGeoReplacement.applyCustomAnimations:86, activity 0) at 0.0325 rad/tick, 193.33 ticks - over the 6 s cap; the activity wings cos(ageInTicks * 0.45 * WINGSPEED / pscale) * PI * 0.24 (:86, activity != 0); the attacking jaw cos(ageInTicks * 0.85 * WINGSPEED) * PI * 0.16 (:179) else the RenderInfo chomp latch gated by |ageInTicks * 0.7 * WINGSPEED mod 2 pi| (:184-185); the walking legs cos / sin(ageInTicks * 0.75 * WINGSPEED / pscale) with the pscale-scaled claw writes (:222-285, walk) at 0.4875 and the flying legs cos(ageInTicks * 0.85 * WINGSPEED / pscale) * 0.2 while attacking (:305); the forked tail chain at tailspeed 0.76 / pscale walking and 0.26 / pscale at rest (:349-353, :355-416); the slowest group's period 193.328786 ticks exceeds the 6 s cap (120 ticks): a two-second window (40 ticks), not a loop - the sheet states the closing key's seam",
+      "span_ticks": 40.0,
+      "period_ticks": 193.3287857737,
+      "period_multiple_k": null,
+      "animation_length_seconds": 2.0,
+      "keys_per_bone": 41,
+      "keys_per_bone_min": 2,
+      "dense_samples": 41,
+      "lerp_mode": "catmullrom",
+      "keying": {
+        "rotation_tolerance_degrees": 1.0,
+        "position_tolerance_blocks": 0.03125,
+        "max_error_degrees": 0.973233609,
+        "max_error_blocks": 0.0294127724,
+        "within_tolerance": true,
+        "keys_total": 1801
+      },
+      "sampled_inputs": "getActivity() answers 1 (the state the seed names `fly`; every other getter at its rest value); limbSwingAmount 0.0; limbSwing 0 (the walk position at rest: vanilla WalkAnimationState holds its position while the speed is 0, and a creature that has not walked since it spawned carries 0); ageInTicks = t (getBob: tickCount + partialTick, partialTick 0; advancing 1.0 per tick from 0); netHeadYaw 0; headPitch 0 (looking ahead); every other entity-state flag at its rest value (ri1 0, rock_type 0, rf1 0); the entity RNG seeded 0 once per clip and evolving across the keys; one pose call per key, 20 keys per second; full health",
+      "hook": "danger.orespawn.entity.client.PitchBlackGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the unlanded hook of owner 2026-09-14, addendum item 10 - the classic setupAnim transcribed into the descriptor's PoseInputs form, proven when the rig lands - registry-free, on explicit PoseInputs, over the reference leg's converter output reference_pitchblack.geo.json baked without the face-order strictness the landing slice's TEST-007 adds)",
+      "landed": false,
+      "moving_bones": [
+        "jaw1",
+        "jaw2",
+        "jaw3",
+        "jaw4",
+        "jaw5",
+        "lclaw1",
+        "lclaw2",
+        "lclaw3",
+        "lclaw4",
+        "lclaw5",
+        "lclaw6",
+        "lclaw7",
+        "leftleg1",
+        "leftleg2",
+        "leftleg3",
+        "llegspike",
+        "llegspike2",
+        "mem1",
+        "mem2",
+        "mem3",
+        "rclaw1",
+        "rclaw2",
+        "rclaw3",
+        "rclaw4",
+        "rclaw5",
+        "rclaw6",
+        "rclaw7",
+        "rightleg1",
+        "rightleg2",
+        "rightleg3",
+        "rmem1",
+        "rmem2",
+        "rmem3",
+        "rwing1",
+        "rwing2",
+        "rwing3",
+        "rwingclaw1",
+        "rwingclaw2",
+        "rwingclaw3",
+        "tail1",
+        "tail2",
+        "tail3",
+        "tail4",
+        "tail5",
+        "tail6",
+        "tail7",
+        "tail8",
+        "tail9",
+        "tailpoint1",
+        "tailpoint2",
+        "tailspike1",
+        "tailspike2",
+        "tailspike3",
+        "tailspike4",
+        "tailspike5",
+        "tailspike6",
+        "tooth14",
+        "tooth15",
+        "tooth16",
+        "tooth17",
+        "tooth18",
+        "tooth19",
+        "tooth20",
+        "tooth21",
+        "tooth22",
+        "tooth23",
+        "wing1",
+        "wing2",
+        "wing3",
+        "wingclaw1",
+        "wingclaw2",
+        "wingclaw3"
+      ],
+      "position_bones": [
+        "lclaw1",
+        "lclaw2",
+        "lclaw3",
+        "lclaw4",
+        "lclaw5",
+        "lclaw6",
+        "lclaw7",
+        "leftleg1",
+        "leftleg2",
+        "leftleg3",
+        "llegspike",
+        "llegspike2",
+        "mem2",
+        "mem3",
+        "rclaw1",
+        "rclaw2",
+        "rclaw3",
+        "rclaw4",
+        "rclaw5",
+        "rclaw6",
+        "rclaw7",
+        "rightleg1",
+        "rightleg2",
+        "rightleg3",
+        "rmem2",
+        "rmem3",
+        "rwing2",
+        "rwing3",
+        "rwingclaw1",
+        "rwingclaw2",
+        "rwingclaw3",
+        "tail2",
+        "tail3",
+        "tail4",
+        "tail5",
+        "tail6",
+        "tail7",
+        "tail8",
+        "tail9",
+        "tailpoint1",
+        "tailpoint2",
+        "tailspike1",
+        "tailspike2",
+        "tailspike3",
+        "tailspike4",
+        "tailspike5",
+        "tailspike6",
+        "wing2",
+        "wing3",
+        "wingclaw1",
+        "wingclaw2",
+        "wingclaw3"
+      ],
+      "hidden_bones_at_rest": [],
+      "seam_delta_degrees": 30.4503664332,
+      "attacking": {
+        "declared_pose_interfaces": [
+          "PitchBlackPose"
+        ],
+        "getters": [
+          "PitchBlackPose.getAttacking()"
+        ],
+        "outside_pose_interface": [],
+        "reads_attacking": true,
+        "read_at_inputs": true
+      }
     }
   ],
   "reference_clip": {
     "state": "walk",
     "file": "pitch_black_reference_walk.animation.json",
-    "sha256": "22f7d1af05b77dd8c0958d9c094d13330ba0bd13ee09b1d4e8050bbbe6acfe0b",
-    "clip": "reference",
+    "sha256": "2fa7013bae5dc5f784761f67013839064fe88593cd70f52f4e29f05c633a3f1a",
+    "clip": "reference_walk",
     "reference_only": true,
     "delivered_clip": "walk",
+    "offered_extra": null,
+    "named": true,
+    "name_source": "the contract",
+    "getter": null,
+    "value": null,
     "rule": "two_seconds_past_cap",
     "rule_note": "wingspeed 0.65, pscale 1.0 on the probe: the slowest rhythm is the resting wing sway -pi/4 + cos(ageInTicks * 0.05 * WINGSPEED / pscale) * PI * ... (PitchBlackGeoReplacement.applyCustomAnimations:86, activity 0) at 0.0325 rad/tick, 193.33 ticks - over the 6 s cap; the activity wings cos(ageInTicks * 0.45 * WINGSPEED / pscale) * PI * 0.24 (:86, activity != 0); the attacking jaw cos(ageInTicks * 0.85 * WINGSPEED) * PI * 0.16 (:179) else the RenderInfo chomp latch gated by |ageInTicks * 0.7 * WINGSPEED mod 2 pi| (:184-185); the walking legs cos / sin(ageInTicks * 0.75 * WINGSPEED / pscale) with the pscale-scaled claw writes (:222-285, walk) at 0.4875 and the flying legs cos(ageInTicks * 0.85 * WINGSPEED / pscale) * 0.2 while attacking (:305); the forked tail chain at tailspeed 0.76 / pscale walking and 0.26 / pscale at rest (:349-353, :355-416); the slowest group's period 193.328786 ticks exceeds the 6 s cap (120 ticks): a two-second window (40 ticks), not a loop - the sheet states the closing key's seam",
     "span_ticks": 40.0,
@@ -7784,6 +8028,17 @@
     "period_multiple_k": null,
     "animation_length_seconds": 2.0,
     "keys_per_bone": 41,
+    "keys_per_bone_min": 2,
+    "dense_samples": 41,
+    "lerp_mode": "catmullrom",
+    "keying": {
+      "rotation_tolerance_degrees": 1.0,
+      "position_tolerance_blocks": 0.03125,
+      "max_error_degrees": 0.973233609,
+      "max_error_blocks": 0.02973813,
+      "within_tolerance": true,
+      "keys_total": 1773
+    },
     "sampled_inputs": "limbSwingAmount 1.0; limbSwing = t (advancing 1.0 per tick from 0: vanilla WalkAnimationState.update does speed += (movementSpeed - speed) * multiplier; position += speed, and the classic renderer hands walkAnimation.position(partialTick) as limbSwing and min(1, speed) as limbSwingAmount, so at speed 1 the position advances exactly 1.0 per tick); ageInTicks = t (getBob: tickCount + partialTick, partialTick 0); netHeadYaw 0; headPitch 0 (looking ahead); every entity-state flag at its rest value (attacking 0, ri1 0, rock_type 0, rf1 0: a ProbeSubject built from an empty state); the entity RNG seeded 0 once per clip and evolving across the keys; one pose call per key, 20 keys per second; full health (no shipped hook reads health)",
     "hook": "danger.orespawn.entity.client.PitchBlackGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the unlanded hook of owner 2026-09-14, addendum item 10 - the classic setupAnim transcribed into the descriptor's PoseInputs form, proven when the rig lands - registry-free, on explicit PoseInputs, over the reference leg's converter output reference_pitchblack.geo.json baked without the face-order strictness the landing slice's TEST-007 adds)",
     "landed": false,
@@ -7915,6 +8170,7 @@
       "read_at_inputs": true
     }
   },
+  "reference_offers": [],
   "exact_transcription": false,
   "rig_source": "reference-leg converter output",
   "in_game": false,

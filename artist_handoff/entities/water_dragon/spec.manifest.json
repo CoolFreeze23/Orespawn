@@ -1,5 +1,5 @@
 {
-  "generated_by": "tools/artist_package.py 0.3.0 (the reference clips for every species, 2026-09-14, addendum items 11 to 13: every hook's reference_walk, reference_idle and - where the code reads an attack - reference_attack clip beside the sheet, landed or not; the clips loaded through Blockbench's Import Animations (README_FIRST, Toolchain); a reference clip's keys as the starting point of a delivered idle / walk / aggro_idle, only the reference file itself under its own name refused)",
+  "generated_by": "tools/artist_package.py 0.4.0 (the reference clips revised, 2026-09-14, second set revised, items 2 to 6: every state a hook reads sampled and named by the seed - reference_walk, reference_idle, reference_attack, reference_fly, reference_swim, the species' own states, an unnamed one flagged - keyed by the exact transcriptions' density search (catmullrom, 1 degree, 1/32 block), embedded in every .bbmodel within the round-trip tolerance with the files beside the sheet the pinned source; a reference clip's keys as the starting point of idle / walk / aggro_idle / fly / swim, a species state offered as a SPEC extra; only the reference file itself under its own name refused; one tracked copy, the folder's copies ignored by git)",
   "registry": "water_dragon",
   "display_name": "Water Dragon",
   "tier": 1,
@@ -1709,7 +1709,8 @@
       "required": true,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "idle_ears",
@@ -1719,7 +1720,8 @@
       "required": false,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "idle_body_fin",
@@ -1729,7 +1731,8 @@
       "required": false,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "idle_neck_fin",
@@ -1739,7 +1742,8 @@
       "required": false,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "idle_jaw",
@@ -1749,7 +1753,8 @@
       "required": false,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "walk",
@@ -1759,7 +1764,8 @@
       "required": true,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "walk_ears",
@@ -1769,7 +1775,8 @@
       "required": false,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "walk_body_fin",
@@ -1779,7 +1786,8 @@
       "required": false,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "walk_neck_fin",
@@ -1789,7 +1797,8 @@
       "required": false,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "walk_jaw",
@@ -1799,7 +1808,8 @@
       "required": false,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "swim",
@@ -1809,7 +1819,8 @@
       "required": false,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "aggro_idle",
@@ -1819,7 +1830,8 @@
       "required": false,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "calm_idle",
@@ -1829,7 +1841,8 @@
       "required": false,
       "length_rule": "near:1.0",
       "length_seconds": 1.0,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "attack",
@@ -1839,7 +1852,8 @@
       "required": false,
       "length_rule": "near:0.5",
       "length_seconds": 0.5,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "hurt",
@@ -1849,7 +1863,8 @@
       "required": false,
       "length_rule": "near:0.4",
       "length_seconds": 0.4,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "death",
@@ -1859,7 +1874,8 @@
       "required": false,
       "length_rule": "near:1.5",
       "length_seconds": 1.5,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
     },
     {
       "name": "cannon",
@@ -1869,7 +1885,30 @@
       "required": false,
       "length_rule": "near:0.4",
       "length_seconds": 0.4,
-      "verdict": "author"
+      "verdict": "author",
+      "offered_from_reference": null
+    },
+    {
+      "name": "mouth_open",
+      "loop": "true",
+      "role": "extra",
+      "code_triggered": false,
+      "required": false,
+      "length_rule": "near:1.0",
+      "length_seconds": 1.0,
+      "verdict": "author",
+      "offered_from_reference": "reference_mouth_open"
+    },
+    {
+      "name": "sit",
+      "loop": "true",
+      "role": "extra",
+      "code_triggered": false,
+      "required": false,
+      "length_rule": "near:1.0",
+      "length_seconds": 1.0,
+      "verdict": "author",
+      "offered_from_reference": "reference_sit"
     }
   ],
   "allow_idle_alt": true,
@@ -1881,16 +1920,21 @@
       "aliases": []
     }
   ],
-  "effort_hours": 37.1,
-  "effort_source": "generator: 8 h + 0.15 h/bone x 24 + 1.5 h/clip x 17 to author or improve (owner adjusts)",
+  "effort_hours": 40.1,
+  "effort_source": "generator: 8 h + 0.15 h/bone x 24 + 1.5 h/clip x 19 to author or improve (owner adjusts)",
   "reference_clips": [
     {
       "state": "walk",
       "file": "water_dragon_reference_walk.animation.json",
-      "sha256": "511548ee9a61362f1e64779bc63d84fb5a85f95bb228b900f5fcd316fe03cc72",
-      "clip": "reference",
+      "sha256": "620a68978899c281685d799b5790d2913ea006959aa31abf86a210fe1953001b",
+      "clip": "reference_walk",
       "reference_only": true,
       "delivered_clip": "walk",
+      "offered_extra": null,
+      "named": true,
+      "name_source": "the contract",
+      "getter": null,
+      "value": null,
       "rule": "two_seconds_past_cap",
       "rule_note": "wingspeed 0.5: the slowest rhythm is cos(ageInTicks * 0.5 * WINGSPEED) * PI * 0.05 (WaterDragonGeoReplacement.applyCustomAnimations:124, every state) at 0.25 rad/tick, 25.13 ticks, beside the 0.8 / 0.7 / 0.6 * 0.5 sways (:109-119); the threshold gait cos(ageInTicks * 1.3 * WINGSPEED) * PI * 0.2 * limbSwingAmount and the pi/4-phased body wave cos(ageInTicks * 1.3 * WINGSPEED - n * pi/4) * PI * 0.4 * limbSwingAmount with its chained position writes (:82-99, walk) at 0.65; the three-way attacking jaw cos(ageInTicks * 1.2 * WINGSPEED) * PI * 0.25 at attacking 1, 0.45 rad at 2, -0.25 at rest (:129); the head look at 0.75 with the nose, jaw, fin and ears following follows netHeadYaw = 0 (:130-142); no multiple of the slowest group's period 25.132741 ticks up to the 6 s cap (120 ticks) brings every group back within 5 degrees of its start (k = 1: 130.251666 deg / 23.241338 units, k = 2: 83.597776 deg / 4.315639 units, k = 3: 83.603926 deg / 13.37987 units, k = 4: 130.247603 deg / 17.466937 units): a two-second window (40 ticks), not a loop - the sheet states the closing key's seam",
       "span_ticks": 40.0,
@@ -1898,6 +1942,17 @@
       "period_multiple_k": null,
       "animation_length_seconds": 2.0,
       "keys_per_bone": 41,
+      "keys_per_bone_min": 2,
+      "dense_samples": 41,
+      "lerp_mode": "catmullrom",
+      "keying": {
+        "rotation_tolerance_degrees": 1.0,
+        "position_tolerance_blocks": 0.03125,
+        "max_error_degrees": 0.9071579621,
+        "max_error_blocks": 0.0,
+        "within_tolerance": true,
+        "keys_total": 687
+      },
       "sampled_inputs": "limbSwingAmount 1.0; limbSwing = t (advancing 1.0 per tick from 0: vanilla WalkAnimationState.update does speed += (movementSpeed - speed) * multiplier; position += speed, and the classic renderer hands walkAnimation.position(partialTick) as limbSwing and min(1, speed) as limbSwingAmount, so at speed 1 the position advances exactly 1.0 per tick); ageInTicks = t (getBob: tickCount + partialTick, partialTick 0); netHeadYaw 0; headPitch 0 (looking ahead); every entity-state flag at its rest value (attacking 0, ri1 0, rock_type 0, rf1 0: a ProbeSubject built from an empty state); the entity RNG seeded 0 once per clip and evolving across the keys; one pose call per key, 20 keys per second; full health (no shipped hook reads health)",
       "hook": "danger.orespawn.entity.client.WaterDragonGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the unlanded hook of owner 2026-09-14, addendum item 10 - the classic setupAnim transcribed into the descriptor's PoseInputs form, proven when the rig lands - registry-free, on explicit PoseInputs, over the reference leg's converter output reference_waterdragon.geo.json baked without the face-order strictness the landing slice's TEST-007 adds)",
       "landed": false,
@@ -1944,17 +1999,33 @@
     {
       "state": "idle",
       "file": "water_dragon_reference_idle.animation.json",
-      "sha256": "7dd3e6deac26ee0452d12ad26de4ab03d4abc116dd63ea0d70dabd5c0f0b3f5c",
+      "sha256": "2bd8a5b15ce820af79b48042a338ef136e6983d543e8338c9085c3dc2ff75ce2",
       "clip": "reference_idle",
       "reference_only": true,
       "delivered_clip": "idle",
+      "offered_extra": null,
+      "named": true,
+      "name_source": "the contract",
+      "getter": null,
+      "value": null,
       "rule": "two_seconds_past_cap",
       "rule_note": "wingspeed 0.5: the slowest rhythm is cos(ageInTicks * 0.5 * WINGSPEED) * PI * 0.05 (WaterDragonGeoReplacement.applyCustomAnimations:124, every state) at 0.25 rad/tick, 25.13 ticks, beside the 0.8 / 0.7 / 0.6 * 0.5 sways (:109-119); the threshold gait cos(ageInTicks * 1.3 * WINGSPEED) * PI * 0.2 * limbSwingAmount and the pi/4-phased body wave cos(ageInTicks * 1.3 * WINGSPEED - n * pi/4) * PI * 0.4 * limbSwingAmount with its chained position writes (:82-99, walk) at 0.65; the three-way attacking jaw cos(ageInTicks * 1.2 * WINGSPEED) * PI * 0.25 at attacking 1, 0.45 rad at 2, -0.25 at rest (:129); the head look at 0.75 with the nose, jaw, fin and ears following follows netHeadYaw = 0 (:130-142); no multiple of the slowest group's period 25.132741 ticks up to the 6 s cap (120 ticks) brings every group back within 5 degrees of its start (k = 1: 32.562917 deg, k = 2: 32.561901 deg, k = 3: 32.562917 deg, k = 4: 32.561901 deg): a two-second window (40 ticks), not a loop - the sheet states the closing key's seam",
       "span_ticks": 40.0,
       "period_ticks": 25.1327412287,
       "period_multiple_k": null,
       "animation_length_seconds": 2.0,
-      "keys_per_bone": 41,
+      "keys_per_bone": 14,
+      "keys_per_bone_min": 2,
+      "dense_samples": 41,
+      "lerp_mode": "catmullrom",
+      "keying": {
+        "rotation_tolerance_degrees": 1.0,
+        "position_tolerance_blocks": 0.03125,
+        "max_error_degrees": 0.9071579621,
+        "max_error_blocks": 0.0,
+        "within_tolerance": true,
+        "keys_total": 100
+      },
       "sampled_inputs": "limbSwingAmount 0.0; limbSwing 0 (the walk position at rest: vanilla WalkAnimationState holds its position while the speed is 0, and a creature that has not walked since it spawned carries 0); ageInTicks = t (getBob: tickCount + partialTick, partialTick 0; advancing 1.0 per tick from 0); netHeadYaw 0; headPitch 0 (looking ahead); every entity-state flag at its rest value (attacking 0, ri1 0, rock_type 0, rf1 0: a ProbeSubject built from an empty state); the entity RNG seeded 0 once per clip and evolving across the keys; one pose call per key, 20 keys per second; full health",
       "hook": "danger.orespawn.entity.client.WaterDragonGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the unlanded hook of owner 2026-09-14, addendum item 10 - the classic setupAnim transcribed into the descriptor's PoseInputs form, proven when the rig lands - registry-free, on explicit PoseInputs, over the reference leg's converter output reference_waterdragon.geo.json baked without the face-order strictness the landing slice's TEST-007 adds)",
       "landed": false,
@@ -1994,10 +2065,15 @@
     {
       "state": "attack",
       "file": "water_dragon_reference_attack.animation.json",
-      "sha256": "4d8560d7d3ee393d6bc4dce402cc3872bacf0eb76319d8ee6b850e3e98387639",
+      "sha256": "73a0beecb572d70b8996cf1f6534c39358677bdae85442781519bd199ea8d7f7",
       "clip": "reference_attack",
       "reference_only": true,
       "delivered_clip": "aggro_idle",
+      "offered_extra": null,
+      "named": true,
+      "name_source": "the contract (getAttacking 1)",
+      "getter": "getAttacking",
+      "value": 1,
       "rule": "two_seconds_past_cap",
       "rule_note": "wingspeed 0.5: the slowest rhythm is cos(ageInTicks * 0.5 * WINGSPEED) * PI * 0.05 (WaterDragonGeoReplacement.applyCustomAnimations:124, every state) at 0.25 rad/tick, 25.13 ticks, beside the 0.8 / 0.7 / 0.6 * 0.5 sways (:109-119); the threshold gait cos(ageInTicks * 1.3 * WINGSPEED) * PI * 0.2 * limbSwingAmount and the pi/4-phased body wave cos(ageInTicks * 1.3 * WINGSPEED - n * pi/4) * PI * 0.4 * limbSwingAmount with its chained position writes (:82-99, walk) at 0.65; the three-way attacking jaw cos(ageInTicks * 1.2 * WINGSPEED) * PI * 0.25 at attacking 1, 0.45 rad at 2, -0.25 at rest (:129); the head look at 0.75 with the nose, jaw, fin and ears following follows netHeadYaw = 0 (:130-142); no multiple of the slowest group's period 25.132741 ticks up to the 6 s cap (120 ticks) brings every group back within 5 degrees of its start (k = 1: 81.404752 deg, k = 2: 32.561901 deg, k = 3: 32.562917 deg, k = 4: 81.40729 deg): a two-second window (40 ticks), not a loop - the sheet states the closing key's seam",
       "span_ticks": 40.0,
@@ -2005,7 +2081,18 @@
       "period_multiple_k": null,
       "animation_length_seconds": 2.0,
       "keys_per_bone": 41,
-      "sampled_inputs": "attacking 1 (the pose interface's getAttacking() answers 1: the hook's attacking branch); limbSwingAmount 0.0; limbSwing 0 (the walk position at rest); ageInTicks = t (getBob: tickCount + partialTick, partialTick 0; advancing 1.0 per tick from 0); netHeadYaw 0; headPitch 0 (looking ahead); every other entity-state flag at its rest value (ri1 0, rock_type 0, rf1 0: a ProbeSubject built from the attack state); the entity RNG seeded 0 once per clip and evolving across the keys; one pose call per key, 20 keys per second; full health",
+      "keys_per_bone_min": 2,
+      "dense_samples": 41,
+      "lerp_mode": "catmullrom",
+      "keying": {
+        "rotation_tolerance_degrees": 1.0,
+        "position_tolerance_blocks": 0.03125,
+        "max_error_degrees": 0.9071579621,
+        "max_error_blocks": 0.0,
+        "within_tolerance": true,
+        "keys_total": 139
+      },
+      "sampled_inputs": "getAttacking() answers 1 (the state the seed names `attack`; every other getter at its rest value); limbSwingAmount 0.0; limbSwing 0 (the walk position at rest: vanilla WalkAnimationState holds its position while the speed is 0, and a creature that has not walked since it spawned carries 0); ageInTicks = t (getBob: tickCount + partialTick, partialTick 0; advancing 1.0 per tick from 0); netHeadYaw 0; headPitch 0 (looking ahead); every other entity-state flag at its rest value (ri1 0, rock_type 0, rf1 0); the entity RNG seeded 0 once per clip and evolving across the keys; one pose call per key, 20 keys per second; full health",
       "hook": "danger.orespawn.entity.client.WaterDragonGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the unlanded hook of owner 2026-09-14, addendum item 10 - the classic setupAnim transcribed into the descriptor's PoseInputs form, proven when the rig lands - registry-free, on explicit PoseInputs, over the reference leg's converter output reference_waterdragon.geo.json baked without the face-order strictness the landing slice's TEST-007 adds)",
       "landed": false,
       "moving_bones": [
@@ -2040,15 +2127,150 @@
         "reads_attacking": true,
         "read_at_inputs": true
       }
+    },
+    {
+      "state": "mouth_open",
+      "file": "water_dragon_reference_mouth_open.animation.json",
+      "sha256": "49042a56fc7d3a7ca754ff2a62129d8f4fc52e16c4528707fea1f8ce43d9643e",
+      "clip": "reference_mouth_open",
+      "reference_only": true,
+      "delivered_clip": null,
+      "offered_extra": "mouth_open",
+      "named": true,
+      "name_source": "water_dragon.json reference_states.mouth_open = {getAttacking: 2}",
+      "getter": "getAttacking",
+      "value": 2,
+      "rule": "two_seconds_past_cap",
+      "rule_note": "wingspeed 0.5: the slowest rhythm is cos(ageInTicks * 0.5 * WINGSPEED) * PI * 0.05 (WaterDragonGeoReplacement.applyCustomAnimations:124, every state) at 0.25 rad/tick, 25.13 ticks, beside the 0.8 / 0.7 / 0.6 * 0.5 sways (:109-119); the threshold gait cos(ageInTicks * 1.3 * WINGSPEED) * PI * 0.2 * limbSwingAmount and the pi/4-phased body wave cos(ageInTicks * 1.3 * WINGSPEED - n * pi/4) * PI * 0.4 * limbSwingAmount with its chained position writes (:82-99, walk) at 0.65; the three-way attacking jaw cos(ageInTicks * 1.2 * WINGSPEED) * PI * 0.25 at attacking 1, 0.45 rad at 2, -0.25 at rest (:129); the head look at 0.75 with the nose, jaw, fin and ears following follows netHeadYaw = 0 (:130-142); no multiple of the slowest group's period 25.132741 ticks up to the 6 s cap (120 ticks) brings every group back within 5 degrees of its start (k = 1: 32.562917 deg, k = 2: 32.561901 deg, k = 3: 32.562917 deg, k = 4: 32.561901 deg): a two-second window (40 ticks), not a loop - the sheet states the closing key's seam",
+      "span_ticks": 40.0,
+      "period_ticks": 25.1327412287,
+      "period_multiple_k": null,
+      "animation_length_seconds": 2.0,
+      "keys_per_bone": 14,
+      "keys_per_bone_min": 2,
+      "dense_samples": 41,
+      "lerp_mode": "catmullrom",
+      "keying": {
+        "rotation_tolerance_degrees": 1.0,
+        "position_tolerance_blocks": 0.03125,
+        "max_error_degrees": 0.9071579621,
+        "max_error_blocks": 0.0,
+        "within_tolerance": true,
+        "keys_total": 100
+      },
+      "sampled_inputs": "getAttacking() answers 2 (the state the seed names `mouth_open`; every other getter at its rest value); limbSwingAmount 0.0; limbSwing 0 (the walk position at rest: vanilla WalkAnimationState holds its position while the speed is 0, and a creature that has not walked since it spawned carries 0); ageInTicks = t (getBob: tickCount + partialTick, partialTick 0; advancing 1.0 per tick from 0); netHeadYaw 0; headPitch 0 (looking ahead); every other entity-state flag at its rest value (ri1 0, rock_type 0, rf1 0); the entity RNG seeded 0 once per clip and evolving across the keys; one pose call per key, 20 keys per second; full health",
+      "hook": "danger.orespawn.entity.client.WaterDragonGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the unlanded hook of owner 2026-09-14, addendum item 10 - the classic setupAnim transcribed into the descriptor's PoseInputs form, proven when the rig lands - registry-free, on explicit PoseInputs, over the reference leg's converter output reference_waterdragon.geo.json baked without the face-order strictness the landing slice's TEST-007 adds)",
+      "landed": false,
+      "moving_bones": [
+        "Bodyfin",
+        "Leg1",
+        "Leg2",
+        "Leg7",
+        "Leg8",
+        "jaw",
+        "leftear",
+        "neackfin",
+        "rightear"
+      ],
+      "position_bones": [
+        "leftear",
+        "rightear",
+        "tail1",
+        "tailbottom",
+        "tailmiddle",
+        "tailtop"
+      ],
+      "hidden_bones_at_rest": [],
+      "seam_delta_degrees": 35.2378987395,
+      "attacking": {
+        "declared_pose_interfaces": [
+          "WaterDragonPose"
+        ],
+        "getters": [
+          "WaterDragonPose.getAttacking()"
+        ],
+        "outside_pose_interface": [],
+        "reads_attacking": true,
+        "read_at_inputs": true
+      }
+    },
+    {
+      "state": "sit",
+      "file": "water_dragon_reference_sit.animation.json",
+      "sha256": "9085666dfa33048dc22126fc5b6698a3278c45124aabf32f58b6e1f4b8065aa0",
+      "clip": "reference_sit",
+      "reference_only": true,
+      "delivered_clip": null,
+      "offered_extra": "sit",
+      "named": true,
+      "name_source": "water_dragon.json reference_states.sit = {isInSittingPose: true}",
+      "getter": "isInSittingPose",
+      "value": true,
+      "rule": "two_seconds_past_cap",
+      "rule_note": "wingspeed 0.5: the slowest rhythm is cos(ageInTicks * 0.5 * WINGSPEED) * PI * 0.05 (WaterDragonGeoReplacement.applyCustomAnimations:124, every state) at 0.25 rad/tick, 25.13 ticks, beside the 0.8 / 0.7 / 0.6 * 0.5 sways (:109-119); the threshold gait cos(ageInTicks * 1.3 * WINGSPEED) * PI * 0.2 * limbSwingAmount and the pi/4-phased body wave cos(ageInTicks * 1.3 * WINGSPEED - n * pi/4) * PI * 0.4 * limbSwingAmount with its chained position writes (:82-99, walk) at 0.65; the three-way attacking jaw cos(ageInTicks * 1.2 * WINGSPEED) * PI * 0.25 at attacking 1, 0.45 rad at 2, -0.25 at rest (:129); the head look at 0.75 with the nose, jaw, fin and ears following follows netHeadYaw = 0 (:130-142); no multiple of the slowest group's period 25.132741 ticks up to the 6 s cap (120 ticks) brings every group back within 5 degrees of its start (k = 1: 32.562917 deg, k = 2: 12.437365 deg, k = 3: 12.439007 deg, k = 4: 32.561901 deg): a two-second window (40 ticks), not a loop - the sheet states the closing key's seam",
+      "span_ticks": 40.0,
+      "period_ticks": 25.1327412287,
+      "period_multiple_k": null,
+      "animation_length_seconds": 2.0,
+      "keys_per_bone": 14,
+      "keys_per_bone_min": 2,
+      "dense_samples": 41,
+      "lerp_mode": "catmullrom",
+      "keying": {
+        "rotation_tolerance_degrees": 1.0,
+        "position_tolerance_blocks": 0.03125,
+        "max_error_degrees": 0.9071579621,
+        "max_error_blocks": 0.0,
+        "within_tolerance": true,
+        "keys_total": 84
+      },
+      "sampled_inputs": "isInSittingPose() answers 1 (the state the seed names `sit`; every other getter at its rest value); limbSwingAmount 0.0; limbSwing 0 (the walk position at rest: vanilla WalkAnimationState holds its position while the speed is 0, and a creature that has not walked since it spawned carries 0); ageInTicks = t (getBob: tickCount + partialTick, partialTick 0; advancing 1.0 per tick from 0); netHeadYaw 0; headPitch 0 (looking ahead); every other entity-state flag at its rest value (ri1 0, rock_type 0, rf1 0); the entity RNG seeded 0 once per clip and evolving across the keys; one pose call per key, 20 keys per second; full health",
+      "hook": "danger.orespawn.entity.client.WaterDragonGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the unlanded hook of owner 2026-09-14, addendum item 10 - the classic setupAnim transcribed into the descriptor's PoseInputs form, proven when the rig lands - registry-free, on explicit PoseInputs, over the reference leg's converter output reference_waterdragon.geo.json baked without the face-order strictness the landing slice's TEST-007 adds)",
+      "landed": false,
+      "moving_bones": [
+        "Leg1",
+        "Leg2",
+        "Leg7",
+        "Leg8",
+        "jaw",
+        "leftear",
+        "rightear"
+      ],
+      "position_bones": [
+        "leftear",
+        "rightear",
+        "tail1",
+        "tailbottom",
+        "tailmiddle",
+        "tailtop"
+      ],
+      "hidden_bones_at_rest": [],
+      "seam_delta_degrees": 35.2378987395,
+      "attacking": {
+        "declared_pose_interfaces": [
+          "WaterDragonPose"
+        ],
+        "getters": [
+          "WaterDragonPose.getAttacking()"
+        ],
+        "outside_pose_interface": [],
+        "reads_attacking": true,
+        "read_at_inputs": true
+      }
     }
   ],
   "reference_clip": {
     "state": "walk",
     "file": "water_dragon_reference_walk.animation.json",
-    "sha256": "511548ee9a61362f1e64779bc63d84fb5a85f95bb228b900f5fcd316fe03cc72",
-    "clip": "reference",
+    "sha256": "620a68978899c281685d799b5790d2913ea006959aa31abf86a210fe1953001b",
+    "clip": "reference_walk",
     "reference_only": true,
     "delivered_clip": "walk",
+    "offered_extra": null,
+    "named": true,
+    "name_source": "the contract",
+    "getter": null,
+    "value": null,
     "rule": "two_seconds_past_cap",
     "rule_note": "wingspeed 0.5: the slowest rhythm is cos(ageInTicks * 0.5 * WINGSPEED) * PI * 0.05 (WaterDragonGeoReplacement.applyCustomAnimations:124, every state) at 0.25 rad/tick, 25.13 ticks, beside the 0.8 / 0.7 / 0.6 * 0.5 sways (:109-119); the threshold gait cos(ageInTicks * 1.3 * WINGSPEED) * PI * 0.2 * limbSwingAmount and the pi/4-phased body wave cos(ageInTicks * 1.3 * WINGSPEED - n * pi/4) * PI * 0.4 * limbSwingAmount with its chained position writes (:82-99, walk) at 0.65; the three-way attacking jaw cos(ageInTicks * 1.2 * WINGSPEED) * PI * 0.25 at attacking 1, 0.45 rad at 2, -0.25 at rest (:129); the head look at 0.75 with the nose, jaw, fin and ears following follows netHeadYaw = 0 (:130-142); no multiple of the slowest group's period 25.132741 ticks up to the 6 s cap (120 ticks) brings every group back within 5 degrees of its start (k = 1: 130.251666 deg / 23.241338 units, k = 2: 83.597776 deg / 4.315639 units, k = 3: 83.603926 deg / 13.37987 units, k = 4: 130.247603 deg / 17.466937 units): a two-second window (40 ticks), not a loop - the sheet states the closing key's seam",
     "span_ticks": 40.0,
@@ -2056,6 +2278,17 @@
     "period_multiple_k": null,
     "animation_length_seconds": 2.0,
     "keys_per_bone": 41,
+    "keys_per_bone_min": 2,
+    "dense_samples": 41,
+    "lerp_mode": "catmullrom",
+    "keying": {
+      "rotation_tolerance_degrees": 1.0,
+      "position_tolerance_blocks": 0.03125,
+      "max_error_degrees": 0.9071579621,
+      "max_error_blocks": 0.0,
+      "within_tolerance": true,
+      "keys_total": 687
+    },
     "sampled_inputs": "limbSwingAmount 1.0; limbSwing = t (advancing 1.0 per tick from 0: vanilla WalkAnimationState.update does speed += (movementSpeed - speed) * multiplier; position += speed, and the classic renderer hands walkAnimation.position(partialTick) as limbSwing and min(1, speed) as limbSwingAmount, so at speed 1 the position advances exactly 1.0 per tick); ageInTicks = t (getBob: tickCount + partialTick, partialTick 0); netHeadYaw 0; headPitch 0 (looking ahead); every entity-state flag at its rest value (attacking 0, ri1 0, rock_type 0, rf1 0: a ProbeSubject built from an empty state); the entity RNG seeded 0 once per clip and evolving across the keys; one pose call per key, 20 keys per second; full health (no shipped hook reads health)",
     "hook": "danger.orespawn.entity.client.WaterDragonGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the unlanded hook of owner 2026-09-14, addendum item 10 - the classic setupAnim transcribed into the descriptor's PoseInputs form, proven when the rig lands - registry-free, on explicit PoseInputs, over the reference leg's converter output reference_waterdragon.geo.json baked without the face-order strictness the landing slice's TEST-007 adds)",
     "landed": false,
@@ -2099,6 +2332,10 @@
       "read_at_inputs": true
     }
   },
+  "reference_offers": [
+    "mouth_open",
+    "sit"
+  ],
   "exact_transcription": false,
   "rig_source": "reference-leg converter output",
   "in_game": false,

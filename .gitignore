@@ -49,3 +49,8 @@ simplify_animation.py
 verify_hierarchy.py
 commit_msg.txt
 __pycache__/
+
+# The artist folder's copies of the reference-only clips (owner 2026-09-14, second set revised, item 32 (6)): one tracked
+# copy lives in tools/reference_clips/; tools/artist_package.py package writes these beside each sheet on every run and
+# the checker warns on an untouched one coming back
+artist_handoff/**/*_reference_*.animation.json

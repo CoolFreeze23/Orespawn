@@ -55,10 +55,12 @@ from collections import Counter, OrderedDict, defaultdict
 from pathlib import Path
 from typing import Any, Iterable
 
-TOOL_VERSION = ("0.3.0 (the reference clips for every species, 2026-09-14, addendum items 11 to 13: every hook's reference_walk, "
-                "reference_idle and - where the code reads an attack - reference_attack clip beside the sheet, landed or not; the clips loaded "
-                "through Blockbench's Import Animations (README_FIRST, Toolchain); a reference clip's keys as the starting point of a delivered "
-                "idle / walk / aggro_idle, only the reference file itself under its own name refused)")  # its text is emitted into every generated file: the §7 marking's word is kept for the marking
+TOOL_VERSION = ("0.4.0 (the reference clips revised, 2026-09-14, second set revised, items 2 to 6: every state a hook reads sampled "
+                "and named by the seed - reference_walk, reference_idle, reference_attack, reference_fly, reference_swim, the species' own "
+                "states, an unnamed one flagged - keyed by the exact transcriptions' density search (catmullrom, 1 degree, 1/32 block), "
+                "embedded in every .bbmodel within the round-trip tolerance with the files beside the sheet the pinned source; a reference "
+                "clip's keys as the starting point of idle / walk / aggro_idle / fly / swim, a species state offered as a SPEC extra; only "
+                "the reference file itself under its own name refused; one tracked copy, the folder's copies ignored by git)")  # its text is emitted into every generated file: the §7 marking's word is kept for the marking
 
 ROOT = Path(__file__).resolve().parent.parent
 
@@ -117,48 +119,60 @@ CHECK_REJECTS = [
     "a returned `.geo.json` whose bones, parents, pivots, rotations, cubes, UVs or canvas differ from the shipped rig",
     "a `locked` bone renamed, re-parented or deleted in a returned `.geo.json` (the finding names the bone)",
     "a texture that is not this creature's, or whose canvas size changed",
-    "a `*_reference_<state>.animation.json` returned under its own name that is not the package's own untouched copy (the reference-only clips the package carries beside the sheet: the classic code sampled at fixed inputs, never shipped — the finding names the file; the untouched copy coming back is warned, not a delivery; copying a reference clip's KEYS into `idle` / `walk` / `aggro_idle` is a delivery and passes)",
+    "a `*_reference_<state>.animation.json` returned under its own name that is not the package's own untouched copy (the reference-only clips the package carries beside the sheet: the classic code sampled at fixed inputs, never shipped — the finding names the file; the untouched copy coming back is warned, not a delivery; copying a reference clip's KEYS into `idle` / `walk` / `aggro_idle` / `fly` / `swim` or into an offered extra is a delivery and passes)",
+    "a returned `.bbmodel` that lists fewer clips than the folder's animation files hold, or whose embedded keys leave the round-trip tolerance (key times within 5e-5 s, values within 1e-6) of those files (the files beside the sheet are the pinned source; the `.bbmodel` must open with every clip listed — owner 2026-09-14)",
 ]
-# The reference-only clip (owner 2026-09-13, second set, addendum item 27 (3)): `tools/reference_clips/<registry>_reference.animation.json`,
-# the classic hook sampled at fixed inputs by the g1 harness (ReferenceClipSampler; gradle referenceClips), copied beside each
-# species' sheet by `package`, marked reference-only in SPEC §4.3, refused by `check` (a REJECT naming the file) and by the
-# asset audit under src/main/resources (the jar never carries one). `_preview` stays a WARN (ruled 2026-09-06, Q15 (a): a
-# Blockbench-only export, never in the jar); this is a REJECT.
-# One clip per reachable STATE since owner 2026-09-14, addendum item 31 (11): `<registry>_reference_walk.animation.json` (the
-# fixed inputs of 2026-09-13 - limbSwingAmount 1, the walk position advancing), `_reference_idle` (limbSwingAmount 0) and, where
-# the creature's code reads an attack, `_reference_attack` (attacking 1). The old single `<registry>_reference.animation.json`
-# is still recognised as a reference-only name (a package generated before 2026-09-14 coming back).
-REFERENCE_CLIP_STATES = ("walk", "idle", "attack")
-REFERENCE_CLIP_RE = re.compile(r"_reference(?:_(walk|idle|attack))?\.animation\.json$")
+# The reference-only clips (owner 2026-09-13, second set, addendum item 27 (3)): the classic hook sampled at fixed inputs by the
+# g1 harness (ReferenceClipSampler; gradle referenceClips), copied beside each species' sheet by `package`, marked reference-only
+# in SPEC §4.3, refused by `check` (a REJECT naming the file) and by the asset audit under src/main/resources (the jar never
+# carries one). `_preview` stays a WARN (ruled 2026-09-06, Q15 (a): a Blockbench-only export, never in the jar); this is a REJECT.
+# One clip per STATE THE HOOK'S CODE READS since owner 2026-09-14, second set revised, item 32 (2)-(3): `<registry>_reference_<state>
+# .animation.json`, the Bedrock clip inside named `reference_<state>` - `walk` (limbSwingAmount 1, the walk position advancing),
+# `idle` (limbSwingAmount 0), `attack` (getAttacking 1), `fly` / `swim` and the species' own words as the seed's `reference_states`
+# map them to the getter values the code branches on, and `<getter>_<value>` for a value the seed does not name (flagged). The
+# old single `<registry>_reference.animation.json` is still recognised as a reference-only name (a package generated before
+# 2026-09-14 coming back).
+REFERENCE_CONTRACT_STATES = ("walk", "idle", "attack", "fly", "swim")
+REFERENCE_CLIP_STATES = REFERENCE_CONTRACT_STATES  # the contract's states, in sheet order; the seed's names follow them
+REFERENCE_CLIP_RE = re.compile(r"_reference(?:_([a-z0-9_]+))?\.animation\.json$")
 REFERENCE_CLIP_INDEX = "reference_clips.json"
-REFERENCE_CLIP_NAME = "reference"  # the walk clip's Bedrock clip name (its bytes are pinned); the others carry their state
-REFERENCE_CLIP_NAMES = {"walk": "reference", "idle": "reference_idle", "attack": "reference_attack"}
-# Item 31 (13): a reference clip's keys may be the starting point of the delivered clip its state corresponds to.
-REFERENCE_STATE_TO_DELIVERED_CLIP = {"walk": "walk", "idle": "idle", "attack": "aggro_idle"}
+REFERENCE_CLIP_PREFIX = "reference_"  # every clip's Bedrock name is reference_<state> (item 32 (3))
+# Item 32 (4): a reference clip's keys may be the starting point of the delivered clip its state corresponds to; a species state
+# with no contract clip (sit, sleep, display, ...) is OFFERED as a SPEC extra under §2.3 (reference_offers).
+REFERENCE_STATE_TO_DELIVERED_CLIP = {"walk": "walk", "idle": "idle", "attack": "aggro_idle", "fly": "fly", "swim": "swim"}
 REFERENCE_STATE_STATEMENTS = {
     "walk": "full walking speed (limbSwingAmount 1, the walk position and the age advancing one tick per key), not attacking, looking straight ahead, every state flag at rest, full health",
     "idle": "standing still (limbSwingAmount 0, the walk position 0; the age advancing one tick per key), not attacking, looking straight ahead, every state flag at rest, full health",
     "attack": "attacking (the code's attacking flag raised) while standing still (limbSwingAmount 0, the walk position 0; the age advancing one tick per key), looking straight ahead, every other state flag at rest, full health",
 }
-README_REFERENCE_SENTENCE = ("The `<registry>_reference_walk.animation.json`, `<registry>_reference_idle.animation.json` and (where the creature's code "
-                             "reads an attack) `<registry>_reference_attack.animation.json` beside each sheet are REFERENCE-ONLY: the creature's classic "
-                             "code sampled at fixed inputs so you can see today's motion in Blockbench (load them as the Toolchain says). Their KEYS may be "
-                             "your starting point (owner 2026-09-14): copy them into `walk` (from `_reference_walk`), `idle` (from `_reference_idle`) or "
-                             "`aggro_idle` (from `_reference_attack`) and improve from there — a delivered clip carrying those keys is a valid delivery. "
-                             "Only the reference file ITSELF coming back under its own name is refused (the checker REJECTS it), and the game's jar never "
-                             "carries one.")
-# Item 31 (12): the reference clips are NOT embedded in the .bbmodel - the generator's Blockbench emulation (its own writer against
-# its own importer) writes four-decimal keyframe times and collapses a linear key to a bare vector, while the sampler's files carry
-# ten-decimal times and `post` / `lerp_mode` objects, so the emulated round trip cannot reproduce the embedded keys byte for byte and
-# Blockbench's real timecode precision is still unread from its exporter (ROUNDTRIP_TIME_NOTE); the clips stay separate files and
-# README_FIRST's Toolchain says how to load them.
-README_IMPORT_ANIMATIONS = ("**Import Animations** — the reference clips are separate files beside each sheet, not part of the `.bbmodel` (the "
-                            "generator's Blockbench emulation cannot prove an embedded copy byte for byte: it writes four-decimal keyframe times and "
-                            "bare linear keys where the sampler writes ten decimals and `post` objects, so nothing is embedded that a real Blockbench "
-                            "round-trip has not confirmed). To see them: open the `.bbmodel`, switch to the **Animate** tab, open the **Animation** menu "
-                            "and choose **Import Animations...**, then pick `<registry_name>_reference_walk.animation.json` (and `_reference_idle`, "
-                            "`_reference_attack` where present). The clips `reference`, `reference_idle` and `reference_attack` appear in the "
-                            "Animation panel beside the shipped clips; play them against the rig. Each sheet's §4.3 names the files for that creature.")
+# The keying (item 32 (6)), stated in one sentence in every §4.3: the density search the exact transcriptions use.
+REFERENCE_KEYING_SENTENCE = ("Keys: the classic code is sampled once per tick, and the samples are reduced by the density search the exact "
+                             "transcriptions use — the fewest Catmull-Rom keys per bone and channel whose curve stays within 1 degree of "
+                             "rotation and 1/32 block of position of every sample, the closing key always kept — so each clip carries as few "
+                             "keys as that tolerance allows (each entry below states its key counts and the measured maximum error).")
+README_REFERENCE_SENTENCE = ("The `<registry>_reference_<state>.animation.json` files beside each sheet (`_reference_walk`, `_reference_idle`, "
+                             "`_reference_attack` where the creature's code reads an attack, `_reference_fly` / `_reference_swim` and the creature's "
+                             "own states where its code has them) are REFERENCE-ONLY: the creature's classic code sampled at fixed inputs, one clip "
+                             "per state its code reads, so you can see today's motion in Blockbench (they are embedded in the `.bbmodel`; the files "
+                             "are the pinned source). Their KEYS may be your starting point (owner 2026-09-14): copy them into `walk` (from "
+                             "`_reference_walk`), `idle` (from `_reference_idle`), `aggro_idle` (from `_reference_attack`), `fly` (from "
+                             "`_reference_fly`) or `swim` (from `_reference_swim`) and improve from there — a delivered clip carrying those keys "
+                             "is a valid delivery; a state with no contract clip (sit, sleep, display, ...) is offered as an extra in the sheet's "
+                             "clip table (\"offered from reference_<state>\"), delivered under that name. Only the reference file ITSELF coming back "
+                             "under its own name is refused (the checker REJECTS it), and the game's jar never carries one.")
+# Item 32 (5): the clips ARE embedded in the .bbmodel - the shipped clips and the reference clips - verified by the generator's
+# round trip within the ruled tolerance (key times 5e-5 s, values 1e-6; not byte identity); the files beside the sheet stay the
+# pinned source, and README_FIRST says both. The Import Animations instruction of the 2026-09-14 landing stays as the one-line
+# fallback for a re-exported .bbmodel.
+README_BBMODEL_CLIPS = ("**The clips are in the `.bbmodel`** — every entity's `.bbmodel` opens with its Animation tab populated: the shipped "
+                        "clips and the reference-only clips (`reference_walk`, `reference_idle`, `reference_attack`, `reference_fly`, "
+                        "`reference_swim` and the creature's own states, where its code has them) are embedded for viewing and editing, "
+                        "verified by the generator's round trip within the ruled tolerance (key times within 5e-5 s, values within 1e-6; "
+                        "`roundtrip.report.json` per folder). The `<registry_name>_reference_<state>.animation.json` files beside each sheet "
+                        "are the PINNED SOURCE of the reference clips (the checker compares against their bytes), so the two agree by "
+                        "construction. Fallback, if you rebuild or re-export a `.bbmodel` and the reference clips are gone: Animate tab, "
+                        "Animation → Import Animations..., pick the `_reference_<state>` files.")
+README_IMPORT_ANIMATIONS = README_BBMODEL_CLIPS  # the 0.3.0 name, kept for the callers that quote the Toolchain bullet
 CHECK_WARNS = [
     "a key on a `locked` bone (the clip and the bones are named) — " + LOCK_POLICY,
     "a `_preview` file delivered (a Blockbench-only aid, never in the jar — ruled 2026-09-06, Q15 (a); leave it out of the delivery)",
@@ -445,8 +459,10 @@ def load_proof_ids(paths: Paths) -> dict[str, str]:
 
 def load_reference_clip_index(paths: Paths) -> dict[str, dict[str, dict[str, Any]]]:
     """registry -> state -> the sampler's index row (`tools/reference_clips/reference_clips.json`, written by the g1 harness's
-    ReferenceClipSampler: file, sha256, rule, span, keys, the sampled inputs; one row per state since 2026-09-14 - a row without
-    a `state` is a pre-2026-09-14 index's single walk clip); empty when the sampler has not run."""
+    ReferenceClipSampler: file, sha256, rule, span, keys, the sampled inputs, the getter and value of a state; one row per state
+    since 2026-09-14, the states the seed names since the second set revised - a row without a `state` is a pre-2026-09-14
+    index's single walk clip); empty when the sampler has not run. The states keep the index's order (walk, idle, attack, then
+    the hook's other states)."""
     index = paths.reference_clips / REFERENCE_CLIP_INDEX
     if not index.exists():
         return {}
@@ -454,6 +470,26 @@ def load_reference_clip_index(paths: Paths) -> dict[str, dict[str, dict[str, Any
     for row in load_json(index).get("clips", []):
         out.setdefault(row["registry"], {})[str(row.get("state") or "walk")] = row
     return out
+
+
+def load_reference_hook_facts(paths: Paths) -> dict[str, dict[str, Any]]:
+    """registry -> the sampler's hook facts (index schema 4, `hooks`): the getters the hook reads with their enumerated values
+    or the reason they are not enumerable, the states emitted, the unnamed ones, and the values that move nothing at rest
+    (`no_motion`, with the gate that keeps a resting attack still); empty for an older index."""
+    index = paths.reference_clips / REFERENCE_CLIP_INDEX
+    if not index.exists():
+        return {}
+    return dict(load_json(index).get("hooks") or {})
+
+
+def reference_state_order(rows: dict[str, dict[str, Any]]) -> list[str]:
+    """The sheet's order of a species' reference states: the contract's (walk, idle, attack, fly, swim) then the others as the
+    index lists them."""
+    return [s for s in REFERENCE_CONTRACT_STATES if s in rows] + [s for s in rows if s not in REFERENCE_CONTRACT_STATES]
+
+
+def reference_clip_name(state: str) -> str:
+    return REFERENCE_CLIP_PREFIX + state
 
 
 def load_reference_ids(paths: Paths) -> dict[str, str]:
@@ -716,6 +752,7 @@ class Repo:
         self.sidecars = load_sidecars(self.paths)
         self.proof_ids = load_proof_ids(self.paths)
         self.reference_clips = load_reference_clip_index(self.paths)
+        self.reference_hooks = load_reference_hook_facts(self.paths)  # item 32 (2): the getters read, the values without motion
         self.provenance = parse_provenance(self.paths)
         self.geos = geo_files(self.paths)
         self.anims = animation_files(self.paths)
@@ -2275,8 +2312,9 @@ def reference_clip_facts(species: "Species", repo: "Repo", native: bool) -> tupl
     """(state -> the sampler's index row for this species with its file's sha256 verified, or None; the reason when None).
     A landed species whose descriptor has no classic hook (`native`: the SPEC's controller kind - a native GeckoLib rig, the
     Queen) has none by design; a hook species without rows means the sampler has not run (gradle referenceClips) - a
-    warning, never a silent omission. Since 2026-09-14 (owner, addendum item 31 (11)) a species carries one row per reachable
-    state: walk, idle and - where its code reads an attack - attack."""
+    warning, never a silent omission. Since 2026-09-14 (owner, addendum item 31 (11)) a species carries one row per state its
+    code reads: walk, idle, attack and - since the second set revised, item 32 (2) - fly, swim and its own named or unnamed
+    states, in the index's order."""
     rows = repo.reference_clips.get(species.registry)
     if not rows:
         if native:
@@ -2287,10 +2325,8 @@ def reference_clip_facts(species: "Species", repo: "Repo", native: bool) -> tupl
                           "(the g1 harness's ReferenceClipSampler) before packaging")
         return None, "no sampled reference clip in this package (the sampler has not run for this creature: gradle referenceClips)"
     out: dict[str, dict[str, Any]] = {}
-    for state in REFERENCE_CLIP_STATES:
-        row = rows.get(state)
-        if row is None:
-            continue
+    for state in reference_state_order(rows):
+        row = rows[state]
         path = repo.paths.reference_clips / row["file"]
         if not path.exists():
             repo.warnings.add(species.registry, "REFERENCE_CLIP_MISSING", f"the index names {row['file']} but tools/reference_clips/ has no such file")
@@ -2303,6 +2339,33 @@ def reference_clip_facts(species: "Species", repo: "Repo", native: bool) -> tupl
     if not out:
         return None, "no sampled reference clip in this package (the index names files tools/reference_clips/ does not carry)"
     return out, ""
+
+
+def reference_offers(rows: dict[str, dict[str, Any]] | None) -> list[dict[str, Any]]:
+    """Item 32 (4): the species states with NO contract clip (sit, sleep, display, ... - every named state outside
+    REFERENCE_STATE_TO_DELIVERED_CLIP) offered as SPEC extras under §2.3, each row saying which reference clip it starts from;
+    an unnamed state (`<getter>_<value>`) is flagged in §4.3 instead, and offered once the seed names it."""
+    offers: list[dict[str, Any]] = []
+    for state, row in (rows or {}).items():
+        if state in REFERENCE_STATE_TO_DELIVERED_CLIP or not row.get("named", True):
+            continue
+        getter = row.get("getter")
+        value = row.get("value")
+        offers.append({"name": state, "state": state, "file": row["file"], "clip": row.get("clip_name") or reference_clip_name(state),
+                       "getter": getter, "value": value,
+                       "note": f"offered from `{reference_clip_name(state)}`: the code's {state} pose"
+                               + (f" (`{getter}` {str(value).lower()})" if getter else "")})
+    return offers
+
+
+def reference_clip_documents(repo: "Repo", rows: dict[str, dict[str, Any]] | None) -> dict[str, dict[str, Any]]:
+    """The reference clips' Bedrock documents, clip name -> clip, read from the pinned files (the .bbmodel embeds them; item 32 (5))."""
+    out: dict[str, dict[str, Any]] = {}
+    for state, row in (rows or {}).items():
+        path = row.get("_path") or (repo.paths.reference_clips / row["file"])
+        for name, clip in load_json(path).get("animations", {}).items():
+            out[name] = clip
+    return out
 
 
 def reference_span_sentence(row: dict[str, Any]) -> str:
@@ -2328,19 +2391,39 @@ def reference_span_sentence(row: dict[str, Any]) -> str:
     return f"two seconds ({fmt(span_ticks, 0)} ticks): this motion has no natural period — a two-second window, not a loop; the closing key differs from the first by {fmt(seam, 4)} degrees"
 
 
+def reference_keying_sentence(row: dict[str, Any]) -> str:
+    """One clip's keying in words (item 32 (6)): the key counts the density search kept against the dense samples, the measured
+    maximum error against the tolerance; a one-key clip says so; an older index (no keying block) states its per-tick keys."""
+    keying = row.get("keying") or {}
+    samples = int(row.get("dense_samples") or keying.get("dense_samples") or 0)
+    if not keying:
+        return f"{int(row.get('keys_per_bone', 0))} keys per bone (one per tick)"
+    lo = int(row.get("keys_per_bone_min") or keying.get("keys_per_bone_min") or 0)
+    hi = int(row.get("keys_per_bone") or keying.get("keys_per_bone_max") or 0)
+    if samples <= 1:
+        return "one key per bone (nothing to reduce)"
+    keys = f"{lo} to {hi} keys per bone" if lo != hi else f"{hi} keys per bone"
+    error = (f"max error {fmt(float(keying.get('max_error_degrees', 0.0)), 3)} degrees"
+             + (f" / {fmt(float(keying.get('max_error_blocks', 0.0)), 4)} block" if row.get("position_bones") else "")
+             + " against the samples (the tolerance 1 degree / 1/32 block)")
+    return f"{keys} chosen by the density search from {samples} per-tick samples, Catmull-Rom; {error}"
 def reference_clip_section(species: "Species", repo: "Repo", seed: dict[str, Any], exact: bool, native: bool,
-                           unlanded: bool = False) -> tuple[list[str], list[dict[str, Any]]]:
+                           unlanded: bool = False, rows: dict[str, dict[str, Any]] | None = None, reason: str | None = None,
+                           offers: list[dict[str, Any]] | None = None) -> tuple[list[str], list[dict[str, Any]]]:
     """SPEC §4.3 (owner 2026-09-13, second set, addendum item 27 (3); every hook and every reachable state since owner
-    2026-09-14, addendum item 31 (11)-(13)) and the manifest's `reference_clips` blocks: what the reference-only clips are - one
-    per reachable state, `_reference_walk`, `_reference_idle` and, where the code reads an attack, `_reference_attack` - how
-    they are loaded (README_FIRST, Toolchain: Import Animations - item 31 (12): they are not embedded in the .bbmodel), that a
-    clip's keys may be the starting point of the delivered `walk` / `idle` / `aggro_idle` and only the file itself under its own
-    name is refused (item 31 (13)), and - for a species without an exact transcription - the plain-language transcription of its
-    source formulas (migration design section 5; the seed's `formulas`). `unlanded` (owner 2026-09-13, fourth set, item 29 (5);
-    item 31 (10)): a rig not yet in-game whose hook the sampler has sampled (the item-10 hooks) carries its clips with the
-    statement that the transcription is proven when the rig lands; a rig with no sampled clip (a held species: the Boyfriend,
-    the Girlfriend, the Princess) says the clip is sampled when the rig lands, and neither the REFERENCE_CLIP_MISSING nor the
-    FORMULAS_MISSING warning is raised for it."""
+    2026-09-14, addendum item 31 (11)-(13); every state the code reads, named by the seed, keyed by the density search and
+    embedded in the .bbmodel since owner 2026-09-14, second set revised, item 32 (2)-(6)) and the manifest's `reference_clips`
+    blocks: what the reference-only clips are - one per state the code reads, `_reference_walk`, `_reference_idle`,
+    `_reference_attack` where the code reads an attack, `_reference_fly` / `_reference_swim` and the species' own states as the
+    seed names them, an unnamed state as `_reference_<getter>_<value>` and flagged - how they are loaded (in the .bbmodel; the
+    files the pinned source), the keying, that a clip's keys may be the starting point of the delivered `walk` / `idle` /
+    `aggro_idle` / `fly` / `swim` (a species state offered as an extra) and only the file itself under its own name is refused,
+    the values the code branches on that move nothing (the six resting attacks' gates), the getters that are not enumerable,
+    and - for a species without an exact transcription - the plain-language transcription of its source formulas (migration
+    design section 5; the seed's `formulas`). `unlanded` (owner 2026-09-13, fourth set, item 29 (5); item 31 (10)): a rig not
+    yet in-game whose hook the sampler has sampled carries its clips with the statement that the transcription is proven when
+    the rig lands; a rig with no sampled clip (a held species) says the clip is sampled when the rig lands, and neither the
+    REFERENCE_CLIP_MISSING nor the FORMULAS_MISSING warning is raised for it."""
     L: list[str] = []
     L.append("### 4.3 Reference clips (reference-only)")
     L.append("")
@@ -2360,44 +2443,80 @@ def reference_clip_section(species: "Species", repo: "Repo", seed: dict[str, Any
         if seed.get("formulas"):
             L.append("")
         return L, blocks
-    rows, reason = reference_clip_facts(species, repo, native)
+    if rows is None and reason is None:
+        rows, reason = reference_clip_facts(species, repo, native)
+    if offers is None:
+        offers = reference_offers(rows)
+    offered_by_state = {o["state"]: o for o in offers}
+    hook = (repo.reference_hooks or {}).get(species.registry) or {}
     if rows is None:
         L.append(f"_{reason}._")
     else:
-        files = ", ".join(f"`{rows[s]['file']}`" for s in REFERENCE_CLIP_STATES if s in rows)
-        states = "; ".join(f"`_reference_{s}` — {REFERENCE_STATE_STATEMENTS[s]}" for s in REFERENCE_CLIP_STATES if s in rows)
+        states = reference_state_order(rows)
+        files = ", ".join(f"`{rows[s]['file']}`" for s in states)
+        parts = []
+        for s in states:
+            row = rows[s]
+            if s in REFERENCE_STATE_STATEMENTS:
+                parts.append(f"`_reference_{s}` — {REFERENCE_STATE_STATEMENTS[s]}")
+            else:
+                getter = row.get("getter")
+                value = str(row.get("value")).lower()
+                what = f"the code's `{getter}` answering {value} while standing still, every other state at rest"
+                if row.get("named", True):
+                    parts.append(f"`_reference_{s}` — the `{s}` state: {what}")
+                else:
+                    parts.append(f"`_reference_{s}` — an UNNAMED state ({what}): the seed's `reference_states` should name it")
+        states_text = "; ".join(parts)
         if "attack" not in rows:
-            states += "; no `_reference_attack` — this creature's code reads no attack state"
-        L.append(f"{files} (beside this sheet) are NOT clips to return or ship under their own names. Each is the creature's classic code — "
-                 "the motion the game draws today — SAMPLED by the harness at fixed inputs so you can open it beside the rig in Blockbench and see "
-                 "that motion. Load them as README_FIRST's Toolchain says (**Import Animations**: open the `.bbmodel`, Animate tab, "
-                 "Animation → Import Animations..., pick the file; the clips `reference`, `reference_idle` and `reference_attack` then sit beside "
-                 f"the shipped clips). One clip per reachable state: {states}. 20 keys per second, linear keys; rotations are deltas from the bind "
-                 "pose under the same sign rule as the shipped clips (X as the classic degrees, Y and Z negated), positions only where the code moves a bone.")
+            gate = next((n for n in (hook.get("no_motion") or []) if n.get("getter") == "getAttacking"), None)
+            states_text += ("; no `_reference_attack` — " + (f"the code reads an attack, but attacking alone moves nothing at rest: {gate.get('why', '')}" if gate
+                                                            else "this creature's code reads no attack state"))
+        L.append(f"{files} (beside this sheet, and embedded in `{species.registry}.bbmodel`'s Animation tab) are NOT clips to return or ship under "
+                 "their own names. Each is the creature's classic code — the motion the game draws today — SAMPLED by the harness at fixed inputs so you "
+                 "can see that motion beside the rig in Blockbench. The `.bbmodel` opens with every clip listed (the shipped clips and these); the files "
+                 "beside the sheet are the PINNED SOURCE (their bytes are what the checker knows; the generator's round trip proves the embedded copies "
+                 "within 5e-5 s on key times and 1e-6 on values). If you rebuild the `.bbmodel` and they are gone, Animation → Import Animations... on "
+                 f"the files brings them back. One clip per state the code reads, each value alone: {states_text}. "
+                 + REFERENCE_KEYING_SENTENCE + " Rotations are deltas from the bind pose under the same sign rule as the shipped clips (X as the classic "
+                 "degrees, Y and Z negated), positions only where the code moves a bone.")
         if unlanded:
             L.append("")
             L.append("This rig is not yet in-game: these clips are sampled from the hook's transcription of the classic `setupAnim` into the "
                      "descriptor a landing slice will use (owner 2026-09-14, addendum item 10) — the transcription is proven when the rig lands; "
                      "until then the clips show the code as the port carries it.")
         L.append("")
-        L.append("**Starting point (owner 2026-09-14, addendum item 13):** a reference clip's KEYS may be the starting point of the delivered clip "
-                 "its state corresponds to — copy them into `walk` (from `_reference_walk`), `idle` (from `_reference_idle`) or `aggro_idle` (from "
-                 "`_reference_attack`) and improve from there; a delivered clip carrying those keys is a valid delivery (no rule compares them). "
+        L.append("**Starting point (owner 2026-09-14, addendum item 13; extended by the second set revised, item 4):** a reference clip's KEYS may "
+                 "be the starting point of the delivered clip its state corresponds to — copy them into `walk` (from `_reference_walk`), `idle` "
+                 "(from `_reference_idle`), `aggro_idle` (from `_reference_attack`), `fly` (from `_reference_fly`) or `swim` (from `_reference_swim`) "
+                 "and improve from there; a delivered clip carrying those keys is a valid delivery (no rule compares them). A state with no contract "
+                 "clip (sit, sleep, display, ...) is OFFERED as an extra of this creature's own under §2.3 — §5 lists it as \"offered from "
+                 "reference_<state>\" beside the seed's extras, and a delivered clip under that name carrying the reference keys is a valid delivery. "
                  "Only the reference file itself coming back under its own name is refused.")
         L.append("")
-        for state in REFERENCE_CLIP_STATES:
-            row = rows.get(state)
-            if row is None:
-                continue
+        for state in states:
+            row = rows[state]
             keys = int(row.get("keys_per_bone", 0))
-            clip_name = str(row.get("clip_name") or REFERENCE_CLIP_NAMES[state])
-            delivered = REFERENCE_STATE_TO_DELIVERED_CLIP[state]
+            clip_name = str(row.get("clip_name") or reference_clip_name(state))
+            delivered = REFERENCE_STATE_TO_DELIVERED_CLIP.get(state)
+            offered = offered_by_state.get(state)
+            named = bool(row.get("named", True))
             moving = row.get("moving_bones") or []
             positioned = row.get("position_bones") or []
             hidden = row.get("hidden_bones_at_rest") or []
             attacking = row.get("attacking") or {}
-            L.append(f"- `{row['file']}` (sha256 `{row['sha256']}`; clip `{clip_name}`; a starting point for `{delivered}`): {reference_span_sentence(row)}; "
-                     f"{keys} keys per bone.")
+            keying = row.get("keying") or {}
+            if delivered:
+                role = f"a starting point for `{delivered}`"
+            elif offered:
+                role = f"offered as the extra `{state}` (§2.3; §5)"
+            else:
+                role = "UNNAMED — the seed's `reference_states` should name it; offered as an extra once named"
+            L.append(f"- `{row['file']}` (sha256 `{row['sha256']}`; clip `{clip_name}`; {role}): {reference_span_sentence(row)}; "
+                     f"{reference_keying_sentence(row)}.")
+            if row.get("getter"):
+                L.append(f"  - State: `{row['getter']}` answers {str(row.get('value')).lower()}, every other getter at rest"
+                         + (f" (named by {row.get('name_source')})" if named and row.get("name_source") else "") + ".")
             L.append(f"  - Sampled from: `{row.get('hook', '')}`.")
             L.append(f"  - Rule applied: {row.get('rule_note', '')}.")
             L.append(f"  - Bones that move in it: {', '.join('`' + b + '`' for b in moving) if moving else 'none'}"
@@ -2412,14 +2531,36 @@ def reference_clip_section(species: "Species", repo: "Repo", seed: dict[str, Any
                             else " — the read sits in a branch these inputs do not reach (a latch re-rolled at a zero crossing, an activity), so this clip shows the resting branch under the attack flag."))
             blocks.append({
                 "state": state, "file": row["file"], "sha256": row["sha256"], "clip": clip_name, "reference_only": True,
-                "delivered_clip": delivered,
+                "delivered_clip": delivered, "offered_extra": offered["name"] if offered else None,
+                "named": named, "name_source": row.get("name_source"), "getter": row.get("getter"), "value": row.get("value"),
                 "rule": str(row.get("rule", "")), "rule_note": row.get("rule_note"), "span_ticks": float(row.get("span_ticks", 0.0)),
                 "period_ticks": row.get("period_ticks"), "period_multiple_k": row.get("period_multiple_k"),
                 "animation_length_seconds": row.get("animation_length_seconds"), "keys_per_bone": keys,
+                "keys_per_bone_min": row.get("keys_per_bone_min"), "dense_samples": row.get("dense_samples"),
+                "lerp_mode": row.get("lerp_mode"),
+                "keying": {k: keying.get(k) for k in ("rotation_tolerance_degrees", "position_tolerance_blocks", "max_error_degrees",
+                                                      "max_error_blocks", "within_tolerance", "keys_total")} if keying else None,
                 "sampled_inputs": row.get("sampled_inputs"), "hook": row.get("hook"), "landed": row.get("landed", True),
                 "moving_bones": moving, "position_bones": positioned, "hidden_bones_at_rest": hidden,
                 "seam_delta_degrees": row.get("seam_delta_degrees"), "attacking": attacking or None,
             })
+        no_motion = hook.get("no_motion") or []
+        if no_motion:
+            L.append("")
+            L.append("Values the code branches on that move NOTHING at rest (no clip; nothing is silently missing):")
+            for n in no_motion:
+                L.append(f"- `{n.get('getter')}` {str(n.get('value')).lower()}: no motion at rest — {n.get('why', '')}.")
+        not_enumerable = hook.get("not_enumerable") or []
+        if not_enumerable:
+            L.append("")
+            L.append("Reads the sampler cannot enumerate alone (no clip can show them): "
+                     + "; ".join(f"`{n.get('getter')}` — {n.get('reason')}" for n in not_enumerable) + ".")
+        unnamed = [s for s in states if not rows[s].get("named", True)]
+        if unnamed:
+            L.append("")
+            L.append("Unnamed state" + ("s" if len(unnamed) > 1 else "") + " — the seed's `reference_states` should name "
+                     + ("them" if len(unnamed) > 1 else "it") + " in the animator's words from the code's own: "
+                     + ", ".join(f"`{reference_clip_name(s)}` (`{rows[s].get('getter')}` {str(rows[s].get('value')).lower()})" for s in unnamed) + ".")
         L.append("")
         L.append("`check` REJECTS a `*_reference_<state>.animation.json` returned under its own name (the package's own untouched copy is warned, "
                  "not a delivery), and the game's jar never carries one (the asset audit refuses it).")
@@ -2480,10 +2621,13 @@ def primary_group(species: "Species", groups: list[dict[str, Any]], gait: list[d
 
 
 def clip_rows(species: "Species", inv: dict[str, Any], anim: dict[str, Any], groups: list[dict[str, Any]],
-              bone_names: list[str] | None = None, locked: dict[str, str] | None = None) -> list[dict[str, Any]]:
+              bone_names: list[str] | None = None, locked: dict[str, str] | None = None,
+              offers: list[dict[str, Any]] | None = None) -> list[dict[str, Any]]:
     """The clip table: contract clips this species ships or would ship, with loop mode, layer, trigger, bones, rule.
     `bone_names` (the rig, geo order) lets the base loops list every bone (§2.1 / §8); `locked` lets every row say
-    what its keys on locked bones mean under each policy."""
+    what its keys on locked bones mean under each policy; `offers` (owner 2026-09-14, second set revised, item 32 (4)) the
+    species states with no contract clip, offered as extras under §2.3 beside the seed's own - a seed extra of the same name
+    keeps its row and gains the offer's note, never a duplicate."""
     seed = species.seed or {}
     verdicts = {c["name"]: c for c in seed.get("clips", [])}
     scope = seed.get("artist_scope", "")
@@ -2610,17 +2754,32 @@ def clip_rows(species: "Species", inv: dict[str, Any], anim: dict[str, Any], gro
                      "required": name in native,  # a shipped code-triggered clip may not be renamed or dropped
                      "role": "contract", "group": "", "verdict": v.get("verdict", "author"), "note": v.get("note", ""),
                      "contract": name})
+    offered = {o["name"]: o for o in (offers or [])}
     for extra in seed.get("extras", []):
         looping_extra = str(extra.get("loop")).lower() == "true"
+        note = extra.get("note", "")
+        offer = offered.pop(extra["name"], None)
+        if offer is not None:  # the seed already names this state as an extra: one row, the offer noted on it
+            note = (note + " — " if note else "") + "also " + offer["note"]
         rows.append({"name": extra["name"], "loop": str(extra.get("loop", "false")).lower(), "layer": extra.get("layer", "overlay"),
                      "trigger": extra.get("trigger", "(SPEC)"), "bones": ", ".join(extra.get("bones", [])) or "(SPEC)",
                      # a looping extra follows rule 5's phase-locked kind (1.0 s); a one-shot the length its seed states
                      "length_seconds": LOOP_AUTHORING_LENGTH_SECONDS if looping_extra else extra.get("length_seconds"),
                      "length_rule": f"near:{LOOP_AUTHORING_LENGTH_SECONDS}" if looping_extra else f"near:{extra.get('length_seconds', 1.0)}",
                      "code_triggered": bool(extra.get("code_triggered", False)), "required": False, "role": "extra", "group": "",
-                     "verdict": "author", "note": extra.get("note", ""), "contract": "extra (§2.3; four per creature without a ruling — ruled 2026-09-06, Q6 (a))"})
-    if len(seed.get("extras", [])) > 4:
-        pass  # reported by the caller as a warning
+                     "verdict": "author", "note": note, "contract": "extra (§2.3; four per creature without a ruling — ruled 2026-09-06, Q6 (a))",
+                     "offered_from_reference": offer["clip"] if offer is not None else None})
+    for offer in offered.values():
+        # item 32 (4): a species state with no contract clip, offered as an extra (a loop at rule 5's authoring length; its
+        # transport - the getter's value in-game - is the landing slice's, as every extra's)
+        trigger = (f"the code's `{offer['getter']}` answering {str(offer['value']).lower()} (the state `{offer['clip']}` samples; "
+                   "its transport is the landing slice's)" if offer.get("getter") else f"the state `{offer['clip']}` samples")
+        rows.append({"name": offer["name"], "loop": "true", "layer": "base (a state loop, offered)", "trigger": trigger, "bones": "(any unlocked)",
+                     "length_seconds": LOOP_AUTHORING_LENGTH_SECONDS, "length_rule": f"near:{LOOP_AUTHORING_LENGTH_SECONDS}",
+                     "code_triggered": False, "required": False, "role": "extra", "group": "", "verdict": "author",
+                     "note": offer["note"] + " — copy the reference clip's keys and improve from there (a valid delivery)",
+                     "contract": "extra (§2.3; offered from a reference clip — owner 2026-09-14, second set revised, item 4)",
+                     "offered_from_reference": offer["clip"]})
     return rows
 
 
@@ -2657,9 +2816,25 @@ def spec_document(species: "Species", repo: "Repo", catalog: "TextureCatalog", i
     groups = frequency_groups(species)
     glossary = build_glossary(species, repo, geo, groups)
     locked = {r["name"]: r["lock_reason"] for r in glossary if r["locked"]}
-    clips = clip_rows(species, inv, anim, groups, bone_names=[b["name"] for b in bones], locked=locked)
-    if len(seed.get("extras", [])) > 4:
-        repo.warnings.add(species.registry, "EXTRAS_CAP", f"{len(seed['extras'])} extras exceed the cap of four per creature without a ruling (ruled 2026-09-06, Q6 (a): more needs the owner)")
+    # the reference clips' rows and the states offered as extras (item 32 (4)) come before the clip table, which lists the offers
+    native_rig = species.tier == 0 or bool(anim.get("animations")) and bool(inv.get("native"))
+    unlanded_rig = species.rig_source == RIG_SOURCE_REFERENCE
+    if unlanded_rig and not repo.reference_clips.get(species.registry):
+        reference_rows, reference_reason = None, "sampled when the rig lands"  # a held species: no warning (item 29 (5))
+    else:
+        reference_rows, reference_reason = reference_clip_facts(species, repo, native_rig)
+    offers = reference_offers(reference_rows)
+    clips = clip_rows(species, inv, anim, groups, bone_names=[b["name"] for b in bones], locked=locked, offers=offers)
+    seed_extra_names = {e["name"] for e in seed.get("extras", [])}
+    offered_new = [o["name"] for o in offers if o["name"] not in seed_extra_names]
+    extras_total = len(seed.get("extras", [])) + len(offered_new)
+    if extras_total > 4:
+        # the four-per-creature rule (§2.3; ruled 2026-09-06, Q6 (a)): the offer is listed and the count flagged - never a seed
+        # extra dropped, never an offer dropped (item 32 (4): "say what happens when the offer would exceed four")
+        repo.warnings.add(species.registry, "EXTRAS_CAP",
+                          f"{extras_total} extras ({len(seed.get('extras', []))} from the seed" + (f" + {len(offered_new)} offered from the reference states: "
+                          + ", ".join(offered_new) if offered_new else "") + ") exceed the cap of four per creature without a ruling (ruled 2026-09-06, Q6 (a): "
+                          "more needs the owner; every one is listed, none dropped)")
     textures = catalog.canonical_for_species(species)
     keyed_locked = sorted(shipped_keyed_bones(anim) & set(locked))
     keyed_locked_by_clip = {name: sorted(set(clip.get("bones", {})) & set(locked)) for name, clip in anim.get("animations", {}).items()}
@@ -2803,7 +2978,8 @@ def spec_document(species: "Species", repo: "Repo", catalog: "TextureCatalog", i
     # where no exact transcription ships.
     is_native_rig = any(c["role"] == "native" for c in clips)
     exact = exact_transcription(species, repo)
-    section, reference_clips = reference_clip_section(species, repo, seed, exact, is_native_rig, unlanded=unlanded)
+    section, reference_clips = reference_clip_section(species, repo, seed, exact, is_native_rig, unlanded=unlanded,
+                                                      rows=reference_rows, reason=reference_reason, offers=offers)
     L.extend(section)
     # §4.4 (owner 2026-09-13, fourth set, item 3): where the register records that the 1.7.10 original moved MORE than the
     # port's classic pose does (ANIM-021 to 024, deferred with the parity lanes), the sheet carries that description so the
@@ -3064,7 +3240,8 @@ def spec_document(species: "Species", repo: "Repo", catalog: "TextureCatalog", i
         # `verdict` (0.2.7): the seed's verdict per clip, so the README's priority table can say which clips a folder delivers
         # (a native creature's `leave` clips come back as shipped); the old per-clip marker flag is gone with the markers (item 28 (3))
         "clips": [{"name": c["name"], "loop": c["loop"], "role": c["role"], "code_triggered": c["code_triggered"], "required": c["required"],
-                   "length_rule": c["length_rule"], "length_seconds": c.get("length_seconds"), "verdict": c.get("verdict", "author")} for c in clips],
+                   "length_rule": c["length_rule"], "length_seconds": c.get("length_seconds"), "verdict": c.get("verdict", "author"),
+                   "offered_from_reference": c.get("offered_from_reference")} for c in clips],
         "allow_idle_alt": allow_idle_alt,
         "textures": [{"canonical": t["canonical"], "width": t["width"], "height": t["height"], "aliases": t["aliases"]} for t in textures],
         "effort_hours": hours, "effort_source": hours_source,
@@ -3072,6 +3249,7 @@ def spec_document(species: "Species", repo: "Repo", catalog: "TextureCatalog", i
         # classic hook, or the sampler has not run), and whether the shipped .animation.json carries the exact transcription
         "reference_clips": reference_clips,
         "reference_clip": next((b for b in reference_clips if b.get("state") == "walk"), None),
+        "reference_offers": [o["name"] for o in offers],
         "exact_transcription": exact,
         # owner 2026-09-13, fourth set, item 29 (5): where the rig comes from and whether it is in-game (a reference-leg rig is not;
         # its sheet says so under the title, in §3 and in §11); item 29 (7): the intended locked bones a Tier-1 boss's seed
@@ -3206,8 +3384,24 @@ def cube_element(registry: str, bone: dict[str, Any], index: int, cube: dict[str
     return el
 
 
+def merged_animations(anim: dict[str, Any], reference: dict[str, dict[str, Any]] | None) -> dict[str, Any]:
+    """The shipped clips then the reference clips (item 32 (5): the .bbmodel embeds EVERY clip of the folder); a name clash is refused."""
+    animations = dict(anim.get("animations", {}))
+    for name, clip in (reference or {}).items():
+        if name in animations:
+            raise ValueError(f"reference clip {name} collides with a shipped clip of the same name")
+        animations[name] = clip
+    return dict(anim) | {"animations": animations}
+
+
 def build_bbmodel(species: "Species", geo: dict[str, Any], anim: dict[str, Any],
-                  textures: list[tuple[str, bytes, tuple[int, int]]], warnings: Warnings) -> dict[str, Any]:
+                  textures: list[tuple[str, bytes, tuple[int, int]]], warnings: Warnings,
+                  reference: dict[str, dict[str, Any]] | None = None) -> dict[str, Any]:
+    """The Blockbench project: the rig, the textures and - in its `animations` - every clip of the folder (owner 2026-09-14,
+    second set revised, item 32 (5)): the shipped clips and the reference clips (`reference`: clip name -> the sampler's clip),
+    so the Animation tab lists every clip on opening. Blockbench's own keyframe format (`bb_animations`): catmullrom keys keep
+    their interpolation; verification is the round trip within the ruled tolerance, not byte identity."""
+    anim = merged_animations(anim, reference)
     registry = species.registry
     g = geo["minecraft:geometry"][0]
     desc = g["description"]
@@ -3490,6 +3684,49 @@ def signature_differences(xs: dict[str, Any], ys: dict[str, Any]) -> list[str]:
 
 
 ROUNDTRIP_TIME_TOLERANCE_SECONDS = 5e-5
+ROUNDTRIP_VALUE_TOLERANCE = 1e-6
+
+
+def clip_differences(name: str, clip: dict[str, Any], back: dict[str, Any]) -> tuple[list[str], list[str], int]:
+    """One clip against its embedded or re-exported copy within the ruled tolerance (key times ROUNDTRIP_TIME_TOLERANCE_SECONDS,
+    values ROUNDTRIP_VALUE_TOLERANCE): the differences, the keyframe keys dropped, the keys compared. Shared by the round trip and
+    by `check` (a returned .bbmodel against the folder's files, item 32 (5))."""
+    diffs: list[str] = []
+    dropped: list[str] = []
+    keys_compared = 0
+    s_loop = clip.get("loop", False)
+    b_loop = back.get("loop", False)
+    if s_loop != b_loop:
+        diffs.append(f"clip {name}: loop {s_loop} -> {b_loop}")
+    if not _close(clip.get("animation_length", 0), back.get("animation_length", 0)):
+        diffs.append(f"clip {name}: length {clip.get('animation_length')} -> {back.get('animation_length')}")
+    for bone, chans in clip.get("bones", {}).items():
+        bchans = back.get("bones", {}).get(bone)
+        if bchans is None:
+            diffs.append(f"clip {name}: bone {bone} lost")
+            continue
+        for ch, keys in chans.items():
+            s_keys = normalize_channel(keys)
+            b_keys = normalize_channel(bchans.get(ch, {}))
+            if len(s_keys) != len(b_keys):
+                diffs.append(f"clip {name} {bone}.{ch}: {len(s_keys)} keys -> {len(b_keys)}")
+                continue
+            for (st, sk), (bt, bk) in zip(s_keys, b_keys):
+                keys_compared += 1
+                if not _close(st, bt, ROUNDTRIP_TIME_TOLERANCE_SECONDS) or sk["lerp"] != bk["lerp"] or len(sk["points"]) != len(bk["points"]) \
+                        or not all(_close(p, q, ROUNDTRIP_VALUE_TOLERANCE) for p, q in zip(sk["points"], bk["points"])):
+                    diffs.append(f"clip {name} {bone}.{ch} @ {st}: {sk} -> {bk}")
+                    break
+                # easing and every other keyframe key beside the points: a dropped easing or an unknown key IS a difference
+                s_extra = {k: v for k, v in sk["extra"].items() if v is not None}
+                b_extra = {k: v for k, v in bk["extra"].items() if v is not None}
+                if s_extra != b_extra:
+                    lost = sorted(set(s_extra) - set(b_extra))
+                    diffs.append(f"clip {name} {bone}.{ch} @ {st}: keyframe keys {s_extra} -> {b_extra}" + (f" (lost: {lost})" if lost else ""))
+                    for k in lost:
+                        dropped.append(f"clip {name} {bone}.{ch} @ {st}: {k}")
+                    break
+    return diffs, dropped, keys_compared
 ROUNDTRIP_TIME_NOTE = ("key TIMES compare within 5e-5 s (owner 2026-09-13, addendum item 26 (5)): the Blockbench emulation writes 4-decimal "
                        "timecodes while a transcription's key times are k/(N-1) s at 10 decimals (the first Tier-2 slice's Beaver round-trip "
                        "reported six time-only diffs); Blockbench's real timecode precision is read from its exporter source when the _preview "
@@ -3543,47 +3780,26 @@ def roundtrip_diff(shipped_geo: dict[str, Any], back_geo: dict[str, Any], shippe
         for k in s:
             if k not in ("name", "parent", "pivot", "rotation", "mirror", "cubes", "binding"):
                 dropped.append(f"{name}.{k}")
-    # animations
+    # animations: every clip of the shipped file and, since item 32 (5), the embedded reference clips - each compared within the
+    # tolerance and reported per clip (EQUAL-within-tolerance) beside the whole
     sa, ba = shipped_anim.get("animations", {}), back_anim.get("animations", {})
     if list(sa) != list(ba):
         diffs.append(f"clip names/order: {list(sa)} -> {list(ba)}")
+    clips_report: dict[str, dict[str, Any]] = {}
     for name, clip in sa.items():
         back = ba.get(name)
         if back is None:
+            clips_report[name] = {"equal_within_tolerance": False, "differences": ["missing from the .bbmodel"], "keys": 0}
             continue
-        s_loop = clip.get("loop", False)
-        b_loop = back.get("loop", False)
-        if s_loop != b_loop:
-            diffs.append(f"clip {name}: loop {s_loop} -> {b_loop}")
-        if not _close(clip.get("animation_length", 0), back.get("animation_length", 0)):
-            diffs.append(f"clip {name}: length {clip.get('animation_length')} -> {back.get('animation_length')}")
-        for bone, chans in clip.get("bones", {}).items():
-            bchans = back.get("bones", {}).get(bone)
-            if bchans is None:
-                diffs.append(f"clip {name}: bone {bone} lost")
-                continue
-            for ch, keys in chans.items():
-                s_keys = normalize_channel(keys)
-                b_keys = normalize_channel(bchans.get(ch, {}))
-                if len(s_keys) != len(b_keys):
-                    diffs.append(f"clip {name} {bone}.{ch}: {len(s_keys)} keys -> {len(b_keys)}")
-                    continue
-                for (st, sk), (bt, bk) in zip(s_keys, b_keys):
-                    if not _close(st, bt, ROUNDTRIP_TIME_TOLERANCE_SECONDS) or sk["lerp"] != bk["lerp"] or len(sk["points"]) != len(bk["points"]) \
-                            or not all(_close(p, q) for p, q in zip(sk["points"], bk["points"])):
-                        diffs.append(f"clip {name} {bone}.{ch} @ {st}: {sk} -> {bk}")
-                        break
-                    # easing and every other keyframe key beside the points: a dropped easing or an unknown key IS a difference
-                    s_extra = {k: v for k, v in sk["extra"].items() if v is not None}
-                    b_extra = {k: v for k, v in bk["extra"].items() if v is not None}
-                    if s_extra != b_extra:
-                        lost = sorted(set(s_extra) - set(b_extra))
-                        diffs.append(f"clip {name} {bone}.{ch} @ {st}: keyframe keys {s_extra} -> {b_extra}" + (f" (lost: {lost})" if lost else ""))
-                        for k in lost:
-                            dropped.append(f"clip {name} {bone}.{ch} @ {st}: {k}")
-                        break
+        clip_diffs, clip_dropped, keys = clip_differences(name, clip, back)
+        diffs.extend(clip_diffs)
+        dropped.extend(clip_dropped)
+        clips_report[name] = {"equal_within_tolerance": not clip_diffs, "differences": clip_diffs, "keys": keys,
+                              "reference_only": name.startswith(REFERENCE_CLIP_PREFIX)}
     return {"equal": not diffs, "bone_order_preserved": order_ok, "differences": diffs, "dropped_keys": sorted(set(dropped)),
             "reattached_by_this_importer": reattached,
+            "clips": clips_report, "clips_embedded": len(ba), "clips_equal_within_tolerance": sum(1 for c in clips_report.values() if c["equal_within_tolerance"]),
+            "reference_clips_embedded": sum(1 for n in ba if n.startswith(REFERENCE_CLIP_PREFIX)),
             "time_tolerance_seconds": ROUNDTRIP_TIME_TOLERANCE_SECONDS, "time_tolerance_note": ROUNDTRIP_TIME_NOTE,
             "note": "a real Blockbench geo re-export drops the dropped_keys and the reattached description keys; the artist returns the animation file, never the geo. "
                     "This round-trip is the tool's writer against the tool's importer (one memory of the Blockbench codec on both sides): EQUAL means they agree "
@@ -3678,7 +3894,7 @@ def readme_document(repo: "Repo", manifests: dict[str, dict[str, Any]], packaged
              "(the rig) with its texture(s) beside it; if you open the `.geo.json` instead, choose a **Bedrock Entity** project.")
     L.append("- Deliver one **`.animation.json`** per entity (Bedrock animation format 1.8.0 — Blockbench's default export for a Bedrock Entity project), "
              "and optionally the `.bbmodel` working file. Do NOT re-export the `.geo.json`: a re-export silently drops data the game needs; the rig you were given is the rig that ships.")
-    L.append("- " + README_IMPORT_ANIMATIONS)
+    L.append("- " + README_BBMODEL_CLIPS)
     L.append("")
     L.append("## Hard rules (the game breaks if these are broken)")
     L.append("")
@@ -3707,11 +3923,15 @@ def readme_document(repo: "Repo", manifests: dict[str, dict[str, Any]], packaged
     L.append("  <name>.animation.json    the current clips (empty for creatures that ship none yet)")
     L.append("  <registry_name>_reference_walk.animation.json")
     L.append("  <registry_name>_reference_idle.animation.json")
-    L.append("  <registry_name>_reference_attack.animation.json   (where the creature's code reads an attack)")
-    L.append("                           REFERENCE-ONLY: the creature's classic code sampled at fixed inputs, one clip per state, to look at")
-    L.append("                           beside the rig (SPEC §4.3; load them with Import Animations, see Toolchain); their keys may start your")
-    L.append("                           walk / idle / aggro_idle — never return one under its own name (the checker rejects it)")
-    L.append("  <registry_name>.bbmodel  a Blockbench project of the same rig, textures embedded")
+    L.append("  <registry_name>_reference_attack.animation.json   (where the creature's code reads an attack that moves it)")
+    L.append("  <registry_name>_reference_fly.animation.json      (where the creature's code has a flying state; likewise _swim)")
+    L.append("  <registry_name>_reference_<state>.animation.json  (the creature's own states: sit, display, scream, ... as its code names them)")
+    L.append("                           REFERENCE-ONLY: the creature's classic code sampled at fixed inputs, one clip per state its code")
+    L.append("                           reads, to look at beside the rig (SPEC §4.3); embedded in the .bbmodel, these files the pinned")
+    L.append("                           source; their keys may start your walk / idle / aggro_idle / fly / swim or an offered extra —")
+    L.append("                           never return one under its own name (the checker rejects it)")
+    L.append("  <registry_name>.bbmodel  a Blockbench project of the same rig, textures embedded, EVERY clip of the folder in its Animation")
+    L.append("                           tab (the shipped clips and the reference clips; if you return it, it must still list them all)")
     L.append("  textures/                the texture(s) to edit, one canonical copy each")
     L.append("  SPEC.md                  the creature's sheet: what it is, size, bone glossary, current motion in plain English,")
     L.append("                           what to improve / leave, loop-mode table, what fires each clip, locked bones, wishlist")
@@ -3817,9 +4037,15 @@ def build_package(repo: "Repo", out_dir: Path, registries: list[str] | None = No
         # owner 2026-09-13, second set, item 27 (3); one clip per reachable state since 2026-09-14, item 31 (11): the reference-only
         # clips beside the sheet, byte for byte from tools/reference_clips/ (the sampler's output; each sha256 is in the manifest),
         # under their own names.
+        reference_files = 0
         for block in manifest.get("reference_clips") or []:
             src = repo.paths.reference_clips / block["file"]
             (folder / src.name).write_bytes(src.read_bytes())
+            reference_files += 1
+        # item 32 (5): the reference clips embedded in the .bbmodel beside the shipped clips, verified by the round trip within
+        # the ruled tolerance; the copies beside the sheet (above) are the pinned source and, since item 32 (6), ignored by git
+        reference_rows = {b["state"]: {"file": b["file"], "_path": repo.paths.reference_clips / b["file"]} for b in manifest.get("reference_clips") or []}
+        reference_anims = reference_clip_documents(repo, reference_rows)
         textures = []
         for t in catalog.canonical_for_species(s):
             if t["stray"]:
@@ -3829,13 +4055,13 @@ def build_package(repo: "Repo", out_dir: Path, registries: list[str] | None = No
             (folder / "textures").mkdir(exist_ok=True)
             (folder / "textures" / t["canonical"]).write_bytes(data)
             textures.append((t["canonical"], data, (t["width"], t["height"])))
-        bb = build_bbmodel(s, geo, anim, textures, repo.warnings)
+        bb = build_bbmodel(s, geo, anim, textures, repo.warnings, reference=reference_anims)
         write_bbmodel(folder / f"{s.registry}.bbmodel", bb)
         rt = None
         if with_roundtrip:
             back_geo, reattached = bbmodel_to_geo(bb)
             back_anim = bbmodel_to_animation(bb)
-            rt = roundtrip_diff(geo, back_geo, anim, back_anim, reattached)
+            rt = roundtrip_diff(geo, back_geo, merged_animations(anim, reference_anims), back_anim, reattached)
             write_json(folder / "roundtrip.report.json", rt)
             if not rt["equal"]:
                 repo.warnings.add(s.registry, "ROUNDTRIP_DIFF", f"{len(rt['differences'])} difference(s): {rt['differences'][:3]}")
@@ -3848,6 +4074,8 @@ def build_package(repo: "Repo", out_dir: Path, registries: list[str] | None = No
             "files": sorted(str(p.relative_to(folder)).replace("\\", "/") for p in folder.rglob("*") if p.is_file()),
             "bones": len(bl), "cubes": sum(len(b.get("cubes", [])) for b in bl),
             "clips_shipped": len(anim.get("animations", {})), "clips_in_spec": len(manifest["clips"]),
+            "reference_clip_files": reference_files, "clips_embedded": len(bb["animations"]),
+            "reference_offers": manifest.get("reference_offers") or [],
             "goals": len(inv.get("goals", [])), "flags": len(inv.get("flags", [])),
             "attacking": (inv.get("attacking") or {}).get("verdict"),
             "strike_sites": len(inv.get("combat", {}).get("melee", [])) + len(inv.get("combat", {}).get("ranged", [])),
@@ -3857,7 +4085,9 @@ def build_package(repo: "Repo", out_dir: Path, registries: list[str] | None = No
             "unlabelled_bones": sum(1 for w in repo.warnings.for_scope(s.registry) if w[1] == "BONE_UNLABELLED"),
             "roundtrip": None if rt is None else {"equal": rt["equal"], "bone_order_preserved": rt["bone_order_preserved"],
                                                    "differences": len(rt["differences"]), "dropped_keys": len(rt["dropped_keys"]),
-                                                   "reattached": rt["reattached_by_this_importer"]},
+                                                   "reattached": rt["reattached_by_this_importer"],
+                                                   "clips_embedded": rt.get("clips_embedded"), "clips_equal_within_tolerance": rt.get("clips_equal_within_tolerance"),
+                                                   "reference_clips_embedded": rt.get("reference_clips_embedded")},
             "warnings": [f"{code}: {msg}" for _, code, msg in repo.warnings.for_scope(s.registry)],
         })
     # the README's priority table lists THIS run's folders only (owner 2026-09-13, third set, item 28 (4)); INVENTORY.csv and
@@ -3898,11 +4128,26 @@ def package_counts(repo: "Repo", manifests: dict[str, dict[str, Any]], entities:
     # owner 2026-09-14, addendum item 31 (11): the reference clips per state; the artist-tier species carrying clips against the
     # 90, and the artist-tier species packaged with no clip that are not yet in-game (held under item 10: sampled when the rig lands)
     with_clips = [s for s in packaged if manifests[s.registry].get("reference_clips")]
+    per_state: dict[str, int] = {}
+    unnamed: list[str] = []
+    for s in with_clips:
+        for b in manifests[s.registry]["reference_clips"]:
+            per_state[b["state"]] = per_state.get(b["state"], 0) + 1
+            if not b.get("named", True):
+                unnamed.append(f"{s.registry}:{b['state']}")
+    no_motion = sum(len((repo.reference_hooks or {}).get(s.registry, {}).get("no_motion") or []) for s in packaged)
     reference_clips = {
         "species_with_clips": len(with_clips),
-        "walk": sum(1 for s in with_clips if any(b["state"] == "walk" for b in manifests[s.registry]["reference_clips"])),
-        "idle": sum(1 for s in with_clips if any(b["state"] == "idle" for b in manifests[s.registry]["reference_clips"])),
-        "attack": sum(1 for s in with_clips if any(b["state"] == "attack" for b in manifests[s.registry]["reference_clips"])),
+        "walk": per_state.get("walk", 0), "idle": per_state.get("idle", 0), "attack": per_state.get("attack", 0),
+        "fly": per_state.get("fly", 0), "swim": per_state.get("swim", 0),
+        # item 32 (2)-(4): every state per name, the unnamed states, the values that move nothing, the offered extras
+        "per_state": dict(sorted(per_state.items(), key=lambda kv: (-kv[1], kv[0]))),
+        "files": sum(per_state.values()),
+        "files_written": sum(int(e.get("reference_clip_files", 0)) for e in entities),
+        "unnamed_states": sorted(unnamed),
+        "values_without_motion": no_motion,
+        "offered_extras": sum(len(manifests[s.registry].get("reference_offers") or []) for s in packaged),
+        "clips_embedded": sum(int(e.get("clips_embedded", 0)) for e in entities),
         "artist_tier_with_clips": sum(1 for s in with_clips if tier_bucket(s) in (1, 2)),
         "artist_tier_held": sorted(s.registry for s in packaged if tier_bucket(s) in (1, 2) and not manifests[s.registry].get("reference_clips") and not s.landed),
         "artist_tier_without_clips_landed": sorted(s.registry for s in packaged if tier_bucket(s) in (1, 2) and not manifests[s.registry].get("reference_clips") and s.landed),
@@ -3936,10 +4181,14 @@ def summary_markdown(summary: dict[str, Any]) -> str:
         if rc:
             held = rc.get("artist_tier_held") or []
             without = rc.get("artist_tier_without_clips_landed") or []
-            L.append(f"- Reference clips (owner 2026-09-14, item 31 (11)): {rc.get('species_with_clips', 0)} species carry them "
-                     f"(walk {rc.get('walk', 0)}, idle {rc.get('idle', 0)}, attack {rc.get('attack', 0)}); artist-tier species with clips: "
-                     f"{rc.get('artist_tier_with_clips', 0)}; held (sampled when the rig lands): {len(held)}" + (" — " + ", ".join(held) if held else "")
-                     + (f"; landed without a sampled clip (native): {', '.join(without)}" if without else "") + ".")
+            per_state = rc.get("per_state") or {}
+            L.append(f"- Reference clips (owner 2026-09-14, item 31 (11); every state the code reads since item 32 (2)): {rc.get('species_with_clips', 0)} "
+                     f"species carry them — {rc.get('files', 0)} files (" + ", ".join(f"{k} {v}" for k, v in per_state.items()) + "), "
+                     f"{rc.get('files_written', 0)} written beside the sheets, {rc.get('clips_embedded', 0)} clips embedded in the .bbmodels; unnamed states "
+                     f"{len(rc.get('unnamed_states') or [])}" + (" (" + ", ".join(rc.get("unnamed_states") or []) + ")" if rc.get("unnamed_states") else "")
+                     + f"; values that move nothing at rest {rc.get('values_without_motion', 0)}; states offered as extras {rc.get('offered_extras', 0)}; "
+                     f"artist-tier species with clips: {rc.get('artist_tier_with_clips', 0)}; held (sampled when the rig lands): {len(held)}"
+                     + (" — " + ", ".join(held) if held else "") + (f"; landed without a sampled clip (native): {', '.join(without)}" if without else "") + ".")
         sm = c.get("seed_missing", [])
         L.append(f"- Packaged without a seed (the SEED_MISSING fallback: the display name from the registry, empty authored sections): {len(sm)}"
                  + (" — " + ", ".join(sm) if sm else "") + ".")
@@ -4386,12 +4635,46 @@ def check_folder(folder: Path, manifest_path: Path | None = None, lock_mode_over
                 findings.append(("REJECT", f"textures/{tp.name}: canvas {w}x{h}, must stay {t['width']}x{t['height']}"))
             if tp.name in aliases and tp.name not in known:
                 findings.append(("WARN", f"textures/{tp.name}: an alias name; the canonical copy is {aliases[tp.name]['canonical']}"))
+    # --- the .bbmodel (owner 2026-09-14, second set revised, item 32 (5)): it must open with every clip of the folder's animation
+    # files listed - the delivered / shipped clips and the reference clips present beside the sheet - and every embedded clip must
+    # match its file within the round-trip tolerance (key times 5e-5 s, values 1e-6); the files are the pinned source
+    folder_clips: dict[str, tuple[str, dict[str, Any]]] = {}
+    for fp in sorted(folder.glob("*.animation.json")):
+        if "_preview" in fp.name:
+            continue
+        try:
+            doc = load_json(fp)
+        except Exception:  # noqa: BLE001 - reported above for the delivery; a reference file is compared by bytes
+            continue
+        if isinstance(doc, dict) and isinstance(doc.get("animations"), dict):
+            for cname, cclip in doc["animations"].items():
+                if isinstance(cclip, dict):
+                    folder_clips.setdefault(cname, (fp.name, cclip))
     for bp in folder.glob("*.bbmodel"):
         try:
-            load_json(bp)
-            findings.append(("OK", f"{bp.name}: parses"))
+            bb = load_json(bp)
+            embedded = bbmodel_to_animation(bb).get("animations", {})
         except Exception as exc:  # noqa: BLE001
             findings.append(("WARN", f"{bp.name}: unreadable ({exc})"))
+            continue
+        missing = [n for n in folder_clips if n not in embedded]
+        if missing:
+            findings.append(("REJECT", f"{bp.name}: lists {len(embedded)} clip(s) but the folder's animation files hold {len(folder_clips)} — missing "
+                                       f"{missing[:8]}" + (f", +{len(missing) - 8} more" if len(missing) > 8 else "")
+                                       + " (a .bbmodel must open with every clip listed; the files beside the sheet are the pinned source)"))
+        out_of_tolerance = []
+        for cname, (fname, cclip) in folder_clips.items():
+            if cname not in embedded:
+                continue
+            cdiffs, _, _ = clip_differences(cname, cclip, embedded[cname])
+            if cdiffs:
+                out_of_tolerance.append(f"{cname} (from {fname}): {cdiffs[0]}")
+        if out_of_tolerance:
+            findings.append(("REJECT", f"{bp.name}: {len(out_of_tolerance)} embedded clip(s) leave the round-trip tolerance of the folder's files "
+                                       f"(key times within {ROUNDTRIP_TIME_TOLERANCE_SECONDS} s, values within {ROUNDTRIP_VALUE_TOLERANCE}) — "
+                                       + "; ".join(out_of_tolerance[:4]) + (f"; +{len(out_of_tolerance) - 4} more" if len(out_of_tolerance) > 4 else "")))
+        if not missing and not out_of_tolerance:
+            findings.append(("OK", f"{bp.name}: lists {len(embedded)} clip(s), every clip of the folder's animation files ({len(folder_clips)}) within the round-trip tolerance"))
     # --- the summary lines (always present) ---
     keyed_total = len({b for bones_hit in locked_hits.values() for b in bones_hit})
     if locked:
@@ -4480,7 +4763,10 @@ def main(argv: list[str] | None = None) -> int:
             if not t["stray"]:
                 textures.append((t["canonical"], (repo.paths.tex_dir / t["canonical"]).read_bytes(), (t["width"], t["height"])))
         geo, anim = s.geo, s.animation
-        bb = build_bbmodel(s, geo, anim, textures, repo.warnings)
+        reference_rows, _ = reference_clip_facts(s, repo, s.tier == 0) if repo.reference_clips.get(s.registry) else (None, "")
+        reference_anims = reference_clip_documents(repo, reference_rows)
+        bb = build_bbmodel(s, geo, anim, textures, repo.warnings, reference=reference_anims)
+        anim = merged_animations(anim, reference_anims)
         if args.command == "bbmodel":
             path = args.out / "entities" / s.registry / f"{s.registry}.bbmodel"
             write_bbmodel(path, bb)

@@ -138,7 +138,7 @@ NATIVE_PROFILE = {
 }
 
 FIXTURE_SEED = {
-    "registry": "fixture", "display_name": "Fixture", "status": "test seed", "locomotion": "walker", "artist_scope": "full contract",
+    "registry": "fixture", "display_name": "Fixture", "status": "test seed", "locomotion": "flyer", "artist_scope": "full contract",
     "character_sheet": "A test creature.", "labels": {"root": "the body", "arm": "the arm", "tail": "the tail"},
     "groups": [{"name": "gait", "bones": ["tail"], "omega": 3.7, "axis": "x", "gait_scaled": True, "amplitude": "1 rad",
                 "plain": "the tail wags", "math": "tail.xRot = cos(t*3.7)", "source": "Fixture.java"},
@@ -146,6 +146,9 @@ FIXTURE_SEED = {
                 "amplitude": "|cos| x 0.785 + 0.75 rad", "plain": "the arm pumps", "math": "arm = |cos(rad(t % 360) * 6)| * 0.7854 + 0.75",
                 "source": "Fixture.java"}],
     "behaviour": ["it wags"], "clips": [{"name": "walk", "verdict": "improve"}], "extras": [], "wishlist": [],
+    # owner 2026-09-14, second set revised, item 32 (2): the states the sampler enumerates, named in the animator's words from
+    # the code's own (the fixture hook reads getActivity - 1 is flying - and isInSittingPose)
+    "reference_states": {"fly": {"getActivity": 1}, "sit": {"isInSittingPose": True}},
     # owner 2026-09-13, fourth set, item 3: a register entry recording that the 1.7.10 original moved more than the port's pose
     "original_moved_more": {"register": "ANIM-999", "original": "the tail also nodded on a 0.5 cosine (Fixture.java:10)",
                             "port": "the tail wags only; the nod was dropped"},
@@ -645,42 +648,87 @@ def build_fixture_repo(root: Path) -> None:
     (root / "phase_g_reports").mkdir()
     (root / "phase_g_reports/geckolib_migration_design.md").write_text(DESIGN_MD, encoding="utf-8")
     (root / "provenance_byte_identical_assets.txt").write_text("  textures\\entity\\fixture.png  <=  Fixture.png\n", encoding="utf-8")
-    # the reference-only clips (owner 2026-09-13, second set, item 27 (3); one per reachable state since 2026-09-14, item 31 (11)):
-    # the sampler's synthetic output for the fixture (walk, idle, attack: its hook reads attacking) and for the critter (an unlanded
-    # hook species: walk and idle, its hook reads no attack) with their index rows (schema 3); the native boss has no row by design
-    # (no classic hook) and the boss of the reference leg none either (a held species: sampled when the rig lands)
+    # the reference-only clips (owner 2026-09-13, second set, item 27 (3); one per reachable state since 2026-09-14, item 31 (11);
+    # every state the hook's code reads since the second set revised, item 32 (2)-(6)): the sampler's synthetic output for the
+    # fixture (walk, idle, attack, a named fly - getActivity 1 - and a named sit - isInSittingPose true; its hook also reads
+    # getBlink, whose value 1 moves nothing, and a RenderInfo latch that is not enumerable) and for the critter (an unlanded hook
+    # species: walk, idle and an UNNAMED activity_2) with their index rows (schema 4: the keying, the names, the hook facts);
+    # the native boss has no row by design (no classic hook) and the boss of the reference leg none either (a held species)
     clips_dir = root / "tools/reference_clips"
     clips_dir.mkdir(parents=True)
     rows = []
-    for registry, landed, states in (("fixture", True, ("walk", "idle", "attack")), ("critter", False, ("walk", "idle"))):
-        for state in states:
-            clip = {"walk": REFERENCE_CLIP, "idle": REFERENCE_CLIP_IDLE, "attack": REFERENCE_CLIP_ATTACK}[state]
+    hooks = {}
+    plan = (("fixture", True, (("walk", REFERENCE_CLIP), ("idle", REFERENCE_CLIP_IDLE), ("attack", REFERENCE_CLIP_ATTACK),
+                               ("fly", REFERENCE_CLIP_FLY), ("sit", REFERENCE_CLIP_SIT))),
+            ("critter", False, (("walk", CRITTER_CLIP_WALK), ("idle", CRITTER_CLIP_IDLE), ("activity_2", CRITTER_CLIP_ACTIVITY_2))))
+    getters = {"attack": ("getAttacking", 1, True, "the contract (getAttacking 1)"),
+               "fly": ("getActivity", 1, True, "fixture.json reference_states.fly = {getActivity: 1}"),
+               "sit": ("isInSittingPose", True, True, "fixture.json reference_states.sit = {isInSittingPose: true}"),
+               "activity_2": ("getActivity", 2, False, "unnamed: reference_<getter>_<value> (the seed's reference_states should name it)")}
+    for registry, landed, states in plan:
+        for state, clip in states:
             clip_path = clips_dir / f"{registry}_reference_{state}.animation.json"
             clip_path.write_bytes((json.dumps(clip, indent=2) + "\n").encode("utf-8"))
-            one_key = state == "idle"
-            rows.append({"registry": registry, "state": state, "model_id": "model_fixture" if landed else "reference_critter",
-                         "manifest": "t2_model_proofs.json" if landed else "reference_model_proofs.json",
-                         "model_class": "FixtureModel" if landed else "CritterModel", "landed": landed,
-                         "rig_source": "shipped" if landed else "reference-leg converter output",
-                         "hook": ("FixtureGeoReplacement" if landed else "CritterGeoReplacement") + ".applyCustomAnimations(AnimationProcessor, PoseInputs)",
-                         "geo": "src/main/resources/assets/orespawn/geo/entity/fixture.geo.json" if landed else "build/reference/generated/reference_critter.geo.json",
-                         "file": clip_path.name, "clip_name": ap.REFERENCE_CLIP_NAMES[state], "sha256": ap.sha256_file(clip_path),
-                         "rule": "one_key" if one_key else "period_multiple",
-                         "rule_note": ("nothing moves at the idle inputs: every bone's rotation and position is the same at every sample" if one_key else
-                                       "one channel at 3.7 rad/tick: one natural period 2 pi / 3.7 = 1.698 ticks; closes at k = 1 (1.698132 ticks): every bone returns within 0 degrees of its start at k x T"),
-                         **({} if one_key else {"period_ticks": 1.6981317008, "period_multiple_k": 1, "closure_delta_degrees": 0.0}),
-                         "span_ticks": 0.0 if one_key else 1.6981317008, "animation_length_seconds": 0.05 if one_key else 0.0849065850,
-                         "keys_per_bone": 1 if one_key else 3, "bones": 4,
-                         "moving_bones": [] if one_key else ["tail"], "position_bones": [] if one_key else ["arm"], "hidden_bones_at_rest": [],
-                         "seam_delta_degrees": 0.0, "seam_delta_position_units": 0.0,
-                         "subject_after": {"ri1": 0, "shielding": -1, "rf1": 0.0},
-                         "attacking": {"declared_pose_interfaces": ["FixturePose"] if landed else [],
-                                       "getters": ["FixturePose.getAttacking()"] if landed else [], "outside_pose_interface": [],
-                                       "reads_attacking": landed, "read_at_inputs": state == "attack"},
-                         "sampled_inputs": {"walk": "limbSwingAmount 1.0; limbSwing = t; ageInTicks = t; netHeadYaw 0; headPitch 0; rest state; RNG seed 0",
-                                            "idle": "limbSwingAmount 0.0; limbSwing 0; ageInTicks = t; netHeadYaw 0; headPitch 0; rest state; RNG seed 0",
-                                            "attack": "attacking 1; limbSwingAmount 0.0; limbSwing 0; ageInTicks = t; netHeadYaw 0; headPitch 0; RNG seed 0"}[state]})
-    (clips_dir / "reference_clips.json").write_text(json.dumps({"schema_version": 3, "clip_name": "reference", "clips": rows}, indent=2) + "\n",
+            one_key = state in ("idle", "sit", "activity_2")
+            getter = getters.get(state)
+            row = {"registry": registry, "state": state, "named": getter[2] if getter else True,
+                   "name_source": getter[3] if getter else "the contract",
+                   **({"getter": getter[0], "value": getter[1], "getter_read_at_inputs": True} if getter else {}),
+                   "model_id": "model_fixture" if landed else "reference_critter",
+                   "manifest": "t2_model_proofs.json" if landed else "reference_model_proofs.json",
+                   "model_class": "FixtureModel" if landed else "CritterModel", "landed": landed,
+                   "rig_source": "shipped" if landed else "reference-leg converter output",
+                   "hook": ("FixtureGeoReplacement" if landed else "CritterGeoReplacement") + ".applyCustomAnimations(AnimationProcessor, PoseInputs)",
+                   "geo": "src/main/resources/assets/orespawn/geo/entity/fixture.geo.json" if landed else "build/reference/generated/reference_critter.geo.json",
+                   "file": clip_path.name, "clip_name": ap.reference_clip_name(state), "sha256": ap.sha256_file(clip_path),
+                   "rule": "one_key" if one_key else "period_multiple",
+                   "rule_note": (f"nothing moves at the {state} inputs: every bone's rotation and position is the same at every sample" if one_key else
+                                 "one channel at 3.7 rad/tick: one natural period 2 pi / 3.7 = 1.698 ticks; closes at k = 1 (1.698132 ticks): every bone returns within 0 degrees of its start at k x T"),
+                   **({} if one_key else {"period_ticks": 1.6981317008, "period_multiple_k": 1, "closure_delta_degrees": 0.0}),
+                   "span_ticks": 0.0 if one_key else 1.6981317008, "animation_length_seconds": 0.05 if one_key else 0.0849065850,
+                   "dense_samples": 1 if one_key else 3, "keys_per_bone": 1 if one_key else 3, "keys_per_bone_min": 1 if one_key else 2,
+                   "keys_total": 2 if one_key else 5, "lerp_mode": "catmullrom",
+                   "keying": {"search": "the density search of the exact transcriptions", "lerp_mode": "catmullrom",
+                              "rotation_tolerance_degrees": 1.0, "position_tolerance_blocks": 0.03125, "position_tolerance_units": 0.5,
+                              "dense_samples": 1 if one_key else 3, "keys_per_bone_min": 1 if one_key else 2, "keys_per_bone_max": 1 if one_key else 3,
+                              "keys_total": 2 if one_key else 5, "max_error_degrees": 0.0 if one_key else 0.4321, "max_error_units": 0.0,
+                              "max_error_blocks": 0.0, "max_error_degrees_geckolib": 0.0 if one_key else 0.4321, "max_error_units_geckolib": 0.0,
+                              "within_tolerance": True, "one_fewer_max_error": None if one_key else 12.5, "channels_at_minimum_keys": 0, "channels": 2},
+                   "bones": 4 if landed else 2,
+                   "moving_bones": [] if one_key else (["tail"] if state != "fly" else ["arm"]), "position_bones": [] if (one_key or state != "walk") else ["arm"],
+                   "hidden_bones_at_rest": [], "seam_delta_degrees": 0.0, "seam_delta_position_units": 0.0,
+                   "subject_after": {"ri1": 0, "shielding": -1, "rf1": 0.0},
+                   "getters_read_at_inputs": ["getActivity", "getAttacking", "getBlink", "getRenderInfo", "isInSittingPose"] if landed else ["getActivity"],
+                   "attacking": {"declared_pose_interfaces": ["FixturePose"] if landed else ["CritterPose"],
+                                 "getters": ["FixturePose.getAttacking()"] if landed else [], "outside_pose_interface": [],
+                                 "reads_attacking": landed, "read_at_inputs": state == "attack"},
+                   "sampled_inputs": {"walk": "limbSwingAmount 1.0; limbSwing = t; ageInTicks = t; netHeadYaw 0; headPitch 0; rest state; RNG seed 0",
+                                      "idle": "limbSwingAmount 0.0; limbSwing 0; ageInTicks = t; netHeadYaw 0; headPitch 0; rest state; RNG seed 0"}.get(
+                       state, f"{getter[0] if getter else state}() answers {getter[1] if getter else ''}; limbSwingAmount 0.0; limbSwing 0; ageInTicks = t; RNG seed 0")}
+            rows.append(row)
+    hooks["fixture"] = {"registry": "fixture", "descriptor": "FixtureGeoReplacement", "landed": True,
+                        "declared": {"descriptor": "FixtureGeoReplacement", "declared_pose_interfaces": ["FixturePose"], "getters": [
+                            {"interface": "FixturePose", "getter": "getActivity", "type": "int", "enumerable": True, "values": [1], "read_at": ["FixtureGeoReplacement:40 != 0"]},
+                            {"interface": "FixturePose", "getter": "getAttacking", "type": "int", "enumerable": True, "values": [1], "read_at": ["FixtureGeoReplacement:52 != 0"]},
+                            {"interface": "FixturePose", "getter": "getBlink", "type": "int", "enumerable": True, "values": [1], "read_at": ["FixtureGeoReplacement:60 > 0"]},
+                            {"interface": "FixturePose", "getter": "getRenderInfo", "type": "RenderInfo", "enumerable": False, "values": [],
+                             "not_enumerable": "a RenderInfo latch (the per-entity scratch the pose reads and writes), not a value the code branches on", "read_at": ["FixtureGeoReplacement:70"]},
+                            {"interface": "FixturePose", "getter": "isInSittingPose", "type": "boolean", "enumerable": True, "values": [True], "read_at": ["FixtureGeoReplacement:80"]}],
+                                     "outside_pose_interface": []},
+                        "not_enumerable": [{"getter": "FixturePose.getRenderInfo()", "type": "RenderInfo",
+                                            "reason": "a RenderInfo latch (the per-entity scratch the pose reads and writes), not a value the code branches on"}],
+                        "states": ["walk", "idle", "attack", "fly", "sit"], "unnamed_states": [],
+                        "no_motion": [{"getter": "getBlink", "value": 1, "state": "blink_1", "named": False, "read_at_inputs": True,
+                                       "why": "getBlink 1: no motion at rest - the read is reached but the value changes no bone's rotation or position at the idle inputs (a visibility or texture choice, or a branch whose bones the rest pose already holds)",
+                                       "note": "getBlink 1: no motion at rest"}],
+                        "getters_read": 5, "values_enumerated": 4, "getters_not_enumerable": 1}
+    hooks["critter"] = {"registry": "critter", "descriptor": "CritterGeoReplacement", "landed": False,
+                        "declared": {"descriptor": "CritterGeoReplacement", "declared_pose_interfaces": ["CritterPose"], "getters": [
+                            {"interface": "CritterPose", "getter": "getActivity", "type": "int", "enumerable": True, "values": [2], "read_at": ["CritterGeoReplacement:30 == 2"]}],
+                                     "outside_pose_interface": []},
+                        "not_enumerable": [], "states": ["walk", "idle", "activity_2"], "unnamed_states": ["activity_2"], "no_motion": [],
+                        "getters_read": 1, "values_enumerated": 1, "getters_not_enumerable": 0}
+    (clips_dir / "reference_clips.json").write_text(json.dumps({"schema_version": 4, "hooks": hooks, "clips": rows}, indent=2) + "\n",
                                                     encoding="utf-8")
     # the full folder (owner 2026-09-13, fourth set, item 29 (5)): the reference manifest and the converter's output directory
     # (gradle referenceConvertModels' default, build/reference/generated) - the boss's and the critter's geos with their
@@ -697,14 +745,14 @@ def build_fixture_repo(root: Path) -> None:
 REFERENCE_CLIP = {
     "format_version": "1.8.0",
     "animations": {
-        "reference": {"loop": True, "animation_length": 0.084906585, "bones": {
-            "arm": {"rotation": {"0.0": {"post": [0.0, 0.0, 0.0], "lerp_mode": "linear"}, "0.05": {"post": [0.0, 0.0, 0.0], "lerp_mode": "linear"},
-                                 "0.084906585": {"post": [0.0, 0.0, 0.0], "lerp_mode": "linear"}},
-                    "position": {"0.0": {"post": [0.0, -1.5, 2.0], "lerp_mode": "linear"}, "0.05": {"post": [0.0, -1.5, 2.0], "lerp_mode": "linear"},
-                                 "0.084906585": {"post": [0.0, -1.5, 2.0], "lerp_mode": "linear"}}},
-            "tail": {"rotation": {"0.0": {"post": [57.2957795131, 0.0, 0.0], "lerp_mode": "linear"},
-                                  "0.05": {"post": [-48.9012345678, 0.0, 0.0], "lerp_mode": "linear"},
-                                  "0.084906585": {"post": [57.2957795131, 0.0, 0.0], "lerp_mode": "linear"}}},
+        "reference_walk": {"loop": True, "animation_length": 0.084906585, "bones": {
+            "arm": {"rotation": {"0.0": {"post": [0.0, 0.0, 0.0], "lerp_mode": "catmullrom"}, "0.05": {"post": [0.0, 0.0, 0.0], "lerp_mode": "catmullrom"},
+                                 "0.084906585": {"post": [0.0, 0.0, 0.0], "lerp_mode": "catmullrom"}},
+                    "position": {"0.0": {"post": [0.0, -1.5, 2.0], "lerp_mode": "catmullrom"}, "0.05": {"post": [0.0, -1.5, 2.0], "lerp_mode": "catmullrom"},
+                                 "0.084906585": {"post": [0.0, -1.5, 2.0], "lerp_mode": "catmullrom"}}},
+            "tail": {"rotation": {"0.0": {"post": [57.2957795131, 0.0, 0.0], "lerp_mode": "catmullrom"},
+                                  "0.05": {"post": [-48.9012345678, 0.0, 0.0], "lerp_mode": "catmullrom"},
+                                  "0.084906585": {"post": [57.2957795131, 0.0, 0.0], "lerp_mode": "catmullrom"}}},
         }},
     },
 }
@@ -714,8 +762,8 @@ REFERENCE_CLIP_IDLE = {
     "format_version": "1.8.0",
     "animations": {
         "reference_idle": {"loop": True, "animation_length": 0.05, "bones": {
-            "arm": {"rotation": {"0.0": {"post": [0.0, 0.0, 0.0], "lerp_mode": "linear"}}},
-            "tail": {"rotation": {"0.0": {"post": [12.5, 0.0, 0.0], "lerp_mode": "linear"}}},
+            "arm": {"rotation": {"0.0": {"post": [0.0, 0.0, 0.0], "lerp_mode": "catmullrom"}}},
+            "tail": {"rotation": {"0.0": {"post": [12.5, 0.0, 0.0], "lerp_mode": "catmullrom"}}},
         }},
     },
 }
@@ -724,11 +772,69 @@ REFERENCE_CLIP_ATTACK = {
     "format_version": "1.8.0",
     "animations": {
         "reference_attack": {"loop": True, "animation_length": 0.084906585, "bones": {
-            "arm": {"rotation": {"0.0": {"post": [0.0, 0.0, 0.0], "lerp_mode": "linear"}, "0.05": {"post": [0.0, 0.0, 0.0], "lerp_mode": "linear"},
-                                 "0.084906585": {"post": [0.0, 0.0, 0.0], "lerp_mode": "linear"}}},
-            "tail": {"rotation": {"0.0": {"post": [30.0, 0.0, 0.0], "lerp_mode": "linear"},
-                                  "0.05": {"post": [-30.0, 0.0, 0.0], "lerp_mode": "linear"},
-                                  "0.084906585": {"post": [30.0, 0.0, 0.0], "lerp_mode": "linear"}}},
+            "arm": {"rotation": {"0.0": {"post": [0.0, 0.0, 0.0], "lerp_mode": "catmullrom"}, "0.05": {"post": [0.0, 0.0, 0.0], "lerp_mode": "catmullrom"},
+                                 "0.084906585": {"post": [0.0, 0.0, 0.0], "lerp_mode": "catmullrom"}}},
+            "tail": {"rotation": {"0.0": {"post": [30.0, 0.0, 0.0], "lerp_mode": "catmullrom"},
+                                  "0.05": {"post": [-30.0, 0.0, 0.0], "lerp_mode": "catmullrom"},
+                                  "0.084906585": {"post": [30.0, 0.0, 0.0], "lerp_mode": "catmullrom"}}},
+        }},
+    },
+}
+
+# the named fly state (getActivity 1): the arm beats +-50.4 degrees about Z while the tail holds - the wing beat the Baby
+# Dragon's real clip shows (item 32 (2): "reference_fly must show the beat")
+REFERENCE_CLIP_FLY = {
+    "format_version": "1.8.0",
+    "animations": {
+        "reference_fly": {"loop": True, "animation_length": 0.084906585, "bones": {
+            "arm": {"rotation": {"0.0": {"post": [0.0, 0.0, 50.4], "lerp_mode": "catmullrom"}, "0.05": {"post": [0.0, 0.0, -50.4], "lerp_mode": "catmullrom"},
+                                 "0.084906585": {"post": [0.0, 0.0, 50.4], "lerp_mode": "catmullrom"}}},
+            "tail": {"rotation": {"0.0": {"post": [0.0, 0.0, 0.0], "lerp_mode": "catmullrom"}, "0.05": {"post": [0.0, 0.0, 0.0], "lerp_mode": "catmullrom"},
+                                  "0.084906585": {"post": [0.0, 0.0, 0.0], "lerp_mode": "catmullrom"}}},
+        }},
+    },
+}
+
+# the named sit state (isInSittingPose true): one key, the tail dropped - a species state with no contract clip, offered as an extra
+REFERENCE_CLIP_SIT = {
+    "format_version": "1.8.0",
+    "animations": {
+        "reference_sit": {"loop": True, "animation_length": 0.05, "bones": {
+            "arm": {"rotation": {"0.0": {"post": [0.0, 0.0, 0.0], "lerp_mode": "catmullrom"}}},
+            "tail": {"rotation": {"0.0": {"post": [-40.0, 0.0, 0.0], "lerp_mode": "catmullrom"}}},
+        }},
+    },
+}
+
+# the critter's clips on its own bones (body, leg): walk, idle and the UNNAMED activity_2 (getActivity 2 with no seed word)
+CRITTER_CLIP_WALK = {
+    "format_version": "1.8.0",
+    "animations": {
+        "reference_walk": {"loop": True, "animation_length": 0.084906585, "bones": {
+            "body": {"rotation": {"0.0": {"post": [0.0, 0.0, 0.0], "lerp_mode": "catmullrom"}, "0.05": {"post": [0.0, 0.0, 0.0], "lerp_mode": "catmullrom"},
+                                  "0.084906585": {"post": [0.0, 0.0, 0.0], "lerp_mode": "catmullrom"}}},
+            "leg": {"rotation": {"0.0": {"post": [20.0, 0.0, 0.0], "lerp_mode": "catmullrom"}, "0.05": {"post": [-20.0, 0.0, 0.0], "lerp_mode": "catmullrom"},
+                                 "0.084906585": {"post": [20.0, 0.0, 0.0], "lerp_mode": "catmullrom"}}},
+        }},
+    },
+}
+
+CRITTER_CLIP_IDLE = {
+    "format_version": "1.8.0",
+    "animations": {
+        "reference_idle": {"loop": True, "animation_length": 0.05, "bones": {
+            "body": {"rotation": {"0.0": {"post": [0.0, 0.0, 0.0], "lerp_mode": "catmullrom"}}},
+            "leg": {"rotation": {"0.0": {"post": [0.0, 0.0, 0.0], "lerp_mode": "catmullrom"}}},
+        }},
+    },
+}
+
+CRITTER_CLIP_ACTIVITY_2 = {
+    "format_version": "1.8.0",
+    "animations": {
+        "reference_activity_2": {"loop": True, "animation_length": 0.05, "bones": {
+            "body": {"rotation": {"0.0": {"post": [0.0, 0.0, 0.0], "lerp_mode": "catmullrom"}}},
+            "leg": {"rotation": {"0.0": {"post": [-57.2957795131, 0.0, 0.0], "lerp_mode": "catmullrom"}}},
         }},
     },
 }
@@ -1347,9 +1453,12 @@ class FixtureCase(unittest.TestCase):
         self.assertIn("no `_preview` files in a delivery (a Blockbench-only aid, never in the jar — ruled 2026-09-06, Q15 (a); the checker warns). "
                       + ap.README_REFERENCE_SENTENCE, readme)
         for name in ("<registry_name>_reference_walk.animation.json", "<registry_name>_reference_idle.animation.json",
-                     "<registry_name>_reference_attack.animation.json   (where the creature's code reads an attack)"):
+                     "<registry_name>_reference_attack.animation.json   (where the creature's code reads an attack that moves it)",
+                     "<registry_name>_reference_fly.animation.json      (where the creature's code has a flying state; likewise _swim)",
+                     "<registry_name>_reference_<state>.animation.json  (the creature's own states: sit, display, scream, ... as its code names them)"):
             self.assertIn(name, readme)
-        self.assertIn("- " + ap.README_IMPORT_ANIMATIONS, readme)  # item 31 (12): the Toolchain says how the clips are loaded
+        self.assertIn("- " + ap.README_BBMODEL_CLIPS, readme)  # item 32 (5): the Toolchain says both - the clips in the .bbmodel, the files the pinned source
+        self.assertIs(ap.README_IMPORT_ANIMATIONS, ap.README_BBMODEL_CLIPS)
         self.assertTrue(any("`*_reference_<state>.animation.json` returned under its own name" in r for r in ap.CHECK_REJECTS))
         manifest = folder / "spec.manifest.json"
         good = self.GOOD
@@ -1429,36 +1538,43 @@ class FixtureCase(unittest.TestCase):
 
     def test_reference_clip_packaged_spec_section_and_manifest(self):
         """The reference-only clips (owner 2026-09-13, second set, item 27 (3); one per reachable state since 2026-09-14, item 31
-        (11)): `package` copies tools/reference_clips/<registry>_reference_walk / _idle / _attack.animation.json beside the sheet
-        byte for byte; SPEC §4.3 states what they are, the inputs per state, the span of each, how they are loaded (Import
-        Animations), the starting-point rule (item 31 (13)), that a file is never returned under its own name, and - without an
-        exact transcription - the plain-language transcription of the source formulas; the manifest records `reference_clips`
-        (one block per state: file, sha256, clip, the delivered clip it may start, sampled inputs, span) with `reference_clip`
-        the walk block, and `exact_transcription`."""
+        (11); every state the code reads, named by the seed, since the second set revised, item 32 (2)-(3)): `package` copies
+        tools/reference_clips/<registry>_reference_<state>.animation.json beside the sheet byte for byte; SPEC §4.3 states what
+        they are, the inputs per state, the span and the keying of each, how they are loaded (in the .bbmodel; the files the pinned
+        source), the starting-point rule (walk / idle / aggro_idle / fly / swim; a species state offered as an extra), that a file
+        is never returned under its own name, the values that move nothing and the reads that are not enumerable, and - without
+        an exact transcription - the plain-language transcription of the source formulas; the manifest records `reference_clips`
+        (one block per state: file, sha256, clip, the delivered clip it may start or the extra it is offered as, the getter and
+        value, named, sampled inputs, span, keying) with `reference_clip` the walk block, and `exact_transcription`."""
         out = self.tmp / "out_reference"
         ap.build_package(self.repo, out, ["fixture"])
         folder = out / "entities/fixture"
-        for state in ("walk", "idle", "attack"):
+        for state in ("walk", "idle", "attack", "fly", "sit"):
             src = self.root / f"tools/reference_clips/fixture_reference_{state}.animation.json"
             copied = folder / f"fixture_reference_{state}.animation.json"
             self.assertTrue(copied.exists(), state)
             self.assertEqual(copied.read_bytes(), src.read_bytes(), state)
         manifest = json.loads((folder / "spec.manifest.json").read_text(encoding="utf-8"))
         blocks = manifest["reference_clips"]
-        self.assertEqual([b["state"] for b in blocks], ["walk", "idle", "attack"])
-        self.assertEqual([b["delivered_clip"] for b in blocks], ["walk", "idle", "aggro_idle"])  # item 31 (13)
-        self.assertEqual([b["clip"] for b in blocks], ["reference", "reference_idle", "reference_attack"])
+        self.assertEqual([b["state"] for b in blocks], ["walk", "idle", "attack", "fly", "sit"])
+        self.assertEqual([b["delivered_clip"] for b in blocks], ["walk", "idle", "aggro_idle", "fly", None])  # item 32 (4)
+        self.assertEqual([b["offered_extra"] for b in blocks], [None, None, None, None, "sit"])
+        self.assertEqual([b["clip"] for b in blocks], ["reference_walk", "reference_idle", "reference_attack", "reference_fly", "reference_sit"])
+        self.assertEqual([(b["getter"], b["value"], b["named"]) for b in blocks],
+                         [(None, None, True), (None, None, True), ("getAttacking", 1, True), ("getActivity", 1, True), ("isInSittingPose", True, True)])
         rc = manifest["reference_clip"]
         self.assertEqual(rc, blocks[0])
         self.assertEqual(rc["file"], "fixture_reference_walk.animation.json")
         self.assertEqual(rc["sha256"], ap.sha256_file(self.root / "tools/reference_clips/fixture_reference_walk.animation.json"))
-        self.assertEqual(rc["clip"], "reference")
+        self.assertEqual(rc["clip"], "reference_walk")
         self.assertTrue(rc["reference_only"] and all(b["reference_only"] for b in blocks))
         self.assertEqual(rc["rule"], "period_multiple")  # the span rule (owner 2026-09-13, third set, item 28 (5)): a period multiple
         self.assertEqual(rc["period_multiple_k"], 1)
         self.assertAlmostEqual(rc["period_ticks"], 1.6981317008)
         self.assertAlmostEqual(rc["span_ticks"], 1.6981317008)
-        self.assertEqual(rc["keys_per_bone"], 3)
+        self.assertEqual((rc["keys_per_bone"], rc["keys_per_bone_min"], rc["dense_samples"], rc["lerp_mode"]), (3, 2, 3, "catmullrom"))
+        self.assertEqual(rc["keying"]["rotation_tolerance_degrees"], 1.0)  # item 32 (6)
+        self.assertTrue(rc["keying"]["within_tolerance"])
         self.assertIn("limbSwingAmount 1.0", rc["sampled_inputs"])
         self.assertEqual(rc["position_bones"], ["arm"])
         self.assertEqual(blocks[1]["rule"], "one_key")
@@ -1467,23 +1583,39 @@ class FixtureCase(unittest.TestCase):
         self.assertFalse(manifest["exact_transcription"])  # no tools/keyframe_clips/fixture.json: the fixture runs on its hook
         spec = (folder / "SPEC.md").read_text(encoding="utf-8")
         self.assertIn("### 4.3 Reference clips (reference-only)", spec)
-        self.assertIn("`fixture_reference_walk.animation.json`, `fixture_reference_idle.animation.json`, `fixture_reference_attack.animation.json` "
-                      "(beside this sheet) are NOT clips to return or ship under their own names.", spec)
+        self.assertIn("`fixture_reference_walk.animation.json`, `fixture_reference_idle.animation.json`, `fixture_reference_attack.animation.json`, "
+                      "`fixture_reference_fly.animation.json`, `fixture_reference_sit.animation.json` (beside this sheet, and embedded in `fixture.bbmodel`'s "
+                      "Animation tab) are NOT clips to return or ship under their own names.", spec)
         self.assertIn("`_reference_walk` — full walking speed (limbSwingAmount 1, the walk position and the age advancing one tick per key), not attacking, looking straight ahead", spec)
         self.assertIn("`_reference_idle` — standing still (limbSwingAmount 0, the walk position 0", spec)
         self.assertIn("`_reference_attack` — attacking (the code's attacking flag raised) while standing still", spec)
-        self.assertIn("Animation → Import Animations..., pick the file", spec)  # item 31 (12): §4.3 says how the clips are loaded
-        self.assertIn("**Starting point (owner 2026-09-14, addendum item 13):** a reference clip's KEYS may be the starting point of the delivered clip "
-                      "its state corresponds to — copy them into `walk` (from `_reference_walk`), `idle` (from `_reference_idle`) or `aggro_idle` (from "
-                      "`_reference_attack`) and improve from there; a delivered clip carrying those keys is a valid delivery (no rule compares them). "
-                      "Only the reference file itself coming back under its own name is refused.", spec)
-        self.assertIn("- `fixture_reference_walk.animation.json` (sha256 `" + rc["sha256"] + "`; clip `reference`; a starting point for `walk`): one period of "
+        self.assertIn("`_reference_fly` — the `fly` state: the code's `getActivity` answering 1 while standing still, every other state at rest", spec)
+        self.assertIn("`_reference_sit` — the `sit` state: the code's `isInSittingPose` answering true while standing still, every other state at rest", spec)
+        self.assertIn(ap.REFERENCE_KEYING_SENTENCE, spec)  # item 32 (6): the tolerance in one sentence
+        self.assertIn("the files beside the sheet are the PINNED SOURCE", spec)
+        self.assertIn("Animation → Import Animations... on the files brings them back", spec)  # the one-line fallback
+        self.assertIn("**Starting point (owner 2026-09-14, addendum item 13; extended by the second set revised, item 4):** a reference clip's KEYS may "
+                      "be the starting point of the delivered clip its state corresponds to — copy them into `walk` (from `_reference_walk`), `idle` "
+                      "(from `_reference_idle`), `aggro_idle` (from `_reference_attack`), `fly` (from `_reference_fly`) or `swim` (from `_reference_swim`) "
+                      "and improve from there; a delivered clip carrying those keys is a valid delivery (no rule compares them). A state with no contract "
+                      "clip (sit, sleep, display, ...) is OFFERED as an extra of this creature's own under §2.3", spec)
+        self.assertIn("- `fixture_reference_walk.animation.json` (sha256 `" + rc["sha256"] + "`; clip `reference_walk`; a starting point for `walk`): one period of "
                       "its slowest rhythm — 1.698 ticks (0.085 s): every moving bone is back within 5 degrees of its start there, so the last key closes "
-                      "the loop; 3 keys per bone.", spec)
+                      "the loop; 2 to 3 keys per bone chosen by the density search from 3 per-tick samples, Catmull-Rom; max error 0.432 degrees / 0 block "
+                      "against the samples (the tolerance 1 degree / 1/32 block).", spec)
         self.assertIn("- `fixture_reference_idle.animation.json` (sha256 `" + blocks[1]["sha256"] + "`; clip `reference_idle`; a starting point for `idle`): "
-                      "one key (nothing in this rig's code moves a bone at these inputs: the pose it holds); 1 keys per bone.", spec)
+                      "one key (nothing in this rig's code moves a bone at these inputs: the pose it holds); one key per bone (nothing to reduce).", spec)
         self.assertIn("a starting point for `aggro_idle`", spec)
+        self.assertIn("clip `reference_fly`; a starting point for `fly`)", spec)
+        self.assertIn("  - State: `getActivity` answers 1, every other getter at rest (named by fixture.json reference_states.fly = {getActivity: 1}).", spec)
+        self.assertIn("clip `reference_sit`; offered as the extra `sit` (§2.3; §5))", spec)
         self.assertIn("  - Attacking read through `FixturePose.getAttacking()`.", spec)
+        self.assertIn("Values the code branches on that move NOTHING at rest (no clip; nothing is silently missing):", spec)
+        self.assertIn("- `getBlink` 1: no motion at rest — getBlink 1: no motion at rest - the read is reached but the value changes no bone's rotation or "
+                      "position at the idle inputs (a visibility or texture choice, or a branch whose bones the rest pose already holds).", spec)
+        self.assertIn("Reads the sampler cannot enumerate alone (no clip can show them): `FixturePose.getRenderInfo()` — a RenderInfo latch (the per-entity "
+                      "scratch the pose reads and writes), not a value the code branches on.", spec)
+        self.assertNotIn("Unnamed state", spec)  # every state of the fixture is named
         self.assertIn("`check` REJECTS a `*_reference_<state>.animation.json` returned under its own name (the package's own untouched copy is warned, "
                       "not a delivery), and the game's jar never carries one (the asset audit refuses it).", spec)
         self.assertIn("bones the code also MOVES (position keys): `arm`", spec)
@@ -1515,6 +1647,7 @@ class FixtureCase(unittest.TestCase):
         md, mn = ap.spec_document(nat, self.repo, self.catalog, inv)
         self.assertIsNone(mn["reference_clip"])
         self.assertEqual(mn["reference_clips"], [])
+        self.assertEqual(mn["reference_offers"], [])
         self.assertFalse(mn["exact_transcription"])
         self.assertIn("no sampled reference clip: this creature has no classic hook (a native GeckoLib rig)", md)
         self.assertIn("This creature is a native GeckoLib rig: it has no classic code to transcribe", md)
@@ -1535,67 +1668,194 @@ class FixtureCase(unittest.TestCase):
             self.repo.reference_clips = saved
 
     def test_reference_keys_as_a_starting_point_are_a_valid_delivery(self):
-        """Item 31 (13): a delivered `idle` / `walk` / `aggro_idle` whose keys equal a reference clip's is a VALID delivery - no rule
-        compares them; only the reference file itself coming back under its own name is refused."""
+        """Item 31 (13), extended by item 32 (4): a delivered `idle` / `walk` / `aggro_idle` / `fly` / `swim` whose keys equal a
+        reference clip's is a VALID delivery - no rule compares them; so is an offered extra (`sit`) carrying `reference_sit`'s
+        keys; only the reference file itself coming back under its own name is refused."""
         manifest = self._package_fixture()
         m = json.loads(manifest.read_text(encoding="utf-8"))
         clips = {c["name"]: c for c in m["clips"]}
-        walk = json.loads((self.root / "tools/reference_clips/fixture_reference_walk.animation.json").read_text(encoding="utf-8"))
-        idle = json.loads((self.root / "tools/reference_clips/fixture_reference_idle.animation.json").read_text(encoding="utf-8"))
-        attack = json.loads((self.root / "tools/reference_clips/fixture_reference_attack.animation.json").read_text(encoding="utf-8"))
+        self.assertIn("fly", clips)  # the fixture is a flyer: `fly` is a contract row
+        self.assertIn("sit", clips)  # the offered extra (item 32 (4))
+        docs = {s: json.loads((self.root / f"tools/reference_clips/fixture_reference_{s}.animation.json").read_text(encoding="utf-8"))
+                for s in ("walk", "idle", "attack", "fly", "sit")}
         delivery = json.loads(json.dumps(self.GOOD))
-        delivery["animations"]["walk"] = {"loop": True, "animation_length": 1.0, "bones": walk["animations"]["reference"]["bones"]}
-        delivery["animations"]["idle"] = {"loop": True, "animation_length": 1.0, "bones": idle["animations"]["reference_idle"]["bones"]}
+        delivery["animations"]["walk"] = {"loop": True, "animation_length": 1.0, "bones": docs["walk"]["animations"]["reference_walk"]["bones"]}
+        delivery["animations"]["idle"] = {"loop": True, "animation_length": 1.0, "bones": docs["idle"]["animations"]["reference_idle"]["bones"]}
+        delivery["animations"]["fly"] = {"loop": True, "animation_length": 1.0, "bones": docs["fly"]["animations"]["reference_fly"]["bones"]}
+        delivery["animations"]["sit"] = {"loop": True, "animation_length": 1.0, "bones": docs["sit"]["animations"]["reference_sit"]["bones"]}
+        expected = 7
         if "aggro_idle" in clips:
             delivery["animations"]["aggro_idle"] = {"loop": ap.normalize_loop(clips["aggro_idle"]["loop"]) == "true", "animation_length": 1.0,
-                                                    "bones": attack["animations"]["reference_attack"]["bones"]}
+                                                    "bones": docs["attack"]["animations"]["reference_attack"]["bones"]}
+            expected = 8
         findings, passed = ap.check_folder(self._returned(delivery), manifest)
         self.assertTrue(passed, findings)
         self.assertFalse([f for f in findings if f[0] == "REJECT"], findings)
         self.assertFalse([f for f in findings if "reference" in f[1].lower() and f[0] != "OK"], findings)  # no rule compares the keys
-        self.assertTrue(self._has(findings, "OK", "checked 5 clip(s)" if "aggro_idle" not in clips else "checked 6 clip(s)"), findings)
+        self.assertTrue(self._has(findings, "OK", f"checked {expected} clip(s)"), findings)
 
-    def test_bbmodel_keeps_the_reference_clips_out_and_the_readme_says_how_to_import_them(self):
-        """Item 31 (12): the reference clips are NOT embedded in the .bbmodel - the generator's emulated round trip (its own writer
-        against its own importer) cannot reproduce the sampler's form byte for byte: `bbmodel_to_animation` writes four-decimal
-        times (`time_key`) and collapses a linear single-point key to a bare vector, where the sampler writes ten-decimal times and
-        `post` / `lerp_mode` objects; the round-trip report is EQUAL only within its time tolerance, and Blockbench's real timecode
-        precision is still unread from its exporter (ROUNDTRIP_TIME_NOTE). So README_FIRST gains the Import Animations instruction
-        under Toolchain and §4.3 names the files (the previous test)."""
+    def test_bbmodel_embeds_every_clip_within_tolerance_and_the_readme_says_both(self):
+        """Item 32 (5): the .bbmodel embeds EVERY clip of the folder - the shipped clips and the reference clips - so the Animation
+        tab lists them on opening; verification is the ruled round-trip tolerance (times 5e-5 s, values 1e-6), not byte identity:
+        `bbmodel_to_animation` over the embedded animations reproduces each clip within it, `roundtrip.report.json` says
+        EQUAL-within-tolerance per embedded clip, `check` refuses a .bbmodel that lists fewer clips than the folder holds or whose
+        embedded keys leave the tolerance, and README_FIRST says both (the clips in the .bbmodel; the files the pinned source) with
+        the Import Animations instruction kept as the one-line fallback."""
         fx = self.repo.get("fixture")
         out = self.tmp / "out_bbmodel_reference"
         ap.build_package(self.repo, out, ["fixture"])
-        bb = json.loads((out / "entities/fixture/fixture.bbmodel").read_text(encoding="utf-8"))
-        self.assertFalse([a["name"] for a in bb["animations"] if a["name"].startswith("reference")])
-        self.assertEqual(sorted(a["name"] for a in bb["animations"]), sorted(fx.animation["animations"]))
-        # the emulation against the sampler's own form: semantically EQUAL within the tolerance, never byte for byte
-        sampled = json.loads((self.root / "tools/reference_clips/fixture_reference_walk.animation.json").read_text(encoding="utf-8"))
-        embedded = ap.build_bbmodel(fx, fx.geo, sampled, [], ap.Warnings())
-        back = ap.bbmodel_to_animation(embedded)
-        report = ap.roundtrip_diff(fx.geo, ap.bbmodel_to_geo(embedded)[0], sampled, back, [])
+        folder = out / "entities/fixture"
+        bb = json.loads((folder / "fixture.bbmodel").read_text(encoding="utf-8"))
+        names = [a["name"] for a in bb["animations"]]
+        self.assertEqual(names, list(fx.animation["animations"]) + ["reference_walk", "reference_idle", "reference_attack", "reference_fly", "reference_sit"])
+        report = json.loads((folder / "roundtrip.report.json").read_text(encoding="utf-8"))
         self.assertTrue(report["equal"], report["differences"])
-        self.assertNotEqual(json.dumps(back, indent=2) + "\n", json.dumps(sampled, indent=2) + "\n")
-        tail = back["animations"]["reference"]["bones"]["tail"]["rotation"]
-        self.assertEqual(tail["0.0"], [57.2957795131, 0.0, 0.0])  # a bare vector where the sampler wrote {"post": [...], "lerp_mode": "linear"}
-        self.assertIn("0.0849", tail)  # the closing key's ten-decimal time 0.084906585 became a four-decimal timecode
+        self.assertEqual((report["clips_embedded"], report["clips_equal_within_tolerance"], report["reference_clips_embedded"]), (8, 8, 5))
+        self.assertTrue(all(c["equal_within_tolerance"] for c in report["clips"].values()), report["clips"])
+        self.assertTrue(report["clips"]["reference_walk"]["reference_only"] and not report["clips"]["idle"]["reference_only"])
+        # EQUAL within the tolerance, never byte for byte: the emulation writes four-decimal timecodes (ROUNDTRIP_TIME_NOTE)
+        back = ap.bbmodel_to_animation(bb)
+        tail = back["animations"]["reference_walk"]["bones"]["tail"]["rotation"]
+        self.assertEqual(tail["0.0"], {"post": [57.2957795131, 0.0, 0.0], "lerp_mode": "catmullrom"})
+        self.assertIn("0.0849", tail)
         self.assertNotIn("0.084906585", tail)
         self.assertEqual(ap.time_key(0.084906585), "0.0849")
         readme = (out / "README_FIRST.md").read_text(encoding="utf-8")
         toolchain = readme.split("## Toolchain")[1].split("## Hard rules")[0]
-        self.assertIn("- " + ap.README_IMPORT_ANIMATIONS, toolchain)
-        self.assertIn("Animation** menu and choose **Import Animations...**", toolchain)
-        self.assertIn("pick `<registry_name>_reference_walk.animation.json` (and `_reference_idle`, `_reference_attack` where present)", toolchain)
-        self.assertIn("Each sheet's §4.3 names the files for that creature.", toolchain)
+        self.assertIn("- " + ap.README_BBMODEL_CLIPS, toolchain)
+        self.assertIn("are the PINNED SOURCE of the reference clips", toolchain)
+        self.assertIn("Animation → Import Animations..., pick the `_reference_<state>` files", toolchain)  # the fallback, one line
+        self.assertIn("EVERY clip of the folder in its Animation", readme)
+        spec = (folder / "SPEC.md").read_text(encoding="utf-8")
+        self.assertIn("embedded in `fixture.bbmodel`'s Animation tab", spec)
+        # check: the generated folder's own .bbmodel lists every clip of the folder's files within the tolerance
+        findings, passed = ap.check_folder(folder)
+        self.assertTrue(self._has(findings, "OK", "fixture.bbmodel: lists 8 clip(s), every clip of the folder's animation files (8) within the round-trip tolerance"), findings)
+        self.assertFalse(any(sev == "REJECT" and "bbmodel" in msg for sev, msg in findings), findings)  # the folder's own REJECT is its missing `walk`
+        # a returned .bbmodel listing fewer clips than the folder's files hold is refused ...
+        manifest = folder / "spec.manifest.json"
+        own = {f"fixture_reference_{s}.animation.json": (self.root / f"tools/reference_clips/fixture_reference_{s}.animation.json").read_text(encoding="utf-8")
+               for s in ("walk", "idle", "attack", "fly", "sit")}
+        fewer = json.loads(json.dumps(bb))
+        fewer["animations"] = [a for a in fewer["animations"] if a["name"] != "reference_fly"]
+        findings, passed = ap.check_folder(self._returned(FIXTURE_ANIM, extra_files=own | {"fixture.bbmodel": json.dumps(fewer)}), manifest)
+        self.assertFalse(passed)
+        self.assertTrue(self._has(findings, "REJECT", "fixture.bbmodel: lists 7 clip(s) but the folder's animation files hold 8 — missing ['reference_fly']"), findings)
+        # ... and so is one whose embedded keys leave the tolerance of the files (the files beside the sheet are the pinned source)
+        drifted = json.loads(json.dumps(bb))
+        for a in drifted["animations"]:
+            if a["name"] == "reference_walk":
+                for animator in a["animators"].values():
+                    for kf in animator["keyframes"]:
+                        if kf["channel"] == "rotation":
+                            kf["data_points"][0]["x"] = float(kf["data_points"][0]["x"]) + 0.01
+        findings, passed = ap.check_folder(self._returned(FIXTURE_ANIM, extra_files=own | {"fixture.bbmodel": json.dumps(drifted)}), manifest)
+        self.assertFalse(passed)
+        self.assertTrue(self._has(findings, "REJECT", "fixture.bbmodel: 1 embedded clip(s) leave the round-trip tolerance of the folder's files (key times within 5e-05 s, values within 1e-06) — reference_walk (from fixture_reference_walk.animation.json)"), findings)
+        # the package's untouched .bbmodel beside the files: the OK line, no .bbmodel finding (the synthetic fixture's shipped file
+        # lacks `walk`, its own REJECT as before; the reference copies warned as before)
+        findings, passed = ap.check_folder(self._returned(FIXTURE_ANIM, extra_files=own | {"fixture.bbmodel": json.dumps(bb)}), manifest)
+        self.assertTrue(self._has(findings, "OK", "fixture.bbmodel: lists 8 clip(s), every clip of the folder's animation files (8) within the round-trip tolerance"), findings)
+        self.assertFalse(any(sev == "REJECT" and "bbmodel" in msg for sev, msg in findings), findings)
+        # the rule is in the checker's table, quoted by the README and §11
+        self.assertTrue(any("`.bbmodel` that lists fewer clips than the folder's animation files hold" in r for r in ap.CHECK_REJECTS))
+        self.assertIn("lists fewer clips than the folder's animation files hold", readme)
+
+    def test_a_species_state_is_offered_as_an_extra_and_the_cap_is_flagged_never_cut(self):
+        """Item 32 (4): a species state with NO contract clip (the fixture's `sit`) is offered as a SPEC extra under §2.3 - a clip row
+        (role extra, loop, 1.0 s) saying "offered from reference_sit" beside the seed's own extras, so a delivered `sit` carrying the
+        reference keys passes; a seed extra of the same name keeps one row and gains the note; when the offer would exceed four the
+        count is flagged (EXTRAS_CAP naming the offer) and nothing is dropped; an UNNAMED state (the critter's activity_2) is flagged,
+        not offered."""
+        manifest = self._package_fixture()
+        m = json.loads(manifest.read_text(encoding="utf-8"))
+        clips = {c["name"]: c for c in m["clips"]}
+        self.assertEqual(m["reference_offers"], ["sit"])
+        self.assertEqual((clips["sit"]["role"], clips["sit"]["loop"], clips["sit"]["offered_from_reference"], clips["sit"]["required"]),
+                         ("extra", "true", "reference_sit", False))
+        self.assertIsNone(clips["idle"]["offered_from_reference"])
+        spec = (manifest.parent / "SPEC.md").read_text(encoding="utf-8")
+        self.assertIn("| `sit` | true | base (a state loop, offered) | the code's `isInSittingPose` answering true (the state `reference_sit` samples; "
+                      "its transport is the landing slice's) | (any unlocked) | 1 s | no | author | offered from `reference_sit`: the code's sit pose "
+                      "(`isInSittingPose` true) — copy the reference clip's keys and improve from there (a valid delivery) |", spec)
+        self.assertFalse(self.warnings_with("EXTRAS_CAP"))
+        fx = self.repo.get("fixture")
+        inv = ap.build_trigger_inventory(fx, self.repo)
+        saved = fx.seed
+        try:
+            # a seed extra of the same name: one row, the offer noted on it
+            fx.seed = dict(saved, extras=[{"name": "sit", "loop": True, "trigger": "the seed's own", "bones": ["tail"], "note": "the seed's sit"}])
+            _, m2 = ap.spec_document(fx, self.repo, self.catalog, inv)
+            rows = [c for c in m2["clips"] if c["name"] == "sit"]
+            self.assertEqual(len(rows), 1)
+            self.assertEqual(rows[0]["offered_from_reference"], "reference_sit")
+            merged = [c for c in ap.clip_rows(fx, inv, fx.animation, ap.frequency_groups(fx), offers=ap.reference_offers(self.repo.reference_clips["fixture"]))
+                      if c["name"] == "sit"][0]
+            self.assertEqual(merged["note"], "the seed's sit — also offered from `reference_sit`: the code's sit pose (`isInSittingPose` true)")
+            self.assertFalse(self.warnings_with("EXTRAS_CAP"))
+            # four seed extras plus the offer: the count flagged, every row present, nothing dropped
+            fx.seed = dict(saved, extras=[{"name": n, "loop": False, "trigger": "x", "bones": ["tail"], "length_seconds": 0.5} for n in ("a", "b", "c", "d")])
+            _, m3 = ap.spec_document(fx, self.repo, self.catalog, inv)
+            self.assertEqual([c["name"] for c in m3["clips"] if c["role"] == "extra"], ["a", "b", "c", "d", "sit"])
+            cap = self.warnings_with("EXTRAS_CAP")
+            self.assertTrue(cap, cap)
+            self.assertIn("5 extras (4 from the seed + 1 offered from the reference states: sit) exceed the cap of four per creature without a ruling "
+                          "(ruled 2026-09-06, Q6 (a): more needs the owner; every one is listed, none dropped)", cap[-1][2])
+        finally:
+            fx.seed = saved
+        # the unnamed state: flagged in §4.3, not offered (no `activity_2` clip row)
+        out = self.tmp / "out_unnamed"
+        ap.build_package(self.repo, out, ["critter"], with_roundtrip=False)
+        mc = json.loads((out / "entities/critter/spec.manifest.json").read_text(encoding="utf-8"))
+        self.assertEqual(mc["reference_offers"], [])
+        self.assertNotIn("activity_2", [c["name"] for c in mc["clips"]])
+        block = [b for b in mc["reference_clips"] if b["state"] == "activity_2"][0]
+        self.assertEqual((block["named"], block["getter"], block["value"], block["delivered_clip"], block["offered_extra"]), (False, "getActivity", 2, None, None))
+        cs = (out / "entities/critter/SPEC.md").read_text(encoding="utf-8")
+        self.assertIn("`_reference_activity_2` — an UNNAMED state (the code's `getActivity` answering 2 while standing still, every other state at rest): "
+                      "the seed's `reference_states` should name it", cs)
+        self.assertIn("Unnamed state — the seed's `reference_states` should name it in the animator's words from the code's own: "
+                      "`reference_activity_2` (`getActivity` 2).", cs)
+        self.assertIn("clip `reference_activity_2`; UNNAMED — the seed's `reference_states` should name it; offered as an extra once named)", cs)
+
+    def test_the_fixture_fly_state_shows_the_beat_and_starts_fly(self):
+        """Item 32 (2)'s test case on the fixture (a hook species with a named fly state): `reference_fly` (getActivity 1, named by
+        the seed's reference_states) shows the beat - the wing bone's rotation range across the clip against its range in
+        `reference_idle` - and is the starting point of `fly` (item 32 (4)): a delivered `fly` carrying its keys checks PASS."""
+        rows = self.repo.reference_clips["fixture"]
+        self.assertEqual((rows["fly"]["getter"], rows["fly"]["value"], rows["fly"]["named"]), ("getActivity", 1, True))
+        fly = json.loads((self.root / "tools/reference_clips/fixture_reference_fly.animation.json").read_text(encoding="utf-8"))
+        idle = json.loads((self.root / "tools/reference_clips/fixture_reference_idle.animation.json").read_text(encoding="utf-8"))
+
+        def z_range(doc: dict, clip: str, bone: str) -> float:
+            values = [k["post"][2] for k in doc["animations"][clip]["bones"][bone]["rotation"].values()]
+            return max(values) - min(values)
+
+        self.assertAlmostEqual(z_range(fly, "reference_fly", "arm"), 100.8)  # the beat: +-50.4 degrees about Z
+        self.assertAlmostEqual(z_range(idle, "reference_idle", "arm"), 0.0)   # still at rest
+        manifest = self._package_fixture()
+        m = json.loads(manifest.read_text(encoding="utf-8"))
+        block = [b for b in m["reference_clips"] if b["state"] == "fly"][0]
+        self.assertEqual((block["delivered_clip"], block["named"], block["clip"]), ("fly", True, "reference_fly"))
+        delivery = json.loads(json.dumps(FIXTURE_ANIM))
+        delivery["animations"]["idle"] = {"loop": True, "animation_length": 1.0, "bones": idle["animations"]["reference_idle"]["bones"]}
+        delivery["animations"]["walk"] = {"loop": True, "animation_length": 1.0, "bones": {"tail": {"rotation": {"0.0": [0, 0, 0]}}}}
+        delivery["animations"]["fly"] = {"loop": True, "animation_length": 1.0, "bones": fly["animations"]["reference_fly"]["bones"]}
+        findings, passed = ap.check_folder(self._returned(delivery), manifest)
+        self.assertTrue(passed, findings)
+        self.assertFalse([f for f in findings if f[0] == "REJECT"], findings)
+        self.assertFalse(self._has(findings, "WARN", "optional clip 'fly' not delivered"), findings)
 
     def test_check_rejects_a_returned_reference_clip(self):
         """`check` REJECTS a `*_reference_<state>.animation.json` returned under its own name (reference-only, never shipped; its keys
-        copied into idle / walk / aggro_idle are a delivery instead) - a REJECT where `_preview` is a WARN - unless it is the package's
-        own copy back untouched (a manifest block's file name and sha256), which is warned as not a delivery so the generated folder
-        itself checks PASS; neither counts as a second animation file. The pre-2026-09-14 single name `<registry>_reference.animation.json`
-        is a name the sheet never gave: refused."""
+        copied into idle / walk / aggro_idle / fly / swim or an offered extra are a delivery instead) - a REJECT where `_preview` is a
+        WARN - unless it is the package's own copy back untouched (a manifest block's file name and sha256), which is warned as not a
+        delivery so the generated folder itself checks PASS; neither counts as a second animation file. The pre-2026-09-14 single
+        name `<registry>_reference.animation.json` is a name the sheet never gave: refused."""
         manifest = self._package_fixture()
         good = self.GOOD
-        own = {s: (self.root / f"tools/reference_clips/fixture_reference_{s}.animation.json").read_text(encoding="utf-8") for s in ("walk", "idle", "attack")}
+        states = ("walk", "idle", "attack", "fly", "sit")
+        own = {s: (self.root / f"tools/reference_clips/fixture_reference_{s}.animation.json").read_text(encoding="utf-8") for s in states}
         # the package's own copies, untouched: a WARN each, PASS
         findings, passed = ap.check_folder(self._returned(good, extra_files={f"fixture_reference_{s}.animation.json": own[s] for s in own}), manifest)
         self.assertTrue(passed, findings)
@@ -1605,19 +1865,19 @@ class FixtureCase(unittest.TestCase):
         self.assertFalse(self._has(findings, "REJECT", "wrong file name"), findings)
         # the same name with edited bytes: a REJECT naming the file
         edited = json.loads(own["walk"])
-        edited["animations"]["reference"]["bones"]["tail"]["rotation"]["0.05"]["post"] = [0.0, 0.0, 0.0]
+        edited["animations"]["reference_walk"]["bones"]["tail"]["rotation"]["0.05"]["post"] = [0.0, 0.0, 0.0]
         findings, passed = ap.check_folder(self._returned(good, extra_files={"fixture_reference_walk.animation.json": json.dumps(edited)}), manifest)
         self.assertFalse(passed)
         self.assertTrue(self._has(findings, "REJECT", "fixture_reference_walk.animation.json: a reference-only clip that is not the package's own untouched copy (its bytes differ from the sheet's)"), findings)
         self.assertTrue(self._has(findings, "REJECT", "never returned under its own name, never shipped (copy its keys into idle / walk / aggro_idle instead); remove it from the returned folder"), findings)
         self.assertFalse(self._has(findings, "REJECT", "animation files returned"), findings)  # a refused file, not a second delivery
-        edited_idle = json.loads(own["idle"])
-        edited_idle["animations"]["reference_idle"]["bones"]["tail"]["rotation"]["0.0"]["post"] = [0.0, 0.0, 0.0]
-        findings, passed = ap.check_folder(self._returned(good, extra_files={"fixture_reference_idle.animation.json": json.dumps(edited_idle)}), manifest)
+        edited_fly = json.loads(own["fly"])
+        edited_fly["animations"]["reference_fly"]["bones"]["arm"]["rotation"]["0.0"]["post"] = [0.0, 0.0, 0.0]
+        findings, passed = ap.check_folder(self._returned(good, extra_files={"fixture_reference_fly.animation.json": json.dumps(edited_fly)}), manifest)
         self.assertFalse(passed)
-        self.assertTrue(self._has(findings, "REJECT", "fixture_reference_idle.animation.json: a reference-only clip that is not the package's own untouched copy (its bytes differ from the sheet's)"), findings)
-        # a reference name the sheet never gave: a REJECT naming the file - another registry's, and the old single name
-        for name in ("fixture_v2_reference_walk.animation.json", "fixture_reference.animation.json"):
+        self.assertTrue(self._has(findings, "REJECT", "fixture_reference_fly.animation.json: a reference-only clip that is not the package's own untouched copy (its bytes differ from the sheet's)"), findings)
+        # a reference name the sheet never gave: a REJECT naming the file - another registry's, the old single name, a state this creature lacks
+        for name in ("fixture_v2_reference_walk.animation.json", "fixture_reference.animation.json", "fixture_reference_swim.animation.json"):
             findings, passed = ap.check_folder(self._returned(good, extra_files={name: own["walk"]}), manifest)
             self.assertFalse(passed, name)
             self.assertTrue(self._has(findings, "REJECT", f"{name}: a reference-only clip that is not the package's own untouched copy (a name the sheet never gave)"), findings)
@@ -1627,7 +1887,7 @@ class FixtureCase(unittest.TestCase):
         out = self.tmp / "out_reference_check"
         ap.build_package(self.repo, out, ["fixture"])
         findings, _ = ap.check_folder(out / "entities/fixture")
-        self.assertEqual(sum(1 for sev, msg in findings if sev == "WARN" and "the package's own reference-only clip came back untouched" in msg), 3, findings)
+        self.assertEqual(sum(1 for sev, msg in findings if sev == "WARN" and "the package's own reference-only clip came back untouched" in msg), 5, findings)
         self.assertFalse(any(sev == "REJECT" and "reference" in msg for sev, msg in findings), findings)
         # the same folder without them passes with no reference finding at all
         findings, passed = ap.check_folder(self._returned(good), manifest)
@@ -2246,9 +2506,9 @@ class FixtureCase(unittest.TestCase):
         # walk and idle clips - no attack, its hook reads none - with the item-10 sentence, no REFERENCE_CLIP_MISSING, PASS
         critter = out / "entities/critter"
         self.assertEqual(sorted(p.name for p in critter.glob("*_reference_*.animation.json")),
-                         ["critter_reference_idle.animation.json", "critter_reference_walk.animation.json"])
+                         ["critter_reference_activity_2.animation.json", "critter_reference_idle.animation.json", "critter_reference_walk.animation.json"])
         mc = json.loads((critter / "spec.manifest.json").read_text(encoding="utf-8"))
-        self.assertEqual([b["state"] for b in mc["reference_clips"]], ["walk", "idle"])
+        self.assertEqual([b["state"] for b in mc["reference_clips"]], ["walk", "idle", "activity_2"])  # the unnamed state last (item 32 (2))
         self.assertFalse(any(b["landed"] for b in mc["reference_clips"]))
         self.assertEqual(mc["reference_clip"]["file"], "critter_reference_walk.animation.json")
         cs = (critter / "SPEC.md").read_text(encoding="utf-8").split("### 4.3 Reference clips (reference-only)")[1].split("## 5. Clips")[0]
@@ -2259,9 +2519,12 @@ class FixtureCase(unittest.TestCase):
         self.assertNotIn("the sampler has not run", cs)
         findings, passed = ap.check_folder(critter)
         self.assertTrue(passed, findings)
-        self.assertEqual(sum(1 for sev, msg in findings if sev == "WARN" and "reference-only clip came back untouched" in msg), 2, findings)
+        self.assertEqual(sum(1 for sev, msg in findings if sev == "WARN" and "reference-only clip came back untouched" in msg), 3, findings)
         counts = summary["counts"]["reference_clips"]
-        self.assertEqual((counts["species_with_clips"], counts["walk"], counts["idle"], counts["attack"]), (2, 2, 2, 1))
+        self.assertEqual((counts["species_with_clips"], counts["walk"], counts["idle"], counts["attack"], counts["fly"]), (2, 2, 2, 1, 1))
+        self.assertEqual(counts["per_state"], {"idle": 2, "walk": 2, "activity_2": 1, "attack": 1, "fly": 1, "sit": 1})
+        self.assertEqual((counts["files"], counts["files_written"], counts["unnamed_states"], counts["values_without_motion"], counts["offered_extras"]),
+                         (8, 8, ["critter:activity_2"], 1, 1))
         self.assertEqual(counts["artist_tier_held"], ["boss"])
         self.assertTrue({c["name"] for c in m["clips"]} >= {"idle", "walk", "attack", "hurt", "death"})
         self.assertEqual({c["name"]: c["required"] for c in m["clips"] if c["name"] in ("idle", "walk", "attack")}, {"idle": True, "walk": True, "attack": False})
@@ -2443,8 +2706,9 @@ class FixtureCase(unittest.TestCase):
         # effort_hours is filled with the generator's estimate: 4 h + 0.2 x 4 bones + 1 h x the clips to author or improve
         self.assertNotEqual(by["fixture"]["effort_hours"], "")
         self.assertIn("generator:", by["fixture"]["effort_source"])
-        # 4 + 0.2 x 4 bones + 1 h x 10: idle, idle_pump, walk, walk_pump, swim, aggro_idle, calm_idle (a real pair: STATE flag), attack, hurt, death
-        self.assertEqual(by["fixture"]["effort_hours"], "14.8")
+        # 4 + 0.2 x 4 bones + 1 h x 11: idle, idle_pump, walk, walk_pump, fly (a flyer), aggro_idle, calm_idle (a real pair: STATE flag), attack,
+        # hurt, death, and the `sit` extra offered from reference_sit (item 32 (4))
+        self.assertEqual(by["fixture"]["effort_hours"], "15.8")
         self.assertEqual(by["other"]["status"], "classic only")
         self.assertEqual(by["other"]["tier"], 3)
         self.assertEqual(by["other"]["effort_hours"], "")
