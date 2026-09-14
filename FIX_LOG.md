@@ -7459,3 +7459,282 @@ draw fix, on the hooks already written, one refuter, the counts opening the repo
 count per state. Nothing else runs.
 
 GATE: docs-only (no gate; nothing under src or tools moves).
+
+## THE REFERENCE CLIPS, REVISED (2026-09-14) — every state a hook reads sampled, one clip per value that moves the pose, named by the seed's `reference_states` (walk / idle / attack / fly / swim and the species' own words; one unnamed state flagged); the clip name inside every file `reference_<state>` with the walk pin moved to the sampled values; fly / swim as starting points and the species states offered as SPEC extras; every clip embedded in its .bbmodel to the ruled round-trip tolerance with the files beside the sheet the pinned source; the clips keyed through the exact transcriptions' density search (catmullrom, 1 degree, 1/32 block, the closing key kept); one tracked copy, the folder's copies ignored by git; the six resting attacks re-examined and their gates named (owner 2026-09-14, second set revised, items 2 to 6 and 7; tooling, no refuter)
+
+RULING. Owner 2026-09-14, second set revised (addendum item 32 (2)-(7), superseding item 31 (11)-(13) where they overlap): "(2) Every
+state a hook reads is sampled, not only attacking: for each pose-interface getter the hook reads, each value the code branches on,
+alone at rest otherwise, one clip per value that moves the pose. The seed names the states in the animator's words (fly, swim, sit,
+sleep, and any species word), mapped to the getter values; a state the seed does not name is emitted as reference_<getter>_<value>
+and the sheet flags it, so nothing is silently missing. The Baby Dragon's flight is the test case: reference_fly must show the beat.
+(3) Clip names inside the files: reference_walk, reference_idle, reference_attack, reference_fly, reference_swim and the seed's names;
+the walk clip's byte-identity pin moves to the sampled values. (4) The starting-point rule extends: fly from _reference_fly, swim from
+_reference_swim; a species state with no contract clip (sit, sleep) is offered as a SPEC extra under §2.3, the sheet saying so. (5)
+The clips are embedded in each .bbmodel, verified to the round-trip tolerance already ruled (times 5e-5 s, values 1e-6), not byte
+identity; the files beside the sheet stay the pinned source, the README says both. A .bbmodel must open with every clip listed. (6)
+Weight: reference clips are keyed through the density search the exact transcriptions use, catmullrom, at 1 degree of rotation and
+1/32 block of position, the closing key kept; the sheets state the tolerance. One tracked copy, tools/reference_clips; the folder's
+copies are written by the generator and ignored by git. Sizes in the report. ... (7) ... The six attack clips at the resting branch:
+re-examined under item 2, since a resting attack usually means another flag gates it." One tooling item, no refuter (the cost rules
+of 2026-09-12, item 25 (5)): the tool's own tests and one dry run are the check. One implementation lane; the orchestrator's
+regeneration under gradle, the folder and the gate.
+
+WHAT LANDED:
+- ITEM 2 (1), THE GETTERS (`src/g1tool/java/danger/orespawn/g1/HookGetterReader.java`, the generalisation of the landing's
+  `declaredAttacking`): the `inputs.subject(<X>Pose.class)` casts of the descriptor's source and of the static pose helpers it
+  delegates to (`<Other>GeoReplacement.poseRig` / `poseDragon` / `pose`, followed as before; comments and string literals blanked),
+  the interfaces' public no-argument getters by reflection, and per getter every call through a subject (a local or parameter
+  declared with the interface's type, or the direct `subject(X.class).g()` form) with the comparison it feeds: `g() OP <int>`
+  (`==`, `!=`, `>`, `>=`, `<`, `<=`, the literal on either side), a `switch (g())`, or the same on an int local the getter
+  initialises (`int a = e.g(); if (a == 3)` - the Spyro's, Stinky's, Princes', Kraken's, Leaf Monster's and Rock Base's form).
+  THE VALUES: an int getter yields, per comparison, the literal (unless it is the rest value 0) plus, where neither the literal nor
+  the rest value lands on one side of the comparison, the smallest non-negative value that does (`!= 0` -> 1, `> 0` -> 1, `> 1` ->
+  1 and 2, `== 2` -> 2, `< 1 || > 12` -> 1 and 13); a boolean getter yields `true`; the rest value itself is the idle state, never a
+  clip. NOT ENUMERABLE, named per hook in the index (`hooks.<registry>.not_enumerable`) with the reason: a RenderInfo latch, an RNG
+  (`getRandom` / `getLevelRandom`), a movement delta (`getDeltaMovement`, `getX` / `getZ` / `xOld` / `zOld`), a yaw (`getYRot` /
+  `yRotO` / `getYRotO`), a health read (`getHealth` / `getMaxHealth`, the hf ratio), a scale (`getPitchBlackScale`), and an int used
+  only arithmetically (`getHead1Ext` / `2` / `3`, `toRadians(getHeadNExt() - 30)`). THE NUMBERS over the 112 hooks (per-hook sums;
+  a delegating descriptor counts its helper's getters again): 164 getters read, 84 values enumerated, 83 getters not enumerable
+  (30 distinct getter names; 16 distinct getter / value pairs: getAttacking 1 and 2, getActivity 1 / 2 / 3, isInSittingPose,
+  isOrderedToSit, isScreaming, isCrouching, isVehicle, getSinging 1, getBlink 1, getOpenClosed 1, getIsActivated 1 / 2,
+  getBeingRidden 1). The probe (`ProbeSubject`) takes a `getters` object in its state JSON (any int or boolean getter raised alone;
+  every default unchanged, so every landed dump is as before) and records every getter read (`readGetters()`; `attackingRead()`
+  kept).
+- ITEM 2 (2), THE SAMPLING (`ReferenceClipSampler`): the states are `walk` and `idle` as today, then ONE STATE PER ENUMERATED VALUE
+  at the idle inputs with that one getter raised (`State.ofValue`; `getAttacking` 1 first as the contract's `attack`), each under
+  the span rule with the per-state closure test on its own fresh subject. A value whose dense samples equal the idle state's on
+  every bone and channel (ticks, rotations, positions, exactly) yields NO clip: the index records it under
+  `hooks.<registry>.no_motion` with the getter, the value, whether the read was reached (`read_at_inputs`) and `why`, and the sheet
+  lists it ("`getIsActivated` 1: no motion at rest — ..."). ELEVEN such values: the SIX resting attacks (below), the Leon's and
+  Leonopteryx's `getBeingRidden` 1 (a read inside the flying branch), the Ostrich's `getIsActivated` 1 and 2 (the hat visibility:
+  no animation channel) and `isVehicle` true (the ridden yaw accumulator on a probe that does not turn). Combinations are never
+  sampled (the ruling says alone). THE CLIP COUNT PER STATE: 297 clips over 112 registries - walk 112, idle 112, attack 40, sit 14,
+  fly 10, scream 2, crouch 1, display 1, mouth_open 1, open 1, sing 1, sitting_flat 1, and one UNNAMED `activity_2` (the Stinky);
+  swim 0 (no hook reads a swimming state). The registries with no clip for an enumerated value: cave_fisher, leon, leonopteryx,
+  ostrich, robot_2, robot_3, scorpion (the eleven values above).
+- ITEM 2 (3), THE NAMES: the seed gains `reference_states` (`tools/artist_specs/<registry>.json`: an object mapping a state name
+  in the animator's words to the getter value that produces it, `{"fly": {"getActivity": 1}, "sit": {"isInSittingPose": true}}`),
+  read by the sampler from `<repository>/tools/artist_specs` (`--specs <dir>` overrides; no gradle argument change). The contract
+  names are `walk`, `idle`, `attack` (`getAttacking` 1, fixed), `fly`, `swim`; a value the seed does not name is emitted as
+  `reference_<getter>_<value>` (`HookGetterReader.bareName`: the getter without its `get` / `is` prefix, lower snake case; `true`
+  as `1`) with `named` false in the index and the sheet flagging it. A mapping naming a value the hook does not enumerate, a
+  contract name for the wrong value, two values under one name, or two getters in one mapping is refused loudly (a stale seed
+  fails the sampler, as a stale HOOK_DESCRIPTORS row does). AUTHORED into 22 seeds (32 mappings) from the code's own words only,
+  the DRAFT banner kept; the naming table (registry, getter, value, name, the line that gave the word):
+  | registry | getter | value | name | the code's word |
+  |---|---|---|---|---|
+  | baby_dragon, dragon | getActivity | 1 | fly | DragonGeoReplacement.java:19-21 "the ACTIVITY branch ... (flying: a constant 1.0 tuck ...)", "0.75 x 0.28 flying"; Dragon.java:438 "the wild AI flight (activity 1)" |
+  | baby_dragon, dragon | isInSittingPose | true | sit | DragonPose.java:27 "orig ModelDragon.java:500 e.func_70906_o() (EntityTameable.isSitting)"; DragonGeoReplacement.java:25 "sitting" |
+  | cephadrome | getActivity | 1 | fly | CephadromeGeoReplacement.java:18-20 "the ACTIVITY branch on the eight leg parts (flying: a constant 1.0 lift ...)", "0.55 x 0.28 flying" |
+  | chipmunk | isInSittingPose | true | sit | ChipmunkGeoReplacement.java:20 "SITTING branch (orig :168-173 ...): while not sitting the tail pitches" |
+  | ender_knight | isScreaming | true | scream | EnderKnightGeoReplacement.java:20 "the SCREAMING branch (orig :331-352 ...)" |
+  | ender_reaper | isScreaming | true | scream | EnderReaperGeoReplacement.java:18 "the SCREAMING branch (orig :492-507 ...)" |
+  | frog | getSinging | 1 | sing | FrogGeoReplacement.java:19 "the SINGING branch on the jaw ... while singing" |
+  | gazelle | isCrouching | true | crouch | GazelleGeoReplacement.java:21-22 "the CROUCH branch (orig :297 ...): while not crouching the tail pitches" |
+  | hydrolisc | isInSittingPose | true | sit | HydroliscGeoReplacement.java:19 "the SITTING-stilled tail sway" |
+  | leon, leonopteryx | getActivity | 1 | fly | LeonGeoReplacement.java:17-19 "draws exactly one per frame by the entity's activity ... STANDING (activity 0) ... FLYING"; :26 "FLYING: the ATTACKING flag speeds the beat" |
+  | leon, leonopteryx | isInSittingPose | true | sit | LeonGeoReplacement.java:23 "0 SITTING" (the standing gait's amplitude); LeonPose.java (isInSittingPose) |
+  | ostrich | isInSittingPose | true | sit | OstrichGeoReplacement.java:23 "the SITTING-and-not-activated branch (orig :349)"; :126 "head inverts only for a sitting, non-activated ostrich" |
+  | peacock | getBlink | 1 | display | PeacockGeoReplacement.java:19 "the DISPLAY branch (getBlink() > 0)" |
+  | pitch_black | getActivity | 1 | fly | PitchBlackGeoReplacement.java:18-22 "the ACTIVITY branch on the wings (getActivity() != 0 beats ...)", "0.2 flying / 0.55 walking"; :31 "flying, the claws tucked" |
+  | spyro | getActivity | 3 | fly | SpyroPose.java:13 "3 (flying) halves the wings and stills legs and tail"; SpyroGeoReplacement.java:21 "halved by the ACTIVITY branch while flying (3)" |
+  | spyro | getActivity | 2 | sitting_flat | SpyroPose.java:5-6 "folds the legs under the body while sitting-flat (2)" |
+  | spyro, stinky | isInSittingPose | true | sit | SpyroGeoReplacement.java:24 / StinkyGeoReplacement.java:22 "stilled by the SITTING check" |
+  | the_prince | getActivity | 2 | fly | ThePrince.java:182 "orig ThePrince.java:423 — activity 2 (flying) ghosts through terrain" |
+  | the_prince, the_prince_adult, the_prince_teen | isOrderedToSit | true | sit | ThePrinceGeoReplacement.java:21 "stilled by the SIT order (isOrderedToSit())"; ThePrinceAdultGeoReplacement.java:17 "0 while ordered to sit"; ThePrinceTeenGeoReplacement.java:25 "stilled by the SIT order" |
+  | the_prince_adult | getActivity | 1 | fly | ThePrinceAdult.java:372 "flying wild (activity != 0)"; ThePrinceAdultGeoReplacement.java:31 "or flying (0.17 / 0.13 / 0.19 ws ...)" |
+  | the_prince_teen | getActivity | 1 | fly | ThePrinceTeen.java:378 "flying wild (activity != 0)"; ThePrinceTeenGeoReplacement.java:18 "flying a 1.4 ws x 0.4 beat" |
+  | triffid | getOpenClosed | 1 | open | TriffidGeoReplacement.java:16-18 "the OPEN / CLOSED branch (orig :1275 getOpenClosed() == 0: the fold ... closed, cos(...) open)"; TriffidPose.java:13 "0 closed, otherwise swaying open" |
+  | velocity_raptor | isInSittingPose | true | sit | VelocityRaptorGeoReplacement.java:22 "stilled by the SITTING check, orig :298" |
+  | water_dragon | isInSittingPose | true | sit | WaterDragonGeoReplacement.java:24 "the SITTING check (orig :222-232)" |
+  | water_dragon | getAttacking | 2 | mouth_open | WaterDragonPose.java:16 "0 rest, 1 biting, 2 mouth held open"; WaterDragon.java:573 "pose 2 opens the jaw (ModelWaterDragon)" |
+  | stinky | getActivity | 2 | UNNAMED (`reference_activity_2`) | StinkyPose.java:5 and :12 give only "folds the four legs under the body at 2"; EntityStinky.java:221 sets it on hurt - no state word in the code, so the sampler emits `reference_activity_2` and the sheet flags it for the owner |
+  31 named rows over 32 mappings (`sit` twice on the Leon rig's two registries and so on), 1 unnamed; the eleven no-motion values
+  need no name (no clip). `attack` is the contract's for every hook that reads `getAttacking` (40 clips).
+- ITEM 2 (4), THE TEST CASE: the Baby Dragon's `reference_fly` (`getActivity` 1) shows the beat, in numbers from the dense samples
+  (`--dump-samples`; 41 samples over a two-second window, the same span as its idle): the wing bones' Z rotation range across the
+  clip against the idle clip's - wing1 / wing15 (the root spar and panel) 100.76 degrees (-50.40 to +50.36) against 10.07 (43.66
+  to 53.73) at rest; wing3 / wing8 (the middle spar and inner membrane, 4/3 of the beat) 134.34 against 13.43; wing2 (the tip spar,
+  3/2) 151.13 against 15.11; the right wing the mirror (wing4 / wing14 100.76, wing5 134.34, wing6 151.13). A test on the fixture
+  (a hook species with a named fly state) in `tools/test_artist_package.py`
+  (`test_the_fixture_fly_state_shows_the_beat_and_starts_fly`: the range in `reference_fly` against `reference_idle`, the
+  starting-point block, a delivered `fly` carrying the keys PASS).
+- ITEM 3, THE NAMES INSIDE THE FILES AND THE WALK PIN: every clip's Bedrock name is `reference_<state>` (`reference_walk` too: the
+  walk file's bytes are no longer pinned - its keys are now the density search's); the file names follow
+  (`<registry>_reference_<state>.animation.json`). THE PIN AT THE SAMPLED VALUES: `--dump-samples <dir>` writes every sampled
+  state's dense samples as JSON (`<registry>_samples_<state>.json`: the ticks, their ten-decimal time keys, every bone's rotation
+  and the positioned bones' positions after the sampler's own 1e-10 rounding; never shipped), and `identity_samples.sh
+  <old-clips-dir>` (the lane's scratch, with `identity_samples.py`) runs the sampler headlessly with it and compares every walk
+  state's samples number for number with the keys of the walk clips checked in at fc5e23c (the same time keys in order, the same
+  values on every bone's rotation and on the positioned bones' positions, the same bone sets): `SAMPLES IDENTITY: 112 walk
+  clips, 0 differing or missing`, exit 0.
+- ITEM 4, THE STARTING-POINT RULE EXTENDED; THE OFFERS (`tools/artist_package.py` 0.4.0): `REFERENCE_STATE_TO_DELIVERED_CLIP`
+  gains fly -> `fly` and swim -> `swim`; README rule 7 (`README_REFERENCE_SENTENCE`) and §4.3's starting-point paragraph say so. A
+  species state with no contract clip (a named state outside that map: sit, display, scream, sing, crouch, open, mouth_open,
+  sitting_flat) is OFFERED as a SPEC extra under §2.3 (`reference_offers`): a clip row in §5's table and the manifest (role
+  `extra`, loop true, rule 5's 1.0 s, "offered from `reference_<state>`: the code's <state> pose (`<getter>` <value>) — copy the
+  reference clip's keys and improve from there", `offered_from_reference`), beside the seed's own extras; a seed extra of the same
+  name keeps its one row and gains the note ("also offered from ..."; the Chipmunk's, Gazelle's, Hydrolisc's, Ostrich's, Spyro's,
+  Stinky's, Velocity Raptor's `sit`); the manifest lists `reference_offers`. 22 offers over the folder. WHEN THE OFFER WOULD EXCEED
+  FOUR: the offer is listed and the count flagged (`EXTRAS_CAP`: "5 extras (4 from the seed + 1 offered from the reference
+  states: sitting_flat) exceed the cap of four per creature without a ruling ... every one is listed, none dropped") - the Spyro
+  today; no seed extra is ever dropped. An UNNAMED state is flagged in §4.3, not offered ("offered as an extra once named"). THE
+  CHECKER: a delivered `fly` / `swim` / an offered extra whose keys copy the reference clip's is a valid delivery (no rule compares
+  them; the Baby Dragon's `idle` + `walk` + `fly` from its three reference clips' keys and lengths: PASS, with rule 5's length WARN
+  at 2 s); a `*_reference_<state>.animation.json` under its own name keeps today's rule (the package's own untouched copy a WARN,
+  anything else a REJECT; `REFERENCE_CLIP_RE` now `_reference(?:_([a-z0-9_]+))?\.animation\.json$`, the audit's the same); the
+  tests cover the new states and the offer.
+- ITEM 5, THE CLIPS EMBEDDED IN EACH .BBMODEL: `build_bbmodel(..., reference=)` embeds every clip of the folder - the shipped clips
+  then the reference clips (`merged_animations`; a name clash refused) - in Blockbench's own keyframe format (catmullrom keys keep
+  their interpolation), so the Animation tab lists every clip on opening. VERIFICATION is the ruled round-trip tolerance, not byte
+  identity: `bbmodel_to_animation` over the embedded animations reproduces each clip within `ROUNDTRIP_TIME_TOLERANCE_SECONDS`
+  (5e-5 s) on key times and `ROUNDTRIP_VALUE_TOLERANCE` (1e-6) on values (`clip_differences`, shared by the round trip and the
+  checker); every folder's `roundtrip.report.json` says EQUAL-within-tolerance per embedded clip (`clips`, `clips_embedded`,
+  `clips_equal_within_tolerance`, `reference_clips_embedded`) beside the whole; `check_folder` REJECTS a .bbmodel that lists fewer
+  clips than the folder's animation files hold ("lists 7 clip(s) but the folder's animation files hold 8 — missing
+  ['reference_fly']") or whose embedded keys leave the tolerance of those files (the rule in `CHECK_REJECTS`, quoted by the README
+  and §11), and prints an OK line otherwise. THE FILES BESIDE THE SHEET STAY THE PINNED SOURCE (the checker's byte rule on them
+  unchanged); README_FIRST says BOTH (`README_BBMODEL_CLIPS`, the Toolchain bullet: the clips are in the Blockbench file for
+  viewing and editing, verified within the tolerance; the files are the pinned source), the folder listing says the .bbmodel holds
+  EVERY clip and must still list them if returned, and the previous landing's Import Animations instruction STAYS as the one-line
+  fallback for a rebuilt or re-exported .bbmodel (in the same bullet and in §4.3). THE PROOF (the dry run): 116 .bbmodels, 356
+  clips embedded (59 shipped + 297 reference), 0 listing fewer than the folder holds, 0 round-trip reports outside the tolerance;
+  the emulation still writes four-decimal timecodes (the closing key 0.084906585 s comes back as 0.0849: within 5e-5 s, not byte
+  for byte - `ROUNDTRIP_TIME_NOTE` unchanged).
+- ITEM 6 (1), THE KEYING (`src/g1tool/java/danger/orespawn/g1/ReferenceClipKeying.java`, `DensitySearch.java`): THE SEARCH LIVES
+  IN JAVA, not in Python - `tools/keyframe_clip.py` only reads the manifest's `keys_per_bone` (an output of the harness);
+  `KeyframeLeg.densitySearch()` is the search. Its loop is EXTRACTED into the shared g1tool class `DensitySearch` (for keys =
+  min..max, the candidate at that count evaluated, each independent channel taking the FIRST count whose max error holds its
+  tolerance, the loop stopping when every channel has one; the count below the fewest the one that failed) and `KeyframeLeg`
+  now calls it with the same candidate (its uniform cosine keys through the GeckoLib harness) - the same `fewest` map and the
+  same JSON table as before the extraction. The sampler calls the same search per bone and channel (a key holds all three axes)
+  with tolerance 1 degree of rotation and 1/32 block = 0.5 model units of position, `lerp_mode` catmullrom, from `MIN_KEYS` 2
+  (both ends) up to every sample. THE ONE ADAPTATION: a hook is posed once per tick with the entity RNG and the RenderInfo latches
+  evolving per call, so an intermediate time cannot be posed without changing the call sequence - the candidate keys are the
+  SAMPLES themselves, uniform in sample index (`round(i (N - 1) / (n - 1))`), both ends included, so the closing key is ALWAYS
+  kept and the seam stays stated as today. THE EVALUATOR IN FORCE is GeckoLib 4.8.4's CATMULLROM with the spline arguments repaired
+  at load (`SplineRepair`, the Q9 repair every shipped keyframe clip plays under): the search evaluates the same formula inline
+  (`getPointOnSpline`: 0.5 (2 P1 + (P2 - P0) t + (2 P0 - 5 P1 + 4 P2 - P3) t^2 + (3 P1 - P0 - 3 P2 + P3) t^3), the neighbour rule
+  of `SplineRepair.repairedArguments` on a loop, GeckoLib's own P0 == P1 / P3 == P2 on a two-key channel) and the FINAL keys of
+  every channel are re-measured through GeckoLib's own objects (real `Keyframe`s as `BakedAnimationsAdapter` builds them, the
+  arguments from `SplineRepair.repairedArguments`, the value from `EasingType.CATMULLROM.apply(AnimationPoint)` on the frame
+  GeckoLib's lookup selects); the two must agree to 1e-9 (they agree exactly: the largest difference over 297 clips is 0). THE
+  INDEX (schema 4) records per clip `dense_samples`, `keys_per_bone` (the max), `keys_per_bone_min`, `keys_total`, `lerp_mode`
+  and `keying` (the search rule, the tolerances in degrees / blocks / units, the measured maximum error in degrees and in units
+  and blocks, the GeckoLib-measured maximum, `within_tolerance`, the worst one-fewer error, the channels at the minimum); the
+  sheets' §4.3 state the tolerance in one sentence (`REFERENCE_KEYING_SENTENCE`) and each entry its key counts and measured
+  error. THE EFFECT: keys before (every tick) 512,354 over 270 clips; after 180,226 over 297 clips (35.2 %); on the clips both
+  sets carry 500,846 -> 159,733 (31.9 %). Keys per bone after 1 to 119; the measured maximum error 1.000 degree (at the tolerance,
+  never over: 297 / 297 within) and 0.4999 units = 0.03124 block of position; 156 of the 297 clips keep every sample on some
+  channel (a rhythm at or above the tick sampling's own limit - a 1.8-tick teeth chatter, a sawtooth wrap - and the non-closing
+  two-second windows, where the repaired spline's loop wrap at a seam of tens of degrees forces dense keys near both ends; the
+  honest answer under the evaluator in force). The cost: the sampler runs in 11 s headlessly (from 11 s before); no gradle change.
+- ITEM 6 (2), ONE TRACKED COPY: `tools/reference_clips/` stays the writer's and verifier's directory; `.gitignore` gains
+  `artist_handoff/**/*_reference_*.animation.json` (a comment naming the ruling), the checker's WARN on an untouched copy coming
+  back stays, and the generator's summary counts the copies as present (`counts.reference_clips.files_written` 297 =
+  `files` 297; per folder `reference_clip_files`, `clips_embedded`). The repository's `artist_handoff/` still tracks the OLD 270
+  copies until the orchestrator's regeneration (`git rm -r --cached artist_handoff` then the fresh folder: the copies are written
+  again and stay untracked under the rule). SIZES: `tools/reference_clips/` before 93 MB, 271 files, the largest 2.05 MB
+  (leonopteryx / leon _reference_walk), the index 1.00 MB; after 37 MB, 298 files, the largest clip 1.60 MB (the_king
+  _reference_attack: 119 bones over a two-second window), the index 1.68 MB (the hooks' facts and the keying per clip). The
+  folder (the dry run's `pkg`, the same 116 folders): before 131 MB (of which the copies 92 MB, the .bbmodels 14 MB); after 132
+  MB with the copies (35 MB) and 97 MB without them - the tracked size - of which the .bbmodels 71 MB (every clip embedded in
+  Blockbench's per-keyframe form, the price of item 5). 1,369 files (1,363 in the entity folders).
+- THE SIX RESTING ATTACKS RE-EXAMINED (item 7): under item 2 `getAttacking` 1 alone moves nothing on all six - no attack clip is
+  emitted (attack 46 -> 40), the index's `no_motion` row carries the authored gate (`ReferenceClipSampler.ATTACK_GATES`, attached
+  only when the computed result is no motion) and the sheet states it in one line ("no `_reference_attack` — the code reads an
+  attack, but attacking alone moves nothing at rest: ..."): cave_fisher and scorpion - the read sits inside the claw latch's
+  re-roll `if (nextangle > 0 && newangle < 0)` on cos(ageInTicks x 3.0 x 0.62) with its 0.1-tick look-ahead
+  (CaveFisherGeoReplacement.java:100-110, ScorpionGeoReplacement.java:82-92), reached only when a rising zero crossing falls
+  within 0.1 tick after a whole-tick sample, which none does; robot_2 - the windmill latch's re-roll on sin(toRadians(ageInTicks x
+  20)) with a 1.5-degree look-ahead (Robot2GeoReplacement.java:51-59): at a whole tick the phase is a multiple of 20 degrees and
+  Mth.sin's table answers exactly 0, never below; robot_3 - the arm swing's rising zero crossing of cos(ageInTicks) with a 0.3-tick
+  look-ahead (Robot3GeoReplacement.java:56-60): no whole tick of the 11.42-tick span falls within 0.3 tick before a crossing
+  (4.71, 11.0 ...); leon and leonopteryx - every attacking read sits in the flying branch (`if (entity.getActivity() == 0) {
+  standing } else { flying: :255, :286, :465 }`, LeonGeoReplacement.java:161). The combinations (activity 1 with attacking 1; a
+  latch hit at a crossing) are the owner's to sample.
+- THE PACKAGE GENERATOR (`tools/artist_package.py` 0.4.0): `load_reference_hook_facts` (index `hooks`), `reference_state_order`
+  (the contract's states then the hook's others as the index lists them), `reference_clip_name`, `reference_clip_facts` over every
+  state, `reference_offers`, `reference_clip_documents`, `reference_keying_sentence`, `reference_clip_section` (§4.3: the files
+  and the .bbmodel, the pinned source and the fallback, one line per state with its name or the UNNAMED flag, the keying sentence,
+  the starting-point paragraph with fly / swim and the offer, one entry per clip with its key counts and measured error, the
+  value-state's getter line with the seed's source, the attack read line, the no-motion values with their gates, the reads that
+  are not enumerable, the unnamed states), `clip_rows(..., offers=)`, the `EXTRAS_CAP` count with the offers, `merged_animations`,
+  `build_bbmodel(..., reference=)`, `clip_differences`, `roundtrip_diff` per clip, `build_package` (the copies counted, the
+  embedding, the merged round trip), `readme_document` (`README_BBMODEL_CLIPS`, the listing, rule 7), `package_counts` /
+  `summary_markdown` (per state, unnamed, no-motion, offers, embedded), `check_folder` (the .bbmodel rules), the manifest's blocks
+  (`delivered_clip`, `offered_extra`, `named`, `name_source`, `getter`, `value`, `keys_per_bone_min`, `dense_samples`,
+  `lerp_mode`, `keying`) and `reference_offers`. `tools/asset_audit.py`: `REFERENCE_CLIP_RE` refuses every `_reference_<state>`
+  name under src/main/resources; the `HOOKS` list untouched.
+- THE TESTS (`tools/test_artist_package.py`, 50, all passing; 48 before): the fixture is a flyer whose seed names `fly`
+  (`getActivity` 1) and `sit` (`isInSittingPose` true) under `reference_states`; its reference clips walk / idle / attack / fly /
+  sit with schema-4 rows and hook facts (a `getBlink` 1 that moves nothing, a RenderInfo latch not enumerable); the critter (an
+  unlanded hook species) walk / idle and an UNNAMED `activity_2` on its own bones; the reference tests updated to the new clip
+  names, the §4.3 wording, the blocks and the counts; `test_bbmodel_embeds_every_clip_within_tolerance_and_the_readme_says_both`
+  (replacing the landing's keeps-them-out test: the embedded names, the report per clip, the OK line, the two REJECTs, the README
+  both), `test_a_species_state_is_offered_as_an_extra_and_the_cap_is_flagged_never_cut` (the offer row, a seed extra of the same
+  name merged, the cap flagged with every row present, the unnamed state flagged and not offered),
+  `test_the_fixture_fly_state_shows_the_beat_and_starts_fly`; the starting-point test delivers fly and sit too.
+
+THE COUNTS after this item: rigs through the seam 38 / 106 (unchanged: nothing under src/main moves; the sampler is g1tool);
+artist-tier species with an exact transcription shipped 15 / 90 (informational, unchanged); artist-tier species packaged 90 / 90
+rigs (103 registries; 116 folders, 1,369 files with the 13 Tier-3 props, every folder `check` PASS in the dry run). Reference
+clips: 297 over 112 registries (99 artist-tier registries; 3 held: the Boyfriend, the Girlfriend, the Princess; the Queen native).
+
+THE CHECKS (the lane, headless, no gradle): javac x3 into fresh scratch class directories - src/main rc 0 (1,262 classes),
+src/g1tool rc 0 (84 classes: DensitySearch, HookGetterReader, ReferenceClipKeying and the sampler's records new), src/gametest
+rc 0 (246 classes); the sampler over every hook twice into scratch, the two runs byte-identical (298 files, 11 s each), the
+result installed into `tools/reference_clips/` and `--verify` against it VERIFIED (298 files); `identity_samples.sh` against the
+exported fc5e23c clips: SAMPLES IDENTITY: 112 walk clips, 0 differing or missing (exit 0; the script runs the sampler with
+`--dump-samples` itself); `python tools/test_artist_package.py` OK (50 tests); the dry run `package --out <scratch>/pkg
+--reference-geo-dir build/reference/generated` over every species (21 s): 116 folders, `check` PASS 116 / 0, every .bbmodel
+listing every clip of its folder (356 embedded; 0 short), every `roundtrip.report.json` EQUAL-within-tolerance per embedded clip
+(0 outside), 297 reference files beside the sheets (walk 112, idle 112, attack 40, sit 14, fly 10, scream 2, activity_2 1,
+crouch 1, display 1, mouth_open 1, open 1, sing 1, sitting_flat 1), 22 offers, 1 EXTRAS_CAP (the Spyro), 1 unnamed state (the
+Stinky); the Baby Dragon's fly beat in numbers (above); a delivery copying `reference_fly`'s keys (and `reference_idle`'s and
+`reference_walk`'s, the pair) into `fly` / `idle` / `walk` checked PASS on the Baby Dragon (rule 5's length WARNs at 2 s);
+`python tools/asset_audit.py` 0 errors, 138 acknowledged, exit 0 (nothing under src/main moves); stray processes 0 (no java,
+javac or python left).
+
+DEVIATIONS (each reversible, presented):
+- THE KEYS ARE CHOSEN AMONG THE SAMPLES (uniform in sample index), where the leg's search samples its cosine at any time: a hook
+  is posed once per tick with its RNG and latches evolving per call, so intermediate times cannot be posed without changing the
+  call sequence. Every other part of the search is the leg's, through the shared class.
+- THE SEARCH'S LOOP WAS EXTRACTED from `KeyframeLeg.densitySearch()` into `DensitySearch` and the leg now calls it: a
+  mechanical extraction (the same candidate, the same fewest-per-group rule, the same table), compiled but not run under the
+  harness by this lane (no gradle); the gate's proofs are the check.
+- THE WALK CLIP'S BYTES CHANGE (its name inside is `reference_walk`, its keys the search's): the ruling moves the pin to the
+  sampled values, and the identity script is that pin.
+- THE SIX ATTACK GATES ARE AUTHORED (`ATTACK_GATES`, from the code with the lines), attached only when the sampler's own
+  comparison finds no motion; the computed result, not the sentence, decides whether a clip is emitted.
+- AN UNNAMED STATE IS FLAGGED, NOT OFFERED as an extra (the Stinky's `activity_2`: the code gives no word); it is offered once the
+  seed names it.
+- THE OFFERED EXTRA'S LENGTH follows rule 5 (a loop at 1.0 s), so a delivery that keeps the reference clip's own length warns
+  under rule 5 as any loop would; the keys are the starting point, the length the animator's.
+- THE .BBMODEL RULE IN `check` applies to every .bbmodel in a returned folder: it must list every clip of the folder's animation
+  files (the delivered file's and the reference files') within the tolerance; an artist who returns a rebuilt .bbmodel without the
+  reference clips is told to leave it out or import them (the fallback line).
+- THE INDEX DROPS THE PER-BONE KEYING DETAIL (it would have been 4.6 MB): per clip it keeps the counts, the tolerance, the maxima,
+  the worst one-fewer error and the channels at the minimum.
+- `--specs` DEFAULTS TO THE REPOSITORY'S `tools/artist_specs` (no gradle argument change); the seeds are read by the sampler as
+  data, a stale mapping refused loudly.
+
+THE ORCHESTRATOR ON THE DEVIATIONS (decided under doctrine, reversible): the keys chosen among the samples is the
+ruling's search applied to what a hook can give - a hook is posed once per tick with its latches and RNG advancing per
+call, so a key between ticks would need a pose the classic code never produced; the search, the fewest-keys rule and
+the catmullrom evaluator are the leg's own through the shared class, and the closing key is always kept as ruled. The
+extraction of the leg's loop into `DensitySearch` is a harness change: the regeneration verifies the g1 / s4 / t2 trees
+first, byte-identical, before anything else runs (the GATE line records it), so the keyframe leg's proofs did not move.
+The six attack gates are recorded as the lane found them; no combination was sampled (the ruling says alone) and the
+owner's item 7 re-examination is answered with the gates, not with a clip. The Stinky's one unnamed state stays
+flagged on its sheet until its seed names it. The other deviations are the ruling in the generator's terms.
+
+NOT DONE (the orchestrator's): gradle (`referenceDumpCompiledModels referenceConvertModels referenceClips` twice,
+`referenceClipsVerify`, `identity_samples.sh` under the gradle-built classes, the benchmark re-pin - g1tool moved); the
+repository's `artist_handoff/` regenerated (the old 270 tracked copies dropped, the new ones ignored); the records (this section,
+KNOWN_ISSUES's count); the commit.
+
+IN-GAME: nothing - the sampler is g1tool, the descriptors stay unregistered; nothing under src/main moves (`ProbeSubject`,
+`KeyframeLeg` and the sampler are g1tool; `SplineRepair` is only called).
+
+GATE: GATE: clips3 green - the g1 / s4 / t2 verify-only passes identical FIRST (g1 2, s4 13, t2 29 PARITY PASS: the keyframe leg moved into the shared search and its proofs did not), the clips deterministic across two gradle runs (298 files), the walk identity at the sampled values against the fc5e23c clips (SAMPLES IDENTITY: 112 walk clips, 0 differing or missing), referenceClipsVerify VERIFIED 298 on its own, the tests OK (50), the folder fresh (116 folders, 1,369 files, every check PASS; 297 reference clip copies written and all 297 ignored by git, the 270 tracked copies of the previous landing removed from the index; 356 animations embedded, 0 round-trip reports outside the tolerance), the benchmark re-pinned, the audit 0 errors / 138 acknowledged; sizes: tools/reference_clips 37 MB / 298 files (93 MB / 271 before), the folder 132 MB on disk of which 35 MB the ignored copies (97 MB tracked; 131 MB tracked before); drift 0, build 0, suite: all 1278 required tests passed.
