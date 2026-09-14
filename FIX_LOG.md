@@ -7738,3 +7738,217 @@ IN-GAME: nothing - the sampler is g1tool, the descriptors stay unregistered; not
 `KeyframeLeg` and the sampler are g1tool; `SplineRepair` is only called).
 
 GATE: GATE: clips3 green - the g1 / s4 / t2 verify-only passes identical FIRST (g1 2, s4 13, t2 29 PARITY PASS: the keyframe leg moved into the shared search and its proofs did not), the clips deterministic across two gradle runs (298 files), the walk identity at the sampled values against the fc5e23c clips (SAMPLES IDENTITY: 112 walk clips, 0 differing or missing), referenceClipsVerify VERIFIED 298 on its own, the tests OK (50), the folder fresh (116 folders, 1,369 files, every check PASS; 297 reference clip copies written and all 297 ignored by git, the 270 tracked copies of the previous landing removed from the index; 356 animations embedded, 0 round-trip reports outside the tolerance), the benchmark re-pinned, the audit 0 errors / 138 acknowledged; sizes: tools/reference_clips 37 MB / 298 files (93 MB / 271 before), the folder 132 MB on disk of which 35 MB the ignored copies (97 MB tracked; 131 MB tracked before); drift 0, build 0, suite: all 1278 required tests passed.
+
+## PHASE G — THE FOURTH TIER-2 SLICE, T2d (2026-09-14): fifteen rigs on the hook, the Crab's draw fix — thirteen landed on the hooks already written (the Crab with ANIM-025 fixed and its twenty-four explicit-form leg clones proven by draw pose, the Kyuubi, Leaf Monster, Alosaurus, Attack Squid, Band P, Baryonyx, Camarasaurus, Cassowary, Creeping Horror, Cryolophosaurus, Easter Bunny, Flounder) through the seam behind the dev switch; the Boyfriend and Girlfriend hooks written (vanilla HumanoidModel.setupAnim transcribed) and HELD on the partial tick the seam does not carry; the fifteen packages with the SPEC's formulas and the sampler's clips; no gameplay touched
+
+RULING. Owner 2026-09-14, second set revised, item 8 (addendum item 32 (8)): "the fifteen-rig slice T2d as briefed, the Crab with its
+draw fix, on the hooks already written, one refuter, the counts open the report"; item 7: the held species' clips come with their landing.
+Item 9: fifteen rigs on the hook in the design's order, the Crab first. Addendum items 10 and 14 (FIX_LOG "THE HOOKS (2026-09-14)"): the
+landing slices reuse the hooks - a slice adds the geo, the renderer registration, the layers and the proofs, and moves the rig out of the
+hook state. Item 3 (ANIM-025): the port's renderToBuffer fix lands with the Crab's slice, exempt from the freeze as a rig matter. Item 4
+(TEST-010 (a)): the Boyfriend and Girlfriend land on the hook as the Cannon Fodder did - no reference leg, no renderer pin. Amendment 2
+to Amendment 1 (2026-09-13, second set, item 2): every rig lands ON THE HOOK - no clip manifest, no transcription, no keyframeLayers();
+the classic setupAnim verbatim through PoseInputs (the S4 doctrine). Parity lanes frozen: a divergence gets a draft register line and
+stops. One refuter for the whole slice (the cost rules of 2026-09-12, item 25 (3)).
+
+WHAT LANDED (thirteen rigs on their hooks; thirteen geos, thirteen empty animation files, thirteen manifest entries, thirteen pin
+candidates, thirteen seeds with formulas, the sampler's clips per state; the design's order):
+- THE HOOKS (`entity/client/<Name>GeoReplacement.java`, written by the hook lanes and reused - the descriptor's javadoc gains the landing
+  line; every hook diffed against its classic setupAnim / poseFrom (hook_diff.py: the numeric-literal multisets of the hook body and its
+  helpers against the classic body - three MATCH exactly (leaf_monster, alosaurus, flounder), the ten differences all structural: each
+  descriptor's WINGSPEED constant standing in for the classic's wingspeed field (kyuubi x 31, attack_squid x 20, band_p x 4, baryonyx x 2,
+  camarasaurus x 2, cassowary x 2, cryolophosaurus x 1, easter_bunny x 3), the Crab's draw() helper looping the three leg parts where the
+  classic writes each pose's x / y / z three times, the Creeping Horror's lower leg parts copying the upper (`= this.leg1.yRot`) where the
+  hook writes the literal); the animation leg's 0 rad over every sample, amplitude and state is the ruled proof; no drift found, none fixed):
+  crab (the eight leg poses -pi/2 +- cos(age 1.7) pi 0.15 x limbSwingAmount landing on the explicit-form clones leg1__i0..7 / leg2__i0..7 /
+  leg3__i0..7 through moveTo and rotateY, the classic's double / float chain; the ATTACKING branch on the eyes, mouths and claw tips
+  through CrabPose; shadow CrabRenderer.SHADOW 0.99, the per-entity getCrabScale scale); kyuubi (the THRESHOLD gait at 1.1 x 0.5 ws, the
+  gait-scaled arm swing plus a 0.5 ws sway, the HEAD-LOOK idiom (toRadians(netHeadYaw) + 4 pi4 on the head), the two five-piece horn chains
+  and the nine-ring tail through moveXZ / moveTo from the bind pivots; shadow 0.1, no scale); leaf_monster (the ATTACKING branch is the whole
+  pose: the bush at rest (body y 16, arms y 8 through moveTo), the risen figure attacking with the THRESHOLD legs and the |cos| arms;
+  LeafMonsterPose; shadow 0.65); alosaurus (a THRESHOLD gait at 1.3 x 0.22 inline, the ATTACKING jaw, the forelimb sway; AlosaurusPose;
+  the renderer's literal 1.0f shadow); attack_squid (the THRESHOLD idiom on all ten channels, the HEAD-LOOK body yaw x 0.75; scale 0.9,
+  shadow 0.25 x 0.9); band_p (the THRESHOLD idiom with a standing branch, the HEAD-LOOK yaw and pitch; shadow 1.0; the texture by getWhat()
+  through BandPRenderer.textureFor - lifted into the renderer by this slice, the Fairy form); baryonyx (a THRESHOLD gait at 1.3 x 0.25, the
+  claw wave; twenty-six zero-thickness cubes so the classic face order; the literal 1.0f shadow, BaryonyxRenderer.SCALE 1.0 halved for a
+  baby - the constant made public by this slice); camarasaurus (a THRESHOLD gait at 1.3 x 0.65, the HEALTH-FREQUENCY tail through
+  CamarasaurusPose (hf = 1 on the probe) with the position-write chain down the tail, the HEAD-LOOK neck at 1/8, 1/4, 0.38, 1, 1 with the
+  follow chain; the literal 0.65 x 0.65 shadow, CamarasaurusRenderer.SCALE 0.65 halved for a baby - public now); cassowary (a THRESHOLD
+  gait at 1.3 x 0.55 with its 2.6 harmonic on the neck, the crest / beak / head following the neck by (sin, cos) 7; the literal 0.5f shadow,
+  CassowaryRenderer.SCALE 1.0 halved for a baby - public now); creeping_horror (the GAIT-scaled legs at 1.25 with no threshold, the pincers,
+  the |cos| tail, fifteen spike cosines; seven zero-thickness cubes so the classic face order; scale 0.75, shadow 0.45 x 0.75);
+  cryolophosaurus (a THRESHOLD gait at 1.3 x 0.75, the jaw at 0.28; the literal 0.75 x 0.5 shadow, CryolophosaurusRenderer.SCALE 0.5 -
+  public now); easter_bunny (the THRESHOLD idiom with a live idle ear branch at 1.3 x 0.55; shadow 0.5, halved for a baby); flounder (the
+  THRESHOLD idiom with a live idle tail sway at 0.7; shadow 0.1, halved for a baby).
+- THE HOOK-LANE NOTES ACTED ON: the BandP texture switch lifted into BandPRenderer.textureFor(int) (the descriptor reads it); the private
+  SCALE constants of BaryonyxRenderer, CamarasaurusRenderer, CassowaryRenderer and CryolophosaurusRenderer made public and the descriptors
+  scale by them (the pins tool's candidate check passes only through <Renderer>.SCALE), their applyScale in the Gamma Metroid's if / else
+  form; the shadow literals stay equal literals (the T2c doctrine (vii)); no render type to re-base and no whole-model render transform
+  among the thirteen.
+- THE CRAB'S DRAW FIX (ANIM-025; `ModelCrab.java`): BEFORE - poseFrom wrote the eight leg poses over leg1 / leg2 / leg3 in turn and
+  renderToBuffer drew each part once at the last pose (one leg). AFTER - poseFrom keeps the two inputs the poses read (limbSwingAmount,
+  ageInTicks; :215-217) and renderToBuffer (:258-344) re-poses and draws the three parts at each of the eight poses with the classic's own
+  expressions in the original's order (orig ModelCrab.java:199-274), then the body parts (orig :306-329); a fresh model draws the legs at a
+  swing of 0 - the reference entry's declared bind transforms. The reference entry's three pinned_draw_count pins removed (the probe holds
+  the port to the declared eight: 24 leg + 22 body draws per capture); the seam entry carries the same explicit render_instances
+  declaration, the shipped crab.geo.json the twenty-four leg bones (46 bones / 46 cubes). NOT REPRODUCED: orig :310-311's ninth draw of
+  leg2 / leg3 at the eighth pose - a coincident duplicate (the same pose, the same triangles), outside the ruled count of eight
+  (audit_ANIM-025_draw_fix.txt). The Crab's classic gametest rows (PreyListParityTests, TargetReleaseParityTests, RecipeTests) read no
+  model: no re-pin.
+- THE HARNESS (`tools/g1_render_parity.py`, the explicit-scope case the folder's-gaps landing named as the Crab's slice's open item):
+  candidate_bone_names accepts a clone with no group bone (static_pivot_classic required); render_instance_pose_parity proves such a clone by
+  the classic's measured draw pose alone against the clone's declared pivot (no instance-pose / group comparison); the per-part channel loop
+  skips explicit clones (the compiled part's transforms are its last classic pose, no expectation for a clone the hook animates directly);
+  the report gains explicit_clone_bones / explicit_draws_checked and an evidence sentence ONLY for a rig with explicit clones, so the fan
+  rigs' checked-in metrics stay byte-identical (the s4 verify chain PASS). No threshold changed.
+- THE SHIPPED GEOS: the converter's output byte for byte (`geo/entity/<stem>.geo.json`: crab, kyuubi, leafmonster, alosaurus, attacksquid,
+  bandp, baryonyx, camarasaurus, cassowary, creepinghorror, cryolophosaurus, easterbunny, flounder - the manifest id's stem),
+  `orespawn:bone_draw_order` on all thirteen, `orespawn:cube_face_order` on the Baryonyx (shape27-45, shape46-51, shape52) and the Creeping
+  Horror (the two pincer blades, the five inside plates) - TEST-007, declared `cube_face_order: "classic"` with a face_order_note; the
+  twenty-four already-shipped t2 geos equal the converter's output; thirteen empty animation files (the s4 form); the dev-switch wiring
+  (`PhaseGDevRenderers` thirteen providers, `OreSpawnClient` thirteen registrations through them; the classic renderers the default);
+  `tools/reference_renderer_pins.json` naming thirteen port_candidates (PASS 120 / DIVERGES 0 / MANIFEST_DRIFT 0).
+- THE MANIFEST (`tools/t2_model_proofs.json` +13 entries, 42 models): `code_driven` (nine) or `entity_state` (the Crab, Leaf Monster and
+  Alosaurus on idle / attacking; the Camarasaurus on one declared state, full_health - its poseFrom reads the health ratio), the hook path,
+  `channels: []` on every entry (the converter refuses channels on a hook entry: the RULES rows carry the spans), `reference_source` on all
+  thirteen, the Beaver's amplitude matrix 0 / 0.25 / 0.5 / 1 on all thirteen (every hook reads limbSwingAmount), the head-look rigs
+  sampled at netHeadYaw 30 / headPitch 10 (kyuubi, attack_squid, band_p, camarasaurus), the Crab's render_instances copied from the
+  reference entry, the hook_rig_note extended.
+- THE AUDIT AND THE SAMPLER OUT OF THE HOOK STATE: thirteen `HOOKS` entries removed from `tools/asset_audit.py` (and the two held hooks
+  added: BoyfriendGeoReplacement, GirlfriendGeoReplacement); `ReferenceClipSampler`: thirteen `HOOK_DESCRIPTORS` rows removed and the two
+  held added, thirteen `REGISTRIES` rows added (model_<stem> -> registry), thirteen `HOOK_RULES` rows carried verbatim into `RULES` keyed by
+  the manifest id (the same rule, the same source lines), two `HOOK_RULES` rows added for the held hooks (the vanilla base's slowest rhythm,
+  the arms' 0.067 bob). The clips of the thirteen reproduce IDENTICALLY over the shipped geo: `cmp` of all 29 files (crab 3, alosaurus 3,
+  leaf_monster 3, ten x 2) against the pre-slice files - 29 identical, 0 differing; the other 268 clips unchanged; the index (schema 4) marks
+  the thirteen landed on the shipped rig.
+- THE SAMPLER'S RULES AND SPANS (the carried rows; `tools/reference_clips/reference_clips.json`): crab period_multiple k = 1 x 48.33 (the
+  0.13 claw drift; walk / idle / attack), kyuubi two_seconds_past_cap (T 25.13 at 0.5 x 0.5), leaf_monster period_multiple (T 6.61 at 0.95;
+  walk / idle / attack), alosaurus period_multiple (T 62.83 at 0.1; walk / idle / attack), attack_squid two_seconds_past_cap (T 25.13 at
+  0.25), band_p two_seconds_past_cap (T 52.36 at 0.3 x 0.4), baryonyx two_seconds_past_cap (T 35.90 at 0.7 x 0.25), camarasaurus
+  two_seconds_past_cap (T 7.44 at 1.3 x 0.65), cassowary period_multiple (T 8.79 at 1.3 x 0.55), creeping_horror two_seconds_past_cap (T
+  61.0 at 0.103), cryolophosaurus two_seconds_past_cap (T 22.44 at 0.28), easter_bunny period_multiple (T 8.79 at 1.3 x 0.55), flounder
+  period_multiple (T 8.98 at 0.7) - every span exactly as the hooks' landing sampled it (the clips are byte-identical). The two held hooks:
+  boyfriend / girlfriend walk two_seconds_past_cap (the 0.6662 stride on limbSwing does not close within the 0.067 bob's 93.78 ticks), idle /
+  ride / glide period_multiple k = 1 x 93.78 (the arms' bob); isUsingItem / isVisuallySwimming true and getFallFlyingTicks 4 no motion.
+  Two headless runs diff-clean (sA2 == sB after the seeds named the states), installed, `--verify` VERIFIED 298 files (297 clips + the index; the two held hooks' eight clips the orchestrator removed, below).
+- THE PACKAGES (`tools/artist_specs/<registry>.json`): thirteen seeds gain `formulas` (the source method and lines quoted, orig cited, every
+  formula and constant in words; the Boyfriend's and Girlfriend's the vanilla HumanoidModel.setupAnim body by class and line); the thirteen
+  landed seeds' status / artist_scope say the rig is in-game on its hook since T2d; the Crab's ANIM-025 sentences (character sheet,
+  behaviour, wishlist) say the game draws all eight legs and its port line citations move to the fixed model's lines; the two held seeds
+  gain `reference_states` (ride = isSeatedOnVehicle true, glide = getFallFlyingTicks 5), their status / scope state the hold and the stale
+  "no rig to package" sentence is corrected. The dry run: 116 folders, 1,377 files, `check` PASS 116 / 0; artist-tier species with clips 101;
+  the Girlfriend's two offers trip EXTRAS_CAP (5 > 4, listed, none dropped - the Spyro precedent); `test_artist_package.py` 50 OK.
+- THE GAMETESTS: `T2SeamTests.t2_006` (one new row, the required-test count 1278 -> 1279): each of the thirteen descriptors constructs
+  registry-free, declares NO keyframe layer, its shipped animation file bakes to no clip, the self-gate registers nothing under the modern
+  keys, its shadow is the classic renderer's, the classic face order is required exactly where the shipped geo carries it, and the classic
+  hook poses a fresh bake of the shipped geo off its bind (a HookSubject for the four entity-reading hooks: the Leaf Monster's attacking, the
+  others at rest); t2_005's assertions moved into the shared assertHookSpecies, byte for byte. `KeyframeLegTests.kf_007` fifty-six
+  replacements (43 + 13 in the classic-source branch; the fourteen Tier-2 descriptors with layers unchanged).
+- THE BOYFRIEND AND GIRLFRIEND (item 4; HELD - audit_TEST-010_partial_tick.txt): `entity/pose/HumanoidPose` (the vanilla reads:
+  getFallFlyingTicks, isVisuallySwimming, getDeltaMovement, isSeatedOnVehicle, getMainArm, isUsingItem, getUsedItemHand, getSwingingArm,
+  getAttackAnim(partialTick), getSwimAmount(partialTick)), the two entities implement it with two one-line delegates (isSeatedOnVehicle -
+  the renderer's riding expression; getSwingingArm - the public field), `ProbeSubject` answers every getter at rest,
+  `BoyfriendGeoReplacement.poseRig` transcribes vanilla HumanoidModel.setupAnim (21.1.223, HumanoidModel.java:137-286 from the jar's
+  bytecode - the sources jar is a stub) statement by statement, `GirlfriendGeoReplacement` delegates (her 5x valentine scale, the skin
+  switch through GirlfriendRenderer.textureFor; the Boyfriend's through BoyfriendRenderer.textureFor - both lifted). THE STOP: the
+  classic renderer sets attackTime = getAttackAnim(partialTick) and swimAmount = getSwimAmount(partialTick) per frame; PoseInputs carries no
+  partial tick; both entities swing (Boyfriend.java:367 / :447, Girlfriend.java:441 / :521) - so the hooks evaluate the two lerps at the
+  tick boundary (PARTIAL_TICK_NOT_CARRIED), exact on the probe and at whole ticks, and the landing stops: no geo, no wiring, no manifest
+  entry, no pin candidate; the hooks are HOOKS / HOOK_DESCRIPTORS rows and their clips are sampled (walk, idle, ride, glide x 2).
+
+THE PROOF (this lane's `--validate-only` evidence over the t2 chain, run 1, `G1 PARITY STAGING PASS: 42 models`; the t2 proof tree is the
+orchestrator's to regenerate): crab geometry 1.06e-6 blocks (1886 cube-samples over 41 samples), surface UV 0 / normal 1.73e-7 (45,264
+vertices), animation 0 rad over 2706 channel samples at every amplitude and state, position 0, draw order 41 captures / 1886 draws,
+reference 25 parts, visual 1.37e-4 / MAE 1.56e-3 / contested 3.8e-4, render instances 24 explicit clones, 984 draws over 41 captures, draw
+pose linear 1.5e-7 / translation 9.49e-6 units; kyuubi 3.19e-7 (882), 0 / 1.72e-7, 0 rad over 2646 (position 1e-6 units), 21 / 882, 42
+parts, 0 / 0 / 1.1e-3; leaf_monster 3.37e-7 (205), 0 / 1.22e-7, 0 rad over 615 at every amplitude and state, 41 / 205, 5 parts, 0 / 0 /
+6.7e-3; alosaurus 3.36e-7 (861), 0 / 7.62e-8, 0 rad over 2583 (position 2e-7), 41 / 861, 21 parts, 0 / 0 / 0; attack_squid 3.08e-7 (189), 0
+/ 2.57e-7, 0 rad over 567, 21 / 189, 9 parts, 0 / 0 / 0; band_p 3.08e-7 (147), 0 / 1.24e-7, 0 rad over 441, 21 / 147, 7 parts, 0 / 0 / 0;
+baryonyx 3.23e-7 (1092), 0 / 0 (2184 zero-area faces ignored), 0 rad over 3276, 21 / 1092, face order 6552 faces over 21 captures, 52
+parts, 0 / 0 / 1.53e-4; camarasaurus 3.15e-7 (441), 0 / 1.49e-7, 0 rad over 1323, 21 / 441, 21 parts, 0 / 0 / 4.88e-3; cassowary 2.01e-7
+(252), 0 / 0, 0 rad over 756, 21 / 252, 12 parts, 0 / 0 / 4.27e-4; creeping_horror 4.24e-7 (546), 0 / 2.07e-7 (588 ignored), 0 rad over
+1638, 21 / 546, face order 3276 faces over 21 captures, 26 parts, 1.22e-4 / 5.14e-4 / 2.08e-3; cryolophosaurus 3.06e-7 (420), 0 / 0, 0 rad
+over 1260, 21 / 420, 20 parts, 0 / 0 / 2.3e-3; easter_bunny 3.01e-7 (273), 0 / 0, 0 rad over 819, 21 / 273, 13 parts, 0 / 0 / 0; flounder
+2.24e-7 (126), 0 / 0, 0 rad over 378, 21 / 126, 6 parts, 1.53e-5 / 5.09e-4 / 1.53e-5. Render state entity_cutout_no_cull / white / light 0
+on both sides for all thirteen. The twenty-nine entries landed before: identical numbers, the shipped geos equal to the converter's output.
+THE CHAIN REPEAT (chains2.summary, the final tool and the final classes t2d2): the t2 chain run 2 and run 3 (`run_t2_chain.sh t2d2
+run2|run3 validate`) each `G1 PARITY STAGING PASS: 42 models` rc 0, `diff -rq run2 run3` 0 lines (dumps, generated geos, reference
+reports and evidence identical; the thirteen generated geos equal the shipped files); the s4 chain twice in verify mode `G1 PARITY PASS: 13
+models; checked-in proof verified`, `diff -rq s4a s4b` 0 lines (the fan rigs' checked-in metrics untouched by the explicit-scope case);
+the g1 chain twice `G1 PARITY PASS: 2 models; checked-in proof verified`, `diff -rq g1a g1b` 0 lines. (The first s4 pass, before the
+report keys were made explicit-only, failed on `checked-in G1 proof drift: evidence/report.json` - deviation (3).)
+
+DECIDED UNDER DOCTRINE, REVERSIBLE (one line each): (i) the geo file names follow the t2b naming (the manifest id's stem); (ii) the sample
+periods per entry are each rig's slowest rest rhythm (the HOOK_RULES row's), a probe choice; (iii) the head-look inputs 30 / 10 on the four
+rigs that read netHeadYaw (the Kyuubi, Attack Squid and Camarasaurus read no pitch); (iv) the Camarasaurus is an entity_state entry with one
+declared state (full_health) because its poseFrom reads the entity - a lower ratio is not enumerable (item 32 (2)); (v) the private
+renderer SCALE constants were made public rather than copied (the pins tool passes a candidate's scale only through <Renderer>.SCALE), the
+shadow literals stay literals; (vi) the Boyfriend's and Girlfriend's hooks evaluate the two per-frame lerps at partial tick 0 so the code is
+complete and sampleable, and their landing stops (the brief's instruction), the options presented; (vii) the Crab's ninth coincident draw of
+leg2 / leg3 is not reproduced (the ruled count is eight); (viii) t2_006 is a new row sharing t2_005's assertions through one helper (the
+count moves by one), not an extension of t2_005's list; (ix) the vanilla HumanoidModel body was read from the jar's bytecode (javap over
+neoforge-21.1.223.jar, a file the repository's own classpath names; the sources jar beside it is a 197-byte stub) and cited by the jar's
+LineNumberTable.
+
+THE ORCHESTRATOR ON THE HELD PAIR (decided under doctrine, reversible): everything the lane wrote for the Boyfriend and
+Girlfriend beyond their stop — `entity/pose/HumanoidPose`, `BoyfriendGeoReplacement` / `GirlfriendGeoReplacement`, the
+entities' `implements` and delegates, the renderers' `textureFor`, `ProbeSubject`'s getters, the two `HOOKS` entries, the
+two `HOOK_DESCRIPTORS` and `HOOK_RULES` rows, the two seeds' states and status, the eight sampled clips and their index rows
+— was REMOVED from the delta before the refuter and the gate ran, and the lane's statements above about the pair describe
+that removed material. Why: the owner's 2026-09-14 second set, item 7, says the held pair's clips come with their landing,
+and a hook whose transcription evaluates the classic renderer's per-frame lerps at partial tick 0 is not the classic code
+verbatim (item 10's "sampled when the rig lands" holds). The pair stays held exactly as after the hooks' landing; the lane's
+drafts are kept in the advisor's scratch (`r19/slice/held_pair/`) for the owner's ruling among the three options in the
+register line (TEST-010 (b)). The tree compiled after the removal (main 1,262, g1tool 84, gametest 247 classes, the lane's
+javac recipe); the audit's `HOOKS` list holds 54 entries (67 less the thirteen landed).
+
+THE ORCHESTRATOR'S ONE FIX (the Band P descriptor): the first gate went red at the suite - two required tests
+(`T2SeamTests.t2_006`, `KeyframeLegTests.kf_007`) failed with "Attempted to load class MobRenderer for invalid dist
+DEDICATED_SERVER": `BandPGeoReplacement` built its static descriptor with `BandPRenderer.textureFor(0)` as the default
+texture, a call that loads the client renderer class on the gametest server. The default is now the bandit sheet's
+literal (`textures/entity/bandp_bandit.png`, the Fairy form: a literal in the descriptor, the renderer's `textureFor` only
+inside `texture(entity)`); the lift of the switch into `BandPRenderer.textureFor` stands. Nothing in the proofs moves (the
+probe reads the same sheet); the tree recompiled (1,262 / 84 / 247 classes) and the regeneration ran again from the top.
+
+THE REFUTER (one, per the cost rules; its report in the advisor's scratch `r19/ref/`): CONFIRMED the thirteen hooks as
+the classic code verbatim (every pair diffed statement by statement), the Crab's draw fix block by block against the
+1.7.10 `render` (the coincident ninth draw at orig :310-311 verified present there and not reproduced, as recorded), the
+geos as the converter's output, the legs' numbers by an independent chain (`G1 PARITY STAGING PASS: 42 models`, the
+proof numbers identical), the hook state moved (the thirteen `RULES` rows identical to the removed `HOOK_RULES` rows,
+the clips 298 of 298 byte-identical), and that nothing of the held pair remains in the delta. MUST-FIX (1): the Band P
+descriptor's static `textureFor(0)` call (above; fixed before the refuter's report by the orchestrator from the first
+gate's failure). MUST-FIX (2): `model_creepinghorror` kept `bind` among its visual samples although its hook writes the
+two flat pincer blades every frame — the TEST-008 (c) rule (the fourth set) excludes bind from a flat-bone rig's visual
+samples with the note; fixed by the orchestrator: `bind` dropped from the entry's `visual_sample_ids`, the Bee-form note
+written, the t2 proof regenerated for it (the Baryonyx keeps bind: its twenty-six flat cubes are never written by its
+hook). REFUTED citations: four seeds' port line ranges missed the `poseFrom` bodies the hooks landing's refactor had
+shifted (alosaurus, camarasaurus, kyuubi, leaf_monster) and twelve seeds labelled the 1.7.10 rotation code
+`setRotationAngles` where the decompile holds it in `render` (`func_78088_a`); the lane re-derived every port citation
+of the thirteen seeds from the files as they are and relabelled the orig method per model (its report below). The
+lane's drafts described the removed pair's material (the 306-file index, `HOOKS` at 56, 116 acknowledged); corrected to
+the landing as it is (298 files, 54, 112). The benchmark proof re-pinned by the regeneration because g1tool moved (the
+sampler's rows and the shared search; the recorded runtime-classpath artifact unavailable at verify), the base revision
+67e991b → 00e0817 — the pinned inputs, not the numbers.
+
+DEVIATIONS PRESENTED: (1) the Boyfriend and Girlfriend did NOT land - the seam lacks the partial tick (audit_TEST-010_partial_tick.txt);
+thirteen rigs landed, not fifteen; (2) tools/g1_render_parity.py was extended for the explicit scope (a harness change: the composition
+leg's explicit case, no threshold moved; presented before the gate as the cost rules require); (3) the s4 verify chain's first pass failed
+on proof drift because the new report keys appeared on the fan rigs too - made explicit-only and re-run; (4) the asset audit's 26 errors are
+the untracked-file precedent (TEXTURE_REF_CASE on the thirteen geos and thirteen animation files until the orchestrator stages them),
+nothing else - no HOOK_STALE, no FLAT_CUBE, no DRAW_ORDER, no PROOF_DRIFT row; (5) the Girlfriend's EXTRAS_CAP flag (her two offered
+reference states beside three seed extras); (6) the two hand-compacted seeds (flounder, girlfriend) were edited by exact-string replacement
+rather than a json round trip (their inline arrays kept); (7) the sampler's HOOK_DESCRIPTORS javadoc count sentence updated in place.
+
+DIVERGENCES NOTICED, DRAFTED, NOT FIXED: none new among the thirteen beyond ANIM-025's closing note (the ninth coincident draw); the hooks
+transcribe the port's classic models, whose earlier findings (the seeds' original_moved_more where present) stand.
+
+IN-GAME: for a default install the Crab draws eight legs (the classic renderer, ANIM-025 fixed); nothing else. Behind
+`-Dorespawn.dev.geckolibRenderers=<species>` the thirteen draw the converted rigs posed by their classic code through the seam (the Crab's
+twenty-four leg clones, the Baryonyx and Camarasaurus and Cassowary halved as babies, the Girlfriend not among them); no artist clip plays
+until idle and walk are delivered.
+
+NOT DONE (by design): the gametest suite not run (no gradle); the t2 proof tree (the orchestrator's `--write-proof`, +13 entries); the
+reference folder's regeneration (the Crab's reference dump now shows eight draws per part; the Boyfriend / Girlfriend folders carry their
+clips); the Boyfriend / Girlfriend landing (held; the owner's options in the draft); the artist_handoff folder (the orchestrator's).
+
+GATE: GATE: t2d (first run) red at the suite - two required tests (T2SeamTests.t2_006, KeyframeLegTests.kf_007) failed on the Band P descriptor loading a client renderer class on the dedicated server (the fix above); t2d2 stopped by the orchestrator to take the refuter's second must-fix (the Creeping Horror's bind) -> t2d3 green: the g1 / s4 verify-only passes identical, the t2 write-proof G1 PARITY PASS: 42 models (the thirteen new entries; the Creeping Horror on its four posed samples), the reference clips deterministic across two gradle runs (298 files; the thirteen's clips byte-identical to their pre-slice files, only the index's provenance rows moved from hook to seam), referenceClipsVerify VERIFIED 298, the folder fresh (116 folders, 1,369 files, every check PASS), the benchmark proof re-pinned in the first run because g1tool moved (the sampler's rows and the shared search; the base revision 67e991b -> 00e0817) and verified unchanged since, the audit 0 errors / 112 acknowledged (the HOOKS list at 54); drift 0, build 0 (g1 2, s4 13, t2 42 PARITY PASS), suite: all 1279 required tests passed.

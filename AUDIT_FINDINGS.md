@@ -5473,6 +5473,22 @@ Entries: **79 total** — ANIM 20 (DIVERGENT 8 · PARTIAL 10 · MISSING 2) · BU
   `pinned_draw_count: 1` (the reference leg's pinned-divergence idiom) and fails by name the moment the draw fix lands.
   The port's `renderToBuffer` fix (each part drawn eight times as the original) lands with the Crab's slice, one
   refuter, exempt from the freeze. This line stays until then.
+- **2026-09-14 — THE DRAW FIX LANDED (577a0a6, T2d):** `ModelCrab.poseFrom` keeps the two inputs the poses read
+  (`ModelCrab.java:215-217`) and `renderToBuffer` (:258-344) re-poses and draws `leg1` / `leg2` / `leg3` at each of the
+  eight poses with the classic's own expressions in the original's order (orig `ModelCrab.java:199-274`: (36, 3, z) at z
+  0 / 10 / 20 / 30 with yaw -pi/2 +- a, then (-36, 3, z) with each yaw negated, a = cos(f2 x 1.7) x pi x 0.15 x f1),
+  then the body parts (orig :306-329) — eight three-segment legs, as 1.7.10 drew them; a fresh model draws the legs at a
+  swing of 0, the reference entry's declared bind transforms. The three `pinned_draw_count` pins are removed from
+  `reference_crab` (the probe holds the port to the declared eight draws: 24 leg + 22 body draws per capture, 984 leg
+  draws over 41 captures); `model_crab` carries the same explicit `render_instances`; `crab.geo.json` ships the
+  twenty-four leg bones (46 bones) and the Crab draws through the seam behind the dev switch on its hook (T2d). The
+  harness gained the explicit-scope case in `tools/g1_render_parity.py` (a clone with no group bone proven by the
+  classic's measured draw pose against its declared pivot: linear 1.5e-7, translation 9.5e-6 units over 984 draws; report
+  keys written for explicit rigs only, the fan rigs' checked-in metrics byte-identical). NOT REPRODUCED, RECORDED: orig
+  :310-311 draws `leg2` and `leg3` a ninth time between body4 and body5 at the eighth pose — the same pose, the same
+  triangles, a coincident duplicate with no visible difference; the ruled declaration counts eight draws per part, so the
+  fix draws exactly eight (reproducing the duplicate would change the declaration's count and the bone set with it: the
+  owner's call). The Crab's classic gametest rows read no model: no re-pin. Status: FIXED (one refuter, T2d).
 
 ## BUG — Port-code bugs (from 09_bugs.md)
 
@@ -10403,6 +10419,27 @@ two coplanar faces interpolate depth along OPPOSITE diagonals on the two sides a
   reference leg reports them `REFERENCE GEOMETRY UNPAIRED` (a new line; it skipped a source-less entry silently before)
   and stays green over the 111 entries. Both package. Status: FIXED for the folder; they land on the hook in a Tier-2
   slice as the Cannon Fodder did.
+- **2026-09-14 — (b) HELD AT THE SEAM'S PARTIAL TICK (577a0a6, T2d):** the pair did not land. `ModelBoyfriend` /
+  `ModelGirlfriend` declare no `setupAnim`: the classic pose is vanilla `HumanoidModel.setupAnim` (NeoForge 21.1.223,
+  `HumanoidModel.java:137-286` by the jar's LineNumberTable; the repository's sources jar is a 197-byte stub, so the body
+  was read from the bytecode) over the six floats, entity reads outside them (`getFallFlyingTicks`, `isVisuallySwimming`,
+  `getDeltaMovement`, `getMainArm`, `isUsingItem`, `getUsedItemHand`, the swinging arm) and the model fields the classic
+  renderer sets per frame: `attackTime = getAttackAnim(partialTick)`, `riding`, `swimAmount = getSwimAmount(partialTick)`.
+  The gap: `attackTime` and `swimAmount` are per-frame lerps at the renderer's partial tick, which `PoseInputs` (the S4
+  doctrine) does not carry, and both entities swing (`Boyfriend.java:367` / `:447`, `Girlfriend.java:441` / `:521`) — a
+  reachable per-frame read, the slice brief's stop. The lane wrote hooks anyway (a `HumanoidPose` interface, the
+  descriptors with the two lerps at partial tick 0, entity delegates, probe getters, `HOOKS` / `HOOK_DESCRIPTORS` rows,
+  seed states, eight sampled clips); the orchestrator removed all of it from the landing under the 2026-09-14 second set's
+  item 7 (the held pair's clips come with their landing; a hook the seam cannot carry verbatim is not a hook) and kept the
+  drafts in the advisor's scratch for the ruling. THE OWNER'S OPTIONS (each reversible): (a) carry the partial tick in the
+  seam — a `PoseInputs` field the replaced renderer fills from the animation state (a seam extension outside Amendment
+  2's "no harness or controller extension"), the hooks then read `entity.getAttackAnim(inputs.partialTick())` verbatim
+  and the pair lands in the next slice; (b) accept the tick-boundary swing — exact on the probe and at every whole tick,
+  short of the classic renderer's sub-tick lerp (a six-tick swing stepped at 20 Hz) — and land the drafts as they are;
+  (c) hold the pair, as now. Beside the pose, the same landing decides the classic renderer's layers the seam does not
+  draw (`HumanoidArmorLayer`, `ItemInHandLayer`, `CustomHeadLayer`, `ElytraLayer`). Their folders package from the
+  reference leg's geo as before (TEST-010 (a)), the sheet saying "sampled when the rig lands". Status: OPEN — the
+  owner's call.
 
 ### TEST-011 — The package generator's trigger inventory misses three flag idioms, so four sheets cannot offer the `attack` / `aggro_idle` rows their entities warrant: a raw `ATTACKING` accessor (the Lizard), a flag set through a goal's consumer (the Cave Fisher, the Dungeon Beast), and a vanilla `MeleeAttackGoal` strike with a `DATA_SCREAMING` state (the Ender Knight) (REPORT, 2026-09-13; found by the Tier-2 batch A seed lane)
 
