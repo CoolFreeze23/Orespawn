@@ -1,11 +1,11 @@
 {
   "format_version": "1.8.0",
   "animations": {
-    "reference_attack": {
+    "reference_display": {
       "loop": true,
       "animation_length": 0.05,
       "bones": {
-        "body1": {
+        "body": {
           "rotation": {
             "0.0": {
               "post": [
@@ -13,11 +13,11 @@
                 0.0,
                 0.0
               ],
-              "lerp_mode": "linear"
+              "lerp_mode": "catmullrom"
             }
           }
         },
-        "body2": {
+        "head1": {
           "rotation": {
             "0.0": {
               "post": [
@@ -25,11 +25,11 @@
                 0.0,
                 0.0
               ],
-              "lerp_mode": "linear"
+              "lerp_mode": "catmullrom"
             }
           }
         },
-        "body3": {
+        "head2": {
           "rotation": {
             "0.0": {
               "post": [
@@ -37,47 +37,47 @@
                 0.0,
                 0.0
               ],
-              "lerp_mode": "linear"
+              "lerp_mode": "catmullrom"
             }
           }
         },
-        "body4": {
+        "hf1": {
           "rotation": {
             "0.0": {
               "post": [
-                0.0,
+                -0.0243906055,
                 0.0,
                 0.0
               ],
-              "lerp_mode": "linear"
+              "lerp_mode": "catmullrom"
             }
           }
         },
-        "hips": {
+        "hf2": {
           "rotation": {
             "0.0": {
               "post": [
-                0.0,
+                0.0305335069,
                 0.0,
                 0.0
               ],
-              "lerp_mode": "linear"
+              "lerp_mode": "catmullrom"
             }
           }
         },
-        "larm1": {
+        "hf3": {
           "rotation": {
             "0.0": {
               "post": [
-                0.0,
+                0.0075439439,
                 0.0,
                 0.0
               ],
-              "lerp_mode": "linear"
+              "lerp_mode": "catmullrom"
             }
           }
         },
-        "larm2": {
+        "lleg": {
           "rotation": {
             "0.0": {
               "post": [
@@ -85,11 +85,11 @@
                 0.0,
                 0.0
               ],
-              "lerp_mode": "linear"
+              "lerp_mode": "catmullrom"
             }
           }
         },
-        "larm3": {
+        "neck": {
           "rotation": {
             "0.0": {
               "post": [
@@ -97,11 +97,11 @@
                 0.0,
                 0.0
               ],
-              "lerp_mode": "linear"
+              "lerp_mode": "catmullrom"
             }
           }
         },
-        "lazer": {
+        "rleg": {
           "rotation": {
             "0.0": {
               "post": [
@@ -109,127 +109,91 @@
                 0.0,
                 0.0
               ],
-              "lerp_mode": "linear"
+              "lerp_mode": "catmullrom"
             }
           }
         },
-        "lleg1": {
+        "tailf1": {
           "rotation": {
             "0.0": {
               "post": [
+                59.9886840462,
                 0.0,
-                0.0,
-                0.0
+                22.9183121467
               ],
-              "lerp_mode": "linear"
+              "lerp_mode": "catmullrom"
             }
           }
         },
-        "lleg2": {
+        "tailf2": {
           "rotation": {
             "0.0": {
               "post": [
+                59.9886840462,
                 0.0,
-                0.0,
-                0.0
+                45.8366242935
               ],
-              "lerp_mode": "linear"
+              "lerp_mode": "catmullrom"
             }
           }
         },
-        "rarm1": {
+        "tailf3": {
           "rotation": {
             "0.0": {
               "post": [
+                59.9886840462,
                 0.0,
-                0.0,
-                0.0
+                68.7549381478
               ],
-              "lerp_mode": "linear"
+              "lerp_mode": "catmullrom"
             }
           }
         },
-        "rarm2": {
+        "tailf4": {
           "rotation": {
             "0.0": {
               "post": [
+                59.9886840462,
                 0.0,
-                0.0,
-                0.0
+                -22.9183121467
               ],
-              "lerp_mode": "linear"
+              "lerp_mode": "catmullrom"
             }
           }
         },
-        "rarm3": {
+        "tailf5": {
           "rotation": {
             "0.0": {
               "post": [
+                59.9886840462,
                 0.0,
-                0.0,
-                0.0
+                -45.8366242935
               ],
-              "lerp_mode": "linear"
+              "lerp_mode": "catmullrom"
             }
           }
         },
-        "rleg1": {
+        "tailf6": {
           "rotation": {
             "0.0": {
               "post": [
+                59.9886840462,
                 0.0,
-                0.0,
-                0.0
+                -68.7549381478
               ],
-              "lerp_mode": "linear"
+              "lerp_mode": "catmullrom"
             }
           }
         },
-        "rleg2": {
+        "tailf7": {
           "rotation": {
             "0.0": {
               "post": [
-                0.0,
-                0.0,
-                0.0
-              ],
-              "lerp_mode": "linear"
-            }
-          }
-        },
-        "waist1": {
-          "rotation": {
-            "0.0": {
-              "post": [
-                0.0,
+                59.9886840462,
                 0.0,
                 0.0
               ],
-              "lerp_mode": "linear"
-            }
-          }
-        },
-        "waist2": {
-          "rotation": {
-            "0.0": {
-              "post": [
-                0.0,
-                0.0,
-                0.0
-              ],
-              "lerp_mode": "linear"
-            }
-          }
-        },
-        "waist3": {
-          "rotation": {
-            "0.0": {
-              "post": [
-                0.0,
-                0.0,
-                0.0
-              ],
-              "lerp_mode": "linear"
+              "lerp_mode": "catmullrom"
             }
           }
         }

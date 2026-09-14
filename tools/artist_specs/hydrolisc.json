@@ -230,5 +230,8 @@
     "keep the crest's health rule readable: fast and wide when healthy, slow and small when hurt (HydroliscModel.java:353-357) - the seam plays a fixed loop, so give the owner a calm (healthy) crest in `idle` and note that the hurt scaling is lost unless the seam adds a health input",
     "in `hurt`: a whole-body cringe and a snap of the crest closed - it is what a hurt pet does before it runs for water (:117-121)"
   ],
-  "effort_hours": null
+  "effort_hours": null,
+  "reference_states": {
+    "sit": {"isInSittingPose": true}
+  }
 }

@@ -156,5 +156,8 @@
     "in `close`: a snap of the leaves and a shudder of the head plates on the hit (EntityTriffid.java:168-176); the head is static today",
     "in `idle` (closed): a slow breath of the curl and a twitch of the folded tongue - a rooted plant needs a tell that it is alive"
   ],
-  "effort_hours": null
+  "effort_hours": null,
+  "reference_states": {
+    "open": {"getOpenClosed": 1}
+  }
 }

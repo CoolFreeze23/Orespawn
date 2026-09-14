@@ -1010,28 +1010,32 @@ final class KeyframeLeg {
             out.addProperty("confirm_uniform_intervals", confirmIntervals);
             out.addProperty("late_start_age_ticks", this.search.get("late_start_age_ticks").getAsDouble());
             out.addProperty("span_age_ticks", this.search.get("span_age_ticks").getAsDouble());
-            JsonObject table = new JsonObject();
-            Map<String, Integer> fewest = new LinkedHashMap<>();
-            for (int keys = minKeys; keys <= maxKeys; keys++) {
+            // The loop is the shared DensitySearch (the reference-clip sampler keys its clips through this same search):
+            // every group evaluated at every count until each has its fewest; the table and the fewest map are exactly
+            // what the loop here produced before the extraction.
+            List<String> groupNames = this.groups.stream().map(Group::name).toList();
+            DensitySearch.Result searched = DensitySearch.search(minKeys, maxKeys, groupNames, name -> this.tolerance, (keys, pending) -> {
                 Map<String, Integer> uniform = new LinkedHashMap<>();
                 for (Group group : this.groups) {
                     uniform.put(group.name(), keys);
                 }
                 RunResult run = runDense(maybeRepair(bake(generate(this.groups, uniform, this.lerpMode, this.seconds,
                         this.bindDegrees)), this.splineRepair), searchIntervals, List.of(1.0F));
+                Map<String, Double> errors = new LinkedHashMap<>();
+                for (Group group : this.groups) {
+                    errors.put(group.name(), run.maxError.getOrDefault(group.name(), Double.NaN));
+                }
+                return errors;
+            });
+            JsonObject table = new JsonObject();
+            searched.table().forEach((keys, errors) -> {
                 JsonObject row = new JsonObject();
                 for (Group group : this.groups) {
-                    double error = run.maxError.getOrDefault(group.name(), Double.NaN);
-                    row.addProperty(group.name(), error);
-                    if (!fewest.containsKey(group.name()) && error <= this.tolerance) {
-                        fewest.put(group.name(), keys);
-                    }
+                    row.addProperty(group.name(), errors.get(group.name()));
                 }
                 table.add(Integer.toString(keys), row);
-                if (fewest.size() == this.groups.size()) {
-                    break;
-                }
-            }
+            });
+            Map<String, Integer> fewest = searched.fewest();
             out.add("search_max_error_radians_by_keys_per_bone", table);
             JsonObject groupsBlock = new JsonObject();
             boolean allFound = fewest.size() == this.groups.size();

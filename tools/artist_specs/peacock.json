@@ -125,5 +125,8 @@
     "in `attack`: a neck jab at the termite (Peacock.java:144-146); the rig has no head motion today",
     "in `idle`: a look-around of the head and a settle of the flat tail; the crest folds to -61 degrees when the fan is closed (:153-155) — let it twitch"
   ],
-  "effort_hours": null
+  "effort_hours": null,
+  "reference_states": {
+    "display": {"getBlink": 1}
+  }
 }

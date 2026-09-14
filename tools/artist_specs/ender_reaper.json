@@ -198,5 +198,8 @@
     "in `attack`: a real scythe swing with the right arm — rarm1 (:369-371) carries the shaft (:393-403) and the code never moves it; the MeleeAttackGoal lands 18 (EnderReaper.java:54, :204)",
     "in `teleport`: a fold of the wings and a dissolve on the portal sound pair (EnderReaper.java:314-315)"
   ],
-  "effort_hours": null
+  "effort_hours": null,
+  "reference_states": {
+    "scream": {"isScreaming": true}
+  }
 }

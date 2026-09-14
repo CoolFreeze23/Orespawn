@@ -136,5 +136,8 @@
     "in `hurt`: a startled jump straight up before the panic run (Chipmunk.java:72)",
     "the hat pieces are hidden by the model (:187-188): key nothing on hat1 / hat2"
   ],
-  "effort_hours": null
+  "effort_hours": null,
+  "reference_states": {
+    "sit": {"isInSittingPose": true}
+  }
 }

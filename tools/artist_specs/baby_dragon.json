@@ -231,5 +231,9 @@
     {"bone": "tail6", "size": [0.27, 0.2475], "damage": 0.25}
   ],
   "locked_bones_note": "The design's section 6 ModelDragon row (geckolib_migration_design.md:446): 'Baby profile uses the same bones at 45% part sizes, never the adult constants' — the adult's bones (head [1,0.8] @1, body [1.4,1.1] @0.5, four leg roots [0.4,0.75] @0.5, wing14/wing15 [2.2,0.5] @0.25, tail1/tail3/tail6 [0.6,0.55] @0.25) each at 0.45: head [0.45,0.36], body [0.63,0.495], leg roots [0.18,0.3375], root panels [0.99,0.225], tail [0.27,0.2475]; the damage factors unchanged. The names resolve as in `dragon`'s seed: head, body, wing14, wing15, tail1, tail3, tail6 as written; 'four leg roots' taken as leg1, leg2 (hind thighs), leg3, leg4 (front uppers). The row pins the baby's renderer x0.45, texture state and root dimensions independently (BabyDragonRenderer.java:34; ModEntities.java:496-497).",
-  "effort_hours": null
+  "effort_hours": null,
+  "reference_states": {
+    "fly": {"getActivity": 1},
+    "sit": {"isInSittingPose": true}
+  }
 }

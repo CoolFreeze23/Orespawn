@@ -231,5 +231,9 @@
     {"bone": "tail6", "size": [0.6, 0.55], "damage": 0.25}
   ],
   "locked_bones_note": "The design's section 6 ModelDragon row (geckolib_migration_design.md:446): 'Adult: head [1,0.8] @1, body [1.4,1.1] @0.5, four leg roots [0.4,0.75] @0.5, wing14/wing15 [2.2,0.5] @0.25, tail1/tail3/tail6 [0.6,0.55] @0.25'. head, body, wing14, wing15, tail1, tail3 and tail6 resolve as written (wing14 / wing15 are the root panels; tail3 is the fourth segment of the chain and tail6 the sixth — the chain runs tail1, tail2, 'neck1', tail3, tail4, tail6, tail5, ModelDragon.java:531-570). 'four leg roots' is not a bone name: taken as the root of each leg chain — leg1 and leg2 (the hind thighs), leg3 and leg4 (the front uppers) (createBodyLayer :225-242, setupAnim :451-466). The row's baby profile ('the same bones at 45% part sizes') is in `baby_dragon`'s seed.",
-  "effort_hours": null
+  "effort_hours": null,
+  "reference_states": {
+    "fly": {"getActivity": 1},
+    "sit": {"isInSittingPose": true}
+  }
 }

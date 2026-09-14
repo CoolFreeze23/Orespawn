@@ -134,5 +134,8 @@
     "in `sing`: a throat swell — the jaw plate (:57-60) is the only croak the code has (:115-118); a body puff sells the 35-tick state",
     "in `attack`: a tongue-lash is not in the rig — a jaw snap and a body lunge toward the insect (Frog.java:248-250) is what the parts allow"
   ],
-  "effort_hours": null
+  "effort_hours": null,
+  "reference_states": {
+    "sing": {"getSinging": 1}
+  }
 }

@@ -250,5 +250,8 @@
     {"bone": "tail9", "size": [0.7, 0.7], "damage": 0.25}
   ],
   "locked_bones_note": "The design's section 6 ModelPitchBlack row (geckolib_migration_design.md:451): 'At scale 1: head1 [1.2,1] @1; body/body2 [1.8,1.8] @0.5; left/right segmented legs [0.6,1.4] @0.5; wing1/rwing1 [2,0.6] @0.25; tail1/tail5/tail9 [0.7,0.7] @0.25. Multiply part sizes from the authoritative discrete size tier.' head1, body, body2, wing1, rwing1, tail1, tail5 and tail9 resolve as written (ModelPitchBlack.createBodyLayer; tail9 is the left fork's second segment, ModelPitchBlack.java:932-934). 'left/right segmented legs' is not a bone name: taken as the three leg segments a side — leftleg1, leftleg2, leftleg3 and rightleg1, rightleg2, rightleg3 (the seven claw pieces a foot and the leg spikes stay visual). The sizes are the row's scale-1 values; the profile multiplies them by the synced size tier's scale (PitchBlack.getPitchBlackScale :240-242), which the row calls the scale-path proof case.",
-  "effort_hours": null
+  "effort_hours": null,
+  "reference_states": {
+    "fly": {"getActivity": 1}
+  }
 }

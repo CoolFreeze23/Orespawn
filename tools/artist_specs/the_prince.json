@@ -192,5 +192,9 @@
     {"bone": "tail4", "size": [0.25, 0.35], "damage": 0.25}
   ],
   "locked_bones_note": "The design's section 6 ModelThePrince row (geckolib_migration_design.md:454): 'head/Lhead/Rhead [0.35,0.35] @1; body [0.7,0.55] @0.5; Lleg1/Rleg1 [0.22,0.5] @0.5; Lwing/Rwing [0.55,0.2] @0.25; tail1/tail4 [0.25,0.35] @0.25'. Every design name resolves to the port model's part names as written (ModelThePrince.createBodyLayer). The row: 'Small targets may fail usability testing; if so demote to Tier 2 instead of inflating boxes beyond the art.'",
-  "effort_hours": null
+  "effort_hours": null,
+  "reference_states": {
+    "fly": {"getActivity": 2},
+    "sit": {"isOrderedToSit": true}
+  }
 }

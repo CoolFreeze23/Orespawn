@@ -165,5 +165,8 @@
     "in `flap`: one full two-sided beat — the code's flap is one-sided (:401) and plays one cycle in three (:396-398)",
     "in `sit`: a real crouch with the legs folded under the body — the code only flips the head (:371-377)"
   ],
-  "effort_hours": null
+  "effort_hours": null,
+  "reference_states": {
+    "sit": {"isInSittingPose": true}
+  }
 }

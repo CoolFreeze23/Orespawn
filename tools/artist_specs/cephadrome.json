@@ -218,5 +218,8 @@
     {"bone": "tail3", "size": [0.8, 0.7], "damage": 0.25}
   ],
   "locked_bones_note": "The design's section 6 ModelCephadrome row (geckolib_migration_design.md:445): 'head [1.3,1.0] @1; body/chest [2.3,1.4] @0.5; left/right leg chains [0.5,0.9] @0.5; wing-fin roots [1.7,0.45] @0.25; tail1/tail3 [0.8,0.7] @0.25'. head, body, chest, tail1 and tail3 resolve as written. 'left/right leg chains' is not a bone name: taken as every segment of each chain — leftleg1, leftleg2, leftleg3, leftfoot and rightleg1, rightleg2, rightleg3, rightfoot (the code poses all four pieces a side, ModelCephadrome.java:314-330). 'wing-fin roots' is not a bone name: taken as the root spar a side — the port model spells the left one 'lefwingfin1' (createBodyLayer; the geo carries that spelling) and the right 'rightwingfin1'; the row says the membranes and outer spars stay visual ('make only structural fin roots damageable').",
-  "effort_hours": null
+  "effort_hours": null,
+  "reference_states": {
+    "fly": {"getActivity": 1}
+  }
 }
