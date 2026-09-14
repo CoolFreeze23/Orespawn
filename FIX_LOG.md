@@ -8185,3 +8185,262 @@ reference folder's regeneration (the Stinky's folder carries the renamed clip); 
 the draft); the artist_handoff folder (the orchestrator's).
 
 GATE: GATE: t2e green on the first run (drift 0, build 0, suite: all 1280 required tests passed; the g1 / s4 verify-only passes identical, the t2 write-proof G1 PARITY PASS: 56 models, the clips deterministic across two gradle runs (298 files; the fourteen's clips byte-identical, the Stinky's clip renamed, the index's rows moved), referenceClipsVerify VERIFIED 298, the folder fresh (116 folders, 1,369 files, every check PASS), the benchmark proof re-pinned for g1tool's move (the sampler's rows), the audit 0 errors / 84 acknowledged with HOOKS at 40); t2e2 green again after the refuter's citation fixes (the same numbers, the benchmark verified unchanged, the audit the same).
+
+## PHASE G — THE SIXTH TIER-2 SLICE, T2f (2026-09-15): the last fourteen Tier-2 rigs on their written hooks — the state-branching remainder of the design's order — twelve landed on the hooks already written (the Ender Knight, Ender Reaper, Frog, Gazelle, Nastysaurus, Peacock, Sea Viper, Urchin, Ostrich, Spyro, Stinky, Triffid) through the seam behind the dev switch; the Dungeon Beast HELD on its whole-model render transform and its four never-drawn toe parts (neither form the proof legs accept, the register line) and the Scorpion HELD on the visual leg (a harness depth-tie finding on two overlapping leg cubes at the gait's quarter pose, the register line); the twelve packages with the SPEC's formulas and the sampler's clips; the classicRotX bind read lifted into the base; no gameplay touched
+
+RULING. Owner 2026-09-15, closing set, item 4 (addendum item 33 (4)): "Each slice in the standing form: fifteen rigs on their written
+hooks, the geo shipped, the renderer registered behind the switch, the four legs and the reference leg where a pair exists, one refuter,
+the gate, records as the cost rules, the package rows regenerated. ... A rig that fails a leg is held with a register line and rejoins at
+the remainder; one still failing there is reported, not forced." This slice: the last fourteen of the twenty-nine remaining Tier-2 rigs
+in the design's order (the state-branching class; the §1 inventory row order within it) - after it no Tier-2 rig remains unlanded but the
+Ghost (ENT-S-160), the held Boyfriend / Girlfriend (the biped seam change) and the three held here and in T2e (the Lurking Terror, the
+Dungeon Beast, the Scorpion). Amendment 2 (owner 2026-09-13, second set, item 2): every rig lands ON ITS HOOK - no clip manifest, no
+transcription, no keyframeLayers(). Addendum items 10 and 14 (FIX_LOG "THE HOOKS (2026-09-14)"): the hooks exist and are reused; the
+slice adds the geo, the wiring, the pins, the manifest entry and the proofs, and moves the rig out of the hook state. Parity lanes
+frozen: a divergence gets a draft register line and stops. One refuter for the whole slice (the cost rules of 2026-09-12, item 25 (3)).
+
+WHAT LANDED (twelve rigs on their hooks; twelve geos, twelve empty animation files, twelve manifest entries, twelve pin candidates,
+twelve seeds with formulas, the sampler's clips per state; the design's order):
+- THE HOOKS (`entity/client/<Name>GeoReplacement.java`, written by the hook lanes and reused - the descriptor's javadoc gains the landing
+  line; every hook diffed against its classic poseFrom (hook_diff_t2f.py: the numeric-literal multisets of the hook body and its helpers
+  against the classic body and its helpers - ten MATCH exactly (dungeon_beast, ender_knight, frog, gazelle, nastysaurus, peacock, urchin,
+  spyro, stinky, triffid), the four differences all structural: the Ender Reaper's classic chained writes `lwing2.yRot = lwing3.yRot =
+  0.785f + newangle` written per part by the hook (the Creeping Horror precedent), the Sea Viper's hook-side chained-state index constants
+  X / Z / Y_ROT the diff folds as literals, the Ostrich's and Scorpion's classic unused locals `float hf = 0.0f` / `float upangle = 0.0f`
+  not declared in the hooks); the animation leg's 0 rad over every sample, amplitude and state is the ruled proof; no drift found, none
+  fixed):
+  ender_knight (the THRESHOLD gait 1.3 ws x 0.25 on the fourteen leg / foot parts about their 0.6 / -0.1 rests, the cape rolling on a
+  quarter of it and pitching 0.7 ws x 0.02, the HEAD-LOOK yaw at 0.45 clamped to +-0.45, the SCREAMING arms 2.7 ws x 0.3 about -1.2 / -1.8
+  with the blade at 0.5 + 3/2 of it else the guard (-0.5 / -1.0, the forearms yawed +-1.0), the POSITION follows 10 / 7 (+1 y) in the
+  classic's double arithmetic through moveYZ; EnderKnightPose; shadow EnderKnightRenderer.SHADOW 0.3, no scale hook; one zero-thickness
+  cube cape2 so the classic face order); ender_reaper (the THRESHOLD gait feeding 1 - |cos| on the three scythe parts, the SCREAMING
+  scythe 1 + 1.9 ws x 0.25, left arm -0.436 / -0.488 and wings 2.7 ws x 0.3 else -2.436 / 1.0 and 0.7 ws x 0.06 about +-0.785, the HEAD-LOOK
+  yaw clamped; EnderReaperPose; shadow 0.2, no scale hook; four zero-thickness cubes - the wing membranes lwing1 / rwing1 0 x 50 x 17 and the
+  blade pieces scythe2 / scythe3 - so the classic face order); frog (the THRESHOLD gait 1.4 ws x 0.55 about Y on the front legs and the
+  lower hind legs at half, the SINGING jaw 1.22 + 0.85 ws x 0.15, the JUMP roll +-2.44 else +-0.227 on the vertical velocity, the lower hind
+  legs FOLLOWING 9 units through moveYZ; FrogPose with its Vec3 rest; shadow 0.35, FrogRenderer.SCALE 1.0 halved for a baby - the constant
+  made public by this slice); gazelle (the THRESHOLD gait 1.1 ws x 0.12 on eighteen leg parts about their rests, the HEAD-LOOK yaw at 0.45
+  on eleven parts with the ears at 1.57 + it + 0.5 x 0.02, the CROUCH branch on the tail 1.0 + 0.1 x 0.06; GazellePose; shadow 0.45,
+  GazelleRenderer.SCALE 1.0 halved for a baby - made public by this slice); nastysaurus (the HEAD-LOOK yaw % 360 x 0.35 on twenty-eight
+  parts, the second neck ring at half; the ATTACKING jaw 0.85 ws x 0.16 + 0.5 over the CHEW LATCH - the 0.7 ws phase wrap against
+  RenderInfo.rf1, ri1 re-rolled one in twenty from the level RNG through Nastysaurus.getLevelRandom(), sin 0.85 ws x 0.16 + 0.5 while set
+  else 0.196; the THRESHOLD (> 0.001) gait cos / sin (ws / 2) with the claw POSITION writes 21 - 4 sin x lsa and 15 + 10 cos x lsa and the
+  17-unit leg follows, the right leg a half turn behind; the tail 0.76 / 0.25 attacking else 0.26 / 0.08 with an 11-unit follow;
+  NastysaurusPose; the renderer's literal 1.0f x 1.5f shadow, NastysaurusRenderer.SCALE 1.5 - made public by this slice); peacock (the
+  THRESHOLD legs 1.3 ws x 0.15, the DISPLAY branch on getBlink() > 0 - the head feathers 0.401 / -0.174 / -0.698 and the tail feathers raised
+  1.047 and fanned -+0.4 / 0.8 / 1.2, else -1.06 and 0, constants every frame; PeacockPose; shadow 0.25, a baby at 0.5; ten zero-thickness
+  feathers so the classic face order); sea_viper (the negative-swing clamp, the base segment 1.3 ws x 0.1 x lsa and the twenty-one-segment
+  doseg chain - 9 units along the predecessor's yaw foreshortened by |cos(pitch)|, the wave lagged pi/4 per index blended to the S-curve;
+  the ATTACKING jaw 0.65 + 1.7 ws x 0.17 and tongue 4.7 ws x 0.07 with the 1.5 ws z offset folded into the pivot (x16) else 0.45 + 0.2 ws x
+  0.02 / 1.7 ws x 0.03 / 0.5 ws; the HEAD-LOOK yaw at 0.5 on nine parts, the forks -+0.436, the lower jaw following the head 2 units;
+  SeaViperPose; shadow 1.0, no scale hook); urchin (the THRESHOLD fins on five gait cosines 0.7 / 1.7 / 1.65 / 1.75 / 1.8 ws x 0.15 about
+  +-0.261 / +-0.523, the ATTACKING centre spin (age x 0.2) mod 2 pi else 0.02 and the eight spine rocks 0.7 .. 0.35 ws x 0.06 else 0.07 ..
+  0.035 x 0.02; UrchinPose; shadow 0.4375, UrchinRenderer.SCALE 1.25); ostrich (the POSITION-DELTA gait |xOld - x, zOld - z| on 1.25 ws x
+  0.4 clamped +-0.75 over twenty-two leg parts - 0 on a probe that does not move, the clips say so; the tail 0.05 x 0.06 about -0.594 and
+  the feathers' yaw 0.061 / 0.072 x 0.08; the RIDDEN rf1 accumulation of the yaw delta x 20 eased a sixtieth and clamped +-50 else half the
+  look yaw; the SITTING-not-activated head inversion 3.1415 on six parts; the HEAD-LOOK at 0.65 on five parts; the |cos| wings 1.0 ws x 0.15
+  behind the ri1 LATCH rolled one in three at the rhythm's rising zero crossing with its 0.3-tick look-ahead; the two hats' VISIBILITY by the
+  activation level through setVisible; the EXISTING OstrichPose; shadow 0.55, no scale hook; eleven zero-thickness cubes - the eight claws
+  and the three tail feathers - so the classic face order); spyro (the port's ws = limbSwingAmount: the THRESHOLD wings 2.3 ws x 0.4 x lsa
+  halved flying and the twelve leg parts 2.0 ws x 0.25 x lsa - 0 flying, folded -1 / +1 at activity 2 - the tail 1.2 ws x 0.25 stilled
+  sitting or flying with the front link at 1.6 and a 3-unit follow less 0.5 x, the HEAD-LOOK yaw and pitch in radians on twelve parts with
+  the horns -+0.785; SpyroPose; shadow 0.4875, SpyroRenderer.SCALE 0.75; two zero-thickness wings so the classic face order); stinky (the
+  port's ws = limbSwingAmount: the THRESHOLD wings 2.3 ws x 0.4 x lsa about -+0.4 and the four legs 2.0 ws x 0.25 x lsa folded -1 / +1 at
+  activity 2, the tail 1.0 ws x 0.2 stilled sitting with the links at 1.6 / 2.6 and 4 / 3-unit follows less 0.5 x, the HEAD-LOOK yaw on
+  seven parts (the neck half) and the pitch at a third; StinkyPose; shadow 0.75, no scale hook; two zero-thickness wings so the classic face
+  order); triffid (the OPEN / CLOSED fold - 0.1225 closed, 0.25 ws x 0.039 open - down four leaf chains through the state-carrying helpers
+  leafpartA-D (each link the parent's angle plus the fold, placed j units along the parent's sine / cosine in double arithmetic; l44's root
+  the bind), the ATTACKING tentacle |0.25 ws x 0.5| else pi/2 with the alternating -+angle - 0.6 roll down t15 .. t3 and 6 / 3-unit follows,
+  t1 / t2 riding t3, the thirteen yaws zeroed; TriffidPose; shadow 0.3, no scale hook; eleven zero-thickness leaf tips c1-c11 - never
+  written by the hook - so the classic face order).
+- THE HOOK-LANE NOTES ACTED ON: the three private renderer SCALE constants the hooks mirrored as equal literals (the Frog's and Gazelle's
+  1.0 with the baby halving, the Nastysaurus's 1.5) made public IN PLACE - no line added, the seeds' size_notes cite the renderers' lines -
+  and the three descriptors scale by `<Renderer>.SCALE` in applyScale with their own literals dropped (the pins tool passes a candidate's
+  scale only through the renderer's constant: the three DIVERGED as named until then; the T2d form for the Baryonyx and Cassowary, the
+  T2e form for the Whale); the Sea Viper's bind-read helper `classicXRot(bone) = -bone.getRotX()` is the read the landed Spit Bug (T2e)
+  and the Scorpion carry as their private `classicRotX`, so the brief's condition holds and the base gains `protected static float
+  classicRotX(GeoBone)` (`OreSpawnGeoReplacement`, the landed descriptors' name, the pair of rotateX): the Sea Viper's private copy went
+  and its one doseg call was renamed (the hook's own read-back idiom, not classic code: the classic reads `inn.xRot`), the Spit Bug's
+  private copy went with its four calls unchanged, and the HELD Scorpion's private copy had to go as well (Java refuses a private static
+  hiding the base's protected one; its call unchanged, its hook body untouched); the Sea Viper's `classicBindZ(bone) = bone.getPivotZ()`
+  has no other reader and stays in its descriptor. The Triffid's flat-cube count corrected against the shipped geo (eleven leaf tips
+  c1-c11, not "ten"). The Dungeon Beast's whole-model render transform: neither form the brief names is a form the proof legs accept
+  today - held, below. Every landed descriptor's javadoc edit is LINE-NEUTRAL: the class javadoc's paragraphs re-wrapped to the same block
+  length (the blank paragraph separator dropped in eight files, kept in four), so `applyCustomAnimations` keeps its HEAD line in all
+  twelve and the carried HOOK_RULES rows' citations, the clip index's read_at lines and this slice's notes stay true (the T2e refuter's
+  lesson). The shadow literals stay equal literals (the T2c doctrine (vii)); no render type to re-base among the twelve.
+- THE SHIPPED GEOS: the converter's output byte for byte (`geo/entity/<stem>.geo.json`: enderknight, enderreaper, frog, gazelle,
+  nastysaurus, peacock, seaviper, urchin, ostrich, spyro, stinky, triffid - the manifest id's stem), `orespawn:bone_draw_order` on all
+  twelve, `orespawn:cube_face_order` on the Ender Knight (cape2 9 x 24 x 0), Ender Reaper (lwing1 / rwing1 0 x 50 x 17, scythe2 16 x 6 x 0,
+  scythe3 7 x 5 x 0), Peacock (hf1-3 0 x 7 x 3, tailf1-7 8 x 0 x 30), Ostrich (LClaw1-4 / Rclaw1-4 0 x 2 x 3 and 0 x 1 x 3, Tail1 4 x 0 x 14,
+  Tail2-3 3 x 0 x 13), Spyro (WingLeft / WingRight 10 x 0 x 4), Stinky (Lwing / Rwing 18 x 0 x 10) and Triffid (c1-c11 0 x 5 x 2) - TEST-007
+  / ENT-S-146; the fifty-one already-shipped t2 geos equal the converter's output (copy_geos.py); twelve empty animation files (the s4 form,
+  byte-identical to cricket's); the dev-switch wiring (`PhaseGDevRenderers` twelve providers, `OreSpawnClient` twelve registrations through
+  them; the classic renderers the default); `tools/reference_renderer_pins.json` naming twelve port_candidates (PASS 120 / DIVERGES 0 /
+  MANIFEST_DRIFT 0; 81 candidates named).
+- THE MANIFEST (`tools/t2_model_proofs.json` +12 entries, 68 models): `entity_state` on every one (every hook of this slice reads its
+  entity; the probe poses an entity_state entry's classic side through poseFrom on a fresh subject per sample): idle / screaming for the
+  Ender Knight and Ender Reaper (the flag through the state's getters object), idle / singing for the Frog (the jump branch on
+  getDeltaMovement().y is a Vec3 the probe answers as ZERO - not enumerable, item 32 (2)), idle / crouching for the Gazelle, idle / chewing
+  (ri1 1, the Robot2 preset form) / attacking for the Nastysaurus, idle / display for the Peacock, idle / attacking for the Sea Viper and
+  Urchin, idle / wings_flapping (ri1 1) / sitting / activated (getIsActivated 2: both hats shown) for the Ostrich, idle / flying (activity 3)
+  / legs_folded (activity 2) / sitting for the Spyro, idle / legs_folded / sitting for the Stinky (the state the T2e landing named, kept),
+  idle / open / attacking for the Triffid; the hook path, `channels: []` on every entry, `reference_source` on all twelve, the Beaver's
+  amplitude matrix 0 / 0.25 / 0.5 / 1 on the ten hooks that read limbSwingAmount (the Ostrich's gait reads the movement delta, the Triffid
+  reads none), the head-look rigs sampled at netHeadYaw 30 / headPitch 10 (ender_knight, ender_reaper, gazelle, nastysaurus, sea_viper,
+  ostrich, spyro, stinky); bind EXCLUDED from the visual samples of the six rigs whose hook writes a flat bone every frame with the Bee-form
+  note (ender_knight, ender_reaper, peacock, ostrich, spyro, stinky; TEST-008 (c)) - the Triffid's tips are never written, so it keeps bind
+  (the Baryonyx form); the hook_rig_note extended.
+- THE AUDIT AND THE SAMPLER OUT OF THE HOOK STATE: twelve `HOOKS` entries removed from `tools/asset_audit.py` (40 -> 28);
+  `ReferenceClipSampler`: twelve `HOOK_DESCRIPTORS` rows removed, twelve `REGISTRIES` rows added (model_<stem> -> registry), twelve
+  `HOOK_RULES` rows carried verbatim into `RULES` keyed by the manifest id (the same rule, the same source lines - and the lines still
+  true, the descriptors line-neutral), the javadoc count sentence. The clips of the twelve reproduce IDENTICALLY over the shipped geo:
+  `cmp` of all 40 files against the pre-slice files - 40 identical, 0 differing; the held Dungeon Beast's 3 and Scorpion's 2 and the other
+  252 clips unchanged; the index marks the twelve landed on the shipped rig. Two headless runs diff-clean (sA == sB), installed, `--verify`
+  VERIFIED 298 files.
+- THE SAMPLER'S RULES AND SPANS (the carried rows; `tools/reference_clips/reference_clips.json`): ender_knight two_seconds_past_cap (T 42.74
+  at 0.7 x 0.21; walk / scream, idle period_multiple k = 1), ender_reaper period_multiple (T 39.03 at 0.7 x 0.23; walk k = 3, idle k = 1, the
+  scream two_seconds_past_cap), frog period_multiple (T 4.49 at 1.4 x 1.0; walk k = 1, sing k = 5, idle one_key), gazelle
+  two_seconds_past_cap on the walk, period_multiple k = 1 on idle / crouch (T 62.83 at 0.1), nastysaurus two_seconds_past_cap (T 37.18 at
+  0.26 x 0.65; walk / attack, idle period_multiple k = 1), peacock period_multiple (T 6.44 at 1.3 x 0.75; walk k = 1, idle / display one_key),
+  sea_viper two_seconds_past_cap (T 62.83 at 0.2 x 0.5; walk / idle / attack), urchin two_seconds_past_cap (T 314.16 at 0.02; walk / idle /
+  attack), ostrich two_seconds_past_cap (T 125.66 at 0.05; walk / idle / sit - the gait reads the movement delta, 0 on the probe), spyro
+  period_multiple k = 12 on the walk (T 5.24 at 1.2), one_key on idle / fly / sitting_flat / sit, stinky period_multiple k = 10 on the walk
+  (T 6.28 at 1.0), one_key on idle / sit / legs_folded, triffid one_key on walk / idle, period_multiple k = 1 on attack (T 12.57, the |cos|
+  half period at 0.25) and open (25.13) - every span exactly as the hooks' landing sampled it (the clips are byte-identical).
+- THE PACKAGES (`tools/artist_specs/<registry>.json`): twelve seeds gain `formulas` (the port pose method and its real lines quoted,
+  declaration to closing brace, with the helpers' spans where the pose runs through them - the Sea Viper's doseg, the Triffid's four leaf
+  helpers; the 1.7.10 pose statements in `render` (func_78088_a; func_78087_a a bare super call in all twelve) cited `orig:` with the
+  wingspeed's ClientProxyOreSpawn line, every formula and constant in words), their status / artist_scope say the rig is in-game on its
+  hook since T2f; all twelve are hand-compacted, so every one was edited by exact-string replacement (the T2e path). The dry run: 116
+  folders, 1,369 files, `check` PASS 116 / 0; Tier 2 in-game 64 rigs (70 less the 6 not yet in-game); EXTRAS_CAP on the spyro and the stinky
+  (as before); `test_artist_package.py` 50 OK.
+- THE GAMETESTS: `T2SeamTests.t2_008` (one new row, the required-test count 1280 -> 1281): each of the twelve descriptors constructs
+  registry-free, declares NO keyframe layer, its shipped animation file bakes to no clip, the self-gate registers nothing under the modern
+  keys, its shadow is the classic renderer's, the classic face order is required exactly where the shipped geo carries it (the Ender
+  Knight, Ender Reaper, Peacock, Ostrich, Spyro, Stinky, Triffid), and the classic hook poses a fresh bake of the shipped geo off its bind at
+  age 7 (a RestSubjectT2f implementing the twelve pose interfaces at rest - not screaming / singing / crouching / sitting / activated /
+  ridden, no vertical velocity or movement delta, attacking 0, activity 0, closed, a fresh RenderInfo and the entity / level RNG seeded 0 -
+  one instance per species since every hook reads its entity and the Nastysaurus and Ostrich write the latch scratch); the assertions shared
+  through assertHookSpecies. `KeyframeLegTests.kf_007` eighty-two replacements (70 + 12; the fourteen Tier-2 descriptors with layers
+  unchanged).
+- THE DUNGEON BEAST (HELD - audit_dungeon_beast_held.txt): the brief's one rig whose classic renderer draws what the hook does not pose.
+  `ModelDungeonBeast.renderToBuffer` draws every part under `mulPose(Axis.YP.rotationDegrees(90))` (orig :574 glRotatef) and draws sixty
+  of the sixty-four compiled parts (ltoe1 / ltoe3 / rtoe1 / rtoe3 never rendered - orig :575-634 the same, the port faithful). Run 1
+  measured it on the hook with no transform carried: geometry PASS 4.49e-7 blocks over 3,904 cube-samples, surface PASS 0 / 2.69e-7 over
+  93,696 vertex-samples, animation PASS 0 rad, then DRAW ORDER MISMATCH at bind (the classic list of 60, GeoRenderer's 64), and the harness
+  rasteriser on the same dumps puts the rotation's visual effect at changed 0.19 .. 0.20 (12,706 .. 13,412 px, MAE 13) at every sample. THE
+  DECISION: neither form lands under the S4 doctrine - (a) a descriptor-level render transform (applyRotations / applyScale) is applied
+  in-game but by no leg (the probe renders the bake through CapturingGeoRenderer under the fixed normalisation and consults the descriptor
+  only for its render type; proving it needs a probe extension; in-game the slot runs before GeckoLib's flip, so it would carry -90 about Y:
+  R_z(180) R_y(90) = R_y(-90) R_z(180)); (b) a root bone the converter emits needs the converter, the parity's bone-set rule, the draw-order
+  key's nesting and the animation leg extended; (c) the four undrawn toes fail the draw-order leg on their own and the harness has no
+  "compiled but never drawn" notion (a hook hiding them through setVisible would transcribe renderToBuffer into setupAnim - not the classic
+  code verbatim). Not forced: run 1's measurement entry and its copied files taken back (hold_dungeon_beast.py); its hook state stands as the
+  hook lanes left it (no wiring, no pin, no gametest row, the seed and javadoc untouched, its three clips byte-identical). The Kraken's hook
+  carries the same shape: the remainder lands the two together under the register line's option (a).
+- THE SCORPION (HELD - audit_scorpion_held.txt): the t2 chain's run 1 FAILED its visual leg (`VISUAL MISMATCH
+  model_scorpion/s_claws_swinging_a1_t_quarter: changed fraction 1.495e-3 > 1e-3`) after geometry 3.16e-7 over 1,342 cube-samples, surface
+  0 / 2.00e-7 over 32,208, animation 0 rad, draw order 61 / 1,342 and reference 22 parts all PASSED. The lane's read-back with the harness's
+  own rasteriser (probe_visual.py): the 98 changed pixels (88 inside the contested mask) are owned by `rleg1` on the vanilla side and
+  `rleg2` on the geo side (97 of 98) - the first and second right legs at 2.65 and 2.52 rad about pivots three units apart at the gait's
+  quarter pose overlap in the projection within the contest window, and the rasteriser's triangulation-dependent depth past 1e-6 picks
+  different winners (TEST-012's mechanism on two solid cubes rather than a flat pair; no flat cube on the rig, so TEST-008 (c) does not
+  reach it); the attacking state's quarter sample fails the same way (97 px), bind / t0 / t_half / t_three_quarter 0 or 11 px. Not forced:
+  every landing piece taken back (hold_scorpion.py - the wiring, the pin, the audit row restored, the sampler's HOOK_DESCRIPTORS and
+  HOOK_RULES rows restored verbatim, the manifest entry, the geo and animation file deleted; no gametest row, seed or javadoc had been
+  written); its hook state stands as the hook lanes left it but the private `classicRotX` duplicate the base lift required removing (its
+  call and hook body unchanged), its two clips byte-identical. The remainder needs the owner's call among TEST-012's three options.
+
+THE PROOF (this lane's `--validate-only` evidence over the t2 chain, run 2, `G1 PARITY STAGING PASS: 68 models`; the t2 proof tree is the
+orchestrator's to regenerate): enderknight geometry 3.16e-7 blocks (1640 cube-samples over 41 samples), surface UV 0 / normal 1.43e-7
+(38,704 vertices, 164 zero-area faces ignored), animation 0 rad over 4920 channel samples at every amplitude in idle / screaming, position
+2e-7 units, draw order 41 captures / 1640 draws, face order 9,840 faces over 41 captures, reference 40 parts, visual 0 / 0 / contested
+2.14e-3; enderreaper 7.07e-7 (2706), 0 / 1.42e-7 (656 ignored), 0 rad over 8118 (position 2e-6), 41 / 2706, face order 16,236 / 41, 66 parts,
+0 / 0 / 1.57e-3; frog 3.18e-7 (410), 0 / 1.84e-7, 0 rad over 1230 in idle / singing, 41 / 410, 10 parts, 1.53e-5 / 5.8e-4 / 6.1e-3; gazelle
+3.01e-7 (1394), 0 / 1.6e-7, 0 rad over 4182 in idle / crouching (position 2e-7), 41 / 1394, 34 parts, 0 / 0 / 8.16e-3; nastysaurus 6.04e-7
+(3599 over 61 samples), 0 / 1.39e-7, 0 rad over 10,797 in idle / chewing / attacking, 61 / 3599, 59 parts, 0 / 0 / 6.68e-3; peacock 4.03e-7
+(656), 0 / 1.09e-7 (1640 ignored), 0 rad over 1968 in idle / display, 41 / 656, face order 3,936 / 41, 16 parts, 0 / 0 / 5.19e-4; seaviper
+2.0e-6 (1394), 0 / 2.0e-7, 0 rad over 4182 in idle / attacking (position 1e-6), 41 / 1394, 34 parts, 0 / 0 / 5.95e-3; urchin 2.52e-7 (697),
+0 / 1.82e-7, 0 rad over 2091, 41 / 697, 17 parts, 0 / 0 / 5.04e-4; ostrich 2.26e-7 (768 over 21 samples), 0 / 1.12e-7 (924 ignored), 0 rad
+over 2394 in idle / wings_flapping / sitting / activated, 21 / 768, face order 4,608 / 21, 38 parts, 0 / 0 / 2.19e-2; spyro 3.01e-7 (2997
+over 81 samples), 0 / 2.01e-7 (648 ignored), 0 rad over 8991 in idle / flying / legs_folded / sitting, 81 / 2997, face order 17,982 / 81, 37
+parts, 0 / 0 / 3.43e-3; stinky 3.0e-7 (1220 over 61), 0 / 1.66e-7 (488 ignored), 0 rad over 3660 in idle / legs_folded / sitting, 61 / 1220,
+face order 7,320 / 61, 20 parts, 0 / 0 / 3.45e-3; triffid 7.08e-7 (2848 over 16), 0 / 2.83e-7 (704 ignored), 0 rad over 8544 in idle / open
+/ attacking (position 3e-6), 16 / 2848, face order 17,088 / 16, 178 parts, 0 / 0 / 3.42e-3. Render state entity_cutout_no_cull / white /
+light 0 on both sides for all twelve. The fifty-six entries landed before: identical numbers, the shipped geos equal to the converter's
+output. THE CHAIN REPEAT: run 3 (`run_t2_chain.sh t2f2 run3 validate`) `G1 PARITY STAGING PASS: 68 models` rc 0, `diff -rq run2 run3` 0
+lines; the s4 chain twice in verify mode `G1 PARITY PASS: 13 models; checked-in proof verified`, `diff -rq s4a s4b` 0 lines; the g1 chain
+twice `G1 PARITY PASS: 2 models; checked-in proof verified`, `diff -rq g1a g1b` 0 lines.
+
+DECIDED UNDER DOCTRINE, REVERSIBLE (one line each): (i) the geo file names follow the t2b naming (the manifest id's stem); (ii) the sample
+periods per entry are each rig's slowest rest rhythm (the HOOK_RULES row's), a probe choice; (iii) the head-look inputs 30 / 10 on the
+eight rigs that read netHeadYaw (five read no pitch); (iv) every entry is entity_state because every hook of the slice reads its entity -
+the three latch rigs with an ri1-preset state (the Robot2 form), the flags through the states' getters object, the Ostrich's activated
+state at level 2 (both hats); (v) the base gains classicRotX under the landed descriptors' name (the Sea Viper's classicXRot renamed at its
+one call), the held Scorpion's private duplicate removed for the compiler; (vi) the three renderer SCALE constants made public in place
+rather than the descriptors' literals kept; (vii) the descriptors' javadocs re-wrapped line-neutrally (the paragraph separator dropped
+where it had to go) rather than the carried rules' lines shifting; (viii) the Dungeon Beast and the Scorpion HELD rather than a form the
+legs cannot prove built, a posed sample excluded or a threshold moved (a tolerance is an owner ruling); (ix) t2_008 is a new row sharing
+assertHookSpecies (the count moves by one); (x) bind excluded from the visual samples of the six flat-writing rigs and kept for the
+Triffid (TEST-008 (c)); (xi) the Triffid's javadoc count corrected against the shipped geo (eleven tips).
+
+THE REFUTER (one, per the cost rules; its report in the advisor's scratch `r21/t2f_ref/`): CONFIRMED the twelve hooks as
+the classic code verbatim by a statement-level normaliser (66 residual hunks, every one structural: chained classic
+writes split per part, the Nastysaurus's claw loop over the classic's six hand-written writes, the chained-state
+arrays), the geos as the converter's output (63 t2 geos byte-identical to its own chain), the manifest entries with the
+flat-bone rule checked rig by rig (bind excluded on the six whose hooks write flat bones, the Triffid's eleven tips
+written by neither side), the legs' numbers by its own chain, both holds re-measured to the same numbers (the Scorpion's
+98 pixels at the quarter sample, `rleg1` / `rleg2` 97 of 98; the Dungeon Beast's draw-order mismatch with exactly the
+four toe parts and the 0.19-0.20 changed fraction), the Triffid observation at orig :1404, the seeds' spans (0
+problems), the sampler's 298 files byte-identical, the gametest count by construction (1280 → 1281), the hook state
+moved. MUST-FIX, prose only, fixed by the orchestrator before the second regeneration: this section's count of the held
+rigs ("three", not "four"), the changelog's "but six" Tier-2 rigs not yet in-game, the Scorpion line's pivot
+coordinates ((-2, 18, -1) and (-2, 18, 1), two units apart in z), the Triffid seed's and line's orig pose span ending
+at :1400 (the GL rotation follows at :1401-1404).
+
+THE ORCHESTRATOR'S STOP (owner 2026-09-15, closing set, item 6: "stop and report only if ... a decision outside the
+recorded doctrine blocks more than one rig"): after this landing the sequence of slices stops and the advisor reports.
+Two decisions the recorded doctrine does not answer each block more than one rig. (1) A WHOLE-MODEL RENDER TRANSFORM
+the classic renderer applies in `renderToBuffer` and no setupAnim statement carries: the Dungeon Beast (held here,
+TEST-013) and the Kraken (the same shape, `ModelKraken.java:733`, the first Tier-1 slice's rig) — neither a
+descriptor-level transform (applied in-game, observed by no leg) nor a converter-emitted root bone (the converter, the
+bone-set rule, the draw-order nesting and the animation leg extended) is a form the proof legs accept today, and the
+Dungeon Beast's four never-drawn toe parts need a "compiled but never drawn" notion the harness lacks; the Triffid's
+missing rotation (ENT-S-162) would need the same form once the parity lanes reopen. (2) THE HARNESS RASTERISER'S
+TRIANGULATION-DEPENDENT DEPTH past the 1e-6 contest window at POSED samples: the Lurking Terror (TEST-012, flat wings
+and coincident leg pairs) and the Scorpion (TEST-014, two overlapping solid cubes) — the options are a rasteriser change
+presented before its gate, a ruling extending TEST-008 (c) to posed samples owned by one pair on both sides, or a camera
+choice per entry; a tolerance is an owner ruling and the lanes moved none. The FK slice (the Emperor Scorpion, the
+Alien rig, the two solver rigs), the two Tier-1 slices and the remainder wait with their briefs drafted; the twelve
+rigs of this slice are landed, pushed and recorded as the order directs.
+
+DEVIATIONS PRESENTED: (1) the Dungeon Beast and the Scorpion did NOT land - two register lines; twelve rigs landed, not fourteen; (2)
+the t2 chain's run 1 (all fourteen entries, the Dungeon Beast's last) stopped at the Scorpion's visual leg; the remaining rigs were
+measured on run 1's dumps by the parity tool alone under a scratch root (the Spyro, Stinky and Triffid every leg PASS; the Dungeon Beast's
+draw-order mismatch), then the holds, and runs 2 and 3 pass diff-clean; (3) the asset audit's 24 errors are the untracked-file
+precedent (TEXTURE_REF_CASE on the twelve geos and twelve animation files until the orchestrator stages them), nothing else - no
+HOOK_STALE, no FLAT_CUBE, no DRAW_ORDER, no PROOF_DRIFT, no FACE_ORDER_INVALID row; (4) the Spyro's and Stinky's EXTRAS_CAP flags (as
+before); (5) the twelve hand-compacted seeds were edited by exact-string replacement (their inline arrays kept); (6) the sampler's
+HOOK_DESCRIPTORS javadoc count sentence updated in place; (7) the base class `OreSpawnGeoReplacement` and the landed T2e Spit Bug's
+descriptor were touched for the helper lift the brief asked for; (8) the held Scorpion's descriptor lost its private `classicRotX`
+duplicate (the compiler's rule), nothing else of its hook state; (9) the copy script's first run tripped on the five shared-rig consumers
+(no geo of their own) and was corrected before the chain ran.
+
+DIVERGENCES NOTICED, DRAFTED, NOT FIXED: ENT-S (draft) - the 1.7.10 ModelTriffid.render wraps every part in a whole-model -90-degree
+rotation about Y (orig :1401-1405) that the port's TriffidModel.renderToBuffer does not apply (recorded as an out-of-scope observation in
+phase_g_reports/hitbox_dims_findings.md:108, no register line until now) - audit_triffid_render_rotation.txt; the seam draws what the
+port's classic renderer draws. TEST (draft) x 2 - the Dungeon Beast's and the Scorpion's holds above; the hooks transcribe the port's
+classic models, whose earlier findings (the seeds' original_moved_more where present; the Spyro's and Stinky's ws = limbSwingAmount)
+stand.
+
+IN-GAME: for a default install nothing changes (the classic renderers the default). Behind `-Dorespawn.dev.geckolibRenderers=<species>`
+the twelve draw the converted rigs posed by their classic code through the seam (the Frog and Gazelle halved as babies, the Peacock at 0.5
+as a baby, the Nastysaurus at 1.5, the Urchin at 1.25, the Spyro at 0.75; the Dungeon Beast and the Scorpion not among them); no artist
+clip plays until idle and walk are delivered.
+
+NOT DONE (by design): the gametest suite not run (no gradle); the t2 proof tree (the orchestrator's `--write-proof`, +12 entries); the
+reference folder's regeneration; the Dungeon Beast's and the Scorpion's landings (held; the owner's options in the drafts); the
+artist_handoff folder (the orchestrator's).
+
+GATE: GATE: t2f (first run) stopped before its gate at the second clip run - a Gradle artifact lock (the client-extra jar held open by the refuter's own JVM while --rerun-tasks re-selected it; the regeneration's second run is a plain run since) after the g1 / s4 verify-only passes identical and the t2 write-proof G1 PARITY PASS: 68 models; t2f2 green: the same verifies and proof, the clips deterministic across two gradle runs (298 files; every clip byte-identical, the index's rows moved), referenceClipsVerify VERIFIED 298, the folder fresh (116 folders, 1,369 files, every check PASS), the benchmark proof re-pinned for g1tool's move (the sampler's rows), the audit 0 errors / 60 acknowledged with HOOKS at 28 and 78 shipped geos (77 seam + 1 outside-seam); drift 0, build 0, suite: all 1281 required tests passed.
