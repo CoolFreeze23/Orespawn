@@ -615,18 +615,18 @@
       "registry": "ender_knight",
       "tier": 2,
       "tier_label": "Tier 2",
-      "rig_source": "reference-leg converter output",
-      "in_game": false,
+      "rig_source": "shipped",
+      "in_game": true,
       "seed": true,
       "files": [
         "SPEC.md",
-        "ender_knight.animation.json",
         "ender_knight.bbmodel",
         "ender_knight_reference_idle.animation.json",
         "ender_knight_reference_scream.animation.json",
         "ender_knight_reference_walk.animation.json",
+        "enderknight.animation.json",
+        "enderknight.geo.json",
         "reference/SLOTS.md",
-        "reference_enderknight.geo.json",
         "roundtrip.report.json",
         "spec.manifest.json",
         "textures/enderknight.png"
@@ -656,7 +656,8 @@
         "differences": 0,
         "dropped_keys": 0,
         "reattached": [
-          "orespawn:bone_draw_order"
+          "orespawn:bone_draw_order",
+          "orespawn:cube_face_order"
         ],
         "clips_embedded": 3,
         "clips_equal_within_tolerance": 3,
@@ -668,18 +669,18 @@
       "registry": "ender_reaper",
       "tier": 2,
       "tier_label": "Tier 2",
-      "rig_source": "reference-leg converter output",
-      "in_game": false,
+      "rig_source": "shipped",
+      "in_game": true,
       "seed": true,
       "files": [
         "SPEC.md",
-        "ender_reaper.animation.json",
         "ender_reaper.bbmodel",
         "ender_reaper_reference_idle.animation.json",
         "ender_reaper_reference_scream.animation.json",
         "ender_reaper_reference_walk.animation.json",
+        "enderreaper.animation.json",
+        "enderreaper.geo.json",
         "reference/SLOTS.md",
-        "reference_enderreaper.geo.json",
         "roundtrip.report.json",
         "spec.manifest.json",
         "textures/enderreaper.png"
@@ -709,7 +710,8 @@
         "differences": 0,
         "dropped_keys": 0,
         "reattached": [
-          "orespawn:bone_draw_order"
+          "orespawn:bone_draw_order",
+          "orespawn:cube_face_order"
         ],
         "clips_embedded": 3,
         "clips_equal_within_tolerance": 3,
@@ -924,18 +926,18 @@
       "registry": "nastysaurus",
       "tier": 2,
       "tier_label": "Tier 2",
-      "rig_source": "reference-leg converter output",
-      "in_game": false,
+      "rig_source": "shipped",
+      "in_game": true,
       "seed": true,
       "files": [
         "SPEC.md",
         "nastysaurus.animation.json",
         "nastysaurus.bbmodel",
+        "nastysaurus.geo.json",
         "nastysaurus_reference_attack.animation.json",
         "nastysaurus_reference_idle.animation.json",
         "nastysaurus_reference_walk.animation.json",
         "reference/SLOTS.md",
-        "reference_nastysaurus.geo.json",
         "roundtrip.report.json",
         "spec.manifest.json",
         "textures/nastysaurus.png"
@@ -1410,19 +1412,19 @@
       "registry": "sea_viper",
       "tier": 2,
       "tier_label": "Tier 2",
-      "rig_source": "reference-leg converter output",
-      "in_game": false,
+      "rig_source": "shipped",
+      "in_game": true,
       "seed": true,
       "files": [
         "SPEC.md",
         "reference/SLOTS.md",
-        "reference_seaviper.geo.json",
         "roundtrip.report.json",
-        "sea_viper.animation.json",
         "sea_viper.bbmodel",
         "sea_viper_reference_attack.animation.json",
         "sea_viper_reference_idle.animation.json",
         "sea_viper_reference_walk.animation.json",
+        "seaviper.animation.json",
+        "seaviper.geo.json",
         "spec.manifest.json",
         "textures/seaviper.png"
       ],
@@ -1562,18 +1564,18 @@
       "registry": "urchin",
       "tier": 2,
       "tier_label": "Tier 2",
-      "rig_source": "reference-leg converter output",
-      "in_game": false,
+      "rig_source": "shipped",
+      "in_game": true,
       "seed": true,
       "files": [
         "SPEC.md",
         "reference/SLOTS.md",
-        "reference_urchin.geo.json",
         "roundtrip.report.json",
         "spec.manifest.json",
         "textures/urchin.png",
         "urchin.animation.json",
         "urchin.bbmodel",
+        "urchin.geo.json",
         "urchin_reference_attack.animation.json",
         "urchin_reference_idle.animation.json",
         "urchin_reference_walk.animation.json"
@@ -2579,18 +2581,18 @@
       "registry": "triffid",
       "tier": 2,
       "tier_label": "Tier 2",
-      "rig_source": "reference-leg converter output",
-      "in_game": false,
+      "rig_source": "shipped",
+      "in_game": true,
       "seed": true,
       "files": [
         "SPEC.md",
         "reference/SLOTS.md",
-        "reference_triffid.geo.json",
         "roundtrip.report.json",
         "spec.manifest.json",
         "textures/triffid.png",
         "triffid.animation.json",
         "triffid.bbmodel",
+        "triffid.geo.json",
         "triffid_reference_attack.animation.json",
         "triffid_reference_idle.animation.json",
         "triffid_reference_open.animation.json",
@@ -2621,7 +2623,8 @@
         "differences": 0,
         "dropped_keys": 0,
         "reattached": [
-          "orespawn:bone_draw_order"
+          "orespawn:bone_draw_order",
+          "orespawn:cube_face_order"
         ],
         "clips_embedded": 4,
         "clips_equal_within_tolerance": 4,
@@ -3295,18 +3298,18 @@
       "registry": "frog",
       "tier": 2,
       "tier_label": "Tier 2",
-      "rig_source": "reference-leg converter output",
-      "in_game": false,
+      "rig_source": "shipped",
+      "in_game": true,
       "seed": true,
       "files": [
         "SPEC.md",
         "frog.animation.json",
         "frog.bbmodel",
+        "frog.geo.json",
         "frog_reference_idle.animation.json",
         "frog_reference_sing.animation.json",
         "frog_reference_walk.animation.json",
         "reference/SLOTS.md",
-        "reference_frog.geo.json",
         "roundtrip.report.json",
         "spec.manifest.json",
         "textures/frogtexture.png"
@@ -3348,18 +3351,18 @@
       "registry": "gazelle",
       "tier": 2,
       "tier_label": "Tier 2",
-      "rig_source": "reference-leg converter output",
-      "in_game": false,
+      "rig_source": "shipped",
+      "in_game": true,
       "seed": true,
       "files": [
         "SPEC.md",
         "gazelle.animation.json",
         "gazelle.bbmodel",
+        "gazelle.geo.json",
         "gazelle_reference_crouch.animation.json",
         "gazelle_reference_idle.animation.json",
         "gazelle_reference_walk.animation.json",
         "reference/SLOTS.md",
-        "reference_gazelle.geo.json",
         "roundtrip.report.json",
         "spec.manifest.json",
         "textures/gazelletexture.png"
@@ -3552,18 +3555,18 @@
       "registry": "peacock",
       "tier": 2,
       "tier_label": "Tier 2",
-      "rig_source": "reference-leg converter output",
-      "in_game": false,
+      "rig_source": "shipped",
+      "in_game": true,
       "seed": true,
       "files": [
         "SPEC.md",
         "peacock.animation.json",
         "peacock.bbmodel",
+        "peacock.geo.json",
         "peacock_reference_display.animation.json",
         "peacock_reference_idle.animation.json",
         "peacock_reference_walk.animation.json",
         "reference/SLOTS.md",
-        "reference_peacock.geo.json",
         "roundtrip.report.json",
         "spec.manifest.json",
         "textures/peacock.png"
@@ -3593,7 +3596,8 @@
         "differences": 0,
         "dropped_keys": 0,
         "reattached": [
-          "orespawn:bone_draw_order"
+          "orespawn:bone_draw_order",
+          "orespawn:cube_face_order"
         ],
         "clips_embedded": 3,
         "clips_equal_within_tolerance": 3,
@@ -4814,18 +4818,18 @@
       "registry": "ostrich",
       "tier": 2,
       "tier_label": "Tier 2",
-      "rig_source": "reference-leg converter output",
-      "in_game": false,
+      "rig_source": "shipped",
+      "in_game": true,
       "seed": true,
       "files": [
         "SPEC.md",
         "ostrich.animation.json",
         "ostrich.bbmodel",
+        "ostrich.geo.json",
         "ostrich_reference_idle.animation.json",
         "ostrich_reference_sit.animation.json",
         "ostrich_reference_walk.animation.json",
         "reference/SLOTS.md",
-        "reference_ostrich.geo.json",
         "roundtrip.report.json",
         "spec.manifest.json",
         "textures/ostrich.png"
@@ -4855,7 +4859,8 @@
         "differences": 0,
         "dropped_keys": 0,
         "reattached": [
-          "orespawn:bone_draw_order"
+          "orespawn:bone_draw_order",
+          "orespawn:cube_face_order"
         ],
         "clips_embedded": 3,
         "clips_equal_within_tolerance": 3,
@@ -4917,17 +4922,17 @@
       "registry": "spyro",
       "tier": 2,
       "tier_label": "Tier 2",
-      "rig_source": "reference-leg converter output",
-      "in_game": false,
+      "rig_source": "shipped",
+      "in_game": true,
       "seed": true,
       "files": [
         "SPEC.md",
         "reference/SLOTS.md",
-        "reference_spyro.geo.json",
         "roundtrip.report.json",
         "spec.manifest.json",
         "spyro.animation.json",
         "spyro.bbmodel",
+        "spyro.geo.json",
         "spyro_reference_fly.animation.json",
         "spyro_reference_idle.animation.json",
         "spyro_reference_sit.animation.json",
@@ -4961,7 +4966,8 @@
         "differences": 0,
         "dropped_keys": 0,
         "reattached": [
-          "orespawn:bone_draw_order"
+          "orespawn:bone_draw_order",
+          "orespawn:cube_face_order"
         ],
         "clips_embedded": 5,
         "clips_equal_within_tolerance": 5,
@@ -4975,17 +4981,17 @@
       "registry": "stinky",
       "tier": 2,
       "tier_label": "Tier 2",
-      "rig_source": "reference-leg converter output",
-      "in_game": false,
+      "rig_source": "shipped",
+      "in_game": true,
       "seed": true,
       "files": [
         "SPEC.md",
         "reference/SLOTS.md",
-        "reference_stinky.geo.json",
         "roundtrip.report.json",
         "spec.manifest.json",
         "stinky.animation.json",
         "stinky.bbmodel",
+        "stinky.geo.json",
         "stinky_reference_idle.animation.json",
         "stinky_reference_legs_folded.animation.json",
         "stinky_reference_sit.animation.json",
@@ -5018,7 +5024,8 @@
         "differences": 0,
         "dropped_keys": 0,
         "reattached": [
-          "orespawn:bone_draw_order"
+          "orespawn:bone_draw_order",
+          "orespawn:cube_face_order"
         ],
         "clips_embedded": 4,
         "clips_equal_within_tolerance": 4,
@@ -6171,8 +6178,8 @@
       "tier_2": {
         "registries": 75,
         "rigs": 70,
-        "not_in_game_registries": 18,
-        "not_in_game_rigs": 18
+        "not_in_game_registries": 6,
+        "not_in_game_rigs": 6
       },
       "tier_3": {
         "registries": 13,
@@ -6220,8 +6227,8 @@
       ]
     },
     "rig_sources": {
-      "reference-leg converter output": 45,
-      "shipped": 71
+      "reference-leg converter output": 33,
+      "shipped": 83
     },
     "seed_missing": [],
     "artist_tier_not_packaged": []

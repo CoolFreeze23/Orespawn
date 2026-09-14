@@ -10,26 +10,26 @@ import net.minecraft.util.Mth;
 import software.bernie.geckolib.animation.AnimationProcessor;
 
 /**
- * GeckoLib Ender Knight (the hooks, owner 2026-09-14, addendum item 10): {@link ModelEnderKnight#poseFrom} verbatim on the
- * converted rig, ON THE HOOK (Amendment 2 to Amendment 1: no keyframe layer, no transcription - the self-gate stays closed
- * until an artist delivers {@code idle} and {@code walk}). Wingspeed 0.21f (orig ModelEnderKnight.java:54,57 /
- * ClientProxyOreSpawn.java:473): the THRESHOLD idiom on the fourteen leg / foot parts about X - above a walking speed of a
- * tenth {@code cos(age * 1.3f * ws) * PI * 0.25f * limbSwingAmount} around 0 / 0.6 / -0.1 rad, the right side the
- * negative, 0 at or below it (orig :408-425) - with the cape rolling on a quarter of it and pitching on a 0.7 ws cosine x
- * 0.02 (orig :426-427); the HEAD-LOOK idiom (orig :428-434): yaw = {@code toRadians(netHeadYaw) * 0.45f} clamped to
- * +-0.45 rad (no pitch); the SCREAMING branch (orig :331-352, read through {@link EnderKnightPose}): screaming, the six
- * arm parts swing on a 2.7 ws cosine x 0.3 around -1.2 / -1.8 rad and the blade / handle on 3/2 of it around 0.5; else the
- * arms hold their guard (-0.5 / -1.0, the shoulders yawed +-1.0, rolled 0) and the blade / handle 0.35; and the
- * POSITION-write idiom (through {@link #moveTo}) - each forearm's pivot FOLLOWS its upper arm 10 units along (cos, sin) of
- * the upper arm's pitch and the blade / handle the right forearm 7 units on, lifted 1 (orig :353-358, double arithmetic as
- * the classic casts it). The upper arms' pivots are never written (the bind), read through {@link #classicPosition}; every
- * value the classic reads back from a part it just wrote is held in a local; the followers keep their bind x. Screaming,
- * the classic leaves the shoulders' yaw / roll where the last frame left them (a singleton-model latch); the hook leaves
- * those channels at bind.
- *
- * <p>Shadow follows {@link EnderKnightRenderer}: a 0.3 x 1.0 shadow (ENT-S-092); the classic renderer scales by 1.0, so no
- * scale hook. The rig has a zero-thickness cube (the cape), so the shipped geo carries the classic within-cube face order
- * ({@link FaceOrder#KEY}; TEST-007) and the seam expects it.</p>
+ * GeckoLib Ender Knight (the hooks, owner 2026-09-14, addendum item 10; landed by the sixth Tier-2 slice T2f,
+ * 2026-09-15, the owner's closing set item 4): {@link ModelEnderKnight#poseFrom} verbatim on the converted rig, ON THE
+ * HOOK (Amendment 2 to Amendment 1: no keyframe layer, no transcription - the self-gate stays closed until an artist
+ * delivers {@code idle} and {@code walk} ). Wingspeed 0.21f (orig ModelEnderKnight.java:54,57 /
+ * ClientProxyOreSpawn.java:473): the THRESHOLD idiom on the fourteen leg / foot parts about X - above a walking speed
+ * of a tenth {@code cos(age * 1.3f * ws) * PI * 0.25f * limbSwingAmount} around 0 / 0.6 / -0.1 rad, the right side the
+ * negative, 0 at or below it (orig :408-425) - with the cape rolling on a quarter of it and pitching on a 0.7 ws cosine
+ * x 0.02 (orig :426-427); the HEAD-LOOK idiom (orig :428-434): yaw = {@code toRadians(netHeadYaw) * 0.45f} clamped to
+ * +-0.45 rad (no pitch); the SCREAMING branch (orig :331-352, read through {@link EnderKnightPose} ): screaming, the
+ * six arm parts swing on a 2.7 ws cosine x 0.3 around -1.2 / -1.8 rad and the blade / handle on 3/2 of it around 0.5;
+ * else the arms hold their guard (-0.5 / -1.0, the shoulders yawed +-1.0, rolled 0) and the blade / handle 0.35; and
+ * the POSITION-write idiom (through {@link #moveTo} ) - each forearm's pivot FOLLOWS its upper arm 10 units along (cos,
+ * sin) of the upper arm's pitch and the blade / handle the right forearm 7 units on, lifted 1 (orig :353-358, double
+ * arithmetic as the classic casts it). The upper arms' pivots are never written (the bind), read through
+ * {@link #classicPosition} ; every value the classic reads back from a part it just wrote is held in a local; the
+ * followers keep their bind x. Screaming, the classic leaves the shoulders' yaw / roll where the last frame left them
+ * (a singleton-model latch); the hook leaves those channels at bind.
+ * <p>Shadow follows {@link EnderKnightRenderer} : a 0.3 x 1.0 shadow (ENT-S-092); the classic renderer scales by 1.0,
+ * so no scale hook. The rig has a zero-thickness cube (the cape), so the shipped geo carries the classic within-cube
+ * face order ({@link FaceOrder#KEY}; TEST-007) and the seam expects it.</p>
  */
 public final class EnderKnightGeoReplacement extends OreSpawnGeoReplacement<EnderKnight> {
     /** orig ModelEnderKnight.java:54,57 {@code wingspeed} = 0.21f (ClientProxyOreSpawn.java:473): the chain's third multiply. */

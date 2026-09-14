@@ -11,28 +11,26 @@ import net.minecraft.util.Mth;
 import software.bernie.geckolib.animation.AnimationProcessor;
 
 /**
- * GeckoLib Frog (the hooks, owner 2026-09-14, addendum item 10): {@link ModelFrog#poseFrom} verbatim on the converted rig,
- * ON THE HOOK (Amendment 2 to Amendment 1: no keyframe layer, no transcription - the self-gate stays closed until an
- * artist delivers {@code idle} and {@code walk}). Wingspeed 1.0f (orig ModelFrog.java:14,27 / ClientProxyOreSpawn.java:512):
- * the THRESHOLD idiom on the front legs and lower hind legs about Y - above a walking speed of a tenth {@code cos(age * ws
- * * 1.4f) * PI * 0.55f * limbSwingAmount}, the right side the negative, the hind pair at half, 0 at or below it (orig
- * :133-141); the SINGING branch on the jaw - a 0.85 ws cosine x 0.15 around 1.22 rad while singing, 1.22 otherwise (orig
- * :102-103, read through {@link FrogPose}); the JUMP branch on the upper hind legs' roll - +-2.44 rad while the vertical
- * motion exceeds a tenth either way, +-0.227 otherwise (orig :104-110, {@code getDeltaMovement().y}); and the
- * POSITION-write idiom (through {@link #moveTo}) - each lower hind leg's pivot FOLLOWS its upper leg 9 units along (cos,
- * sin) of the roll (orig :111-114). The upper legs' pivots are never written (the bind), read through
- * {@link #classicPosition}; the rolls the classic reads back are held in locals; the followers keep their bind x.
- *
- * <p>Scale and shadow follow {@link FrogRenderer}: 1.0 render scale, halved for a baby, and a 0.35 x 1.0 shadow
+ * GeckoLib Frog (the hooks, owner 2026-09-14, addendum item 10; landed by the sixth Tier-2 slice T2f, 2026-09-15, the
+ * owner's closing set item 4): {@link ModelFrog#poseFrom} verbatim on the converted rig, ON THE HOOK (Amendment 2 to
+ * Amendment 1: no keyframe layer, no transcription - the self-gate stays closed until an artist delivers {@code idle} and
+ * {@code walk} ). Wingspeed 1.0f (orig ModelFrog.java:14,27 / ClientProxyOreSpawn.java:512): the THRESHOLD idiom on the
+ * front legs and lower hind legs about Y - above a walking speed of a tenth
+ * {@code cos(age * ws * 1.4f) * PI * 0.55f * limbSwingAmount} , the right side the negative, the hind pair at half, 0 at
+ * or below it (orig :133-141); the SINGING branch on the jaw - a 0.85 ws cosine x 0.15 around 1.22 rad while singing, 1.22
+ * otherwise (orig :102-103, read through {@link FrogPose} ); the JUMP branch on the upper hind legs' roll - +-2.44 rad
+ * while the vertical motion exceeds a tenth either way, +-0.227 otherwise (orig :104-110, {@code getDeltaMovement().y} );
+ * and the POSITION-write idiom (through {@link #moveTo} ) - each lower hind leg's pivot FOLLOWS its upper leg 9 units
+ * along (cos, sin) of the roll (orig :111-114). The upper legs' pivots are never written (the bind), read through
+ * {@link #classicPosition} ; the rolls the classic reads back are held in locals; the followers keep their bind x.
+ * <p>Scale and shadow follow {@link FrogRenderer} : 1.0 render scale, halved for a baby, and a 0.35 x 1.0 shadow
  * (ENT-S-092; orig RenderFrog.java:23-24, 39-40 - the 1.7.10 renderer scaled by 1.0 unconditionally; the port's renderer
- * halves a baby, and the port's renderer is what this follows). The renderer's SCALE is private, so the equal literal
- * here.</p>
+ * halves a baby, and the port's renderer is what this follows). The descriptor scales by {@link FrogRenderer#SCALE} (made
+ * public by the landing slice T2f; the hook lanes passed an equal literal while it was private - the T2d form).</p>
  */
 public final class FrogGeoReplacement extends OreSpawnGeoReplacement<Frog> {
     /** orig ModelFrog.java:14,27 {@code wingspeed} = 1.0f (ClientProxyOreSpawn.java:512): the chain's second multiply. */
     static final float WINGSPEED = 1.0F;
-    /** FrogRenderer.SCALE (private) = 1.0f: orig RenderFrog.java:24 {@code scale = par3}, ClientProxyOreSpawn.java:512. */
-    static final float SCALE = 1.0F;
     private static final GeoReplacementDescriptor<Frog> DESCRIPTOR = new GeoReplacementDescriptor<>(
             () -> ModEntities.FROG.get(),  // lambda: a bound method ref would initialise ModEntities eagerly
             Frog.class,
@@ -42,9 +40,11 @@ public final class FrogGeoReplacement extends OreSpawnGeoReplacement<Frog> {
             FrogRenderer.SHADOW) {
         @Override
         public void applyScale(Frog entity, PoseStack poseStack, float partialTick) {
-            // FrogRenderer.render: isBaby() ? SCALE / 2 : SCALE
-            float scale = entity.isBaby() ? SCALE / 2.0F : SCALE;
-            poseStack.scale(scale, scale, scale);
+            if (entity.isBaby()) {
+                poseStack.scale(FrogRenderer.SCALE / 2.0F, FrogRenderer.SCALE / 2.0F, FrogRenderer.SCALE / 2.0F);
+                return;
+            }
+            poseStack.scale(FrogRenderer.SCALE, FrogRenderer.SCALE, FrogRenderer.SCALE);
         }
     };
 

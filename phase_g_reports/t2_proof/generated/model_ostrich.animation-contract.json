@@ -1,0 +1,37 @@
+{
+  "schema_version": 1,
+  "kind": "entity_state",
+  "controller_required": false,
+  "candidate_animation_path": "production_replacement_hook",
+  "candidate_class": "danger.orespawn.entity.client.OstrichGeoReplacement",
+  "candidate_acceptance_path": "production OreSpawnGeoReplacementModel.setCustomAnimations (Amendment 1 Tier-3 code-driven)",
+  "sample_ids": [
+    "bind",
+    "s_idle_t0",
+    "s_idle_t_quarter",
+    "s_idle_t_half",
+    "s_idle_t_three_quarter",
+    "s_idle_t_end",
+    "s_wings_flapping_t0",
+    "s_wings_flapping_t_quarter",
+    "s_wings_flapping_t_half",
+    "s_wings_flapping_t_three_quarter",
+    "s_wings_flapping_t_end",
+    "s_sitting_t0",
+    "s_sitting_t_quarter",
+    "s_sitting_t_half",
+    "s_sitting_t_three_quarter",
+    "s_sitting_t_end",
+    "s_activated_t0",
+    "s_activated_t_quarter",
+    "s_activated_t_half",
+    "s_activated_t_three_quarter",
+    "s_activated_t_end"
+  ],
+  "entity_states": [
+    "idle",
+    "wings_flapping",
+    "sitting",
+    "activated"
+  ]
+}

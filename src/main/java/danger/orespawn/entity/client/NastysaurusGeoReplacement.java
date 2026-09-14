@@ -11,33 +11,32 @@ import net.minecraft.util.Mth;
 import software.bernie.geckolib.animation.AnimationProcessor;
 
 /**
- * GeckoLib Nastysaurus (the hooks, owner 2026-09-14, addendum item 10): {@link ModelNastysaurus#poseFrom} verbatim on
- * the converted rig, ON THE HOOK (no keyframe layer, no transcription - the self-gate stays closed until an artist
- * delivers {@code idle} and {@code walk}; the landing slice adds the geo, the wiring and the proofs). Wingspeed 0.65f
- * (orig ModelNastysaurus.java:15,77 / ClientProxyOreSpawn.java:508): the HEAD-LOOK idiom (yaw {@code netHeadYaw % 360 x
- * 0.35} in radians on the head, the third neck ring, the jaws and the twenty-three teeth, half of it on the second
- * ring); the ATTACKING branch ({@code getAttacking() != 0}: the jaw and its teeth on a 0.85 ws cosine x PI x 0.16 + 0.5)
- * over the CHEW LATCH (the Robot2 precedent; orig ModelNastysaurus.java:438,450): the phase of the 0.7 ws idle rhythm
- * wraps against the per-entity {@code RenderInfo.rf1} and on each wrap {@code ri1} is re-rolled from the level's RNG
- * ({@code nextInt(20) == 1}), a set bit chewing on the 0.85 ws sine + 0.5, a clear one holding 0.196 rad; the THRESHOLD
- * idiom on each leg ({@code (double) limbSwingAmount > 0.001} selects the {@code age x ws / 2} cosine / sine, else 0),
- * the right leg a half turn behind: the seven claws and the lower leg lifted {@code sin x 4 x amount} while the sine is
- * positive and swept {@code 15 + 10 x cos x amount} in z (POSITION writes through {@link #moveTo}), the thigh and the
- * upper leg FOLLOWING the lower leg by 17 units along its pitch, the fourteen claw pitches reset to 0; and the tail's
- * yaw at 0.76 / 0.25 attacking over 0.26 / 0.08 (tail3 at half, tail4 FOLLOWING it by 11 units). The entity is read
- * through {@link NastysaurusPose} (the Slice 4b doctrine). Every value the classic reads back from a part it just wrote
- * is held in a local; the coordinates the classic never writes (the claws' and legs' x, tail3's pivot) are read
- * through {@link #classicPosition} (the bind).
- *
- * <p>Scale and shadow follow {@link NastysaurusRenderer}: 1.5 render scale (its private {@code SCALE}, applied around
- * {@code super.render} - the literal) and the {@code 1.0f * 1.5f} shadow literal its constructor passes (no SHADOW
- * constant). No zero-thickness cube.</p>
+ * GeckoLib Nastysaurus (the hooks, owner 2026-09-14, addendum item 10; landed by the sixth Tier-2 slice T2f,
+ * 2026-09-15, the owner's closing set item 4): {@link ModelNastysaurus#poseFrom} verbatim on the converted rig, ON THE
+ * HOOK (no keyframe layer, no transcription - the self-gate stays closed until an artist delivers {@code idle} and
+ * {@code walk} ; the geo, the wiring and the proofs landed with T2f). Wingspeed 0.65f (orig ModelNastysaurus.java:15,77
+ * / ClientProxyOreSpawn.java:508): the HEAD-LOOK idiom (yaw {@code netHeadYaw % 360 x 0.35} in radians on the head, the
+ * third neck ring, the jaws and the twenty-three teeth, half of it on the second ring); the ATTACKING branch ({@code
+ * getAttacking() != 0}: the jaw and its teeth on a 0.85 ws cosine x PI x 0.16 + 0.5) over the CHEW LATCH (the Robot2
+ * precedent; orig ModelNastysaurus.java:438,450): the phase of the 0.7 ws idle rhythm wraps against the per-entity
+ * {@code RenderInfo.rf1} and on each wrap {@code ri1} is re-rolled from the level's RNG ({@code nextInt(20) == 1}), a
+ * set bit chewing on the 0.85 ws sine + 0.5, a clear one holding 0.196 rad; the THRESHOLD idiom on each leg ({@code
+ * (double) limbSwingAmount > 0.001} selects the {@code age x ws / 2} cosine / sine, else 0), the right leg a half turn
+ * behind: the seven claws and the lower leg lifted {@code sin x 4 x amount} while the sine is positive and swept
+ * {@code 15 + 10 x cos x amount} in z (POSITION writes through {@link #moveTo} ), the thigh and the upper leg FOLLOWING
+ * the lower leg by 17 units along its pitch, the fourteen claw pitches reset to 0; and the tail's yaw at 0.76 / 0.25
+ * attacking over 0.26 / 0.08 (tail3 at half, tail4 FOLLOWING it by 11 units). The entity is read through
+ * {@link NastysaurusPose} (the Slice 4b doctrine). Every value the classic reads back from a part it just wrote is held
+ * in a local; the coordinates the classic never writes (the claws' and legs' x, tail3's pivot) are read through
+ * {@link #classicPosition} (the bind).
+ * <p>Scale and shadow follow {@link NastysaurusRenderer} : 1.5 render scale ({@link NastysaurusRenderer#SCALE}, applied
+ * around {@code super.render} - made public by the landing slice T2f, the hook lanes' equal literal dropped; the T2d
+ * form) and the {@code 1.0f * 1.5f} shadow literal its constructor passes (no SHADOW constant). No zero-thickness
+ * cube.</p>
  */
 public final class NastysaurusGeoReplacement extends OreSpawnGeoReplacement<Nastysaurus> {
     /** orig ModelNastysaurus.java:15,77 {@code wingspeed} = 0.65f (ClientProxyOreSpawn.java:508): the chain's frequency multiplier. */
     static final float WINGSPEED = 0.65f;
-    /** NastysaurusRenderer's private {@code SCALE} = 1.5f (its render() wrapper's uniform scale): the equal literal. */
-    static final float SCALE = 1.5f;
     private static final GeoReplacementDescriptor<Nastysaurus> DESCRIPTOR = new GeoReplacementDescriptor<>(
             () -> ModEntities.NASTYSAURUS.get(),  // lambda: a bound method ref would initialise ModEntities eagerly
             Nastysaurus.class,
@@ -48,8 +47,9 @@ public final class NastysaurusGeoReplacement extends OreSpawnGeoReplacement<Nast
             1.0F * 1.5F) {
         @Override
         public void applyScale(Nastysaurus entity, PoseStack poseStack, float partialTick) {
-            // NastysaurusRenderer.render: poseStack.scale(SCALE, SCALE, SCALE) around super.render
-            poseStack.scale(SCALE, SCALE, SCALE);
+            // NastysaurusRenderer.render: poseStack.scale(SCALE, SCALE, SCALE) around super.render (the renderer's constant,
+            // public since T2f: the T2d form)
+            poseStack.scale(NastysaurusRenderer.SCALE, NastysaurusRenderer.SCALE, NastysaurusRenderer.SCALE);
         }
     };
 

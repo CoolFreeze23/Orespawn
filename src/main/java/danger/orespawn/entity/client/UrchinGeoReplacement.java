@@ -11,17 +11,17 @@ import net.minecraft.util.Mth;
 import software.bernie.geckolib.animation.AnimationProcessor;
 
 /**
- * GeckoLib Urchin (the hooks, owner 2026-09-14, addendum item 10): {@link ModelUrchin#poseFrom} verbatim on the rig the
- * landing slice converts, ON THE HOOK (Amendment 2 to Amendment 1: no keyframe layer, no transcription - the self-gate
- * stays closed until an artist delivers {@code idle} and {@code walk}). Wingspeed 1.0f (orig ModelUrchin.java:14,34 /
- * ClientProxyOreSpawn.java:487): the THRESHOLD idiom on the eight fins - above a walking speed of a tenth, five gait
- * cosines (0.7 / 1.7 / 1.65 / 1.75 / 1.8 x ws) at 0.15 x PI x limbSwingAmount about their rest pitches and rolls
- * (+-0.261 / +-0.523 rad), 0 at or below it - and the ATTACKING branch (orig :175 {@code getAttacking() != 0}) that
- * spins the center about Y on {@code (age x 0.2) mod 2 PI} (0.02 at rest) and rocks the eight spines on eight cosines
- * (0.7 ... 0.35 x ws at 0.06 x PI attacking, 0.07 ... 0.035 x ws at 0.02 x PI at rest) about their rest angles. The
- * entity is read through {@link UrchinPose} (the Slice 4b form).
- *
- * <p>Scale and shadow follow {@link UrchinRenderer}: 1.25 render scale and a 0.35 x 1.25 shadow (ENT-S-092).</p>
+ * GeckoLib Urchin (the hooks, owner 2026-09-14, addendum item 10; landed by the sixth Tier-2 slice T2f, 2026-09-15, the
+ * owner's closing set item 4): {@link ModelUrchin#poseFrom} verbatim on the converted rig, ON THE HOOK (Amendment 2 to
+ * Amendment 1: no keyframe layer, no transcription - the self-gate stays closed until an artist delivers {@code idle}
+ * and {@code walk} ). Wingspeed 1.0f (orig ModelUrchin.java:14,34 / ClientProxyOreSpawn.java:487): the THRESHOLD idiom
+ * on the eight fins - above a walking speed of a tenth, five gait cosines (0.7 / 1.7 / 1.65 / 1.75 / 1.8 x ws) at 0.15
+ * x PI x limbSwingAmount about their rest pitches and rolls (+-0.261 / +-0.523 rad), 0 at or below it - and the
+ * ATTACKING branch (orig :175 {@code getAttacking() != 0} ) that spins the center about Y on
+ * {@code (age x 0.2) mod 2 PI} (0.02 at rest) and rocks the eight spines on eight cosines (0.7 ... 0.35 x ws at 0.06 x
+ * PI attacking, 0.07 ... 0.035 x ws at 0.02 x PI at rest) about their rest angles. The entity is read through
+ * {@link UrchinPose} (the Slice 4b form).
+ * <p>Scale and shadow follow {@link UrchinRenderer} : 1.25 render scale and a 0.35 x 1.25 shadow (ENT-S-092).</p>
  */
 public final class UrchinGeoReplacement extends OreSpawnGeoReplacement<Urchin> {
     /** orig ModelUrchin.java:14,34 {@code wingspeed} = 1.0f (ClientProxyOreSpawn.java:487): the chain's third multiply. */

@@ -301,6 +301,17 @@ public abstract class OreSpawnGeoReplacement<E extends Entity> implements GeoRep
         };
     }
 
+    /**
+     * {@code part.xRot} read back in classic terms for a part the classic never writes: the bind the bake gave the bone
+     * (internal X is the negated classic X, {@link #rotateX}'s mapping; no controller runs on the classic source and
+     * GeckoLib holds an untouched bone at its bake). Lifted into the base by the sixth Tier-2 slice (T2f, 2026-09-15) from
+     * the Spit Bug's, Scorpion's and Sea Viper's descriptors, which each carried it privately (the brief's rule: a bind read
+     * other landed rigs share belongs to the base).
+     */
+    protected static float classicRotX(GeoBone bone) {
+        return -bone.getRotX();
+    }
+
     /** {@code part.x = x; part.y = y; part.z = z} in classic terms. */
     protected static void moveTo(AnimationProcessor<?> processor, String name, float x, float y, float z) {
         GeoBone bone = bone(processor, name);

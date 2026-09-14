@@ -11,24 +11,24 @@ import net.minecraft.util.Mth;
 import software.bernie.geckolib.animation.AnimationProcessor;
 
 /**
- * GeckoLib Spyro (the hooks, owner 2026-09-14, addendum item 10): {@link SpyroModel#poseFrom} verbatim on the rig the
- * landing slice converts, ON THE HOOK (Amendment 2 to Amendment 1: no keyframe layer, no transcription - the self-gate
- * stays closed until an artist delivers {@code idle} and {@code walk}). The port's classic model as it is: its
- * frequency multiplier {@code ws} is {@code limbSwingAmount} itself (SpyroModel.poseFrom {@code float ws =
- * limbSwingAmount}; orig ModelSpyro.java ran on a wingspeed of 0.65f, ClientProxyOreSpawn.java:427 - the register
- * line of the landing slice records where the port's pose departs from the 1.7.10 one) - the THRESHOLD idiom on the
- * wings about Z ({@code cos(age x 2.3 x ws) x PI x 0.4 x limbSwingAmount} above a walking speed of a tenth, mirrored,
- * halved by the ACTIVITY branch while flying (3)) and on the twelve leg parts about X ({@code cos(age x 2.0 x ws) x PI
- * x 0.25 x limbSwingAmount}, zeroed while flying, alternating about the rests -0.087 / -0.17 / 0 / 0.139 / -0.174;
- * activity 2 folds them at -1 rad (front) / +1 rad (back)); the tail about Y on {@code cos(age x 1.2 x ws) x PI x 0.25},
- * stilled by the SITTING check or flying, the front link at 1.6 of it and its pivot FOLLOWING the back link 3 units
- * along (sin, cos) of the back link's yaw, less 0.5 in x (the POSITION-write idiom, x and z through {@link #moveXZ};
- * the back link's pivot is never written - the bind), the two tail pieces riding the front link; and the HEAD-LOOK
- * idiom in radians on twelve head parts, the horns offset +-0.785 rad in yaw and -0.785 in pitch. The entity is read
- * through {@link SpyroPose} (the Slice 4b form). The two wings are zero-thickness cubes (ENT-S-161; the classic face
- * order required below).
+ * GeckoLib Spyro (the hooks, owner 2026-09-14, addendum item 10; landed by the sixth Tier-2 slice T2f, 2026-09-15, the
+ * owner's closing set item 4): {@link SpyroModel#poseFrom} verbatim on the converted rig, ON THE HOOK (Amendment 2 to
+ * Amendment 1: no keyframe layer, no transcription - the self-gate stays closed until an artist delivers {@code idle}
+ * and {@code walk} ). The port's classic model as it is: its frequency multiplier {@code ws} is {@code limbSwingAmount}
+ * itself (SpyroModel.poseFrom {@code float ws = limbSwingAmount} ; orig ModelSpyro.java ran on a wingspeed of 0.65f,
+ * ClientProxyOreSpawn.java:427 - the register line of the landing slice records where the port's pose departs from the
+ * 1.7.10 one) - the THRESHOLD idiom on the wings about Z ({@code cos(age x 2.3 x ws) x PI x 0.4 x limbSwingAmount}
+ * above a walking speed of a tenth, mirrored, halved by the ACTIVITY branch while flying (3)) and on the twelve leg
+ * parts about X ({@code cos(age x 2.0 x ws) x PI x 0.25 x limbSwingAmount}, zeroed while flying, alternating about the
+ * rests -0.087 / -0.17 / 0 / 0.139 / -0.174; activity 2 folds them at -1 rad (front) / +1 rad (back)); the tail about Y
+ * on {@code cos(age x 1.2 x ws) x PI x 0.25} , stilled by the SITTING check or flying, the front link at 1.6 of it and
+ * its pivot FOLLOWING the back link 3 units along (sin, cos) of the back link's yaw, less 0.5 in x (the POSITION-write
+ * idiom, x and z through {@link #moveXZ} ; the back link's pivot is never written - the bind), the two tail pieces
+ * riding the front link; and the HEAD-LOOK idiom in radians on twelve head parts, the horns offset +-0.785 rad in yaw
+ * and -0.785 in pitch. The entity is read through {@link SpyroPose} (the Slice 4b form). The two wings are
+ * zero-thickness cubes (ENT-S-161; the classic face order required below).
  *
- * <p>Scale and shadow follow {@link SpyroRenderer}: 0.75 render scale and a 0.65 x 0.75 shadow (ENT-S-092).</p>
+ * <p>Scale and shadow follow {@link SpyroRenderer} : 0.75 render scale and a 0.65 x 0.75 shadow (ENT-S-092).</p>
  */
 public final class SpyroGeoReplacement extends OreSpawnGeoReplacement<EntitySpyro> {
     private static final GeoReplacementDescriptor<EntitySpyro> DESCRIPTOR = new GeoReplacementDescriptor<>(

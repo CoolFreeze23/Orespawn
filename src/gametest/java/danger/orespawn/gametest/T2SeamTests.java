@@ -42,6 +42,10 @@ import danger.orespawn.entity.client.DragonflyRenderer;
 import danger.orespawn.entity.client.DrawOrder;
 import danger.orespawn.entity.client.EasterBunnyGeoReplacement;
 import danger.orespawn.entity.client.EasterBunnyRenderer;
+import danger.orespawn.entity.client.EnderKnightGeoReplacement;
+import danger.orespawn.entity.client.EnderKnightRenderer;
+import danger.orespawn.entity.client.EnderReaperGeoReplacement;
+import danger.orespawn.entity.client.EnderReaperRenderer;
 import danger.orespawn.entity.client.FaceOrder;
 import danger.orespawn.entity.client.FairyGeoReplacement;
 import danger.orespawn.entity.client.FairyRenderer;
@@ -49,8 +53,12 @@ import danger.orespawn.entity.client.FireflyGeoReplacement;
 import danger.orespawn.entity.client.FireflyRenderer;
 import danger.orespawn.entity.client.FlounderGeoReplacement;
 import danger.orespawn.entity.client.FlounderRenderer;
+import danger.orespawn.entity.client.FrogGeoReplacement;
+import danger.orespawn.entity.client.FrogRenderer;
 import danger.orespawn.entity.client.GammaMetroidGeoReplacement;
 import danger.orespawn.entity.client.GammaMetroidRenderer;
+import danger.orespawn.entity.client.GazelleGeoReplacement;
+import danger.orespawn.entity.client.GazelleRenderer;
 import danger.orespawn.entity.client.GhostSkellyGeoReplacement;
 import danger.orespawn.entity.client.GhostSkellyRenderer;
 import danger.orespawn.entity.client.GoldFishGeoReplacement;
@@ -73,8 +81,13 @@ import danger.orespawn.entity.client.MolenoidGeoReplacement;
 import danger.orespawn.entity.client.MolenoidRenderer;
 import danger.orespawn.entity.client.MosquitoGeoReplacement;
 import danger.orespawn.entity.client.MosquitoRenderer;
+import danger.orespawn.entity.client.NastysaurusGeoReplacement;
 import danger.orespawn.entity.client.OreSpawnGeoReplacement;
 import danger.orespawn.entity.client.OreSpawnGeoReplacementModel;
+import danger.orespawn.entity.client.OstrichGeoReplacement;
+import danger.orespawn.entity.client.OstrichRenderer;
+import danger.orespawn.entity.client.PeacockGeoReplacement;
+import danger.orespawn.entity.client.PeacockRenderer;
 import danger.orespawn.entity.client.PointysaurusGeoReplacement;
 import danger.orespawn.entity.client.PoseInputs;
 import danger.orespawn.entity.client.RainbowAntGeoReplacement;
@@ -87,22 +100,32 @@ import danger.orespawn.entity.client.RenderInfo;
 import danger.orespawn.entity.client.RubberDuckyGeoReplacement;
 import danger.orespawn.entity.client.RubberDuckyRenderer;
 import danger.orespawn.entity.client.RubyBirdGeoReplacement;
+import danger.orespawn.entity.client.SeaViperGeoReplacement;
+import danger.orespawn.entity.client.SeaViperRenderer;
 import danger.orespawn.entity.client.SkateGeoReplacement;
 import danger.orespawn.entity.client.SkateRenderer;
 import danger.orespawn.entity.client.SpitBugGeoReplacement;
 import danger.orespawn.entity.client.SpitBugRenderer;
+import danger.orespawn.entity.client.SpyroGeoReplacement;
+import danger.orespawn.entity.client.SpyroRenderer;
 import danger.orespawn.entity.client.StinkBugGeoReplacement;
 import danger.orespawn.entity.client.StinkBugRenderer;
+import danger.orespawn.entity.client.StinkyGeoReplacement;
+import danger.orespawn.entity.client.StinkyRenderer;
 import danger.orespawn.entity.client.TermiteGeoReplacement;
 import danger.orespawn.entity.client.TermiteRenderer;
 import danger.orespawn.entity.client.TerribleTerrorGeoReplacement;
 import danger.orespawn.entity.client.TerribleTerrorRenderer;
+import danger.orespawn.entity.client.TriffidGeoReplacement;
+import danger.orespawn.entity.client.TriffidRenderer;
 import danger.orespawn.entity.client.TrooperBugGeoReplacement;
 import danger.orespawn.entity.client.TrooperBugRenderer;
 import danger.orespawn.entity.client.TshirtGeoReplacement;
 import danger.orespawn.entity.client.TshirtRenderer;
 import danger.orespawn.entity.client.UnstableAntGeoReplacement;
 import danger.orespawn.entity.client.UnstableAntRenderer;
+import danger.orespawn.entity.client.UrchinGeoReplacement;
+import danger.orespawn.entity.client.UrchinRenderer;
 import danger.orespawn.entity.client.VelocityRaptorGeoReplacement;
 import danger.orespawn.entity.client.VelocityRaptorRenderer;
 import danger.orespawn.entity.client.WhaleGeoReplacement;
@@ -122,6 +145,10 @@ import danger.orespawn.entity.pose.CaterKillerPose;
 import danger.orespawn.entity.pose.CaveFisherPose;
 import danger.orespawn.entity.pose.ChipmunkPose;
 import danger.orespawn.entity.pose.CrabPose;
+import danger.orespawn.entity.pose.EnderKnightPose;
+import danger.orespawn.entity.pose.EnderReaperPose;
+import danger.orespawn.entity.pose.FrogPose;
+import danger.orespawn.entity.pose.GazellePose;
 import danger.orespawn.entity.pose.GhostSkellyPose;
 import danger.orespawn.entity.pose.HerculesBeetlePose;
 import danger.orespawn.entity.pose.HydroliscPose;
@@ -129,10 +156,18 @@ import danger.orespawn.entity.pose.LeafMonsterPose;
 import danger.orespawn.entity.pose.LizardPose;
 import danger.orespawn.entity.pose.MantisPose;
 import danger.orespawn.entity.pose.MolenoidPose;
+import danger.orespawn.entity.pose.NastysaurusPose;
+import danger.orespawn.entity.pose.OstrichPose;
+import danger.orespawn.entity.pose.PeacockPose;
 import danger.orespawn.entity.pose.PointysaurusPose;
 import danger.orespawn.entity.pose.RatPose;
+import danger.orespawn.entity.pose.SeaViperPose;
 import danger.orespawn.entity.pose.SpitBugPose;
+import danger.orespawn.entity.pose.SpyroPose;
+import danger.orespawn.entity.pose.StinkyPose;
+import danger.orespawn.entity.pose.TriffidPose;
 import danger.orespawn.entity.pose.TrooperBugPose;
+import danger.orespawn.entity.pose.UrchinPose;
 import danger.orespawn.entity.pose.VelocityRaptorPose;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
@@ -147,6 +182,7 @@ import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 import software.bernie.geckolib.animatable.GeoAnimatable;
@@ -205,6 +241,14 @@ import software.bernie.geckolib.loading.object.GeometryTree;
  *     Raptor and Lizard (their zero-thickness cubes) and on the Ghost Skelly (a blending rig, the Fairy form), the
  *     hook moving a named bone off its bind at age 7; the twelve entity-reading hooks on a declared rest subject - a
  *     fresh one per RenderInfo-reading hook, so no latch scratch is shared between species).</li>
+ * <li>{@code t2_008} (the sixth Tier-2 slice T2f, 2026-09-15; owner's closing set item 4 on the hooks already written,
+ *     addendum items 10 and 14): the twelve HOOK species landed on their hooks - the Ender Knight, Ender Reaper, Frog,
+ *     Gazelle, Nastysaurus, Peacock, Sea Viper, Urchin, Ostrich, Spyro, Stinky and Triffid (the Dungeon Beast held on its
+ *     whole-model render transform and the Scorpion on the visual leg, their register lines) - each pinned exactly as
+ *     {@code t2_005} pins the third slice's (no layer, an empty file, nothing registered, the classic shadow, the face order
+ *     on the Ender Knight, Ender Reaper, Peacock, Ostrich, Spyro, Stinky and Triffid (their zero-thickness cubes), the
+ *     hook moving a named bone off its bind at age 7; every hook of the slice reads its entity, so each poses on its own
+ *     declared rest subject - a fresh one per species, so no RenderInfo latch scratch is shared).</li>
  * <li>{@code t2_004}: the render facts the 4c precedent pinned in code - each descriptor's shadow radius is its
  *     classic renderer's constant (ENT-S-092; the Ant family's {@code 0.1 / 0.15 x SCALE} products where the classic
  *     renderer declares no SHADOW), the Cockateil and Ruby Bird sharing the Cockateil renderer's - and each shared
@@ -625,7 +669,163 @@ public class T2SeamTests {
         helper.succeed();
     }
 
-    /** The t2_005 pins on one hook species (shared by the third, fourth and fifth slices' rows). */
+    // ------------------------------------------------------------------ row 8: the hook species of the sixth slice (T2f)
+
+    /**
+     * The declared rest state of the twelve T2f hooks (every one reads its entity): the attacking flag 0, not screaming,
+     * not singing, no vertical velocity, not crouching, the display flag 0, not sitting, not activated, not ridden, at rest
+     * on the origin with no movement delta, activity 0, closed; a fresh RenderInfo latch and the entity / level RNG seeded
+     * 0 (the probe's rest subject). One instance per species (the Nastysaurus and the Ostrich write the latch's scratch).
+     */
+    private static final class RestSubjectT2f implements EnderKnightPose, EnderReaperPose, FrogPose, GazellePose, NastysaurusPose,
+            PeacockPose, SeaViperPose, UrchinPose, OstrichPose, SpyroPose, StinkyPose, TriffidPose {
+        private final RenderInfo renderInfo = new RenderInfo();
+        private final RandomSource random = RandomSource.create(0L);
+
+        @Override
+        public boolean isScreaming() {
+            return false;
+        }
+
+        @Override
+        public int getSinging() {
+            return 0;
+        }
+
+        @Override
+        public Vec3 getDeltaMovement() {
+            return Vec3.ZERO;
+        }
+
+        @Override
+        public boolean isCrouching() {
+            return false;
+        }
+
+        @Override
+        public RenderInfo getRenderInfo() {
+            return this.renderInfo;
+        }
+
+        @Override
+        public int getAttacking() {
+            return 0;
+        }
+
+        @Override
+        public RandomSource getLevelRandom() {
+            return this.random;
+        }
+
+        @Override
+        public RandomSource getRandom() {
+            return this.random;
+        }
+
+        @Override
+        public int getBlink() {
+            return 0;
+        }
+
+        @Override
+        public boolean isInSittingPose() {
+            return false;
+        }
+
+        @Override
+        public int getIsActivated() {
+            return 0;
+        }
+
+        @Override
+        public boolean isVehicle() {
+            return false;
+        }
+
+        @Override
+        public double getX() {
+            return 0.0D;
+        }
+
+        @Override
+        public double getZ() {
+            return 0.0D;
+        }
+
+        @Override
+        public double xOld() {
+            return 0.0D;
+        }
+
+        @Override
+        public double zOld() {
+            return 0.0D;
+        }
+
+        @Override
+        public float getYRot() {
+            return 0.0F;
+        }
+
+        @Override
+        public float yRotO() {
+            return 0.0F;
+        }
+
+        @Override
+        public int getActivity() {
+            return 0;
+        }
+
+        @Override
+        public int getOpenClosed() {
+            return 0;
+        }
+    }
+
+    private static List<HookSpecies> hookSpeciesT2f() {
+        return List.of(
+                // the Ender Knight's zero-thickness cape piece; the left foot swings on the threshold gait
+                new HookSpecies("ender_knight", new EnderKnightGeoReplacement(), "enderknight", EnderKnightRenderer.SHADOW, true, new RestSubjectT2f(), "lfoot1"),
+                // the Ender Reaper's four zero-thickness parts; the scythe rolls on 1 - |gait|
+                new HookSpecies("ender_reaper", new EnderReaperGeoReplacement(), "enderreaper", EnderReaperRenderer.SHADOW, true, new RestSubjectT2f(), "scythe1"),
+                new HookSpecies("frog", new FrogGeoReplacement(), "frog", FrogRenderer.SHADOW, false, new RestSubjectT2f(), "lfleg"),
+                new HookSpecies("gazelle", new GazelleGeoReplacement(), "gazelle", GazelleRenderer.SHADOW, false, new RestSubjectT2f(), "lfleg1"),
+                // NastysaurusRenderer's constructor passes the literal 1.0f * 1.5f (no SHADOW constant)
+                new HookSpecies("nastysaurus", new NastysaurusGeoReplacement(), "nastysaurus", 1.0F * 1.5F, false, new RestSubjectT2f(), "leftleg3"),
+                // the Peacock's ten zero-thickness feathers (folded at rest); the legs swing on the threshold gait
+                new HookSpecies("peacock", new PeacockGeoReplacement(), "peacock", PeacockRenderer.SHADOW, true, new RestSubjectT2f(), "lleg"),
+                new HookSpecies("sea_viper", new SeaViperGeoReplacement(), "seaviper", SeaViperRenderer.SHADOW, false, new RestSubjectT2f(), "tBase"),
+                // the Urchin's centre spins (age x 0.02) mod 2 pi at rest
+                new HookSpecies("urchin", new UrchinGeoReplacement(), "urchin", UrchinRenderer.SHADOW, false, new RestSubjectT2f(), "center"),
+                // the Ostrich's eleven zero-thickness parts; the tail sways on the 0.05 cosine (the gait reads the movement delta, 0 here)
+                new HookSpecies("ostrich", new OstrichGeoReplacement(), "ostrich", OstrichRenderer.SHADOW, true, new RestSubjectT2f(), "Tail1"),
+                // the Spyro's and Stinky's two zero-thickness wings; ws = limbSwingAmount = 1 here, so the wings beat
+                new HookSpecies("spyro", new SpyroGeoReplacement(), "spyro", SpyroRenderer.SHADOW, true, new RestSubjectT2f(), "WingLeft"),
+                new HookSpecies("stinky", new StinkyGeoReplacement(), "stinky", StinkyRenderer.SHADOW, true, new RestSubjectT2f(), "Rwing"),
+                // the Triffid's eleven zero-thickness leaf tips (never written); the first leaf link folds by the closed constant
+                new HookSpecies("triffid", new TriffidGeoReplacement(), "triffid", TriffidRenderer.SHADOW, true, new RestSubjectT2f(), "l1"));
+    }
+
+    @GameTest(template = "empty", batch = BATCH)
+    public static void t2_008_sixth_slice_hook_species_declare_no_layer_register_nothing_and_pose_through_their_hooks(GameTestHelper helper) {
+        Flags flags = Flags.read();
+        try {
+            OreSpawnConfig.MODERN_ENABLED.set(true);
+            OreSpawnConfig.MODERN_ARTIST_ANIMATIONS.set(true);
+            OreSpawnConfig.MODERN_CLASSIC_ANIMATION_SPECIES.set(List.of());
+            List<HookSpecies> all = hookSpeciesT2f();
+            helper.assertTrue(all.size() == 12, "the twelve hook descriptors landed by the sixth Tier-2 slice (owner 2026-09-15, closing set item 4; the Dungeon Beast and the Scorpion held)");
+            for (HookSpecies species : all) {
+                assertHookSpecies(helper, species);
+            }
+        } finally {
+            flags.restore();
+        }
+        helper.succeed();
+    }
+
+    /** The t2_005 pins on one hook species (shared by the third, fourth, fifth and sixth slices' rows). */
     private static void assertHookSpecies(GameTestHelper helper, HookSpecies species) {
         helper.assertTrue(species.replacement().keyframeLayers().isEmpty(),
                 species.name() + " declares no keyframe layer: on the hook until an artist delivers idle and walk (Amendment 2)");

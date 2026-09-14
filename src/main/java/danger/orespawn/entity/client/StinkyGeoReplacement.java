@@ -10,24 +10,24 @@ import net.minecraft.util.Mth;
 import software.bernie.geckolib.animation.AnimationProcessor;
 
 /**
- * GeckoLib Stinky (the hooks, owner 2026-09-14, addendum item 10): {@link StinkyModel#poseFrom} verbatim on the rig the
- * landing slice converts, ON THE HOOK (Amendment 2 to Amendment 1: no keyframe layer, no transcription - the self-gate
- * stays closed until an artist delivers {@code idle} and {@code walk}). The port's classic model as it is: its
- * frequency multiplier {@code ws} is {@code limbSwingAmount} itself (StinkyModel.poseFrom {@code float ws =
- * limbSwingAmount}; orig ModelStinky.java ran on a wingspeed of 0.65f, ClientProxyOreSpawn.java:490 - the register
- * line of the landing slice records where the port's pose departs from the 1.7.10 one) - the THRESHOLD idiom on the
- * wings about Z ({@code cos(age x 2.3 x ws) x PI x 0.4 x limbSwingAmount} above a walking speed of a tenth about
- * -+0.4 rad) and on the four legs about X ({@code cos(age x 2.0 x ws) x PI x 0.25 x limbSwingAmount}, alternating;
- * the ACTIVITY branch folds them at -1 / +1 rad at 2); the tail about Y on {@code cos(age x 1.0 x ws) x PI x 0.2},
- * stilled by the SITTING check, the second and third links at 1.6 and 2.6 of it, each link's pivot FOLLOWING its
- * parent 4 / 3 units along (sin, cos) of the parent's yaw, less 0.5 in x (the POSITION-write idiom, x and z through
- * {@link #moveXZ}; the first link's pivot is never written - the bind); and the HEAD-LOOK idiom on seven head parts,
- * the yaw in radians (the neck at half), the pitch in radians at a third. The entity is read through
- * {@link StinkyPose} (the Slice 4b form). The two wings are zero-thickness cubes (ENT-S-161; the classic face order
- * required below).
+ * GeckoLib Stinky (the hooks, owner 2026-09-14, addendum item 10; landed by the sixth Tier-2 slice T2f, 2026-09-15, the
+ * owner's closing set item 4): {@link StinkyModel#poseFrom} verbatim on the converted rig, ON THE HOOK (Amendment 2 to
+ * Amendment 1: no keyframe layer, no transcription - the self-gate stays closed until an artist delivers {@code idle}
+ * and {@code walk} ). The port's classic model as it is: its frequency multiplier {@code ws} is {@code limbSwingAmount}
+ * itself (StinkyModel.poseFrom {@code float ws = limbSwingAmount} ; orig ModelStinky.java ran on a wingspeed of 0.65f,
+ * ClientProxyOreSpawn.java:490 - the register line of the landing slice records where the port's pose departs from the
+ * 1.7.10 one) - the THRESHOLD idiom on the wings about Z ({@code cos(age x 2.3 x ws) x PI x 0.4 x limbSwingAmount}
+ * above a walking speed of a tenth about -+0.4 rad) and on the four legs about X ({@code cos(age x 2.0 x ws) x PI x
+ * 0.25 x limbSwingAmount}, alternating; the ACTIVITY branch folds them at -1 / +1 rad at 2); the tail about Y on
+ * {@code cos(age x 1.0 x ws) x PI x 0.2} , stilled by the SITTING check, the second and third links at 1.6 and 2.6 of
+ * it, each link's pivot FOLLOWING its parent 4 / 3 units along (sin, cos) of the parent's yaw, less 0.5 in x (the
+ * POSITION-write idiom, x and z through {@link #moveXZ} ; the first link's pivot is never written - the bind); and the
+ * HEAD-LOOK idiom on seven head parts, the yaw in radians (the neck at half), the pitch in radians at a third. The
+ * entity is read through {@link StinkyPose} (the Slice 4b form). The two wings are zero-thickness cubes (ENT-S-161; the
+ * classic face order required below).
  *
- * <p>Shadow follows {@link StinkyRenderer}: a 0.75 x 1.0 shadow (ENT-S-092); the classic renderer scales by 1.0 with no
- * scale override, so no scale hook.</p>
+ * <p>Shadow follows {@link StinkyRenderer} : a 0.75 x 1.0 shadow (ENT-S-092); the classic renderer scales by 1.0 with
+ * no scale override, so no scale hook.</p>
  */
 public final class StinkyGeoReplacement extends OreSpawnGeoReplacement<EntityStinky> {
     private static final GeoReplacementDescriptor<EntityStinky> DESCRIPTOR = new GeoReplacementDescriptor<>(

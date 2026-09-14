@@ -18,6 +18,8 @@ import danger.orespawn.entity.CreepingHorror;
 import danger.orespawn.entity.Cryolophosaurus;
 import danger.orespawn.entity.EasterBunny;
 import danger.orespawn.entity.Elevator;
+import danger.orespawn.entity.EnderKnight;
+import danger.orespawn.entity.EnderReaper;
 import danger.orespawn.entity.EntityAnt;
 import danger.orespawn.entity.EntityBee;
 import danger.orespawn.entity.EntityBrutalfly;
@@ -40,9 +42,12 @@ import danger.orespawn.entity.EntityRedAnt;
 import danger.orespawn.entity.EntityRotator;
 import danger.orespawn.entity.EntityRubberDucky;
 import danger.orespawn.entity.EntitySpitBug;
+import danger.orespawn.entity.EntitySpyro;
 import danger.orespawn.entity.EntityStinkBug;
+import danger.orespawn.entity.EntityStinky;
 import danger.orespawn.entity.EntityTermite;
 import danger.orespawn.entity.EntityTerribleTerror;
+import danger.orespawn.entity.EntityTriffid;
 import danger.orespawn.entity.EntityTrooperBug;
 import danger.orespawn.entity.EntityTshirt;
 import danger.orespawn.entity.EntityUnstableAnt;
@@ -53,12 +58,17 @@ import danger.orespawn.entity.EntityWormSmall;
 import danger.orespawn.entity.Fairy;
 import danger.orespawn.entity.Firefly;
 import danger.orespawn.entity.Flounder;
+import danger.orespawn.entity.Frog;
+import danger.orespawn.entity.Gazelle;
 import danger.orespawn.entity.GhostSkelly;
 import danger.orespawn.entity.GoldFish;
 import danger.orespawn.entity.Irukandji;
 import danger.orespawn.entity.Island;
 import danger.orespawn.entity.IslandToo;
 import danger.orespawn.entity.Lizard;
+import danger.orespawn.entity.Nastysaurus;
+import danger.orespawn.entity.Ostrich;
+import danger.orespawn.entity.Peacock;
 import danger.orespawn.entity.Pointysaurus;
 import danger.orespawn.entity.PurplePower;
 import danger.orespawn.entity.Robot1;
@@ -67,7 +77,9 @@ import danger.orespawn.entity.Robot3;
 import danger.orespawn.entity.Robot4;
 import danger.orespawn.entity.Robot5;
 import danger.orespawn.entity.RockBase;
+import danger.orespawn.entity.SeaViper;
 import danger.orespawn.entity.Skate;
+import danger.orespawn.entity.Urchin;
 import danger.orespawn.entity.VelocityRaptor;
 import danger.orespawn.entity.Whale;
 import danger.orespawn.entity.client.AlosaurusGeoReplacement;
@@ -120,14 +132,22 @@ import danger.orespawn.entity.client.EasterBunnyGeoReplacement;
 import danger.orespawn.entity.client.EasterBunnyRenderer;
 import danger.orespawn.entity.client.ElevatorGeoReplacement;
 import danger.orespawn.entity.client.ElevatorRenderer;
+import danger.orespawn.entity.client.EnderKnightGeoReplacement;
+import danger.orespawn.entity.client.EnderKnightRenderer;
+import danger.orespawn.entity.client.EnderReaperGeoReplacement;
+import danger.orespawn.entity.client.EnderReaperRenderer;
 import danger.orespawn.entity.client.FairyGeoReplacement;
 import danger.orespawn.entity.client.FairyRenderer;
 import danger.orespawn.entity.client.FireflyGeoReplacement;
 import danger.orespawn.entity.client.FireflyRenderer;
 import danger.orespawn.entity.client.FlounderGeoReplacement;
 import danger.orespawn.entity.client.FlounderRenderer;
+import danger.orespawn.entity.client.FrogGeoReplacement;
+import danger.orespawn.entity.client.FrogRenderer;
 import danger.orespawn.entity.client.GammaMetroidGeoReplacement;
 import danger.orespawn.entity.client.GammaMetroidRenderer;
+import danger.orespawn.entity.client.GazelleGeoReplacement;
+import danger.orespawn.entity.client.GazelleRenderer;
 import danger.orespawn.entity.client.GhostSkellyGeoReplacement;
 import danger.orespawn.entity.client.GhostSkellyRenderer;
 import danger.orespawn.entity.client.GoldFishGeoReplacement;
@@ -154,6 +174,12 @@ import danger.orespawn.entity.client.MolenoidGeoReplacement;
 import danger.orespawn.entity.client.MolenoidRenderer;
 import danger.orespawn.entity.client.MosquitoGeoReplacement;
 import danger.orespawn.entity.client.MosquitoRenderer;
+import danger.orespawn.entity.client.NastysaurusGeoReplacement;
+import danger.orespawn.entity.client.NastysaurusRenderer;
+import danger.orespawn.entity.client.OstrichGeoReplacement;
+import danger.orespawn.entity.client.OstrichRenderer;
+import danger.orespawn.entity.client.PeacockGeoReplacement;
+import danger.orespawn.entity.client.PeacockRenderer;
 import danger.orespawn.entity.client.PointysaurusGeoReplacement;
 import danger.orespawn.entity.client.PointysaurusRenderer;
 import danger.orespawn.entity.client.PurplePowerGeoReplacement;
@@ -181,22 +207,32 @@ import danger.orespawn.entity.client.RotatorRenderer;
 import danger.orespawn.entity.client.RubberDuckyGeoReplacement;
 import danger.orespawn.entity.client.RubberDuckyRenderer;
 import danger.orespawn.entity.client.RubyBirdGeoReplacement;
+import danger.orespawn.entity.client.SeaViperGeoReplacement;
+import danger.orespawn.entity.client.SeaViperRenderer;
 import danger.orespawn.entity.client.SkateGeoReplacement;
 import danger.orespawn.entity.client.SkateRenderer;
 import danger.orespawn.entity.client.SpitBugGeoReplacement;
 import danger.orespawn.entity.client.SpitBugRenderer;
+import danger.orespawn.entity.client.SpyroGeoReplacement;
+import danger.orespawn.entity.client.SpyroRenderer;
 import danger.orespawn.entity.client.StinkBugGeoReplacement;
 import danger.orespawn.entity.client.StinkBugRenderer;
+import danger.orespawn.entity.client.StinkyGeoReplacement;
+import danger.orespawn.entity.client.StinkyRenderer;
 import danger.orespawn.entity.client.TermiteGeoReplacement;
 import danger.orespawn.entity.client.TermiteRenderer;
 import danger.orespawn.entity.client.TerribleTerrorGeoReplacement;
 import danger.orespawn.entity.client.TerribleTerrorRenderer;
+import danger.orespawn.entity.client.TriffidGeoReplacement;
+import danger.orespawn.entity.client.TriffidRenderer;
 import danger.orespawn.entity.client.TrooperBugGeoReplacement;
 import danger.orespawn.entity.client.TrooperBugRenderer;
 import danger.orespawn.entity.client.TshirtGeoReplacement;
 import danger.orespawn.entity.client.TshirtRenderer;
 import danger.orespawn.entity.client.UnstableAntGeoReplacement;
 import danger.orespawn.entity.client.UnstableAntRenderer;
+import danger.orespawn.entity.client.UrchinGeoReplacement;
+import danger.orespawn.entity.client.UrchinRenderer;
 import danger.orespawn.entity.client.VelocityRaptorGeoReplacement;
 import danger.orespawn.entity.client.VelocityRaptorRenderer;
 import danger.orespawn.entity.client.VortexGeoReplacement;
@@ -509,6 +545,56 @@ public final class PhaseGDevRenderers {
 
     public static EntityRendererProvider<Chipmunk> chipmunkRenderer() {
         return select("chipmunk", ChipmunkRenderer::new, ChipmunkGeoReplacement.Renderer::new);
+    }
+
+
+    /** The sixth Tier-2 slice (T2f, 2026-09-15): the twelve rigs ON THE HOOKS already written (the Dungeon Beast and the Scorpion held); the classic renderers the default. */
+    public static EntityRendererProvider<EnderKnight> enderKnightRenderer() {
+        return select("ender_knight", EnderKnightRenderer::new, EnderKnightGeoReplacement.Renderer::new);
+    }
+
+    public static EntityRendererProvider<EnderReaper> enderReaperRenderer() {
+        return select("ender_reaper", EnderReaperRenderer::new, EnderReaperGeoReplacement.Renderer::new);
+    }
+
+    public static EntityRendererProvider<Frog> frogRenderer() {
+        return select("frog", FrogRenderer::new, FrogGeoReplacement.Renderer::new);
+    }
+
+    public static EntityRendererProvider<Gazelle> gazelleRenderer() {
+        return select("gazelle", GazelleRenderer::new, GazelleGeoReplacement.Renderer::new);
+    }
+
+    public static EntityRendererProvider<Nastysaurus> nastysaurusRenderer() {
+        return select("nastysaurus", NastysaurusRenderer::new, NastysaurusGeoReplacement.Renderer::new);
+    }
+
+    public static EntityRendererProvider<Peacock> peacockRenderer() {
+        return select("peacock", PeacockRenderer::new, PeacockGeoReplacement.Renderer::new);
+    }
+
+    public static EntityRendererProvider<SeaViper> seaViperRenderer() {
+        return select("sea_viper", SeaViperRenderer::new, SeaViperGeoReplacement.Renderer::new);
+    }
+
+    public static EntityRendererProvider<Urchin> urchinRenderer() {
+        return select("urchin", UrchinRenderer::new, UrchinGeoReplacement.Renderer::new);
+    }
+
+    public static EntityRendererProvider<Ostrich> ostrichRenderer() {
+        return select("ostrich", OstrichRenderer::new, OstrichGeoReplacement.Renderer::new);
+    }
+
+    public static EntityRendererProvider<EntitySpyro> spyroRenderer() {
+        return select("spyro", SpyroRenderer::new, SpyroGeoReplacement.Renderer::new);
+    }
+
+    public static EntityRendererProvider<EntityStinky> stinkyRenderer() {
+        return select("stinky", StinkyRenderer::new, StinkyGeoReplacement.Renderer::new);
+    }
+
+    public static EntityRendererProvider<EntityTriffid> triffidRenderer() {
+        return select("triffid", TriffidRenderer::new, TriffidGeoReplacement.Renderer::new);
     }
 
 

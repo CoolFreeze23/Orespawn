@@ -11,17 +11,17 @@ import net.minecraft.util.Mth;
 import software.bernie.geckolib.animation.AnimationProcessor;
 
 /**
- * GeckoLib Peacock (the hooks, owner 2026-09-14, addendum item 10): {@link ModelPeacock#poseFrom} verbatim on the
- * converted rig, ON THE HOOK (no keyframe layer, no transcription - the self-gate stays closed until an artist delivers
- * {@code idle} and {@code walk}; the landing slice adds the geo, the wiring and the proofs). Wingspeed 0.75f (orig
- * ModelPeacock.java:14,33 / ClientProxyOreSpawn.java:478): the THRESHOLD idiom on the two legs' pitch - above a walking
- * speed of a tenth ({@code (double) limbSwingAmount > 0.1}) {@code cos(age x 1.3 ws) x PI x 0.15 x amount}, mirrored, 0
- * at or below it - and the DISPLAY branch ({@code getBlink() > 0}): the three head feathers pitched 0.401 / -0.174 /
- * -0.698 and the seven tail feathers raised 1.047 rad and fanned -+0.4 / 0.8 / 1.2 about Z, else the head feathers
- * folded at -1.06 and every tail feather at 0 - constants written every frame. The entity is read through
- * {@link PeacockPose} (the Slice 4b doctrine).
- *
- * <p>Scale and shadow follow {@link PeacockRenderer}: {@code SCALE} 1.0 (identity) with a baby drawn at 0.5 through
+ * GeckoLib Peacock (the hooks, owner 2026-09-14, addendum item 10; landed by the sixth Tier-2 slice T2f, 2026-09-15,
+ * the owner's closing set item 4): {@link ModelPeacock#poseFrom} verbatim on the converted rig, ON THE HOOK (no
+ * keyframe layer, no transcription - the self-gate stays closed until an artist delivers {@code idle} and {@code walk}
+ * ; the geo, the wiring and the proofs landed with T2f). Wingspeed 0.75f (orig ModelPeacock.java:14,33 /
+ * ClientProxyOreSpawn.java:478): the THRESHOLD idiom on the two legs' pitch - above a walking speed of a tenth ({@code
+ * (double) limbSwingAmount > 0.1}) {@code cos(age x 1.3 ws) x PI x 0.15 x amount} , mirrored, 0 at or below it - and
+ * the DISPLAY branch ({@code getBlink() > 0}): the three head feathers pitched 0.401 / -0.174 / -0.698 and the seven
+ * tail feathers raised 1.047 rad and fanned -+0.4 / 0.8 / 1.2 about Z, else the head feathers folded at -1.06 and every
+ * tail feather at 0 - constants written every frame. The entity is read through {@link PeacockPose} (the Slice 4b
+ * doctrine).
+ * <p>Scale and shadow follow {@link PeacockRenderer} : {@code SCALE} 1.0 (identity) with a baby drawn at 0.5 through
  * its {@code render} wrapper (orig RenderPeacock.preRenderScale :39-45, children at scale / 2), and a 0.25 x 1.0 shadow
  * (ENT-S-092). The three head feathers and the seven tail feathers are zero-thickness cubes (the seam draws every cube
  * with its true transformed normal and its two coplanar faces in the classic order, ENT-S-161 / TEST-007 - below).</p>
