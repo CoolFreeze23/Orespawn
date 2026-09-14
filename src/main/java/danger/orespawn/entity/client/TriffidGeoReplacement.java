@@ -10,26 +10,26 @@ import net.minecraft.util.Mth;
 import software.bernie.geckolib.animation.AnimationProcessor;
 
 /**
- * GeckoLib Triffid (the hooks): {@link TriffidModel#poseFrom} verbatim on the rig the landing slice converts, ON THE
- * HOOK (no keyframe layer, no transcription - the self-gate stays closed until an artist delivers {@code idle}
- * and {@code walk}). Wingspeed 1.0f (orig ModelTriffid.java:15,196 / ClientProxyOreSpawn.java:459):
- * the OPEN / CLOSED branch (orig :1275 {@code getOpenClosed() == 0}: the fold 0.122522116 rad
- * per link closed, {@code cos(age x 0.25 x ws) x PI x 0.039} open) driving four leaf chains through the four
- * helpers transcribed below (the same names, each a link's rotation as its parent's plus the angle and its pivot
- * FOLLOWING the parent {@code j} units along (sin, cos) of the parent's rotation - the POSITION-write idiom, two
- * coordinates per chain through {@link #moveXY} / {@link #moveYZ}): l1-l15 (Z, about -0.95, the root's pivot from
- * the angle), l31-l43 (Z, about 0.95, the negative angle), l16-l30 (X, about -0.75, the negative angle) and l44-l57
- * (X, about 0.75; l44's pivot is never written - the bind, read through {@link #classicPosition}); the
- * ATTACKING branch on the fifteen-link tentacle (orig :1342 {@code getAttacking() != 0}: {@code |cos(age x 0.25 x ws) x
- * PI x 0.5|} lashing, else a right angle held), the links about Z alternating {@code -+angle - 0.6} from t15
- * down to t3, each pivot following the link above 6 / 3 units along (cos, sin) of that link's roll (t15's pivot
- * is never written - the bind), t1 and t2 riding t3, and the thirteen links' yaw zeroed; every value the
- * classic reads back from a part it just wrote is held in a local. The entity is read through {@link TriffidPose}
- * (the Slice 4b form). Ten leaf tips are zero-thickness cubes (0 x 5 x 2; ENT-S-161; the classic face order required
- * below).
+ * GeckoLib Triffid (the hooks, landed by the sixth Tier-2 slice T2f): {@link TriffidModel#poseFrom} verbatim on the
+ * converted rig, ON THE HOOK (no keyframe layer, no transcription - the self-gate stays closed until an artist
+ * delivers {@code idle} and {@code walk}). Wingspeed 1.0f (orig ModelTriffid.java:15,196 /
+ * ClientProxyOreSpawn.java:459): the OPEN / CLOSED branch (orig :1275 {@code getOpenClosed() == 0} : the fold
+ * 0.122522116 rad per link closed, {@code cos(age x 0.25 x ws) x PI x 0.039} open) driving four leaf chains
+ * through the four helpers transcribed below (the same names, each a link's rotation as its parent's plus the angle
+ * and its pivot FOLLOWING the parent {@code j} units along (sin, cos) of the parent's rotation - the POSITION-write
+ * idiom, two coordinates per chain through {@link #moveXY} / {@link #moveYZ} ): l1-l15 (Z, about -0.95, the
+ * root's pivot from the angle), l31-l43 (Z, about 0.95, the negative angle), l16-l30 (X, about -0.75, the negative
+ * angle) and l44-l57 (X, about 0.75; l44's pivot is never written - the bind, read through {@link #classicPosition}
+ * ); the ATTACKING branch on the fifteen-link tentacle (orig :1342 {@code getAttacking() != 0} : {@code |cos(age x
+ * 0.25 x ws) x PI x 0.5|} lashing, else a right angle held), the links about Z alternating {@code -+angle - 0.6}
+ * from t15 down to t3, each pivot following the link above 6 / 3 units along (cos, sin) of that link's roll (t15's
+ * pivot is never written - the bind), t1 and t2 riding t3, and the thirteen links' yaw zeroed; every value the
+ * classic reads back from a part it just wrote is held in a local. The entity is read through {@link TriffidPose} (the
+ * Slice 4b form). Eleven leaf tips (c1-c11, never written by the hook) are zero-thickness cubes (0 x 5 x 2; ENT-S-161;
+ * the classic face order required below; the shipped geo's count, T2f).
  *
- * <p>Shadow follows {@link TriffidRenderer}: a 0.3 x 1.0 shadow (ENT-S-092); the classic renderer scales by 1.0 with no
- * scale override, so no scale hook.</p>
+ * <p>Shadow follows {@link TriffidRenderer} : a 0.3 x 1.0 shadow (ENT-S-092); the classic renderer scales by 1.0 with
+ * no scale override, so no scale hook.</p>
  */
 public final class TriffidGeoReplacement extends OreSpawnGeoReplacement<EntityTriffid> {
     /** orig ModelTriffid.java:15,196 {@code wingspeed} = 1.0f (ClientProxyOreSpawn.java:459): the chain's third multiply. */
@@ -42,8 +42,8 @@ public final class TriffidGeoReplacement extends OreSpawnGeoReplacement<EntityTr
             ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "textures/entity/triffid.png"),
             TriffidRenderer.SHADOW) {
         /**
-         * A rig with zero-thickness cubes (ten leaf tips, 0 x 5 x 2): the shipped geo carries the classic within-cube
-         * face order ({@link FaceOrder#KEY}; TEST-007) and the seam expects it.
+         * A rig with zero-thickness cubes (the eleven leaf tips c1-c11, 0 x 5 x 2): the shipped geo carries the classic
+         * within-cube face order ({@link FaceOrder#KEY}; TEST-007) and the seam expects it.
          */
         @Override
         public boolean cubeFaceOrderRequired() {

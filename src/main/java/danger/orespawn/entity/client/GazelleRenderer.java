@@ -25,7 +25,7 @@ public class GazelleRenderer extends MobRenderer<Gazelle, ModelGazelle> {
             new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "gazelle"), "main");
 
     /** orig RenderGazelle.scale = 1.0f (third constructor argument, ClientProxyOreSpawn.java:449). */
-    private static final float SCALE = 1.0f;
+    public static final float SCALE = 1.0f;
     /** orig RenderLiving shadow = 0.45f * 1.0f (RenderGazelle.java:23). */
     public static final float SHADOW = 0.45F * 1.0F;
 

@@ -160,15 +160,6 @@ public final class ScorpionGeoReplacement extends OreSpawnGeoReplacement<EntityS
         moveYZ(processor, "tail6", tail6Y, tail6Z);
     }
 
-    /**
-     * {@code part.xRot} read back in classic terms for a part the classic never writes: the bind the bake gave the bone
-     * (internal X is the negated classic X, the base's basis fact; no controller runs on the classic source and GeckoLib
-     * holds an untouched bone at its bake).
-     */
-    private static float classicRotX(GeoBone bone) {
-        return -bone.getRotX();
-    }
-
     /** {@code part.z = z} in classic terms, the part's x and y left as they are (the bind: the classic never writes them). */
     private static void moveZ(AnimationProcessor<?> processor, String name, float z) {
         float[] current = classicPosition(bone(processor, name));

@@ -1,9 +1,9 @@
 {
   "registry": "ender_reaper",
   "display_name": "Ender Reaper",
-  "status": "DRAFT — authored by a first pass from the entity code, 2026-09-13; edit pending",
+  "status": "DRAFT — authored by a first pass from the entity code, 2026-09-13; edit pending, landed on its hook by the sixth Tier-2 slice (T2f, 2026-09-15)",
   "locomotion": "walker",
-  "artist_scope": "full contract (Tier 2, the state-branching class: geckolib_migration_design.md section 5); the rig is not yet in-game (it lands through the seam in a later slice)",
+  "artist_scope": "full contract (Tier 2, the state-branching class: geckolib_migration_design.md section 5); ON THE HOOK until idle and walk are delivered: in-game through the seam behind the dev switch since the sixth Tier-2 slice (T2f, 2026-09-15)",
   "character_sheet": "A hostile skeletal wraith with a scythe: a bare spine, pelvis and tailbone with no legs at all, a ribcage of forty rib and vertebra pieces, two bony arms hung from shoulder blocks, the right hand carrying a 39-long scythe with a bladed head, two wings of two spars and a zero-thickness sail each, and a boxy skull (ModelEnderReaper.java:161-423, 66 parts). 90 HP, 18 damage, 8 armour, speed 0.37 (EnderReaper.java:199-207). It is an enderman's heir: it hunts only the player who looks at it (the pumpkin-stare test :184-197 selects the target :87-141), screams while it holds that stare (DATA_SCREAMING :39-40, set at :116 and on a hit at :341), teleports away from a starer within 4 blocks (:273-277) and toward a far target it has held 30 ticks (:278-280), flees daylight (:245-254) and water or fire (:258-261), drowns in rain (:226-228) and sheds portal particles (:230-239); a melee goal bites at 18 (:54). It spawns in the dark at night above y 30 with no other reaper within 16 blocks (:366-374), through the dark forest, highlands and lowlands biome modifiers and in the Chaos and Island biomes. Read it as a floating skeleton: no stride, a hover, the wings and the scythe carrying the mood.",
   "size_notes": "Drawn at x1.0 of the rig (EnderReaperRenderer.java:25; shadow 0.2, :27) on a 512x512 sheet (ModelEnderReaper.java:425), enderreaper.png (EnderReaperRenderer.java:19); the hitbox is 0.7 x 2.9 (ModEntities.java:92-94). The original's ModelEnderReaper(0.23f) argument was the wingspeed, not a scale (ModelEnderReaper.java:19-20; EnderReaperRenderer.java:10-15).",
   "labels": {
@@ -197,6 +197,9 @@
     "in `aggro_idle` (the screaming branch): keep the 54-degree wing beat (:440, :446-449) and the scythe's wide swing (:435-437), and make the left forearm's snap forward (:438-439) the tell",
     "in `attack`: a real scythe swing with the right arm — rarm1 (:369-371) carries the shaft (:393-403) and the code never moves it; the MeleeAttackGoal lands 18 (EnderReaper.java:54, :204)",
     "in `teleport`: a fold of the wings and a dissolve on the portal sound pair (EnderReaper.java:314-315)"
+  ],
+  "formulas": [
+    "`ModelEnderReaper.poseFrom` (ModelEnderReaper.java:437-465; orig ModelEnderReaper.java:489-513 in `render` (func_78088_a, :484-581; func_78087_a at :589-591 is a bare super call), wingspeed 0.23 from `new ModelEnderReaper(0.23f)` in orig ClientProxyOreSpawn.java:474 - the port's WINGSPEED): while the walking speed is above a tenth the swing is the cosine of the age in ticks times 1.3 times the wingspeed, times pi, times 0.25, times the walking speed, else 0; the three scythe pieces roll by 1.0 minus its absolute value. Screaming, the scythe pieces roll instead by 1.0 plus the cosine of the age times 1.9 times the wingspeed, times pi, times 0.25, the left arm pitches -0.436 and yaws -0.488, and the wing beat is the cosine of the age times 2.7 times the wingspeed, times pi, times 0.3; not screaming, the left arm pitches -2.436 and yaws 1.0 and the wing beat is the cosine of the age times 0.7 times the wingspeed, times pi, times 0.06. The three left wing pieces yaw by 0.785 plus the beat, the three right wing pieces by -0.785 minus it. The head yaws by the look yaw in radians times 0.45, clamped to plus or minus 0.45. The walk position and the look pitch play no part. The GeckoLib hook is the same (EnderReaperGeoReplacement.applyCustomAnimations)."
   ],
   "effort_hours": null,
   "reference_states": {

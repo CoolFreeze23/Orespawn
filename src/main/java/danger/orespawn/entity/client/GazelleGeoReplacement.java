@@ -11,26 +11,24 @@ import net.minecraft.util.Mth;
 import software.bernie.geckolib.animation.AnimationProcessor;
 
 /**
- * GeckoLib Gazelle (the hooks): {@link ModelGazelle#poseFrom} verbatim on the converted rig, ON THE HOOK (no
- * keyframe layer, no transcription - the self-gate stays closed until an artist delivers {@code idle} and {@code walk}).
- * Wingspeed 0.65f (orig ModelGazelle.java:14,51 / ClientProxyOreSpawn.java:449): the THRESHOLD idiom on
- * the eighteen leg parts about X - above a walking speed of a tenth {@code cos(age * 1.1f * ws) * PI * 0.12f *
- * limbSwingAmount} around the 0.297 / -0.074 / -0.409 / 0 / 0.185 rad rests, the diagonal pairs opposed, 0 at or below
- * it (orig :342-363); the HEAD-LOOK idiom about Y at 0.45 of {@code toRadians(netHeadYaw)} on the
- * head, nose, mouth and the six antler parts, the ears at 1.57 rad plus it plus a 0.5 cosine x 0.02 (orig :364-375; no
- * clamp, no pitch); and the CROUCH branch (orig :297 {@code func_70906_o()}, the port's {@code isCrouching()}, read
- * through {@link GazellePose}): while not crouching the tail pitches on a 0.1 cosine x 0.06 around 1.0 rad. Crouching,
- * the classic leaves the tail's pitch where the last frame left it (a singleton-model latch); the hook leaves the
- * bone at bind.
+ * GeckoLib Gazelle (the hooks, landed by the sixth Tier-2 slice T2f): {@link ModelGazelle#poseFrom} verbatim on the
+ * converted rig, ON THE HOOK (no keyframe layer, no transcription - the self-gate stays closed until an artist delivers
+ * {@code idle} and {@code walk}). Wingspeed 0.65f (orig ModelGazelle.java:14,51 / ClientProxyOreSpawn.java:449): the
+ * THRESHOLD idiom on the eighteen leg parts about X - above a walking speed of a tenth {@code cos(age * 1.1f * ws) * PI *
+ * 0.12f * limbSwingAmount} around the 0.297 / -0.074 / -0.409 / 0 / 0.185 rad rests, the diagonal pairs opposed, 0 at or
+ * below it (orig :342-363); the HEAD-LOOK idiom about Y at 0.45 of {@code toRadians(netHeadYaw)} on the head, nose, mouth
+ * and the six antler parts, the ears at 1.57 rad plus it plus a 0.5 cosine x 0.02 (orig :364-375; no clamp, no pitch);
+ * and the CROUCH branch (orig :297 {@code func_70906_o()} , the port's {@code isCrouching()} , read through {@link
+ * GazellePose} ): while not crouching the tail pitches on a 0.1 cosine x 0.06 around 1.0 rad. Crouching, the classic
+ * leaves the tail's pitch where the last frame left it (a singleton-model latch); the hook leaves the bone at bind.
  *
- * <p>Scale and shadow follow {@link GazelleRenderer}: 1.0 render scale, halved for a baby, and a 0.45 x 1.0 shadow
- * (ENT-S-092; orig RenderGazelle.java:23-24, 39-45). The renderer's SCALE is private, so the equal literal here.</p>
+ * <p>Scale and shadow follow {@link GazelleRenderer} : 1.0 render scale, halved for a baby, and a 0.45 x 1.0 shadow
+ * (ENT-S-092; orig RenderGazelle.java:23-24, 39-45). The descriptor scales by {@link GazelleRenderer#SCALE} (made public by
+ * the landing slice T2f; the hook survey passed an equal literal while it was private - the T2d form).</p>
  */
 public final class GazelleGeoReplacement extends OreSpawnGeoReplacement<Gazelle> {
     /** orig ModelGazelle.java:14,51 {@code wingspeed} = 0.65f (ClientProxyOreSpawn.java:449): the chain's third multiply. */
     static final float WINGSPEED = 0.65F;
-    /** GazelleRenderer.SCALE (private) = 1.0f: orig RenderGazelle.java:24 {@code scale = par3}, ClientProxyOreSpawn.java:449. */
-    static final float SCALE = 1.0F;
     private static final GeoReplacementDescriptor<Gazelle> DESCRIPTOR = new GeoReplacementDescriptor<>(
             () -> ModEntities.GAZELLE.get(),  // lambda: a bound method ref would initialise ModEntities eagerly
             Gazelle.class,
@@ -40,10 +38,12 @@ public final class GazelleGeoReplacement extends OreSpawnGeoReplacement<Gazelle>
             GazelleRenderer.SHADOW) {
         @Override
         public void applyScale(Gazelle entity, PoseStack poseStack, float partialTick) {
-            // orig RenderGazelle.preRenderScale (:39-45): a child gets glScalef(scale / 2), otherwise glScalef(scale)
-            // (GazelleRenderer.render: isBaby() ? SCALE / 2 : SCALE)
-            float scale = entity.isBaby() ? SCALE / 2.0F : SCALE;
-            poseStack.scale(scale, scale, scale);
+            // orig RenderGazelle.preRenderScale (:39-45), GazelleRenderer.render: a child at SCALE / 2, else SCALE (public since T2f)
+            if (entity.isBaby()) {
+                poseStack.scale(GazelleRenderer.SCALE / 2.0F, GazelleRenderer.SCALE / 2.0F, GazelleRenderer.SCALE / 2.0F);
+                return;
+            }
+            poseStack.scale(GazelleRenderer.SCALE, GazelleRenderer.SCALE, GazelleRenderer.SCALE);
         }
     };
 

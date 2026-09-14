@@ -1,9 +1,9 @@
 {
   "registry": "frog",
   "display_name": "Frog",
-  "status": "DRAFT — authored by a first pass from the entity code, 2026-09-13; edit pending",
+  "status": "DRAFT — authored by a first pass from the entity code, 2026-09-13; edit pending, landed on its hook by the sixth Tier-2 slice (T2f, 2026-09-15)",
   "locomotion": "walker",
-  "artist_scope": "full contract (Tier 2, the state-branching class: geckolib_migration_design.md section 5); the rig is not yet in-game (it lands through the seam in a later slice)",
+  "artist_scope": "full contract (Tier 2, the state-branching class: geckolib_migration_design.md section 5); ON THE HOOK until idle and walk are delivered: in-game through the seam behind the dev switch since the sixth Tier-2 slice (T2f, 2026-09-15)",
   "character_sheet": "A small passive frog: an 8x11x2 body slab pitched forward 42 degrees, an 8x8 jaw plate hinged beneath it, two stubby front legs, two long jointed hind legs (a 9-long thigh and a 10-long shin each) and two eye nubs (ModelFrog.java:52-100, ten parts). 8 HP, speed 0.1, no fall damage and silent feet (Frog.java:70-75, :210-217). It hops: a random leap about every 70 ticks after a 50-tick cooldown (:96-108, :124-127) and one whenever it is hit (:229-236); it floats and is pushed by water (:65, :92-94); it hunts ants, butterflies, crickets, mosquitoes, fireflies and small worms within 8 blocks, biting for 3 and healing 1 on a kill (:220-226, :239-276); it croaks with a synched singing state of 35 ticks on half of its ambient rolls (:49-50, :183-192). A sneaking, empty-handed player pops it into a Boyfriend frog-prince or a Girlfriend princess in a puff of smoke (:132-179). It spawns in daylight above y 50, at most five together (:284-292; ModEntities.java:381-382). Read it as a frog: a squat, a leap with the hind legs kicked straight, a croak.",
   "size_notes": "Drawn at x1.0 of the rig, x0.5 as a baby (FrogRenderer.java:27, :39-40; shadow 0.35, :29) on a 64x64 sheet (ModelFrog.java:102), frogtexture.png (FrogRenderer.java:22); the hitbox is 0.75 x 0.75 (ModEntities.java:381-382). The original's ModelFrog(1.0f) argument was the wingspeed (ModelFrog.java:23), not a scale.",
   "labels": {
@@ -133,6 +133,9 @@
     "in `jump`: the kick the code has (thighs to 140 degrees, :120-126) with a crouch before and a squat after; the shins today are simply re-placed at the thigh ends (:128-131) — key the joint instead",
     "in `sing`: a throat swell — the jaw plate (:57-60) is the only croak the code has (:115-118); a body puff sells the 35-tick state",
     "in `attack`: a tongue-lash is not in the rig — a jaw snap and a body lunge toward the insect (Frog.java:248-250) is what the parts allow"
+  ],
+  "formulas": [
+    "`ModelFrog.poseFrom` (ModelFrog.java:114-140; orig ModelFrog.java:97-114 in `render` (func_78088_a, :92-125; func_78087_a at :133-135 is a bare super call), wingspeed 1.0 from `new ModelFrog(1.0f)` in orig ClientProxyOreSpawn.java:512 - the port's WINGSPEED): while the walking speed is above a tenth the swing is the cosine of the age in ticks times the wingspeed times 1.4, times pi, times 0.55, times the walking speed, else 0; the left front leg yaws by it, the right front leg by its negative, the left lower hind leg by minus half of it and the right lower hind leg by half of it. The jaw pitches by 1.22 plus, while singing, the cosine of the age times 0.85 times the wingspeed, times pi, times 0.15. While the vertical velocity is beyond a tenth either way the upper hind legs roll 2.44 (left) and -2.44 (right), else 0.227 and -0.227; each lower hind leg is placed from its upper leg's pivot (the bind) 9 units down the cosine of the roll in y and along the sine of the roll in z. The walk position and the head angles play no part. The GeckoLib hook is the same (FrogGeoReplacement.applyCustomAnimations)."
   ],
   "effort_hours": null,
   "reference_states": {

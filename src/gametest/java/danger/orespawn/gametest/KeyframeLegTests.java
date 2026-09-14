@@ -32,10 +32,14 @@ import danger.orespawn.entity.client.CryolophosaurusGeoReplacement;
 import danger.orespawn.entity.client.DragonflyGeoReplacement;
 import danger.orespawn.entity.client.EasterBunnyGeoReplacement;
 import danger.orespawn.entity.client.ElevatorGeoReplacement;
+import danger.orespawn.entity.client.EnderKnightGeoReplacement;
+import danger.orespawn.entity.client.EnderReaperGeoReplacement;
 import danger.orespawn.entity.client.FairyGeoReplacement;
 import danger.orespawn.entity.client.FireflyGeoReplacement;
 import danger.orespawn.entity.client.FlounderGeoReplacement;
+import danger.orespawn.entity.client.FrogGeoReplacement;
 import danger.orespawn.entity.client.GammaMetroidGeoReplacement;
+import danger.orespawn.entity.client.GazelleGeoReplacement;
 import danger.orespawn.entity.client.GhostSkellyGeoReplacement;
 import danger.orespawn.entity.client.GoldFishGeoReplacement;
 import danger.orespawn.entity.client.HerculesBeetleGeoReplacement;
@@ -49,8 +53,11 @@ import danger.orespawn.entity.client.LizardGeoReplacement;
 import danger.orespawn.entity.client.MantisGeoReplacement;
 import danger.orespawn.entity.client.MolenoidGeoReplacement;
 import danger.orespawn.entity.client.MosquitoGeoReplacement;
+import danger.orespawn.entity.client.NastysaurusGeoReplacement;
 import danger.orespawn.entity.client.OreSpawnGeoReplacement;
 import danger.orespawn.entity.client.OreSpawnGeoReplacementModel;
+import danger.orespawn.entity.client.OstrichGeoReplacement;
+import danger.orespawn.entity.client.PeacockGeoReplacement;
 import danger.orespawn.entity.client.PointysaurusGeoReplacement;
 import danger.orespawn.entity.client.PurplePowerGeoReplacement;
 import danger.orespawn.entity.client.RainbowAntGeoReplacement;
@@ -65,14 +72,19 @@ import danger.orespawn.entity.client.RockBaseGeoReplacement;
 import danger.orespawn.entity.client.RotatorGeoReplacement;
 import danger.orespawn.entity.client.RubberDuckyGeoReplacement;
 import danger.orespawn.entity.client.RubyBirdGeoReplacement;
+import danger.orespawn.entity.client.SeaViperGeoReplacement;
 import danger.orespawn.entity.client.SkateGeoReplacement;
 import danger.orespawn.entity.client.SpitBugGeoReplacement;
+import danger.orespawn.entity.client.SpyroGeoReplacement;
 import danger.orespawn.entity.client.StinkBugGeoReplacement;
+import danger.orespawn.entity.client.StinkyGeoReplacement;
 import danger.orespawn.entity.client.TermiteGeoReplacement;
 import danger.orespawn.entity.client.TerribleTerrorGeoReplacement;
+import danger.orespawn.entity.client.TriffidGeoReplacement;
 import danger.orespawn.entity.client.TrooperBugGeoReplacement;
 import danger.orespawn.entity.client.TshirtGeoReplacement;
 import danger.orespawn.entity.client.UnstableAntGeoReplacement;
+import danger.orespawn.entity.client.UrchinGeoReplacement;
 import danger.orespawn.entity.client.VelocityRaptorGeoReplacement;
 import danger.orespawn.entity.client.VortexGeoReplacement;
 import danger.orespawn.entity.client.WhaleGeoReplacement;
@@ -172,11 +184,11 @@ import software.bernie.geckolib.model.GeoModel;
  *     {@code MolangQueries}, which the dedicated server refuses; the harness leg carries these facts): the declared-length time-warp (the same shape at 0.5 s and 2.0 s poses identically;
  *     the declared ticks and the ratio), the late prime (a controller first processed at a late age poses
  *     as one that ran from age zero), the LUT index chain straddling a seam and saturating at an absurd age.</li>
- * <li>{@code kf_007} (the Tier-2 slices, 2026-09-13 / 2026-09-14 / 2026-09-15): the presented state - every one of the seventy shipped
- * replacements, constructed registry-free on this server, declares no keyframe layer but the Beaver (its three)
- * and the fourteen Tier-2 descriptors with transcriptions (pinned group by group in {@link T2SeamTests}; the third
- * slice's fifteen, the fourth slice's thirteen and the fifth slice's fourteen hook rigs declare none); {@code registerControllers} is final on the base and no replacement declares its own, so the base's self-gated registration is the
- * single path, and it registers nothing here for every species.</li>
+ * <li>{@code kf_007} (the Tier-2 slices, 2026-09-13 / 2026-09-14 / 2026-09-15): the presented state - every one of the eighty-two
+ * shipped replacements, constructed registry-free on this server, declares no keyframe layer but the Beaver (its
+ * three) and the fourteen Tier-2 descriptors with transcriptions (pinned group by group in {@link T2SeamTests};
+ * the third slice's fifteen, the fourth slice's thirteen, the fifth slice's fourteen and the sixth slice's twelve hook rigs declare none); {@code registerControllers} is final on the base and no replacement declares its own, so the base's self-gated registration is
+ * the single path, and it registers nothing here for every species.</li>
  * <li>{@code kf_008}: the production repair site - GeckoLib's animation cache map seeded by reflection
  * with a bake of the reference clip under the Beaver's animation resource, the shipped {@code
  * OreSpawnGeoReplacementModel} constructed registry-free: {@code getAnimation} serves a repaired copy
@@ -633,7 +645,11 @@ public class KeyframeLegTests {
                 new PointysaurusGeoReplacement(), new WhaleGeoReplacement(), new MolenoidGeoReplacement(), new RatGeoReplacement(),
                 new SpitBugGeoReplacement(), new StinkBugGeoReplacement(), new TrooperBugGeoReplacement(), new VelocityRaptorGeoReplacement(),
                 new GhostSkellyGeoReplacement(), new HydroliscGeoReplacement(), new LizardGeoReplacement(),
-                new MantisGeoReplacement(), new CaveFisherGeoReplacement(), new ChipmunkGeoReplacement());
+                new MantisGeoReplacement(), new CaveFisherGeoReplacement(), new ChipmunkGeoReplacement(),
+                // the sixth Tier-2 slice (T2f, 2026-09-15): the twelve rigs landed on the hooks already written (the Dungeon Beast and the Scorpion held) - no layer, the classic source
+                new EnderKnightGeoReplacement(), new EnderReaperGeoReplacement(), new FrogGeoReplacement(), new GazelleGeoReplacement(),
+                new NastysaurusGeoReplacement(), new PeacockGeoReplacement(), new SeaViperGeoReplacement(), new UrchinGeoReplacement(),
+                new OstrichGeoReplacement(), new SpyroGeoReplacement(), new StinkyGeoReplacement(), new TriffidGeoReplacement());
     }
 
     /** The Tier-2 descriptors' declared group counts (pinned group by group in T2SeamTests). */
@@ -650,7 +666,7 @@ public class KeyframeLegTests {
     @GameTest(template = "empty", batch = BATCH)
     public static void kf_007_every_shipped_replacement_declares_its_layers_and_the_seam_registers_nothing_here(GameTestHelper helper) throws ReflectiveOperationException {
         List<OreSpawnGeoReplacement<?>> replacements = everyReplacement();
-        helper.assertTrue(replacements.size() == 70, "the seventy shipped replacements (G1, Slice 4 and the five Tier-2 slices)");
+        helper.assertTrue(replacements.size() == 82, "the eighty-two shipped replacements (G1, Slice 4 and the six Tier-2 slices)");
         Method sealed = OreSpawnGeoReplacement.class.getMethod("registerControllers", AnimatableManager.ControllerRegistrar.class);
         helper.assertTrue(Modifier.isFinal(sealed.getModifiers()),
                 "registerControllers is final on the base: registerKeyframeLayers over loadedClips is the single self-gating path");
@@ -673,8 +689,8 @@ public class KeyframeLegTests {
             helper.assertTrue(new AnimatableManager<>(replacement).getAnimationControllers().isEmpty(),
                     name + ": the production registerControllers registers nothing on this server (no bake; the layers empty, or the clips absent)");
         }
-        helper.assertTrue(beavers == 1, "exactly one Beaver among the seventy");
-        helper.assertTrue(tier2 == 14, "the fourteen Tier-2 descriptors with layers among the seventy (the third slice's fifteen, the fourth slice's thirteen and the fifth slice's fourteen hook rigs declare none)");
+        helper.assertTrue(beavers == 1, "exactly one Beaver among the eighty-two");
+        helper.assertTrue(tier2 == 14, "the fourteen Tier-2 descriptors with layers among the eighty-two (the third slice's fifteen, the fourth slice's thirteen, the fifth slice's fourteen and the sixth slice's twelve hook rigs declare none)");
         helper.succeed();
     }
 

@@ -10,20 +10,20 @@ import net.minecraft.util.Mth;
 import software.bernie.geckolib.animation.AnimationProcessor;
 
 /**
- * GeckoLib Ender Reaper (the hooks): {@link ModelEnderReaper#poseFrom} verbatim on the converted rig, ON THE HOOK (no
- * keyframe layer, no transcription - the self-gate stays closed until an artist delivers {@code idle} and {@code
- * walk}). Wingspeed 0.23f (orig ModelEnderReaper.java:80,83 / ClientProxyOreSpawn.java:474): the THRESHOLD idiom
- * feeding a {@code |cos|} - above a walking speed of a tenth the three scythe parts roll on {@code 1.0f - |cos(age * 1.3f
- * * ws) * PI * 0.25f * limbSwingAmount|}, 1.0 at or below it (orig :589-593); the SCREAMING branch (orig :492-507,
- * read through {@link EnderReaperPose}): screaming, the scythe swings on a 1.9 ws cosine x 0.25 around 1.0 rad, the left
- * arm rises to -0.436 / -0.488 and the six wing parts beat on a 2.7 ws cosine x 0.3; else the left arm hangs at
- * -2.436 / 1.0 and the wings sway on a 0.7 ws cosine x 0.06, both about Y around +-0.785 rad; and the HEAD-LOOK idiom
- * (orig :508-514): yaw = {@code toRadians(netHeadYaw) * 0.45f} clamped to +-0.45 rad (no pitch).
+ * GeckoLib Ender Reaper (the hooks, landed by the sixth Tier-2 slice T2f): {@link ModelEnderReaper#poseFrom}
+ * verbatim on the converted rig, ON THE HOOK (no keyframe layer, no transcription - the self-gate stays closed until
+ * an artist delivers {@code idle} and {@code walk}). Wingspeed 0.23f (orig ModelEnderReaper.java:80,83 /
+ * ClientProxyOreSpawn.java:474): the THRESHOLD idiom feeding a {@code |cos|} - above a walking
+ * speed of a tenth the three scythe parts roll on {@code 1.0f - |cos(age * 1.3f * ws) * PI * 0.25f *
+ * limbSwingAmount|} , 1.0 at or below it (orig :589-593); the SCREAMING branch (orig :492-507, read through {@link
+ * EnderReaperPose} ): screaming, the scythe swings on a 1.9 ws cosine x 0.25 around 1.0 rad, the left arm rises to
+ * -0.436 / -0.488 and the six wing parts beat on a 2.7 ws cosine x 0.3; else the left arm hangs at -2.436 / 1.0 and the
+ * wings sway on a 0.7 ws cosine x 0.06, both about Y around +-0.785 rad; and the HEAD-LOOK idiom (orig :508-514):
+ * yaw = {@code toRadians(netHeadYaw) * 0.45f} clamped to +-0.45 rad (no pitch).
  *
- *
- * <p>Shadow follows {@link EnderReaperRenderer}: a 0.2 x 1.0 shadow (ENT-S-092); the classic renderer scales by 1.0, so no
- * scale hook. The rig has zero-thickness cubes (four: the two wing membranes, 0 x 50 x 17, and two blades), so the shipped
- * geo carries the classic within-cube face order ({@link FaceOrder#KEY}; TEST-007) and the seam expects it.</p>
+ * <p>Shadow follows {@link EnderReaperRenderer} : a 0.2 x 1.0 shadow (ENT-S-092); the classic renderer scales by 1.0, so
+ * no scale hook. The rig has zero-thickness cubes (four: the two wing membranes, 0 x 50 x 17, and two blades), so the
+ * shipped geo carries the classic within-cube face order ({@link FaceOrder#KEY}; TEST-007) and the seam expects it.</p>
  */
 public final class EnderReaperGeoReplacement extends OreSpawnGeoReplacement<EnderReaper> {
     /** orig ModelEnderReaper.java:80,83 {@code wingspeed} = 0.23f (ClientProxyOreSpawn.java:474): the chain's third multiply. */

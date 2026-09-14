@@ -1,0 +1,2235 @@
+{
+  "schema_version": 1,
+  "model_id": "model_triffid",
+  "tier": 2,
+  "proof_scope": "production_proof_model",
+  "ground_truth": "executed compiled LayerDefinition and baked ModelPart",
+  "source_class": "danger.orespawn.entity.client.TriffidModel",
+  "source_class_sha256": "dfde6fd3bcf958d625999a390d678dc3ad262ba99e136c21f46ac21c033165b4",
+  "compiled_dump_sha256": "9bc01a2df6714561d1d1433c347370aba0a329779ac523312f4af12078fead54",
+  "geometry_sha256": "57f902e7dd0ddca105e37275fe0786c6eda7d60fd35da6d41d267c419133d31d",
+  "animation_sha256": "7882082857fdb11e02f158ebc3a6d3f970e2ac60d54813f0e903ee97b2293749",
+  "animation_contract_sha256": "b8ee2ced555d015818d709f232a50bf6f2af934357aa14d0fe3170117a3432f9",
+  "bone_count": 178,
+  "cube_count": 178,
+  "mirrored_cube_count": 0,
+  "mirrored_uv_strategy": "source flag retained as modelpart_mirror; semantics baked into explicit faces; incompatible GeckoLib native mirror disabled",
+  "exact_bone_names": [
+    "b1",
+    "b10",
+    "b11",
+    "b13",
+    "b14",
+    "b15",
+    "b16",
+    "b17",
+    "b2",
+    "b3",
+    "b4",
+    "b5",
+    "b6",
+    "b7",
+    "b8",
+    "b9",
+    "base",
+    "c1",
+    "c10",
+    "c11",
+    "c2",
+    "c3",
+    "c4",
+    "c5",
+    "c6",
+    "c7",
+    "c8",
+    "c9",
+    "h1",
+    "h10",
+    "h11",
+    "h12",
+    "h13",
+    "h14",
+    "h15",
+    "h16",
+    "h17",
+    "h18",
+    "h19",
+    "h2",
+    "h20",
+    "h21",
+    "h22",
+    "h23",
+    "h3",
+    "h4",
+    "h5",
+    "h6",
+    "h7",
+    "h8",
+    "h9",
+    "l1",
+    "l10",
+    "l11",
+    "l12",
+    "l13",
+    "l14",
+    "l15",
+    "l16",
+    "l17",
+    "l18",
+    "l19",
+    "l2",
+    "l20",
+    "l21",
+    "l22",
+    "l23",
+    "l24",
+    "l25",
+    "l26",
+    "l27",
+    "l28",
+    "l29",
+    "l3",
+    "l30",
+    "l31",
+    "l32",
+    "l33",
+    "l34",
+    "l35",
+    "l36",
+    "l37",
+    "l38",
+    "l39",
+    "l4",
+    "l40",
+    "l41",
+    "l42",
+    "l43",
+    "l44",
+    "l45",
+    "l46",
+    "l47",
+    "l48",
+    "l49",
+    "l5",
+    "l50",
+    "l51",
+    "l52",
+    "l53",
+    "l54",
+    "l55",
+    "l56",
+    "l57",
+    "l6",
+    "l7",
+    "l8",
+    "l9",
+    "leaf3",
+    "leaf32",
+    "leaf49",
+    "r1",
+    "r10",
+    "r11",
+    "r12",
+    "r13",
+    "r14",
+    "r15",
+    "r16",
+    "r17",
+    "r18",
+    "r19",
+    "r2",
+    "r20",
+    "r21",
+    "r22",
+    "r23",
+    "r24",
+    "r25",
+    "r26",
+    "r27",
+    "r28",
+    "r29",
+    "r3",
+    "r30",
+    "r31",
+    "r32",
+    "r33",
+    "r34",
+    "r35",
+    "r36",
+    "r37",
+    "r38",
+    "r39",
+    "r4",
+    "r40",
+    "r41",
+    "r42",
+    "r43",
+    "r44",
+    "r45",
+    "r46",
+    "r47",
+    "r48",
+    "r49",
+    "r5",
+    "r50",
+    "r6",
+    "r7",
+    "r8",
+    "r9",
+    "root",
+    "root43",
+    "t1",
+    "t10",
+    "t11",
+    "t12",
+    "t13",
+    "t14",
+    "t15",
+    "t2",
+    "t3",
+    "t4",
+    "t5",
+    "t6",
+    "t7",
+    "t8",
+    "t9"
+  ],
+  "bone_draw_order": [
+    "r9",
+    "b14",
+    "base",
+    "b3",
+    "l57",
+    "l30",
+    "b6",
+    "b7",
+    "b8",
+    "b9",
+    "b11",
+    "b16",
+    "h18",
+    "b13",
+    "b15",
+    "h8",
+    "h1",
+    "h13",
+    "h7",
+    "h3",
+    "h17",
+    "h16",
+    "h23",
+    "h4",
+    "h2",
+    "h21",
+    "h19",
+    "h20",
+    "b10",
+    "b17",
+    "h6",
+    "h11",
+    "h14",
+    "h15",
+    "h10",
+    "h9",
+    "h5",
+    "h12",
+    "c2",
+    "c11",
+    "c1",
+    "c5",
+    "c3",
+    "c4",
+    "c10",
+    "c6",
+    "c7",
+    "c8",
+    "c9",
+    "b1",
+    "l15",
+    "b2",
+    "l43",
+    "l1",
+    "l2",
+    "l3",
+    "leaf3",
+    "l4",
+    "l5",
+    "l6",
+    "l7",
+    "l8",
+    "l9",
+    "l10",
+    "l11",
+    "l12",
+    "l13",
+    "l14",
+    "b4",
+    "l31",
+    "l32",
+    "leaf32",
+    "l33",
+    "l34",
+    "l35",
+    "l36",
+    "l37",
+    "l38",
+    "l39",
+    "l40",
+    "l41",
+    "l42",
+    "l17",
+    "l18",
+    "l19",
+    "l20",
+    "l21",
+    "l22",
+    "l23",
+    "l24",
+    "l25",
+    "l26",
+    "l27",
+    "l28",
+    "l29",
+    "b5",
+    "l45",
+    "l46",
+    "l47",
+    "l48",
+    "l49",
+    "leaf49",
+    "l50",
+    "l51",
+    "l52",
+    "l53",
+    "l54",
+    "l55",
+    "l56",
+    "h22",
+    "t15",
+    "t14",
+    "t13",
+    "t12",
+    "t11",
+    "t10",
+    "t9",
+    "t6",
+    "t2",
+    "t8",
+    "t7",
+    "t5",
+    "t4",
+    "t3",
+    "t1",
+    "r47",
+    "r2",
+    "r6",
+    "r5",
+    "r10",
+    "r7",
+    "r12",
+    "r8",
+    "r11",
+    "r4",
+    "r40",
+    "r45",
+    "r49",
+    "r44",
+    "root43",
+    "r43",
+    "r46",
+    "r48",
+    "r35",
+    "r38",
+    "r42",
+    "r39",
+    "r41",
+    "r18",
+    "r3",
+    "r50",
+    "r31",
+    "r36",
+    "r37",
+    "r22",
+    "r30",
+    "r33",
+    "r34",
+    "r29",
+    "r20",
+    "r24",
+    "r28",
+    "r26",
+    "r25",
+    "r27",
+    "r23",
+    "r21",
+    "r1",
+    "r13",
+    "r16",
+    "r19",
+    "r15",
+    "r14",
+    "r17",
+    "r32",
+    "l16",
+    "l44",
+    "root"
+  ],
+  "draw_order_evidence": {
+    "source": "classic EntityModel.renderToBuffer on a second bake posed identically; every ModelPart.render is one pose-stack push, attributed to its part by ModelPart.skipDraw elimination (one run per cube-bearing part with every other part's skipDraw set); a part drawn n > 1 times is named <part>__i<k> by draw ordinal",
+    "captures": [
+      "bind",
+      "s_idle_t0",
+      "s_idle_t_quarter",
+      "s_idle_t_half",
+      "s_idle_t_three_quarter",
+      "s_idle_t_end",
+      "s_open_t0",
+      "s_open_t_quarter",
+      "s_open_t_half",
+      "s_open_t_three_quarter",
+      "s_open_t_end",
+      "s_attacking_t0",
+      "s_attacking_t_quarter",
+      "s_attacking_t_half",
+      "s_attacking_t_three_quarter",
+      "s_attacking_t_end"
+    ],
+    "cube_bearing_units": 178,
+    "observed_units": 178,
+    "unobserved_units": [],
+    "ordered_pairs": 15753,
+    "tie_break": "converter emission order for pairs never drawn together in any capture",
+    "lifting": "pre-order over the geo bone tree, siblings by their subtree's first classic draw"
+  },
+  "cube_face_order": {
+    "b1": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "b10": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "b11": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "b13": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "b14": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "b15": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "b16": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "b17": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "b2": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "b3": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "b4": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "b5": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "b6": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "b7": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "b8": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "b9": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "base": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "c1": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "c10": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "c11": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "c2": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "c3": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "c4": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "c5": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "c6": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "c7": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "c8": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "c9": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "h1": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "h10": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "h11": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "h12": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "h13": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "h14": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "h15": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "h16": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "h17": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "h18": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "h19": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "h2": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "h20": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "h21": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "h22": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "h23": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "h3": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "h4": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "h5": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "h6": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "h7": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "h8": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "h9": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "l1": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "l10": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "l11": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "l12": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "l13": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "l14": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "l15": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "l16": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "l17": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "l18": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "l19": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "l2": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "l20": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "l21": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "l22": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "l23": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "l24": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "l25": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "l26": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "l27": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "l28": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "l29": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "l3": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "l30": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "l31": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "l32": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "l33": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "l34": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "l35": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "l36": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "l37": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "l38": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "l39": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "l4": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "l40": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "l41": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "l42": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "l43": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "l44": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "l45": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "l46": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "l47": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "l48": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "l49": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "l5": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "l50": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "l51": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "l52": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "l53": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "l54": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "l55": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "l56": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "l57": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "l6": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "l7": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "l8": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "l9": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "leaf3": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "leaf32": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "leaf49": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "r1": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "r10": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "r11": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "r12": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "r13": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "r14": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "r15": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "r16": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "r17": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "r18": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "r19": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "r2": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "r20": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "r21": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "r22": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "r23": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "r24": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "r25": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "r26": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "r27": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "r28": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "r29": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "r3": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "r30": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "r31": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "r32": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "r33": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "r34": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "r35": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "r36": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "r37": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "r38": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "r39": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "r4": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "r40": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "r41": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "r42": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "r43": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "r44": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "r45": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "r46": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "r47": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "r48": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "r49": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "r5": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "r50": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "r6": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "r7": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "r8": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "r9": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "root": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "root43": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "t1": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "t10": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "t11": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "t12": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "t13": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "t14": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "t15": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "t2": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "t3": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "t4": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "t5": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "t6": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "t7": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "t8": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "t9": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ]
+  },
+  "cube_face_order_evidence": {
+    "rule": "NeoForge 21.1.223 ModelPart.Cube.<init> polygon order DOWN, UP, WEST, NORTH, EAST, SOUTH (offsets 365-785: DOWN 365, UP 436, WEST 507, NORTH 578, EAST 649, SOUTH 720), mirror negating the X normals; GeckoLib labels by the direction whose step is the classic normal reflected in Y",
+    "cube_bearing_bones": 178,
+    "cubes": 178,
+    "verified_unrotated_cubes_at_bind": 1,
+    "verification": "captured normals of every cube unrotated at bind equal the rule's, in order; the parity tool's draw-order leg compares the per-quad normal sequences of both renderers on every capture"
+  },
+  "animation_contract": {
+    "schema_version": 1,
+    "kind": "entity_state",
+    "controller_required": false,
+    "candidate_animation_path": "production_replacement_hook",
+    "candidate_class": "danger.orespawn.entity.client.TriffidGeoReplacement",
+    "candidate_acceptance_path": "production OreSpawnGeoReplacementModel.setCustomAnimations (Tier-3 code-driven)",
+    "sample_ids": [
+      "bind",
+      "s_idle_t0",
+      "s_idle_t_quarter",
+      "s_idle_t_half",
+      "s_idle_t_three_quarter",
+      "s_idle_t_end",
+      "s_open_t0",
+      "s_open_t_quarter",
+      "s_open_t_half",
+      "s_open_t_three_quarter",
+      "s_open_t_end",
+      "s_attacking_t0",
+      "s_attacking_t_quarter",
+      "s_attacking_t_half",
+      "s_attacking_t_three_quarter",
+      "s_attacking_t_end"
+    ],
+    "entity_states": [
+      "idle",
+      "open",
+      "attacking"
+    ]
+  },
+  "reference_animation_schema": {
+    "status": "SCHEMA_VALID_REFERENCE_ONLY",
+    "clip_count": 0,
+    "constant_vector_count": 0,
+    "runtime_acceptance": false
+  },
+  "accepted_animation_evidence": "production OreSpawnGeoReplacement hook posed from declared entity states through the entity's pose interface (Tier-3 code-driven)",
+  "artist_editable_math_to_keyframes_status": "NOT_APPLICABLE_TIER3_CODE_DRIVEN",
+  "compiled_animation_bake_sample_count": 0,
+  "reference_clip_keys_source": "compiled setupAnim output; no Python formula evaluation",
+  "source_animation_channel_inventory": []
+}

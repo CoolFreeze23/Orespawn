@@ -11,27 +11,27 @@ import software.bernie.geckolib.animation.AnimationProcessor;
 import software.bernie.geckolib.cache.object.GeoBone;
 
 /**
- * GeckoLib Sea Viper (the hooks): {@link ModelSeaViper#poseFrom} verbatim on the converted rig (ENT-S-091 slice C's
- * line-for-line transcription of orig ModelSeaViper.java:295-402), ON THE HOOK (no keyframe layer, no transcription -
- * the self-gate stays closed until an artist delivers {@code idle} and {@code walk}; the landing slice adds the geo,
- * the wiring and the proofs). Wingspeed 0.5f (orig ModelSeaViper.java:14,51 / ClientProxyOreSpawn.java:497):
- * a negative walking speed clamped to 0 (orig :298-301); the base segment's yaw {@code cos(age x 1.3 ws) x PI
- * x 0.1 x amount} (orig :302) and the twenty-one segments chained off their predecessor through {@link #doseg} (the
- * classic helper, the same name; orig :394-402): each 9 units along the previous segment's yaw foreshortened by {@code
- * |cos(pitch)|} (POSITION writes through {@link #moveTo}; the segments' pitch is never written - the bind, read
- * through {@link #classicXRot}) and yawed on a travelling wave lagged {@code pi / 4} per index blended toward the
- * static S-curve as the swing amount drops (index 2 twice, as the original); the ATTACKING branch (orig :324-346
- * {@code getAttacking() != 0}): the jaw chattering wide (0.65 + 1.7 ws x PI x 0.17) and the tongue's four parts
- * flicking on a 4.7 ws cosine with a 1.5 ws z offset, else the idle breath (0.45 + 0.2 ws x PI x 0.02, the tongue at
- * 1.7 ws with a 0.5 ws offset) - the offset the original wrote as {@code offsetZ} in block units, folded into the
- * pivot's z as the bind plus sixteen times it (orig :332-334 / :343-345, the port's fold); and the HEAD-LOOK idiom
- * (orig :347-357: yaw {@code toRadians(netHeadYaw) x 0.5} on the eyes, the mouth, the head, the fangs and the
- * tongue, the forks splayed -+0.436, the lower jaw's pivot FOLLOWING the head's yaw by 2 units). The entity is read
- * through {@link SeaViperPose} (the Slice 4b doctrine). Every value the classic reads back from a part it just wrote is
- * held in a local; the base segment's and the head's pivots, never written, are read through
- * {@link #classicPosition} (the bind).
+ * GeckoLib Sea Viper (the hooks, landed by the sixth Tier-2 slice T2f): {@link ModelSeaViper#poseFrom} verbatim on the
+ * converted rig (ENT-S-091 slice C's line-for-line transcription of orig ModelSeaViper.java:295-402), ON THE HOOK
+ * (no keyframe layer, no transcription - the self-gate stays closed until an artist delivers {@code idle} and {@code
+ * walk} ; the geo, the wiring and the proofs landed with T2f). Wingspeed 0.5f (orig ModelSeaViper.java:14,51 /
+ * ClientProxyOreSpawn.java:497): a negative walking speed clamped to 0 (orig :298-301); the base segment's yaw
+ * {@code cos(age x 1.3 ws) x PI x 0.1 x amount} (orig :302) and the twenty-one segments chained off their
+ * predecessor through {@link #doseg} (the classic helper, the same name; orig :394-402): each 9 units along the
+ * previous segment's yaw foreshortened by {@code |cos(pitch)|} (POSITION writes through {@link #moveTo} ; the
+ * segments' pitch is never written - the bind, read through {@link #classicRotX} , the base's since T2f)
+ * and yawed on a travelling wave lagged {@code pi / 4} per index blended toward the static S-curve as the swing
+ * amount drops (index 2 twice, as the original); the ATTACKING branch (orig :324-346 {@code getAttacking() != 0}
+ * ): the jaw chattering wide (0.65 + 1.7 ws x PI x 0.17) and the tongue's four parts flicking on a 4.7 ws cosine
+ * with a 1.5 ws z offset, else the idle breath (0.45 + 0.2 ws x PI x 0.02, the tongue at 1.7 ws with a 0.5 ws offset) -
+ * the offset the original wrote as {@code offsetZ} in block units, folded into the pivot's z as the bind plus
+ * sixteen times it (orig :332-334 / :343-345, the port's fold); and the HEAD-LOOK idiom (orig :347-357: yaw {@code
+ * toRadians(netHeadYaw) x 0.5} on the eyes, the mouth, the head, the fangs and the tongue, the forks splayed -+0.436,
+ * the lower jaw's pivot FOLLOWING the head's yaw by 2 units). The entity is read through {@link SeaViperPose} (the
+ * Slice 4b doctrine). Every value the classic reads back from a part it just wrote is held in a local; the base
+ * segment's and the head's pivots, never written, are read through {@link #classicPosition} (the bind).
  *
- * <p>Shadow follows {@link SeaViperRenderer}: a 1.0 x 1.0 shadow (ENT-S-092); its {@code SCALE} is 1.0 (identity,
+ * <p>Shadow follows {@link SeaViperRenderer} : a 1.0 x 1.0 shadow (ENT-S-092); its {@code SCALE} is 1.0 (identity,
  * never applied), so no scale hook. No zero-thickness cube.</p>
  */
 public final class SeaViperGeoReplacement extends OreSpawnGeoReplacement<SeaViper> {
@@ -155,13 +155,13 @@ public final class SeaViperGeoReplacement extends OreSpawnGeoReplacement<SeaVipe
     /**
      * ModelSeaViper.doseg verbatim (orig ModelSeaViper.java:394-402): segment {@code notinn} positioned and yawed off
      * its predecessor {@code inn}, whose x / z / yaw are the chained state (the base segment's pivot is the bind) and
-     * whose pitch is never written (the bind, {@link #classicXRot}); returns {@code notinn}'s x / z / yaw for the next.
+     * whose pitch is never written (the bind, {@link #classicRotX}); returns {@code notinn}'s x / z / yaw for the next.
      */
     private static float[] doseg(AnimationProcessor<?> processor, String inn, float[] innState, String notinn,
                                  float f, float f1, float f2) {
         float pi4 = 0.7853982f;                                               // orig :395
         float newangle = 0.0f;                                                // orig :396
-        float innXRot = classicXRot(bone(processor, inn));
+        float innXRot = classicRotX(bone(processor, inn));
         // orig :397-398 - 9 px along the previous segment's yaw, foreshortened by |cos(pitch)|.
         // Math.cos / casts kept verbatim (double math) so the result is bit-identical to the original.
         float notinnZ = (float) ((double) innState[Z] + (double) ((float) Math.cos(innState[Y_ROT])) * (9.0 * Math.abs(Math.cos(innXRot))));
@@ -174,11 +174,6 @@ public final class SeaViperGeoReplacement extends OreSpawnGeoReplacement<SeaVipe
         float notinnYRot = newangle + a - a * f1;
         rotateY(processor, notinn, notinnYRot);
         return new float[] {notinnX, notinnZ, notinnYRot};
-    }
-
-    /** {@code part.xRot} read back on a part whose pitch the classic never writes (the bind): the inverse of {@link #rotateX}'s mapping. */
-    private static float classicXRot(GeoBone bone) {
-        return -bone.getRotX();
     }
 
     /**

@@ -10,28 +10,28 @@ import net.minecraft.util.Mth;
 import software.bernie.geckolib.animation.AnimationProcessor;
 
 /**
- * GeckoLib Ostrich (the hooks): {@link OstrichModel#poseFrom} verbatim on the rig the landing slice converts, ON THE
- * HOOK (no keyframe layer, no transcription - the self-gate stays closed until an artist delivers {@code idle}
- * and {@code walk}). Wingspeed 0.65f (orig ModelOstrich.java:16,57 / ClientProxyOreSpawn.java:450), the
- * entity read through the EXISTING {@link OstrichPose} (ENT-S-093, the Slice 4b form; nothing added to it): the
- * legs' gait on the entity's own per-tick SPEED ({@code sqrt(dx^2 + dz^2)} of {@code xOld - getX},
- * {@code zOld - getZ}) - {@code cos(age x 1.25 x ws) x PI x speed x 0.4}, CLAMPED to +-0.75 past +-0.5 - over the
- * twenty-two leg parts about X (the left positive about -0.297 / 0.483 / -0.437, the right the negative); the three
- * tail feathers about X on a bare 0.05 cosine at 0.06 x PI about -0.594 and about Y on 0.061 / 0.072 cosines at 0.08 x
- * PI about -+0.334; the head yaw from the RenderInfo ACCUMULATION when ridden (orig :335-337: the entity's own
- * yaw delta x 20, negated, eased into {@code rf1} by a sixtieth and clamped to +-50; the Rotator's per-frame
- * RenderInfo precedent) else halved; the SITTING-and-not-activated branch (orig :349) that inverts the six head
- * parts to 3.1415 rad about X and zeroes the yaw; the HEAD-LOOK idiom {@code
- * toRadians(netHeadYaw) x 0.65} on five head parts; the wings' {@code |cos|} flap on 1.0 x ws at 0.15 x PI (Z,
- * mirrored; Y at half) gated by the {@code ri1} LATCH rolled from the entity's random on the frame the rhythm
- * crosses zero upward (orig :370-373; the PurplePower's subject-RNG precedent); and the two hats' VISIBILITY by the
- * activation level (orig :420-425, through {@link #setVisible}). Every value the classic reads back from a part it
- * just wrote is held in a local. Once per rendered frame, as the classic: the ENT-S-147 record of the per-frame dedup
- * applies as it does to the Rotator. Eight claws and the three tail feathers are zero-thickness cubes (ENT-S-161; the
- * classic face order required below).
+ * GeckoLib Ostrich (the hooks, landed by the sixth Tier-2 slice T2f): {@link OstrichModel#poseFrom} verbatim on the
+ * converted rig, ON THE HOOK (no keyframe layer, no transcription - the self-gate stays closed until an artist
+ * delivers {@code idle} and {@code walk}). Wingspeed 0.65f (orig ModelOstrich.java:16,57 /
+ * ClientProxyOreSpawn.java:450), the entity read through the EXISTING {@link OstrichPose} (ENT-S-093, the Slice 4b
+ * form; nothing added to it): the legs' gait on the entity's own per-tick SPEED ({@code sqrt(dx^2 + dz^2)} of {@code
+ * xOld - getX} , {@code zOld - getZ} ) - {@code cos(age x 1.25 x ws) x PI x speed x 0.4} , CLAMPED to +-0.75 past
+ * +-0.5 - over the twenty-two leg parts about X (the left positive about -0.297 / 0.483 / -0.437, the right the
+ * negative); the three tail feathers about X on a bare 0.05 cosine at 0.06 x PI about -0.594 and about Y on 0.061 /
+ * 0.072 cosines at 0.08 x PI about -+0.334; the head yaw from the RenderInfo ACCUMULATION when ridden (orig :335-337:
+ * the entity's own yaw delta x 20, negated, eased into {@code rf1} by a sixtieth and clamped to +-50; the Rotator's
+ * per-frame RenderInfo precedent) else halved; the SITTING-and-not-activated branch (orig :349) that inverts
+ * the six head parts to 3.1415 rad about X and zeroes the yaw; the HEAD-LOOK idiom {@code toRadians(netHeadYaw) x
+ * 0.65} on five head parts; the wings' {@code |cos|} flap on 1.0 x ws at 0.15 x PI (Z, mirrored; Y at half) gated by
+ * the {@code ri1} LATCH rolled from the entity's random on the frame the rhythm crosses zero upward (orig :370-373;
+ * the PurplePower's subject-RNG precedent); and the two hats' VISIBILITY by the activation level (orig :420-425,
+ * through {@link #setVisible} ). Every value the classic reads back from a part it just wrote is held in a local. Once
+ * per rendered frame, as the classic: the ENT-S-147 record of the per-frame dedup applies as it does to the Rotator.
+ * Eight claws and the three tail feathers are zero-thickness cubes (ENT-S-161; the classic face order required
+ * below).
  *
- * <p>Shadow follows {@link OstrichRenderer}: a 0.55 x 1.0 shadow (ENT-S-092); the classic renderer scales by 1.0 with no
- * scale override, so no scale hook.</p>
+ * <p>Shadow follows {@link OstrichRenderer} : a 0.55 x 1.0 shadow (ENT-S-092); the classic renderer scales by 1.0 with
+ * no scale override, so no scale hook.</p>
  */
 public final class OstrichGeoReplacement extends OreSpawnGeoReplacement<Ostrich> {
     /** orig ModelOstrich.java:16,57 {@code wingspeed} = 0.65f (ClientProxyOreSpawn.java:450): the chain's third multiply. */

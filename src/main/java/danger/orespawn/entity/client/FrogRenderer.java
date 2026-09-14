@@ -24,7 +24,7 @@ public class FrogRenderer extends MobRenderer<Frog, ModelFrog> {
     public static final ModelLayerLocation MODEL_LAYER =
             new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "frog"), "main");
 
-    private static final float SCALE = 1.0f;
+    public static final float SCALE = 1.0f;
     /** orig RenderLiving shadow = 0.35f * 1.0f (RenderFrog.java:23). */
     public static final float SHADOW = 0.35F * 1.0F;
 

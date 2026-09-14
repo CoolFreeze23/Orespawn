@@ -260,15 +260,6 @@ public final class SpitBugGeoReplacement extends OreSpawnGeoReplacement<EntitySp
         rotateX(processor, "leg3part3c", -0.48f - upangle);
     }
 
-    /**
-     * {@code part.xRot} read back in classic terms for a part the classic never writes: the bind the bake gave the bone
-     * (internal X is the negated classic X, the base's basis fact; no controller runs on the classic source and GeckoLib
-     * holds an untouched bone at its bake).
-     */
-    private static float classicRotX(GeoBone bone) {
-        return -bone.getRotX();
-    }
-
     /** {@code part.x = x; part.z = z} in classic terms, the part's y left as it is (the bind: the classic never writes it). */
     private static void moveXZ(AnimationProcessor<?> processor, String name, float x, float z) {
         float[] current = classicPosition(bone(processor, name));

@@ -1,9 +1,9 @@
 {
   "registry": "gazelle",
   "display_name": "Gazelle",
-  "status": "DRAFT — authored by a first pass from the entity code, 2026-09-13; edit pending",
+  "status": "DRAFT — authored by a first pass from the entity code, 2026-09-13; edit pending, landed on its hook by the sixth Tier-2 slice (T2f, 2026-09-15)",
   "locomotion": "walker",
-  "artist_scope": "full contract (Tier 2, the state-branching class: geckolib_migration_design.md section 5); the rig is not yet in-game (it lands through the seam in a later slice)",
+  "artist_scope": "full contract (Tier 2, the state-branching class: geckolib_migration_design.md section 5); ON THE HOOK until idle and walk are delivered: in-game through the seam behind the dev switch since the sixth Tier-2 slice (T2f, 2026-09-15)",
   "character_sheet": "A tameable, skittish grazer: a 6x6x13 body with a chest wedge, a long raked neck with a throat fluff, a cube head with a nose, a mouth, two ears and two three-segment antlers, four legs of four or five pieces down to a hoof, and a stub tail (ModelGazelle.java:101-269, 34 parts). 15 HP, speed 0.3 and no attack (Gazelle.java:82-87). It flees monsters within 8 blocks and players within 12 (:73, :76), panics when hurt (:75), is tempted by wheat (:74) and tamed by it one time in two (:226-249); tamed it follows its owner (:72), sits on a right-click (:277-282), is untamed with glass (:251-265) and takes at most 10 per hit (:210-216). It grazes: hurt or on a 1-in-750 tick it scans up to ten blocks for carrots, potatoes or grass, walks there, eats the block with a burp and heals (:89-94, :150-182); every 250 ticks or so it drifts toward another gazelle (:184-189). It spawns between y 50 and 100 on dirt or grass (:288-294; ModEntities.java:385-386), breeds on a crystal apple (:325-327) and its fawn inherits the owner (:340-348). Read it as a deer: a light diagonal trot, the ears flicking, the tail wagging, the head down to graze.",
   "size_notes": "Drawn at x1.0 of the rig, x0.5 as a baby (GazelleRenderer.java:28, :40-41; shadow 0.45, :30) on a 64x64 sheet (ModelGazelle.java:271), gazelletexture.png (GazelleRenderer.java:22); the hitbox is 0.6 x 1.8 (ModEntities.java:385-386). The original's ModelGazelle(0.65f) argument was the wingspeed (ModelGazelle.java:24), not a scale.",
   "labels": {
@@ -150,6 +150,9 @@
     "in `graze`: the bite the code fires (Gazelle.java:171-179) has no pose; a neck-and-head dip with a chew on the burp",
     "in `sit`: the owner's sit toggle (Gazelle.java:277-282) is invisible today; a folded rest pose",
     "in `hurt`: a startled leap before the PanicGoal's bolt (Gazelle.java:75)"
+  ],
+  "formulas": [
+    "`ModelGazelle.poseFrom` (ModelGazelle.java:283-322; orig ModelGazelle.java:267-298 in `render` (func_78088_a, :261-334; func_78087_a at :342-344 is a bare super call), wingspeed 0.65 from `new ModelGazelle(0.65f)` in orig ClientProxyOreSpawn.java:449 - the port's WINGSPEED): while the walking speed is above a tenth the swing is the cosine of the age in ticks times 1.1 times the wingspeed, times pi, times 0.12, times the walking speed, else 0; the four left front leg pieces pitch by 0.297, -0.074, -0.409 and 0 plus the swing, the right front pieces by the same rests minus it, the five left rear pieces by 0, 0.185, -0.074, -0.409 and 0 minus it and the five right rear pieces by the same rests plus it. The head, nose, mouth and the six antler pieces yaw by the look yaw in radians times 0.45, the two ears by 1.57 plus that plus the cosine of the age times 0.5, times pi, times 0.02. While not crouching the tail pitches by 1.0 plus the cosine of the age times 0.1, times pi, times 0.06; crouching, the tail is left where the last frame put it (the hook leaves it at the bind). The walk position and the look pitch play no part. The GeckoLib hook is the same (GazelleGeoReplacement.applyCustomAnimations)."
   ],
   "effort_hours": null,
   "reference_states": {
