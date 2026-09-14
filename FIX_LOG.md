@@ -8697,3 +8697,220 @@ register lines and KNOWN_ISSUES' count (the lane's records.md drafts them); the 
 conversion (`build/reference/generated`, the reference manifest) untouched — the Dungeon Beast's artist rig keeps its four toes, as 1.7.10 compiles them.
 
 GATE: GATE: harness1 (first run) red at the suite - the new row t2_009 loading a client class on the dedicated server (the fix above); harness1b stopped by the orchestrator to take the refuters' fixes; harness1c green: the three trees re-pinned under the pair-contested rule (g1 2, s4 13, t2 68 PARITY PASS, checked-in proof updated, then each verified drift-free), the reference clips deterministic and unchanged (298 files, VERIFIED), the two test files OK (50 and 12), the folder fresh (116 folders, 1,369 files, every check PASS), the benchmark re-pinned for g1tool's move, the audit 0 errors / 60 acknowledged / 78 shipped geos; drift 0, build 0, suite: all 1282 required tests passed.
+
+## PHASE G — THE FK SLICE (2026-09-15): the Alien and the Emperor Scorpion as real parent-child hierarchies, the world transform at every chain link as their proof — BOTH RIGS HELD: the seam draws a bake in pre-order (GeoRenderer.renderRecursively, DrawOrder.apply) and neither classic draw order is a pre-order of its chains (the Alien's tail rings before their root, its head group and arm chains apart; the Scorpion's left pincer after the whole right arm), the Alien's third arm links also past the surface leg's normal tolerance (2.45e-6 against 1e-6, float32 composition of three full local triples); the converter's hierarchy form (child bones parented to their chain parents, pivots derived in Blockbench terms, local bind rotations, a measurement draw-order form) and the harness's chain-link leg landed and proven on scratch entries — the Emperor Scorpion's 52 links and the Alien's 26 all PASS under 7.4e-7 blocks, every other leg PASS but the draw order (and the Alien's surface leg) — the hook's FlatRig mapping measured and kept as patches; no rig landed, no hook state moved, no gameplay touched
+
+RULING. Owner 2026-09-15, closing set, item 4 (addendum item 33 (4)) and the continuation's item 3 (addendum item 34): "the four FK-chained
+rigs as real parent-child hierarchies per design section 5, the world transform at every chain link against the classic model as their
+proof", narrowed to "The FK slice is the Alien and the Emperor Scorpion. The Ant Robot and Spider Robot are Tier 0 (design section 5, the
+solver exceptions) and are not converted." Design section 5 ("FK-chained"): "Alien and EmperorScorpion must become real parent-child bone
+hierarchies rather than a flat rig whose child pivots are rewritten by trigonometry. Preserve part names, derive pivots in Blockbench terms,
+and compare independently evaluated world transforms at every chain link. ... Do not revive the early Queen helper's synthetic/fake hierarchy
+approach." Amendment 2 (owner 2026-09-13, second set, item 2): every rig lands ON ITS HOOK. The standing form (item 4): "A rig that fails a
+leg is held with a register line and rejoins at the remainder; one still failing there is reported, not forced." The brief: "a converter
+limitation or a hook the S4 doctrine cannot carry is the same: held, with the line". One refuter for the slice (the cost rules of 2026-09-12,
+item 25 (3)). Parity lanes frozen: nothing of gameplay touched.
+
+WHAT LANDED (tooling; no rig, no hook state moved):
+- THE CONVERTER'S HIERARCHY FORM (`tools/layer_definition_to_geo.py`): a manifest entry's `hierarchy: {child: parent}` over the classic
+  flat rig's top-level parts (`hierarchy_declared` :563-600 - compiled part names, top-level, not undrawn / render-instance parts, no
+  self-parenting, no cycle; `hierarchy_draw_order_declared` :601-608). `convert_geometry` (the hierarchy parameters :915-921; `derived_pivot`
+  :949-968; the child's pivot and cubes at the derived pivot :977-979; the parent and the local bind rotation :1015-1024; the summary's
+  `hierarchy` block :1104-1120) emits each declared child as a bone PARENTED to its chain parent, the part name preserved, its PIVOT DERIVED
+  IN BLOCKBENCH TERMS - GeckoLib rotates a child's pivot with its parent (RenderUtil.prepMatrixForBone, 4.8.4 bytecode: translate to the
+  bone, to its pivot, rotate Z then Y then X, away from the pivot; a child's pos and rotation in the parent's frame, its pivot offset from the
+  parent's), so a child under a parent ROTATED at bind cannot keep the classic absolute pivot: `P_c = P_p + R_p^-1 * (classic_c - classic_p)`
+  (the parent's own derived pivot and flat bind rotation), its cubes at that pivot plus their classic local offsets - and its bind rotation
+  the LOCAL one, `R_local = R_parent^-1 * R_child` (`local_bind_rotation` :663-684, the ZYX Euler machinery :611-660: `rotation_matrix_zyx`
+  = Rz * Ry * Rx, ModelPart.translateAndRotate's rotationZYX and GeckoLib's rotateMatrixAroundBone alike, and its inverse with the gimbal
+  branch), checked on every link to recompose the child's flat rotation to 1e-9 AND to be recoverable by the hook's flat-bind convention
+  (`euler_angles_zyx_classic_branch` :651-660: of a rotation's two ZYX triples the one with the smaller |xRot| + |zRot| - a classic setupAnim
+  writes one axis over the bind, so the hook's buffer must hold the classic's own triple; a rig the convention could not carry is refused at
+  conversion). The draw-order derivation (`derive_bone_draw_order` :687-834) lifts the classic order over the declared tree as it always did
+  for a nested rig and REFUSES a classic order that is not a pre-order (its two FINDINGs: a parent drawn after a descendant, a subtree
+  interleaved); the MEASUREMENT form `hierarchy_draw_order: "preorder_diagnostic"` (:551-560; the `finding` closure :782-786; the evidence
+  :821-833) records the findings and the moved units instead and carries the hierarchy's pre-order as the key, so a held rig's other legs can
+  be measured - the draw-order leg fails such a geo by construction (the classic list is not the emitted one), so nothing under it can ship.
+  `convert_model` :1474-1478 declares and passes both; the conversion report gains `hierarchy` (:1511) - the declaration, the link count, the
+  local bind rotations, the derived pivots, the draw-order mode - for a hierarchy entry only: every other entry's report byte-identical.
+- THE CHAIN-LINK LEG (`tools/g1_render_parity.py`, an entry-declared leg): `hierarchy_declared` :853-897 (the manifest's declaration validated
+  the converter's way and checked for drift against the converter's report and the generated geo's bone parents); `chain_link_parity`
+  :924-1021 - for every sample of the entry's matrix the world transform of EVERY bone (the declared links reported per link, the roots and
+  every other bone beside them), evaluated independently on the classic model (`classic_world_matrix` :910-921: T(rotation point / 16) * Rz *
+  Ry * Rx from the compiled `transforms`, the flat part's ModelPart.translateAndRotate) and on the GeckoLib bake (the probe's
+  `bone_poses_classic`: the pose stack at the bone as the bake renders it, conjugated into classic space - `G1ModelProbe.java:1415` records
+  it for a hierarchy entry as for a render-instance one - closed by the bone's own geo pivot: classic_world == bone_pose * T(geo pivot / 16),
+  a root's the classic absolute pivot, a child's the derived one), compared within the GEOMETRY leg's tolerance (the ruling; 1e-5 blocks on
+  the 3x3 linear block and on the translation column alike; an entry error bounds the angle error up to sqrt 3, stated), every sample a full
+  capture (a transform-only sample refused: the bake's world matrices are recorded where it renders); the console line `G1 CHAIN LEG PASS:
+  <id> N links, max delta L linear / T blocks over B bone-samples in S samples` (:3147-3157, before the draw-order leg so a measurement-form
+  rig still reports its links); the report key `chain_link_leg` (:3219) and the README line (`chain_link_lines` :2760-2773, the entity_state
+  and code_driven branches :2865 / :2884) for a hierarchy entry only. The animation leg (`animation_parity`, the `hierarchy` parameter
+  :1344-1345, the deferral :1397-1405, the report key :1767-1772): a bone parented by the entry's hierarchy carries a LOCAL rotation and
+  position (the parent's frame), which the flat classic channels are not - its world transform is the chain-link leg's; its scale and its
+  hidden flag are still compared; the chain roots and every other bone compare at 0 rad as always. `hierarchy_declared` at :3097, passed at
+  :3141.
+- THE PINS (`tools/test_g1_render_parity.py`, 12 -> 18: the `HierarchyForm` class :198-353 on a synthetic two-link chain - the Alien's arml1
+  under its bind roll and arml2): the converter parents the child with a local rotation that recomposes the flat one and a derived pivot
+  that the bake carries forward to the classic one (:223-249); the classic-branch convention recovers a yaw past a quarter turn and refuses
+  a half-turn pitch-and-roll (:251-259); the hierarchy validation (:261-278); the pre-order refusal and the diagnostic form's record
+  (:280-290); the chain-link leg PASS on world matrices derived through the pivot relation and CHAIN LINK MISMATCH on a link moved 2e-5
+  blocks, a transform-only sample refused (:324-338); the parity's drift checks against the converter's report and the geo (:340-352).
+
+THE HIERARCHIES DECLARED (the design's order; `hierarchy_analysis.py` in the lane's scratch, the manifests `build/fk_measure*.json`):
+- emperor_scorpion (EmperorScorpionModel; 52 links, 11 chain roots): the tail Tailseg1 -> Tailseg2 -> .. -> Tailseg7 -> {Tailseg8, Stinger1 ->
+  Stinger2 -> Stinger3} (10 links; the classic `doTail` :799-831 pitches each ring by the last one's plus its own increment and places it
+  9 / 10 / 3 units along the last one's sine and cosine - a TRUE joint follow: the resolved local position is the constant bind offset, the
+  local rotation the classic increment); each leg Leg<k>Seg1 -> Seg2 -> Seg3 -> Seg4 -> Seg5 (32 links; `doLeftLeg` / `doRightLeg` :743-777
+  yaw the four outer segments alike and place each by `6 - 6|sin(yaw)|`, not `6 cos(yaw)`, so the local position slides within the parent's
+  frame as much as the classic pivot does); LeftShoulder -> LeftArmSeg1 -> LeftArmSeg2 -> {LeftArmSeg3, LeftArmSeg4, LeftPincer} and the
+  right arm the same (10 links; `doLeftClaw` / `doRightClaw` :779-797 place the arm's z from the first segment's yaw). The head, the eight body
+  segments, the eyes and the mandibles stay roots (no follow).
+- alien / alien_boss (ModelAlien; 26 links, 4 chain roots; one hierarchy for the two registries): neck -> head -> {head1, head2, fang1-4,
+  jaw1 -> jaw2} (9 links; the head-look follows :444-471: the head 3 units along the neck's yaw, its six followers at its pivot, the jaws 8
+  units on); tail1 -> tail2 -> tail3 -> tail4 -> tail5 with spike1 under tail1, spike2 under tail2, spike3 under tail3, spike4 / spike5 under
+  tail4 (9 links; `doTail` :594-620, 10 units along each ring's yaw with y left at the bind - the pitched parent makes the local offset a
+  constant carried back through its bind pitch); arml1 -> arml2 -> {clawl1, clawl2, clawl3} and armr1 -> armr2 -> {clawr1, clawr2, clawr3} (8
+  links; `doLeftClaw` / `doRightClaw` :622-651, 9 and 14 units along the yaws, the arm root's bind roll (arml1 zRot 0.1745, armr1 -0.1745)
+  ignored by the classic follow, so the local position moves within the parent's frame). The eight leg parts (four a side about one pivot,
+  independent pitches) and the fifteen fan parts (one pivot, independent) are not chains: roots.
+
+THE MAPPING (the hook's form; MEASURED, then taken back - the lane's `hook_hierarchy_form/` holds `FlatRig.java`, the three descriptors in
+the form and `hooks_hierarchy.patch`): `FlatRig` (a new class in `entity/client`) holds the classic FLAT rig - every part's world rotation
+point and world rotation, initialised to the flat bind read from the bake (the pivot, absolute; the initial snapshot GeckoLib saved when the
+processor registered the bone; a child's flat bind rotation its parents' composed onto its local one and decomposed again by the classic-
+branch convention, its flat bind position its parent's carried forward through the parent's bind rotation - the converter's derivations
+inverted) - and the classic statements are KEPT EXACTLY, their target the buffer: `rotateX(processor, "fan", -1.85f)` becomes `rig.rotateX
+("fan", -1.85f)`, `moveXZ` / `moveTo` / the `bind()` reads likewise (the hook's private helpers take the rig; `applyCustomAnimations` is
+`FlatRig rig = FlatRig.bind(processor); poseRig(rig, inputs); rig.resolve();` - the Alien Boss the same through the shared `poseRig`). `resolve`
+maps the flat pose onto the bake: a ROOT bone takes exactly the channels the statements wrote (an unwritten channel stays the bake's bind bit
+for bit, a written one the classic float - the animation leg's 0 rad on every root); a PARENTED bone whose chain was written takes the
+parent-relative transform that reproduces its flat world transform, `L = W_parent^-1 * W_child` (W = T(x, y, z) * Rz * Ry * Rx in double
+precision, JOML Matrix4d), decomposed into ModelPart's own child form - the translation in the parent's frame through the base's `moveTo`
+(relative to the parent's pivot for a child bone) and the ZYX Euler triple through `rotateX / Y / Z`; an untouched chain stays at the bake's
+bind. So the world transform of every link is the classic's, `W_parent * L = W_child` - the chain-link leg's measurement below. Two lessons
+of the measurement, both in the landed converter: (1) the derived pivot (a hierarchy whose children kept the classic absolute pivots missed
+by 0.36 blocks at bind: GeckoLib rotates a child's pivot with its parent); (2) the classic-branch convention (a child whose bind yaw exceeds
+a quarter turn - armr2 at 2.27 rad - decomposes to the equivalent triple (pi, 0.87, pi), and the classic's single-axis write over that
+triple is a different rotation: 0.89 blocks at the first posed sample; the convention picks the classic's triple, the converter refuses a
+rig where it would not).
+
+THE MEASUREMENT (the lane's scratch entries over the t2 form, `build/fk_measure.json`: entity_state, the states idle / claws_swinging (ri1
+3, the Robot2 preset form) / attacking, the Beaver's amplitude matrix 0 / 0.25 / 0.5 / 1 (both hooks read limbSwingAmount), five fractions
+of the sampler's period (the Alien 28.56 ticks at 0.22 rad/tick, the Scorpion 57.12 at 0.11), the Alien's head look 30 / 10, the camera 34 /
+-28, `reference_source` on all three, the measurement draw-order form; the chain `run_chain.sh fk measure validate` on the lane's fresh javac
+classes (main 1265 / g1tool 84 / gametest 249, rc 0 x 3) - vanilla probe rc 0, convert rc 0, geo probe rc 0, reference leg rc 0 (55 / 55 / 78
+parts), the parity tool stopping at the first failing leg, so every leg run independently per entry by `measure_legs.py` over the same dumps
+(`measure_legs.log`)):
+- emperor_scorpion: geometry PASS 1.28e-6 blocks over 4,758 cube-samples (61 samples); surface PASS UV 0 / normal 8.35e-7 over 114,192
+  vertex-samples; animation PASS 0 rad / 0 model units over 4,758 root channel-samples (9,516 channel-samples of the 52 parented bones
+  deferred), hidden-bone checks 60; CHAIN LEG PASS 52 links, max delta 4.68e-7 linear / 7.32e-7 blocks over 4,758 bone-samples in 61 samples
+  (worst Stinger2 3.16e-7 / 7.32e-7 at s_idle_a0_t0; best Leg8Seg2 9.3e-8 / 1.38e-7); DRAW ORDER MISMATCH at every capture (LeftPincer:
+  seven units moved); visual PASS 0 / 0 at all seven samples (contested 6.4e-3 .. 7.8e-3, pair-contested 0); render state cutout / white /
+  light 0 both sides; reference PASS 78 parts.
+- alien and alien_boss (identical numbers, the same hook): geometry PASS 1.17e-6 blocks over 3,355 cube-samples (61 samples); SURFACE FAIL
+  (`RENDERER MAPPING MISMATCH model_alien/s_idle_a0_t0/clawl1#0`: clawl1 and clawl3 - the third links of the left arm chain under arml1's bind
+  roll - best-matching normals 2.45e-6 from the classic's, every other bone's within 6.12e-7; the position within 1.17e-6 blocks); animation
+  PASS 0 rad / 0 units over 5,307 root channel-samples (4,758 of the 26 parented bones deferred), hidden-bone checks 60; CHAIN LEG PASS 26
+  links, max delta 5.90e-7 linear / 5.94e-7 blocks over 3,355 bone-samples in 61 samples (worst spike4 / spike5 3.96e-7 / 5.94e-7, clawl3
+  5.9e-7 / 3.44e-7, clawr1 5.82e-7 / 3.38e-7; best fang4 7.45e-8 / 1.31e-7); DRAW ORDER MISMATCH at every capture (26 of 55 units moved);
+  visual PASS 0 / 0 at all seven samples (contested 4.6e-5 .. 2.4e-4, pair-contested 0 .. 2.4e-4); render state cutout / white / light 0;
+  reference PASS 55 parts.
+- THE HOOKS DIFFED (`hook_diff_fk.py`, the T2f form): AlienGeoReplacement.poseRig vs ModelAlien.poseFrom MATCH (161 literals both sides);
+  EmperorScorpionGeoReplacement.applyCustomAnimations vs EmperorScorpionModel.poseFrom MATCH (145 / 145); nothing fixed.
+
+HELD (two register lines, the lane's drafts `audit_emperor_scorpion_held.txt` and `audit_alien_held.txt`):
+- emperor_scorpion — the DRAW-ORDER LEG: the classic renderToBuffer (EmperorScorpionModel.java:683-694; orig :662-673) draws LeftPincer
+  last, after the six right-arm parts, so LeftArmSeg2's subtree is not contiguous in the classic order and no hierarchy parenting the pincer
+  to its chain parent can emit it - the seam draws a bake in pre-order (GeoRenderer.renderRecursively; DrawOrder.apply :319-344 refuses a
+  key that is not one; the converter's classic mode refuses with its FINDINGs). Every other leg PASS (above). Not forced: no geo, no wiring,
+  no pin, no manifest entry, no gametest row, no seed edit; its `HOOKS` entry, `HOOK_DESCRIPTORS` row and two clips as the hook lanes left
+  them.
+- alien / alien_boss — the DRAW-ORDER LEG (ten pre-order violations: tail1 drawn after tail2-tail5; the neck's, jaw1's, tail1-4's, arml1's,
+  arml2's and armr1's subtrees interleaved - ModelAlien.java:529-559; orig :563-593) AND the SURFACE LEG (2.45e-6 > 1e-6 on clawl1 / clawl3:
+  GeckoLib composes a third link's world rotation from nine float32 axis rotations where the classic applies two; a tolerance is an owner
+  ruling, not moved). Not forced; the hook state of both registries untouched.
+- What the remainder needs (the owner's call): the seam's EMISSION of a hierarchy rig's bones in the key's order as a flat sequence over the
+  hierarchy's matrices (`OreSpawnGeoReplacedEntityRenderer`: a first pass preparing every bone's matrix as `renderRecursively` does, then the
+  cubes of each bone in the key's order under its stored matrix, the tracking matrices kept for MultiHitboxLib's collector; the probe's
+  `CapturingGeoRenderer` the same; `DrawOrder` accepting a hierarchy rig's key as a permutation naming every bone; the audit's rule; a
+  gametest pin) - renderer code, two refuters - OR a ruling that a hierarchy rig draws in its pre-order with the visual leg as the judge
+  (0 / 0 on both rigs here); and for the Alien a ruling on the surface leg's normal tolerance for a chain composing three full triples. With
+  those the rigs land on the measured form (the converter's geo with `hierarchy_draw_order` back to `classic`, the FlatRig patches, the
+  manifest entries, the wiring, the pins, the sampler and audit rows).
+
+THE HARNESS-SEMANTICS CHANGE, BEFORE / AFTER: BEFORE - no entry declares a hierarchy; the converter emits every top-level compiled part as a
+root bone; the animation leg compares every bone's rotation and position against the flat classic channels; no chain-link leg. AFTER - an
+entry that declares `hierarchy` gets the parented geo, the animation leg's deferral of its parented bones (their scale and hidden flag still
+compared) and the chain-link leg (world matrices, the geometry tolerance); an entry that declares none is untouched: the three checked-in
+proof trees VERIFY byte for byte under the landed tools with fresh classes (g1 `G1 PARITY PASS: 2 models; checked-in proof verified`, s4 `13
+models ... verified`, t2 `68 models ... verified`; twice each, diff-clean - THE CHAINS below), so the checked-in metrics of every other rig are
+unchanged; the report keys `chain_link_leg` and `animation.contract.hierarchy` exist only for a hierarchy entry; the console gains `G1 CHAIN
+LEG PASS` for such an entry only. The "after" of the two hierarchy entries is the measurement above (the Scorpion's 52 links under 7.4e-7
+blocks, the Alien's 26 under 6e-7).
+
+THE CHAINS AND THE CHECKS (every process under a timeout; the lane's scratch holds every log): javac x3 twice (the measured form: main 1265 /
+g1tool 84 / gametest 249, rc 0; the tree as committed: main 1263 / g1tool 84 / gametest 249, rc 0; stray javac 0); the g1 / s4 / t2 chains
+in VERIFY mode twice on the committed tree's classes and tools (`verify_chains.sh` / `verify_chains.log`: g1 `G1 PARITY PASS: 2 models;
+checked-in proof verified` a and b, s4 `13 models ... verified` a and b, t2 `68 models ... verified` a and b, rc 0 six times; `diff -rq` of
+each a / b pair 0 lines, the logs included); the sampler twice headlessly with the build's `referenceClips` arguments (the three seam
+manifests, then `--reference` the reference manifest and `build/reference/generated`; sA and sB 298 files each, `diff -rq sA sB` 0 lines,
+rc 0 both) and `--verify` against `tools/reference_clips` (`REFERENCE CLIPS VERIFIED: 298 files`, rc 0); `cmp` of every clip of the two rigs
+(alien 3, alien_boss 3, emperor_scorpion 3: walk / idle / attack) against the tree's files - every one identical, 0 differing; `python
+tools/test_g1_render_parity.py` 18 OK; `python tools/asset_audit.py` RESULT 0 error(s), 0 advisory(ies), 60 acknowledged; draw order 78
+shipped geo: 77 seam + 1 outside-seam, exit 0 (HOOKS 28, unchanged); `python tools/test_artist_package.py` 50 OK; `python
+tools/reference_renderer_pins.py` 133 registrations: PASS 120, DIVERGES 0, MANIFEST_DRIFT 0, rc 0; the dry run `package --out <scratch>/pkg
+--reference-geo-dir build/reference/generated`: 116 folders, 1,369 files, `check` PASS 116 / REJECT 0 (checks.log); `git status --porcelain`:
+M src/g1tool/java/danger/orespawn/g1/G1ModelProbe.java, M tools/g1_render_parity.py, M tools/layer_definition_to_geo.py, M
+tools/test_g1_render_parity.py - nothing else (the three descriptors restored byte for byte from HEAD, FlatRig.java not in the tree; no
+crash-args file in the repository root); stray processes at the end: javac.exe 0, python.exe 0, java.exe 1 - PID 65848, created 03:28:35,
+before this lane began (the earlier lane's / the orchestrator's JVM, not this lane's; left alone).
+
+DECIDED UNDER DOCTRINE, REVERSIBLE (one line each): (i) both rigs HELD rather than a partial hierarchy shipped (the Scorpion with LeftPincer
+a root would pass every leg, 51 of its 52 links parented - a rig whose left pincer detaches from its arm under a keyed rotation is not the
+ruled form "child bones parented to their chain parents", and an asymmetric rig is not craftsmanship: the owner's call, the deviation not
+taken); (ii) the chain-link leg compares EVERY bone (the roots and the unchained parts beside the declared links) and reports the links per
+link - stricter, and a root's world transform is a fact too; (iii) the linear block held to the geometry epsilon as the ruling says (not the
+animation epsilon the render-instance leg uses), the sqrt-3 bound stated; (iv) the chain leg runs BEFORE the draw-order leg so a
+measurement-form rig prints its links; (v) the measurement draw-order form is a manifest field of the converter (`preorder_diagnostic`,
+recorded loudly in the report and the geo's evidence, failing the draw-order leg by construction) rather than a scratch-only monkeypatch, so
+the refuter can rerun the chain with the tree's tools; (vi) the classic-branch convention (the smaller |xRot| + |zRot|) checked by the
+converter on every link rather than a classic triple carried in the geo (GeckoLib's Bone keeps no such field); (vii) the hook's mapping
+resolves a parented bone only when its chain was written (an untouched chain stays the bake's bind bit for bit); (viii) FlatRig and the
+descriptors' hierarchy form taken back into scratch patches rather than left in the tree with no consumer (a held rig's hook state stays as
+the hook lanes left it); (ix) Seg1 -> Seg2 and Shoulder -> ArmSeg1 declared as links although the classic never poses the hips and shoulders
+(the natural rig for the artist; a fixed link costs nothing); (x) the derived pivots recorded in the conversion report (`derived_pivots_classic`)
+beside the local bind rotations.
+
+THE ORCHESTRATOR ON THIS LANDING (decided under doctrine, reversible): the machinery is landed as a TOOLING commit - the
+converter's hierarchy form and the harness's chain-link leg change nothing for an entry that declares no hierarchy, and
+the three checked-in proof trees verify byte-identical under the landed tools (the lane's twice-run chains and the
+regeneration's own verifies) - so it takes no refuter (the tool's own pins, the dry run and the gate are the check; the
+cost rules of 2026-09-12); the FK slice's "one refuter" was for landed rigs, and none landed. THE STOP (owner 2026-09-15,
+closing set, item 6: "a slice lands fewer than half its rigs"): zero of two landed, so the sequence stops here and the
+advisor reports. The question is one decision for both rigs: the seam's emission of a hierarchy rig - GeckoLib's
+renderer walks a bake parent-first, `DrawOrder.apply` refuses a key that is not a pre-order, and neither classic
+`renderToBuffer` is one (the Scorpion's left pincer after the right arm; the Alien's tail rings before their root, its
+head group and arm chains interleaved) - so either the seam's renderer emits a hierarchy rig in the key's order over the
+hierarchy's matrices (renderer code: two refuters) or a ruling lets a hierarchy rig draw in its pre-order with the
+visual leg as the judge (0 / 0 on both rigs here); the Alien's third arm links also need a ruling on the surface leg's
+normal tolerance (2.45e-6 against 1e-6, the float composition of three local triples). The hook's FlatRig mapping is
+measured and kept as patches in the advisor's scratch for the landing that follows the ruling. The two Tier-1 slices
+and the remainder wait with their briefs drafted.
+
+DEVIATIONS PRESENTED: (1) NO RIG LANDED - the two register lines; the counts unchanged (77 / 106); (2) the hook mapping is not in the tree
+(the patches in the lane's scratch; the descriptors byte-identical to HEAD); (3) no manifest entry, no geo, no wiring, no pin, no gametest row,
+no seed edit, no sampler / audit row moved (the held form); (4) the measurement entries lived under `build/` (git-ignored; the tools resolve the
+repository root as the manifest's grandparent - the harness1 precedent) and stay there for the refuter; (5) `tools/test_g1_render_parity.py`
+gains six pins in a new class rather than a new test file.
+
+DIVERGENCES NOTICED, DRAFTED, NOT FIXED: TEST (draft) x 2 - the two holds above (the seam's pre-order emission against a classic order that
+is not one; the surface leg's normal tolerance against a three-link float32 composition). Nothing else: the hooks are the classic code
+verbatim and the parity lanes stay frozen.
+
+IN-GAME: nothing changes (no rig landed; the classic renderers draw both species; the dev switch names neither).
+
+NOT DONE (by design): the gametest suite not run (no gradle); no proof tree regenerated (nothing to regenerate: every checked-in proof
+verifies as it stands); the artist_handoff folder untouched; the two rigs' landings (held; the owner's options in the drafts).
+
+GATE: GATE: fk green on the first run (drift 0, build 0, suite: all 1282 required tests passed): the g1 / s4 verify-only passes identical, the t2 write-proof G1 PARITY PASS: 68 models with ZERO proof files changed (every metric byte-identical under the hierarchy form and the chain-link leg - no entry declares a hierarchy), the reference clips deterministic and unchanged (298 files, VERIFIED), the folder fresh (116 folders, 1,369 files, every check PASS), the benchmark proof re-pinned for g1tool's move (the probe recording the classic bone poses), the audit 0 errors / 60 acknowledged / 78 shipped geos.
