@@ -8462,3 +8462,238 @@ commit, gated → the FK slice → the two Tier-1 slices → the remainder → t
 every green landing; the stop rule as before.
 
 GATE: docs-only (no gate; nothing under src or tools moves).
+
+## PHASE G — THE PAIR-CONTESTED RULE AND THE CONSTANT RENDER TRANSFORM (2026-09-15) — the visual leg attributes a changed pixel's two front faces on both sides and counts a same-pair pixel as pair-contested (never a mismatch, capped at 1 percent of the image), the ten TEST-008 (c) bind exclusions retired under it and the two held rigs (the Lurking Terror, the Scorpion) cleared on scratch entries; the descriptor declares a constant render transform the probe reads without an entity and the replaced renderer applies conjugated in applyRotations, and the manifest's undrawn_parts list the converter omits from the geo and the draw-order key — the Dungeon Beast (YP 90, four undrawn toes) and the Kraken (XP 90) measured every leg PASS on scratch entries, neither landed; one harness-and-seam commit, two refuters
+
+RULING. Owner 2026-09-15, closing set continued (addendum item 34 (1) and (2), recorded docs-only at ab505c1): (1) "TEST-012 and TEST-014: (b), as a
+rule of the visual leg, not per rig. A changed pixel whose two front fragments on both sides are the same pair of faces, within an attribution
+window of 1e-5 blocks, is a pair-contested pixel: counted and reported per sample beside the contested fraction, never a mismatch, capped at 1
+percent of the image so a rig that ties everywhere still fails. TEST-008 (c)'s bind exclusions are re-run under it and retire where it clears
+them. Measured on every existing proof first; the before/after per sample in the report; one refuter." (2) "TEST-013: (a). The descriptor
+declares a constant render transform the probe reads without an entity and the replaced renderer applies in applyRotations, with the order
+analysis confirmed by measurement; a manifest undrawn_parts list the converter omits from the geo and the audit's key. Two refuters, the seam
+being renderer code. The Dungeon Beast and the Kraken land under it in the Kraken's slice. ENT-S-162 stays frozen; the sheet notes the
+Triffid's fix is one line each side when the parity lanes reopen." Order of work (4): items 1 and 2 as one harness-and-seam commit, gated.
+
+WHAT LANDED — ITEM 1, THE PAIR-CONTESTED RULE (`tools/g1_render_parity.py`; a harness-semantics change, its before / after per sample presented
+in the lane's before_after.md and summarised below):
+- THE CONSTANTS, the ruling cited: `PAIR_ATTRIBUTION_WINDOW = 1.0e-5` (blocks) and `PAIR_CONTESTED_CAP = 0.01` (of the image), beside the untouched
+  `CONTEST_DEPTH_EPSILON = 1.0e-6` (the tie rule of TEST-006 does not move); `PAIR_CONTESTED_MARKER` paints the pixels in the diff images.
+- THE FACE IDENTITY (`quad_face_ids`): per quad of a capture's `render_vertices`, (the drawn unit the capture's `draw_order` attributes it to — a
+  classic part or a render-instance clone, the same names on the geo side by the draw-order leg's proof — its cube's ordinal within that unit,
+  the quad's normal quantised to a tenth), built the same way on both sides from each side's own `cubes` groups in cube order and shared through
+  one table per sample; a capture whose quads do not add up from its draw order is a harness error, never attributed silently; a face on a
+  rounding boundary goes unrecognised and its pixel stays a changed pixel (the conservative side).
+- THE RASTERISER (`render_capture`, and `render_capture_blended` the same way): beside the front fragment and the contested mask it keeps, per
+  pixel, the two nearest fragments of DIFFERENT faces by depth (a fragment the cutout shader discards writes no depth on either renderer and is
+  never a member); the pixel's FRONT PAIR is those two when the second lies within the attribution window behind the first. The blended mode
+  attributes the same two nearest fragments; what it cannot attribute is stated in its docstring — under blending the colour is the composite
+  of every passing layer in emission order, so a third layer inside the window or the order the pair blended in can still differ; the rule
+  excludes such a pixel all the same on the ruling's premise (both renderers resolve the same pair alike in-game under the contracted orders).
+- THE COMPARISON (`pixel_diff`, `visual_parity`): a CHANGED pixel (a channel beyond the tolerance) whose front pairs are the same set of two faces
+  on both sides is PAIR-CONTESTED — excluded from the changed fraction AND the MAE (both judged over the pixels compared, as the retired
+  contested exclusion was), painted, counted: `pair_contested_fraction` per sample (over the image) beside `contested_fraction` and the changed
+  fraction; `VISUAL MISMATCH <id>/<sample>: pair-contested fraction X > 0.01` above the cap. The report gains `pair_attribution_window_blocks`,
+  `pair_contested_cap`, `max_pair_contested_fraction` and the policy sentence; the README bullet and the `G1 VISUAL PASS` line carry the maximum.
+- THE REPORT KEYS CHANGE FOR EVERY ENTRY, so every proof (g1 2, s4 13, t2 68) re-pins under the orchestrator's `--write-proof`; the evidence
+  diff images change only where a pair-contested pixel exists (painted), the capture images not at all.
+- THE TEN BIND EXCLUSIONS RE-RUN (`tools/t2_model_proofs.json`, the ten TEST-008 (c) entries: model_bee, model_creepinghorror, model_trooperbug,
+  model_velocityraptor, model_enderknight, model_enderreaper, model_peacock, model_ostrich, model_spyro, model_stinky): `bind` back in every
+  `visual_sample_ids`, ALL TEN RETIRED — the Bee's 72 pixels (changed 1.0986e-3 under the old rule, the finding's number) are pair-contested under
+  the rule (pair-contested fraction at bind 1.0986e-3, changed 0, MAE 1.0e-5, contested 1.10e-2: its two coplanar wing faces are the front pair on
+  both sides); the other nine pass at changed 0 / MAE 0 under the OLD rule as well (pair-contested 0; contested 5.2e-4 .. 2.20e-2) — their
+  exclusions were the fourth set's blanket rule for a flat bone written every frame, never a measured flip; each `visual_note` says "bind
+  included: the TEST-008 (c) exclusion retired under the pair-contested rule (owner 2026-09-15, closing set continued, item 1); pair-contested
+  fraction at bind X" with the numbers. The camera of those ten entries is now fitted with bind's vertices (a fit, not a rule: their posed
+  samples' pixel numbers move with it; all pass).
+- THE HARNESS TESTS: `tools/test_g1_render_parity.py` (NEW; the only tools/test_*.py before it, `test_artist_package.py`, covers the package
+  generator): twelve `unittest` pins through the production paths on synthetic captures — the face identities equal across sides and counting
+  every quad (a capture whose quads do not add up refused), a coplanar pair swapped by 2e-6 blocks (past the contest window, inside the
+  attribution window) pair-contested with changed 0 and the marker painted, a different pair and a pair beyond the window staying changed
+  pixels (VISUAL MISMATCH changed fraction), the cap failing a rig that ties over 30 percent of the image, identical sides reporting nothing,
+  `candidate_bone_names` dropping the undrawn parts and refusing an unknown or repeated one, `draw_order_parity` refusing a drawn undrawn part
+  (a clone `toe__i1` too) as UNDRAWN PART DRAWN and recording the list on a pass, the converter's `undrawn_parts_declared` refusing a part with
+  children / unknown / a render-instance part, and `derive_bone_draw_order` refusing a drawn undrawn part loudly.
+
+WHAT LANDED — ITEM 2, THE CONSTANT RENDER TRANSFORM AND THE UNDRAWN-PARTS LIST (the seam: two refuters):
+- THE DESCRIPTOR (`GeoReplacementDescriptor`): `public RenderTransform renderTransform()` — a nested `record RenderTransform(xDegrees, yDegrees,
+  zDegrees, x, y, z)` in the CLASSIC renderer's own terms (a translation, then rotations about X, Y, Z as `translate; mulPose(XP); mulPose(YP);
+  mulPose(ZP)` — the calls a classic renderToBuffer makes; `rotationDegrees(x, y, z)` for a pure rotation), `IDENTITY` the default, read WITHOUT an
+  entity (the ENT-S-146 form of `renderType(null)`): `applyClassic(PoseStack)` (the classic form), `classicMatrix()`, `classicFrame()` (M =
+  `scale(-1, -1, 1) translate(0, -1.501, 0)`, LivingEntityRenderer.render's flip and lift), `slotMatrix()` = M C M^-1 (computed, not hand-derived),
+  `applySlot(PoseStack)` (nothing for the identity). `DungeonBeastGeoReplacement`'s descriptor declares `rotationDegrees(0, 90, 0)` (renderToBuffer
+  :535, orig :574), `KrakenGeoReplacement`'s `rotationDegrees(90, 0, 0)` (renderToBuffer :733, orig :1137) — both edits LINE-NEUTRAL (the clip
+  index cites DungeonBeastGeoReplacement:87 / :142 / :146-148 and KrakenGeoReplacement:98; the sampler's rows :68-69 / :93-94 / :109 / :215-229 /
+  :234-235 / :241-242 / :245-310): the Dungeon Beast's shadow paragraph absorbs one line for a one-line override, the Kraken's NOT-CARRIED
+  paragraph becomes the carried statement in four lines for a standard override. Neither rig lands here (no geo, no wiring, no manifest entry,
+  no pin, no gametest row: the Kraken's slice).
+- THE RENDERER (`OreSpawnGeoReplacedEntityRenderer.applyRotations`): after the entity yaw and the descriptor's own `applyRotations` (the Elevator's
+  S4 slot), `descriptor.renderTransform().applySlot(poseStack)` — innermost, as the classic applies its rotation last before its parts.
+- THE ORDER ANALYSIS, AND ITS MEASUREMENT: the classic path rotates INSIDE renderToBuffer, after the flip and the lift (ModelPart space, Y down, the
+  origin 1.501 above the feet); the slot runs in entity space before GeckoLib's chain (its 0.01 lift at actuallyRender 727 and the bake, whose
+  Bedrock conventions — the converter's pivot (-x, 24 - y, z) — stand in for the flip and lift; GeckoLib flips nothing itself, javap 4.8.4), so the
+  slot carries M C M^-1: S_y R_y(90) S_y = R_y(90) (the seam frame: the bake's Y flip and the classic lift, no x flip) for the YP 90 (the lift commutes with a Y rotation), translate(0, 1.501, 1.501)
+  R_x(-90) for the Kraken's XP 90 (the same rotation about the classic origin 1.501 up; GeckoLib's extra 0.01 lift sits outside the conjugation —
+  the 0.009-block offset every seam rig already carries). MEASURED: the probe's geo side (`G1ModelProbe.captureGeoSample`) applies the renderer's
+  own slot form wrapped in the in-game context, `mulPose(M^-1); applySlot; mulPose(M)` before the fixed normalisation, so its ModelPart-space
+  capture equals C in classic terms EXACTLY WHEN the conjugation is right (M^-1 (M C M^-1) M = C; an unconjugated slot misses by 2.0 blocks on a
+  unit point, the geometry leg failing at every sample); the classic side's `root.visit` cubes carry the DECLARED classic form (`applyClassic`,
+  read from the same descriptor without an entity — `S4CandidateRuntime.renderTransform`; the render-instance capture form refuses a declared
+  transform loudly, its cubes coming from renderToBuffer already) while its `render_vertices` keep the classic's OWN rotation from renderToBuffer,
+  so the visual leg is what proves the declaration equals the classic; both dumps record `render_transform` and the parity tool requires the
+  two records equal (`render_transform` in the entry's report). THE DUNGEON BEAST, scratch entry `model_dungeonbeast` (the T2f lane's run-1
+  entry plus `undrawn_parts`; states idle / jaws_still (ri1 1) / attacking, the amplitude matrix): geometry PASS 4.47e-7 blocks over 3,660
+  cube-samples (61 samples), surface UV 0 / normal 2.69e-7 over 87,840 vertex-samples, animation 0 rad (position 0; 60 hidden-bone checks), draw
+  order 61 captures / 3,660 draws in the classic order (the toes left out), reference 64 parts against 1.7.10, visual changed 0 / MAE 0 at all seven
+  samples (contested 1.8e-3 .. 2.4e-3, pair-contested 0 .. 3.05e-5, i.e. 0-2 px), render state cutout / white / light 0 — TEST-013's 0.19-0.20 gone.
+  THE KRAKEN, scratch entry `model_kraken` (entity_state idle / twitching (ri1 1, the Robot2 preset) / attacking, no amplitude matrix, camera
+  34 / -28, the slowest rhythm 0.087 rad/tick): geometry PASS 4.01e-6 blocks over 1,776 cube-samples (16 samples; the largest delta of the four —
+  a rig ten blocks across through a float conjugation, within the 1e-5 epsilon), surface UV 0 / normal 2.51e-7 over 42,624, animation 0 rad
+  (position 4.0e-6 model units), draw order 16 / 1,776, reference 111 parts, visual 0 / 0 at all seven samples (contested 0, pair-contested 0).
+- THE UNDRAWN PARTS: the manifest entry's `undrawn_parts: [...]` — the Dungeon Beast's `ltoe1`, `ltoe3`, `rtoe1`, `rtoe3` (compiled by the classic
+  model, never drawn by its renderToBuffer: sixty draws of sixty-four parts, ModelDungeonBeast.java:536-595; orig :575-634 the same, the four built
+  at orig :206-235). The converter (`layer_definition_to_geo.py`: `undrawn_parts_declared` — compiled part names, unique, no children, not
+  render-instance parts; `convert_geometry` skips them: no bone, no cubes, no key entry; `derive_bone_draw_order` refuses a capture that draws one:
+  `UNDRAWN PART DRAWN`; the conversion report carries the list) OMITS them from the geo, so `orespawn:bone_draw_order` names exactly the rig's
+  bones and the audit's rule holds unchanged (verified on the scratch geo: 60 bones, 60 key entries, `asset_audit._draw_order_problem` → none).
+  The parity tool: `undrawn_parts(spec)` validated the same way, `candidate_bone_names` = the compiled parts minus the list (plus the
+  render-instance expansion), the geometry / surface / face-order legs leave the classic's compiled cubes of those parts out (`cube_map`), the
+  animation leg their channels and hidden flags, the draw-order leg compares the classic draw list with the emitted bones as today (both without
+  the toes) and refuses a drawn one (`UNDRAWN PART DRAWN`, never silent), the reference leg is untouched — every compiled part compared, since
+  1.7.10 compiles them too (64 parts matched). THE KRAKEN HAS NONE: `ModelKraken.renderToBuffer` (:731-848) draws all 111 compiled parts, as orig
+  :1137-1249 does (111 of 111) — the entry declares no list.
+- THE TRIFFID'S SHEET (`tools/artist_specs/triffid.json`, exact-string edit, one sentence): the 1.7.10 rotation the port omits is ENT-S-162,
+  frozen; when the parity lanes reopen the fix is one line each side — the `mulPose` in `TriffidModel.renderToBuffer` and the `renderTransform()`
+  on its descriptor. Nothing else moves for it (`test_artist_package.py` 50 OK).
+- THE GAMETEST: `T2SeamTests.t2_009_constant_render_transform_slot_is_the_conjugated_classic_rotation` (the required-test count 1281 -> 1282, the
+  orchestrator's KNOWN_ISSUES line): the default is the identity and leaves a pose stack alone; the Dungeon Beast declares YP 90 and the Kraken XP
+  90; each slot matrix equals the analysis's closed form (R_y(-90); translate(0, 1.501, 1.501) R_x(-90)) on a pose stack to 1e-5; and on three
+  sample points the classic chain (flip, lift, then the classic rotation) and the seam chain (the slot, then the flip and lift) place the point
+  alike — the conjugation measured, not asserted.
+
+THE BEFORE-AFTER PER SAMPLE (the lane's before_after.md, every entry and visual sample of the three chains — g1 10, s4 66, t2 346 + the ten
+binds — before with the clean tree's tool and classes in verify mode (all three proofs verified at ab505c1), after with this lane's):
+NO EXISTING SAMPLE CHANGED VERDICT and no passing sample fails: the 417 visual rows of the three checked-in proofs (g1 10, s4 66 with the
+Vortex's two cameras, t2 341) are PASS before and after; the changed fraction of NO sample increased; every sample whose changed fraction moved
+(21) is a sample with a pair-contested fraction above zero — 22 of the 417 carry one (the 22nd, the Bee's s_idle_t0, one pixel changed only under
+the bind-inclusive camera fit), the pixels the rule now attributes: model_bee s_attacking_t_three_quarter 9.3e-4 -> 0 (59 px pair-contested;
+MAE 0.040 -> 1.0e-5), s_idle_t_half 2.1e-4 -> 0 (13 px), s_idle_t0 1.5e-5 -> 0 (1 px); model_crab s_idle_a1_t0 1.37e-4 -> 0 (9 px),
+s_attacking_a1_t_three_quarter 1.5e-5 -> 0 (1 px); model_creepinghorror a1_t_three_quarter 1.68e-4 -> 1.5e-5 (7 px pair-contested, one changed
+pixel left — a different pair), a1_t_half 1.2e-4 -> 0 (5 px); model_spitbug s_attacking_a1_t_three_quarter 6.1e-5 -> 0 (4 px), bind 3.1e-5 -> 0
+(2 px), s_idle_a1_t0 1.5e-5 -> 0 (1 px); model_flounder bind, model_wormsmall t_three_quarter, model_rubberducky's five samples and
+model_stinkbug's five samples 1.5e-5 -> 0 (1 px each); every other sample of the 422 identical in its changed fraction and MAE. The contested
+fraction (the diagnostic) is identical everywhere except 32 rows of seven of the ten bind entries (bee, creepinghorror, enderknight, ostrich,
+spyro, trooperbug, velocityraptor), where the camera fit now includes bind's vertices (a fit, not the rule; their changed fractions did not
+move). The largest changed fraction after: model_vortex bind.back 2.29e-4 (as before; its pixels are uncontested silhouette pixels, no pair);
+the largest pair-contested fraction of the shipped proofs 1.0986e-3 (the Bee's bind, re-included), of the 417 pre-existing rows 9.0e-4 (the Bee's attack three-quarter), of everything measured 2.03e-3 (the Lurking
+Terror's idle, a scratch entry) — all under the 1 percent cap. The ten new bind rows all PASS (below). The full table: the lane's
+before_after.md (519 rows, the bind and held sections included).
+
+THE BIND EXCLUSIONS (ten outcomes, the bind-all run's dumps, the same bind-included camera fit under both tools): model_bee RETIRED (old rule
+changed 1.0986e-3 / MAE 0.038 FAIL; new rule changed 0 / MAE 1.0e-5 / pair-contested 1.0986e-3 = 72 px / contested 1.10e-2 PASS);
+model_creepinghorror RETIRED (0 / 0 under both; pair 0; contested 1.9e-3); model_trooperbug RETIRED (0 / 0; pair 0; contested 2.1e-3);
+model_velocityraptor RETIRED (0 / 0; pair 0; contested 4.5e-3); model_enderknight RETIRED (0 / 0; pair 0; contested 2.0e-3); model_enderreaper
+RETIRED (0 / 0; pair 0; contested 1.4e-3); model_peacock RETIRED (0 / 0; pair 0; contested 5.2e-4); model_ostrich RETIRED (0 / 0; pair 0;
+contested 2.20e-2); model_spyro RETIRED (0 / 0; pair 0; contested 1.6e-3); model_stinky RETIRED (0 / 0; pair 0; contested 2.0e-3). None stays.
+
+THE HELD RIGS UNDER THE RULE (scratch entries as the T2e / T2f builders wrote them; nothing landed; the same dumps under both tools): THE LURKING
+TERROR (TEST-012): every other leg PASS (geometry 3.61e-7 over 944, surface 0 / 2.10e-7 over 21,632 with 256 zero-area faces ignored, animation 0
+rad, draw order 16 / 944, face order 5,664, reference 59); the visual leg — s_idle_t0 and s_idle_t_half changed 2.029e-3 (133 px, FAIL) under the
+old rule -> 0 under the new (pair-contested 2.029e-3, the same 133 px; contested 1.40e-2); s_legs_swaying_t_quarter / _three_quarter 9.0e-4 / 5.2e-4
+-> 0 (pair-contested 9.0e-4 / 5.2e-4); s_attacking_t_quarter / _three_quarter 9.8e-4 / 9.8e-4 -> 0 (pair-contested 9.8e-4 / 9.8e-4): CLEARED.
+THE SCORPION (TEST-014): every other leg PASS (geometry 3.16e-7 over 1,342, surface 0 / 2.00e-7 over 32,208, animation 0 rad, draw order 61 /
+1,342, reference 22); the visual leg — s_claws_swinging_a1_t_quarter changed 1.495e-3 (98 px, FAIL) -> 0 (pair-contested 1.495e-3, the same 98 px;
+MAE 2.4e-4; contested 6.94e-3), s_attacking_a1_t_quarter 1.480e-3 (97 px, FAIL) -> 0 (pair-contested 1.480e-3), s_idle_a1_t_half 1.68e-4 (11 px)
+-> 0 (pair-contested 1.68e-4), bind / s_idle_a1_t0 / the two three-quarter samples 0 -> 0: CLEARED. Both rejoin at the remainder under item 1.
+
+THE ORDER ANALYSIS MEASURED: the Dungeon Beast's and the Kraken's legs above are the measurement — the geo side carries the slot form the
+renderer applies, wrapped in the flip and lift that surround it in-game, against the classic's own renderToBuffer (the visual leg) and the
+declared classic form (the geometry leg); the closed forms and the two chains pinned by t2_009 on a pose stack; a numeric cross-check in the
+lane's scratch (numpy): the slot equals R_y(-90) / translate(0, 1.501, 1.501) R_x(-90), the probe chain with the right slot equals C N, an
+unconjugated slot misses by 2.0 / 3.5 blocks on a unit point.
+
+THE CHAINS (this lane's fresh javac classes — main 1263 / g1tool 84 / gametest 249 classes, rc 0 each — and the tree's tools; the T2f recipe:
+G1ModelProbe vanilla -> layer_definition_to_geo.py -> G1ModelProbe geo -> reference_geometry_leg.py -> g1_render_parity.py, every process
+under a timeout): BEFORE — the clean tree's classes (a fresh javac of ab505c1) and the base copies of the tools, VERIFY mode: `G1 PARITY PASS: 2
+models; checked-in proof verified`, `13 models ... verified`, `68 models ... verified` (the three proofs verify at ab505c1). AFTER — validate mode
+twice each: g1 `G1 PARITY STAGING PASS: 2 models` (a, b), s4 `13 models` (a, b), t2 `68 models` (a, b), rc 0 six times; `diff -rq` of each a / b
+pair: 0 differing files, the logs included. The measurement chain (the four scratch entries, validate): `G1 PARITY STAGING PASS: 4 models`, rc
+0; the bind-all chain (the tree's t2 manifest with bind on the ten, before the notes were written): `68 models`, rc 0. `python
+tools/asset_audit.py` on the tree before and after the manifest edit: `RESULT: 0 error(s), 0 advisory(ies), 60 acknowledged; draw order: 78
+shipped geo: 77 seam + 1 outside-seam -> exit 0` (nothing shipped moves). `python tools/test_artist_package.py`: 50 OK. `python
+tools/test_g1_render_parity.py`: 12 OK.
+
+REFUTER A (the harness; its report in the advisor's scratch `r21/harness1_ref_a/`): CONFIRMED the rule as the ruling
+and no more (synthetic captures through the production paths: a second face at 9e-6 pair-contested, at 1.2e-5 a
+changed pixel; a third face between the pair on one side a mismatch; the cap failing at 7.5 and 82 percent), the face
+identity the same on both sides (the Crab's clone pairs, the Rotator's eight-fold clones, the Bee's wing, the Lurking
+Terror's and the Scorpion's pairs, no collision), the before / after over 422 proof rows plus the ten new bind rows
+(no verdict flip, no changed-fraction increase, the 22 rows with pair-contested pixels exactly the lane's, the images
+and contested masks byte-identical between the old and the new rasteriser on 141 captures), the ten bind outcomes
+and the two held rigs to the printed digit, the blended mode's limits. MUST-FIX, fixed by the orchestrator before the
+regeneration: the ten retired notes, which still opened "bind is NOT a visual sample" before their retirement
+sentence (now "bind WAS excluded ... bind included since 2026-09-15"); this section's shipped maximum (1.0986e-3, the
+Bee's bind re-included; 9.0e-4 among the 417 pre-existing rows); the face-identity builder's silent over-accounting
+`break` (now a raise, unreachable in production since the draw-order leg precedes the visual leg and a repeated draw
+carries its clone name); the gametest's client class (above). PRESENTED FOR THE OWNER, NOT APPLIED (refuter A's note
+N1): the ruling's letter admits one hidden divergence - a pixel where both sides show the SAME front face and differ
+only through that face's own texel, with a second face within the window behind it on both sides, is pair-contested
+under the text (no swap is required) and would pass; on every real capture measured (878 pair-contested pixels over
+141 captures) the shown faces differ and both belong to the pair, so a tightening "and the shown fragments differ
+inside the pair" (one line: the rasterisers already track the owner quad) changes no number today, and the surface leg
+covers the texel route at 1e-7 independently. A follow-up ruling item.
+
+REFUTER B (the seam; its report in the advisor's scratch `r21/harness1_ref_b/`): CONFIRMED the null-entity read with
+the identity default and no landed proof moving, the undrawn-parts machinery at the converter and at the leg (a listed
+part that is drawn refused as `UNDRAWN PART DRAWN`, an unknown name refused, a missing name a `DRAW ORDER MISMATCH`; the
+reference leg keeping all 64), the two rigs not landed, the Kraken drawing all 111 parts, the Triffid's one sentence,
+and every number of the Dungeon Beast's and the Kraken's scratch chains. REFUTED the conjugation's FRAME: from the
+bytecode of NeoForge 21.1.223 and GeckoLib 4.8.4 the seam's chain has no x flip - vanilla's `scale(-1, -1, 1)` is the
+classic frame, and GeckoLib's baker negates the Bedrock x the converter had negated, so the frame between the slot and
+ModelPart space is the seam's, F = scale(1, -1, 1) translate(0, -1.501, 0), not vanilla's M; for a rotation about Y the
+conjugate through F keeps the sign (S_y R_y(90) S_y = R_y(90)), so the Dungeon Beast's slot is YP +90, and the lane's
+YP -90 would have drawn the rig facing backwards in-game (the refuter's own run through the lane's `applySlot`: a head
+point four blocks from where the classic puts it); the Kraken's form is unchanged (a mirror in x commutes with a
+rotation about X). It also showed the probe's wrap measures only that the renderer's slot is the conjugate of the
+declared form through whatever frame the record holds - an identity in the frame - so no headless leg sees the frame:
+the bytecode is its confirmation. Fixed by the orchestrator before the regeneration: the record's frame constant is
+the seam frame (`seamFrame()`), its order analysis rewritten from the bytecode, `t2_009`'s closed form YP +90 and its
+seam chain on F, the probe's and the renderer's comments; the Dungeon Beast's and Kraken's numbers are unchanged by
+construction. PRESENTED FOR THE OWNER (refuter B's pre-existing finding, the register's TEST-015): by the same bytecode
+every rig drawn through the seam renders as the classic's LEFT-RIGHT MIRROR in the entity frame (plus 0.009 blocks
+up) - the classic flips x and y before `renderToBuffer`, the seam only y - invisible for a bilaterally symmetric rig
+and to every harness leg (the probe compares in its own frame); not yet seen in-game; one in-game overlay of an
+asymmetric landed rig through the dev switch would confirm or refute it, and the fix if confirmed is one line in the
+seam's `applyRotations` with the probe's normalisation mirrored to match. The Q1 contact sheets (the closing set's item
+8) must be in-game captures or they will not show it.
+
+THE ORCHESTRATOR'S ONE FIX (the gametest's client class): the first gate went red at the suite on the new row
+`T2SeamTests.t2_009` - "Attempted to load class PoseStack for invalid dist DEDICATED_SERVER": the row built pose stacks,
+and the record's own `classicMatrix()` derived its matrix through a `PoseStack` too, so even the matrix path loaded the
+client class on the gametest server. `RenderTransform.classicMatrix()` now builds C on `Matrix4f` alone (the same
+right-multiplied translate, X, Y, Z order the pose-stack calls make: `PoseStack.mulPose` and `Matrix4f.rotateX/Y/Z` both
+post-multiply) and the row asserts on matrices only (the identity's slot matrix, each slot matrix against the closed
+form at 1e-5, the classic chain M·C against the seam chain slot·M on three points); `applyClassic` / `applySlot` keep
+their pose-stack forms for the renderer. The three source sets recompiled (1,263 / 84 / 249 classes) and the
+regeneration ran again from the top, the three trees re-pinned under the rewritten method.
+
+DEVIATIONS PRESENTED (each reversible): (1) the classic probe side ALSO reads the descriptor's transform (without an entity) and applies its
+classic form to the root.visit capture — without it the geometry leg compares an unrotated classic tree against the rotated geo and cannot
+measure the conjugation; the classic's render_vertices and the reference leg are untouched by it; (2) the geo side applies the renderer's slot
+form wrapped in M^-1 … M rather than the declared classic form literally — the same product when the conjugation is right, and only this form
+measures it; (3) a new test file `tools/test_g1_render_parity.py` (twelve pins) rather than none, no test file having existed for the parity tool
+or the converter; (4) the scratch manifests were staged as `build/h1_*.json` (git-ignored) because the probe and the tools resolve the repository
+root as the manifest's grandparent — removed after the runs; (5) the two descriptors' edits are line-neutral for the citations (a one-line
+override on the Dungeon Beast, a re-wrapped paragraph on the Kraken); (6) `pixel_diff` returns a fourth value (the pair-contested fraction)
+and the two rasterisers a third (the front pairs) — the T2e / T2f lanes' scratch `probe_visual.py` read-back scripts would need the new arity
+(not run here; nothing in the tree calls them); (7) the pair-contested pixels are excluded from the MAE as well as the changed fraction (the
+ruling's "never a mismatch" reaches both verdicts; the retired contested exclusion did the same); (8) `render_transform` and
+`draw_order.undrawn_parts` appear in a report only for an entry that declares them, so the other entries' reports change by the pair keys alone.
+
+NOT DONE (by design): the gametest suite not run (no gradle); the three proof trees (the orchestrator's `--write-proof`: every entry's report
+carries the pair keys; the diff images with pair-contested pixels repainted); the Dungeon Beast's and the Kraken's landings (the Kraken's slice:
+geo, wiring, manifest entries, pins, gametest rows, the seeds' status); the Lurking Terror's and the Scorpion's re-landing (the remainder); the
+register lines and KNOWN_ISSUES' count (the lane's records.md drafts them); the artist_handoff folder untouched; the artist package's reference
+conversion (`build/reference/generated`, the reference manifest) untouched — the Dungeon Beast's artist rig keeps its four toes, as 1.7.10 compiles them.
+
+GATE: GATE: harness1 (first run) red at the suite - the new row t2_009 loading a client class on the dedicated server (the fix above); harness1b stopped by the orchestrator to take the refuters' fixes; harness1c green: the three trees re-pinned under the pair-contested rule (g1 2, s4 13, t2 68 PARITY PASS, checked-in proof updated, then each verified drift-free), the reference clips deterministic and unchanged (298 files, VERIFIED), the two test files OK (50 and 12), the folder fresh (116 folders, 1,369 files, every check PASS), the benchmark re-pinned for g1tool's move, the audit 0 errors / 60 acknowledged / 78 shipped geos; drift 0, build 0, suite: all 1282 required tests passed.
