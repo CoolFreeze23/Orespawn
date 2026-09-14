@@ -539,6 +539,24 @@ that slice, not a task for now.
     the report. (10) The final report: the counts; a per-slice table (rigs landed, held, gate, commit); the held list
     with reasons; the decided-under-doctrine list; the contact sheets' paths; the folder's file count and size.
 
+34. **Rulings of 2026-09-15, closing set continued (owner, through the advisor):** resumes the closing set at the FK
+    slice; its items 5 to 10 stand unchanged. **The two questions:** (1) TEST-012 and TEST-014: (b), as a rule of the
+    visual leg, not per rig. A changed pixel whose two front fragments on both sides are the same pair of faces, within
+    an attribution window of 1e-5 blocks, is a pair-contested pixel: counted and reported per sample beside the
+    contested fraction, never a mismatch, capped at 1 percent of the image so a rig that ties everywhere still fails.
+    TEST-008 (c)'s bind exclusions are re-run under it and retire where it clears them. Measured on every existing
+    proof first; the before/after per sample in the report; one refuter. (2) TEST-013: (a). The descriptor declares a
+    constant render transform the probe reads without an entity and the replaced renderer applies in applyRotations,
+    with the order analysis confirmed by measurement; a manifest undrawn_parts list the converter omits from the geo
+    and the audit's key. Two refuters, the seam being renderer code. The Dungeon Beast and the Kraken land under it in
+    the Kraken's slice. ENT-S-162 stays frozen; the sheet notes the Triffid's fix is one line each side when the
+    parity lanes reopen. (3) The FK slice is the Alien and the Emperor Scorpion. The Ant Robot and Spider Robot are
+    Tier 0 (design section 5, the solver exceptions) and are not converted; the brief's hold is void. **Order of
+    work:** (4) Items 1 and 2 as one harness-and-seam commit, gated → the FK slice → the two Tier-1 slices, the
+    Dungeon Beast joining the Kraken's → the remainder: the Lurking Terror and Scorpion under item 1, the Ghost under
+    ENT-S-160 (a) with (d), the Boyfriend, Girlfriend and Princess under the closing set's item 3 → the closing set's
+    items 7 to 10. Push after every green landing; the stop rule as before.
+
 ## D. Rulings executed the same day (for cross-reference)
 
 - ENT-S-098 fixed (shot BetterFireballs carry the mod's own type; save/load round-trip pinned) and its

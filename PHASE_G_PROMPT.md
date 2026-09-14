@@ -837,6 +837,21 @@ root-order slice with the GeckoLib per-entity cache eviction, then Slice 4c). Th
   the jar built and its path reported; the final report with the counts, a per-slice table, the held list with
   reasons, the decided-under-doctrine list, the contact sheets' paths, the folder's file count and size.
 
+- Rulings of 2026-09-15, closing set continued (addendum item 34; the closing set's items 5 to 10 unchanged): the
+  visual leg gains the pair-contested rule — a changed pixel whose two front fragments on both sides are the same pair
+  of faces within a 1e-5-block attribution window is counted and reported per sample beside the contested fraction,
+  never a mismatch, capped at 1 percent of the image; TEST-008 (c)'s bind exclusions are re-run under it and retire
+  where it clears them; measured on every existing proof first with the before/after per sample, one refuter. TEST-013
+  ruled (a): the descriptor declares a constant render transform the probe reads without an entity and the replaced
+  renderer applies in applyRotations (the order analysis confirmed by measurement), with a manifest undrawn_parts list
+  the converter omits from the geo and the audit's key — two refuters, the seam being renderer code; the Dungeon Beast
+  and the Kraken land under it in the Kraken's slice; ENT-S-162 stays frozen (the sheet notes the Triffid's one-line
+  fix each side). The FK slice is the Alien and the Emperor Scorpion; the Ant Robot and Spider Robot are Tier 0 and
+  are not converted. Order: items 1 and 2 as one harness-and-seam commit, gated → the FK slice → the two Tier-1 slices
+  → the remainder (the Lurking Terror and Scorpion under the rule, the Ghost under ENT-S-160 (a) with (d), the three
+  biped species under the closing set's item 3) → the closing set's items 7 to 10; push after every green landing;
+  the stop rule as before.
+
 ## 7. Standing traps checklist (things that have actually bitten this project)
 
 - Uppercase in resource filenames → `ResourceLocation` crash. Lowercase all geo/

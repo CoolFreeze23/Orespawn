@@ -8444,3 +8444,21 @@ reference folder's regeneration; the Dungeon Beast's and the Scorpion's landings
 artist_handoff folder (the orchestrator's).
 
 GATE: GATE: t2f (first run) stopped before its gate at the second clip run - a Gradle artifact lock (the client-extra jar held open by the refuter's own JVM while --rerun-tasks re-selected it; the regeneration's second run is a plain run since) after the g1 / s4 verify-only passes identical and the t2 write-proof G1 PARITY PASS: 68 models; t2f2 green: the same verifies and proof, the clips deterministic across two gradle runs (298 files; every clip byte-identical, the index's rows moved), referenceClipsVerify VERIFIED 298, the folder fresh (116 folders, 1,369 files, every check PASS), the benchmark proof re-pinned for g1tool's move (the sampler's rows), the audit 0 errors / 60 acknowledged with HOOKS at 28 and 78 shipped geos (77 seam + 1 outside-seam); drift 0, build 0, suite: all 1281 required tests passed.
+
+## RULINGS 2026-09-15, CLOSING SET CONTINUED, RECORDED (docs-only) — the pair-contested rule of the visual leg, the constant render transform with an undrawn-parts list, the FK slice as the Alien and the Emperor Scorpion; the sequence resumes
+
+Recorded in `phase_g_reports/phase_g_scope_addendum_2026-09-03.md` item 34 (the rulings in full) and `PHASE_G_PROMPT.md`
+§6b (the bullet). Executed here, docs-only, with nothing unpushed (origin/master 58a4225). The two questions the sixth
+Tier-2 slice stopped on are answered: (1) the visual leg gains the pair-contested rule (a changed pixel whose two front
+fragments on both sides are the same pair of faces within a 1e-5-block attribution window is counted per sample beside
+the contested fraction, never a mismatch, capped at 1 percent of the image), the TEST-008 (c) bind exclusions re-run
+under it and retiring where it clears them, measured on every existing proof first with the before / after per sample,
+one refuter; (2) TEST-013 (a): a constant render transform the descriptor declares, the probe reads without an entity
+and the replaced renderer applies in `applyRotations` with the order analysis confirmed by measurement, and a manifest
+`undrawn_parts` list the converter omits from the geo and the audit's key — two refuters; the Dungeon Beast and the
+Kraken land under it in the Kraken's slice; ENT-S-162 stays frozen. The FK slice is the Alien and the Emperor Scorpion
+(the Ant Robot and Spider Robot Tier 0, never converted). The order from here: items 1 and 2 as one harness-and-seam
+commit, gated → the FK slice → the two Tier-1 slices → the remainder → the closing set's items 7 to 10; push after
+every green landing; the stop rule as before.
+
+GATE: docs-only (no gate; nothing under src or tools moves).
