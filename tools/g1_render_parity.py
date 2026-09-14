@@ -839,6 +839,186 @@ def render_instance_pose_parity(model_id: str, compiled: dict[str, Any],
     return metrics
 
 
+# THE CHAIN-LINK LEG (design section 5; the FK slice): an entry that declares a `hierarchy` ({child: parent} over the
+# classic flat rig's top-level parts - the Alien's and the Emperor Scorpion's chains, whose child pivots the
+# classic setupAnim rewrites by trigonometry) ships a geo whose children are bones PARENTED to their chain parents
+# (tools/layer_definition_to_geo.py, the hierarchy form). Its proof is the world transform of every link: on the
+# classic side the part's world matrix from its rotation point and rotations, evaluated here from the compiled
+# `transforms` (a flat part's ModelPart.translateAndRotate: translate(x, y, z) / 16, then rotationZYX(zRot,
+# yRot, xRot) = Rz * Ry * Rx); on the GeckoLib side the bone's world matrix as the bake renders it (the probe's
+# `bone_poses_classic`: the pose stack at the bone, conjugated into classic space), closed by the bone's absolute
+# bind pivot - a classic cube corner is local to the part's pivot, a GeckoLib corner absolute, so
+# classic_world == bone_pose * T(pivot / 16) (the render-instance leg's relation). Both are compared within the GEOMETRY
+# leg's tolerance (the decision: linear entries and the translation column alike, in blocks) and reported per link.
+def hierarchy_declared(model_id: str, spec: dict[str, Any], compiled: dict[str, Any], conversion: dict[str, Any],
+                       generated_geometry: dict[str, Any]) -> dict[str, str]:
+    """The manifest's ``hierarchy`` validated the converter's way and checked for drift against the converter's
+    report and the generated geo's bone parents (every declared child parented exactly as declared, every other bone
+    a root). Empty for an entry declaring none (whose converter report and geo then carry no parents of the form)."""
+    declared = spec.get("hierarchy")
+    if declared is None:
+        if conversion.get("hierarchy") is not None:
+            raise AssertionError(f"{model_id} converter recorded a hierarchy the manifest does not declare")
+        return {}
+    if not isinstance(declared, dict) or not declared or any(
+            not isinstance(child, str) or not child or not isinstance(parent, str) or not parent
+            for child, parent in declared.items()):
+        raise AssertionError(f"{model_id} hierarchy must be a non-empty object of child part name -> parent part name")
+    names = set(compiled["bone_names"])
+    involved = set(declared) | set(declared.values())
+    unknown = sorted(involved - names)
+    if unknown:
+        raise AssertionError(f"{model_id} hierarchy names parts the compiled model lacks: {unknown}")
+    excluded = set(spec.get("undrawn_parts") or []) | set(spec.get("render_instances") or {})
+    overlap = sorted(involved & excluded)
+    if overlap:
+        raise AssertionError(f"{model_id} hierarchy overlaps undrawn_parts / render_instances: {overlap}")
+    for child, parent in declared.items():
+        if child == parent:
+            raise AssertionError(f"{model_id} hierarchy parents {child} to itself")
+        seen = [child]
+        cursor = parent
+        while cursor in declared:
+            if cursor in seen:
+                raise AssertionError(f"{model_id} hierarchy has a cycle through {seen}")
+            seen.append(cursor)
+            cursor = declared[cursor]
+    recorded = conversion.get("hierarchy")
+    if not isinstance(recorded, dict) or recorded.get("declared") != declared:
+        raise AssertionError(f"{model_id} hierarchy drift between the manifest and the converter: {recorded}")
+    parents = {bone["name"]: bone.get("parent") for bone in generated_geometry["minecraft:geometry"][0]["bones"]}
+    for name, parent in parents.items():
+        if parent != declared.get(name):
+            raise AssertionError(
+                f"{model_id} generated geo parents {name} to {parent}, the manifest's hierarchy to {declared.get(name)}"
+            )
+    return dict(declared)
+
+
+def rotation_matrix_zyx(angles: Iterable[float]) -> list[list[float]]:
+    """Classic (xRot, yRot, zRot) radians -> the 3x3 rows of Rz * Ry * Rx: ModelPart.translateAndRotate's
+    ``rotationZYX(zRot, yRot, xRot)`` (a vector is rotated about X first, then Y, then Z). Evaluated here, not imported."""
+    x, y, z = (float(value) for value in angles)
+    cx, sx, cy, sy, cz, sz = math.cos(x), math.sin(x), math.cos(y), math.sin(y), math.cos(z), math.sin(z)
+    return [
+        [cz * cy, cz * sy * sx - sz * cx, cz * sy * cx + sz * sx],
+        [sz * cy, sz * sy * sx + cz * cx, sz * sy * cx - cz * sx],
+        [-sy, cy * sx, cy * cx],
+    ]
+
+
+def classic_world_matrix(transform: dict[str, Any]) -> list[list[float]]:
+    """A flat classic part's world matrix from its rotation point and rotations (blocks): T(position / 16) * Rz * Ry * Rx,
+    exactly what ``ModelPart.translateAndRotate`` pushes for a part of the unnamed root (a unit scale, the compiled
+    dumps' rigs never scale)."""
+    rotation = rotation_matrix_zyx(transform["rotation"])
+    position = [float(value) / 16.0 for value in transform["position"]]
+    return [
+        [rotation[0][0], rotation[0][1], rotation[0][2], position[0]],
+        [rotation[1][0], rotation[1][1], rotation[1][2], position[1]],
+        [rotation[2][0], rotation[2][1], rotation[2][2], position[2]],
+        [0.0, 0.0, 0.0, 1.0],
+    ]
+
+
+def chain_link_parity(model_id: str, compiled: dict[str, Any], geo_render: dict[str, Any],
+                      generated_geometry: dict[str, Any], hierarchy: dict[str, str], epsilon: float,
+                      undrawn: frozenset[str] = frozenset()) -> dict[str, Any]:
+    """The chain-link leg: for every sample of the entry's matrix the world transform of every bone - every link of the
+    declared hierarchy and every root beside them - evaluated independently on the classic model (``classic_world_matrix``
+    of the compiled ``transforms``) and on the GeckoLib bake (``bone_poses_classic``, closed by the bone's own pivot: a
+    GeckoLib corner is absolute, at the geo pivot plus the classic local offset, a classic corner local to the part's
+    rotation point, so classic_world == bone_pose * T(geo pivot / 16) - a root's geo pivot the classic absolute pivot, a
+    child's the converter's derived one), compared within ``epsilon`` (the geometry leg's, blocks) on the 3x3 linear
+    block and on the translation column, and reported per link. Every sample must be a full capture: the bake's world
+    matrices are recorded where it renders."""
+    if not hierarchy:
+        raise AssertionError(f"{model_id} chain-link leg needs a declared hierarchy")
+    vanilla_samples = sample_map(compiled)
+    candidate_samples = sample_map(geo_render)
+    if vanilla_samples.keys() != candidate_samples.keys():
+        raise AssertionError(f"{model_id} chain-link sample IDs differ")
+    # the geo's pivots in classic terms (the converter writes (-x, 24 - y, z) of the classic pivot), in blocks
+    pivots = {
+        bone["name"]: [-float(bone["pivot"][0]) / 16.0, (24.0 - float(bone["pivot"][1])) / 16.0, float(bone["pivot"][2]) / 16.0]
+        for bone in generated_geometry["minecraft:geometry"][0]["bones"]
+    }
+    compiled_pivots = {
+        name: [float(value) / 16.0 for value in part["absolute_pivot"]]
+        for name, part in definition_parts(compiled["definition"]).items()
+    }
+    for name, pivot in pivots.items():
+        if name not in hierarchy and vector_delta(pivot, compiled_pivots[name]) > 1.0e-9:
+            raise AssertionError(f"{model_id} geo pivot of the root {name} is not the classic absolute pivot: {pivot}")
+    per_link: dict[str, dict[str, Any]] = {
+        child: {"parent": parent, "max_linear_delta": 0.0, "max_translation_delta_blocks": 0.0, "worst_sample": "exact"}
+        for child, parent in hierarchy.items()
+    }
+    max_linear = max_translation = 0.0
+    worst = "exact"
+    bones_compared = 0
+    samples_checked = 0
+    for sample_id, vanilla_sample in vanilla_samples.items():
+        candidate_sample = candidate_samples[sample_id]
+        if vanilla_sample.get("capture_kind") != "full":
+            raise AssertionError(
+                f"{model_id}/{sample_id} is not a full capture: the chain-link leg compares the bake's rendered world "
+                "matrices, recorded at full captures only"
+            )
+        poses = candidate_sample.get("bone_poses_classic")
+        if poses is None:
+            raise AssertionError(f"{model_id}/{sample_id} geo probe recorded no bone_poses_classic")
+        for bone, transform in vanilla_sample["transforms"].items():
+            if bone in undrawn:
+                continue
+            if bone not in poses:
+                raise AssertionError(f"{model_id}/{sample_id} geo probe recorded no world matrix for bone {bone}")
+            classic = classic_world_matrix(transform)
+            candidate = matrix_translate(matrix_rows(poses[bone], f"{model_id}/{sample_id}/{bone} bone pose"), pivots[bone])
+            linear, translation = matrix_delta(classic, candidate)
+            if linear > max_linear or translation > max_translation:
+                worst = f"{sample_id}:{bone}"
+            max_linear = max(max_linear, linear)
+            max_translation = max(max_translation, translation)
+            link = per_link.get(bone)
+            if link is not None:
+                if linear > link["max_linear_delta"] or translation > link["max_translation_delta_blocks"]:
+                    link["worst_sample"] = sample_id
+                link["max_linear_delta"] = max(link["max_linear_delta"], linear)
+                link["max_translation_delta_blocks"] = max(link["max_translation_delta_blocks"], translation)
+            if linear > epsilon or translation > epsilon:
+                raise AssertionError(
+                    f"CHAIN LINK MISMATCH {model_id}/{sample_id}/{bone}"
+                    f"{' (child of ' + hierarchy[bone] + ')' if bone in hierarchy else ' (a root)'}: the classic part's "
+                    f"world matrix differs from the bake's bone world matrix (linear {linear:.12g}, translation "
+                    f"{translation:.12g} blocks > epsilon {epsilon:.12g})"
+                )
+            bones_compared += 1
+        samples_checked += 1
+    if samples_checked == 0 or bones_compared == 0:
+        raise AssertionError(f"{model_id} chain-link leg compared nothing")
+    return {
+        "status": "PASS",
+        "epsilon_blocks": epsilon,
+        "links": len(hierarchy),
+        "chain_roots": sorted(set(hierarchy.values()) - set(hierarchy)),
+        "samples_checked": samples_checked,
+        "bone_samples_compared": bones_compared,
+        "max_linear_delta": max_linear,
+        "max_translation_delta_blocks": max_translation,
+        "worst_case": worst,
+        "per_link": per_link,
+        "evidence": (
+            "classic: T(rotation point / 16) * Rz * Ry * Rx from the compiled transforms of every sample (the flat part's "
+            "ModelPart.translateAndRotate); GeckoLib: the bake's rendered bone world matrix conjugated into classic space "
+            "(bone_poses_classic) * T(the geo's own pivot / 16, a child's the derived one); every bone compared, the "
+            "declared links reported per link; "
+            "an entry error bounds the angle error only up to sqrt(3) for a rotation about an arbitrary axis, so the "
+            "effective angular tolerance is at most ~sqrt(3) x epsilon - stated, no threshold changed"
+        ),
+    }
+
+
 def resolve_repository_path(repository_root: Path, text: str) -> Path:
     path = Path(text)
     return path.resolve() if path.is_absolute() else (repository_root / path).resolve()
@@ -1140,7 +1320,8 @@ def animation_parity(model_id: str, spec: dict[str, Any], compiled: dict[str, An
                      epsilon: float, position_epsilon: float = 1.0e-4,
                      repository_root: Path | None = None,
                      conversion: dict[str, Any] | None = None,
-                     undrawn: frozenset[str] = frozenset()) -> dict[str, Any]:
+                     undrawn: frozenset[str] = frozenset(),
+                     hierarchy: dict[str, str] | None = None) -> dict[str, Any]:
     """Compare independent compiled setupAnim output with the actual candidate hook.
 
     Slice 4c: for a model with render_instances the compiled ``transforms`` stay per PART (the
@@ -1149,12 +1330,19 @@ def animation_parity(model_id: str, spec: dict[str, Any], compiled: dict[str, An
     the clone's static step (``step_scope: part``); a static group's are its bind step; a
     hook-animated group's rotation has no part channel and is proven by the composition leg
     (``render_instance_pose_parity``) against the classic model's measured per-draw pose stack.
+
+    The hierarchy form (the FK slice): a bone parented by the entry's ``hierarchy`` carries a LOCAL
+    rotation and position (the parent's frame), which the flat classic part's channels are not; its
+    world transform is proven by the chain-link leg (``chain_link_parity``) instead, and only its
+    scale and hidden flag are compared here. The chain roots and every other bone compare as always.
     """
     vanilla_samples = sample_map(compiled)
     candidate_samples = sample_map(geo_render)
     expansion = render_instance_expansion(conversion)
     mapping: dict[str, Any] = expansion["bones"] if expansion else {}
     expanded_parts = set(expansion["parts"]) if expansion else set()
+    chain_children = frozenset(hierarchy or {})
+    chain_link_channels = 0
     if vanilla_samples.keys() != candidate_samples.keys():
         raise AssertionError(
             f"{model_id} animation sample IDs differ: "
@@ -1205,6 +1393,15 @@ def animation_parity(model_id: str, spec: dict[str, Any], compiled: dict[str, An
                     max_static_delta,
                     vector_delta(transform["scale"], bind_transforms[bone]["scale"]),
                 )
+                continue
+            if bone in chain_children:
+                # the hierarchy form: a parented bone's rotation and position are local to its parent (not the flat
+                # classic channels); its world transform is the chain-link leg's; its scale must still be the bind's
+                max_static_delta = max(
+                    max_static_delta,
+                    vector_delta(transform["scale"], bind_transforms[bone]["scale"]),
+                )
+                chain_link_channels += 3
                 continue
             delta = vector_delta(transform["rotation"], candidate_rotations[bone])
             if delta > max_rotation_delta:
@@ -1563,6 +1760,15 @@ def animation_parity(model_id: str, spec: dict[str, Any], compiled: dict[str, An
         contract_metrics["render_instances"] = render_instance_pose_parity(
             model_id, compiled, vanilla_samples, candidate_samples, expansion, epsilon, position_epsilon
         )
+    if chain_children:
+        if kind not in ("code_driven", "entity_state"):
+            raise AssertionError(f"{model_id} a hierarchy needs a production-hook animation kind")
+        # written only for a hierarchy entry, so every other entry's animation report stays byte-identical
+        contract_metrics["hierarchy"] = {
+            "chain_link_bones": sorted(chain_children),
+            "chain_link_channel_samples_deferred": chain_link_channels,
+            "policy": "a parented bone's local rotation and position are proven as a world transform by the chain-link leg",
+        }
 
     return {
         "status": "PASS",
@@ -2551,6 +2757,22 @@ def render_instance_lines(contract: dict[str, Any]) -> list[str]:
     ]
 
 
+def chain_link_lines(leg: dict[str, Any] | None) -> list[str]:
+    """The chain-link leg's README line (the hierarchy form): the links, the maxima and the worst link."""
+    if leg is None:
+        return []
+    worst_link = max(leg["per_link"].items(), key=lambda item: max(item[1]["max_linear_delta"],
+                                                                     item[1]["max_translation_delta_blocks"]))
+    return [
+        f"- Chain-link leg (the hierarchy form): {leg['links']} links under roots {leg['chain_roots']}; world transforms "
+        f"of {leg['bone_samples_compared']} bone-samples over {leg['samples_checked']} samples within "
+        f"{leg['epsilon_blocks']:.12g} - maximum linear delta {leg['max_linear_delta']:.12g}, maximum translation delta "
+        f"{leg['max_translation_delta_blocks']:.12g} blocks (worst {leg['worst_case']}); the worst link "
+        f"{worst_link[0]} under {worst_link[1]['parent']}: {worst_link[1]['max_linear_delta']:.6g} linear / "
+        f"{worst_link[1]['max_translation_delta_blocks']:.6g} blocks at {worst_link[1]['worst_sample']}.",
+    ]
+
+
 def contested_line(visual: dict[str, Any]) -> str:
     pair = (f" Pair-contested pixels (the same two front faces on both sides within "
             f"{visual['pair_attribution_window_blocks']:g} blocks) never a mismatch: maximum fraction "
@@ -2640,6 +2862,7 @@ def markdown_report(report: dict[str, Any]) -> str:
                     contested_line(model["visual"]),
                     *visual_mode_lines(model["visual"]),
                     *render_instance_lines(contract),
+                    *chain_link_lines(model.get("chain_link_leg")),
                     # A code_driven model may declare the keyframe reference leg (the Tier-2 transcriptions, 2026-09-13):
                     # its README lines are the gait_scaled branch's.
                     *keyframe_leg_lines(model.get(KEYFRAME_LEG_KEY)),
@@ -2658,6 +2881,7 @@ def markdown_report(report: dict[str, Any]) -> str:
                     contested_line(model["visual"]),
                     *visual_mode_lines(model["visual"]),
                     *render_instance_lines(contract),
+                    *chain_link_lines(model.get("chain_link_leg")),
                     "",
                 ]
             )
@@ -2868,6 +3092,9 @@ def main() -> int:
         undrawn = undrawn_parts(model_id, spec, compiled)
         if sorted(conversion.get("undrawn_parts", [])) != sorted(undrawn):
             raise AssertionError(f"{model_id} undrawn_parts drift between the manifest and the converter")
+        # The hierarchy form (the FK slice): validated against the converter's report and the geo's bone parents;
+        # empty for every entry that declares none.
+        hierarchy = hierarchy_declared(model_id, spec, compiled, conversion, generated_geometry)
         # The constant render transform (TEST-013): both probes read it from the candidate descriptor without an
         # entity and record it; the two records must agree.
         render_transform = compiled.get("render_transform")
@@ -2906,11 +3133,27 @@ def main() -> int:
             repository_root=repository_root,
             conversion=conversion,
             undrawn=undrawn,
+            hierarchy=hierarchy,
         )
         print(
             f"G1 ANIMATION PASS: {model_id} max delta "
             f"{animation['max_rotation_delta_radians']:.12g} radians"
         )
+        chain_link_leg = None
+        if hierarchy:
+            # the chain-link leg (the FK slice): an entry-declared leg, the world transform of every link within the
+            # geometry leg's tolerance; before the draw-order leg so a rig the seam cannot draw in the classic order
+            # (the measurement form) still reports its links
+            chain_link_leg = chain_link_parity(
+                model_id, compiled, geo_render, generated_geometry, hierarchy,
+                float(thresholds["geometry_epsilon_blocks"]), undrawn
+            )
+            print(
+                f"G1 CHAIN LEG PASS: {model_id} {chain_link_leg['links']} links, max delta "
+                f"{chain_link_leg['max_linear_delta']:.12g} linear / "
+                f"{chain_link_leg['max_translation_delta_blocks']:.12g} blocks over "
+                f"{chain_link_leg['bone_samples_compared']} bone-samples in {chain_link_leg['samples_checked']} samples"
+            )
         keyframe_leg = None
         if KEYFRAME_LEG_KEY in spec:
             keyframe_clip_path = resolve_repository_path(repository_root, spec[KEYFRAME_LEG_KEY]["clip_path"])
@@ -2972,6 +3215,8 @@ def main() -> int:
         }
         if render_transform is not None:
             common_report["render_transform"] = render_transform
+        if chain_link_leg is not None:
+            common_report["chain_link_leg"] = chain_link_leg
         if keyframe_leg is not None:
             common_report[KEYFRAME_LEG_KEY] = keyframe_leg
         if "reference_source" in spec:

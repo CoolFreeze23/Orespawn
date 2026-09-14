@@ -537,10 +537,162 @@ def undrawn_parts_declared(spec: dict[str, Any], compiled: dict[str, Any]) -> fr
     return frozenset(declared)
 
 
+# THE HIERARCHY FORM (design section 5; the FK slice): a manifest entry's `hierarchy` is {child: parent} over the
+# compiled model's TOP-LEVEL parts - the classic flat rig whose child pivots the classic setupAnim rewrites by
+# trigonometry (the Alien's neck / head / jaw, tail and claw chains, the Emperor Scorpion's tail, legs and claws). The
+# converter emits each declared child as a GeckoLib bone PARENTED to its chain parent: the part names preserved, its
+# pivot the absolute bind pivot in Blockbench terms (unchanged), its bind rotation the LOCAL one - the parent's flat
+# (world) bind rotation inverted onto the child's, R_local = R_parent^-1 * R_child, so the bake's world rotation at bind
+# is the classic's (GeckoLib composes a parent's rotation onto its children, RenderUtil .prepMatrixForBone: translate to
+# the bone, to its pivot, rotate Z then Y then X, away from the pivot - the same ZYX order as
+# ModelPart.translateAndRotate, and the converter's Y-reflection conjugation preserves composition). The hook
+# expresses the classic world transforms through parent-relative rotations and positions (FlatRig); the harness's
+# chain-link leg (tools/g1_render_parity.py chain_link_parity) compares the world matrices at every link.
+HIERARCHY_DRAW_ORDER_CLASSIC = "classic"
+# A MEASUREMENT form only (`hierarchy_draw_order`): the seam draws a bake in PRE-ORDER (GeoRenderer.renderRecursively draws
+# a bone's cubes, then its children; DrawOrder.apply refuses a key that is not a pre-order of the tree), so a hierarchy
+# whose classic draw order is not one - a parent drawn after a child, a subtree interleaved with another - cannot draw in
+# the classic order through the seam as it stands, and derive_bone_draw_order refuses it (its FINDINGs). Under this form
+# the key is the classic order re-sequenced into the hierarchy's pre-order (siblings by their subtree's first classic draw)
+# and the findings are recorded instead: the draw-order leg FAILS such a rig by construction (the classic list is not the
+# emitted one), so nothing under it can ship; it exists so a held rig's other legs can be measured and reported.
+HIERARCHY_DRAW_ORDER_PREORDER_DIAGNOSTIC = "preorder_diagnostic"
+HIERARCHY_DRAW_ORDERS = (HIERARCHY_DRAW_ORDER_CLASSIC, HIERARCHY_DRAW_ORDER_PREORDER_DIAGNOSTIC)
+
+
+def hierarchy_declared(spec: dict[str, Any], compiled: dict[str, Any]) -> dict[str, str]:
+    """The manifest's ``hierarchy`` ({child: parent}), validated: compiled part names, top-level in the compiled tree
+    (a flat classic rig; a nested compiled part keeps its own parent), not undrawn or render-instance parts, a child
+    declared once (an object's keys), no self-parenting, no cycle. Empty when the entry declares none."""
+    declared = spec.get("hierarchy")
+    model_id = spec["id"]
+    if declared is None:
+        return {}
+    if not isinstance(declared, dict) or not declared or any(
+            not isinstance(child, str) or not child or not isinstance(parent, str) or not parent
+            for child, parent in declared.items()):
+        raise ValueError(f"{model_id} hierarchy must be a non-empty object of child part name -> parent part name")
+    names = set(compiled["bone_names"])
+    involved = set(declared) | set(declared.values())
+    unknown = sorted(involved - names)
+    if unknown:
+        raise ValueError(f"{model_id} hierarchy names parts the compiled model lacks: {unknown}")
+    excluded = set(spec.get("undrawn_parts") or []) | set(spec.get("render_instances") or {})
+    overlap = sorted(involved & excluded)
+    if overlap:
+        raise ValueError(f"{model_id} hierarchy overlaps undrawn_parts / render_instances: {overlap}")
+    nested = sorted(part["name"] for part, parent in iter_parts(compiled["definition"])
+                    if parent is not None and part["name"] in involved)
+    if nested:
+        raise ValueError(f"{model_id} hierarchy may only parent top-level compiled parts (a flat classic rig): {nested}")
+    for child, parent in declared.items():
+        if child == parent:
+            raise ValueError(f"{model_id} hierarchy parents {child} to itself")
+        seen = [child]
+        cursor = parent
+        while cursor in declared:
+            if cursor in seen:
+                raise ValueError(f"{model_id} hierarchy has a cycle through {seen}")
+            seen.append(cursor)
+            cursor = declared[cursor]
+    return dict(declared)
+
+
+def hierarchy_draw_order_declared(spec: dict[str, Any], hierarchy: dict[str, str]) -> str:
+    """The entry's ``hierarchy_draw_order``: classic by default; the measurement form only with a hierarchy."""
+    mode = spec.get("hierarchy_draw_order", HIERARCHY_DRAW_ORDER_CLASSIC)
+    if mode not in HIERARCHY_DRAW_ORDERS:
+        raise ValueError(f"{spec['id']} hierarchy_draw_order {mode!r} is not one of {HIERARCHY_DRAW_ORDERS}")
+    if mode != HIERARCHY_DRAW_ORDER_CLASSIC and not hierarchy:
+        raise ValueError(f"{spec['id']} hierarchy_draw_order {mode!r} needs a hierarchy")
+    return mode
+
+
+def rotation_matrix_zyx(angles: Iterable[float]) -> list[list[float]]:
+    """ModelPart / JOML ``rotationZYX``: classic (xRot, yRot, zRot) radians -> the 3x3 rows of Rz * Ry * Rx (a vector is
+    rotated about X first, then Y, then Z) - ModelPart.translateAndRotate's ``rotationZYX(zRot, yRot, xRot)`` and
+    GeckoLib's RenderUtil.rotateMatrixAroundBone (mulPose Z, then Y, then X) alike."""
+    x, y, z = (float(value) for value in angles)
+    cx, sx, cy, sy, cz, sz = math.cos(x), math.sin(x), math.cos(y), math.sin(y), math.cos(z), math.sin(z)
+    return [
+        [cz * cy, cz * sy * sx - sz * cx, cz * sy * cx + sz * sx],
+        [sz * cy, sz * sy * sx + cz * cx, sz * sy * cx - cz * sx],
+        [-sy, cy * sx, cy * cx],
+    ]
+
+
+def euler_angles_zyx(matrix: list[list[float]]) -> list[float]:
+    """The inverse of ``rotation_matrix_zyx``: the classic (xRot, yRot, zRot) of a rotation matrix M = Rz * Ry * Rx.
+    ``M[2][0] = -sin(y)``; away from the gimbal (|cos(y)| > 0) ``x = atan2(M[2][1], M[2][2])`` and
+    ``z = atan2(M[1][0], M[0][0])``; at the gimbal (y = +-pi/2, cos(y) = 0) x and z are not separable - z is taken as 0 and
+    x from the first row (``M[0][1] = sin(y) sin(x)``, ``M[0][2] = sin(y) cos(x)``)."""
+    sy = max(-1.0, min(1.0, -float(matrix[2][0])))
+    if abs(sy) < 1.0 - 1.0e-12:
+        return [math.atan2(matrix[2][1], matrix[2][2]), math.asin(sy), math.atan2(matrix[1][0], matrix[0][0])]
+    return [math.atan2(sy * matrix[0][1], sy * matrix[0][2]), math.copysign(math.pi / 2.0, sy), 0.0]
+
+
+def matrix_multiply(left: list[list[float]], right: list[list[float]]) -> list[list[float]]:
+    return [[sum(left[r][k] * right[k][c] for k in range(3)) for c in range(3)] for r in range(3)]
+
+
+def matrix_transpose(matrix: list[list[float]]) -> list[list[float]]:
+    return [[matrix[c][r] for c in range(3)] for r in range(3)]
+
+
+def wrap_angle(value: float) -> float:
+    """An angle into (-pi, pi]."""
+    wrapped = math.fmod(value + math.pi, 2.0 * math.pi)
+    if wrapped <= 0.0:
+        wrapped += 2.0 * math.pi
+    return wrapped - math.pi
+
+
+def euler_angles_zyx_classic_branch(matrix: list[list[float]]) -> list[float]:
+    """The ZYX Euler triple of a rotation AS A CLASSIC RIG AUTHORS IT. A rotation has two ZYX triples - (x, y, z) with
+    y in [-pi/2, pi/2] (``euler_angles_zyx``) and (x + pi, pi - y, z + pi) - and a classic setupAnim writes ONE axis at a
+    time over the bind, so the hook's flat buffer (FlatRig) must hold the classic's own triple, not an equivalent one:
+    the convention is the triple with the smaller |xRot| + |zRot| (a classic part turned past a quarter turn about Y is
+    authored as a yaw, never as a half-turn pitch and roll beside it). The converter checks, for every declared child,
+    that this convention recovers the compiled bind triple from the composed local one (``local_bind_rotation``)."""
+    first = euler_angles_zyx(matrix)
+    second = [wrap_angle(first[0] + math.pi), wrap_angle(math.pi - first[1]), wrap_angle(first[2] + math.pi)]
+    return second if abs(second[0]) + abs(second[2]) < abs(first[0]) + abs(first[2]) - 1.0e-12 else first
+
+
+def local_bind_rotation(parent_flat: Iterable[float], child_flat: Iterable[float]) -> list[float]:
+    """A declared child's LOCAL bind rotation (classic radians, ZYX) from the flat compiled bind rotations of its parent
+    and itself: R_local = R_parent^-1 * R_child (the transpose, a rotation's inverse), so that the bake's composition
+    R_parent * R_local reproduces the child's flat (world) bind rotation - checked here to 1e-9 on every entry, and the
+    hook's convention for reading that flat triple back from the composition (``euler_angles_zyx_classic_branch``, the
+    FlatRig's) checked to recover the compiled triple itself, axis by axis modulo a full turn."""
+    parent = rotation_matrix_zyx(parent_flat)
+    child = rotation_matrix_zyx(child_flat)
+    local = euler_angles_zyx(matrix_multiply(matrix_transpose(parent), child))
+    recomposed = matrix_multiply(parent, rotation_matrix_zyx(local))
+    drift = max(abs(recomposed[r][c] - child[r][c]) for r in range(3) for c in range(3))
+    if drift > 1.0e-9:
+        raise ValueError(f"local bind rotation does not recompose the child's flat rotation (drift {drift:.3g})")
+    recovered = euler_angles_zyx_classic_branch(recomposed)
+    triple_drift = max(abs(wrap_angle(recovered[axis] - float(list(child_flat)[axis]))) for axis in range(3))
+    if triple_drift > 1.0e-9:
+        raise ValueError(
+            f"the hook's flat-bind convention (the ZYX triple with the smaller |xRot| + |zRot|) would recover "
+            f"{recovered} for a child whose compiled bind rotation is {list(child_flat)}: the FlatRig could not hold "
+            "the classic triple (drift {triple_drift:.3g})"
+        )
+    return local
+
+
 def derive_bone_draw_order(compiled: dict[str, Any],
                            bones: list[dict[str, Any]],
-                           undrawn_parts: frozenset[str] = frozenset()) -> tuple[list[str], dict[str, Any]]:
+                           undrawn_parts: frozenset[str] = frozenset(),
+                           preorder_diagnostic: bool = False) -> tuple[list[str], dict[str, Any]]:
     """G2 root-order contract: the geo bones in the order the classic renderer draws the parts.
+
+    ``preorder_diagnostic`` (the hierarchy form's measurement mode, HIERARCHY_DRAW_ORDER_PREORDER_DIAGNOSTIC): the two
+    tree FINDINGs below and the lifting check are RECORDED in the evidence instead of raised, and the key is the
+    pre-order the lifting produces - a rig the seam cannot draw in the classic order, measured on its other legs.
 
     The probe records, for every full capture, the classic ``renderToBuffer`` draw
     sequence (``draw_order``: cube-bearing parts, a render-instance draw as its
@@ -625,17 +777,24 @@ def derive_bone_draw_order(compiled: dict[str, Any],
         return min(ranks) if ranks else math.inf
 
     ordered: list[str] = []
+    findings: list[str] = []
+
+    def finding(message: str) -> None:
+        if preorder_diagnostic:
+            findings.append(message)
+            return
+        raise ValueError(message)
 
     def emit(level: list[str]) -> None:
         for name in sorted(level, key=lambda bone: (first_rank(bone), emission_rank[bone])):
             ranks = sorted(subtree_ranks(name))
             if name in rank and any(value < rank[name] for value in ranks):
-                raise ValueError(
+                finding(
                     f"FINDING {compiled['model_id']}: {name} is drawn after one of its descendants; "
                     "a pre-order bone traversal cannot express that"
                 )
             if ranks and ranks[-1] - ranks[0] + 1 != len(ranks):
-                raise ValueError(
+                finding(
                     f"FINDING {compiled['model_id']}: the draws of {name}'s subtree are interleaved with "
                     "another bone's; the bone tree cannot express that order"
                 )
@@ -643,8 +802,10 @@ def derive_bone_draw_order(compiled: dict[str, Any],
             emit(children_of.get(name, []))
 
     emit(children_of.get(None, []))
-    if [name for name in ordered if name in rank] != [unit for unit in total if unit in rank]:
-        raise ValueError(f"{compiled['model_id']}: pre-order lifting changed the merged draw order")
+    lifted = [name for name in ordered if name in rank]
+    merged = [unit for unit in total if unit in rank]
+    if lifted != merged:
+        finding(f"{compiled['model_id']}: pre-order lifting changed the merged draw order")
     if sorted(ordered) != sorted(emission_rank):
         raise ValueError(f"{compiled['model_id']}: the draw order does not cover every geo bone exactly once")
     evidence = {
@@ -657,6 +818,17 @@ def derive_bone_draw_order(compiled: dict[str, Any],
         "tie_break": "converter emission order for pairs never drawn together in any capture",
         "lifting": "pre-order over the geo bone tree, siblings by their subtree's first classic draw",
     }
+    if preorder_diagnostic:
+        # the hierarchy form's measurement mode: the classic (merged) order, the pre-order the key carries instead, the
+        # units whose position moved and the findings the classic mode would have raised - the draw-order leg fails it
+        evidence["preorder_diagnostic"] = {
+            "classic_order": merged,
+            "moved_units": [unit for unit, lifted_unit in zip(merged, lifted) if unit != lifted_unit],
+            "findings": findings,
+            "note": "the key is the hierarchy's pre-order, NOT the classic draw order: a measurement form for a rig the "
+                    "seam cannot draw in the classic order (a parent drawn after a child, a subtree interleaved); the "
+                    "draw-order leg fails it by construction, so nothing under it can ship",
+        }
     return ordered, evidence
 
 
@@ -746,10 +918,13 @@ def derive_cube_face_order(compiled: dict[str, Any], bones: list[dict[str, Any]]
 def convert_geometry(compiled: dict[str, Any],
                      render_instances: dict[str, Any] | None = None,
                      cube_face_order: str | None = None,
-                     undrawn_parts: frozenset[str] = frozenset()) -> tuple[dict[str, Any], dict[str, Any]]:
+                     undrawn_parts: frozenset[str] = frozenset(),
+                     hierarchy: dict[str, str] | None = None,
+                     hierarchy_draw_order: str = HIERARCHY_DRAW_ORDER_CLASSIC) -> tuple[dict[str, Any], dict[str, Any]]:
     root = compiled["definition"]
     if root["cubes"]:
         raise ValueError("unnamed MeshDefinition root contains cubes")
+    hierarchy = dict(hierarchy or {})
 
     bones: list[dict[str, Any]] = []
     cube_count = 0
@@ -762,6 +937,35 @@ def convert_geometry(compiled: dict[str, Any],
     bind_rotations = initial_rotations(compiled) if any(
         sample["id"] == "bind" for sample in compiled["samples"]) else {}
     ancestors: dict[str, list[str]] = {}
+    # the hierarchy form: every top-level compiled part's flat bind rotation IS its world bind rotation, the parents'
+    # among them the frames the declared children's local bind rotations and pivots are derived in
+    flat_rotations = {part["name"]: [float(value) for value in part["initial_rotation_radians"]]
+                      for part, _parent in iter_parts(root)}
+    flat_pivots = {part["name"]: [float(value) for value in part["absolute_pivot"]]
+                   for part, _parent in iter_parts(root)}
+    local_bind_rotations: dict[str, list[float]] = {}
+    derived_pivots: dict[str, list[float]] = {}
+
+    def derived_pivot(name: str) -> list[float]:
+        """THE PIVOT IN BLOCKBENCH TERMS. GeckoLib rotates a child's pivot with its parent (the child's world pivot at
+        bind is P_parent_world + R_parent * (P_child - P_parent), the pivots as the geo stores them), so a child under a
+        parent that is ROTATED at bind cannot keep the classic absolute pivot: its geo pivot is the classic one carried
+        back through the parent's bind rotation, P_c = P_p + R_p^-1 * (classic_c - classic_p) (P_p the parent's own derived
+        pivot, classic_* the flat rotation points), and its cubes sit at that pivot plus their classic local offsets, so the
+        bake's bind places every corner where the classic does. A root's is the flat absolute pivot."""
+        if name in derived_pivots:
+            return derived_pivots[name]
+        if name not in hierarchy:
+            derived_pivots[name] = list(flat_pivots[name])
+            return derived_pivots[name]
+        parent_name = hierarchy[name]
+        parent_pivot = derived_pivot(parent_name)
+        inverse = matrix_transpose(rotation_matrix_zyx(flat_rotations[parent_name]))
+        offset = [flat_pivots[name][axis] - flat_pivots[parent_name][axis] for axis in range(3)]
+        rotated = [sum(inverse[r][c] * offset[c] for c in range(3)) for r in range(3)]
+        derived_pivots[name] = [parent_pivot[axis] + rotated[axis] for axis in range(3)]
+        return derived_pivots[name]
+
     for part, parent in iter_parts(root):
         name = part["name"]
         absolute_pivot = [float(value) for value in part["absolute_pivot"]]
@@ -770,6 +974,9 @@ def convert_geometry(compiled: dict[str, Any],
         if name in undrawn_parts:
             # never drawn by the classic renderToBuffer (the manifest's undrawn_parts): no bone, no cubes, no key entry
             continue
+        if name in hierarchy:
+            # the hierarchy form: the bone's pivot and its cubes' origins are placed at the DERIVED pivot (above)
+            absolute_pivot = derived_pivot(name)
         lineage_unrotated = all(
             not nonzero(bind_rotations.get(ancestor, initial_rotation)) for ancestor in ancestors[name]
         ) and not nonzero(bind_rotations.get(name, initial_rotation))
@@ -803,15 +1010,25 @@ def convert_geometry(compiled: dict[str, Any],
         }
         if parent is not None:
             bone["parent"] = parent
-        if nonzero(initial_rotation):
+        bone_rotation = initial_rotation
+        if name in hierarchy:
+            # THE HIERARCHY FORM: the child parented to its declared chain parent, its pivot the DERIVED one (the classic
+            # bind pivot carried back through the parent's bind rotation, derived_pivot above: Blockbench pivots are
+            # absolute and a parent's rotation rotates its children's pivots), its bind rotation the LOCAL one so the bake
+            # composes the classic world rotation at bind (the flat compiled tree's initial rotations are world rotations:
+            # both parts are top-level, hierarchy_declared)
+            bone["parent"] = hierarchy[name]
+            bone_rotation = local_bind_rotation(flat_rotations[hierarchy[name]], initial_rotation)
+            local_bind_rotations[name] = [float(value) for value in bone_rotation]
+        if nonzero(bone_rotation):
             # GeckoLib 4.8.4's BakedModelFactory negates JSON X/Y but not Z.
             # Conjugating ModelPart rotations through the Y reflection needs
             # internal (-X,+Y,-Z), hence JSON (+X,-Y,-Z).
             bone["rotation"] = clean_vector(
                 [
-                    math.degrees(initial_rotation[0]),
-                    -math.degrees(initial_rotation[1]),
-                    -math.degrees(initial_rotation[2]),
+                    math.degrees(bone_rotation[0]),
+                    -math.degrees(bone_rotation[1]),
+                    -math.degrees(bone_rotation[2]),
                 ]
             )
         if part["cubes"]:
@@ -838,7 +1055,11 @@ def convert_geometry(compiled: dict[str, Any],
         raise ValueError("duplicate bone names cannot be preserved by GeckoLib")
 
     model_id = compiled["model_id"]
-    bone_draw_order, draw_order_evidence = derive_bone_draw_order(compiled, bones, undrawn_parts)
+    if set(local_bind_rotations) != set(hierarchy):
+        raise ValueError(f"{model_id}: hierarchy names parts the geo does not carry: "
+                         f"{sorted(set(hierarchy) - set(local_bind_rotations))}")
+    bone_draw_order, draw_order_evidence = derive_bone_draw_order(
+        compiled, bones, undrawn_parts, hierarchy_draw_order == HIERARCHY_DRAW_ORDER_PREORDER_DIAGNOSTIC)
     description: dict[str, Any] = {
         "identifier": f"geometry.orespawn.g1.{model_id}",
         "texture_width": compiled["texture_width"],
@@ -880,6 +1101,22 @@ def convert_geometry(compiled: dict[str, Any],
     }
     if undrawn_parts:
         summary["undrawn_parts"] = sorted(undrawn_parts)
+    if hierarchy:
+        summary["hierarchy"] = {
+            "declared": hierarchy,
+            "links": len(hierarchy),
+            "local_bind_rotations_radians": {child: clean_vector(local_bind_rotations[child], 12) for child in hierarchy},
+            "derived_pivots_classic": {child: clean_vector(derived_pivots[child], 12) for child in hierarchy},
+            "draw_order": hierarchy_draw_order,
+            "semantics": (
+                "each declared child is a bone parented to its chain parent (the part names preserved), its pivot derived "
+                "in Blockbench terms - the classic bind pivot carried back through the parent's bind rotation, "
+                "P_c = P_p + R_p^-1 * (classic_c - classic_p), its cubes at that pivot plus their classic local offsets - and "
+                "its bind rotation the LOCAL one, R_parent^-1 * R_child, so the bake's bind places every corner and every "
+                "world rotation where the classic flat rig does; the hook writes parent-relative rotations and positions "
+                "that reproduce the classic world transform at every link (the chain-link leg's proof)"
+            ),
+        }
     if face_order is not None:
         summary["cube_face_order"] = face_order
         summary["cube_face_order_evidence"] = face_order_evidence
@@ -1234,7 +1471,10 @@ def convert_model(manifest: dict[str, Any], spec: dict[str, Any],
             f"{compiled.get('render_instances')} != {render_instances}"
         )
     undrawn = undrawn_parts_declared(spec, compiled)
-    geometry, geometry_summary = convert_geometry(compiled, render_instances, spec.get("cube_face_order"), undrawn)
+    hierarchy = hierarchy_declared(spec, compiled)
+    hierarchy_draw_order = hierarchy_draw_order_declared(spec, hierarchy)
+    geometry, geometry_summary = convert_geometry(compiled, render_instances, spec.get("cube_face_order"), undrawn,
+                                                  hierarchy, hierarchy_draw_order)
     animation, animation_contract = convert_animation(
         spec, compiled, float(manifest["ticks_per_second"])
     )
@@ -1268,6 +1508,7 @@ def convert_model(manifest: dict[str, Any], spec: dict[str, Any],
         "bone_draw_order": geometry_summary["bone_draw_order"],
         "draw_order_evidence": geometry_summary["draw_order_evidence"],
         **({"undrawn_parts": geometry_summary["undrawn_parts"]} if "undrawn_parts" in geometry_summary else {}),
+        **({"hierarchy": geometry_summary["hierarchy"]} if "hierarchy" in geometry_summary else {}),
         **({"cube_face_order": geometry_summary["cube_face_order"],
             "cube_face_order_evidence": geometry_summary["cube_face_order_evidence"]}
            if "cube_face_order" in geometry_summary else {}),
