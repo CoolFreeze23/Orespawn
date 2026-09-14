@@ -812,6 +812,31 @@ root-order slice with the GeckoLib per-entity cache eviction, then Slice 4c). Th
   fifteen-rig slice T2d as briefed (the Crab with its draw fix, on the hooks, one refuter, the counts opening the
   report) → stop and report with the clip count per state. Nothing else runs.
 
+- Rulings of 2026-09-15, closing set (addendum item 33): master pushed (the six commits after fc5e23c). The Stinky's
+  activity 2 named in its seed from the code's own word and its clip regenerated. TEST-010 (b) ruled (a): the seam
+  carries the renderer's partial tick in PoseInputs, the biped hooks read getAttackAnim(partialTick) verbatim, and the
+  classic item, armor, head and elytra layers are drawn by the seam's renderer for those species — a seam change, two
+  refuters, executed in the remainder slice where the Boyfriend, Girlfriend and Princess land. The landings run in
+  sequence with no stop between them, each slice in the standing form (fifteen rigs on their written hooks, the geo
+  shipped, the renderer registered behind the switch, the four legs and the reference leg where a pair exists, one
+  refuter, the gate, records as the cost rules, the package rows regenerated): the remaining Tier-2 rigs in the
+  design's order until none remain; the four FK-chained rigs as real parent-child hierarchies (design section 5) with
+  the world transform at every chain link against the classic model as their proof; the Tier-1 rigs in the same form,
+  hitbox profiles excluded, the GiantRobot pair through its instance form; then the remainder — the Ghost under
+  ENT-S-160 (a) with (d), and the three biped species. A rig that fails a leg is held with a register line and rejoins
+  at the remainder; one still failing there is reported, not forced. Push after every green landing (this order only).
+  Stop and report only if a gate cannot be made green in three runs, a slice lands fewer than half its rigs, or a
+  decision outside the recorded doctrine blocks more than one rig; everything else is decided under doctrine, tagged,
+  and reported at the end. After the last landing: the weights slice (Q2 (a), Q13 (a), two refuters; every
+  transcription bit-exact to its hook, weights on artist clips only, transcription groups always-on; flying and
+  swimming per contract §3; the artist gate unchanged; the Queen native and untouched); the default flip prepared on
+  the branch default-flip and not applied (the GeckoLib renderer the default for every landed rig, the switch inverted
+  to name classic species), with one contact sheet per slice under phase_g_reports/ on master for the Q1 review, the
+  branch merging on the owner's word; the full package regenerated over the seam manifests (the reference clips
+  reproducing), the version bumped per the README's convention, the changelog paragraph once, KNOWN_ISSUES current,
+  the jar built and its path reported; the final report with the counts, a per-slice table, the held list with
+  reasons, the decided-under-doctrine list, the contact sheets' paths, the folder's file count and size.
+
 ## 7. Standing traps checklist (things that have actually bitten this project)
 
 - Uppercase in resource filenames → `ResourceLocation` crash. Lowercase all geo/

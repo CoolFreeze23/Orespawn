@@ -7952,3 +7952,22 @@ reference folder's regeneration (the Crab's reference dump now shows eight draws
 clips); the Boyfriend / Girlfriend landing (held; the owner's options in the draft); the artist_handoff folder (the orchestrator's).
 
 GATE: GATE: t2d (first run) red at the suite - two required tests (T2SeamTests.t2_006, KeyframeLegTests.kf_007) failed on the Band P descriptor loading a client renderer class on the dedicated server (the fix above); t2d2 stopped by the orchestrator to take the refuter's second must-fix (the Creeping Horror's bind) -> t2d3 green: the g1 / s4 verify-only passes identical, the t2 write-proof G1 PARITY PASS: 42 models (the thirteen new entries; the Creeping Horror on its four posed samples), the reference clips deterministic across two gradle runs (298 files; the thirteen's clips byte-identical to their pre-slice files, only the index's provenance rows moved from hook to seam), referenceClipsVerify VERIFIED 298, the folder fresh (116 folders, 1,369 files, every check PASS), the benchmark proof re-pinned in the first run because g1tool moved (the sampler's rows and the shared search; the base revision 67e991b -> 00e0817) and verified unchanged since, the audit 0 errors / 112 acknowledged (the HOOKS list at 54); drift 0, build 0 (g1 2, s4 13, t2 42 PARITY PASS), suite: all 1279 required tests passed.
+
+## RULINGS 2026-09-15, CLOSING SET RECORDED (docs-only) — the landings in sequence with no stop between them: the remaining Tier-2 rigs, the four FK-chained rigs, the Tier-1 rigs, the remainder with the biped seam change; then the weights slice, the default flip prepared on a branch, the package, the jar, the final report
+
+Recorded in `phase_g_reports/phase_g_scope_addendum_2026-09-03.md` item 33 (the rulings in full) and `PHASE_G_PROMPT.md`
+§6b (the bullet). Executed here, docs-only, after the push (origin/master ddc44ee, the six commits after fc5e23c). The
+order of work from here: the Stinky's activity 2 named and its clip regenerated with the first slice's tooling; the
+remaining Tier-2 rigs in the design's order, fifteen per slice in the standing form (their written hooks, the geo, the
+registration behind the switch, the four legs and the reference leg where a pair exists, one refuter, the gate, the
+records, the package rows), each green landing pushed; the four FK-chained rigs as real parent-child hierarchies with
+the world transform at every chain link as their proof; the Tier-1 rigs, hitbox profiles excluded, the GiantRobot pair
+through its instance form; the remainder — the Ghost under ENT-S-160 (a) with (d), and the Boyfriend, Girlfriend and
+Princess with the seam carrying the renderer's partial tick and drawing the classic item, armor, head and elytra
+layers (two refuters); a rig that fails a leg held with a register line and rejoining at the remainder. Then the
+weights slice (Q2 (a), Q13 (a), two refuters), the default flip prepared on the branch default-flip with one contact
+sheet per slice on master for the Q1 review, the full package regenerated with the version bumped and the jar built,
+and the final report. The advisor stops only if a gate cannot be made green in three runs, a slice lands fewer than
+half its rigs, or a decision outside the recorded doctrine blocks more than one rig.
+
+GATE: docs-only (no gate; nothing under src or tools moves).

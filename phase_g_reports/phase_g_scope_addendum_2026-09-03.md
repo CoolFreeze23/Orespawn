@@ -511,6 +511,34 @@ that slice, not a task for now.
     draw fix, on the hooks already written, one refuter, the counts open the report → stop and report with the clip
     count per state. Nothing else runs.
 
+33. **Rulings of 2026-09-15, closing set (owner, through the advisor):** (1) **Push:** master pushed now, the six
+    commits after origin/master fc5e23c. **Small items (with the first slice's tooling, no refuter):** (2) The Stinky's
+    activity 2 is named in its seed from the code's own word; the clip regenerates. (3) TEST-010 (b): (a). The seam
+    carries the renderer's partial tick in PoseInputs; the biped hooks read getAttackAnim(partialTick) verbatim; the
+    classic item, armor, head and elytra layers are drawn by the seam's renderer for those species as the classic
+    renderer draws them. A seam change: two refuters. Executed in the remainder slice; the Boyfriend, Girlfriend and
+    Princess land there. **The landings, in sequence, no stop between them:** (4) Each slice in the standing form:
+    fifteen rigs on their written hooks, the geo shipped, the renderer registered behind the switch, the four legs and
+    the reference leg where a pair exists, one refuter, the gate, records as the cost rules, the package rows
+    regenerated. In order: the remaining Tier-2 rigs in the design's order until none remain; the four FK-chained rigs
+    as real parent-child hierarchies per design section 5, the world transform at every chain link against the classic
+    model as their proof; the Tier-1 rigs in the same form, hitbox profiles excluded, the GiantRobot pair through its
+    instance form; then the remainder — the Ghost under ENT-S-160 (a) with (d), and the three biped species under item
+    3. A rig that fails a leg is held with a register line and rejoins at the remainder; one still failing there is
+    reported, not forced. (5) Push after every green landing, for this order only. (6) Stop and report only if a gate
+    cannot be made green in three runs, a slice lands fewer than half its rigs, or a decision outside the recorded
+    doctrine blocks more than one rig. Everything else is decided under doctrine, tagged, and reported at the end.
+    **After the last landing:** (7) The weights slice: Q2 (a) and Q13 (a) as ruled, two refuters; every transcription
+    stays bit-exact to its hook (weights on artist clips only, transcription groups always-on); flying and swimming as
+    contract §3 defines them; the artist gate unchanged; the Queen native and untouched. (8) The default flip, prepared,
+    not applied: on a branch default-flip, the GeckoLib renderer becomes the default for every landed rig and the switch
+    inverts to name classic species; on master, one contact sheet per slice under phase_g_reports/ (classic, candidate,
+    diff at bind and one posed sample, every rig), for the owner's Q1 review. The branch merges on the owner's word.
+    (9) The full package regenerated over the seam manifests (the reference clips must reproduce), the version bumped
+    per the README's convention, the changelog paragraph once, KNOWN_ISSUES current, the jar built; the jar's path in
+    the report. (10) The final report: the counts; a per-slice table (rigs landed, held, gate, commit); the held list
+    with reasons; the decided-under-doctrine list; the contact sheets' paths; the folder's file count and size.
+
 ## D. Rulings executed the same day (for cross-reference)
 
 - ENT-S-098 fixed (shot BetterFireballs carry the mod's own type; save/load round-trip pinned) and its
