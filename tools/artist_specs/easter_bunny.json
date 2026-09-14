@@ -1,9 +1,9 @@
 {
   "registry": "easter_bunny",
   "display_name": "Easter Bunny",
-  "status": "DRAFT — authored by a seed lane from the entity code, 2026-09-13; the owner's edit pending",
+  "status": "DRAFT — authored by a seed lane from the entity code, 2026-09-13; the owner's edit pending, landed on its hook by the fourth Tier-2 slice (T2d, 2026-09-14)",
   "locomotion": "walker",
-  "artist_scope": "full contract (Tier 2, the gait-scaled class (with a standing branch on the ears): geckolib_migration_design.md section 5); the rig is not yet in-game (it lands through the seam in a later slice)",
+  "artist_scope": "full contract (Tier 2, the gait-scaled class (with a standing branch on the ears): geckolib_migration_design.md section 5); ON THE HOOK until idle and walk are delivered (Amendment 2): in-game through the seam behind the dev switch since the fourth Tier-2 slice (T2d, 2026-09-14)",
   "character_sheet": "A rabbit: a body and an upper body, a head with a nose and two long ears, two front paws, two legs with feet and a tail (ModelEasterBunny.java:37-49; 13 parts on a 64x128 sheet). It is a skittish holiday animal: 10 HP, speed 0.45, an unused 8-damage attribute (EasterBunny.java:59-64) - no goal strikes. It floats (:49), breeds on crystal apples (:50, :93-96), runs from monsters AND players (:51-52), panics when hurt (:53), watches other mobs (:54) and strolls avoiding water (:55); about once in 600 ticks it lays a stack of one to three random spawn eggs from a 115-slot table (:104-237). It spawns only at Easter, above y 50, by day, never within 32 blocks of another (:245-256); a kit is drawn at half size (EasterBunnyRenderer.java:39-41). Read it as a quick, nervous hare: a fast two-legged hop with the ears flapping at half the stride rate, the ears twitching gently when it stops.",
   "size_notes": "Drawn at x1.0 of the rig, x0.5 as a baby (EasterBunnyRenderer.java:27, 39-41) on a 64x128 sheet (ModelEasterBunny.java:108); the hitbox is 0.5 x 0.75 (ModEntities.java:371-373); shadow 0.5 (EasterBunnyRenderer.java:29).",
   "labels": {
@@ -125,6 +125,9 @@
     "the `lay_egg` extra: the bunny's one event (EasterBunny.java:110-111) has no pose today",
     "in `idle`: a nose twitch and a head turn (the nose and head never move, and no look is read) over the ears' faint twitch",
     "in `hurt`: a startled leap straight up with the ears flat before the panic run (EasterBunny.java:53)"
+  ],
+  "formulas": [
+    "`ModelEasterBunny.setupAnim` (ModelEasterBunny.java:112-126; orig ModelEasterBunny.java:120-129 in `render` (func_78088_a, :113-143; func_78087_a at :151-153 is a bare super call), wingspeed 0.55 from `new ModelEasterBunny(0.55f)` in orig ClientProxyOreSpawn.java:498): while the walking speed is above a tenth the leg swing is the cosine of the age in ticks times 2.6 times 0.55, times pi, times 0.15, times the walking speed and the ear swing the cosine of the age times 1.3 times 0.55, times pi, times 0.1, times the walking speed; at or below it the leg swing is 0 and the ear swing is the cosine of the age times 1.3 times 0.55, times pi, times 0.01; the left foot and leg pitch by the leg swing, the right foot and leg by its negative, the left ear by -0.226 plus the ear swing and the right ear by -0.418 minus it. The walk position, the head angles and the entity's state play no part. The GeckoLib hook is the same (EasterBunnyGeoReplacement.applyCustomAnimations)."
   ],
   "effort_hours": null
 }

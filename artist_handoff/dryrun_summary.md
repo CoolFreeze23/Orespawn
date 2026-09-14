@@ -5,10 +5,10 @@ Output: `artist_handoff`
 ## Counts (the deliverable)
 
 - Tier 1: 28 registries over 21 rigs (a shared rig counted once); not yet in-game: 27 registries over 20 rigs.
-- Tier 2: 75 registries over 70 rigs (a shared rig counted once); not yet in-game: 45 registries over 45 rigs.
+- Tier 2: 75 registries over 70 rigs (a shared rig counted once); not yet in-game: 32 registries over 32 rigs.
 - Tier 3: 13 registries over 12 rigs (a shared rig counted once).
 - Folders: 116 (one per registry); files: 1369 (1363 in the entity folders + the 6 package-wide files).
-- Rig sources: reference-leg converter output 72, shipped 44.
+- Rig sources: reference-leg converter output 59, shipped 57.
 - Reference clips (owner 2026-09-14, item 31 (11); every state the code reads since item 32 (2)): 112 species carry them — 297 files (idle 112, walk 112, attack 40, sit 14, fly 10, scream 2, activity_2 1, crouch 1, display 1, mouth_open 1, open 1, sing 1, sitting_flat 1), 297 written beside the sheets, 356 clips embedded in the .bbmodels; unnamed states 1 (stinky:activity_2); values that move nothing at rest 11; states offered as extras 22; artist-tier species with clips: 99; held (sampled when the rig lands): 3 — boyfriend, girlfriend, the_princess; landed without a sampled clip (native): the_queen.
 - Packaged without a seed (the SEED_MISSING fallback: the display name from the registry, empty authored sections): 0.
 - Artist-tier species with no rig to package: 0.
@@ -17,15 +17,15 @@ Output: `artist_handoff`
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | alien | Tier 1 (boss) | reference leg (not yet in-game) | 11 | 55 | 55 | 0 | 16 | 7 | 1 | STATE | 2 | 1 | 16 (0 keyed by the shipped clips; warn) | 0 | EQUAL, order kept | 38.8 h | 0 |
 | alien_boss | Tier 1 (boss) | reference leg (not yet in-game) | 11 | 55 | 55 | 0 | 17 | 1 | 1 | STATE | 3 | 1 | 16 (0 keyed by the shipped clips; warn) | 0 | EQUAL, order kept | 40.2 h | 0 |
-| alosaurus | Tier 2 | reference leg (not yet in-game) | 11 | 21 | 21 | 0 | 12 | 6 | 1 | STATE | 2 | 1 | 0 | 0 | EQUAL, order kept | 20.2 h | 0 |
-| attack_squid | Tier 2 | reference leg (not yet in-game) | 10 | 9 | 9 | 0 | 13 | 5 | 1 | STATE | 2 | 1 | 0 | 0 | EQUAL, order kept | 18.8 h | 0 |
-| band_p | Tier 2 | reference leg (not yet in-game) | 11 | 7 | 7 | 0 | 12 | 6 | 1 | NONE | 1 | 2 | 0 | 0 | EQUAL, order kept | 15.4 h | 0 |
+| alosaurus | Tier 2 | shipped | 11 | 21 | 21 | 0 | 12 | 6 | 1 | STATE | 2 | 1 | 0 | 0 | EQUAL, order kept | 20.2 h | 0 |
+| attack_squid | Tier 2 | shipped | 10 | 9 | 9 | 0 | 13 | 5 | 1 | STATE | 2 | 1 | 0 | 0 | EQUAL, order kept | 18.8 h | 0 |
+| band_p | Tier 2 | shipped | 11 | 7 | 7 | 0 | 12 | 6 | 1 | NONE | 1 | 2 | 0 | 0 | EQUAL, order kept | 15.4 h | 0 |
 | basilisk | Tier 1 (boss) | reference leg (not yet in-game) | 11 | 21 | 21 | 0 | 10 | 6 | 1 | STATE | 2 | 1 | 8 (0 keyed by the shipped clips; warn) | 0 | EQUAL, order kept | 24.6 h | 0 |
 | cave_fisher | Tier 2 | reference leg (not yet in-game) | 10 | 75 | 75 | 0 | 11 | 5 | 1 | STATE | 1 | 1 | 0 | 0 | EQUAL, order kept | 30 h | 0 |
 | cloud_shark | Tier 2 | shipped | 10 | 8 | 8 | 0 | 11 | 0 | 0 | NONE | 1 | 1 | 0 | 0 | EQUAL, order kept | 15.6 h | 0 |
-| crab | Tier 2 | reference leg (not yet in-game) | 11 | 46 | 46 | 0 | 14 | 5 | 2 | STATE | 1 | 1 | 0 | 0 | EQUAL, order kept | 27.2 h | 0 |
-| creeping_horror | Tier 2 | reference leg (not yet in-game) | 10 | 26 | 26 | 0 | 13 | 7 | 0 | NONE | 1 | 1 | 0 | 0 | EQUAL, order kept | 21.2 h | 0 |
-| cryolophosaurus | Tier 2 | reference leg (not yet in-game) | 10 | 20 | 20 | 0 | 9 | 7 | 0 | NONE | 2 | 1 | 0 | 0 | EQUAL, order kept | 16 h | 0 |
+| crab | Tier 2 | shipped | 11 | 46 | 46 | 0 | 14 | 5 | 2 | STATE | 1 | 1 | 0 | 0 | EQUAL, order kept | 27.2 h | 0 |
+| creeping_horror | Tier 2 | shipped | 10 | 26 | 26 | 0 | 13 | 7 | 0 | NONE | 1 | 1 | 0 | 0 | EQUAL, order kept | 21.2 h | 0 |
+| cryolophosaurus | Tier 2 | shipped | 10 | 20 | 20 | 0 | 9 | 7 | 0 | NONE | 2 | 1 | 0 | 0 | EQUAL, order kept | 16 h | 0 |
 | dungeon_beast | Tier 2 | reference leg (not yet in-game) | 11 | 64 | 64 | 0 | 15 | 5 | 1 | STATE | 1 | 1 | 0 | 0 | EQUAL, order kept | 31.8 h | 0 |
 | ender_knight | Tier 2 | reference leg (not yet in-game) | 11 | 40 | 40 | 0 | 14 | 7 | 1 | STATE | 0 | 1 | 0 | 0 | EQUAL, order kept | 26 h | 0 |
 | ender_reaper | Tier 2 | reference leg (not yet in-game) | 11 | 66 | 66 | 0 | 15 | 7 | 1 | STATE | 0 | 1 | 0 | 0 | EQUAL, order kept | 31.2 h | 0 |
@@ -55,8 +55,8 @@ Output: `artist_handoff`
 | cater_killer | Tier 2 | shipped | 11 | 80 | 80 | 0 | 22 | 6 | 1 | STATE | 2 | 1 | 0 | 0 | EQUAL, order kept | 42 h | 0 |
 | emperor_scorpion | Tier 1 (boss) | reference leg (not yet in-game) | 11 | 78 | 78 | 0 | 13 | 6 | 1 | STATE | 2 | 1 | 48 (0 keyed by the shipped clips; warn) | 0 | EQUAL, order kept | 37.7 h | 0 |
 | hercules_beetle | Tier 2 | shipped | 11 | 37 | 37 | 0 | 10 | 6 | 1 | STATE | 2 | 1 | 0 | 0 | EQUAL, order kept | 21.4 h | 0 |
-| kyuubi | Tier 2 | reference leg (not yet in-game) | 10 | 42 | 42 | 0 | 15 | 6 | 0 | NONE | 2 | 1 | 0 | 0 | EQUAL, order kept | 26.4 h | 0 |
-| leaf_monster | Tier 2 | reference leg (not yet in-game) | 11 | 5 | 5 | 0 | 12 | 3 | 1 | STATE | 1 | 1 | 0 | 0 | EQUAL, order kept | 17 h | 0 |
+| kyuubi | Tier 2 | shipped | 10 | 42 | 42 | 0 | 15 | 6 | 0 | NONE | 2 | 1 | 0 | 0 | EQUAL, order kept | 26.4 h | 0 |
+| leaf_monster | Tier 2 | shipped | 11 | 5 | 5 | 0 | 12 | 3 | 1 | STATE | 1 | 1 | 0 | 0 | EQUAL, order kept | 17 h | 0 |
 | lurking_terror | Tier 2 | reference leg (not yet in-game) | 11 | 59 | 59 | 0 | 15 | 0 | 1 | STATE | 1 | 1 | 0 | 0 | EQUAL, order kept | 30.8 h | 0 |
 | mantis | Tier 2 | reference leg (not yet in-game) | 11 | 36 | 36 | 0 | 10 | 0 | 1 | STATE | 2 | 1 | 0 | 0 | EQUAL, order kept | 21.2 h | 0 |
 | molenoid | Tier 2 | reference leg (not yet in-game) | 11 | 37 | 37 | 0 | 12 | 5 | 1 | STATE | 2 | 1 | 0 | 0 | EQUAL, order kept | 22.4 h | 0 |
@@ -71,14 +71,14 @@ Output: `artist_handoff`
 | worm_small | Tier 2 | shipped | 10 | 3 | 3 | 0 | 11 | 0 | 0 | NONE | 1 | 1 | 0 | 0 | EQUAL, order kept | 14.6 h | 0 |
 | worm_medium | Tier 2 | shipped | 10 | 8 | 8 | 0 | 13 | 0 | 0 | NONE | 1 | 1 | 0 | 0 | EQUAL, order kept | 17.6 h | 0 |
 | worm_large | Tier 2 | shipped | 10 | 23 | 23 | 0 | 13 | 4 | 0 | NONE | 1 | 1 | 0 | 0 | EQUAL, order kept | 20.6 h | 0 |
-| baryonyx | Tier 2 | reference leg (not yet in-game) | 10 | 52 | 52 | 0 | 9 | 7 | 0 | NONE | 0 | 1 | 0 | 0 | EQUAL, order kept | 22.4 h | 0 |
+| baryonyx | Tier 2 | shipped | 10 | 52 | 52 | 0 | 9 | 7 | 0 | NONE | 0 | 1 | 0 | 0 | EQUAL, order kept | 22.4 h | 0 |
 | beaver | Tier 2 | shipped | 10 | 9 | 9 | 4 | 11 | 8 | 0 | NONE | 0 | 1 | 0 | 0 | EQUAL, order kept | 12.8 h | 0 |
-| cassowary | Tier 2 | reference leg (not yet in-game) | 10 | 12 | 12 | 0 | 8 | 8 | 0 | NONE | 0 | 1 | 0 | 0 | EQUAL, order kept | 13.4 h | 0 |
+| cassowary | Tier 2 | shipped | 10 | 12 | 12 | 0 | 8 | 8 | 0 | NONE | 0 | 1 | 0 | 0 | EQUAL, order kept | 13.4 h | 0 |
 | chipmunk | Tier 2 | reference leg (not yet in-game) | 11 | 18 | 18 | 0 | 10 | 12 | 2 | NONE | 1 | 1 | 0 | 0 | EQUAL, order kept | 16.6 h | 0 |
 | cockateil | Tier 2 | shipped | 15 | 16 | 16 | 6 | 14 | 0 | 1 | NONE | 0 | 6 | 0 | 0 | EQUAL, order kept | 11.2 h | 0 |
 | coin | Tier 3 | shipped | 10 | 1 | 1 | 0 | 0 | 1 | 0 | NONE | 0 | 1 | 0 | 0 | EQUAL, order kept | 0 h | 0 |
-| easter_bunny | Tier 2 | reference leg (not yet in-game) | 10 | 13 | 13 | 0 | 9 | 8 | 0 | NONE | 0 | 1 | 0 | 0 | EQUAL, order kept | 14.6 h | 0 |
-| flounder | Tier 2 | reference leg (not yet in-game) | 10 | 6 | 6 | 0 | 7 | 7 | 0 | NONE | 0 | 1 | 0 | 0 | EQUAL, order kept | 11.2 h | 0 |
+| easter_bunny | Tier 2 | shipped | 10 | 13 | 13 | 0 | 9 | 8 | 0 | NONE | 0 | 1 | 0 | 0 | EQUAL, order kept | 14.6 h | 0 |
+| flounder | Tier 2 | shipped | 10 | 6 | 6 | 0 | 7 | 7 | 0 | NONE | 0 | 1 | 0 | 0 | EQUAL, order kept | 11.2 h | 0 |
 | frog | Tier 2 | reference leg (not yet in-game) | 11 | 10 | 10 | 0 | 13 | 3 | 1 | NONE | 1 | 1 | 0 | 0 | EQUAL, order kept | 18 h | 0 |
 | gazelle | Tier 2 | reference leg (not yet in-game) | 11 | 34 | 34 | 0 | 13 | 10 | 0 | NONE | 0 | 1 | 0 | 0 | EQUAL, order kept | 21.8 h | 0 |
 | gold_fish | Tier 2 | shipped | 10 | 16 | 16 | 7 | 16 | 0 | 0 | NONE | 0 | 1 | 0 | 0 | EQUAL, order kept | 11.2 h | 0 |
@@ -97,7 +97,7 @@ Output: `artist_handoff`
 | tshirt | Tier 2 | shipped | 10 | 2 | 2 | 2 | 5 | 0 | 0 | NONE | 0 | 1 | 0 | 0 | EQUAL, order kept | 7.4 h | 0 |
 | unstable_ant | Tier 2 | shipped | 10 | 20 | 20 | 3 | 8 | 2 | 0 | NONE | 0 | 1 | 0 | 0 | EQUAL, order kept | 12 h | 0 |
 | boyfriend | Tier 2 | reference leg (not yet in-game) | 55 | 7 | 7 | 0 | 12 | 16 | 5 | NONE | 2 | 48 | 0 | 0 | EQUAL, order kept | 16.4 h | 0 |
-| camarasaurus | Tier 2 | reference leg (not yet in-game) | 10 | 21 | 21 | 0 | 10 | 10 | 0 | NONE | 0 | 1 | 0 | 0 | EQUAL, order kept | 17.2 h | 0 |
+| camarasaurus | Tier 2 | shipped | 10 | 21 | 21 | 0 | 10 | 10 | 0 | NONE | 0 | 1 | 0 | 0 | EQUAL, order kept | 17.2 h | 0 |
 | dragon | Tier 1 (boss) | reference leg (not yet in-game) | 14 | 55 | 55 | 0 | 18 | 9 | 4 | STATE | 9 | 2 | 11 (0 keyed by the shipped clips; warn) | 0 | EQUAL, order kept | 43.2 h | 0 |
 | baby_dragon | Tier 1 (boss) | reference leg (not yet in-game) | 14 | 55 | 55 | 0 | 18 | 0 | 4 | STATE | 9 | 2 | 11 (0 keyed by the shipped clips; warn) | 0 | EQUAL, order kept | 43.2 h | 0 |
 | cannon_fodder | Tier 2 | shipped | 10 | 6 | 6 | 0 | 9 | 0 | 2 | NONE | 1 | 1 | 0 | 0 | EQUAL, order kept | 13.2 h | 0 |

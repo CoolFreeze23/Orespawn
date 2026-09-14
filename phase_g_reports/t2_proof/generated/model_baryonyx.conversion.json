@@ -1,0 +1,728 @@
+{
+  "schema_version": 1,
+  "model_id": "model_baryonyx",
+  "tier": 2,
+  "proof_scope": "production_proof_model",
+  "ground_truth": "executed compiled LayerDefinition and baked ModelPart",
+  "source_class": "danger.orespawn.entity.client.ModelBaryonyx",
+  "source_class_sha256": "fa792f79282af0bf18fbbe3002008322a0c0f2c700614dbb8e27202250fc8fc2",
+  "compiled_dump_sha256": "a681709a2cdbb589294f8e06a3bac5ff34a529d6701eda0408fed878157b080e",
+  "geometry_sha256": "39a56d7034c0a137d840779e28d55f4dcbbc82af784922454a7ecd188d2a79e3",
+  "animation_sha256": "7882082857fdb11e02f158ebc3a6d3f970e2ac60d54813f0e903ee97b2293749",
+  "animation_contract_sha256": "4cf303e2d4cf6048586beb9796e64524de93fd7e27db5e2b6438414f6bfaacf1",
+  "bone_count": 52,
+  "cube_count": 52,
+  "mirrored_cube_count": 0,
+  "mirrored_uv_strategy": "source flag retained as modelpart_mirror; semantics baked into explicit faces; incompatible GeckoLib native mirror disabled",
+  "exact_bone_names": [
+    "shape1",
+    "shape10",
+    "shape11",
+    "shape12",
+    "shape13",
+    "shape14",
+    "shape15",
+    "shape16",
+    "shape17",
+    "shape18",
+    "shape19",
+    "shape2",
+    "shape20",
+    "shape21",
+    "shape22",
+    "shape23",
+    "shape24",
+    "shape25",
+    "shape26",
+    "shape27",
+    "shape28",
+    "shape29",
+    "shape3",
+    "shape30",
+    "shape31",
+    "shape32",
+    "shape33",
+    "shape34",
+    "shape35",
+    "shape36",
+    "shape37",
+    "shape38",
+    "shape39",
+    "shape4",
+    "shape40",
+    "shape41",
+    "shape42",
+    "shape43",
+    "shape44",
+    "shape45",
+    "shape46",
+    "shape47",
+    "shape48",
+    "shape49",
+    "shape5",
+    "shape50",
+    "shape51",
+    "shape52",
+    "shape6",
+    "shape7",
+    "shape8",
+    "shape9"
+  ],
+  "bone_draw_order": [
+    "shape27",
+    "shape28",
+    "shape29",
+    "shape30",
+    "shape31",
+    "shape32",
+    "shape33",
+    "shape34",
+    "shape35",
+    "shape36",
+    "shape37",
+    "shape38",
+    "shape39",
+    "shape40",
+    "shape41",
+    "shape42",
+    "shape43",
+    "shape44",
+    "shape45",
+    "shape46",
+    "shape47",
+    "shape48",
+    "shape49",
+    "shape50",
+    "shape51",
+    "shape1",
+    "shape2",
+    "shape3",
+    "shape4",
+    "shape5",
+    "shape6",
+    "shape7",
+    "shape8",
+    "shape9",
+    "shape10",
+    "shape11",
+    "shape12",
+    "shape13",
+    "shape14",
+    "shape15",
+    "shape16",
+    "shape17",
+    "shape18",
+    "shape19",
+    "shape20",
+    "shape21",
+    "shape22",
+    "shape23",
+    "shape24",
+    "shape25",
+    "shape26",
+    "shape52"
+  ],
+  "draw_order_evidence": {
+    "source": "classic EntityModel.renderToBuffer on a second bake posed identically; every ModelPart.render is one pose-stack push, attributed to its part by ModelPart.skipDraw elimination (one run per cube-bearing part with every other part's skipDraw set); a part drawn n > 1 times is named <part>__i<k> by draw ordinal",
+    "captures": [
+      "bind",
+      "a0_t0",
+      "a0_t_quarter",
+      "a0_t_half",
+      "a0_t_three_quarter",
+      "a0_t_end",
+      "a0_25_t0",
+      "a0_25_t_quarter",
+      "a0_25_t_half",
+      "a0_25_t_three_quarter",
+      "a0_25_t_end",
+      "a0_5_t0",
+      "a0_5_t_quarter",
+      "a0_5_t_half",
+      "a0_5_t_three_quarter",
+      "a0_5_t_end",
+      "a1_t0",
+      "a1_t_quarter",
+      "a1_t_half",
+      "a1_t_three_quarter",
+      "a1_t_end"
+    ],
+    "cube_bearing_units": 52,
+    "observed_units": 52,
+    "unobserved_units": [],
+    "ordered_pairs": 1326,
+    "tie_break": "converter emission order for pairs never drawn together in any capture",
+    "lifting": "pre-order over the geo bone tree, siblings by their subtree's first classic draw"
+  },
+  "cube_face_order": {
+    "shape1": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "shape10": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "shape11": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "shape12": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "shape13": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "shape14": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "shape15": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "shape16": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "shape17": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "shape18": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "shape19": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "shape2": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "shape20": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "shape21": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "shape22": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "shape23": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "shape24": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "shape25": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "shape26": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "shape27": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "shape28": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "shape29": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "shape3": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "shape30": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "shape31": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "shape32": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "shape33": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "shape34": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "shape35": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "shape36": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "shape37": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "shape38": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "shape39": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "shape4": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "shape40": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "shape41": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "shape42": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "shape43": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "shape44": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "shape45": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "shape46": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "shape47": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "shape48": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "shape49": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "shape5": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "shape50": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "shape51": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "shape52": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "shape6": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "shape7": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "shape8": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "shape9": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ]
+  },
+  "cube_face_order_evidence": {
+    "rule": "NeoForge 21.1.223 ModelPart.Cube.<init> polygon order DOWN, UP, WEST, NORTH, EAST, SOUTH (offsets 365-785: DOWN 365, UP 436, WEST 507, NORTH 578, EAST 649, SOUTH 720), mirror negating the X normals; GeckoLib labels by the direction whose step is the classic normal reflected in Y",
+    "cube_bearing_bones": 52,
+    "cubes": 52,
+    "verified_unrotated_cubes_at_bind": 46,
+    "verification": "captured normals of every cube unrotated at bind equal the rule's, in order; the parity tool's draw-order leg compares the per-quad normal sequences of both renderers on every capture"
+  },
+  "animation_contract": {
+    "schema_version": 1,
+    "kind": "code_driven",
+    "controller_required": false,
+    "candidate_animation_path": "production_replacement_hook",
+    "candidate_class": "danger.orespawn.entity.client.BaryonyxGeoReplacement",
+    "candidate_acceptance_path": "production OreSpawnGeoReplacementModel.setCustomAnimations (Amendment 1 Tier-3 code-driven)",
+    "sample_ids": [
+      "bind",
+      "a0_t0",
+      "a0_t_quarter",
+      "a0_t_half",
+      "a0_t_three_quarter",
+      "a0_t_end",
+      "a0_25_t0",
+      "a0_25_t_quarter",
+      "a0_25_t_half",
+      "a0_25_t_three_quarter",
+      "a0_25_t_end",
+      "a0_5_t0",
+      "a0_5_t_quarter",
+      "a0_5_t_half",
+      "a0_5_t_three_quarter",
+      "a0_5_t_end",
+      "a1_t0",
+      "a1_t_quarter",
+      "a1_t_half",
+      "a1_t_three_quarter",
+      "a1_t_end"
+    ]
+  },
+  "reference_animation_schema": {
+    "status": "SCHEMA_VALID_REFERENCE_ONLY",
+    "clip_count": 0,
+    "constant_vector_count": 0,
+    "runtime_acceptance": false
+  },
+  "accepted_animation_evidence": "production OreSpawnGeoReplacement hook through OreSpawnGeoReplacementModel.setCustomAnimations (Amendment 1 Tier-3 code-driven)",
+  "artist_editable_math_to_keyframes_status": "NOT_APPLICABLE_TIER3_CODE_DRIVEN",
+  "compiled_animation_bake_sample_count": 0,
+  "reference_clip_keys_source": "compiled setupAnim output; no Python formula evaluation",
+  "source_animation_channel_inventory": []
+}

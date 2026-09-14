@@ -11,26 +11,27 @@ import net.minecraft.util.Mth;
 import software.bernie.geckolib.animation.AnimationProcessor;
 
 /**
- * GeckoLib Crab (the hooks, owner 2026-09-14, addendum item 10): {@link ModelCrab#poseFrom} verbatim on the
- * render-instance-expanded rig, ON THE HOOK (Amendment 2 to Amendment 1: no keyframe layer, no transcription - the
- * self-gate stays closed until an artist delivers {@code idle} and {@code walk}). No wingspeed (orig ModelCrab.java has
- * none).
+ * GeckoLib Crab (the hooks, owner 2026-09-14, addendum item 10; landed by the fourth Tier-2 slice T2d, 2026-09-14, the
+ * owner's item 9 with the draw fix of item 3): the classic {@link ModelCrab} pose verbatim on the render-instance-expanded
+ * rig, ON THE HOOK (Amendment 2 to Amendment 1: no keyframe layer, no transcription - the self-gate stays closed until an
+ * artist delivers {@code idle} and {@code walk}). No wingspeed (orig ModelCrab.java has none).
  *
  * <p>THE LEGS, THE RENDER-INSTANCE FORM (the Slice 4c form, the explicit scope of 2026-09-14): 1.7.10's {@code render}
  * (orig ModelCrab.java:195-289) set each of the three leg parts' rotation point and yaw and DREW it eight times - four on
  * the left side (x 36) at z 0 / 10 / 20 / 30 with yaw -pi/2 + a, -pi/2 - a, -pi/2 + a, -pi/2 - a, then four on the right
  * (x -36) with the yaw negated - {@code a = cos(age * 1.7f) * PI * 0.15f * limbSwingAmount} the gait. The port's classic
- * {@code poseFrom} (ModelCrab.java:183-234) writes those eight poses over {@code leg1} / {@code leg2} / {@code leg3} in
- * turn and its {@code renderToBuffer} draws each part ONCE, the last pose (ANIM-025; the draw fix lands with the Crab's
- * slice, the port's {@code renderToBuffer} untouched here). The reference entry ({@code reference_crab},
- * {@code tools/reference_model_proofs.json}) declares the eight draws per part in the explicit form - a translation series
- * with a mirrored yaw, which no rotational step about one axis expresses - so the converter emits one TOP-LEVEL clone per
- * draw, {@code <part>__i<k>} (draws 0-3 the left side front to back, 4-7 the right), its bind pivot the declared point
- * ((+-36, 3, z)) and its bind yaw -+pi/2, the part's own pitch kept; there is no group bone. So this hook poses every
- * clone directly, as {@link PurplePowerGeoReplacement} poses its expanded rig: draw {@code k}'s classic pose - the pivot
- * write ({@code x, y, z}, through {@link #moveTo}: the classic's position write, landing on the clone's bind) and the yaw
- * ({@code -pi/2 +- a} through {@link #rotateY}, the double / float chain exactly as the classic casts it) - onto the three
- * clones {@code leg1__i<k>}, {@code leg2__i<k>}, {@code leg3__i<k>}, in the classic's order of the eight poses.</p>
+ * model now does the same (ANIM-025, the draw fix of this slice): {@code ModelCrab.renderToBuffer} re-poses and draws
+ * {@code leg1} / {@code leg2} / {@code leg3} at each of the eight poses from the two inputs {@code poseFrom} keeps
+ * (orig :199-274). The reference entry ({@code reference_crab}, {@code tools/reference_model_proofs.json}) declares the
+ * eight draws per part in the explicit form - a translation series with a mirrored yaw, which no rotational step about one
+ * axis expresses - so the converter emits one TOP-LEVEL clone per draw, {@code <part>__i<k>} (draws 0-3 the left side
+ * front to back, 4-7 the right), its bind pivot the declared point ((+-36, 3, z)) and its bind yaw -+pi/2, the part's own
+ * pitch kept; there is no group bone. So this hook poses every clone directly, as {@link PurplePowerGeoReplacement} poses
+ * its expanded rig: draw {@code k}'s classic pose - the pivot write ({@code x, y, z}, through {@link #moveTo}: the classic's
+ * position write, landing on the clone's bind) and the yaw ({@code -pi/2 +- a} through {@link #rotateY}, the double / float
+ * chain exactly as the classic casts it) - onto the three clones {@code leg1__i<k>}, {@code leg2__i<k>}, {@code leg3__i<k>},
+ * in the classic's order of the eight poses; the composition leg proves every clone against the classic's measured draw
+ * pose ({@code tools/g1_render_parity.py}, the explicit-scope case of this slice).</p>
  *
  * <p>THE REST (orig :275-318): the ATTACKING branch, read through {@link CrabPose} - at rest the four eye parts nod and
  * roll on 0.35 / 0.25 / 0.3 / 0.45 cosines x 0.05 around +-0.54 rad, the two mouth parts on a 0.25 cosine around -+0.72,

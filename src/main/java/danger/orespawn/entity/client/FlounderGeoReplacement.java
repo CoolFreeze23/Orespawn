@@ -10,7 +10,8 @@ import net.minecraft.util.Mth;
 import software.bernie.geckolib.animation.AnimationProcessor;
 
 /**
- * GeckoLib Flounder (the hooks, owner 2026-09-14, addendum item 10): {@link ModelFlounder#setupAnim} verbatim on the
+ * GeckoLib Flounder (the hooks, owner 2026-09-14, addendum item 10; landed by the fourth Tier-2 slice T2d, 2026-09-14,
+ * the owner's item 9): {@link ModelFlounder#setupAnim} verbatim on the
  * converted rig, ON THE HOOK (Amendment 2 to Amendment 1: no keyframe layer, no transcription - the self-gate stays closed
  * until an artist delivers {@code idle} and {@code walk}). No wingspeed (orig ModelFlounder.java has none): the THRESHOLD
  * idiom with a live idle branch - above a walking speed of a tenth the two fins roll on {@code cos(age * 1.3f) * PI *

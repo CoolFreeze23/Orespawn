@@ -110,36 +110,36 @@ Bosses first (they carry hitboxes and need the most care), then the ordinary cre
 | trex | T-Rex | Tier 1 (boss) | 27 | not yet | idle, idle_jaw, idle_arms, walk, walk_jaw, walk_arms, swim, aggro_idle, calm_idle, attack, hurt, death | 28.6 h |
 | vampire_butterfly | Vampire Butterfly | Tier 1 (boss) | 10 | not yet | idle, walk, fly, calm_idle, attack, hurt, death | 18.5 h |
 | water_dragon | Water Dragon | Tier 1 (boss) | 24 | not yet | idle, idle_ears, idle_body_fin, idle_neck_fin, idle_jaw, walk, walk_ears, walk_body_fin, walk_neck_fin, walk_jaw, swim, aggro_idle, calm_idle, attack, hurt, death, cannon, mouth_open, sit | 40.1 h |
-| alosaurus | Alosaurus | Tier 2 | 21 | not yet | idle, idle_jaw, idle_forelimbs, walk, walk_jaw, walk_forelimbs, swim, aggro_idle, calm_idle, attack, hurt, death | 20.2 h |
+| alosaurus | Alosaurus | Tier 2 | 21 | yes | idle, idle_jaw, idle_forelimbs, walk, walk_jaw, walk_forelimbs, swim, aggro_idle, calm_idle, attack, hurt, death | 20.2 h |
 | ant | Ant | Tier 2 | 20 | yes | idle, idle_jaws, walk, walk_jaws, swim, calm_idle, hurt, death | 12 h |
-| attack_squid | Attack Squid | Tier 2 | 9 | not yet | idle, idle_body_pitch, idle_body_roll, walk, walk_body_pitch, walk_body_roll, swim, aggro_idle, calm_idle, attack, hurt, death, spit | 18.8 h |
-| band_p | Bandit / Pirate (BandP) | Tier 2 | 7 | not yet | idle, idle_belly_bounce, idle_arm_sway, walk, walk_belly_bounce, walk_arm_sway, swim, calm_idle, attack, hurt, death, steal | 15.4 h |
-| baryonyx | Baryonyx | Tier 2 | 52 | not yet | idle, idle_claws, walk, walk_claws, swim, calm_idle, hurt, death, graze | 22.4 h |
+| attack_squid | Attack Squid | Tier 2 | 9 | yes | idle, idle_body_pitch, idle_body_roll, walk, walk_body_pitch, walk_body_roll, swim, aggro_idle, calm_idle, attack, hurt, death, spit | 18.8 h |
+| band_p | Bandit / Pirate (BandP) | Tier 2 | 7 | yes | idle, idle_belly_bounce, idle_arm_sway, walk, walk_belly_bounce, walk_arm_sway, swim, calm_idle, attack, hurt, death, steal | 15.4 h |
+| baryonyx | Baryonyx | Tier 2 | 52 | yes | idle, idle_claws, walk, walk_claws, swim, calm_idle, hurt, death, graze | 22.4 h |
 | beaver | Beaver | Tier 2 | 9 | yes | idle, idle_teeth, idle_tail, walk, walk_teeth, walk_tail, swim, calm_idle, hurt, death, chop | 12.8 h |
 | bee | Bee | Tier 2 | 23 | yes | idle, idle_pincers, idle_left_antenna, idle_right_antenna, idle_abdomen, walk, walk_pincers, walk_left_antenna, walk_right_antenna, walk_abdomen, fly, aggro_idle, calm_idle, attack, hurt, death | 24.6 h |
 | boyfriend | Boyfriend | Tier 2 | 7 | not yet | idle, idle_arm_sway_roll, idle_arm_sway_pitch, walk, walk_arm_sway_roll, walk_arm_sway_pitch, swim, calm_idle, attack, hurt, death, shoot | 16.4 h |
 | brutalfly | Brutalfly | Tier 2 | 14 | yes | idle, walk, fly, calm_idle, attack, hurt, death | 11.8 h |
-| camarasaurus | Camarasaurus | Tier 2 | 21 | not yet | idle, idle_tail, walk, walk_tail, swim, calm_idle, hurt, death, sit, graze | 17.2 h |
+| camarasaurus | Camarasaurus | Tier 2 | 21 | yes | idle, idle_tail, walk, walk_tail, swim, calm_idle, hurt, death, sit, graze | 17.2 h |
 | cannon_fodder | Cannon Fodder | Tier 2 | 6 | yes | idle, idle_head, walk, walk_head, swim, calm_idle, attack, hurt, death | 13.2 h |
-| cassowary | Cassowary | Tier 2 | 12 | not yet | idle, idle_neck_bob, walk, walk_neck_bob, swim, calm_idle, hurt, death | 13.4 h |
+| cassowary | Cassowary | Tier 2 | 12 | yes | idle, idle_neck_bob, walk, walk_neck_bob, swim, calm_idle, hurt, death | 13.4 h |
 | cater_killer | CaterKiller | Tier 2 | 80 | yes | idle, idle_jaws, idle_head_bob, idle_tusk_tips, idle_front_spikes, idle_front_legs, idle_rear_spikes, idle_back_spikes, walk, walk_jaws, walk_head_bob, walk_tusk_tips, walk_front_spikes, walk_front_legs, walk_rear_spikes, walk_back_spikes, swim, aggro_idle, calm_idle, attack, hurt, death | 42 h |
 | cave_fisher | Cave Fisher | Tier 2 | 75 | not yet | idle, idle_claws, walk, walk_claws, swim, aggro_idle, calm_idle, attack, hurt, death, claw_snap | 30 h |
 | chipmunk | Chipmunk | Tier 2 | 18 | not yet | idle, idle_tail_wag, walk, walk_tail_wag, swim, calm_idle, attack, hurt, death, sit | 16.6 h |
 | cliff_racer | Cliff Racer | Tier 2 | 8 | yes | idle, walk, fly, calm_idle, hurt, death | 9.6 h |
 | cloud_shark | Cloud Shark | Tier 2 | 8 | yes | idle, idle_fins, idle_jaw, walk, walk_fins, walk_jaw, fly, calm_idle, attack, hurt, death | 15.6 h |
 | cockateil | Cockateil | Tier 2 | 16 | yes | idle, idle_tail, idle_feather1, idle_feather2, idle_feather3, walk, walk_tail, walk_feather1, walk_feather2, walk_feather3, fly, calm_idle, hurt, death | 11.2 h |
-| crab | Crab | Tier 2 | 46 | not yet | idle, idle_eyes, idle_mouth, idle_claws, walk, walk_eyes, walk_mouth, walk_claws, swim, aggro_idle, calm_idle, attack, hurt, death | 27.2 h |
-| creeping_horror | Creeping Horror | Tier 2 | 26 | not yet | idle, idle_pincers, idle_tail, idle_spikes, walk, walk_pincers, walk_tail, walk_spikes, swim, calm_idle, attack, hurt, death | 21.2 h |
+| crab | Crab | Tier 2 | 46 | yes | idle, idle_eyes, idle_mouth, idle_claws, walk, walk_eyes, walk_mouth, walk_claws, swim, aggro_idle, calm_idle, attack, hurt, death | 27.2 h |
+| creeping_horror | Creeping Horror | Tier 2 | 26 | yes | idle, idle_pincers, idle_tail, idle_spikes, walk, walk_pincers, walk_tail, walk_spikes, swim, calm_idle, attack, hurt, death | 21.2 h |
 | cricket | Cricket | Tier 2 | 11 | yes | idle, idle_hind_legs, walk, walk_hind_legs, swim, calm_idle, hurt, death | 13.2 h |
-| cryolophosaurus | Cryolophosaurus | Tier 2 | 20 | not yet | idle, idle_jaw, walk, walk_jaw, swim, calm_idle, attack, hurt, death | 16 h |
+| cryolophosaurus | Cryolophosaurus | Tier 2 | 20 | yes | idle, idle_jaw, walk, walk_jaw, swim, calm_idle, attack, hurt, death | 16 h |
 | dragonfly | Dragonfly | Tier 2 | 26 | yes | idle, idle_jaws, walk, walk_jaws, fly, calm_idle, attack, hurt, death | 14.2 h |
 | dungeon_beast | Dungeon Beast | Tier 2 | 64 | not yet | idle, idle_spines, idle_tail, idle_jaws, walk, walk_spines, walk_tail, walk_jaws, swim, aggro_idle, calm_idle, attack, hurt, death, jaw_flap | 31.8 h |
-| easter_bunny | Easter Bunny | Tier 2 | 13 | not yet | idle, idle_ears, walk, walk_ears, swim, calm_idle, hurt, death, lay_egg | 14.6 h |
+| easter_bunny | Easter Bunny | Tier 2 | 13 | yes | idle, idle_ears, walk, walk_ears, swim, calm_idle, hurt, death, lay_egg | 14.6 h |
 | ender_knight | Ender Knight | Tier 2 | 40 | not yet | idle, idle_cape_sway, idle_arms, walk, walk_cape_sway, walk_arms, swim, aggro_idle, calm_idle, attack, hurt, death, teleport, scream | 26 h |
 | ender_reaper | Ender Reaper | Tier 2 | 66 | not yet | idle, idle_wings, idle_left_arm, walk, walk_wings, walk_left_arm, swim, aggro_idle, calm_idle, attack, hurt, death, teleport, stare, scream | 31.2 h |
 | fairy | Fairy | Tier 2 | 15 | yes | idle, idle_inner_wings, idle_arms, idle_head, walk, walk_inner_wings, walk_arms, walk_head, fly, calm_idle, attack, hurt, death | 19 h |
 | firefly | Firefly | Tier 2 | 12 | yes | idle, walk, fly, calm_idle, hurt, death | 10.4 h |
-| flounder | Flounder | Tier 2 | 6 | not yet | idle, walk, swim, calm_idle, hurt, death, splash | 11.2 h |
+| flounder | Flounder | Tier 2 | 6 | yes | idle, walk, swim, calm_idle, hurt, death, splash | 11.2 h |
 | frog | Frog | Tier 2 | 10 | not yet | idle, idle_jaw, idle_thighs, walk, walk_jaw, walk_thighs, swim, calm_idle, attack, hurt, death, jump, sing | 18 h |
 | gamma_metroid | Gamma Metroid | Tier 2 | 21 | yes | idle, idle_shell, idle_beak, walk, walk_shell, walk_beak, swim, calm_idle, attack, hurt, death | 18.2 h |
 | gazelle | Gazelle | Tier 2 | 34 | not yet | idle, idle_ears, idle_tail, walk, walk_ears, walk_tail, swim, calm_idle, hurt, death, graze, sit, crouch | 21.8 h |
@@ -150,8 +150,8 @@ Bosses first (they carry hitboxes and need the most care), then the ordinary cre
 | hercules_beetle | Hercules Beetle | Tier 2 | 37 | yes | idle, idle_jaws, walk, walk_jaws, swim, aggro_idle, calm_idle, attack, hurt, death | 21.4 h |
 | hydrolisc | Hydrolisc | Tier 2 | 40 | not yet | idle, idle_tail, idle_crest_outer, idle_crest_centre, walk, walk_tail, walk_crest_outer, walk_crest_centre, swim, calm_idle, hurt, death, sit | 24 h |
 | irukandji | Irukandji | Tier 2 | 9 | yes | idle, idle_tentacle_2, idle_tentacle_3, idle_tentacle_4, walk, walk_tentacle_2, walk_tentacle_3, walk_tentacle_4, swim, aggro_idle, calm_idle, attack, hurt, death | 19.8 h |
-| kyuubi | Kyuubi | Tier 2 | 42 | not yet | idle, idle_arm_breath, idle_horns, idle_tail_sway, idle_tail_curl, walk, walk_arm_breath, walk_horns, walk_tail_sway, walk_tail_curl, swim, calm_idle, attack, hurt, death | 26.4 h |
-| leaf_monster | Leaf Monster | Tier 2 | 5 | not yet | idle, idle_arms, walk, walk_arms, swim, aggro_idle, calm_idle, attack, hurt, death, rise, sink | 17 h |
+| kyuubi | Kyuubi | Tier 2 | 42 | yes | idle, idle_arm_breath, idle_horns, idle_tail_sway, idle_tail_curl, walk, walk_arm_breath, walk_horns, walk_tail_sway, walk_tail_curl, swim, calm_idle, attack, hurt, death | 26.4 h |
+| leaf_monster | Leaf Monster | Tier 2 | 5 | yes | idle, idle_arms, walk, walk_arms, swim, aggro_idle, calm_idle, attack, hurt, death, rise, sink | 17 h |
 | lizard | Lizard | Tier 2 | 71 | not yet | idle, idle_jaw, idle_tail, walk, walk_jaw, walk_tail, swim, aggro_idle, calm_idle, attack, hurt, death | 30.2 h |
 | lurking_terror | Lurking Terror | Tier 2 | 59 | not yet | idle, idle_breath, idle_legs, idle_mouth, walk, walk_breath, walk_legs, walk_mouth, fly, aggro_idle, calm_idle, attack, hurt, death, mouth_flare | 30.8 h |
 | mantis | Mantis | Tier 2 | 36 | not yet | idle, idle_arms, walk, walk_arms, fly, aggro_idle, calm_idle, attack, hurt, death | 21.2 h |

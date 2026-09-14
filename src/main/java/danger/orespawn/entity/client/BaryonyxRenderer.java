@@ -17,7 +17,8 @@ public class BaryonyxRenderer extends MobRenderer<Baryonyx, ModelBaryonyx> {
     public static final ModelLayerLocation MODEL_LAYER =
             new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "baryonyx"), "main");
 
-    private static final float SCALE = 1.0f;
+    /** orig RenderBaryonyx.scale = 1.0f (ClientProxyOreSpawn.java:428); public since T2d: the GeckoLib descriptor scales by the same constant. */
+    public static final float SCALE = 1.0f;
 
     public BaryonyxRenderer(EntityRendererProvider.Context context) {
         super(context, new ModelBaryonyx(context.bakeLayer(MODEL_LAYER)), 1.0f);

@@ -10,7 +10,8 @@ import net.minecraft.util.Mth;
 import software.bernie.geckolib.animation.AnimationProcessor;
 
 /**
- * GeckoLib Attack Squid (the hook lanes, 2026-09-14, addendum item 10): {@link ModelAttackSquid#setupAnim} verbatim
+ * GeckoLib Attack Squid (the hook lanes, 2026-09-14, addendum item 10; landed by the fourth Tier-2 slice T2d,
+ * 2026-09-14, the owner's item 9): {@link ModelAttackSquid#setupAnim} verbatim
  * on the converted rig, ON THE HOOK (no keyframe layer, no transcription - the self-gate stays closed until an artist
  * delivers {@code idle} and {@code walk}). Wingspeed 1.0f (orig ModelAttackSquid.java:14,26 / ClientProxyOreSpawn.java:
  * 437): the THRESHOLD idiom on all ten channels - above a walking speed of a tenth the eight tentacles swing at

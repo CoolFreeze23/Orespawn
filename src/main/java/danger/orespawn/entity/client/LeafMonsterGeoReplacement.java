@@ -10,7 +10,8 @@ import net.minecraft.util.Mth;
 import software.bernie.geckolib.animation.AnimationProcessor;
 
 /**
- * GeckoLib Leaf Monster (the hook lanes, 2026-09-14, addendum item 10): {@link LeafMonsterModel#poseFrom} verbatim on
+ * GeckoLib Leaf Monster (the hook lanes, 2026-09-14, addendum item 10; landed by the fourth Tier-2 slice T2d,
+ * 2026-09-14, the owner's item 9): {@link LeafMonsterModel#poseFrom} verbatim on
  * the converted rig, ON THE HOOK (no keyframe layer, no transcription - the self-gate stays closed until an artist
  * delivers {@code idle} and {@code walk}). No wingspeed: the ATTACKING branch is the whole pose - at rest the body sits
  * at y 16 and both arms at y 8 with every rotation 0 (the bush); attacking, the body rises to y 0 and the arms to y -8

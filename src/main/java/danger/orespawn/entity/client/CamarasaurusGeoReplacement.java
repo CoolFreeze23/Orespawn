@@ -11,7 +11,8 @@ import net.minecraft.util.Mth;
 import software.bernie.geckolib.animation.AnimationProcessor;
 
 /**
- * GeckoLib Camarasaurus (the hooks, owner 2026-09-14, addendum item 10): {@link ModelCamarasaurus#poseFrom} verbatim on
+ * GeckoLib Camarasaurus (the hooks, owner 2026-09-14, addendum item 10; landed by the fourth Tier-2 slice T2d,
+ * 2026-09-14, the owner's item 9): {@link ModelCamarasaurus#poseFrom} verbatim on
  * the converted rig, ON THE HOOK (Amendment 2 to Amendment 1: no keyframe layer, no transcription - the self-gate stays
  * closed until an artist delivers {@code idle} and {@code walk}). Wingspeed 0.65f (orig ModelCamarasaurus.java:14,38 /
  * ClientProxyOreSpawn.java:421): the THRESHOLD idiom on the eight leg parts about X - above a walking speed of a tenth
@@ -25,15 +26,13 @@ import software.bernie.geckolib.animation.AnimationProcessor;
  * pivots are never written (the bind), read through {@link #classicPosition}; every value the classic reads back from a
  * part it just wrote is held in a local; a part whose x / z the classic writes keeps its bind y.
  *
- * <p>Scale and shadow follow {@link CamarasaurusRenderer}: 0.65 render scale, halved for a baby, and a 0.65 x 0.65 shadow
- * (ENT-S-092; orig RenderCamarasaurus.java:23-24, 39-44). The renderer's SCALE is private and its shadow a constructor
- * literal, so both are the equal literals here.</p>
+ * <p>Scale and shadow follow {@link CamarasaurusRenderer}: {@link CamarasaurusRenderer#SCALE} (0.65, lifted to public by
+ * the landing slice so both renderers read the one constant), halved for a baby, and a 0.65 x 0.65 shadow (ENT-S-092;
+ * orig RenderCamarasaurus.java:23-24, 39-44) - the shadow a constructor literal there, so the equal literal here.</p>
  */
 public final class CamarasaurusGeoReplacement extends OreSpawnGeoReplacement<Camarasaurus> {
     /** orig ModelCamarasaurus.java:14,38 {@code wingspeed} = 0.65f (ClientProxyOreSpawn.java:421): the chain's third multiply. */
     static final float WINGSPEED = 0.65F;
-    /** CamarasaurusRenderer.SCALE (private) = 0.65f: orig RenderCamarasaurus.java:24 {@code scale = par3}, ClientProxyOreSpawn.java:421. */
-    static final float SCALE = 0.65F;
     private static final GeoReplacementDescriptor<Camarasaurus> DESCRIPTOR = new GeoReplacementDescriptor<>(
             () -> ModEntities.CAMARASAURUS.get(),  // lambda: a bound method ref would initialise ModEntities eagerly
             Camarasaurus.class,
@@ -47,8 +46,11 @@ public final class CamarasaurusGeoReplacement extends OreSpawnGeoReplacement<Cam
         public void applyScale(Camarasaurus entity, PoseStack poseStack, float partialTick) {
             // orig RenderCamarasaurus.preRenderScale (:39-44): a child gets glScalef(scale / 2), otherwise glScalef(scale)
             // (CamarasaurusRenderer.render: isBaby() ? SCALE / 2 : SCALE)
-            float scale = entity.isBaby() ? SCALE / 2.0F : SCALE;
-            poseStack.scale(scale, scale, scale);
+            if (entity.isBaby()) {
+                poseStack.scale(CamarasaurusRenderer.SCALE / 2.0F, CamarasaurusRenderer.SCALE / 2.0F, CamarasaurusRenderer.SCALE / 2.0F);
+                return;
+            }
+            poseStack.scale(CamarasaurusRenderer.SCALE, CamarasaurusRenderer.SCALE, CamarasaurusRenderer.SCALE);
         }
     };
 

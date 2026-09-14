@@ -1,9 +1,9 @@
 {
   "registry": "alosaurus",
   "display_name": "Alosaurus",
-  "status": "DRAFT — authored by a seed lane from the entity code, 2026-09-13; the owner's edit pending",
+  "status": "DRAFT — authored by a seed lane from the entity code, 2026-09-13; the owner's edit pending, landed on its hook by the fourth Tier-2 slice (T2d, 2026-09-14)",
   "locomotion": "walker",
-  "artist_scope": "full contract (Tier 2, the gait-scaled class (with an attacking branch on the jaw): geckolib_migration_design.md section 5); the rig is not yet in-game (it lands through the seam in a later slice)",
+  "artist_scope": "full contract (Tier 2, the gait-scaled class (with an attacking branch on the jaw): geckolib_migration_design.md section 5); ON THE HOOK until idle and walk are delivered (Amendment 2): in-game through the seam behind the dev switch since the fourth Tier-2 slice (T2d, 2026-09-14)",
   "character_sheet": "A big theropod: a 10x18x31 torso with hips and a 25-long tail behind, a neck angled up to a 9x9x12 head and a 7x9x9 snout tip with a hinged jaw beneath, a spike on each side of the head and each flank, two small 2x10x2 forelimbs, and two legs of thigh, shin, heel spur and foot (ModelAlosaurus.java:70-153; 21 parts on a 128x128 sheet). It is hostile: 110 HP, 18 damage, 8 armour, speed 0.35 (MobStats.ALOSAURUS, Alosaurus.java:94-103), 40 XP. Every fifth tick it picks the nearest living thing in sight within 12 blocks - other allosaurs, cryolophosaurs, velocity raptors and creative players excepted (:168-206) - and hands it to its dinosaur melee goal (:77-78): a chase at 1.25, a bite within 4 blocks plus half the prey's width on dice, the synched attacking flag raised for the chase and cleared when the scan comes up empty (:177); a bite knocks the victim back 1.2 blocks and up a little (:142-159). It walks through villages (:84), wanders far (:85), watches players (:86), floats (:76) and spawns in darkness at night above y 50 in a clear column, never near another (:219-229). Read it as a heavy hunter: a striding, tail-balanced walk, the little forelimbs twitching, the jaw hanging almost shut until it hunts - then snapping.",
   "size_notes": "Drawn at x1.0 of the rig (AlosaurusRenderer.java:20, 30) on a 128x128 sheet (ModelAlosaurus.java:155); the hitbox is 1.9 x 3.6 (ModEntities.java:34-35); shadow 1.0 (AlosaurusRenderer.java:23).",
   "labels": {
@@ -141,6 +141,9 @@
     "in `aggro_idle`: a lowered head and a raised tail with the chomp, so the hunt reads before the strike",
     "in `idle`: a head turn to the player (the LookAtPlayerGoal runs, Alosaurus.java:86, but the model ignores netHeadYaw) and a slow breath in the torso",
     "in `hurt`: a stagger back on the legs and a head toss"
+  ],
+  "formulas": [
+    "`ModelAlosaurus.poseFrom` (ModelAlosaurus.java:167-185; orig ModelAlosaurus.java:174-185 in `render` (func_78088_a, :169-207; func_78087_a at :215-217 is a bare super call), wingspeed 0.22 from `new ModelAlosaurus(0.22f)` in orig ClientProxyOreSpawn.java:416 - the port's model carries 1.3 times 0.22 inline): while the walking speed is above a tenth the leg swing is the cosine of the age in ticks times 1.3 times 0.22, times pi, times 0.25, times the walking speed, else 0; the right leg's four parts pitch by their rests -0.174, 0.506, -0.401 and 0 plus it and the left leg's by the same rests minus it; the jaw pitches by 0.52 plus the cosine of the age times 0.45, times pi, times 0.18 while the attacking flag is set, else it holds 0.1; the two forelimbs (shape17, shape11) pitch by -0.523 plus the cosine of the age times 0.1, times pi, times 0.05, always. The walk position and the head angles play no part. The GeckoLib hook is the same (AlosaurusGeoReplacement.applyCustomAnimations)."
   ],
   "effort_hours": null
 }

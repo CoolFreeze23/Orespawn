@@ -9,7 +9,8 @@ import net.minecraft.util.Mth;
 import software.bernie.geckolib.animation.AnimationProcessor;
 
 /**
- * GeckoLib Kyuubi (the hook lanes, 2026-09-14, addendum item 10): {@link KyuubiModel#setupAnim} verbatim on the
+ * GeckoLib Kyuubi (the hook lanes, 2026-09-14, addendum item 10; landed by the fourth Tier-2 slice T2d, 2026-09-14,
+ * the owner's item 9): {@link KyuubiModel#setupAnim} verbatim on the
  * converted rig, ON THE HOOK (no keyframe layer, no transcription - the self-gate stays closed until an artist
  * delivers {@code idle} and {@code walk}). Wingspeed 0.5f (orig ModelKyuubi.java:15,60 / ClientProxyOreSpawn.java:432):
  * the THRESHOLD gait on the legs ({@code cos(age * 1.1 ws) * PI * 0.2 * limbSwingAmount} above a walking speed of a

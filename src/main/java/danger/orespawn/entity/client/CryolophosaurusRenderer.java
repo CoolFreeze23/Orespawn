@@ -17,7 +17,8 @@ public class CryolophosaurusRenderer extends MobRenderer<Cryolophosaurus, ModelC
     public static final ModelLayerLocation MODEL_LAYER =
             new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "cryolophosaurus"), "main");
 
-    private static final float SCALE = 0.5f;
+    /** orig RenderCryolophosaurus.java:24 scale = par3 = 0.5f (ClientProxyOreSpawn.java:419); public since T2d: the GeckoLib descriptor scales by the same constant. */
+    public static final float SCALE = 0.5f;
 
     public CryolophosaurusRenderer(EntityRendererProvider.Context context) {
         super(context, new ModelCryolophosaurus(context.bakeLayer(MODEL_LAYER)), 0.75f * 0.5f);

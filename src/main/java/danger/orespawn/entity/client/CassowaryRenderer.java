@@ -17,7 +17,8 @@ public class CassowaryRenderer extends MobRenderer<Cassowary, ModelCassowary> {
     public static final ModelLayerLocation MODEL_LAYER =
             new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "cassowary"), "main");
 
-    private static final float SCALE = 1.0f;
+    /** orig RenderCassowary.java:24 scale = par3 = 1.0f (ClientProxyOreSpawn.java:469); public since T2d: the GeckoLib descriptor scales by the same constant. */
+    public static final float SCALE = 1.0f;
 
     public CassowaryRenderer(EntityRendererProvider.Context context) {
         super(context, new ModelCassowary(context.bakeLayer(MODEL_LAYER)), 0.5f);

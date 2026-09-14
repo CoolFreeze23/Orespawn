@@ -10,7 +10,7 @@ apple_cow.png,ba0b1a53460f,img_ba0b1a53460f,redcow.png,no,red_cow.png;redcow.png
 attacksquid.png,dd8a058f39b7,img_dd8a058f39b7,attacksquid.png,yes,,,64,32,,,AttackSquidGeoReplacement;AttackSquidRenderer,attack_squid,AttackSquid.png,
 attitudeadjustertexture.png,4f0b66f127d4,img_4f0b66f127d4,attitudeadjustertexture.png,yes,,item/attitudeadjustertexture.png,128,256,,"item-renderer texture (a held weapon/tool model), not a mob",OreSpawnItemRenderer,,AttitudeAdjustertexture.png,
 bandp_bandit.png,bdb327b3e7ef,img_bdb327b3e7ef,bandp_bandit.png,yes,bandptexture.png,,64,128,,,BandPGeoReplacement;BandPRenderer,band_p,BandPtexture.png,bandptexture.png
-bandp_pirate.png,69e11d73d5f1,img_69e11d73d5f1,bandp_pirate.png,yes,squidzookatexture.png,item/squidzookatexture.png,128,128,,,BandPGeoReplacement;BandPRenderer,band_p,SquidZookatexture.png,squidzookatexture.png
+bandp_pirate.png,69e11d73d5f1,img_69e11d73d5f1,bandp_pirate.png,yes,squidzookatexture.png,item/squidzookatexture.png,128,128,,,BandPRenderer,band_p,SquidZookatexture.png,squidzookatexture.png
 bandptexture.png,bdb327b3e7ef,img_bdb327b3e7ef,bandp_bandit.png,no,bandp_bandit.png,,64,128,,,,band_p,BandPtexture.png,
 baryonyx.png,76ba9dd1b2b2,img_76ba9dd1b2b2,baryonyx.png,yes,,,128,128,,,BaryonyxGeoReplacement;BaryonyxRenderer,baryonyx,Baryonyx.png,
 basilisk.png,ab568d4e0020,img_ab568d4e0020,basilisk.png,yes,,,256,64,,,BasiliskGeoReplacement;BasiliskRenderer,basilisk,basilisk.png,

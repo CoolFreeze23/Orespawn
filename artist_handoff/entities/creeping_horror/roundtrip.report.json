@@ -4,7 +4,8 @@
   "differences": [],
   "dropped_keys": [],
   "reattached_by_this_importer": [
-    "orespawn:bone_draw_order"
+    "orespawn:bone_draw_order",
+    "orespawn:cube_face_order"
   ],
   "clips": {
     "reference_walk": {

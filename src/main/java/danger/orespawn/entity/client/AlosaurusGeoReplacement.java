@@ -10,7 +10,8 @@ import net.minecraft.util.Mth;
 import software.bernie.geckolib.animation.AnimationProcessor;
 
 /**
- * GeckoLib Alosaurus (the hook lanes, 2026-09-14, addendum item 10): {@link ModelAlosaurus#poseFrom} verbatim on the
+ * GeckoLib Alosaurus (the hook lanes, 2026-09-14, addendum item 10; landed by the fourth Tier-2 slice T2d, 2026-09-14,
+ * the owner's item 9): {@link ModelAlosaurus#poseFrom} verbatim on the
  * converted rig, ON THE HOOK (no keyframe layer, no transcription - the self-gate stays closed until an artist
  * delivers {@code idle} and {@code walk}). The classic model carries its wingspeed inline ({@code 1.3f * 0.22f}, orig
  * ClientProxyOreSpawn.java:428's 0.22f): the THRESHOLD gait on the eight leg parts ({@code cos(age * 1.3 * 0.22) * PI *

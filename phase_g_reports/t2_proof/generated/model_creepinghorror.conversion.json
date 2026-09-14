@@ -1,0 +1,416 @@
+{
+  "schema_version": 1,
+  "model_id": "model_creepinghorror",
+  "tier": 2,
+  "proof_scope": "production_proof_model",
+  "ground_truth": "executed compiled LayerDefinition and baked ModelPart",
+  "source_class": "danger.orespawn.entity.client.ModelCreepingHorror",
+  "source_class_sha256": "3bf173d7420e3de175c9355f89797608fd64c6f05a46690dc6b69aeefe0f35da",
+  "compiled_dump_sha256": "f3a0e275f1690315c624a6675217471d434fc285fc2bd0d9dbb028038392c523",
+  "geometry_sha256": "656644421a5ca338a3fecab7d83e380d74d9d5c6a94e6ad7dc5bb3b519e4b9eb",
+  "animation_sha256": "7882082857fdb11e02f158ebc3a6d3f970e2ac60d54813f0e903ee97b2293749",
+  "animation_contract_sha256": "604e5f0c4349ee6d198da52c23a1ed4a9a22d6720e230932edba5f2bad5774a3",
+  "bone_count": 26,
+  "cube_count": 26,
+  "mirrored_cube_count": 0,
+  "mirrored_uv_strategy": "source flag retained as modelpart_mirror; semantics baked into explicit faces; incompatible GeckoLib native mirror disabled",
+  "exact_bone_names": [
+    "body",
+    "insides1",
+    "insides2",
+    "insides3",
+    "insides4",
+    "insides5",
+    "leg1",
+    "leg1part2",
+    "leg2",
+    "leg2part2",
+    "leg3",
+    "leg3part2",
+    "leg4",
+    "leg4part2",
+    "pincer1",
+    "pincer1part2",
+    "pincer2",
+    "pincer2part2",
+    "spike1",
+    "spike2",
+    "spike3",
+    "spike4",
+    "spike5",
+    "tailseg1",
+    "tailseg2",
+    "tailseg3"
+  ],
+  "bone_draw_order": [
+    "body",
+    "leg1",
+    "leg1part2",
+    "leg2",
+    "leg2part2",
+    "leg3",
+    "leg3part2",
+    "leg4",
+    "leg4part2",
+    "tailseg1",
+    "tailseg2",
+    "tailseg3",
+    "pincer1",
+    "pincer1part2",
+    "pincer2",
+    "pincer2part2",
+    "spike1",
+    "spike2",
+    "spike3",
+    "spike4",
+    "spike5",
+    "insides1",
+    "insides2",
+    "insides3",
+    "insides4",
+    "insides5"
+  ],
+  "draw_order_evidence": {
+    "source": "classic EntityModel.renderToBuffer on a second bake posed identically; every ModelPart.render is one pose-stack push, attributed to its part by ModelPart.skipDraw elimination (one run per cube-bearing part with every other part's skipDraw set); a part drawn n > 1 times is named <part>__i<k> by draw ordinal",
+    "captures": [
+      "bind",
+      "a0_t0",
+      "a0_t_quarter",
+      "a0_t_half",
+      "a0_t_three_quarter",
+      "a0_t_end",
+      "a0_25_t0",
+      "a0_25_t_quarter",
+      "a0_25_t_half",
+      "a0_25_t_three_quarter",
+      "a0_25_t_end",
+      "a0_5_t0",
+      "a0_5_t_quarter",
+      "a0_5_t_half",
+      "a0_5_t_three_quarter",
+      "a0_5_t_end",
+      "a1_t0",
+      "a1_t_quarter",
+      "a1_t_half",
+      "a1_t_three_quarter",
+      "a1_t_end"
+    ],
+    "cube_bearing_units": 26,
+    "observed_units": 26,
+    "unobserved_units": [],
+    "ordered_pairs": 325,
+    "tie_break": "converter emission order for pairs never drawn together in any capture",
+    "lifting": "pre-order over the geo bone tree, siblings by their subtree's first classic draw"
+  },
+  "cube_face_order": {
+    "body": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "insides1": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "insides2": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "insides3": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "insides4": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "insides5": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "leg1": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "leg1part2": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "leg2": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "leg2part2": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "leg3": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "leg3part2": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "leg4": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "leg4part2": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "pincer1": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "pincer1part2": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "pincer2": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "pincer2part2": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "spike1": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "spike2": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "spike3": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "spike4": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "spike5": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "tailseg1": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "tailseg2": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ],
+    "tailseg3": [
+      [
+        "up",
+        "down",
+        "west",
+        "north",
+        "east",
+        "south"
+      ]
+    ]
+  },
+  "cube_face_order_evidence": {
+    "rule": "NeoForge 21.1.223 ModelPart.Cube.<init> polygon order DOWN, UP, WEST, NORTH, EAST, SOUTH (offsets 365-785: DOWN 365, UP 436, WEST 507, NORTH 578, EAST 649, SOUTH 720), mirror negating the X normals; GeckoLib labels by the direction whose step is the classic normal reflected in Y",
+    "cube_bearing_bones": 26,
+    "cubes": 26,
+    "verified_unrotated_cubes_at_bind": 6,
+    "verification": "captured normals of every cube unrotated at bind equal the rule's, in order; the parity tool's draw-order leg compares the per-quad normal sequences of both renderers on every capture"
+  },
+  "animation_contract": {
+    "schema_version": 1,
+    "kind": "code_driven",
+    "controller_required": false,
+    "candidate_animation_path": "production_replacement_hook",
+    "candidate_class": "danger.orespawn.entity.client.CreepingHorrorGeoReplacement",
+    "candidate_acceptance_path": "production OreSpawnGeoReplacementModel.setCustomAnimations (Amendment 1 Tier-3 code-driven)",
+    "sample_ids": [
+      "bind",
+      "a0_t0",
+      "a0_t_quarter",
+      "a0_t_half",
+      "a0_t_three_quarter",
+      "a0_t_end",
+      "a0_25_t0",
+      "a0_25_t_quarter",
+      "a0_25_t_half",
+      "a0_25_t_three_quarter",
+      "a0_25_t_end",
+      "a0_5_t0",
+      "a0_5_t_quarter",
+      "a0_5_t_half",
+      "a0_5_t_three_quarter",
+      "a0_5_t_end",
+      "a1_t0",
+      "a1_t_quarter",
+      "a1_t_half",
+      "a1_t_three_quarter",
+      "a1_t_end"
+    ]
+  },
+  "reference_animation_schema": {
+    "status": "SCHEMA_VALID_REFERENCE_ONLY",
+    "clip_count": 0,
+    "constant_vector_count": 0,
+    "runtime_acceptance": false
+  },
+  "accepted_animation_evidence": "production OreSpawnGeoReplacement hook through OreSpawnGeoReplacementModel.setCustomAnimations (Amendment 1 Tier-3 code-driven)",
+  "artist_editable_math_to_keyframes_status": "NOT_APPLICABLE_TIER3_CODE_DRIVEN",
+  "compiled_animation_bake_sample_count": 0,
+  "reference_clip_keys_source": "compiled setupAnim output; no Python formula evaluation",
+  "source_animation_channel_inventory": []
+}

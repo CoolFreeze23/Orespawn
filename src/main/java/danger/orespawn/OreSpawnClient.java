@@ -51,14 +51,14 @@ public class OreSpawnClient {
             // size scaling is handled by the registered hitbox dimensions
             // (1.4 × 3.5 in ModEntities) so the same model renders bigger.
             event.registerEntityRenderer(ModEntities.ALIEN_BOSS.get(), AlienRenderer::new);
-            event.registerEntityRenderer(ModEntities.ALOSAURUS.get(), AlosaurusRenderer::new);
-            event.registerEntityRenderer(ModEntities.ATTACK_SQUID.get(), AttackSquidRenderer::new);
-            event.registerEntityRenderer(ModEntities.BAND_P.get(), BandPRenderer::new);
+            event.registerEntityRenderer(ModEntities.ALOSAURUS.get(), PhaseGDevRenderers.alosaurusRenderer());
+            event.registerEntityRenderer(ModEntities.ATTACK_SQUID.get(), PhaseGDevRenderers.attackSquidRenderer());
+            event.registerEntityRenderer(ModEntities.BAND_P.get(), PhaseGDevRenderers.bandPRenderer());
             event.registerEntityRenderer(ModEntities.CAVE_FISHER.get(), CaveFisherRenderer::new);
             event.registerEntityRenderer(ModEntities.CLOUD_SHARK.get(), PhaseGDevRenderers.cloudSharkRenderer());
-            event.registerEntityRenderer(ModEntities.CRAB.get(), CrabRenderer::new);
-            event.registerEntityRenderer(ModEntities.CREEPING_HORROR.get(), CreepingHorrorRenderer::new);
-            event.registerEntityRenderer(ModEntities.CRYOLOPHOSAURUS.get(), CryolophosaurusRenderer::new);
+            event.registerEntityRenderer(ModEntities.CRAB.get(), PhaseGDevRenderers.crabRenderer());
+            event.registerEntityRenderer(ModEntities.CREEPING_HORROR.get(), PhaseGDevRenderers.creepingHorrorRenderer());
+            event.registerEntityRenderer(ModEntities.CRYOLOPHOSAURUS.get(), PhaseGDevRenderers.cryolophosaurusRenderer());
             event.registerEntityRenderer(ModEntities.DUNGEON_BEAST.get(), DungeonBeastRenderer::new);
             event.registerEntityRenderer(ModEntities.ENDER_KNIGHT.get(), EnderKnightRenderer::new);
             event.registerEntityRenderer(ModEntities.ENDER_REAPER.get(), EnderReaperRenderer::new);
@@ -89,8 +89,8 @@ public class OreSpawnClient {
             event.registerEntityRenderer(ModEntities.ENTITY_CATER_KILLER.get(), PhaseGDevRenderers.caterKillerRenderer());
             event.registerEntityRenderer(ModEntities.ENTITY_EMPEROR_SCORPION.get(), EmperorScorpionRenderer::new);
             event.registerEntityRenderer(ModEntities.ENTITY_HERCULES_BEETLE.get(), PhaseGDevRenderers.herculesBeetleRenderer());
-            event.registerEntityRenderer(ModEntities.ENTITY_KYUUBI.get(), KyuubiRenderer::new);
-            event.registerEntityRenderer(ModEntities.ENTITY_LEAF_MONSTER.get(), LeafMonsterRenderer::new);
+            event.registerEntityRenderer(ModEntities.ENTITY_KYUUBI.get(), PhaseGDevRenderers.kyuubiRenderer());
+            event.registerEntityRenderer(ModEntities.ENTITY_LEAF_MONSTER.get(), PhaseGDevRenderers.leafMonsterRenderer());
             event.registerEntityRenderer(ModEntities.ENTITY_LURKING_TERROR.get(), LurkingTerrorRenderer::new);
             event.registerEntityRenderer(ModEntities.ENTITY_MANTIS.get(), MantisRenderer::new);
             event.registerEntityRenderer(ModEntities.ENTITY_MOLENOID.get(), MolenoidRenderer::new);
@@ -107,14 +107,14 @@ public class OreSpawnClient {
             event.registerEntityRenderer(ModEntities.ENTITY_WORM_LARGE.get(), PhaseGDevRenderers.wormLargeRenderer());
 
             // Creature (passive)
-            event.registerEntityRenderer(ModEntities.BARYONYX.get(), BaryonyxRenderer::new);
+            event.registerEntityRenderer(ModEntities.BARYONYX.get(), PhaseGDevRenderers.baryonyxRenderer());
             event.registerEntityRenderer(ModEntities.BEAVER.get(), PhaseGDevRenderers.beaverRenderer());
-            event.registerEntityRenderer(ModEntities.CASSOWARY.get(), CassowaryRenderer::new);
+            event.registerEntityRenderer(ModEntities.CASSOWARY.get(), PhaseGDevRenderers.cassowaryRenderer());
             event.registerEntityRenderer(ModEntities.CHIPMUNK.get(), ChipmunkRenderer::new);
             event.registerEntityRenderer(ModEntities.COCKATEIL.get(), PhaseGDevRenderers.cockateilRenderer());
             event.registerEntityRenderer(ModEntities.COIN.get(), PhaseGDevRenderers.coinRenderer());
-            event.registerEntityRenderer(ModEntities.EASTER_BUNNY.get(), EasterBunnyRenderer::new);
-            event.registerEntityRenderer(ModEntities.FLOUNDER.get(), FlounderRenderer::new);
+            event.registerEntityRenderer(ModEntities.EASTER_BUNNY.get(), PhaseGDevRenderers.easterBunnyRenderer());
+            event.registerEntityRenderer(ModEntities.FLOUNDER.get(), PhaseGDevRenderers.flounderRenderer());
             event.registerEntityRenderer(ModEntities.GOLD_FISH.get(), PhaseGDevRenderers.goldFishRenderer());
             event.registerEntityRenderer(ModEntities.ISLAND.get(), PhaseGDevRenderers.islandRenderer());
             event.registerEntityRenderer(ModEntities.ISLAND_TOO.get(), PhaseGDevRenderers.islandTooRenderer());
@@ -135,7 +135,7 @@ public class OreSpawnClient {
 
             // Creature (tameable)
             event.registerEntityRenderer(ModEntities.BOYFRIEND.get(), BoyfriendRenderer::new);
-            event.registerEntityRenderer(ModEntities.CAMARASAURUS.get(), CamarasaurusRenderer::new);
+            event.registerEntityRenderer(ModEntities.CAMARASAURUS.get(), PhaseGDevRenderers.camarasaurusRenderer());
             event.registerEntityRenderer(ModEntities.DRAGON.get(), DragonRenderer::new);
             event.registerEntityRenderer(ModEntities.BABY_DRAGON.get(), BabyDragonRenderer::new);
             event.registerEntityRenderer(ModEntities.ENTITY_CANNON_FODDER.get(), PhaseGDevRenderers.cannonFodderRenderer());

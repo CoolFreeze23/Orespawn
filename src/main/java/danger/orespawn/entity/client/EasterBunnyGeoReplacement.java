@@ -10,7 +10,8 @@ import net.minecraft.util.Mth;
 import software.bernie.geckolib.animation.AnimationProcessor;
 
 /**
- * GeckoLib Easter Bunny (the hooks, owner 2026-09-14, addendum item 10): {@link ModelEasterBunny#setupAnim} verbatim on
+ * GeckoLib Easter Bunny (the hooks, owner 2026-09-14, addendum item 10; landed by the fourth Tier-2 slice T2d,
+ * 2026-09-14, the owner's item 9): {@link ModelEasterBunny#setupAnim} verbatim on
  * the converted rig, ON THE HOOK (Amendment 2 to Amendment 1: no keyframe layer, no transcription - the self-gate stays
  * closed until an artist delivers {@code idle} and {@code walk}). Wingspeed 0.55f (orig ModelEasterBunny.java:14,30 /
  * ClientProxyOreSpawn.java:498): the THRESHOLD idiom with a live idle branch - above a walking speed of a tenth the two

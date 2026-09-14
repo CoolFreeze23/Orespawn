@@ -10,7 +10,8 @@ import net.minecraft.util.Mth;
 import software.bernie.geckolib.animation.AnimationProcessor;
 
 /**
- * GeckoLib Baryonyx (the hook lanes, 2026-09-14, addendum item 10): {@link ModelBaryonyx#setupAnim} verbatim on the
+ * GeckoLib Baryonyx (the hook lanes, 2026-09-14, addendum item 10; landed by the fourth Tier-2 slice T2d, 2026-09-14,
+ * the owner's item 9): {@link ModelBaryonyx#setupAnim} verbatim on the
  * converted rig, ON THE HOOK (no keyframe layer, no transcription - the self-gate stays closed until an artist
  * delivers {@code idle} and {@code walk}). Wingspeed 0.25f (orig ModelBaryonyx.java:14,69 / ClientProxyOreSpawn.java:
  * 428): the THRESHOLD gait on the six hind-leg parts ({@code cos(age * 1.3 ws) * PI * 0.15 * limbSwingAmount} above a
@@ -20,15 +21,14 @@ import software.bernie.geckolib.animation.AnimationProcessor;
  * normal, ENT-S-161, and its two coplanar faces in the classic order - below).
  *
  * <p>Shadow follows {@link BaryonyxRenderer}'s constructor ({@code super(context, model, 1.0f)}: the literal it
- * passes - it declares no SHADOW constant); its render scale is a private 1.0, halved for a baby, applied around
- * {@code super.render} (a uniform scale commutes with the rotations and the flip, so the scale slot carries it): the
- * identity for an adult, 0.5 for a baby.</p>
+ * passes - it declares no SHADOW constant); its render scale is {@link BaryonyxRenderer#SCALE} (1.0, lifted to public
+ * by the landing slice so both renderers read the one constant), halved for a baby, applied around {@code super.render}
+ * (a uniform scale commutes with the rotations and the flip, so the scale slot carries it): the identity for an adult,
+ * 0.5 for a baby.</p>
  */
 public final class BaryonyxGeoReplacement extends OreSpawnGeoReplacement<Baryonyx> {
     /** orig ModelBaryonyx.java:14,69 {@code wingspeed} = 0.25f (ClientProxyOreSpawn.java:428): the chain's third multiply. */
     static final float WINGSPEED = 0.25F;
-    /** BaryonyxRenderer's private {@code SCALE = 1.0f}: the equal literal. */
-    static final float SCALE = 1.0F;
     private static final GeoReplacementDescriptor<Baryonyx> DESCRIPTOR = new GeoReplacementDescriptor<>(
             () -> ModEntities.BARYONYX.get(),  // lambda: a bound method ref would initialise ModEntities eagerly
             Baryonyx.class,
@@ -40,8 +40,11 @@ public final class BaryonyxGeoReplacement extends OreSpawnGeoReplacement<Baryony
         @Override
         public void applyScale(Baryonyx entity, PoseStack poseStack, float partialTick) {
             // BaryonyxRenderer.render: float scale = entity.isBaby() ? SCALE / 2.0f : SCALE; poseStack.scale(scale, scale, scale)
-            float scale = entity.isBaby() ? SCALE / 2.0f : SCALE;
-            poseStack.scale(scale, scale, scale);
+            if (entity.isBaby()) {
+                poseStack.scale(BaryonyxRenderer.SCALE / 2.0f, BaryonyxRenderer.SCALE / 2.0f, BaryonyxRenderer.SCALE / 2.0f);
+                return;
+            }
+            poseStack.scale(BaryonyxRenderer.SCALE, BaryonyxRenderer.SCALE, BaryonyxRenderer.SCALE);
         }
 
         /**
