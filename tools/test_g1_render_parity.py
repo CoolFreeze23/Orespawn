@@ -14,6 +14,7 @@ mechanism), inside the 1e-5 attribution window.
 from __future__ import annotations
 
 import json
+import math
 import shutil
 import sys
 import tempfile
@@ -192,6 +193,167 @@ class UndrawnParts(unittest.TestCase):
             converter.derive_bone_draw_order(compiled(["body", "toe", "claw"]), bones, frozenset({"toe"}))
         with self.assertRaisesRegex(ValueError, "not cube-bearing geo bones"):
             converter.derive_bone_draw_order(compiled(["body", "toe", "claw"]), bones)
+
+
+class HierarchyForm(unittest.TestCase):
+    """The FK slice (owner 2026-09-15, closing set, item 4; design section 5): the converter's hierarchy form - a declared
+    child parented to its chain parent with the LOCAL bind rotation and the DERIVED pivot (the classic pivot carried back
+    through the parent's bind rotation), the classic-branch convention the hook's FlatRig reads the flat bind back with,
+    the pre-order refusal and its measurement form - and the parity tool's chain-link leg on a synthetic two-link chain.
+    The synthetic rig: ``arm`` at (2, -1, -6) rotated (0, -0.5236, 0.1745) (the Alien's arml1) and its child ``claw`` at
+    (11, 2, -1) rotated (0, 0.8552, 0) (arml2), one unit cube each."""
+    ARM = {"pivot": [2.0, -1.0, -6.0], "rotation": [0.0, -0.5235988, 0.1745329]}
+    CLAW = {"pivot": [11.0, 2.0, -1.0], "rotation": [0.0, 0.8552113, 0.0]}
+
+    @classmethod
+    def compiled(cls, classic_order: list[str]) -> dict:
+        def part(name: str, spec: dict) -> dict:
+            return {"name": name, "path": "/" + name, "local_pivot": spec["pivot"], "absolute_pivot": spec["pivot"],
+                    "initial_rotation_radians": spec["rotation"], "children": [],
+                    "cubes": [{"origin": [0.0, 0.0, 0.0], "size": [1.0, 1.0, 1.0], "deformation": [0.0, 0.0, 0.0],
+                               "uv": [0.0, 0.0], "texture_scale": [1.0, 1.0], "mirror": False,
+                               "visible_faces": ["down", "east", "north", "south", "up", "west"]}]}
+        transforms = {name: {"position": spec["pivot"], "rotation": spec["rotation"], "scale": [1.0, 1.0, 1.0]}
+                      for name, spec in (("arm", cls.ARM), ("claw", cls.CLAW))}
+        return {"model_id": "m", "bone_names": ["arm", "claw"], "texture_width": 64, "texture_height": 32,
+                "draw_order_source": "test",
+                "definition": {"name": None, "path": "", "cubes": [], "children": [part("arm", cls.ARM), part("claw", cls.CLAW)]},
+                "samples": [{"id": "bind", "capture_kind": "full", "draw_order": classic_order, "transforms": transforms}]}
+
+    def test_converter_parents_the_child_with_the_local_rotation_and_the_derived_pivot(self) -> None:
+        geometry, summary = converter.convert_geometry(self.compiled(["arm", "claw"]), hierarchy={"claw": "arm"})
+        bones = {bone["name"]: bone for bone in geometry["minecraft:geometry"][0]["bones"]}
+        self.assertNotIn("parent", bones["arm"])
+        self.assertEqual(bones["claw"]["parent"], "arm")
+        # the local bind rotation recomposes the child's flat (world) bind rotation under the parent's
+        local = summary["hierarchy"]["local_bind_rotations_radians"]["claw"]
+        parent = converter.rotation_matrix_zyx(self.ARM["rotation"])
+        recomposed = converter.matrix_multiply(parent, converter.rotation_matrix_zyx(local))
+        child = converter.rotation_matrix_zyx(self.CLAW["rotation"])
+        self.assertLess(max(abs(recomposed[r][c] - child[r][c]) for r in range(3) for c in range(3)), 1.0e-9)
+        self.assertTrue(any(abs(value) > 0.1 for value in local[0::2]), "a rolled parent makes the local a full triple")
+        # the derived pivot: the classic pivot carried back through the parent's bind rotation, and the cubes at it
+        inverse = converter.matrix_transpose(parent)
+        offset = [self.CLAW["pivot"][i] - self.ARM["pivot"][i] for i in range(3)]
+        expected = [self.ARM["pivot"][r] + sum(inverse[r][c] * offset[c] for c in range(3)) for r in range(3)]
+        derived = summary["hierarchy"]["derived_pivots_classic"]["claw"]
+        self.assertLess(converter_delta(derived, expected), 1.0e-9)
+        self.assertLess(converter_delta(bones["claw"]["pivot"], [-expected[0], 24.0 - expected[1], expected[2]]), 1.0e-9)
+        self.assertEqual(bones["claw"]["cubes"][0]["origin"],
+                         converter.convert_cube(self.compiled(["arm", "claw"])["definition"]["children"][1]["cubes"][0], expected)["origin"])
+        self.assertLess(converter_delta(bones["arm"]["pivot"], [-2.0, 25.0, -6.0]), 1.0e-12)
+        # the flat (world) pivot the bake gives the child at bind is the classic one: P_p + R_p * (P_c - P_p)
+        forward = [self.ARM["pivot"][r] + sum(parent[r][c] * (derived[c] - self.ARM["pivot"][c]) for c in range(3)) for r in range(3)]
+        self.assertLess(converter_delta(forward, self.CLAW["pivot"]), 1.0e-9)
+        self.assertEqual(geometry["minecraft:geometry"][0]["description"][converter.DRAW_ORDER_KEY], ["arm", "claw"])
+        self.assertNotIn("hierarchy", converter.convert_geometry(self.compiled(["arm", "claw"]))[1])
+
+    def test_classic_branch_recovers_a_yaw_past_a_quarter_turn(self) -> None:
+        for triple in ([0.0, 2.268928, 0.0], [0.1745329, 2.70526, 0.0], [-2.602503, 0.0, 0.0], [0.0, 0.0, 2.240008],
+                       [0.4505939, -1.3700851, -0.594227]):
+            recovered = converter.euler_angles_zyx_classic_branch(converter.rotation_matrix_zyx(triple))
+            self.assertLess(max(abs(converter.wrap_angle(recovered[i] - triple[i])) for i in range(3)), 1.0e-9, triple)
+        self.assertIsNotNone(converter.local_bind_rotation(self.ARM["rotation"], [0.0, 2.268928, 0.0]))
+        with self.assertRaisesRegex(ValueError, "convention"):
+            # a child authored with a half-turn pitch AND roll beside a yaw is the other branch: refused, never silently held
+            converter.local_bind_rotation([0.0, 0.0, 0.0], [3.0, 0.5, 3.0])
+
+    def test_converter_validates_the_hierarchy(self) -> None:
+        compiled = self.compiled(["arm", "claw"])
+        self.assertEqual(converter.hierarchy_declared({"id": "m"}, compiled), {})
+        self.assertEqual(converter.hierarchy_declared({"id": "m", "hierarchy": {"claw": "arm"}}, compiled), {"claw": "arm"})
+        for bad, reason in (({"claw": "nope"}, "lacks"), ({"claw": "claw"}, "itself"), ({"claw": "arm", "arm": "claw"}, "cycle"),
+                            ({}, "non-empty"), ({"claw": 3}, "non-empty")):
+            with self.assertRaisesRegex(ValueError, reason):
+                converter.hierarchy_declared({"id": "m", "hierarchy": bad}, compiled)
+        with self.assertRaisesRegex(ValueError, "undrawn_parts"):
+            converter.hierarchy_declared({"id": "m", "hierarchy": {"claw": "arm"}, "undrawn_parts": ["claw"]}, compiled)
+        with self.assertRaisesRegex(ValueError, "top-level"):
+            nested = self.compiled(["arm", "claw"])
+            nested["definition"]["children"][0]["children"] = [nested["definition"]["children"].pop(1)]
+            converter.hierarchy_declared({"id": "m", "hierarchy": {"claw": "arm"}}, nested)
+        with self.assertRaisesRegex(ValueError, "hierarchy_draw_order"):
+            converter.hierarchy_draw_order_declared({"id": "m", "hierarchy_draw_order": "preorder_diagnostic"}, {})
+        with self.assertRaisesRegex(ValueError, "not one of"):
+            converter.hierarchy_draw_order_declared({"id": "m", "hierarchy_draw_order": "classic_please"}, {"claw": "arm"})
+
+    def test_converter_refuses_a_classic_order_that_is_not_a_preorder_and_records_it_under_the_diagnostic(self) -> None:
+        with self.assertRaisesRegex(ValueError, "drawn after one of its descendants"):
+            converter.convert_geometry(self.compiled(["claw", "arm"]), hierarchy={"claw": "arm"})
+        geometry, summary = converter.convert_geometry(self.compiled(["claw", "arm"]), hierarchy={"claw": "arm"},
+                                                       hierarchy_draw_order=converter.HIERARCHY_DRAW_ORDER_PREORDER_DIAGNOSTIC)
+        self.assertEqual(geometry["minecraft:geometry"][0]["description"][converter.DRAW_ORDER_KEY], ["arm", "claw"])
+        diagnostic = summary["draw_order_evidence"]["preorder_diagnostic"]
+        self.assertEqual(diagnostic["classic_order"], ["claw", "arm"])
+        self.assertEqual(diagnostic["moved_units"], ["claw", "arm"])
+        self.assertTrue(any("drawn after one of its descendants" in finding for finding in diagnostic["findings"]))
+        self.assertEqual(summary["hierarchy"]["draw_order"], "preorder_diagnostic")
+        self.assertNotIn("preorder_diagnostic", converter.convert_geometry(self.compiled(["arm", "claw"]), hierarchy={"claw": "arm"})[1]["draw_order_evidence"])
+
+    @classmethod
+    def chain_inputs(cls, claw_world_offset_blocks: float = 0.0, capture_kind: str = "full") -> tuple[dict, dict, dict, dict]:
+        """The synthetic chain posed: the arm yawed to -0.9 and the claw's classic pivot rewritten as the Alien's follow
+        does (9 units along the arm's yaw); the bake's world matrices derived from the classic ones through the pivot
+        relation (classic_world == bone_pose * T(geo pivot / 16)), the claw's translation moved by the given offset."""
+        compiled = cls.compiled(["arm", "claw"])
+        geometry, conversion_summary = converter.convert_geometry(compiled, hierarchy={"claw": "arm"})
+        conversion = {"hierarchy": conversion_summary["hierarchy"]}
+        arm_rot = [0.0, -0.9, 0.1745329]
+        claw_pos = [2.0 + math.cos(-0.9) * 9.0, 2.0, -6.0 - math.sin(-0.9) * 9.0]
+        transforms = {"arm": {"position": [2.0, -1.0, -6.0], "rotation": arm_rot, "scale": [1.0, 1.0, 1.0]},
+                      "claw": {"position": claw_pos, "rotation": [0.0, 1.2, 0.0], "scale": [1.0, 1.0, 1.0]}}
+        compiled["samples"] = [{"id": "bind", "capture_kind": "full", "draw_order": ["arm", "claw"],
+                                "transforms": compiled["samples"][0]["transforms"]},
+                               {"id": "t0", "capture_kind": capture_kind, "draw_order": ["arm", "claw"], "transforms": transforms}]
+        bones = {bone["name"]: bone for bone in geometry["minecraft:geometry"][0]["bones"]}
+        poses = {}
+        for sample in compiled["samples"]:
+            poses[sample["id"]] = {}
+            for name, transform in sample["transforms"].items():
+                pivot = bones[name]["pivot"]
+                classic_pivot = [-pivot[0] / 16.0, (24.0 - pivot[1]) / 16.0, pivot[2] / 16.0]
+                world = parity.classic_world_matrix(transform)
+                pose = parity.matrix_translate(world, [-value for value in classic_pivot])  # world * T(-pivot) = bone pose
+                if name == "claw" and sample["id"] == "t0":
+                    pose[0][3] += claw_world_offset_blocks
+                poses[sample["id"]][name] = pose
+        geo_render = {"samples": [{"id": sample["id"], "capture_kind": sample["capture_kind"], "bone_poses_classic": poses[sample["id"]]}
+                                  for sample in compiled["samples"]]}
+        return compiled, geo_render, geometry, conversion
+
+    def test_chain_link_leg_compares_world_transforms_at_every_link(self) -> None:
+        compiled, geo_render, geometry, conversion = self.chain_inputs()
+        hierarchy = parity.hierarchy_declared("m", {"hierarchy": {"claw": "arm"}}, compiled, conversion, geometry)
+        report = parity.chain_link_parity("m", compiled, geo_render, geometry, hierarchy, 1.0e-5)
+        self.assertEqual(report["status"], "PASS")
+        self.assertEqual((report["links"], report["chain_roots"], report["samples_checked"], report["bone_samples_compared"]),
+                         (1, ["arm"], 2, 4))
+        self.assertLess(max(report["max_linear_delta"], report["max_translation_delta_blocks"]), 1.0e-9)
+        self.assertEqual(report["per_link"]["claw"]["parent"], "arm")
+        moved = self.chain_inputs(claw_world_offset_blocks=2.0e-5)
+        with self.assertRaisesRegex(AssertionError, r"CHAIN LINK MISMATCH m/t0/claw \(child of arm\)"):
+            parity.chain_link_parity("m", moved[0], moved[1], moved[2], hierarchy, 1.0e-5)
+        partial = self.chain_inputs(capture_kind="transform_only")
+        with self.assertRaisesRegex(AssertionError, "not a full capture"):
+            parity.chain_link_parity("m", partial[0], partial[1], partial[2], hierarchy, 1.0e-5)
+
+    def test_parity_hierarchy_declared_checks_the_converter_and_the_geo(self) -> None:
+        compiled, _geo_render, geometry, conversion = self.chain_inputs()
+        self.assertEqual(parity.hierarchy_declared("m", {}, compiled, {}, geometry), {})
+        with self.assertRaisesRegex(AssertionError, "does not declare"):
+            parity.hierarchy_declared("m", {}, compiled, conversion, geometry)
+        with self.assertRaisesRegex(AssertionError, "drift"):
+            parity.hierarchy_declared("m", {"hierarchy": {"claw": "arm"}}, compiled, {"hierarchy": {"declared": {}}}, geometry)
+        flat = {"minecraft:geometry": [{"bones": [{"name": "arm"}, {"name": "claw"}]}]}
+        with self.assertRaisesRegex(AssertionError, "parents claw to None"):
+            parity.hierarchy_declared("m", {"hierarchy": {"claw": "arm"}}, compiled, conversion, flat)
+        for bad, reason in (({"claw": "nope"}, "lacks"), ({"claw": "claw"}, "itself"), ({"claw": "arm", "arm": "claw"}, "cycle")):
+            with self.assertRaisesRegex(AssertionError, reason):
+                parity.hierarchy_declared("m", {"hierarchy": bad}, compiled, conversion, geometry)
+
+
+def converter_delta(left: list, right: list) -> float:
+    return max(abs(float(a) - float(b)) for a, b in zip(left, right))
 
 
 if __name__ == "__main__":

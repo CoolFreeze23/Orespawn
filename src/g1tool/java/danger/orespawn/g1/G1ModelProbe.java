@@ -1410,7 +1410,9 @@ public final class G1ModelProbe {
         // Slice 4c: for an expanded rig every bone's cumulative transform is recorded in classic
         // terms so the parity tool can compare the group/clone composition with the classic
         // model's measured per-draw pose stack.
-        boolean recordBonePoses = spec.has("render_instances");
+        // The hierarchy form (the FK slice, owner 2026-09-15, closing set, item 4): a rig whose declared chain children
+        // are parented bones records every bone's world matrix in classic terms as well, for the chain-link leg.
+        boolean recordBonePoses = spec.has("render_instances") || spec.has("hierarchy");
 
         JsonArray samples = new JsonArray();
         SampleRequest bindRequest = new SampleRequest("bind", 0.0F, 0.0F, true, false);
