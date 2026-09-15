@@ -1,0 +1,699 @@
+{
+  "schema_version": 1,
+  "model_id": "model_cephadrome",
+  "tier": 1,
+  "proof_scope": "production_proof_model",
+  "ground_truth": "executed compiled LayerDefinition and baked ModelPart",
+  "source_class": "danger.orespawn.entity.client.ModelCephadrome",
+  "source_class_sha256": "55b595edd535ba1ba7e32772507cac476618b5756f56ae78f42ddd42907b6187",
+  "compiled_dump_sha256": "0660339d6608f6d0af6da3b607554d056d540466717807d9bf190c8e9fde7a40",
+  "geometry_sha256": "4d8b1091ae15e4c4edea65473dc75184e7df15dbc40a72de9643924b8a72d0e9",
+  "animation_sha256": "7882082857fdb11e02f158ebc3a6d3f970e2ac60d54813f0e903ee97b2293749",
+  "animation_contract_sha256": "e10a4be7ce454658861c414bfbe61146d7c1bbba87972337aea40e184d17448f",
+  "bone_count": 50,
+  "cube_count": 50,
+  "mirrored_cube_count": 0,
+  "mirrored_uv_strategy": "source flag retained as modelpart_mirror; semantics baked into explicit faces; incompatible GeckoLib native mirror disabled",
+  "exact_bone_names": [
+    "body",
+    "body2",
+    "butt",
+    "chest",
+    "chest1",
+    "hammerhead",
+    "hammerhead2",
+    "head",
+    "leftfoot",
+    "leftleg1",
+    "leftleg2",
+    "leftleg3",
+    "leftshoulder",
+    "leftwingfin2",
+    "leftwingfin3",
+    "leftwingfin4",
+    "leftwingmembrane",
+    "lefwingfin1",
+    "mouth",
+    "neck1",
+    "neck2",
+    "neck3",
+    "rightfoot",
+    "rightleg1",
+    "rightleg2",
+    "rightleg3",
+    "rightshoulder",
+    "rightwingfin1",
+    "rightwingfin2",
+    "rightwingfin3",
+    "rightwingfin4",
+    "rightwingmembrane",
+    "tail1",
+    "tail2",
+    "tail3",
+    "tailfin1",
+    "tailfin2",
+    "tailfin3",
+    "tailfin4",
+    "tailmembrane1",
+    "tailmembrane2",
+    "tailmembrane3",
+    "topfin1",
+    "topfin2",
+    "topfin3",
+    "topfin4",
+    "topmem1",
+    "topmem2",
+    "topmem3",
+    "topmem4"
+  ],
+  "bone_draw_order": [
+    "leftfoot",
+    "butt",
+    "rightfoot",
+    "topfin1",
+    "topfin2",
+    "topfin3",
+    "topfin4",
+    "leftshoulder",
+    "lefwingfin1",
+    "tailfin1",
+    "tailmembrane2",
+    "tailfin2",
+    "tailfin4",
+    "tailfin3",
+    "tailmembrane1",
+    "topmem1",
+    "topmem2",
+    "topmem3",
+    "topmem4",
+    "neck1",
+    "body",
+    "chest1",
+    "leftleg1",
+    "mouth",
+    "neck2",
+    "head",
+    "hammerhead",
+    "chest",
+    "neck3",
+    "tail1",
+    "rightleg1",
+    "leftleg2",
+    "rightleg2",
+    "body2",
+    "leftleg3",
+    "rightleg3",
+    "tail2",
+    "tail3",
+    "tailmembrane3",
+    "leftwingfin2",
+    "leftwingfin3",
+    "leftwingfin4",
+    "leftwingmembrane",
+    "rightshoulder",
+    "rightwingfin1",
+    "rightwingfin2",
+    "rightwingfin3",
+    "rightwingfin4",
+    "rightwingmembrane",
+    "hammerhead2"
+  ],
+  "draw_order_evidence": {
+    "source": "classic EntityModel.renderToBuffer on a second bake posed identically; every ModelPart.render is one pose-stack push, attributed to its part by ModelPart.skipDraw elimination (one run per cube-bearing part with every other part's skipDraw set); a part drawn n > 1 times is named <part>__i<k> by draw ordinal",
+    "captures": [
+      "bind",
+      "s_idle_t0",
+      "s_idle_t_quarter",
+      "s_idle_t_half",
+      "s_idle_t_three_quarter",
+      "s_idle_t_end",
+      "s_attacking_t0",
+      "s_attacking_t_quarter",
+      "s_attacking_t_half",
+      "s_attacking_t_three_quarter",
+      "s_attacking_t_end",
+      "s_flying_t0",
+      "s_flying_t_quarter",
+      "s_flying_t_half",
+      "s_flying_t_three_quarter",
+      "s_flying_t_end"
+    ],
+    "cube_bearing_units": 50,
+    "observed_units": 50,
+    "unobserved_units": [],
+    "ordered_pairs": 1225,
+    "tie_break": "converter emission order for pairs never drawn together in any capture",
+    "lifting": "pre-order over the geo bone tree, siblings by their subtree's first classic draw"
+  },
+  "cube_face_order": {
+    "body": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "body2": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "butt": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "chest": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "chest1": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "hammerhead": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "hammerhead2": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "head": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "leftfoot": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "leftleg1": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "leftleg2": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "leftleg3": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "leftshoulder": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "leftwingfin2": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "leftwingfin3": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "leftwingfin4": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "leftwingmembrane": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "lefwingfin1": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "mouth": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "neck1": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "neck2": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "neck3": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "rightfoot": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "rightleg1": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "rightleg2": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "rightleg3": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "rightshoulder": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "rightwingfin1": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "rightwingfin2": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "rightwingfin3": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "rightwingfin4": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "rightwingmembrane": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "tail1": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "tail2": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "tail3": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "tailfin1": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "tailfin2": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "tailfin3": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "tailfin4": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "tailmembrane1": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "tailmembrane2": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "tailmembrane3": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "topfin1": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "topfin2": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "topfin3": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "topfin4": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "topmem1": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "topmem2": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "topmem3": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "topmem4": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ]
+  },
+  "cube_face_order_evidence": {
+    "rule": "NeoForge 21.1.223 ModelPart.Cube.<init> polygon order DOWN, UP, WEST, NORTH, EAST, SOUTH (offsets 365-785: DOWN 365, UP 436, WEST 507, NORTH 578, EAST 649, SOUTH 720), mirror negating the X normals; GeckoLib labels by the direction whose step is the classic normal reflected in X and Y (the entity frame: the classic chain's scale(-1, -1, 1) and the baker's x negation alike, TEST-015)",
+    "cube_bearing_bones": 50,
+    "cubes": 50,
+    "verified_unrotated_cubes_at_bind": 2,
+    "verification": "captured normals (the entity frame) of every cube unrotated at bind equal the rule's, in order; the parity tool's draw-order leg compares the per-quad normal sequences of both renderers on every capture"
+  },
+  "animation_contract": {
+    "schema_version": 1,
+    "kind": "entity_state",
+    "controller_required": false,
+    "candidate_animation_path": "production_replacement_hook",
+    "candidate_class": "danger.orespawn.entity.client.CephadromeGeoReplacement",
+    "candidate_acceptance_path": "production OreSpawnGeoReplacementModel.setCustomAnimations (Amendment 1 Tier-3 code-driven)",
+    "sample_ids": [
+      "bind",
+      "s_idle_t0",
+      "s_idle_t_quarter",
+      "s_idle_t_half",
+      "s_idle_t_three_quarter",
+      "s_idle_t_end",
+      "s_attacking_t0",
+      "s_attacking_t_quarter",
+      "s_attacking_t_half",
+      "s_attacking_t_three_quarter",
+      "s_attacking_t_end",
+      "s_flying_t0",
+      "s_flying_t_quarter",
+      "s_flying_t_half",
+      "s_flying_t_three_quarter",
+      "s_flying_t_end"
+    ],
+    "entity_states": [
+      "idle",
+      "attacking",
+      "flying"
+    ]
+  },
+  "reference_animation_schema": {
+    "status": "SCHEMA_VALID_REFERENCE_ONLY",
+    "clip_count": 0,
+    "constant_vector_count": 0,
+    "runtime_acceptance": false
+  },
+  "accepted_animation_evidence": "production OreSpawnGeoReplacement hook posed from declared entity states through the entity's pose interface (Amendment 1 Tier-3 code-driven)",
+  "artist_editable_math_to_keyframes_status": "NOT_APPLICABLE_TIER3_CODE_DRIVEN",
+  "compiled_animation_bake_sample_count": 0,
+  "reference_clip_keys_source": "compiled setupAnim output; no Python formula evaluation",
+  "source_animation_channel_inventory": []
+}

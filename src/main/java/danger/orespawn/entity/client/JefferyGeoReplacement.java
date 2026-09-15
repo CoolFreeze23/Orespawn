@@ -8,13 +8,15 @@ import net.minecraft.resources.ResourceLocation;
 import software.bernie.geckolib.animation.AnimationProcessor;
 
 /**
- * GeckoLib Jeffery (the hooks, owner 2026-09-14, addendum item 10): a consumer of the Giant Robot rig. The port registers
- * {@code GiantRobotRenderer::new} for the {@code jeffery} registry ({@code OreSpawnClient.java:66}; {@code Jeffery
- * extends GiantRobot} - a port-side registry with no 1.7.10 registration of its own), so this descriptor shares
- * {@link GiantRobotGeoReplacement}'s geo, clip file and hook ({@link GiantRobotGeoReplacement#poseRig}) under its own
- * registry path (the Ant precedent: one profile per registry path even for a shared rig), with the Giant Robot's texture,
- * shadow and scale: {@link GiantRobotRenderer#SHADOW} (0.99 x 1.0, ENT-S-092), {@code SCALE} 1.0 (identity, no scale
- * hook). The entity is read through {@code GiantRobotPose}, which the Jeffery satisfies through its parent.
+ * GeckoLib Jeffery (the hooks, owner 2026-09-14, addendum item 10; landed by the first Tier-1 slice T1a, 2026-09-15,
+ * the owner's closing set item 4): a consumer of the Giant Robot rig. The port registers
+ * {@code GiantRobotRenderer::new} for the {@code jeffery} registry ({@code OreSpawnClient.java:66};
+ * {@code Jeffery extends GiantRobot} - a port-side registry with no 1.7.10 registration of its own), so this descriptor
+ * shares {@link GiantRobotGeoReplacement} 's geo, clip file and hook ({@link GiantRobotGeoReplacement#poseRig}) under
+ * its own registry path (the Ant precedent: one profile per registry path even for a shared rig), with the Giant
+ * Robot's texture, shadow and scale: {@link GiantRobotRenderer#SHADOW} (0.99 x 1.0, ENT-S-092), {@code SCALE} 1.0
+ * (identity, no scale hook). The entity is read through {@code GiantRobotPose} , which the Jeffery satisfies through
+ * its parent.
  */
 public final class JefferyGeoReplacement extends OreSpawnGeoReplacement<Jeffery> {
     private static final GeoReplacementDescriptor<Jeffery> DESCRIPTOR = new GeoReplacementDescriptor<>(

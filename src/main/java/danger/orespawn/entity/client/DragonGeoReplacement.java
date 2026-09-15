@@ -10,37 +10,37 @@ import net.minecraft.util.Mth;
 import software.bernie.geckolib.animation.AnimationProcessor;
 
 /**
- * GeckoLib Dragon (the hooks, owner 2026-09-14, addendum item 10; Tier 1): {@link ModelDragon#poseFrom} verbatim on the
- * converted rig, ON THE HOOK (Amendment 2 to Amendment 1: no keyframe layer, no transcription - the self-gate stays closed
- * until an artist delivers {@code idle} and {@code walk}). ANIM_SPEED 1.0f (ModelDragon.java:20 - the port's classic
- * frequency, where 1.7.10 registered the model with wingspeed 0.65f, orig ModelDragon.java:15,73 / ClientProxyOreSpawn.java:
- * 447; the port's model is what this transcribes). The idioms, all read through {@link DragonPose}: the walk amplitude
- * from the MOVEMENT DELTA - above a walking speed of a thousandth {@code cos(age * 1.25f) * PI * lspeed * 0.6f} with
- * {@code lspeed} the horizontal distance moved this tick (orig :418-424; no clamp); the ACTIVITY branch on the fourteen leg
- * parts about X (flying: a constant 1.0 tuck; else the gait, the pairs opposed; orig :425-456); the ATTACKING x ACTIVITY
- * ternaries on the wings' Z (0.75 x 0.28 flying; -0.45 + 0.85 x 0.2 attacking on the ground; -0.85 + 0.2 x 0.028 at rest;
- * orig :457) with the POSITION-write idiom (through {@link #moveTo}) - the three wing segments a side FOLLOW each other 7 and
- * 6 units along (cos, sin) of the previous segment's roll, at 4/3 and 3/2 of the angle, the inner membranes copying the
- * segment pivots (orig :458-491); the tail rhythm by the flags (0.76 / 0.45; 0.96 / 0.75 attacking; 0.22 / 0.22 idle; 0 / 0
- * sitting; orig :492-502) and the tail chain's pivots each 6 units along (sin, cos) of the previous yaw with the classic's x
- * nudges, the spikes copying their segments (orig :503-537); the RIDDEN-FLIGHT NECK LATCH (orig :538-551, the Rotator's
- * precedent): while activity is 1 the head yaw is the negated body-yaw delta x 8 eased into the per-entity {@link RenderInfo}'s
- * {@code rf1} by a sixtieth and clamped to +-50, else {@code netHeadYaw / 2}; the HEAD-LOOK idiom about Y at 0.25 / 0.5 /
- * 0.75 of the radians on the neck and head, each pivot 6 units back, the mouth / horns copying the head (the horns +-0.26
- * rad), the lower jaw 9 units on (orig :552-574); and the ATTACKING branch on the jaw's pitch (orig :575). Wing1's, wing4's,
- * tail1's and neck2's pivots are never written (the bind), read through {@link #classicPosition}; every value the classic
- * reads back from a part it just wrote is held in a local; a part whose x / y (wings) or x / z (tail, neck) the classic
- * writes keeps its bind third axis. Orig :576's {@code e.setRenderInfo(r)} is the port's omitted self-copy (ENT-S-093).
- *
- * <p>One rig, two registries (orig ClientProxyOreSpawn.java:447 {@code new RenderDragon(new ModelDragon(0.65f), 1.25f,
- * 1.0f)}; the port's Baby Dragon is a distinct entity drawn by {@link BabyDragonRenderer} with the same model):
- * {@link BabyDragonGeoReplacement} shares this class's geo, clip file and hook ({@link #poseDragon}; named apart from the base's final harness entry {@code pose}) under its own descriptor -
- * one profile per registry path (design Q9; the Ant precedent) - with its own texture rule, shadow and scale.</p>
- *
- * <p>Shadow follows {@link DragonRenderer}: a 1.25 x 1.0 shadow (ENT-S-092); the classic renderer scales by 1.0 (its
+ * GeckoLib Dragon (the hooks, owner 2026-09-14, addendum item 10; Tier 1; landed by the first Tier-1 slice T1a, 2026-09-15,
+ * the owner's closing set item 4): {@link ModelDragon#poseFrom} verbatim on the converted rig, ON THE HOOK (Amendment 2 to
+ * Amendment 1: no keyframe layer, no transcription - the self-gate stays closed until an artist delivers {@code idle} and
+ * {@code walk} ). ANIM_SPEED 1.0f (ModelDragon.java:20 - the port's classic frequency, where 1.7.10 registered the model
+ * with wingspeed 0.65f, orig ModelDragon.java:15,73 / ClientProxyOreSpawn.java: 447; the port's model is what this
+ * transcribes). The idioms, all read through {@link DragonPose} : the walk amplitude from the MOVEMENT DELTA - above a
+ * walking speed of a thousandth {@code cos(age * 1.25f) * PI * lspeed * 0.6f} with {@code lspeed} the horizontal distance
+ * moved this tick (orig :418-424; no clamp); the ACTIVITY branch on the fourteen leg parts about X (flying: a constant 1.0
+ * tuck; else the gait, the pairs opposed; orig :425-456); the ATTACKING x ACTIVITY ternaries on the wings' Z (0.75 x 0.28
+ * flying; -0.45 + 0.85 x 0.2 attacking on the ground; -0.85 + 0.2 x 0.028 at rest; orig :457) with the POSITION-write idiom
+ * (through {@link #moveTo} ) - the three wing segments a side FOLLOW each other 7 and 6 units along (cos, sin) of the
+ * previous segment's roll, at 4/3 and 3/2 of the angle, the inner membranes copying the segment pivots (orig :458-491); the
+ * tail rhythm by the flags (0.76 / 0.45; 0.96 / 0.75 attacking; 0.22 / 0.22 idle; 0 / 0 sitting; orig :492-502) and the
+ * tail chain's pivots each 6 units along (sin, cos) of the previous yaw with the classic's x nudges, the spikes copying
+ * their segments (orig :503-537); the RIDDEN-FLIGHT NECK LATCH (orig :538-551, the Rotator's precedent): while activity is
+ * 1 the head yaw is the negated body-yaw delta x 8 eased into the per-entity {@link RenderInfo} 's {@code rf1} by a
+ * sixtieth and clamped to +-50, else {@code netHeadYaw / 2} ; the HEAD-LOOK idiom about Y at 0.25 / 0.5 / 0.75 of the
+ * radians on the neck and head, each pivot 6 units back, the mouth / horns copying the head (the horns +-0.26 rad), the
+ * lower jaw 9 units on (orig :552-574); and the ATTACKING branch on the jaw's pitch (orig :575). Wing1's, wing4's, tail1's
+ * and neck2's pivots are never written (the bind), read through {@link #classicPosition} ; every value the classic reads
+ * back from a part it just wrote is held in a local; a part whose x / y (wings) or x / z (tail, neck) the classic writes
+ * keeps its bind third axis. Orig :576's {@code e.setRenderInfo(r)} is the port's omitted self-copy (ENT-S-093).
+ * <p>One rig, two registries (orig ClientProxyOreSpawn.java:447
+ * {@code new RenderDragon(new ModelDragon(0.65f), 1.25f, 1.0f)} ; the port's Baby Dragon is a distinct entity drawn by
+ * {@link BabyDragonRenderer} with the same model): {@link BabyDragonGeoReplacement} shares this class's geo, clip file and
+ * hook ({@link #poseDragon}; named apart from the base's final harness entry {@code pose} ) under its own descriptor - one
+ * profile per registry path (design Q9; the Ant precedent) - with its own texture rule, shadow and scale.</p>
+ * <p>Shadow follows {@link DragonRenderer} : a 1.25 x 1.0 shadow (ENT-S-092); the classic renderer scales by 1.0 (its
  * private SCALE), so no scale hook; the texture is the dragon type's sheet as {@link DragonRenderer#getTextureLocation}
- * resolves it (type 0 {@code dragon.png}, any other {@code white_dragon.png} - the renderer's two constants are private, so
- * the equal literals here). The rig has a zero-thickness cube (tail5, a fin), so the shipped geo carries the classic
+ * resolves it (type 0 {@code dragon.png} , any other {@code white_dragon.png} - the renderer's two constants are private,
+ * so the equal literals here). The rig has a zero-thickness cube (tail5, a fin), so the shipped geo carries the classic
  * within-cube face order ({@link FaceOrder#KEY}; TEST-007) and the seam expects it.</p>
  */
 public final class DragonGeoReplacement extends OreSpawnGeoReplacement<Dragon> {

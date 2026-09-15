@@ -4,8 +4,8 @@
   "display_name": "Dungeon Beast",
   "tier": 2,
   "tier_label": "Tier 2",
-  "geo_file": "reference_dungeonbeast.geo.json",
-  "animation_file": "dungeon_beast.animation.json",
+  "geo_file": "dungeonbeast.geo.json",
+  "animation_file": "dungeonbeast.animation.json",
   "bbmodel_file": "dungeon_beast.bbmodel",
   "texture_size": [
     128,
@@ -1701,77 +1701,6 @@
       ]
     },
     {
-      "name": "ltoe1",
-      "parent": null,
-      "pivot": [
-        3,
-        7,
-        7
-      ],
-      "rotation": [
-        -89.999981276,
-        -45.0000020972,
-        -45.0000020972
-      ],
-      "locked": false,
-      "mirror": false,
-      "cubes": [
-        {
-          "origin": [
-            0.0,
-            6.6,
-            12.2
-          ],
-          "size": [
-            1.0,
-            1.0,
-            2.0
-          ],
-          "inflate": 0,
-          "pivot": null,
-          "rotation": null,
-          "faces": {
-            "west": [
-              35.0,
-              2.0,
-              2.0,
-              1.0
-            ],
-            "east": [
-              32.0,
-              2.0,
-              2.0,
-              1.0
-            ],
-            "north": [
-              34.0,
-              2.0,
-              1.0,
-              1.0
-            ],
-            "south": [
-              37.0,
-              2.0,
-              1.0,
-              1.0
-            ],
-            "up": [
-              34.0,
-              0.0,
-              1.0,
-              2.0
-            ],
-            "down": [
-              35.0,
-              2.0,
-              1.0,
-              -2.0
-            ]
-          }
-        }
-      ]
-    },
-    {
       "name": "ltoe2",
       "parent": null,
       "pivot": [
@@ -1792,77 +1721,6 @@
             0.0,
             7.3,
             12.2
-          ],
-          "size": [
-            1.0,
-            1.0,
-            2.0
-          ],
-          "inflate": 0,
-          "pivot": null,
-          "rotation": null,
-          "faces": {
-            "west": [
-              35.0,
-              2.0,
-              2.0,
-              1.0
-            ],
-            "east": [
-              32.0,
-              2.0,
-              2.0,
-              1.0
-            ],
-            "north": [
-              34.0,
-              2.0,
-              1.0,
-              1.0
-            ],
-            "south": [
-              37.0,
-              2.0,
-              1.0,
-              1.0
-            ],
-            "up": [
-              34.0,
-              0.0,
-              1.0,
-              2.0
-            ],
-            "down": [
-              35.0,
-              2.0,
-              1.0,
-              -2.0
-            ]
-          }
-        }
-      ]
-    },
-    {
-      "name": "ltoe3",
-      "parent": null,
-      "pivot": [
-        3,
-        7,
-        7
-      ],
-      "rotation": [
-        -89.999981276,
-        45.0000020972,
-        -45.0000020972
-      ],
-      "locked": false,
-      "mirror": false,
-      "cubes": [
-        {
-          "origin": [
-            -0.7,
-            7.5,
-            11.5
           ],
           "size": [
             1.0,
@@ -3042,77 +2900,6 @@
       ]
     },
     {
-      "name": "rtoe1",
-      "parent": null,
-      "pivot": [
-        3,
-        7,
-        -7
-      ],
-      "rotation": [
-        -89.999981276,
-        45.0000020972,
-        -45.0000020972
-      ],
-      "locked": false,
-      "mirror": false,
-      "cubes": [
-        {
-          "origin": [
-            0.0,
-            6.6,
-            -1.8
-          ],
-          "size": [
-            1.0,
-            1.0,
-            2.0
-          ],
-          "inflate": 0,
-          "pivot": null,
-          "rotation": null,
-          "faces": {
-            "west": [
-              35.0,
-              2.0,
-              2.0,
-              1.0
-            ],
-            "east": [
-              32.0,
-              2.0,
-              2.0,
-              1.0
-            ],
-            "north": [
-              34.0,
-              2.0,
-              1.0,
-              1.0
-            ],
-            "south": [
-              37.0,
-              2.0,
-              1.0,
-              1.0
-            ],
-            "up": [
-              34.0,
-              0.0,
-              1.0,
-              2.0
-            ],
-            "down": [
-              35.0,
-              2.0,
-              1.0,
-              -2.0
-            ]
-          }
-        }
-      ]
-    },
-    {
       "name": "rtoe2",
       "parent": null,
       "pivot": [
@@ -3133,77 +2920,6 @@
             0.0,
             5.7,
             -1.8
-          ],
-          "size": [
-            1.0,
-            1.0,
-            2.0
-          ],
-          "inflate": 0,
-          "pivot": null,
-          "rotation": null,
-          "faces": {
-            "west": [
-              35.0,
-              2.0,
-              2.0,
-              1.0
-            ],
-            "east": [
-              32.0,
-              2.0,
-              2.0,
-              1.0
-            ],
-            "north": [
-              34.0,
-              2.0,
-              1.0,
-              1.0
-            ],
-            "south": [
-              37.0,
-              2.0,
-              1.0,
-              1.0
-            ],
-            "up": [
-              34.0,
-              0.0,
-              1.0,
-              2.0
-            ],
-            "down": [
-              35.0,
-              2.0,
-              1.0,
-              -2.0
-            ]
-          }
-        }
-      ]
-    },
-    {
-      "name": "rtoe3",
-      "parent": null,
-      "pivot": [
-        3,
-        7,
-        -7
-      ],
-      "rotation": [
-        -89.999981276,
-        -45.0000020972,
-        -45.0000020972
-      ],
-      "locked": false,
-      "mirror": false,
-      "cubes": [
-        {
-          "origin": [
-            -0.7,
-            5.4,
-            -2.5
           ],
           "size": [
             1.0,
@@ -4719,13 +4435,13 @@
       ]
     }
   ],
-  "effort_hours": 31.8,
-  "effort_source": "generator: 4 h + 0.2 h/bone x 64 + 1 h/clip x 15 to author or improve (owner adjusts)",
+  "effort_hours": 31.0,
+  "effort_source": "generator: 4 h + 0.2 h/bone x 60 + 1 h/clip x 15 to author or improve (owner adjusts)",
   "reference_clips": [
     {
       "state": "walk",
       "file": "dungeon_beast_reference_walk.animation.json",
-      "sha256": "f1cc728c7f840853573622daef347630d40efc92ac748a8606347974e7d72cf1",
+      "sha256": "c52c8dc41077d5e0839539f4f08428912b119cc87439b8bf5a688b41855d2bd0",
       "clip": "reference_walk",
       "reference_only": true,
       "delivered_clip": "walk",
@@ -4750,11 +4466,11 @@
         "max_error_degrees": 0.9174125999,
         "max_error_blocks": 0.0305089032,
         "within_tolerance": true,
-        "keys_total": 1465
+        "keys_total": 1457
       },
       "sampled_inputs": "limbSwingAmount 1.0; limbSwing = t (advancing 1.0 per tick from 0: vanilla WalkAnimationState.update does speed += (movementSpeed - speed) * multiplier; position += speed, and the classic renderer hands walkAnimation.position(partialTick) as limbSwing and min(1, speed) as limbSwingAmount, so at speed 1 the position advances exactly 1.0 per tick); ageInTicks = t (getBob: tickCount + partialTick, partialTick 0); netHeadYaw 0; headPitch 0 (looking ahead); every entity-state flag at its rest value (attacking 0, ri1 0, rock_type 0, rf1 0: a ProbeSubject built from an empty state); the entity RNG seeded 0 once per clip and evolving across the keys; one pose call per key, 20 keys per second; full health (no shipped hook reads health)",
-      "hook": "danger.orespawn.entity.client.DungeonBeastGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the unlanded hook of owner 2026-09-14, addendum item 10 - the classic setupAnim transcribed into the descriptor's PoseInputs form, proven when the rig lands - registry-free, on explicit PoseInputs, over the reference leg's converter output reference_dungeonbeast.geo.json baked without the face-order strictness the landing slice's TEST-007 adds)",
-      "landed": false,
+      "hook": "danger.orespawn.entity.client.DungeonBeastGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the shipped replacement, registry-free, on explicit PoseInputs)",
+      "landed": true,
       "moving_bones": [
         "bodys1",
         "bodys2",
@@ -4829,7 +4545,7 @@
     {
       "state": "idle",
       "file": "dungeon_beast_reference_idle.animation.json",
-      "sha256": "cae310f41557829a989a5161bbc1ea3a950c62d71f3da2631b53441a831b4fe7",
+      "sha256": "ac06cbccdf854f3a01bdc70ad83d93c0582f85fba1692895669893e84ea53728",
       "clip": "reference_idle",
       "reference_only": true,
       "delivered_clip": "idle",
@@ -4854,11 +4570,11 @@
         "max_error_degrees": 0.9899134771,
         "max_error_blocks": 0.0,
         "within_tolerance": true,
-        "keys_total": 348
+        "keys_total": 340
       },
       "sampled_inputs": "limbSwingAmount 0.0; limbSwing 0 (the walk position at rest: vanilla WalkAnimationState holds its position while the speed is 0, and a creature that has not walked since it spawned carries 0); ageInTicks = t (getBob: tickCount + partialTick, partialTick 0; advancing 1.0 per tick from 0); netHeadYaw 0; headPitch 0 (looking ahead); every entity-state flag at its rest value (attacking 0, ri1 0, rock_type 0, rf1 0: a ProbeSubject built from an empty state); the entity RNG seeded 0 once per clip and evolving across the keys; one pose call per key, 20 keys per second; full health",
-      "hook": "danger.orespawn.entity.client.DungeonBeastGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the unlanded hook of owner 2026-09-14, addendum item 10 - the classic setupAnim transcribed into the descriptor's PoseInputs form, proven when the rig lands - registry-free, on explicit PoseInputs, over the reference leg's converter output reference_dungeonbeast.geo.json baked without the face-order strictness the landing slice's TEST-007 adds)",
-      "landed": false,
+      "hook": "danger.orespawn.entity.client.DungeonBeastGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the shipped replacement, registry-free, on explicit PoseInputs)",
+      "landed": true,
       "moving_bones": [
         "bodys1",
         "bodys2",
@@ -4916,7 +4632,7 @@
     {
       "state": "attack",
       "file": "dungeon_beast_reference_attack.animation.json",
-      "sha256": "2c1be59615b0ab98893f8acdb8953ace361ca84f76699c1fddcee582fa45d62a",
+      "sha256": "12a265ab87646905bc8f615a0d4f1a6bb2d08624d3d11ff30c8cf47471108abe",
       "clip": "reference_attack",
       "reference_only": true,
       "delivered_clip": "aggro_idle",
@@ -4941,11 +4657,11 @@
         "max_error_degrees": 0.8557790338,
         "max_error_blocks": 0.0295481905,
         "within_tolerance": true,
-        "keys_total": 1236
+        "keys_total": 1228
       },
       "sampled_inputs": "getAttacking() answers 1 (the state the seed names `attack`; every other getter at its rest value); limbSwingAmount 0.0; limbSwing 0 (the walk position at rest: vanilla WalkAnimationState holds its position while the speed is 0, and a creature that has not walked since it spawned carries 0); ageInTicks = t (getBob: tickCount + partialTick, partialTick 0; advancing 1.0 per tick from 0); netHeadYaw 0; headPitch 0 (looking ahead); every other entity-state flag at its rest value (ri1 0, rock_type 0, rf1 0); the entity RNG seeded 0 once per clip and evolving across the keys; one pose call per key, 20 keys per second; full health",
-      "hook": "danger.orespawn.entity.client.DungeonBeastGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the unlanded hook of owner 2026-09-14, addendum item 10 - the classic setupAnim transcribed into the descriptor's PoseInputs form, proven when the rig lands - registry-free, on explicit PoseInputs, over the reference leg's converter output reference_dungeonbeast.geo.json baked without the face-order strictness the landing slice's TEST-007 adds)",
-      "landed": false,
+      "hook": "danger.orespawn.entity.client.DungeonBeastGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the shipped replacement, registry-free, on explicit PoseInputs)",
+      "landed": true,
       "moving_bones": [
         "bodys1",
         "bodys2",
@@ -5011,7 +4727,7 @@
   "reference_clip": {
     "state": "walk",
     "file": "dungeon_beast_reference_walk.animation.json",
-    "sha256": "f1cc728c7f840853573622daef347630d40efc92ac748a8606347974e7d72cf1",
+    "sha256": "c52c8dc41077d5e0839539f4f08428912b119cc87439b8bf5a688b41855d2bd0",
     "clip": "reference_walk",
     "reference_only": true,
     "delivered_clip": "walk",
@@ -5036,11 +4752,11 @@
       "max_error_degrees": 0.9174125999,
       "max_error_blocks": 0.0305089032,
       "within_tolerance": true,
-      "keys_total": 1465
+      "keys_total": 1457
     },
     "sampled_inputs": "limbSwingAmount 1.0; limbSwing = t (advancing 1.0 per tick from 0: vanilla WalkAnimationState.update does speed += (movementSpeed - speed) * multiplier; position += speed, and the classic renderer hands walkAnimation.position(partialTick) as limbSwing and min(1, speed) as limbSwingAmount, so at speed 1 the position advances exactly 1.0 per tick); ageInTicks = t (getBob: tickCount + partialTick, partialTick 0); netHeadYaw 0; headPitch 0 (looking ahead); every entity-state flag at its rest value (attacking 0, ri1 0, rock_type 0, rf1 0: a ProbeSubject built from an empty state); the entity RNG seeded 0 once per clip and evolving across the keys; one pose call per key, 20 keys per second; full health (no shipped hook reads health)",
-    "hook": "danger.orespawn.entity.client.DungeonBeastGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the unlanded hook of owner 2026-09-14, addendum item 10 - the classic setupAnim transcribed into the descriptor's PoseInputs form, proven when the rig lands - registry-free, on explicit PoseInputs, over the reference leg's converter output reference_dungeonbeast.geo.json baked without the face-order strictness the landing slice's TEST-007 adds)",
-    "landed": false,
+    "hook": "danger.orespawn.entity.client.DungeonBeastGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the shipped replacement, registry-free, on explicit PoseInputs)",
+    "landed": true,
     "moving_bones": [
       "bodys1",
       "bodys2",
@@ -5114,9 +4830,9 @@
   },
   "reference_offers": [],
   "exact_transcription": false,
-  "rig_source": "reference-leg converter output",
-  "in_game": false,
-  "reference_id": "reference_dungeonbeast",
+  "rig_source": "shipped",
+  "in_game": true,
+  "reference_id": null,
   "locked_bones_source": "none",
   "locked_bones_provisional": []
 }

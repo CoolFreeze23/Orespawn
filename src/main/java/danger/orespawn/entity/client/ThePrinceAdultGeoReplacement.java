@@ -10,39 +10,39 @@ import net.minecraft.util.Mth;
 import software.bernie.geckolib.animation.AnimationProcessor;
 
 /**
- * GeckoLib The Prince (adult) (the hooks, owner 2026-09-14, addendum item 10): {@link ModelThePrinceAdult#poseFrom}
- * verbatim on the converted rig (the King's part set under the Prince's own model), ON THE HOOK (no keyframe layer, no
- * transcription - the self-gate stays closed until an artist delivers {@code idle} and {@code walk}; the landing slice
- * adds the geo, the wiring and the proofs). Wingspeed 0.65f (the port's model field): the wings' roll by ATTACKING /
- * ACTIVITY / SIT (0.75 ws x PI x 0.21 attacking; 0.35 ws x 0.15 gliding, scaled by the walking speed while the
- * activity is 0; 0 while ordered to sit) on the ten parts of each wing - the third at five thirds and the fifth at
- * seven thirds of it, the third's pivot FOLLOWING the root 84 units along its roll and the fifth's the third by 184
- * (POSITION writes through {@link #moveTo}), the even parts and the four feather parts riding the third at -+0.261, the
- * right wing mirrored; the thirteen claw parts flexing on a 0.75 ws cosine x PI x 0.25 while attacking (else 0) around
- * -0.925 / 0.384 / 0.645; the legs' swing (0.6 ws x PI x 0.45 attacking; a 0.3 ws x PI x 0.25 x amount gait while
- * walking and not sitting; else 0) - a quarter of it on the thigh and upper leg around 0.785, half on the lower leg and
- * foot around -0.628, the lower leg FOLLOWING the upper by 50 units and the seven claws of each foot the lower leg by
- * 66 (at -0.1 / +0.15 rad); the tail's yaw chain at 0.56 / 0.19 attacking over 0.26 / 0.08, both 0 while sitting,
- * lagging pi / 4 per ring and FOLLOWING by 54 (a -1 x nudge) / 42 / 41 / 34 / 34 / 40 / 43 / 58 units, the two rear
- * ridges copying the first ring's yaw and the sixth ridge the seventh ring; and the three heads through
- * {@link #moveLeftHead} / {@link #moveCenterHead} / {@link #moveRightHead} (the classic helpers, the same names: the one
- * statement sequence over each head's part set): their pitch from the entity's HEAD EXTENSIONS ({@code getHead1Ext / 2
- * / 3} minus 30, degrees) in every state, their sideways sweeps attacking (0.3 / 0.28 / 0.32 ws sines x PI x 0.25, the
- * jaws on 0.85 / 0.75 / 0.95 ws x 0.12 over 0.5) or flying (0.17 / 0.13 / 0.19 ws x 0.08, the jaws 0.45 / 0.65 / 0.55
- * ws x 0.04 over 0.25), and walking the three-head LOOK split (two thirds of the head yaw / pitch, the side heads at
- * half of it on the side the head turns to, in radians, the pitch added to the extension, the jaws 0.25 / 0.45 / 0.35
- * ws x 0.03 over 0.25) - each jaw adding its head's pitch, the side heads clamped to the centre head's sweep; each
- * head's four neck rings yawed and pitched at 0.125 / 0.25 / 0.38 / 0.5 of it, FOLLOWING one another by 20 / 36 / 36 /
- * 36 units first sideways, then foreshortened and lifted by the pitch chain, the head group (three head parts, the
- * mane, two eyes, two nose spikes) riding the fourth ring by 36 and the jaw group (three jaws, four teeth) 38 units
- * behind the fourth ring along its pitch, 12 along the head's pitch and 7 across the head's yaw. The entity is read
- * through {@link ThePrinceAdultPose} (the Slice 4b doctrine). Every value the classic reads back from a part it just
- * wrote is held in a local (the head chains' sideways-pass positions are re-derived by the pitch pass before any draw,
- * so each part is written once with its final values); the wing roots', the upper legs', the first tail ring's and
- * the first neck rings' pivots, never written, are read through {@link #classicPosition} (the bind).
- *
- * <p>Shadow follows {@link ThePrinceAdultRenderer}'s constructor ({@code super(context, model, 1.2f)}: the literal it
- * passes - no SHADOW constant); its private {@code SCALE} is 1.0 (identity, applied around {@code super.render}), so
+ * GeckoLib The Prince (adult) (the hooks, owner 2026-09-14, addendum item 10; landed by the first Tier-1 slice T1a,
+ * 2026-09-15, the owner's closing set item 4): {@link ModelThePrinceAdult#poseFrom} verbatim on the converted rig (the
+ * King's part set under the Prince's own model), ON THE HOOK (no keyframe layer, no transcription - the self-gate stays
+ * closed until an artist delivers {@code idle} and {@code walk} ; the geo, the wiring and the proofs landed with T1a).
+ * Wingspeed 0.65f (the port's model field): the wings' roll by ATTACKING / ACTIVITY / SIT (0.75 ws x PI x 0.21
+ * attacking; 0.35 ws x 0.15 gliding, scaled by the walking speed while the activity is 0; 0 while ordered to sit) on
+ * the ten parts of each wing - the third at five thirds and the fifth at seven thirds of it, the third's pivot
+ * FOLLOWING the root 84 units along its roll and the fifth's the third by 184 (POSITION writes through {@link #moveTo}
+ * ), the even parts and the four feather parts riding the third at -+0.261, the right wing mirrored; the thirteen claw
+ * parts flexing on a 0.75 ws cosine x PI x 0.25 while attacking (else 0) around -0.925 / 0.384 / 0.645; the legs' swing
+ * (0.6 ws x PI x 0.45 attacking; a 0.3 ws x PI x 0.25 x amount gait while walking and not sitting; else 0) - a quarter
+ * of it on the thigh and upper leg around 0.785, half on the lower leg and foot around -0.628, the lower leg FOLLOWING
+ * the upper by 50 units and the seven claws of each foot the lower leg by 66 (at -0.1 / +0.15 rad); the tail's yaw
+ * chain at 0.56 / 0.19 attacking over 0.26 / 0.08, both 0 while sitting, lagging pi / 4 per ring and FOLLOWING by 54 (a
+ * -1 x nudge) / 42 / 41 / 34 / 34 / 40 / 43 / 58 units, the two rear ridges copying the first ring's yaw and the sixth
+ * ridge the seventh ring; and the three heads through {@link #moveLeftHead} / {@link #moveCenterHead} /
+ * {@link #moveRightHead} (the classic helpers, the same names: the one statement sequence over each head's part set):
+ * their pitch from the entity's HEAD EXTENSIONS ({@code getHead1Ext / 2 / 3} minus 30, degrees) in every state, their
+ * sideways sweeps attacking (0.3 / 0.28 / 0.32 ws sines x PI x 0.25, the jaws on 0.85 / 0.75 / 0.95 ws x 0.12 over 0.5)
+ * or flying (0.17 / 0.13 / 0.19 ws x 0.08, the jaws 0.45 / 0.65 / 0.55 ws x 0.04 over 0.25), and walking the three-head
+ * LOOK split (two thirds of the head yaw / pitch, the side heads at half of it on the side the head turns to, in
+ * radians, the pitch added to the extension, the jaws 0.25 / 0.45 / 0.35 ws x 0.03 over 0.25) - each jaw adding its
+ * head's pitch, the side heads clamped to the centre head's sweep; each head's four neck rings yawed and pitched at
+ * 0.125 / 0.25 / 0.38 / 0.5 of it, FOLLOWING one another by 20 / 36 / 36 / 36 units first sideways, then foreshortened
+ * and lifted by the pitch chain, the head group (three head parts, the mane, two eyes, two nose spikes) riding the
+ * fourth ring by 36 and the jaw group (three jaws, four teeth) 38 units behind the fourth ring along its pitch, 12
+ * along the head's pitch and 7 across the head's yaw. The entity is read through {@link ThePrinceAdultPose} (the Slice
+ * 4b doctrine). Every value the classic reads back from a part it just wrote is held in a local (the head chains'
+ * sideways-pass positions are re-derived by the pitch pass before any draw, so each part is written once with its final
+ * values); the wing roots', the upper legs', the first tail ring's and the first neck rings' pivots, never written, are
+ * read through {@link #classicPosition} (the bind).
+ * <p>Shadow follows {@link ThePrinceAdultRenderer} 's constructor ({@code super(context, model, 1.2f)}: the literal it
+ * passes - no SHADOW constant); its private {@code SCALE} is 1.0 (identity, applied around {@code super.render} ), so
  * no scale hook. No zero-thickness cube.</p>
  */
 public final class ThePrinceAdultGeoReplacement extends OreSpawnGeoReplacement<ThePrinceAdult> {

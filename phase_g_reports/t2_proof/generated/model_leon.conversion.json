@@ -1,0 +1,1406 @@
+{
+  "schema_version": 1,
+  "model_id": "model_leon",
+  "tier": 1,
+  "proof_scope": "production_proof_model",
+  "ground_truth": "executed compiled LayerDefinition and baked ModelPart",
+  "source_class": "danger.orespawn.entity.client.LeonModel",
+  "source_class_sha256": "3efc15ee65e40910cf8a3707d15a4bbfbd2045f9bf6bd99c83fc073d25f6bc81",
+  "compiled_dump_sha256": "41cbf2771e26b202f5d16ba4698c5cbb79986ae3024a3a5885c2c53e5acc9b5b",
+  "geometry_sha256": "bd62f956fa6d29a34db70f5ee4a0d81cbae2dfae074ece9d3fd4569249055f45",
+  "animation_sha256": "7882082857fdb11e02f158ebc3a6d3f970e2ac60d54813f0e903ee97b2293749",
+  "animation_contract_sha256": "72b9b429a10efb91c384e28d433e75485b64d289505ce94cf5b0308662ee2fcb",
+  "bone_count": 98,
+  "cube_count": 98,
+  "mirrored_cube_count": 0,
+  "mirrored_uv_strategy": "source flag retained as modelpart_mirror; semantics baked into explicit faces; incompatible GeckoLib native mirror disabled",
+  "exact_bone_names": [
+    "abdomen",
+    "anntena_1_L",
+    "anntena_1_R",
+    "anntena_2_L",
+    "anntena_2_R",
+    "arm_1_L",
+    "arm_1_R",
+    "arm_2_L",
+    "arm_2_R",
+    "bottom_jaw",
+    "chest",
+    "chest_ridge",
+    "claw_L",
+    "claw_L2",
+    "claw_R",
+    "claw_R_2",
+    "eye_ridge_L",
+    "eye_ridge_R",
+    "fabdomen",
+    "fanntena_1_L",
+    "fanntena_1_R",
+    "fanntena_2_L",
+    "fanntena_2_R",
+    "farm_1_L",
+    "farm_1_R",
+    "farm_2_L",
+    "farm_2_R",
+    "fbottom_jaw",
+    "fchest",
+    "fchest_ridge",
+    "fclaw_L",
+    "fclaw_L2",
+    "fclaw_R",
+    "fclaw_R_2",
+    "feye_ridge_L",
+    "feye_ridge_R",
+    "ffootL",
+    "ffootR",
+    "fhead",
+    "fleg_1_L",
+    "fleg_1_R",
+    "fleg_2_L",
+    "fleg_2_R",
+    "flower_sail1",
+    "flower_sail2",
+    "flower_sail_3",
+    "fneck_1",
+    "fneck_2",
+    "fneck_3",
+    "footL",
+    "footR",
+    "fupper_jaw",
+    "fupper_sail2_",
+    "fupper_sail3",
+    "fupper_sail_1",
+    "fwing_1_L",
+    "fwing_1_R",
+    "fwing_2_L",
+    "fwing_2_R",
+    "fwing_3_L",
+    "fwing_3_R",
+    "fwing_4_L",
+    "fwing_4_R",
+    "fwing_5_L",
+    "fwing_5_R",
+    "fwing_6_L",
+    "fwing_6_R",
+    "fwing_7_L",
+    "fwing_7_R",
+    "head",
+    "leg_1_L",
+    "leg_1_R",
+    "leg_2_L",
+    "leg_2_R",
+    "lower_sail1",
+    "lower_sail2",
+    "lower_sail_3",
+    "neck_1",
+    "neck_2",
+    "neck_3",
+    "upper_jaw",
+    "upper_sail2_",
+    "upper_sail3",
+    "upper_sail_1",
+    "wing_1_L",
+    "wing_1_R",
+    "wing_2_L",
+    "wing_2_R",
+    "wing_3_L",
+    "wing_3_R",
+    "wing_4_L",
+    "wing_4_R",
+    "wing_5_L",
+    "wing_5_R",
+    "wing_6_L",
+    "wing_6_R",
+    "wing_7_L",
+    "wing_7_R"
+  ],
+  "bone_draw_order": [
+    "chest",
+    "neck_1",
+    "neck_2",
+    "neck_3",
+    "abdomen",
+    "head",
+    "upper_jaw",
+    "bottom_jaw",
+    "chest_ridge",
+    "upper_sail_1",
+    "upper_sail2_",
+    "upper_sail3",
+    "lower_sail1",
+    "lower_sail2",
+    "lower_sail_3",
+    "eye_ridge_L",
+    "eye_ridge_R",
+    "anntena_1_L",
+    "anntena_1_R",
+    "anntena_2_L",
+    "anntena_2_R",
+    "arm_1_L",
+    "arm_2_L",
+    "wing_1_L",
+    "wing_2_L",
+    "arm_1_R",
+    "arm_2_R",
+    "wing_1_R",
+    "wing_2_R",
+    "leg_1_L",
+    "leg_1_R",
+    "leg_2_L",
+    "leg_2_R",
+    "footL",
+    "footR",
+    "wing_3_L",
+    "wing_3_R",
+    "wing_4_L",
+    "wing_4_R",
+    "claw_L",
+    "claw_R",
+    "claw_L2",
+    "claw_R_2",
+    "wing_5_L",
+    "wing_6_L",
+    "wing_7_L",
+    "wing_5_R",
+    "wing_6_R",
+    "wing_7_R",
+    "fchest",
+    "fneck_1",
+    "fneck_2",
+    "fneck_3",
+    "fabdomen",
+    "fhead",
+    "fupper_jaw",
+    "fbottom_jaw",
+    "fchest_ridge",
+    "fupper_sail_1",
+    "fupper_sail2_",
+    "fupper_sail3",
+    "flower_sail1",
+    "flower_sail2",
+    "flower_sail_3",
+    "feye_ridge_L",
+    "feye_ridge_R",
+    "fanntena_1_L",
+    "fanntena_1_R",
+    "fanntena_2_L",
+    "fanntena_2_R",
+    "farm_1_L",
+    "farm_2_L",
+    "fwing_1_L",
+    "fwing_2_L",
+    "farm_1_R",
+    "farm_2_R",
+    "fwing_1_R",
+    "fwing_2_R",
+    "fleg_1_L",
+    "fleg_1_R",
+    "fleg_2_L",
+    "fleg_2_R",
+    "ffootL",
+    "ffootR",
+    "fwing_3_L",
+    "fwing_3_R",
+    "fwing_4_L",
+    "fwing_4_R",
+    "fclaw_L",
+    "fclaw_R",
+    "fclaw_L2",
+    "fclaw_R_2",
+    "fwing_5_L",
+    "fwing_6_L",
+    "fwing_7_L",
+    "fwing_5_R",
+    "fwing_6_R",
+    "fwing_7_R"
+  ],
+  "draw_order_evidence": {
+    "source": "classic EntityModel.renderToBuffer on a second bake posed identically; every ModelPart.render is one pose-stack push, attributed to its part by ModelPart.skipDraw elimination (one run per cube-bearing part with every other part's skipDraw set); a part drawn n > 1 times is named <part>__i<k> by draw ordinal",
+    "captures": [
+      "bind",
+      "s_idle_a0_t0",
+      "s_idle_a0_t_quarter",
+      "s_idle_a0_t_half",
+      "s_idle_a0_t_three_quarter",
+      "s_idle_a0_t_end",
+      "s_idle_a0_25_t0",
+      "s_idle_a0_25_t_quarter",
+      "s_idle_a0_25_t_half",
+      "s_idle_a0_25_t_three_quarter",
+      "s_idle_a0_25_t_end",
+      "s_idle_a0_5_t0",
+      "s_idle_a0_5_t_quarter",
+      "s_idle_a0_5_t_half",
+      "s_idle_a0_5_t_three_quarter",
+      "s_idle_a0_5_t_end",
+      "s_idle_a1_t0",
+      "s_idle_a1_t_quarter",
+      "s_idle_a1_t_half",
+      "s_idle_a1_t_three_quarter",
+      "s_idle_a1_t_end",
+      "s_sitting_a0_t0",
+      "s_sitting_a0_t_quarter",
+      "s_sitting_a0_t_half",
+      "s_sitting_a0_t_three_quarter",
+      "s_sitting_a0_t_end",
+      "s_sitting_a0_25_t0",
+      "s_sitting_a0_25_t_quarter",
+      "s_sitting_a0_25_t_half",
+      "s_sitting_a0_25_t_three_quarter",
+      "s_sitting_a0_25_t_end",
+      "s_sitting_a0_5_t0",
+      "s_sitting_a0_5_t_quarter",
+      "s_sitting_a0_5_t_half",
+      "s_sitting_a0_5_t_three_quarter",
+      "s_sitting_a0_5_t_end",
+      "s_sitting_a1_t0",
+      "s_sitting_a1_t_quarter",
+      "s_sitting_a1_t_half",
+      "s_sitting_a1_t_three_quarter",
+      "s_sitting_a1_t_end",
+      "s_flying_a0_t0",
+      "s_flying_a0_t_quarter",
+      "s_flying_a0_t_half",
+      "s_flying_a0_t_three_quarter",
+      "s_flying_a0_t_end",
+      "s_flying_a0_25_t0",
+      "s_flying_a0_25_t_quarter",
+      "s_flying_a0_25_t_half",
+      "s_flying_a0_25_t_three_quarter",
+      "s_flying_a0_25_t_end",
+      "s_flying_a0_5_t0",
+      "s_flying_a0_5_t_quarter",
+      "s_flying_a0_5_t_half",
+      "s_flying_a0_5_t_three_quarter",
+      "s_flying_a0_5_t_end",
+      "s_flying_a1_t0",
+      "s_flying_a1_t_quarter",
+      "s_flying_a1_t_half",
+      "s_flying_a1_t_three_quarter",
+      "s_flying_a1_t_end",
+      "s_flying_attacking_a0_t0",
+      "s_flying_attacking_a0_t_quarter",
+      "s_flying_attacking_a0_t_half",
+      "s_flying_attacking_a0_t_three_quarter",
+      "s_flying_attacking_a0_t_end",
+      "s_flying_attacking_a0_25_t0",
+      "s_flying_attacking_a0_25_t_quarter",
+      "s_flying_attacking_a0_25_t_half",
+      "s_flying_attacking_a0_25_t_three_quarter",
+      "s_flying_attacking_a0_25_t_end",
+      "s_flying_attacking_a0_5_t0",
+      "s_flying_attacking_a0_5_t_quarter",
+      "s_flying_attacking_a0_5_t_half",
+      "s_flying_attacking_a0_5_t_three_quarter",
+      "s_flying_attacking_a0_5_t_end",
+      "s_flying_attacking_a1_t0",
+      "s_flying_attacking_a1_t_quarter",
+      "s_flying_attacking_a1_t_half",
+      "s_flying_attacking_a1_t_three_quarter",
+      "s_flying_attacking_a1_t_end"
+    ],
+    "cube_bearing_units": 98,
+    "observed_units": 98,
+    "unobserved_units": [],
+    "ordered_pairs": 4753,
+    "tie_break": "converter emission order for pairs never drawn together in any capture",
+    "lifting": "pre-order over the geo bone tree, siblings by their subtree's first classic draw"
+  },
+  "cube_face_order": {
+    "abdomen": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "anntena_1_L": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "anntena_1_R": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "anntena_2_L": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "anntena_2_R": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "arm_1_L": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "arm_1_R": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "arm_2_L": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "arm_2_R": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "bottom_jaw": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "chest": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "chest_ridge": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "claw_L": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "claw_L2": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "claw_R": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "claw_R_2": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "eye_ridge_L": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "eye_ridge_R": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "fabdomen": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "fanntena_1_L": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "fanntena_1_R": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "fanntena_2_L": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "fanntena_2_R": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "farm_1_L": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "farm_1_R": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "farm_2_L": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "farm_2_R": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "fbottom_jaw": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "fchest": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "fchest_ridge": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "fclaw_L": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "fclaw_L2": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "fclaw_R": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "fclaw_R_2": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "feye_ridge_L": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "feye_ridge_R": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "ffootL": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "ffootR": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "fhead": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "fleg_1_L": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "fleg_1_R": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "fleg_2_L": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "fleg_2_R": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "flower_sail1": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "flower_sail2": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "flower_sail_3": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "fneck_1": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "fneck_2": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "fneck_3": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "footL": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "footR": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "fupper_jaw": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "fupper_sail2_": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "fupper_sail3": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "fupper_sail_1": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "fwing_1_L": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "fwing_1_R": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "fwing_2_L": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "fwing_2_R": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "fwing_3_L": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "fwing_3_R": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "fwing_4_L": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "fwing_4_R": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "fwing_5_L": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "fwing_5_R": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "fwing_6_L": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "fwing_6_R": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "fwing_7_L": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "fwing_7_R": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "head": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "leg_1_L": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "leg_1_R": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "leg_2_L": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "leg_2_R": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "lower_sail1": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "lower_sail2": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "lower_sail_3": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "neck_1": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "neck_2": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "neck_3": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "upper_jaw": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "upper_sail2_": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "upper_sail3": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "upper_sail_1": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "wing_1_L": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "wing_1_R": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "wing_2_L": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "wing_2_R": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "wing_3_L": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "wing_3_R": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "wing_4_L": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "wing_4_R": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "wing_5_L": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "wing_5_R": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "wing_6_L": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "wing_6_R": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "wing_7_L": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "wing_7_R": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ]
+  },
+  "cube_face_order_evidence": {
+    "rule": "NeoForge 21.1.223 ModelPart.Cube.<init> polygon order DOWN, UP, WEST, NORTH, EAST, SOUTH (offsets 365-785: DOWN 365, UP 436, WEST 507, NORTH 578, EAST 649, SOUTH 720), mirror negating the X normals; GeckoLib labels by the direction whose step is the classic normal reflected in X and Y (the entity frame: the classic chain's scale(-1, -1, 1) and the baker's x negation alike, TEST-015)",
+    "cube_bearing_bones": 98,
+    "cubes": 98,
+    "verified_unrotated_cubes_at_bind": 4,
+    "verification": "captured normals (the entity frame) of every cube unrotated at bind equal the rule's, in order; the parity tool's draw-order leg compares the per-quad normal sequences of both renderers on every capture"
+  },
+  "animation_contract": {
+    "schema_version": 1,
+    "kind": "entity_state",
+    "controller_required": false,
+    "candidate_animation_path": "production_replacement_hook",
+    "candidate_class": "danger.orespawn.entity.client.LeonGeoReplacement",
+    "candidate_acceptance_path": "production OreSpawnGeoReplacementModel.setCustomAnimations (Amendment 1 Tier-3 code-driven)",
+    "sample_ids": [
+      "bind",
+      "s_idle_a0_t0",
+      "s_idle_a0_t_quarter",
+      "s_idle_a0_t_half",
+      "s_idle_a0_t_three_quarter",
+      "s_idle_a0_t_end",
+      "s_idle_a0_25_t0",
+      "s_idle_a0_25_t_quarter",
+      "s_idle_a0_25_t_half",
+      "s_idle_a0_25_t_three_quarter",
+      "s_idle_a0_25_t_end",
+      "s_idle_a0_5_t0",
+      "s_idle_a0_5_t_quarter",
+      "s_idle_a0_5_t_half",
+      "s_idle_a0_5_t_three_quarter",
+      "s_idle_a0_5_t_end",
+      "s_idle_a1_t0",
+      "s_idle_a1_t_quarter",
+      "s_idle_a1_t_half",
+      "s_idle_a1_t_three_quarter",
+      "s_idle_a1_t_end",
+      "s_sitting_a0_t0",
+      "s_sitting_a0_t_quarter",
+      "s_sitting_a0_t_half",
+      "s_sitting_a0_t_three_quarter",
+      "s_sitting_a0_t_end",
+      "s_sitting_a0_25_t0",
+      "s_sitting_a0_25_t_quarter",
+      "s_sitting_a0_25_t_half",
+      "s_sitting_a0_25_t_three_quarter",
+      "s_sitting_a0_25_t_end",
+      "s_sitting_a0_5_t0",
+      "s_sitting_a0_5_t_quarter",
+      "s_sitting_a0_5_t_half",
+      "s_sitting_a0_5_t_three_quarter",
+      "s_sitting_a0_5_t_end",
+      "s_sitting_a1_t0",
+      "s_sitting_a1_t_quarter",
+      "s_sitting_a1_t_half",
+      "s_sitting_a1_t_three_quarter",
+      "s_sitting_a1_t_end",
+      "s_flying_a0_t0",
+      "s_flying_a0_t_quarter",
+      "s_flying_a0_t_half",
+      "s_flying_a0_t_three_quarter",
+      "s_flying_a0_t_end",
+      "s_flying_a0_25_t0",
+      "s_flying_a0_25_t_quarter",
+      "s_flying_a0_25_t_half",
+      "s_flying_a0_25_t_three_quarter",
+      "s_flying_a0_25_t_end",
+      "s_flying_a0_5_t0",
+      "s_flying_a0_5_t_quarter",
+      "s_flying_a0_5_t_half",
+      "s_flying_a0_5_t_three_quarter",
+      "s_flying_a0_5_t_end",
+      "s_flying_a1_t0",
+      "s_flying_a1_t_quarter",
+      "s_flying_a1_t_half",
+      "s_flying_a1_t_three_quarter",
+      "s_flying_a1_t_end",
+      "s_flying_attacking_a0_t0",
+      "s_flying_attacking_a0_t_quarter",
+      "s_flying_attacking_a0_t_half",
+      "s_flying_attacking_a0_t_three_quarter",
+      "s_flying_attacking_a0_t_end",
+      "s_flying_attacking_a0_25_t0",
+      "s_flying_attacking_a0_25_t_quarter",
+      "s_flying_attacking_a0_25_t_half",
+      "s_flying_attacking_a0_25_t_three_quarter",
+      "s_flying_attacking_a0_25_t_end",
+      "s_flying_attacking_a0_5_t0",
+      "s_flying_attacking_a0_5_t_quarter",
+      "s_flying_attacking_a0_5_t_half",
+      "s_flying_attacking_a0_5_t_three_quarter",
+      "s_flying_attacking_a0_5_t_end",
+      "s_flying_attacking_a1_t0",
+      "s_flying_attacking_a1_t_quarter",
+      "s_flying_attacking_a1_t_half",
+      "s_flying_attacking_a1_t_three_quarter",
+      "s_flying_attacking_a1_t_end"
+    ],
+    "entity_states": [
+      "idle",
+      "sitting",
+      "flying",
+      "flying_attacking"
+    ]
+  },
+  "reference_animation_schema": {
+    "status": "SCHEMA_VALID_REFERENCE_ONLY",
+    "clip_count": 0,
+    "constant_vector_count": 0,
+    "runtime_acceptance": false
+  },
+  "accepted_animation_evidence": "production OreSpawnGeoReplacement hook posed from declared entity states through the entity's pose interface (Amendment 1 Tier-3 code-driven)",
+  "artist_editable_math_to_keyframes_status": "NOT_APPLICABLE_TIER3_CODE_DRIVEN",
+  "compiled_animation_bake_sample_count": 0,
+  "reference_clip_keys_source": "compiled setupAnim output; no Python formula evaluation",
+  "source_animation_channel_inventory": []
+}

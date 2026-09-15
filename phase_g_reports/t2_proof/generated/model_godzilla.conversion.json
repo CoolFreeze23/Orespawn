@@ -1,0 +1,1000 @@
+{
+  "schema_version": 1,
+  "model_id": "model_godzilla",
+  "tier": 1,
+  "proof_scope": "production_proof_model",
+  "ground_truth": "executed compiled LayerDefinition and baked ModelPart",
+  "source_class": "danger.orespawn.entity.client.ModelGodzilla",
+  "source_class_sha256": "416286b5b7defcbbdd9f1ded71935964489a063668889319fd9f357a5eb18bd7",
+  "compiled_dump_sha256": "1036e3e4016d7c7f54c4a774bd4fe8cdd0e63d9f753784036ced74f01ff74762",
+  "geometry_sha256": "6727afba4f901afdf0c829f3c84beccd378da97b48c09a9d92e5a4f914173d6c",
+  "animation_sha256": "7882082857fdb11e02f158ebc3a6d3f970e2ac60d54813f0e903ee97b2293749",
+  "animation_contract_sha256": "6f4fde1865393bff48a7245efd3fe4b1e886c8769c358becbda069bc0d6430ac",
+  "bone_count": 71,
+  "cube_count": 71,
+  "mirrored_cube_count": 0,
+  "mirrored_uv_strategy": "source flag retained as modelpart_mirror; semantics baked into explicit faces; incompatible GeckoLib native mirror disabled",
+  "exact_bone_names": [
+    "BodyBottom",
+    "BodyCenter",
+    "BodyTop",
+    "Head",
+    "L3rdFingerBase",
+    "L3rdFingerTip",
+    "LHand",
+    "LIndexBase",
+    "LIndexTip",
+    "LLowerArm",
+    "LLowerLeg",
+    "LShoulder",
+    "LThigh",
+    "LThumbBase",
+    "LThumbTip",
+    "LToe1",
+    "LToe2",
+    "LToe3",
+    "LToe4",
+    "LToe5",
+    "LToe6",
+    "LToe7",
+    "LToe8",
+    "LToe9",
+    "LUpperArm",
+    "LUpperLeg",
+    "LowerJaw",
+    "Lspike2",
+    "Lspike3",
+    "Lspike4",
+    "Lspike5",
+    "Lspikes1",
+    "Neck",
+    "R3rdFingerBase",
+    "R3rdFingerTip",
+    "RHand",
+    "RIndexBase",
+    "RIndexTip",
+    "RLegLower",
+    "RLegUpper",
+    "RLowerArm",
+    "RShoulder",
+    "RThigh",
+    "RThumbBase",
+    "RThumbTip",
+    "RToe1",
+    "RToe2",
+    "RToe3",
+    "RToe4",
+    "RToe5",
+    "RToe6",
+    "RToe7",
+    "RToe8",
+    "RToe9",
+    "RUpperArm",
+    "Rspike2",
+    "Rspike3",
+    "Rspike4",
+    "Rspike5",
+    "Rspikes1",
+    "Spike6",
+    "Spikes7",
+    "Tail2",
+    "Tail3",
+    "Tail4",
+    "Tail5",
+    "Tail6",
+    "Tail7",
+    "TailBase",
+    "TailTip",
+    "TopJaw"
+  ],
+  "bone_draw_order": [
+    "LToe1",
+    "LToe2",
+    "LToe3",
+    "LToe4",
+    "LToe5",
+    "LToe6",
+    "LToe7",
+    "LToe8",
+    "LToe9",
+    "RToe1",
+    "RToe2",
+    "RToe3",
+    "RToe4",
+    "RToe5",
+    "RToe6",
+    "RToe7",
+    "RToe8",
+    "RToe9",
+    "LThigh",
+    "LUpperLeg",
+    "LLowerLeg",
+    "RThigh",
+    "RLegUpper",
+    "RLegLower",
+    "BodyBottom",
+    "BodyCenter",
+    "BodyTop",
+    "Neck",
+    "Head",
+    "TopJaw",
+    "LowerJaw",
+    "TailBase",
+    "Tail2",
+    "Tail3",
+    "Tail4",
+    "Tail5",
+    "Tail6",
+    "Tail7",
+    "TailTip",
+    "RShoulder",
+    "RUpperArm",
+    "RLowerArm",
+    "RHand",
+    "RThumbBase",
+    "RThumbTip",
+    "RIndexBase",
+    "RIndexTip",
+    "R3rdFingerBase",
+    "R3rdFingerTip",
+    "LShoulder",
+    "LUpperArm",
+    "LLowerArm",
+    "LHand",
+    "LThumbBase",
+    "LThumbTip",
+    "LIndexBase",
+    "LIndexTip",
+    "L3rdFingerBase",
+    "L3rdFingerTip",
+    "Lspikes1",
+    "Rspikes1",
+    "Lspike2",
+    "Rspike2",
+    "Lspike3",
+    "Rspike3",
+    "Lspike4",
+    "Rspike4",
+    "Lspike5",
+    "Rspike5",
+    "Spike6",
+    "Spikes7"
+  ],
+  "draw_order_evidence": {
+    "source": "classic EntityModel.renderToBuffer on a second bake posed identically; every ModelPart.render is one pose-stack push, attributed to its part by ModelPart.skipDraw elimination (one run per cube-bearing part with every other part's skipDraw set); a part drawn n > 1 times is named <part>__i<k> by draw ordinal",
+    "captures": [
+      "bind",
+      "s_idle_a0_t0",
+      "s_idle_a0_t_quarter",
+      "s_idle_a0_t_half",
+      "s_idle_a0_t_three_quarter",
+      "s_idle_a0_t_end",
+      "s_idle_a0_25_t0",
+      "s_idle_a0_25_t_quarter",
+      "s_idle_a0_25_t_half",
+      "s_idle_a0_25_t_three_quarter",
+      "s_idle_a0_25_t_end",
+      "s_idle_a0_5_t0",
+      "s_idle_a0_5_t_quarter",
+      "s_idle_a0_5_t_half",
+      "s_idle_a0_5_t_three_quarter",
+      "s_idle_a0_5_t_end",
+      "s_idle_a1_t0",
+      "s_idle_a1_t_quarter",
+      "s_idle_a1_t_half",
+      "s_idle_a1_t_three_quarter",
+      "s_idle_a1_t_end",
+      "s_attacking_a0_t0",
+      "s_attacking_a0_t_quarter",
+      "s_attacking_a0_t_half",
+      "s_attacking_a0_t_three_quarter",
+      "s_attacking_a0_t_end",
+      "s_attacking_a0_25_t0",
+      "s_attacking_a0_25_t_quarter",
+      "s_attacking_a0_25_t_half",
+      "s_attacking_a0_25_t_three_quarter",
+      "s_attacking_a0_25_t_end",
+      "s_attacking_a0_5_t0",
+      "s_attacking_a0_5_t_quarter",
+      "s_attacking_a0_5_t_half",
+      "s_attacking_a0_5_t_three_quarter",
+      "s_attacking_a0_5_t_end",
+      "s_attacking_a1_t0",
+      "s_attacking_a1_t_quarter",
+      "s_attacking_a1_t_half",
+      "s_attacking_a1_t_three_quarter",
+      "s_attacking_a1_t_end"
+    ],
+    "cube_bearing_units": 71,
+    "observed_units": 71,
+    "unobserved_units": [],
+    "ordered_pairs": 2485,
+    "tie_break": "converter emission order for pairs never drawn together in any capture",
+    "lifting": "pre-order over the geo bone tree, siblings by their subtree's first classic draw"
+  },
+  "cube_face_order": {
+    "BodyBottom": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "BodyCenter": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "BodyTop": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "Head": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "L3rdFingerBase": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "L3rdFingerTip": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "LHand": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "LIndexBase": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "LIndexTip": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "LLowerArm": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "LLowerLeg": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "LShoulder": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "LThigh": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "LThumbBase": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "LThumbTip": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "LToe1": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "LToe2": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "LToe3": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "LToe4": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "LToe5": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "LToe6": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "LToe7": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "LToe8": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "LToe9": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "LUpperArm": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "LUpperLeg": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "LowerJaw": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "Lspike2": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "Lspike3": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "Lspike4": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "Lspike5": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "Lspikes1": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "Neck": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "R3rdFingerBase": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "R3rdFingerTip": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "RHand": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "RIndexBase": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "RIndexTip": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "RLegLower": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "RLegUpper": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "RLowerArm": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "RShoulder": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "RThigh": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "RThumbBase": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "RThumbTip": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "RToe1": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "RToe2": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "RToe3": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "RToe4": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "RToe5": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "RToe6": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "RToe7": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "RToe8": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "RToe9": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "RUpperArm": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "Rspike2": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "Rspike3": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "Rspike4": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "Rspike5": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "Rspikes1": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "Spike6": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "Spikes7": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "Tail2": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "Tail3": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "Tail4": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "Tail5": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "Tail6": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "Tail7": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "TailBase": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "TailTip": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "TopJaw": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ]
+  },
+  "cube_face_order_evidence": {
+    "rule": "NeoForge 21.1.223 ModelPart.Cube.<init> polygon order DOWN, UP, WEST, NORTH, EAST, SOUTH (offsets 365-785: DOWN 365, UP 436, WEST 507, NORTH 578, EAST 649, SOUTH 720), mirror negating the X normals; GeckoLib labels by the direction whose step is the classic normal reflected in X and Y (the entity frame: the classic chain's scale(-1, -1, 1) and the baker's x negation alike, TEST-015)",
+    "cube_bearing_bones": 71,
+    "cubes": 71,
+    "verified_unrotated_cubes_at_bind": 7,
+    "verification": "captured normals (the entity frame) of every cube unrotated at bind equal the rule's, in order; the parity tool's draw-order leg compares the per-quad normal sequences of both renderers on every capture"
+  },
+  "animation_contract": {
+    "schema_version": 1,
+    "kind": "entity_state",
+    "controller_required": false,
+    "candidate_animation_path": "production_replacement_hook",
+    "candidate_class": "danger.orespawn.entity.client.GodzillaGeoReplacement",
+    "candidate_acceptance_path": "production OreSpawnGeoReplacementModel.setCustomAnimations (Amendment 1 Tier-3 code-driven)",
+    "sample_ids": [
+      "bind",
+      "s_idle_a0_t0",
+      "s_idle_a0_t_quarter",
+      "s_idle_a0_t_half",
+      "s_idle_a0_t_three_quarter",
+      "s_idle_a0_t_end",
+      "s_idle_a0_25_t0",
+      "s_idle_a0_25_t_quarter",
+      "s_idle_a0_25_t_half",
+      "s_idle_a0_25_t_three_quarter",
+      "s_idle_a0_25_t_end",
+      "s_idle_a0_5_t0",
+      "s_idle_a0_5_t_quarter",
+      "s_idle_a0_5_t_half",
+      "s_idle_a0_5_t_three_quarter",
+      "s_idle_a0_5_t_end",
+      "s_idle_a1_t0",
+      "s_idle_a1_t_quarter",
+      "s_idle_a1_t_half",
+      "s_idle_a1_t_three_quarter",
+      "s_idle_a1_t_end",
+      "s_attacking_a0_t0",
+      "s_attacking_a0_t_quarter",
+      "s_attacking_a0_t_half",
+      "s_attacking_a0_t_three_quarter",
+      "s_attacking_a0_t_end",
+      "s_attacking_a0_25_t0",
+      "s_attacking_a0_25_t_quarter",
+      "s_attacking_a0_25_t_half",
+      "s_attacking_a0_25_t_three_quarter",
+      "s_attacking_a0_25_t_end",
+      "s_attacking_a0_5_t0",
+      "s_attacking_a0_5_t_quarter",
+      "s_attacking_a0_5_t_half",
+      "s_attacking_a0_5_t_three_quarter",
+      "s_attacking_a0_5_t_end",
+      "s_attacking_a1_t0",
+      "s_attacking_a1_t_quarter",
+      "s_attacking_a1_t_half",
+      "s_attacking_a1_t_three_quarter",
+      "s_attacking_a1_t_end"
+    ],
+    "entity_states": [
+      "idle",
+      "attacking"
+    ]
+  },
+  "reference_animation_schema": {
+    "status": "SCHEMA_VALID_REFERENCE_ONLY",
+    "clip_count": 0,
+    "constant_vector_count": 0,
+    "runtime_acceptance": false
+  },
+  "accepted_animation_evidence": "production OreSpawnGeoReplacement hook posed from declared entity states through the entity's pose interface (Amendment 1 Tier-3 code-driven)",
+  "artist_editable_math_to_keyframes_status": "NOT_APPLICABLE_TIER3_CODE_DRIVEN",
+  "compiled_animation_bake_sample_count": 0,
+  "reference_clip_keys_source": "compiled setupAnim output; no Python formula evaluation",
+  "source_animation_channel_inventory": []
+}

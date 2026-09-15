@@ -17,7 +17,7 @@ public class ThePrinceRenderer extends MobRenderer<ThePrince, ModelThePrince> {
     public static final ModelLayerLocation MODEL_LAYER =
             new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "theprince"), "main");
 
-    private static final float SCALE = 0.75f;
+    public static final float SCALE = 0.75f;
 
     public ThePrinceRenderer(EntityRendererProvider.Context context) {
         super(context, new ModelThePrince(context.bakeLayer(MODEL_LAYER)), 0.75f * 0.75f);

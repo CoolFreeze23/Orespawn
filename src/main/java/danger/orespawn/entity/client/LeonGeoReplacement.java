@@ -11,45 +11,44 @@ import net.minecraft.util.Mth;
 import software.bernie.geckolib.animation.AnimationProcessor;
 
 /**
- * GeckoLib Leon (the hook lanes, 2026-09-14, addendum item 10): {@link LeonModel#poseFrom} verbatim on the converted
- * rig, ON THE HOOK (no keyframe layer, no transcription - the self-gate stays closed until an artist delivers
- * {@code idle} and {@code walk}). Wingspeed 0.22f (orig ModelLeon.java:15,116 / ClientProxyOreSpawn.java:500). The rig
- * carries TWO part sets and draws exactly one per frame by the entity's activity (orig ModelLeon.java:729/852; the
- * port's {@code visible} toggles, TF-030) - here {@link #setVisible} on the forty-nine standing and forty-nine flying
- * parts. STANDING (activity 0): the THRESHOLD gait ({@code cos(age * 1.8 ws) * PI * 0.25 * limbSwingAmount} above a
- * walking speed of a tenth) on the two-part legs around -+0.611 with the feet FOLLOWING through {@link #moveTo} (9 units
- * of sin / cos, then 13 / 11), the halved gait on the arms and inner wings around -0.07 / -0.17 / -0.471 / -0.523 with an
- * 11-unit follow and the outer wing group 20 units on (the claws 1 / 9 units behind, 2 down), the 0.9-ws wing sway
- * ({@code PI * 0.25 * limbSwingAmount} walking, {@code PI * 0.02} standing, 0 SITTING) at a half / quarter / eighth on
- * the three outer wing parts, the 0.6-ws breath on the chest (an eighth) and jaw and lower sails (a half), and the
- * HEAD-LOOK idiom ({@code toRadians(netHeadYaw) * 0.5} on the head, jaws and sails, the eye ridges and antennae around
- * +-0.558 / 0.366 / 0.139, the lower jaw following the head by 5 units). FLYING: the ATTACKING flag speeds the beat
- * (spd 1.7) and widens it (amp 1.4); the chest bobs {@code sin(cos(age * 1.6 ws spd) * PI * 0.06) * 10 * amp} unless
- * RIDDEN, the abdomen and the four rear wings follow it; the legs hang at pi/2 (attacking: -pi/4 with a 3.6-ws
- * flutter and fixed x offsets 7 / 11 / -9 / -13); the two three-part wings beat about Z on
- * {@code cos(age * 1.6 ws spd) * PI * 0.26 * amp} around -+pi/2 with 1.3 and 1.65 multiples down the chain and 14 / 20-unit
- * follows; the three neck rings and the head follow the chest (10 / 7 / 7 / 16 along, 8 / 6 / 5 / 15 up) pitching
- * -newangle / 12, 10, 8; the head yaw is {@code toRadians(netHeadYaw) * 0.5} unless RIDDEN, when it is the per-entity
- * ACCUMULATOR {@code rf1 += ((yRotO - yRot) * -8 - rf1) / 60} clamped to +-50 (orig :1013-1024; the Rotator's
- * precedent); the jaw opens on a 2.6-ws {@code PI * 0.16} while attacking, the three lower sails at fixed offsets. The
- * entity is read through {@link LeonPose}.
+ * GeckoLib Leon (the hook lanes, 2026-09-14, addendum item 10; landed by the first Tier-1 slice T1a, 2026-09-15, the
+ * owner's closing set item 4): {@link LeonModel#poseFrom} verbatim on the converted rig, ON THE HOOK (no keyframe
+ * layer, no transcription - the self-gate stays closed until an artist delivers {@code idle} and {@code walk} ).
+ * Wingspeed 0.22f (orig ModelLeon.java:15,116 / ClientProxyOreSpawn.java:500). The rig carries TWO part sets and draws
+ * exactly one per frame by the entity's activity (orig ModelLeon.java:729/852; the port's {@code visible} toggles,
+ * TF-030) - here {@link #setVisible} on the forty-nine standing and forty-nine flying parts. STANDING (activity 0):
+ * the THRESHOLD gait ({@code cos(age * 1.8 ws) * PI * 0.25 * limbSwingAmount} above a walking speed of a tenth) on the
+ * two-part legs around -+0.611 with the feet FOLLOWING through {@link #moveTo} (9 units of sin / cos, then 13 / 11),
+ * the halved gait on the arms and inner wings around -0.07 / -0.17 / -0.471 / -0.523 with an 11-unit follow and the
+ * outer wing group 20 units on (the claws 1 / 9 units behind, 2 down), the 0.9-ws wing sway ({@code PI * 0.25 *
+ * limbSwingAmount} walking, {@code PI * 0.02} standing, 0 SITTING) at a half / quarter / eighth on the three outer
+ * wing parts, the 0.6-ws breath on the chest (an eighth) and jaw and lower sails (a half), and the HEAD-LOOK idiom
+ * ({@code toRadians(netHeadYaw) * 0.5} on the head, jaws and sails, the eye ridges and antennae around +-0.558 / 0.366
+ * / 0.139, the lower jaw following the head by 5 units). FLYING: the ATTACKING flag speeds the beat (spd 1.7) and
+ * widens it (amp 1.4); the chest bobs {@code sin(cos(age * 1.6 ws spd) * PI * 0.06) * 10 * amp} unless RIDDEN, the
+ * abdomen and the four rear wings follow it; the legs hang at pi/2 (attacking: -pi/4 with a 3.6-ws flutter and fixed x
+ * offsets 7 / 11 / -9 / -13); the two three-part wings beat about Z on {@code cos(age * 1.6 ws spd) * PI * 0.26 * amp}
+ * around -+pi/2 with 1.3 and 1.65 multiples down the chain and 14 / 20-unit follows; the three neck rings and the head
+ * follow the chest (10 / 7 / 7 / 16 along, 8 / 6 / 5 / 15 up) pitching -newangle / 12, 10, 8; the head yaw is
+ * {@code toRadians(netHeadYaw) * 0.5} unless RIDDEN, when it is the per-entity ACCUMULATOR
+ * {@code rf1 += ((yRotO - yRot) * -8 - rf1) / 60} clamped to +-50 (orig :1013-1024; the Rotator's precedent); the jaw
+ * opens on a 2.6-ws {@code PI * 0.16} while attacking, the three lower sails at fixed offsets. The entity is read
+ * through {@link LeonPose} .
  *
  * <p>Two registries, one rig: {@link LeonopteryxGeoReplacement} (the canonical {@code leonopteryx} id, TF-030) shares
  * this class's geo, clip file and hook ({@link #poseRig}) under its own descriptor. Scale and shadow follow
- * {@link LeonRenderer}: 1.75 render scale and a 1.0 x 1.75 shadow (orig ClientProxyOreSpawn.java:500; the renderer keeps
- * both as literals, its SCALE private, so the equal literals are carried here). The four sails are zero-thickness cubes
- * (the seam draws every cube with its true transformed normal, ENT-S-161, and its two coplanar faces in the classic
- * order - below). The classic renderer's unconditional {@code shouldRender} (OPT-013) is a renderer matter for the
- * landing slice.</p>
+ * {@link LeonRenderer} : 1.75 render scale ({@link LeonRenderer#SCALE}, made public by the landing slice T1a; the hook
+ * lanes carried an equal literal while it was private - the T2d form) and a 1.0 x 1.75 shadow (orig
+ * ClientProxyOreSpawn.java:500 / RenderLeon.java:22-25; the renderer passes the shadow as a literal, so both
+ * descriptors' constructors pass the equal literal - the pins tool reads a literal or the renderer's constant, never a
+ * descriptor static, T1a). The four sails are zero-thickness cubes (the seam draws every cube with its true
+ * transformed normal, ENT-S-161, and its two coplanar faces in the classic order - below). The classic renderer's
+ * unconditional {@code shouldRender} (OPT-013) is carried by {@link Renderer#shouldRender} of both registries
+ * (T1a).</p>
  */
 public final class LeonGeoReplacement extends OreSpawnGeoReplacement<EntityLeon> {
     /** orig ModelLeon.java:15,116 {@code wingspeed} = 0.22f (ClientProxyOreSpawn.java:500): the chain's third multiply. */
     static final float WINGSPEED = 0.22F;
-    /** orig ClientProxyOreSpawn.java:500 {@code new RenderLeon(new ModelLeon(0.22f), 1.0f, 1.75f)}: LeonRenderer's private SCALE. */
-    static final float SCALE = 1.75F;
-    /** orig RenderLeon.java:22-25 shadow = 1.0f x 1.75f: the literal LeonRenderer's constructor passes. */
-    static final float SHADOW = 1.75F;
-    static final ResourceLocation MODEL = ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "geo/entity/leon.geo.json");
     static final ResourceLocation ANIMATION = ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "animations/entity/leon.animation.json");
     static final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "textures/entity/leon.png");
     /** orig ModelLeon.java:803-851: the standing set, drawn when {@code getActivity() == 0}. */
@@ -78,11 +77,12 @@ public final class LeonGeoReplacement extends OreSpawnGeoReplacement<EntityLeon>
     };
     private static final GeoReplacementDescriptor<EntityLeon> DESCRIPTOR = new GeoReplacementDescriptor<>(
             () -> ModEntities.ENTITY_LEON.get(),  // lambda: a bound method ref would initialise ModEntities eagerly
-            EntityLeon.class, MODEL, ANIMATION, TEXTURE, SHADOW) {
+            EntityLeon.class, ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "geo/entity/leon.geo.json"),
+            ANIMATION, TEXTURE, 1.75F) {
         @Override
         public void applyScale(EntityLeon entity, PoseStack poseStack, float partialTick) {
-            // orig RenderLeon.java:39-41 preRenderScale: GL11.glScalef(scale, scale, scale) (LeonRenderer.scale)
-            poseStack.scale(SCALE, SCALE, SCALE);
+            // orig RenderLeon.java:39-41 preRenderScale: GL11.glScalef(scale, scale, scale) (LeonRenderer.scale; public since T1a)
+            poseStack.scale(LeonRenderer.SCALE, LeonRenderer.SCALE, LeonRenderer.SCALE);
         }
 
         /**
@@ -478,6 +478,12 @@ public final class LeonGeoReplacement extends OreSpawnGeoReplacement<EntityLeon>
     public static final class Renderer extends OreSpawnGeoReplacedEntityRenderer<EntityLeon, LeonGeoReplacement> {
         public Renderer(EntityRendererProvider.Context context) {
             super(context, new LeonGeoReplacement());
+        }
+
+        /** The classic {@link LeonRenderer#shouldRender} (OPT-013): unconditionally drawn, never frustum-culled by its hitbox (T1a). */
+        @Override
+        public boolean shouldRender(EntityLeon entity, net.minecraft.client.renderer.culling.Frustum frustum, double x, double y, double z) {
+            return true;
         }
     }
 }

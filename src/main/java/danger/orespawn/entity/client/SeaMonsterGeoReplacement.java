@@ -10,24 +10,24 @@ import net.minecraft.util.Mth;
 import software.bernie.geckolib.animation.AnimationProcessor;
 
 /**
- * GeckoLib Sea Monster (the hooks, owner 2026-09-14, addendum item 10): {@link ModelSeaMonster#poseFrom} verbatim on
- * the converted rig, ON THE HOOK (no keyframe layer, no transcription - the self-gate stays closed until an artist
- * delivers {@code idle} and {@code walk}; the landing slice adds the geo, the wiring and the proofs). Wingspeed 0.5f
- * (orig ModelSeaMonster.java:14,40 / ClientProxyOreSpawn.java:496): the THRESHOLD-OR-ATTACKING idiom
- * ({@code (double) limbSwingAmount > 0.1 || getAttacking() != 0}) on three rhythms - the tail's yaw fan
- * ({@code cos(age x 1.3 ws) x PI x 0.2 x amount}, else 0, in sevenths down to the tip, the seven rings FOLLOWING one
- * another by 10 / 7 / 5 / 5 / 5 / 5 units in x / z: POSITION writes through {@link #moveTo}), the four fins' pitch and
- * yaw (1.2 ws x PI x 0.2 x amount, else a 0.02 breath, around -0.523 / -+0.698), and the neck's pitch chain (0.455 x
- * amount + 0.9 ws x PI x 0.25 x amount, else a 0.3 ws x 0.02 breath: the base at 0.455 + a fifth, each ring adding a
- * quarter / third / half and the last two subtracting a half / third, the rings FOLLOWING by 9 / 9 / 9 / 9 / 5 units in
- * y / z, the jaws and eyes riding 5 units past the sixth); the HEAD-LOOK idiom (yaw {@code toRadians(netHeadYaw) x 0.5}
- * on the top jaw, the eyes and the bottom jaw); and the ATTACKING branch on the bottom jaw ({@code getAttacking() != 0}:
- * a 1.7 ws cosine x PI x 0.17 over 0.45, else a 0.2 ws cosine x PI x 0.05 over 0.17). The entity is read through
- * {@link SeaMonsterPose} (the Slice 4b doctrine). Every value the classic reads back from a part it just wrote is held
- * in a local; the tail base's and the neck base's pivots, never written, are read through {@link #classicPosition}
- * (the bind), as are the tail's y and the neck's x.
+ * GeckoLib Sea Monster (the hooks, owner 2026-09-14, addendum item 10; landed by the first Tier-1 slice T1a,
+ * 2026-09-15, the owner's closing set item 4): {@link ModelSeaMonster#poseFrom} verbatim on the converted rig, ON THE
+ * HOOK (no keyframe layer, no transcription - the self-gate stays closed until an artist delivers {@code idle} and
+ * {@code walk} ; the geo, the wiring and the proofs landed with T1a). Wingspeed 0.5f (orig ModelSeaMonster.java:14,40 /
+ * ClientProxyOreSpawn.java:496): the THRESHOLD-OR-ATTACKING idiom ({@code (double) limbSwingAmount > 0.1 ||
+ * getAttacking() != 0}) on three rhythms - the tail's yaw fan ({@code cos(age x 1.3 ws) x PI x 0.2 x amount}, else 0,
+ * in sevenths down to the tip, the seven rings FOLLOWING one another by 10 / 7 / 5 / 5 / 5 / 5 units in x / z: POSITION
+ * writes through {@link #moveTo} ), the four fins' pitch and yaw (1.2 ws x PI x 0.2 x amount, else a 0.02 breath,
+ * around -0.523 / -+0.698), and the neck's pitch chain (0.455 x amount + 0.9 ws x PI x 0.25 x amount, else a 0.3 ws x
+ * 0.02 breath: the base at 0.455 + a fifth, each ring adding a quarter / third / half and the last two subtracting a
+ * half / third, the rings FOLLOWING by 9 / 9 / 9 / 9 / 5 units in y / z, the jaws and eyes riding 5 units past the
+ * sixth); the HEAD-LOOK idiom (yaw {@code toRadians(netHeadYaw) x 0.5} on the top jaw, the eyes and the bottom jaw);
+ * and the ATTACKING branch on the bottom jaw ({@code getAttacking() != 0}: a 1.7 ws cosine x PI x 0.17 over 0.45, else
+ * a 0.2 ws cosine x PI x 0.05 over 0.17). The entity is read through {@link SeaMonsterPose} (the Slice 4b doctrine).
+ * Every value the classic reads back from a part it just wrote is held in a local; the tail base's and the neck base's
+ * pivots, never written, are read through {@link #classicPosition} (the bind), as are the tail's y and the neck's x.
  *
- * <p>Shadow follows {@link SeaMonsterRenderer}: a 1.0 x 1.0 shadow (ENT-S-092); its {@code SCALE} is 1.0 (identity),
+ * <p>Shadow follows {@link SeaMonsterRenderer} : a 1.0 x 1.0 shadow (ENT-S-092); its {@code SCALE} is 1.0 (identity),
  * so no scale hook. No zero-thickness cube.</p>
  */
 public final class SeaMonsterGeoReplacement extends OreSpawnGeoReplacement<SeaMonster> {
@@ -161,6 +161,12 @@ public final class SeaMonsterGeoReplacement extends OreSpawnGeoReplacement<SeaMo
     public static final class Renderer extends OreSpawnGeoReplacedEntityRenderer<SeaMonster, SeaMonsterGeoReplacement> {
         public Renderer(EntityRendererProvider.Context context) {
             super(context, new SeaMonsterGeoReplacement());
+        }
+
+        /** The classic {@link SeaMonsterRenderer#shouldRender} (OPT-013): unconditionally drawn, never frustum-culled by its hitbox (T1a). */
+        @Override
+        public boolean shouldRender(SeaMonster entity, net.minecraft.client.renderer.culling.Frustum frustum, double x, double y, double z) {
+            return true;
         }
     }
 }

@@ -13,9 +13,12 @@ import danger.orespawn.entity.client.AntGeoReplacement;
 import danger.orespawn.entity.client.AntRenderer;
 import danger.orespawn.entity.client.AttackSquidGeoReplacement;
 import danger.orespawn.entity.client.AttackSquidRenderer;
+import danger.orespawn.entity.client.BabyDragonGeoReplacement;
 import danger.orespawn.entity.client.BandPGeoReplacement;
 import danger.orespawn.entity.client.BandPRenderer;
 import danger.orespawn.entity.client.BaryonyxGeoReplacement;
+import danger.orespawn.entity.client.BasiliskGeoReplacement;
+import danger.orespawn.entity.client.BasiliskRenderer;
 import danger.orespawn.entity.client.BeeGeoReplacement;
 import danger.orespawn.entity.client.BeeRenderer;
 import danger.orespawn.entity.client.BrutalflyGeoReplacement;
@@ -27,6 +30,7 @@ import danger.orespawn.entity.client.CaterKillerGeoReplacement;
 import danger.orespawn.entity.client.CaterKillerRenderer;
 import danger.orespawn.entity.client.CaveFisherGeoReplacement;
 import danger.orespawn.entity.client.CaveFisherRenderer;
+import danger.orespawn.entity.client.CephadromeGeoReplacement;
 import danger.orespawn.entity.client.ChipmunkGeoReplacement;
 import danger.orespawn.entity.client.ChipmunkRenderer;
 import danger.orespawn.entity.client.CliffRacerGeoReplacement;
@@ -41,10 +45,13 @@ import danger.orespawn.entity.client.CreepingHorrorRenderer;
 import danger.orespawn.entity.client.CricketGeoReplacement;
 import danger.orespawn.entity.client.CricketRenderer;
 import danger.orespawn.entity.client.CryolophosaurusGeoReplacement;
+import danger.orespawn.entity.client.DragonGeoReplacement;
+import danger.orespawn.entity.client.DragonRenderer;
 import danger.orespawn.entity.client.DragonflyGeoReplacement;
 import danger.orespawn.entity.client.DragonflyRenderer;
 import danger.orespawn.entity.client.DrawOrder;
 import danger.orespawn.entity.client.DungeonBeastGeoReplacement;
+import danger.orespawn.entity.client.DungeonBeastRenderer;
 import danger.orespawn.entity.client.EasterBunnyGeoReplacement;
 import danger.orespawn.entity.client.EasterBunnyRenderer;
 import danger.orespawn.entity.client.EmperorScorpionGeoReplacement;
@@ -69,19 +76,29 @@ import danger.orespawn.entity.client.GazelleRenderer;
 import danger.orespawn.entity.client.GeoReplacementDescriptor;
 import danger.orespawn.entity.client.GhostSkellyGeoReplacement;
 import danger.orespawn.entity.client.GhostSkellyRenderer;
+import danger.orespawn.entity.client.GiantRobotGeoReplacement;
+import danger.orespawn.entity.client.GiantRobotRenderer;
+import danger.orespawn.entity.client.GodzillaGeoReplacement;
+import danger.orespawn.entity.client.GodzillaRenderer;
 import danger.orespawn.entity.client.GoldFishGeoReplacement;
 import danger.orespawn.entity.client.GoldFishRenderer;
+import danger.orespawn.entity.client.HammerheadGeoReplacement;
+import danger.orespawn.entity.client.HammerheadRenderer;
 import danger.orespawn.entity.client.HerculesBeetleGeoReplacement;
 import danger.orespawn.entity.client.HerculesBeetleRenderer;
 import danger.orespawn.entity.client.HydroliscGeoReplacement;
 import danger.orespawn.entity.client.HydroliscRenderer;
 import danger.orespawn.entity.client.IrukandjiGeoReplacement;
 import danger.orespawn.entity.client.IrukandjiRenderer;
+import danger.orespawn.entity.client.JefferyGeoReplacement;
 import danger.orespawn.entity.client.KrakenGeoReplacement;
+import danger.orespawn.entity.client.KrakenRenderer;
 import danger.orespawn.entity.client.KyuubiGeoReplacement;
 import danger.orespawn.entity.client.KyuubiRenderer;
 import danger.orespawn.entity.client.LeafMonsterGeoReplacement;
 import danger.orespawn.entity.client.LeafMonsterRenderer;
+import danger.orespawn.entity.client.LeonGeoReplacement;
+import danger.orespawn.entity.client.LeonopteryxGeoReplacement;
 import danger.orespawn.entity.client.LizardGeoReplacement;
 import danger.orespawn.entity.client.LizardRenderer;
 import danger.orespawn.entity.client.MantisGeoReplacement;
@@ -97,6 +114,8 @@ import danger.orespawn.entity.client.OstrichGeoReplacement;
 import danger.orespawn.entity.client.OstrichRenderer;
 import danger.orespawn.entity.client.PeacockGeoReplacement;
 import danger.orespawn.entity.client.PeacockRenderer;
+import danger.orespawn.entity.client.PitchBlackGeoReplacement;
+import danger.orespawn.entity.client.PitchBlackRenderer;
 import danger.orespawn.entity.client.PointysaurusGeoReplacement;
 import danger.orespawn.entity.client.PoseInputs;
 import danger.orespawn.entity.client.RainbowAntGeoReplacement;
@@ -109,6 +128,8 @@ import danger.orespawn.entity.client.RenderInfo;
 import danger.orespawn.entity.client.RubberDuckyGeoReplacement;
 import danger.orespawn.entity.client.RubberDuckyRenderer;
 import danger.orespawn.entity.client.RubyBirdGeoReplacement;
+import danger.orespawn.entity.client.SeaMonsterGeoReplacement;
+import danger.orespawn.entity.client.SeaMonsterRenderer;
 import danger.orespawn.entity.client.SeaViperGeoReplacement;
 import danger.orespawn.entity.client.SeaViperRenderer;
 import danger.orespawn.entity.client.SkateGeoReplacement;
@@ -121,10 +142,14 @@ import danger.orespawn.entity.client.StinkBugGeoReplacement;
 import danger.orespawn.entity.client.StinkBugRenderer;
 import danger.orespawn.entity.client.StinkyGeoReplacement;
 import danger.orespawn.entity.client.StinkyRenderer;
+import danger.orespawn.entity.client.TRexGeoReplacement;
+import danger.orespawn.entity.client.TRexRenderer;
 import danger.orespawn.entity.client.TermiteGeoReplacement;
 import danger.orespawn.entity.client.TermiteRenderer;
 import danger.orespawn.entity.client.TerribleTerrorGeoReplacement;
 import danger.orespawn.entity.client.TerribleTerrorRenderer;
+import danger.orespawn.entity.client.ThePrinceAdultGeoReplacement;
+import danger.orespawn.entity.client.ThePrinceGeoReplacement;
 import danger.orespawn.entity.client.TriffidGeoReplacement;
 import danger.orespawn.entity.client.TriffidRenderer;
 import danger.orespawn.entity.client.TrooperBugGeoReplacement;
@@ -149,33 +174,47 @@ import danger.orespawn.entity.client.animation.KeyframeLayer;
 import danger.orespawn.entity.client.animation.PhaseLockedKeyframeController;
 import danger.orespawn.entity.pose.AlienPose;
 import danger.orespawn.entity.pose.AlosaurusPose;
+import danger.orespawn.entity.pose.BasiliskPose;
 import danger.orespawn.entity.pose.BeePose;
 import danger.orespawn.entity.pose.CamarasaurusPose;
 import danger.orespawn.entity.pose.CaterKillerPose;
 import danger.orespawn.entity.pose.CaveFisherPose;
+import danger.orespawn.entity.pose.CephadromePose;
 import danger.orespawn.entity.pose.ChipmunkPose;
 import danger.orespawn.entity.pose.CrabPose;
+import danger.orespawn.entity.pose.DragonPose;
+import danger.orespawn.entity.pose.DungeonBeastPose;
 import danger.orespawn.entity.pose.EmperorScorpionPose;
 import danger.orespawn.entity.pose.EnderKnightPose;
 import danger.orespawn.entity.pose.EnderReaperPose;
 import danger.orespawn.entity.pose.FrogPose;
 import danger.orespawn.entity.pose.GazellePose;
 import danger.orespawn.entity.pose.GhostSkellyPose;
+import danger.orespawn.entity.pose.GiantRobotPose;
+import danger.orespawn.entity.pose.GodzillaPose;
+import danger.orespawn.entity.pose.HammerheadPose;
 import danger.orespawn.entity.pose.HerculesBeetlePose;
 import danger.orespawn.entity.pose.HydroliscPose;
+import danger.orespawn.entity.pose.KrakenPose;
 import danger.orespawn.entity.pose.LeafMonsterPose;
+import danger.orespawn.entity.pose.LeonPose;
 import danger.orespawn.entity.pose.LizardPose;
 import danger.orespawn.entity.pose.MantisPose;
 import danger.orespawn.entity.pose.MolenoidPose;
 import danger.orespawn.entity.pose.NastysaurusPose;
 import danger.orespawn.entity.pose.OstrichPose;
 import danger.orespawn.entity.pose.PeacockPose;
+import danger.orespawn.entity.pose.PitchBlackPose;
 import danger.orespawn.entity.pose.PointysaurusPose;
 import danger.orespawn.entity.pose.RatPose;
+import danger.orespawn.entity.pose.SeaMonsterPose;
 import danger.orespawn.entity.pose.SeaViperPose;
 import danger.orespawn.entity.pose.SpitBugPose;
 import danger.orespawn.entity.pose.SpyroPose;
 import danger.orespawn.entity.pose.StinkyPose;
+import danger.orespawn.entity.pose.TRexPose;
+import danger.orespawn.entity.pose.ThePrinceAdultPose;
+import danger.orespawn.entity.pose.ThePrincePose;
 import danger.orespawn.entity.pose.TriffidPose;
 import danger.orespawn.entity.pose.TrooperBugPose;
 import danger.orespawn.entity.pose.UrchinPose;
@@ -269,6 +308,18 @@ import software.bernie.geckolib.loading.object.GeometryTree;
  *     through the seam frame (S_y R_y(90) S_y = R_y(90): the bake flips nothing in x; the Kraken's about the classic
  *     origin 1.501 up), measured on a pose stack against the analysis's closed form and, on sample points, the classic
  *     chain (the classic flip and lift, the classic rotation) against the seam chain (the slot, then the seam frame).</li>
+ * <li>{@code t2_012} (the first Tier-1 slice T1a, 2026-09-15; owner's closing set item 4 on the hooks already written,
+ *     addendum items 10 and 14; hitbox profiles excluded): the seventeen HOOK registries landed on their hooks - the Kraken,
+ *     Dungeon Beast, Basilisk, Godzilla, Hammerhead, T-Rex, Leon and Leonopteryx, Cephadrome, Dragon and Baby Dragon, Giant
+ *     Robot and Jeffery, Pitch Black, Sea Monster, The Prince and The Prince Adult (the King held on its second translucent
+ *     membrane pass, the Butterfly rig on the Mothra's pair-contested cap, their register lines) - each pinned exactly as
+ *     {@code t2_005} pins the third slice's (no layer, an empty file, nothing registered, the classic shadow, the face order
+ *     on the Godzilla, Leon pair, Cephadrome, Dragon pair and Prince (their zero-thickness cubes), the hook moving a named bone
+ *     off its bind at age 7; every hook of the slice reads its entity, so each poses on its own declared rest subject), plus
+ *     the slice's own facts: the three shared consumers draw their rig's geo, the Dungeon Beast's shipped geo carries none of
+ *     its four undrawn toes (TEST-013), the Giant Robot pair's geo carries the twenty-two render-instance clones (the Crab's
+ *     form) and the Kraken's and Dungeon Beast's descriptors declare their constant render transform ({@code t2_009} pins
+ *     its conjugation).</li>
  * <li>{@code t2_004}: the render facts the 4c precedent pinned in code - each descriptor's shadow radius is its
  *     classic renderer's constant (ENT-S-092; the Ant family's {@code 0.1 / 0.15 x SCALE} products where the classic
  *     renderer declares no SHADOW), the Cockateil and Ruby Bird sharing the Cockateil renderer's - and each shared
@@ -1031,7 +1082,186 @@ public class T2SeamTests {
         helper.succeed();
     }
 
-    /** The t2_005 pins on one hook species (shared by the third, fourth, fifth and sixth slices' rows). */
+    // ------------------------------------------------------------------ row 12: the hook registries of the first Tier-1 slice (T1a)
+
+    /**
+     * The declared rest state of the seventeen T1a hooks (every one reads its entity): the attacking flag 0, activity 0, not
+     * sitting, not ordered to sit, not ridden, at rest on the origin with no movement delta and no yaw delta, the head
+     * extensions 0, the Pitch Black's size tier 1.0; a fresh RenderInfo latch and the entity RNG seeded 0 (the probe's rest
+     * subject). One instance per registry (the Kraken, the Dungeon Beast and the Pitch Black write the latch's scratch).
+     */
+    private static final class RestSubjectT1a implements KrakenPose, DungeonBeastPose, BasiliskPose, GodzillaPose, HammerheadPose,
+            TRexPose, LeonPose, CephadromePose, DragonPose, GiantRobotPose, PitchBlackPose, SeaMonsterPose, ThePrincePose,
+            ThePrinceAdultPose {
+        private final RenderInfo renderInfo = new RenderInfo();
+        private final RandomSource random = RandomSource.create(0L);
+
+        @Override
+        public RenderInfo getRenderInfo() {
+            return this.renderInfo;
+        }
+
+        @Override
+        public int getAttacking() {
+            return 0;
+        }
+
+        @Override
+        public RandomSource getRandom() {
+            return this.random;
+        }
+
+        @Override
+        public int getActivity() {
+            return 0;
+        }
+
+        @Override
+        public int getBeingRidden() {
+            return 0;
+        }
+
+        @Override
+        public boolean isInSittingPose() {
+            return false;
+        }
+
+        @Override
+        public boolean isOrderedToSit() {
+            return false;
+        }
+
+        @Override
+        public float getYRot() {
+            return 0.0F;
+        }
+
+        @Override
+        public float getYRotO() {
+            return 0.0F;
+        }
+
+        @Override
+        public float yRotO() {
+            return 0.0F;
+        }
+
+        @Override
+        public double getX() {
+            return 0.0D;
+        }
+
+        @Override
+        public double getZ() {
+            return 0.0D;
+        }
+
+        @Override
+        public double xOld() {
+            return 0.0D;
+        }
+
+        @Override
+        public double zOld() {
+            return 0.0D;
+        }
+
+        @Override
+        public float getPitchBlackScale() {
+            return 1.0F;
+        }
+
+        @Override
+        public int getHead1Ext() {
+            return 0;
+        }
+
+        @Override
+        public int getHead2Ext() {
+            return 0;
+        }
+
+        @Override
+        public int getHead3Ext() {
+            return 0;
+        }
+    }
+
+    private static List<HookSpecies> hookSpeciesT1a() {
+        return List.of(
+                // the Kraken: the right fin rolls on the 0.43 cosine (the whole-model XP 90 is the descriptor's render transform, t2_009)
+                new HookSpecies("kraken", new KrakenGeoReplacement(), "kraken", KrakenRenderer.SHADOW, false, new RestSubjectT1a(), "Finright"),
+                // the Dungeon Beast: the right heel rolls on the gait at limbSwingAmount 1 (the four undrawn toes are not in the geo)
+                new HookSpecies("dungeon_beast", new DungeonBeastGeoReplacement(), "dungeonbeast", DungeonBeastRenderer.SHADOW, false, new RestSubjectT1a(), "rheel"),
+                new HookSpecies("basilisk", new BasiliskGeoReplacement(), "basilisk", BasiliskRenderer.SHADOW, false, new RestSubjectT1a(), "body1"),
+                // the Godzilla's twelve zero-thickness back spikes; the left lower leg pitches on the threshold gait
+                new HookSpecies("godzilla", new GodzillaGeoReplacement(), "godzilla", GodzillaRenderer.SHADOW, true, new RestSubjectT1a(), "LLowerLeg"),
+                new HookSpecies("hammerhead", new HammerheadGeoReplacement(), "hammerhead", HammerheadRenderer.SHADOW, false, new RestSubjectT1a(), "leg_1"),
+                new HookSpecies("trex", new TRexGeoReplacement(), "trex", TRexRenderer.SHADOW, false, new RestSubjectT1a(), "rightleg"),
+                // the Leon rig's two registries on one geo (four zero-thickness sails); orig RenderLeon.java:22-25 shadow 1.0f x 1.75f, the
+                // literal LeonRenderer's constructor passes (no SHADOW constant): the equal literal
+                new HookSpecies("leon", new LeonGeoReplacement(), "leon", 1.75F, true, new RestSubjectT1a(), "leg_1_L"),
+                new HookSpecies("leonopteryx", new LeonopteryxGeoReplacement(), "leon", 1.75F, true, new RestSubjectT1a(), "leg_1_L"),
+                // orig RenderCephadrome.java:23 shadow 1.25f x 1.0f: the literal CephadromeRenderer's constructor passes (no SHADOW constant)
+                new HookSpecies("cephadrome", new CephadromeGeoReplacement(), "cephadrome", 1.25F, true, new RestSubjectT1a(), "tail1"),
+                // the Dragon rig's two registries on one geo (the zero-thickness tail fin); the Baby Dragon's constructor literal 0.6f
+                new HookSpecies("dragon", new DragonGeoReplacement(), "dragon", DragonRenderer.SHADOW, true, new RestSubjectT1a(), "wing1"),
+                new HookSpecies("baby_dragon", new BabyDragonGeoReplacement(), "dragon", 0.6F, true, new RestSubjectT1a(), "wing1"),
+                // the Giant Robot rig's two registries on one geo of twenty-nine bones (the twenty-two render-instance clones); the hip yaws
+                new HookSpecies("giant_robot", new GiantRobotGeoReplacement(), "giantrobot", GiantRobotRenderer.SHADOW, false, new RestSubjectT1a(), "hip"),
+                new HookSpecies("jeffery", new JefferyGeoReplacement(), "giantrobot", GiantRobotRenderer.SHADOW, false, new RestSubjectT1a(), "hip"),
+                new HookSpecies("pitch_black", new PitchBlackGeoReplacement(), "pitchblack", PitchBlackRenderer.SHADOW, false, new RestSubjectT1a(), "wing1"),
+                new HookSpecies("sea_monster", new SeaMonsterGeoReplacement(), "seamonster", SeaMonsterRenderer.SHADOW, false, new RestSubjectT1a(), "BottomJaw"),
+                // ThePrinceRenderer's constructor passes the literal 0.75f * 0.75f (no SHADOW constant); six zero-thickness wing parts
+                new HookSpecies("the_prince", new ThePrinceGeoReplacement(), "theprince", 0.75F * 0.75F, true, new RestSubjectT1a(), "Rwing"),
+                // ThePrinceAdultRenderer's constructor passes the literal 1.2f (no SHADOW constant)
+                new HookSpecies("the_prince_adult", new ThePrinceAdultGeoReplacement(), "theprinceadult", 1.2F, false, new RestSubjectT1a(), "LUpperLeg"));
+    }
+
+    /** The Dungeon Beast's four compiled-but-never-drawn toe parts (TEST-013): omitted from the shipped geo and its draw-order key. */
+    private static final List<String> DUNGEON_BEAST_UNDRAWN = List.of("ltoe1", "ltoe3", "rtoe1", "rtoe3");
+    /** The Giant Robot's eleven shared leg and arm parts, each a pair of render-instance clones in the shipped geo (the Crab's form). */
+    private static final List<String> GIANT_ROBOT_CLONED = List.of("thigh", "thigh2", "thigh3", "shin", "foot1", "foot2", "foot3", "arm1",
+            "arm2", "arm3", "knuckles");
+
+    @GameTest(template = "empty", batch = BATCH)
+    public static void t2_012_first_tier1_slice_hook_registries_declare_no_layer_register_nothing_and_pose_through_their_hooks(GameTestHelper helper) {
+        Flags flags = Flags.read();
+        try {
+            OreSpawnConfig.MODERN_ENABLED.set(true);
+            OreSpawnConfig.MODERN_ARTIST_ANIMATIONS.set(true);
+            OreSpawnConfig.MODERN_CLASSIC_ANIMATION_SPECIES.set(List.of());
+            List<HookSpecies> all = hookSpeciesT1a();
+            helper.assertTrue(all.size() == 17, "the seventeen hook registries landed by the first Tier-1 slice (owner 2026-09-15, closing set item 4; the King and the Butterfly rig held)");
+            for (HookSpecies species : all) {
+                assertHookSpecies(helper, species);
+            }
+            List<String> beast = DrawOrder.read(JsonParser.parseString(resource(GEO + "dungeonbeast.geo.json")).getAsJsonObject());
+            for (String toe : DUNGEON_BEAST_UNDRAWN) {
+                helper.assertTrue(!beast.contains(toe), "the Dungeon Beast's shipped geo omits the undrawn toe " + toe + " (TEST-013)");
+            }
+            helper.assertTrue(beast.size() == 60, "the Dungeon Beast's draw-order key names its sixty drawn bones (found " + beast.size() + ")");
+            List<String> robot = DrawOrder.read(JsonParser.parseString(resource(GEO + "giantrobot.geo.json")).getAsJsonObject());
+            for (String part : GIANT_ROBOT_CLONED) {
+                helper.assertTrue(robot.contains(part + "__i0") && robot.contains(part + "__i1") && !robot.contains(part),
+                        "the Giant Robot's shipped geo carries the two render-instance clones of " + part + " and not the part itself");
+            }
+            helper.assertTrue(new LeonGeoReplacement().descriptor().modelResource().equals(new LeonopteryxGeoReplacement().descriptor().modelResource()),
+                    "the Leonopteryx draws the Leon's geo (one rig for the two registries)");
+            helper.assertTrue(new DragonGeoReplacement().descriptor().modelResource().equals(new BabyDragonGeoReplacement().descriptor().modelResource()),
+                    "the Baby Dragon draws the Dragon's geo (one rig for the two registries)");
+            helper.assertTrue(new GiantRobotGeoReplacement().descriptor().modelResource().equals(new JefferyGeoReplacement().descriptor().modelResource()),
+                    "Jeffery draws the Giant Robot's geo (one rig for the two registries)");
+            helper.assertTrue(!new KrakenGeoReplacement().descriptor().renderTransform().isIdentity()
+                            && !new DungeonBeastGeoReplacement().descriptor().renderTransform().isIdentity(),
+                    "the Kraken and the Dungeon Beast declare their constant render transform (TEST-013; t2_009 pins its conjugation)");
+        } finally {
+            flags.restore();
+        }
+        helper.succeed();
+    }
+
+    /** The t2_005 pins on one hook species (shared by the third, fourth, fifth and sixth slices', the FK slice's and the first Tier-1 slice's rows). */
     private static void assertHookSpecies(GameTestHelper helper, HookSpecies species) {
         helper.assertTrue(species.replacement().keyframeLayers().isEmpty(),
                 species.name() + " declares no keyframe layer: on the hook until an artist delivers idle and walk (Amendment 2)");

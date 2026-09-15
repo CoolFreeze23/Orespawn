@@ -4,8 +4,8 @@
   "display_name": "Leonopteryx",
   "tier": 1,
   "tier_label": "Tier 1 (boss)",
-  "geo_file": "reference_leon.geo.json",
-  "animation_file": "leonopteryx.animation.json",
+  "geo_file": "leon.geo.json",
+  "animation_file": "leon.animation.json",
   "bbmodel_file": "leonopteryx.bbmodel",
   "texture_size": [
     256,
@@ -7283,8 +7283,8 @@
         "keys_total": 1664
       },
       "sampled_inputs": "limbSwingAmount 1.0; limbSwing = t (advancing 1.0 per tick from 0: vanilla WalkAnimationState.update does speed += (movementSpeed - speed) * multiplier; position += speed, and the classic renderer hands walkAnimation.position(partialTick) as limbSwing and min(1, speed) as limbSwingAmount, so at speed 1 the position advances exactly 1.0 per tick); ageInTicks = t (getBob: tickCount + partialTick, partialTick 0); netHeadYaw 0; headPitch 0 (looking ahead); every entity-state flag at its rest value (attacking 0, ri1 0, rock_type 0, rf1 0: a ProbeSubject built from an empty state); the entity RNG seeded 0 once per clip and evolving across the keys; one pose call per key, 20 keys per second; full health (no shipped hook reads health)",
-      "hook": "danger.orespawn.entity.client.LeonopteryxGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the unlanded hook of owner 2026-09-14, addendum item 10 - the classic setupAnim transcribed into the descriptor's PoseInputs form, proven when the rig lands - registry-free, on explicit PoseInputs, over the reference leg's converter output reference_leon.geo.json baked without the face-order strictness the landing slice's TEST-007 adds)",
-      "landed": false,
+      "hook": "danger.orespawn.entity.client.LeonopteryxGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the shipped replacement, registry-free, on explicit PoseInputs)",
+      "landed": true,
       "moving_bones": [
         "anntena_1_L",
         "anntena_1_R",
@@ -7434,8 +7434,8 @@
         "keys_total": 244
       },
       "sampled_inputs": "limbSwingAmount 0.0; limbSwing 0 (the walk position at rest: vanilla WalkAnimationState holds its position while the speed is 0, and a creature that has not walked since it spawned carries 0); ageInTicks = t (getBob: tickCount + partialTick, partialTick 0; advancing 1.0 per tick from 0); netHeadYaw 0; headPitch 0 (looking ahead); every entity-state flag at its rest value (attacking 0, ri1 0, rock_type 0, rf1 0: a ProbeSubject built from an empty state); the entity RNG seeded 0 once per clip and evolving across the keys; one pose call per key, 20 keys per second; full health",
-      "hook": "danger.orespawn.entity.client.LeonopteryxGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the unlanded hook of owner 2026-09-14, addendum item 10 - the classic setupAnim transcribed into the descriptor's PoseInputs form, proven when the rig lands - registry-free, on explicit PoseInputs, over the reference leg's converter output reference_leon.geo.json baked without the face-order strictness the landing slice's TEST-007 adds)",
-      "landed": false,
+      "hook": "danger.orespawn.entity.client.LeonopteryxGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the shipped replacement, registry-free, on explicit PoseInputs)",
+      "landed": true,
       "moving_bones": [
         "anntena_1_L",
         "anntena_1_R",
@@ -7585,8 +7585,8 @@
         "keys_total": 1537
       },
       "sampled_inputs": "getActivity() answers 1 (the state the seed names `fly`; every other getter at its rest value); limbSwingAmount 0.0; limbSwing 0 (the walk position at rest: vanilla WalkAnimationState holds its position while the speed is 0, and a creature that has not walked since it spawned carries 0); ageInTicks = t (getBob: tickCount + partialTick, partialTick 0; advancing 1.0 per tick from 0); netHeadYaw 0; headPitch 0 (looking ahead); every other entity-state flag at its rest value (ri1 0, rock_type 0, rf1 0); the entity RNG seeded 0 once per clip and evolving across the keys; one pose call per key, 20 keys per second; full health",
-      "hook": "danger.orespawn.entity.client.LeonopteryxGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the unlanded hook of owner 2026-09-14, addendum item 10 - the classic setupAnim transcribed into the descriptor's PoseInputs form, proven when the rig lands - registry-free, on explicit PoseInputs, over the reference leg's converter output reference_leon.geo.json baked without the face-order strictness the landing slice's TEST-007 adds)",
-      "landed": false,
+      "hook": "danger.orespawn.entity.client.LeonopteryxGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the shipped replacement, registry-free, on explicit PoseInputs)",
+      "landed": true,
       "moving_bones": [
         "fabdomen",
         "fanntena_1_L",
@@ -7771,8 +7771,8 @@
         "keys_total": 236
       },
       "sampled_inputs": "isInSittingPose() answers 1 (the state the seed names `sit`; every other getter at its rest value); limbSwingAmount 0.0; limbSwing 0 (the walk position at rest: vanilla WalkAnimationState holds its position while the speed is 0, and a creature that has not walked since it spawned carries 0); ageInTicks = t (getBob: tickCount + partialTick, partialTick 0; advancing 1.0 per tick from 0); netHeadYaw 0; headPitch 0 (looking ahead); every other entity-state flag at its rest value (ri1 0, rock_type 0, rf1 0); the entity RNG seeded 0 once per clip and evolving across the keys; one pose call per key, 20 keys per second; full health",
-      "hook": "danger.orespawn.entity.client.LeonopteryxGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the unlanded hook of owner 2026-09-14, addendum item 10 - the classic setupAnim transcribed into the descriptor's PoseInputs form, proven when the rig lands - registry-free, on explicit PoseInputs, over the reference leg's converter output reference_leon.geo.json baked without the face-order strictness the landing slice's TEST-007 adds)",
-      "landed": false,
+      "hook": "danger.orespawn.entity.client.LeonopteryxGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the shipped replacement, registry-free, on explicit PoseInputs)",
+      "landed": true,
       "moving_bones": [
         "anntena_1_L",
         "anntena_1_R",
@@ -7923,8 +7923,8 @@
       "keys_total": 1664
     },
     "sampled_inputs": "limbSwingAmount 1.0; limbSwing = t (advancing 1.0 per tick from 0: vanilla WalkAnimationState.update does speed += (movementSpeed - speed) * multiplier; position += speed, and the classic renderer hands walkAnimation.position(partialTick) as limbSwing and min(1, speed) as limbSwingAmount, so at speed 1 the position advances exactly 1.0 per tick); ageInTicks = t (getBob: tickCount + partialTick, partialTick 0); netHeadYaw 0; headPitch 0 (looking ahead); every entity-state flag at its rest value (attacking 0, ri1 0, rock_type 0, rf1 0: a ProbeSubject built from an empty state); the entity RNG seeded 0 once per clip and evolving across the keys; one pose call per key, 20 keys per second; full health (no shipped hook reads health)",
-    "hook": "danger.orespawn.entity.client.LeonopteryxGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the unlanded hook of owner 2026-09-14, addendum item 10 - the classic setupAnim transcribed into the descriptor's PoseInputs form, proven when the rig lands - registry-free, on explicit PoseInputs, over the reference leg's converter output reference_leon.geo.json baked without the face-order strictness the landing slice's TEST-007 adds)",
-    "landed": false,
+    "hook": "danger.orespawn.entity.client.LeonopteryxGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the shipped replacement, registry-free, on explicit PoseInputs)",
+    "landed": true,
     "moving_bones": [
       "anntena_1_L",
       "anntena_1_R",
@@ -8047,9 +8047,9 @@
     "sit"
   ],
   "exact_transcription": false,
-  "rig_source": "reference-leg converter output",
-  "in_game": false,
-  "reference_id": "reference_leon",
+  "rig_source": "shipped",
+  "in_game": true,
+  "reference_id": null,
   "locked_bones_source": "provisional (the design's section 6)",
   "locked_bones_provisional": [
     {

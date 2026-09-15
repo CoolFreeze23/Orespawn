@@ -26,7 +26,7 @@ public class BasiliskRenderer extends MobRenderer<Basilisk, ModelBasilisk> {
 
     // 1.7.10 ClientProxyOreSpawn: new RenderBasilisk(new ModelBasilisk(0.3f), 0.5f, 1.25f)
     // where the last float is the renderer's world-space scale multiplier.
-    private static final float SCALE = 1.25f;
+    public static final float SCALE = 1.25f;
     /** orig RenderLiving shadow = 0.5f * 1.25f (RenderBasilisk.java:23). */
     public static final float SHADOW = 0.5F * 1.25F;
 
