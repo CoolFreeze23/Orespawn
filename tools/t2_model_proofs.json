@@ -4827,9 +4827,1621 @@
         "clawr3": "armr2"
       },
       "hook_note": "the FK slice (under the hierarchy rules, on the hook already written): a HOOK rig on a real parent-child HIERARCHY - the shipped geo parents every declared child to its chain parent (tools/layer_definition_to_geo.py, the hierarchy form: the part names preserved, the pivots derived in Blockbench terms, the bind rotations local, the draw-order key the tree's PRE-ORDER by rule); the descriptor's applyCustomAnimations(processor, PoseInputs) writes the classic setupAnim verbatim into a FlatRig (the flat rig the classic statements pose) and FlatRig.resolve maps it onto the chains - a root bone takes the channels the statements wrote, a parented bone the parent-relative transform reproducing its classic world transform; no keyframe layer, no transcription, no clip manifest (the self-gate stays closed until an artist delivers idle and walk); channels [] because the converter refuses channels on a code_driven / entity_state entry without a keyframe_reference_leg - the reference-clip sampler's span comes from its RULES row for this id (the row the hook survey wrote as its HOOK_RULES row, carried unchanged, its line citations true on the line-neutral descriptor); THE LEGS: the chain-link leg proves the world transform of every link against the classic within the geometry epsilon on every sample, the animation leg the chain roots and every other bone at 0 rad (the parented bones' local channels deferred to the chain-link leg), the draw-order leg the key's pre-order on every capture with the classic order's deviation recorded and the visual leg the judge of it (changed 0 expected), the surface leg at the named HIERARCHY_NORMAL_EPSILON 1e-5 with the chain's accumulation recorded"
+    },
+    {
+      "id": "model_kraken",
+      "tier": 1,
+      "class": "danger.orespawn.entity.client.ModelKraken",
+      "texture": "src/main/resources/assets/orespawn/textures/entity/kraken.png",
+      "reference_source": "reference_1_7_10_source/sources/danger/orespawn/ModelKraken.java",
+      "rig_note": "the classic model reads its entity (getAttacking() stiffening the two front tentacles and setting the mouth latch's re-roll ranges; the per-entity RenderInfo twitch latch re-rolled on the entity RNG at the zero crossing of the 0.66 cosine with its 0.1-tick look-ahead; orig ModelKraken.java:1045-1058), so it poses through ModelKraken.poseFrom(KrakenPose, ...) from a declared state on both sides (the Slice 4b form): idle (ri1 0: the mouth and teeth at rest), twitching (ri1 1 preset, the Robot2 form: the eight mouth parts and the forty-one teeth on the 0.5 cosine) and attacking; the six tentacles' rings follow by position (moveTo, 30 units along each ring's pitch and yaw) with the two suction cups riding the front pair; no limbSwingAmount, no head look. THE WHOLE-MODEL RENDER TRANSFORM: ModelKraken.renderToBuffer draws every part under mulPose(Axis.XP.rotationDegrees(90)) (:733; orig :1137 glRotatef) - DESCRIPTOR.renderTransform() declares it in the classic's terms (XP 90) under the constant-render-transform form (TEST-013 (a)): the seam applies its slot form, the probe applies it on both sides; measured PASS on the harness landing's scratch entry (harness1, 2026-09-15) and landed here (T1a); every compiled part is drawn - no undrawn_parts, in 1.7.10 and the port alike (111 parts, 111 draws)",
+      "animation_kind": "entity_state",
+      "candidate_animation_path": "production_replacement_hook",
+      "candidate_class": "danger.orespawn.entity.client.KrakenGeoReplacement",
+      "loop_period_age_ticks": 72.22052077217916,
+      "period_note": "ANIM_SPEED 1.0: the fourth tentacle pair's pitch cosine at differ 0.087 rad/tick closes every 72.22 ticks; one cycle (the fins 0.43 / 0.32, 14.6 / 19.6; the mouth latch 0.66, 9.5; the teeth twitch 0.5, 12.6)",
+      "sample_fractions": [
+        0.0,
+        0.25,
+        0.5,
+        0.75,
+        1.0
+      ],
+      "limb_swing": 0.0,
+      "limb_swing_amount": 0.0,
+      "visual_sample_ids": [
+        "bind",
+        "s_idle_t0",
+        "s_idle_t_half",
+        "s_twitching_t_quarter",
+        "s_twitching_t_three_quarter",
+        "s_attacking_t_quarter",
+        "s_attacking_t_three_quarter"
+      ],
+      "visual_note": "the bind and two ages per state (the latch at rest, the mouth on the preset, the attacking flag)",
+      "net_head_yaw": 0.0,
+      "head_pitch": 0.0,
+      "entity_states": [
+        {
+          "name": "idle",
+          "attacking": 0,
+          "ri1": 0
+        },
+        {
+          "name": "twitching",
+          "attacking": 0,
+          "ri1": 1
+        },
+        {
+          "name": "attacking",
+          "attacking": 1,
+          "ri1": 0
+        }
+      ],
+      "camera": {
+        "yaw_degrees": 34.0,
+        "pitch_degrees": -28.0
+      },
+      "channels": [],
+      "hook_note": "the first Tier-1 slice (T1a - on the hook already written, a Tier-1 rig lands exactly as a Tier-2 rig does: hitbox profiles excluded, the classic single hitbox stays, nothing of the profile phase): a HOOK rig - the shipped pose is the classic setupAnim verbatim in the descriptor's applyCustomAnimations(processor, PoseInputs); no keyframe layer, no transcription, no clip manifest (the self-gate stays closed until an artist delivers idle and walk); channels [] because tools/layer_definition_to_geo.py refuses channels on a code_driven / entity_state entry without a keyframe_reference_leg - the reference-clip sampler's span comes from its RULES row for this id (ReferenceClipSampler.RULES, the source lines cited; the row the hook survey wrote as its HOOK_RULES row, carried unchanged); the animation leg proves the hook at 0 rad against the classic model at the same inputs on every sample"
+    },
+    {
+      "id": "model_dungeonbeast",
+      "tier": 2,
+      "class": "danger.orespawn.entity.client.ModelDungeonBeast",
+      "texture": "src/main/resources/assets/orespawn/textures/entity/dungeonbeast.png",
+      "reference_source": "reference_1_7_10_source/sources/danger/orespawn/ModelDungeonBeast.java",
+      "rig_note": "the classic model reads getAttacking() (the tail amplitude 1.25 attacking else limbSwingAmount; orig ModelDungeonBeast.java:506) and its per-entity RenderInfo jaw latch re-rolled on the entity RNG at the rising zero crossing of the 2.0 ws cosine with the ranges by the attacking flag (orig :546-573), so it poses through ModelDungeonBeast.poseFrom(DungeonBeastPose, ...) from a declared state on both sides (the Slice 4b form): idle (ri1 0: the six jaw parts chew on the cosine), jaws_still (ri1 1 preset, the Robot2 form: the jaws hold their rests) and attacking; the gait-scaled idiom on the ten leg parts (cos x limbSwingAmount, no threshold: the amplitude matrix) and the position-write idiom down the seven tail parts (moveXZ from tail1's bind pivot); no head look. THE WHOLE-MODEL RENDER TRANSFORM: ModelDungeonBeast.renderToBuffer draws every part under mulPose(Axis.YP.rotationDegrees(90)) (orig :574 glRotatef), which no setupAnim statement carries - DESCRIPTOR.renderTransform() declares it in the classic's terms (YP 90) under the constant-render-transform form (TEST-013 (a)): the seam applies its slot form, the probe applies it on both sides; measured PASS with undrawn_parts on the harness landing's scratch entry (harness1, 2026-09-15) and landed here (T1a, the Kraken's slice)",
+      "animation_kind": "entity_state",
+      "candidate_animation_path": "production_replacement_hook",
+      "candidate_class": "danger.orespawn.entity.client.DungeonBeastGeoReplacement",
+      "loop_period_age_ticks": 20.26833970057931,
+      "period_note": "the fourteen phased spine segments 0.5 x 0.62 = 0.31 rad/tick close every 20.27 ticks; one cycle (the ten gait legs 1.4 x 0.62 = 0.868 at limbSwingAmount, 7.2; the tail 0.75 x 0.62 = 0.465, 13.5; the jaw latch 2.0 x 0.62 = 1.24, 5.1)",
+      "sample_fractions": [
+        0.0,
+        0.25,
+        0.5,
+        0.75,
+        1.0
+      ],
+      "limb_swing": 0.0,
+      "limb_swing_amount": 0.0,
+      "limb_swing_amount_samples": [
+        0.0,
+        0.25,
+        0.5,
+        1.0
+      ],
+      "visual_sample_ids": [
+        "bind",
+        "s_idle_a1_t0",
+        "s_idle_a1_t_half",
+        "s_jaws_still_a1_t_quarter",
+        "s_jaws_still_a1_t_three_quarter",
+        "s_attacking_a1_t_quarter",
+        "s_attacking_a1_t_three_quarter"
+      ],
+      "visual_note": "the bind and two full-amplitude ages per state (the jaws chewing at the latch's rest, the jaws still on the preset, the attacking flag); the amplitude matrix is the setupAnim leg's",
+      "net_head_yaw": 0.0,
+      "head_pitch": 0.0,
+      "entity_states": [
+        {
+          "name": "idle",
+          "attacking": 0,
+          "ri1": 0
+        },
+        {
+          "name": "jaws_still",
+          "attacking": 0,
+          "ri1": 1
+        },
+        {
+          "name": "attacking",
+          "attacking": 1,
+          "ri1": 0
+        }
+      ],
+      "camera": {
+        "yaw_degrees": 34.0,
+        "pitch_degrees": -28.0
+      },
+      "channels": [],
+      "hook_note": "the first Tier-1 slice (T1a - on the hook already written, a Tier-1 rig lands exactly as a Tier-2 rig does: hitbox profiles excluded, the classic single hitbox stays, nothing of the profile phase): a HOOK rig - the shipped pose is the classic setupAnim verbatim in the descriptor's applyCustomAnimations(processor, PoseInputs); no keyframe layer, no transcription, no clip manifest (the self-gate stays closed until an artist delivers idle and walk); channels [] because tools/layer_definition_to_geo.py refuses channels on a code_driven / entity_state entry without a keyframe_reference_leg - the reference-clip sampler's span comes from its RULES row for this id (ReferenceClipSampler.RULES, the source lines cited; the row the hook survey wrote as its HOOK_RULES row, carried unchanged); the animation leg proves the hook at 0 rad against the classic model at the same inputs on every sample",
+      "undrawn_parts": [
+        "ltoe1",
+        "ltoe3",
+        "rtoe1",
+        "rtoe3"
+      ],
+      "undrawn_note": "the four toe parts the classic model compiles and its renderToBuffer never draws (ModelDungeonBeast.java:536-595 draws sixty of the sixty-four compiled parts; orig :575-634 the same, ltoe1 / ltoe3 / rtoe1 / rtoe3 built at orig :206-235 and never rendered): omitted from the geo and the draw-order key by the converter, left out of the geometry / surface / animation legs, kept in the reference leg (1.7.10 compiles them too); a capture that draws one is UNDRAWN PART DRAWN (TEST-013)"
+    },
+    {
+      "id": "model_basilisk",
+      "tier": 1,
+      "class": "danger.orespawn.entity.client.ModelBasilisk",
+      "texture": "src/main/resources/assets/orespawn/textures/entity/basilisk.png",
+      "reference_source": "reference_1_7_10_source/sources/danger/orespawn/ModelBasilisk.java",
+      "rig_note": "the classic model reads getAttacking() (the jaw's rhythm; orig ModelBasilisk.java:204), so it poses through ModelBasilisk.poseFrom(BasiliskPose, ...) from a declared state on both sides (the Slice 4b form); the GAIT-scaled idiom (cos x limbSwingAmount, no threshold: the amplitude matrix) on the ten-ring serpentine, each ring a quarter turn behind the last and its pivot FOLLOWING the last ring's yaw (moveXZ from body1's bind pivot; the position-write idiom); no head look",
+      "animation_kind": "entity_state",
+      "candidate_animation_path": "production_replacement_hook",
+      "candidate_class": "danger.orespawn.entity.client.BasiliskGeoReplacement",
+      "loop_period_age_ticks": 16.110731556870732,
+      "period_note": "the ten-ring serpentine 1.3 x 0.3 = 0.39 rad/tick closes every 16.11 ticks; one cycle (the attacking jaw 0.45, 14.0)",
+      "sample_fractions": [
+        0.0,
+        0.25,
+        0.5,
+        0.75,
+        1.0
+      ],
+      "limb_swing": 0.0,
+      "limb_swing_amount": 0.0,
+      "limb_swing_amount_samples": [
+        0.0,
+        0.25,
+        0.5,
+        1.0
+      ],
+      "visual_sample_ids": [
+        "bind",
+        "s_idle_a1_t0",
+        "s_idle_a1_t_half",
+        "s_attacking_a1_t_quarter",
+        "s_attacking_a1_t_three_quarter"
+      ],
+      "visual_note": "the bind and two full-amplitude ages per state: the rest branch and the attacking branch are the player-visible states; the amplitude matrix is the setupAnim leg's",
+      "net_head_yaw": 0.0,
+      "head_pitch": 0.0,
+      "entity_states": [
+        {
+          "name": "idle",
+          "attacking": 0
+        },
+        {
+          "name": "attacking",
+          "attacking": 1
+        }
+      ],
+      "camera": {
+        "yaw_degrees": 34.0,
+        "pitch_degrees": -28.0
+      },
+      "channels": [],
+      "hook_note": "the first Tier-1 slice (T1a - on the hook already written, a Tier-1 rig lands exactly as a Tier-2 rig does: hitbox profiles excluded, the classic single hitbox stays, nothing of the profile phase): a HOOK rig - the shipped pose is the classic setupAnim verbatim in the descriptor's applyCustomAnimations(processor, PoseInputs); no keyframe layer, no transcription, no clip manifest (the self-gate stays closed until an artist delivers idle and walk); channels [] because tools/layer_definition_to_geo.py refuses channels on a code_driven / entity_state entry without a keyframe_reference_leg - the reference-clip sampler's span comes from its RULES row for this id (ReferenceClipSampler.RULES, the source lines cited; the row the hook survey wrote as its HOOK_RULES row, carried unchanged); the animation leg proves the hook at 0 rad against the classic model at the same inputs on every sample"
+    },
+    {
+      "id": "model_godzilla",
+      "tier": 1,
+      "class": "danger.orespawn.entity.client.ModelGodzilla",
+      "texture": "src/main/resources/assets/orespawn/textures/entity/godzillatexture.png",
+      "reference_source": "reference_1_7_10_source/sources/danger/orespawn/ModelGodzilla.java",
+      "rig_note": "the classic model reads getAttacking() (the tail's yaw fan, the jaw and the arms switch rhythm; orig ModelGodzilla.java:633, :695, :701), so it poses through ModelGodzilla.poseFrom(GodzillaPose, ...) from a declared state on both sides (the Slice 4b form); the THRESHOLD idiom (limbSwingAmount > 0.001) per leg with the toes' POSITION writes and the 55-unit leg follows scaled by limbSwingAmount (the amplitude matrix); the HEAD-LOOK idiom (netHeadYaw 30 deg sampled at 0.55 on the head and jaws with the lower jaw following 11 units, headPitch 10 deg on the head and top jaw); the arm chains follow by position (moveTo)",
+      "animation_kind": "entity_state",
+      "candidate_animation_path": "production_replacement_hook",
+      "candidate_class": "danger.orespawn.entity.client.GodzillaGeoReplacement",
+      "loop_period_age_ticks": 62.83185307179586,
+      "period_note": "ANIM_SPEED 1.0: the idle arm drift 0.1 rad/tick closes every 62.83 ticks; one cycle (the threshold gait 0.75 at limbSwingAmount, 8.4; the idle tail 0.75, 8.4; attacking: the tail fan 1.75, 3.6; the jaw 1.5, 4.2; the arms 1.75, 3.6)",
+      "sample_fractions": [
+        0.0,
+        0.25,
+        0.5,
+        0.75,
+        1.0
+      ],
+      "limb_swing": 0.0,
+      "limb_swing_amount": 0.0,
+      "limb_swing_amount_samples": [
+        0.0,
+        0.25,
+        0.5,
+        1.0
+      ],
+      "visual_sample_ids": [
+        "bind",
+        "s_idle_a1_t0",
+        "s_idle_a1_t_half",
+        "s_attacking_a1_t_quarter",
+        "s_attacking_a1_t_three_quarter"
+      ],
+      "visual_note": "the bind and two full-amplitude ages per state: the rest branch and the attacking branch are the player-visible states; the amplitude matrix is the setupAnim leg's",
+      "net_head_yaw": 30.0,
+      "head_pitch": 10.0,
+      "entity_states": [
+        {
+          "name": "idle",
+          "attacking": 0
+        },
+        {
+          "name": "attacking",
+          "attacking": 1
+        }
+      ],
+      "camera": {
+        "yaw_degrees": 34.0,
+        "pitch_degrees": -28.0
+      },
+      "cube_face_order": "classic",
+      "face_order_note": "the first Tier-1 slice (T1a, 2026-09-15): this rig carries zero-thickness cubes (the twelve back spikes Lspikes1 / Rspikes1 0 x 10 x 11, Lspike2 / Rspike2 0 x 25 x 21, Lspike3 / Rspike3 0 x 45 x 34, Lspike4 / Rspike4 0 x 50 x 36, Lspike5 / Rspike5 0 x 39 x 27, Spike6 0 x 25 x 21 and Spikes7 0 x 10 x 11; no cube is mirrored since BUG-041 stage 2), each drawing its two coplanar faces without culling; where the two faces carry different texels the z-fight winner is the face emitted last (LEQUAL in-game; the harness's rasteriser: first-wins throughout the contest window, TEST-006), and vanilla's ModelPart.Cube and GeckoLib's buildQuads emit a cube's faces in different orders, so the shipped geo carries the classic within-cube order under orespawn:cube_face_order (the FaceOrder contract, ENT-S-146; the audit's TEST-007 rule refuses a cutout rig with such a cube that omits it), the seam permutes every cube's quads into it (FaceOrder.apply) and the draw-order leg compares the per-quad normal sequences of both renderers on every capture; the descriptor requires the key (a re-exported pack that drops it gets one WARN); bind stays a visual sample under the pair-contested rule",
+      "channels": [],
+      "hook_note": "the first Tier-1 slice (T1a - on the hook already written, a Tier-1 rig lands exactly as a Tier-2 rig does: hitbox profiles excluded, the classic single hitbox stays, nothing of the profile phase): a HOOK rig - the shipped pose is the classic setupAnim verbatim in the descriptor's applyCustomAnimations(processor, PoseInputs); no keyframe layer, no transcription, no clip manifest (the self-gate stays closed until an artist delivers idle and walk); channels [] because tools/layer_definition_to_geo.py refuses channels on a code_driven / entity_state entry without a keyframe_reference_leg - the reference-clip sampler's span comes from its RULES row for this id (ReferenceClipSampler.RULES, the source lines cited; the row the hook survey wrote as its HOOK_RULES row, carried unchanged); the animation leg proves the hook at 0 rad against the classic model at the same inputs on every sample"
+    },
+    {
+      "id": "model_hammerhead",
+      "tier": 1,
+      "class": "danger.orespawn.entity.client.ModelHammerhead",
+      "texture": "src/main/resources/assets/orespawn/textures/entity/hammerhead.png",
+      "reference_source": "reference_1_7_10_source/sources/danger/orespawn/ModelHammerhead.java",
+      "rig_note": "the classic model reads getAttacking() (the sixteen head parts' nod; orig ModelHammerhead.java:323), so it poses through ModelHammerhead.poseFrom(HammerheadPose, ...) from a declared state on both sides (the Slice 4b form); the THRESHOLD idiom ((double) limbSwingAmount > 0.1) on the twelve leg parts scaled by limbSwingAmount (the amplitude matrix), the middle pair an eighth-turn ahead; the HEAD-LOOK idiom (netHeadYaw 30 deg sampled at 0.25 on sixteen neck / head / horn / fan / ear parts; the port's model reads no pitch)",
+      "animation_kind": "entity_state",
+      "candidate_animation_path": "production_replacement_hook",
+      "candidate_class": "danger.orespawn.entity.client.HammerheadGeoReplacement",
+      "loop_period_age_ticks": 63.46651825433925,
+      "period_note": "the armour sway 0.3 x 0.33 = 0.099 rad/tick closes every 63.47 ticks; one cycle (the threshold gait 1.3 x 0.33 = 0.429 at limbSwingAmount, 14.6; the attacking nod 0.429, 14.6)",
+      "sample_fractions": [
+        0.0,
+        0.25,
+        0.5,
+        0.75,
+        1.0
+      ],
+      "limb_swing": 0.0,
+      "limb_swing_amount": 0.0,
+      "limb_swing_amount_samples": [
+        0.0,
+        0.25,
+        0.5,
+        1.0
+      ],
+      "visual_sample_ids": [
+        "bind",
+        "s_idle_a1_t0",
+        "s_idle_a1_t_half",
+        "s_attacking_a1_t_quarter",
+        "s_attacking_a1_t_three_quarter"
+      ],
+      "visual_note": "the bind and two full-amplitude ages per state: the rest branch and the attacking branch are the player-visible states; the amplitude matrix is the setupAnim leg's",
+      "net_head_yaw": 30.0,
+      "head_pitch": 10.0,
+      "entity_states": [
+        {
+          "name": "idle",
+          "attacking": 0
+        },
+        {
+          "name": "attacking",
+          "attacking": 1
+        }
+      ],
+      "camera": {
+        "yaw_degrees": 34.0,
+        "pitch_degrees": -28.0
+      },
+      "channels": [],
+      "hook_note": "the first Tier-1 slice (T1a - on the hook already written, a Tier-1 rig lands exactly as a Tier-2 rig does: hitbox profiles excluded, the classic single hitbox stays, nothing of the profile phase): a HOOK rig - the shipped pose is the classic setupAnim verbatim in the descriptor's applyCustomAnimations(processor, PoseInputs); no keyframe layer, no transcription, no clip manifest (the self-gate stays closed until an artist delivers idle and walk); channels [] because tools/layer_definition_to_geo.py refuses channels on a code_driven / entity_state entry without a keyframe_reference_leg - the reference-clip sampler's span comes from its RULES row for this id (ReferenceClipSampler.RULES, the source lines cited; the row the hook survey wrote as its HOOK_RULES row, carried unchanged); the animation leg proves the hook at 0 rad against the classic model at the same inputs on every sample"
+    },
+    {
+      "id": "model_trex",
+      "tier": 1,
+      "class": "danger.orespawn.entity.client.ModelTRex",
+      "texture": "src/main/resources/assets/orespawn/textures/entity/trex.png",
+      "reference_source": "reference_1_7_10_source/sources/danger/orespawn/ModelTRex.java",
+      "rig_note": "the classic model reads getAttacking() (the jaw; orig ModelTRex.java:225), so it poses through ModelTRex.poseFrom(TRexPose, ...) from a declared state on both sides (the Slice 4b form); the THRESHOLD idiom (limbSwingAmount > 0.1, the float compare) on the eight leg parts scaled by limbSwingAmount (the amplitude matrix); no head look (the port's ANIM_SPEED 1.0 where 1.7.10 passed 0.2 - the hook transcribes the port, the finding stays a finding)",
+      "animation_kind": "entity_state",
+      "candidate_animation_path": "production_replacement_hook",
+      "candidate_class": "danger.orespawn.entity.client.TRexGeoReplacement",
+      "loop_period_age_ticks": 62.83185307179586,
+      "period_note": "the arm sway 0.1 rad/tick closes every 62.83 ticks; one cycle (the threshold gait 1.3 x 1.0 = 1.3 at limbSwingAmount, 4.8; the attacking jaw 0.45, 14.0)",
+      "sample_fractions": [
+        0.0,
+        0.25,
+        0.5,
+        0.75,
+        1.0
+      ],
+      "limb_swing": 0.0,
+      "limb_swing_amount": 0.0,
+      "limb_swing_amount_samples": [
+        0.0,
+        0.25,
+        0.5,
+        1.0
+      ],
+      "visual_sample_ids": [
+        "bind",
+        "s_idle_a1_t0",
+        "s_idle_a1_t_half",
+        "s_attacking_a1_t_quarter",
+        "s_attacking_a1_t_three_quarter"
+      ],
+      "visual_note": "the bind and two full-amplitude ages per state: the rest branch and the attacking branch are the player-visible states; the amplitude matrix is the setupAnim leg's",
+      "net_head_yaw": 0.0,
+      "head_pitch": 0.0,
+      "entity_states": [
+        {
+          "name": "idle",
+          "attacking": 0
+        },
+        {
+          "name": "attacking",
+          "attacking": 1
+        }
+      ],
+      "camera": {
+        "yaw_degrees": 34.0,
+        "pitch_degrees": -28.0
+      },
+      "channels": [],
+      "hook_note": "the first Tier-1 slice (T1a - on the hook already written, a Tier-1 rig lands exactly as a Tier-2 rig does: hitbox profiles excluded, the classic single hitbox stays, nothing of the profile phase): a HOOK rig - the shipped pose is the classic setupAnim verbatim in the descriptor's applyCustomAnimations(processor, PoseInputs); no keyframe layer, no transcription, no clip manifest (the self-gate stays closed until an artist delivers idle and walk); channels [] because tools/layer_definition_to_geo.py refuses channels on a code_driven / entity_state entry without a keyframe_reference_leg - the reference-clip sampler's span comes from its RULES row for this id (ReferenceClipSampler.RULES, the source lines cited; the row the hook survey wrote as its HOOK_RULES row, carried unchanged); the animation leg proves the hook at 0 rad against the classic model at the same inputs on every sample"
+    },
+    {
+      "id": "model_leon",
+      "tier": 1,
+      "class": "danger.orespawn.entity.client.LeonModel",
+      "texture": "src/main/resources/assets/orespawn/textures/entity/leon.png",
+      "reference_source": "reference_1_7_10_source/sources/danger/orespawn/ModelLeon.java",
+      "rig_note": "the classic model reads getActivity() (0 draws the standing part set, else the flying set - the port's visible toggles on both sides, TF-030; orig ModelLeon.java:729/852), isInSittingPose() (the standing wing sway stilled; orig :725 func_70906_o), getAttacking() (read in the FLYING branch only: the beat's speed 1.7 and width 1.4, the legs' flutter, the jaw; orig :853, :880, :1045 - the gate the hooks' landing recorded, no attack clip) and getBeingRidden() with the RenderInfo rf1 yaw accumulator (0 on the probe; orig :860, :1010-1024), so it poses through LeonModel.poseFrom(LeonPose, ...) from a declared state on both sides (the Slice 4b form): idle (standing), sitting, flying (getActivity 1) and flying_attacking (getActivity 1 with getAttacking 1, the gated read exercised) through the states' getters object; the THRESHOLD gait on the standing legs, arms and inner wings scaled by limbSwingAmount (the amplitude matrix) with the position follows (moveYZ / moveXY); the HEAD-LOOK idiom (netHeadYaw 30 deg sampled at 0.5 on the head, jaws and sails of either set; no pitch); one geo leon.geo.json for the two registries (the canonical leonopteryx id and the leon alias, TF-030), this registry proven on its own entry",
+      "animation_kind": "entity_state",
+      "candidate_animation_path": "production_replacement_hook",
+      "candidate_class": "danger.orespawn.entity.client.LeonGeoReplacement",
+      "loop_period_age_ticks": 47.59988869075444,
+      "period_note": "the standing sway 0.6 x 0.22 = 0.132 rad/tick closes every 47.60 ticks; one cycle (the standing threshold gait 1.8 x 0.22 = 0.396 at limbSwingAmount, 15.9, and 0.9 x 0.22 = 0.198, 31.7; the flight beat 1.6 x 0.22 = 0.352, 17.8, x 1.7 attacking, 10.5; the flying legs 3.6 x 0.22 = 0.792, 7.9; the flying attacking jaw 2.6 x 0.22 = 0.572, 11.0)",
+      "sample_fractions": [
+        0.0,
+        0.25,
+        0.5,
+        0.75,
+        1.0
+      ],
+      "limb_swing": 0.0,
+      "limb_swing_amount": 0.0,
+      "limb_swing_amount_samples": [
+        0.0,
+        0.25,
+        0.5,
+        1.0
+      ],
+      "visual_sample_ids": [
+        "bind",
+        "s_idle_a1_t0",
+        "s_idle_a1_t_half",
+        "s_sitting_a1_t_quarter",
+        "s_sitting_a1_t_three_quarter",
+        "s_flying_a1_t_quarter",
+        "s_flying_a1_t_three_quarter",
+        "s_flying_attacking_a1_t_quarter",
+        "s_flying_attacking_a1_t_three_quarter"
+      ],
+      "visual_note": "the bind and two full-amplitude ages per state (standing at rest, sitting, flying, flying and attacking); the amplitude matrix is the setupAnim leg's",
+      "net_head_yaw": 30.0,
+      "head_pitch": 10.0,
+      "entity_states": [
+        {
+          "name": "idle"
+        },
+        {
+          "name": "sitting",
+          "getters": {
+            "isInSittingPose": true
+          }
+        },
+        {
+          "name": "flying",
+          "getters": {
+            "getActivity": 1
+          }
+        },
+        {
+          "name": "flying_attacking",
+          "getters": {
+            "getActivity": 1,
+            "getAttacking": 1
+          }
+        }
+      ],
+      "camera": {
+        "yaw_degrees": 34.0,
+        "pitch_degrees": -28.0
+      },
+      "cube_face_order": "classic",
+      "face_order_note": "the first Tier-1 slice (T1a, 2026-09-15): this rig carries zero-thickness cubes (the four sails upper_sail3 / fupper_sail3 0 x 9 x 13 and lower_sail_3 / flower_sail_3 0 x 9 x 7 (one pair per part set); no cube is mirrored since BUG-041 stage 2), each drawing its two coplanar faces without culling; where the two faces carry different texels the z-fight winner is the face emitted last (LEQUAL in-game; the harness's rasteriser: first-wins throughout the contest window, TEST-006), and vanilla's ModelPart.Cube and GeckoLib's buildQuads emit a cube's faces in different orders, so the shipped geo carries the classic within-cube order under orespawn:cube_face_order (the FaceOrder contract, ENT-S-146; the audit's TEST-007 rule refuses a cutout rig with such a cube that omits it), the seam permutes every cube's quads into it (FaceOrder.apply) and the draw-order leg compares the per-quad normal sequences of both renderers on every capture; the descriptor requires the key (a re-exported pack that drops it gets one WARN); bind stays a visual sample under the pair-contested rule",
+      "channels": [],
+      "hook_note": "the first Tier-1 slice (T1a - on the hook already written, a Tier-1 rig lands exactly as a Tier-2 rig does: hitbox profiles excluded, the classic single hitbox stays, nothing of the profile phase): a HOOK rig - the shipped pose is the classic setupAnim verbatim in the descriptor's applyCustomAnimations(processor, PoseInputs); no keyframe layer, no transcription, no clip manifest (the self-gate stays closed until an artist delivers idle and walk); channels [] because tools/layer_definition_to_geo.py refuses channels on a code_driven / entity_state entry without a keyframe_reference_leg - the reference-clip sampler's span comes from its RULES row for this id (ReferenceClipSampler.RULES, the source lines cited; the row the hook survey wrote as its HOOK_RULES row, carried unchanged); the animation leg proves the hook at 0 rad against the classic model at the same inputs on every sample"
+    },
+    {
+      "id": "model_leonopteryx",
+      "tier": 1,
+      "class": "danger.orespawn.entity.client.LeonModel",
+      "texture": "src/main/resources/assets/orespawn/textures/entity/leon.png",
+      "reference_source": "reference_1_7_10_source/sources/danger/orespawn/ModelLeon.java",
+      "rig_note": "the classic model reads getActivity() (0 draws the standing part set, else the flying set - the port's visible toggles on both sides, TF-030; orig ModelLeon.java:729/852), isInSittingPose() (the standing wing sway stilled; orig :725 func_70906_o), getAttacking() (read in the FLYING branch only: the beat's speed 1.7 and width 1.4, the legs' flutter, the jaw; orig :853, :880, :1045 - the gate the hooks' landing recorded, no attack clip) and getBeingRidden() with the RenderInfo rf1 yaw accumulator (0 on the probe; orig :860, :1010-1024), so it poses through LeonModel.poseFrom(LeonPose, ...) from a declared state on both sides (the Slice 4b form): idle (standing), sitting, flying (getActivity 1) and flying_attacking (getActivity 1 with getAttacking 1, the gated read exercised) through the states' getters object; the THRESHOLD gait on the standing legs, arms and inner wings scaled by limbSwingAmount (the amplitude matrix) with the position follows (moveYZ / moveXY); the HEAD-LOOK idiom (netHeadYaw 30 deg sampled at 0.5 on the head, jaws and sails of either set; no pitch); one geo leon.geo.json for the two registries (the canonical leonopteryx id and the leon alias, TF-030), this registry proven on its own entry",
+      "animation_kind": "entity_state",
+      "candidate_animation_path": "production_replacement_hook",
+      "candidate_class": "danger.orespawn.entity.client.LeonopteryxGeoReplacement",
+      "loop_period_age_ticks": 47.59988869075444,
+      "period_note": "the standing sway 0.6 x 0.22 = 0.132 rad/tick closes every 47.60 ticks; one cycle (the standing threshold gait 1.8 x 0.22 = 0.396 at limbSwingAmount, 15.9, and 0.9 x 0.22 = 0.198, 31.7; the flight beat 1.6 x 0.22 = 0.352, 17.8, x 1.7 attacking, 10.5; the flying legs 3.6 x 0.22 = 0.792, 7.9; the flying attacking jaw 2.6 x 0.22 = 0.572, 11.0)",
+      "sample_fractions": [
+        0.0,
+        0.25,
+        0.5,
+        0.75,
+        1.0
+      ],
+      "limb_swing": 0.0,
+      "limb_swing_amount": 0.0,
+      "limb_swing_amount_samples": [
+        0.0,
+        0.25,
+        0.5,
+        1.0
+      ],
+      "visual_sample_ids": [
+        "bind",
+        "s_idle_a1_t0",
+        "s_idle_a1_t_half",
+        "s_sitting_a1_t_quarter",
+        "s_sitting_a1_t_three_quarter",
+        "s_flying_a1_t_quarter",
+        "s_flying_a1_t_three_quarter",
+        "s_flying_attacking_a1_t_quarter",
+        "s_flying_attacking_a1_t_three_quarter"
+      ],
+      "visual_note": "the bind and two full-amplitude ages per state (standing at rest, sitting, flying, flying and attacking); the amplitude matrix is the setupAnim leg's",
+      "net_head_yaw": 30.0,
+      "head_pitch": 10.0,
+      "entity_states": [
+        {
+          "name": "idle"
+        },
+        {
+          "name": "sitting",
+          "getters": {
+            "isInSittingPose": true
+          }
+        },
+        {
+          "name": "flying",
+          "getters": {
+            "getActivity": 1
+          }
+        },
+        {
+          "name": "flying_attacking",
+          "getters": {
+            "getActivity": 1,
+            "getAttacking": 1
+          }
+        }
+      ],
+      "camera": {
+        "yaw_degrees": 34.0,
+        "pitch_degrees": -28.0
+      },
+      "cube_face_order": "classic",
+      "face_order_note": "the first Tier-1 slice (T1a, 2026-09-15): this rig carries zero-thickness cubes (the four sails upper_sail3 / fupper_sail3 0 x 9 x 13 and lower_sail_3 / flower_sail_3 0 x 9 x 7 (one pair per part set); no cube is mirrored since BUG-041 stage 2), each drawing its two coplanar faces without culling; where the two faces carry different texels the z-fight winner is the face emitted last (LEQUAL in-game; the harness's rasteriser: first-wins throughout the contest window, TEST-006), and vanilla's ModelPart.Cube and GeckoLib's buildQuads emit a cube's faces in different orders, so the shipped geo carries the classic within-cube order under orespawn:cube_face_order (the FaceOrder contract, ENT-S-146; the audit's TEST-007 rule refuses a cutout rig with such a cube that omits it), the seam permutes every cube's quads into it (FaceOrder.apply) and the draw-order leg compares the per-quad normal sequences of both renderers on every capture; the descriptor requires the key (a re-exported pack that drops it gets one WARN); bind stays a visual sample under the pair-contested rule",
+      "channels": [],
+      "hook_note": "the first Tier-1 slice (T1a - on the hook already written, a Tier-1 rig lands exactly as a Tier-2 rig does: hitbox profiles excluded, the classic single hitbox stays, nothing of the profile phase): a HOOK rig - the shipped pose is the classic setupAnim verbatim in the descriptor's applyCustomAnimations(processor, PoseInputs); no keyframe layer, no transcription, no clip manifest (the self-gate stays closed until an artist delivers idle and walk); channels [] because tools/layer_definition_to_geo.py refuses channels on a code_driven / entity_state entry without a keyframe_reference_leg - the reference-clip sampler's span comes from its RULES row for this id (ReferenceClipSampler.RULES, the source lines cited; the row the hook survey wrote as its HOOK_RULES row, carried unchanged); the animation leg proves the hook at 0 rad against the classic model at the same inputs on every sample"
+    },
+    {
+      "id": "model_cephadrome",
+      "tier": 1,
+      "class": "danger.orespawn.entity.client.ModelCephadrome",
+      "texture": "src/main/resources/assets/orespawn/textures/entity/cephadrome.png",
+      "reference_source": "reference_1_7_10_source/sources/danger/orespawn/ModelCephadrome.java",
+      "rig_note": "the classic model reads getActivity() (the eight leg parts' constant flying lift, the wings' beat, the tail's rhythm and the ridden-flight neck latch into the per-entity RenderInfo rf1 - the Rotator's precedent, 0 on a probe whose yaw does not move; orig ModelCephadrome.java:397-427, :437-441, :469-482), getAttacking() (the wings' rhythm, the tail's, the mouth's pitch; orig :417-427, :503) and the MOVEMENT DELTA xOld() - getX(), zOld() - getZ() for the legs' gait (orig :384-396; 0 on a probe that does not move, so the gait does not move at these inputs - the clips say so), so it poses through ModelCephadrome.poseFrom(CephadromePose, ...) from a declared state on both sides (the Slice 4b form): idle, attacking and flying (getActivity 1 through the state's getters object); the |cos| idiom on the eight top fins and membranes; the tail and neck chains follow by position (moveXZ); the HEAD-LOOK idiom (netHeadYaw 30 deg sampled, halved, at 0.125 / 0.25 / 0.5 / 0.75 on the three necks and the head with the hammerheads and mouth following; no pitch); the hook reads no limbSwingAmount beyond the thousandth gate",
+      "animation_kind": "entity_state",
+      "candidate_animation_path": "production_replacement_hook",
+      "candidate_class": "danger.orespawn.entity.client.CephadromeGeoReplacement",
+      "loop_period_age_ticks": 57.11986642890532,
+      "period_note": "the resting wing beat 0.2 x 0.55 = 0.11 rad/tick closes every 57.12 ticks; one cycle (the fins' 0.15 x 0.55 sway folds through |cos| to 38.08; the tail at 0.22 x 0.55 idle, 51.9, 0.76 x 0.55 active, 15.0; the flying wings 0.55 x 0.55, 20.8; the attacking wings 0.9 x 0.55, 12.7; the jaw 0.5 x 0.55, 22.8; the gait reads the movement delta, 0 on the probe)",
+      "sample_fractions": [
+        0.0,
+        0.25,
+        0.5,
+        0.75,
+        1.0
+      ],
+      "limb_swing": 0.0,
+      "limb_swing_amount": 0.0,
+      "visual_sample_ids": [
+        "bind",
+        "s_idle_t0",
+        "s_idle_t_half",
+        "s_attacking_t_quarter",
+        "s_attacking_t_three_quarter",
+        "s_flying_t_quarter",
+        "s_flying_t_three_quarter"
+      ],
+      "visual_note": "the bind and two ages per state (at rest, attacking, flying)",
+      "net_head_yaw": 30.0,
+      "head_pitch": 10.0,
+      "entity_states": [
+        {
+          "name": "idle",
+          "attacking": 0
+        },
+        {
+          "name": "attacking",
+          "attacking": 1
+        },
+        {
+          "name": "flying",
+          "getters": {
+            "getActivity": 1
+          }
+        }
+      ],
+      "camera": {
+        "yaw_degrees": 34.0,
+        "pitch_degrees": -28.0
+      },
+      "cube_face_order": "classic",
+      "face_order_note": "the first Tier-1 slice (T1a, 2026-09-15): this rig carries zero-thickness cubes (the nine wing fins and membranes tailmembrane1 0 x 11 x 21, tailmembrane2 0 x 10 x 19, tailmembrane3 0 x 10 x 18, topmem1 0 x 24 x 10, topmem2 0 x 20 x 10, topmem3 0 x 18 x 8, topmem4 0 x 9 x 10 and leftwingmembrane / rightwingmembrane 64 x 0 x 34; no cube is mirrored since BUG-041 stage 2), each drawing its two coplanar faces without culling; where the two faces carry different texels the z-fight winner is the face emitted last (LEQUAL in-game; the harness's rasteriser: first-wins throughout the contest window, TEST-006), and vanilla's ModelPart.Cube and GeckoLib's buildQuads emit a cube's faces in different orders, so the shipped geo carries the classic within-cube order under orespawn:cube_face_order (the FaceOrder contract, ENT-S-146; the audit's TEST-007 rule refuses a cutout rig with such a cube that omits it), the seam permutes every cube's quads into it (FaceOrder.apply) and the draw-order leg compares the per-quad normal sequences of both renderers on every capture; the descriptor requires the key (a re-exported pack that drops it gets one WARN); bind stays a visual sample under the pair-contested rule",
+      "channels": [],
+      "hook_note": "the first Tier-1 slice (T1a - on the hook already written, a Tier-1 rig lands exactly as a Tier-2 rig does: hitbox profiles excluded, the classic single hitbox stays, nothing of the profile phase): a HOOK rig - the shipped pose is the classic setupAnim verbatim in the descriptor's applyCustomAnimations(processor, PoseInputs); no keyframe layer, no transcription, no clip manifest (the self-gate stays closed until an artist delivers idle and walk); channels [] because tools/layer_definition_to_geo.py refuses channels on a code_driven / entity_state entry without a keyframe_reference_leg - the reference-clip sampler's span comes from its RULES row for this id (ReferenceClipSampler.RULES, the source lines cited; the row the hook survey wrote as its HOOK_RULES row, carried unchanged); the animation leg proves the hook at 0 rad against the classic model at the same inputs on every sample"
+    },
+    {
+      "id": "model_dragon",
+      "tier": 1,
+      "class": "danger.orespawn.entity.client.ModelDragon",
+      "texture": "src/main/resources/assets/orespawn/textures/entity/dragon.png",
+      "reference_source": "reference_1_7_10_source/sources/danger/orespawn/ModelDragon.java",
+      "rig_note": "the classic model reads getAttacking() (the wings' and tail's rhythms, the jaw; orig ModelDragon.java:457, :492, :575), getActivity() (1 tucks the fourteen leg parts, beats the wings and latches the ridden-flight neck yaw into the per-entity RenderInfo rf1 - the Rotator's precedent, 0 on a probe whose yaw does not move; orig :425-456, :538-551), isInSittingPose() (the tail stilled; orig :500) and the MOVEMENT DELTA xOld() - getX(), zOld() - getZ() for the legs' gait (orig :418-424; 0 on a probe that does not move, so the gait does not move at these inputs - the clips say so), so it poses through ModelDragon.poseFrom(DragonPose, ...) from a declared state on both sides (the Slice 4b form): idle, attacking, flying (getActivity 1) and sitting through the states' getters object; the wing chains and the tail chain follow by position (moveXY / moveXZ); the HEAD-LOOK idiom (netHeadYaw 30 deg sampled, halved, at 0.25 / 0.5 / 0.75 on the neck and head with the mouth, horns and lower jaw following; no pitch); the hook reads no limbSwingAmount beyond the thousandth gate (the port's ANIM_SPEED 1.0 where 1.7.10 passed 0.65 - the hook transcribes the port); one geo dragon.geo.json for the two registries (the Baby Dragon a distinct entity at 0.45 scale), this registry proven on its own entry",
+      "animation_kind": "entity_state",
+      "candidate_animation_path": "production_replacement_hook",
+      "candidate_class": "danger.orespawn.entity.client.DragonGeoReplacement",
+      "loop_period_age_ticks": 31.41592653589793,
+      "period_note": "ANIM_SPEED 1.0: the resting wing beat 0.2 rad/tick closes every 31.42 ticks; one cycle (the activity beat 0.75, 8.4; the attacking wings 0.85, 7.4; the tail at 0.22 idle, 28.6, 0.76 active, 8.3, 0.96 attacking, 6.5; the attacking jaw 1.5, 4.2; the gait reads the movement delta, 0 on the probe)",
+      "sample_fractions": [
+        0.0,
+        0.25,
+        0.5,
+        0.75,
+        1.0
+      ],
+      "limb_swing": 0.0,
+      "limb_swing_amount": 0.0,
+      "visual_sample_ids": [
+        "bind",
+        "s_idle_t0",
+        "s_idle_t_half",
+        "s_attacking_t_quarter",
+        "s_attacking_t_three_quarter",
+        "s_flying_t_quarter",
+        "s_flying_t_three_quarter",
+        "s_sitting_t_quarter",
+        "s_sitting_t_three_quarter"
+      ],
+      "visual_note": "the bind and two ages per state (at rest, attacking, flying, sitting)",
+      "net_head_yaw": 30.0,
+      "head_pitch": 10.0,
+      "entity_states": [
+        {
+          "name": "idle",
+          "attacking": 0
+        },
+        {
+          "name": "attacking",
+          "attacking": 1
+        },
+        {
+          "name": "flying",
+          "getters": {
+            "getActivity": 1
+          }
+        },
+        {
+          "name": "sitting",
+          "getters": {
+            "isInSittingPose": true
+          }
+        }
+      ],
+      "camera": {
+        "yaw_degrees": 34.0,
+        "pitch_degrees": -28.0
+      },
+      "cube_face_order": "classic",
+      "face_order_note": "the first Tier-1 slice (T1a, 2026-09-15): this rig carries zero-thickness cubes (the tail fin tail5 0 x 11 x 10; no cube is mirrored since BUG-041 stage 2), each drawing its two coplanar faces without culling; where the two faces carry different texels the z-fight winner is the face emitted last (LEQUAL in-game; the harness's rasteriser: first-wins throughout the contest window, TEST-006), and vanilla's ModelPart.Cube and GeckoLib's buildQuads emit a cube's faces in different orders, so the shipped geo carries the classic within-cube order under orespawn:cube_face_order (the FaceOrder contract, ENT-S-146; the audit's TEST-007 rule refuses a cutout rig with such a cube that omits it), the seam permutes every cube's quads into it (FaceOrder.apply) and the draw-order leg compares the per-quad normal sequences of both renderers on every capture; the descriptor requires the key (a re-exported pack that drops it gets one WARN); bind stays a visual sample under the pair-contested rule",
+      "channels": [],
+      "hook_note": "the first Tier-1 slice (T1a - on the hook already written, a Tier-1 rig lands exactly as a Tier-2 rig does: hitbox profiles excluded, the classic single hitbox stays, nothing of the profile phase): a HOOK rig - the shipped pose is the classic setupAnim verbatim in the descriptor's applyCustomAnimations(processor, PoseInputs); no keyframe layer, no transcription, no clip manifest (the self-gate stays closed until an artist delivers idle and walk); channels [] because tools/layer_definition_to_geo.py refuses channels on a code_driven / entity_state entry without a keyframe_reference_leg - the reference-clip sampler's span comes from its RULES row for this id (ReferenceClipSampler.RULES, the source lines cited; the row the hook survey wrote as its HOOK_RULES row, carried unchanged); the animation leg proves the hook at 0 rad against the classic model at the same inputs on every sample"
+    },
+    {
+      "id": "model_baby_dragon",
+      "tier": 1,
+      "class": "danger.orespawn.entity.client.ModelDragon",
+      "texture": "src/main/resources/assets/orespawn/textures/entity/dragon.png",
+      "reference_source": "reference_1_7_10_source/sources/danger/orespawn/ModelDragon.java",
+      "rig_note": "the classic model reads getAttacking() (the wings' and tail's rhythms, the jaw; orig ModelDragon.java:457, :492, :575), getActivity() (1 tucks the fourteen leg parts, beats the wings and latches the ridden-flight neck yaw into the per-entity RenderInfo rf1 - the Rotator's precedent, 0 on a probe whose yaw does not move; orig :425-456, :538-551), isInSittingPose() (the tail stilled; orig :500) and the MOVEMENT DELTA xOld() - getX(), zOld() - getZ() for the legs' gait (orig :418-424; 0 on a probe that does not move, so the gait does not move at these inputs - the clips say so), so it poses through ModelDragon.poseFrom(DragonPose, ...) from a declared state on both sides (the Slice 4b form): idle, attacking, flying (getActivity 1) and sitting through the states' getters object; the wing chains and the tail chain follow by position (moveXY / moveXZ); the HEAD-LOOK idiom (netHeadYaw 30 deg sampled, halved, at 0.25 / 0.5 / 0.75 on the neck and head with the mouth, horns and lower jaw following; no pitch); the hook reads no limbSwingAmount beyond the thousandth gate (the port's ANIM_SPEED 1.0 where 1.7.10 passed 0.65 - the hook transcribes the port); one geo dragon.geo.json for the two registries (the Baby Dragon a distinct entity at 0.45 scale), this registry proven on its own entry",
+      "animation_kind": "entity_state",
+      "candidate_animation_path": "production_replacement_hook",
+      "candidate_class": "danger.orespawn.entity.client.BabyDragonGeoReplacement",
+      "loop_period_age_ticks": 31.41592653589793,
+      "period_note": "ANIM_SPEED 1.0: the resting wing beat 0.2 rad/tick closes every 31.42 ticks; one cycle (the activity beat 0.75, 8.4; the attacking wings 0.85, 7.4; the tail at 0.22 idle, 28.6, 0.76 active, 8.3, 0.96 attacking, 6.5; the attacking jaw 1.5, 4.2; the gait reads the movement delta, 0 on the probe)",
+      "sample_fractions": [
+        0.0,
+        0.25,
+        0.5,
+        0.75,
+        1.0
+      ],
+      "limb_swing": 0.0,
+      "limb_swing_amount": 0.0,
+      "visual_sample_ids": [
+        "bind",
+        "s_idle_t0",
+        "s_idle_t_half",
+        "s_attacking_t_quarter",
+        "s_attacking_t_three_quarter",
+        "s_flying_t_quarter",
+        "s_flying_t_three_quarter",
+        "s_sitting_t_quarter",
+        "s_sitting_t_three_quarter"
+      ],
+      "visual_note": "the bind and two ages per state (at rest, attacking, flying, sitting)",
+      "net_head_yaw": 30.0,
+      "head_pitch": 10.0,
+      "entity_states": [
+        {
+          "name": "idle",
+          "attacking": 0
+        },
+        {
+          "name": "attacking",
+          "attacking": 1
+        },
+        {
+          "name": "flying",
+          "getters": {
+            "getActivity": 1
+          }
+        },
+        {
+          "name": "sitting",
+          "getters": {
+            "isInSittingPose": true
+          }
+        }
+      ],
+      "camera": {
+        "yaw_degrees": 34.0,
+        "pitch_degrees": -28.0
+      },
+      "cube_face_order": "classic",
+      "face_order_note": "the first Tier-1 slice (T1a, 2026-09-15): this rig carries zero-thickness cubes (the tail fin tail5 0 x 11 x 10; no cube is mirrored since BUG-041 stage 2), each drawing its two coplanar faces without culling; where the two faces carry different texels the z-fight winner is the face emitted last (LEQUAL in-game; the harness's rasteriser: first-wins throughout the contest window, TEST-006), and vanilla's ModelPart.Cube and GeckoLib's buildQuads emit a cube's faces in different orders, so the shipped geo carries the classic within-cube order under orespawn:cube_face_order (the FaceOrder contract, ENT-S-146; the audit's TEST-007 rule refuses a cutout rig with such a cube that omits it), the seam permutes every cube's quads into it (FaceOrder.apply) and the draw-order leg compares the per-quad normal sequences of both renderers on every capture; the descriptor requires the key (a re-exported pack that drops it gets one WARN); bind stays a visual sample under the pair-contested rule",
+      "channels": [],
+      "hook_note": "the first Tier-1 slice (T1a - on the hook already written, a Tier-1 rig lands exactly as a Tier-2 rig does: hitbox profiles excluded, the classic single hitbox stays, nothing of the profile phase): a HOOK rig - the shipped pose is the classic setupAnim verbatim in the descriptor's applyCustomAnimations(processor, PoseInputs); no keyframe layer, no transcription, no clip manifest (the self-gate stays closed until an artist delivers idle and walk); channels [] because tools/layer_definition_to_geo.py refuses channels on a code_driven / entity_state entry without a keyframe_reference_leg - the reference-clip sampler's span comes from its RULES row for this id (ReferenceClipSampler.RULES, the source lines cited; the row the hook survey wrote as its HOOK_RULES row, carried unchanged); the animation leg proves the hook at 0 rad against the classic model at the same inputs on every sample"
+    },
+    {
+      "id": "model_giantrobot",
+      "tier": 1,
+      "class": "danger.orespawn.entity.client.ModelGiantRobot",
+      "texture": "src/main/resources/assets/orespawn/textures/entity/giantrobot.png",
+      "reference_source": "reference_1_7_10_source/sources/danger/orespawn/ModelGiantRobot.java",
+      "rig_note": "the classic model reads getAttacking() (the shoulders' twist and the windmill punch; orig ModelGiantRobot.java:227-240), so it poses through ModelGiantRobot.poseFrom(GiantRobotPose, ...) from a declared state on both sides (the Slice 4b form); the MOVESCALE idiom (limbSwingAmount x 0.65 clamped to 1: the amplitude matrix) scaling the hip's sway and bob and the two-phase thigh / shin angles; the HEAD-LOOK idiom (netHeadYaw 30 deg and headPitch 10 deg sampled in radians, the pitch a third); THE RENDER-INSTANCE FORM (step_scope explicit, the reference entry's declaration carried verbatim - THE FOLDER'S GAPS 2026-09-14, the Crab's precedent T2d): the classic renderToBuffer re-poses and draws the eleven shared leg and arm parts twice per frame (renderLeg orig :173-199 / :200-226, renderArm :243-254 / :255-266), so the rig carries one top-level clone per draw - <part>__i0 the sign +1 pass, <part>__i1 the sign -1 pass, twenty-two bones - and the hook poses every clone directly with the classic helpers' pose statements; one geo giantrobot.geo.json for the two registries (Jeffery extends GiantRobot, drawn by the one GiantRobotRenderer), this registry proven on its own entry",
+      "animation_kind": "entity_state",
+      "candidate_animation_path": "production_replacement_hook",
+      "candidate_class": "danger.orespawn.entity.client.GiantRobotGeoReplacement",
+      "loop_period_age_ticks": 25.132741228718345,
+      "period_note": "WING_SPEED 0.25: the hip sway and quarter turn 0.25 rad/tick close every 25.13 ticks; one cycle (the bob and the attacking shoulder twist and windmill 0.5, 12.6)",
+      "sample_fractions": [
+        0.0,
+        0.25,
+        0.5,
+        0.75,
+        1.0
+      ],
+      "limb_swing": 0.0,
+      "limb_swing_amount": 0.0,
+      "limb_swing_amount_samples": [
+        0.0,
+        0.25,
+        0.5,
+        1.0
+      ],
+      "visual_sample_ids": [
+        "bind",
+        "s_idle_a1_t0",
+        "s_idle_a1_t_half",
+        "s_attacking_a1_t_quarter",
+        "s_attacking_a1_t_three_quarter"
+      ],
+      "visual_note": "the bind and two full-amplitude ages per state: the rest branch and the attacking branch are the player-visible states; the amplitude matrix is the setupAnim leg's",
+      "net_head_yaw": 30.0,
+      "head_pitch": 10.0,
+      "entity_states": [
+        {
+          "name": "idle",
+          "attacking": 0
+        },
+        {
+          "name": "attacking",
+          "attacking": 1
+        }
+      ],
+      "render_instances": {
+        "thigh": {
+          "count": 2,
+          "step_scope": "explicit",
+          "instances": [
+            {
+              "pivot": [
+                0.0,
+                -60.0,
+                13.0
+              ],
+              "note": "draw 0: the sign +1 pass (the first renderLeg / renderArm call)"
+            },
+            {
+              "pivot": [
+                0.0,
+                -60.0,
+                -13.0
+              ],
+              "note": "draw 1: the sign -1 pass (the second call, the offsets negated)"
+            }
+          ],
+          "note": "renderLeg (ModelGiantRobot.java:271-281; orig :173-199 / :200-226): x = hip.x + s cos(hip.xRot) sin(hip.yRot) 13, y = hip.y - s sin(hip.xRot) 13, z = hip.z + s cos(hip.xRot) cos(hip.yRot) 13, s = +1 for draw 0 and -1 for draw 1; at bind (the constructor pose, hip (0, -60, 0) unrotated) (0, -60, +13) / (0, -60, -13); in-game the hip's constant quarter turn (setupAnim :208, hip.yRot = pi/2 + the sway) carries the pair to x +13 / -13 - draw 0 the model's left side (+x, vanilla's left_arm side), draw 1 the right"
+        },
+        "thigh2": {
+          "count": 2,
+          "step_scope": "explicit",
+          "instances": [
+            {
+              "pivot": [
+                0.0,
+                -60.0,
+                13.0
+              ],
+              "note": "draw 0: the sign +1 pass (the first renderLeg / renderArm call)"
+            },
+            {
+              "pivot": [
+                0.0,
+                -60.0,
+                -13.0
+              ],
+              "note": "draw 1: the sign -1 pass (the second call, the offsets negated)"
+            }
+          ],
+          "note": "as thigh: renderLeg (ModelGiantRobot.java:271-281; orig :173-199 / :200-226): x = hip.x + s cos(hip.xRot) sin(hip.yRot) 13, y = hip.y - s sin(hip.xRot) 13, z = hip.z + s cos(hip.xRot) cos(hip.yRot) 13, s = +1 for draw 0 and -1 for draw 1; at bind (the constructor pose, hip (0, -60, 0) unrotated) (0, -60, +13) / (0, -60, -13); in-game the hip's constant quarter turn (setupAnim :208, hip.yRot = pi/2 + the sway) carries the pair to x +13 / -13 - draw 0 the model's left side (+x, vanilla's left_arm side), draw 1 the right"
+        },
+        "thigh3": {
+          "count": 2,
+          "step_scope": "explicit",
+          "instances": [
+            {
+              "pivot": [
+                0.0,
+                -60.0,
+                13.0
+              ],
+              "note": "draw 0: the sign +1 pass (the first renderLeg / renderArm call)"
+            },
+            {
+              "pivot": [
+                0.0,
+                -60.0,
+                -13.0
+              ],
+              "note": "draw 1: the sign -1 pass (the second call, the offsets negated)"
+            }
+          ],
+          "note": "as thigh: renderLeg (ModelGiantRobot.java:271-281; orig :173-199 / :200-226): x = hip.x + s cos(hip.xRot) sin(hip.yRot) 13, y = hip.y - s sin(hip.xRot) 13, z = hip.z + s cos(hip.xRot) cos(hip.yRot) 13, s = +1 for draw 0 and -1 for draw 1; at bind (the constructor pose, hip (0, -60, 0) unrotated) (0, -60, +13) / (0, -60, -13); in-game the hip's constant quarter turn (setupAnim :208, hip.yRot = pi/2 + the sway) carries the pair to x +13 / -13 - draw 0 the model's left side (+x, vanilla's left_arm side), draw 1 the right"
+        },
+        "shin": {
+          "count": 2,
+          "step_scope": "explicit",
+          "instances": [
+            {
+              "pivot": [
+                0.0,
+                -20.0,
+                13.0
+              ],
+              "note": "draw 0: the sign +1 pass (the first renderLeg / renderArm call)"
+            },
+            {
+              "pivot": [
+                0.0,
+                -20.0,
+                -13.0
+              ],
+              "note": "draw 1: the sign -1 pass (the second call, the offsets negated)"
+            }
+          ],
+          "note": "renderLeg (:283-287): shin.y = thigh.y + cos(thigh.xRot) 40, z = thigh.z + sin(thigh.xRot) 40, x = thigh.x - at bind (0, -20, +13) / (0, -20, -13) (thigh.xRot 0 at bind: the walk's angles are setupAnim's, all 0 in the constructor pose)"
+        },
+        "foot1": {
+          "count": 2,
+          "step_scope": "explicit",
+          "instances": [
+            {
+              "pivot": [
+                0.0,
+                -20.0,
+                13.0
+              ],
+              "note": "draw 0: the sign +1 pass (the first renderLeg / renderArm call)"
+            },
+            {
+              "pivot": [
+                0.0,
+                -20.0,
+                -13.0
+              ],
+              "note": "draw 1: the sign -1 pass (the second call, the offsets negated)"
+            }
+          ],
+          "note": "renderLeg (:289-299): the foot pieces take the shin's rotation point and pitch - at bind (0, -20, +13) / (0, -20, -13)"
+        },
+        "foot2": {
+          "count": 2,
+          "step_scope": "explicit",
+          "instances": [
+            {
+              "pivot": [
+                0.0,
+                -20.0,
+                13.0
+              ],
+              "note": "draw 0: the sign +1 pass (the first renderLeg / renderArm call)"
+            },
+            {
+              "pivot": [
+                0.0,
+                -20.0,
+                -13.0
+              ],
+              "note": "draw 1: the sign -1 pass (the second call, the offsets negated)"
+            }
+          ],
+          "note": "renderLeg (:289-299): the foot pieces take the shin's rotation point and pitch - at bind (0, -20, +13) / (0, -20, -13)"
+        },
+        "foot3": {
+          "count": 2,
+          "step_scope": "explicit",
+          "instances": [
+            {
+              "pivot": [
+                0.0,
+                -20.0,
+                13.0
+              ],
+              "note": "draw 0: the sign +1 pass (the first renderLeg / renderArm call)"
+            },
+            {
+              "pivot": [
+                0.0,
+                -20.0,
+                -13.0
+              ],
+              "note": "draw 1: the sign -1 pass (the second call, the offsets negated)"
+            }
+          ],
+          "note": "renderLeg (:289-299): the foot pieces take the shin's rotation point and pitch - at bind (0, -20, +13) / (0, -20, -13)"
+        },
+        "arm1": {
+          "count": 2,
+          "step_scope": "explicit",
+          "instances": [
+            {
+              "pivot": [
+                26.0,
+                -120.0,
+                0.0
+              ],
+              "note": "draw 0: the sign +1 pass (the first renderLeg / renderArm call)"
+            },
+            {
+              "pivot": [
+                -26.0,
+                -120.0,
+                0.0
+              ],
+              "note": "draw 1: the sign -1 pass (the second call, the offsets negated)"
+            }
+          ],
+          "note": "renderArm (:309-314; orig :243-254 / :255-266): y = hip.y - 60, x = hip.x + s 26, z = shoulders.z - s sin(shoulders.yRot) 26, s = +1 for draw 0 (x +26, the model's left side) and -1 for draw 1 (x -26); at bind (+26, -120, 0) / (-26, -120, 0)"
+        },
+        "arm2": {
+          "count": 2,
+          "step_scope": "explicit",
+          "instances": [
+            {
+              "pivot": [
+                26.0,
+                -120.0,
+                0.0
+              ],
+              "note": "draw 0: the sign +1 pass (the first renderLeg / renderArm call)"
+            },
+            {
+              "pivot": [
+                -26.0,
+                -120.0,
+                0.0
+              ],
+              "note": "draw 1: the sign -1 pass (the second call, the offsets negated)"
+            }
+          ],
+          "note": "as arm1: renderArm (:309-314; orig :243-254 / :255-266): y = hip.y - 60, x = hip.x + s 26, z = shoulders.z - s sin(shoulders.yRot) 26, s = +1 for draw 0 (x +26, the model's left side) and -1 for draw 1 (x -26); at bind (+26, -120, 0) / (-26, -120, 0)"
+        },
+        "arm3": {
+          "count": 2,
+          "step_scope": "explicit",
+          "instances": [
+            {
+              "pivot": [
+                26.0,
+                -79.0,
+                0.0
+              ],
+              "rotation": [
+                -0.19634954084936207,
+                null,
+                null
+              ],
+              "note": "draw 0: the sign +1 pass (the first renderLeg / renderArm call)"
+            },
+            {
+              "pivot": [
+                -26.0,
+                -79.0,
+                0.0
+              ],
+              "rotation": [
+                -0.19634954084936207,
+                null,
+                null
+              ],
+              "note": "draw 1: the sign -1 pass (the second call, the offsets negated)"
+            }
+          ],
+          "note": "renderArm (:316-320): xRot = the lower angle - 0.19634954 (the forearm leads the upper arm by that constant, present at bind), y = arm1.y + cos(arm1.xRot) 41 = -79, z = arm1.z + sin(arm1.xRot) 41 = 0, x = arm1.x - at bind (+26, -79, 0) / (-26, -79, 0) with xRot -0.19634954"
+        },
+        "knuckles": {
+          "count": 2,
+          "step_scope": "explicit",
+          "instances": [
+            {
+              "pivot": [
+                26.0,
+                -79.0,
+                0.0
+              ],
+              "rotation": [
+                -0.19634954084936207,
+                null,
+                null
+              ],
+              "note": "draw 0: the sign +1 pass (the first renderLeg / renderArm call)"
+            },
+            {
+              "pivot": [
+                -26.0,
+                -79.0,
+                0.0
+              ],
+              "rotation": [
+                -0.19634954084936207,
+                null,
+                null
+              ],
+              "note": "draw 1: the sign -1 pass (the second call, the offsets negated)"
+            }
+          ],
+          "note": "as arm3: renderArm (:316-320): xRot = the lower angle - 0.19634954 (the forearm leads the upper arm by that constant, present at bind), y = arm1.y + cos(arm1.xRot) 41 = -79, z = arm1.z + sin(arm1.xRot) 41 = 0, x = arm1.x - at bind (+26, -79, 0) / (-26, -79, 0) with xRot -0.19634954"
+        }
+      },
+      "render_instances_note": "the reference entry's declaration (tools/reference_model_proofs.json reference_giantrobot, THE FOLDER'S GAPS 2026-09-14: the explicit step_scope - the two-pass renderLeg / renderArm draws, two declared draws per shared part, twenty-two bones thigh__i0/1, thigh2__i0/1, thigh3__i0/1, shin__i0/1, foot1__i0/1, foot2__i0/1, foot3__i0/1, arm1__i0/1, arm2__i0/1, arm3__i0/1, knuckles__i0/1 - draw 0 the sign +1 pass, draw 1 the sign -1 pass) carried onto the seam entry so the shipped geo is the same rig (the Crab precedent, T2d): the probe holds the classic's two draws per part to the declared instances and the hook poses the clones directly (GiantRobotGeoReplacement.renderLeg / renderArm)",
+      "camera": {
+        "yaw_degrees": 34.0,
+        "pitch_degrees": -28.0
+      },
+      "channels": [],
+      "hook_note": "the first Tier-1 slice (T1a - on the hook already written, a Tier-1 rig lands exactly as a Tier-2 rig does: hitbox profiles excluded, the classic single hitbox stays, nothing of the profile phase): a HOOK rig - the shipped pose is the classic setupAnim verbatim in the descriptor's applyCustomAnimations(processor, PoseInputs); no keyframe layer, no transcription, no clip manifest (the self-gate stays closed until an artist delivers idle and walk); channels [] because tools/layer_definition_to_geo.py refuses channels on a code_driven / entity_state entry without a keyframe_reference_leg - the reference-clip sampler's span comes from its RULES row for this id (ReferenceClipSampler.RULES, the source lines cited; the row the hook survey wrote as its HOOK_RULES row, carried unchanged); the animation leg proves the hook at 0 rad against the classic model at the same inputs on every sample"
+    },
+    {
+      "id": "model_jeffery",
+      "tier": 1,
+      "class": "danger.orespawn.entity.client.ModelGiantRobot",
+      "texture": "src/main/resources/assets/orespawn/textures/entity/giantrobot.png",
+      "reference_source": "reference_1_7_10_source/sources/danger/orespawn/ModelGiantRobot.java",
+      "rig_note": "the classic model reads getAttacking() (the shoulders' twist and the windmill punch; orig ModelGiantRobot.java:227-240), so it poses through ModelGiantRobot.poseFrom(GiantRobotPose, ...) from a declared state on both sides (the Slice 4b form); the MOVESCALE idiom (limbSwingAmount x 0.65 clamped to 1: the amplitude matrix) scaling the hip's sway and bob and the two-phase thigh / shin angles; the HEAD-LOOK idiom (netHeadYaw 30 deg and headPitch 10 deg sampled in radians, the pitch a third); THE RENDER-INSTANCE FORM (step_scope explicit, the reference entry's declaration carried verbatim - THE FOLDER'S GAPS 2026-09-14, the Crab's precedent T2d): the classic renderToBuffer re-poses and draws the eleven shared leg and arm parts twice per frame (renderLeg orig :173-199 / :200-226, renderArm :243-254 / :255-266), so the rig carries one top-level clone per draw - <part>__i0 the sign +1 pass, <part>__i1 the sign -1 pass, twenty-two bones - and the hook poses every clone directly with the classic helpers' pose statements; one geo giantrobot.geo.json for the two registries (Jeffery extends GiantRobot, drawn by the one GiantRobotRenderer), this registry proven on its own entry",
+      "animation_kind": "entity_state",
+      "candidate_animation_path": "production_replacement_hook",
+      "candidate_class": "danger.orespawn.entity.client.JefferyGeoReplacement",
+      "loop_period_age_ticks": 25.132741228718345,
+      "period_note": "WING_SPEED 0.25: the hip sway and quarter turn 0.25 rad/tick close every 25.13 ticks; one cycle (the bob and the attacking shoulder twist and windmill 0.5, 12.6)",
+      "sample_fractions": [
+        0.0,
+        0.25,
+        0.5,
+        0.75,
+        1.0
+      ],
+      "limb_swing": 0.0,
+      "limb_swing_amount": 0.0,
+      "limb_swing_amount_samples": [
+        0.0,
+        0.25,
+        0.5,
+        1.0
+      ],
+      "visual_sample_ids": [
+        "bind",
+        "s_idle_a1_t0",
+        "s_idle_a1_t_half",
+        "s_attacking_a1_t_quarter",
+        "s_attacking_a1_t_three_quarter"
+      ],
+      "visual_note": "the bind and two full-amplitude ages per state: the rest branch and the attacking branch are the player-visible states; the amplitude matrix is the setupAnim leg's",
+      "net_head_yaw": 30.0,
+      "head_pitch": 10.0,
+      "entity_states": [
+        {
+          "name": "idle",
+          "attacking": 0
+        },
+        {
+          "name": "attacking",
+          "attacking": 1
+        }
+      ],
+      "render_instances": {
+        "thigh": {
+          "count": 2,
+          "step_scope": "explicit",
+          "instances": [
+            {
+              "pivot": [
+                0.0,
+                -60.0,
+                13.0
+              ],
+              "note": "draw 0: the sign +1 pass (the first renderLeg / renderArm call)"
+            },
+            {
+              "pivot": [
+                0.0,
+                -60.0,
+                -13.0
+              ],
+              "note": "draw 1: the sign -1 pass (the second call, the offsets negated)"
+            }
+          ],
+          "note": "renderLeg (ModelGiantRobot.java:271-281; orig :173-199 / :200-226): x = hip.x + s cos(hip.xRot) sin(hip.yRot) 13, y = hip.y - s sin(hip.xRot) 13, z = hip.z + s cos(hip.xRot) cos(hip.yRot) 13, s = +1 for draw 0 and -1 for draw 1; at bind (the constructor pose, hip (0, -60, 0) unrotated) (0, -60, +13) / (0, -60, -13); in-game the hip's constant quarter turn (setupAnim :208, hip.yRot = pi/2 + the sway) carries the pair to x +13 / -13 - draw 0 the model's left side (+x, vanilla's left_arm side), draw 1 the right"
+        },
+        "thigh2": {
+          "count": 2,
+          "step_scope": "explicit",
+          "instances": [
+            {
+              "pivot": [
+                0.0,
+                -60.0,
+                13.0
+              ],
+              "note": "draw 0: the sign +1 pass (the first renderLeg / renderArm call)"
+            },
+            {
+              "pivot": [
+                0.0,
+                -60.0,
+                -13.0
+              ],
+              "note": "draw 1: the sign -1 pass (the second call, the offsets negated)"
+            }
+          ],
+          "note": "as thigh: renderLeg (ModelGiantRobot.java:271-281; orig :173-199 / :200-226): x = hip.x + s cos(hip.xRot) sin(hip.yRot) 13, y = hip.y - s sin(hip.xRot) 13, z = hip.z + s cos(hip.xRot) cos(hip.yRot) 13, s = +1 for draw 0 and -1 for draw 1; at bind (the constructor pose, hip (0, -60, 0) unrotated) (0, -60, +13) / (0, -60, -13); in-game the hip's constant quarter turn (setupAnim :208, hip.yRot = pi/2 + the sway) carries the pair to x +13 / -13 - draw 0 the model's left side (+x, vanilla's left_arm side), draw 1 the right"
+        },
+        "thigh3": {
+          "count": 2,
+          "step_scope": "explicit",
+          "instances": [
+            {
+              "pivot": [
+                0.0,
+                -60.0,
+                13.0
+              ],
+              "note": "draw 0: the sign +1 pass (the first renderLeg / renderArm call)"
+            },
+            {
+              "pivot": [
+                0.0,
+                -60.0,
+                -13.0
+              ],
+              "note": "draw 1: the sign -1 pass (the second call, the offsets negated)"
+            }
+          ],
+          "note": "as thigh: renderLeg (ModelGiantRobot.java:271-281; orig :173-199 / :200-226): x = hip.x + s cos(hip.xRot) sin(hip.yRot) 13, y = hip.y - s sin(hip.xRot) 13, z = hip.z + s cos(hip.xRot) cos(hip.yRot) 13, s = +1 for draw 0 and -1 for draw 1; at bind (the constructor pose, hip (0, -60, 0) unrotated) (0, -60, +13) / (0, -60, -13); in-game the hip's constant quarter turn (setupAnim :208, hip.yRot = pi/2 + the sway) carries the pair to x +13 / -13 - draw 0 the model's left side (+x, vanilla's left_arm side), draw 1 the right"
+        },
+        "shin": {
+          "count": 2,
+          "step_scope": "explicit",
+          "instances": [
+            {
+              "pivot": [
+                0.0,
+                -20.0,
+                13.0
+              ],
+              "note": "draw 0: the sign +1 pass (the first renderLeg / renderArm call)"
+            },
+            {
+              "pivot": [
+                0.0,
+                -20.0,
+                -13.0
+              ],
+              "note": "draw 1: the sign -1 pass (the second call, the offsets negated)"
+            }
+          ],
+          "note": "renderLeg (:283-287): shin.y = thigh.y + cos(thigh.xRot) 40, z = thigh.z + sin(thigh.xRot) 40, x = thigh.x - at bind (0, -20, +13) / (0, -20, -13) (thigh.xRot 0 at bind: the walk's angles are setupAnim's, all 0 in the constructor pose)"
+        },
+        "foot1": {
+          "count": 2,
+          "step_scope": "explicit",
+          "instances": [
+            {
+              "pivot": [
+                0.0,
+                -20.0,
+                13.0
+              ],
+              "note": "draw 0: the sign +1 pass (the first renderLeg / renderArm call)"
+            },
+            {
+              "pivot": [
+                0.0,
+                -20.0,
+                -13.0
+              ],
+              "note": "draw 1: the sign -1 pass (the second call, the offsets negated)"
+            }
+          ],
+          "note": "renderLeg (:289-299): the foot pieces take the shin's rotation point and pitch - at bind (0, -20, +13) / (0, -20, -13)"
+        },
+        "foot2": {
+          "count": 2,
+          "step_scope": "explicit",
+          "instances": [
+            {
+              "pivot": [
+                0.0,
+                -20.0,
+                13.0
+              ],
+              "note": "draw 0: the sign +1 pass (the first renderLeg / renderArm call)"
+            },
+            {
+              "pivot": [
+                0.0,
+                -20.0,
+                -13.0
+              ],
+              "note": "draw 1: the sign -1 pass (the second call, the offsets negated)"
+            }
+          ],
+          "note": "renderLeg (:289-299): the foot pieces take the shin's rotation point and pitch - at bind (0, -20, +13) / (0, -20, -13)"
+        },
+        "foot3": {
+          "count": 2,
+          "step_scope": "explicit",
+          "instances": [
+            {
+              "pivot": [
+                0.0,
+                -20.0,
+                13.0
+              ],
+              "note": "draw 0: the sign +1 pass (the first renderLeg / renderArm call)"
+            },
+            {
+              "pivot": [
+                0.0,
+                -20.0,
+                -13.0
+              ],
+              "note": "draw 1: the sign -1 pass (the second call, the offsets negated)"
+            }
+          ],
+          "note": "renderLeg (:289-299): the foot pieces take the shin's rotation point and pitch - at bind (0, -20, +13) / (0, -20, -13)"
+        },
+        "arm1": {
+          "count": 2,
+          "step_scope": "explicit",
+          "instances": [
+            {
+              "pivot": [
+                26.0,
+                -120.0,
+                0.0
+              ],
+              "note": "draw 0: the sign +1 pass (the first renderLeg / renderArm call)"
+            },
+            {
+              "pivot": [
+                -26.0,
+                -120.0,
+                0.0
+              ],
+              "note": "draw 1: the sign -1 pass (the second call, the offsets negated)"
+            }
+          ],
+          "note": "renderArm (:309-314; orig :243-254 / :255-266): y = hip.y - 60, x = hip.x + s 26, z = shoulders.z - s sin(shoulders.yRot) 26, s = +1 for draw 0 (x +26, the model's left side) and -1 for draw 1 (x -26); at bind (+26, -120, 0) / (-26, -120, 0)"
+        },
+        "arm2": {
+          "count": 2,
+          "step_scope": "explicit",
+          "instances": [
+            {
+              "pivot": [
+                26.0,
+                -120.0,
+                0.0
+              ],
+              "note": "draw 0: the sign +1 pass (the first renderLeg / renderArm call)"
+            },
+            {
+              "pivot": [
+                -26.0,
+                -120.0,
+                0.0
+              ],
+              "note": "draw 1: the sign -1 pass (the second call, the offsets negated)"
+            }
+          ],
+          "note": "as arm1: renderArm (:309-314; orig :243-254 / :255-266): y = hip.y - 60, x = hip.x + s 26, z = shoulders.z - s sin(shoulders.yRot) 26, s = +1 for draw 0 (x +26, the model's left side) and -1 for draw 1 (x -26); at bind (+26, -120, 0) / (-26, -120, 0)"
+        },
+        "arm3": {
+          "count": 2,
+          "step_scope": "explicit",
+          "instances": [
+            {
+              "pivot": [
+                26.0,
+                -79.0,
+                0.0
+              ],
+              "rotation": [
+                -0.19634954084936207,
+                null,
+                null
+              ],
+              "note": "draw 0: the sign +1 pass (the first renderLeg / renderArm call)"
+            },
+            {
+              "pivot": [
+                -26.0,
+                -79.0,
+                0.0
+              ],
+              "rotation": [
+                -0.19634954084936207,
+                null,
+                null
+              ],
+              "note": "draw 1: the sign -1 pass (the second call, the offsets negated)"
+            }
+          ],
+          "note": "renderArm (:316-320): xRot = the lower angle - 0.19634954 (the forearm leads the upper arm by that constant, present at bind), y = arm1.y + cos(arm1.xRot) 41 = -79, z = arm1.z + sin(arm1.xRot) 41 = 0, x = arm1.x - at bind (+26, -79, 0) / (-26, -79, 0) with xRot -0.19634954"
+        },
+        "knuckles": {
+          "count": 2,
+          "step_scope": "explicit",
+          "instances": [
+            {
+              "pivot": [
+                26.0,
+                -79.0,
+                0.0
+              ],
+              "rotation": [
+                -0.19634954084936207,
+                null,
+                null
+              ],
+              "note": "draw 0: the sign +1 pass (the first renderLeg / renderArm call)"
+            },
+            {
+              "pivot": [
+                -26.0,
+                -79.0,
+                0.0
+              ],
+              "rotation": [
+                -0.19634954084936207,
+                null,
+                null
+              ],
+              "note": "draw 1: the sign -1 pass (the second call, the offsets negated)"
+            }
+          ],
+          "note": "as arm3: renderArm (:316-320): xRot = the lower angle - 0.19634954 (the forearm leads the upper arm by that constant, present at bind), y = arm1.y + cos(arm1.xRot) 41 = -79, z = arm1.z + sin(arm1.xRot) 41 = 0, x = arm1.x - at bind (+26, -79, 0) / (-26, -79, 0) with xRot -0.19634954"
+        }
+      },
+      "render_instances_note": "the reference entry's declaration (tools/reference_model_proofs.json reference_giantrobot, THE FOLDER'S GAPS 2026-09-14: the explicit step_scope - the two-pass renderLeg / renderArm draws, two declared draws per shared part, twenty-two bones thigh__i0/1, thigh2__i0/1, thigh3__i0/1, shin__i0/1, foot1__i0/1, foot2__i0/1, foot3__i0/1, arm1__i0/1, arm2__i0/1, arm3__i0/1, knuckles__i0/1 - draw 0 the sign +1 pass, draw 1 the sign -1 pass) carried onto the seam entry so the shipped geo is the same rig (the Crab precedent, T2d): the probe holds the classic's two draws per part to the declared instances and the hook poses the clones directly (GiantRobotGeoReplacement.renderLeg / renderArm)",
+      "camera": {
+        "yaw_degrees": 34.0,
+        "pitch_degrees": -28.0
+      },
+      "channels": [],
+      "hook_note": "the first Tier-1 slice (T1a - on the hook already written, a Tier-1 rig lands exactly as a Tier-2 rig does: hitbox profiles excluded, the classic single hitbox stays, nothing of the profile phase): a HOOK rig - the shipped pose is the classic setupAnim verbatim in the descriptor's applyCustomAnimations(processor, PoseInputs); no keyframe layer, no transcription, no clip manifest (the self-gate stays closed until an artist delivers idle and walk); channels [] because tools/layer_definition_to_geo.py refuses channels on a code_driven / entity_state entry without a keyframe_reference_leg - the reference-clip sampler's span comes from its RULES row for this id (ReferenceClipSampler.RULES, the source lines cited; the row the hook survey wrote as its HOOK_RULES row, carried unchanged); the animation leg proves the hook at 0 rad against the classic model at the same inputs on every sample"
+    },
+    {
+      "id": "model_pitchblack",
+      "tier": 1,
+      "class": "danger.orespawn.entity.client.ModelPitchBlack",
+      "texture": "src/main/resources/assets/orespawn/textures/entity/pitchblack.png",
+      "reference_source": "reference_1_7_10_source/sources/danger/orespawn/ModelPitchBlack.java",
+      "rig_note": "the classic model reads getActivity() (the wings' beat and the legs' branch - walking gait or the flying tuck; orig ModelPitchBlack.java:742, :784, :847), getAttacking() (the jaw over the chomp latch, the flying claws' swing, the tail's rhythm; orig :813, :933, :987), getPitchBlackScale() (every rhythm divided by the size tier and the claw amplitudes multiplied - 1.0 on the probe, the entity's rest value; orig :738) and its per-entity RenderInfo chomp latch (the 0.7 ws idle rhythm's phase wraps against rf1 and ri1 is re-rolled one in twenty from the entity RNG - the Kraken convention where orig :820 read the world's; orig :817-830), so it poses through ModelPitchBlack.poseFrom(PitchBlackPose, ...) from a declared state on both sides (the Slice 4b form): idle (ri1 0: the jaw holds 0.196 rad), chomping (ri1 1 preset, the Robot2 form: the jaw on the 0.85 ws sine + 0.5), attacking and flying (getActivity 1 through the state's getters object: the wings beat, the claws tucked) - the probe's fresh subject per sample never reaches a phase wrap (rf1 starts at 0), so the re-roll is not exercised at these inputs; the THRESHOLD idiom ((double) limbSwingAmount > 0.001) per walking leg with the claws' POSITION writes scaled by limbSwingAmount (the amplitude matrix) and the 17-unit leg follows; the HEAD-LOOK idiom (netHeadYaw 30 deg sampled, % 360 and x 0.55 walking / 0.2 flying, on the head, jaws, teeth and eyes, half on the third neck ring; no pitch); the wing and tail chains follow by position (moveXY / moveXZ)",
+      "animation_kind": "entity_state",
+      "candidate_animation_path": "production_replacement_hook",
+      "candidate_class": "danger.orespawn.entity.client.PitchBlackGeoReplacement",
+      "loop_period_age_ticks": 193.3287786824488,
+      "period_note": "wingspeed 0.65, pscale 1 on the probe: the resting wing sway 0.05 x 0.65 = 0.0325 rad/tick closes every 193.33 ticks; one cycle (the flying wings 0.45 x 0.65 = 0.2925, 21.5; the attacking jaw 0.85 x 0.65 = 0.5525, 11.4; the chomp latch 0.7 x 0.65 = 0.455, 13.8; the walking legs 0.75 x 0.65 = 0.4875 at limbSwingAmount, 12.9; the tail 0.26 x 0.65 = 0.169 idle, 37.2, 0.76 x 0.65 = 0.494 attacking, 12.7)",
+      "sample_fractions": [
+        0.0,
+        0.25,
+        0.5,
+        0.75,
+        1.0
+      ],
+      "limb_swing": 0.0,
+      "limb_swing_amount": 0.0,
+      "limb_swing_amount_samples": [
+        0.0,
+        0.25,
+        0.5,
+        1.0
+      ],
+      "visual_sample_ids": [
+        "bind",
+        "s_idle_a1_t0",
+        "s_idle_a1_t_half",
+        "s_chomping_a1_t_quarter",
+        "s_chomping_a1_t_three_quarter",
+        "s_attacking_a1_t_quarter",
+        "s_attacking_a1_t_three_quarter",
+        "s_flying_a1_t_quarter",
+        "s_flying_a1_t_three_quarter"
+      ],
+      "visual_note": "the bind and two full-amplitude ages per state (the latch at rest, the chomp on the preset, the attacking flag, flying); the amplitude matrix is the setupAnim leg's",
+      "net_head_yaw": 30.0,
+      "head_pitch": 10.0,
+      "entity_states": [
+        {
+          "name": "idle",
+          "attacking": 0,
+          "ri1": 0
+        },
+        {
+          "name": "chomping",
+          "attacking": 0,
+          "ri1": 1
+        },
+        {
+          "name": "attacking",
+          "attacking": 1,
+          "ri1": 0
+        },
+        {
+          "name": "flying",
+          "attacking": 0,
+          "ri1": 0,
+          "getters": {
+            "getActivity": 1
+          }
+        }
+      ],
+      "camera": {
+        "yaw_degrees": 34.0,
+        "pitch_degrees": -28.0
+      },
+      "channels": [],
+      "hook_note": "the first Tier-1 slice (T1a - on the hook already written, a Tier-1 rig lands exactly as a Tier-2 rig does: hitbox profiles excluded, the classic single hitbox stays, nothing of the profile phase): a HOOK rig - the shipped pose is the classic setupAnim verbatim in the descriptor's applyCustomAnimations(processor, PoseInputs); no keyframe layer, no transcription, no clip manifest (the self-gate stays closed until an artist delivers idle and walk); channels [] because tools/layer_definition_to_geo.py refuses channels on a code_driven / entity_state entry without a keyframe_reference_leg - the reference-clip sampler's span comes from its RULES row for this id (ReferenceClipSampler.RULES, the source lines cited; the row the hook survey wrote as its HOOK_RULES row, carried unchanged); the animation leg proves the hook at 0 rad against the classic model at the same inputs on every sample"
+    },
+    {
+      "id": "model_seamonster",
+      "tier": 1,
+      "class": "danger.orespawn.entity.client.ModelSeaMonster",
+      "texture": "src/main/resources/assets/orespawn/textures/entity/seamonster.png",
+      "reference_source": "reference_1_7_10_source/sources/danger/orespawn/ModelSeaMonster.java",
+      "rig_note": "the classic model reads getAttacking() (the THRESHOLD-OR-ATTACKING idiom on the tail, fins and neck, the jaw's rhythm; orig ModelSeaMonster.java:189, :209, :218, :244), so it poses through ModelSeaMonster.poseFrom(SeaMonsterPose, ...) from a declared state on both sides (the Slice 4b form); the three rhythms scaled by limbSwingAmount (the amplitude matrix) with the tail and neck chains FOLLOWING by position (moveXZ / moveYZ from the bind pivots); the HEAD-LOOK idiom (netHeadYaw 30 deg sampled at 0.5 on the top jaw, eyes and bottom jaw; no pitch)",
+      "animation_kind": "entity_state",
+      "candidate_animation_path": "production_replacement_hook",
+      "candidate_class": "danger.orespawn.entity.client.SeaMonsterGeoReplacement",
+      "loop_period_age_ticks": 62.83185307179586,
+      "period_note": "the eye twitch 0.2 x 0.5 = 0.1 rad/tick closes every 62.83 ticks; one cycle (the tail fan 1.3 x 0.5 = 0.65 at limbSwingAmount, 9.7; the fins 1.2 x 0.5 = 0.6, 10.5; the neck 0.9 x 0.5 = 0.45, 14.0; the attacking jaw 1.7 x 0.5 = 0.85, 7.4)",
+      "sample_fractions": [
+        0.0,
+        0.25,
+        0.5,
+        0.75,
+        1.0
+      ],
+      "limb_swing": 0.0,
+      "limb_swing_amount": 0.0,
+      "limb_swing_amount_samples": [
+        0.0,
+        0.25,
+        0.5,
+        1.0
+      ],
+      "visual_sample_ids": [
+        "bind",
+        "s_idle_a1_t0",
+        "s_idle_a1_t_half",
+        "s_attacking_a1_t_quarter",
+        "s_attacking_a1_t_three_quarter"
+      ],
+      "visual_note": "the bind and two full-amplitude ages per state: the rest branch and the attacking branch are the player-visible states; the amplitude matrix is the setupAnim leg's",
+      "net_head_yaw": 30.0,
+      "head_pitch": 10.0,
+      "entity_states": [
+        {
+          "name": "idle",
+          "attacking": 0
+        },
+        {
+          "name": "attacking",
+          "attacking": 1
+        }
+      ],
+      "camera": {
+        "yaw_degrees": 34.0,
+        "pitch_degrees": -28.0
+      },
+      "channels": [],
+      "hook_note": "the first Tier-1 slice (T1a - on the hook already written, a Tier-1 rig lands exactly as a Tier-2 rig does: hitbox profiles excluded, the classic single hitbox stays, nothing of the profile phase): a HOOK rig - the shipped pose is the classic setupAnim verbatim in the descriptor's applyCustomAnimations(processor, PoseInputs); no keyframe layer, no transcription, no clip manifest (the self-gate stays closed until an artist delivers idle and walk); channels [] because tools/layer_definition_to_geo.py refuses channels on a code_driven / entity_state entry without a keyframe_reference_leg - the reference-clip sampler's span comes from its RULES row for this id (ReferenceClipSampler.RULES, the source lines cited; the row the hook survey wrote as its HOOK_RULES row, carried unchanged); the animation leg proves the hook at 0 rad against the classic model at the same inputs on every sample"
+    },
+    {
+      "id": "model_theprince",
+      "tier": 1,
+      "class": "danger.orespawn.entity.client.ModelThePrince",
+      "texture": "src/main/resources/assets/orespawn/textures/entity/theprince.png",
+      "reference_source": "reference_1_7_10_source/sources/danger/orespawn/ModelThePrince.java",
+      "rig_note": "the classic model reads getAttacking() (the wings' threshold-or-attacking idiom, the legs' branch, the tail's lash, the jaw chatter; orig ModelThePrince.java:277, :285, :296, :347), getActivity() (2 tucks both legs at -1.0 unless attacking; orig :274, :285), isOrderedToSit() (the tail sway stilled; orig :293 func_70906_o) and the three HEAD EXTENSIONS getHead1Ext / 2 / 3 (the necks' pitch in degrees; 0 on the probe, the rest value; orig :367-369), so it poses through ModelThePrince.poseFrom(ThePrincePose, ...) from a declared state on both sides (the Slice 4b form): idle, attacking, legs_folded (getActivity 2) and sitting (isOrderedToSit) through the states' getters object; the wings and legs scaled by limbSwingAmount (the amplitude matrix); the tail chain FOLLOWS by position (moveXZ from tail2's bind pivot); the three-head LOOK split (netHeadYaw 30 deg and headPitch 10 deg sampled: two thirds on the centre head, half of it on the side the head turns to) with each head group following its neck 7 units (moveTo); the classic's early dead jaw writes transcribed as such",
+      "animation_kind": "entity_state",
+      "candidate_animation_path": "production_replacement_hook",
+      "candidate_class": "danger.orespawn.entity.client.ThePrinceGeoReplacement",
+      "loop_period_age_ticks": 32.221463113741464,
+      "period_note": "the resting wings 0.3 x 0.65 = 0.195 rad/tick close every 32.22 ticks; one cycle (the threshold-or-attacking wings 2.3 x 0.65 = 1.495 at limbSwingAmount, 4.2; the threshold legs 2.0 x 0.65 = 1.3, 4.8; the tail sway 0.9 x 0.65 = 0.585, 10.7; the attacking lash 1.3 x 0.65 = 0.845, 7.4; the jaw chatter 1.9 / 2.1 / 2.3 x 0.65, 5.1 / 4.6 / 4.2)",
+      "sample_fractions": [
+        0.0,
+        0.25,
+        0.5,
+        0.75,
+        1.0
+      ],
+      "limb_swing": 0.0,
+      "limb_swing_amount": 0.0,
+      "limb_swing_amount_samples": [
+        0.0,
+        0.25,
+        0.5,
+        1.0
+      ],
+      "visual_sample_ids": [
+        "bind",
+        "s_idle_a1_t0",
+        "s_idle_a1_t_half",
+        "s_attacking_a1_t_quarter",
+        "s_attacking_a1_t_three_quarter",
+        "s_legs_folded_a1_t_quarter",
+        "s_legs_folded_a1_t_three_quarter",
+        "s_sitting_a1_t_quarter",
+        "s_sitting_a1_t_three_quarter"
+      ],
+      "visual_note": "the bind and two full-amplitude ages per state (at rest, attacking, the legs folded, sitting); the amplitude matrix is the setupAnim leg's",
+      "net_head_yaw": 30.0,
+      "head_pitch": 10.0,
+      "entity_states": [
+        {
+          "name": "idle",
+          "attacking": 0
+        },
+        {
+          "name": "attacking",
+          "attacking": 1
+        },
+        {
+          "name": "legs_folded",
+          "getters": {
+            "getActivity": 2
+          }
+        },
+        {
+          "name": "sitting",
+          "getters": {
+            "isOrderedToSit": true
+          }
+        }
+      ],
+      "camera": {
+        "yaw_degrees": 34.0,
+        "pitch_degrees": -28.0
+      },
+      "cube_face_order": "classic",
+      "face_order_note": "the first Tier-1 slice (T1a, 2026-09-15): this rig carries zero-thickness cubes (the six wing parts Lwing / Rwing 22 x 0 x 10, Lwing2 / Rwing2 12 x 0 x 10 and Lwing3 / Rwing3 10 x 0 x 10; no cube is mirrored since BUG-041 stage 2), each drawing its two coplanar faces without culling; where the two faces carry different texels the z-fight winner is the face emitted last (LEQUAL in-game; the harness's rasteriser: first-wins throughout the contest window, TEST-006), and vanilla's ModelPart.Cube and GeckoLib's buildQuads emit a cube's faces in different orders, so the shipped geo carries the classic within-cube order under orespawn:cube_face_order (the FaceOrder contract, ENT-S-146; the audit's TEST-007 rule refuses a cutout rig with such a cube that omits it), the seam permutes every cube's quads into it (FaceOrder.apply) and the draw-order leg compares the per-quad normal sequences of both renderers on every capture; the descriptor requires the key (a re-exported pack that drops it gets one WARN); bind stays a visual sample under the pair-contested rule",
+      "channels": [],
+      "hook_note": "the first Tier-1 slice (T1a - on the hook already written, a Tier-1 rig lands exactly as a Tier-2 rig does: hitbox profiles excluded, the classic single hitbox stays, nothing of the profile phase): a HOOK rig - the shipped pose is the classic setupAnim verbatim in the descriptor's applyCustomAnimations(processor, PoseInputs); no keyframe layer, no transcription, no clip manifest (the self-gate stays closed until an artist delivers idle and walk); channels [] because tools/layer_definition_to_geo.py refuses channels on a code_driven / entity_state entry without a keyframe_reference_leg - the reference-clip sampler's span comes from its RULES row for this id (ReferenceClipSampler.RULES, the source lines cited; the row the hook survey wrote as its HOOK_RULES row, carried unchanged); the animation leg proves the hook at 0 rad against the classic model at the same inputs on every sample"
+    },
+    {
+      "id": "model_theprinceadult",
+      "tier": 1,
+      "class": "danger.orespawn.entity.client.ModelThePrinceAdult",
+      "texture": "src/main/resources/assets/orespawn/textures/entity/theprinceadult.png",
+      "reference_source": "reference_1_7_10_source/sources/danger/orespawn/ModelThePrinceAdult.java",
+      "rig_note": "the classic model reads getAttacking() (the wings, claws, legs, tail and the heads' sweeps switch rhythm; orig ModelThePrinceAdult.java:873, :925, :942, :971, :1005), getActivity() (0 scales the gliding wings by the walking speed and walks the legs; else the flying heads' sweeps; orig :877, :944, :1022), isOrderedToSit() (the wings, legs and tail stilled; orig :881, :944, :975 func_70906_o) and the three HEAD EXTENSIONS getHead1Ext / 2 / 3 minus 30 (the heads' pitch in every state - 0 on the probe, so the heads rest at -30 degrees; orig :1007-1013, :1024-1030, :1035-1037), so it poses through ModelThePrinceAdult.poseFrom(ThePrinceAdultPose, ...) from a declared state on both sides (the Slice 4b form): idle (walking, activity 0), attacking, flying (getActivity 1) and sitting (isOrderedToSit) through the states' getters object; the wings and the gait scaled by limbSwingAmount at activity 0 (the amplitude matrix); the wing, leg, tail and neck chains FOLLOW by position (moveXY / moveYZ / moveXZ / moveTo); the three-head LOOK split at activity 0 (netHeadYaw 30 deg and headPitch 10 deg sampled: two thirds on the centre head, half of it on the side the head turns to, the pitch added to the extension)",
+      "animation_kind": "entity_state",
+      "candidate_animation_path": "production_replacement_hook",
+      "candidate_class": "danger.orespawn.entity.client.ThePrinceAdultGeoReplacement",
+      "loop_period_age_ticks": 74.35722257017261,
+      "period_note": "the centre head's resting yaw 0.13 x 0.65 = 0.0845 rad/tick closes every 74.35 ticks; one cycle (the wings 0.35 x 0.65 = 0.2275, 27.6, 0.75 x 0.65 = 0.4875 attacking, 12.9; the gait 0.3 x 0.65 = 0.195 at limbSwingAmount, 32.2; the tail 0.26 x 0.65 = 0.169, 37.2, 0.56 x 0.65 = 0.364 attacking, 17.3; the attacking heads 0.28 .. 0.95 x 0.65)",
+      "sample_fractions": [
+        0.0,
+        0.25,
+        0.5,
+        0.75,
+        1.0
+      ],
+      "limb_swing": 0.0,
+      "limb_swing_amount": 0.0,
+      "limb_swing_amount_samples": [
+        0.0,
+        0.25,
+        0.5,
+        1.0
+      ],
+      "visual_sample_ids": [
+        "bind",
+        "s_idle_a1_t0",
+        "s_idle_a1_t_half",
+        "s_attacking_a1_t_quarter",
+        "s_attacking_a1_t_three_quarter",
+        "s_flying_a1_t_quarter",
+        "s_flying_a1_t_three_quarter",
+        "s_sitting_a1_t_quarter",
+        "s_sitting_a1_t_three_quarter"
+      ],
+      "visual_note": "the bind and two full-amplitude ages per state (walking at rest, attacking, flying, sitting); the amplitude matrix is the setupAnim leg's",
+      "net_head_yaw": 30.0,
+      "head_pitch": 10.0,
+      "entity_states": [
+        {
+          "name": "idle",
+          "attacking": 0
+        },
+        {
+          "name": "attacking",
+          "attacking": 1
+        },
+        {
+          "name": "flying",
+          "getters": {
+            "getActivity": 1
+          }
+        },
+        {
+          "name": "sitting",
+          "getters": {
+            "isOrderedToSit": true
+          }
+        }
+      ],
+      "camera": {
+        "yaw_degrees": 34.0,
+        "pitch_degrees": -28.0
+      },
+      "channels": [],
+      "hook_note": "the first Tier-1 slice (T1a - on the hook already written, a Tier-1 rig lands exactly as a Tier-2 rig does: hitbox profiles excluded, the classic single hitbox stays, nothing of the profile phase): a HOOK rig - the shipped pose is the classic setupAnim verbatim in the descriptor's applyCustomAnimations(processor, PoseInputs); no keyframe layer, no transcription, no clip manifest (the self-gate stays closed until an artist delivers idle and walk); channels [] because tools/layer_definition_to_geo.py refuses channels on a code_driven / entity_state entry without a keyframe_reference_leg - the reference-clip sampler's span comes from its RULES row for this id (ReferenceClipSampler.RULES, the source lines cited; the row the hook survey wrote as its HOOK_RULES row, carried unchanged); the animation leg proves the hook at 0 rad against the classic model at the same inputs on every sample"
     }
   ],
   "fixtures": [],
   "naming_rule_note": "the second Tier-2 slice (2026-09-13): the bare walk is the gait group's clip, else the clip manifest's primary_group's (the first group when absent), the other groups' walk_<group> (KeyframeLeg.primaryGroup and tools/keyframe_clip.py refuse a manifest that breaks it)",
-  "hook_rig_note": "the third Tier-2 slice (2026-09-13): the fifteen entries model_cloudshark .. model_herculesbeetle are HOOK rigs: the classic setupAnim verbatim in the descriptor, no keyframe layer, channels [] (the converter refuses channels on a hook entry without a keyframe_reference_leg); the reference-clip sampler's span per id comes from ReferenceClipSampler.RULES. The fourth Tier-2 slice (T2d, 2026-09-14): the thirteen entries model_crab .. model_flounder likewise, on the hooks written by the hook survey, the Crab with its draw fix and the render_instances declaration of its reference entry. The fifth Tier-2 slice (T2e, 2026-09-15): the fourteen entries model_pointysaurus .. model_chipmunk (the Lurking Terror held on the visual leg, its register line) likewise, on the hooks written by the hook survey: entity_state wherever the classic model reads its entity (the probe poses a code_driven entry's classic side through setupAnim(null, ...)), the two latch rigs with an ri1-preset state (the Robot2 form), the two sitting flags through the states' getters object. The sixth Tier-2 slice (T2f, 2026-09-15): the twelve entries model_enderknight .. model_triffid likewise, on the hooks written by the hook survey (the Dungeon Beast held on its whole-model render transform and the Scorpion on the visual leg, their register lines): entity_state on every one (every hook of this slice reads its entity), the two latch rigs with an ri1-preset state (the Robot2 form), the entity flags through the states' getters object. The FK slice (2026-09-15): the three entries model_emperorscorpion, model_alien and model_alien_boss likewise on their hooks, each a parent-child HIERARCHY (the entry's `hierarchy` {child: parent}; the converter's hierarchy form; the key the tree's pre-order by rule) posed through FlatRig with the chain-link leg as the proof of every link."
+  "hook_rig_note": "the third Tier-2 slice (2026-09-13): the fifteen entries model_cloudshark .. model_herculesbeetle are HOOK rigs: the classic setupAnim verbatim in the descriptor, no keyframe layer, channels [] (the converter refuses channels on a hook entry without a keyframe_reference_leg); the reference-clip sampler's span per id comes from ReferenceClipSampler.RULES. The fourth Tier-2 slice (T2d, 2026-09-14): the thirteen entries model_crab .. model_flounder likewise, on the hooks written by the hook survey, the Crab with its draw fix and the render_instances declaration of its reference entry. The fifth Tier-2 slice (T2e, 2026-09-15): the fourteen entries model_pointysaurus .. model_chipmunk (the Lurking Terror held on the visual leg, its register line) likewise, on the hooks written by the hook survey: entity_state wherever the classic model reads its entity (the probe poses a code_driven entry's classic side through setupAnim(null, ...)), the two latch rigs with an ri1-preset state (the Robot2 form), the two sitting flags through the states' getters object. The sixth Tier-2 slice (T2f, 2026-09-15): the twelve entries model_enderknight .. model_triffid likewise, on the hooks written by the hook survey (the Dungeon Beast held on its whole-model render transform and the Scorpion on the visual leg, their register lines): entity_state on every one (every hook of this slice reads its entity), the two latch rigs with an ri1-preset state (the Robot2 form), the entity flags through the states' getters object. The FK slice (2026-09-15): the three entries model_emperorscorpion, model_alien and model_alien_boss likewise on their hooks, each a parent-child HIERARCHY (the entry's `hierarchy` {child: parent}; the converter's hierarchy form; the key the tree's pre-order by rule) posed through FlatRig with the chain-link leg as the proof of every link.. The first Tier-1 slice (T1a, 2026-09-15): the seventeen entries model_kraken .. model_theprinceadult likewise, on the hooks written by the hook survey (the Tier-1 rigs in the same form, hitbox profiles excluded, the GiantRobot pair through its instance form; the King held on its second translucent membrane pass and the Butterfly rig's four registries held on the Mothra's pair-contested cap at one sample, their register lines): every entry entity_state (the flags through the states' getters object, the three latch rigs with an ri1-preset state - the Robot2 form), the Kraken's and the Dungeon Beast's constant render transform (TEST-013 (a)) with the Dungeon Beast's undrawn_parts, the Giant Robot pair's explicit render_instances (the Crab's form)"
 }

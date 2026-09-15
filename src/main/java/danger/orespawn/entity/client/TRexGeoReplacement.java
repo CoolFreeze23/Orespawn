@@ -11,25 +11,25 @@ import net.minecraft.util.Mth;
 import software.bernie.geckolib.animation.AnimationProcessor;
 
 /**
- * GeckoLib T-Rex (the hooks): {@link ModelTRex#poseFrom} verbatim on the converted rig, ON THE HOOK (no keyframe
- * layer, no transcription - the self-gate stays closed until an artist delivers {@code idle} and {@code
- * walk}; the landing slice adds the geo, the wiring and the proofs). The port's classic model as it is, {@code
- * ANIM_SPEED} 1.0f (orig ClientProxyOreSpawn.java:417 passes {@code new ModelTRex(0.2f)}; the port's model is what the
- * hook transcribes): the THRESHOLD idiom on the eight leg parts' pitch - above a walking speed of a tenth ({@code
- * limbSwingAmount > 0.1f}, the float compare) {@code cos(age x 1.3) x PI x 0.25 x amount}, 0 at or below it - around
- * the rest pitches -0.174 / 0.506 / -0.401 / 0, the left leg mirrored; the ATTACKING branch on the jaw
- * ({@code getAttacking() != 0}: 0.52 + a 0.45 cosine x PI x 0.18, else 0.1); and the arms' 0.1 cosine x PI x 0.05
- * around -0.523 (the classic's {@code leftArm} / {@code rightArm} fields are the rig's {@code shape17} / {@code shape11}
- * parts). The entity is read through {@link TRexPose} (the Slice 4b doctrine).
+ * GeckoLib T-Rex (the hooks, landed by the first Tier-1 slice T1a): {@link ModelTRex#poseFrom} verbatim on the
+ * converted rig, ON THE HOOK (no keyframe layer, no transcription - the self-gate stays closed until an artist
+ * delivers {@code idle} and {@code walk} ; the geo, the wiring and the proofs landed with T1a). The port's classic
+ * model as it is, {@code ANIM_SPEED} 1.0f (orig ClientProxyOreSpawn.java:417 passes {@code new ModelTRex(0.2f)} ;
+ * the port's model is what the hook transcribes): the THRESHOLD idiom on the eight leg parts' pitch - above a walking
+ * speed of a tenth ({@code limbSwingAmount > 0.1f}, the float compare) {@code cos(age x 1.3) x PI x 0.25 x amount} , 0
+ * at or below it - around the rest pitches -0.174 / 0.506 / -0.401 / 0, the left leg mirrored; the ATTACKING
+ * branch on the jaw ({@code getAttacking() != 0}: 0.52 + a 0.45 cosine x PI x 0.18, else 0.1); and the arms' 0.1
+ * cosine x PI x 0.05 around -0.523 (the classic's {@code leftArm} / {@code rightArm} fields are the rig's {@code
+ * shape17} / {@code shape11} parts). The entity is read through {@link TRexPose} (the Slice 4b doctrine).
  *
- * <p>Scale and shadow follow {@link TRexRenderer}: 1.2 render scale (its private {@code SCALE}, applied around
- * {@code super.render} - the literal) and a 1.0 x 1.2 shadow (ENT-S-092). No zero-thickness cube.</p>
+ *
+ * <p>Scale and shadow follow {@link TRexRenderer} : 1.2 render scale ({@link TRexRenderer#SCALE}, applied around
+ * {@code super.render} - made public by the landing slice T1a, the hook survey' equal literal dropped; the T2d form)
+ * and a 1.0 x 1.2 shadow (ENT-S-092). No zero-thickness cube.</p>
  */
 public final class TRexGeoReplacement extends OreSpawnGeoReplacement<TRex> {
     /** The port's {@code ModelTRex.ANIM_SPEED} = 1.0f: the chain's frequency multiplier. */
     static final float ANIM_SPEED = 1.0F;
-    /** TRexRenderer's private {@code SCALE} = 1.2f (orig RenderTRex.scale, ClientProxyOreSpawn.java:417): the equal literal. */
-    static final float SCALE = 1.2f;
     private static final GeoReplacementDescriptor<TRex> DESCRIPTOR = new GeoReplacementDescriptor<>(
             () -> ModEntities.TREX.get(),  // lambda: a bound method ref would initialise ModEntities eagerly
             TRex.class,
@@ -39,8 +39,8 @@ public final class TRexGeoReplacement extends OreSpawnGeoReplacement<TRex> {
             TRexRenderer.SHADOW) {
         @Override
         public void applyScale(TRex entity, PoseStack poseStack, float partialTick) {
-            // TRexRenderer.render (orig RenderTRex.preRenderScale :39-45): poseStack.scale(SCALE, SCALE, SCALE)
-            poseStack.scale(SCALE, SCALE, SCALE);
+            // TRexRenderer.render (orig RenderTRex.preRenderScale :39-45): the renderer's constant, public since T1a (the T2d form)
+            poseStack.scale(TRexRenderer.SCALE, TRexRenderer.SCALE, TRexRenderer.SCALE);
         }
     };
 

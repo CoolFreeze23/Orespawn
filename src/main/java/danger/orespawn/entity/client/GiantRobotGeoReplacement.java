@@ -10,34 +10,34 @@ import net.minecraft.util.Mth;
 import software.bernie.geckolib.animation.AnimationProcessor;
 
 /**
- * GeckoLib Giant Robot (the hooks): {@link ModelGiantRobot#poseFrom} verbatim on the render-instance-expanded rig, ON
- * THE HOOK (no keyframe layer, no transcription - the self-gate stays closed until an artist delivers {@code idle} and
- * {@code walk}; the landing slice adds the geo, the wiring and the proofs). Wingspeed 0.25f (orig
- * ClientProxyOreSpawn.java:516 {@code new ModelGiantRobot(0.25f)}, the model's {@code WING_SPEED}): the MOVESCALE
- * idiom ({@code limbSwingAmount * 0.65f} clamped to 1, orig ModelGiantRobot.java:158-161) scaling every walk term; the
- * hip's sway (X on {@code cos(-age ws)}, Y on {@code sin(-age ws)}, both x PI x 0.1, the yaw plus a constant quarter
- * turn) and its 4-unit BOB at twice the walk frequency (a POSITION write through {@link #moveTo}, orig
- * :168-171) that the three back parts, the shoulders, the neck and the head FOLLOW (orig :267-272); the two-phase thigh
- * / shin angles (0.15 / 0.2 x PI around -0.19634954 / +0.62831854 x movescale, orig :162-167); the ATTACKING branch
- * (orig :227-240 {@code getAttacking() != 0}): the shoulders twist on {@code -sin(age ws 2) PI 0.2} where idle they
- * twist on the hip's negated sway, and the arms windmill ({@code sin(age ws 2) PI / 5 - PI / 4} for the upper arm,
- * {@code PI - upper} for the lower, both + 0.62831853) where idle they copy the thigh angles; the torso counter-twist
- * (back3 at half the shoulders', orig :241-242); and the HEAD-LOOK idiom (yaw {@code toRadians(netHeadYaw)}, pitch
- * {@code toRadians(headPitch) / 3}). The entity is read through {@link GiantRobotPose} (the Slice 4b doctrine).
- *
+ * GeckoLib Giant Robot (the hooks, landed by the first Tier-1 slice T1a): {@link ModelGiantRobot#poseFrom}
+ * verbatim on the render-instance-expanded rig, ON THE HOOK (no keyframe layer, no
+ * transcription - the self-gate stays closed until an artist delivers {@code idle} and {@code walk} ; the geo, the
+ * wiring and the proofs landed with T1a). Wingspeed 0.25f (orig ClientProxyOreSpawn.java:516 {@code new
+ * ModelGiantRobot(0.25f)} , the model's {@code WING_SPEED} ): the MOVESCALE idiom ({@code limbSwingAmount *
+ * 0.65f} clamped to 1, orig ModelGiantRobot.java:158-161) scaling every walk term; the hip's sway (X on {@code
+ * cos(-age ws)} , Y on {@code sin(-age ws)} , both x PI x 0.1, the yaw plus a constant quarter turn) and its
+ * 4-unit BOB at twice the walk frequency (a POSITION write through {@link #moveTo} , orig :168-171) that the three
+ * back parts, the shoulders, the neck and the head FOLLOW (orig :267-272); the two-phase thigh / shin angles (0.15 /
+ * 0.2 x PI around -0.19634954 / +0.62831854 x movescale, orig :162-167); the ATTACKING branch (orig :227-240
+ * {@code getAttacking() != 0} ): the shoulders twist on {@code -sin(age ws 2) PI 0.2} where idle they twist on the
+ * hip's negated sway, and the arms windmill ({@code sin(age ws 2) PI / 5 - PI / 4} for the upper arm, {@code PI -
+ * upper} for the lower, both + 0.62831853) where idle they copy the thigh angles; the torso counter-twist
+ * (back3 at half the shoulders', orig :241-242); and the HEAD-LOOK idiom (yaw {@code
+ * toRadians(netHeadYaw)} , pitch {@code toRadians(headPitch) / 3} ). The entity is read through {@link
+ * GiantRobotPose} (the Slice 4b doctrine).
  * <p>THE RENDER-INSTANCE FORM ({@code step_scope: explicit} - the Giant Robot's reference entry, THE FOLDER'S GAPS
  * 2026-09-14): the classic draws its eleven shared leg and arm parts twice per frame, re-posed between the draws by
  * {@code renderLeg} (orig :173-199 the sign +1 pass, :200-226 the sign -1 pass) and {@code renderArm} (orig :243-254 /
  * :255-266), so the converted rig carries one top-level clone per draw - {@code <part>__i0} the sign +1 pass,
  * {@code <part>__i1} the sign -1 pass, twenty-two bones - and this hook poses every clone directly with the classic
  * helpers' statements ({@link #renderLeg} / {@link #renderArm} below: the same names, the pose statements only - the
- * draw calls are the rig's {@code orespawn:bone_draw_order}). Every value the classic reads back from a part it just
- * wrote is held in a local; the coordinates the classic never writes (the hip's and the followers' x / z, the shoulders'
- * z) are read through {@link #classicPosition} (the bind).</p>
- *
- * <p>Scale and shadow follow {@link GiantRobotRenderer}: {@code SCALE} 1.0 (identity, so no scale hook) and a 0.99 x
- * 1.0 shadow (ENT-S-092). No zero-thickness cube. The Jeffery shares this rig and hook under its own registry
- * ({@link JefferyGeoReplacement}, the Ant precedent).</p>
+ * draw calls are the rig's {@code orespawn:bone_draw_order} ). Every value the classic reads back from a part it just
+ * wrote is held in a local; the coordinates the classic never writes (the hip's and the followers' x / z, the
+ * shoulders' z) are read through {@link #classicPosition} (the bind).</p>
+ * <p>Scale and shadow follow {@link GiantRobotRenderer} : {@code SCALE} 1.0 (identity, so no scale hook) and a 0.99 x
+ * 1.0 shadow (ENT-S-092). No zero-thickness cube. The Jeffery shares this rig and hook under its own registry ({@link
+ * JefferyGeoReplacement}, the Ant precedent).</p>
  */
 public final class GiantRobotGeoReplacement extends OreSpawnGeoReplacement<GiantRobot> {
     /** orig ClientProxyOreSpawn.java:516 {@code new ModelGiantRobot(0.25f)}: the model's {@code WING_SPEED}. */

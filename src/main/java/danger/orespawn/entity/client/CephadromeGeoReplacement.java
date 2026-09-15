@@ -10,28 +10,28 @@ import net.minecraft.util.Mth;
 import software.bernie.geckolib.animation.AnimationProcessor;
 
 /**
- * GeckoLib Cephadrome (the hooks): {@link ModelCephadrome#poseFrom} verbatim on the converted rig, ON THE HOOK (no
- * keyframe layer, no transcription - the self-gate stays closed until an artist delivers {@code idle} and {@code walk}).
- * Wingspeed 0.55f (orig ModelCephadrome.java:15,68 / ClientProxyOreSpawn.java:446). The idioms, all read
- * through {@link CephadromePose}: the walk amplitude from the MOVEMENT DELTA - above a walking speed of a
- * thousandth {@code cos(age * 0.75f * ws) * PI * lspeed * 0.4f} with {@code lspeed} the horizontal distance
- * moved this tick, clamped to +-0.75 past +-0.5 (orig :384-396); the ACTIVITY branch on the eight leg parts (flying: a
- * constant 1.0 lift on both sides; else the gait, the left side the negative; orig :397-416); the ACTIVITY /
- * ATTACKING ternary on the ten wing parts about Z (0.55 x 0.28 flying, -0.85 + 0.2 x 0.028 at rest, -0.65 + 0.9 x 0.068
- * attacking; orig :417-427); the {@code |cos|} idiom on the eight top fins / membranes about X, halved down the row (orig
- * :428-436); the tail rhythm switched by the flags (0.76 / 0.1 active, 0.22 / 0.03 idle; orig :437-441) with the
- * POSITION-write idiom (through {@link #moveTo}) - each tail segment FOLLOWS the previous 13 / 13 / 10 units along (sin,
- * cos) of its yaw with the classic's x nudges, the seven tail fins / membranes copying the fin's pivot and yaw (orig
- * :442-468); the RIDDEN-FLIGHT NECK LATCH (orig :469-482, the Rotator's precedent): while activity is 1 the head yaw is
- * the negated body-yaw delta x 10 eased into the per-entity {@link RenderInfo}'s {@code rf1} by a fiftieth and clamped to
- * +-50, else {@code netHeadYaw / 2}; the HEAD-LOOK idiom about Y at 0.125 / 0.25 / 0.5 / 0.75 of the radians on the three
- * necks and the head, each pivot following the previous 14 / 14 / 8 units back, the two hammerheads and the mouth copying
- * the head (orig :483-502); and the ATTACKING branch on the mouth's pitch (orig :503). The tail's and neck3's pivots are
- * never written (the bind), read through {@link #classicPosition}; every value the classic reads back from a part it
- * just wrote is held in a local; a part whose x / z the classic writes keeps its bind y. Orig :504's
- * {@code e.setRenderInfo(r)} is the port's omitted self-copy (ENT-S-093).
- *
- * <p>Shadow follows {@link CephadromeRenderer}: a 1.25 x 1.0 shadow (ENT-S-092; the constructor literal - the renderer
+ * GeckoLib Cephadrome (the hooks, landed by the first Tier-1 slice T1a): {@link ModelCephadrome#poseFrom} verbatim on
+ * the converted rig, ON THE HOOK (no keyframe layer, no transcription - the self-gate stays closed until an
+ * artist delivers {@code idle} and {@code walk}). Wingspeed 0.55f (orig ModelCephadrome.java:15,68 /
+ * ClientProxyOreSpawn.java:446). The idioms, all read through {@link CephadromePose} : the walk amplitude from the
+ * MOVEMENT DELTA - above a walking speed of a thousandth {@code cos(age * 0.75f * ws) * PI * lspeed * 0.4f} with
+ * {@code lspeed} the horizontal distance moved this tick, clamped to +-0.75 past +-0.5 (orig :384-396); the ACTIVITY
+ * branch on the eight leg parts (flying: a constant 1.0 lift on both sides; else the gait, the left side the
+ * negative; orig :397-416); the ACTIVITY / ATTACKING ternary on the ten wing parts about Z (0.55 x 0.28 flying, -0.85
+ * + 0.2 x 0.028 at rest, -0.65 + 0.9 x 0.068 attacking; orig :417-427); the {@code |cos|} idiom on the eight top fins /
+ * membranes about X, halved down the row (orig :428-436); the tail rhythm switched by the flags (0.76 / 0.1
+ * active, 0.22 / 0.03 idle; orig :437-441) with the POSITION-write idiom (through {@link #moveTo} ) - each tail
+ * segment FOLLOWS the previous 13 / 13 / 10 units along (sin, cos) of its yaw with the classic's x nudges, the
+ * seven tail fins / membranes copying the fin's pivot and yaw (orig :442-468); the RIDDEN-FLIGHT NECK LATCH (orig
+ * :469-482, the Rotator's precedent): while activity is 1 the head yaw is the negated body-yaw delta x 10 eased into
+ * the per-entity {@link RenderInfo} 's {@code rf1} by a fiftieth and clamped to +-50, else {@code netHeadYaw / 2} ;
+ * the HEAD-LOOK idiom about Y at 0.125 / 0.25 / 0.5 / 0.75 of the radians on the three necks and the head, each pivot
+ * following the previous 14 / 14 / 8 units back, the two hammerheads and the mouth copying the head (orig :483-502); and
+ * the ATTACKING branch on the mouth's pitch (orig :503). The tail's and neck3's pivots are never written (the
+ * bind), read through {@link #classicPosition} ; every value the classic reads back from a part it just wrote is
+ * held in a local; a part whose x / z the classic writes keeps its bind y. Orig :504's {@code e.setRenderInfo(r)} is the
+ * port's omitted self-copy (ENT-S-093).
+ * <p>Shadow follows {@link CephadromeRenderer} : a 1.25 x 1.0 shadow (ENT-S-092; the constructor literal - the renderer
  * declares no SHADOW constant); the classic renderer scales by 1.0 (its private SCALE), so no scale hook. The rig has
  * zero-thickness cubes (the wing fins and membranes), so the shipped geo carries the classic within-cube face order
  * ({@link FaceOrder#KEY}; TEST-007) and the seam expects it.</p>

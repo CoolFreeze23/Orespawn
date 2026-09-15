@@ -26,7 +26,7 @@ public class LeonRenderer extends MobRenderer<EntityLeon, LeonModel> {
      * applied in RenderLeon.java:39-41 {@code preRenderScale}:
      * {@code GL11.glScalef((float)this.scale, (float)this.scale, (float)this.scale)}.
      */
-    private static final float SCALE = 1.75f;
+    public static final float SCALE = 1.75f;
 
     public LeonRenderer(EntityRendererProvider.Context context) {
         // Shadow 1.75f = orig shadowSize par2 * par3 = 1.0f * 1.75f

@@ -330,12 +330,31 @@ public final class ReferenceClipSampler {
             // the FK slice (2026-09-15): the Alien rig's two registries and the Emperor Scorpion landed as real parent-child hierarchies
             Map.entry("model_emperorscorpion", "emperor_scorpion"),
             Map.entry("model_alien", "alien"),
-            Map.entry("model_alien_boss", "alien_boss")));
+            Map.entry("model_alien_boss", "alien_boss"),
+            // the first Tier-1 slice (T1a, 2026-09-15): the seventeen registries landed on the hooks already written (the King and the
+            // Butterfly rig held)
+            Map.entry("model_kraken", "kraken"),
+            Map.entry("model_dungeonbeast", "dungeon_beast"),
+            Map.entry("model_basilisk", "basilisk"),
+            Map.entry("model_godzilla", "godzilla"),
+            Map.entry("model_hammerhead", "hammerhead"),
+            Map.entry("model_trex", "trex"),
+            Map.entry("model_leon", "leon"),
+            Map.entry("model_leonopteryx", "leonopteryx"),
+            Map.entry("model_cephadrome", "cephadrome"),
+            Map.entry("model_dragon", "dragon"),
+            Map.entry("model_baby_dragon", "baby_dragon"),
+            Map.entry("model_giantrobot", "giant_robot"),
+            Map.entry("model_jeffery", "jeffery"),
+            Map.entry("model_pitchblack", "pitch_black"),
+            Map.entry("model_seamonster", "sea_monster"),
+            Map.entry("model_theprince", "the_prince"),
+            Map.entry("model_theprinceadult", "the_prince_adult")));
 
     /**
      * An unlanded hook: the descriptor's simple class name, the ModEntities registry it packages under and the rig it
      * names - the map {@code HOOKS} in {@code tools/asset_audit.py} carries (descriptor -> rig; 67 entries at the
-     * hooks' landing, the landing slices removing theirs - T2d removed thirteen, T2e fourteen (the Lurking Terror held), T2f twelve (the Dungeon Beast and the Scorpion held), the FK slice three (the Alien pair and the Emperor Scorpion, real parent-child hierarchies); the two delegating descriptors, the
+     * hooks' landing, the landing slices removing theirs - T2d removed thirteen, T2e fourteen (the Lurking Terror held), T2f twelve (the Dungeon Beast and the Scorpion held), the FK slice three (the Alien pair and the Emperor Scorpion, real parent-child hierarchies), the first Tier-1 slice T1a seventeen (the King and the Butterfly rig held); the two delegating descriptors, the
      * Alien Boss's on the Alien's rig and the Leonopteryx's on the Leon's, added
      * here because they package under their own registries). The reference entry is {@code reference_<rig>} in {@code
      * tools/reference_model_proofs.json}, its geo {@code
@@ -354,30 +373,13 @@ public final class ReferenceClipSampler {
     }
 
     static final Map<String, Hook> HOOK_DESCRIPTORS = hooks(
-            new Hook("BabyDragonGeoReplacement", "baby_dragon", "dragon"),
-            new Hook("BasiliskGeoReplacement", "basilisk", "basilisk"),
             new Hook("ButterflyGeoReplacement", "butterfly", "butterfly"),
-            new Hook("CephadromeGeoReplacement", "cephadrome", "cephadrome"),
-            new Hook("DragonGeoReplacement", "dragon", "dragon"),
-            new Hook("DungeonBeastGeoReplacement", "dungeon_beast", "dungeonbeast"),
             new Hook("GhostGeoReplacement", "ghost", "ghost"),
-            new Hook("GiantRobotGeoReplacement", "giant_robot", "giantrobot"),
-            new Hook("GodzillaGeoReplacement", "godzilla", "godzilla"),
-            new Hook("HammerheadGeoReplacement", "hammerhead", "hammerhead"),
-            new Hook("JefferyGeoReplacement", "jeffery", "giantrobot"),
-            new Hook("KrakenGeoReplacement", "kraken", "kraken"),
-            new Hook("LeonGeoReplacement", "leon", "leon"),
-            new Hook("LeonopteryxGeoReplacement", "leonopteryx", "leon"),
             new Hook("LunaMothGeoReplacement", "luna_moth", "butterfly"),
             new Hook("LurkingTerrorGeoReplacement", "lurking_terror", "lurkingterror"),
             new Hook("MothraGeoReplacement", "mothra", "butterfly"),
-            new Hook("PitchBlackGeoReplacement", "pitch_black", "pitchblack"),
             new Hook("ScorpionGeoReplacement", "scorpion", "scorpion"),
-            new Hook("SeaMonsterGeoReplacement", "sea_monster", "seamonster"),
-            new Hook("TRexGeoReplacement", "trex", "trex"),
             new Hook("TheKingGeoReplacement", "the_king", "theking"),
-            new Hook("ThePrinceAdultGeoReplacement", "the_prince_adult", "theprinceadult"),
-            new Hook("ThePrinceGeoReplacement", "the_prince", "theprince"),
             new Hook("ThePrinceTeenGeoReplacement", "the_prince_teen", "theprinceteen"),
             new Hook("VampireButterflyGeoReplacement", "vampire_butterfly", "butterfly"),
             new Hook("WaterDragonGeoReplacement", "water_dragon", "waterdragon"));
@@ -815,7 +817,118 @@ public final class ReferenceClipSampler {
                 "wingspeed 1.0: the only rhythm live at these inputs is the attacking tentacle |cos(ageInTicks * 0.25 * WINGSPEED) * PI * 0.5| with its alternating roll "
                         + "(TriffidGeoReplacement.applyCustomAnimations:147-148, attacking; the l44 chain follows by position, :158-217) at 0.25 rad/tick, which the absolute "
                         + "value folds to a 12.57-tick half period; the four leaf chains cos(ageInTicks * 0.25 * WINGSPEED) * PI * 0.039 (:67) need getOpenClosed() != 0 - 0 on "
-                        + "the probe, the closed constant 0.1225 rad - so the walk and idle states hold still"))));
+                        + "the probe, the closed constant 0.1225 rad - so the walk and idle states hold still")),
+            // the first Tier-1 slice (T1a, 2026-09-15): the seventeen registries landed on the hooks already written (the King and the
+            // Butterfly rig held) - each row is the HOOK_RULES row the hook survey wrote, carried verbatim (the same rule, the same
+            // source lines, true on the line-neutral descriptors) and keyed by the manifest id; the three shared rows carried once per
+            // registry (the FK slice's form): LeonopteryxGeoReplacement.applyCustomAnimations:45 ->
+            // LeonGeoReplacement.poseRig, BabyDragonGeoReplacement.applyCustomAnimations:61 ->
+            // DragonGeoReplacement.poseDragon, JefferyGeoReplacement.applyCustomAnimations:38 -> GiantRobotGeoReplacement.poseRig
+            Map.entry("model_kraken", Rule.periodic(TWO_PI / (double) (0.087F * 1.0F),
+                "ANIM_SPEED 1.0: the slowest rhythm is the fourth tentacle pair's pitch cos(ageInTicks * differ * ANIM_SPEED - n * pi/4) * PI * amp with differ "
+                        + "0.087 (KrakenGeoReplacement.dangleTentacle:245-310; differ 0.1 / 0.101 / 0.097 / 0.093 / 0.087 and ydiffer 0.1 / 0.102 / 0.098 / 0.092 / 0.088 per "
+                        + "tentacle, :215-229; 0.2 for the two rear ones, :234-235; 0.5 with amp 0.03 while attacking, :241-242) at 0.087 rad/tick, 72.22 ticks; the fins "
+                        + "cos(ageInTicks * 0.43 / 0.32 * ANIM_SPEED) * PI * 0.15 / 0.14 (:68-69); the mouth latch cos(ageInTicks * 0.66) * PI * 0.15 with its 0.1-tick "
+                        + "look-ahead (:93-94) re-rolled on the entity RNG at the zero crossing (the Robot2 precedent); the teeth twitch cos(ageInTicks * 0.5 * ANIM_SPEED) * PI * 0.015 (:109)")),
+            Map.entry("model_dungeonbeast", Rule.periodic(TWO_PI / (double) (0.5F * 0.62F),
+                "wingspeed 0.62: the slowest rhythm is the fourteen phased spine segments cos(ageInTicks * 0.5 * WINGSPEED + n * pi/4) * PI * 0.07 "
+                        + "(DungeonBeastGeoReplacement.applyCustomAnimations:73-86, every state) at 0.31 rad/tick, 20.27 ticks; the ten gait-scaled legs "
+                        + "cos(ageInTicks * 1.4 * WINGSPEED) * PI * 0.22 * limbSwingAmount (:60, walk) at 0.868; the tail cos(ageInTicks * 0.75 * WINGSPEED) * PI * 0.25 * "
+                        + "tailamp with tailamp = limbSwingAmount at rest and 1.25 attacking (:87-88, :97-138); the jaw latch cos(ageInTicks * 2.0 * WINGSPEED) * PI * 0.15 "
+                        + "with its 0.1-tick look-ahead (:143-144) on RenderInfo, re-rolled on the entity RNG")),
+            Map.entry("model_basilisk", Rule.periodic(TWO_PI / (double) (1.3F * 0.3F),
+                "wingspeed 0.3: the ten-ring serpentine cos(ageInTicks * 1.3 * WINGSPEED - n * pi/4) * PI * 0.1 * limbSwingAmount (BasiliskGeoReplacement"
+                        + ".applyCustomAnimations:66-111, walk; the rings' pivots follow, position channels) at 0.39 rad/tick, 16.11 ticks - the slowest; the "
+                        + "attacking jaw -1.0 + cos(ageInTicks * 0.45) * PI * 0.18 (:112) at 0.45")),
+            Map.entry("model_godzilla", Rule.periodic(TWO_PI / (double) (0.1F * 1.0F),
+                "ANIM_SPEED 1.0: the slowest rhythm is the idle arm drift sin(ageInTicks * ANIM_SPEED * 0.1) * PI * 0.02 (GodzillaGeoReplacement"
+                        + ".applyCustomAnimations:209, attacking 0) at 0.1 rad/tick, 62.83 ticks; the per-leg threshold gait cos / sin(ageInTicks * 0.75 * ANIM_SPEED "
+                        + "+ n * pi/4) with the toe lift and sweep position writes (:97-99, :135-137, walk) at 0.75; the idle tail cos(ageInTicks * 0.75) * PI * 0.05 and the attacking "
+                        + "tail fan cos(ageInTicks * 1.75) * PI * 0.2 (:182-183); the attacking jaw cos(ageInTicks * 1.5) * PI * 0.12 (:202) and arms sin(ageInTicks * 1.75) * PI * 0.16 (:208); "
+                        + "the head look follows netHeadYaw * 0.55 = 0 (:187)")),
+            Map.entry("model_hammerhead", Rule.periodic(TWO_PI / (double) (0.3F * 0.33F),
+                "wingspeed 0.33: the slowest rhythm is the armour sway cos(ageInTicks * 0.3 * WINGSPEED) * PI * 0.03 (HammerheadGeoReplacement"
+                        + ".applyCustomAnimations:96, every state) at 0.099 rad/tick, 63.47 ticks; the (double) > 0.1 gait on twelve leg parts cos(ageInTicks * 1.3 * "
+                        + "WINGSPEED) * PI * 0.1 * limbSwingAmount and its pi/4 phase (:62-63, walk) at 0.429; the attacking nod cos(ageInTicks * 1.3 * WINGSPEED) * PI * 0.13 "
+                        + "(:99); the head look at 0.25 on sixteen parts follows netHeadYaw = 0 (:79)")),
+            Map.entry("model_trex", Rule.periodic(TWO_PI / (double) 0.1F,
+                "the slowest rhythm is the arm sway -0.523 + cos(ageInTicks * 0.1) * PI * 0.05 on shape17 / shape11 (TRexGeoReplacement.applyCustomAnimations:75-76, "
+                        + "every state) at 0.1 rad/tick, 62.83 ticks; the float-compare threshold gait on eight leg parts cos(ageInTicks * 1.3 * ANIM_SPEED) * PI * 0.25 * "
+                        + "limbSwingAmount (:58, ANIM_SPEED 1.0, walk) at 1.3; the attacking jaw 0.52 + cos(ageInTicks * 0.45) * PI * 0.18 (:72)")),
+            Map.entry("model_leon", Rule.periodic(TWO_PI / (double) (0.6F * 0.22F),
+                "wingspeed 0.22: the slowest rhythm is the standing sway cos(ageInTicks * 0.6 * WINGSPEED) * PI * 0.02 (LeonGeoReplacement.poseRig:224, "
+                        + "activity 0) at 0.132 rad/tick, 47.60 ticks; the standing threshold gait cos(ageInTicks * 1.8 * WINGSPEED) * PI * 0.25 * limbSwingAmount and "
+                        + "cos(ageInTicks * 0.9 * WINGSPEED) * PI * 0.25 * limbSwingAmount (:143-144, walk; the feet follow, :170-179) with the idle 0.9 * 0.22 sway at "
+                        + "amplitude 0.02 (:147); the flight beat cos(ageInTicks * 1.6 * WINGSPEED * spd) * PI * 0.06 / 0.26 * amp with spd 1.7 and amp 1.4 while attacking "
+                        + "(:259, :344, :256-257), the flying legs at 3.6 * 0.22 (:316) and the flying jaw at 2.6 * 0.22 (:468) need activity != 0 (0 on the probe); the ridden "
+                        + "yaw accumulator rf1 needs getBeingRidden() != 0; the head look follows netHeadYaw = 0 (:232-253)")),
+            Map.entry("model_leonopteryx", Rule.periodic(TWO_PI / (double) (0.6F * 0.22F),
+                "wingspeed 0.22: the slowest rhythm is the standing sway cos(ageInTicks * 0.6 * WINGSPEED) * PI * 0.02 (LeonGeoReplacement.poseRig:224, "
+                        + "activity 0) at 0.132 rad/tick, 47.60 ticks; the standing threshold gait cos(ageInTicks * 1.8 * WINGSPEED) * PI * 0.25 * limbSwingAmount and "
+                        + "cos(ageInTicks * 0.9 * WINGSPEED) * PI * 0.25 * limbSwingAmount (:143-144, walk; the feet follow, :170-179) with the idle 0.9 * 0.22 sway at "
+                        + "amplitude 0.02 (:147); the flight beat cos(ageInTicks * 1.6 * WINGSPEED * spd) * PI * 0.06 / 0.26 * amp with spd 1.7 and amp 1.4 while attacking "
+                        + "(:259, :344, :256-257), the flying legs at 3.6 * 0.22 (:316) and the flying jaw at 2.6 * 0.22 (:468) need activity != 0 (0 on the probe); the ridden "
+                        + "yaw accumulator rf1 needs getBeingRidden() != 0; the head look follows netHeadYaw = 0 (:232-253)")),
+            Map.entry("model_cephadrome", Rule.periodic(TWO_PI / (double) (0.2F * 0.55F),
+                "wingspeed 0.55: the slowest rhythm is the resting wing beat -0.85 + cos(ageInTicks * 0.2 * WINGSPEED) * PI * ... (CephadromeGeoReplacement"
+                        + ".applyCustomAnimations:112, activity 0 and not attacking) at 0.11 rad/tick, 57.12 ticks; the fins' sway cos(ageInTicks * 0.15 * WINGSPEED) "
+                        + "* PI * 0.05 (:124) folds through Math.abs on the fins and membranes (:125-132) to a 38.08-tick period; the tail chain at tailspeed 0.76 "
+                        + "(:72, :139-156; 0.22 in the ridden branch :135); the jaw cos(ageInTicks * 0.5 * WINGSPEED) * PI * 0.14 (:217); the legs "
+                        + "cos(ageInTicks * 0.75 * WINGSPEED) * PI * lspeed * 0.4 (:80) scale by the movement delta lspeed = |xOld - x, zOld - z| (:70-79), 0 on the "
+                        + "probe, so the gait does not move at these inputs")),
+            Map.entry("model_dragon", Rule.periodic(TWO_PI / (double) (0.2F * 1.0F),
+                "ANIM_SPEED 1.0: the slowest rhythm is the resting wing beat -0.85 + cos(ageInTicks * 0.2 * ANIM_SPEED) * PI * 0.028 (DragonGeoReplacement"
+                        + ".poseDragon:151, activity 0 and not attacking) at 0.2 rad/tick, 31.42 ticks; the activity beat cos(ageInTicks * 0.75) * PI * 0.28 (:146, :150) and "
+                        + "the attacking-by-activity -0.45 + cos(ageInTicks * 0.85) * PI * 0.2 (:147); the tail chain cos(ageInTicks * tailspeed) with tailspeed 0.76 "
+                        + "at rest, 0.96 attacking, 0.22 sitting (:97-98, :198-208, :211-258); the attacking jaw cos(ageInTicks * 1.5) * PI * 0.14 (:309); the fourteen legs "
+                        + "cos(ageInTicks * 1.25 * ANIM_SPEED) * PI * lspeed * 0.6 (:104) scale by the movement delta lspeed = |xOld - x, zOld - z| (:96-103), 0 on the "
+                        + "probe, so the gait does not move at these inputs")),
+            Map.entry("model_baby_dragon", Rule.periodic(TWO_PI / (double) (0.2F * 1.0F),
+                "ANIM_SPEED 1.0: the slowest rhythm is the resting wing beat -0.85 + cos(ageInTicks * 0.2 * ANIM_SPEED) * PI * 0.028 (DragonGeoReplacement"
+                        + ".poseDragon:151, activity 0 and not attacking) at 0.2 rad/tick, 31.42 ticks; the activity beat cos(ageInTicks * 0.75) * PI * 0.28 (:146, :150) and "
+                        + "the attacking-by-activity -0.45 + cos(ageInTicks * 0.85) * PI * 0.2 (:147); the tail chain cos(ageInTicks * tailspeed) with tailspeed 0.76 "
+                        + "at rest, 0.96 attacking, 0.22 sitting (:97-98, :198-208, :211-258); the attacking jaw cos(ageInTicks * 1.5) * PI * 0.14 (:309); the fourteen legs "
+                        + "cos(ageInTicks * 1.25 * ANIM_SPEED) * PI * lspeed * 0.6 (:104) scale by the movement delta lspeed = |xOld - x, zOld - z| (:96-103), 0 on the "
+                        + "probe, so the gait does not move at these inputs")),
+            Map.entry("model_giantrobot", Rule.periodic(TWO_PI / (double) 0.25F,
+                "WING_SPEED 0.25: the hip sway and quarter turn cos / sin(-ageInTicks * WING_SPEED) * PI * 0.1 * movescale and the two-phase thigh and shin "
+                        + "(GiantRobotGeoReplacement.poseRig:79-87; movescale = limbSwingAmount * 0.65 clamped to 1, :72-75, so 0 at idle) at 0.25 rad/tick, 25.13 ticks - "
+                        + "the slowest; the bob cos(-ageInTicks * WING_SPEED * 2.0) * movescale (:91) and the attacking shoulder twist and windmill punch "
+                        + "sin(ageInTicks * WING_SPEED * 2.0) (:112-117) at 0.5; the head look follows netHeadYaw = 0 (:135-136); the twenty-two instance bones posed by "
+                        + "renderLeg / renderArm (:152-211)")),
+            Map.entry("model_jeffery", Rule.periodic(TWO_PI / (double) 0.25F,
+                "WING_SPEED 0.25: the hip sway and quarter turn cos / sin(-ageInTicks * WING_SPEED) * PI * 0.1 * movescale and the two-phase thigh and shin "
+                        + "(GiantRobotGeoReplacement.poseRig:79-87; movescale = limbSwingAmount * 0.65 clamped to 1, :72-75, so 0 at idle) at 0.25 rad/tick, 25.13 ticks - "
+                        + "the slowest; the bob cos(-ageInTicks * WING_SPEED * 2.0) * movescale (:91) and the attacking shoulder twist and windmill punch "
+                        + "sin(ageInTicks * WING_SPEED * 2.0) (:112-117) at 0.5; the head look follows netHeadYaw = 0 (:135-136); the twenty-two instance bones posed by "
+                        + "renderLeg / renderArm (:152-211)")),
+            Map.entry("model_pitchblack", Rule.periodic(TWO_PI / (double) (0.05F * 0.65F),
+                "wingspeed 0.65, pscale 1.0 on the probe: the slowest rhythm is the resting wing sway -pi/4 + cos(ageInTicks * 0.05 * WINGSPEED / pscale) * PI * ... "
+                        + "(PitchBlackGeoReplacement.applyCustomAnimations:86, activity 0) at 0.0325 rad/tick, 193.33 ticks - over the 6 s cap; the activity wings "
+                        + "cos(ageInTicks * 0.45 * WINGSPEED / pscale) * PI * 0.24 (:86, activity != 0); the attacking jaw cos(ageInTicks * 0.85 * WINGSPEED) * PI * 0.16 (:179) else "
+                        + "the RenderInfo chomp latch gated by |ageInTicks * 0.7 * WINGSPEED mod 2 pi| (:184-185); the walking legs cos / sin(ageInTicks * 0.75 * WINGSPEED / pscale) "
+                        + "with the pscale-scaled claw writes (:222-285, walk) at 0.4875 and the flying legs cos(ageInTicks * 0.85 * WINGSPEED / pscale) * 0.2 while attacking (:305); "
+                        + "the forked tail chain at tailspeed 0.76 / pscale walking and 0.26 / pscale at rest (:349-353, :355-416)")),
+            Map.entry("model_seamonster", Rule.periodic(TWO_PI / (double) (0.2F * 0.5F),
+                "wingspeed 0.5: the slowest rhythm is the eye twitch cos(ageInTicks * 0.2 * WINGSPEED) * PI * 0.05 (SeaMonsterGeoReplacement.applyCustomAnimations:144, "
+                        + "every state) at 0.1 rad/tick, 62.83 ticks; the tail fan cos(ageInTicks * 1.3 * WINGSPEED) * PI * 0.2 * limbSwingAmount (:58, walking or attacking; "
+                        + "seven follows :62-88), the fins cos(ageInTicks * 1.2 * WINGSPEED) * PI * 0.2 * limbSwingAmount (:91) and the neck chain 0.455 * limbSwingAmount + "
+                        + "cos(ageInTicks * 0.9 * WINGSPEED) * PI * 0.25 * limbSwingAmount (:100; five follows :104-130) - each with its own idle alternative below the threshold; "
+                        + "the attacking jaw cos(ageInTicks * 1.7 * WINGSPEED) * PI * 0.17 (:141); the head look at 0.5 follows netHeadYaw = 0 (:135)")),
+            Map.entry("model_theprince", Rule.periodic(TWO_PI / (double) (0.3F * 0.65F),
+                "wingspeed 0.65: the slowest rhythm is the resting wings cos(ageInTicks * 0.3 * WINGSPEED) * PI * 0.04 (ThePrinceGeoReplacement"
+                        + ".applyCustomAnimations:86, below the threshold and not attacking) at 0.195 rad/tick, 32.22 ticks; the threshold-or-attacking wings cos(ageInTicks "
+                        + "* 2.3 * WINGSPEED) * PI * 0.4 * limbSwingAmount (:85) and the threshold legs cos(ageInTicks * 2.0 * WINGSPEED) * PI * 0.25 * limbSwingAmount (:95, "
+                        + "walk); the attacking lash cos(ageInTicks * 0.9 * WINGSPEED) * PI * 0.06 (:106) and the tail fan cos(ageInTicks * 1.3 * WINGSPEED) * PI * 0.12 (:111; "
+                        + "four follows :116-132); the jaw chatter cos(ageInTicks * 1.9 / 2.1 / 2.3 * WINGSPEED) * PI * 0.2 (:191-195); the three heads' look and the necks by the "
+                        + "head extensions (0 on the probe, :149-244)")),
+            Map.entry("model_theprinceadult", Rule.periodic(TWO_PI / (double) (0.13F * 0.65F),
+                "wingspeed 0.65: the slowest rhythm is the centre head's resting yaw sin(ageInTicks * 0.13 * WINGSPEED) * PI * 0.08 (ThePrinceAdultGeoReplacement"
+                        + ".applyCustomAnimations:308, attacking 0; the heads' resting rhythms 0.17 / 0.45, 0.19 / 0.55, 0.13 / 0.65, :302-310, their pitch getHeadNExt() - 30 in "
+                        + "every state) at 0.0845 rad/tick, 74.35 ticks; the attacking heads at 0.3 / 0.85, 0.32 / 0.95, 0.28 / 0.75 (:285-293) and the sitting jaws at 0.25 / 0.35 "
+                        + "/ 0.45 (:334-336); the wings by attacking / activity / sitting cos(ageInTicks * 0.75 / 0.35 * WINGSPEED) (:88-92) with the 84 / 184 follows; the gait "
+                        + "cos(ageInTicks * 0.3 * WINGSPEED) * PI * 0.25 * limbSwingAmount while walking and not sitting (:176, walk) at 0.195; the tail chain at tailspeed 0.26 "
+                        + "resting, 0.56 attacking, 0 sitting (:74-75, :226-231)"))));
 
     /**
      * The span rule of every unlanded hook ((3)): a hook declares no manifest channels, so each row states its
@@ -836,19 +949,6 @@ public final class ReferenceClipSampler {
 
     private static Map<String, Rule> hookRules() {
         Map<String, Rule> rules = new TreeMap<>();
-        Rule dragon = Rule.periodic(TWO_PI / (double) (0.2F * 1.0F),
-                "ANIM_SPEED 1.0: the slowest rhythm is the resting wing beat -0.85 + cos(ageInTicks * 0.2 * ANIM_SPEED) * PI * 0.028 (DragonGeoReplacement"
-                        + ".poseDragon:151, activity 0 and not attacking) at 0.2 rad/tick, 31.42 ticks; the activity beat cos(ageInTicks * 0.75) * PI * 0.28 (:146, :150) and "
-                        + "the attacking-by-activity -0.45 + cos(ageInTicks * 0.85) * PI * 0.2 (:147); the tail chain cos(ageInTicks * tailspeed) with tailspeed 0.76 "
-                        + "at rest, 0.96 attacking, 0.22 sitting (:97-98, :198-208, :211-258); the attacking jaw cos(ageInTicks * 1.5) * PI * 0.14 (:309); the fourteen legs "
-                        + "cos(ageInTicks * 1.25 * ANIM_SPEED) * PI * lspeed * 0.6 (:104) scale by the movement delta lspeed = |xOld - x, zOld - z| (:96-103), 0 on the "
-                        + "probe, so the gait does not move at these inputs");
-        rules.put("DragonGeoReplacement", dragon);
-        rules.put("BabyDragonGeoReplacement", dragon);  // BabyDragonGeoReplacement.applyCustomAnimations:61 -> DragonGeoReplacement.poseDragon
-        rules.put("BasiliskGeoReplacement", Rule.periodic(TWO_PI / (double) (1.3F * 0.3F),
-                "wingspeed 0.3: the ten-ring serpentine cos(ageInTicks * 1.3 * WINGSPEED - n * pi/4) * PI * 0.1 * limbSwingAmount (BasiliskGeoReplacement"
-                        + ".applyCustomAnimations:66-111, walk; the rings' pivots follow, position channels) at 0.39 rad/tick, 16.11 ticks - the slowest; the "
-                        + "attacking jaw -1.0 + cos(ageInTicks * 0.45) * PI * 0.18 (:112) at 0.45"));
         rules.put("ButterflyGeoReplacement", Rule.periodic(TWO_PI / (double) (1.3F * 1.0F),
                 "one rhythm at wingspeed 1.0: the eight mirrored wings cos(ageInTicks * 1.3 * wingspeed) * PI * 0.25 about Z (ButterflyGeoReplacement"
                         + ".pose:69; ButterflyGeoReplacement.applyCustomAnimations passes WINGSPEED 1.0) at 1.3 rad/tick, 4.83 ticks; nothing reads the walk or the entity"));
@@ -861,74 +961,20 @@ public final class ReferenceClipSampler {
         rules.put("VampireButterflyGeoReplacement", Rule.periodic(TWO_PI / (double) (1.3F * 1.0F),
                 "the Butterfly rig's one rhythm at the Vampire Butterfly's wingspeed 1.0: cos(ageInTicks * 1.3 * 1.0) * PI * 0.25 on the eight wings "
                         + "(VampireButterflyGeoReplacement.applyCustomAnimations:40 -> ButterflyGeoReplacement.pose:69) at 1.3 rad/tick, 4.83 ticks"));
-        rules.put("CephadromeGeoReplacement", Rule.periodic(TWO_PI / (double) (0.2F * 0.55F),
-                "wingspeed 0.55: the slowest rhythm is the resting wing beat -0.85 + cos(ageInTicks * 0.2 * WINGSPEED) * PI * ... (CephadromeGeoReplacement"
-                        + ".applyCustomAnimations:112, activity 0 and not attacking) at 0.11 rad/tick, 57.12 ticks; the fins' sway cos(ageInTicks * 0.15 * WINGSPEED) "
-                        + "* PI * 0.05 (:124) folds through Math.abs on the fins and membranes (:125-132) to a 38.08-tick period; the tail chain at tailspeed 0.76 "
-                        + "(:72, :139-156; 0.22 in the ridden branch :135); the jaw cos(ageInTicks * 0.5 * WINGSPEED) * PI * 0.14 (:217); the legs "
-                        + "cos(ageInTicks * 0.75 * WINGSPEED) * PI * lspeed * 0.4 (:80) scale by the movement delta lspeed = |xOld - x, zOld - z| (:70-79), 0 on the "
-                        + "probe, so the gait does not move at these inputs"));
-        rules.put("DungeonBeastGeoReplacement", Rule.periodic(TWO_PI / (double) (0.5F * 0.62F),
-                "wingspeed 0.62: the slowest rhythm is the fourteen phased spine segments cos(ageInTicks * 0.5 * WINGSPEED + n * pi/4) * PI * 0.07 "
-                        + "(DungeonBeastGeoReplacement.applyCustomAnimations:73-86, every state) at 0.31 rad/tick, 20.27 ticks; the ten gait-scaled legs "
-                        + "cos(ageInTicks * 1.4 * WINGSPEED) * PI * 0.22 * limbSwingAmount (:60, walk) at 0.868; the tail cos(ageInTicks * 0.75 * WINGSPEED) * PI * 0.25 * "
-                        + "tailamp with tailamp = limbSwingAmount at rest and 1.25 attacking (:87-88, :97-138); the jaw latch cos(ageInTicks * 2.0 * WINGSPEED) * PI * 0.15 "
-                        + "with its 0.1-tick look-ahead (:143-144) on RenderInfo, re-rolled on the entity RNG"));
         rules.put("GhostGeoReplacement", Rule.periodic(TWO_PI / (double) 0.3F,
                 "four slow cosines on the two arms: cos(ageInTicks * 0.3 / 0.32 / 0.34 / 0.36) * PI * 0.05 about Z and X (GhostGeoReplacement.applyCustomAnimations:58-61, "
                         + "every state): the slowest 0.3 rad/tick, 20.94 ticks; nothing reads the walk or the entity"));
-        Rule giantRobot = Rule.periodic(TWO_PI / (double) 0.25F,
-                "WING_SPEED 0.25: the hip sway and quarter turn cos / sin(-ageInTicks * WING_SPEED) * PI * 0.1 * movescale and the two-phase thigh and shin "
-                        + "(GiantRobotGeoReplacement.poseRig:79-87; movescale = limbSwingAmount * 0.65 clamped to 1, :72-75, so 0 at idle) at 0.25 rad/tick, 25.13 ticks - "
-                        + "the slowest; the bob cos(-ageInTicks * WING_SPEED * 2.0) * movescale (:91) and the attacking shoulder twist and windmill punch "
-                        + "sin(ageInTicks * WING_SPEED * 2.0) (:112-117) at 0.5; the head look follows netHeadYaw = 0 (:135-136); the twenty-two instance bones posed by "
-                        + "renderLeg / renderArm (:152-211)");
-        rules.put("GiantRobotGeoReplacement", giantRobot);
-        rules.put("JefferyGeoReplacement", giantRobot);  // JefferyGeoReplacement.applyCustomAnimations:36 -> GiantRobotGeoReplacement.poseRig
-        rules.put("GodzillaGeoReplacement", Rule.periodic(TWO_PI / (double) (0.1F * 1.0F),
-                "ANIM_SPEED 1.0: the slowest rhythm is the idle arm drift sin(ageInTicks * ANIM_SPEED * 0.1) * PI * 0.02 (GodzillaGeoReplacement"
-                        + ".applyCustomAnimations:209, attacking 0) at 0.1 rad/tick, 62.83 ticks; the per-leg threshold gait cos / sin(ageInTicks * 0.75 * ANIM_SPEED "
-                        + "+ n * pi/4) with the toe lift and sweep position writes (:97-99, :135-137, walk) at 0.75; the idle tail cos(ageInTicks * 0.75) * PI * 0.05 and the attacking "
-                        + "tail fan cos(ageInTicks * 1.75) * PI * 0.2 (:182-183); the attacking jaw cos(ageInTicks * 1.5) * PI * 0.12 (:202) and arms sin(ageInTicks * 1.75) * PI * 0.16 (:208); "
-                        + "the head look follows netHeadYaw * 0.55 = 0 (:187)"));
         hookRulesHtoP(rules);
         hookRulesRtoW(rules);
         return rules;
     }
 
     private static void hookRulesHtoP(Map<String, Rule> rules) {
-        rules.put("HammerheadGeoReplacement", Rule.periodic(TWO_PI / (double) (0.3F * 0.33F),
-                "wingspeed 0.33: the slowest rhythm is the armour sway cos(ageInTicks * 0.3 * WINGSPEED) * PI * 0.03 (HammerheadGeoReplacement"
-                        + ".applyCustomAnimations:96, every state) at 0.099 rad/tick, 63.47 ticks; the (double) > 0.1 gait on twelve leg parts cos(ageInTicks * 1.3 * "
-                        + "WINGSPEED) * PI * 0.1 * limbSwingAmount and its pi/4 phase (:62-63, walk) at 0.429; the attacking nod cos(ageInTicks * 1.3 * WINGSPEED) * PI * 0.13 "
-                        + "(:99); the head look at 0.25 on sixteen parts follows netHeadYaw = 0 (:79)"));
-        rules.put("KrakenGeoReplacement", Rule.periodic(TWO_PI / (double) (0.087F * 1.0F),
-                "ANIM_SPEED 1.0: the slowest rhythm is the fourth tentacle pair's pitch cos(ageInTicks * differ * ANIM_SPEED - n * pi/4) * PI * amp with differ "
-                        + "0.087 (KrakenGeoReplacement.dangleTentacle:245-310; differ 0.1 / 0.101 / 0.097 / 0.093 / 0.087 and ydiffer 0.1 / 0.102 / 0.098 / 0.092 / 0.088 per "
-                        + "tentacle, :215-229; 0.2 for the two rear ones, :234-235; 0.5 with amp 0.03 while attacking, :241-242) at 0.087 rad/tick, 72.22 ticks; the fins "
-                        + "cos(ageInTicks * 0.43 / 0.32 * ANIM_SPEED) * PI * 0.15 / 0.14 (:68-69); the mouth latch cos(ageInTicks * 0.66) * PI * 0.15 with its 0.1-tick "
-                        + "look-ahead (:93-94) re-rolled on the entity RNG at the zero crossing (the Robot2 precedent); the teeth twitch cos(ageInTicks * 0.5 * ANIM_SPEED) * PI * 0.015 (:109)"));
-        Rule leon = Rule.periodic(TWO_PI / (double) (0.6F * 0.22F),
-                "wingspeed 0.22: the slowest rhythm is the standing sway cos(ageInTicks * 0.6 * WINGSPEED) * PI * 0.02 (LeonGeoReplacement.poseRig:224, "
-                        + "activity 0) at 0.132 rad/tick, 47.60 ticks; the standing threshold gait cos(ageInTicks * 1.8 * WINGSPEED) * PI * 0.25 * limbSwingAmount and "
-                        + "cos(ageInTicks * 0.9 * WINGSPEED) * PI * 0.25 * limbSwingAmount (:143-144, walk; the feet follow, :170-179) with the idle 0.9 * 0.22 sway at "
-                        + "amplitude 0.02 (:147); the flight beat cos(ageInTicks * 1.6 * WINGSPEED * spd) * PI * 0.06 / 0.26 * amp with spd 1.7 and amp 1.4 while attacking "
-                        + "(:259, :344, :256-257), the flying legs at 3.6 * 0.22 (:316) and the flying jaw at 2.6 * 0.22 (:468) need activity != 0 (0 on the probe); the ridden "
-                        + "yaw accumulator rf1 needs getBeingRidden() != 0; the head look follows netHeadYaw = 0 (:232-253)");
-        rules.put("LeonGeoReplacement", leon);
-        rules.put("LeonopteryxGeoReplacement", leon);  // LeonopteryxGeoReplacement.applyCustomAnimations:41 -> LeonGeoReplacement.poseRig
         rules.put("LurkingTerrorGeoReplacement", Rule.periodic(TWO_PI / (double) (0.1F * 1.0F),
                 "wingspeed 1.0: the slowest rhythm is the thorax breath sin(ageInTicks * 0.1 * WINGSPEED) * PI * 0.06 with the abdomen following by position "
                         + "(LurkingTerrorGeoReplacement.applyCustomAnimations:198-201, every state) at 0.1 rad/tick, 62.83 ticks; the legs sin(ageInTicks * legspeed * WINGSPEED) "
                         + "with legspeed 0.7 (:69, :110-144) behind the phase-wrap latch |ageInTicks * legspeed mod 2 pi| rolled on the entity RNG (:73-74); the jaws |sin(ageInTicks * "
                         + "mouthspeed * WINGSPEED)| with mouthspeed 0.9 (:70, :97-98, :150-151, a folded half period) forced open while attacking; cos(ageInTicks * 1.4 * WINGSPEED) * PI * 0.2 (:202)"));
-        rules.put("PitchBlackGeoReplacement", Rule.periodic(TWO_PI / (double) (0.05F * 0.65F),
-                "wingspeed 0.65, pscale 1.0 on the probe: the slowest rhythm is the resting wing sway -pi/4 + cos(ageInTicks * 0.05 * WINGSPEED / pscale) * PI * ... "
-                        + "(PitchBlackGeoReplacement.applyCustomAnimations:86, activity 0) at 0.0325 rad/tick, 193.33 ticks - over the 6 s cap; the activity wings "
-                        + "cos(ageInTicks * 0.45 * WINGSPEED / pscale) * PI * 0.24 (:86, activity != 0); the attacking jaw cos(ageInTicks * 0.85 * WINGSPEED) * PI * 0.16 (:179) else "
-                        + "the RenderInfo chomp latch gated by |ageInTicks * 0.7 * WINGSPEED mod 2 pi| (:184-185); the walking legs cos / sin(ageInTicks * 0.75 * WINGSPEED / pscale) "
-                        + "with the pscale-scaled claw writes (:222-285, walk) at 0.4875 and the flying legs cos(ageInTicks * 0.85 * WINGSPEED / pscale) * 0.2 while attacking (:305); "
-                        + "the forked tail chain at tailspeed 0.76 / pscale walking and 0.26 / pscale at rest (:349-353, :355-416)"));
     }
 
     private static void hookRulesRtoW(Map<String, Rule> rules) {
@@ -937,36 +983,12 @@ public final class ReferenceClipSampler {
                         + ".applyCustomAnimations:68-77, walk) at 1.24 rad/tick, 5.07 ticks - the slowest; the claw and tail latch cos(ageInTicks * 3.0 * WINGSPEED) * PI * "
                         + "0.15 with its 0.1-tick look-ahead (:82-83) on RenderInfo ri1 / ri2, rolled on the entity RNG with attacking-picked ranges (the Robot2 precedent); "
                         + "the claw and tail chains follow by position (:117-159)"));
-        rules.put("SeaMonsterGeoReplacement", Rule.periodic(TWO_PI / (double) (0.2F * 0.5F),
-                "wingspeed 0.5: the slowest rhythm is the eye twitch cos(ageInTicks * 0.2 * WINGSPEED) * PI * 0.05 (SeaMonsterGeoReplacement.applyCustomAnimations:144, "
-                        + "every state) at 0.1 rad/tick, 62.83 ticks; the tail fan cos(ageInTicks * 1.3 * WINGSPEED) * PI * 0.2 * limbSwingAmount (:58, walking or attacking; "
-                        + "seven follows :62-88), the fins cos(ageInTicks * 1.2 * WINGSPEED) * PI * 0.2 * limbSwingAmount (:91) and the neck chain 0.455 * limbSwingAmount + "
-                        + "cos(ageInTicks * 0.9 * WINGSPEED) * PI * 0.25 * limbSwingAmount (:100; five follows :104-130) - each with its own idle alternative below the threshold; "
-                        + "the attacking jaw cos(ageInTicks * 1.7 * WINGSPEED) * PI * 0.17 (:141); the head look at 0.5 follows netHeadYaw = 0 (:135)"));
-        rules.put("TRexGeoReplacement", Rule.periodic(TWO_PI / (double) 0.1F,
-                "the slowest rhythm is the arm sway -0.523 + cos(ageInTicks * 0.1) * PI * 0.05 on shape17 / shape11 (TRexGeoReplacement.applyCustomAnimations:75-76, "
-                        + "every state) at 0.1 rad/tick, 62.83 ticks; the float-compare threshold gait on eight leg parts cos(ageInTicks * 1.3 * ANIM_SPEED) * PI * 0.25 * "
-                        + "limbSwingAmount (:58, ANIM_SPEED 1.0, walk) at 1.3; the attacking jaw 0.52 + cos(ageInTicks * 0.45) * PI * 0.18 (:72)"));
         rules.put("TheKingGeoReplacement", Rule.periodic(TWO_PI / (double) (0.08F * 1.0F),
                 "WING_SPEED 1.0: the slowest rhythm is the centre head's resting pitch sin(ageInTicks * 0.08 * WING_SPEED) * PI * 0.1 (TheKingGeoReplacement"
                         + ".applyCustomAnimations:298, attacking 0; the three heads' resting rhythms 0.17 / 0.13 / 0.45, 0.19 / 0.12 / 0.55, 0.13 / 0.08 / 0.65, :291-299) at "
                         + "0.08 rad/tick, 78.54 ticks; the attacking heads at 0.3 / 0.2 / 0.85, 0.32 / 0.21 / 0.95, 0.28 / 0.19 / 0.75 (:278-286); the wings cos(ageInTicks * 0.75 "
                         + "* WING_SPEED) * PI * 0.21 attacking else cos(ageInTicks * 0.35 * WING_SPEED) * PI * 0.15 (:83-84) with the 84 / 184 follows; the fourteen claws and legs on "
                         + "attacking (:142, :162); the eight-link tail chain at tailspeed 0.26 resting and 0.56 attacking (:212-217, :220-268)"));
-        rules.put("ThePrinceAdultGeoReplacement", Rule.periodic(TWO_PI / (double) (0.13F * 0.65F),
-                "wingspeed 0.65: the slowest rhythm is the centre head's resting yaw sin(ageInTicks * 0.13 * WINGSPEED) * PI * 0.08 (ThePrinceAdultGeoReplacement"
-                        + ".applyCustomAnimations:308, attacking 0; the heads' resting rhythms 0.17 / 0.45, 0.19 / 0.55, 0.13 / 0.65, :302-310, their pitch getHeadNExt() - 30 in "
-                        + "every state) at 0.0845 rad/tick, 74.35 ticks; the attacking heads at 0.3 / 0.85, 0.32 / 0.95, 0.28 / 0.75 (:285-293) and the sitting jaws at 0.25 / 0.35 "
-                        + "/ 0.45 (:334-336); the wings by attacking / activity / sitting cos(ageInTicks * 0.75 / 0.35 * WINGSPEED) (:88-92) with the 84 / 184 follows; the gait "
-                        + "cos(ageInTicks * 0.3 * WINGSPEED) * PI * 0.25 * limbSwingAmount while walking and not sitting (:176, walk) at 0.195; the tail chain at tailspeed 0.26 "
-                        + "resting, 0.56 attacking, 0 sitting (:74-75, :226-231)"));
-        rules.put("ThePrinceGeoReplacement", Rule.periodic(TWO_PI / (double) (0.3F * 0.65F),
-                "wingspeed 0.65: the slowest rhythm is the resting wings cos(ageInTicks * 0.3 * WINGSPEED) * PI * 0.04 (ThePrinceGeoReplacement"
-                        + ".applyCustomAnimations:86, below the threshold and not attacking) at 0.195 rad/tick, 32.22 ticks; the threshold-or-attacking wings cos(ageInTicks "
-                        + "* 2.3 * WINGSPEED) * PI * 0.4 * limbSwingAmount (:85) and the threshold legs cos(ageInTicks * 2.0 * WINGSPEED) * PI * 0.25 * limbSwingAmount (:95, "
-                        + "walk); the attacking lash cos(ageInTicks * 0.9 * WINGSPEED) * PI * 0.06 (:106) and the tail fan cos(ageInTicks * 1.3 * WINGSPEED) * PI * 0.12 (:111; "
-                        + "four follows :116-132); the jaw chatter cos(ageInTicks * 1.9 / 2.1 / 2.3 * WINGSPEED) * PI * 0.2 (:191-195); the three heads' look and the necks by the "
-                        + "head extensions (0 on the probe, :149-244)"));
         rules.put("ThePrinceTeenGeoReplacement", Rule.periodic(TWO_PI / (double) (0.25F * 0.65F),
                 "wingspeed 0.65: the slowest rhythm is the resting jaw chatter cos(ageInTicks * 0.25 * WINGSPEED) * PI * 0.02 (ThePrinceTeenGeoReplacement"
                         + ".applyCustomAnimations:323, attacking 0; the other heads at 0.3 / 0.35, :325-327) at 0.1625 rad/tick, 38.67 ticks, beside the resting tail chain at "

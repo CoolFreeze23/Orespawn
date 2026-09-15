@@ -31,7 +31,7 @@ public class BabyDragonRenderer extends MobRenderer<Dragon, ModelDragon> {
     public static final ModelLayerLocation MODEL_LAYER = new ModelLayerLocation(
             ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "baby_dragon"), "main");
 
-    private static final float SCALE = 0.45f;
+    public static final float SCALE = 0.45f;
 
     public BabyDragonRenderer(EntityRendererProvider.Context context) {
         super(context, new ModelDragon(context.bakeLayer(MODEL_LAYER)), 0.6f);

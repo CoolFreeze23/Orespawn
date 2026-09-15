@@ -11,28 +11,28 @@ import net.minecraft.util.Mth;
 import software.bernie.geckolib.animation.AnimationProcessor;
 
 /**
- * GeckoLib Kraken (the hooks): {@link ModelKraken#poseFrom} verbatim on the converted rig, ON THE HOOK (no
- * keyframe layer, no transcription - the self-gate stays closed until an artist delivers {@code idle} and {@code walk};
- * the landing slice adds the geo, the wiring and the proofs). The port's classic model as it is, {@code ANIM_SPEED} 1.0f
- * (orig ClientProxyOreSpawn.java:444 {@code new ModelKraken(1.0f)}): the two fins' roll on 0.43 / 0.32 cosines (Z, x
- * PI x 0.15 / 0.14); the six eight-ring tentacles through {@link #dangleTentacle} (the classic helper, the same
- * name): the root ring pitched and yawed on the tentacle's own {@code differ} / {@code ydiffer} cosines around its
- * {@code xoff} / {@code yoff}, each following ring's pivot FOLLOWING the last 30 units along its pitch and yaw
- * (POSITION writes through {@link #moveTo}) and lagging a further 0.314159 rad, the two front tentacles' sign flipped
- * for the right one and the ATTACKING branch ({@code getAttacking() != 0}) stiffening them (0.5 / 0.03 / no offset
+ * GeckoLib Kraken (the hooks, landed by the first Tier-1 slice T1a): {@link ModelKraken#poseFrom} verbatim on the
+ * converted rig, ON THE HOOK (no keyframe layer, no transcription - the self-gate stays closed until an artist delivers
+ * {@code idle} and {@code walk} ; the geo, the wiring and the proofs landed with T1a). The port's classic model as it is,
+ * {@code ANIM_SPEED} 1.0f (orig ClientProxyOreSpawn.java:444 {@code new ModelKraken(1.0f)} ): the two fins' roll on 0.43 /
+ * 0.32 cosines (Z, x PI x 0.15 / 0.14); the six eight-ring tentacles through {@link #dangleTentacle} (the classic
+ * helper, the same name): the root ring pitched and yawed on the tentacle's own {@code differ} / {@code ydiffer}
+ * cosines around its {@code xoff} / {@code yoff} , each following ring's pivot FOLLOWING the last 30 units along its
+ * pitch and yaw (POSITION writes through {@link #moveTo} ) and lagging a further 0.314159 rad, the two front tentacles' sign
+ * flipped for the right one and the ATTACKING branch ({@code getAttacking() != 0}) stiffening them (0.5 / 0.03 / no offset
  * over 0.2 / 0.1 / -0.25); the two suction cups riding 30 units past the eighth ring and copying its angles; the mouth
- * TWITCH latch (the Robot2 precedent, orig ModelKraken.java:1045-1057): on the falling zero crossing of a 0.66 cosine
- * (the 0.1-tick look-ahead) the per-entity {@code RenderInfo}'s {@code ri1} / {@code ri2} are re-rolled from the
- * entity's own RNG ({@code nextInt(10)} / {@code nextInt(15)} idle, {@code nextInt(4)} / {@code nextInt(3)} attacking),
- * and while {@code ri1} is 1 or 3 the eight mouth parts twitch on a 0.5 cosine x PI x 0.015 (orig :1058) and the
- * forty-one teeth on seven times that, around their -+0.3 .. 0.39 rests. The entity is read through {@link KrakenPose}
- * (the Slice 4b doctrine). Every value the classic reads back from a part it just wrote is held in a local; the six
- * root rings' pivots, never written, are read through {@link #classicPosition} (the bind).
- *
+ * TWITCH latch (the Robot2 precedent, orig ModelKraken.java:1045-1057): on the falling zero crossing of a 0.66 cosine (the
+ * 0.1-tick look-ahead) the per-entity {@code RenderInfo} 's {@code ri1} / {@code ri2} are re-rolled from the entity's own RNG
+ * ({@code nextInt(10)} / {@code nextInt(15)} idle, {@code nextInt(4)} / {@code nextInt(3)} attacking), and
+ * while {@code ri1} is 1 or 3 the eight mouth parts twitch on a 0.5 cosine x PI x 0.015 (orig :1058) and the forty-one
+ * teeth on seven times that, around their -+0.3 .. 0.39 rests. The entity is read through {@link KrakenPose} (the Slice
+ * 4b doctrine). Every value the classic reads back from a part it just wrote is held in a local; the six root rings'
+ * pivots, never written, are read through {@link #classicPosition} (the bind).
  * <p>THE WHOLE-MODEL RENDER TRANSFORM (TEST-013): {@code ModelKraken.renderToBuffer} draws every part under {@code
- * mulPose(Axis.XP.rotationDegrees(90))} (ModelKraken.java:733, orig :1137), which no bone of the converted rig can pose; {@code
- * DESCRIPTOR.renderTransform()} declares it in the classic's terms and the seam applies its slot form. Scale and shadow follow {@link
- * KrakenRenderer}: 1.0, a third of it while {@code getPlayNicely() != 0}, a 1.0 x 1.0 shadow (ENT-S-092). No zero-thickness cube.</p>
+ * mulPose(Axis.XP.rotationDegrees(90))} (ModelKraken.java:733, orig :1137), which no bone of the converted rig can pose;
+ * {@code DESCRIPTOR.renderTransform()} declares it in the classic's terms and the seam applies its slot form. Scale and
+ * shadow follow {@link KrakenRenderer} : 1.0, a third of it while {@code getPlayNicely() != 0} , a 1.0 x 1.0 shadow
+ * (ENT-S-092). No zero-thickness cube.</p>
  */
 public final class KrakenGeoReplacement extends OreSpawnGeoReplacement<Kraken> {
     /** The port's {@code ModelKraken.ANIM_SPEED} = 1.0f (orig ClientProxyOreSpawn.java:444 {@code new ModelKraken(1.0f)}). */
@@ -316,6 +316,12 @@ public final class KrakenGeoReplacement extends OreSpawnGeoReplacement<Kraken> {
     public static final class Renderer extends OreSpawnGeoReplacedEntityRenderer<Kraken, KrakenGeoReplacement> {
         public Renderer(EntityRendererProvider.Context context) {
             super(context, new KrakenGeoReplacement());
+        }
+
+        /** The classic {@link KrakenRenderer#shouldRender} (OPT-013): unconditionally drawn, never frustum-culled by its hitbox (T1a). */
+        @Override
+        public boolean shouldRender(Kraken entity, net.minecraft.client.renderer.culling.Frustum frustum, double x, double y, double z) {
+            return true;
         }
     }
 }

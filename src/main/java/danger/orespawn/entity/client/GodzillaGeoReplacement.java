@@ -11,29 +11,27 @@ import net.minecraft.util.Mth;
 import software.bernie.geckolib.animation.AnimationProcessor;
 
 /**
- * GeckoLib Godzilla (the hooks): {@link ModelGodzilla#poseFrom} verbatim on the converted rig, ON THE HOOK (no
- * keyframe layer, no transcription - the self-gate stays closed until an artist delivers {@code idle} and {@code walk};
- * the landing slice adds the geo, the wiring and the proofs). The port's classic model as it is, {@code ANIM_SPEED} 1.0f
- * (orig ClientProxyOreSpawn.java:462 passes {@code new ModelGodzilla(0.2f)}; the port's model is what the hook
- * transcribes): the THRESHOLD idiom on each leg ({@code limbSwingAmount > 0.001f} selects the 0.75 cosines / sine,
- * else 0) with the right leg four and five eighth-turns behind; the toes' POSITION writes (y lifted {@code sin x 18 x
- * amount} while the sine is positive, z {@code 6 + 35 x cos x amount}, through {@link #moveTo}) copied to the nine toes
- * of each foot and the lower leg, the upper leg FOLLOWING the lower by 55 units along its pitch, the thigh's z a
- * quarter of the toes' sweep; the eighteen toes' pitch reset to 0 every frame; the ATTACKING branch ({@code
- * getAttacking() != 0}): the tail's yaw fan (0.25 .. 2.25 x a 1.75 / 0.75 cosine, the eight tail parts
- * FOLLOWING one another by 25 / 20 / 20 / 25 / 27 / 28 / 18 units in x / z, the spikes copying their ring), the jaw's
- * 1.5 cosine over 0.52 rad, the arms' 1.75 x PI x 0.16 swing over the 0.1 x PI x 0.02 idle drift; the HEAD-LOOK idiom
- * (yaw {@code toRadians(netHeadYaw) x 0.55} on the head and both jaws, the lower jaw's pivot FOLLOWING the head's yaw
- * by 11 units, pitch {@code toRadians(headPitch)} on the head and the top jaw, the lower jaw adding it to its opening);
- * the two arm chains (upper arm / lower arm / hand about Y at 1x / 1.5x / 2x the swing, the lower arm and the hand
- * FOLLOWING by 50 / 45 units with 10-unit sine dips, the six finger parts riding the hand and curling at 1x / 2x / 3x).
- * The entity is read through {@link GodzillaPose} (the Slice 4b doctrine). Every value the classic reads back from a
- * part it just wrote is held in a local; the coordinates the classic never writes (the toes' and thighs' x, the head's,
- * the upper arms' and the tail base's pivots) are read through {@link #classicPosition} (the bind).
- *
- * <p>Scale and shadow follow {@link GodzillaRenderer}: 2.0 render scale, a quarter of it while {@code getPlayNicely()
- * != 0}, and a 1.0 x 2.0 shadow (ENT-S-092). The twelve back spikes are zero-thickness cubes (the seam draws every cube
- * with its true transformed normal and its two coplanar faces in the classic order, ENT-S-161 / TEST-007 - below).</p>
+ * GeckoLib Godzilla (the hooks, landed by the first Tier-1 slice T1a): {@link ModelGodzilla#poseFrom} verbatim on the
+ * converted rig, ON THE HOOK (no keyframe layer, no transcription - the self-gate stays closed until an artist delivers {@code
+ * idle} and {@code walk} ). The port's classic model as it is, {@code ANIM_SPEED} 1.0f (orig ClientProxyOreSpawn.java:462
+ * passes {@code new ModelGodzilla(0.2f)} ; the port's model is what the hook transcribes): the THRESHOLD idiom on each leg
+ * ({@code limbSwingAmount > 0.001f} selects the 0.75 cosines / sine, else 0) with the right leg four and five
+ * eighth-turns behind; the toes' POSITION writes (y lifted {@code sin x 18 x amount} while the sine is positive, z
+ * {@code 6 + 35 x cos x amount} , through {@link #moveTo} ) copied to the nine toes of each foot and the lower leg, the upper
+ * leg FOLLOWING the lower by 55 units along its pitch, the thigh's z a quarter of the toes' sweep; the eighteen toes' pitch
+ * reset to 0 every frame; the ATTACKING branch ({@code getAttacking() != 0}): the tail's yaw fan (0.25 .. 2.25 x a 1.75 /
+ * 0.75 cosine, the eight tail parts FOLLOWING one another by 25 / 20 / 20 / 25 / 27 / 28 / 18 units in x / z, the spikes
+ * copying their ring), the jaw's 1.5 cosine over 0.52 rad, the arms' 1.75 x PI x 0.16 swing over the 0.1 x PI x 0.02 idle
+ * drift; the HEAD-LOOK idiom (yaw {@code toRadians(netHeadYaw) x 0.55} on the head and both jaws, the lower jaw's pivot
+ * FOLLOWING the head's yaw by 11 units, pitch {@code toRadians(headPitch)} on the head and the top jaw, the lower jaw adding
+ * it to its opening); the two arm chains (upper arm / lower arm / hand about Y at 1x / 1.5x / 2x the swing, the lower arm and
+ * the hand FOLLOWING by 50 / 45 units with 10-unit sine dips, the six finger parts riding the hand and curling at 1x / 2x /
+ * 3x). The entity is read through {@link GodzillaPose} (the Slice 4b doctrine). Every value the classic reads back from a
+ * part it just wrote is held in a local; the coordinates the classic never writes (the toes' and thighs' x, the head's, the
+ * upper arms' and the tail base's pivots) are read through {@link #classicPosition} (the bind). <p>Scale and shadow follow
+ * {@link GodzillaRenderer} : 2.0 render scale, a quarter of it while {@code getPlayNicely() != 0} , and a 1.0 x 2.0 shadow
+ * (ENT-S-092). The twelve back spikes are zero-thickness cubes (the seam draws every cube with its true transformed normal and
+ * its two coplanar faces in the classic order, ENT-S-161 / TEST-007 - below).</p>
  */
 public final class GodzillaGeoReplacement extends OreSpawnGeoReplacement<Godzilla> {
     /** The port's {@code ModelGodzilla.ANIM_SPEED} = 1.0f: the chain's frequency multiplier. */
@@ -48,15 +46,17 @@ public final class GodzillaGeoReplacement extends OreSpawnGeoReplacement<Godzill
         @Override
         public void applyScale(Godzilla entity, PoseStack poseStack, float partialTick) {
             // orig RenderGodzilla.preRenderScale (:39-45): PlayNicely gets glScalef(scale / 4), otherwise glScalef(scale)
-            // (GodzillaRenderer.scale)
-            float effectiveScale = entity.getPlayNicely() != 0 ? GodzillaRenderer.SCALE / 4.0F : GodzillaRenderer.SCALE;
-            poseStack.scale(effectiveScale, effectiveScale, effectiveScale);
+            // (GodzillaRenderer.SCALE, public; the T2f Frog form)
+            if (entity.getPlayNicely() != 0) {
+                poseStack.scale(GodzillaRenderer.SCALE / 4.0F, GodzillaRenderer.SCALE / 4.0F, GodzillaRenderer.SCALE / 4.0F);
+                return;
+            }
+            poseStack.scale(GodzillaRenderer.SCALE, GodzillaRenderer.SCALE, GodzillaRenderer.SCALE);
         }
 
         /**
-         * A rig with zero-thickness cubes (the twelve back spikes, 0 x 10..50 x 11..36): the within-cube face order
-         * decides a flat cube's z-fight, so the shipped geo carries the classic order ({@link FaceOrder#KEY}; TEST-007)
-         * and the seam expects it.
+         * A rig with zero-thickness cubes (the twelve back spikes, 0 x 10..50 x 11..36): the within-cube face order decides a flat
+         * cube's z-fight, so the shipped geo carries the classic order ({@link FaceOrder#KEY}; TEST-007) and the seam expects it.
          */
         @Override
         public boolean cubeFaceOrderRequired() {
@@ -345,6 +345,12 @@ public final class GodzillaGeoReplacement extends OreSpawnGeoReplacement<Godzill
     public static final class Renderer extends OreSpawnGeoReplacedEntityRenderer<Godzilla, GodzillaGeoReplacement> {
         public Renderer(EntityRendererProvider.Context context) {
             super(context, new GodzillaGeoReplacement());
+        }
+
+        /** The classic {@link GodzillaRenderer#shouldRender} (OPT-013): unconditionally drawn, never frustum-culled by its hitbox (T1a). */
+        @Override
+        public boolean shouldRender(Godzilla entity, net.minecraft.client.renderer.culling.Frustum frustum, double x, double y, double z) {
+            return true;
         }
     }
 }

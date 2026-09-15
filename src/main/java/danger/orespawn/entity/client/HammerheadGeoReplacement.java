@@ -11,21 +11,21 @@ import net.minecraft.util.Mth;
 import software.bernie.geckolib.animation.AnimationProcessor;
 
 /**
- * GeckoLib Hammerhead (the hooks): {@link ModelHammerhead#poseFrom} verbatim on the converted rig, ON THE HOOK (no
- * keyframe layer, no transcription - the self-gate stays closed until an artist delivers {@code idle} and {@code walk};
- * the landing slice adds the geo, the wiring and the proofs). Wingspeed 0.33f (orig ModelHammerhead.java:14,54 /
- * ClientProxyOreSpawn.java:501): the THRESHOLD idiom on the twelve leg parts' pitch - above a walking speed of a
- * tenth ({@code (double) limbSwingAmount > 0.1}) {@code cos(age x 1.3 ws) x PI x 0.1 x amount} and the same an
- * eighth-turn ahead for the middle pair, 0 at or below it - around the rest pitches -0.087 / -0.052 / -0.349 (the
- * lower parts around 0, the right side mirrored); the HEAD-LOOK idiom (yaw {@code
+ * GeckoLib Hammerhead (the hooks, landed by the first Tier-1 slice T1a): {@link ModelHammerhead#poseFrom} verbatim on
+ * the converted rig, ON THE HOOK (no keyframe layer, no transcription - the self-gate stays closed until an artist
+ * delivers {@code idle} and {@code walk} ; the geo, the wiring and the proofs landed with T1a). Wingspeed 0.33f (orig
+ * ModelHammerhead.java:14,54 / ClientProxyOreSpawn.java:501): the THRESHOLD idiom on the twelve leg parts'
+ * pitch - above a walking speed of a tenth ({@code (double) limbSwingAmount > 0.1}) {@code cos(age x 1.3 ws) x PI x
+ * 0.1 x amount} and the same an eighth-turn ahead for the middle pair, 0 at or below it - around the rest pitches
+ * -0.087 / -0.052 / -0.349 (the lower parts around 0, the right side mirrored); the HEAD-LOOK idiom (yaw {@code
  * toRadians(netHeadYaw) x 0.25} on the neck, its armour, the four horns and their base, the head, the snout and the
- * centre fan, the side fans and ears offset by -+0.122 / 0.226 / 0.227); the back armour's yaw sway at 0.3 ws x PI x
- * 0.03 around -+0.349; and the ATTACKING branch ({@code getAttacking() != 0}: {@code cos(age x 1.3 ws) x PI x 0.13},
- * else 0) nodding the sixteen neck / head / horn / fan / ear parts over their rest pitches (0.157 / 0.087 / 0.192 /
- * 0.209 / 0.611 / -0.139 / -0.209 / -0.331 / 0.366). The entity is read through {@link HammerheadPose} (the Slice 4b
- * doctrine).
+ * centre fan, the side fans and ears offset by -+0.122 / 0.226 / 0.227); the back armour's yaw sway at 0.3 ws x
+ * PI x 0.03 around -+0.349; and the ATTACKING branch ({@code getAttacking() != 0}: {@code cos(age x 1.3 ws) x PI x
+ * 0.13} , else 0) nodding the sixteen neck / head / horn / fan / ear parts over their rest pitches (0.157 / 0.087 /
+ * 0.192 / 0.209 / 0.611 / -0.139 / -0.209 / -0.331 / 0.366). The entity is read through {@link HammerheadPose} (the
+ * Slice 4b doctrine).
  *
- * <p>Scale and shadow follow {@link HammerheadRenderer}: 2.5 render scale and a 1.0 x 2.5 shadow (ENT-S-092). No
+ * <p>Scale and shadow follow {@link HammerheadRenderer} : 2.5 render scale and a 1.0 x 2.5 shadow (ENT-S-092). No
  * zero-thickness cube.</p>
  */
 public final class HammerheadGeoReplacement extends OreSpawnGeoReplacement<Hammerhead> {

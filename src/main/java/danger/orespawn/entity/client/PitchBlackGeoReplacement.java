@@ -11,34 +11,34 @@ import net.minecraft.util.Mth;
 import software.bernie.geckolib.animation.AnimationProcessor;
 
 /**
- * GeckoLib Pitch Black (the hooks): {@link ModelPitchBlack#poseFrom} verbatim on the converted rig, ON THE HOOK (no
- * keyframe layer, no transcription - the self-gate stays closed until an artist delivers {@code idle} and {@code walk};
- * the landing slice adds the geo, the wiring and the proofs). Wingspeed 0.65f (orig ModelPitchBlack.java:15,119 /
- * ClientProxyOreSpawn.java:460), every rhythm divided by the entity's size tier ({@code
- * getPitchBlackScale()}, orig :39): the ACTIVITY branch on the wings ({@code getActivity() != 0} beats the
- * three-link wings on a 0.45 cosine x PI x 0.24, else they hang at -0.785 with a 0.05 breath), each link's pivot
- * FOLLOWING the last 21 / 43 units along its roll (POSITION writes through {@link #moveTo}; the membranes and the
- * three wing claws riding their link), the right wing mirrored; the HEAD-LOOK idiom ({@code netHeadYaw % 360} scaled
- * 0.2 flying / 0.55 walking, in radians, on the seven head parts, the five jaws, the twenty-three teeth and the eyes,
- * half of it on the third neck ring); the ATTACKING branch on the jaw ({@code getAttacking() != 0}: a 0.85 ws cosine x
- * PI x 0.16 + 0.5) over the CHOMP LATCH (the Robot2 precedent; orig ModelPitchBlack.java:741,817-830, ENT-S-093): the
- * phase of the 0.7 ws idle rhythm wraps against the per-entity {@code RenderInfo.rf1} and on each wrap {@code ri1} is
- * re-rolled from the entity's RNG ({@code nextInt(20) == 1}; the Kraken convention where orig :820 read the world's), a
- * set bit chomping on the 0.85 ws sine + 0.5, a clear one holding 0.196 rad; the legs by ACTIVITY: walking, the
- * THRESHOLD idiom per leg ({@code (double) limbSwingAmount > 0.001} selects the {@code 0.75 ws / pscale} cosine / sine,
- * the right leg a half turn behind) lifting the seven claws and the lower leg {@code sin x 6 pscale x amount} while the
- * sine is positive and sweeping them {@code 7 + 12 pscale x cos x amount} in z, the thigh and upper leg FOLLOWING the
- * lower leg by 17 units plus half the lift, the fourteen claw pitches reset; flying, the claws tucked at (7, 9) and
- * curled -0.7 rad, swung {@code cos(0.85 ws / pscale) x 0.2} x 30 units while attacking, the legs following at a
- * quarter of the curl; and the tail's yaw chain at 0.76 / 0.25 attacking over 0.26 / 0.08 ({@code / pscale}), the
- * rings FOLLOWING one another by 11 / 9 units with a -1 x nudge on the second, lagging 0.785 rad per ring, forking at
- * the fifth into two 0.174-rad branches with their spikes and points. The entity is read through
- * {@link PitchBlackPose} (ENT-S-093's interface, already on the entity and the model). Every value the classic reads
- * back from a part it just wrote is held in a local; the coordinates the classic never writes (the wing roots' pivots,
- * the wings' z, the claws' and legs' x, tail1's pivot and the tail's y) are read through {@link #classicPosition} (the
- * bind).
+ * GeckoLib Pitch Black (the hooks, landed by the first Tier-1 slice T1a): {@link ModelPitchBlack#poseFrom}
+ * verbatim on the converted rig, ON THE HOOK (no keyframe layer, no transcription - the self-gate stays closed until
+ * an artist delivers {@code idle} and {@code walk} ; the geo, the wiring and the proofs landed with T1a).
+ * Wingspeed 0.65f (orig ModelPitchBlack.java:15,119 / ClientProxyOreSpawn.java:460), every rhythm divided by the
+ * entity's size tier ({@code getPitchBlackScale()}, orig :39): the ACTIVITY branch on the wings ({@code getActivity()
+ * != 0} beats the three-link wings on a 0.45 cosine x PI x 0.24, else they hang at -0.785 with a 0.05 breath), each
+ * link's pivot FOLLOWING the last 21 / 43 units along its roll (POSITION writes through {@link #moveTo} ; the membranes
+ * and the three wing claws riding their link), the right wing mirrored; the HEAD-LOOK idiom ({@code netHeadYaw % 360}
+ * scaled 0.2 flying / 0.55 walking, in radians, on the seven head parts, the five jaws, the twenty-three teeth and
+ * the eyes, half of it on the third neck ring); the ATTACKING branch on the jaw ({@code getAttacking() != 0}: a
+ * 0.85 ws cosine x PI x 0.16 + 0.5) over the CHOMP LATCH (the Robot2 precedent; orig ModelPitchBlack.java:741,817-830,
+ * ENT-S-093): the phase of the 0.7 ws idle rhythm wraps against the per-entity {@code RenderInfo.rf1} and on each
+ * wrap {@code ri1} is re-rolled from the entity's RNG ({@code nextInt(20) == 1}; the Kraken convention where orig :820
+ * read the world's), a set bit chomping on the 0.85 ws sine + 0.5, a clear one holding 0.196 rad; the legs by ACTIVITY:
+ * walking, the THRESHOLD idiom per leg ({@code (double) limbSwingAmount > 0.001} selects the {@code 0.75 ws / pscale}
+ * cosine / sine, the right leg a half turn behind) lifting the seven claws and the lower leg {@code sin x 6 pscale x
+ * amount} while the sine is positive and sweeping them {@code 7 + 12 pscale x cos x amount} in
+ * z, the thigh and upper leg FOLLOWING the lower leg by 17 units plus half the lift, the fourteen claw pitches reset;
+ * flying, the claws tucked at (7, 9) and curled -0.7 rad, swung {@code cos(0.85 ws / pscale) x 0.2} x
+ * 30 units while attacking, the legs following at a quarter of the curl; and the tail's yaw chain at 0.76 / 0.25
+ * attacking over 0.26 / 0.08 ({@code / pscale}), the rings FOLLOWING one another by 11 / 9 units with a -1 x nudge on
+ * the second, lagging 0.785 rad per ring, forking at the fifth into two 0.174-rad branches with their spikes and
+ * points. The entity is read through {@link PitchBlackPose} (ENT-S-093's interface, already on the entity and the
+ * model). Every value the classic reads back from a part it just wrote is held in a local; the coordinates the
+ * classic never writes (the wing roots' pivots, the wings' z, the claws' and legs' x, tail1's pivot and the
+ * tail's y) are read through {@link #classicPosition} (the bind).
  *
- * <p>Scale and shadow follow {@link PitchBlackRenderer}: the entity's own {@code getPitchBlackScale()} applied around
+ * <p>Scale and shadow follow {@link PitchBlackRenderer} : the entity's own {@code getPitchBlackScale()} applied around
  * {@code super.render} (orig RenderPitchBlack.preRenderScale :39-42; no SCALE constant) and a 1.25 x 1.0 shadow
  * (ENT-S-092). No zero-thickness cube.</p>
  */
@@ -439,6 +439,12 @@ public final class PitchBlackGeoReplacement extends OreSpawnGeoReplacement<Pitch
     public static final class Renderer extends OreSpawnGeoReplacedEntityRenderer<PitchBlack, PitchBlackGeoReplacement> {
         public Renderer(EntityRendererProvider.Context context) {
             super(context, new PitchBlackGeoReplacement());
+        }
+
+        /** The classic {@link PitchBlackRenderer#shouldRender} (OPT-013): unconditionally drawn, never frustum-culled by its hitbox (T1a). */
+        @Override
+        public boolean shouldRender(PitchBlack entity, net.minecraft.client.renderer.culling.Frustum frustum, double x, double y, double z) {
+            return true;
         }
     }
 }

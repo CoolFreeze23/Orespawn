@@ -10,24 +10,24 @@ import net.minecraft.util.Mth;
 import software.bernie.geckolib.animation.AnimationProcessor;
 
 /**
- * GeckoLib Dungeon Beast (the hooks): {@link ModelDungeonBeast#poseFrom} verbatim on the converted rig, ON THE HOOK (no
- * keyframe layer, no transcription - the self-gate stays closed until an artist delivers {@code idle} and {@code
- * walk}). Wingspeed 0.62f (orig ModelDungeonBeast.java:16,83 / ClientProxyOreSpawn.java:481): the GAIT-scaled idiom on
- * the ten leg parts about Z - {@code cos(age * 1.4f * ws) * PI * 0.22f * limbSwingAmount}, the left side the negative,
- * the toes around -0.785 rad (orig :488-497; no threshold); the fourteen body / tail segments' pitch on one 0.5 ws
- * cosine x 0.07 phased by k x 0.3927 down the spine, the last eight negated (orig :498-505); the ATTACKING amplitude
- * on the tail's yaw - {@code limbSwingAmount} at rest, 1.25 attacking (orig :506, read through {@link
- * DungeonBeastPose}) on a 0.75 ws cosine x 0.25, scaled 0.25 / 0.5 / 0.75 / 1 / 1.25 / 1.5 / 1.75 down the seven tail
- * parts with the POSITION-write idiom (through {@link #moveTo}) - each tail part's pivot FOLLOWS the previous 6 / 5 / 4.5 /
- * 4 / 3 / 3 units back along (cos, sin) of its yaw, the spine segments copying their tail part's pivot and yaw (orig
- * :507-545); and the JAW LATCH (orig :546-573, the Robot2 precedent): at each falling zero-crossing of a 2.0 ws cosine the
- * per-entity {@link RenderInfo}'s {@code ri1} / {@code ri2} are re-rolled from the entity's RNG (0-14 at rest, 0
- * attacking) and while {@code ri1} is 0 the six jaw parts chew on that cosine x 0.15 around -+0.349 / +-0.349 / +-0.523
- * rad, else they rest. Tail1's pivot is never written (the bind), read through {@link #classicPosition}; every value
- * the classic reads back from a part it just wrote is held in a local; a part whose x / z the classic writes keeps its
- * bind y. Orig :573's {@code e.setRenderInfo(r)} is the port's omitted self-copy (ENT-S-093).
- * <p>Shadow follows {@link DungeonBeastRenderer}: a 0.25 x 1.0 shadow (ENT-S-092); the classic renderer scales by 1.0, so no
- * scale hook. {@code DESCRIPTOR.renderTransform()}: the classic renderToBuffer's YP 90 (535, orig:574; TEST-013).</p>
+ * GeckoLib Dungeon Beast (the hooks, landed by T1a): {@link ModelDungeonBeast#poseFrom} verbatim on the converted rig, ON
+ * THE HOOK (no keyframe layer, no transcription - the self-gate stays closed until an artist delivers {@code idle} and
+ * {@code walk}). Wingspeed 0.62f (orig ModelDungeonBeast.java:16,83 / ClientProxyOreSpawn.java:481): the GAIT-scaled idiom
+ * on the ten leg parts about Z - {@code cos(age * 1.4f * ws) * PI * 0.22f * limbSwingAmount} , the left side the
+ * negative, the toes around -0.785 rad (orig :488-497; no threshold); the fourteen body / tail segments' pitch on one 0.5 ws
+ * cosine x 0.07 phased by k x 0.3927 down the spine, the last eight negated (orig :498-505); the ATTACKING amplitude on the
+ * tail's yaw - {@code limbSwingAmount} at rest, 1.25 attacking (orig :506, read through {@link DungeonBeastPose} ) on a 0.75
+ * ws cosine x 0.25, scaled 0.25 / 0.5 / 0.75 / 1 / 1.25 / 1.5 / 1.75 down the seven tail parts with the POSITION-write idiom
+ * (through {@link #moveTo} ) - each tail part's pivot FOLLOWS the previous 6 / 5 / 4.5 / 4 / 3 / 3 units back along (cos, sin)
+ * of its yaw, the spine segments copying their tail part's pivot and yaw (orig :507-545); and the JAW LATCH (orig :546-573,
+ * the Robot2 precedent): at each falling zero-crossing of a 2.0 ws cosine the per-entity {@link RenderInfo} 's {@code ri1} /
+ * {@code ri2} are re-rolled from the entity's RNG (0-14 at rest, 0 attacking) and while {@code ri1} is 0 the six jaw parts
+ * chew on that cosine x 0.15 around -+0.349 / +-0.349 / +-0.523 rad, else they rest. Tail1's pivot is never written (the
+ * bind), read through {@link #classicPosition} ; every value the classic reads back from a part it just wrote is held in a
+ * local; a part whose x / z the classic writes keeps its bind y. Orig :573's {@code e.setRenderInfo(r)} is the port's omitted
+ * self-copy (ENT-S-093). <p>Shadow follows {@link DungeonBeastRenderer} : a 0.25 x 1.0 shadow
+ * (ENT-S-092); the classic renderer scales by 1.0, so no scale hook. {@code DESCRIPTOR.renderTransform()} : the classic
+ * renderToBuffer's YP 90 (535, orig:574; TEST-013).</p>
  */
 public final class DungeonBeastGeoReplacement extends OreSpawnGeoReplacement<DungeonBeast> {
     /** orig ModelDungeonBeast.java:16,83 {@code wingspeed} = 0.62f (ClientProxyOreSpawn.java:481): the chain's third multiply. */
@@ -177,6 +177,12 @@ public final class DungeonBeastGeoReplacement extends OreSpawnGeoReplacement<Dun
     public static final class Renderer extends OreSpawnGeoReplacedEntityRenderer<DungeonBeast, DungeonBeastGeoReplacement> {
         public Renderer(EntityRendererProvider.Context context) {
             super(context, new DungeonBeastGeoReplacement());
+        }
+
+        /** The classic {@link DungeonBeastRenderer#shouldRender} (OPT-013): unconditionally drawn, never frustum-culled by its hitbox (T1a). */
+        @Override
+        public boolean shouldRender(DungeonBeast entity, net.minecraft.client.renderer.culling.Frustum frustum, double x, double y, double z) {
+            return true;
         }
     }
 }

@@ -11,24 +11,21 @@ import net.minecraft.util.Mth;
 import software.bernie.geckolib.animation.AnimationProcessor;
 
 /**
- * GeckoLib Basilisk (the hook survey): {@link ModelBasilisk#poseFrom} verbatim on the converted rig, ON THE HOOK
- * (no keyframe layer, no transcription - the self-gate stays closed until an artist delivers {@code idle} and
- * {@code walk}). Wingspeed 0.3f (orig ModelBasilisk.java:14,38 / ClientProxyOreSpawn.java:420): the GAIT-scaled
- * serpentine ({@code cos(age * 1.3 ws - k * pi4) * PI * 0.1 * limbSwingAmount}, no threshold) down the ten-ring body
- * and tail chain, each ring a quarter turn behind the last and its pivot FOLLOWING the last ring's yaw through
- * {@link #moveTo} (12 / 11 / 12 / 12 / 12 / 12 / 10 / 10 / 10 units along cos / sin, the tail rings a further 0.5 /
- * 1.0 / 1.5 / 1.0 / 1.0 units back); and the ATTACKING-branch jaw ({@code -1.0 + cos(age * 0.45) * PI * 0.18}
- * attacking, -1.1 at rest). The entity is read through {@link BasiliskPose}.
- *
- * <p>Scale and shadow follow {@link BasiliskRenderer}: a 0.5 x 1.25 shadow (ENT-S-092) and a private 1.25 render
- * scale, halved for a baby, applied around {@code super.render} (a uniform scale commutes with the rotations and the
- * flip, so the scale slot carries it; the equal literal is carried here).</p>
+ * GeckoLib Basilisk (the hook survey, landed by the first Tier-1 slice T1a): {@link ModelBasilisk#poseFrom} verbatim on
+ * the converted rig, ON THE HOOK (no keyframe layer, no transcription - the self-gate stays closed until an artist delivers
+ * {@code idle} and {@code walk} ). Wingspeed 0.3f (orig ModelBasilisk.java:14,38 / ClientProxyOreSpawn.java:420): the
+ * GAIT-scaled serpentine ({@code cos(age * 1.3 ws - k * pi4) * PI * 0.1 * limbSwingAmount}, no threshold) down the ten-ring
+ * body and tail chain, each ring a quarter turn behind the last and its pivot FOLLOWING the last ring's yaw through {@link
+ * #moveTo} (12 / 11 / 12 / 12 / 12 / 12 / 10 / 10 / 10 units along cos / sin, the tail rings a further 0.5 / 1.0 / 1.5 /
+ * 1.0 / 1.0 units back); and the ATTACKING-branch jaw ({@code -1.0 + cos(age * 0.45) * PI * 0.18} attacking, -1.1 at
+ * rest). The entity is read through {@link BasiliskPose} .
+ * <p>Scale and shadow follow {@link BasiliskRenderer} : a 0.5 x 1.25 shadow (ENT-S-092) and a 1.25 render scale ({@link
+ * BasiliskRenderer#SCALE}, public since T1a), halved for a baby, applied around {@code super.render} (a uniform scale
+ * commutes with the rotations and the flip, so the scale slot carries it).</p>
  */
 public final class BasiliskGeoReplacement extends OreSpawnGeoReplacement<Basilisk> {
     /** orig ModelBasilisk.java:14,38 {@code wingspeed} = 0.3f (ClientProxyOreSpawn.java:420): the chain's third multiply. */
     static final float WINGSPEED = 0.3F;
-    /** orig ClientProxyOreSpawn.java:420 {@code new RenderBasilisk(new ModelBasilisk(0.3f), 0.5f, 1.25f)}: BasiliskRenderer's private SCALE. */
-    static final float SCALE = 1.25F;
     private static final GeoReplacementDescriptor<Basilisk> DESCRIPTOR = new GeoReplacementDescriptor<>(
             () -> ModEntities.BASILISK.get(),  // lambda: a bound method ref would initialise ModEntities eagerly
             Basilisk.class,
@@ -38,9 +35,12 @@ public final class BasiliskGeoReplacement extends OreSpawnGeoReplacement<Basilis
             BasiliskRenderer.SHADOW) {
         @Override
         public void applyScale(Basilisk entity, PoseStack poseStack, float partialTick) {
-            // BasiliskRenderer.render: float scale = entity.isBaby() ? SCALE / 2.0f : SCALE; poseStack.scale(scale, scale, scale)
-            float scale = entity.isBaby() ? SCALE / 2.0f : SCALE;
-            poseStack.scale(scale, scale, scale);
+            // BasiliskRenderer.render: isBaby() ? SCALE / 2 : SCALE (the renderer's constant, public since T1a; the T2f Frog form)
+            if (entity.isBaby()) {
+                poseStack.scale(BasiliskRenderer.SCALE / 2.0F, BasiliskRenderer.SCALE / 2.0F, BasiliskRenderer.SCALE / 2.0F);
+                return;
+            }
+            poseStack.scale(BasiliskRenderer.SCALE, BasiliskRenderer.SCALE, BasiliskRenderer.SCALE);
         }
     };
 

@@ -11,36 +11,36 @@ import net.minecraft.util.Mth;
 import software.bernie.geckolib.animation.AnimationProcessor;
 
 /**
- * GeckoLib The Prince (the hooks): {@link ModelThePrince#poseFrom} verbatim on the converted rig, ON THE HOOK (no
- * keyframe layer, no transcription - the self-gate stays closed until an artist delivers {@code idle} and {@code walk};
- * the landing slice adds the geo, the wiring and the proofs). Wingspeed 0.65f (orig ModelThePrince.java:15,53 /
- * ClientProxyOreSpawn.java:494): the THRESHOLD-OR-ATTACKING idiom on the six wing parts' roll ({@code (double)
- * limbSwingAmount > 0.1 || getAttacking() != 0}: a 2.3 ws cosine x PI x 0.4 x amount, else a 0.3 ws x 0.04 breath,
- * around -+0.4 / 0.6 / 0.2); the THRESHOLD idiom on the legs (2.0 ws x PI x 0.25 x amount, else 0) under the
- * ACTIVITY branch ({@code getActivity() != 2 || attacking}: the gait, else both legs tucked at -1.0); the tail sway (0.9
- * ws x PI x 0.06) stilled by the SIT order ({@code isOrderedToSit()}) and overridden by the ATTACKING lash (1.3 ws x
- * PI x 0.12), fanned x1.6 / 2.6 / 3.6 / 4.6 down the five tail rings FOLLOWING one another by 6 / 5 / 4 / 4 units in
- * x / z (POSITION writes through {@link #moveTo}); the three-head LOOK split (two thirds of the head yaw / pitch,
- * the side heads at half of it on the side the head turns to, in radians on each head's head / snout / fin / jaw,
- * half on its neck) with the ATTACKING chatter on the three jaws (1.9 / 2.1 / 2.3 ws cosines x PI x 0.2 + 0.2); the
- * three necks pitched by the entity's HEAD EXTENSIONS ({@code getHead1Ext / 2 / 3}, degrees) and each head group
- * (head, snout, fin, jaw) FOLLOWING its neck 7 units along its pitch and yaw. The entity is read through
- * {@link ThePrincePose} (the Slice 4b doctrine). Every value the classic reads back from a part it just wrote is held
- * in a local; the necks' and the second tail ring's pivots, never written, are read through {@link #classicPosition}
- * (the bind). The classic's early {@code jaw.z / x = snout.z / x - cos / sin(snout.yRot)} (and the side jaws') read
- * the snout's position before this frame writes it and are overwritten by the neck follow below before any read -
- * dead writes, transcribed as such.
+ * GeckoLib The Prince (the hooks, landed by the first Tier-1 slice T1a): {@link ModelThePrince#poseFrom}
+ * verbatim on the converted rig, ON THE HOOK (no keyframe layer, no transcription - the self-gate stays closed until
+ * an artist delivers {@code idle} and {@code walk} ; the geo, the wiring and the proofs landed with T1a).
+ * Wingspeed 0.65f (orig ModelThePrince.java:15,53 / ClientProxyOreSpawn.java:494): the THRESHOLD-OR-ATTACKING idiom
+ * on the six wing parts' roll ({@code (double) limbSwingAmount > 0.1 || getAttacking() != 0}: a 2.3 ws cosine x
+ * PI x 0.4 x amount, else a 0.3 ws x 0.04 breath, around -+0.4 / 0.6 / 0.2); the THRESHOLD idiom on the legs (2.0
+ * ws x PI x 0.25 x amount, else 0) under the ACTIVITY branch ({@code getActivity() != 2 || attacking}: the gait, else
+ * both legs tucked at -1.0); the tail sway (0.9 ws x PI x 0.06) stilled by the SIT order ({@code isOrderedToSit()})
+ * and overridden by the ATTACKING lash (1.3 ws x PI x 0.12), fanned x1.6 / 2.6 / 3.6 / 4.6 down the five tail rings
+ * FOLLOWING one another by 6 / 5 / 4 / 4 units in x / z (POSITION writes through {@link #moveTo} ); the three-head
+ * LOOK split (two thirds of the head yaw / pitch, the side heads at half of it on the side the head turns to, in
+ * radians on each head's head / snout / fin / jaw, half on its neck) with the ATTACKING chatter on the three jaws
+ * (1.9 / 2.1 / 2.3 ws cosines x PI x 0.2 + 0.2); the three necks pitched by the entity's HEAD EXTENSIONS ({@code
+ * getHead1Ext / 2 / 3}, degrees) and each head group (head, snout, fin, jaw) FOLLOWING its neck 7 units along its
+ * pitch and yaw. The entity is read through {@link ThePrincePose} (the Slice 4b doctrine). Every value the classic
+ * reads back from a part it just wrote is held in a local; the necks' and the second tail ring's pivots, never
+ * written, are read through {@link #classicPosition} (the bind). The classic's early {@code jaw.z / x = snout.z / x
+ * - cos / sin(snout.yRot)} (and the side jaws') read the snout's position before this frame writes it and are
+ * overwritten by the neck follow below before any read - dead writes, transcribed as such.
  *
- * <p>Scale and shadow follow {@link ThePrinceRenderer}: 0.75 render scale (its private {@code SCALE}, applied around
- * {@code super.render} - the literal) and the {@code 0.75f * 0.75f} shadow literal its constructor passes (no SHADOW
- * constant). The six wing parts are zero-thickness cubes (the seam draws every cube with its true transformed normal
- * and its two coplanar faces in the classic order, ENT-S-161 / TEST-007 - below).</p>
+ *
+ * <p>Scale and shadow follow {@link ThePrinceRenderer} : 0.75 render scale ({@link ThePrinceRenderer#SCALE}, applied
+ * around {@code super.render} - made public by the landing slice T1a, the hook survey' equal literal dropped; the
+ * T2d form) and the {@code 0.75f * 0.75f} shadow literal its constructor passes (no SHADOW constant). The six wing
+ * parts are zero-thickness cubes (the seam draws every cube with its true transformed normal and its two coplanar
+ * faces in the classic order, ENT-S-161 / TEST-007 - below).</p>
  */
 public final class ThePrinceGeoReplacement extends OreSpawnGeoReplacement<ThePrince> {
     /** orig ModelThePrince.java:15,53 {@code wingspeed} = 0.65f (ClientProxyOreSpawn.java:494): the chain's frequency multiplier. */
     static final float WINGSPEED = 0.65f;
-    /** ThePrinceRenderer's private {@code SCALE} = 0.75f (its render() wrapper's uniform scale): the equal literal. */
-    static final float SCALE = 0.75f;
     private static final GeoReplacementDescriptor<ThePrince> DESCRIPTOR = new GeoReplacementDescriptor<>(
             () -> ModEntities.THE_PRINCE.get(),  // lambda: a bound method ref would initialise ModEntities eagerly
             ThePrince.class,
@@ -51,8 +51,8 @@ public final class ThePrinceGeoReplacement extends OreSpawnGeoReplacement<ThePri
             0.75F * 0.75F) {
         @Override
         public void applyScale(ThePrince entity, PoseStack poseStack, float partialTick) {
-            // ThePrinceRenderer.render: poseStack.scale(SCALE, SCALE, SCALE) around super.render
-            poseStack.scale(SCALE, SCALE, SCALE);
+            // ThePrinceRenderer.render: poseStack.scale(SCALE, SCALE, SCALE) around super.render (the renderer's constant, public since T1a)
+            poseStack.scale(ThePrinceRenderer.SCALE, ThePrinceRenderer.SCALE, ThePrinceRenderer.SCALE);
         }
 
         /**

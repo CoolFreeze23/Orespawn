@@ -1,0 +1,1327 @@
+{
+  "schema_version": 1,
+  "model_id": "model_giantrobot",
+  "tier": 1,
+  "proof_scope": "production_proof_model",
+  "ground_truth": "executed compiled LayerDefinition and baked ModelPart",
+  "source_class": "danger.orespawn.entity.client.ModelGiantRobot",
+  "source_class_sha256": "cc58aa31322cbdd10603a65ec5344ea3bb2d041272dce864efc637b023d0e8ae",
+  "compiled_dump_sha256": "92eef1b632488ee5ca763b30570896bc77878647392cfcbe9fae678b06379977",
+  "geometry_sha256": "390881d8894b79e59bfc9083af1ee948a19a667954cf8c98be0f13b4aac80bd9",
+  "animation_sha256": "7882082857fdb11e02f158ebc3a6d3f970e2ac60d54813f0e903ee97b2293749",
+  "animation_contract_sha256": "ee9b395570747e41a9e6e30042cc0ac107b52ec75f35360c331aa82cf5996715",
+  "bone_count": 29,
+  "cube_count": 29,
+  "mirrored_cube_count": 0,
+  "mirrored_uv_strategy": "source flag retained as modelpart_mirror; semantics baked into explicit faces; incompatible GeckoLib native mirror disabled",
+  "exact_bone_names": [
+    "arm1__i0",
+    "arm1__i1",
+    "arm2__i0",
+    "arm2__i1",
+    "arm3__i0",
+    "arm3__i1",
+    "back1",
+    "back2",
+    "back3",
+    "foot1__i0",
+    "foot1__i1",
+    "foot2__i0",
+    "foot2__i1",
+    "foot3__i0",
+    "foot3__i1",
+    "head",
+    "hip",
+    "knuckles__i0",
+    "knuckles__i1",
+    "neck",
+    "shin__i0",
+    "shin__i1",
+    "shoulders",
+    "thigh2__i0",
+    "thigh2__i1",
+    "thigh3__i0",
+    "thigh3__i1",
+    "thigh__i0",
+    "thigh__i1"
+  ],
+  "bone_draw_order": [
+    "hip",
+    "thigh__i0",
+    "thigh2__i0",
+    "thigh3__i0",
+    "shin__i0",
+    "foot1__i0",
+    "foot2__i0",
+    "foot3__i0",
+    "thigh__i1",
+    "thigh2__i1",
+    "thigh3__i1",
+    "shin__i1",
+    "foot1__i1",
+    "foot2__i1",
+    "foot3__i1",
+    "arm1__i0",
+    "arm2__i0",
+    "arm3__i0",
+    "knuckles__i0",
+    "arm1__i1",
+    "arm2__i1",
+    "arm3__i1",
+    "knuckles__i1",
+    "back1",
+    "back2",
+    "back3",
+    "shoulders",
+    "neck",
+    "head"
+  ],
+  "draw_order_evidence": {
+    "source": "classic EntityModel.renderToBuffer on a second bake posed identically; every ModelPart.render is one pose-stack push, attributed to its part by ModelPart.skipDraw elimination (one run per cube-bearing part with every other part's skipDraw set); a part drawn n > 1 times is named <part>__i<k> by draw ordinal",
+    "captures": [
+      "bind",
+      "s_idle_a0_t0",
+      "s_idle_a0_t_quarter",
+      "s_idle_a0_t_half",
+      "s_idle_a0_t_three_quarter",
+      "s_idle_a0_t_end",
+      "s_idle_a0_25_t0",
+      "s_idle_a0_25_t_quarter",
+      "s_idle_a0_25_t_half",
+      "s_idle_a0_25_t_three_quarter",
+      "s_idle_a0_25_t_end",
+      "s_idle_a0_5_t0",
+      "s_idle_a0_5_t_quarter",
+      "s_idle_a0_5_t_half",
+      "s_idle_a0_5_t_three_quarter",
+      "s_idle_a0_5_t_end",
+      "s_idle_a1_t0",
+      "s_idle_a1_t_quarter",
+      "s_idle_a1_t_half",
+      "s_idle_a1_t_three_quarter",
+      "s_idle_a1_t_end",
+      "s_attacking_a0_t0",
+      "s_attacking_a0_t_quarter",
+      "s_attacking_a0_t_half",
+      "s_attacking_a0_t_three_quarter",
+      "s_attacking_a0_t_end",
+      "s_attacking_a0_25_t0",
+      "s_attacking_a0_25_t_quarter",
+      "s_attacking_a0_25_t_half",
+      "s_attacking_a0_25_t_three_quarter",
+      "s_attacking_a0_25_t_end",
+      "s_attacking_a0_5_t0",
+      "s_attacking_a0_5_t_quarter",
+      "s_attacking_a0_5_t_half",
+      "s_attacking_a0_5_t_three_quarter",
+      "s_attacking_a0_5_t_end",
+      "s_attacking_a1_t0",
+      "s_attacking_a1_t_quarter",
+      "s_attacking_a1_t_half",
+      "s_attacking_a1_t_three_quarter",
+      "s_attacking_a1_t_end"
+    ],
+    "cube_bearing_units": 29,
+    "observed_units": 29,
+    "unobserved_units": [],
+    "ordered_pairs": 406,
+    "tie_break": "converter emission order for pairs never drawn together in any capture",
+    "lifting": "pre-order over the geo bone tree, siblings by their subtree's first classic draw"
+  },
+  "render_instances": {
+    "declared": {
+      "thigh": {
+        "count": 2,
+        "step_scope": "explicit",
+        "instances": [
+          {
+            "pivot": [
+              0.0,
+              -60.0,
+              13.0
+            ],
+            "note": "draw 0: the sign +1 pass (the first renderLeg / renderArm call)"
+          },
+          {
+            "pivot": [
+              0.0,
+              -60.0,
+              -13.0
+            ],
+            "note": "draw 1: the sign -1 pass (the second call, the offsets negated)"
+          }
+        ],
+        "note": "renderLeg (ModelGiantRobot.java:271-281; orig :173-199 / :200-226): x = hip.x + s cos(hip.xRot) sin(hip.yRot) 13, y = hip.y - s sin(hip.xRot) 13, z = hip.z + s cos(hip.xRot) cos(hip.yRot) 13, s = +1 for draw 0 and -1 for draw 1; at bind (the constructor pose, hip (0, -60, 0) unrotated) (0, -60, +13) / (0, -60, -13); in-game the hip's constant quarter turn (setupAnim :208, hip.yRot = pi/2 + the sway) carries the pair to x +13 / -13 - draw 0 the model's left side (+x, vanilla's left_arm side), draw 1 the right"
+      },
+      "thigh2": {
+        "count": 2,
+        "step_scope": "explicit",
+        "instances": [
+          {
+            "pivot": [
+              0.0,
+              -60.0,
+              13.0
+            ],
+            "note": "draw 0: the sign +1 pass (the first renderLeg / renderArm call)"
+          },
+          {
+            "pivot": [
+              0.0,
+              -60.0,
+              -13.0
+            ],
+            "note": "draw 1: the sign -1 pass (the second call, the offsets negated)"
+          }
+        ],
+        "note": "as thigh: renderLeg (ModelGiantRobot.java:271-281; orig :173-199 / :200-226): x = hip.x + s cos(hip.xRot) sin(hip.yRot) 13, y = hip.y - s sin(hip.xRot) 13, z = hip.z + s cos(hip.xRot) cos(hip.yRot) 13, s = +1 for draw 0 and -1 for draw 1; at bind (the constructor pose, hip (0, -60, 0) unrotated) (0, -60, +13) / (0, -60, -13); in-game the hip's constant quarter turn (setupAnim :208, hip.yRot = pi/2 + the sway) carries the pair to x +13 / -13 - draw 0 the model's left side (+x, vanilla's left_arm side), draw 1 the right"
+      },
+      "thigh3": {
+        "count": 2,
+        "step_scope": "explicit",
+        "instances": [
+          {
+            "pivot": [
+              0.0,
+              -60.0,
+              13.0
+            ],
+            "note": "draw 0: the sign +1 pass (the first renderLeg / renderArm call)"
+          },
+          {
+            "pivot": [
+              0.0,
+              -60.0,
+              -13.0
+            ],
+            "note": "draw 1: the sign -1 pass (the second call, the offsets negated)"
+          }
+        ],
+        "note": "as thigh: renderLeg (ModelGiantRobot.java:271-281; orig :173-199 / :200-226): x = hip.x + s cos(hip.xRot) sin(hip.yRot) 13, y = hip.y - s sin(hip.xRot) 13, z = hip.z + s cos(hip.xRot) cos(hip.yRot) 13, s = +1 for draw 0 and -1 for draw 1; at bind (the constructor pose, hip (0, -60, 0) unrotated) (0, -60, +13) / (0, -60, -13); in-game the hip's constant quarter turn (setupAnim :208, hip.yRot = pi/2 + the sway) carries the pair to x +13 / -13 - draw 0 the model's left side (+x, vanilla's left_arm side), draw 1 the right"
+      },
+      "shin": {
+        "count": 2,
+        "step_scope": "explicit",
+        "instances": [
+          {
+            "pivot": [
+              0.0,
+              -20.0,
+              13.0
+            ],
+            "note": "draw 0: the sign +1 pass (the first renderLeg / renderArm call)"
+          },
+          {
+            "pivot": [
+              0.0,
+              -20.0,
+              -13.0
+            ],
+            "note": "draw 1: the sign -1 pass (the second call, the offsets negated)"
+          }
+        ],
+        "note": "renderLeg (:283-287): shin.y = thigh.y + cos(thigh.xRot) 40, z = thigh.z + sin(thigh.xRot) 40, x = thigh.x - at bind (0, -20, +13) / (0, -20, -13) (thigh.xRot 0 at bind: the walk's angles are setupAnim's, all 0 in the constructor pose)"
+      },
+      "foot1": {
+        "count": 2,
+        "step_scope": "explicit",
+        "instances": [
+          {
+            "pivot": [
+              0.0,
+              -20.0,
+              13.0
+            ],
+            "note": "draw 0: the sign +1 pass (the first renderLeg / renderArm call)"
+          },
+          {
+            "pivot": [
+              0.0,
+              -20.0,
+              -13.0
+            ],
+            "note": "draw 1: the sign -1 pass (the second call, the offsets negated)"
+          }
+        ],
+        "note": "renderLeg (:289-299): the foot pieces take the shin's rotation point and pitch - at bind (0, -20, +13) / (0, -20, -13)"
+      },
+      "foot2": {
+        "count": 2,
+        "step_scope": "explicit",
+        "instances": [
+          {
+            "pivot": [
+              0.0,
+              -20.0,
+              13.0
+            ],
+            "note": "draw 0: the sign +1 pass (the first renderLeg / renderArm call)"
+          },
+          {
+            "pivot": [
+              0.0,
+              -20.0,
+              -13.0
+            ],
+            "note": "draw 1: the sign -1 pass (the second call, the offsets negated)"
+          }
+        ],
+        "note": "renderLeg (:289-299): the foot pieces take the shin's rotation point and pitch - at bind (0, -20, +13) / (0, -20, -13)"
+      },
+      "foot3": {
+        "count": 2,
+        "step_scope": "explicit",
+        "instances": [
+          {
+            "pivot": [
+              0.0,
+              -20.0,
+              13.0
+            ],
+            "note": "draw 0: the sign +1 pass (the first renderLeg / renderArm call)"
+          },
+          {
+            "pivot": [
+              0.0,
+              -20.0,
+              -13.0
+            ],
+            "note": "draw 1: the sign -1 pass (the second call, the offsets negated)"
+          }
+        ],
+        "note": "renderLeg (:289-299): the foot pieces take the shin's rotation point and pitch - at bind (0, -20, +13) / (0, -20, -13)"
+      },
+      "arm1": {
+        "count": 2,
+        "step_scope": "explicit",
+        "instances": [
+          {
+            "pivot": [
+              26.0,
+              -120.0,
+              0.0
+            ],
+            "note": "draw 0: the sign +1 pass (the first renderLeg / renderArm call)"
+          },
+          {
+            "pivot": [
+              -26.0,
+              -120.0,
+              0.0
+            ],
+            "note": "draw 1: the sign -1 pass (the second call, the offsets negated)"
+          }
+        ],
+        "note": "renderArm (:309-314; orig :243-254 / :255-266): y = hip.y - 60, x = hip.x + s 26, z = shoulders.z - s sin(shoulders.yRot) 26, s = +1 for draw 0 (x +26, the model's left side) and -1 for draw 1 (x -26); at bind (+26, -120, 0) / (-26, -120, 0)"
+      },
+      "arm2": {
+        "count": 2,
+        "step_scope": "explicit",
+        "instances": [
+          {
+            "pivot": [
+              26.0,
+              -120.0,
+              0.0
+            ],
+            "note": "draw 0: the sign +1 pass (the first renderLeg / renderArm call)"
+          },
+          {
+            "pivot": [
+              -26.0,
+              -120.0,
+              0.0
+            ],
+            "note": "draw 1: the sign -1 pass (the second call, the offsets negated)"
+          }
+        ],
+        "note": "as arm1: renderArm (:309-314; orig :243-254 / :255-266): y = hip.y - 60, x = hip.x + s 26, z = shoulders.z - s sin(shoulders.yRot) 26, s = +1 for draw 0 (x +26, the model's left side) and -1 for draw 1 (x -26); at bind (+26, -120, 0) / (-26, -120, 0)"
+      },
+      "arm3": {
+        "count": 2,
+        "step_scope": "explicit",
+        "instances": [
+          {
+            "pivot": [
+              26.0,
+              -79.0,
+              0.0
+            ],
+            "rotation": [
+              -0.19634954084936207,
+              null,
+              null
+            ],
+            "note": "draw 0: the sign +1 pass (the first renderLeg / renderArm call)"
+          },
+          {
+            "pivot": [
+              -26.0,
+              -79.0,
+              0.0
+            ],
+            "rotation": [
+              -0.19634954084936207,
+              null,
+              null
+            ],
+            "note": "draw 1: the sign -1 pass (the second call, the offsets negated)"
+          }
+        ],
+        "note": "renderArm (:316-320): xRot = the lower angle - 0.19634954 (the forearm leads the upper arm by that constant, present at bind), y = arm1.y + cos(arm1.xRot) 41 = -79, z = arm1.z + sin(arm1.xRot) 41 = 0, x = arm1.x - at bind (+26, -79, 0) / (-26, -79, 0) with xRot -0.19634954"
+      },
+      "knuckles": {
+        "count": 2,
+        "step_scope": "explicit",
+        "instances": [
+          {
+            "pivot": [
+              26.0,
+              -79.0,
+              0.0
+            ],
+            "rotation": [
+              -0.19634954084936207,
+              null,
+              null
+            ],
+            "note": "draw 0: the sign +1 pass (the first renderLeg / renderArm call)"
+          },
+          {
+            "pivot": [
+              -26.0,
+              -79.0,
+              0.0
+            ],
+            "rotation": [
+              -0.19634954084936207,
+              null,
+              null
+            ],
+            "note": "draw 1: the sign -1 pass (the second call, the offsets negated)"
+          }
+        ],
+        "note": "as arm3: renderArm (:316-320): xRot = the lower angle - 0.19634954 (the forearm leads the upper arm by that constant, present at bind), y = arm1.y + cos(arm1.xRot) 41 = -79, z = arm1.z + sin(arm1.xRot) 41 = 0, x = arm1.x - at bind (+26, -79, 0) / (-26, -79, 0) with xRot -0.19634954"
+      }
+    },
+    "parts": {
+      "arm1": {
+        "count": 2,
+        "step_scope": "explicit",
+        "instances": [
+          {
+            "draw_index": 0,
+            "pivot": [
+              26.0,
+              -120.0,
+              0.0
+            ],
+            "rotation": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "note": "draw 0: the sign +1 pass (the first renderLeg / renderArm call)"
+          },
+          {
+            "draw_index": 1,
+            "pivot": [
+              -26.0,
+              -120.0,
+              0.0
+            ],
+            "rotation": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "note": "draw 1: the sign -1 pass (the second call, the offsets negated)"
+          }
+        ],
+        "group_bones": [],
+        "clone_bones": [
+          "arm1__i0",
+          "arm1__i1"
+        ],
+        "cubes_per_draw": 1,
+        "note": "renderArm (:309-314; orig :243-254 / :255-266): y = hip.y - 60, x = hip.x + s 26, z = shoulders.z - s sin(shoulders.yRot) 26, s = +1 for draw 0 (x +26, the model's left side) and -1 for draw 1 (x -26); at bind (+26, -120, 0) / (-26, -120, 0)"
+      },
+      "arm2": {
+        "count": 2,
+        "step_scope": "explicit",
+        "instances": [
+          {
+            "draw_index": 0,
+            "pivot": [
+              26.0,
+              -120.0,
+              0.0
+            ],
+            "rotation": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "note": "draw 0: the sign +1 pass (the first renderLeg / renderArm call)"
+          },
+          {
+            "draw_index": 1,
+            "pivot": [
+              -26.0,
+              -120.0,
+              0.0
+            ],
+            "rotation": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "note": "draw 1: the sign -1 pass (the second call, the offsets negated)"
+          }
+        ],
+        "group_bones": [],
+        "clone_bones": [
+          "arm2__i0",
+          "arm2__i1"
+        ],
+        "cubes_per_draw": 1,
+        "note": "as arm1: renderArm (:309-314; orig :243-254 / :255-266): y = hip.y - 60, x = hip.x + s 26, z = shoulders.z - s sin(shoulders.yRot) 26, s = +1 for draw 0 (x +26, the model's left side) and -1 for draw 1 (x -26); at bind (+26, -120, 0) / (-26, -120, 0)"
+      },
+      "arm3": {
+        "count": 2,
+        "step_scope": "explicit",
+        "instances": [
+          {
+            "draw_index": 0,
+            "pivot": [
+              26.0,
+              -79.0,
+              0.0
+            ],
+            "rotation": [
+              -0.19634954084936207,
+              0.0,
+              0.0
+            ],
+            "note": "draw 0: the sign +1 pass (the first renderLeg / renderArm call)"
+          },
+          {
+            "draw_index": 1,
+            "pivot": [
+              -26.0,
+              -79.0,
+              0.0
+            ],
+            "rotation": [
+              -0.19634954084936207,
+              0.0,
+              0.0
+            ],
+            "note": "draw 1: the sign -1 pass (the second call, the offsets negated)"
+          }
+        ],
+        "group_bones": [],
+        "clone_bones": [
+          "arm3__i0",
+          "arm3__i1"
+        ],
+        "cubes_per_draw": 1,
+        "note": "renderArm (:316-320): xRot = the lower angle - 0.19634954 (the forearm leads the upper arm by that constant, present at bind), y = arm1.y + cos(arm1.xRot) 41 = -79, z = arm1.z + sin(arm1.xRot) 41 = 0, x = arm1.x - at bind (+26, -79, 0) / (-26, -79, 0) with xRot -0.19634954"
+      },
+      "foot1": {
+        "count": 2,
+        "step_scope": "explicit",
+        "instances": [
+          {
+            "draw_index": 0,
+            "pivot": [
+              0.0,
+              -20.0,
+              13.0
+            ],
+            "rotation": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "note": "draw 0: the sign +1 pass (the first renderLeg / renderArm call)"
+          },
+          {
+            "draw_index": 1,
+            "pivot": [
+              0.0,
+              -20.0,
+              -13.0
+            ],
+            "rotation": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "note": "draw 1: the sign -1 pass (the second call, the offsets negated)"
+          }
+        ],
+        "group_bones": [],
+        "clone_bones": [
+          "foot1__i0",
+          "foot1__i1"
+        ],
+        "cubes_per_draw": 1,
+        "note": "renderLeg (:289-299): the foot pieces take the shin's rotation point and pitch - at bind (0, -20, +13) / (0, -20, -13)"
+      },
+      "foot2": {
+        "count": 2,
+        "step_scope": "explicit",
+        "instances": [
+          {
+            "draw_index": 0,
+            "pivot": [
+              0.0,
+              -20.0,
+              13.0
+            ],
+            "rotation": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "note": "draw 0: the sign +1 pass (the first renderLeg / renderArm call)"
+          },
+          {
+            "draw_index": 1,
+            "pivot": [
+              0.0,
+              -20.0,
+              -13.0
+            ],
+            "rotation": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "note": "draw 1: the sign -1 pass (the second call, the offsets negated)"
+          }
+        ],
+        "group_bones": [],
+        "clone_bones": [
+          "foot2__i0",
+          "foot2__i1"
+        ],
+        "cubes_per_draw": 1,
+        "note": "renderLeg (:289-299): the foot pieces take the shin's rotation point and pitch - at bind (0, -20, +13) / (0, -20, -13)"
+      },
+      "foot3": {
+        "count": 2,
+        "step_scope": "explicit",
+        "instances": [
+          {
+            "draw_index": 0,
+            "pivot": [
+              0.0,
+              -20.0,
+              13.0
+            ],
+            "rotation": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "note": "draw 0: the sign +1 pass (the first renderLeg / renderArm call)"
+          },
+          {
+            "draw_index": 1,
+            "pivot": [
+              0.0,
+              -20.0,
+              -13.0
+            ],
+            "rotation": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "note": "draw 1: the sign -1 pass (the second call, the offsets negated)"
+          }
+        ],
+        "group_bones": [],
+        "clone_bones": [
+          "foot3__i0",
+          "foot3__i1"
+        ],
+        "cubes_per_draw": 1,
+        "note": "renderLeg (:289-299): the foot pieces take the shin's rotation point and pitch - at bind (0, -20, +13) / (0, -20, -13)"
+      },
+      "knuckles": {
+        "count": 2,
+        "step_scope": "explicit",
+        "instances": [
+          {
+            "draw_index": 0,
+            "pivot": [
+              26.0,
+              -79.0,
+              0.0
+            ],
+            "rotation": [
+              -0.19634954084936207,
+              0.0,
+              0.0
+            ],
+            "note": "draw 0: the sign +1 pass (the first renderLeg / renderArm call)"
+          },
+          {
+            "draw_index": 1,
+            "pivot": [
+              -26.0,
+              -79.0,
+              0.0
+            ],
+            "rotation": [
+              -0.19634954084936207,
+              0.0,
+              0.0
+            ],
+            "note": "draw 1: the sign -1 pass (the second call, the offsets negated)"
+          }
+        ],
+        "group_bones": [],
+        "clone_bones": [
+          "knuckles__i0",
+          "knuckles__i1"
+        ],
+        "cubes_per_draw": 1,
+        "note": "as arm3: renderArm (:316-320): xRot = the lower angle - 0.19634954 (the forearm leads the upper arm by that constant, present at bind), y = arm1.y + cos(arm1.xRot) 41 = -79, z = arm1.z + sin(arm1.xRot) 41 = 0, x = arm1.x - at bind (+26, -79, 0) / (-26, -79, 0) with xRot -0.19634954"
+      },
+      "shin": {
+        "count": 2,
+        "step_scope": "explicit",
+        "instances": [
+          {
+            "draw_index": 0,
+            "pivot": [
+              0.0,
+              -20.0,
+              13.0
+            ],
+            "rotation": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "note": "draw 0: the sign +1 pass (the first renderLeg / renderArm call)"
+          },
+          {
+            "draw_index": 1,
+            "pivot": [
+              0.0,
+              -20.0,
+              -13.0
+            ],
+            "rotation": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "note": "draw 1: the sign -1 pass (the second call, the offsets negated)"
+          }
+        ],
+        "group_bones": [],
+        "clone_bones": [
+          "shin__i0",
+          "shin__i1"
+        ],
+        "cubes_per_draw": 1,
+        "note": "renderLeg (:283-287): shin.y = thigh.y + cos(thigh.xRot) 40, z = thigh.z + sin(thigh.xRot) 40, x = thigh.x - at bind (0, -20, +13) / (0, -20, -13) (thigh.xRot 0 at bind: the walk's angles are setupAnim's, all 0 in the constructor pose)"
+      },
+      "thigh": {
+        "count": 2,
+        "step_scope": "explicit",
+        "instances": [
+          {
+            "draw_index": 0,
+            "pivot": [
+              0.0,
+              -60.0,
+              13.0
+            ],
+            "rotation": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "note": "draw 0: the sign +1 pass (the first renderLeg / renderArm call)"
+          },
+          {
+            "draw_index": 1,
+            "pivot": [
+              0.0,
+              -60.0,
+              -13.0
+            ],
+            "rotation": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "note": "draw 1: the sign -1 pass (the second call, the offsets negated)"
+          }
+        ],
+        "group_bones": [],
+        "clone_bones": [
+          "thigh__i0",
+          "thigh__i1"
+        ],
+        "cubes_per_draw": 1,
+        "note": "renderLeg (ModelGiantRobot.java:271-281; orig :173-199 / :200-226): x = hip.x + s cos(hip.xRot) sin(hip.yRot) 13, y = hip.y - s sin(hip.xRot) 13, z = hip.z + s cos(hip.xRot) cos(hip.yRot) 13, s = +1 for draw 0 and -1 for draw 1; at bind (the constructor pose, hip (0, -60, 0) unrotated) (0, -60, +13) / (0, -60, -13); in-game the hip's constant quarter turn (setupAnim :208, hip.yRot = pi/2 + the sway) carries the pair to x +13 / -13 - draw 0 the model's left side (+x, vanilla's left_arm side), draw 1 the right"
+      },
+      "thigh2": {
+        "count": 2,
+        "step_scope": "explicit",
+        "instances": [
+          {
+            "draw_index": 0,
+            "pivot": [
+              0.0,
+              -60.0,
+              13.0
+            ],
+            "rotation": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "note": "draw 0: the sign +1 pass (the first renderLeg / renderArm call)"
+          },
+          {
+            "draw_index": 1,
+            "pivot": [
+              0.0,
+              -60.0,
+              -13.0
+            ],
+            "rotation": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "note": "draw 1: the sign -1 pass (the second call, the offsets negated)"
+          }
+        ],
+        "group_bones": [],
+        "clone_bones": [
+          "thigh2__i0",
+          "thigh2__i1"
+        ],
+        "cubes_per_draw": 1,
+        "note": "as thigh: renderLeg (ModelGiantRobot.java:271-281; orig :173-199 / :200-226): x = hip.x + s cos(hip.xRot) sin(hip.yRot) 13, y = hip.y - s sin(hip.xRot) 13, z = hip.z + s cos(hip.xRot) cos(hip.yRot) 13, s = +1 for draw 0 and -1 for draw 1; at bind (the constructor pose, hip (0, -60, 0) unrotated) (0, -60, +13) / (0, -60, -13); in-game the hip's constant quarter turn (setupAnim :208, hip.yRot = pi/2 + the sway) carries the pair to x +13 / -13 - draw 0 the model's left side (+x, vanilla's left_arm side), draw 1 the right"
+      },
+      "thigh3": {
+        "count": 2,
+        "step_scope": "explicit",
+        "instances": [
+          {
+            "draw_index": 0,
+            "pivot": [
+              0.0,
+              -60.0,
+              13.0
+            ],
+            "rotation": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "note": "draw 0: the sign +1 pass (the first renderLeg / renderArm call)"
+          },
+          {
+            "draw_index": 1,
+            "pivot": [
+              0.0,
+              -60.0,
+              -13.0
+            ],
+            "rotation": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "note": "draw 1: the sign -1 pass (the second call, the offsets negated)"
+          }
+        ],
+        "group_bones": [],
+        "clone_bones": [
+          "thigh3__i0",
+          "thigh3__i1"
+        ],
+        "cubes_per_draw": 1,
+        "note": "as thigh: renderLeg (ModelGiantRobot.java:271-281; orig :173-199 / :200-226): x = hip.x + s cos(hip.xRot) sin(hip.yRot) 13, y = hip.y - s sin(hip.xRot) 13, z = hip.z + s cos(hip.xRot) cos(hip.yRot) 13, s = +1 for draw 0 and -1 for draw 1; at bind (the constructor pose, hip (0, -60, 0) unrotated) (0, -60, +13) / (0, -60, -13); in-game the hip's constant quarter turn (setupAnim :208, hip.yRot = pi/2 + the sway) carries the pair to x +13 / -13 - draw 0 the model's left side (+x, vanilla's left_arm side), draw 1 the right"
+      }
+    },
+    "bones": {
+      "arm1__i0": {
+        "role": "clone",
+        "source_part": "arm1",
+        "draw_index": 0,
+        "group_bone": null,
+        "static_rotation_radians": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "static_channel": null,
+        "static_pivot_classic": [
+          26.0,
+          -120.0,
+          0.0
+        ],
+        "instance_note": "draw 0: the sign +1 pass (the first renderLeg / renderArm call)"
+      },
+      "arm1__i1": {
+        "role": "clone",
+        "source_part": "arm1",
+        "draw_index": 1,
+        "group_bone": null,
+        "static_rotation_radians": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "static_channel": null,
+        "static_pivot_classic": [
+          -26.0,
+          -120.0,
+          0.0
+        ],
+        "instance_note": "draw 1: the sign -1 pass (the second call, the offsets negated)"
+      },
+      "arm2__i0": {
+        "role": "clone",
+        "source_part": "arm2",
+        "draw_index": 0,
+        "group_bone": null,
+        "static_rotation_radians": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "static_channel": null,
+        "static_pivot_classic": [
+          26.0,
+          -120.0,
+          0.0
+        ],
+        "instance_note": "draw 0: the sign +1 pass (the first renderLeg / renderArm call)"
+      },
+      "arm2__i1": {
+        "role": "clone",
+        "source_part": "arm2",
+        "draw_index": 1,
+        "group_bone": null,
+        "static_rotation_radians": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "static_channel": null,
+        "static_pivot_classic": [
+          -26.0,
+          -120.0,
+          0.0
+        ],
+        "instance_note": "draw 1: the sign -1 pass (the second call, the offsets negated)"
+      },
+      "arm3__i0": {
+        "role": "clone",
+        "source_part": "arm3",
+        "draw_index": 0,
+        "group_bone": null,
+        "static_rotation_radians": [
+          -0.19634954084936207,
+          0.0,
+          0.0
+        ],
+        "static_channel": null,
+        "static_pivot_classic": [
+          26.0,
+          -79.0,
+          0.0
+        ],
+        "instance_note": "draw 0: the sign +1 pass (the first renderLeg / renderArm call)"
+      },
+      "arm3__i1": {
+        "role": "clone",
+        "source_part": "arm3",
+        "draw_index": 1,
+        "group_bone": null,
+        "static_rotation_radians": [
+          -0.19634954084936207,
+          0.0,
+          0.0
+        ],
+        "static_channel": null,
+        "static_pivot_classic": [
+          -26.0,
+          -79.0,
+          0.0
+        ],
+        "instance_note": "draw 1: the sign -1 pass (the second call, the offsets negated)"
+      },
+      "foot1__i0": {
+        "role": "clone",
+        "source_part": "foot1",
+        "draw_index": 0,
+        "group_bone": null,
+        "static_rotation_radians": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "static_channel": null,
+        "static_pivot_classic": [
+          0.0,
+          -20.0,
+          13.0
+        ],
+        "instance_note": "draw 0: the sign +1 pass (the first renderLeg / renderArm call)"
+      },
+      "foot1__i1": {
+        "role": "clone",
+        "source_part": "foot1",
+        "draw_index": 1,
+        "group_bone": null,
+        "static_rotation_radians": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "static_channel": null,
+        "static_pivot_classic": [
+          0.0,
+          -20.0,
+          -13.0
+        ],
+        "instance_note": "draw 1: the sign -1 pass (the second call, the offsets negated)"
+      },
+      "foot2__i0": {
+        "role": "clone",
+        "source_part": "foot2",
+        "draw_index": 0,
+        "group_bone": null,
+        "static_rotation_radians": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "static_channel": null,
+        "static_pivot_classic": [
+          0.0,
+          -20.0,
+          13.0
+        ],
+        "instance_note": "draw 0: the sign +1 pass (the first renderLeg / renderArm call)"
+      },
+      "foot2__i1": {
+        "role": "clone",
+        "source_part": "foot2",
+        "draw_index": 1,
+        "group_bone": null,
+        "static_rotation_radians": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "static_channel": null,
+        "static_pivot_classic": [
+          0.0,
+          -20.0,
+          -13.0
+        ],
+        "instance_note": "draw 1: the sign -1 pass (the second call, the offsets negated)"
+      },
+      "foot3__i0": {
+        "role": "clone",
+        "source_part": "foot3",
+        "draw_index": 0,
+        "group_bone": null,
+        "static_rotation_radians": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "static_channel": null,
+        "static_pivot_classic": [
+          0.0,
+          -20.0,
+          13.0
+        ],
+        "instance_note": "draw 0: the sign +1 pass (the first renderLeg / renderArm call)"
+      },
+      "foot3__i1": {
+        "role": "clone",
+        "source_part": "foot3",
+        "draw_index": 1,
+        "group_bone": null,
+        "static_rotation_radians": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "static_channel": null,
+        "static_pivot_classic": [
+          0.0,
+          -20.0,
+          -13.0
+        ],
+        "instance_note": "draw 1: the sign -1 pass (the second call, the offsets negated)"
+      },
+      "knuckles__i0": {
+        "role": "clone",
+        "source_part": "knuckles",
+        "draw_index": 0,
+        "group_bone": null,
+        "static_rotation_radians": [
+          -0.19634954084936207,
+          0.0,
+          0.0
+        ],
+        "static_channel": null,
+        "static_pivot_classic": [
+          26.0,
+          -79.0,
+          0.0
+        ],
+        "instance_note": "draw 0: the sign +1 pass (the first renderLeg / renderArm call)"
+      },
+      "knuckles__i1": {
+        "role": "clone",
+        "source_part": "knuckles",
+        "draw_index": 1,
+        "group_bone": null,
+        "static_rotation_radians": [
+          -0.19634954084936207,
+          0.0,
+          0.0
+        ],
+        "static_channel": null,
+        "static_pivot_classic": [
+          -26.0,
+          -79.0,
+          0.0
+        ],
+        "instance_note": "draw 1: the sign -1 pass (the second call, the offsets negated)"
+      },
+      "shin__i0": {
+        "role": "clone",
+        "source_part": "shin",
+        "draw_index": 0,
+        "group_bone": null,
+        "static_rotation_radians": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "static_channel": null,
+        "static_pivot_classic": [
+          0.0,
+          -20.0,
+          13.0
+        ],
+        "instance_note": "draw 0: the sign +1 pass (the first renderLeg / renderArm call)"
+      },
+      "shin__i1": {
+        "role": "clone",
+        "source_part": "shin",
+        "draw_index": 1,
+        "group_bone": null,
+        "static_rotation_radians": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "static_channel": null,
+        "static_pivot_classic": [
+          0.0,
+          -20.0,
+          -13.0
+        ],
+        "instance_note": "draw 1: the sign -1 pass (the second call, the offsets negated)"
+      },
+      "thigh__i0": {
+        "role": "clone",
+        "source_part": "thigh",
+        "draw_index": 0,
+        "group_bone": null,
+        "static_rotation_radians": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "static_channel": null,
+        "static_pivot_classic": [
+          0.0,
+          -60.0,
+          13.0
+        ],
+        "instance_note": "draw 0: the sign +1 pass (the first renderLeg / renderArm call)"
+      },
+      "thigh__i1": {
+        "role": "clone",
+        "source_part": "thigh",
+        "draw_index": 1,
+        "group_bone": null,
+        "static_rotation_radians": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "static_channel": null,
+        "static_pivot_classic": [
+          0.0,
+          -60.0,
+          -13.0
+        ],
+        "instance_note": "draw 1: the sign -1 pass (the second call, the offsets negated)"
+      },
+      "thigh2__i0": {
+        "role": "clone",
+        "source_part": "thigh2",
+        "draw_index": 0,
+        "group_bone": null,
+        "static_rotation_radians": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "static_channel": null,
+        "static_pivot_classic": [
+          0.0,
+          -60.0,
+          13.0
+        ],
+        "instance_note": "draw 0: the sign +1 pass (the first renderLeg / renderArm call)"
+      },
+      "thigh2__i1": {
+        "role": "clone",
+        "source_part": "thigh2",
+        "draw_index": 1,
+        "group_bone": null,
+        "static_rotation_radians": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "static_channel": null,
+        "static_pivot_classic": [
+          0.0,
+          -60.0,
+          -13.0
+        ],
+        "instance_note": "draw 1: the sign -1 pass (the second call, the offsets negated)"
+      },
+      "thigh3__i0": {
+        "role": "clone",
+        "source_part": "thigh3",
+        "draw_index": 0,
+        "group_bone": null,
+        "static_rotation_radians": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "static_channel": null,
+        "static_pivot_classic": [
+          0.0,
+          -60.0,
+          13.0
+        ],
+        "instance_note": "draw 0: the sign +1 pass (the first renderLeg / renderArm call)"
+      },
+      "thigh3__i1": {
+        "role": "clone",
+        "source_part": "thigh3",
+        "draw_index": 1,
+        "group_bone": null,
+        "static_rotation_radians": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "static_channel": null,
+        "static_pivot_classic": [
+          0.0,
+          -60.0,
+          -13.0
+        ],
+        "instance_note": "draw 1: the sign -1 pass (the second call, the offsets negated)"
+      }
+    },
+    "semantics": "one bone per classic draw: <part>__i<k> is draw k of <part> (its cubes and pivot); step_scope part = the loop assigns the part's own axis channel, so the step is the clone's bind rotation under one hook-animated group <part>__fan; step_scope stack = the loop rotates the pose stack outside the part, so the step is the bind rotation of a per-draw parent <part>__fan<k> and the clone carries the part's animated channels",
+    "semantics_explicit": "step_scope explicit = the classic re-poses the part between its draws from code (a rotation point and rotation set per draw, no pose-stack step), so draw k is a top-level clone <part>__i<k> whose bind pivot and rotation are the declared per-draw transform at bind and whose cubes are the part's, local to that pivot; a hook animates each clone directly"
+  },
+  "animation_contract": {
+    "schema_version": 1,
+    "kind": "entity_state",
+    "controller_required": false,
+    "candidate_animation_path": "production_replacement_hook",
+    "candidate_class": "danger.orespawn.entity.client.GiantRobotGeoReplacement",
+    "candidate_acceptance_path": "production OreSpawnGeoReplacementModel.setCustomAnimations (Tier-3 code-driven)",
+    "sample_ids": [
+      "bind",
+      "s_idle_a0_t0",
+      "s_idle_a0_t_quarter",
+      "s_idle_a0_t_half",
+      "s_idle_a0_t_three_quarter",
+      "s_idle_a0_t_end",
+      "s_idle_a0_25_t0",
+      "s_idle_a0_25_t_quarter",
+      "s_idle_a0_25_t_half",
+      "s_idle_a0_25_t_three_quarter",
+      "s_idle_a0_25_t_end",
+      "s_idle_a0_5_t0",
+      "s_idle_a0_5_t_quarter",
+      "s_idle_a0_5_t_half",
+      "s_idle_a0_5_t_three_quarter",
+      "s_idle_a0_5_t_end",
+      "s_idle_a1_t0",
+      "s_idle_a1_t_quarter",
+      "s_idle_a1_t_half",
+      "s_idle_a1_t_three_quarter",
+      "s_idle_a1_t_end",
+      "s_attacking_a0_t0",
+      "s_attacking_a0_t_quarter",
+      "s_attacking_a0_t_half",
+      "s_attacking_a0_t_three_quarter",
+      "s_attacking_a0_t_end",
+      "s_attacking_a0_25_t0",
+      "s_attacking_a0_25_t_quarter",
+      "s_attacking_a0_25_t_half",
+      "s_attacking_a0_25_t_three_quarter",
+      "s_attacking_a0_25_t_end",
+      "s_attacking_a0_5_t0",
+      "s_attacking_a0_5_t_quarter",
+      "s_attacking_a0_5_t_half",
+      "s_attacking_a0_5_t_three_quarter",
+      "s_attacking_a0_5_t_end",
+      "s_attacking_a1_t0",
+      "s_attacking_a1_t_quarter",
+      "s_attacking_a1_t_half",
+      "s_attacking_a1_t_three_quarter",
+      "s_attacking_a1_t_end"
+    ],
+    "entity_states": [
+      "idle",
+      "attacking"
+    ]
+  },
+  "reference_animation_schema": {
+    "status": "SCHEMA_VALID_REFERENCE_ONLY",
+    "clip_count": 0,
+    "constant_vector_count": 0,
+    "runtime_acceptance": false
+  },
+  "accepted_animation_evidence": "production OreSpawnGeoReplacement hook posed from declared entity states through the entity's pose interface (Tier-3 code-driven)",
+  "artist_editable_math_to_keyframes_status": "NOT_APPLICABLE_TIER3_CODE_DRIVEN",
+  "compiled_animation_bake_sample_count": 0,
+  "reference_clip_keys_source": "compiled setupAnim output; no Python formula evaluation",
+  "source_animation_channel_inventory": []
+}
