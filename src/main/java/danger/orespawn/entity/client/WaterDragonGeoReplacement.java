@@ -11,22 +11,22 @@ import net.minecraft.util.Mth;
 import software.bernie.geckolib.animation.AnimationProcessor;
 
 /**
- * GeckoLib Water Dragon (the hooks): {@link ModelWaterDragon#poseFrom} verbatim on the rig the landing slice converts,
- * ON THE HOOK (no keyframe layer, no transcription - the self-gate stays closed until an artist delivers {@code
- * idle} and {@code walk}). Wingspeed 0.5f (orig ModelWaterDragon.java:14,41 /
- * ClientProxyOreSpawn.java:436): the THRESHOLD idiom on the four legs about Y - above a walking speed of a tenth
- * {@code cos(age x 1.3 x ws) x PI x 0.2 x limbSwingAmount} about +-0.58 rad, 0 at or below it
- * - and the GAIT-scaled body wave, no threshold: body3, body4, tail1 and the three tail plates yaw on the same 1.3 x
- * ws cosine at 0.4 x PI x limbSwingAmount a quarter turn apart ({@code - k x pi/4}), each link's pivot FOLLOWING its
- * parent 7 / 5 / 3 units along (sin, cos) of the parent's yaw (the POSITION-write idiom, x and z through
- * {@link #moveXZ}; body3's pivot is never written - the bind); the ears about Y on 0.8 x ws at 0.1 x PI about +-0.62
- * rad plus the head yaw; the body fin (Z, 0.7 x ws, 0.02 x PI) and the neck fin (Y, 0.6 x ws, 0.1 x PI) stilled by
- * the SITTING check (orig :222-232); the jaw's three-way ATTACKING branch about X (orig :236: 1 bites on 1.2 x ws at
- * 0.25 x PI, 2 holds 0.45 rad, else -0.25); and the HEAD-LOOK idiom {@code toRadians(netHeadYaw) x 0.75} on the head,
+ * GeckoLib Water Dragon (the hooks, landed by the second Tier-1 slice T1b): {@link ModelWaterDragon#poseFrom} verbatim on
+ * the converted rig, ON THE HOOK (no keyframe layer, no transcription - the self-gate stays closed until an artist delivers
+ * {@code idle} and {@code walk}; the geo, the wiring and the proofs landed with T1b). Wingspeed 0.5f (orig
+ * ModelWaterDragon.java:14,41 / ClientProxyOreSpawn.java:436): the THRESHOLD idiom on the four legs about
+ * Y - above a walking speed of a tenth {@code cos(age x 1.3 x ws) x PI x 0.2 x limbSwingAmount} about +-0.58
+ * rad, 0 at or below it - and the GAIT-scaled body wave, no threshold: body3, body4, tail1 and the three tail plates yaw
+ * on the same 1.3 x ws cosine at 0.4 x PI x limbSwingAmount a quarter turn apart ({@code - k x pi/4}), each
+ * link's pivot FOLLOWING its parent 7 / 5 / 3 units along (sin, cos) of the parent's yaw (the POSITION-write idiom, x and
+ * z through {@link #moveXZ}; body3's pivot is never written - the bind); the ears about Y on 0.8 x ws at 0.1 x PI about
+ * +-0.62 rad plus the head yaw; the body fin (Z, 0.7 x ws, 0.02 x PI) and the neck fin (Y, 0.6 x ws, 0.1 x PI) stilled by
+ * the SITTING check (orig :222-232); the jaw's three-way ATTACKING branch about X (orig :236: 1 bites on 1.2 x ws at 0.25
+ * x PI, 2 holds 0.45 rad, else -0.25); and the HEAD-LOOK idiom {@code toRadians(netHeadYaw) x 0.75} on the head,
  * nose, jaw, head fin and both ears, the nose / jaw / head fin / ears' pivots following the head 8 / 7 / 3 / sqrt 13 /
- * sqrt 20 units along (sin, cos) of the head yaw (+-pi/4 for the ears; the head's pivot is never written - the bind).
- * The entity is read through {@link WaterDragonPose} (the Slice 4b form). The head fin, both ears, the neck fin and
- * the body fin are zero-thickness cubes (ENT-S-161; the classic face order required below).
+ * sqrt 20 units along (sin, cos) of the head yaw (+-pi/4 for the ears; the head's pivot is never written - the bind). The
+ * entity is read through {@link WaterDragonPose} (the Slice 4b form). The head fin, both ears, the neck fin and the body fin
+ * are zero-thickness cubes (ENT-S-161; the classic face order required below).
  *
  * <p>Scale and shadow follow {@link WaterDragonRenderer}: 1.1 render scale, halved for a baby, and a 0.85 x 1.1 shadow
  * (ENT-S-092).</p>

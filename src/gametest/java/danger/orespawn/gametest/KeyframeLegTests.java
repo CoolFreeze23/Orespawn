@@ -100,6 +100,7 @@ import danger.orespawn.entity.client.TermiteGeoReplacement;
 import danger.orespawn.entity.client.TerribleTerrorGeoReplacement;
 import danger.orespawn.entity.client.ThePrinceAdultGeoReplacement;
 import danger.orespawn.entity.client.ThePrinceGeoReplacement;
+import danger.orespawn.entity.client.ThePrinceTeenGeoReplacement;
 import danger.orespawn.entity.client.TriffidGeoReplacement;
 import danger.orespawn.entity.client.TrooperBugGeoReplacement;
 import danger.orespawn.entity.client.TshirtGeoReplacement;
@@ -107,6 +108,7 @@ import danger.orespawn.entity.client.UnstableAntGeoReplacement;
 import danger.orespawn.entity.client.UrchinGeoReplacement;
 import danger.orespawn.entity.client.VelocityRaptorGeoReplacement;
 import danger.orespawn.entity.client.VortexGeoReplacement;
+import danger.orespawn.entity.client.WaterDragonGeoReplacement;
 import danger.orespawn.entity.client.WhaleGeoReplacement;
 import danger.orespawn.entity.client.WormLargeGeoReplacement;
 import danger.orespawn.entity.client.WormMediumGeoReplacement;
@@ -205,9 +207,9 @@ import software.bernie.geckolib.model.GeoModel;
  *     the declared ticks and the ratio), the late prime (a controller first processed at a late age poses
  *     as one that ran from age zero), the LUT index chain straddling a seam and saturating at an absurd age.</li>
  * <li>{@code kf_007} (the Tier-2 slices, 2026-09-13 / 2026-09-14 / 2026-09-15): the presented state - every one of the one hundred and
- * two shipped replacements, constructed registry-free on this server, declares no keyframe layer but the Beaver (its three)
+ * four shipped replacements, constructed registry-free on this server, declares no keyframe layer but the Beaver (its three)
  * and the fourteen Tier-2 descriptors with transcriptions (pinned group by group in {@link T2SeamTests}; the third
- * slice's fifteen, the fourth slice's thirteen, the fifth slice's fourteen, the sixth slice's twelve, the FK slice's three and the first Tier-1 slice's seventeen hook rigs declare none); {@code registerControllers} is final on the base and no replacement declares its own, so the base's self-gated registration is the
+ * slice's fifteen, the fourth slice's thirteen, the fifth slice's fourteen, the sixth slice's twelve, the FK slice's three, the first Tier-1 slice's seventeen and the second Tier-1 slice's two hook rigs declare none); {@code registerControllers} is final on the base and no replacement declares its own, so the base's self-gated registration is the
  * single path, and it registers nothing here for every species.</li>
  * <li>{@code kf_008}: the production repair site - GeckoLib's animation cache map seeded by reflection
  * with a bake of the reference clip under the Beaver's animation resource, the shipped {@code
@@ -677,7 +679,9 @@ public class KeyframeLegTests {
                 new HammerheadGeoReplacement(), new TRexGeoReplacement(), new LeonGeoReplacement(), new LeonopteryxGeoReplacement(),
                 new CephadromeGeoReplacement(), new DragonGeoReplacement(), new BabyDragonGeoReplacement(), new GiantRobotGeoReplacement(),
                 new JefferyGeoReplacement(), new PitchBlackGeoReplacement(), new SeaMonsterGeoReplacement(), new ThePrinceGeoReplacement(),
-                new ThePrinceAdultGeoReplacement());
+                new ThePrinceAdultGeoReplacement(),
+                // the second Tier-1 slice (T1b, 2026-09-15): the Prince Teen and the Water Dragon landed on the hooks already written - no layer, the classic source
+                new ThePrinceTeenGeoReplacement(), new WaterDragonGeoReplacement());
     }
 
     /** The Tier-2 descriptors' declared group counts (pinned group by group in T2SeamTests). */
@@ -694,7 +698,7 @@ public class KeyframeLegTests {
     @GameTest(template = "empty", batch = BATCH)
     public static void kf_007_every_shipped_replacement_declares_its_layers_and_the_seam_registers_nothing_here(GameTestHelper helper) throws ReflectiveOperationException {
         List<OreSpawnGeoReplacement<?>> replacements = everyReplacement();
-        helper.assertTrue(replacements.size() == 102, "the one hundred and two shipped replacements (G1, Slice 4, the six Tier-2 slices, the FK slice and the first Tier-1 slice)");
+        helper.assertTrue(replacements.size() == 104, "the one hundred and four shipped replacements (G1, Slice 4, the six Tier-2 slices, the FK slice and the two Tier-1 slices)");
         Method sealed = OreSpawnGeoReplacement.class.getMethod("registerControllers", AnimatableManager.ControllerRegistrar.class);
         helper.assertTrue(Modifier.isFinal(sealed.getModifiers()),
                 "registerControllers is final on the base: registerKeyframeLayers over loadedClips is the single self-gating path");
@@ -717,8 +721,8 @@ public class KeyframeLegTests {
             helper.assertTrue(new AnimatableManager<>(replacement).getAnimationControllers().isEmpty(),
                     name + ": the production registerControllers registers nothing on this server (no bake; the layers empty, or the clips absent)");
         }
-        helper.assertTrue(beavers == 1, "exactly one Beaver among the one hundred and two");
-        helper.assertTrue(tier2 == 14, "the fourteen Tier-2 descriptors with layers among the one hundred and two (the third slice's fifteen, the fourth slice's thirteen, the fifth slice's fourteen, the sixth slice's twelve, the FK slice's three and the first Tier-1 slice's seventeen hook rigs declare none)");
+        helper.assertTrue(beavers == 1, "exactly one Beaver among the one hundred and four");
+        helper.assertTrue(tier2 == 14, "the fourteen Tier-2 descriptors with layers among the one hundred and four (the third slice's fifteen, the fourth slice's thirteen, the fifth slice's fourteen, the sixth slice's twelve, the FK slice's three, the first Tier-1 slice's seventeen and the second Tier-1 slice's two hook rigs declare none)");
         helper.succeed();
     }
 

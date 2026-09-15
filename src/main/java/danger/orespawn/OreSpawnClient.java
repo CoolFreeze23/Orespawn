@@ -151,9 +151,9 @@ public class OreSpawnClient {
             event.registerEntityRenderer(ModEntities.THE_PRINCE.get(), PhaseGDevRenderers.thePrinceRenderer());
             event.registerEntityRenderer(ModEntities.THE_PRINCE_ADULT.get(), PhaseGDevRenderers.thePrinceAdultRenderer());
             event.registerEntityRenderer(ModEntities.THE_PRINCESS.get(), ThePrincessRenderer::new);
-            event.registerEntityRenderer(ModEntities.THE_PRINCE_TEEN.get(), ThePrinceTeenRenderer::new);
+            event.registerEntityRenderer(ModEntities.THE_PRINCE_TEEN.get(), PhaseGDevRenderers.thePrinceTeenRenderer());
             event.registerEntityRenderer(ModEntities.VELOCITY_RAPTOR.get(), PhaseGDevRenderers.velocityRaptorRenderer());
-            event.registerEntityRenderer(ModEntities.WATER_DRAGON.get(), WaterDragonRenderer::new);
+            event.registerEntityRenderer(ModEntities.WATER_DRAGON.get(), PhaseGDevRenderers.waterDragonRenderer());
 
             // Ambient
             event.registerEntityRenderer(ModEntities.ENTITY_BUTTERFLY.get(), ButterflyRenderer::new);

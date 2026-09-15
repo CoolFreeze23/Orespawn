@@ -1241,5 +1241,31 @@ The independent gates are:
 - Entity states: ['idle', 'attacking', 'flying', 'sitting']; rotation maximum delta 0 radians; position maximum delta 1.9999999985e-06 model units; hidden-bone checks 80.
 - Visual z-fight pixels compared, none excluded (G2 root-order contract): maximum contested fraction 0.000259399414062, a diagnostic. Pair-contested pixels (the same two front faces on both sides within 1e-05 blocks) never a mismatch: maximum fraction 1.52587890625e-05 under the cap 0.01.
 
+## model_theprinceteen (Tier 1)
+
+- Exact bones: 71; cubes: 71.
+- Geometry maximum corner delta: 8.0622577486e-07 blocks (epsilon 1e-05).
+- Surface maximum UV delta: 0; normal delta: 2.11896201016e-07.
+- Animation maximum rotation delta: 0 radians (epsilon 2e-06).
+- Visual maximum changed fraction: 0; maximum mean absolute error: 0; maximum pair-contested fraction: 1.52587890625e-05 (never a mismatch; cap 0.01).
+- Draw order: GeckoLib bone order equals the classic draw order over 81 captures (5751 draws).
+
+- Accepted path: production OreSpawnGeoReplacement.applyCustomAnimations posed from declared entity states through the entity's pose interface; compiled poseFrom on the same states (`danger.orespawn.entity.client.ThePrinceTeenGeoReplacement`).
+- Entity states: ['idle', 'attacking', 'flying', 'sitting']; rotation maximum delta 0 radians; position maximum delta 4.00000000234e-07 model units; hidden-bone checks 80.
+- Visual z-fight pixels compared, none excluded (G2 root-order contract): maximum contested fraction 0.000503540039062, a diagnostic. Pair-contested pixels (the same two front faces on both sides within 1e-05 blocks) never a mismatch: maximum fraction 1.52587890625e-05 under the cap 0.01.
+
+## model_waterdragon (Tier 1)
+
+- Exact bones: 24; cubes: 24.
+- Geometry maximum corner delta: 3.41092362819e-07 blocks (epsilon 1e-05).
+- Surface maximum UV delta: 0; normal delta: 2.09045449632e-07.
+- Animation maximum rotation delta: 0 radians (epsilon 2e-06).
+- Visual maximum changed fraction: 0; maximum mean absolute error: 0; maximum pair-contested fraction: 0 (never a mismatch; cap 0.01).
+- Draw order: GeckoLib bone order equals the classic draw order over 81 captures (1944 draws).
+
+- Accepted path: production OreSpawnGeoReplacement.applyCustomAnimations posed from declared entity states through the entity's pose interface; compiled poseFrom on the same states (`danger.orespawn.entity.client.WaterDragonGeoReplacement`).
+- Entity states: ['idle', 'attacking', 'mouth_open', 'sitting']; rotation maximum delta 0 radians; position maximum delta 0 model units; hidden-bone checks 80.
+- Visual z-fight pixels compared, none excluded (G2 root-order contract): maximum contested fraction 0.0144195556641, a diagnostic. Pair-contested pixels (the same two front faces on both sides within 1e-05 blocks) never a mismatch: maximum fraction 0 under the cap 0.01.
+
 Reproduce with `gradlew.bat g1Parity`. Any mismatch exits nonzero before
 proof evidence can be updated.

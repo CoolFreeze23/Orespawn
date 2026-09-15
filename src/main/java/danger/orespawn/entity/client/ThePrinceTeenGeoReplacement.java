@@ -11,30 +11,30 @@ import net.minecraft.util.Mth;
 import software.bernie.geckolib.animation.AnimationProcessor;
 
 /**
- * GeckoLib The Prince (teen) (the hooks): {@link ModelThePrinceTeen#poseFrom} verbatim on the converted rig, ON
- * THE HOOK (no keyframe layer, no transcription - the self-gate stays closed until an artist delivers {@code idle} and
- * {@code walk}; the landing slice adds the geo, the wiring and the proofs). Wingspeed 0.65f (orig
- * ModelThePrinceTeen.java:16,90 / ClientProxyOreSpawn.java:503): the wings by ACTIVITY and ATTACKING (a 1.3 ws x PI
- * x 0.2 x amount walking beat above a tenth, else a 0.3 ws x 0.04 breath; flying a 1.4 ws x 0.4 beat; attacking
- * 1.7 ws x 0.4) on the four links' roll (x1.25 on the second, around -0.4 / -0.6 / -0.2), the second link's pivot
- * FOLLOWING the first 22 units along its roll (POSITION writes through {@link #moveTo}), the four membranes
- * copying their link, the right wing mirrored; the legs by THRESHOLD, ATTACKING and ACTIVITY ({@code (double)
- * limbSwingAmount > 0.1}: the 0.55 ws x PI x 0.25 x amount gait a quarter turn apart on the lower leg; attacking the
- * 1.0 ws x 0.25 swing; flying the legs tucked -0.5 / -1.25 (mirrored) and the ten claws curled -0.685), the lower leg
- * FOLLOWING the upper by 14 units (+6 / +5) and the five claws of each foot FOLLOWING the lower leg by 17 units (-1 in
- * z); the tail's yaw chain at 0.56 / 0.19 attacking over 0.26 / 0.08, stilled by the SIT order ({@code
- * isOrderedToSit()}), lagging pi / 4 per ring and FOLLOWING by 11 / 9 / 9 / 9 units, the three tail spikes riding the
- * fifth ring by 9 / 15 / 11; the FLIGHT YAW LATCH (the Rotator / Leon precedent; orig :669-678): while flying the
- * head yaw is the body-yaw delta {@code (yRotO - getYRot()) x -10} eased into the per-entity {@code RenderInfo.rf1} by
- * a fiftieth per frame and clamped to +-50; the three-head LOOK split (two thirds of that yaw / the head pitch, the
- * side heads at half of it on the side the head turns to) on each head's two head parts, fin and two jaws, an
- * eighth / quarter / half of it on its three neck rings, the fins pitched +0.5; the three jaws' chatter (attacking 0.9
- * / 1.1 / 1.3 ws x PI x 0.1 + 0.25, else 0.25 / 0.3 / 0.35 ws x 0.02 + 0.1); the three necks pitched by the entity's
- * HEAD EXTENSIONS ({@code getHead1Ext / 2 / 3}, degrees, a third / two thirds / all of it negated down the rings) and
- * each ring, then the head group, FOLLOWING the last 9 units along its pitch and yaw. The entity is read through
- * {@link ThePrinceTeenPose} (the Slice 4b doctrine). Every value the classic reads back from a part it just wrote is
- * held in a local; the wing roots', the upper legs', the first tail ring's and the first neck rings' pivots, never
- * written, are read through {@link #classicPosition} (the bind).
+ * GeckoLib The Prince (teen) (the hooks, landed by the second Tier-1 slice T1b): {@link
+ * ModelThePrinceTeen#poseFrom} verbatim on the converted rig, ON THE HOOK (no keyframe layer, no transcription - the
+ * self-gate stays closed until an artist delivers {@code idle} and {@code walk}; the geo, the wiring and the
+ * proofs landed with T1b). Wingspeed 0.65f (orig ModelThePrinceTeen.java:16,90 / ClientProxyOreSpawn.java:503): the
+ * wings by ACTIVITY and ATTACKING (a 1.3 ws x PI x 0.2 x amount walking beat above a tenth, else a 0.3 ws x 0.04
+ * breath; flying a 1.4 ws x 0.4 beat; attacking 1.7 ws x 0.4) on the four links' roll (x1.25 on the second, around
+ * -0.4 / -0.6 / -0.2), the second link's pivot FOLLOWING the first 22 units along its roll (POSITION writes through
+ * {@link #moveTo}), the four membranes copying their link, the right wing mirrored; the legs by THRESHOLD, ATTACKING and
+ * ACTIVITY ({@code (double) limbSwingAmount > 0.1}: the 0.55 ws x PI x 0.25 x amount gait a quarter turn apart on
+ * the lower leg; attacking the 1.0 ws x 0.25 swing; flying the legs tucked -0.5 / -1.25 (mirrored) and the ten claws
+ * curled -0.685), the lower leg FOLLOWING the upper by 14 units (+6 / +5) and the five claws of each foot FOLLOWING
+ * the lower leg by 17 units (-1 in z); the tail's yaw chain at 0.56 / 0.19 attacking over 0.26 / 0.08, stilled by the
+ * SIT order ({@code isOrderedToSit()}), lagging pi / 4 per ring and FOLLOWING by 11 / 9 / 9 / 9 units, the three tail
+ * spikes riding the fifth ring by 9 / 15 / 11; the FLIGHT YAW LATCH (the Rotator / Leon precedent; orig :669-678):
+ * while flying the head yaw is the body-yaw delta {@code (yRotO - getYRot()) x -10} eased into the per-entity {@code
+ * RenderInfo.rf1} by a fiftieth per frame and clamped to +-50; the three-head LOOK split (two thirds of that yaw / the
+ * head pitch, the side heads at half of it on the side the head turns to) on each head's two head parts, fin and two
+ * jaws, an eighth / quarter / half of it on its three neck rings, the fins pitched +0.5; the three jaws' chatter
+ * (attacking 0.9 / 1.1 / 1.3 ws x PI x 0.1 + 0.25, else 0.25 / 0.3 / 0.35 ws x 0.02 + 0.1); the three necks pitched by
+ * the entity's HEAD EXTENSIONS ({@code getHead1Ext / 2 / 3}, degrees, a third / two thirds / all of it negated down the
+ * rings) and each ring, then the head group, FOLLOWING the last 9 units along its pitch and yaw. The entity is read
+ * through {@link ThePrinceTeenPose} (the Slice 4b doctrine). Every value the classic reads back from a part it just
+ * wrote is held in a local; the wing roots', the upper legs', the first tail ring's and the first neck rings' pivots,
+ * never written, are read through {@link #classicPosition} (the bind).
  *
  * <p>Scale and shadow follow {@link ThePrinceTeenRenderer}: 1.25 render scale and a 1.0 x 1.25 shadow (ENT-S-092). No
  * zero-thickness cube.</p>
