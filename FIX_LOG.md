@@ -9499,3 +9499,240 @@ orchestrator's --write-proof: the three entries' proofs and every entry's policy
 into scratch is the proof); the register's TEST-016 / TEST-017 closure and KNOWN_ISSUES' count (records.md drafts them).
 
 GATE: GATE: fk2 green on the first run (the three trees re-pinned under the hierarchy rules and the pair-contested tightening - g1 2, s4 13, t2 71 PARITY PASS, 2 / 2 / 20 proof files changed, each verified drift-free; the reference clips deterministic and VERIFIED with the two rigs' nine clips changed to the hierarchy form; both test files OK; the folder fresh, every check PASS; the benchmark re-pinned; the audit 0 errors / 56 acknowledged / 80 shipped geos; drift 0, build 0, suite: all 1284 required tests passed); fk3 green again after the refuter's two manifest note fixes (the same numbers).
+
+## PHASE G — THE FIRST TIER-1 SLICE, T1a (2026-09-15): sixteen rigs on their written hooks - three simple-cyclic, four gait-scaled and eight state-branching Tier-1 rigs in the design's order, the Dungeon Beast joining under the constant render transform, hitbox profiles excluded, the GiantRobot pair through its instance form
+
+RULING. Owner 2026-09-15, closing set, item 4 (addendum item 33 (4)): "the Tier-1 rigs in the same form, hitbox profiles excluded,
+the GiantRobot pair through its instance form" - each slice in the standing form: the rigs on their written hooks, the geo shipped, the
+renderer registered behind the switch, the four legs and the reference leg where a pair exists, the gate, records as the cost rules, the
+package rows regenerated; "a rig that fails a leg is held with a register line and rejoins at the remainder; one still failing there is
+reported, not forced". Amendment 2 (owner 2026-09-13, second set, item 2): every rig lands ON ITS HOOK - no clip manifest, no
+transcription, no keyframeLayers(). Addendum items 10 and 14 (FIX_LOG "THE HOOKS (2026-09-14)"): the hooks exist and are reused; the
+slice adds the geo, the wiring, the pins, the manifest entry and the proofs, and moves the rig out of the hook state. TEST-013 (a)
+(harness1 landing 86b74ef, the mirror-corrected frame 4f42b49): a constant render transform is declared by the descriptor and applied
+through the seam frame; a part the classic never draws is declared `undrawn_parts`. The Crab's form (T2d): explicit `render_instances`
+for the parts a classic renderer draws twice. THE PROFILE PHASE IS NOT TOUCHED: every Tier-1 rig of this slice keeps the classic single
+hitbox - no bone-synced hitbox profile (design section 6), no `data/orespawn/hitboxes` entry, no damage-bone declaration; the seeds'
+`locked_bones_provisional` / `locked_bones_note` stay as they are (reconciled at the profile phase, ruled 2026-09-14 item 8). Parity
+lanes frozen: a divergence gets a draft register line and stops.
+
+WHAT LANDED (fourteen rigs, seventeen registries, on their hooks; fourteen geos, fourteen empty animation files, seventeen manifest
+entries, fourteen pin candidates, seventeen seeds with formulas, the sampler's clips per state; the design's order):
+- THE HOOKS (`entity/client/<Name>GeoReplacement.java`, written by the hook lanes and reused - the descriptor's javadoc gains the landing
+  line; every hook diffed against its classic poseFrom (hook_diff_t1a.py: the numeric-literal multisets of the hook body and its helpers
+  against the classic body and its helpers - eleven MATCH exactly (butterfly, dungeon_beast, basilisk, hammerhead, trex, leon,
+  cephadrome, dragon, pitch_black, sea_monster, the_prince), five DIFFERS all structural: the Kraken's tentacle-table index constants 0 /
+  1 / 2 / 3 / 4 folded as literals, the Godzilla's four chained toe resets against the classic's two loops (two 0.0 literals), the
+  GiantRobot's +-1.0 sign arguments at the classic's renderToBuffer call sites, the King's and the Prince Adult's shared moveHead helpers
+  and chained claw writes (the -0.925 rest folded once)); the animation leg's 0 rad over every sample, amplitude and state is the ruled
+  proof; no drift found, none fixed):
+  kraken (the eight tentacles' phased dangle through the `dangleTentacle` helper - differ 0.1 / 0.101 / 0.097 / 0.093 / 0.087 and
+  ydiffer per tentacle - the TWITCH latch on RenderInfo ri1, the ATTACKING grab; KrakenPose; the CONSTANT RENDER TRANSFORM XP 90
+  declared by `renderTransform()` and applied by the replaced renderer's applyRotations through the seam frame M (TEST-013 (a)); shadow
+  KrakenRenderer.SHADOW, KrakenRenderer.SCALE 1.0 a third while PlayNicely); dungeon_beast (the fourteen phased spine segments cos(age x
+  0.5 ws + n pi/4) x PI x 0.07, the ten GAIT-scaled legs at 1.4 ws x 0.2, the jaw latch ri1; DungeonBeastPose; the CONSTANT RENDER
+  TRANSFORM YP 90 and the four never-drawn toes ltoe1 / ltoe3 / rtoe1 / rtoe3 declared `undrawn_parts` - the shipped geo carries 60 of
+  the 64 compiled parts (T2f's hold resolved by harness1's form); shadow DungeonBeastRenderer.SHADOW, no scale hook); basilisk (the
+  GAIT-scaled ten-ring serpentine cos(age x 1.3 ws - k pi/4) x PI x 0.1 x amount with no threshold, each ring's pivot FOLLOWING the last
+  ring's yaw through moveTo, the ATTACKING jaw -1.0 + cos(age x 0.45) x PI x 0.18 else -1.1; BasiliskPose; shadow 0.5 x 1.25,
+  BasiliskRenderer.SCALE 1.25 halved for a baby - made public by this slice); godzilla (the THRESHOLD gait > 0.001 with the toes'
+  POSITION writes copied to the nine toes of each foot and the lower leg, the upper leg FOLLOWING by 55 units, the ATTACKING tail fan /
+  jaw 1.5 x PI x 0.12 / arms 1.75 x PI x 0.16 over the 0.1 x PI x 0.02 idle drift, the HEAD-LOOK yaw x 0.55 with the lower jaw's pivot
+  following; GodzillaPose; twelve zero-thickness spikes so the classic face order (`cubeFaceOrderRequired`); shadow 1.0 x 2.0,
+  GodzillaRenderer.SCALE 2.0 a quarter while PlayNicely); hammerhead (the (double) > 0.1 gait cos(age x 1.3 ws) x PI x 0.1 x amount on
+  twelve leg parts with the pi/4 phase, the armour sway 0.3 ws x 0.03, the ATTACKING nod 1.3 ws x 0.13, the HEAD-LOOK at 0.25 on sixteen
+  parts; HammerheadPose; shadow HammerheadRenderer.SHADOW, HammerheadRenderer.SCALE); trex (the float-compare threshold gait cos(age x
+  1.3) x PI x 0.25 x amount on eight leg parts, the arm sway -0.523 + cos(age x 0.1) x PI x 0.05, the ATTACKING jaw 0.52 + cos(age x
+  0.45) x PI x 0.18; TRexPose; shadow TRexRenderer.SHADOW, TRexRenderer.SCALE 1.2 - made public by this slice); leon and leonopteryx
+  (ONE rig, two registries: the Leonopteryx delegating to LeonGeoReplacement.poseRig; TWO part sets - forty-nine standing, forty-nine
+  flying - drawn one per frame by getActivity through setVisible, the STANDING threshold gait 1.8 ws x 0.25 x amount with the feet
+  FOLLOWING, the 0.9-ws wing sway, the 0.6-ws breath, the HEAD-LOOK at 0.5; FLYING the beat cos(age x 1.6 ws spd) x PI x 0.26 x amp with
+  spd 1.7 / amp 1.4 while ATTACKING, the chest bob, the RIDDEN yaw accumulator rf1; LeonPose; four zero-thickness sails so the classic
+  face order; shadow the literal 1.75F (LeonRenderer passes the literal), LeonRenderer.SCALE 1.75 - made public by this slice; the
+  classic renderer's unconditional shouldRender (OPT-013) carried by both registries); cephadrome (the movement-delta gait - no
+  amplitude matrix - the resting wing beat -0.85 + cos(age x 0.2 ws) x ..., the fins' sway 0.15 ws x 0.05, the ATTACKING and FLYING
+  branches; CephadromePose; nine flat cubes so the classic face order; shadow the literal 1.25F, no scale hook); dragon and baby_dragon
+  (ONE rig, two registries: the BabyDragon delegating to DragonGeoReplacement.poseDragon; the movement-delta gait, the resting wing beat
+  -0.85 + cos(age x 0.2) x PI x 0.028 and the activity beat cos(age x 0.75) x PI x 0.28, the ATTACKING bite, the SITTING fold; the port's
+  ANIM_SPEED 1.0 where 1.7.10 passed 0.65 - the hook transcribes the port; DragonPose; tail5 flat so the classic face order; dragon
+  shadow DragonRenderer.SHADOW with no scale hook, baby_dragon the literal 0.6F and BabyDragonRenderer.SCALE 0.45 - made public by this
+  slice); giant_robot and jeffery (ONE rig, two registries: the Jeffery delegating to GiantRobotGeoReplacement.poseRig; THE INSTANCE
+  FORM - the classic renderer draws the arms and legs twice, so the reference entry's explicit `render_instances` (eleven parts x two:
+  the twenty-two clones `<part>__i0` / `__i1` of thigh, thigh2, thigh3, shin, foot1-3, arm1-3, knuckles) is carried into the t2 entries
+  and the shipped geo, the hook posing the clones directly through the private `renderLeg` / `renderArm` helpers; the hip sway and
+  quarter turn cos / sin(-age x 0.25) x PI x 0.1 x movescale with movescale = amount x 0.65 clamped to 1 (0 at idle), the two-phase
+  thigh and shin, the ATTACKING arms, the HEAD-LOOK; GiantRobotPose; shadow GiantRobotRenderer.SHADOW, no scale hook); pitch_black (the
+  entity's getPitchBlackScale() dividing every rhythm (1.0 on the probe), the resting wing sway -pi/4 + cos(age x 0.05 ws / pscale) x
+  ..., the activity wings, the CHOMP latch ri1, the ATTACKING jaw, the HEAD-LOOK; PitchBlackPose; shadow PitchBlackRenderer.SHADOW, the
+  uniform getPitchBlackScale() scale; shouldRender carried); sea_monster (the eye twitch 0.2 ws x 0.05, the tail fan 1.3 ws x 0.2 x
+  amount while walking or attacking, the ATTACKING jaw, the HEAD-LOOK; SeaMonsterPose; shadow SeaMonsterRenderer.SHADOW, no scale hook;
+  shouldRender carried); the_prince (the resting wings cos(age x 0.3 ws) x PI x 0.04 below the threshold and not attacking, the
+  threshold-or-attacking wings at 2.3 ws, the LEGS-FOLDED branch (activity 2), the SITTING branch (isOrderedToSit), the dead early jaw
+  writes transcribed as such, the HEAD-LOOK; ThePrincePose; six flat wings so the classic face order; shadow the literal 0.75F x
+  0.75F, ThePrinceRenderer.SCALE 0.75 - made public by this slice); the_prince_adult (the three heads' resting rhythms 0.17 / 0.19 /
+  0.13 ws through moveLeftHead / moveCenterHead / moveRightHead with their pitch getHeadNExt() - 30 - the heads' rest at 30, ext 0 on
+  the probe - the chained claw writes, the wings, the ATTACKING / FLYING / SITTING branches; ThePrinceAdultPose; shadow the literal
+  1.2F, no scale hook).
+- THE HOOK-LANE NOTES ACTED ON: the five private renderer SCALE constants the hooks mirrored as equal literals (the T2d form) made
+  public in place - TRexRenderer 1.2f, BasiliskRenderer 1.25f, ThePrinceRenderer 0.75f, LeonRenderer 1.75f, BabyDragonRenderer 0.45f -
+  and the hooks' literals dropped for `<Renderer>.SCALE` (a `public static final` primitive: no renderer class is initialised by a
+  descriptor's static construction); the Leon's MODEL static replaced by the geo literal in both constructors (the asset audit
+  attributes a rig by the literal in the descriptor's constructor statement, the Ant precedent); the unconditional `shouldRender`
+  (OPT-013) of the eight classic renderers carried into the Renderer inner classes (Kraken, DungeonBeast, Godzilla, Leon, Leonopteryx,
+  PitchBlack, SeaMonster landed; the Mothra's held with its rig); the Kraken's and the Dungeon Beast's whole-model transforms declared
+  as written by the hook lanes (renderTransform XP 90 / YP 90) with the Dungeon Beast's undrawn_parts on its manifest entry; no render
+  type re-based - every rig's classic render type is entity_cutout_no_cull, the seam's default (the render-state leg PASS on all
+  seventeen: cutout / (255, 255, 255, 255) / light 0 on both sides). THE PINS' LESSON (fix_pins.py): the pins tool's candidate scale site
+  is a `poseStack.scale(` whose first argument IS `<Renderer>.SCALE` (required when the expected scale is not 1.0), and a constructor
+  shadow parses as a literal or `<Renderer>.SHADOW`, never a descriptor static - so the Basilisk's and the Godzilla's applyScale take the
+  T2f Frog form (`if (cond) { scale(SCALE / n) ; return; } scale(SCALE, SCALE, SCALE)`), the Leon pair's constructors pass the literal
+  1.75F and the descriptor's SHADOW static goes; the class javadocs re-wrapped by the T2f solver so applyCustomAnimations keeps its line
+  (58 / 77 / 127) and every line the sampler cites after it (the Godzilla's face-order javadoc to two lines at width 131, its redundant
+  "the geo, the wiring and the proofs landed with T1a" clause dropped; the Basilisk's separator dropped at width 125; the Leon's at 119).
+- THE SHIPPED GEOS: the converter's output byte for byte (`geo/entity/<stem>.geo.json`: kraken 111 bones, dungeonbeast 60, basilisk 21,
+  godzilla 71, hammerhead 37, trex 27, leon 98, cephadrome 50, dragon 55, giantrobot 29 (the 22 clones + 7), pitchblack 101, seamonster
+  23, theprince 35, theprinceadult 119; the tree 94 geos, 93 through the seam) and fourteen empty animation files byte-identical to the
+  cricket's; the shared consumers (leonopteryx, baby_dragon, jeffery) read their rig's geo through the same literal. Checked byte for
+  byte against the t2 chain's converter output on the a runs (COPY_GEOS=1: equal 79, differing 0).
+- THE WIRING: `PhaseGDevRenderers` gains seventeen providers through `select` (the FK slice's generalised signature for the consumers
+  whose classic renderer is typed on the parent: Jeffery / GiantRobotRenderer, BabyDragon / BabyDragonRenderer<Dragon>, Leonopteryx /
+  LeonRenderer), `OreSpawnClient` seventeen registrations; for a default install nothing changes.
+- THE PINS (`tools/reference_renderer_pins.json`): fourteen `port_candidate` entries named (Basilisk, Cephadrome, Dragon, DungeonBeast,
+  GiantRobot, Godzilla, Hammerhead, Kraken, Leon, PitchBlack, SeaMonster, TRex, ThePrince, ThePrinceAdult); `reference_renderer_pins.py`
+  PASS 120, PENDING 0, MOD 0, NOT_APPLICABLE 13, DIVERGES 0, MANIFEST_DRIFT 0.
+- THE MANIFEST (`tools/t2_model_proofs.json` +17 entries, 88 models; hook_rig_note extended): `entity_states` on every one (the flags
+  through the states' getters object; the three latch rigs - kraken twitching, dungeon_beast jaws_still, pitch_black chomping - with an
+  ri1-preset state, the Robot2 form; the Leon pair's idle / sitting / flying / flying_attacking, the Dragon pair's and the Prince Adult's
+  idle / attacking / flying / sitting, the Prince's legs_folded (activity 2) and sitting (isOrderedToSit), the Cephadrome's idle /
+  attacking / flying); the amplitude matrix 0 / 0.25 / 0.5 / 1 on the thirteen gait-scaled entries, none on the four movement-delta
+  entries (kraken, cephadrome, dragon, baby_dragon); `cube_face_order: classic` on godzilla, leon, leonopteryx, cephadrome, dragon, baby_dragon,
+  theprince; `undrawn_parts` on dungeonbeast; `render_instances` (eleven parts x two) on giantrobot and jeffery; the head look 30 / 10
+  where the hook reads it; the Kraken's harness1 entry reused. The four Butterfly-rig code_driven entries built and taken back
+  (hold_butterfly.py).
+- THE LEGS (measure2.log / proof_numbers.txt, the same numbers on the t1a3 and t1a4 chains): kraken geometry 4.01e-6 blocks over 1,776
+  cube-samples (16 captures), surface 0 / 3.2e-7 over 42,624 vertices, animation 0 rad (position 4e-6) over 5,328 channel samples, draw
+  order 16 / 1,776, reference 111 parts, visual 0 / 0 / contested 0 / pair-contested 0; dungeon_beast 5.28e-7 / 3,660 (61), 0 / 3.32e-7 /
+  87,840, 0 / 0 over 10,980, 61 / 3,660, reference 64, visual 0 / 0 / 2.41e-3 / 7.63e-5; basilisk 1.08e-6 / 861 (41), 0 / 1.7e-7 / 20,664, 0
+  rad (4e-6) over 2,583, 41 / 861, reference 21, visual 0 / 0 / 3.95e-3 / 0; godzilla 2.4e-6 / 2,911 (41), 0 / 2.04e-7 / 61,992 (1,968
+  zero-area faces ignored), 0 / 0 over 8,733, 41 / 2,911, reference 71, visual 3.05e-5 / MAE 1.53e-4 / 2.32e-3 / 0, face order 17,466
+  faces over 41 captures; hammerhead 6.24e-7 / 1,517 (41), 0 / 1.51e-7 / 36,408, 0 / 0 over 4,551, 41 / 1,517, reference 37, visual 0 /
+  0 / 0 / 0; trex 5.39e-7 / 1,107 (41), 0 / 7.62e-8 / 26,568, 0 rad (2e-7) over 3,321, 41 / 1,107, reference 27, visual 0 / 0 / 0 / 0;
+  leon and leonopteryx each 1.07e-6 / 4,018 (81), 0 / 2.5e-7 / 93,808 (656 zero-area), 0 rad (1e-6) over 23,814, 81 / 4,018, reference
+  98, visual 0 / 0 / 0 / 0, face order 24,108 over 81; cephadrome 1.42e-6 / 800 (16), 0 / 2.24e-7 / 16,896 (576 zero-area), 0 rad (5e-8)
+  over 2,400, 16 / 800, reference 50, visual 0 / 0 / 3.97e-3 / 0, face order 4,800 over 16; dragon and baby_dragon each 8.57e-7 / 1,155
+  (21), 0 / 2.2e-7 / 27,384 (84 zero-area), 0 rad (3e-7) over 3,465, 21 / 1,155, reference 55, visual 0 / MAE 1.98e-4 / 7.0e-3 / 4.12e-4,
+  face order 6,930 over 21; giant_robot and jeffery each 2e-6 / 1,189 (41), 0 / 1.4e-7 / 28,536, 0 / 0 over 861, 41 / 1,189, reference 18
+  parts, visual 0 / 0 / 0 / 0; pitch_black 1.03e-6 / 8,181 (81), 0 / 2.02e-7 / 196,344, 0 rad (1e-6) over 24,543, 81 / 8,181, reference
+  101, visual 0 / 0 / 9.46e-4 / 0; sea_monster 6.04e-7 / 943 (41), 0 / 2e-7 / 22,632, 0 rad (2e-6) over 2,829, 41 / 943, reference 23,
+  visual 1.53e-5 / 1.63e-4 / 7.48e-4 / 0; the_prince 2.5e-7 / 2,835 (81), 0 / 1.49e-7 / 60,264 (1,944 zero-area), 0 / 0 over 8,505, 81 /
+  2,835, reference 35, visual 0 / 0 / 1.77e-3 / 0, face order 17,010 over 81; the_prince_adult 5.1e-6 / 9,639 (81), 0 / 1.56e-7 /
+  231,336, 0 rad (2e-6) over 28,917, 81 / 9,639, reference 119, visual 1.53e-5 / 9.16e-5 / 2.59e-4 / 1.53e-5. Render state
+  entity_cutout_no_cull / white / light 0 on both sides of all seventeen.
+- THE AUDIT AND THE SAMPLER OUT OF THE HOOK STATE: sixteen `HOOKS` entries removed from `tools/asset_audit.py` (26 -> 10: the Butterfly
+  rig's four, Ghost, LurkingTerror, Scorpion, TheKing, ThePrinceTeen, WaterDragon remain); `ReferenceClipSampler` +17 REGISTRIES rows,
+  -17 HOOK_DESCRIPTORS rows (27 -> 10), the seventeen HOOK_RULES rows carried verbatim into RULES keyed by the manifest id (the same
+  rule, the same source lines, true on the line-neutral descriptors; the three shared locals - the Dragon's, the Giant Robot's, the
+  Leon's - carried once per registry as the FK slice carried the Alien's), the javadoc's count sentence updated. The sampler twice
+  diff-clean (297 clips over 112 registries, 298 files); sixty of the sixty-three landed clips byte-identical to their pre-slice files,
+  the Dungeon Beast's three losing only the four undrawn toe bones' channels (32 leaves each; re-installed); the held rigs' eleven and
+  the other 223 identical; the index re-installed (the 63 rows landed / model_id / manifest / geo / hook / rig_source, spans and periods
+  unchanged; hooks sampled from the reference manifest 27 -> 10); `--verify` VERIFIED 298 files.
+- THE SAMPLER'S RULES AND SPANS (the carried rows; `tools/reference_clips/reference_clips.json`): kraken periodic 2 pi / 0.087 = 72.22
+  ticks (the fourth tentacle pair's pitch) - walk, idle, attack two_seconds_past_cap (seam 35.1 deg / 82.0 units; 35.1 / 80.3);
+  dungeon_beast 2 pi / (0.5 x 0.62) = 20.27 (the spine) - walk cap (78.7 deg / 0.33), idle 1 x 20.27, attack 2 x 40.54; basilisk 2 pi /
+  (1.3 x 0.3) = 16.11 (the serpentine) - walk 1 x 16.11 (closure 0.0017 deg), idle still, attack 6 x 96.66 (3.71 deg); godzilla 2 pi /
+  0.1 = 62.83 (the idle arm drift) - walk / idle / attack cap (17.1 deg / 29.6; 17.1 / 24.7; 66.9 / 37.2); hammerhead 2 pi / (0.3 x
+  0.33) = 63.47 (the armour sway) - walk cap (20.1 / 0), idle 1 x 63.47, attack cap (26.2 / 0); trex 2 pi / 0.1 = 62.83 (the arm sway)
+  - walk 1 x 62.83, idle 1 x 62.83, attack cap (14.9 / 0); leon and leonopteryx 2 pi / (0.6 x 0.22) = 47.60 (the standing sway) - walk 2
+  x 95.20, idle 1 x 47.60 (3.6 deg), fly cap (72.8 / 25.8), sit 1 x 47.60; cephadrome 2 pi / (0.2 x 0.55) = 57.12 (the resting wing
+  beat) - walk / idle cap (7.1 / 4.0), attack and fly cap (30.3 / 11.9); dragon and baby_dragon 2 pi / (0.2 x 1.0) = 31.42 (the resting
+  wing beat) - walk / idle cap (53.8 / 15.2), attack cap (99.8 / 14.3), fly cap (63.9 / 8.9), sit 1 x 31.42; giant_robot and jeffery 2
+  pi / 0.25 = 25.13 (the hip sway) - walk 1 x 25.13 (6.8e-6 deg), idle still, attack 1 x 25.13 (2.7e-5 deg); pitch_black 2 pi / (0.05
+  x 0.65) = 193.33 (the resting wing sway, over the 6 s cap) - walk / idle cap (17.4 / 7.7), attack cap (112.3 / 41.4), fly cap (30.5 /
+  19.5); sea_monster 2 pi / (0.2 x 0.5) = 62.83 (the eye twitch) - walk cap (20.7 / 7.4), idle cap (14.9 / 0.07), attack cap (56.6 /
+  0); the_prince 2 pi / (0.3 x 0.65) = 32.22 (the resting wings) - walk 3 x 96.66, idle 1 x 32.22, attack 3 x 96.66, fly (activity 2)
+  1 x 32.22, sit 1 x 32.22; the_prince_adult 2 pi / (0.13 x 0.65) = 74.36 (the centre head's resting yaw) - walk / fly cap (122.7 /
+  329.2), idle cap (20.3 / 49.5), attack cap (168.5 / 326.3), sit cap (4.1 / 0).
+- THE PACKAGES (`tools/artist_specs/<registry>.json`): seventeen seeds gain `formulas` (the port pose method and its real lines quoted,
+  declaration to closing brace, with every helper's span; the 1.7.10 method that holds the rotation code per model - func_78087_a or
+  func_78088_a where the render method holds it - `orig:` cited; cite_check.txt, re-run last and identical after the pins fix), the
+  status ", landed on its hook by the first Tier-1 slice (T1a, 2026-09-15; hitbox profiles excluded - the classic single hitbox stays
+  until the profile phase)" and the artist_scope "in-game through the seam behind the dev switch since the first Tier-1 slice"; the dry
+  run `package --out <scratch>/pkg --reference-geo-dir build/reference/generated`: 116 folders (28 Tier-1 registries over 21 rigs, 75
+  Tier-2 over 70, 13 Tier-3 props; rig sources shipped 103 / reference-leg 13), every folder `check` PASS, no EXTRAS_CAP.
+- THE GAMETESTS: `T2SeamTests.t2_012` (one new row, the required-test count 1284 -> 1285): each of the seventeen descriptors constructs,
+  declares no keyframe layer, registers nothing, poses a fresh bake of the shipped geo off its bind through its hook (one moving bone
+  per rig checked against the bind: Finright, rheel, body1, LLowerLeg, leg_1, rightleg, leg_1_L, tail1, wing1, hip, wing1, BottomJaw,
+  Rwing, LUpperLeg), its shadow is the classic renderer's (the Leon pair's literal 1.75F), the Dungeon Beast's rig carries 60 bones
+  without the toes, the GiantRobot pair's carries the `__i0` / `__i1` clones and no plain part, the three shared consumers read their
+  rig's modelResource, the Kraken's and the Dungeon Beast's renderTransform is not the identity (`RestSubjectT1a` implementing the
+  fourteen pose interfaces at rest, `hookSpeciesT1a()` through `assertHookSpecies`); `KeyframeLegTests.kf_007` +17 (85 -> 102, "one
+  hundred and two"). Not run (no gradle).
+
+HELD:
+- THE KING (audit_the_king_held.txt, TEST-018 draft): the brief's one plausible hold, and it held. The hook is the classic
+  ModelTheKing.poseFrom verbatim; on a scratch entry the King measured geometry PASS 5.10e-6 blocks over 1,309 cube-samples, surface PASS
+  0 / 2.09e-7 over 31,416, animation PASS 0 rad, reference PASS 119 parts, then DRAW ORDER MISMATCH at bind: renderToBuffer draws 109 of
+  the 119 parts - the ten wing membranes go out in TheKingRenderer.render's second entityTranslucent pass, which the probe does not
+  capture; the undrawn form (the ten membranes declared undrawn_parts) is refused by the converter ("GeckoLib rig is missing bone
+  Lwing2") because the hook poses them. Neither form is a leg the owner accepts; the register line names the remainder's options (a probe
+  that captures the second pass under its own render type; or the two-pass rig as a seam feature). Nothing of its hook state moved.
+- THE BUTTERFLY RIG (audit_butterfly_held.txt, TEST-019 draft): butterfly, luna_moth and vampire_butterfly PASS every leg (geometry
+  5.83e-8 blocks over 60, surface 0 / 0 over 1,440, animation 0 rad, draw order 6 / 60, reference 10 parts, visual 0 / 0, pair-contested
+  0); the Mothra (wingspeed 0.2, period 24.17 ticks) fails one visual sample, `t_three_quarter`, at the wings' flat pose: pair-contested
+  0.01225 > 0.01 - 803 px, every one on the coplanar undersides of the overlapping leftwing / leftwing2 (TEST-012 / TEST-014's
+  mechanism on a rig whose overlapping wing area is a large fraction of a tiny picture). One geo for four registries: a hook whose geo
+  ships is stale for the audit (HOOK_STALE) and for the sampler (the stale rule), so three landing and one waiting is not representable
+  and the rig is held whole; the cap is the owner's number, nothing moved. The four descriptors carry the landing line (patch_descriptors
+  ran before the measurement; noted in the draft, left in place); no geo, no wiring, no pins, no manifest entries, no gametest row.
+
+DIVERGENCES NOTICED, DRAFTED, NOT FIXED: ENT-S (draft, audit_godzilla_latches.txt) - the 1.7.10 ModelGodzilla's per-entity jaw / arm
+RenderInfo latches (orig :641-685: the jaw bites and each arm swings on a random subset of phases, re-rolled per cycle) are not in the
+port's ModelGodzilla, which moves them on every phase; the hook transcribes the port as it is, the seed's formula describes the port.
+TEST (draft) x 2 - the King's and the Butterfly rig's holds above.
+
+IN-GAME: for a default install nothing changes (the classic renderers the default). Behind `-Dorespawn.dev.geckolibRenderers=<species>`
+the seventeen registries draw the converted rigs posed by their classic code through the seam - the Kraken and the Dungeon Beast under
+their constant render transforms, the Basilisk halved as a baby, the Godzilla a quarter and the Kraken a third while PlayNicely, the
+T-Rex at 1.2, the Leon pair at 1.75, the Prince at 0.75, the Baby Dragon at 0.45, the Pitch Black at its entity scale; the King and the
+Butterfly rig not among them; no artist clip plays until idle and walk are delivered; the classic single hitbox everywhere.
+
+THE REFUTER (one, per the cost rules; its report in the advisor's scratch `r21/t1a_ref/`): CONFIRMED the fourteen hooks
+as the classic code verbatim (three diffed by hand statement for statement, eleven through a statement-level diff with
+every residue named), no static renderer call, the geos byte-identical to its own chain (79 compared), the face-order
+keys on exactly the five rigs with flat cubes, the GiantRobot's 29 bones as 22 clones plus seven with no plain shared
+part and its `render_instances` equal to the reference entry's, the Dungeon Beast's 60 bones without the toes, every
+leg's number by its own 88-model chain, both holds re-measured (the King's draw-order mismatch on the ten membranes of
+the second pass; the Mothra's one sample at 0.0122528 against the cap 0.01), the gametest count by construction (1284 →
+1285), the pins PASS 120, the hook state moved with all seventeen rules carried verbatim, bind INCLUDED in every entry's
+visual samples as TEST-008's retirement requires. MUST-FIX, fixed by the orchestrator before the second regeneration:
+the four HELD Butterfly-rig descriptors had been edited as if landed (the "landed by T1a" javadoc and a `shouldRender`
+override on the Mothra's renderer) - restored to HEAD's copies, nothing else referencing them; the three source sets
+recompiled. DECIDED UNDER DOCTRINE (reversible): the Dungeon Beast's three reference clips are not byte-identical to
+their pre-slice files - under `undrawn_parts` the sampler cannot emit bones the geo omits, and the lost channels were
+the four undrawn toes' rotations at [0, 0, 0] on every key, never posed - so the clip follows the shipped rig's form
+(the FK landing's decision of the same day); the identity rule applies to a landing that keeps the rig's bone set.
+Presented, not applied: the Godzilla hook writes four of its twelve flat spikes (no consequence under the pair-contested
+rule); the Cephadrome's and Dragon's walking branches read the movement delta, 0 on the probe, so no leg exercises them
+(the design's classification, recorded); cosmetic javadoc re-wrap artefacts in the landed descriptors.
+
+DEVIATIONS PRESENTED: (1) the King and the Butterfly rig did NOT land - two register lines; fourteen rigs / seventeen registries landed
+of the brief's sixteen / twenty-two; (2) the Butterfly rig is held WHOLE although three of its four registries pass every leg (the hook
+machinery has no held consumer of a shipped shared rig; the owner's options in the draft); (3) the Dungeon Beast's three clips are not
+cmp-equal to their pre-slice files: the shipped geo omits the four toe bones the classic never draws, so the clips lose those bones'
+channels and nothing else; (4) the pins fix reshaped two applyScale bodies (the Frog form) and dropped the Leon's SHADOW static, with
+line-neutral javadoc re-wraps and one redundant clause dropped from the Godzilla's javadoc; (5) the asset audit's 33 errors are the
+untracked-file precedent (TEXTURE_REF_CASE on the fourteen geos and fourteen animation files and the shared consumers' second
+literals until the orchestrator stages them), nothing else - no HOOK_STALE, no FLAT_CUBE, no DRAW_ORDER, no PROOF_DRIFT, no
+FACE_ORDER_INVALID row; (6) the Dungeon Beast's javadoc took the short landing form ("(Amendment 2 to Amendment 1:" -> "(Amendment 2:")
+to stay line-neutral; (7) the sampler's three shared rules are carried once per registry (duplicated text, the FK slice's form); (8) the
+four Butterfly-rig descriptors carry the landing line although held; (9) the first measurement chain (21 entries) stopped at the
+Mothra's visual leg, the seventeen were re-measured on their own manifest (exit 0), the butterflies on theirs with the Mothra last (exit
+5), the King on two scratch manifests (exit 5 / 3); (10) the gametest reads the Leon pair's shadow as the literal 1.75F; (11) the
+sampler's REGISTRIES / RULES javadoc count sentence updated in place; (12) five renderer SCALE constants made public in place.
+
+NOT DONE (by design): the gametest suite not run (no gradle; the 1285 count is the row count); the t2 proof tree (the orchestrator's
+`--write-proof`, +17 entries); the reference folder's regeneration; the King's and the Butterfly rig's landings (held; the owner's
+options in the drafts); the artist_handoff folder (the orchestrator's); the profile phase (hitbox profiles) not touched.
+
+GATE: GATE: t1a green on the first run (drift 0, build 0, suite: all 1285 required tests passed; the g1 / s4 verify-only passes identical, the t2 write-proof G1 PARITY PASS: 88 models with the seventeen new entries, the reference clips deterministic across two gradle runs and VERIFIED with the Dungeon Beast's three clips changed as recorded, the folder fresh (116 folders, 1,369 files, every check PASS), the benchmark re-pinned for g1tool's move, the audit 0 errors / 24 acknowledged / 94 shipped geos); t1a2 green again after the refuter's restore of the four held Butterfly descriptors (the same numbers).
