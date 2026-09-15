@@ -8914,3 +8914,18 @@ NOT DONE (by design): the gametest suite not run (no gradle); no proof tree rege
 verifies as it stands); the artist_handoff folder untouched; the two rigs' landings (held; the owner's options in the drafts).
 
 GATE: GATE: fk green on the first run (drift 0, build 0, suite: all 1282 required tests passed): the g1 / s4 verify-only passes identical, the t2 write-proof G1 PARITY PASS: 68 models with ZERO proof files changed (every metric byte-identical under the hierarchy form and the chain-link leg - no entry declares a hierarchy), the reference clips deterministic and unchanged (298 files, VERIFIED), the folder fresh (116 folders, 1,369 files, every check PASS), the benchmark proof re-pinned for g1tool's move (the probe recording the classic bone poses), the audit 0 errors / 60 acknowledged / 78 shipped geos.
+
+## RULINGS 2026-09-15, CLOSING SET CONTINUED (SECOND), RECORDED (docs-only) — the mirror fixed at the source (the converter's x convention, the probe on the real chains, the seam's height compensation, everything regenerated), the hierarchy rules for the FK slice, refuter A's tightening adopted
+
+Recorded in `phase_g_reports/phase_g_scope_addendum_2026-09-03.md` item 35 (the rulings in full) and `PHASE_G_PROMPT.md`
+§6b (the bullet). Executed here, docs-only, with nothing unpushed (origin/master 3277562). The order from here: the
+mirror landing (items 1 to 3: the converter no longer negating x, every geo regenerated, the hooks' basis mapping and
+the clip sign rule re-derived, the transcriptions, reference clips, face-order keys and every proof tree regenerated
+and re-pinned, the probe on both real chains with the seam's height compensation, the package regenerated on the
+corrected rigs; two refuters), gated and pushed → the FK slice under the hierarchy rules (parent-first, the key's
+pre-order, the visual leg the judge, the surface epsilon 1e-5 for hierarchy entries, the pair-contested tightening)
+→ the two Tier-1 slices → the remainder → the closing set's items 7 to 10; push after every green landing; the stop
+rule as before. The owner's in-game overlay of one asymmetric species (named with the dev-instance command in the
+report) is the acceptance of the mirror fix; the run does not wait for it.
+
+GATE: docs-only (no gate; nothing under src or tools moves).

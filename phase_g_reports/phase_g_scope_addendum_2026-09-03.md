@@ -557,6 +557,27 @@ that slice, not a task for now.
     ENT-S-160 (a) with (d), the Boyfriend, Girlfriend and Princess under the closing set's item 3 → the closing set's
     items 7 to 10. Push after every green landing; the stop rule as before.
 
+35. **Rulings of 2026-09-15, closing set continued, second (owner, through the advisor):** resumes the closing set;
+    its items 5 to 10 and the first continuation stand except as below. **TEST-015 — the mirror, fixed at the source:**
+    (1) The converter stops negating x: a converted rig sits in the Bedrock convention the Queen's native rig uses, and
+    every geo regenerates. The hooks' basis mapping and the clip sign rule are re-derived from the new frame in the one
+    place each lives; the transcriptions, the reference clips, the face-order keys and every proof tree regenerate and
+    re-pin. (2) The probe reproduces both real chains — vanilla's scale(-1,-1,1) and translate(0,-1.501,0) on the
+    classic side, GeckoLib's baker and translate(0,0.01,0) on the geo side — in place of its own normalisation, so its
+    frame is the in-game frame; the seam compensates the residual height offset so the two chains agree to zero. Two
+    refuters, one of them reproducing the chain reading from the jars independently. The register records the finding
+    with its history: every seam rig and every package rig mirrored from Slice 4a to this commit. (3) The package
+    regenerates on the corrected rigs; the sheets' "Blockbench mirrors X" sentence goes. Nothing has been sent to the
+    animator; the folder that goes is this one. (4) The report names one asymmetric landed species and the exact
+    dev-instance command for the owner's in-game overlay against the classic renderer. That look is the acceptance of
+    this item and of the flip; the run does not wait for it. **TEST-016 and TEST-017 — the hierarchies:** (5) A
+    hierarchy rig draws parent-first; the draw-order leg's rule for a hierarchy entry is the key's pre-order, and the
+    visual leg is the judge of what the order change shows (0 on both today). The surface leg's normal epsilon for
+    hierarchy entries is 1e-5, a named tolerance, the chain's accumulation recorded. Refuter A's tightening of the
+    pair-contested letter: adopted. The Alien pair and the Emperor Scorpion land in the FK slice under these.
+    **Order of work:** (6) Items 1 to 3 as one landing, gated and pushed → the FK slice → the two Tier-1 slices → the
+    remainder → the closing set's items 7 to 10. Push after every green landing; the stop rule as before.
+
 ## D. Rulings executed the same day (for cross-reference)
 
 - ENT-S-098 fixed (shot BetterFireballs carry the mod's own type; save/load round-trip pinned) and its

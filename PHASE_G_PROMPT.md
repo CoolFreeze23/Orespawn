@@ -852,6 +852,23 @@ root-order slice with the GeckoLib per-entity cache eviction, then Slice 4c). Th
   biped species under the closing set's item 3) → the closing set's items 7 to 10; push after every green landing;
   the stop rule as before.
 
+- Rulings of 2026-09-15, closing set continued, second (addendum item 35): TEST-015 fixed at the source — the converter
+  stops negating x (a converted rig in the Bedrock convention the Queen's native rig uses), every geo regenerates, the
+  hooks' basis mapping and the clip sign rule re-derived from the new frame in the one place each lives, the
+  transcriptions, reference clips, face-order keys and every proof tree regenerated and re-pinned; the probe
+  reproduces both real chains (vanilla's flip and lift on the classic side, GeckoLib's baker and 0.01 lift on the geo
+  side) in place of its own normalisation, the seam compensating the residual height so the chains agree to zero;
+  two refuters, one reproducing the chain reading from the jars; the register records the finding with its history
+  (every seam and package rig mirrored from Slice 4a to this commit); the package regenerates on the corrected rigs
+  and the "Blockbench mirrors X" sentence goes; the report names one asymmetric landed species and the dev-instance
+  command for the owner's in-game overlay, which is the acceptance (the run does not wait for it). TEST-016 / 017: a
+  hierarchy rig draws parent-first, the draw-order leg's rule for a hierarchy entry is the key's pre-order, the visual
+  leg judges the order change, the surface leg's normal epsilon for hierarchy entries is 1e-5 (named, the chain's
+  accumulation recorded); refuter A's tightening of the pair-contested letter adopted; the Alien pair and the Emperor
+  Scorpion land in the FK slice under these. Order: items 1 to 3 as one landing, gated and pushed → the FK slice →
+  the two Tier-1 slices → the remainder → the closing set's items 7 to 10; push after every green landing; the stop
+  rule as before.
+
 ## 7. Standing traps checklist (things that have actually bitten this project)
 
 - Uppercase in resource filenames → `ResourceLocation` crash. Lowercase all geo/
