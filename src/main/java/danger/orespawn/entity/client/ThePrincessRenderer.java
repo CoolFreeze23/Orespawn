@@ -17,7 +17,8 @@ public class ThePrincessRenderer extends MobRenderer<ThePrincess, ModelThePrince
     public static final ModelLayerLocation MODEL_LAYER =
             new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "theprincess"), "main");
 
-    private static final float SCALE = 0.7f;
+    /** orig RenderThePrincess.java:25 {@code this.scale = par3} = 0.7f (ClientProxyOreSpawn.java:511); public since the remainder slice (2026-09-15) so the GeckoLib descriptor reads the renderer's constant (the T2d form). */
+    public static final float SCALE = 0.7f;
 
     public ThePrincessRenderer(EntityRendererProvider.Context context) {
         super(context, new ModelThePrincess(context.bakeLayer(MODEL_LAYER)), 0.7f * 0.7f);

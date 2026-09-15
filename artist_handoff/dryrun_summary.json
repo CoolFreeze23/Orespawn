@@ -1720,21 +1720,21 @@
       "registry": "the_king",
       "tier": 1,
       "tier_label": "Tier 1 (boss)",
-      "rig_source": "reference-leg converter output",
-      "in_game": false,
+      "rig_source": "shipped",
+      "in_game": true,
       "seed": true,
       "files": [
         "SPEC.md",
         "reference/SLOTS.md",
-        "reference_theking.geo.json",
         "roundtrip.report.json",
         "spec.manifest.json",
         "textures/theprinceadult.png",
-        "the_king.animation.json",
         "the_king.bbmodel",
         "the_king_reference_attack.animation.json",
         "the_king_reference_idle.animation.json",
-        "the_king_reference_walk.animation.json"
+        "the_king_reference_walk.animation.json",
+        "theking.animation.json",
+        "theking.geo.json"
       ],
       "bones": 119,
       "cubes": 119,
@@ -2176,18 +2176,18 @@
       "registry": "lurking_terror",
       "tier": 2,
       "tier_label": "Tier 2",
-      "rig_source": "reference-leg converter output",
-      "in_game": false,
+      "rig_source": "shipped",
+      "in_game": true,
       "seed": true,
       "files": [
         "SPEC.md",
-        "lurking_terror.animation.json",
         "lurking_terror.bbmodel",
         "lurking_terror_reference_attack.animation.json",
         "lurking_terror_reference_idle.animation.json",
         "lurking_terror_reference_walk.animation.json",
+        "lurkingterror.animation.json",
+        "lurkingterror.geo.json",
         "reference/SLOTS.md",
-        "reference_lurkingterror.geo.json",
         "roundtrip.report.json",
         "spec.manifest.json",
         "textures/lurkingterror.png"
@@ -2215,7 +2215,8 @@
         "differences": 0,
         "dropped_keys": 0,
         "reattached": [
-          "orespawn:bone_draw_order"
+          "orespawn:bone_draw_order",
+          "orespawn:cube_face_order"
         ],
         "clips_embedded": 3,
         "clips_equal_within_tolerance": 3,
@@ -2430,16 +2431,16 @@
       "registry": "scorpion",
       "tier": 2,
       "tier_label": "Tier 2",
-      "rig_source": "reference-leg converter output",
-      "in_game": false,
+      "rig_source": "shipped",
+      "in_game": true,
       "seed": true,
       "files": [
         "SPEC.md",
         "reference/SLOTS.md",
-        "reference_scorpion.geo.json",
         "roundtrip.report.json",
         "scorpion.animation.json",
         "scorpion.bbmodel",
+        "scorpion.geo.json",
         "scorpion_reference_idle.animation.json",
         "scorpion_reference_walk.animation.json",
         "spec.manifest.json",
@@ -4160,15 +4161,19 @@
       "registry": "boyfriend",
       "tier": 2,
       "tier_label": "Tier 2",
-      "rig_source": "reference-leg converter output",
-      "in_game": false,
+      "rig_source": "shipped",
+      "in_game": true,
       "seed": true,
       "files": [
         "SPEC.md",
         "boyfriend.animation.json",
         "boyfriend.bbmodel",
+        "boyfriend.geo.json",
+        "boyfriend_reference_glide.animation.json",
+        "boyfriend_reference_idle.animation.json",
+        "boyfriend_reference_ride.animation.json",
+        "boyfriend_reference_walk.animation.json",
         "reference/SLOTS.md",
-        "reference_boyfriend.geo.json",
         "roundtrip.report.json",
         "spec.manifest.json",
         "textures/boyfriend0.png",
@@ -4223,10 +4228,13 @@
       "bones": 7,
       "cubes": 7,
       "clips_shipped": 0,
-      "clips_in_spec": 12,
-      "reference_clip_files": 0,
-      "clips_embedded": 0,
-      "reference_offers": [],
+      "clips_in_spec": 14,
+      "reference_clip_files": 4,
+      "clips_embedded": 4,
+      "reference_offers": [
+        "glide",
+        "ride"
+      ],
       "goals": 16,
       "flags": 5,
       "attacking": "NONE",
@@ -4235,7 +4243,7 @@
       "locked_bones": 0,
       "lock_mode": "warn",
       "keyed_locked_bones": 0,
-      "effort_hours": 16.4,
+      "effort_hours": 18.4,
       "unlabelled_bones": 0,
       "roundtrip": {
         "equal": true,
@@ -4245,9 +4253,9 @@
         "reattached": [
           "orespawn:bone_draw_order"
         ],
-        "clips_embedded": 0,
-        "clips_equal_within_tolerance": 0,
-        "reference_clips_embedded": 0
+        "clips_embedded": 4,
+        "clips_equal_within_tolerance": 4,
+        "reference_clips_embedded": 4
       },
       "warnings": []
     },
@@ -4519,15 +4527,19 @@
       "registry": "girlfriend",
       "tier": 2,
       "tier_label": "Tier 2",
-      "rig_source": "reference-leg converter output",
-      "in_game": false,
+      "rig_source": "shipped",
+      "in_game": true,
       "seed": true,
       "files": [
         "SPEC.md",
         "girlfriend.animation.json",
         "girlfriend.bbmodel",
+        "girlfriend.geo.json",
+        "girlfriend_reference_glide.animation.json",
+        "girlfriend_reference_idle.animation.json",
+        "girlfriend_reference_ride.animation.json",
+        "girlfriend_reference_walk.animation.json",
         "reference/SLOTS.md",
-        "reference_girlfriend.geo.json",
         "roundtrip.report.json",
         "spec.manifest.json",
         "textures/girlfriend0.png",
@@ -4576,10 +4588,13 @@
       "bones": 7,
       "cubes": 7,
       "clips_shipped": 0,
-      "clips_in_spec": 14,
-      "reference_clip_files": 0,
-      "clips_embedded": 0,
-      "reference_offers": [],
+      "clips_in_spec": 16,
+      "reference_clip_files": 4,
+      "clips_embedded": 4,
+      "reference_offers": [
+        "glide",
+        "ride"
+      ],
       "goals": 19,
       "flags": 4,
       "attacking": "NONE",
@@ -4588,7 +4603,7 @@
       "locked_bones": 0,
       "lock_mode": "warn",
       "keyed_locked_bones": 0,
-      "effort_hours": 17.4,
+      "effort_hours": 19.4,
       "unlabelled_bones": 0,
       "roundtrip": {
         "equal": true,
@@ -4598,11 +4613,13 @@
         "reattached": [
           "orespawn:bone_draw_order"
         ],
-        "clips_embedded": 0,
-        "clips_equal_within_tolerance": 0,
-        "reference_clips_embedded": 0
+        "clips_embedded": 4,
+        "clips_equal_within_tolerance": 4,
+        "reference_clips_embedded": 4
       },
-      "warnings": []
+      "warnings": [
+        "EXTRAS_CAP: 5 extras (3 from the seed + 2 offered from the reference states: glide, ride) exceed the cap of four per creature without a ruling (ruled 2026-09-06, Q6 (a): more needs the owner; every one is listed, none dropped)"
+      ]
     },
     {
       "registry": "hydrolisc",
@@ -5155,26 +5172,33 @@
       "registry": "the_princess",
       "tier": 1,
       "tier_label": "Tier 1 (boss)",
-      "rig_source": "reference-leg converter output",
-      "in_game": false,
+      "rig_source": "shipped",
+      "in_game": true,
       "seed": true,
       "files": [
         "SPEC.md",
         "reference/SLOTS.md",
-        "reference_theprincess.geo.json",
         "roundtrip.report.json",
         "spec.manifest.json",
         "textures/theprincess.png",
-        "the_princess.animation.json",
-        "the_princess.bbmodel"
+        "the_princess.bbmodel",
+        "the_princess_reference_attack.animation.json",
+        "the_princess_reference_fly.animation.json",
+        "the_princess_reference_idle.animation.json",
+        "the_princess_reference_sit.animation.json",
+        "the_princess_reference_walk.animation.json",
+        "theprincess.animation.json",
+        "theprincess.geo.json"
       ],
       "bones": 37,
       "cubes": 37,
       "clips_shipped": 0,
-      "clips_in_spec": 19,
-      "reference_clip_files": 0,
-      "clips_embedded": 0,
-      "reference_offers": [],
+      "clips_in_spec": 20,
+      "reference_clip_files": 5,
+      "clips_embedded": 5,
+      "reference_offers": [
+        "sit"
+      ],
       "goals": 10,
       "flags": 4,
       "attacking": "STATE",
@@ -5183,7 +5207,7 @@
       "locked_bones": 10,
       "lock_mode": "warn",
       "keyed_locked_bones": 0,
-      "effort_hours": 42.0,
+      "effort_hours": 43.5,
       "unlabelled_bones": 0,
       "roundtrip": {
         "equal": true,
@@ -5191,11 +5215,12 @@
         "differences": 0,
         "dropped_keys": 0,
         "reattached": [
-          "orespawn:bone_draw_order"
+          "orespawn:bone_draw_order",
+          "orespawn:cube_face_order"
         ],
-        "clips_embedded": 0,
-        "clips_equal_within_tolerance": 0,
-        "reference_clips_embedded": 0
+        "clips_embedded": 5,
+        "clips_equal_within_tolerance": 5,
+        "reference_clips_embedded": 5
       },
       "warnings": []
     },
@@ -5635,17 +5660,17 @@
       "registry": "ghost",
       "tier": 2,
       "tier_label": "Tier 2",
-      "rig_source": "reference-leg converter output",
-      "in_game": false,
+      "rig_source": "shipped",
+      "in_game": true,
       "seed": true,
       "files": [
         "SPEC.md",
         "ghost.animation.json",
         "ghost.bbmodel",
+        "ghost.geo.json",
         "ghost_reference_idle.animation.json",
         "ghost_reference_walk.animation.json",
         "reference/SLOTS.md",
-        "reference_ghost.geo.json",
         "roundtrip.report.json",
         "spec.manifest.json",
         "textures/ghost.png"
@@ -5673,7 +5698,8 @@
         "differences": 0,
         "dropped_keys": 0,
         "reattached": [
-          "orespawn:bone_draw_order"
+          "orespawn:bone_draw_order",
+          "orespawn:cube_face_order"
         ],
         "clips_embedded": 2,
         "clips_equal_within_tolerance": 2,
@@ -6163,6 +6189,7 @@
     "[robot_5] ATTACKING_UNCLASSIFIED: DATA_ATTACKING classified MIXED: a 5-tick pulse per in-range think tick: the flag is raised at line(s) [143] every 20 ticks (reloadTicker reset) while a target is in range — before the line-of-sight gate, so it pulses whether or not a shot fires — and cleared when reloadTicker < 15 at line(s) [131] AND cleared on target loss at line(s) [152]",
     "[kraken] ATTACKING_UNCLASSIFIED: DATA_ATTACKING classified STATE?: cleared unconditionally at line(s) [451] (the enclosing branch decides; read the source)",
     "[the_queen] LOCKED_BONES_KEYED: the shipped clips key 26 of the 27 SPEC-locked bones (LHead, LHead12, LHead4, Lwing1, NeckL1, NeckL13...): allowed and warned — Keying a locked bone is allowed; the checker warns, and the hitbox part follows the bone in-game (the consequence, so keep such keys deliberate). Renaming, re-parenting or deleting a locked bone is refused.",
+    "[girlfriend] EXTRAS_CAP: 5 extras (3 from the seed + 2 offered from the reference states: glide, ride) exceed the cap of four per creature without a ruling (ruled 2026-09-06, Q6 (a): more needs the owner; every one is listed, none dropped)",
     "[spyro] EXTRAS_CAP: 5 extras (4 from the seed + 1 offered from the reference states: sitting_flat) exceed the cap of four per creature without a ruling (ruled 2026-09-06, Q6 (a): more needs the owner; every one is listed, none dropped)",
     "[stinky] EXTRAS_CAP: 5 extras (4 from the seed + 1 offered from the reference states: legs_folded) exceed the cap of four per creature without a ruling (ruled 2026-09-06, Q6 (a): more needs the owner; every one is listed, none dropped)",
     "[elevator] BONE_UNLABELLED: bone shape1 has no glossary label",
@@ -6173,21 +6200,21 @@
   ],
   "counts": {
     "folders": 116,
-    "entity_files": 1363,
+    "entity_files": 1376,
     "package_wide_files": 6,
-    "files": 1369,
+    "files": 1382,
     "per_tier": {
       "tier_1": {
         "registries": 28,
         "rigs": 21,
-        "not_in_game_registries": 6,
-        "not_in_game_rigs": 3
+        "not_in_game_registries": 4,
+        "not_in_game_rigs": 1
       },
       "tier_2": {
         "registries": 75,
         "rigs": 70,
-        "not_in_game_registries": 5,
-        "not_in_game_rigs": 5
+        "not_in_game_registries": 0,
+        "not_in_game_rigs": 0
       },
       "tier_3": {
         "registries": 13,
@@ -6197,18 +6224,20 @@
       }
     },
     "reference_clips": {
-      "species_with_clips": 112,
-      "walk": 112,
-      "idle": 112,
-      "attack": 40,
-      "fly": 10,
+      "species_with_clips": 115,
+      "walk": 115,
+      "idle": 115,
+      "attack": 41,
+      "fly": 11,
       "swim": 0,
       "per_state": {
-        "idle": 112,
-        "walk": 112,
-        "attack": 40,
-        "sit": 14,
-        "fly": 10,
+        "idle": 115,
+        "walk": 115,
+        "attack": 41,
+        "sit": 15,
+        "fly": 11,
+        "glide": 2,
+        "ride": 2,
         "scream": 2,
         "crouch": 1,
         "display": 1,
@@ -6218,25 +6247,21 @@
         "sing": 1,
         "sitting_flat": 1
       },
-      "files": 297,
-      "files_written": 297,
+      "files": 310,
+      "files_written": 310,
       "unnamed_states": [],
-      "values_without_motion": 11,
-      "offered_extras": 23,
-      "clips_embedded": 356,
-      "artist_tier_with_clips": 99,
-      "artist_tier_held": [
-        "boyfriend",
-        "girlfriend",
-        "the_princess"
-      ],
+      "values_without_motion": 17,
+      "offered_extras": 28,
+      "clips_embedded": 369,
+      "artist_tier_with_clips": 102,
+      "artist_tier_held": [],
       "artist_tier_without_clips_landed": [
         "the_queen"
       ]
     },
     "rig_sources": {
-      "shipped": 105,
-      "reference-leg converter output": 11
+      "shipped": 112,
+      "reference-leg converter output": 4
     },
     "seed_missing": [],
     "artist_tier_not_packaged": []

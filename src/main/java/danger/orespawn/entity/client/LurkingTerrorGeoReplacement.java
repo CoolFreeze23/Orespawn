@@ -11,21 +11,21 @@ import net.minecraft.util.Mth;
 import software.bernie.geckolib.animation.AnimationProcessor;
 
 /**
- * GeckoLib Lurking Terror (the hook lanes, 2026-09-14, addendum item 10): {@link LurkingTerrorModel#poseFrom} verbatim
- * on the converted rig, ON THE HOOK (no keyframe layer, no transcription - the self-gate stays closed until an artist
- * delivers {@code idle} and {@code walk}). Wingspeed 1.0f (orig ModelLurkingTerror.java:15; the default, the classic
- * constructor takes none): the per-entity LATCHES (orig :435-562; the Robot2 precedent) - each frame the leg rhythm's
- * phase {@code |age * 0.7 ws mod 2 PI|} is compared with the last frame's ({@code rf1}) and on each wrap the entity's own
- * random rolls six selector bits into {@code ri1} (two at 1 in 3, two at 1 in 4, two at 1 in 6), the mouth rhythm's
- * phase {@code |age * 0.9 ws mod 2 PI|} likewise rolls {@code ri2} (1 in 20, forced by the ATTACKING flag); the six legs
- * then sway about Z on {@code sin(age * 0.7 ws) * PI * 0.25 / 0.15 / 0.1} around their +-0.191 / +-0.675 / +-0.34 rests only
- * while their bit is set (the {@code Mth.sin} idiom); the four jaws with their twenty-four teeth open on the {@code |sin|}
- * idiom ({@code |sin(age * 0.9 ws) * PI * 0.35|}, the side pair about Y, the top / bottom pair about X, mirrored) while the
- * mouth bit is set, the three tongue parts held straight with a POSITION write through {@link #moveTo} (the tip 5 and
- * 10 units out on the same angle); the thorax breathes on {@code sin(age * 0.1 ws) * PI * 0.06} with the abdomen
- * FOLLOWING 14 units of its sine; and the four wings beat about X on {@code cos(age * 1.4 ws) * PI * 0.2} around 0.455.
- * The entity is read through {@link LurkingTerrorPose}. The four wings are zero-thickness cubes (the seam draws every
- * cube with its true transformed normal, ENT-S-161, and its two coplanar faces in the classic order - below).
+ * GeckoLib Lurking Terror (the hook lanes, 2026-09-14, addendum item 10; landed by the remainder slice, 2026-09-15 - TEST-012
+ * cleared under the pair-contested rule, the owner's closing set item 4): {@link LurkingTerrorModel#poseFrom} verbatim on the
+ * converted rig, ON THE HOOK (no keyframe layer, no transcription - the self-gate stays closed until an artist delivers {@code idle}
+ * and {@code walk}). Wingspeed 1.0f (orig ModelLurkingTerror.java:15; the default, the classic constructor takes none): the
+ * per-entity LATCHES (orig :435-562; the Robot2 precedent) - each frame the leg rhythm's phase {@code |age * 0.7 ws mod 2 PI|} is
+ * compared with the last frame's ({@code rf1}) and on each wrap the entity's own random rolls six selector bits into {@code ri1}
+ * (two at 1 in 3, two at 1 in 4, two at 1 in 6), the mouth rhythm's phase {@code |age * 0.9 ws mod 2 PI|} likewise rolls {@code ri2}
+ * (1 in 20, forced by the ATTACKING flag); the six legs then sway about Z on {@code sin(age * 0.7 ws) * PI * 0.25 / 0.15 / 0.1}
+ * around their +-0.191 / +-0.675 / +-0.34 rests only while their bit is set (the {@code Mth.sin} idiom); the four jaws with their
+ * twenty-four teeth open on the {@code |sin|} idiom ({@code |sin(age * 0.9 ws) * PI * 0.35|}, the side pair about Y, the top /
+ * bottom pair about X, mirrored) while the mouth bit is set, the three tongue parts held straight with a POSITION write through
+ * {@link #moveTo} (the tip 5 and 10 units out on the same angle); the thorax breathes on {@code sin(age * 0.1 ws) * PI * 0.06} with
+ * the abdomen FOLLOWING 14 units of its sine; and the four wings beat about X on {@code cos(age * 1.4 ws) * PI * 0.2} around 0.455.
+ * The entity is read through {@link LurkingTerrorPose}. The four wings are zero-thickness cubes (the seam draws every cube with its
+ * true transformed normal, ENT-S-161, and its two coplanar faces in the classic order - below).
  *
  * <p>Scale and shadow follow {@link LurkingTerrorRenderer}: 0.85 render scale and a 0.45 x 0.85 shadow (ENT-S-092).</p>
  */

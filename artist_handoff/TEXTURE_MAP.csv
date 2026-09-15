@@ -48,7 +48,7 @@ bird6.png,f8d2fae70e42,img_f8d2fae70e42,bird6.png,yes,,,64,32,bird1..6 x6,,Cocka
 blisterbug.png,1ddd3674bd31,img_1ddd3674bd31,spitbug.png,no,spitbug.png,,512,256,,,,spit_bug,BlisterBug.png,
 blue_queen.png,d20ca5ae8d1a,img_d20ca5ae8d1a,blue_queen.png,yes,,,2048,2048,,,QueenModel,the_queen,,
 botwtexture.png,32b8477c377e,img_32b8477c377e,dungeonbeast.png,no,cannon_fodder.png;dungeonbeast.png,,128,64,,,,cannon_fodder;dungeon_beast,Botwtexture.png,
-boyfriend0.png,1090856f4066,img_1090856f4066,boyfriend0.png,yes,,,64,32,boyfriend0..27 x28 (law 0..27: ok),,BoyfriendRenderer,boyfriend,boyfriend0.png,
+boyfriend0.png,1090856f4066,img_1090856f4066,boyfriend0.png,yes,,,64,32,boyfriend0..27 x28 (law 0..27: ok),,BoyfriendGeoReplacement;BoyfriendRenderer,boyfriend,boyfriend0.png,
 boyfriend1.png,606a03dbdf3d,img_606a03dbdf3d,boyfriend1.png,yes,,,64,32,boyfriend0..27 x28 (law 0..27: ok),,BoyfriendRenderer,boyfriend,boyfriend1.png,
 boyfriend10.png,abdd2db96992,img_abdd2db96992,boyfriend10.png,yes,,,64,32,boyfriend0..27 x28 (law 0..27: ok),,BoyfriendRenderer,boyfriend,boyfriend10.png,
 boyfriend11.png,38c9a459b837,img_38c9a459b837,boyfriend11.png,yes,,,64,32,boyfriend0..27 x28 (law 0..27: ok),,BoyfriendRenderer,boyfriend,boyfriend11.png,
@@ -161,7 +161,7 @@ ghostskellytexture.png,fcbd6e91dffd,img_fcbd6e91dffd,ghost_skelly.png,no,ghost_s
 ghosttexture.png,105f04d40d68,img_105f04d40d68,ghost.png,no,ghost.png,,64,64,,,,ghost,Ghosttexture.png,
 giantrobot.png,7b971080da98,img_7b971080da98,giantrobot.png,yes,giantrobottexture.png,,256,512,,,GiantRobotGeoReplacement;GiantRobotRenderer;JefferyGeoReplacement,giant_robot;jeffery,GiantRobottexture.png,giantrobottexture.png
 giantrobottexture.png,7b971080da98,img_7b971080da98,giantrobot.png,no,giantrobot.png,,256,512,,,,giant_robot;jeffery,GiantRobottexture.png,
-girlfriend0.png,11659bd18cd2,img_11659bd18cd2,girlfriend0.png,yes,,,64,32,girlfriend0..40 x41 (law 0..40: ok),,GirlfriendRenderer,girlfriend,girlfriend0.png,
+girlfriend0.png,11659bd18cd2,img_11659bd18cd2,girlfriend0.png,yes,,,64,32,girlfriend0..40 x41 (law 0..40: ok),,GirlfriendGeoReplacement;GirlfriendRenderer,girlfriend,girlfriend0.png,
 girlfriend1.png,144ea2d730ec,img_144ea2d730ec,girlfriend1.png,yes,,,64,32,girlfriend0..40 x41 (law 0..40: ok),,GirlfriendRenderer,girlfriend,girlfriend1.png,
 girlfriend10.png,37b0edd1b56b,img_37b0edd1b56b,girlfriend10.png,yes,,,64,32,girlfriend0..40 x41 (law 0..40: ok),,GirlfriendRenderer,girlfriend,girlfriend10.png,
 girlfriend11.png,2559481e3ffe,img_2559481e3ffe,girlfriend11.png,yes,,,64,32,girlfriend0..40 x41 (law 0..40: ok),,GirlfriendRenderer,girlfriend,girlfriend11.png,
@@ -387,7 +387,7 @@ thekingtexture.png,d78624bba58e,img_d78624bba58e,theprinceadult.png,no,theprince
 theprince.png,d2f46315201e,img_d2f46315201e,theprince.png,yes,theprincetexture.png,,128,128,,,ThePrinceGeoReplacement;ThePrinceRenderer,the_prince,ThePrincetexture.png,theprincetexture.png
 theprince_teen.png,ce9fa395419e,img_ce9fa395419e,theprince_teen.png,yes,princeteentexture.png,,512,256,,,ThePrinceTeenGeoReplacement;ThePrinceTeenRenderer,the_prince_teen,PrinceTeentexture.png,princeteentexture.png
 theprinceadult.png,d78624bba58e,img_d78624bba58e,theprinceadult.png,yes,thekingtexture.png,,2048,2048,,,ThePrinceAdultGeoReplacement;ThePrinceAdultRenderer,the_king;the_prince_adult,TheKingtexture.png,thekingtexture.png
-theprincess.png,71ebc538aef9,img_71ebc538aef9,theprincess.png,yes,theprincesstexture.png,,128,128,,,ThePrincessRenderer,the_princess,ThePrincesstexture.png,theprincesstexture.png
+theprincess.png,71ebc538aef9,img_71ebc538aef9,theprincess.png,yes,theprincesstexture.png,,128,128,,,ThePrincessGeoReplacement;ThePrincessRenderer,the_princess,ThePrincesstexture.png,theprincesstexture.png
 theprincess2.png,b0231393affc,img_b0231393affc,theprincess2.png,yes,theprincesstexture2.png,,128,128,theprincess2..2 x1,,,,ThePrincesstexture2.png,theprincesstexture2.png
 theprincesstexture.png,71ebc538aef9,img_71ebc538aef9,theprincess.png,no,theprincess.png,,128,128,,,,the_princess,ThePrincesstexture.png,
 theprincesstexture2.png,b0231393affc,img_b0231393affc,theprincess2.png,no,theprincess2.png,,128,128,theprincesstexture2..2 x1,,,,ThePrincesstexture2.png,

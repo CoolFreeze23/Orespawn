@@ -12,25 +12,25 @@ import software.bernie.geckolib.animation.AnimationProcessor;
 import software.bernie.geckolib.cache.object.GeoBone;
 
 /**
- * GeckoLib Scorpion (the hooks, owner 2026-09-14, addendum item 10): {@link ScorpionModel#poseFrom} verbatim on the
- * rig the landing slice converts, ON THE HOOK (Amendment 2 to Amendment 1: no keyframe layer, no transcription - the
- * self-gate stays closed until an artist delivers {@code idle} and {@code walk}). Wingspeed 0.62f (orig
- * ModelScorpion.java:15,40 / ClientProxyOreSpawn.java:433): the GAIT-scaled legs about Y - four pairs on
- * {@code cos(age x 2.0 x ws - k x pi/2) x PI x 0.12 x limbSwingAmount}, k = 0..3, about +-0.49 / +-0.24 / -+2.9 /
- * -+2.65 rad, no threshold - and the per-entity LATCH the port's classic model keeps in the entity's
- * {@link RenderInfo} (ENT-S-093; the Rotator's RenderInfo and the PurplePower's subject-RNG precedents through
- * {@link ScorpionPose}): on the frame the 3 x ws claw rhythm crosses zero upward ({@code nextangle > 0 && newangle
- * < 0}) {@code ri1} and {@code ri2} are rolled from the entity's random - {@code nextInt(20)} / {@code nextInt(25)}
- * at rest, {@code nextInt(4)} / {@code nextInt(3)} attacking (the ATTACKING branch, orig :203) - and then, every
- * frame, {@code ri1} 1 or 3 swings the left claw, 2 or 3 the right, {@code ri2} 1 strikes the tail, each at
- * {@code cos(age x 3.0 x ws) x PI x 0.15} else 0, through the three helpers transcribed below (the same names): a
- * claw's arm yaws about 0.52 / 2.61 rad and the wrist and pincer pivots FOLLOW it 4.5 x sin of that yaw and a further
- * 3 units in z (the POSITION-write idiom, through {@link #moveZ}; the arm's pivot is never written - the bind); the
- * tail's six links pitch cumulatively (0.26 + a, +0.769 + a, +0.701 + a, -5.501 - 1.5 a - 0.4) with each pivot
- * following the link below 4 / 4 / 3 / 4 / 4 units along (-sin, cos) of that link's pitch (y and z through
- * {@link #moveYZ}; tail1's pivot and tail5's pitch are never written - the bind, read through {@link #classicPosition}
- * and {@link #classicRotX}); every value the classic reads back from a part it just wrote is held in a local. Once per
- * rendered frame, as the classic: the ENT-S-147 record of the per-frame dedup applies as it does to the Rotator.
+ * GeckoLib Scorpion (the hooks, owner 2026-09-14, addendum item 10; landed by the remainder slice, 2026-09-15 - TEST-014
+ * cleared under the pair-contested rule, the owner's closing set item 4): {@link ScorpionModel#poseFrom} verbatim on the
+ * converted rig, ON THE HOOK (Amendment 2: no keyframe layer, no transcription - the self-gate stays closed until an artist
+ * delivers {@code idle} and {@code walk}). Wingspeed 0.62f (orig ModelScorpion.java:15,40 / ClientProxyOreSpawn.java:433):
+ * the GAIT-scaled legs about Y - four pairs on {@code cos(age x 2.0 x ws - k x pi/2) x PI x 0.12 x limbSwingAmount}, k =
+ * 0..3, about +-0.49 / +-0.24 / -+2.9 / -+2.65 rad, no threshold - and the per-entity LATCH the port's classic model keeps
+ * in the entity's {@link RenderInfo} (ENT-S-093; the Rotator's RenderInfo and the PurplePower's subject-RNG precedents
+ * through {@link ScorpionPose}): on the frame the 3 x ws claw rhythm crosses zero upward ({@code nextangle > 0 && newangle
+ * < 0}) {@code ri1} and {@code ri2} are rolled from the entity's random - {@code nextInt(20)} / {@code nextInt(25)} at
+ * rest, {@code nextInt(4)} / {@code nextInt(3)} attacking (the ATTACKING branch, orig :203) - and then, every frame,
+ * {@code ri1} 1 or 3 swings the left claw, 2 or 3 the right, {@code ri2} 1 strikes the tail, each at
+ * {@code cos(age x 3.0 x ws) x PI x 0.15} else 0, through the three helpers transcribed below (the same names): a claw's
+ * arm yaws about 0.52 / 2.61 rad and the wrist and pincer pivots FOLLOW it 4.5 x sin of that yaw and a further 3 units in z
+ * (the POSITION-write idiom, through {@link #moveZ}; the arm's pivot is never written - the bind); the tail's six links
+ * pitch cumulatively (0.26 + a, +0.769 + a, +0.701 + a, -5.501 - 1.5 a - 0.4) with each pivot following the link below 4 /
+ * 4 / 3 / 4 / 4 units along (-sin, cos) of that link's pitch (y and z through {@link #moveYZ}; tail1's pivot and tail5's
+ * pitch are never written - the bind, read through {@link #classicPosition} and {@link #classicRotX}); every value the
+ * classic reads back from a part it just wrote is held in a local. Once per rendered frame, as the classic: the ENT-S-147
+ * record of the per-frame dedup applies as it does to the Rotator.
  *
  * <p>Scale and shadow follow {@link ScorpionRenderer}: 0.75 render scale and a 0.35 x 0.75 shadow (ENT-S-092).</p>
  */

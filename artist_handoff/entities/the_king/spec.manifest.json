@@ -4,8 +4,8 @@
   "display_name": "The King",
   "tier": 1,
   "tier_label": "Tier 1 (boss)",
-  "geo_file": "reference_theking.geo.json",
-  "animation_file": "the_king.animation.json",
+  "geo_file": "theking.geo.json",
+  "animation_file": "theking.animation.json",
   "bbmodel_file": "the_king.bbmodel",
   "texture_size": [
     2048,
@@ -8695,7 +8695,7 @@
       "getter": null,
       "value": null,
       "rule": "two_seconds_past_cap",
-      "rule_note": "WING_SPEED 1.0: the slowest rhythm is the centre head's resting pitch sin(ageInTicks * 0.08 * WING_SPEED) * PI * 0.1 (TheKingGeoReplacement.applyCustomAnimations:298, attacking 0; the three heads' resting rhythms 0.17 / 0.13 / 0.45, 0.19 / 0.12 / 0.55, 0.13 / 0.08 / 0.65, :291-299) at 0.08 rad/tick, 78.54 ticks; the attacking heads at 0.3 / 0.2 / 0.85, 0.32 / 0.21 / 0.95, 0.28 / 0.19 / 0.75 (:278-286); the wings cos(ageInTicks * 0.75 * WING_SPEED) * PI * 0.21 attacking else cos(ageInTicks * 0.35 * WING_SPEED) * PI * 0.15 (:83-84) with the 84 / 184 follows; the fourteen claws and legs on attacking (:142, :162); the eight-link tail chain at tailspeed 0.26 resting and 0.56 attacking (:212-217, :220-268); no multiple of the slowest group's period 78.539818 ticks up to the 6 s cap (120 ticks) brings every group back within 5 degrees of its start (k = 1: 107.547739 deg / 292.731842 units): a two-second window (40 ticks), not a loop - the sheet states the closing key's seam",
+      "rule_note": "WING_SPEED 1.0: the slowest rhythm is the centre head's resting pitch sin(ageInTicks * 0.08 * WING_SPEED) * PI * 0.1 (TheKingGeoReplacement.applyCustomAnimations:310, attacking 0; the three heads' resting rhythms 0.17 / 0.13 / 0.45, 0.19 / 0.12 / 0.55, 0.13 / 0.08 / 0.65, :303-311) at 0.08 rad/tick, 78.54 ticks; the attacking heads at 0.3 / 0.2 / 0.85, 0.32 / 0.21 / 0.95, 0.28 / 0.19 / 0.75 (:290-298); the wings cos(ageInTicks * 0.75 * WING_SPEED) * PI * 0.21 attacking else cos(ageInTicks * 0.35 * WING_SPEED) * PI * 0.15 (:95-96) with the 84 / 184 follows; the fourteen claws and legs on attacking (:154, :174); the eight-link tail chain at tailspeed 0.26 resting and 0.56 attacking (:224-229, :232-280); no multiple of the slowest group's period 78.539818 ticks up to the 6 s cap (120 ticks) brings every group back within 5 degrees of its start (k = 1: 107.547739 deg / 292.731842 units): a two-second window (40 ticks), not a loop - the sheet states the closing key's seam",
       "span_ticks": 40.0,
       "period_ticks": 78.5398180952,
       "period_multiple_k": null,
@@ -8713,8 +8713,8 @@
         "keys_total": 4683
       },
       "sampled_inputs": "limbSwingAmount 1.0; limbSwing = t (advancing 1.0 per tick from 0: vanilla WalkAnimationState.update does speed += (movementSpeed - speed) * multiplier; position += speed, and the classic renderer hands walkAnimation.position(partialTick) as limbSwing and min(1, speed) as limbSwingAmount, so at speed 1 the position advances exactly 1.0 per tick); ageInTicks = t (getBob: tickCount + partialTick, partialTick 0); netHeadYaw 0; headPitch 0 (looking ahead); every entity-state flag at its rest value (attacking 0, ri1 0, rock_type 0, rf1 0: a ProbeSubject built from an empty state); the entity RNG seeded 0 once per clip and evolving across the keys; one pose call per key, 20 keys per second; full health (no shipped hook reads health)",
-      "hook": "danger.orespawn.entity.client.TheKingGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the unlanded hook of owner 2026-09-14, addendum item 10 - the classic setupAnim transcribed into the descriptor's PoseInputs form, proven when the rig lands - registry-free, on explicit PoseInputs, over the reference leg's converter output reference_theking.geo.json baked without the face-order strictness the landing slice's TEST-007 adds)",
-      "landed": false,
+      "hook": "danger.orespawn.entity.client.TheKingGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the shipped replacement, registry-free, on explicit PoseInputs)",
+      "landed": true,
       "moving_bones": [
         "CHead1",
         "CHead2",
@@ -8956,7 +8956,7 @@
       "getter": null,
       "value": null,
       "rule": "two_seconds_past_cap",
-      "rule_note": "WING_SPEED 1.0: the slowest rhythm is the centre head's resting pitch sin(ageInTicks * 0.08 * WING_SPEED) * PI * 0.1 (TheKingGeoReplacement.applyCustomAnimations:298, attacking 0; the three heads' resting rhythms 0.17 / 0.13 / 0.45, 0.19 / 0.12 / 0.55, 0.13 / 0.08 / 0.65, :291-299) at 0.08 rad/tick, 78.54 ticks; the attacking heads at 0.3 / 0.2 / 0.85, 0.32 / 0.21 / 0.95, 0.28 / 0.19 / 0.75 (:278-286); the wings cos(ageInTicks * 0.75 * WING_SPEED) * PI * 0.21 attacking else cos(ageInTicks * 0.35 * WING_SPEED) * PI * 0.15 (:83-84) with the 84 / 184 follows; the fourteen claws and legs on attacking (:142, :162); the eight-link tail chain at tailspeed 0.26 resting and 0.56 attacking (:212-217, :220-268); no multiple of the slowest group's period 78.539818 ticks up to the 6 s cap (120 ticks) brings every group back within 5 degrees of its start (k = 1: 107.547739 deg / 292.731842 units): a two-second window (40 ticks), not a loop - the sheet states the closing key's seam",
+      "rule_note": "WING_SPEED 1.0: the slowest rhythm is the centre head's resting pitch sin(ageInTicks * 0.08 * WING_SPEED) * PI * 0.1 (TheKingGeoReplacement.applyCustomAnimations:310, attacking 0; the three heads' resting rhythms 0.17 / 0.13 / 0.45, 0.19 / 0.12 / 0.55, 0.13 / 0.08 / 0.65, :303-311) at 0.08 rad/tick, 78.54 ticks; the attacking heads at 0.3 / 0.2 / 0.85, 0.32 / 0.21 / 0.95, 0.28 / 0.19 / 0.75 (:290-298); the wings cos(ageInTicks * 0.75 * WING_SPEED) * PI * 0.21 attacking else cos(ageInTicks * 0.35 * WING_SPEED) * PI * 0.15 (:95-96) with the 84 / 184 follows; the fourteen claws and legs on attacking (:154, :174); the eight-link tail chain at tailspeed 0.26 resting and 0.56 attacking (:224-229, :232-280); no multiple of the slowest group's period 78.539818 ticks up to the 6 s cap (120 ticks) brings every group back within 5 degrees of its start (k = 1: 107.547739 deg / 292.731842 units): a two-second window (40 ticks), not a loop - the sheet states the closing key's seam",
       "span_ticks": 40.0,
       "period_ticks": 78.5398180952,
       "period_multiple_k": null,
@@ -8974,8 +8974,8 @@
         "keys_total": 4683
       },
       "sampled_inputs": "limbSwingAmount 0.0; limbSwing 0 (the walk position at rest: vanilla WalkAnimationState holds its position while the speed is 0, and a creature that has not walked since it spawned carries 0); ageInTicks = t (getBob: tickCount + partialTick, partialTick 0; advancing 1.0 per tick from 0); netHeadYaw 0; headPitch 0 (looking ahead); every entity-state flag at its rest value (attacking 0, ri1 0, rock_type 0, rf1 0: a ProbeSubject built from an empty state); the entity RNG seeded 0 once per clip and evolving across the keys; one pose call per key, 20 keys per second; full health",
-      "hook": "danger.orespawn.entity.client.TheKingGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the unlanded hook of owner 2026-09-14, addendum item 10 - the classic setupAnim transcribed into the descriptor's PoseInputs form, proven when the rig lands - registry-free, on explicit PoseInputs, over the reference leg's converter output reference_theking.geo.json baked without the face-order strictness the landing slice's TEST-007 adds)",
-      "landed": false,
+      "hook": "danger.orespawn.entity.client.TheKingGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the shipped replacement, registry-free, on explicit PoseInputs)",
+      "landed": true,
       "moving_bones": [
         "CHead1",
         "CHead2",
@@ -9217,7 +9217,7 @@
       "getter": "getAttacking",
       "value": 1,
       "rule": "two_seconds_past_cap",
-      "rule_note": "WING_SPEED 1.0: the slowest rhythm is the centre head's resting pitch sin(ageInTicks * 0.08 * WING_SPEED) * PI * 0.1 (TheKingGeoReplacement.applyCustomAnimations:298, attacking 0; the three heads' resting rhythms 0.17 / 0.13 / 0.45, 0.19 / 0.12 / 0.55, 0.13 / 0.08 / 0.65, :291-299) at 0.08 rad/tick, 78.54 ticks; the attacking heads at 0.3 / 0.2 / 0.85, 0.32 / 0.21 / 0.95, 0.28 / 0.19 / 0.75 (:278-286); the wings cos(ageInTicks * 0.75 * WING_SPEED) * PI * 0.21 attacking else cos(ageInTicks * 0.35 * WING_SPEED) * PI * 0.15 (:83-84) with the 84 / 184 follows; the fourteen claws and legs on attacking (:142, :162); the eight-link tail chain at tailspeed 0.26 resting and 0.56 attacking (:212-217, :220-268); no multiple of the slowest group's period 78.539818 ticks up to the 6 s cap (120 ticks) brings every group back within 5 degrees of its start (k = 1: 150.560838 deg / 382.273148 units): a two-second window (40 ticks), not a loop - the sheet states the closing key's seam",
+      "rule_note": "WING_SPEED 1.0: the slowest rhythm is the centre head's resting pitch sin(ageInTicks * 0.08 * WING_SPEED) * PI * 0.1 (TheKingGeoReplacement.applyCustomAnimations:310, attacking 0; the three heads' resting rhythms 0.17 / 0.13 / 0.45, 0.19 / 0.12 / 0.55, 0.13 / 0.08 / 0.65, :303-311) at 0.08 rad/tick, 78.54 ticks; the attacking heads at 0.3 / 0.2 / 0.85, 0.32 / 0.21 / 0.95, 0.28 / 0.19 / 0.75 (:290-298); the wings cos(ageInTicks * 0.75 * WING_SPEED) * PI * 0.21 attacking else cos(ageInTicks * 0.35 * WING_SPEED) * PI * 0.15 (:95-96) with the 84 / 184 follows; the fourteen claws and legs on attacking (:154, :174); the eight-link tail chain at tailspeed 0.26 resting and 0.56 attacking (:224-229, :232-280); no multiple of the slowest group's period 78.539818 ticks up to the 6 s cap (120 ticks) brings every group back within 5 degrees of its start (k = 1: 150.560838 deg / 382.273148 units): a two-second window (40 ticks), not a loop - the sheet states the closing key's seam",
       "span_ticks": 40.0,
       "period_ticks": 78.5398180952,
       "period_multiple_k": null,
@@ -9235,8 +9235,8 @@
         "keys_total": 7987
       },
       "sampled_inputs": "getAttacking() answers 1 (the state the seed names `attack`; every other getter at its rest value); limbSwingAmount 0.0; limbSwing 0 (the walk position at rest: vanilla WalkAnimationState holds its position while the speed is 0, and a creature that has not walked since it spawned carries 0); ageInTicks = t (getBob: tickCount + partialTick, partialTick 0; advancing 1.0 per tick from 0); netHeadYaw 0; headPitch 0 (looking ahead); every other entity-state flag at its rest value (ri1 0, rock_type 0, rf1 0); the entity RNG seeded 0 once per clip and evolving across the keys; one pose call per key, 20 keys per second; full health",
-      "hook": "danger.orespawn.entity.client.TheKingGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the unlanded hook of owner 2026-09-14, addendum item 10 - the classic setupAnim transcribed into the descriptor's PoseInputs form, proven when the rig lands - registry-free, on explicit PoseInputs, over the reference leg's converter output reference_theking.geo.json baked without the face-order strictness the landing slice's TEST-007 adds)",
-      "landed": false,
+      "hook": "danger.orespawn.entity.client.TheKingGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the shipped replacement, registry-free, on explicit PoseInputs)",
+      "landed": true,
       "moving_bones": [
         "CHead1",
         "CHead2",
@@ -9479,7 +9479,7 @@
     "getter": null,
     "value": null,
     "rule": "two_seconds_past_cap",
-    "rule_note": "WING_SPEED 1.0: the slowest rhythm is the centre head's resting pitch sin(ageInTicks * 0.08 * WING_SPEED) * PI * 0.1 (TheKingGeoReplacement.applyCustomAnimations:298, attacking 0; the three heads' resting rhythms 0.17 / 0.13 / 0.45, 0.19 / 0.12 / 0.55, 0.13 / 0.08 / 0.65, :291-299) at 0.08 rad/tick, 78.54 ticks; the attacking heads at 0.3 / 0.2 / 0.85, 0.32 / 0.21 / 0.95, 0.28 / 0.19 / 0.75 (:278-286); the wings cos(ageInTicks * 0.75 * WING_SPEED) * PI * 0.21 attacking else cos(ageInTicks * 0.35 * WING_SPEED) * PI * 0.15 (:83-84) with the 84 / 184 follows; the fourteen claws and legs on attacking (:142, :162); the eight-link tail chain at tailspeed 0.26 resting and 0.56 attacking (:212-217, :220-268); no multiple of the slowest group's period 78.539818 ticks up to the 6 s cap (120 ticks) brings every group back within 5 degrees of its start (k = 1: 107.547739 deg / 292.731842 units): a two-second window (40 ticks), not a loop - the sheet states the closing key's seam",
+    "rule_note": "WING_SPEED 1.0: the slowest rhythm is the centre head's resting pitch sin(ageInTicks * 0.08 * WING_SPEED) * PI * 0.1 (TheKingGeoReplacement.applyCustomAnimations:310, attacking 0; the three heads' resting rhythms 0.17 / 0.13 / 0.45, 0.19 / 0.12 / 0.55, 0.13 / 0.08 / 0.65, :303-311) at 0.08 rad/tick, 78.54 ticks; the attacking heads at 0.3 / 0.2 / 0.85, 0.32 / 0.21 / 0.95, 0.28 / 0.19 / 0.75 (:290-298); the wings cos(ageInTicks * 0.75 * WING_SPEED) * PI * 0.21 attacking else cos(ageInTicks * 0.35 * WING_SPEED) * PI * 0.15 (:95-96) with the 84 / 184 follows; the fourteen claws and legs on attacking (:154, :174); the eight-link tail chain at tailspeed 0.26 resting and 0.56 attacking (:224-229, :232-280); no multiple of the slowest group's period 78.539818 ticks up to the 6 s cap (120 ticks) brings every group back within 5 degrees of its start (k = 1: 107.547739 deg / 292.731842 units): a two-second window (40 ticks), not a loop - the sheet states the closing key's seam",
     "span_ticks": 40.0,
     "period_ticks": 78.5398180952,
     "period_multiple_k": null,
@@ -9497,8 +9497,8 @@
       "keys_total": 4683
     },
     "sampled_inputs": "limbSwingAmount 1.0; limbSwing = t (advancing 1.0 per tick from 0: vanilla WalkAnimationState.update does speed += (movementSpeed - speed) * multiplier; position += speed, and the classic renderer hands walkAnimation.position(partialTick) as limbSwing and min(1, speed) as limbSwingAmount, so at speed 1 the position advances exactly 1.0 per tick); ageInTicks = t (getBob: tickCount + partialTick, partialTick 0); netHeadYaw 0; headPitch 0 (looking ahead); every entity-state flag at its rest value (attacking 0, ri1 0, rock_type 0, rf1 0: a ProbeSubject built from an empty state); the entity RNG seeded 0 once per clip and evolving across the keys; one pose call per key, 20 keys per second; full health (no shipped hook reads health)",
-    "hook": "danger.orespawn.entity.client.TheKingGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the unlanded hook of owner 2026-09-14, addendum item 10 - the classic setupAnim transcribed into the descriptor's PoseInputs form, proven when the rig lands - registry-free, on explicit PoseInputs, over the reference leg's converter output reference_theking.geo.json baked without the face-order strictness the landing slice's TEST-007 adds)",
-    "landed": false,
+    "hook": "danger.orespawn.entity.client.TheKingGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the shipped replacement, registry-free, on explicit PoseInputs)",
+    "landed": true,
     "moving_bones": [
       "CHead1",
       "CHead2",
@@ -9729,9 +9729,9 @@
   },
   "reference_offers": [],
   "exact_transcription": false,
-  "rig_source": "reference-leg converter output",
-  "in_game": false,
-  "reference_id": "reference_theking",
+  "rig_source": "shipped",
+  "in_game": true,
+  "reference_id": null,
   "locked_bones_source": "provisional (the design's section 6)",
   "locked_bones_provisional": [
     {

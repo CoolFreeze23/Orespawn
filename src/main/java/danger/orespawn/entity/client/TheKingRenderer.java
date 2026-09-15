@@ -53,10 +53,10 @@ public class TheKingRenderer extends MobRenderer<TheKing, ModelTheKing> {
     /** orig RenderLiving shadow = 1.9f * 2.1f (RenderTheKing.java:23). */
     public static final float SHADOW = 1.9F * 2.1F;
 
-    // Original 1.7.10 GL state: glColor4f(0.75, 0.75, 0.75, 0.55).
-    // Packed as ARGB int for Blaze3D's {@code color} parameter (A, R, G, B):
-    //   alpha = 0.55 * 255 = 140, gray = 0.75 * 255 = 191.
-    private static final int WING_MEMBRANE_COLOR = (140 << 24) | (191 << 16) | (191 << 8) | 191;
+    // Original 1.7.10 GL state: glColor4f(0.75, 0.75, 0.75, 0.55), packed as the ARGB int for Blaze3D's {@code color}
+    // parameter - lifted onto the model as ModelTheKing.WING_MEMBRANE_COLOR beside the pass's render-type function
+    // ModelTheKing.WING_MEMBRANE_RENDER_TYPE (the remainder slice, 2026-09-15; TEST-018: the ENT-S-146 form, so the GeckoLib
+    // descriptor's second pass hands over the same objects and the parity harness proves the two renderers' pass equal).
 
     public TheKingRenderer(EntityRendererProvider.Context context) {
         super(context, new ModelTheKing(context.bakeLayer(MODEL_LAYER)), SHADOW);
@@ -85,9 +85,9 @@ public class TheKingRenderer extends MobRenderer<TheKing, ModelTheKing> {
         poseStack.pushPose();
         setupEntityTransform(entity, poseStack, entityYaw, partialTicks);
 
-        VertexConsumer translucentVC = buffer.getBuffer(RenderType.entityTranslucent(tex));
+        VertexConsumer translucentVC = buffer.getBuffer(ModelTheKing.WING_MEMBRANE_RENDER_TYPE.apply(tex));
         this.getModel().renderWingMembranes(poseStack, translucentVC, packedLight,
-                OverlayTexture.NO_OVERLAY, WING_MEMBRANE_COLOR);
+                OverlayTexture.NO_OVERLAY, ModelTheKing.WING_MEMBRANE_COLOR);
 
         poseStack.popPose();
     }

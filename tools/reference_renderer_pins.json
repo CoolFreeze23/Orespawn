@@ -19,7 +19,7 @@
       "expected_scale": 1,
       "ref_derivation": "shadow: ClientProxyOreSpawn.java:386 `new RenderGirlfriend(new ModelBiped(), 0.5f)`; RenderGirlfriend.java:20-23 `public RenderGirlfriend(ModelBiped par1ModelBase, float par2) { super(par1ModelBase, par2); this.model = (ModelBiped)this.field_77045_g ... | scale: RenderGirlfriend.java:29-36 overrides func_77041_b (preRenderCallback): `if (OreSpawnMain.valentines_day != 0 && p_77041_1_ != null && p_77041_1_ instanceof Girlfriend) { Girlfriend gf = ...; if (gf.feelingBetter == 0) GL11.glScalef(5.0f, 5.0f, 5.0f) ...",
       "port_renderer": "src/main/java/danger/orespawn/entity/client/GirlfriendRenderer.java",
-      "port_candidate": "none",
+      "port_candidate": "src/main/java/danger/orespawn/entity/client/GirlfriendGeoReplacement.java",
       "truth_verdicts": {
         "shadow": "MATCH",
         "scale": "MATCH"
@@ -37,7 +37,7 @@
       "expected_scale": 1,
       "ref_derivation": "shadow: ClientProxyOreSpawn.java:387 `new RenderBoyfriend(new ModelBiped(), 0.55f)`; RenderBoyfriend.java:17-20 `public RenderBoyfriend(ModelBiped par1ModelBase, float par2) { super(par1ModelBase, par2); this.model = ... ... | scale: RenderBoyfriend.java is 38 lines: constructor :17-20, renderBoyfriend :22-24 (forwards to super.func_76986_a), two func_76986_a overloads :26-32, func_110775_a :34-37. ...",
       "port_renderer": "src/main/java/danger/orespawn/entity/client/BoyfriendRenderer.java",
-      "port_candidate": "none",
+      "port_candidate": "src/main/java/danger/orespawn/entity/client/BoyfriendGeoReplacement.java",
       "truth_verdicts": {
         "shadow": "DIVERGES",
         "scale": "MATCH"
@@ -466,7 +466,7 @@
       "expected_scale": 0.65,
       "ref_derivation": "shadow: RenderGhost(ModelGhost par1, float par2, float par3) { super((ModelBase)par1, par2 * par3); this.scale = par3; } (RenderGhost.java:22-25). ... | scale: this.scale = par3 = 0.65f (RenderGhost.java:24); func_77041_b -> preRenderScale -> GL11.glScalef(0.65,0.65,0.65) (RenderGhost.java:39-45).",
       "port_renderer": "src/main/java/danger/orespawn/entity/client/GhostRenderer.java",
-      "port_candidate": "none",
+      "port_candidate": "src/main/java/danger/orespawn/entity/client/GhostGeoReplacement.java",
       "truth_verdicts": {
         "shadow": "MATCH",
         "scale": "MATCH"
@@ -968,7 +968,7 @@
       "expected_scale": 0.75,
       "ref_derivation": "shadow: RenderScorpion.java:22-23 `super((ModelBase)par1ModelBase, par2 * par3)` with ClientProxyOreSpawn.java:433 `new RenderScorpion(new ModelScorpion(0.62f), 0.35f, 0.75f)` -> 0.35*0.75 = 0.2625 (re-read, confirmed) | scale: RenderScorpion.java:24 `this.scale = par3` (=0.75f); :39-41 preRenderScale glScalef(0.75,0.75,0.75) via func_77041_b :43-45. No isChild branch.",
       "port_renderer": "src/main/java/danger/orespawn/entity/client/ScorpionRenderer.java",
-      "port_candidate": "none",
+      "port_candidate": "src/main/java/danger/orespawn/entity/client/ScorpionGeoReplacement.java",
       "truth_verdicts": {
         "shadow": "DIVERGES",
         "scale": "DIVERGES"
@@ -1579,7 +1579,7 @@
       "expected_scale": 0.85,
       "ref_derivation": "shadow: RenderLurkingTerror.java:22-23 `super((ModelBase)par1ModelBase, par2 * par3)` with ClientProxyOreSpawn.java:461 args (new ModelLurkingTerror(), 0.45f, 0.85f) -> 0.45f * 0.85f = 0.3825 (confirmed). | scale: RenderLurkingTerror.java:24 `this.scale = par3` = 0.85f; :39-41 `GL11.glScalef(this.scale, this.scale, this.scale)` via func_77041_b :43-45 -> 0.85 every frame, unconditionally. ...",
       "port_renderer": "src/main/java/danger/orespawn/entity/client/LurkingTerrorRenderer.java",
-      "port_candidate": "none",
+      "port_candidate": "src/main/java/danger/orespawn/entity/client/LurkingTerrorGeoReplacement.java",
       "truth_verdicts": {
         "shadow": "DIVERGES",
         "scale": "DIVERGES"
@@ -2248,7 +2248,7 @@
       "expected_scale": 2.1,
       "ref_derivation": "shadow: RenderTheKing.java:23 `super((ModelBase)par1ModelBase, par2 * par3)` with ClientProxyOreSpawn.java:492 args (1.9f, 2.1f) => 1.9f * 2.1f = 3.99 (float product 3.9899998, i.e. 3.99 to display precision) | scale: RenderTheKing.java:24 `this.scale = par3` = 2.1f; RenderTheKing.java:39-45 preRenderScale: if par1Entity.getPlayNicely() != 0 => glScalef(scale/4) = 0.525, else glScalef(scale) = 2.1; invoked from func_77041_b :47-48",
       "port_renderer": "src/main/java/danger/orespawn/entity/client/TheKingRenderer.java",
-      "port_candidate": "none",
+      "port_candidate": "src/main/java/danger/orespawn/entity/client/TheKingGeoReplacement.java",
       "truth_verdicts": {
         "shadow": "DIVERGES",
         "scale": "DIVERGES"
@@ -2653,7 +2653,7 @@
       "expected_scale": 0.7,
       "ref_derivation": "shadow: RenderThePrincess.java:23-24 `super((ModelBase)par1ModelBase, par2 * par3)` with registration args (0.7f, 0.7f) at ClientProxyOreSpawn.java:511 => 0.7 * 0.7 = 0.49 (float 0.48999998). Confirmed. | scale: RenderThePrincess.java:25 this.scale = par3 = 0.7; :44-46 func_77041_b -> preRenderScale :40-42 glScalef(this.scale x3) => 0.7; ModelThePrincess(0.65f) arg is wingspeed only (ModelThePrincess.java:55-56); no isChild use in ModelThePrincess. Confirmed.",
       "port_renderer": "src/main/java/danger/orespawn/entity/client/ThePrincessRenderer.java",
-      "port_candidate": "none",
+      "port_candidate": "src/main/java/danger/orespawn/entity/client/ThePrincessGeoReplacement.java",
       "truth_verdicts": {
         "shadow": "MATCH",
         "scale": "MATCH"

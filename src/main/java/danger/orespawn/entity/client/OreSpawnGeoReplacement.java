@@ -329,6 +329,22 @@ public abstract class OreSpawnGeoReplacement<E extends Entity> implements GeoRep
         return -bone.getRotX();
     }
 
+    /**
+     * {@code part.yRot} read back in classic terms (internal Y is the negated classic Y, {@link #rotateY}'s mapping): the
+     * value the bone holds as this frame begins - the bind for a part the classic never writes, the PREVIOUS FRAME's write
+     * for a part the classic accumulates on (GeckoLib's tickAnimation resets only a bone no hook wrote this tick, so a bone
+     * written every frame keeps its value between frames as a classic ModelPart does). The remainder slice (2026-09-15):
+     * the Princess's three power orbs, whose rotations accumulate per rendered frame on the model's own parts.
+     */
+    protected static float classicRotY(GeoBone bone) {
+        return -bone.getRotY();
+    }
+
+    /** {@code part.zRot} read back in classic terms (internal Z keeps the classic sense, {@link #rotateZ}'s mapping); see {@link #classicRotY}. */
+    protected static float classicRotZ(GeoBone bone) {
+        return bone.getRotZ();
+    }
+
     /** {@code part.x = x; part.y = y; part.z = z} in classic terms (the offset's x and z keep the classic sign, y is negated: the basis facts). */
     protected static void moveTo(AnimationProcessor<?> processor, String name, float x, float y, float z) {
         GeoBone bone = bone(processor, name);

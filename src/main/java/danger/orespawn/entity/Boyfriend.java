@@ -56,7 +56,7 @@ import danger.orespawn.entity.ai.MyEntityAINearestAttackableTargetGoal;
 import danger.orespawn.item.ItemOreSpawnArmor;
 import java.util.function.Predicate;
 
-public class Boyfriend extends TamableAnimal implements RangedAttackMob {
+public class Boyfriend extends TamableAnimal implements RangedAttackMob, danger.orespawn.entity.pose.HumanoidPose {
     // OPT-011: cached SoundEvents — identical createVariableRangeEvent ids,
     // allocated once per class instead of on every sound query.
     private static final SoundEvent SND_B_FIGHT = SoundEvent.createVariableRangeEvent(
@@ -785,6 +785,21 @@ public class Boyfriend extends TamableAnimal implements RangedAttackMob {
     @Override
     public AgeableMob getBreedOffspring(ServerLevel level, AgeableMob otherParent) {
         return null;
+    }
+
+    /**
+     * HumanoidPose (the remainder slice, 2026-09-15; drafted by T2d): what vanilla LivingEntityRenderer.render computes for the
+     * model's {@code riding} (21.1.223 bytecode offsets 52-89) - one line, no behaviour of its own.
+     */
+    @Override
+    public boolean isSeatedOnVehicle() {
+        return this.isPassenger() && this.getVehicle() != null && this.getVehicle().shouldRiderSit();
+    }
+
+    /** HumanoidPose: the public field vanilla HumanoidModel.getAttackArm reads (:466-467) - one line, no behaviour of its own. */
+    @Override
+    public InteractionHand getSwingingArm() {
+        return this.swingingArm;
     }
 
     @Override

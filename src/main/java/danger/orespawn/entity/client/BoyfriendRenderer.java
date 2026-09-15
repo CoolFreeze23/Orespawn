@@ -41,6 +41,11 @@ public class BoyfriendRenderer extends HumanoidMobRenderer<Boyfriend, ModelBoyfr
      */
     @Override
     public ResourceLocation getTextureLocation(Boyfriend entity) {
+        return textureFor(entity);
+    }
+
+    /** The sheet for an entity's skin, wetness and prince state (the GeckoLib descriptor reads the same switch; the remainder slice, 2026-09-15). */
+    public static ResourceLocation textureFor(Boyfriend entity) {
         if (entity.getWetCount() <= 0) {
             int prince = entity.getPrince();
             if (prince == 1) { // orig :298-300 (FrogPrince.png)

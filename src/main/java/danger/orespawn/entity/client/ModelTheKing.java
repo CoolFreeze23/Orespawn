@@ -8,7 +8,10 @@ import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
+import java.util.function.Function;
 
 /**
  * The King's entity model, ported from 1.7.10 Techne-generated {@code ModelTheKing}
@@ -63,6 +66,23 @@ import net.minecraft.util.Mth;
  * reference-geometry leg.
  */
 public class ModelTheKing extends EntityModel<TheKing> {
+    /**
+     * THE SECOND PASS (the remainder slice, 2026-09-15; TEST-018, the ENT-S-146 form): the render-type FUNCTION the ten wing
+     * membranes ({@code Lwing2 / 4 / 6 / 8 / 10}, {@code Rwing2 / 4 / 6 / 8 / 10}) are drawn with in the second pass -
+     * {@code RenderType::entityTranslucent}, the factory {@link TheKingRenderer#render} applies to the texture for
+     * {@link #renderWingMembranes} (orig ModelTheKing.java's GL block: {@code glEnable(GL_BLEND)} around the ten parts) - stored
+     * on the model as {@code EntityModel(Function)} stores the main pass's, so the GeckoLib descriptor's second pass hands over
+     * this very object and the parity harness proves the two renderers' pass equal by identity. The main pass keeps the
+     * {@code EntityModel} default ({@code RenderType::entityCutoutNoCull}), as before.
+     */
+    public static final Function<ResourceLocation, RenderType> WING_MEMBRANE_RENDER_TYPE = RenderType::entityTranslucent;
+    /**
+     * The second pass's colour: 1.7.10's {@code glColor4f(0.75, 0.75, 0.75, 0.55)} packed as the ARGB int Blaze3D's
+     * {@code color} parameter takes (A, R, G, B: alpha 0.55 x 255 = 140, grey 0.75 x 255 = 191) - {@code 0x8CBFBFBF} -
+     * the constant {@link TheKingRenderer} hands {@link #renderWingMembranes} (lifted here from the renderer by the remainder
+     * slice; a compile-time constant, inlined wherever it is read, the descriptor's included).
+     */
+    public static final int WING_MEMBRANE_COLOR = (140 << 24) | (191 << 16) | (191 << 8) | 191;
     private static final float WING_SPEED = 1.0F;
 
     private final ModelPart LCClaw1;

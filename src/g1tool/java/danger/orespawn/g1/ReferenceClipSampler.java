@@ -352,12 +352,22 @@ public final class ReferenceClipSampler {
             Map.entry("model_theprinceadult", "the_prince_adult"),
             // the second Tier-1 slice (T1b, 2026-09-15): the Prince Teen and the Water Dragon landed on the hooks already written
             Map.entry("model_theprinceteen", "the_prince_teen"),
-            Map.entry("model_waterdragon", "water_dragon")));
+            Map.entry("model_waterdragon", "water_dragon"),
+            // the remainder slice (2026-09-15): seven hooks landed - the Lurking Terror and the Scorpion (the pair-contested rule), the
+            // Ghost (ENT-S-160 (a)), the Boyfriend, the Girlfriend and the Princess (the closing set's item 3, the hooks written by this
+            // slice), the King (the second pass, TEST-018); the Butterfly rig's four consumers REPORTED, not landed (TEST-019): rows stay
+            Map.entry("model_lurkingterror", "lurking_terror"),
+            Map.entry("model_scorpion", "scorpion"),
+            Map.entry("model_ghost", "ghost"),
+            Map.entry("model_boyfriend", "boyfriend"),
+            Map.entry("model_girlfriend", "girlfriend"),
+            Map.entry("model_theprincess", "the_princess"),
+            Map.entry("model_theking", "the_king")));
 
     /**
      * An unlanded hook (owner 2026-09-14, addendum items 10 and 11): the descriptor's simple class name, the ModEntities
      * registry it packages under and the rig it names - the map {@code HOOKS} in {@code tools/asset_audit.py} carries
-     * (descriptor -> rig; 67 entries at the hooks' landing, the landing slices removing theirs - T2d removed thirteen, T2e fourteen (the Lurking Terror held), T2f twelve (the Dungeon Beast and the Scorpion held), the FK slice three (the Alien pair and the Emperor Scorpion, real parent-child hierarchies), the first Tier-1 slice T1a seventeen (the King and the Butterfly rig held), the second Tier-1 slice T1b two (the Prince Teen and the Water Dragon);
+     * (descriptor -> rig; 67 entries at the hooks' landing, the landing slices removing theirs - T2d removed thirteen, T2e fourteen (the Lurking Terror held), T2f twelve (the Dungeon Beast and the Scorpion held), the FK slice three (the Alien pair and the Emperor Scorpion, real parent-child hierarchies), the first Tier-1 slice T1a seventeen (the King and the Butterfly rig held), the second Tier-1 slice T1b two (the Prince Teen and the Water Dragon), the remainder slice four (the Lurking Terror, the Scorpion, the Ghost and the King; the Butterfly rig's four stay - REPORTED, not landed, TEST-019; the Boyfriend, Girlfriend and Princess hooks written and landed by the same slice never held a row);
      * the two delegating descriptors, the Alien Boss's on the Alien's rig and the
      * Leonopteryx's on the Leon's, added here because they package under their own registries). The reference entry is
      * {@code reference_<rig>} in {@code tools/reference_model_proofs.json}, its geo
@@ -377,12 +387,8 @@ public final class ReferenceClipSampler {
 
     static final Map<String, Hook> HOOK_DESCRIPTORS = hooks(
             new Hook("ButterflyGeoReplacement", "butterfly", "butterfly"),
-            new Hook("GhostGeoReplacement", "ghost", "ghost"),
             new Hook("LunaMothGeoReplacement", "luna_moth", "butterfly"),
-            new Hook("LurkingTerrorGeoReplacement", "lurking_terror", "lurkingterror"),
             new Hook("MothraGeoReplacement", "mothra", "butterfly"),
-            new Hook("ScorpionGeoReplacement", "scorpion", "scorpion"),
-            new Hook("TheKingGeoReplacement", "the_king", "theking"),
             new Hook("VampireButterflyGeoReplacement", "vampire_butterfly", "butterfly"));
 
     private static Map<String, Hook> hooks(Hook... rows) {
@@ -946,7 +952,36 @@ public final class ReferenceClipSampler {
                         + "at 0.25 rad/tick, 25.13 ticks, beside the 0.8 / 0.7 / 0.6 * 0.5 sways (:109-119); the threshold gait cos(ageInTicks * 1.3 * WINGSPEED) * PI * 0.2 * "
                         + "limbSwingAmount and the pi/4-phased body wave cos(ageInTicks * 1.3 * WINGSPEED - n * pi/4) * PI * 0.4 * limbSwingAmount with its chained position writes "
                         + "(:82-99, walk) at 0.65; the three-way attacking jaw cos(ageInTicks * 1.2 * WINGSPEED) * PI * 0.25 at attacking 1, 0.45 rad at 2, -0.25 at rest (:129); the "
-                        + "head look at 0.75 with the nose, jaw, fin and ears following follows netHeadYaw = 0 (:130-142)"))));
+                        + "head look at 0.75 with the nose, jaw, fin and ears following follows netHeadYaw = 0 (:130-142)")),
+            // the remainder slice (2026-09-15): every remaining hook landed - each carried row is the HOOK_RULES row the hook lanes
+            // wrote, the same rule and the same source lines (the Ghost's and the King's re-cited by the measured delta of their pose
+            // entries: the descriptors could not absorb their code overrides line-neutrally); the Boyfriend's, Girlfriend's and
+            // Princess's rows authored by this slice with their hooks, the lines read from the descriptors
+            Map.entry("model_lurkingterror", Rule.periodic(TWO_PI / (double) (0.1F * 1.0F),
+                "wingspeed 1.0: the slowest rhythm is the thorax breath sin(ageInTicks * 0.1 * WINGSPEED) * PI * 0.06 with the abdomen following by position "
+                        + "(LurkingTerrorGeoReplacement.applyCustomAnimations:198-201, every state) at 0.1 rad/tick, 62.83 ticks; the legs sin(ageInTicks * legspeed * WINGSPEED) "
+                        + "with legspeed 0.7 (:69, :110-144) behind the phase-wrap latch |ageInTicks * legspeed mod 2 pi| rolled on the entity RNG (:73-74); the jaws |sin(ageInTicks * "
+                        + "mouthspeed * WINGSPEED)| with mouthspeed 0.9 (:70, :97-98, :150-151, a folded half period) forced open while attacking; cos(ageInTicks * 1.4 * WINGSPEED) * PI * 0.2 (:202)")),
+            Map.entry("model_scorpion", Rule.periodic(TWO_PI / (double) (2.0F * 0.62F),
+                "wingspeed 0.62: the pi/2-phased gait cos(ageInTicks * 2.0 * WINGSPEED - n * pi/4) * PI * 0.12 * limbSwingAmount (ScorpionGeoReplacement"
+                        + ".applyCustomAnimations:68-77, walk) at 1.24 rad/tick, 5.07 ticks - the slowest; the claw and tail latch cos(ageInTicks * 3.0 * WINGSPEED) * PI * "
+                        + "0.15 with its 0.1-tick look-ahead (:82-83) on RenderInfo ri1 / ri2, rolled on the entity RNG with attacking-picked ranges (the Robot2 precedent); "
+                        + "the claw and tail chains follow by position (:117-159)")),
+            Map.entry("model_ghost", Rule.periodic(TWO_PI / (double) 0.3F,
+                "four slow cosines on the two arms: cos(ageInTicks * 0.3 / 0.32 / 0.34 / 0.36) * PI * 0.05 about Z and X (GhostGeoReplacement.applyCustomAnimations:68-71, "
+                        + "every state): the slowest 0.3 rad/tick, 20.94 ticks; nothing reads the walk or the entity")),
+            Map.entry("model_theking", Rule.periodic(TWO_PI / (double) (0.08F * 1.0F),
+                "WING_SPEED 1.0: the slowest rhythm is the centre head's resting pitch sin(ageInTicks * 0.08 * WING_SPEED) * PI * 0.1 (TheKingGeoReplacement"
+                        + ".applyCustomAnimations:310, attacking 0; the three heads' resting rhythms 0.17 / 0.13 / 0.45, 0.19 / 0.12 / 0.55, 0.13 / 0.08 / 0.65, :303-311) at "
+                        + "0.08 rad/tick, 78.54 ticks; the attacking heads at 0.3 / 0.2 / 0.85, 0.32 / 0.21 / 0.95, 0.28 / 0.19 / 0.75 (:290-298); the wings cos(ageInTicks * 0.75 "
+                        + "* WING_SPEED) * PI * 0.21 attacking else cos(ageInTicks * 0.35 * WING_SPEED) * PI * 0.15 (:95-96) with the 84 / 184 follows; the fourteen claws and legs on "
+                        + "attacking (:154, :174); the eight-link tail chain at tailspeed 0.26 resting and 0.56 attacking (:224-229, :232-280)")),
+            Map.entry("model_boyfriend", Rule.periodic(TWO_PI / (double) 0.067F,
+                "vanilla HumanoidModel.setupAnim (21.1.223, HumanoidModel.java:137-286) transcribed in BoyfriendGeoReplacement.poseRig: the slowest rhythm is the arms' idle bob sin(ageInTicks * 0.067) * 0.05 on the arms' pitch (AnimationUtils.bobModelPart :60; poseRig:248, :250, every state) at 0.067 rad/tick, 93.78 ticks, beside the roll's cos(ageInTicks * 0.09) * 0.05 + 0.05 (:59; poseRig:247); the stride cos(limbSwing * 0.6662) on the legs (1.4 * limbSwingAmount) and the arms (2 * 0.5 * limbSwingAmount) (HumanoidModel.java:168-173; poseRig:138-143, walk) is phased by the walk position, 1.0 per tick at the sampler's inputs (9.43 ticks); the swing (setupAttackAnimation :382-408; poseRig:183-210) reads attackTime = getAttackAnim(inputs.partialTick()) (poseRig:98; the seam's partial tick, 0 in the sampler, 0 at rest); the riding pose (:178-186; poseRig:149) and the elytra glide (:137-165; poseRig:104) on isSeatedOnVehicle / getFallFlyingTicks")),
+            Map.entry("model_girlfriend", Rule.periodic(TWO_PI / (double) 0.067F,
+                "the Boyfriend rig's rule: GirlfriendGeoReplacement.applyCustomAnimations:68 -> BoyfriendGeoReplacement.poseRig - vanilla HumanoidModel.setupAnim (21.1.223, HumanoidModel.java:137-286) transcribed in BoyfriendGeoReplacement.poseRig: the slowest rhythm is the arms' idle bob sin(ageInTicks * 0.067) * 0.05 on the arms' pitch (AnimationUtils.bobModelPart :60; poseRig:248, :250, every state) at 0.067 rad/tick, 93.78 ticks, beside the roll's cos(ageInTicks * 0.09) * 0.05 + 0.05 (:59; poseRig:247); the stride cos(limbSwing * 0.6662) on the legs (1.4 * limbSwingAmount) and the arms (2 * 0.5 * limbSwingAmount) (HumanoidModel.java:168-173; poseRig:138-143, walk) is phased by the walk position, 1.0 per tick at the sampler's inputs (9.43 ticks); the swing (setupAttackAnimation :382-408; poseRig:183-210) reads attackTime = getAttackAnim(inputs.partialTick()) (poseRig:98; the seam's partial tick, 0 in the sampler, 0 at rest); the riding pose (:178-186; poseRig:149) and the elytra glide (:137-165; poseRig:104) on isSeatedOnVehicle / getFallFlyingTicks")),
+            Map.entry("model_theprincess", Rule.periodic(TWO_PI / (double) (0.3F * 0.65F),
+                "wingspeed 0.65: the slowest rhythm is the resting wings cos(ageInTicks * 0.3 * WINGSPEED) * PI * 0.04 (ThePrincessGeoReplacement.applyCustomAnimations:97, below the threshold and not attacking) at 0.195 rad/tick, 32.22 ticks; the threshold-or-attacking wings cos(ageInTicks * 2.3 * WINGSPEED) * PI * 0.4 * limbSwingAmount (:96) and the threshold legs cos(ageInTicks * 2.0 * WINGSPEED) * PI * 0.25 * limbSwingAmount (:106, walk); the tail sway cos(ageInTicks * 0.9 * WINGSPEED) * PI * 0.06 (:117) and the attacking lash cos(ageInTicks * 1.3 * WINGSPEED) * PI * 0.12 (:122; the fan x1.6 .. 4.6 with the four follows :130-145); the jaw chatter cos(ageInTicks * 1.9 / 2.1 / 2.3 * WINGSPEED) * PI * 0.2 (:202-203); the three heads' look and the necks by the head extensions (0 on the probe, :147-259); the three power orbs advance every axis by a constant per pose call (:264-272: 0.03 .. 0.13 rad, wrapped below pi) on the bake's own bones - not a function of time: a step per rendered frame in-game, while the sampler poses every key over a fresh bake (one pose call per key), so each key holds one step from the bind and the orbs stand still in the clips; the closure test is the wings'"))));
 
     /**
      * The span rule of every unlanded hook (owner 2026-09-14, addendum item 31 (11) (3)): a hook declares no manifest
@@ -979,34 +1014,15 @@ public final class ReferenceClipSampler {
         rules.put("VampireButterflyGeoReplacement", Rule.periodic(TWO_PI / (double) (1.3F * 1.0F),
                 "the Butterfly rig's one rhythm at the Vampire Butterfly's wingspeed 1.0: cos(ageInTicks * 1.3 * 1.0) * PI * 0.25 on the eight wings "
                         + "(VampireButterflyGeoReplacement.applyCustomAnimations:40 -> ButterflyGeoReplacement.pose:69) at 1.3 rad/tick, 4.83 ticks"));
-        rules.put("GhostGeoReplacement", Rule.periodic(TWO_PI / (double) 0.3F,
-                "four slow cosines on the two arms: cos(ageInTicks * 0.3 / 0.32 / 0.34 / 0.36) * PI * 0.05 about Z and X (GhostGeoReplacement.applyCustomAnimations:58-61, "
-                        + "every state): the slowest 0.3 rad/tick, 20.94 ticks; nothing reads the walk or the entity"));
         hookRulesHtoP(rules);
         hookRulesRtoW(rules);
         return rules;
     }
 
     private static void hookRulesHtoP(Map<String, Rule> rules) {
-        rules.put("LurkingTerrorGeoReplacement", Rule.periodic(TWO_PI / (double) (0.1F * 1.0F),
-                "wingspeed 1.0: the slowest rhythm is the thorax breath sin(ageInTicks * 0.1 * WINGSPEED) * PI * 0.06 with the abdomen following by position "
-                        + "(LurkingTerrorGeoReplacement.applyCustomAnimations:198-201, every state) at 0.1 rad/tick, 62.83 ticks; the legs sin(ageInTicks * legspeed * WINGSPEED) "
-                        + "with legspeed 0.7 (:69, :110-144) behind the phase-wrap latch |ageInTicks * legspeed mod 2 pi| rolled on the entity RNG (:73-74); the jaws |sin(ageInTicks * "
-                        + "mouthspeed * WINGSPEED)| with mouthspeed 0.9 (:70, :97-98, :150-151, a folded half period) forced open while attacking; cos(ageInTicks * 1.4 * WINGSPEED) * PI * 0.2 (:202)"));
     }
 
     private static void hookRulesRtoW(Map<String, Rule> rules) {
-        rules.put("ScorpionGeoReplacement", Rule.periodic(TWO_PI / (double) (2.0F * 0.62F),
-                "wingspeed 0.62: the pi/2-phased gait cos(ageInTicks * 2.0 * WINGSPEED - n * pi/4) * PI * 0.12 * limbSwingAmount (ScorpionGeoReplacement"
-                        + ".applyCustomAnimations:68-77, walk) at 1.24 rad/tick, 5.07 ticks - the slowest; the claw and tail latch cos(ageInTicks * 3.0 * WINGSPEED) * PI * "
-                        + "0.15 with its 0.1-tick look-ahead (:82-83) on RenderInfo ri1 / ri2, rolled on the entity RNG with attacking-picked ranges (the Robot2 precedent); "
-                        + "the claw and tail chains follow by position (:117-159)"));
-        rules.put("TheKingGeoReplacement", Rule.periodic(TWO_PI / (double) (0.08F * 1.0F),
-                "WING_SPEED 1.0: the slowest rhythm is the centre head's resting pitch sin(ageInTicks * 0.08 * WING_SPEED) * PI * 0.1 (TheKingGeoReplacement"
-                        + ".applyCustomAnimations:298, attacking 0; the three heads' resting rhythms 0.17 / 0.13 / 0.45, 0.19 / 0.12 / 0.55, 0.13 / 0.08 / 0.65, :291-299) at "
-                        + "0.08 rad/tick, 78.54 ticks; the attacking heads at 0.3 / 0.2 / 0.85, 0.32 / 0.21 / 0.95, 0.28 / 0.19 / 0.75 (:278-286); the wings cos(ageInTicks * 0.75 "
-                        + "* WING_SPEED) * PI * 0.21 attacking else cos(ageInTicks * 0.35 * WING_SPEED) * PI * 0.15 (:83-84) with the 84 / 184 follows; the fourteen claws and legs on "
-                        + "attacking (:142, :162); the eight-link tail chain at tailspeed 0.26 resting and 0.56 attacking (:212-217, :220-268)"));
     }
 
     private ReferenceClipSampler() {

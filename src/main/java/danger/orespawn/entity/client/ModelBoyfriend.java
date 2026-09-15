@@ -1,6 +1,7 @@
 package danger.orespawn.entity.client;
 
 import danger.orespawn.entity.Boyfriend;
+import danger.orespawn.entity.pose.HumanoidPose;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
@@ -10,6 +11,21 @@ public class ModelBoyfriend extends HumanoidModel<Boyfriend> {
 
     public ModelBoyfriend(ModelPart root) {
         super(root);
+    }
+
+    /**
+     * The parity probe's entry (the remainder slice, 2026-09-15; owner's closing set item 3, TEST-010 (b)): this model
+     * declares no {@code setupAnim} - the classic renderer draws vanilla {@code HumanoidModel.setupAnim} (21.1.223,
+     * HumanoidModel.java:137-286) after setting {@code attackTime} / {@code riding} / {@code swimAmount} per frame - so the
+     * probe, which has no entity, poses through {@link HumanoidClassicPose}: the renderer's three field sets at the frame's
+     * partial tick, then vanilla's body transcribed statement by statement over these parts. The in-game classic path is
+     * untouched: {@code HumanoidMobRenderer} still calls vanilla's own method. The seven-float form ({@code partialTick}
+     * last) is the one the probe prefers over the six-float {@code poseFrom} where a model declares it.
+     */
+    public void poseFrom(HumanoidPose entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw,
+                         float headPitch, float partialTick) {
+        HumanoidClassicPose.prepare(this, entity, partialTick);
+        HumanoidClassicPose.setupAnim(this, entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
     }
 
     public static LayerDefinition createBodyLayer() {

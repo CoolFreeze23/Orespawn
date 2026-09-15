@@ -11,42 +11,44 @@ import net.minecraft.util.Mth;
 import software.bernie.geckolib.animation.AnimationProcessor;
 
 /**
- * GeckoLib The King (the hooks, owner 2026-09-14, addendum item 10): {@link ModelTheKing#poseFrom} verbatim on the
- * converted rig, ON THE HOOK (no keyframe layer, no transcription - the self-gate stays closed until an artist delivers
- * {@code idle} and {@code walk}; the landing slice adds the geo, the wiring and the proofs). The port's classic model as
- * it is, {@code WING_SPEED} 1.0f (orig ClientProxyOreSpawn.java:492 passes {@code new ModelTheKing(0.65f)}; the port's
- * model is what the hook transcribes); every rhythm on the ATTACKING branch ({@code getAttacking() != 0}): the wings'
- * roll (0.75 ws x PI x 0.21 attacking, 0.35 ws x 0.15 gliding) on the ten parts of each wing - the third at five thirds
- * and the fifth at seven thirds of it, the third's pivot FOLLOWING the root 84 units along its roll and the fifth's
- * the third by 184 (POSITION writes through {@link #moveTo}), the even parts and the four feather parts riding the
- * third at -+0.261, the right wing mirrored; the thirteen claw parts flexing on a 0.75 ws cosine x PI x 0.25 (else 0)
- * around -0.925 / 0.384 / 0.645; the legs' swing on a 0.6 ws cosine x PI x 0.45 (else 0) - a quarter of it on the
- * thigh and upper leg around 0.785, half on the lower leg and foot around -0.628, the lower leg FOLLOWING the upper by
- * 50 units and the seven claws of each foot the lower leg by 66 (at -0.1 / +0.15 rad); the tail's yaw chain at 0.56 /
- * 0.19 attacking over 0.26 / 0.08, lagging pi / 4 per ring and FOLLOWING by 54 (a -1 x nudge) / 42 / 41 / 34 / 34 /
- * 40 / 43 / 58 units, the two rear ridges copying the first ring's yaw and the sixth ridge the seventh ring; and the
- * three heads through {@link #moveLeftHead} / {@link #moveCenterHead} / {@link #moveRightHead} (the classic helpers,
- * the same names: the one statement sequence over each head's part set): their sweeps (attacking 0.3 / 0.28 / 0.32 ws
- * sines x PI x 0.25 sideways and 0.2 / 0.19 / 0.21 ws up-down, the jaws on 0.85 / 0.75 / 0.95 ws x 0.12 over 0.5;
- * idle 0.17 / 0.13 / 0.19 ws x 0.08 sideways, 0.13 / 0.08 / 0.12 ws x 0.1 up-down, the jaws 0.45 / 0.65 / 0.55 ws x
- * 0.04 over 0.25 - each jaw adding its head's pitch), the side heads clamped to the centre head's sweep, and each
- * head's four neck rings yawed and pitched at 0.125 / 0.25 / 0.38 / 0.5 of it, FOLLOWING one another by 20 / 36 / 36
- * / 36 units first sideways, then foreshortened and lifted by the pitch chain, the head group (three head parts, the
- * mane, two eyes, two nose spikes) riding the fourth ring by 36 and the jaw group (three jaws, four teeth) by 37 and 14
- * more along the head's pitch. The entity is read through {@link TheKingPose} (the Slice 4b doctrine). Every value
- * the classic reads back from a part it just wrote is held in a local (the head chains' sideways-pass positions are
- * re-derived by the pitch pass before any draw, so each part is written once with its final values); the wing roots',
- * the upper legs', the first tail ring's and the first neck rings' pivots, never written, are read through
- * {@link #classicPosition} (the bind).
+ * GeckoLib The King (the hooks, owner 2026-09-14, addendum item 10; landed by the remainder slice, 2026-09-15 -
+ * TEST-018, the second pass declared and proven pass by pass, the owner's closing set item 4):
+ * {@link ModelTheKing#poseFrom} verbatim on the converted rig, ON THE HOOK (no keyframe layer, no transcription - the
+ * self-gate stays closed until an artist delivers {@code idle} and {@code walk}; the geo, the wiring and the proofs
+ * landed with the remainder). The port's classic model as it is, {@code WING_SPEED} 1.0f (orig
+ * ClientProxyOreSpawn.java:492 passes {@code new ModelTheKing(0.65f)}; the port's model is what the hook transcribes);
+ * every rhythm on the ATTACKING branch ({@code getAttacking() != 0}): the wings' roll (0.75 ws x PI x 0.21 attacking,
+ * 0.35 ws x 0.15 gliding) on the ten parts of each wing - the third at five thirds and the fifth at seven thirds of it,
+ * the third's pivot FOLLOWING the root 84 units along its roll and the fifth's the third by 184 (POSITION writes
+ * through {@link #moveTo}), the even parts and the four feather parts riding the third at -+0.261, the right wing
+ * mirrored; the thirteen claw parts flexing on a 0.75 ws cosine x PI x 0.25 (else 0) around -0.925 / 0.384 / 0.645; the
+ * legs' swing on a 0.6 ws cosine x PI x 0.45 (else 0) - a quarter of it on the thigh and upper leg around 0.785, half
+ * on the lower leg and foot around -0.628, the lower leg FOLLOWING the upper by 50 units and the seven claws of each
+ * foot the lower leg by 66 (at -0.1 / +0.15 rad); the tail's yaw chain at 0.56 / 0.19 attacking over 0.26 / 0.08,
+ * lagging pi / 4 per ring and FOLLOWING by 54 (a -1 x nudge) / 42 / 41 / 34 / 34 / 40 / 43 / 58 units, the two rear
+ * ridges copying the first ring's yaw and the sixth ridge the seventh ring; and the three heads through
+ * {@link #moveLeftHead} / {@link #moveCenterHead} / {@link #moveRightHead} (the classic helpers, the same names: the
+ * one statement sequence over each head's part set): their sweeps (attacking 0.3 / 0.28 / 0.32 ws sines x PI x 0.25
+ * sideways and 0.2 / 0.19 / 0.21 ws up-down, the jaws on 0.85 / 0.75 / 0.95 ws x 0.12 over 0.5; idle 0.17 / 0.13 / 0.19
+ * ws x 0.08 sideways, 0.13 / 0.08 / 0.12 ws x 0.1 up-down, the jaws 0.45 / 0.65 / 0.55 ws x 0.04 over 0.25 - each jaw
+ * adding its head's pitch), the side heads clamped to the centre head's sweep, and each head's four neck rings yawed
+ * and pitched at 0.125 / 0.25 / 0.38 / 0.5 of it, FOLLOWING one another by 20 / 36 / 36 / 36 units first sideways, then
+ * foreshortened and lifted by the pitch chain, the head group (three head parts, the mane, two eyes, two nose spikes)
+ * riding the fourth ring by 36 and the jaw group (three jaws, four teeth) by 37 and 14 more along the head's pitch. The
+ * entity is read through {@link TheKingPose} (the Slice 4b doctrine). Every value the classic reads back from a part it
+ * just wrote is held in a local (the head chains' sideways-pass positions are re-derived by the pitch pass before any
+ * draw, so each part is written once with its final values); the wing roots', the upper legs', the first tail ring's
+ * and the first neck rings' pivots, never written, are read through {@link #classicPosition} (the bind).
  *
- * <p>NOT A SETUPANIM STATEMENT, NOT CARRIED HERE: the classic draws the ten wing membranes ({@code Lwing2 / 4 / 6 / 8 /
- * 10}, {@code Rwing2 / 4 / 6 / 8 / 10}) in a SECOND, translucent pass ({@link TheKingRenderer#render}: {@code
- * RenderType.entityTranslucent} at the packed 0.75 / 0.75 / 0.75 / 0.55 tint, {@link ModelTheKing#renderWingMembranes};
- * orig ModelTheKing.java's GL block) while every other part draws opaque - a per-part render state the descriptor's
- * single {@link GeoReplacementDescriptor#renderType} cannot express; the landing slice decides its form and proves it.</p>
+ * <p>THE SECOND PASS (TEST-018, landed): the classic draws the ten wing membranes ({@code Lwing2 / 4 / 6 / 8 / 10},
+ * {@code Rwing2 / 4 / 6 / 8 / 10}) again in a translucent pass ({@link TheKingRenderer#render}:
+ * {@link ModelTheKing#renderWingMembranes} on the model's own {@link ModelTheKing#WING_MEMBRANE_RENDER_TYPE} at
+ * {@link ModelTheKing#WING_MEMBRANE_COLOR}; orig ModelTheKing.java's GL block) - not a setupAnim statement: the
+ * descriptor declares it ({@link GeoReplacementDescriptor#secondPass}), the seam's renderer draws it as a layer after
+ * the opaque pass with those bones hidden in it, and the probe captures both passes.</p>
  *
- * <p>Scale and shadow follow {@link TheKingRenderer}: 2.1 render scale, a quarter of it while {@code getPlayNicely() !=
- * 0}, and a 1.9 x 2.1 shadow (ENT-S-092). No zero-thickness cube.</p>
+ * <p>Scale and shadow follow {@link TheKingRenderer}: 2.1 render scale, a quarter of it while
+ * {@code getPlayNicely() != 0}, and a 1.9 x 2.1 shadow (ENT-S-092). No zero-thickness cube.</p>
  */
 public final class TheKingGeoReplacement extends OreSpawnGeoReplacement<TheKing> {
     /** The port's {@code ModelTheKing.WING_SPEED} = 1.0f (orig ClientProxyOreSpawn.java:492 passes 0.65f): the chain's frequency multiplier. */
@@ -61,9 +63,19 @@ public final class TheKingGeoReplacement extends OreSpawnGeoReplacement<TheKing>
         @Override
         public void applyScale(TheKing entity, PoseStack poseStack, float partialTick) {
             // orig RenderTheKing.preRenderScale (:39-45): PlayNicely gets glScalef(scale / 4), otherwise glScalef(scale)
-            // (TheKingRenderer.scale)
-            float effectiveScale = entity.getPlayNicely() != 0 ? TheKingRenderer.SCALE / 4.0F : TheKingRenderer.SCALE;
-            poseStack.scale(effectiveScale, effectiveScale, effectiveScale);
+            // (TheKingRenderer.scale) - the T2f Frog form the reference-renderer pins tool reads (the remainder slice)
+            if (entity.getPlayNicely() != 0) {
+                poseStack.scale(TheKingRenderer.SCALE / 4.0F, TheKingRenderer.SCALE / 4.0F, TheKingRenderer.SCALE / 4.0F);
+                return;
+            }
+            poseStack.scale(TheKingRenderer.SCALE, TheKingRenderer.SCALE, TheKingRenderer.SCALE);
+        }
+
+        /** TEST-018 (the remainder slice): the ten wing membranes drawn again after the opaque pass on the model's own pass function and tint. */
+        @Override
+        public SecondPass secondPass() {
+            return new SecondPass(java.util.List.of("Lwing2", "Lwing4", "Lwing6", "Lwing8", "Lwing10", "Rwing2", "Rwing4", "Rwing6", "Rwing8", "Rwing10"),
+                    ModelTheKing.WING_MEMBRANE_RENDER_TYPE, ModelTheKing.WING_MEMBRANE_COLOR);
         }
     };
 
@@ -476,6 +488,12 @@ public final class TheKingGeoReplacement extends OreSpawnGeoReplacement<TheKing>
     public static final class Renderer extends OreSpawnGeoReplacedEntityRenderer<TheKing, TheKingGeoReplacement> {
         public Renderer(EntityRendererProvider.Context context) {
             super(context, new TheKingGeoReplacement());
+        }
+
+        /** {@code TheKingRenderer.shouldRender} is unconditionally true (OPT-013: the huge box pops out of vanilla's culling); the seam's renderer the same. */
+        @Override
+        public boolean shouldRender(TheKing entity, net.minecraft.client.renderer.culling.Frustum frustum, double x, double y, double z) {
+            return true;
         }
     }
 }

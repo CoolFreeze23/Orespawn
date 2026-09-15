@@ -1,0 +1,674 @@
+{
+  "schema_version": 1,
+  "model_id": "model_theprincess",
+  "tier": 1,
+  "proof_scope": "production_proof_model",
+  "ground_truth": "executed compiled LayerDefinition and baked ModelPart",
+  "source_class": "danger.orespawn.entity.client.ModelThePrincess",
+  "source_class_sha256": "8c0c96d85d19e4ee9ceff811aa24416881b993d18cf6a31eaa24ef5f30391804",
+  "compiled_dump_sha256": "1bbcebdff222840b1ae8cdb3579718bb559441c0500a458c812750205d551563",
+  "geometry_sha256": "b9082e9f4ecb539b16b61343b8392212164600ce305b82244b094523744bbc15",
+  "animation_sha256": "7882082857fdb11e02f158ebc3a6d3f970e2ac60d54813f0e903ee97b2293749",
+  "animation_contract_sha256": "d35f5d1252d337c3f7417728bbd27a8c8002f2dd0d1b0d139859d1c91b72ccf2",
+  "bone_count": 37,
+  "cube_count": 37,
+  "mirrored_cube_count": 0,
+  "mirrored_uv_strategy": "source flag retained as modelpart_mirror; semantics baked into explicit faces; incompatible GeckoLib native mirror disabled",
+  "exact_bone_names": [
+    "Backfin",
+    "Cpower",
+    "Lhead",
+    "Lheadfin",
+    "Ljaw",
+    "Lleg1",
+    "Lneck",
+    "Lneck1",
+    "Lpower",
+    "Lsnout",
+    "Lwing",
+    "Lwing2",
+    "Lwing3",
+    "Rhead",
+    "Rheadfin",
+    "Rjaw",
+    "Rleg1",
+    "Rneck",
+    "Rneck1",
+    "Rpower",
+    "Rsnout",
+    "Rwing",
+    "Rwing2",
+    "Rwing3",
+    "Tail5",
+    "Tail6",
+    "body",
+    "head",
+    "headfin",
+    "jaw",
+    "neck",
+    "neck1",
+    "neckbase",
+    "snout",
+    "tail2",
+    "tail3",
+    "tail4"
+  ],
+  "bone_draw_order": [
+    "body",
+    "neck1",
+    "neck",
+    "neckbase",
+    "head",
+    "Rleg1",
+    "Lleg1",
+    "snout",
+    "tail2",
+    "tail3",
+    "tail4",
+    "Tail5",
+    "Tail6",
+    "Lneck1",
+    "Lneck",
+    "Lhead",
+    "Lsnout",
+    "Rneck1",
+    "Rneck",
+    "Rhead",
+    "Rsnout",
+    "headfin",
+    "Lheadfin",
+    "Rheadfin",
+    "Backfin",
+    "Ljaw",
+    "jaw",
+    "Rjaw",
+    "Rwing2",
+    "Rwing3",
+    "Lwing2",
+    "Lwing3",
+    "Lwing",
+    "Rwing",
+    "Lpower",
+    "Cpower",
+    "Rpower"
+  ],
+  "draw_order_evidence": {
+    "source": "classic EntityModel.renderToBuffer on a second bake posed identically; every ModelPart.render is one pose-stack push, attributed to its part by ModelPart.skipDraw elimination (one run per cube-bearing part with every other part's skipDraw set); a part drawn n > 1 times is named <part>__i<k> by draw ordinal",
+    "captures": [
+      "bind",
+      "s_idle_a0_t0",
+      "s_idle_a0_t_quarter",
+      "s_idle_a0_t_half",
+      "s_idle_a0_t_three_quarter",
+      "s_idle_a0_t_end",
+      "s_idle_a0_25_t0",
+      "s_idle_a0_25_t_quarter",
+      "s_idle_a0_25_t_half",
+      "s_idle_a0_25_t_three_quarter",
+      "s_idle_a0_25_t_end",
+      "s_idle_a0_5_t0",
+      "s_idle_a0_5_t_quarter",
+      "s_idle_a0_5_t_half",
+      "s_idle_a0_5_t_three_quarter",
+      "s_idle_a0_5_t_end",
+      "s_idle_a1_t0",
+      "s_idle_a1_t_quarter",
+      "s_idle_a1_t_half",
+      "s_idle_a1_t_three_quarter",
+      "s_idle_a1_t_end",
+      "s_attacking_a0_t0",
+      "s_attacking_a0_t_quarter",
+      "s_attacking_a0_t_half",
+      "s_attacking_a0_t_three_quarter",
+      "s_attacking_a0_t_end",
+      "s_attacking_a0_25_t0",
+      "s_attacking_a0_25_t_quarter",
+      "s_attacking_a0_25_t_half",
+      "s_attacking_a0_25_t_three_quarter",
+      "s_attacking_a0_25_t_end",
+      "s_attacking_a0_5_t0",
+      "s_attacking_a0_5_t_quarter",
+      "s_attacking_a0_5_t_half",
+      "s_attacking_a0_5_t_three_quarter",
+      "s_attacking_a0_5_t_end",
+      "s_attacking_a1_t0",
+      "s_attacking_a1_t_quarter",
+      "s_attacking_a1_t_half",
+      "s_attacking_a1_t_three_quarter",
+      "s_attacking_a1_t_end",
+      "s_legs_folded_a0_t0",
+      "s_legs_folded_a0_t_quarter",
+      "s_legs_folded_a0_t_half",
+      "s_legs_folded_a0_t_three_quarter",
+      "s_legs_folded_a0_t_end",
+      "s_legs_folded_a0_25_t0",
+      "s_legs_folded_a0_25_t_quarter",
+      "s_legs_folded_a0_25_t_half",
+      "s_legs_folded_a0_25_t_three_quarter",
+      "s_legs_folded_a0_25_t_end",
+      "s_legs_folded_a0_5_t0",
+      "s_legs_folded_a0_5_t_quarter",
+      "s_legs_folded_a0_5_t_half",
+      "s_legs_folded_a0_5_t_three_quarter",
+      "s_legs_folded_a0_5_t_end",
+      "s_legs_folded_a1_t0",
+      "s_legs_folded_a1_t_quarter",
+      "s_legs_folded_a1_t_half",
+      "s_legs_folded_a1_t_three_quarter",
+      "s_legs_folded_a1_t_end",
+      "s_sitting_a0_t0",
+      "s_sitting_a0_t_quarter",
+      "s_sitting_a0_t_half",
+      "s_sitting_a0_t_three_quarter",
+      "s_sitting_a0_t_end",
+      "s_sitting_a0_25_t0",
+      "s_sitting_a0_25_t_quarter",
+      "s_sitting_a0_25_t_half",
+      "s_sitting_a0_25_t_three_quarter",
+      "s_sitting_a0_25_t_end",
+      "s_sitting_a0_5_t0",
+      "s_sitting_a0_5_t_quarter",
+      "s_sitting_a0_5_t_half",
+      "s_sitting_a0_5_t_three_quarter",
+      "s_sitting_a0_5_t_end",
+      "s_sitting_a1_t0",
+      "s_sitting_a1_t_quarter",
+      "s_sitting_a1_t_half",
+      "s_sitting_a1_t_three_quarter",
+      "s_sitting_a1_t_end"
+    ],
+    "cube_bearing_units": 37,
+    "observed_units": 37,
+    "unobserved_units": [],
+    "ordered_pairs": 666,
+    "tie_break": "converter emission order for pairs never drawn together in any capture",
+    "lifting": "pre-order over the geo bone tree, siblings by their subtree's first classic draw"
+  },
+  "cube_face_order": {
+    "Backfin": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "Cpower": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "Lhead": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "Lheadfin": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "Ljaw": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "Lleg1": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "Lneck": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "Lneck1": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "Lpower": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "Lsnout": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "Lwing": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "Lwing2": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "Lwing3": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "Rhead": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "Rheadfin": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "Rjaw": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "Rleg1": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "Rneck": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "Rneck1": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "Rpower": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "Rsnout": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "Rwing": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "Rwing2": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "Rwing3": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "Tail5": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "Tail6": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "body": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "head": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "headfin": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "jaw": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "neck": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "neck1": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "neckbase": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "snout": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "tail2": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "tail3": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "tail4": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ]
+  },
+  "cube_face_order_evidence": {
+    "rule": "NeoForge 21.1.223 ModelPart.Cube.<init> polygon order DOWN, UP, WEST, NORTH, EAST, SOUTH (offsets 365-785: DOWN 365, UP 436, WEST 507, NORTH 578, EAST 649, SOUTH 720), mirror negating the X normals; GeckoLib labels by the direction whose step is the classic normal reflected in X and Y (the entity frame: the classic chain's scale(-1, -1, 1) and the baker's x negation alike, TEST-015)",
+    "cube_bearing_bones": 37,
+    "cubes": 37,
+    "verified_unrotated_cubes_at_bind": 20,
+    "verification": "captured normals (the entity frame) of every cube unrotated at bind equal the rule's, in order; the parity tool's draw-order leg compares the per-quad normal sequences of both renderers on every capture"
+  },
+  "animation_contract": {
+    "schema_version": 1,
+    "kind": "entity_state",
+    "controller_required": false,
+    "candidate_animation_path": "production_replacement_hook",
+    "candidate_class": "danger.orespawn.entity.client.ThePrincessGeoReplacement",
+    "candidate_acceptance_path": "production OreSpawnGeoReplacementModel.setCustomAnimations (Amendment 1 Tier-3 code-driven)",
+    "sample_ids": [
+      "bind",
+      "s_idle_a0_t0",
+      "s_idle_a0_t_quarter",
+      "s_idle_a0_t_half",
+      "s_idle_a0_t_three_quarter",
+      "s_idle_a0_t_end",
+      "s_idle_a0_25_t0",
+      "s_idle_a0_25_t_quarter",
+      "s_idle_a0_25_t_half",
+      "s_idle_a0_25_t_three_quarter",
+      "s_idle_a0_25_t_end",
+      "s_idle_a0_5_t0",
+      "s_idle_a0_5_t_quarter",
+      "s_idle_a0_5_t_half",
+      "s_idle_a0_5_t_three_quarter",
+      "s_idle_a0_5_t_end",
+      "s_idle_a1_t0",
+      "s_idle_a1_t_quarter",
+      "s_idle_a1_t_half",
+      "s_idle_a1_t_three_quarter",
+      "s_idle_a1_t_end",
+      "s_attacking_a0_t0",
+      "s_attacking_a0_t_quarter",
+      "s_attacking_a0_t_half",
+      "s_attacking_a0_t_three_quarter",
+      "s_attacking_a0_t_end",
+      "s_attacking_a0_25_t0",
+      "s_attacking_a0_25_t_quarter",
+      "s_attacking_a0_25_t_half",
+      "s_attacking_a0_25_t_three_quarter",
+      "s_attacking_a0_25_t_end",
+      "s_attacking_a0_5_t0",
+      "s_attacking_a0_5_t_quarter",
+      "s_attacking_a0_5_t_half",
+      "s_attacking_a0_5_t_three_quarter",
+      "s_attacking_a0_5_t_end",
+      "s_attacking_a1_t0",
+      "s_attacking_a1_t_quarter",
+      "s_attacking_a1_t_half",
+      "s_attacking_a1_t_three_quarter",
+      "s_attacking_a1_t_end",
+      "s_legs_folded_a0_t0",
+      "s_legs_folded_a0_t_quarter",
+      "s_legs_folded_a0_t_half",
+      "s_legs_folded_a0_t_three_quarter",
+      "s_legs_folded_a0_t_end",
+      "s_legs_folded_a0_25_t0",
+      "s_legs_folded_a0_25_t_quarter",
+      "s_legs_folded_a0_25_t_half",
+      "s_legs_folded_a0_25_t_three_quarter",
+      "s_legs_folded_a0_25_t_end",
+      "s_legs_folded_a0_5_t0",
+      "s_legs_folded_a0_5_t_quarter",
+      "s_legs_folded_a0_5_t_half",
+      "s_legs_folded_a0_5_t_three_quarter",
+      "s_legs_folded_a0_5_t_end",
+      "s_legs_folded_a1_t0",
+      "s_legs_folded_a1_t_quarter",
+      "s_legs_folded_a1_t_half",
+      "s_legs_folded_a1_t_three_quarter",
+      "s_legs_folded_a1_t_end",
+      "s_sitting_a0_t0",
+      "s_sitting_a0_t_quarter",
+      "s_sitting_a0_t_half",
+      "s_sitting_a0_t_three_quarter",
+      "s_sitting_a0_t_end",
+      "s_sitting_a0_25_t0",
+      "s_sitting_a0_25_t_quarter",
+      "s_sitting_a0_25_t_half",
+      "s_sitting_a0_25_t_three_quarter",
+      "s_sitting_a0_25_t_end",
+      "s_sitting_a0_5_t0",
+      "s_sitting_a0_5_t_quarter",
+      "s_sitting_a0_5_t_half",
+      "s_sitting_a0_5_t_three_quarter",
+      "s_sitting_a0_5_t_end",
+      "s_sitting_a1_t0",
+      "s_sitting_a1_t_quarter",
+      "s_sitting_a1_t_half",
+      "s_sitting_a1_t_three_quarter",
+      "s_sitting_a1_t_end"
+    ],
+    "entity_states": [
+      "idle",
+      "attacking",
+      "legs_folded",
+      "sitting"
+    ]
+  },
+  "reference_animation_schema": {
+    "status": "SCHEMA_VALID_REFERENCE_ONLY",
+    "clip_count": 0,
+    "constant_vector_count": 0,
+    "runtime_acceptance": false
+  },
+  "accepted_animation_evidence": "production OreSpawnGeoReplacement hook posed from declared entity states through the entity's pose interface (Amendment 1 Tier-3 code-driven)",
+  "artist_editable_math_to_keyframes_status": "NOT_APPLICABLE_TIER3_CODE_DRIVEN",
+  "compiled_animation_bake_sample_count": 0,
+  "reference_clip_keys_source": "compiled setupAnim output; no Python formula evaluation",
+  "source_animation_channel_inventory": []
+}

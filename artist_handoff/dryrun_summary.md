@@ -4,12 +4,12 @@ Output: `artist_handoff`
 
 ## Counts (the deliverable)
 
-- Tier 1: 28 registries over 21 rigs (a shared rig counted once); not yet in-game: 6 registries over 3 rigs.
-- Tier 2: 75 registries over 70 rigs (a shared rig counted once); not yet in-game: 5 registries over 5 rigs.
+- Tier 1: 28 registries over 21 rigs (a shared rig counted once); not yet in-game: 4 registries over 1 rigs.
+- Tier 2: 75 registries over 70 rigs (a shared rig counted once).
 - Tier 3: 13 registries over 12 rigs (a shared rig counted once).
-- Folders: 116 (one per registry); files: 1369 (1363 in the entity folders + the 6 package-wide files).
-- Rig sources: shipped 105, reference-leg converter output 11.
-- Reference clips (owner 2026-09-14, item 31 (11); every state the code reads since item 32 (2)): 112 species carry them — 297 files (idle 112, walk 112, attack 40, sit 14, fly 10, scream 2, crouch 1, display 1, legs_folded 1, mouth_open 1, open 1, sing 1, sitting_flat 1), 297 written beside the sheets, 356 clips embedded in the .bbmodels; unnamed states 0; values that move nothing at rest 11; states offered as extras 23; artist-tier species with clips: 99; held (sampled when the rig lands): 3 — boyfriend, girlfriend, the_princess; landed without a sampled clip (native): the_queen.
+- Folders: 116 (one per registry); files: 1382 (1376 in the entity folders + the 6 package-wide files).
+- Rig sources: shipped 112, reference-leg converter output 4.
+- Reference clips (owner 2026-09-14, item 31 (11); every state the code reads since item 32 (2)): 115 species carry them — 310 files (idle 115, walk 115, attack 41, sit 15, fly 11, glide 2, ride 2, scream 2, crouch 1, display 1, legs_folded 1, mouth_open 1, open 1, sing 1, sitting_flat 1), 310 written beside the sheets, 369 clips embedded in the .bbmodels; unnamed states 0; values that move nothing at rest 17; states offered as extras 28; artist-tier species with clips: 102; held (sampled when the rig lands): 0; landed without a sampled clip (native): the_queen.
 - Packaged without a seed (the SEED_MISSING fallback: the display name from the registry, empty authored sections): 0.
 - Artist-tier species with no rig to package: 0.
 
@@ -48,7 +48,7 @@ Output: `artist_handoff`
 | urchin | Tier 2 | shipped | 11 | 17 | 17 | 0 | 13 | 4 | 1 | STATE | 3 | 1 | 0 | 0 | EQUAL, order kept | 19.4 h | 0 |
 | godzilla | Tier 1 (boss) | shipped | 11 | 71 | 71 | 0 | 18 | 5 | 2 | STATE | 7 | 1 | 12 (0 keyed by the shipped clips; warn) | 0 | EQUAL, order kept | 44.1 h | 0 |
 | kraken | Tier 1 (boss) | shipped | 11 | 111 | 111 | 0 | 18 | 2 | 2 | STATE? | 1 | 1 | 14 (0 keyed by the shipped clips; warn) | 0 | EQUAL, order kept | 50.1 h | 1 |
-| the_king | Tier 1 (boss) | reference leg (not yet in-game) | 11 | 119 | 119 | 0 | 23 | 5 | 3 | STATE | 5 | 1 | 15 (0 keyed by the shipped clips; warn) | 0 | EQUAL, order kept | 60.3 h | 0 |
+| the_king | Tier 1 (boss) | shipped | 11 | 119 | 119 | 0 | 23 | 5 | 3 | STATE | 5 | 1 | 15 (0 keyed by the shipped clips; warn) | 0 | EQUAL, order kept | 60.3 h | 0 |
 | the_queen | Tier 1 (boss; the design's 'done' row) | shipped | 9 | 110 | 130 | 8 | 8 | 5 | 6 | STATE | 6 | 2 | 27 (26 keyed by the shipped clips; warn) | 0 | EQUAL, order kept | 27.5 h | 1 |
 | bee | Tier 2 | shipped | 11 | 23 | 23 | 0 | 16 | 0 | 1 | STATE | 2 | 1 | 0 | 0 | EQUAL, order kept | 24.6 h | 0 |
 | brutalfly | Tier 2 | shipped | 10 | 14 | 14 | 2 | 7 | 0 | 0 | NONE | 3 | 1 | 0 | 0 | EQUAL, order kept | 11.8 h | 0 |
@@ -57,12 +57,12 @@ Output: `artist_handoff`
 | hercules_beetle | Tier 2 | shipped | 11 | 37 | 37 | 0 | 10 | 6 | 1 | STATE | 2 | 1 | 0 | 0 | EQUAL, order kept | 21.4 h | 0 |
 | kyuubi | Tier 2 | shipped | 10 | 42 | 42 | 0 | 15 | 6 | 0 | NONE | 2 | 1 | 0 | 0 | EQUAL, order kept | 26.4 h | 0 |
 | leaf_monster | Tier 2 | shipped | 11 | 5 | 5 | 0 | 12 | 3 | 1 | STATE | 1 | 1 | 0 | 0 | EQUAL, order kept | 17 h | 0 |
-| lurking_terror | Tier 2 | reference leg (not yet in-game) | 11 | 59 | 59 | 0 | 15 | 0 | 1 | STATE | 1 | 1 | 0 | 0 | EQUAL, order kept | 30.8 h | 0 |
+| lurking_terror | Tier 2 | shipped | 11 | 59 | 59 | 0 | 15 | 0 | 1 | STATE | 1 | 1 | 0 | 0 | EQUAL, order kept | 30.8 h | 0 |
 | mantis | Tier 2 | shipped | 11 | 36 | 36 | 0 | 10 | 0 | 1 | STATE | 2 | 1 | 0 | 0 | EQUAL, order kept | 21.2 h | 0 |
 | molenoid | Tier 2 | shipped | 11 | 37 | 37 | 0 | 12 | 5 | 1 | STATE | 2 | 1 | 0 | 0 | EQUAL, order kept | 22.4 h | 0 |
 | rat | Tier 2 | shipped | 11 | 12 | 12 | 0 | 11 | 6 | 1 | STATE | 1 | 1 | 0 | 0 | EQUAL, order kept | 16.4 h | 0 |
 | rotator | Tier 3 | shipped | 10 | 27 | 24 | 0 | 0 | 0 | 0 | NONE | 1 | 1 | 0 | 0 | EQUAL, order kept | 0 h | 0 |
-| scorpion | Tier 2 | reference leg (not yet in-game) | 10 | 22 | 22 | 0 | 14 | 5 | 1 | STATE | 2 | 1 | 0 | 0 | EQUAL, order kept | 21.4 h | 0 |
+| scorpion | Tier 2 | shipped | 10 | 22 | 22 | 0 | 14 | 5 | 1 | STATE | 2 | 1 | 0 | 0 | EQUAL, order kept | 21.4 h | 0 |
 | spit_bug | Tier 2 | shipped | 11 | 93 | 93 | 0 | 12 | 6 | 1 | STATE | 4 | 1 | 0 | 0 | EQUAL, order kept | 33.6 h | 0 |
 | terrible_terror | Tier 2 | shipped | 10 | 21 | 21 | 0 | 11 | 0 | 0 | NONE | 1 | 1 | 0 | 0 | EQUAL, order kept | 18.2 h | 0 |
 | triffid | Tier 2 | shipped | 12 | 178 | 178 | 0 | 11 | 4 | 2 | STATE | 1 | 1 | 0 | 0 | EQUAL, order kept | 50.6 h | 0 |
@@ -96,13 +96,13 @@ Output: `artist_handoff`
 | termite | Tier 2 | shipped | 10 | 20 | 20 | 3 | 9 | 4 | 0 | NONE | 1 | 1 | 0 | 0 | EQUAL, order kept | 13 h | 0 |
 | tshirt | Tier 2 | shipped | 10 | 2 | 2 | 2 | 5 | 0 | 0 | NONE | 0 | 1 | 0 | 0 | EQUAL, order kept | 7.4 h | 0 |
 | unstable_ant | Tier 2 | shipped | 10 | 20 | 20 | 3 | 8 | 2 | 0 | NONE | 0 | 1 | 0 | 0 | EQUAL, order kept | 12 h | 0 |
-| boyfriend | Tier 2 | reference leg (not yet in-game) | 55 | 7 | 7 | 0 | 12 | 16 | 5 | NONE | 2 | 48 | 0 | 0 | EQUAL, order kept | 16.4 h | 0 |
+| boyfriend | Tier 2 | shipped | 59 | 7 | 7 | 0 | 14 | 16 | 5 | NONE | 2 | 48 | 0 | 0 | EQUAL, order kept | 18.4 h | 0 |
 | camarasaurus | Tier 2 | shipped | 10 | 21 | 21 | 0 | 10 | 10 | 0 | NONE | 0 | 1 | 0 | 0 | EQUAL, order kept | 17.2 h | 0 |
 | dragon | Tier 1 (boss) | shipped | 14 | 55 | 55 | 0 | 18 | 9 | 4 | STATE | 9 | 2 | 11 (0 keyed by the shipped clips; warn) | 0 | EQUAL, order kept | 43.2 h | 0 |
 | baby_dragon | Tier 1 (boss) | shipped | 14 | 55 | 55 | 0 | 18 | 0 | 4 | STATE | 9 | 2 | 11 (0 keyed by the shipped clips; warn) | 0 | EQUAL, order kept | 43.2 h | 0 |
 | cannon_fodder | Tier 2 | shipped | 10 | 6 | 6 | 0 | 9 | 0 | 2 | NONE | 1 | 1 | 0 | 0 | EQUAL, order kept | 13.2 h | 0 |
 | gamma_metroid | Tier 2 | shipped | 10 | 21 | 21 | 0 | 11 | 11 | 0 | NONE | 1 | 1 | 0 | 0 | EQUAL, order kept | 18.2 h | 0 |
-| girlfriend | Tier 2 | reference leg (not yet in-game) | 49 | 7 | 7 | 0 | 14 | 19 | 4 | NONE | 2 | 42 | 0 | 0 | EQUAL, order kept | 17.4 h | 0 |
+| girlfriend | Tier 2 | shipped | 53 | 7 | 7 | 0 | 16 | 19 | 4 | NONE | 2 | 42 | 0 | 0 | EQUAL, order kept | 19.4 h | 1 |
 | hydrolisc | Tier 2 | shipped | 11 | 40 | 40 | 0 | 13 | 12 | 0 | NONE | 0 | 1 | 0 | 0 | EQUAL, order kept | 24 h | 0 |
 | leon | Tier 1 (boss) | shipped | 12 | 98 | 98 | 0 | 23 | 10 | 3 | STATE | 2 | 1 | 22 (0 keyed by the shipped clips; warn) | 0 | EQUAL, order kept | 57.2 h | 0 |
 | leonopteryx | Tier 1 (boss) | shipped | 12 | 98 | 98 | 0 | 23 | 10 | 3 | STATE | 2 | 1 | 22 (0 keyed by the shipped clips; warn) | 0 | EQUAL, order kept | 57.2 h | 0 |
@@ -113,7 +113,7 @@ Output: `artist_handoff`
 | stinky | Tier 2 | shipped | 12 | 20 | 20 | 0 | 14 | 12 | 3 | NONE | 1 | 1 | 0 | 0 | EQUAL, order kept | 21 h | 1 |
 | the_prince | Tier 1 (boss) | shipped | 13 | 35 | 35 | 0 | 16 | 10 | 3 | STATE | 4 | 1 | 10 (0 keyed by the shipped clips; warn) | 0 | EQUAL, order kept | 37.2 h | 0 |
 | the_prince_adult | Tier 1 (boss) | shipped | 13 | 119 | 119 | 0 | 24 | 10 | 6 | STATE | 8 | 1 | 17 (0 keyed by the shipped clips; warn) | 0 | EQUAL, order kept | 61.8 h | 0 |
-| the_princess | Tier 1 (boss) | reference leg (not yet in-game) | 8 | 37 | 37 | 0 | 19 | 10 | 4 | STATE | 4 | 1 | 10 (0 keyed by the shipped clips; warn) | 0 | EQUAL, order kept | 42 h | 0 |
+| the_princess | Tier 1 (boss) | shipped | 13 | 37 | 37 | 0 | 20 | 10 | 4 | STATE | 4 | 1 | 10 (0 keyed by the shipped clips; warn) | 0 | EQUAL, order kept | 43.5 h | 0 |
 | the_prince_teen | Tier 1 (boss) | shipped | 13 | 71 | 71 | 0 | 16 | 10 | 6 | STATE | 8 | 1 | 16 (0 keyed by the shipped clips; warn) | 0 | EQUAL, order kept | 42.6 h | 0 |
 | velocity_raptor | Tier 2 | shipped | 11 | 34 | 34 | 0 | 16 | 12 | 0 | NONE | 0 | 1 | 0 | 0 | EQUAL, order kept | 24.8 h | 0 |
 | water_dragon | Tier 1 (boss) | shipped | 13 | 24 | 24 | 0 | 19 | 10 | 1 | STATE | 3 | 1 | 11 (0 keyed by the shipped clips; warn) | 0 | EQUAL, order kept | 40.1 h | 0 |
@@ -122,7 +122,7 @@ Output: `artist_handoff`
 | mosquito | Tier 2 | shipped | 10 | 5 | 5 | 2 | 6 | 1 | 0 | NONE | 0 | 1 | 0 | 0 | EQUAL, order kept | 9 h | 0 |
 | fairy | Tier 2 | shipped | 18 | 15 | 15 | 0 | 13 | 2 | 1 | NONE | 1 | 9 | 0 | 0 | EQUAL, order kept | 19 h | 0 |
 | firefly | Tier 2 | shipped | 10 | 12 | 12 | 2 | 6 | 1 | 0 | NONE | 0 | 1 | 0 | 0 | EQUAL, order kept | 10.4 h | 0 |
-| ghost | Tier 2 | reference leg (not yet in-game) | 10 | 3 | 3 | 0 | 13 | 2 | 0 | NONE | 1 | 1 | 0 | 0 | EQUAL, order kept | 16.6 h | 0 |
+| ghost | Tier 2 | shipped | 10 | 3 | 3 | 0 | 13 | 2 | 0 | NONE | 1 | 1 | 0 | 0 | EQUAL, order kept | 16.6 h | 0 |
 | ghost_skelly | Tier 2 | shipped | 10 | 10 | 10 | 0 | 14 | 2 | 0 | NONE | 1 | 1 | 0 | 0 | EQUAL, order kept | 19 h | 0 |
 | mothra | Tier 1 (boss) | reference leg (not yet in-game) | 10 | 10 | 10 | 0 | 7 | 0 | 1 | NONE | 2 | 1 | 4 (0 keyed by the shipped clips; warn) | 0 | EQUAL, order kept | 18.5 h | 0 |
 | vampire_butterfly | Tier 1 (boss) | reference leg (not yet in-game) | 10 | 10 | 10 | 0 | 7 | 3 | 1 | NONE | 1 | 1 | 0 | 0 | EQUAL, order kept | 18.5 h | 0 |
@@ -164,6 +164,7 @@ TEXTURE_MAP: 428 shipped, 338 unique payloads, 86 duplicate groups, 90 redundant
 - [robot_5] ATTACKING_UNCLASSIFIED: DATA_ATTACKING classified MIXED: a 5-tick pulse per in-range think tick: the flag is raised at line(s) [143] every 20 ticks (reloadTicker reset) while a target is in range — before the line-of-sight gate, so it pulses whether or not a shot fires — and cleared when reloadTicker < 15 at line(s) [131] AND cleared on target loss at line(s) [152]
 - [kraken] ATTACKING_UNCLASSIFIED: DATA_ATTACKING classified STATE?: cleared unconditionally at line(s) [451] (the enclosing branch decides; read the source)
 - [the_queen] LOCKED_BONES_KEYED: the shipped clips key 26 of the 27 SPEC-locked bones (LHead, LHead12, LHead4, Lwing1, NeckL1, NeckL13...): allowed and warned — Keying a locked bone is allowed; the checker warns, and the hitbox part follows the bone in-game (the consequence, so keep such keys deliberate). Renaming, re-parenting or deleting a locked bone is refused.
+- [girlfriend] EXTRAS_CAP: 5 extras (3 from the seed + 2 offered from the reference states: glide, ride) exceed the cap of four per creature without a ruling (ruled 2026-09-06, Q6 (a): more needs the owner; every one is listed, none dropped)
 - [spyro] EXTRAS_CAP: 5 extras (4 from the seed + 1 offered from the reference states: sitting_flat) exceed the cap of four per creature without a ruling (ruled 2026-09-06, Q6 (a): more needs the owner; every one is listed, none dropped)
 - [stinky] EXTRAS_CAP: 5 extras (4 from the seed + 1 offered from the reference states: legs_folded) exceed the cap of four per creature without a ruling (ruled 2026-09-06, Q6 (a): more needs the owner; every one is listed, none dropped)
 - [elevator] BONE_UNLABELLED: bone shape1 has no glossary label

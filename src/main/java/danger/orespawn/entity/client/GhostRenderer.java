@@ -34,9 +34,12 @@ public class GhostRenderer extends MobRenderer<Ghost, GhostModel<Ghost>> {
     // uses RenderType.entityCutoutNoCull, which treats any pixel with alpha
     // < 1 as fully transparent — fine for mobs with hard edges, but it
     // destroys the semi-transparent sheet look we want for a ghost.
+    // ENT-S-160 (a) (the remainder slice, 2026-09-15): the factory is the model's own function object
+    // (GhostModel.RENDER_TYPE, the ENT-S-146 form), applied here to the texture exactly as the bare
+    // RenderType.entityTranslucent(texture) call did, so the GeckoLib descriptor hands over the same object.
     @Override
     public RenderType getRenderType(Ghost entity, boolean visible, boolean visibleToPlayer, boolean glowing) {
-        return RenderType.entityTranslucent(this.getTextureLocation(entity));
+        return GhostModel.RENDER_TYPE.apply(this.getTextureLocation(entity));
     }
 
     @Override

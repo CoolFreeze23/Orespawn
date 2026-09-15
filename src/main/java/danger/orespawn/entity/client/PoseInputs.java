@@ -7,7 +7,7 @@ import software.bernie.geckolib.model.data.EntityModelData;
 
 /**
  * The six values vanilla's {@code LivingEntityRenderer} hands {@code setupAnim},
- * plus the pose subject, as a plain record.
+ * plus the pose subject and the frame's partial tick, as a plain record.
  *
  * <p>Code-driven poses consume this instead of GeckoLib's {@link AnimationState}
  * so the same production hook runs both on the client (through
@@ -15,6 +15,17 @@ import software.bernie.geckolib.model.data.EntityModelData;
  * in the headless parity probe, where GeckoLib's {@link DataTickets} cannot be
  * loaded because its initialiser registers a data component and therefore
  * needs a bootstrapped game.</p>
+ *
+ * <p>THE PARTIAL TICK (the remainder slice, 2026-09-15; owner 2026-09-15, closing set, item 3 - TEST-010 (b): "the seam
+ * carries the renderer's partial tick in PoseInputs; the biped hooks read getAttackAnim(partialTick) verbatim"): the
+ * classic {@code LivingEntityRenderer.render} sets two model fields from the FRAME's partial tick before {@code setupAnim}
+ * - {@code attackTime = entity.getAttackAnim(partialTick)} (21.1.223 bytecode offsets 39-49) and, through
+ * {@code HumanoidModel.prepareMobModel}, {@code swimAmount = entity.getSwimAmount(partialTick)} (HumanoidModel.java:129-131)
+ * - so a hook that transcribes vanilla's biped pose reads them through {@link #partialTick()} exactly as the renderer
+ * does. The replaced renderer fills it from the animation state's partial tick ({@link #fromState}); the parity probe
+ * fills it from the sample's - the fractional part of the sample's age, vanilla's own identity {@code ageInTicks =
+ * tickCount + partialTick}; the reference-clip sampler's fixed inputs keep it 0 (a whole tick per key). Every hook that
+ * does not read it is unchanged by it.</p>
  *
  * @param subject       the entity being drawn, or in the harness a stand-in
  *                      implementing the species' {@code danger.orespawn.entity.pose}
@@ -24,9 +35,11 @@ import software.bernie.geckolib.model.data.EntityModelData;
  * @param limbSwingAmount walk speed clamped to one, zero when dead or riding
  * @param netHeadYaw    head yaw minus body yaw, degrees, vanilla sign
  * @param headPitch     head pitch, degrees, vanilla sign
+ * @param partialTick   the frame's partial tick, {@code [0, 1)}: what the renderer hands {@code getAttackAnim} /
+ *                      {@code getSwimAmount}; the fractional part of {@code ageInTicks} on the probe, 0 in the sampler
  */
 public record PoseInputs(Object subject, float ageInTicks, float limbSwing, float limbSwingAmount,
-                         float netHeadYaw, float headPitch) {
+                         float netHeadYaw, float headPitch, float partialTick) {
 
     /** The subject seen through the species' pose interface; a wrong or missing subject is a wiring failure. */
     public <T> T subject(Class<T> poseInterface) {
@@ -60,6 +73,6 @@ public record PoseInputs(Object subject, float ageInTicks, float limbSwing, floa
             throw new IllegalStateException("AnimationState carries no ENTITY_MODEL_DATA datum");
         }
         return new PoseInputs(entity, ageInTicks, state.getLimbSwing(), state.getLimbSwingAmount(),
-                -modelData.netHeadYaw(), -modelData.headPitch());
+                -modelData.netHeadYaw(), -modelData.headPitch(), state.getPartialTick());
     }
 }

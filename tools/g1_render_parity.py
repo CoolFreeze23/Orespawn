@@ -528,10 +528,51 @@ def cube_face_order_parity(model_id: str, compiled: dict[str, Any], geo_render: 
     }
 
 
+def second_pass_draw_order(model_id: str, pass_spec: dict[str, Any], vanilla_samples: dict[str, dict[str, Any]],
+                           geo_samples: dict[str, dict[str, Any]]) -> dict[str, Any]:
+    """TEST-018: per full capture, the classic renderer's second pass (``draw_order_pass2``, attributed by the probe's
+    skipDraw elimination on the classic pass method) and GeoRenderer's (the pass's bones alone, in emission order) must
+    be the same sequence; that sequence must be exactly the declared bones (as a set); and no declared bone may appear
+    in either side's main-pass ``draw_order``."""
+    declared = set(pass_spec["bones"])
+    draws_checked = 0
+    for sample_id, vanilla_sample in vanilla_samples.items():
+        classic = vanilla_sample.get("draw_order_pass2")
+        gecko = geo_samples[sample_id].get("draw_order_pass2")
+        if classic is None or gecko is None:
+            raise AssertionError(f"SECOND PASS MISSING {model_id}/{sample_id}: a capture carries no draw_order_pass2 (a stale probe run?)")
+        if classic != gecko:
+            raise AssertionError(
+                f"DRAW ORDER MISMATCH {model_id}/{sample_id} (second pass): the classic pass drew {classic}; GeoRenderer drew {gecko}"
+            )
+        if set(classic) != declared or len(classic) != len(declared):
+            raise AssertionError(
+                f"SECOND PASS MISMATCH {model_id}/{sample_id}: the pass drew {classic}; the manifest declares {sorted(declared)}"
+            )
+        leaked = sorted(declared & (set(vanilla_sample["draw_order"]) | set(geo_samples[sample_id]["draw_order"])))
+        if leaked:
+            raise AssertionError(
+                f"SECOND PASS MISMATCH {model_id}/{sample_id}: the pass's bones {leaked} were drawn in the main pass"
+            )
+        draws_checked += len(classic)
+    return {
+        "status": "PASS",
+        "bones": list(pass_spec["bones"]),
+        "classic_method": pass_spec["classic_method"],
+        "captures_checked": len(vanilla_samples),
+        "draws_checked": draws_checked,
+        "policy": (
+            "the classic renderer's second pass (the model's pass method under the classic chain, attributed by skipDraw "
+            "elimination) and the seam's SecondPassLayer (the pass's bones alone, re-rendered after the opaque pass) draw "
+            "the declared bones in the same order on every capture, and neither side draws them in the main pass"
+        ),
+    }
+
+
 def draw_order_parity(model_id: str, compiled: dict[str, Any], geo_render: dict[str, Any],
                       generated_geometry: dict[str, Any], conversion: dict[str, Any],
                       normal_epsilon: float = 1.0e-6, undrawn: frozenset[str] = frozenset(),
-                      hierarchy: dict[str, str] | None = None) -> dict[str, Any]:
+                      hierarchy: dict[str, str] | None = None, pass_spec: dict[str, Any] | None = None) -> dict[str, Any]:
     """G2 root-order contract: GeckoLib draws the bones in the classic part order.
 
     A HIERARCHY entry (``hierarchy`` non-empty, the FK slice; owner 2026-09-15, closing set continued second, item 35
@@ -666,6 +707,9 @@ def draw_order_parity(model_id: str, compiled: dict[str, Any], geo_render: dict[
     face_order = cube_face_order_parity(model_id, compiled, geo_render, generated_geometry, conversion, normal_epsilon, undrawn)
     if face_order is not None:
         report["cube_face_order"] = face_order
+    if pass_spec is not None:
+        # TEST-018: written for a second-pass entry only, so every other entry's draw-order report stays byte-identical
+        report["second_pass"] = second_pass_draw_order(model_id, pass_spec, vanilla_samples, geo_samples)
     return report
 
 
@@ -700,6 +744,35 @@ def visual_mode(model_id: str, spec: dict[str, Any]) -> dict[str, Any] | None:
         "emulated_states": {key: value for key, value in VISUAL_MODES[render_type].items() if key != "rasteriser"},
         "rasteriser": VISUAL_MODES[render_type]["rasteriser"],
     }
+
+
+def second_pass(model_id: str, spec: dict[str, Any]) -> dict[str, Any] | None:
+    """THE SECOND PASS (the remainder slice, 2026-09-15; TEST-018 - the King): a manifest entry whose classic renderer draws
+    some bones AGAIN in a second pass after the opaque one declares ``second_pass``: ``bones`` (the bones drawn only in it),
+    ``render_type`` (a VISUAL_MODES key the pass draws with), ``vertex_color`` (the RGBA bytes every vertex of the pass is
+    multiplied by), ``classic_method`` / ``classic_render_type_field`` / ``classic_color_field`` (the probe's: the classic
+    model's pass method and its own static function and colour). The probe captures both sides' pass beside every full
+    capture (``render_vertices_pass2`` / ``draw_order_pass2``, the sidecars' ``second_pass``), and the draw-order,
+    render-state and visual legs compare the two passes: the pass's bones drawn in the same order by both renderers and
+    by neither in the main pass, the pass's render type / colour / light equal on both sides and to the declaration, and
+    the pass rasterised over the opaque pass on both sides. An entry without the block is untouched."""
+    declared = spec.get("second_pass")
+    if declared is None:
+        return None
+    bones = declared.get("bones")
+    if not isinstance(bones, list) or not bones or len(set(bones)) != len(bones):
+        raise AssertionError(f"{model_id} second_pass.bones must be a non-empty list of distinct bone names")
+    render_type = declared.get("render_type")
+    if render_type not in VISUAL_MODES:
+        raise AssertionError(f"{model_id} second_pass.render_type {render_type!r} is not emulated: {sorted(VISUAL_MODES)}")
+    colour = declared.get("vertex_color")
+    if not isinstance(colour, list) or len(colour) != 4 or any(not isinstance(v, int) or not 0 <= v <= 255 for v in colour):
+        raise AssertionError(f"{model_id} second_pass.vertex_color must be four RGBA bytes")
+    for key in ("classic_method", "classic_render_type_field", "classic_color_field"):
+        if not isinstance(declared.get(key), str) or not declared[key]:
+            raise AssertionError(f"{model_id} second_pass.{key} must name the classic model's member")
+    return {"bones": list(bones), "render_type": render_type, "vertex_color": list(colour),
+            "classic_method": declared["classic_method"]}
 
 
 def render_instance_expansion(conversion: dict[str, Any] | None) -> dict[str, Any] | None:
@@ -2134,6 +2207,10 @@ def all_vertices(samples: dict[str, dict[str, Any]], ids: Iterable[str]) -> list
         vertices.extend(
             vertex_position(vertex) for vertex in samples[sample_id]["render_vertices"]
         )
+        # TEST-018: a second-pass entry's camera fits both passes (the same vertex set on both sides, so the same camera)
+        vertices.extend(
+            vertex_position(vertex) for vertex in samples[sample_id].get("render_vertices_pass2", [])
+        )
     return vertices
 
 
@@ -2230,8 +2307,25 @@ def quad_face_ids(model_id: str, sample_id: str, sample: dict[str, Any],
     return ids
 
 
+def raster_state(state: dict[str, Any] | None) -> dict[str, Any]:
+    """TEST-018: the rasteriser's per-pixel buffers - fresh for a one-pass capture (the default: every landed entry's numbers
+    unchanged), or the buffers a previous pass left (``state``, shared by the two passes of a second-pass entry: the pass
+    draws over the opaque pass's pixels against its depth, as the GPU does), ``quad_offset`` numbering the pass's quads after
+    the previous pass's so the owner-quad and face tables span both passes."""
+    if state is None:
+        state = {}
+    if "pixels" not in state:
+        size = IMAGE_SIZE * IMAGE_SIZE
+        state.update(
+            pixels=[BACKGROUND] * size, depth_buffer=[math.inf] * size, owner_quad=[-1] * size, contested=[False] * size,
+            near_face=[-1] * size, near_depth=[math.inf] * size, second_face=[-1] * size, second_depth=[math.inf] * size,
+            quad_offset=0,
+        )
+    return state
+
+
 def render_capture(sample: dict[str, Any], texture: Image.Image, camera: Camera,
-                   quad_faces: list[int] | None = None
+                   quad_faces: list[int] | None = None, state: dict[str, Any] | None = None
                    ) -> tuple[Image.Image, list[bool], list[tuple[int, int] | None], list[int]]:
     """Rasterise one capture; also returns the per-pixel z-fight mask and, when ``quad_faces`` (``quad_face_ids``)
     is given, the per-pixel FRONT PAIR for the pair-contested rule (owner 2026-09-15): the two nearest fragments of
@@ -2257,15 +2351,17 @@ def render_capture(sample: dict[str, Any], texture: Image.Image, camera: Camera,
     the front, which let a thin fin's two coplanar faces swap between the
     renderers - the Cloud Shark).
     """
-    pixels = [BACKGROUND] * (IMAGE_SIZE * IMAGE_SIZE)
-    depth_buffer = [math.inf] * (IMAGE_SIZE * IMAGE_SIZE)
-    owner_quad = [-1] * (IMAGE_SIZE * IMAGE_SIZE)
-    contested = [False] * (IMAGE_SIZE * IMAGE_SIZE)
+    state = raster_state(state)
+    pixels = state["pixels"]
+    depth_buffer = state["depth_buffer"]
+    owner_quad = state["owner_quad"]
+    contested = state["contested"]
     # the pair-contested rule's two nearest faces per pixel (face id and depth), tracked when quad_faces is given
-    near_face = [-1] * (IMAGE_SIZE * IMAGE_SIZE)
-    near_depth = [math.inf] * (IMAGE_SIZE * IMAGE_SIZE)
-    second_face = [-1] * (IMAGE_SIZE * IMAGE_SIZE)
-    second_depth = [math.inf] * (IMAGE_SIZE * IMAGE_SIZE)
+    near_face = state["near_face"]
+    near_depth = state["near_depth"]
+    second_face = state["second_face"]
+    second_depth = state["second_depth"]
+    quad_offset = state["quad_offset"]
     # a fragment farther behind the front than this can neither show nor be one of the two front fragments
     reach = PAIR_ATTRIBUTION_WINDOW if quad_faces is not None else CONTEST_DEPTH_EPSILON
     texture = texture.convert("RGBA")
@@ -2275,11 +2371,11 @@ def render_capture(sample: dict[str, Any], texture: Image.Image, camera: Camera,
     vertices = sample["render_vertices"]
     if len(vertices) % 4:
         raise AssertionError("captured renderer vertex count is not quad-aligned")
-    if quad_faces is not None and len(quad_faces) != len(vertices) // 4:
+    if quad_faces is not None and len(quad_faces) != quad_offset + len(vertices) // 4:
         raise AssertionError("quad face identities do not match the captured quad count")
     for offset in range(0, len(vertices), 4):
         quad = vertices[offset:offset + 4]
-        quad_index = offset // 4
+        quad_index = quad_offset + offset // 4
         face = quad_faces[quad_index] if quad_faces is not None else -1
         for indices in ((0, 1, 2), (0, 2, 3)):
             triangle = [quad[index] for index in indices]
@@ -2356,6 +2452,7 @@ def render_capture(sample: dict[str, Any], texture: Image.Image, camera: Camera,
                     depth_buffer[pixel_index] = depth
                     owner_quad[pixel_index] = quad_index
 
+    state["quad_offset"] = quad_offset + len(vertices) // 4
     image = Image.new("RGBA", (IMAGE_SIZE, IMAGE_SIZE))
     image.putdata(pixels)
     return (image, contested, front_pairs(quad_faces, near_face, near_depth, second_face, second_depth),
@@ -2388,7 +2485,7 @@ def shown_faces(quad_faces: list[int] | None, owner_quad: list[int]) -> list[int
 
 def render_capture_blended(sample: dict[str, Any], texture: Image.Image, camera: Camera,
                            mode: dict[str, Any], depth_epsilon: float,
-                           quad_faces: list[int] | None = None
+                           quad_faces: list[int] | None = None, state: dict[str, Any] | None = None
                            ) -> tuple[Image.Image, list[bool], list[tuple[int, int] | None], list[int]]:
     """ENT-S-146: rasterise one capture under ``entity_translucent`` - what the GPU does for ONE model's
     quads, in emission order, under that RenderType's states (VISUAL_MODES, bytecode-cited):
@@ -2437,15 +2534,17 @@ def render_capture_blended(sample: dict[str, Any], texture: Image.Image, camera:
     never a member.
     """
     colour_scale = [value / 255.0 for value in mode["vertex_color"]]
-    pixels = [BACKGROUND] * (IMAGE_SIZE * IMAGE_SIZE)
-    depth_buffer = [math.inf] * (IMAGE_SIZE * IMAGE_SIZE)
-    owner_quad = [-1] * (IMAGE_SIZE * IMAGE_SIZE)
+    state = raster_state(state)
+    pixels = state["pixels"]
+    depth_buffer = state["depth_buffer"]
+    owner_quad = state["owner_quad"]
     front_texel: list[tuple[int, int, int] | None] = [None] * (IMAGE_SIZE * IMAGE_SIZE)
-    contested = [False] * (IMAGE_SIZE * IMAGE_SIZE)
-    near_face = [-1] * (IMAGE_SIZE * IMAGE_SIZE)
-    near_depth = [math.inf] * (IMAGE_SIZE * IMAGE_SIZE)
-    second_face = [-1] * (IMAGE_SIZE * IMAGE_SIZE)
-    second_depth = [math.inf] * (IMAGE_SIZE * IMAGE_SIZE)
+    contested = state["contested"]
+    near_face = state["near_face"]
+    near_depth = state["near_depth"]
+    second_face = state["second_face"]
+    second_depth = state["second_depth"]
+    quad_offset = state["quad_offset"]
     reach = max(depth_epsilon, PAIR_ATTRIBUTION_WINDOW) if quad_faces is not None else depth_epsilon
     texture = texture.convert("RGBA")
     texture_pixels = texture.load()
@@ -2454,11 +2553,11 @@ def render_capture_blended(sample: dict[str, Any], texture: Image.Image, camera:
     vertices = sample["render_vertices"]
     if len(vertices) % 4:
         raise AssertionError("captured renderer vertex count is not quad-aligned")
-    if quad_faces is not None and len(quad_faces) != len(vertices) // 4:
+    if quad_faces is not None and len(quad_faces) != quad_offset + len(vertices) // 4:
         raise AssertionError("quad face identities do not match the captured quad count")
     for offset in range(0, len(vertices), 4):
         quad = vertices[offset:offset + 4]
-        quad_index = offset // 4
+        quad_index = quad_offset + offset // 4
         face = quad_faces[quad_index] if quad_faces is not None else -1
         for indices in ((0, 1, 2), (0, 2, 3)):
             triangle = [quad[index] for index in indices]
@@ -2528,6 +2627,7 @@ def render_capture_blended(sample: dict[str, Any], texture: Image.Image, camera:
                     owner_quad[pixel_index] = quad_index
                     front_texel[pixel_index] = texel
 
+    state["quad_offset"] = quad_offset + len(vertices) // 4
     image = Image.new("RGBA", (IMAGE_SIZE, IMAGE_SIZE))
     image.putdata(pixels)
     return (image, contested, front_pairs(quad_faces, near_face, near_depth, second_face, second_depth),
@@ -2586,10 +2686,15 @@ def foreground_fraction(image: Image.Image) -> float:
     return sum(pixel != BACKGROUND for pixel in pixels) / (IMAGE_SIZE * IMAGE_SIZE)
 
 
+def pass2_view(sample: dict[str, Any]) -> dict[str, Any]:
+    """TEST-018: the second pass of a capture as a sample of its own (the pass's vertices and draw order over the capture's cubes)."""
+    return {"cubes": sample["cubes"], "draw_order": sample["draw_order_pass2"], "render_vertices": sample["render_vertices_pass2"]}
+
+
 def visual_parity(model_id: str, spec: dict[str, Any], compiled: dict[str, Any],
                   geo_render: dict[str, Any], repository_root: Path,
                   output_dir: Path, thresholds: dict[str, Any],
-                  exclude_contested: bool = False) -> dict[str, Any]:
+                  exclude_contested: bool = False, pass_spec: dict[str, Any] | None = None) -> dict[str, Any]:
     """The visual leg. By default (the G2 root-order contract) every pixel is compared,
     contested ones included, and the contested fraction is a diagnostic only;
     ``exclude_contested`` True (``--contested-exclusion``) restores the ruling-2 exclusion
@@ -2651,10 +2756,35 @@ def visual_parity(model_id: str, spec: dict[str, Any], compiled: dict[str, Any],
             geo_image, geo_contested, geo_pairs, geo_shown = render_capture_blended(
                 geo_samples[sample_id], texture, camera, mode, depth_epsilon, geo_faces)
         else:
+            vanilla_state: dict[str, Any] = {}
+            geo_state: dict[str, Any] = {}
             vanilla_image, vanilla_contested, vanilla_pairs, vanilla_shown = render_capture(
-                vanilla_samples[sample_id], texture, camera, vanilla_faces)
+                vanilla_samples[sample_id], texture, camera, vanilla_faces, state=vanilla_state)
             geo_image, geo_contested, geo_pairs, geo_shown = render_capture(
-                geo_samples[sample_id], texture, camera, geo_faces)
+                geo_samples[sample_id], texture, camera, geo_faces, state=geo_state)
+            if pass_spec is not None:
+                # TEST-018: the second pass rasterised OVER the opaque pass on both sides - the pass's quads, in emission
+                # order, under the pass's render type (blended, LEQUAL against the opaque pass's depth, the depth written)
+                # and the pass's vertex colour, the face-identity table continuing across the two passes; the composite is
+                # what the diff compares, the pair-contested rule attributing across both passes.
+                if "coplanar_depth_epsilon_blocks" not in thresholds:
+                    raise AssertionError(
+                        f"{model_id} declares a second pass but the manifest thresholds carry no coplanar_depth_epsilon_blocks: "
+                        "the blended rasteriser's depth-tie window is a named tolerance and has no default"
+                    )
+                pass_mode = dict(VISUAL_MODES[pass_spec["render_type"]], render_type=pass_spec["render_type"],
+                                 vertex_color=list(pass_spec["vertex_color"]), light="world")
+                if pass_mode["blend"] is None:
+                    raise AssertionError(f"{model_id} second_pass.render_type {pass_spec['render_type']} does not blend; a second pass draws translucent")
+                depth_epsilon = float(thresholds["coplanar_depth_epsilon_blocks"])
+                vanilla_pass_faces = quad_face_ids(model_id, sample_id + " (second pass)", pass2_view(vanilla_samples[sample_id]), faces)
+                geo_pass_faces = quad_face_ids(model_id, sample_id + " (second pass)", pass2_view(geo_samples[sample_id]), faces)
+                vanilla_image, vanilla_contested, vanilla_pairs, vanilla_shown = render_capture_blended(
+                    pass2_view(vanilla_samples[sample_id]), texture, camera, pass_mode, depth_epsilon,
+                    vanilla_faces + vanilla_pass_faces, state=vanilla_state)
+                geo_image, geo_contested, geo_pairs, geo_shown = render_capture_blended(
+                    pass2_view(geo_samples[sample_id]), texture, camera, pass_mode, depth_epsilon,
+                    geo_faces + geo_pass_faces, state=geo_state)
         contested = [left or right for left, right in zip(vanilla_contested, geo_contested)]
         contested_fraction = sum(contested) / (IMAGE_SIZE * IMAGE_SIZE)
         # pair-eligible: both sides' two front fragments are the same pair of faces (either order) within the window,
@@ -2779,6 +2909,23 @@ def visual_parity(model_id: str, spec: dict[str, Any], compiled: dict[str, Any],
                 "compared, the draw and face orders being contracted equal on both sides (G2 root-order contract; "
                 "ENT-S-146 face order)" + pair_policy
             )
+    if pass_spec is not None:
+        # TEST-018: the second pass composited over the opaque pass (a second-pass entry only: every other report unchanged)
+        report["second_pass"] = {
+            "bones": list(pass_spec["bones"]),
+            "render_type": pass_spec["render_type"],
+            "vertex_color": list(pass_spec["vertex_color"]),
+            "emulated_states": dict(
+                {key: value for key, value in VISUAL_MODES[pass_spec["render_type"]].items() if key != "rasteriser"},
+                coplanar_depth_epsilon_blocks=float(thresholds["coplanar_depth_epsilon_blocks"])),
+            "composite": (
+                "the opaque pass rasterised first (the cutout rules above), then the pass's quads in emission order under the "
+                "pass's render type - blended SRC_ALPHA / ONE_MINUS_SRC_ALPHA over the opaque pixels, LEQUAL against the opaque "
+                "pass's depth within the coplanar depth epsilon, the depth written - each vertex multiplied by the pass's "
+                "colour, on both sides alike; the face-identity table and the pair-contested rule span both passes; the "
+                "composite is the image compared"
+            ),
+        }
     return report
 
 
@@ -2792,8 +2939,79 @@ FULL_BRIGHT_PACKED_LIGHT = 15728880
 PROBE_PACKED_LIGHT = 0
 
 
+def second_pass_render_state(model_id: str, pass_spec: dict[str, Any], classic: dict[str, Any],
+                             candidate: dict[str, Any]) -> dict[str, Any]:
+    """TEST-018: both sidecars' ``second_pass`` blocks - the pass's render-type function (one factory, the same name on
+    both sides and the declared one; the candidate's the classic model's own object by identity), the colour every vertex
+    of the pass carried (one, equal on both sides and to the declaration) and the light (the probe's, as the main pass)."""
+    expected_colour = list(pass_spec["vertex_color"])
+    observed = {}
+    for side, state in (("classic", classic), ("candidate", candidate)):
+        block = state.get("second_pass")
+        if not isinstance(block, dict):
+            raise AssertionError(f"RENDER STATE MISSING {model_id}/{side}: the sidecar carries no second_pass block (a stale probe run?)")
+        render_type = block["render_type"]
+        factories = render_type.get("render_type_factories") or []
+        if len(factories) != 1 or render_type.get("render_type") is None:
+            raise AssertionError(
+                f"RENDER STATE AMBIGUOUS {model_id}/{side} (second pass): the render-type function's owner "
+                f"{render_type.get('owner_class')} references {factories} RenderType factories; exactly one is required"
+            )
+        colour = block["vertex_color"]
+        if len(colour.get("distinct_argb") or []) != 1 or "rgba" not in colour:
+            raise AssertionError(
+                f"RENDER STATE {model_id}/{side} (second pass): the pass's vertices carried {colour.get('distinct_rgba')} colours; "
+                "exactly one is required"
+            )
+        light = block["packed_light"]
+        if len(light.get("distinct_observed") or []) != 1 or "value" not in light:
+            raise AssertionError(
+                f"RENDER STATE {model_id}/{side} (second pass): the pass's vertices carried {light.get('distinct_observed')} packed "
+                "lights; exactly one is required"
+            )
+        if int(colour["vertices_observed"]) == 0:
+            raise AssertionError(f"RENDER STATE UNEVIDENCED {model_id}/{side} (second pass): no vertex was observed")
+        if sorted(block.get("bones") or []) != sorted(pass_spec["bones"]):
+            raise AssertionError(f"RENDER STATE MISMATCH {model_id}/{side} (second pass): the probe's bones {block.get('bones')} "
+                                 f"are not the manifest's {pass_spec['bones']}")
+        observed[side] = {
+            "render_type": render_type["render_type"],
+            "render_type_factory": factories[0],
+            "render_type_owner": render_type.get("owner_class"),
+            "vertex_color": [int(value) for value in colour["rgba"]],
+            "packed_light": int(light["value"]),
+            "vertices_observed": int(colour["vertices_observed"]),
+        }
+    expected = {"render_type": pass_spec["render_type"], "vertex_color": expected_colour,
+                "packed_light": observed["classic"]["packed_light"]}
+    for field in ("render_type", "vertex_color", "packed_light"):
+        left, right = observed["classic"][field], observed["candidate"][field]
+        if left != right:
+            raise AssertionError(
+                f"RENDER STATE MISMATCH {model_id} (second pass): classic {field} {left} but the candidate requests {right}"
+            )
+        if left != expected[field]:
+            raise AssertionError(
+                f"RENDER STATE MISMATCH {model_id} (second pass): both sides request {field} {left} but the manifest's second_pass "
+                f"declares {expected[field]}"
+            )
+    if not candidate["second_pass"]["render_type"].get("same_function_object_as_classic"):
+        raise AssertionError(
+            f"RENDER STATE MISMATCH {model_id} (second pass): the descriptor hands over a render-type function that is not the "
+            "classic model's own object"
+        )
+    return {
+        "status": "PASS",
+        "expected": expected,
+        "classic": observed["classic"],
+        "candidate": dict(observed["candidate"], same_function_object_as_classic=True,
+                          source=candidate["second_pass"]["render_type"].get("source")),
+        "bones": list(pass_spec["bones"]),
+    }
+
+
 def render_state_parity(model_id: str, spec: dict[str, Any], mode: dict[str, Any] | None,
-                        vanilla_dir: Path, geo_dir: Path) -> dict[str, Any]:
+                        vanilla_dir: Path, geo_dir: Path, pass_spec: dict[str, Any] | None = None) -> dict[str, Any]:
     """Both sides' recorded render state equal to each other and to the manifest's visual mode.
 
     The expectation is the declared mode, or the default every landed model runs under: render type
@@ -2865,7 +3083,7 @@ def render_state_parity(model_id: str, spec: dict[str, Any], mode: dict[str, Any
             f"RENDER STATE MISMATCH {model_id}: the descriptor hands over a render-type function that is not the "
             "classic model's own object"
         )
-    return {
+    report = {
         "status": "PASS",
         "expected": {"render_type": expected_type, "vertex_color": expected_colour, "packed_light": expected_light,
                      "light": mode["light"] if mode else "world"},
@@ -2879,6 +3097,10 @@ def render_state_parity(model_id: str, spec: dict[str, Any], mode: dict[str, Any
             "vertex carried after each side was handed what its renderer would hand it"
         ),
     }
+    if pass_spec is not None:
+        # TEST-018: the second pass's render state, both sides against the declaration (a second-pass entry only)
+        report["second_pass"] = second_pass_render_state(model_id, pass_spec, classic, candidate)
+    return report
 
 
 def visual_mode_lines(visual: dict[str, Any]) -> list[str]:
@@ -3391,9 +3613,17 @@ def main() -> int:
             model_id, spec, compiled, reference_animation, animation_contract,
             conversion, float(manifest["ticks_per_second"]),
         )
+        # TEST-018: a second-pass entry's declaration, handed to the draw-order, render-state and visual legs (None otherwise)
+        pass_spec = second_pass(model_id, spec)
         draw_order = draw_order_parity(model_id, compiled, geo_render, generated_geometry, conversion,
                                        HIERARCHY_NORMAL_EPSILON if hierarchy else float(thresholds["normal_epsilon"]),
-                                       undrawn, hierarchy)
+                                       undrawn, hierarchy, pass_spec)
+        if pass_spec is not None:
+            print(
+                f"G1 SECOND PASS PASS: {model_id} {draw_order['second_pass']['draws_checked']} pass draws over "
+                f"{draw_order['second_pass']['captures_checked']} captures in the classic order - the bones "
+                f"{draw_order['second_pass']['bones']} drawn by the pass alone on both sides"
+            )
         print(
             f"G1 DRAW ORDER PASS: {model_id} {draw_order['captures_checked']} captures, "
             f"{draw_order['draws_checked']} draws in the "
@@ -3475,7 +3705,7 @@ def main() -> int:
         else:
             visual = visual_parity(
                 model_id, spec, compiled, geo_render, repository_root, args.output_dir, thresholds,
-                exclude_contested=args.contested_exclusion,
+                exclude_contested=args.contested_exclusion, pass_spec=pass_spec,
             )
             print(
                 f"G1 VISUAL PASS: {model_id} max changed {visual['max_changed_fraction']:.12g}, "
@@ -3487,14 +3717,21 @@ def main() -> int:
             # ENT-S-146 (refuter B, D3): the render state both sides actually requested, against the mode the
             # visual leg emulated - for EVERY model (a cutout rig reporting anything but cutout / white / the
             # probe's light fails here); recorded in the report only for a model that declares a mode.
-            render_state = render_state_parity(model_id, spec, declared_mode, args.vanilla_dir, args.geo_dir)
+            render_state = render_state_parity(model_id, spec, declared_mode, args.vanilla_dir, args.geo_dir, pass_spec)
             print(
                 f"G1 RENDER STATE PASS: {model_id} {render_state['classic']['render_type']} / "
                 f"{tuple(render_state['classic']['vertex_color'])} / light {render_state['classic']['packed_light']} "
                 f"on both sides ({render_state['classic']['vertices_observed']} + "
                 f"{render_state['candidate']['vertices_observed']} vertices observed)"
+                + (
+                    f"; second pass {render_state['second_pass']['classic']['render_type']} / "
+                    f"{tuple(render_state['second_pass']['classic']['vertex_color'])} on both sides, the classic model's own "
+                    f"function object ({render_state['second_pass']['classic']['vertices_observed']} + "
+                    f"{render_state['second_pass']['candidate']['vertices_observed']} pass vertices observed)"
+                    if pass_spec is not None else ""
+                )
             )
-            if declared_mode is not None:
+            if declared_mode is not None or pass_spec is not None:
                 visual["render_state"] = render_state
             common_report["visual"] = visual
             model_reports.append(common_report)

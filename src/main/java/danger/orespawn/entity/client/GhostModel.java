@@ -10,7 +10,10 @@ import net.minecraft.client.model.geom.builders.CubeListBuilder;
 import net.minecraft.client.model.geom.builders.LayerDefinition;
 import net.minecraft.client.model.geom.builders.MeshDefinition;
 import net.minecraft.client.model.geom.builders.PartDefinition;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
+import java.util.function.Function;
 
 /**
  * The 1.7.10 Ghost (orig ModelGhost.java, ENT-S-091): one 6x21x6 head-and-body
@@ -22,11 +25,22 @@ import net.minecraft.util.Mth;
  * ENT-S-092's per-renderer findings, not geometry.
  */
 public class GhostModel<T extends Ghost> extends EntityModel<T> {
+    /**
+     * ENT-S-160 (a), the remainder slice (2026-09-15; owner 2026-09-13, item 4: the ENT-S-146 move): the render-type FUNCTION the
+     * ghost is drawn with - {@code RenderType::entityTranslucent}, the factory {@link GhostRenderer#getRenderType} applied as its
+     * own decision (the ghost.png alpha honoured; the 1.7.10 GL_BLEND look) - stored on the model as {@code EntityModel(Function)}
+     * does (the {@link FairyModel#RENDER_TYPE} / {@link GhostSkellyModel#RENDER_TYPE} form) so the GeckoLib descriptor hands over
+     * this very object and the parity harness proves the two renderers' render type equal by identity. The classic path reads it
+     * back through {@link GhostRenderer#getRenderType}, which applies this function to the texture as {@code Model.renderType}
+     * would; {@code LivingEntityRenderer.getRenderType} itself is overridden there, as before.
+     */
+    public static final Function<ResourceLocation, RenderType> RENDER_TYPE = RenderType::entityTranslucent;
     private final ModelPart headAndBody;
     private final ModelPart lArm;
     private final ModelPart rArm;
 
     public GhostModel(ModelPart root) {
+        super(RENDER_TYPE);
         this.headAndBody = root.getChild("HeadAndBody");
         this.lArm = root.getChild("LArm");
         this.rArm = root.getChild("RArm");

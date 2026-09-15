@@ -54,7 +54,7 @@ import danger.orespawn.OreSpawnMod;
 import danger.orespawn.util.MyUtils;
 import danger.orespawn.entity.ai.TargetSelection;
 
-public class ThePrincess extends TamableAnimal {
+public class ThePrincess extends TamableAnimal implements danger.orespawn.entity.pose.ThePrincessPose {
     // OPT-011: cached SoundEvents — identical createVariableRangeEvent ids,
     // allocated once per class instead of on every sound query.
     private static final SoundEvent SND_ROAR = SoundEvent.createVariableRangeEvent(

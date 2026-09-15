@@ -122,12 +122,8 @@ ACKNOWLEDGED = {
 # from a hook is an ERROR as anywhere else. check_hooks reports a stale entry.
 HOOKS = {
     "ButterflyGeoReplacement": "butterfly",
-    "GhostGeoReplacement": "ghost",
     "LunaMothGeoReplacement": "butterfly",
-    "LurkingTerrorGeoReplacement": "lurkingterror",
     "MothraGeoReplacement": "butterfly",
-    "ScorpionGeoReplacement": "scorpion",
-    "TheKingGeoReplacement": "theking",
     "VampireButterflyGeoReplacement": "butterfly",
 }
 
