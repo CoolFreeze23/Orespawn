@@ -292,12 +292,21 @@ public final class G1ModelProbe {
         DrawOrderObserver drawOrder = new DrawOrderObserver(newClassicModel(modelClass, spec, shadowRoot), shadowRoot,
                 namesToPaths, instances == null ? Map.of() : instances.declaredCounts);
 
+        // THE SECOND PASS (the remainder slice, 2026-09-15; TEST-018): the classic renderer's second pass, captured beside
+        // every full capture - the bind included - on its own consumer under the same classic chain (the King's renderWingMembranes).
+        ClassicSecondPass secondPass = ClassicSecondPass.declared(spec, modelClass);
         JsonArray samples = new JsonArray();
         resetBakedTree(bakedRoot);
         JsonObject bindSample = captureVanillaSample(
                 new SampleRequest("bind", 0.0F, 0.0F, true, false),
                 model, bakedRoot, namesToPaths, Set.of(), instances, observed, packedLight, transform);
+        if (secondPass != null) {
+            secondPass.capture(bindSample, model, packedLight);
+        }
         drawOrder.observe(bindSample, (shadowModel, root) -> resetBakedTree(root));
+        if (secondPass != null) {
+            drawOrder.observePass(bindSample, (shadowModel, root) -> resetBakedTree(root), secondPass.method);
+        }
         samples.add(bindSample);
 
         float limbSwing = spec.get("limb_swing").getAsFloat();
@@ -307,6 +316,7 @@ public final class G1ModelProbe {
         boolean productionHook = CODE_DRIVEN_KIND.equals(animationKind)
                 || ENTITY_STATE_KIND.equals(animationKind);
         List<SampleRequest> requests = sampleRequests(spec);
+        boolean partialTickInput = partialTickInput(spec);
         if (ENTITY_STATE_KIND.equals(animationKind)) {
             // The classic model reads its entity: pose it from a declared state through
             // its entity-free poseFrom entry, exactly as the candidate side is posed.
@@ -319,21 +329,31 @@ public final class G1ModelProbe {
                     ProbeSubject subject = new ProbeSubject(state);
                     resetBakedTree(bakedRoot);
                     showAllParts(bakedRoot);
-                    poseFrom.invoke(model, subject, limbSwing, request.limbSwingAmount(),
-                            request.ageTicks(), netHeadYaw, headPitch);
+                    invokePoseFrom(poseFrom, model, subject, limbSwing, request.limbSwingAmount(),
+                            request.ageTicks(), netHeadYaw, headPitch, request.partialTick());
                     Set<String> hidden = hiddenParts(bakedRoot, namesToPaths);
                     JsonObject sample = captureVanillaSample(stateRequest(state, request), model, bakedRoot,
                             namesToPaths, hidden, instances, observed, packedLight, transform);
                     sample.add("entity_state", state.deepCopy());
                     sample.add("subject_after", subject.after());
                     sample.add("hidden_bones", names(hidden));
-                    drawOrder.observe(sample, (shadowModel, root) -> {
+                    if (partialTickInput) {
+                        sample.addProperty("partial_tick", request.partialTick());
+                    }
+                    if (secondPass != null && request.fullCapture()) {
+                        secondPass.capture(sample, model, packedLight);
+                    }
+                    ShadowPose shadowPose = (shadowModel, root) -> {
                         // The same declared state on a fresh subject: a seeded roll evolves identically.
                         resetBakedTree(root);
                         showAllParts(root);
-                        poseFrom.invoke(shadowModel, new ProbeSubject(state), limbSwing, request.limbSwingAmount(),
-                                request.ageTicks(), netHeadYaw, headPitch);
-                    });
+                        invokePoseFrom(poseFrom, shadowModel, new ProbeSubject(state), limbSwing, request.limbSwingAmount(),
+                                request.ageTicks(), netHeadYaw, headPitch, request.partialTick());
+                    };
+                    drawOrder.observe(sample, shadowPose);
+                    if (secondPass != null && request.fullCapture()) {
+                        drawOrder.observePass(sample, shadowPose, secondPass.method);
+                    }
                     samples.add(sample);
                 }
             }
@@ -349,11 +369,21 @@ public final class G1ModelProbe {
                 if (productionHook) {
                     sample.add("hidden_bones", names(hidden));
                 }
-                drawOrder.observe(sample, (shadowModel, root) -> {
+                if (partialTickInput) {
+                    sample.addProperty("partial_tick", request.partialTick());
+                }
+                if (secondPass != null && request.fullCapture()) {
+                    secondPass.capture(sample, model, packedLight);
+                }
+                ShadowPose shadowPose = (shadowModel, root) -> {
                     resetBakedTree(root);
                     setupAnim.invoke(shadowModel, null, limbSwing, request.limbSwingAmount(),
                             request.ageTicks(), netHeadYaw, headPitch);
-                });
+                };
+                drawOrder.observe(sample, shadowPose);
+                if (secondPass != null && request.fullCapture()) {
+                    drawOrder.observePass(sample, shadowPose, secondPass.method);
+                }
                 samples.add(sample);
             }
         }
@@ -401,7 +431,110 @@ public final class G1ModelProbe {
             light.add("classic_renderer", rendererLight);
         }
         renderState.add("packed_light", light);
+        if (secondPass != null) {
+            // TEST-018: the classic renderer's second pass - its render-type function (the model's own object), the colour and
+            // light every vertex of the pass carried, the bones and the classic method - beside the main pass's.
+            renderState.add("second_pass", secondPass.sidecar());
+        }
         return out;
+    }
+
+    /**
+     * THE CLASSIC RENDERER'S SECOND PASS (the remainder slice, 2026-09-15; TEST-018 - the King): the manifest's
+     * {@code second_pass} block names the classic model's method that draws the pass ({@code classic_method}, the
+     * {@code (PoseStack, VertexConsumer, int, int, int)} shape of {@code renderToBuffer}: {@code ModelTheKing.renderWingMembranes}),
+     * the bones it draws ({@code bones}), and the model's own static fields holding the pass's render-type function
+     * ({@code classic_render_type_field}: {@code WING_MEMBRANE_RENDER_TYPE}) and ARGB colour ({@code classic_color_field}:
+     * {@code WING_MEMBRANE_COLOR}) - the very objects {@code TheKingRenderer.render} hands the pass. Beside every full
+     * capture the probe runs that method on its own consumer under the same classic chain M with the pass's colour and the
+     * capture's light ({@code render_vertices_pass2}), attributes its draws by the same skipDraw elimination
+     * ({@code draw_order_pass2}) and records the pass's render state in the sidecar ({@code second_pass}). The entity
+     * transform {@code TheKingRenderer.setupEntityTransform} rebuilds for its pass is the renderer's, not the model's: the
+     * probe captures the model's pass under M, the chain the main pass is captured under.
+     */
+    private static final class ClassicSecondPass {
+        final Method method;
+        final List<String> bones;
+        final int color;
+        final Function<ResourceLocation, RenderType> renderType;
+        final String renderTypeField;
+        final String colorField;
+        final RenderStateProbe.Observed observed = new RenderStateProbe.Observed();
+
+        private ClassicSecondPass(Method method, List<String> bones, int color, Function<ResourceLocation, RenderType> renderType,
+                                  String renderTypeField, String colorField) {
+            this.method = method;
+            this.bones = bones;
+            this.color = color;
+            this.renderType = renderType;
+            this.renderTypeField = renderTypeField;
+            this.colorField = colorField;
+        }
+
+        /** The manifest's declaration resolved against the classic model class, or null for an entry without one. */
+        @SuppressWarnings("unchecked")
+        static ClassicSecondPass declared(JsonObject spec, Class<?> modelClass) throws Exception {
+            if (!spec.has("second_pass")) {
+                return null;
+            }
+            JsonObject pass = spec.getAsJsonObject("second_pass");
+            String methodName = pass.get("classic_method").getAsString();
+            Method method = modelClass.getDeclaredMethod(methodName, PoseStack.class, VertexConsumer.class, int.class, int.class, int.class);
+            method.setAccessible(true);
+            List<String> bones = new ArrayList<>();
+            pass.getAsJsonArray("bones").forEach(bone -> bones.add(bone.getAsString()));
+            if (bones.isEmpty()) {
+                throw new IllegalStateException(spec.get("id").getAsString() + ": second_pass.bones is empty");
+            }
+            String renderTypeField = pass.get("classic_render_type_field").getAsString();
+            String colorField = pass.get("classic_color_field").getAsString();
+            Field function = modelClass.getDeclaredField(renderTypeField);
+            function.setAccessible(true);
+            Field colour = modelClass.getDeclaredField(colorField);
+            colour.setAccessible(true);
+            if (!Modifier.isStatic(function.getModifiers()) || !Modifier.isStatic(colour.getModifiers())) {
+                throw new IllegalStateException(spec.get("id").getAsString() + ": the second pass's fields must be static");
+            }
+            return new ClassicSecondPass(method, List.copyOf(bones), colour.getInt(null),
+                    (Function<ResourceLocation, RenderType>) function.get(null), renderTypeField, colorField);
+        }
+
+        /** The classic model's own function object (the render-state identity check against the descriptor's). */
+        static Function<ResourceLocation, RenderType> classicFunction(JsonObject spec, Class<?> modelClass) throws Exception {
+            Field function = modelClass.getDeclaredField(spec.getAsJsonObject("second_pass").get("classic_render_type_field").getAsString());
+            function.setAccessible(true);
+            @SuppressWarnings("unchecked")
+            Function<ResourceLocation, RenderType> value = (Function<ResourceLocation, RenderType>) function.get(null);
+            return value;
+        }
+
+        /** The pass's vertices under the classic chain M, on their own consumer, with the pass's colour and the capture's light. */
+        void capture(JsonObject sample, Object model, int packedLight) throws Exception {
+            FlatCapturingVertexConsumer consumer = new FlatCapturingVertexConsumer(this.observed);
+            PoseStack render = new PoseStack();
+            applyClassicChain(render);
+            this.method.invoke(model, render, consumer, packedLight, 0, this.color);
+            sample.add("render_vertices_pass2", consumer.verticesJson());
+        }
+
+        JsonObject sidecar() throws Exception {
+            JsonObject out = new JsonObject();
+            JsonObject renderType = RenderStateProbe.describeFunction(this.renderType, RenderStateProbe.entityModelDefault());
+            renderType.addProperty("source", "the classic model's own static function object " + this.renderTypeField
+                    + " (the ENT-S-146 form), applied to the texture by the classic renderer's second pass");
+            out.add("render_type", renderType);
+            JsonObject colour = this.observed.colourJson();
+            colour.addProperty("handed_to_second_pass", this.color);
+            colour.addProperty("source", "the classic model's own static constant " + this.colorField
+                    + ", handed to the pass method and observed at addVertex over the full captures");
+            out.add("vertex_color", colour);
+            JsonObject light = this.observed.lightJson();
+            light.addProperty("source", "the capture's packed light, handed to the pass method and observed at addVertex");
+            out.add("packed_light", light);
+            out.add("bones", names(this.bones));
+            out.addProperty("classic_method", this.method.getName());
+            return out;
+        }
     }
 
     private static final String GAIT_SCALED_KIND = "gait_scaled";
@@ -468,13 +601,19 @@ public final class G1ModelProbe {
                 request.denseTransformSample());
     }
 
-    /** The compiled model's entity-free pose entry: {@code poseFrom(<pose interface>, 6 floats)}. */
+    /**
+     * The compiled model's entity-free pose entry: {@code poseFrom(<pose interface>, 5 floats)}, or - preferred where a
+     * model declares it (the remainder slice, 2026-09-15: the bipeds' {@code ModelBoyfriend} / {@code ModelGirlfriend}, whose
+     * classic renderer sets per-frame fields from the frame's partial tick) - the seven-parameter form with the partial tick
+     * last, {@code poseFrom(<pose interface>, 5 floats, float partialTick)}; {@link #invokePoseFrom} hands each its arguments.
+     */
     private static Method findPoseFrom(Class<?> modelClass) {
         return Arrays.stream(modelClass.getDeclaredMethods())
                 .filter(method -> method.getName().equals("poseFrom"))
-                .filter(method -> method.getParameterCount() == 6)
+                .filter(method -> method.getParameterCount() == 6 || method.getParameterCount() == 7)
                 .filter(method -> method.getParameterTypes()[0].isInterface()
                         && method.getParameterTypes()[0].isInstance(new ProbeSubject(new JsonObject())))
+                .sorted(Comparator.comparingInt(Method::getParameterCount).reversed())
                 .findFirst()
                 .map(method -> {
                     method.setAccessible(true);
@@ -482,6 +621,16 @@ public final class G1ModelProbe {
                 })
                 .orElseThrow(() -> new IllegalStateException("No poseFrom(<pose interface>, ...) on "
                         + modelClass.getName() + "; entity_state models must expose one"));
+    }
+
+    /** The pose entry on its arguments: the six-parameter form without the partial tick, the seven-parameter form with it. */
+    private static void invokePoseFrom(Method poseFrom, Object model, Object subject, float limbSwing, float limbSwingAmount,
+                                       float ageTicks, float netHeadYaw, float headPitch, float partialTick) throws Exception {
+        if (poseFrom.getParameterCount() == 7) {
+            poseFrom.invoke(model, subject, limbSwing, limbSwingAmount, ageTicks, netHeadYaw, headPitch, partialTick);
+        } else {
+            poseFrom.invoke(model, subject, limbSwing, limbSwingAmount, ageTicks, netHeadYaw, headPitch);
+        }
     }
 
     private static Set<String> hiddenParts(ModelPart root, Map<String, String> namesToPaths) throws Exception {
@@ -537,17 +686,26 @@ public final class G1ModelProbe {
         return out;
     }
 
+    /**
+     * The classic model's concrete {@code setupAnim(entity, 5 floats)} - its own, or the nearest superclass's where the model
+     * declares none (the remainder slice, 2026-09-15: {@code ModelBoyfriend} / {@code ModelGirlfriend} inherit vanilla
+     * {@code HumanoidModel.setupAnim}; an entity_state entry poses through {@code poseFrom} and never invokes it, but every
+     * entry resolves it).
+     */
     private static Method findSetupAnim(Class<?> modelClass) {
-        return Arrays.stream(modelClass.getDeclaredMethods())
-                .filter(method -> method.getName().equals("setupAnim"))
-                .filter(method -> method.getParameterCount() == 6)
-                .filter(method -> !method.isBridge())
-                .findFirst()
-                .map(method -> {
-                    method.setAccessible(true);
-                    return method;
-                })
-                .orElseThrow(() -> new IllegalStateException("No concrete setupAnim method on " + modelClass.getName()));
+        for (Class<?> current = modelClass; current != null; current = current.getSuperclass()) {
+            java.util.Optional<Method> found = Arrays.stream(current.getDeclaredMethods())
+                    .filter(method -> method.getName().equals("setupAnim"))
+                    .filter(method -> method.getParameterCount() == 6)
+                    .filter(method -> !method.isBridge() && !Modifier.isAbstract(method.getModifiers()))
+                    .findFirst();
+            if (found.isPresent()) {
+                Method method = found.get();
+                method.setAccessible(true);
+                return method;
+            }
+        }
+        throw new IllegalStateException("No concrete setupAnim method on " + modelClass.getName());
     }
 
     private static JsonObject captureVanillaSample(SampleRequest request, Object model, ModelPart root,
@@ -1185,18 +1343,31 @@ public final class G1ModelProbe {
 
         /** Adds {@code draw_order} to a full capture: the drawn parts (clones per draw) in the classic order. */
         void observe(JsonObject sample, ShadowPose pose) throws Exception {
+            observe(sample, pose, null, "draw_order");
+        }
+
+        /**
+         * TEST-018: adds {@code draw_order_pass2} to a full capture - the parts the classic renderer's SECOND pass draws
+         * ({@code drawMethod}, the model's pass method of the {@code renderToBuffer} shape), attributed by the same skipDraw
+         * elimination on the same shadow bake posed identically.
+         */
+        void observePass(JsonObject sample, ShadowPose pose, Method drawMethod) throws Exception {
+            observe(sample, pose, drawMethod, "draw_order_pass2");
+        }
+
+        private void observe(JsonObject sample, ShadowPose pose, Method drawMethod, String key) throws Exception {
             if (!sample.has("render_vertices")) {
                 return;
             }
             String id = sample.get("id").getAsString();
             pose.apply(this.model, this.root);
-            Map<Integer, Integer> draws = run();
+            Map<Integer, Integer> draws = run(drawMethod);
             Map<Integer, String> owners = new TreeMap<>();
             try {
                 for (String name : this.cubeParts.keySet()) {
                     this.cubeParts.values().forEach(part -> part.skipDraw = true);
                     this.cubeParts.get(name).skipDraw = false;
-                    for (Map.Entry<Integer, Integer> draw : run().entrySet()) {
+                    for (Map.Entry<Integer, Integer> draw : run(drawMethod).entrySet()) {
                         Integer expected = draws.get(draw.getKey());
                         if (expected == null || !expected.equals(draw.getValue())) {
                             throw new IllegalStateException(id + ": " + name + " drew " + draw.getValue()
@@ -1231,7 +1402,7 @@ public final class G1ModelProbe {
                 order.add(this.declaredCounts.containsKey(part) || counts.get(part) > 1
                         ? part + "__i" + ordinal : part);
             }
-            if (sample.has("draws")) {
+            if (drawMethod == null && sample.has("draws")) {
                 // Slice 4c attributed the declared parts' draws by UV set; the two attributions must agree.
                 List<String> byUv = new ArrayList<>();
                 for (JsonElement draw : sample.getAsJsonArray("draws")) {
@@ -1250,14 +1421,18 @@ public final class G1ModelProbe {
                             + "draws as " + declaredDraws + " but the UV attribution recorded " + byUv);
                 }
             }
-            sample.add("draw_order", order);
+            sample.add(key, order);
         }
 
-        /** One renderToBuffer: vertex count per pose-stack push serial, in draw order. */
-        private Map<Integer, Integer> run() {
+        /** One renderToBuffer (or, for the second pass, the pass method): vertex count per pose-stack push serial, in draw order. */
+        private Map<Integer, Integer> run(Method drawMethod) throws Exception {
             InstrumentedPoseStack stack = new InstrumentedPoseStack();
             SerialCountingVertexConsumer consumer = new SerialCountingVertexConsumer(stack);
-            ((EntityModel<?>) this.model).renderToBuffer(stack, consumer, 0, 0, -1);
+            if (drawMethod == null) {
+                ((EntityModel<?>) this.model).renderToBuffer(stack, consumer, 0, 0, -1);
+            } else {
+                drawMethod.invoke(this.model, stack, consumer, 0, 0, -1);
+            }
             if (stack.depth != 0) {
                 throw new IllegalStateException("renderToBuffer left the pose stack unbalanced (depth " + stack.depth + ")");
             }
@@ -1387,10 +1562,21 @@ public final class G1ModelProbe {
         JsonObject candidateRenderType;
         String colourSource;
         GeoReplacementDescriptor.RenderTransform transform = GeoReplacementDescriptor.RenderTransform.IDENTITY;
+        // TEST-018 (the remainder slice, 2026-09-15): the descriptor's second pass, read without an entity like the hooks
+        // below; the pass's bones are drawn by the geo side in a second capture with the pass's colour, the main capture
+        // without them - exactly as the replaced renderer draws them (OreSpawnGeoReplacedEntityRenderer.SecondPassLayer).
+        GeoReplacementDescriptor.SecondPass geoPass = null;
+        RenderStateProbe.Observed observedPass = new RenderStateProbe.Observed();
         if (productionHook) {
             GeoReplacementDescriptor<?> descriptor = S4CandidateRuntime.instantiate(candidateClass).descriptor();
             // the constant render transform (TEST-013), read without an entity like the hooks below
             transform = descriptor.renderTransform();
+            geoPass = descriptor.secondPass();
+            if ((geoPass != null) != spec.has("second_pass")) {
+                throw new IllegalStateException(modelId + ": the descriptor " + (geoPass != null ? "declares" : "declares no")
+                        + " second pass but the manifest entry " + (spec.has("second_pass") ? "carries" : "carries no")
+                        + " second_pass block; the two must agree");
+            }
             Function<ResourceLocation, RenderType> own = descriptor.renderType(null);
             if (own != null) {
                 candidateRenderType = RenderStateProbe.describeFunction(own, entityModelDefault);
@@ -1474,8 +1660,9 @@ public final class G1ModelProbe {
 
         JsonArray samples = new JsonArray();
         SampleRequest bindRequest = new SampleRequest("bind", 0.0F, 0.0F, true, false);
+        boolean partialTickInput = partialTickInput(spec);
         samples.add(captureGeoSample(bindRequest, bind, productionHook, recordBonePoses, observed, candidateColour, candidateLight,
-                transform));
+                transform, geoPass, observedPass));
 
         float limbSwing = spec.get("limb_swing").getAsFloat();
         float netHeadYaw = optionalFloat(spec, "net_head_yaw");
@@ -1489,12 +1676,15 @@ public final class G1ModelProbe {
                     G1AnimationRuntime.EvaluatedModel candidate = S4CandidateRuntime.evaluateProductionHook(
                             rawModel, drawOrder, faceOrder, candidateClass,
                             new S4CandidateRuntime.Inputs(request.ageTicks(), limbSwing,
-                                    request.limbSwingAmount(), netHeadYaw, headPitch),
+                                    request.limbSwingAmount(), netHeadYaw, headPitch, request.partialTick()),
                             subject);
                     JsonObject sample = captureGeoSample(stateRequest(state, request), candidate, true,
-                            recordBonePoses, observed, candidateColour, candidateLight, transform);
+                            recordBonePoses, observed, candidateColour, candidateLight, transform, geoPass, observedPass);
                     sample.add("entity_state", state.deepCopy());
                     sample.add("subject_after", subject.after());
+                    if (partialTickInput) {
+                        sample.addProperty("partial_tick", request.partialTick());
+                    }
                     samples.add(sample);
                 }
             }
@@ -1514,12 +1704,15 @@ public final class G1ModelProbe {
                 } else if (productionHook) {
                     candidate = S4CandidateRuntime.evaluateProductionHook(rawModel, drawOrder, faceOrder, candidateClass,
                             new S4CandidateRuntime.Inputs(request.ageTicks(), limbSwing,
-                                    request.limbSwingAmount(), netHeadYaw, headPitch), null);
+                                    request.limbSwingAmount(), netHeadYaw, headPitch, request.partialTick()), null);
                 } else {
                     throw new IllegalStateException("Unsupported G1 candidate animation path " + candidatePath);
                 }
                 JsonObject sample = captureGeoSample(request, candidate, productionHook, recordBonePoses, observed,
-                        candidateColour, candidateLight, transform);
+                        candidateColour, candidateLight, transform, geoPass, observedPass);
+                if (partialTickInput) {
+                    sample.addProperty("partial_tick", request.partialTick());
+                }
                 if (keyframeLeg != null) {
                     sample.add(KeyframeLeg.SAMPLE_FIELD, keyframeLeg.classicRotations(request));
                     JsonObject wrap = keyframeLeg.wrapProvenance(request);
@@ -1555,6 +1748,29 @@ public final class G1ModelProbe {
                                 + "handed to actuallyRender and observed at addVertex")
                 : "no shipped descriptor: the probe's light, handed to actuallyRender and observed at addVertex");
         renderState.add("packed_light", light);
+        if (geoPass != null) {
+            // TEST-018: the candidate's second pass - the descriptor's render-type function (its identity against the classic
+            // model's own static field, the manifest's classic_render_type_field), the colour and light every vertex of the
+            // pass carried, the bones - beside the main pass's.
+            JsonObject pass = new JsonObject();
+            Function<ResourceLocation, RenderType> classicPassFunction = ClassicSecondPass.classicFunction(spec, classicModel(spec).getClass());
+            JsonObject passType = RenderStateProbe.describeFunction(geoPass.renderType(), entityModelDefault);
+            passType.addProperty("source", "descriptor.secondPass().renderType(), applied to the texture by "
+                    + "OreSpawnGeoReplacedEntityRenderer.SecondPassLayer for the pass's bones after the opaque pass");
+            passType.addProperty("same_function_object_as_classic", geoPass.renderType() == classicPassFunction);
+            passType.add("classic", RenderStateProbe.describeFunction(classicPassFunction, entityModelDefault));
+            pass.add("render_type", passType);
+            JsonObject passColour = observedPass.colourJson();
+            passColour.addProperty("handed_to_second_pass", geoPass.color());
+            passColour.addProperty("source", "descriptor.secondPass().color() - the colour int the SecondPassLayer hands "
+                    + "reRender for the pass, observed at addVertex over the pass captures");
+            pass.add("vertex_color", passColour);
+            JsonObject passLight = observedPass.lightJson();
+            passLight.addProperty("source", "the capture's packed light, handed to the pass and observed at addVertex");
+            pass.add("packed_light", passLight);
+            pass.add("bones", names(geoPass.bones()));
+            renderState.add("second_pass", pass);
+        }
         return out;
     }
 
@@ -1583,6 +1799,19 @@ public final class G1ModelProbe {
      * the declared primitive; a wrong count or type is refused, never guessed).
      */
     private static Object newClassicModel(Class<?> modelClass, JsonObject spec, ModelPart root) throws Exception {
+        Object model = constructClassicModel(modelClass, spec, root);
+        if (model instanceof EntityModel<?> entityModel) {
+            // The remainder slice (2026-09-15): EntityModel.young defaults to TRUE and the classic renderer sets it to
+            // entity.isBaby() before every draw (LivingEntityRenderer.render 92-100, 21.1.223); the probe's subject is never a
+            // baby, so the classic model stands at the adult value from construction - read only by AgeableListModel
+            // .renderToBuffer (the bipeds' HumanoidModel: the baby head and body scaling), ignored by every model that
+            // overrides renderToBuffer, so no other entry's capture moves.
+            entityModel.young = false;
+        }
+        return model;
+    }
+
+    private static Object constructClassicModel(Class<?> modelClass, JsonObject spec, ModelPart root) throws Exception {
         if (!spec.has("constructor_arguments")) {
             Constructor<?> constructor = modelClass.getDeclaredConstructor(ModelPart.class);
             constructor.setAccessible(true);
@@ -1658,7 +1887,8 @@ public final class G1ModelProbe {
     private static JsonObject captureGeoSample(
             SampleRequest request, G1AnimationRuntime.EvaluatedModel evaluated, boolean productionHook,
             boolean recordBonePoses, RenderStateProbe.Observed observed, int colour, int packedLight,
-            GeoReplacementDescriptor.RenderTransform transform) {
+            GeoReplacementDescriptor.RenderTransform transform, GeoReplacementDescriptor.SecondPass secondPass,
+            RenderStateProbe.Observed observedPass) {
         JsonObject sample = new JsonObject();
         sample.addProperty("id", request.id());
         sample.addProperty("capture_kind", request.fullCapture() ? "full" : "transform_only");
@@ -1674,6 +1904,7 @@ public final class G1ModelProbe {
                     hidden.add(name);
                 }
             });
+            // as the hook left them: the second pass's hiding below is the renderer's, not the hook's
             sample.add("hidden_bones", names(hidden));
         }
         if (!request.fullCapture()) {
@@ -1692,13 +1923,66 @@ public final class G1ModelProbe {
         transform.applySlot(poseStack);
         poseStack.translate(0.0F, GeoReplacementDescriptor.RenderTransform.SEAM_HEIGHT_COMPENSATION, 0.0F);
         poseStack.translate(0.0F, 0.01F, 0.0F);
+        // TEST-018: a rig with a second pass draws the pass's bones only in it - hidden for the main capture, exactly as
+        // OreSpawnGeoReplacedEntityRenderer.preRender hides them for the opaque pass; the hook's own hidden flags are kept
+        // and put back afterwards.
+        Map<String, boolean[]> passFlags = new TreeMap<>();
+        if (secondPass != null) {
+            for (String name : secondPass.bones()) {
+                GeoBone bone = evaluated.bones().get(name);
+                if (bone == null) {
+                    throw new IllegalStateException("the second pass names a bone the rig lacks: " + name);
+                }
+                passFlags.put(name, new boolean[] {bone.isHidden(), bone.isHidingChildren()});
+                bone.setHidden(true);
+            }
+        }
         // ENT-S-146: the light and colour the production renderer would hand actuallyRender (the descriptor's
         // fullBright / renderColor; GeckoLib's own for a rig without hooks) - GeoRenderer.renderCube passes
         // them to every addVertex, where the capture observes them. They touch no captured coordinate.
         renderer.actuallyRender(poseStack, null, evaluated.model(), null, null, consumer,
                 true, 0.0F, packedLight, 0, colour);
 
-        sample.add("cubes", consumer.groupsJson());
+        JsonArray cubes = consumer.groupsJson();
+        if (secondPass != null) {
+            // THE SECOND PASS on the geo side: the pass's bones alone (every other bone's cubes hidden, its children still
+            // traversed - the SecondPassLayer's form), the same chain, the pass's colour and the capture's light, on their own
+            // consumer: render_vertices_pass2 / draw_order_pass2 beside the main capture's, the cubes joined for the geometry
+            // and surface legs (which compare the whole rig, pass by pass being the draw-order, render-state and visual legs').
+            Map<String, boolean[]> flags = new TreeMap<>();
+            evaluated.bones().forEach((name, bone) -> flags.put(name, new boolean[] {bone.isHidden(), bone.isHidingChildren()}));
+            Set<String> passBones = new java.util.TreeSet<>(secondPass.bones());
+            evaluated.bones().forEach((name, bone) -> {
+                if (passBones.contains(name)) {
+                    bone.setHidden(false);
+                } else {
+                    bone.setHidden(true);
+                    bone.setChildrenHidden(false);
+                }
+            });
+            CapturingVertexConsumer passConsumer = new CapturingVertexConsumer(observedPass);
+            CapturingGeoRenderer passRenderer = new CapturingGeoRenderer(passConsumer, false);
+            PoseStack passStack = new PoseStack();
+            transform.applySlot(passStack);
+            passStack.translate(0.0F, GeoReplacementDescriptor.RenderTransform.SEAM_HEIGHT_COMPENSATION, 0.0F);
+            passStack.translate(0.0F, 0.01F, 0.0F);
+            passRenderer.actuallyRender(passStack, null, evaluated.model(), null, null, passConsumer,
+                    true, 0.0F, packedLight, 0, secondPass.color());
+            evaluated.bones().forEach((name, bone) -> {
+                boolean[] before = flags.get(name);
+                bone.setHidden(before[0]);
+                bone.setChildrenHidden(before[1]);
+            });
+            passFlags.forEach((name, before) -> {
+                GeoBone bone = evaluated.bones().get(name);
+                bone.setHidden(before[0]);
+                bone.setChildrenHidden(before[1]);
+            });
+            passConsumer.groupsJson().forEach(cubes::add);
+            sample.add("render_vertices_pass2", passConsumer.verticesJson());
+            sample.add("draw_order_pass2", passRenderer.drawOrderJson());
+        }
+        sample.add("cubes", cubes);
         sample.add("render_vertices", consumer.verticesJson());
         // G2: the bones whose cubes GeoRenderer emitted, in the order it emitted them.
         sample.add("draw_order", renderer.drawOrderJson());
@@ -1852,8 +2136,28 @@ public final class G1ModelProbe {
         Files.writeString(path, GSON.toJson(value) + "\n", StandardCharsets.UTF_8);
     }
 
+    /**
+     * One sample of the schedule; {@code partialTick} the frame's partial tick the seam carries since the remainder slice
+     * ({@code PoseInputs.partialTick}) - the fractional part of the sample's age, vanilla's own identity {@code
+     * ageInTicks = tickCount + partialTick}, handed to the classic side's seven-float {@code poseFrom} where a
+     * model declares one and to the hook through {@code S4CandidateRuntime.Inputs}; a hook that does not read it is unchanged
+     * by it, and the dumps record it only for an entry that declares {@code partial_tick_input}.
+     */
     record SampleRequest(String id, float ageTicks, float limbSwingAmount,
-                         boolean fullCapture, boolean denseTransformSample) {
+                         boolean fullCapture, boolean denseTransformSample, float partialTick) {
+        SampleRequest(String id, float ageTicks, float limbSwingAmount, boolean fullCapture, boolean denseTransformSample) {
+            this(id, ageTicks, limbSwingAmount, fullCapture, denseTransformSample, partialTickOf(ageTicks));
+        }
+
+        /** The fractional part of an age in ticks: {@code age - floor(age)}, in [0, 1). */
+        static float partialTickOf(float ageTicks) {
+            return ageTicks - (float) Math.floor(ageTicks);
+        }
+    }
+
+    /** An entry that declares {@code partial_tick_input}: its hook reads the seam's partial tick, so every sample records it. */
+    private static boolean partialTickInput(JsonObject spec) {
+        return spec.has("partial_tick_input") && spec.get("partial_tick_input").getAsBoolean();
     }
 
     private record BakeRequest(String id, double fraction, float ageTicks) {

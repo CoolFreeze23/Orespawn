@@ -1,0 +1,807 @@
+{
+  "schema_version": 1,
+  "model_id": "model_lurkingterror",
+  "tier": 2,
+  "proof_scope": "production_proof_model",
+  "ground_truth": "executed compiled LayerDefinition and baked ModelPart",
+  "source_class": "danger.orespawn.entity.client.LurkingTerrorModel",
+  "source_class_sha256": "3f0596485c2660cc7124d0f33e14926bdbc6b48b054560114991c294aefa9a42",
+  "compiled_dump_sha256": "bf1bde17ca48f76d4a123685ed1774c6aa44ccd340555d55d1c90cb942e77965",
+  "geometry_sha256": "0fce7a16e87376916f1fb07fa8c4846f3d35402741e9fd8b465695b816ae94c9",
+  "animation_sha256": "7882082857fdb11e02f158ebc3a6d3f970e2ac60d54813f0e903ee97b2293749",
+  "animation_contract_sha256": "408fd6731c7c26541d456cd004025c52b920b9f88b95702ae072f0bf2bf75236",
+  "bone_count": 59,
+  "cube_count": 59,
+  "mirrored_cube_count": 0,
+  "mirrored_uv_strategy": "source flag retained as modelpart_mirror; semantics baked into explicit faces; incompatible GeckoLib native mirror disabled",
+  "exact_bone_names": [
+    "abdomen",
+    "body",
+    "head",
+    "jaw1",
+    "jaw1part2",
+    "jaw1tooth1",
+    "jaw1tooth2",
+    "jaw1tooth3",
+    "jaw1tooth4",
+    "jaw1tooth5",
+    "jaw1tooth6",
+    "jaw2",
+    "jaw2part2",
+    "jaw2tooth1",
+    "jaw2tooth2",
+    "jaw2tooth3",
+    "jaw2tooth4",
+    "jaw2tooth5",
+    "jaw2tooth6",
+    "jaw3",
+    "jaw3part2",
+    "jaw3tooth1",
+    "jaw3tooth2",
+    "jaw3tooth3",
+    "jaw3tooth4",
+    "jaw3tooth5",
+    "jaw3tooth6",
+    "jaw4",
+    "jaw4part2",
+    "jaw4tooth1",
+    "jaw4tooth2",
+    "jaw4tooth3",
+    "jaw4tooth4",
+    "jaw4tooth5",
+    "jaw4tooth6",
+    "leg1",
+    "leg1part2",
+    "leg1part3",
+    "leg2",
+    "leg2part2",
+    "leg2part3",
+    "leg3",
+    "leg3part2",
+    "leg3part3",
+    "leg4",
+    "leg4part2",
+    "leg4part3",
+    "leg5",
+    "leg5part2",
+    "leg6",
+    "leg6part2",
+    "thorax",
+    "tonguepart1",
+    "tonguepart2",
+    "tonguepart3",
+    "wing_1",
+    "wing_2",
+    "wing_3",
+    "wing_4"
+  ],
+  "bone_draw_order": [
+    "body",
+    "leg1",
+    "leg1part2",
+    "leg1part3",
+    "leg2",
+    "leg2part2",
+    "leg2part3",
+    "leg3",
+    "leg3part2",
+    "leg3part3",
+    "leg4",
+    "leg4part2",
+    "leg4part3",
+    "leg5",
+    "leg5part2",
+    "leg6",
+    "leg6part2",
+    "thorax",
+    "abdomen",
+    "head",
+    "jaw1",
+    "jaw1part2",
+    "jaw1tooth1",
+    "jaw1tooth2",
+    "jaw1tooth3",
+    "jaw1tooth4",
+    "jaw1tooth5",
+    "jaw1tooth6",
+    "jaw2",
+    "jaw2part2",
+    "jaw2tooth1",
+    "jaw2tooth2",
+    "jaw2tooth3",
+    "jaw2tooth4",
+    "jaw2tooth5",
+    "jaw2tooth6",
+    "jaw3",
+    "jaw3part2",
+    "jaw3tooth1",
+    "jaw3tooth2",
+    "jaw3tooth3",
+    "jaw3tooth4",
+    "jaw3tooth5",
+    "jaw3tooth6",
+    "jaw4",
+    "jaw4part2",
+    "jaw4tooth1",
+    "jaw4tooth2",
+    "jaw4tooth3",
+    "jaw4tooth4",
+    "jaw4tooth5",
+    "jaw4tooth6",
+    "tonguepart1",
+    "tonguepart2",
+    "tonguepart3",
+    "wing_1",
+    "wing_2",
+    "wing_3",
+    "wing_4"
+  ],
+  "draw_order_evidence": {
+    "source": "classic EntityModel.renderToBuffer on a second bake posed identically; every ModelPart.render is one pose-stack push, attributed to its part by ModelPart.skipDraw elimination (one run per cube-bearing part with every other part's skipDraw set); a part drawn n > 1 times is named <part>__i<k> by draw ordinal",
+    "captures": [
+      "bind",
+      "s_idle_t0",
+      "s_idle_t_quarter",
+      "s_idle_t_half",
+      "s_idle_t_three_quarter",
+      "s_idle_t_end",
+      "s_legs_swaying_t0",
+      "s_legs_swaying_t_quarter",
+      "s_legs_swaying_t_half",
+      "s_legs_swaying_t_three_quarter",
+      "s_legs_swaying_t_end",
+      "s_attacking_t0",
+      "s_attacking_t_quarter",
+      "s_attacking_t_half",
+      "s_attacking_t_three_quarter",
+      "s_attacking_t_end"
+    ],
+    "cube_bearing_units": 59,
+    "observed_units": 59,
+    "unobserved_units": [],
+    "ordered_pairs": 1711,
+    "tie_break": "converter emission order for pairs never drawn together in any capture",
+    "lifting": "pre-order over the geo bone tree, siblings by their subtree's first classic draw"
+  },
+  "cube_face_order": {
+    "abdomen": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "body": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "head": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "jaw1": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "jaw1part2": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "jaw1tooth1": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "jaw1tooth2": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "jaw1tooth3": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "jaw1tooth4": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "jaw1tooth5": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "jaw1tooth6": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "jaw2": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "jaw2part2": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "jaw2tooth1": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "jaw2tooth2": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "jaw2tooth3": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "jaw2tooth4": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "jaw2tooth5": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "jaw2tooth6": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "jaw3": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "jaw3part2": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "jaw3tooth1": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "jaw3tooth2": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "jaw3tooth3": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "jaw3tooth4": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "jaw3tooth5": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "jaw3tooth6": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "jaw4": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "jaw4part2": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "jaw4tooth1": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "jaw4tooth2": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "jaw4tooth3": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "jaw4tooth4": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "jaw4tooth5": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "jaw4tooth6": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "leg1": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "leg1part2": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "leg1part3": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "leg2": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "leg2part2": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "leg2part3": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "leg3": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "leg3part2": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "leg3part3": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "leg4": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "leg4part2": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "leg4part3": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "leg5": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "leg5part2": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "leg6": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "leg6part2": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "thorax": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "tonguepart1": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "tonguepart2": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "tonguepart3": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "wing_1": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "wing_2": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "wing_3": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "wing_4": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ]
+  },
+  "cube_face_order_evidence": {
+    "rule": "NeoForge 21.1.223 ModelPart.Cube.<init> polygon order DOWN, UP, WEST, NORTH, EAST, SOUTH (offsets 365-785: DOWN 365, UP 436, WEST 507, NORTH 578, EAST 649, SOUTH 720), mirror negating the X normals; GeckoLib labels by the direction whose step is the classic normal reflected in X and Y (the entity frame: the classic chain's scale(-1, -1, 1) and the baker's x negation alike, TEST-015)",
+    "cube_bearing_bones": 59,
+    "cubes": 59,
+    "verified_unrotated_cubes_at_bind": 3,
+    "verification": "captured normals (the entity frame) of every cube unrotated at bind equal the rule's, in order; the parity tool's draw-order leg compares the per-quad normal sequences of both renderers on every capture"
+  },
+  "animation_contract": {
+    "schema_version": 1,
+    "kind": "entity_state",
+    "controller_required": false,
+    "candidate_animation_path": "production_replacement_hook",
+    "candidate_class": "danger.orespawn.entity.client.LurkingTerrorGeoReplacement",
+    "candidate_acceptance_path": "production OreSpawnGeoReplacementModel.setCustomAnimations (Tier-3 code-driven)",
+    "sample_ids": [
+      "bind",
+      "s_idle_t0",
+      "s_idle_t_quarter",
+      "s_idle_t_half",
+      "s_idle_t_three_quarter",
+      "s_idle_t_end",
+      "s_legs_swaying_t0",
+      "s_legs_swaying_t_quarter",
+      "s_legs_swaying_t_half",
+      "s_legs_swaying_t_three_quarter",
+      "s_legs_swaying_t_end",
+      "s_attacking_t0",
+      "s_attacking_t_quarter",
+      "s_attacking_t_half",
+      "s_attacking_t_three_quarter",
+      "s_attacking_t_end"
+    ],
+    "entity_states": [
+      "idle",
+      "legs_swaying",
+      "attacking"
+    ]
+  },
+  "reference_animation_schema": {
+    "status": "SCHEMA_VALID_REFERENCE_ONLY",
+    "clip_count": 0,
+    "constant_vector_count": 0,
+    "runtime_acceptance": false
+  },
+  "accepted_animation_evidence": "production OreSpawnGeoReplacement hook posed from declared entity states through the entity's pose interface (Tier-3 code-driven)",
+  "artist_editable_math_to_keyframes_status": "NOT_APPLICABLE_TIER3_CODE_DRIVEN",
+  "compiled_animation_bake_sample_count": 0,
+  "reference_clip_keys_source": "compiled setupAnim output; no Python formula evaluation",
+  "source_animation_channel_inventory": []
+}

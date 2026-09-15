@@ -21,6 +21,8 @@ import danger.orespawn.entity.client.BasiliskGeoReplacement;
 import danger.orespawn.entity.client.BasiliskRenderer;
 import danger.orespawn.entity.client.BeeGeoReplacement;
 import danger.orespawn.entity.client.BeeRenderer;
+import danger.orespawn.entity.client.BoyfriendGeoReplacement;
+import danger.orespawn.entity.client.BoyfriendRenderer;
 import danger.orespawn.entity.client.BrutalflyGeoReplacement;
 import danger.orespawn.entity.client.BrutalflyRenderer;
 import danger.orespawn.entity.client.CamarasaurusGeoReplacement;
@@ -74,10 +76,13 @@ import danger.orespawn.entity.client.GammaMetroidRenderer;
 import danger.orespawn.entity.client.GazelleGeoReplacement;
 import danger.orespawn.entity.client.GazelleRenderer;
 import danger.orespawn.entity.client.GeoReplacementDescriptor;
+import danger.orespawn.entity.client.GhostGeoReplacement;
+import danger.orespawn.entity.client.GhostRenderer;
 import danger.orespawn.entity.client.GhostSkellyGeoReplacement;
 import danger.orespawn.entity.client.GhostSkellyRenderer;
 import danger.orespawn.entity.client.GiantRobotGeoReplacement;
 import danger.orespawn.entity.client.GiantRobotRenderer;
+import danger.orespawn.entity.client.GirlfriendGeoReplacement;
 import danger.orespawn.entity.client.GodzillaGeoReplacement;
 import danger.orespawn.entity.client.GodzillaRenderer;
 import danger.orespawn.entity.client.GoldFishGeoReplacement;
@@ -101,6 +106,8 @@ import danger.orespawn.entity.client.LeonGeoReplacement;
 import danger.orespawn.entity.client.LeonopteryxGeoReplacement;
 import danger.orespawn.entity.client.LizardGeoReplacement;
 import danger.orespawn.entity.client.LizardRenderer;
+import danger.orespawn.entity.client.LurkingTerrorGeoReplacement;
+import danger.orespawn.entity.client.LurkingTerrorRenderer;
 import danger.orespawn.entity.client.MantisGeoReplacement;
 import danger.orespawn.entity.client.MantisRenderer;
 import danger.orespawn.entity.client.MolenoidGeoReplacement;
@@ -128,6 +135,8 @@ import danger.orespawn.entity.client.RenderInfo;
 import danger.orespawn.entity.client.RubberDuckyGeoReplacement;
 import danger.orespawn.entity.client.RubberDuckyRenderer;
 import danger.orespawn.entity.client.RubyBirdGeoReplacement;
+import danger.orespawn.entity.client.ScorpionGeoReplacement;
+import danger.orespawn.entity.client.ScorpionRenderer;
 import danger.orespawn.entity.client.SeaMonsterGeoReplacement;
 import danger.orespawn.entity.client.SeaMonsterRenderer;
 import danger.orespawn.entity.client.SeaViperGeoReplacement;
@@ -148,10 +157,13 @@ import danger.orespawn.entity.client.TermiteGeoReplacement;
 import danger.orespawn.entity.client.TermiteRenderer;
 import danger.orespawn.entity.client.TerribleTerrorGeoReplacement;
 import danger.orespawn.entity.client.TerribleTerrorRenderer;
+import danger.orespawn.entity.client.TheKingGeoReplacement;
+import danger.orespawn.entity.client.TheKingRenderer;
 import danger.orespawn.entity.client.ThePrinceAdultGeoReplacement;
 import danger.orespawn.entity.client.ThePrinceGeoReplacement;
 import danger.orespawn.entity.client.ThePrinceTeenGeoReplacement;
 import danger.orespawn.entity.client.ThePrinceTeenRenderer;
+import danger.orespawn.entity.client.ThePrincessGeoReplacement;
 import danger.orespawn.entity.client.TriffidGeoReplacement;
 import danger.orespawn.entity.client.TriffidRenderer;
 import danger.orespawn.entity.client.TrooperBugGeoReplacement;
@@ -198,11 +210,13 @@ import danger.orespawn.entity.pose.GiantRobotPose;
 import danger.orespawn.entity.pose.GodzillaPose;
 import danger.orespawn.entity.pose.HammerheadPose;
 import danger.orespawn.entity.pose.HerculesBeetlePose;
+import danger.orespawn.entity.pose.HumanoidPose;
 import danger.orespawn.entity.pose.HydroliscPose;
 import danger.orespawn.entity.pose.KrakenPose;
 import danger.orespawn.entity.pose.LeafMonsterPose;
 import danger.orespawn.entity.pose.LeonPose;
 import danger.orespawn.entity.pose.LizardPose;
+import danger.orespawn.entity.pose.LurkingTerrorPose;
 import danger.orespawn.entity.pose.MantisPose;
 import danger.orespawn.entity.pose.MolenoidPose;
 import danger.orespawn.entity.pose.NastysaurusPose;
@@ -211,15 +225,18 @@ import danger.orespawn.entity.pose.PeacockPose;
 import danger.orespawn.entity.pose.PitchBlackPose;
 import danger.orespawn.entity.pose.PointysaurusPose;
 import danger.orespawn.entity.pose.RatPose;
+import danger.orespawn.entity.pose.ScorpionPose;
 import danger.orespawn.entity.pose.SeaMonsterPose;
 import danger.orespawn.entity.pose.SeaViperPose;
 import danger.orespawn.entity.pose.SpitBugPose;
 import danger.orespawn.entity.pose.SpyroPose;
 import danger.orespawn.entity.pose.StinkyPose;
 import danger.orespawn.entity.pose.TRexPose;
+import danger.orespawn.entity.pose.TheKingPose;
 import danger.orespawn.entity.pose.ThePrinceAdultPose;
 import danger.orespawn.entity.pose.ThePrincePose;
 import danger.orespawn.entity.pose.ThePrinceTeenPose;
+import danger.orespawn.entity.pose.ThePrincessPose;
 import danger.orespawn.entity.pose.TriffidPose;
 import danger.orespawn.entity.pose.TrooperBugPose;
 import danger.orespawn.entity.pose.UrchinPose;
@@ -236,8 +253,11 @@ import net.minecraft.core.Direction;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.util.GsonHelper;
+import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
@@ -332,6 +352,12 @@ import software.bernie.geckolib.loading.object.GeometryTree;
  * Water Dragon (its five zero-thickness fins), the hook moving a named bone off its bind at age 7; both hooks read their
  * entity, so each poses on its own declared rest subject).</li>
  *
+ * <li>{@code t2_014} (the remainder slice): the seven remaining HOOK registries landed on their hooks - the Lurking Terror,
+ * the Scorpion, the Ghost, the Boyfriend, the Girlfriend, the Princess and the King (the Butterfly rig's four REPORTED, not
+ * landed, TEST-019, are not pinned here) - each pinned exactly as {@code t2_005} pins the third slice's, the entity-reading hooks
+ * on one declared rest subject, the Ghost's on none; PLUS the seam change's pin: {@code PoseInputs} carries the frame's partial
+ * tick and the Boyfriend hook reads it verbatim through {@code getAttackAnim(partialTick)} (a swinging subject: the attack arm at partial tick 0.5
+ * differs from partial tick 0, and at 0 equals oAttackAnim's pose).</li>
  * <li>{@code t2_004}: the render facts the 4c precedent pinned in code - each descriptor's shadow radius is its
  *     classic renderer's constant (ENT-S-092; the Ant family's {@code 0.1 / 0.15 x SCALE} products where the classic
  *     renderer declares no SHADOW), the Cockateil and Ruby Bird sharing the Cockateil renderer's - and each shared
@@ -1360,7 +1386,188 @@ public class T2SeamTests {
         helper.succeed();
     }
 
-    /** The t2_005 pins on one hook species (shared by the third, fourth, fifth and sixth slices', the FK slice's and the two Tier-1 slices' rows). */
+    // ------------------------------------------------------------------ row 14: the hook registries of the remainder slice
+
+    /**
+     * The declared rest state of the remainder's entity-reading hooks: the attacking flag 0, activity 0, not sitting, not ordered
+     * to sit, the head extensions 0, a fresh RenderInfo latch and a zero-seeded random (the probe's rest subject); the vanilla
+     * biped reads at rest - no fall-flying, not visually swimming, no motion, the right main arm, no item in use, the main hand
+     * swinging, not seated, an adult, the swing and swim amounts 0 at any partial tick.
+     */
+    private static class RestSubjectRem implements LurkingTerrorPose, ScorpionPose, TheKingPose, ThePrincessPose, HumanoidPose {
+        private final RenderInfo renderInfo = new RenderInfo();
+        private final RandomSource random = RandomSource.create(0L);
+
+        @Override
+        public RenderInfo getRenderInfo() {
+            return this.renderInfo;
+        }
+
+        @Override
+        public RandomSource getRandom() {
+            return this.random;
+        }
+
+        @Override
+        public int getAttacking() {
+            return 0;
+        }
+
+        @Override
+        public int getActivity() {
+            return 0;
+        }
+
+        @Override
+        public boolean isOrderedToSit() {
+            return false;
+        }
+
+        @Override
+        public int getHead1Ext() {
+            return 0;
+        }
+
+        @Override
+        public int getHead2Ext() {
+            return 0;
+        }
+
+        @Override
+        public int getHead3Ext() {
+            return 0;
+        }
+
+        @Override
+        public int getFallFlyingTicks() {
+            return 0;
+        }
+
+        @Override
+        public boolean isVisuallySwimming() {
+            return false;
+        }
+
+        @Override
+        public Vec3 getDeltaMovement() {
+            return Vec3.ZERO;
+        }
+
+        @Override
+        public boolean isSeatedOnVehicle() {
+            return false;
+        }
+
+        @Override
+        public HumanoidArm getMainArm() {
+            return HumanoidArm.RIGHT;
+        }
+
+        @Override
+        public boolean isUsingItem() {
+            return false;
+        }
+
+        @Override
+        public InteractionHand getUsedItemHand() {
+            return InteractionHand.MAIN_HAND;
+        }
+
+        @Override
+        public InteractionHand getSwingingArm() {
+            return InteractionHand.MAIN_HAND;
+        }
+
+        @Override
+        public float getAttackAnim(float partialTick) {
+            return 0.0F;
+        }
+
+        @Override
+        public float getSwimAmount(float partialTick) {
+            return 0.0F;
+        }
+
+        @Override
+        public boolean isBaby() {
+            return false;
+        }
+    }
+
+    /** The rest subject mid-swing: vanilla LivingEntity.getAttackAnim (:3057-3062) over oAttackAnim 1/3 and attackAnim 1/2, a sixth per tick. */
+    private static final class SwingingSubjectRem extends RestSubjectRem {
+        @Override
+        public float getAttackAnim(float partialTick) {
+            float attackAnim = 0.5F;
+            float oAttackAnim = 1.0F / 3.0F;
+            float f = attackAnim - oAttackAnim;
+            if (f < 0.0F) {
+                f++;
+            }
+            return oAttackAnim + f * partialTick;
+        }
+    }
+
+    private static List<HookSpecies> hookSpeciesRem() {
+        return List.of(
+                // the Lurking Terror: the first wing beats about X at every age (cos(age x 1.4) x PI x 0.2 around 0.455); four zero-thickness wings
+                new HookSpecies("lurking_terror", new LurkingTerrorGeoReplacement(), "lurkingterror", LurkingTerrorRenderer.SHADOW, true, new RestSubjectRem(), "wing_1"),
+                // the Scorpion: the first right leg yaws on the gait at limbSwingAmount 1; no zero-thickness cube
+                new HookSpecies("scorpion", new ScorpionGeoReplacement(), "scorpion", ScorpionRenderer.SHADOW, false, new RestSubjectRem(), "rleg1"),
+                // the Ghost: the left arm's slow cosines (no entity read: a null subject); a blending rig under the classic face order (ENT-S-160 (a))
+                new HookSpecies("ghost", new GhostGeoReplacement(), "ghost", GhostRenderer.SHADOW, true, null, "LArm"),
+                // the Boyfriend: the right leg strides on cos(limbSwing x 0.6662) x 1.4 x limbSwingAmount (vanilla HumanoidModel.setupAnim :172)
+                new HookSpecies("boyfriend", new BoyfriendGeoReplacement(), "boyfriend", BoyfriendRenderer.SHADOW, false, new RestSubjectRem(), "right_leg"),
+                // the Girlfriend: the Boyfriend's hook delegated; the 0.5f shadow literal GirlfriendRenderer's constructor passes
+                new HookSpecies("girlfriend", new GirlfriendGeoReplacement(), "girlfriend", 0.5F, false, new RestSubjectRem(), "right_leg"),
+                // the Princess: the right leg on the threshold gait at limbSwingAmount 1; six zero-thickness wings; the 0.7f x 0.7f shadow literal
+                new HookSpecies("the_princess", new ThePrincessGeoReplacement(), "theprincess", 0.7F * 0.7F, true, new RestSubjectRem(), "Rleg1"),
+                // the King: the left wing root rolls on the gliding cosine at rest (the second pass is a client render fact, not posed here)
+                new HookSpecies("the_king", new TheKingGeoReplacement(), "theking", TheKingRenderer.SHADOW, false, new RestSubjectRem(), "Lwing1"));
+    }
+
+    @GameTest(template = "empty", batch = BATCH)
+    public static void t2_014_remainder_slice_hook_registries_declare_no_layer_register_nothing_and_the_seam_carries_the_partial_tick(GameTestHelper helper) {
+        Flags flags = Flags.read();
+        try {
+            OreSpawnConfig.MODERN_ENABLED.set(true);
+            OreSpawnConfig.MODERN_ARTIST_ANIMATIONS.set(true);
+            OreSpawnConfig.MODERN_CLASSIC_ANIMATION_SPECIES.set(List.of());
+            List<HookSpecies> all = hookSpeciesRem();
+            helper.assertTrue(all.size() == 7, "the 7 hook registries landed by the remainder slice");
+            for (HookSpecies species : all) {
+                assertHookSpecies(helper, species);
+            }
+            // THE SEAM CHANGE: PoseInputs carries the frame's partial tick and the biped hook reads getAttackAnim(partialTick)
+            // verbatim - the attack arm's pitch on a swinging subject differs between the partial ticks 0 and 0.5 (vanilla's swing
+            // advancing a sixth per tick), and at 0 equals the pose of a subject frozen at oAttackAnim.
+            String geoJson = resource(GEO + "boyfriend.geo.json");
+            BoyfriendGeoReplacement boyfriend = new BoyfriendGeoReplacement();
+            float armAtZero = attackArmPitch(boyfriend, geoJson, new SwingingSubjectRem(), 0.0F);
+            float armAtHalf = attackArmPitch(boyfriend, geoJson, new SwingingSubjectRem(), 0.5F);
+            float armFrozen = attackArmPitch(boyfriend, geoJson, new RestSubjectRem() {
+                @Override
+                public float getAttackAnim(float partialTick) {
+                    return 1.0F / 3.0F;
+                }
+            }, 0.5F);
+            helper.assertTrue(armAtZero != armAtHalf, "the Boyfriend hook reads the seam's partial tick: the swinging arm differs between partial ticks 0 and 0.5");
+            helper.assertTrue(armAtZero == armFrozen, "at partial tick 0 the swing is oAttackAnim's, as vanilla's lerp gives it");
+        } finally {
+            flags.restore();
+        }
+        helper.succeed();
+    }
+
+    /** The right arm's classic pitch after the Boyfriend hook posed a fresh bake at age 7, walking, on the subject at the partial tick. */
+    private static float attackArmPitch(BoyfriendGeoReplacement replacement, String geoJson, Object subject, float partialTick) {
+        BakedGeoModel baked = bakeRig(geoJson);
+        DrawOrder.apply(baked, DrawOrder.read(JsonParser.parseString(geoJson).getAsJsonObject()));
+        AnimationProcessor<?> processor = poseThroughHook(replacement, baked, new PoseInputs(subject, 7.0F, 3.0F, 1.0F, 0.0F, 0.0F, partialTick));
+        return -processor.getBone("right_arm").getRotX();
+    }
+
+    /** The t2_005 pins on one hook species (shared by the third, fourth, fifth and sixth slices', the FK slice's, the two Tier-1 slices' and the remainder's rows). */
     private static void assertHookSpecies(GameTestHelper helper, HookSpecies species) {
         helper.assertTrue(species.replacement().keyframeLayers().isEmpty(),
                 species.name() + " declares no keyframe layer: on the hook until an artist delivers idle and walk");
@@ -1390,7 +1597,7 @@ public class T2SeamTests {
             FaceOrder.apply(baked, faceOrder);
         }
         AnimationProcessor<?> processor = poseThroughHook(species.replacement(), baked,
-                new PoseInputs(species.subject(), 7.0F, 3.0F, 1.0F, 0.0F, 0.0F));
+                new PoseInputs(species.subject(), 7.0F, 3.0F, 1.0F, 0.0F, 0.0F, 0.0F));
         GeoBone bone = processor.getBone(species.movingBone());
         helper.assertTrue(bone != null, species.name() + ": the shipped geo carries the bone " + species.movingBone());
         GeoBone bind = bakeRig(geoJson).getBone(species.movingBone()).orElseThrow();

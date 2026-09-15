@@ -30,20 +30,17 @@
   "keying_rule": "the density search of the exact transcriptions (KeyframeLeg's density_search through the shared DensitySearch): per bone and channel the fewest keys - candidates uniform in sample index, both ends included (the closing key always kept), the value at a key exactly the sample's - whose catmullrom curve (GeckoLib 4.8.4's CATMULLROM with the spline arguments repaired at load, SplineRepair) stays within the tolerance of every dense sample; the count below the fewest is the one that failed; a one-key state stays one key; tolerance 1.0 degree of rotation and 1/32 block (0.5 model units) of position; lerp_mode catmullrom",
   "rotation_rule": "a rotation sample per bone per tick as the DELTA from the bone's bind under the converter's sign rule: authored X, Y and Z = +classic degrees (tools/keyframe_clip.py; KeyframeLeg; TEST-015, the Bedrock convention); rounded to 1e-10 degrees, never -0.0; the keys the density search keeps, lerp_mode catmullrom",
   "position_rule": "a position sample per bone per tick where the hook writes positions (OreSpawnGeoReplacement.moveTo): the internal offset the hook wrote, (+dx, -dy, +dz) of the classic pivot move (dx, dy, dz) in model units - GeckoLib reads position keys unnegated and sets them absolutely over a fresh bake's zero offsets; the keys the density search keeps",
-  "hooks_sampled_from_reference_manifest": 8,
+  "hooks_sampled_from_reference_manifest": 4,
   "reference_entries_skipped": [
     "reference_antrobot",
     "reference_spiderrobot",
-    "reference_theprincess",
     "reference_battleaxe",
     "reference_bertha",
     "reference_chainsaw",
     "reference_hammy",
     "reference_queenbattleaxe",
     "reference_slice",
-    "reference_squidzooka",
-    "reference_boyfriend",
-    "reference_girlfriend"
+    "reference_squidzooka"
   ],
   "hooks": {
     "alien": {
@@ -596,6 +593,176 @@
       "getters_read": 1,
       "values_enumerated": 1,
       "getters_not_enumerable": 0
+    },
+    "boyfriend": {
+      "registry": "boyfriend",
+      "descriptor": "BoyfriendGeoReplacement",
+      "landed": true,
+      "declared": {
+        "descriptor": "BoyfriendGeoReplacement",
+        "declared_pose_interfaces": [
+          "HumanoidPose"
+        ],
+        "getters": [
+          {
+            "interface": "HumanoidPose",
+            "getter": "getDeltaMovement",
+            "type": "Vec3",
+            "enumerable": false,
+            "values": [],
+            "not_enumerable": "a movement delta (the entity's velocity), not an enumerable state",
+            "read_at": [
+              "BoyfriendGeoReplacement:130"
+            ]
+          },
+          {
+            "interface": "HumanoidPose",
+            "getter": "getFallFlyingTicks",
+            "type": "int",
+            "enumerable": true,
+            "values": [
+              4,
+              5
+            ],
+            "read_at": [
+              "BoyfriendGeoReplacement:104 > 4"
+            ]
+          },
+          {
+            "interface": "HumanoidPose",
+            "getter": "getMainArm",
+            "type": "HumanoidArm",
+            "enumerable": false,
+            "values": [],
+            "not_enumerable": "a HumanoidArm read used arithmetically, not an enumerable state",
+            "read_at": [
+              "BoyfriendGeoReplacement:164",
+              "BoyfriendGeoReplacement:322"
+            ]
+          },
+          {
+            "interface": "HumanoidPose",
+            "getter": "getSwingingArm",
+            "type": "InteractionHand",
+            "enumerable": false,
+            "values": [],
+            "not_enumerable": "a InteractionHand read used arithmetically, not an enumerable state",
+            "read_at": [
+              "BoyfriendGeoReplacement:323"
+            ]
+          },
+          {
+            "interface": "HumanoidPose",
+            "getter": "getUsedItemHand",
+            "type": "InteractionHand",
+            "enumerable": false,
+            "values": [],
+            "not_enumerable": "a InteractionHand read used arithmetically, not an enumerable state",
+            "read_at": [
+              "BoyfriendGeoReplacement:166"
+            ]
+          },
+          {
+            "interface": "HumanoidPose",
+            "getter": "isSeatedOnVehicle",
+            "type": "boolean",
+            "enumerable": true,
+            "values": [
+              true
+            ],
+            "read_at": [
+              "BoyfriendGeoReplacement:99"
+            ]
+          },
+          {
+            "interface": "HumanoidPose",
+            "getter": "isUsingItem",
+            "type": "boolean",
+            "enumerable": true,
+            "values": [
+              true
+            ],
+            "read_at": [
+              "BoyfriendGeoReplacement:165",
+              "BoyfriendGeoReplacement:258"
+            ]
+          },
+          {
+            "interface": "HumanoidPose",
+            "getter": "isVisuallySwimming",
+            "type": "boolean",
+            "enumerable": true,
+            "values": [
+              true
+            ],
+            "read_at": [
+              "BoyfriendGeoReplacement:105"
+            ]
+          }
+        ],
+        "outside_pose_interface": []
+      },
+      "not_enumerable": [
+        {
+          "getter": "HumanoidPose.getDeltaMovement()",
+          "type": "Vec3",
+          "reason": "a movement delta (the entity's velocity), not an enumerable state"
+        },
+        {
+          "getter": "HumanoidPose.getMainArm()",
+          "type": "HumanoidArm",
+          "reason": "a HumanoidArm read used arithmetically, not an enumerable state"
+        },
+        {
+          "getter": "HumanoidPose.getSwingingArm()",
+          "type": "InteractionHand",
+          "reason": "a InteractionHand read used arithmetically, not an enumerable state"
+        },
+        {
+          "getter": "HumanoidPose.getUsedItemHand()",
+          "type": "InteractionHand",
+          "reason": "a InteractionHand read used arithmetically, not an enumerable state"
+        }
+      ],
+      "states": [
+        "walk",
+        "idle",
+        "glide",
+        "ride"
+      ],
+      "unnamed_states": [],
+      "no_motion": [
+        {
+          "getter": "getFallFlyingTicks",
+          "value": 4,
+          "state": "fall_flying_ticks_4",
+          "named": false,
+          "read_at_inputs": true,
+          "why": "getFallFlyingTicks 4: no motion at rest - the read is reached but the value changes no bone's rotation or position at the idle inputs (a visibility or texture choice, or a branch whose bones the rest pose already holds)",
+          "note": "getFallFlyingTicks 4: no motion at rest"
+        },
+        {
+          "getter": "isUsingItem",
+          "value": true,
+          "state": "using_item_1",
+          "named": false,
+          "read_at_inputs": true,
+          "why": "isUsingItem 1: no motion at rest - the read is reached but the value changes no bone's rotation or position at the idle inputs (a visibility or texture choice, or a branch whose bones the rest pose already holds)",
+          "note": "isUsingItem 1: no motion at rest"
+        },
+        {
+          "getter": "isVisuallySwimming",
+          "value": true,
+          "state": "visually_swimming_1",
+          "named": false,
+          "read_at_inputs": true,
+          "why": "isVisuallySwimming 1: no motion at rest - the read is reached but the value changes no bone's rotation or position at the idle inputs (a visibility or texture choice, or a branch whose bones the rest pose already holds)",
+          "note": "isVisuallySwimming 1: no motion at rest"
+        }
+      ],
+      "getters_read": 8,
+      "values_enumerated": 5,
+      "getters_not_enumerable": 4
     },
     "brutalfly": {
       "registry": "brutalfly",
@@ -1897,7 +2064,7 @@
     "ghost": {
       "registry": "ghost",
       "descriptor": "GhostGeoReplacement",
-      "landed": false,
+      "landed": true,
       "declared": {
         "descriptor": "GhostGeoReplacement",
         "declared_pose_interfaces": [],
@@ -2008,6 +2175,176 @@
       "getters_read": 1,
       "values_enumerated": 1,
       "getters_not_enumerable": 0
+    },
+    "girlfriend": {
+      "registry": "girlfriend",
+      "descriptor": "GirlfriendGeoReplacement",
+      "landed": true,
+      "declared": {
+        "descriptor": "GirlfriendGeoReplacement",
+        "declared_pose_interfaces": [
+          "HumanoidPose"
+        ],
+        "getters": [
+          {
+            "interface": "HumanoidPose",
+            "getter": "getDeltaMovement",
+            "type": "Vec3",
+            "enumerable": false,
+            "values": [],
+            "not_enumerable": "a movement delta (the entity's velocity), not an enumerable state",
+            "read_at": [
+              "BoyfriendGeoReplacement:130"
+            ]
+          },
+          {
+            "interface": "HumanoidPose",
+            "getter": "getFallFlyingTicks",
+            "type": "int",
+            "enumerable": true,
+            "values": [
+              4,
+              5
+            ],
+            "read_at": [
+              "BoyfriendGeoReplacement:104 > 4"
+            ]
+          },
+          {
+            "interface": "HumanoidPose",
+            "getter": "getMainArm",
+            "type": "HumanoidArm",
+            "enumerable": false,
+            "values": [],
+            "not_enumerable": "a HumanoidArm read used arithmetically, not an enumerable state",
+            "read_at": [
+              "BoyfriendGeoReplacement:164",
+              "BoyfriendGeoReplacement:322"
+            ]
+          },
+          {
+            "interface": "HumanoidPose",
+            "getter": "getSwingingArm",
+            "type": "InteractionHand",
+            "enumerable": false,
+            "values": [],
+            "not_enumerable": "a InteractionHand read used arithmetically, not an enumerable state",
+            "read_at": [
+              "BoyfriendGeoReplacement:323"
+            ]
+          },
+          {
+            "interface": "HumanoidPose",
+            "getter": "getUsedItemHand",
+            "type": "InteractionHand",
+            "enumerable": false,
+            "values": [],
+            "not_enumerable": "a InteractionHand read used arithmetically, not an enumerable state",
+            "read_at": [
+              "BoyfriendGeoReplacement:166"
+            ]
+          },
+          {
+            "interface": "HumanoidPose",
+            "getter": "isSeatedOnVehicle",
+            "type": "boolean",
+            "enumerable": true,
+            "values": [
+              true
+            ],
+            "read_at": [
+              "BoyfriendGeoReplacement:99"
+            ]
+          },
+          {
+            "interface": "HumanoidPose",
+            "getter": "isUsingItem",
+            "type": "boolean",
+            "enumerable": true,
+            "values": [
+              true
+            ],
+            "read_at": [
+              "BoyfriendGeoReplacement:165",
+              "BoyfriendGeoReplacement:258"
+            ]
+          },
+          {
+            "interface": "HumanoidPose",
+            "getter": "isVisuallySwimming",
+            "type": "boolean",
+            "enumerable": true,
+            "values": [
+              true
+            ],
+            "read_at": [
+              "BoyfriendGeoReplacement:105"
+            ]
+          }
+        ],
+        "outside_pose_interface": []
+      },
+      "not_enumerable": [
+        {
+          "getter": "HumanoidPose.getDeltaMovement()",
+          "type": "Vec3",
+          "reason": "a movement delta (the entity's velocity), not an enumerable state"
+        },
+        {
+          "getter": "HumanoidPose.getMainArm()",
+          "type": "HumanoidArm",
+          "reason": "a HumanoidArm read used arithmetically, not an enumerable state"
+        },
+        {
+          "getter": "HumanoidPose.getSwingingArm()",
+          "type": "InteractionHand",
+          "reason": "a InteractionHand read used arithmetically, not an enumerable state"
+        },
+        {
+          "getter": "HumanoidPose.getUsedItemHand()",
+          "type": "InteractionHand",
+          "reason": "a InteractionHand read used arithmetically, not an enumerable state"
+        }
+      ],
+      "states": [
+        "walk",
+        "idle",
+        "glide",
+        "ride"
+      ],
+      "unnamed_states": [],
+      "no_motion": [
+        {
+          "getter": "getFallFlyingTicks",
+          "value": 4,
+          "state": "fall_flying_ticks_4",
+          "named": false,
+          "read_at_inputs": true,
+          "why": "getFallFlyingTicks 4: no motion at rest - the read is reached but the value changes no bone's rotation or position at the idle inputs (a visibility or texture choice, or a branch whose bones the rest pose already holds)",
+          "note": "getFallFlyingTicks 4: no motion at rest"
+        },
+        {
+          "getter": "isUsingItem",
+          "value": true,
+          "state": "using_item_1",
+          "named": false,
+          "read_at_inputs": true,
+          "why": "isUsingItem 1: no motion at rest - the read is reached but the value changes no bone's rotation or position at the idle inputs (a visibility or texture choice, or a branch whose bones the rest pose already holds)",
+          "note": "isUsingItem 1: no motion at rest"
+        },
+        {
+          "getter": "isVisuallySwimming",
+          "value": true,
+          "state": "visually_swimming_1",
+          "named": false,
+          "read_at_inputs": true,
+          "why": "isVisuallySwimming 1: no motion at rest - the read is reached but the value changes no bone's rotation or position at the idle inputs (a visibility or texture choice, or a branch whose bones the rest pose already holds)",
+          "note": "isVisuallySwimming 1: no motion at rest"
+        }
+      ],
+      "getters_read": 8,
+      "values_enumerated": 5,
+      "getters_not_enumerable": 4
     },
     "godzilla": {
       "registry": "godzilla",
@@ -2796,7 +3133,7 @@
     "lurking_terror": {
       "registry": "lurking_terror",
       "descriptor": "LurkingTerrorGeoReplacement",
-      "landed": false,
+      "landed": true,
       "declared": {
         "descriptor": "LurkingTerrorGeoReplacement",
         "declared_pose_interfaces": [
@@ -3928,7 +4265,7 @@
     "scorpion": {
       "registry": "scorpion",
       "descriptor": "ScorpionGeoReplacement",
-      "landed": false,
+      "landed": true,
       "declared": {
         "descriptor": "ScorpionGeoReplacement",
         "declared_pose_interfaces": [
@@ -4313,7 +4650,7 @@
     "the_king": {
       "registry": "the_king",
       "descriptor": "TheKingGeoReplacement",
-      "landed": false,
+      "landed": true,
       "declared": {
         "descriptor": "TheKingGeoReplacement",
         "declared_pose_interfaces": [
@@ -4329,7 +4666,7 @@
               1
             ],
             "read_at": [
-              "TheKingGeoReplacement:79 != 0"
+              "TheKingGeoReplacement:91 != 0"
             ]
           }
         ],
@@ -4755,6 +5092,121 @@
       "getters_read": 9,
       "values_enumerated": 3,
       "getters_not_enumerable": 6
+    },
+    "the_princess": {
+      "registry": "the_princess",
+      "descriptor": "ThePrincessGeoReplacement",
+      "landed": true,
+      "declared": {
+        "descriptor": "ThePrincessGeoReplacement",
+        "declared_pose_interfaces": [
+          "ThePrincessPose"
+        ],
+        "getters": [
+          {
+            "interface": "ThePrincessPose",
+            "getter": "getActivity",
+            "type": "int",
+            "enumerable": true,
+            "values": [
+              2
+            ],
+            "read_at": [
+              "ThePrincessGeoReplacement:108 (current_activity) != 2"
+            ]
+          },
+          {
+            "interface": "ThePrincessPose",
+            "getter": "getAttacking",
+            "type": "int",
+            "enumerable": true,
+            "values": [
+              1
+            ],
+            "read_at": [
+              "ThePrincessGeoReplacement:95 != 0",
+              "ThePrincessGeoReplacement:108 != 0",
+              "ThePrincessGeoReplacement:121 != 0",
+              "ThePrincessGeoReplacement:201 != 0"
+            ]
+          },
+          {
+            "interface": "ThePrincessPose",
+            "getter": "getHead1Ext",
+            "type": "int",
+            "enumerable": false,
+            "values": [],
+            "not_enumerable": "an int read used only arithmetically or passed as an argument, never compared with a literal (ThePrincessGeoReplacement:223: d1 = entity.getHead1Ext();)",
+            "read_at": [
+              "ThePrincessGeoReplacement:223"
+            ]
+          },
+          {
+            "interface": "ThePrincessPose",
+            "getter": "getHead2Ext",
+            "type": "int",
+            "enumerable": false,
+            "values": [],
+            "not_enumerable": "an int read used only arithmetically or passed as an argument, never compared with a literal (ThePrincessGeoReplacement:224: d2 = entity.getHead2Ext();)",
+            "read_at": [
+              "ThePrincessGeoReplacement:224"
+            ]
+          },
+          {
+            "interface": "ThePrincessPose",
+            "getter": "getHead3Ext",
+            "type": "int",
+            "enumerable": false,
+            "values": [],
+            "not_enumerable": "an int read used only arithmetically or passed as an argument, never compared with a literal (ThePrincessGeoReplacement:225: d3 = entity.getHead3Ext();)",
+            "read_at": [
+              "ThePrincessGeoReplacement:225"
+            ]
+          },
+          {
+            "interface": "ThePrincessPose",
+            "getter": "isOrderedToSit",
+            "type": "boolean",
+            "enumerable": true,
+            "values": [
+              true
+            ],
+            "read_at": [
+              "ThePrincessGeoReplacement:118"
+            ]
+          }
+        ],
+        "outside_pose_interface": []
+      },
+      "not_enumerable": [
+        {
+          "getter": "ThePrincessPose.getHead1Ext()",
+          "type": "int",
+          "reason": "an int read used only arithmetically or passed as an argument, never compared with a literal (ThePrincessGeoReplacement:223: d1 = entity.getHead1Ext();)"
+        },
+        {
+          "getter": "ThePrincessPose.getHead2Ext()",
+          "type": "int",
+          "reason": "an int read used only arithmetically or passed as an argument, never compared with a literal (ThePrincessGeoReplacement:224: d2 = entity.getHead2Ext();)"
+        },
+        {
+          "getter": "ThePrincessPose.getHead3Ext()",
+          "type": "int",
+          "reason": "an int read used only arithmetically or passed as an argument, never compared with a literal (ThePrincessGeoReplacement:225: d3 = entity.getHead3Ext();)"
+        }
+      ],
+      "states": [
+        "walk",
+        "idle",
+        "attack",
+        "fly",
+        "sit"
+      ],
+      "unnamed_states": [],
+      "no_motion": [],
+      "getters_read": 6,
+      "values_enumerated": 3,
+      "getters_not_enumerable": 3
     },
     "trex": {
       "registry": "trex",
@@ -8277,6 +8729,345 @@
         "read_at_inputs": true
       },
       "sampled_inputs": "getAttacking() answers 1 (the state the seed names `attack`; every other getter at its rest value); limbSwingAmount 0.0; limbSwing 0 (the walk position at rest: vanilla WalkAnimationState holds its position while the speed is 0, and a creature that has not walked since it spawned carries 0); ageInTicks = t (getBob: tickCount + partialTick, partialTick 0; advancing 1.0 per tick from 0); netHeadYaw 0; headPitch 0 (looking ahead); every other entity-state flag at its rest value (ri1 0, rock_type 0, rf1 0); the entity RNG seeded 0 once per clip and evolving across the keys; one pose call per key, 20 keys per second; full health"
+    },
+    {
+      "registry": "boyfriend",
+      "state": "walk",
+      "named": true,
+      "name_source": "the contract",
+      "model_id": "model_boyfriend",
+      "manifest": "t2_model_proofs.json",
+      "model_class": "danger.orespawn.entity.client.ModelBoyfriend",
+      "landed": true,
+      "rig_source": "shipped",
+      "hook": "danger.orespawn.entity.client.BoyfriendGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the shipped replacement, registry-free, on explicit PoseInputs)",
+      "geo": "src/main/resources/assets/orespawn/geo/entity/boyfriend.geo.json",
+      "file": "boyfriend_reference_walk.animation.json",
+      "clip_name": "reference_walk",
+      "sha256": "eed3bee78f4960a5784bcf436b8ed8de662f356192799a64db211d2c954009ba",
+      "rule": "two_seconds_past_cap",
+      "rule_note": "vanilla HumanoidModel.setupAnim (21.1.223, HumanoidModel.java:137-286) transcribed in BoyfriendGeoReplacement.poseRig: the slowest rhythm is the arms' idle bob sin(ageInTicks * 0.067) * 0.05 on the arms' pitch (AnimationUtils.bobModelPart :60; poseRig:248, :250, every state) at 0.067 rad/tick, 93.78 ticks, beside the roll's cos(ageInTicks * 0.09) * 0.05 + 0.05 (:59; poseRig:247); the stride cos(limbSwing * 0.6662) on the legs (1.4 * limbSwingAmount) and the arms (2 * 0.5 * limbSwingAmount) (HumanoidModel.java:168-173; poseRig:138-143, walk) is phased by the walk position, 1.0 per tick at the sampler's inputs (9.43 ticks); the swing (setupAttackAnimation :382-408; poseRig:183-210) reads attackTime = getAttackAnim(inputs.partialTick()) (poseRig:98; the seam's partial tick, 0 in the sampler, 0 at rest); the riding pose (:178-186; poseRig:149) and the elytra glide (:137-165; poseRig:104) on isSeatedOnVehicle / getFallFlyingTicks; no multiple of the slowest group's period 93.778883 ticks up to the 6 s cap (120 ticks) brings every group back within 5 degrees of its start (k = 1: 5.04238 deg): a two-second window (40 ticks), not a loop - the sheet states the closing key's seam",
+      "period_ticks": 93.7788828458,
+      "span_ticks": 40.0,
+      "animation_length_seconds": 2.0,
+      "dense_samples": 41,
+      "keys_per_bone": 41,
+      "keys_per_bone_min": 2,
+      "keys_total": 170,
+      "lerp_mode": "catmullrom",
+      "keying": {
+        "search": "the density search of the exact transcriptions (KeyframeLeg's density_search through the shared DensitySearch): per bone and channel the fewest keys - candidates uniform in sample index, both ends included (the closing key always kept), the value at a key exactly the sample's - whose catmullrom curve (GeckoLib 4.8.4's CATMULLROM with the spline arguments repaired at load, SplineRepair) stays within the tolerance of every dense sample; the count below the fewest is the one that failed; a one-key state stays one key",
+        "lerp_mode": "catmullrom",
+        "rotation_tolerance_degrees": 1.0,
+        "position_tolerance_blocks": 0.03125,
+        "position_tolerance_units": 0.5,
+        "dense_samples": 41,
+        "keys_per_bone_min": 2,
+        "keys_per_bone_max": 41,
+        "keys_total": 170,
+        "max_error_degrees": 0.0,
+        "max_error_units": 0.0,
+        "max_error_blocks": 0.0,
+        "max_error_degrees_geckolib": 0.0,
+        "max_error_units_geckolib": 0.0,
+        "within_tolerance": true,
+        "one_fewer_max_error": 8.4550737245,
+        "channels_at_minimum_keys": 3,
+        "channels": 7
+      },
+      "bones": 7,
+      "moving_bones": [
+        "left_arm",
+        "left_leg",
+        "right_arm",
+        "right_leg"
+      ],
+      "position_bones": [],
+      "hidden_bones_at_rest": [],
+      "seam_delta_degrees": 75.7559392499,
+      "seam_delta_position_units": 0.0,
+      "subject_after": {
+        "ri1": 0,
+        "shielding": -1,
+        "rf1": 0.0
+      },
+      "getters_read_at_inputs": [
+        "getAttackAnim",
+        "getFallFlyingTicks",
+        "getMainArm",
+        "getSwimAmount",
+        "isSeatedOnVehicle",
+        "isUsingItem",
+        "isVisuallySwimming"
+      ],
+      "attacking": {
+        "declared_pose_interfaces": [
+          "HumanoidPose"
+        ],
+        "getters": [],
+        "outside_pose_interface": [],
+        "reads_attacking": false,
+        "read_at_inputs": false
+      },
+      "sampled_inputs": "limbSwingAmount 1.0; limbSwing = t (advancing 1.0 per tick from 0: vanilla WalkAnimationState.update does speed += (movementSpeed - speed) * multiplier; position += speed, and the classic renderer hands walkAnimation.position(partialTick) as limbSwing and min(1, speed) as limbSwingAmount, so at speed 1 the position advances exactly 1.0 per tick); ageInTicks = t (getBob: tickCount + partialTick, partialTick 0); netHeadYaw 0; headPitch 0 (looking ahead); every entity-state flag at its rest value (attacking 0, ri1 0, rock_type 0, rf1 0: a ProbeSubject built from an empty state); the entity RNG seeded 0 once per clip and evolving across the keys; one pose call per key, 20 keys per second; full health (no shipped hook reads health)"
+    },
+    {
+      "registry": "boyfriend",
+      "state": "idle",
+      "named": true,
+      "name_source": "the contract",
+      "model_id": "model_boyfriend",
+      "manifest": "t2_model_proofs.json",
+      "model_class": "danger.orespawn.entity.client.ModelBoyfriend",
+      "landed": true,
+      "rig_source": "shipped",
+      "hook": "danger.orespawn.entity.client.BoyfriendGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the shipped replacement, registry-free, on explicit PoseInputs)",
+      "geo": "src/main/resources/assets/orespawn/geo/entity/boyfriend.geo.json",
+      "file": "boyfriend_reference_idle.animation.json",
+      "clip_name": "reference_idle",
+      "sha256": "2f167053b66fea07a18cd85556726a3359ee44f05c0e799881b6597cbc97fcfe",
+      "rule": "period_multiple",
+      "rule_note": "vanilla HumanoidModel.setupAnim (21.1.223, HumanoidModel.java:137-286) transcribed in BoyfriendGeoReplacement.poseRig: the slowest rhythm is the arms' idle bob sin(ageInTicks * 0.067) * 0.05 on the arms' pitch (AnimationUtils.bobModelPart :60; poseRig:248, :250, every state) at 0.067 rad/tick, 93.78 ticks, beside the roll's cos(ageInTicks * 0.09) * 0.05 + 0.05 (:59; poseRig:247); the stride cos(limbSwing * 0.6662) on the legs (1.4 * limbSwingAmount) and the arms (2 * 0.5 * limbSwingAmount) (HumanoidModel.java:168-173; poseRig:138-143, walk) is phased by the walk position, 1.0 per tick at the sampler's inputs (9.43 ticks); the swing (setupAttackAnimation :382-408; poseRig:183-210) reads attackTime = getAttackAnim(inputs.partialTick()) (poseRig:98; the seam's partial tick, 0 in the sampler, 0 at rest); the riding pose (:178-186; poseRig:149) and the elytra glide (:137-165; poseRig:104) on isSeatedOnVehicle / getFallFlyingTicks; closes at k = 1 (93.778883 ticks): every bone returns within 4.449294 degrees of its start at k x T (the 5-degree test under the 6 s cap; k = 1: 4.449294 deg)",
+      "period_ticks": 93.7788828458,
+      "period_multiple_k": 1,
+      "closure_delta_degrees": 4.4492940815,
+      "span_ticks": 93.7788828458,
+      "animation_length_seconds": 4.6889441423,
+      "dense_samples": 95,
+      "keys_per_bone": 5,
+      "keys_per_bone_min": 2,
+      "keys_total": 20,
+      "lerp_mode": "catmullrom",
+      "keying": {
+        "search": "the density search of the exact transcriptions (KeyframeLeg's density_search through the shared DensitySearch): per bone and channel the fewest keys - candidates uniform in sample index, both ends included (the closing key always kept), the value at a key exactly the sample's - whose catmullrom curve (GeckoLib 4.8.4's CATMULLROM with the spline arguments repaired at load, SplineRepair) stays within the tolerance of every dense sample; the count below the fewest is the one that failed; a one-key state stays one key",
+        "lerp_mode": "catmullrom",
+        "rotation_tolerance_degrees": 1.0,
+        "position_tolerance_blocks": 0.03125,
+        "position_tolerance_units": 0.5,
+        "dense_samples": 95,
+        "keys_per_bone_min": 2,
+        "keys_per_bone_max": 5,
+        "keys_total": 20,
+        "max_error_degrees": 0.8597647808,
+        "max_error_units": 0.0,
+        "max_error_blocks": 0.0,
+        "max_error_degrees_geckolib": 0.8597647808,
+        "max_error_units_geckolib": 0.0,
+        "within_tolerance": true,
+        "one_fewer_max_error": 1.2909299041,
+        "channels_at_minimum_keys": 5,
+        "channels": 7
+      },
+      "bones": 7,
+      "moving_bones": [
+        "left_arm",
+        "left_leg",
+        "right_arm",
+        "right_leg"
+      ],
+      "position_bones": [],
+      "hidden_bones_at_rest": [],
+      "seam_delta_degrees": 4.4492940815,
+      "seam_delta_position_units": 0.0,
+      "subject_after": {
+        "ri1": 0,
+        "shielding": -1,
+        "rf1": 0.0
+      },
+      "getters_read_at_inputs": [
+        "getAttackAnim",
+        "getFallFlyingTicks",
+        "getMainArm",
+        "getSwimAmount",
+        "isSeatedOnVehicle",
+        "isUsingItem",
+        "isVisuallySwimming"
+      ],
+      "attacking": {
+        "declared_pose_interfaces": [
+          "HumanoidPose"
+        ],
+        "getters": [],
+        "outside_pose_interface": [],
+        "reads_attacking": false,
+        "read_at_inputs": false
+      },
+      "sampled_inputs": "limbSwingAmount 0.0; limbSwing 0 (the walk position at rest: vanilla WalkAnimationState holds its position while the speed is 0, and a creature that has not walked since it spawned carries 0); ageInTicks = t (getBob: tickCount + partialTick, partialTick 0; advancing 1.0 per tick from 0); netHeadYaw 0; headPitch 0 (looking ahead); every entity-state flag at its rest value (attacking 0, ri1 0, rock_type 0, rf1 0: a ProbeSubject built from an empty state); the entity RNG seeded 0 once per clip and evolving across the keys; one pose call per key, 20 keys per second; full health"
+    },
+    {
+      "registry": "boyfriend",
+      "state": "glide",
+      "named": true,
+      "name_source": "boyfriend.json reference_states.glide = {getFallFlyingTicks: 5}",
+      "getter": "getFallFlyingTicks",
+      "value": 5,
+      "getter_read_at_inputs": true,
+      "model_id": "model_boyfriend",
+      "manifest": "t2_model_proofs.json",
+      "model_class": "danger.orespawn.entity.client.ModelBoyfriend",
+      "landed": true,
+      "rig_source": "shipped",
+      "hook": "danger.orespawn.entity.client.BoyfriendGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the shipped replacement, registry-free, on explicit PoseInputs)",
+      "geo": "src/main/resources/assets/orespawn/geo/entity/boyfriend.geo.json",
+      "file": "boyfriend_reference_glide.animation.json",
+      "clip_name": "reference_glide",
+      "sha256": "1d4457c022e7e4d33e04a87851db389ecb5de8c91065dc5db98910d6627c7029",
+      "rule": "period_multiple",
+      "rule_note": "vanilla HumanoidModel.setupAnim (21.1.223, HumanoidModel.java:137-286) transcribed in BoyfriendGeoReplacement.poseRig: the slowest rhythm is the arms' idle bob sin(ageInTicks * 0.067) * 0.05 on the arms' pitch (AnimationUtils.bobModelPart :60; poseRig:248, :250, every state) at 0.067 rad/tick, 93.78 ticks, beside the roll's cos(ageInTicks * 0.09) * 0.05 + 0.05 (:59; poseRig:247); the stride cos(limbSwing * 0.6662) on the legs (1.4 * limbSwingAmount) and the arms (2 * 0.5 * limbSwingAmount) (HumanoidModel.java:168-173; poseRig:138-143, walk) is phased by the walk position, 1.0 per tick at the sampler's inputs (9.43 ticks); the swing (setupAttackAnimation :382-408; poseRig:183-210) reads attackTime = getAttackAnim(inputs.partialTick()) (poseRig:98; the seam's partial tick, 0 in the sampler, 0 at rest); the riding pose (:178-186; poseRig:149) and the elytra glide (:137-165; poseRig:104) on isSeatedOnVehicle / getFallFlyingTicks; closes at k = 1 (93.778883 ticks): every bone returns within 4.449294 degrees of its start at k x T (the 5-degree test under the 6 s cap; k = 1: 4.449294 deg)",
+      "period_ticks": 93.7788828458,
+      "period_multiple_k": 1,
+      "closure_delta_degrees": 4.4492940815,
+      "span_ticks": 93.7788828458,
+      "animation_length_seconds": 4.6889441423,
+      "dense_samples": 95,
+      "keys_per_bone": 5,
+      "keys_per_bone_min": 2,
+      "keys_total": 20,
+      "lerp_mode": "catmullrom",
+      "keying": {
+        "search": "the density search of the exact transcriptions (KeyframeLeg's density_search through the shared DensitySearch): per bone and channel the fewest keys - candidates uniform in sample index, both ends included (the closing key always kept), the value at a key exactly the sample's - whose catmullrom curve (GeckoLib 4.8.4's CATMULLROM with the spline arguments repaired at load, SplineRepair) stays within the tolerance of every dense sample; the count below the fewest is the one that failed; a one-key state stays one key",
+        "lerp_mode": "catmullrom",
+        "rotation_tolerance_degrees": 1.0,
+        "position_tolerance_blocks": 0.03125,
+        "position_tolerance_units": 0.5,
+        "dense_samples": 95,
+        "keys_per_bone_min": 2,
+        "keys_per_bone_max": 5,
+        "keys_total": 20,
+        "max_error_degrees": 0.8597647808,
+        "max_error_units": 0.0,
+        "max_error_blocks": 0.0,
+        "max_error_degrees_geckolib": 0.8597647808,
+        "max_error_units_geckolib": 0.0,
+        "within_tolerance": true,
+        "one_fewer_max_error": 1.2909299041,
+        "channels_at_minimum_keys": 5,
+        "channels": 7
+      },
+      "bones": 7,
+      "moving_bones": [
+        "hat",
+        "head",
+        "left_arm",
+        "left_leg",
+        "right_arm",
+        "right_leg"
+      ],
+      "position_bones": [],
+      "hidden_bones_at_rest": [],
+      "seam_delta_degrees": 4.4492940815,
+      "seam_delta_position_units": 0.0,
+      "subject_after": {
+        "ri1": 0,
+        "shielding": -1,
+        "rf1": 0.0
+      },
+      "getters_read_at_inputs": [
+        "getAttackAnim",
+        "getDeltaMovement",
+        "getFallFlyingTicks",
+        "getMainArm",
+        "getSwimAmount",
+        "isSeatedOnVehicle",
+        "isUsingItem",
+        "isVisuallySwimming"
+      ],
+      "attacking": {
+        "declared_pose_interfaces": [
+          "HumanoidPose"
+        ],
+        "getters": [],
+        "outside_pose_interface": [],
+        "reads_attacking": false,
+        "read_at_inputs": false
+      },
+      "sampled_inputs": "getFallFlyingTicks() answers 5 (the state the seed names `glide`; every other getter at its rest value); limbSwingAmount 0.0; limbSwing 0 (the walk position at rest: vanilla WalkAnimationState holds its position while the speed is 0, and a creature that has not walked since it spawned carries 0); ageInTicks = t (getBob: tickCount + partialTick, partialTick 0; advancing 1.0 per tick from 0); netHeadYaw 0; headPitch 0 (looking ahead); every other entity-state flag at its rest value (ri1 0, rock_type 0, rf1 0); the entity RNG seeded 0 once per clip and evolving across the keys; one pose call per key, 20 keys per second; full health"
+    },
+    {
+      "registry": "boyfriend",
+      "state": "ride",
+      "named": true,
+      "name_source": "boyfriend.json reference_states.ride = {isSeatedOnVehicle: true}",
+      "getter": "isSeatedOnVehicle",
+      "value": true,
+      "getter_read_at_inputs": true,
+      "model_id": "model_boyfriend",
+      "manifest": "t2_model_proofs.json",
+      "model_class": "danger.orespawn.entity.client.ModelBoyfriend",
+      "landed": true,
+      "rig_source": "shipped",
+      "hook": "danger.orespawn.entity.client.BoyfriendGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the shipped replacement, registry-free, on explicit PoseInputs)",
+      "geo": "src/main/resources/assets/orespawn/geo/entity/boyfriend.geo.json",
+      "file": "boyfriend_reference_ride.animation.json",
+      "clip_name": "reference_ride",
+      "sha256": "9e466ce2c846e9ebbd2d59f0178a6e0460b033c89936c0167eca8f97b4759df0",
+      "rule": "period_multiple",
+      "rule_note": "vanilla HumanoidModel.setupAnim (21.1.223, HumanoidModel.java:137-286) transcribed in BoyfriendGeoReplacement.poseRig: the slowest rhythm is the arms' idle bob sin(ageInTicks * 0.067) * 0.05 on the arms' pitch (AnimationUtils.bobModelPart :60; poseRig:248, :250, every state) at 0.067 rad/tick, 93.78 ticks, beside the roll's cos(ageInTicks * 0.09) * 0.05 + 0.05 (:59; poseRig:247); the stride cos(limbSwing * 0.6662) on the legs (1.4 * limbSwingAmount) and the arms (2 * 0.5 * limbSwingAmount) (HumanoidModel.java:168-173; poseRig:138-143, walk) is phased by the walk position, 1.0 per tick at the sampler's inputs (9.43 ticks); the swing (setupAttackAnimation :382-408; poseRig:183-210) reads attackTime = getAttackAnim(inputs.partialTick()) (poseRig:98; the seam's partial tick, 0 in the sampler, 0 at rest); the riding pose (:178-186; poseRig:149) and the elytra glide (:137-165; poseRig:104) on isSeatedOnVehicle / getFallFlyingTicks; closes at k = 1 (93.778883 ticks): every bone returns within 4.449294 degrees of its start at k x T (the 5-degree test under the 6 s cap; k = 1: 4.449294 deg)",
+      "period_ticks": 93.7788828458,
+      "period_multiple_k": 1,
+      "closure_delta_degrees": 4.4492940815,
+      "span_ticks": 93.7788828458,
+      "animation_length_seconds": 4.6889441423,
+      "dense_samples": 95,
+      "keys_per_bone": 5,
+      "keys_per_bone_min": 2,
+      "keys_total": 20,
+      "lerp_mode": "catmullrom",
+      "keying": {
+        "search": "the density search of the exact transcriptions (KeyframeLeg's density_search through the shared DensitySearch): per bone and channel the fewest keys - candidates uniform in sample index, both ends included (the closing key always kept), the value at a key exactly the sample's - whose catmullrom curve (GeckoLib 4.8.4's CATMULLROM with the spline arguments repaired at load, SplineRepair) stays within the tolerance of every dense sample; the count below the fewest is the one that failed; a one-key state stays one key",
+        "lerp_mode": "catmullrom",
+        "rotation_tolerance_degrees": 1.0,
+        "position_tolerance_blocks": 0.03125,
+        "position_tolerance_units": 0.5,
+        "dense_samples": 95,
+        "keys_per_bone_min": 2,
+        "keys_per_bone_max": 5,
+        "keys_total": 20,
+        "max_error_degrees": 0.8597647808,
+        "max_error_units": 0.0,
+        "max_error_blocks": 0.0,
+        "max_error_degrees_geckolib": 0.8597647808,
+        "max_error_units_geckolib": 0.0,
+        "within_tolerance": true,
+        "one_fewer_max_error": 1.2909299041,
+        "channels_at_minimum_keys": 5,
+        "channels": 7
+      },
+      "bones": 7,
+      "moving_bones": [
+        "left_arm",
+        "left_leg",
+        "right_arm",
+        "right_leg"
+      ],
+      "position_bones": [],
+      "hidden_bones_at_rest": [],
+      "seam_delta_degrees": 4.4492940815,
+      "seam_delta_position_units": 0.0,
+      "subject_after": {
+        "ri1": 0,
+        "shielding": -1,
+        "rf1": 0.0
+      },
+      "getters_read_at_inputs": [
+        "getAttackAnim",
+        "getFallFlyingTicks",
+        "getMainArm",
+        "getSwimAmount",
+        "isSeatedOnVehicle",
+        "isUsingItem",
+        "isVisuallySwimming"
+      ],
+      "attacking": {
+        "declared_pose_interfaces": [
+          "HumanoidPose"
+        ],
+        "getters": [],
+        "outside_pose_interface": [],
+        "reads_attacking": false,
+        "read_at_inputs": false
+      },
+      "sampled_inputs": "isSeatedOnVehicle() answers 1 (the state the seed names `ride`; every other getter at its rest value); limbSwingAmount 0.0; limbSwing 0 (the walk position at rest: vanilla WalkAnimationState holds its position while the speed is 0, and a creature that has not walked since it spawned carries 0); ageInTicks = t (getBob: tickCount + partialTick, partialTick 0; advancing 1.0 per tick from 0); netHeadYaw 0; headPitch 0 (looking ahead); every other entity-state flag at its rest value (ri1 0, rock_type 0, rf1 0); the entity RNG seeded 0 once per clip and evolving across the keys; one pose call per key, 20 keys per second; full health"
     },
     {
       "registry": "brutalfly",
@@ -15493,18 +16284,18 @@
       "state": "walk",
       "named": true,
       "name_source": "the contract",
-      "model_id": "reference_ghost",
-      "manifest": "reference_model_proofs.json",
+      "model_id": "model_ghost",
+      "manifest": "t2_model_proofs.json",
       "model_class": "danger.orespawn.entity.client.GhostModel",
-      "landed": false,
-      "rig_source": "reference-leg converter output",
-      "hook": "danger.orespawn.entity.client.GhostGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the unlanded hook of - the classic setupAnim transcribed into the descriptor's PoseInputs form, proven when the rig lands - registry-free, on explicit PoseInputs, over the reference leg's converter output reference_ghost.geo.json baked without the face-order strictness the landing slice's TEST-007 adds)",
-      "geo": "build/reference/generated/reference_ghost.geo.json",
+      "landed": true,
+      "rig_source": "shipped",
+      "hook": "danger.orespawn.entity.client.GhostGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the shipped replacement, registry-free, on explicit PoseInputs)",
+      "geo": "src/main/resources/assets/orespawn/geo/entity/ghost.geo.json",
       "file": "ghost_reference_walk.animation.json",
       "clip_name": "reference_walk",
       "sha256": "b02645ec5c1e29b5876dc851415897b0c0f4107708bde2cf34b7f0bef05cfeb0",
       "rule": "two_seconds_past_cap",
-      "rule_note": "four slow cosines on the two arms: cos(ageInTicks * 0.3 / 0.32 / 0.34 / 0.36) * PI * 0.05 about Z and X (GhostGeoReplacement.applyCustomAnimations:58-61, every state): the slowest 0.3 rad/tick, 20.94 ticks; nothing reads the walk or the entity; no multiple of the slowest group's period 20.94395 ticks up to the 6 s cap (120 ticks) brings every group back within 5 degrees of its start (k = 1: 6.218682 deg, k = 2: 16.28095 deg, k = 3: 16.281458 deg, k = 4: 17.803426 deg, k = 5: 13.500499 deg): a two-second window (40 ticks), not a loop - the sheet states the closing key's seam",
+      "rule_note": "four slow cosines on the two arms: cos(ageInTicks * 0.3 / 0.32 / 0.34 / 0.36) * PI * 0.05 about Z and X (GhostGeoReplacement.applyCustomAnimations:68-71, every state): the slowest 0.3 rad/tick, 20.94 ticks; nothing reads the walk or the entity; no multiple of the slowest group's period 20.94395 ticks up to the 6 s cap (120 ticks) brings every group back within 5 degrees of its start (k = 1: 6.218682 deg, k = 2: 16.28095 deg, k = 3: 16.281458 deg, k = 4: 17.803426 deg, k = 5: 13.500499 deg): a two-second window (40 ticks), not a loop - the sheet states the closing key's seam",
       "period_ticks": 20.9439501917,
       "span_ticks": 40.0,
       "animation_length_seconds": 2.0,
@@ -15562,18 +16353,18 @@
       "state": "idle",
       "named": true,
       "name_source": "the contract",
-      "model_id": "reference_ghost",
-      "manifest": "reference_model_proofs.json",
+      "model_id": "model_ghost",
+      "manifest": "t2_model_proofs.json",
       "model_class": "danger.orespawn.entity.client.GhostModel",
-      "landed": false,
-      "rig_source": "reference-leg converter output",
-      "hook": "danger.orespawn.entity.client.GhostGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the unlanded hook of - the classic setupAnim transcribed into the descriptor's PoseInputs form, proven when the rig lands - registry-free, on explicit PoseInputs, over the reference leg's converter output reference_ghost.geo.json baked without the face-order strictness the landing slice's TEST-007 adds)",
-      "geo": "build/reference/generated/reference_ghost.geo.json",
+      "landed": true,
+      "rig_source": "shipped",
+      "hook": "danger.orespawn.entity.client.GhostGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the shipped replacement, registry-free, on explicit PoseInputs)",
+      "geo": "src/main/resources/assets/orespawn/geo/entity/ghost.geo.json",
       "file": "ghost_reference_idle.animation.json",
       "clip_name": "reference_idle",
       "sha256": "07e929c78bb9dd5ba5b02c0592e0a26b8afd34b6c6386b6a4eb249724d4e782e",
       "rule": "two_seconds_past_cap",
-      "rule_note": "four slow cosines on the two arms: cos(ageInTicks * 0.3 / 0.32 / 0.34 / 0.36) * PI * 0.05 about Z and X (GhostGeoReplacement.applyCustomAnimations:58-61, every state): the slowest 0.3 rad/tick, 20.94 ticks; nothing reads the walk or the entity; no multiple of the slowest group's period 20.94395 ticks up to the 6 s cap (120 ticks) brings every group back within 5 degrees of its start (k = 1: 6.218682 deg, k = 2: 16.28095 deg, k = 3: 16.281458 deg, k = 4: 17.803426 deg, k = 5: 13.500499 deg): a two-second window (40 ticks), not a loop - the sheet states the closing key's seam",
+      "rule_note": "four slow cosines on the two arms: cos(ageInTicks * 0.3 / 0.32 / 0.34 / 0.36) * PI * 0.05 about Z and X (GhostGeoReplacement.applyCustomAnimations:68-71, every state): the slowest 0.3 rad/tick, 20.94 ticks; nothing reads the walk or the entity; no multiple of the slowest group's period 20.94395 ticks up to the 6 s cap (120 ticks) brings every group back within 5 degrees of its start (k = 1: 6.218682 deg, k = 2: 16.28095 deg, k = 3: 16.281458 deg, k = 4: 17.803426 deg, k = 5: 13.500499 deg): a two-second window (40 ticks), not a loop - the sheet states the closing key's seam",
       "period_ticks": 20.9439501917,
       "span_ticks": 40.0,
       "animation_length_seconds": 2.0,
@@ -16108,6 +16899,345 @@
         "read_at_inputs": true
       },
       "sampled_inputs": "getAttacking() answers 1 (the state the seed names `attack`; every other getter at its rest value); limbSwingAmount 0.0; limbSwing 0 (the walk position at rest: vanilla WalkAnimationState holds its position while the speed is 0, and a creature that has not walked since it spawned carries 0); ageInTicks = t (getBob: tickCount + partialTick, partialTick 0; advancing 1.0 per tick from 0); netHeadYaw 0; headPitch 0 (looking ahead); every other entity-state flag at its rest value (ri1 0, rock_type 0, rf1 0); the entity RNG seeded 0 once per clip and evolving across the keys; one pose call per key, 20 keys per second; full health"
+    },
+    {
+      "registry": "girlfriend",
+      "state": "walk",
+      "named": true,
+      "name_source": "the contract",
+      "model_id": "model_girlfriend",
+      "manifest": "t2_model_proofs.json",
+      "model_class": "danger.orespawn.entity.client.ModelGirlfriend",
+      "landed": true,
+      "rig_source": "shipped",
+      "hook": "danger.orespawn.entity.client.GirlfriendGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the shipped replacement, registry-free, on explicit PoseInputs)",
+      "geo": "src/main/resources/assets/orespawn/geo/entity/girlfriend.geo.json",
+      "file": "girlfriend_reference_walk.animation.json",
+      "clip_name": "reference_walk",
+      "sha256": "eed3bee78f4960a5784bcf436b8ed8de662f356192799a64db211d2c954009ba",
+      "rule": "two_seconds_past_cap",
+      "rule_note": "the Boyfriend rig's rule: GirlfriendGeoReplacement.applyCustomAnimations:68 -> BoyfriendGeoReplacement.poseRig - vanilla HumanoidModel.setupAnim (21.1.223, HumanoidModel.java:137-286) transcribed in BoyfriendGeoReplacement.poseRig: the slowest rhythm is the arms' idle bob sin(ageInTicks * 0.067) * 0.05 on the arms' pitch (AnimationUtils.bobModelPart :60; poseRig:248, :250, every state) at 0.067 rad/tick, 93.78 ticks, beside the roll's cos(ageInTicks * 0.09) * 0.05 + 0.05 (:59; poseRig:247); the stride cos(limbSwing * 0.6662) on the legs (1.4 * limbSwingAmount) and the arms (2 * 0.5 * limbSwingAmount) (HumanoidModel.java:168-173; poseRig:138-143, walk) is phased by the walk position, 1.0 per tick at the sampler's inputs (9.43 ticks); the swing (setupAttackAnimation :382-408; poseRig:183-210) reads attackTime = getAttackAnim(inputs.partialTick()) (poseRig:98; the seam's partial tick, 0 in the sampler, 0 at rest); the riding pose (:178-186; poseRig:149) and the elytra glide (:137-165; poseRig:104) on isSeatedOnVehicle / getFallFlyingTicks; no multiple of the slowest group's period 93.778883 ticks up to the 6 s cap (120 ticks) brings every group back within 5 degrees of its start (k = 1: 5.04238 deg): a two-second window (40 ticks), not a loop - the sheet states the closing key's seam",
+      "period_ticks": 93.7788828458,
+      "span_ticks": 40.0,
+      "animation_length_seconds": 2.0,
+      "dense_samples": 41,
+      "keys_per_bone": 41,
+      "keys_per_bone_min": 2,
+      "keys_total": 170,
+      "lerp_mode": "catmullrom",
+      "keying": {
+        "search": "the density search of the exact transcriptions (KeyframeLeg's density_search through the shared DensitySearch): per bone and channel the fewest keys - candidates uniform in sample index, both ends included (the closing key always kept), the value at a key exactly the sample's - whose catmullrom curve (GeckoLib 4.8.4's CATMULLROM with the spline arguments repaired at load, SplineRepair) stays within the tolerance of every dense sample; the count below the fewest is the one that failed; a one-key state stays one key",
+        "lerp_mode": "catmullrom",
+        "rotation_tolerance_degrees": 1.0,
+        "position_tolerance_blocks": 0.03125,
+        "position_tolerance_units": 0.5,
+        "dense_samples": 41,
+        "keys_per_bone_min": 2,
+        "keys_per_bone_max": 41,
+        "keys_total": 170,
+        "max_error_degrees": 0.0,
+        "max_error_units": 0.0,
+        "max_error_blocks": 0.0,
+        "max_error_degrees_geckolib": 0.0,
+        "max_error_units_geckolib": 0.0,
+        "within_tolerance": true,
+        "one_fewer_max_error": 8.4550737245,
+        "channels_at_minimum_keys": 3,
+        "channels": 7
+      },
+      "bones": 7,
+      "moving_bones": [
+        "left_arm",
+        "left_leg",
+        "right_arm",
+        "right_leg"
+      ],
+      "position_bones": [],
+      "hidden_bones_at_rest": [],
+      "seam_delta_degrees": 75.7559392499,
+      "seam_delta_position_units": 0.0,
+      "subject_after": {
+        "ri1": 0,
+        "shielding": -1,
+        "rf1": 0.0
+      },
+      "getters_read_at_inputs": [
+        "getAttackAnim",
+        "getFallFlyingTicks",
+        "getMainArm",
+        "getSwimAmount",
+        "isSeatedOnVehicle",
+        "isUsingItem",
+        "isVisuallySwimming"
+      ],
+      "attacking": {
+        "declared_pose_interfaces": [
+          "HumanoidPose"
+        ],
+        "getters": [],
+        "outside_pose_interface": [],
+        "reads_attacking": false,
+        "read_at_inputs": false
+      },
+      "sampled_inputs": "limbSwingAmount 1.0; limbSwing = t (advancing 1.0 per tick from 0: vanilla WalkAnimationState.update does speed += (movementSpeed - speed) * multiplier; position += speed, and the classic renderer hands walkAnimation.position(partialTick) as limbSwing and min(1, speed) as limbSwingAmount, so at speed 1 the position advances exactly 1.0 per tick); ageInTicks = t (getBob: tickCount + partialTick, partialTick 0); netHeadYaw 0; headPitch 0 (looking ahead); every entity-state flag at its rest value (attacking 0, ri1 0, rock_type 0, rf1 0: a ProbeSubject built from an empty state); the entity RNG seeded 0 once per clip and evolving across the keys; one pose call per key, 20 keys per second; full health (no shipped hook reads health)"
+    },
+    {
+      "registry": "girlfriend",
+      "state": "idle",
+      "named": true,
+      "name_source": "the contract",
+      "model_id": "model_girlfriend",
+      "manifest": "t2_model_proofs.json",
+      "model_class": "danger.orespawn.entity.client.ModelGirlfriend",
+      "landed": true,
+      "rig_source": "shipped",
+      "hook": "danger.orespawn.entity.client.GirlfriendGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the shipped replacement, registry-free, on explicit PoseInputs)",
+      "geo": "src/main/resources/assets/orespawn/geo/entity/girlfriend.geo.json",
+      "file": "girlfriend_reference_idle.animation.json",
+      "clip_name": "reference_idle",
+      "sha256": "2f167053b66fea07a18cd85556726a3359ee44f05c0e799881b6597cbc97fcfe",
+      "rule": "period_multiple",
+      "rule_note": "the Boyfriend rig's rule: GirlfriendGeoReplacement.applyCustomAnimations:68 -> BoyfriendGeoReplacement.poseRig - vanilla HumanoidModel.setupAnim (21.1.223, HumanoidModel.java:137-286) transcribed in BoyfriendGeoReplacement.poseRig: the slowest rhythm is the arms' idle bob sin(ageInTicks * 0.067) * 0.05 on the arms' pitch (AnimationUtils.bobModelPart :60; poseRig:248, :250, every state) at 0.067 rad/tick, 93.78 ticks, beside the roll's cos(ageInTicks * 0.09) * 0.05 + 0.05 (:59; poseRig:247); the stride cos(limbSwing * 0.6662) on the legs (1.4 * limbSwingAmount) and the arms (2 * 0.5 * limbSwingAmount) (HumanoidModel.java:168-173; poseRig:138-143, walk) is phased by the walk position, 1.0 per tick at the sampler's inputs (9.43 ticks); the swing (setupAttackAnimation :382-408; poseRig:183-210) reads attackTime = getAttackAnim(inputs.partialTick()) (poseRig:98; the seam's partial tick, 0 in the sampler, 0 at rest); the riding pose (:178-186; poseRig:149) and the elytra glide (:137-165; poseRig:104) on isSeatedOnVehicle / getFallFlyingTicks; closes at k = 1 (93.778883 ticks): every bone returns within 4.449294 degrees of its start at k x T (the 5-degree test under the 6 s cap; k = 1: 4.449294 deg)",
+      "period_ticks": 93.7788828458,
+      "period_multiple_k": 1,
+      "closure_delta_degrees": 4.4492940815,
+      "span_ticks": 93.7788828458,
+      "animation_length_seconds": 4.6889441423,
+      "dense_samples": 95,
+      "keys_per_bone": 5,
+      "keys_per_bone_min": 2,
+      "keys_total": 20,
+      "lerp_mode": "catmullrom",
+      "keying": {
+        "search": "the density search of the exact transcriptions (KeyframeLeg's density_search through the shared DensitySearch): per bone and channel the fewest keys - candidates uniform in sample index, both ends included (the closing key always kept), the value at a key exactly the sample's - whose catmullrom curve (GeckoLib 4.8.4's CATMULLROM with the spline arguments repaired at load, SplineRepair) stays within the tolerance of every dense sample; the count below the fewest is the one that failed; a one-key state stays one key",
+        "lerp_mode": "catmullrom",
+        "rotation_tolerance_degrees": 1.0,
+        "position_tolerance_blocks": 0.03125,
+        "position_tolerance_units": 0.5,
+        "dense_samples": 95,
+        "keys_per_bone_min": 2,
+        "keys_per_bone_max": 5,
+        "keys_total": 20,
+        "max_error_degrees": 0.8597647808,
+        "max_error_units": 0.0,
+        "max_error_blocks": 0.0,
+        "max_error_degrees_geckolib": 0.8597647808,
+        "max_error_units_geckolib": 0.0,
+        "within_tolerance": true,
+        "one_fewer_max_error": 1.2909299041,
+        "channels_at_minimum_keys": 5,
+        "channels": 7
+      },
+      "bones": 7,
+      "moving_bones": [
+        "left_arm",
+        "left_leg",
+        "right_arm",
+        "right_leg"
+      ],
+      "position_bones": [],
+      "hidden_bones_at_rest": [],
+      "seam_delta_degrees": 4.4492940815,
+      "seam_delta_position_units": 0.0,
+      "subject_after": {
+        "ri1": 0,
+        "shielding": -1,
+        "rf1": 0.0
+      },
+      "getters_read_at_inputs": [
+        "getAttackAnim",
+        "getFallFlyingTicks",
+        "getMainArm",
+        "getSwimAmount",
+        "isSeatedOnVehicle",
+        "isUsingItem",
+        "isVisuallySwimming"
+      ],
+      "attacking": {
+        "declared_pose_interfaces": [
+          "HumanoidPose"
+        ],
+        "getters": [],
+        "outside_pose_interface": [],
+        "reads_attacking": false,
+        "read_at_inputs": false
+      },
+      "sampled_inputs": "limbSwingAmount 0.0; limbSwing 0 (the walk position at rest: vanilla WalkAnimationState holds its position while the speed is 0, and a creature that has not walked since it spawned carries 0); ageInTicks = t (getBob: tickCount + partialTick, partialTick 0; advancing 1.0 per tick from 0); netHeadYaw 0; headPitch 0 (looking ahead); every entity-state flag at its rest value (attacking 0, ri1 0, rock_type 0, rf1 0: a ProbeSubject built from an empty state); the entity RNG seeded 0 once per clip and evolving across the keys; one pose call per key, 20 keys per second; full health"
+    },
+    {
+      "registry": "girlfriend",
+      "state": "glide",
+      "named": true,
+      "name_source": "girlfriend.json reference_states.glide = {getFallFlyingTicks: 5}",
+      "getter": "getFallFlyingTicks",
+      "value": 5,
+      "getter_read_at_inputs": true,
+      "model_id": "model_girlfriend",
+      "manifest": "t2_model_proofs.json",
+      "model_class": "danger.orespawn.entity.client.ModelGirlfriend",
+      "landed": true,
+      "rig_source": "shipped",
+      "hook": "danger.orespawn.entity.client.GirlfriendGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the shipped replacement, registry-free, on explicit PoseInputs)",
+      "geo": "src/main/resources/assets/orespawn/geo/entity/girlfriend.geo.json",
+      "file": "girlfriend_reference_glide.animation.json",
+      "clip_name": "reference_glide",
+      "sha256": "1d4457c022e7e4d33e04a87851db389ecb5de8c91065dc5db98910d6627c7029",
+      "rule": "period_multiple",
+      "rule_note": "the Boyfriend rig's rule: GirlfriendGeoReplacement.applyCustomAnimations:68 -> BoyfriendGeoReplacement.poseRig - vanilla HumanoidModel.setupAnim (21.1.223, HumanoidModel.java:137-286) transcribed in BoyfriendGeoReplacement.poseRig: the slowest rhythm is the arms' idle bob sin(ageInTicks * 0.067) * 0.05 on the arms' pitch (AnimationUtils.bobModelPart :60; poseRig:248, :250, every state) at 0.067 rad/tick, 93.78 ticks, beside the roll's cos(ageInTicks * 0.09) * 0.05 + 0.05 (:59; poseRig:247); the stride cos(limbSwing * 0.6662) on the legs (1.4 * limbSwingAmount) and the arms (2 * 0.5 * limbSwingAmount) (HumanoidModel.java:168-173; poseRig:138-143, walk) is phased by the walk position, 1.0 per tick at the sampler's inputs (9.43 ticks); the swing (setupAttackAnimation :382-408; poseRig:183-210) reads attackTime = getAttackAnim(inputs.partialTick()) (poseRig:98; the seam's partial tick, 0 in the sampler, 0 at rest); the riding pose (:178-186; poseRig:149) and the elytra glide (:137-165; poseRig:104) on isSeatedOnVehicle / getFallFlyingTicks; closes at k = 1 (93.778883 ticks): every bone returns within 4.449294 degrees of its start at k x T (the 5-degree test under the 6 s cap; k = 1: 4.449294 deg)",
+      "period_ticks": 93.7788828458,
+      "period_multiple_k": 1,
+      "closure_delta_degrees": 4.4492940815,
+      "span_ticks": 93.7788828458,
+      "animation_length_seconds": 4.6889441423,
+      "dense_samples": 95,
+      "keys_per_bone": 5,
+      "keys_per_bone_min": 2,
+      "keys_total": 20,
+      "lerp_mode": "catmullrom",
+      "keying": {
+        "search": "the density search of the exact transcriptions (KeyframeLeg's density_search through the shared DensitySearch): per bone and channel the fewest keys - candidates uniform in sample index, both ends included (the closing key always kept), the value at a key exactly the sample's - whose catmullrom curve (GeckoLib 4.8.4's CATMULLROM with the spline arguments repaired at load, SplineRepair) stays within the tolerance of every dense sample; the count below the fewest is the one that failed; a one-key state stays one key",
+        "lerp_mode": "catmullrom",
+        "rotation_tolerance_degrees": 1.0,
+        "position_tolerance_blocks": 0.03125,
+        "position_tolerance_units": 0.5,
+        "dense_samples": 95,
+        "keys_per_bone_min": 2,
+        "keys_per_bone_max": 5,
+        "keys_total": 20,
+        "max_error_degrees": 0.8597647808,
+        "max_error_units": 0.0,
+        "max_error_blocks": 0.0,
+        "max_error_degrees_geckolib": 0.8597647808,
+        "max_error_units_geckolib": 0.0,
+        "within_tolerance": true,
+        "one_fewer_max_error": 1.2909299041,
+        "channels_at_minimum_keys": 5,
+        "channels": 7
+      },
+      "bones": 7,
+      "moving_bones": [
+        "hat",
+        "head",
+        "left_arm",
+        "left_leg",
+        "right_arm",
+        "right_leg"
+      ],
+      "position_bones": [],
+      "hidden_bones_at_rest": [],
+      "seam_delta_degrees": 4.4492940815,
+      "seam_delta_position_units": 0.0,
+      "subject_after": {
+        "ri1": 0,
+        "shielding": -1,
+        "rf1": 0.0
+      },
+      "getters_read_at_inputs": [
+        "getAttackAnim",
+        "getDeltaMovement",
+        "getFallFlyingTicks",
+        "getMainArm",
+        "getSwimAmount",
+        "isSeatedOnVehicle",
+        "isUsingItem",
+        "isVisuallySwimming"
+      ],
+      "attacking": {
+        "declared_pose_interfaces": [
+          "HumanoidPose"
+        ],
+        "getters": [],
+        "outside_pose_interface": [],
+        "reads_attacking": false,
+        "read_at_inputs": false
+      },
+      "sampled_inputs": "getFallFlyingTicks() answers 5 (the state the seed names `glide`; every other getter at its rest value); limbSwingAmount 0.0; limbSwing 0 (the walk position at rest: vanilla WalkAnimationState holds its position while the speed is 0, and a creature that has not walked since it spawned carries 0); ageInTicks = t (getBob: tickCount + partialTick, partialTick 0; advancing 1.0 per tick from 0); netHeadYaw 0; headPitch 0 (looking ahead); every other entity-state flag at its rest value (ri1 0, rock_type 0, rf1 0); the entity RNG seeded 0 once per clip and evolving across the keys; one pose call per key, 20 keys per second; full health"
+    },
+    {
+      "registry": "girlfriend",
+      "state": "ride",
+      "named": true,
+      "name_source": "girlfriend.json reference_states.ride = {isSeatedOnVehicle: true}",
+      "getter": "isSeatedOnVehicle",
+      "value": true,
+      "getter_read_at_inputs": true,
+      "model_id": "model_girlfriend",
+      "manifest": "t2_model_proofs.json",
+      "model_class": "danger.orespawn.entity.client.ModelGirlfriend",
+      "landed": true,
+      "rig_source": "shipped",
+      "hook": "danger.orespawn.entity.client.GirlfriendGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the shipped replacement, registry-free, on explicit PoseInputs)",
+      "geo": "src/main/resources/assets/orespawn/geo/entity/girlfriend.geo.json",
+      "file": "girlfriend_reference_ride.animation.json",
+      "clip_name": "reference_ride",
+      "sha256": "9e466ce2c846e9ebbd2d59f0178a6e0460b033c89936c0167eca8f97b4759df0",
+      "rule": "period_multiple",
+      "rule_note": "the Boyfriend rig's rule: GirlfriendGeoReplacement.applyCustomAnimations:68 -> BoyfriendGeoReplacement.poseRig - vanilla HumanoidModel.setupAnim (21.1.223, HumanoidModel.java:137-286) transcribed in BoyfriendGeoReplacement.poseRig: the slowest rhythm is the arms' idle bob sin(ageInTicks * 0.067) * 0.05 on the arms' pitch (AnimationUtils.bobModelPart :60; poseRig:248, :250, every state) at 0.067 rad/tick, 93.78 ticks, beside the roll's cos(ageInTicks * 0.09) * 0.05 + 0.05 (:59; poseRig:247); the stride cos(limbSwing * 0.6662) on the legs (1.4 * limbSwingAmount) and the arms (2 * 0.5 * limbSwingAmount) (HumanoidModel.java:168-173; poseRig:138-143, walk) is phased by the walk position, 1.0 per tick at the sampler's inputs (9.43 ticks); the swing (setupAttackAnimation :382-408; poseRig:183-210) reads attackTime = getAttackAnim(inputs.partialTick()) (poseRig:98; the seam's partial tick, 0 in the sampler, 0 at rest); the riding pose (:178-186; poseRig:149) and the elytra glide (:137-165; poseRig:104) on isSeatedOnVehicle / getFallFlyingTicks; closes at k = 1 (93.778883 ticks): every bone returns within 4.449294 degrees of its start at k x T (the 5-degree test under the 6 s cap; k = 1: 4.449294 deg)",
+      "period_ticks": 93.7788828458,
+      "period_multiple_k": 1,
+      "closure_delta_degrees": 4.4492940815,
+      "span_ticks": 93.7788828458,
+      "animation_length_seconds": 4.6889441423,
+      "dense_samples": 95,
+      "keys_per_bone": 5,
+      "keys_per_bone_min": 2,
+      "keys_total": 20,
+      "lerp_mode": "catmullrom",
+      "keying": {
+        "search": "the density search of the exact transcriptions (KeyframeLeg's density_search through the shared DensitySearch): per bone and channel the fewest keys - candidates uniform in sample index, both ends included (the closing key always kept), the value at a key exactly the sample's - whose catmullrom curve (GeckoLib 4.8.4's CATMULLROM with the spline arguments repaired at load, SplineRepair) stays within the tolerance of every dense sample; the count below the fewest is the one that failed; a one-key state stays one key",
+        "lerp_mode": "catmullrom",
+        "rotation_tolerance_degrees": 1.0,
+        "position_tolerance_blocks": 0.03125,
+        "position_tolerance_units": 0.5,
+        "dense_samples": 95,
+        "keys_per_bone_min": 2,
+        "keys_per_bone_max": 5,
+        "keys_total": 20,
+        "max_error_degrees": 0.8597647808,
+        "max_error_units": 0.0,
+        "max_error_blocks": 0.0,
+        "max_error_degrees_geckolib": 0.8597647808,
+        "max_error_units_geckolib": 0.0,
+        "within_tolerance": true,
+        "one_fewer_max_error": 1.2909299041,
+        "channels_at_minimum_keys": 5,
+        "channels": 7
+      },
+      "bones": 7,
+      "moving_bones": [
+        "left_arm",
+        "left_leg",
+        "right_arm",
+        "right_leg"
+      ],
+      "position_bones": [],
+      "hidden_bones_at_rest": [],
+      "seam_delta_degrees": 4.4492940815,
+      "seam_delta_position_units": 0.0,
+      "subject_after": {
+        "ri1": 0,
+        "shielding": -1,
+        "rf1": 0.0
+      },
+      "getters_read_at_inputs": [
+        "getAttackAnim",
+        "getFallFlyingTicks",
+        "getMainArm",
+        "getSwimAmount",
+        "isSeatedOnVehicle",
+        "isUsingItem",
+        "isVisuallySwimming"
+      ],
+      "attacking": {
+        "declared_pose_interfaces": [
+          "HumanoidPose"
+        ],
+        "getters": [],
+        "outside_pose_interface": [],
+        "reads_attacking": false,
+        "read_at_inputs": false
+      },
+      "sampled_inputs": "isSeatedOnVehicle() answers 1 (the state the seed names `ride`; every other getter at its rest value); limbSwingAmount 0.0; limbSwing 0 (the walk position at rest: vanilla WalkAnimationState holds its position while the speed is 0, and a creature that has not walked since it spawned carries 0); ageInTicks = t (getBob: tickCount + partialTick, partialTick 0; advancing 1.0 per tick from 0); netHeadYaw 0; headPitch 0 (looking ahead); every other entity-state flag at its rest value (ri1 0, rock_type 0, rf1 0); the entity RNG seeded 0 once per clip and evolving across the keys; one pose call per key, 20 keys per second; full health"
     },
     {
       "registry": "godzilla",
@@ -21500,13 +22630,13 @@
       "state": "walk",
       "named": true,
       "name_source": "the contract",
-      "model_id": "reference_lurkingterror",
-      "manifest": "reference_model_proofs.json",
+      "model_id": "model_lurkingterror",
+      "manifest": "t2_model_proofs.json",
       "model_class": "danger.orespawn.entity.client.LurkingTerrorModel",
-      "landed": false,
-      "rig_source": "reference-leg converter output",
-      "hook": "danger.orespawn.entity.client.LurkingTerrorGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the unlanded hook of - the classic setupAnim transcribed into the descriptor's PoseInputs form, proven when the rig lands - registry-free, on explicit PoseInputs, over the reference leg's converter output reference_lurkingterror.geo.json baked without the face-order strictness the landing slice's TEST-007 adds)",
-      "geo": "build/reference/generated/reference_lurkingterror.geo.json",
+      "landed": true,
+      "rig_source": "shipped",
+      "hook": "danger.orespawn.entity.client.LurkingTerrorGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the shipped replacement, registry-free, on explicit PoseInputs)",
+      "geo": "src/main/resources/assets/orespawn/geo/entity/lurkingterror.geo.json",
       "file": "lurking_terror_reference_walk.animation.json",
       "clip_name": "reference_walk",
       "sha256": "e4a6575994508d09e6778fe6489baf17cc7d42bfb64f13e0380a21feb66fc362",
@@ -21637,13 +22767,13 @@
       "state": "idle",
       "named": true,
       "name_source": "the contract",
-      "model_id": "reference_lurkingterror",
-      "manifest": "reference_model_proofs.json",
+      "model_id": "model_lurkingterror",
+      "manifest": "t2_model_proofs.json",
       "model_class": "danger.orespawn.entity.client.LurkingTerrorModel",
-      "landed": false,
-      "rig_source": "reference-leg converter output",
-      "hook": "danger.orespawn.entity.client.LurkingTerrorGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the unlanded hook of - the classic setupAnim transcribed into the descriptor's PoseInputs form, proven when the rig lands - registry-free, on explicit PoseInputs, over the reference leg's converter output reference_lurkingterror.geo.json baked without the face-order strictness the landing slice's TEST-007 adds)",
-      "geo": "build/reference/generated/reference_lurkingterror.geo.json",
+      "landed": true,
+      "rig_source": "shipped",
+      "hook": "danger.orespawn.entity.client.LurkingTerrorGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the shipped replacement, registry-free, on explicit PoseInputs)",
+      "geo": "src/main/resources/assets/orespawn/geo/entity/lurkingterror.geo.json",
       "file": "lurking_terror_reference_idle.animation.json",
       "clip_name": "reference_idle",
       "sha256": "6b2d876867a2bbf3b2fec5566c47407e42e4f029dc50d3bbc68530f1152f3a82",
@@ -21777,13 +22907,13 @@
       "getter": "getAttacking",
       "value": 1,
       "getter_read_at_inputs": true,
-      "model_id": "reference_lurkingterror",
-      "manifest": "reference_model_proofs.json",
+      "model_id": "model_lurkingterror",
+      "manifest": "t2_model_proofs.json",
       "model_class": "danger.orespawn.entity.client.LurkingTerrorModel",
-      "landed": false,
-      "rig_source": "reference-leg converter output",
-      "hook": "danger.orespawn.entity.client.LurkingTerrorGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the unlanded hook of - the classic setupAnim transcribed into the descriptor's PoseInputs form, proven when the rig lands - registry-free, on explicit PoseInputs, over the reference leg's converter output reference_lurkingterror.geo.json baked without the face-order strictness the landing slice's TEST-007 adds)",
-      "geo": "build/reference/generated/reference_lurkingterror.geo.json",
+      "landed": true,
+      "rig_source": "shipped",
+      "hook": "danger.orespawn.entity.client.LurkingTerrorGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the shipped replacement, registry-free, on explicit PoseInputs)",
+      "geo": "src/main/resources/assets/orespawn/geo/entity/lurkingterror.geo.json",
       "file": "lurking_terror_reference_attack.animation.json",
       "clip_name": "reference_attack",
       "sha256": "c5f265b663b794254f68a4d5a661eb8224e25b1d9998ddd95d17b57503bb5ff9",
@@ -27061,13 +28191,13 @@
       "state": "walk",
       "named": true,
       "name_source": "the contract",
-      "model_id": "reference_scorpion",
-      "manifest": "reference_model_proofs.json",
+      "model_id": "model_scorpion",
+      "manifest": "t2_model_proofs.json",
       "model_class": "danger.orespawn.entity.client.ScorpionModel",
-      "landed": false,
-      "rig_source": "reference-leg converter output",
-      "hook": "danger.orespawn.entity.client.ScorpionGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the unlanded hook of - the classic setupAnim transcribed into the descriptor's PoseInputs form, proven when the rig lands - registry-free, on explicit PoseInputs, over the reference leg's converter output reference_scorpion.geo.json baked without the face-order strictness the landing slice's TEST-007 adds)",
-      "geo": "build/reference/generated/reference_scorpion.geo.json",
+      "landed": true,
+      "rig_source": "shipped",
+      "hook": "danger.orespawn.entity.client.ScorpionGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the shipped replacement, registry-free, on explicit PoseInputs)",
+      "geo": "src/main/resources/assets/orespawn/geo/entity/scorpion.geo.json",
       "file": "scorpion_reference_walk.animation.json",
       "clip_name": "reference_walk",
       "sha256": "09a358d4f060c4edffc59a55385a62a7fccc5176a322f1384b2453069d68c700",
@@ -27162,13 +28292,13 @@
       "state": "idle",
       "named": true,
       "name_source": "the contract",
-      "model_id": "reference_scorpion",
-      "manifest": "reference_model_proofs.json",
+      "model_id": "model_scorpion",
+      "manifest": "t2_model_proofs.json",
       "model_class": "danger.orespawn.entity.client.ScorpionModel",
-      "landed": false,
-      "rig_source": "reference-leg converter output",
-      "hook": "danger.orespawn.entity.client.ScorpionGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the unlanded hook of - the classic setupAnim transcribed into the descriptor's PoseInputs form, proven when the rig lands - registry-free, on explicit PoseInputs, over the reference leg's converter output reference_scorpion.geo.json baked without the face-order strictness the landing slice's TEST-007 adds)",
-      "geo": "build/reference/generated/reference_scorpion.geo.json",
+      "landed": true,
+      "rig_source": "shipped",
+      "hook": "danger.orespawn.entity.client.ScorpionGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the shipped replacement, registry-free, on explicit PoseInputs)",
+      "geo": "src/main/resources/assets/orespawn/geo/entity/scorpion.geo.json",
       "file": "scorpion_reference_idle.animation.json",
       "clip_name": "reference_idle",
       "sha256": "384c3ad23b1f45922c33de8eb9375eb80cab29c9cfd37b494490cac711cdab9d",
@@ -29816,18 +30946,18 @@
       "state": "walk",
       "named": true,
       "name_source": "the contract",
-      "model_id": "reference_theking",
-      "manifest": "reference_model_proofs.json",
+      "model_id": "model_theking",
+      "manifest": "t2_model_proofs.json",
       "model_class": "danger.orespawn.entity.client.ModelTheKing",
-      "landed": false,
-      "rig_source": "reference-leg converter output",
-      "hook": "danger.orespawn.entity.client.TheKingGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the unlanded hook of - the classic setupAnim transcribed into the descriptor's PoseInputs form, proven when the rig lands - registry-free, on explicit PoseInputs, over the reference leg's converter output reference_theking.geo.json baked without the face-order strictness the landing slice's TEST-007 adds)",
-      "geo": "build/reference/generated/reference_theking.geo.json",
+      "landed": true,
+      "rig_source": "shipped",
+      "hook": "danger.orespawn.entity.client.TheKingGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the shipped replacement, registry-free, on explicit PoseInputs)",
+      "geo": "src/main/resources/assets/orespawn/geo/entity/theking.geo.json",
       "file": "the_king_reference_walk.animation.json",
       "clip_name": "reference_walk",
       "sha256": "ef2e5f334353e19255fc580571d6af7b5206367ca1227711a06212a7c9f4f87c",
       "rule": "two_seconds_past_cap",
-      "rule_note": "WING_SPEED 1.0: the slowest rhythm is the centre head's resting pitch sin(ageInTicks * 0.08 * WING_SPEED) * PI * 0.1 (TheKingGeoReplacement.applyCustomAnimations:298, attacking 0; the three heads' resting rhythms 0.17 / 0.13 / 0.45, 0.19 / 0.12 / 0.55, 0.13 / 0.08 / 0.65, :291-299) at 0.08 rad/tick, 78.54 ticks; the attacking heads at 0.3 / 0.2 / 0.85, 0.32 / 0.21 / 0.95, 0.28 / 0.19 / 0.75 (:278-286); the wings cos(ageInTicks * 0.75 * WING_SPEED) * PI * 0.21 attacking else cos(ageInTicks * 0.35 * WING_SPEED) * PI * 0.15 (:83-84) with the 84 / 184 follows; the fourteen claws and legs on attacking (:142, :162); the eight-link tail chain at tailspeed 0.26 resting and 0.56 attacking (:212-217, :220-268); no multiple of the slowest group's period 78.539818 ticks up to the 6 s cap (120 ticks) brings every group back within 5 degrees of its start (k = 1: 107.547739 deg / 292.731842 units): a two-second window (40 ticks), not a loop - the sheet states the closing key's seam",
+      "rule_note": "WING_SPEED 1.0: the slowest rhythm is the centre head's resting pitch sin(ageInTicks * 0.08 * WING_SPEED) * PI * 0.1 (TheKingGeoReplacement.applyCustomAnimations:310, attacking 0; the three heads' resting rhythms 0.17 / 0.13 / 0.45, 0.19 / 0.12 / 0.55, 0.13 / 0.08 / 0.65, :303-311) at 0.08 rad/tick, 78.54 ticks; the attacking heads at 0.3 / 0.2 / 0.85, 0.32 / 0.21 / 0.95, 0.28 / 0.19 / 0.75 (:290-298); the wings cos(ageInTicks * 0.75 * WING_SPEED) * PI * 0.21 attacking else cos(ageInTicks * 0.35 * WING_SPEED) * PI * 0.15 (:95-96) with the 84 / 184 follows; the fourteen claws and legs on attacking (:154, :174); the eight-link tail chain at tailspeed 0.26 resting and 0.56 attacking (:224-229, :232-280); no multiple of the slowest group's period 78.539818 ticks up to the 6 s cap (120 ticks) brings every group back within 5 degrees of its start (k = 1: 107.547739 deg / 292.731842 units): a two-second window (40 ticks), not a loop - the sheet states the closing key's seam",
       "period_ticks": 78.5398180952,
       "span_ticks": 40.0,
       "animation_length_seconds": 2.0,
@@ -30100,18 +31230,18 @@
       "state": "idle",
       "named": true,
       "name_source": "the contract",
-      "model_id": "reference_theking",
-      "manifest": "reference_model_proofs.json",
+      "model_id": "model_theking",
+      "manifest": "t2_model_proofs.json",
       "model_class": "danger.orespawn.entity.client.ModelTheKing",
-      "landed": false,
-      "rig_source": "reference-leg converter output",
-      "hook": "danger.orespawn.entity.client.TheKingGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the unlanded hook of - the classic setupAnim transcribed into the descriptor's PoseInputs form, proven when the rig lands - registry-free, on explicit PoseInputs, over the reference leg's converter output reference_theking.geo.json baked without the face-order strictness the landing slice's TEST-007 adds)",
-      "geo": "build/reference/generated/reference_theking.geo.json",
+      "landed": true,
+      "rig_source": "shipped",
+      "hook": "danger.orespawn.entity.client.TheKingGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the shipped replacement, registry-free, on explicit PoseInputs)",
+      "geo": "src/main/resources/assets/orespawn/geo/entity/theking.geo.json",
       "file": "the_king_reference_idle.animation.json",
       "clip_name": "reference_idle",
       "sha256": "e5d22be93959a72b7bdd2988bb0326e824e4efc9c16509c81b230b4ee68dee48",
       "rule": "two_seconds_past_cap",
-      "rule_note": "WING_SPEED 1.0: the slowest rhythm is the centre head's resting pitch sin(ageInTicks * 0.08 * WING_SPEED) * PI * 0.1 (TheKingGeoReplacement.applyCustomAnimations:298, attacking 0; the three heads' resting rhythms 0.17 / 0.13 / 0.45, 0.19 / 0.12 / 0.55, 0.13 / 0.08 / 0.65, :291-299) at 0.08 rad/tick, 78.54 ticks; the attacking heads at 0.3 / 0.2 / 0.85, 0.32 / 0.21 / 0.95, 0.28 / 0.19 / 0.75 (:278-286); the wings cos(ageInTicks * 0.75 * WING_SPEED) * PI * 0.21 attacking else cos(ageInTicks * 0.35 * WING_SPEED) * PI * 0.15 (:83-84) with the 84 / 184 follows; the fourteen claws and legs on attacking (:142, :162); the eight-link tail chain at tailspeed 0.26 resting and 0.56 attacking (:212-217, :220-268); no multiple of the slowest group's period 78.539818 ticks up to the 6 s cap (120 ticks) brings every group back within 5 degrees of its start (k = 1: 107.547739 deg / 292.731842 units): a two-second window (40 ticks), not a loop - the sheet states the closing key's seam",
+      "rule_note": "WING_SPEED 1.0: the slowest rhythm is the centre head's resting pitch sin(ageInTicks * 0.08 * WING_SPEED) * PI * 0.1 (TheKingGeoReplacement.applyCustomAnimations:310, attacking 0; the three heads' resting rhythms 0.17 / 0.13 / 0.45, 0.19 / 0.12 / 0.55, 0.13 / 0.08 / 0.65, :303-311) at 0.08 rad/tick, 78.54 ticks; the attacking heads at 0.3 / 0.2 / 0.85, 0.32 / 0.21 / 0.95, 0.28 / 0.19 / 0.75 (:290-298); the wings cos(ageInTicks * 0.75 * WING_SPEED) * PI * 0.21 attacking else cos(ageInTicks * 0.35 * WING_SPEED) * PI * 0.15 (:95-96) with the 84 / 184 follows; the fourteen claws and legs on attacking (:154, :174); the eight-link tail chain at tailspeed 0.26 resting and 0.56 attacking (:224-229, :232-280); no multiple of the slowest group's period 78.539818 ticks up to the 6 s cap (120 ticks) brings every group back within 5 degrees of its start (k = 1: 107.547739 deg / 292.731842 units): a two-second window (40 ticks), not a loop - the sheet states the closing key's seam",
       "period_ticks": 78.5398180952,
       "span_ticks": 40.0,
       "animation_length_seconds": 2.0,
@@ -30387,18 +31517,18 @@
       "getter": "getAttacking",
       "value": 1,
       "getter_read_at_inputs": true,
-      "model_id": "reference_theking",
-      "manifest": "reference_model_proofs.json",
+      "model_id": "model_theking",
+      "manifest": "t2_model_proofs.json",
       "model_class": "danger.orespawn.entity.client.ModelTheKing",
-      "landed": false,
-      "rig_source": "reference-leg converter output",
-      "hook": "danger.orespawn.entity.client.TheKingGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the unlanded hook of - the classic setupAnim transcribed into the descriptor's PoseInputs form, proven when the rig lands - registry-free, on explicit PoseInputs, over the reference leg's converter output reference_theking.geo.json baked without the face-order strictness the landing slice's TEST-007 adds)",
-      "geo": "build/reference/generated/reference_theking.geo.json",
+      "landed": true,
+      "rig_source": "shipped",
+      "hook": "danger.orespawn.entity.client.TheKingGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the shipped replacement, registry-free, on explicit PoseInputs)",
+      "geo": "src/main/resources/assets/orespawn/geo/entity/theking.geo.json",
       "file": "the_king_reference_attack.animation.json",
       "clip_name": "reference_attack",
       "sha256": "9e024d8870d4c3346574a1e5bd4dbecaa238f4ff2e9f22a0fc98fbb4aa495770",
       "rule": "two_seconds_past_cap",
-      "rule_note": "WING_SPEED 1.0: the slowest rhythm is the centre head's resting pitch sin(ageInTicks * 0.08 * WING_SPEED) * PI * 0.1 (TheKingGeoReplacement.applyCustomAnimations:298, attacking 0; the three heads' resting rhythms 0.17 / 0.13 / 0.45, 0.19 / 0.12 / 0.55, 0.13 / 0.08 / 0.65, :291-299) at 0.08 rad/tick, 78.54 ticks; the attacking heads at 0.3 / 0.2 / 0.85, 0.32 / 0.21 / 0.95, 0.28 / 0.19 / 0.75 (:278-286); the wings cos(ageInTicks * 0.75 * WING_SPEED) * PI * 0.21 attacking else cos(ageInTicks * 0.35 * WING_SPEED) * PI * 0.15 (:83-84) with the 84 / 184 follows; the fourteen claws and legs on attacking (:142, :162); the eight-link tail chain at tailspeed 0.26 resting and 0.56 attacking (:212-217, :220-268); no multiple of the slowest group's period 78.539818 ticks up to the 6 s cap (120 ticks) brings every group back within 5 degrees of its start (k = 1: 150.560838 deg / 382.273148 units): a two-second window (40 ticks), not a loop - the sheet states the closing key's seam",
+      "rule_note": "WING_SPEED 1.0: the slowest rhythm is the centre head's resting pitch sin(ageInTicks * 0.08 * WING_SPEED) * PI * 0.1 (TheKingGeoReplacement.applyCustomAnimations:310, attacking 0; the three heads' resting rhythms 0.17 / 0.13 / 0.45, 0.19 / 0.12 / 0.55, 0.13 / 0.08 / 0.65, :303-311) at 0.08 rad/tick, 78.54 ticks; the attacking heads at 0.3 / 0.2 / 0.85, 0.32 / 0.21 / 0.95, 0.28 / 0.19 / 0.75 (:290-298); the wings cos(ageInTicks * 0.75 * WING_SPEED) * PI * 0.21 attacking else cos(ageInTicks * 0.35 * WING_SPEED) * PI * 0.15 (:95-96) with the 84 / 184 follows; the fourteen claws and legs on attacking (:154, :174); the eight-link tail chain at tailspeed 0.26 resting and 0.56 attacking (:224-229, :232-280); no multiple of the slowest group's period 78.539818 ticks up to the 6 s cap (120 ticks) brings every group back within 5 degrees of its start (k = 1: 150.560838 deg / 382.273148 units): a two-second window (40 ticks), not a loop - the sheet states the closing key's seam",
       "period_ticks": 78.5398180952,
       "span_ticks": 40.0,
       "animation_length_seconds": 2.0,
@@ -33464,6 +34594,555 @@
         ],
         "getters": [
           "ThePrinceTeenPose.getAttacking()"
+        ],
+        "outside_pose_interface": [],
+        "reads_attacking": true,
+        "read_at_inputs": true
+      },
+      "sampled_inputs": "isOrderedToSit() answers 1 (the state the seed names `sit`; every other getter at its rest value); limbSwingAmount 0.0; limbSwing 0 (the walk position at rest: vanilla WalkAnimationState holds its position while the speed is 0, and a creature that has not walked since it spawned carries 0); ageInTicks = t (getBob: tickCount + partialTick, partialTick 0; advancing 1.0 per tick from 0); netHeadYaw 0; headPitch 0 (looking ahead); every other entity-state flag at its rest value (ri1 0, rock_type 0, rf1 0); the entity RNG seeded 0 once per clip and evolving across the keys; one pose call per key, 20 keys per second; full health"
+    },
+    {
+      "registry": "the_princess",
+      "state": "walk",
+      "named": true,
+      "name_source": "the contract",
+      "model_id": "model_theprincess",
+      "manifest": "t2_model_proofs.json",
+      "model_class": "danger.orespawn.entity.client.ModelThePrincess",
+      "landed": true,
+      "rig_source": "shipped",
+      "hook": "danger.orespawn.entity.client.ThePrincessGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the shipped replacement, registry-free, on explicit PoseInputs)",
+      "geo": "src/main/resources/assets/orespawn/geo/entity/theprincess.geo.json",
+      "file": "the_princess_reference_walk.animation.json",
+      "clip_name": "reference_walk",
+      "sha256": "6aed848dd3b1b42980f4968343f4962a8c8e68b4bf47a9483af3f23db9f8adff",
+      "rule": "period_multiple",
+      "rule_note": "wingspeed 0.65: the slowest rhythm is the resting wings cos(ageInTicks * 0.3 * WINGSPEED) * PI * 0.04 (ThePrincessGeoReplacement.applyCustomAnimations:97, below the threshold and not attacking) at 0.195 rad/tick, 32.22 ticks; the threshold-or-attacking wings cos(ageInTicks * 2.3 * WINGSPEED) * PI * 0.4 * limbSwingAmount (:96) and the threshold legs cos(ageInTicks * 2.0 * WINGSPEED) * PI * 0.25 * limbSwingAmount (:106, walk); the tail sway cos(ageInTicks * 0.9 * WINGSPEED) * PI * 0.06 (:117) and the attacking lash cos(ageInTicks * 1.3 * WINGSPEED) * PI * 0.12 (:122; the fan x1.6 .. 4.6 with the four follows :130-145); the jaw chatter cos(ageInTicks * 1.9 / 2.1 / 2.3 * WINGSPEED) * PI * 0.2 (:202-203); the three heads' look and the necks by the head extensions (0 on the probe, :147-259); the three power orbs advance every axis by a constant per pose call (:264-272: 0.03 .. 0.13 rad, wrapped below pi) on the bake's own bones - not a function of time: a step per rendered frame in-game, while the sampler poses every key over a fresh bake (one pose call per key), so each key holds one step from the bind and the orbs stand still in the clips; the closure test is the wings'; closes at k = 3 (96.664386 ticks): every bone returns within 0 degrees of its start at k x T (the 5-degree test under the 6 s cap; k = 1: 108.003992 deg, k = 2: 107.998009 deg, k = 3: 0 deg)",
+      "period_ticks": 32.2214618334,
+      "period_multiple_k": 3,
+      "closure_delta_degrees": 0.0,
+      "span_ticks": 96.6643855001,
+      "animation_length_seconds": 4.833219275,
+      "dense_samples": 98,
+      "keys_per_bone": 98,
+      "keys_per_bone_min": 2,
+      "keys_total": 1383,
+      "lerp_mode": "catmullrom",
+      "keying": {
+        "search": "the density search of the exact transcriptions (KeyframeLeg's density_search through the shared DensitySearch): per bone and channel the fewest keys - candidates uniform in sample index, both ends included (the closing key always kept), the value at a key exactly the sample's - whose catmullrom curve (GeckoLib 4.8.4's CATMULLROM with the spline arguments repaired at load, SplineRepair) stays within the tolerance of every dense sample; the count below the fewest is the one that failed; a one-key state stays one key",
+        "lerp_mode": "catmullrom",
+        "rotation_tolerance_degrees": 1.0,
+        "position_tolerance_blocks": 0.03125,
+        "position_tolerance_units": 0.5,
+        "dense_samples": 98,
+        "keys_per_bone_min": 2,
+        "keys_per_bone_max": 98,
+        "keys_total": 1383,
+        "max_error_degrees": 0.9004115119,
+        "max_error_units": 0.450851159,
+        "max_error_blocks": 0.0281781974,
+        "max_error_degrees_geckolib": 0.9004115119,
+        "max_error_units_geckolib": 0.450851159,
+        "within_tolerance": true,
+        "one_fewer_max_error": 50.08504614,
+        "channels_at_minimum_keys": 27,
+        "channels": 44
+      },
+      "bones": 37,
+      "moving_bones": [
+        "Cpower",
+        "Lhead",
+        "Lheadfin",
+        "Ljaw",
+        "Lleg1",
+        "Lpower",
+        "Lwing",
+        "Lwing2",
+        "Lwing3",
+        "Rheadfin",
+        "Rjaw",
+        "Rleg1",
+        "Rpower",
+        "Rwing",
+        "Rwing2",
+        "Rwing3",
+        "Tail5",
+        "Tail6",
+        "headfin",
+        "jaw",
+        "tail2",
+        "tail3",
+        "tail4"
+      ],
+      "position_bones": [
+        "Ljaw",
+        "Rjaw",
+        "Tail5",
+        "Tail6",
+        "jaw",
+        "tail3",
+        "tail4"
+      ],
+      "hidden_bones_at_rest": [],
+      "seam_delta_degrees": 0.0,
+      "seam_delta_position_units": 0.0,
+      "subject_after": {
+        "ri1": 0,
+        "shielding": -1,
+        "rf1": 0.0
+      },
+      "getters_read_at_inputs": [
+        "getActivity",
+        "getAttacking",
+        "getHead1Ext",
+        "getHead2Ext",
+        "getHead3Ext",
+        "isOrderedToSit"
+      ],
+      "attacking": {
+        "declared_pose_interfaces": [
+          "ThePrincessPose"
+        ],
+        "getters": [
+          "ThePrincessPose.getAttacking()"
+        ],
+        "outside_pose_interface": [],
+        "reads_attacking": true,
+        "read_at_inputs": true
+      },
+      "sampled_inputs": "limbSwingAmount 1.0; limbSwing = t (advancing 1.0 per tick from 0: vanilla WalkAnimationState.update does speed += (movementSpeed - speed) * multiplier; position += speed, and the classic renderer hands walkAnimation.position(partialTick) as limbSwing and min(1, speed) as limbSwingAmount, so at speed 1 the position advances exactly 1.0 per tick); ageInTicks = t (getBob: tickCount + partialTick, partialTick 0); netHeadYaw 0; headPitch 0 (looking ahead); every entity-state flag at its rest value (attacking 0, ri1 0, rock_type 0, rf1 0: a ProbeSubject built from an empty state); the entity RNG seeded 0 once per clip and evolving across the keys; one pose call per key, 20 keys per second; full health (no shipped hook reads health)"
+    },
+    {
+      "registry": "the_princess",
+      "state": "idle",
+      "named": true,
+      "name_source": "the contract",
+      "model_id": "model_theprincess",
+      "manifest": "t2_model_proofs.json",
+      "model_class": "danger.orespawn.entity.client.ModelThePrincess",
+      "landed": true,
+      "rig_source": "shipped",
+      "hook": "danger.orespawn.entity.client.ThePrincessGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the shipped replacement, registry-free, on explicit PoseInputs)",
+      "geo": "src/main/resources/assets/orespawn/geo/entity/theprincess.geo.json",
+      "file": "the_princess_reference_idle.animation.json",
+      "clip_name": "reference_idle",
+      "sha256": "606391909ca72f321cd8dc23081e0cab608d63ce119bc3cc3cc36f9f6a4d4076",
+      "rule": "period_multiple",
+      "rule_note": "wingspeed 0.65: the slowest rhythm is the resting wings cos(ageInTicks * 0.3 * WINGSPEED) * PI * 0.04 (ThePrincessGeoReplacement.applyCustomAnimations:97, below the threshold and not attacking) at 0.195 rad/tick, 32.22 ticks; the threshold-or-attacking wings cos(ageInTicks * 2.3 * WINGSPEED) * PI * 0.4 * limbSwingAmount (:96) and the threshold legs cos(ageInTicks * 2.0 * WINGSPEED) * PI * 0.25 * limbSwingAmount (:106, walk); the tail sway cos(ageInTicks * 0.9 * WINGSPEED) * PI * 0.06 (:117) and the attacking lash cos(ageInTicks * 1.3 * WINGSPEED) * PI * 0.12 (:122; the fan x1.6 .. 4.6 with the four follows :130-145); the jaw chatter cos(ageInTicks * 1.9 / 2.1 / 2.3 * WINGSPEED) * PI * 0.2 (:202-203); the three heads' look and the necks by the head extensions (0 on the probe, :147-259); the three power orbs advance every axis by a constant per pose call (:264-272: 0.03 .. 0.13 rad, wrapped below pi) on the bake's own bones - not a function of time: a step per rendered frame in-game, while the sampler poses every key over a fresh bake (one pose call per key), so each key holds one step from the bind and the orbs stand still in the clips; the closure test is the wings'; closes at k = 1 (32.221462 ticks): every bone returns within 0 degrees of its start at k x T (the 5-degree test under the 6 s cap; k = 1: 0 deg)",
+      "period_ticks": 32.2214618334,
+      "period_multiple_k": 1,
+      "closure_delta_degrees": 0.0,
+      "span_ticks": 32.2214618334,
+      "animation_length_seconds": 1.6110730917,
+      "dense_samples": 34,
+      "keys_per_bone": 34,
+      "keys_per_bone_min": 2,
+      "keys_total": 271,
+      "lerp_mode": "catmullrom",
+      "keying": {
+        "search": "the density search of the exact transcriptions (KeyframeLeg's density_search through the shared DensitySearch): per bone and channel the fewest keys - candidates uniform in sample index, both ends included (the closing key always kept), the value at a key exactly the sample's - whose catmullrom curve (GeckoLib 4.8.4's CATMULLROM with the spline arguments repaired at load, SplineRepair) stays within the tolerance of every dense sample; the count below the fewest is the one that failed; a one-key state stays one key",
+        "lerp_mode": "catmullrom",
+        "rotation_tolerance_degrees": 1.0,
+        "position_tolerance_blocks": 0.03125,
+        "position_tolerance_units": 0.5,
+        "dense_samples": 34,
+        "keys_per_bone_min": 2,
+        "keys_per_bone_max": 34,
+        "keys_total": 271,
+        "max_error_degrees": 0.9914574266,
+        "max_error_units": 0.4950628581,
+        "max_error_blocks": 0.0309414286,
+        "max_error_degrees_geckolib": 0.9914574266,
+        "max_error_units_geckolib": 0.4950628581,
+        "within_tolerance": true,
+        "one_fewer_max_error": 14.398311978,
+        "channels_at_minimum_keys": 29,
+        "channels": 44
+      },
+      "bones": 37,
+      "moving_bones": [
+        "Cpower",
+        "Lhead",
+        "Lheadfin",
+        "Ljaw",
+        "Lpower",
+        "Lwing",
+        "Lwing2",
+        "Lwing3",
+        "Rheadfin",
+        "Rjaw",
+        "Rpower",
+        "Rwing",
+        "Rwing2",
+        "Rwing3",
+        "Tail5",
+        "Tail6",
+        "headfin",
+        "jaw",
+        "tail2",
+        "tail3",
+        "tail4"
+      ],
+      "position_bones": [
+        "Ljaw",
+        "Rjaw",
+        "Tail5",
+        "Tail6",
+        "jaw",
+        "tail3",
+        "tail4"
+      ],
+      "hidden_bones_at_rest": [],
+      "seam_delta_degrees": 0.0,
+      "seam_delta_position_units": 0.0,
+      "subject_after": {
+        "ri1": 0,
+        "shielding": -1,
+        "rf1": 0.0
+      },
+      "getters_read_at_inputs": [
+        "getActivity",
+        "getAttacking",
+        "getHead1Ext",
+        "getHead2Ext",
+        "getHead3Ext",
+        "isOrderedToSit"
+      ],
+      "attacking": {
+        "declared_pose_interfaces": [
+          "ThePrincessPose"
+        ],
+        "getters": [
+          "ThePrincessPose.getAttacking()"
+        ],
+        "outside_pose_interface": [],
+        "reads_attacking": true,
+        "read_at_inputs": true
+      },
+      "sampled_inputs": "limbSwingAmount 0.0; limbSwing 0 (the walk position at rest: vanilla WalkAnimationState holds its position while the speed is 0, and a creature that has not walked since it spawned carries 0); ageInTicks = t (getBob: tickCount + partialTick, partialTick 0; advancing 1.0 per tick from 0); netHeadYaw 0; headPitch 0 (looking ahead); every entity-state flag at its rest value (attacking 0, ri1 0, rock_type 0, rf1 0: a ProbeSubject built from an empty state); the entity RNG seeded 0 once per clip and evolving across the keys; one pose call per key, 20 keys per second; full health"
+    },
+    {
+      "registry": "the_princess",
+      "state": "attack",
+      "named": true,
+      "name_source": "the contract (getAttacking 1)",
+      "getter": "getAttacking",
+      "value": 1,
+      "getter_read_at_inputs": true,
+      "model_id": "model_theprincess",
+      "manifest": "t2_model_proofs.json",
+      "model_class": "danger.orespawn.entity.client.ModelThePrincess",
+      "landed": true,
+      "rig_source": "shipped",
+      "hook": "danger.orespawn.entity.client.ThePrincessGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the shipped replacement, registry-free, on explicit PoseInputs)",
+      "geo": "src/main/resources/assets/orespawn/geo/entity/theprincess.geo.json",
+      "file": "the_princess_reference_attack.animation.json",
+      "clip_name": "reference_attack",
+      "sha256": "e02f0afdf3d42dc3aa5c0d90097e0fc0616d11ecb3403f0cadf97aee3dee631b",
+      "rule": "period_multiple",
+      "rule_note": "wingspeed 0.65: the slowest rhythm is the resting wings cos(ageInTicks * 0.3 * WINGSPEED) * PI * 0.04 (ThePrincessGeoReplacement.applyCustomAnimations:97, below the threshold and not attacking) at 0.195 rad/tick, 32.22 ticks; the threshold-or-attacking wings cos(ageInTicks * 2.3 * WINGSPEED) * PI * 0.4 * limbSwingAmount (:96) and the threshold legs cos(ageInTicks * 2.0 * WINGSPEED) * PI * 0.25 * limbSwingAmount (:106, walk); the tail sway cos(ageInTicks * 0.9 * WINGSPEED) * PI * 0.06 (:117) and the attacking lash cos(ageInTicks * 1.3 * WINGSPEED) * PI * 0.12 (:122; the fan x1.6 .. 4.6 with the four follows :130-145); the jaw chatter cos(ageInTicks * 1.9 / 2.1 / 2.3 * WINGSPEED) * PI * 0.2 (:202-203); the three heads' look and the necks by the head extensions (0 on the probe, :147-259); the three power orbs advance every axis by a constant per pose call (:264-272: 0.03 .. 0.13 rad, wrapped below pi) on the bake's own bones - not a function of time: a step per rendered frame in-game, while the sampler poses every key over a fresh bake (one pose call per key), so each key holds one step from the bind and the orbs stand still in the clips; the closure test is the wings'; closes at k = 3 (96.664386 ticks): every bone returns within 0 degrees of its start at k x T (the 5-degree test under the 6 s cap; k = 1: 149.037245 deg / 19.279271 units, k = 2: 149.045499 deg / 19.280334 units, k = 3: 0 deg)",
+      "period_ticks": 32.2214618334,
+      "period_multiple_k": 3,
+      "closure_delta_degrees": 0.0,
+      "span_ticks": 96.6643855001,
+      "animation_length_seconds": 4.833219275,
+      "dense_samples": 98,
+      "keys_per_bone": 98,
+      "keys_per_bone_min": 2,
+      "keys_total": 1192,
+      "lerp_mode": "catmullrom",
+      "keying": {
+        "search": "the density search of the exact transcriptions (KeyframeLeg's density_search through the shared DensitySearch): per bone and channel the fewest keys - candidates uniform in sample index, both ends included (the closing key always kept), the value at a key exactly the sample's - whose catmullrom curve (GeckoLib 4.8.4's CATMULLROM with the spline arguments repaired at load, SplineRepair) stays within the tolerance of every dense sample; the count below the fewest is the one that failed; a one-key state stays one key",
+        "lerp_mode": "catmullrom",
+        "rotation_tolerance_degrees": 1.0,
+        "position_tolerance_blocks": 0.03125,
+        "position_tolerance_units": 0.5,
+        "dense_samples": 98,
+        "keys_per_bone_min": 2,
+        "keys_per_bone_max": 98,
+        "keys_total": 1192,
+        "max_error_degrees": 0.0,
+        "max_error_units": 0.3085971401,
+        "max_error_blocks": 0.0192873213,
+        "max_error_degrees_geckolib": 0.0,
+        "max_error_units_geckolib": 0.3085971401,
+        "within_tolerance": true,
+        "one_fewer_max_error": 25.0425218427,
+        "channels_at_minimum_keys": 32,
+        "channels": 44
+      },
+      "bones": 37,
+      "moving_bones": [
+        "Cpower",
+        "Lhead",
+        "Lheadfin",
+        "Ljaw",
+        "Lpower",
+        "Lwing",
+        "Lwing2",
+        "Lwing3",
+        "Rheadfin",
+        "Rjaw",
+        "Rpower",
+        "Rwing",
+        "Rwing2",
+        "Rwing3",
+        "Tail5",
+        "Tail6",
+        "headfin",
+        "jaw",
+        "tail2",
+        "tail3",
+        "tail4"
+      ],
+      "position_bones": [
+        "Ljaw",
+        "Rjaw",
+        "Tail5",
+        "Tail6",
+        "jaw",
+        "tail3",
+        "tail4"
+      ],
+      "hidden_bones_at_rest": [],
+      "seam_delta_degrees": 0.0,
+      "seam_delta_position_units": 0.0,
+      "subject_after": {
+        "ri1": 0,
+        "shielding": -1,
+        "rf1": 0.0
+      },
+      "getters_read_at_inputs": [
+        "getActivity",
+        "getAttacking",
+        "getHead1Ext",
+        "getHead2Ext",
+        "getHead3Ext",
+        "isOrderedToSit"
+      ],
+      "attacking": {
+        "declared_pose_interfaces": [
+          "ThePrincessPose"
+        ],
+        "getters": [
+          "ThePrincessPose.getAttacking()"
+        ],
+        "outside_pose_interface": [],
+        "reads_attacking": true,
+        "read_at_inputs": true
+      },
+      "sampled_inputs": "getAttacking() answers 1 (the state the seed names `attack`; every other getter at its rest value); limbSwingAmount 0.0; limbSwing 0 (the walk position at rest: vanilla WalkAnimationState holds its position while the speed is 0, and a creature that has not walked since it spawned carries 0); ageInTicks = t (getBob: tickCount + partialTick, partialTick 0; advancing 1.0 per tick from 0); netHeadYaw 0; headPitch 0 (looking ahead); every other entity-state flag at its rest value (ri1 0, rock_type 0, rf1 0); the entity RNG seeded 0 once per clip and evolving across the keys; one pose call per key, 20 keys per second; full health"
+    },
+    {
+      "registry": "the_princess",
+      "state": "fly",
+      "named": true,
+      "name_source": "the_princess.json reference_states.fly = {getActivity: 2}",
+      "getter": "getActivity",
+      "value": 2,
+      "getter_read_at_inputs": true,
+      "model_id": "model_theprincess",
+      "manifest": "t2_model_proofs.json",
+      "model_class": "danger.orespawn.entity.client.ModelThePrincess",
+      "landed": true,
+      "rig_source": "shipped",
+      "hook": "danger.orespawn.entity.client.ThePrincessGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the shipped replacement, registry-free, on explicit PoseInputs)",
+      "geo": "src/main/resources/assets/orespawn/geo/entity/theprincess.geo.json",
+      "file": "the_princess_reference_fly.animation.json",
+      "clip_name": "reference_fly",
+      "sha256": "8641ae0c3c03ac87b25bc5206f097a33a0b71a1cc7d12d79a585ec3af53ef778",
+      "rule": "period_multiple",
+      "rule_note": "wingspeed 0.65: the slowest rhythm is the resting wings cos(ageInTicks * 0.3 * WINGSPEED) * PI * 0.04 (ThePrincessGeoReplacement.applyCustomAnimations:97, below the threshold and not attacking) at 0.195 rad/tick, 32.22 ticks; the threshold-or-attacking wings cos(ageInTicks * 2.3 * WINGSPEED) * PI * 0.4 * limbSwingAmount (:96) and the threshold legs cos(ageInTicks * 2.0 * WINGSPEED) * PI * 0.25 * limbSwingAmount (:106, walk); the tail sway cos(ageInTicks * 0.9 * WINGSPEED) * PI * 0.06 (:117) and the attacking lash cos(ageInTicks * 1.3 * WINGSPEED) * PI * 0.12 (:122; the fan x1.6 .. 4.6 with the four follows :130-145); the jaw chatter cos(ageInTicks * 1.9 / 2.1 / 2.3 * WINGSPEED) * PI * 0.2 (:202-203); the three heads' look and the necks by the head extensions (0 on the probe, :147-259); the three power orbs advance every axis by a constant per pose call (:264-272: 0.03 .. 0.13 rad, wrapped below pi) on the bake's own bones - not a function of time: a step per rendered frame in-game, while the sampler poses every key over a fresh bake (one pose call per key), so each key holds one step from the bind and the orbs stand still in the clips; the closure test is the wings'; closes at k = 1 (32.221462 ticks): every bone returns within 0 degrees of its start at k x T (the 5-degree test under the 6 s cap; k = 1: 0 deg)",
+      "period_ticks": 32.2214618334,
+      "period_multiple_k": 1,
+      "closure_delta_degrees": 0.0,
+      "span_ticks": 32.2214618334,
+      "animation_length_seconds": 1.6110730917,
+      "dense_samples": 34,
+      "keys_per_bone": 34,
+      "keys_per_bone_min": 2,
+      "keys_total": 271,
+      "lerp_mode": "catmullrom",
+      "keying": {
+        "search": "the density search of the exact transcriptions (KeyframeLeg's density_search through the shared DensitySearch): per bone and channel the fewest keys - candidates uniform in sample index, both ends included (the closing key always kept), the value at a key exactly the sample's - whose catmullrom curve (GeckoLib 4.8.4's CATMULLROM with the spline arguments repaired at load, SplineRepair) stays within the tolerance of every dense sample; the count below the fewest is the one that failed; a one-key state stays one key",
+        "lerp_mode": "catmullrom",
+        "rotation_tolerance_degrees": 1.0,
+        "position_tolerance_blocks": 0.03125,
+        "position_tolerance_units": 0.5,
+        "dense_samples": 34,
+        "keys_per_bone_min": 2,
+        "keys_per_bone_max": 34,
+        "keys_total": 271,
+        "max_error_degrees": 0.9914574266,
+        "max_error_units": 0.4950628581,
+        "max_error_blocks": 0.0309414286,
+        "max_error_degrees_geckolib": 0.9914574266,
+        "max_error_units_geckolib": 0.4950628581,
+        "within_tolerance": true,
+        "one_fewer_max_error": 14.398311978,
+        "channels_at_minimum_keys": 29,
+        "channels": 44
+      },
+      "bones": 37,
+      "moving_bones": [
+        "Cpower",
+        "Lhead",
+        "Lheadfin",
+        "Ljaw",
+        "Lleg1",
+        "Lpower",
+        "Lwing",
+        "Lwing2",
+        "Lwing3",
+        "Rheadfin",
+        "Rjaw",
+        "Rleg1",
+        "Rpower",
+        "Rwing",
+        "Rwing2",
+        "Rwing3",
+        "Tail5",
+        "Tail6",
+        "headfin",
+        "jaw",
+        "tail2",
+        "tail3",
+        "tail4"
+      ],
+      "position_bones": [
+        "Ljaw",
+        "Rjaw",
+        "Tail5",
+        "Tail6",
+        "jaw",
+        "tail3",
+        "tail4"
+      ],
+      "hidden_bones_at_rest": [],
+      "seam_delta_degrees": 0.0,
+      "seam_delta_position_units": 0.0,
+      "subject_after": {
+        "ri1": 0,
+        "shielding": -1,
+        "rf1": 0.0
+      },
+      "getters_read_at_inputs": [
+        "getActivity",
+        "getAttacking",
+        "getHead1Ext",
+        "getHead2Ext",
+        "getHead3Ext",
+        "isOrderedToSit"
+      ],
+      "attacking": {
+        "declared_pose_interfaces": [
+          "ThePrincessPose"
+        ],
+        "getters": [
+          "ThePrincessPose.getAttacking()"
+        ],
+        "outside_pose_interface": [],
+        "reads_attacking": true,
+        "read_at_inputs": true
+      },
+      "sampled_inputs": "getActivity() answers 2 (the state the seed names `fly`; every other getter at its rest value); limbSwingAmount 0.0; limbSwing 0 (the walk position at rest: vanilla WalkAnimationState holds its position while the speed is 0, and a creature that has not walked since it spawned carries 0); ageInTicks = t (getBob: tickCount + partialTick, partialTick 0; advancing 1.0 per tick from 0); netHeadYaw 0; headPitch 0 (looking ahead); every other entity-state flag at its rest value (ri1 0, rock_type 0, rf1 0); the entity RNG seeded 0 once per clip and evolving across the keys; one pose call per key, 20 keys per second; full health"
+    },
+    {
+      "registry": "the_princess",
+      "state": "sit",
+      "named": true,
+      "name_source": "the_princess.json reference_states.sit = {isOrderedToSit: true}",
+      "getter": "isOrderedToSit",
+      "value": true,
+      "getter_read_at_inputs": true,
+      "model_id": "model_theprincess",
+      "manifest": "t2_model_proofs.json",
+      "model_class": "danger.orespawn.entity.client.ModelThePrincess",
+      "landed": true,
+      "rig_source": "shipped",
+      "hook": "danger.orespawn.entity.client.ThePrincessGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the shipped replacement, registry-free, on explicit PoseInputs)",
+      "geo": "src/main/resources/assets/orespawn/geo/entity/theprincess.geo.json",
+      "file": "the_princess_reference_sit.animation.json",
+      "clip_name": "reference_sit",
+      "sha256": "faad0e5f574b110d86fcd50be1b1c896de4da62aed63735101490e61e684bdf2",
+      "rule": "period_multiple",
+      "rule_note": "wingspeed 0.65: the slowest rhythm is the resting wings cos(ageInTicks * 0.3 * WINGSPEED) * PI * 0.04 (ThePrincessGeoReplacement.applyCustomAnimations:97, below the threshold and not attacking) at 0.195 rad/tick, 32.22 ticks; the threshold-or-attacking wings cos(ageInTicks * 2.3 * WINGSPEED) * PI * 0.4 * limbSwingAmount (:96) and the threshold legs cos(ageInTicks * 2.0 * WINGSPEED) * PI * 0.25 * limbSwingAmount (:106, walk); the tail sway cos(ageInTicks * 0.9 * WINGSPEED) * PI * 0.06 (:117) and the attacking lash cos(ageInTicks * 1.3 * WINGSPEED) * PI * 0.12 (:122; the fan x1.6 .. 4.6 with the four follows :130-145); the jaw chatter cos(ageInTicks * 1.9 / 2.1 / 2.3 * WINGSPEED) * PI * 0.2 (:202-203); the three heads' look and the necks by the head extensions (0 on the probe, :147-259); the three power orbs advance every axis by a constant per pose call (:264-272: 0.03 .. 0.13 rad, wrapped below pi) on the bake's own bones - not a function of time: a step per rendered frame in-game, while the sampler poses every key over a fresh bake (one pose call per key), so each key holds one step from the bind and the orbs stand still in the clips; the closure test is the wings'; closes at k = 1 (32.221462 ticks): every bone returns within 0 degrees of its start at k x T (the 5-degree test under the 6 s cap; k = 1: 0 deg)",
+      "period_ticks": 32.2214618334,
+      "period_multiple_k": 1,
+      "closure_delta_degrees": 0.0,
+      "span_ticks": 32.2214618334,
+      "animation_length_seconds": 1.6110730917,
+      "dense_samples": 34,
+      "keys_per_bone": 3,
+      "keys_per_bone_min": 2,
+      "keys_total": 86,
+      "lerp_mode": "catmullrom",
+      "keying": {
+        "search": "the density search of the exact transcriptions (KeyframeLeg's density_search through the shared DensitySearch): per bone and channel the fewest keys - candidates uniform in sample index, both ends included (the closing key always kept), the value at a key exactly the sample's - whose catmullrom curve (GeckoLib 4.8.4's CATMULLROM with the spline arguments repaired at load, SplineRepair) stays within the tolerance of every dense sample; the count below the fewest is the one that failed; a one-key state stays one key",
+        "lerp_mode": "catmullrom",
+        "rotation_tolerance_degrees": 1.0,
+        "position_tolerance_blocks": 0.03125,
+        "position_tolerance_units": 0.5,
+        "dense_samples": 34,
+        "keys_per_bone_min": 2,
+        "keys_per_bone_max": 3,
+        "keys_total": 86,
+        "max_error_degrees": 0.9028927737,
+        "max_error_units": 0.0,
+        "max_error_blocks": 0.0,
+        "max_error_degrees_geckolib": 0.9028927737,
+        "max_error_units_geckolib": 0.0,
+        "within_tolerance": true,
+        "one_fewer_max_error": 14.398311978,
+        "channels_at_minimum_keys": 34,
+        "channels": 40
+      },
+      "bones": 37,
+      "moving_bones": [
+        "Cpower",
+        "Lhead",
+        "Lheadfin",
+        "Ljaw",
+        "Lpower",
+        "Lwing",
+        "Lwing2",
+        "Lwing3",
+        "Rheadfin",
+        "Rjaw",
+        "Rpower",
+        "Rwing",
+        "Rwing2",
+        "Rwing3",
+        "headfin",
+        "jaw"
+      ],
+      "position_bones": [
+        "Ljaw",
+        "Rjaw",
+        "jaw"
+      ],
+      "hidden_bones_at_rest": [],
+      "seam_delta_degrees": 0.0,
+      "seam_delta_position_units": 0.0,
+      "subject_after": {
+        "ri1": 0,
+        "shielding": -1,
+        "rf1": 0.0
+      },
+      "getters_read_at_inputs": [
+        "getActivity",
+        "getAttacking",
+        "getHead1Ext",
+        "getHead2Ext",
+        "getHead3Ext",
+        "isOrderedToSit"
+      ],
+      "attacking": {
+        "declared_pose_interfaces": [
+          "ThePrincessPose"
+        ],
+        "getters": [
+          "ThePrincessPose.getAttacking()"
         ],
         "outside_pose_interface": [],
         "reads_attacking": true,

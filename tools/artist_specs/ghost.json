@@ -1,9 +1,9 @@
 {
   "registry": "ghost",
   "display_name": "Ghost",
-  "status": "DRAFT — authored by a first pass from the entity code, 2026-09-13; edit pending",
+  "status": "DRAFT — authored by a first pass from the entity code, 2026-09-13; edit pending, landed on its hook by the remainder slice (2026-09-15)",
   "locomotion": "flyer",
-  "artist_scope": "full contract (Tier 2, the simple-cyclic class: geckolib_migration_design.md section 5); the rig is not yet in-game (it lands through the seam in a later slice)",
+  "artist_scope": "full contract (Tier 2, the simple-cyclic class: geckolib_migration_design.md section 5); ON THE HOOK until idle and walk are delivered: in-game through the seam behind the dev switch since the remainder slice (2026-09-15)",
   "character_sheet": "A hovering ghost of the Halloween nights: one 6x21x6 head-and-body column and two 2x11x2 arms splayed 0.33 rad (19 deg) at the shoulders (GhostModel.java:38-49), drawn translucent (GhostRenderer.java:38-40). It passes through blocks (noPhysics, Ghost.java:50) and drifts toward a spot beside the nearest player within 16 blocks, else to a random air pocket (Ghost.java:119-160), and hurts whoever it touches: 2 contact damage within 1.5 blocks every 20 ticks, no melee goal (Ghost.java:102-116, doHurtTarget :68-71). It spawns at night, in Halloween week anywhere and year-round in snowy taiga, taiga, frozen river, jungle and dark forest (Ghost.java:196-209). Read it as a sheet ghost: a still column, two arms drifting slowly and never quite together.",
   "size_notes": "Drawn at x0.65 of the rig (GhostRenderer.java:21, 45) on a 64x64 sheet (GhostModel.java:50); the hitbox is 0.5 x 1.5 (ModEntities.java:638-639); no shadow (SHADOW 0, GhostRenderer.java:19).",
   "labels": {
@@ -123,6 +123,9 @@
     "in `attack`: a visible reach of both arms toward the victim at the strike - the contact damage (Ghost.java:102-116) has no visible strike today",
     "in `idle`: a faint sway of the head-and-body column so the sheet does not hang dead-still while the arms drift",
     "in `hurt`: a recoil that keeps the translucent silhouette readable (the vanilla red overlay stays)"
+  ],
+  "formulas": [
+    "`GhostModel.setupAnim` (GhostModel.java:68-74; orig ModelGhost.java:44-56 in `render` (func_78088_a, :41-58; func_78087_a at :66-68 is a bare super call); no wingspeed - `new RenderGhost(new ModelGhost(), 0.0f, 0.65f)` in orig ClientProxyOreSpawn.java:409): the left arm rolls by minus 0.33 plus the cosine of the age in ticks times 0.3, times pi, times 0.05, and pitches by minus 0.33 plus the cosine of the age times 0.34, times pi, times 0.05; the right arm rolls by 0.33 plus the cosine of the age times 0.32, times pi, times 0.05, and pitches by 0.33 plus the cosine of the age times 0.36, times pi, times 0.05; the head-and-body column is still. The walk position and speed play no part. The sheet draws translucent (GhostRenderer applies GhostModel.RENDER_TYPE, RenderType::entityTranslucent - the ghost.png alpha; ENT-S-160 (a)); the 1.7.10 0.75 tint and 0.25 alpha are ENT-S-092's renderer question, not the pose's. The GeckoLib hook is the same (GhostGeoReplacement.applyCustomAnimations)."
   ],
   "effort_hours": null
 }

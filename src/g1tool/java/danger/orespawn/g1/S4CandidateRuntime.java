@@ -40,7 +40,16 @@ final class S4CandidateRuntime {
     private S4CandidateRuntime() {
     }
 
-    record Inputs(float ageTicks, float limbSwing, float limbSwingAmount, float netHeadYaw, float headPitch) {
+    /**
+     * The hook's inputs; {@code partialTick} the frame's partial tick the seam carries since the remainder slice
+     * ({@code PoseInputs.partialTick}) - the probe fills it from the sample's (the fractional part of the sample's age), the
+     * reference-clip sampler keeps the five-float form (0: a whole tick per key).
+     */
+    record Inputs(float ageTicks, float limbSwing, float limbSwingAmount, float netHeadYaw, float headPitch, float partialTick) {
+        /** The five-float form: the partial tick 0 (the sampler's fixed inputs; every clip byte-identical to its pre-slice file). */
+        Inputs(float ageTicks, float limbSwing, float limbSwingAmount, float netHeadYaw, float headPitch) {
+            this(ageTicks, limbSwing, limbSwingAmount, netHeadYaw, headPitch, 0.0F);
+        }
     }
 
     static G1AnimationRuntime.EvaluatedModel evaluateProductionHook(Model rawModel, List<String> drawOrder,
@@ -138,7 +147,7 @@ final class S4CandidateRuntime {
                 new OreSpawnGeoReplacementModel<>(replacement.descriptor());
         model.getAnimationProcessor().setActiveModel(baked);
         replacement.pose(model.getAnimationProcessor(), new PoseInputs(subject, inputs.ageTicks(),
-                inputs.limbSwing(), inputs.limbSwingAmount(), inputs.netHeadYaw(), inputs.headPitch()));
+                inputs.limbSwing(), inputs.limbSwingAmount(), inputs.netHeadYaw(), inputs.headPitch(), inputs.partialTick()));
     }
 
     private static G1AnimationRuntime.EvaluatedModel snapshot(BakedGeoModel model) {

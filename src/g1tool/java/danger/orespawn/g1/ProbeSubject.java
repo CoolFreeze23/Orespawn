@@ -61,6 +61,8 @@ import danger.orespawn.entity.pose.Robot3Pose;
 import danger.orespawn.entity.pose.Robot4Pose;
 import danger.orespawn.entity.pose.RockBasePose;
 import danger.orespawn.entity.pose.RotatorPose;
+import danger.orespawn.entity.pose.HumanoidPose;
+import danger.orespawn.entity.pose.ThePrincessPose;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.TreeSet;
@@ -90,7 +92,7 @@ import net.minecraft.util.RandomSource;
  */
 final class ProbeSubject implements Robot2Pose, Robot3Pose, Robot4Pose, RockBasePose, RotatorPose, PurplePowerPose,
         BeePose, CaterKillerPose, HerculesBeetlePose,
-        EmperorScorpionPose, GhostSkellyPose, HydroliscPose, LeafMonsterPose, LeonPose, LizardPose, LurkingTerrorPose, MantisPose, AlienPose, AlosaurusPose, BasiliskPose, CamarasaurusPose, CephadromePose, ChipmunkPose, CrabPose, DragonPose, DungeonBeastPose, EnderKnightPose, EnderReaperPose, FrogPose, GazellePose, CaveFisherPose, GiantRobotPose, GodzillaPose, HammerheadPose, KrakenPose, NastysaurusPose, PeacockPose, PitchBlackPose, PointysaurusPose, SeaMonsterPose, SeaViperPose, TRexPose, TheKingPose, ThePrincePose, ThePrinceAdultPose, ThePrinceTeenPose, UrchinPose, WaterDragonPose, MolenoidPose, RatPose, ScorpionPose, SpitBugPose, SpyroPose, StinkyPose, TriffidPose, TrooperBugPose, VelocityRaptorPose, OstrichPose {
+        EmperorScorpionPose, GhostSkellyPose, HydroliscPose, LeafMonsterPose, LeonPose, LizardPose, LurkingTerrorPose, MantisPose, AlienPose, AlosaurusPose, BasiliskPose, CamarasaurusPose, CephadromePose, ChipmunkPose, CrabPose, DragonPose, DungeonBeastPose, EnderKnightPose, EnderReaperPose, FrogPose, GazellePose, CaveFisherPose, GiantRobotPose, GodzillaPose, HammerheadPose, KrakenPose, NastysaurusPose, PeacockPose, PitchBlackPose, PointysaurusPose, SeaMonsterPose, SeaViperPose, TRexPose, TheKingPose, ThePrincePose, ThePrinceAdultPose, ThePrinceTeenPose, UrchinPose, WaterDragonPose, MolenoidPose, RatPose, ScorpionPose, SpitBugPose, SpyroPose, StinkyPose, TriffidPose, TrooperBugPose, VelocityRaptorPose, OstrichPose, HumanoidPose, ThePrincessPose {
     /** The state JSON's object of getter name -> value (an int or a boolean), each getter's declared value. */
     static final String GETTERS_KEY = "getters";
     private final RenderInfo renderInfo = new RenderInfo();
@@ -387,5 +389,96 @@ final class ProbeSubject implements Robot2Pose, Robot3Pose, Robot4Pose, RockBase
     public boolean isVehicle() {
         read("isVehicle");
         return booleanValue("isVehicle", false);
+    }
+
+    // ---- HumanoidPose (the remainder slice, 2026-09-15; drafted by T2d): the vanilla HumanoidModel.setupAnim reads of the
+    // Boyfriend / Girlfriend hooks, at rest unless the state's getters object raises one; the two per-frame lerps take the
+    // seam's partial tick over the declared previous-tick / current-tick values, vanilla's own forms
+    // (LivingEntity.getAttackAnim :3057-3062, getSwimAmount :387).
+
+    /** The declared value of a float getter (a JSON number), or its rest value. */
+    private float floatValue(String getter, float rest) {
+        JsonElement value = this.values.get(getter);
+        return value == null ? rest : value.getAsFloat();
+    }
+
+    /** HumanoidPose: the rest value (HumanoidModel.setupAnim :137 entity.getFallFlyingTicks() > 4; a tameable never fall-flies). */
+    @Override
+    public int getFallFlyingTicks() {
+        read("getFallFlyingTicks");
+        return intValue("getFallFlyingTicks", 0);
+    }
+
+    /** HumanoidPose: the rest value (HumanoidModel.setupAnim :138 entity.isVisuallySwimming(); no mob takes the SWIMMING pose). */
+    @Override
+    public boolean isVisuallySwimming() {
+        read("isVisuallySwimming");
+        return booleanValue("isVisuallySwimming", false);
+    }
+
+    /** HumanoidPose: the rest value (LivingEntityRenderer.render offsets 52-89: the model's riding; a boat or minecart seats the rider). */
+    @Override
+    public boolean isSeatedOnVehicle() {
+        read("isSeatedOnVehicle");
+        return booleanValue("isSeatedOnVehicle", false);
+    }
+
+    /** HumanoidPose: the rest value (HumanoidModel.setupAnim :192 entity.getMainArm() == HumanoidArm.RIGHT; vanilla's default main arm). */
+    @Override
+    public net.minecraft.world.entity.HumanoidArm getMainArm() {
+        read("getMainArm");
+        return net.minecraft.world.entity.HumanoidArm.RIGHT;
+    }
+
+    /** HumanoidPose: the rest value (HumanoidModel.setupAnim :193, :248 entity.isUsingItem()). */
+    @Override
+    public boolean isUsingItem() {
+        read("isUsingItem");
+        return booleanValue("isUsingItem", false);
+    }
+
+    /** HumanoidPose: the rest value (HumanoidModel.setupAnim :194 entity.getUsedItemHand() == InteractionHand.MAIN_HAND). */
+    @Override
+    public net.minecraft.world.InteractionHand getUsedItemHand() {
+        read("getUsedItemHand");
+        return net.minecraft.world.InteractionHand.MAIN_HAND;
+    }
+
+    /** HumanoidPose: the rest value (HumanoidModel.getAttackArm :466-467: entity.swingingArm == InteractionHand.MAIN_HAND; the field's default). */
+    @Override
+    public net.minecraft.world.InteractionHand getSwingingArm() {
+        read("getSwingingArm");
+        return net.minecraft.world.InteractionHand.MAIN_HAND;
+    }
+
+    /**
+     * HumanoidPose: vanilla LivingEntity.getAttackAnim(partialTick) (21.1.223 :3057-3062: {@code f = attackAnim - oAttackAnim;
+     * if (f < 0) f++; return oAttackAnim + f * partialTick}) over the declared {@code oAttackAnim} / {@code attackAnim} (rest 0
+     * / 0: no swing), so a state that declares them proves the hook reads the seam's partial tick verbatim.
+     */
+    @Override
+    public float getAttackAnim(float partialTick) {
+        read("getAttackAnim");
+        float attackAnim = floatValue("attackAnim", 0.0F);
+        float oAttackAnim = floatValue("oAttackAnim", 0.0F);
+        float f = attackAnim - oAttackAnim;
+        if (f < 0.0F) {
+            f++;
+        }
+        return oAttackAnim + f * partialTick;
+    }
+
+    /** HumanoidPose: vanilla LivingEntity.getSwimAmount(partialTick) (:387: Mth.lerp(partialTick, swimAmountO, swimAmount)) over the declared values (rest 0 / 0). */
+    @Override
+    public float getSwimAmount(float partialTick) {
+        read("getSwimAmount");
+        return net.minecraft.util.Mth.lerp(partialTick, floatValue("swimAmountO", 0.0F), floatValue("swimAmount", 0.0F));
+    }
+
+    /** HumanoidPose: the rest value (LivingEntityRenderer.render offsets 92-100: model.young = entity.isBaby(); a tameable never bred a baby). */
+    @Override
+    public boolean isBaby() {
+        read("isBaby");
+        return booleanValue("isBaby", false);
     }
 }

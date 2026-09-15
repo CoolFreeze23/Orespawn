@@ -3,6 +3,7 @@ package danger.orespawn.entity.client;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import danger.orespawn.entity.ThePrincess;
+import danger.orespawn.entity.pose.ThePrincessPose;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
@@ -181,6 +182,19 @@ public class ModelThePrincess extends EntityModel<ThePrincess> {
 
     @Override
     public void setupAnim(ThePrincess entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
+        // The body lives in poseFrom so the parity harness can drive it from a declared state without a live
+        // entity (the remainder slice, 2026-09-15; the Slice 4b form): the entity implements ThePrincessPose.
+        poseFrom(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
+    }
+
+    /**
+     * The classic pose over a declared subject: the Prince's form (ModelThePrince.poseFrom) plus the three power orbs, whose
+     * rotations accumulate PER RENDERED FRAME on this model's own parts (:319-354 below: {@code += 0.03 ... 0.13f}, wrapped
+     * at pi) - state on no entity field, carried by the seam's hook from the bake's bones the same way. The probe resets the
+     * parts to their bind before every sample ({@code ModelPart.resetPose}), so a sample sees one step from the bind on
+     * both sides; in-game both singletons accumulate per rendered frame.
+     */
+    public void poseFrom(ThePrincessPose entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
         float newangle;
         int current_activity = entity.getActivity();
 

@@ -34,6 +34,11 @@ public class GirlfriendRenderer extends HumanoidMobRenderer<Girlfriend, ModelGir
 
     @Override
     public ResourceLocation getTextureLocation(Girlfriend entity) {
+        return textureFor(entity);
+    }
+
+    /** The sheet for an entity's skin and valentine state (the GeckoLib descriptor reads the same switch; the remainder slice, 2026-09-15). */
+    public static ResourceLocation textureFor(Girlfriend entity) {
         // orig Girlfriend.java:331-334 — dedicated texture while valentine-angry
         if (entity.isValentineAngry()) {
             return ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID,

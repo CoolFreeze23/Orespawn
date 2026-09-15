@@ -10,6 +10,7 @@ import danger.orespawn.entity.BandP;
 import danger.orespawn.entity.Baryonyx;
 import danger.orespawn.entity.Basilisk;
 import danger.orespawn.entity.Beaver;
+import danger.orespawn.entity.Boyfriend;
 import danger.orespawn.entity.Camarasaurus;
 import danger.orespawn.entity.Cassowary;
 import danger.orespawn.entity.CaveFisher;
@@ -42,6 +43,7 @@ import danger.orespawn.entity.EntityHydrolisc;
 import danger.orespawn.entity.EntityKyuubi;
 import danger.orespawn.entity.EntityLeafMonster;
 import danger.orespawn.entity.EntityLeon;
+import danger.orespawn.entity.EntityLurkingTerror;
 import danger.orespawn.entity.EntityMantis;
 import danger.orespawn.entity.EntityMolenoid;
 import danger.orespawn.entity.EntityMosquito;
@@ -50,6 +52,7 @@ import danger.orespawn.entity.EntityRat;
 import danger.orespawn.entity.EntityRedAnt;
 import danger.orespawn.entity.EntityRotator;
 import danger.orespawn.entity.EntityRubberDucky;
+import danger.orespawn.entity.EntityScorpion;
 import danger.orespawn.entity.EntitySpitBug;
 import danger.orespawn.entity.EntitySpyro;
 import danger.orespawn.entity.EntityStinkBug;
@@ -69,8 +72,10 @@ import danger.orespawn.entity.Firefly;
 import danger.orespawn.entity.Flounder;
 import danger.orespawn.entity.Frog;
 import danger.orespawn.entity.Gazelle;
+import danger.orespawn.entity.Ghost;
 import danger.orespawn.entity.GhostSkelly;
 import danger.orespawn.entity.GiantRobot;
+import danger.orespawn.entity.Girlfriend;
 import danger.orespawn.entity.Godzilla;
 import danger.orespawn.entity.GoldFish;
 import danger.orespawn.entity.Hammerhead;
@@ -96,9 +101,11 @@ import danger.orespawn.entity.SeaMonster;
 import danger.orespawn.entity.SeaViper;
 import danger.orespawn.entity.Skate;
 import danger.orespawn.entity.TRex;
+import danger.orespawn.entity.TheKing;
 import danger.orespawn.entity.ThePrince;
 import danger.orespawn.entity.ThePrinceAdult;
 import danger.orespawn.entity.ThePrinceTeen;
+import danger.orespawn.entity.ThePrincess;
 import danger.orespawn.entity.Urchin;
 import danger.orespawn.entity.VelocityRaptor;
 import danger.orespawn.entity.WaterDragon;
@@ -124,6 +131,8 @@ import danger.orespawn.entity.client.BeaverGeoReplacedRenderer;
 import danger.orespawn.entity.client.BeaverRenderer;
 import danger.orespawn.entity.client.BeeGeoReplacement;
 import danger.orespawn.entity.client.BeeRenderer;
+import danger.orespawn.entity.client.BoyfriendGeoReplacement;
+import danger.orespawn.entity.client.BoyfriendRenderer;
 import danger.orespawn.entity.client.BrutalflyGeoReplacement;
 import danger.orespawn.entity.client.BrutalflyRenderer;
 import danger.orespawn.entity.client.CamarasaurusGeoReplacement;
@@ -184,10 +193,14 @@ import danger.orespawn.entity.client.GammaMetroidGeoReplacement;
 import danger.orespawn.entity.client.GammaMetroidRenderer;
 import danger.orespawn.entity.client.GazelleGeoReplacement;
 import danger.orespawn.entity.client.GazelleRenderer;
+import danger.orespawn.entity.client.GhostGeoReplacement;
+import danger.orespawn.entity.client.GhostRenderer;
 import danger.orespawn.entity.client.GhostSkellyGeoReplacement;
 import danger.orespawn.entity.client.GhostSkellyRenderer;
 import danger.orespawn.entity.client.GiantRobotGeoReplacement;
 import danger.orespawn.entity.client.GiantRobotRenderer;
+import danger.orespawn.entity.client.GirlfriendGeoReplacement;
+import danger.orespawn.entity.client.GirlfriendRenderer;
 import danger.orespawn.entity.client.GodzillaGeoReplacement;
 import danger.orespawn.entity.client.GodzillaRenderer;
 import danger.orespawn.entity.client.GoldFishGeoReplacement;
@@ -216,6 +229,8 @@ import danger.orespawn.entity.client.LeonRenderer;
 import danger.orespawn.entity.client.LeonopteryxGeoReplacement;
 import danger.orespawn.entity.client.LizardGeoReplacement;
 import danger.orespawn.entity.client.LizardRenderer;
+import danger.orespawn.entity.client.LurkingTerrorGeoReplacement;
+import danger.orespawn.entity.client.LurkingTerrorRenderer;
 import danger.orespawn.entity.client.MantisGeoReplacement;
 import danger.orespawn.entity.client.MantisRenderer;
 import danger.orespawn.entity.client.MolenoidGeoReplacement;
@@ -257,6 +272,8 @@ import danger.orespawn.entity.client.RotatorRenderer;
 import danger.orespawn.entity.client.RubberDuckyGeoReplacement;
 import danger.orespawn.entity.client.RubberDuckyRenderer;
 import danger.orespawn.entity.client.RubyBirdGeoReplacement;
+import danger.orespawn.entity.client.ScorpionGeoReplacement;
+import danger.orespawn.entity.client.ScorpionRenderer;
 import danger.orespawn.entity.client.SeaMonsterGeoReplacement;
 import danger.orespawn.entity.client.SeaMonsterRenderer;
 import danger.orespawn.entity.client.SeaViperGeoReplacement;
@@ -277,12 +294,16 @@ import danger.orespawn.entity.client.TermiteGeoReplacement;
 import danger.orespawn.entity.client.TermiteRenderer;
 import danger.orespawn.entity.client.TerribleTerrorGeoReplacement;
 import danger.orespawn.entity.client.TerribleTerrorRenderer;
+import danger.orespawn.entity.client.TheKingGeoReplacement;
+import danger.orespawn.entity.client.TheKingRenderer;
 import danger.orespawn.entity.client.ThePrinceAdultGeoReplacement;
 import danger.orespawn.entity.client.ThePrinceAdultRenderer;
 import danger.orespawn.entity.client.ThePrinceGeoReplacement;
 import danger.orespawn.entity.client.ThePrinceRenderer;
 import danger.orespawn.entity.client.ThePrinceTeenGeoReplacement;
 import danger.orespawn.entity.client.ThePrinceTeenRenderer;
+import danger.orespawn.entity.client.ThePrincessGeoReplacement;
+import danger.orespawn.entity.client.ThePrincessRenderer;
 import danger.orespawn.entity.client.TriffidGeoReplacement;
 import danger.orespawn.entity.client.TriffidRenderer;
 import danger.orespawn.entity.client.TrooperBugGeoReplacement;
@@ -765,6 +786,40 @@ public final class PhaseGDevRenderers {
 
     public static EntityRendererProvider<WaterDragon> waterDragonRenderer() {
         return select("water_dragon", WaterDragonRenderer::new, WaterDragonGeoReplacement.Renderer::new);
+    }
+
+    /**
+     * The remainder slice: the seven remaining rigs ON THEIR HOOKS - the Lurking Terror and the Scorpion (the pair-contested
+     * rule), the Ghost (ENT-S-160 (a)), the Boyfriend, Girlfriend and Princess (item 3: the seam's partial tick and the classic
+     * layers), the King (the second pass, TEST-018); the Butterfly rig's four consumers REPORTED, not landed (TEST-019: no
+     * provider, their classic renderers alone); the classic renderers the default.
+     */
+    public static EntityRendererProvider<EntityLurkingTerror> lurkingTerrorRenderer() {
+        return select("lurking_terror", LurkingTerrorRenderer::new, LurkingTerrorGeoReplacement.Renderer::new);
+    }
+
+    public static EntityRendererProvider<EntityScorpion> scorpionRenderer() {
+        return select("scorpion", ScorpionRenderer::new, ScorpionGeoReplacement.Renderer::new);
+    }
+
+    public static EntityRendererProvider<Ghost> ghostRenderer() {
+        return select("ghost", GhostRenderer::new, GhostGeoReplacement.Renderer::new);
+    }
+
+    public static EntityRendererProvider<Boyfriend> boyfriendRenderer() {
+        return select("boyfriend", BoyfriendRenderer::new, BoyfriendGeoReplacement.Renderer::new);
+    }
+
+    public static EntityRendererProvider<Girlfriend> girlfriendRenderer() {
+        return select("girlfriend", GirlfriendRenderer::new, GirlfriendGeoReplacement.Renderer::new);
+    }
+
+    public static EntityRendererProvider<ThePrincess> thePrincessRenderer() {
+        return select("the_princess", ThePrincessRenderer::new, ThePrincessGeoReplacement.Renderer::new);
+    }
+
+    public static EntityRendererProvider<TheKing> theKingRenderer() {
+        return select("the_king", TheKingRenderer::new, TheKingGeoReplacement.Renderer::new);
     }
 
 

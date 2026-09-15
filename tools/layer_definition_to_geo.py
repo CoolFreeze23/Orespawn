@@ -760,13 +760,29 @@ def derive_bone_draw_order(compiled: dict[str, Any],
     """
     full_samples = [sample for sample in compiled["samples"] if sample.get("capture_kind") == "full"]
     sequences: list[list[str]] = []
+    second_pass_units: list[str] = []
     for sample in full_samples:
         if "draw_order" not in sample:
             raise ValueError(
                 f"{compiled['model_id']} capture {sample['id']} carries no draw_order; "
                 "the compiled dump predates the G2 root-order contract"
             )
-        sequences.append([str(token) for token in sample["draw_order"]])
+        sequence = [str(token) for token in sample["draw_order"]]
+        if "draw_order_pass2" in sample:
+            # THE SECOND PASS (the remainder slice, 2026-09-15; TEST-018 - the King): the classic renderer draws the pass's parts
+            # AFTER its opaque pass (TheKingRenderer.render: renderToBuffer, then renderWingMembranes), so one capture's classic
+            # order is the main sequence followed by the pass sequence - the pass's bones take the key's tail in the pass's own
+            # order, which is what the seam's SecondPassLayer traverses (the key restricted to the pass's bones) and the
+            # draw-order leg compares per pass. A one-pass capture is unchanged.
+            pass_sequence = [str(token) for token in sample["draw_order_pass2"]]
+            overlap = sorted(set(sequence) & set(pass_sequence))
+            if overlap:
+                raise ValueError(f"{compiled['model_id']} capture {sample['id']} draws {overlap} in both passes")
+            sequence = sequence + pass_sequence
+            for unit in pass_sequence:
+                if unit not in second_pass_units:
+                    second_pass_units.append(unit)
+        sequences.append(sequence)
     emission_rank = {bone["name"]: index for index, bone in enumerate(bones)}
     units = [bone["name"] for bone in bones if bone.get("cubes")]
     unit_set = set(units)
@@ -865,6 +881,10 @@ def derive_bone_draw_order(compiled: dict[str, Any],
         "cube_bearing_units": len(units),
         "observed_units": len(observed),
         "unobserved_units": unobserved,
+        **({"second_pass_units": second_pass_units,
+            "second_pass_rule": "the classic renderer draws the pass after its opaque pass, so each capture's order is the main "
+                                "sequence then the pass sequence: the pass's bones take the key's tail in the pass's own order"}
+           if second_pass_units else {}),
         "ordered_pairs": sum(len(later) for later in successors.values()),
         "tie_break": "converter emission order for pairs never drawn together in any capture",
         "lifting": "pre-order over the geo bone tree, siblings by their subtree's first classic draw",

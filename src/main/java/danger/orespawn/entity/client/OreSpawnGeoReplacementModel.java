@@ -155,9 +155,24 @@ public final class OreSpawnGeoReplacementModel<E extends Entity, A extends OreSp
      */
     @Override
     public void setCustomAnimations(A animatable, long instanceId, AnimationState<A> animationState) {
+        // The remainder slice: the frame's inputs as the classic hook receives them, kept EVERY FRAME, before the gate below,
+        // for the vanilla-layer adapter that draws the classic biped layers after the bones (the same six floats and the
+        // partial tick vanilla's LivingEntityRenderer.render hands its RenderLayer.render calls, 21.1.223 bytecode 632-684):
+        // the adapter reads the bones in classic terms whether the hook or the artist layers posed them, so a species whose
+        // artist gate opens needs the inputs too (kept after the gate, the adapter threw on that species' first frame). One frame
+        // at a time: defaultRender runs actuallyRender and applyRenderLayers back to back.
+        this.lastPoseInputs = PoseInputs.fromState(animationState);
         if (!animatable.getAnimatableInstanceCache().getManagerForId(instanceId).getAnimationControllers().isEmpty()) {
             return;
         }
         animatable.applyCustomAnimations(getAnimationProcessor(), animationState);
+    }
+
+    /** The remainder slice: the inputs of the frame being drawn (see {@link #setCustomAnimations}); null before the first hook frame. */
+    private PoseInputs lastPoseInputs;
+
+    /** The frame's inputs as the classic hook received them, for a render layer drawn after the bones; null before the first hook frame. */
+    public PoseInputs lastPoseInputs() {
+        return this.lastPoseInputs;
     }
 }

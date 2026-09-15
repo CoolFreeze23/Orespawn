@@ -2,6 +2,7 @@ package danger.orespawn.entity.client;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
+import java.util.List;
 import java.util.Objects;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -149,6 +150,42 @@ public abstract class GeoReplacementDescriptor<E extends Entity> {
      */
     public boolean cubeFaceOrderRequired() {
         return false;
+    }
+
+    /**
+     * THE SECOND PASS (the remainder slice, on TEST-018 - the King): the bones the classic renderer draws AGAIN in a
+     * second pass after the opaque one, with that pass's render-type function and ARGB tint - {@code
+     * TheKingRenderer.render}'s {@code renderWingMembranes} on {@code RenderType.entityTranslucent} at the packed 0.75 /
+     * 0.75 / 0.75 / 0.55 tint (orig ModelTheKing.java's GL block: {@code glEnable(GL_BLEND); glColor4f(0.75,
+     * 0.75, 0.75, 0.55)} around the ten membranes). {@code null} (the default) for a rig drawn in one pass. The ENT-S-146
+     * form widened from one render type per rig to (bone set, render-type function, colour): the function object is the
+     * classic model's OWN ({@code ModelTheKing.WING_MEMBRANE_RENDER_TYPE}) so the harness proves the two renderers'
+     * pass equal by identity, and the colour the model's own constant. Read WITHOUT an entity (the {@link
+     * #renderType} form): the parity probe reads it from the descriptor alone and captures both sides' pass
+     * ({@code render_vertices_pass2} / {@code draw_order_pass2} / the sidecar's {@code second_pass}), so the draw-order,
+     * render-state and visual legs prove the two passes against the classic renderer's two; the replaced renderer
+     * ({@link OreSpawnGeoReplacedEntityRenderer}) hides the pass's bones in its main pass and re-renders them alone,
+     * on the pass's render type with its colour, as a render layer after the opaque pass. Answered by a method, never by
+     * the descriptor's static construction (the Band P lesson: the function object lives on a client class).
+     */
+    public SecondPass secondPass() {
+        return null;
+    }
+
+    /**
+     * A second render pass over a subset of the rig's bones: {@code bones} the bone names drawn only in it (hidden in the
+     * main pass), {@code renderType} the pass's render-type function (applied to the descriptor's texture, as
+     * {@code Model.renderType(texture)} applies the classic model's), {@code color} the ARGB int every vertex of the pass is
+     * multiplied by (the colour argument the classic {@code ModelPart.render} receives in that pass).
+     */
+    public record SecondPass(List<String> bones, Function<ResourceLocation, RenderType> renderType, int color) {
+        public SecondPass {
+            bones = List.copyOf(Objects.requireNonNull(bones, "bones"));
+            Objects.requireNonNull(renderType, "renderType");
+            if (bones.isEmpty()) {
+                throw new IllegalArgumentException("a second pass names at least one bone");
+            }
+        }
     }
 
     /**
