@@ -44,6 +44,20 @@ CONTESTED_MARKER = (40, 90, 255, 255)
 PAIR_ATTRIBUTION_WINDOW = 1.0e-5
 PAIR_CONTESTED_CAP = 0.01
 PAIR_CONTESTED_MARKER = (255, 40, 200, 255)
+# THE FRAME (TEST-015): both probes capture in the ENTITY FRAME - the classic side under vanilla's own chain, M =
+# scale(-1, -1, 1) . translate(0, -1.501, 0) (LivingEntityRenderer.render 395-400 / 413-417,
+# 21.1.223), the geo side under the seam's (the descriptor slot, the seam's height compensation, GeckoLib's
+# translate(0, 0.01, 0) at actuallyRender 727, the bake as the baker built it) - so every leg compares the two chains
+# as the game draws them. A ModelPart-space quantity the classic dumps still carry (the `transforms` channels, a part's
+# rotation point) is carried into that frame by ENTITY_FRAME_OF_CLASSIC below; the geo probe's bone poses
+# (`bone_poses_entity_frame`) are recorded there directly.
+ENTITY_FRAME_OF_CLASSIC = [
+    [-1.0, 0.0, 0.0, 0.0],
+    [0.0, -1.0, 0.0, 1.501],
+    [0.0, 0.0, 1.0, 0.0],
+    [0.0, 0.0, 0.0, 1.0],
+]
+BONE_POSES_FIELD = "bone_poses_entity_frame"
 # G2 root-order contract: the geo description key the converter writes and the shipped model applies.
 DRAW_ORDER_KEY = "orespawn:bone_draw_order"
 # ENT-S-146: the within-cube face order key (bone -> one array per cube of GeckoLib direction names in
@@ -703,10 +717,12 @@ def render_instance_pose_parity(model_id: str, compiled: dict[str, Any],
     candidate's MEASURED bone transforms.
 
     The compiled probe records, for every draw k of an expanded part, the pose-stack matrix at
-    the part's own pushPose (``instance_pose``: the model's per-draw transform, e.g. the fan spin
-    or the stack step) and the matrix its cubes were compiled with (``draw_pose`` = instance *
-    T(pivot) * R(part)). The geo probe records every bone's cumulative transform conjugated into
-    classic space (``bone_poses_classic``). The two must agree:
+    the part's own pushPose (``instance_pose``: the classic chain M then the model's per-draw
+    transform, e.g. the fan spin or the stack step) and the matrix its cubes were compiled with
+    (``draw_pose`` = instance * T(pivot) * R(part)) - both in the ENTITY FRAME (TEST-015). The geo
+    probe records every bone's world transform in the same frame (``bone_poses_entity_frame``: the
+    seam's chain and the bone's cumulative transform, closed by the bake map from classic absolute
+    space). The two must agree:
 
       instance_pose(part, k)  ==  bone_pose(group bone of clone k)
       draw_pose(part, k)      ==  bone_pose(clone k) * T(part pivot / 16)
@@ -735,9 +751,9 @@ def render_instance_pose_parity(model_id: str, compiled: dict[str, Any],
         if vanilla_sample.get("capture_kind") != "full":
             continue
         candidate_sample = candidate_samples[sample_id]
-        poses = candidate_sample.get("bone_poses_classic")
+        poses = candidate_sample.get(BONE_POSES_FIELD)
         if poses is None:
-            raise AssertionError(f"{model_id}/{sample_id} geo probe recorded no bone_poses_classic")
+            raise AssertionError(f"{model_id}/{sample_id} geo probe recorded no {BONE_POSES_FIELD}")
         draws = vanilla_sample.get("draws")
         if draws is None:
             raise AssertionError(f"{model_id}/{sample_id} compiled probe recorded no per-draw poses")
@@ -826,8 +842,8 @@ def render_instance_pose_parity(model_id: str, compiled: dict[str, Any],
         "worst_case": worst,
         "evidence": (
             "measured classic per-draw pose stack (instance_pose at the part's pushPose, draw_pose at "
-            "cube compile) versus measured GeckoLib bone transforms conjugated into classic space "
-            "(bone_poses_classic): instance == group bone, draw == clone bone * T(pivot)"
+            "cube compile, under the classic chain) versus measured GeckoLib bone world transforms in the "
+            "same entity frame (bone_poses_entity_frame): instance == group bone, draw == clone bone * T(pivot)"
         ),
     }
     if explicit_clone_bones:
@@ -845,11 +861,12 @@ def render_instance_pose_parity(model_id: str, compiled: dict[str, Any],
 # (tools/layer_definition_to_geo.py, the hierarchy form). Its proof is the world transform of every link: on the
 # classic side the part's world matrix from its rotation point and rotations, evaluated here from the compiled
 # `transforms` (a flat part's ModelPart.translateAndRotate: translate(x, y, z) / 16, then rotationZYX(zRot,
-# yRot, xRot) = Rz * Ry * Rx); on the GeckoLib side the bone's world matrix as the bake renders it (the probe's
-# `bone_poses_classic`: the pose stack at the bone, conjugated into classic space), closed by the bone's absolute
-# bind pivot - a classic cube corner is local to the part's pivot, a GeckoLib corner absolute, so
-# classic_world == bone_pose * T(pivot / 16) (the render-instance leg's relation). Both are compared within the GEOMETRY
-# leg's tolerance (the decision: linear entries and the translation column alike, in blocks) and reported per link.
+# yRot, xRot) = Rz * Ry * Rx) and carried into the entity frame by the classic chain M (TEST-015); on the GeckoLib side
+# the bone's world matrix as the bake renders it in that frame (the probe's `bone_poses_entity_frame`: the pose stack at
+# the bone, closed by the bake map from classic absolute space), closed by the bone's absolute bind pivot - a classic
+# cube corner is local to the part's pivot, a GeckoLib corner absolute, so M * classic_world
+# == bone_pose * T(pivot / 16) (the render-instance leg's relation). Both are compared within the GEOMETRY leg's
+# tolerance (the decision: linear entries and the translation column alike, in blocks) and reported per link.
 def hierarchy_declared(model_id: str, spec: dict[str, Any], compiled: dict[str, Any], conversion: dict[str, Any],
                        generated_geometry: dict[str, Any]) -> dict[str, str]:
     """The manifest's ``hierarchy`` validated the converter's way and checked for drift against the converter's
@@ -910,7 +927,7 @@ def rotation_matrix_zyx(angles: Iterable[float]) -> list[list[float]]:
 def classic_world_matrix(transform: dict[str, Any]) -> list[list[float]]:
     """A flat classic part's world matrix from its rotation point and rotations (blocks): T(position / 16) * Rz * Ry * Rx,
     exactly what ``ModelPart.translateAndRotate`` pushes for a part of the unnamed root (a unit scale, the compiled
-    dumps' rigs never scale)."""
+    dumps' rigs never scale) - in ModelPart space; ``entity_frame`` carries it under the classic chain."""
     rotation = rotation_matrix_zyx(transform["rotation"])
     position = [float(value) / 16.0 for value in transform["position"]]
     return [
@@ -921,26 +938,43 @@ def classic_world_matrix(transform: dict[str, Any]) -> list[list[float]]:
     ]
 
 
+def matrix_product(left: list[list[float]], right: list[list[float]]) -> list[list[float]]:
+    return [[sum(left[r][k] * right[k][c] for k in range(4)) for c in range(4)] for r in range(4)]
+
+
+def entity_frame(classic_matrix: list[list[float]]) -> list[list[float]]:
+    """A ModelPart-space affine map carried into the entity frame by the classic chain: M * matrix (TEST-015)."""
+    return matrix_product(ENTITY_FRAME_OF_CLASSIC, classic_matrix)
+
+
+def geo_pivot_classic_blocks(pivot: Iterable[float]) -> list[float]:
+    """A geo bone's pivot in classic terms, blocks: the converter writes (x, 24 - y, z) of the classic pivot (the Bedrock
+    convention, TEST-015; before: (-x, 24 - y, z))."""
+    x, y, z = (float(value) for value in pivot)
+    return [x / 16.0, (24.0 - y) / 16.0, z / 16.0]
+
+
 def chain_link_parity(model_id: str, compiled: dict[str, Any], geo_render: dict[str, Any],
                       generated_geometry: dict[str, Any], hierarchy: dict[str, str], epsilon: float,
                       undrawn: frozenset[str] = frozenset()) -> dict[str, Any]:
     """The chain-link leg: for every sample of the entry's matrix the world transform of every bone - every link of the
     declared hierarchy and every root beside them - evaluated independently on the classic model (``classic_world_matrix``
-    of the compiled ``transforms``) and on the GeckoLib bake (``bone_poses_classic``, closed by the bone's own pivot: a
-    GeckoLib corner is absolute, at the geo pivot plus the classic local offset, a classic corner local to the part's
-    rotation point, so classic_world == bone_pose * T(geo pivot / 16) - a root's geo pivot the classic absolute pivot, a
-    child's the converter's derived one), compared within ``epsilon`` (the geometry leg's, blocks) on the 3x3 linear
-    block and on the translation column, and reported per link. Every sample must be a full capture: the bake's world
-    matrices are recorded where it renders."""
+    of the compiled ``transforms``, carried into the entity frame by the classic chain, ``entity_frame``) and on the
+    GeckoLib bake (``bone_poses_entity_frame``, closed by the bone's own pivot: a GeckoLib corner is absolute, at the geo
+    pivot plus the classic local offset, a classic corner local to the part's rotation point, so
+    M * classic_world == bone_pose * T(geo pivot / 16) - a root's geo pivot the classic absolute pivot, a child's the
+    converter's derived one), compared within ``epsilon`` (the geometry leg's, blocks) on the 3x3 linear block and on
+    the translation column, and reported per link. Every sample must be a full capture: the bake's world matrices are
+    recorded where it renders."""
     if not hierarchy:
         raise AssertionError(f"{model_id} chain-link leg needs a declared hierarchy")
     vanilla_samples = sample_map(compiled)
     candidate_samples = sample_map(geo_render)
     if vanilla_samples.keys() != candidate_samples.keys():
         raise AssertionError(f"{model_id} chain-link sample IDs differ")
-    # the geo's pivots in classic terms (the converter writes (-x, 24 - y, z) of the classic pivot), in blocks
+    # the geo's pivots in classic terms (the converter writes (x, 24 - y, z) of the classic pivot), in blocks
     pivots = {
-        bone["name"]: [-float(bone["pivot"][0]) / 16.0, (24.0 - float(bone["pivot"][1])) / 16.0, float(bone["pivot"][2]) / 16.0]
+        bone["name"]: geo_pivot_classic_blocks(bone["pivot"])
         for bone in generated_geometry["minecraft:geometry"][0]["bones"]
     }
     compiled_pivots = {
@@ -965,15 +999,15 @@ def chain_link_parity(model_id: str, compiled: dict[str, Any], geo_render: dict[
                 f"{model_id}/{sample_id} is not a full capture: the chain-link leg compares the bake's rendered world "
                 "matrices, recorded at full captures only"
             )
-        poses = candidate_sample.get("bone_poses_classic")
+        poses = candidate_sample.get(BONE_POSES_FIELD)
         if poses is None:
-            raise AssertionError(f"{model_id}/{sample_id} geo probe recorded no bone_poses_classic")
+            raise AssertionError(f"{model_id}/{sample_id} geo probe recorded no {BONE_POSES_FIELD}")
         for bone, transform in vanilla_sample["transforms"].items():
             if bone in undrawn:
                 continue
             if bone not in poses:
                 raise AssertionError(f"{model_id}/{sample_id} geo probe recorded no world matrix for bone {bone}")
-            classic = classic_world_matrix(transform)
+            classic = entity_frame(classic_world_matrix(transform))
             candidate = matrix_translate(matrix_rows(poses[bone], f"{model_id}/{sample_id}/{bone} bone pose"), pivots[bone])
             linear, translation = matrix_delta(classic, candidate)
             if linear > max_linear or translation > max_translation:
@@ -1009,10 +1043,10 @@ def chain_link_parity(model_id: str, compiled: dict[str, Any], geo_render: dict[
         "worst_case": worst,
         "per_link": per_link,
         "evidence": (
-            "classic: T(rotation point / 16) * Rz * Ry * Rx from the compiled transforms of every sample (the flat part's "
-            "ModelPart.translateAndRotate); GeckoLib: the bake's rendered bone world matrix conjugated into classic space "
-            "(bone_poses_classic) * T(the geo's own pivot / 16, a child's the derived one); every bone compared, the "
-            "declared links reported per link; "
+            "classic: M * T(rotation point / 16) * Rz * Ry * Rx from the compiled transforms of every sample (the flat part's "
+            "ModelPart.translateAndRotate under the classic chain M, the entity frame); GeckoLib: the bake's rendered bone "
+            "world matrix in the same frame (bone_poses_entity_frame) * T(the geo's own pivot / 16, a child's the derived "
+            "one); every bone compared, the declared links reported per link; "
             "an entry error bounds the angle error only up to sqrt(3) for a rotation about an arbitrary axis, so the "
             "effective angular tolerance is at most ~sqrt(3) x epsilon - stated, no threshold changed"
         ),
@@ -1995,6 +2029,16 @@ def all_vertices(samples: dict[str, dict[str, Any]], ids: Iterable[str]) -> list
 
 
 class Camera:
+    """The visual leg's orthographic camera: a bounding-box fit (the centre and the scale from the vertices it is
+    given) and a view of the manifest's yaw and pitch, unchanged in intent under the frame change (TEST-015): the
+    captures now sit in the ENTITY FRAME, which is ModelPart space reflected in x and y (the classic chain's
+    scale(-1, -1, 1)), and the view looks THROUGH that reflection - a point is mirrored back before the yaw and
+    pitch - so the fit and the picture the yaw / pitch were chosen for are the ones the proofs were pinned with (a
+    rig the two chains draw alike gives the same image as before to float precision). What changes is what the
+    picture can show: a seam rig drawn as the classic's left-right mirror (TEST-015's finding, invisible when both
+    sides were normalised into ModelPart space) now projects to a different image from the classic's, and the
+    leg fails it."""
+
     def __init__(self, vertices: list[tuple[float, float, float]], yaw_degrees: float,
                  pitch_degrees: float) -> None:
         mins = [min(point[index] for point in vertices) for index in range(3)]
@@ -2010,8 +2054,9 @@ class Camera:
         self.scale = (IMAGE_SIZE - 24.0) / largest_span
 
     def project_unscaled(self, point: tuple[float, float, float]) -> tuple[float, float, float]:
-        x = point[0] - self.center[0]
-        y = point[1] - self.center[1]
+        # the entity frame's reflection undone about the fit's centre (the class docstring)
+        x = -(point[0] - self.center[0])
+        y = -(point[1] - self.center[1])
         z = point[2] - self.center[2]
         cos_yaw = math.cos(self.yaw)
         sin_yaw = math.sin(self.yaw)

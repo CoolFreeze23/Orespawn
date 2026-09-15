@@ -6,8 +6,8 @@
   "ground_truth": "executed compiled LayerDefinition and baked ModelPart",
   "source_class": "danger.orespawn.entity.client.StinkyModel",
   "source_class_sha256": "270196eca3a051cfb6beda14bf9bebd6a2b38e734bb46e46a9a748f87c5ce428",
-  "compiled_dump_sha256": "3d6090a0ced16fdfcb5ca713f95770b5879fe3e99f244201b2ea591c9c3d97d2",
-  "geometry_sha256": "9a9e77fde29972b823f464b2801a36a6022f680c7adf63ba5f23221e9a7517c7",
+  "compiled_dump_sha256": "21ebeeecc108367c170aa397c884c79023fb7af8835b30d0b13ace04fa0b3527",
+  "geometry_sha256": "5def67f88997d16ad3ad5f8e23e277bad96a6e15203865b52bd60d386dd9e422",
   "animation_sha256": "7882082857fdb11e02f158ebc3a6d3f970e2ac60d54813f0e903ee97b2293749",
   "animation_contract_sha256": "05445dbfb093c455ae76bec99626d3fab7342b715de4ccbc6d2100b0924d825e",
   "bone_count": 20,
@@ -135,9 +135,9 @@
       [
         "up",
         "down",
-        "west",
-        "north",
         "east",
+        "north",
+        "west",
         "south"
       ]
     ],
@@ -145,9 +145,9 @@
       [
         "up",
         "down",
-        "west",
-        "north",
         "east",
+        "north",
+        "west",
         "south"
       ]
     ],
@@ -155,9 +155,9 @@
       [
         "up",
         "down",
-        "west",
-        "north",
         "east",
+        "north",
+        "west",
         "south"
       ]
     ],
@@ -165,9 +165,9 @@
       [
         "up",
         "down",
-        "west",
-        "north",
         "east",
+        "north",
+        "west",
         "south"
       ]
     ],
@@ -175,9 +175,9 @@
       [
         "up",
         "down",
-        "west",
-        "north",
         "east",
+        "north",
+        "west",
         "south"
       ]
     ],
@@ -185,9 +185,9 @@
       [
         "up",
         "down",
-        "west",
-        "north",
         "east",
+        "north",
+        "west",
         "south"
       ]
     ],
@@ -195,9 +195,9 @@
       [
         "up",
         "down",
-        "west",
-        "north",
         "east",
+        "north",
+        "west",
         "south"
       ]
     ],
@@ -205,9 +205,9 @@
       [
         "up",
         "down",
-        "west",
-        "north",
         "east",
+        "north",
+        "west",
         "south"
       ]
     ],
@@ -215,9 +215,9 @@
       [
         "up",
         "down",
-        "west",
-        "north",
         "east",
+        "north",
+        "west",
         "south"
       ]
     ],
@@ -225,9 +225,9 @@
       [
         "up",
         "down",
-        "west",
-        "north",
         "east",
+        "north",
+        "west",
         "south"
       ]
     ],
@@ -235,9 +235,9 @@
       [
         "up",
         "down",
-        "west",
-        "north",
         "east",
+        "north",
+        "west",
         "south"
       ]
     ],
@@ -245,9 +245,9 @@
       [
         "up",
         "down",
-        "west",
-        "north",
         "east",
+        "north",
+        "west",
         "south"
       ]
     ],
@@ -255,9 +255,9 @@
       [
         "up",
         "down",
-        "west",
-        "north",
         "east",
+        "north",
+        "west",
         "south"
       ]
     ],
@@ -265,9 +265,9 @@
       [
         "up",
         "down",
-        "west",
-        "north",
         "east",
+        "north",
+        "west",
         "south"
       ]
     ],
@@ -275,9 +275,9 @@
       [
         "up",
         "down",
-        "west",
-        "north",
         "east",
+        "north",
+        "west",
         "south"
       ]
     ],
@@ -285,9 +285,9 @@
       [
         "up",
         "down",
-        "west",
-        "north",
         "east",
+        "north",
+        "west",
         "south"
       ]
     ],
@@ -295,9 +295,9 @@
       [
         "up",
         "down",
-        "west",
-        "north",
         "east",
+        "north",
+        "west",
         "south"
       ]
     ],
@@ -305,9 +305,9 @@
       [
         "up",
         "down",
-        "west",
-        "north",
         "east",
+        "north",
+        "west",
         "south"
       ]
     ],
@@ -315,9 +315,9 @@
       [
         "up",
         "down",
-        "west",
-        "north",
         "east",
+        "north",
+        "west",
         "south"
       ]
     ],
@@ -325,19 +325,19 @@
       [
         "up",
         "down",
-        "west",
-        "north",
         "east",
+        "north",
+        "west",
         "south"
       ]
     ]
   },
   "cube_face_order_evidence": {
-    "rule": "NeoForge 21.1.223 ModelPart.Cube.<init> polygon order DOWN, UP, WEST, NORTH, EAST, SOUTH (offsets 365-785: DOWN 365, UP 436, WEST 507, NORTH 578, EAST 649, SOUTH 720), mirror negating the X normals; GeckoLib labels by the direction whose step is the classic normal reflected in Y",
+    "rule": "NeoForge 21.1.223 ModelPart.Cube.<init> polygon order DOWN, UP, WEST, NORTH, EAST, SOUTH (offsets 365-785: DOWN 365, UP 436, WEST 507, NORTH 578, EAST 649, SOUTH 720), mirror negating the X normals; GeckoLib labels by the direction whose step is the classic normal reflected in X and Y (the entity frame: the classic chain's scale(-1, -1, 1) and the baker's x negation alike, TEST-015)",
     "cube_bearing_bones": 20,
     "cubes": 20,
     "verified_unrotated_cubes_at_bind": 14,
-    "verification": "captured normals of every cube unrotated at bind equal the rule's, in order; the parity tool's draw-order leg compares the per-quad normal sequences of both renderers on every capture"
+    "verification": "captured normals (the entity frame) of every cube unrotated at bind equal the rule's, in order; the parity tool's draw-order leg compares the per-quad normal sequences of both renderers on every capture"
   },
   "animation_contract": {
     "schema_version": 1,

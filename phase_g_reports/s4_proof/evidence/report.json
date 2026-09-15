@@ -23,10 +23,10 @@
       "proof_scope": "production_proof_model",
       "source_class": "danger.orespawn.entity.client.ModelElevator",
       "source_class_sha256": "2a752a018cf805f5a0eebc914703478db66316d6d82bc61eef96f355d5dfd041",
-      "compiled_dump_sha256": "8802363dc5ab9a92c223795d9f76e798718ee5f6e392d5b303d29e9d43ba8e12",
+      "compiled_dump_sha256": "8ae8954ee5b1ee2eca4a7a1289cea4c8f46fc966c048b7aa5d1c8558ccbc3370",
       "bone_count": 5,
       "cube_count": 5,
-      "geometry_sha256": "2c4a85d72917fbf6ee0bc6a8da1cb0813f8e46ee1e0312c6d349d32c0d21ce92",
+      "geometry_sha256": "bfe8752ed7d67e0f15f4691d473325388ae22d87c700e530b143f7770b27d484",
       "animation_sha256": "7882082857fdb11e02f158ebc3a6d3f970e2ac60d54813f0e903ee97b2293749",
       "animation_contract_sha256": "ef25a2b4eb7640daad7b902fc72c12e0e99737cd0882ac83ea702e72c92a7acd",
       "geometry": {
@@ -196,10 +196,10 @@
       "proof_scope": "production_proof_model",
       "source_class": "danger.orespawn.entity.client.VortexModel",
       "source_class_sha256": "75057c78feb46bdb1cf43b9127bd8b349dcc71cd41ea623445a8a7e48e668490",
-      "compiled_dump_sha256": "9fee1bdab26394a5aea9ed72e6a9b0618c150b3aab470c78c3ac746c2106c9c4",
+      "compiled_dump_sha256": "e5af2026019319a1ba4e702aaef1ac0a3eaf12b090a89b9748e820ce8a272fd1",
       "bone_count": 1,
       "cube_count": 1,
-      "geometry_sha256": "153a1829938c03435911c0bd8d7263d39d91668417ea4ae8416c28eecd8b5883",
+      "geometry_sha256": "91b74c5e735ac1a2a304504ffd30ee8255fdceb9eb7cccdeb15e1cc0c4e69e0c",
       "animation_sha256": "7882082857fdb11e02f158ebc3a6d3f970e2ac60d54813f0e903ee97b2293749",
       "animation_contract_sha256": "ef25a2b4eb7640daad7b902fc72c12e0e99737cd0882ac83ea702e72c92a7acd",
       "geometry": {
@@ -267,9 +267,9 @@
               [
                 "up",
                 "down",
-                "west",
-                "north",
                 "east",
+                "north",
+                "west",
                 "south"
               ]
             ]
@@ -278,11 +278,11 @@
           "faces_checked": 36,
           "normal_epsilon": 1e-06,
           "evidence": {
-            "rule": "NeoForge 21.1.223 ModelPart.Cube.<init> polygon order DOWN, UP, WEST, NORTH, EAST, SOUTH (offsets 365-785: DOWN 365, UP 436, WEST 507, NORTH 578, EAST 649, SOUTH 720), mirror negating the X normals; GeckoLib labels by the direction whose step is the classic normal reflected in Y",
+            "rule": "NeoForge 21.1.223 ModelPart.Cube.<init> polygon order DOWN, UP, WEST, NORTH, EAST, SOUTH (offsets 365-785: DOWN 365, UP 436, WEST 507, NORTH 578, EAST 649, SOUTH 720), mirror negating the X normals; GeckoLib labels by the direction whose step is the classic normal reflected in X and Y (the entity frame: the classic chain's scale(-1, -1, 1) and the baker's x negation alike, TEST-015)",
             "cube_bearing_bones": 1,
             "cubes": 1,
             "verified_unrotated_cubes_at_bind": 1,
-            "verification": "captured normals of every cube unrotated at bind equal the rule's, in order; the parity tool's draw-order leg compares the per-quad normal sequences of both renderers on every capture"
+            "verification": "captured normals (the entity frame) of every cube unrotated at bind equal the rule's, in order; the parity tool's draw-order leg compares the per-quad normal sequences of both renderers on every capture"
           },
           "policy": "the shipped model permutes every cube's quads into the classic ModelPart.Cube order (FaceOrder.apply), so under a blending render type a cube's back face shows through its front face - or is rejected by the depth test - exactly as it does on the classic renderer"
         }
@@ -311,8 +311,8 @@
         "minimum_foreground_fraction_threshold": 0.001,
         "pair_attribution_window_blocks": 1e-05,
         "pair_contested_cap": 0.01,
-        "max_changed_fraction": 0.0002288818359375,
-        "max_mean_absolute_error": 0.0076751708984375,
+        "max_changed_fraction": 0.0,
+        "max_mean_absolute_error": 0.0,
         "z_fight_policy": "pixels where two different quads meet the front within 1e-06 depth with different texels are counted as a diagnostic only; every pixel is compared, the draw order being contracted equal on both sides (G2 root-order contract, landed 2026-09-06); a CHANGED pixel whose two front fragments on both sides are the same pair of faces within 1e-05 blocks is pair-contested: counted per sample, excluded from the changed fraction and the MAE, painted in the diff, never a mismatch, and capped at 0.01 of the image",
         "contested_exclusion_applied": false,
         "max_contested_fraction": 0.0,
@@ -323,13 +323,13 @@
           {
             "sample": "bind",
             "camera": "front",
-            "changed_fraction": 0.0002288818359375,
-            "mean_absolute_error": 0.0076751708984375,
+            "changed_fraction": 0.0,
+            "mean_absolute_error": 0.0,
             "contested_fraction": 0.0,
             "pair_contested_fraction": 0.0,
             "contested_excluded": false,
             "vanilla_foreground_fraction": 0.0540771484375,
-            "geo_foreground_fraction": 0.0540618896484375,
+            "geo_foreground_fraction": 0.0540771484375,
             "vanilla_capture": "visual/model_vortex/bind.front.vanilla.png",
             "geo_capture": "visual/model_vortex/bind.front.geo.png",
             "diff_capture": "visual/model_vortex/bind.front.diff.png"
@@ -337,13 +337,13 @@
           {
             "sample": "bind",
             "camera": "back",
-            "changed_fraction": 0.0002288818359375,
-            "mean_absolute_error": 0.0076751708984375,
+            "changed_fraction": 0.0,
+            "mean_absolute_error": 0.0,
             "contested_fraction": 0.0,
             "pair_contested_fraction": 0.0,
             "contested_excluded": false,
             "vanilla_foreground_fraction": 0.0540771484375,
-            "geo_foreground_fraction": 0.0540618896484375,
+            "geo_foreground_fraction": 0.0540771484375,
             "vanilla_capture": "visual/model_vortex/bind.back.vanilla.png",
             "geo_capture": "visual/model_vortex/bind.back.geo.png",
             "diff_capture": "visual/model_vortex/bind.back.diff.png"
@@ -351,13 +351,13 @@
           {
             "sample": "t0",
             "camera": "front",
-            "changed_fraction": 0.0002288818359375,
-            "mean_absolute_error": 0.0076751708984375,
+            "changed_fraction": 0.0,
+            "mean_absolute_error": 0.0,
             "contested_fraction": 0.0,
             "pair_contested_fraction": 0.0,
             "contested_excluded": false,
             "vanilla_foreground_fraction": 0.0540771484375,
-            "geo_foreground_fraction": 0.0540618896484375,
+            "geo_foreground_fraction": 0.0540771484375,
             "vanilla_capture": "visual/model_vortex/t0.front.vanilla.png",
             "geo_capture": "visual/model_vortex/t0.front.geo.png",
             "diff_capture": "visual/model_vortex/t0.front.diff.png"
@@ -365,13 +365,13 @@
           {
             "sample": "t0",
             "camera": "back",
-            "changed_fraction": 0.0002288818359375,
-            "mean_absolute_error": 0.0076751708984375,
+            "changed_fraction": 0.0,
+            "mean_absolute_error": 0.0,
             "contested_fraction": 0.0,
             "pair_contested_fraction": 0.0,
             "contested_excluded": false,
             "vanilla_foreground_fraction": 0.0540771484375,
-            "geo_foreground_fraction": 0.0540618896484375,
+            "geo_foreground_fraction": 0.0540771484375,
             "vanilla_capture": "visual/model_vortex/t0.back.vanilla.png",
             "geo_capture": "visual/model_vortex/t0.back.geo.png",
             "diff_capture": "visual/model_vortex/t0.back.diff.png"
@@ -379,13 +379,13 @@
           {
             "sample": "t_quarter",
             "camera": "front",
-            "changed_fraction": 0.0002288818359375,
-            "mean_absolute_error": 0.0076751708984375,
+            "changed_fraction": 0.0,
+            "mean_absolute_error": 0.0,
             "contested_fraction": 0.0,
             "pair_contested_fraction": 0.0,
             "contested_excluded": false,
             "vanilla_foreground_fraction": 0.0540771484375,
-            "geo_foreground_fraction": 0.0540618896484375,
+            "geo_foreground_fraction": 0.0540771484375,
             "vanilla_capture": "visual/model_vortex/t_quarter.front.vanilla.png",
             "geo_capture": "visual/model_vortex/t_quarter.front.geo.png",
             "diff_capture": "visual/model_vortex/t_quarter.front.diff.png"
@@ -393,13 +393,13 @@
           {
             "sample": "t_quarter",
             "camera": "back",
-            "changed_fraction": 0.0002288818359375,
-            "mean_absolute_error": 0.0076751708984375,
+            "changed_fraction": 0.0,
+            "mean_absolute_error": 0.0,
             "contested_fraction": 0.0,
             "pair_contested_fraction": 0.0,
             "contested_excluded": false,
             "vanilla_foreground_fraction": 0.0540771484375,
-            "geo_foreground_fraction": 0.0540618896484375,
+            "geo_foreground_fraction": 0.0540771484375,
             "vanilla_capture": "visual/model_vortex/t_quarter.back.vanilla.png",
             "geo_capture": "visual/model_vortex/t_quarter.back.geo.png",
             "diff_capture": "visual/model_vortex/t_quarter.back.diff.png"
@@ -407,13 +407,13 @@
           {
             "sample": "t_half",
             "camera": "front",
-            "changed_fraction": 0.0002288818359375,
-            "mean_absolute_error": 0.0076751708984375,
+            "changed_fraction": 0.0,
+            "mean_absolute_error": 0.0,
             "contested_fraction": 0.0,
             "pair_contested_fraction": 0.0,
             "contested_excluded": false,
             "vanilla_foreground_fraction": 0.0540771484375,
-            "geo_foreground_fraction": 0.0540618896484375,
+            "geo_foreground_fraction": 0.0540771484375,
             "vanilla_capture": "visual/model_vortex/t_half.front.vanilla.png",
             "geo_capture": "visual/model_vortex/t_half.front.geo.png",
             "diff_capture": "visual/model_vortex/t_half.front.diff.png"
@@ -421,13 +421,13 @@
           {
             "sample": "t_half",
             "camera": "back",
-            "changed_fraction": 0.0002288818359375,
-            "mean_absolute_error": 0.0076751708984375,
+            "changed_fraction": 0.0,
+            "mean_absolute_error": 0.0,
             "contested_fraction": 0.0,
             "pair_contested_fraction": 0.0,
             "contested_excluded": false,
             "vanilla_foreground_fraction": 0.0540771484375,
-            "geo_foreground_fraction": 0.0540618896484375,
+            "geo_foreground_fraction": 0.0540771484375,
             "vanilla_capture": "visual/model_vortex/t_half.back.vanilla.png",
             "geo_capture": "visual/model_vortex/t_half.back.geo.png",
             "diff_capture": "visual/model_vortex/t_half.back.diff.png"
@@ -435,13 +435,13 @@
           {
             "sample": "t_three_quarter",
             "camera": "front",
-            "changed_fraction": 0.0002288818359375,
-            "mean_absolute_error": 0.0076751708984375,
+            "changed_fraction": 0.0,
+            "mean_absolute_error": 0.0,
             "contested_fraction": 0.0,
             "pair_contested_fraction": 0.0,
             "contested_excluded": false,
             "vanilla_foreground_fraction": 0.0540771484375,
-            "geo_foreground_fraction": 0.0540618896484375,
+            "geo_foreground_fraction": 0.0540771484375,
             "vanilla_capture": "visual/model_vortex/t_three_quarter.front.vanilla.png",
             "geo_capture": "visual/model_vortex/t_three_quarter.front.geo.png",
             "diff_capture": "visual/model_vortex/t_three_quarter.front.diff.png"
@@ -449,13 +449,13 @@
           {
             "sample": "t_three_quarter",
             "camera": "back",
-            "changed_fraction": 0.0002288818359375,
-            "mean_absolute_error": 0.0076751708984375,
+            "changed_fraction": 0.0,
+            "mean_absolute_error": 0.0,
             "contested_fraction": 0.0,
             "pair_contested_fraction": 0.0,
             "contested_excluded": false,
             "vanilla_foreground_fraction": 0.0540771484375,
-            "geo_foreground_fraction": 0.0540618896484375,
+            "geo_foreground_fraction": 0.0540771484375,
             "vanilla_capture": "visual/model_vortex/t_three_quarter.back.vanilla.png",
             "geo_capture": "visual/model_vortex/t_three_quarter.back.geo.png",
             "diff_capture": "visual/model_vortex/t_three_quarter.back.diff.png"
@@ -469,10 +469,10 @@
       "proof_scope": "production_proof_model",
       "source_class": "danger.orespawn.entity.client.ModelCoin",
       "source_class_sha256": "2de79f388718e1c82d994e23f62882dc4b0029bf8ea9811ede1df8dc452ded20",
-      "compiled_dump_sha256": "b46e2b5137ce430bda6c123f6d99efe8c4809863de309cc4bee5d3625c3c60e9",
+      "compiled_dump_sha256": "bc0fa74c5e0b2081bcf7c03157d6237116c3b7f7b1f56308797b086b35359ffe",
       "bone_count": 1,
       "cube_count": 1,
-      "geometry_sha256": "29a4289d742122d5d5a07e55ea38ed5176cbd1d7df808d7d2f1e7a09e4a93b2d",
+      "geometry_sha256": "d11de25748fa5b1aae39e69c0615c5fed9af5dcc5ab5f3c09f150023160564f1",
       "animation_sha256": "7882082857fdb11e02f158ebc3a6d3f970e2ac60d54813f0e903ee97b2293749",
       "animation_contract_sha256": "482262077ce6cd865ae76182cf3a08357a7d1dc50a07ef8da5e453d6960d1e4e",
       "geometry": {
@@ -656,17 +656,17 @@
       "proof_scope": "production_proof_model",
       "source_class": "danger.orespawn.entity.client.ModelIsland",
       "source_class_sha256": "3e211bbcfe8a09884a2d35416e76abcc98841a38e138631b022e2c593f2a60d4",
-      "compiled_dump_sha256": "334aa19634ec968066bde0ae9ca41e719a245139e4e8abfb4adf358780da2c3b",
+      "compiled_dump_sha256": "b719b20d0fd13989333c2277a2bd8b8c88daf7ab14e95257707694fec94fb53f",
       "bone_count": 3,
       "cube_count": 3,
-      "geometry_sha256": "62e76b3115fcfcc504385d5e8441b4198e00775a27a687680282d60df8e8d21f",
+      "geometry_sha256": "ece683a34533e24ca394b0d1b5878e4a7c5f8912dac5a3018e4afdfda9c59c40",
       "animation_sha256": "7882082857fdb11e02f158ebc3a6d3f970e2ac60d54813f0e903ee97b2293749",
       "animation_contract_sha256": "886df1cc407ffd3b23e37cd4158fead91a3befb3fb157902f92cbf6dd6be98ed",
       "geometry": {
         "status": "PASS",
         "epsilon_blocks": 1e-05,
-        "max_corner_delta_blocks": 2.0322401433130862e-07,
-        "worst_case": "t_end:Shape2#0",
+        "max_corner_delta_blocks": 1.6186414054920762e-07,
+        "worst_case": "t_quarter:Shape3#0",
         "sample_count": 8,
         "cube_sample_count": 24
       },
@@ -675,12 +675,12 @@
         "position_epsilon_blocks": 1e-05,
         "normal_epsilon": 1e-06,
         "uv_epsilon_normalized": 1e-07,
-        "max_position_delta_blocks": 2.0322401433130862e-07,
+        "max_position_delta_blocks": 1.6186414054920762e-07,
         "max_normal_delta": 2.0223748416697057e-07,
         "max_uv_delta_normalized": 0.0,
         "vertex_samples": 576,
         "ignored_zero_area_faces": 0,
-        "worst_case": "t_end:Shape2#0",
+        "worst_case": "t_0_375000:Shape1#0",
         "evidence": "position/normal/UV tuples from baked ModelPart.Cube.compile versus pinned GeckoLib BakedModelFactory rendered through GeoRenderer; faces of exactly zero area are excluded"
       },
       "animation": {
@@ -839,17 +839,17 @@
       "proof_scope": "production_proof_model",
       "source_class": "danger.orespawn.entity.client.ModelIslandToo",
       "source_class_sha256": "eb16e5dcf67d59b128ef43bd1da5f1672e40ce455a515dea34794e705b7cd1d8",
-      "compiled_dump_sha256": "7fbcca31147c7bde4a4d11f8b37bc0fb0d45174ee82393d5b93a98c878685d51",
+      "compiled_dump_sha256": "2063bf9447f899b5f873616817592dc8cd4b84f59be69ecec49b6138b271f0ea",
       "bone_count": 3,
       "cube_count": 3,
-      "geometry_sha256": "655fd6ff960b80133a721acbc5ec3f7a41034cfc6ea4d5f86e11ca80ee0ff43a",
+      "geometry_sha256": "55f45dc029de22df231626f6640dd31c99e28b0dec64f20fcb6272339fac9e68",
       "animation_sha256": "7882082857fdb11e02f158ebc3a6d3f970e2ac60d54813f0e903ee97b2293749",
       "animation_contract_sha256": "4427b165eb692c1f0aa3ddfa8df750ba20951e95df69a5c72a9713b04e39584f",
       "geometry": {
         "status": "PASS",
         "epsilon_blocks": 1e-05,
-        "max_corner_delta_blocks": 2.0322401433130862e-07,
-        "worst_case": "t_end:Shape2#0",
+        "max_corner_delta_blocks": 1.6186414054920762e-07,
+        "worst_case": "t_quarter:Shape3#0",
         "sample_count": 8,
         "cube_sample_count": 24
       },
@@ -858,12 +858,12 @@
         "position_epsilon_blocks": 1e-05,
         "normal_epsilon": 1e-06,
         "uv_epsilon_normalized": 1e-07,
-        "max_position_delta_blocks": 2.0322401433130862e-07,
+        "max_position_delta_blocks": 1.6186414054920762e-07,
         "max_normal_delta": 2.0223748416697057e-07,
         "max_uv_delta_normalized": 0.0,
         "vertex_samples": 576,
         "ignored_zero_area_faces": 0,
-        "worst_case": "t_end:Shape2#0",
+        "worst_case": "t_0_375000:Shape1#0",
         "evidence": "position/normal/UV tuples from baked ModelPart.Cube.compile versus pinned GeckoLib BakedModelFactory rendered through GeoRenderer; faces of exactly zero area are excluded"
       },
       "animation": {
@@ -1022,17 +1022,17 @@
       "proof_scope": "production_proof_model",
       "source_class": "danger.orespawn.entity.client.ModelRobot1",
       "source_class_sha256": "f5610edbedaed72d8a79dcd23749047b1d8435834190ecd71d89fe77a20c8a14",
-      "compiled_dump_sha256": "061da2f5f041585c9d3ab7484213c23f8127b8ef8b6a57a13d555b298a9fed96",
+      "compiled_dump_sha256": "0b2c9eda9d8f61ae0e445cfda19e15d99c3149d230802a71507509ae83100de1",
       "bone_count": 27,
       "cube_count": 27,
-      "geometry_sha256": "5265566d02a4be79674098607fa547526bab719f6a43e7b244dd60f1abbf4a75",
+      "geometry_sha256": "45cc35dd4929f5e1da5efab3ea0893344a1c6f5aa8f99eaec7bc17dab4df6f46",
       "animation_sha256": "7882082857fdb11e02f158ebc3a6d3f970e2ac60d54813f0e903ee97b2293749",
       "animation_contract_sha256": "cc45f47e5a42049450eeef250e8d41dedb6fc6acc440ff41bbe6208baeaf9394",
       "geometry": {
         "status": "PASS",
         "epsilon_blocks": 1e-05,
-        "max_corner_delta_blocks": 3.0002666543467846e-07,
-        "worst_case": "a0_05000000074505806_t_half:key4#0",
+        "max_corner_delta_blocks": 1.0012492191997585e-07,
+        "worst_case": "a0_05000000074505806_t_half:key3#0",
         "sample_count": 11,
         "cube_sample_count": 297
       },
@@ -1041,12 +1041,12 @@
         "position_epsilon_blocks": 1e-05,
         "normal_epsilon": 1e-06,
         "uv_epsilon_normalized": 1e-07,
-        "max_position_delta_blocks": 3.0002666543467846e-07,
+        "max_position_delta_blocks": 1.0012492191997585e-07,
         "max_normal_delta": 0.0,
         "max_uv_delta_normalized": 0.0,
         "vertex_samples": 7128,
         "ignored_zero_area_faces": 0,
-        "worst_case": "a0_05000000074505806_t_half:key4#0",
+        "worst_case": "a0_05000000074505806_t_half:key3#0",
         "evidence": "position/normal/UV tuples from baked ModelPart.Cube.compile versus pinned GeckoLib BakedModelFactory rendered through GeoRenderer; faces of exactly zero area are excluded"
       },
       "animation": {
@@ -1230,16 +1230,16 @@
       "proof_scope": "production_proof_model",
       "source_class": "danger.orespawn.entity.client.ModelRobot5",
       "source_class_sha256": "6fee187a968d7cdb33669d7247229df2e03cf83415681b47fa578babb76b6453",
-      "compiled_dump_sha256": "14004098ee509a92bfda0fe21096d3ef1f21e47f69cb7f48c858fdf38e2916f3",
+      "compiled_dump_sha256": "16082cd25904210224b9dc364378a50da3c39bcb75e4701513fa3adc94958248",
       "bone_count": 11,
       "cube_count": 11,
-      "geometry_sha256": "f06968d4ac58897db2ea420304bdf7c13a66a969c8cace26838e5ed21c9b77ef",
+      "geometry_sha256": "34de8cac759aba5fdf032ab128738d4de4032c38e54f8e493bd1f25e8da3f847",
       "animation_sha256": "7882082857fdb11e02f158ebc3a6d3f970e2ac60d54813f0e903ee97b2293749",
       "animation_contract_sha256": "e7aeb5d8c13771c5bec685470f51a53010fc44929c84bd5335a92d7d43ae456c",
       "geometry": {
         "status": "PASS",
         "epsilon_blocks": 1e-05,
-        "max_corner_delta_blocks": 2.0000000011677344e-07,
+        "max_corner_delta_blocks": 4.000000003445692e-08,
         "worst_case": "a1_t0:lwheel1#0",
         "sample_count": 5,
         "cube_sample_count": 55
@@ -1249,7 +1249,7 @@
         "position_epsilon_blocks": 1e-05,
         "normal_epsilon": 1e-06,
         "uv_epsilon_normalized": 1e-07,
-        "max_position_delta_blocks": 2.0000000011677344e-07,
+        "max_position_delta_blocks": 4.000000003445692e-08,
         "max_normal_delta": 0.0,
         "max_uv_delta_normalized": 0.0,
         "vertex_samples": 1320,
@@ -1380,16 +1380,16 @@
       "proof_scope": "production_proof_model",
       "source_class": "danger.orespawn.entity.client.ModelRobot2",
       "source_class_sha256": "5d48b697f841b1e1069463e25ce18656035fa0a706ddbee0ea51ef4adf0295b2",
-      "compiled_dump_sha256": "41fc0e9ab08b94ef248d00e0773de480f8a6d2b3b9be19f189ef3c6c84f5f30c",
+      "compiled_dump_sha256": "66debfc120fdc16fd1bae80f56989709e8aaf792831448eaafb6db7b386f5e34",
       "bone_count": 15,
       "cube_count": 15,
-      "geometry_sha256": "4cf7ae3f34751241b1a2525f60514d1c1805c7607315aade88a0711fe0e7cadd",
+      "geometry_sha256": "aa04be1df0729f2ce9480a20f67cd7d6f0abe54e4eee24c0643c817b69ebba85",
       "animation_sha256": "7882082857fdb11e02f158ebc3a6d3f970e2ac60d54813f0e903ee97b2293749",
       "animation_contract_sha256": "bb6e544804646a11fa00b3dbcc3b7ca59974ecf0506023d65eaee6dbc70b6aa9",
       "geometry": {
         "status": "PASS",
         "epsilon_blocks": 1e-05,
-        "max_corner_delta_blocks": 1.0049875622569831e-06,
+        "max_corner_delta_blocks": 7.039005604616853e-07,
         "worst_case": "s_idle_ri1_a0_t_half:rarm2#0",
         "sample_count": 21,
         "cube_sample_count": 315
@@ -1399,7 +1399,7 @@
         "position_epsilon_blocks": 1e-05,
         "normal_epsilon": 1e-06,
         "uv_epsilon_normalized": 1e-07,
-        "max_position_delta_blocks": 1.0049875622569831e-06,
+        "max_position_delta_blocks": 7.039005604616853e-07,
         "max_normal_delta": 0.0,
         "max_uv_delta_normalized": 0.0,
         "vertex_samples": 7560,
@@ -1576,17 +1576,17 @@
       "proof_scope": "production_proof_model",
       "source_class": "danger.orespawn.entity.client.ModelRobot3",
       "source_class_sha256": "a7be9eca74fc036294ae7533936dab63ac5acc681667df993d32768ff46bb03b",
-      "compiled_dump_sha256": "bf66460a88111c5066788db349e0f05d3ad8d4219376629fc18b6098509fe4c3",
+      "compiled_dump_sha256": "45e424285dcefbe844f86564d293a8f5c05fbf4201539d1d0ae8f2b0dd97312a",
       "bone_count": 19,
       "cube_count": 19,
-      "geometry_sha256": "042a29004cddc65c97a9cf8e8b598b55b1f47df7a920793e8b96b2646be5137f",
+      "geometry_sha256": "d176b8569eaf0eaaacd58f37069f7a946276fa39e2111f1a979a9f48d03f3d47",
       "animation_sha256": "7882082857fdb11e02f158ebc3a6d3f970e2ac60d54813f0e903ee97b2293749",
       "animation_contract_sha256": "2ec095812a31d1cc5f7d9be313d29145c3d64869baf665655abdcd49fb6e1cdf",
       "geometry": {
         "status": "PASS",
         "epsilon_blocks": 1e-05,
-        "max_corner_delta_blocks": 1.004987562245936e-06,
-        "worst_case": "bind:rarm3#0",
+        "max_corner_delta_blocks": 1.0049875613511182e-06,
+        "worst_case": "bind:body3#0",
         "sample_count": 13,
         "cube_sample_count": 247
       },
@@ -1595,12 +1595,12 @@
         "position_epsilon_blocks": 1e-05,
         "normal_epsilon": 1e-06,
         "uv_epsilon_normalized": 1e-07,
-        "max_position_delta_blocks": 1.004987562245936e-06,
+        "max_position_delta_blocks": 1.0049875613511182e-06,
         "max_normal_delta": 1.4317821056903206e-07,
         "max_uv_delta_normalized": 0.0,
         "vertex_samples": 5928,
         "ignored_zero_area_faces": 0,
-        "worst_case": "bind:rarm3#0",
+        "worst_case": "bind:body3#0",
         "evidence": "position/normal/UV tuples from baked ModelPart.Cube.compile versus pinned GeckoLib BakedModelFactory rendered through GeoRenderer; faces of exactly zero area are excluded"
       },
       "animation": {
@@ -1751,17 +1751,17 @@
       "proof_scope": "production_proof_model",
       "source_class": "danger.orespawn.entity.client.ModelRobot4",
       "source_class_sha256": "275701615c31ea4553bdef18e38c4db3872764eac04177ccd97a5352f3305241",
-      "compiled_dump_sha256": "f4748a38d65a5aa4c78bc71ae51b4136ed4a124464ae45ef014b208e0a1e4da2",
+      "compiled_dump_sha256": "de70fd05f2aebcd1a347a570a1c9561ab5a7a333dd538800e3a11e6fe3c47447",
       "bone_count": 56,
       "cube_count": 56,
-      "geometry_sha256": "ea681cfee3989bd7e380d2b76c6b8bcd44aea3fc4a463101c859999c9001a71e",
+      "geometry_sha256": "090e22a85f220bbc36274e9eae42c6a23478112e2896b173292dea64631d2b42",
       "animation_sha256": "7882082857fdb11e02f158ebc3a6d3f970e2ac60d54813f0e903ee97b2293749",
       "animation_contract_sha256": "a9ad66cc2fc5d2bb717f6c25ae26d1e7f2916eacb08221c22a9299f286b1ed0f",
       "geometry": {
         "status": "PASS",
         "epsilon_blocks": 1e-05,
-        "max_corner_delta_blocks": 3.704713214411673e-07,
-        "worst_case": "bind:sheildend#0",
+        "max_corner_delta_blocks": 5.528978206415811e-07,
+        "worst_case": "s_attacking_a0_t0:rightsholder#0",
         "sample_count": 13,
         "cube_sample_count": 728
       },
@@ -1770,12 +1770,12 @@
         "position_epsilon_blocks": 1e-05,
         "normal_epsilon": 1e-06,
         "uv_epsilon_normalized": 1e-07,
-        "max_position_delta_blocks": 3.704713214411673e-07,
+        "max_position_delta_blocks": 5.528978206415811e-07,
         "max_normal_delta": 1.063014580922823e-07,
         "max_uv_delta_normalized": 0.0,
         "vertex_samples": 17472,
         "ignored_zero_area_faces": 0,
-        "worst_case": "bind:sheildend#0",
+        "worst_case": "s_attacking_a0_t0:rightsholder#0",
         "evidence": "position/normal/UV tuples from baked ModelPart.Cube.compile versus pinned GeckoLib BakedModelFactory rendered through GeoRenderer; faces of exactly zero area are excluded"
       },
       "animation": {
@@ -1970,16 +1970,16 @@
       "proof_scope": "production_proof_model",
       "source_class": "danger.orespawn.entity.client.ModelRockBase",
       "source_class_sha256": "f914c33c064f67521711e2ba3b0643a535136f0f11f65150a4d2dbe509dd53c0",
-      "compiled_dump_sha256": "028ef50473005515e21d022cf7d93aac513cf246f85801c430cca9bf85574722",
+      "compiled_dump_sha256": "6a17a34c95e38fb1ca0dcab65b3149c3a6e0939cb3eeba9a364481437ec6cb7d",
       "bone_count": 22,
       "cube_count": 22,
-      "geometry_sha256": "c14cc867f8dd8fe113c8207b53954f5be2ad6a572eb4a945bc554aa3b7565fc0",
+      "geometry_sha256": "3171be0778f23a3342d9cb77a060da1b89e2f41f4e62bb75d468c318c9452aa6",
       "animation_sha256": "7882082857fdb11e02f158ebc3a6d3f970e2ac60d54813f0e903ee97b2293749",
       "animation_contract_sha256": "96210b2f48d392b2f0c39b6aff1630daeae3c452df0c998a1583bb4edc7367e7",
       "geometry": {
         "status": "PASS",
         "epsilon_blocks": 1e-05,
-        "max_corner_delta_blocks": 2.0000000011677344e-07,
+        "max_corner_delta_blocks": 2.000000001722846e-08,
         "worst_case": "bind:CrystalShape4a#0",
         "sample_count": 15,
         "cube_sample_count": 86
@@ -1989,7 +1989,7 @@
         "position_epsilon_blocks": 1e-05,
         "normal_epsilon": 1e-06,
         "uv_epsilon_normalized": 1e-07,
-        "max_position_delta_blocks": 2.0000000011677344e-07,
+        "max_position_delta_blocks": 2.000000001722846e-08,
         "max_normal_delta": 0.0,
         "max_uv_delta_normalized": 0.0,
         "vertex_samples": 2064,
@@ -2328,17 +2328,17 @@
       "proof_scope": "production_proof_model",
       "source_class": "danger.orespawn.entity.client.RotatorModel",
       "source_class_sha256": "bfcbe42c9a732a58c0be80557b0c29860d773902a075ea979170482fee38b5e5",
-      "compiled_dump_sha256": "6e080a3244b32f4f24a67720444e7acc6ec201f7c24da3f72e2902c84b8a9924",
+      "compiled_dump_sha256": "a020a2cc65ba2559710651ab607edd99d2f9486bd1354d9f4cd69a73cbb0ed8b",
       "bone_count": 27,
       "cube_count": 24,
-      "geometry_sha256": "fd552c1cbbc146e3654cd0c130e68dd2b592ba0b571963d2e85e7ecd3126aff4",
+      "geometry_sha256": "7d62f2bc95c5c7171cc7a18a5488f23dc8acf0edaaa25de137d9c3a39190a0ec",
       "animation_sha256": "7882082857fdb11e02f158ebc3a6d3f970e2ac60d54813f0e903ee97b2293749",
       "animation_contract_sha256": "06c5003cbf552116a3c12259b91657a490627f44c78c60063cf5b3e6e5e0f955",
       "geometry": {
         "status": "PASS",
         "epsilon_blocks": 1e-05,
-        "max_corner_delta_blocks": 1.5652475844189892e-07,
-        "worst_case": "s_rf1_359_t0:shape3__i3#0",
+        "max_corner_delta_blocks": 3.2695565443728205e-07,
+        "worst_case": "s_rf1_2_t0:shape2__i3#0",
         "sample_count": 13,
         "cube_sample_count": 312
       },
@@ -2347,12 +2347,12 @@
         "position_epsilon_blocks": 1e-05,
         "normal_epsilon": 1e-06,
         "uv_epsilon_normalized": 1e-07,
-        "max_position_delta_blocks": 1.5652475844189892e-07,
+        "max_position_delta_blocks": 3.2695565443728205e-07,
         "max_normal_delta": 0.0,
         "max_uv_delta_normalized": 0.0,
         "vertex_samples": 7488,
         "ignored_zero_area_faces": 0,
-        "worst_case": "s_rf1_359_t0:shape3__i3#0",
+        "worst_case": "s_rf1_2_t0:shape2__i3#0",
         "evidence": "position/normal/UV tuples from baked ModelPart.Cube.compile versus pinned GeckoLib BakedModelFactory rendered through GeoRenderer; faces of exactly zero area are excluded"
       },
       "animation": {
@@ -2451,11 +2451,11 @@
             "instance_pose_epsilon_linear": 2e-06,
             "instance_pose_epsilon_model_units": 0.0001,
             "max_instance_pose_linear_delta": 0.0,
-            "max_instance_pose_translation_delta_model_units": 0.0,
+            "max_instance_pose_translation_delta_model_units": 1.5999999973814738e-06,
             "max_draw_pose_linear_delta": 0.0,
-            "max_draw_pose_translation_delta_model_units": 2.399999998736746e-08,
-            "worst_case": "s_rf1_2_t0:shape2__i2 (draw vs clone)",
-            "evidence": "measured classic per-draw pose stack (instance_pose at the part's pushPose, draw_pose at cube compile) versus measured GeckoLib bone transforms conjugated into classic space (bone_poses_classic): instance == group bone, draw == clone bone * T(pivot)"
+            "max_draw_pose_translation_delta_model_units": 3.200000001868375e-06,
+            "worst_case": "bind:shape1__i3 (draw vs clone)",
+            "evidence": "measured classic per-draw pose stack (instance_pose at the part's pushPose, draw_pose at cube compile, under the classic chain) versus measured GeckoLib bone world transforms in the same entity frame (bone_poses_entity_frame): instance == group bone, draw == clone bone * T(pivot)"
           }
         }
       },
@@ -2607,17 +2607,17 @@
       "proof_scope": "production_proof_model",
       "source_class": "danger.orespawn.entity.client.ModelPurplePower",
       "source_class_sha256": "98e8241e3b4a8bdde31cd36bf134d834ec6561c37e65fe3b8420a028cc0c9864",
-      "compiled_dump_sha256": "e77744aba8a906c82fe38273caf2c3235001a92bda46310700be49d0072699e3",
+      "compiled_dump_sha256": "01eba7527ecff9b79acb304c46a32a8dacfb20cc1fda5dc4658e495dfbb209a9",
       "bone_count": 27,
       "cube_count": 18,
-      "geometry_sha256": "246b7f24bec2a800908e7d980db923c3486f1a30a571d32ee33713b724011794",
+      "geometry_sha256": "e384b4d1dbd00dd9d4a8383db3abcbe5a02764bba383c63b5a7634bfce7d1a91",
       "animation_sha256": "7882082857fdb11e02f158ebc3a6d3f970e2ac60d54813f0e903ee97b2293749",
       "animation_contract_sha256": "2b2fd2d323a15671f34388a811f19c94dfb5743a3348c174e9c897d08f866f09",
       "geometry": {
         "status": "PASS",
         "epsilon_blocks": 1e-05,
-        "max_corner_delta_blocks": 1.8681541693133464e-07,
-        "worst_case": "s_seed_12345_t0:Shape3__i1#0",
+        "max_corner_delta_blocks": 5.144171457577189e-07,
+        "worst_case": "s_seed_1_t0:Shape2__i1#0",
         "sample_count": 9,
         "cube_sample_count": 162
       },
@@ -2626,12 +2626,12 @@
         "position_epsilon_blocks": 1e-05,
         "normal_epsilon": 1e-06,
         "uv_epsilon_normalized": 1e-07,
-        "max_position_delta_blocks": 1.8681541693133464e-07,
+        "max_position_delta_blocks": 5.144171457577189e-07,
         "max_normal_delta": 0.0,
         "max_uv_delta_normalized": 0.0,
         "vertex_samples": 3888,
         "ignored_zero_area_faces": 0,
-        "worst_case": "s_seed_12345_t0:Shape3__i1#0",
+        "worst_case": "s_seed_1_t0:Shape2__i1#0",
         "evidence": "position/normal/UV tuples from baked ModelPart.Cube.compile versus pinned GeckoLib BakedModelFactory rendered through GeoRenderer; faces of exactly zero area are excluded"
       },
       "animation": {
@@ -2728,11 +2728,11 @@
             "instance_pose_epsilon_linear": 2e-06,
             "instance_pose_epsilon_model_units": 0.0001,
             "max_instance_pose_linear_delta": 0.0,
-            "max_instance_pose_translation_delta_model_units": 0.0,
+            "max_instance_pose_translation_delta_model_units": 3.200000001868375e-06,
             "max_draw_pose_linear_delta": 0.0,
-            "max_draw_pose_translation_delta_model_units": 0.0,
-            "worst_case": "exact",
-            "evidence": "measured classic per-draw pose stack (instance_pose at the part's pushPose, draw_pose at cube compile) versus measured GeckoLib bone transforms conjugated into classic space (bone_poses_classic): instance == group bone, draw == clone bone * T(pivot)"
+            "max_draw_pose_translation_delta_model_units": 4.8000000028025624e-06,
+            "worst_case": "s_seed_1_t0:Shape2__i1 (draw vs clone)",
+            "evidence": "measured classic per-draw pose stack (instance_pose at the part's pushPose, draw_pose at cube compile, under the classic chain) versus measured GeckoLib bone world transforms in the same entity frame (bone_poses_entity_frame): instance == group bone, draw == clone bone * T(pivot)"
           }
         }
       },
@@ -2786,9 +2786,9 @@
               [
                 "up",
                 "down",
-                "west",
-                "north",
                 "east",
+                "north",
+                "west",
                 "south"
               ]
             ],
@@ -2796,9 +2796,9 @@
               [
                 "up",
                 "down",
-                "west",
-                "north",
                 "east",
+                "north",
+                "west",
                 "south"
               ]
             ],
@@ -2806,9 +2806,9 @@
               [
                 "up",
                 "down",
-                "west",
-                "north",
                 "east",
+                "north",
+                "west",
                 "south"
               ]
             ],
@@ -2816,9 +2816,9 @@
               [
                 "up",
                 "down",
-                "west",
-                "north",
                 "east",
+                "north",
+                "west",
                 "south"
               ]
             ],
@@ -2826,9 +2826,9 @@
               [
                 "up",
                 "down",
-                "west",
-                "north",
                 "east",
+                "north",
+                "west",
                 "south"
               ]
             ],
@@ -2836,9 +2836,9 @@
               [
                 "up",
                 "down",
-                "west",
-                "north",
                 "east",
+                "north",
+                "west",
                 "south"
               ]
             ],
@@ -2846,9 +2846,9 @@
               [
                 "up",
                 "down",
-                "west",
-                "north",
                 "east",
+                "north",
+                "west",
                 "south"
               ]
             ],
@@ -2856,9 +2856,9 @@
               [
                 "up",
                 "down",
-                "west",
-                "north",
                 "east",
+                "north",
+                "west",
                 "south"
               ]
             ],
@@ -2866,9 +2866,9 @@
               [
                 "up",
                 "down",
-                "west",
-                "north",
                 "east",
+                "north",
+                "west",
                 "south"
               ]
             ],
@@ -2876,9 +2876,9 @@
               [
                 "up",
                 "down",
-                "west",
-                "north",
                 "east",
+                "north",
+                "west",
                 "south"
               ]
             ],
@@ -2886,9 +2886,9 @@
               [
                 "up",
                 "down",
-                "west",
-                "north",
                 "east",
+                "north",
+                "west",
                 "south"
               ]
             ],
@@ -2896,9 +2896,9 @@
               [
                 "up",
                 "down",
-                "west",
-                "north",
                 "east",
+                "north",
+                "west",
                 "south"
               ]
             ],
@@ -2906,9 +2906,9 @@
               [
                 "up",
                 "down",
-                "west",
-                "north",
                 "east",
+                "north",
+                "west",
                 "south"
               ]
             ],
@@ -2916,9 +2916,9 @@
               [
                 "up",
                 "down",
-                "west",
-                "north",
                 "east",
+                "north",
+                "west",
                 "south"
               ]
             ],
@@ -2926,9 +2926,9 @@
               [
                 "up",
                 "down",
-                "west",
-                "north",
                 "east",
+                "north",
+                "west",
                 "south"
               ]
             ],
@@ -2936,9 +2936,9 @@
               [
                 "up",
                 "down",
-                "west",
-                "north",
                 "east",
+                "north",
+                "west",
                 "south"
               ]
             ],
@@ -2946,9 +2946,9 @@
               [
                 "up",
                 "down",
-                "west",
-                "north",
                 "east",
+                "north",
+                "west",
                 "south"
               ]
             ],
@@ -2956,9 +2956,9 @@
               [
                 "up",
                 "down",
-                "west",
-                "north",
                 "east",
+                "north",
+                "west",
                 "south"
               ]
             ]
@@ -2967,11 +2967,11 @@
           "faces_checked": 972,
           "normal_epsilon": 1e-06,
           "evidence": {
-            "rule": "NeoForge 21.1.223 ModelPart.Cube.<init> polygon order DOWN, UP, WEST, NORTH, EAST, SOUTH (offsets 365-785: DOWN 365, UP 436, WEST 507, NORTH 578, EAST 649, SOUTH 720), mirror negating the X normals; GeckoLib labels by the direction whose step is the classic normal reflected in Y",
+            "rule": "NeoForge 21.1.223 ModelPart.Cube.<init> polygon order DOWN, UP, WEST, NORTH, EAST, SOUTH (offsets 365-785: DOWN 365, UP 436, WEST 507, NORTH 578, EAST 649, SOUTH 720), mirror negating the X normals; GeckoLib labels by the direction whose step is the classic normal reflected in X and Y (the entity frame: the classic chain's scale(-1, -1, 1) and the baker's x negation alike, TEST-015)",
             "cube_bearing_bones": 18,
             "cubes": 18,
             "verified_unrotated_cubes_at_bind": 3,
-            "verification": "captured normals of every cube unrotated at bind equal the rule's, in order; the parity tool's draw-order leg compares the per-quad normal sequences of both renderers on every capture"
+            "verification": "captured normals (the entity frame) of every cube unrotated at bind equal the rule's, in order; the parity tool's draw-order leg compares the per-quad normal sequences of both renderers on every capture"
           },
           "policy": "the shipped model permutes every cube's quads into the classic ModelPart.Cube order (FaceOrder.apply), so under a blending render type a cube's back face shows through its front face - or is rejected by the depth test - exactly as it does on the classic renderer"
         }
@@ -2992,8 +2992,8 @@
         "minimum_foreground_fraction_threshold": 0.001,
         "pair_attribution_window_blocks": 1e-05,
         "pair_contested_cap": 0.01,
-        "max_changed_fraction": 3.0517578125e-05,
-        "max_mean_absolute_error": 0.000457763671875,
+        "max_changed_fraction": 0.0,
+        "max_mean_absolute_error": 0.0,
         "z_fight_policy": "blended mode: fragments within the coplanar depth epsilon (1e-05 blocks, the manifest's own named tolerance) of the last written depth are one plane and all pass, in emission order, on both sides (the classic side's coplanar spokes tie to <= 1e-9; the cross-side same-fragment noise is ~1e-7 genuine plus up to ~1e-6 from the harness projector's 6-decimal rounding); a pixel where another quad's fragment passed within that window is counted as contested, whatever its texel, as a diagnostic only - every pixel is compared, the draw and face orders being contracted equal on both sides (G2 root-order contract; ENT-S-146 face order); a CHANGED pixel whose two front fragments on both sides are the same pair of faces within 1e-05 blocks is pair-contested: counted per sample, excluded from the changed fraction and the MAE, painted in the diff, never a mismatch, and capped at 0.01 of the image",
         "contested_exclusion_applied": false,
         "max_contested_fraction": 0.16192626953125,
@@ -3018,8 +3018,8 @@
           {
             "sample": "s_seed_12345_t0",
             "camera": null,
-            "changed_fraction": 3.0517578125e-05,
-            "mean_absolute_error": 0.000457763671875,
+            "changed_fraction": 0.0,
+            "mean_absolute_error": 0.0,
             "contested_fraction": 0.16192626953125,
             "pair_contested_fraction": 0.0,
             "contested_excluded": false,
@@ -3136,17 +3136,17 @@
       "proof_scope": "non_production_converter_fixture",
       "source_class": "danger.orespawn.g1.G1RuntimeBasisFixtureModel",
       "source_class_sha256": "0cdcac7fb9c6ed3cf22e6040e48ce44e858364b29dda7de2a014593e2232d96d",
-      "compiled_dump_sha256": "ac990c76fa1566cad40be3ce1984bc8183ec92d0f455718e0e502d5a5de94802",
+      "compiled_dump_sha256": "9c92305c736590ea6020ca062aed42d4f314fa87d4e5e08c9c87293f0f187023",
       "bone_count": 2,
       "cube_count": 2,
-      "geometry_sha256": "664b91d78aa5e496f7d1a14548fdc02700cff45c346d74c0239d8ce013337300",
+      "geometry_sha256": "fe79aedf5b97b5f89f2e33dbe386124a9909b00c6dc70c599f15d24e80c8dce6",
       "animation_sha256": "7882082857fdb11e02f158ebc3a6d3f970e2ac60d54813f0e903ee97b2293749",
       "animation_contract_sha256": "b6a55b917f92609a9e0f050ba028c23c50768ac82c0b83a1ed0708946c7e1cd1",
       "geometry": {
         "status": "PASS",
         "epsilon_blocks": 1e-05,
-        "max_corner_delta_blocks": 2.7676705008476174e-07,
-        "worst_case": "t_end:basis_child#0",
+        "max_corner_delta_blocks": 4.1593268687533713e-07,
+        "worst_case": "t_three_quarter:basis_child#0",
         "sample_count": 7,
         "cube_sample_count": 14
       },
@@ -3155,12 +3155,12 @@
         "position_epsilon_blocks": 1e-05,
         "normal_epsilon": 1e-06,
         "uv_epsilon_normalized": 1e-07,
-        "max_position_delta_blocks": 2.7676705008476174e-07,
+        "max_position_delta_blocks": 4.1593268687533713e-07,
         "max_normal_delta": 2.886173938163454e-07,
         "max_uv_delta_normalized": 0.0,
         "vertex_samples": 336,
         "ignored_zero_area_faces": 0,
-        "worst_case": "t_quarter:basis_child#0",
+        "worst_case": "t_three_quarter:basis_child#0",
         "evidence": "position/normal/UV tuples from baked ModelPart.Cube.compile versus pinned GeckoLib BakedModelFactory rendered through GeoRenderer; faces of exactly zero area are excluded"
       },
       "animation": {

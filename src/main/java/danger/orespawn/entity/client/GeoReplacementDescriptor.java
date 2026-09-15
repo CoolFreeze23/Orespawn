@@ -171,31 +171,45 @@ public abstract class GeoReplacementDescriptor<E extends Entity> {
      * classic {@code renderToBuffer} makes; both rigs that declare one rotate about a single axis, so the order is theirs
      * by construction).
      *
-     * <p>THE ORDER ANALYSIS (TEST-013; the frame from the bytecode of NeoForge 21.1.223 and GeckoLib 4.8.4, of the
-     * harness-and-seam landing): the classic path applies its rotation INSIDE {@code renderToBuffer}, after
-     * {@code LivingEntityRenderer.render}'s {@code scale(-1, -1, 1)} flip and {@code translate(0, -1.501, 0)} lift - in
-     * ModelPart space, Y down, the origin 1.501 blocks above the feet. The replaced renderer's descriptor slot
-     * ({@link OreSpawnGeoReplacedEntityRenderer#applyRotations}, after the entity yaw) runs in ENTITY space, before
-     * GeckoLib's own chain: its 0.01 lift ({@code actuallyRender} 727) and then the bake, which flips NOTHING in x -
-     * GeckoLib's baker negates the Bedrock cube x the converter had negated, so the bake's vertices land on ModelPart x
-     * directly, and the probe's normalisation ({@code translate(0, 1.5, 0) scale(1, -1, 1)}) is the whole frame between
-     * the two spaces. So the frame between the slot and ModelPart space is the SEAM's, {@code F = scale(1, -1, 1)
-     * translate(0, -1.501, 0)} ({@link #seamFrame}: the bake's Y flip about the datum plus the classic lift; GeckoLib's
-     * 0.01 lift outside it), and the slot carries the transform CONJUGATED through it, {@code F C F^-1}: for a rotation
-     * about Y, {@code S_y R_y(t) S_y = R_y(t)}, so the Dungeon Beast's YP 90 is YP 90 in the slot; the Kraken's XP 90
-     * becomes translate(0, 1.501, 1.501) R_x(-90), the same rotation about the classic origin 1.501 up (the mirror in y
-     * reverses the sense of a rotation about X). The two renderers' chains differ by an x-mirror for every rig (the
-     * classic's {@code scale(-1, -1, 1)} against the bake's y-only flip): the register's TEST-015 line. {@link #slotMatrix}
-     * is the product, computed rather than hand-derived; {@code T2SeamTests.t2_009} measures it on matrices against the
-     * closed form and against the classic chain on sample points. The parity probe wraps the SAME slot form in
-     * {@code F^-1 ... F} around its ModelPart-space capture, which measures that the renderer's slot is the F-conjugate of
-     * the declared form (an unconjugated slot fails the geometry leg at every sample) - not the frame itself, which no
-     * headless leg can see: the bytecode above is the frame's confirmation.</p>
+     * <p>THE ORDER ANALYSIS (TEST-013, re-derived under TEST-015 -, the frames from the bytecode of NeoForge 21.1.223
+     * and GeckoLib 4.8.4, read with javap and written into {@code G1ModelProbe}'s javadoc): the classic path applies
+     * its rotation INSIDE {@code renderToBuffer} (offset 621), after {@code LivingEntityRenderer.render}'s {@code
+     * scale(-1, -1, 1)} flip (395-400) and {@code translate(0, -1.501, 0)} lift (413-417) - in ModelPart space, Y down, the
+     * origin 1.501 blocks above the feet: a ModelPart point p draws at {@code M C p}, {@code M = scale(-1, -1, 1) .
+     * translate(0, -1.501, 0)}. The replaced renderer's descriptor slot ({@link
+     * OreSpawnGeoReplacedEntityRenderer#applyRotations}, after the entity yaw) runs in ENTITY space, before the rest of
+     * the seam's chain: the height compensation ({@link #SEAM_HEIGHT_COMPENSATION}, applied right after the slot),
+     * GeckoLib's own 0.01 lift ({@code actuallyRender} 727) and the bake, which the converter now writes in the
+     * Bedrock convention (a converted cube keeps its ModelPart x) and GeckoLib's baker mirrors in x
+     * ({@code BakedModelFactory$Builtin.constructCube} 98-139, the pivots at 157-167 / {@code constructBone} 95-116;
+     * nothing else flips in {@code GeoRenderer} or {@code RenderUtil}): the bake of p is {@code B p = (-x, 1.5 - y, z)},
+     * and {@code translate(0, comp, 0) . translate(0, 0.01, 0) . B = M} exactly. So the frame between the slot and
+     * ModelPart space is vanilla's own M - THE SEAM FRAME F IS M ({@link #seamFrame}; before this landing the converter's
+     * x negation cancelled the baker's and F was {@code scale(1, -1, 1) translate(0, -1.501, 0)}, the y flip alone) - and
+     * the slot carries the transform CONJUGATED through it, {@code F C F^-1}. {@code S = diag(-1, -1, 1)} is a half turn
+     * about Z, so conjugating through it reverses the sense of a rotation about X or Y and keeps Z, and the lift
+     * conjugates a rotation into the same rotation about the classic origin 1.501 up: the Dungeon Beast's YP 90 is
+     * {@code R_y(-90)} in the slot (a rotation about Y commutes with the lift; before: YP +90), the Kraken's XP 90 is
+     * {@code translate(0, 1.501, 1.501) R_x(-90)} (unchanged: a mirror in x commutes with a rotation about X, the mirror
+     * in y reverses it). {@link #slotMatrix} is the product, computed rather than hand-derived; {@code T2SeamTests.t2_009}
+     * measures it on matrices against the closed forms and against the classic chain on sample points, and
+     * {@code t2_010} measures the compensation. The parity probe applies the SAME slot form, then the compensation, the
+     * 0.01 and the bake on its geo side, and M on its classic side, so the geometry leg now measures the frame itself
+     * as well as the conjugation: a wrong F, a wrong conjugate or a missing compensation fails it at every sample.</p>
      */
     public record RenderTransform(float xDegrees, float yDegrees, float zDegrees, float x, float y, float z) {
         public static final RenderTransform IDENTITY = new RenderTransform(0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F);
-        /** M: LivingEntityRenderer.render's {@code scale(-1, -1, 1)} then {@code translate(0, -1.501, 0)} (21.1.223), the frame the slot's conjugation runs through. */
-        private static final Matrix4f SEAM_FRAME = new Matrix4f().scale(1.0F, -1.0F, 1.0F).translate(0.0F, -1.501F, 0.0F);
+        /**
+         * THE SEAM'S HEIGHT COMPENSATION (TEST-015 (2)): the classic chain lifts its origin {@code 1.501} blocks over the
+         * feet ({@code LivingEntityRenderer.render} 413-417); the seam's chain lifts the bake's 1.5-block datum by GeckoLib's
+         * {@code 0.01} ({@code GeoReplacedEntityRenderer.actuallyRender} 722-727) - the 0.009-block offset every seam rig
+         * had carried. Applied by {@link OreSpawnGeoReplacedEntityRenderer#applyRotations} right after the descriptor slot
+         * and by the parity probe's geo side, so {@code comp + 0.01 + 1.5 = 1.501} and the two chains agree to float
+         * precision; without it the geometry leg's translation delta is 0.009 on every rig.
+         */
+        public static final float SEAM_HEIGHT_COMPENSATION = 1.501F - 1.5F - 0.01F;
+        /** F = M: LivingEntityRenderer.render's {@code scale(-1, -1, 1)} then {@code translate(0, -1.501, 0)} (21.1.223), the frame the slot's conjugation runs through - the seam's chain after the slot equals it (the record javadoc). */
+        private static final Matrix4f SEAM_FRAME = new Matrix4f().scale(-1.0F, -1.0F, 1.0F).translate(0.0F, -1.501F, 0.0F);
 
         /** A pure rotation in classic terms: degrees about X, Y and Z as {@code Axis.XP / YP / ZP.rotationDegrees}. */
         public static RenderTransform rotationDegrees(float xDegrees, float yDegrees, float zDegrees) {
@@ -245,9 +259,18 @@ public abstract class GeoReplacementDescriptor<E extends Entity> {
             return matrix;
         }
 
-        /** A copy of the seam frame F (the record javadoc): the bake's Y flip about the datum plus the classic lift. */
+        /** A copy of the seam frame F = M (the record javadoc): the classic chain's flip and lift, which the seam's chain after the slot equals. */
         public static Matrix4f seamFrame() {
             return new Matrix4f(SEAM_FRAME);
+        }
+
+        /**
+         * THE BAKE MAP B: a classic absolute point (ModelPart space, blocks) to the corner the converter's Bedrock
+         * convention and GeckoLib's baker produce, {@code (x, y, z) -> (-x, 1.5 - y, z)}; the seam's chain after the slot is
+         * {@code translate(0, comp, 0) . translate(0, 0.01, 0) . B}, which {@code t2_010} measures against {@link #seamFrame}.
+         */
+        public static Matrix4f bakeOfClassic() {
+            return new Matrix4f().scale(-1.0F, -1.0F, 1.0F).translate(0.0F, -1.5F, 0.0F);
         }
 
         /** The slot form F C F^-1: what the replaced renderer multiplies onto the pose stack in its descriptor slot. */

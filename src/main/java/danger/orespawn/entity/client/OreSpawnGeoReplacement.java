@@ -27,20 +27,36 @@ import software.bernie.geckolib.loading.object.BakedAnimations;
  * <p>The static helpers below let a code-driven pose be written in the
  * classic {@code ModelPart} vocabulary (vanilla sign conventions, pivot
  * positions in the parent's frame) and translate it onto GeckoLib's internal
- * bone basis in exactly one place. The basis facts, derived from GeckoLib
- * 4.8.4 bytecode and proven geometrically by the Slice 4b harness fixture
- * ({@code fixture_runtime_basis_yz}, see):</p>
+ * bone basis in exactly one place - THE HOOKS' BASIS MAPPING. The basis facts,
+ * derived from GeckoLib 4.8.4 bytecode, re-derived for the entity frame by
+ * TEST-015 and proven geometrically by the Slice 4b harness fixture ({@code
+ * fixture_runtime_basis_yz}, see) and by the animation
+ * leg of every landed hook (0 rad against the classic model):</p>
+ *
  * <ul>
- *   <li>the converter writes bone pivot {@code (-x, 24 - y, z)} and the baker
- *       negates JSON pivot X, so an internal pivot is {@code (x, 24 - y, z)}
- *       of the ModelPart's absolute pivot: internal space is classic space
- *       reflected in Y;</li>
- *   <li>conjugating a rotation through that reflection negates the X and Z
- *       angles and keeps Y: internal rotation = {@code (-xRot, yRot, -zRot)};</li>
- *   <li>{@code RenderUtil.translateMatrixToBone} translates by
- *       {@code (-posX, posY, posZ)/16} in internal space, so a classic pivot
- *       move {@code (dx, dy, dz)} is {@code posX = -dx, posY = -dy, posZ = dz}.</li>
+ *   <li>the converter writes a bone pivot {@code (x, 24 - y, z)} of the
+ *       ModelPart's absolute pivot (the Bedrock convention the Queen's native rig
+ *       uses) and the baker negates JSON pivot X
+ *       ({@code BakedModelFactory$Builtin.constructBone} 95-116), so an internal
+ *       pivot is {@code (-x, 24 - y, z)}: INTERNAL SPACE IS CLASSIC SPACE
+ *       REFLECTED IN X AND Y - the baker's x negation is the classic chain's
+ *       {@code scale(-1, -1, 1)} ({@code LivingEntityRenderer.render} 395-400),
+ *       which the converter no longer cancels;</li>
+ *   <li>conjugating a rotation through that reflection ({@code S = diag(-1, -1, 1)},
+ *       a half turn about Z) keeps the ZYX axis order, reverses the sense of the
+ *       rotations about X and Y and keeps Z: internal rotation =
+ *       {@code (-xRot, -yRot, zRot)} (before TEST-015, with the reflection in Y
+ *       alone, it was {@code (-xRot, yRot, -zRot)}: a mirror in x reverses the
+ *       sense of the rotations about Y and Z);</li>
+ *   <li>{@code RenderUtil.translateMatrixToBone} (offsets 2-23) translates by
+ *       {@code (-posX, posY, posZ)/16} in internal space, and a classic pivot
+ *       move {@code (dx, dy, dz)} is the internal offset {@code (-dx, -dy, dz)},
+ *       so {@code posX = dx, posY = -dy, posZ = dz} (before: {@code posX = -dx}:
+ *       the mirror reverses the sign of an x position).</li>
  * </ul>
+ * <p>No descriptor's hook statements change with the frame: every hook writes
+ * classic terms through these helpers, and only this mapping carries the
+ * frame.</p>
  */
 public abstract class OreSpawnGeoReplacement<E extends Entity> implements GeoReplacedEntity {
     private final GeoReplacementDescriptor<E> descriptor;
@@ -260,32 +276,33 @@ public abstract class OreSpawnGeoReplacement<E extends Entity> implements GeoRep
         bone.markRotationAsChanged();
     }
 
-    /** {@code part.yRot = yRot} in classic terms. */
+    /** {@code part.yRot = yRot} in classic terms (internal Y is the negated classic Y: the class javadoc's basis facts). */
     protected static void rotateY(AnimationProcessor<?> processor, String name, float yRot) {
         GeoBone bone = bone(processor, name);
-        bone.setRotY(yRot);
+        bone.setRotY(-yRot);
         bone.markRotationAsChanged();
     }
 
-    /** {@code part.zRot = zRot} in classic terms. */
+    /** {@code part.zRot = zRot} in classic terms (internal Z keeps the classic sense: the class javadoc's basis facts). */
     protected static void rotateZ(AnimationProcessor<?> processor, String name, float zRot) {
         GeoBone bone = bone(processor, name);
-        bone.setRotZ(-zRot);
+        bone.setRotZ(zRot);
         bone.markRotationAsChanged();
     }
 
     /**
      * The bone's bind pivot in classic terms, in its parent's frame (a
      * ModelPart's {@code x/y/z} is local to the parent pivot; GeckoLib pivots
-     * are absolute, so the parent's internal pivot is subtracted).
+     * are absolute, so the parent's internal pivot is subtracted). The internal
+     * pivot is {@code (-x, 24 - y, z)} of the classic absolute pivot (the basis facts).
      */
     private static float[] classicBindPivot(GeoBone bone) {
         GeoBone parent = bone.getParent();
         if (parent == null) {
-            return new float[] {bone.getPivotX(), 24.0F - bone.getPivotY(), bone.getPivotZ()};
+            return new float[] {-bone.getPivotX(), 24.0F - bone.getPivotY(), bone.getPivotZ()};
         }
         return new float[] {
-                bone.getPivotX() - parent.getPivotX(),
+                parent.getPivotX() - bone.getPivotX(),
                 parent.getPivotY() - bone.getPivotY(),
                 bone.getPivotZ() - parent.getPivotZ(),
         };
@@ -295,7 +312,7 @@ public abstract class OreSpawnGeoReplacement<E extends Entity> implements GeoRep
     protected static float[] classicPosition(GeoBone bone) {
         float[] bind = classicBindPivot(bone);
         return new float[] {
-                bind[0] - bone.getPosX(),
+                bind[0] + bone.getPosX(),
                 bind[1] - bone.getPosY(),
                 bind[2] + bone.getPosZ(),
         };
@@ -312,11 +329,11 @@ public abstract class OreSpawnGeoReplacement<E extends Entity> implements GeoRep
         return -bone.getRotX();
     }
 
-    /** {@code part.x = x; part.y = y; part.z = z} in classic terms. */
+    /** {@code part.x = x; part.y = y; part.z = z} in classic terms (the offset's x and z keep the classic sign, y is negated: the basis facts). */
     protected static void moveTo(AnimationProcessor<?> processor, String name, float x, float y, float z) {
         GeoBone bone = bone(processor, name);
         float[] bind = classicBindPivot(bone);
-        bone.setPosX(bind[0] - x);
+        bone.setPosX(x - bind[0]);
         bone.setPosY(bind[1] - y);
         bone.setPosZ(z - bind[2]);
         bone.markPositionAsChanged();

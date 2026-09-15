@@ -34,7 +34,7 @@ The independent gates are:
 ## model_beaver (Tier 2)
 
 - Exact bones: 9; cubes: 9.
-- Geometry maximum corner delta: 2.00000000117e-07 blocks (epsilon 1e-05).
+- Geometry maximum corner delta: 1.00498756158e-07 blocks (epsilon 1e-05).
 - Surface maximum UV delta: 0; normal delta: 0.
 - Animation maximum rotation delta: 0 radians (epsilon 2e-06).
 - Visual maximum changed fraction: 0; maximum mean absolute error: 0; maximum pair-contested fraction: 0 (never a mismatch; cap 0.01).
@@ -52,7 +52,7 @@ The independent gates are:
 ## fixture_nested_nonmirrored_rotated_inflate (non-production fixture)
 
 - Coverage: nested_parent_bone, non_mirrored_uv, nonzero_bind_rotation, uniform_inflate.
-- Geometry maximum corner delta: 1.41509716909e-07 blocks; surface UV maximum 0.
+- Geometry maximum corner delta: 1.33416640631e-07 blocks; surface UV maximum 0.
 - Draw order: GeckoLib bone order equals the classic draw order over 1 captures (2 draws).
 
 Reproduce with `gradlew.bat g1Parity`. Any mismatch exits nonzero before

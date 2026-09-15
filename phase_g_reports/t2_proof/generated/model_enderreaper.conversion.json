@@ -6,8 +6,8 @@
   "ground_truth": "executed compiled LayerDefinition and baked ModelPart",
   "source_class": "danger.orespawn.entity.client.ModelEnderReaper",
   "source_class_sha256": "d3477ccc9cc712acd47637135b1ab3b1e03e52855f8319460b1c6e2cda536610",
-  "compiled_dump_sha256": "f4ab25229f8e2b61547db1f9e5a87f2c4c2c7266cbf6282e9077056d8a5ad3ad",
-  "geometry_sha256": "9f70a9794209e6c3f6ceeca1080e3e31a5391f029119e6d5df4855f6573552ce",
+  "compiled_dump_sha256": "4743d383b5d79ad4631355f269b9f9d78bac5dca71ad38c6797d3599b7dcbe7d",
+  "geometry_sha256": "4bd237800eea4563430d1ab683461dfdbe59a73da9511d4a35348e42d3c4d21e",
   "animation_sha256": "7882082857fdb11e02f158ebc3a6d3f970e2ac60d54813f0e903ee97b2293749",
   "animation_contract_sha256": "cde6825ccc36334a3866096ba1a4073695797e9492bb16ea4947c13f5678e299",
   "bone_count": 66,
@@ -207,9 +207,9 @@
       [
         "up",
         "down",
-        "west",
-        "north",
         "east",
+        "north",
+        "west",
         "south"
       ]
     ],
@@ -217,9 +217,9 @@
       [
         "up",
         "down",
-        "west",
-        "north",
         "east",
+        "north",
+        "west",
         "south"
       ]
     ],
@@ -227,9 +227,9 @@
       [
         "up",
         "down",
-        "west",
-        "north",
         "east",
+        "north",
+        "west",
         "south"
       ]
     ],
@@ -237,9 +237,9 @@
       [
         "up",
         "down",
-        "west",
-        "north",
         "east",
+        "north",
+        "west",
         "south"
       ]
     ],
@@ -247,9 +247,9 @@
       [
         "up",
         "down",
-        "west",
-        "north",
         "east",
+        "north",
+        "west",
         "south"
       ]
     ],
@@ -257,9 +257,9 @@
       [
         "up",
         "down",
-        "west",
-        "north",
         "east",
+        "north",
+        "west",
         "south"
       ]
     ],
@@ -267,9 +267,9 @@
       [
         "up",
         "down",
-        "west",
-        "north",
         "east",
+        "north",
+        "west",
         "south"
       ]
     ],
@@ -277,9 +277,9 @@
       [
         "up",
         "down",
-        "west",
-        "north",
         "east",
+        "north",
+        "west",
         "south"
       ]
     ],
@@ -287,9 +287,9 @@
       [
         "up",
         "down",
-        "west",
-        "north",
         "east",
+        "north",
+        "west",
         "south"
       ]
     ],
@@ -297,9 +297,9 @@
       [
         "up",
         "down",
-        "west",
-        "north",
         "east",
+        "north",
+        "west",
         "south"
       ]
     ],
@@ -307,9 +307,9 @@
       [
         "up",
         "down",
-        "west",
-        "north",
         "east",
+        "north",
+        "west",
         "south"
       ]
     ],
@@ -317,9 +317,9 @@
       [
         "up",
         "down",
-        "west",
-        "north",
         "east",
+        "north",
+        "west",
         "south"
       ]
     ],
@@ -327,9 +327,9 @@
       [
         "up",
         "down",
-        "west",
-        "north",
         "east",
+        "north",
+        "west",
         "south"
       ]
     ],
@@ -337,9 +337,9 @@
       [
         "up",
         "down",
-        "west",
-        "north",
         "east",
+        "north",
+        "west",
         "south"
       ]
     ],
@@ -347,9 +347,9 @@
       [
         "up",
         "down",
-        "west",
-        "north",
         "east",
+        "north",
+        "west",
         "south"
       ]
     ],
@@ -357,9 +357,9 @@
       [
         "up",
         "down",
-        "west",
-        "north",
         "east",
+        "north",
+        "west",
         "south"
       ]
     ],
@@ -367,9 +367,9 @@
       [
         "up",
         "down",
-        "west",
-        "north",
         "east",
+        "north",
+        "west",
         "south"
       ]
     ],
@@ -377,9 +377,9 @@
       [
         "up",
         "down",
-        "west",
-        "north",
         "east",
+        "north",
+        "west",
         "south"
       ]
     ],
@@ -387,9 +387,9 @@
       [
         "up",
         "down",
-        "west",
-        "north",
         "east",
+        "north",
+        "west",
         "south"
       ]
     ],
@@ -397,9 +397,9 @@
       [
         "up",
         "down",
-        "west",
-        "north",
         "east",
+        "north",
+        "west",
         "south"
       ]
     ],
@@ -407,9 +407,9 @@
       [
         "up",
         "down",
-        "west",
-        "north",
         "east",
+        "north",
+        "west",
         "south"
       ]
     ],
@@ -417,9 +417,9 @@
       [
         "up",
         "down",
-        "west",
-        "north",
         "east",
+        "north",
+        "west",
         "south"
       ]
     ],
@@ -427,9 +427,9 @@
       [
         "up",
         "down",
-        "west",
-        "north",
         "east",
+        "north",
+        "west",
         "south"
       ]
     ],
@@ -437,9 +437,9 @@
       [
         "up",
         "down",
-        "west",
-        "north",
         "east",
+        "north",
+        "west",
         "south"
       ]
     ],
@@ -447,9 +447,9 @@
       [
         "up",
         "down",
-        "west",
-        "north",
         "east",
+        "north",
+        "west",
         "south"
       ]
     ],
@@ -457,9 +457,9 @@
       [
         "up",
         "down",
-        "west",
-        "north",
         "east",
+        "north",
+        "west",
         "south"
       ]
     ],
@@ -467,9 +467,9 @@
       [
         "up",
         "down",
-        "west",
-        "north",
         "east",
+        "north",
+        "west",
         "south"
       ]
     ],
@@ -477,9 +477,9 @@
       [
         "up",
         "down",
-        "west",
-        "north",
         "east",
+        "north",
+        "west",
         "south"
       ]
     ],
@@ -487,9 +487,9 @@
       [
         "up",
         "down",
-        "west",
-        "north",
         "east",
+        "north",
+        "west",
         "south"
       ]
     ],
@@ -497,9 +497,9 @@
       [
         "up",
         "down",
-        "west",
-        "north",
         "east",
+        "north",
+        "west",
         "south"
       ]
     ],
@@ -507,9 +507,9 @@
       [
         "up",
         "down",
-        "west",
-        "north",
         "east",
+        "north",
+        "west",
         "south"
       ]
     ],
@@ -517,9 +517,9 @@
       [
         "up",
         "down",
-        "west",
-        "north",
         "east",
+        "north",
+        "west",
         "south"
       ]
     ],
@@ -527,9 +527,9 @@
       [
         "up",
         "down",
-        "west",
-        "north",
         "east",
+        "north",
+        "west",
         "south"
       ]
     ],
@@ -537,9 +537,9 @@
       [
         "up",
         "down",
-        "west",
-        "north",
         "east",
+        "north",
+        "west",
         "south"
       ]
     ],
@@ -547,9 +547,9 @@
       [
         "up",
         "down",
-        "west",
-        "north",
         "east",
+        "north",
+        "west",
         "south"
       ]
     ],
@@ -557,9 +557,9 @@
       [
         "up",
         "down",
-        "west",
-        "north",
         "east",
+        "north",
+        "west",
         "south"
       ]
     ],
@@ -567,9 +567,9 @@
       [
         "up",
         "down",
-        "west",
-        "north",
         "east",
+        "north",
+        "west",
         "south"
       ]
     ],
@@ -577,9 +577,9 @@
       [
         "up",
         "down",
-        "west",
-        "north",
         "east",
+        "north",
+        "west",
         "south"
       ]
     ],
@@ -587,9 +587,9 @@
       [
         "up",
         "down",
-        "west",
-        "north",
         "east",
+        "north",
+        "west",
         "south"
       ]
     ],
@@ -597,9 +597,9 @@
       [
         "up",
         "down",
-        "west",
-        "north",
         "east",
+        "north",
+        "west",
         "south"
       ]
     ],
@@ -607,9 +607,9 @@
       [
         "up",
         "down",
-        "west",
-        "north",
         "east",
+        "north",
+        "west",
         "south"
       ]
     ],
@@ -617,9 +617,9 @@
       [
         "up",
         "down",
-        "west",
-        "north",
         "east",
+        "north",
+        "west",
         "south"
       ]
     ],
@@ -627,9 +627,9 @@
       [
         "up",
         "down",
-        "west",
-        "north",
         "east",
+        "north",
+        "west",
         "south"
       ]
     ],
@@ -637,9 +637,9 @@
       [
         "up",
         "down",
-        "west",
-        "north",
         "east",
+        "north",
+        "west",
         "south"
       ]
     ],
@@ -647,9 +647,9 @@
       [
         "up",
         "down",
-        "west",
-        "north",
         "east",
+        "north",
+        "west",
         "south"
       ]
     ],
@@ -657,9 +657,9 @@
       [
         "up",
         "down",
-        "west",
-        "north",
         "east",
+        "north",
+        "west",
         "south"
       ]
     ],
@@ -667,9 +667,9 @@
       [
         "up",
         "down",
-        "west",
-        "north",
         "east",
+        "north",
+        "west",
         "south"
       ]
     ],
@@ -677,9 +677,9 @@
       [
         "up",
         "down",
-        "west",
-        "north",
         "east",
+        "north",
+        "west",
         "south"
       ]
     ],
@@ -687,9 +687,9 @@
       [
         "up",
         "down",
-        "west",
-        "north",
         "east",
+        "north",
+        "west",
         "south"
       ]
     ],
@@ -697,9 +697,9 @@
       [
         "up",
         "down",
-        "west",
-        "north",
         "east",
+        "north",
+        "west",
         "south"
       ]
     ],
@@ -707,9 +707,9 @@
       [
         "up",
         "down",
-        "west",
-        "north",
         "east",
+        "north",
+        "west",
         "south"
       ]
     ],
@@ -717,9 +717,9 @@
       [
         "up",
         "down",
-        "west",
-        "north",
         "east",
+        "north",
+        "west",
         "south"
       ]
     ],
@@ -727,9 +727,9 @@
       [
         "up",
         "down",
-        "west",
-        "north",
         "east",
+        "north",
+        "west",
         "south"
       ]
     ],
@@ -737,9 +737,9 @@
       [
         "up",
         "down",
-        "west",
-        "north",
         "east",
+        "north",
+        "west",
         "south"
       ]
     ],
@@ -747,9 +747,9 @@
       [
         "up",
         "down",
-        "west",
-        "north",
         "east",
+        "north",
+        "west",
         "south"
       ]
     ],
@@ -757,9 +757,9 @@
       [
         "up",
         "down",
-        "west",
-        "north",
         "east",
+        "north",
+        "west",
         "south"
       ]
     ],
@@ -767,9 +767,9 @@
       [
         "up",
         "down",
-        "west",
-        "north",
         "east",
+        "north",
+        "west",
         "south"
       ]
     ],
@@ -777,9 +777,9 @@
       [
         "up",
         "down",
-        "west",
-        "north",
         "east",
+        "north",
+        "west",
         "south"
       ]
     ],
@@ -787,9 +787,9 @@
       [
         "up",
         "down",
-        "west",
-        "north",
         "east",
+        "north",
+        "west",
         "south"
       ]
     ],
@@ -797,9 +797,9 @@
       [
         "up",
         "down",
-        "west",
-        "north",
         "east",
+        "north",
+        "west",
         "south"
       ]
     ],
@@ -807,9 +807,9 @@
       [
         "up",
         "down",
-        "west",
-        "north",
         "east",
+        "north",
+        "west",
         "south"
       ]
     ],
@@ -817,9 +817,9 @@
       [
         "up",
         "down",
-        "west",
-        "north",
         "east",
+        "north",
+        "west",
         "south"
       ]
     ],
@@ -827,9 +827,9 @@
       [
         "up",
         "down",
-        "west",
-        "north",
         "east",
+        "north",
+        "west",
         "south"
       ]
     ],
@@ -837,9 +837,9 @@
       [
         "up",
         "down",
-        "west",
-        "north",
         "east",
+        "north",
+        "west",
         "south"
       ]
     ],
@@ -847,9 +847,9 @@
       [
         "up",
         "down",
-        "west",
-        "north",
         "east",
+        "north",
+        "west",
         "south"
       ]
     ],
@@ -857,19 +857,19 @@
       [
         "up",
         "down",
-        "west",
-        "north",
         "east",
+        "north",
+        "west",
         "south"
       ]
     ]
   },
   "cube_face_order_evidence": {
-    "rule": "NeoForge 21.1.223 ModelPart.Cube.<init> polygon order DOWN, UP, WEST, NORTH, EAST, SOUTH (offsets 365-785: DOWN 365, UP 436, WEST 507, NORTH 578, EAST 649, SOUTH 720), mirror negating the X normals; GeckoLib labels by the direction whose step is the classic normal reflected in Y",
+    "rule": "NeoForge 21.1.223 ModelPart.Cube.<init> polygon order DOWN, UP, WEST, NORTH, EAST, SOUTH (offsets 365-785: DOWN 365, UP 436, WEST 507, NORTH 578, EAST 649, SOUTH 720), mirror negating the X normals; GeckoLib labels by the direction whose step is the classic normal reflected in X and Y (the entity frame: the classic chain's scale(-1, -1, 1) and the baker's x negation alike, TEST-015)",
     "cube_bearing_bones": 66,
     "cubes": 66,
     "verified_unrotated_cubes_at_bind": 44,
-    "verification": "captured normals of every cube unrotated at bind equal the rule's, in order; the parity tool's draw-order leg compares the per-quad normal sequences of both renderers on every capture"
+    "verification": "captured normals (the entity frame) of every cube unrotated at bind equal the rule's, in order; the parity tool's draw-order leg compares the per-quad normal sequences of both renderers on every capture"
   },
   "animation_contract": {
     "schema_version": 1,

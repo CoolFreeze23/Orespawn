@@ -6,8 +6,8 @@
   "ground_truth": "executed compiled LayerDefinition and baked ModelPart",
   "source_class": "danger.orespawn.entity.client.ModelPeacock",
   "source_class_sha256": "d876f8d926da56872bd720e9b54f9a1fc91a56bb3c5d66b1ff9c0b17cd52ac35",
-  "compiled_dump_sha256": "0a58fe1c5200fdef879423224f9f892fdb107102aacd738e496fd0533c8c738e",
-  "geometry_sha256": "ad8ea826f3bce312b16e85b5ec5dac50f0d74a04d334a2009ce7775836e51401",
+  "compiled_dump_sha256": "7c9162401a1de0841c01736e4615215de47ae21879ccd1a1df3bf942c3b1a86f",
+  "geometry_sha256": "f5404de8aef23b6edc5504317223c1c0d35877ab4620f9db8ca69e44bd727e39",
   "animation_sha256": "7882082857fdb11e02f158ebc3a6d3f970e2ac60d54813f0e903ee97b2293749",
   "animation_contract_sha256": "ed61d0de75ccb2a8550938e3a31dec61d01220fd16a551517817237b4b41c062",
   "bone_count": 16,
@@ -107,9 +107,9 @@
       [
         "up",
         "down",
-        "west",
-        "north",
         "east",
+        "north",
+        "west",
         "south"
       ]
     ],
@@ -117,9 +117,9 @@
       [
         "up",
         "down",
-        "west",
-        "north",
         "east",
+        "north",
+        "west",
         "south"
       ]
     ],
@@ -127,9 +127,9 @@
       [
         "up",
         "down",
-        "west",
-        "north",
         "east",
+        "north",
+        "west",
         "south"
       ]
     ],
@@ -137,9 +137,9 @@
       [
         "up",
         "down",
-        "west",
-        "north",
         "east",
+        "north",
+        "west",
         "south"
       ]
     ],
@@ -147,9 +147,9 @@
       [
         "up",
         "down",
-        "west",
-        "north",
         "east",
+        "north",
+        "west",
         "south"
       ]
     ],
@@ -157,9 +157,9 @@
       [
         "up",
         "down",
-        "west",
-        "north",
         "east",
+        "north",
+        "west",
         "south"
       ]
     ],
@@ -167,9 +167,9 @@
       [
         "up",
         "down",
-        "west",
-        "north",
         "east",
+        "north",
+        "west",
         "south"
       ]
     ],
@@ -177,9 +177,9 @@
       [
         "up",
         "down",
-        "west",
-        "north",
         "east",
+        "north",
+        "west",
         "south"
       ]
     ],
@@ -187,9 +187,9 @@
       [
         "up",
         "down",
-        "west",
-        "north",
         "east",
+        "north",
+        "west",
         "south"
       ]
     ],
@@ -197,9 +197,9 @@
       [
         "up",
         "down",
-        "west",
-        "north",
         "east",
+        "north",
+        "west",
         "south"
       ]
     ],
@@ -207,9 +207,9 @@
       [
         "up",
         "down",
-        "west",
-        "north",
         "east",
+        "north",
+        "west",
         "south"
       ]
     ],
@@ -217,9 +217,9 @@
       [
         "up",
         "down",
-        "west",
-        "north",
         "east",
+        "north",
+        "west",
         "south"
       ]
     ],
@@ -227,9 +227,9 @@
       [
         "up",
         "down",
-        "west",
-        "north",
         "east",
+        "north",
+        "west",
         "south"
       ]
     ],
@@ -237,9 +237,9 @@
       [
         "up",
         "down",
-        "west",
-        "north",
         "east",
+        "north",
+        "west",
         "south"
       ]
     ],
@@ -247,9 +247,9 @@
       [
         "up",
         "down",
-        "west",
-        "north",
         "east",
+        "north",
+        "west",
         "south"
       ]
     ],
@@ -257,19 +257,19 @@
       [
         "up",
         "down",
-        "west",
-        "north",
         "east",
+        "north",
+        "west",
         "south"
       ]
     ]
   },
   "cube_face_order_evidence": {
-    "rule": "NeoForge 21.1.223 ModelPart.Cube.<init> polygon order DOWN, UP, WEST, NORTH, EAST, SOUTH (offsets 365-785: DOWN 365, UP 436, WEST 507, NORTH 578, EAST 649, SOUTH 720), mirror negating the X normals; GeckoLib labels by the direction whose step is the classic normal reflected in Y",
+    "rule": "NeoForge 21.1.223 ModelPart.Cube.<init> polygon order DOWN, UP, WEST, NORTH, EAST, SOUTH (offsets 365-785: DOWN 365, UP 436, WEST 507, NORTH 578, EAST 649, SOUTH 720), mirror negating the X normals; GeckoLib labels by the direction whose step is the classic normal reflected in X and Y (the entity frame: the classic chain's scale(-1, -1, 1) and the baker's x negation alike, TEST-015)",
     "cube_bearing_bones": 16,
     "cubes": 16,
     "verified_unrotated_cubes_at_bind": 11,
-    "verification": "captured normals of every cube unrotated at bind equal the rule's, in order; the parity tool's draw-order leg compares the per-quad normal sequences of both renderers on every capture"
+    "verification": "captured normals (the entity frame) of every cube unrotated at bind equal the rule's, in order; the parity tool's draw-order leg compares the per-quad normal sequences of both renderers on every capture"
   },
   "animation_contract": {
     "schema_version": 1,

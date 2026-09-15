@@ -50,12 +50,16 @@ public final class ElevatorGeoReplacement extends OreSpawnGeoReplacement<Elevato
                 poseStack.mulPose(Axis.XP.rotationDegrees(
                         Mth.sin(hitTime) * hitTime * damage / 10.0f * (float) entity.getForwardDirection()));
             }
-            // ENT-S-091: the converter maps a classic pivot y to geo y 24 - y, so the original's pivot 0 puts
-            // the deck at geo y 24 (1.5 blocks up) while the classic path draws it at the feet with the living
-            // lift cancelled; translate the same 1.5 down in this yaw+wobble frame. GeckoLib's own lift,
-            // translate(0, 0.01, 0) issued right after applyRotations (actuallyRender bytecode 727 vs 396), is
-            // cancelled too: orig RenderElevator has none. Not in applyScale, so a hit wobble leaves no residual.
-            poseStack.translate(0.0F, -1.5F - 0.01F, 0.0F);
+            // ENT-S-091, re-derived under TEST-015: the seam's chain after this descriptor slot is now exactly
+            // vanilla's living chain M - the bake's 1.5-block datum, GeckoLib's translate(0, 0.01, 0) (actuallyRender
+            // bytecode 727 vs 396) and the seam's height compensation
+            // (OreSpawnGeoReplacedEntityRenderer.applyRotations: 1.501 - 1.5 - 0.01) add up to the classic's 1.501 lift.
+            // The classic ElevatorRenderer cancels that lift in its scale hook (+1.501 in the flipped frame: orig
+            // RenderElevator.java:43-44 flips and renders with NO lift), so the same cancellation here, -1.501 in this
+            // yaw+wobble frame, and the deck sits at the feet as the classic draws it. (Before TEST-015 this was
+            // -1.5 - 0.01, the datum and GeckoLib's lift alone; the compensation the seam now carries closes the last
+            // 0.001 to the classic's constant.) Not in applyScale, so a hit wobble leaves no residual.
+            poseStack.translate(0.0F, -1.501F, 0.0F);
         }
     };
 

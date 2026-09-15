@@ -841,15 +841,21 @@ public class T2SeamTests {
 
     /**
      * The constant render transform's conjugation, measured on matrices (TEST-013; the seam's {@code
-     * OreSpawnGeoReplacedEntityRenderer.applyRotations} path, whose one line is {@code
-     * descriptor.renderTransform.applySlot(poseStack)} after the entity yaw and the descriptor's own rotations). The
-     * classic path rotates INSIDE {@code renderToBuffer}, after {@code LivingEntityRenderer.render}'s
-     * {@code scale(-1, -1, 1)} flip and {@code translate(0, -1.501, 0)} lift; the slot runs in entity space before the
-     * SEAM's frame F = scale(1, -1, 1) translate(0, -1.501, 0) (the bake's Y flip and the classic lift - GeckoLib's baker
-     * undoes the converter's x negation, so nothing flips in x), so it carries F C F^-1: S_y R_y(90) S_y = R_y(90) for
-     * the Dungeon Beast's YP 90, and translate(0, 1.501, 1.501) R_x(-90) for the Kraken's XP 90 (the rotation about the
-     * classic origin, 1.501 up; the y-mirror reverses a rotation about X). Asserted two ways: the slot matrix against the
-     * closed form, and the two chains on sample points - F, C against slot, F (the frame is the bytecode's, TEST-013).
+     * OreSpawnGeoReplacedEntityRenderer.applyRotations} path: {@code
+     * descriptor.renderTransform.applySlot(poseStack)} after the entity yaw and the descriptor's own rotations, then the
+     * height compensation). RE-PINNED UNDER TEST-015: the classic path rotates INSIDE {@code renderToBuffer}, after
+     * {@code LivingEntityRenderer.render}'s {@code scale(-1, -1, 1)} flip (21.1.223 offsets 395-400) and {@code
+     * translate(0, -1.501, 0)} lift (413-417) - M; the slot runs in entity space before the seam's chain, which after
+     * the slot is {@code translate(0, comp, 0) translate(0, 0.01, 0) B} with B the bake map {@code (x, y, z) ->
+     * (-x, 1.5 - y, z)} (the converter's Bedrock convention and the baker's x negation, {@code
+     * BakedModelFactory$Builtin.constructCube} 98-139) - and that product IS M, so the seam frame F is M itself and the
+     * slot carries {@code M C M^-1}: {@code S R_y(90) S = R_y(-90)} for the Dungeon Beast's YP 90 (S = diag(-1, -1, 1) is
+     * a half turn about Z, which reverses the sense of a rotation about Y; before TEST-015, with F the y flip alone, the
+     * slot was YP +90 and the seam drew the rig facing the other way in the entity frame the classic mirrors), and
+     * translate(0, 1.501, 1.501) R_x(-90) for the Kraken's XP 90 (unchanged: the mirror in x commutes with a rotation
+     * about X, the mirror in y reverses it; the rotation about the classic origin, 1.501 up). Asserted two ways: the
+     * slot matrix against the closed form, and the two chains on sample points - M, C against slot, M (the frame is the
+     * bytecode's; t2_010 measures that the seam's chain after the slot is M).
      */
     @GameTest(template = "empty", batch = BATCH)
     public static void t2_009_constant_render_transform_slot_is_the_conjugated_classic_rotation(GameTestHelper helper) {
@@ -860,7 +866,7 @@ public class T2SeamTests {
         GeoReplacementDescriptor.RenderTransform beast = new DungeonBeastGeoReplacement().descriptor().renderTransform();
         helper.assertTrue(beast.equals(GeoReplacementDescriptor.RenderTransform.rotationDegrees(0.0F, 90.0F, 0.0F)),
                 "the Dungeon Beast declares the classic renderToBuffer's YP 90 (ModelDungeonBeast.java:535, orig :574)");
-        assertSlot(helper, "dungeon_beast", beast, new Matrix4f().rotateY((float) Math.toRadians(90.0)));
+        assertSlot(helper, "dungeon_beast", beast, new Matrix4f().rotateY((float) Math.toRadians(-90.0)));
 
         GeoReplacementDescriptor.RenderTransform kraken = new KrakenGeoReplacement().descriptor().renderTransform();
         helper.assertTrue(kraken.equals(GeoReplacementDescriptor.RenderTransform.rotationDegrees(90.0F, 0.0F, 0.0F)),
@@ -878,7 +884,7 @@ public class T2SeamTests {
                 name + ": the slot form is the conjugated rotation the order analysis gives, " + analysis + " (found "
                         + slot + ")");
         // The chains on matrices (the pose-stack calls post-multiply exactly as these do; PoseStack is a client class the
-        // dedicated-server gametests cannot load): the seam frame F then the classic rotation, against the slot then F.
+        // dedicated-server gametests cannot load): the seam frame M then the classic rotation, against the slot then M.
         Matrix4f frame = GeoReplacementDescriptor.RenderTransform.seamFrame();
         Matrix4f classicChain = new Matrix4f(frame).mul(transform.classicMatrix());
         Matrix4f seamChain = new Matrix4f(slot).mul(frame);
@@ -889,6 +895,55 @@ public class T2SeamTests {
             helper.assertTrue(left.distance(right) < 1.0e-5F, name + ": the classic chain (flip, lift, then the classic rotation) "
                     + "and the seam chain (the slot, then the seam frame) place " + point + " alike: " + left + " vs " + right);
         }
+    }
+
+    // ------------------------------------------------------------------ row 10: the seam's chain is the classic's (TEST-015)
+
+    /**
+     * THE MIRROR FIXED AT THE SOURCE AND THE SEAM'S HEIGHT COMPENSATION, measured on matrices (TEST-015). From
+     * the bytecode: the classic chain carries a ModelPart-space point p to {@code M p}, {@code M = scale(-1, -1,
+     * 1) translate(0, -1.501, 0)} ({@code LivingEntityRenderer.render} 395-400 / 413-417,
+     * 21.1.223); the seam's chain after the descriptor slot is the height compensation ({@code
+     * OreSpawnGeoReplacedEntityRenderer.applyRotations}), GeckoLib's {@code translate(0, 0.01,
+     * 0)} ({@code GeoReplacedEntityRenderer.actuallyRender} 722-727, 4.8.4) and the bake, which places a converted cube's
+     * corner at {@code B p = (-x, 1.5 - y, z)} (the converter's Bedrock convention: the cube keeps its ModelPart x and
+     * its y is measured up from the 24-unit datum; the baker negates x, {@code
+     * BakedModelFactory$Builtin.constructCube} 98-139). Pinned: (1) the frame constant the record holds is M (a rig
+     * point mirrors in x and y and rises 1.501); (2) with the compensation the seam's chain equals M on sample points
+     * to float precision - the two renderers draw every rig in the same place; (3) WITHOUT it the two chains differ
+     * by exactly the 0.009 blocks of height every seam rig carried before this landing (and by nothing else), the
+     * measured residual the compensation closes; (4) the bake map itself mirrors x: a point at ModelPart x = +2
+     * bakes to -2, where the classic's flip also draws it - the left-right mirror of TEST-015 closed at the source.
+     */
+    @GameTest(template = "empty", batch = BATCH)
+    public static void t2_010_seam_chain_equals_the_classic_chain_with_the_height_compensation(GameTestHelper helper) {
+        Matrix4f classic = new Matrix4f().scale(-1.0F, -1.0F, 1.0F).translate(0.0F, -1.501F, 0.0F);
+        helper.assertTrue(classic.equals(GeoReplacementDescriptor.RenderTransform.seamFrame(), 0.0F),
+                "the seam frame F is vanilla's own M: scale(-1, -1, 1) then translate(0, -1.501, 0)");
+        float compensation = GeoReplacementDescriptor.RenderTransform.SEAM_HEIGHT_COMPENSATION;
+        helper.assertTrue(Math.abs(compensation + 0.009F) < 1.0e-6F,
+                "the compensation is 1.501 - 1.5 - 0.01 = -0.009 blocks (found " + compensation + ")");
+        Matrix4f bake = GeoReplacementDescriptor.RenderTransform.bakeOfClassic();
+        Matrix4f seam = new Matrix4f().translate(0.0F, compensation, 0.0F).translate(0.0F, 0.01F, 0.0F).mul(bake);
+        Matrix4f seamUncompensated = new Matrix4f().translate(0.0F, 0.01F, 0.0F).mul(bake);
+        for (Vector4f point : List.of(new Vector4f(0.0F, 0.0F, 0.0F, 1.0F), new Vector4f(2.0F, 0.5F, -1.0F, 1.0F),
+                new Vector4f(-0.75F, 1.5F, 0.25F, 1.0F), new Vector4f(0.125F, -0.375F, 3.0F, 1.0F))) {
+            Vector4f left = new Vector4f(point).mul(classic);
+            Vector4f right = new Vector4f(point).mul(seam);
+            helper.assertTrue(left.distance(right) < 1.0e-6F, "with the compensation the seam's chain places " + point
+                    + " where the classic chain does: " + left + " vs " + right);
+            Vector4f drifted = new Vector4f(point).mul(seamUncompensated);
+            helper.assertTrue(Math.abs(drifted.x - left.x) < 1.0e-6F && Math.abs(drifted.z - left.z) < 1.0e-6F
+                            && Math.abs((drifted.y - left.y) - 0.009F) < 1.0e-6F,
+                    "without the compensation the seam's chain sits exactly 0.009 blocks above the classic's at " + point
+                            + " and nowhere else: " + drifted + " vs " + left);
+        }
+        Vector4f right = new Vector4f(2.0F, 0.0F, 0.0F, 1.0F).mul(bake);
+        Vector4f classicRight = new Vector4f(2.0F, 0.0F, 0.0F, 1.0F).mul(classic);
+        helper.assertTrue(Math.abs(right.x + 2.0F) < 1.0e-6F && Math.abs(classicRight.x + 2.0F) < 1.0e-6F,
+                "a point at ModelPart x = +2 bakes to x = -2, the side the classic's flip draws it on (found " + right.x
+                        + " and " + classicRight.x + ")");
+        helper.succeed();
     }
 
     /** The t2_005 pins on one hook species (shared by the third, fourth, fifth and sixth slices' rows). */
