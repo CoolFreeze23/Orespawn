@@ -9736,3 +9736,166 @@ NOT DONE (by design): the gametest suite not run (no gradle; the 1285 count is t
 options in the drafts); the artist_handoff folder (the orchestrator's); the profile phase (hitbox profiles) not touched.
 
 GATE: GATE: t1a green on the first run (drift 0, build 0, suite: all 1285 required tests passed; the g1 / s4 verify-only passes identical, the t2 write-proof G1 PARITY PASS: 88 models with the seventeen new entries, the reference clips deterministic across two gradle runs and VERIFIED with the Dungeon Beast's three clips changed as recorded, the folder fresh (116 folders, 1,369 files, every check PASS), the benchmark re-pinned for g1tool's move, the audit 0 errors / 24 acknowledged / 94 shipped geos); t1a2 green again after the refuter's restore of the four held Butterfly descriptors (the same numbers).
+
+## PHASE G — THE SECOND TIER-1 SLICE, T1b (2026-09-15): the last two Tier-1 rigs on their written hooks, hitbox profiles excluded
+
+RULING. Owner 2026-09-15, closing set, item 4 (addendum item 33 (4)): each slice in the standing form - the rigs on their written
+hooks, the geo shipped, the renderer registered behind the switch, the four legs and the reference leg where a pair exists, one
+refuter, the gate, records as the cost rules, the package rows regenerated; "a rig that fails a leg is held with a register line and
+rejoins at the remainder; one still failing there is reported, not forced". This slice: the last two Tier-1 rigs in the design's order
+(the Prince Teen, row 84; the Water Dragon, row 87) - after it every Tier-1 rig is landed or held but the Princess (the remainder) and
+the held King and Butterfly rig; the Queen native and untouched. Amendment 2 (owner 2026-09-13, second set, item 2): every rig lands ON
+ITS HOOK - no clip manifest, no transcription, no keyframeLayers(). Addendum items 10 and 14 (FIX_LOG "THE HOOKS (2026-09-14)"): the
+hooks exist and are reused; the slice adds the geo, the wiring, the pins, the manifest entry and the proofs, and moves the rig out of
+the hook state. THE PROFILE PHASE IS NOT TOUCHED: both rigs keep the classic single hitbox - no bone-synced hitbox profile (design
+section 6), no `data/orespawn/hitboxes` entry, no damage-bone declaration; the seeds' `locked_bones_provisional` / `locked_bones_note`
+stay as they are (reconciled at the profile phase, ruled 2026-09-14 item 8). Parity lanes frozen: a divergence gets a draft register
+line and stops.
+
+WHAT LANDED (two rigs, two registries, on their hooks; two geos, two empty animation files, two manifest entries, two pin candidates,
+two seeds with formulas, the sampler's clips per state, byte-identical to their pre-slice files):
+- THE HOOKS (`entity/client/<Name>GeoReplacement.java`, written by the hook lanes and reused - the descriptor's javadoc gains the
+  landing line, line-neutral (both carried sampler rows cite applyCustomAnimations lines in their text: the Prince Teen's stays at :67,
+  the Water Dragon's at :70, every line after them unchanged); each hook read statement by statement against its classic poseFrom and
+  diffed by hook_diff_t1b.py (the numeric-literal multisets of the hook body and its helpers against the classic body): both MATCH
+  exactly (191 / 191 and 64 / 64 literals); the animation leg's 0 rad over every sample, amplitude and state is the ruled proof; no
+  drift found, none fixed; no descriptor's static construction calls a renderer class - the two `public static final float` renderer
+  constants are inlined):
+  the_prince_teen (ThePrinceTeenGeoReplacement.applyCustomAnimations :67-430 with the moveXY / moveYZ / moveXZ helpers; ThePrinceTeenPose:
+  getActivity, getAttacking, getRenderInfo, isOrderedToSit, getHead1Ext / 2 / 3, getYRot, yRotO; wingspeed 0.65; the wings by ACTIVITY
+  and ATTACKING - cos(age x 1.3 ws) x PI x 0.2 x amount walking above a tenth at activity 0, else cos(age x 0.3 ws) x PI x 0.04;
+  flying cos(age x 1.4 ws) x PI x 0.4; attacking cos(age x 1.7 ws) x PI x 0.4 - on the four spars' roll (x1.25 on the second, around
+  -0.4 / -0.6 / -0.2), the second spar FOLLOWING the first 22 units along its roll (POSITION writes), the four membranes copying their
+  spars, the right wing mirrored; the legs by THRESHOLD ((double) limbSwingAmount > 0.1: cos(age x 0.55 ws) x PI x 0.25 x amount with
+  the lower leg a quarter turn ahead), ATTACKING (cos(age x ws) x PI x 0.25) and ACTIVITY (flying the legs tucked -0.5 / -1.25, the
+  ten claws curled -0.685), the lower leg FOLLOWING the upper by 14 units (+6 / +5) and the five claws FOLLOWING by 17; the tail's yaw
+  chain at tailspeed 0.26 / tailamp 0.08 (0.56 / 0.19 attacking, 0 amplitude under the SIT order) lagging pi/4 per ring and FOLLOWING
+  11 / 9 / 9 / 9 units, the three spikes riding the fifth ring 9 / 15 / 11; the FLIGHT YAW LATCH (activity 1: (yRotO() - getYRot()) x
+  -10 eased into RenderInfo.rf1 by a fiftieth, clamped +-50; 0 on the probe); the three-head LOOK split (two thirds of the yaw and the
+  pitch to the side head the yaw turns to, half of that to the centre and the other side) on each head's two head parts, fin and two
+  jaws, an eighth / quarter / half on the neck rings, the fins +0.5; the three jaws' chatter (attacking 0.25 + cos(age x 0.9 / 1.1 /
+  1.3 ws) x PI x 0.1, else 0.1 + cos(age x 0.25 / 0.3 / 0.35 ws) x PI x 0.02); the necks pitched -1/3 / -2/3 / -1 of the HEAD
+  EXTENSIONS in degrees (0 on the probe) and every ring and head group FOLLOWING 9 units along the ring's pitch and yaw; no
+  zero-thickness cube; shadow ThePrinceTeenRenderer.SHADOW 1.0 x 1.25, ThePrinceTeenRenderer.SCALE 1.25 unconditional - both public
+  already, the descriptor already reads them: no hook-lane note to act on); water_dragon (WaterDragonGeoReplacement
+  .applyCustomAnimations :70-143 with moveXZ; WaterDragonPose: isInSittingPose, getAttacking; wingspeed 0.5; the GAIT-scaled body wave
+  with no threshold - body3, body4, tail1 and the tail middle (the two tail fins riding it) yaw on cos(age x 1.3 ws - k pi/4) x PI x
+  0.4 x amount, each link FOLLOWING 7 / 5 / 3 units along (sin, cos) of the parent's yaw (body4 a unit to the left); the THRESHOLD
+  flippers ((double) limbSwingAmount > 0.1: cos(age x 1.3 ws) x PI x 0.2 x amount about +-0.58); the ears cos(age x 0.8 ws) x PI x 0.1
+  about +-0.62 plus the head yaw; the back fin (Z, 0.7 ws, 0.02 PI), the neck fin (Y, 0.6 ws, 0.1 PI) and the head fin's dead wave
+  (0.5 ws, 0.05 PI, overwritten by the head yaw) stilled by the SITTING check; the THREE-WAY attacking jaw (1: cos(age x 1.2 ws) x PI
+  x 0.25; 2: 0.45; else -0.25); the HEAD-LOOK toRadians(netHeadYaw) x 0.75 on the head with the nose / jaw / head fin / ears FOLLOWING
+  8 / 7 / 3 / sqrt 13 / sqrt 20 units (+-pi/4 for the ears) from the head's bind pivot; five zero-thickness fins (headfin 0 x 10 x 9,
+  leftear / rightear 0 x 5 x 5, neackfin 0 x 5 x 5, Bodyfin 0 x 10 x 9) so the classic face order (`cubeFaceOrderRequired`, TEST-007);
+  shadow WaterDragonRenderer.SHADOW 0.85 x 1.1, WaterDragonRenderer.SCALE 1.1 halved for a baby in the T2f Frog form - both public
+  already, the descriptor already reads them: no hook-lane note to act on).
+- THE HOOK-LANE NOTES: none to act on - no render type to re-base (both rigs' classic render type is entity_cutout_no_cull, the seam's
+  default; the render-state leg PASS on both: cutout / (255, 255, 255, 255) / light 0 on both sides), no constant to lift (the two
+  renderers' SHADOW / SCALE were public at HEAD and the descriptors read them), no whole-model render transform (neither classic
+  renderToBuffer rotates or translates). THE PINS' LESSON HELD: the Water Dragon's applyScale was already the T2f Frog form and the
+  Prince Teen's the one unconditional `poseStack.scale(<Renderer>.SCALE, ...)` - `reference_renderer_pins.py` PASS 120, DIVERGES 0 with
+  both candidates named.
+- THE SHIPPED GEOS: the converter's output byte for byte (`geo/entity/theprinceteen.geo.json` 71 bones, 138,144 bytes;
+  `geo/entity/waterdragon.geo.json` 24 bones, 51,020 bytes, with `orespawn:cube_face_order`; both with `orespawn:bone_draw_order`, no
+  mirrored cube; the tree 96 geos, 95 through the seam) and two empty animation files byte-identical to the cricket's. Checked byte for
+  byte against the t2 chain's converter output on the a run (COPY_GEOS=1: every shipped t2 geo equal, the two new ones unchanged).
+- THE WIRING: `PhaseGDevRenderers` gains two providers through `select` (thePrinceTeenRenderer, waterDragonRenderer), `OreSpawnClient`
+  two registrations; for a default install nothing changes.
+- THE PINS (`tools/reference_renderer_pins.json`): two `port_candidate` entries named (ThePrinceTeen, orig ClientProxyOreSpawn.java:503
+  `new RenderThePrinceTeen(new ModelThePrinceTeen(0.65f), 1.0f, 1.25f)`; WaterDragon, :436 `new RenderWaterDragon(new
+  ModelWaterDragon(0.5f), 0.85f, 1.1f)`); `reference_renderer_pins.py` PASS 120, PENDING 0, MOD 0, NOT_APPLICABLE 13, DIVERGES 0,
+  MANIFEST_DRIFT 0.
+- THE MANIFEST (`tools/t2_model_proofs.json` +2 entries, 90 models; hook_rig_note extended): `entity_states` on both (the Prince Teen
+  idle / attacking / flying (getActivity 1) / sitting (isOrderedToSit) through the states' getters object; the Water Dragon idle /
+  attacking (1) / mouth_open (the preset attacking 2, the cannon's pose) / sitting (isInSittingPose)); the amplitude matrix 0 / 0.25 /
+  0.5 / 1 on both (both hooks read limbSwingAmount); the head look 30 / 10 on both (the Water Dragon reads no pitch); `cube_face_order:
+  classic` on the Water Dragon; bind INCLUDED in every visual sample list (the T1a form under the pair-contested rule); `reference_source`
+  on both.
+- THE LEGS (measure.log / the t2 chain, the same numbers): the_prince_teen geometry 8.06e-7 blocks over 5,751 cube-samples (81
+  captures), surface UV 0 / normal 2.12e-7 over 138,024 vertices (0 zero-area), animation 0 rad (position 4e-7 units) over 17,253
+  channel samples at the four amplitudes in the four states, draw order 81 captures / 5,751 draws, reference 71 parts, visual changed 0
+  / MAE 0 / contested 5.04e-4 / pair-contested 1.53e-5; water_dragon geometry 3.41e-7 / 1,944 (81), surface 0 / 2.09e-7 / 40,176 (1,620
+  zero-area faces ignored), animation 0 / 0 over 5,832, draw order 81 / 1,944, reference 24 parts, visual 0 / 0 / 1.44e-2 / 0, face
+  order 11,664 faces over 81 captures. Render state entity_cutout_no_cull / white / light 0 on both sides of both (138,024 + 138,024
+  and 46,656 + 46,656 vertices observed).
+- THE AUDIT AND THE SAMPLER OUT OF THE HOOK STATE: two `HOOKS` entries removed from `tools/asset_audit.py` (10 -> 8: the Butterfly rig's
+  four, Ghost, LurkingTerror, Scorpion, TheKing remain); `ReferenceClipSampler` +2 REGISTRIES rows, -2 HOOK_DESCRIPTORS rows (10 -> 8;
+  the Water Dragon's row closed the call, the Vampire Butterfly's now does), the two HOOK_RULES rows carried verbatim into RULES keyed by
+  the manifest id (the same rule, the same source lines, true on the line-neutral descriptors), the javadoc's count sentence updated.
+  The sampler twice diff-clean (297 clips over 112 registries, 298 files); every clip of the two landed registries byte-identical to
+  its pre-slice file (10 of 10); the other 287 identical; the index re-installed (the 10 rows landed / model_id / manifest / geo / hook
+  / rig_source, spans and periods unchanged; hooks sampled from the reference manifest 10 -> 8); `--verify` VERIFIED 298 files. The
+  three chains headlessly twice diff-clean on the final classes (t2 validate a / b `G1 PARITY STAGING PASS: 90 models`, the shipped
+  geos equal 81 / differing 0 on the a run; s4 verify PASS 13 twice; g1 verify PASS 2 twice); `test_artist_package.py` 52 OK.
+- THE SAMPLER'S RULES AND SPANS (the carried rows; `tools/reference_clips/reference_clips.json`): the_prince_teen periodic 2 pi / (0.25
+  x 0.65) = 38.67 ticks (the resting centre-jaw chatter; the row as the hook lanes wrote it) - every state two_seconds_past_cap (span
+  40 ticks; the seam delta 77.7 deg / 22.57 units walk, 15.0 / 5.74 idle, 145.1 / 38.1 attack, 65.9 / 18.01 fly, 8.5 / 2.47 sit; 54
+  moving bones, 64 in fly (the claws curl), 46 in sit; 41 position bones); water_dragon periodic 2 pi / (0.5 x 0.5) = 25.13 ticks (the
+  head fin's own 0.5-ws wave as the hook lanes wrote it - a dead write, overwritten by the head yaw at :137 and never shown; the slowest
+  live rhythm is the neck fin 0.6 x 0.5 = 0.3 rad/tick, 20.94 ticks - the row carried unchanged as ruled, the manifest's period_note
+  and the seed say so) - every state two_seconds_past_cap (span 40; the seam delta 56.8 deg / 2.65 units walk, 35.2 / 0 idle, attack,
+  mouth_open and sit; 15 / 9 / 9 / 9 / 7 moving bones, 7 / 6 position bones).
+- THE PACKAGES (`tools/artist_specs/<registry>.json`): both seeds gain `formulas` (the port pose method and its real lines quoted,
+  declaration to closing brace - ModelThePrinceTeen.poseFrom :542-858, ModelWaterDragon.poseFrom :186-246 - and the 1.7.10 method that
+  holds the rotation code, `render` (func_78088_a) in both, func_78087_a a bare super call, `orig:` cited with the ClientProxyOreSpawn
+  wingspeed lines; cite_check_t1b.py identical before and after every port edit), the status ", landed on its hook by the second Tier-1
+  slice (T1b, 2026-09-15; hitbox profiles excluded - the classic single hitbox stays until the profile phase)" and the artist_scope
+  "in-game through the seam behind the dev switch since the second Tier-1 slice"; the dry run `package --out <scratch>/pkg
+  --reference-geo-dir build/reference/generated`: 116 folders (28 Tier-1 registries over 21 rigs - not yet in-game 6 registries over 3
+  rigs: the King, the Butterfly rig, the Princess - 75 Tier-2 over 70, 13 Tier-3 props; rig sources shipped 105 / reference-leg 11),
+  every folder `check` PASS, no EXTRAS_CAP.
+- THE GAMETESTS: `T2SeamTests.t2_013` (one new row, the required-test count 1285 -> 1286): each of the two descriptors constructs,
+  declares no keyframe layer, registers nothing, its shadow is the classic renderer's (ThePrinceTeenRenderer.SHADOW,
+  WaterDragonRenderer.SHADOW), the classic face order is required exactly where the shipped geo carries it (the Water Dragon), and the
+  hook poses a fresh bake of the shipped geo off its bind through `assertHookSpecies` (wing1 on the walking beat; body3 on the body
+  wave; `RestSubjectT1b` implementing the two pose interfaces at rest, `hookSpeciesT1b()`); `KeyframeLegTests.kf_007` +2 (102 -> 104,
+  "one hundred and four"). Not run (no gradle).
+
+HELD: none - both rigs of the slice PASS every leg.
+
+DIVERGENCES NOTICED, DRAFTED, NOT FIXED: ENT-S (draft, audit_the_prince_teen_membranes.txt) - the 1.7.10 ModelThePrinceTeen drew its
+eight wing membranes in a SECOND blended pass (orig :869-883: GL_BLEND SRC_ALPHA / ONE_MINUS_SRC_ALPHA, glColor4f(0.75, 0.75, 0.75,
+0.55), the same GL block as the King's original); the port's ModelThePrinceTeen.renderToBuffer (:861-934) draws all 71 parts in one
+cutout pass, the membranes last in the classic order, and ThePrinceTeenRenderer has no second pass (unlike TheKingRenderer, TEST-018) -
+a PORT divergence recorded nowhere in the register; the seam draws what the port's classic renderer draws, so the legs compare port
+against port and the rig lands; a fix (the King's two-pass form on the port renderer) would put the Prince Teen where the King is for
+the seam, so it goes with the King's remainder form - the owner's call. NOTED, NOT CHANGED: the Water Dragon's sampler row names a
+dead rhythm as its slowest (the head fin's 0.5-ws wave, overwritten by the head yaw); carried verbatim as ruled, the truth stated in
+the manifest's period_note and the seed's formula.
+
+IN-GAME: for a default install nothing changes (the classic renderers the default). Behind `-Dorespawn.dev.geckolibRenderers=<species>`
+the two registries draw the converted rigs posed by their classic code through the seam - the Prince Teen at 1.25 with its opaque
+membranes as the port draws them, the Water Dragon at 1.1 (0.55 as a baby) under the classic face order of its five fins; no artist
+clip plays until idle and walk are delivered; the classic single hitbox everywhere; the King, the Butterfly rig and the Princess stay
+on the classic renderers alone.
+
+THE REFUTER (one, per the cost rules; its report in the advisor's scratch `r21/t1b_ref/`): CONFIRMED both hooks as the
+classic code verbatim (statement by statement, the never-written pivots read through `classicPosition`, the twice-written
+head fin, the ternary's side assignment), the renderer constants inlined (javap: no reference to either renderer class in
+the descriptors), the geos byte-identical to its own chain, the face-order key on the Water Dragon's five flat cubes and
+none on the Prince Teen, the manifest entries with bind included as the retirement of TEST-008 (c) requires, every leg's
+number by its own chain, the sampler's 298 files identical, the gametest count by construction (1285 → 1286), the pins
+PASS 120, the hook state moved with both rules carried verbatim and their cited lines true, the membrane finding against
+the 1.7.10 source (the King's GL block at orig :869-883; the port drawing all 71 parts in one pass). MUST-FIX, text only,
+fixed by the orchestrator before the second regeneration: the Prince Teen seed's 1.7.10 pose span :535-881 (the last
+draw, the T1a seeds' convention; :856 was a draw), the Water Dragon's :198-276 with the draws at :253-276, the draft's GL
+constant 2977 named GL_NORMALIZE. Its notes: the seeds' "a unit to the left" for `x - 1` reads as the entity's right in
+both frames (artist-facing wording, left as the seed lanes wrote it); the Water Dragon's carried period names the head
+fin's dead wave, the truth in the manifest's period note.
+
+DEVIATIONS PRESENTED: (1) no rig held - both of the brief's two landed; (2) bind is INCLUDED in both entries' visual sample lists (the
+brief's item 3 wording of the TEST-008 (c) exclusion; the T1a landing and its refuter established the pair-contested rule's form - bind
+stays a sample - and this slice follows the landed form); (3) the descriptor javadocs were re-patched once: the T1a re-wrap tokenizer
+left "} ;" artefacts, the files were restored from HEAD (git show, read-only) and re-wrapped with the tokenizer fixed (the separator
+kept, widths 121 / 126), the pose entry's line and every line after it unchanged both times; (4) the asset audit's 4 errors are the
+untracked-file precedent (TEXTURE_REF_CASE on the two geos and two animation files until the orchestrator stages them), nothing else -
+no HOOK_STALE, no FLAT_CUBE, no DRAW_ORDER, no PROOF_DRIFT, no FACE_ORDER_INVALID row; (5) the Water Dragon's third state is a preset
+`attacking: 2` (the Kraken's ri1-preset form) rather than a getters entry - getAttacking is the Slice 4b preset field; (6) the
+Water Dragon's manifest period is the carried rule's 25.13 ticks though the rhythm it names is dead (the note says so); (7) the
+sampler's REGISTRIES / HOOK_DESCRIPTORS javadoc count sentence updated in place; (8) the port divergence above drafted, not fixed.
+
+NOT DONE (by design): the gametest suite not run (no gradle; the 1286 count is the row count); the t2 proof tree (the orchestrator's
+`--write-proof`, +2 entries); the reference folder's regeneration; the King's, the Butterfly rig's and the Princess's landings (held /
+the remainder's); the artist_handoff folder (the orchestrator's); the profile phase (hitbox profiles) not touched.
+
+GATE: GATE: t1b green on the first run (drift 0, build 0, suite: all 1286 required tests passed; the g1 / s4 verify-only passes identical, the t2 write-proof G1 PARITY PASS: 90 models with the two new entries, the reference clips deterministic and VERIFIED with only the index moved, the folder fresh (116 folders, 1,369 files, every check PASS), the benchmark re-pinned for g1tool's move, the audit 0 errors / 96 shipped geos); t1b2 green again after the refuter's two seed-span fixes (the same numbers).
