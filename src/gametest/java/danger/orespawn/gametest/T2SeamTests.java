@@ -1,9 +1,13 @@
 package danger.orespawn.gametest;
 
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import danger.orespawn.OreSpawnConfig;
 import danger.orespawn.OreSpawnMod;
+import danger.orespawn.entity.client.AlienBossGeoReplacement;
+import danger.orespawn.entity.client.AlienGeoReplacement;
+import danger.orespawn.entity.client.AlienRenderer;
 import danger.orespawn.entity.client.AlosaurusGeoReplacement;
 import danger.orespawn.entity.client.AntGeoReplacement;
 import danger.orespawn.entity.client.AntRenderer;
@@ -43,6 +47,8 @@ import danger.orespawn.entity.client.DrawOrder;
 import danger.orespawn.entity.client.DungeonBeastGeoReplacement;
 import danger.orespawn.entity.client.EasterBunnyGeoReplacement;
 import danger.orespawn.entity.client.EasterBunnyRenderer;
+import danger.orespawn.entity.client.EmperorScorpionGeoReplacement;
+import danger.orespawn.entity.client.EmperorScorpionRenderer;
 import danger.orespawn.entity.client.EnderKnightGeoReplacement;
 import danger.orespawn.entity.client.EnderKnightRenderer;
 import danger.orespawn.entity.client.EnderReaperGeoReplacement;
@@ -141,6 +147,7 @@ import danger.orespawn.entity.client.WormSmallGeoReplacement;
 import danger.orespawn.entity.client.WormSmallRenderer;
 import danger.orespawn.entity.client.animation.KeyframeLayer;
 import danger.orespawn.entity.client.animation.PhaseLockedKeyframeController;
+import danger.orespawn.entity.pose.AlienPose;
 import danger.orespawn.entity.pose.AlosaurusPose;
 import danger.orespawn.entity.pose.BeePose;
 import danger.orespawn.entity.pose.CamarasaurusPose;
@@ -148,6 +155,7 @@ import danger.orespawn.entity.pose.CaterKillerPose;
 import danger.orespawn.entity.pose.CaveFisherPose;
 import danger.orespawn.entity.pose.ChipmunkPose;
 import danger.orespawn.entity.pose.CrabPose;
+import danger.orespawn.entity.pose.EmperorScorpionPose;
 import danger.orespawn.entity.pose.EnderKnightPose;
 import danger.orespawn.entity.pose.EnderReaperPose;
 import danger.orespawn.entity.pose.FrogPose;
@@ -831,6 +839,83 @@ public class T2SeamTests {
             for (HookSpecies species : all) {
                 assertHookSpecies(helper, species);
             }
+        } finally {
+            flags.restore();
+        }
+        helper.succeed();
+    }
+
+    // ------------------------------------------------------------------ row 11: the hook species of the FK slice (the hierarchies)
+
+    /**
+     * The declared rest state of the FK slice's two hooks (both read their entity): the attacking flag 0, a fresh RenderInfo
+     * latch and the entity RNG seeded 0 (the probe's rest subject). One instance per species (both hooks write the latch's
+     * scratch when their selector rhythm crosses zero).
+     */
+    private static final class RestSubjectFk implements AlienPose, EmperorScorpionPose {
+        private final RenderInfo renderInfo = new RenderInfo();
+        private final RandomSource random = RandomSource.create(0L);
+
+        @Override
+        public int getAttacking() {
+            return 0;
+        }
+
+        @Override
+        public RenderInfo getRenderInfo() {
+            return this.renderInfo;
+        }
+
+        @Override
+        public RandomSource getRandom() {
+            return this.random;
+        }
+    }
+
+    /** The FK slice's shipped geos parent every declared chain child (the converter's hierarchy form): the link count per geo stem. */
+    private static final Map<String, Integer> FK_LINKS = Map.of("emperorscorpion", 52, "alien", 26);
+
+    private static List<HookSpecies> hookSpeciesFk() {
+        return List.of(
+                // the Emperor Scorpion: Leg1Seg2 (a chain child of Leg1Seg1) yaws on the four-phase gait at limbSwingAmount 1
+                new HookSpecies("emperor_scorpion", new EmperorScorpionGeoReplacement(), "emperorscorpion", EmperorScorpionRenderer.SHADOW, false, new RestSubjectFk(), "Leg1Seg2"),
+                // the Alien rig's two registries on one geo: tail2 (a chain child of tail1) yaws on the slow tail sway (ri2 0 at rest)
+                new HookSpecies("alien", new AlienGeoReplacement(), "alien", AlienRenderer.SHADOW, false, new RestSubjectFk(), "tail2"),
+                new HookSpecies("alien_boss", new AlienBossGeoReplacement(), "alien", AlienRenderer.SHADOW, false, new RestSubjectFk(), "tail2"));
+    }
+
+    /**
+     * THE FK SLICE (2026-09-15; owner's closing set item 4 under the hierarchy rules of item 35 (5)): the t2_005 pins on the
+     * three hook descriptors (registry-free construction, no keyframe layer, the empty clip file, the self-gate registering
+     * nothing, the classic shadow, no face-order key, the shipped geo baked through GeckoLib's loader and sorted into the
+     * G2 key by DrawOrder.apply - which accepts a key only when it is a pre-order of the bake's tree: a hierarchy rig draws
+     * parent-first - and the classic hook moving a bone off its bind at age 7) and the hierarchy itself: the shipped geo
+     * parents exactly the declared chain children (the Emperor Scorpion's 52 links, the Alien's 26; one geo for the Alien's
+     * two registries), and the moving bone is a CHAIN CHILD whose local rotation FlatRig resolved from the classic flat pose.
+     */
+    @GameTest(template = "empty", batch = BATCH)
+    public static void t2_011_fk_slice_hook_species_are_parent_child_hierarchies_posed_through_their_hooks(GameTestHelper helper) {
+        Flags flags = Flags.read();
+        try {
+            OreSpawnConfig.MODERN_ENABLED.set(true);
+            OreSpawnConfig.MODERN_ARTIST_ANIMATIONS.set(true);
+            OreSpawnConfig.MODERN_CLASSIC_ANIMATION_SPECIES.set(List.of());
+            List<HookSpecies> all = hookSpeciesFk();
+            helper.assertTrue(all.size() == 3, "the three hook descriptors landed by the FK slice (the Emperor Scorpion, the Alien, the Alien Boss)");
+            for (HookSpecies species : all) {
+                assertHookSpecies(helper, species);
+                JsonObject geo = JsonParser.parseString(resource(GEO + species.file() + ".geo.json")).getAsJsonObject();
+                int parented = 0;
+                for (JsonElement bone : geo.getAsJsonArray("minecraft:geometry").get(0).getAsJsonObject().getAsJsonArray("bones")) {
+                    if (bone.getAsJsonObject().has("parent")) {
+                        parented++;
+                    }
+                }
+                helper.assertTrue(parented == FK_LINKS.get(species.file()),
+                        species.name() + ": the shipped geo parents " + FK_LINKS.get(species.file()) + " chain children (found " + parented + ")");
+            }
+            helper.assertTrue(new AlienGeoReplacement().descriptor().modelResource().equals(new AlienBossGeoReplacement().descriptor().modelResource()),
+                    "the Alien Boss draws the Alien's geo (one hierarchy for the two registries)");
         } finally {
             flags.restore();
         }

@@ -10,19 +10,19 @@
     "reference_walk": {
       "equal_within_tolerance": true,
       "differences": [],
-      "keys": 605,
+      "keys": 572,
       "reference_only": true
     },
     "reference_idle": {
       "equal_within_tolerance": true,
       "differences": [],
-      "keys": 381,
+      "keys": 348,
       "reference_only": true
     },
     "reference_attack": {
       "equal_within_tolerance": true,
       "differences": [],
-      "keys": 1520,
+      "keys": 958,
       "reference_only": true
     }
   },

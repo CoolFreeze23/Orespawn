@@ -1,0 +1,1098 @@
+{
+  "schema_version": 1,
+  "model_id": "model_emperorscorpion",
+  "tier": 1,
+  "proof_scope": "production_proof_model",
+  "ground_truth": "executed compiled LayerDefinition and baked ModelPart",
+  "source_class": "danger.orespawn.entity.client.EmperorScorpionModel",
+  "source_class_sha256": "551728c323703d4747f93b2888bb378a0f25ca676fb56d992bbe110261e511ca",
+  "compiled_dump_sha256": "11f1b2c1cd437c2d77b181b0cf2bf9d7ac5b941ad4f0d2941d9e8a2d994552ef",
+  "geometry_sha256": "bc9ea63083033a2d7363ff8bc59265bc952b9e7101de6ce3e3a52b3c3191bc27",
+  "animation_sha256": "7882082857fdb11e02f158ebc3a6d3f970e2ac60d54813f0e903ee97b2293749",
+  "animation_contract_sha256": "5fb3ac86aac7ce78ee2be8fa812c828d0fce998b96178a7c019fe0fb47610bd8",
+  "bone_count": 78,
+  "cube_count": 78,
+  "mirrored_cube_count": 0,
+  "mirrored_uv_strategy": "source flag retained as modelpart_mirror; semantics baked into explicit faces; incompatible GeckoLib native mirror disabled",
+  "exact_bone_names": [
+    "Head",
+    "LeftArmSeg1",
+    "LeftArmSeg2",
+    "LeftArmSeg3",
+    "LeftArmSeg4",
+    "LeftManPart2",
+    "LeftMandible",
+    "LeftPincer",
+    "LeftShoulder",
+    "Lefteye",
+    "Leg1Seg1",
+    "Leg1Seg2",
+    "Leg1Seg3",
+    "Leg1Seg4",
+    "Leg1Seg5",
+    "Leg2Seg1",
+    "Leg2Seg2",
+    "Leg2Seg3",
+    "Leg2Seg4",
+    "Leg2Seg5",
+    "Leg3Seg1",
+    "Leg3Seg2",
+    "Leg3Seg3",
+    "Leg3Seg4",
+    "Leg3Seg5",
+    "Leg4Seg1",
+    "Leg4Seg2",
+    "Leg4Seg3",
+    "Leg4Seg4",
+    "Leg4Seg5",
+    "Leg5Seg1",
+    "Leg5Seg2",
+    "Leg5Seg3",
+    "Leg5Seg4",
+    "Leg5Seg5",
+    "Leg6Seg1",
+    "Leg6Seg2",
+    "Leg6Seg3",
+    "Leg6Seg4",
+    "Leg6Seg5",
+    "Leg7Seg1",
+    "Leg7Seg2",
+    "Leg7Seg3",
+    "Leg7Seg4",
+    "Leg7Seg5",
+    "Leg8Seg1",
+    "Leg8Seg2",
+    "Leg8Seg3",
+    "Leg8Seg4",
+    "Leg8Seg5",
+    "RightArmSeg1",
+    "RightArmSeg2",
+    "RightArmSeg3",
+    "RightArmSeg4",
+    "RightManPart2",
+    "RightMandible",
+    "RightPincer",
+    "RightShoulder",
+    "Righteye",
+    "Seg1",
+    "Seg2",
+    "Seg3",
+    "Seg4",
+    "Seg5",
+    "Seg6",
+    "Seg7",
+    "Seg8",
+    "Stinger1",
+    "Stinger2",
+    "Stinger3",
+    "Tailseg1",
+    "Tailseg2",
+    "Tailseg3",
+    "Tailseg4",
+    "Tailseg5",
+    "Tailseg6",
+    "Tailseg7",
+    "Tailseg8"
+  ],
+  "bone_draw_order": [
+    "Head",
+    "Seg1",
+    "Seg2",
+    "Seg3",
+    "Seg4",
+    "Seg5",
+    "Seg6",
+    "Seg7",
+    "Seg8",
+    "Tailseg1",
+    "Tailseg2",
+    "Tailseg3",
+    "Tailseg4",
+    "Tailseg5",
+    "Tailseg6",
+    "Tailseg7",
+    "Tailseg8",
+    "Stinger1",
+    "Stinger2",
+    "Stinger3",
+    "LeftShoulder",
+    "LeftArmSeg1",
+    "LeftArmSeg2",
+    "LeftArmSeg3",
+    "LeftArmSeg4",
+    "LeftPincer",
+    "RightShoulder",
+    "RightArmSeg1",
+    "RightArmSeg2",
+    "RightArmSeg3",
+    "RightArmSeg4",
+    "RightPincer",
+    "Lefteye",
+    "Righteye",
+    "RightMandible",
+    "LeftMandible",
+    "RightManPart2",
+    "LeftManPart2",
+    "Leg1Seg1",
+    "Leg1Seg2",
+    "Leg1Seg3",
+    "Leg1Seg4",
+    "Leg1Seg5",
+    "Leg2Seg1",
+    "Leg2Seg2",
+    "Leg2Seg3",
+    "Leg2Seg4",
+    "Leg2Seg5",
+    "Leg3Seg1",
+    "Leg3Seg2",
+    "Leg3Seg3",
+    "Leg3Seg4",
+    "Leg3Seg5",
+    "Leg4Seg1",
+    "Leg4Seg2",
+    "Leg4Seg3",
+    "Leg4Seg4",
+    "Leg4Seg5",
+    "Leg5Seg1",
+    "Leg5Seg2",
+    "Leg5Seg3",
+    "Leg5Seg4",
+    "Leg5Seg5",
+    "Leg6Seg1",
+    "Leg6Seg2",
+    "Leg6Seg3",
+    "Leg6Seg4",
+    "Leg6Seg5",
+    "Leg7Seg1",
+    "Leg7Seg2",
+    "Leg7Seg3",
+    "Leg7Seg4",
+    "Leg7Seg5",
+    "Leg8Seg1",
+    "Leg8Seg2",
+    "Leg8Seg3",
+    "Leg8Seg4",
+    "Leg8Seg5"
+  ],
+  "draw_order_evidence": {
+    "source": "classic EntityModel.renderToBuffer on a second bake posed identically; every ModelPart.render is one pose-stack push, attributed to its part by ModelPart.skipDraw elimination (one run per cube-bearing part with every other part's skipDraw set); a part drawn n > 1 times is named <part>__i<k> by draw ordinal",
+    "captures": [
+      "bind",
+      "s_idle_a0_t0",
+      "s_idle_a0_t_quarter",
+      "s_idle_a0_t_half",
+      "s_idle_a0_t_three_quarter",
+      "s_idle_a0_t_end",
+      "s_idle_a0_25_t0",
+      "s_idle_a0_25_t_quarter",
+      "s_idle_a0_25_t_half",
+      "s_idle_a0_25_t_three_quarter",
+      "s_idle_a0_25_t_end",
+      "s_idle_a0_5_t0",
+      "s_idle_a0_5_t_quarter",
+      "s_idle_a0_5_t_half",
+      "s_idle_a0_5_t_three_quarter",
+      "s_idle_a0_5_t_end",
+      "s_idle_a1_t0",
+      "s_idle_a1_t_quarter",
+      "s_idle_a1_t_half",
+      "s_idle_a1_t_three_quarter",
+      "s_idle_a1_t_end",
+      "s_claws_swinging_a0_t0",
+      "s_claws_swinging_a0_t_quarter",
+      "s_claws_swinging_a0_t_half",
+      "s_claws_swinging_a0_t_three_quarter",
+      "s_claws_swinging_a0_t_end",
+      "s_claws_swinging_a0_25_t0",
+      "s_claws_swinging_a0_25_t_quarter",
+      "s_claws_swinging_a0_25_t_half",
+      "s_claws_swinging_a0_25_t_three_quarter",
+      "s_claws_swinging_a0_25_t_end",
+      "s_claws_swinging_a0_5_t0",
+      "s_claws_swinging_a0_5_t_quarter",
+      "s_claws_swinging_a0_5_t_half",
+      "s_claws_swinging_a0_5_t_three_quarter",
+      "s_claws_swinging_a0_5_t_end",
+      "s_claws_swinging_a1_t0",
+      "s_claws_swinging_a1_t_quarter",
+      "s_claws_swinging_a1_t_half",
+      "s_claws_swinging_a1_t_three_quarter",
+      "s_claws_swinging_a1_t_end",
+      "s_attacking_a0_t0",
+      "s_attacking_a0_t_quarter",
+      "s_attacking_a0_t_half",
+      "s_attacking_a0_t_three_quarter",
+      "s_attacking_a0_t_end",
+      "s_attacking_a0_25_t0",
+      "s_attacking_a0_25_t_quarter",
+      "s_attacking_a0_25_t_half",
+      "s_attacking_a0_25_t_three_quarter",
+      "s_attacking_a0_25_t_end",
+      "s_attacking_a0_5_t0",
+      "s_attacking_a0_5_t_quarter",
+      "s_attacking_a0_5_t_half",
+      "s_attacking_a0_5_t_three_quarter",
+      "s_attacking_a0_5_t_end",
+      "s_attacking_a1_t0",
+      "s_attacking_a1_t_quarter",
+      "s_attacking_a1_t_half",
+      "s_attacking_a1_t_three_quarter",
+      "s_attacking_a1_t_end"
+    ],
+    "cube_bearing_units": 78,
+    "observed_units": 78,
+    "unobserved_units": [],
+    "ordered_pairs": 3003,
+    "tie_break": "converter emission order for pairs never drawn together in any capture",
+    "lifting": "pre-order over the geo bone tree, siblings by their subtree's first classic draw",
+    "hierarchy_preorder": {
+      "rule": "a hierarchy rig draws parent-first (owner 2026-09-15, closing set continued second, item 35 (5)): the key is the tree's pre-order with siblings by their subtree's first classic draw; the classic renderToBuffer order's deviation from it is recorded here, reported by the draw-order leg and judged by the visual leg",
+      "classic_order": [
+        "Head",
+        "Seg1",
+        "Seg2",
+        "Seg3",
+        "Seg4",
+        "Seg5",
+        "Seg6",
+        "Seg7",
+        "Seg8",
+        "Tailseg1",
+        "Tailseg2",
+        "Tailseg3",
+        "Tailseg4",
+        "Tailseg5",
+        "Tailseg6",
+        "Tailseg7",
+        "Tailseg8",
+        "Stinger1",
+        "Stinger2",
+        "Stinger3",
+        "LeftShoulder",
+        "LeftArmSeg1",
+        "LeftArmSeg2",
+        "LeftArmSeg3",
+        "LeftArmSeg4",
+        "RightShoulder",
+        "RightArmSeg1",
+        "RightArmSeg2",
+        "RightArmSeg3",
+        "RightArmSeg4",
+        "RightPincer",
+        "LeftPincer",
+        "Lefteye",
+        "Righteye",
+        "RightMandible",
+        "LeftMandible",
+        "RightManPart2",
+        "LeftManPart2",
+        "Leg1Seg1",
+        "Leg1Seg2",
+        "Leg1Seg3",
+        "Leg1Seg4",
+        "Leg1Seg5",
+        "Leg2Seg1",
+        "Leg2Seg2",
+        "Leg2Seg3",
+        "Leg2Seg4",
+        "Leg2Seg5",
+        "Leg3Seg1",
+        "Leg3Seg2",
+        "Leg3Seg3",
+        "Leg3Seg4",
+        "Leg3Seg5",
+        "Leg4Seg1",
+        "Leg4Seg2",
+        "Leg4Seg3",
+        "Leg4Seg4",
+        "Leg4Seg5",
+        "Leg5Seg1",
+        "Leg5Seg2",
+        "Leg5Seg3",
+        "Leg5Seg4",
+        "Leg5Seg5",
+        "Leg6Seg1",
+        "Leg6Seg2",
+        "Leg6Seg3",
+        "Leg6Seg4",
+        "Leg6Seg5",
+        "Leg7Seg1",
+        "Leg7Seg2",
+        "Leg7Seg3",
+        "Leg7Seg4",
+        "Leg7Seg5",
+        "Leg8Seg1",
+        "Leg8Seg2",
+        "Leg8Seg3",
+        "Leg8Seg4",
+        "Leg8Seg5"
+      ],
+      "preorder": [
+        "Head",
+        "Seg1",
+        "Seg2",
+        "Seg3",
+        "Seg4",
+        "Seg5",
+        "Seg6",
+        "Seg7",
+        "Seg8",
+        "Tailseg1",
+        "Tailseg2",
+        "Tailseg3",
+        "Tailseg4",
+        "Tailseg5",
+        "Tailseg6",
+        "Tailseg7",
+        "Tailseg8",
+        "Stinger1",
+        "Stinger2",
+        "Stinger3",
+        "LeftShoulder",
+        "LeftArmSeg1",
+        "LeftArmSeg2",
+        "LeftArmSeg3",
+        "LeftArmSeg4",
+        "LeftPincer",
+        "RightShoulder",
+        "RightArmSeg1",
+        "RightArmSeg2",
+        "RightArmSeg3",
+        "RightArmSeg4",
+        "RightPincer",
+        "Lefteye",
+        "Righteye",
+        "RightMandible",
+        "LeftMandible",
+        "RightManPart2",
+        "LeftManPart2",
+        "Leg1Seg1",
+        "Leg1Seg2",
+        "Leg1Seg3",
+        "Leg1Seg4",
+        "Leg1Seg5",
+        "Leg2Seg1",
+        "Leg2Seg2",
+        "Leg2Seg3",
+        "Leg2Seg4",
+        "Leg2Seg5",
+        "Leg3Seg1",
+        "Leg3Seg2",
+        "Leg3Seg3",
+        "Leg3Seg4",
+        "Leg3Seg5",
+        "Leg4Seg1",
+        "Leg4Seg2",
+        "Leg4Seg3",
+        "Leg4Seg4",
+        "Leg4Seg5",
+        "Leg5Seg1",
+        "Leg5Seg2",
+        "Leg5Seg3",
+        "Leg5Seg4",
+        "Leg5Seg5",
+        "Leg6Seg1",
+        "Leg6Seg2",
+        "Leg6Seg3",
+        "Leg6Seg4",
+        "Leg6Seg5",
+        "Leg7Seg1",
+        "Leg7Seg2",
+        "Leg7Seg3",
+        "Leg7Seg4",
+        "Leg7Seg5",
+        "Leg8Seg1",
+        "Leg8Seg2",
+        "Leg8Seg3",
+        "Leg8Seg4",
+        "Leg8Seg5"
+      ],
+      "moved_units": [
+        "RightShoulder",
+        "RightArmSeg1",
+        "RightArmSeg2",
+        "RightArmSeg3",
+        "RightArmSeg4",
+        "RightPincer",
+        "LeftPincer"
+      ],
+      "findings": [
+        "FINDING model_emperorscorpion: the draws of LeftShoulder's subtree are interleaved with another bone's; the bone tree cannot express that order",
+        "FINDING model_emperorscorpion: the draws of LeftArmSeg1's subtree are interleaved with another bone's; the bone tree cannot express that order",
+        "FINDING model_emperorscorpion: the draws of LeftArmSeg2's subtree are interleaved with another bone's; the bone tree cannot express that order",
+        "model_emperorscorpion: pre-order lifting changed the merged draw order"
+      ]
+    }
+  },
+  "hierarchy": {
+    "declared": {
+      "Tailseg2": "Tailseg1",
+      "Tailseg3": "Tailseg2",
+      "Tailseg4": "Tailseg3",
+      "Tailseg5": "Tailseg4",
+      "Tailseg6": "Tailseg5",
+      "Tailseg7": "Tailseg6",
+      "Tailseg8": "Tailseg7",
+      "Stinger1": "Tailseg7",
+      "Stinger2": "Stinger1",
+      "Stinger3": "Stinger2",
+      "LeftArmSeg1": "LeftShoulder",
+      "LeftArmSeg2": "LeftArmSeg1",
+      "LeftArmSeg3": "LeftArmSeg2",
+      "LeftArmSeg4": "LeftArmSeg2",
+      "LeftPincer": "LeftArmSeg2",
+      "RightArmSeg1": "RightShoulder",
+      "RightArmSeg2": "RightArmSeg1",
+      "RightArmSeg3": "RightArmSeg2",
+      "RightArmSeg4": "RightArmSeg2",
+      "RightPincer": "RightArmSeg2",
+      "Leg1Seg2": "Leg1Seg1",
+      "Leg1Seg3": "Leg1Seg2",
+      "Leg1Seg4": "Leg1Seg3",
+      "Leg1Seg5": "Leg1Seg4",
+      "Leg2Seg2": "Leg2Seg1",
+      "Leg2Seg3": "Leg2Seg2",
+      "Leg2Seg4": "Leg2Seg3",
+      "Leg2Seg5": "Leg2Seg4",
+      "Leg3Seg2": "Leg3Seg1",
+      "Leg3Seg3": "Leg3Seg2",
+      "Leg3Seg4": "Leg3Seg3",
+      "Leg3Seg5": "Leg3Seg4",
+      "Leg4Seg2": "Leg4Seg1",
+      "Leg4Seg3": "Leg4Seg2",
+      "Leg4Seg4": "Leg4Seg3",
+      "Leg4Seg5": "Leg4Seg4",
+      "Leg5Seg2": "Leg5Seg1",
+      "Leg5Seg3": "Leg5Seg2",
+      "Leg5Seg4": "Leg5Seg3",
+      "Leg5Seg5": "Leg5Seg4",
+      "Leg6Seg2": "Leg6Seg1",
+      "Leg6Seg3": "Leg6Seg2",
+      "Leg6Seg4": "Leg6Seg3",
+      "Leg6Seg5": "Leg6Seg4",
+      "Leg7Seg2": "Leg7Seg1",
+      "Leg7Seg3": "Leg7Seg2",
+      "Leg7Seg4": "Leg7Seg3",
+      "Leg7Seg5": "Leg7Seg4",
+      "Leg8Seg2": "Leg8Seg1",
+      "Leg8Seg3": "Leg8Seg2",
+      "Leg8Seg4": "Leg8Seg3",
+      "Leg8Seg5": "Leg8Seg4"
+    },
+    "links": 52,
+    "local_bind_rotations_radians": {
+      "Tailseg2": [
+        0.4833222,
+        0,
+        0
+      ],
+      "Tailseg3": [
+        0.632036,
+        0,
+        0
+      ],
+      "Tailseg4": [
+        0.557679,
+        0,
+        0
+      ],
+      "Tailseg5": [
+        0.632037,
+        0,
+        0
+      ],
+      "Tailseg6": [
+        0.78075030718,
+        0,
+        0
+      ],
+      "Tailseg7": [
+        2.3794313,
+        0,
+        0
+      ],
+      "Tailseg8": [
+        0,
+        0,
+        0
+      ],
+      "Stinger1": [
+        0.4461434,
+        0,
+        0
+      ],
+      "Stinger2": [
+        -0.483322,
+        0,
+        0
+      ],
+      "Stinger3": [
+        -0.5948578,
+        0,
+        0
+      ],
+      "LeftArmSeg1": [
+        0,
+        -1.1897159,
+        0
+      ],
+      "LeftArmSeg2": [
+        0,
+        1.3012518,
+        0
+      ],
+      "LeftArmSeg3": [
+        0,
+        1.1153583,
+        0
+      ],
+      "LeftArmSeg4": [
+        3.14159265359,
+        0.91087645359,
+        3.14159265359
+      ],
+      "LeftPincer": [
+        0,
+        0.8179407,
+        0
+      ],
+      "RightArmSeg1": [
+        0,
+        1.1897214,
+        0
+      ],
+      "RightArmSeg2": [
+        0,
+        -1.3012479,
+        0
+      ],
+      "RightArmSeg3": [
+        0,
+        -1.1153701,
+        0
+      ],
+      "RightArmSeg4": [
+        3.14159265359,
+        -0.91086955359,
+        3.14159265359
+      ],
+      "RightPincer": [
+        0,
+        -0.8179412,
+        0
+      ],
+      "Leg1Seg2": [
+        0,
+        0,
+        -0.9294576
+      ],
+      "Leg1Seg3": [
+        0,
+        0,
+        1.5614937
+      ],
+      "Leg1Seg4": [
+        0,
+        0,
+        -0.6320361
+      ],
+      "Leg1Seg5": [
+        0,
+        0,
+        0.669215
+      ],
+      "Leg2Seg2": [
+        0,
+        0,
+        -0.9294576
+      ],
+      "Leg2Seg3": [
+        0,
+        0,
+        1.5614937
+      ],
+      "Leg2Seg4": [
+        0,
+        0,
+        -0.6320361
+      ],
+      "Leg2Seg5": [
+        0,
+        0,
+        0.669215
+      ],
+      "Leg3Seg2": [
+        0,
+        0,
+        -0.9294576
+      ],
+      "Leg3Seg3": [
+        0,
+        0,
+        1.5614937
+      ],
+      "Leg3Seg4": [
+        0,
+        0,
+        -0.6320361
+      ],
+      "Leg3Seg5": [
+        0,
+        0,
+        0.669215
+      ],
+      "Leg4Seg2": [
+        0,
+        0,
+        -0.9294576
+      ],
+      "Leg4Seg3": [
+        0,
+        0,
+        1.5614937
+      ],
+      "Leg4Seg4": [
+        0,
+        0,
+        -0.6320361
+      ],
+      "Leg4Seg5": [
+        0,
+        0,
+        0.669215
+      ],
+      "Leg5Seg2": [
+        0,
+        0,
+        0.9294653
+      ],
+      "Leg5Seg3": [
+        0,
+        0,
+        -1.5615017
+      ],
+      "Leg5Seg4": [
+        0,
+        0,
+        0.6320364
+      ],
+      "Leg5Seg5": [
+        0,
+        0,
+        2.240008
+      ],
+      "Leg6Seg2": [
+        0,
+        0,
+        0.9294576
+      ],
+      "Leg6Seg3": [
+        0,
+        0,
+        -1.5614937
+      ],
+      "Leg6Seg4": [
+        0,
+        0,
+        0.6320361
+      ],
+      "Leg6Seg5": [
+        0,
+        0,
+        2.240008
+      ],
+      "Leg7Seg2": [
+        0,
+        0,
+        0.9294576
+      ],
+      "Leg7Seg3": [
+        0,
+        0,
+        -1.5614937
+      ],
+      "Leg7Seg4": [
+        0,
+        0,
+        0.6320361
+      ],
+      "Leg7Seg5": [
+        0,
+        0,
+        2.240008
+      ],
+      "Leg8Seg2": [
+        0,
+        0,
+        0.9294576
+      ],
+      "Leg8Seg3": [
+        0,
+        0,
+        -1.5614937
+      ],
+      "Leg8Seg4": [
+        0,
+        0,
+        0.6320361
+      ],
+      "Leg8Seg5": [
+        0,
+        0,
+        2.240008
+      ]
+    },
+    "derived_pivots_classic": {
+      "Tailseg2": [
+        0,
+        14.438052318376,
+        27.478770322026
+      ],
+      "Tailseg3": [
+        0,
+        15.060082996505,
+        36.892222283738
+      ],
+      "Tailseg4": [
+        0,
+        15.320502167163,
+        45.943862016712
+      ],
+      "Tailseg5": [
+        0,
+        15.214225310223,
+        55.162793908731
+      ],
+      "Tailseg6": [
+        0,
+        15.97321280773,
+        64.619217015732
+      ],
+      "Tailseg7": [
+        0,
+        15.7891707026,
+        74.051402791232
+      ],
+      "Tailseg8": [
+        0,
+        15.7891707026,
+        74.051402791232
+      ],
+      "Stinger1": [
+        0,
+        15.527353193312,
+        84.246080402213
+      ],
+      "Stinger2": [
+        0,
+        15.592807570634,
+        86.794749804958
+      ],
+      "Stinger3": [
+        0,
+        15.432664292814,
+        89.339225022084
+      ],
+      "LeftArmSeg1": [
+        7.459127112473,
+        13,
+        -25.576199420417
+      ],
+      "LeftArmSeg2": [
+        5.130339147812,
+        13,
+        -34.496779368809
+      ],
+      "LeftArmSeg3": [
+        5.04475358336,
+        13,
+        -49.362601751414
+      ],
+      "LeftArmSeg4": [
+        5.04475358336,
+        13,
+        -49.362601751414
+      ],
+      "LeftPincer": [
+        -3.787908347724,
+        13,
+        -41.239543016481
+      ],
+      "RightArmSeg1": [
+        -7.459132476772,
+        13,
+        -25.576198731722
+      ],
+      "RightArmSeg2": [
+        -5.130308829809,
+        13,
+        -34.496769364891
+      ],
+      "RightArmSeg3": [
+        -5.044605825364,
+        13,
+        -49.362591070906
+      ],
+      "RightArmSeg4": [
+        -5.044605825364,
+        13,
+        -49.362591070906
+      ],
+      "RightPincer": [
+        3.787991933281,
+        13,
+        -41.239462558197
+      ],
+      "Leg1Seg2": [
+        12,
+        13,
+        -10
+      ],
+      "Leg1Seg3": [
+        23.60256773619,
+        11.82508641717,
+        -10
+      ],
+      "Leg1Seg4": [
+        35.374276792474,
+        14.360212823131,
+        -10
+      ],
+      "Leg1Seg5": [
+        36.374276792474,
+        21.360212823131,
+        -10
+      ],
+      "Leg2Seg2": [
+        12,
+        13,
+        -4
+      ],
+      "Leg2Seg3": [
+        23.60256773619,
+        11.82508641717,
+        -4
+      ],
+      "Leg2Seg4": [
+        35.374276792474,
+        14.360212823131,
+        -4
+      ],
+      "Leg2Seg5": [
+        36.374276792474,
+        21.360212823131,
+        -4
+      ],
+      "Leg3Seg2": [
+        12,
+        13,
+        2
+      ],
+      "Leg3Seg3": [
+        23.60256773619,
+        11.82508641717,
+        2
+      ],
+      "Leg3Seg4": [
+        35.374276792474,
+        14.360212823131,
+        2
+      ],
+      "Leg3Seg5": [
+        36.374276792474,
+        21.360212823131,
+        2
+      ],
+      "Leg4Seg2": [
+        12,
+        13,
+        8
+      ],
+      "Leg4Seg3": [
+        23.60256773619,
+        11.82508641717,
+        8
+      ],
+      "Leg4Seg4": [
+        35.374276792474,
+        14.360212823131,
+        8
+      ],
+      "Leg4Seg5": [
+        36.374276792474,
+        21.360212823131,
+        8
+      ],
+      "Leg5Seg2": [
+        -12,
+        14,
+        -10
+      ],
+      "Leg5Seg3": [
+        -23.602576782681,
+        12.825175756976,
+        -10
+      ],
+      "Leg5Seg4": [
+        -34.783497597048,
+        14.553472532083,
+        -10
+      ],
+      "Leg5Seg5": [
+        -35.783497597048,
+        21.553472532083,
+        -10
+      ],
+      "Leg6Seg2": [
+        -12,
+        14,
+        -4
+      ],
+      "Leg6Seg3": [
+        -23.60256773619,
+        12.82508641717,
+        -4
+      ],
+      "Leg6Seg4": [
+        -34.783488032068,
+        14.553386546553,
+        -4
+      ],
+      "Leg6Seg5": [
+        -35.783488032068,
+        21.553386546553,
+        -4
+      ],
+      "Leg7Seg2": [
+        -12,
+        14,
+        2
+      ],
+      "Leg7Seg3": [
+        -23.60256773619,
+        12.82508641717,
+        2
+      ],
+      "Leg7Seg4": [
+        -34.783488032068,
+        14.553386546553,
+        2
+      ],
+      "Leg7Seg5": [
+        -35.783488032068,
+        21.553386546553,
+        2
+      ],
+      "Leg8Seg2": [
+        -12,
+        14,
+        8
+      ],
+      "Leg8Seg3": [
+        -23.60256773619,
+        12.82508641717,
+        8
+      ],
+      "Leg8Seg4": [
+        -34.783488032068,
+        14.553386546553,
+        8
+      ],
+      "Leg8Seg5": [
+        -35.783488032068,
+        21.553386546553,
+        8
+      ]
+    },
+    "draw_order": "preorder",
+    "draw_order_rule": "a hierarchy rig draws parent-first (owner 2026-09-15, closing set continued second, item 35 (5)): the key is the tree's pre-order with siblings by their subtree's first classic draw; the classic renderToBuffer order's deviation from it is recorded here, reported by the draw-order leg and judged by the visual leg",
+    "semantics": "each declared child is a bone parented to its chain parent (the part names preserved), its pivot derived in Blockbench terms - the classic bind pivot carried back through the parent's bind rotation, P_c = P_p + R_p^-1 * (classic_c - classic_p), its cubes at that pivot plus their classic local offsets - and its bind rotation the LOCAL one, R_parent^-1 * R_child, so the bake's bind places every corner and every world rotation where the classic flat rig does; the hook writes parent-relative rotations and positions that reproduce the classic world transform at every link (the chain-link leg's proof)"
+  },
+  "animation_contract": {
+    "schema_version": 1,
+    "kind": "entity_state",
+    "controller_required": false,
+    "candidate_animation_path": "production_replacement_hook",
+    "candidate_class": "danger.orespawn.entity.client.EmperorScorpionGeoReplacement",
+    "candidate_acceptance_path": "production OreSpawnGeoReplacementModel.setCustomAnimations (Amendment 1 Tier-3 code-driven)",
+    "sample_ids": [
+      "bind",
+      "s_idle_a0_t0",
+      "s_idle_a0_t_quarter",
+      "s_idle_a0_t_half",
+      "s_idle_a0_t_three_quarter",
+      "s_idle_a0_t_end",
+      "s_idle_a0_25_t0",
+      "s_idle_a0_25_t_quarter",
+      "s_idle_a0_25_t_half",
+      "s_idle_a0_25_t_three_quarter",
+      "s_idle_a0_25_t_end",
+      "s_idle_a0_5_t0",
+      "s_idle_a0_5_t_quarter",
+      "s_idle_a0_5_t_half",
+      "s_idle_a0_5_t_three_quarter",
+      "s_idle_a0_5_t_end",
+      "s_idle_a1_t0",
+      "s_idle_a1_t_quarter",
+      "s_idle_a1_t_half",
+      "s_idle_a1_t_three_quarter",
+      "s_idle_a1_t_end",
+      "s_claws_swinging_a0_t0",
+      "s_claws_swinging_a0_t_quarter",
+      "s_claws_swinging_a0_t_half",
+      "s_claws_swinging_a0_t_three_quarter",
+      "s_claws_swinging_a0_t_end",
+      "s_claws_swinging_a0_25_t0",
+      "s_claws_swinging_a0_25_t_quarter",
+      "s_claws_swinging_a0_25_t_half",
+      "s_claws_swinging_a0_25_t_three_quarter",
+      "s_claws_swinging_a0_25_t_end",
+      "s_claws_swinging_a0_5_t0",
+      "s_claws_swinging_a0_5_t_quarter",
+      "s_claws_swinging_a0_5_t_half",
+      "s_claws_swinging_a0_5_t_three_quarter",
+      "s_claws_swinging_a0_5_t_end",
+      "s_claws_swinging_a1_t0",
+      "s_claws_swinging_a1_t_quarter",
+      "s_claws_swinging_a1_t_half",
+      "s_claws_swinging_a1_t_three_quarter",
+      "s_claws_swinging_a1_t_end",
+      "s_attacking_a0_t0",
+      "s_attacking_a0_t_quarter",
+      "s_attacking_a0_t_half",
+      "s_attacking_a0_t_three_quarter",
+      "s_attacking_a0_t_end",
+      "s_attacking_a0_25_t0",
+      "s_attacking_a0_25_t_quarter",
+      "s_attacking_a0_25_t_half",
+      "s_attacking_a0_25_t_three_quarter",
+      "s_attacking_a0_25_t_end",
+      "s_attacking_a0_5_t0",
+      "s_attacking_a0_5_t_quarter",
+      "s_attacking_a0_5_t_half",
+      "s_attacking_a0_5_t_three_quarter",
+      "s_attacking_a0_5_t_end",
+      "s_attacking_a1_t0",
+      "s_attacking_a1_t_quarter",
+      "s_attacking_a1_t_half",
+      "s_attacking_a1_t_three_quarter",
+      "s_attacking_a1_t_end"
+    ],
+    "entity_states": [
+      "idle",
+      "claws_swinging",
+      "attacking"
+    ]
+  },
+  "reference_animation_schema": {
+    "status": "SCHEMA_VALID_REFERENCE_ONLY",
+    "clip_count": 0,
+    "constant_vector_count": 0,
+    "runtime_acceptance": false
+  },
+  "accepted_animation_evidence": "production OreSpawnGeoReplacement hook posed from declared entity states through the entity's pose interface (Amendment 1 Tier-3 code-driven)",
+  "artist_editable_math_to_keyframes_status": "NOT_APPLICABLE_TIER3_CODE_DRIVEN",
+  "compiled_animation_bake_sample_count": 0,
+  "reference_clip_keys_source": "compiled setupAnim output; no Python formula evaluation",
+  "source_animation_channel_inventory": []
+}

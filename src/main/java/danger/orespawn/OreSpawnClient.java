@@ -46,11 +46,11 @@ public class OreSpawnClient {
         @SubscribeEvent
         public static void registerRenderers(EntityRenderersEvent.RegisterRenderers event) {
             // Monster (hostile)
-            event.registerEntityRenderer(ModEntities.ALIEN.get(), AlienRenderer::new);
+            event.registerEntityRenderer(ModEntities.ALIEN.get(), PhaseGDevRenderers.alienRenderer());
             // Phase 12 — Alien Boss reuses the AlienRenderer; the client-side
             // size scaling is handled by the registered hitbox dimensions
             // (1.4 × 3.5 in ModEntities) so the same model renders bigger.
-            event.registerEntityRenderer(ModEntities.ALIEN_BOSS.get(), AlienRenderer::new);
+            event.registerEntityRenderer(ModEntities.ALIEN_BOSS.get(), PhaseGDevRenderers.alienBossRenderer());
             event.registerEntityRenderer(ModEntities.ALOSAURUS.get(), PhaseGDevRenderers.alosaurusRenderer());
             event.registerEntityRenderer(ModEntities.ATTACK_SQUID.get(), PhaseGDevRenderers.attackSquidRenderer());
             event.registerEntityRenderer(ModEntities.BAND_P.get(), PhaseGDevRenderers.bandPRenderer());
@@ -87,7 +87,7 @@ public class OreSpawnClient {
             event.registerEntityRenderer(ModEntities.ENTITY_BEE.get(), PhaseGDevRenderers.beeRenderer());
             event.registerEntityRenderer(ModEntities.ENTITY_BRUTALFLY.get(), PhaseGDevRenderers.brutalflyRenderer());
             event.registerEntityRenderer(ModEntities.ENTITY_CATER_KILLER.get(), PhaseGDevRenderers.caterKillerRenderer());
-            event.registerEntityRenderer(ModEntities.ENTITY_EMPEROR_SCORPION.get(), EmperorScorpionRenderer::new);
+            event.registerEntityRenderer(ModEntities.ENTITY_EMPEROR_SCORPION.get(), PhaseGDevRenderers.emperorScorpionRenderer());
             event.registerEntityRenderer(ModEntities.ENTITY_HERCULES_BEETLE.get(), PhaseGDevRenderers.herculesBeetleRenderer());
             event.registerEntityRenderer(ModEntities.ENTITY_KYUUBI.get(), PhaseGDevRenderers.kyuubiRenderer());
             event.registerEntityRenderer(ModEntities.ENTITY_LEAF_MONSTER.get(), PhaseGDevRenderers.leafMonsterRenderer());

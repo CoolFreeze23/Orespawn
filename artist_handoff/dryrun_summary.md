@@ -4,19 +4,19 @@ Output: `artist_handoff`
 
 ## Counts (the deliverable)
 
-- Tier 1: 28 registries over 21 rigs (a shared rig counted once); not yet in-game: 27 registries over 20 rigs.
+- Tier 1: 28 registries over 21 rigs (a shared rig counted once); not yet in-game: 24 registries over 18 rigs.
 - Tier 2: 75 registries over 70 rigs (a shared rig counted once); not yet in-game: 6 registries over 6 rigs.
 - Tier 3: 13 registries over 12 rigs (a shared rig counted once).
 - Folders: 116 (one per registry); files: 1369 (1363 in the entity folders + the 6 package-wide files).
-- Rig sources: reference-leg converter output 33, shipped 83.
+- Rig sources: shipped 86, reference-leg converter output 30.
 - Reference clips (owner 2026-09-14, item 31 (11); every state the code reads since item 32 (2)): 112 species carry them — 297 files (idle 112, walk 112, attack 40, sit 14, fly 10, scream 2, crouch 1, display 1, legs_folded 1, mouth_open 1, open 1, sing 1, sitting_flat 1), 297 written beside the sheets, 356 clips embedded in the .bbmodels; unnamed states 0; values that move nothing at rest 11; states offered as extras 23; artist-tier species with clips: 99; held (sampled when the rig lands): 3 — boyfriend, girlfriend, the_princess; landed without a sampled clip (native): the_queen.
 - Packaged without a seed (the SEED_MISSING fallback: the display name from the registry, empty authored sections): 0.
 - Artist-tier species with no rig to package: 0.
 
 | entity | tier | rig | files | bones | cubes | clips shipped | clips in SPEC | goals | flags | attacking | strike/launch sites | textures | locked | unlabelled | round-trip | effort | warnings |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| alien | Tier 1 (boss) | reference leg (not yet in-game) | 11 | 55 | 55 | 0 | 16 | 7 | 1 | STATE | 2 | 1 | 16 (0 keyed by the shipped clips; warn) | 0 | EQUAL, order kept | 38.8 h | 0 |
-| alien_boss | Tier 1 (boss) | reference leg (not yet in-game) | 11 | 55 | 55 | 0 | 17 | 1 | 1 | STATE | 3 | 1 | 16 (0 keyed by the shipped clips; warn) | 0 | EQUAL, order kept | 40.2 h | 0 |
+| alien | Tier 1 (boss) | shipped | 11 | 55 | 55 | 0 | 16 | 7 | 1 | STATE | 2 | 1 | 19 (0 keyed by the shipped clips; warn) | 0 | EQUAL, order kept | 38.8 h | 0 |
+| alien_boss | Tier 1 (boss) | shipped | 11 | 55 | 55 | 0 | 17 | 1 | 1 | STATE | 3 | 1 | 19 (0 keyed by the shipped clips; warn) | 0 | EQUAL, order kept | 40.2 h | 0 |
 | alosaurus | Tier 2 | shipped | 11 | 21 | 21 | 0 | 12 | 6 | 1 | STATE | 2 | 1 | 0 | 0 | EQUAL, order kept | 20.2 h | 0 |
 | attack_squid | Tier 2 | shipped | 10 | 9 | 9 | 0 | 13 | 5 | 1 | STATE | 2 | 1 | 0 | 0 | EQUAL, order kept | 18.8 h | 0 |
 | band_p | Tier 2 | shipped | 11 | 7 | 7 | 0 | 12 | 6 | 1 | NONE | 1 | 2 | 0 | 0 | EQUAL, order kept | 15.4 h | 0 |
@@ -53,7 +53,7 @@ Output: `artist_handoff`
 | bee | Tier 2 | shipped | 11 | 23 | 23 | 0 | 16 | 0 | 1 | STATE | 2 | 1 | 0 | 0 | EQUAL, order kept | 24.6 h | 0 |
 | brutalfly | Tier 2 | shipped | 10 | 14 | 14 | 2 | 7 | 0 | 0 | NONE | 3 | 1 | 0 | 0 | EQUAL, order kept | 11.8 h | 0 |
 | cater_killer | Tier 2 | shipped | 11 | 80 | 80 | 0 | 22 | 6 | 1 | STATE | 2 | 1 | 0 | 0 | EQUAL, order kept | 42 h | 0 |
-| emperor_scorpion | Tier 1 (boss) | reference leg (not yet in-game) | 11 | 78 | 78 | 0 | 13 | 6 | 1 | STATE | 2 | 1 | 48 (0 keyed by the shipped clips; warn) | 0 | EQUAL, order kept | 37.7 h | 0 |
+| emperor_scorpion | Tier 1 (boss) | shipped | 11 | 78 | 78 | 0 | 13 | 6 | 1 | STATE | 2 | 1 | 61 (0 keyed by the shipped clips; warn) | 0 | EQUAL, order kept | 37.7 h | 0 |
 | hercules_beetle | Tier 2 | shipped | 11 | 37 | 37 | 0 | 10 | 6 | 1 | STATE | 2 | 1 | 0 | 0 | EQUAL, order kept | 21.4 h | 0 |
 | kyuubi | Tier 2 | shipped | 10 | 42 | 42 | 0 | 15 | 6 | 0 | NONE | 2 | 1 | 0 | 0 | EQUAL, order kept | 26.4 h | 0 |
 | leaf_monster | Tier 2 | shipped | 11 | 5 | 5 | 0 | 12 | 3 | 1 | STATE | 1 | 1 | 0 | 0 | EQUAL, order kept | 17 h | 0 |

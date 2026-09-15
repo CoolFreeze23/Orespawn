@@ -326,12 +326,16 @@ public final class ReferenceClipSampler {
             Map.entry("model_ostrich", "ostrich"),
             Map.entry("model_spyro", "spyro"),
             Map.entry("model_stinky", "stinky"),
-            Map.entry("model_triffid", "triffid")));
+            Map.entry("model_triffid", "triffid"),
+            // the FK slice (2026-09-15): the Alien rig's two registries and the Emperor Scorpion landed as real parent-child hierarchies
+            Map.entry("model_emperorscorpion", "emperor_scorpion"),
+            Map.entry("model_alien", "alien"),
+            Map.entry("model_alien_boss", "alien_boss")));
 
     /**
      * An unlanded hook (owner 2026-09-14, addendum items 10 and 11): the descriptor's simple class name, the ModEntities
      * registry it packages under and the rig it names - the map {@code HOOKS} in {@code tools/asset_audit.py} carries
-     * (descriptor -> rig; 67 entries at the hooks' landing, the landing slices removing theirs - T2d removed thirteen, T2e fourteen (the Lurking Terror held), T2f twelve (the Dungeon Beast and the Scorpion held);
+     * (descriptor -> rig; 67 entries at the hooks' landing, the landing slices removing theirs - T2d removed thirteen, T2e fourteen (the Lurking Terror held), T2f twelve (the Dungeon Beast and the Scorpion held), the FK slice three (the Alien pair and the Emperor Scorpion, real parent-child hierarchies);
      * the two delegating descriptors, the Alien Boss's on the Alien's rig and the
      * Leonopteryx's on the Leon's, added here because they package under their own registries). The reference entry is
      * {@code reference_<rig>} in {@code tools/reference_model_proofs.json}, its geo
@@ -350,15 +354,12 @@ public final class ReferenceClipSampler {
     }
 
     static final Map<String, Hook> HOOK_DESCRIPTORS = hooks(
-            new Hook("AlienGeoReplacement", "alien", "alien"),
-            new Hook("AlienBossGeoReplacement", "alien_boss", "alien"),
             new Hook("BabyDragonGeoReplacement", "baby_dragon", "dragon"),
             new Hook("BasiliskGeoReplacement", "basilisk", "basilisk"),
             new Hook("ButterflyGeoReplacement", "butterfly", "butterfly"),
             new Hook("CephadromeGeoReplacement", "cephadrome", "cephadrome"),
             new Hook("DragonGeoReplacement", "dragon", "dragon"),
             new Hook("DungeonBeastGeoReplacement", "dungeon_beast", "dungeonbeast"),
-            new Hook("EmperorScorpionGeoReplacement", "emperor_scorpion", "emperorscorpion"),
             new Hook("GhostGeoReplacement", "ghost", "ghost"),
             new Hook("GiantRobotGeoReplacement", "giant_robot", "giantrobot"),
             new Hook("GodzillaGeoReplacement", "godzilla", "godzilla"),
@@ -788,6 +789,28 @@ public final class ReferenceClipSampler {
                         + "limbSwingAmount 0; at 1 the slowest is the tail cos(ageInTicks * 1.0 * ws) * PI * 0.2 (:85; the tail chain follows, :91-97) at 1.0 rad/tick, "
                         + "6.28 ticks; the threshold gait cos(ageInTicks * 2.3 * ws) * PI * 0.4 * limbSwingAmount and cos(ageInTicks * 2.0 * ws) * PI * 0.25 * limbSwingAmount "
                         + "(:65, :69); the activity-2 fold and the sitting still are off on the probe; the head look follows netHeadYaw / headPitch = 0 (:101-115)")),
+            // the FK slice (2026-09-15): the Alien rig's two registries and the Emperor Scorpion landed on the hooks already written as real
+            // parent-child hierarchies - each row is the HOOK_RULES row the hook lanes wrote, carried verbatim (the same rule, the same source
+            // lines, true on the line-neutral descriptors; the Alien Boss's the Alien's: AlienBossGeoReplacement.applyCustomAnimations:43 ->
+            // AlienGeoReplacement.poseRig) and keyed by the manifest id; a chain child's clip keys are LOCAL to its parent (the hierarchy form)
+            Map.entry("model_emperorscorpion", Rule.periodic(TWO_PI / (double) (0.5F * 0.22F),
+                "wingspeed 0.22: the slowest rhythm is the resting mandibles cos(ageInTicks * 0.5 * WINGSPEED) * PI * 0.05 (EmperorScorpionGeoReplacement"
+                        + ".applyCustomAnimations:100, attacking 0) at 0.11 rad/tick, 57.12 ticks; the attacking mandibles at 2.5 * 0.22 (:101); the four-phase legs "
+                        + "cos(ageInTicks * 2.0 * WINGSPEED - n * pi/4) * PI * 0.12 * limbSwingAmount with the 0.1-tick look-ahead lift 0.47 * limbSwingAmount - |newangle| "
+                        + "(:67-95, walk; position follows); the tail latch cos(ageInTicks * 3.0 * WINGSPEED) * PI * 0.15 (:107-108) on RenderInfo ri1 / ri2, rolled on the entity "
+                        + "RNG at a zero crossing (the Robot2 precedent)")),
+            Map.entry("model_alien", Rule.periodic(TWO_PI / (double) (1.0F * 0.22F),
+                "wingspeed 0.22: the slowest rhythms are the jaw, tail and claw sways cos(ageInTicks * WINGSPEED) * PI * 0.05 / 0.02 / 0.03 "
+                        + "(AlienGeoReplacement.poseRig:192, 199, 206, 212; the jaws fold it through Math.abs at :235-236, a half period) at 0.22 rad/tick, "
+                        + "28.56 ticks; the gait cos(ageInTicks * 4.0 * WINGSPEED) * PI * 0.5 * limbSwingAmount (:78) at 0.88; the head fan "
+                        + "cos(ageInTicks * fanspeed * WINGSPEED) with fanspeed 1.22 (:114-130) at 0.268 in the attacking branch; the leg latch at "
+                        + "3.5 * 0.22 = 0.77 with its 0.2-tick look-ahead (:176-177) rolled on the entity RNG at a zero crossing")),
+            Map.entry("model_alien_boss", Rule.periodic(TWO_PI / (double) (1.0F * 0.22F),
+                "wingspeed 0.22: the slowest rhythms are the jaw, tail and claw sways cos(ageInTicks * WINGSPEED) * PI * 0.05 / 0.02 / 0.03 "
+                        + "(AlienGeoReplacement.poseRig:192, 199, 206, 212; the jaws fold it through Math.abs at :235-236, a half period) at 0.22 rad/tick, "
+                        + "28.56 ticks; the gait cos(ageInTicks * 4.0 * WINGSPEED) * PI * 0.5 * limbSwingAmount (:78) at 0.88; the head fan "
+                        + "cos(ageInTicks * fanspeed * WINGSPEED) with fanspeed 1.22 (:114-130) at 0.268 in the attacking branch; the leg latch at "
+                        + "3.5 * 0.22 = 0.77 with its 0.2-tick look-ahead (:176-177) rolled on the entity RNG at a zero crossing")),
             Map.entry("model_triffid", Rule.periodic(Math.PI / (double) (0.25F * 1.0F),
                 "wingspeed 1.0: the only rhythm live at these inputs is the attacking tentacle |cos(ageInTicks * 0.25 * WINGSPEED) * PI * 0.5| with its alternating roll "
                         + "(TriffidGeoReplacement.applyCustomAnimations:147-148, attacking; the l44 chain follows by position, :158-217) at 0.25 rad/tick, which the absolute "
@@ -813,14 +836,6 @@ public final class ReferenceClipSampler {
 
     private static Map<String, Rule> hookRules() {
         Map<String, Rule> rules = new TreeMap<>();
-        Rule alien = Rule.periodic(TWO_PI / (double) (1.0F * 0.22F),
-                "wingspeed 0.22: the slowest rhythms are the jaw, tail and claw sways cos(ageInTicks * WINGSPEED) * PI * 0.05 / 0.02 / 0.03 "
-                        + "(AlienGeoReplacement.poseRig:192, 199, 206, 212; the jaws fold it through Math.abs at :235-236, a half period) at 0.22 rad/tick, "
-                        + "28.56 ticks; the gait cos(ageInTicks * 4.0 * WINGSPEED) * PI * 0.5 * limbSwingAmount (:78) at 0.88; the head fan "
-                        + "cos(ageInTicks * fanspeed * WINGSPEED) with fanspeed 1.22 (:114-130) at 0.268 in the attacking branch; the leg latch at "
-                        + "3.5 * 0.22 = 0.77 with its 0.2-tick look-ahead (:176-177) rolled on the entity RNG at a zero crossing");
-        rules.put("AlienGeoReplacement", alien);
-        rules.put("AlienBossGeoReplacement", alien);  // AlienBossGeoReplacement.applyCustomAnimations:35 -> AlienGeoReplacement.poseRig
         Rule dragon = Rule.periodic(TWO_PI / (double) (0.2F * 1.0F),
                 "ANIM_SPEED 1.0: the slowest rhythm is the resting wing beat -0.85 + cos(ageInTicks * 0.2 * ANIM_SPEED) * PI * 0.028 (DragonGeoReplacement"
                         + ".poseDragon:151, activity 0 and not attacking) at 0.2 rad/tick, 31.42 ticks; the activity beat cos(ageInTicks * 0.75) * PI * 0.28 (:146, :150) and "
@@ -859,12 +874,6 @@ public final class ReferenceClipSampler {
                         + "cos(ageInTicks * 1.4 * WINGSPEED) * PI * 0.22 * limbSwingAmount (:60, walk) at 0.868; the tail cos(ageInTicks * 0.75 * WINGSPEED) * PI * 0.25 * "
                         + "tailamp with tailamp = limbSwingAmount at rest and 1.25 attacking (:87-88, :97-138); the jaw latch cos(ageInTicks * 2.0 * WINGSPEED) * PI * 0.15 "
                         + "with its 0.1-tick look-ahead (:143-144) on RenderInfo, re-rolled on the entity RNG"));
-        rules.put("EmperorScorpionGeoReplacement", Rule.periodic(TWO_PI / (double) (0.5F * 0.22F),
-                "wingspeed 0.22: the slowest rhythm is the resting mandibles cos(ageInTicks * 0.5 * WINGSPEED) * PI * 0.05 (EmperorScorpionGeoReplacement"
-                        + ".applyCustomAnimations:100, attacking 0) at 0.11 rad/tick, 57.12 ticks; the attacking mandibles at 2.5 * 0.22 (:101); the four-phase legs "
-                        + "cos(ageInTicks * 2.0 * WINGSPEED - n * pi/4) * PI * 0.12 * limbSwingAmount with the 0.1-tick look-ahead lift 0.47 * limbSwingAmount - |newangle| "
-                        + "(:67-95, walk; position follows); the tail latch cos(ageInTicks * 3.0 * WINGSPEED) * PI * 0.15 (:107-108) on RenderInfo ri1 / ri2, rolled on the entity "
-                        + "RNG at a zero crossing (the Robot2 precedent)"));
         rules.put("GhostGeoReplacement", Rule.periodic(TWO_PI / (double) 0.3F,
                 "four slow cosines on the two arms: cos(ageInTicks * 0.3 / 0.32 / 0.34 / 0.36) * PI * 0.05 about Z and X (GhostGeoReplacement.applyCustomAnimations:58-61, "
                         + "every state): the slowest 0.3 rad/tick, 20.94 ticks; nothing reads the walk or the entity"));

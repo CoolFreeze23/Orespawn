@@ -1,5 +1,5 @@
 file,sha256_12,canonical_id,canonical_name,is_canonical,twins,twins_elsewhere,width,height,series,stray_class,consumers,entity_folders,provenance_1_7_10,fan_out_targets
-alien.png,3e274d9e4553,img_3e274d9e4553,alien.png,yes,myalien.png,,256,128,,,AlienGeoReplacement;AlienRenderer,alien;alien_boss,MyAlien.png,myalien.png
+alien.png,3e274d9e4553,img_3e274d9e4553,alien.png,yes,myalien.png,,256,128,,,AlienBossGeoReplacement;AlienGeoReplacement;AlienRenderer,alien;alien_boss,MyAlien.png,myalien.png
 alosaurus.png,2c03ee764782,img_2c03ee764782,alosaurus.png,yes,,,128,128,,,AlosaurusGeoReplacement;AlosaurusRenderer,alosaurus,alosaurus.png,
 amethyst_1.png,929708899e95,img_929708899e95,amethyst_1.png,yes,,models/armor/amethyst_layer_1.png,64,32,amethyst_1..2 x2,armor sheet stray: the shipped armor layer is textures/models/armor/amethyst_layer_1.png (byte-identical),,,amethyst_1.png,
 amethyst_2.png,e6b6ffd10324,img_e6b6ffd10324,amethyst_2.png,yes,,models/armor/amethyst_layer_2.png,64,32,amethyst_1..2 x2,armor sheet stray: the shipped armor layer is textures/models/armor/amethyst_layer_2.png (byte-identical),,,amethyst_2.png,

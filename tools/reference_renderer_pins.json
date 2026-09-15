@@ -812,7 +812,7 @@
       "expected_scale": 1.5,
       "ref_derivation": "shadow: RenderEmperorScorpion.java:22-23 `super((ModelBase)par1ModelBase, par2 * par3)` with ClientProxyOreSpawn.java:426 `new RenderEmperorScorpion(new ModelEmperorScorpion(0.22f), 0.95f, 1.5f)` -> par2=0.95f, par3=1.5f ... | scale: RenderEmperorScorpion.java:24 `this.scale = par3` (=1.5f); :39-41 preRenderScale -> GL11.glScalef(scale,scale,scale) = 1.5 uniform, invoked from func_77041_b (preRenderCallback) :43-45. No isChild branch (re-read, confirmed).",
       "port_renderer": "src/main/java/danger/orespawn/entity/client/EmperorScorpionRenderer.java",
-      "port_candidate": "none",
+      "port_candidate": "src/main/java/danger/orespawn/entity/client/EmperorScorpionGeoReplacement.java",
       "truth_verdicts": {
         "shadow": "DIVERGES",
         "scale": "DIVERGES"
@@ -1014,7 +1014,7 @@
       "expected_scale": 1.1,
       "ref_derivation": "shadow: RenderAlien.java:22-25 `super((ModelBase)par1ModelBase, par2 * par3)` with ClientProxyOreSpawn.java:435 args par2=0.35f, par3=1.1f -> shadowSize = 0.35f*1.1f = 0.385f (float32 0.38499999046325684). | scale: RenderAlien.java:24 `this.scale = par3` (par3=1.1f); RenderAlien.java:39-45 preRenderScale -> `GL11.glScalef(1.1,1.1,1.1)` unconditionally. ModelAlien(0.22f) is `this.wingspeed` only (ModelAlien.java:72-73).",
       "port_renderer": "src/main/java/danger/orespawn/entity/client/AlienRenderer.java",
-      "port_candidate": "none",
+      "port_candidate": "src/main/java/danger/orespawn/entity/client/AlienGeoReplacement.java",
       "truth_verdicts": {
         "shadow": "DIVERGES",
         "scale": "DIVERGES"

@@ -6,18 +6,18 @@
       "registry": "alien",
       "tier": 1,
       "tier_label": "Tier 1 (boss)",
-      "rig_source": "reference-leg converter output",
-      "in_game": false,
+      "rig_source": "shipped",
+      "in_game": true,
       "seed": true,
       "files": [
         "SPEC.md",
         "alien.animation.json",
         "alien.bbmodel",
+        "alien.geo.json",
         "alien_reference_attack.animation.json",
         "alien_reference_idle.animation.json",
         "alien_reference_walk.animation.json",
         "reference/SLOTS.md",
-        "reference_alien.geo.json",
         "roundtrip.report.json",
         "spec.manifest.json",
         "textures/alien.png"
@@ -34,7 +34,7 @@
       "attacking": "STATE",
       "strike_sites": 2,
       "textures_mapped": 1,
-      "locked_bones": 16,
+      "locked_bones": 19,
       "lock_mode": "warn",
       "keyed_locked_bones": 0,
       "effort_hours": 38.8,
@@ -57,18 +57,18 @@
       "registry": "alien_boss",
       "tier": 1,
       "tier_label": "Tier 1 (boss)",
-      "rig_source": "reference-leg converter output",
-      "in_game": false,
+      "rig_source": "shipped",
+      "in_game": true,
       "seed": true,
       "files": [
         "SPEC.md",
-        "alien_boss.animation.json",
+        "alien.animation.json",
+        "alien.geo.json",
         "alien_boss.bbmodel",
         "alien_boss_reference_attack.animation.json",
         "alien_boss_reference_idle.animation.json",
         "alien_boss_reference_walk.animation.json",
         "reference/SLOTS.md",
-        "reference_alien.geo.json",
         "roundtrip.report.json",
         "spec.manifest.json",
         "textures/alien.png"
@@ -85,7 +85,7 @@
       "attacking": "STATE",
       "strike_sites": 3,
       "textures_mapped": 1,
-      "locked_bones": 16,
+      "locked_bones": 19,
       "lock_mode": "warn",
       "keyed_locked_bones": 0,
       "effort_hours": 40.2,
@@ -1972,18 +1972,18 @@
       "registry": "emperor_scorpion",
       "tier": 1,
       "tier_label": "Tier 1 (boss)",
-      "rig_source": "reference-leg converter output",
-      "in_game": false,
+      "rig_source": "shipped",
+      "in_game": true,
       "seed": true,
       "files": [
         "SPEC.md",
-        "emperor_scorpion.animation.json",
         "emperor_scorpion.bbmodel",
         "emperor_scorpion_reference_attack.animation.json",
         "emperor_scorpion_reference_idle.animation.json",
         "emperor_scorpion_reference_walk.animation.json",
+        "emperorscorpion.animation.json",
+        "emperorscorpion.geo.json",
         "reference/SLOTS.md",
-        "reference_emperorscorpion.geo.json",
         "roundtrip.report.json",
         "spec.manifest.json",
         "textures/emperorscorpion.png"
@@ -2000,7 +2000,7 @@
       "attacking": "STATE",
       "strike_sites": 2,
       "textures_mapped": 1,
-      "locked_bones": 48,
+      "locked_bones": 61,
       "lock_mode": "warn",
       "keyed_locked_bones": 0,
       "effort_hours": 37.7,
@@ -6172,8 +6172,8 @@
       "tier_1": {
         "registries": 28,
         "rigs": 21,
-        "not_in_game_registries": 27,
-        "not_in_game_rigs": 20
+        "not_in_game_registries": 24,
+        "not_in_game_rigs": 18
       },
       "tier_2": {
         "registries": 75,
@@ -6227,8 +6227,8 @@
       ]
     },
     "rig_sources": {
-      "reference-leg converter output": 33,
-      "shipped": 83
+      "shipped": 86,
+      "reference-leg converter output": 30
     },
     "seed_missing": [],
     "artist_tier_not_packaged": []

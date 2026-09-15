@@ -82,14 +82,14 @@ Bosses first (they carry hitboxes and need the most care), then the ordinary cre
 
 | folder | creature | tier | bones | rig in-game | clips to deliver | estimated effort |
 |---|---|---|---|---|---|---|
-| alien | Alien | Tier 1 (boss) | 55 | not yet | idle, idle_fan, idle_tail, idle_jaw, idle_claws, walk, walk_fan, walk_tail, walk_jaw, walk_claws, swim, aggro_idle, calm_idle, attack, hurt, death | 38.8 h |
-| alien_boss | Alien Boss | Tier 1 (boss) | 55 | not yet | idle, idle_fan, idle_tail, idle_jaw, idle_claws, walk, walk_fan, walk_tail, walk_jaw, walk_claws, swim, aggro_idle, calm_idle, attack, hurt, death, summon | 40.2 h |
+| alien | Alien | Tier 1 (boss) | 55 | yes | idle, idle_fan, idle_tail, idle_jaw, idle_claws, walk, walk_fan, walk_tail, walk_jaw, walk_claws, swim, aggro_idle, calm_idle, attack, hurt, death | 38.8 h |
+| alien_boss | Alien Boss | Tier 1 (boss) | 55 | yes | idle, idle_fan, idle_tail, idle_jaw, idle_claws, walk, walk_fan, walk_tail, walk_jaw, walk_claws, swim, aggro_idle, calm_idle, attack, hurt, death, summon | 40.2 h |
 | baby_dragon | Baby Dragon | Tier 1 (boss) | 55 | not yet | idle, idle_wings, idle_tail, idle_mouth, walk, walk_wings, walk_tail, walk_mouth, fly, aggro_idle, calm_idle, attack, hurt, death, breath, takeoff, land, sit | 43.2 h |
 | basilisk | Basilisk | Tier 1 (boss) | 21 | not yet | idle, idle_jaw, walk, walk_jaw, swim, aggro_idle, calm_idle, attack, hurt, death | 24.6 h |
 | butterfly | Butterfly | Tier 1 (boss) | 10 | not yet | idle, walk, fly, calm_idle, attack, hurt, death | 18.5 h |
 | cephadrome | Cephadrome | Tier 1 (boss) | 50 | not yet | idle, idle_wing_fins, idle_top_fins, idle_tail, idle_mouth, walk, walk_wing_fins, walk_top_fins, walk_tail, walk_mouth, fly, aggro_idle, calm_idle, attack, hurt, death | 39.5 h |
 | dragon | Dragon | Tier 1 (boss) | 55 | not yet | idle, idle_wings, idle_tail, idle_mouth, walk, walk_wings, walk_tail, walk_mouth, fly, aggro_idle, calm_idle, attack, hurt, death, breath, takeoff, land, sit | 43.2 h |
-| emperor_scorpion | Emperor Scorpion | Tier 1 (boss) | 78 | not yet | idle, idle_mandibles, idle_claws_tail, walk, walk_mandibles, walk_claws_tail, swim, aggro_idle, calm_idle, attack, hurt, death, summon | 37.7 h |
+| emperor_scorpion | Emperor Scorpion | Tier 1 (boss) | 78 | yes | idle, idle_mandibles, idle_claws_tail, walk, walk_mandibles, walk_claws_tail, swim, aggro_idle, calm_idle, attack, hurt, death, summon | 37.7 h |
 | giant_robot | Giant Robot | Tier 1 (boss) | 29 | not yet | idle, idle_arms, walk, walk_arms, swim, aggro_idle, calm_idle, attack, hurt, death, laser | 27.4 h |
 | godzilla | Mobzilla | Tier 1 (boss) | 71 | not yet | idle, idle_tail, idle_arms, idle_jaw, walk, walk_tail, walk_arms, walk_jaw, swim, aggro_idle, calm_idle, attack, hurt, death, jump, land, cannon, lightning | 44.1 h |
 | hammerhead | Hammerhead | Tier 1 (boss) | 37 | not yet | idle, idle_rear_fins, idle_head_nod, walk, walk_rear_fins, walk_head_nod, swim, aggro_idle, calm_idle, attack, hurt, death | 30.1 h |

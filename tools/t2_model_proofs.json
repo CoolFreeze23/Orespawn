@@ -4528,9 +4528,308 @@
       "face_order_note": "the sixth Tier-2 slice (T2f, 2026-09-15): this rig carries zero-thickness cubes (the eleven leaf tips c1-c11 0 x 5 x 2; no cube is mirrored since BUG-041 stage 2), each drawing its two coplanar faces without culling; where the two faces carry different texels the z-fight winner is the face emitted last (LEQUAL in-game; the harness's rasteriser: first-wins throughout the contest window, TEST-006), and vanilla's ModelPart.Cube and GeckoLib's buildQuads emit a cube's faces in different orders, so the shipped geo carries the classic within-cube order under orespawn:cube_face_order (the FaceOrder contract, ENT-S-146; the audit's TEST-007 rule refuses a cutout rig with such a cube that omits it), the seam permutes every cube's quads into it (FaceOrder.apply) and the draw-order leg compares the per-quad normal sequences of both renderers on every capture; the descriptor requires the key (a re-exported pack that drops it gets one WARN)",
       "channels": [],
       "hook_note": "the sixth Tier-2 slice (T2f, 2026-09-15, owner's closing set item 4 under Amendment 2 - on the hook already written, owner 2026-09-14 addendum items 10 and 14): a HOOK rig - the shipped pose is the classic setupAnim verbatim in the descriptor's applyCustomAnimations(processor, PoseInputs); no keyframe layer, no transcription, no clip manifest (the self-gate stays closed until an artist delivers idle and walk); channels [] because tools/layer_definition_to_geo.py refuses channels on a code_driven / entity_state entry without a keyframe_reference_leg - the reference-clip sampler's span comes from its RULES row for this id (ReferenceClipSampler.RULES, the source lines cited; the row the hook lanes wrote as its HOOK_RULES row, carried unchanged); the animation leg proves the hook at 0 rad against the classic model at the same inputs on every sample"
+    },
+    {
+      "id": "model_emperorscorpion",
+      "tier": 1,
+      "class": "danger.orespawn.entity.client.EmperorScorpionModel",
+      "texture": "src/main/resources/assets/orespawn/textures/entity/emperorscorpion.png",
+      "reference_source": "reference_1_7_10_source/sources/danger/orespawn/ModelEmperorScorpion.java",
+      "rig_note": "the FK slice (2026-09-15): the Emperor Scorpion as a parent-child HIERARCHY of 52 links under 11 chain roots - the tail Tailseg1 -> Tailseg2 -> .. -> Tailseg7 -> Tailseg8 and Stinger1 -> Stinger2 -> Stinger3 (doTail: each ring pitched by the last one's plus its own increment and placed 9 / 10 / 3 units along the last one's sine and cosine - a true joint follow); each leg Leg<k>Seg1 -> Seg2 -> Seg3 -> Seg4 -> Seg5 (doLeftLeg / doRightLeg: the four outer segments yawed alike and placed by 6 - 6|sin(yaw)|, not 6 cos(yaw), so the local position slides within the parent's frame as much as the classic pivot does); LeftShoulder -> LeftArmSeg1 -> LeftArmSeg2 -> LeftArmSeg3 / LeftArmSeg4 / LeftPincer and the right arm the same (doLeftClaw / doRightClaw: the arm's z from the first segment's yaw); the head, the eight body segments, the eyes and the mandibles stay roots. The classic renderToBuffer order (EmperorScorpionModel.java:663-740; orig :642-719) draws LeftPincer last, after the whole right arm - not a pre-order of LeftArmSeg2's subtree - so the key is the pre-order by rule (the seven units RightShoulder, RightArmSeg1-4, RightPincer, LeftPincer move) and the visual leg judges the deviation. entity_state: the attacking flag (the mandibles' rhythm and the latch ranges) and the ri1 preset 3 (both claws on the sway; the Robot2 form); the amplitude matrix (the eight legs read limbSwingAmount); no head look (the classic reads neither yaw nor pitch)",
+      "animation_kind": "entity_state",
+      "candidate_animation_path": "production_replacement_hook",
+      "candidate_class": "danger.orespawn.entity.client.EmperorScorpionGeoReplacement",
+      "loop_period_age_ticks": 57.11986642890533,
+      "period_note": "the slowest rhythm, the resting mandibles cos(ageInTicks * 0.5 * WINGSPEED) at 0.11 rad/tick, closes every 57.12 ticks (the sampler's rule for the rig); one cycle (the four-phase gait 2.0 x 0.22 = 0.44 at limbSwingAmount, 14.28; the latch 3.0 x 0.22 = 0.66, 9.52; the attacking mandibles 2.5 x 0.22 = 0.55, 11.42)",
+      "sample_fractions": [
+        0.0,
+        0.25,
+        0.5,
+        0.75,
+        1.0
+      ],
+      "limb_swing": 0.0,
+      "limb_swing_amount": 0.0,
+      "limb_swing_amount_samples": [
+        0.0,
+        0.25,
+        0.5,
+        1.0
+      ],
+      "visual_sample_ids": [
+        "bind",
+        "s_idle_a1_t0",
+        "s_idle_a1_t_half",
+        "s_claws_swinging_a1_t_quarter",
+        "s_claws_swinging_a1_t_three_quarter",
+        "s_attacking_a1_t_quarter",
+        "s_attacking_a1_t_three_quarter"
+      ],
+      "visual_note": "the bind and two full-amplitude ages per state (idle, the claws swinging on the ri1 preset 3, attacking); bind included (no zero-thickness cube in this rig; the pair-contested rule of 2026-09-15 stands for every entry); the visual leg is the judge of the hierarchy's draw-order change (owner 2026-09-15, item 35 (5)): changed 0 / MAE 0 on every sample is the expected result",
+      "net_head_yaw": 0.0,
+      "head_pitch": 0.0,
+      "entity_states": [
+        {
+          "name": "idle",
+          "attacking": 0,
+          "ri1": 0
+        },
+        {
+          "name": "claws_swinging",
+          "attacking": 0,
+          "ri1": 3
+        },
+        {
+          "name": "attacking",
+          "attacking": 1,
+          "ri1": 0
+        }
+      ],
+      "camera": {
+        "yaw_degrees": 34.0,
+        "pitch_degrees": -28.0
+      },
+      "channels": [],
+      "hierarchy": {
+        "Tailseg2": "Tailseg1",
+        "Tailseg3": "Tailseg2",
+        "Tailseg4": "Tailseg3",
+        "Tailseg5": "Tailseg4",
+        "Tailseg6": "Tailseg5",
+        "Tailseg7": "Tailseg6",
+        "Tailseg8": "Tailseg7",
+        "Stinger1": "Tailseg7",
+        "Stinger2": "Stinger1",
+        "Stinger3": "Stinger2",
+        "LeftArmSeg1": "LeftShoulder",
+        "LeftArmSeg2": "LeftArmSeg1",
+        "LeftArmSeg3": "LeftArmSeg2",
+        "LeftArmSeg4": "LeftArmSeg2",
+        "LeftPincer": "LeftArmSeg2",
+        "RightArmSeg1": "RightShoulder",
+        "RightArmSeg2": "RightArmSeg1",
+        "RightArmSeg3": "RightArmSeg2",
+        "RightArmSeg4": "RightArmSeg2",
+        "RightPincer": "RightArmSeg2",
+        "Leg1Seg2": "Leg1Seg1",
+        "Leg1Seg3": "Leg1Seg2",
+        "Leg1Seg4": "Leg1Seg3",
+        "Leg1Seg5": "Leg1Seg4",
+        "Leg2Seg2": "Leg2Seg1",
+        "Leg2Seg3": "Leg2Seg2",
+        "Leg2Seg4": "Leg2Seg3",
+        "Leg2Seg5": "Leg2Seg4",
+        "Leg3Seg2": "Leg3Seg1",
+        "Leg3Seg3": "Leg3Seg2",
+        "Leg3Seg4": "Leg3Seg3",
+        "Leg3Seg5": "Leg3Seg4",
+        "Leg4Seg2": "Leg4Seg1",
+        "Leg4Seg3": "Leg4Seg2",
+        "Leg4Seg4": "Leg4Seg3",
+        "Leg4Seg5": "Leg4Seg4",
+        "Leg5Seg2": "Leg5Seg1",
+        "Leg5Seg3": "Leg5Seg2",
+        "Leg5Seg4": "Leg5Seg3",
+        "Leg5Seg5": "Leg5Seg4",
+        "Leg6Seg2": "Leg6Seg1",
+        "Leg6Seg3": "Leg6Seg2",
+        "Leg6Seg4": "Leg6Seg3",
+        "Leg6Seg5": "Leg6Seg4",
+        "Leg7Seg2": "Leg7Seg1",
+        "Leg7Seg3": "Leg7Seg2",
+        "Leg7Seg4": "Leg7Seg3",
+        "Leg7Seg5": "Leg7Seg4",
+        "Leg8Seg2": "Leg8Seg1",
+        "Leg8Seg3": "Leg8Seg2",
+        "Leg8Seg4": "Leg8Seg3",
+        "Leg8Seg5": "Leg8Seg4"
+      },
+      "hook_note": "the FK slice (2026-09-15, owner's closing set item 4 under the hierarchy rules of item 35 (5), on the hook already written - owner 2026-09-14 addendum items 10 and 14): a HOOK rig on a real parent-child HIERARCHY - the shipped geo parents every declared child to its chain parent (tools/layer_definition_to_geo.py, the hierarchy form: the part names preserved, the pivots derived in Blockbench terms, the bind rotations local, the draw-order key the tree's PRE-ORDER by rule); the descriptor's applyCustomAnimations(processor, PoseInputs) writes the classic setupAnim verbatim into a FlatRig (the flat rig the classic statements pose) and FlatRig.resolve maps it onto the chains - a root bone takes the channels the statements wrote, a parented bone the parent-relative transform reproducing its classic world transform; no keyframe layer, no transcription, no clip manifest (the self-gate stays closed until an artist delivers idle and walk); channels [] because the converter refuses channels on a code_driven / entity_state entry without a keyframe_reference_leg - the reference-clip sampler's span comes from its RULES row for this id (the row the hook lanes wrote as its HOOK_RULES row, carried unchanged, its line citations true on the line-neutral descriptor); THE LEGS: the chain-link leg proves the world transform of every link against the classic within the geometry epsilon on every sample, the animation leg the chain roots and every other bone at 0 rad (the parented bones' local channels deferred to the chain-link leg), the draw-order leg the key's pre-order on every capture with the classic order's deviation recorded and the visual leg the judge of it (changed 0 expected), the surface leg at the named HIERARCHY_NORMAL_EPSILON 1e-5 with the chain's accumulation recorded"
+    },
+    {
+      "id": "model_alien",
+      "tier": 1,
+      "class": "danger.orespawn.entity.client.ModelAlien",
+      "texture": "src/main/resources/assets/orespawn/textures/entity/alien.png",
+      "reference_source": "reference_1_7_10_source/sources/danger/orespawn/ModelAlien.java",
+      "rig_note": "the FK slice (2026-09-15): the Alien rig under the registry alien (one geo alien.geo.json for the two registries; the Alien Boss's descriptor names the same literals and scales like the Alien: orig ClientProxyOreSpawn.java:435 drew both with the one RenderAlien) as a parent-child HIERARCHY of 26 links under 4 chain roots - neck -> head -> head1 / head2 / fang1-4 / jaw1 -> jaw2 (the head-look follows: the head 3 units along the neck's yaw, its six followers at its pivot, the jaws 8 units on); tail1 -> tail2 -> tail3 -> tail4 -> tail5 with spike1 under tail1, spike2 under tail2, spike3 under tail3, spike4 and spike5 under tail4 (doTail: 10 units along each ring's yaw, y at the bind); arml1 -> arml2 -> clawl1 / clawl2 / clawl3 and armr1 -> armr2 -> clawr1 / clawr2 / clawr3 (doLeftClaw / doRightClaw: 9 and 14 units along the yaws, the arm root's bind roll ignored by the classic follow, so the local position moves within the parent's frame); the eight leg parts (four a side about one pivot, independent pitches) and the fifteen fan parts (one pivot) are not chains: roots. The classic renderToBuffer order (ModelAlien.java:519-573; orig :553-607) is not a pre-order of these chains (tail2-tail5 before tail1, the head group apart from the neck, the two arm chains interleaved, the spikes apart from their rings: eleven findings (ten FINDINGs and the merged-order note)) - the key is the pre-order by rule and the visual leg judges the deviation. entity_state: the attacking flag (the head fan and the latch ranges) and the ri1 preset 3 (both claws on the fast sway; the Robot2 form); the amplitude matrix (the gait legs read limbSwingAmount); the head look 30 / 10 (the neck and head read netHeadYaw; the port's model reads no pitch)",
+      "animation_kind": "entity_state",
+      "candidate_animation_path": "production_replacement_hook",
+      "candidate_class": "danger.orespawn.entity.client.AlienGeoReplacement",
+      "loop_period_age_ticks": 28.559933214452666,
+      "period_note": "the slowest rhythm cos(ageInTicks * WINGSPEED) at 0.22 rad/tick (the jaw, tail and claw sways at rest) closes every 28.56 ticks (the sampler's rule for the rig); one cycle (the gait 4.0 x 0.22 = 0.88 at limbSwingAmount, 7.14; the latch 3.5 x 0.22 = 0.77, 8.16; the attacking fan 1.22 x 0.22 = 0.268, 23.4)",
+      "sample_fractions": [
+        0.0,
+        0.25,
+        0.5,
+        0.75,
+        1.0
+      ],
+      "limb_swing": 0.0,
+      "limb_swing_amount": 0.0,
+      "limb_swing_amount_samples": [
+        0.0,
+        0.25,
+        0.5,
+        1.0
+      ],
+      "visual_sample_ids": [
+        "bind",
+        "s_idle_a1_t0",
+        "s_idle_a1_t_half",
+        "s_claws_swinging_a1_t_quarter",
+        "s_claws_swinging_a1_t_three_quarter",
+        "s_attacking_a1_t_quarter",
+        "s_attacking_a1_t_three_quarter"
+      ],
+      "visual_note": "the bind and two full-amplitude ages per state (idle, the claws swinging on the ri1 preset 3, attacking); bind included (no zero-thickness cube in this rig; the pair-contested rule of 2026-09-15 stands for every entry); the visual leg is the judge of the hierarchy's draw-order change (owner 2026-09-15, item 35 (5)): changed 0 / MAE 0 on every sample is the expected result",
+      "net_head_yaw": 30.0,
+      "head_pitch": 10.0,
+      "entity_states": [
+        {
+          "name": "idle",
+          "attacking": 0,
+          "ri1": 0
+        },
+        {
+          "name": "claws_swinging",
+          "attacking": 0,
+          "ri1": 3
+        },
+        {
+          "name": "attacking",
+          "attacking": 1,
+          "ri1": 0
+        }
+      ],
+      "camera": {
+        "yaw_degrees": 34.0,
+        "pitch_degrees": -28.0
+      },
+      "channels": [],
+      "hierarchy": {
+        "head": "neck",
+        "head1": "head",
+        "head2": "head",
+        "fang1": "head",
+        "fang2": "head",
+        "fang3": "head",
+        "fang4": "head",
+        "jaw1": "head",
+        "jaw2": "jaw1",
+        "tail2": "tail1",
+        "tail3": "tail2",
+        "tail4": "tail3",
+        "tail5": "tail4",
+        "spike1": "tail1",
+        "spike2": "tail2",
+        "spike3": "tail3",
+        "spike4": "tail4",
+        "spike5": "tail4",
+        "arml2": "arml1",
+        "clawl1": "arml2",
+        "clawl2": "arml2",
+        "clawl3": "arml2",
+        "armr2": "armr1",
+        "clawr1": "armr2",
+        "clawr2": "armr2",
+        "clawr3": "armr2"
+      },
+      "hook_note": "the FK slice (2026-09-15, owner's closing set item 4 under the hierarchy rules of item 35 (5), on the hook already written - owner 2026-09-14 addendum items 10 and 14): a HOOK rig on a real parent-child HIERARCHY - the shipped geo parents every declared child to its chain parent (tools/layer_definition_to_geo.py, the hierarchy form: the part names preserved, the pivots derived in Blockbench terms, the bind rotations local, the draw-order key the tree's PRE-ORDER by rule); the descriptor's applyCustomAnimations(processor, PoseInputs) writes the classic setupAnim verbatim into a FlatRig (the flat rig the classic statements pose) and FlatRig.resolve maps it onto the chains - a root bone takes the channels the statements wrote, a parented bone the parent-relative transform reproducing its classic world transform; no keyframe layer, no transcription, no clip manifest (the self-gate stays closed until an artist delivers idle and walk); channels [] because the converter refuses channels on a code_driven / entity_state entry without a keyframe_reference_leg - the reference-clip sampler's span comes from its RULES row for this id (the row the hook lanes wrote as its HOOK_RULES row, carried unchanged, its line citations true on the line-neutral descriptor); THE LEGS: the chain-link leg proves the world transform of every link against the classic within the geometry epsilon on every sample, the animation leg the chain roots and every other bone at 0 rad (the parented bones' local channels deferred to the chain-link leg), the draw-order leg the key's pre-order on every capture with the classic order's deviation recorded and the visual leg the judge of it (changed 0 expected), the surface leg at the named HIERARCHY_NORMAL_EPSILON 1e-5 with the chain's accumulation recorded"
+    },
+    {
+      "id": "model_alien_boss",
+      "tier": 1,
+      "class": "danger.orespawn.entity.client.ModelAlien",
+      "texture": "src/main/resources/assets/orespawn/textures/entity/alien.png",
+      "reference_source": "reference_1_7_10_source/sources/danger/orespawn/ModelAlien.java",
+      "rig_note": "the FK slice (2026-09-15): the Alien rig under the registry alien_boss (one geo alien.geo.json for the two registries; the Alien Boss's descriptor names the same literals and scales like the Alien: orig ClientProxyOreSpawn.java:435 drew both with the one RenderAlien) as a parent-child HIERARCHY of 26 links under 4 chain roots - neck -> head -> head1 / head2 / fang1-4 / jaw1 -> jaw2 (the head-look follows: the head 3 units along the neck's yaw, its six followers at its pivot, the jaws 8 units on); tail1 -> tail2 -> tail3 -> tail4 -> tail5 with spike1 under tail1, spike2 under tail2, spike3 under tail3, spike4 and spike5 under tail4 (doTail: 10 units along each ring's yaw, y at the bind); arml1 -> arml2 -> clawl1 / clawl2 / clawl3 and armr1 -> armr2 -> clawr1 / clawr2 / clawr3 (doLeftClaw / doRightClaw: 9 and 14 units along the yaws, the arm root's bind roll ignored by the classic follow, so the local position moves within the parent's frame); the eight leg parts (four a side about one pivot, independent pitches) and the fifteen fan parts (one pivot) are not chains: roots. The classic renderToBuffer order (ModelAlien.java:519-573; orig :553-607) is not a pre-order of these chains (tail2-tail5 before tail1, the head group apart from the neck, the two arm chains interleaved, the spikes apart from their rings: ten findings) - the key is the pre-order by rule and the visual leg judges the deviation. entity_state: the attacking flag (the head fan and the latch ranges) and the ri1 preset 3 (both claws on the fast sway; the Robot2 form); the amplitude matrix (the gait legs read limbSwingAmount); the head look 30 / 10 (the neck and head read netHeadYaw; the port's model reads no pitch)",
+      "animation_kind": "entity_state",
+      "candidate_animation_path": "production_replacement_hook",
+      "candidate_class": "danger.orespawn.entity.client.AlienBossGeoReplacement",
+      "loop_period_age_ticks": 28.559933214452666,
+      "period_note": "the slowest rhythm cos(ageInTicks * WINGSPEED) at 0.22 rad/tick (the jaw, tail and claw sways at rest) closes every 28.56 ticks (the sampler's rule for the rig); one cycle (the gait 4.0 x 0.22 = 0.88 at limbSwingAmount, 7.14; the latch 3.5 x 0.22 = 0.77, 8.16; the attacking fan 1.22 x 0.22 = 0.268, 23.4)",
+      "sample_fractions": [
+        0.0,
+        0.25,
+        0.5,
+        0.75,
+        1.0
+      ],
+      "limb_swing": 0.0,
+      "limb_swing_amount": 0.0,
+      "limb_swing_amount_samples": [
+        0.0,
+        0.25,
+        0.5,
+        1.0
+      ],
+      "visual_sample_ids": [
+        "bind",
+        "s_idle_a1_t0",
+        "s_idle_a1_t_half",
+        "s_claws_swinging_a1_t_quarter",
+        "s_claws_swinging_a1_t_three_quarter",
+        "s_attacking_a1_t_quarter",
+        "s_attacking_a1_t_three_quarter"
+      ],
+      "visual_note": "the bind and two full-amplitude ages per state (idle, the claws swinging on the ri1 preset 3, attacking); bind included (no zero-thickness cube in this rig; the pair-contested rule of 2026-09-15 stands for every entry); the visual leg is the judge of the hierarchy's draw-order change (owner 2026-09-15, item 35 (5)): changed 0 / MAE 0 on every sample is the expected result",
+      "net_head_yaw": 30.0,
+      "head_pitch": 10.0,
+      "entity_states": [
+        {
+          "name": "idle",
+          "attacking": 0,
+          "ri1": 0
+        },
+        {
+          "name": "claws_swinging",
+          "attacking": 0,
+          "ri1": 3
+        },
+        {
+          "name": "attacking",
+          "attacking": 1,
+          "ri1": 0
+        }
+      ],
+      "camera": {
+        "yaw_degrees": 34.0,
+        "pitch_degrees": -28.0
+      },
+      "channels": [],
+      "hierarchy": {
+        "head": "neck",
+        "head1": "head",
+        "head2": "head",
+        "fang1": "head",
+        "fang2": "head",
+        "fang3": "head",
+        "fang4": "head",
+        "jaw1": "head",
+        "jaw2": "jaw1",
+        "tail2": "tail1",
+        "tail3": "tail2",
+        "tail4": "tail3",
+        "tail5": "tail4",
+        "spike1": "tail1",
+        "spike2": "tail2",
+        "spike3": "tail3",
+        "spike4": "tail4",
+        "spike5": "tail4",
+        "arml2": "arml1",
+        "clawl1": "arml2",
+        "clawl2": "arml2",
+        "clawl3": "arml2",
+        "armr2": "armr1",
+        "clawr1": "armr2",
+        "clawr2": "armr2",
+        "clawr3": "armr2"
+      },
+      "hook_note": "the FK slice (2026-09-15, owner's closing set item 4 under the hierarchy rules of item 35 (5), on the hook already written - owner 2026-09-14 addendum items 10 and 14): a HOOK rig on a real parent-child HIERARCHY - the shipped geo parents every declared child to its chain parent (tools/layer_definition_to_geo.py, the hierarchy form: the part names preserved, the pivots derived in Blockbench terms, the bind rotations local, the draw-order key the tree's PRE-ORDER by rule); the descriptor's applyCustomAnimations(processor, PoseInputs) writes the classic setupAnim verbatim into a FlatRig (the flat rig the classic statements pose) and FlatRig.resolve maps it onto the chains - a root bone takes the channels the statements wrote, a parented bone the parent-relative transform reproducing its classic world transform; no keyframe layer, no transcription, no clip manifest (the self-gate stays closed until an artist delivers idle and walk); channels [] because the converter refuses channels on a code_driven / entity_state entry without a keyframe_reference_leg - the reference-clip sampler's span comes from its RULES row for this id (the row the hook lanes wrote as its HOOK_RULES row, carried unchanged, its line citations true on the line-neutral descriptor); THE LEGS: the chain-link leg proves the world transform of every link against the classic within the geometry epsilon on every sample, the animation leg the chain roots and every other bone at 0 rad (the parented bones' local channels deferred to the chain-link leg), the draw-order leg the key's pre-order on every capture with the classic order's deviation recorded and the visual leg the judge of it (changed 0 expected), the surface leg at the named HIERARCHY_NORMAL_EPSILON 1e-5 with the chain's accumulation recorded"
     }
   ],
   "fixtures": [],
   "naming_rule_note": "the second Tier-2 slice (2026-09-13): the bare walk is the gait group's clip, else the clip manifest's primary_group's (the first group when absent), the other groups' walk_<group> (owner 2026-09-13, addendum item 26 (2); KeyframeLeg.primaryGroup and tools/keyframe_clip.py refuse a manifest that breaks it)",
-  "hook_rig_note": "the third Tier-2 slice (2026-09-13): the fifteen entries model_cloudshark .. model_herculesbeetle are HOOK rigs (owner's third set item 8 under Amendment 2 to Amendment 1): the classic setupAnim verbatim in the descriptor, no keyframe layer, channels [] (the converter refuses channels on a hook entry without a keyframe_reference_leg); the reference-clip sampler's span per id comes from ReferenceClipSampler.RULES. The fourth Tier-2 slice (T2d, 2026-09-14): the thirteen entries model_crab .. model_flounder likewise, on the hooks written by the hook lanes (owner 2026-09-14, addendum items 10 and 14), the Crab with its draw fix and the render_instances declaration of its reference entry. The fifth Tier-2 slice (T2e, 2026-09-15): the fourteen entries model_pointysaurus .. model_chipmunk (the Lurking Terror held on the visual leg, its register line) likewise, on the hooks written by the hook lanes (owner 2026-09-15, closing set item 4): entity_state wherever the classic model reads its entity (the probe poses a code_driven entry's classic side through setupAnim(null, ...)), the two latch rigs with an ri1-preset state (the Robot2 form), the two sitting flags through the states' getters object. The sixth Tier-2 slice (T2f, 2026-09-15): the twelve entries model_enderknight .. model_triffid likewise, on the hooks written by the hook lanes (owner 2026-09-15, closing set item 4; the Dungeon Beast held on its whole-model render transform and the Scorpion on the visual leg, their register lines): entity_state on every one (every hook of this slice reads its entity), the two latch rigs with an ri1-preset state (the Robot2 form), the entity flags through the states' getters object"
+  "hook_rig_note": "the third Tier-2 slice (2026-09-13): the fifteen entries model_cloudshark .. model_herculesbeetle are HOOK rigs (owner's third set item 8 under Amendment 2 to Amendment 1): the classic setupAnim verbatim in the descriptor, no keyframe layer, channels [] (the converter refuses channels on a hook entry without a keyframe_reference_leg); the reference-clip sampler's span per id comes from ReferenceClipSampler.RULES. The fourth Tier-2 slice (T2d, 2026-09-14): the thirteen entries model_crab .. model_flounder likewise, on the hooks written by the hook lanes (owner 2026-09-14, addendum items 10 and 14), the Crab with its draw fix and the render_instances declaration of its reference entry. The fifth Tier-2 slice (T2e, 2026-09-15): the fourteen entries model_pointysaurus .. model_chipmunk (the Lurking Terror held on the visual leg, its register line) likewise, on the hooks written by the hook lanes (owner 2026-09-15, closing set item 4): entity_state wherever the classic model reads its entity (the probe poses a code_driven entry's classic side through setupAnim(null, ...)), the two latch rigs with an ri1-preset state (the Robot2 form), the two sitting flags through the states' getters object. The sixth Tier-2 slice (T2f, 2026-09-15): the twelve entries model_enderknight .. model_triffid likewise, on the hooks written by the hook lanes (owner 2026-09-15, closing set item 4; the Dungeon Beast held on its whole-model render transform and the Scorpion on the visual leg, their register lines): entity_state on every one (every hook of this slice reads its entity), the two latch rigs with an ri1-preset state (the Robot2 form), the entity flags through the states' getters object. The FK slice (2026-09-15): the three entries model_emperorscorpion, model_alien and model_alien_boss likewise on their hooks, each a parent-child HIERARCHY (the entry's `hierarchy` {child: parent}; the converter's hierarchy form; the key the tree's pre-order by rule, owner 2026-09-15, item 35 (5)) posed through FlatRig with the chain-link leg as the proof of every link."
 }

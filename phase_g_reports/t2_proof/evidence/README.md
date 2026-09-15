@@ -15,10 +15,15 @@ The independent gates are:
   its emitted clip is reference-only, not runtime acceptance, and editable keyframes remain G3 work;
 - visual: independent software rasterization of concrete `EntityModel.renderToBuffer` and `GeoRenderer` streams using the shipped texture;
   every pixel is compared (G2 root-order contract, 2026-09-06) and the z-fight contested fraction is reported as a diagnostic only;
-  a changed pixel whose two front fragments on both sides are the same pair of faces within 1e-5 blocks is pair-contested
-  (owner 2026-09-15): reported per sample, never a mismatch, capped at 1 percent of the image;
+  a changed pixel whose two front fragments on both sides are the same pair of faces within 1e-5 blocks, the shown
+  fragments differing inside the pair, is pair-contested (owner 2026-09-15; refuter A's tightening adopted, item 35 (5)):
+  reported per sample, never a mismatch, capped at 1 percent of the image;
 - draw order: per full capture, the sequence of parts the classic `renderToBuffer` drew equals the sequence of bones `GeoRenderer` emitted,
-  and the order shipped in each geo (`orespawn:bone_draw_order`) equals the converter's, the probe's and the fresh bake's traversal.
+  and the order shipped in each geo (`orespawn:bone_draw_order`) equals the converter's, the probe's and the fresh bake's traversal;
+  a hierarchy entry (the FK slice) draws parent-first, its key the tree's pre-order (owner 2026-09-15, item 35 (5)): GeoRenderer's
+  sequence equals that pre-order, the classic order's deviation is recorded and the visual leg judges it; its surface leg's normal
+  epsilon is the named HIERARCHY_NORMAL_EPSILON 1e-5 with the chain's accumulation recorded, and its chain-link leg compares
+  every link's world transform against the classic within the geometry epsilon.
 
 ## model_tshirt (Tier 2)
 
@@ -964,6 +969,54 @@ The independent gates are:
 - Accepted path: production OreSpawnGeoReplacement.applyCustomAnimations posed from declared entity states through the entity's pose interface; compiled poseFrom on the same states (`danger.orespawn.entity.client.TriffidGeoReplacement`).
 - Entity states: ['idle', 'open', 'attacking']; rotation maximum delta 0 radians; position maximum delta 2.99999999953e-06 model units; hidden-bone checks 15.
 - Visual z-fight pixels compared, none excluded (G2 root-order contract): maximum contested fraction 0.00341796875, a diagnostic. Pair-contested pixels (the same two front faces on both sides within 1e-05 blocks; owner 2026-09-15) never a mismatch: maximum fraction 0 under the cap 0.01.
+
+## model_emperorscorpion (Tier 1)
+
+- Exact bones: 78; cubes: 78.
+- Geometry maximum corner delta: 1.28062484761e-06 blocks (epsilon 1e-05).
+- Surface maximum UV delta: 0; normal delta: 8.35463942937e-07.
+- Animation maximum rotation delta: 0 radians (epsilon 2e-06).
+- Visual maximum changed fraction: 0; maximum mean absolute error: 0; maximum pair-contested fraction: 0 (never a mismatch; cap 0.01).
+- Draw order: GeckoLib bone order equals the classic draw order over 61 captures (4758 draws).
+
+- Accepted path: production OreSpawnGeoReplacement.applyCustomAnimations posed from declared entity states through the entity's pose interface; compiled poseFrom on the same states (`danger.orespawn.entity.client.EmperorScorpionGeoReplacement`).
+- Entity states: ['idle', 'claws_swinging', 'attacking']; rotation maximum delta 0 radians; position maximum delta 0 model units; hidden-bone checks 60.
+- Visual z-fight pixels compared, none excluded (G2 root-order contract): maximum contested fraction 0.0078125, a diagnostic. Pair-contested pixels (the same two front faces on both sides within 1e-05 blocks; owner 2026-09-15) never a mismatch: maximum fraction 0 under the cap 0.01.
+- Chain-link leg (the hierarchy form): 52 links under roots ['LeftShoulder', 'Leg1Seg1', 'Leg2Seg1', 'Leg3Seg1', 'Leg4Seg1', 'Leg5Seg1', 'Leg6Seg1', 'Leg7Seg1', 'Leg8Seg1', 'RightShoulder', 'Tailseg1']; world transforms of 4758 bone-samples over 61 samples within 1e-05 - maximum linear delta 4.6764352335e-07, maximum translation delta 8.09817934488e-07 blocks (worst s_idle_a0_25_t0:Leg3Seg5); the worst link Tailseg8 under Tailseg7: 6.96866e-08 linear / 8.09818e-07 blocks at s_idle_a0_t0.
+- Surface leg of a hierarchy entry: normal epsilon 1e-05 (HIERARCHY_NORMAL_EPSILON, owner 2026-09-15, item 35 (5)); the chain's accumulation - the worst link Tailseg6 under Tailseg5 at depth 5: 8.35464e-07 at s_idle_a0_t0:Tailseg6#0; the maxima by depth {'0': 1.299999999870849e-07, '1': 2.213594362181519e-07, '2': 2.402082429737773e-07, '3': 2.8191529831357717e-07, '4': 5.811196089540885e-07, '5': 8.354639429370931e-07, '6': 7.810249673572553e-08, '7': 7.810249673572553e-08, '8': 1.4000000003733248e-07, '9': 3.444198019913622e-07}.
+- Draw order of a hierarchy entry: GeoRenderer draws the key's pre-order (parent-first) on every capture; the classic renderToBuffer order deviates from it at up to 7 units on 61 of 61 captures (4 recorded findings) - judged by the visual leg above.
+
+## model_alien (Tier 1)
+
+- Exact bones: 55; cubes: 55.
+- Geometry maximum corner delta: 1.15758369044e-06 blocks (epsilon 1e-05).
+- Surface maximum UV delta: 0; normal delta: 2.45201236583e-06.
+- Animation maximum rotation delta: 0 radians (epsilon 2e-06).
+- Visual maximum changed fraction: 0; maximum mean absolute error: 0; maximum pair-contested fraction: 0.000244140625 (never a mismatch; cap 0.01).
+- Draw order: GeckoLib bone order equals the classic draw order over 61 captures (3355 draws).
+
+- Accepted path: production OreSpawnGeoReplacement.applyCustomAnimations posed from declared entity states through the entity's pose interface; compiled poseFrom on the same states (`danger.orespawn.entity.client.AlienGeoReplacement`).
+- Entity states: ['idle', 'claws_swinging', 'attacking']; rotation maximum delta 0 radians; position maximum delta 0 model units; hidden-bone checks 60.
+- Visual z-fight pixels compared, none excluded (G2 root-order contract): maximum contested fraction 0.000244140625, a diagnostic. Pair-contested pixels (the same two front faces on both sides within 1e-05 blocks; owner 2026-09-15) never a mismatch: maximum fraction 0.000244140625 under the cap 0.01.
+- Chain-link leg (the hierarchy form): 26 links under roots ['arml1', 'armr1', 'neck', 'tail1']; world transforms of 3355 bone-samples over 61 samples within 1e-05 - maximum linear delta 5.89538622281e-07, maximum translation delta 5.93968893181e-07 blocks (worst s_idle_a0_t_quarter:spike4); the worst link spike4 under tail4: 3.96026e-07 linear / 5.93969e-07 blocks at s_idle_a0_t_half.
+- Surface leg of a hierarchy entry: normal epsilon 1e-05 (HIERARCHY_NORMAL_EPSILON, owner 2026-09-15, item 35 (5)); the chain's accumulation - the worst link clawl1 under arml2 at depth 2: 2.45201e-06 at s_idle_a0_t0:clawl1#0; the maxima by depth {'0': 2.0000000000575113e-07, '1': 3.1382826257612083e-07, '2': 2.4520123658282206e-06, '3': 2.766427751275831e-07, '4': 4.4130563958280783e-07}.
+- Draw order of a hierarchy entry: GeoRenderer draws the key's pre-order (parent-first) on every capture; the classic renderToBuffer order deviates from it at up to 26 units on 61 of 61 captures (11 recorded findings) - judged by the visual leg above.
+
+## model_alien_boss (Tier 1)
+
+- Exact bones: 55; cubes: 55.
+- Geometry maximum corner delta: 1.15758369044e-06 blocks (epsilon 1e-05).
+- Surface maximum UV delta: 0; normal delta: 2.45201236583e-06.
+- Animation maximum rotation delta: 0 radians (epsilon 2e-06).
+- Visual maximum changed fraction: 0; maximum mean absolute error: 0; maximum pair-contested fraction: 0.000244140625 (never a mismatch; cap 0.01).
+- Draw order: GeckoLib bone order equals the classic draw order over 61 captures (3355 draws).
+
+- Accepted path: production OreSpawnGeoReplacement.applyCustomAnimations posed from declared entity states through the entity's pose interface; compiled poseFrom on the same states (`danger.orespawn.entity.client.AlienBossGeoReplacement`).
+- Entity states: ['idle', 'claws_swinging', 'attacking']; rotation maximum delta 0 radians; position maximum delta 0 model units; hidden-bone checks 60.
+- Visual z-fight pixels compared, none excluded (G2 root-order contract): maximum contested fraction 0.000244140625, a diagnostic. Pair-contested pixels (the same two front faces on both sides within 1e-05 blocks; owner 2026-09-15) never a mismatch: maximum fraction 0.000244140625 under the cap 0.01.
+- Chain-link leg (the hierarchy form): 26 links under roots ['arml1', 'armr1', 'neck', 'tail1']; world transforms of 3355 bone-samples over 61 samples within 1e-05 - maximum linear delta 5.89538622281e-07, maximum translation delta 5.93968893181e-07 blocks (worst s_idle_a0_t_quarter:spike4); the worst link spike4 under tail4: 3.96026e-07 linear / 5.93969e-07 blocks at s_idle_a0_t_half.
+- Surface leg of a hierarchy entry: normal epsilon 1e-05 (HIERARCHY_NORMAL_EPSILON, owner 2026-09-15, item 35 (5)); the chain's accumulation - the worst link clawl1 under arml2 at depth 2: 2.45201e-06 at s_idle_a0_t0:clawl1#0; the maxima by depth {'0': 2.0000000000575113e-07, '1': 3.1382826257612083e-07, '2': 2.4520123658282206e-06, '3': 2.766427751275831e-07, '4': 4.4130563958280783e-07}.
+- Draw order of a hierarchy entry: GeoRenderer draws the key's pre-order (parent-first) on every capture; the classic renderToBuffer order deviates from it at up to 26 units on 61 of 61 captures (11 recorded findings) - judged by the visual leg above.
 
 Reproduce with `gradlew.bat g1Parity`. Any mismatch exits nonzero before
 proof evidence can be updated.
