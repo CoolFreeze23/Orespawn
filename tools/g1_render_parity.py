@@ -40,7 +40,12 @@ CONTESTED_MARKER = (40, 90, 255, 255)
 # (CONTEST_DEPTH_EPSILON, the rasteriser's tie rule), which does not move. A face identity is the quad's owner - the
 # drawn unit the capture's draw order attributes it to (a classic part or a render-instance clone; the geo's
 # bones carry the same names, the draw-order leg's proof), its cube's ordinal within that unit and the quad's face
-# direction (its normal, quantised to a tenth) - built the same way on both sides.
+# direction (its normal, quantised to a tenth) - built the same way on both sides. THE TIGHTENING, ADOPTED: a
+# pair-contested pixel ALSO requires the SHOWN fragments to differ inside the pair - the face each side's front
+# fragment belongs to (the rasteriser's owner quad) is one of the pair on both sides and NOT the same face on both
+# - so a pixel where both sides show the same face and differ only through that face's own texel (with a second face
+# within the window behind it on both sides) stays a changed pixel instead of passing as pair-contested; the report
+# key is unchanged.
 PAIR_ATTRIBUTION_WINDOW = 1.0e-5
 PAIR_CONTESTED_CAP = 0.01
 PAIR_CONTESTED_MARKER = (255, 40, 200, 255)
@@ -58,6 +63,13 @@ ENTITY_FRAME_OF_CLASSIC = [
     [0.0, 0.0, 0.0, 1.0],
 ]
 BONE_POSES_FIELD = "bone_poses_entity_frame"
+# THE SURFACE LEG'S NORMAL EPSILON FOR A HIERARCHY ENTRY (TEST-017): "The surface leg's normal epsilon for hierarchy
+# entries is 1e-5, a named tolerance, the chain's accumulation recorded." GeckoLib composes a chain child's world
+# rotation from its ancestors' float32 axis rotations (three full local triples at the Alien's third arm links: 2.45e-6
+# against the flat rigs' 1e-6), so a hierarchy entry's normals are held to this named tolerance instead of the manifest's
+# normal_epsilon, and the surface leg records the accumulation - the worst normal delta per bone with the bone's depth in
+# its chain, the worst link and the per-depth maxima. Flat entries unchanged.
+HIERARCHY_NORMAL_EPSILON = 1.0e-5
 # G2 root-order contract: the geo description key the converter writes and the shipped model applies.
 DRAW_ORDER_KEY = "orespawn:bone_draw_order"
 # ENT-S-146: the within-cube face order key (bone -> one array per cube of GeckoLib direction names in
@@ -284,11 +296,29 @@ def geometry_parity(model_id: str, compiled: dict[str, Any], geo_render: dict[st
     }
 
 
+def chain_depth(bone: str, hierarchy: dict[str, str]) -> int:
+    """A bone's depth in the declared hierarchy: the number of chain parents above it (a root 0)."""
+    depth = 0
+    cursor = bone
+    while cursor in hierarchy:
+        depth += 1
+        cursor = hierarchy[cursor]
+    return depth
+
+
 def surface_mapping_parity(model_id: str, compiled: dict[str, Any],
                            geo_render: dict[str, Any], position_epsilon: float,
                            normal_epsilon: float, uv_epsilon: float,
-                           undrawn: frozenset[str] = frozenset()) -> dict[str, Any]:
-    """Compare baked position/normal/UV tuples without relying on quad order."""
+                           undrawn: frozenset[str] = frozenset(),
+                           hierarchy: dict[str, str] | None = None) -> dict[str, Any]:
+    """Compare baked position/normal/UV tuples without relying on quad order.
+
+    A hierarchy entry (``hierarchy`` non-empty, the FK slice) is held to HIERARCHY_NORMAL_EPSILON on the normals (the
+    named tolerance) instead of ``normal_epsilon``, and the chain's accumulation is recorded: the worst normal delta
+    of every bone with its depth, the worst link and the per-depth maxima."""
+    hierarchy = dict(hierarchy or {})
+    if hierarchy:
+        normal_epsilon = HIERARCHY_NORMAL_EPSILON
     vanilla_samples = full_sample_map(compiled)
     geo_samples = full_sample_map(geo_render)
     max_position_delta = 0.0
@@ -296,6 +326,8 @@ def surface_mapping_parity(model_id: str, compiled: dict[str, Any],
     max_uv_delta = 0.0
     vertex_count = 0
     worst = "exact"
+    # the chain's accumulation (a hierarchy entry): per bone, the worst normal delta and where it was seen
+    bone_normal: dict[str, tuple[float, str]] = {}
 
     ignored_zero_area_faces = 0
 
@@ -344,13 +376,15 @@ def surface_mapping_parity(model_id: str, compiled: dict[str, Any],
                 max_normal_delta = max(max_normal_delta, normal_delta)
                 max_uv_delta = max(max_uv_delta, uv_delta)
                 vertex_count += 1
+                if hierarchy and normal_delta > bone_normal.get(key[0], (-1.0, ""))[0]:
+                    bone_normal[key[0]] = (normal_delta, f"{sample_name}:{key[0]}#{key[1]}")
             if remaining:
                 raise AssertionError(
                     f"RENDERER MAPPING MISMATCH {model_id}/{sample_name}/{key[0]}#{key[1]}: "
                     f"{len(remaining)} unmatched GeoRenderer vertices"
                 )
 
-    return {
+    report = {
         "status": "PASS",
         "position_epsilon_blocks": position_epsilon,
         "normal_epsilon": normal_epsilon,
@@ -367,6 +401,32 @@ def surface_mapping_parity(model_id: str, compiled: dict[str, Any],
             "faces of exactly zero area are excluded"
         ),
     }
+    if hierarchy:
+        # written for a hierarchy entry only, so every other entry's surface report stays byte-identical
+        worst_bone, (worst_delta, worst_at) = max(bone_normal.items(), key=lambda item: item[1][0])
+        by_depth: dict[str, float] = {}
+        for bone, (delta, _where) in bone_normal.items():
+            depth = str(chain_depth(bone, hierarchy))
+            by_depth[depth] = max(by_depth.get(depth, 0.0), delta)
+        report["normal_epsilon_rule"] = (
+            "HIERARCHY_NORMAL_EPSILON, the named tolerance of a hierarchy entry"
+            ": a chain child's world rotation is GeckoLib's float32 composition of its ancestors' "
+            "axis rotations, so the normals are held to 1e-5 instead of the manifest's normal_epsilon"
+        )
+        report["chain_accumulation"] = {
+            "worst_link": {
+                "bone": worst_bone,
+                "parent": hierarchy.get(worst_bone),
+                "depth": chain_depth(worst_bone, hierarchy),
+                "max_normal_delta": worst_delta,
+                "at": worst_at,
+            },
+            "max_normal_delta_by_depth": {depth: by_depth[depth] for depth in sorted(by_depth, key=int)},
+            "max_normal_delta_by_bone": {bone: bone_normal[bone][0] for bone in sorted(bone_normal)},
+            "evidence": "the worst normal delta of every bone over every full capture, the bone's depth its number of "
+                        "chain parents (a root 0); the accumulation is the growth of the maxima with depth",
+        }
+    return report
 
 
 def face_area(quad: list[dict[str, Any]]) -> float:
@@ -470,8 +530,15 @@ def cube_face_order_parity(model_id: str, compiled: dict[str, Any], geo_render: 
 
 def draw_order_parity(model_id: str, compiled: dict[str, Any], geo_render: dict[str, Any],
                       generated_geometry: dict[str, Any], conversion: dict[str, Any],
-                      normal_epsilon: float = 1.0e-6, undrawn: frozenset[str] = frozenset()) -> dict[str, Any]:
+                      normal_epsilon: float = 1.0e-6, undrawn: frozenset[str] = frozenset(),
+                      hierarchy: dict[str, str] | None = None) -> dict[str, Any]:
     """G2 root-order contract: GeckoLib draws the bones in the classic part order.
+
+    A HIERARCHY entry (``hierarchy`` non-empty, the FK slice): a hierarchy rig draws parent-first, so the leg's rule
+    is the KEY'S PRE-ORDER - per capture the sequence of bones ``GeoRenderer`` emitted must equal the key restricted
+    to the units drawn, the classic sequence must draw the same units, and the classic order's deviation from the key
+    (the units whose position moved, the converter's recorded findings) is reported for the visual leg to
+    judge; the three agreements above hold as for a flat entry.
 
     Three things must agree: the order the converter derived from the classic captures
     (``conversion.json``), the order shipped inside the geo (``description[DRAW_ORDER_KEY]``,
@@ -507,6 +574,9 @@ def draw_order_parity(model_id: str, compiled: dict[str, Any], geo_render: dict[
     if vanilla_samples.keys() != geo_samples.keys():
         raise AssertionError(f"{model_id} full capture sets differ between the probes")
     draws_checked = 0
+    hierarchy = dict(hierarchy or {})
+    deviating_captures = 0
+    max_moved_units = 0
     for sample_id, vanilla_sample in vanilla_samples.items():
         classic = vanilla_sample.get("draw_order")
         gecko = geo_samples[sample_id].get("draw_order")
@@ -518,6 +588,25 @@ def draw_order_parity(model_id: str, compiled: dict[str, Any], geo_render: dict[
                 f"UNDRAWN PART DRAWN {model_id}/{sample_id}: the classic renderToBuffer drew {drawn_undrawn}, which the "
                 "manifest lists under undrawn_parts (a part listed as undrawn is never drawn by the classic capture)"
             )
+        if hierarchy:
+            # the hierarchy rules: the bake draws the key's pre-order; the classic draws the same units in its own order
+            expected = [unit for unit in order if unit in set(gecko)]
+            if gecko != expected:
+                raise AssertionError(
+                    f"DRAW ORDER MISMATCH {model_id}/{sample_id}: GeoRenderer drew {gecko}; the key's pre-order over "
+                    f"the drawn units is {expected} (a hierarchy rig draws parent-first)"
+                )
+            if sorted(classic) != sorted(gecko):
+                raise AssertionError(
+                    f"DRAW ORDER MISMATCH {model_id}/{sample_id}: classic renderToBuffer drew the units {sorted(classic)}; "
+                    f"GeoRenderer drew {sorted(gecko)}"
+                )
+            moved = sum(1 for left, right in zip(classic, gecko) if left != right)
+            if moved:
+                deviating_captures += 1
+                max_moved_units = max(max_moved_units, moved)
+            draws_checked += len(gecko)
+            continue
         if classic != gecko:
             raise AssertionError(
                 f"DRAW ORDER MISMATCH {model_id}/{sample_id}: classic renderToBuffer drew {classic}; "
@@ -547,6 +636,26 @@ def draw_order_parity(model_id: str, compiled: dict[str, Any], geo_render: dict[
             "sibling orders are equal draw orders"
         ),
     }
+    if hierarchy:
+        # written for a hierarchy entry only, so every other entry's draw-order report stays byte-identical
+        recorded = evidence.get("hierarchy_preorder")
+        if not isinstance(recorded, dict):
+            raise AssertionError(f"{model_id} converter recorded no hierarchy_preorder evidence for a hierarchy entry")
+        report["policy"] = (
+            "a hierarchy rig draws parent-first: the shipped "
+            "key is the tree's pre-order (DrawOrder.apply sorts the bake's sibling lists into it; GeoRenderer traverses "
+            "parent-first), GeoRenderer's sequence equals that pre-order over the drawn units on every capture, and the "
+            "classic renderToBuffer order's deviation from it is recorded below for the visual leg to judge"
+        )
+        report["hierarchy_rule"] = "the key's pre-order"
+        report["classic_order_deviation"] = {
+            "captures_deviating": deviating_captures,
+            "max_moved_units": max_moved_units,
+            "classic_order": recorded.get("classic_order"),
+            "moved_units": recorded.get("moved_units"),
+            "findings": recorded.get("findings"),
+            "judged_by": "the visual leg (changed fraction and MAE over the entry's visual samples)",
+        }
     if undrawn:
         report["undrawn_parts"] = sorted(undrawn)
         report["undrawn_parts_policy"] = (
@@ -2122,13 +2231,15 @@ def quad_face_ids(model_id: str, sample_id: str, sample: dict[str, Any],
 
 
 def render_capture(sample: dict[str, Any], texture: Image.Image, camera: Camera,
-                   quad_faces: list[int] | None = None) -> tuple[Image.Image, list[bool], list[tuple[int, int] | None]]:
+                   quad_faces: list[int] | None = None
+                   ) -> tuple[Image.Image, list[bool], list[tuple[int, int] | None], list[int]]:
     """Rasterise one capture; also returns the per-pixel z-fight mask and, when ``quad_faces`` (``quad_face_ids``)
     is given, the per-pixel FRONT PAIR for the pair-contested rule: the two nearest fragments of
     different faces where the second lies within PAIR_ATTRIBUTION_WINDOW behind the first, as a sorted pair of face
-    ids, else None. The pair is tracked by depth alone - the shown fragment is one of the two by construction
-    (first-wins inside the contest window keeps a fragment within 1e-6 of the nearest) - and a fragment the cutout
-    shader discards (alpha < 0.1, no depth write on either renderer) is never a member.
+    ids, else None - and the per-pixel SHOWN face (``shown_faces``: the owner quad's identity, tightening). The pair is
+    tracked by depth alone - the shown fragment is one of the two by construction (first-wins inside the contest
+    window keeps a fragment within 1e-6 of the nearest), which the tightening checks explicitly - and a
+    fragment the cutout shader discards (alpha < 0.1, no depth write on either renderer) is never a member.
 
     A pixel is CONTESTED when two fragments from different quads land within
     CONTEST_DEPTH_EPSILON of each other at the front with different texels.
@@ -2247,7 +2358,8 @@ def render_capture(sample: dict[str, Any], texture: Image.Image, camera: Camera,
 
     image = Image.new("RGBA", (IMAGE_SIZE, IMAGE_SIZE))
     image.putdata(pixels)
-    return image, contested, front_pairs(quad_faces, near_face, near_depth, second_face, second_depth)
+    return (image, contested, front_pairs(quad_faces, near_face, near_depth, second_face, second_depth),
+            shown_faces(quad_faces, owner_quad))
 
 
 def front_pairs(quad_faces: list[int] | None, near_face: list[int], near_depth: list[float],
@@ -2265,9 +2377,19 @@ def front_pairs(quad_faces: list[int] | None, near_face: list[int], near_depth: 
     return pairs
 
 
+def shown_faces(quad_faces: list[int] | None, owner_quad: list[int]) -> list[int]:
+    """The face SHOWN at every pixel - the face identity of the rasteriser's owner quad (the front fragment that won the
+    pixel under the tie rule), -1 where nothing shows or no identities were given: a later review's tightening of the
+    pair-contested rule requires the shown fragments to differ inside the pair."""
+    if quad_faces is None:
+        return [-1] * (IMAGE_SIZE * IMAGE_SIZE)
+    return [quad_faces[quad] if quad >= 0 else -1 for quad in owner_quad]
+
+
 def render_capture_blended(sample: dict[str, Any], texture: Image.Image, camera: Camera,
                            mode: dict[str, Any], depth_epsilon: float,
-                           quad_faces: list[int] | None = None) -> tuple[Image.Image, list[bool], list[tuple[int, int] | None]]:
+                           quad_faces: list[int] | None = None
+                           ) -> tuple[Image.Image, list[bool], list[tuple[int, int] | None], list[int]]:
     """ENT-S-146: rasterise one capture under ``entity_translucent`` - what the GPU does for ONE model's
     quads, in emission order, under that RenderType's states (VISUAL_MODES, bytecode-cited):
 
@@ -2408,7 +2530,8 @@ def render_capture_blended(sample: dict[str, Any], texture: Image.Image, camera:
 
     image = Image.new("RGBA", (IMAGE_SIZE, IMAGE_SIZE))
     image.putdata(pixels)
-    return image, contested, front_pairs(quad_faces, near_face, near_depth, second_face, second_depth)
+    return (image, contested, front_pairs(quad_faces, near_face, near_depth, second_face, second_depth),
+            shown_faces(quad_faces, owner_quad))
 
 
 def save_png(image: Image.Image, path: Path) -> None:
@@ -2523,18 +2646,24 @@ def visual_parity(model_id: str, spec: dict[str, Any], compiled: dict[str, Any],
                     "(an, presented with its number) and has no default"
                 )
             depth_epsilon = float(thresholds["coplanar_depth_epsilon_blocks"])
-            vanilla_image, vanilla_contested, vanilla_pairs = render_capture_blended(
+            vanilla_image, vanilla_contested, vanilla_pairs, vanilla_shown = render_capture_blended(
                 vanilla_samples[sample_id], texture, camera, mode, depth_epsilon, vanilla_faces)
-            geo_image, geo_contested, geo_pairs = render_capture_blended(
+            geo_image, geo_contested, geo_pairs, geo_shown = render_capture_blended(
                 geo_samples[sample_id], texture, camera, mode, depth_epsilon, geo_faces)
         else:
-            vanilla_image, vanilla_contested, vanilla_pairs = render_capture(
+            vanilla_image, vanilla_contested, vanilla_pairs, vanilla_shown = render_capture(
                 vanilla_samples[sample_id], texture, camera, vanilla_faces)
-            geo_image, geo_contested, geo_pairs = render_capture(geo_samples[sample_id], texture, camera, geo_faces)
+            geo_image, geo_contested, geo_pairs, geo_shown = render_capture(
+                geo_samples[sample_id], texture, camera, geo_faces)
         contested = [left or right for left, right in zip(vanilla_contested, geo_contested)]
         contested_fraction = sum(contested) / (IMAGE_SIZE * IMAGE_SIZE)
-        # pair-eligible: both sides' two front fragments are the same pair of faces (either order) within the window
-        pair_eligible = [left is not None and left == right for left, right in zip(vanilla_pairs, geo_pairs)]
+        # pair-eligible: both sides' two front fragments are the same pair of faces (either order) within the window,
+        # AND (the tightening adopted) the shown fragments differ inside the pair - each side shows one of the two
+        # faces and not the same one as the other side
+        pair_eligible = [
+            left is not None and left == right and shown_left != shown_right and shown_left in left and shown_right in left
+            for left, right, shown_left, shown_right in zip(vanilla_pairs, geo_pairs, vanilla_shown, geo_shown)
+        ]
         changed, mae, diff_image, pair_contested = pixel_diff(
             vanilla_image, geo_image, int(thresholds["pixel_channel_tolerance"]),
             contested if exclude_contested else None, pair_eligible,
@@ -2598,7 +2727,8 @@ def visual_parity(model_id: str, spec: dict[str, Any], compiled: dict[str, Any],
 
     pair_policy = (
         "; a CHANGED pixel whose two front fragments on both sides are the same pair of faces within "
-        f"{PAIR_ATTRIBUTION_WINDOW:g} blocks is pair-contested: "
+        f"{PAIR_ATTRIBUTION_WINDOW:g} blocks, and whose shown fragments differ inside that pair (the tightening "
+        "adopted, item 35 (5)), is pair-contested: "
         "counted per sample, excluded from the changed fraction and the MAE, painted in the diff, never a mismatch, "
         f"and capped at {PAIR_CONTESTED_CAP:g} of the image"
     )
@@ -2818,6 +2948,32 @@ def chain_link_lines(leg: dict[str, Any] | None) -> list[str]:
     ]
 
 
+def hierarchy_lines(model: dict[str, Any]) -> list[str]:
+    """The hierarchy rules' README lines (the FK slice): the surface leg's named epsilon with the chain's accumulation and
+    the draw-order leg's pre-order rule with the classic order's deviation; nothing for a flat entry."""
+    accumulation = model["surface_mapping"].get("chain_accumulation")
+    deviation = model["draw_order"].get("classic_order_deviation")
+    if not accumulation and not deviation:
+        return []
+    lines = []
+    if accumulation:
+        worst = accumulation["worst_link"]
+        lines.append(
+            f"- Surface leg of a hierarchy entry: normal epsilon {model['surface_mapping']['normal_epsilon']:.12g} "
+            f"(HIERARCHY_NORMAL_EPSILON); the chain's accumulation - the worst link "
+            f"{worst['bone']} under {worst['parent']} at depth {worst['depth']}: {worst['max_normal_delta']:.6g} at "
+            f"{worst['at']}; the maxima by depth {accumulation['max_normal_delta_by_depth']}."
+        )
+    if deviation:
+        lines.append(
+            f"- Draw order of a hierarchy entry: GeoRenderer draws the key's pre-order (parent-first) on every capture; the "
+            f"classic renderToBuffer order deviates from it at up to {deviation['max_moved_units']} units on "
+            f"{deviation['captures_deviating']} of {model['draw_order']['captures_checked']} captures "
+            f"({len(deviation['findings'] or [])} recorded findings) - judged by the visual leg above."
+        )
+    return lines
+
+
 def contested_line(visual: dict[str, Any]) -> str:
     pair = (f" Pair-contested pixels (the same two front faces on both sides within "
             f"{visual['pair_attribution_window_blocks']:g} blocks) never a mismatch: maximum fraction "
@@ -2848,10 +3004,15 @@ def markdown_report(report: dict[str, Any]) -> str:
         "  its emitted clip is reference-only, not runtime acceptance, and editable keyframes remain G3 work;",
         "- visual: independent software rasterization of concrete `EntityModel.renderToBuffer` and `GeoRenderer` streams using the shipped texture;",
         "  every pixel is compared (G2 root-order contract, 2026-09-06) and the z-fight contested fraction is reported as a diagnostic only;",
-        "  a changed pixel whose two front fragments on both sides are the same pair of faces within 1e-5 blocks is pair-contested",
-        ": reported per sample, never a mismatch, capped at 1 percent of the image;",
+        "  a changed pixel whose two front fragments on both sides are the same pair of faces within 1e-5 blocks, the shown",
+        "  fragments differing inside the pair, is pair-contested (the tightening adopted):",
+        "  reported per sample, never a mismatch, capped at 1 percent of the image;",
         "- draw order: per full capture, the sequence of parts the classic `renderToBuffer` drew equals the sequence of bones `GeoRenderer` emitted,",
-        "  and the order shipped in each geo (`orespawn:bone_draw_order`) equals the converter's, the probe's and the fresh bake's traversal.",
+        "  and the order shipped in each geo (`orespawn:bone_draw_order`) equals the converter's, the probe's and the fresh bake's traversal;",
+        "  a hierarchy entry (the FK slice) draws parent-first, its key the tree's pre-order: GeoRenderer's",
+        "  sequence equals that pre-order, the classic order's deviation is recorded and the visual leg judges it; its surface leg's normal",
+        "  epsilon is the named HIERARCHY_NORMAL_EPSILON 1e-5 with the chain's accumulation recorded, and its chain-link leg compares",
+        "  every link's world transform against the classic within the geometry epsilon.",
         "",
     ]
     for model in report["models"]:
@@ -2908,6 +3069,7 @@ def markdown_report(report: dict[str, Any]) -> str:
                     *visual_mode_lines(model["visual"]),
                     *render_instance_lines(contract),
                     *chain_link_lines(model.get("chain_link_leg")),
+                    *hierarchy_lines(model),
                     # A code_driven model may declare the keyframe reference leg (the Tier-2 transcriptions, 2026-09-13):
                     # its README lines are the gait_scaled branch's.
                     *keyframe_leg_lines(model.get(KEYFRAME_LEG_KEY)),
@@ -2927,6 +3089,7 @@ def markdown_report(report: dict[str, Any]) -> str:
                     *visual_mode_lines(model["visual"]),
                     *render_instance_lines(contract),
                     *chain_link_lines(model.get("chain_link_leg")),
+                    *hierarchy_lines(model),
                     "",
                 ]
             )
@@ -3164,12 +3327,21 @@ def main() -> int:
             float(thresholds["normal_epsilon"]),
             float(thresholds["uv_epsilon_normalized"]),
             undrawn,
+            hierarchy,
         )
         print(
             f"G1 SURFACE PASS: {model_id} {surface_mapping['vertex_samples']} vertex-samples, "
             f"{surface_mapping['ignored_zero_area_faces']} zero-area faces ignored, "
             f"max UV {surface_mapping['max_uv_delta_normalized']:.12g}, "
             f"max normal {surface_mapping['max_normal_delta']:.12g}"
+            + (
+                f" (a hierarchy entry: HIERARCHY_NORMAL_EPSILON {HIERARCHY_NORMAL_EPSILON:g}; the chain's accumulation "
+                f"worst link {surface_mapping['chain_accumulation']['worst_link']['bone']} at depth "
+                f"{surface_mapping['chain_accumulation']['worst_link']['depth']}: "
+                f"{surface_mapping['chain_accumulation']['worst_link']['max_normal_delta']:.6g}; by depth "
+                f"{surface_mapping['chain_accumulation']['max_normal_delta_by_depth']})"
+                if hierarchy else ""
+            )
         )
         animation = animation_parity(
             model_id, spec, compiled, geo_render, animation_contract,
@@ -3220,10 +3392,17 @@ def main() -> int:
             conversion, float(manifest["ticks_per_second"]),
         )
         draw_order = draw_order_parity(model_id, compiled, geo_render, generated_geometry, conversion,
-                                       float(thresholds["normal_epsilon"]), undrawn)
+                                       HIERARCHY_NORMAL_EPSILON if hierarchy else float(thresholds["normal_epsilon"]),
+                                       undrawn, hierarchy)
         print(
             f"G1 DRAW ORDER PASS: {model_id} {draw_order['captures_checked']} captures, "
-            f"{draw_order['draws_checked']} draws in the classic order"
+            f"{draw_order['draws_checked']} draws in the "
+            + (
+                f"key's pre-order (a hierarchy rig draws parent-first; the classic order deviates at "
+                f"{draw_order['classic_order_deviation']['max_moved_units']} units on "
+                f"{draw_order['classic_order_deviation']['captures_deviating']} captures - the visual leg judges)"
+                if hierarchy else "classic order"
+            )
             + (f" (undrawn parts left out of the geo: {sorted(undrawn)})" if undrawn else "")
         )
         if "cube_face_order" in draw_order:

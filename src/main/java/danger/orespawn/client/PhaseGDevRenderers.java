@@ -1,6 +1,8 @@
 package danger.orespawn.client;
 
 import danger.orespawn.OreSpawnMod;
+import danger.orespawn.entity.Alien;
+import danger.orespawn.entity.AlienBoss;
 import danger.orespawn.entity.Alosaurus;
 import danger.orespawn.entity.AttackSquid;
 import danger.orespawn.entity.BandP;
@@ -28,6 +30,7 @@ import danger.orespawn.entity.EntityCaterKiller;
 import danger.orespawn.entity.EntityCliffRacer;
 import danger.orespawn.entity.EntityCricket;
 import danger.orespawn.entity.EntityDragonfly;
+import danger.orespawn.entity.EntityEmperorScorpion;
 import danger.orespawn.entity.EntityGammaMetroid;
 import danger.orespawn.entity.EntityHerculesBeetle;
 import danger.orespawn.entity.EntityHydrolisc;
@@ -82,6 +85,9 @@ import danger.orespawn.entity.Skate;
 import danger.orespawn.entity.Urchin;
 import danger.orespawn.entity.VelocityRaptor;
 import danger.orespawn.entity.Whale;
+import danger.orespawn.entity.client.AlienBossGeoReplacement;
+import danger.orespawn.entity.client.AlienGeoReplacement;
+import danger.orespawn.entity.client.AlienRenderer;
 import danger.orespawn.entity.client.AlosaurusGeoReplacement;
 import danger.orespawn.entity.client.AlosaurusRenderer;
 import danger.orespawn.entity.client.AntGeoReplacement;
@@ -132,6 +138,8 @@ import danger.orespawn.entity.client.EasterBunnyGeoReplacement;
 import danger.orespawn.entity.client.EasterBunnyRenderer;
 import danger.orespawn.entity.client.ElevatorGeoReplacement;
 import danger.orespawn.entity.client.ElevatorRenderer;
+import danger.orespawn.entity.client.EmperorScorpionGeoReplacement;
+import danger.orespawn.entity.client.EmperorScorpionRenderer;
 import danger.orespawn.entity.client.EnderKnightGeoReplacement;
 import danger.orespawn.entity.client.EnderKnightRenderer;
 import danger.orespawn.entity.client.EnderReaperGeoReplacement;
@@ -548,6 +556,26 @@ public final class PhaseGDevRenderers {
     }
 
 
+    /**
+     * The FK slice (under the hierarchy rules): the Alien rig's two registries and the Emperor Scorpion ON THE HOOKS
+     * already written, shipped as real parent-child hierarchies (FlatRig); the classic renderers the default. The Alien
+     * Boss's classic side is the AlienRenderer (orig ClientProxyOreSpawn.java:435 drew both registries with the one
+     * RenderAlien; the port registers AlienRenderer, typed on Alien, for the AlienBoss type through registerEntityRenderer's
+     * {@code EntityType<? extends T>} widening) - {@code select} widens it the same way, so the switch keys the two
+     * registries apart ({@code alien}, {@code alien_boss}).
+     */
+    public static EntityRendererProvider<Alien> alienRenderer() {
+        return select("alien", AlienRenderer::new, AlienGeoReplacement.Renderer::new);
+    }
+
+    public static EntityRendererProvider<AlienBoss> alienBossRenderer() {
+        return select("alien_boss", AlienRenderer::new, AlienBossGeoReplacement.Renderer::new);
+    }
+
+    public static EntityRendererProvider<EntityEmperorScorpion> emperorScorpionRenderer() {
+        return select("emperor_scorpion", EmperorScorpionRenderer::new, EmperorScorpionGeoReplacement.Renderer::new);
+    }
+
     /** The sixth Tier-2 slice (T2f, 2026-09-15): the twelve rigs ON THE HOOKS already written (the Dungeon Beast and the Scorpion held); the classic renderers the default. */
     public static EntityRendererProvider<EnderKnight> enderKnightRenderer() {
         return select("ender_knight", EnderKnightRenderer::new, EnderKnightGeoReplacement.Renderer::new);
@@ -598,15 +626,25 @@ public final class PhaseGDevRenderers {
     }
 
 
-    private static <E extends Entity> EntityRendererProvider<E> select(String species,
-                                                                       EntityRendererProvider<E> classic,
-                                                                       EntityRendererProvider<E> candidate) {
+    /**
+     * {@code P} is the species the classic renderer draws and {@code E extends P} the registry's own entity: for every
+     * species but one they are the same class; the Alien Boss (the FK slice) is a shared consumer whose classic renderer is
+     * its parent species' - the AlienRenderer, typed on Alien (orig ClientProxyOreSpawn.java:435 registered the one
+     * RenderAlien for both, and the port's {@code registerEntityRenderer(EntityType<? extends T>, EntityRendererProvider<T>)}
+     * widened it the same way) - returned under the boss's own provider type. The bound {@code E extends P} checks the
+     * widening at compile time (a renderer of the parent class draws the subclass entity); the unchecked cast is the type
+     * system's word for it and nothing runs differently.
+     */
+    @SuppressWarnings("unchecked")
+    private static <P extends Entity, E extends P> EntityRendererProvider<E> select(String species,
+                                                                                    EntityRendererProvider<P> classic,
+                                                                                    EntityRendererProvider<E> candidate) {
         if (DevRendererSwitch.geckolib(species) == DevRendererSwitch.Variant.CANDIDATE) {
             OreSpawnMod.LOGGER.warn("Phase G dev switch: {} is using its GeckoLib candidate renderer "
                     + "(selected by -D{}). This is a review build, not a production cutover.",
                     species, DevRendererSwitch.candidateSource(species));
             return candidate;
         }
-        return classic;
+        return (EntityRendererProvider<E>) (EntityRendererProvider<?>) classic;
     }
 }

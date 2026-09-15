@@ -595,19 +595,25 @@ def undrawn_parts_declared(spec: dict[str, Any], compiled: dict[str, Any]) -> fr
 # (world) bind rotation inverted onto the child's, R_local = R_parent^-1 * R_child, so the bake's world rotation at bind
 # is the classic's (GeckoLib composes a parent's rotation onto its children, RenderUtil .prepMatrixForBone: translate to
 # the bone, to its pivot, rotate Z then Y then X, away from the pivot - the same ZYX order as
-# ModelPart.translateAndRotate, and the converter's Y-reflection conjugation preserves composition). The hook
+# ModelPart.translateAndRotate, and the conjugation through the entity frame's reflection preserves composition). The hook
 # expresses the classic world transforms through parent-relative rotations and positions (FlatRig); the harness's
 # chain-link leg (tools/g1_render_parity.py chain_link_parity) compares the world matrices at every link.
-HIERARCHY_DRAW_ORDER_CLASSIC = "classic"
-# A MEASUREMENT form only (`hierarchy_draw_order`): the seam draws a bake in PRE-ORDER (GeoRenderer.renderRecursively draws
-# a bone's cubes, then its children; DrawOrder.apply refuses a key that is not a pre-order of the tree), so a hierarchy
-# whose classic draw order is not one - a parent drawn after a child, a subtree interleaved with another - cannot draw in
-# the classic order through the seam as it stands, and derive_bone_draw_order refuses it (its FINDINGs). Under this form
-# the key is the classic order re-sequenced into the hierarchy's pre-order (siblings by their subtree's first classic draw)
-# and the findings are recorded instead: the draw-order leg FAILS such a rig by construction (the classic list is not the
-# emitted one), so nothing under it can ship; it exists so a held rig's other legs can be measured and reported.
-HIERARCHY_DRAW_ORDER_PREORDER_DIAGNOSTIC = "preorder_diagnostic"
-HIERARCHY_DRAW_ORDERS = (HIERARCHY_DRAW_ORDER_CLASSIC, HIERARCHY_DRAW_ORDER_PREORDER_DIAGNOSTIC)
+# THE HIERARCHY RULES (TEST-016 / TEST-017): "A hierarchy rig draws parent-first; the draw-order leg's rule for a
+# hierarchy entry is the key's pre-order, and the visual leg is the judge of what the order change shows." The seam
+# draws a bake in PRE-ORDER (GeoRenderer.renderRecursively draws a bone's cubes, then its children; DrawOrder.apply
+# refuses a key that is not a pre-order of the tree), so for a hierarchy entry the key IS the tree's pre-order - the
+# classic order lifted over the declared tree, siblings by their subtree's first classic draw - and a classic order
+# that is not one (a parent drawn after a child, a subtree interleaved with another: the Alien's tail rings before
+# their root, the Emperor Scorpion's left pincer after the right arm) is not refused but RECORDED in the evidence
+# (`hierarchy_preorder`: the classic order, the units whose position moved, the findings) as the deviation the draw-order
+# leg reports and the visual leg judges. A flat entry (no hierarchy) is refused as before. The former measurement
+# field `hierarchy_draw_order` (the first attempt's preorder_diagnostic form) is retired: refused.
+HIERARCHY_PREORDER_RULE = (
+    "a hierarchy rig draws parent-first: the key is the "
+    "tree's pre-order with siblings by their subtree's first classic draw; the classic renderToBuffer order's deviation "
+    "from it is recorded here, reported by the draw-order leg and judged by the visual leg"
+)
+RETIRED_HIERARCHY_FIELDS = ("hierarchy_draw_order",)
 
 
 def hierarchy_declared(spec: dict[str, Any], compiled: dict[str, Any]) -> dict[str, str]:
@@ -616,6 +622,10 @@ def hierarchy_declared(spec: dict[str, Any], compiled: dict[str, Any]) -> dict[s
     declared once (an object's keys), no self-parenting, no cycle. Empty when the entry declares none."""
     declared = spec.get("hierarchy")
     model_id = spec["id"]
+    retired = [field for field in RETIRED_HIERARCHY_FIELDS if field in spec]
+    if retired:
+        raise ValueError(f"{model_id} carries the retired field(s) {retired}: a hierarchy entry's draw-order key is the "
+                         "tree's pre-order by rule; there is no measurement form")
     if declared is None:
         return {}
     if not isinstance(declared, dict) or not declared or any(
@@ -646,16 +656,6 @@ def hierarchy_declared(spec: dict[str, Any], compiled: dict[str, Any]) -> dict[s
             seen.append(cursor)
             cursor = declared[cursor]
     return dict(declared)
-
-
-def hierarchy_draw_order_declared(spec: dict[str, Any], hierarchy: dict[str, str]) -> str:
-    """The entry's ``hierarchy_draw_order``: classic by default; the measurement form only with a hierarchy."""
-    mode = spec.get("hierarchy_draw_order", HIERARCHY_DRAW_ORDER_CLASSIC)
-    if mode not in HIERARCHY_DRAW_ORDERS:
-        raise ValueError(f"{spec['id']} hierarchy_draw_order {mode!r} is not one of {HIERARCHY_DRAW_ORDERS}")
-    if mode != HIERARCHY_DRAW_ORDER_CLASSIC and not hierarchy:
-        raise ValueError(f"{spec['id']} hierarchy_draw_order {mode!r} needs a hierarchy")
-    return mode
 
 
 def rotation_matrix_zyx(angles: Iterable[float]) -> list[list[float]]:
@@ -737,12 +737,13 @@ def local_bind_rotation(parent_flat: Iterable[float], child_flat: Iterable[float
 def derive_bone_draw_order(compiled: dict[str, Any],
                            bones: list[dict[str, Any]],
                            undrawn_parts: frozenset[str] = frozenset(),
-                           preorder_diagnostic: bool = False) -> tuple[list[str], dict[str, Any]]:
+                           hierarchy_preorder: bool = False) -> tuple[list[str], dict[str, Any]]:
     """G2 root-order contract: the geo bones in the order the classic renderer draws the parts.
 
-    ``preorder_diagnostic`` (the hierarchy form's measurement mode, HIERARCHY_DRAW_ORDER_PREORDER_DIAGNOSTIC): the two
-    tree FINDINGs below and the lifting check are RECORDED in the evidence instead of raised, and the key is the
-    pre-order the lifting produces - a rig the seam cannot draw in the classic order, measured on its other legs.
+    ``hierarchy_preorder`` (a hierarchy entry; THE HIERARCHY RULES, HIERARCHY_PREORDER_RULE): the key is the pre-order
+    the lifting produces by rule, and the two tree FINDINGs below and the lifting check are RECORDED in the evidence
+    (``hierarchy_preorder``) instead of raised - the classic order's deviation the draw-order leg reports and the
+    visual leg judges. A flat entry keeps the refusals.
 
     The probe records, for every full capture, the classic ``renderToBuffer`` draw
     sequence (``draw_order``: cube-bearing parts, a render-instance draw as its
@@ -830,7 +831,7 @@ def derive_bone_draw_order(compiled: dict[str, Any],
     findings: list[str] = []
 
     def finding(message: str) -> None:
-        if preorder_diagnostic:
+        if hierarchy_preorder:
             findings.append(message)
             return
         raise ValueError(message)
@@ -868,16 +869,15 @@ def derive_bone_draw_order(compiled: dict[str, Any],
         "tie_break": "converter emission order for pairs never drawn together in any capture",
         "lifting": "pre-order over the geo bone tree, siblings by their subtree's first classic draw",
     }
-    if preorder_diagnostic:
-        # the hierarchy form's measurement mode: the classic (merged) order, the pre-order the key carries instead, the
-        # units whose position moved and the findings the classic mode would have raised - the draw-order leg fails it
-        evidence["preorder_diagnostic"] = {
+    if hierarchy_preorder:
+        # the hierarchy rules: the classic (merged) order, the units whose position moved under the pre-order the key
+        # carries, and the findings a flat entry would have been refused with - the deviation the visual leg judges
+        evidence["hierarchy_preorder"] = {
+            "rule": HIERARCHY_PREORDER_RULE,
             "classic_order": merged,
+            "preorder": lifted,
             "moved_units": [unit for unit, lifted_unit in zip(merged, lifted) if unit != lifted_unit],
             "findings": findings,
-            "note": "the key is the hierarchy's pre-order, NOT the classic draw order: a measurement form for a rig the "
-                    "seam cannot draw in the classic order (a parent drawn after a child, a subtree interleaved); the "
-                    "draw-order leg fails it by construction, so nothing under it can ship",
         }
     return ordered, evidence
 
@@ -969,12 +969,35 @@ def derive_cube_face_order(compiled: dict[str, Any], bones: list[dict[str, Any]]
     return order, evidence
 
 
+def preorder_bones(bones: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    """The bones in the tree's pre-order: every root in list order, each followed by its subtree, siblings in list order.
+    Every bone is visited exactly once (a parent named by a bone must be a bone of the list; refused otherwise)."""
+    by_name = {bone["name"]: bone for bone in bones}
+    children: dict[str | None, list[str]] = {}
+    for bone in bones:
+        parent = bone.get("parent")
+        if parent is not None and parent not in by_name:
+            raise ValueError(f"bone {bone['name']} is parented to {parent}, which the geo does not carry")
+        children.setdefault(parent, []).append(bone["name"])
+    ordered: list[dict[str, Any]] = []
+
+    def visit(name: str) -> None:
+        ordered.append(by_name[name])
+        for child in children.get(name, []):
+            visit(child)
+
+    for root in children.get(None, []):
+        visit(root)
+    if len(ordered) != len(bones):
+        raise ValueError("the bone tree does not reach every bone exactly once (a cycle or a detached subtree)")
+    return ordered
+
+
 def convert_geometry(compiled: dict[str, Any],
                      render_instances: dict[str, Any] | None = None,
                      cube_face_order: str | None = None,
                      undrawn_parts: frozenset[str] = frozenset(),
-                     hierarchy: dict[str, str] | None = None,
-                     hierarchy_draw_order: str = HIERARCHY_DRAW_ORDER_CLASSIC) -> tuple[dict[str, Any], dict[str, Any]]:
+                     hierarchy: dict[str, str] | None = None) -> tuple[dict[str, Any], dict[str, Any]]:
     root = compiled["definition"]
     if root["cubes"]:
         raise ValueError("unnamed MeshDefinition root contains cubes")
@@ -1088,6 +1111,13 @@ def convert_geometry(compiled: dict[str, Any],
             cube_count += len(part["cubes"])
         bones.append(bone)
 
+    if hierarchy:
+        # THE HIERARCHY FORM's bone order: the tree's pre-order (a parent before its children, siblings in the compiled
+        # order) - the order a nested rig is authored and exported in (the Queen's native geo, Blockbench's outliner), so
+        # the artist package's round trip keeps it; GeckoLib resolves parents by name and DrawOrder sorts the sibling lists
+        # into the key, so nothing else reads the list order. A flat entry's list stays the compiled order (unchanged).
+        bones = preorder_bones(bones)
+
     input_names = sorted(compiled["bone_names"])
     output_names = sorted(bone["name"] for bone in bones)
     if render_instances:
@@ -1107,8 +1137,7 @@ def convert_geometry(compiled: dict[str, Any],
     if set(local_bind_rotations) != set(hierarchy):
         raise ValueError(f"{model_id}: hierarchy names parts the geo does not carry: "
                          f"{sorted(set(hierarchy) - set(local_bind_rotations))}")
-    bone_draw_order, draw_order_evidence = derive_bone_draw_order(
-        compiled, bones, undrawn_parts, hierarchy_draw_order == HIERARCHY_DRAW_ORDER_PREORDER_DIAGNOSTIC)
+    bone_draw_order, draw_order_evidence = derive_bone_draw_order(compiled, bones, undrawn_parts, bool(hierarchy))
     description: dict[str, Any] = {
         "identifier": f"geometry.orespawn.g1.{model_id}",
         "texture_width": compiled["texture_width"],
@@ -1156,7 +1185,8 @@ def convert_geometry(compiled: dict[str, Any],
             "links": len(hierarchy),
             "local_bind_rotations_radians": {child: clean_vector(local_bind_rotations[child], 12) for child in hierarchy},
             "derived_pivots_classic": {child: clean_vector(derived_pivots[child], 12) for child in hierarchy},
-            "draw_order": hierarchy_draw_order,
+            "draw_order": "preorder",
+            "draw_order_rule": HIERARCHY_PREORDER_RULE,
             "semantics": (
                 "each declared child is a bone parented to its chain parent (the part names preserved), its pivot derived "
                 "in Blockbench terms - the classic bind pivot carried back through the parent's bind rotation, "
@@ -1527,9 +1557,8 @@ def convert_model(manifest: dict[str, Any], spec: dict[str, Any],
         )
     undrawn = undrawn_parts_declared(spec, compiled)
     hierarchy = hierarchy_declared(spec, compiled)
-    hierarchy_draw_order = hierarchy_draw_order_declared(spec, hierarchy)
     geometry, geometry_summary = convert_geometry(compiled, render_instances, spec.get("cube_face_order"), undrawn,
-                                                  hierarchy, hierarchy_draw_order)
+                                                  hierarchy)
     animation, animation_contract = convert_animation(
         spec, compiled, float(manifest["ticks_per_second"])
     )

@@ -15,10 +15,15 @@ The independent gates are:
   its emitted clip is reference-only, not runtime acceptance, and editable keyframes remain G3 work;
 - visual: independent software rasterization of concrete `EntityModel.renderToBuffer` and `GeoRenderer` streams using the shipped texture;
   every pixel is compared (G2 root-order contract, 2026-09-06) and the z-fight contested fraction is reported as a diagnostic only;
-  a changed pixel whose two front fragments on both sides are the same pair of faces within 1e-5 blocks is pair-contested
-: reported per sample, never a mismatch, capped at 1 percent of the image;
+  a changed pixel whose two front fragments on both sides are the same pair of faces within 1e-5 blocks, the shown
+  fragments differing inside the pair, is pair-contested (the tightening adopted):
+  reported per sample, never a mismatch, capped at 1 percent of the image;
 - draw order: per full capture, the sequence of parts the classic `renderToBuffer` drew equals the sequence of bones `GeoRenderer` emitted,
-  and the order shipped in each geo (`orespawn:bone_draw_order`) equals the converter's, the probe's and the fresh bake's traversal.
+  and the order shipped in each geo (`orespawn:bone_draw_order`) equals the converter's, the probe's and the fresh bake's traversal;
+  a hierarchy entry (the FK slice) draws parent-first, its key the tree's pre-order: GeoRenderer's
+  sequence equals that pre-order, the classic order's deviation is recorded and the visual leg judges it; its surface leg's normal
+  epsilon is the named HIERARCHY_NORMAL_EPSILON 1e-5 with the chain's accumulation recorded, and its chain-link leg compares
+  every link's world transform against the classic within the geometry epsilon.
 
 ## model_elevator (Tier 3)
 

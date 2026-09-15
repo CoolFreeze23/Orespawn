@@ -121,14 +121,12 @@ ACKNOWLEDGED = {
 # acknowledged (see is_acknowledged in main); a texture or another rig's asset missing
 # from a hook is an ERROR as anywhere else. check_hooks reports a stale entry.
 HOOKS = {
-    "AlienGeoReplacement": "alien",
     "BabyDragonGeoReplacement": "dragon",
     "BasiliskGeoReplacement": "basilisk",
     "ButterflyGeoReplacement": "butterfly",
     "CephadromeGeoReplacement": "cephadrome",
     "DragonGeoReplacement": "dragon",
     "DungeonBeastGeoReplacement": "dungeonbeast",
-    "EmperorScorpionGeoReplacement": "emperorscorpion",
     "GhostGeoReplacement": "ghost",
     "GiantRobotGeoReplacement": "giantrobot",
     "GodzillaGeoReplacement": "godzilla",
