@@ -5203,23 +5203,23 @@
       "registry": "the_prince_teen",
       "tier": 1,
       "tier_label": "Tier 1 (boss)",
-      "rig_source": "reference-leg converter output",
-      "in_game": false,
+      "rig_source": "shipped",
+      "in_game": true,
       "seed": true,
       "files": [
         "SPEC.md",
         "reference/SLOTS.md",
-        "reference_theprinceteen.geo.json",
         "roundtrip.report.json",
         "spec.manifest.json",
         "textures/theprince_teen.png",
-        "the_prince_teen.animation.json",
         "the_prince_teen.bbmodel",
         "the_prince_teen_reference_attack.animation.json",
         "the_prince_teen_reference_fly.animation.json",
         "the_prince_teen_reference_idle.animation.json",
         "the_prince_teen_reference_sit.animation.json",
-        "the_prince_teen_reference_walk.animation.json"
+        "the_prince_teen_reference_walk.animation.json",
+        "theprinceteen.animation.json",
+        "theprinceteen.geo.json"
       ],
       "bones": 71,
       "cubes": 71,
@@ -5312,23 +5312,23 @@
       "registry": "water_dragon",
       "tier": 1,
       "tier_label": "Tier 1 (boss)",
-      "rig_source": "reference-leg converter output",
-      "in_game": false,
+      "rig_source": "shipped",
+      "in_game": true,
       "seed": true,
       "files": [
         "SPEC.md",
         "reference/SLOTS.md",
-        "reference_waterdragon.geo.json",
         "roundtrip.report.json",
         "spec.manifest.json",
         "textures/waterdragon.png",
-        "water_dragon.animation.json",
         "water_dragon.bbmodel",
         "water_dragon_reference_attack.animation.json",
         "water_dragon_reference_idle.animation.json",
         "water_dragon_reference_mouth_open.animation.json",
         "water_dragon_reference_sit.animation.json",
-        "water_dragon_reference_walk.animation.json"
+        "water_dragon_reference_walk.animation.json",
+        "waterdragon.animation.json",
+        "waterdragon.geo.json"
       ],
       "bones": 24,
       "cubes": 24,
@@ -5356,7 +5356,8 @@
         "differences": 0,
         "dropped_keys": 0,
         "reattached": [
-          "orespawn:bone_draw_order"
+          "orespawn:bone_draw_order",
+          "orespawn:cube_face_order"
         ],
         "clips_embedded": 5,
         "clips_equal_within_tolerance": 5,
@@ -6179,8 +6180,8 @@
       "tier_1": {
         "registries": 28,
         "rigs": 21,
-        "not_in_game_registries": 8,
-        "not_in_game_rigs": 5
+        "not_in_game_registries": 6,
+        "not_in_game_rigs": 3
       },
       "tier_2": {
         "registries": 75,
@@ -6234,8 +6235,8 @@
       ]
     },
     "rig_sources": {
-      "shipped": 103,
-      "reference-leg converter output": 13
+      "shipped": 105,
+      "reference-leg converter output": 11
     },
     "seed_missing": [],
     "artist_tier_not_packaged": []

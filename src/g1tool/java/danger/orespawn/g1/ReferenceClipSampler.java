@@ -349,12 +349,15 @@ public final class ReferenceClipSampler {
             Map.entry("model_pitchblack", "pitch_black"),
             Map.entry("model_seamonster", "sea_monster"),
             Map.entry("model_theprince", "the_prince"),
-            Map.entry("model_theprinceadult", "the_prince_adult")));
+            Map.entry("model_theprinceadult", "the_prince_adult"),
+            // the second Tier-1 slice (T1b, 2026-09-15): the Prince Teen and the Water Dragon landed on the hooks already written
+            Map.entry("model_theprinceteen", "the_prince_teen"),
+            Map.entry("model_waterdragon", "water_dragon")));
 
     /**
      * An unlanded hook (owner 2026-09-14, addendum items 10 and 11): the descriptor's simple class name, the ModEntities
      * registry it packages under and the rig it names - the map {@code HOOKS} in {@code tools/asset_audit.py} carries
-     * (descriptor -> rig; 67 entries at the hooks' landing, the landing slices removing theirs - T2d removed thirteen, T2e fourteen (the Lurking Terror held), T2f twelve (the Dungeon Beast and the Scorpion held), the FK slice three (the Alien pair and the Emperor Scorpion, real parent-child hierarchies), the first Tier-1 slice T1a seventeen (the King and the Butterfly rig held);
+     * (descriptor -> rig; 67 entries at the hooks' landing, the landing slices removing theirs - T2d removed thirteen, T2e fourteen (the Lurking Terror held), T2f twelve (the Dungeon Beast and the Scorpion held), the FK slice three (the Alien pair and the Emperor Scorpion, real parent-child hierarchies), the first Tier-1 slice T1a seventeen (the King and the Butterfly rig held), the second Tier-1 slice T1b two (the Prince Teen and the Water Dragon);
      * the two delegating descriptors, the Alien Boss's on the Alien's rig and the
      * Leonopteryx's on the Leon's, added here because they package under their own registries). The reference entry is
      * {@code reference_<rig>} in {@code tools/reference_model_proofs.json}, its geo
@@ -380,9 +383,7 @@ public final class ReferenceClipSampler {
             new Hook("MothraGeoReplacement", "mothra", "butterfly"),
             new Hook("ScorpionGeoReplacement", "scorpion", "scorpion"),
             new Hook("TheKingGeoReplacement", "the_king", "theking"),
-            new Hook("ThePrinceTeenGeoReplacement", "the_prince_teen", "theprinceteen"),
-            new Hook("VampireButterflyGeoReplacement", "vampire_butterfly", "butterfly"),
-            new Hook("WaterDragonGeoReplacement", "water_dragon", "waterdragon"));
+            new Hook("VampireButterflyGeoReplacement", "vampire_butterfly", "butterfly"));
 
     private static Map<String, Hook> hooks(Hook... rows) {
         Map<String, Hook> out = new TreeMap<>();
@@ -928,7 +929,24 @@ public final class ReferenceClipSampler {
                         + "every state) at 0.0845 rad/tick, 74.35 ticks; the attacking heads at 0.3 / 0.85, 0.32 / 0.95, 0.28 / 0.75 (:285-293) and the sitting jaws at 0.25 / 0.35 "
                         + "/ 0.45 (:334-336); the wings by attacking / activity / sitting cos(ageInTicks * 0.75 / 0.35 * WINGSPEED) (:88-92) with the 84 / 184 follows; the gait "
                         + "cos(ageInTicks * 0.3 * WINGSPEED) * PI * 0.25 * limbSwingAmount while walking and not sitting (:176, walk) at 0.195; the tail chain at tailspeed 0.26 "
-                        + "resting, 0.56 attacking, 0 sitting (:74-75, :226-231)"))));
+                        + "resting, 0.56 attacking, 0 sitting (:74-75, :226-231)")),
+            // the second Tier-1 slice (T1b, 2026-09-15): the Prince Teen and the Water Dragon landed on the hooks already written - each
+            // row is the HOOK_RULES row the hook lanes wrote, carried verbatim (the same rule, the same source lines, true on the
+            // line-neutral descriptors) and keyed by the manifest id
+            Map.entry("model_theprinceteen", Rule.periodic(TWO_PI / (double) (0.25F * 0.65F),
+                "wingspeed 0.65: the slowest rhythm is the resting jaw chatter cos(ageInTicks * 0.25 * WINGSPEED) * PI * 0.02 (ThePrinceTeenGeoReplacement"
+                        + ".applyCustomAnimations:323, attacking 0; the other heads at 0.3 / 0.35, :325-327) at 0.1625 rad/tick, 38.67 ticks, beside the resting tail chain at "
+                        + "tailspeed 0.26 (:81-82, :210-244; 0.56 attacking :203, 0 sitting :207); the wings cos(ageInTicks * 1.3 * WINGSPEED) * PI * 0.2 * limbSwingAmount walking, "
+                        + "cos(ageInTicks * 0.3 * WINGSPEED) * PI * 0.04 resting (:90-91), 1.4 / 1.7 * 0.65 by activity and attacking (:93-96); the legs cos(ageInTicks * 0.55 * "
+                        + "WINGSPEED) * PI * 0.25 * limbSwingAmount with its pi/2 phase (:136-137, walk) and cos(ageInTicks * WINGSPEED) * PI * 0.25 attacking (:149-150); the "
+                        + "attacking jaws at 0.9 / 1.1 / 1.3 * 0.65 (:316-320); the flight yaw latch rf1 needs activity (0 on the probe); the three-head look follows the head "
+                        + "extensions = 0 (:276-424)")),
+            Map.entry("model_waterdragon", Rule.periodic(TWO_PI / (double) (0.5F * 0.5F),
+                "wingspeed 0.5: the slowest rhythm is cos(ageInTicks * 0.5 * WINGSPEED) * PI * 0.05 (WaterDragonGeoReplacement.applyCustomAnimations:124, every state) "
+                        + "at 0.25 rad/tick, 25.13 ticks, beside the 0.8 / 0.7 / 0.6 * 0.5 sways (:109-119); the threshold gait cos(ageInTicks * 1.3 * WINGSPEED) * PI * 0.2 * "
+                        + "limbSwingAmount and the pi/4-phased body wave cos(ageInTicks * 1.3 * WINGSPEED - n * pi/4) * PI * 0.4 * limbSwingAmount with its chained position writes "
+                        + "(:82-99, walk) at 0.65; the three-way attacking jaw cos(ageInTicks * 1.2 * WINGSPEED) * PI * 0.25 at attacking 1, 0.45 rad at 2, -0.25 at rest (:129); the "
+                        + "head look at 0.75 with the nose, jaw, fin and ears following follows netHeadYaw = 0 (:130-142)"))));
 
     /**
      * The span rule of every unlanded hook (owner 2026-09-14, addendum item 31 (11) (3)): a hook declares no manifest
@@ -989,20 +1007,6 @@ public final class ReferenceClipSampler {
                         + "0.08 rad/tick, 78.54 ticks; the attacking heads at 0.3 / 0.2 / 0.85, 0.32 / 0.21 / 0.95, 0.28 / 0.19 / 0.75 (:278-286); the wings cos(ageInTicks * 0.75 "
                         + "* WING_SPEED) * PI * 0.21 attacking else cos(ageInTicks * 0.35 * WING_SPEED) * PI * 0.15 (:83-84) with the 84 / 184 follows; the fourteen claws and legs on "
                         + "attacking (:142, :162); the eight-link tail chain at tailspeed 0.26 resting and 0.56 attacking (:212-217, :220-268)"));
-        rules.put("ThePrinceTeenGeoReplacement", Rule.periodic(TWO_PI / (double) (0.25F * 0.65F),
-                "wingspeed 0.65: the slowest rhythm is the resting jaw chatter cos(ageInTicks * 0.25 * WINGSPEED) * PI * 0.02 (ThePrinceTeenGeoReplacement"
-                        + ".applyCustomAnimations:323, attacking 0; the other heads at 0.3 / 0.35, :325-327) at 0.1625 rad/tick, 38.67 ticks, beside the resting tail chain at "
-                        + "tailspeed 0.26 (:81-82, :210-244; 0.56 attacking :203, 0 sitting :207); the wings cos(ageInTicks * 1.3 * WINGSPEED) * PI * 0.2 * limbSwingAmount walking, "
-                        + "cos(ageInTicks * 0.3 * WINGSPEED) * PI * 0.04 resting (:90-91), 1.4 / 1.7 * 0.65 by activity and attacking (:93-96); the legs cos(ageInTicks * 0.55 * "
-                        + "WINGSPEED) * PI * 0.25 * limbSwingAmount with its pi/2 phase (:136-137, walk) and cos(ageInTicks * WINGSPEED) * PI * 0.25 attacking (:149-150); the "
-                        + "attacking jaws at 0.9 / 1.1 / 1.3 * 0.65 (:316-320); the flight yaw latch rf1 needs activity (0 on the probe); the three-head look follows the head "
-                        + "extensions = 0 (:276-424)"));
-        rules.put("WaterDragonGeoReplacement", Rule.periodic(TWO_PI / (double) (0.5F * 0.5F),
-                "wingspeed 0.5: the slowest rhythm is cos(ageInTicks * 0.5 * WINGSPEED) * PI * 0.05 (WaterDragonGeoReplacement.applyCustomAnimations:124, every state) "
-                        + "at 0.25 rad/tick, 25.13 ticks, beside the 0.8 / 0.7 / 0.6 * 0.5 sways (:109-119); the threshold gait cos(ageInTicks * 1.3 * WINGSPEED) * PI * 0.2 * "
-                        + "limbSwingAmount and the pi/4-phased body wave cos(ageInTicks * 1.3 * WINGSPEED - n * pi/4) * PI * 0.4 * limbSwingAmount with its chained position writes "
-                        + "(:82-99, walk) at 0.65; the three-way attacking jaw cos(ageInTicks * 1.2 * WINGSPEED) * PI * 0.25 at attacking 1, 0.45 rad at 2, -0.25 at rest (:129); the "
-                        + "head look at 0.75 with the nose, jaw, fin and ears following follows netHeadYaw = 0 (:130-142)"));
     }
 
     private ReferenceClipSampler() {

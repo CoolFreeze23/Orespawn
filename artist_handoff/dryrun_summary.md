@@ -4,11 +4,11 @@ Output: `artist_handoff`
 
 ## Counts (the deliverable)
 
-- Tier 1: 28 registries over 21 rigs (a shared rig counted once); not yet in-game: 8 registries over 5 rigs.
+- Tier 1: 28 registries over 21 rigs (a shared rig counted once); not yet in-game: 6 registries over 3 rigs.
 - Tier 2: 75 registries over 70 rigs (a shared rig counted once); not yet in-game: 5 registries over 5 rigs.
 - Tier 3: 13 registries over 12 rigs (a shared rig counted once).
 - Folders: 116 (one per registry); files: 1369 (1363 in the entity folders + the 6 package-wide files).
-- Rig sources: shipped 103, reference-leg converter output 13.
+- Rig sources: shipped 105, reference-leg converter output 11.
 - Reference clips (owner 2026-09-14, item 31 (11); every state the code reads since item 32 (2)): 112 species carry them — 297 files (idle 112, walk 112, attack 40, sit 14, fly 10, scream 2, crouch 1, display 1, legs_folded 1, mouth_open 1, open 1, sing 1, sitting_flat 1), 297 written beside the sheets, 356 clips embedded in the .bbmodels; unnamed states 0; values that move nothing at rest 11; states offered as extras 23; artist-tier species with clips: 99; held (sampled when the rig lands): 3 — boyfriend, girlfriend, the_princess; landed without a sampled clip (native): the_queen.
 - Packaged without a seed (the SEED_MISSING fallback: the display name from the registry, empty authored sections): 0.
 - Artist-tier species with no rig to package: 0.
@@ -114,9 +114,9 @@ Output: `artist_handoff`
 | the_prince | Tier 1 (boss) | shipped | 13 | 35 | 35 | 0 | 16 | 10 | 3 | STATE | 4 | 1 | 10 (0 keyed by the shipped clips; warn) | 0 | EQUAL, order kept | 37.2 h | 0 |
 | the_prince_adult | Tier 1 (boss) | shipped | 13 | 119 | 119 | 0 | 24 | 10 | 6 | STATE | 8 | 1 | 17 (0 keyed by the shipped clips; warn) | 0 | EQUAL, order kept | 61.8 h | 0 |
 | the_princess | Tier 1 (boss) | reference leg (not yet in-game) | 8 | 37 | 37 | 0 | 19 | 10 | 4 | STATE | 4 | 1 | 10 (0 keyed by the shipped clips; warn) | 0 | EQUAL, order kept | 42 h | 0 |
-| the_prince_teen | Tier 1 (boss) | reference leg (not yet in-game) | 13 | 71 | 71 | 0 | 16 | 10 | 6 | STATE | 8 | 1 | 16 (0 keyed by the shipped clips; warn) | 0 | EQUAL, order kept | 42.6 h | 0 |
+| the_prince_teen | Tier 1 (boss) | shipped | 13 | 71 | 71 | 0 | 16 | 10 | 6 | STATE | 8 | 1 | 16 (0 keyed by the shipped clips; warn) | 0 | EQUAL, order kept | 42.6 h | 0 |
 | velocity_raptor | Tier 2 | shipped | 11 | 34 | 34 | 0 | 16 | 12 | 0 | NONE | 0 | 1 | 0 | 0 | EQUAL, order kept | 24.8 h | 0 |
-| water_dragon | Tier 1 (boss) | reference leg (not yet in-game) | 13 | 24 | 24 | 0 | 19 | 10 | 1 | STATE | 3 | 1 | 11 (0 keyed by the shipped clips; warn) | 0 | EQUAL, order kept | 40.1 h | 0 |
+| water_dragon | Tier 1 (boss) | shipped | 13 | 24 | 24 | 0 | 19 | 10 | 1 | STATE | 3 | 1 | 11 (0 keyed by the shipped clips; warn) | 0 | EQUAL, order kept | 40.1 h | 0 |
 | butterfly | Tier 1 (boss) | reference leg (not yet in-game) | 13 | 10 | 10 | 0 | 7 | 1 | 1 | NONE | 1 | 4 | 0 | 0 | EQUAL, order kept | 18.5 h | 0 |
 | luna_moth | Tier 1 (boss) | reference leg (not yet in-game) | 13 | 10 | 10 | 0 | 7 | 1 | 1 | NONE | 1 | 4 | 0 | 0 | EQUAL, order kept | 17 h | 0 |
 | mosquito | Tier 2 | shipped | 10 | 5 | 5 | 2 | 6 | 1 | 0 | NONE | 0 | 1 | 0 | 0 | EQUAL, order kept | 9 h | 0 |

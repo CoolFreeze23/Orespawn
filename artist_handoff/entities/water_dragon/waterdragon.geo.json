@@ -3,7 +3,7 @@
   "minecraft:geometry": [
     {
       "description": {
-        "identifier": "geometry.orespawn.g1.reference_waterdragon",
+        "identifier": "geometry.orespawn.g1.model_waterdragon",
         "texture_width": 128,
         "texture_height": 128,
         "orespawn:bone_draw_order": [
@@ -31,7 +31,249 @@
           "neackfin",
           "Bodyfin",
           "jaw"
-        ]
+        ],
+        "orespawn:cube_face_order": {
+          "Bodyfin": [
+            [
+              "up",
+              "down",
+              "east",
+              "north",
+              "west",
+              "south"
+            ]
+          ],
+          "Head": [
+            [
+              "up",
+              "down",
+              "east",
+              "north",
+              "west",
+              "south"
+            ]
+          ],
+          "Leg1": [
+            [
+              "up",
+              "down",
+              "east",
+              "north",
+              "west",
+              "south"
+            ]
+          ],
+          "Leg2": [
+            [
+              "up",
+              "down",
+              "east",
+              "north",
+              "west",
+              "south"
+            ]
+          ],
+          "Leg7": [
+            [
+              "up",
+              "down",
+              "east",
+              "north",
+              "west",
+              "south"
+            ]
+          ],
+          "Leg8": [
+            [
+              "up",
+              "down",
+              "east",
+              "north",
+              "west",
+              "south"
+            ]
+          ],
+          "body1": [
+            [
+              "up",
+              "down",
+              "east",
+              "north",
+              "west",
+              "south"
+            ]
+          ],
+          "body2": [
+            [
+              "up",
+              "down",
+              "east",
+              "north",
+              "west",
+              "south"
+            ]
+          ],
+          "body3": [
+            [
+              "up",
+              "down",
+              "east",
+              "north",
+              "west",
+              "south"
+            ]
+          ],
+          "body4": [
+            [
+              "up",
+              "down",
+              "east",
+              "north",
+              "west",
+              "south"
+            ]
+          ],
+          "headfin": [
+            [
+              "up",
+              "down",
+              "east",
+              "north",
+              "west",
+              "south"
+            ]
+          ],
+          "jaw": [
+            [
+              "up",
+              "down",
+              "east",
+              "north",
+              "west",
+              "south"
+            ]
+          ],
+          "leftear": [
+            [
+              "up",
+              "down",
+              "east",
+              "north",
+              "west",
+              "south"
+            ]
+          ],
+          "neackfin": [
+            [
+              "up",
+              "down",
+              "east",
+              "north",
+              "west",
+              "south"
+            ]
+          ],
+          "neck1": [
+            [
+              "up",
+              "down",
+              "east",
+              "north",
+              "west",
+              "south"
+            ]
+          ],
+          "neck2": [
+            [
+              "up",
+              "down",
+              "east",
+              "north",
+              "west",
+              "south"
+            ]
+          ],
+          "neck3": [
+            [
+              "up",
+              "down",
+              "east",
+              "north",
+              "west",
+              "south"
+            ]
+          ],
+          "neck4": [
+            [
+              "up",
+              "down",
+              "east",
+              "north",
+              "west",
+              "south"
+            ]
+          ],
+          "nose": [
+            [
+              "up",
+              "down",
+              "east",
+              "north",
+              "west",
+              "south"
+            ]
+          ],
+          "rightear": [
+            [
+              "up",
+              "down",
+              "east",
+              "north",
+              "west",
+              "south"
+            ]
+          ],
+          "tail1": [
+            [
+              "up",
+              "down",
+              "east",
+              "north",
+              "west",
+              "south"
+            ]
+          ],
+          "tailbottom": [
+            [
+              "up",
+              "down",
+              "east",
+              "north",
+              "west",
+              "south"
+            ]
+          ],
+          "tailmiddle": [
+            [
+              "up",
+              "down",
+              "east",
+              "north",
+              "west",
+              "south"
+            ]
+          ],
+          "tailtop": [
+            [
+              "up",
+              "down",
+              "east",
+              "north",
+              "west",
+              "south"
+            ]
+          ]
+        }
       },
       "bones": [
         {

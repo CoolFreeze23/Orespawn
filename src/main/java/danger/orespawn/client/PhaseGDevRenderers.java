@@ -98,8 +98,10 @@ import danger.orespawn.entity.Skate;
 import danger.orespawn.entity.TRex;
 import danger.orespawn.entity.ThePrince;
 import danger.orespawn.entity.ThePrinceAdult;
+import danger.orespawn.entity.ThePrinceTeen;
 import danger.orespawn.entity.Urchin;
 import danger.orespawn.entity.VelocityRaptor;
+import danger.orespawn.entity.WaterDragon;
 import danger.orespawn.entity.Whale;
 import danger.orespawn.entity.client.AlienBossGeoReplacement;
 import danger.orespawn.entity.client.AlienGeoReplacement;
@@ -279,6 +281,8 @@ import danger.orespawn.entity.client.ThePrinceAdultGeoReplacement;
 import danger.orespawn.entity.client.ThePrinceAdultRenderer;
 import danger.orespawn.entity.client.ThePrinceGeoReplacement;
 import danger.orespawn.entity.client.ThePrinceRenderer;
+import danger.orespawn.entity.client.ThePrinceTeenGeoReplacement;
+import danger.orespawn.entity.client.ThePrinceTeenRenderer;
 import danger.orespawn.entity.client.TriffidGeoReplacement;
 import danger.orespawn.entity.client.TriffidRenderer;
 import danger.orespawn.entity.client.TrooperBugGeoReplacement;
@@ -293,6 +297,8 @@ import danger.orespawn.entity.client.VelocityRaptorGeoReplacement;
 import danger.orespawn.entity.client.VelocityRaptorRenderer;
 import danger.orespawn.entity.client.VortexGeoReplacement;
 import danger.orespawn.entity.client.VortexRenderer;
+import danger.orespawn.entity.client.WaterDragonGeoReplacement;
+import danger.orespawn.entity.client.WaterDragonRenderer;
 import danger.orespawn.entity.client.WhaleGeoReplacement;
 import danger.orespawn.entity.client.WhaleRenderer;
 import danger.orespawn.entity.client.WormLargeGeoReplacement;
@@ -746,6 +752,19 @@ public final class PhaseGDevRenderers {
 
     public static EntityRendererProvider<ThePrinceAdult> thePrinceAdultRenderer() {
         return select("the_prince_adult", ThePrinceAdultRenderer::new, ThePrinceAdultGeoReplacement.Renderer::new);
+    }
+
+    /**
+     * The second Tier-1 slice (T1b, 2026-09-15, owner's closing set item 4): the last two Tier-1 rigs ON THE HOOKS already
+     * written - the Prince Teen and the Water Dragon (the King and the Butterfly rig held by T1a, the Princess the remainder's);
+     * the classic renderers the default.
+     */
+    public static EntityRendererProvider<ThePrinceTeen> thePrinceTeenRenderer() {
+        return select("the_prince_teen", ThePrinceTeenRenderer::new, ThePrinceTeenGeoReplacement.Renderer::new);
+    }
+
+    public static EntityRendererProvider<WaterDragon> waterDragonRenderer() {
+        return select("water_dragon", WaterDragonRenderer::new, WaterDragonGeoReplacement.Renderer::new);
     }
 
 

@@ -1037,7 +1037,7 @@
       "expected_scale": 1.1,
       "ref_derivation": "shadow: RenderWaterDragon.java:22-25 `super((ModelBase)par1ModelBase, par2 * par3)` with ClientProxyOreSpawn.java:436 args par2=0.85f, par3=1.1f -> shadowSize = 0.85f*1.1f = 0.935f (float32 0.9350000619888306). | scale: RenderWaterDragon.java:24 `this.scale = par3` (1.1f); RenderWaterDragon.java:39-45 preRenderScale: if `par1Entity.func_70631_g_()` (isChild) -> `glScalef(scale/2)` = 0.55; else `glScalef(1.1)`. ...",
       "port_renderer": "src/main/java/danger/orespawn/entity/client/WaterDragonRenderer.java",
-      "port_candidate": "none",
+      "port_candidate": "src/main/java/danger/orespawn/entity/client/WaterDragonGeoReplacement.java",
       "truth_verdicts": {
         "shadow": "DIVERGES",
         "scale": "DIVERGES"
@@ -2479,7 +2479,7 @@
       "expected_scale": 1.25,
       "ref_derivation": "shadow: RenderThePrinceTeen.java:22-25 `super((ModelBase)par1ModelBase, par2 * par3)` with ClientProxyOreSpawn.java:503 args (1.0f, 1.25f) -> Render.shadowSize = 1.0f * 1.25f = 1.25. ... | scale: RenderThePrinceTeen.java:24 `this.scale = par3` = 1.25f; preRenderScale :39-41 `GL11.glScalef(1.25,1.25,1.25)` unconditionally; via func_77041_b :43-45.",
       "port_renderer": "src/main/java/danger/orespawn/entity/client/ThePrinceTeenRenderer.java",
-      "port_candidate": "none",
+      "port_candidate": "src/main/java/danger/orespawn/entity/client/ThePrinceTeenGeoReplacement.java",
       "truth_verdicts": {
         "shadow": "DIVERGES",
         "scale": "DIVERGES"

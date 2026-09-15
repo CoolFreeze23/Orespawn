@@ -150,6 +150,8 @@ import danger.orespawn.entity.client.TerribleTerrorGeoReplacement;
 import danger.orespawn.entity.client.TerribleTerrorRenderer;
 import danger.orespawn.entity.client.ThePrinceAdultGeoReplacement;
 import danger.orespawn.entity.client.ThePrinceGeoReplacement;
+import danger.orespawn.entity.client.ThePrinceTeenGeoReplacement;
+import danger.orespawn.entity.client.ThePrinceTeenRenderer;
 import danger.orespawn.entity.client.TriffidGeoReplacement;
 import danger.orespawn.entity.client.TriffidRenderer;
 import danger.orespawn.entity.client.TrooperBugGeoReplacement;
@@ -162,6 +164,8 @@ import danger.orespawn.entity.client.UrchinGeoReplacement;
 import danger.orespawn.entity.client.UrchinRenderer;
 import danger.orespawn.entity.client.VelocityRaptorGeoReplacement;
 import danger.orespawn.entity.client.VelocityRaptorRenderer;
+import danger.orespawn.entity.client.WaterDragonGeoReplacement;
+import danger.orespawn.entity.client.WaterDragonRenderer;
 import danger.orespawn.entity.client.WhaleGeoReplacement;
 import danger.orespawn.entity.client.WhaleRenderer;
 import danger.orespawn.entity.client.WormLargeGeoReplacement;
@@ -215,10 +219,12 @@ import danger.orespawn.entity.pose.StinkyPose;
 import danger.orespawn.entity.pose.TRexPose;
 import danger.orespawn.entity.pose.ThePrinceAdultPose;
 import danger.orespawn.entity.pose.ThePrincePose;
+import danger.orespawn.entity.pose.ThePrinceTeenPose;
 import danger.orespawn.entity.pose.TriffidPose;
 import danger.orespawn.entity.pose.TrooperBugPose;
 import danger.orespawn.entity.pose.UrchinPose;
 import danger.orespawn.entity.pose.VelocityRaptorPose;
+import danger.orespawn.entity.pose.WaterDragonPose;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -320,6 +326,12 @@ import software.bernie.geckolib.loading.object.GeometryTree;
  *     its four undrawn toes (TEST-013), the Giant Robot pair's geo carries the twenty-two render-instance clones (the Crab's
  *     form) and the Kraken's and Dungeon Beast's descriptors declare their constant render transform ({@code t2_009} pins
  *     its conjugation).</li>
+ * <li>{@code t2_013} (the second Tier-1 slice T1b, 2026-09-15; owner's closing set item 4 on the hooks already written,
+ *     addendum items 10 and 14; hitbox profiles excluded): the last two Tier-1 HOOK registries landed on their hooks - The
+ *     Prince Teen and the Water Dragon - each pinned exactly as {@code t2_005} pins the third slice's (no layer, an empty
+ *     file, nothing registered, the classic shadow, the face order on the Water Dragon (its five zero-thickness fins), the
+ *     hook moving a named bone off its bind at age 7; both hooks read their entity, so each poses on its own declared rest
+ *     subject).</li>
  * <li>{@code t2_004}: the render facts the 4c precedent pinned in code - each descriptor's shadow radius is its
  *     classic renderer's constant (ENT-S-092; the Ant family's {@code 0.1 / 0.15 x SCALE} products where the classic
  *     renderer declares no SHADOW), the Cockateil and Ruby Bird sharing the Cockateil renderer's - and each shared
@@ -1261,7 +1273,94 @@ public class T2SeamTests {
         helper.succeed();
     }
 
-    /** The t2_005 pins on one hook species (shared by the third, fourth, fifth and sixth slices', the FK slice's and the first Tier-1 slice's rows). */
+    // ------------------------------------------------------------------ row 13: the hook registries of the second Tier-1 slice (T1b)
+
+    /**
+     * The declared rest state of the two T1b hooks (both read their entity): the attacking flag 0, activity 0, not sitting,
+     * not ordered to sit, at rest with no yaw delta, the head extensions 0; a fresh RenderInfo latch (the probe's rest
+     * subject). One instance per registry (the Prince Teen's flight yaw latch writes the scratch only while flying).
+     */
+    private static final class RestSubjectT1b implements ThePrinceTeenPose, WaterDragonPose {
+        private final RenderInfo renderInfo = new RenderInfo();
+
+        @Override
+        public RenderInfo getRenderInfo() {
+            return this.renderInfo;
+        }
+
+        @Override
+        public int getAttacking() {
+            return 0;
+        }
+
+        @Override
+        public int getActivity() {
+            return 0;
+        }
+
+        @Override
+        public boolean isOrderedToSit() {
+            return false;
+        }
+
+        @Override
+        public boolean isInSittingPose() {
+            return false;
+        }
+
+        @Override
+        public float getYRot() {
+            return 0.0F;
+        }
+
+        @Override
+        public float yRotO() {
+            return 0.0F;
+        }
+
+        @Override
+        public int getHead1Ext() {
+            return 0;
+        }
+
+        @Override
+        public int getHead2Ext() {
+            return 0;
+        }
+
+        @Override
+        public int getHead3Ext() {
+            return 0;
+        }
+    }
+
+    private static List<HookSpecies> hookSpeciesT1b() {
+        return List.of(
+                // the Prince Teen: the left wing's first spar rolls on the walking beat at limbSwingAmount 1 (no zero-thickness cube)
+                new HookSpecies("the_prince_teen", new ThePrinceTeenGeoReplacement(), "theprinceteen", ThePrinceTeenRenderer.SHADOW, false, new RestSubjectT1b(), "wing1"),
+                // the Water Dragon: the rear body block yaws on the gait-scaled body wave at limbSwingAmount 1; five zero-thickness fins
+                new HookSpecies("water_dragon", new WaterDragonGeoReplacement(), "waterdragon", WaterDragonRenderer.SHADOW, true, new RestSubjectT1b(), "body3"));
+    }
+
+    @GameTest(template = "empty", batch = BATCH)
+    public static void t2_013_second_tier1_slice_hook_registries_declare_no_layer_register_nothing_and_pose_through_their_hooks(GameTestHelper helper) {
+        Flags flags = Flags.read();
+        try {
+            OreSpawnConfig.MODERN_ENABLED.set(true);
+            OreSpawnConfig.MODERN_ARTIST_ANIMATIONS.set(true);
+            OreSpawnConfig.MODERN_CLASSIC_ANIMATION_SPECIES.set(List.of());
+            List<HookSpecies> all = hookSpeciesT1b();
+            helper.assertTrue(all.size() == 2, "the two hook registries landed by the second Tier-1 slice (owner 2026-09-15, closing set item 4)");
+            for (HookSpecies species : all) {
+                assertHookSpecies(helper, species);
+            }
+        } finally {
+            flags.restore();
+        }
+        helper.succeed();
+    }
+
+    /** The t2_005 pins on one hook species (shared by the third, fourth, fifth and sixth slices', the FK slice's and the two Tier-1 slices' rows). */
     private static void assertHookSpecies(GameTestHelper helper, HookSpecies species) {
         helper.assertTrue(species.replacement().keyframeLayers().isEmpty(),
                 species.name() + " declares no keyframe layer: on the hook until an artist delivers idle and walk (Amendment 2)");

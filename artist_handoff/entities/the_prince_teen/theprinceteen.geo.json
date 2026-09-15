@@ -3,7 +3,7 @@
   "minecraft:geometry": [
     {
       "description": {
-        "identifier": "geometry.orespawn.g1.reference_theprinceteen",
+        "identifier": "geometry.orespawn.g1.model_theprinceteen",
         "texture_width": 512,
         "texture_height": 256,
         "orespawn:bone_draw_order": [

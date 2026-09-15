@@ -6439,9 +6439,149 @@
       },
       "channels": [],
       "hook_note": "the first Tier-1 slice (T1a, 2026-09-15, owner's closing set item 4 under Amendment 2 - on the hook already written, owner 2026-09-14 addendum items 10 and 14; a Tier-1 rig lands exactly as a Tier-2 rig does: hitbox profiles excluded, the classic single hitbox stays, nothing of the profile phase): a HOOK rig - the shipped pose is the classic setupAnim verbatim in the descriptor's applyCustomAnimations(processor, PoseInputs); no keyframe layer, no transcription, no clip manifest (the self-gate stays closed until an artist delivers idle and walk); channels [] because tools/layer_definition_to_geo.py refuses channels on a code_driven / entity_state entry without a keyframe_reference_leg - the reference-clip sampler's span comes from its RULES row for this id (ReferenceClipSampler.RULES, the source lines cited; the row the hook lanes wrote as its HOOK_RULES row, carried unchanged); the animation leg proves the hook at 0 rad against the classic model at the same inputs on every sample"
+    },
+    {
+      "id": "model_theprinceteen",
+      "tier": 1,
+      "class": "danger.orespawn.entity.client.ModelThePrinceTeen",
+      "texture": "src/main/resources/assets/orespawn/textures/entity/theprince_teen.png",
+      "reference_source": "reference_1_7_10_source/sources/danger/orespawn/ModelThePrinceTeen.java",
+      "rig_note": "the classic model reads getActivity() (1: the flying wing beat, the legs tucked and the ten claws curled, the FLIGHT YAW LATCH - the entity's own yaw delta yRotO() - getYRot() times -10 eased into the per-entity RenderInfo rf1 by a fiftieth and clamped to +-50, the Rotator / Leon precedent, 0 on a probe whose yaw does not move; orig ModelThePrinceTeen.java:535, :541-542, :590, :594, :668-678), getAttacking() (the wings, legs, tail and the three jaws' chatter switch rhythm; orig :543, :583, :590, :639, :718), getRenderInfo() (the latch's scratch; orig :538), isOrderedToSit() (the tail stilled; orig :643 func_70906_o) and the three HEAD EXTENSIONS getHead1Ext / 2 / 3 (the necks' pitch in degrees; 0 on the probe, the rest value; orig :748-750), so it poses through ModelThePrinceTeen.poseFrom(ThePrinceTeenPose, ...) from a declared state on both sides (the Slice 4b form): idle, attacking, flying (getActivity 1) and sitting (isOrderedToSit) through the states' getters object; the wings and legs by THRESHOLD ((double) limbSwingAmount > 0.1) scaled by limbSwingAmount (the amplitude matrix); the wing, leg, tail and neck chains FOLLOW by position (moveXY / moveYZ / moveXZ / moveTo from the bind pivots of the wing roots, the upper legs, the first tail ring and the first neck rings); the three-head LOOK split (netHeadYaw 30 deg and headPitch 10 deg sampled: two thirds on the side head the yaw turns to, half of that on the centre and the other side) with each neck ring and the head group following 9 units along the ring's pitch and yaw; no zero-thickness cube. THE MEMBRANES: the port's ModelThePrinceTeen.renderToBuffer (:861-934) draws all 71 parts in one cutout pass, the eight wing membranes last in the classic order (orig :869-883 drew them in a second GL_BLEND pass at glColor4f(0.75, 0.75, 0.75, 0.55) - a port divergence noticed by this slice and drafted for the register, not the seam's: ThePrinceTeenRenderer has no second pass, so the seam draws what the port's classic renderer draws and the legs compare port against port)",
+      "animation_kind": "entity_state",
+      "candidate_animation_path": "production_replacement_hook",
+      "candidate_class": "danger.orespawn.entity.client.ThePrinceTeenGeoReplacement",
+      "loop_period_age_ticks": 38.66575573648976,
+      "period_note": "wingspeed 0.65: the resting centre-jaw chatter 0.25 x 0.65 = 0.1625 rad/tick closes every 38.67 ticks; one cycle (the other resting jaws 0.3 / 0.35 x 0.65, 32.2 / 27.6; the resting tail 0.26 x 0.65 = 0.169, 37.2, 0.56 x 0.65 = 0.364 attacking, 17.3; the wings 0.3 x 0.65 = 0.195 resting, 32.2, 1.3 x 0.65 = 0.845 at limbSwingAmount walking, 7.4, 1.4 x 0.65 = 0.91 flying, 6.9, 1.7 x 0.65 = 1.105 attacking, 5.7; the legs 0.55 x 0.65 = 0.3575 at limbSwingAmount, 17.6, 0.65 attacking, 9.7; the attacking jaws 0.9 / 1.1 / 1.3 x 0.65, 10.7 / 8.8 / 7.4)",
+      "sample_fractions": [
+        0.0,
+        0.25,
+        0.5,
+        0.75,
+        1.0
+      ],
+      "limb_swing": 0.0,
+      "limb_swing_amount": 0.0,
+      "limb_swing_amount_samples": [
+        0.0,
+        0.25,
+        0.5,
+        1.0
+      ],
+      "visual_sample_ids": [
+        "bind",
+        "s_idle_a1_t0",
+        "s_idle_a1_t_half",
+        "s_attacking_a1_t_quarter",
+        "s_attacking_a1_t_three_quarter",
+        "s_flying_a1_t_quarter",
+        "s_flying_a1_t_three_quarter",
+        "s_sitting_a1_t_quarter",
+        "s_sitting_a1_t_three_quarter"
+      ],
+      "visual_note": "the bind and two full-amplitude ages per state (at rest, attacking, flying, sitting); the amplitude matrix is the setupAnim leg's",
+      "net_head_yaw": 30.0,
+      "head_pitch": 10.0,
+      "entity_states": [
+        {
+          "name": "idle",
+          "attacking": 0
+        },
+        {
+          "name": "attacking",
+          "attacking": 1
+        },
+        {
+          "name": "flying",
+          "getters": {
+            "getActivity": 1
+          }
+        },
+        {
+          "name": "sitting",
+          "getters": {
+            "isOrderedToSit": true
+          }
+        }
+      ],
+      "camera": {
+        "yaw_degrees": 34.0,
+        "pitch_degrees": -28.0
+      },
+      "channels": [],
+      "hook_note": "the second Tier-1 slice (T1b, 2026-09-15, owner's closing set item 4 under Amendment 2 - on the hook already written, owner 2026-09-14 addendum items 10 and 14; a Tier-1 rig lands exactly as a Tier-2 rig does: hitbox profiles excluded, the classic single hitbox stays, nothing of the profile phase): a HOOK rig - the shipped pose is the classic setupAnim verbatim in the descriptor's applyCustomAnimations(processor, PoseInputs); no keyframe layer, no transcription, no clip manifest (the self-gate stays closed until an artist delivers idle and walk); channels [] because tools/layer_definition_to_geo.py refuses channels on a code_driven / entity_state entry without a keyframe_reference_leg - the reference-clip sampler's span comes from its RULES row for this id (ReferenceClipSampler.RULES, the source lines cited; the row the hook lanes wrote as its HOOK_RULES row, carried unchanged); the animation leg proves the hook at 0 rad against the classic model at the same inputs on every sample"
+    },
+    {
+      "id": "model_waterdragon",
+      "tier": 1,
+      "class": "danger.orespawn.entity.client.ModelWaterDragon",
+      "texture": "src/main/resources/assets/orespawn/textures/entity/waterdragon.png",
+      "reference_source": "reference_1_7_10_source/sources/danger/orespawn/ModelWaterDragon.java",
+      "rig_note": "the classic model reads isInSittingPose() (the back fin, the neck fin and the head fin's dead wave stilled; orig ModelWaterDragon.java:222, :227, :232 func_70906_o) and the THREE-WAY getAttacking() (1 bites the jaw on the 1.2 x wingspeed cosine, 2 holds it open at 0.45 rad, else -0.25; orig :236), so it poses through ModelWaterDragon.poseFrom(WaterDragonPose, ...) from a declared state on both sides (the Slice 4b form): idle, attacking (1), mouth_open (attacking 2, the cannon's pose) and sitting (isInSittingPose) through the states' getters object; the GAIT-scaled body wave with no threshold (cos x limbSwingAmount on body3, body4, tail1 and the tail middle a quarter turn apart, the two tail fins riding the middle: the amplitude matrix) and the THRESHOLD idiom ((double) limbSwingAmount > 0.1) on the four flippers; the body chain FOLLOWS by position (moveXZ from body3's bind pivot); the HEAD-LOOK idiom (netHeadYaw 30 deg sampled at 0.75 on the head with the nose, jaw, head fin and both ears following from the head's bind pivot; the port's model reads no pitch)",
+      "animation_kind": "entity_state",
+      "candidate_animation_path": "production_replacement_hook",
+      "candidate_class": "danger.orespawn.entity.client.WaterDragonGeoReplacement",
+      "loop_period_age_ticks": 25.132741228718345,
+      "period_note": "wingspeed 0.5: the head fin's own wave 0.5 x 0.5 = 0.25 rad/tick closes every 25.13 ticks (the sampler's RULES row, carried from the hook lanes' HOOK_RULES row; that yaw is overwritten by the head's yaw at applyCustomAnimations:137 and never shows - the slowest LIVE rhythm is the neck fin 0.6 x 0.5 = 0.3, 20.9); one cycle (the back fin 0.7 x 0.5 = 0.35, 18.0; the ears 0.8 x 0.5 = 0.4, 15.7; the body wave and the threshold flippers 1.3 x 0.5 = 0.65 at limbSwingAmount, 9.7; the biting jaw 1.2 x 0.5 = 0.6, 10.5)",
+      "sample_fractions": [
+        0.0,
+        0.25,
+        0.5,
+        0.75,
+        1.0
+      ],
+      "limb_swing": 0.0,
+      "limb_swing_amount": 0.0,
+      "limb_swing_amount_samples": [
+        0.0,
+        0.25,
+        0.5,
+        1.0
+      ],
+      "visual_sample_ids": [
+        "bind",
+        "s_idle_a1_t0",
+        "s_idle_a1_t_half",
+        "s_attacking_a1_t_quarter",
+        "s_attacking_a1_t_three_quarter",
+        "s_mouth_open_a1_t_quarter",
+        "s_mouth_open_a1_t_three_quarter",
+        "s_sitting_a1_t_quarter",
+        "s_sitting_a1_t_three_quarter"
+      ],
+      "visual_note": "the bind and two full-amplitude ages per state (at rest, biting, the mouth held open, sitting); the amplitude matrix is the setupAnim leg's",
+      "net_head_yaw": 30.0,
+      "head_pitch": 10.0,
+      "entity_states": [
+        {
+          "name": "idle",
+          "attacking": 0
+        },
+        {
+          "name": "attacking",
+          "attacking": 1
+        },
+        {
+          "name": "mouth_open",
+          "attacking": 2
+        },
+        {
+          "name": "sitting",
+          "getters": {
+            "isInSittingPose": true
+          }
+        }
+      ],
+      "camera": {
+        "yaw_degrees": 34.0,
+        "pitch_degrees": -28.0
+      },
+      "cube_face_order": "classic",
+      "face_order_note": "the second Tier-1 slice (T1b, 2026-09-15): this rig carries zero-thickness cubes (the head fin headfin 0 x 10 x 9, the ears leftear / rightear 0 x 5 x 5, the neck fin neackfin 0 x 5 x 5 and the back fin Bodyfin 0 x 10 x 9; no cube is mirrored since BUG-041 stage 2), each drawing its two coplanar faces without culling; where the two faces carry different texels the z-fight winner is the face emitted last (LEQUAL in-game; the harness's rasteriser: first-wins throughout the contest window, TEST-006), and vanilla's ModelPart.Cube and GeckoLib's buildQuads emit a cube's faces in different orders, so the shipped geo carries the classic within-cube order under orespawn:cube_face_order (the FaceOrder contract, ENT-S-146; the audit's TEST-007 rule refuses a cutout rig with such a cube that omits it), the seam permutes every cube's quads into it (FaceOrder.apply) and the draw-order leg compares the per-quad normal sequences of both renderers on every capture; the descriptor requires the key (a re-exported pack that drops it gets one WARN); bind stays a visual sample under the pair-contested rule (owner 2026-09-15, closing set continued, item 1)",
+      "channels": [],
+      "hook_note": "the second Tier-1 slice (T1b, 2026-09-15, owner's closing set item 4 under Amendment 2 - on the hook already written, owner 2026-09-14 addendum items 10 and 14; a Tier-1 rig lands exactly as a Tier-2 rig does: hitbox profiles excluded, the classic single hitbox stays, nothing of the profile phase): a HOOK rig - the shipped pose is the classic setupAnim verbatim in the descriptor's applyCustomAnimations(processor, PoseInputs); no keyframe layer, no transcription, no clip manifest (the self-gate stays closed until an artist delivers idle and walk); channels [] because tools/layer_definition_to_geo.py refuses channels on a code_driven / entity_state entry without a keyframe_reference_leg - the reference-clip sampler's span comes from its RULES row for this id (ReferenceClipSampler.RULES, the source lines cited; the row the hook lanes wrote as its HOOK_RULES row, carried unchanged); the animation leg proves the hook at 0 rad against the classic model at the same inputs on every sample"
     }
   ],
   "fixtures": [],
   "naming_rule_note": "the second Tier-2 slice (2026-09-13): the bare walk is the gait group's clip, else the clip manifest's primary_group's (the first group when absent), the other groups' walk_<group> (owner 2026-09-13, addendum item 26 (2); KeyframeLeg.primaryGroup and tools/keyframe_clip.py refuse a manifest that breaks it)",
-  "hook_rig_note": "the third Tier-2 slice (2026-09-13): the fifteen entries model_cloudshark .. model_herculesbeetle are HOOK rigs (owner's third set item 8 under Amendment 2 to Amendment 1): the classic setupAnim verbatim in the descriptor, no keyframe layer, channels [] (the converter refuses channels on a hook entry without a keyframe_reference_leg); the reference-clip sampler's span per id comes from ReferenceClipSampler.RULES. The fourth Tier-2 slice (T2d, 2026-09-14): the thirteen entries model_crab .. model_flounder likewise, on the hooks written by the hook lanes (owner 2026-09-14, addendum items 10 and 14), the Crab with its draw fix and the render_instances declaration of its reference entry. The fifth Tier-2 slice (T2e, 2026-09-15): the fourteen entries model_pointysaurus .. model_chipmunk (the Lurking Terror held on the visual leg, its register line) likewise, on the hooks written by the hook lanes (owner 2026-09-15, closing set item 4): entity_state wherever the classic model reads its entity (the probe poses a code_driven entry's classic side through setupAnim(null, ...)), the two latch rigs with an ri1-preset state (the Robot2 form), the two sitting flags through the states' getters object. The sixth Tier-2 slice (T2f, 2026-09-15): the twelve entries model_enderknight .. model_triffid likewise, on the hooks written by the hook lanes (owner 2026-09-15, closing set item 4; the Dungeon Beast held on its whole-model render transform and the Scorpion on the visual leg, their register lines): entity_state on every one (every hook of this slice reads its entity), the two latch rigs with an ri1-preset state (the Robot2 form), the entity flags through the states' getters object. The FK slice (2026-09-15): the three entries model_emperorscorpion, model_alien and model_alien_boss likewise on their hooks, each a parent-child HIERARCHY (the entry's `hierarchy` {child: parent}; the converter's hierarchy form; the key the tree's pre-order by rule, owner 2026-09-15, item 35 (5)) posed through FlatRig with the chain-link leg as the proof of every link.. The first Tier-1 slice (T1a, 2026-09-15): the seventeen entries model_kraken .. model_theprinceadult likewise, on the hooks written by the hook lanes (owner 2026-09-15, closing set item 4: the Tier-1 rigs in the same form, hitbox profiles excluded, the GiantRobot pair through its instance form; the King held on its second translucent membrane pass and the Butterfly rig's four registries held on the Mothra's pair-contested cap at one sample, their register lines): every entry entity_state (the flags through the states' getters object, the three latch rigs with an ri1-preset state - the Robot2 form), the Kraken's and the Dungeon Beast's constant render transform (TEST-013 (a)) with the Dungeon Beast's undrawn_parts, the Giant Robot pair's explicit render_instances (the Crab's form)"
+  "hook_rig_note": "the third Tier-2 slice (2026-09-13): the fifteen entries model_cloudshark .. model_herculesbeetle are HOOK rigs (owner's third set item 8 under Amendment 2 to Amendment 1): the classic setupAnim verbatim in the descriptor, no keyframe layer, channels [] (the converter refuses channels on a hook entry without a keyframe_reference_leg); the reference-clip sampler's span per id comes from ReferenceClipSampler.RULES. The fourth Tier-2 slice (T2d, 2026-09-14): the thirteen entries model_crab .. model_flounder likewise, on the hooks written by the hook lanes (owner 2026-09-14, addendum items 10 and 14), the Crab with its draw fix and the render_instances declaration of its reference entry. The fifth Tier-2 slice (T2e, 2026-09-15): the fourteen entries model_pointysaurus .. model_chipmunk (the Lurking Terror held on the visual leg, its register line) likewise, on the hooks written by the hook lanes (owner 2026-09-15, closing set item 4): entity_state wherever the classic model reads its entity (the probe poses a code_driven entry's classic side through setupAnim(null, ...)), the two latch rigs with an ri1-preset state (the Robot2 form), the two sitting flags through the states' getters object. The sixth Tier-2 slice (T2f, 2026-09-15): the twelve entries model_enderknight .. model_triffid likewise, on the hooks written by the hook lanes (owner 2026-09-15, closing set item 4; the Dungeon Beast held on its whole-model render transform and the Scorpion on the visual leg, their register lines): entity_state on every one (every hook of this slice reads its entity), the two latch rigs with an ri1-preset state (the Robot2 form), the entity flags through the states' getters object. The FK slice (2026-09-15): the three entries model_emperorscorpion, model_alien and model_alien_boss likewise on their hooks, each a parent-child HIERARCHY (the entry's `hierarchy` {child: parent}; the converter's hierarchy form; the key the tree's pre-order by rule, owner 2026-09-15, item 35 (5)) posed through FlatRig with the chain-link leg as the proof of every link.. The first Tier-1 slice (T1a, 2026-09-15): the seventeen entries model_kraken .. model_theprinceadult likewise, on the hooks written by the hook lanes (owner 2026-09-15, closing set item 4: the Tier-1 rigs in the same form, hitbox profiles excluded, the GiantRobot pair through its instance form; the King held on its second translucent membrane pass and the Butterfly rig's four registries held on the Mothra's pair-contested cap at one sample, their register lines): every entry entity_state (the flags through the states' getters object, the three latch rigs with an ri1-preset state - the Robot2 form), the Kraken's and the Dungeon Beast's constant render transform (TEST-013 (a)) with the Dungeon Beast's undrawn_parts, the Giant Robot pair's explicit render_instances (the Crab's form). The second Tier-1 slice (T1b, 2026-09-15): the two entries model_theprinceteen and model_waterdragon likewise, on the hooks written by the hook lanes (owner 2026-09-15, closing set item 4: the last two Tier-1 rigs in the same form, hitbox profiles excluded): both entity_state (the flags through the states' getters object; the Water Dragon's three-way attacking value as a preset attacking 2 state), the Water Dragon under the classic face order (five zero-thickness fins)"
 }

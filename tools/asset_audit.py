@@ -128,9 +128,7 @@ HOOKS = {
     "MothraGeoReplacement": "butterfly",
     "ScorpionGeoReplacement": "scorpion",
     "TheKingGeoReplacement": "theking",
-    "ThePrinceTeenGeoReplacement": "theprinceteen",
     "VampireButterflyGeoReplacement": "butterfly",
-    "WaterDragonGeoReplacement": "waterdragon",
 }
 
 # Categories no ACKNOWLEDGED entry may whitelist (an entry naming one is FATAL):
