@@ -9899,3 +9899,331 @@ NOT DONE (by design): the gametest suite not run (no gradle; the 1286 count is t
 the remainder's); the artist_handoff folder (the orchestrator's); the profile phase (hitbox profiles) not touched.
 
 GATE: GATE: t1b green on the first run (drift 0, build 0, suite: all 1286 required tests passed; the g1 / s4 verify-only passes identical, the t2 write-proof G1 PARITY PASS: 90 models with the two new entries, the reference clips deterministic and VERIFIED with only the index moved, the folder fresh (116 folders, 1,369 files, every check PASS), the benchmark re-pinned for g1tool's move, the audit 0 errors / 96 shipped geos); t1b2 green again after the refuter's two seed-span fixes (the same numbers).
+
+## PHASE G — THE REMAINDER (2026-09-15): the Lurking Terror and the Scorpion under the pair-contested rule, the Ghost under ENT-S-160 (a) with (d), the Boyfriend, Girlfriend and Princess under the closing set's item 3 (the seam carrying the renderer's partial tick and the classic layers), the King and the Butterfly rig rejoining
+
+RULING. Owner 2026-09-15, closing set, item 4 (addendum item 33 (4)): each slice in the standing form - the rigs on their written
+hooks, the geo shipped, the renderer registered behind the switch, the four legs and the reference leg where a pair exists, one
+refuter, the gate, records as the cost rules, the package rows regenerated; "a rig that fails a leg is held with a register line and
+rejoins at the remainder; one still failing there is reported, not forced". This slice IS the remainder: every rig held so far
+rejoins - the Lurking Terror and the Scorpion under item 1 (the pair-contested rule, cleared at the harness landing 86b74ef), the
+Ghost under ENT-S-160 (a) with (d) (owner 2026-09-13, item 4), the Boyfriend, the Girlfriend and the Princess under the closing set's
+item 3 (TEST-010 (b): (a) - "the seam carries the renderer's partial tick in PoseInputs; the biped hooks read
+getAttackAnim(partialTick) verbatim; the classic item, armor, head and elytra layers are drawn by the seam's renderer for those
+species as the classic renderer draws them. A seam change: two refuters"), the King (TEST-018: the second pass carried in the
+descriptor's Renderer AND the probe taught to capture a descriptor-declared second pass - a harness-semantics change, presented) and
+the Butterfly rig (TEST-019: re-measured, the cap the owner's and not moved). Amendment 2 (owner 2026-09-13, second set, item 2):
+every rig lands ON ITS HOOK - no clip manifest, no transcription, no keyframeLayers(). Addendum items 10 and 14: the hooks already
+written are reused (the Lurking Terror, the Scorpion, the Ghost, the King, the Butterfly rig's four); the three hooks held since the
+hooks' landing (the Boyfriend, the Girlfriend, the Princess) are written by this slice, the bipeds' from the T2d drafts. THE PROFILE
+PHASE IS NOT TOUCHED: the Princess and the King keep the classic single hitbox (design section 6). Parity lanes frozen: a divergence
+gets a draft register line and stops.
+
+WHAT LANDED (seven rigs, seven registries, on their hooks; seven geos, seven empty animation files, seven manifest entries, seven pin
+candidates, seven seeds with formulas, the sampler's clips per state - the four carried registries' byte-identical to their pre-slice
+files, the three new registries' clips new):
+- THE SEAM CHANGE, ITEM 3 (1): `PoseInputs` gains `partialTick` - the frame's partial tick as the classic `LivingEntityRenderer.render`
+  hands it to `getAttackAnim` (21.1.223 bytecode 39-49) and, through `HumanoidModel.prepareMobModel` (:129-131), to `getSwimAmount`;
+  `fromState` fills it from the animation state's partial tick (the replaced renderer's frame), `S4CandidateRuntime.Inputs` carries it
+  as a sixth component with a five-float form at 0 (the reference-clip sampler's fixed inputs: a whole tick per key - its clips are
+  byte-identical by construction), and the probe fills it from the SAMPLE's - the fractional part of the sample's age, vanilla's own
+  identity ageInTicks = tickCount + partialTick (`G1ModelProbe.SampleRequest.partialTick`, derived by the five-argument constructor so
+  every schedule and wrap request carries it), records it in the dumps only where an entry declares `partial_tick_input` (the bipeds:
+  every sample gains `partial_tick`), and hands the classic side's seven-parameter `poseFrom(<pose>, 5 floats, partialTick)` its value
+  where a model declares one (`findPoseFrom` prefers it; `invokePoseFrom`). Every other hook's inputs are unchanged and every other
+  entry's dumps carry no new key: the t2 / s4 / g1 chains verify byte-identical (below). The gametest construction gained the seventh
+  argument (T2SeamTests: 0.0F).
+- THE BIPED HOOKS, ITEM 3 (2) (`BoyfriendGeoReplacement.poseRig`, the Girlfriend delegating - the T2d drafts under
+  scratchpad\r19\slice\held_pair\ re-derived): vanilla `HumanoidModel.setupAnim` (NeoForge 21.1.223, HumanoidModel.java:137-286 by the
+  jar's LineNumberTable; the sources jar a stub, the body read from the bytecode with javap and every float literal written as the
+  constant pool holds it - 0.017453292, -0.7853982, -0.62831855, -1.4137167, 0.31415927, 0.07853982, 3.1415927, 6.2831855, 1.8707964,
+  5.012389, 1.2707963, 1.5707964, 0.33333334) transcribed STATEMENT BY STATEMENT over the seven bones head / hat / body / right_arm /
+  left_arm / right_leg / left_leg: `attackTime = entity.getAttackAnim(inputs.partialTick())` (LivingEntityRenderer.render 39-49),
+  `riding = entity.isSeatedOnVehicle()` (52-89: isPassenger && getVehicle != null && getVehicle.shouldRiderSit, a one-line entity
+  delegate), `swimAmount = entity.getSwimAmount(inputs.partialTick())` (prepareMobModel :129-131), `crouching` false and the arm poses
+  EMPTY as a HumanoidMobRenderer leaves them (21.1.223's class is its two constructors and their layers); the head look and the elytra
+  dive (:137-149, the swim lerp reading the bone's previous frame), the arm and leg placement (:152-156), the fall-flying speed factor
+  (:157-165), the distance-phased stride (:168-177: the legs 1.4 rad and the arms 2 x 0.5 rad times the walking speed, the legs' 0.005
+  splay), the riding pose (:178-186), the EMPTY arm poses (:189-206 -> poseRightArm :289-291 / poseLeftArm :333-335), the attack swing
+  (:210 -> setupAttackAnimation :382-408, getAttackArm :466-467 through the entity's swingingArm delegate), the crouch branch (:211-232,
+  never taken), the arms' idle bob (:235-240 -> AnimationUtils.bobModelPart :59-60), the swim branch (:243-282, unreachable for a mob
+  that never takes the SWIMMING pose) and the hat copying the head (:285). THE ENTITY READS: `entity/pose/HumanoidPose`
+  (getFallFlyingTicks, isVisuallySwimming, getDeltaMovement, isSeatedOnVehicle, getMainArm, isUsingItem, getUsedItemHand,
+  getSwingingArm, getAttackAnim(float), getSwimAmount(float), isBaby - the LivingEntity methods satisfied without a delegate, two
+  one-line delegates on Boyfriend / Girlfriend), ProbeSubject answering every one at rest with the two lerps in vanilla's own forms
+  (LivingEntity.getAttackAnim :3057-3062: f = attackAnim - oAttackAnim; if (f < 0) f++; oAttackAnim + f * partialTick; getSwimAmount
+  :387 Mth.lerp) over the declared oAttackAnim / attackAnim / swimAmountO / swimAmount. THE CLASSIC SIDE: `ModelBoyfriend` /
+  `ModelGirlfriend` declare no setupAnim, so the probe poses through their new `poseFrom(HumanoidPose, 5 floats, partialTick)` ->
+  `HumanoidClassicPose` (the renderer's field sets - attackTime, riding, young, swimAmount - then vanilla's body transcribed over the
+  classic ModelParts, line by line as the bytecode's LineNumberTable cites it); vanilla's own method stays the in-game classic path
+  (untouched). THE STAND-IN THAT COULD NOT BE: a `LivingEntity` subclass allocated with Unsafe would have let the probe run vanilla's
+  REAL method on the classic model, but LivingEntity's class initialiser trips `Bootstrap.checkBootstrapCalled` through the game-event
+  registry in the un-bootstrapped JVM ("Not bootstrapped (called from registry minecraft:root / minecraft:game_event)", the lane's
+  standin/run.log) - so the animation leg compares two transcriptions of the same bytecode at 0 rad, and their fidelity to the
+  bytecode is by the reading, cited line by line (the refuters' reading is the check). THE SWING PROVEN THROUGH THE PARTIAL TICK: the
+  `swinging` state declares oAttackAnim 0.3333 / attackAnim 0.5 (vanilla's swing advancing a sixth per tick), so getAttackAnim varies
+  with the sample's partial tick across the amplitude matrix and the animation leg's 0 rad proves the hook reads
+  `inputs.partialTick()` verbatim; the gametest row pins it on the server (below).
+- THE CLASSIC LAYERS, ITEM 3 (3) (`OreSpawnGeoReplacedEntityRenderer.VanillaLayersAdapter`, attached by the two descriptors' Renderers):
+  the SAME vanilla layer classes the classic renderer carries, constructed with the same arguments in the classic order - the
+  `CustomHeadLayer(parent, modelSet, itemInHandRenderer)`, `ElytraLayer(parent, modelSet)` and `ItemInHandLayer(parent,
+  itemInHandRenderer)` a `HumanoidMobRenderer` adds in its constructor (21.1.223 bytecode 7-67) and the `HumanoidArmorLayer(parent,
+  inner PLAYER_INNER_ARMOR, outer PLAYER_OUTER_ARMOR, modelManager)` BoyfriendRenderer / GirlfriendRenderer add after them (:30-33 /
+  :20-23) - given a `RenderLayerParent` whose model is a classic `ModelBoyfriend` / `ModelGirlfriend` (baked from the classic
+  renderer's own layer) with its seven parts posed from the bake's bones IN CLASSIC TERMS (the hooks' basis mapping inverted: xRot =
+  -rotX, yRot = -rotY, zRot = rotZ, the position through classicPosition, the visibility from the bone), its three renderer-set fields
+  as LivingEntityRenderer.render sets them (attackTime, riding, young), and the frame's six floats the classic hook itself received
+  (`OreSpawnGeoReplacementModel.lastPoseInputs`, kept in setCustomAnimations - vanilla hands its layers the same six at 632-684) on a
+  pose stack multiplied from the layer's level to `modelRenderTranslations . B` (GeckoLib's matrix before the bones, 736-745, times the
+  bake map): F_geo . B = the classic M frame under the entity yaw (TEST-015), where vanilla runs its layers right after renderToBuffer.
+  What the layers then draw is the vanilla code, unchanged. WHAT THE PROBE CANNOT PROVE: a sample wearing armor or holding an item (no
+  entity, no bootstrapped item registry) - the layers are proven by construction (the same classes, arguments, order, parent model,
+  frame) and the owner's in-game look must confirm the armor on the armor bones, the held item at the hand, a head block and the
+  elytra, behind the dev switch.
+- THE PRINCESS (`ThePrincessGeoReplacement`, `ThePrincessPose`, `ModelThePrincess.poseFrom` - the refactor of this slice, the classic
+  setupAnim delegating): the Prince's pose (the THRESHOLD-OR-ATTACKING wings, the THRESHOLD legs under the ACTIVITY branch, the tail
+  sway stilled by the SIT order and overridden by the ATTACKING lash fanned x1.6 / 2.6 / 3.6 / 4.6 down five rings FOLLOWING 6 / 5 / 4
+  / 4, the three-head LOOK split with the ATTACKING jaw chatter, the necks by the HEAD EXTENSIONS with each head group FOLLOWING 7
+  units, the dead jaw writes transcribed as such) PLUS THE THREE POWER ORBS (ModelThePrincess.java:319-354): the classic advances
+  Lpower / Cpower / Rpower's xRot / yRot / zRot by 0.03 / 0.04 / 0.05, 0.035 / 0.046 / 0.065 and 0.05 / 0.13 / 0.03 PER RENDERED FRAME
+  on the model singleton's own parts, wrapping below pi - state on no entity field. CARRIED AS THE CLASSIC DOES, WITHIN THE S4
+  DOCTRINE'S LETTER: no seam accumulator was added - the hook reads each orb bone's rotation as the frame begins (`classicRotX` and
+  the new base helpers `classicRotY` / `classicRotZ`), adds the step, wraps in double as the classic does and writes; GeckoLib's
+  `AnimationProcessor.tickAnimation` (4.8.4 bytecode) resets only a bone NOT marked this tick (632 -> the initial snapshot) BEFORE
+  clearing the markers (1250), and `GeoModel.handleAnimations` runs the hook after it (292), so a bone the hook writes every frame
+  keeps its value between frames exactly as the classic ModelPart keeps its field, and both are one singleton per species shared by
+  every entity of it (the classic ModelThePrincess per renderer; the bake per OreSpawnGeoReplacementModel). On the probe a fresh bake per
+  sample on the geo side and `ModelPart.resetPose` per sample on the classic side put both at the bind before the pose, so every sample
+  sees one step from the bind on both sides and the animation leg proves the step (0 rad). Shadow the 0.7f x 0.7f literal
+  ThePrincessRenderer's constructor passes, scale ThePrincessRenderer.SCALE made public (the T2d form); six zero-thickness wings, the
+  classic face order.
+- THE KING, THE SECOND PASS (TEST-018; the harness-semantics change, presented): `GeoReplacementDescriptor.secondPass()` returns a
+  `SecondPass(bones, renderType function, ARGB colour)` - the ten membranes Lwing2 / 4 / 6 / 8 / 10, Rwing2 / 4 / 6 / 8 / 10 on
+  `ModelTheKing.WING_MEMBRANE_RENDER_TYPE` (RenderType::entityTranslucent, the model's own function object, the ENT-S-146 form) at
+  `ModelTheKing.WING_MEMBRANE_COLOR` (0x8CBFBFBF: 1.7.10's glColor4f(0.75, 0.75, 0.75, 0.55)) - the two constants lifted from
+  TheKingRenderer onto the model, which the renderer now reads back; answered by a method, never by the descriptor's static
+  construction (the Band P lesson: the function object lives on a client class). THE SEAM'S RENDERER: preRender hides the pass's bones
+  for the opaque pass on every frame (the hook poses them and hides nothing); a `SecondPassLayer` (the AutoGlowingGeoLayer form:
+  `GeoRenderer.reRender`, whose `actuallyRender` re-applies the whole chain on a re-render - 4.8.4 bytecode: the entity scale 382,
+  applyRotations 396 with the descriptor slot and the seam's compensation, the 0.01 lift 727 - skipping only the animation block
+  581-721) re-renders the pass's bones alone (every other bone's cubes hidden for the re-render, its children still traversed, every
+  flag restored afterwards) on the pass's render type applied to the entity's texture, with the pass's colour and NO_OVERLAY (as
+  TheKingRenderer hands renderWingMembranes); the descriptor's applyScale is not re-applied (preRender skips it on a re-render: the
+  first preRender applied it on the defaultRender level the layer still stands on). THE PROBE: the classic side captures the model's
+  pass method (`renderWingMembranes`, the manifest's `second_pass.classic_method`) on its own consumer under the classic chain M on
+  the bind and every full capture (`render_vertices_pass2`), attributes its draws by the same skipDraw elimination
+  (`DrawOrderObserver.observePass` -> `draw_order_pass2`) and records the pass's render state in the sidecar (`second_pass`: the model's
+  own static function `classic_render_type_field`, the colour `classic_color_field`, the light); the geo side hides the pass's bones for
+  its main capture and captures them alone with the pass's colour in a second (`render_vertices_pass2` / `draw_order_pass2`, the cubes
+  joined for the geometry and surface legs, `hidden_bones` as the hook left them), its sidecar's `second_pass` carrying the descriptor's
+  function (`same_function_object_as_classic` by identity). THE CONVERTER merges each capture's pass sequence after its main sequence
+  (the classic draws the pass after its opaque pass), so the ten bones take the key's tail in the pass's own order - what the
+  SecondPassLayer traverses. THE PARITY TOOL: the draw-order leg compares `draw_order_pass2` per capture (equal on both sides, exactly the
+  declared bones, none of them in either side's main pass), the render-state leg admits the pass's one factory / one colour / one
+  light per side against the manifest's `second_pass` (`entity_translucent`, (191, 191, 191, 140)) and the function's identity, and
+  the visual leg composites the pass over the opaque pass on both sides (`raster_state`: the cutout pass's pixels and depth handed to
+  the blended rasteriser, SRC_ALPHA / ONE_MINUS_SRC_ALPHA, LEQUAL within coplanar_depth_epsilon_blocks 1e-5, the depth written, the
+  face-identity table and the pair-contested rule spanning both passes, the camera fit over both). BEFORE / AFTER: T1a's plain entry
+  failed at bind (`DRAW ORDER MISMATCH model_theking/bind: classic renderToBuffer drew [109 parts]; GeoRenderer drew [the same 109
+  ... then Lwing10 ... Rwing8]`) and the undrawn-parts form was refused by the hook (`GeckoLib rig is missing bone Lwing2`); now
+  `G1 SECOND PASS PASS: model_theking 110 pass draws over 11 captures in the classic order`, draw order 11 captures / 1,199 draws (109
+  opaque per capture), visual changed 1.53e-5 / MAE 4.58e-5 / contested 1.42e-3 / pair-contested 0 over the composite, render state
+  cutout / white / light 0 on the opaque pass (28,776 + 28,776 vertices) and entity_translucent / (191, 191, 191, 140) / light 0 on
+  the pass (2,640 + 2,640), the classic model's own function object on both; geometry 5.10e-6 blocks over 1,309 cube-samples (T1a's
+  number: the 184-unit wing through the float chain), surface UV 0 / normal 2.09e-7 over 31,416, animation 0 rad, reference 119 parts.
+  Every other entry's numbers byte-identical (no `second_pass`: no pass capture, no pass keys, the rasterisers on fresh state). The
+  classic renderer's shouldRender (unconditionally true, OPT-013) carried onto the King's Renderer.
+- THE GHOST (ENT-S-160 (a) with (d)): `GhostModel.RENDER_TYPE = RenderType::entityTranslucent` stored as EntityModel(Function) does
+  (the FairyModel / GhostSkellyModel form), `GhostRenderer.getRenderType` applying that object to the texture, the descriptor
+  re-based from the bare factory the hook lanes returned onto the model's object, `cubeFaceOrderRequired()` true (a blending rig
+  with no flat cube: the shipped geo carries the classic within-cube order), the manifest entry `visual_mode` entity_translucent with
+  `cube_face_order` classic; NO keyframe transcription (the arms' two frequency groups wait on (c)). The hook (four slow cosines,
+  code_driven, no entity read) as the hook lanes wrote it.
+- THE TWO CLEARED RIGS: the Lurking Terror and the Scorpion in the standing form on the hooks and rows as the T2e / T2f holds left
+  them, re-measured under the mirror-corrected frame (below) - the Lurking Terror with bind INCLUDED in its visual samples (the
+  TEST-008 (c) exclusion retired under the pair-contested rule; the T1a / T1b form); the Scorpion's attacking read inside the claw
+  latch's re-roll gated at the sampled ticks as ATTACK_GATES records (no attack clip, as the gate recorded).
+- THE HOOK-LANE NOTES ACTED ON: the Ghost's render type re-based (above); the King's tint and render-type function lifted onto the
+  model and the pass declared (above); the Mothra's unconditional shouldRender noted for the Butterfly rig's landing - NOT applied,
+  the rig held (below); the Princess's scale constant made public (the T2d form); the biped renderers' texture switches lifted into
+  `textureFor` statics (the Fairy form). THE PINS' LESSON HELD: the King's applyScale rewritten in the T2f Frog form (an if-branch with
+  its own scale and return, one unconditional `poseStack.scale(TheKingRenderer.SCALE, ...)`) after `reference_renderer_pins.py` refused
+  the ternary-into-a-local form; PASS 120, DIVERGES 0 with the seven candidates named.
+- THE SHIPPED GEOS: the converter's output byte for byte - `lurkingterror.geo.json` (59 bones, 127,445 bytes, with
+  `orespawn:cube_face_order`), `scorpion.geo.json` (22, 43,129), `ghost.geo.json` (3, 6,675, with the face order), `boyfriend.geo.json`
+  (7, 13,429), `girlfriend.geo.json` (7, 13,430), `theprincess.geo.json` (37, 77,869, with the face order), `theking.geo.json` (119,
+  234,782; the ten membranes the key's tail) - all with `orespawn:bone_draw_order`, no mirrored cube but the bipeds' vanilla left arm
+  and leg (vanilla's own mirror(), the reconciliation of 2026-09-05; the surface leg UV 0 on both) - and seven empty animation files
+  byte-identical to the cricket's; the tree 103 geos, 102 through the seam. Checked byte for byte against the t2 chain's converter
+  output on the a run (COPY_GEOS=1: every shipped t2 geo equal, the seven new ones unchanged).
+- THE WIRING: `PhaseGDevRenderers` gains seven providers through `select`, `OreSpawnClient` seven registrations; for a default
+  install nothing changes.
+- THE PINS (`tools/reference_renderer_pins.json`): seven `port_candidate` entries named (LurkingTerror :461, Scorpion :433, Ghost :409,
+  Boyfriend :387, Girlfriend :386, ThePrincess :511, TheKing :492 of orig ClientProxyOreSpawn.java); PASS 120, PENDING 0, MOD 0,
+  NOT_APPLICABLE 13, DIVERGES 0, MANIFEST_DRIFT 0.
+- THE MANIFEST (`tools/t2_model_proofs.json` +7 entries, 97 models; hook_rig_note extended): the Lurking Terror's and Scorpion's the
+  T2e / T2f builders' entries as the harness landing staged them (bind included on the Lurking Terror, the notes the remainder's);
+  the Ghost code_driven with `visual_mode` and `cube_face_order`; the bipeds entity_state (idle / swinging / riding / gliding through
+  the getters object, the amplitude matrix, `limb_swing` 3.0 so the distance-phased stride is off its zero crossing, the head look 30
+  / 10, `partial_tick_input`, no reference_source - TEST-010 (a)); the Princess the Prince's entry form (idle / attacking /
+  legs_folded (getActivity 2) / sitting) with `cube_face_order`, tier 1; the King the T1a entry plus `second_pass` (classic_method,
+  bones, the two field names, render_type, vertex_color); bind INCLUDED in every visual sample list.
+- THE LEGS (the measurement chains measure / measure_b / measure_c on the lane's classes; the t2 chain's numbers the same - appended):
+  lurking_terror geometry 3.36e-7 blocks over 944 cube-samples (16 captures), surface UV 0 / normal 2.10e-7 over 21,632 (256 zero-area
+  faces ignored), animation 0 rad (idle / legs_swaying / attacking), draw order 16 / 944, face order 5,664 over 16, reference 59 parts,
+  visual changed 0 / MAE 0 / contested 2.42e-2 / pair-contested 2.59e-4 (the harness landing's 133 px at idle now at most 17), render
+  state cutout / white / light 0 (22,656 + 22,656); scorpion 2.00e-7 / 1,342 (61), surface 0 / 2.00e-7 / 32,208, animation 0 rad at
+  four amplitudes in three states, draw order 61 / 1,342, reference 22, visual 0 / 0 / 6.90e-3 / 6.10e-5 (the 98 / 97 px at the
+  quarter samples now at most 4), render state cutout (32,208 + 32,208); ghost 2.03e-7 / 18 (6), surface 0 / 1.32e-7 / 432,
+  animation 0, draw order 6 / 18, face order 108 over 6, reference 3, visual 0 / 0 / 1.53e-5 / 0 under the blended rasteriser, render
+  state entity_translucent / white / light 0 (432 + 432), the same function object; boyfriend 3.12e-7 / 567 (81), surface 0 / 2.50e-7 /
+  13,608, animation 0 rad at four amplitudes in four states, draw order 81 / 567, visual 0 / 0 / 0 / 0, render state cutout (13,608 +
+  13,608), the reference leg unpaired (geometry only); girlfriend 3.18e-7 / 567 (81), the same legs, visual 0 / 0 / 0 / 0; the_princess
+  2.50e-7 / 2,997 (81), surface 0 / 1.49e-7 / 64,152 (1,944 zero-area), animation 0 rad in four states, draw order 81 / 2,997, face
+  order 17,982 over 81, reference 37, visual 0 / 0 / 1.56e-3 / 9.16e-5, render state cutout (71,928 + 71,928); the_king as the second
+  pass above.
+- THE AUDIT AND THE SAMPLER OUT OF THE HOOK STATE: four `HOOKS` entries removed from `tools/asset_audit.py` (8 -> 4: the Butterfly rig's
+  four remain); `ReferenceClipSampler` +7 REGISTRIES rows, -4 HOOK_DESCRIPTORS rows (8 -> 4), the four carried HOOK_RULES rows into
+  RULES keyed by the manifest id - the Lurking Terror's and the Scorpion's the same rule and the same source lines (line-neutral
+  descriptors, the T1a solver at widths 133 / 124), the Ghost's and the King's the same rule with every applyCustomAnimations line
+  RE-CITED (+10 / +12: their descriptors could not absorb the code overrides line-neutrally - the Ghost's cubeFaceOrderRequired, the
+  King's secondPass and the Frog-form applyScale) - and THREE NEW RULES rows authored with their hooks (the Boyfriend's / Girlfriend's:
+  the arms' idle bob at 0.067 rad/tick, 93.78 ticks - idle / ride / glide closing at k 1 (closure 4.45 degrees under the sampler's
+  5-degree tolerance: the arms' roll cos(ageInTicks * 0.09) does not close at the 0.067 period), walk the two-second window (the
+  stride at 1.0 per tick, seam 75.76 degrees); the Princess's: the resting wings at 0.195 rad/tick, 32.22 ticks - idle / fly / sit
+  closing at k 1, walk / attack at k 3 (96.66 ticks), the orbs one step from the bind at every key (the sampler poses each key over a
+  fresh bake: a step per rendered frame in-game, still in the clips)), the lines read from the descriptors; the javadoc's count
+  sentence updated. The sampler twice diff-clean; the four carried registries' clips byte-identical
+  to their pre-slice files, the held Butterfly rig's eight likewise, every other pre-existing clip identical; the three new registries'
+  clips installed with the index (below).
+- THE PACKAGES (`tools/artist_specs/<registry>.json`): the seven seeds gain `formulas` (the port pose method and its real lines quoted,
+  declaration to closing brace - LurkingTerrorModel.poseFrom :459-583, ScorpionModel.poseFrom :196-244, GhostModel.setupAnim :68-74,
+  ModelThePrincess.poseFrom :197-369, ModelTheKing.poseFrom :973-1152, the bipeds vanilla HumanoidModel.setupAnim :137-286 through
+  HumanoidClassicPose - and the 1.7.10 method that holds the rotation code, `render` (func_78088_a) in every 1.7.10 model of the slice
+  with func_78087_a a bare super call, `orig:` cited with the ClientProxyOreSpawn registration lines; the bipeds 1.7.10's vanilla
+  ModelBiped), the status ", landed on its hook by the remainder slice (2026-09-15[; hitbox profiles excluded ...])" and the
+  artist_scope "in-game through the seam behind the dev switch since the remainder slice"; the Princess's `reference_states` fly
+  (getActivity 2) / sit and the bipeds' ride (isSeatedOnVehicle) / glide (getFallFlyingTicks 5) - the T2d drafts'; the dry run
+  `package --out <scratch>/pkg --reference-geo-dir build/reference/generated` (appended).
+- THE GAMETESTS: `T2SeamTests.t2_014` (one new row, the required-test count 1286 -> 1287): each of the seven descriptors constructs,
+  declares no keyframe layer, registers nothing, its shadow is the classic renderer's, the classic face order is required exactly where
+  the shipped geo carries it (the Lurking Terror, the Ghost, the Princess), and the hook poses a fresh bake of the shipped geo off its
+  bind through `assertHookSpecies` (wing_1, rleg1, LArm, right_leg x2, Rleg1, Lwing1) on a `RestSubjectRem` implementing the five pose
+  interfaces (the Ghost's hook on a null subject); PLUS THE SEAM CHANGE'S PIN: the Boyfriend hook posed on a `SwingingSubjectRem`
+  (vanilla's getAttackAnim over oAttackAnim 1/3 and attackAnim 1/2) at partial ticks 0 and 0.5 gives different attack-arm pitches, and
+  at 0 the pitch of a subject frozen at oAttackAnim - the seam carries the partial tick and the hook reads it verbatim (the King's
+  secondPass() is NOT called on the dedicated server: its function object lives on a client class); `KeyframeLegTests.kf_007` +7 (104
+  -> 111, "one hundred and eleven"). Not run (no gradle).
+
+HELD / REPORTED: THE BUTTERFLY RIG (butterfly, luna_moth, mothra, vampire_butterfly) - REPORTED, NOT FORCED (audit_butterfly_reported.txt):
+re-measured under the current tree, the Butterfly and the Luna Moth PASS every leg (visual 0 / 0 / pair-contested 0 at every sample)
+and the Mothra's `t_three_quarter` sample stands at exactly T1a's number - `VISUAL MISMATCH model_mothra/t_three_quarter: pair-contested
+fraction 0.0122528076 > 0.01` (803 px on the coplanar undersides of leftwing / leftwing2 at the flat pose); the cause is the shared
+rig's overlapping 1-unit wing cubes at the flat pose with the Mothra's own age-to-angle float value (its wingspeed 0.2 puts its
+three-quarter sample at age 18.125 where the Butterfly's is 3.625 and the Luna Moth's 4.833: the same nominal angle, three float
+products, only the Mothra's leaves the 1e-6 window on those pixels), not the Mothra's texture (every one of the four sheets carries
+different texels on the two faces); what would clear it without touching the cap is a different posed sample set for the Mothra's
+entry (the Butterfly and the Luna Moth prove the rig at their flat samples), which the standing matrix rule does NOT allow (the
+fractions are the ruling's schedule, the owner's rule (b) on TEST-012 refused a per-rig sample or camera choice), or a rasteriser
+change presented before its gate (the T2e / T2f option (a)), which this lane did not build; one geo for four registries and a hook
+whose geo ships is HOOK_STALE, so the rig stays held WHOLE: no geo, no wiring, no pins, no manifest entries, no gametest row, the four
+descriptors' javadocs untouched (no landing line), the four HOOKS entries, the four HOOK_DESCRIPTORS / HOOK_RULES rows and the eight
+clips exactly as T1a left them. The Mothra's unconditional shouldRender, a hook-lane note, is left for the rig's landing.
+
+DIVERGENCES NOTICED, DRAFTED, NOT FIXED: (1) audit_the_king_membrane_offset.txt (ENT-S draft) - the port's
+`TheKingRenderer.setupEntityTransform` (:98-108) opens with `translate(0, 1.501, 0)` before the yaw, which vanilla's chain (21.1.223
+bytecode 390-417) has no counterpart for: the classic renderer draws the ten membranes 1.501 blocks above the wings; the seam's pass
+draws them on the wings (the probe captures the model's pass under M, where the legs agree) - the owner's in-game look sees it on the
+classic path; (2) audit_biped_baby_form.txt (ENT-S draft) - a Boyfriend / Girlfriend summoned with a negative age is drawn by the
+classic renderer in vanilla AgeableListModel's baby form (the head at three quarters, lifted a block; the body halved), which the seam
+does not carry; unreachable by breeding (getBreedOffspring null), reachable by /summon and possibly a natural spawn's 5 percent baby
+chance - the owner's check. NOTED, NOT CHANGED: the Scorpion's classic `upangle = 0.0f` unused local (the T2f hook_diff), the Lurking
+Terror's chained assignments (one literal for two parts; the T2e hook_diff), the King's three head helpers (the T1a hook_diff) - the
+hook_diff_rem.py EXPLAINED forms, the animation leg 0 rad the ruled proof.
+
+IN-GAME: for a default install nothing changes (the classic renderers the default). Behind `-Dorespawn.dev.geckolibRenderers=<species>`
+the seven registries draw the converted rigs posed by their classic code through the seam - the Lurking Terror at 0.85 under the
+classic face order of its four wings, the Scorpion at 0.75, the Ghost at 0.65 translucent, the Boyfriend and Girlfriend at 1.0 (5.0
+valentine-angry) with the vanilla armor, item, head and elytra layers over the bones, the Princess at 0.7 with her orbs advancing per
+frame, the King at 2.1 (0.525 playing nicely) with the membranes translucent in the second pass on the wings; no artist clip plays
+until idle and walk are delivered; the classic single hitbox everywhere; the Butterfly rig stays on the classic renderers alone.
+
+THE REFUTERS (two, per the closing set's item 3 - the seam is renderer code; their reports in the advisor's scratch): (filled by the
+orchestrator)
+
+DEVIATIONS PRESENTED: (1) the Butterfly rig REPORTED, not landed - its four registries' hook state untouched; (2) the Ghost's and the
+King's descriptors NOT line-neutral (their code overrides could not be absorbed by the T1a re-wrap solver at any width 100-140): the
+carried rows keep the same rule with every line re-cited (+10 / +12), verified statement by statement (the Ghost's four rotates at
+:68-71; the King's wing cosines at :95-96, the claws :154, the legs :174, the tail speeds :224-229, the attacking heads :290-298, the
+resting heads :303-311 with the 0.08 line at :310); (3) the classic side of the bipeds is a transcription, not vanilla's method (the
+stand-in experiment above) - vanilla's own setupAnim untouched in-game; (4) the probe's classic model is constructed with
+`EntityModel.young = false` for EVERY entry (the renderer sets it to isBaby() before every draw; the probe's subject is an adult) -
+only AgeableListModel subclasses read it, so no other entry's capture moves (the bipeds' bind drew the baby form before it: 49
+percent changed, the measurement log); (5) the Ghost's sampler row and the King's were the hook lanes' rows re-cited, not carried
+"the same source lines"; (6) the bipeds' manifest entries carry `limb_swing` 3.0 (every other entry 0.0) so the distance-phased stride
+is sampled off its zero crossing - the animation leg's inputs, not a threshold; (7) the King's applyScale rewritten in the Frog form
+for the pins tool (the same scale, the ternary unrolled); (8) the asset audit's 14 errors are the untracked-file precedent
+(TEXTURE_REF_CASE on the seven geos and seven animation files until the orchestrator stages them), nothing else - no HOOK_STALE, no
+FLAT_CUBE, no DRAW_ORDER, no PROOF_DRIFT, no FACE_ORDER_INVALID row; (9) the two divergences above drafted, not fixed; (10) the
+sampler's HOOK_DESCRIPTORS javadoc count sentence updated in place; (11) the vanilla-layer adapter's parent model fields are set from
+the entity directly (attackTime / riding / young as LivingEntityRenderer.render computes them), not through HumanoidPose, so the adapter
+stays generic over any HumanoidModel species; (12) the first verify run (on the rem8 classes, stopped for the King's Frog-form fix)
+outlived its stop - its shell went on to sample on rem8 and install the 13 new clips and the index at 21:33; the final run (rem9)
+found the tracked directory at 311 files, re-installed only the index, and its `--verify` proves the tracked set reproduces from the
+final classes byte for byte; (13) the Princess's sampler rule note (one string in the RULES row) corrected after the first sampler run
+- it claimed the orbs take the two-second window, while the clips show them still (one step from the bind at every key: the sampler
+poses each key over a fresh bake; the closure test settles k 1 / k 3 on the wings); the correction recompiled (rem10: every class file
+but ReferenceClipSampler.class byte-identical to rem9, so the rem9 chains stand), the sampler re-run twice diff-clean, only the index
+changed (the five the_princess rows' rule_note), re-installed and `--verify` VERIFIED 311 files.
+
+NOT DONE (by design): the gametest suite not run (no gradle; the 1287 count is the row count); the t2 proof tree (the orchestrator's
+`--write-proof`, +7 entries); the reference folder's regeneration; the Butterfly rig's landing (reported); the artist_handoff folder
+(the orchestrator's); the profile phase (hitbox profiles) not touched; the ENT-S-160 (c) additive layer kind (the weights slice's).
+
+THE REFUTERS (two, the seam change; the reports under the advisor's scratch, `r21/rem_ref` and `r21/rem_ref_b`). Refuter A (the
+rigs, the legs, the register): every claim CONFIRMED on its own compile and chain - the seven hooks read pair by pair against the
+port models (the bipeds against its own javap of NeoForge 21.1.223, `HumanoidModel.setupAnim` 137-286 statement by statement, the
+arm poses EMPTY, `getAttackArm` 466-467), all 95 shipped geos reproduced byte for byte (the seven new and the 88 before), the full t2
+chain `STAGING PASS 97` with its `proof_numbers` byte-identical to the lane's, the Butterfly rig re-measured (the Butterfly and the
+Luna Moth PASS, the Mothra's `t_three_quarter` the same 0.0122528076 against the 0.01 cap), the sampler reproducing all 311 tracked
+files, HEAD's 90 entries identical in every sha pin and leg summary. Four MUST-FIX items, comment text only: the sampler's two
+comments, the `t2_014` javadoc and the switch's javadoc said the Butterfly rig's four were landed or removed while the code holds
+their rows and providers untouched - corrected in place, line counts unchanged (`fix_rem_refA.py`). Its notes for the owner: the
+King's second pass double-draws nothing (`preRender` hides the pass bones before the hook each frame, the hook never un-hides); the
+Princess's orbs would step twice on a same-frame re-render (the glowing outline) where the classic singleton stepped once per
+`setupAnim` - not measured, reported. Refuter B (the seam change): every claim CONFIRMED - the partial tick's fill against
+`LivingEntityRenderer.render` 39-49 and GeckoLib 4.8.4's `actuallyRender` 584-597 (slot 8 the method's own partial tick), the
+bipeds' hooks against its own javap, the adapter's classes / constructor arguments / order against `HumanoidMobRenderer.<init>`
+7-67 and the two port renderers, the frame algebra (C = the TEST-015 frame M), the orbs' carry through GeckoLib's marker reset
+(`tickAnimation` 632 / 1250, `handleAnimations` 284 / 292), the King's pass through `reRender` (the scale and `applyRotations`
+re-applied, only the animation block skipped), five landed hooks re-run on its own compile with every dump and geo byte-identical.
+One MUST-FIX in the seam: `OreSpawnGeoReplacementModel.setCustomAnimations` kept the frame's inputs for the layer adapter AFTER its
+early return for a species whose artist layers run, so the Boyfriend's or Girlfriend's adapter would have thrown on every frame
+the moment its artist gate opened (latent: `keyframeLayers()` empty this landing, `kf_007`) - the assignment moved above the gate
+with its comment corrected, line counts unchanged (`fix_rem_refB.py`); its cite nit (`HumanoidClassicPose.getArm` :457, not
+:459-461) with it. Its qualifications carried into the record: `t2_014` pins the HOOK's `getAttackAnim(inputs.partialTick())`
+read, not `fromState`'s fill nor the layers (server-side); the layers are proven by construction only - the owner's look confirms
+armor on the seven bones, the item at the hand, a head block, the elytra, and the Girlfriend's valentine scale carrying them; a
+summoned baby's layers would float off the seam's adult rig (added to ENT-S-166); the King's pass is proven against the model's
+`renderWingMembranes` under M while the port renderer's own extra translate is ENT-S-165. Both refuters' must-fixes applied
+before the gate below was run again on the same tree (the first run green on the tree without them: drift 0, build, 1287).
+
+THE HARNESS-SEMANTICS CHANGE, PRESENTED BEFORE ITS GATE (doctrine 2026-09-12): the probe's capture of a descriptor-declared second
+pass and the parity tool's per-pass draw-order / render-state comparison with the blended composite - the lane's draft carries the
+before / after (T1a's DRAW ORDER MISMATCH at the King's bind; the intermediate DRAW ORDER UNEVIDENCED in its measure_b log; SECOND
+PASS PASS 110 draws over 11 captures) and the register's TEST-018 line records it; no other entry's report moved (the s4 and g1
+proof trees re-pinned with zero files changed, the t2 tree's 42 files the seven new entries and the aggregate).
+
+DECIDED UNDER DOCTRINE, REVERSIBLE (the closing set's item 6; each tagged for the final report): (1) the Butterfly rig held WHOLE
+- one geo, four registries; the Butterfly and the Luna Moth pass every leg, but a shared rig lands or holds as one (the T1a
+precedent; TEST-019 stays OPEN for the owner's call: the cap, a Mothra-specific sample set, or a rasteriser change presented
+first). (2) The probe's classic model constructed with `young = false` for every entry - the renderer's own value for an adult
+subject; only the two AgeableListModel species read it. (3) The bipeds' manifest entries at `limb_swing` 3.0 so the distance-phased
+stride is sampled off its zero crossing - an input of the animation leg, not a tolerance. (4) The King's `applyScale` rewritten in
+the Frog form for the pins tool (the same scale; the ternary unrolled). (5) The bipeds' classic side a transcription of vanilla's
+`setupAnim` (a LivingEntity stand-in cannot be allocated headlessly), refuted against the bytecode by both refuters. (6) The
+Ghost's and the King's descriptors not line-neutral to their hook rows (+10 / +12), every line re-cited. (7) The two divergences
+found (ENT-S-165, ENT-S-166) recorded frozen with the parity lanes, not fixed. (8) Refuter B's seam fix applied as its exact text
+and re-gated without a third refuter (the standing must-fix pattern; the change is the order of two statements).
+
+GATE: GATE: green twice on 2026-09-15 - the regeneration run (tag rem, 21:57-22:24: the gradle chains, the three proof trees re-pinned under the probe's partial tick and the second-pass keys (g1 and s4 zero files changed, t2 42: the seven new entries and the aggregate) and each verified drift-free, the reference clips reproduced twice and referenceClipsVerify VERIFIED 311 files, the tool tests OK, the folder regenerated 116 folders / 1382 files with check PASS 116 / FAIL 0, the benchmark re-pinned, the audit 0 errors / 0 advisories / 12 acknowledged with draw order 103 shipped geos (102 seam + 1 outside-seam), then the gate: drift 0, gradlew build BUILD SUCCESSFUL 7m 31s, runGameTestServer all 1287 required tests passed) and, after both refuters' must-fixes (comment text and the seam's statement order, line counts unchanged), the gate alone on the fixed tree (tag rem2, from 22:30: drift 0, the audit the same line, gradlew build BUILD SUCCESSFUL 7m 8s, all 1287 required tests passed, 1286 -> 1287 for t2_014); no stray process after either run (the Gradle daemon alone).
