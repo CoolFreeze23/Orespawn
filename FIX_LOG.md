@@ -8929,3 +8929,274 @@ rule as before. The owner's in-game overlay of one asymmetric species (named wit
 report) is the acceptance of the mirror fix; the run does not wait for it.
 
 GATE: docs-only (no gate; nothing under src or tools moves).
+
+## PHASE G — THE MIRROR FIXED AT THE SOURCE (2026-09-15) — the converter stops negating x (a converted rig sits in the Bedrock convention the Queen's native rig uses, so GeckoLib's baker's x negation IS the classic chain's scale(-1, -1, 1) instead of cancelling it), the hooks' basis mapping, the clip sign rule, the face labels and islands and the hierarchy form's pins re-derived in their one place each; the probe reproduces both real chains from the jars so its frame is the in-game frame; the seam compensates the residual 0.009-block height and the two chains agree to float precision; the constant render transform's seam frame is vanilla's own M (the Dungeon Beast's slot YP -90); 77 geos, 15 keyframe clips, 109 reference geos and 298 reference clips regenerated; the package on the corrected rigs with the sheets' "Blockbench mirrors X" sentence gone; one landing, two refuters
+
+RULING. Owner 2026-09-15, closing set continued, second (addendum item 35 (1)-(4), recorded docs-only at 8f835fe): "TEST-015 — the mirror,
+fixed at the source: (1) The converter stops negating x: a converted rig sits in the Bedrock convention the Queen's native rig uses, and
+every geo regenerates. The hooks' basis mapping and the clip sign rule are re-derived from the new frame in the one place each lives; the
+transcriptions, the reference clips, the face-order keys and every proof tree regenerate and re-pin. (2) The probe reproduces both real
+chains — vanilla's scale(-1,-1,1) and translate(0,-1.501,0) on the classic side, GeckoLib's baker and translate(0,0.01,0) on the geo side —
+in place of its own normalisation, so its frame is the in-game frame; the seam compensates the residual height offset so the two chains
+agree to zero. Two refuters, one of them reproducing the chain reading from the jars independently. The register records the finding with
+its history: every seam rig and every package rig mirrored from Slice 4a to this commit. (3) The package regenerates on the corrected rigs;
+the sheets' 'Blockbench mirrors X' sentence goes. Nothing has been sent to the animator; the folder that goes is this one. (4) The report
+names one asymmetric landed species and the exact dev-instance command for the owner's in-game overlay against the classic renderer. That
+look is the acceptance of this item and of the flip; the run does not wait for it." Order of work (6): items 1 to 3 as one landing, gated
+and pushed.
+
+THE TWO CHAINS, READ FROM THE PINNED JARS (javap over neoforge-21.1.223.jar and geckolib-neoforge-1.21.1-4.8.4.jar; written into
+G1ModelProbe's class javadoc): the classic `LivingEntityRenderer.render(T, float, float, PoseStack, MultiBufferSource, int)` calls
+`setupRotations` at offset 390, `PoseStack.scale(-1, -1, 1)` at 395-400 (ldc -1.0f, ldc -1.0f, fconst_1, invokevirtual scale), the
+renderer's `scale` hook at 408, `PoseStack.translate(0, -1.501, 0)` at 413-417 (fconst_0, ldc -1.501f, fconst_0, invokevirtual translate),
+`setupAnim` at 510 and `renderToBuffer` at 621: a ModelPart-space point p draws at M p, M = scale(-1, -1, 1) . translate(0, -1.501, 0).
+GeckoLib's `GeoReplacedEntityRenderer.actuallyRender` calls `scale(getScale)` at 382, `applyRotations` at 396 (the same 180 - yaw),
+`translate(0, 0.01, 0)` at 722-727 (fconst_0, ldc_w 0.01f, fconst_0, invokevirtual translate) and then `GeoRenderer.actuallyRender`;
+`BakedModelFactory$Builtin.constructCube` builds the cube's origin as (-(origin.x + size.x), origin.y, origin.z) / 16 (offsets 98-139), its
+pivot as pivot.multiply(-1, 1, 1) (157-167) and its rotation as (-toRadians(x), -toRadians(y), +toRadians(z)) (169-202); `constructBone`
+the bone's rotation the same way (61-92) and its pivot as (-x, y, z) (95-116); `RenderUtil.translateMatrixToBone` translates by
+(-posX, posY, posZ) / 16 (2-23), `rotateMatrixAroundBone` multiplies Z, then Y, then X (1-72); no scale(-1, ...) anywhere in GeoRenderer or
+RenderUtil. `ModelPart.Cube.<init>` (365-785) and `Polygon.<init>` (the remaps at 41 / 64 / 88 / 113, the mirrored reversal at 141-167)
+and GeckoLib's `GeoQuad.build` (the u-endpoint swap for a non-mirrored quad at 34-48, the corner UVs at 75-144) and
+`BakedModelFactory$VertexSet` (quadWest the min-x side, quadNorth the min-z side, quadUp the max-y side) give the face rule below.
+
+THE FRAME, DERIVED: the bake of a ModelPart point is B p = (-x, 1.5 - y, z) blocks once the converter keeps the ModelPart x (the
+Bedrock convention: the Queen's leftLeg pivots at +49.9, her cubes at their own x) - INTERNAL SPACE IS CLASSIC SPACE REFLECTED IN X AND Y,
+S = diag(-1, -1, 1) = R_z(180) (before: in Y alone, the converter's negation having cancelled the baker's, so every seam rig drew as the
+classic's left-right mirror in the entity frame, 0.009 blocks higher, invisible to a probe that normalised the bake back into ModelPart
+space). Every derived rule follows from S: a rotation conjugated through a half turn about Z keeps the ZYX axis order, reverses the sense
+of the rotations about X and Y and keeps Z; a translation reverses its x and y; a normal reflects in x and y.
+
+WHAT LANDED — ITEM 1 (1), THE CONVERTER (`tools/layer_definition_to_geo.py`): `convert_cube` writes the origin (ax, 24 - (ay + sy), az)
+[was (-(ax + sx), ...)], every bone pivot (px, 24 - py, pz) [was (-px, ...)] - `convert_geometry`, the render-instance clones' pivots
+(`expand_render_instances`, `expand_explicit_instances`; the fan groups at the model origin (0, 24, 0) as before) and the hierarchy form's
+derived pivots (`derived_pivot`, computed in classic terms and mapped the same way); `json_rotation` / `json_rotation_delta` write +classic
+degrees on X, Y and Z [was (+x, -y, -z)] - the baker negates JSON X and Y at load, so that JSON bakes to the internal (-x, -y, z) the
+conjugation needs; `local_bind_rotation` unchanged (conjugation is a homomorphism: the local triple's JSON is the same rule); the face
+rectangles (`modelpart_face_uv`): the ModelPart WEST island (at u) lands on GeckoLib's EAST quad and vice versa, every island keeps its
+own u direction for a plain cube (uv_size positive in u) and a MIRRORED cube's polygons carry their islands u-reversed (the u origin at the
+island's far edge, a negative width) - exactly the old rule with the u signs inverted and the two x islands swapped, derived corner by
+corner from Polygon.<init>'s remaps and GeoQuad.build's swap (the docstring carries the derivation); the face labels
+(`GECKOLIB_LABEL_BY_CLASSIC_NORMAL`): a classic normal (x, y, z) is the quad whose step is (-x, -y, z) [was (x, -y, z)], so the classic WEST
+slot is "east", DOWN (the y-down top) stays "up"; `classic_face_normals` returns the entity-frame normals (`entity_frame_normal`) the bind
+capture now carries, so `derive_cube_face_order`'s self-check compares like with like; the undrawn-parts list untouched. MEASURED on the
+77 regenerated geos against HEAD's (a scratch check over 2,104 bones, 2,092 cubes, 12,552 face rectangles, 21 face-order geos / 836 cube
+entries): every pivot x negated, every rotation's Y and Z negated, every cube origin x = -(old x + size), every island the same rectangle
+with u reversed on the mirrored-name face, every face-order entry the old with west <-> east swapped, every draw-order key identical, no
+other change.
+
+WHAT LANDED — ITEM 1 (2), THE HOOKS' BASIS MAPPING (`entity/client/OreSpawnGeoReplacement.java`, the one place): `rotateY` writes -yRot
+[was +yRot], `rotateZ` writes +zRot [was -zRot], `rotateX` unchanged (-xRot); `classicBindPivot` reads the internal pivot as
+(-x, 24 - y, z) of the classic [was (x, ...)] and a child's x as parent - child [was child - parent]; `classicPosition` adds posX [was
+subtracted]; `moveTo` writes posX = x - bind [was bind - x], posY and posZ unchanged; `classicRotX` unchanged; the class javadoc's basis
+facts rewritten with the bytecode. No descriptor's hook statements change (every hook writes classic terms through these helpers; the
+Beaver's own X-only internal write and the harness's Beaver transcription unchanged, their comments updated); the probe's read-back
+(`G1ModelProbe.javaRotations` (-x, -y, z), `javaPositions`) and the keyframe twin (`KeyframeLeg.internalRotation`: X and Y negated, Z
+kept; `classicJson`) follow the same facts. THE PROOF: the animation leg unchanged on every hook (0 rad on all but the Rotator and PurplePower at 4.1e-8 rad and the Trooper Bug at 6e-13 rad, the position maxima up to 3e-6 model units on fourteen hooks - every figure as before, within 2e-6 rad / 1e-4 units) of the three chains (below), the Slice 4b
+basis fixture (`fixture_runtime_basis_yz`: full XYZ rotations and moves on a nested pair through the helpers) PASS at 4.159e-7 blocks geometry / 2.886e-7
+normal (1.005e-6 is the s4 chain's maximum, the Robot3's), and the 61-sample scratch chains of the Dungeon Beast, Kraken, Scorpion and Lurking Terror at 0 rad.
+
+WHAT LANDED — ITEM 1 (3), THE CLIP SIGN RULE (`json_rotation_delta`, the one place; quoted by `tools/keyframe_clip.py` AUTHORED_SIGN
+{x: 1, y: 1, z: 1} [was y, z: -1] and `bind_degrees` (the geo's rotation read as +x, +y, +z), by `KeyframeLeg.generate` (authoredSign 1 on
+every axis) / `bindDegrees` (the geo read and the bake's (-x, -y, z) check), and by `ReferenceClipSampler.authoredKeys` (the classic delta
+(-(Ix - Bx), -(Iy - By), Iz - Bz), authored (+dCx, +dCy, +dCz) = (-dIx, -dIy, +dIz) in internal terms - the same internal form as before,
+which GeckoLib's load (X and Y keys negated, BakedAnimationsAdapter.buildKeyframeStack 209-224 / 250-265) lands on the internal basis;
+the position keys the internal offsets (+dx, -dy, +dz) of a classic move [was (-dx, ...)]). REGENERATED: the 15 exact transcriptions'
+clips from their clip manifests (`tools/keyframe_clips/*.json`, the bind read from the regenerated geos): 9 files changed (the Tshirt,
+Ant and Gold Fish clips: every Y key's sign; the Brutalfly, Cliff Racer, Cockateil, Dragonfly, Firefly and Mosquito clips: every Z key's
+sign), the Beaver's and every X-only clip byte-identical - a scratch classification of every key against HEAD: sign flips only, no key
+time, X rotation key or lerp mode moved; the keyframe leg PASS on all 15 at its 2.5e-3 rad epsilon with the SAME maxima as before
+(Beaver 2.29524e-3 over 17,568 layer-bone samples, Ant rig 2.16644e-3 over 3,528 x 5, Cockateil / Ruby Bird 2.2395e-3 over 1,030,
+Gold Fish 2.08834e-3, Dragonfly 1.77852e-3, Mosquito 1.755335e-3, Cliff Racer 1.7441e-3, Brutalfly 1.48505e-3, Firefly 1.4405e-3,
+Tshirt 0). THE REFERENCE CLIPS: the sampler headlessly over every hook and every seam rig (the three seam manifests, --reference the
+regenerated build/reference/generated) twice into scratch, 298 files each, 0 differing; the tracked copy `tools/reference_clips/`
+rewritten (251 files changed, 47 byte-identical - the X-only and static clips - 0 new, 0 stale; a scratch classification against HEAD:
+every changed value is a sign flip of a Y or Z rotation key or an X position key, every key time, X rotation key and Y / Z position key
+identical) and `--verify` VERIFIED: 298 files reproduced byte for byte. THE WALK IDENTITY against the clips of fc5e23c no longer holds
+by design - the frame changed - and holds exactly up to that sign change; the seeds' `reference_states` untouched; the index's
+`rotation_rule` / `position_rule` sentences state the new rule.
+
+WHAT LANDED — ITEM 1 (4), EVERY GEO: the 77 shipped seam geos regenerated (the t2 68, s4 13 and g1 2 chains' converter output copied
+into `src/main/resources/assets/orespawn/geo/entity/` as the slices did - 83 outputs, the Elevator's g1 and s4 outputs byte-identical,
+the five consumers sharing the Ant and Cockateil rigs not shipped under their own names - every shipped file byte-identical to the
+chain's copy, 77 of 77; the Queen's native geo and clips untouched; the empty animation files unchanged); the reference leg's 109 geos
+(`build/reference/generated`, the probe over `tools/reference_model_proofs.json` - 111 dumps - and the converter with
+--continue-on-refusal: 109 converted, the same two refused as before, reference_purplepower and reference_rotator); the audit's
+draw-order keys regenerate with the geos (the bone order unchanged on every rig), the face-order keys with the swap above.
+
+WHAT LANDED — ITEM 1 (5)-(6), THE PROOFS AND THE PINS: the before / after per entry and per leg in the lane's before_after.md (85
+rows: g1 2 + 1 fixture, s4 13 + 1 fixture, t2 68; BEFORE = HEAD's classes and tool copies in verify mode, all three proofs verified;
+AFTER = this lane's, validate mode) - NO LEG'S VERDICT FLIPS on any entry; the maxima: geometry g1 2e-7 -> 1.334e-7, s4 1.005e-6 ->
+1.005e-6, t2 2e-6 -> 2e-6; surface normal g1 1.513e-7, s4 2.886e-7, t2 2.829e-7 unchanged, UV 0 everywhere; animation s4 4.101e-8 rad,
+t2 6e-13 rad unchanged; draws / faces g1 221 / 0, s4 2,307 / 1,008, t2 62,129 / 150,102 unchanged; visual: 35 of the 422 sample rows
+move by whole pixels (the largest changed fraction after 1.526e-5 = one pixel, the largest MAE 0.0029, the largest pair-contested
+9.0e-4 - the Bee's attack three-quarter, as before; the Vortex's ten rows drop their 15 silhouette pixels to 0), every other row
+identical: the rasteriser's pixel-boundary and coplanar-tie decisions on coordinates whose last bits now carry the 1.501 lift and the
+mirror, never a verdict. THE GAMETESTS: `T2SeamTests.t2_009` re-pinned (the Dungeon Beast's slot YP -90; the seam chain on F = M; its
+javadoc the re-derivation) and `t2_010_seam_chain_equals_the_classic_chain_with_the_height_compensation` NEW (the frame constant is M;
+the compensation is 1.501 - 1.5 - 0.01; with it the seam's chain equals M on four sample points to 1e-6; without it the two chains
+differ by exactly 0.009 in y and nothing else; a point at ModelPart x +2 bakes to -2, where the classic's flip draws it): the required-test
+count 1282 -> 1283. No other pin carried a sign or an axis of the old frame: the seam tests' bind assertions compare a bone against its
+own bake, the keyframe-leg counts do not move (the density is the manifests'), no Slice 4 rest-subject check reads a sign.
+
+WHAT LANDED — ITEM 2 (1), THE PROBE ON BOTH REAL CHAINS (`G1ModelProbe`): the classic side applies `applyClassicChain` -
+`scale(-1, -1, 1)` then `translate(0, -1.501, 0)`, the same calls with the same float constants - to a fresh pose stack before
+`renderToBuffer` (the render_vertices), before the `root.visit` compile (then the declared constant render transform, inside the chain
+as the classic applies it) and before the render-instance capture (whose per-draw matrices are now recorded in the entity frame); the
+geo side applies the descriptor's slot form, the seam's height compensation and `translate(0, 0.01, 0)` to a fresh pose stack and
+renders the bake as the baker built it - the fixed normalisation `translate(0, 1.5, 0) scale(1, -1, 1)` (1640-1641) and its inverse
+(1889) are GONE, and the F^-1 ... F wrap around the slot with them: the probe applies the seam's real slot in the seam's real chain.
+The bone poses a render-instance or hierarchy rig records are in the entity frame (`bone_poses_entity_frame`: the pose stack at the
+bone closed by the bake map B = scale(-1, -1, 1) translate(0, -1.5, 0), so that bone_pose . T(classic pivot / 16) lands a classic
+pivot-local corner where M . cumulative does); the parity tool (`ENTITY_FRAME_OF_CLASSIC`, `entity_frame`, `geo_pivot_classic_blocks`)
+carries the compiled `transforms` into that frame for the chain-link leg and reads the geo pivots as (x, 24 - y, z); the visual leg's
+camera views the entity frame through the classic flip (a point mirrored back about the fit's centre before the yaw and pitch), so the
+fit and the picture the yaw / pitch were chosen for are unchanged in intent, while a rig the seam draws as the classic's mirror now
+projects to a different image and fails (`test_visual_leg_sees_a_mirrored_rig`). THE CONSTANT RENDER TRANSFORM'S SLOT CONJUGATION
+(`RenderTransform.seamFrame`, the record javadoc rewritten from the bytecode): the seam frame F is vanilla's own M (before: the y flip
+alone), so the slot is M C M^-1 - the Dungeon Beast's YP 90 becomes R_y(-90) (the half turn about Z that M carries reverses the sense
+of a rotation about Y; before YP +90), the Kraken's XP 90 stays translate(0, 1.501, 1.501) R_x(-90) (a mirror in x commutes with a
+rotation about X). PROVEN on the previous landing's scratch entries (the harness1 manifest `measure.json` staged as
+build/mirror_measure.json, validate): the Dungeon Beast geometry PASS 5.28e-7 blocks over 3,660 cube-samples (61 samples), surface UV 0
+/ normal 3.32e-7 over 87,840, animation 0 rad, draw order 61 / 3,660 (the four toes out), visual changed 0 / MAE 0 (pair-contested
+7.6e-5); the Kraken geometry PASS 4.01e-6 over 1,776 (16 samples), normal 3.2e-7 over 42,624, animation 0 rad, visual 0 / 0; the
+Scorpion 2e-7 over 1,342, visual 0 / 0 (pair 6.1e-5); the Lurking Terror 3.36e-7 over 944, visual 0 / 0 (pair 2.7e-4) - and since the
+probe now applies the slot in the real chain, a wrong F, a wrong conjugate or a missing compensation fails the geometry leg at every
+sample: the frame is measured, not assumed.
+
+WHAT LANDED — ITEM 2 (2)-(3), THE SEAM COMPENSATES THE RESIDUAL HEIGHT (`OreSpawnGeoReplacedEntityRenderer.applyRotations`, after the
+descriptor's rotations and the slot): `poseStack.translate(0, RenderTransform.SEAM_HEIGHT_COMPENSATION, 0)` with
+`SEAM_HEIGHT_COMPENSATION = 1.501F - 1.5F - 0.01F` (-0.009; on the record beside `seamFrame()` and `bakeOfClassic()`, loadable on the
+dedicated server): the classic lifts its origin 1.501 over the feet, GeckoLib lifts the bake's 1.5 datum by 0.01, and the seam's chain
+after the slot is now translate(0, comp, 0) translate(0, 0.01, 0) B = M exactly. THE NUMBERS: before, the two real chains differed by
+0.009 blocks in height on every seam rig (1.51 against 1.501; the old probe measured 2e-7 .. 2e-6 because it normalised the bake into
+ModelPart space and never saw either chain); after, the probe measures the real chains and the geometry leg's maximum corner delta is
+1.334e-7 (g1), 1.005e-6 (s4, the Robot3's corner rounding) and 2e-6 (t2, the Sea Viper) - float noise against the 1e-5 epsilon - and the
+translation delta of every rig is inside it; t2_010 pins that without the compensation the chains differ by exactly 0.009 in y. The
+Elevator (ENT-S-094, the one non-living species; `ElevatorGeoReplacement.applyRotations`): its ENT-S-091 translate becomes -1.501
+[was -1.5 - 0.01] - the seam's chain after the descriptor slot now carries the classic's whole living lift, and the classic
+ElevatorRenderer cancels exactly that lift in its scale hook (+1.501 in the flipped frame, orig RenderElevator having none), so the
+same cancellation on the seam keeps the deck at the feet; the comment carries the derivation (the probe applies neither descriptor
+slot - no entity - so the Elevator's proof entries are unchanged by it, as before). THE DRAW-ORDER CAPTURES on every entry agree as
+before (draws g1 221, s4 2,307, t2 62,129); the visual leg's images now compared in the in-game frame.
+
+WHAT LANDED — ITEM 3, THE PACKAGE (`tools/artist_package.py`): the .bbmodel builder's convention re-derived - the flip
+(`flip_x` / `flip_rot` / `cube_element` and their inverses) is Blockbench's OWN Bedrock codec (a .bbmodel holds Blockbench's
+coordinates, whose x is the Bedrock file's x negated; the codec negates x on import and on export; rotations negate X and Y), the same
+negation GeckoLib's baker applies, so a geo in the Bedrock convention opens in Blockbench exactly as the game draws it: the flip STAYS,
+its comment rewritten, and it is verified on the Queen's native rig, which Blockbench authored and exported - the builder's project of
+her geo puts her leftLeg group at origin x -49.9 (the codec's inverse of her +49.9 pivot: her own left in Blockbench's front view),
+LThigh's rotation at (-45, 0, 0), and the emulated export reproduces her geo EQUAL (`test_the_queens_native_rig_opens_as_authored`,
+on the repository's file); under the OLD converter convention the same codec showed every converted rig mirrored against the classic
+renderer, which is what the sheets' sentence "Blockbench mirrors X for display, so the author's left appears on your right ..." explained
+away - GONE (the glossary now says the rig opens in Blockbench exactly as the game draws it); the reference-clip section's rule sentence
+now "X, Y and Z as the classic degrees"; `test_sheets_no_longer_say_blockbench_mirrors_x`. The tests 50 -> 52 OK. THE DRY RUN over every
+species into the lane's scratch (`package --out <scratch>/pkg --reference-geo-dir build/reference/generated`, on the regenerated
+geos, reference geos and reference clips): exit 0, 116 folders, 1,369 files, every folder `check` PASS (116 / 116), the round-trip EQUAL
+within the ruled tolerance on every folder, 356 clips embedded; the repository's artist_handoff/ untouched.
+
+THE BEFORE-AFTER PER ENTRY: the lane's before_after.md (85 rows, the three chains; the per-chain maxima table; the 35 visual rows that
+moved by whole pixels, each named with its before and after; the reasons).
+
+THE HISTORY LINE (for the register's TEST-015 entry): every seam rig and every package rig converted, proved, packaged and (for the
+artist folder) prepared with the rig as the classic's left-right mirror in the entity frame, 0.009 blocks higher, from Slice 4a to this
+commit - Slice 4a (the Elevator, the s4 pipeline, 2026-09-02), 4a-2 (the Vortex), 4b (eight Tier-3 code-driven rigs, the
+production-hook harness), 4c (PurplePower and Rotator, c01154d, 2026-09-06), the keyframe leg's return and item 15 (the Beaver's
+transcription, 317dce7 / 2ac767c), T2a (ec24c39), T2b (f1c5ed5), the reference-clip sampler (4f1112c), the mirror drop (d51f06f, 17 geos
+regenerated), the pilot package (f4e3f99), T2c (e02663d), the tooling steps (ce1f375, 6576c37, 3792537), the full artist folder (b53fabd),
+the folder's gaps (beb7c61), the hooks (de11b73), the reference clips for every species (55a349e) and revised (3bfac5d), T2d (577a0a6),
+T2e (3ac6a59), T2f (c791ec8), the harness-and-seam landing (86b74ef) and the FK slice (d6bb595) - every proof passed because the probe
+compared both sides in its own y-flipped frame, where the mirror is invisible (TEST-015). Nothing has been sent to the animator; the
+folder that goes is the one regenerated here.
+
+THE OWNER'S LOOK (the lane's owner_look.md, verbatim): the Ender Knight (`ender_knight`) - its sword (`blade` / `handle`,
+ModelEnderKnight.java:263-269, at ModelPart x -4 beside the right arm chain at -12 / -14, no counterpart on the left) is drawn by the
+classic renderer in the knight's RIGHT hand, on your left when it faces you; the seam before this landing drew it in the LEFT hand,
+0.009 blocks higher; after it, in the same hand at the same height. The command: the dev instance's Java arguments
+`-Dorespawn.dev.geckolibRenderers=ender_knight` (Prism: Edit instance -> Settings -> Java; the look sheet's Section E form), or under
+`runs { client { ... } }` in build.gradle `systemProperty 'orespawn.dev.geckolibRenderers', 'ender_knight'` then `gradlew runClient`;
+`/summon orespawn:ender_knight ~ ~ ~4`, stand south of it, F3+B; two looks at the same entity through the switch toggled (or two
+clients side by side): the same hand, the same height is the pass. A second tell: `robot_4` (a shield on its left, a cannon on its right).
+
+THE CHAINS (this lane's fresh javac classes - main 1263 / g1tool 84 / gametest 249 classes, rc 0 at every step - and the tree's tools;
+the harness1 / T2f recipe: G1ModelProbe vanilla -> layer_definition_to_geo.py -> G1ModelProbe geo -> reference_geometry_leg.py ->
+g1_render_parity.py, every process under a timeout): BEFORE - HEAD's classes (git archive 8f835fe + javac) and the base copies of the
+tools, VERIFY mode: `G1 PARITY PASS: 2 models; checked-in proof verified`, `13 models ... verified`, `68 models ... verified` (rc 0 x 3).
+AFTER - validate mode twice each on the regenerated tree: g1 `G1 PARITY STAGING PASS: 2 models` (a, b), s4 `13 models` (a, b), t2 `68
+models` (a, b), rc 0 x 6; `diff -rq` of each a / b pair: 0 differing files, the logs included; the chains once more on the m2 classes
+(the Elevator's slot and a comment, neither on a probe path) and once more on the final m3 classes (the probe's render_transform record
+text naming F = M, carried only by a declaring entry's dumps): 0 differing files against the a runs, six times. The measurement chain
+(the four scratch entries): `G1 PARITY STAGING PASS: 4 models`, rc 0 on m2 and on m3 (the m3 run differing from the m2 run in exactly
+the two declaring entries' dumps, conversion records and report - the text - and nothing else). The reference chain: 111 dumps, 109 converted, 2 refused, the standing
+reference-geometry leg VERIFY against phase_g_reports/reference_proof rc 0 (it compares the compiled definitions with the 1.7.10 source,
+not the captures: its proof stands). The sampler: A / B 0 differing, `REFERENCE CLIPS VERIFIED: 298 files`. `python
+tools/test_g1_render_parity.py`: 22 OK (18 + 4: the Bedrock convention, the face labels and islands, the frame helpers and the camera, the
+visual leg seeing a mirrored rig). `python tools/test_artist_package.py`: 52 OK. `python tools/asset_audit.py` after the geos were copied:
+`RESULT: 78 error(s), 0 advisory(ies), 60 acknowledged; draw order: 78 shipped geo: 77 seam + 1 outside-seam -> exit 1` - the 78 are
+GECKO_GEO_PROOF_DRIFT rows, every shipped rig against its stale checked-in proof copy (2 g1 + 13 s4 + 63 t2; the Elevator twice), the
+precedent of every rig landing before its proof tree is re-pinned (FIX_LOG 2832, 3750); nothing else, and each shipped geo is
+byte-identical to this lane's chain copy (77 / 77); green outright once the orchestrator's --write-proof re-pins the three trees.
+
+REFUTER A (the chains from the jars, independently; its report in the advisor's scratch `r21/mirror_ref_a/`): NO MUST-FIX. Its
+own reading of both chains from the jars (written before the probe's javadoc; the appendix of its report) matches the
+probe at every step and offset; the probe's classic side is vanilla's flip and lift before `renderToBuffer`, `root.visit`
+and the render-instance capture, its geo side the slot, the compensation, the 0.01 lift and GeckoLib's own baker, the
+old normalisation gone. The convention checked by hand on the Ender Knight's sword (classic `(-4, -2, -8)`, geo pivot
+`(-4, 26, -8)`, the baker and vanilla's flip landing it at the same world x; the first vertex `(0.1875, 3.708, -0.994)`
+on both sides) and against the Queen's untouched rig (her left limb at +x, the origin the minimum corner, y up - the
+knight's left arm laid out the same way). An independent re-implementation of GeckoLib's chain from its bytecode agrees
+with the geo capture to 1.55e-6 and with the vanilla capture to 9.5e-7 on 83 entries at bind; HEAD's geos through the
+real chain without the compensation differ from the classic by at least 0.009 on 78 of 78 rigs (the mean y offset
++0.0090 on every rig; up to 7.98 blocks on the Crab once the mirror is counted) - the "before" figure the lane's own
+table could not carry, since the old probe never measured either chain. The seam's `applyRotations` carries the
+compensation only, after the slot and before GeckoLib's lift, commuting with the yaw; no x flip anywhere in the seam.
+Its one drafting gap, added here: the before / after table's render-instance and chain-link columns were blank, while
+the reports carry them - the Crab 0 / 0 unchanged, the Rotator's and the PurplePower's instance translation deltas
+moved off exact zero to 1.6e-6 and 3.2e-6 model units (2e-7 blocks; the epsilon 1e-4): the per-draw matrices are now
+recorded under M, so the translation carries the 1.501 lift's float rounding. Two notes stand: the species scale sits
+outside both probe sides symmetrically (unchanged by this landing); the one remaining "mirrors X" hit in
+`artist_package.py` is the comment saying the sentence is gone.
+
+REFUTER B (the derived rules and the regenerations; its report in the advisor's scratch `r21/mirror_ref_b/`): CONFIRMED
+the converter (the x negation removed at all four sites - the cube origin, the pivot, the explicit and the fan instance
+expansions - the derived pivot computed in classic terms and mapped once; its own re-derivation of the sign rule from the
+baker's bytecode agrees; the tree's converter over the lane's dumps byte-identical to the 77 shipped geos and to the
+109 reference geos, the same two refused), the hooks' mapping (four files under `entity/client` moved - the base, the
+descriptor record, the renderer and the Elevator's slot constant; no descriptor writes an internal channel; its own
+animation leg on eleven hooks including the Crab's explicit instances, six `moveTo` rigs with head look and the
+PurplePower's spun fan, and the basis fixture, unchanged from before), the clip sign rule (one place, the two
+quotations exact; four clips regenerated by itself byte-identical; the ten changed clips carrying only Y or Z sign
+flips; the keyframe leg's maxima identical; its own sampler run 298 of 298 identical, VERIFIED), the package (the
+Queen's Blockbench file with every group origin the codec's negation of her pivots, the mirror sentence in none of the
+1,369 files, ten folders checked PASS), the owner's look (the sword's geometry and texture, the switch's property and
+the run configuration exact), the drafts' hashes (all 23 in the history line real; Slices 4a, 4a-2 and 4b carry no
+hash because FIX_LOG's sections record none - stated here). MUST-FIX, record accuracy only, fixed above: the
+composition leg's moved maxima tabulated and explained; the animation leg's actual maxima in place of "0 rad on every
+hook"; the fixture's geometry figure. Its notes: the animation leg reads back through the mapping it tests, so the
+frame proof is the geometry leg at posed samples (PASS on its thirteen entries and the lane's 85); no shipped geo
+carries a mirrored cube, so the mirrored-island branch is pinned only by its test until the first mirrored rig lands
+(the Boyfriend's and Girlfriend's four cubes); the Elevator's classic scale hook `translate(0, 1.501, 0)` confirms its
+-1.501 slot; the one remaining "mirrors X" hit in the generator is the comment saying the sentence is gone.
+
+DEVIATIONS PRESENTED (each reversible): (1) the .bbmodel builder's flip STAYS - the brief's parenthetical expected no mirroring, but the
+flip is Blockbench's own codec (the FIX_LOG record at 3465 and the Queen's rig), and removing it would mirror every rig in Blockbench,
+the Queen included; the rest of item 3 as ruled; (2) the Elevator's ENT-S-091 translate moved from -1.51 to -1.501 - forced by the
+compensation, not a hook statement; (3) the geo probe's bone-pose field renamed `bone_poses_classic` -> `bone_poses_entity_frame` (it no
+longer holds classic-space matrices) and the parity tool and its tests follow; (4) the render-instance leg's and the chain-link leg's
+matrices compare in the entity frame (the classic side's per-draw matrices recorded under M, the classic world matrices carried by M),
+the relation `draw == bone_pose * T(pivot)` unchanged in form; (5) the visual leg's camera mirrors the entity frame back before the
+yaw and pitch so the pinned pictures stay the pinned pictures (the fit unchanged in intent) - a right-handed view of the entity frame
+would have flipped every proof image left-right for no gain in what the leg can see; (6) the audit is not green on the tree until the
+proof trees are re-pinned (the 78 PROOF_DRIFT rows above); (7) `SEAM_HEIGHT_COMPENSATION`, `bakeOfClassic()` live on the
+`RenderTransform` record rather than on the renderer, so the probe and the dedicated-server gametest read them without a client class
+(the t2_009 lesson); (8) the codec fact rests on the FIX_LOG's record and the Queen's rig - Blockbench's source was not fetched (two
+attempts at its repository path returned 404; no further crawling).
+
+NOT DONE (by design): the gametest suite not run (no gradle: the 1283 count is the row count); the three proof trees (the orchestrator's
+--write-proof: every entry's geometry_sha256 / animation_sha256, the reports' render_transform text and the evidence images with the
+frame; then each verified drift-free); the register's TEST-015 status and history line, the TEST-013 note and KNOWN_ISSUES' count (the
+lane's records.md drafts them); the artist_handoff folder (the dry run into scratch is the proof; the folder that goes is regenerated by
+the orchestrator on the corrected rigs); the owner's in-game look (item 35 (4): the acceptance, not waited for); the Dungeon Beast's and
+the Kraken's landings (the Kraken's slice; their scratch entries measured here PASS under the new frame).
+
+GATE: GATE: mirror green on the first run (drift 0, build 0, suite: all 1283 required tests passed): the chains fresh, the reference leg verified with no re-pin (109 entries compared, 2 unpaired, in ModelPart space as before), the three trees re-pinned under the in-game frame (g1 2, s4 13, t2 68 PARITY PASS; 8 / 62 / 217 proof files changed) and each verified drift-free, the 77 shipped geos byte-identical to the chains' converter output, the reference clips deterministic across two gradle runs (298 files, 251 changed by sign flips) and VERIFIED, both test files OK (52 and 22), the folder fresh (116 folders, 1,369 files, every check PASS, the mirror sentence in no file), the benchmark re-pinned for g1tool's move, the audit 0 errors / 60 acknowledged / 78 shipped geos.
