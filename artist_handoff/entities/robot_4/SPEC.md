@@ -16,66 +16,66 @@ A four-block hybrid warrior: articulated legs (foot, shin, calf, knee guard, thi
 
 ## 3. Bone glossary (locked legacy names — readable labels beside them)
 
-Never rename, delete or re-parent a bone: code and hitboxes reference them by name. Left/right in the labels follow the model author's own naming (the side the legacy name calls left); Blockbench mirrors X for display, so the author's left appears on your right when the mob faces you. `gait bone` = its motion is scaled by walking speed in-game (P3). `locked` = it carries or parents a hitbox part (contract §8.1). Keying a locked bone is allowed; the checker warns, and the hitbox part follows the bone in-game (the consequence, so keep such keys deliberate). Renaming, re-parenting or deleting a locked bone is refused.
+Never rename, delete or re-parent a bone: code and hitboxes reference them by name. Left/right in the labels follow the model author's own naming (the side the legacy name calls left); the rig opens in Blockbench exactly as the game draws it, so a bone the author calls left is on the creature's own left. `gait bone` = its motion is scaled by walking speed in-game (P3). `locked` = it carries or parents a hitbox part (contract §8.1). Keying a locked bone is allowed; the checker warns, and the hitbox part follows the bone in-game (the consequence, so keep such keys deliberate). Renaming, re-parenting or deleting a locked bone is refused.
 
 | bone | readable label | classic part | parent | pivot (x, y, z) | group | gait bone | locked | cubes |
 |---|---|---|---|---|---|---|---|---|
-| `bottomcannonpiece` | cannon plate, bottom | bottomcannonpiece (ModelPart of the same name) | - | (15, 29, 1) | cannon_arm | no | no | 1 |
-| `cannonammo` | cannon ammunition drum | cannonammo (ModelPart of the same name) | - | (15, 29, 1) | cannon_arm | no | no | 1 |
-| `cannonbase` | cannon, base | cannonbase (ModelPart of the same name) | - | (15, 29, 1) | cannon_arm | no | no | 1 |
-| `cannonend` | cannon, muzzle | cannonend (ModelPart of the same name) | - | (15, 29, 1) | cannon_arm | no | no | 1 |
-| `chest` | chest | chest (ModelPart of the same name) | - | (10, 47, -4) | - | no | no | 1 |
-| `glowycannonbit1` | cannon glow segment 1 | glowycannonbit1 (ModelPart of the same name) | - | (15, 29, 1) | cannon_arm | no | no | 1 |
-| `glowycannonbit2` | cannon glow segment 2 | glowycannonbit2 (ModelPart of the same name) | - | (15, 29, 1) | cannon_arm | no | no | 1 |
-| `glowycannonbit3` | cannon glow segment 3 | glowycannonbit3 (ModelPart of the same name) | - | (15, 29, 1) | cannon_arm | no | no | 1 |
-| `glowycannonbit4` | cannon glow segment 4 | glowycannonbit4 (ModelPart of the same name) | - | (15, 29, 1) | cannon_arm | no | no | 1 |
-| `glowycannonbit5` | cannon glow segment 5 | glowycannonbit5 (ModelPart of the same name) | - | (15, 29, 1) | cannon_arm | no | no | 1 |
-| `head` | head (turns with the gaze at 2/3 rate) | head (ModelPart of the same name) | - | (1, 50, -5) | head | no | no | 1 |
-| `hips` | hips | hips (ModelPart of the same name) | - | (8, 27, 2) | - | no | no | 1 |
-| `leftcalf` | left calf | leftcalf (ModelPart of the same name) | - | (8, 27, 6) | legs | yes | no | 1 |
-| `leftcannonpiece` | cannon side plate, left | leftcannonpiece (ModelPart of the same name) | - | (15, 29, 1) | cannon_arm | no | no | 1 |
-| `leftfootback` | left foot, heel | leftfootback (ModelPart of the same name) | - | (8, 27, 6) | legs | yes | no | 1 |
-| `leftfootbase` | left foot, base | leftfootbase (ModelPart of the same name) | - | (8, 27, 6) | legs | yes | no | 1 |
-| `leftfootfront` | left foot, front | leftfootfront (ModelPart of the same name) | - | (8, 27, 6) | legs | yes | no | 1 |
-| `leftfoottip` | left foot, toe tip | leftfoottip (ModelPart of the same name) | - | (8, 27, 6) | legs | yes | no | 1 |
-| `leftkneegaurd` | left knee guard ('gaurd' sic) | leftkneegaurd (ModelPart of the same name) | - | (8, 27, 6) | legs | yes | no | 1 |
-| `leftshin` | left shin | leftshin (ModelPart of the same name) | - | (8, 27, 6) | legs | yes | no | 1 |
-| `leftsholder` | left shoulder (cannon arm) | leftsholder (ModelPart of the same name) | - | (9, 42, 4) | cannon_arm | no | no | 1 |
-| `leftthigh` | left thigh | leftthigh (ModelPart of the same name) | - | (8, 27, 6) | legs | yes | no | 1 |
-| `lefttopspinebase` | back spine, upper left, base | lefttopspinebase (ModelPart of the same name) | - | (7, 53, 5) | - | no | no | 1 |
-| `lefttopspinetip` | back spine, upper left, tip | lefttopspinetip (ModelPart of the same name) | - | (6.5, 59, 8) | - | no | no | 1 |
-| `leftupperarm` | left upper arm (the cannon follows it) | leftupperarm (ModelPart of the same name) | - | (9, 42, 4) | cannon_arm | no | no | 1 |
-| `lowerleftspinebase` | back spine, lower left, base | lowerleftspinebase (ModelPart of the same name) | - | (8, 43, 15) | - | no | no | 1 |
-| `lowerleftspinetip` | back spine, lower left, tip | lowerleftspinetip (ModelPart of the same name) | - | (7.5, 45, 20) | - | no | no | 1 |
-| `lowerrightspinebase` | back spine, lower right, base | lowerrightspinebase (ModelPart of the same name) | - | (-4, 43, 15) | - | no | no | 1 |
-| `lowerrightspinetip` | back spine, lower right, tip | lowerrightspinetip (ModelPart of the same name) | - | (-4.5, 45, 20) | - | no | no | 1 |
-| `middleleftspinebase` | back spine, middle left, base | middleleftspinebase (ModelPart of the same name) | - | (-2, 49, 14) | - | no | no | 1 |
-| `middleleftspinetip` | back spine, middle left, tip | middleleftspinetip (ModelPart of the same name) | - | (-2.5, 52, 18) | - | no | no | 1 |
-| `middlerightspinebase` | back spine, middle right, base | middlerightspinebase (ModelPart of the same name) | - | (6, 49, 14) | - | no | no | 1 |
-| `middlerightspinetip` | back spine, middle right, tip | middlerightspinetip (ModelPart of the same name) | - | (5.5, 52, 18) | - | no | no | 1 |
-| `neck` | neck | neck (ModelPart of the same name) | - | (4, 46, -7) | - | no | no | 1 |
-| `rightcalf` | right calf | rightcalf (ModelPart of the same name) | - | (-5, 27, 6) | legs | yes | no | 1 |
-| `rightcannonpiece` | cannon side plate, right | rightcannonpiece (ModelPart of the same name) | - | (15, 29, 1) | cannon_arm | no | no | 1 |
-| `rightfootback` | right foot, heel | rightfootback (ModelPart of the same name) | - | (-5, 27, 6) | legs | yes | no | 1 |
-| `rightfootbase` | right foot, base | rightfootbase (ModelPart of the same name) | - | (-5, 27, 6) | legs | yes | no | 1 |
-| `rightfootfront` | right foot, front | rightfootfront (ModelPart of the same name) | - | (-5, 27, 6) | legs | yes | no | 1 |
-| `rightfoottip` | right foot, toe tip | rightfoottip (ModelPart of the same name) | - | (-5, 27, 6) | legs | yes | no | 1 |
-| `rightkneegaurd` | right knee guard | rightkneegaurd (ModelPart of the same name) | - | (-5, 27, 6) | legs | yes | no | 1 |
-| `rightlowerarm` | right lower arm | rightlowerarm (ModelPart of the same name) | - | (-7, 42, 4) | shield_arm | no | no | 1 |
-| `rightshin` | right shin | rightshin (ModelPart of the same name) | - | (-5, 27, 6) | legs | yes | no | 1 |
-| `rightsholder` | right shoulder ('sholder' sic) | rightsholder (ModelPart of the same name) | - | (-7, 42, 4) | shield_arm | no | no | 1 |
-| `rightsholdergaurd` | right shoulder guard | rightsholdergaurd (ModelPart of the same name) | - | (-7, 42, 4) | shield_arm | no | no | 1 |
-| `rightthigh` | right thigh | rightthigh (ModelPart of the same name) | - | (-5, 27, 6) | legs | yes | no | 1 |
-| `righttopspinebase` | back spine, upper right, base | righttopspinebase (ModelPart of the same name) | - | (-3, 53, 5) | - | no | no | 1 |
-| `righttopspinetip` | back spine, upper right, tip | righttopspinetip (ModelPart of the same name) | - | (-3.5, 59, 8) | - | no | no | 1 |
-| `rightupperarm` | right upper arm (shield arm) | rightupperarm (ModelPart of the same name) | - | (-7, 42, 4) | shield_arm | no | no | 1 |
-| `sheildbase` | shield, base ('sheild' sic) | sheildbase (ModelPart of the same name) | - | (-7, 42, 4) | shield_arm | no | no | 1 |
-| `sheildend` | shield, end plate | sheildend (ModelPart of the same name) | - | (-7, 42, 4) | shield_arm | no | no | 1 |
-| `sheildtip` | shield, tip | sheildtip (ModelPart of the same name) | - | (-6, 42, 4) | shield_arm | no | no | 1 |
-| `sholdergaurdtip` | right shoulder guard, tip | sholdergaurdtip (ModelPart of the same name) | - | (-7, 42, 4) | shield_arm | no | no | 1 |
-| `stomach` | stomach | stomach (ModelPart of the same name) | - | (7, 33, 2) | - | no | no | 1 |
-| `topcannonpiece` | cannon plate, top | topcannonpiece (ModelPart of the same name) | - | (15, 29, 1) | cannon_arm | no | no | 1 |
-| `torso` | torso | torso (ModelPart of the same name) | - | (8, 37, 0) | - | no | no | 1 |
+| `bottomcannonpiece` | cannon plate, bottom | bottomcannonpiece (ModelPart of the same name) | - | (-15, 29, 1) | cannon_arm | no | no | 1 |
+| `cannonammo` | cannon ammunition drum | cannonammo (ModelPart of the same name) | - | (-15, 29, 1) | cannon_arm | no | no | 1 |
+| `cannonbase` | cannon, base | cannonbase (ModelPart of the same name) | - | (-15, 29, 1) | cannon_arm | no | no | 1 |
+| `cannonend` | cannon, muzzle | cannonend (ModelPart of the same name) | - | (-15, 29, 1) | cannon_arm | no | no | 1 |
+| `chest` | chest | chest (ModelPart of the same name) | - | (-10, 47, -4) | - | no | no | 1 |
+| `glowycannonbit1` | cannon glow segment 1 | glowycannonbit1 (ModelPart of the same name) | - | (-15, 29, 1) | cannon_arm | no | no | 1 |
+| `glowycannonbit2` | cannon glow segment 2 | glowycannonbit2 (ModelPart of the same name) | - | (-15, 29, 1) | cannon_arm | no | no | 1 |
+| `glowycannonbit3` | cannon glow segment 3 | glowycannonbit3 (ModelPart of the same name) | - | (-15, 29, 1) | cannon_arm | no | no | 1 |
+| `glowycannonbit4` | cannon glow segment 4 | glowycannonbit4 (ModelPart of the same name) | - | (-15, 29, 1) | cannon_arm | no | no | 1 |
+| `glowycannonbit5` | cannon glow segment 5 | glowycannonbit5 (ModelPart of the same name) | - | (-15, 29, 1) | cannon_arm | no | no | 1 |
+| `head` | head (turns with the gaze at 2/3 rate) | head (ModelPart of the same name) | - | (-1, 50, -5) | head | no | no | 1 |
+| `hips` | hips | hips (ModelPart of the same name) | - | (-8, 27, 2) | - | no | no | 1 |
+| `leftcalf` | left calf | leftcalf (ModelPart of the same name) | - | (-8, 27, 6) | legs | yes | no | 1 |
+| `leftcannonpiece` | cannon side plate, left | leftcannonpiece (ModelPart of the same name) | - | (-15, 29, 1) | cannon_arm | no | no | 1 |
+| `leftfootback` | left foot, heel | leftfootback (ModelPart of the same name) | - | (-8, 27, 6) | legs | yes | no | 1 |
+| `leftfootbase` | left foot, base | leftfootbase (ModelPart of the same name) | - | (-8, 27, 6) | legs | yes | no | 1 |
+| `leftfootfront` | left foot, front | leftfootfront (ModelPart of the same name) | - | (-8, 27, 6) | legs | yes | no | 1 |
+| `leftfoottip` | left foot, toe tip | leftfoottip (ModelPart of the same name) | - | (-8, 27, 6) | legs | yes | no | 1 |
+| `leftkneegaurd` | left knee guard ('gaurd' sic) | leftkneegaurd (ModelPart of the same name) | - | (-8, 27, 6) | legs | yes | no | 1 |
+| `leftshin` | left shin | leftshin (ModelPart of the same name) | - | (-8, 27, 6) | legs | yes | no | 1 |
+| `leftsholder` | left shoulder (cannon arm) | leftsholder (ModelPart of the same name) | - | (-9, 42, 4) | cannon_arm | no | no | 1 |
+| `leftthigh` | left thigh | leftthigh (ModelPart of the same name) | - | (-8, 27, 6) | legs | yes | no | 1 |
+| `lefttopspinebase` | back spine, upper left, base | lefttopspinebase (ModelPart of the same name) | - | (-7, 53, 5) | - | no | no | 1 |
+| `lefttopspinetip` | back spine, upper left, tip | lefttopspinetip (ModelPart of the same name) | - | (-6.5, 59, 8) | - | no | no | 1 |
+| `leftupperarm` | left upper arm (the cannon follows it) | leftupperarm (ModelPart of the same name) | - | (-9, 42, 4) | cannon_arm | no | no | 1 |
+| `lowerleftspinebase` | back spine, lower left, base | lowerleftspinebase (ModelPart of the same name) | - | (-8, 43, 15) | - | no | no | 1 |
+| `lowerleftspinetip` | back spine, lower left, tip | lowerleftspinetip (ModelPart of the same name) | - | (-7.5, 45, 20) | - | no | no | 1 |
+| `lowerrightspinebase` | back spine, lower right, base | lowerrightspinebase (ModelPart of the same name) | - | (4, 43, 15) | - | no | no | 1 |
+| `lowerrightspinetip` | back spine, lower right, tip | lowerrightspinetip (ModelPart of the same name) | - | (4.5, 45, 20) | - | no | no | 1 |
+| `middleleftspinebase` | back spine, middle left, base | middleleftspinebase (ModelPart of the same name) | - | (2, 49, 14) | - | no | no | 1 |
+| `middleleftspinetip` | back spine, middle left, tip | middleleftspinetip (ModelPart of the same name) | - | (2.5, 52, 18) | - | no | no | 1 |
+| `middlerightspinebase` | back spine, middle right, base | middlerightspinebase (ModelPart of the same name) | - | (-6, 49, 14) | - | no | no | 1 |
+| `middlerightspinetip` | back spine, middle right, tip | middlerightspinetip (ModelPart of the same name) | - | (-5.5, 52, 18) | - | no | no | 1 |
+| `neck` | neck | neck (ModelPart of the same name) | - | (-4, 46, -7) | - | no | no | 1 |
+| `rightcalf` | right calf | rightcalf (ModelPart of the same name) | - | (5, 27, 6) | legs | yes | no | 1 |
+| `rightcannonpiece` | cannon side plate, right | rightcannonpiece (ModelPart of the same name) | - | (-15, 29, 1) | cannon_arm | no | no | 1 |
+| `rightfootback` | right foot, heel | rightfootback (ModelPart of the same name) | - | (5, 27, 6) | legs | yes | no | 1 |
+| `rightfootbase` | right foot, base | rightfootbase (ModelPart of the same name) | - | (5, 27, 6) | legs | yes | no | 1 |
+| `rightfootfront` | right foot, front | rightfootfront (ModelPart of the same name) | - | (5, 27, 6) | legs | yes | no | 1 |
+| `rightfoottip` | right foot, toe tip | rightfoottip (ModelPart of the same name) | - | (5, 27, 6) | legs | yes | no | 1 |
+| `rightkneegaurd` | right knee guard | rightkneegaurd (ModelPart of the same name) | - | (5, 27, 6) | legs | yes | no | 1 |
+| `rightlowerarm` | right lower arm | rightlowerarm (ModelPart of the same name) | - | (7, 42, 4) | shield_arm | no | no | 1 |
+| `rightshin` | right shin | rightshin (ModelPart of the same name) | - | (5, 27, 6) | legs | yes | no | 1 |
+| `rightsholder` | right shoulder ('sholder' sic) | rightsholder (ModelPart of the same name) | - | (7, 42, 4) | shield_arm | no | no | 1 |
+| `rightsholdergaurd` | right shoulder guard | rightsholdergaurd (ModelPart of the same name) | - | (7, 42, 4) | shield_arm | no | no | 1 |
+| `rightthigh` | right thigh | rightthigh (ModelPart of the same name) | - | (5, 27, 6) | legs | yes | no | 1 |
+| `righttopspinebase` | back spine, upper right, base | righttopspinebase (ModelPart of the same name) | - | (3, 53, 5) | - | no | no | 1 |
+| `righttopspinetip` | back spine, upper right, tip | righttopspinetip (ModelPart of the same name) | - | (3.5, 59, 8) | - | no | no | 1 |
+| `rightupperarm` | right upper arm (shield arm) | rightupperarm (ModelPart of the same name) | - | (7, 42, 4) | shield_arm | no | no | 1 |
+| `sheildbase` | shield, base ('sheild' sic) | sheildbase (ModelPart of the same name) | - | (7, 42, 4) | shield_arm | no | no | 1 |
+| `sheildend` | shield, end plate | sheildend (ModelPart of the same name) | - | (7, 42, 4) | shield_arm | no | no | 1 |
+| `sheildtip` | shield, tip | sheildtip (ModelPart of the same name) | - | (6, 42, 4) | shield_arm | no | no | 1 |
+| `sholdergaurdtip` | right shoulder guard, tip | sholdergaurdtip (ModelPart of the same name) | - | (7, 42, 4) | shield_arm | no | no | 1 |
+| `stomach` | stomach | stomach (ModelPart of the same name) | - | (-7, 33, 2) | - | no | no | 1 |
+| `topcannonpiece` | cannon plate, top | topcannonpiece (ModelPart of the same name) | - | (-15, 29, 1) | cannon_arm | no | no | 1 |
+| `torso` | torso | torso (ModelPart of the same name) | - | (-8, 37, 0) | - | no | no | 1 |
 
 ## 4. Current animation behaviour — plain English and the source formulas
 
@@ -107,7 +107,7 @@ Author every loop at 1.0 s (README rule 5, the phase-locked kind; ruled 2026-09-
 
 ### 4.3 Reference clips (reference-only)
 
-`robot_4_reference_walk.animation.json`, `robot_4_reference_idle.animation.json`, `robot_4_reference_attack.animation.json` (beside this sheet, and embedded in `robot_4.bbmodel`'s Animation tab) are NOT clips to return or ship under their own names. Each is the creature's classic code — the motion the game draws today — SAMPLED by the harness at fixed inputs so you can see that motion beside the rig in Blockbench. The `.bbmodel` opens with every clip listed (the shipped clips and these); the files beside the sheet are the PINNED SOURCE (their bytes are what the checker knows; the generator's round trip proves the embedded copies within 5e-5 s on key times and 1e-6 on values). If you rebuild the `.bbmodel` and they are gone, Animation → Import Animations... on the files brings them back. One clip per state the code reads, each value alone: `_reference_walk` — full walking speed (limbSwingAmount 1, the walk position and the age advancing one tick per key), not attacking, looking straight ahead, every state flag at rest, full health; `_reference_idle` — standing still (limbSwingAmount 0, the walk position 0; the age advancing one tick per key), not attacking, looking straight ahead, every state flag at rest, full health; `_reference_attack` — attacking (the code's attacking flag raised) while standing still (limbSwingAmount 0, the walk position 0; the age advancing one tick per key), looking straight ahead, every other state flag at rest, full health. Keys: the classic code is sampled once per tick, and the samples are reduced by the density search the exact transcriptions use — the fewest Catmull-Rom keys per bone and channel whose curve stays within 1 degree of rotation and 1/32 block of position of every sample, the closing key always kept — so each clip carries as few keys as that tolerance allows (each entry below states its key counts and the measured maximum error). Rotations are deltas from the bind pose under the same sign rule as the shipped clips (X as the classic degrees, Y and Z negated), positions only where the code moves a bone.
+`robot_4_reference_walk.animation.json`, `robot_4_reference_idle.animation.json`, `robot_4_reference_attack.animation.json` (beside this sheet, and embedded in `robot_4.bbmodel`'s Animation tab) are NOT clips to return or ship under their own names. Each is the creature's classic code — the motion the game draws today — SAMPLED by the harness at fixed inputs so you can see that motion beside the rig in Blockbench. The `.bbmodel` opens with every clip listed (the shipped clips and these); the files beside the sheet are the PINNED SOURCE (their bytes are what the checker knows; the generator's round trip proves the embedded copies within 5e-5 s on key times and 1e-6 on values). If you rebuild the `.bbmodel` and they are gone, Animation → Import Animations... on the files brings them back. One clip per state the code reads, each value alone: `_reference_walk` — full walking speed (limbSwingAmount 1, the walk position and the age advancing one tick per key), not attacking, looking straight ahead, every state flag at rest, full health; `_reference_idle` — standing still (limbSwingAmount 0, the walk position 0; the age advancing one tick per key), not attacking, looking straight ahead, every state flag at rest, full health; `_reference_attack` — attacking (the code's attacking flag raised) while standing still (limbSwingAmount 0, the walk position 0; the age advancing one tick per key), looking straight ahead, every other state flag at rest, full health. Keys: the classic code is sampled once per tick, and the samples are reduced by the density search the exact transcriptions use — the fewest Catmull-Rom keys per bone and channel whose curve stays within 1 degree of rotation and 1/32 block of position of every sample, the closing key always kept — so each clip carries as few keys as that tolerance allows (each entry below states its key counts and the measured maximum error). Rotations are deltas from the bind pose under the same sign rule as the shipped clips (X, Y and Z as the classic degrees: the rig is in the Bedrock convention), positions only where the code moves a bone.
 
 **Starting point (owner 2026-09-14, addendum item 13; extended by the second set revised, item 4):** a reference clip's KEYS may be the starting point of the delivered clip its state corresponds to — copy them into `walk` (from `_reference_walk`), `idle` (from `_reference_idle`), `aggro_idle` (from `_reference_attack`), `fly` (from `_reference_fly`) or `swim` (from `_reference_swim`) and improve from there; a delivered clip carrying those keys is a valid delivery (no rule compares them). A state with no contract clip (sit, sleep, display, ...) is OFFERED as an extra of this creature's own under §2.3 — §5 lists it as "offered from reference_<state>" beside the seed's extras, and a delivered clip under that name carrying the reference keys is a valid delivery. Only the reference file itself coming back under its own name is refused.
 

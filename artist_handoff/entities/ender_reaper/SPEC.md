@@ -18,76 +18,76 @@ A hostile skeletal wraith with a scythe: a bare spine, pelvis and tailbone with 
 
 ## 3. Bone glossary (locked legacy names — readable labels beside them)
 
-Never rename, delete or re-parent a bone: code and hitboxes reference them by name. Left/right in the labels follow the model author's own naming (the side the legacy name calls left); Blockbench mirrors X for display, so the author's left appears on your right when the mob faces you. `gait bone` = its motion is scaled by walking speed in-game (P3). `locked` = it carries or parents a hitbox part (contract §8.1). Keying a locked bone is allowed; the checker warns, and the hitbox part follows the bone in-game (the consequence, so keep such keys deliberate). Renaming, re-parenting or deleting a locked bone is refused.
+Never rename, delete or re-parent a bone: code and hitboxes reference them by name. Left/right in the labels follow the model author's own naming (the side the legacy name calls left); the rig opens in Blockbench exactly as the game draws it, so a bone the author calls left is on the creature's own left. `gait bone` = its motion is scaled by walking speed in-game (P3). `locked` = it carries or parents a hitbox part (contract §8.1). Keying a locked bone is allowed; the checker warns, and the hitbox part follows the bone in-game (the consequence, so keep such keys deliberate). Renaming, re-parenting or deleting a locked bone is refused.
 
 | bone | readable label | classic part | parent | pivot (x, y, z) | group | gait bone | locked | cubes |
 |---|---|---|---|---|---|---|---|---|
-| `Shape10` | right rib 3 (static) | (native rig: no classic part) | - | (1, 34, 10) | - | no | no | 1 |
-| `Shape11` | right rib 4 (static) | (native rig: no classic part) | - | (1, 32, 10) | - | no | no | 1 |
-| `Shape12` | right rib 5 (2 wide; static) | (native rig: no classic part) | - | (-1, 30, 10) | - | no | no | 1 |
-| `Shape13` | right rib 6, the lowest (3 wide; static) | (native rig: no classic part) | - | (-1, 28, 10) | - | no | no | 1 |
-| `Shape14` | vertebra knob 1 (a 1x1x1 behind the spine top; static) | (native rig: no classic part) | - | (-3.5, 38, 11) | - | no | no | 1 |
-| `Shape15` | vertebra knob 2 (static) | (native rig: no classic part) | - | (-3.5, 36, 11) | - | no | no | 1 |
-| `Shape16` | vertebra knob 3 (static) | (native rig: no classic part) | - | (-3.5, 34, 11) | - | no | no | 1 |
-| `Shape17` | vertebra knob 4 (static) | (native rig: no classic part) | - | (-3.5, 32, 11) | - | no | no | 1 |
-| `Shape18` | vertebra knob 5 (static) | (native rig: no classic part) | - | (-3.5, 30, 11) | - | no | no | 1 |
-| `Shape19` | vertebra knob 6, the lowest (static) | (native rig: no classic part) | - | (-3.5, 28, 11) | - | no | no | 1 |
-| `Shape20` | left rib 2 (static) | (native rig: no classic part) | - | (-5, 36, 10) | - | no | no | 1 |
-| `Shape21` | left rib 3 (static) | (native rig: no classic part) | - | (-5, 34, 10) | - | no | no | 1 |
-| `Shape22` | left rib 4 (static) | (native rig: no classic part) | - | (-5, 32, 10) | - | no | no | 1 |
-| `Shape23` | left rib 5 (3 wide; static) | (native rig: no classic part) | - | (-5, 30, 10) | - | no | no | 1 |
-| `Shape24` | left rib 6, the lowest (2 wide; static) | (native rig: no classic part) | - | (-5, 28, 10) | - | no | no | 1 |
-| `Shape25` | left rib 6, side run (1x1x3; static) | (native rig: no classic part) | - | (-6, 28, 8) | - | no | no | 1 |
-| `Shape26` | left rib 6, front (2 wide; static) | (native rig: no classic part) | - | (-5, 28, 8) | - | no | no | 1 |
-| `Shape27` | left rib 5, side run (1x1x5; static) | (native rig: no classic part) | - | (-7, 30, 6) | - | no | no | 1 |
-| `Shape28` | left rib 4, side run (1x1x5; static) | (native rig: no classic part) | - | (-8, 32, 5) | - | no | no | 1 |
-| `Shape29` | left rib 3, side run (1x1x6; static) | (native rig: no classic part) | - | (-8, 34, 4) | - | no | no | 1 |
-| `Shape3` | spine (the 12-tall backbone column; static) | (native rig: no classic part) | - | (-3, 38, 10) | - | no | no | 1 |
-| `Shape30` | left rib 2, side run (1x1x6; static) | (native rig: no classic part) | - | (-8, 36, 4) | - | no | no | 1 |
-| `Shape31` | left top rib, side run (1x1x6; static) | (native rig: no classic part) | - | (-8, 38, 4) | - | no | no | 1 |
-| `Shape32` | left rib 5, front (2 wide; static) | (native rig: no classic part) | - | (-6, 30, 6) | - | no | no | 1 |
-| `Shape33` | left rib 4, front (4 wide; static) | (native rig: no classic part) | - | (-5, 32, 5) | - | no | no | 1 |
-| `Shape34` | left rib 3, front (static) | (native rig: no classic part) | - | (-5, 34, 4) | - | no | no | 1 |
-| `Shape35` | left rib 2, front (static) | (native rig: no classic part) | - | (-5, 36, 4) | - | no | no | 1 |
-| `Shape36` | left top rib, front (static) | (native rig: no classic part) | - | (-5, 38, 4) | - | no | no | 1 |
-| `Shape37` | right rib 6, side run (1x1x3; static) | (native rig: no classic part) | - | (-1, 28, 8) | - | no | no | 1 |
+| `Shape10` | right rib 3 (static) | (native rig: no classic part) | - | (-1, 34, 10) | - | no | no | 1 |
+| `Shape11` | right rib 4 (static) | (native rig: no classic part) | - | (-1, 32, 10) | - | no | no | 1 |
+| `Shape12` | right rib 5 (2 wide; static) | (native rig: no classic part) | - | (1, 30, 10) | - | no | no | 1 |
+| `Shape13` | right rib 6, the lowest (3 wide; static) | (native rig: no classic part) | - | (1, 28, 10) | - | no | no | 1 |
+| `Shape14` | vertebra knob 1 (a 1x1x1 behind the spine top; static) | (native rig: no classic part) | - | (3.5, 38, 11) | - | no | no | 1 |
+| `Shape15` | vertebra knob 2 (static) | (native rig: no classic part) | - | (3.5, 36, 11) | - | no | no | 1 |
+| `Shape16` | vertebra knob 3 (static) | (native rig: no classic part) | - | (3.5, 34, 11) | - | no | no | 1 |
+| `Shape17` | vertebra knob 4 (static) | (native rig: no classic part) | - | (3.5, 32, 11) | - | no | no | 1 |
+| `Shape18` | vertebra knob 5 (static) | (native rig: no classic part) | - | (3.5, 30, 11) | - | no | no | 1 |
+| `Shape19` | vertebra knob 6, the lowest (static) | (native rig: no classic part) | - | (3.5, 28, 11) | - | no | no | 1 |
+| `Shape20` | left rib 2 (static) | (native rig: no classic part) | - | (5, 36, 10) | - | no | no | 1 |
+| `Shape21` | left rib 3 (static) | (native rig: no classic part) | - | (5, 34, 10) | - | no | no | 1 |
+| `Shape22` | left rib 4 (static) | (native rig: no classic part) | - | (5, 32, 10) | - | no | no | 1 |
+| `Shape23` | left rib 5 (3 wide; static) | (native rig: no classic part) | - | (5, 30, 10) | - | no | no | 1 |
+| `Shape24` | left rib 6, the lowest (2 wide; static) | (native rig: no classic part) | - | (5, 28, 10) | - | no | no | 1 |
+| `Shape25` | left rib 6, side run (1x1x3; static) | (native rig: no classic part) | - | (6, 28, 8) | - | no | no | 1 |
+| `Shape26` | left rib 6, front (2 wide; static) | (native rig: no classic part) | - | (5, 28, 8) | - | no | no | 1 |
+| `Shape27` | left rib 5, side run (1x1x5; static) | (native rig: no classic part) | - | (7, 30, 6) | - | no | no | 1 |
+| `Shape28` | left rib 4, side run (1x1x5; static) | (native rig: no classic part) | - | (8, 32, 5) | - | no | no | 1 |
+| `Shape29` | left rib 3, side run (1x1x6; static) | (native rig: no classic part) | - | (8, 34, 4) | - | no | no | 1 |
+| `Shape3` | spine (the 12-tall backbone column; static) | (native rig: no classic part) | - | (3, 38, 10) | - | no | no | 1 |
+| `Shape30` | left rib 2, side run (1x1x6; static) | (native rig: no classic part) | - | (8, 36, 4) | - | no | no | 1 |
+| `Shape31` | left top rib, side run (1x1x6; static) | (native rig: no classic part) | - | (8, 38, 4) | - | no | no | 1 |
+| `Shape32` | left rib 5, front (2 wide; static) | (native rig: no classic part) | - | (6, 30, 6) | - | no | no | 1 |
+| `Shape33` | left rib 4, front (4 wide; static) | (native rig: no classic part) | - | (5, 32, 5) | - | no | no | 1 |
+| `Shape34` | left rib 3, front (static) | (native rig: no classic part) | - | (5, 34, 4) | - | no | no | 1 |
+| `Shape35` | left rib 2, front (static) | (native rig: no classic part) | - | (5, 36, 4) | - | no | no | 1 |
+| `Shape36` | left top rib, front (static) | (native rig: no classic part) | - | (5, 38, 4) | - | no | no | 1 |
+| `Shape37` | right rib 6, side run (1x1x3; static) | (native rig: no classic part) | - | (1, 28, 8) | - | no | no | 1 |
 | `Shape38` | right rib 5, side run (1x1x5; static) | (native rig: no classic part) | - | (0, 30, 6) | - | no | no | 1 |
-| `Shape39` | right rib 4, side run (1x1x6; static) | (native rig: no classic part) | - | (1, 32, 5) | - | no | no | 1 |
-| `Shape4` | pelvis / lower spine (6 tall, tilted back 14 deg; static) | (native rig: no classic part) | - | (-3, 26, 10) | - | no | no | 1 |
-| `Shape40` | right rib 3, side run (static) | (native rig: no classic part) | - | (1, 34, 4) | - | no | no | 1 |
-| `Shape41` | right rib 2, side run (static) | (native rig: no classic part) | - | (1, 36, 4) | - | no | no | 1 |
-| `Shape42` | right top rib, side run (static) | (native rig: no classic part) | - | (1, 38, 4) | - | no | no | 1 |
-| `Shape43` | right rib 6, front (2 wide; static) | (native rig: no classic part) | - | (-1, 28, 8) | - | no | no | 1 |
+| `Shape39` | right rib 4, side run (1x1x6; static) | (native rig: no classic part) | - | (-1, 32, 5) | - | no | no | 1 |
+| `Shape4` | pelvis / lower spine (6 tall, tilted back 14 deg; static) | (native rig: no classic part) | - | (3, 26, 10) | - | no | no | 1 |
+| `Shape40` | right rib 3, side run (static) | (native rig: no classic part) | - | (-1, 34, 4) | - | no | no | 1 |
+| `Shape41` | right rib 2, side run (static) | (native rig: no classic part) | - | (-1, 36, 4) | - | no | no | 1 |
+| `Shape42` | right top rib, side run (static) | (native rig: no classic part) | - | (-1, 38, 4) | - | no | no | 1 |
+| `Shape43` | right rib 6, front (2 wide; static) | (native rig: no classic part) | - | (1, 28, 8) | - | no | no | 1 |
 | `Shape44` | right rib 5, front (2 wide; static) | (native rig: no classic part) | - | (0, 30, 6) | - | no | no | 1 |
-| `Shape45` | right rib 4, front (4 wide; static) | (native rig: no classic part) | - | (1, 32, 5) | - | no | no | 1 |
-| `Shape46` | right rib 3, front (static) | (native rig: no classic part) | - | (1, 34, 4) | - | no | no | 1 |
-| `Shape47` | right rib 2, front (static) | (native rig: no classic part) | - | (1, 36, 4) | - | no | no | 1 |
-| `Shape48` | right top rib, front (static) | (native rig: no classic part) | - | (1, 38, 4) | - | no | no | 1 |
-| `Shape49` | right shoulder block (3x2x3, rolled 30 deg; static) | (native rig: no classic part) | - | (7.5, 39.5, 3) | - | no | no | 1 |
-| `Shape5` | tailbone (3 tall, tilted 44 deg; the lowest point of the rig — it has no legs; static) | (native rig: no classic part) | - | (-3.5, 20, 8) | - | no | no | 1 |
-| `Shape54` | left shoulder block (3x2x3, rolled -30 deg; static) | (native rig: no classic part) | - | (-5, 38, 3) | - | no | no | 1 |
-| `Shape6` | neck (6 tall, raked 135 deg from the spine top up to the skull; static) | (native rig: no classic part) | - | (-3, 36, 7.5) | - | no | no | 1 |
-| `Shape7` | left top rib (4 wide at the shoulder row; static) | (native rig: no classic part) | - | (-5, 38, 10) | - | no | no | 1 |
-| `Shape8` | right top rib (static) | (native rig: no classic part) | - | (1, 38, 10) | - | no | no | 1 |
-| `Shape9` | right rib 2 (static) | (native rig: no classic part) | - | (1, 36, 10) | - | no | no | 1 |
+| `Shape45` | right rib 4, front (4 wide; static) | (native rig: no classic part) | - | (-1, 32, 5) | - | no | no | 1 |
+| `Shape46` | right rib 3, front (static) | (native rig: no classic part) | - | (-1, 34, 4) | - | no | no | 1 |
+| `Shape47` | right rib 2, front (static) | (native rig: no classic part) | - | (-1, 36, 4) | - | no | no | 1 |
+| `Shape48` | right top rib, front (static) | (native rig: no classic part) | - | (-1, 38, 4) | - | no | no | 1 |
+| `Shape49` | right shoulder block (3x2x3, rolled 30 deg; static) | (native rig: no classic part) | - | (-7.5, 39.5, 3) | - | no | no | 1 |
+| `Shape5` | tailbone (3 tall, tilted 44 deg; the lowest point of the rig — it has no legs; static) | (native rig: no classic part) | - | (3.5, 20, 8) | - | no | no | 1 |
+| `Shape54` | left shoulder block (3x2x3, rolled -30 deg; static) | (native rig: no classic part) | - | (5, 38, 3) | - | no | no | 1 |
+| `Shape6` | neck (6 tall, raked 135 deg from the spine top up to the skull; static) | (native rig: no classic part) | - | (3, 36, 7.5) | - | no | no | 1 |
+| `Shape7` | left top rib (4 wide at the shoulder row; static) | (native rig: no classic part) | - | (5, 38, 10) | - | no | no | 1 |
+| `Shape8` | right top rib (static) | (native rig: no classic part) | - | (-1, 38, 10) | - | no | no | 1 |
+| `Shape9` | right rib 2 (static) | (native rig: no classic part) | - | (-1, 36, 10) | - | no | no | 1 |
 | `head` | skull (6x6x5 on the neck; yaws with the look at 0.45 of the head yaw, clamped to ±0.45 rad; no pitch) | (native rig: no classic part) | - | (0, 40, 4) | - | no | no | 1 |
-| `larm1` | left forearm (1x9x2; the one arm bone the code poses: held back and up at rest, snapped forward while screaming) | (native rig: no classic part) | - | (-12, 27, 2.5) | left_arm | no | no | 1 |
-| `larm2` | left upper arm, bone 2 (static) | (native rig: no classic part) | - | (-10.5, 39, 5) | - | no | no | 1 |
-| `larm3` | left upper arm, bone 1 (1x12; static) | (native rig: no classic part) | - | (-9.5, 39, 3) | - | no | no | 1 |
-| `lelbow` | left elbow (2x2x4; static) | (native rig: no classic part) | - | (-10, 27, 3) | - | no | no | 1 |
-| `lwing1` | left wing sail (the mirror; sweeps with the wing group) | (native rig: no classic part) | - | (-4, 30.9, 8.5) | wings | no | no | 1 |
-| `lwing2` | left wing, upper spar (1x19x3 hung 11 above its pivot, raked 100 deg; sweeps with the wing group) | (native rig: no classic part) | - | (-4, 47.9, 8.5) | wings | no | no | 1 |
-| `lwing3` | left wing, lower spar (1x19x3 from the shoulder, raked 135 deg; sweeps with the wing group) | (native rig: no classic part) | - | (-4, 35.7, 8.5) | wings | no | no | 1 |
-| `rarm1` | right forearm (1x11x2, pitched forward 44 deg toward the scythe grip; static — the code never poses the scythe arm) | (native rig: no classic part) | - | (10.5, 26, 2.5) | - | no | no | 1 |
-| `rarm2` | right upper arm, bone 1 (1x12; static) | (native rig: no classic part) | - | (5, 35.5, 8) | - | no | no | 1 |
-| `rarm3` | right upper arm, bone 2 (the paired bone beside it; static) | (native rig: no classic part) | - | (4, 35.5, 6) | - | no | no | 1 |
-| `relbow` | right elbow (2x2x3; static) | (native rig: no classic part) | - | (11, 27.5, 3) | - | no | no | 1 |
-| `rwing1` | right wing sail (a zero-thickness 50x17 membrane hung from the shoulder, raked back 100 deg; sweeps with the wing group) | (native rig: no classic part) | - | (4, 30.9, 8.5) | wings | no | no | 1 |
-| `rwing2` | right wing, upper spar (the mirror; sweeps with the wing group) | (native rig: no classic part) | - | (4, 47.9, 8.5) | wings | no | no | 1 |
-| `rwing3` | right wing, lower spar (the mirror; sweeps with the wing group) | (native rig: no classic part) | - | (4, 35.7, 8.5) | wings | no | no | 1 |
-| `scythe1` | scythe shaft (1x39, pivoting at the right hand, rolled 1.0 rad at rest; the scythe group) | (native rig: no classic part) | - | (17, 18, -2) | scythe | yes | no | 1 |
-| `scythe2` | scythe blade (a zero-thickness 16x6 plane at the shaft's top; rolls with the shaft) | (native rig: no classic part) | - | (17, 18, -2) | scythe | yes | no | 1 |
-| `scythe3` | scythe blade tip (a zero-thickness 7x5 plane; rolls with the shaft) | (native rig: no classic part) | - | (17, 18, -2) | scythe | yes | no | 1 |
+| `larm1` | left forearm (1x9x2; the one arm bone the code poses: held back and up at rest, snapped forward while screaming) | (native rig: no classic part) | - | (12, 27, 2.5) | left_arm | no | no | 1 |
+| `larm2` | left upper arm, bone 2 (static) | (native rig: no classic part) | - | (10.5, 39, 5) | - | no | no | 1 |
+| `larm3` | left upper arm, bone 1 (1x12; static) | (native rig: no classic part) | - | (9.5, 39, 3) | - | no | no | 1 |
+| `lelbow` | left elbow (2x2x4; static) | (native rig: no classic part) | - | (10, 27, 3) | - | no | no | 1 |
+| `lwing1` | left wing sail (the mirror; sweeps with the wing group) | (native rig: no classic part) | - | (4, 30.9, 8.5) | wings | no | no | 1 |
+| `lwing2` | left wing, upper spar (1x19x3 hung 11 above its pivot, raked 100 deg; sweeps with the wing group) | (native rig: no classic part) | - | (4, 47.9, 8.5) | wings | no | no | 1 |
+| `lwing3` | left wing, lower spar (1x19x3 from the shoulder, raked 135 deg; sweeps with the wing group) | (native rig: no classic part) | - | (4, 35.7, 8.5) | wings | no | no | 1 |
+| `rarm1` | right forearm (1x11x2, pitched forward 44 deg toward the scythe grip; static — the code never poses the scythe arm) | (native rig: no classic part) | - | (-10.5, 26, 2.5) | - | no | no | 1 |
+| `rarm2` | right upper arm, bone 1 (1x12; static) | (native rig: no classic part) | - | (-5, 35.5, 8) | - | no | no | 1 |
+| `rarm3` | right upper arm, bone 2 (the paired bone beside it; static) | (native rig: no classic part) | - | (-4, 35.5, 6) | - | no | no | 1 |
+| `relbow` | right elbow (2x2x3; static) | (native rig: no classic part) | - | (-11, 27.5, 3) | - | no | no | 1 |
+| `rwing1` | right wing sail (a zero-thickness 50x17 membrane hung from the shoulder, raked back 100 deg; sweeps with the wing group) | (native rig: no classic part) | - | (-4, 30.9, 8.5) | wings | no | no | 1 |
+| `rwing2` | right wing, upper spar (the mirror; sweeps with the wing group) | (native rig: no classic part) | - | (-4, 47.9, 8.5) | wings | no | no | 1 |
+| `rwing3` | right wing, lower spar (the mirror; sweeps with the wing group) | (native rig: no classic part) | - | (-4, 35.7, 8.5) | wings | no | no | 1 |
+| `scythe1` | scythe shaft (1x39, pivoting at the right hand, rolled 1.0 rad at rest; the scythe group) | (native rig: no classic part) | - | (-17, 18, -2) | scythe | yes | no | 1 |
+| `scythe2` | scythe blade (a zero-thickness 16x6 plane at the shaft's top; rolls with the shaft) | (native rig: no classic part) | - | (-17, 18, -2) | scythe | yes | no | 1 |
+| `scythe3` | scythe blade tip (a zero-thickness 7x5 plane; rolls with the shaft) | (native rig: no classic part) | - | (-17, 18, -2) | scythe | yes | no | 1 |
 
 ## 4. Current animation behaviour — plain English and the source formulas
 
@@ -120,21 +120,21 @@ Author every loop at 1.0 s (README rule 5, the phase-locked kind; ruled 2026-09-
 
 ### 4.3 Reference clips (reference-only)
 
-`ender_reaper_reference_walk.animation.json`, `ender_reaper_reference_idle.animation.json`, `ender_reaper_reference_scream.animation.json` (beside this sheet, and embedded in `ender_reaper.bbmodel`'s Animation tab) are NOT clips to return or ship under their own names. Each is the creature's classic code — the motion the game draws today — SAMPLED by the harness at fixed inputs so you can see that motion beside the rig in Blockbench. The `.bbmodel` opens with every clip listed (the shipped clips and these); the files beside the sheet are the PINNED SOURCE (their bytes are what the checker knows; the generator's round trip proves the embedded copies within 5e-5 s on key times and 1e-6 on values). If you rebuild the `.bbmodel` and they are gone, Animation → Import Animations... on the files brings them back. One clip per state the code reads, each value alone: `_reference_walk` — full walking speed (limbSwingAmount 1, the walk position and the age advancing one tick per key), not attacking, looking straight ahead, every state flag at rest, full health; `_reference_idle` — standing still (limbSwingAmount 0, the walk position 0; the age advancing one tick per key), not attacking, looking straight ahead, every state flag at rest, full health; `_reference_scream` — the `scream` state: the code's `isScreaming` answering true while standing still, every other state at rest; no `_reference_attack` — this creature's code reads no attack state. Keys: the classic code is sampled once per tick, and the samples are reduced by the density search the exact transcriptions use — the fewest Catmull-Rom keys per bone and channel whose curve stays within 1 degree of rotation and 1/32 block of position of every sample, the closing key always kept — so each clip carries as few keys as that tolerance allows (each entry below states its key counts and the measured maximum error). Rotations are deltas from the bind pose under the same sign rule as the shipped clips (X as the classic degrees, Y and Z negated), positions only where the code moves a bone.
+`ender_reaper_reference_walk.animation.json`, `ender_reaper_reference_idle.animation.json`, `ender_reaper_reference_scream.animation.json` (beside this sheet, and embedded in `ender_reaper.bbmodel`'s Animation tab) are NOT clips to return or ship under their own names. Each is the creature's classic code — the motion the game draws today — SAMPLED by the harness at fixed inputs so you can see that motion beside the rig in Blockbench. The `.bbmodel` opens with every clip listed (the shipped clips and these); the files beside the sheet are the PINNED SOURCE (their bytes are what the checker knows; the generator's round trip proves the embedded copies within 5e-5 s on key times and 1e-6 on values). If you rebuild the `.bbmodel` and they are gone, Animation → Import Animations... on the files brings them back. One clip per state the code reads, each value alone: `_reference_walk` — full walking speed (limbSwingAmount 1, the walk position and the age advancing one tick per key), not attacking, looking straight ahead, every state flag at rest, full health; `_reference_idle` — standing still (limbSwingAmount 0, the walk position 0; the age advancing one tick per key), not attacking, looking straight ahead, every state flag at rest, full health; `_reference_scream` — the `scream` state: the code's `isScreaming` answering true while standing still, every other state at rest; no `_reference_attack` — this creature's code reads no attack state. Keys: the classic code is sampled once per tick, and the samples are reduced by the density search the exact transcriptions use — the fewest Catmull-Rom keys per bone and channel whose curve stays within 1 degree of rotation and 1/32 block of position of every sample, the closing key always kept — so each clip carries as few keys as that tolerance allows (each entry below states its key counts and the measured maximum error). Rotations are deltas from the bind pose under the same sign rule as the shipped clips (X, Y and Z as the classic degrees: the rig is in the Bedrock convention), positions only where the code moves a bone.
 
 **Starting point (owner 2026-09-14, addendum item 13; extended by the second set revised, item 4):** a reference clip's KEYS may be the starting point of the delivered clip its state corresponds to — copy them into `walk` (from `_reference_walk`), `idle` (from `_reference_idle`), `aggro_idle` (from `_reference_attack`), `fly` (from `_reference_fly`) or `swim` (from `_reference_swim`) and improve from there; a delivered clip carrying those keys is a valid delivery (no rule compares them). A state with no contract clip (sit, sleep, display, ...) is OFFERED as an extra of this creature's own under §2.3 — §5 lists it as "offered from reference_<state>" beside the seed's extras, and a delivered clip under that name carrying the reference keys is a valid delivery. Only the reference file itself coming back under its own name is refused.
 
-- `ender_reaper_reference_walk.animation.json` (sha256 `f0f434cc8c3825351e5ab5b016b2ef57955eb3c60000149095223a20cc40b90c`; clip `reference_walk`; a starting point for `walk`): 3 periods of its slowest rhythm (39.026 ticks each) — 117.078 ticks (5.854 s): the smallest multiple at which EVERY rhythm returns within 5 degrees of its start (the rule caps this search at 6 s), so the last key closes the loop; 2 to 119 keys per bone chosen by the density search from 119 per-tick samples, Catmull-Rom; max error 0.693 degrees against the samples (the tolerance 1 degree / 1/32 block).
+- `ender_reaper_reference_walk.animation.json` (sha256 `3ec620f6d97eb075b8d2e2ce798008b500b4c96e479813d1be2eada6d7918d39`; clip `reference_walk`; a starting point for `walk`): 3 periods of its slowest rhythm (39.026 ticks each) — 117.078 ticks (5.854 s): the smallest multiple at which EVERY rhythm returns within 5 degrees of its start (the rule caps this search at 6 s), so the last key closes the loop; 2 to 119 keys per bone chosen by the density search from 119 per-tick samples, Catmull-Rom; max error 0.693 degrees against the samples (the tolerance 1 degree / 1/32 block).
   - Sampled from: `danger.orespawn.entity.client.EnderReaperGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the shipped replacement, registry-free, on explicit PoseInputs)`.
   - Rule applied: wingspeed 0.23: the slowest rhythm is cos(ageInTicks * 0.7 * WINGSPEED) * PI * 0.06 (EnderReaperGeoReplacement.applyCustomAnimations:74, every state) at 0.161 rad/tick, 39.02 ticks; the threshold gait cos(ageInTicks * 1.3 * WINGSPEED) * PI * 0.25 * limbSwingAmount (:57, walk) feeding the scythe 1.0 - |newangle| (:58); cos(ageInTicks * 1.9 * WINGSPEED) * PI * 0.25 (:63); the screaming branch at 2.7 * 0.23 (:70, isScreaming false on the probe); closes at k = 3 (117.077988 ticks): every bone returns within 4.456135 degrees of its start at k x T (the 5-degree test under the 6 s cap; k = 1: 16.945368 deg, k = 2: 34.984758 deg, k = 3: 4.456135 deg).
   - Bones that move in it: `larm1`, `lwing1`, `lwing2`, `lwing3`, `rwing1`, `rwing2`, `rwing3`, `scythe1`, `scythe2`, `scythe3`.
   - Loop seam: the closing key differs from the first by at most 4.4561 degrees (mod 360).
-- `ender_reaper_reference_idle.animation.json` (sha256 `8b6cd0f028a36ee55df95c0156d073fe5dd387dc8b664220f534ac92c09835eb`; clip `reference_idle`; a starting point for `idle`): one period of its slowest rhythm — 39.026 ticks (1.951 s): every moving bone is back within 5 degrees of its start there, so the last key closes the loop; 2 to 3 keys per bone chosen by the density search from 41 per-tick samples, Catmull-Rom; max error 0.709 degrees against the samples (the tolerance 1 degree / 1/32 block).
+- `ender_reaper_reference_idle.animation.json` (sha256 `55986abb76443a2df1f17e2ae0eab4dc769b6548f88b02c528d4c56101c1eb7d`; clip `reference_idle`; a starting point for `idle`): one period of its slowest rhythm — 39.026 ticks (1.951 s): every moving bone is back within 5 degrees of its start there, so the last key closes the loop; 2 to 3 keys per bone chosen by the density search from 41 per-tick samples, Catmull-Rom; max error 0.709 degrees against the samples (the tolerance 1 degree / 1/32 block).
   - Sampled from: `danger.orespawn.entity.client.EnderReaperGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the shipped replacement, registry-free, on explicit PoseInputs)`.
   - Rule applied: wingspeed 0.23: the slowest rhythm is cos(ageInTicks * 0.7 * WINGSPEED) * PI * 0.06 (EnderReaperGeoReplacement.applyCustomAnimations:74, every state) at 0.161 rad/tick, 39.02 ticks; the threshold gait cos(ageInTicks * 1.3 * WINGSPEED) * PI * 0.25 * limbSwingAmount (:57, walk) feeding the scythe 1.0 - |newangle| (:58); cos(ageInTicks * 1.9 * WINGSPEED) * PI * 0.25 (:63); the screaming branch at 2.7 * 0.23 (:70, isScreaming false on the probe); closes at k = 1 (39.025996 ticks): every bone returns within 0 degrees of its start at k x T (the 5-degree test under the 6 s cap; k = 1: 0 deg).
   - Bones that move in it: `larm1`, `lwing1`, `lwing2`, `lwing3`, `rwing1`, `rwing2`, `rwing3`.
   - Loop seam: the closing key differs from the first by at most 0 degrees (mod 360).
-- `ender_reaper_reference_scream.animation.json` (sha256 `f85b3a5a2432321cb858ab0d80f21b67f31f50e10f3564b35ddc6445ea1a5ef1`; clip `reference_scream`; offered as the extra `scream` (§2.3; §5)): two seconds (40 ticks): this motion does not close within 6 s (its slowest rhythm is 39.026 ticks, and no multiple of it under 6 s brings every rhythm back within 5 degrees) — a two-second window, not a loop; the closing key differs from the first by 36.0052 degrees; 2 to 41 keys per bone chosen by the density search from 41 per-tick samples, Catmull-Rom; max error 0 degrees against the samples (the tolerance 1 degree / 1/32 block).
+- `ender_reaper_reference_scream.animation.json` (sha256 `e2e36c6390b9ad93f6824ab4299c54638f036d576c91e12d7204189c7b6e37b8`; clip `reference_scream`; offered as the extra `scream` (§2.3; §5)): two seconds (40 ticks): this motion does not close within 6 s (its slowest rhythm is 39.026 ticks, and no multiple of it under 6 s brings every rhythm back within 5 degrees) — a two-second window, not a loop; the closing key differs from the first by 36.0052 degrees; 2 to 41 keys per bone chosen by the density search from 41 per-tick samples, Catmull-Rom; max error 0 degrees against the samples (the tolerance 1 degree / 1/32 block).
   - State: `isScreaming` answers true, every other getter at rest (named by ender_reaper.json reference_states.scream = {isScreaming: true}).
   - Sampled from: `danger.orespawn.entity.client.EnderReaperGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the shipped replacement, registry-free, on explicit PoseInputs)`.
   - Rule applied: wingspeed 0.23: the slowest rhythm is cos(ageInTicks * 0.7 * WINGSPEED) * PI * 0.06 (EnderReaperGeoReplacement.applyCustomAnimations:74, every state) at 0.161 rad/tick, 39.02 ticks; the threshold gait cos(ageInTicks * 1.3 * WINGSPEED) * PI * 0.25 * limbSwingAmount (:57, walk) feeding the scythe 1.0 - |newangle| (:58); cos(ageInTicks * 1.9 * WINGSPEED) * PI * 0.25 (:63); the screaming branch at 2.7 * 0.23 (:70, isScreaming false on the probe); no multiple of the slowest group's period 39.025996 ticks up to the 6 s cap (120 ticks) brings every group back within 5 degrees of its start (k = 1: 55.015248 deg, k = 2: 85.542 deg, k = 3: 102.652648 deg): a two-second window (40 ticks), not a loop - the sheet states the closing key's seam.

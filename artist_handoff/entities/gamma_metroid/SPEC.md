@@ -16,7 +16,7 @@ A hostile four-legged crawler with a segmented shell, a head with an upper and l
 
 ## 3. Bone glossary (locked legacy names — readable labels beside them)
 
-Never rename, delete or re-parent a bone: code and hitboxes reference them by name. Left/right in the labels follow the model author's own naming (the side the legacy name calls left); Blockbench mirrors X for display, so the author's left appears on your right when the mob faces you. `gait bone` = its motion is scaled by walking speed in-game (P3). `locked` = it carries or parents a hitbox part (contract §8.1). Keying a locked bone is allowed; the checker warns, and the hitbox part follows the bone in-game (the consequence, so keep such keys deliberate). Renaming, re-parenting or deleting a locked bone is refused.
+Never rename, delete or re-parent a bone: code and hitboxes reference them by name. Left/right in the labels follow the model author's own naming (the side the legacy name calls left); the rig opens in Blockbench exactly as the game draws it, so a bone the author calls left is on the creature's own left. `gait bone` = its motion is scaled by walking speed in-game (P3). `locked` = it carries or parents a hitbox part (contract §8.1). Keying a locked bone is allowed; the checker warns, and the hitbox part follows the bone in-game (the consequence, so keep such keys deliberate). Renaming, re-parenting or deleting a locked bone is refused.
 
 | bone | readable label | classic part | parent | pivot (x, y, z) | group | gait bone | locked | cubes |
 |---|---|---|---|---|---|---|---|---|
@@ -25,22 +25,22 @@ Never rename, delete or re-parent a bone: code and hitboxes reference them by na
 | `bellyinside` | belly plate, inner | (native rig: no classic part) | - | (0, 16, 2) | - | no | no | 1 |
 | `bellyoutside` | belly plate, outer | (native rig: no classic part) | - | (0, 16, 2) | - | no | no | 1 |
 | `core` | core | (native rig: no classic part) | - | (0, 16, 3) | - | no | no | 1 |
-| `head` | head | (native rig: no classic part) | - | (8, 25, -11) | - | no | no | 1 |
-| `lefttusk` | left tusk | (native rig: no classic part) | - | (-5, 18, -10) | tusks | no | no | 1 |
-| `lflowerleg` | left front leg (lower) | (native rig: no classic part) | - | (-14, 11, -3.5) | - | no | no | 1 |
-| `lfupperleg` | left front leg (upper) | (native rig: no classic part) | - | (-8, 16, -2) | - | no | no | 1 |
-| `lrlowerleg` | left rear leg (lower) | (native rig: no classic part) | - | (-14, 10, 8.5) | - | no | no | 1 |
-| `lrupperleg` | left rear leg (upper) | (native rig: no classic part) | - | (-8, 15, 7) | - | no | no | 1 |
+| `head` | head | (native rig: no classic part) | - | (-8, 25, -11) | - | no | no | 1 |
+| `lefttusk` | left tusk | (native rig: no classic part) | - | (5, 18, -10) | tusks | no | no | 1 |
+| `lflowerleg` | left front leg (lower) | (native rig: no classic part) | - | (14, 11, -3.5) | - | no | no | 1 |
+| `lfupperleg` | left front leg (upper) | (native rig: no classic part) | - | (8, 16, -2) | - | no | no | 1 |
+| `lrlowerleg` | left rear leg (lower) | (native rig: no classic part) | - | (14, 10, 8.5) | - | no | no | 1 |
+| `lrupperleg` | left rear leg (upper) | (native rig: no classic part) | - | (8, 15, 7) | - | no | no | 1 |
 | `middletusk` | middle tusk | (native rig: no classic part) | - | (0, 26, -10) | tusks | no | no | 1 |
-| `rflowerleg` | right front leg (lower) | (native rig: no classic part) | - | (14, 11, -3.5) | - | no | no | 1 |
-| `rfupperleg` | right front leg (upper) | (native rig: no classic part) | - | (8, 16, -2) | - | no | no | 1 |
-| `righttusk` | right tusk | (native rig: no classic part) | - | (5, 18, -10) | tusks | no | no | 1 |
-| `rrlowerleg` | right rear leg (lower) | (native rig: no classic part) | - | (14, 10, 8.5) | - | no | no | 1 |
-| `rrupperleg` | right rear leg (upper) | (native rig: no classic part) | - | (8, 15, 7) | - | no | no | 1 |
+| `rflowerleg` | right front leg (lower) | (native rig: no classic part) | - | (-14, 11, -3.5) | - | no | no | 1 |
+| `rfupperleg` | right front leg (upper) | (native rig: no classic part) | - | (-8, 16, -2) | - | no | no | 1 |
+| `righttusk` | right tusk | (native rig: no classic part) | - | (-5, 18, -10) | tusks | no | no | 1 |
+| `rrlowerleg` | right rear leg (lower) | (native rig: no classic part) | - | (-14, 10, 8.5) | - | no | no | 1 |
+| `rrupperleg` | right rear leg (upper) | (native rig: no classic part) | - | (-8, 15, 7) | - | no | no | 1 |
 | `shell1` | shell segment 1 | (native rig: no classic part) | - | (0, 20, -7) | shell | no | no | 1 |
 | `shell2` | shell segment 2 | (native rig: no classic part) | - | (0, 19.5, 5) | - | no | no | 1 |
 | `shell3` | shell segment 3 | (native rig: no classic part) | - | (0, 17, 10) | - | no | no | 1 |
-| `shell4` | shell segment 4 | (native rig: no classic part) | - | (3, 15, 13) | - | no | no | 1 |
+| `shell4` | shell segment 4 | (native rig: no classic part) | - | (-3, 15, 13) | - | no | no | 1 |
 
 ## 4. Current animation behaviour — plain English and the source formulas
 
@@ -71,7 +71,7 @@ Author every loop at 1.0 s (README rule 5, the phase-locked kind; ruled 2026-09-
 
 ### 4.3 Reference clips (reference-only)
 
-`gamma_metroid_reference_walk.animation.json`, `gamma_metroid_reference_idle.animation.json` (beside this sheet, and embedded in `gamma_metroid.bbmodel`'s Animation tab) are NOT clips to return or ship under their own names. Each is the creature's classic code — the motion the game draws today — SAMPLED by the harness at fixed inputs so you can see that motion beside the rig in Blockbench. The `.bbmodel` opens with every clip listed (the shipped clips and these); the files beside the sheet are the PINNED SOURCE (their bytes are what the checker knows; the generator's round trip proves the embedded copies within 5e-5 s on key times and 1e-6 on values). If you rebuild the `.bbmodel` and they are gone, Animation → Import Animations... on the files brings them back. One clip per state the code reads, each value alone: `_reference_walk` — full walking speed (limbSwingAmount 1, the walk position and the age advancing one tick per key), not attacking, looking straight ahead, every state flag at rest, full health; `_reference_idle` — standing still (limbSwingAmount 0, the walk position 0; the age advancing one tick per key), not attacking, looking straight ahead, every state flag at rest, full health; no `_reference_attack` — this creature's code reads no attack state. Keys: the classic code is sampled once per tick, and the samples are reduced by the density search the exact transcriptions use — the fewest Catmull-Rom keys per bone and channel whose curve stays within 1 degree of rotation and 1/32 block of position of every sample, the closing key always kept — so each clip carries as few keys as that tolerance allows (each entry below states its key counts and the measured maximum error). Rotations are deltas from the bind pose under the same sign rule as the shipped clips (X as the classic degrees, Y and Z negated), positions only where the code moves a bone.
+`gamma_metroid_reference_walk.animation.json`, `gamma_metroid_reference_idle.animation.json` (beside this sheet, and embedded in `gamma_metroid.bbmodel`'s Animation tab) are NOT clips to return or ship under their own names. Each is the creature's classic code — the motion the game draws today — SAMPLED by the harness at fixed inputs so you can see that motion beside the rig in Blockbench. The `.bbmodel` opens with every clip listed (the shipped clips and these); the files beside the sheet are the PINNED SOURCE (their bytes are what the checker knows; the generator's round trip proves the embedded copies within 5e-5 s on key times and 1e-6 on values). If you rebuild the `.bbmodel` and they are gone, Animation → Import Animations... on the files brings them back. One clip per state the code reads, each value alone: `_reference_walk` — full walking speed (limbSwingAmount 1, the walk position and the age advancing one tick per key), not attacking, looking straight ahead, every state flag at rest, full health; `_reference_idle` — standing still (limbSwingAmount 0, the walk position 0; the age advancing one tick per key), not attacking, looking straight ahead, every state flag at rest, full health; no `_reference_attack` — this creature's code reads no attack state. Keys: the classic code is sampled once per tick, and the samples are reduced by the density search the exact transcriptions use — the fewest Catmull-Rom keys per bone and channel whose curve stays within 1 degree of rotation and 1/32 block of position of every sample, the closing key always kept — so each clip carries as few keys as that tolerance allows (each entry below states its key counts and the measured maximum error). Rotations are deltas from the bind pose under the same sign rule as the shipped clips (X, Y and Z as the classic degrees: the rig is in the Bedrock convention), positions only where the code moves a bone.
 
 **Starting point (owner 2026-09-14, addendum item 13; extended by the second set revised, item 4):** a reference clip's KEYS may be the starting point of the delivered clip its state corresponds to — copy them into `walk` (from `_reference_walk`), `idle` (from `_reference_idle`), `aggro_idle` (from `_reference_attack`), `fly` (from `_reference_fly`) or `swim` (from `_reference_swim`) and improve from there; a delivered clip carrying those keys is a valid delivery (no rule compares them). A state with no contract clip (sit, sleep, display, ...) is OFFERED as an extra of this creature's own under §2.3 — §5 lists it as "offered from reference_<state>" beside the seed's extras, and a delivered clip under that name carrying the reference keys is a valid delivery. Only the reference file itself coming back under its own name is refused.
 

@@ -73,6 +73,43 @@ import software.bernie.geckolib.renderer.GeoRenderer;
  * 4.8.4's own JSON adapter/baker and captures vertices through the real
  * {@link GeoRenderer} recursive cube path.</p>
  *
+ * <p>THE FRAME IS THE IN-GAME FRAME (TEST-015; owner 2026-09-15, closing set continued, second, item 35 (2)): each side
+ * applies ITS OWN RENDERER'S REAL CHAIN to its model, read from the pinned jars with javap, so every leg compares the two
+ * chains as the game draws them, in the entity frame after the yaw (the yaw is the same call on both sides -
+ * {@code 180 - yaw} about Y - and is left out).</p>
+ * <ul>
+ *   <li>THE CLASSIC CHAIN, {@code LivingEntityRenderer.render} (NeoForge 21.1.223, the erased
+ *       {@code render(LivingEntity, float, float, PoseStack, MultiBufferSource, int)}): {@code setupRotations} at
+ *       offset 390 (the yaw and the living extras), then {@code PoseStack.scale(-1, -1, 1)} at 395-400 (ldc -1.0f,
+ *       ldc -1.0f, fconst_1, invokevirtual scale), the renderer's {@code scale} hook at 408, then
+ *       {@code PoseStack.translate(0, -1.501, 0)} at 413-417 (fconst_0, ldc -1.501f, fconst_0, invokevirtual
+ *       translate), {@code setupAnim} at 510 and {@code EntityModel.renderToBuffer} at 621. So a ModelPart-space point
+ *       p draws at {@code M p}, {@code M = scale(-1, -1, 1) . translate(0, -1.501, 0)}: {@link #captureVanillaSample}
+ *       applies exactly those two calls to a fresh pose stack before {@code renderToBuffer} and before the
+ *       {@code root.visit} compile (the declared constant render transform after them, as the classic
+ *       {@code renderToBuffer} applies it inside), and the render-instance capture the same.</li>
+ *   <li>THE SEAM'S CHAIN, {@code GeoReplacedEntityRenderer.actuallyRender} (GeckoLib 4.8.4): {@code scale(getScale)}
+ *       at 382, {@code applyRotations} at 396 - the same {@code 180 - yaw} as vanilla, then the shared renderer's
+ *       descriptor slot ({@code OreSpawnGeoReplacedEntityRenderer.applyRotations}: the constant render transform's slot
+ *       form and, since this landing, the seam's height compensation
+ *       {@link GeoReplacementDescriptor.RenderTransform#SEAM_HEIGHT_COMPENSATION}) - then
+ *       {@code PoseStack.translate(0, 0.01, 0)} at 722-727 (fconst_0, ldc_w 0.01f, fconst_0, invokevirtual
+ *       translate) and {@code GeoRenderer.actuallyRender}, which renders the bake as
+ *       {@code BakedModelFactory$Builtin} built it: {@code constructCube} negates a Bedrock cube's
+ *       {@code origin.x + size.x} (98-139) and every pivot's x ({@code constructCube} 157-167,
+ *       {@code constructBone} 95-116) and negates the JSON X and Y rotation degrees (constructBone 61-92); no
+ *       {@code scale(-1, ...)} anywhere in {@code GeoRenderer} or {@code RenderUtil}. So a bake corner b draws at
+ *       {@code slot . translate(0, comp, 0) . translate(0, 0.01, 0) . b}: {@link #captureGeoSample} applies exactly
+ *       that to a fresh pose stack before {@code GeoRenderer.actuallyRender}.</li>
+ * </ul>
+ * <p>With the converter in the Bedrock convention ({@code tools/layer_definition_to_geo.py}: a converted cube keeps its
+ * ModelPart x, so the baker's negation is the classic's flip) the bake of p is {@code B p = (-x, 1.5 - y, z)} and the
+ * seam's chain after the slot equals {@code M} exactly once {@code comp = 1.501 - 1.5 - 0.01}: the geometry leg's
+ * corner delta is float noise on every rig, where the real chains had disagreed by 0.009 blocks in height and by a
+ * left-right mirror the probe's former normalisation ({@code translate(0, 1.5, 0) scale(1, -1, 1)}, a y flip only)
+ * hid. A wrong frame constant, a wrong conjugation of the constant render transform or a missing compensation now
+ * fails the geometry leg at every sample: the frame is measured, not assumed.</p>
+ *
  * <p>BUG-041 stage 2 (2026-09-13), vanilla mode only: three optional manifest keys let the standing
  * reference-geometry leg dump a classic model the default path cannot construct. {@code layer_factory}
  * names the static {@link LayerDefinition} factory when it is not {@code createBodyLayer} (the
@@ -394,7 +431,8 @@ public final class G1ModelProbe {
         out.add("translation", floats(transform.x(), transform.y(), transform.z()));
         out.addProperty("form", "the classic renderToBuffer's own terms: translate, then mulPose about X, Y, Z (GeoReplacementDescriptor.RenderTransform)");
         out.addProperty("source", "descriptor.renderTransform(), read without an entity; the replaced renderer applies its slot form "
-                + "(F C F^-1 through the seam frame: the bake's Y flip and the classic lift) in applyRotations");
+                + "(M C M^-1 through the seam frame F = M, vanilla's own scale(-1, -1, 1) and translate(0, -1.501, 0); TEST-015) in "
+                + "applyRotations, and this probe applies the same slot in the seam's real chain on its geo side, M on its classic side");
         return out;
     }
 
@@ -476,17 +514,19 @@ public final class G1ModelProbe {
 
     /**
      * Bone positions in classic ModelPart terms (x/y/z in the parent's frame):
-     * the internal pivot is (x, 24 - y, z) of the absolute ModelPart pivot and
-     * GeckoLib translates by (-posX, posY, posZ), see OreSpawnGeoReplacement.
+     * the internal pivot is (-x, 24 - y, z) of the absolute ModelPart pivot (internal
+     * space is classic space reflected in X and Y, TEST-015) and GeckoLib translates
+     * by (-posX, posY, posZ)/16 in internal space, so a classic move (dx, dy, dz) is
+     * the offset (dx, -dy, dz) - OreSpawnGeoReplacement's basis facts, read back here.
      */
     private static JsonObject javaPositions(Map<String, GeoBone> bones) {
         JsonObject positions = new JsonObject();
         bones.forEach((name, bone) -> {
             GeoBone parent = bone.getParent();
-            float bindX = parent == null ? bone.getPivotX() : bone.getPivotX() - parent.getPivotX();
+            float bindX = parent == null ? -bone.getPivotX() : parent.getPivotX() - bone.getPivotX();
             float bindY = parent == null ? 24.0F - bone.getPivotY() : parent.getPivotY() - bone.getPivotY();
             float bindZ = parent == null ? bone.getPivotZ() : bone.getPivotZ() - parent.getPivotZ();
-            positions.add(name, floats(bindX - bone.getPosX(), bindY - bone.getPosY(), bindZ + bone.getPosZ()));
+            positions.add(name, floats(bindX + bone.getPosX(), bindY - bone.getPosY(), bindZ + bone.getPosZ()));
         });
         return positions;
     }
@@ -541,15 +581,18 @@ public final class G1ModelProbe {
             return sample;
         }
         FlatCapturingVertexConsumer renderConsumer = new FlatCapturingVertexConsumer(observed);
-        ((EntityModel<?>) model).renderToBuffer(
-                new PoseStack(), renderConsumer, packedLight, 0, -1);
+        PoseStack render = new PoseStack();
+        applyClassicChain(render);
+        ((EntityModel<?>) model).renderToBuffer(render, renderConsumer, packedLight, 0, -1);
         sample.add("render_vertices", renderConsumer.verticesJson());
 
         CapturingVertexConsumer consumer = new CapturingVertexConsumer();
         PoseStack visit = new PoseStack();
+        applyClassicChain(visit);
         // The constant render transform (TEST-013): root.visit compiles the tree with no renderToBuffer around it, so the
-        // DECLARED classic form is applied here for the geometry / surface legs (the render_vertices above carry the
-        // classic's own rotation; the visual leg is what proves the declaration equals it).
+        // DECLARED classic form is applied here, inside the chain as the classic renderToBuffer applies it, for the
+        // geometry / surface legs (the render_vertices above carry the classic's own rotation; the visual leg is what
+        // proves the declaration equals it).
         transform.applyClassic(visit);
         root.visit(visit, (pose, path, index, cube) -> {
             String boneName = boneNameForPath(path, namesToPaths);
@@ -563,6 +606,18 @@ public final class G1ModelProbe {
         });
         sample.add("cubes", consumer.groupsJson());
         return sample;
+    }
+
+    /**
+     * THE CLASSIC CHAIN on a fresh pose stack (the class javadoc, from the bytecode of NeoForge 21.1.223):
+     * {@code LivingEntityRenderer.render}'s {@code scale(-1, -1, 1)} (offsets 395-400) and
+     * {@code translate(0, -1.501, 0)} (413-417), the two calls between the yaw and {@code renderToBuffer} (621) that
+     * carry a ModelPart-space point into the entity frame - the same calls with the same float constants. The
+     * renderer's {@code scale} hook (408) between them is the descriptor's per-entity scale, not applied headlessly.
+     */
+    static void applyClassicChain(PoseStack poseStack) {
+        poseStack.scale(-1.0F, -1.0F, 1.0F);
+        poseStack.translate(0.0F, -1.501F, 0.0F);
     }
 
     private static JsonObject captureModelPartTransforms(ModelPart root,
@@ -894,6 +949,9 @@ public final class G1ModelProbe {
         void capture(JsonObject sample, Object model, Set<String> hiddenBones,
                      RenderStateProbe.Observed renderState, int packedLight) {
             InstrumentedPoseStack stack = new InstrumentedPoseStack();
+            // the classic chain (TEST-015): the per-draw matrices below are recorded in the entity frame, M included,
+            // as the render-instance leg's geo-side bone poses are
+            applyClassicChain(stack);
             DrawCapturingVertexConsumer consumer = new DrawCapturingVertexConsumer(stack, renderState);
             ((EntityModel<?>) model).renderToBuffer(stack, consumer, packedLight, 0, -1);
             if (stack.depth != 0) {
@@ -1407,11 +1465,11 @@ public final class G1ModelProbe {
             out.add("cube_face_order", faceOrderJson(faceOrder));
             out.add("baked_cube_face_order", faceOrderJson(FaceOrder.faceOrders(bind.model())));
         }
-        // Slice 4c: for an expanded rig every bone's cumulative transform is recorded in classic
-        // terms so the parity tool can compare the group/clone composition with the classic
-        // model's measured per-draw pose stack.
+        // Slice 4c: for an expanded rig every bone's world transform is recorded (the entity frame, BONE_POSES_FIELD)
+        // so the parity tool can compare the group/clone composition with the classic model's measured per-draw pose
+        // stack, captured under the classic chain.
         // The hierarchy form (the FK slice, owner 2026-09-15, closing set, item 4): a rig whose declared chain children
-        // are parented bones records every bone's world matrix in classic terms as well, for the chain-link leg.
+        // are parented bones records every bone's world matrix as well, for the chain-link leg.
         boolean recordBonePoses = spec.has("render_instances") || spec.has("hierarchy");
 
         JsonArray samples = new JsonArray();
@@ -1589,10 +1647,11 @@ public final class G1ModelProbe {
         return out;
     }
 
+    /** Internal bone rotations read back in classic terms: {@code (-x, -y, z)} (OreSpawnGeoReplacement's basis facts, TEST-015). */
     private static JsonObject javaRotations(Map<String, float[]> internalRotations) {
         JsonObject rotations = new JsonObject();
         internalRotations.forEach((name, rotation) -> rotations.add(name,
-                floats(-rotation[0], rotation[1], -rotation[2])));
+                floats(-rotation[0], -rotation[1], rotation[2])));
         return rotations;
     }
 
@@ -1624,21 +1683,15 @@ public final class G1ModelProbe {
         CapturingVertexConsumer consumer = new CapturingVertexConsumer(observed);
         CapturingGeoRenderer renderer = new CapturingGeoRenderer(consumer, recordBonePoses);
         PoseStack poseStack = new PoseStack();
-        if (!transform.isIdentity()) {
-            // The constant render transform (owner 2026-09-15, closing set continued, item 2; TEST-013), measured as the
-            // seam applies it: the SLOT form (M C M^-1, the renderer's own applySlot) wrapped in the classic path's flip and
-            // lift M that surround the slot in-game, so the ModelPart-space capture below equals C in classic terms -
-            // M^-1 (M C M^-1) M = C - exactly when the conjugation is right; a wrong one turns the geo side the other way
-            // and the geometry leg fails at every sample (the classic side's cubes carry C in its own terms).
-            Matrix4f frame = GeoReplacementDescriptor.RenderTransform.seamFrame();  // F: the wrap measures that applySlot is the F-conjugate of the declared form, not the frame itself (the bytecode is)
-            poseStack.mulPose(new Matrix4f(frame).invert());
-            transform.applySlot(poseStack);
-            poseStack.mulPose(frame);
-        }
-        // Bedrock geometry is Y-up around the 24px baseline. This fixed,
-        // bytecode-derived normalization maps it into ModelPart's Y-down space.
-        poseStack.translate(0.0, 1.5, 0.0);
-        poseStack.scale(1.0F, -1.0F, 1.0F);
+        // THE SEAM'S CHAIN (the class javadoc; TEST-015): what OreSpawnGeoReplacedEntityRenderer.applyRotations adds
+        // after the yaw - the constant render transform's SLOT form (TEST-013: the renderer's own applySlot, the
+        // classic form conjugated through the seam frame F = M) and the seam's height compensation - then GeckoLib's own
+        // translate(0, 0.01, 0) (actuallyRender 727) and the bake as the baker built it. Nothing normalises the capture
+        // into ModelPart space any more: the classic side carries its own chain, and the geometry leg compares the two
+        // in the entity frame. A wrong slot conjugation, a wrong frame or a missing compensation fails it at every sample.
+        transform.applySlot(poseStack);
+        poseStack.translate(0.0F, GeoReplacementDescriptor.RenderTransform.SEAM_HEIGHT_COMPENSATION, 0.0F);
+        poseStack.translate(0.0F, 0.01F, 0.0F);
         // ENT-S-146: the light and colour the production renderer would hand actuallyRender (the descriptor's
         // fullBright / renderColor; GeckoLib's own for a rig without hooks) - GeoRenderer.renderCube passes
         // them to every addVertex, where the capture observes them. They touch no captured coordinate.
@@ -1650,10 +1703,18 @@ public final class G1ModelProbe {
         // G2: the bones whose cubes GeoRenderer emitted, in the order it emitted them.
         sample.add("draw_order", renderer.drawOrderJson());
         if (recordBonePoses) {
-            sample.add("bone_poses_classic", renderer.bonePosesJson());
+            sample.add(BONE_POSES_FIELD, renderer.bonePosesJson());
         }
         return sample;
     }
+
+    /**
+     * The geo probe's per-bone world matrices (a render-instance or hierarchy rig), IN THE ENTITY FRAME: for every bone,
+     * the pose stack GeckoLib's {@code renderRecursively} holds at the bone's cubes, closed by the bake map B (classic
+     * absolute corner -> bake corner), so that {@code bone_pose . T(classic pivot / 16)} maps a classic pivot-local corner
+     * exactly where the classic chain's {@code M . cumulative} maps it - the render-instance and chain-link legs' relation.
+     */
+    static final String BONE_POSES_FIELD = "bone_poses_entity_frame";
 
     private static List<JsonObject> allSpecs(JsonObject manifest) {
         List<JsonObject> specs = new ArrayList<>();
@@ -1881,12 +1942,14 @@ public final class G1ModelProbe {
 
     private static final class CapturingGeoRenderer implements GeoRenderer<GeoAnimatable> {
         /**
-         * Inverse of the probe's Bedrock -> ModelPart normalization (translate (0, 1.5, 0) then
-         * scale (1, -1, 1)); right-multiplied onto the pose stack it yields the bone's cumulative
-         * transform as a classic-space affine map: classic = M * internal * M^-1.
+         * THE BAKE MAP B (TEST-015): a classic absolute corner (ModelPart space, blocks) to the bake corner the converter
+         * and GeckoLib's baker produce, {@code (x, y, z) -> (-x, 1.5 - y, z)} = {@code scale(-1, -1, 1) . translate(0, -1.5, 0)}
+         * (the converter's Bedrock convention plus the baker's x negation). Right-multiplied onto the pose stack at a bone's
+         * cubes it yields the bone's world transform as a map from classic absolute space into the entity frame; the
+         * classic pivot-local corner then needs one more {@code T(pivot / 16)}, the legs' relation.
          */
-        private static final Matrix4f GEO_TO_CLASSIC_INVERSE =
-                new Matrix4f().scale(1.0F, -1.0F, 1.0F).translate(0.0F, -1.5F, 0.0F);
+        private static final Matrix4f BAKE_OF_CLASSIC =
+                new Matrix4f().scale(-1.0F, -1.0F, 1.0F).translate(0.0F, -1.5F, 0.0F);
         private final CapturingVertexConsumer consumer;
         private final Map<String, JsonArray> bonePoses;
         private final List<String> drawOrder = new ArrayList<>();
@@ -1920,9 +1983,10 @@ public final class G1ModelProbe {
         public void renderCubesOfBone(PoseStack poseStack, GeoBone bone, VertexConsumer buffer,
                                       int packedLight, int packedOverlay, int color) {
             if (this.bonePoses != null) {
-                // renderRecursively has run RenderUtil.prepMatrixForBone: the stack holds M * (bone's cumulative transform).
+                // renderRecursively has run RenderUtil.prepMatrixForBone: the stack holds the seam's chain * (bone's
+                // cumulative transform) in bake space; closed by B it maps classic absolute space into the entity frame.
                 if (this.bonePoses.put(bone.getName(),
-                        matrixRows(new Matrix4f(poseStack.last().pose()).mul(GEO_TO_CLASSIC_INVERSE))) != null) {
+                        matrixRows(new Matrix4f(poseStack.last().pose()).mul(BAKE_OF_CLASSIC))) != null) {
                     throw new IllegalStateException("bone " + bone.getName() + " rendered twice");
                 }
             }

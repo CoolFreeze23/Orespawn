@@ -37,7 +37,7 @@ The independent gates are:
 - Geometry maximum corner delta: 0 blocks (epsilon 1e-05).
 - Surface maximum UV delta: 0; normal delta: 0.
 - Animation maximum rotation delta: 0 radians (epsilon 2e-06).
-- Visual maximum changed fraction: 0.000228881835938; maximum mean absolute error: 0.00767517089844; maximum pair-contested fraction: 0 (never a mismatch; cap 0.01).
+- Visual maximum changed fraction: 0; maximum mean absolute error: 0; maximum pair-contested fraction: 0 (never a mismatch; cap 0.01).
 - Draw order: GeckoLib bone order equals the classic draw order over 6 captures (6 draws).
 
 - Static identity maximum rotation motion: 0 radians; no controller emitted.
@@ -58,7 +58,7 @@ The independent gates are:
 ## model_island (Tier 3)
 
 - Exact bones: 3; cubes: 3.
-- Geometry maximum corner delta: 2.03224014331e-07 blocks (epsilon 1e-05).
+- Geometry maximum corner delta: 1.61864140549e-07 blocks (epsilon 1e-05).
 - Surface maximum UV delta: 0; normal delta: 2.02237484167e-07.
 - Animation maximum rotation delta: 0 radians (epsilon 2e-06).
 - Visual maximum changed fraction: 0; maximum mean absolute error: 0; maximum pair-contested fraction: 0 (never a mismatch; cap 0.01).
@@ -71,7 +71,7 @@ The independent gates are:
 ## model_islandtoo (Tier 3)
 
 - Exact bones: 3; cubes: 3.
-- Geometry maximum corner delta: 2.03224014331e-07 blocks (epsilon 1e-05).
+- Geometry maximum corner delta: 1.61864140549e-07 blocks (epsilon 1e-05).
 - Surface maximum UV delta: 0; normal delta: 2.02237484167e-07.
 - Animation maximum rotation delta: 0 radians (epsilon 2e-06).
 - Visual maximum changed fraction: 0; maximum mean absolute error: 0; maximum pair-contested fraction: 0 (never a mismatch; cap 0.01).
@@ -84,7 +84,7 @@ The independent gates are:
 ## model_robot1 (Tier 3)
 
 - Exact bones: 27; cubes: 27.
-- Geometry maximum corner delta: 3.00026665435e-07 blocks (epsilon 1e-05).
+- Geometry maximum corner delta: 1.0012492192e-07 blocks (epsilon 1e-05).
 - Surface maximum UV delta: 0; normal delta: 0.
 - Animation maximum rotation delta: 0 radians (epsilon 2e-06).
 - Visual maximum changed fraction: 0; maximum mean absolute error: 0; maximum pair-contested fraction: 0 (never a mismatch; cap 0.01).
@@ -97,7 +97,7 @@ The independent gates are:
 ## model_robot5 (Tier 3)
 
 - Exact bones: 11; cubes: 11.
-- Geometry maximum corner delta: 2.00000000117e-07 blocks (epsilon 1e-05).
+- Geometry maximum corner delta: 4.00000000345e-08 blocks (epsilon 1e-05).
 - Surface maximum UV delta: 0; normal delta: 0.
 - Animation maximum rotation delta: 0 radians (epsilon 2e-06).
 - Visual maximum changed fraction: 0; maximum mean absolute error: 0; maximum pair-contested fraction: 0 (never a mismatch; cap 0.01).
@@ -110,7 +110,7 @@ The independent gates are:
 ## model_robot2 (Tier 3)
 
 - Exact bones: 15; cubes: 15.
-- Geometry maximum corner delta: 1.00498756226e-06 blocks (epsilon 1e-05).
+- Geometry maximum corner delta: 7.03900560462e-07 blocks (epsilon 1e-05).
 - Surface maximum UV delta: 0; normal delta: 0.
 - Animation maximum rotation delta: 0 radians (epsilon 2e-06).
 - Visual maximum changed fraction: 0; maximum mean absolute error: 0; maximum pair-contested fraction: 0 (never a mismatch; cap 0.01).
@@ -123,7 +123,7 @@ The independent gates are:
 ## model_robot3 (Tier 3)
 
 - Exact bones: 19; cubes: 19.
-- Geometry maximum corner delta: 1.00498756225e-06 blocks (epsilon 1e-05).
+- Geometry maximum corner delta: 1.00498756135e-06 blocks (epsilon 1e-05).
 - Surface maximum UV delta: 0; normal delta: 1.43178210569e-07.
 - Animation maximum rotation delta: 0 radians (epsilon 2e-06).
 - Visual maximum changed fraction: 0; maximum mean absolute error: 0; maximum pair-contested fraction: 0 (never a mismatch; cap 0.01).
@@ -136,7 +136,7 @@ The independent gates are:
 ## model_robot4 (Tier 3)
 
 - Exact bones: 56; cubes: 56.
-- Geometry maximum corner delta: 3.70471321441e-07 blocks (epsilon 1e-05).
+- Geometry maximum corner delta: 5.52897820642e-07 blocks (epsilon 1e-05).
 - Surface maximum UV delta: 0; normal delta: 1.06301458092e-07.
 - Animation maximum rotation delta: 0 radians (epsilon 2e-06).
 - Visual maximum changed fraction: 0; maximum mean absolute error: 0; maximum pair-contested fraction: 0 (never a mismatch; cap 0.01).
@@ -149,7 +149,7 @@ The independent gates are:
 ## model_rockbase (Tier 3)
 
 - Exact bones: 22; cubes: 22.
-- Geometry maximum corner delta: 2.00000000117e-07 blocks (epsilon 1e-05).
+- Geometry maximum corner delta: 2.00000000172e-08 blocks (epsilon 1e-05).
 - Surface maximum UV delta: 0; normal delta: 0.
 - Animation maximum rotation delta: 0 radians (epsilon 2e-06).
 - Visual maximum changed fraction: 0; maximum mean absolute error: 0; maximum pair-contested fraction: 0 (never a mismatch; cap 0.01).
@@ -162,7 +162,7 @@ The independent gates are:
 ## model_rotator (Tier 3)
 
 - Exact bones: 27; cubes: 24.
-- Geometry maximum corner delta: 1.56524758442e-07 blocks (epsilon 1e-05).
+- Geometry maximum corner delta: 3.26955654437e-07 blocks (epsilon 1e-05).
 - Surface maximum UV delta: 0; normal delta: 0.
 - Animation maximum rotation delta: 4.10125733374e-08 radians (epsilon 2e-06).
 - Visual maximum changed fraction: 0; maximum mean absolute error: 0; maximum pair-contested fraction: 0 (never a mismatch; cap 0.01).
@@ -171,15 +171,15 @@ The independent gates are:
 - Accepted path: production OreSpawnGeoReplacement.applyCustomAnimations posed from declared entity states through the entity's pose interface; compiled poseFrom on the same states (`danger.orespawn.entity.client.RotatorGeoReplacement`).
 - Entity states: ['rf1_0', 'rf1_2', 'rf1_90', 'rf1_180_5', 'rf1_358', 'rf1_359']; rotation maximum delta 4.10125733374e-08 radians; position maximum delta 0 model units; hidden-bone checks 12.
 - Visual z-fight pixels compared, none excluded (G2 root-order contract): maximum contested fraction 0, a diagnostic. Pair-contested pixels (the same two front faces on both sides within 1e-05 blocks; owner 2026-09-15) never a mismatch: maximum fraction 0 under the cap 0.01.
-- Render instances: shape1 x8 (part, z), shape2 x8 (part, z), shape3 x8 (part, z); 24 clone and 3 group bones; 312 measured draws over 13 captures: instance pose linear delta 0, translation 0 model units; draw pose linear delta 0, translation 2.39999999874e-08 model units.
+- Render instances: shape1 x8 (part, z), shape2 x8 (part, z), shape3 x8 (part, z); 24 clone and 3 group bones; 312 measured draws over 13 captures: instance pose linear delta 0, translation 1.59999999738e-06 model units; draw pose linear delta 0, translation 3.20000000187e-06 model units.
 
 ## model_purplepower (Tier 3)
 
 - Exact bones: 27; cubes: 18.
-- Geometry maximum corner delta: 1.86815416931e-07 blocks (epsilon 1e-05).
+- Geometry maximum corner delta: 5.14417145758e-07 blocks (epsilon 1e-05).
 - Surface maximum UV delta: 0; normal delta: 0.
 - Animation maximum rotation delta: 4.10125733374e-08 radians (epsilon 2e-06).
-- Visual maximum changed fraction: 3.0517578125e-05; maximum mean absolute error: 0.000457763671875; maximum pair-contested fraction: 0 (never a mismatch; cap 0.01).
+- Visual maximum changed fraction: 0; maximum mean absolute error: 0; maximum pair-contested fraction: 0 (never a mismatch; cap 0.01).
 - Draw order: GeckoLib bone order equals the classic draw order over 9 captures (162 draws).
 
 - Accepted path: production OreSpawnGeoReplacement.applyCustomAnimations posed from declared entity states through the entity's pose interface; compiled poseFrom on the same states (`danger.orespawn.entity.client.PurplePowerGeoReplacement`).
@@ -187,12 +187,12 @@ The independent gates are:
 - Visual z-fight pixels compared, none excluded (G2 root-order contract): maximum contested fraction 0.161926269531, a diagnostic. Pair-contested pixels (the same two front faces on both sides within 1e-05 blocks; owner 2026-09-15) never a mismatch: maximum fraction 0 under the cap 0.01.
 - Render mode: entity_translucent (vertex colour (191, 191, 191, 140), light full_bright): blend SRC_ALPHA / ONE_MINUS_SRC_ALPHA / ONE / ONE_MINUS_SRC_ALPHA over the background in emission order, LEQUAL depth test with the depth written (fragments within 1e-05 blocks are one plane and all pass), texel alpha < 0.1 discarded; the same emulation on both sides.
 - Render state observed: both sides request entity_translucent (RenderType.entityTranslucent, the classic model's own render-type function - the same object on the candidate), vertex colour (191, 191, 191, 140) and packed light 15728880 at every captured vertex (3888 classic + 3888 candidate).
-- Render instances: Shape1 x6 (part, z), Shape2 x6 (part, z), Shape3 x6 (part, z); 18 clone and 9 group bones; 162 measured draws over 9 captures: instance pose linear delta 0, translation 0 model units; draw pose linear delta 0, translation 0 model units.
+- Render instances: Shape1 x6 (part, z), Shape2 x6 (part, z), Shape3 x6 (part, z); 18 clone and 9 group bones; 162 measured draws over 9 captures: instance pose linear delta 0, translation 3.20000000187e-06 model units; draw pose linear delta 0, translation 4.8000000028e-06 model units.
 
 ## fixture_runtime_basis_yz (non-production fixture)
 
 - Coverage: nested_parent_bone, non_mirrored_uv, nonzero_bind_rotation, uniform_inflate.
-- Geometry maximum corner delta: 2.76767050085e-07 blocks; surface UV maximum 0.
+- Geometry maximum corner delta: 4.15932686875e-07 blocks; surface UV maximum 0.
 - Draw order: GeckoLib bone order equals the classic draw order over 7 captures (14 draws).
 - Runtime basis proof: `danger.orespawn.g1.G1RuntimeBasisFixtureReplacement` rotation maximum delta 0 radians, position maximum delta 0 model units, surface mapping exact over 336 posed vertex samples.
 

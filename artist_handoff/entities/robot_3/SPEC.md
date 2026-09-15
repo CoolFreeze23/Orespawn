@@ -16,7 +16,7 @@ A mid-range gun platform: a stacked torso on hips and waist rings, two legs, two
 
 ## 3. Bone glossary (locked legacy names — readable labels beside them)
 
-Never rename, delete or re-parent a bone: code and hitboxes reference them by name. Left/right in the labels follow the model author's own naming (the side the legacy name calls left); Blockbench mirrors X for display, so the author's left appears on your right when the mob faces you. `gait bone` = its motion is scaled by walking speed in-game (P3). `locked` = it carries or parents a hitbox part (contract §8.1). Keying a locked bone is allowed; the checker warns, and the hitbox part follows the bone in-game (the consequence, so keep such keys deliberate). Renaming, re-parenting or deleting a locked bone is refused.
+Never rename, delete or re-parent a bone: code and hitboxes reference them by name. Left/right in the labels follow the model author's own naming (the side the legacy name calls left); the rig opens in Blockbench exactly as the game draws it, so a bone the author calls left is on the creature's own left. `gait bone` = its motion is scaled by walking speed in-game (P3). `locked` = it carries or parents a hitbox part (contract §8.1). Keying a locked bone is allowed; the checker warns, and the hitbox part follows the bone in-game (the consequence, so keep such keys deliberate). Renaming, re-parenting or deleting a locked bone is refused.
 
 | bone | readable label | classic part | parent | pivot (x, y, z) | group | gait bone | locked | cubes |
 |---|---|---|---|---|---|---|---|---|
@@ -24,21 +24,21 @@ Never rename, delete or re-parent a bone: code and hitboxes reference them by na
 | `body2` | torso plate 2 | body2 (ModelPart of the same name) | - | (0, 112, -11) | - | no | no | 1 |
 | `body3` | torso plate 3 | body3 (ModelPart of the same name) | - | (0, 112, -10) | - | no | no | 1 |
 | `body4` | torso plate 4 | body4 (ModelPart of the same name) | - | (0, 112, -11) | - | no | no | 1 |
-| `hips` | hips | hips (ModelPart of the same name) | - | (9, 67, -8) | - | no | no | 1 |
-| `larm1` | left arm, upper | larm1 (ModelPart of the same name) | - | (-27, 116, 2) | arms | no | no | 1 |
-| `larm2` | left arm, lower | larm2 (ModelPart of the same name) | - | (-24, 116, 2) | arms | no | no | 1 |
-| `larm3` | left hand | larm3 (ModelPart of the same name) | - | (-24, 116, 2) | arms | no | no | 1 |
+| `hips` | hips | hips (ModelPart of the same name) | - | (-9, 67, -8) | - | no | no | 1 |
+| `larm1` | left arm, upper | larm1 (ModelPart of the same name) | - | (27, 116, 2) | arms | no | no | 1 |
+| `larm2` | left arm, lower | larm2 (ModelPart of the same name) | - | (24, 116, 2) | arms | no | no | 1 |
+| `larm3` | left hand | larm3 (ModelPart of the same name) | - | (24, 116, 2) | arms | no | no | 1 |
 | `lazer` | laser turret (yaws with the gaze; 'lazer' sic) | lazer (ModelPart of the same name) | - | (0, 112, -11) | turret | no | no | 1 |
-| `lleg1` | left leg, upper | lleg1 (ModelPart of the same name) | - | (-9, 54, 0) | legs | yes | no | 1 |
-| `lleg2` | left leg, lower | lleg2 (ModelPart of the same name) | - | (-9, 55, 0) | legs | yes | no | 1 |
-| `rarm1` | right arm, upper | rarm1 (ModelPart of the same name) | - | (23, 116, 2) | arms | no | no | 1 |
-| `rarm2` | right arm, lower | rarm2 (ModelPart of the same name) | - | (23, 116, 2) | arms | no | no | 1 |
-| `rarm3` | right hand | rarm3 (ModelPart of the same name) | - | (23, 116, 2) | arms | no | no | 1 |
-| `rleg1` | right leg, upper | rleg1 (ModelPart of the same name) | - | (9, 55, 0) | legs | yes | no | 1 |
-| `rleg2` | right leg, lower | rleg2 (ModelPart of the same name) | - | (9, 55, 0) | legs | yes | no | 1 |
-| `waist1` | waist ring 1 | waist1 (ModelPart of the same name) | - | (6, 79, -4) | - | no | no | 1 |
-| `waist2` | waist ring 2 | waist2 (ModelPart of the same name) | - | (6, 91, -4) | - | no | no | 1 |
-| `waist3` | waist ring 3 | waist3 (ModelPart of the same name) | - | (6, 107, -6) | - | no | no | 1 |
+| `lleg1` | left leg, upper | lleg1 (ModelPart of the same name) | - | (9, 54, 0) | legs | yes | no | 1 |
+| `lleg2` | left leg, lower | lleg2 (ModelPart of the same name) | - | (9, 55, 0) | legs | yes | no | 1 |
+| `rarm1` | right arm, upper | rarm1 (ModelPart of the same name) | - | (-23, 116, 2) | arms | no | no | 1 |
+| `rarm2` | right arm, lower | rarm2 (ModelPart of the same name) | - | (-23, 116, 2) | arms | no | no | 1 |
+| `rarm3` | right hand | rarm3 (ModelPart of the same name) | - | (-23, 116, 2) | arms | no | no | 1 |
+| `rleg1` | right leg, upper | rleg1 (ModelPart of the same name) | - | (-9, 55, 0) | legs | yes | no | 1 |
+| `rleg2` | right leg, lower | rleg2 (ModelPart of the same name) | - | (-9, 55, 0) | legs | yes | no | 1 |
+| `waist1` | waist ring 1 | waist1 (ModelPart of the same name) | - | (-6, 79, -4) | - | no | no | 1 |
+| `waist2` | waist ring 2 | waist2 (ModelPart of the same name) | - | (-6, 91, -4) | - | no | no | 1 |
+| `waist3` | waist ring 3 | waist3 (ModelPart of the same name) | - | (-6, 107, -6) | - | no | no | 1 |
 
 ## 4. Current animation behaviour — plain English and the source formulas
 
@@ -65,7 +65,7 @@ Author every loop at 1.0 s (README rule 5, the phase-locked kind; ruled 2026-09-
 
 ### 4.3 Reference clips (reference-only)
 
-`robot_3_reference_walk.animation.json`, `robot_3_reference_idle.animation.json` (beside this sheet, and embedded in `robot_3.bbmodel`'s Animation tab) are NOT clips to return or ship under their own names. Each is the creature's classic code — the motion the game draws today — SAMPLED by the harness at fixed inputs so you can see that motion beside the rig in Blockbench. The `.bbmodel` opens with every clip listed (the shipped clips and these); the files beside the sheet are the PINNED SOURCE (their bytes are what the checker knows; the generator's round trip proves the embedded copies within 5e-5 s on key times and 1e-6 on values). If you rebuild the `.bbmodel` and they are gone, Animation → Import Animations... on the files brings them back. One clip per state the code reads, each value alone: `_reference_walk` — full walking speed (limbSwingAmount 1, the walk position and the age advancing one tick per key), not attacking, looking straight ahead, every state flag at rest, full health; `_reference_idle` — standing still (limbSwingAmount 0, the walk position 0; the age advancing one tick per key), not attacking, looking straight ahead, every state flag at rest, full health; no `_reference_attack` — the code reads an attack, but attacking alone moves nothing at rest: getAttacking() is read only at the arm swing's rising zero crossing, if (nextangle > 0 && armSwing < 0) on cos(ageInTicks) with a 0.3-tick look-ahead (Robot3GeoReplacement.java:56-60): no whole tick of the sampled span falls within 0.3 tick before a crossing (they sit at 4.71, 11.0, 17.3 ... ticks), so ri1 stays 0, the arms hold their bent rest and attacking alone moves nothing. Keys: the classic code is sampled once per tick, and the samples are reduced by the density search the exact transcriptions use — the fewest Catmull-Rom keys per bone and channel whose curve stays within 1 degree of rotation and 1/32 block of position of every sample, the closing key always kept — so each clip carries as few keys as that tolerance allows (each entry below states its key counts and the measured maximum error). Rotations are deltas from the bind pose under the same sign rule as the shipped clips (X as the classic degrees, Y and Z negated), positions only where the code moves a bone.
+`robot_3_reference_walk.animation.json`, `robot_3_reference_idle.animation.json` (beside this sheet, and embedded in `robot_3.bbmodel`'s Animation tab) are NOT clips to return or ship under their own names. Each is the creature's classic code — the motion the game draws today — SAMPLED by the harness at fixed inputs so you can see that motion beside the rig in Blockbench. The `.bbmodel` opens with every clip listed (the shipped clips and these); the files beside the sheet are the PINNED SOURCE (their bytes are what the checker knows; the generator's round trip proves the embedded copies within 5e-5 s on key times and 1e-6 on values). If you rebuild the `.bbmodel` and they are gone, Animation → Import Animations... on the files brings them back. One clip per state the code reads, each value alone: `_reference_walk` — full walking speed (limbSwingAmount 1, the walk position and the age advancing one tick per key), not attacking, looking straight ahead, every state flag at rest, full health; `_reference_idle` — standing still (limbSwingAmount 0, the walk position 0; the age advancing one tick per key), not attacking, looking straight ahead, every state flag at rest, full health; no `_reference_attack` — the code reads an attack, but attacking alone moves nothing at rest: getAttacking() is read only at the arm swing's rising zero crossing, if (nextangle > 0 && armSwing < 0) on cos(ageInTicks) with a 0.3-tick look-ahead (Robot3GeoReplacement.java:56-60): no whole tick of the sampled span falls within 0.3 tick before a crossing (they sit at 4.71, 11.0, 17.3 ... ticks), so ri1 stays 0, the arms hold their bent rest and attacking alone moves nothing. Keys: the classic code is sampled once per tick, and the samples are reduced by the density search the exact transcriptions use — the fewest Catmull-Rom keys per bone and channel whose curve stays within 1 degree of rotation and 1/32 block of position of every sample, the closing key always kept — so each clip carries as few keys as that tolerance allows (each entry below states its key counts and the measured maximum error). Rotations are deltas from the bind pose under the same sign rule as the shipped clips (X, Y and Z as the classic degrees: the rig is in the Bedrock convention), positions only where the code moves a bone.
 
 **Starting point (owner 2026-09-14, addendum item 13; extended by the second set revised, item 4):** a reference clip's KEYS may be the starting point of the delivered clip its state corresponds to — copy them into `walk` (from `_reference_walk`), `idle` (from `_reference_idle`), `aggro_idle` (from `_reference_attack`), `fly` (from `_reference_fly`) or `swim` (from `_reference_swim`) and improve from there; a delivered clip carrying those keys is a valid delivery (no rule compares them). A state with no contract clip (sit, sleep, display, ...) is OFFERED as an extra of this creature's own under §2.3 — §5 lists it as "offered from reference_<state>" beside the seed's extras, and a delivered clip under that name carrying the reference keys is a valid delivery. Only the reference file itself coming back under its own name is refused.
 

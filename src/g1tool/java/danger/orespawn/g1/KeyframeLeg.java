@@ -68,7 +68,7 @@ import software.bernie.geckolib.model.GeoModel;
  * the compiled float chain and in the compiled ORDER: the phase's two multiplies left to right (the
  * {@code wingspeed} is never pre-multiplied into {@code omega}), the amplitude scaled, the sign, the base added
  * LAST ({@code -1.11f - cos(...) * PI * 0.35f} is {@code (-1.11f) + (-(x))}, exact in IEEE). On the internal basis
- * X and Z are negated, Y kept ({@code OreSpawnGeoReplacement}'s basis facts). A key of the transcription holds
+ * X and Y are negated, Z kept ({@code OreSpawnGeoReplacement}'s basis facts, TEST-015). A key of the transcription holds
  * the DELTA from the bone's bind rotation on the channel's axis (GeckoLib adds every key to the initial
  * snapshot, {@code AnimationProcessor.tickAnimation} 323-341): {@code base - bind} plus the cosine, with the
  * bind read from the SHIPPED geo the clip manifest names ({@code geo}) - the same decimal text the generator
@@ -163,10 +163,10 @@ final class KeyframeLeg {
             return value;
         }
 
-        /** The internal basis: rotation X and Z negated, Y kept (OreSpawnGeoReplacement's basis facts). */
+        /** The internal basis: rotation X and Y negated, Z kept (OreSpawnGeoReplacement's basis facts, TEST-015). */
         float internalRotation(float age, float amplitude) {
             float classic = classicRotation(age, amplitude);
-            return this.axis == AXIS_Y ? classic : -classic;
+            return this.axis == AXIS_Z ? classic : -classic;
         }
 
         double effectiveFrequency() {
@@ -525,11 +525,11 @@ final class KeyframeLeg {
 
     /**
      * The classic bind rotation of every bone in degrees ({@code (x, y, z)} of the ModelPart), read from the shipped
-     * geo the clip manifest names ({@code geo}: the converter wrote JSON {@code (+x, -y, -z)} degrees; a bone without a
-     * {@code rotation} is unrotated) - the same decimal text {@code tools/keyframe_clip.py} reads, so the two generators
-     * subtract the same numbers - and checked against the baked rig's bind (a fresh bake's bone rotation, internal
-     * {@code (-x, y, -z)} radians). Without a named geo (the Beaver's manifest) every channel bone must bake unrotated on
-     * its axis.
+     * geo the clip manifest names ({@code geo}: the converter wrote JSON {@code (+x, +y, +z)} degrees - the Bedrock
+     * convention, TEST-015; a bone without a {@code rotation} is unrotated) - the same decimal text
+     * {@code tools/keyframe_clip.py} reads, so the two generators subtract the same numbers - and checked against the
+     * baked rig's bind (a fresh bake's bone rotation, internal {@code (-x, -y, z)} radians). Without a named geo (the
+     * Beaver's manifest) every channel bone must bake unrotated on its axis.
      */
     private static Map<String, double[]> bindDegrees(JsonObject clipManifest, Path repositoryRoot, BakedGeoModel baked,
                                                      List<Channel> channels, String modelId) throws Exception {
@@ -564,8 +564,8 @@ final class KeyframeLeg {
             if (bone.has("rotation")) {
                 JsonArray rotation = bone.getAsJsonArray("rotation");
                 classic[0] = rotation.get(0).getAsDouble();
-                classic[1] = -rotation.get(1).getAsDouble();
-                classic[2] = -rotation.get(2).getAsDouble();
+                classic[1] = rotation.get(1).getAsDouble();
+                classic[2] = rotation.get(2).getAsDouble();
             }
             out.put(bone.get("name").getAsString(), classic);
         }
@@ -575,7 +575,7 @@ final class KeyframeLeg {
             if (fromGeo == null || bone == null) {
                 throw new IllegalStateException(modelId + ": " + geoPath + " or the baked rig has no bone " + channel.bone());
             }
-            double[] fromBake = {-Math.toDegrees(bone.getRotX()), Math.toDegrees(bone.getRotY()), -Math.toDegrees(bone.getRotZ())};
+            double[] fromBake = {-Math.toDegrees(bone.getRotX()), -Math.toDegrees(bone.getRotY()), Math.toDegrees(bone.getRotZ())};
             for (int axis = 0; axis < 3; axis++) {
                 if (Math.abs(fromGeo[axis] - fromBake[axis]) > BIND_EPSILON_DEGREES) {
                     throw new IllegalStateException(modelId + ": the shipped geo " + geoPath + " binds " + channel.bone()
@@ -645,7 +645,7 @@ final class KeyframeLeg {
      * The generator's rule ({@code tools/keyframe_clip.py}), in memory: one looping clip per group of the
      * declared length, keys at {@code L k / (N - 1)} holding, in degrees, {@code (base - bind) + sign * (float) Math.PI
      * * piScale * cos(2 pi k / (N - 1))} - the classic delta from the bone's bind rotation on the channel's axis -
-     * rounded to 1e-10 degrees, authored under the converter's sign rule (X = +classic degrees, Y and Z negated) in
+     * rounded to 1e-10 degrees, authored under the converter's sign rule (X, Y and Z = +classic degrees; TEST-015) in
      * the axis's slot of the key.
      */
     static JsonObject generate(List<Group> groups, Map<String, Integer> keysPerGroup, String lerpMode, double seconds,
@@ -658,7 +658,7 @@ final class KeyframeLeg {
             for (Channel channel : group.channels()) {
                 double amplitudeDegrees = channel.sign() * Math.toDegrees((float) ((float) Math.PI * channel.piScale()));
                 double offsetDegrees = Math.toDegrees((double) channel.base()) - bindDegrees.get(channel.bone())[channel.axis()];
-                double authoredSign = channel.axis() == AXIS_X ? 1.0D : -1.0D;
+                double authoredSign = 1.0D;  // the converter's rule: +classic degrees on every axis (TEST-015)
                 JsonObject rotation = new JsonObject();
                 for (int index = 0; index <= segments; index++) {
                     double value = Math.round((offsetDegrees + amplitudeDegrees * Math.cos(TWO_PI * index / segments))
@@ -764,7 +764,7 @@ final class KeyframeLeg {
             this.harness = new Harness(evaluator.freshBake(), clips, layers, true);
         }
 
-        /** The layers' pose at this request, every bone of the rig in classic terms ({@code (-x, y, -z)} of the internal basis). */
+        /** The layers' pose at this request, every bone of the rig in classic terms ({@code (-x, -y, z)} of the internal basis, TEST-015). */
         JsonObject classicRotations(G1ModelProbe.SampleRequest request) {
             Map<String, float[]> internal = this.harness.sample(request.ageTicks(), request.limbSwingAmount());
             this.forward.put(request.id(), internal);
@@ -776,8 +776,8 @@ final class KeyframeLeg {
             internal.forEach((name, rotation) -> {
                 JsonArray array = new JsonArray();
                 array.add(-rotation[0]);
-                array.add(rotation[1]);
-                array.add(-rotation[2]);
+                array.add(-rotation[1]);
+                array.add(rotation[2]);
                 rotations.add(name, array);
             });
             return rotations;

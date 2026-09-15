@@ -26,15 +26,19 @@ wingspeed, pi_scale, sign, base_radians, limb_swing_scaled) and writes the ``.an
   bone's initial snapshot (``AnimationProcessor.tickAnimation`` 323-341), so a classic
   ``base + cos(...)`` written over a bone that binds at ``bind`` on that axis is keyed as
   ``(base - bind) + cos(...)``; the bind is read from the SHIPPED geo the clip manifest names
-  (``geo``: the converter wrote JSON ``(+x, -y, -z)`` degrees), the same decimal text the harness's
-  twin reads. A clip manifest without ``geo`` (the Beaver's) is a rig whose channel bones bind
-  unrotated on their axes - the harness checks that;
-* under the converter's sign rule (``tools/layer_definition_to_geo.py`` ``json_rotation_delta``):
-  authored X = +classic degrees, Y and Z NEGATED, in the axis's slot of the key. GeckoLib 4.8.4
-  negates constant X and Y keys at load (``BakedAnimationsAdapter.buildKeyframeStack`` 209-224 /
-  250-265), so the loaded value lands on the internal basis ``(-xRot, yRot, -zRot)`` that the shipped
-  code-driven hook writes. The salvaged ``tools/g3_beaver_animation.py`` authored the opposite sign
-  (Q17 (a): regenerated here; ``controller_design.md`` section 12);
+  (``geo``: the converter wrote JSON ``(+x, +y, +z)`` degrees, the Bedrock convention since TEST-015),
+  the same decimal text the harness's twin reads. A clip manifest without ``geo`` (the Beaver's) is a
+  rig whose channel bones bind unrotated on their axes - the harness checks that;
+* under the converter's sign rule (``tools/layer_definition_to_geo.py`` ``json_rotation_delta``,
+  re-derived for the entity frame by TEST-015, owner 2026-09-15): authored X, Y and Z = +classic
+  degrees, in the axis's slot of the key. GeckoLib 4.8.4 negates constant X and Y keys at load
+  (``BakedAnimationsAdapter.buildKeyframeStack`` 209-224 / 250-265), so the loaded value lands on the
+  internal basis ``(-xRot, -yRot, zRot)`` that the shipped code-driven hook writes (internal space is
+  classic space reflected in x and y: the baker's x negation and the y-up datum). Before TEST-015 the
+  rule was X = +classic degrees, Y and Z negated (internal ``(-xRot, yRot, -zRot)``: the converter had
+  negated x itself, and every seam rig drew as the classic's mirror); the salvaged
+  ``tools/g3_beaver_animation.py`` authored the opposite X sign (Q17 (a): regenerated here;
+  ``controller_design.md`` section 12);
 * with the density the manifest records per group - an OUTPUT of the harness (the
   ``keyframe_reference_leg`` density search: the fewest keys per bone holding 2.5e-3 rad under the
   repaired catmullrom evaluator), which the harness re-derives and checks against this file on every
@@ -68,8 +72,8 @@ TIME_DECIMALS = 10
 VALUE_DECIMALS = 10
 FREQUENCY_EPSILON = 1.0e-9
 AXIS_INDEX = {"x": 0, "y": 1, "z": 2}
-# The converter's rule: authored X = +classic degrees, Y and Z negated (json_rotation_delta).
-AUTHORED_SIGN = {"x": 1.0, "y": -1.0, "z": -1.0}
+# The converter's rule (json_rotation_delta, TEST-015): authored X, Y and Z = +classic degrees.
+AUTHORED_SIGN = {"x": 1.0, "y": 1.0, "z": 1.0}
 
 
 def java_float(value: float) -> float:
@@ -130,8 +134,8 @@ def bind_degrees(clip_manifest: dict, repository_root: Path) -> dict[str, list[f
         if rotation is None:
             out[bone["name"]] = [0.0, 0.0, 0.0]
         else:
-            # the converter wrote JSON (+x, -y, -z) degrees of the ModelPart's (x, y, z)
-            out[bone["name"]] = [float(rotation[0]), -float(rotation[1]), -float(rotation[2])]
+            # the converter wrote JSON (+x, +y, +z) degrees of the ModelPart's (x, y, z) (the Bedrock convention)
+            out[bone["name"]] = [float(rotation[0]), float(rotation[1]), float(rotation[2])]
     return out
 
 

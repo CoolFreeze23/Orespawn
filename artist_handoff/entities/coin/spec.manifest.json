@@ -40,39 +40,39 @@
           "rotation": null,
           "faces": {
             "west": [
+              257.0,
               1.0,
               1.0,
-              -1.0,
               256.0
             ],
             "east": [
-              258.0,
+              0.0,
               1.0,
-              -1.0,
+              1.0,
               256.0
             ],
             "north": [
-              257.0,
               1.0,
-              -256.0,
+              1.0,
+              256.0,
               256.0
             ],
             "south": [
-              514.0,
+              258.0,
               1.0,
-              -256.0,
+              256.0,
               256.0
             ],
             "up": [
-              257.0,
+              1.0,
               0.0,
-              -256.0,
+              256.0,
               1.0
             ],
             "down": [
-              513.0,
+              257.0,
               1.0,
-              -256.0,
+              256.0,
               -1.0
             ]
           }
@@ -105,7 +105,7 @@
     {
       "state": "walk",
       "file": "coin_reference_walk.animation.json",
-      "sha256": "71391b5014b8b26fc9ed4f2db0f2414a7bc36172e031d323e8c6ccbeab813d7d",
+      "sha256": "c4b422ec7f1c5a34ca9a9578e7348a9e73eca2b4f9c344b3ffe15070abb54b8a",
       "clip": "reference_walk",
       "reference_only": true,
       "delivered_clip": "walk",
@@ -152,7 +152,7 @@
     {
       "state": "idle",
       "file": "coin_reference_idle.animation.json",
-      "sha256": "4bdaa8684bf9d25528cc19708606fedb0f00f7231b04adbbf5ececcd3bed983a",
+      "sha256": "1beb298da051a7e8c48dfba011a6d63ed3e835fe17704f1c051f6b3275123d70",
       "clip": "reference_idle",
       "reference_only": true,
       "delivered_clip": "idle",
@@ -200,7 +200,7 @@
   "reference_clip": {
     "state": "walk",
     "file": "coin_reference_walk.animation.json",
-    "sha256": "71391b5014b8b26fc9ed4f2db0f2414a7bc36172e031d323e8c6ccbeab813d7d",
+    "sha256": "c4b422ec7f1c5a34ca9a9578e7348a9e73eca2b4f9c344b3ffe15070abb54b8a",
     "clip": "reference_walk",
     "reference_only": true,
     "delivered_clip": "walk",

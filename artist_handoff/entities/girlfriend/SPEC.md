@@ -20,7 +20,7 @@ A player-shaped companion: the vanilla biped - a head with a hat layer, a body, 
 
 ## 3. Bone glossary (locked legacy names — readable labels beside them)
 
-Never rename, delete or re-parent a bone: code and hitboxes reference them by name. Left/right in the labels follow the model author's own naming (the side the legacy name calls left); Blockbench mirrors X for display, so the author's left appears on your right when the mob faces you. `gait bone` = its motion is scaled by walking speed in-game (P3). `locked` = it carries or parents a hitbox part (contract §8.1). Keying a locked bone is allowed; the checker warns, and the hitbox part follows the bone in-game (the consequence, so keep such keys deliberate). Renaming, re-parenting or deleting a locked bone is refused.
+Never rename, delete or re-parent a bone: code and hitboxes reference them by name. Left/right in the labels follow the model author's own naming (the side the legacy name calls left); the rig opens in Blockbench exactly as the game draws it, so a bone the author calls left is on the creature's own left. `gait bone` = its motion is scaled by walking speed in-game (P3). `locked` = it carries or parents a hitbox part (contract §8.1). Keying a locked bone is allowed; the checker warns, and the hitbox part follows the bone in-game (the consequence, so keep such keys deliberate). Renaming, re-parenting or deleting a locked bone is refused.
 
 This rig is NOT yet in-game: the geometry is the converter's output over the port's compiled model, proven part for part against the 1.7.10 source by the reference-geometry leg; it lands through the seam in a later slice. Bone names are FINAL — the seam, the hitbox profiles and the transcriptions find bones by name.
 
@@ -29,10 +29,10 @@ This rig is NOT yet in-game: the geometry is the converter's output over the por
 | `body` | body (torso) | body (ModelPart of the same name) | - | (0, 24, 0) | - | no | no | 1 |
 | `hat` | hat layer (an inflated copy of the head; the vanilla model copies the head's pose onto it) | hat (ModelPart of the same name) | - | (0, 24, 0) | - | no | no | 1 |
 | `head` | head (turns and pitches with the look) | head (ModelPart of the same name) | - | (0, 24, 0) | - | no | no | 1 |
-| `left_arm` | left arm (a slim 3-wide arm; swings with the stride, sways at rest) | left_arm (ModelPart of the same name) | - | (-5, 22, 0) | arm_sway_pitch | no | no | 1 |
-| `left_leg` | left leg | left_leg (ModelPart of the same name) | - | (-1.9, 12, 0) | gait | yes | no | 1 |
-| `right_arm` | right arm (a slim 3-wide arm; swings with the stride, sways at rest, carries the weapon swing) | right_arm (ModelPart of the same name) | - | (5, 22, 0) | arm_sway_pitch | no | no | 1 |
-| `right_leg` | right leg | right_leg (ModelPart of the same name) | - | (1.9, 12, 0) | gait | yes | no | 1 |
+| `left_arm` | left arm (a slim 3-wide arm; swings with the stride, sways at rest) | left_arm (ModelPart of the same name) | - | (5, 22, 0) | arm_sway_pitch | no | no | 1 |
+| `left_leg` | left leg | left_leg (ModelPart of the same name) | - | (1.9, 12, 0) | gait | yes | no | 1 |
+| `right_arm` | right arm (a slim 3-wide arm; swings with the stride, sways at rest, carries the weapon swing) | right_arm (ModelPart of the same name) | - | (-5, 22, 0) | arm_sway_pitch | no | no | 1 |
+| `right_leg` | right leg | right_leg (ModelPart of the same name) | - | (-1.9, 12, 0) | gait | yes | no | 1 |
 
 ## 4. Current animation behaviour — plain English and the source formulas
 

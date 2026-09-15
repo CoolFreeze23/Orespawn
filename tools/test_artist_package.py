@@ -1347,6 +1347,49 @@ class FixtureCase(unittest.TestCase):
         self.assertEqual(attack_back["0.25"]["easing"], "easeInOutSine")
         self.assertEqual(attack_back["0.25"]["easingArgs"], [2])
 
+    def test_the_queens_native_rig_opens_as_authored(self):
+        # TEST-015 (owner 2026-09-15, closing set continued, second, item 35 (3)): the .bbmodel builder's flip is Blockbench's own
+        # Bedrock codec (a .bbmodel holds Blockbench's coordinates, whose x is the Bedrock file's x negated), verified on the
+        # one rig Blockbench itself authored and exported - the Queen: her leftLeg pivots at +49.9 in the geo (the Bedrock
+        # convention every converted rig now shares) and the builder writes its group origin at -49.9, the codec's inverse,
+        # where Blockbench's own import puts it (on her own left in the front view); the emulated export reproduces her geo EQUAL.
+        queen_path = Path(__file__).resolve().parents[1] / "src/main/resources/assets/orespawn/geo/entity/the_queen.geo.json"
+        if not queen_path.is_file():
+            self.skipTest("the repository's Queen geo is not beside this test")
+        geo = json.loads(queen_path.read_text(encoding="utf-8"))
+        fx = self.repo.get("fixture")
+        bb = ap.build_bbmodel(fx, geo, {"format_version": "1.8.0", "animations": {}}, [("the_queen.png", b"", (2048, 2048))], ap.Warnings())
+        groups = {}
+
+        def walk(node):
+            if isinstance(node, dict):
+                groups[node["name"]] = node
+                for child in node.get("children", []):
+                    walk(child)
+        for node in bb["outliner"]:
+            walk(node)
+        bones = {b["name"]: b for b in geo["minecraft:geometry"][0]["bones"]}
+        self.assertEqual(bones["leftLeg"]["pivot"][0], 49.90909)
+        self.assertEqual(groups["leftLeg"]["origin"], [-49.90909, 107.72727, 3.45455])
+        self.assertEqual(groups["rightLeg"]["origin"], [49.90909, 107.72727, 3.45455])
+        self.assertEqual(groups["LThigh"]["rotation"], [-45.0, 0.0, 0.0])  # the codec negates X and Y, keeps Z
+        back_geo, reattached = ap.bbmodel_to_geo(bb)
+        report = ap.roundtrip_diff(geo, back_geo, {"format_version": "1.8.0", "animations": {}},
+                                   ap.bbmodel_to_animation(bb), reattached)
+        self.assertTrue(report["equal"], report["differences"])
+        self.assertTrue(report["bone_order_preserved"])
+
+    def test_sheets_no_longer_say_blockbench_mirrors_x(self):
+        # TEST-015 (3): the converted rigs sit in the Bedrock convention, so the glossary's mirror sentence is gone and the
+        # reference-clip section states the sign rule as +classic degrees on every axis
+        fx = self.repo.get("fixture")
+        inv = ap.build_trigger_inventory(fx, self.repo)
+        md, _manifest = ap.spec_document(fx, self.repo, self.catalog, inv)
+        self.assertNotIn("Blockbench mirrors X", md)
+        self.assertNotIn("appears on your right", md)
+        self.assertNotIn("Y and Z negated", md)
+        self.assertIn("the rig opens in Blockbench exactly as the game draws it", md)
+
     def test_roundtrip_reports_a_dropped_easing_or_unknown_key(self):
         fx = self.repo.get("fixture")
         geo = fx.geo

@@ -20,76 +20,76 @@ A horned, long-tailed dungeon lizard built sideways: a body with three spines, a
 
 ## 3. Bone glossary (locked legacy names — readable labels beside them)
 
-Never rename, delete or re-parent a bone: code and hitboxes reference them by name. Left/right in the labels follow the model author's own naming (the side the legacy name calls left); Blockbench mirrors X for display, so the author's left appears on your right when the mob faces you. `gait bone` = its motion is scaled by walking speed in-game (P3). `locked` = it carries or parents a hitbox part (contract §8.1). Keying a locked bone is allowed; the checker warns, and the hitbox part follows the bone in-game (the consequence, so keep such keys deliberate). Renaming, re-parenting or deleting a locked bone is refused.
+Never rename, delete or re-parent a bone: code and hitboxes reference them by name. Left/right in the labels follow the model author's own naming (the side the legacy name calls left); the rig opens in Blockbench exactly as the game draws it, so a bone the author calls left is on the creature's own left. `gait bone` = its motion is scaled by walking speed in-game (P3). `locked` = it carries or parents a hitbox part (contract §8.1). Keying a locked bone is allowed; the checker warns, and the hitbox part follows the bone in-game (the consequence, so keep such keys deliberate). Renaming, re-parenting or deleting a locked bone is refused.
 
 This rig is NOT yet in-game: the geometry is the converter's output over the port's compiled model, proven part for part against the 1.7.10 source by the reference-geometry leg; it lands through the seam in a later slice. Bone names are FINAL — the seam, the hitbox profiles and the transcriptions find bones by name.
 
 | bone | readable label | classic part | parent | pivot (x, y, z) | group | gait bone | locked | cubes |
 |---|---|---|---|---|---|---|---|---|
-| `body` | body | body (ModelPart of the same name) | - | (1, 9, 0) | - | no | no | 1 |
-| `bodys1` | body spine 1 (front) | bodys1 (ModelPart of the same name) | - | (1, 9, 0) | spines | no | no | 1 |
-| `bodys2` | body spine 2 | bodys2 (ModelPart of the same name) | - | (1, 9, 0) | spines | no | no | 1 |
-| `bodys3` | body spine 3 (rear) | bodys3 (ModelPart of the same name) | - | (1, 9, 0) | spines | no | no | 1 |
-| `head1` | head, centre piece | head1 (ModelPart of the same name) | - | (-5, 9, 0) | - | no | no | 1 |
-| `head2` | head, left cheek (turned 46 deg) | head2 (ModelPart of the same name) | - | (-5, 9, 0) | - | no | no | 1 |
-| `head3` | head, right cheek (turned -46 deg) | head3 (ModelPart of the same name) | - | (-5, 9, 0) | - | no | no | 1 |
-| `horn1` | brow horn 1 | horn1 (ModelPart of the same name) | - | (-5, 9, 0) | - | no | no | 1 |
-| `horn2` | brow horn 2 | horn2 (ModelPart of the same name) | - | (-5, 9, 0) | - | no | no | 1 |
-| `leye` | left eye | leye (ModelPart of the same name) | - | (-5, 9, 0) | - | no | no | 1 |
-| `lfoot` | left foot, piece 1 | lfoot (ModelPart of the same name) | - | (-3, 7, 7) | gait | yes | no | 1 |
-| `lfoot2` | left foot, piece 2 (turned 45 deg) | lfoot2 (ModelPart of the same name) | - | (-3, 7, 7) | gait | yes | no | 1 |
-| `lh1` | left horn, segment 1 (base, 30 deg) | lh1 (ModelPart of the same name) | - | (-5, 9, 0) | - | no | no | 1 |
-| `lh2` | left horn, segment 2 (50 deg) | lh2 (ModelPart of the same name) | - | (-5, 9, 0) | - | no | no | 1 |
-| `lh3` | left horn, segment 3 (80 deg) | lh3 (ModelPart of the same name) | - | (-5, 9, 0) | - | no | no | 1 |
-| `lh4` | left horn, segment 4 (tip, 100 deg) | lh4 (ModelPart of the same name) | - | (-5, 9, 0) | - | no | no | 1 |
-| `lheel` | left heel | lheel (ModelPart of the same name) | - | (-3, 7, 7) | gait | yes | no | 1 |
-| `lhornbase` | left horn base | lhornbase (ModelPart of the same name) | - | (-5, 9, 0) | - | no | no | 1 |
-| `ljaw1` | left jaw, piece 1 (rest -0.349 rad; flaps) | ljaw1 (ModelPart of the same name) | - | (-10, 8, 2) | jaws | no | no | 1 |
-| `ljaw2` | left jaw, piece 2 (rest +0.349 rad; flaps) | ljaw2 (ModelPart of the same name) | - | (-10, 8, 2) | jaws | no | no | 1 |
-| `ljaw3` | left jaw, piece 3 (rest +0.523 rad; flaps) | ljaw3 (ModelPart of the same name) | - | (-10, 8, 2) | jaws | no | no | 1 |
-| `lleg1` | left thigh | lleg1 (ModelPart of the same name) | - | (-3, 9, 4) | gait | yes | no | 1 |
-| `lleg2` | left shin | lleg2 (ModelPart of the same name) | - | (-3, 7, 7) | gait | yes | no | 1 |
-| `lshoulder` | left shoulder | lshoulder (ModelPart of the same name) | - | (1, 9, 0) | - | no | no | 1 |
-| `ltoe1` | left toe 1 (static) | ltoe1 (ModelPart of the same name) | - | (-3, 7, 7) | - | no | no | 1 |
-| `ltoe2` | left toe 2 (swings with the leg around -0.785 rad) | ltoe2 (ModelPart of the same name) | - | (-3, 7, 7) | gait | yes | no | 1 |
-| `ltoe3` | left toe 3 (static) | ltoe3 (ModelPart of the same name) | - | (-3, 7, 7) | - | no | no | 1 |
-| `neck` | neck | neck (ModelPart of the same name) | - | (-5, 9, 0) | - | no | no | 1 |
-| `reye` | right eye | reye (ModelPart of the same name) | - | (-5, 9, 0) | - | no | no | 1 |
-| `rfoot` | right foot, piece 1 | rfoot (ModelPart of the same name) | - | (-3, 7, -7) | gait | yes | no | 1 |
-| `rfoot2` | right foot, piece 2 (turned -45 deg) | rfoot2 (ModelPart of the same name) | - | (-3, 7, -7) | gait | yes | no | 1 |
-| `rh1` | right horn, segment 1 (base) | rh1 (ModelPart of the same name) | - | (-5, 9, 0) | - | no | no | 1 |
-| `rh2` | right horn, segment 2 | rh2 (ModelPart of the same name) | - | (-5, 9, 0) | - | no | no | 1 |
-| `rh3` | right horn, segment 3 | rh3 (ModelPart of the same name) | - | (-5, 9, 0) | - | no | no | 1 |
-| `rh4` | right horn, segment 4 (tip) | rh4 (ModelPart of the same name) | - | (-5, 9, 0) | - | no | no | 1 |
-| `rheel` | right heel | rheel (ModelPart of the same name) | - | (-3, 7, -7) | gait | yes | no | 1 |
-| `rhornbase` | right horn base | rhornbase (ModelPart of the same name) | - | (-5, 9, 0) | - | no | no | 1 |
-| `rjaw1` | right jaw, piece 1 (rest +0.349 rad; flaps, mirrored) | rjaw1 (ModelPart of the same name) | - | (-10, 8, -2) | jaws | no | no | 1 |
-| `rjaw2` | right jaw, piece 2 (rest -0.349 rad) | rjaw2 (ModelPart of the same name) | - | (-10, 8, -2) | jaws | no | no | 1 |
-| `rjaw3` | right jaw, piece 3 (rest -0.523 rad) | rjaw3 (ModelPart of the same name) | - | (-10, 8, -2) | jaws | no | no | 1 |
-| `rleg1` | right thigh | rleg1 (ModelPart of the same name) | - | (-3, 9, -4) | gait | yes | no | 1 |
-| `rleg2` | right shin | rleg2 (ModelPart of the same name) | - | (-3, 7, -7) | gait | yes | no | 1 |
-| `rshoulder` | right shoulder | rshoulder (ModelPart of the same name) | - | (1, 9, 0) | - | no | no | 1 |
-| `rtoe1` | right toe 1 (static) | rtoe1 (ModelPart of the same name) | - | (-3, 7, -7) | - | no | no | 1 |
-| `rtoe2` | right toe 2 (swings with the leg around -0.785 rad) | rtoe2 (ModelPart of the same name) | - | (-3, 7, -7) | gait | yes | no | 1 |
-| `rtoe3` | right toe 3 (static) | rtoe3 (ModelPart of the same name) | - | (-3, 7, -7) | - | no | no | 1 |
-| `t1s1` | tail spine, segment 1 a | t1s1 (ModelPart of the same name) | - | (1, 9, 0) | tail | no | no | 1 |
-| `t1s2` | tail spine, segment 1 b | t1s2 (ModelPart of the same name) | - | (1, 9, 0) | tail | no | no | 1 |
-| `t1s3` | tail spine, segment 1 c | t1s3 (ModelPart of the same name) | - | (1, 9, 0) | tail | no | no | 1 |
-| `t2s1` | tail spine, segment 2 a | t2s1 (ModelPart of the same name) | - | (6, 7, 0) | tail | no | no | 1 |
-| `t2s2` | tail spine, segment 2 b | t2s2 (ModelPart of the same name) | - | (6, 7, 0) | tail | no | no | 1 |
-| `t2s3` | tail spine, segment 2 c | t2s3 (ModelPart of the same name) | - | (6, 7, 0) | tail | no | no | 1 |
-| `t3s1` | tail spine, segment 3 a | t3s1 (ModelPart of the same name) | - | (10, 4, 0) | tail | no | no | 1 |
-| `t3s2` | tail spine, segment 3 b | t3s2 (ModelPart of the same name) | - | (10, 4, 0) | tail | no | no | 1 |
-| `t4s1` | tail spine, segment 4 | t4s1 (ModelPart of the same name) | - | (14, 1.2, 0) | tail | no | no | 1 |
-| `t5s1` | tail spine, segment 5 | t5s1 (ModelPart of the same name) | - | (18, 0.8, 0) | tail | no | no | 1 |
-| `t6s1` | tail spine, segment 6 | t6s1 (ModelPart of the same name) | - | (21, 0.5, 0) | tail | no | no | 1 |
-| `tail1` | tail segment 1 (base) | tail1 (ModelPart of the same name) | - | (1, 9, 0) | tail | no | no | 1 |
-| `tail2` | tail segment 2 (placed 6 units along segment 1's yaw by the code) | tail2 (ModelPart of the same name) | - | (6, 7, 0) | tail | no | no | 1 |
-| `tail3` | tail segment 3 (5 units along segment 2) | tail3 (ModelPart of the same name) | - | (10, 4, 0) | tail | no | no | 1 |
-| `tail4` | tail segment 4 (4.5 units along segment 3) | tail4 (ModelPart of the same name) | - | (14, 1.2, 0) | tail | no | no | 1 |
-| `tail5` | tail segment 5 (4 units along segment 4) | tail5 (ModelPart of the same name) | - | (18, 0.8, 0) | tail | no | no | 1 |
-| `tail6` | tail segment 6 (3 units along segment 5) | tail6 (ModelPart of the same name) | - | (21, 0.5, 0) | tail | no | no | 1 |
-| `tail7` | tail segment 7, the tip (3 units along segment 6) | tail7 (ModelPart of the same name) | - | (24, 0.5, 0) | tail | no | no | 1 |
+| `body` | body | body (ModelPart of the same name) | - | (-1, 9, 0) | - | no | no | 1 |
+| `bodys1` | body spine 1 (front) | bodys1 (ModelPart of the same name) | - | (-1, 9, 0) | spines | no | no | 1 |
+| `bodys2` | body spine 2 | bodys2 (ModelPart of the same name) | - | (-1, 9, 0) | spines | no | no | 1 |
+| `bodys3` | body spine 3 (rear) | bodys3 (ModelPart of the same name) | - | (-1, 9, 0) | spines | no | no | 1 |
+| `head1` | head, centre piece | head1 (ModelPart of the same name) | - | (5, 9, 0) | - | no | no | 1 |
+| `head2` | head, left cheek (turned 46 deg) | head2 (ModelPart of the same name) | - | (5, 9, 0) | - | no | no | 1 |
+| `head3` | head, right cheek (turned -46 deg) | head3 (ModelPart of the same name) | - | (5, 9, 0) | - | no | no | 1 |
+| `horn1` | brow horn 1 | horn1 (ModelPart of the same name) | - | (5, 9, 0) | - | no | no | 1 |
+| `horn2` | brow horn 2 | horn2 (ModelPart of the same name) | - | (5, 9, 0) | - | no | no | 1 |
+| `leye` | left eye | leye (ModelPart of the same name) | - | (5, 9, 0) | - | no | no | 1 |
+| `lfoot` | left foot, piece 1 | lfoot (ModelPart of the same name) | - | (3, 7, 7) | gait | yes | no | 1 |
+| `lfoot2` | left foot, piece 2 (turned 45 deg) | lfoot2 (ModelPart of the same name) | - | (3, 7, 7) | gait | yes | no | 1 |
+| `lh1` | left horn, segment 1 (base, 30 deg) | lh1 (ModelPart of the same name) | - | (5, 9, 0) | - | no | no | 1 |
+| `lh2` | left horn, segment 2 (50 deg) | lh2 (ModelPart of the same name) | - | (5, 9, 0) | - | no | no | 1 |
+| `lh3` | left horn, segment 3 (80 deg) | lh3 (ModelPart of the same name) | - | (5, 9, 0) | - | no | no | 1 |
+| `lh4` | left horn, segment 4 (tip, 100 deg) | lh4 (ModelPart of the same name) | - | (5, 9, 0) | - | no | no | 1 |
+| `lheel` | left heel | lheel (ModelPart of the same name) | - | (3, 7, 7) | gait | yes | no | 1 |
+| `lhornbase` | left horn base | lhornbase (ModelPart of the same name) | - | (5, 9, 0) | - | no | no | 1 |
+| `ljaw1` | left jaw, piece 1 (rest -0.349 rad; flaps) | ljaw1 (ModelPart of the same name) | - | (10, 8, 2) | jaws | no | no | 1 |
+| `ljaw2` | left jaw, piece 2 (rest +0.349 rad; flaps) | ljaw2 (ModelPart of the same name) | - | (10, 8, 2) | jaws | no | no | 1 |
+| `ljaw3` | left jaw, piece 3 (rest +0.523 rad; flaps) | ljaw3 (ModelPart of the same name) | - | (10, 8, 2) | jaws | no | no | 1 |
+| `lleg1` | left thigh | lleg1 (ModelPart of the same name) | - | (3, 9, 4) | gait | yes | no | 1 |
+| `lleg2` | left shin | lleg2 (ModelPart of the same name) | - | (3, 7, 7) | gait | yes | no | 1 |
+| `lshoulder` | left shoulder | lshoulder (ModelPart of the same name) | - | (-1, 9, 0) | - | no | no | 1 |
+| `ltoe1` | left toe 1 (static) | ltoe1 (ModelPart of the same name) | - | (3, 7, 7) | - | no | no | 1 |
+| `ltoe2` | left toe 2 (swings with the leg around -0.785 rad) | ltoe2 (ModelPart of the same name) | - | (3, 7, 7) | gait | yes | no | 1 |
+| `ltoe3` | left toe 3 (static) | ltoe3 (ModelPart of the same name) | - | (3, 7, 7) | - | no | no | 1 |
+| `neck` | neck | neck (ModelPart of the same name) | - | (5, 9, 0) | - | no | no | 1 |
+| `reye` | right eye | reye (ModelPart of the same name) | - | (5, 9, 0) | - | no | no | 1 |
+| `rfoot` | right foot, piece 1 | rfoot (ModelPart of the same name) | - | (3, 7, -7) | gait | yes | no | 1 |
+| `rfoot2` | right foot, piece 2 (turned -45 deg) | rfoot2 (ModelPart of the same name) | - | (3, 7, -7) | gait | yes | no | 1 |
+| `rh1` | right horn, segment 1 (base) | rh1 (ModelPart of the same name) | - | (5, 9, 0) | - | no | no | 1 |
+| `rh2` | right horn, segment 2 | rh2 (ModelPart of the same name) | - | (5, 9, 0) | - | no | no | 1 |
+| `rh3` | right horn, segment 3 | rh3 (ModelPart of the same name) | - | (5, 9, 0) | - | no | no | 1 |
+| `rh4` | right horn, segment 4 (tip) | rh4 (ModelPart of the same name) | - | (5, 9, 0) | - | no | no | 1 |
+| `rheel` | right heel | rheel (ModelPart of the same name) | - | (3, 7, -7) | gait | yes | no | 1 |
+| `rhornbase` | right horn base | rhornbase (ModelPart of the same name) | - | (5, 9, 0) | - | no | no | 1 |
+| `rjaw1` | right jaw, piece 1 (rest +0.349 rad; flaps, mirrored) | rjaw1 (ModelPart of the same name) | - | (10, 8, -2) | jaws | no | no | 1 |
+| `rjaw2` | right jaw, piece 2 (rest -0.349 rad) | rjaw2 (ModelPart of the same name) | - | (10, 8, -2) | jaws | no | no | 1 |
+| `rjaw3` | right jaw, piece 3 (rest -0.523 rad) | rjaw3 (ModelPart of the same name) | - | (10, 8, -2) | jaws | no | no | 1 |
+| `rleg1` | right thigh | rleg1 (ModelPart of the same name) | - | (3, 9, -4) | gait | yes | no | 1 |
+| `rleg2` | right shin | rleg2 (ModelPart of the same name) | - | (3, 7, -7) | gait | yes | no | 1 |
+| `rshoulder` | right shoulder | rshoulder (ModelPart of the same name) | - | (-1, 9, 0) | - | no | no | 1 |
+| `rtoe1` | right toe 1 (static) | rtoe1 (ModelPart of the same name) | - | (3, 7, -7) | - | no | no | 1 |
+| `rtoe2` | right toe 2 (swings with the leg around -0.785 rad) | rtoe2 (ModelPart of the same name) | - | (3, 7, -7) | gait | yes | no | 1 |
+| `rtoe3` | right toe 3 (static) | rtoe3 (ModelPart of the same name) | - | (3, 7, -7) | - | no | no | 1 |
+| `t1s1` | tail spine, segment 1 a | t1s1 (ModelPart of the same name) | - | (-1, 9, 0) | tail | no | no | 1 |
+| `t1s2` | tail spine, segment 1 b | t1s2 (ModelPart of the same name) | - | (-1, 9, 0) | tail | no | no | 1 |
+| `t1s3` | tail spine, segment 1 c | t1s3 (ModelPart of the same name) | - | (-1, 9, 0) | tail | no | no | 1 |
+| `t2s1` | tail spine, segment 2 a | t2s1 (ModelPart of the same name) | - | (-6, 7, 0) | tail | no | no | 1 |
+| `t2s2` | tail spine, segment 2 b | t2s2 (ModelPart of the same name) | - | (-6, 7, 0) | tail | no | no | 1 |
+| `t2s3` | tail spine, segment 2 c | t2s3 (ModelPart of the same name) | - | (-6, 7, 0) | tail | no | no | 1 |
+| `t3s1` | tail spine, segment 3 a | t3s1 (ModelPart of the same name) | - | (-10, 4, 0) | tail | no | no | 1 |
+| `t3s2` | tail spine, segment 3 b | t3s2 (ModelPart of the same name) | - | (-10, 4, 0) | tail | no | no | 1 |
+| `t4s1` | tail spine, segment 4 | t4s1 (ModelPart of the same name) | - | (-14, 1.2, 0) | tail | no | no | 1 |
+| `t5s1` | tail spine, segment 5 | t5s1 (ModelPart of the same name) | - | (-18, 0.8, 0) | tail | no | no | 1 |
+| `t6s1` | tail spine, segment 6 | t6s1 (ModelPart of the same name) | - | (-21, 0.5, 0) | tail | no | no | 1 |
+| `tail1` | tail segment 1 (base) | tail1 (ModelPart of the same name) | - | (-1, 9, 0) | tail | no | no | 1 |
+| `tail2` | tail segment 2 (placed 6 units along segment 1's yaw by the code) | tail2 (ModelPart of the same name) | - | (-6, 7, 0) | tail | no | no | 1 |
+| `tail3` | tail segment 3 (5 units along segment 2) | tail3 (ModelPart of the same name) | - | (-10, 4, 0) | tail | no | no | 1 |
+| `tail4` | tail segment 4 (4.5 units along segment 3) | tail4 (ModelPart of the same name) | - | (-14, 1.2, 0) | tail | no | no | 1 |
+| `tail5` | tail segment 5 (4 units along segment 4) | tail5 (ModelPart of the same name) | - | (-18, 0.8, 0) | tail | no | no | 1 |
+| `tail6` | tail segment 6 (3 units along segment 5) | tail6 (ModelPart of the same name) | - | (-21, 0.5, 0) | tail | no | no | 1 |
+| `tail7` | tail segment 7, the tip (3 units along segment 6) | tail7 (ModelPart of the same name) | - | (-24, 0.5, 0) | tail | no | no | 1 |
 
 ## 4. Current animation behaviour — plain English and the source formulas
 
@@ -121,23 +121,23 @@ Author every loop at 1.0 s (README rule 5, the phase-locked kind; ruled 2026-09-
 
 ### 4.3 Reference clips (reference-only)
 
-`dungeon_beast_reference_walk.animation.json`, `dungeon_beast_reference_idle.animation.json`, `dungeon_beast_reference_attack.animation.json` (beside this sheet, and embedded in `dungeon_beast.bbmodel`'s Animation tab) are NOT clips to return or ship under their own names. Each is the creature's classic code — the motion the game draws today — SAMPLED by the harness at fixed inputs so you can see that motion beside the rig in Blockbench. The `.bbmodel` opens with every clip listed (the shipped clips and these); the files beside the sheet are the PINNED SOURCE (their bytes are what the checker knows; the generator's round trip proves the embedded copies within 5e-5 s on key times and 1e-6 on values). If you rebuild the `.bbmodel` and they are gone, Animation → Import Animations... on the files brings them back. One clip per state the code reads, each value alone: `_reference_walk` — full walking speed (limbSwingAmount 1, the walk position and the age advancing one tick per key), not attacking, looking straight ahead, every state flag at rest, full health; `_reference_idle` — standing still (limbSwingAmount 0, the walk position 0; the age advancing one tick per key), not attacking, looking straight ahead, every state flag at rest, full health; `_reference_attack` — attacking (the code's attacking flag raised) while standing still (limbSwingAmount 0, the walk position 0; the age advancing one tick per key), looking straight ahead, every other state flag at rest, full health. Keys: the classic code is sampled once per tick, and the samples are reduced by the density search the exact transcriptions use — the fewest Catmull-Rom keys per bone and channel whose curve stays within 1 degree of rotation and 1/32 block of position of every sample, the closing key always kept — so each clip carries as few keys as that tolerance allows (each entry below states its key counts and the measured maximum error). Rotations are deltas from the bind pose under the same sign rule as the shipped clips (X as the classic degrees, Y and Z negated), positions only where the code moves a bone.
+`dungeon_beast_reference_walk.animation.json`, `dungeon_beast_reference_idle.animation.json`, `dungeon_beast_reference_attack.animation.json` (beside this sheet, and embedded in `dungeon_beast.bbmodel`'s Animation tab) are NOT clips to return or ship under their own names. Each is the creature's classic code — the motion the game draws today — SAMPLED by the harness at fixed inputs so you can see that motion beside the rig in Blockbench. The `.bbmodel` opens with every clip listed (the shipped clips and these); the files beside the sheet are the PINNED SOURCE (their bytes are what the checker knows; the generator's round trip proves the embedded copies within 5e-5 s on key times and 1e-6 on values). If you rebuild the `.bbmodel` and they are gone, Animation → Import Animations... on the files brings them back. One clip per state the code reads, each value alone: `_reference_walk` — full walking speed (limbSwingAmount 1, the walk position and the age advancing one tick per key), not attacking, looking straight ahead, every state flag at rest, full health; `_reference_idle` — standing still (limbSwingAmount 0, the walk position 0; the age advancing one tick per key), not attacking, looking straight ahead, every state flag at rest, full health; `_reference_attack` — attacking (the code's attacking flag raised) while standing still (limbSwingAmount 0, the walk position 0; the age advancing one tick per key), looking straight ahead, every other state flag at rest, full health. Keys: the classic code is sampled once per tick, and the samples are reduced by the density search the exact transcriptions use — the fewest Catmull-Rom keys per bone and channel whose curve stays within 1 degree of rotation and 1/32 block of position of every sample, the closing key always kept — so each clip carries as few keys as that tolerance allows (each entry below states its key counts and the measured maximum error). Rotations are deltas from the bind pose under the same sign rule as the shipped clips (X, Y and Z as the classic degrees: the rig is in the Bedrock convention), positions only where the code moves a bone.
 
 This rig is not yet in-game: these clips are sampled from the hook's transcription of the classic `setupAnim` into the descriptor a landing slice will use (owner 2026-09-14, addendum item 10) — the transcription is proven when the rig lands; until then the clips show the code as the port carries it.
 
 **Starting point (owner 2026-09-14, addendum item 13; extended by the second set revised, item 4):** a reference clip's KEYS may be the starting point of the delivered clip its state corresponds to — copy them into `walk` (from `_reference_walk`), `idle` (from `_reference_idle`), `aggro_idle` (from `_reference_attack`), `fly` (from `_reference_fly`) or `swim` (from `_reference_swim`) and improve from there; a delivered clip carrying those keys is a valid delivery (no rule compares them). A state with no contract clip (sit, sleep, display, ...) is OFFERED as an extra of this creature's own under §2.3 — §5 lists it as "offered from reference_<state>" beside the seed's extras, and a delivered clip under that name carrying the reference keys is a valid delivery. Only the reference file itself coming back under its own name is refused.
 
-- `dungeon_beast_reference_walk.animation.json` (sha256 `4c2b671f42960b5ecfddd781f213a616e79d62cc2224e35d7f681541de1645aa`; clip `reference_walk`; a starting point for `walk`): two seconds (40 ticks): this motion does not close within 6 s (its slowest rhythm is 20.268 ticks, and no multiple of it under 6 s brings every rhythm back within 5 degrees) — a two-second window, not a loop; the closing key differs from the first by 78.6789 degrees; 2 to 41 keys per bone chosen by the density search from 41 per-tick samples, Catmull-Rom; max error 0.917 degrees / 0.0305 block against the samples (the tolerance 1 degree / 1/32 block).
+- `dungeon_beast_reference_walk.animation.json` (sha256 `f1cc728c7f840853573622daef347630d40efc92ac748a8606347974e7d72cf1`; clip `reference_walk`; a starting point for `walk`): two seconds (40 ticks): this motion does not close within 6 s (its slowest rhythm is 20.268 ticks, and no multiple of it under 6 s brings every rhythm back within 5 degrees) — a two-second window, not a loop; the closing key differs from the first by 78.6789 degrees; 2 to 41 keys per bone chosen by the density search from 41 per-tick samples, Catmull-Rom; max error 0.917 degrees / 0.0305 block against the samples (the tolerance 1 degree / 1/32 block).
   - Sampled from: `danger.orespawn.entity.client.DungeonBeastGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the unlanded hook of owner 2026-09-14, addendum item 10 - the classic setupAnim transcribed into the descriptor's PoseInputs form, proven when the rig lands - registry-free, on explicit PoseInputs, over the reference leg's converter output reference_dungeonbeast.geo.json baked without the face-order strictness the landing slice's TEST-007 adds)`.
   - Rule applied: wingspeed 0.62: the slowest rhythm is the fourteen phased spine segments cos(ageInTicks * 0.5 * WINGSPEED + n * pi/4) * PI * 0.07 (DungeonBeastGeoReplacement.applyCustomAnimations:73-86, every state) at 0.31 rad/tick, 20.27 ticks; the ten gait-scaled legs cos(ageInTicks * 1.4 * WINGSPEED) * PI * 0.22 * limbSwingAmount (:60, walk) at 0.868; the tail cos(ageInTicks * 0.75 * WINGSPEED) * PI * 0.25 * tailamp with tailamp = limbSwingAmount at rest and 1.25 attacking (:87-88, :97-138); the jaw latch cos(ageInTicks * 2.0 * WINGSPEED) * PI * 0.15 with its 0.1-tick look-ahead (:143-144) on RenderInfo, re-rolled on the entity RNG; no multiple of the slowest group's period 20.26834 ticks up to the 6 s cap (120 ticks) brings every group back within 5 degrees of its start (k = 1: 157.50001 deg / 27.357002 units, k = 2: 71.638419 deg, k = 3: 157.50001 deg / 27.357002 units, k = 4: 27.362209 deg, k = 5: 157.50001 deg / 27.357002 units): a two-second window (40 ticks), not a loop - the sheet states the closing key's seam.
   - Bones that move in it: `bodys1`, `bodys2`, `bodys3`, `lfoot`, `lfoot2`, `lheel`, `ljaw1`, `ljaw2`, `ljaw3`, `lleg1`, `lleg2`, `ltoe2`, `rfoot`, `rfoot2`, `rheel`, `rjaw1`, `rjaw2`, `rjaw3`, `rleg1`, `rleg2`, `rtoe2`, `t1s1`, `t1s2`, `t1s3`, `t2s1`, `t2s2`, `t2s3`, `t3s1`, `t3s2`, `t4s1`, `t5s1`, `t6s1`, `tail1`, `tail2`, `tail3`, `tail4`, `tail5`, `tail6`, `tail7`; bones the code also MOVES (position keys): `t2s1`, `t2s2`, `t2s3`, `t3s1`, `t3s2`, `t4s1`, `t5s1`, `t6s1`, `tail2`, `tail3`, `tail4`, `tail5`, `tail6`, `tail7`.
   - Loop seam: the closing key differs from the first by at most 78.6789 degrees (mod 360).
-- `dungeon_beast_reference_idle.animation.json` (sha256 `0ef6365e049f8423c4d16819c60b8f9d6818ef8198b600758ecf6d555fbc667d`; clip `reference_idle`; a starting point for `idle`): one period of its slowest rhythm — 20.268 ticks (1.013 s): every moving bone is back within 5 degrees of its start there, so the last key closes the loop; 2 to 22 keys per bone chosen by the density search from 22 per-tick samples, Catmull-Rom; max error 0.99 degrees / 0 block against the samples (the tolerance 1 degree / 1/32 block).
+- `dungeon_beast_reference_idle.animation.json` (sha256 `cae310f41557829a989a5161bbc1ea3a950c62d71f3da2631b53441a831b4fe7`; clip `reference_idle`; a starting point for `idle`): one period of its slowest rhythm — 20.268 ticks (1.013 s): every moving bone is back within 5 degrees of its start there, so the last key closes the loop; 2 to 22 keys per bone chosen by the density search from 22 per-tick samples, Catmull-Rom; max error 0.99 degrees / 0 block against the samples (the tolerance 1 degree / 1/32 block).
   - Sampled from: `danger.orespawn.entity.client.DungeonBeastGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the unlanded hook of owner 2026-09-14, addendum item 10 - the classic setupAnim transcribed into the descriptor's PoseInputs form, proven when the rig lands - registry-free, on explicit PoseInputs, over the reference leg's converter output reference_dungeonbeast.geo.json baked without the face-order strictness the landing slice's TEST-007 adds)`.
   - Rule applied: wingspeed 0.62: the slowest rhythm is the fourteen phased spine segments cos(ageInTicks * 0.5 * WINGSPEED + n * pi/4) * PI * 0.07 (DungeonBeastGeoReplacement.applyCustomAnimations:73-86, every state) at 0.31 rad/tick, 20.27 ticks; the ten gait-scaled legs cos(ageInTicks * 1.4 * WINGSPEED) * PI * 0.22 * limbSwingAmount (:60, walk) at 0.868; the tail cos(ageInTicks * 0.75 * WINGSPEED) * PI * 0.25 * tailamp with tailamp = limbSwingAmount at rest and 1.25 attacking (:87-88, :97-138); the jaw latch cos(ageInTicks * 2.0 * WINGSPEED) * PI * 0.15 with its 0.1-tick look-ahead (:143-144) on RenderInfo, re-rolled on the entity RNG; closes at k = 1 (20.26834 ticks): every bone returns within 0 degrees of its start at k x T (the 5-degree test under the 6 s cap; k = 1: 0 deg).
   - Bones that move in it: `bodys1`, `bodys2`, `bodys3`, `ljaw1`, `ljaw2`, `ljaw3`, `ltoe2`, `rjaw1`, `rjaw2`, `rjaw3`, `rtoe2`, `t1s1`, `t1s2`, `t1s3`, `t2s1`, `t2s2`, `t2s3`, `t3s1`, `t3s2`, `t4s1`, `t5s1`, `t6s1`; bones the code also MOVES (position keys): `t2s1`, `t2s2`, `t2s3`, `t3s1`, `t3s2`, `t4s1`, `t5s1`, `t6s1`, `tail2`, `tail3`, `tail4`, `tail5`, `tail6`, `tail7`.
   - Loop seam: the closing key differs from the first by at most 0 degrees (mod 360).
-- `dungeon_beast_reference_attack.animation.json` (sha256 `0c013beb9f57f6e72a786670447bd7c9a9a9ed9435947b53e04e09b1500275f5`; clip `reference_attack`; a starting point for `aggro_idle`): 2 periods of its slowest rhythm (20.268 ticks each) — 40.537 ticks (2.027 s): the smallest multiple at which EVERY rhythm returns within 5 degrees of its start (the rule caps this search at 6 s), so the last key closes the loop; 2 to 42 keys per bone chosen by the density search from 42 per-tick samples, Catmull-Rom; max error 0.856 degrees / 0.0295 block against the samples (the tolerance 1 degree / 1/32 block).
+- `dungeon_beast_reference_attack.animation.json` (sha256 `2c1be59615b0ab98893f8acdb8953ace361ca84f76699c1fddcee582fa45d62a`; clip `reference_attack`; a starting point for `aggro_idle`): 2 periods of its slowest rhythm (20.268 ticks each) — 40.537 ticks (2.027 s): the smallest multiple at which EVERY rhythm returns within 5 degrees of its start (the rule caps this search at 6 s), so the last key closes the loop; 2 to 42 keys per bone chosen by the density search from 42 per-tick samples, Catmull-Rom; max error 0.856 degrees / 0.0295 block against the samples (the tolerance 1 degree / 1/32 block).
   - State: `getAttacking` answers 1, every other getter at rest (named by the contract (getAttacking 1)).
   - Sampled from: `danger.orespawn.entity.client.DungeonBeastGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the unlanded hook of owner 2026-09-14, addendum item 10 - the classic setupAnim transcribed into the descriptor's PoseInputs form, proven when the rig lands - registry-free, on explicit PoseInputs, over the reference leg's converter output reference_dungeonbeast.geo.json baked without the face-order strictness the landing slice's TEST-007 adds)`.
   - Rule applied: wingspeed 0.62: the slowest rhythm is the fourteen phased spine segments cos(ageInTicks * 0.5 * WINGSPEED + n * pi/4) * PI * 0.07 (DungeonBeastGeoReplacement.applyCustomAnimations:73-86, every state) at 0.31 rad/tick, 20.27 ticks; the ten gait-scaled legs cos(ageInTicks * 1.4 * WINGSPEED) * PI * 0.22 * limbSwingAmount (:60, walk) at 0.868; the tail cos(ageInTicks * 0.75 * WINGSPEED) * PI * 0.25 * tailamp with tailamp = limbSwingAmount at rest and 1.25 attacking (:87-88, :97-138); the jaw latch cos(ageInTicks * 2.0 * WINGSPEED) * PI * 0.15 with its 0.1-tick look-ahead (:143-144) on RenderInfo, re-rolled on the entity RNG; closes at k = 2 (40.536679 ticks): every bone returns within 0 degrees of its start at k x T (the 5-degree test under the 6 s cap; k = 1: 168.750014 deg / 31.945889 units, k = 2: 0 deg).

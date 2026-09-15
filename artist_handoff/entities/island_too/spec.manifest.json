@@ -40,39 +40,39 @@
           "rotation": null,
           "faces": {
             "west": [
+              16.0,
               8.0,
               8.0,
-              -8.0,
               8.0
             ],
             "east": [
-              24.0,
+              0.0,
               8.0,
-              -8.0,
+              8.0,
               8.0
             ],
             "north": [
-              16.0,
               8.0,
-              -8.0,
+              8.0,
+              8.0,
               8.0
             ],
             "south": [
-              32.0,
+              24.0,
               8.0,
-              -8.0,
+              8.0,
               8.0
             ],
             "up": [
-              16.0,
+              8.0,
               0.0,
-              -8.0,
+              8.0,
               8.0
             ],
             "down": [
-              24.0,
+              16.0,
               8.0,
-              -8.0,
+              8.0,
               -8.0
             ]
           }
@@ -89,8 +89,8 @@
       ],
       "rotation": [
         45.0000020972,
-        -45.0000020972,
-        -45.0000020972
+        45.0000020972,
+        45.0000020972
       ],
       "locked": false,
       "mirror": false,
@@ -111,39 +111,39 @@
           "rotation": null,
           "faces": {
             "west": [
-              40.0,
+              48.0,
               8.0,
-              -8.0,
+              8.0,
               8.0
             ],
             "east": [
-              56.0,
+              32.0,
               8.0,
-              -8.0,
+              8.0,
               8.0
             ],
             "north": [
-              48.0,
+              40.0,
               8.0,
-              -8.0,
+              8.0,
               8.0
             ],
             "south": [
-              64.0,
+              56.0,
               8.0,
-              -8.0,
+              8.0,
               8.0
             ],
             "up": [
-              48.0,
+              40.0,
               0.0,
-              -8.0,
+              8.0,
               8.0
             ],
             "down": [
-              56.0,
+              48.0,
               8.0,
-              -8.0,
+              8.0,
               -8.0
             ]
           }
@@ -160,8 +160,8 @@
       ],
       "rotation": [
         45.0000020972,
-        -45.0000020972,
-        -45.0000020972
+        45.0000020972,
+        45.0000020972
       ],
       "locked": false,
       "mirror": false,
@@ -182,39 +182,39 @@
           "rotation": null,
           "faces": {
             "west": [
-              40.0,
+              48.0,
               24.0,
-              -8.0,
+              8.0,
               8.0
             ],
             "east": [
-              56.0,
+              32.0,
               24.0,
-              -8.0,
+              8.0,
               8.0
             ],
             "north": [
-              48.0,
+              40.0,
               24.0,
-              -8.0,
+              8.0,
               8.0
             ],
             "south": [
-              64.0,
+              56.0,
               24.0,
-              -8.0,
+              8.0,
               8.0
             ],
             "up": [
-              48.0,
+              40.0,
               16.0,
-              -8.0,
+              8.0,
               8.0
             ],
             "down": [
-              56.0,
+              48.0,
               24.0,
-              -8.0,
+              8.0,
               -8.0
             ]
           }
@@ -245,7 +245,7 @@
     {
       "state": "walk",
       "file": "island_too_reference_walk.animation.json",
-      "sha256": "4ccc29b84bb2a38e4954a6fdc1131c8df7d9031fd63e7cc32c7f2e7ee6b551f2",
+      "sha256": "f4d27b6033ee22a696b40d2eaed857d5b3b7b936422362153daa4e6628cf261b",
       "clip": "reference_walk",
       "reference_only": true,
       "delivered_clip": "walk",
@@ -294,7 +294,7 @@
     {
       "state": "idle",
       "file": "island_too_reference_idle.animation.json",
-      "sha256": "e3e166378ed78aa2551c7dc94d9ee71513ea10905e3d540d8db49531592708e6",
+      "sha256": "a52dfe04c3da9ff6a27e4fe67597e5a333578d05e1d54d3f20ef145b374fbf3d",
       "clip": "reference_idle",
       "reference_only": true,
       "delivered_clip": "idle",
@@ -344,7 +344,7 @@
   "reference_clip": {
     "state": "walk",
     "file": "island_too_reference_walk.animation.json",
-    "sha256": "4ccc29b84bb2a38e4954a6fdc1131c8df7d9031fd63e7cc32c7f2e7ee6b551f2",
+    "sha256": "f4d27b6033ee22a696b40d2eaed857d5b3b7b936422362153daa4e6628cf261b",
     "clip": "reference_walk",
     "reference_only": true,
     "delivered_clip": "walk",

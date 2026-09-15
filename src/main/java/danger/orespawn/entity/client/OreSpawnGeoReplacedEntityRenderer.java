@@ -153,9 +153,16 @@ public abstract class OreSpawnGeoReplacedEntityRenderer<E extends Entity, A exte
         }
         this.descriptor.applyRotations(currentEntity(), poseStack, ageInTicks, partialTick);
         // The constant render transform (owner 2026-09-15, closing set continued, item 2; TEST-013): the classic
-        // renderToBuffer's whole-model rotation in its SLOT form - conjugated through the seam frame (the bake's Y flip and the classic lift; TEST-013), and lift,
-        // GeoReplacementDescriptor.RenderTransform - innermost here, as the classic applies it last before its parts.
+        // renderToBuffer's whole-model rotation in its SLOT form - conjugated through the seam frame F = M, vanilla's own
+        // scale(-1, -1, 1) and translate(0, -1.501, 0) (GeoReplacementDescriptor.RenderTransform, TEST-015) - innermost
+        // here, as the classic applies it last before its parts.
         this.descriptor.renderTransform().applySlot(poseStack);
+        // THE SEAM'S HEIGHT COMPENSATION (TEST-015 (2); owner 2026-09-15, closing set continued, second, item 35 (2)):
+        // the classic chain lifts its origin 1.501 blocks (LivingEntityRenderer.render 413-417); GeckoLib's chain lifts the
+        // bake's 1.5 datum by 0.01 (actuallyRender 722-727, after this method). With the converter in the Bedrock
+        // convention the baker's x negation is the classic's flip, and this translate closes the last 0.009 blocks, so
+        // the seam's chain after the slot equals M exactly and the two renderers draw every rig in the same place.
+        poseStack.translate(0.0F, GeoReplacementDescriptor.RenderTransform.SEAM_HEIGHT_COMPENSATION, 0.0F);
     }
 
     /**

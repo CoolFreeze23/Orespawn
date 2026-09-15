@@ -163,7 +163,7 @@ final class G1AnimationRuntime {
             float ageTicks = (float) state.getAnimationTick();
             float amount = state.getLimbSwingAmount();
             float gait = Mth.cos(ageTicks * 3.7F) * (float) Math.PI * 0.45F * amount;
-            // GeckoLib's internal rotation basis is [-javaX, javaY, -javaZ].
+            // GeckoLib's internal rotation basis is [-javaX, -javaY, javaZ] (TEST-015; X, the only axis written here, unchanged).
             setX("rff", -gait);
             setX("lrf", -gait);
             setX("lff", gait);

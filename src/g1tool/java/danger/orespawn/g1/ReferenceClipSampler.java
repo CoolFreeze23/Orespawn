@@ -112,19 +112,23 @@ import software.bernie.geckolib.loading.json.typeadapter.KeyFramesAdapter;
  * window's seam and a sawtooth channel's wrap are visible.</p>
  *
  * <p>THE SAMPLES AND THE KEYS: a rotation sample per bone per tick, DELTAS from the bone's bind under the converter's
- * sign rule (authored X = +classic degrees, Y and Z negated; the rule {@code tools/keyframe_clip.py} and
- * {@link KeyframeLeg} document): the bake's internal rotation is classic {@code (-x, y, -z)}
- * ({@code OreSpawnGeoReplacement}'s basis facts), so the classic delta is {@code (-(Ix - Bx), Iy - By, -(Iz - Bz))}
- * and the authored value {@code (+dCx, -dCy, -dCz)} - equivalently {@code (-dIx, -dIy, +dIz)} in internal terms, which
- * is exactly what GeckoLib 4.8.4 undoes at load (X and Y rotation keys negated, Z kept) before adding the key to the
- * bone's initial snapshot. A position sample per bone per tick where the hook writes positions ({@code moveTo}):
- * GeckoLib reads position keys unnegated and sets them absolutely, and a fresh bake's offsets are 0, so the authored
- * value is the internal offset itself - {@code (-dx, -dy, +dz)} of the classic pivot move {@code (dx, dy, dz)}, the
- * numbers {@code moveTo} writes. Values rounded to 1e-10 (degrees / model units), never {@code -0.0}. THE WALK PIN
- * (item 32 (3)): the dense per-tick samples of every walk state, after this rounding, equal number for number the keys
- * of the walk clips checked in at {@code fc5e23c} (whose keys were the samples at every whole tick plus the closing
- * key); {@code --dump-samples <dir>} writes them as JSON ({@code <registry>_samples_<state>.json}, never shipped) for
- * that proof. THE KEYS (item 32 (6)) are chosen from the samples by the density search the exact transcriptions use
+ * sign rule (authored X, Y and Z = +classic degrees since TEST-015, owner 2026-09-15; the rule
+ * {@code tools/keyframe_clip.py} and {@link KeyframeLeg} document): the bake's internal rotation is classic
+ * {@code (-x, -y, z)} ({@code OreSpawnGeoReplacement}'s basis facts: internal space is classic space reflected in x and
+ * y), so the classic delta is {@code (-(Ix - Bx), -(Iy - By), Iz - Bz)} and the authored value {@code (+dCx, +dCy, +dCz)}
+ * - equivalently {@code (-dIx, -dIy, +dIz)} in internal terms, which is exactly what GeckoLib 4.8.4 undoes at load (X
+ * and Y rotation keys negated, Z kept) before adding the key to the bone's initial snapshot. (Before TEST-015 the rule
+ * was {@code (+dCx, -dCy, -dCz)} over an internal basis reflected in y alone; the internal form of a key is the same,
+ * the hooks' internal Y and Z writes changed sense with the frame, so the Y and Z keys of every clip and the X keys of
+ * every position channel changed sign - the walk identity against the clips of {@code fc5e23c} no longer holds by
+ * design.) A position sample per bone per tick where the hook writes positions ({@code moveTo}): GeckoLib reads
+ * position keys unnegated and sets them absolutely, and a fresh bake's offsets are 0, so the authored value is the
+ * internal offset itself - {@code (+dx, -dy, +dz)} of the classic pivot move {@code (dx, dy, dz)}, the numbers
+ * {@code moveTo} writes. Values rounded to 1e-10 (degrees / model units), never {@code -0.0}. THE WALK PIN (item 32
+ * (3)): the dense per-tick samples of every walk state, after this rounding, equal number for number the keys of the
+ * walk clips checked in at {@code fc5e23c} up to the frame's sign change (whose keys were the samples at every whole
+ * tick plus the closing key); {@code --dump-samples <dir>} writes them as JSON ({@code <registry>_samples_<state>.json},
+ * never shipped) for that proof. THE KEYS (item 32 (6)) are chosen from the samples by the density search the exact transcriptions use
  * ({@link ReferenceClipKeying}: catmullrom, the fewest keys per bone and channel within 1 degree of rotation and 1/32
  * block of position of the samples, the closing key always kept) and written with {@code lerp_mode} catmullrom; the
  * index records per clip the key counts, the sample count, the tolerance and the measured maximum error. Two-space
@@ -1276,10 +1280,10 @@ public final class ReferenceClipSampler {
                 + " degree of rotation and 1/32 block (" + ReferenceClipKeying.POSITION_TOLERANCE_UNITS + " model units) of position; lerp_mode "
                 + ReferenceClipKeying.LERP_MODE + " (owner 2026-09-14, second set revised, item 32 (6))");
         root.addProperty("rotation_rule", "a rotation sample per bone per tick as the DELTA from the bone's bind under the converter's "
-                + "sign rule: authored X = +classic degrees, Y and Z negated (tools/keyframe_clip.py; KeyframeLeg); rounded to 1e-10 "
-                + "degrees, never -0.0; the keys the density search keeps, lerp_mode catmullrom");
+                + "sign rule: authored X, Y and Z = +classic degrees (tools/keyframe_clip.py; KeyframeLeg; TEST-015, the Bedrock convention); "
+                + "rounded to 1e-10 degrees, never -0.0; the keys the density search keeps, lerp_mode catmullrom");
         root.addProperty("position_rule", "a position sample per bone per tick where the hook writes positions (OreSpawnGeoReplacement.moveTo): "
-                + "the internal offset the hook wrote, (-dx, -dy, +dz) of the classic pivot move (dx, dy, dz) in model units - GeckoLib reads "
+                + "the internal offset the hook wrote, (+dx, -dy, +dz) of the classic pivot move (dx, dy, dz) in model units - GeckoLib reads "
                 + "position keys unnegated and sets them absolutely over a fresh bake's zero offsets; the keys the density search keeps");
         root.addProperty("hooks_sampled_from_reference_manifest", hooksSampled);
         root.add("reference_entries_skipped", names(skipped));
@@ -1822,11 +1826,11 @@ public final class ReferenceClipSampler {
             String name = boneEntry.getKey();
             GeoBone bone = boneEntry.getValue();
             float[] bindRotation = bindRotations.get(name);
-            // classic = (-Ix, Iy, -Iz); the classic delta from bind; authored = (+dCx, -dCy, -dCz).
+            // classic = (-Ix, -Iy, Iz) (TEST-015); the classic delta from bind; authored = (+dCx, +dCy, +dCz).
             double dCx = -(double) bone.getRotX() + (double) bindRotation[0];
-            double dCy = (double) bone.getRotY() - (double) bindRotation[1];
-            double dCz = -(double) bone.getRotZ() + (double) bindRotation[2];
-            rotation.put(name, new double[]{round(Math.toDegrees(dCx)), round(-Math.toDegrees(dCy)), round(-Math.toDegrees(dCz))});
+            double dCy = -(double) bone.getRotY() + (double) bindRotation[1];
+            double dCz = (double) bone.getRotZ() - (double) bindRotation[2];
+            rotation.put(name, new double[]{round(Math.toDegrees(dCx)), round(Math.toDegrees(dCy)), round(Math.toDegrees(dCz))});
             float[] bindPosition = bindPositions.get(name);
             position.put(name, new double[]{
                     round((double) bone.getPosX() - (double) bindPosition[0]),

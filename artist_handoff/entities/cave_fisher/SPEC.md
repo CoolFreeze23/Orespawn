@@ -18,78 +18,78 @@ A cave crab-spider: a low two-block body with four ridged plates down each side 
 
 ## 3. Bone glossary (locked legacy names — readable labels beside them)
 
-Never rename, delete or re-parent a bone: code and hitboxes reference them by name. Left/right in the labels follow the model author's own naming (the side the legacy name calls left); Blockbench mirrors X for display, so the author's left appears on your right when the mob faces you. `gait bone` = its motion is scaled by walking speed in-game (P3). `locked` = it carries or parents a hitbox part (contract §8.1). Keying a locked bone is allowed; the checker warns, and the hitbox part follows the bone in-game (the consequence, so keep such keys deliberate). Renaming, re-parenting or deleting a locked bone is refused.
+Never rename, delete or re-parent a bone: code and hitboxes reference them by name. Left/right in the labels follow the model author's own naming (the side the legacy name calls left); the rig opens in Blockbench exactly as the game draws it, so a bone the author calls left is on the creature's own left. `gait bone` = its motion is scaled by walking speed in-game (P3). `locked` = it carries or parents a hitbox part (contract §8.1). Keying a locked bone is allowed; the checker warns, and the hitbox part follows the bone in-game (the consequence, so keep such keys deliberate). Renaming, re-parenting or deleting a locked bone is refused.
 
 | bone | readable label | classic part | parent | pivot (x, y, z) | group | gait bone | locked | cubes |
 |---|---|---|---|---|---|---|---|---|
-| `BodyLow1` | body, lower front block | (native rig: no classic part) | - | (4, 5.3, -4) | - | no | no | 1 |
-| `BodyLow2` | body, lower rear block | (native rig: no classic part) | - | (4, 5.7, 3) | - | no | no | 1 |
+| `BodyLow1` | body, lower front block | (native rig: no classic part) | - | (-4, 5.3, -4) | - | no | no | 1 |
+| `BodyLow2` | body, lower rear block | (native rig: no classic part) | - | (-4, 5.7, 3) | - | no | no | 1 |
 | `BodyTopLeft1` | body plate, left 1 (front) | (native rig: no classic part) | - | (0, 8, -4) | - | no | no | 1 |
 | `BodyTopLeft2` | body plate, left 2 | (native rig: no classic part) | - | (0, 8, -1) | - | no | no | 1 |
 | `BodyTopLeft3` | body plate, left 3 | (native rig: no classic part) | - | (0, 8, 3) | - | no | no | 1 |
 | `BodyTopLeft4` | body plate, left 4 (rear) | (native rig: no classic part) | - | (0, 7.8, 7) | - | no | no | 1 |
 | `BodyTopRight1` | body plate, right 1 (front) | (native rig: no classic part) | - | (0, 8, -4) | - | no | no | 1 |
-| `BodyTopRight2` | body plate, right 2 | (native rig: no classic part) | - | (1, 8, -1) | - | no | no | 1 |
-| `BodyTopRight3` | body plate, right 3 | (native rig: no classic part) | - | (1, 8, 3) | - | no | no | 1 |
-| `BodyTopRight4` | body plate, right 4 (rear) | (native rig: no classic part) | - | (1, 7.8, 7) | - | no | no | 1 |
+| `BodyTopRight2` | body plate, right 2 | (native rig: no classic part) | - | (-1, 8, -1) | - | no | no | 1 |
+| `BodyTopRight3` | body plate, right 3 | (native rig: no classic part) | - | (-1, 8, 3) | - | no | no | 1 |
+| `BodyTopRight4` | body plate, right 4 (rear) | (native rig: no classic part) | - | (-1, 7.8, 7) | - | no | no | 1 |
 | `EyeLeft` | left eye | (native rig: no classic part) | - | (0, 5, -4) | - | no | no | 1 |
 | `EyeRight` | right eye | (native rig: no classic part) | - | (0, 5, -4) | - | no | no | 1 |
 | `HeadBase` | head, base piece | (native rig: no classic part) | - | (0, 5, -4) | - | no | no | 1 |
 | `HeadEnd` | head, end piece | (native rig: no classic part) | - | (0, 5, -4) | - | no | no | 1 |
 | `HeadMid` | head, middle piece | (native rig: no classic part) | - | (0, 5, -4) | - | no | no | 1 |
-| `LBLeg1` | left back leg, segment 1 (hip) | (native rig: no classic part) | - | (-5, 6, 8.5) | gait | yes | no | 1 |
-| `LBLeg2` | left back leg, segment 2 | (native rig: no classic part) | - | (-5, 6, 8.5) | gait | yes | no | 1 |
-| `LBLeg3` | left back leg, segment 3 | (native rig: no classic part) | - | (-5, 6, 8.5) | gait | yes | no | 1 |
-| `LBLeg4` | left back leg, segment 4 | (native rig: no classic part) | - | (-5, 6, 8.5) | gait | yes | no | 1 |
-| `LBLeg5` | left back leg, segment 5 | (native rig: no classic part) | - | (-5, 6, 8.5) | gait | yes | no | 1 |
-| `LBLeg6` | left back leg, segment 6 (foot) | (native rig: no classic part) | - | (-5, 6, 8.5) | gait | yes | no | 1 |
-| `LFLeg1` | left front leg, segment 1 (hip, 25 deg) | (native rig: no classic part) | - | (-5, 6, 0.5) | gait | yes | no | 1 |
-| `LFLeg2` | left front leg, segment 2 (55 deg) | (native rig: no classic part) | - | (-5, 6, 0.5) | gait | yes | no | 1 |
-| `LFLeg3` | left front leg, segment 3 (33 deg) | (native rig: no classic part) | - | (-5, 6, 0.5) | gait | yes | no | 1 |
-| `LFLeg4` | left front leg, segment 4 (12 deg) | (native rig: no classic part) | - | (-5, 6, 0.5) | gait | yes | no | 1 |
-| `LFLeg5` | left front leg, segment 5 (6 deg) | (native rig: no classic part) | - | (-5, 6, 0.5) | gait | yes | no | 1 |
-| `LFLeg6` | left front leg, segment 6 (foot) | (native rig: no classic part) | - | (-5, 6, 0.5) | gait | yes | no | 1 |
-| `LMLeg1` | left middle leg, segment 1 (hip) | (native rig: no classic part) | - | (-5, 6, 4.5) | gait | yes | no | 1 |
-| `LMLeg2` | left middle leg, segment 2 | (native rig: no classic part) | - | (-5, 6, 4.5) | gait | yes | no | 1 |
-| `LMLeg3` | left middle leg, segment 3 | (native rig: no classic part) | - | (-5, 6, 4.5) | gait | yes | no | 1 |
-| `LMLeg4` | left middle leg, segment 4 | (native rig: no classic part) | - | (-5, 6, 4.5) | gait | yes | no | 1 |
-| `LMLeg5` | left middle leg, segment 5 | (native rig: no classic part) | - | (-5, 6, 4.5) | gait | yes | no | 1 |
-| `LMLeg6` | left middle leg, segment 6 (foot) | (native rig: no classic part) | - | (-5, 6, 4.5) | gait | yes | no | 1 |
-| `LeftArmSeg1` | left arm, segment 1 (shoulder, splayed 30 deg) | (native rig: no classic part) | - | (-4.7, 6.5, -3) | claws | no | no | 1 |
-| `LeftArmSeg2` | left arm, segment 2 | (native rig: no classic part) | - | (-4.7, 6.5, -3) | claws | no | no | 1 |
-| `LeftArmSeg3` | left arm, segment 3 | (native rig: no classic part) | - | (-4.7, 6.5, -3) | claws | no | no | 1 |
-| `LeftArmSeg4` | left arm, segment 4 | (native rig: no classic part) | - | (-4.7, 6.5, -3) | claws | no | no | 1 |
-| `LeftArmSeg5` | left arm, segment 5 | (native rig: no classic part) | - | (-4.7, 6.5, -3) | claws | no | no | 1 |
-| `LeftClawBase` | left claw, base | (native rig: no classic part) | - | (-4.7, 6.5, -3) | claws | no | no | 1 |
-| `LeftClawLow` | left claw, lower pincer (rest +0.35 rad) | (native rig: no classic part) | - | (-4.7, 6.5, -3) | claws | no | no | 1 |
-| `LeftClawTop` | left claw, upper pincer (rest -0.54 rad) | (native rig: no classic part) | - | (-4.7, 6.5, -3) | claws | no | no | 1 |
+| `LBLeg1` | left back leg, segment 1 (hip) | (native rig: no classic part) | - | (5, 6, 8.5) | gait | yes | no | 1 |
+| `LBLeg2` | left back leg, segment 2 | (native rig: no classic part) | - | (5, 6, 8.5) | gait | yes | no | 1 |
+| `LBLeg3` | left back leg, segment 3 | (native rig: no classic part) | - | (5, 6, 8.5) | gait | yes | no | 1 |
+| `LBLeg4` | left back leg, segment 4 | (native rig: no classic part) | - | (5, 6, 8.5) | gait | yes | no | 1 |
+| `LBLeg5` | left back leg, segment 5 | (native rig: no classic part) | - | (5, 6, 8.5) | gait | yes | no | 1 |
+| `LBLeg6` | left back leg, segment 6 (foot) | (native rig: no classic part) | - | (5, 6, 8.5) | gait | yes | no | 1 |
+| `LFLeg1` | left front leg, segment 1 (hip, 25 deg) | (native rig: no classic part) | - | (5, 6, 0.5) | gait | yes | no | 1 |
+| `LFLeg2` | left front leg, segment 2 (55 deg) | (native rig: no classic part) | - | (5, 6, 0.5) | gait | yes | no | 1 |
+| `LFLeg3` | left front leg, segment 3 (33 deg) | (native rig: no classic part) | - | (5, 6, 0.5) | gait | yes | no | 1 |
+| `LFLeg4` | left front leg, segment 4 (12 deg) | (native rig: no classic part) | - | (5, 6, 0.5) | gait | yes | no | 1 |
+| `LFLeg5` | left front leg, segment 5 (6 deg) | (native rig: no classic part) | - | (5, 6, 0.5) | gait | yes | no | 1 |
+| `LFLeg6` | left front leg, segment 6 (foot) | (native rig: no classic part) | - | (5, 6, 0.5) | gait | yes | no | 1 |
+| `LMLeg1` | left middle leg, segment 1 (hip) | (native rig: no classic part) | - | (5, 6, 4.5) | gait | yes | no | 1 |
+| `LMLeg2` | left middle leg, segment 2 | (native rig: no classic part) | - | (5, 6, 4.5) | gait | yes | no | 1 |
+| `LMLeg3` | left middle leg, segment 3 | (native rig: no classic part) | - | (5, 6, 4.5) | gait | yes | no | 1 |
+| `LMLeg4` | left middle leg, segment 4 | (native rig: no classic part) | - | (5, 6, 4.5) | gait | yes | no | 1 |
+| `LMLeg5` | left middle leg, segment 5 | (native rig: no classic part) | - | (5, 6, 4.5) | gait | yes | no | 1 |
+| `LMLeg6` | left middle leg, segment 6 (foot) | (native rig: no classic part) | - | (5, 6, 4.5) | gait | yes | no | 1 |
+| `LeftArmSeg1` | left arm, segment 1 (shoulder, splayed 30 deg) | (native rig: no classic part) | - | (4.7, 6.5, -3) | claws | no | no | 1 |
+| `LeftArmSeg2` | left arm, segment 2 | (native rig: no classic part) | - | (4.7, 6.5, -3) | claws | no | no | 1 |
+| `LeftArmSeg3` | left arm, segment 3 | (native rig: no classic part) | - | (4.7, 6.5, -3) | claws | no | no | 1 |
+| `LeftArmSeg4` | left arm, segment 4 | (native rig: no classic part) | - | (4.7, 6.5, -3) | claws | no | no | 1 |
+| `LeftArmSeg5` | left arm, segment 5 | (native rig: no classic part) | - | (4.7, 6.5, -3) | claws | no | no | 1 |
+| `LeftClawBase` | left claw, base | (native rig: no classic part) | - | (4.7, 6.5, -3) | claws | no | no | 1 |
+| `LeftClawLow` | left claw, lower pincer (rest +0.35 rad) | (native rig: no classic part) | - | (4.7, 6.5, -3) | claws | no | no | 1 |
+| `LeftClawTop` | left claw, upper pincer (rest -0.54 rad) | (native rig: no classic part) | - | (4.7, 6.5, -3) | claws | no | no | 1 |
 | `Nose` | nose | (native rig: no classic part) | - | (0, 5, -4) | - | no | no | 1 |
-| `RBLeg1` | right back leg, segment 1 (hip) | (native rig: no classic part) | - | (5, 6, 8.5) | gait | yes | no | 1 |
-| `RBLeg2` | right back leg, segment 2 | (native rig: no classic part) | - | (5, 6, 8.5) | gait | yes | no | 1 |
-| `RBLeg3` | right back leg, segment 3 | (native rig: no classic part) | - | (5, 6, 8.5) | gait | yes | no | 1 |
-| `RBLeg4` | right back leg, segment 4 | (native rig: no classic part) | - | (5, 6, 8.5) | gait | yes | no | 1 |
-| `RBLeg5` | right back leg, segment 5 | (native rig: no classic part) | - | (5, 6, 8.5) | gait | yes | no | 1 |
-| `RBLeg6` | right back leg, segment 6 (foot) | (native rig: no classic part) | - | (5, 6, 8.5) | gait | yes | no | 1 |
-| `RFLeg1` | right front leg, segment 1 (hip) | (native rig: no classic part) | - | (5, 6, 0.5) | gait | yes | no | 1 |
-| `RFLeg2` | right front leg, segment 2 | (native rig: no classic part) | - | (5, 6, 0.5) | gait | yes | no | 1 |
-| `RFLeg3` | right front leg, segment 3 | (native rig: no classic part) | - | (5, 6, 0.5) | gait | yes | no | 1 |
-| `RFLeg4` | right front leg, segment 4 | (native rig: no classic part) | - | (5, 6, 0.5) | gait | yes | no | 1 |
-| `RFLeg5` | right front leg, segment 5 | (native rig: no classic part) | - | (5, 6, 0.5) | gait | yes | no | 1 |
-| `RFLeg6` | right front leg, segment 6 (foot) | (native rig: no classic part) | - | (5, 6, 0.5) | gait | yes | no | 1 |
-| `RMLeg1` | right middle leg, segment 1 (hip) | (native rig: no classic part) | - | (5, 6, 4.5) | gait | yes | no | 1 |
-| `RMLeg2` | right middle leg, segment 2 | (native rig: no classic part) | - | (5, 6, 4.5) | gait | yes | no | 1 |
-| `RMLeg3` | right middle leg, segment 3 | (native rig: no classic part) | - | (5, 6, 4.5) | gait | yes | no | 1 |
-| `RMLeg4` | right middle leg, segment 4 | (native rig: no classic part) | - | (5, 6, 4.5) | gait | yes | no | 1 |
-| `RMLeg5` | right middle leg, segment 5 | (native rig: no classic part) | - | (5, 6, 4.5) | gait | yes | no | 1 |
-| `RMLeg6` | right middle leg, segment 6 (foot) | (native rig: no classic part) | - | (5, 6, 4.5) | gait | yes | no | 1 |
-| `RightArmSeg1` | right arm, segment 1 (shoulder, splayed -30 deg) | (native rig: no classic part) | - | (4.7, 6.5, -3) | claws | no | no | 1 |
-| `RightArmSeg2` | right arm, segment 2 | (native rig: no classic part) | - | (4.7, 6.5, -3) | claws | no | no | 1 |
-| `RightArmSeg3` | right arm, segment 3 | (native rig: no classic part) | - | (4.7, 6.5, -3) | claws | no | no | 1 |
-| `RightArmSeg4` | right arm, segment 4 | (native rig: no classic part) | - | (4.7, 6.5, -3) | claws | no | no | 1 |
-| `RightArmSeg5` | right arm, segment 5 | (native rig: no classic part) | - | (4.7, 6.5, -3) | claws | no | no | 1 |
-| `RightClawBase` | right claw, base | (native rig: no classic part) | - | (4.7, 6.5, -3) | claws | no | no | 1 |
-| `RightClawLow` | right claw, lower pincer (rest +0.35 rad) | (native rig: no classic part) | - | (4.7, 6.5, -3) | claws | no | no | 1 |
-| `RightClawTop` | right claw, upper pincer (rest -0.54 rad) | (native rig: no classic part) | - | (4.7, 6.5, -3) | claws | no | no | 1 |
+| `RBLeg1` | right back leg, segment 1 (hip) | (native rig: no classic part) | - | (-5, 6, 8.5) | gait | yes | no | 1 |
+| `RBLeg2` | right back leg, segment 2 | (native rig: no classic part) | - | (-5, 6, 8.5) | gait | yes | no | 1 |
+| `RBLeg3` | right back leg, segment 3 | (native rig: no classic part) | - | (-5, 6, 8.5) | gait | yes | no | 1 |
+| `RBLeg4` | right back leg, segment 4 | (native rig: no classic part) | - | (-5, 6, 8.5) | gait | yes | no | 1 |
+| `RBLeg5` | right back leg, segment 5 | (native rig: no classic part) | - | (-5, 6, 8.5) | gait | yes | no | 1 |
+| `RBLeg6` | right back leg, segment 6 (foot) | (native rig: no classic part) | - | (-5, 6, 8.5) | gait | yes | no | 1 |
+| `RFLeg1` | right front leg, segment 1 (hip) | (native rig: no classic part) | - | (-5, 6, 0.5) | gait | yes | no | 1 |
+| `RFLeg2` | right front leg, segment 2 | (native rig: no classic part) | - | (-5, 6, 0.5) | gait | yes | no | 1 |
+| `RFLeg3` | right front leg, segment 3 | (native rig: no classic part) | - | (-5, 6, 0.5) | gait | yes | no | 1 |
+| `RFLeg4` | right front leg, segment 4 | (native rig: no classic part) | - | (-5, 6, 0.5) | gait | yes | no | 1 |
+| `RFLeg5` | right front leg, segment 5 | (native rig: no classic part) | - | (-5, 6, 0.5) | gait | yes | no | 1 |
+| `RFLeg6` | right front leg, segment 6 (foot) | (native rig: no classic part) | - | (-5, 6, 0.5) | gait | yes | no | 1 |
+| `RMLeg1` | right middle leg, segment 1 (hip) | (native rig: no classic part) | - | (-5, 6, 4.5) | gait | yes | no | 1 |
+| `RMLeg2` | right middle leg, segment 2 | (native rig: no classic part) | - | (-5, 6, 4.5) | gait | yes | no | 1 |
+| `RMLeg3` | right middle leg, segment 3 | (native rig: no classic part) | - | (-5, 6, 4.5) | gait | yes | no | 1 |
+| `RMLeg4` | right middle leg, segment 4 | (native rig: no classic part) | - | (-5, 6, 4.5) | gait | yes | no | 1 |
+| `RMLeg5` | right middle leg, segment 5 | (native rig: no classic part) | - | (-5, 6, 4.5) | gait | yes | no | 1 |
+| `RMLeg6` | right middle leg, segment 6 (foot) | (native rig: no classic part) | - | (-5, 6, 4.5) | gait | yes | no | 1 |
+| `RightArmSeg1` | right arm, segment 1 (shoulder, splayed -30 deg) | (native rig: no classic part) | - | (-4.7, 6.5, -3) | claws | no | no | 1 |
+| `RightArmSeg2` | right arm, segment 2 | (native rig: no classic part) | - | (-4.7, 6.5, -3) | claws | no | no | 1 |
+| `RightArmSeg3` | right arm, segment 3 | (native rig: no classic part) | - | (-4.7, 6.5, -3) | claws | no | no | 1 |
+| `RightArmSeg4` | right arm, segment 4 | (native rig: no classic part) | - | (-4.7, 6.5, -3) | claws | no | no | 1 |
+| `RightArmSeg5` | right arm, segment 5 | (native rig: no classic part) | - | (-4.7, 6.5, -3) | claws | no | no | 1 |
+| `RightClawBase` | right claw, base | (native rig: no classic part) | - | (-4.7, 6.5, -3) | claws | no | no | 1 |
+| `RightClawLow` | right claw, lower pincer (rest +0.35 rad) | (native rig: no classic part) | - | (-4.7, 6.5, -3) | claws | no | no | 1 |
+| `RightClawTop` | right claw, upper pincer (rest -0.54 rad) | (native rig: no classic part) | - | (-4.7, 6.5, -3) | claws | no | no | 1 |
 | `Spine1` | back spine 1 (front) | (native rig: no classic part) | - | (0, 8, -4.2) | - | no | no | 1 |
 | `Spine2` | back spine 2 | (native rig: no classic part) | - | (0, 8, -1.2) | - | no | no | 1 |
 | `Spine3` | back spine 3 | (native rig: no classic part) | - | (0, 8, 1.8) | - | no | no | 1 |
@@ -127,11 +127,11 @@ Author every loop at 1.0 s (README rule 5, the phase-locked kind; ruled 2026-09-
 
 ### 4.3 Reference clips (reference-only)
 
-`cave_fisher_reference_walk.animation.json`, `cave_fisher_reference_idle.animation.json` (beside this sheet, and embedded in `cave_fisher.bbmodel`'s Animation tab) are NOT clips to return or ship under their own names. Each is the creature's classic code — the motion the game draws today — SAMPLED by the harness at fixed inputs so you can see that motion beside the rig in Blockbench. The `.bbmodel` opens with every clip listed (the shipped clips and these); the files beside the sheet are the PINNED SOURCE (their bytes are what the checker knows; the generator's round trip proves the embedded copies within 5e-5 s on key times and 1e-6 on values). If you rebuild the `.bbmodel` and they are gone, Animation → Import Animations... on the files brings them back. One clip per state the code reads, each value alone: `_reference_walk` — full walking speed (limbSwingAmount 1, the walk position and the age advancing one tick per key), not attacking, looking straight ahead, every state flag at rest, full health; `_reference_idle` — standing still (limbSwingAmount 0, the walk position 0; the age advancing one tick per key), not attacking, looking straight ahead, every state flag at rest, full health; no `_reference_attack` — the code reads an attack, but attacking alone moves nothing at rest: getAttacking() is read only inside the claw-snap latch's re-roll, if (nextangle > 0 && newangle < 0) on cos(ageInTicks * 3.0 * WINGSPEED) with its 0.1-tick look-ahead (CaveFisherGeoReplacement.java:100-110): the read happens only when a rising zero crossing of that 1.86 rad/tick rhythm falls within 0.1 tick after a whole-tick sample, which no sampled tick does, so ri1 stays 0, the claws hold their rest and attacking alone moves nothing. Keys: the classic code is sampled once per tick, and the samples are reduced by the density search the exact transcriptions use — the fewest Catmull-Rom keys per bone and channel whose curve stays within 1 degree of rotation and 1/32 block of position of every sample, the closing key always kept — so each clip carries as few keys as that tolerance allows (each entry below states its key counts and the measured maximum error). Rotations are deltas from the bind pose under the same sign rule as the shipped clips (X as the classic degrees, Y and Z negated), positions only where the code moves a bone.
+`cave_fisher_reference_walk.animation.json`, `cave_fisher_reference_idle.animation.json` (beside this sheet, and embedded in `cave_fisher.bbmodel`'s Animation tab) are NOT clips to return or ship under their own names. Each is the creature's classic code — the motion the game draws today — SAMPLED by the harness at fixed inputs so you can see that motion beside the rig in Blockbench. The `.bbmodel` opens with every clip listed (the shipped clips and these); the files beside the sheet are the PINNED SOURCE (their bytes are what the checker knows; the generator's round trip proves the embedded copies within 5e-5 s on key times and 1e-6 on values). If you rebuild the `.bbmodel` and they are gone, Animation → Import Animations... on the files brings them back. One clip per state the code reads, each value alone: `_reference_walk` — full walking speed (limbSwingAmount 1, the walk position and the age advancing one tick per key), not attacking, looking straight ahead, every state flag at rest, full health; `_reference_idle` — standing still (limbSwingAmount 0, the walk position 0; the age advancing one tick per key), not attacking, looking straight ahead, every state flag at rest, full health; no `_reference_attack` — the code reads an attack, but attacking alone moves nothing at rest: getAttacking() is read only inside the claw-snap latch's re-roll, if (nextangle > 0 && newangle < 0) on cos(ageInTicks * 3.0 * WINGSPEED) with its 0.1-tick look-ahead (CaveFisherGeoReplacement.java:100-110): the read happens only when a rising zero crossing of that 1.86 rad/tick rhythm falls within 0.1 tick after a whole-tick sample, which no sampled tick does, so ri1 stays 0, the claws hold their rest and attacking alone moves nothing. Keys: the classic code is sampled once per tick, and the samples are reduced by the density search the exact transcriptions use — the fewest Catmull-Rom keys per bone and channel whose curve stays within 1 degree of rotation and 1/32 block of position of every sample, the closing key always kept — so each clip carries as few keys as that tolerance allows (each entry below states its key counts and the measured maximum error). Rotations are deltas from the bind pose under the same sign rule as the shipped clips (X, Y and Z as the classic degrees: the rig is in the Bedrock convention), positions only where the code moves a bone.
 
 **Starting point (owner 2026-09-14, addendum item 13; extended by the second set revised, item 4):** a reference clip's KEYS may be the starting point of the delivered clip its state corresponds to — copy them into `walk` (from `_reference_walk`), `idle` (from `_reference_idle`), `aggro_idle` (from `_reference_attack`), `fly` (from `_reference_fly`) or `swim` (from `_reference_swim`) and improve from there; a delivered clip carrying those keys is a valid delivery (no rule compares them). A state with no contract clip (sit, sleep, display, ...) is OFFERED as an extra of this creature's own under §2.3 — §5 lists it as "offered from reference_<state>" beside the seed's extras, and a delivered clip under that name carrying the reference keys is a valid delivery. Only the reference file itself coming back under its own name is refused.
 
-- `cave_fisher_reference_walk.animation.json` (sha256 `ac64cc0c25043477f0adaff9e9c8c1af1f0500a94fc27177386cb2ac8b24ca9a`; clip `reference_walk`; a starting point for `walk`): one period of its slowest rhythm — 5.067 ticks (0.253 s): every moving bone is back within 5 degrees of its start there, so the last key closes the loop; 2 to 7 keys per bone chosen by the density search from 7 per-tick samples, Catmull-Rom; max error 0 degrees against the samples (the tolerance 1 degree / 1/32 block).
+- `cave_fisher_reference_walk.animation.json` (sha256 `6ed428e5790528ad028db0c33951ae0c0cc4943382631bd062ee2eb9184bf4dc`; clip `reference_walk`; a starting point for `walk`): one period of its slowest rhythm — 5.067 ticks (0.253 s): every moving bone is back within 5 degrees of its start there, so the last key closes the loop; 2 to 7 keys per bone chosen by the density search from 7 per-tick samples, Catmull-Rom; max error 0 degrees against the samples (the tolerance 1 degree / 1/32 block).
   - Sampled from: `danger.orespawn.entity.client.CaveFisherGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the shipped replacement, registry-free, on explicit PoseInputs)`.
   - Rule applied: wingspeed 0.62: the thirty-six gait-scaled legs in three phases cos(ageInTicks * 2.0 * WINGSPEED - n * pi/4) * PI * 0.12 * limbSwingAmount (CaveFisherGeoReplacement.applyCustomAnimations:59, 72, 85; walk) at 1.24 rad/tick, 5.07 ticks - the slowest; the claw snap cos(ageInTicks * 3.0 * WINGSPEED) * PI * 0.15 with its 0.1-tick look-ahead (:100-101) latched on RenderInfo and re-rolled on the entity RNG by the attacking flag (the Robot2 precedent), folded through Math.abs on the arm segments (:123-142); closes at k = 1 (5.067085 ticks): every bone returns within 0 degrees of its start at k x T (the 5-degree test under the 6 s cap; k = 1: 0 deg).
   - Bones that move in it: `LBLeg1`, `LBLeg2`, `LBLeg3`, `LBLeg4`, `LBLeg5`, `LBLeg6`, `LFLeg1`, `LFLeg2`, `LFLeg3`, `LFLeg4`, `LFLeg5`, `LFLeg6`, `LMLeg1`, `LMLeg2`, `LMLeg3`, `LMLeg4`, `LMLeg5`, `LMLeg6`, `LeftClawLow`, `LeftClawTop`, `RBLeg1`, `RBLeg2`, `RBLeg3`, `RBLeg4`, `RBLeg5`, `RBLeg6`, `RFLeg1`, `RFLeg2`, `RFLeg3`, `RFLeg4`, `RFLeg5`, `RFLeg6`, `RMLeg1`, `RMLeg2`, `RMLeg3`, `RMLeg4`, `RMLeg5`, `RMLeg6`, `RightClawLow`, `RightClawTop`.

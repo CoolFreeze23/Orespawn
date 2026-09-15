@@ -132,6 +132,95 @@ class PairContestedRule(unittest.TestCase):
         self.assertEqual((row["changed_fraction"], row["pair_contested_fraction"], row["mean_absolute_error"]), (0.0, 0.0, 0.0))
 
 
+class EntityFrame(unittest.TestCase):
+    """TEST-015 (owner 2026-09-15, closing set continued, second, item 35): the converter's Bedrock convention, the sign
+    rule, the face labels and islands re-derived for the entity frame, the parity tool's frame helpers, the camera's view
+    through the classic flip, and the one thing the old frame could never show - a seam rig drawn as the classic's mirror
+    failing the visual leg."""
+
+    def test_converter_writes_the_bedrock_convention(self) -> None:
+        cube = {"origin": [1.0, -3.0, -2.0], "size": [2.0, 4.0, 6.0], "deformation": [0.0, 0.0, 0.0], "uv": [0.0, 0.0],
+                "texture_scale": [1.0, 1.0], "mirror": False,
+                "visible_faces": ["down", "east", "north", "south", "up", "west"]}
+        converted = converter.convert_cube(cube, [2.0, 8.0, 0.0])
+        # the ModelPart corner (3, 5, -2) .. (5, 9, 4): x kept, y up from the 24 datum (24 - 9 = 15), z kept
+        self.assertEqual(converted["origin"], [3, 15, -2])
+        self.assertEqual(converted["size"], [2, 4, 6])
+        self.assertEqual(converter.json_rotation([0.1, 0.2, -0.3]),
+                         converter.clean_vector([math.degrees(0.1), math.degrees(0.2), math.degrees(-0.3)]))
+        self.assertEqual(converter.json_rotation_delta([0.5, 0.25, -0.75], [0.1, 0.05, 0.05]),
+                         [math.degrees(0.4), math.degrees(0.2), math.degrees(-0.8)])
+        geometry, _summary = converter.convert_geometry(HierarchyForm.compiled(["arm", "claw"]))
+        bones = {bone["name"]: bone for bone in geometry["minecraft:geometry"][0]["bones"]}
+        self.assertEqual(bones["claw"]["pivot"], [11, 22, -1])  # (x, 24 - y, z) of the classic (11, 2, -1)
+        self.assertEqual(bones["claw"]["rotation"], converter.clean_vector([0.0, math.degrees(0.8552113), 0.0]))
+
+    def test_face_labels_and_islands_follow_the_reflection(self) -> None:
+        # the classic WEST slot (normal -x) lands on GeckoLib's east quad, DOWN (the y-down top) on its up quad
+        self.assertEqual(converter.classic_face_labels(False), ["up", "down", "east", "north", "west", "south"])
+        self.assertEqual(converter.classic_face_labels(True), ["up", "down", "west", "north", "east", "south"])
+        self.assertEqual(converter.classic_face_normals(False),
+                         [(0.0, 1.0, 0.0), (0.0, -1.0, 0.0), (1.0, 0.0, 0.0), (0.0, 0.0, -1.0), (-1.0, 0.0, 0.0), (0.0, 0.0, 1.0)])
+        self.assertEqual(converter.entity_frame_normal((-1.0, 0.0, 0.0)), (1.0, 0.0, 0.0))
+        cube = {"uv": [0.0, 0.0], "size": [2.0, 4.0, 6.0], "mirror": False}
+        faces = converter.modelpart_face_uv(cube)
+        # the ModelPart WEST island (at u = 0) on the east quad, its EAST island (at u + dz + dx = 8) on the west quad,
+        # every island with its own u direction (a positive uv_size in u) for a plain cube
+        self.assertEqual(faces["east"], {"uv": [0, 6], "uv_size": [6, 4]})
+        self.assertEqual(faces["west"], {"uv": [8, 6], "uv_size": [6, 4]})
+        self.assertEqual(faces["north"], {"uv": [6, 6], "uv_size": [2, 4]})
+        self.assertEqual(faces["south"], {"uv": [14, 6], "uv_size": [2, 4]})
+        self.assertEqual(faces["up"], {"uv": [6, 0], "uv_size": [2, 6]})
+        self.assertEqual(faces["down"], {"uv": [8, 6], "uv_size": [2, -6]})
+        mirrored = converter.modelpart_face_uv(dict(cube, mirror=True))
+        # a mirrored cube's polygons carry their islands u-reversed: the u origin at the far edge, a negative width
+        self.assertEqual(mirrored["west"], {"uv": [6, 6], "uv_size": [-6, 4]})
+        self.assertEqual(mirrored["east"], {"uv": [14, 6], "uv_size": [-6, 4]})
+        self.assertEqual(mirrored["north"], {"uv": [8, 6], "uv_size": [-2, 4]})
+
+    def test_frame_helpers_are_vanillas_chain(self) -> None:
+        moved = parity.entity_frame([[1.0, 0.0, 0.0, 2.0], [0.0, 1.0, 0.0, 0.5], [0.0, 0.0, 1.0, -1.0], [0.0, 0.0, 0.0, 1.0]])
+        # M (2, 0.5, -1) = (-2, 1.501 - 0.5, -1): the flip and the lift
+        self.assertLess(converter_delta([row[3] for row in moved[:3]], [-2.0, 1.001, -1.0]), 1.0e-12)
+        self.assertEqual([row[:3] for row in moved[:3]], [[-1.0, 0.0, 0.0], [0.0, -1.0, 0.0], [0.0, 0.0, 1.0]])
+        self.assertEqual(parity.geo_pivot_classic_blocks([3.0, 16.0, -2.0]), [3.0 / 16.0, 0.5, -2.0 / 16.0])
+        camera = parity.Camera([(-1.0, -1.0, -1.0), (1.0, 1.0, 1.0)], 0.0, 0.0)
+        # the view looks through the entity frame's reflection: a point at (+1, +1) projects where ModelPart (-1, -1) did
+        self.assertEqual(camera.project_unscaled((1.0, 1.0, 0.0)), (-1.0, -1.0, 0.0))
+
+    def test_visual_leg_sees_a_mirrored_rig(self) -> None:
+        root = Path(tempfile.mkdtemp(prefix="g1_mirror_"))
+        try:
+            texture = Image.new("RGBA", (2, 2))
+            texture.putpixel(RED, (255, 0, 0, 255))
+            texture.putpixel(BLUE, (0, 0, 255, 255))
+            texture.putpixel(CLEAR, (0, 0, 0, 0))
+            texture.save(root / "texture.png")
+            spec = {"id": "synthetic", "texture": "texture.png", "visual_sample_ids": ["bind"],
+                    "camera": {"yaw_degrees": 0.0, "pitch_degrees": 0.0}}
+
+            def asymmetric(mirror_x: float) -> dict:
+                # an invisible frame quad (the camera fit) and one red quad to the +x side of the origin
+                frame = square(5.0, 10.0, CLEAR, 1.0)
+                quad = [{"position": [x * mirror_x, y, 0.0], "uv": texel_uv(RED), "normal": [0.0, 0.0, 1.0]}
+                        for x, y in ((0.2, -0.6), (1.4, -0.6), (1.4, 0.6), (0.2, 0.6))]
+                return {"id": "bind", "capture_kind": "full", "render_vertices": frame + quad,
+                        "cubes": [{"bone": "frame", "cube_index": 0, "vertices": frame},
+                                  {"bone": "wing", "cube_index": 0, "vertices": quad}],
+                        "draw_order": ["frame", "wing"]}
+
+            same = parity.visual_parity("synthetic", spec, {"samples": [asymmetric(1.0)]}, {"samples": [asymmetric(1.0)]},
+                                        root, root / "same", THRESHOLDS)
+            self.assertEqual(same["samples"][0]["changed_fraction"], 0.0)
+            with self.assertRaisesRegex(AssertionError, r"VISUAL MISMATCH synthetic/bind: changed fraction"):
+                # the geo side drawn as the classic's left-right mirror: invisible to the old ModelPart-space compare
+                # of a symmetric rig, a different picture here
+                parity.visual_parity("synthetic", spec, {"samples": [asymmetric(1.0)]}, {"samples": [asymmetric(-1.0)]},
+                                     root, root / "mirrored", THRESHOLDS)
+        finally:
+            shutil.rmtree(root, ignore_errors=True)
+
+
 class UndrawnParts(unittest.TestCase):
     COMPILED = {"bone_names": ["body", "claw", "toe"], "definition": {"name": None, "cubes": [], "children": [
         {"name": "body", "cubes": [{}], "children": [{"name": "claw", "cubes": [{}], "children": []}]},
@@ -238,10 +327,14 @@ class HierarchyForm(unittest.TestCase):
         expected = [self.ARM["pivot"][r] + sum(inverse[r][c] * offset[c] for c in range(3)) for r in range(3)]
         derived = summary["hierarchy"]["derived_pivots_classic"]["claw"]
         self.assertLess(converter_delta(derived, expected), 1.0e-9)
-        self.assertLess(converter_delta(bones["claw"]["pivot"], [-expected[0], 24.0 - expected[1], expected[2]]), 1.0e-9)
+        # the Bedrock convention (TEST-015): the geo pivot keeps the classic x, y up from the 24-unit datum
+        self.assertLess(converter_delta(bones["claw"]["pivot"], [expected[0], 24.0 - expected[1], expected[2]]), 1.0e-9)
         self.assertEqual(bones["claw"]["cubes"][0]["origin"],
                          converter.convert_cube(self.compiled(["arm", "claw"])["definition"]["children"][1]["cubes"][0], expected)["origin"])
-        self.assertLess(converter_delta(bones["arm"]["pivot"], [-2.0, 25.0, -6.0]), 1.0e-12)
+        self.assertLess(converter_delta(bones["arm"]["pivot"], [2.0, 25.0, -6.0]), 1.0e-12)
+        # the local bind rotation is written as +classic degrees on every axis (the sign rule, TEST-015)
+        self.assertLess(converter_delta(bones["claw"]["rotation"], [math.degrees(value) for value in local]), 1.0e-9)
+        self.assertLess(converter_delta(bones["arm"]["rotation"], [0.0, math.degrees(-0.5235988), math.degrees(0.1745329)]), 1.0e-9)
         # the flat (world) pivot the bake gives the child at bind is the classic one: P_p + R_p * (P_c - P_p)
         forward = [self.ARM["pivot"][r] + sum(parent[r][c] * (derived[c] - self.ARM["pivot"][c]) for c in range(3)) for r in range(3)]
         self.assertLess(converter_delta(forward, self.CLAW["pivot"]), 1.0e-9)
@@ -294,7 +387,8 @@ class HierarchyForm(unittest.TestCase):
     def chain_inputs(cls, claw_world_offset_blocks: float = 0.0, capture_kind: str = "full") -> tuple[dict, dict, dict, dict]:
         """The synthetic chain posed: the arm yawed to -0.9 and the claw's classic pivot rewritten as the Alien's follow
         does (9 units along the arm's yaw); the bake's world matrices derived from the classic ones through the pivot
-        relation (classic_world == bone_pose * T(geo pivot / 16)), the claw's translation moved by the given offset."""
+        relation in the entity frame (M * classic_world == bone_pose * T(geo pivot / 16), TEST-015), the claw's
+        translation moved by the given offset."""
         compiled = cls.compiled(["arm", "claw"])
         geometry, conversion_summary = converter.convert_geometry(compiled, hierarchy={"claw": "arm"})
         conversion = {"hierarchy": conversion_summary["hierarchy"]}
@@ -310,14 +404,13 @@ class HierarchyForm(unittest.TestCase):
         for sample in compiled["samples"]:
             poses[sample["id"]] = {}
             for name, transform in sample["transforms"].items():
-                pivot = bones[name]["pivot"]
-                classic_pivot = [-pivot[0] / 16.0, (24.0 - pivot[1]) / 16.0, pivot[2] / 16.0]
-                world = parity.classic_world_matrix(transform)
-                pose = parity.matrix_translate(world, [-value for value in classic_pivot])  # world * T(-pivot) = bone pose
+                classic_pivot = parity.geo_pivot_classic_blocks(bones[name]["pivot"])
+                world = parity.entity_frame(parity.classic_world_matrix(transform))
+                pose = parity.matrix_translate(world, [-value for value in classic_pivot])  # M world * T(-pivot) = bone pose
                 if name == "claw" and sample["id"] == "t0":
                     pose[0][3] += claw_world_offset_blocks
                 poses[sample["id"]][name] = pose
-        geo_render = {"samples": [{"id": sample["id"], "capture_kind": sample["capture_kind"], "bone_poses_classic": poses[sample["id"]]}
+        geo_render = {"samples": [{"id": sample["id"], "capture_kind": sample["capture_kind"], parity.BONE_POSES_FIELD: poses[sample["id"]]}
                                   for sample in compiled["samples"]]}
         return compiled, geo_render, geometry, conversion
 

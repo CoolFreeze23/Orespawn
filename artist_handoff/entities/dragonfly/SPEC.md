@@ -16,36 +16,36 @@ A large passive dragonfly: a thorax with a head, two jaws, antennae, six jointed
 
 ## 3. Bone glossary (locked legacy names — readable labels beside them)
 
-Never rename, delete or re-parent a bone: code and hitboxes reference them by name. Left/right in the labels follow the model author's own naming (the side the legacy name calls left); Blockbench mirrors X for display, so the author's left appears on your right when the mob faces you. `gait bone` = its motion is scaled by walking speed in-game (P3). `locked` = it carries or parents a hitbox part (contract §8.1). Keying a locked bone is allowed; the checker warns, and the hitbox part follows the bone in-game (the consequence, so keep such keys deliberate). Renaming, re-parenting or deleting a locked bone is refused.
+Never rename, delete or re-parent a bone: code and hitboxes reference them by name. Left/right in the labels follow the model author's own naming (the side the legacy name calls left); the rig opens in Blockbench exactly as the game draws it, so a bone the author calls left is on the creature's own left. `gait bone` = its motion is scaled by walking speed in-game (P3). `locked` = it carries or parents a hitbox part (contract §8.1). Keying a locked bone is allowed; the checker warns, and the hitbox part follows the bone in-game (the consequence, so keep such keys deliberate). Renaming, re-parenting or deleting a locked bone is refused.
 
 | bone | readable label | classic part | parent | pivot (x, y, z) | group | gait bone | locked | cubes |
 |---|---|---|---|---|---|---|---|---|
 | `Shape1` | thorax | (native rig: no classic part) | - | (0, 8, 0) | - | no | no | 1 |
-| `Shape10` | front left leg (upper) | (native rig: no classic part) | - | (-1, 6, 0) | - | no | no | 1 |
-| `Shape11` | front left leg (lower) | (native rig: no classic part) | - | (1, 3, 0) | - | no | no | 1 |
+| `Shape10` | front left leg (upper) | (native rig: no classic part) | - | (1, 6, 0) | - | no | no | 1 |
+| `Shape11` | front left leg (lower) | (native rig: no classic part) | - | (-1, 3, 0) | - | no | no | 1 |
 | `Shape12` | front left foot | (native rig: no classic part) | - | (0, 3, -4) | - | no | no | 1 |
-| `Shape13` | front right leg (upper) | (native rig: no classic part) | - | (-4, 6, 0) | - | no | no | 1 |
-| `Shape14` | front right leg (lower) | (native rig: no classic part) | - | (-5, 3, 0) | - | no | no | 1 |
-| `Shape15` | front right foot | (native rig: no classic part) | - | (-5, 3, -4) | - | no | no | 1 |
-| `Shape16` | mid right leg (upper) | (native rig: no classic part) | - | (-5, 4.5, 3) | - | no | no | 1 |
-| `Shape17` | mid right leg (lower) | (native rig: no classic part) | - | (-6, 3, 3) | - | no | no | 1 |
+| `Shape13` | front right leg (upper) | (native rig: no classic part) | - | (4, 6, 0) | - | no | no | 1 |
+| `Shape14` | front right leg (lower) | (native rig: no classic part) | - | (5, 3, 0) | - | no | no | 1 |
+| `Shape15` | front right foot | (native rig: no classic part) | - | (5, 3, -4) | - | no | no | 1 |
+| `Shape16` | mid right leg (upper) | (native rig: no classic part) | - | (5, 4.5, 3) | - | no | no | 1 |
+| `Shape17` | mid right leg (lower) | (native rig: no classic part) | - | (6, 3, 3) | - | no | no | 1 |
 | `Shape18` | mid left leg (upper) | (native rig: no classic part) | - | (0, 4.5, 3) | - | no | no | 1 |
-| `Shape19` | mid left leg (lower) | (native rig: no classic part) | - | (1, 3, 3) | - | no | no | 1 |
-| `Shape20` | rear right leg (upper) | (native rig: no classic part) | - | (-4, 4.5, 6) | - | no | no | 1 |
-| `Shape21` | rear left leg (upper) | (native rig: no classic part) | - | (-1.5, 4.5, 7) | - | no | no | 1 |
-| `Shape22` | rear left leg (lower) | (native rig: no classic part) | - | (1, 3, 7.5) | - | no | no | 1 |
-| `Shape23` | rear right leg (lower) | (native rig: no classic part) | - | (-5, 3, 7.5) | - | no | no | 1 |
-| `Shape3` | head | (native rig: no classic part) | - | (-2.5, 8, -1) | - | no | no | 1 |
-| `Shape4` | left antenna | (native rig: no classic part) | - | (-1, 6, -6) | - | no | no | 1 |
-| `Shape5` | right antenna | (native rig: no classic part) | - | (-3, 6, -6) | - | no | no | 1 |
-| `lfwing` | left front wing | (native rig: no classic part) | - | (-5, 8, 1) | wings | no | no | 1 |
-| `ljaw` | left jaw | (native rig: no classic part) | - | (-3, 5, -5) | jaws | no | no | 1 |
-| `lrwing` | left rear wing | (native rig: no classic part) | - | (-5, 8, 6) | wings | no | no | 1 |
+| `Shape19` | mid left leg (lower) | (native rig: no classic part) | - | (-1, 3, 3) | - | no | no | 1 |
+| `Shape20` | rear right leg (upper) | (native rig: no classic part) | - | (4, 4.5, 6) | - | no | no | 1 |
+| `Shape21` | rear left leg (upper) | (native rig: no classic part) | - | (1.5, 4.5, 7) | - | no | no | 1 |
+| `Shape22` | rear left leg (lower) | (native rig: no classic part) | - | (-1, 3, 7.5) | - | no | no | 1 |
+| `Shape23` | rear right leg (lower) | (native rig: no classic part) | - | (5, 3, 7.5) | - | no | no | 1 |
+| `Shape3` | head | (native rig: no classic part) | - | (2.5, 8, -1) | - | no | no | 1 |
+| `Shape4` | left antenna | (native rig: no classic part) | - | (1, 6, -6) | - | no | no | 1 |
+| `Shape5` | right antenna | (native rig: no classic part) | - | (3, 6, -6) | - | no | no | 1 |
+| `lfwing` | left front wing | (native rig: no classic part) | - | (5, 8, 1) | wings | no | no | 1 |
+| `ljaw` | left jaw | (native rig: no classic part) | - | (3, 5, -5) | jaws | no | no | 1 |
+| `lrwing` | left rear wing | (native rig: no classic part) | - | (5, 8, 6) | wings | no | no | 1 |
 | `rfwing` | right front wing | (native rig: no classic part) | - | (0, 8, 1) | wings | no | no | 1 |
-| `rjaw` | right jaw | (native rig: no classic part) | - | (-2, 5, -5) | jaws | no | no | 1 |
+| `rjaw` | right jaw | (native rig: no classic part) | - | (2, 5, -5) | jaws | no | no | 1 |
 | `rrwing` | right rear wing | (native rig: no classic part) | - | (0, 8, 6) | wings | no | no | 1 |
-| `tail1` | tail base | (native rig: no classic part) | - | (-2, 8, 7) | - | no | no | 1 |
-| `tail2` | tail tip | (native rig: no classic part) | - | (-2, 8, 14) | - | no | no | 1 |
+| `tail1` | tail base | (native rig: no classic part) | - | (2, 8, 7) | - | no | no | 1 |
+| `tail2` | tail tip | (native rig: no classic part) | - | (2, 8, 14) | - | no | no | 1 |
 
 ## 4. Current animation behaviour — plain English and the source formulas
 
@@ -71,16 +71,16 @@ Author every loop at 1.0 s (README rule 5, the phase-locked kind; ruled 2026-09-
 
 ### 4.3 Reference clips (reference-only)
 
-`dragonfly_reference_walk.animation.json`, `dragonfly_reference_idle.animation.json` (beside this sheet, and embedded in `dragonfly.bbmodel`'s Animation tab) are NOT clips to return or ship under their own names. Each is the creature's classic code — the motion the game draws today — SAMPLED by the harness at fixed inputs so you can see that motion beside the rig in Blockbench. The `.bbmodel` opens with every clip listed (the shipped clips and these); the files beside the sheet are the PINNED SOURCE (their bytes are what the checker knows; the generator's round trip proves the embedded copies within 5e-5 s on key times and 1e-6 on values). If you rebuild the `.bbmodel` and they are gone, Animation → Import Animations... on the files brings them back. One clip per state the code reads, each value alone: `_reference_walk` — full walking speed (limbSwingAmount 1, the walk position and the age advancing one tick per key), not attacking, looking straight ahead, every state flag at rest, full health; `_reference_idle` — standing still (limbSwingAmount 0, the walk position 0; the age advancing one tick per key), not attacking, looking straight ahead, every state flag at rest, full health; no `_reference_attack` — this creature's code reads no attack state. Keys: the classic code is sampled once per tick, and the samples are reduced by the density search the exact transcriptions use — the fewest Catmull-Rom keys per bone and channel whose curve stays within 1 degree of rotation and 1/32 block of position of every sample, the closing key always kept — so each clip carries as few keys as that tolerance allows (each entry below states its key counts and the measured maximum error). Rotations are deltas from the bind pose under the same sign rule as the shipped clips (X as the classic degrees, Y and Z negated), positions only where the code moves a bone.
+`dragonfly_reference_walk.animation.json`, `dragonfly_reference_idle.animation.json` (beside this sheet, and embedded in `dragonfly.bbmodel`'s Animation tab) are NOT clips to return or ship under their own names. Each is the creature's classic code — the motion the game draws today — SAMPLED by the harness at fixed inputs so you can see that motion beside the rig in Blockbench. The `.bbmodel` opens with every clip listed (the shipped clips and these); the files beside the sheet are the PINNED SOURCE (their bytes are what the checker knows; the generator's round trip proves the embedded copies within 5e-5 s on key times and 1e-6 on values). If you rebuild the `.bbmodel` and they are gone, Animation → Import Animations... on the files brings them back. One clip per state the code reads, each value alone: `_reference_walk` — full walking speed (limbSwingAmount 1, the walk position and the age advancing one tick per key), not attacking, looking straight ahead, every state flag at rest, full health; `_reference_idle` — standing still (limbSwingAmount 0, the walk position 0; the age advancing one tick per key), not attacking, looking straight ahead, every state flag at rest, full health; no `_reference_attack` — this creature's code reads no attack state. Keys: the classic code is sampled once per tick, and the samples are reduced by the density search the exact transcriptions use — the fewest Catmull-Rom keys per bone and channel whose curve stays within 1 degree of rotation and 1/32 block of position of every sample, the closing key always kept — so each clip carries as few keys as that tolerance allows (each entry below states its key counts and the measured maximum error). Rotations are deltas from the bind pose under the same sign rule as the shipped clips (X, Y and Z as the classic degrees: the rig is in the Bedrock convention), positions only where the code moves a bone.
 
 **Starting point (owner 2026-09-14, addendum item 13; extended by the second set revised, item 4):** a reference clip's KEYS may be the starting point of the delivered clip its state corresponds to — copy them into `walk` (from `_reference_walk`), `idle` (from `_reference_idle`), `aggro_idle` (from `_reference_attack`), `fly` (from `_reference_fly`) or `swim` (from `_reference_swim`) and improve from there; a delivered clip carrying those keys is a valid delivery (no rule compares them). A state with no contract clip (sit, sleep, display, ...) is OFFERED as an extra of this creature's own under §2.3 — §5 lists it as "offered from reference_<state>" beside the seed's extras, and a delivered clip under that name carrying the reference keys is a valid delivery. Only the reference file itself coming back under its own name is refused.
 
-- `dragonfly_reference_walk.animation.json` (sha256 `95f0246e9829a38289f4940cad8d92a77703d627e9ec908bb425fa51ecffe82d`; clip `reference_walk`; a starting point for `walk`): 3 periods of its slowest rhythm (10.472 ticks each) — 31.416 ticks (1.571 s): the smallest multiple at which EVERY rhythm returns within 5 degrees of its start (the rule caps this search at 6 s), so the last key closes the loop; 2 to 33 keys per bone chosen by the density search from 33 per-tick samples, Catmull-Rom; max error 0.975 degrees against the samples (the tolerance 1 degree / 1/32 block).
+- `dragonfly_reference_walk.animation.json` (sha256 `1479c5c17d8e0e4acb652ea9c60c35bb3b52687e1600da8ee5a92d9ae414f703`; clip `reference_walk`; a starting point for `walk`): 3 periods of its slowest rhythm (10.472 ticks each) — 31.416 ticks (1.571 s): the smallest multiple at which EVERY rhythm returns within 5 degrees of its start (the rule caps this search at 6 s), so the last key closes the loop; 2 to 33 keys per bone chosen by the density search from 33 per-tick samples, Catmull-Rom; max error 0.975 degrees against the samples (the tolerance 1 degree / 1/32 block).
   - Sampled from: `danger.orespawn.entity.client.DragonflyGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the shipped replacement, registry-free, on explicit PoseInputs)`.
   - Rule applied: the manifest's channels: 2 distinct frequency group(s) [2.6, 0.6] rad/tick (omega x wingspeed): the slowest group's period 2 pi / 0.6 = 10.471976 ticks; closes at k = 3 (31.415927 ticks): every bone returns within 0 degrees of its start at k x T (the 5-degree test under the 6 s cap; k = 1: 67.498757 deg, k = 2: 67.5025 deg, k = 3: 0 deg).
   - Bones that move in it: `lfwing`, `ljaw`, `lrwing`, `rfwing`, `rjaw`, `rrwing`.
   - Loop seam: the closing key differs from the first by at most 0 degrees (mod 360).
-- `dragonfly_reference_idle.animation.json` (sha256 `404f45035987a29b8865ff0e37a5b7d59134e612d88698724ed21594264c52f9`; clip `reference_idle`; a starting point for `idle`): 3 periods of its slowest rhythm (10.472 ticks each) — 31.416 ticks (1.571 s): the smallest multiple at which EVERY rhythm returns within 5 degrees of its start (the rule caps this search at 6 s), so the last key closes the loop; 2 to 33 keys per bone chosen by the density search from 33 per-tick samples, Catmull-Rom; max error 0.975 degrees against the samples (the tolerance 1 degree / 1/32 block).
+- `dragonfly_reference_idle.animation.json` (sha256 `23518294095adb9bb69cfe0d2f4ebca5e7fec8413219317ca8f5948a2a2d02b7`; clip `reference_idle`; a starting point for `idle`): 3 periods of its slowest rhythm (10.472 ticks each) — 31.416 ticks (1.571 s): the smallest multiple at which EVERY rhythm returns within 5 degrees of its start (the rule caps this search at 6 s), so the last key closes the loop; 2 to 33 keys per bone chosen by the density search from 33 per-tick samples, Catmull-Rom; max error 0.975 degrees against the samples (the tolerance 1 degree / 1/32 block).
   - Sampled from: `danger.orespawn.entity.client.DragonflyGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the shipped replacement, registry-free, on explicit PoseInputs)`.
   - Rule applied: the manifest's channels: 2 distinct frequency group(s) [2.6, 0.6] rad/tick (omega x wingspeed): the slowest group's period 2 pi / 0.6 = 10.471976 ticks; closes at k = 3 (31.415927 ticks): every bone returns within 0 degrees of its start at k x T (the 5-degree test under the 6 s cap; k = 1: 67.498757 deg, k = 2: 67.5025 deg, k = 3: 0 deg).
   - Bones that move in it: `lfwing`, `ljaw`, `lrwing`, `rfwing`, `rjaw`, `rrwing`.

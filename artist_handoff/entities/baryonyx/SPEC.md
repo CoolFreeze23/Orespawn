@@ -18,29 +18,29 @@ A sail-backed, crocodile-snouted dinosaur: a torso, a rump and a tail, a neck ba
 
 ## 3. Bone glossary (locked legacy names — readable labels beside them)
 
-Never rename, delete or re-parent a bone: code and hitboxes reference them by name. Left/right in the labels follow the model author's own naming (the side the legacy name calls left); Blockbench mirrors X for display, so the author's left appears on your right when the mob faces you. `gait bone` = its motion is scaled by walking speed in-game (P3). `locked` = it carries or parents a hitbox part (contract §8.1). Keying a locked bone is allowed; the checker warns, and the hitbox part follows the bone in-game (the consequence, so keep such keys deliberate). Renaming, re-parenting or deleting a locked bone is refused.
+Never rename, delete or re-parent a bone: code and hitboxes reference them by name. Left/right in the labels follow the model author's own naming (the side the legacy name calls left); the rig opens in Blockbench exactly as the game draws it, so a bone the author calls left is on the creature's own left. `gait bone` = its motion is scaled by walking speed in-game (P3). `locked` = it carries or parents a hitbox part (contract §8.1). Keying a locked bone is allowed; the checker warns, and the hitbox part follows the bone in-game (the consequence, so keep such keys deliberate). Renaming, re-parenting or deleting a locked bone is refused.
 
 | bone | readable label | classic part | parent | pivot (x, y, z) | group | gait bone | locked | cubes |
 |---|---|---|---|---|---|---|---|---|
-| `shape1` | torso | (native rig: no classic part) | - | (5, 39, -10) | - | no | no | 1 |
-| `shape10` | left arm, forearm (left front shin) | (native rig: no classic part) | - | (-5, 17, -8) | - | no | no | 1 |
-| `shape11` | left hand, toe 1 | (native rig: no classic part) | - | (-5, 16, -8) | - | no | no | 1 |
-| `shape12` | left hand, toe 2 | (native rig: no classic part) | - | (-5, 15, -11) | - | no | no | 1 |
-| `shape13` | left hind leg (thigh) | (native rig: no classic part) | - | (-5, 39, 2) | gait | yes | no | 1 |
-| `shape14` | snout tip | (native rig: no classic part) | - | (1.5, 41, -43) | - | no | no | 1 |
-| `shape15` | left hind calf (-10 deg) | (native rig: no classic part) | - | (-5, 39, 2) | gait | yes | no | 1 |
-| `shape16` | left hand, hooked claw (waves) | (native rig: no classic part) | - | (-5, 14, -8) | claws | no | no | 1 |
-| `shape17` | left hind foot | (native rig: no classic part) | - | (-5, 39, 2) | gait | yes | no | 1 |
-| `shape18` | right arm, upper (the model's right front thigh) | (native rig: no classic part) | - | (5, 24, -7) | - | no | no | 1 |
-| `shape19` | right arm, elbow (right front knee, -22 deg) | (native rig: no classic part) | - | (5.1, 21, -6) | - | no | no | 1 |
+| `shape1` | torso | (native rig: no classic part) | - | (-5, 39, -10) | - | no | no | 1 |
+| `shape10` | left arm, forearm (left front shin) | (native rig: no classic part) | - | (5, 17, -8) | - | no | no | 1 |
+| `shape11` | left hand, toe 1 | (native rig: no classic part) | - | (5, 16, -8) | - | no | no | 1 |
+| `shape12` | left hand, toe 2 | (native rig: no classic part) | - | (5, 15, -11) | - | no | no | 1 |
+| `shape13` | left hind leg (thigh) | (native rig: no classic part) | - | (5, 39, 2) | gait | yes | no | 1 |
+| `shape14` | snout tip | (native rig: no classic part) | - | (-1.5, 41, -43) | - | no | no | 1 |
+| `shape15` | left hind calf (-10 deg) | (native rig: no classic part) | - | (5, 39, 2) | gait | yes | no | 1 |
+| `shape16` | left hand, hooked claw (waves) | (native rig: no classic part) | - | (5, 14, -8) | claws | no | no | 1 |
+| `shape17` | left hind foot | (native rig: no classic part) | - | (5, 39, 2) | gait | yes | no | 1 |
+| `shape18` | right arm, upper (the model's right front thigh) | (native rig: no classic part) | - | (-5, 24, -7) | - | no | no | 1 |
+| `shape19` | right arm, elbow (right front knee, -22 deg) | (native rig: no classic part) | - | (-5.1, 21, -6) | - | no | no | 1 |
 | `shape2` | neck base (angled -11 deg) | (native rig: no classic part) | - | (0, 34, -6) | - | no | no | 1 |
-| `shape20` | right arm, forearm (right front shin) | (native rig: no classic part) | - | (5, 17, -8) | - | no | no | 1 |
-| `shape21` | right hand, hooked claw (waves) | (native rig: no classic part) | - | (5, 14, -8) | claws | no | no | 1 |
-| `shape22` | right hand, toe 1 | (native rig: no classic part) | - | (5, 16, -8) | - | no | no | 1 |
-| `shape23` | right hand, toe 2 | (native rig: no classic part) | - | (5, 15, -11) | - | no | no | 1 |
-| `shape24` | right hind leg (thigh) | (native rig: no classic part) | - | (5, 39, 2) | gait | yes | no | 1 |
-| `shape25` | right hind calf (-10 deg) | (native rig: no classic part) | - | (5, 39, 2) | gait | yes | no | 1 |
-| `shape26` | right hind foot | (native rig: no classic part) | - | (5, 39, 2) | gait | yes | no | 1 |
+| `shape20` | right arm, forearm (right front shin) | (native rig: no classic part) | - | (-5, 17, -8) | - | no | no | 1 |
+| `shape21` | right hand, hooked claw (waves) | (native rig: no classic part) | - | (-5, 14, -8) | claws | no | no | 1 |
+| `shape22` | right hand, toe 1 | (native rig: no classic part) | - | (-5, 16, -8) | - | no | no | 1 |
+| `shape23` | right hand, toe 2 | (native rig: no classic part) | - | (-5, 15, -11) | - | no | no | 1 |
+| `shape24` | right hind leg (thigh) | (native rig: no classic part) | - | (-5, 39, 2) | gait | yes | no | 1 |
+| `shape25` | right hind calf (-10 deg) | (native rig: no classic part) | - | (-5, 39, 2) | gait | yes | no | 1 |
+| `shape26` | right hind foot | (native rig: no classic part) | - | (-5, 39, 2) | gait | yes | no | 1 |
 | `shape27` | sail plate 1 (front, above the shoulders) | (native rig: no classic part) | - | (0, 41, -10) | - | no | no | 1 |
 | `shape28` | sail plate 2 | (native rig: no classic part) | - | (0, 41, -7) | - | no | no | 1 |
 | `shape29` | sail plate 3 | (native rig: no classic part) | - | (0, 41, -4) | - | no | no | 1 |
@@ -55,7 +55,7 @@ Never rename, delete or re-parent a bone: code and hitboxes reference them by na
 | `shape37` | sail plate 11 | (native rig: no classic part) | - | (0, 41, 20) | - | no | no | 1 |
 | `shape38` | sail plate 12 | (native rig: no classic part) | - | (0, 41, 23) | - | no | no | 1 |
 | `shape39` | sail plate 13 | (native rig: no classic part) | - | (0, 41, 26) | - | no | no | 1 |
-| `shape4` | upper snout | (native rig: no classic part) | - | (3, 42, -28) | - | no | no | 1 |
+| `shape4` | upper snout | (native rig: no classic part) | - | (-3, 42, -28) | - | no | no | 1 |
 | `shape40` | sail plate 14 | (native rig: no classic part) | - | (0, 41, 29) | - | no | no | 1 |
 | `shape41` | sail plate 15 | (native rig: no classic part) | - | (0, 41, 32) | - | no | no | 1 |
 | `shape42` | sail plate 16 | (native rig: no classic part) | - | (0, 41, 35) | - | no | no | 1 |
@@ -66,14 +66,14 @@ Never rename, delete or re-parent a bone: code and hitboxes reference them by na
 | `shape47` | crest segment 2 | (native rig: no classic part) | - | (0, 37, -13) | - | no | no | 1 |
 | `shape48` | crest segment 3 | (native rig: no classic part) | - | (0, 39, -15) | - | no | no | 1 |
 | `shape49` | crest segment 4 | (native rig: no classic part) | - | (0, 40, -16) | - | no | no | 1 |
-| `shape5` | long snout | (native rig: no classic part) | - | (1.5, 41.5, -43) | - | no | no | 1 |
+| `shape5` | long snout | (native rig: no classic part) | - | (-1.5, 41.5, -43) | - | no | no | 1 |
 | `shape50` | crest segment 5 | (native rig: no classic part) | - | (0, 43, -17) | - | no | no | 1 |
 | `shape51` | crest segment 6 (foremost) | (native rig: no classic part) | - | (0, 43, -19) | - | no | no | 1 |
 | `shape52` | nasal ridge (the unnamed shape52 on the snout) | (native rig: no classic part) | - | (0, 43, -30) | - | no | no | 1 |
-| `shape6` | rump | (native rig: no classic part) | - | (4, 39, 15) | - | no | no | 1 |
-| `shape7` | tail | (native rig: no classic part) | - | (3, 39, 23) | - | no | no | 1 |
-| `shape8` | left arm, upper (the model's left front thigh) | (native rig: no classic part) | - | (-5, 24, -7) | - | no | no | 1 |
-| `shape9` | left arm, elbow (left front knee, -22 deg) | (native rig: no classic part) | - | (-5.1, 21, -6) | - | no | no | 1 |
+| `shape6` | rump | (native rig: no classic part) | - | (-4, 39, 15) | - | no | no | 1 |
+| `shape7` | tail | (native rig: no classic part) | - | (-3, 39, 23) | - | no | no | 1 |
+| `shape8` | left arm, upper (the model's left front thigh) | (native rig: no classic part) | - | (5, 24, -7) | - | no | no | 1 |
+| `shape9` | left arm, elbow (left front knee, -22 deg) | (native rig: no classic part) | - | (5.1, 21, -6) | - | no | no | 1 |
 
 ## 4. Current animation behaviour — plain English and the source formulas
 
@@ -101,16 +101,16 @@ Author every loop at 1.0 s (README rule 5, the phase-locked kind; ruled 2026-09-
 
 ### 4.3 Reference clips (reference-only)
 
-`baryonyx_reference_walk.animation.json`, `baryonyx_reference_idle.animation.json` (beside this sheet, and embedded in `baryonyx.bbmodel`'s Animation tab) are NOT clips to return or ship under their own names. Each is the creature's classic code — the motion the game draws today — SAMPLED by the harness at fixed inputs so you can see that motion beside the rig in Blockbench. The `.bbmodel` opens with every clip listed (the shipped clips and these); the files beside the sheet are the PINNED SOURCE (their bytes are what the checker knows; the generator's round trip proves the embedded copies within 5e-5 s on key times and 1e-6 on values). If you rebuild the `.bbmodel` and they are gone, Animation → Import Animations... on the files brings them back. One clip per state the code reads, each value alone: `_reference_walk` — full walking speed (limbSwingAmount 1, the walk position and the age advancing one tick per key), not attacking, looking straight ahead, every state flag at rest, full health; `_reference_idle` — standing still (limbSwingAmount 0, the walk position 0; the age advancing one tick per key), not attacking, looking straight ahead, every state flag at rest, full health; no `_reference_attack` — this creature's code reads no attack state. Keys: the classic code is sampled once per tick, and the samples are reduced by the density search the exact transcriptions use — the fewest Catmull-Rom keys per bone and channel whose curve stays within 1 degree of rotation and 1/32 block of position of every sample, the closing key always kept — so each clip carries as few keys as that tolerance allows (each entry below states its key counts and the measured maximum error). Rotations are deltas from the bind pose under the same sign rule as the shipped clips (X as the classic degrees, Y and Z negated), positions only where the code moves a bone.
+`baryonyx_reference_walk.animation.json`, `baryonyx_reference_idle.animation.json` (beside this sheet, and embedded in `baryonyx.bbmodel`'s Animation tab) are NOT clips to return or ship under their own names. Each is the creature's classic code — the motion the game draws today — SAMPLED by the harness at fixed inputs so you can see that motion beside the rig in Blockbench. The `.bbmodel` opens with every clip listed (the shipped clips and these); the files beside the sheet are the PINNED SOURCE (their bytes are what the checker knows; the generator's round trip proves the embedded copies within 5e-5 s on key times and 1e-6 on values). If you rebuild the `.bbmodel` and they are gone, Animation → Import Animations... on the files brings them back. One clip per state the code reads, each value alone: `_reference_walk` — full walking speed (limbSwingAmount 1, the walk position and the age advancing one tick per key), not attacking, looking straight ahead, every state flag at rest, full health; `_reference_idle` — standing still (limbSwingAmount 0, the walk position 0; the age advancing one tick per key), not attacking, looking straight ahead, every state flag at rest, full health; no `_reference_attack` — this creature's code reads no attack state. Keys: the classic code is sampled once per tick, and the samples are reduced by the density search the exact transcriptions use — the fewest Catmull-Rom keys per bone and channel whose curve stays within 1 degree of rotation and 1/32 block of position of every sample, the closing key always kept — so each clip carries as few keys as that tolerance allows (each entry below states its key counts and the measured maximum error). Rotations are deltas from the bind pose under the same sign rule as the shipped clips (X, Y and Z as the classic degrees: the rig is in the Bedrock convention), positions only where the code moves a bone.
 
 **Starting point (owner 2026-09-14, addendum item 13; extended by the second set revised, item 4):** a reference clip's KEYS may be the starting point of the delivered clip its state corresponds to — copy them into `walk` (from `_reference_walk`), `idle` (from `_reference_idle`), `aggro_idle` (from `_reference_attack`), `fly` (from `_reference_fly`) or `swim` (from `_reference_swim`) and improve from there; a delivered clip carrying those keys is a valid delivery (no rule compares them). A state with no contract clip (sit, sleep, display, ...) is OFFERED as an extra of this creature's own under §2.3 — §5 lists it as "offered from reference_<state>" beside the seed's extras, and a delivered clip under that name carrying the reference keys is a valid delivery. Only the reference file itself coming back under its own name is refused.
 
-- `baryonyx_reference_walk.animation.json` (sha256 `7aa85d4c488ed371690aee66b427557ed35ffa1dabb5aedc4d8b1052590c0152`; clip `reference_walk`; a starting point for `walk`): two seconds (40 ticks): this motion does not close within 6 s (its slowest rhythm is 35.904 ticks, and no multiple of it under 6 s brings every rhythm back within 5 degrees) — a two-second window, not a loop; the closing key differs from the first by 11.0726 degrees; 2 to 28 keys per bone chosen by the density search from 41 per-tick samples, Catmull-Rom; max error 0.901 degrees against the samples (the tolerance 1 degree / 1/32 block).
+- `baryonyx_reference_walk.animation.json` (sha256 `a5d9c79c7c49e49de3c2eb2c810fee89d008816dd3abce1e42aa9ba021758026`; clip `reference_walk`; a starting point for `walk`): two seconds (40 ticks): this motion does not close within 6 s (its slowest rhythm is 35.904 ticks, and no multiple of it under 6 s brings every rhythm back within 5 degrees) — a two-second window, not a loop; the closing key differs from the first by 11.0726 degrees; 2 to 28 keys per bone chosen by the density search from 41 per-tick samples, Catmull-Rom; max error 0.901 degrees against the samples (the tolerance 1 degree / 1/32 block).
   - Sampled from: `danger.orespawn.entity.client.BaryonyxGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the shipped replacement, registry-free, on explicit PoseInputs)`.
   - Rule applied: wingspeed 0.25: the slowest rhythm is the claw wave cos(ageInTicks * 0.7 * WINGSPEED) * PI * 0.25 (BaryonyxGeoReplacement.applyCustomAnimations:76, every state) at 0.175 rad/tick, 35.90 ticks; the threshold gait cos(ageInTicks * 1.3 * WINGSPEED) * PI * 0.15 * limbSwingAmount (:69, walk) at 0.325; no multiple of the slowest group's period 35.903917 ticks up to the 6 s cap (120 ticks) brings every group back within 5 degrees of its start (k = 1: 10.167222 deg, k = 2: 33.00915 deg, k = 3: 51.326324 deg): a two-second window (40 ticks), not a loop - the sheet states the closing key's seam.
   - Bones that move in it: `shape13`, `shape15`, `shape16`, `shape17`, `shape21`, `shape24`, `shape25`, `shape26`.
   - Loop seam: the closing key differs from the first by at most 11.0726 degrees (mod 360).
-- `baryonyx_reference_idle.animation.json` (sha256 `7d367b9c6e70285bb46c7c883f400bc93df67433a7b842a94cdb9f510509ecdb`; clip `reference_idle`; a starting point for `idle`): one period of its slowest rhythm — 35.904 ticks (1.795 s): every moving bone is back within 5 degrees of its start there, so the last key closes the loop; 2 to 10 keys per bone chosen by the density search from 37 per-tick samples, Catmull-Rom; max error 0.283 degrees against the samples (the tolerance 1 degree / 1/32 block).
+- `baryonyx_reference_idle.animation.json` (sha256 `ff79c9bf5842592b62ce3862befa75fea6818e5a4e3cea780c9460a81fec3a61`; clip `reference_idle`; a starting point for `idle`): one period of its slowest rhythm — 35.904 ticks (1.795 s): every moving bone is back within 5 degrees of its start there, so the last key closes the loop; 2 to 10 keys per bone chosen by the density search from 37 per-tick samples, Catmull-Rom; max error 0.283 degrees against the samples (the tolerance 1 degree / 1/32 block).
   - Sampled from: `danger.orespawn.entity.client.BaryonyxGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the shipped replacement, registry-free, on explicit PoseInputs)`.
   - Rule applied: wingspeed 0.25: the slowest rhythm is the claw wave cos(ageInTicks * 0.7 * WINGSPEED) * PI * 0.25 (BaryonyxGeoReplacement.applyCustomAnimations:76, every state) at 0.175 rad/tick, 35.90 ticks; the threshold gait cos(ageInTicks * 1.3 * WINGSPEED) * PI * 0.15 * limbSwingAmount (:69, walk) at 0.325; closes at k = 1 (35.903917 ticks): every bone returns within 0 degrees of its start at k x T (the 5-degree test under the 6 s cap; k = 1: 0 deg).
   - Bones that move in it: `shape15`, `shape16`, `shape21`, `shape25`.

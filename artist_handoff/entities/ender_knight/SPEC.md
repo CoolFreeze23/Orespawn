@@ -18,50 +18,50 @@ A towering armoured enderman: a pelvis, three spine pieces and four ribs up to a
 
 ## 3. Bone glossary (locked legacy names — readable labels beside them)
 
-Never rename, delete or re-parent a bone: code and hitboxes reference them by name. Left/right in the labels follow the model author's own naming (the side the legacy name calls left); Blockbench mirrors X for display, so the author's left appears on your right when the mob faces you. `gait bone` = its motion is scaled by walking speed in-game (P3). `locked` = it carries or parents a hitbox part (contract §8.1). Keying a locked bone is allowed; the checker warns, and the hitbox part follows the bone in-game (the consequence, so keep such keys deliberate). Renaming, re-parenting or deleting a locked bone is refused.
+Never rename, delete or re-parent a bone: code and hitboxes reference them by name. Left/right in the labels follow the model author's own naming (the side the legacy name calls left); the rig opens in Blockbench exactly as the game draws it, so a bone the author calls left is on the creature's own left. `gait bone` = its motion is scaled by walking speed in-game (P3). `locked` = it carries or parents a hitbox part (contract §8.1). Keying a locked bone is allowed; the checker warns, and the hitbox part follows the bone in-game (the consequence, so keep such keys deliberate). Renaming, re-parenting or deleting a locked bone is refused.
 
 | bone | readable label | classic part | parent | pivot (x, y, z) | group | gait bone | locked | cubes |
 |---|---|---|---|---|---|---|---|---|
-| `blade` | sword blade (moves with the handle) | (native rig: no classic part) | - | (4, 26, -8) | arms | no | no | 1 |
-| `cape1` | cape, upper piece (static) | (native rig: no classic part) | - | (8, 44, 3) | - | no | no | 1 |
-| `cape2` | cape, lower piece (stirs with the stride and a slow sway) | (native rig: no classic part) | - | (4, 44, 4) | cape_sway | no | no | 1 |
-| `handle` | sword handle (placed 7 units along the right forearm's pitch) | (native rig: no classic part) | - | (4, 26, -8) | arms | no | no | 1 |
-| `head` | head (turns 0.45 of the look yaw, clamped to +-0.45 rad) | (native rig: no classic part) | - | (3, 42, 3) | - | no | no | 1 |
-| `larm1` | left forearm (placed 10 units along the upper arm's pitch by the code; folded across at rest) | (native rig: no classic part) | - | (-4, 42, 1) | arms | no | no | 1 |
-| `larm2` | left upper arm, piece a (the shoulder hinge) | (native rig: no classic part) | - | (-5, 42, 1) | arms | no | no | 1 |
-| `larm3` | left upper arm, piece b (moves with piece a) | (native rig: no classic part) | - | (-3, 42, 1) | arms | no | no | 1 |
-| `lcollar` | left collar | (native rig: no classic part) | - | (1, 43, 1) | - | no | no | 1 |
-| `lfoot1` | left foot, piece 1 | (native rig: no classic part) | - | (2, 29, -2) | gait | yes | no | 1 |
-| `lfoot2` | left foot, piece 2 (rest +0.6 rad) | (native rig: no classic part) | - | (2, 29, -2) | gait | yes | no | 1 |
-| `lfoot3` | left foot, piece 3 | (native rig: no classic part) | - | (2, 29, -2) | gait | yes | no | 1 |
-| `lfoot4` | left foot, piece 4 | (native rig: no classic part) | - | (2, 29, -2) | gait | yes | no | 1 |
-| `lhip` | left hip (static) | (native rig: no classic part) | - | (1, 28, -2) | - | no | no | 1 |
-| `lleg1` | left thigh | (native rig: no classic part) | - | (1, 29, -2) | gait | yes | no | 1 |
+| `blade` | sword blade (moves with the handle) | (native rig: no classic part) | - | (-4, 26, -8) | arms | no | no | 1 |
+| `cape1` | cape, upper piece (static) | (native rig: no classic part) | - | (-8, 44, 3) | - | no | no | 1 |
+| `cape2` | cape, lower piece (stirs with the stride and a slow sway) | (native rig: no classic part) | - | (-4, 44, 4) | cape_sway | no | no | 1 |
+| `handle` | sword handle (placed 7 units along the right forearm's pitch) | (native rig: no classic part) | - | (-4, 26, -8) | arms | no | no | 1 |
+| `head` | head (turns 0.45 of the look yaw, clamped to +-0.45 rad) | (native rig: no classic part) | - | (-3, 42, 3) | - | no | no | 1 |
+| `larm1` | left forearm (placed 10 units along the upper arm's pitch by the code; folded across at rest) | (native rig: no classic part) | - | (4, 42, 1) | arms | no | no | 1 |
+| `larm2` | left upper arm, piece a (the shoulder hinge) | (native rig: no classic part) | - | (5, 42, 1) | arms | no | no | 1 |
+| `larm3` | left upper arm, piece b (moves with piece a) | (native rig: no classic part) | - | (3, 42, 1) | arms | no | no | 1 |
+| `lcollar` | left collar | (native rig: no classic part) | - | (-1, 43, 1) | - | no | no | 1 |
+| `lfoot1` | left foot, piece 1 | (native rig: no classic part) | - | (-2, 29, -2) | gait | yes | no | 1 |
+| `lfoot2` | left foot, piece 2 (rest +0.6 rad) | (native rig: no classic part) | - | (-2, 29, -2) | gait | yes | no | 1 |
+| `lfoot3` | left foot, piece 3 | (native rig: no classic part) | - | (-2, 29, -2) | gait | yes | no | 1 |
+| `lfoot4` | left foot, piece 4 | (native rig: no classic part) | - | (-2, 29, -2) | gait | yes | no | 1 |
+| `lhip` | left hip (static) | (native rig: no classic part) | - | (-1, 28, -2) | - | no | no | 1 |
+| `lleg1` | left thigh | (native rig: no classic part) | - | (-1, 29, -2) | gait | yes | no | 1 |
 | `lleg2` | left shin, piece a (rest -0.1 rad) | (native rig: no classic part) | - | (0, 29, -2) | gait | yes | no | 1 |
-| `lleg3` | left shin, piece b (rest -0.1 rad) | (native rig: no classic part) | - | (2, 29, -2) | gait | yes | no | 1 |
-| `lshoulder` | left shoulder | (native rig: no classic part) | - | (-2, 45, 0) | - | no | no | 1 |
-| `neck` | neck | (native rig: no classic part) | - | (6, 44, 0) | - | no | no | 1 |
-| `pelvis` | pelvis | (native rig: no classic part) | - | (5, 30, -2) | - | no | no | 1 |
-| `rarm1` | right forearm (placed 10 units along the upper arm's pitch; holds the sword) | (native rig: no classic part) | - | (12, 42, 2) | arms | no | no | 1 |
-| `rarm2` | right upper arm, piece a (the shoulder hinge) | (native rig: no classic part) | - | (13, 42, 1) | arms | no | no | 1 |
-| `rarm3` | right upper arm, piece b (moves with piece a) | (native rig: no classic part) | - | (11, 42, 1) | arms | no | no | 1 |
-| `rcollar` | right collar | (native rig: no classic part) | - | (11, 43, 1) | - | no | no | 1 |
-| `rfoot1` | right foot, piece 1 | (native rig: no classic part) | - | (8, 29, -2) | gait | yes | no | 1 |
-| `rfoot2` | right foot, piece 2 (rest +0.6 rad) | (native rig: no classic part) | - | (8, 29, -2) | gait | yes | no | 1 |
-| `rfoot3` | right foot, piece 3 | (native rig: no classic part) | - | (8, 29, -2) | gait | yes | no | 1 |
-| `rfoot4` | right foot, piece 4 | (native rig: no classic part) | - | (8, 29, -2) | gait | yes | no | 1 |
-| `rhip` | right hip (static) | (native rig: no classic part) | - | (7, 28, -2) | - | no | no | 1 |
-| `rib1` | rib 1 (top) | (native rig: no classic part) | - | (6, 40, 0) | - | no | no | 1 |
-| `rib2` | rib 2 | (native rig: no classic part) | - | (6, 37, 1) | - | no | no | 1 |
-| `rib3` | rib 3 | (native rig: no classic part) | - | (5, 35, 1) | - | no | no | 1 |
-| `rib4` | rib 4 (bottom) | (native rig: no classic part) | - | (5, 33, 1) | - | no | no | 1 |
-| `rleg1` | right thigh | (native rig: no classic part) | - | (7, 29, -2) | gait | yes | no | 1 |
-| `rleg2` | right shin, piece a (rest -0.1 rad) | (native rig: no classic part) | - | (8, 29, -2) | gait | yes | no | 1 |
-| `rleg3` | right shin, piece b (rest -0.1 rad) | (native rig: no classic part) | - | (6, 29, -2) | gait | yes | no | 1 |
-| `rshoulder` | right shoulder | (native rig: no classic part) | - | (14, 45, 0) | - | no | no | 1 |
-| `spine1` | spine, lower piece (-17 deg) | (native rig: no classic part) | - | (4, 33, 1) | - | no | no | 1 |
-| `spine2` | spine, middle piece | (native rig: no classic part) | - | (4, 37, 1) | - | no | no | 1 |
-| `spine3` | spine, upper piece (11 deg) | (native rig: no classic part) | - | (4, 41, 0) | - | no | no | 1 |
+| `lleg3` | left shin, piece b (rest -0.1 rad) | (native rig: no classic part) | - | (-2, 29, -2) | gait | yes | no | 1 |
+| `lshoulder` | left shoulder | (native rig: no classic part) | - | (2, 45, 0) | - | no | no | 1 |
+| `neck` | neck | (native rig: no classic part) | - | (-6, 44, 0) | - | no | no | 1 |
+| `pelvis` | pelvis | (native rig: no classic part) | - | (-5, 30, -2) | - | no | no | 1 |
+| `rarm1` | right forearm (placed 10 units along the upper arm's pitch; holds the sword) | (native rig: no classic part) | - | (-12, 42, 2) | arms | no | no | 1 |
+| `rarm2` | right upper arm, piece a (the shoulder hinge) | (native rig: no classic part) | - | (-13, 42, 1) | arms | no | no | 1 |
+| `rarm3` | right upper arm, piece b (moves with piece a) | (native rig: no classic part) | - | (-11, 42, 1) | arms | no | no | 1 |
+| `rcollar` | right collar | (native rig: no classic part) | - | (-11, 43, 1) | - | no | no | 1 |
+| `rfoot1` | right foot, piece 1 | (native rig: no classic part) | - | (-8, 29, -2) | gait | yes | no | 1 |
+| `rfoot2` | right foot, piece 2 (rest +0.6 rad) | (native rig: no classic part) | - | (-8, 29, -2) | gait | yes | no | 1 |
+| `rfoot3` | right foot, piece 3 | (native rig: no classic part) | - | (-8, 29, -2) | gait | yes | no | 1 |
+| `rfoot4` | right foot, piece 4 | (native rig: no classic part) | - | (-8, 29, -2) | gait | yes | no | 1 |
+| `rhip` | right hip (static) | (native rig: no classic part) | - | (-7, 28, -2) | - | no | no | 1 |
+| `rib1` | rib 1 (top) | (native rig: no classic part) | - | (-6, 40, 0) | - | no | no | 1 |
+| `rib2` | rib 2 | (native rig: no classic part) | - | (-6, 37, 1) | - | no | no | 1 |
+| `rib3` | rib 3 | (native rig: no classic part) | - | (-5, 35, 1) | - | no | no | 1 |
+| `rib4` | rib 4 (bottom) | (native rig: no classic part) | - | (-5, 33, 1) | - | no | no | 1 |
+| `rleg1` | right thigh | (native rig: no classic part) | - | (-7, 29, -2) | gait | yes | no | 1 |
+| `rleg2` | right shin, piece a (rest -0.1 rad) | (native rig: no classic part) | - | (-8, 29, -2) | gait | yes | no | 1 |
+| `rleg3` | right shin, piece b (rest -0.1 rad) | (native rig: no classic part) | - | (-6, 29, -2) | gait | yes | no | 1 |
+| `rshoulder` | right shoulder | (native rig: no classic part) | - | (-14, 45, 0) | - | no | no | 1 |
+| `spine1` | spine, lower piece (-17 deg) | (native rig: no classic part) | - | (-4, 33, 1) | - | no | no | 1 |
+| `spine2` | spine, middle piece | (native rig: no classic part) | - | (-4, 37, 1) | - | no | no | 1 |
+| `spine3` | spine, upper piece (11 deg) | (native rig: no classic part) | - | (-4, 41, 0) | - | no | no | 1 |
 
 ## 4. Current animation behaviour — plain English and the source formulas
 
@@ -93,11 +93,11 @@ Author every loop at 1.0 s (README rule 5, the phase-locked kind; ruled 2026-09-
 
 ### 4.3 Reference clips (reference-only)
 
-`ender_knight_reference_walk.animation.json`, `ender_knight_reference_idle.animation.json`, `ender_knight_reference_scream.animation.json` (beside this sheet, and embedded in `ender_knight.bbmodel`'s Animation tab) are NOT clips to return or ship under their own names. Each is the creature's classic code — the motion the game draws today — SAMPLED by the harness at fixed inputs so you can see that motion beside the rig in Blockbench. The `.bbmodel` opens with every clip listed (the shipped clips and these); the files beside the sheet are the PINNED SOURCE (their bytes are what the checker knows; the generator's round trip proves the embedded copies within 5e-5 s on key times and 1e-6 on values). If you rebuild the `.bbmodel` and they are gone, Animation → Import Animations... on the files brings them back. One clip per state the code reads, each value alone: `_reference_walk` — full walking speed (limbSwingAmount 1, the walk position and the age advancing one tick per key), not attacking, looking straight ahead, every state flag at rest, full health; `_reference_idle` — standing still (limbSwingAmount 0, the walk position 0; the age advancing one tick per key), not attacking, looking straight ahead, every state flag at rest, full health; `_reference_scream` — the `scream` state: the code's `isScreaming` answering true while standing still, every other state at rest; no `_reference_attack` — this creature's code reads no attack state. Keys: the classic code is sampled once per tick, and the samples are reduced by the density search the exact transcriptions use — the fewest Catmull-Rom keys per bone and channel whose curve stays within 1 degree of rotation and 1/32 block of position of every sample, the closing key always kept — so each clip carries as few keys as that tolerance allows (each entry below states its key counts and the measured maximum error). Rotations are deltas from the bind pose under the same sign rule as the shipped clips (X as the classic degrees, Y and Z negated), positions only where the code moves a bone.
+`ender_knight_reference_walk.animation.json`, `ender_knight_reference_idle.animation.json`, `ender_knight_reference_scream.animation.json` (beside this sheet, and embedded in `ender_knight.bbmodel`'s Animation tab) are NOT clips to return or ship under their own names. Each is the creature's classic code — the motion the game draws today — SAMPLED by the harness at fixed inputs so you can see that motion beside the rig in Blockbench. The `.bbmodel` opens with every clip listed (the shipped clips and these); the files beside the sheet are the PINNED SOURCE (their bytes are what the checker knows; the generator's round trip proves the embedded copies within 5e-5 s on key times and 1e-6 on values). If you rebuild the `.bbmodel` and they are gone, Animation → Import Animations... on the files brings them back. One clip per state the code reads, each value alone: `_reference_walk` — full walking speed (limbSwingAmount 1, the walk position and the age advancing one tick per key), not attacking, looking straight ahead, every state flag at rest, full health; `_reference_idle` — standing still (limbSwingAmount 0, the walk position 0; the age advancing one tick per key), not attacking, looking straight ahead, every state flag at rest, full health; `_reference_scream` — the `scream` state: the code's `isScreaming` answering true while standing still, every other state at rest; no `_reference_attack` — this creature's code reads no attack state. Keys: the classic code is sampled once per tick, and the samples are reduced by the density search the exact transcriptions use — the fewest Catmull-Rom keys per bone and channel whose curve stays within 1 degree of rotation and 1/32 block of position of every sample, the closing key always kept — so each clip carries as few keys as that tolerance allows (each entry below states its key counts and the measured maximum error). Rotations are deltas from the bind pose under the same sign rule as the shipped clips (X, Y and Z as the classic degrees: the rig is in the Bedrock convention), positions only where the code moves a bone.
 
 **Starting point (owner 2026-09-14, addendum item 13; extended by the second set revised, item 4):** a reference clip's KEYS may be the starting point of the delivered clip its state corresponds to — copy them into `walk` (from `_reference_walk`), `idle` (from `_reference_idle`), `aggro_idle` (from `_reference_attack`), `fly` (from `_reference_fly`) or `swim` (from `_reference_swim`) and improve from there; a delivered clip carrying those keys is a valid delivery (no rule compares them). A state with no contract clip (sit, sleep, display, ...) is OFFERED as an extra of this creature's own under §2.3 — §5 lists it as "offered from reference_<state>" beside the seed's extras, and a delivered clip under that name carrying the reference keys is a valid delivery. Only the reference file itself coming back under its own name is refused.
 
-- `ender_knight_reference_walk.animation.json` (sha256 `5906327e13091b4f07ef601ee78873e65732dbc9996b42ba5c41dbee3bddd8ea`; clip `reference_walk`; a starting point for `walk`): two seconds (40 ticks): this motion does not close within 6 s (its slowest rhythm is 42.743 ticks, and no multiple of it under 6 s brings every rhythm back within 5 degrees) — a two-second window, not a loop; the closing key differs from the first by 48.4008 degrees; 2 to 34 keys per bone chosen by the density search from 41 per-tick samples, Catmull-Rom; max error 0.976 degrees / 0 block against the samples (the tolerance 1 degree / 1/32 block).
+- `ender_knight_reference_walk.animation.json` (sha256 `6d7474e8d3c9732a8de204b07c1d32fb86adfdeadcbd6d7e901cb9b616bd8630`; clip `reference_walk`; a starting point for `walk`): two seconds (40 ticks): this motion does not close within 6 s (its slowest rhythm is 42.743 ticks, and no multiple of it under 6 s brings every rhythm back within 5 degrees) — a two-second window, not a loop; the closing key differs from the first by 48.4008 degrees; 2 to 34 keys per bone chosen by the density search from 41 per-tick samples, Catmull-Rom; max error 0.976 degrees / 0 block against the samples (the tolerance 1 degree / 1/32 block).
   - Sampled from: `danger.orespawn.entity.client.EnderKnightGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the shipped replacement, registry-free, on explicit PoseInputs)`.
   - Rule applied: wingspeed 0.21: the slowest rhythm is the cape cos(ageInTicks * 0.7 * WINGSPEED) * PI * 0.02 (EnderKnightGeoReplacement.applyCustomAnimations:79, every state) at 0.147 rad/tick, 42.74 ticks; the threshold gait on fourteen leg parts cos(ageInTicks * 1.3 * WINGSPEED) * PI * 0.25 * limbSwingAmount (:63, walk) at 0.273; the screaming branch cos(ageInTicks * 2.7 * WINGSPEED) * PI * 0.3 (:88, isScreaming false on the probe); the head look clamped from netHeadYaw = 0 (:80); the forearm and blade position writes follow the arms (:128-136); no multiple of the slowest group's period 42.742757 ticks up to the 6 s cap (120 ticks) brings every group back within 5 degrees of its start (k = 1: 16.945368 deg, k = 2: 55.015247 deg): a two-second window (40 ticks), not a loop - the sheet states the closing key's seam.
   - Bones that move in it: `cape2`, `lfoot1`, `lfoot2`, `lfoot3`, `lfoot4`, `lleg1`, `lleg2`, `lleg3`, `rfoot1`, `rfoot2`, `rfoot3`, `rfoot4`, `rleg1`, `rleg2`, `rleg3`; bones the code also MOVES (position keys): `blade`, `handle`, `larm1`, `rarm1`.

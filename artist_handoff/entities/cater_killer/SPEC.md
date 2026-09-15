@@ -16,90 +16,90 @@ A huge hostile caterpillar: a head with a false head, two two-part tusks and two
 
 ## 3. Bone glossary (locked legacy names — readable labels beside them)
 
-Never rename, delete or re-parent a bone: code and hitboxes reference them by name. Left/right in the labels follow the model author's own naming (the side the legacy name calls left); Blockbench mirrors X for display, so the author's left appears on your right when the mob faces you. `gait bone` = its motion is scaled by walking speed in-game (P3). `locked` = it carries or parents a hitbox part (contract §8.1). Keying a locked bone is allowed; the checker warns, and the hitbox part follows the bone in-game (the consequence, so keep such keys deliberate). Renaming, re-parenting or deleting a locked bone is refused.
+Never rename, delete or re-parent a bone: code and hitboxes reference them by name. Left/right in the labels follow the model author's own naming (the side the legacy name calls left); the rig opens in Blockbench exactly as the game draws it, so a bone the author calls left is on the creature's own left. `gait bone` = its motion is scaled by walking speed in-game (P3). `locked` = it carries or parents a hitbox part (contract §8.1). Keying a locked bone is allowed; the checker warns, and the hitbox part follows the bone in-game (the consequence, so keep such keys deliberate). Renaming, re-parenting or deleting a locked bone is refused.
 
 | bone | readable label | classic part | parent | pivot (x, y, z) | group | gait bone | locked | cubes |
 |---|---|---|---|---|---|---|---|---|
 | `Head` | head | (native rig: no classic part) | - | (0, 32, -12) | head_bob | no | no | 1 |
 | `falsehead` | false head | (native rig: no classic part) | - | (0, 32, -12) | head_bob | no | no | 1 |
-| `ljaw` | left jaw | (native rig: no classic part) | - | (-4, 25, -18) | head_bob | no | no | 1 |
-| `ltusk1` | left tusk, base | (native rig: no classic part) | - | (-9, 49, -19) | head_bob | no | no | 1 |
-| `ltusk2` | left tusk, tip | (native rig: no classic part) | - | (-36, 49, -36) | tusk_tips | no | no | 1 |
-| `rjaw` | right jaw | (native rig: no classic part) | - | (5, 25, -18) | head_bob | no | no | 1 |
-| `rtusk1` | right tusk, base | (native rig: no classic part) | - | (8, 49, -17) | head_bob | no | no | 1 |
-| `rtusk2` | right tusk, tip | (native rig: no classic part) | - | (36, 48, -34) | tusk_tips | no | no | 1 |
+| `ljaw` | left jaw | (native rig: no classic part) | - | (4, 25, -18) | head_bob | no | no | 1 |
+| `ltusk1` | left tusk, base | (native rig: no classic part) | - | (9, 49, -19) | head_bob | no | no | 1 |
+| `ltusk2` | left tusk, tip | (native rig: no classic part) | - | (36, 49, -36) | tusk_tips | no | no | 1 |
+| `rjaw` | right jaw | (native rig: no classic part) | - | (-5, 25, -18) | head_bob | no | no | 1 |
+| `rtusk1` | right tusk, base | (native rig: no classic part) | - | (-8, 49, -17) | head_bob | no | no | 1 |
+| `rtusk2` | right tusk, tip | (native rig: no classic part) | - | (-36, 48, -34) | tusk_tips | no | no | 1 |
 | `seg1_0` | front segment 1 | (native rig: no classic part) | - | (0, 32, -12) | head_bob | no | no | 1 |
 | `seg1_1` | front segment 2 | (native rig: no classic part) | - | (0, 32, -12) | head_bob | no | no | 1 |
 | `seg1_2` | front segment 3 | (native rig: no classic part) | - | (0, 32, -12) | head_bob | no | no | 1 |
-| `seg1lleg_0` | front segment 1, left leg | (native rig: no classic part) | - | (-8, 32, -5) | front_legs | no | no | 1 |
-| `seg1lleg_1` | front segment 2, left leg | (native rig: no classic part) | - | (-8, 32, -5) | front_legs | no | no | 1 |
-| `seg1lleg_2` | front segment 3, left leg | (native rig: no classic part) | - | (-8, 32, -5) | front_legs | no | no | 1 |
-| `seg1lspike_0` | front segment 1, left side spike | (native rig: no classic part) | - | (-14, 56, -6) | front_spikes | no | no | 1 |
-| `seg1lspike_1` | front segment 2, left side spike | (native rig: no classic part) | - | (-14, 56, -6) | front_spikes | no | no | 1 |
-| `seg1lspike_2` | front segment 3, left side spike | (native rig: no classic part) | - | (-14, 56, -6) | front_spikes | no | no | 1 |
-| `seg1ltopspike_0` | front segment 1, left top spike | (native rig: no classic part) | - | (-8, 63, -6) | head_bob | no | no | 1 |
-| `seg1ltopspike_1` | front segment 2, left top spike | (native rig: no classic part) | - | (-8, 63, -6) | head_bob | no | no | 1 |
-| `seg1ltopspike_2` | front segment 3, left top spike | (native rig: no classic part) | - | (-8, 63, -6) | head_bob | no | no | 1 |
-| `seg1rleg_0` | front segment 1, right leg | (native rig: no classic part) | - | (9, 32, -5) | front_legs | no | no | 1 |
-| `seg1rleg_1` | front segment 2, right leg | (native rig: no classic part) | - | (9, 32, -5) | front_legs | no | no | 1 |
-| `seg1rleg_2` | front segment 3, right leg | (native rig: no classic part) | - | (9, 32, -5) | front_legs | no | no | 1 |
-| `seg1rspike_0` | front segment 1, right side spike | (native rig: no classic part) | - | (13, 56, -6) | front_spikes | no | no | 1 |
-| `seg1rspike_1` | front segment 2, right side spike | (native rig: no classic part) | - | (13, 56, -6) | front_spikes | no | no | 1 |
-| `seg1rspike_2` | front segment 3, right side spike | (native rig: no classic part) | - | (13, 56, -6) | front_spikes | no | no | 1 |
-| `seg1rtopspike_0` | front segment 1, right top spike | (native rig: no classic part) | - | (10, 63, -6) | head_bob | no | no | 1 |
-| `seg1rtopspike_1` | front segment 2, right top spike | (native rig: no classic part) | - | (10, 63, -6) | head_bob | no | no | 1 |
-| `seg1rtopspike_2` | front segment 3, right top spike | (native rig: no classic part) | - | (10, 63, -6) | head_bob | no | no | 1 |
+| `seg1lleg_0` | front segment 1, left leg | (native rig: no classic part) | - | (8, 32, -5) | front_legs | no | no | 1 |
+| `seg1lleg_1` | front segment 2, left leg | (native rig: no classic part) | - | (8, 32, -5) | front_legs | no | no | 1 |
+| `seg1lleg_2` | front segment 3, left leg | (native rig: no classic part) | - | (8, 32, -5) | front_legs | no | no | 1 |
+| `seg1lspike_0` | front segment 1, left side spike | (native rig: no classic part) | - | (14, 56, -6) | front_spikes | no | no | 1 |
+| `seg1lspike_1` | front segment 2, left side spike | (native rig: no classic part) | - | (14, 56, -6) | front_spikes | no | no | 1 |
+| `seg1lspike_2` | front segment 3, left side spike | (native rig: no classic part) | - | (14, 56, -6) | front_spikes | no | no | 1 |
+| `seg1ltopspike_0` | front segment 1, left top spike | (native rig: no classic part) | - | (8, 63, -6) | head_bob | no | no | 1 |
+| `seg1ltopspike_1` | front segment 2, left top spike | (native rig: no classic part) | - | (8, 63, -6) | head_bob | no | no | 1 |
+| `seg1ltopspike_2` | front segment 3, left top spike | (native rig: no classic part) | - | (8, 63, -6) | head_bob | no | no | 1 |
+| `seg1rleg_0` | front segment 1, right leg | (native rig: no classic part) | - | (-9, 32, -5) | front_legs | no | no | 1 |
+| `seg1rleg_1` | front segment 2, right leg | (native rig: no classic part) | - | (-9, 32, -5) | front_legs | no | no | 1 |
+| `seg1rleg_2` | front segment 3, right leg | (native rig: no classic part) | - | (-9, 32, -5) | front_legs | no | no | 1 |
+| `seg1rspike_0` | front segment 1, right side spike | (native rig: no classic part) | - | (-13, 56, -6) | front_spikes | no | no | 1 |
+| `seg1rspike_1` | front segment 2, right side spike | (native rig: no classic part) | - | (-13, 56, -6) | front_spikes | no | no | 1 |
+| `seg1rspike_2` | front segment 3, right side spike | (native rig: no classic part) | - | (-13, 56, -6) | front_spikes | no | no | 1 |
+| `seg1rtopspike_0` | front segment 1, right top spike | (native rig: no classic part) | - | (-10, 63, -6) | head_bob | no | no | 1 |
+| `seg1rtopspike_1` | front segment 2, right top spike | (native rig: no classic part) | - | (-10, 63, -6) | head_bob | no | no | 1 |
+| `seg1rtopspike_2` | front segment 3, right top spike | (native rig: no classic part) | - | (-10, 63, -6) | head_bob | no | no | 1 |
 | `seg2_0` | rear segment 1 | (native rig: no classic part) | - | (0, 26, 32) | stride | yes | no | 1 |
 | `seg2_1` | rear segment 2 | (native rig: no classic part) | - | (0, 26, 32) | stride | yes | no | 1 |
 | `seg2_2` | rear segment 3 | (native rig: no classic part) | - | (0, 26, 32) | stride | yes | no | 1 |
 | `seg2_3` | rear segment 4 | (native rig: no classic part) | - | (0, 26, 32) | stride | yes | no | 1 |
 | `seg2_4` | rear segment 5 | (native rig: no classic part) | - | (0, 26, 32) | stride | yes | no | 1 |
 | `seg2_5` | rear segment 6 | (native rig: no classic part) | - | (0, 26, 32) | stride | yes | no | 1 |
-| `seg2lfoot_0` | rear segment 1, left foot | (native rig: no classic part) | - | (-13, 10, 32) | stride | yes | no | 1 |
-| `seg2lfoot_1` | rear segment 2, left foot | (native rig: no classic part) | - | (-13, 10, 32) | stride | yes | no | 1 |
-| `seg2lfoot_2` | rear segment 3, left foot | (native rig: no classic part) | - | (-13, 10, 32) | stride | yes | no | 1 |
-| `seg2lfoot_3` | rear segment 4, left foot | (native rig: no classic part) | - | (-13, 10, 32) | stride | yes | no | 1 |
-| `seg2lfoot_4` | rear segment 5, left foot | (native rig: no classic part) | - | (-13, 10, 32) | stride | yes | no | 1 |
-| `seg2lfoot_5` | rear segment 6, left foot | (native rig: no classic part) | - | (-13, 10, 32) | stride | yes | no | 1 |
-| `seg2lspike_0` | rear segment 1, left side spike | (native rig: no classic part) | - | (-18, 33, 32) | rear_spikes | no | no | 1 |
-| `seg2lspike_1` | rear segment 2, left side spike | (native rig: no classic part) | - | (-18, 33, 32) | rear_spikes | no | no | 1 |
-| `seg2lspike_2` | rear segment 3, left side spike | (native rig: no classic part) | - | (-18, 33, 32) | rear_spikes | no | no | 1 |
-| `seg2lspike_3` | rear segment 4, left side spike | (native rig: no classic part) | - | (-18, 33, 32) | rear_spikes | no | no | 1 |
-| `seg2lspike_4` | rear segment 5, left side spike | (native rig: no classic part) | - | (-18, 33, 32) | rear_spikes | no | no | 1 |
-| `seg2lspike_5` | rear segment 6, left side spike | (native rig: no classic part) | - | (-18, 33, 32) | rear_spikes | no | no | 1 |
-| `seg2ltopspike_0` | rear segment 1, left top spike | (native rig: no classic part) | - | (-14, 42, 32) | stride | yes | no | 1 |
-| `seg2ltopspike_1` | rear segment 2, left top spike | (native rig: no classic part) | - | (-14, 42, 32) | stride | yes | no | 1 |
-| `seg2ltopspike_2` | rear segment 3, left top spike | (native rig: no classic part) | - | (-14, 42, 32) | stride | yes | no | 1 |
-| `seg2ltopspike_3` | rear segment 4, left top spike | (native rig: no classic part) | - | (-14, 42, 32) | stride | yes | no | 1 |
-| `seg2ltopspike_4` | rear segment 5, left top spike | (native rig: no classic part) | - | (-14, 42, 32) | stride | yes | no | 1 |
-| `seg2ltopspike_5` | rear segment 6, left top spike | (native rig: no classic part) | - | (-14, 42, 32) | stride | yes | no | 1 |
-| `seg2rfoot_0` | rear segment 1, right foot | (native rig: no classic part) | - | (13, 10, 32) | stride | yes | no | 1 |
-| `seg2rfoot_1` | rear segment 2, right foot | (native rig: no classic part) | - | (13, 10, 32) | stride | yes | no | 1 |
-| `seg2rfoot_2` | rear segment 3, right foot | (native rig: no classic part) | - | (13, 10, 32) | stride | yes | no | 1 |
-| `seg2rfoot_3` | rear segment 4, right foot | (native rig: no classic part) | - | (13, 10, 32) | stride | yes | no | 1 |
-| `seg2rfoot_4` | rear segment 5, right foot | (native rig: no classic part) | - | (13, 10, 32) | stride | yes | no | 1 |
-| `seg2rfoot_5` | rear segment 6, right foot | (native rig: no classic part) | - | (13, 10, 32) | stride | yes | no | 1 |
-| `seg2rspike_0` | rear segment 1, right side spike | (native rig: no classic part) | - | (18, 33, 32) | rear_spikes | no | no | 1 |
-| `seg2rspike_1` | rear segment 2, right side spike | (native rig: no classic part) | - | (18, 33, 32) | rear_spikes | no | no | 1 |
-| `seg2rspike_2` | rear segment 3, right side spike | (native rig: no classic part) | - | (18, 33, 32) | rear_spikes | no | no | 1 |
-| `seg2rspike_3` | rear segment 4, right side spike | (native rig: no classic part) | - | (18, 33, 32) | rear_spikes | no | no | 1 |
-| `seg2rspike_4` | rear segment 5, right side spike | (native rig: no classic part) | - | (18, 33, 32) | rear_spikes | no | no | 1 |
-| `seg2rspike_5` | rear segment 6, right side spike | (native rig: no classic part) | - | (18, 33, 32) | rear_spikes | no | no | 1 |
-| `seg2rtopspike_0` | rear segment 1, right top spike | (native rig: no classic part) | - | (14, 42, 32) | stride | yes | no | 1 |
-| `seg2rtopspike_1` | rear segment 2, right top spike | (native rig: no classic part) | - | (14, 42, 32) | stride | yes | no | 1 |
-| `seg2rtopspike_2` | rear segment 3, right top spike | (native rig: no classic part) | - | (14, 42, 32) | stride | yes | no | 1 |
-| `seg2rtopspike_3` | rear segment 4, right top spike | (native rig: no classic part) | - | (14, 42, 32) | stride | yes | no | 1 |
-| `seg2rtopspike_4` | rear segment 5, right top spike | (native rig: no classic part) | - | (14, 42, 32) | stride | yes | no | 1 |
-| `seg2rtopspike_5` | rear segment 6, right top spike | (native rig: no classic part) | - | (14, 42, 32) | stride | yes | no | 1 |
+| `seg2lfoot_0` | rear segment 1, left foot | (native rig: no classic part) | - | (13, 10, 32) | stride | yes | no | 1 |
+| `seg2lfoot_1` | rear segment 2, left foot | (native rig: no classic part) | - | (13, 10, 32) | stride | yes | no | 1 |
+| `seg2lfoot_2` | rear segment 3, left foot | (native rig: no classic part) | - | (13, 10, 32) | stride | yes | no | 1 |
+| `seg2lfoot_3` | rear segment 4, left foot | (native rig: no classic part) | - | (13, 10, 32) | stride | yes | no | 1 |
+| `seg2lfoot_4` | rear segment 5, left foot | (native rig: no classic part) | - | (13, 10, 32) | stride | yes | no | 1 |
+| `seg2lfoot_5` | rear segment 6, left foot | (native rig: no classic part) | - | (13, 10, 32) | stride | yes | no | 1 |
+| `seg2lspike_0` | rear segment 1, left side spike | (native rig: no classic part) | - | (18, 33, 32) | rear_spikes | no | no | 1 |
+| `seg2lspike_1` | rear segment 2, left side spike | (native rig: no classic part) | - | (18, 33, 32) | rear_spikes | no | no | 1 |
+| `seg2lspike_2` | rear segment 3, left side spike | (native rig: no classic part) | - | (18, 33, 32) | rear_spikes | no | no | 1 |
+| `seg2lspike_3` | rear segment 4, left side spike | (native rig: no classic part) | - | (18, 33, 32) | rear_spikes | no | no | 1 |
+| `seg2lspike_4` | rear segment 5, left side spike | (native rig: no classic part) | - | (18, 33, 32) | rear_spikes | no | no | 1 |
+| `seg2lspike_5` | rear segment 6, left side spike | (native rig: no classic part) | - | (18, 33, 32) | rear_spikes | no | no | 1 |
+| `seg2ltopspike_0` | rear segment 1, left top spike | (native rig: no classic part) | - | (14, 42, 32) | stride | yes | no | 1 |
+| `seg2ltopspike_1` | rear segment 2, left top spike | (native rig: no classic part) | - | (14, 42, 32) | stride | yes | no | 1 |
+| `seg2ltopspike_2` | rear segment 3, left top spike | (native rig: no classic part) | - | (14, 42, 32) | stride | yes | no | 1 |
+| `seg2ltopspike_3` | rear segment 4, left top spike | (native rig: no classic part) | - | (14, 42, 32) | stride | yes | no | 1 |
+| `seg2ltopspike_4` | rear segment 5, left top spike | (native rig: no classic part) | - | (14, 42, 32) | stride | yes | no | 1 |
+| `seg2ltopspike_5` | rear segment 6, left top spike | (native rig: no classic part) | - | (14, 42, 32) | stride | yes | no | 1 |
+| `seg2rfoot_0` | rear segment 1, right foot | (native rig: no classic part) | - | (-13, 10, 32) | stride | yes | no | 1 |
+| `seg2rfoot_1` | rear segment 2, right foot | (native rig: no classic part) | - | (-13, 10, 32) | stride | yes | no | 1 |
+| `seg2rfoot_2` | rear segment 3, right foot | (native rig: no classic part) | - | (-13, 10, 32) | stride | yes | no | 1 |
+| `seg2rfoot_3` | rear segment 4, right foot | (native rig: no classic part) | - | (-13, 10, 32) | stride | yes | no | 1 |
+| `seg2rfoot_4` | rear segment 5, right foot | (native rig: no classic part) | - | (-13, 10, 32) | stride | yes | no | 1 |
+| `seg2rfoot_5` | rear segment 6, right foot | (native rig: no classic part) | - | (-13, 10, 32) | stride | yes | no | 1 |
+| `seg2rspike_0` | rear segment 1, right side spike | (native rig: no classic part) | - | (-18, 33, 32) | rear_spikes | no | no | 1 |
+| `seg2rspike_1` | rear segment 2, right side spike | (native rig: no classic part) | - | (-18, 33, 32) | rear_spikes | no | no | 1 |
+| `seg2rspike_2` | rear segment 3, right side spike | (native rig: no classic part) | - | (-18, 33, 32) | rear_spikes | no | no | 1 |
+| `seg2rspike_3` | rear segment 4, right side spike | (native rig: no classic part) | - | (-18, 33, 32) | rear_spikes | no | no | 1 |
+| `seg2rspike_4` | rear segment 5, right side spike | (native rig: no classic part) | - | (-18, 33, 32) | rear_spikes | no | no | 1 |
+| `seg2rspike_5` | rear segment 6, right side spike | (native rig: no classic part) | - | (-18, 33, 32) | rear_spikes | no | no | 1 |
+| `seg2rtopspike_0` | rear segment 1, right top spike | (native rig: no classic part) | - | (-14, 42, 32) | stride | yes | no | 1 |
+| `seg2rtopspike_1` | rear segment 2, right top spike | (native rig: no classic part) | - | (-14, 42, 32) | stride | yes | no | 1 |
+| `seg2rtopspike_2` | rear segment 3, right top spike | (native rig: no classic part) | - | (-14, 42, 32) | stride | yes | no | 1 |
+| `seg2rtopspike_3` | rear segment 4, right top spike | (native rig: no classic part) | - | (-14, 42, 32) | stride | yes | no | 1 |
+| `seg2rtopspike_4` | rear segment 5, right top spike | (native rig: no classic part) | - | (-14, 42, 32) | stride | yes | no | 1 |
+| `seg2rtopspike_5` | rear segment 6, right top spike | (native rig: no classic part) | - | (-14, 42, 32) | stride | yes | no | 1 |
 | `seg3` | segment 3 (the last) | (native rig: no classic part) | - | (0, 21, 48) | stride | yes | no | 1 |
-| `seg3lbackspike` | segment 3, left back spike | (native rig: no classic part) | - | (-13, 32, 54) | back_spikes | no | no | 1 |
-| `seg3lfoot` | segment 3, left foot | (native rig: no classic part) | - | (-10, 8, 48) | stride | yes | no | 1 |
-| `seg3lspike` | segment 3, left side spike | (native rig: no classic part) | - | (-14, 28, 48) | rear_spikes | no | no | 1 |
-| `seg3ltopspike` | segment 3, left top spike | (native rig: no classic part) | - | (-10, 34, 48) | stride | yes | no | 1 |
-| `seg3rbackspike` | segment 3, right back spike | (native rig: no classic part) | - | (13, 32, 54) | back_spikes | no | no | 1 |
-| `seg3rfoot` | segment 3, right foot | (native rig: no classic part) | - | (10, 8, 48) | stride | yes | no | 1 |
-| `seg3rspike` | segment 3, right side spike | (native rig: no classic part) | - | (14, 28, 48) | rear_spikes | no | no | 1 |
-| `seg3rtopspike` | segment 3, right top spike | (native rig: no classic part) | - | (10, 34, 48) | stride | yes | no | 1 |
+| `seg3lbackspike` | segment 3, left back spike | (native rig: no classic part) | - | (13, 32, 54) | back_spikes | no | no | 1 |
+| `seg3lfoot` | segment 3, left foot | (native rig: no classic part) | - | (10, 8, 48) | stride | yes | no | 1 |
+| `seg3lspike` | segment 3, left side spike | (native rig: no classic part) | - | (14, 28, 48) | rear_spikes | no | no | 1 |
+| `seg3ltopspike` | segment 3, left top spike | (native rig: no classic part) | - | (10, 34, 48) | stride | yes | no | 1 |
+| `seg3rbackspike` | segment 3, right back spike | (native rig: no classic part) | - | (-13, 32, 54) | back_spikes | no | no | 1 |
+| `seg3rfoot` | segment 3, right foot | (native rig: no classic part) | - | (-10, 8, 48) | stride | yes | no | 1 |
+| `seg3rspike` | segment 3, right side spike | (native rig: no classic part) | - | (-14, 28, 48) | rear_spikes | no | no | 1 |
+| `seg3rtopspike` | segment 3, right top spike | (native rig: no classic part) | - | (-10, 34, 48) | stride | yes | no | 1 |
 
 ## 4. Current animation behaviour — plain English and the source formulas
 
@@ -138,21 +138,21 @@ Author every loop at 1.0 s (README rule 5, the phase-locked kind; ruled 2026-09-
 
 ### 4.3 Reference clips (reference-only)
 
-`cater_killer_reference_walk.animation.json`, `cater_killer_reference_idle.animation.json`, `cater_killer_reference_attack.animation.json` (beside this sheet, and embedded in `cater_killer.bbmodel`'s Animation tab) are NOT clips to return or ship under their own names. Each is the creature's classic code — the motion the game draws today — SAMPLED by the harness at fixed inputs so you can see that motion beside the rig in Blockbench. The `.bbmodel` opens with every clip listed (the shipped clips and these); the files beside the sheet are the PINNED SOURCE (their bytes are what the checker knows; the generator's round trip proves the embedded copies within 5e-5 s on key times and 1e-6 on values). If you rebuild the `.bbmodel` and they are gone, Animation → Import Animations... on the files brings them back. One clip per state the code reads, each value alone: `_reference_walk` — full walking speed (limbSwingAmount 1, the walk position and the age advancing one tick per key), not attacking, looking straight ahead, every state flag at rest, full health; `_reference_idle` — standing still (limbSwingAmount 0, the walk position 0; the age advancing one tick per key), not attacking, looking straight ahead, every state flag at rest, full health; `_reference_attack` — attacking (the code's attacking flag raised) while standing still (limbSwingAmount 0, the walk position 0; the age advancing one tick per key), looking straight ahead, every other state flag at rest, full health. Keys: the classic code is sampled once per tick, and the samples are reduced by the density search the exact transcriptions use — the fewest Catmull-Rom keys per bone and channel whose curve stays within 1 degree of rotation and 1/32 block of position of every sample, the closing key always kept — so each clip carries as few keys as that tolerance allows (each entry below states its key counts and the measured maximum error). Rotations are deltas from the bind pose under the same sign rule as the shipped clips (X as the classic degrees, Y and Z negated), positions only where the code moves a bone.
+`cater_killer_reference_walk.animation.json`, `cater_killer_reference_idle.animation.json`, `cater_killer_reference_attack.animation.json` (beside this sheet, and embedded in `cater_killer.bbmodel`'s Animation tab) are NOT clips to return or ship under their own names. Each is the creature's classic code — the motion the game draws today — SAMPLED by the harness at fixed inputs so you can see that motion beside the rig in Blockbench. The `.bbmodel` opens with every clip listed (the shipped clips and these); the files beside the sheet are the PINNED SOURCE (their bytes are what the checker knows; the generator's round trip proves the embedded copies within 5e-5 s on key times and 1e-6 on values). If you rebuild the `.bbmodel` and they are gone, Animation → Import Animations... on the files brings them back. One clip per state the code reads, each value alone: `_reference_walk` — full walking speed (limbSwingAmount 1, the walk position and the age advancing one tick per key), not attacking, looking straight ahead, every state flag at rest, full health; `_reference_idle` — standing still (limbSwingAmount 0, the walk position 0; the age advancing one tick per key), not attacking, looking straight ahead, every state flag at rest, full health; `_reference_attack` — attacking (the code's attacking flag raised) while standing still (limbSwingAmount 0, the walk position 0; the age advancing one tick per key), looking straight ahead, every other state flag at rest, full health. Keys: the classic code is sampled once per tick, and the samples are reduced by the density search the exact transcriptions use — the fewest Catmull-Rom keys per bone and channel whose curve stays within 1 degree of rotation and 1/32 block of position of every sample, the closing key always kept — so each clip carries as few keys as that tolerance allows (each entry below states its key counts and the measured maximum error). Rotations are deltas from the bind pose under the same sign rule as the shipped clips (X, Y and Z as the classic degrees: the rig is in the Bedrock convention), positions only where the code moves a bone.
 
 **Starting point (owner 2026-09-14, addendum item 13; extended by the second set revised, item 4):** a reference clip's KEYS may be the starting point of the delivered clip its state corresponds to — copy them into `walk` (from `_reference_walk`), `idle` (from `_reference_idle`), `aggro_idle` (from `_reference_attack`), `fly` (from `_reference_fly`) or `swim` (from `_reference_swim`) and improve from there; a delivered clip carrying those keys is a valid delivery (no rule compares them). A state with no contract clip (sit, sleep, display, ...) is OFFERED as an extra of this creature's own under §2.3 — §5 lists it as "offered from reference_<state>" beside the seed's extras, and a delivered clip under that name carrying the reference keys is a valid delivery. Only the reference file itself coming back under its own name is refused.
 
-- `cater_killer_reference_walk.animation.json` (sha256 `2b266f99e9ed671fa37dfbbebd0762fbc9c2d741691884ba12d31a7ff38cf1c9`; clip `reference_walk`; a starting point for `walk`): two seconds (40 ticks): this motion does not close within 6 s (its slowest rhythm is 95.2 ticks, and no multiple of it under 6 s brings every rhythm back within 5 degrees) — a two-second window, not a loop; the closing key differs from the first by 24.309 degrees; 2 to 40 keys per bone chosen by the density search from 41 per-tick samples, Catmull-Rom; max error 0.997 degrees / 0.0302 block against the samples (the tolerance 1 degree / 1/32 block).
+- `cater_killer_reference_walk.animation.json` (sha256 `bbad2c3e76e3e60685e2df42d80da0700681edd40884acb4bdf6ee402294c6ba`; clip `reference_walk`; a starting point for `walk`): two seconds (40 ticks): this motion does not close within 6 s (its slowest rhythm is 95.2 ticks, and no multiple of it under 6 s brings every rhythm back within 5 degrees) — a two-second window, not a loop; the closing key differs from the first by 24.309 degrees; 2 to 40 keys per bone chosen by the density search from 41 per-tick samples, Catmull-Rom; max error 0.997 degrees / 0.0302 block against the samples (the tolerance 1 degree / 1/32 block).
   - Sampled from: `danger.orespawn.entity.client.CaterKillerGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the shipped replacement, registry-free, on explicit PoseInputs)`.
   - Rule applied: at rest (attacking 0) the slowest channel is the head bob cos(ageInTicks * 0.3F * ws) * 2 units at wingspeed 0.22 (CaterKillerGeoReplacement.applyCustomAnimations, CaterKillerModel.poseFrom; orig ModelCaterKiller.java:251): 0.066 rad/tick, 95.2 ticks; the other rest rhythms 0.077 .. 0.506 rad/tick (orig :248-338); the head bob and the segments' z are position channels, the rear segments' z scaled by limbSwingAmount = 1 (orig :301-308); no multiple of the slowest group's period 95.199778 ticks up to the 6 s cap (120 ticks) brings every group back within 5 degrees of its start (k = 1: 21.600801 deg / 9.000336 units): a two-second window (40 ticks), not a loop - the sheet states the closing key's seam.
   - Bones that move in it: `ljaw`, `ltusk2`, `rjaw`, `rtusk2`, `seg1lleg_0`, `seg1lleg_1`, `seg1lleg_2`, `seg1lspike_0`, `seg1lspike_1`, `seg1lspike_2`, `seg1rleg_0`, `seg1rleg_1`, `seg1rleg_2`, `seg1rspike_0`, `seg1rspike_1`, `seg1rspike_2`, `seg2lspike_0`, `seg2lspike_1`, `seg2lspike_2`, `seg2lspike_3`, `seg2lspike_4`, `seg2lspike_5`, `seg2rspike_0`, `seg2rspike_1`, `seg2rspike_2`, `seg2rspike_3`, `seg2rspike_4`, `seg2rspike_5`, `seg3lbackspike`, `seg3lspike`, `seg3rbackspike`, `seg3rspike`; bones the code also MOVES (position keys): `Head`, `falsehead`, `ljaw`, `ltusk1`, `ltusk2`, `rjaw`, `rtusk1`, `rtusk2`, `seg1_0`, `seg1_1`, `seg1_2`, `seg1lleg_0`, `seg1lleg_1`, `seg1lleg_2`, `seg1lspike_0`, `seg1lspike_1`, `seg1lspike_2`, `seg1ltopspike_0`, `seg1ltopspike_1`, `seg1ltopspike_2`, `seg1rleg_0`, `seg1rleg_1`, `seg1rleg_2`, `seg1rspike_0`, `seg1rspike_1`, `seg1rspike_2`, `seg1rtopspike_0`, `seg1rtopspike_1`, `seg1rtopspike_2`, `seg2_0`, `seg2_1`, `seg2_2`, `seg2_3`, `seg2_4`, `seg2_5`, `seg2lfoot_0`, `seg2lfoot_1`, `seg2lfoot_2`, `seg2lfoot_3`, `seg2lfoot_4`, `seg2lfoot_5`, `seg2lspike_0`, `seg2lspike_1`, `seg2lspike_2`, `seg2lspike_3`, `seg2lspike_4`, `seg2lspike_5`, `seg2ltopspike_0`, `seg2ltopspike_1`, `seg2ltopspike_2`, `seg2ltopspike_3`, `seg2ltopspike_4`, `seg2ltopspike_5`, `seg2rfoot_0`, `seg2rfoot_1`, `seg2rfoot_2`, `seg2rfoot_3`, `seg2rfoot_4`, `seg2rfoot_5`, `seg2rspike_0`, `seg2rspike_1`, `seg2rspike_2`, `seg2rspike_3`, `seg2rspike_4`, `seg2rspike_5`, `seg2rtopspike_0`, `seg2rtopspike_1`, `seg2rtopspike_2`, `seg2rtopspike_3`, `seg2rtopspike_4`, `seg2rtopspike_5`, `seg3`, `seg3lbackspike`, `seg3lfoot`, `seg3lspike`, `seg3ltopspike`, `seg3rbackspike`, `seg3rfoot`, `seg3rspike`, `seg3rtopspike`.
   - Loop seam: the closing key differs from the first by at most 24.309 degrees (mod 360).
-- `cater_killer_reference_idle.animation.json` (sha256 `2eae70acbab4c4ccb994c70bde6fc670a263fba942706f9478904599329273f3`; clip `reference_idle`; a starting point for `idle`): two seconds (40 ticks): this motion does not close within 6 s (its slowest rhythm is 95.2 ticks, and no multiple of it under 6 s brings every rhythm back within 5 degrees) — a two-second window, not a loop; the closing key differs from the first by 24.309 degrees; 2 to 40 keys per bone chosen by the density search from 41 per-tick samples, Catmull-Rom; max error 0.997 degrees / 0.0248 block against the samples (the tolerance 1 degree / 1/32 block).
+- `cater_killer_reference_idle.animation.json` (sha256 `73f0772762baeb44f4c5bd064cc5d6663277d680d3804e215a191bc3b79f2178`; clip `reference_idle`; a starting point for `idle`): two seconds (40 ticks): this motion does not close within 6 s (its slowest rhythm is 95.2 ticks, and no multiple of it under 6 s brings every rhythm back within 5 degrees) — a two-second window, not a loop; the closing key differs from the first by 24.309 degrees; 2 to 40 keys per bone chosen by the density search from 41 per-tick samples, Catmull-Rom; max error 0.997 degrees / 0.0248 block against the samples (the tolerance 1 degree / 1/32 block).
   - Sampled from: `danger.orespawn.entity.client.CaterKillerGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the shipped replacement, registry-free, on explicit PoseInputs)`.
   - Rule applied: at rest (attacking 0) the slowest channel is the head bob cos(ageInTicks * 0.3F * ws) * 2 units at wingspeed 0.22 (CaterKillerGeoReplacement.applyCustomAnimations, CaterKillerModel.poseFrom; orig ModelCaterKiller.java:251): 0.066 rad/tick, 95.2 ticks; the other rest rhythms 0.077 .. 0.506 rad/tick (orig :248-338); the head bob and the segments' z are position channels, the rear segments' z scaled by limbSwingAmount = 1 (orig :301-308); no multiple of the slowest group's period 95.199778 ticks up to the 6 s cap (120 ticks) brings every group back within 5 degrees of its start (k = 1: 21.600801 deg): a two-second window (40 ticks), not a loop - the sheet states the closing key's seam.
   - Bones that move in it: `ljaw`, `ltusk2`, `rjaw`, `rtusk2`, `seg1lleg_0`, `seg1lleg_1`, `seg1lleg_2`, `seg1lspike_0`, `seg1lspike_1`, `seg1lspike_2`, `seg1rleg_0`, `seg1rleg_1`, `seg1rleg_2`, `seg1rspike_0`, `seg1rspike_1`, `seg1rspike_2`, `seg2lspike_0`, `seg2lspike_1`, `seg2lspike_2`, `seg2lspike_3`, `seg2lspike_4`, `seg2lspike_5`, `seg2rspike_0`, `seg2rspike_1`, `seg2rspike_2`, `seg2rspike_3`, `seg2rspike_4`, `seg2rspike_5`, `seg3lbackspike`, `seg3lspike`, `seg3rbackspike`, `seg3rspike`; bones the code also MOVES (position keys): `Head`, `falsehead`, `ljaw`, `ltusk1`, `ltusk2`, `rjaw`, `rtusk1`, `rtusk2`, `seg1_0`, `seg1_1`, `seg1_2`, `seg1lleg_0`, `seg1lleg_1`, `seg1lleg_2`, `seg1lspike_0`, `seg1lspike_1`, `seg1lspike_2`, `seg1ltopspike_0`, `seg1ltopspike_1`, `seg1ltopspike_2`, `seg1rleg_0`, `seg1rleg_1`, `seg1rleg_2`, `seg1rspike_0`, `seg1rspike_1`, `seg1rspike_2`, `seg1rtopspike_0`, `seg1rtopspike_1`, `seg1rtopspike_2`, `seg2_0`, `seg2_1`, `seg2_2`, `seg2_3`, `seg2_4`, `seg2_5`, `seg2lfoot_0`, `seg2lfoot_1`, `seg2lfoot_2`, `seg2lfoot_3`, `seg2lfoot_4`, `seg2lfoot_5`, `seg2lspike_0`, `seg2lspike_1`, `seg2lspike_2`, `seg2lspike_3`, `seg2lspike_4`, `seg2lspike_5`, `seg2ltopspike_0`, `seg2ltopspike_1`, `seg2ltopspike_2`, `seg2ltopspike_3`, `seg2ltopspike_4`, `seg2ltopspike_5`, `seg2rfoot_0`, `seg2rfoot_1`, `seg2rfoot_2`, `seg2rfoot_3`, `seg2rfoot_4`, `seg2rfoot_5`, `seg2rspike_0`, `seg2rspike_1`, `seg2rspike_2`, `seg2rspike_3`, `seg2rspike_4`, `seg2rspike_5`, `seg2rtopspike_0`, `seg2rtopspike_1`, `seg2rtopspike_2`, `seg2rtopspike_3`, `seg2rtopspike_4`, `seg2rtopspike_5`, `seg3`, `seg3lbackspike`, `seg3lfoot`, `seg3lspike`, `seg3ltopspike`, `seg3rbackspike`, `seg3rfoot`, `seg3rspike`, `seg3rtopspike`.
   - Loop seam: the closing key differs from the first by at most 24.309 degrees (mod 360).
-- `cater_killer_reference_attack.animation.json` (sha256 `1baeb59d0ae5e846bd2b5afb513f6ce5f818b0d2d961945f154e030da0f6e468`; clip `reference_attack`; a starting point for `aggro_idle`): two seconds (40 ticks): this motion does not close within 6 s (its slowest rhythm is 95.2 ticks, and no multiple of it under 6 s brings every rhythm back within 5 degrees) — a two-second window, not a loop; the closing key differs from the first by 24.309 degrees; 2 to 41 keys per bone chosen by the density search from 41 per-tick samples, Catmull-Rom; max error 0.949 degrees / 0.0264 block against the samples (the tolerance 1 degree / 1/32 block).
+- `cater_killer_reference_attack.animation.json` (sha256 `fa17695cad045b777b7e5bc96ce5d6f768b17212fc899230fda0b386f75a7c0e`; clip `reference_attack`; a starting point for `aggro_idle`): two seconds (40 ticks): this motion does not close within 6 s (its slowest rhythm is 95.2 ticks, and no multiple of it under 6 s brings every rhythm back within 5 degrees) — a two-second window, not a loop; the closing key differs from the first by 24.309 degrees; 2 to 41 keys per bone chosen by the density search from 41 per-tick samples, Catmull-Rom; max error 0.949 degrees / 0.0264 block against the samples (the tolerance 1 degree / 1/32 block).
   - State: `getAttacking` answers 1, every other getter at rest (named by the contract (getAttacking 1)).
   - Sampled from: `danger.orespawn.entity.client.CaterKillerGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the shipped replacement, registry-free, on explicit PoseInputs)`.
   - Rule applied: at rest (attacking 0) the slowest channel is the head bob cos(ageInTicks * 0.3F * ws) * 2 units at wingspeed 0.22 (CaterKillerGeoReplacement.applyCustomAnimations, CaterKillerModel.poseFrom; orig ModelCaterKiller.java:251): 0.066 rad/tick, 95.2 ticks; the other rest rhythms 0.077 .. 0.506 rad/tick (orig :248-338); the head bob and the segments' z are position channels, the rear segments' z scaled by limbSwingAmount = 1 (orig :301-308); no multiple of the slowest group's period 95.199778 ticks up to the 6 s cap (120 ticks) brings every group back within 5 degrees of its start (k = 1: 35.343955 deg / 12.000443 units): a two-second window (40 ticks), not a loop - the sheet states the closing key's seam.

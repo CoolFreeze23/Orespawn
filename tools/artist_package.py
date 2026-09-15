@@ -2478,8 +2478,8 @@ def reference_clip_section(species: "Species", repo: "Repo", seed: dict[str, Any
                  "beside the sheet are the PINNED SOURCE (their bytes are what the checker knows; the generator's round trip proves the embedded copies "
                  "within 5e-5 s on key times and 1e-6 on values). If you rebuild the `.bbmodel` and they are gone, Animation → Import Animations... on "
                  f"the files brings them back. One clip per state the code reads, each value alone: {states_text}. "
-                 + REFERENCE_KEYING_SENTENCE + " Rotations are deltas from the bind pose under the same sign rule as the shipped clips (X as the classic "
-                 "degrees, Y and Z negated), positions only where the code moves a bone.")
+                 + REFERENCE_KEYING_SENTENCE + " Rotations are deltas from the bind pose under the same sign rule as the shipped clips (X, Y and Z as "
+                 "the classic degrees: the rig is in the Bedrock convention), positions only where the code moves a bone.")
         if unlanded:
             L.append("")
             L.append("This rig is not yet in-game: these clips are sampled from the hook's transcription of the classic `setupAnim` into the "
@@ -2904,7 +2904,8 @@ def spec_document(species: "Species", repo: "Repo", catalog: "TextureCatalog", i
     L.append("## 3. Bone glossary (locked legacy names — readable labels beside them)")
     L.append("")
     L.append("Never rename, delete or re-parent a bone: code and hitboxes reference them by name. Left/right in the labels follow the model "
-             "author's own naming (the side the legacy name calls left); Blockbench mirrors X for display, so the author's left appears on your right when the mob faces you. "
+             "author's own naming (the side the legacy name calls left); the rig opens in Blockbench exactly as the game draws it, so a bone "
+             "the author calls left is on the creature's own left. "
              "`gait bone` = its motion is scaled by walking speed in-game (P3). `locked` = it carries or parents a hitbox part (contract §8.1). "
              + LOCK_POLICY)
     L.append("")
@@ -3287,12 +3288,26 @@ def slots_document(species: "Species") -> str:
 # ---------------------------------------------------------------------------
 # .bbmodel: a Blockbench "Bedrock Entity" project from the shipped geo + animation JSON, and the
 # round-trip check (item 22 (11)): the Blockbench bedrock export rules emulated back to JSON, then a
-# semantic diff against the shipped files. Format facts (Blockbench 4.x bedrock codec): Blockbench
-# mirrors X for display — a bone pivot [x, y, z] becomes a group origin [-x, y, z]; rotations negate X
-# and Y and keep Z; a cube origin+size becomes from [-(x+sx), y, z] / to [-x, y+sy, z+sz]; per-face UV
-# {uv:[u,v], uv_size:[w,h]} becomes [u, v, u+w, v+h]; box UV keeps uv_offset; animation values are
-# stored in the Bedrock convention verbatim; loop true / "hold_on_last_frame" / absent become
-# "loop" / "hold" / "once". The DESCRIPTION's unknown keys (the parked `orespawn:bone_draw_order`) and
+# semantic diff against the shipped files. Format facts (Blockbench 4.x bedrock codec): a .bbmodel holds
+# Blockbench's OWN coordinates, whose x is the Bedrock file's x negated - the codec negates x on import
+# and again on export - so a bone pivot [x, y, z] is written as the group origin [-x, y, z]; rotations
+# negate X and Y and keep Z; a cube origin+size becomes from [-(x+sx), y, z] / to [-x, y+sy, z+sz]
+# (`flip_x` / `flip_rot` / `cube_element`, and their inverses in `bbmodel_to_geo` / `compile_cube`).
+# THE CONVENTION, RE-DERIVED FOR THE ENTITY FRAME (TEST-015, owner 2026-09-15, closing set continued,
+# second, item 35 (3)): this is the codec's own rule, not a display trick of this tool - GeckoLib's baker
+# negates the same x (BakedModelFactory$Builtin.constructCube / constructBone), so Blockbench's internal
+# frame and the game's entity frame agree. Since the converter writes every rig in the Bedrock
+# convention (a converted cube keeps its ModelPart x, as the Queen's Blockbench-authored rig is laid out:
+# her leftLeg pivots at +49.9), a rig opens in Blockbench exactly as the game draws it, and the sheets no
+# longer tell the animator that "Blockbench mirrors X for display". Verified against the Queen's native
+# rig, which Blockbench exported: this writer's project of her geo applies the codec's inverse (her leftLeg
+# group at origin x -49.9, on her own left in Blockbench's front view), and the emulated export
+# reproduces her geo EQUAL (test_the_queens_native_rig_opens_as_authored). Under the OLD converter
+# convention the same codec showed every converted rig mirrored against the classic renderer, which is
+# what that sentence explained away. Per-face UV {uv:[u,v], uv_size:[w,h]} becomes [u, v, u+w, v+h];
+# box UV keeps uv_offset; animation values are stored in the Bedrock convention verbatim; loop true /
+# "hold_on_last_frame" / absent become "loop" / "hold" / "once". The DESCRIPTION's unknown keys
+# (the parked `orespawn:bone_draw_order`) and
 # the converter's private cube key `modelpart_mirror` have no Blockbench field: this writer stashes the
 # description keys under `unhandled_root_fields` (a Blockbench project field it preserves on save) and
 # the importer re-attaches them; a REAL Blockbench geo re-export drops both — which is why the artist

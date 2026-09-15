@@ -40,39 +40,39 @@
           "rotation": null,
           "faces": {
             "west": [
+              257.0,
               1.0,
               1.0,
-              -1.0,
               64.0
             ],
             "east": [
-              258.0,
+              0.0,
               1.0,
-              -1.0,
+              1.0,
               64.0
             ],
             "north": [
-              257.0,
               1.0,
-              -256.0,
+              1.0,
+              256.0,
               64.0
             ],
             "south": [
-              514.0,
+              258.0,
               1.0,
-              -256.0,
+              256.0,
               64.0
             ],
             "up": [
-              257.0,
+              1.0,
               0.0,
-              -256.0,
+              256.0,
               1.0
             ],
             "down": [
-              513.0,
+              257.0,
               1.0,
-              -256.0,
+              256.0,
               -1.0
             ]
           }
@@ -107,39 +107,39 @@
           "rotation": null,
           "faces": {
             "west": [
-              1.0,
+              129.0,
               65.0,
-              -1.0,
+              1.0,
               128.0
             ],
             "east": [
-              130.0,
+              0.0,
               65.0,
-              -1.0,
+              1.0,
               128.0
             ],
             "north": [
-              129.0,
+              1.0,
               65.0,
-              -128.0,
+              128.0,
               128.0
             ],
             "south": [
-              258.0,
+              130.0,
               65.0,
-              -128.0,
+              128.0,
               128.0
             ],
             "up": [
-              129.0,
+              1.0,
               64.0,
-              -128.0,
+              128.0,
               1.0
             ],
             "down": [
-              257.0,
+              129.0,
               65.0,
-              -128.0,
+              128.0,
               -1.0
             ]
           }
@@ -228,7 +228,7 @@
     {
       "state": "walk",
       "file": "tshirt_reference_walk.animation.json",
-      "sha256": "1ccc26da1beab34d58cfd00ec33a113ac9960b2648e48c1dc8e1f8ffe1af6fe3",
+      "sha256": "ac0dba8851887ba783ba35ba4ec28b2a02989a148293f16577f83934496e7f98",
       "clip": "reference_walk",
       "reference_only": true,
       "delivered_clip": "walk",
@@ -276,7 +276,7 @@
     {
       "state": "idle",
       "file": "tshirt_reference_idle.animation.json",
-      "sha256": "ac8451512d60ef3d4caf035798cf417e78545e4aea44ae9ca5b705af84faed85",
+      "sha256": "485214a916b6679a9ee8a54e8ab8ae0a2d8e1c17302358d3cbcb542734f95014",
       "clip": "reference_idle",
       "reference_only": true,
       "delivered_clip": "idle",
@@ -325,7 +325,7 @@
   "reference_clip": {
     "state": "walk",
     "file": "tshirt_reference_walk.animation.json",
-    "sha256": "1ccc26da1beab34d58cfd00ec33a113ac9960b2648e48c1dc8e1f8ffe1af6fe3",
+    "sha256": "ac0dba8851887ba783ba35ba4ec28b2a02989a148293f16577f83934496e7f98",
     "clip": "reference_walk",
     "reference_only": true,
     "delivered_clip": "walk",

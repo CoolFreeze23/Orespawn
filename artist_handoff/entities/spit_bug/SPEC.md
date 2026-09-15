@@ -18,18 +18,18 @@ A hostile armoured bug that spits acid: a fifteen-plate abdomen on a three-piece
 
 ## 3. Bone glossary (locked legacy names — readable labels beside them)
 
-Never rename, delete or re-parent a bone: code and hitboxes reference them by name. Left/right in the labels follow the model author's own naming (the side the legacy name calls left); Blockbench mirrors X for display, so the author's left appears on your right when the mob faces you. `gait bone` = its motion is scaled by walking speed in-game (P3). `locked` = it carries or parents a hitbox part (contract §8.1). Keying a locked bone is allowed; the checker warns, and the hitbox part follows the bone in-game (the consequence, so keep such keys deliberate). Renaming, re-parenting or deleting a locked bone is refused.
+Never rename, delete or re-parent a bone: code and hitboxes reference them by name. Left/right in the labels follow the model author's own naming (the side the legacy name calls left); the rig opens in Blockbench exactly as the game draws it, so a bone the author calls left is on the creature's own left. `gait bone` = its motion is scaled by walking speed in-game (P3). `locked` = it carries or parents a hitbox part (contract §8.1). Keying a locked bone is allowed; the checker warns, and the hitbox part follows the bone in-game (the consequence, so keep such keys deliberate). Renaming, re-parenting or deleting a locked bone is refused.
 
 | bone | readable label | classic part | parent | pivot (x, y, z) | group | gait bone | locked | cubes |
 |---|---|---|---|---|---|---|---|---|
-| `arm1` | first palp, upper piece (static) | (native rig: no classic part) | - | (-7, 35, -14) | - | no | no | 1 |
-| `arm1end` | first palp, tip (static) | (native rig: no classic part) | - | (-6, 33, -16.5) | - | no | no | 1 |
-| `arm1part2` | first palp, lower piece (static) | (native rig: no classic part) | - | (-7, 33, -16.5) | - | no | no | 1 |
-| `arm1start` | first palp, root (static) | (native rig: no classic part) | - | (-5, 35, -14) | - | no | no | 1 |
-| `arm2` | second palp, upper piece (static) | (native rig: no classic part) | - | (7, 35, -14) | - | no | no | 1 |
-| `arm2end` | second palp, tip (static) | (native rig: no classic part) | - | (7, 33, -16.5) | - | no | no | 1 |
-| `arm2part2` | second palp, lower piece (static) | (native rig: no classic part) | - | (7, 33, -16.5) | - | no | no | 1 |
-| `arm2start` | second palp, root (static) | (native rig: no classic part) | - | (5, 35, -14) | - | no | no | 1 |
+| `arm1` | first palp, upper piece (static) | (native rig: no classic part) | - | (7, 35, -14) | - | no | no | 1 |
+| `arm1end` | first palp, tip (static) | (native rig: no classic part) | - | (6, 33, -16.5) | - | no | no | 1 |
+| `arm1part2` | first palp, lower piece (static) | (native rig: no classic part) | - | (7, 33, -16.5) | - | no | no | 1 |
+| `arm1start` | first palp, root (static) | (native rig: no classic part) | - | (5, 35, -14) | - | no | no | 1 |
+| `arm2` | second palp, upper piece (static) | (native rig: no classic part) | - | (-7, 35, -14) | - | no | no | 1 |
+| `arm2end` | second palp, tip (static) | (native rig: no classic part) | - | (-7, 33, -16.5) | - | no | no | 1 |
+| `arm2part2` | second palp, lower piece (static) | (native rig: no classic part) | - | (-7, 33, -16.5) | - | no | no | 1 |
+| `arm2start` | second palp, root (static) | (native rig: no classic part) | - | (-5, 35, -14) | - | no | no | 1 |
 | `bodybase` | abdomen, base plate (static) | (native rig: no classic part) | - | (0, 23, 1) | - | no | no | 1 |
 | `bodybasepart10` | abdomen plate 10 (static) | (native rig: no classic part) | - | (0, 23, 1) | - | no | no | 1 |
 | `bodybasepart11` | abdomen plate 11 (static) | (native rig: no classic part) | - | (0, 23, 1) | - | no | no | 1 |
@@ -45,52 +45,52 @@ Never rename, delete or re-parent a bone: code and hitboxes reference them by na
 | `bodybasepart7` | abdomen plate 7 (static) | (native rig: no classic part) | - | (0, 23, 1) | - | no | no | 1 |
 | `bodybasepart8` | abdomen plate 8 (static) | (native rig: no classic part) | - | (0, 23, 1) | - | no | no | 1 |
 | `bodybasepart9` | abdomen plate 9 (static) | (native rig: no classic part) | - | (0, 23, 1) | - | no | no | 1 |
-| `eye1` | eye 1 (static) | (native rig: no classic part) | - | (-6.5, 34, -11) | - | no | no | 1 |
-| `eye2` | eye 2 (static) | (native rig: no classic part) | - | (6.5, 34, -11) | - | no | no | 1 |
-| `leg1` | right front leg, root (rest yaw -1.2; the gait's sweep) | (native rig: no classic part) | - | (-6, 21, -6) | gait | yes | no | 1 |
-| `leg1part2` | right front femur, plate a (placed 14 along the root; lifts on the forward swing about -1.152) | (native rig: no classic part) | - | (-12, 11, -12) | gait | yes | no | 1 |
-| `leg1part2b` | right front femur, plate b (about -0.743) | (native rig: no classic part) | - | (-12, 11, -12) | gait | yes | no | 1 |
-| `leg1part2c` | right front femur, plate c (about -0.632) | (native rig: no classic part) | - | (-12, 11, -12) | gait | yes | no | 1 |
-| `leg1part2d` | right front femur, plate d (about -1.041) | (native rig: no classic part) | - | (-12, 11, -12) | gait | yes | no | 1 |
-| `leg1part3` | right front tibia (placed 14 along the femur; pitches against the lift about 0.669) | (native rig: no classic part) | - | (-16, 21, -16) | gait | yes | no | 1 |
-| `leg1part3b` | right front tarsus, plate b (placed 8 along the tibia; about -0.48) | (native rig: no classic part) | - | (-20, 16, -20) | gait | yes | no | 1 |
-| `leg1part3c` | right front tarsus, plate c (about -0.48) | (native rig: no classic part) | - | (-20, 16, -20) | gait | yes | no | 1 |
-| `leg1start` | right front coxa, piece 1 (static) | (native rig: no classic part) | - | (-4, 21, -4) | - | no | no | 1 |
-| `leg1startpart2` | right front coxa, piece 2 (static) | (native rig: no classic part) | - | (-6, 21, -6) | - | no | no | 1 |
-| `leg1startpart3` | right front coxa, piece 3 (static) | (native rig: no classic part) | - | (-6, 21, -6) | - | no | no | 1 |
-| `leg2` | left front leg, root (rest yaw 1.2; the gait's sweep) | (native rig: no classic part) | - | (6, 21, -6) | gait | yes | no | 1 |
-| `leg2part2` | left front femur, plate a (lifts on the forward swing) | (native rig: no classic part) | - | (12, 11, -12) | gait | yes | no | 1 |
-| `leg2part2b` | left front femur, plate b | (native rig: no classic part) | - | (12, 11, -12) | gait | yes | no | 1 |
-| `leg2part2c` | left front femur, plate c | (native rig: no classic part) | - | (12, 11, -12) | gait | yes | no | 1 |
-| `leg2part2d` | left front femur, plate d | (native rig: no classic part) | - | (12, 11, -12) | gait | yes | no | 1 |
-| `leg2part3` | left front tibia (pitches against the lift) | (native rig: no classic part) | - | (16, 21, -16) | gait | yes | no | 1 |
-| `leg2part3b` | left front tarsus, plate b | (native rig: no classic part) | - | (20, 16, -20) | gait | yes | no | 1 |
-| `leg2part3c` | left front tarsus, plate c | (native rig: no classic part) | - | (20, 16, -20) | gait | yes | no | 1 |
-| `leg2start` | left front coxa, piece 1 (static) | (native rig: no classic part) | - | (4, 21, -4) | - | no | no | 1 |
-| `leg2startpart2` | left front coxa, piece 2 (static) | (native rig: no classic part) | - | (6, 21, -6) | - | no | no | 1 |
-| `leg2startpart3` | left front coxa, piece 3 (static) | (native rig: no classic part) | - | (6, 21, -6) | - | no | no | 1 |
-| `leg3` | left rear leg, root (rest yaw -2.1; the gait's sweep) | (native rig: no classic part) | - | (-6, 21, 8) | gait | yes | no | 1 |
-| `leg3part2` | left rear femur, plate a (lifts on the forward swing) | (native rig: no classic part) | - | (-12, 11, 14) | gait | yes | no | 1 |
-| `leg3part2b` | left rear femur, plate b | (native rig: no classic part) | - | (-12, 11, 14) | gait | yes | no | 1 |
-| `leg3part2c` | left rear femur, plate c | (native rig: no classic part) | - | (-12, 11, 14) | gait | yes | no | 1 |
-| `leg3part2d` | left rear femur, plate d | (native rig: no classic part) | - | (-12, 11, 14) | gait | yes | no | 1 |
-| `leg3part3` | left rear tibia (pitches against the lift) | (native rig: no classic part) | - | (-16, 21, 18) | gait | yes | no | 1 |
-| `leg3part3b` | left rear tarsus, plate b | (native rig: no classic part) | - | (-20, 16, 22) | gait | yes | no | 1 |
-| `leg3part3c` | left rear tarsus, plate c | (native rig: no classic part) | - | (-20, 16, 22) | gait | yes | no | 1 |
-| `leg3start` | left rear coxa, piece 1 (static) | (native rig: no classic part) | - | (-4, 21, 6) | - | no | no | 1 |
-| `leg3startpart2` | left rear coxa, piece 2 (static) | (native rig: no classic part) | - | (-6, 21, 8) | - | no | no | 1 |
-| `leg3startpart3` | left rear coxa, piece 3 (static) | (native rig: no classic part) | - | (-6, 21, 8) | - | no | no | 1 |
-| `leg4` | right rear leg, root (rest yaw 2.1; the gait's sweep) | (native rig: no classic part) | - | (6, 21, 8) | gait | yes | no | 1 |
-| `leg4part2` | right rear femur, plate a (lifts on the forward swing) | (native rig: no classic part) | - | (12, 11, 14) | gait | yes | no | 1 |
-| `leg4part2b` | right rear femur, plate b | (native rig: no classic part) | - | (12, 11, 14) | gait | yes | no | 1 |
-| `leg4part2c` | right rear femur, plate c | (native rig: no classic part) | - | (12, 11, 14) | gait | yes | no | 1 |
-| `leg4part2d` | right rear femur, plate d | (native rig: no classic part) | - | (12, 11, 14) | gait | yes | no | 1 |
-| `leg4part3` | right rear tibia (pitches against the lift) | (native rig: no classic part) | - | (16, 21, 18) | gait | yes | no | 1 |
-| `leg4part3b` | right rear tarsus, plate b | (native rig: no classic part) | - | (20, 16, 22) | gait | yes | no | 1 |
-| `leg4part3c` | right rear tarsus, plate c | (native rig: no classic part) | - | (20, 16, 22) | gait | yes | no | 1 |
-| `leg4start` | right rear coxa, piece 1 (static) | (native rig: no classic part) | - | (4, 21, 6) | - | no | no | 1 |
-| `leg4startpart2` | right rear coxa, piece 2 (static) | (native rig: no classic part) | - | (6, 21, 8) | - | no | no | 1 |
-| `leg4startpart3` | right rear coxa, piece 3 (static) | (native rig: no classic part) | - | (6, 21, 8) | - | no | no | 1 |
+| `eye1` | eye 1 (static) | (native rig: no classic part) | - | (6.5, 34, -11) | - | no | no | 1 |
+| `eye2` | eye 2 (static) | (native rig: no classic part) | - | (-6.5, 34, -11) | - | no | no | 1 |
+| `leg1` | right front leg, root (rest yaw -1.2; the gait's sweep) | (native rig: no classic part) | - | (6, 21, -6) | gait | yes | no | 1 |
+| `leg1part2` | right front femur, plate a (placed 14 along the root; lifts on the forward swing about -1.152) | (native rig: no classic part) | - | (12, 11, -12) | gait | yes | no | 1 |
+| `leg1part2b` | right front femur, plate b (about -0.743) | (native rig: no classic part) | - | (12, 11, -12) | gait | yes | no | 1 |
+| `leg1part2c` | right front femur, plate c (about -0.632) | (native rig: no classic part) | - | (12, 11, -12) | gait | yes | no | 1 |
+| `leg1part2d` | right front femur, plate d (about -1.041) | (native rig: no classic part) | - | (12, 11, -12) | gait | yes | no | 1 |
+| `leg1part3` | right front tibia (placed 14 along the femur; pitches against the lift about 0.669) | (native rig: no classic part) | - | (16, 21, -16) | gait | yes | no | 1 |
+| `leg1part3b` | right front tarsus, plate b (placed 8 along the tibia; about -0.48) | (native rig: no classic part) | - | (20, 16, -20) | gait | yes | no | 1 |
+| `leg1part3c` | right front tarsus, plate c (about -0.48) | (native rig: no classic part) | - | (20, 16, -20) | gait | yes | no | 1 |
+| `leg1start` | right front coxa, piece 1 (static) | (native rig: no classic part) | - | (4, 21, -4) | - | no | no | 1 |
+| `leg1startpart2` | right front coxa, piece 2 (static) | (native rig: no classic part) | - | (6, 21, -6) | - | no | no | 1 |
+| `leg1startpart3` | right front coxa, piece 3 (static) | (native rig: no classic part) | - | (6, 21, -6) | - | no | no | 1 |
+| `leg2` | left front leg, root (rest yaw 1.2; the gait's sweep) | (native rig: no classic part) | - | (-6, 21, -6) | gait | yes | no | 1 |
+| `leg2part2` | left front femur, plate a (lifts on the forward swing) | (native rig: no classic part) | - | (-12, 11, -12) | gait | yes | no | 1 |
+| `leg2part2b` | left front femur, plate b | (native rig: no classic part) | - | (-12, 11, -12) | gait | yes | no | 1 |
+| `leg2part2c` | left front femur, plate c | (native rig: no classic part) | - | (-12, 11, -12) | gait | yes | no | 1 |
+| `leg2part2d` | left front femur, plate d | (native rig: no classic part) | - | (-12, 11, -12) | gait | yes | no | 1 |
+| `leg2part3` | left front tibia (pitches against the lift) | (native rig: no classic part) | - | (-16, 21, -16) | gait | yes | no | 1 |
+| `leg2part3b` | left front tarsus, plate b | (native rig: no classic part) | - | (-20, 16, -20) | gait | yes | no | 1 |
+| `leg2part3c` | left front tarsus, plate c | (native rig: no classic part) | - | (-20, 16, -20) | gait | yes | no | 1 |
+| `leg2start` | left front coxa, piece 1 (static) | (native rig: no classic part) | - | (-4, 21, -4) | - | no | no | 1 |
+| `leg2startpart2` | left front coxa, piece 2 (static) | (native rig: no classic part) | - | (-6, 21, -6) | - | no | no | 1 |
+| `leg2startpart3` | left front coxa, piece 3 (static) | (native rig: no classic part) | - | (-6, 21, -6) | - | no | no | 1 |
+| `leg3` | left rear leg, root (rest yaw -2.1; the gait's sweep) | (native rig: no classic part) | - | (6, 21, 8) | gait | yes | no | 1 |
+| `leg3part2` | left rear femur, plate a (lifts on the forward swing) | (native rig: no classic part) | - | (12, 11, 14) | gait | yes | no | 1 |
+| `leg3part2b` | left rear femur, plate b | (native rig: no classic part) | - | (12, 11, 14) | gait | yes | no | 1 |
+| `leg3part2c` | left rear femur, plate c | (native rig: no classic part) | - | (12, 11, 14) | gait | yes | no | 1 |
+| `leg3part2d` | left rear femur, plate d | (native rig: no classic part) | - | (12, 11, 14) | gait | yes | no | 1 |
+| `leg3part3` | left rear tibia (pitches against the lift) | (native rig: no classic part) | - | (16, 21, 18) | gait | yes | no | 1 |
+| `leg3part3b` | left rear tarsus, plate b | (native rig: no classic part) | - | (20, 16, 22) | gait | yes | no | 1 |
+| `leg3part3c` | left rear tarsus, plate c | (native rig: no classic part) | - | (20, 16, 22) | gait | yes | no | 1 |
+| `leg3start` | left rear coxa, piece 1 (static) | (native rig: no classic part) | - | (4, 21, 6) | - | no | no | 1 |
+| `leg3startpart2` | left rear coxa, piece 2 (static) | (native rig: no classic part) | - | (6, 21, 8) | - | no | no | 1 |
+| `leg3startpart3` | left rear coxa, piece 3 (static) | (native rig: no classic part) | - | (6, 21, 8) | - | no | no | 1 |
+| `leg4` | right rear leg, root (rest yaw 2.1; the gait's sweep) | (native rig: no classic part) | - | (-6, 21, 8) | gait | yes | no | 1 |
+| `leg4part2` | right rear femur, plate a (lifts on the forward swing) | (native rig: no classic part) | - | (-12, 11, 14) | gait | yes | no | 1 |
+| `leg4part2b` | right rear femur, plate b | (native rig: no classic part) | - | (-12, 11, 14) | gait | yes | no | 1 |
+| `leg4part2c` | right rear femur, plate c | (native rig: no classic part) | - | (-12, 11, 14) | gait | yes | no | 1 |
+| `leg4part2d` | right rear femur, plate d | (native rig: no classic part) | - | (-12, 11, 14) | gait | yes | no | 1 |
+| `leg4part3` | right rear tibia (pitches against the lift) | (native rig: no classic part) | - | (-16, 21, 18) | gait | yes | no | 1 |
+| `leg4part3b` | right rear tarsus, plate b | (native rig: no classic part) | - | (-20, 16, 22) | gait | yes | no | 1 |
+| `leg4part3c` | right rear tarsus, plate c | (native rig: no classic part) | - | (-20, 16, 22) | gait | yes | no | 1 |
+| `leg4start` | right rear coxa, piece 1 (static) | (native rig: no classic part) | - | (-4, 21, 6) | - | no | no | 1 |
+| `leg4startpart2` | right rear coxa, piece 2 (static) | (native rig: no classic part) | - | (-6, 21, 8) | - | no | no | 1 |
+| `leg4startpart3` | right rear coxa, piece 3 (static) | (native rig: no classic part) | - | (-6, 21, 8) | - | no | no | 1 |
 | `legintersection` | hip hub (the legs' common root; static) | (native rig: no classic part) | - | (0, 21, 1) | - | no | no | 1 |
 | `legintersectionpart2` | hip hub, piece 2 (static) | (native rig: no classic part) | - | (0, 21, 2) | - | no | no | 1 |
 | `legintersectionpart3` | hip hub, piece 3 (static) | (native rig: no classic part) | - | (0, 21, 1) | - | no | no | 1 |
@@ -143,21 +143,21 @@ Author every loop at 1.0 s (README rule 5, the phase-locked kind; ruled 2026-09-
 
 ### 4.3 Reference clips (reference-only)
 
-`spit_bug_reference_walk.animation.json`, `spit_bug_reference_idle.animation.json`, `spit_bug_reference_attack.animation.json` (beside this sheet, and embedded in `spit_bug.bbmodel`'s Animation tab) are NOT clips to return or ship under their own names. Each is the creature's classic code — the motion the game draws today — SAMPLED by the harness at fixed inputs so you can see that motion beside the rig in Blockbench. The `.bbmodel` opens with every clip listed (the shipped clips and these); the files beside the sheet are the PINNED SOURCE (their bytes are what the checker knows; the generator's round trip proves the embedded copies within 5e-5 s on key times and 1e-6 on values). If you rebuild the `.bbmodel` and they are gone, Animation → Import Animations... on the files brings them back. One clip per state the code reads, each value alone: `_reference_walk` — full walking speed (limbSwingAmount 1, the walk position and the age advancing one tick per key), not attacking, looking straight ahead, every state flag at rest, full health; `_reference_idle` — standing still (limbSwingAmount 0, the walk position 0; the age advancing one tick per key), not attacking, looking straight ahead, every state flag at rest, full health; `_reference_attack` — attacking (the code's attacking flag raised) while standing still (limbSwingAmount 0, the walk position 0; the age advancing one tick per key), looking straight ahead, every other state flag at rest, full health. Keys: the classic code is sampled once per tick, and the samples are reduced by the density search the exact transcriptions use — the fewest Catmull-Rom keys per bone and channel whose curve stays within 1 degree of rotation and 1/32 block of position of every sample, the closing key always kept — so each clip carries as few keys as that tolerance allows (each entry below states its key counts and the measured maximum error). Rotations are deltas from the bind pose under the same sign rule as the shipped clips (X as the classic degrees, Y and Z negated), positions only where the code moves a bone.
+`spit_bug_reference_walk.animation.json`, `spit_bug_reference_idle.animation.json`, `spit_bug_reference_attack.animation.json` (beside this sheet, and embedded in `spit_bug.bbmodel`'s Animation tab) are NOT clips to return or ship under their own names. Each is the creature's classic code — the motion the game draws today — SAMPLED by the harness at fixed inputs so you can see that motion beside the rig in Blockbench. The `.bbmodel` opens with every clip listed (the shipped clips and these); the files beside the sheet are the PINNED SOURCE (their bytes are what the checker knows; the generator's round trip proves the embedded copies within 5e-5 s on key times and 1e-6 on values). If you rebuild the `.bbmodel` and they are gone, Animation → Import Animations... on the files brings them back. One clip per state the code reads, each value alone: `_reference_walk` — full walking speed (limbSwingAmount 1, the walk position and the age advancing one tick per key), not attacking, looking straight ahead, every state flag at rest, full health; `_reference_idle` — standing still (limbSwingAmount 0, the walk position 0; the age advancing one tick per key), not attacking, looking straight ahead, every state flag at rest, full health; `_reference_attack` — attacking (the code's attacking flag raised) while standing still (limbSwingAmount 0, the walk position 0; the age advancing one tick per key), looking straight ahead, every other state flag at rest, full health. Keys: the classic code is sampled once per tick, and the samples are reduced by the density search the exact transcriptions use — the fewest Catmull-Rom keys per bone and channel whose curve stays within 1 degree of rotation and 1/32 block of position of every sample, the closing key always kept — so each clip carries as few keys as that tolerance allows (each entry below states its key counts and the measured maximum error). Rotations are deltas from the bind pose under the same sign rule as the shipped clips (X, Y and Z as the classic degrees: the rig is in the Bedrock convention), positions only where the code moves a bone.
 
 **Starting point (owner 2026-09-14, addendum item 13; extended by the second set revised, item 4):** a reference clip's KEYS may be the starting point of the delivered clip its state corresponds to — copy them into `walk` (from `_reference_walk`), `idle` (from `_reference_idle`), `aggro_idle` (from `_reference_attack`), `fly` (from `_reference_fly`) or `swim` (from `_reference_swim`) and improve from there; a delivered clip carrying those keys is a valid delivery (no rule compares them). A state with no contract clip (sit, sleep, display, ...) is OFFERED as an extra of this creature's own under §2.3 — §5 lists it as "offered from reference_<state>" beside the seed's extras, and a delivered clip under that name carrying the reference keys is a valid delivery. Only the reference file itself coming back under its own name is refused.
 
-- `spit_bug_reference_walk.animation.json` (sha256 `8d92e567ab9ab3292507e2c9abcb62e20dd7def2ab75f96e0ad85efd7883157f`; clip `reference_walk`; a starting point for `walk`): 3 periods of its slowest rhythm (19.04 ticks each) — 57.12 ticks (2.856 s): the smallest multiple at which EVERY rhythm returns within 5 degrees of its start (the rule caps this search at 6 s), so the last key closes the loop; 2 to 59 keys per bone chosen by the density search from 59 per-tick samples, Catmull-Rom; max error 0.741 degrees / 0.0297 block against the samples (the tolerance 1 degree / 1/32 block).
+- `spit_bug_reference_walk.animation.json` (sha256 `9262d4732128bd97a2f15e982a606da3d410e245be98b88bb66dae0662fe9891`; clip `reference_walk`; a starting point for `walk`): 3 periods of its slowest rhythm (19.04 ticks each) — 57.12 ticks (2.856 s): the smallest multiple at which EVERY rhythm returns within 5 degrees of its start (the rule caps this search at 6 s), so the last key closes the loop; 2 to 59 keys per bone chosen by the density search from 59 per-tick samples, Catmull-Rom; max error 0.741 degrees / 0.0297 block against the samples (the tolerance 1 degree / 1/32 block).
   - Sampled from: `danger.orespawn.entity.client.SpitBugGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the shipped replacement, registry-free, on explicit PoseInputs)`.
   - Rule applied: wingspeed 0.55: the slowest rhythm is the resting jaw |cos(ageInTicks * 0.3 * WINGSPEED) * PI * 0.015| (SpitBugGeoReplacement.applyCustomAnimations:80-81, attacking 0) at 0.165 rad/tick, which the absolute value folds to a 19.04-tick half period; the attacking jaw |cos(ageInTicks * 2.6 * WINGSPEED) * PI * 0.1| (:80); the Mth.sin gait sin(ageInTicks * 2.0 * WINGSPEED) * PI * 0.12 * limbSwingAmount with the 0.1-tick look-ahead and the |cos| lift on the rising half-cycle (:64-76, walk; the four leg helpers over bind pivots and chains, :103-255) at 1.1; closes at k = 3 (57.119864 ticks): every bone returns within 0.002076 degrees and 0.000833 model units of its start at k x T (the 5-degree test under the 6 s cap; k = 1: 21.600002 deg / 8.867279 units, k = 2: 21.600002 deg / 8.654566 units, k = 3: 0.002076 deg / 0.000833 units).
   - Bones that move in it: `leg1`, `leg1part2`, `leg1part2b`, `leg1part2c`, `leg1part2d`, `leg1part3`, `leg1part3b`, `leg1part3c`, `leg2`, `leg2part2`, `leg2part2b`, `leg2part2c`, `leg2part2d`, `leg2part3`, `leg2part3b`, `leg2part3c`, `leg3`, `leg3part2`, `leg3part2b`, `leg3part2c`, `leg3part2d`, `leg3part3`, `leg3part3b`, `leg3part3c`, `leg4`, `leg4part2`, `leg4part2b`, `leg4part2c`, `leg4part2d`, `leg4part3`, `leg4part3b`, `leg4part3c`, `tooth1`, `tooth2`, `tooth3`, `upperjawbasepart1`, `upperjawbasepart2`, `upperjawbasepart3`; bones the code also MOVES (position keys): `leg1part2`, `leg1part2b`, `leg1part2c`, `leg1part2d`, `leg1part3`, `leg1part3b`, `leg1part3c`, `leg2part2`, `leg2part2b`, `leg2part2c`, `leg2part2d`, `leg2part3`, `leg2part3b`, `leg2part3c`, `leg3part2`, `leg3part2b`, `leg3part2c`, `leg3part2d`, `leg3part3`, `leg3part3b`, `leg3part3c`, `leg4part2`, `leg4part2b`, `leg4part2c`, `leg4part2d`, `leg4part3`, `leg4part3b`, `leg4part3c`.
   - Loop seam: the closing key differs from the first by at most 0.0021 degrees (mod 360).
-- `spit_bug_reference_idle.animation.json` (sha256 `af339f2c5e7fb45ca564b42eeb1d115762e7e9498480557dda64d451c459346d`; clip `reference_idle`; a starting point for `idle`): one period of its slowest rhythm — 19.04 ticks (0.952 s): every moving bone is back within 5 degrees of its start there, so the last key closes the loop; 2 to 3 keys per bone chosen by the density search from 21 per-tick samples, Catmull-Rom; max error 0.613 degrees / 0 block against the samples (the tolerance 1 degree / 1/32 block).
+- `spit_bug_reference_idle.animation.json` (sha256 `a1c4cc8e7a7ebcecfe042deffbed4317697de2148ab60a9a02b1403ee4cb2f7a`; clip `reference_idle`; a starting point for `idle`): one period of its slowest rhythm — 19.04 ticks (0.952 s): every moving bone is back within 5 degrees of its start there, so the last key closes the loop; 2 to 3 keys per bone chosen by the density search from 21 per-tick samples, Catmull-Rom; max error 0.613 degrees / 0 block against the samples (the tolerance 1 degree / 1/32 block).
   - Sampled from: `danger.orespawn.entity.client.SpitBugGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the shipped replacement, registry-free, on explicit PoseInputs)`.
   - Rule applied: wingspeed 0.55: the slowest rhythm is the resting jaw |cos(ageInTicks * 0.3 * WINGSPEED) * PI * 0.015| (SpitBugGeoReplacement.applyCustomAnimations:80-81, attacking 0) at 0.165 rad/tick, which the absolute value folds to a 19.04-tick half period; the attacking jaw |cos(ageInTicks * 2.6 * WINGSPEED) * PI * 0.1| (:80); the Mth.sin gait sin(ageInTicks * 2.0 * WINGSPEED) * PI * 0.12 * limbSwingAmount with the 0.1-tick look-ahead and the |cos| lift on the rising half-cycle (:64-76, walk; the four leg helpers over bind pivots and chains, :103-255) at 1.1; closes at k = 1 (19.039955 ticks): every bone returns within 0 degrees of its start at k x T (the 5-degree test under the 6 s cap; k = 1: 0 deg).
   - Bones that move in it: `leg1`, `leg1part2`, `leg1part2b`, `leg1part2c`, `leg1part2d`, `leg1part3`, `leg1part3b`, `leg1part3c`, `leg2`, `leg2part2`, `leg2part2b`, `leg2part2c`, `leg2part2d`, `leg2part3`, `leg2part3b`, `leg2part3c`, `leg3`, `leg3part2`, `leg3part2b`, `leg3part2c`, `leg3part2d`, `leg3part3`, `leg3part3b`, `leg3part3c`, `leg4`, `leg4part2`, `leg4part2b`, `leg4part2c`, `leg4part2d`, `leg4part3`, `leg4part3b`, `leg4part3c`, `tooth1`, `tooth2`, `tooth3`, `upperjawbasepart1`, `upperjawbasepart2`, `upperjawbasepart3`; bones the code also MOVES (position keys): `leg1part2`, `leg1part2b`, `leg1part2c`, `leg1part2d`, `leg1part3`, `leg1part3b`, `leg1part3c`, `leg2part2`, `leg2part2b`, `leg2part2c`, `leg2part2d`, `leg2part3`, `leg2part3b`, `leg2part3c`, `leg3part2`, `leg3part2b`, `leg3part2c`, `leg3part2d`, `leg3part3`, `leg3part3b`, `leg3part3c`, `leg4part2`, `leg4part2b`, `leg4part2c`, `leg4part2d`, `leg4part3`, `leg4part3b`, `leg4part3c`.
   - Loop seam: the closing key differs from the first by at most 0 degrees (mod 360).
-- `spit_bug_reference_attack.animation.json` (sha256 `605afa6bb357c192ad15cee2b1df75829127f2de7fac7e751d389ea7fc9b6635`; clip `reference_attack`; a starting point for `aggro_idle`): 3 periods of its slowest rhythm (19.04 ticks each) — 57.12 ticks (2.856 s): the smallest multiple at which EVERY rhythm returns within 5 degrees of its start (the rule caps this search at 6 s), so the last key closes the loop; 2 to 59 keys per bone chosen by the density search from 59 per-tick samples, Catmull-Rom; max error 0 degrees / 0 block against the samples (the tolerance 1 degree / 1/32 block).
+- `spit_bug_reference_attack.animation.json` (sha256 `4e4e721792e534bb83eb708a7871f7f0d9b3e66a3a7e5acaae4489da07d5ebbe`; clip `reference_attack`; a starting point for `aggro_idle`): 3 periods of its slowest rhythm (19.04 ticks each) — 57.12 ticks (2.856 s): the smallest multiple at which EVERY rhythm returns within 5 degrees of its start (the rule caps this search at 6 s), so the last key closes the loop; 2 to 59 keys per bone chosen by the density search from 59 per-tick samples, Catmull-Rom; max error 0 degrees / 0 block against the samples (the tolerance 1 degree / 1/32 block).
   - State: `getAttacking` answers 1, every other getter at rest (named by the contract (getAttacking 1)).
   - Sampled from: `danger.orespawn.entity.client.SpitBugGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the shipped replacement, registry-free, on explicit PoseInputs)`.
   - Rule applied: wingspeed 0.55: the slowest rhythm is the resting jaw |cos(ageInTicks * 0.3 * WINGSPEED) * PI * 0.015| (SpitBugGeoReplacement.applyCustomAnimations:80-81, attacking 0) at 0.165 rad/tick, which the absolute value folds to a 19.04-tick half period; the attacking jaw |cos(ageInTicks * 2.6 * WINGSPEED) * PI * 0.1| (:80); the Mth.sin gait sin(ageInTicks * 2.0 * WINGSPEED) * PI * 0.12 * limbSwingAmount with the 0.1-tick look-ahead and the |cos| lift on the rising half-cycle (:64-76, walk; the four leg helpers over bind pivots and chains, :103-255) at 1.1; closes at k = 3 (57.119864 ticks): every bone returns within 0 degrees of its start at k x T (the 5-degree test under the 6 s cap; k = 1: 9.000499 deg, k = 2: 8.999004 deg, k = 3: 0 deg).

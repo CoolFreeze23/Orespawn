@@ -18,188 +18,188 @@ A hostile carnivorous plant: a 9x8x9 base on fifty-two root pieces, a stem of si
 
 ## 3. Bone glossary (locked legacy names — readable labels beside them)
 
-Never rename, delete or re-parent a bone: code and hitboxes reference them by name. Left/right in the labels follow the model author's own naming (the side the legacy name calls left); Blockbench mirrors X for display, so the author's left appears on your right when the mob faces you. `gait bone` = its motion is scaled by walking speed in-game (P3). `locked` = it carries or parents a hitbox part (contract §8.1). Keying a locked bone is allowed; the checker warns, and the hitbox part follows the bone in-game (the consequence, so keep such keys deliberate). Renaming, re-parenting or deleting a locked bone is refused.
+Never rename, delete or re-parent a bone: code and hitboxes reference them by name. Left/right in the labels follow the model author's own naming (the side the legacy name calls left); the rig opens in Blockbench exactly as the game draws it, so a bone the author calls left is on the creature's own left. `gait bone` = its motion is scaled by walking speed in-game (P3). `locked` = it carries or parents a hitbox part (contract §8.1). Keying a locked bone is allowed; the checker warns, and the hitbox part follows the bone in-game (the consequence, so keep such keys deliberate). Renaming, re-parenting or deleting a locked bone is refused.
 
 | bone | readable label | classic part | parent | pivot (x, y, z) | group | gait bone | locked | cubes |
 |---|---|---|---|---|---|---|---|---|
-| `b1` | stem block 1 (a 9x8x9 bulb at the base; static) | (native rig: no classic part) | - | (1, 11, -5) | - | no | no | 1 |
+| `b1` | stem block 1 (a 9x8x9 bulb at the base; static) | (native rig: no classic part) | - | (-1, 11, -5) | - | no | no | 1 |
 | `b10` | stem block 10 (static) | (native rig: no classic part) | - | (0, 36, -6.5) | - | no | no | 1 |
-| `b11` | stem block 11 (static) | (native rig: no classic part) | - | (3, 36, -5.5) | - | no | no | 1 |
+| `b11` | stem block 11 (static) | (native rig: no classic part) | - | (-3, 36, -5.5) | - | no | no | 1 |
 | `b13` | stem block 13 (static) | (native rig: no classic part) | - | (0, 52, -1.5) | - | no | no | 1 |
 | `b14` | stem block 14 (static) | (native rig: no classic part) | - | (0, 46, -2.5) | - | no | no | 1 |
 | `b15` | stem block 15 (static) | (native rig: no classic part) | - | (0, 51, -0.5) | - | no | no | 1 |
 | `b16` | stem block 16 (static) | (native rig: no classic part) | - | (0, 41, -5.5) | - | no | no | 1 |
 | `b17` | stem block 17, the top (static) | (native rig: no classic part) | - | (0, 44.5, -2.5) | - | no | no | 1 |
-| `b2` | stem block 2 (static) | (native rig: no classic part) | - | (2, 16, -4) | - | no | no | 1 |
-| `b3` | stem block 3 (static) | (native rig: no classic part) | - | (2, 8, -2) | - | no | no | 1 |
-| `b4` | stem block 4 (static) | (native rig: no classic part) | - | (4.5, 15, -4.5) | - | no | no | 1 |
-| `b5` | stem block 5 (static) | (native rig: no classic part) | - | (2.5, 15, -5.5) | - | no | no | 1 |
-| `b6` | stem block 6 (static) | (native rig: no classic part) | - | (4.5, 22, -4.5) | - | no | no | 1 |
-| `b7` | stem block 7 (static) | (native rig: no classic part) | - | (3, 20, -4.5) | - | no | no | 1 |
-| `b8` | stem block 8 (static) | (native rig: no classic part) | - | (3, 29, -4.5) | - | no | no | 1 |
-| `b9` | stem block 9 (static) | (native rig: no classic part) | - | (3, 29, -5.5) | - | no | no | 1 |
-| `base` | base (the 9x8x9 block at the ground; static) | (native rig: no classic part) | - | (5, 8, -5) | - | no | no | 1 |
-| `c1` | petal 1 (a zero-thickness 5x2 plane in the ring under the head; static) | (native rig: no classic part) | - | (3, 53, -2) | - | no | no | 1 |
+| `b2` | stem block 2 (static) | (native rig: no classic part) | - | (-2, 16, -4) | - | no | no | 1 |
+| `b3` | stem block 3 (static) | (native rig: no classic part) | - | (-2, 8, -2) | - | no | no | 1 |
+| `b4` | stem block 4 (static) | (native rig: no classic part) | - | (-4.5, 15, -4.5) | - | no | no | 1 |
+| `b5` | stem block 5 (static) | (native rig: no classic part) | - | (-2.5, 15, -5.5) | - | no | no | 1 |
+| `b6` | stem block 6 (static) | (native rig: no classic part) | - | (-4.5, 22, -4.5) | - | no | no | 1 |
+| `b7` | stem block 7 (static) | (native rig: no classic part) | - | (-3, 20, -4.5) | - | no | no | 1 |
+| `b8` | stem block 8 (static) | (native rig: no classic part) | - | (-3, 29, -4.5) | - | no | no | 1 |
+| `b9` | stem block 9 (static) | (native rig: no classic part) | - | (-3, 29, -5.5) | - | no | no | 1 |
+| `base` | base (the 9x8x9 block at the ground; static) | (native rig: no classic part) | - | (-5, 8, -5) | - | no | no | 1 |
+| `c1` | petal 1 (a zero-thickness 5x2 plane in the ring under the head; static) | (native rig: no classic part) | - | (-3, 53, -2) | - | no | no | 1 |
 | `c10` | petal 10 (static) | (native rig: no classic part) | - | (0, 54, 2.5) | - | no | no | 1 |
-| `c11` | petal 11 (static) | (native rig: no classic part) | - | (3, 53, 0) | - | no | no | 1 |
-| `c2` | petal 2 (static) | (native rig: no classic part) | - | (2, 53, -3) | - | no | no | 1 |
+| `c11` | petal 11 (static) | (native rig: no classic part) | - | (-3, 53, 0) | - | no | no | 1 |
+| `c2` | petal 2 (static) | (native rig: no classic part) | - | (-2, 53, -3) | - | no | no | 1 |
 | `c3` | petal 3 (static) | (native rig: no classic part) | - | (0, 53, -3.5333) | - | no | no | 1 |
-| `c4` | petal 4 (static) | (native rig: no classic part) | - | (-2.5, 53, -4) | - | no | no | 1 |
-| `c5` | petal 5 (static) | (native rig: no classic part) | - | (-2.5, 53, -2.5) | - | no | no | 1 |
-| `c6` | petal 6 (static) | (native rig: no classic part) | - | (-4.5, 53, -0.5) | - | no | no | 1 |
-| `c7` | petal 7 (static) | (native rig: no classic part) | - | (-4.5, 54, -0.5) | - | no | no | 1 |
-| `c8` | petal 8 (static) | (native rig: no classic part) | - | (-4, 54, 0.5) | - | no | no | 1 |
-| `c9` | petal 9 (static) | (native rig: no classic part) | - | (-2, 54, 2) | - | no | no | 1 |
-| `h1` | head plate 1 (static) | (native rig: no classic part) | - | (1, 58.5, -3) | - | no | no | 1 |
-| `h10` | head plate 10 (static) | (native rig: no classic part) | - | (1.5, 61.5, 0.5) | - | no | no | 1 |
-| `h11` | head plate 11 (static) | (native rig: no classic part) | - | (1.5, 64.5, 0.5) | - | no | no | 1 |
-| `h12` | head plate 12 (static) | (native rig: no classic part) | - | (2, 66, -0.5) | - | no | no | 1 |
-| `h13` | head plate 13 (static) | (native rig: no classic part) | - | (2, 65, -2.5) | - | no | no | 1 |
-| `h14` | head plate 14 (static) | (native rig: no classic part) | - | (1.5, 64.5, -3) | - | no | no | 1 |
-| `h15` | head plate 15 (static) | (native rig: no classic part) | - | (1.5, 61.5, -3) | - | no | no | 1 |
-| `h16` | head plate 16 (static) | (native rig: no classic part) | - | (1.5, 58.5, -2.5) | - | no | no | 1 |
-| `h17` | head plate 17 (static) | (native rig: no classic part) | - | (-2, 65.7, -2.5) | - | no | no | 1 |
-| `h18` | head plate 18 (static) | (native rig: no classic part) | - | (-2, 64.5, -3) | - | no | no | 1 |
-| `h19` | head plate 19 (static) | (native rig: no classic part) | - | (-3, 61.5, -2) | - | no | no | 1 |
-| `h2` | head plate 2 (static) | (native rig: no classic part) | - | (1, 61.5, -3.5) | - | no | no | 1 |
-| `h20` | head plate 20 (static) | (native rig: no classic part) | - | (-3, 58.5, -1.5) | - | no | no | 1 |
-| `h21` | head plate 21 (static) | (native rig: no classic part) | - | (-3, 58.5, -0.5) | - | no | no | 1 |
-| `h22` | head plate 22 (static) | (native rig: no classic part) | - | (-2, 61.5, 0) | - | no | no | 1 |
-| `h23` | head plate 23 (static) | (native rig: no classic part) | - | (-2, 64.5, 0) | - | no | no | 1 |
-| `h3` | head plate 3 (static) | (native rig: no classic part) | - | (1, 64.5, -3.5) | - | no | no | 1 |
-| `h4` | head plate 4 (static) | (native rig: no classic part) | - | (1, 64.5, -3.5) | - | no | no | 1 |
-| `h5` | head plate 5 (static) | (native rig: no classic part) | - | (1, 66.5, -0.5) | - | no | no | 1 |
-| `h6` | head plate 6 (static) | (native rig: no classic part) | - | (1, 64.5, 1) | - | no | no | 1 |
-| `h7` | head plate 7 (static) | (native rig: no classic part) | - | (1, 61.5, 1) | - | no | no | 1 |
-| `h8` | head plate 8 (static) | (native rig: no classic part) | - | (1, 59, 0.5) | - | no | no | 1 |
-| `h9` | head plate 9 (static) | (native rig: no classic part) | - | (1.5, 58.5, -0.5) | - | no | no | 1 |
-| `l1` | left leaf, segment 1, the root (1x5x5 at the base's side, rest roll -0.95; the leaf group) | (native rig: no classic part) | - | (7, 14, -4) | leaves | no | no | 1 |
-| `l10` | left leaf, segment 11 | (native rig: no classic part) | - | (11, 47.3, -7.5) | leaves | no | no | 1 |
-| `l11` | left leaf, segment 12 | (native rig: no classic part) | - | (9.5, 50, -7) | leaves | no | no | 1 |
-| `l12` | left leaf, segment 13 | (native rig: no classic part) | - | (8.5, 52, -6.5) | leaves | no | no | 1 |
-| `l13` | left leaf, segment 14 | (native rig: no classic part) | - | (7.5, 53, -6) | leaves | no | no | 1 |
-| `l14` | left leaf, segment 15 | (native rig: no classic part) | - | (6.5, 54, -5.5) | leaves | no | no | 1 |
-| `l15` | left leaf, segment 16, the tip | (native rig: no classic part) | - | (5.5, 55, -5) | leaves | no | no | 1 |
-| `l16` | front leaf, segment 1, the root (5x1x5 ahead of the base, rest pitch -0.75; the leaf group) | (native rig: no classic part) | - | (2, 14, -9) | leaves | no | no | 1 |
-| `l17` | front leaf, segment 2 (placed 3 along) | (native rig: no classic part) | - | (2.5, 15.5, -11) | leaves | no | no | 1 |
-| `l18` | front leaf, segment 3 | (native rig: no classic part) | - | (3, 17, -13) | leaves | no | no | 1 |
-| `l19` | front leaf, segment 4 | (native rig: no classic part) | - | (3.5, 19.5, -16) | leaves | no | no | 1 |
-| `l2` | left leaf, segment 2 (placed 3 along segment 1; curls a further step) | (native rig: no classic part) | - | (9, 15.5, -5) | leaves | no | no | 1 |
-| `l20` | front leaf, segment 5 | (native rig: no classic part) | - | (4, 22, -18) | leaves | no | no | 1 |
-| `l21` | front leaf, segment 6 (the widest, 10x1x5) | (native rig: no classic part) | - | (4.5, 26, -19) | leaves | no | no | 1 |
-| `l22` | front leaf, segment 7 | (native rig: no classic part) | - | (4, 29.5, -18.5) | leaves | no | no | 1 |
-| `l23` | front leaf, segment 8 | (native rig: no classic part) | - | (4, 32.5, -17.5) | leaves | no | no | 1 |
-| `l24` | front leaf, segment 9 | (native rig: no classic part) | - | (3.5, 36, -15.5) | leaves | no | no | 1 |
-| `l25` | front leaf, segment 10 | (native rig: no classic part) | - | (3, 39, -13) | leaves | no | no | 1 |
-| `l26` | front leaf, segment 11 | (native rig: no classic part) | - | (2.5, 42, -10.5) | leaves | no | no | 1 |
-| `l27` | front leaf, segment 12 | (native rig: no classic part) | - | (2, 44, -9) | leaves | no | no | 1 |
-| `l28` | front leaf, segment 13 | (native rig: no classic part) | - | (1.5, 45.5, -8) | leaves | no | no | 1 |
-| `l29` | front leaf, segment 14 | (native rig: no classic part) | - | (1, 47, -7) | leaves | no | no | 1 |
-| `l3` | left leaf, segment 3 (placed 4 along) | (native rig: no classic part) | - | (10, 18.5, -6) | leaves | no | no | 1 |
-| `l30` | front leaf, segment 15, the tip | (native rig: no classic part) | - | (0.5, 48.5, -6) | leaves | no | no | 1 |
-| `l31` | right leaf, segment 1, the root (rest roll +0.95; the leaf group) | (native rig: no classic part) | - | (-7.5, 15, -3.5) | leaves | no | no | 1 |
-| `l32` | right leaf, segment 2 (placed 3 along) | (native rig: no classic part) | - | (-9, 17.5, -4) | leaves | no | no | 1 |
-| `l33` | right leaf, segment 4 | (native rig: no classic part) | - | (-10.5, 19.5, -4.5) | leaves | no | no | 1 |
-| `l34` | right leaf, segment 5 | (native rig: no classic part) | - | (-11.5, 23, -5) | leaves | no | no | 1 |
-| `l35` | right leaf, segment 6 | (native rig: no classic part) | - | (-12.5, 26.5, -5.5) | leaves | no | no | 1 |
-| `l36` | right leaf, segment 7 (the widest) | (native rig: no classic part) | - | (-12.5, 31.5, -6) | leaves | no | no | 1 |
-| `l37` | right leaf, segment 8 | (native rig: no classic part) | - | (-12, 35.5, -5.5) | leaves | no | no | 1 |
-| `l38` | right leaf, segment 9 | (native rig: no classic part) | - | (-11, 39, -5) | leaves | no | no | 1 |
-| `l39` | right leaf, segment 10 | (native rig: no classic part) | - | (-9.5, 42.5, -4.5) | leaves | no | no | 1 |
-| `l4` | left leaf, segment 5 | (native rig: no classic part) | - | (11, 22.5, -7) | leaves | no | no | 1 |
-| `l40` | right leaf, segment 11 | (native rig: no classic part) | - | (-8.5, 45, -4) | leaves | no | no | 1 |
-| `l41` | right leaf, segment 12 | (native rig: no classic part) | - | (-7, 47.5, -3) | leaves | no | no | 1 |
-| `l42` | right leaf, segment 13 | (native rig: no classic part) | - | (-6, 49, -2) | leaves | no | no | 1 |
-| `l43` | right leaf, segment 14, the tip | (native rig: no classic part) | - | (-5.5, 49.5, -1.5) | leaves | no | no | 1 |
-| `l44` | back leaf, segment 1, the root (5x1x5 behind the base, rest pitch +0.75; the leaf group) | (native rig: no classic part) | - | (2.5, 15, 4.5) | leaves | no | no | 1 |
-| `l45` | back leaf, segment 2 (placed 5 along) | (native rig: no classic part) | - | (3, 18, 8.5) | leaves | no | no | 1 |
-| `l46` | back leaf, segment 3 | (native rig: no classic part) | - | (3.5, 21, 11) | leaves | no | no | 1 |
-| `l47` | back leaf, segment 4 | (native rig: no classic part) | - | (4, 23, 12) | leaves | no | no | 1 |
-| `l48` | back leaf, segment 5 | (native rig: no classic part) | - | (4, 27, 13) | leaves | no | no | 1 |
-| `l49` | back leaf, segment 6 (the widest, 10x1x5) | (native rig: no classic part) | - | (4.5, 30, 13.5) | leaves | no | no | 1 |
-| `l5` | left leaf, segment 6 | (native rig: no classic part) | - | (11.5, 26.5, -8) | leaves | no | no | 1 |
-| `l50` | back leaf, segment 8 | (native rig: no classic part) | - | (4, 35, 13.5) | leaves | no | no | 1 |
-| `l51` | back leaf, segment 9 | (native rig: no classic part) | - | (3.5, 38, 13) | leaves | no | no | 1 |
-| `l52` | back leaf, segment 10 | (native rig: no classic part) | - | (3, 40.5, 12.5) | leaves | no | no | 1 |
-| `l53` | back leaf, segment 11 | (native rig: no classic part) | - | (2.5, 43, 11) | leaves | no | no | 1 |
-| `l54` | back leaf, segment 12 | (native rig: no classic part) | - | (2, 45, 9) | leaves | no | no | 1 |
-| `l55` | back leaf, segment 13 | (native rig: no classic part) | - | (1.5, 46, 8) | leaves | no | no | 1 |
-| `l56` | back leaf, segment 14 | (native rig: no classic part) | - | (0.5, 47, 7) | leaves | no | no | 1 |
+| `c4` | petal 4 (static) | (native rig: no classic part) | - | (2.5, 53, -4) | - | no | no | 1 |
+| `c5` | petal 5 (static) | (native rig: no classic part) | - | (2.5, 53, -2.5) | - | no | no | 1 |
+| `c6` | petal 6 (static) | (native rig: no classic part) | - | (4.5, 53, -0.5) | - | no | no | 1 |
+| `c7` | petal 7 (static) | (native rig: no classic part) | - | (4.5, 54, -0.5) | - | no | no | 1 |
+| `c8` | petal 8 (static) | (native rig: no classic part) | - | (4, 54, 0.5) | - | no | no | 1 |
+| `c9` | petal 9 (static) | (native rig: no classic part) | - | (2, 54, 2) | - | no | no | 1 |
+| `h1` | head plate 1 (static) | (native rig: no classic part) | - | (-1, 58.5, -3) | - | no | no | 1 |
+| `h10` | head plate 10 (static) | (native rig: no classic part) | - | (-1.5, 61.5, 0.5) | - | no | no | 1 |
+| `h11` | head plate 11 (static) | (native rig: no classic part) | - | (-1.5, 64.5, 0.5) | - | no | no | 1 |
+| `h12` | head plate 12 (static) | (native rig: no classic part) | - | (-2, 66, -0.5) | - | no | no | 1 |
+| `h13` | head plate 13 (static) | (native rig: no classic part) | - | (-2, 65, -2.5) | - | no | no | 1 |
+| `h14` | head plate 14 (static) | (native rig: no classic part) | - | (-1.5, 64.5, -3) | - | no | no | 1 |
+| `h15` | head plate 15 (static) | (native rig: no classic part) | - | (-1.5, 61.5, -3) | - | no | no | 1 |
+| `h16` | head plate 16 (static) | (native rig: no classic part) | - | (-1.5, 58.5, -2.5) | - | no | no | 1 |
+| `h17` | head plate 17 (static) | (native rig: no classic part) | - | (2, 65.7, -2.5) | - | no | no | 1 |
+| `h18` | head plate 18 (static) | (native rig: no classic part) | - | (2, 64.5, -3) | - | no | no | 1 |
+| `h19` | head plate 19 (static) | (native rig: no classic part) | - | (3, 61.5, -2) | - | no | no | 1 |
+| `h2` | head plate 2 (static) | (native rig: no classic part) | - | (-1, 61.5, -3.5) | - | no | no | 1 |
+| `h20` | head plate 20 (static) | (native rig: no classic part) | - | (3, 58.5, -1.5) | - | no | no | 1 |
+| `h21` | head plate 21 (static) | (native rig: no classic part) | - | (3, 58.5, -0.5) | - | no | no | 1 |
+| `h22` | head plate 22 (static) | (native rig: no classic part) | - | (2, 61.5, 0) | - | no | no | 1 |
+| `h23` | head plate 23 (static) | (native rig: no classic part) | - | (2, 64.5, 0) | - | no | no | 1 |
+| `h3` | head plate 3 (static) | (native rig: no classic part) | - | (-1, 64.5, -3.5) | - | no | no | 1 |
+| `h4` | head plate 4 (static) | (native rig: no classic part) | - | (-1, 64.5, -3.5) | - | no | no | 1 |
+| `h5` | head plate 5 (static) | (native rig: no classic part) | - | (-1, 66.5, -0.5) | - | no | no | 1 |
+| `h6` | head plate 6 (static) | (native rig: no classic part) | - | (-1, 64.5, 1) | - | no | no | 1 |
+| `h7` | head plate 7 (static) | (native rig: no classic part) | - | (-1, 61.5, 1) | - | no | no | 1 |
+| `h8` | head plate 8 (static) | (native rig: no classic part) | - | (-1, 59, 0.5) | - | no | no | 1 |
+| `h9` | head plate 9 (static) | (native rig: no classic part) | - | (-1.5, 58.5, -0.5) | - | no | no | 1 |
+| `l1` | left leaf, segment 1, the root (1x5x5 at the base's side, rest roll -0.95; the leaf group) | (native rig: no classic part) | - | (-7, 14, -4) | leaves | no | no | 1 |
+| `l10` | left leaf, segment 11 | (native rig: no classic part) | - | (-11, 47.3, -7.5) | leaves | no | no | 1 |
+| `l11` | left leaf, segment 12 | (native rig: no classic part) | - | (-9.5, 50, -7) | leaves | no | no | 1 |
+| `l12` | left leaf, segment 13 | (native rig: no classic part) | - | (-8.5, 52, -6.5) | leaves | no | no | 1 |
+| `l13` | left leaf, segment 14 | (native rig: no classic part) | - | (-7.5, 53, -6) | leaves | no | no | 1 |
+| `l14` | left leaf, segment 15 | (native rig: no classic part) | - | (-6.5, 54, -5.5) | leaves | no | no | 1 |
+| `l15` | left leaf, segment 16, the tip | (native rig: no classic part) | - | (-5.5, 55, -5) | leaves | no | no | 1 |
+| `l16` | front leaf, segment 1, the root (5x1x5 ahead of the base, rest pitch -0.75; the leaf group) | (native rig: no classic part) | - | (-2, 14, -9) | leaves | no | no | 1 |
+| `l17` | front leaf, segment 2 (placed 3 along) | (native rig: no classic part) | - | (-2.5, 15.5, -11) | leaves | no | no | 1 |
+| `l18` | front leaf, segment 3 | (native rig: no classic part) | - | (-3, 17, -13) | leaves | no | no | 1 |
+| `l19` | front leaf, segment 4 | (native rig: no classic part) | - | (-3.5, 19.5, -16) | leaves | no | no | 1 |
+| `l2` | left leaf, segment 2 (placed 3 along segment 1; curls a further step) | (native rig: no classic part) | - | (-9, 15.5, -5) | leaves | no | no | 1 |
+| `l20` | front leaf, segment 5 | (native rig: no classic part) | - | (-4, 22, -18) | leaves | no | no | 1 |
+| `l21` | front leaf, segment 6 (the widest, 10x1x5) | (native rig: no classic part) | - | (-4.5, 26, -19) | leaves | no | no | 1 |
+| `l22` | front leaf, segment 7 | (native rig: no classic part) | - | (-4, 29.5, -18.5) | leaves | no | no | 1 |
+| `l23` | front leaf, segment 8 | (native rig: no classic part) | - | (-4, 32.5, -17.5) | leaves | no | no | 1 |
+| `l24` | front leaf, segment 9 | (native rig: no classic part) | - | (-3.5, 36, -15.5) | leaves | no | no | 1 |
+| `l25` | front leaf, segment 10 | (native rig: no classic part) | - | (-3, 39, -13) | leaves | no | no | 1 |
+| `l26` | front leaf, segment 11 | (native rig: no classic part) | - | (-2.5, 42, -10.5) | leaves | no | no | 1 |
+| `l27` | front leaf, segment 12 | (native rig: no classic part) | - | (-2, 44, -9) | leaves | no | no | 1 |
+| `l28` | front leaf, segment 13 | (native rig: no classic part) | - | (-1.5, 45.5, -8) | leaves | no | no | 1 |
+| `l29` | front leaf, segment 14 | (native rig: no classic part) | - | (-1, 47, -7) | leaves | no | no | 1 |
+| `l3` | left leaf, segment 3 (placed 4 along) | (native rig: no classic part) | - | (-10, 18.5, -6) | leaves | no | no | 1 |
+| `l30` | front leaf, segment 15, the tip | (native rig: no classic part) | - | (-0.5, 48.5, -6) | leaves | no | no | 1 |
+| `l31` | right leaf, segment 1, the root (rest roll +0.95; the leaf group) | (native rig: no classic part) | - | (7.5, 15, -3.5) | leaves | no | no | 1 |
+| `l32` | right leaf, segment 2 (placed 3 along) | (native rig: no classic part) | - | (9, 17.5, -4) | leaves | no | no | 1 |
+| `l33` | right leaf, segment 4 | (native rig: no classic part) | - | (10.5, 19.5, -4.5) | leaves | no | no | 1 |
+| `l34` | right leaf, segment 5 | (native rig: no classic part) | - | (11.5, 23, -5) | leaves | no | no | 1 |
+| `l35` | right leaf, segment 6 | (native rig: no classic part) | - | (12.5, 26.5, -5.5) | leaves | no | no | 1 |
+| `l36` | right leaf, segment 7 (the widest) | (native rig: no classic part) | - | (12.5, 31.5, -6) | leaves | no | no | 1 |
+| `l37` | right leaf, segment 8 | (native rig: no classic part) | - | (12, 35.5, -5.5) | leaves | no | no | 1 |
+| `l38` | right leaf, segment 9 | (native rig: no classic part) | - | (11, 39, -5) | leaves | no | no | 1 |
+| `l39` | right leaf, segment 10 | (native rig: no classic part) | - | (9.5, 42.5, -4.5) | leaves | no | no | 1 |
+| `l4` | left leaf, segment 5 | (native rig: no classic part) | - | (-11, 22.5, -7) | leaves | no | no | 1 |
+| `l40` | right leaf, segment 11 | (native rig: no classic part) | - | (8.5, 45, -4) | leaves | no | no | 1 |
+| `l41` | right leaf, segment 12 | (native rig: no classic part) | - | (7, 47.5, -3) | leaves | no | no | 1 |
+| `l42` | right leaf, segment 13 | (native rig: no classic part) | - | (6, 49, -2) | leaves | no | no | 1 |
+| `l43` | right leaf, segment 14, the tip | (native rig: no classic part) | - | (5.5, 49.5, -1.5) | leaves | no | no | 1 |
+| `l44` | back leaf, segment 1, the root (5x1x5 behind the base, rest pitch +0.75; the leaf group) | (native rig: no classic part) | - | (-2.5, 15, 4.5) | leaves | no | no | 1 |
+| `l45` | back leaf, segment 2 (placed 5 along) | (native rig: no classic part) | - | (-3, 18, 8.5) | leaves | no | no | 1 |
+| `l46` | back leaf, segment 3 | (native rig: no classic part) | - | (-3.5, 21, 11) | leaves | no | no | 1 |
+| `l47` | back leaf, segment 4 | (native rig: no classic part) | - | (-4, 23, 12) | leaves | no | no | 1 |
+| `l48` | back leaf, segment 5 | (native rig: no classic part) | - | (-4, 27, 13) | leaves | no | no | 1 |
+| `l49` | back leaf, segment 6 (the widest, 10x1x5) | (native rig: no classic part) | - | (-4.5, 30, 13.5) | leaves | no | no | 1 |
+| `l5` | left leaf, segment 6 | (native rig: no classic part) | - | (-11.5, 26.5, -8) | leaves | no | no | 1 |
+| `l50` | back leaf, segment 8 | (native rig: no classic part) | - | (-4, 35, 13.5) | leaves | no | no | 1 |
+| `l51` | back leaf, segment 9 | (native rig: no classic part) | - | (-3.5, 38, 13) | leaves | no | no | 1 |
+| `l52` | back leaf, segment 10 | (native rig: no classic part) | - | (-3, 40.5, 12.5) | leaves | no | no | 1 |
+| `l53` | back leaf, segment 11 | (native rig: no classic part) | - | (-2.5, 43, 11) | leaves | no | no | 1 |
+| `l54` | back leaf, segment 12 | (native rig: no classic part) | - | (-2, 45, 9) | leaves | no | no | 1 |
+| `l55` | back leaf, segment 13 | (native rig: no classic part) | - | (-1.5, 46, 8) | leaves | no | no | 1 |
+| `l56` | back leaf, segment 14 | (native rig: no classic part) | - | (-0.5, 47, 7) | leaves | no | no | 1 |
 | `l57` | back leaf, segment 15, the tip | (native rig: no classic part) | - | (0, 48, 6) | leaves | no | no | 1 |
-| `l6` | left leaf, segment 7 (the widest, 1x6x10) | (native rig: no classic part) | - | (12, 31.5, -9) | leaves | no | no | 1 |
-| `l7` | left leaf, segment 8 | (native rig: no classic part) | - | (13, 35.5, -9) | leaves | no | no | 1 |
-| `l8` | left leaf, segment 9 | (native rig: no classic part) | - | (13, 39.5, -8.5) | leaves | no | no | 1 |
-| `l9` | left leaf, segment 10 | (native rig: no classic part) | - | (12.5, 43.5, -8) | leaves | no | no | 1 |
-| `leaf3` | left leaf, segment 4 (a 1x4x7 blade sharing segment 3's place; placed 4 along) | (native rig: no classic part) | - | (10, 18.5, -6) | leaves | no | no | 1 |
-| `leaf32` | right leaf, segment 3 (a 1x3x7 blade; placed 3 along) | (native rig: no classic part) | - | (-10.5, 19.5, -4.5) | leaves | no | no | 1 |
-| `leaf49` | back leaf, segment 7 (a 9x1x3 blade; placed 5 along) | (native rig: no classic part) | - | (4, 35, 13.5) | leaves | no | no | 1 |
-| `r1` | root 1 (static) | (native rig: no classic part) | - | (8, 3, -8) | - | no | no | 1 |
-| `r10` | root 10 (static) | (native rig: no classic part) | - | (18, 0, -13.5) | - | no | no | 1 |
-| `r11` | root 11 (static) | (native rig: no classic part) | - | (18, 0, -19.5) | - | no | no | 1 |
-| `r12` | root 12 (static) | (native rig: no classic part) | - | (14, 0, -18.5) | - | no | no | 1 |
-| `r13` | root 13 (static) | (native rig: no classic part) | - | (1, 4, -6) | - | no | no | 1 |
-| `r14` | root 14 (static) | (native rig: no classic part) | - | (2, 4, -12) | - | no | no | 1 |
-| `r15` | root 15 (static) | (native rig: no classic part) | - | (2, 4, -12) | - | no | no | 1 |
-| `r16` | root 16 (static) | (native rig: no classic part) | - | (2, 4, -12) | - | no | no | 1 |
-| `r17` | root 17 (static) | (native rig: no classic part) | - | (-1, 2, -16) | - | no | no | 1 |
-| `r18` | root 18 (static) | (native rig: no classic part) | - | (-1, 2, -16) | - | no | no | 1 |
-| `r19` | root 19 (static) | (native rig: no classic part) | - | (2, 4, -12) | - | no | no | 1 |
-| `r2` | root 2 (static) | (native rig: no classic part) | - | (11, 2, -11) | - | no | no | 1 |
-| `r20` | root 20 (static) | (native rig: no classic part) | - | (-6, 2.5, -10.5) | - | no | no | 1 |
-| `r21` | root 21 (static) | (native rig: no classic part) | - | (-6, 2.5, -10.5) | - | no | no | 1 |
-| `r22` | root 22 (static) | (native rig: no classic part) | - | (-9, 3, -5) | - | no | no | 1 |
-| `r23` | root 23 (static) | (native rig: no classic part) | - | (-11, 2.5, -6.5) | - | no | no | 1 |
-| `r24` | root 24 (static) | (native rig: no classic part) | - | (-6, 3, -2) | - | no | no | 1 |
-| `r25` | root 25 (static) | (native rig: no classic part) | - | (-15, 1, -1.5) | - | no | no | 1 |
-| `r26` | root 26 (static) | (native rig: no classic part) | - | (-12, 2.5, 0.5) | - | no | no | 1 |
-| `r27` | root 27 (static) | (native rig: no classic part) | - | (-11, 1.5, -2.5) | - | no | no | 1 |
-| `r28` | root 28 (static) | (native rig: no classic part) | - | (-9, 3, 1) | - | no | no | 1 |
-| `r29` | root 29 (static) | (native rig: no classic part) | - | (-5, 3, 2.6) | - | no | no | 1 |
-| `r3` | root 3 (static) | (native rig: no classic part) | - | (8, 3, -14) | - | no | no | 1 |
-| `r30` | root 30 (static) | (native rig: no classic part) | - | (-9.5, 3.5, 5) | - | no | no | 1 |
-| `r31` | root 31 (static) | (native rig: no classic part) | - | (-5.5, 2.5, 8) | - | no | no | 1 |
-| `r32` | root 32 (static) | (native rig: no classic part) | - | (-6.5, 2.5, 8) | - | no | no | 1 |
-| `r33` | root 33 (static) | (native rig: no classic part) | - | (-6.5, 2.5, 8) | - | no | no | 1 |
-| `r34` | root 34 (static) | (native rig: no classic part) | - | (-5, 3, 4.6) | - | no | no | 1 |
-| `r35` | root 35 (static) | (native rig: no classic part) | - | (-2, 2.5, 12.6) | - | no | no | 1 |
-| `r36` | root 36 (static) | (native rig: no classic part) | - | (-2, 2.5, 8.6) | - | no | no | 1 |
+| `l6` | left leaf, segment 7 (the widest, 1x6x10) | (native rig: no classic part) | - | (-12, 31.5, -9) | leaves | no | no | 1 |
+| `l7` | left leaf, segment 8 | (native rig: no classic part) | - | (-13, 35.5, -9) | leaves | no | no | 1 |
+| `l8` | left leaf, segment 9 | (native rig: no classic part) | - | (-13, 39.5, -8.5) | leaves | no | no | 1 |
+| `l9` | left leaf, segment 10 | (native rig: no classic part) | - | (-12.5, 43.5, -8) | leaves | no | no | 1 |
+| `leaf3` | left leaf, segment 4 (a 1x4x7 blade sharing segment 3's place; placed 4 along) | (native rig: no classic part) | - | (-10, 18.5, -6) | leaves | no | no | 1 |
+| `leaf32` | right leaf, segment 3 (a 1x3x7 blade; placed 3 along) | (native rig: no classic part) | - | (10.5, 19.5, -4.5) | leaves | no | no | 1 |
+| `leaf49` | back leaf, segment 7 (a 9x1x3 blade; placed 5 along) | (native rig: no classic part) | - | (-4, 35, 13.5) | leaves | no | no | 1 |
+| `r1` | root 1 (static) | (native rig: no classic part) | - | (-8, 3, -8) | - | no | no | 1 |
+| `r10` | root 10 (static) | (native rig: no classic part) | - | (-18, 0, -13.5) | - | no | no | 1 |
+| `r11` | root 11 (static) | (native rig: no classic part) | - | (-18, 0, -19.5) | - | no | no | 1 |
+| `r12` | root 12 (static) | (native rig: no classic part) | - | (-14, 0, -18.5) | - | no | no | 1 |
+| `r13` | root 13 (static) | (native rig: no classic part) | - | (-1, 4, -6) | - | no | no | 1 |
+| `r14` | root 14 (static) | (native rig: no classic part) | - | (-2, 4, -12) | - | no | no | 1 |
+| `r15` | root 15 (static) | (native rig: no classic part) | - | (-2, 4, -12) | - | no | no | 1 |
+| `r16` | root 16 (static) | (native rig: no classic part) | - | (-2, 4, -12) | - | no | no | 1 |
+| `r17` | root 17 (static) | (native rig: no classic part) | - | (1, 2, -16) | - | no | no | 1 |
+| `r18` | root 18 (static) | (native rig: no classic part) | - | (1, 2, -16) | - | no | no | 1 |
+| `r19` | root 19 (static) | (native rig: no classic part) | - | (-2, 4, -12) | - | no | no | 1 |
+| `r2` | root 2 (static) | (native rig: no classic part) | - | (-11, 2, -11) | - | no | no | 1 |
+| `r20` | root 20 (static) | (native rig: no classic part) | - | (6, 2.5, -10.5) | - | no | no | 1 |
+| `r21` | root 21 (static) | (native rig: no classic part) | - | (6, 2.5, -10.5) | - | no | no | 1 |
+| `r22` | root 22 (static) | (native rig: no classic part) | - | (9, 3, -5) | - | no | no | 1 |
+| `r23` | root 23 (static) | (native rig: no classic part) | - | (11, 2.5, -6.5) | - | no | no | 1 |
+| `r24` | root 24 (static) | (native rig: no classic part) | - | (6, 3, -2) | - | no | no | 1 |
+| `r25` | root 25 (static) | (native rig: no classic part) | - | (15, 1, -1.5) | - | no | no | 1 |
+| `r26` | root 26 (static) | (native rig: no classic part) | - | (12, 2.5, 0.5) | - | no | no | 1 |
+| `r27` | root 27 (static) | (native rig: no classic part) | - | (11, 1.5, -2.5) | - | no | no | 1 |
+| `r28` | root 28 (static) | (native rig: no classic part) | - | (9, 3, 1) | - | no | no | 1 |
+| `r29` | root 29 (static) | (native rig: no classic part) | - | (5, 3, 2.6) | - | no | no | 1 |
+| `r3` | root 3 (static) | (native rig: no classic part) | - | (-8, 3, -14) | - | no | no | 1 |
+| `r30` | root 30 (static) | (native rig: no classic part) | - | (9.5, 3.5, 5) | - | no | no | 1 |
+| `r31` | root 31 (static) | (native rig: no classic part) | - | (5.5, 2.5, 8) | - | no | no | 1 |
+| `r32` | root 32 (static) | (native rig: no classic part) | - | (6.5, 2.5, 8) | - | no | no | 1 |
+| `r33` | root 33 (static) | (native rig: no classic part) | - | (6.5, 2.5, 8) | - | no | no | 1 |
+| `r34` | root 34 (static) | (native rig: no classic part) | - | (5, 3, 4.6) | - | no | no | 1 |
+| `r35` | root 35 (static) | (native rig: no classic part) | - | (2, 2.5, 12.6) | - | no | no | 1 |
+| `r36` | root 36 (static) | (native rig: no classic part) | - | (2, 2.5, 8.6) | - | no | no | 1 |
 | `r37` | root 37 (static) | (native rig: no classic part) | - | (0, 3, 4.6) | - | no | no | 1 |
-| `r38` | root 38 (static) | (native rig: no classic part) | - | (3, 2.5, 10.6) | - | no | no | 1 |
-| `r39` | root 39 (static) | (native rig: no classic part) | - | (8, 3, 8.6) | - | no | no | 1 |
-| `r4` | root 4 (static) | (native rig: no classic part) | - | (7.5, 2.5, -15) | - | no | no | 1 |
-| `r40` | root 40 (static) | (native rig: no classic part) | - | (13, 3, 14.6) | - | no | no | 1 |
-| `r41` | root 41 (static) | (native rig: no classic part) | - | (11, 3, 11.6) | - | no | no | 1 |
-| `r42` | root 42 (static) | (native rig: no classic part) | - | (8, 3, 8.6) | - | no | no | 1 |
-| `r43` | root 43 (static) | (native rig: no classic part) | - | (22, 1.5, 8.1) | - | no | no | 1 |
-| `r44` | root 44 (static) | (native rig: no classic part) | - | (16, 2, 6.6) | - | no | no | 1 |
-| `r45` | root 45 (static) | (native rig: no classic part) | - | (14, 2.5, -2.9) | - | no | no | 1 |
-| `r46` | root 46 (static) | (native rig: no classic part) | - | (11, 1.5, 0.1) | - | no | no | 1 |
-| `r47` | root 47 (static) | (native rig: no classic part) | - | (12, 2, -0.4) | - | no | no | 1 |
-| `r48` | root 48 (static) | (native rig: no classic part) | - | (11, 1.5, 3.1) | - | no | no | 1 |
-| `r49` | root 49 (static) | (native rig: no classic part) | - | (12, 2, 4.6) | - | no | no | 1 |
-| `r5` | root 5 (static) | (native rig: no classic part) | - | (16, 2, -11) | - | no | no | 1 |
-| `r50` | root 50 (static) | (native rig: no classic part) | - | (8, 3, 4.6) | - | no | no | 1 |
-| `r6` | root 6 (static) | (native rig: no classic part) | - | (17, -0.5, -6.5) | - | no | no | 1 |
-| `r7` | root 7 (static) | (native rig: no classic part) | - | (20, -0.5, -10.5) | - | no | no | 1 |
-| `r8` | root 8 (static) | (native rig: no classic part) | - | (22, -1, -14.5) | - | no | no | 1 |
-| `r9` | root 9 (static) | (native rig: no classic part) | - | (15, 2, -17) | - | no | no | 1 |
-| `root` | root, main piece (2x2x5 on the ground; static) | (native rig: no classic part) | - | (11, 2, -11) | - | no | no | 1 |
-| `root43` | root, piece 43 (static) | (native rig: no classic part) | - | (16, 2, 6.6) | - | no | no | 1 |
-| `t1` | tongue, segment 1, the tip (3 long; rides segment 3's end) | (native rig: no classic part) | - | (46.5, 56, -0.5) | tongue | no | no | 1 |
-| `t10` | tongue, segment 10 (3 long) | (native rig: no classic part) | - | (12.5, 59.5, -1) | tongue | no | no | 1 |
-| `t11` | tongue, segment 11 (3 long) | (native rig: no classic part) | - | (10, 59.5, -1.5) | tongue | no | no | 1 |
-| `t12` | tongue, segment 12 (3 long) | (native rig: no classic part) | - | (7.5, 60, -1) | tongue | no | no | 1 |
-| `t13` | tongue, segment 13 (3 long; placed 3 along) | (native rig: no classic part) | - | (5.5, 60.8, -1) | tongue | no | no | 1 |
-| `t14` | tongue, segment 14 (placed 6 along the root; folds the other way) | (native rig: no classic part) | - | (3, 62, -1) | tongue | no | no | 1 |
-| `t15` | tongue, segment 15, the root (a 6x1x1 bar at the head's mouth; the tongue's first fold) | (native rig: no classic part) | - | (1, 64.5, -1) | tongue | no | no | 1 |
-| `t2` | tongue, segment 2 (3 long; rides segment 3's end) | (native rig: no classic part) | - | (46.5, 56, -1.5) | tongue | no | no | 1 |
-| `t3` | tongue, segment 3 (6 long) | (native rig: no classic part) | - | (44.5, 57, -1) | tongue | no | no | 1 |
-| `t4` | tongue, segment 4 (6 long) | (native rig: no classic part) | - | (39.5, 58, -1) | tongue | no | no | 1 |
-| `t5` | tongue, segment 5 (6 long) | (native rig: no classic part) | - | (34.5, 60, -1) | tongue | no | no | 1 |
-| `t6` | tongue, segment 6 (6 long) | (native rig: no classic part) | - | (29.5, 59.5, -1) | tongue | no | no | 1 |
-| `t7` | tongue, segment 7 (6 long) | (native rig: no classic part) | - | (24.5, 60, -1) | tongue | no | no | 1 |
-| `t8` | tongue, segment 8 (6 long; placed 6 along) | (native rig: no classic part) | - | (19.5, 59.5, -1) | tongue | no | no | 1 |
-| `t9` | tongue, segment 9 (6 long; placed 3 along) | (native rig: no classic part) | - | (14.5, 59.5, -1) | tongue | no | no | 1 |
+| `r38` | root 38 (static) | (native rig: no classic part) | - | (-3, 2.5, 10.6) | - | no | no | 1 |
+| `r39` | root 39 (static) | (native rig: no classic part) | - | (-8, 3, 8.6) | - | no | no | 1 |
+| `r4` | root 4 (static) | (native rig: no classic part) | - | (-7.5, 2.5, -15) | - | no | no | 1 |
+| `r40` | root 40 (static) | (native rig: no classic part) | - | (-13, 3, 14.6) | - | no | no | 1 |
+| `r41` | root 41 (static) | (native rig: no classic part) | - | (-11, 3, 11.6) | - | no | no | 1 |
+| `r42` | root 42 (static) | (native rig: no classic part) | - | (-8, 3, 8.6) | - | no | no | 1 |
+| `r43` | root 43 (static) | (native rig: no classic part) | - | (-22, 1.5, 8.1) | - | no | no | 1 |
+| `r44` | root 44 (static) | (native rig: no classic part) | - | (-16, 2, 6.6) | - | no | no | 1 |
+| `r45` | root 45 (static) | (native rig: no classic part) | - | (-14, 2.5, -2.9) | - | no | no | 1 |
+| `r46` | root 46 (static) | (native rig: no classic part) | - | (-11, 1.5, 0.1) | - | no | no | 1 |
+| `r47` | root 47 (static) | (native rig: no classic part) | - | (-12, 2, -0.4) | - | no | no | 1 |
+| `r48` | root 48 (static) | (native rig: no classic part) | - | (-11, 1.5, 3.1) | - | no | no | 1 |
+| `r49` | root 49 (static) | (native rig: no classic part) | - | (-12, 2, 4.6) | - | no | no | 1 |
+| `r5` | root 5 (static) | (native rig: no classic part) | - | (-16, 2, -11) | - | no | no | 1 |
+| `r50` | root 50 (static) | (native rig: no classic part) | - | (-8, 3, 4.6) | - | no | no | 1 |
+| `r6` | root 6 (static) | (native rig: no classic part) | - | (-17, -0.5, -6.5) | - | no | no | 1 |
+| `r7` | root 7 (static) | (native rig: no classic part) | - | (-20, -0.5, -10.5) | - | no | no | 1 |
+| `r8` | root 8 (static) | (native rig: no classic part) | - | (-22, -1, -14.5) | - | no | no | 1 |
+| `r9` | root 9 (static) | (native rig: no classic part) | - | (-15, 2, -17) | - | no | no | 1 |
+| `root` | root, main piece (2x2x5 on the ground; static) | (native rig: no classic part) | - | (-11, 2, -11) | - | no | no | 1 |
+| `root43` | root, piece 43 (static) | (native rig: no classic part) | - | (-16, 2, 6.6) | - | no | no | 1 |
+| `t1` | tongue, segment 1, the tip (3 long; rides segment 3's end) | (native rig: no classic part) | - | (-46.5, 56, -0.5) | tongue | no | no | 1 |
+| `t10` | tongue, segment 10 (3 long) | (native rig: no classic part) | - | (-12.5, 59.5, -1) | tongue | no | no | 1 |
+| `t11` | tongue, segment 11 (3 long) | (native rig: no classic part) | - | (-10, 59.5, -1.5) | tongue | no | no | 1 |
+| `t12` | tongue, segment 12 (3 long) | (native rig: no classic part) | - | (-7.5, 60, -1) | tongue | no | no | 1 |
+| `t13` | tongue, segment 13 (3 long; placed 3 along) | (native rig: no classic part) | - | (-5.5, 60.8, -1) | tongue | no | no | 1 |
+| `t14` | tongue, segment 14 (placed 6 along the root; folds the other way) | (native rig: no classic part) | - | (-3, 62, -1) | tongue | no | no | 1 |
+| `t15` | tongue, segment 15, the root (a 6x1x1 bar at the head's mouth; the tongue's first fold) | (native rig: no classic part) | - | (-1, 64.5, -1) | tongue | no | no | 1 |
+| `t2` | tongue, segment 2 (3 long; rides segment 3's end) | (native rig: no classic part) | - | (-46.5, 56, -1.5) | tongue | no | no | 1 |
+| `t3` | tongue, segment 3 (6 long) | (native rig: no classic part) | - | (-44.5, 57, -1) | tongue | no | no | 1 |
+| `t4` | tongue, segment 4 (6 long) | (native rig: no classic part) | - | (-39.5, 58, -1) | tongue | no | no | 1 |
+| `t5` | tongue, segment 5 (6 long) | (native rig: no classic part) | - | (-34.5, 60, -1) | tongue | no | no | 1 |
+| `t6` | tongue, segment 6 (6 long) | (native rig: no classic part) | - | (-29.5, 59.5, -1) | tongue | no | no | 1 |
+| `t7` | tongue, segment 7 (6 long) | (native rig: no classic part) | - | (-24.5, 60, -1) | tongue | no | no | 1 |
+| `t8` | tongue, segment 8 (6 long; placed 6 along) | (native rig: no classic part) | - | (-19.5, 59.5, -1) | tongue | no | no | 1 |
+| `t9` | tongue, segment 9 (6 long; placed 3 along) | (native rig: no classic part) | - | (-14.5, 59.5, -1) | tongue | no | no | 1 |
 
 ## 4. Current animation behaviour — plain English and the source formulas
 
@@ -228,28 +228,28 @@ Author every loop at 1.0 s (README rule 5, the phase-locked kind; ruled 2026-09-
 
 ### 4.3 Reference clips (reference-only)
 
-`triffid_reference_walk.animation.json`, `triffid_reference_idle.animation.json`, `triffid_reference_attack.animation.json`, `triffid_reference_open.animation.json` (beside this sheet, and embedded in `triffid.bbmodel`'s Animation tab) are NOT clips to return or ship under their own names. Each is the creature's classic code — the motion the game draws today — SAMPLED by the harness at fixed inputs so you can see that motion beside the rig in Blockbench. The `.bbmodel` opens with every clip listed (the shipped clips and these); the files beside the sheet are the PINNED SOURCE (their bytes are what the checker knows; the generator's round trip proves the embedded copies within 5e-5 s on key times and 1e-6 on values). If you rebuild the `.bbmodel` and they are gone, Animation → Import Animations... on the files brings them back. One clip per state the code reads, each value alone: `_reference_walk` — full walking speed (limbSwingAmount 1, the walk position and the age advancing one tick per key), not attacking, looking straight ahead, every state flag at rest, full health; `_reference_idle` — standing still (limbSwingAmount 0, the walk position 0; the age advancing one tick per key), not attacking, looking straight ahead, every state flag at rest, full health; `_reference_attack` — attacking (the code's attacking flag raised) while standing still (limbSwingAmount 0, the walk position 0; the age advancing one tick per key), looking straight ahead, every other state flag at rest, full health; `_reference_open` — the `open` state: the code's `getOpenClosed` answering 1 while standing still, every other state at rest. Keys: the classic code is sampled once per tick, and the samples are reduced by the density search the exact transcriptions use — the fewest Catmull-Rom keys per bone and channel whose curve stays within 1 degree of rotation and 1/32 block of position of every sample, the closing key always kept — so each clip carries as few keys as that tolerance allows (each entry below states its key counts and the measured maximum error). Rotations are deltas from the bind pose under the same sign rule as the shipped clips (X as the classic degrees, Y and Z negated), positions only where the code moves a bone.
+`triffid_reference_walk.animation.json`, `triffid_reference_idle.animation.json`, `triffid_reference_attack.animation.json`, `triffid_reference_open.animation.json` (beside this sheet, and embedded in `triffid.bbmodel`'s Animation tab) are NOT clips to return or ship under their own names. Each is the creature's classic code — the motion the game draws today — SAMPLED by the harness at fixed inputs so you can see that motion beside the rig in Blockbench. The `.bbmodel` opens with every clip listed (the shipped clips and these); the files beside the sheet are the PINNED SOURCE (their bytes are what the checker knows; the generator's round trip proves the embedded copies within 5e-5 s on key times and 1e-6 on values). If you rebuild the `.bbmodel` and they are gone, Animation → Import Animations... on the files brings them back. One clip per state the code reads, each value alone: `_reference_walk` — full walking speed (limbSwingAmount 1, the walk position and the age advancing one tick per key), not attacking, looking straight ahead, every state flag at rest, full health; `_reference_idle` — standing still (limbSwingAmount 0, the walk position 0; the age advancing one tick per key), not attacking, looking straight ahead, every state flag at rest, full health; `_reference_attack` — attacking (the code's attacking flag raised) while standing still (limbSwingAmount 0, the walk position 0; the age advancing one tick per key), looking straight ahead, every other state flag at rest, full health; `_reference_open` — the `open` state: the code's `getOpenClosed` answering 1 while standing still, every other state at rest. Keys: the classic code is sampled once per tick, and the samples are reduced by the density search the exact transcriptions use — the fewest Catmull-Rom keys per bone and channel whose curve stays within 1 degree of rotation and 1/32 block of position of every sample, the closing key always kept — so each clip carries as few keys as that tolerance allows (each entry below states its key counts and the measured maximum error). Rotations are deltas from the bind pose under the same sign rule as the shipped clips (X, Y and Z as the classic degrees: the rig is in the Bedrock convention), positions only where the code moves a bone.
 
 **Starting point (owner 2026-09-14, addendum item 13; extended by the second set revised, item 4):** a reference clip's KEYS may be the starting point of the delivered clip its state corresponds to — copy them into `walk` (from `_reference_walk`), `idle` (from `_reference_idle`), `aggro_idle` (from `_reference_attack`), `fly` (from `_reference_fly`) or `swim` (from `_reference_swim`) and improve from there; a delivered clip carrying those keys is a valid delivery (no rule compares them). A state with no contract clip (sit, sleep, display, ...) is OFFERED as an extra of this creature's own under §2.3 — §5 lists it as "offered from reference_<state>" beside the seed's extras, and a delivered clip under that name carrying the reference keys is a valid delivery. Only the reference file itself coming back under its own name is refused.
 
-- `triffid_reference_walk.animation.json` (sha256 `879897e39d3e5af82bdc26a82dff344efb099ac15e424f0c05cffc85b136579d`; clip `reference_walk`; a starting point for `walk`): one key (nothing in this rig's code moves a bone at these inputs: the pose it holds); one key per bone (nothing to reduce).
+- `triffid_reference_walk.animation.json` (sha256 `03291b354e0131caebac60e7c427c29c622e845f922cdea8df9c8e554f4c941d`; clip `reference_walk`; a starting point for `walk`): one key (nothing in this rig's code moves a bone at these inputs: the pose it holds); one key per bone (nothing to reduce).
   - Sampled from: `danger.orespawn.entity.client.TriffidGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the shipped replacement, registry-free, on explicit PoseInputs)`.
   - Rule applied: nothing moves at the walk inputs: every bone's rotation and position is the same at every sample of the span the closure test settled (period_multiple; wingspeed 1.0: the only rhythm live at these inputs is the attacking tentacle |cos(ageInTicks * 0.25 * WINGSPEED) * PI * 0.5| with its alternating roll (TriffidGeoReplacement.applyCustomAnimations:147-148, attacking; the l44 chain follows by position, :158-217) at 0.25 rad/tick, which the absolute value folds to a 12.57-tick half period; the four leaf chains cos(ageInTicks * 0.25 * WINGSPEED) * PI * 0.039 (:67) need getOpenClosed() != 0 - 0 on the probe, the closed constant 0.1225 rad - so the walk and idle states hold still; closes at k = 1 (12.566371 ticks): every bone returns within 0 degrees of its start at k x T (the 5-degree test under the 6 s cap; k = 1: 0 deg)), so this state is one key.
   - Bones that move in it: `l1`, `l10`, `l11`, `l12`, `l13`, `l14`, `l15`, `l16`, `l17`, `l18`, `l19`, `l2`, `l20`, `l21`, `l22`, `l23`, `l24`, `l25`, `l26`, `l27`, `l28`, `l29`, `l3`, `l30`, `l31`, `l32`, `l33`, `l34`, `l35`, `l36`, `l37`, `l38`, `l39`, `l4`, `l40`, `l41`, `l42`, `l43`, `l44`, `l45`, `l46`, `l47`, `l48`, `l49`, `l5`, `l50`, `l51`, `l52`, `l53`, `l54`, `l55`, `l56`, `l57`, `l6`, `l7`, `l8`, `l9`, `leaf3`, `leaf32`, `leaf49`, `t10`, `t11`, `t12`, `t13`, `t14`, `t15`, `t3`, `t4`, `t5`, `t6`, `t7`, `t8`, `t9`; bones the code also MOVES (position keys): `l1`, `l10`, `l11`, `l12`, `l13`, `l14`, `l15`, `l16`, `l17`, `l18`, `l19`, `l2`, `l20`, `l21`, `l22`, `l23`, `l24`, `l25`, `l26`, `l27`, `l28`, `l29`, `l3`, `l30`, `l31`, `l32`, `l33`, `l34`, `l35`, `l36`, `l37`, `l38`, `l39`, `l4`, `l40`, `l41`, `l42`, `l43`, `l45`, `l46`, `l47`, `l48`, `l49`, `l5`, `l50`, `l51`, `l52`, `l53`, `l54`, `l55`, `l56`, `l57`, `l6`, `l7`, `l8`, `l9`, `leaf3`, `leaf32`, `leaf49`, `t1`, `t10`, `t11`, `t12`, `t13`, `t14`, `t2`, `t3`, `t4`, `t5`, `t6`, `t7`, `t8`, `t9`.
   - Loop seam: the closing key differs from the first by at most 0 degrees (mod 360).
-- `triffid_reference_idle.animation.json` (sha256 `17b4a9813c61341159dfbf41f30ad81a0a64e0125ea888ebddb4fc9b89b85aaf`; clip `reference_idle`; a starting point for `idle`): one key (nothing in this rig's code moves a bone at these inputs: the pose it holds); one key per bone (nothing to reduce).
+- `triffid_reference_idle.animation.json` (sha256 `6bfc86faeb8ea6ebd1b018a948ddf54c014202b7d354dea634b17806be2766d4`; clip `reference_idle`; a starting point for `idle`): one key (nothing in this rig's code moves a bone at these inputs: the pose it holds); one key per bone (nothing to reduce).
   - Sampled from: `danger.orespawn.entity.client.TriffidGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the shipped replacement, registry-free, on explicit PoseInputs)`.
   - Rule applied: nothing moves at the idle inputs: every bone's rotation and position is the same at every sample of the span the closure test settled (period_multiple; wingspeed 1.0: the only rhythm live at these inputs is the attacking tentacle |cos(ageInTicks * 0.25 * WINGSPEED) * PI * 0.5| with its alternating roll (TriffidGeoReplacement.applyCustomAnimations:147-148, attacking; the l44 chain follows by position, :158-217) at 0.25 rad/tick, which the absolute value folds to a 12.57-tick half period; the four leaf chains cos(ageInTicks * 0.25 * WINGSPEED) * PI * 0.039 (:67) need getOpenClosed() != 0 - 0 on the probe, the closed constant 0.1225 rad - so the walk and idle states hold still; closes at k = 1 (12.566371 ticks): every bone returns within 0 degrees of its start at k x T (the 5-degree test under the 6 s cap; k = 1: 0 deg)), so this state is one key.
   - Bones that move in it: `l1`, `l10`, `l11`, `l12`, `l13`, `l14`, `l15`, `l16`, `l17`, `l18`, `l19`, `l2`, `l20`, `l21`, `l22`, `l23`, `l24`, `l25`, `l26`, `l27`, `l28`, `l29`, `l3`, `l30`, `l31`, `l32`, `l33`, `l34`, `l35`, `l36`, `l37`, `l38`, `l39`, `l4`, `l40`, `l41`, `l42`, `l43`, `l44`, `l45`, `l46`, `l47`, `l48`, `l49`, `l5`, `l50`, `l51`, `l52`, `l53`, `l54`, `l55`, `l56`, `l57`, `l6`, `l7`, `l8`, `l9`, `leaf3`, `leaf32`, `leaf49`, `t10`, `t11`, `t12`, `t13`, `t14`, `t15`, `t3`, `t4`, `t5`, `t6`, `t7`, `t8`, `t9`; bones the code also MOVES (position keys): `l1`, `l10`, `l11`, `l12`, `l13`, `l14`, `l15`, `l16`, `l17`, `l18`, `l19`, `l2`, `l20`, `l21`, `l22`, `l23`, `l24`, `l25`, `l26`, `l27`, `l28`, `l29`, `l3`, `l30`, `l31`, `l32`, `l33`, `l34`, `l35`, `l36`, `l37`, `l38`, `l39`, `l4`, `l40`, `l41`, `l42`, `l43`, `l45`, `l46`, `l47`, `l48`, `l49`, `l5`, `l50`, `l51`, `l52`, `l53`, `l54`, `l55`, `l56`, `l57`, `l6`, `l7`, `l8`, `l9`, `leaf3`, `leaf32`, `leaf49`, `t1`, `t10`, `t11`, `t12`, `t13`, `t14`, `t2`, `t3`, `t4`, `t5`, `t6`, `t7`, `t8`, `t9`.
   - Loop seam: the closing key differs from the first by at most 0 degrees (mod 360).
-- `triffid_reference_attack.animation.json` (sha256 `d084f24edd4b0711a48bcd7f0c57758110871c909754987eb7d5b0b82e8d1186`; clip `reference_attack`; a starting point for `aggro_idle`): one period of its slowest rhythm — 12.566 ticks (0.628 s): every moving bone is back within 5 degrees of its start there, so the last key closes the loop; 2 to 14 keys per bone chosen by the density search from 14 per-tick samples, Catmull-Rom; max error 0 degrees / 0.0304 block against the samples (the tolerance 1 degree / 1/32 block).
+- `triffid_reference_attack.animation.json` (sha256 `a50bcc356568169e7a2ac0e46501dcaa51a11b2a314231bb12e633cae9990616`; clip `reference_attack`; a starting point for `aggro_idle`): one period of its slowest rhythm — 12.566 ticks (0.628 s): every moving bone is back within 5 degrees of its start there, so the last key closes the loop; 2 to 14 keys per bone chosen by the density search from 14 per-tick samples, Catmull-Rom; max error 0 degrees / 0.0304 block against the samples (the tolerance 1 degree / 1/32 block).
   - State: `getAttacking` answers 1, every other getter at rest (named by the contract (getAttacking 1)).
   - Sampled from: `danger.orespawn.entity.client.TriffidGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the shipped replacement, registry-free, on explicit PoseInputs)`.
   - Rule applied: wingspeed 1.0: the only rhythm live at these inputs is the attacking tentacle |cos(ageInTicks * 0.25 * WINGSPEED) * PI * 0.5| with its alternating roll (TriffidGeoReplacement.applyCustomAnimations:147-148, attacking; the l44 chain follows by position, :158-217) at 0.25 rad/tick, which the absolute value folds to a 12.57-tick half period; the four leaf chains cos(ageInTicks * 0.25 * WINGSPEED) * PI * 0.039 (:67) need getOpenClosed() != 0 - 0 on the probe, the closed constant 0.1225 rad - so the walk and idle states hold still; closes at k = 1 (12.566371 ticks): every bone returns within 0 degrees of its start at k x T (the 5-degree test under the 6 s cap; k = 1: 0 deg).
   - Bones that move in it: `l1`, `l10`, `l11`, `l12`, `l13`, `l14`, `l15`, `l16`, `l17`, `l18`, `l19`, `l2`, `l20`, `l21`, `l22`, `l23`, `l24`, `l25`, `l26`, `l27`, `l28`, `l29`, `l3`, `l30`, `l31`, `l32`, `l33`, `l34`, `l35`, `l36`, `l37`, `l38`, `l39`, `l4`, `l40`, `l41`, `l42`, `l43`, `l44`, `l45`, `l46`, `l47`, `l48`, `l49`, `l5`, `l50`, `l51`, `l52`, `l53`, `l54`, `l55`, `l56`, `l57`, `l6`, `l7`, `l8`, `l9`, `leaf3`, `leaf32`, `leaf49`, `t10`, `t11`, `t12`, `t13`, `t14`, `t15`, `t3`, `t4`, `t5`, `t6`, `t7`, `t8`, `t9`; bones the code also MOVES (position keys): `l1`, `l10`, `l11`, `l12`, `l13`, `l14`, `l15`, `l16`, `l17`, `l18`, `l19`, `l2`, `l20`, `l21`, `l22`, `l23`, `l24`, `l25`, `l26`, `l27`, `l28`, `l29`, `l3`, `l30`, `l31`, `l32`, `l33`, `l34`, `l35`, `l36`, `l37`, `l38`, `l39`, `l4`, `l40`, `l41`, `l42`, `l43`, `l45`, `l46`, `l47`, `l48`, `l49`, `l5`, `l50`, `l51`, `l52`, `l53`, `l54`, `l55`, `l56`, `l57`, `l6`, `l7`, `l8`, `l9`, `leaf3`, `leaf32`, `leaf49`, `t1`, `t10`, `t11`, `t12`, `t13`, `t14`, `t2`, `t3`, `t4`, `t5`, `t6`, `t7`, `t8`, `t9`.
   - Loop seam: the closing key differs from the first by at most 0 degrees (mod 360).
   - Attacking read through `TriffidPose.getAttacking()`.
-- `triffid_reference_open.animation.json` (sha256 `d1bbd883dbbc7494d127db6fcbb36067ff66eff8658d9cfe3730060af2f9b071`; clip `reference_open`; offered as the extra `open` (§2.3; §5)): 2 periods of its slowest rhythm (12.566 ticks each) — 25.133 ticks (1.257 s): the smallest multiple at which EVERY rhythm returns within 5 degrees of its start (the rule caps this search at 6 s), so the last key closes the loop; 2 to 14 keys per bone chosen by the density search from 27 per-tick samples, Catmull-Rom; max error 0.965 degrees / 0.0305 block against the samples (the tolerance 1 degree / 1/32 block).
+- `triffid_reference_open.animation.json` (sha256 `54514fb9fa713d479beaaa36f1ee3807cd392e92655378e31d1d9b9c946b560d`; clip `reference_open`; offered as the extra `open` (§2.3; §5)): 2 periods of its slowest rhythm (12.566 ticks each) — 25.133 ticks (1.257 s): the smallest multiple at which EVERY rhythm returns within 5 degrees of its start (the rule caps this search at 6 s), so the last key closes the loop; 2 to 14 keys per bone chosen by the density search from 27 per-tick samples, Catmull-Rom; max error 0.965 degrees / 0.0305 block against the samples (the tolerance 1 degree / 1/32 block).
   - State: `getOpenClosed` answers 1, every other getter at rest (named by triffid.json reference_states.open = {getOpenClosed: 1}).
   - Sampled from: `danger.orespawn.entity.client.TriffidGeoReplacement.applyCustomAnimations(AnimationProcessor, PoseInputs) through OreSpawnGeoReplacement.pose (the S4 doctrine: the shipped replacement, registry-free, on explicit PoseInputs)`.
   - Rule applied: wingspeed 1.0: the only rhythm live at these inputs is the attacking tentacle |cos(ageInTicks * 0.25 * WINGSPEED) * PI * 0.5| with its alternating roll (TriffidGeoReplacement.applyCustomAnimations:147-148, attacking; the l44 chain follows by position, :158-217) at 0.25 rad/tick, which the absolute value folds to a 12.57-tick half period; the four leaf chains cos(ageInTicks * 0.25 * WINGSPEED) * PI * 0.039 (:67) need getOpenClosed() != 0 - 0 on the probe, the closed constant 0.1225 rad - so the walk and idle states hold still; closes at k = 2 (25.132741 ticks): every bone returns within 0 degrees of its start at k x T (the 5-degree test under the 6 s cap; k = 1: 177.479997 deg / 60.341827 units, k = 2: 0 deg).

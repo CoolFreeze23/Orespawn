@@ -31,22 +31,47 @@ DRAW_ORDER_KEY = "orespawn:bone_draw_order"
 # declares `cube_face_order: "classic"` (a translucent rig, where blending makes the order visible),
 # applied by the shipped OreSpawnGeoReplacementModel and the harness through FaceOrder.apply.
 FACE_ORDER_KEY = "orespawn:cube_face_order"
+# THE FRAME (TEST-015, owner 2026-09-15, closing set continued, second, item 35 (1); from the bytecode of NeoForge
+# 21.1.223 and GeckoLib 4.8.4): the classic renderer draws a ModelPart-space point p at M p in the entity frame,
+# M = scale(-1, -1, 1) . translate(0, -1.501, 0) (LivingEntityRenderer.render: setupRotations 390, the flip 395-400,
+# the renderer's scale hook 408, the lift 414-417, renderToBuffer 621). GeckoLib's baker negates a Bedrock cube's
+# origin.x + size.x (BakedModelFactory$Builtin.constructCube 98-139) and every pivot's x (constructCube 157-167,
+# constructBone 95-116) and flips nothing else, so a Bedrock cube spanning [x, x + sx] bakes to [-(x + sx), -x]: the
+# baker IS the x mirror the classic's flip applies. A converted rig therefore sits in the BEDROCK CONVENTION the Queen's
+# Blockbench-authored rig uses - the same x as the ModelPart, y up about the 24-unit datum, z the same:
+#   cube origin (ax, 24 - (ay + sy), az), pivot (px, 24 - py, pz)   [before this landing: x negated on both]
+# and the bake of a ModelPart-space point is B p = (-x, 1.5 - y, z) blocks: INTERNAL SPACE IS CLASSIC SPACE REFLECTED
+# IN X AND Y (before: in Y only - the converter's own negation cancelled the baker's, and every seam rig drew as the
+# classic's left-right mirror in the entity frame). Every derived rule below follows from that reflection, S =
+# diag(-1, -1, 1) = R_z(180): a rotation conjugated through S keeps its Z sense and reverses X and Y (internal
+# rotation = (-xRot, -yRot, +zRot) of the classic; the baker negates JSON X and Y at load, constructBone 61-92, so
+# the JSON rotation is +classic degrees on all three axes: json_rotation / json_rotation_delta), a classic pivot move
+# (dx, dy, dz) is the internal offset (-dx, -dy, dz), and the six faces land where S sends their normals.
 # NeoForge 21.1.223 ModelPart.Cube.<init> fills its polygon array DOWN, UP, WEST, NORTH, EAST, SOUTH
 # (offsets 365-785: DOWN 365, UP 436, WEST 507, NORTH 578, EAST 649, SOUTH 720, each slot ending in its
 # Polygon.<init> and aastore) and compile emits them in that order; Polygon.<init> takes the normal from the
 # direction's step and, for a mirrored cube, negates its X (the WEST polygon then faces +X). GeckoLib
 # 4.8.4 BakedModelFactory.buildQuads builds WEST, EAST, NORTH, SOUTH, UP, DOWN (offsets 20-130) and
-# stamps each quad with its direction; internal space is classic space reflected in Y, so a classic
-# normal (x, y, z) is the quad GeckoLib labels by the direction whose step is (x, -y, z).
+# stamps each quad with the direction of its geometric side in internal space (VertexSet.quadWest is the
+# min-x side, quadNorth the min-z side, quadUp the max-y side); internal space is classic space reflected
+# in X and Y, so a classic normal (x, y, z) is the quad GeckoLib labels by the direction whose step is
+# (-x, -y, z): the classic WEST slot is GeckoLib's east quad, DOWN (the classic's y-down top) its up quad.
 CLASSIC_FACE_ORDER = ("down", "up", "west", "north", "east", "south")
 CLASSIC_FACE_NORMAL = {
     "down": (0.0, -1.0, 0.0), "up": (0.0, 1.0, 0.0), "west": (-1.0, 0.0, 0.0),
     "north": (0.0, 0.0, -1.0), "east": (1.0, 0.0, 0.0), "south": (0.0, 0.0, 1.0),
 }
 GECKOLIB_LABEL_BY_CLASSIC_NORMAL = {
-    (-1.0, 0.0, 0.0): "west", (1.0, 0.0, 0.0): "east", (0.0, 0.0, -1.0): "north",
+    (-1.0, 0.0, 0.0): "east", (1.0, 0.0, 0.0): "west", (0.0, 0.0, -1.0): "north",
     (0.0, 0.0, 1.0): "south", (0.0, -1.0, 0.0): "up", (0.0, 1.0, 0.0): "down",
 }
+
+
+def entity_frame_normal(normal: tuple[float, float, float]) -> tuple[float, float, float]:
+    """A classic (ModelPart-space) normal as the entity frame carries it: S n = (-x, -y, z) - the classic chain's
+    scale(-1, -1, 1) (PoseStack.scale scales the normal matrix by the signs of a uniform-magnitude scale) and the
+    bake alike; the probe captures both sides in this frame."""
+    return (-normal[0] + 0.0, -normal[1] + 0.0, normal[2] + 0.0)
 
 
 def load_json(path: Path) -> dict[str, Any]:
@@ -98,16 +123,28 @@ def iter_parts(root: dict[str, Any]) -> Iterable[tuple[dict[str, Any], str | Non
 def modelpart_face_uv(cube: dict[str, Any]) -> dict[str, dict[str, list[float | int]]]:
     """Translate Mojang box UVs into deterministic GeckoLib per-face UVs.
 
-    The converter's X-origin basis change means GeckoLib box UV assigns the two
-    X face islands opposite Mojang's physical faces. GeckoLib's native mirror
-    additionally moves its UP/DOWN vertices without moving their normals. Both
-    differences are visible in the pinned bakers' captured vertex streams.
+    THE RULE, DERIVED FROM THE BYTECODE FOR THE ENTITY FRAME (TEST-015; internal space = classic space
+    reflected in X and Y, the module comment). ModelPart.Cube.<init> (21.1.223) gives every polygon its
+    four vertices and one island, and Polygon.<init> (offsets 41 / 64 / 88 / 113) remaps them
+    ``[0] (u2, v1)  [1] (u1, v1)  [2] (u1, v2)  [3] (u2, v2)`` before a mirrored cube's array is
+    reversed (141-167; the cube's x extents were swapped first, 126-135, so a mirrored WEST polygon sits
+    at +x with its island's u running the other way). GeckoLib's GeoQuad.build (4.8.4, offsets 34-48)
+    SWAPS the supplied u endpoints for a quad whose native mirror is false, then (75-144) gives
+    ``[0] (u + uSize, v)  [1] (u, v)  [2] (u, v + vSize)  [3] (u + uSize, v + vSize)`` to the corners
+    VertexSet hands it (quadNorth: min-x-top, max-x-top, max-x-bottom, min-x-bottom; quadEast: min-z-top,
+    max-z-top, ...; quadWest: max-z-top, min-z-top, ...; quadUp: min-x-max-z, max-x-max-z, max-x-min-z, ...;
+    quadDown: min-x-min-z, max-x-min-z, max-x-max-z, ...). Reading the classic corners through the
+    reflection (a ModelPart min x is an internal MAX x; a ModelPart min y - Direction.DOWN's slot - the
+    internal TOP): the classic WEST island (at ``u``) lands on GeckoLib's EAST quad and vice versa, the
+    DOWN island on its UP quad, and every island keeps its own u direction (``uv_size`` positive in u)
+    for a plain cube - a MIRRORED cube, whose polygons carry their islands u-reversed, writes the u
+    origin at the island's far edge with a negative width. Before this landing the converter negated x
+    itself, so the same derivation gave the opposite u signs and the islands on the same-named quads.
 
-    We therefore bake the source mirror semantics into six face rectangles and
-    leave GeckoLib's incompatible native mirror disabled. ``modelpart_mirror``
-    remains in the cube as provenance. With native mirror false,
-    ``GeoQuad.build`` swaps the supplied U endpoints; the signs below make the
-    resulting position/normal/UV tuples identical to the baked ModelPart tuples.
+    GeckoLib's native mirror moves its UP / DOWN vertices without moving their normals, so the source
+    mirror semantics are baked into six explicit face rectangles instead and the native flag stays
+    false; ``modelpart_mirror`` remains in the cube as provenance. The surface leg (position / normal /
+    UV tuples, 1e-7) and the face-order leg are what prove the rule on every rig.
     """
     u, v = (float(value) for value in cube["uv"])
     size_x, size_y, size_z = (float(value) for value in cube["size"])
@@ -115,8 +152,8 @@ def modelpart_face_uv(cube: dict[str, Any]) -> dict[str, dict[str, list[float | 
 
     def face(min_u: float, min_v: float, width: float, height: float,
              flip_v: bool = False) -> dict[str, list[float | int]]:
-        origin_u = min_u if mirrored else min_u + width
-        signed_width = width if mirrored else -width
+        origin_u = min_u + width if mirrored else min_u
+        signed_width = -width if mirrored else width
         origin_v = min_v + height if flip_v else min_v
         signed_height = -height if flip_v else height
         return {
@@ -124,13 +161,16 @@ def modelpart_face_uv(cube: dict[str, Any]) -> dict[str, dict[str, list[float | 
             "uv_size": clean_vector([signed_width, signed_height]),
         }
 
+    # the island each ModelPart x face carries (the mirror flag swaps them, Cube.<init> 126-135)
     negative_x_u = u + size_z + size_x if mirrored else u
     positive_x_u = u if mirrored else u + size_z + size_x
     return {
-        "west": face(negative_x_u, v + size_z, size_z, size_y),
-        "east": face(positive_x_u, v + size_z, size_z, size_y),
+        # the ModelPart's +x face is the entity frame's -x side (GeckoLib's west quad), and vice versa
+        "west": face(positive_x_u, v + size_z, size_z, size_y),
+        "east": face(negative_x_u, v + size_z, size_z, size_y),
         "north": face(u + size_z, v + size_z, size_x, size_y),
         "south": face(u + 2.0 * size_z + size_x, v + size_z, size_x, size_y),
+        # the ModelPart DOWN slot (its y-down top) is the entity frame's top: GeckoLib's up quad
         "up": face(u + size_z, v, size_x, size_z),
         "down": face(u + size_z + size_x, v, size_x, size_z, flip_v=True),
     }
@@ -160,11 +200,13 @@ def convert_cube(cube: dict[str, Any], absolute_pivot: list[float]) -> dict[str,
         for index in range(3)
     ]
 
-    # F(x,y,z) = (x, 24-y, z) is the fixed ModelPart Y-down -> Bedrock Y-up
-    # basis change. GeckoLib's pinned baker negates (origin.x + size.x), so
-    # this x origin makes its baked vertex positions land on ModelPart x.
+    # THE BEDROCK CONVENTION (TEST-015, the module comment): (x, 24 - y, z) of the ModelPart corners - the
+    # cube keeps its ModelPart x and its y is measured up from the 24-unit datum, exactly as the Queen's
+    # Blockbench-authored cubes are laid out. GeckoLib's pinned baker negates (origin.x + size.x)
+    # (constructCube 98-139), so the bake spans [-(ax + sx), -ax]: the x mirror the classic chain's
+    # scale(-1, -1, 1) applies, no longer cancelled by a negation here.
     geo_origin = [
-        -(absolute_origin[0] + size[0]),
+        absolute_origin[0],
         24.0 - (absolute_origin[1] + size[1]),
         absolute_origin[2],
     ]
@@ -192,12 +234,20 @@ def float32(value: float) -> float:
 
 
 def json_rotation(classic_radians: list[float]) -> list[float | int]:
-    """ModelPart (x, y, z) radians -> Bedrock degrees; see the bind-rotation note in convert_geometry."""
+    """ModelPart (x, y, z) radians -> Bedrock degrees: +classic degrees on all three axes (THE SIGN RULE,
+    re-derived for the entity frame, TEST-015 - the one place it lives; ``json_rotation_delta`` is the same
+    rule on a delta, quoted by tools/keyframe_clip.py, KeyframeLeg and ReferenceClipSampler). Internal
+    space is classic space reflected in X and Y (S = diag(-1, -1, 1) = R_z(180)); conjugating the classic
+    ZYX triple through S keeps the axis order and gives internal (-xRot, -yRot, +zRot); GeckoLib's baker
+    negates the JSON X and Y degrees at load (BakedModelFactory$Builtin.constructBone 61-92: updateRotation
+    of -toRadians(x), -toRadians(y), +toRadians(z)), so the JSON that bakes to that internal triple is the
+    classic triple itself. Before this landing (internal = classic reflected in Y only) the rule was
+    (+x, -y, -z)."""
     return clean_vector(
         [
             math.degrees(classic_radians[0]),
-            -math.degrees(classic_radians[1]),
-            -math.degrees(classic_radians[2]),
+            math.degrees(classic_radians[1]),
+            math.degrees(classic_radians[2]),
         ]
     )
 
@@ -311,7 +361,7 @@ def expand_explicit_instances(name: str, part: dict[str, Any], absolute_pivot: l
         clone_name = f"{name}__i{k}"
         bone: dict[str, Any] = {
             "name": clone_name,
-            "pivot": clean_vector([-pivot[0], 24.0 - pivot[1], pivot[2]]),
+            "pivot": clean_vector([pivot[0], 24.0 - pivot[1], pivot[2]]),
         }
         if nonzero(rotation):
             bone["rotation"] = json_rotation(rotation)
@@ -395,7 +445,7 @@ def expand_render_instances(name: str, part: dict[str, Any], parent: str | None,
         raise ValueError(f"render_instances.{name}.axis {axis!r} is not x, y or z")
     step, angles = render_instance_angles(name, declaration)
     axis_index = AXIS_INDEX[axis]
-    pivot_json = clean_vector([-absolute_pivot[0], 24.0 - absolute_pivot[1], absolute_pivot[2]])
+    pivot_json = clean_vector([absolute_pivot[0], 24.0 - absolute_pivot[1], absolute_pivot[2]])
     # The classic loop rotates the pose stack about the model origin: classic (0, 0, 0).
     origin_json = clean_vector([0.0, 24.0, 0.0])
     cubes = [convert_cube(cube, absolute_pivot) for cube in part["cubes"]]
@@ -834,7 +884,8 @@ def derive_bone_draw_order(compiled: dict[str, Any],
 
 def classic_face_labels(mirror: bool) -> list[str]:
     """The six GeckoLib direction names in the order ModelPart.Cube.compile emits the classic faces
-    (CLASSIC_FACE_ORDER; a mirrored cube's WEST / EAST polygons carry the negated X normals)."""
+    (CLASSIC_FACE_ORDER; a mirrored cube's WEST / EAST polygons carry the negated X normals): the direction
+    whose step is the classic normal reflected in X and Y (GECKOLIB_LABEL_BY_CLASSIC_NORMAL, the frame)."""
     labels = []
     for face in CLASSIC_FACE_ORDER:
         normal = CLASSIC_FACE_NORMAL[face]
@@ -845,13 +896,15 @@ def classic_face_labels(mirror: bool) -> list[str]:
 
 
 def classic_face_normals(mirror: bool) -> list[tuple[float, float, float]]:
-    """The classic-space normals of those six faces, in emission order."""
+    """The normals of those six faces AS THE ENTITY FRAME CARRIES THEM, in emission order: the classic-space
+    normal (a mirrored cube's X faces negated) through the classic chain's flip, ``entity_frame_normal`` - the
+    frame the probe captures both sides in since TEST-015."""
     normals = []
     for face in CLASSIC_FACE_ORDER:
         normal = CLASSIC_FACE_NORMAL[face]
         if mirror and face in ("west", "east"):
             normal = (-normal[0], normal[1], normal[2])
-        normals.append(normal)
+        normals.append(entity_frame_normal(normal))
     return normals
 
 
@@ -905,12 +958,13 @@ def derive_cube_face_order(compiled: dict[str, Any], bones: list[dict[str, Any]]
         "rule": "NeoForge 21.1.223 ModelPart.Cube.<init> polygon order DOWN, UP, WEST, NORTH, EAST, SOUTH "
                 "(offsets 365-785: DOWN 365, UP 436, WEST 507, NORTH 578, EAST 649, SOUTH 720), mirror negating the X "
                 "normals; GeckoLib labels by the direction whose step is "
-                "the classic normal reflected in Y",
+                "the classic normal reflected in X and Y (the entity frame: the classic chain's scale(-1, -1, 1) and "
+                "the baker's x negation alike, TEST-015)",
         "cube_bearing_bones": len(order),
         "cubes": sum(len(cubes) for cubes in order.values()),
         "verified_unrotated_cubes_at_bind": verified,
-        "verification": "captured normals of every cube unrotated at bind equal the rule's, in order; the parity "
-                        "tool's draw-order leg compares the per-quad normal sequences of both renderers on every capture",
+        "verification": "captured normals (the entity frame) of every cube unrotated at bind equal the rule's, in order; "
+                        "the parity tool's draw-order leg compares the per-quad normal sequences of both renderers on every capture",
     }
     return order, evidence
 
@@ -1004,8 +1058,9 @@ def convert_geometry(compiled: dict[str, Any],
                 unrotated_at_bind.add(name)
         bone: dict[str, Any] = {
             "name": name,
+            # the Bedrock convention (TEST-015): the classic pivot's x kept, y up from the datum
             "pivot": clean_vector(
-                [-absolute_pivot[0], 24.0 - absolute_pivot[1], absolute_pivot[2]]
+                [absolute_pivot[0], 24.0 - absolute_pivot[1], absolute_pivot[2]]
             ),
         }
         if parent is not None:
@@ -1021,16 +1076,10 @@ def convert_geometry(compiled: dict[str, Any],
             bone_rotation = local_bind_rotation(flat_rotations[hierarchy[name]], initial_rotation)
             local_bind_rotations[name] = [float(value) for value in bone_rotation]
         if nonzero(bone_rotation):
-            # GeckoLib 4.8.4's BakedModelFactory negates JSON X/Y but not Z.
-            # Conjugating ModelPart rotations through the Y reflection needs
-            # internal (-X,+Y,-Z), hence JSON (+X,-Y,-Z).
-            bone["rotation"] = clean_vector(
-                [
-                    math.degrees(bone_rotation[0]),
-                    -math.degrees(bone_rotation[1]),
-                    -math.degrees(bone_rotation[2]),
-                ]
-            )
+            # the sign rule (json_rotation): internal space is classic space reflected in X and Y, so the
+            # internal triple is (-X, -Y, +Z) of the classic; the baker negates JSON X and Y at load, hence
+            # JSON = +classic degrees on every axis
+            bone["rotation"] = json_rotation(bone_rotation)
         if part["cubes"]:
             bone["cubes"] = [
                 convert_cube(cube, absolute_pivot)
@@ -1154,11 +1203,17 @@ def initial_rotations(compiled: dict[str, Any]) -> dict[str, list[float]]:
 
 
 def json_rotation_delta(target: list[float], initial: list[float]) -> list[float]:
+    """THE CLIP SIGN RULE: a keyed rotation delta is authored as +classic degrees on X, Y and Z alike (the rule
+    ``json_rotation`` derives; the generators quote it: tools/keyframe_clip.py AUTHORED_SIGN, KeyframeLeg.generate,
+    ReferenceClipSampler.authoredKeys). GeckoLib 4.8.4 negates constant X and Y keys at load
+    (BakedAnimationsAdapter.buildKeyframeStack 209-224 / 250-265) and adds them to the bone's initial snapshot, so
+    the loaded value lands on the internal basis (-x, -y, +z) the base's rotateX / rotateY / rotateZ write. Before
+    this landing (TEST-015) the rule was (+x, -y, -z)."""
     delta = [target[index] - initial[index] for index in range(3)]
     return [
         math.degrees(delta[0]),
-        -math.degrees(delta[1]),
-        -math.degrees(delta[2]),
+        math.degrees(delta[1]),
+        math.degrees(delta[2]),
     ]
 
 

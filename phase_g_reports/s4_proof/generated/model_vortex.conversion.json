@@ -6,8 +6,8 @@
   "ground_truth": "executed compiled LayerDefinition and baked ModelPart",
   "source_class": "danger.orespawn.entity.client.VortexModel",
   "source_class_sha256": "75057c78feb46bdb1cf43b9127bd8b349dcc71cd41ea623445a8a7e48e668490",
-  "compiled_dump_sha256": "9fee1bdab26394a5aea9ed72e6a9b0618c150b3aab470c78c3ac746c2106c9c4",
-  "geometry_sha256": "153a1829938c03435911c0bd8d7263d39d91668417ea4ae8416c28eecd8b5883",
+  "compiled_dump_sha256": "e5af2026019319a1ba4e702aaef1ac0a3eaf12b090a89b9748e820ce8a272fd1",
+  "geometry_sha256": "91b74c5e735ac1a2a304504ffd30ee8255fdceb9eb7cccdeb15e1cc0c4e69e0c",
   "animation_sha256": "7882082857fdb11e02f158ebc3a6d3f970e2ac60d54813f0e903ee97b2293749",
   "animation_contract_sha256": "ef25a2b4eb7640daad7b902fc72c12e0e99737cd0882ac83ea702e72c92a7acd",
   "bone_count": 1,
@@ -42,19 +42,19 @@
       [
         "up",
         "down",
-        "west",
-        "north",
         "east",
+        "north",
+        "west",
         "south"
       ]
     ]
   },
   "cube_face_order_evidence": {
-    "rule": "NeoForge 21.1.223 ModelPart.Cube.<init> polygon order DOWN, UP, WEST, NORTH, EAST, SOUTH (offsets 365-785: DOWN 365, UP 436, WEST 507, NORTH 578, EAST 649, SOUTH 720), mirror negating the X normals; GeckoLib labels by the direction whose step is the classic normal reflected in Y",
+    "rule": "NeoForge 21.1.223 ModelPart.Cube.<init> polygon order DOWN, UP, WEST, NORTH, EAST, SOUTH (offsets 365-785: DOWN 365, UP 436, WEST 507, NORTH 578, EAST 649, SOUTH 720), mirror negating the X normals; GeckoLib labels by the direction whose step is the classic normal reflected in X and Y (the entity frame: the classic chain's scale(-1, -1, 1) and the baker's x negation alike, TEST-015)",
     "cube_bearing_bones": 1,
     "cubes": 1,
     "verified_unrotated_cubes_at_bind": 1,
-    "verification": "captured normals of every cube unrotated at bind equal the rule's, in order; the parity tool's draw-order leg compares the per-quad normal sequences of both renderers on every capture"
+    "verification": "captured normals (the entity frame) of every cube unrotated at bind equal the rule's, in order; the parity tool's draw-order leg compares the per-quad normal sequences of both renderers on every capture"
   },
   "animation_contract": {
     "schema_version": 1,
