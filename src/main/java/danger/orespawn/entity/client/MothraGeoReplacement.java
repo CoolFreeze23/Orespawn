@@ -9,14 +9,14 @@ import net.minecraft.resources.ResourceLocation;
 import software.bernie.geckolib.animation.AnimationProcessor;
 
 /**
- * GeckoLib Mothra (the hook survey, 2026-09-14): a consumer of the Butterfly rig. orig
+ * GeckoLib Mothra (the hook survey, 2026-09-14; landed by the Butterfly rig's slice, 2026-09-19 - TEST-019,
+ * its t_three_quarter tie pinned by the entry's cap): a consumer of the Butterfly rig. orig
  * ClientProxyOreSpawn.java:411 registers {@code new RenderButterfly(new ModelButterfly(0.2f), 0.75f, 10.0f)}
- * over the eye-moth sheet, so this descriptor shares {@link ButterflyGeoReplacement}'s geo, clip file and
- * hook under its own registry path ({@code mothra}; one profile per registry path even for a shared rig) at Mothra's own wingspeed 0.2f.
- *
+ * over the eye-moth sheet, so this descriptor shares {@link ButterflyGeoReplacement}'s geo, clip file and hook
+ * under its own registry path ({@code mothra}; one profile per registry path even for a shared rig) at Mothra's own wingspeed 0.2f.
  * <p>Scale and shadow follow {@link MothraRenderer}: 10.0 render scale and a 0.75 x 10.0 shadow (ENT-S-092); the one
  * texture {@code eyemoth.png} ({@link MothraRenderer#getTextureLocation}). The classic renderer's unconditional
- * {@code shouldRender} (OPT-013) is a renderer matter for the landing slice, not a pose fact.</p>
+ * {@code shouldRender} (OPT-013) is carried onto {@link Renderer}, not a pose fact.</p>
  */
 public final class MothraGeoReplacement extends OreSpawnGeoReplacement<Mothra> {
     /** orig ClientProxyOreSpawn.java:411 {@code new ModelButterfly(0.2f)}: Mothra's wingspeed. */
@@ -48,6 +48,12 @@ public final class MothraGeoReplacement extends OreSpawnGeoReplacement<Mothra> {
     public static final class Renderer extends OreSpawnGeoReplacedEntityRenderer<Mothra, MothraGeoReplacement> {
         public Renderer(EntityRendererProvider.Context context) {
             super(context, new MothraGeoReplacement());
+        }
+
+        /** The classic {@link MothraRenderer#shouldRender} (OPT-013): unconditionally drawn, never frustum-culled by its hitbox (the Butterfly rig's slice, 2026-09-19). */
+        @Override
+        public boolean shouldRender(Mothra entity, net.minecraft.client.renderer.culling.Frustum frustum, double x, double y, double z) {
+            return true;
         }
     }
 

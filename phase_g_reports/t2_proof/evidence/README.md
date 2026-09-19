@@ -1360,5 +1360,57 @@ The independent gates are:
 - Entity states: ['idle', 'attacking']; rotation maximum delta 0 radians; position maximum delta 2.99999999953e-06 model units; hidden-bone checks 10.
 - Visual z-fight pixels compared, none excluded (G2 root-order contract): maximum contested fraction 0.00141906738281, a diagnostic. Pair-contested pixels (the same two front faces on both sides within 1e-05 blocks) never a mismatch: maximum fraction 0 under the cap 0.01.
 
+## model_butterfly (Tier 1)
+
+- Exact bones: 10; cubes: 10.
+- Geometry maximum corner delta: 5.83095188702e-08 blocks (epsilon 1e-05).
+- Surface maximum UV delta: 0; normal delta: 0.
+- Animation maximum rotation delta: 0 radians (epsilon 2e-06).
+- Visual maximum changed fraction: 0; maximum mean absolute error: 0; maximum pair-contested fraction: 0 (never a mismatch; cap 0).
+- Draw order: GeckoLib bone order equals the classic draw order over 6 captures (60 draws).
+
+- Accepted path: production OreSpawnGeoReplacement.applyCustomAnimations through OreSpawnGeoReplacementModel.setCustomAnimations (`danger.orespawn.entity.client.ButterflyGeoReplacement`).
+- Rotation maximum delta 0 radians; position maximum delta 0 model units over 180 position channels; inputs {'limb_swing': 0.0, 'limb_swing_amounts': [0.0], 'net_head_yaw_degrees': 0.0, 'head_pitch_degrees': 0.0}.
+- Visual z-fight pixels compared, none excluded (G2 root-order contract): maximum contested fraction 0.0454254150391, a diagnostic. Pair-contested pixels (the same two front faces on both sides within 1e-05 blocks) never a mismatch: maximum fraction 0 under the cap 0 - the entry's declared cap: no tie tolerated, 0 pair-contested pixels on every sample.
+
+## model_luna_moth (Tier 1)
+
+- Exact bones: 10; cubes: 10.
+- Geometry maximum corner delta: 5.83095188702e-08 blocks (epsilon 1e-05).
+- Surface maximum UV delta: 0; normal delta: 0.
+- Animation maximum rotation delta: 0 radians (epsilon 2e-06).
+- Visual maximum changed fraction: 0; maximum mean absolute error: 0; maximum pair-contested fraction: 0 (never a mismatch; cap 0).
+- Draw order: GeckoLib bone order equals the classic draw order over 6 captures (60 draws).
+
+- Accepted path: production OreSpawnGeoReplacement.applyCustomAnimations through OreSpawnGeoReplacementModel.setCustomAnimations (`danger.orespawn.entity.client.LunaMothGeoReplacement`).
+- Rotation maximum delta 0 radians; position maximum delta 0 model units over 180 position channels; inputs {'limb_swing': 0.0, 'limb_swing_amounts': [0.0], 'net_head_yaw_degrees': 0.0, 'head_pitch_degrees': 0.0}.
+- Visual z-fight pixels compared, none excluded (G2 root-order contract): maximum contested fraction 0.0340881347656, a diagnostic. Pair-contested pixels (the same two front faces on both sides within 1e-05 blocks) never a mismatch: maximum fraction 0 under the cap 0 - the entry's declared cap: no tie tolerated, 0 pair-contested pixels on every sample.
+
+## model_mothra (Tier 1)
+
+- Exact bones: 10; cubes: 10.
+- Geometry maximum corner delta: 5.83095188702e-08 blocks (epsilon 1e-05).
+- Surface maximum UV delta: 0; normal delta: 0.
+- Animation maximum rotation delta: 0 radians (epsilon 2e-06).
+- Visual maximum changed fraction: 0; maximum mean absolute error: 0; maximum pair-contested fraction: 0.0122528076172 (never a mismatch; cap 0.0125).
+- Draw order: GeckoLib bone order equals the classic draw order over 6 captures (60 draws).
+
+- Accepted path: production OreSpawnGeoReplacement.applyCustomAnimations through OreSpawnGeoReplacementModel.setCustomAnimations (`danger.orespawn.entity.client.MothraGeoReplacement`).
+- Rotation maximum delta 0 radians; position maximum delta 0 model units over 180 position channels; inputs {'limb_swing': 0.0, 'limb_swing_amounts': [0.0], 'net_head_yaw_degrees': 0.0, 'head_pitch_degrees': 0.0}.
+- Visual z-fight pixels compared, none excluded (G2 root-order contract): maximum contested fraction 0.0340423583984, a diagnostic. Pair-contested pixels (the same two front faces on both sides within 1e-05 blocks) never a mismatch: maximum fraction 0.0122528076172 under the cap 0.0125 - the entry's declared cap (the default 0.01): pinned to 803 pair-contested pixels on leftwing / leftwing2 at t_three_quarter; measured 803 pixels, the dominant pair leftwing / leftwing2.
+
+## model_vampire_butterfly (Tier 1)
+
+- Exact bones: 10; cubes: 10.
+- Geometry maximum corner delta: 5.83095188702e-08 blocks (epsilon 1e-05).
+- Surface maximum UV delta: 0; normal delta: 0.
+- Animation maximum rotation delta: 0 radians (epsilon 2e-06).
+- Visual maximum changed fraction: 0; maximum mean absolute error: 0; maximum pair-contested fraction: 0 (never a mismatch; cap 0).
+- Draw order: GeckoLib bone order equals the classic draw order over 6 captures (60 draws).
+
+- Accepted path: production OreSpawnGeoReplacement.applyCustomAnimations through OreSpawnGeoReplacementModel.setCustomAnimations (`danger.orespawn.entity.client.VampireButterflyGeoReplacement`).
+- Rotation maximum delta 0 radians; position maximum delta 0 model units over 180 position channels; inputs {'limb_swing': 0.0, 'limb_swing_amounts': [0.0], 'net_head_yaw_degrees': 0.0, 'head_pitch_degrees': 0.0}.
+- Visual z-fight pixels compared, none excluded (G2 root-order contract): maximum contested fraction 0.0454254150391, a diagnostic. Pair-contested pixels (the same two front faces on both sides within 1e-05 blocks) never a mismatch: maximum fraction 0 under the cap 0 - the entry's declared cap: no tie tolerated, 0 pair-contested pixels on every sample.
+
 Reproduce with `gradlew.bat g1Parity`. Any mismatch exits nonzero before
 proof evidence can be updated.

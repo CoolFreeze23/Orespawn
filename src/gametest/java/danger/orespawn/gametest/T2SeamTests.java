@@ -25,6 +25,8 @@ import danger.orespawn.entity.client.BoyfriendGeoReplacement;
 import danger.orespawn.entity.client.BoyfriendRenderer;
 import danger.orespawn.entity.client.BrutalflyGeoReplacement;
 import danger.orespawn.entity.client.BrutalflyRenderer;
+import danger.orespawn.entity.client.ButterflyGeoReplacement;
+import danger.orespawn.entity.client.ButterflyRenderer;
 import danger.orespawn.entity.client.CamarasaurusGeoReplacement;
 import danger.orespawn.entity.client.CannonFodderGeoReplacement;
 import danger.orespawn.entity.client.CassowaryGeoReplacement;
@@ -106,6 +108,8 @@ import danger.orespawn.entity.client.LeonGeoReplacement;
 import danger.orespawn.entity.client.LeonopteryxGeoReplacement;
 import danger.orespawn.entity.client.LizardGeoReplacement;
 import danger.orespawn.entity.client.LizardRenderer;
+import danger.orespawn.entity.client.LunaMothGeoReplacement;
+import danger.orespawn.entity.client.LunaMothRenderer;
 import danger.orespawn.entity.client.LurkingTerrorGeoReplacement;
 import danger.orespawn.entity.client.LurkingTerrorRenderer;
 import danger.orespawn.entity.client.MantisGeoReplacement;
@@ -114,6 +118,8 @@ import danger.orespawn.entity.client.MolenoidGeoReplacement;
 import danger.orespawn.entity.client.MolenoidRenderer;
 import danger.orespawn.entity.client.MosquitoGeoReplacement;
 import danger.orespawn.entity.client.MosquitoRenderer;
+import danger.orespawn.entity.client.MothraGeoReplacement;
+import danger.orespawn.entity.client.MothraRenderer;
 import danger.orespawn.entity.client.NastysaurusGeoReplacement;
 import danger.orespawn.entity.client.OreSpawnGeoReplacement;
 import danger.orespawn.entity.client.OreSpawnGeoReplacementModel;
@@ -174,6 +180,7 @@ import danger.orespawn.entity.client.UnstableAntGeoReplacement;
 import danger.orespawn.entity.client.UnstableAntRenderer;
 import danger.orespawn.entity.client.UrchinGeoReplacement;
 import danger.orespawn.entity.client.UrchinRenderer;
+import danger.orespawn.entity.client.VampireButterflyGeoReplacement;
 import danger.orespawn.entity.client.VelocityRaptorGeoReplacement;
 import danger.orespawn.entity.client.VelocityRaptorRenderer;
 import danger.orespawn.entity.client.WaterDragonGeoReplacement;
@@ -353,11 +360,20 @@ import software.bernie.geckolib.loading.object.GeometryTree;
  * entity, so each poses on its own declared rest subject).</li>
  *
  * <li>{@code t2_014} (the remainder slice): the seven remaining HOOK registries landed on their hooks - the Lurking Terror,
- * the Scorpion, the Ghost, the Boyfriend, the Girlfriend, the Princess and the King (the Butterfly rig's four REPORTED, not
- * landed, TEST-019, are not pinned here) - each pinned exactly as {@code t2_005} pins the third slice's, the entity-reading hooks
+ * the Scorpion, the Ghost, the Boyfriend, the Girlfriend, the Princess and the King (the Butterfly rig's four REPORTED then,
+ * TEST-019, pinned by {@code t2_015}) - each pinned exactly as {@code t2_005} pins the third slice's, the entity-reading hooks
  * on one declared rest subject, the Ghost's on none; PLUS the seam change's pin: {@code PoseInputs} carries the frame's partial
  * tick and the Boyfriend hook reads it verbatim through {@code getAttackAnim(partialTick)} (a swinging subject: the attack arm at partial tick 0.5
  * differs from partial tick 0, and at 0 equals oAttackAnim's pose).</li>
+ * <li>{@code t2_015} (the Butterfly rig's slice): the four HOOK registries of the Butterfly rig landed on their hooks - the
+ * Butterfly, the Luna Moth, Mothra and the Vampire Butterfly, one rig butterfly.geo.json at four wingspeeds, landed under the
+ * manifest entry's own pair-contested cap (TEST-019: the Mothra's t_three_quarter tie pinned at 803 pixels on leftwing /
+ * leftwing2, the three others at 0 - a harness fact the t2 proof carries) - each pinned exactly as {@code t2_005} pins the third
+ * slice's (no layer, the empty file, nothing registered, the classic shadow, no face-order key: 1-unit wings, the hook moving rightwing
+ * off its bind at age 7 on a rest subject the hooks never read); PLUS the shared rig's facts: the three consumers share the
+ * Butterfly's geo, clip file and layer list under their own descriptors and draw their own textures, and the one hook poses the shared
+ * rig at each registry's WINGSPEED (rightwing's roll at age 7 equal for the two registries at 1.0, different at 0.75 and 0.2).</li>
+ *
  * <li>{@code t2_004}: the render facts the 4c precedent pinned in code - each descriptor's shadow radius is its
  *     classic renderer's constant (ENT-S-092; the Ant family's {@code 0.1 / 0.15 x SCALE} products where the classic
  *     renderer declares no SHADOW), the Cockateil and Ruby Bird sharing the Cockateil renderer's - and each shared
@@ -1567,7 +1583,72 @@ public class T2SeamTests {
         return -processor.getBone("right_arm").getRotX();
     }
 
-    /** The t2_005 pins on one hook species (shared by the third, fourth, fifth and sixth slices', the FK slice's, the two Tier-1 slices' and the remainder's rows). */
+    // ------------------------------------------------------------------ row 15: the hook registries of the Butterfly rig's slice
+
+    /**
+     * One rig, four consumers (the Ant precedent, design Q9: one profile per registry path): the four hooks read no entity - the
+     * RestSubjectRem stands in as the row's convention (the T1a / remainder rows) and is never read.
+     */
+    private static List<HookSpecies> hookSpeciesButterfly() {
+        return List.of(
+                // the Butterfly: the right wing rolls about Z on cos(age x 1.3 x 1.0) x PI x 0.25 (the hook reads no entity; the rest subject is the row's convention); the shared geo of four consumers, 1-unit wings - no zero-thickness cube
+                new HookSpecies("butterfly", new ButterflyGeoReplacement(), "butterfly", ButterflyRenderer.SHADOW, false, new RestSubjectRem(), "rightwing"),
+                // the Luna Moth: the same rig at wingspeed 0.75
+                new HookSpecies("luna_moth", new LunaMothGeoReplacement(), "butterfly", LunaMothRenderer.SHADOW, false, new RestSubjectRem(), "rightwing"),
+                // Mothra: the same rig at wingspeed 0.2 (its t_three_quarter tie is pinned by the manifest entry's declared pair-contested cap, TEST-019 - a harness fact, not posed here)
+                new HookSpecies("mothra", new MothraGeoReplacement(), "butterfly", MothraRenderer.SHADOW, false, new RestSubjectRem(), "rightwing"),
+                // the Vampire Butterfly: the same rig at wingspeed 1.0; the 0.2f shadow literal its port-only renderer passes (no SHADOW constant)
+                new HookSpecies("vampire_butterfly", new VampireButterflyGeoReplacement(), "butterfly", 0.2F, false, new RestSubjectRem(), "rightwing"));
+    }
+
+    @GameTest(template = "empty", batch = BATCH)
+    public static void t2_015_butterfly_rig_hook_registries_declare_no_layer_register_nothing_and_share_one_geo_at_four_wingspeeds(GameTestHelper helper) {
+        Flags flags = Flags.read();
+        try {
+            OreSpawnConfig.MODERN_ENABLED.set(true);
+            OreSpawnConfig.MODERN_ARTIST_ANIMATIONS.set(true);
+            OreSpawnConfig.MODERN_CLASSIC_ANIMATION_SPECIES.set(List.of());
+            List<HookSpecies> all = hookSpeciesButterfly();
+            helper.assertTrue(all.size() == 4, "the four hook registries of the Butterfly rig landed by the Butterfly rig's slice (TEST-019)");
+            for (HookSpecies species : all) {
+                assertHookSpecies(helper, species);
+            }
+            // ONE RIG, FOUR CONSUMERS: the three consumers share the Butterfly's geo and clip file under their own descriptors (the Ant
+            // precedent), each drawing its own texture, and the one hook (ButterflyGeoReplacement.pose) poses the shared rig at each
+            // registry's WINGSPEED - rightwing's roll at age 7 is cos(7 x 1.3 x wingspeed) x PI x 0.25: equal for the Butterfly and the
+            // Vampire Butterfly (1.0), different for the Luna Moth (0.75) and Mothra (0.2).
+            ButterflyGeoReplacement butterfly = new ButterflyGeoReplacement();
+            for (HookSpecies species : all.subList(1, all.size())) {
+                helper.assertTrue(butterfly.descriptor().modelResource().equals(species.replacement().descriptor().modelResource())
+                                && butterfly.descriptor().animationResource().equals(species.replacement().descriptor().animationResource())
+                                && butterfly.keyframeLayers().equals(species.replacement().keyframeLayers()),
+                        species.name() + " shares the Butterfly's geo, clip file and layer list under its own descriptor (orig ClientProxyOreSpawn.java:405, 407, 411; the Vampire Butterfly port-only)");
+                helper.assertTrue(!butterfly.descriptor().textureResource().equals(species.replacement().descriptor().textureResource()),
+                        species.name() + " draws its own texture over the shared rig");
+            }
+            String geoJson = resource(GEO + "butterfly.geo.json");
+            float[] rolls = new float[all.size()];
+            for (int i = 0; i < all.size(); i++) {
+                rolls[i] = rightWingRoll(all.get(i), geoJson);
+            }
+            helper.assertTrue(rolls[0] == rolls[3], "the Butterfly and the Vampire Butterfly pose the shared rig at the same wingspeed 1.0: the same roll of rightwing at age 7");
+            helper.assertTrue(rolls[0] != rolls[1] && rolls[1] != rolls[2] && rolls[0] != rolls[2],
+                    "the Luna Moth (0.75) and Mothra (0.2) pose the same rig at their own wingspeeds: three different rolls of rightwing at age 7");
+        } finally {
+            flags.restore();
+        }
+        helper.succeed();
+    }
+
+    /** The right wing's roll after the species' hook posed a fresh bake of the shared geo at age 7 (the hook reads nothing but the age). */
+    private static float rightWingRoll(HookSpecies species, String geoJson) {
+        BakedGeoModel baked = bakeRig(geoJson);
+        DrawOrder.apply(baked, DrawOrder.read(JsonParser.parseString(geoJson).getAsJsonObject()));
+        AnimationProcessor<?> processor = poseThroughHook(species.replacement(), baked, new PoseInputs(species.subject(), 7.0F, 3.0F, 1.0F, 0.0F, 0.0F, 0.0F));
+        return processor.getBone("rightwing").getRotZ();
+    }
+
+    /** The t2_005 pins on one hook species (shared by the third, fourth, fifth and sixth slices', the FK slice's, the two Tier-1 slices', the remainder's and the Butterfly rig's rows). */
     private static void assertHookSpecies(GameTestHelper helper, HookSpecies species) {
         helper.assertTrue(species.replacement().keyframeLayers().isEmpty(),
                 species.name() + " declares no keyframe layer: on the hook until an artist delivers idle and walk");

@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+from collections import Counter
 import hashlib
 import json
 import math
@@ -48,6 +49,21 @@ CONTESTED_MARKER = (40, 90, 255, 255)
 # key is unchanged.
 PAIR_ATTRIBUTION_WINDOW = 1.0e-5
 PAIR_CONTESTED_CAP = 0.01
+# THE ENTRY'S OWN CAP (TEST-019, the Butterfly rig's Mothra registry): "the pair-contested cap stays 1 percent by default; a
+# manifest entry may declare its own cap, at most 2 percent, with the pixel count and the pair named". A manifest entry may
+# carry `"pair_contested_cap": {"fraction": F, "pixels": N, "pair": [a, b], "sample": S}` (one per entry; a free `note`): F
+# must be a number with 0 <= F <= PAIR_CONTESTED_CAP_DECLARED_MAX, else a MANIFEST error naming the entry fails the run
+# before any render (main() validates every entry first; visual_parity validates again); the entry's samples are judged against
+# F instead of the default; the declaration is a PIN, not a loophole - on the named sample S the measured pair-contested
+# pixel count must equal N and the dominant contested pair (the two drawn units the most of those pixels are attributed to,
+# order-free) must be exactly {a, b}, else VISUAL MISMATCH naming the declared and the measured count and pair; with F 0 the
+# entry declares NO tie tolerated (pixels 0, pair null, sample null) and any pair-contested pixel on any of its samples
+# fails. The report records the declared cap beside the measured fraction per sample (`pair_contested_cap` and
+# `pair_contested_pixels` on every row of such an entry, the pin's measured side under `pair_contested_pin` on the named sample,
+# `pair_contested_cap_declared` beside the entry's `pair_contested_cap`) and the README says so, so a reader sees the pin. An
+# entry without the field is exactly as before: the default cap, not one new key.
+PAIR_CONTESTED_CAP_DECLARED_MAX = 0.02
+PAIR_CONTESTED_CAP_FIELD = "pair_contested_cap"
 PAIR_CONTESTED_MARKER = (255, 40, 200, 255)
 # THE FRAME (TEST-015): both probes capture in the ENTITY FRAME - the classic side under vanilla's own chain, M =
 # scale(-1, -1, 1) . translate(0, -1.501, 0) (LivingEntityRenderer.render 395-400 / 413-417,
@@ -2641,13 +2657,16 @@ def save_png(image: Image.Image, path: Path) -> None:
 
 def pixel_diff(vanilla: Image.Image, geo: Image.Image, channel_tolerance: int,
                excluded: list[bool] | None = None,
-               pair_eligible: list[bool] | None = None) -> tuple[float, float, Image.Image, float]:
+               pair_eligible: list[bool] | None = None,
+               pair_contested_mask: list[bool] | None = None) -> tuple[float, float, Image.Image, float]:
     """Changed fraction and MAE over the pixels compared, the diff image, and the pair-contested fraction (over the image).
 
     Excluded pixels (the ``--contested-exclusion`` diagnostic) are not compared and are painted CONTESTED_MARKER. A pixel
     that is CHANGED (a channel beyond the tolerance) and pair-eligible - both sides' front pairs are the same two faces
     within PAIR_ATTRIBUTION_WINDOW - is PAIR-CONTESTED: not compared, painted PAIR_CONTESTED_MARKER and counted, never
-    a mismatch; an unchanged pixel is compared whatever its pair."""
+    a mismatch; an unchanged pixel is compared whatever its pair. A list given as ``pair_contested_mask`` receives one
+    flag per pixel, True exactly where the pixel was counted pair-contested (the entry's own cap pins that count and the
+    pair behind it); the return value is unchanged."""
     vanilla_pixels = list(vanilla.convert("RGB").get_flattened_data())
     geo_pixels = list(geo.convert("RGB").get_flattened_data())
     if excluded is None:
@@ -2662,14 +2681,20 @@ def pixel_diff(vanilla: Image.Image, geo: Image.Image, channel_tolerance: int,
     for left, right, skip, eligible in zip(vanilla_pixels, geo_pixels, excluded, pair_eligible):
         if skip:
             diff_pixels.append(CONTESTED_MARKER)
+            if pair_contested_mask is not None:
+                pair_contested_mask.append(False)
             continue
         delta = tuple(abs(left[index] - right[index]) for index in range(3))
         if max(delta) > channel_tolerance:
             if eligible:
                 pair_contested += 1
                 diff_pixels.append(PAIR_CONTESTED_MARKER)
+                if pair_contested_mask is not None:
+                    pair_contested_mask.append(True)
                 continue
             changed += 1
+        if pair_contested_mask is not None:
+            pair_contested_mask.append(False)
         compared += 1
         absolute_sum += sum(delta)
         diff_pixels.append((min(255, delta[0] * 8), min(255, delta[1] * 8),
@@ -2691,6 +2716,104 @@ def pass2_view(sample: dict[str, Any]) -> dict[str, Any]:
     return {"cubes": sample["cubes"], "draw_order": sample["draw_order_pass2"], "render_vertices": sample["render_vertices_pass2"]}
 
 
+def visual_capture_ids(spec: dict[str, Any]) -> list[str]:
+    """The capture ids the visual leg judges for an entry: its visual sample ids (the default five when it declares none), each
+    suffixed by a camera name where the entry declares ``cameras``."""
+    sample_ids = list(spec.get("visual_sample_ids", DEFAULT_VISUAL_SAMPLE_IDS))
+    if "cameras" in spec:
+        return [f"{sample_id}.{camera['name']}" for sample_id in sample_ids for camera in spec["cameras"]]
+    return sample_ids
+
+
+def pair_contested_cap_declared(model_id: str, spec: dict[str, Any]) -> dict[str, Any] | None:
+    """The entry's own pair-contested cap (PAIR_CONTESTED_CAP_FIELD), validated: None when the entry carries none (the default
+    PAIR_CONTESTED_CAP applies and nothing else of the entry changes), else the declaration
+    as {fraction, pixels, pair (sorted), sample}. Every defect is a MANIFEST error naming the entry - main() raises it before
+    any render, visual_parity again when it judges the entry."""
+    if PAIR_CONTESTED_CAP_FIELD not in spec:
+        return None
+    declared = spec[PAIR_CONTESTED_CAP_FIELD]
+    where = f"MANIFEST {model_id}: {PAIR_CONTESTED_CAP_FIELD}"
+    if not isinstance(declared, dict):
+        raise AssertionError(f"{where} must be an object {{fraction, pixels, pair, sample}}, not {type(declared).__name__}")
+    unknown = sorted(set(declared) - {"fraction", "pixels", "pair", "sample", "note"})
+    if unknown:
+        raise AssertionError(f"{where} carries unknown key(s) {unknown}; the form is {{fraction, pixels, pair, sample}} with a free note")
+    fraction = declared.get("fraction")
+    if isinstance(fraction, bool) or not isinstance(fraction, (int, float)) or not math.isfinite(fraction):
+        raise AssertionError(f"{where}.fraction must be a number (the entry's cap as a fraction of the image), not {fraction!r}")
+    if not 0.0 <= fraction <= PAIR_CONTESTED_CAP_DECLARED_MAX:
+        raise AssertionError(
+            f"{where}.fraction {fraction!r} is outside 0 <= F <= {PAIR_CONTESTED_CAP_DECLARED_MAX:g}: an entry may declare at most "
+            f"{PAIR_CONTESTED_CAP_DECLARED_MAX * 100:g} percent of the image"
+        )
+    pixels = declared.get("pixels")
+    pair = declared.get("pair")
+    sample = declared.get("sample")
+    if fraction == 0.0:
+        if isinstance(pixels, bool) or pixels not in (None, 0):
+            raise AssertionError(f"{where}: a cap of 0 tolerates no tie - pixels must be 0 or absent, not {pixels!r}")
+        if pair is not None:
+            raise AssertionError(f"{where}: a cap of 0 tolerates no tie - pair must be null or absent, not {pair!r}")
+        if sample is not None:
+            raise AssertionError(f"{where}: a cap of 0 tolerates no tie - sample must be null or absent, not {sample!r}")
+        return {"fraction": 0.0, "pixels": 0, "pair": None, "sample": None}
+    if isinstance(pixels, bool) or not isinstance(pixels, int) or pixels <= 0:
+        raise AssertionError(
+            f"{where}.pixels must be a positive integer - the measured pair-contested pixel count on the named sample, the pin - "
+            f"not {pixels!r}"
+        )
+    if not (isinstance(pair, list) and len(pair) == 2 and all(isinstance(unit, str) and unit for unit in pair)):
+        raise AssertionError(f"{where}.pair must name the two drawn units of the measured tie as [a, b], not {pair!r}")
+    if not isinstance(sample, str) or not sample:
+        raise AssertionError(f"{where}.sample must name the visual capture the pin was measured on, not {sample!r}")
+    captures = visual_capture_ids(spec)
+    if sample not in captures:
+        raise AssertionError(f"{where}.sample {sample!r} is not one of the entry's visual captures {captures}")
+    image_fraction = pixels / (IMAGE_SIZE * IMAGE_SIZE)
+    if image_fraction > fraction:
+        raise AssertionError(
+            f"{where}.pixels {pixels} is {image_fraction:.9g} of the image, above the declared fraction {fraction!r}: a pin sits "
+            "under the cap it declares"
+        )
+    return {"fraction": float(fraction), "pixels": pixels, "pair": sorted(pair), "sample": sample}
+
+
+def dominant_contested_pair(pair_contested_mask: list[bool], pairs: list[tuple[int, int] | None],
+                            faces: dict[tuple[Any, ...], int]) -> tuple[list[str] | None, int, list[tuple[list[str], int]]]:
+    """The measured side of an entry's pin: the two drawn units the most pair-contested pixels of a sample are attributed to
+    (their face identities' units, order-free, sorted), the pixel count on that pair, and the whole tally by
+    pair (units sorted, most pixels first). No dominant pair (None) where nothing was counted or where two pairs tie for first."""
+    units = {index: identity[0] for identity, index in faces.items()}
+    tally: Counter[tuple[str, str]] = Counter()
+    for index, counted in enumerate(pair_contested_mask):
+        if counted and pairs[index] is not None:
+            first, second = pairs[index]
+            tally[tuple(sorted((str(units[first]), str(units[second]))))] += 1
+    ranked = tally.most_common()
+    listed = [(list(pair), count) for pair, count in ranked]
+    if not ranked:
+        return None, 0, listed
+    if len(ranked) > 1 and ranked[1][1] == ranked[0][1]:
+        return None, ranked[0][1], listed
+    return list(ranked[0][0]), ranked[0][1], listed
+
+
+def declared_cap_text(visual: dict[str, Any]) -> str:
+    """One clause for the console and the README when an entry declares its own cap: the pin, or no tie."""
+    declared = visual.get("pair_contested_cap_declared")
+    if declared is None:
+        return ""
+    if declared["fraction"] == 0.0:
+        return " - the entry's declared cap: no tie tolerated, 0 pair-contested pixels on every sample"
+    pinned = next((row for row in visual["samples"] if "pair_contested_pin" in row), None)
+    measured = "" if pinned is None else (
+        f"; measured {pinned['pair_contested_pin']['measured_pixels']} pixels, the dominant pair "
+        f"{' / '.join(pinned['pair_contested_pin']['measured_dominant_pair'] or ['none'])}")
+    return (f" - the entry's declared cap (the default {PAIR_CONTESTED_CAP:g}): pinned to "
+            f"{declared['pixels']} pair-contested pixels on {' / '.join(declared['pair'])} at {declared['sample']}{measured}")
+
+
 def visual_parity(model_id: str, spec: dict[str, Any], compiled: dict[str, Any],
                   geo_render: dict[str, Any], repository_root: Path,
                   output_dir: Path, thresholds: dict[str, Any],
@@ -2705,6 +2828,10 @@ def visual_parity(model_id: str, spec: dict[str, Any], compiled: dict[str, Any],
             f"{model_id} manifest still carries the retired decision 2 field(s) {retired}: the z-fight "
             "exclusion and its pins were removed on 2026-09-06 (G2 root-order contract)"
         )
+    # The entry's own pair-contested cap (TEST-019): validated here as main() did before any render; the default
+    # PAIR_CONTESTED_CAP for an entry without the field, and nothing else of such an entry changes.
+    declared_cap = pair_contested_cap_declared(model_id, spec)
+    pair_cap = PAIR_CONTESTED_CAP if declared_cap is None else declared_cap["fraction"]
     mode = visual_mode(model_id, spec)
     vanilla_samples = sample_map(compiled)
     geo_samples = sample_map(geo_render)
@@ -2732,6 +2859,7 @@ def visual_parity(model_id: str, spec: dict[str, Any], compiled: dict[str, Any],
     max_contested = 0.0
     max_pair_contested = 0.0
     min_foreground = 1.0
+    pinned_sample_seen = False
 
     for sample_id, (camera_name, camera) in (
         (sample_id, camera_entry) for sample_id in visual_sample_ids for camera_entry in cameras
@@ -2794,10 +2922,12 @@ def visual_parity(model_id: str, spec: dict[str, Any], compiled: dict[str, Any],
             left is not None and left == right and shown_left != shown_right and shown_left in left and shown_right in left
             for left, right, shown_left, shown_right in zip(vanilla_pairs, geo_pairs, vanilla_shown, geo_shown)
         ]
+        pair_contested_mask: list[bool] = []
         changed, mae, diff_image, pair_contested = pixel_diff(
             vanilla_image, geo_image, int(thresholds["pixel_channel_tolerance"]),
-            contested if exclude_contested else None, pair_eligible,
+            contested if exclude_contested else None, pair_eligible, pair_contested_mask,
         )
+        pair_contested_pixels = sum(pair_contested_mask)
         vanilla_foreground = foreground_fraction(vanilla_image)
         geo_foreground = foreground_fraction(geo_image)
         required_foreground = float(thresholds["minimum_foreground_fraction"])
@@ -2806,12 +2936,37 @@ def visual_parity(model_id: str, spec: dict[str, Any], compiled: dict[str, Any],
                 f"VISIBILITY MISMATCH {model_id}/{capture_id}: foreground fraction "
                 f"{min(vanilla_foreground, geo_foreground):.9g} < {required_foreground}"
             )
-        if pair_contested > PAIR_CONTESTED_CAP:
-            # the cap: never a mismatch pixel by pixel, but a rig that ties everywhere still fails
+        if pair_contested > pair_cap:
+            # the cap: never a mismatch pixel by pixel, but a rig that ties everywhere still fails; an entry's own declared cap
+            # judges its samples instead of the default, and a cap of 0 tolerates no tie
             raise AssertionError(
                 f"VISUAL MISMATCH {model_id}/{capture_id}: pair-contested fraction {pair_contested:.9g} > "
-                f"{PAIR_CONTESTED_CAP}"
+                f"{pair_cap:g}"
+                + ("" if declared_cap is None else
+                   f" (the entry's declared pair_contested_cap{': no tie tolerated' if pair_cap == 0.0 else ''}; "
+                   f"{pair_contested_pixels} pair-contested pixels)")
             )
+        pin_report: dict[str, Any] | None = None
+        if declared_cap is not None and declared_cap["sample"] == capture_id:
+            # THE PIN: on the named sample the measured count and the dominant pair must be exactly the declared ones - a
+            # declaration is a measured tie written down, never a loophole
+            pinned_sample_seen = True
+            dominant, on_dominant, tally = dominant_contested_pair(pair_contested_mask, vanilla_pairs, faces)
+            pin_report = {
+                "declared_pixels": declared_cap["pixels"], "measured_pixels": pair_contested_pixels,
+                "declared_pair": list(declared_cap["pair"]), "measured_dominant_pair": dominant,
+                "pixels_on_the_dominant_pair": on_dominant,
+                "pairs_measured": [{"pair": pair, "pixels": count} for pair, count in tally],
+            }
+            if pair_contested_pixels != declared_cap["pixels"] or dominant != declared_cap["pair"]:
+                raise AssertionError(
+                    f"VISUAL MISMATCH {model_id}/{capture_id}: the entry's declared pair_contested_cap pins "
+                    f"{declared_cap['pixels']} pair-contested pixels on the pair {' / '.join(declared_cap['pair'])} at this sample; "
+                    f"measured {pair_contested_pixels} pixels, the dominant pair "
+                    f"{'none' if dominant is None else ' / '.join(dominant)} ({on_dominant} pixels"
+                    f"{'; a tie for dominance' if dominant is None and on_dominant else ''}) - a pin is a measured tie written "
+                    "down: re-measure and re-declare it, never loosen it"
+                )
         if changed > float(thresholds["pixel_changed_fraction"]):
             raise AssertionError(
                 f"VISUAL MISMATCH {model_id}/{capture_id}: changed fraction {changed:.9g} > "
@@ -2846,6 +3001,12 @@ def visual_parity(model_id: str, spec: dict[str, Any], compiled: dict[str, Any],
                 "diff_capture": diff_path.as_posix(),
             }
         )
+        if declared_cap is not None:
+            # the declared cap beside the measured fraction: only an entry that declares one gains these keys
+            rows[-1]["pair_contested_cap"] = pair_cap
+            rows[-1]["pair_contested_pixels"] = pair_contested_pixels
+            if pin_report is not None:
+                rows[-1]["pair_contested_pin"] = pin_report
         max_changed = max(max_changed, changed)
         max_mae = max(max_mae, mae)
         max_contested = max(max_contested, contested_fraction)
@@ -2853,7 +3014,12 @@ def visual_parity(model_id: str, spec: dict[str, Any], compiled: dict[str, Any],
     # The contested fraction is not gated: with every pixel compared, a contested pixel
     # that resolves differently is a changed pixel and fails above; one that resolves the
     # same way (the ordinary case under the contract) is nothing to a player. The
-    # pair-contested fraction is gated by its own cap only (PAIR_CONTESTED_CAP).
+    # pair-contested fraction is gated by its own cap only (PAIR_CONTESTED_CAP, or the entry's declared cap).
+    if declared_cap is not None and declared_cap["sample"] is not None and not pinned_sample_seen:
+        raise AssertionError(
+            f"VISUAL MISMATCH {model_id}: the entry's declared pair_contested_cap names the sample {declared_cap['sample']!r}, "
+            "which the entry did not render"
+        )
 
     pair_policy = (
         "; a CHANGED pixel whose two front fragments on both sides are the same pair of faces within "
@@ -2862,6 +3028,14 @@ def visual_parity(model_id: str, spec: dict[str, Any], compiled: dict[str, Any],
         "counted per sample, excluded from the changed fraction and the MAE, painted in the diff, never a mismatch, "
         f"and capped at {PAIR_CONTESTED_CAP:g} of the image"
     )
+    if declared_cap is not None:
+        pair_policy += (
+            f"; THIS ENTRY DECLARES ITS OWN CAP {pair_cap:g} (at most "
+            f"{PAIR_CONTESTED_CAP_DECLARED_MAX:g} of the image; the default {PAIR_CONTESTED_CAP:g} judges every entry without the field)"
+            + (" - no tie tolerated: any pair-contested pixel on any of its samples fails" if pair_cap == 0.0 else
+               f" - a pin, not a loophole: on the sample {declared_cap['sample']} the measured pair-contested pixel count must "
+               f"equal {declared_cap['pixels']} and the dominant pair must be {' / '.join(declared_cap['pair'])}")
+        )
     report = {
         "status": "PASS",
         "image_size": [IMAGE_SIZE, IMAGE_SIZE],
@@ -2871,7 +3045,7 @@ def visual_parity(model_id: str, spec: dict[str, Any], compiled: dict[str, Any],
         "mean_absolute_error_threshold": thresholds["pixel_mean_absolute_error"],
         "minimum_foreground_fraction_threshold": thresholds["minimum_foreground_fraction"],
         "pair_attribution_window_blocks": PAIR_ATTRIBUTION_WINDOW,
-        "pair_contested_cap": PAIR_CONTESTED_CAP,
+        "pair_contested_cap": pair_cap,
         "max_changed_fraction": max_changed,
         "max_mean_absolute_error": max_mae,
         "z_fight_policy": (
@@ -2892,6 +3066,10 @@ def visual_parity(model_id: str, spec: dict[str, Any], compiled: dict[str, Any],
         "minimum_observed_foreground_fraction": min_foreground,
         "samples": rows,
     }
+    if declared_cap is not None:
+        # the pin beside the entry's cap: the default it replaces and the declaration as validated
+        report["pair_contested_cap_default"] = PAIR_CONTESTED_CAP
+        report["pair_contested_cap_declared"] = dict(declared_cap)
     if mode is not None:
         # ENT-S-146: the declared mode and the GPU states the rasteriser emulated for it (only for a
         # model that declares one: every other report stays as it was).
@@ -3199,7 +3377,7 @@ def hierarchy_lines(model: dict[str, Any]) -> list[str]:
 def contested_line(visual: dict[str, Any]) -> str:
     pair = (f" Pair-contested pixels (the same two front faces on both sides within "
             f"{visual['pair_attribution_window_blocks']:g} blocks) never a mismatch: maximum fraction "
-            f"{visual['max_pair_contested_fraction']:.12g} under the cap {visual['pair_contested_cap']:g}.")
+            f"{visual['max_pair_contested_fraction']:.12g} under the cap {visual['pair_contested_cap']:g}{declared_cap_text(visual)}.")
     if visual.get("contested_exclusion_applied", False):
         return (f"- Visual z-fight pixels excluded (--contested-exclusion diagnostic run, not the gate's policy): "
                 f"maximum contested fraction {visual['max_contested_fraction']:.12g}." + pair)
@@ -3477,6 +3655,10 @@ def main() -> int:
     manifest = load_json(args.manifest)
     repository_root = args.manifest.resolve().parent.parent
     thresholds = manifest["thresholds"]
+    # The entries' own pair-contested caps: every declaration validated before any render - a defective one is a MANIFEST error
+    # naming the entry, and the run fails here.
+    for spec in [*manifest["models"], *manifest.get("fixtures", [])]:
+        pair_contested_cap_declared(spec["id"], spec)
     args.output_dir.mkdir(parents=True, exist_ok=True)
     visual_output = args.output_dir / "visual"
     if visual_output.exists():
@@ -3712,7 +3894,8 @@ def main() -> int:
                 f"max MAE {visual['max_mean_absolute_error']:.12g}, "
                 f"max contested {visual['max_contested_fraction']:.12g} "
                 f"({'excluded: --contested-exclusion diagnostic run' if visual['contested_exclusion_applied'] else 'compared, not excluded; a diagnostic'}), "
-                f"max pair-contested {visual['max_pair_contested_fraction']:.12g} (never a mismatch; cap {PAIR_CONTESTED_CAP:g})"
+                f"max pair-contested {visual['max_pair_contested_fraction']:.12g} (never a mismatch; cap "
+                f"{visual['pair_contested_cap']:g}{declared_cap_text(visual)})"
             )
             # ENT-S-146: the render state both sides actually requested, against the mode the visual leg
             # emulated - for EVERY model (a cutout rig reporting anything but cutout / white / the probe's

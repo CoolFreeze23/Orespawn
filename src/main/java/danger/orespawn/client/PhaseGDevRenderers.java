@@ -31,6 +31,7 @@ import danger.orespawn.entity.EnderReaper;
 import danger.orespawn.entity.EntityAnt;
 import danger.orespawn.entity.EntityBee;
 import danger.orespawn.entity.EntityBrutalfly;
+import danger.orespawn.entity.EntityButterfly;
 import danger.orespawn.entity.EntityCannonFodder;
 import danger.orespawn.entity.EntityCaterKiller;
 import danger.orespawn.entity.EntityCliffRacer;
@@ -43,6 +44,7 @@ import danger.orespawn.entity.EntityHydrolisc;
 import danger.orespawn.entity.EntityKyuubi;
 import danger.orespawn.entity.EntityLeafMonster;
 import danger.orespawn.entity.EntityLeon;
+import danger.orespawn.entity.EntityLunaMoth;
 import danger.orespawn.entity.EntityLurkingTerror;
 import danger.orespawn.entity.EntityMantis;
 import danger.orespawn.entity.EntityMolenoid;
@@ -85,6 +87,7 @@ import danger.orespawn.entity.IslandToo;
 import danger.orespawn.entity.Jeffery;
 import danger.orespawn.entity.Kraken;
 import danger.orespawn.entity.Lizard;
+import danger.orespawn.entity.Mothra;
 import danger.orespawn.entity.Nastysaurus;
 import danger.orespawn.entity.Ostrich;
 import danger.orespawn.entity.Peacock;
@@ -107,6 +110,7 @@ import danger.orespawn.entity.ThePrinceAdult;
 import danger.orespawn.entity.ThePrinceTeen;
 import danger.orespawn.entity.ThePrincess;
 import danger.orespawn.entity.Urchin;
+import danger.orespawn.entity.VampireButterfly;
 import danger.orespawn.entity.VelocityRaptor;
 import danger.orespawn.entity.WaterDragon;
 import danger.orespawn.entity.Whale;
@@ -135,6 +139,8 @@ import danger.orespawn.entity.client.BoyfriendGeoReplacement;
 import danger.orespawn.entity.client.BoyfriendRenderer;
 import danger.orespawn.entity.client.BrutalflyGeoReplacement;
 import danger.orespawn.entity.client.BrutalflyRenderer;
+import danger.orespawn.entity.client.ButterflyGeoReplacement;
+import danger.orespawn.entity.client.ButterflyRenderer;
 import danger.orespawn.entity.client.CamarasaurusGeoReplacement;
 import danger.orespawn.entity.client.CamarasaurusRenderer;
 import danger.orespawn.entity.client.CannonFodderGeoReplacement;
@@ -229,6 +235,8 @@ import danger.orespawn.entity.client.LeonRenderer;
 import danger.orespawn.entity.client.LeonopteryxGeoReplacement;
 import danger.orespawn.entity.client.LizardGeoReplacement;
 import danger.orespawn.entity.client.LizardRenderer;
+import danger.orespawn.entity.client.LunaMothGeoReplacement;
+import danger.orespawn.entity.client.LunaMothRenderer;
 import danger.orespawn.entity.client.LurkingTerrorGeoReplacement;
 import danger.orespawn.entity.client.LurkingTerrorRenderer;
 import danger.orespawn.entity.client.MantisGeoReplacement;
@@ -237,6 +245,8 @@ import danger.orespawn.entity.client.MolenoidGeoReplacement;
 import danger.orespawn.entity.client.MolenoidRenderer;
 import danger.orespawn.entity.client.MosquitoGeoReplacement;
 import danger.orespawn.entity.client.MosquitoRenderer;
+import danger.orespawn.entity.client.MothraGeoReplacement;
+import danger.orespawn.entity.client.MothraRenderer;
 import danger.orespawn.entity.client.NastysaurusGeoReplacement;
 import danger.orespawn.entity.client.NastysaurusRenderer;
 import danger.orespawn.entity.client.OstrichGeoReplacement;
@@ -314,6 +324,8 @@ import danger.orespawn.entity.client.UnstableAntGeoReplacement;
 import danger.orespawn.entity.client.UnstableAntRenderer;
 import danger.orespawn.entity.client.UrchinGeoReplacement;
 import danger.orespawn.entity.client.UrchinRenderer;
+import danger.orespawn.entity.client.VampireButterflyGeoReplacement;
+import danger.orespawn.entity.client.VampireButterflyRenderer;
 import danger.orespawn.entity.client.VelocityRaptorGeoReplacement;
 import danger.orespawn.entity.client.VelocityRaptorRenderer;
 import danger.orespawn.entity.client.VortexGeoReplacement;
@@ -791,8 +803,8 @@ public final class PhaseGDevRenderers {
     /**
      * The remainder slice: the seven remaining rigs ON THEIR HOOKS - the Lurking Terror and the Scorpion (the pair-contested
      * rule), the Ghost (ENT-S-160 (a)), the Boyfriend, Girlfriend and Princess (item 3: the seam's partial tick and the classic
-     * layers), the King (the second pass, TEST-018); the Butterfly rig's four consumers REPORTED, not landed (TEST-019: no
-     * provider, their classic renderers alone); the classic renderers the default.
+     * layers), the King (the second pass, TEST-018); the Butterfly rig's four consumers REPORTED, not landed then
+     * (TEST-019; landed by the Butterfly rig's slice below); the classic renderers the default.
      */
     public static EntityRendererProvider<EntityLurkingTerror> lurkingTerrorRenderer() {
         return select("lurking_terror", LurkingTerrorRenderer::new, LurkingTerrorGeoReplacement.Renderer::new);
@@ -820,6 +832,29 @@ public final class PhaseGDevRenderers {
 
     public static EntityRendererProvider<TheKing> theKingRenderer() {
         return select("the_king", TheKingRenderer::new, TheKingGeoReplacement.Renderer::new);
+    }
+
+    /**
+     * The Butterfly rig's slice (TEST-019): one rig, four consumers ON THE HOOKS already written - the Butterfly, the Luna
+     * Moth, Mothra and the Vampire Butterfly on butterfly.geo.json at their own wingspeeds (1.0 / 0.75 / 0.2 / 1.0), landed under
+     * the manifest-declared pair-contested cap (the Mothra's entry pinned at 803 pixels on leftwing / leftwing2 at
+     * t_three_quarter, the three others at 0); each selects separately over its own entity class as the classic renderers are
+     * typed (the Ant precedent, design Q9: one profile per registry path); the classic renderers the default.
+     */
+    public static EntityRendererProvider<EntityButterfly> butterflyRenderer() {
+        return select("butterfly", ButterflyRenderer::new, ButterflyGeoReplacement.Renderer::new);
+    }
+
+    public static EntityRendererProvider<EntityLunaMoth> lunaMothRenderer() {
+        return select("luna_moth", LunaMothRenderer::new, LunaMothGeoReplacement.Renderer::new);
+    }
+
+    public static EntityRendererProvider<Mothra> mothraRenderer() {
+        return select("mothra", MothraRenderer::new, MothraGeoReplacement.Renderer::new);
+    }
+
+    public static EntityRendererProvider<VampireButterfly> vampireButterflyRenderer() {
+        return select("vampire_butterfly", VampireButterflyRenderer::new, VampireButterflyGeoReplacement.Renderer::new);
     }
 
 

@@ -1,9 +1,9 @@
 {
   "registry": "luna_moth",
   "display_name": "Luna Moth",
-  "status": "DRAFT — authored by a first pass from the entity code, 2026-09-13; edit pending",
+  "status": "DRAFT — authored by a first pass from the entity code, 2026-09-13; edit pending, landed on its hook by the Butterfly rig's slice (TEST-019 under the entry's declared pair-contested cap; hitbox profiles excluded - the classic single hitbox stays until the profile phase)",
   "locomotion": "flyer",
-  "artist_scope": "full contract (Tier 1, the simple-cyclic class: geckolib_migration_design.md section 5) with the §8.1 locks (none pre-declared: the design's section 6 keeps this consumer of the shared ButterflyModel single-box); the rig is not yet in-game (it lands through the seam in a later slice)",
+  "artist_scope": "full contract (Tier 1, the simple-cyclic class: geckolib_migration_design.md section 5) with the §8.1 locks (none pre-declared: the design's section 6 keeps this consumer of the shared ButterflyModel single-box); ON THE HOOK until idle and walk are delivered: in-game through the seam behind the dev switch since the Butterfly rig's slice",
   "character_sheet": "A night-flying moth on the shared butterfly rig: a one-cube body bar, a one-cube head, and four flat wing panels a side — inner and outer forewings, a hindwing and a long tail streamer (ButterflyModel.createBodyLayer, ButterflyModel.java:54-102), drawn half again as large as the butterfly in one of four moth skins (LunaMothRenderer.java:23, :39-43). It is a butterfly subclass (EntityLunaMoth.java:24) whose flight goal seeks torches when it is sheltered from the sky (LunaMothFlightGoal, registered at :55) and still carries the Islands hunt of its parent, so in the Islands it nips prey for 1.0 on a 1-in-2 roll (EntityButterfly.doHurtTarget, EntityButterfly.java:161-165). It hovers a little heavier than the butterfly (the vertical drag at tick :58-63), spawns only at night, in the air, above y 50 or anywhere in the Islands (checkSpawnRules :66-73) in jungle and taiga swarms (the swarm_luna_moth biome modifiers), and twenty of them burst from Mothra when she dies (Mothra.java:468-475). Read it as a soft, slower flutter than the butterfly's.",
   "size_notes": "Drawn at x1.5 of the rig (LunaMothRenderer.java:23, applied at :33-35; shadow 0.4 x 1.5) on the shared 64x32 sheet (ButterflyModel.java:104), four skins by moth_type (LunaMothRenderer.java:39-43: lunamoth / eyemoth / darkmoth / firemoth); 0.5 x 0.5 block hitbox (ModEntities.java:606-608). The wing panels are one unit thick.",
   "labels": {
@@ -90,5 +90,8 @@
   ],
   "locked_bones_provisional": [],
   "locked_bones_note": "The design's section 6 ButterflyModel row (geckolib_migration_design.md:440) keeps this consumer single-box — 'butterfly / luna_moth [0.4,0.4] ... stay single-box', 'other shared-rig consumers get no profile' — so no intended locked bones are pre-declared; the row's four part bones (body, head, leftwing, rightwing) belong to mothra's profile only. Every bone name stays final regardless (the shared rig serves four registries).",
+  "formulas": [
+    "`ButterflyModel.setupAnim` (ButterflyModel.java:108-116; orig ModelButterfly.java:96-102 in `render` (func_78088_a, :91-111 - the head and body drawn at :94-95, the eight wing rotations written at :96-102, the eight wings drawn at :103-110; func_78087_a at :119-121 is a bare super call), wingspeed 0.75 - `new ModelButterfly(0.75f)` in orig ClientProxyOreSpawn.java:407): the four right wing parts (rightwing, rightwing2, rightwing3, rightwing4) roll about Z by the cosine of the age in ticks times 1.3 times the wingspeed (two float multiplies, left to right), times pi, times 0.25, and the four left wing parts (leftwing, leftwing2, leftwing3, leftwing4) by its negative; the body and the head are still. The walk position, the walking speed, the head angles and the entity's state play no part. The GeckoLib hook is the same (LunaMothGeoReplacement.applyCustomAnimations -> ButterflyGeoReplacement.pose at WINGSPEED 0.75; the shared butterfly.geo.json)."
+  ],
   "effort_hours": null
 }

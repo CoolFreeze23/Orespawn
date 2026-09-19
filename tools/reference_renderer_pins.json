@@ -379,7 +379,7 @@
       "expected_scale": 1,
       "ref_derivation": "shadow: RenderButterfly(ModelButterfly par1, float par2, float par3) { super((ModelBase)par1, par2 * par3); this.scale = par3; } (RenderButterfly.java:24-27). ... | scale: this.scale = par3 = 1.0f (RenderButterfly.java:26); preRenderCallback func_77041_b -> preRenderScale -> GL11.glScalef(scale,scale,scale) (RenderButterfly.java:41-47) => 1.0.",
       "port_renderer": "src/main/java/danger/orespawn/entity/client/ButterflyRenderer.java",
-      "port_candidate": "none",
+      "port_candidate": "src/main/java/danger/orespawn/entity/client/ButterflyGeoReplacement.java",
       "truth_verdicts": {
         "shadow": "DIVERGES",
         "scale": "MATCH"
@@ -425,7 +425,7 @@
       "expected_scale": 1.5,
       "ref_derivation": "shadow: super((ModelBase)par1ModelBase, par2 * par3) (RenderButterfly.java:25). Registration `new RenderButterfly(new ModelButterfly(0.75f), 0.4f, 1.5f)` (ClientProxyOreSpawn.java:407) => super(model, 0.4f * 1.5f) => shadowSize 0.6 (float 0.6000000238). ... | scale: this.scale = par3 = 1.5f (RenderButterfly.java:26); func_77041_b -> preRenderScale -> GL11.glScalef(1.5,1.5,1.5) (RenderButterfly.java:41-47).",
       "port_renderer": "src/main/java/danger/orespawn/entity/client/LunaMothRenderer.java",
-      "port_candidate": "none",
+      "port_candidate": "src/main/java/danger/orespawn/entity/client/LunaMothGeoReplacement.java",
       "truth_verdicts": {
         "shadow": "DIVERGES",
         "scale": "MATCH"
@@ -507,7 +507,7 @@
       "expected_scale": 10,
       "ref_derivation": "shadow: RenderButterfly.java:24-25 `super((ModelBase)par1ModelBase, par2 * par3)` with ClientProxyOreSpawn.java:411 args (0.75f, 10.0f) -> shadowSize = 0.75f * 10.0f = 7.5 (re-read; confirmed) | scale: RenderButterfly.java:26 `this.scale = par3` = 10.0f; RenderButterfly.java:41-43 preRenderScale -> GL11.glScalef(10,10,10) via func_77041_b at :45-47. ...",
       "port_renderer": "src/main/java/danger/orespawn/entity/client/MothraRenderer.java",
-      "port_candidate": "none",
+      "port_candidate": "src/main/java/danger/orespawn/entity/client/MothraGeoReplacement.java",
       "truth_verdicts": {
         "shadow": "DIVERGES",
         "scale": "MATCH"

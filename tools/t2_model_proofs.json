@@ -7034,9 +7034,176 @@
       },
       "channels": [],
       "hook_note": "the remainder slice (on the hook already written, or written by this slice for the three rigs held since the hooks' landing; a Tier-1 rig lands exactly as a Tier-2 rig does: hitbox profiles excluded, the classic single hitbox stays, nothing of the profile phase): a HOOK rig - the shipped pose is the classic setupAnim verbatim in the descriptor's applyCustomAnimations(processor, PoseInputs); no keyframe layer, no transcription, no clip manifest (the self-gate stays closed until an artist delivers idle and walk); channels [] because tools/layer_definition_to_geo.py refuses channels on a code_driven / entity_state entry without a keyframe_reference_leg - the reference-clip sampler's span comes from its RULES row for this id (ReferenceClipSampler.RULES, the source lines cited; the row the hook survey wrote as its HOOK_RULES row, carried unchanged, or the row this slice authored); the animation leg proves the hook at 0 rad against the classic model at the same inputs on every sample"
+    },
+    {
+      "id": "model_butterfly",
+      "tier": 1,
+      "class": "danger.orespawn.entity.client.ButterflyModel",
+      "texture": "src/main/resources/assets/orespawn/textures/entity/butterfly.png",
+      "reference_source": "reference_1_7_10_source/sources/danger/orespawn/ModelButterfly.java",
+      "rig_note": "the shared parameterised rig of the Butterfly / Luna Moth / Mothra / Vampire Butterfly (ButterflyModel(root, wingspeed); orig ClientProxyOreSpawn.java:405-411 gives 1.0 / 0.75 / 0.2 and the Vampire Butterfly the default 1.0 of orig ModelButterfly.java:23): the one rhythm cos(age x 1.3 x wingspeed) x PI x 0.25 about Z on the eight wing parts, the four right wings positive and the four left wings the negative (orig ModelButterfly.java:23,28,96-102; the port's ButterflyModel.setupAnim :108-116); the hook reads no entity and no walk (code_driven: the classic side through setupAnim(null, ...) on a model built at this registry's wingspeed through constructor_arguments); one geo butterfly.geo.json for the four registries (the Ant precedent, design Q9), this consumer proven on its own entry at its own wingspeed 1.0 - the Butterfly (orig :405 new ModelButterfly(1.0f)); every cube of the rig is a 1-unit cube (the wings 5 x 1 x 5, 6 x 1 x 7, 1 x 1 x 7), none flat: no cube_face_order",
+      "animation_kind": "code_driven",
+      "candidate_animation_path": "production_replacement_hook",
+      "candidate_class": "danger.orespawn.entity.client.ButterflyGeoReplacement",
+      "loop_period_age_ticks": 4.83321946706122,
+      "period_note": "the eight wings' 1.3 x 1.0 = 1.3 rad/tick close every 4.83 ticks; one cycle - the one rhythm",
+      "sample_fractions": [
+        0.0,
+        0.25,
+        0.5,
+        0.75,
+        1.0
+      ],
+      "limb_swing": 0.0,
+      "limb_swing_amount": 0.0,
+      "visual_note": "the default visual samples (the bind and the four fractions of the wing beat's period); no amplitude matrix, no state: the hook reads neither the walk nor the entity",
+      "net_head_yaw": 0.0,
+      "head_pitch": 0.0,
+      "camera": {
+        "yaw_degrees": 34.0,
+        "pitch_degrees": -28.0
+      },
+      "constructor_arguments": [
+        1.0
+      ],
+      "channels": [],
+      "hook_note": "the Butterfly rig's slice (and - on the hook already written, a Tier-1 rig lands exactly as a Tier-2 rig does: hitbox profiles excluded, the classic single hitbox stays, nothing of the profile phase): a HOOK rig - the shipped pose is the classic setupAnim verbatim in the descriptor's applyCustomAnimations(processor, PoseInputs); no keyframe layer, no transcription, no clip manifest (the self-gate stays closed until an artist delivers idle and walk); channels [] because tools/layer_definition_to_geo.py refuses channels on a code_driven / entity_state entry without a keyframe_reference_leg - the reference-clip sampler's span comes from its RULES row for this id (ReferenceClipSampler.RULES, the source lines cited; the row the hook survey wrote as its HOOK_RULES row, carried unchanged); the animation leg proves the hook at 0 rad against the classic model at the same inputs on every sample",
+      "pair_contested_cap": {
+        "fraction": 0.0,
+        "pixels": 0,
+        "pair": null,
+        "sample": null,
+        "note": "TEST-019: this entry declares NO pair-contested tie tolerated - the cap 0 with pixels 0, no pair and no sample; any pair-contested pixel on any of its samples fails the visual leg (measured 0 at every sample of the T1a, the remainder and this slice's chains)"
+      }
+    },
+    {
+      "id": "model_luna_moth",
+      "tier": 1,
+      "class": "danger.orespawn.entity.client.ButterflyModel",
+      "texture": "src/main/resources/assets/orespawn/textures/entity/lunamoth.png",
+      "reference_source": "reference_1_7_10_source/sources/danger/orespawn/ModelButterfly.java",
+      "rig_note": "the shared parameterised rig of the Butterfly / Luna Moth / Mothra / Vampire Butterfly (ButterflyModel(root, wingspeed); orig ClientProxyOreSpawn.java:405-411 gives 1.0 / 0.75 / 0.2 and the Vampire Butterfly the default 1.0 of orig ModelButterfly.java:23): the one rhythm cos(age x 1.3 x wingspeed) x PI x 0.25 about Z on the eight wing parts, the four right wings positive and the four left wings the negative (orig ModelButterfly.java:23,28,96-102; the port's ButterflyModel.setupAnim :108-116); the hook reads no entity and no walk (code_driven: the classic side through setupAnim(null, ...) on a model built at this registry's wingspeed through constructor_arguments); one geo butterfly.geo.json for the four registries (the Ant precedent, design Q9), this consumer proven on its own entry at its own wingspeed 0.75 - the Luna Moth (orig :407 new ModelButterfly(0.75f)); every cube of the rig is a 1-unit cube (the wings 5 x 1 x 5, 6 x 1 x 7, 1 x 1 x 7), none flat: no cube_face_order",
+      "animation_kind": "code_driven",
+      "candidate_animation_path": "production_replacement_hook",
+      "candidate_class": "danger.orespawn.entity.client.LunaMothGeoReplacement",
+      "loop_period_age_ticks": 6.444292622748293,
+      "period_note": "the eight wings' 1.3 x 0.75 = 0.975 rad/tick close every 6.44 ticks; one cycle - the one rhythm",
+      "sample_fractions": [
+        0.0,
+        0.25,
+        0.5,
+        0.75,
+        1.0
+      ],
+      "limb_swing": 0.0,
+      "limb_swing_amount": 0.0,
+      "visual_note": "the default visual samples (the bind and the four fractions of the wing beat's period); no amplitude matrix, no state: the hook reads neither the walk nor the entity",
+      "net_head_yaw": 0.0,
+      "head_pitch": 0.0,
+      "camera": {
+        "yaw_degrees": 34.0,
+        "pitch_degrees": -28.0
+      },
+      "constructor_arguments": [
+        0.75
+      ],
+      "channels": [],
+      "hook_note": "the Butterfly rig's slice (and - on the hook already written, a Tier-1 rig lands exactly as a Tier-2 rig does: hitbox profiles excluded, the classic single hitbox stays, nothing of the profile phase): a HOOK rig - the shipped pose is the classic setupAnim verbatim in the descriptor's applyCustomAnimations(processor, PoseInputs); no keyframe layer, no transcription, no clip manifest (the self-gate stays closed until an artist delivers idle and walk); channels [] because tools/layer_definition_to_geo.py refuses channels on a code_driven / entity_state entry without a keyframe_reference_leg - the reference-clip sampler's span comes from its RULES row for this id (ReferenceClipSampler.RULES, the source lines cited; the row the hook survey wrote as its HOOK_RULES row, carried unchanged); the animation leg proves the hook at 0 rad against the classic model at the same inputs on every sample",
+      "pair_contested_cap": {
+        "fraction": 0.0,
+        "pixels": 0,
+        "pair": null,
+        "sample": null,
+        "note": "TEST-019: this entry declares NO pair-contested tie tolerated - the cap 0 with pixels 0, no pair and no sample; any pair-contested pixel on any of its samples fails the visual leg (measured 0 at every sample of the T1a, the remainder and this slice's chains)"
+      }
+    },
+    {
+      "id": "model_mothra",
+      "tier": 1,
+      "class": "danger.orespawn.entity.client.ButterflyModel",
+      "texture": "src/main/resources/assets/orespawn/textures/entity/eyemoth.png",
+      "reference_source": "reference_1_7_10_source/sources/danger/orespawn/ModelButterfly.java",
+      "rig_note": "the shared parameterised rig of the Butterfly / Luna Moth / Mothra / Vampire Butterfly (ButterflyModel(root, wingspeed); orig ClientProxyOreSpawn.java:405-411 gives 1.0 / 0.75 / 0.2 and the Vampire Butterfly the default 1.0 of orig ModelButterfly.java:23): the one rhythm cos(age x 1.3 x wingspeed) x PI x 0.25 about Z on the eight wing parts, the four right wings positive and the four left wings the negative (orig ModelButterfly.java:23,28,96-102; the port's ButterflyModel.setupAnim :108-116); the hook reads no entity and no walk (code_driven: the classic side through setupAnim(null, ...) on a model built at this registry's wingspeed through constructor_arguments); one geo butterfly.geo.json for the four registries (the Ant precedent, design Q9), this consumer proven on its own entry at its own wingspeed 0.2 - the Mothra (orig :411 new ModelButterfly(0.2f)); every cube of the rig is a 1-unit cube (the wings 5 x 1 x 5, 6 x 1 x 7, 1 x 1 x 7), none flat: no cube_face_order",
+      "animation_kind": "code_driven",
+      "candidate_animation_path": "production_replacement_hook",
+      "candidate_class": "danger.orespawn.entity.client.MothraGeoReplacement",
+      "loop_period_age_ticks": 24.1660973353061,
+      "period_note": "the eight wings' 1.3 x 0.2 = 0.26 rad/tick close every 24.17 ticks; one cycle - the one rhythm",
+      "sample_fractions": [
+        0.0,
+        0.25,
+        0.5,
+        0.75,
+        1.0
+      ],
+      "limb_swing": 0.0,
+      "limb_swing_amount": 0.0,
+      "visual_note": "the default visual samples (the bind and the four fractions of the wing beat's period); no amplitude matrix, no state: the hook reads neither the walk nor the entity",
+      "net_head_yaw": 0.0,
+      "head_pitch": 0.0,
+      "camera": {
+        "yaw_degrees": 34.0,
+        "pitch_degrees": -28.0
+      },
+      "constructor_arguments": [
+        0.2
+      ],
+      "channels": [],
+      "hook_note": "the Butterfly rig's slice (and - on the hook already written, a Tier-1 rig lands exactly as a Tier-2 rig does: hitbox profiles excluded, the classic single hitbox stays, nothing of the profile phase): a HOOK rig - the shipped pose is the classic setupAnim verbatim in the descriptor's applyCustomAnimations(processor, PoseInputs); no keyframe layer, no transcription, no clip manifest (the self-gate stays closed until an artist delivers idle and walk); channels [] because tools/layer_definition_to_geo.py refuses channels on a code_driven / entity_state entry without a keyframe_reference_leg - the reference-clip sampler's span comes from its RULES row for this id (ReferenceClipSampler.RULES, the source lines cited; the row the hook survey wrote as its HOOK_RULES row, carried unchanged); the animation leg proves the hook at 0 rad against the classic model at the same inputs on every sample",
+      "pair_contested_cap": {
+        "fraction": 0.0125,
+        "pixels": 803,
+        "pair": [
+          "leftwing",
+          "leftwing2"
+        ],
+        "sample": "t_three_quarter",
+        "note": "TEST-019: a PIN on the measured tie, not a loophole - at the t_three_quarter sample (age 18.125 ticks, the wings flat at cos(4.7125) x PI x 0.25 = -0.0009 rad) the two overlapping 1-unit wing cubes leftwing (origin 1, 6, -4; 5 x 1 x 5) and leftwing2 (origin 2, 6, -6; 6 x 1 x 7) share x 2..6, z -4..1 on their undersides, and the two vertex pipelines' float rounding puts the coplanar faces 1e-6 .. 1e-5 apart with opposite order on exactly 803 pixels of 65,536 (0.0122528076 of the image; the same number at T1a, the remainder and this slice), every one attributed to the pair leftwing / leftwing2 on both sides (TEST-012 / TEST-014's mechanism); the tool requires the measured count to equal 803 and the dominant pair to be exactly this pair on that sample, judges every other sample of the entry against 0.0125 too, and refuses any declaration above 0.02; the default cap 0.01 stays for every other entry"
+      }
+    },
+    {
+      "id": "model_vampire_butterfly",
+      "tier": 1,
+      "class": "danger.orespawn.entity.client.ButterflyModel",
+      "texture": "src/main/resources/assets/orespawn/textures/entity/vampire_butterfly.png",
+      "reference_source": "reference_1_7_10_source/sources/danger/orespawn/ModelButterfly.java",
+      "rig_note": "the shared parameterised rig of the Butterfly / Luna Moth / Mothra / Vampire Butterfly (ButterflyModel(root, wingspeed); orig ClientProxyOreSpawn.java:405-411 gives 1.0 / 0.75 / 0.2 and the Vampire Butterfly the default 1.0 of orig ModelButterfly.java:23): the one rhythm cos(age x 1.3 x wingspeed) x PI x 0.25 about Z on the eight wing parts, the four right wings positive and the four left wings the negative (orig ModelButterfly.java:23,28,96-102; the port's ButterflyModel.setupAnim :108-116); the hook reads no entity and no walk (code_driven: the classic side through setupAnim(null, ...) on a model built at this registry's wingspeed through constructor_arguments); one geo butterfly.geo.json for the four registries (the Ant precedent, design Q9), this consumer proven on its own entry at its own wingspeed 1.0 - the Vampire Butterfly (the port-only registration at the model's default 1.0f); every cube of the rig is a 1-unit cube (the wings 5 x 1 x 5, 6 x 1 x 7, 1 x 1 x 7), none flat: no cube_face_order",
+      "animation_kind": "code_driven",
+      "candidate_animation_path": "production_replacement_hook",
+      "candidate_class": "danger.orespawn.entity.client.VampireButterflyGeoReplacement",
+      "loop_period_age_ticks": 4.83321946706122,
+      "period_note": "the eight wings' 1.3 x 1.0 = 1.3 rad/tick close every 4.83 ticks; one cycle - the one rhythm",
+      "sample_fractions": [
+        0.0,
+        0.25,
+        0.5,
+        0.75,
+        1.0
+      ],
+      "limb_swing": 0.0,
+      "limb_swing_amount": 0.0,
+      "visual_note": "the default visual samples (the bind and the four fractions of the wing beat's period); no amplitude matrix, no state: the hook reads neither the walk nor the entity",
+      "net_head_yaw": 0.0,
+      "head_pitch": 0.0,
+      "camera": {
+        "yaw_degrees": 34.0,
+        "pitch_degrees": -28.0
+      },
+      "constructor_arguments": [
+        1.0
+      ],
+      "channels": [],
+      "hook_note": "the Butterfly rig's slice (and - on the hook already written, a Tier-1 rig lands exactly as a Tier-2 rig does: hitbox profiles excluded, the classic single hitbox stays, nothing of the profile phase): a HOOK rig - the shipped pose is the classic setupAnim verbatim in the descriptor's applyCustomAnimations(processor, PoseInputs); no keyframe layer, no transcription, no clip manifest (the self-gate stays closed until an artist delivers idle and walk); channels [] because tools/layer_definition_to_geo.py refuses channels on a code_driven / entity_state entry without a keyframe_reference_leg - the reference-clip sampler's span comes from its RULES row for this id (ReferenceClipSampler.RULES, the source lines cited; the row the hook survey wrote as its HOOK_RULES row, carried unchanged); the animation leg proves the hook at 0 rad against the classic model at the same inputs on every sample",
+      "pair_contested_cap": {
+        "fraction": 0.0,
+        "pixels": 0,
+        "pair": null,
+        "sample": null,
+        "note": "TEST-019: this entry declares NO pair-contested tie tolerated - the cap 0 with pixels 0, no pair and no sample; any pair-contested pixel on any of its samples fails the visual leg (measured 0 at every sample of the T1a, the remainder and this slice's chains)"
+      }
     }
   ],
   "fixtures": [],
   "naming_rule_note": "the second Tier-2 slice (2026-09-13): the bare walk is the gait group's clip, else the clip manifest's primary_group's (the first group when absent), the other groups' walk_<group> (KeyframeLeg.primaryGroup and tools/keyframe_clip.py refuse a manifest that breaks it)",
-  "hook_rig_note": "the third Tier-2 slice (2026-09-13): the fifteen entries model_cloudshark .. model_herculesbeetle are HOOK rigs: the classic setupAnim verbatim in the descriptor, no keyframe layer, channels [] (the converter refuses channels on a hook entry without a keyframe_reference_leg); the reference-clip sampler's span per id comes from ReferenceClipSampler.RULES. The fourth Tier-2 slice (T2d, 2026-09-14): the thirteen entries model_crab .. model_flounder likewise, on the hooks written by the hook survey, the Crab with its draw fix and the render_instances declaration of its reference entry. The fifth Tier-2 slice (T2e, 2026-09-15): the fourteen entries model_pointysaurus .. model_chipmunk (the Lurking Terror held on the visual leg, its register line) likewise, on the hooks written by the hook survey: entity_state wherever the classic model reads its entity (the probe poses a code_driven entry's classic side through setupAnim(null, ...)), the two latch rigs with an ri1-preset state (the Robot2 form), the two sitting flags through the states' getters object. The sixth Tier-2 slice (T2f, 2026-09-15): the twelve entries model_enderknight .. model_triffid likewise, on the hooks written by the hook survey (the Dungeon Beast held on its whole-model render transform and the Scorpion on the visual leg, their register lines): entity_state on every one (every hook of this slice reads its entity), the two latch rigs with an ri1-preset state (the Robot2 form), the entity flags through the states' getters object. The FK slice (2026-09-15): the three entries model_emperorscorpion, model_alien and model_alien_boss likewise on their hooks, each a parent-child HIERARCHY (the entry's `hierarchy` {child: parent}; the converter's hierarchy form; the key the tree's pre-order by rule) posed through FlatRig with the chain-link leg as the proof of every link.. The first Tier-1 slice (T1a, 2026-09-15): the seventeen entries model_kraken .. model_theprinceadult likewise, on the hooks written by the hook survey (the Tier-1 rigs in the same form, hitbox profiles excluded, the GiantRobot pair through its instance form; the King held on its second translucent membrane pass and the Butterfly rig's four registries held on the Mothra's pair-contested cap at one sample, their register lines): every entry entity_state (the flags through the states' getters object, the three latch rigs with an ri1-preset state - the Robot2 form), the Kraken's and the Dungeon Beast's constant render transform (TEST-013 (a)) with the Dungeon Beast's undrawn_parts, the Giant Robot pair's explicit render_instances (the Crab's form). The second Tier-1 slice (T1b, 2026-09-15): the two entries model_theprinceteen and model_waterdragon likewise, on the hooks written by the hook survey (the last two Tier-1 rigs in the same form, hitbox profiles excluded): both entity_state (the flags through the states' getters object; the Water Dragon's three-way attacking value as a preset attacking 2 state), the Water Dragon under the classic face order (five zero-thickness fins). The remainder slice (2026-09-15): the seven entries model_lurkingterror and model_scorpion (cleared under the pair-contested rule, TEST-012 / TEST-014, bind included), model_ghost (ENT-S-160 (a): the render-type function on GhostModel, a blending rig under the classic face order), model_boyfriend and model_girlfriend (vanilla HumanoidModel.setupAnim on the seam's partial tick - partial_tick_input - with the classic layers drawn by the seam's renderer), model_theprincess (the Prince's form plus the per-frame orbs) and model_theking (the second pass declared - second_pass - and proven pass by pass, TEST-018), on the hooks written by the hook survey or by this slice (the remainder); the Butterfly rig's four consumers re-measured and REPORTED, not landed (TEST-019: the Mothra's t_three_quarter sample at the cap's 0.01225 > 0.01, unchanged)"
+  "hook_rig_note": "the third Tier-2 slice (2026-09-13): the fifteen entries model_cloudshark .. model_herculesbeetle are HOOK rigs: the classic setupAnim verbatim in the descriptor, no keyframe layer, channels [] (the converter refuses channels on a hook entry without a keyframe_reference_leg); the reference-clip sampler's span per id comes from ReferenceClipSampler.RULES. The fourth Tier-2 slice (T2d, 2026-09-14): the thirteen entries model_crab .. model_flounder likewise, on the hooks written by the hook survey, the Crab with its draw fix and the render_instances declaration of its reference entry. The fifth Tier-2 slice (T2e, 2026-09-15): the fourteen entries model_pointysaurus .. model_chipmunk (the Lurking Terror held on the visual leg, its register line) likewise, on the hooks written by the hook survey: entity_state wherever the classic model reads its entity (the probe poses a code_driven entry's classic side through setupAnim(null, ...)), the two latch rigs with an ri1-preset state (the Robot2 form), the two sitting flags through the states' getters object. The sixth Tier-2 slice (T2f, 2026-09-15): the twelve entries model_enderknight .. model_triffid likewise, on the hooks written by the hook survey (the Dungeon Beast held on its whole-model render transform and the Scorpion on the visual leg, their register lines): entity_state on every one (every hook of this slice reads its entity), the two latch rigs with an ri1-preset state (the Robot2 form), the entity flags through the states' getters object. The FK slice (2026-09-15): the three entries model_emperorscorpion, model_alien and model_alien_boss likewise on their hooks, each a parent-child HIERARCHY (the entry's `hierarchy` {child: parent}; the converter's hierarchy form; the key the tree's pre-order by rule) posed through FlatRig with the chain-link leg as the proof of every link.. The first Tier-1 slice (T1a, 2026-09-15): the seventeen entries model_kraken .. model_theprinceadult likewise, on the hooks written by the hook survey (the Tier-1 rigs in the same form, hitbox profiles excluded, the GiantRobot pair through its instance form; the King held on its second translucent membrane pass and the Butterfly rig's four registries held on the Mothra's pair-contested cap at one sample, their register lines): every entry entity_state (the flags through the states' getters object, the three latch rigs with an ri1-preset state - the Robot2 form), the Kraken's and the Dungeon Beast's constant render transform (TEST-013 (a)) with the Dungeon Beast's undrawn_parts, the Giant Robot pair's explicit render_instances (the Crab's form). The second Tier-1 slice (T1b, 2026-09-15): the two entries model_theprinceteen and model_waterdragon likewise, on the hooks written by the hook survey (the last two Tier-1 rigs in the same form, hitbox profiles excluded): both entity_state (the flags through the states' getters object; the Water Dragon's three-way attacking value as a preset attacking 2 state), the Water Dragon under the classic face order (five zero-thickness fins). The remainder slice (2026-09-15): the seven entries model_lurkingterror and model_scorpion (cleared under the pair-contested rule, TEST-012 / TEST-014, bind included), model_ghost (ENT-S-160 (a): the render-type function on GhostModel, a blending rig under the classic face order), model_boyfriend and model_girlfriend (vanilla HumanoidModel.setupAnim on the seam's partial tick - partial_tick_input - with the classic layers drawn by the seam's renderer), model_theprincess (the Prince's form plus the per-frame orbs) and model_theking (the second pass declared - second_pass - and proven pass by pass, TEST-018), on the hooks written by the hook survey or by this slice (the remainder); the Butterfly rig's four consumers re-measured and REPORTED, not landed (TEST-019: the Mothra's t_three_quarter sample at the cap's 0.01225 > 0.01, unchanged). The Butterfly rig's slice: the four entries model_butterfly, model_luna_moth, model_mothra and model_vampire_butterfly (one rig, four registries on butterfly.geo.json through constructor_arguments - the wingspeeds 1.0 / 0.75 / 0.2 / 1.0) likewise, on the hooks written by the hook survey, code_driven (the hook reads no entity), landed under TEST-019's decision: a manifest entry may declare its own pair-contested cap (pair_contested_cap: fraction at most 0.02, the pixel count and the pair named on the sample - a pin the tool checks exactly; the default 0.01 for every entry without the field) - the Mothra's entry declares 0.0125 with 803 pixels on the pair leftwing / leftwing2 at t_three_quarter (the coplanar undersides of two overlapping 1-unit wing cubes at the wings' flat pose), the three others declare 0 (no tie tolerated); every other entry of this manifest unchanged"
 }

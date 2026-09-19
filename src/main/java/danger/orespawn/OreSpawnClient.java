@@ -156,14 +156,14 @@ public class OreSpawnClient {
             event.registerEntityRenderer(ModEntities.WATER_DRAGON.get(), PhaseGDevRenderers.waterDragonRenderer());
 
             // Ambient
-            event.registerEntityRenderer(ModEntities.ENTITY_BUTTERFLY.get(), ButterflyRenderer::new);
-            event.registerEntityRenderer(ModEntities.ENTITY_LUNA_MOTH.get(), LunaMothRenderer::new);
+            event.registerEntityRenderer(ModEntities.ENTITY_BUTTERFLY.get(), PhaseGDevRenderers.butterflyRenderer());
+            event.registerEntityRenderer(ModEntities.ENTITY_LUNA_MOTH.get(), PhaseGDevRenderers.lunaMothRenderer());
             event.registerEntityRenderer(ModEntities.ENTITY_MOSQUITO.get(), PhaseGDevRenderers.mosquitoRenderer());
             event.registerEntityRenderer(ModEntities.FAIRY.get(), PhaseGDevRenderers.fairyRenderer());
             event.registerEntityRenderer(ModEntities.FIREFLY.get(), PhaseGDevRenderers.fireflyRenderer());
             event.registerEntityRenderer(ModEntities.GHOST.get(), PhaseGDevRenderers.ghostRenderer());
             event.registerEntityRenderer(ModEntities.GHOST_SKELLY.get(), PhaseGDevRenderers.ghostSkellyRenderer());
-            event.registerEntityRenderer(ModEntities.MOTHRA.get(), MothraRenderer::new);
+            event.registerEntityRenderer(ModEntities.MOTHRA.get(), PhaseGDevRenderers.mothraRenderer());
             // TF-030: alias id — same consolidated EntityLeon, same renderer.
             event.registerEntityRenderer(ModEntities.LEONOPTERYX.get(), PhaseGDevRenderers.leonopteryxRenderer());
 
@@ -185,7 +185,7 @@ public class OreSpawnClient {
             event.registerEntityRenderer(ModEntities.GOLDEN_APPLE_COW.get(), GoldenAppleCowRenderer::new);
             event.registerEntityRenderer(ModEntities.ENCHANTED_APPLE_COW.get(), EnchantedAppleCowRenderer::new);
             event.registerEntityRenderer(ModEntities.RUBY_BIRD.get(), PhaseGDevRenderers.rubyBirdRenderer());
-            event.registerEntityRenderer(ModEntities.VAMPIRE_BUTTERFLY.get(), VampireButterflyRenderer::new);
+            event.registerEntityRenderer(ModEntities.VAMPIRE_BUTTERFLY.get(), PhaseGDevRenderers.vampireButterflyRenderer());
 
             // Projectiles — ENTITY_NOOP_RENDERER fix batch.
             // Original renderers (reference_1_7_10_source/sources/danger/orespawn/

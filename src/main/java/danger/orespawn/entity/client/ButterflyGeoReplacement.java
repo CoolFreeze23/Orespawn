@@ -9,20 +9,20 @@ import net.minecraft.util.Mth;
 import software.bernie.geckolib.animation.AnimationProcessor;
 
 /**
- * GeckoLib Butterfly (the hook survey): {@link ButterflyModel#setupAnim} verbatim on the converted rig, ON THE HOOK
- * (no keyframe layer, no transcription - the self-gate stays closed until an artist delivers {@code idle} and {@code
- * walk}). The parameterised rig's one rhythm: the eight wing parts about Z at {@code cos(age * 1.3f *
- * wingspeed) * PI * 0.25f}, the four right wings positive and the four left wings the negative (orig
- * ModelButterfly.java:23,28 {@code wingspeed}; the port's ButterflyModel.setupAnim). The WINGSPEED is the
- * classic model's constructor argument, one per registry (orig ClientProxyOreSpawn.java:405-411: the Butterfly 1.0f,
- * the Luna Moth 0.75f, Mothra 0.2f; the Vampire Butterfly the default 1.0f, orig ModelButterfly.java:23).
+ * GeckoLib Butterfly (the hook survey, landed by the Butterfly rig's slice, 2026-09-19 - TEST-019 under the entry's declared
+ * pair-contested cap): {@link ButterflyModel#setupAnim} verbatim on the converted rig, ON THE HOOK (no keyframe layer, no transcription
+ * - the self-gate stays closed until an artist delivers {@code idle} and {@code walk}). The parameterised rig's one rhythm: the eight
+ * wing parts about Z at {@code cos(age * 1.3f * wingspeed) * PI * 0.25f}, the four right wings positive and the four left wings the
+ * negative (orig ModelButterfly.java:23,28 {@code wingspeed}; the port's ButterflyModel.setupAnim). The WINGSPEED is the classic model's
+ * constructor argument, one per registry (orig ClientProxyOreSpawn.java:405-411: the Butterfly 1.0f, the Luna Moth 0.75f, Mothra
+ * 0.2f; the Vampire Butterfly the default 1.0f, orig ModelButterfly.java:23).
  *
  * <p>One rig, four consumers (the Ant precedent): {@link LunaMothGeoReplacement}, {@link MothraGeoReplacement} and
- * {@link VampireButterflyGeoReplacement} share this class's geo, clip file and hook ({@link #pose}) under their own
- * descriptors - one profile per registry path - each with its own wingspeed, texture, shadow and scale.</p>
+ * {@link VampireButterflyGeoReplacement} share this class's geo, clip file and hook ({@link #pose}) under their own descriptors - one
+ * profile per registry path - each with its own wingspeed, texture, shadow and scale.</p>
  *
- * <p>Scale and shadow follow {@link ButterflyRenderer}: 1.0 render scale (identity - the classic renderer has no scale
- * override, so no scale hook) and a 0.3 x 1.0 shadow (ENT-S-092); the texture per {@code getButterflyType()} exactly as
+ * <p>Scale and shadow follow {@link ButterflyRenderer}: 1.0 render scale (identity - the classic renderer has no scale override, so no
+ * scale hook) and a 0.3 x 1.0 shadow (ENT-S-092); the texture per {@code getButterflyType()} exactly as
  * {@link ButterflyRenderer#getTextureLocation} switches it (its sheets are private there, so the switch is carried here).</p>
  */
 public final class ButterflyGeoReplacement extends OreSpawnGeoReplacement<EntityButterfly> {

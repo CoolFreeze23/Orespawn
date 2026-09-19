@@ -355,21 +355,27 @@ public final class ReferenceClipSampler {
             Map.entry("model_waterdragon", "water_dragon"),
             // the remainder slice (2026-09-15): seven hooks landed - the Lurking Terror and the Scorpion (the pair-contested rule), the
             // Ghost (ENT-S-160 (a)), the Boyfriend, the Girlfriend and the Princess (the hooks written by this slice), the King (the
-            // second pass, TEST-018); the Butterfly rig's four consumers REPORTED, not landed (TEST-019): rows stay
+            // second pass, TEST-018); the Butterfly rig's four consumers REPORTED then (TEST-019), landed by the Butterfly rig's slice below
             Map.entry("model_lurkingterror", "lurking_terror"),
             Map.entry("model_scorpion", "scorpion"),
             Map.entry("model_ghost", "ghost"),
             Map.entry("model_boyfriend", "boyfriend"),
             Map.entry("model_girlfriend", "girlfriend"),
             Map.entry("model_theprincess", "the_princess"),
-            Map.entry("model_theking", "the_king")));
+            Map.entry("model_theking", "the_king"),
+            // the Butterfly rig's slice (2026-09-19, the close, item 1): the four consumers of one rig landed on the hooks already written
+            // under the manifest-declared pair-contested cap (TEST-019)
+            Map.entry("model_butterfly", "butterfly"),
+            Map.entry("model_luna_moth", "luna_moth"),
+            Map.entry("model_mothra", "mothra"),
+            Map.entry("model_vampire_butterfly", "vampire_butterfly")));
 
     /**
      * An unlanded hook: the descriptor's simple class name, the ModEntities registry it packages under and the rig it
      * names - the map {@code HOOKS} in {@code tools/asset_audit.py} carries (descriptor -> rig; 67 entries at the
-     * hooks' landing, the landing slices removing theirs - T2d removed thirteen, T2e fourteen (the Lurking Terror held), T2f twelve (the Dungeon Beast and the Scorpion held), the FK slice three (the Alien pair and the Emperor Scorpion, real parent-child hierarchies), the first Tier-1 slice T1a seventeen (the King and the Butterfly rig held), the second Tier-1 slice T1b two (the Prince Teen and the Water Dragon), the remainder slice four (the Lurking Terror, the Scorpion, the Ghost and the King; the Butterfly rig's four stay - REPORTED, not landed, TEST-019; the Boyfriend, Girlfriend and Princess hooks written and landed by the same slice never held a row); the two delegating descriptors, the
-     * Alien Boss's on the Alien's rig and the Leonopteryx's on the Leon's, added
-     * here because they package under their own registries). The reference entry is {@code reference_<rig>} in {@code
+     * hooks' landing, the landing slices removing theirs - T2d removed thirteen, T2e fourteen (the Lurking Terror held), T2f twelve (the Dungeon Beast and the Scorpion held), the FK slice three (the Alien pair and the Emperor Scorpion, real parent-child hierarchies), the first Tier-1 slice T1a seventeen (the King and the Butterfly rig held), the second Tier-1 slice T1b two (the Prince Teen and the Water Dragon), the remainder slice four (the Lurking Terror, the Scorpion, the Ghost and the King; the Butterfly rig's four stayed - REPORTED, not landed, TEST-019; the Boyfriend, Girlfriend and Princess hooks written and landed by the same slice never held a row), the Butterfly rig's slice the last four - butterfly, luna_moth, mothra and vampire_butterfly on one rig (TEST-019 landed under the manifest-declared pair-contested cap; the map is EMPTY, every hook has landed); the two delegating descriptors, the Alien Boss's on the Alien's rig
+     * and the Leonopteryx's on the Leon's, added here because they package under
+     * their own registries). The reference entry is {@code reference_<rig>} in {@code
      * tools/reference_model_proofs.json}, its geo {@code
      * <geo-dir>/reference_<rig>.geo.json}. A row whose descriptor is gone, whose reference entry is gone, or whose rig
      * has shipped (the descriptor's geo exists under src/main/resources: the slice landed and the manifest carries it) is
@@ -385,11 +391,9 @@ public final class ReferenceClipSampler {
         }
     }
 
-    static final Map<String, Hook> HOOK_DESCRIPTORS = hooks(
-            new Hook("ButterflyGeoReplacement", "butterfly", "butterfly"),
-            new Hook("LunaMothGeoReplacement", "luna_moth", "butterfly"),
-            new Hook("MothraGeoReplacement", "mothra", "butterfly"),
-            new Hook("VampireButterflyGeoReplacement", "vampire_butterfly", "butterfly"));
+    // EMPTY since the Butterfly rig's slice (2026-09-19, the close, item 1): the last four hooks (the Butterfly rig's four consumers) landed and
+    // their rows moved to REGISTRIES / RULES; a future hook written ahead of its rig goes back in here.
+    static final Map<String, Hook> HOOK_DESCRIPTORS = hooks();
 
     private static Map<String, Hook> hooks(Hook... rows) {
         Map<String, Hook> out = new TreeMap<>();
@@ -981,7 +985,22 @@ public final class ReferenceClipSampler {
             Map.entry("model_girlfriend", Rule.periodic(TWO_PI / (double) 0.067F,
                 "the Boyfriend rig's rule: GirlfriendGeoReplacement.applyCustomAnimations:68 -> BoyfriendGeoReplacement.poseRig - vanilla HumanoidModel.setupAnim (21.1.223, HumanoidModel.java:137-286) transcribed in BoyfriendGeoReplacement.poseRig: the slowest rhythm is the arms' idle bob sin(ageInTicks * 0.067) * 0.05 on the arms' pitch (AnimationUtils.bobModelPart :60; poseRig:248, :250, every state) at 0.067 rad/tick, 93.78 ticks, beside the roll's cos(ageInTicks * 0.09) * 0.05 + 0.05 (:59; poseRig:247); the stride cos(limbSwing * 0.6662) on the legs (1.4 * limbSwingAmount) and the arms (2 * 0.5 * limbSwingAmount) (HumanoidModel.java:168-173; poseRig:138-143, walk) is phased by the walk position, 1.0 per tick at the sampler's inputs (9.43 ticks); the swing (setupAttackAnimation :382-408; poseRig:183-210) reads attackTime = getAttackAnim(inputs.partialTick()) (poseRig:98; the seam's partial tick, 0 in the sampler, 0 at rest); the riding pose (:178-186; poseRig:149) and the elytra glide (:137-165; poseRig:104) on isSeatedOnVehicle / getFallFlyingTicks")),
             Map.entry("model_theprincess", Rule.periodic(TWO_PI / (double) (0.3F * 0.65F),
-                "wingspeed 0.65: the slowest rhythm is the resting wings cos(ageInTicks * 0.3 * WINGSPEED) * PI * 0.04 (ThePrincessGeoReplacement.applyCustomAnimations:97, below the threshold and not attacking) at 0.195 rad/tick, 32.22 ticks; the threshold-or-attacking wings cos(ageInTicks * 2.3 * WINGSPEED) * PI * 0.4 * limbSwingAmount (:96) and the threshold legs cos(ageInTicks * 2.0 * WINGSPEED) * PI * 0.25 * limbSwingAmount (:106, walk); the tail sway cos(ageInTicks * 0.9 * WINGSPEED) * PI * 0.06 (:117) and the attacking lash cos(ageInTicks * 1.3 * WINGSPEED) * PI * 0.12 (:122; the fan x1.6 .. 4.6 with the four follows :130-145); the jaw chatter cos(ageInTicks * 1.9 / 2.1 / 2.3 * WINGSPEED) * PI * 0.2 (:202-203); the three heads' look and the necks by the head extensions (0 on the probe, :147-259); the three power orbs advance every axis by a constant per pose call (:264-272: 0.03 .. 0.13 rad, wrapped below pi) on the bake's own bones - not a function of time: a step per rendered frame in-game, while the sampler poses every key over a fresh bake (one pose call per key), so each key holds one step from the bind and the orbs stand still in the clips; the closure test is the wings'"))));
+                "wingspeed 0.65: the slowest rhythm is the resting wings cos(ageInTicks * 0.3 * WINGSPEED) * PI * 0.04 (ThePrincessGeoReplacement.applyCustomAnimations:97, below the threshold and not attacking) at 0.195 rad/tick, 32.22 ticks; the threshold-or-attacking wings cos(ageInTicks * 2.3 * WINGSPEED) * PI * 0.4 * limbSwingAmount (:96) and the threshold legs cos(ageInTicks * 2.0 * WINGSPEED) * PI * 0.25 * limbSwingAmount (:106, walk); the tail sway cos(ageInTicks * 0.9 * WINGSPEED) * PI * 0.06 (:117) and the attacking lash cos(ageInTicks * 1.3 * WINGSPEED) * PI * 0.12 (:122; the fan x1.6 .. 4.6 with the four follows :130-145); the jaw chatter cos(ageInTicks * 1.9 / 2.1 / 2.3 * WINGSPEED) * PI * 0.2 (:202-203); the three heads' look and the necks by the head extensions (0 on the probe, :147-259); the three power orbs advance every axis by a constant per pose call (:264-272: 0.03 .. 0.13 rad, wrapped below pi) on the bake's own bones - not a function of time: a step per rendered frame in-game, while the sampler poses every key over a fresh bake (one pose call per key), so each key holds one step from the bind and the orbs stand still in the clips; the closure test is the wings'")),
+            // the Butterfly rig's slice (TEST-019): the four consumers of one rig landed on the hooks already written - each row is the
+            // HOOK_RULES row the hook survey wrote, carried verbatim (the same rule, the same source lines, true on the line-neutral
+            // descriptors) and keyed by the manifest id; one rhythm per registry at its own wingspeed, so its own period
+            Map.entry("model_butterfly", Rule.periodic(TWO_PI / (double) (1.3F * 1.0F),
+                "one rhythm at wingspeed 1.0: the eight mirrored wings cos(ageInTicks * 1.3 * wingspeed) * PI * 0.25 about Z (ButterflyGeoReplacement"
+                        + ".pose:69; ButterflyGeoReplacement.applyCustomAnimations passes WINGSPEED 1.0) at 1.3 rad/tick, 4.83 ticks; nothing reads the walk or the entity")),
+            Map.entry("model_luna_moth", Rule.periodic(TWO_PI / (double) (1.3F * 0.75F),
+                "the Butterfly rig's one rhythm at the Luna Moth's wingspeed 0.75: cos(ageInTicks * 1.3 * 0.75) * PI * 0.25 on the eight wings "
+                        + "(LunaMothGeoReplacement.applyCustomAnimations:58 -> ButterflyGeoReplacement.pose:69) at 0.975 rad/tick, 6.44 ticks")),
+            Map.entry("model_mothra", Rule.periodic(TWO_PI / (double) (1.3F * 0.2F),
+                "the Butterfly rig's one rhythm at Mothra's wingspeed 0.2: cos(ageInTicks * 1.3 * 0.2) * PI * 0.25 on the eight wings "
+                        + "(MothraGeoReplacement.applyCustomAnimations:45 -> ButterflyGeoReplacement.pose:69) at 0.26 rad/tick, 24.17 ticks")),
+            Map.entry("model_vampire_butterfly", Rule.periodic(TWO_PI / (double) (1.3F * 1.0F),
+                "the Butterfly rig's one rhythm at the Vampire Butterfly's wingspeed 1.0: cos(ageInTicks * 1.3 * 1.0) * PI * 0.25 on the eight wings "
+                        + "(VampireButterflyGeoReplacement.applyCustomAnimations:40 -> ButterflyGeoReplacement.pose:69) at 1.3 rad/tick, 4.83 ticks"))));
 
     /**
      * The span rule of every unlanded hook ((3)): a hook declares no manifest channels, so each row states its
@@ -996,24 +1015,13 @@ public final class ReferenceClipSampler {
      * descriptor (the Alien Boss, the Leonopteryx, the Baby Dragon, Jeffery) shares its rig's row; the Butterfly rig's four
      * consumers carry their own wingspeed and therefore their own period. The three hooks whose gait reads the entity's
      * movement delta (the Cephadrome, the Dragon, the Ostrich: {@code xOld() - getX()}, 0 on a probe that does not move)
-     * show no gait at these inputs in any state; their rows say so.
+     * show no gait at these inputs in any state; their rows say so. EMPTY since the Butterfly rig's slice: the last four rows
+     * (the Butterfly rig's four consumers) carried verbatim into {@link #RULES} keyed by their manifest ids.
      */
     static final Map<String, Rule> HOOK_RULES = hookRules();
 
     private static Map<String, Rule> hookRules() {
         Map<String, Rule> rules = new TreeMap<>();
-        rules.put("ButterflyGeoReplacement", Rule.periodic(TWO_PI / (double) (1.3F * 1.0F),
-                "one rhythm at wingspeed 1.0: the eight mirrored wings cos(ageInTicks * 1.3 * wingspeed) * PI * 0.25 about Z (ButterflyGeoReplacement"
-                        + ".pose:69; ButterflyGeoReplacement.applyCustomAnimations passes WINGSPEED 1.0) at 1.3 rad/tick, 4.83 ticks; nothing reads the walk or the entity"));
-        rules.put("LunaMothGeoReplacement", Rule.periodic(TWO_PI / (double) (1.3F * 0.75F),
-                "the Butterfly rig's one rhythm at the Luna Moth's wingspeed 0.75: cos(ageInTicks * 1.3 * 0.75) * PI * 0.25 on the eight wings "
-                        + "(LunaMothGeoReplacement.applyCustomAnimations:58 -> ButterflyGeoReplacement.pose:69) at 0.975 rad/tick, 6.44 ticks"));
-        rules.put("MothraGeoReplacement", Rule.periodic(TWO_PI / (double) (1.3F * 0.2F),
-                "the Butterfly rig's one rhythm at Mothra's wingspeed 0.2: cos(ageInTicks * 1.3 * 0.2) * PI * 0.25 on the eight wings "
-                        + "(MothraGeoReplacement.applyCustomAnimations:45 -> ButterflyGeoReplacement.pose:69) at 0.26 rad/tick, 24.17 ticks"));
-        rules.put("VampireButterflyGeoReplacement", Rule.periodic(TWO_PI / (double) (1.3F * 1.0F),
-                "the Butterfly rig's one rhythm at the Vampire Butterfly's wingspeed 1.0: cos(ageInTicks * 1.3 * 1.0) * PI * 0.25 on the eight wings "
-                        + "(VampireButterflyGeoReplacement.applyCustomAnimations:40 -> ButterflyGeoReplacement.pose:69) at 1.3 rad/tick, 4.83 ticks"));
         hookRulesHtoP(rules);
         hookRulesRtoW(rules);
         return rules;

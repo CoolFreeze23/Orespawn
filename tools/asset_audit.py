@@ -121,10 +121,9 @@ ACKNOWLEDGED = {
 # acknowledged (see is_acknowledged in main); a texture or another rig's asset missing
 # from a hook is an ERROR as anywhere else. check_hooks reports a stale entry.
 HOOKS = {
-    "ButterflyGeoReplacement": "butterfly",
-    "LunaMothGeoReplacement": "butterfly",
-    "MothraGeoReplacement": "butterfly",
-    "VampireButterflyGeoReplacement": "butterfly",
+    # EMPTY since the Butterfly rig's slice (2026-09-19, the close, item 1; TEST-019 landed under the manifest-declared
+    # pair-contested cap): the last four hooks - the Butterfly rig's four consumers on butterfly.geo.json - landed, so every
+    # descriptor's references are audited as every other's. A future hook written ahead of its rig goes back in here.
 }
 
 # Categories no ACKNOWLEDGED entry may whitelist (an entry naming one is FATAL):

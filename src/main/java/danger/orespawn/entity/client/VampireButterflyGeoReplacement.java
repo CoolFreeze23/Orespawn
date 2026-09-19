@@ -8,14 +8,14 @@ import net.minecraft.resources.ResourceLocation;
 import software.bernie.geckolib.animation.AnimationProcessor;
 
 /**
- * GeckoLib Vampire Butterfly (the hook survey, 2026-09-14): a consumer of the Butterfly rig. The port-only
- * registration ({@link VampireButterflyRenderer}: no 1.7.10 {@code RenderButterfly} line for it)
- * draws the shared {@link ButterflyModel} at the default wingspeed 1.0f (orig ModelButterfly.java:23) over {@code
- * vampire_butterfly.png}, so this descriptor shares {@link ButterflyGeoReplacement}'s geo, clip file and hook
- * under its own registry path ({@code vampire_butterfly}; one profile per registry path even for a shared rig).
+ * GeckoLib Vampire Butterfly (the hook survey, 2026-09-14; landed by the Butterfly rig's slice, 2026-09-19, TEST-019): a
+ * consumer of the Butterfly rig. The port-only registration ({@link VampireButterflyRenderer}: no 1.7.10 {@code RenderButterfly}
+ * line for it) draws the shared {@link ButterflyModel} at the default wingspeed 1.0f (orig
+ * ModelButterfly.java:23) over {@code vampire_butterfly.png}, so this descriptor shares {@link ButterflyGeoReplacement}'s geo,
+ * clip file and hook under its own registry path ({@code vampire_butterfly}; one profile per registry path even for a shared rig).
  *
- * <p>Shadow follows {@link VampireButterflyRenderer}'s constructor ({@code super(context, model, 0.2f)}: the literal it
- * passes - it declares no SHADOW constant and no scale override, and no reference renderer pins it).</p>
+ * <p>Shadow follows {@link VampireButterflyRenderer}'s constructor ({@code super(context, model, 0.2f)}: the literal it passes -
+ * it declares no SHADOW constant and no scale override, and no reference renderer pins it).</p>
  */
 public final class VampireButterflyGeoReplacement extends OreSpawnGeoReplacement<VampireButterfly> {
     /** orig ModelButterfly.java:23 {@code wingspeed = 1.0f}: the default the port-only renderer passes. */

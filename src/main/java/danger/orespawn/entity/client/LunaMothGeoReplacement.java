@@ -9,14 +9,14 @@ import net.minecraft.resources.ResourceLocation;
 import software.bernie.geckolib.animation.AnimationProcessor;
 
 /**
- * GeckoLib Luna Moth (the hook survey, 2026-09-14): a consumer of the Butterfly rig. orig
- * ClientProxyOreSpawn.java:407 registers {@code new RenderButterfly(new ModelButterfly(0.75f), 0.4f, 1.5f)} over the
- * moth's sheets, so this descriptor shares {@link ButterflyGeoReplacement}'s geo, clip file and hook under its own
- * registry path ({@code luna_moth}; one profile per registry path even for a shared rig) at the moth's own wingspeed 0.75f.
+ * GeckoLib Luna Moth (the hook survey, 2026-09-14; landed by the Butterfly rig's slice, 2026-09-19, TEST-019): a consumer of
+ * the Butterfly rig. orig ClientProxyOreSpawn.java:407 registers {@code new RenderButterfly(new ModelButterfly(0.75f), 0.4f,
+ * 1.5f)} over the moth's sheets, so this descriptor shares {@link ButterflyGeoReplacement}'s geo, clip file and hook under
+ * its own registry path ({@code luna_moth}; one profile per registry path even for a shared rig) at the moth's own wingspeed 0.75f.
  *
- * <p>Scale and shadow follow {@link LunaMothRenderer}: 1.5 render scale and a 0.4 x 1.5 shadow (ENT-S-092); the texture
- * per {@code moth_type} exactly as {@link LunaMothRenderer#getTextureLocation} switches it (its sheets are private
- * there, so the switch is carried here).</p>
+ * <p>Scale and shadow follow {@link LunaMothRenderer}: 1.5 render scale and a 0.4 x 1.5 shadow (ENT-S-092); the texture per
+ * {@code moth_type} exactly as {@link LunaMothRenderer#getTextureLocation} switches it (its sheets are private there, so the
+ * switch is carried here).</p>
  */
 public final class LunaMothGeoReplacement extends OreSpawnGeoReplacement<EntityLunaMoth> {
     /** orig ClientProxyOreSpawn.java:407 {@code new ModelButterfly(0.75f)}: the Luna Moth's wingspeed. */

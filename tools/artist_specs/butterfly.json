@@ -1,9 +1,9 @@
 {
   "registry": "butterfly",
   "display_name": "Butterfly",
-  "status": "DRAFT — authored by a first pass from the entity code, 2026-09-13; edit pending",
+  "status": "DRAFT — authored by a first pass from the entity code, 2026-09-13; edit pending, landed on its hook by the Butterfly rig's slice (TEST-019 under the entry's declared pair-contested cap; hitbox profiles excluded - the classic single hitbox stays until the profile phase)",
   "locomotion": "flyer",
-  "artist_scope": "full contract (Tier 1, the simple-cyclic class: geckolib_migration_design.md section 5) with the §8.1 locks (none pre-declared: the design's section 6 keeps this consumer of the shared ButterflyModel single-box); the rig is not yet in-game (it lands through the seam in a later slice)",
+  "artist_scope": "full contract (Tier 1, the simple-cyclic class: geckolib_migration_design.md section 5) with the §8.1 locks (none pre-declared: the design's section 6 keeps this consumer of the shared ButterflyModel single-box); ON THE HOOK until idle and walk are delivered: in-game through the seam behind the dev switch since the Butterfly rig's slice",
   "character_sheet": "A small ambient butterfly: a one-cube body bar with a one-cube head at the front and four flat wing panels a side — an inner forewing, a larger outer forewing, a hindwing behind it and a long narrow tail streamer (ButterflyModel.createBodyLayer, ButterflyModel.java:54-102). It drifts about the air on the butterfly flight preset (EntityButterfly.java:74; the vertical drag at tick :103-107 keeps it hovering), wears one of four skins (ButterflyRenderer.java:33-37), and an empty-handed right-click on it carries the player to the Chaos dimension and back (mobInteract, EntityButterfly.java:117-149). In the Islands its type-1 form hunts prey and nips for 1.0 on a 1-in-2 roll (doHurtTarget :161-165, reached from ButterflyIslandsHuntGoal.java:83). It spawns by day, in the air, above y 50 or anywhere in the Islands (checkSpawnRules :209-219), in forest, jungle and taiga swarms (the swarm_butterfly biome modifiers). Read it as a fluttering insect: everything is in the wings.",
   "size_notes": "Drawn at x1.0 of the rig (ButterflyRenderer has no scale override; shadow 0.3, ButterflyRenderer.java:28) on a 64x32 sheet (ButterflyModel.java:104), four skins by the synced butterfly type (ButterflyRenderer.java:33-37); 0.4 x 0.4 block hitbox (ModEntities.java:602-603). The wing panels are one unit thick: they read only from above and the side.",
   "labels": {
@@ -91,5 +91,8 @@
   ],
   "locked_bones_provisional": [],
   "locked_bones_note": "The design's section 6 ButterflyModel row (geckolib_migration_design.md:440) keeps this consumer single-box — 'butterfly / luna_moth [0.4,0.4] ... stay single-box', 'other shared-rig consumers get no profile' — so no intended locked bones are pre-declared; the row's four part bones (body, head, leftwing, rightwing) belong to mothra's profile only. Every bone name stays final regardless (the shared rig serves four registries).",
+  "formulas": [
+    "`ButterflyModel.setupAnim` (ButterflyModel.java:108-116; orig ModelButterfly.java:96-102 in `render` (func_78088_a, :91-111 - the head and body drawn at :94-95, the eight wing rotations written at :96-102, the eight wings drawn at :103-110; func_78087_a at :119-121 is a bare super call), wingspeed 1.0 - `new ModelButterfly(1.0f)` in orig ClientProxyOreSpawn.java:405): the four right wing parts (rightwing, rightwing2, rightwing3, rightwing4) roll about Z by the cosine of the age in ticks times 1.3 times the wingspeed (two float multiplies, left to right), times pi, times 0.25, and the four left wing parts (leftwing, leftwing2, leftwing3, leftwing4) by its negative; the body and the head are still. The walk position, the walking speed, the head angles and the entity's state play no part. The GeckoLib hook is the same (ButterflyGeoReplacement.applyCustomAnimations -> ButterflyGeoReplacement.pose at WINGSPEED 1.0; one rig, butterfly.geo.json, for the four registries)."
+  ],
   "effort_hours": null
 }
