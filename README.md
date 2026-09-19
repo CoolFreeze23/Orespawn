@@ -3,7 +3,7 @@
 > *"Just plain fun!"* — the classic 1.7.10 OreSpawn, rebuilt for modern
 > Minecraft with 100% source-verified parity.
 
-**Version:** 1.21.1-2.0.0-beta.1 · **Loader:** NeoForge 21.1+ · **Minecraft:** 1.21.1
+**Version:** 1.21.1-2.0.0-beta.5 · **Loader:** NeoForge 21.1+ · **Minecraft:** 1.21.1
 **Status:** public beta — the 2.0 robot overhaul is live; the 1.0 parity
 core underneath is stable, with visual/audio polish in community review
 
@@ -69,7 +69,32 @@ post-beta patch.
 
 ## Roadmap
 
-- **2.0.0-beta.1 (this build)**: the Procedural Spider Overhaul —
+- **2.0.0-beta.5 (this build)**: Phase G — the GeckoLib rigs. Nothing
+  changes for a default install: every creature still draws through its
+  classic renderer and poses exactly as before. Behind a developer
+  switch, 103 of the mod's 106 creature rigs now also exist as GeckoLib
+  rigs converted from the classic models and proven against them bone
+  for bone and pixel for pixel; the four butterflies (Butterfly, Luna
+  Moth, Mothra, Vampire Butterfly) are the ones still classic-only,
+  held on one flat-pose sample of the Mothra that ties more pixels than
+  the comparison's rule allows. The switch is a JVM argument, not a
+  config: `-Dorespawn.dev.geckolibRenderers=ender_knight` draws that
+  species through its GeckoLib renderer — a comma-separated list of
+  registry names (`beaver,elevator`), or `candidate` for every
+  converted species; without it you get the classic renderers. Along
+  the way a mirror slip was corrected at its source: the converter had
+  been writing the rigs mirrored left for right, in a frame where the
+  comparison could not see it; every converted rig, clip and proof was
+  regenerated in the corrected frame, and the comparison now reproduces
+  the real in-game render chains. For animators, the animation
+  contract is complete: when a creature's clips are delivered, its
+  idle and walk blend by speed, flying and swimming fade in,
+  and hits, attacks and deaths play over the top; until then every
+  creature keeps its ported motion, bit for bit. The default flip
+  (GeckoLib as the default renderer) is prepared on a branch and
+  merges once approved; boss hitbox profiles are the phase after.
+- **2.0.0-beta.2 to 2.0.0-beta.4**: see [CHANGELOG.md](CHANGELOG.md).
+- **2.0.0-beta.1**: the Procedural Spider Overhaul —
   see [CHANGELOG.md](CHANGELOG.md). Classic 1.7.10 behavior remains
   one config line away and is regression-tested on every build.
 - **Next**: the Queen Coherence pass (flight-state and animation
