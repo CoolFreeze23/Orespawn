@@ -644,7 +644,11 @@ public class OreSpawnConfig {
                         "clips) plays them through the phase-locked keyframe layers and its classic code-driven pose " +
                         "stands down; one without the other, or neither, keeps the classic pose whatever this says " +
                         "(the Beaver ships its transcription since 2026-09-12; every other shipped clip file is empty " +
-                        "until a species' clips land). Only takes effect while modern.enabled is true; classic mode always poses " +
+                        "until a species' clips land). A shipped transcription plays always-on, bit-exact to the classic " +
+                        "formulas; an artist's file (an idle that keys a bone, fly / swim, a one-shot) plays the contract's " +
+                        "weighted layers - idle and walk cross-fading by walking speed, fly / swim ramping in over five ticks, " +
+                        "one-shots over the cycles on the bones they key (the weights slice, 2026-09-15). " +
+                        "Only takes effect while modern.enabled is true; classic mode always poses " +
                         "from the 1.7.10 formulas. On by default; set false to keep every " +
                         "species on the classic pose in modern mode too. Picked up by an entity as it (re)enters render " +
                         "distance, on F3+T or on re-login, not live."

@@ -126,4 +126,10 @@ public final class StinkyGeoReplacement extends OreSpawnGeoReplacement<EntitySti
             super(context, new StinkyGeoReplacement());
         }
     }
+
+    /** The SPEC's {@code locomotion: flyer} (tools/artist_specs/stinky.json): {@code flying} is {@code !onGround()} (contract section 3; the weights slice: every landed species carries its seed's word, the asset audit pins it). */
+    @Override
+    public danger.orespawn.entity.client.animation.LocomotionKind locomotion() {
+        return danger.orespawn.entity.client.animation.LocomotionKind.FLYER;
+    }
 }

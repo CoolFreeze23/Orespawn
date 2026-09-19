@@ -32,4 +32,10 @@ public final class IslandTooGeoReplacement extends OreSpawnGeoReplacement<Island
             super(context, new IslandTooGeoReplacement());
         }
     }
+
+    /** The SPEC's {@code locomotion: stationary} (tools/artist_specs/island_too.json): no gait word - the contract's idle alone (contract section 3; the weights slice: every landed species carries its seed's word, the asset audit pins it). */
+    @Override
+    public danger.orespawn.entity.client.animation.LocomotionKind locomotion() {
+        return danger.orespawn.entity.client.animation.LocomotionKind.STATIONARY;
+    }
 }

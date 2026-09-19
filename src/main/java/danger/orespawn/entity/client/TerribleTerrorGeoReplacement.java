@@ -72,4 +72,10 @@ public final class TerribleTerrorGeoReplacement extends OreSpawnGeoReplacement<E
             super(context, new TerribleTerrorGeoReplacement());
         }
     }
+
+    /** The SPEC's {@code locomotion: flyer} (tools/artist_specs/terrible_terror.json): {@code flying} is {@code !onGround()} (contract section 3; the weights slice: every landed species carries its seed's word, the asset audit pins it). */
+    @Override
+    public danger.orespawn.entity.client.animation.LocomotionKind locomotion() {
+        return danger.orespawn.entity.client.animation.LocomotionKind.FLYER;
+    }
 }

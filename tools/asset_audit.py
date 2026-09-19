@@ -134,7 +134,7 @@ HOOKS = {
 # it is a build error, full stop; and a shipped rig that is neither a seam rig nor a
 # dated OUTSIDE_SEAM exception is a rig outside the contract nobody decided on (on the
 # landing).
-NEVER_ACKNOWLEDGED = {"HOOK_STALE", "GECKO_GEO_DRAW_ORDER_MISSING", "GECKO_GEO_SEAM_UNRECONCILED",
+NEVER_ACKNOWLEDGED = {"HOOK_STALE", "LOCOMOTION_WORD", "GECKO_GEO_DRAW_ORDER_MISSING", "GECKO_GEO_SEAM_UNRECONCILED",
                       "GECKO_GEO_FACE_ORDER_INVALID", "GECKO_GEO_FLAT_CUBE_FACE_ORDER_MISSING",
                       "GECKO_REFERENCE_CLIP_SHIPPED"}
 
@@ -572,6 +572,52 @@ def check_hooks():
             err("HOOK_STALE", name, "HOOKS lists this descriptor as a hook pending its rig, but "
                 "%s ships - the slice landed; remove the entry so the descriptor's references "
                 "are audited as every other's" % rel(geo), java)
+
+
+# The weights slice: contract section 3 defines `flying` and `inWater` by the SPEC's locomotion word, which the descriptor
+# mirrors as its `locomotion()` override - so every seed's word must be the word its descriptor returns. A word with no
+# LocomotionKind (the elevator's "hover (player-ridden vehicle)") is exempt; a seed without a descriptor (Tier 0,
+# unconverted) is skipped.
+SPECS_DIR = Path(__file__).resolve().parent / "artist_specs"
+LOCOMOTION_KINDS = {"walker": "WALKER", "flyer": "FLYER", "swimmer": "SWIMMER", "stationary": "STATIONARY"}
+LOCOMOTION_OVERRIDE_RE = re.compile(r"locomotion\(\)\s*\{\s*return\s+(?:[\w.]*\.)?LocomotionKind\.(\w+);")
+
+
+def descriptor_for_registry(registry):
+    """The descriptor's simple class name for a seed's registry id (CamelCase; robot_1 -> Robot1, trex -> TRex)."""
+    if registry == "trex":
+        return "TRexGeoReplacement"
+    parts = registry.split("_")
+    if len(parts) == 2 and parts[0] == "robot" and parts[1].isdigit():
+        return "Robot" + parts[1] + "GeoReplacement"
+    return "".join(p[:1].upper() + p[1:] for p in parts) + "GeoReplacement"
+
+
+def check_locomotion_words():
+    """Every seed's locomotion word is the word its descriptor's locomotion() returns (walker: no override or WALKER)."""
+    for spec in sorted(SPECS_DIR.glob("*.json")):
+        try:
+            data = json.loads(spec.read_text(encoding="utf-8"))
+        except (OSError, ValueError) as failure:
+            err("LOCOMOTION_WORD", spec.stem, "the seed cannot be read: %s" % failure, spec)
+            continue
+        registry = data.get("registry") or spec.stem
+        word = data.get("locomotion")
+        java = JAVA / "entity" / "client" / (descriptor_for_registry(registry) + ".java")
+        if not java.is_file():
+            continue
+        expected = LOCOMOTION_KINDS.get(word)
+        found = LOCOMOTION_OVERRIDE_RE.search(read(java))
+        if expected is None:
+            if found:
+                err("LOCOMOTION_WORD", registry, "the seed's locomotion word %r has no LocomotionKind, but the descriptor "
+                    "overrides locomotion() with %s - the seed or the override is wrong" % (word, found.group(1)), java)
+            continue
+        actual = found.group(1) if found else "WALKER"
+        if actual != expected:
+            err("LOCOMOTION_WORD", registry, "the seed says locomotion: %s (LocomotionKind.%s) but the descriptor's "
+                "locomotion() returns %s - contract section 3 reads the SPEC's word; add or correct the override "
+                "(the weights slice)" % (word, expected, actual), java)
 
 
 def check_texture_refs(java_texts):
@@ -1229,6 +1275,7 @@ def main():
     check_entity_renderers(entities, java_texts)
     check_menu_screens(menus, java_texts)
     check_hooks()
+    check_locomotion_words()
     check_texture_refs(java_texts)
     check_additional_models(java_texts)
     sound_keys = check_sounds()

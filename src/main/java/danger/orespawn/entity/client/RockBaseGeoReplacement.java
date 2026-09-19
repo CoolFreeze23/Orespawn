@@ -89,4 +89,10 @@ public final class RockBaseGeoReplacement extends OreSpawnGeoReplacement<RockBas
             super(context, new RockBaseGeoReplacement());
         }
     }
+
+    /** The SPEC's {@code locomotion: stationary} (tools/artist_specs/rock_base.json): no gait word - the contract's idle alone (contract section 3; the weights slice: every landed species carries its seed's word, the asset audit pins it). */
+    @Override
+    public danger.orespawn.entity.client.animation.LocomotionKind locomotion() {
+        return danger.orespawn.entity.client.animation.LocomotionKind.STATIONARY;
+    }
 }

@@ -5,6 +5,7 @@ import danger.orespawn.ModEntities;
 import danger.orespawn.OreSpawnMod;
 import danger.orespawn.entity.EntityTshirt;
 import danger.orespawn.entity.client.animation.KeyframeLayer;
+import danger.orespawn.entity.client.animation.LocomotionKind;
 import java.util.List;
 import java.util.Set;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
@@ -52,6 +53,12 @@ public final class TshirtGeoReplacement extends OreSpawnGeoReplacement<EntityTsh
     @Override
     public List<KeyframeLayer> keyframeLayers() {
         return KEYFRAME_LAYERS;
+    }
+
+    /** The SPEC's {@code locomotion: stationary} (tools/artist_specs/tshirt.json): never {@code flying}; {@code idle} its only locomotion loop (contract section 3; the weights slice). */
+    @Override
+    public LocomotionKind locomotion() {
+        return LocomotionKind.STATIONARY;
     }
 
     @Override

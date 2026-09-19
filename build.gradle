@@ -430,6 +430,18 @@ tasks.register('referenceClipsVerify', JavaExec) {
             '--reference', referenceManifest.absolutePath, referenceBuildDir.get().dir('generated').asFile.absolutePath
 }
 tasks.named('check') { dependsOn tasks.named('referenceClipsVerify') }
+// The weights slice: the blend's pose-level proof runs in every build - the headless probe's rows (idle at
+// limbSwingAmount 0, walk at 1, the exact weighted blend at 0.5, the fly / swim ramps, the trigger's replace and its
+// bone-reset blend-out) within 1e-5 rad; any failing check exits 1 and fails the build.
+tasks.register('weightsBlendProbe', JavaExec) {
+    group = 'verification'
+    description = 'Run the weights slice blend probe headlessly (WeightsBlendProbe): every row within 1e-5 rad, else the build fails.'
+    dependsOn tasks.named('g1toolClasses')
+    classpath = sourceSets.g1tool.runtimeClasspath
+    mainClass = 'danger.orespawn.g1.WeightsBlendProbe'
+    jvmArgs '-Djava.awt.headless=true'
+}
+tasks.named('check') { dependsOn tasks.named('weightsBlendProbe') }
 
 // Standing reference-geometry gate (BUG-041 / ENT-S-091): every port entity model with a
 // 1.7.10 source is compiled, dumped and compared against the parsed original; models still

@@ -59,6 +59,14 @@ import software.bernie.geckolib.model.GeoModel;
  *       manager would have accumulated - the demo measured a fresh bake per sample and could not
  *       see it). Two controllers on one bone otherwise compose as last-registered-wins (measured
  *       1.412 rad off the sum; additive 5.2e-8 rad, {@code demo_results.json} G).</li>
+ * <li>in the WEIGHTED mode ({@link #weighted}; the weights slice - and as decided) - the form of every locomotion
+ * layer of an ARTIST-delivered species ({@link ContractLayers}) - every keyed channel of the
+ * clip's bones is multiplied by the frame's layer weight (the share of the contract's products that falls to the
+ * clip) times the trigger mask's per-bone factor and composed additively, positions and scales included; a bone a
+ * triggered clip writes this frame is left to it, a bone crossing back from one carries the bone-reset's value
+ * as its base ({@link TriggerMask}). The transcription forms above never take this branch: an exact
+ * transcription plays always-on, bit-exact to its hook.</li>
+ *
  * </ol>
  *
  * <p>Event keyframes (sound / particle / custom-instruction) on a phase-locked loop fire ONCE per
@@ -100,6 +108,15 @@ public final class PhaseLockedKeyframeController<T extends GeoAnimatable>
     private final Set<String> amplitudeScaledRotationBones;
     private final StateFloatFunction<T> rotationAmplitude;
     private final boolean additive;
+    /**
+     * WEIGHTED (the weights slice, class javadoc item 6): every keyed channel of the clip's bones scaled by the
+     * frame's weight, composed additively, masked per bone by the triggered clips; false on the transcription forms.
+     */
+    private final boolean weighted;
+    /** The weighted mode's trigger mask; null on the transcription forms. */
+    private final TriggerMask mask;
+    /** The per-manager contract a weighted layer belongs to; null on the transcription forms. */
+    private final ContractLayers contract;
     /** The loaded clip's declared length in ticks, read at prime; NaN until primed. */
     private double declaredClipTicks = Double.NaN;
     private double lastClipTick = Double.NaN;
@@ -114,11 +131,17 @@ public final class PhaseLockedKeyframeController<T extends GeoAnimatable>
             Set<String> amplitudeScaledRotationBones,
             StateFloatFunction<T> rotationAmplitude,
             boolean additive,
+            boolean weighted,
+            TriggerMask mask,
+            ContractLayers contract,
             AnimationStateHandler<T> stateHandler) {
         super(animatable, name, 0, stateHandler);
         validateAngularFrequency(angularFrequencyRadiansPerSourceTick);
         if (!Float.isFinite(wingspeed) || wingspeed <= 0.0F) {
             throw new IllegalArgumentException("Wingspeed must be finite and positive");
+        }
+        if (weighted && (mask == null || contract == null)) {
+            throw new IllegalArgumentException("A weighted controller needs its trigger mask and contract");
         }
         this.angularFrequencyRadiansPerSourceTick = angularFrequencyRadiansPerSourceTick;
         this.wingspeed = wingspeed;
@@ -126,6 +149,9 @@ public final class PhaseLockedKeyframeController<T extends GeoAnimatable>
         this.amplitudeScaledRotationBones = Set.copyOf(amplitudeScaledRotationBones);
         this.rotationAmplitude = rotationAmplitude;
         this.additive = additive;
+        this.weighted = weighted;
+        this.mask = mask;
+        this.contract = contract;
     }
 
     /** A phase-locked controller whose authored channels stay unscaled and replace the bone (the salvaged shape); the chain's second multiply is 1.0F. */
@@ -148,7 +174,7 @@ public final class PhaseLockedKeyframeController<T extends GeoAnimatable>
             AnimationStateHandler<T> stateHandler) {
         return new PhaseLockedKeyframeController<>(
                 animatable, name, angularFrequencyRadiansPerSourceTick, wingspeed, sourceAgeTicks,
-                Set.of(), state -> 1.0F, false, stateHandler);
+                Set.of(), state -> 1.0F, false, false, null, null, stateHandler);
     }
 
     /**
@@ -185,7 +211,33 @@ public final class PhaseLockedKeyframeController<T extends GeoAnimatable>
         }
         return new PhaseLockedKeyframeController<>(
                 animatable, name, angularFrequencyRadiansPerSourceTick, wingspeed, sourceAgeTicks,
-                amplitudeScaledRotationBones, rotationAmplitude, additive, stateHandler);
+                amplitudeScaledRotationBones, rotationAmplitude, additive, false, null, null, stateHandler);
+    }
+
+    /**
+     * WEIGHTED (the weights slice; class javadoc item 6): a phase-locked controller for one locomotion state's clip
+     * of an ARTIST-delivered species - every keyed channel (rotation, position and scale) of {@code bones}, the bones
+     * the clip keys, multiplied by the frame's {@code weight} (a share of {@link LocomotionWeights}' products, read
+     * from the per-manager {@link ContractLayers}) and composed additively over whatever earlier layers wrote the bone
+     * this frame; {@code mask} is the triggered clips' replace policy and bone-reset blend-out ({@link TriggerMask}).
+     */
+    public static <T extends GeoAnimatable> PhaseLockedKeyframeController<T> weighted(
+            T animatable,
+            String name,
+            float angularFrequencyRadiansPerSourceTick,
+            float wingspeed,
+            StateFloatFunction<T> sourceAgeTicks,
+            Set<String> bones,
+            StateFloatFunction<T> weight,
+            TriggerMask mask,
+            ContractLayers contract,
+            AnimationStateHandler<T> stateHandler) {
+        if (bones.isEmpty()) {
+            throw new IllegalArgumentException("Weighted controller requires at least one keyed bone");
+        }
+        return new PhaseLockedKeyframeController<>(
+                animatable, name, angularFrequencyRadiansPerSourceTick, wingspeed, sourceAgeTicks,
+                bones, weight, true, true, mask, contract, stateHandler);
     }
 
     private static void validateAngularFrequency(float angularFrequencyRadiansPerSourceTick) {
@@ -230,6 +282,16 @@ public final class PhaseLockedKeyframeController<T extends GeoAnimatable>
 
     public boolean additive() {
         return this.additive;
+    }
+
+    /** True for the weights slice's artist layer (class javadoc item 6); false for the transcription forms. */
+    public boolean weighted() {
+        return this.weighted;
+    }
+
+    /** The per-manager contract a weighted layer belongs to; null for a transcription (always-on) layer. */
+    public ContractLayers contract() {
+        return this.contract;
     }
 
     /**
@@ -280,6 +342,10 @@ public final class PhaseLockedKeyframeController<T extends GeoAnimatable>
         // process signature. adjustTick rejects any non-float-exact carrier.
         super.process(model, state, bones, snapshots, (double) phaseRadians, crashWhenBoneMissing);
 
+        if (this.weighted) {
+            weightPass(state);
+            return;
+        }
         if (this.amplitudeScaledRotationBones.isEmpty()) {
             return;
         }
@@ -375,6 +441,95 @@ public final class PhaseLockedKeyframeController<T extends GeoAnimatable>
         this.lastCosineIndex = authoredCosineIndex;
         this.lastClipTick = (double) authoredCosineIndex * this.declaredClipTicks / (double) CLASSIC_TRIG_INDEX_COUNT;
         return this.lastClipTick;
+    }
+
+    /**
+     * WEIGHTED (class javadoc item 6): after GeckoLib evaluated the clip into the per-bone queues, every keyed
+     * channel of the clip's bones becomes {@code origin + base + factor x (authored - origin)} - the rotation's origin
+     * is 0 (GeckoLib adds the bind itself, {@code tickAnimation} 323-341), the position's the bind offset, the scale's
+     * the bind scale (both written absolutely, 425-575) - where {@code factor} is the frame's layer weight times the
+     * mask's per-bone factor and {@code base} is what earlier sources left on the bone this frame: an earlier layer's
+     * write (the marked bone's current delta) or, on a bone crossing back from a triggered clip that no layer has
+     * written yet this frame, the bone-reset's value ({@link TriggerMask#releaseDelta}). A bone the triggered clip
+     * writes this frame ({@link TriggerMask#held}) is left to it: the layer drops its points for that bone.
+     */
+    private void weightPass(AnimationState<T> state) {
+        float weight = this.rotationAmplitude.applyAsFloat(state);
+        if (!Float.isFinite(weight)) {
+            throw new IllegalStateException("Animation layer weight must be finite");
+        }
+        EasingType overrideEasing = this.overrideEasingTypeFunction.apply(this.animatable);
+        for (String boneName : this.amplitudeScaledRotationBones) {
+            BoneAnimationQueue queue = getBoneAnimationQueues().get(boneName);
+            if (queue == null) {
+                // An artist clip keying a bone the rig lacks: GeckoLib's own policy (crashIfBoneMissing false -
+                // processCurrentAnimation 95-103 skips the bone animation); the package checker rejects such a file,
+                // and a resource pack must never crash the client.
+                continue;
+            }
+            if (this.mask.held(boneName)) {
+                clear(queue);
+                continue;
+            }
+            GeoBone bone = queue.bone();
+            BoneSnapshot initial = bone.getInitialSnapshot();
+            float factor = weight * this.mask.factor(boneName);
+            float[] base = this.mask.releaseDelta(boneName);
+            if (bone.hasRotationChanged()) {
+                base[0] = bone.getRotX() - initial.getRotX();
+                base[1] = bone.getRotY() - initial.getRotY();
+                base[2] = bone.getRotZ() - initial.getRotZ();
+            }
+            if (bone.hasPositionChanged()) {
+                base[3] = bone.getPosX() - initial.getOffsetX();
+                base[4] = bone.getPosY() - initial.getOffsetY();
+                base[5] = bone.getPosZ() - initial.getOffsetZ();
+            }
+            if (bone.hasScaleChanged()) {
+                base[6] = bone.getScaleX() - initial.getScaleX();
+                base[7] = bone.getScaleY() - initial.getScaleY();
+                base[8] = bone.getScaleZ() - initial.getScaleZ();
+            }
+            collapse(queue.rotationXQueue(), factor, base[0], 0.0F, overrideEasing);
+            collapse(queue.rotationYQueue(), factor, base[1], 0.0F, overrideEasing);
+            collapse(queue.rotationZQueue(), factor, base[2], 0.0F, overrideEasing);
+            collapse(queue.positionXQueue(), factor, base[3], initial.getOffsetX(), overrideEasing);
+            collapse(queue.positionYQueue(), factor, base[4], initial.getOffsetY(), overrideEasing);
+            collapse(queue.positionZQueue(), factor, base[5], initial.getOffsetZ(), overrideEasing);
+            collapse(queue.scaleXQueue(), factor, base[6], initial.getScaleX(), overrideEasing);
+            collapse(queue.scaleYQueue(), factor, base[7], initial.getScaleY(), overrideEasing);
+            collapse(queue.scaleZQueue(), factor, base[8], initial.getScaleZ(), overrideEasing);
+        }
+    }
+
+    /** Drops every point of the bone's nine channel queues: GeckoLib then writes nothing to the bone for this layer. */
+    private static void clear(BoneAnimationQueue queue) {
+        queue.rotationXQueue().clear();
+        queue.rotationYQueue().clear();
+        queue.rotationZQueue().clear();
+        queue.positionXQueue().clear();
+        queue.positionYQueue().clear();
+        queue.positionZQueue().clear();
+        queue.scaleXQueue().clear();
+        queue.scaleYQueue().clear();
+        queue.scaleZQueue().clear();
+    }
+
+    /** {@code origin + base + factor x (authored - origin)} per point, collapsed to a constant as {@link #scaled} does. */
+    private static void collapse(AnimationPointQueue queue, float factor, float base, float origin, EasingType overrideEasing) {
+        for (int pointIndex = 0; pointIndex < queue.size(); pointIndex++) {
+            AnimationPoint point = queue.get(pointIndex);
+            float authored = (float) EasingType.lerpWithOverride(point, overrideEasing);
+            float value = (authored - origin) * factor;
+            value = value + base;
+            value = value + origin;
+            queue.set(pointIndex, new AnimationPoint(
+                    null,
+                    point.currentTick(),
+                    point.transitionLength(),
+                    (double) value,
+                    (double) value));
+        }
     }
 
     private static void scale(AnimationPointQueue queue, float amplitude, float base, EasingType overrideEasing) {

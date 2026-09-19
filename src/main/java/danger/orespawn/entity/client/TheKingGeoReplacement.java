@@ -496,4 +496,10 @@ public final class TheKingGeoReplacement extends OreSpawnGeoReplacement<TheKing>
             return true;
         }
     }
+
+    /** The SPEC's {@code locomotion: flyer} (tools/artist_specs/the_king.json): {@code flying} is {@code !onGround()} (contract section 3; the weights slice: every landed species carries its seed's word, the asset audit pins it). */
+    @Override
+    public danger.orespawn.entity.client.animation.LocomotionKind locomotion() {
+        return danger.orespawn.entity.client.animation.LocomotionKind.FLYER;
+    }
 }

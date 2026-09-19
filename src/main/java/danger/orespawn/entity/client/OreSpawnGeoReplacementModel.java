@@ -6,6 +6,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.world.entity.Entity;
+import software.bernie.geckolib.animation.AnimatableManager;
 import software.bernie.geckolib.animation.Animation;
 import software.bernie.geckolib.animation.AnimationState;
 import software.bernie.geckolib.cache.GeckoLibCache;
@@ -140,6 +141,24 @@ public final class OreSpawnGeoReplacementModel<E extends Entity, A extends OreSp
             this.repairedSource = loaded;
         }
         return this.repaired.getAnimation(name);
+    }
+
+    /**
+     * THE WEIGHTS SLICE: once per frame, BEFORE GeckoLib's controllers run, the frame's locomotion state is read
+     * from the drawn entity ({@link OreSpawnGeoReplacement#motionInputs}) and handed to the manager's weighted
+     * contract ({@link OreSpawnGeoReplacement#beginContractFrame}: the ramps advanced on the frame's age,
+     * every layer's weight computed, the client-observed triggers fired on their edges); a manager on the
+     * transcription's always-on layers or on the classic source carries no contract and nothing is read. It runs
+     * ahead of the ENT-S-147 dedup inside {@code super} (GeckoLib 4.8.4 {@code
+     * GeoModel.handleAnimations} returns at 170 for a repeated frame): harmless by construction, since every ramp
+     * and edge is a function of the frame's age and the last-seen values, so a repeated frame recomputes the same
+     * weights and fires nothing twice.
+     */
+    @Override
+    public void handleAnimations(A animatable, long instanceId, AnimationState<A> animationState, float partialTick) {
+        AnimatableManager<A> manager = animatable.getAnimatableInstanceCache().getManagerForId(instanceId);
+        animatable.beginContractFrame(manager, animationState);
+        super.handleAnimations(animatable, instanceId, animationState, partialTick);
     }
 
     /**

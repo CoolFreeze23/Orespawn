@@ -4,6 +4,7 @@ import danger.orespawn.ModEntities;
 import danger.orespawn.OreSpawnMod;
 import danger.orespawn.entity.GoldFish;
 import danger.orespawn.entity.client.animation.KeyframeLayer;
+import danger.orespawn.entity.client.animation.LocomotionKind;
 import java.util.List;
 import java.util.Set;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
@@ -69,6 +70,12 @@ public final class GoldFishGeoReplacement extends OreSpawnGeoReplacement<GoldFis
     @Override
     public List<KeyframeLayer> keyframeLayers() {
         return KEYFRAME_LAYERS;
+    }
+
+    /** The SPEC's {@code locomotion: swimmer} (tools/artist_specs/gold_fish.json): never {@code flying}; {@code swim} on {@code isInWater()} (contract section 3; the weights slice). */
+    @Override
+    public LocomotionKind locomotion() {
+        return LocomotionKind.SWIMMER;
     }
 
     @Override

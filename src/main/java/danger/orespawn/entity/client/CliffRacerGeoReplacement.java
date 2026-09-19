@@ -4,6 +4,7 @@ import danger.orespawn.ModEntities;
 import danger.orespawn.OreSpawnMod;
 import danger.orespawn.entity.EntityCliffRacer;
 import danger.orespawn.entity.client.animation.KeyframeLayer;
+import danger.orespawn.entity.client.animation.LocomotionKind;
 import java.util.List;
 import java.util.Set;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
@@ -43,6 +44,12 @@ public final class CliffRacerGeoReplacement extends OreSpawnGeoReplacement<Entit
     @Override
     public List<KeyframeLayer> keyframeLayers() {
         return KEYFRAME_LAYERS;
+    }
+
+    /** The SPEC's {@code locomotion: flyer} (tools/artist_specs/cliff_racer.json): {@code flying} is {@code !onGround()} (contract section 3; the weights slice). */
+    @Override
+    public LocomotionKind locomotion() {
+        return LocomotionKind.FLYER;
     }
 
     @Override

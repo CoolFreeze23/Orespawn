@@ -1,10 +1,16 @@
 package danger.orespawn.entity.client;
 
 import danger.orespawn.OreSpawnConfig;
+import danger.orespawn.entity.client.animation.AttackingFlag;
+import danger.orespawn.entity.client.animation.ContractLayers;
 import danger.orespawn.entity.client.animation.KeyframeLayer;
+import danger.orespawn.entity.client.animation.LocomotionKind;
+import danger.orespawn.entity.client.animation.TriggerMask;
 import java.util.List;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.animal.FlyingAnimal;
 import software.bernie.geckolib.animatable.GeoReplacedEntity;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.animation.AnimatableManager;
@@ -135,6 +141,86 @@ public abstract class OreSpawnGeoReplacement<E extends Entity> implements GeoRep
     }
 
     /**
+     * THE WEIGHTS SLICE: the SPEC's {@code locomotion} word ({@code
+     * tools/artist_specs/<registry>.json}), so the contract's {@code flying} input is what section 3 defines
+     * - the SPEC's flyer AND {@code !onGround()}. {@link LocomotionKind#WALKER} unless a species' descriptor says
+     * otherwise (the seven flyers, the Gold Fish and the T-shirt among the transcription species do).
+     */
+    public LocomotionKind locomotion() {
+        return LocomotionKind.WALKER;
+    }
+
+    /**
+     * How the species' synched attacking flag reads on the client, as the SPEC's trigger inventory classifies it
+     * ({@link AttackingFlag}); {@link AttackingFlag#NONE} unless a descriptor wires its accessor ({@link #attacking}).
+     */
+    public AttackingFlag attackingFlag() {
+        return AttackingFlag.NONE;
+    }
+
+    /** The species' attacking flag through its pose-style accessor (contract section 3); 0 where it has none. */
+    protected int attacking(E entity) {
+        return 0;
+    }
+
+    /** Contract section 3: a SPEC may narrow {@code inWater} from {@code isInWater()} to {@code isUnderWater()}. */
+    protected boolean underwaterOnly() {
+        return false;
+    }
+
+    /**
+     * Contract section 5.3's proposed {@code boneResetTime}, 3 ticks ({@link TriggerMask#BONE_RESET_TICKS}): the
+     * length of GeckoLib's lerp back to bind for a bone no controller wrote this frame - the blend-out of a
+     * triggered clip's bones. Nothing else ever reaches that lerp: a transcription's layers and a classic hook
+     * write their bones every frame, and a bone no source ever writes lerps from bind to bind.
+     */
+    @Override
+    public double getBoneResetTime() {
+        return TriggerMask.BONE_RESET_TICKS;
+    }
+
+    /**
+     * The frame's locomotion state, read ONCE per frame from the drawn entity into the plain record
+     * ({@link MotionInputs}; contract section 3): {@code flying} = the SPEC's flyer AND {@code !onGround()}, or
+     * {@code FlyingAnimal.isFlying()} where the species implements it; {@code inWater} = {@code isInWater()}, or
+     * {@code isUnderWater()} where {@link #underwaterOnly} says so; {@code hurtTime} and {@code deathTime} the
+     * living entity's own fields (0 for a non-living species); {@code attacking} through {@link #attacking}.
+     */
+    public final MotionInputs motionInputs(AnimationState<?> state) {
+        E entity = entity(state);
+        boolean flying = entity instanceof FlyingAnimal flyer ? flyer.isFlying() : locomotion().flyer() && !entity.onGround();
+        boolean inWater = underwaterOnly() ? entity.isUnderWater() : entity.isInWater();
+        int hurtTime = 0;
+        int deathTime = 0;
+        if (entity instanceof LivingEntity living) {
+            hurtTime = living.hurtTime;
+            deathTime = living.deathTime;
+        }
+        return new MotionInputs(entity, ageInTicks(entity, state), limbSwingAmount(state), inWater, flying,
+                attacking(entity), hurtTime, deathTime);
+    }
+
+    /**
+     * The weighted contract over an ARTIST file for this species' declared groups ({@link ContractLayers#build}),
+     * below the gates of {@link #registerKeyframeLayers}: the harness builds it on explicit readers.
+     */
+    public final ContractLayers contractLayers(BakedAnimations clips) {
+        return ContractLayers.build(keyframeLayers(), clips, locomotion(), attackingFlag());
+    }
+
+    /**
+     * Once per frame, before GeckoLib's controllers ({@link OreSpawnGeoReplacementModel#handleAnimations}): the
+     * frame's {@link #motionInputs} handed to the manager's weighted contract - nothing for a manager on the
+     * transcription's always-on layers or on the classic source.
+     */
+    public final void beginContractFrame(AnimatableManager<?> manager, AnimationState<?> state) {
+        ContractLayers contract = ContractLayers.of(manager);
+        if (contract != null) {
+            contract.beginFrame(manager, motionInputs(state));
+        }
+    }
+
+    /**
      * GeckoLib builds the per-entity {@code AnimatableManager} on the client's
      * render thread ({@code getManagerForId} -> the manager constructor ->
      * this, 4.8.4 offsets 27-55) and never rebuilds it while the entity stays
@@ -181,6 +267,16 @@ public abstract class OreSpawnGeoReplacement<E extends Entity> implements GeoRep
      * controllers are this replacement's own ({@link #ageInTicks} on the drawn
      * entity, {@link #limbSwingAmount} from the
      * renderer's state); the headless harness builds the same layers on explicit inputs through {@link KeyframeLayer#controller}.
+     *
+     * <p>THE WEIGHTS SLICE: behind the same gates the FILE decides the form ({@link
+     * ContractLayers#isTranscription}) - the generator's transcription (an {@code
+     * idle} keying no bone plus the declared groups' walk-family clips, or a
+     * subset) registers the always-on layers below, exactly as before the slice,
+     * bit-exact to the classic hook; any other file is an artist delivery and
+     * registers the weighted contract ({@link #contractLayers}: the triggered clips'
+     * controller first, then one weighted layer per group and present state,
+     * {@link ContractLayers#register}) - the count returned is then the number of
+     * controllers added.</p>
      */
     public final int registerKeyframeLayers(AnimatableManager.ControllerRegistrar controllers, BakedAnimations clips) {
         List<KeyframeLayer> layers = keyframeLayers();
@@ -193,9 +289,16 @@ public abstract class OreSpawnGeoReplacement<E extends Entity> implements GeoRep
         if (!OreSpawnConfig.artistAnimations(this.descriptor.entityType())) {
             return 0;
         }
+        if (!ContractLayers.isTranscription(clips, layers)) {
+            // THE WEIGHTS SLICE: an ARTIST file - an idle that keys a bone, a fly / swim / idle_<group> /
+            // aggro_idle / calm_idle, a triggered clip - plays the weighted contract (ContractLayers); the
+            // generator's transcription file, or a subset of it, takes the loop below unchanged: its groups
+            // always-on, bit-exact to the classic hook (the keyframe leg is the proof).
+            return contractLayers(clips).register(controllers, this, this::ageTicks);
+        }
         int registered = 0;
         for (KeyframeLayer layer : layers) {
-            if (clips.getAnimation(layer.clip()) == null) {
+            if (!ContractLayers.playableLoop(layer.clip(), clips.getAnimation(layer.clip()))) {
                 continue;
             }
             controllers.add(layer.controller(this, this::ageTicks, OreSpawnGeoReplacement::limbSwingAmount));

@@ -5,6 +5,7 @@ import danger.orespawn.ModEntities;
 import danger.orespawn.OreSpawnMod;
 import danger.orespawn.entity.Cockateil;
 import danger.orespawn.entity.client.animation.KeyframeLayer;
+import danger.orespawn.entity.client.animation.LocomotionKind;
 import java.util.List;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.resources.ResourceLocation;
@@ -54,6 +55,12 @@ public final class RubyBirdGeoReplacement extends OreSpawnGeoReplacement<Cockate
     @Override
     public List<KeyframeLayer> keyframeLayers() {
         return CockateilGeoReplacement.KEYFRAME_LAYERS;
+    }
+
+    /** The SPEC's {@code locomotion: flyer} (tools/artist_specs/ruby_bird.json), as the Cockateil's: {@code flying} is {@code !onGround()} (contract section 3; the weights slice). */
+    @Override
+    public LocomotionKind locomotion() {
+        return LocomotionKind.FLYER;
     }
 
     @Override

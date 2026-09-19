@@ -76,4 +76,10 @@ public final class IrukandjiGeoReplacement extends OreSpawnGeoReplacement<Irukan
             super(context, new IrukandjiGeoReplacement());
         }
     }
+
+    /** The SPEC's {@code locomotion: swimmer} (tools/artist_specs/irukandji.json): {@code inWater} is {@code isInWater()} (contract section 3; the weights slice: every landed species carries its seed's word, the asset audit pins it). */
+    @Override
+    public danger.orespawn.entity.client.animation.LocomotionKind locomotion() {
+        return danger.orespawn.entity.client.animation.LocomotionKind.SWIMMER;
+    }
 }
