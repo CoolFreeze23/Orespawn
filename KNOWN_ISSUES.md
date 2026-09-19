@@ -16,7 +16,7 @@ None of these are confirmed broken — they simply haven't been hand-checked
 against the 1.7.10 original yet. If something below looks or sounds wrong in
 your game, that's exactly the report we need.
 
-- Some mob animations and model scales have not been hand-verified against the 1.7.10 originals (idle wing flaps, Mothra's giant size, Nightmares growing with their hitbox) — screenshots welcome. *(i043, i074)*
+- Some mob animations and model scales have not been hand-verified against the 1.7.10 originals (idle wing flaps, Mothra's giant size, Nightmares growing with their hitbox) — screenshots welcome. *(i043, i074)* With `-Dorespawn.dev.geckolibRenderers=<species>` the same creature can be drawn through its converted GeckoLib rig for a side-by-side (see "The GeckoLib rigs" below).
 - Custom mob and boss sounds (Basilisk, Kraken, T-Rex, Godzilla, Prince wing flaps, Stinky's burps, Girlfriend/Boyfriend fight taunts) have not been verified by ear — some may be missing or fall back to vanilla audio. *(i048, i081, i087, i091, i104)*
 - Riding the big mounts (Dragon, Leon, Leonopteryx, Cephadrome, Ostrich, the Prince mounts) has not been feel-tested — rides could feel floaty or misaligned, and the Left-Alt fly/sprint keybind is unverified. *(i066, i068, i102)*
 - Hoverboard tricks are unverified: the wall-crash shatter, the rare high-speed malfunction, skin cycling with the Ultimate Sword, and the ride-only hum. *(i070, i071, i072)*
@@ -151,6 +151,40 @@ Known, on the radar, not yet resolved:
 - ~~Kraken and Creeper repellents can only be placed on the floor for now; wall-mounting (which 1.7.10 supported) is a planned follow-up.~~ **Fixed in this build** — repellents now place on walls exactly like torches (vanilla torch/wall-torch split under the hood), pop off and drop themselves if the wall is removed, and keep their full repel behavior in either orientation. Existing floor-placed repellents are untouched. *(fixed 2026-08-11)*
 - ~~The Extractor block is pending review — it never actually existed in 1.7.10, so it will either be removed or properly adopted as new content.~~ **Removed in this build** — it was a port invention with no 1.7.10 counterpart and its processing recipes were already gone; the design is archived (with the kyanite branch) for a possible 2.0 return. Player-placed Extractors will disappear from existing worlds on load. *(MOD-020 — decision applied 2026-08-11, TF-031)*
 - ~~Your **first** ant-teleport into a freshly generated dimension can bury you inside terrain~~ **Fixed in this build** — arrivals now land on the surface even on the very first visit (the destination terrain is generated before the landing spot is chosen). Please confirm on a fresh world. *(TEST-004 — fixed 2026-08-11, GameTest-covered)*
+
+---
+
+## The GeckoLib rigs — behind a developer switch (new in 2.0.0-beta.5)
+
+Nothing changes for a default install: every creature still draws through its classic renderer and poses exactly as
+before. Behind a developer switch, 103 of the mod's 106 creature rigs now also exist as GeckoLib rigs converted from the
+classic models and proven against them bone for bone and pixel for pixel — the preparation for hand-made animations. The
+switch is a JVM argument, not a config: `-Dorespawn.dev.geckolibRenderers=ender_knight` draws that species through its
+GeckoLib renderer (a comma-separated list of registry names such as `beaver,elevator`, or `candidate` for every converted
+species); without it you get the classic renderers. If you flip a species and it looks different from its classic
+renderer — a limb on the other side, a part missing, a texture facing the wrong way — that is exactly the report we
+need: a side-by-side screenshot, the species and the JVM argument.
+
+- **Still classic-only: the four butterflies** (Butterfly, Luna Moth, Mothra, Vampire Butterfly). They share one rig,
+  and the Mothra's flat-wing pose ties more pixels between two overlapping wing slabs than the comparison's rule allows
+  (1.2 % against a 1 % cap), so the whole rig stays on the classic renderers until it is decided on it — the cap, a
+  different sample set for the Mothra, or a change to the comparison. *(TEST-019, reported at the remainder)*
+- **The mirror correction, one look pending.** Every converted rig had been written mirrored left for right, in a frame
+  where the comparison could not see it; the converter now writes rigs in the same convention as the Queen's hand-made
+  rig, everything was regenerated, and the comparison reproduces the real in-game render chains. The acceptance is
+  in-game looks at an asymmetric creature: the Ender Knight's one sword, `-Dorespawn.dev.geckolibRenderers=ender_knight`
+  then `/summon orespawn:ender_knight ~ ~ ~4`, the sword in the same hand at the same height with the switch on and off.
+  *(TEST-015, fixed at the source in e242357, pending in-game looks)*
+- **Three classic-renderer quirks the GeckoLib rigs copy on purpose** (a converted rig draws exactly what the port's classic
+  renderer draws; these are divergences of the classic renderer from 1.7.10, recorded for a later parity pass,
+  not fixed here): the Triffid stands a quarter-turn from where 1.7.10 turned it *(ENT-S-162)*; Godzilla bites and
+  swings its arms on every cycle where 1.7.10 did so on about half of them, re-rolled per cycle *(ENT-S-163)*; the Prince
+  Teen's wing membranes are opaque where 1.7.10 drew them translucent grey *(ENT-S-164)*.
+- **Not started: boss hitbox profiles.** The King, the Princess and Godzilla keep the classic single hitbox; bone-synced
+  hitbox parts for them are the phase after this one.
+- **The default flip is prepared, not applied.** A branch makes the GeckoLib renderer the default for every landed rig
+  and inverts the switch to name classic species; it merges once approved after the contact-sheet review
+  (`phase_g_reports/contact_sheets/`).
 
 ---
 
