@@ -76,6 +76,7 @@ import software.bernie.geckolib.model.GeoModel;
 public final class WeightsBlendProbe {
     private static final float GAIT_W = 3.7F;
     private static final float TAIL_W = 0.5F;
+    /** The blend proof's tolerance, 1e-5 rad: a named tolerance - never loosened. */
     private static final double TOLERANCE = 1.0e-5D;
     private static final List<KeyframeLayer> GROUPS = List.of(
             new KeyframeLayer("gait", KeyframeLayer.WALK, GAIT_W, Set.of("a", "b"), true),

@@ -509,6 +509,7 @@ public class ContractWeightsTests {
         }
     }
 
+    /** The ramps' tolerance, 1e-6 (also the weight sums' in cw_001): a named tolerance - never loosened. */
     private static boolean close(double a, double b) {
         return Math.abs(a - b) <= 1.0e-6D;
     }
