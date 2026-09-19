@@ -16,7 +16,7 @@ None of these are confirmed broken — they simply haven't been hand-checked
 against the 1.7.10 original yet. If something below looks or sounds wrong in
 your game, that's exactly the report we need.
 
-- Some mob animations and model scales have not been hand-verified against the 1.7.10 originals (idle wing flaps, Mothra's giant size, Nightmares growing with their hitbox) — screenshots welcome. *(i043, i074)* With `-Dorespawn.dev.geckolibRenderers=<species>` the same creature can be drawn through its converted GeckoLib rig for a side-by-side (see "The GeckoLib rigs" below).
+- Some mob animations and model scales have not been hand-verified against the 1.7.10 originals (idle wing flaps, Mothra's giant size, Nightmares growing with their hitbox) — screenshots welcome. *(i043, i074)* With `-Dorespawn.dev.classicRenderers=<species>` the same creature can be drawn through its classic renderer for a side-by-side (see "The GeckoLib rigs" below).
 - Custom mob and boss sounds (Basilisk, Kraken, T-Rex, Godzilla, Prince wing flaps, Stinky's burps, Girlfriend/Boyfriend fight taunts) have not been verified by ear — some may be missing or fall back to vanilla audio. *(i048, i081, i087, i091, i104)*
 - Riding the big mounts (Dragon, Leon, Leonopteryx, Cephadrome, Ostrich, the Prince mounts) has not been feel-tested — rides could feel floaty or misaligned, and the Left-Alt fly/sprint keybind is unverified. *(i066, i068, i102)*
 - Hoverboard tricks are unverified: the wall-crash shatter, the rare high-speed malfunction, skin cycling with the Ultimate Sword, and the ride-only hum. *(i070, i071, i072)*
@@ -154,27 +154,24 @@ Known, on the radar, not yet resolved:
 
 ---
 
-## The GeckoLib rigs — behind a developer switch (new in 2.0.0-beta.5)
+## The GeckoLib rigs — now the default renderers (new in 2.0.0-beta.5)
 
-Nothing changes for a default install: every creature still draws through its classic renderer and poses exactly as
-before. Behind a developer switch, 103 of the mod's 106 creature rigs now also exist as GeckoLib rigs converted from the
-classic models and proven against them bone for bone and pixel for pixel — the preparation for hand-made animations. The
-switch is a JVM argument, not a config: `-Dorespawn.dev.geckolibRenderers=ender_knight` draws that species through its
-GeckoLib renderer (a comma-separated list of registry names such as `beaver,elevator`, or `candidate` for every converted
-species); without it you get the classic renderers. If you flip a species and it looks different from its classic
-renderer — a limb on the other side, a part missing, a texture facing the wrong way — that is exactly the report we
-need: a side-by-side screenshot, the species and the JVM argument.
+Every creature but the two solver robots (the Ant Robot and the Spider Robot) now draws through a GeckoLib rig converted from
+its classic model and proven against it bone for bone and pixel for pixel; the poses are the classic motion, bit for bit, so
+nothing should look different from beta.4. If a species does look different — a limb on the other side, a part missing, a
+texture facing the wrong way — put it back on its classic renderer with one JVM argument and tell us:
+`-Dorespawn.dev.classicRenderers=<registry names, comma-separated>` (or `classic` for every species; the start-up log names each species kept
+classic). That side-by-side screenshot, the species and the argument are exactly the report we need. The Queen keeps her
+hand-made rig either way.
 
-- **Still classic-only: the four butterflies** (Butterfly, Luna Moth, Mothra, Vampire Butterfly). They share one rig,
-  and the Mothra's flat-wing pose ties more pixels between two overlapping wing slabs than the comparison's rule allows
-  (1.2 % against a 1 % cap), so the whole rig stays on the classic renderers until it is decided on it — the cap, a
-  different sample set for the Mothra, or a change to the comparison. *(TEST-019, reported at the remainder)*
-- **The mirror correction, one look pending.** Every converted rig had been written mirrored left for right, in a frame
-  where the comparison could not see it; the converter now writes rigs in the same convention as the Queen's hand-made
-  rig, everything was regenerated, and the comparison reproduces the real in-game render chains. The acceptance is
-  in-game looks at an asymmetric creature: the Ender Knight's one sword, `-Dorespawn.dev.geckolibRenderers=ender_knight`
-  then `/summon orespawn:ender_knight ~ ~ ~4`, the sword in the same hand at the same height with the switch on and off.
-  *(TEST-015, fixed at the source in e242357, pending in-game looks)*
+- **The four butterflies came last.** Butterfly, Luna Moth, Mothra and Vampire Butterfly share one rig; the Mothra's flat-wing
+  pose ties 1.2 % of the image between two overlapping wing slabs, and the rig landed under a declared, pinned allowance for
+  exactly that sample (the comparison's default rule of 1 % stands for everyone else). *(TEST-019, landed 2026-09-19)*
+- **The mirror correction, accepted.** Every converted rig had been written mirrored left for right, in a frame where the
+  comparison could not see it; the converter now writes rigs in the same convention as the Queen's hand-made rig, everything
+  was regenerated, the comparison reproduces the real in-game render chains, and in-game looks at the Ender Knight's one
+  sword (the same hand, the same height, through both renderers) accepted it on 2026-09-19. For a comparison of your own,
+  `-Dorespawn.dev.classicRenderers=ender_knight` puts the knight back on its classic renderer. *(TEST-015, closed 2026-09-19)*
 - **Three classic-renderer quirks the GeckoLib rigs copy on purpose** (a converted rig draws exactly what the port's classic
   renderer draws; these are divergences of the classic renderer from 1.7.10, recorded for a later parity pass,
   not fixed here): the Triffid stands a quarter-turn from where 1.7.10 turned it *(ENT-S-162)*; Godzilla bites and
@@ -182,9 +179,6 @@ need: a side-by-side screenshot, the species and the JVM argument.
   Teen's wing membranes are opaque where 1.7.10 drew them translucent grey *(ENT-S-164)*.
 - **Not started: boss hitbox profiles.** The King, the Princess and Godzilla keep the classic single hitbox; bone-synced
   hitbox parts for them are the phase after this one.
-- **The default flip is prepared, not applied.** A branch makes the GeckoLib renderer the default for every landed rig
-  and inverts the switch to name classic species; it merges once approved after the contact-sheet review
-  (`phase_g_reports/contact_sheets/`).
 
 ---
 

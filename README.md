@@ -69,30 +69,29 @@ post-beta patch.
 
 ## Roadmap
 
-- **2.0.0-beta.5 (this build)**: Phase G — the GeckoLib rigs. Nothing
-  changes for a default install: every creature still draws through its
-  classic renderer and poses exactly as before. Behind a developer
-  switch, 103 of the mod's 106 creature rigs now also exist as GeckoLib
-  rigs converted from the classic models and proven against them bone
-  for bone and pixel for pixel; the four butterflies (Butterfly, Luna
-  Moth, Mothra, Vampire Butterfly) are the ones still classic-only,
-  held on one flat-pose sample of the Mothra that ties more pixels than
-  the comparison's rule allows. The switch is a JVM argument, not a
-  config: `-Dorespawn.dev.geckolibRenderers=ender_knight` draws that
-  species through its GeckoLib renderer — a comma-separated list of
-  registry names (`beaver,elevator`), or `candidate` for every
-  converted species; without it you get the classic renderers. Along
-  the way a mirror slip was corrected at its source: the converter had
-  been writing the rigs mirrored left for right, in a frame where the
+- **2.0.0-beta.5 (this build)**: Phase G — the GeckoLib rigs are now
+  the default renderers. 104 of the mod's 106 creature rigs were
+  converted from the classic models and proven against them bone for
+  bone and pixel for pixel, and every one of them now draws through its
+  GeckoLib rig; the poses are the classic motion, bit for bit, so nothing
+  should look different. The two solver robots (the Ant Robot and the
+  Spider Robot) stay on their classic renderers by design, and the Queen
+  keeps her hand-made rig. If a species looks wrong to you, one JVM
+  argument puts it back on its classic renderer:
+  `-Dorespawn.dev.classicRenderers=ender_knight` — a comma-separated
+  list of registry names (`beaver,elevator`), or `classic` for every
+  species; the start-up log names each species kept classic. Along the
+  way a mirror slip was corrected at its source: the converter had been
+  writing the rigs mirrored left for right, in a frame where the
   comparison could not see it; every converted rig, clip and proof was
-  regenerated in the corrected frame, and the comparison now reproduces
-  the real in-game render chains. For animators, the animation
-  contract is complete: when a creature's clips are delivered, its
-  idle and walk blend by speed, flying and swimming fade in,
-  and hits, attacks and deaths play over the top; until then every
-  creature keeps its ported motion, bit for bit. The default flip
-  (GeckoLib as the default renderer) is prepared on a branch and
-  merges once approved; boss hitbox profiles are the phase after.
+  regenerated in the corrected frame, the comparison now reproduces the
+  real in-game render chains, and an in-game look and the
+  contact-sheet review accepted the result. For animators,
+  the animation contract is complete: when a creature's clips are
+  delivered, its idle and walk blend by speed, flying and swimming
+  fade in, and hits, attacks and deaths play over the top; until
+  then every creature keeps its ported motion, bit for bit. Boss hitbox
+  profiles are the phase after.
 - **2.0.0-beta.2 to 2.0.0-beta.4**: see [CHANGELOG.md](CHANGELOG.md).
 - **2.0.0-beta.1**: the Procedural Spider Overhaul —
   see [CHANGELOG.md](CHANGELOG.md). Classic 1.7.10 behavior remains

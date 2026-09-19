@@ -1,29 +1,34 @@
 # OreSpawn for NeoForge 1.21.1 — 2.0.0-beta.5
 
-Phase G: the GeckoLib rigs, behind a developer switch. Nothing changes for
-a default install — every creature still draws through its classic renderer
-and poses exactly as before.
+Phase G: the GeckoLib rigs are now the default renderers. Every creature
+but the two solver robots draws through a GeckoLib rig converted from its
+classic model and proven against it bone for bone and pixel for pixel; the
+poses are the classic motion, bit for bit, so nothing should look
+different.
 
-## The GeckoLib rigs (developer switch)
+## The GeckoLib rigs (now the default)
 
-- **103 of the mod's 106 creature rigs** now also exist as GeckoLib rigs
-  converted from the classic models and proven against them bone for bone
-  and pixel for pixel. The four butterflies (Butterfly, Luna Moth, Mothra,
-  Vampire Butterfly) stay classic-only for now: one flat-pose sample of the
-  Mothra ties more pixels than the comparison's rule allows.
-- **The switch** is a JVM argument, not a config:
-  `-Dorespawn.dev.geckolibRenderers=ender_knight` draws that species through
-  its GeckoLib renderer — a comma-separated list of registry names
-  (`beaver,elevator`), or `candidate` for every converted species. Without it
-  you get the classic renderers.
+- **104 of the mod's 106 creature rigs** were converted from the classic
+  models and proven against them bone for bone and pixel for pixel, and all
+  of them now draw through their GeckoLib rigs. The Ant Robot and the Spider
+  Robot (the two solver-driven rigs) keep their classic renderers by design;
+  the Queen keeps her hand-made rig.
+- **The escape hatch** is a JVM argument, not a config:
+  `-Dorespawn.dev.classicRenderers=ender_knight` puts that species back on
+  its classic renderer — a comma-separated list of registry names
+  (`beaver,elevator`), or `classic` for every species. The start-up log names
+  each species kept classic. If a species looks different from beta.4, that
+  argument plus a side-by-side screenshot is exactly the report we need.
 - **A mirror slip corrected at its source.** The converter had been writing
   the rigs mirrored left for right, in a frame where the comparison could not
   see it. The converter now writes rigs in the convention the Queen's
   hand-made rig uses; every converted rig, clip and proof was regenerated,
-  and the comparison reproduces the real in-game render chains.
+  the comparison reproduces the real in-game render chains, and an in-game
+  look accepted the result.
 - **The contact sheets.** One sheet per landing slice under
   `phase_g_reports/contact_sheets/` — the classic render, the converted rig
-  and their pixel diff, at rest and at one posed sample, for every rig.
+  and their pixel diff, at rest and at one posed sample, for every rig; the
+  review of them is what put the GeckoLib rigs in front.
 
 ## For animators
 
@@ -35,8 +40,6 @@ and poses exactly as before.
 
 ## Not in this build
 
-- The default flip (GeckoLib as the default renderer, the switch naming
-  classic species) is prepared on a branch and merges once approved.
 - Boss hitbox profiles (bone-synced parts for the King, the Princess and
   Godzilla) are the phase after this one; the classic single hitbox stands.
 
