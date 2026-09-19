@@ -1,8 +1,13 @@
 {
-  "type": "neoforge:add_spawns",
+  "type": "orespawn:add_spawns_in_category",
   "biomes": "minecraft:river",
+  "category": "water_creature",
   "spawners": [
-    { "type": "orespawn:frog", "weight": 20, "minCount": 3, "maxCount": 6 },
-    { "type": "orespawn:frog", "weight": 3,  "minCount": 3, "maxCount": 6 }
+    {
+      "type": "orespawn:frog",
+      "weight": 20,
+      "minCount": 3,
+      "maxCount": 6
+    }
   ]
 }

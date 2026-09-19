@@ -99,6 +99,19 @@ public class ModStructureTypes {
             STRUCTURE_PIECES.register("legacy_dungeon_piece",
                     () -> (StructurePieceType) LegacyDungeonPiece::new);
 
+    /**
+     * The Utopia trees (WGEN-072..074): the Sky and Wind groves and the big square, circular and round trees, on the
+     * structure pipeline because every one of them spans more chunks than a feature may write into. Two structure
+     * JSONs share the type and differ in the {@code roll} field (grove / huge); see {@link UtopiaTreeStructure}.
+     */
+    public static final DeferredHolder<StructureType<?>, StructureType<UtopiaTreeStructure>> UTOPIA_TREE =
+            STRUCTURE_TYPES.register("utopia_tree", () -> () -> UtopiaTreeStructure.CODEC);
+
+    /** Companion piece type for {@link UtopiaTreeStructure}; one piece per tree, its kind and parameters in NBT. */
+    public static final DeferredHolder<StructurePieceType, StructurePieceType> UTOPIA_TREE_PIECE =
+            STRUCTURE_PIECES.register("utopia_tree_piece",
+                    () -> (StructurePieceType) UtopiaTreePiece::new);
+
     public static void register(IEventBus eventBus) {
         STRUCTURE_TYPES.register(eventBus);
         STRUCTURE_PIECES.register(eventBus);

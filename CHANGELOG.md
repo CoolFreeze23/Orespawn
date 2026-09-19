@@ -1,3 +1,25 @@
+# OreSpawn for NeoForge 1.21.1 — after 2.0.0-beta.5 (unreleased)
+
+Fixes for the three reports filed on GitHub against beta.3 (issues #1, #2 and #3), landed 2026-09-20. They take effect in
+newly generated chunks.
+
+- **Utopia's trees are whole again.** The Sky trees and the Wind trees generated with most of their branches missing: a
+  tree that reaches past the next chunk had its outer blocks dropped by the game's chunk writer. They now generate as
+  structures, written chunk by chunk, so every branch lands. With that the Sky trees stand at their 1.7.10 height again
+  (their tops at the same level across the dimension, not a fixed height above the ground) and every Wind tree leans
+  east, as in 1.7.10. *(WGEN-072)*
+- **The big trees are back.** Utopia's giant square-trunked and round-trunked trees — the hollow towers with spiral
+  steps, platforms, chests and Iron Golems on the branches — never generated in the port; only the rarer platform tree
+  did, and that one's branches were lines where the original's are leaf-rimmed discs. All three generate now at the
+  original's rates: one chunk in fifty rolls a big tree, one in four of those carries chests and golems, with the
+  original's chest list. *(WGEN-073, WGEN-074)*
+- **Frogs no longer flood Utopia.** The port let the every-tick water-creature spawn pass put frogs on dry land, and
+  frogs never counted against that pass's cap. Frogs drawn from a water list now need two-deep water, as in 1.7.10; in
+  rivers and swamps they spawn in the water and, as 1.7.10 also listed them there as land creatures, on the banks.
+  *(ENT-S-170)*
+- **Hitboxes (issue #3):** the Ender Knight, Hercules Beetle, Jumpy Bug, Hammerhead and Vortex boxes reported against
+  beta.3 were restored to the originals in beta.5 (see that section); the Basilisk's was already right.
+
 # OreSpawn for NeoForge 1.21.1 — 2.0.0-beta.5
 
 Release: https://github.com/CoolFreeze23/Orespawn/releases/tag/v1.21.1-2.0.0-beta.5 — this section is the player's half of the release notes, verbatim; the full notes, with the modder's half and the findings appendix, are `phase_g_reports/RELEASE_NOTES_2.0.0-beta.5.md`.

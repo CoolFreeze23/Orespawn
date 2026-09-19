@@ -35,6 +35,16 @@ These came straight out of hand-testing and are fixed in code in this build;
 most still need a second pair of eyes in a real game. If one still looks
 wrong for you, please say so.
 
+**post-beta.5 (in the next build):**
+
+- Utopia's Sky trees and Wind trees no longer lose their branches at chunk borders — they generate as structures now,
+  written chunk by chunk. The Sky trees stand at their original height again and the Wind trees all lean east, as in
+  1.7.10. *(WGEN-072)*
+- Utopia's giant square-trunked and round-trunked trees — the hollow towers with spiral steps, platforms, chests and
+  Iron Golems on the branches — generate again, at the original's one-in-fifty-chunks rate; the platform tree's
+  branches are the original's leaf-rimmed discs. *(WGEN-073, WGEN-074)*
+- Frogs no longer overrun Utopia: a frog drawn from a water list needs two-deep water, as in 1.7.10. *(ENT-S-170)*
+
 **post-beta.3 (in the next build):**
 
 - The Princess and The Prince no longer spawn wild in the overworld (they
@@ -147,7 +157,7 @@ always on.) *(MOD-021)*
 Known, on the radar, not yet resolved:
 
 - ~~The Leonopteryx may look or animate oddly (stiff pose, smaller than it should be)~~ **Fixed in this build** — the Leonopteryx and Leon are now one creature under the hood (as in 1.7.10), rendered at the correct 1.75× size with full animation; the stiff interim pose and the double-drawn wing sets are gone. Existing saved Leons and Leonopteryxes both keep working. *(TF-030 — fixed 2026-08-11)*
-- In the **Crystal dimension**, the big Fairy Castle Trees can generate with sheared-off flat edges where they cross a chunk boundary — the tree's arms simply stop mid-air. Roughly 1 in 25 Crystal chunks rolls a castle tree, and most of them clip at least one arm; the ordinary small fairy trees are fine (at worst a block or two on rare max-size ones), and every other Crystal structure is unaffected. When it happens, the game log notes a "Crystal structure write dropped" warning. **This is the designated first post-beta patch** — the fix (rebuilding the castle tree on the multi-chunk structure pipeline) is scoped and scheduled, it just doesn't block the beta. *(BUG-021 — deferred)*
+- In the **Crystal dimension**, the big Fairy Castle Trees can generate with sheared-off flat edges where they cross a chunk boundary — the tree's arms simply stop mid-air. Roughly 1 in 25 Crystal chunks rolls a castle tree, and most of them clip at least one arm; the ordinary small fairy trees are fine (at worst a block or two on rare max-size ones), and every other Crystal structure is unaffected. When it happens, the game log notes a "Crystal structure write dropped" warning. **This is the designated first post-beta patch** — the fix (rebuilding the castle tree on the multi-chunk structure pipeline) is scoped and scheduled, it just doesn't block the beta. The Utopia trees received exactly this fix on 2026-09-20 (WGEN-072); the castle tree is next. *(BUG-021 — deferred)*
 - ~~Kraken and Creeper repellents can only be placed on the floor for now; wall-mounting (which 1.7.10 supported) is a planned follow-up.~~ **Fixed in this build** — repellents now place on walls exactly like torches (vanilla torch/wall-torch split under the hood), pop off and drop themselves if the wall is removed, and keep their full repel behavior in either orientation. Existing floor-placed repellents are untouched. *(fixed 2026-08-11)*
 - ~~The Extractor block is pending review — it never actually existed in 1.7.10, so it will either be removed or properly adopted as new content.~~ **Removed in this build** — it was a port invention with no 1.7.10 counterpart and its processing recipes were already gone; the design is archived (with the kyanite branch) for a possible 2.0 return. Player-placed Extractors will disappear from existing worlds on load. *(MOD-020 — decision applied 2026-08-11, TF-031)*
 - ~~Your **first** ant-teleport into a freshly generated dimension can bury you inside terrain~~ **Fixed in this build** — arrivals now land on the surface even on the very first visit (the destination terrain is generated before the landing spot is chosen). Please confirm on a fresh world. *(TEST-004 — fixed 2026-08-11, GameTest-covered)*

@@ -121,21 +121,8 @@ public class ModFeatures {
     // WorldGenRegion 24-block write window. The full byte-for-byte
     // 1.7.10 generators now live in LegacyDungeonPiece#postProcess.
 
-    // Audit Part 1 — Wind Tree (authentic Trees.WindTree port,
-    // diagonal oak-log spires with leaf-canopy halos).
-    public static final DeferredHolder<Feature<?>, WindTreeFeature> WIND_TREE =
-            FEATURES.register("wind_tree", () -> new WindTreeFeature(NoneFeatureConfiguration.CODEC));
-
-    // Audit Part 1 — Sky Tree (authentic Trees.SkyTree port, towering
-    // SkyTreeLog trunk with cross-shaped horizontal leaf canopies).
-    public static final DeferredHolder<Feature<?>, SkyTreeFeature> SKY_TREE =
-            FEATURES.register("sky_tree", () -> new SkyTreeFeature(NoneFeatureConfiguration.CODEC));
-
-    // Audit Part 1 — Round Tree (authentic
-    // ItemMagicApple.MakeBigRoundTree port, tiered circular log
-    // platforms capped with a diamond block).
-    public static final DeferredHolder<Feature<?>, RoundTreeFeature> ROUND_TREE =
-            FEATURES.register("round_tree", () -> new RoundTreeFeature(NoneFeatureConfiguration.CODEC));
+    // The Wind, Sky and Round trees left the feature registry on 2026-09-20 (WGEN-072, WGEN-073): every one of them
+    // spans more chunks than a feature may write into, so they generate as UtopiaTreeStructure pieces now.
 
     // Audit Part 1 — Magic Apple Tree (authentic
     // ItemAppleSeed.makeTree port: tall oak trunk with two cardinal

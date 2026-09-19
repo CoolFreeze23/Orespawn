@@ -261,8 +261,11 @@ public class ModEntityAttributes {
                 Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, ModEntityAttributes::checkAnimalOrCrystalSpawnRules, RegisterSpawnPlacementsEvent.Operation.AND);
         event.register(ModEntities.COCKATEIL.get(), SpawnPlacementTypes.ON_GROUND,
                 Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, ModEntityAttributes::checkAnimalOrCrystalSpawnRules, RegisterSpawnPlacementsEvent.Operation.AND);
-        event.register(ModEntities.FROG.get(), SpawnPlacementTypes.ON_GROUND,
-                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, ModEntityAttributes::checkAnimalOrCrystalSpawnRules, RegisterSpawnPlacementsEvent.Operation.AND);
+        // ENT-S-170: the Frog is placed by the list it was drawn from (water where Utopia, the Village and the Crystal
+        // plains list it, ground where an ambient or creature list carries it), as orig SpawnerAnimals placed it; orig
+        // Frog.java:240-251 keeps no grass-or-light rule of its own, so the predicate is the entity's checkSpawnRules alone.
+        event.register(ModEntities.FROG.get(), FrogSpawnPlacement.INSTANCE,
+                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, (type, level, spawnType, pos, random) -> true, RegisterSpawnPlacementsEvent.Operation.AND);
         event.register(ModEntities.CRYSTAL_COW.get(), SpawnPlacementTypes.ON_GROUND,
                 Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, ModEntityAttributes::checkAnimalOrCrystalSpawnRules, RegisterSpawnPlacementsEvent.Operation.AND);
 

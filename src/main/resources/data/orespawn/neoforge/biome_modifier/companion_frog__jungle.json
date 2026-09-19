@@ -1,5 +1,13 @@
 {
-  "type": "neoforge:add_spawns",
+  "type": "orespawn:add_spawns_in_category",
   "biomes": "minecraft:jungle",
-  "spawners": { "type": "orespawn:frog", "weight": 3, "minCount": 3, "maxCount": 6 }
+  "category": "ambient",
+  "spawners": [
+    {
+      "type": "orespawn:frog",
+      "weight": 3,
+      "minCount": 3,
+      "maxCount": 6
+    }
+  ]
 }

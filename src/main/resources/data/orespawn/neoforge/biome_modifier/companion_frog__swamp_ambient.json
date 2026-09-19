@@ -1,11 +1,11 @@
 {
   "type": "orespawn:add_spawns_in_category",
   "biomes": "minecraft:swamp",
-  "category": "water_creature",
+  "category": "ambient",
   "spawners": [
     {
       "type": "orespawn:frog",
-      "weight": 20,
+      "weight": 2,
       "minCount": 2,
       "maxCount": 6
     }
