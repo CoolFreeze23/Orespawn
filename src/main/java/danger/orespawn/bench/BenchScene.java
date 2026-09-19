@@ -37,7 +37,8 @@ import net.minecraft.world.entity.Mob;
  *       server tick and streams a keyframe every 40 ticks; the report records how many spawned
  *       modern (the {@code [tweaks] spiderMovement} config decides, not the harness).</li>
  *   <li>E: 100 Beavers, idle: the MHLib-free GeckoLib candidate (classic vs candidate through the
- *       Phase G dev switch, {@code -Dorespawn.dev.geckolibRenderers=beaver}).</li>
+ *       Phase G dev switch - on the branch default-flip the candidate by default, classic with
+ *       {@code -Dorespawn.dev.classicRenderers=beaver}).</li>
  *   <li>F: 100 Frogs, idle: a classic-only vanilla-path renderer of the Beaver's size class, the
  *       zero line (identical in both runs).</li>
  * </ul>
