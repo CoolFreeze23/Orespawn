@@ -283,6 +283,13 @@ import software.bernie.geckolib.loading.object.GeometryTree;
  * the Ant rig's five consumers (the first gait-scaled Tier-2 rig after the Beaver) - no GeckoLib ticking (a controller's {@code process} initialises
  * {@code MolangQueries}, which this server refuses: the kf17d finding; the harness's keyframe reference leg carries the
  * pose facts). Own batch {@code t2Seam} (TEST-003).
+ * <p>THE BRANCH {@code default-flip}: the GeckoLib renderer is the default for every landed rig and the switch names the
+ * classic exceptions ({@link PhaseGDevSwitchTests} re-pinned). The rows below are unchanged: their "registers nothing"
+ * pins are the animation seam's self-gate - {@code registerKeyframeLayers} under the modern keys with no layer declared and no
+ * clip shipped, {@code registerControllers} with no bake on this server - which the renderer default never enters (which
+ * renderer the client registers is decided in PhaseGDevRenderers, a client class this server does not load); "the classic
+ * shadow" and "the classic face order" are the descriptor's facts about the classic renderer it replaces, true under
+ * either default.</p>
  * <ul>
  * <li>{@code t2_001}: every descriptor constructs registry-free on this server (the lazy entity-type suppliers,
  * OPT-029 R0) and declares its frequency groups exactly - count, clip names under the naming rule (the gait

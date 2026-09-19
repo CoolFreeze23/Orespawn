@@ -331,7 +331,18 @@ import danger.orespawn.entity.client.WormSmallRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.world.entity.Entity;
 
-/** Resolves the Phase G developer switch into renderer providers at registration time. Species ids are registry names. */
+/**
+ * Resolves the Phase G developer switch into renderer providers at registration time. Species ids are registry names.
+ *
+ * <p>ON THE BRANCH {@code default-flip} the switch is inverted: the GeckoLib candidate is the default for every registry
+ * that goes through {@link #select} - every landed rig - and {@code -Dorespawn.dev.classicRenderers} (the Beaver
+ * alias the same grammar) names the species that keep their classic renderer; a registry with no landed rig is
+ * registered by OreSpawnClient directly and keeps its classic renderer regardless; the Queen native as always. The
+ * per-slice notes below that say "the classic renderers the default" record each slice's landing on master, where
+ * that is still the default; the branch merges once approved. The start-up line names the classic exceptions now
+ * (master's named the candidates).</p>
+ *
+ */
 public final class PhaseGDevRenderers {
     private PhaseGDevRenderers() {
     }
@@ -836,12 +847,13 @@ public final class PhaseGDevRenderers {
     private static <P extends Entity, E extends P> EntityRendererProvider<E> select(String species,
                                                                                     EntityRendererProvider<P> classic,
                                                                                     EntityRendererProvider<E> candidate) {
-        if (DevRendererSwitch.geckolib(species) == DevRendererSwitch.Variant.CANDIDATE) {
-            OreSpawnMod.LOGGER.warn("Phase G dev switch: {} is using its GeckoLib candidate renderer "
-                    + "(selected by -D{}). This is a review build, not a production cutover.",
-                    species, DevRendererSwitch.candidateSource(species));
-            return candidate;
+        if (DevRendererSwitch.geckolib(species) == DevRendererSwitch.Variant.CLASSIC) {
+            OreSpawnMod.LOGGER.warn("Phase G dev switch (default-flip): {} is keeping its classic renderer "
+                    + "(selected by -D{}); every other landed rig draws with its GeckoLib candidate, the default on this "
+                    + "branch. This is a review build, not a production cutover.",
+                    species, DevRendererSwitch.classicSource(species));
+            return (EntityRendererProvider<E>) (EntityRendererProvider<?>) classic;
         }
-        return (EntityRendererProvider<E>) (EntityRendererProvider<?>) classic;
+        return candidate;
     }
 }

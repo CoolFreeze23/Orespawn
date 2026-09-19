@@ -179,6 +179,12 @@ import software.bernie.geckolib.model.GeoModel;
  * DataTickets}, whose initialiser only builds tickets into its own map), so the dedicated server loads
  * them; the gametest run has already proven {@code new BeaverGeoReplacement()} on this server ({@link
  * GeoCacheEvictionTests}).
+ * <p>THE BRANCH {@code default-flip}: the GeckoLib renderer is the default for every landed rig and the switch names the
+ * classic exceptions ({@link PhaseGDevSwitchTests} re-pinned). The rows below are unchanged: "the classic source" is the
+ * animation seam's word for the classic hook posing a rig whose self-gate registered no layer (the config keys, the
+ * shipped clips), and "registers nothing" is that self-gate's pin on this server; neither reads the renderer switch, and
+ * the flipped default changes which renderer the client registers, not what the seam registers.</p>
+ *
  * <ul>
  * <li>{@code kf_001} (item 15 landed, 2026-09-12): the SHIPPED {@code beaver.animation.json} is the
  * transcription - {@code idle} (no bone keyed), {@code walk}, {@code walk_teeth}, {@code walk_tail} - and
