@@ -1,47 +1,37 @@
 # OreSpawn for NeoForge 1.21.1 — 2.0.0-beta.5
 
-Phase G: the GeckoLib rigs are now the default renderers. Every creature
-but the two solver robots draws through a GeckoLib rig converted from its
-classic model and proven against it bone for bone and pixel for pixel; the
-poses are the classic motion, bit for bit, so nothing should look
-different.
+Release: https://github.com/CoolFreeze23/Orespawn/releases/tag/v1.21.1-2.0.0-beta.5 — this section is the player's half of the release notes, verbatim; the full notes, with the modder's half and the findings appendix, are `phase_g_reports/RELEASE_NOTES_2.0.0-beta.5.md`.
 
-## The GeckoLib rigs (now the default)
+## Part one — for the player
 
-- **104 of the mod's 106 creature rigs** were converted from the classic
-  models and proven against them bone for bone and pixel for pixel, and all
-  of them now draw through their GeckoLib rigs. The Ant Robot and the Spider
-  Robot (the two solver-driven rigs) keep their classic renderers by design;
-  the Queen keeps her hand-made rig.
-- **The escape hatch** is a JVM argument, not a config:
-  `-Dorespawn.dev.classicRenderers=ender_knight` puts that species back on
-  its classic renderer — a comma-separated list of registry names
-  (`beaver,elevator`), or `classic` for every species. The start-up log names
-  each species kept classic. If a species looks different from beta.4, that
-  argument plus a side-by-side screenshot is exactly the report we need.
-- **A mirror slip corrected at its source.** The converter had been writing
-  the rigs mirrored left for right, in a frame where the comparison could not
-  see it. The converter now writes rigs in the convention the Queen's
-  hand-made rig uses; every converted rig, clip and proof was regenerated,
-  the comparison reproduces the real in-game render chains, and an in-game
-  look accepted the result.
-- **The contact sheets.** One sheet per landing slice under
-  `phase_g_reports/contact_sheets/` — the classic render, the converted rig
-  and their pixel diff, at rest and at one posed sample, for every rig; the
-  review of them is what put the GeckoLib rigs in front.
+### What beta.5 is
 
-## For animators
+beta.5 is the build in which the GeckoLib rigs become the default renderers. Every creature but the two solver robots — the Ant Robot and the Spider Robot — now draws through a GeckoLib rig converted from its classic model and proven against it bone for bone and pixel for pixel; the poses are the classic motion, bit for bit; the Queen keeps her hand-made rig. Underneath the renderer change, the cycle's parity work stands in the same build: the creatures' sizes, shadows, hitboxes and textures, the hunters' targeting and a handful of restored models are the 1.7.10 original's again. And the game is ready for hand-made animations: when clips are delivered for a creature, it knows how to play them. (CHANGELOG.md, the beta.5 section; README.md, "2.0.0-beta.5 (this build)", the merge commit 8d7fd2d; phase_g_reports/ents092_changelog_note.md.)
 
-- **The animation contract is complete.** When a creature's clips are
-  delivered, its idle and walk blend by how fast it moves, flying and
-  swimming fade in over a quarter of a second, and hits, attacks and deaths
-  play over the top and hand the bones back smoothly. Until then every
-  creature keeps its ported motion, bit for bit.
+### What a default install sees
 
-## Not in this build
+The rigs. With no argument and no config change, every landed rig draws through its GeckoLib renderer, posed exactly as the classic renderer posed it. The switch that puts a species on its rig is renderer registration, not a change to the creature, and none of the rig batches touched gameplay. Nothing should look different because of the renderer change: a rig that did not match its classic rendering at rest and at a posed sample, pixel for pixel within the comparison's rule, did not land. ( and "PHASE G — THE MERGE (2026-09-19)"; "PHASE G — THE FOURTH TIER-2 SLICE, T2d (2026-09-14)", "PHASE G — THE FIFTH TIER-2 SLICE, T2e (2026-09-15)", "PHASE G — THE SIXTH TIER-2 SLICE, T2f (2026-09-15)", "PHASE G — THE FK SLICE (2026-09-15)", "PHASE G — THE FK SLICE, SECOND ATTEMPT (2026-09-15)", "PHASE G — THE BUTTERFLY RIG (2026-09-19)"; "PHASE G — THE FIRST TIER-1 SLICE, T1a (2026-09-15)", "PHASE G — THE SECOND TIER-1 SLICE, T1b (2026-09-15)", "PHASE G — THE REMAINDER (2026-09-15)"; KNOWN_ISSUES.md, "The GeckoLib rigs — now the default renderers"; phase_g_reports/contact_sheets/index.md.)
 
-- Boss hitbox profiles (bone-synced parts for the King, the Princess and
-  Godzilla) are the phase after this one; the classic single hitbox stands.
+What does look different from beta.4 is the parity work that went into the classic renderers first, in the weeks after beta.4 was cut — and the rigs draw exactly that. In short: mob sizes and shadows are the 1.7.10 registrations again (the Brutalfly nine times bigger; the Irukandji a quarter of its previous size, the Fairy 0.35×, the Robot 3 and the Cricket half, the Hydrolisc 0.65×, a dozen more at 0.75×; the Dragonfly and the Emperor Scorpion 1.5× bigger, the Prince Teen 1.47×; the Queen twice what the port drew, her hit parts on her bones); sixty-three mobs got their 1.7.10 hitboxes back (the Tshirt board 4×4, the Molenoid 3.9×2.6, the Emperor Scorpion 3.5×3, the Sea Monster's box down from 5×5 to 1.25×2.5, the ants, cricket, irukandji and rat small again), Godzilla is 9.9 wide, Mothra's box is 5×2 in classic, and the Kraken has its Play Nicely mode; textures on 97 models sit on their cubes the way the original drew them (the port had mirrored every face's texture on 89 mobs, the four butterflies and seven held items — visible on eyes, markings, text and blades); the Purple Power orb is a translucent, shimmering ball again; the Coin is visible; the Crab shows the twenty-four legs and claws the original drew; and OreSpawn's hunters target as they did in 1.7.10 — the shared "leave it alone" list, the Peaceful and Play Nicely stand-downs, line of sight through grass and torches, prey lists, hunting ranges, who gets picked first, when a grudge is let go — with four modern targeting switches on by default and one config line to turn each off. The full list, grouped, is in part two of the release notes. (phase_g_reports/ents092_changelog_note.md to "TARGETING WAVE 4 (2026-09-06)"; ENT-S-092, ENT-S-095, ENT-S-096, BUG-041, ENT-S-146, BUG-040, ANIM-025; the beta.4 version bump is commit 81549da of 2026-08-21.)
+
+### The switch, and its one-line escape per species
+
+One JVM argument puts a species back on its classic renderer: `-Dorespawn.dev.classicRenderers=<registry names, comma-separated>` — for instance `-Dorespawn.dev.classicRenderers=ender_knight`, or `beaver,elevator` — and the exact token `classic` keeps every species on its classic renderer, for a side-by-side of the whole population. Registry names are trimmed and case-insensitive; the token `classic` is case-exact. The start-up log names each species kept classic, one line per exception at renderer registration; silence means every landed rig is drawing with its GeckoLib renderer. It is a JVM argument, not a config key; the earlier property `orespawn.dev.geckolibRenderers` is no longer read, so a stale one is inert. A species with no landed rig — the Ant Robot, the Spider Robot — never reaches the switch, and the Queen's native rig is untouched either way. (, the inverted switch's form; "PHASE G — THE MERGE (2026-09-19)", item 2; KNOWN_ISSUES.md, "The GeckoLib rigs — now the default renderers".)
+
+What to report. If a species does look different — a limb on the other side, a part missing, a texture facing the wrong way — put it back on its classic renderer with the argument above and send the side-by-side: the species, the argument, a screenshot through each renderer, and the mod version, at https://github.com/CoolFreeze23/Orespawn/issues. That comparison is exactly the report this beta wants; for a crash, the log as well. (KNOWN_ISSUES.md, "The GeckoLib rigs — now the default renderers" and "Help us squash the rest"; README.md, "Reporting issues".)
+
+### Known issues
+
+Condensed from KNOWN_ISSUES.md, which keeps the full list and its ids:
+
+- **The four butterflies came last.** Butterfly, Luna Moth, Mothra and Vampire Butterfly share one rig; the Mothra's flat-wing pose ties 1.2 % of the image between two overlapping wing slabs, and the rig landed under a declared, pinned allowance for exactly that sample — the comparison's default rule of 1 % stands for everyone else. *(TEST-019)*
+- **Classic-renderer quirks the GeckoLib rigs copy on purpose.** A converted rig draws exactly what the port's classic renderer draws; these are divergences of the classic renderer from 1.7.10, recorded and frozen for the parity pass to come, not fixed here: the Triffid stands a quarter-turn from where 1.7.10 turned it *(ENT-S-162)*; Godzilla bites and swings its arms on every cycle where 1.7.10 did so on about half of them, re-rolled per cycle *(ENT-S-163)*; the Prince Teen's wing membranes are opaque where 1.7.10 drew them translucent grey *(ENT-S-164)*. Two more are recorded beside them: put the King on his classic renderer and his wing membranes float 1.5 blocks above his wings — the GeckoLib rig, the default, draws them on the wings *(ENT-S-165)*; and a Boyfriend or Girlfriend summoned with a negative age draws as vanilla's big-headed baby on the classic renderer and as the adult rig at half size on the GeckoLib one, an edge no breeding reaches *(ENT-S-166)*.
+- **Not started: boss hitbox profiles.** The King, the Princess and Godzilla keep the classic single hitbox; bone-synced hitbox parts for them are the phase after this one.
+- **Unchanged from the earlier betas:** the visual and audio rough edges not yet hand-checked against 1.7.10 — some mob animations and model scales *(i043, i074)*, custom mob and boss sounds *(i048, i081, i087, i091, i104)*, the feel of the big mounts and the Left-Alt fly key *(i066, i068, i102)*, hoverboard tricks *(i070, i071, i072)*, boss-fight presentation *(i096, i098, i099, i103)*, the Princess's aura and the Krakens' mouth cycles *(i076, i093)*, far-dimension structures *(i124, i125, i128, i136, i162, i170)*, terrain and spawn sweeps *(i106–i120, i130, i144)*, the Village dimension on a live server *(i158, i164)*, the Valentine's Day Girlfriend *(i178)*; the Fairy Castle Trees of the Crystal dimension can still generate with sheared-off edges at chunk borders — the designated first post-beta patch *(BUG-021)*; and the 1.7.10 quirks that look like bugs but are the original's — the instant teen Prince, the twelve-minute Duplicator tree, the Chainsaw felling everything woody in an 11×16×11 box, the Instant Garden at your feet, rocks placing a pet rock, Mole dirt, the Experience armor's XP trickle, the Cephadrome that cannot be tamed for good *(TF-024, MOD-015 to MOD-019, i004, TF-032)*.
+
+### How to install
+
+Drop `orespawn-1.21.1-2.0.0-beta.5.jar` into `mods/` of a NeoForge 21.1 instance for Minecraft 1.21.1, with GeckoLib 4.7 or later installed alongside; MultiHitboxLib and Databuddy are bundled inside the jar, and the `-slim` jar beside it is the library-less variant. Worlds carry forward from the earlier betas; 1.7.10 worlds are not upgradable. (README.md, "Installing"; `src/main/resources/META-INF/neoforge.mods.toml` — `neoforge` `[21.1,)`, `minecraft` `[1.21.1]`, `geckolib` `[4.7,)`, the second `[[mods]]` entry `multihitboxlib`; `META-INF/jarjar/databuddy-1.21-6.0.0.0.jar`; `build.gradle` lines 522–527, the jar classifiers; `gradle.properties`, GeckoLib 4.8.4 the build's own.)
 
 # OreSpawn for NeoForge 1.21.1 — 2.0.0-beta.4
 
