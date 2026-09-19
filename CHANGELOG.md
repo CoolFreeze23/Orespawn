@@ -1,7 +1,12 @@
-# OreSpawn for NeoForge 1.21.1 — after 2.0.0-beta.5 (unreleased)
+# OreSpawn for NeoForge 1.21.1 — 2.0.0-beta.6
 
-Fixes for the three reports filed on GitHub against beta.3 (issues #1, #2 and #3), landed 2026-09-20. They take effect in
-newly generated chunks.
+Release: https://github.com/CoolFreeze23/Orespawn/releases/tag/v1.21.1-2.0.0-beta.6 — a hotfix on beta.5 for the three reports filed on GitHub against beta.3 (issues #1, #2 and #3), landed 2026-09-20; this section is the player's half of the release notes, verbatim; the notes, with the modder's half, are `phase_g_reports/RELEASE_NOTES_2.0.0-beta.6.md`.
+
+### What beta.6 is
+
+beta.6 is beta.5 plus the fixes for the three player reports: Utopia's trees generate whole and complete again, Utopia's frogs stay in the water, and the hitbox report is answered. Nothing else moves. The worldgen fixes take effect in newly generated chunks; chunks generated before keep what they have.
+
+### What changed
 
 - **Utopia's trees are whole again.** The Sky trees and the Wind trees generated with most of their branches missing: a
   tree that reaches past the next chunk had its outer blocks dropped by the game's chunk writer. They now generate as
@@ -19,6 +24,10 @@ newly generated chunks.
   *(ENT-S-170)*
 - **Hitboxes (issue #3):** the Ender Knight, Hercules Beetle, Jumpy Bug, Hammerhead and Vortex boxes reported against
   beta.3 were restored to the originals in beta.5 (see that section); the Basilisk's was already right.
+
+### How to install
+
+Put `orespawn-1.21.1-2.0.0-beta.6.jar` into the `mods` folder of a NeoForge 21.1 instance for Minecraft 1.21.1 together with GeckoLib 4.7 or newer, and take the beta.5 jar out; MultiHitboxLib and Databuddy are bundled in the jar. Existing worlds carry over.
 
 # OreSpawn for NeoForge 1.21.1 — 2.0.0-beta.5
 
