@@ -1,7 +1,7 @@
 # Known Issues — OreSpawn Port (BETA)
 
 **This release is a beta.** The game logic underneath has been through a
-1304-test automated suite (all green, in both robot modes; the count grows
+1309-test automated suite (all green, in both robot modes; the count grows
 with every remediation batch) plus hands-on play sessions, but a lot
 of the *visual and
 audio* polish has deliberately been left open for community
@@ -35,7 +35,7 @@ These came straight out of hand-testing and are fixed in code in this build;
 most still need a second pair of eyes in a real game. If one still looks
 wrong for you, please say so.
 
-**post-beta.6 (in the next build):**
+**2.0.0-beta.7 (this build):**
 
 - Creatures you leave behind despawn as they did in 1.7.10: frogs, crickets and T-shirts (Utopia no longer fills with
   every frog that ever spawned near you), wild grown Baryonyxes, Cassowaries, Flounders, Stink Bugs and Whales (their

@@ -3,7 +3,7 @@
 > *"Just plain fun!"* — the classic 1.7.10 OreSpawn, rebuilt for modern
 > Minecraft with 100% source-verified parity.
 
-**Version:** 1.21.1-2.0.0-beta.6 · **Loader:** NeoForge 21.1+ · **Minecraft:** 1.21.1
+**Version:** 1.21.1-2.0.0-beta.7 · **Loader:** NeoForge 21.1+ · **Minecraft:** 1.21.1
 **Status:** public beta — the 2.0 robot overhaul is live; the 1.0 parity
 core underneath is stable, with visual/audio polish in community review
 
@@ -69,7 +69,13 @@ post-beta patch.
 
 ## Roadmap
 
-- **2.0.0-beta.6 (this build)**: the hotfix for the three player reports
+- **2.0.0-beta.7 (this build)**: creatures you leave behind despawn as they
+  did in 1.7.10, which ends the frog pile-up beta.6 had left in Utopia.
+  Thirty-five species carry their original rule: the worms, the robots and
+  the hoverboard stop vanishing; a wild, unridden Prince and the tameables'
+  wild adults go when left behind, so tame what you mean to keep. Applies to
+  existing worlds as their chunks load.
+- **2.0.0-beta.6**: the hotfix for the three player reports
   filed against beta.3 — Utopia's Sky and Wind trees generate whole again
   (they were being sheared at chunk borders), the big square and circular
   trees with their chests and iron golems are back in worldgen, the round

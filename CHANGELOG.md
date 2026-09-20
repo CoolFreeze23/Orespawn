@@ -1,4 +1,12 @@
-# OreSpawn for NeoForge 1.21.1 — after 2.0.0-beta.6 (unreleased)
+# OreSpawn for NeoForge 1.21.1 — 2.0.0-beta.7
+
+Release: https://github.com/CoolFreeze23/Orespawn/releases/tag/v1.21.1-2.0.0-beta.7 — cut on 2026-09-20 on beta.6 for the despawn rule (the frogs the owner still saw in Utopia); this section is the player's half of the release notes, verbatim; the notes, with the modder's half, are `phase_g_reports/RELEASE_NOTES_2.0.0-beta.7.md`.
+
+### What beta.7 is
+
+beta.7 is beta.6 plus one rule: creatures you leave behind despawn as they did in 1.7.10, which ends the frog pile-up in Utopia that beta.6's placement fix had left in place. Nothing else moves. It applies to creatures already in your world as their chunks load: the ones far from you go, the ones near you stay.
+
+### What changed
 
 - **Left-behind creatures despawn as they did in 1.7.10.** Frogs, crickets and T-shirts never despawned in the port, so
   Utopia filled with every frog that ever spawned near you (2,753 in one eleven-minute session); beyond 128 blocks they
@@ -9,6 +17,10 @@
   longer vanish when left behind. The Gold Fish despawns only by night; the Pitch Black, the Creeping Horror and the
   Firefly only by day; the Lurking Terror only while idle. A young Easter Bunny, Peacock, Lizard, Ostrich, Rubber Ducky
   or Velocity Raptor that meets the check is kept for good, as the original kept it. *(ENT-S-171)*
+
+### How to install
+
+Put `orespawn-1.21.1-2.0.0-beta.7.jar` into the `mods` folder of a NeoForge 21.1 instance for Minecraft 1.21.1 together with GeckoLib 4.7 or newer, and take the beta.6 jar out; MultiHitboxLib and Databuddy are bundled in the jar. Existing worlds carry over.
 
 # OreSpawn for NeoForge 1.21.1 — 2.0.0-beta.6
 
