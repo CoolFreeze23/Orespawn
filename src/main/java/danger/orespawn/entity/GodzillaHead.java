@@ -20,27 +20,13 @@ import net.minecraft.world.phys.AABB;
  * hitbox for players attacking the boss's head. Damage received was
  * re-routed to the parent via an AABB search for the nearest {@link Godzilla}.</p>
  *
- * <p><b>Obsoleted in the 1.21.1 port.</b> {@link Godzilla} now carries a proper
- * {@link net.neoforged.neoforge.entity.PartEntity} array (see
- * {@link OreSpawnPartEntity}), so hit detection is handled by the engine,
- * rendering interpolates correctly, and damage forwarding is O(1) instead
- * of an AABB query per tick.</p>
+ * <p><b>Retired in the 1.21.1 port (BOSS-047, hit boxes follow the rigs).</b> {@link Godzilla} no longer spawns one:
+ * Godzilla's head is a bone-synced MultiHitboxLib part of Godzilla's own profile ({@code
+ * data/orespawn/multihitboxlib/hitbox_profiles/godzilla.json}), on the drawn head, in place of this box at a fixed
+ * gaze offset. The type stays registered so an old save's head still decodes; one that loads discards itself on its
+ * first server tick ({@link #tick()}). A bypassing hit ({@code /kill}, ENT-S-172) kills it and reaches the body.</p>
  *
- * <p>Retained solely for:
- * <ol>
- *   <li><b>NBT backward compatibility</b> — old saves that still contain an
- *       {@code "orespawn:godzilla_head"} entity must still decode without
- *       error.</li>
- *   <li><b>Flight-pattern hook parity</b> — AI goals spawned from
- *       {@link Godzilla} may still target this head for legacy scripted
- *       dialogue/pattern hooks. Once the PartEntity framework is proven,
- *       the spawn call and this class can be removed together.</li>
- * </ol>
- *
- * <p>Do not add new functionality here — put it on {@link Godzilla} and its
- * {@link OreSpawnPartEntity} children instead.</p>
- *
- * @deprecated Use {@link OreSpawnPartEntity} on {@link Godzilla} instead.
+ * @deprecated retired by BOSS-047; kept for save compatibility only.
  */
 @Deprecated
 public class GodzillaHead extends Mob {
@@ -63,11 +49,17 @@ public class GodzillaHead extends Mob {
 
     @Override
     public boolean hurt(DamageSource source, float amount) {
-        // ENT-S-172: damage that bypasses invulnerability - /kill, the void - is taken by the head itself, never
-        // forwarded, capped or gated: the contract every vanilla boss keeps (EnderDragon, Wither). 1.7.10 had no
-        // such source, so this clause is the port's, not a transcription.
+        // ENT-S-172: damage that bypasses invulnerability - /kill, the void - kills the head itself AND reaches the
+        // body in full, never capped or gated (a head that died alone would be revived by its own health mirror a
+        // tick later, tick()): vanilla's own gates yield to this tag (Entity.isInvulnerableTo's Invulnerable flag, the
+        // totem's checkTotemDeathProtection, WitherBoss.hurt's spawn-armour gate; the Ender Dragon answers /kill in
+        // its own kill() override). 1.7.10's /kill could not name a mob, and its void source ran through the body's
+        // timers, so this clause is the port's, not a transcription.
         if (source.is(net.minecraft.tags.DamageTypeTags.BYPASSES_INVULNERABILITY)) {
-            return super.hurt(source, amount);
+            boolean died = super.hurt(source, amount);
+            List<Godzilla> bodies = this.level().getEntitiesOfClass(Godzilla.class, this.getBoundingBox().inflate(32.0, 32.0, 32.0));
+            if (!bodies.isEmpty()) bodies.get(0).hurt(source, amount);
+            return died;
         }
         if (source.getMsgId().equals("inWall")) return false;
         Entity attacker = source.getEntity();
@@ -101,6 +93,13 @@ public class GodzillaHead extends Mob {
     @Override
     public void tick() {
         if (this.isRemoved()) return;
+        // BOSS-047: the sidecar box is retired - the Godzilla's head is bone-synced MHLib parts of the
+        // body's own profile, on the drawn head. The type stays registered for old saves; one that loads
+        // discards itself here.
+        if (!this.level().isClientSide()) {
+            this.discard();
+            return;
+        }
         this.noPhysics = true;
         this.clearFire();
         if (!this.level().isClientSide()) {

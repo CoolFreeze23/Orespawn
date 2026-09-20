@@ -50,6 +50,7 @@ import danger.orespawn.OreSpawnMod;
 import danger.orespawn.util.MyUtils;
 import danger.orespawn.entity.ai.TargetSelection;
 import de.dertoaster.multihitboxlib.api.IMHLibSizeCallback;
+import de.dertoaster.multihitboxlib.api.IMultipartEntity;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.animation.AnimatableManager;
@@ -120,11 +121,9 @@ import software.bernie.geckolib.util.GeckoLibUtil;
  * Geckolib animation pose, with zero per-part positioning code in
  * this class.</p>
  *
- * <p>The legacy {@code QueenHead} sidecar entity type is still
- * registered and still spawned by {@link #aiStepPrimary()} â€” kept
- * deliberately for save-file backward compatibility and as a
- * separately-targetable nuisance during mad-mood swarms. It is
- * functionally independent of the MHLib part system.</p>
+ * <p>The 1.7.10 {@code QueenHead} sidecar is no longer spawned (BOSS-047, hit boxes follow the rigs)
+ * - the three heads have been bone-synced parts of this profile since ENT-S-092. The type stays registered for old
+ * saves; one that loads discards itself on its first server tick.</p>
  */
 public class TheQueen extends Monster implements GeoEntity, IMHLibSizeCallback<TheQueen> {
 
@@ -492,6 +491,8 @@ public class TheQueen extends Monster implements GeoEntity, IMHLibSizeCallback<T
      * = 5.5x6 exactly (orig TheQueen.java:80-82), with the profile intact.
      * {@code EntityDimensions.scale} is a no-op on a {@code fixed} box, so the
      * entity's own 5.5x6 answer (no profile resolved) is left alone too.
+     * BOSS-047: the King (0.25), Godzilla (0.25) and the Kraken (1/3) joined the
+     * profiled bosses and take the same hook.
      */
     @EventBusSubscriber(modid = OreSpawnMod.MOD_ID)
     public static final class PlayNicelySizeHook {
@@ -499,9 +500,16 @@ public class TheQueen extends Monster implements GeoEntity, IMHLibSizeCallback<T
         }
 
         @SubscribeEvent(priority = EventPriority.LOW)
+        @SuppressWarnings({"rawtypes", "unchecked"})
         public static void onEntitySize(EntityEvent.Size event) {
-            if (event.getEntity() instanceof TheQueen queen) {
-                double scale = queen.mhlibGetEntitySizeScale(queen);
+            // BOSS-047: the King, Godzilla and the Kraken carry profiles too, so MHLib's handler replaces their PlayNicely
+            // box with the profile main size exactly as it did the Queen's (ENT-S-095 batch 3); the same LOW-priority
+            // scale brings each back - any profiled IMHLibSizeCallback, so a future profile needs no line here:
+            // 22x24 -> 5.5x6, 9.9x25 -> 2.475x6.25, 4x15 -> 1.3333334x5.
+            if (event.getEntity() instanceof IMHLibSizeCallback<?> callback
+                    && event.getEntity() instanceof IMultipartEntity<?> multipart
+                    && multipart.getHitboxProfile().isPresent()) {
+                double scale = ((IMHLibSizeCallback) callback).mhlibGetEntitySizeScale(event.getEntity());
                 if (scale != 1.0D) {
                     event.setNewSize(event.getNewSize().scale((float) scale));
                 }
@@ -650,8 +658,10 @@ public class TheQueen extends Monster implements GeoEntity, IMHLibSizeCallback<T
     @Override
     public boolean hurt(DamageSource source, float amount) {
         // ENT-S-172: damage that bypasses invulnerability - /kill, the void - is never capped, gated or refused:
-        // the contract every vanilla boss keeps (EnderDragon, Wither). 1.7.10 had no such source, so this clause
-        // is the port's, not a transcription; everything below it is the original's rule, unchanged.
+        // vanilla's own gates yield to this tag (Entity.isInvulnerableTo's Invulnerable flag, the totem's
+        // checkTotemDeathProtection, WitherBoss.hurt's spawn-armour gate; the Ender Dragon answers /kill in its own
+        // kill() override). 1.7.10's /kill could not name a mob, and its void source ran through these same timers,
+        // so this clause is the port's, not a transcription; everything below it is the original's rule, unchanged.
         if (source.is(net.minecraft.tags.DamageTypeTags.BYPASSES_INVULNERABILITY)) {
             return super.hurt(source, amount);
         }
@@ -1113,14 +1123,9 @@ public class TheQueen extends Monster implements GeoEntity, IMHLibSizeCallback<T
 
             nearbyTarget = findSomethingToAttack();
 
-            if (this.headFound == 0 && this.mood == 1) {
-                QueenHead head = ModEntities.QUEEN_HEAD.get().create(this.level());
-                if (head != null) {
-                    head.moveTo(this.getX(), this.getY() + 20, this.getZ(), 0.0F, 0.0F);
-                    this.level().addFreshEntity(head);
-                    this.headFound = 1;
-                }
-            }
+            // BOSS-047: the QueenHead sidecar (orig QueenHead.java, a 19.9x10 box at the gaze) is no longer spawned -
+            // the three heads have been bone-synced parts of the MHLib profile since ENT-S-092. headFound stays in the
+            // save data; a head from an old save discards itself (QueenHead.tick).
 
             if (currentTarget == null) {
                 currentTarget = nearbyTarget;

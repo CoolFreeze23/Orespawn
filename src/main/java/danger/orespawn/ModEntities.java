@@ -692,6 +692,10 @@ public class ModEntities {
     // short-circuit shouldRender()=false, matching the 1.7.10 empty
     // Render* stubs (the box was invisible there too). Sizes below are the
     // orig func_70105_a values.
+    // BOSS-047 (hit boxes follow the rigs) supersedes the coexistence above: the bodies no longer spawn these sidecars -
+    // the heads are bone-synced MHLib parts on the drawn heads (hitbox_profiles/the_king.json, the_queen.json,
+    // godzilla.json). The three types stay registered for old saves; a loaded one discards itself on its first
+    // server tick (KingHead.tick and twins).
 
     public static final DeferredHolder<EntityType<?>, EntityType<KingHead>> KING_HEAD =
             ENTITY_TYPES.register("king_head", () -> EntityType.Builder.of(KingHead::new, MobCategory.MISC)

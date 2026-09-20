@@ -133,11 +133,14 @@ public class BetterFireball extends LargeFireball {
      */
     @Override
     protected boolean canHitEntity(Entity target) {
-        if (target instanceof BetterFireball || target instanceof Mothra
-                || target instanceof GodzillaHead || MyUtils.isRoyalty(target)) {
+        // BOSS-047: a bone-synced hitbox part stands in for its boss (the King's and the Queen's heads sit where their
+        // own volleys spawn), so the screen reads the part's parent, not the part.
+        Entity screened = target instanceof net.neoforged.neoforge.entity.PartEntity<?> part ? part.getParent() : target;
+        if (screened instanceof BetterFireball || screened instanceof Mothra
+                || screened instanceof GodzillaHead || MyUtils.isRoyalty(screened)) {
             return false;
         }
-        if (this.notme && (target instanceof Player || target instanceof Dragon)) {
+        if (this.notme && (screened instanceof Player || screened instanceof Dragon)) {
             return false;
         }
         return super.canHitEntity(target);

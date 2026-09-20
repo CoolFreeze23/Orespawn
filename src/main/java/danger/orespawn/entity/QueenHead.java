@@ -11,23 +11,17 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 
 /**
- * <b>Legacy 1.7.10 sidecar entity.</b> See {@link KingHead} for the full
- * explanation of this pattern and why it's superseded in 1.21.1 by
- * {@link OreSpawnPartEntity}.
+ * <b>Legacy 1.7.10 sidecar entity.</b> In the 1.7.10 original ({@code reference_1_7_10_source/sources/danger/orespawn/QueenHead.java})
+ * the Queen's head was a standalone {@code EntityLiving} thirty blocks ahead of the gaze and twelve up, forwarding
+ * damage to the body by an AABB search.
  *
- * <p>In the 1.7.10 original ({@code reference_1_7_10_source/sources/danger/orespawn/QueenHead.java}),
- * Queen's head was a standalone {@code EntityLiving} that teleported to
- * {@code (parent.x − 30·sin(yaw), parent.y + 12, parent.z + 30·cos(yaw))}
- * every tick and forwarded damage via AABB search. The modern port expresses
- * Queen's three heads as named {@link OreSpawnPartEntity} children of
- * {@link TheQueen} ({@code headL} / {@code headC} / {@code headR}) — see
- * {@link TheQueen#getParts()}.</p>
+ * <p><b>Retired in the 1.21.1 port (BOSS-047, hit boxes follow the rigs).</b> {@link TheQueen} no longer spawns one: the
+ * Queen's heads are bone-synced MultiHitboxLib parts of the Queen's own profile ({@code
+ * data/orespawn/multihitboxlib/hitbox_profiles/the_queen.json}), on the drawn heads, in place of this box at a fixed
+ * gaze offset. The type stays registered so an old save's head still decodes; one that loads discards itself on its
+ * first server tick ({@link #tick()}). A bypassing hit ({@code /kill}, ENT-S-172) kills it and reaches the body.</p>
  *
- * <p>Retained for NBT backward compatibility and for
- * {@link TheQueen#customServerAiStep()}'s flight-pattern hook only.</p>
- *
- * @deprecated superseded by {@link OreSpawnPartEntity} on {@link TheQueen};
- *             kept for save compatibility only.
+ * @deprecated retired by BOSS-047; kept for save compatibility only.
  */
 @Deprecated
 public class QueenHead extends Mob {
@@ -50,11 +44,17 @@ public class QueenHead extends Mob {
 
     @Override
     public boolean hurt(DamageSource source, float amount) {
-        // ENT-S-172: damage that bypasses invulnerability - /kill, the void - is taken by the head itself, never
-        // forwarded, capped or gated: the contract every vanilla boss keeps (EnderDragon, Wither). 1.7.10 had no
-        // such source, so this clause is the port's, not a transcription.
+        // ENT-S-172: damage that bypasses invulnerability - /kill, the void - kills the head itself AND reaches the
+        // body in full, never capped or gated (a head that died alone would be revived by its own health mirror a
+        // tick later, tick()): vanilla's own gates yield to this tag (Entity.isInvulnerableTo's Invulnerable flag, the
+        // totem's checkTotemDeathProtection, WitherBoss.hurt's spawn-armour gate; the Ender Dragon answers /kill in
+        // its own kill() override). 1.7.10's /kill could not name a mob, and its void source ran through the body's
+        // timers, so this clause is the port's, not a transcription.
         if (source.is(net.minecraft.tags.DamageTypeTags.BYPASSES_INVULNERABILITY)) {
-            return super.hurt(source, amount);
+            boolean died = super.hurt(source, amount);
+            List<TheQueen> bodies = this.level().getEntitiesOfClass(TheQueen.class, this.getBoundingBox().inflate(48.0, 32.0, 48.0));
+            if (!bodies.isEmpty()) bodies.get(0).hurt(source, amount);
+            return died;
         }
         if (source.getMsgId().equals("inWall")) return false;
         Entity attacker = source.getEntity();
@@ -88,6 +88,13 @@ public class QueenHead extends Mob {
     @Override
     public void tick() {
         if (this.isRemoved()) return;
+        // BOSS-047: the sidecar box is retired - the Queen's heads are bone-synced MHLib parts of the
+        // body's own profile, on the drawn heads. The type stays registered for old saves; one that loads
+        // discards itself here.
+        if (!this.level().isClientSide()) {
+            this.discard();
+            return;
+        }
         this.noPhysics = true;
         this.clearFire();
         if (!this.level().isClientSide()) {

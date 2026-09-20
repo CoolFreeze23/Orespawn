@@ -418,8 +418,8 @@ public class HitboxPartTests {
 
     /**
      * The part→parent sweep backing the HUD unwrap: every part of every
-     * part-bearing entity (King manual parts, Godzilla manual parts, Queen
-     * MHLib parts, modern spider legs) resolves to its parent — the
+     * part-bearing entity (the King's, Godzilla's and the Queen's MHLib parts
+     * since BOSS-047, modern spider legs) resolves to its parent — the
      * assumption the crosshair overlay's PartEntity unwrap rests on.
      */
     @GameTest(template = "empty_large", timeoutTicks = 400, batch = "spiderGaitIsolation")
@@ -435,7 +435,7 @@ public class HitboxPartTests {
             Godzilla godzilla = helper.spawnWithNoFreeWill(ModEntities.GODZILLA.get(), new BlockPos(36, 3, 36));
             TheQueen queen = helper.spawnWithNoFreeWill(ModEntities.THE_QUEEN.get(), new BlockPos(10, 3, 38));
             SpiderRobot spider = helper.spawnWithNoFreeWill(ModEntities.SPIDER_ROBOT.get(), new BlockPos(38, 3, 10));
-            assertAllPartsParent(helper, king, 5, "TheKing");
+            assertAllPartsParent(helper, king, 26, "TheKing"); // BOSS-047: the MHLib profile's 26 parts
             helper.assertTrue(godzilla.getParts() != null && godzilla.getParts().length > 0,
                     "Godzilla has no parts to sweep");
             assertAllPartsParent(helper, godzilla, godzilla.getParts().length, "Godzilla");

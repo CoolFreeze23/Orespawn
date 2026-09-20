@@ -20,28 +20,13 @@ import net.minecraft.world.phys.AABB;
  * every tick. Damage was forwarded via an AABB search for the nearest
  * {@code TheKing}.</p>
  *
- * <p><b>Obsoleted in the 1.21.1 port.</b> {@link TheKing} now carries a
- * proper {@link net.neoforged.neoforge.entity.PartEntity} array — see
- * {@link OreSpawnPartEntity} — so hit detection is handled by the engine,
- * client-side rendering interpolates correctly, and damage forwarding is
- * O(1) instead of an AABB query.</p>
+ * <p><b>Retired in the 1.21.1 port (BOSS-047, hit boxes follow the rigs).</b> {@link TheKing} no longer spawns one: the
+ * King's heads are bone-synced MultiHitboxLib parts of the King's own profile ({@code
+ * data/orespawn/multihitboxlib/hitbox_profiles/the_king.json}), on the drawn heads, in place of this box at a fixed
+ * gaze offset. The type stays registered so an old save's head still decodes; one that loads discards itself on its
+ * first server tick ({@link #tick()}). A bypassing hit ({@code /kill}, ENT-S-172) kills it and reaches the body.</p>
  *
- * <p>This class is kept only for:
- * <ol>
- *   <li><b>NBT backward compatibility</b>: old saves with a {@code "orespawn:king_head"}
- *       entity in the world will still load without error.</li>
- *   <li><b>AI-hook parity</b>: {@link TheKing#customServerAiStep()} still
- *       spawns one, mirroring the 1.7.10 flight pattern where enemies
- *       targeting "the head" pull Queen's flight path upward. Once the
- *       PartEntity framework is proven in playtesting, the spawn call and
- *       this class can be removed together.</li>
- * </ol>
- *
- * <p>Do not add new functionality here — put it on {@link TheKing} and its
- * {@link OreSpawnPartEntity} children instead.</p>
- *
- * @deprecated superseded by {@link OreSpawnPartEntity} on {@link TheKing};
- *             kept for save compatibility only.
+ * @deprecated retired by BOSS-047; kept for save compatibility only.
  */
 @Deprecated
 public class KingHead extends Mob {
@@ -65,11 +50,17 @@ public class KingHead extends Mob {
 
     @Override
     public boolean hurt(DamageSource source, float amount) {
-        // ENT-S-172: damage that bypasses invulnerability - /kill, the void - is taken by the head itself, never
-        // forwarded, capped or gated: the contract every vanilla boss keeps (EnderDragon, Wither). 1.7.10 had no
-        // such source, so this clause is the port's, not a transcription.
+        // ENT-S-172: damage that bypasses invulnerability - /kill, the void - kills the head itself AND reaches the
+        // body in full, never capped or gated (a head that died alone would be revived by its own health mirror a
+        // tick later, tick()): vanilla's own gates yield to this tag (Entity.isInvulnerableTo's Invulnerable flag, the
+        // totem's checkTotemDeathProtection, WitherBoss.hurt's spawn-armour gate; the Ender Dragon answers /kill in
+        // its own kill() override). 1.7.10's /kill could not name a mob, and its void source ran through the body's
+        // timers, so this clause is the port's, not a transcription.
         if (source.is(net.minecraft.tags.DamageTypeTags.BYPASSES_INVULNERABILITY)) {
-            return super.hurt(source, amount);
+            boolean died = super.hurt(source, amount);
+            List<TheKing> bodies = this.level().getEntitiesOfClass(TheKing.class, this.getBoundingBox().inflate(48.0, 32.0, 48.0));
+            if (!bodies.isEmpty()) bodies.get(0).hurt(source, amount);
+            return died;
         }
         if (source.getMsgId().equals("inWall")) return false;
         Entity attacker = source.getEntity();
@@ -103,6 +94,13 @@ public class KingHead extends Mob {
     @Override
     public void tick() {
         if (this.isRemoved()) return;
+        // BOSS-047: the sidecar box is retired - the King's heads are bone-synced MHLib parts of the
+        // body's own profile, on the drawn heads. The type stays registered for old saves; one that loads
+        // discards itself here.
+        if (!this.level().isClientSide()) {
+            this.discard();
+            return;
+        }
         this.noPhysics = true;
         this.clearFire();
         if (!this.level().isClientSide()) {

@@ -690,9 +690,10 @@ public class ConfigGateTests {
     /**
      * BOSS-017 — PlayNicely across the giant bosses. Phase 1 (deterministic,
      * constructor-time per orig TheKing.java:85-89 / Godzilla.java:71-75):
-     * a King constructed while playNicely=true snapshots the 5.5x6 box, is
-     * directly pickable, and serves NO part surfaces; constructed with the
-     * flag off it is 22x24, unpickable, with 5 parts. Phase 2 (dynamic per
+     * a King constructed while playNicely=true snapshots the 5.5x6 box;
+     * constructed with the flag off it is 22x24. In both it is unpickable and
+     * hit through its 26 bone-synced parts, quarter-size in the nice form
+     * (BOSS-047, the Queen's ENT-S-095 batch 3 form). Phase 2 (dynamic per
      * orig TheKing.java:985-988): with playNicely=true a full-size King near
      * a survival player acquires no target and never spawns the KingHead
      * sidecar over 80 ticks (the gate fakes headEntityFound=1, orig quirk).
@@ -713,8 +714,8 @@ public class ConfigGateTests {
                         && Math.abs(niceKing.getBbHeight() - 6.0f) < 0.01f,
                 "nice King must snapshot 5.5x6 (orig TheKing.java:85-89), got "
                         + niceKing.getBbWidth() + "x" + niceKing.getBbHeight());
-        helper.assertTrue(niceKing.isPickable(), "nice King is directly hittable (single-box orig)");
-        helper.assertTrue(niceKing.getParts().length == 0, "nice King serves no part surfaces");
+        helper.assertTrue(!niceKing.isPickable() && niceKing.getParts().length == 26,
+                "nice King keeps the profile's 26 parts at a quarter scale and is hit through them (BOSS-047, the Queen's ENT-S-095 batch 3 form)");
         niceKing.discard();
 
         OreSpawnConfig.PLAY_NICELY.set(false);
@@ -722,8 +723,8 @@ public class ConfigGateTests {
                 helper.spawnWithNoFreeWill(ModEntities.THE_KING.get(), new BlockPos(8, 8, 8));
         helper.assertTrue(Math.abs(meanKing.getBbWidth() - 22.0f) < 0.01f,
                 "full King must be 22 wide (orig TheKing.java:86)");
-        helper.assertTrue(!meanKing.isPickable() && meanKing.getParts().length == 5,
-                "full King routes damage through its 5 parts");
+        helper.assertTrue(!meanKing.isPickable() && meanKing.getParts().length == 26,
+                "full King routes damage through its 26 bone-synced parts (BOSS-047)");
         meanKing.discard();
 
         // Phase 2: dynamic pacification of a full-size King.

@@ -37,11 +37,12 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraft.server.level.ServerBossEvent;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.BossEvent;
+import de.dertoaster.multihitboxlib.api.IMHLibSizeCallback;
 import net.minecraft.network.chat.Component;
 import danger.orespawn.entity.ai.TargetSelection;
 import danger.orespawn.entity.pose.KrakenPose;
 
-public class Kraken extends Monster implements KrakenPose {
+public class Kraken extends Monster implements KrakenPose, IMHLibSizeCallback<Kraken> {
     private static final EntityDataAccessor<Integer> DATA_ATTACKING =
             SynchedEntityData.defineId(Kraken.class, EntityDataSerializers.INT);
     /**
@@ -178,6 +179,16 @@ public class Kraken extends Monster implements KrakenPose {
         return this.playNicelyShrunk
                 ? net.minecraft.world.entity.EntityDimensions.fixed(1.3333334f, 5.0f)
                 : net.minecraft.world.entity.EntityDimensions.fixed(4.0f, 15.0f);
+    }
+
+    /**
+     * BOSS-047: the MHLib entity scale of the bone-synced parts - 1.0 hostile, 1.0D / 3.0D while PlayNicely-shrunk, the
+     * factor between the render scale and its PlayNicely shrink (render scale 1.0 -> 1.0/3, box 4x15 -> 1.3333334x5, orig Kraken.java:72-75), so the profile authored for the full draw
+     * fits the shrunk one (the Queen's ENT-S-095 batch 3 form).
+     */
+    @Override
+    public double mhlibGetEntitySizeScale(Kraken entity) {
+        return entity.playNicelyShrunk ? 1.0D / 3.0D : 1.0D;
     }
 
     @Override
@@ -563,10 +574,21 @@ public class Kraken extends Monster implements KrakenPose {
     @Override
     public boolean hurt(DamageSource source, float amount) {
         // ENT-S-172: damage that bypasses invulnerability - /kill, the void - is never capped, gated or refused:
-        // the contract every vanilla boss keeps (EnderDragon, Wither). 1.7.10 had no such source, so this clause
-        // is the port's, not a transcription; everything below it is the original's rule, unchanged.
+        // vanilla's own gates yield to this tag (Entity.isInvulnerableTo's Invulnerable flag, the totem's
+        // checkTotemDeathProtection, WitherBoss.hurt's spawn-armour gate; the Ender Dragon answers /kill in its own
+        // kill() override). 1.7.10's /kill could not name a mob, and its void source ran through these same timers,
+        // so this clause is the port's, not a transcription; everything below it is the original's rule, unchanged.
         if (source.is(net.minecraft.tags.DamageTypeTags.BYPASSES_INVULNERABILITY)) {
             return super.hurt(source, amount);
+        }
+        // BOSS-047: the storm the Kraken calls sixteen blocks under itself (customServerAiStep) falls on its own tentacle
+        // parts (tips 8 to 14 blocks below the origin, inside LightningBolt.tick's 6x12x6 sweep), which forward the bolt's
+        // 5 and their eight-second burn here as source-less hits. Orig Kraken.java: onStruckByLightning is empty (port
+        // thunderHit) and isImmuneToFire is set (port fireImmune), so neither ever reached attackEntityFrom - refused here,
+        // before the 30-tick window and the release roll, not inside super.hurt after them.
+        if (source.is(net.minecraft.world.damagesource.DamageTypes.LIGHTNING_BOLT)
+                || source.is(net.minecraft.tags.DamageTypeTags.IS_FIRE)) {
+            return false;
         }
         Entity attacker = source.getEntity();
         if (this.currentFlightTarget != null && attacker instanceof Player

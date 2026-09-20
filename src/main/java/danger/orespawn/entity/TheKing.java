@@ -51,7 +51,7 @@ import danger.orespawn.ModSounds;
 import danger.orespawn.util.MyUtils;
 import danger.orespawn.entity.ai.TargetSelection;
 import danger.orespawn.entity.pose.TheKingPose;
-import net.neoforged.neoforge.entity.PartEntity;
+import de.dertoaster.multihitboxlib.api.IMHLibSizeCallback;
 
 /**
  * The King â€” a flying, multi-region boss.
@@ -66,42 +66,20 @@ import net.neoforged.neoforge.entity.PartEntity;
  * {@code attackEntityFrom}. This made the whole boss behave like a
  * 2-region hitbox pasted together at runtime.</p>
  *
- * <p>NeoForge 1.21.1 replaces that dual-entity hack with a proper
- * {@link PartEntity} array ({@link OreSpawnPartEntity}): five named
- * regions â€” body, head, left wing, right wing, tail â€” are owned by this
- * single {@code TheKing} and positioned every tick with offsets rotated by
- * {@link #yBodyRot}. Damage flows back through
- * {@link #hurtFromPart(OreSpawnPartEntity, DamageSource, float)} with
- * per-region multipliers (head = full, body = Â½, everything else = Â¼ +1).</p>
- *
- * <p>The legacy {@code KingHead} entity type is <i>still registered</i> for
- * save-file backward compatibility and is still spawned by the AI path
- * below â€” see the comment near {@link ModEntities#KING_HEAD}. Future work
- * should delete the sidecar spawn once multi-part hitboxes are proven in
- * playtesting.</p>
- *
- * <h2>Key lifecycle hooks</h2>
- * <ul>
- *   <li>{@link #TheKing(EntityType, Level)} constructs all five parts. Each
- *       part construction increments {@code Entity.ENTITY_COUNTER}.</li>
- *   <li>{@link #setId(int)} reassigns the parts to a contiguous ID block
- *       starting at {@code id + 1}. This mirrors vanilla
- *       {@code EnderDragon.setId} so the client can correlate part-hit
- *       packets with the owning boss.</li>
- *   <li>{@link #getParts()} returns the stable {@link PartEntity} array
- *       ({@code allParts}) â€” it must be the same reference every call
- *       because the world stores it for hit-testing.</li>
- *   <li>{@link #tick()} snapshots each part's previous position, advances
- *       the parent via {@code super.tick()}, repositions the parts, then
- *       writes the snapshots back to the parts' {@code xo/yo/zo} /
- *       {@code xOld/yOld/zOld} fields so the client renderer interpolates
- *       instead of teleporting.</li>
- * </ul>
- *
- * @see OreSpawnPartEntity for the part implementation and the full 1.7.10
- *   paradigm-shift commentary.
+ * <p>The 1.21.1 port gives the King MultiHitboxLib's bone-synced hitbox profile
+ * ({@code data/orespawn/multihitboxlib/hitbox_profiles/the_king.json}, BOSS-047): twenty-six parts fitted to the drawn
+ * rig at rest - body and chest, the three heads, six neck segments, four segments per wing, two legs, five tail
+ * segments - each a {@code MHLibPartEntity} the library creates from the profile in this entity's constructor
+ * ({@code MixinLivingEntity}) and, on the client, snaps to its GeckoLib bone every frame
+ * ({@code GeckolibBoneInformationCollectorLayer}), the server following the shipped bone positions
+ * ({@code alignSynchedSubParts}). The parent's 22x24 envelope (orig TheKing.java:86) stays the collision box, not
+ * pickable and taking no damage itself: every hit goes through a part, with the profile's damage modifiers (heads 1.0,
+ * body, necks and legs 0.5, wings and tail 0.25). The previous layout - five {@code OreSpawnPartEntity} regions at
+ * hand-picked offsets (BOSS-002) and the 1.7.10 {@code KingHead} sidecar box thirty blocks ahead (BOSS-003) - never
+ * followed the drawn heads and wings and is gone; the sidecar type stays registered for old saves and discards itself.
+ * PlayNicely: {@link #mhlibGetEntitySizeScale} scales the parts by 0.25 with the render's scale/4 and the 5.5x6 box.</p>
  */
-public class TheKing extends Monster implements OreSpawnPartEntity.MultipartBoss, TheKingPose {
+public class TheKing extends Monster implements TheKingPose, IMHLibSizeCallback<TheKing> {
     private static final EntityDataAccessor<Integer> DATA_ATTACKING =
             SynchedEntityData.defineId(TheKing.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Integer> DATA_PLAY_NICELY =
@@ -139,16 +117,8 @@ public class TheKing extends Monster implements OreSpawnPartEntity.MultipartBoss
     private int isEnd = 0;
     private int endCounter = 0;
 
-    /** BOSS-017: empty part array served while PlayNicely-shrunk. */
-    private static final PartEntity<?>[] NO_PARTS = new PartEntity<?>[0];
     /** BOSS-017: constructor-time PlayNicely snapshot (orig TheKing.java:85-89). */
     private boolean playNicelyShrunk = false;
-    private final OreSpawnPartEntity<TheKing> bodyPart;
-    private final OreSpawnPartEntity<TheKing> headPart;
-    private final OreSpawnPartEntity<TheKing> wingLeft;
-    private final OreSpawnPartEntity<TheKing> wingRight;
-    private final OreSpawnPartEntity<TheKing> tail;
-    private final PartEntity<?>[] allParts;
 
     public TheKing(EntityType<? extends TheKing> type, Level level) {
         super(type, level);
@@ -164,13 +134,6 @@ public class TheKing extends Monster implements OreSpawnPartEntity.MultipartBoss
         // afterwards even if the config flips (behavioral gates stay dynamic).
         this.playNicelyShrunk = danger.orespawn.OreSpawnConfig.PLAY_NICELY.get();
         this.refreshDimensions();
-
-        this.bodyPart  = new OreSpawnPartEntity<>(this, "body",  5.0f, 5.0f);
-        this.headPart  = new OreSpawnPartEntity<>(this, "head",  3.0f, 3.0f);
-        this.wingLeft  = new OreSpawnPartEntity<>(this, "wingL", 5.0f, 2.0f);
-        this.wingRight = new OreSpawnPartEntity<>(this, "wingR", 5.0f, 2.0f);
-        this.tail      = new OreSpawnPartEntity<>(this, "tail",  3.0f, 3.0f);
-        this.allParts = new PartEntity<?>[]{ bodyPart, headPart, wingLeft, wingRight, tail };
     }
 
     @Override
@@ -335,60 +298,6 @@ public class TheKing extends Monster implements OreSpawnPartEntity.MultipartBoss
     // ---- Tick / AI ----
 
     /**
-     * Advertises to NeoForge that this entity owns one or more
-     * {@link PartEntity} children. Without this the parts returned by
-     * {@link #getParts()} are ignored by hit-detection.
-     */
-    @Override
-    public boolean isMultipartEntity() {
-        return true;
-    }
-
-    /**
-     * Returns the stable array of child parts. The world caches this
-     * reference for hit-testing, so we must return the SAME array object
-     * every call â€” never rebuild it on the fly.
-     */
-    @Override
-    public PartEntity<?>[] getParts() {
-        // BOSS-017: a PlayNicely-shrunk King is the orig's single 5.5x6 box —
-        // no part surfaces; the parent itself is pickable instead.
-        if (this.playNicelyShrunk) {
-            return NO_PARTS;
-        }
-        return this.allParts;
-    }
-
-    /**
-     * Reserves a contiguous block of entity IDs for the parts so the client
-     * can correlate part-hit packets with the owning boss. Mirrors vanilla
-     * {@code EnderDragon.setId} â€” if parts had non-contiguous IDs, the
-     * client-side part lookup in {@code MultiPlayerLevel} would fail and
-     * hits would register as "the parent's root AABB was struck", losing
-     * the per-part damage multipliers.
-     */
-    @Override
-    public void setId(int id) {
-        super.setId(id);
-        for (int i = 0; i < allParts.length; i++) {
-            allParts[i].setId(id + i + 1);
-        }
-    }
-
-    /**
-     * The parent's own bounding box is invisible to ray-tracing â€” players
-     * must hit a {@link OreSpawnPartEntity} to damage The King. This is
-     * the 1.21.1 analogue of 1.7.10's {@code setSize(22, 24)} trick where
-     * the giant root AABB doubled as both visual bounds and hit area.
-     */
-    @Override
-    public boolean isPickable() {
-        // BOSS-017: shrunk (nice) King is directly hittable like the orig's
-        // single small box; full-size King routes damage through the parts.
-        return this.playNicelyShrunk;
-    }
-
-    /**
      * BOSS-017: orig TheKing.java:85-89 — 22x24 normally, 5.5x6 when
      * PlayNicely was set at construction time.
      */
@@ -400,87 +309,18 @@ public class TheKing extends Monster implements OreSpawnPartEntity.MultipartBoss
     }
 
     /**
-     * Per-part damage routing. Head = full damage (weak point), body = Â½,
-     * everything else = Â¼ + 1 flat.
-     *
-     * <p>1.7.10 parallel: {@code TheKing.func_70097_a} couldn't distinguish
-     * which region was hit â€” every hit applied the same damage because the
-     * sidecar {@code KingHead} just called {@code attackEntityFrom} with
-     * the raw amount. This multiplier table is pure gain from the port.</p>
+     * BOSS-047: the MHLib entity scale of the bone-synced parts - 1.0 hostile, 0.25D while PlayNicely-shrunk, the
+     * factor between the render scale and its PlayNicely shrink (render scale 2.1 -> 2.1/4, box 22x24 -> 5.5x6, orig TheKing.java:85-89), so the profile authored for the full draw
+     * fits the shrunk one (the Queen's ENT-S-095 batch 3 form).
      */
     @Override
-    public boolean hurtFromPart(OreSpawnPartEntity<?> part, DamageSource source, float amount) {
-        String partName = part.getPartName();
-        float multiplied = switch (partName) {
-            case "head" -> amount;
-            case "body" -> amount * 0.5f;
-            default -> amount * 0.25f + 1.0f;
-        };
-        return this.hurt(source, multiplied);
-    }
-
-    /**
-     * Places a sub-part at {@code (offsetX, offsetY, offsetZ)} relative to
-     * this entity, with the horizontal components rotated by this entity's
-     * body yaw. Matches the projection used by the client-side renderer so
-     * the hitbox stays aligned with what the player sees.
-     *
-     * <p>Intentionally uses {@code yBodyRot} (not {@code getYRot()}) so a
-     * yaw-locked head-tracking animation doesn't slosh the hitboxes around
-     * independently of the body.</p>
-     */
-    private void positionPart(OreSpawnPartEntity<TheKing> part, double offsetX, double offsetY, double offsetZ) {
-        float yawRad = this.yBodyRot * Mth.DEG_TO_RAD;
-        double sin = Mth.sin(yawRad);
-        double cos = Mth.cos(yawRad);
-        double rx = offsetX * cos - offsetZ * sin;
-        double rz = offsetX * sin + offsetZ * cos;
-        part.setPos(this.getX() + rx, this.getY() + offsetY, this.getZ() + rz);
+    public double mhlibGetEntitySizeScale(TheKing entity) {
+        return entity.playNicelyShrunk ? 0.25D : 1.0D;
     }
 
     @Override
     public void tick() {
-        // â”€â”€ Step 1: snapshot previous-tick positions â”€â”€
-        // We capture before super.tick() so the values are still the
-        // positions that were computed last tick (which themselves became
-        // the "old" positions at the end of last tick's repositioning).
-        Vec3[] oldPos = new Vec3[allParts.length];
-        for (int i = 0; i < allParts.length; i++) {
-            oldPos[i] = new Vec3(allParts[i].getX(), allParts[i].getY(), allParts[i].getZ());
-        }
-
-        // â”€â”€ Step 2: advance the parent â”€â”€
-        // super.tick() updates yBodyRot, getX/Y/Z, hurt timers, etc. The
-        // repositioning below depends on yBodyRot being current, so do this
-        // FIRST and then derive part positions.
         super.tick();
-
-        // â”€â”€ Step 3: position each part relative to the parent's new pose â”€â”€
-        // Offsets are in world units (blocks) and are rotated by yBodyRot
-        // inside positionPart(). Numbers chosen to roughly match the visual
-        // silhouette of the 1.7.10 render model â€” body at +6 Y, head +11 Y
-        // and 5 blocks forward (negative Z), wings 8 blocks left/right at
-        // +7 Y, tail 6 blocks behind at +4 Y.
-        positionPart(bodyPart,    0.0,  6.0,   0.0);
-        positionPart(headPart,    0.0, 11.0,  -5.0);
-        positionPart(wingLeft,  -8.0,   7.0,   0.0);
-        positionPart(wingRight,  8.0,   7.0,   0.0);
-        positionPart(tail,       0.0,   4.0,   6.0);
-
-        // â”€â”€ Step 4: write the snapshots back as the parts' "old" pose â”€â”€
-        // The client renderer interpolates between oldPos and pos using the
-        // partial-tick timer. If we skipped this, parts would teleport on
-        // every tick because their "old" and "new" would be identical.
-        // xOld/yOld/zOld are the NeoForge-exposed fields; xo/yo/zo are the
-        // legacy mappings â€” set both to avoid any discrepancy.
-        for (int i = 0; i < allParts.length; i++) {
-            allParts[i].xo = oldPos[i].x;
-            allParts[i].yo = oldPos[i].y;
-            allParts[i].zo = oldPos[i].z;
-            allParts[i].xOld = oldPos[i].x;
-            allParts[i].yOld = oldPos[i].y;
-            allParts[i].zOld = oldPos[i].z;
-        }
 
         this.wingSoundTimer++;
         if (this.wingSoundTimer > 30) {
@@ -803,17 +643,9 @@ public class TheKing extends Monster implements OreSpawnPartEntity.MultipartBoss
             // attackChance=3. Acceptable for single-boss arenas.
             nearbyTarget = this.findSomethingToAttack();
 
-            // Legacy 1.7.10 sidecar head spawn â€” see KingHead.java JavaDoc.
-            // Retained for NBT save-compat and flight-pattern hook; to be
-            // removed once the PartEntity-based hit detection is proven.
-            if (this.headEntityFound == 0) {
-                KingHead head = ModEntities.KING_HEAD.get().create(this.level());
-                if (head != null) {
-                    head.moveTo(this.getX(), this.getY() + 20, this.getZ(), 0.0F, 0.0F);
-                    this.level().addFreshEntity(head);
-                    this.headEntityFound = 1;
-                }
-            }
+            // BOSS-047: the KingHead sidecar (orig KingHead.java, a 19.9x10 box thirty blocks ahead of the gaze) is no longer
+            // spawned - the three heads are bone-synced parts of this entity's MHLib profile. The headEntityFound
+            // save field stays as it is; a head from an old save discards itself (KingHead.tick).
 
             if (currentTarget == null) currentTarget = nearbyTarget;
 
@@ -972,8 +804,10 @@ public class TheKing extends Monster implements OreSpawnPartEntity.MultipartBoss
     @Override
     public boolean hurt(DamageSource source, float amount) {
         // ENT-S-172: damage that bypasses invulnerability - /kill, the void - is never capped, gated or refused:
-        // the contract every vanilla boss keeps (EnderDragon, Wither). 1.7.10 had no such source, so this clause
-        // is the port's, not a transcription; everything below it is the original's rule, unchanged.
+        // vanilla's own gates yield to this tag (Entity.isInvulnerableTo's Invulnerable flag, the totem's
+        // checkTotemDeathProtection, WitherBoss.hurt's spawn-armour gate; the Ender Dragon answers /kill in its own
+        // kill() override). 1.7.10's /kill could not name a mob, and its void source ran through these same timers,
+        // so this clause is the port's, not a transcription; everything below it is the original's rule, unchanged.
         if (source.is(net.minecraft.tags.DamageTypeTags.BYPASSES_INVULNERABILITY)) {
             return super.hurt(source, amount);
         }

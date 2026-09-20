@@ -592,6 +592,15 @@ def descriptor_for_registry(registry):
     return "".join(p[:1].upper() + p[1:] for p in parts) + "GeoReplacement"
 
 
+def _descriptor_rig(registry):
+    """The rig (geo/entity/<rig>.geo.json stem) a species' replacement descriptor references, else None."""
+    java = JAVA / "entity" / "client" / (descriptor_for_registry(registry) + ".java")
+    if not java.is_file():
+        return None
+    m = re.search(r'geo/entity/([A-Za-z0-9_]+)\.geo\.json', read(java))
+    return m.group(1) if m else None
+
+
 def check_locomotion_words():
     """Every seed's locomotion word is the word its descriptor's locomotion() returns (walker: no override or WALKER)."""
     for spec in sorted(SPECS_DIR.glob("*.json")):
@@ -1030,7 +1039,10 @@ def _entity_dims():
     text = read(JAVA / "ModEntities.java")
     dims = {}
     for m in re.finditer(r'ENTITY_TYPES\.register\(\s*"([^"]+)"', text):
-        statement = text[m.end():text.find(";", m.end())]
+        # the statement ends at the ';' after its .build(...) - a ';' inside a comment line of the registration
+        # (Godzilla's "ENT-S-095; was an uncited 10.0 x 25.0") is not the end (BOSS-047)
+        build_at = text.find(".build(", m.end())
+        statement = text[m.end():text.find(";", build_at if build_at != -1 else m.end())]
         sized = re.search(r'\.sized\(\s*([0-9.]+)[fF]?\s*,\s*([0-9.]+)[fF]?\s*\)', statement)
         if sized:
             dims[m.group(1)] = (float(sized.group(1)), float(sized.group(2)))
@@ -1216,18 +1228,21 @@ def check_geckolib(java_texts):
                 "replace the entity's dimensions" % (size, list(dims[name])), path)
         referenced = list(data.get("synched-bones") or []) + \
             [p.get("name") for p in (data.get("parts") or []) if isinstance(p, dict)]
-        bones = geo_bones.get(name)
+        # the rig the species draws with: its replacement descriptor's geo reference (the King draws theking.geo.json
+        # under the id the_king; BOSS-047), else a rig named as the profile (the Queen)
+        rig = _descriptor_rig(name) or name
+        bones = geo_bones.get(rig)
         if bones is None:
             if data.get("sync-with-model") is True:
                 err("PROFILE_SYNC_WITHOUT_GEO", name,
                     "sync-with-model is true but there is no geo/entity/%s.geo.json to sync from"
-                    % name, path)
+                    % rig, path)
         else:
             for bone in referenced:
                 if bone not in bones:
                     err("PROFILE_BONE_MISSING", name,
                         'profile references bone "%s", absent from geo/entity/%s.geo.json'
-                        % (bone, name), path)
+                        % (bone, rig), path)
 
     vanilla_dir = DATA / "minecraft" / "multihitboxlib" / "hitbox_profiles"
     if vanilla_dir.is_dir():

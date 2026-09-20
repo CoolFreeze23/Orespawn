@@ -53,9 +53,9 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.BossEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
-import net.neoforged.neoforge.entity.PartEntity;
+import de.dertoaster.multihitboxlib.api.IMHLibSizeCallback;
 
-public class Godzilla extends Monster implements OreSpawnPartEntity.MultipartBoss, GodzillaPose {
+public class Godzilla extends Monster implements GodzillaPose, IMHLibSizeCallback<Godzilla> {
     // OPT-011: cached SoundEvents — identical createVariableRangeEvent ids,
     // allocated once per class instead of on every sound query.
     private static final SoundEvent SND_GODZILLA_LIVING = SoundEvent.createVariableRangeEvent(
@@ -70,8 +70,6 @@ public class Godzilla extends Monster implements OreSpawnPartEntity.MultipartBos
     private static final float INCOMING_DAMAGE_CAP = 750.0f;
     private static final int LARGE_ENTITY_AREA_THRESHOLD = 30;
 
-    /** BOSS-017: empty part array served while PlayNicely-shrunk. */
-    private static final PartEntity<?>[] NO_PARTS = new PartEntity<?>[0];
     /** BOSS-017: constructor-time PlayNicely snapshot (orig Godzilla.java:71-75). */
     private boolean playNicelyShrunk = false;
     /**
@@ -100,20 +98,6 @@ public class Godzilla extends Monster implements OreSpawnPartEntity.MultipartBos
     private int largeUnknownDetected = 0;
     private int headFound = 0;
 
-    private final OreSpawnPartEntity<Godzilla> bodyLower;
-    private final OreSpawnPartEntity<Godzilla> bodyUpper;
-    private final OreSpawnPartEntity<Godzilla> headPart;
-    private final OreSpawnPartEntity<Godzilla> tail;
-    private final PartEntity<?>[] allParts;
-    /**
-     * OPT-010: reusable scratch buffers for the pre-{@code super.tick()} part
-     * positions, replacing a fresh {@code Vec3[]} + one {@code Vec3} per part
-     * every tick. Only written and read within a single {@link #tick()} call.
-     */
-    private final double[] partOldX;
-    private final double[] partOldY;
-    private final double[] partOldZ;
-
     public Godzilla(EntityType<? extends Godzilla> type, Level level) {
         super(type, level);
         // OPT-009: constant speed - assert the attribute base once here instead
@@ -126,15 +110,6 @@ public class Godzilla extends Monster implements OreSpawnPartEntity.MultipartBos
         // snapshot: 2.475x6.25 instead of 9.9x25.
         this.playNicelyShrunk = danger.orespawn.OreSpawnConfig.PLAY_NICELY.get();
         this.refreshDimensions();
-
-        this.bodyLower = new OreSpawnPartEntity<>(this, "bodyLow",  8.0f, 8.0f);
-        this.bodyUpper = new OreSpawnPartEntity<>(this, "bodyUp",   6.0f, 6.0f);
-        this.headPart  = new OreSpawnPartEntity<>(this, "head",     5.0f, 5.0f);
-        this.tail      = new OreSpawnPartEntity<>(this, "tail",     4.0f, 4.0f);
-        this.allParts = new PartEntity<?>[]{ bodyLower, bodyUpper, headPart, tail };
-        this.partOldX = new double[this.allParts.length];
-        this.partOldY = new double[this.allParts.length];
-        this.partOldZ = new double[this.allParts.length];
     }
 
     @Override
@@ -214,36 +189,6 @@ public class Godzilla extends Monster implements OreSpawnPartEntity.MultipartBos
         return true;
     }
 
-    @Override
-    public boolean isMultipartEntity() {
-        return true;
-    }
-
-    @Override
-    public PartEntity<?>[] getParts() {
-        // BOSS-017: a PlayNicely-shrunk Godzilla is the orig's single
-        // 2.475x6.25 box — no part surfaces, parent pickable instead.
-        if (this.playNicelyShrunk) {
-            return NO_PARTS;
-        }
-        return this.allParts;
-    }
-
-    @Override
-    public void setId(int id) {
-        super.setId(id);
-        for (int i = 0; i < allParts.length; i++) {
-            allParts[i].setId(id + i + 1);
-        }
-    }
-
-    @Override
-    public boolean isPickable() {
-        // BOSS-017: shrunk (nice) Godzilla is directly hittable like the
-        // orig's single small box.
-        return this.playNicelyShrunk;
-    }
-
     /**
      * BOSS-017: orig Godzilla.java:71-75 — 9.9x25 normally (orig :72
      * {@code func_70105_a(9.9f, 25.0f)}), 2.475x6.25 (orig :74, the 1.7.10
@@ -259,50 +204,19 @@ public class Godzilla extends Monster implements OreSpawnPartEntity.MultipartBos
                 : net.minecraft.world.entity.EntityDimensions.fixed(9.9f, 25.0f);  // orig Godzilla.java:72
     }
 
+    /**
+     * BOSS-047: the MHLib entity scale of the bone-synced parts - 1.0 hostile, 0.25D while PlayNicely-shrunk, the
+     * factor between the render scale and its PlayNicely shrink (render scale 2.0 -> 2.0/4, box 9.9x25 -> 2.475x6.25, orig Godzilla.java:71-75), so the profile authored for the full draw
+     * fits the shrunk one (the Queen's ENT-S-095 batch 3 form).
+     */
     @Override
-    public boolean hurtFromPart(OreSpawnPartEntity<?> part, DamageSource source, float amount) {
-        String partName = part.getPartName();
-        float multiplied = switch (partName) {
-            case "head" -> amount;
-            case "bodyLow", "bodyUp" -> amount * 0.5f;
-            default -> amount * 0.25f + 1.0f;
-        };
-        return this.hurt(source, multiplied);
-    }
-
-    private void positionPart(OreSpawnPartEntity<Godzilla> part, double offsetX, double offsetY, double offsetZ) {
-        float yawRad = this.yBodyRot * Mth.DEG_TO_RAD;
-        double sin = Mth.sin(yawRad);
-        double cos = Mth.cos(yawRad);
-        double rx = offsetX * cos - offsetZ * sin;
-        double rz = offsetX * sin + offsetZ * cos;
-        part.setPos(this.getX() + rx, this.getY() + offsetY, this.getZ() + rz);
+    public double mhlibGetEntitySizeScale(Godzilla entity) {
+        return entity.playNicelyShrunk ? 0.25D : 1.0D;
     }
 
     @Override
     public void tick() {
-        // OPT-010: snapshot part positions into reusable double[] scratch
-        // buffers (same values the old per-tick Vec3 array captured).
-        for (int i = 0; i < allParts.length; i++) {
-            partOldX[i] = allParts[i].getX();
-            partOldY[i] = allParts[i].getY();
-            partOldZ[i] = allParts[i].getZ();
-        }
-
         super.tick();
-        positionPart(bodyLower,  0.0,  2.0,   0.0);
-        positionPart(bodyUpper,  0.0, 12.0,   0.0);
-        positionPart(headPart,   0.0, 20.0,  -6.0);
-        positionPart(tail,       0.0,  4.0,  10.0);
-
-        for (int i = 0; i < allParts.length; i++) {
-            allParts[i].xo = partOldX[i];
-            allParts[i].yo = partOldY[i];
-            allParts[i].zo = partOldZ[i];
-            allParts[i].xOld = partOldX[i];
-            allParts[i].yOld = partOldY[i];
-            allParts[i].zOld = partOldZ[i];
-        }
 
         if (this.onGround()) {
             this.getNavigation().stop();
@@ -754,14 +668,9 @@ public class Godzilla extends Monster implements OreSpawnPartEntity.MultipartBos
             }
             if (currentTarget == null) {
                 currentTarget = this.findSomethingToAttack();
-                if (this.headFound == 0) {
-                    GodzillaHead head = ModEntities.GODZILLA_HEAD.get().create(this.level());
-                    if (head != null) {
-                        head.moveTo(this.getX(), this.getY() + 20, this.getZ(), 0.0F, 0.0F);
-                        this.level().addFreshEntity(head);
-                        this.headFound = 1;
-                    }
-                }
+                // BOSS-047: the GodzillaHead sidecar (orig GodzillaHead.java, a 9.9x10 box at the gaze) is no longer spawned
+                // - the head is a bone-synced part of this entity's MHLib profile. headFound stays in the save data; a
+                // head from an old save discards itself (GodzillaHead.tick).
             }
 
             if (currentTarget != null) {
@@ -852,8 +761,10 @@ public class Godzilla extends Monster implements OreSpawnPartEntity.MultipartBos
     @Override
     public boolean hurt(DamageSource source, float amount) {
         // ENT-S-172: damage that bypasses invulnerability - /kill, the void - is never capped, gated or refused:
-        // the contract every vanilla boss keeps (EnderDragon, Wither). 1.7.10 had no such source, so this clause
-        // is the port's, not a transcription; everything below it is the original's rule, unchanged.
+        // vanilla's own gates yield to this tag (Entity.isInvulnerableTo's Invulnerable flag, the totem's
+        // checkTotemDeathProtection, WitherBoss.hurt's spawn-armour gate; the Ender Dragon answers /kill in its own
+        // kill() override). 1.7.10's /kill could not name a mob, and its void source ran through these same timers,
+        // so this clause is the port's, not a transcription; everything below it is the original's rule, unchanged.
         if (source.is(net.minecraft.tags.DamageTypeTags.BYPASSES_INVULNERABILITY)) {
             return super.hurt(source, amount);
         }

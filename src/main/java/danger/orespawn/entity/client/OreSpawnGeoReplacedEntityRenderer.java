@@ -59,6 +59,8 @@ public abstract class OreSpawnGeoReplacedEntityRenderer<E extends Entity, A exte
     private final boolean nonLiving;
     /** TEST-018: the descriptor's second pass ({@link GeoReplacementDescriptor#secondPass()}), or null for a one-pass rig. */
     private final GeoReplacementDescriptor.SecondPass secondPass;
+    /** BOSS-047: the baked model whose synched bones were switched to matrix tracking (see preRender). */
+    private BakedGeoModel trackedModel;
 
     protected OreSpawnGeoReplacedEntityRenderer(EntityRendererProvider.Context context, A replacement) {
         super(context, new OreSpawnGeoReplacementModel<E, A>(replacement.descriptor()), replacement);
@@ -100,7 +102,15 @@ public abstract class OreSpawnGeoReplacedEntityRenderer<E extends Entity, A exte
                           MultiBufferSource bufferSource, VertexConsumer buffer, boolean isReRender,
                           float partialTick, int packedLight, int packedOverlay, int colour) {
         if (!isReRender) {
-            this.descriptor.applyScale(currentEntity(), poseStack, partialTick);
+            // BOSS-047: the descriptor scale is applied in scaleModelForRender, AFTER GeckoLib captures
+            // entityRenderTranslations in super.preRender, not here before it - see scaleModelForRender.
+            // A profiled species' synched bones are switched to matrix tracking before the first capture (GeckoLib
+            // 4.9.2 enables tracking lazily, on the first getWorldPosition, so the first frame after every bake would
+            // ship the origin to MultiHitboxLib's collector; QueenRenderer.preRender does the same). Latched per baked
+            // model only once the profile resolved and every synched bone was found.
+            if (model != this.trackedModel && trackSynchedBones(currentEntity(), model)) {
+                this.trackedModel = model;
+            }
             if (this.secondPass != null) {
                 // TEST-018: the second pass's bones are drawn by the pass's layer alone - hidden for the opaque pass on every
                 // frame (the classic renderToBuffer never draws them; the hook poses them and hides nothing).
@@ -111,6 +121,53 @@ public abstract class OreSpawnGeoReplacedEntityRenderer<E extends Entity, A exte
         }
         super.preRender(poseStack, animatable, model, bufferSource, buffer, isReRender,
                 partialTick, packedLight, packedOverlay, colour);
+    }
+
+    /**
+     * BOSS-047: the 1.7.10 render scale of the species (the descriptor's {@code applyScale}: the King's 2.1, Godzilla's
+     * 2.0, a PlayNicely quarter or third of it) is applied HERE, GeckoLib's own slot for a render scale, which runs after
+     * {@code GeoReplacedEntityRenderer.preRender} has captured {@code entityRenderTranslations}. Every bone's local and
+     * world matrix is {@code entityRenderTranslations^-1 * poseState}, so a scale pushed before the capture was cancelled
+     * out of every bone position (the drawn King's heads 25 blocks out, its bone positions 12), while one pushed here
+     * multiplies them: the positions MultiHitboxLib's collector ships are the drawn ones, which is what the bone-synced
+     * hitbox profiles of the King, the Kraken and Godzilla stand on (the Queen's renderer has done this since
+     * ENT-S-092). The drawn image is identical either way - the pose stack composes the same matrix; only the captured
+     * frame moves. Skipped on a re-render pass exactly as preRender skipped it (TEST-018).
+     */
+    @Override
+    public void scaleModelForRender(float widthScale, float heightScale, PoseStack poseStack, A animatable, BakedGeoModel model,
+                                    boolean isReRender, float partialTick, int packedLight, int packedOverlay) {
+        if (!isReRender) {
+            this.descriptor.applyScale(currentEntity(), poseStack, partialTick);
+        }
+        super.scaleModelForRender(widthScale, heightScale, poseStack, animatable, model, isReRender, partialTick, packedLight,
+                packedOverlay);
+    }
+
+    /**
+     * BOSS-047: {@code GeoBone#setTrackingMatrices(true)} on the profile's synched bones of a MultiHitboxLib-profiled
+     * species (the King, the Kraken, Godzilla), so {@code renderRecursively} fills the world matrices the collector
+     * reads from the first frame. Returns true only when the profile resolved and every synched bone was found, so the
+     * caller latches the model only then and retries otherwise; any other species returns false at once.
+     */
+    private static boolean trackSynchedBones(Entity entity, BakedGeoModel model) {
+        if (!(entity instanceof de.dertoaster.multihitboxlib.api.IMultipartEntity<?> multipart)) {
+            return false;
+        }
+        java.util.Optional<de.dertoaster.multihitboxlib.entity.hitbox.HitboxProfile> profile = multipart.getHitboxProfile();
+        if (profile == null || profile.isEmpty()) {
+            return false;
+        }
+        boolean allTracked = true;
+        for (String bone : profile.get().synchedBones()) {
+            java.util.Optional<GeoBone> geoBone = model.getBone(bone);
+            if (geoBone.isPresent()) {
+                geoBone.get().setTrackingMatrices(true);
+            } else {
+                allTracked = false;
+            }
+        }
+        return allTracked;
     }
 
     /** A bone the second pass names, or a wiring failure: the shipped geo drifted from the declaration. */
