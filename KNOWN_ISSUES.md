@@ -196,8 +196,14 @@ hand-made rig either way.
   not fixed here): the Triffid stands a quarter-turn from where 1.7.10 turned it *(ENT-S-162)*; Godzilla bites and
   swings its arms on every cycle where 1.7.10 did so on about half of them, re-rolled per cycle *(ENT-S-163)*; the Prince
   Teen's wing membranes are opaque where 1.7.10 drew them translucent grey *(ENT-S-164)*.
-- **Not started: boss hitbox profiles.** The King, the Princess and Godzilla keep the classic single hitbox; bone-synced
-  hitbox parts for them are the phase after this one.
+- **Boss hitboxes follow the rigs** (BOSS-047): the King, the Kraken and Godzilla now carry bone-synced hitbox parts
+  fitted to their drawn models (26, 25 and 16 parts), like the Queen; the old floating head boxes are gone, and every
+  hit goes through a part (heads full damage, body and limbs half, wings and tail a quarter on the King and Godzilla;
+  the Kraken full everywhere, as in 1.7.10). The Princess keeps her classic single hitbox. Known limits: the boxes are
+  square in plan, so long thin parts (necks, tentacles, wing membranes) read wider than they look; the Kraken's
+  tentacle boxes can lag the drawn tentacle by up to three blocks at the extremes of its wave; the parts are solid
+  (you can stand on Godzilla's tail); the Kraken's tall 1.7.10 swim box is still its collision box; on a server with
+  no player in render range the parts sit at their rest positions. Tell us what looks wrong.
 
 ---
 
