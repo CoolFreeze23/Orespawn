@@ -4,6 +4,46 @@ Newest first. Every version opens with what a player will notice, in plain words
 issue ids and the source lines, is folded under "Technical details" at the end of the version. The full release notes
 for a cut live in `phase_g_reports/` and on the release page.
 
+## 2.0.0-beta.8 — 2026-09-20 · [release page](https://github.com/CoolFreeze23/Orespawn/releases/tag/v1.21.1-2.0.0-beta.8) · [full notes](phase_g_reports/RELEASE_NOTES_2.0.0-beta.8.md)
+
+Two fixes: `/kill` kills every OreSpawn creature again, and the King, the Kraken and Godzilla have hit boxes that follow their models.
+
+**Fixed**
+- `/kill @e` kills every OreSpawn creature, including the King, the Queen, Godzilla and the Kraken, and it works in the middle of a fight. Thirty creatures used to shrug the command off: some capped every hit, some ignored any hit for a second or two after the last one, and the boss heads passed it on to a body that capped it.
+- The King's, the Kraken's and Godzilla's hit boxes sit on their models. The King's heads, necks, wings, legs and tail, the Kraken's head, body, fins and every tentacle, Godzilla's head, body, arms, legs and tail each have a box that follows the drawn part, the way the Queen's already did. The floating head boxes that never lined up with the models are gone.
+
+**Changed**
+- Hits on the King and Godzilla land by part, as on the Queen: heads take full damage, body, necks and legs half, wings and tail a quarter. The Kraken takes full damage anywhere, as it always did.
+- Under PlayNicely the King, Godzilla and the Kraken now behave like the Queen: a small body box with small parts, hit through the parts.
+- The Kraken no longer hurts or sets fire to itself with its own lightning.
+- The King, the Queen and Godzilla no longer spawn the separate head creature from 1.7.10. One left in an old world disappears when it loads.
+
+**Good to know**
+- The big body box of each of the three (22 by 24 for the King, 4 by 15 for the Kraken, 9.9 by 25 for Godzilla) is still there as the collision box, but it no longer takes hits; the parts do. The parts are solid, so you can stand on Godzilla's tail.
+- Long thin parts (necks, tentacles, wing membranes) read wider than they look, because part boxes are square in plan. The Kraken's tentacle boxes can lag the drawn tentacle by up to three blocks at the extremes of its wave.
+- On a server with no player in render range the parts sit at their rest positions until someone comes close.
+- Works in the worlds you already have.
+
+**Install:** put `orespawn-1.21.1-2.0.0-beta.8.jar` in `mods/` (NeoForge 21.1, Minecraft 1.21.1, GeckoLib 4.7 or newer) and take the beta.7 jar out. Worlds carry over.
+
+<details>
+<summary>Technical details</summary>
+
+##### What beta.8 is
+
+beta.8 is beta.7 plus two landings, both from a play session of 2026-09-20: ENT-S-172, the `/kill` bypass, and BOSS-047, hit boxes that follow the rigs. Nothing else moves. Both apply to worlds you already have; a KingHead, QueenHead or GodzillaHead saved by an earlier build discards itself when its chunk loads.
+
+##### What changed
+
+- **`/kill` kills every OreSpawn entity.** `/kill` is `Entity.kill()`, for a living entity `hurt(genericKill, Float.MAX_VALUE)`, a source in the damage-type tag `bypasses_invulnerability` (with the void, the whole tag in 1.21.1), the tag vanilla's own gates yield to (the Invulnerable flag, the totem, the Wither's spawn armour; the Ender Dragon answers `/kill` in its own `kill()`). Thirty of the port's damage overrides, transcriptions of 1.7.10 `attackEntityFrom` bodies whose `/kill` could not name a mob, capped the amount (the King, the Queen and Godzilla at 750; the Boyfriend, the Girlfriend, the Purple Power, the Velocity Raptor, the Hydrolisc and the tamed Gazelle at 10), refused it inside their own hit window (twenty species, the King's 20 ticks to the Sea Viper's 5), forwarded it to a body that capped it (the three head sidecars) or, the hoverboard, refused an attacker-less hit while ridden. Each now opens with the clause: a bypassing source goes straight to `super.hurt`, before the window, the cap and the attacker tests; the heads take it and pass it to the body; the ridden board excepts it. Nothing else in any method moved. *(ENT-S-172; `KillBypassTests` s172a-c)*
+- **Hit boxes that follow the rigs.** The King, the Kraken and Godzilla carry MultiHitboxLib bone-synced hitbox profiles (26, 25 and 16 parts) written from their rigs at the 1.7.10 render scales by `tools/boss_hitbox_profiles.sh`, the Queen's ENT-S-092 derivation generalised to multi-bone parts under any render scale and render transform: each box on its drawn segment, pivots through MHLib's own rotation, the King's thin wing tips padded for the flap. The King and Godzilla keep their damage scheme in the Queen's form (heads 1.0, body, necks and legs 0.5, wings and tail 0.25); the Kraken's parts are all 1.0. The 1.7.10 envelopes stay as unpickable collision boxes. The replaced-entity renderer applies the render scale after GeckoLib's capture and switches a profiled species' synched bones to matrix tracking first, so the collector ships the drawn positions from the first frame (the drawn image is unchanged). The hand-placed `OreSpawnPartEntity` layouts and the three sidecar spawns are removed; the sidecar types stay for old saves and discard themselves; the Queen's PlayNicely size hook covers any profiled species; the Kraken's own storm and burn are refused at `hurt` as the original never took them; the royal fireballs screen a part's boss. Declared: the square footprint of the aabb part type; the Kraken's tentacle boxes drifting up to three blocks at the wave extremes (the render transform is not folded into the shipped rotation); server-only fallback boxes; solid parts; the Kraken's 4x15 envelope held for a later decision. *(BOSS-047; `BossHitboxProfileTests` s047a-e, `HitboxPartTests`, `ConfigGateTests` boss017)*
+
+##### How to install
+
+Put `orespawn-1.21.1-2.0.0-beta.8.jar` into the `mods` folder of a NeoForge 21.1 instance for Minecraft 1.21.1 together with GeckoLib 4.7 or newer, and take the beta.7 jar out; MultiHitboxLib and Databuddy are bundled in the jar. Existing worlds carry over.
+
+</details>
+
 ## 2.0.0-beta.7 — 2026-09-20 · [release page](https://github.com/CoolFreeze23/Orespawn/releases/tag/v1.21.1-2.0.0-beta.7) · [full notes](phase_g_reports/RELEASE_NOTES_2.0.0-beta.7.md)
 
 One fix: creatures you leave behind despawn again, the way they did in 1.7.10. That ends the frog pile-up in Utopia that beta.6 had left in place.

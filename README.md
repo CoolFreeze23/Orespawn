@@ -3,7 +3,7 @@
 > *"Just plain fun!"* — the classic 1.7.10 OreSpawn, rebuilt for modern
 > Minecraft with 100% source-verified parity.
 
-**Version:** 1.21.1-2.0.0-beta.7 · **Loader:** NeoForge 21.1+ · **Minecraft:** 1.21.1
+**Version:** 1.21.1-2.0.0-beta.8 · **Loader:** NeoForge 21.1+ · **Minecraft:** 1.21.1
 **Status:** public beta — the 2.0 robot overhaul is live; the 1.0 parity
 core underneath is stable, with visual/audio polish in community review
 
@@ -69,7 +69,11 @@ post-beta patch.
 
 ## Roadmap
 
-- **2.0.0-beta.7 (this build)**: creatures you leave behind despawn as they
+- **2.0.0-beta.8 (this build)**: `/kill` kills every OreSpawn creature again,
+  including the bosses and in the middle of a fight; and the King, the Kraken and
+  Godzilla have hit boxes that follow their models, the way the Queen's already
+  did, in place of the hand-placed boxes and the floating head boxes.
+- **2.0.0-beta.7**: creatures you leave behind despawn as they
   did in 1.7.10, which ends the frog pile-up beta.6 had left in Utopia.
   Thirty-five species carry their original rule: the worms, the robots and
   the hoverboard stop vanishing; a wild, unridden Prince and the tameables'

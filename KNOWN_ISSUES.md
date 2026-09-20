@@ -1,7 +1,7 @@
 # Known Issues — OreSpawn Port (BETA)
 
 **This release is a beta.** The game logic underneath has been through a
-1309-test automated suite (all green, in both robot modes; the count grows
+1317-test automated suite (all green, in both robot modes; the count grows
 with every remediation batch) plus hands-on play sessions, but a lot
 of the *visual and
 audio* polish has deliberately been left open for community
@@ -35,7 +35,18 @@ These came straight out of hand-testing and are fixed in code in this build;
 most still need a second pair of eyes in a real game. If one still looks
 wrong for you, please say so.
 
-**2.0.0-beta.7 (this build):**
+**2.0.0-beta.8 (this build):**
+
+- `/kill @e` kills every OreSpawn creature again, the bosses included and in the middle of a fight. Thirty species
+  had capped, cooldown-gated, forwarded or refused the command's hit. *(ENT-S-172)*
+- The King, the Kraken and Godzilla have hit boxes that follow their models (26, 25 and 16 bone-synced parts, like
+  the Queen's); the hand-placed boxes and the floating head boxes are gone, and the 1.7.10 head creatures are no
+  longer spawned (one in an old world disappears when it loads). The King and Godzilla take damage by part as the
+  Queen does; the Kraken takes full damage anywhere. Known limits: square-in-plan boxes on long thin parts, the
+  Kraken's tentacle boxes lagging up to three blocks mid-wave, solid parts, the Kraken's tall swim box, rest-pose
+  parts on a server with no player in range. *(BOSS-047)*
+
+**2.0.0-beta.7:**
 
 - Creatures you leave behind despawn as they did in 1.7.10: frogs, crickets and T-shirts (Utopia no longer fills with
   every frog that ever spawned near you), wild grown Baryonyxes, Cassowaries, Flounders, Stink Bugs and Whales (their
@@ -44,7 +55,7 @@ wrong for you, please say so.
   Robots, the hoverboard, the Purple Power and the Rock Base no longer vanish when you walk away; a Creeping Horror and a
   Firefly go only by day, a Gold Fish only by night. *(ENT-S-171)*
 
-**2.0.0-beta.6 (this build):**
+**2.0.0-beta.6:**
 
 - Utopia's Sky trees and Wind trees no longer lose their branches at chunk borders — they generate as structures now,
   written chunk by chunk. The Sky trees stand at their original height again and the Wind trees all lean east, as in
