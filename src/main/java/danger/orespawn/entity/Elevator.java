@@ -127,7 +127,10 @@ public class Elevator extends Mob implements RiderInputPayload.RideableFlyer {
         // inWall ignored; accumulated damage ×10 past 40 (or any creative
         // player hit) destroys the board, dropping the item unless creative.
         boolean isPlayer = source.getEntity() instanceof Player;
-        if (this.getFirstPassenger() != null && !isPlayer) return false;
+        // ENT-S-172: generic_kill carries no attacker; /kill and the void unseat the rider and destroy the board as an
+        // unridden one would (damage-taken past 40 below), instead of the ridden board refusing them.
+        if (this.getFirstPassenger() != null && !isPlayer
+                && !source.is(net.minecraft.tags.DamageTypeTags.BYPASSES_INVULNERABILITY)) return false;
         if (source.getMsgId().equals("inWall")) return false;
         if (!this.level().isClientSide() && !this.isRemoved()) {
             this.setForwardDirection(-this.getForwardDirection());

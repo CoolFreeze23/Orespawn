@@ -230,6 +230,14 @@ public class Crab extends Monster implements danger.orespawn.entity.pose.CrabPos
 
     @Override
     public boolean hurt(DamageSource source, float amount) {
+        // ENT-S-172: damage that bypasses invulnerability - /kill, the void - is never capped, gated or refused:
+        // vanilla's own gates yield to this tag (Entity.isInvulnerableTo's Invulnerable flag, the totem's
+        // checkTotemDeathProtection, WitherBoss.hurt's spawn-armour gate; the Ender Dragon answers /kill in its own
+        // kill() override). 1.7.10's /kill could not name a mob, and its void source ran through these same timers,
+        // so this clause is the port's, not a transcription; everything below it is the original's rule, unchanged.
+        if (source.is(net.minecraft.tags.DamageTypeTags.BYPASSES_INVULNERABILITY)) {
+            return super.hurt(source, amount);
+        }
         if (source.getMsgId().equals("cactus")) return false;
         Entity attacker = source.getEntity();
         if (attacker instanceof Crab) return false;
