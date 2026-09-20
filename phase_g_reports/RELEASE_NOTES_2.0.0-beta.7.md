@@ -4,11 +4,32 @@ Version `1.21.1-2.0.0-beta.7` (`gradle.properties`; `README.md` line 6), cut on 
 
 ## Part one — for the player
 
-### What beta.7 is
+One fix: creatures you leave behind despawn again, the way they did in 1.7.10. That ends the frog pile-up in Utopia that beta.6 had left in place.
+
+**Fixed**
+- Frogs, crickets and T-shirts no longer build up forever. Once you are more than 128 blocks away they despawn, as in the original; the ones near you stay.
+- Hoverboards, Ant Robots, Spider Robots, the worms, the Purple Power, the Rock Base and the boss heads no longer vanish when you walk away from them.
+
+**Changed**
+- Wild, grown Baryonyx, Cassowary, Flounder, Stink Bug and Whale despawn when left behind. Their young stay for good.
+- Wild adult Camarasaurus, Chipmunk and Water Dragon despawn when left behind. Tamed ones stay.
+- A wild, unridden Prince (teen or adult) despawns when left behind. Tame or name-tag the ones you want to keep.
+- Gold Fish despawn only at night. Pitch Black, Creeping Horror and Firefly only by day. The Lurking Terror only while it is not attacking.
+- A baby Easter Bunny, Peacock, Lizard, Ostrich, Rubber Ducky or Velocity Raptor is kept for good once the game has checked on it, as the original kept it.
+
+**Good to know**
+- Works in the worlds you already have, chunk by chunk as they load.
+- Nothing else changed in this build.
+
+**Install:** put `orespawn-1.21.1-2.0.0-beta.7.jar` in `mods/` (NeoForge 21.1, Minecraft 1.21.1, GeckoLib 4.7 or newer) and take the beta.6 jar out. Worlds carry over.
+
+### In more detail
+
+#### What beta.7 is
 
 beta.7 is beta.6 plus one rule: creatures you leave behind despawn as they did in 1.7.10, which ends the frog pile-up in Utopia that beta.6's placement fix had left in place. Nothing else moves. It applies to creatures already in your world as their chunks load: the ones far from you go, the ones near you stay.
 
-### What changed
+#### What changed
 
 - **Left-behind creatures despawn as they did in 1.7.10.** Frogs, crickets and T-shirts never despawned in the port, so
   Utopia filled with every frog that ever spawned near you (2,753 in one eleven-minute session); beyond 128 blocks they
@@ -20,7 +41,7 @@ beta.7 is beta.6 plus one rule: creatures you leave behind despawn as they did i
   Firefly only by day; the Lurking Terror only while idle. A young Easter Bunny, Peacock, Lizard, Ostrich, Rubber Ducky
   or Velocity Raptor that meets the check is kept for good, as the original kept it. *(ENT-S-171)*
 
-### How to install
+#### How to install
 
 Put `orespawn-1.21.1-2.0.0-beta.7.jar` into the `mods` folder of a NeoForge 21.1 instance for Minecraft 1.21.1 together with GeckoLib 4.7 or newer, and take the beta.6 jar out; MultiHitboxLib and Databuddy are bundled in the jar. Existing worlds carry over.
 

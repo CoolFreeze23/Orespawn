@@ -4,11 +4,26 @@ Version `1.21.1-2.0.0-beta.6` (`gradle.properties`; `README.md` line 6), a hotfi
 
 ## Part one — for the player
 
-### What beta.6 is
+A hotfix for the three reports filed against beta.3: Utopia's trees, Utopia's frogs, and the hitbox report.
+
+**Fixed**
+- Utopia's Sky trees and Wind trees no longer lose their branches at chunk borders. The Sky trees stand at their original height again and every Wind tree leans east, as in 1.7.10.
+- Utopia's giant square-trunked and round-trunked trees are back, with their spiral steps, platforms, chests and Iron Golems. The platform tree's branches are leaf-rimmed discs again instead of thin lines.
+- Frogs no longer spawn on dry land all over Utopia. A frog from a water list needs two-deep water, as in 1.7.10; in rivers and swamps they spawn in the water and on the banks.
+
+**Good to know**
+- The tree and frog fixes apply to newly generated chunks. Chunks you already have keep their shape.
+- The hitboxes in the report (Ender Knight, Hercules Beetle, Jumpy Bug, Hammerhead, Vortex) were already fixed in beta.5. The Basilisk's box was right all along.
+
+**Install:** put `orespawn-1.21.1-2.0.0-beta.6.jar` in `mods/` (NeoForge 21.1, Minecraft 1.21.1, GeckoLib 4.7 or newer) and take the beta.5 jar out. Worlds carry over.
+
+### In more detail
+
+#### What beta.6 is
 
 beta.6 is beta.5 plus the fixes for the three player reports: Utopia's trees generate whole and complete again, Utopia's frogs stay in the water, and the hitbox report is answered. Nothing else moves. The worldgen fixes take effect in newly generated chunks; chunks generated before keep what they have.
 
-### What changed
+#### What changed
 
 - **Utopia's trees are whole again.** The Sky trees and the Wind trees generated with most of their branches missing: a
   tree that reaches past the next chunk had its outer blocks dropped by the game's chunk writer. They now generate as
@@ -27,7 +42,7 @@ beta.6 is beta.5 plus the fixes for the three player reports: Utopia's trees gen
 - **Hitboxes (issue #3):** the Ender Knight, Hercules Beetle, Jumpy Bug, Hammerhead and Vortex boxes reported against
   beta.3 were restored to the originals in beta.5 (see that section); the Basilisk's was already right.
 
-### How to install
+#### How to install
 
 Put `orespawn-1.21.1-2.0.0-beta.6.jar` into the `mods` folder of a NeoForge 21.1 instance for Minecraft 1.21.1 together with GeckoLib 4.7 or newer, and take the beta.5 jar out; MultiHitboxLib and Databuddy are bundled in the jar. Existing worlds carry over.
 

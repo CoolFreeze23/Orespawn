@@ -1,12 +1,38 @@
-# OreSpawn for NeoForge 1.21.1 — 2.0.0-beta.7
+# OreSpawn for NeoForge 1.21.1 — Changelog
 
-Release: https://github.com/CoolFreeze23/Orespawn/releases/tag/v1.21.1-2.0.0-beta.7 — cut on 2026-09-20 on beta.6 for the despawn rule (the frogs the owner still saw in Utopia); this section is the player's half of the release notes, verbatim; the notes, with the modder's half, are `phase_g_reports/RELEASE_NOTES_2.0.0-beta.7.md`.
+Newest first. Every version opens with what a player will notice, in plain words; the technical detail, with the
+issue ids and the source lines, is folded under "Technical details" at the end of the version. The full release notes
+for a cut live in `phase_g_reports/` and on the release page.
 
-### What beta.7 is
+## 2.0.0-beta.7 — 2026-09-20 · [release page](https://github.com/CoolFreeze23/Orespawn/releases/tag/v1.21.1-2.0.0-beta.7) · [full notes](phase_g_reports/RELEASE_NOTES_2.0.0-beta.7.md)
+
+One fix: creatures you leave behind despawn again, the way they did in 1.7.10. That ends the frog pile-up in Utopia that beta.6 had left in place.
+
+**Fixed**
+- Frogs, crickets and T-shirts no longer build up forever. Once you are more than 128 blocks away they despawn, as in the original; the ones near you stay.
+- Hoverboards, Ant Robots, Spider Robots, the worms, the Purple Power, the Rock Base and the boss heads no longer vanish when you walk away from them.
+
+**Changed**
+- Wild, grown Baryonyx, Cassowary, Flounder, Stink Bug and Whale despawn when left behind. Their young stay for good.
+- Wild adult Camarasaurus, Chipmunk and Water Dragon despawn when left behind. Tamed ones stay.
+- A wild, unridden Prince (teen or adult) despawns when left behind. Tame or name-tag the ones you want to keep.
+- Gold Fish despawn only at night. Pitch Black, Creeping Horror and Firefly only by day. The Lurking Terror only while it is not attacking.
+- A baby Easter Bunny, Peacock, Lizard, Ostrich, Rubber Ducky or Velocity Raptor is kept for good once the game has checked on it, as the original kept it.
+
+**Good to know**
+- Works in the worlds you already have, chunk by chunk as they load.
+- Nothing else changed in this build.
+
+**Install:** put `orespawn-1.21.1-2.0.0-beta.7.jar` in `mods/` (NeoForge 21.1, Minecraft 1.21.1, GeckoLib 4.7 or newer) and take the beta.6 jar out. Worlds carry over.
+
+<details>
+<summary>Technical details</summary>
+
+##### What beta.7 is
 
 beta.7 is beta.6 plus one rule: creatures you leave behind despawn as they did in 1.7.10, which ends the frog pile-up in Utopia that beta.6's placement fix had left in place. Nothing else moves. It applies to creatures already in your world as their chunks load: the ones far from you go, the ones near you stay.
 
-### What changed
+##### What changed
 
 - **Left-behind creatures despawn as they did in 1.7.10.** Frogs, crickets and T-shirts never despawned in the port, so
   Utopia filled with every frog that ever spawned near you (2,753 in one eleven-minute session); beyond 128 blocks they
@@ -18,19 +44,35 @@ beta.7 is beta.6 plus one rule: creatures you leave behind despawn as they did i
   Firefly only by day; the Lurking Terror only while idle. A young Easter Bunny, Peacock, Lizard, Ostrich, Rubber Ducky
   or Velocity Raptor that meets the check is kept for good, as the original kept it. *(ENT-S-171)*
 
-### How to install
+##### How to install
 
 Put `orespawn-1.21.1-2.0.0-beta.7.jar` into the `mods` folder of a NeoForge 21.1 instance for Minecraft 1.21.1 together with GeckoLib 4.7 or newer, and take the beta.6 jar out; MultiHitboxLib and Databuddy are bundled in the jar. Existing worlds carry over.
 
-# OreSpawn for NeoForge 1.21.1 — 2.0.0-beta.6
+</details>
 
-Release: https://github.com/CoolFreeze23/Orespawn/releases/tag/v1.21.1-2.0.0-beta.6 — a hotfix on beta.5 for the three reports filed on GitHub against beta.3 (issues #1, #2 and #3), landed 2026-09-20; this section is the player's half of the release notes, verbatim; the notes, with the modder's half, are `phase_g_reports/RELEASE_NOTES_2.0.0-beta.6.md`.
+## 2.0.0-beta.6 — 2026-09-20 · [release page](https://github.com/CoolFreeze23/Orespawn/releases/tag/v1.21.1-2.0.0-beta.6) · [full notes](phase_g_reports/RELEASE_NOTES_2.0.0-beta.6.md)
 
-### What beta.6 is
+A hotfix for the three reports filed against beta.3: Utopia's trees, Utopia's frogs, and the hitbox report.
+
+**Fixed**
+- Utopia's Sky trees and Wind trees no longer lose their branches at chunk borders. The Sky trees stand at their original height again and every Wind tree leans east, as in 1.7.10.
+- Utopia's giant square-trunked and round-trunked trees are back, with their spiral steps, platforms, chests and Iron Golems. The platform tree's branches are leaf-rimmed discs again instead of thin lines.
+- Frogs no longer spawn on dry land all over Utopia. A frog from a water list needs two-deep water, as in 1.7.10; in rivers and swamps they spawn in the water and on the banks.
+
+**Good to know**
+- The tree and frog fixes apply to newly generated chunks. Chunks you already have keep their shape.
+- The hitboxes in the report (Ender Knight, Hercules Beetle, Jumpy Bug, Hammerhead, Vortex) were already fixed in beta.5. The Basilisk's box was right all along.
+
+**Install:** put `orespawn-1.21.1-2.0.0-beta.6.jar` in `mods/` (NeoForge 21.1, Minecraft 1.21.1, GeckoLib 4.7 or newer) and take the beta.5 jar out. Worlds carry over.
+
+<details>
+<summary>Technical details</summary>
+
+##### What beta.6 is
 
 beta.6 is beta.5 plus the fixes for the three player reports: Utopia's trees generate whole and complete again, Utopia's frogs stay in the water, and the hitbox report is answered. Nothing else moves. The worldgen fixes take effect in newly generated chunks; chunks generated before keep what they have.
 
-### What changed
+##### What changed
 
 - **Utopia's trees are whole again.** The Sky trees and the Wind trees generated with most of their branches missing: a
   tree that reaches past the next chunk had its outer blocks dropped by the game's chunk writer. They now generate as
@@ -49,33 +91,58 @@ beta.6 is beta.5 plus the fixes for the three player reports: Utopia's trees gen
 - **Hitboxes (issue #3):** the Ender Knight, Hercules Beetle, Jumpy Bug, Hammerhead and Vortex boxes reported against
   beta.3 were restored to the originals in beta.5 (see that section); the Basilisk's was already right.
 
-### How to install
+##### How to install
 
 Put `orespawn-1.21.1-2.0.0-beta.6.jar` into the `mods` folder of a NeoForge 21.1 instance for Minecraft 1.21.1 together with GeckoLib 4.7 or newer, and take the beta.5 jar out; MultiHitboxLib and Databuddy are bundled in the jar. Existing worlds carry over.
 
-# OreSpawn for NeoForge 1.21.1 — 2.0.0-beta.5
+</details>
 
-Release: https://github.com/CoolFreeze23/Orespawn/releases/tag/v1.21.1-2.0.0-beta.5 — this section is the player's half of the release notes, verbatim; the full notes, with the modder's half and the findings appendix, are `phase_g_reports/RELEASE_NOTES_2.0.0-beta.5.md`.
+## 2.0.0-beta.5 — 2026-09-19 · [release page](https://github.com/CoolFreeze23/Orespawn/releases/tag/v1.21.1-2.0.0-beta.5) · [full notes](phase_g_reports/RELEASE_NOTES_2.0.0-beta.5.md)
 
-## Part one — for the player
+The GeckoLib rigs are now the default renderers for every creature except the two robots, and the parity work done since beta.4 ships with them: sizes, hitboxes, textures and targeting are the 1.7.10 original's again.
 
-### What beta.5 is
+**Changed**
+- Every creature except the Ant Robot and the Spider Robot now renders through a GeckoLib rig converted from its classic model and checked against it pixel for pixel. Nothing should look different. The Queen keeps her hand-made rig.
+- One JVM argument puts a species back on its classic renderer for a side-by-side: `-Dorespawn.dev.classicRenderers=ender_knight` (a comma-separated list of registry names, or `classic` for everyone). The start-up log names what was kept classic.
+
+**Fixed (since beta.4)**
+- Mob sizes and shadows match 1.7.10 again: the Brutalfly nine times bigger, the Irukandji a quarter of its previous size, the Queen twice what the port drew, and a dozen others corrected.
+- Sixty-three mobs have their 1.7.10 hitboxes back. Godzilla is 9.9 wide, Mothra's classic box is 5×2, and the Kraken has its Play Nicely mode.
+- Textures on 97 models sit the right way round. The port had mirrored them, which showed on eyes, markings, text and blades.
+- The Purple Power orb is a translucent, shimmering ball again, the Coin is visible, and the Crab shows all twenty-four legs and claws.
+- OreSpawn's hunters target as they did in 1.7.10: the shared "leave it alone" list, the Peaceful and Play Nicely stand-downs, line of sight through grass and torches, prey lists, hunting ranges and grudges. Four modern targeting switches are on by default, each with one config line to turn it off.
+
+**Good to know**
+- The four butterflies share one rig. The Mothra's flat-wing pose differs from the classic drawing by 1.2 % of the image, and that was allowed on purpose.
+- A few classic-renderer quirks are copied on purpose and recorded for the next parity pass: the Triffid's facing, Godzilla attacking on every cycle instead of about half, the Prince Teen's opaque wing membranes, the King's wing membranes on his classic renderer, and a Boyfriend or Girlfriend summoned with a negative age.
+- The King, the Princess and Godzilla still use a single hitbox. Bone-synced hitbox parts for them are the next phase.
+- Fairy Castle Trees in the Crystal dimension can still generate with sheared-off edges at chunk borders. That is the designated first post-beta patch.
+- If a creature looks wrong, put it back on its classic renderer with the argument above and post a screenshot through each renderer, the species and the mod version at https://github.com/CoolFreeze23/Orespawn/issues.
+
+**Install:** put `orespawn-1.21.1-2.0.0-beta.5.jar` in `mods/` (NeoForge 21.1, Minecraft 1.21.1, GeckoLib 4.7 or newer). MultiHitboxLib and Databuddy are bundled; the `-slim` jar is the library-less variant. Worlds carry forward from the earlier betas; 1.7.10 worlds are not upgradable.
+
+<details>
+<summary>Technical details</summary>
+
+#### Part one — for the player
+
+##### What beta.5 is
 
 beta.5 is the build in which the GeckoLib rigs become the default renderers. Every creature but the two solver robots — the Ant Robot and the Spider Robot — now draws through a GeckoLib rig converted from its classic model and proven against it bone for bone and pixel for pixel; the poses are the classic motion, bit for bit; the Queen keeps her hand-made rig. Underneath the renderer change, the cycle's parity work stands in the same build: the creatures' sizes, shadows, hitboxes and textures, the hunters' targeting and a handful of restored models are the 1.7.10 original's again. And the game is ready for hand-made animations: when clips are delivered for a creature, it knows how to play them. (CHANGELOG.md, the beta.5 section; README.md, "2.0.0-beta.5 (this build)", the merge commit 8d7fd2d; phase_g_reports/ents092_changelog_note.md.)
 
-### What a default install sees
+##### What a default install sees
 
 The rigs. With no argument and no config change, every landed rig draws through its GeckoLib renderer, posed exactly as the classic renderer posed it. The switch that puts a species on its rig is renderer registration, not a change to the creature, and none of the rig batches touched gameplay. Nothing should look different because of the renderer change: a rig that did not match its classic rendering at rest and at a posed sample, pixel for pixel within the comparison's rule, did not land. ( and "PHASE G — THE MERGE (2026-09-19)"; "PHASE G — THE FOURTH TIER-2 SLICE, T2d (2026-09-14)", "PHASE G — THE FIFTH TIER-2 SLICE, T2e (2026-09-15)", "PHASE G — THE SIXTH TIER-2 SLICE, T2f (2026-09-15)", "PHASE G — THE FK SLICE (2026-09-15)", "PHASE G — THE FK SLICE, SECOND ATTEMPT (2026-09-15)", "PHASE G — THE BUTTERFLY RIG (2026-09-19)"; "PHASE G — THE FIRST TIER-1 SLICE, T1a (2026-09-15)", "PHASE G — THE SECOND TIER-1 SLICE, T1b (2026-09-15)", "PHASE G — THE REMAINDER (2026-09-15)"; KNOWN_ISSUES.md, "The GeckoLib rigs — now the default renderers"; phase_g_reports/contact_sheets/index.md.)
 
 What does look different from beta.4 is the parity work that went into the classic renderers first, in the weeks after beta.4 was cut — and the rigs draw exactly that. In short: mob sizes and shadows are the 1.7.10 registrations again (the Brutalfly nine times bigger; the Irukandji a quarter of its previous size, the Fairy 0.35×, the Robot 3 and the Cricket half, the Hydrolisc 0.65×, a dozen more at 0.75×; the Dragonfly and the Emperor Scorpion 1.5× bigger, the Prince Teen 1.47×; the Queen twice what the port drew, her hit parts on her bones); sixty-three mobs got their 1.7.10 hitboxes back (the Tshirt board 4×4, the Molenoid 3.9×2.6, the Emperor Scorpion 3.5×3, the Sea Monster's box down from 5×5 to 1.25×2.5, the ants, cricket, irukandji and rat small again), Godzilla is 9.9 wide, Mothra's box is 5×2 in classic, and the Kraken has its Play Nicely mode; textures on 97 models sit on their cubes the way the original drew them (the port had mirrored every face's texture on 89 mobs, the four butterflies and seven held items — visible on eyes, markings, text and blades); the Purple Power orb is a translucent, shimmering ball again; the Coin is visible; the Crab shows the twenty-four legs and claws the original drew; and OreSpawn's hunters target as they did in 1.7.10 — the shared "leave it alone" list, the Peaceful and Play Nicely stand-downs, line of sight through grass and torches, prey lists, hunting ranges, who gets picked first, when a grudge is let go — with four modern targeting switches on by default and one config line to turn each off. The full list, grouped, is in part two of the release notes. (phase_g_reports/ents092_changelog_note.md to "TARGETING WAVE 4 (2026-09-06)"; ENT-S-092, ENT-S-095, ENT-S-096, BUG-041, ENT-S-146, BUG-040, ANIM-025; the beta.4 version bump is commit 81549da of 2026-08-21.)
 
-### The switch, and its one-line escape per species
+##### The switch, and its one-line escape per species
 
 One JVM argument puts a species back on its classic renderer: `-Dorespawn.dev.classicRenderers=<registry names, comma-separated>` — for instance `-Dorespawn.dev.classicRenderers=ender_knight`, or `beaver,elevator` — and the exact token `classic` keeps every species on its classic renderer, for a side-by-side of the whole population. Registry names are trimmed and case-insensitive; the token `classic` is case-exact. The start-up log names each species kept classic, one line per exception at renderer registration; silence means every landed rig is drawing with its GeckoLib renderer. It is a JVM argument, not a config key; the earlier property `orespawn.dev.geckolibRenderers` is no longer read, so a stale one is inert. A species with no landed rig — the Ant Robot, the Spider Robot — never reaches the switch, and the Queen's native rig is untouched either way. (, the inverted switch's form; "PHASE G — THE MERGE (2026-09-19)", item 2; KNOWN_ISSUES.md, "The GeckoLib rigs — now the default renderers".)
 
 What to report. If a species does look different — a limb on the other side, a part missing, a texture facing the wrong way — put it back on its classic renderer with the argument above and send the side-by-side: the species, the argument, a screenshot through each renderer, and the mod version, at https://github.com/CoolFreeze23/Orespawn/issues. That comparison is exactly the report this beta wants; for a crash, the log as well. (KNOWN_ISSUES.md, "The GeckoLib rigs — now the default renderers" and "Help us squash the rest"; README.md, "Reporting issues".)
 
-### Known issues
+##### Known issues
 
 Condensed from KNOWN_ISSUES.md, which keeps the full list and its ids:
 
@@ -84,18 +151,38 @@ Condensed from KNOWN_ISSUES.md, which keeps the full list and its ids:
 - **Not started: boss hitbox profiles.** The King, the Princess and Godzilla keep the classic single hitbox; bone-synced hitbox parts for them are the phase after this one.
 - **Unchanged from the earlier betas:** the visual and audio rough edges not yet hand-checked against 1.7.10 — some mob animations and model scales *(i043, i074)*, custom mob and boss sounds *(i048, i081, i087, i091, i104)*, the feel of the big mounts and the Left-Alt fly key *(i066, i068, i102)*, hoverboard tricks *(i070, i071, i072)*, boss-fight presentation *(i096, i098, i099, i103)*, the Princess's aura and the Krakens' mouth cycles *(i076, i093)*, far-dimension structures *(i124, i125, i128, i136, i162, i170)*, terrain and spawn sweeps *(i106–i120, i130, i144)*, the Village dimension on a live server *(i158, i164)*, the Valentine's Day Girlfriend *(i178)*; the Fairy Castle Trees of the Crystal dimension can still generate with sheared-off edges at chunk borders — the designated first post-beta patch *(BUG-021)*; and the 1.7.10 quirks that look like bugs but are the original's — the instant teen Prince, the twelve-minute Duplicator tree, the Chainsaw felling everything woody in an 11×16×11 box, the Instant Garden at your feet, rocks placing a pet rock, Mole dirt, the Experience armor's XP trickle, the Cephadrome that cannot be tamed for good *(TF-024, MOD-015 to MOD-019, i004, TF-032)*.
 
-### How to install
+##### How to install
 
 Drop `orespawn-1.21.1-2.0.0-beta.5.jar` into `mods/` of a NeoForge 21.1 instance for Minecraft 1.21.1, with GeckoLib 4.7 or later installed alongside; MultiHitboxLib and Databuddy are bundled inside the jar, and the `-slim` jar beside it is the library-less variant. Worlds carry forward from the earlier betas; 1.7.10 worlds are not upgradable. (README.md, "Installing"; `src/main/resources/META-INF/neoforge.mods.toml` — `neoforge` `[21.1,)`, `minecraft` `[1.21.1]`, `geckolib` `[4.7,)`, the second `[[mods]]` entry `multihitboxlib`; `META-INF/jarjar/databuddy-1.21-6.0.0.0.jar`; `build.gradle` lines 522–527, the jar classifiers; `gradle.properties`, GeckoLib 4.8.4 the build's own.)
 
-# OreSpawn for NeoForge 1.21.1 — 2.0.0-beta.4
+</details>
+
+## 2.0.0-beta.4 — 2026-08-21
+
+The Chaos dimension gets its real terrain back: floating grassy islands drifting over open void.
+
+**Fixed**
+- Chaos is floating islands again, not a near-solid stone mass with a flat cap you arrived on top of.
+- The islands have real hills, mountains, cliffs, overhangs and hanging pieces again.
+- There is no sea. The original placed no fluid at all, so islands float over open void, End-style. There is no floor and no bedrock, so watch your step.
+- Grass on every island, as in the original, with the grass-and-stone mix only in the Y60 to Y65 band.
+- Safe arrivals: the teleporter now hunts for solid ground with headroom instead of dropping you at Y64 into the void. Butterfly and ant teleports both use it, and pets come along.
+- The crumbly top and bottom layers of the world follow the original's per-layer dice.
+- Beds work in Chaos again.
+
+**Good to know**
+- Chaos chunks you already generated keep their old shape. New areas, or a fresh visit after deleting the dimension's region files, show the fix.
+- Mob spawns, features and carvers were already faithful and are unchanged.
+
+<details>
+<summary>Technical details</summary>
 
 The Chaos dimension gets its real terrain back: floating grassy islands
 drifting over open void. Worlds carry forward; already-generated Chaos
 chunks keep their old shape, so ungenerated areas (or a fresh visit
 after deleting the dimension's region files) show the fix.
 
-## The Chaos dimension — terrain restored
+#### The Chaos dimension — terrain restored
 
 - **Floating islands, not a stone slab.** The 1.7.10 Chaos generator is
   a photographic negative of the Nether: it copies the Nether's noise
@@ -152,12 +239,28 @@ Mob spawns, features (scraggly trees, anthills, veggie patches, ores),
 and carvers were verified against the original `setChaosCreatures`
 roster and chunk provider — all already faithful, unchanged.
 
-# OreSpawn for NeoForge 1.21.1 — 2.0.0-beta.3
+</details>
+
+## 2.0.0-beta.3 — [release page](https://github.com/CoolFreeze23/Orespawn/releases/tag/v1.21.1-2.0.0-beta.3)
+
+A server-killing worldgen crash fixed, plus the close-out of the Queen animation review.
+
+**Fixed**
+- Generating a new chunk with a classic lake in the Village or Mining dimension could kill the whole server when Serene Seasons is installed. It no longer can.
+- The Queen fights at full speed again. Her flight and attacks had been running at half the original's rate.
+- Her wake-up animation plays out fully, only real hits wake her from the dormant blue phase, and two guards stop her from freezing mid-transition.
+
+**Good to know**
+- Ice placed during generation now follows the biome's base climate rather than the season on the day the chunk happened to generate.
+- Worlds carry forward from any earlier beta.
+
+<details>
+<summary>Technical details</summary>
 
 A server-killing worldgen crash fixed, plus the full close-out of the
 Queen animation review. Worlds carry forward from any earlier beta.
 
-## World generation
+#### World generation
 
 - **Village/Mining dimension lake crash fixed.** Generating a new chunk
   with a classic lake could kill the whole server with
@@ -173,7 +276,7 @@ Queen animation review. Worlds carry forward from any earlier beta.
   the season on the day the chunk happened to generate (the saner
   behavior anyway).
 
-## The Queen — animation-review follow-ups
+#### The Queen — animation-review follow-ups
 
 The held findings from the Queen animation review (the same pass that
 fixed her mid-air freeze) are now closed out:
@@ -191,13 +294,30 @@ fixed her mid-air freeze) are now closed out:
   stance controller can no longer latch off from a one-frame
   client-side death-state flicker.
 
-# OreSpawn for NeoForge 1.21.1 — 2.0.0-beta.2
+</details>
+
+## 2.0.0-beta.2 — [release page](https://github.com/CoolFreeze23/Orespawn/releases/tag/v1.21.1-2.0.0-beta.2)
+
+A field-report patch: ants and termites as the original had them, and daylight back in the Mining dimension.
+
+**Fixed**
+- Ants and Red Ants no longer spawn naturally in every biome. They come from anthills, ambushes and eggs, as in the original, and they despawn again, so the swarms your world has already accumulated clear out as you play.
+- Anthills look like the original's grassy mounds again instead of bare orange cubes.
+- Ants are ant-sized again: quarter scale, with Red Ants and Termites at 0.35×.
+- Termites multiply while eating your house again, with the original's ten-termite crowd cap.
+- The Mining dimension has daylight and a day and night cycle again. Chunks explored before this fix may stay dark until the light engine touches them.
+
+**Changed**
+- One deliberate deviation: a nest skips its 2 to 7 ant burst once ten or more ants are already nearby, so idling next to an anthill cannot snowball into hundreds of ants.
+
+<details>
+<summary>Technical details</summary>
 
 A field-report patch: everything in it came from walking around a real
 modded world and asking "did the original actually do this?" Worlds
 carry forward from any earlier beta.
 
-## The ant & termite overhaul
+#### The ant & termite overhaul
 
 - **Ant armageddon fixed.** Ants and Red Ants were spawning naturally
   in every overworld biome at cow-level frequency — invented content;
@@ -227,7 +347,7 @@ carry forward from any earlier beta.
   relied on despawning alone; with modern render distances that still
   let populations pile up within despawn range.
 
-## Also in this build
+#### Also in this build
 
 - **The Mining dimension has daylight again.** The original's Mining
   dimension is an open-sky mountain world with a day/night cycle and
@@ -237,16 +357,37 @@ carry forward from any earlier beta.
   stay dark until the light engine touches them (or you visit fresh
   terrain) — new chunks are properly sunlit.
 
----
+</details>
 
-# OreSpawn for NeoForge 1.21.1 — 2.0.0-beta.1 "OreSpawn Modernized"
+## 2.0.0-beta.1 "OreSpawn Modernized" — [release page](https://github.com/CoolFreeze23/Orespawn/releases/tag/v1.21.1-2.0.0-beta.1)
+
+The first 2.0 build. The 1.0 line replicated 1.7.10 exactly; 2.0 is where the deliberate improvements live, always one config line away from pure 1.7.10.
+
+**Added**
+- The Giant Robot Spider and the Robot Ant walk for real: their legs plant on the ground, find footing on stairs and ledges, and the body rides them. Every leg is hittable and deals body damage.
+- The spider is rideable and steerable for the first time, with a riding camera that pulls back so the body sits low in view. Clicking a leg mounts you.
+- `spiderMovement = "CLASSIC"` gives you the exact 1.7.10 robots. The test suite runs green in both modes on every build.
+
+**Fixed**
+- The Queen no longer freezes mid-air or repeats one attack swing after her first melee.
+- Vanilla creepers no longer carry invisible extra hitboxes from a bundled library demo file.
+- The Princess and the Prince no longer spawn wild. They come from spawn eggs, the Queen's death and structures, as in the original.
+- Riders sit on the spider properly again, and the spider's body hitbox is the original's 3.25×2.25.
+
+**Good to know**
+- On laggy servers a mid-swing leg leads your view; hit the body, it pays the same.
+- The legs' tempo at sustained sprint and the Robot Ant's step tempo are first-pass tunes. Reports welcome.
+- Worlds carry forward from any 1.0 beta.
+
+<details>
+<summary>Technical details</summary>
 
 The first public build of OreSpawn 2.0. The 1.0 line replicated 1.7.10
 exactly; 2.0 is where the deliberate improvements live — clearly
 labeled, and always one config line away from pure 1.7.10. Worlds
 carry forward from any 1.0 beta.
 
-## The headline: the Procedural Spider Overhaul
+#### The headline: the Procedural Spider Overhaul
 
 - **The Giant Robot Spider and Robot Ant walk for real now.** With the
   default `spiderMovement = "MODERN"`, the legs are procedural and
@@ -276,7 +417,7 @@ carry forward from any 1.0 beta.
   under MODERN and under CLASSIC), so preservation stays a tested
   promise, not a checkbox.
 
-## Also fixed in this build
+#### Also fixed in this build
 
 - **The Queen no longer freezes mid-air** (or endlessly repeats one
   attack swing) after her first melee — her attack animations now
@@ -303,7 +444,7 @@ carry forward from any 1.0 beta.
   shrunken, never-audited 2.0×1.5 box — a much easier target to click
   and to hit. *(ENT-S-088)*
 
-## Known issues & tuning — beta players are the tuners now
+#### Known issues & tuning — beta players are the tuners now
 
 [KNOWN_ISSUES.md](KNOWN_ISSUES.md) has the full list. The short
 version:
@@ -322,14 +463,29 @@ version:
   grass under a rider (with mobGriefing on) — the original tried to,
   but its client-side trample rarely stuck on servers.
 
-## What's next
+#### What's next
 
 The **Queen Coherence pass**: the freeze fix in this build came out of
 a full review of her animation stack, and the follow-ups that review
 surfaced — a real calm-vs-aggro flight state like the original's,
 wake-up polish, attack cadence — are the teased next milestone.
 
-# OreSpawn for NeoForge 1.21.1 — 1.0.0-beta.3
+</details>
+
+## 1.0.0-beta.3 — [release page](https://github.com/CoolFreeze23/Orespawn/releases/tag/v1.21.1-1.0.0-beta.3)
+
+A same-day hotfix for three problems caught by the first play sessions of beta.2. Nothing else changed.
+
+**Fixed**
+- Launch crash on clean installs: the game needed the `databuddy` library from some other mod. It now ships inside the OreSpawn jar.
+- Freezes near Basilisk Mazes and royal trees, where chunks stopped loading and the log said `Failed to load chunk`. Frozen worlds are safe; the failed chunks regenerate on your next visit.
+- The Dungeon Beast never spawned. Restored to the original's values.
+
+**Good to know**
+- The test suite now constructs every mob type on every build, so an unspawnable mob cannot ship silently again.
+
+<details>
+<summary>Technical details</summary>
 
 A same-day hotfix for three problems caught by the first real-world play
 sessions of beta.2. Worlds carry forward; nothing else changed.
@@ -350,16 +506,36 @@ sessions of beta.2. Worlds carry forward; nothing else changed.
 - The test suite now constructs every mob type on every build, so an
   unspawnable mob can never ship silently again.
 
----
+</details>
 
-# OreSpawn for NeoForge 1.21.1 — 1.0.0-beta.2
+## 1.0.0-beta.2 — [release page](https://github.com/CoolFreeze23/Orespawn/releases/tag/v1.21.1-1.0.0-beta.2)
+
+The classic 1.7.10 OreSpawn, rebuilt for modern Minecraft: the first public build of a full parity port, verified line by line against the original's source.
+
+**What's in it**
+- All six dimensions: Utopia, Mining, Village, Crystal, Islands and Chaos, reached by right-clicking the dimension ants empty-handed.
+- The full boss roster: the King, the Queen, Mobzilla, the Kraken, Mothra, the Basilisk and the Prince line.
+- The Big Bertha arsenal, the Ultimate gear and the gemstone armory, with the original's over-enchanted drops on purpose.
+- Girlfriends, Boyfriends and pets: taming, moods, jealousy, dances, the Frog Prince kiss, Cephadrome riding, rideable Ant Robots and the Valentine's Day event.
+- 47 structures, wild crops, anthills, troll-block ambushes and the vanilla-ore boost veins.
+- Modern data-driven recipes, loot and worldgen, a 150-test automated suite and a performance pass that changed no behaviour.
+
+**Fixed**
+- Crashes: a Rat from a mob spawner, the WaterDragon on spawn, lake generation in the Village and Mining dimensions, leftover references at startup, the Prince's transformation when its owner logged out, Godzilla's shockwave hitting Creative and Spectator players, and bosses one-shotting players into a corrupted death state.
+
+**Good to know**
+- This is a beta: the visual and audio polish is deliberately open for community feedback.
+- Fairy Castle Trees in the Crystal dimension can generate with sheared-off edges at chunk boundaries. That is the designated first post-beta patch.
+
+<details>
+<summary>Technical details</summary>
 
 The classic 1.7.10 OreSpawn, rebuilt for modern Minecraft. This is the first
 public build of a full parity port: every mob, boss, weapon, dimension, and
 weird little quirk of the original, verified line-by-line against the
 original's decompiled source — 630 audited findings, all closed.
 
-## Highlights
+#### Highlights
 
 - **All six dimensions are back**: Utopia, Mining, Village, Crystal, Islands,
   and Chaos — reached the classic way, by right-clicking the dimension ants
@@ -383,7 +559,7 @@ original's decompiled source — 630 audited findings, all closed.
   a 150-test automated regression suite, and a performance pass that removed
   the original's worst per-tick costs without changing a single behavior.
 
-## Crash fixes (things the original or early port builds broke)
+#### Crash fixes (things the original or early port builds broke)
 
 - Fixed a server crash when a Rat spawned from a mob spawner.
 - Fixed the WaterDragon crashing the game the moment it spawned.
@@ -394,7 +570,7 @@ original's decompiled source — 630 audited findings, all closed.
 - Fixed Godzilla's landing shockwave damaging Creative and Spectator players.
 - Fixed bosses one-shotting players into a corrupted death state.
 
-## Parity fixes, by category
+#### Parity fixes, by category
 
 The port was audited finding-by-finding against the original's decompiled
 source. Summarized here.
@@ -418,7 +594,7 @@ source. Summarized here.
   fixed, Mothra's 10× scale, crop cross-rendering, projectiles visible in
   flight, the Leonopteryx consolidated to one properly-scaled creature.
 
-## Known issues
+#### Known issues
 
 This is a **beta**. The game logic has been through the automated suite and
 hands-on play, but much of the visual/audio polish is deliberately delegated
@@ -431,7 +607,7 @@ reports on. The headline item:
   the designated **first post-beta patch** — scoped, scheduled, and not a
   blocker. (BUG-021)
 
-## What's next (the 2.0 teaser)
+#### What's next (the 2.0 teaser)
 
 The parity pass replicated the original faithfully — bugs and all. The 2.0
 backlog is where the deliberate improvements live: a procedural spider
@@ -441,8 +617,10 @@ shower, relog-stable boss fights, smooth tornado pulls), and the archived
 kyanite content branch as optional new-content. None of it ships until the
 community has had its say on 1.0.
 
-## Credits
+#### Credits
 
 Original OreSpawn by **TheyCallMeDanger** and the original authors
 (2013-2015) — all rights to the original remain theirs. See the License &
 Ownership section of the README. Ported and modernized for NeoForge 1.21.1.
+
+</details>
