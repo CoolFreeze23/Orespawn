@@ -152,4 +152,14 @@ public class GoldFish extends Animal {
     public AgeableMob getBreedOffspring(ServerLevel level, AgeableMob otherParent) {
         return null;
     }
+
+    /**
+     * orig GoldFish.java:39-44 ({@code func_70692_ba}, canDespawn): the persistent stay; otherwise it despawns only while it is NOT
+     * daytime ({@code !isDaytime()}), where EntityAnimal (and 1.21 Animal) never does. ENT-S-171.
+     */
+    @Override
+    public boolean removeWhenFarAway(double distanceToClosestPlayer) {
+        if (this.isPersistenceRequired()) return false;
+        return !this.level().isDay();
+    }
 }

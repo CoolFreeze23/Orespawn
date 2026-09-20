@@ -256,4 +256,18 @@ public class Chipmunk extends EntityCannonFodder implements danger.orespawn.enti
         }
         return baby;
     }
+
+    /**
+     * orig Chipmunk.java:260-269 ({@code func_70692_ba}, canDespawn): a child is made persistent and stays; otherwise the persistent
+     * and the tamed stay, and a wild adult despawns, where EntityTameable (and 1.21 TamableAnimal) never does. ENT-S-171.
+     */
+    @Override
+    public boolean removeWhenFarAway(double distanceToClosestPlayer) {
+        if (this.isBaby()) {
+            this.setPersistenceRequired();
+            return false;
+        }
+        if (this.isPersistenceRequired()) return false;
+        return !this.isTame();
+    }
 }

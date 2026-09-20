@@ -280,6 +280,16 @@ public class Frog extends Animal implements danger.orespawn.entity.pose.FrogPose
                 this.getBoundingBox().inflate(20.0, 8.0, 20.0)).size();
     }
 
+    /**
+     * orig Frog.java:79-81 ({@code func_70692_ba}, canDespawn): {@code return !this.isNoDespawnRequired();} — the Frog
+     * despawns unless persistence is required, where EntityAnimal (and 1.21 Animal, {@code removeWhenFarAway} false)
+     * never does. ENT-S-171.
+     */
+    @Override
+    public boolean removeWhenFarAway(double distanceToClosestPlayer) {
+        return !this.isPersistenceRequired();
+    }
+
     /** orig Frog.java:240-251 — y>=50; daytime; extra 1-in-20 dice in Crystal; at most 5 buddies within 20/8/20. */
     @Override
     public boolean checkSpawnRules(net.minecraft.world.level.LevelAccessor level,

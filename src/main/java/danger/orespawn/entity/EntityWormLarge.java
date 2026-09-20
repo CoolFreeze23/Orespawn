@@ -319,4 +319,12 @@ public class EntityWormLarge extends Monster {
     public boolean isIgnoringBlockTriggers() {
         return true;
     }
+
+    /**
+     * orig WormLarge.java:64-66 ({@code func_70692_ba}, canDespawn): {@code return false;} — never despawns, where EntityMob (and 1.21 Monster) would. ENT-S-171.
+     */
+    @Override
+    public boolean removeWhenFarAway(double distanceToClosestPlayer) {
+        return false;
+    }
 }

@@ -165,4 +165,13 @@ public class EntityCricket extends Animal {
         return this.level().getEntitiesOfClass(EntityCricket.class,
                 this.getBoundingBox().inflate(20.0, 10.0, 20.0)).size();
     }
+
+    /**
+     * orig Cricket.java:44-46 ({@code func_70692_ba}, canDespawn): {@code return !this.isNoDespawnRequired();} — despawns
+     * unless persistence is required, where EntityAnimal (and 1.21 Animal) never does. ENT-S-171.
+     */
+    @Override
+    public boolean removeWhenFarAway(double distanceToClosestPlayer) {
+        return !this.isPersistenceRequired();
+    }
 }

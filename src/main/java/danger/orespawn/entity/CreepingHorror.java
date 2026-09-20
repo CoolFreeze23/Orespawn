@@ -92,9 +92,14 @@ public class CreepingHorror extends Monster {
                 .add(Attributes.FOLLOW_RANGE, 16.0);
     }
 
+    /**
+     * orig CreepingHorror.java:230-235 ({@code func_70692_ba}, canDespawn): the persistent stay; otherwise it despawns only
+     * while it IS daytime ({@code isDaytime()}); the port had it despawning day and night. ENT-S-171.
+     */
     @Override
     public boolean removeWhenFarAway(double dist) {
-        return !this.isPersistenceRequired();
+        if (this.isPersistenceRequired()) return false;
+        return this.level().isDay();
     }
 
     @Override

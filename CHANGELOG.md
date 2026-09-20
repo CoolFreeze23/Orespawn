@@ -1,3 +1,15 @@
+# OreSpawn for NeoForge 1.21.1 — after 2.0.0-beta.6 (unreleased)
+
+- **Left-behind creatures despawn as they did in 1.7.10.** Frogs, crickets and T-shirts never despawned in the port, so
+  Utopia filled with every frog that ever spawned near you (2,753 in one eleven-minute session); beyond 128 blocks they
+  despawn again, as in the original, and the ones near you stay. The same rule, transcribed from each original, now
+  covers the wild, grown Baryonyx, Cassowary, Flounder, Stink Bug and Whale (their young stay), the wild adult
+  Camarasaurus, Chipmunk and Water Dragon (tamed ones stay), and a wild, unridden Prince teen or adult. In the other
+  direction the worms, the Ant and Spider Robots, the hoverboard, the Purple Power, the Rock Base and the boss heads no
+  longer vanish when left behind. The Gold Fish despawns only by night; the Pitch Black, the Creeping Horror and the
+  Firefly only by day; the Lurking Terror only while idle. A young Easter Bunny, Peacock, Lizard, Ostrich, Rubber Ducky
+  or Velocity Raptor that meets the check is kept for good, as the original kept it. *(ENT-S-171)*
+
 # OreSpawn for NeoForge 1.21.1 — 2.0.0-beta.6
 
 Release: https://github.com/CoolFreeze23/Orespawn/releases/tag/v1.21.1-2.0.0-beta.6 — a hotfix on beta.5 for the three reports filed on GitHub against beta.3 (issues #1, #2 and #3), landed 2026-09-20; this section is the player's half of the release notes, verbatim; the notes, with the modder's half, are `phase_g_reports/RELEASE_NOTES_2.0.0-beta.6.md`.

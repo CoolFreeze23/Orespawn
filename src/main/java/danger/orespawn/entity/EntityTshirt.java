@@ -66,4 +66,13 @@ public class EntityTshirt extends Animal {
         if (this.getY() < 50.0) return false;
         return !OriginalSpawnGates.anyOtherNearby(this, level, EntityTshirt.class, 20.0, 8.0, 20.0);
     }
+
+    /**
+     * orig Tshirt.java:38-40 ({@code func_70692_ba}, canDespawn): {@code return !this.isNoDespawnRequired();} — despawns
+     * unless persistence is required, where EntityAnimal (and 1.21 Animal) never does. ENT-S-171.
+     */
+    @Override
+    public boolean removeWhenFarAway(double distanceToClosestPlayer) {
+        return !this.isPersistenceRequired();
+    }
 }

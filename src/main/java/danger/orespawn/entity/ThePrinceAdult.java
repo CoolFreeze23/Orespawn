@@ -1052,7 +1052,17 @@ public class ThePrinceAdult extends TamableAnimal
     }
 
     @Override protected float getSoundVolume() { return 1.5f; }
-    @Override public boolean removeWhenFarAway(double dist) { return false; }
+    /**
+     * orig ThePrinceAdult.java:1303-1311 ({@code func_70692_ba}, canDespawn): the persistent, the ridden ({@code riddenByEntity != null}) and
+     * the tamed stay; a wild, unridden one despawns, where EntityTameable (and 1.21 TamableAnimal) never does. The port's
+     * uncited {@code return false} dated from the initial commit. ENT-S-171.
+     */
+    @Override
+    public boolean removeWhenFarAway(double distanceToClosestPlayer) {
+        if (this.isPersistenceRequired()) return false;
+        if (this.isVehicle()) return false;
+        return !this.isTame();
+    }
     @Override public boolean isFood(ItemStack stack) { return stack.is(Items.BEEF); }
 
     @Nullable @Override

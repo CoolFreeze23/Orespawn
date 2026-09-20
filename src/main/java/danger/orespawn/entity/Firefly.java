@@ -31,8 +31,8 @@ import net.minecraft.world.phys.Vec3;
  *       driven by {@link #getBlink()}).</li>
  *   <li>Daytime despawn: 1-in-500 discard roll each tick while the day is
  *       past tick 11000, matching 1.7.10 behaviour.</li>
- *   <li>{@code canSeeSky} despawn suppression in {@link #removeWhenFarAway}
- *       so sheltered fireflies stick around for cave lighting.</li>
+ *   <li>The despawn rule in {@link #removeWhenFarAway}: none despawns at night;
+ *       by day, unless persistent (orig Firefly.java:186-191; ENT-S-171).</li>
  * </ul>
  */
 public class Firefly extends AmbientCreature {
@@ -94,9 +94,13 @@ public class Firefly extends AmbientCreature {
     @Override
     protected void checkFallDamage(double y, boolean onGround, BlockState state, BlockPos pos) { }
 
+    /**
+     * orig Firefly.java:186-191 ({@code func_70692_ba}, canDespawn): none despawns at night ({@code !isDaytime()} → false);
+     * by day it despawns unless persistence is required. The port's uncited open-sky rule is gone. ENT-S-171.
+     */
     @Override
     public boolean removeWhenFarAway(double dist) {
-        if (this.level().canSeeSky(this.blockPosition())) return false;
+        if (!this.level().isDay()) return false;
         return !this.isPersistenceRequired();
     }
 

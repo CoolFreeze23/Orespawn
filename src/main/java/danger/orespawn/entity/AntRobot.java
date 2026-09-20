@@ -1144,4 +1144,12 @@ public class AntRobot extends Mob implements ICustomHitboxProfileSupplier, IMode
             renderInfo.uppoint[leg] = liftPoint;
         }
     }
+
+    /**
+     * orig AntRobot.java:80-82 ({@code func_70692_ba}, canDespawn): {@code return false;} — never despawns, where the 1.21 Mob default (and EntityLiving's) would. ENT-S-171.
+     */
+    @Override
+    public boolean removeWhenFarAway(double distanceToClosestPlayer) {
+        return false;
+    }
 }

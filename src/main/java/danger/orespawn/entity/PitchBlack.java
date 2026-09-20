@@ -687,4 +687,14 @@ public class PitchBlack extends Monster implements PitchBlackPose {
         int height = halfWidth * 3;
         return OriginalSpawnGates.airBox(this, level, -halfWidth, halfWidth, 1, height, -halfWidth, halfWidth);
     }
+
+    /**
+     * orig PitchBlack.java:208-213 ({@code func_70692_ba}, canDespawn): the persistent stay; otherwise it despawns only while it IS
+     * daytime ({@code isDaytime()}); the 1.21 Monster default despawns day and night. ENT-S-171.
+     */
+    @Override
+    public boolean removeWhenFarAway(double distanceToClosestPlayer) {
+        if (this.isPersistenceRequired()) return false;
+        return this.level().isDay();
+    }
 }

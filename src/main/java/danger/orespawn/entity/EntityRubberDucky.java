@@ -122,9 +122,16 @@ public class EntityRubberDucky extends TamableAnimal {
         this.entityData.set(DATA_ATTACKING, val);
     }
 
+    /**
+     * orig RubberDucky.java:528-540 ({@code func_70692_ba}): a child is made persistent and stays; the persistent and the
+     * tamed stay; else {@code should_despawn}, a field the original declares true (:50) and never writes. ENT-S-171.
+     */
     @Override
     public boolean removeWhenFarAway(double dist) {
-        if (this.isBaby()) return false;
+        if (this.isBaby()) {
+            this.setPersistenceRequired();
+            return false;
+        }
         if (this.isPersistenceRequired()) return false;
         if (this.isTame()) return false;
         return true;

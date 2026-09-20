@@ -615,4 +615,12 @@ public class Elevator extends Mob implements RiderInputPayload.RideableFlyer {
         if (this.color > 10) this.color = 10;
         this.setColor(this.color);
     }
+
+    /**
+     * orig Elevator.java:117-119 ({@code func_70692_ba}, canDespawn): {@code return false;} — never despawns, where the 1.21 Mob default (and EntityLiving's) would. ENT-S-171.
+     */
+    @Override
+    public boolean removeWhenFarAway(double distanceToClosestPlayer) {
+        return false;
+    }
 }

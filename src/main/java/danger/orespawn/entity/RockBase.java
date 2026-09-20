@@ -185,4 +185,12 @@ public class RockBase extends Mob implements RockBasePose {
                                    net.minecraft.world.entity.MobSpawnType spawnType) {
         return this.getY() >= 50.0;
     }
+
+    /**
+     * orig RockBase.java:187-189 ({@code func_70692_ba}, canDespawn): {@code return false;} — never despawns, where the 1.21 Mob default (and EntityLiving's) would. ENT-S-171.
+     */
+    @Override
+    public boolean removeWhenFarAway(double distanceToClosestPlayer) {
+        return false;
+    }
 }

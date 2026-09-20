@@ -35,6 +35,15 @@ These came straight out of hand-testing and are fixed in code in this build;
 most still need a second pair of eyes in a real game. If one still looks
 wrong for you, please say so.
 
+**post-beta.6 (in the next build):**
+
+- Creatures you leave behind despawn as they did in 1.7.10: frogs, crickets and T-shirts (Utopia no longer fills with
+  every frog that ever spawned near you), wild grown Baryonyxes, Cassowaries, Flounders, Stink Bugs and Whales (their
+  young stay, for good), wild adult Camarasauruses, Chipmunks and Water Dragons (tamed ones stay) and a wild, unridden
+  Prince teen or adult — tame or name-tag the ones you mean to keep. In the other direction the worms, the Ant and Spider
+  Robots, the hoverboard, the Purple Power and the Rock Base no longer vanish when you walk away; a Creeping Horror and a
+  Firefly go only by day, a Gold Fish only by night. *(ENT-S-171)*
+
 **2.0.0-beta.6 (this build):**
 
 - Utopia's Sky trees and Wind trees no longer lose their branches at chunk borders — they generate as structures now,

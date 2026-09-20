@@ -107,4 +107,17 @@ public class Cassowary extends Animal {
                                    net.minecraft.world.entity.MobSpawnType spawnType) {
         return OriginalSpawnGates.isDaytime(level);
     }
+
+    /**
+     * orig Cassowary.java:117-123 ({@code func_70692_ba}, canDespawn): a child is made persistent and stays; an adult despawns unless
+     * persistence is required, where EntityAnimal (and 1.21 Animal) never does. ENT-S-171.
+     */
+    @Override
+    public boolean removeWhenFarAway(double distanceToClosestPlayer) {
+        if (this.isBaby()) {
+            this.setPersistenceRequired();
+            return false;
+        }
+        return !this.isPersistenceRequired();
+    }
 }

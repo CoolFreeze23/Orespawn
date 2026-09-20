@@ -191,4 +191,17 @@ public class Flounder extends Animal {
     public AgeableMob getBreedOffspring(ServerLevel level, AgeableMob otherParent) {
         return new Flounder(ModEntities.FLOUNDER.get(), level);
     }
+
+    /**
+     * orig Flounder.java:232-238 ({@code func_70692_ba}, canDespawn): a child is made persistent and stays; an adult despawns unless
+     * persistence is required, where EntityAnimal (and 1.21 Animal) never does. ENT-S-171.
+     */
+    @Override
+    public boolean removeWhenFarAway(double distanceToClosestPlayer) {
+        if (this.isBaby()) {
+            this.setPersistenceRequired();
+            return false;
+        }
+        return !this.isPersistenceRequired();
+    }
 }

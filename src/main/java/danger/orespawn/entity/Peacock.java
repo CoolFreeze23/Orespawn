@@ -92,8 +92,16 @@ public class Peacock extends Animal implements PeacockPose {
         }
     }
 
+    /**
+     * orig Peacock.java:239-244 ({@code func_70692_ba}, canDespawn): a child is made persistent by the check and stays; an adult
+     * despawns unless persistence is required. The port had dropped the child clause. ENT-S-171.
+     */
     @Override
     public boolean removeWhenFarAway(double dist) {
+        if (this.isBaby()) {
+            this.setPersistenceRequired();
+            return false;
+        }
         return !this.isPersistenceRequired();
     }
 

@@ -265,4 +265,14 @@ public class EntityLurkingTerror extends Monster implements LurkingTerrorPose {
         if (OriginalSpawnGates.anyOtherNearby(this, level, EntityLurkingTerror.class, 32.0, 16.0, 32.0)) return false;
         return this.getY() >= 10.0;
     }
+
+    /**
+     * orig LurkingTerror.java:84-89 ({@code func_70692_ba}, canDespawn): the persistent stay; otherwise it despawns only while
+     * not attacking ({@code getAttacking() == 0}); the 1.21 Monster default despawns regardless. ENT-S-171.
+     */
+    @Override
+    public boolean removeWhenFarAway(double distanceToClosestPlayer) {
+        if (this.isPersistenceRequired()) return false;
+        return this.getAttacking() == 0;
+    }
 }

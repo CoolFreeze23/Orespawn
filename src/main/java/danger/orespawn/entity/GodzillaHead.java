@@ -117,4 +117,12 @@ public class GodzillaHead extends Mob {
         }
         super.tick();
     }
+
+    /**
+     * orig GodzillaHead.java:47-49 ({@code func_70692_ba}, canDespawn): {@code return false;} — never despawns, where the 1.21 Mob default (and EntityLiving's) would. ENT-S-171.
+     */
+    @Override
+    public boolean removeWhenFarAway(double distanceToClosestPlayer) {
+        return false;
+    }
 }

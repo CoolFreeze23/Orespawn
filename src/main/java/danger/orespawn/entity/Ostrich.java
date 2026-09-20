@@ -291,9 +291,13 @@ public class Ostrich extends TamableAnimal
     @Override
     protected void checkFallDamage(double y, boolean onGround, BlockState state, BlockPos pos) { }
 
+    /** orig Ostrich.java:568-580 ({@code func_70692_ba}): a child is made persistent and stays; the ridden, the persistent and the tamed stay. ENT-S-171. */
     @Override
     public boolean removeWhenFarAway(double dist) {
-        if (this.isBaby()) return false;
+        if (this.isBaby()) {
+            this.setPersistenceRequired();
+            return false;
+        }
         if (this.getFirstPassenger() != null) return false;
         if (this.isPersistenceRequired()) return false;
         return !this.isTame();

@@ -255,9 +255,13 @@ public class VelocityRaptor extends TamableAnimal implements VelocityRaptorPose 
     @Override
     public boolean isFood(ItemStack stack) { return stack.is(Items.APPLE); }
 
+    /** orig VelocityRaptor.java:354-360 ({@code func_70692_ba}): a child is made persistent and stays; the tamed stay; else unless persistent. ENT-S-171. */
     @Override
     public boolean removeWhenFarAway(double dist) {
-        if (this.isBaby()) return false;
+        if (this.isBaby()) {
+            this.setPersistenceRequired();
+            return false;
+        }
         if (this.isTame()) return false;
         return !this.isPersistenceRequired();
     }

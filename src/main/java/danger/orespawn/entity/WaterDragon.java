@@ -629,4 +629,18 @@ public class WaterDragon extends TamableAnimal implements WaterDragonPose {
             }
         }
     }
+
+    /**
+     * orig WaterDragon.java:179-188 ({@code func_70692_ba}, canDespawn): a child is made persistent and stays; otherwise the persistent
+     * and the tamed stay, and a wild adult despawns, where EntityTameable (and 1.21 TamableAnimal) never does. ENT-S-171.
+     */
+    @Override
+    public boolean removeWhenFarAway(double distanceToClosestPlayer) {
+        if (this.isBaby()) {
+            this.setPersistenceRequired();
+            return false;
+        }
+        if (this.isPersistenceRequired()) return false;
+        return !this.isTame();
+    }
 }

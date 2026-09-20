@@ -261,9 +261,13 @@ public class Lizard extends TamableAnimal implements LizardPose {
     @Override
     public boolean isFood(ItemStack stack) { return stack.is(Items.COD); }
 
+    /** orig Lizard.java:372-384 ({@code func_70692_ba}): a child is made persistent and stays; the persistent and the tamed stay; else should_despawn. ENT-S-171. */
     @Override
     public boolean removeWhenFarAway(double dist) {
-        if (this.isBaby()) return false;
+        if (this.isBaby()) {
+            this.setPersistenceRequired();
+            return false;
+        }
         if (this.isPersistenceRequired()) return false;
         if (this.isTame()) return false;
         return this.shouldDespawn;
