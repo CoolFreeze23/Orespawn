@@ -81,6 +81,11 @@ public class Crab extends Monster implements danger.orespawn.entity.pose.CrabPos
         // (creeper-halved / big-silhouette-prioritized), not plain distance.
         this.targetSorter = new GenericTargetSorter(this);
         this.movementSpeedAttribute = this.getAttribute(Attributes.MOVEMENT_SPEED);
+        // ENT-S-173: the cached dimensions follow getDefaultDimensions from the first tick. Entity's constructor caches
+        // the registered 2.5x3.5 and nothing refreshed it until DATA_SCALE changed, so a crab whose scale stayed at
+        // the defined 0.25 (a /summon; the client before its first data packet) kept a four-times box around a
+        // quarter-size model. The BOSS-017 pattern (TheKing, Kraken: a constructor-time refreshDimensions).
+        this.refreshDimensions();
     }
 
     @Override

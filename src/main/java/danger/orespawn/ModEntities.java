@@ -647,8 +647,8 @@ public class ModEntities {
     // 1.7.10 func_70105_a: Mothra = 5.0 × 2.0 (orig Mothra.java:65). The port shipped 6 × 3 under the
     // source comment "We bump to 6 × 3 so the wing PartEntities (which extend ±6 sideways) read
     // correctly against the root hitbox during cross-biome target sweeps" -- a source comment, not a
-    // MOD record. The wing parts are placed from the root's POSITION (Mothra#positionPart, ±6 on x),
-    // never from its box, and the target sweeps inflate the ROOT box (Mothra#findSomethingToAttack
+    // MOD record. The wing parts WERE placed from the root's POSITION (Mothra#positionPart, ±6 on x; since
+    // ENT-S-173 MultiHitboxLib parts fitted to the drawn wings), never from its box, and the target sweeps inflate the ROOT box (Mothra#findSomethingToAttack
     // 15/20/15 = orig :489, #checkSpawnRules 64/32/64 = orig :329), so 6 × 3 only widened every sweep
     // by 0.5 per side and raised it by 1.0 over 1.7.10. Restored to 5 × 2 on 2026-09-03 (ENT-S-095
     // batch 2); a config-gated modern 6 × 3 is a separate MOD proposal -- no gate here.

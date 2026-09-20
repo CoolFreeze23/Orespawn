@@ -43,7 +43,7 @@ import danger.orespawn.util.MyUtils;
 import net.neoforged.neoforge.entity.PartEntity;
 import danger.orespawn.entity.ai.TargetSelection;
 
-public class Mothra extends EntityButterfly implements OreSpawnPartEntity.MultipartBoss {
+public class Mothra extends EntityButterfly {
     // OPT-011: cached SoundEvents — identical createVariableRangeEvent ids,
     // allocated once per class instead of on every sound query.
     private static final SoundEvent SND_MOTHRAWINGS = SoundEvent.createVariableRangeEvent(
@@ -54,12 +54,6 @@ public class Mothra extends EntityButterfly implements OreSpawnPartEntity.Multip
     private int wingSound = 0;
     private int healthTicker = 100;
     private final Comparator<Entity> targetSorter;
-
-    private final OreSpawnPartEntity<Mothra> bodyPart;
-    private final OreSpawnPartEntity<Mothra> wingLeft;
-    private final OreSpawnPartEntity<Mothra> wingRight;
-    private final OreSpawnPartEntity<Mothra> headPart;
-    private final PartEntity<?>[] allParts;
 
     /**
      * MOD-029 (ACCEPTED 2026-09-03: "modern-mode default; classic keeps 5x2")
@@ -92,12 +86,9 @@ public class Mothra extends EntityButterfly implements OreSpawnPartEntity.Multip
         // modern-mode Mothra.
         this.modernWideRoot = OreSpawnConfig.mothraWideRootHitbox();
         this.refreshDimensions();
-
-        this.bodyPart  = new OreSpawnPartEntity<>(this, "body",  4.0f, 3.0f);
-        this.wingLeft  = new OreSpawnPartEntity<>(this, "wingL", 5.0f, 1.5f);
-        this.wingRight = new OreSpawnPartEntity<>(this, "wingR", 5.0f, 1.5f);
-        this.headPart  = new OreSpawnPartEntity<>(this, "head",  2.0f, 2.0f);
-        this.allParts = new PartEntity<?>[]{ bodyPart, wingLeft, wingRight, headPart };
+        // ENT-S-173: the hand-placed OreSpawnPartEntity layout (body 4x3, wings 5x1.5 at +-6, head 2x2 at -3) is gone;
+        // MultiHitboxLib builds the parts of data/orespawn/multihitboxlib/hitbox_profiles/mothra.json in the LivingEntity
+        // constructor (MixinLivingEntity), fitted to the drawn wings, body and head of the butterfly rig at scale 10.
     }
 
     public static AttributeSupplier.Builder createAttributes() {
@@ -131,29 +122,6 @@ public class Mothra extends EntityButterfly implements OreSpawnPartEntity.Multip
     @Override
     public boolean isPushable() { return true; }
 
-    @Override
-    public boolean isMultipartEntity() {
-        return true;
-    }
-
-    @Override
-    public PartEntity<?>[] getParts() {
-        return this.allParts;
-    }
-
-    @Override
-    public void setId(int id) {
-        super.setId(id);
-        for (int i = 0; i < allParts.length; i++) {
-            allParts[i].setId(id + i + 1);
-        }
-    }
-
-    @Override
-    public boolean isPickable() {
-        return false;
-    }
-
     /**
      * MOD-029: the port's original 6 x 3 root box while modern mode was on at
      * construction ({@link #modernWideRoot}), else the registered classic
@@ -163,15 +131,17 @@ public class Mothra extends EntityButterfly implements OreSpawnPartEntity.Multip
      * so a modern-mode Mothra's entity dimensions equal the old port's; the EntityType keeps the
      * classic 5 x 2 registration, so type-level reads (natural-spawn placement volume) stay 5 x 2.
      *
-     * <p>Nothing else moves with the root box: the four
-     * {@link OreSpawnPartEntity} parts (body 4x3, wingL/wingR 5x1.5, head 2x2)
-     * carry their own sizes and are placed from the root POSITION in
-     * {@link #positionPart}, never from this box; and the two root-box sweeps,
-     * {@link #findSomethingToAttack} (inflate 15/20/15, orig :489) and
-     * {@link #checkSpawnRules} (inflate 64/32/64, orig :329), read the live
-     * bounding box, so in modern mode each sweep is 0.5 wider per side and
-     * 1.0 taller than 1.7.10 -- exactly the old port behaviour, now behind
-     * the switch; classic mode keeps the 1.7.10 sweeps.</p>
+     * <p>ENT-S-173: the root box is the movement and collision box only. Mothra's hitbox profile
+     * ({@code hitbox_profiles/mothra.json}) has no main size, so MultiHitboxLib leaves these dimensions alone (either
+     * form), and its parts - boxes fitted to the drawn wings, body and head, synced to the rig's bones - take every
+     * hit; the root box is not pickable and takes no damage itself (MHLib's {@code isPickable} and hurt routing).
+     * Before this landing four hand-placed {@code OreSpawnPartEntity} boxes (body 4x3, wings 5x1.5 at +-6, head 2x2 at
+     * -3) were positioned from the root POSITION each tick with a damage scheme of the port's own (head 1.0, body 0.5,
+     * wings 0.25 + 1); 1.7.10's Mothra was one full-damage 5x2 box, and the profile's parts all take full damage - the
+     * alignment, not a rebalance. The two root-box sweeps, {@link #findSomethingToAttack} (inflate 15/20/15, orig :489)
+     * and {@link #checkSpawnRules} (inflate 64/32/64, orig :329), still read the live bounding box, so in modern mode
+     * each sweep is 0.5 wider per side and 1.0 taller than 1.7.10 -- the old port behaviour, behind the switch; classic
+     * mode keeps the 1.7.10 sweeps.</p>
      */
     @Override
     public EntityDimensions getDefaultDimensions(Pose pose) {
@@ -181,46 +151,8 @@ public class Mothra extends EntityButterfly implements OreSpawnPartEntity.Multip
     }
 
     @Override
-    public boolean hurtFromPart(OreSpawnPartEntity<?> part, DamageSource source, float amount) {
-        String partName = part.getPartName();
-        float multiplied = switch (partName) {
-            case "head" -> amount;
-            case "body" -> amount * 0.5f;
-            default -> amount * 0.25f + 1.0f;
-        };
-        return this.hurt(source, multiplied);
-    }
-
-    private void positionPart(OreSpawnPartEntity<Mothra> part, double offsetX, double offsetY, double offsetZ) {
-        float yawRad = this.yBodyRot * Mth.DEG_TO_RAD;
-        double sin = Mth.sin(yawRad);
-        double cos = Mth.cos(yawRad);
-        double rx = offsetX * cos - offsetZ * sin;
-        double rz = offsetX * sin + offsetZ * cos;
-        part.setPos(this.getX() + rx, this.getY() + offsetY, this.getZ() + rz);
-    }
-
-    @Override
     public void tick() {
-        Vec3[] oldPos = new Vec3[allParts.length];
-        for (int i = 0; i < allParts.length; i++) {
-            oldPos[i] = new Vec3(allParts[i].getX(), allParts[i].getY(), allParts[i].getZ());
-        }
-
         super.tick();
-        positionPart(bodyPart,    0.0,  1.0,  0.0);
-        positionPart(headPart,    0.0,  2.0, -3.0);
-        positionPart(wingLeft,   -6.0,  1.5,  0.0);
-        positionPart(wingRight,   6.0,  1.5,  0.0);
-
-        for (int i = 0; i < allParts.length; i++) {
-            allParts[i].xo = oldPos[i].x;
-            allParts[i].yo = oldPos[i].y;
-            allParts[i].zo = oldPos[i].z;
-            allParts[i].xOld = oldPos[i].x;
-            allParts[i].yOld = oldPos[i].y;
-            allParts[i].zOld = oldPos[i].z;
-        }
 
         Vec3 motion = this.getDeltaMovement();
         this.setDeltaMovement(motion.x, motion.y * 0.6, motion.z);

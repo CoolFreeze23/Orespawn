@@ -614,8 +614,9 @@ public class HitboxDimsParityTests {
     /**
      * orig Mothra.java:65 setSize(5.0f, 2.0f) -- the port's 6x3 came from a source comment, not a
      * MOD record (ents095_split batch 2). Mothra has no PlayNicely size branch (orig :63-70), so both
-     * modes read 5x2; her wing parts are placed from the root POSITION (Mothra#positionPart), not
-     * from this box, and only the root-box target sweeps change with it.
+     * modes read 5x2; her wing parts were placed from the root POSITION (Mothra#positionPart; since
+     * ENT-S-173 they are MultiHitboxLib parts fitted to the drawn wings), not from this box, and only the
+     * root-box target sweeps change with it.
      */
     @GameTest(template = "empty_large", batch = "hitboxDimsParity")
     public void s095_mothra_dims_both_modes(GameTestHelper helper) {

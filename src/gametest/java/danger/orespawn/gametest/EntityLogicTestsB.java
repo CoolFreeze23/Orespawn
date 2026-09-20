@@ -1082,10 +1082,14 @@ public class EntityLogicTestsB {
         check(!fireball.canHit(royalty), "BetterFireball must pass through Royalty (ThePrince)");
         check(fireball.canHit(cow), "control: a plain mob IS hittable");
         check(fireball.canHit(player), "without notme, players are hittable");
-        check(fireball.canHit(dragon), "without notme, Dragons are hittable");
+        // ENT-S-173: a profiled species takes projectiles through its hitbox parts; its body box is no longer
+        // pickable (canBeHitByProjectile is isAlive && isPickable), so the vanilla sweep offers the parts and
+        // BetterFireball.canHitEntity screens the part's parent - the dragon's first part stands for the dragon
+        net.neoforged.neoforge.entity.PartEntity<?> dragonPart = dragon.getParts()[0];
+        check(!fireball.canHit(dragon) && fireball.canHit(dragonPart), "without notme, Dragons are hittable (through a part; the body box is not pickable)");
         fireball.setNotMe();
         check(!fireball.canHit(player), "with notme set, players are spared (orig :152,214)");
-        check(!fireball.canHit(dragon), "with notme set, Dragons are spared");
+        check(!fireball.canHit(dragonPart), "with notme set, Dragons are spared (the part's parent is screened)");
 
         // ---- acid vanish, behavioral: straight drop through the target box.
         EntityTrooperBug trooper = helper.spawnWithNoFreeWill(ModEntities.ENTITY_TROOPER_BUG.get(), new BlockPos(20, 1, 24));

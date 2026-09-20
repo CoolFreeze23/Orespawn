@@ -99,5 +99,7 @@ public class OreSpawnMod {
      */
     private void commonSetup(FMLCommonSetupEvent event) {
         event.enqueueWork(ModDispenserBehaviors::register);
+        // ENT-S-173: the per-type size scale of the profiled species' hitbox parts (babies, the Crab's growth, ...)
+        event.enqueueWork(danger.orespawn.entity.hitbox.HitboxScales::register);
     }
 }

@@ -59,11 +59,12 @@ public class SunspotUrchin extends ThrowableProjectile implements ItemSupplier {
 
     @Override
     protected void onHitEntity(EntityHitResult result) {
-        Entity target = result.getEntity();
+        Entity hit = result.getEntity();
+        Entity target = danger.orespawn.util.MyUtils.behindPart(hit); // ENT-S-173: the creature behind a hitbox part; the damage goes through the part hit
         if (target instanceof Player) return;
         float damage = DAMAGE_DEFAULT;
         if (target instanceof Creeper) damage = DAMAGE_VS_CREEPER;
-        target.hurt(this.damageSources().thrown(this, this.getOwner()), damage);
+        hit.hurt(this.damageSources().thrown(this, this.getOwner()), damage);
         if (!target.fireImmune()) target.igniteForSeconds(IGNITE_DURATION_SECONDS);
     }
 

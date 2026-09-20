@@ -506,9 +506,13 @@ public class TheQueen extends Monster implements GeoEntity, IMHLibSizeCallback<T
             // box with the profile main size exactly as it did the Queen's (ENT-S-095 batch 3); the same LOW-priority
             // scale brings each back - any profiled IMHLibSizeCallback, so a future profile needs no line here:
             // 22x24 -> 5.5x6, 9.9x25 -> 2.475x6.25, 4x15 -> 1.3333334x5.
+            // ENT-S-173: a profile without a main size leaves the entity's own dimensions alone (MHLib's handler returns
+            // before setNewSize), and those already carry the species' state (a baby's half, the Crab's growth); only a
+            // profile that overrode the size needs the callback's scale brought back.
             if (event.getEntity() instanceof IMHLibSizeCallback<?> callback
                     && event.getEntity() instanceof IMultipartEntity<?> multipart
-                    && multipart.getHitboxProfile().isPresent()) {
+                    && multipart.getHitboxProfile().isPresent()
+                    && !multipart.getHitboxProfile().get().mainHitboxConfig().baseSize().equals(net.minecraft.world.phys.Vec2.ZERO)) {
                 double scale = ((IMHLibSizeCallback) callback).mhlibGetEntitySizeScale(event.getEntity());
                 if (scale != 1.0D) {
                     event.setNewSize(event.getNewSize().scale((float) scale));

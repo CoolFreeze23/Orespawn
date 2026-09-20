@@ -166,6 +166,11 @@ public class PitchBlack extends Monster implements PitchBlackPose {
         // TF-035: orig PitchBlack.java:54 (field), :67 (ctor) — the shared
         // GenericTargetSorter, not a plain distance comparator.
         this.targetSorter = new GenericTargetSorter(this);
+        // ENT-S-173: the cached dimensions follow getDefaultDimensions from the first tick. Entity's constructor caches
+        // the registered 2.0x3.0 and nothing refreshed it until DATA_SIZE_TIER changed, so a Nightmare whose tier stayed
+        // at the defined MAX_SIZE_TIER (a /summon; a natural spawn that rolled the same tier) kept a 2x3 box under a
+        // 10x14 model. The BOSS-017 pattern (TheKing, Kraken: a constructor-time refreshDimensions).
+        this.refreshDimensions();
     }
 
     @Override

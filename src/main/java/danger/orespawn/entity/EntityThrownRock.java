@@ -102,7 +102,8 @@ public class EntityThrownRock extends ThrowableProjectile implements ItemSupplie
     @Override
     protected void onHitEntity(EntityHitResult result) {
         if (this.level().isClientSide || this.isRemoved()) return;
-        Entity target = result.getEntity();
+        Entity hit = result.getEntity();
+        Entity target = danger.orespawn.util.MyUtils.behindPart(hit); // ENT-S-173: the creature behind a hitbox part; the damage goes through the part hit
         Entity owner = this.getOwner();
         if (owner == null || target == owner) return;
 
@@ -124,11 +125,11 @@ public class EntityThrownRock extends ThrowableProjectile implements ItemSupplie
 
         // Owner may not be a Player (e.g. dispensers, command-spawned), so pick the right damage source
         if (owner instanceof Player player) {
-            target.hurt(this.damageSources().playerAttack(player), damage);
+            hit.hurt(this.damageSources().playerAttack(player), damage);
         } else if (owner instanceof LivingEntity livingOwner) {
-            target.hurt(this.damageSources().mobAttack(livingOwner), damage);
+            hit.hurt(this.damageSources().mobAttack(livingOwner), damage);
         } else {
-            target.hurt(this.damageSources().thrown(this, owner), damage);
+            hit.hurt(this.damageSources().thrown(this, owner), damage);
         }
         float angle = (float) Math.atan2(target.getZ() - owner.getZ(), target.getX() - owner.getX());
         if (target.isRemoved()) verticalKnock *= 2.0;

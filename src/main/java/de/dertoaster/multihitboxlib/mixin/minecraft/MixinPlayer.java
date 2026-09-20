@@ -79,4 +79,29 @@ public abstract class MixinPlayer {
 		return part != null && receiver == part.getParent() ? part : receiver;
 	}
 
+	/**
+	 * ENT-S-173: a right-click on an {@link MHLibPartEntity} is a right-click on its parent, in whole. {@code
+	 * Player.interactOn} runs the entity's own {@code interact} (which the part already forwards) and then, for a {@code
+	 * LivingEntity} target only, the held item's {@code interactLivingEntity} - the Empty Cage's capture, a name tag
+	 * outside {@code Mob}'s own handling, any item that acts on a creature - and fires the interact events with the
+	 * target; a part is no {@code LivingEntity}, so every profiled creature had lost those. Swapping the argument at HEAD
+	 * gives the whole method, events included, the creature; both sides take the same path.
+	 */
+	@ModifyVariable(
+			method = "interactOn(Lnet/minecraft/world/entity/Entity;Lnet/minecraft/world/InteractionHand;)Lnet/minecraft/world/InteractionResult;",
+			at = @At("HEAD"),
+			argsOnly = true,
+			allow = 1,
+			expect = 1
+	)
+	private Entity mhlibUnwrapInteractedPart(final Entity target) {
+		if (target instanceof MHLibPartEntity<?> part) {
+			final Entity parent = part.getParent();
+			if (parent != null) {
+				return parent;
+			}
+		}
+		return target;
+	}
+
 }

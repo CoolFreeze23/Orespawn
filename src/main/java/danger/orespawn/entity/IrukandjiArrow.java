@@ -62,7 +62,8 @@ public class IrukandjiArrow extends AbstractArrow {
      */
     @Override
     protected void onHitEntity(EntityHitResult result) {
-        Entity hit = result.getEntity();
+        Entity struck = result.getEntity();
+        Entity hit = danger.orespawn.util.MyUtils.behindPart(struck); // ENT-S-173: the creature behind a hitbox part; the damage goes through the part hit
 
         if (!OreSpawnConfig.ULTIMATE_SWORD_PVP.get()
                 && (hit instanceof Player || hit instanceof Girlfriend || hit instanceof Boyfriend
@@ -83,7 +84,7 @@ public class IrukandjiArrow extends AbstractArrow {
             hit.igniteForSeconds(5.0f);
         }
 
-        if (hit.hurt(source, damage)) {
+        if (struck.hurt(source, damage)) {
             // orig :181 `instanceof EntityLiving` (1.21.1 Mob) wrapped the arrow count, the push AND the ding
             // together, so a player got none of them (ENT-S-111; the ding was unreachable in 1.7.10 too).
             if (hit instanceof Mob living) {

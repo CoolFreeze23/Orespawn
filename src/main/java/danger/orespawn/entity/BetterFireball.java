@@ -149,7 +149,8 @@ public class BetterFireball extends LargeFireball {
     @Override
     protected void onHitEntity(EntityHitResult result) {
         if (this.level().isClientSide) return;
-        Entity target = result.getEntity();
+        Entity hit = result.getEntity();
+        Entity target = MyUtils.behindPart(hit); // ENT-S-173: the creature behind a hitbox part; the damage goes through the part hit
         if (target == this.getOwner()) return;
 
         if (target instanceof LivingEntity living) {
@@ -167,7 +168,7 @@ public class BetterFireball extends LargeFireball {
         }
 
         float damage = this.small ? DAMAGE_SMALL : DAMAGE_LARGE;
-        target.hurt(this.damageSources().fireball(this, this.getOwner()), damage);
+        hit.hurt(this.damageSources().fireball(this, this.getOwner()), damage);
         target.igniteForSeconds(FIRE_SECONDS_ON_HIT);
     }
 

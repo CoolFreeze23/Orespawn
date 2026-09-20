@@ -355,8 +355,13 @@ public class BenchHarnessTests {
                     FINDING + ": scene F spawns Frogs, actual " + describe(frogs));
             for (Mob mob : mobs) {
                 assertFrozenOnTheFloor(helper, mob, mob.getType().toString(), mob.getType() == ModEntities.BEAVER.get() ? BenchScene.E : BenchScene.F);
-                helper.assertTrue(mob.getParts() == null || mob.getParts().length == 0, FINDING + ": E and F species carry no MHLib part, actual "
-                        + (mob.getParts() == null ? 0 : mob.getParts().length));
+                // ENT-S-173 (2026-09-20): every rig-drawn species carries a generated MHLib profile; the Beaver's and the
+                // Frog's are one box each (a creature up to 1.5 blocks is one part), so the plain-mob scenes now carry one part
+                // - the scene's meaning (a small single-box creature) is unchanged, the part is what a hit meets
+                int parts = mob.getParts() == null ? 0 : mob.getParts().length;
+                int profileParts = ((IMultipartEntity<?>) (Object) mob).getHitboxProfile().map(profile -> profile.partConfigs().size()).orElse(0);
+                helper.assertTrue(profileParts == 1 && parts == 1, FINDING + ": E and F species carry the one MHLib part of their generated profile"
+                        + " (ENT-S-173), actual profile " + profileParts + " / parts " + parts);
             }
             helper.assertTrue(BenchReport.LANDED_SPECIES.contains(BenchScene.E.species()) && !BenchReport.LANDED_SPECIES.contains(BenchScene.F.species()),
                     FINDING + ": the Beaver has a candidate renderer behind the dev switch and the Frog has none (the zero line)");

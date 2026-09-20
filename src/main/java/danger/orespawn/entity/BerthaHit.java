@@ -43,7 +43,11 @@ public class BerthaHit extends ThrowableProjectile {
     @Override
     protected void onHitEntity(EntityHitResult result) {
         if (this.level().isClientSide) return;
-        Entity entity = result.getEntity();
+        // ENT-S-173: a profiled creature is hit through one of its hitbox parts; the spared-class, owner and range
+        // tests below read the creature, the damage goes through the part hit (the part's modifier, the Queen's
+        // scheme), the fire and the shove land on the creature
+        Entity hit = result.getEntity();
+        Entity entity = hit instanceof net.neoforged.neoforge.entity.PartEntity<?> part ? part.getParent() : hit;
         Entity owner = this.getOwner();
         if (owner == null) return;
 
@@ -77,11 +81,11 @@ public class BerthaHit extends ThrowableProjectile {
         if (this.distanceToSqr(owner) < maxRangeSq) {
             // Owner may not be a Player, so pick the right damage source to avoid ClassCastException
             if (owner instanceof Player player) {
-                entity.hurt(this.damageSources().playerAttack(player), damage);
+                hit.hurt(this.damageSources().playerAttack(player), damage);
             } else if (owner instanceof LivingEntity livingOwner) {
-                entity.hurt(this.damageSources().mobAttack(livingOwner), damage);
+                hit.hurt(this.damageSources().mobAttack(livingOwner), damage);
             } else {
-                entity.hurt(this.damageSources().thrown(this, owner), damage);
+                hit.hurt(this.damageSources().thrown(this, owner), damage);
             }
             if (this.hitType == HIT_TYPE_DEFAULT) entity.igniteForSeconds(IGNITE_SECONDS_DEFAULT);
             float angle = (float) Math.atan2(entity.getZ() - owner.getZ(), entity.getX() - owner.getX());

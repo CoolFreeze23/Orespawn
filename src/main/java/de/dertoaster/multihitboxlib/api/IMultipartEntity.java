@@ -6,6 +6,7 @@ import de.dertoaster.multihitboxlib.entity.hitbox.SubPartConfig;
 import de.dertoaster.multihitboxlib.init.MHLibDatapackLoaders;
 import de.dertoaster.multihitboxlib.network.client.CPacketBoneInformation;
 import de.dertoaster.multihitboxlib.network.server.SPacketSetMaster;
+import de.dertoaster.multihitboxlib.util.BodyYawFold;
 import de.dertoaster.multihitboxlib.util.BoneInformation;
 import de.dertoaster.multihitboxlib.util.ClientOnlyMethods;
 import de.dertoaster.multihitboxlib.util.MHLibCounters;
@@ -15,6 +16,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.AgeableMob;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
@@ -327,62 +329,38 @@ public interface IMultipartEntity<T extends Entity> {
 		final double curX = entity.getX();
 		final double curY = entity.getY();
 		final double curZ = entity.getZ();
-
-		// Rotations for the fallback position
-		final float rotX = (float) (this.mhlibGetEntityRotationXForPartOffset() + Math.toRadians(entity.getXRot()));
-		// TODO: Unsure what to do with this as this could mess up the position if we just add the y rot to it...
-		// ... Otherwise this is for non synched parts, so it should be alright
-		final float rotY = (float) (this.mhlibGetEntityRotationYForPartOffset() + Math.toRadians(entity.getYRot()));
-		final float rotZ = this.mhlibGetEntityRotationZForPartOffset();
-
 		final double entityScale = this.mhlibGetEntitySizeInternally(entity);
-
-		// OPT-001: hoisted — one cached profile fetch for the whole pass
-		// (the profile cannot change within a tick; see getHitboxProfile).
 		final HitboxProfile profile = this.getHitboxProfile().get();
-
-		// Evaluate model data
+		// ENT-S-173: the fallback's frame, once per alignment - the collector's body-yaw term (BodyYawFold)
+		final double yawTerm = BodyYawFold.bodyYawRotationTerm(entity instanceof LivingEntity living ? living.yBodyRot : entity.getYRot());
 		for (String syncedBone : profile.synchedBones()) {
-			//System.out.println("Synching bone: " + syncedBone);
 			Optional<MHLibPartEntity<T>> optPart = this.getPartByName(syncedBone);
 			if (optPart.isEmpty()) {
-				//System.out.println("No part found!");
 				continue;
 			}
 			MHLibPartEntity<T> part = optPart.get();
-
-			// ──────────────────────────────────────────────────────────
-			// OPT-019: the fallback BoneInformation (plus its rotated
-			// Vec3 offset chain) used to be built for EVERY synced bone
-			// every tick, only to be discarded whenever the sync map had
-			// data. We now probe with a null fallback and construct the
-			// fallback lazily, only when the map lacks the bone.
-			// Neutrality: the only retrieval function ever passed in is
-			// syncMap::getOrDefault (mhlibAiStep) on a HashMap whose
-			// values are never null, so apply(bone, null) == null exactly
-			// when apply(bone, fallback) would have returned the
-			// fallback — and in that case the fallback constructed below
-			// is identical to the legacy eager one.
-			// ──────────────────────────────────────────────────────────
 			BoneInformation bi = infoRetrievalFunction.apply(syncedBone, null);
 			if (bi == null) {
-				Vec3 partOffset = part.getConfigPositionOffset();
-				partOffset = partOffset.xRot(rotX);
-				partOffset = partOffset.yRot(rotY);
-				partOffset = partOffset.zRot(rotZ);
-
-				partOffset = partOffset.scale(entityScale);
-
-				//System.out.println("SynchedDataMap contents: " + this.syncDataMap.keySet().toString());
+				// ENT-S-173: the server-side fallback (no bone packet yet, or no client in range) places the box where the
+				// client's collector would at rest: the profile offset turned by the body yaw in the collector's own convention
+				// (bodyYawRotationTerm = -toRadians(body yaw); Vec3.yRot(a) is Axis.YP.rotation(a): the yaw-0 profile frame's +z
+				// front turns to -x at yaw 90, as the entity does), and the pivot rotation = the anchor bone's rest rotation from
+				// the profile (AABBHitboxType "rotation"; zero for a profile without one) with the same yaw term folded in, the
+				// collector's exact composition. Before this the offset turned by +yaw (the mirror image) and the pivot not at
+				// all (BOSS-047's declared limit: the rest positions, and only at yaw 0). Pitch is not applied, as the
+				// renderer applies none; the entity's own offset-rotation hooks are not consulted here, as no species overrides them.
+				Vec3 partOffset = part.getConfigPositionOffset().yRot((float) yawTerm).scale(entityScale);
+				final Vec3 rest = part.getConfig() != null ? part.getConfig().hitboxType().getBaseRotation() : Vec3.ZERO;
 				bi = new BoneInformation(
 						syncedBone,
 						false,
 						part.getConfig() != null ? partOffset.add(curX, curY, curZ) : Vec3.ZERO,
 						BoneInformation.DEFAULT_SCALING,
-						part.getConfig() != null ? part.getConfig().hitboxType().getBaseRotation() : Vec3.ZERO
+						BodyYawFold.foldBodyYaw(rest.x, rest.y, rest.z, yawTerm)
 				);
 			}
-			bi = bi.scale(entityScale);
+			// ENT-S-173: the entity scale is applied inside applyInformation (pivot and box), on both sides; it was
+			// pre-multiplied into the bone scale here, on the server alone
 			//System.out.println("Sync data: " + bi.toString());
 
 			part.applyInformation(bi);
@@ -397,6 +375,12 @@ public interface IMultipartEntity<T extends Entity> {
 		if (this instanceof IMHLibSizeCallback sc) {
 			return sc.mhlibGetEntitySizeScale(entity);
 		} else {
+			// ENT-S-173: a scale registered for the entity's type (MHLibEntitySizeScales) outranks the library's own
+			// baby rule below - the port's species whose renderer does not halve a baby, or scales by a state of its own
+			final java.util.function.ToDoubleFunction<Entity> registered = MHLibEntitySizeScales.get(entity.getType());
+			if (registered != null) {
+				return registered.applyAsDouble(entity);
+			}
 			if(entity instanceof AgeableMob am) {
 				if(am.isBaby()) {
 					return 0.5D;

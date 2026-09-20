@@ -46,15 +46,16 @@ public class ThunderBolt extends ThrowableProjectile {
     @Override
     protected void onHitEntity(EntityHitResult result) {
         if (this.level().isClientSide) return;
-        Entity target = result.getEntity();
+        Entity hit = result.getEntity();
+        Entity target = MyUtils.behindPart(hit); // ENT-S-173: the creature behind a hitbox part; the damage goes through the part hit
         float halfDamage = TOTAL_DAMAGE * THROWN_DAMAGE_FRACTION;
         // Owner could be null or a non-living entity; guard the cast to avoid ClassCastException
         Entity thunderOwner = this.getOwner();
-        target.hurt(this.damageSources().thrown(this, thunderOwner), halfDamage);
+        hit.hurt(this.damageSources().thrown(this, thunderOwner), halfDamage);
         if (thunderOwner instanceof LivingEntity livingOwner) {
-            target.hurt(this.damageSources().mobAttack(livingOwner), halfDamage);
+            hit.hurt(this.damageSources().mobAttack(livingOwner), halfDamage);
         } else {
-            target.hurt(this.damageSources().thrown(this, thunderOwner), halfDamage);
+            hit.hurt(this.damageSources().thrown(this, thunderOwner), halfDamage);
         }
         target.igniteForSeconds(IGNITE_DURATION_SECONDS);
     }

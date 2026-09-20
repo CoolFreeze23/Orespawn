@@ -55,9 +55,10 @@ public class UltimateArrow extends AbstractArrow {
      */
     @Override
     protected boolean canHitEntity(Entity target) {
-        if (target instanceof Elevator) return false;
-        if ((target instanceof Cephadrome || target instanceof Dragon || target instanceof AbstractHorse)
-                && target.isVehicle()) {
+        Entity screened = danger.orespawn.util.MyUtils.behindPart(target); // ENT-S-173: the creature behind a hitbox part (a ridden dragon's wing is its wing)
+        if (screened instanceof Elevator) return false;
+        if ((screened instanceof Cephadrome || screened instanceof Dragon || screened instanceof AbstractHorse)
+                && screened.isVehicle()) {
             return false;
         }
         return super.canHitEntity(target);
@@ -72,7 +73,7 @@ public class UltimateArrow extends AbstractArrow {
     @Override
     protected void onHitEntity(EntityHitResult result) {
         if (!OreSpawnConfig.ULTIMATE_SWORD_PVP.get()
-                && result.getEntity() instanceof LivingEntity living
+                && danger.orespawn.util.MyUtils.behindPart(result.getEntity()) instanceof LivingEntity living // ENT-S-173: the creature behind a hitbox part
                 && (living instanceof Player || living instanceof Girlfriend || living instanceof Boyfriend
                         || (living instanceof TamableAnimal tamable && tamable.isTame()))) {
             this.playSound(SoundEvents.ARROW_HIT, 1.0f, 1.2f / (this.random.nextFloat() * 0.2f + 0.9f));

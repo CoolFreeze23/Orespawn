@@ -227,7 +227,7 @@ public class EntityCage extends ThrowableProjectile implements ItemSupplier {
     @Override
     protected void onHitEntity(EntityHitResult result) {
         if (this.level().isClientSide) return;
-        Entity target = result.getEntity();
+        Entity target = danger.orespawn.util.MyUtils.behindPart(result.getEntity()); // ENT-S-173: the creature behind a hitbox part is what the cage takes
 
         // orig EntityCage.java:160,935-937 — 20% base failure on an entity hit: the
         // whole capture block is skipped and the cage is simply lost (no empty cage —

@@ -11,7 +11,8 @@
 		"geckolib.MixinGeoReplacedEntityRenderer",
 		"geckolib.MixinGeoRenderer",
 		"minecraft.MixinCompressionDecoder",
-		"minecraft.MixinPlayer"
+		"minecraft.MixinPlayer",
+		"minecraft.MixinAbstractArrow"
 	],
 	"client": [
 		"accessor.AccessorClientLevel",

@@ -71,7 +71,8 @@ public class Shoes extends ThrowableProjectile implements ItemSupplier {
     /** orig Shoes.java:57-79 — damage table in original order (later rules win). */
     @Override
     protected void onHitEntity(EntityHitResult result) {
-        Entity target = result.getEntity();
+        Entity hit = result.getEntity();
+        Entity target = danger.orespawn.util.MyUtils.behindPart(hit); // ENT-S-173: the creature behind a hitbox part; the damage goes through the part hit
         float damage = DAMAGE_DEFAULT;
         if (this.getShoeId() == HEAVY_SHOE_ID) damage = DAMAGE_HEAVY_SHOE;
         if (target instanceof Creeper) damage += DAMAGE_CREEPER_BONUS;
@@ -83,7 +84,7 @@ public class Shoes extends ThrowableProjectile implements ItemSupplier {
         // throw them back hard)
         if (SeasonalDates.isValentines()) damage = 10.0f;
 
-        target.hurt(this.damageSources().thrown(this, this.getOwner()), damage);
+        hit.hurt(this.damageSources().thrown(this, this.getOwner()), damage);
     }
 
     @Override

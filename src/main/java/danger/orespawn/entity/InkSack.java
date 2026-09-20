@@ -55,11 +55,12 @@ public class InkSack extends ThrowableProjectile implements ItemSupplier {
 
     @Override
     protected void onHitEntity(EntityHitResult result) {
-        Entity target = result.getEntity();
+        Entity hit = result.getEntity();
+        Entity target = danger.orespawn.util.MyUtils.behindPart(hit); // ENT-S-173: the creature behind a hitbox part; the damage goes through the part hit
         float damage = DAMAGE_DEFAULT;
         if (target instanceof Creeper) damage = DAMAGE_VS_CREEPER_BONUS;
 
-        target.hurt(this.damageSources().thrown(this, this.getOwner()), damage);
+        hit.hurt(this.damageSources().thrown(this, this.getOwner()), damage);
         if (target instanceof LivingEntity living && this.random.nextInt(EFFECT_APPLY_CHANCE) == 0) {
             int duration = BLINDNESS_BASE_DURATION + BLINDNESS_DURATION_STEP * this.random.nextInt(BLINDNESS_DURATION_VARIANCE);
             living.addEffect(new MobEffectInstance(MobEffects.BLINDNESS, duration, 0));

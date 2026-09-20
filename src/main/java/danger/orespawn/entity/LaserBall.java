@@ -92,10 +92,11 @@ public class LaserBall extends ThrowableProjectile implements ItemSupplier {
     @Override
     protected void onHitEntity(EntityHitResult result) {
         if (this.level().isClientSide) return;
-        Entity target = result.getEntity();
+        Entity hit = result.getEntity();
+        Entity target = danger.orespawn.util.MyUtils.behindPart(hit); // ENT-S-173: the creature behind a hitbox part; the damage goes through the part hit
 
         if (this.isIrukandji) {
-            target.hurt(this.damageSources().thrown(this, this.getOwner()), IRUKANDJI_DAMAGE);
+            hit.hurt(this.damageSources().thrown(this, this.getOwner()), IRUKANDJI_DAMAGE);
             this.discard();
             return;
         }
@@ -136,7 +137,7 @@ public class LaserBall extends ThrowableProjectile implements ItemSupplier {
             return;
         }
 
-        target.hurt(this.damageSources().thrown(this, this.getOwner()), BASE_DAMAGE);
+        hit.hurt(this.damageSources().thrown(this, this.getOwner()), BASE_DAMAGE);
         if (!this.isIceball) {
             target.igniteForSeconds(FIRE_DURATION_ON_HIT_SECONDS);
         }

@@ -58,11 +58,12 @@ public class WaterBall extends ThrowableProjectile implements ItemSupplier {
         // Exempt targets (water faction, typed Dragons, mounted players) never
         // reach this method — onHit() below bails before dispatching, matching
         // the original's return-before-everything (orig WaterBall.java:47-61).
-        Entity target = result.getEntity();
+        Entity hit = result.getEntity();
+        Entity target = danger.orespawn.util.MyUtils.behindPart(hit); // ENT-S-173: the creature behind a hitbox part; the damage goes through the part hit
         float damage = DAMAGE_DEFAULT;
         if (target instanceof Creeper) damage = DAMAGE_VS_CREEPER;
 
-        target.hurt(this.damageSources().thrown(this, this.getOwner()), damage);
+        hit.hurt(this.damageSources().thrown(this, this.getOwner()), damage);
         // orig WaterBall.java:63-65 — 1/10 chance the target coughs up a water ball
         if (!this.level().isClientSide && this.random.nextInt(10) == 1) {
             target.spawnAtLocation(new ItemStack(ModItems.WATER_BALL.get()));
@@ -82,7 +83,7 @@ public class WaterBall extends ThrowableProjectile implements ItemSupplier {
         // blanks WaterBall damage on its own hurt() (orig AttackSquid.java:
         // 373-375) — both seams existed in the original; keep both.
         if (result instanceof EntityHitResult entityHit) {
-            Entity target = entityHit.getEntity();
+            Entity target = danger.orespawn.util.MyUtils.behindPart(entityHit.getEntity()); // ENT-S-173: the creature behind a hitbox part
             if (target instanceof WaterDragon) return;
             if (target instanceof AttackSquid) return;
             if (target instanceof Dragon dragon && dragon.getDragonType() != 0) return;

@@ -258,6 +258,12 @@ public class MHLibPartEntity<T extends Entity> extends PartEntity<T> {
 		final float w = data.width();
 		final float h = data.height();
 		this.baseSize = (data.fixed() ? EntityDimensions.fixed(w, h) : EntityDimensions.scalable(w, h));
+		// ENT-S-173: the packet carries the unscaled base; the client's box takes the entity's size from the start (the
+		// collector's applyInformation keeps it current for a rendered creature)
+		if (this.getParent() instanceof IMultipartEntity<?> ime) {
+			final double entityScale = ((IMultipartEntity) ime).mhlibGetEntitySizeInternally(this.getParent());
+			this.setScaling((float) entityScale, (float) entityScale);
+		}
 		this.refreshDimensions();
 		if (data.dirty())
 			getEntityData().assignValues(data.data());
@@ -387,6 +393,47 @@ public class MHLibPartEntity<T extends Entity> extends PartEntity<T> {
 		return (this.config.collidable() || this.config.canReceiveDamage()) && this.isPartEnabled();
 	}
 
+	/**
+	 * ENT-S-173: a part rides with its creature. {@code Projectile.canHitEntity} spares a target only through {@code
+	 * owner.isPassengerOfSameVehicle(target)} - root vehicles compared - and {@code Entity}'s own root vehicle is
+	 * itself, so a rider's arrow met its mount through a wing part and a creature's own volley its own parts (a muzzle
+	 * among them). The parent's root vehicle restores vanilla's same-vehicle and own-shooter protection.
+	 */
+	@Override
+	public Entity getRootVehicle() {
+		final T parent = this.getParent();
+		return parent != null ? parent.getRootVehicle() : this;
+	}
+
+	/** ENT-S-173: creative pick-block on a part answers with the creature's (its spawn egg). */
+	@Override
+	public net.minecraft.world.item.ItemStack getPickResult() {
+		final T parent = this.getParent();
+		return parent != null ? parent.getPickResult() : null;
+	}
+
+	/**
+	 * ENT-S-173: fire lands on the creature, never on the part. A part that met lava, a burning arrow (before
+	 * MixinAbstractArrow) or a fireball kept its own fire ticks and routed a burn hit to the creature every second after the
+	 * creature had left the lava, with no flame shown and no water to put it out; now the creature is ignited (never for
+	 * less than it already burns) and a part never burns itself. Extinguishing calls (a part touching water) are not
+	 * forwarded: only the body's water contact puts the creature out, as in vanilla.
+	 */
+	@Override
+	public void setRemainingFireTicks(int ticks) {
+		final T parent = this.getParent();
+		if (parent != null && ticks > 0) {
+			parent.setRemainingFireTicks(Math.max(parent.getRemainingFireTicks(), ticks));
+		}
+	}
+
+	/** ENT-S-173: a part is as fire-proof as its creature. */
+	@Override
+	public boolean fireImmune() {
+		final T parent = this.getParent();
+		return parent != null ? parent.fireImmune() : super.fireImmune();
+	}
+
 	@Override
 	public InteractionResult interact(Player player, InteractionHand hand) {
 		// ──────────────────────────────────────────────────────────────
@@ -479,10 +526,20 @@ public class MHLibPartEntity<T extends Entity> extends PartEntity<T> {
 		if (pivot != Vec3.ZERO) {
 			pivot = pivot.xRot((float) (rotation.x())).yRot((float) (rotation.y())).zRot((float) (rotation.z()));
 		}
-		if (this.getParent() instanceof IMHLibSizeCallback sc) {
-			pivot = pivot.scale(sc.mhlibGetEntitySizeScale(this.getParent()));
+		// ENT-S-173: the pivot AND the box scale by the value the alignment used - IMultipartEntity
+		// .mhlibGetEntitySizeInternally (a size callback, else the type's registered scale, else the library's baby
+		// rule). Before, only a callback parent scaled the pivot (on OPT-013 recorded the asymmetry) and the box scale
+		// came pre-multiplied by alignSynchedSubParts on the server alone: the client's collector called this with the
+		// bare bone scale, so a baby's client box (the box the crosshair is decided on) was the adult's and a
+		// spawn-size Crab's four times its model. Owning the scale here makes both sides agree.
+		double entityScale = 1.0D;
+		if (this.getParent() instanceof IMultipartEntity<?> parentMultipart) {
+			entityScale = ((IMultipartEntity) parentMultipart).mhlibGetEntitySizeInternally(this.getParent());
+			if (entityScale != 1.0D) {
+				pivot = pivot.scale(entityScale);
+			}
 		}
-		this.setScaling(scale);
+		this.setScaling(entityScale == 1.0D ? scale : scale.scale(entityScale));
 		// Subtract pivot from worldpos so we are at the correct position
 		// keep in mind that the pivot was rotated before to match the given rotation!
 		this.setPos(worldPos.subtract(pivot));

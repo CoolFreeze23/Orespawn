@@ -7,7 +7,20 @@ import net.minecraft.world.entity.npc.Villager;
 
 public class MyUtils {
 
+    /**
+     * ENT-S-173: the creature behind a hitbox part. Every living species drawn through a rig carries a MultiHitboxLib
+     * profile, so a projectile, a sweep or a pick meets one of its parts and not its body (the body box is not pickable):
+     * a class, owner or spared test on "the entity hit" reads the part's parent, while the damage itself still goes
+     * through the part (its damage modifier: the Queen's, the King's and Godzilla's schemes). Vanilla's dragon parts
+     * and the retired OreSpawnPartEntity are PartEntity too and unwrap the same way. The five predicates below unwrap
+     * their argument first, so every caller that passes a hit entity reads the creature.
+     */
+    public static Entity behindPart(Entity entity) {
+        return entity instanceof net.neoforged.neoforge.entity.PartEntity<?> part && part.getParent() != null ? part.getParent() : entity;
+    }
+
     public static boolean isRoyalty(Entity entity) {
+        entity = behindPart(entity);
         return entity instanceof TheKing
                 || entity instanceof TheQueen
                 || entity instanceof KingHead
@@ -38,6 +51,7 @@ public class MyUtils {
      * through EntityButterfly, as in 1.7.10.</p>
      */
     public static boolean isIgnoreable(Entity entity) {
+        entity = behindPart(entity);
         return entity instanceof RockBase            // orig :118
                 || entity instanceof EntityAnt       // orig :121
                 || entity instanceof EntityButterfly // orig :124
@@ -73,6 +87,7 @@ public class MyUtils {
      * EntityLeon carries the same membership.</p>
      */
     public static boolean isAttackableNonMob(Entity entity) {
+        entity = behindPart(entity);
         return entity instanceof Monster                 // orig :78 EntityMob
                 || entity instanceof Mothra              // orig :81
                 || entity instanceof EntityLeon          // orig :84 Leon
@@ -89,6 +104,7 @@ public class MyUtils {
     }
 
     public static boolean isAlly(Entity entity) {
+        entity = behindPart(entity);
         return entity instanceof EntityLurkingTerror
                 || entity instanceof EnderReaper
                 || entity instanceof EntityTerribleTerror
@@ -99,6 +115,7 @@ public class MyUtils {
     }
 
     public static boolean isBigBoss(Entity entity) {
+        entity = behindPart(entity);
         return entity instanceof Godzilla
                 || entity instanceof GodzillaHead
                 || entity instanceof PitchBlack
