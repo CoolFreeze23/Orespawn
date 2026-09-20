@@ -65,6 +65,12 @@ public class KingHead extends Mob {
 
     @Override
     public boolean hurt(DamageSource source, float amount) {
+        // ENT-S-172: damage that bypasses invulnerability - /kill, the void - is taken by the head itself, never
+        // forwarded, capped or gated: the contract every vanilla boss keeps (EnderDragon, Wither). 1.7.10 had no
+        // such source, so this clause is the port's, not a transcription.
+        if (source.is(net.minecraft.tags.DamageTypeTags.BYPASSES_INVULNERABILITY)) {
+            return super.hurt(source, amount);
+        }
         if (source.getMsgId().equals("inWall")) return false;
         Entity attacker = source.getEntity();
         if (attacker instanceof TheKing || attacker instanceof KingHead) return false;

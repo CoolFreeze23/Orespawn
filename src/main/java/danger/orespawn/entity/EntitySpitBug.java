@@ -181,6 +181,12 @@ public class EntitySpitBug extends Monster implements SpitBugPose {
      */
     @Override
     public boolean hurt(DamageSource source, float amount) {
+        // ENT-S-172: damage that bypasses invulnerability - /kill, the void - is never capped, gated or refused:
+        // the contract every vanilla boss keeps (EnderDragon, Wither). 1.7.10 had no such source, so this clause
+        // is the port's, not a transcription; everything below it is the original's rule, unchanged.
+        if (source.is(net.minecraft.tags.DamageTypeTags.BYPASSES_INVULNERABILITY)) {
+            return super.hurt(source, amount);
+        }
         if (this.hurtTimer > 0) return false;
         if (source.is(net.minecraft.tags.DamageTypeTags.IS_FALL)
                 || source.is(net.minecraft.world.damagesource.DamageTypes.CACTUS)) {
