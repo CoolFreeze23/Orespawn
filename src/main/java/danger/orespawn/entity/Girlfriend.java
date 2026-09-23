@@ -388,6 +388,10 @@ public class Girlfriend extends TamableAnimal implements RangedAttackMob, danger
 
     @Override
     public void aiStep() {
+        // orig Girlfriend.java:577 — func_82168_bl (updateArmSwingProgress) before super: 1.21 ticks the swing timer only in
+        // Monster.aiStep, Player.serverAiStep and RemotePlayer.aiStep, so a TamableAnimal ticks its own or a swing never ends — the arm swing is never
+        // drawn and performRangedAttack's swinging guard (orig :977) refuses every throw after the first swing (ENT-S-175)
+        this.updateSwingTime();
         super.aiStep();
         --this.autoHeal;
         if (this.autoHeal <= 0) {

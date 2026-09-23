@@ -301,6 +301,10 @@ public class Boyfriend extends TamableAnimal implements RangedAttackMob, danger.
 
     @Override
     public void aiStep() {
+        // orig Boyfriend.java:496 — func_82168_bl (updateArmSwingProgress) before super: 1.21 ticks the swing timer only in
+        // Monster.aiStep, Player.serverAiStep and RemotePlayer.aiStep, so a TamableAnimal ticks its own or a swing never ends — the arm swing is never
+        // drawn and performRangedAttack's swinging guard (orig :876) refuses every throw after the first swing (ENT-S-175)
+        this.updateSwingTime();
         super.aiStep();
         // orig Boyfriend.java:498-502 — water soaks him for 500 ticks; both
         // sides run this, so the client picks the wet texture with no sync.
