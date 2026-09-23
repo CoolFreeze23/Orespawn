@@ -1,8 +1,43 @@
 # OreSpawn for NeoForge 1.21.1 — Changelog
 
-Newest first. Every version opens with what a player will notice, in plain words; the technical detail, with the
-issue ids and the source lines, is folded under "Technical details" at the end of the version. The full release notes
-for a cut live in `phase_g_reports/` and on the release page.
+Newest first. Every version opens with what a player will notice, in plain words and, from beta.10 on, with pictures;
+the technical detail, with the issue ids and the source lines, is folded under "Technical details" at the end of the
+version. The full release notes for a cut live in `phase_g_reports/` and on the release page.
+
+## 2.0.0-beta.10 — 2026-09-24 · [release page](https://github.com/CoolFreeze23/Orespawn/releases/tag/v1.21.1-2.0.0-beta.10) · [full notes](phase_g_reports/RELEASE_NOTES_2.0.0-beta.10.md)
+
+The Girlfriend and the Boyfriend fight properly again: they swing their arms when they strike, throw or dance, and they keep throwing shoes through a fight.
+
+**Fixed**
+- The Girlfriend and the Boyfriend keep throwing shoes at their target through the whole fight. Before, their first swing (a hit, a throw or a dance move) never finished, and they never threw again after it.
+- Their arms swing again when they hit, throw a shoe or dance. That swing was never drawn before.
+
+![Before and after: the Girlfriend throwing shoes on beta.9 and on beta.10](phase_g_reports/release_media/2.0.0-beta.10/pair_throws_before_after.gif)
+
+*Top, beta.9: one shoe, then she only watches. Bottom, beta.10: she keeps throwing, her arm swinging with each shoe.*
+
+**Good to know**
+- A hit that comes right after a throw lands without a second arm swing, the way every Minecraft mob's swing works.
+- Works in the worlds you already have.
+
+**Install:** put `orespawn-1.21.1-2.0.0-beta.10.jar` in `mods/` (NeoForge 21.1, Minecraft 1.21.1, GeckoLib 4.7 or newer) and take the beta.9 jar out. Worlds carry over.
+
+<details>
+<summary>Technical details</summary>
+
+##### What beta.10 is
+
+beta.10 is beta.9 plus one fix, ENT-S-175, the pair's swing timer, found while adding Better Combat attack animations for the pair in the OreSpawn Integrations companion mod. Nothing else moves; it applies to worlds you already have.
+
+##### What changed
+
+- **The pair's swing timer.** 1.21.1 advances a living entity's swing timer (`LivingEntity.updateSwingTime`) only from `Monster.aiStep`, `Player.serverAiStep` and the client's `RemotePlayer.aiStep`. The Girlfriend and the Boyfriend are `TamableAnimal`s, and the original ticks the swing itself at the head of `onLivingUpdate` (orig Girlfriend.java:577, Boyfriend.java:496). Without that call `swinging` stayed true and `swingTime` stayed at -1 after their first swing on both sides, so `attackAnim` never moved and `performRangedAttack`'s `swinging` guard (orig Girlfriend.java:977, Boyfriend.java:876) refused every later throw. Both `aiStep`s now call `updateSwingTime()` first, before `super.aiStep()`. Six gametests (`PairSwingTests` s175a-f) pin one step a tick and the end on the seventh update, a throw once a swing has ended, and the guard mid-swing. Every OreSpawn class whose 1.7.10 base ticked the swing (54, through `EntityMob`) is a `Monster` in the port; the pair were the only ones left without it.
+
+##### How to install
+
+Put `orespawn-1.21.1-2.0.0-beta.10.jar` into the `mods` folder of a NeoForge 21.1 instance for Minecraft 1.21.1 together with GeckoLib 4.7 or newer, and take the beta.9 jar out; MultiHitboxLib and Databuddy are bundled in the jar. Existing worlds carry over.
+
+</details>
 
 ## 2.0.0-beta.9 — 2026-09-23 · [release page](https://github.com/CoolFreeze23/Orespawn/releases/tag/v1.21.1-2.0.0-beta.9) · [full notes](phase_g_reports/RELEASE_NOTES_2.0.0-beta.9.md)
 
@@ -35,7 +70,7 @@ Every OreSpawn creature now has hit boxes that follow its model, and the work th
 
 ##### What beta.9 is
 
-beta.9 is beta.8 plus two landings: ENT-S-173, hit boxes that follow the rigs on every species, and ENT-S-174, the cost of those boxes taken down (after asking whether they would cause lag). Nothing else moves. Both apply to worlds you already have.
+beta.9 is beta.8 plus two changes: ENT-S-173, hit boxes that follow the rigs on every species, and ENT-S-174, the cost of those boxes taken down, so the extra boxes do not add lag. Nothing else moves. Both apply to worlds you already have.
 
 ##### What changed
 
@@ -75,7 +110,7 @@ Two fixes: `/kill` kills every OreSpawn creature again, and the King, the Kraken
 
 ##### What beta.8 is
 
-beta.8 is beta.7 plus two landings, both from a play session of 2026-09-20: ENT-S-172, the `/kill` bypass, and BOSS-047, hit boxes that follow the rigs. Nothing else moves. Both apply to worlds you already have; a KingHead, QueenHead or GodzillaHead saved by an earlier build discards itself when its chunk loads.
+beta.8 is beta.7 plus two fixes, both found in a play session on 2026-09-20: ENT-S-172, the `/kill` bypass, and BOSS-047, hit boxes that follow the rigs. Nothing else moves. Both apply to worlds you already have; a KingHead, QueenHead or GodzillaHead saved by an earlier build discards itself when its chunk loads.
 
 ##### What changed
 

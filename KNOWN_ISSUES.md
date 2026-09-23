@@ -35,7 +35,14 @@ These came straight out of hand-testing and are fixed in code in this build;
 most still need a second pair of eyes in a real game. If one still looks
 wrong for you, please say so.
 
-**2.0.0-beta.9 (this build):**
+**2.0.0-beta.10 (this build):**
+
+- The Girlfriend and the Boyfriend keep throwing shoes through a fight and swing their arms when they hit, throw
+  or dance. After their first swing it never ended, which stopped every later throw and hid the arm swing; they
+  tick their own swing as they did in 1.7.10. A hit right after a throw lands without a second arm swing, as every
+  mob's swing works. *(ENT-S-175)*
+
+**2.0.0-beta.9:**
 
 - Every creature drawn through a rig has hit boxes that follow its model: several boxes along a long or winged
   creature's body, one box the size of a small one, 666 in all over 103 species, every one at full damage as the
@@ -189,9 +196,9 @@ always on.) *(MOD-021)*
 Known, on the radar, not yet resolved:
 
 - ~~The Leonopteryx may look or animate oddly (stiff pose, smaller than it should be)~~ **Fixed in this build** — the Leonopteryx and Leon are now one creature under the hood (as in 1.7.10), rendered at the correct 1.75× size with full animation; the stiff interim pose and the double-drawn wing sets are gone. Existing saved Leons and Leonopteryxes both keep working. *(TF-030 — fixed 2026-08-11)*
-- In the **Crystal dimension**, the big Fairy Castle Trees can generate with sheared-off flat edges where they cross a chunk boundary — the tree's arms simply stop mid-air. Roughly 1 in 25 Crystal chunks rolls a castle tree, and most of them clip at least one arm; the ordinary small fairy trees are fine (at worst a block or two on rare max-size ones), and every other Crystal structure is unaffected. When it happens, the game log notes a "Crystal structure write dropped" warning. **This is the designated first post-beta patch** — the fix (rebuilding the castle tree on the multi-chunk structure pipeline) is scoped and scheduled, it just doesn't block the beta. The Utopia trees received exactly this fix on 2026-09-20 (WGEN-072); the castle tree is next. *(BUG-021 — deferred)*
+- In the **Crystal dimension**, the big Fairy Castle Trees can generate with sheared-off flat edges where they cross a chunk boundary — the tree's arms simply stop mid-air. Roughly 1 in 25 Crystal chunks rolls a castle tree, and most of them clip at least one arm; the ordinary small fairy trees are fine (at worst a block or two on rare max-size ones), and every other Crystal structure is unaffected. When it happens, the game log notes a "Crystal structure write dropped" warning. **This is the designated first post-beta patch** — the fix (rebuilding the castle tree on the multi-chunk structure pipeline) is scoped and scheduled, it just doesn't block the beta. The Utopia trees received exactly this fix on 2026-09-20 (WGEN-072); the castle tree is next. *(BUG-021 — deferred 2026-08-11)*
 - ~~Kraken and Creeper repellents can only be placed on the floor for now; wall-mounting (which 1.7.10 supported) is a planned follow-up.~~ **Fixed in this build** — repellents now place on walls exactly like torches (vanilla torch/wall-torch split under the hood), pop off and drop themselves if the wall is removed, and keep their full repel behavior in either orientation. Existing floor-placed repellents are untouched. *(fixed 2026-08-11)*
-- ~~The Extractor block is pending review — it never actually existed in 1.7.10, so it will either be removed or properly adopted as new content.~~ **Removed in this build** — it was a port invention with no 1.7.10 counterpart and its processing recipes were already gone; the design is archived (with the kyanite branch) for a possible 2.0 return. Player-placed Extractors will disappear from existing worlds on load. *(MOD-020 — decision applied 2026-08-11, TF-031)*
+- ~~The Extractor block is pending review — it never actually existed in 1.7.10, so it will either be removed or properly adopted as new content.~~ **Removed in this build** — it was a port invention with no 1.7.10 counterpart and its processing recipes were already gone; the design is archived (with the kyanite branch) for a possible 2.0 return. Player-placed Extractors will disappear from existing worlds on load. *(MOD-020 — applied 2026-08-11, TF-031)*
 - ~~Your **first** ant-teleport into a freshly generated dimension can bury you inside terrain~~ **Fixed in this build** — arrivals now land on the surface even on the very first visit (the destination terrain is generated before the landing spot is chosen). Please confirm on a fresh world. *(TEST-004 — fixed 2026-08-11, GameTest-covered)*
 
 ---
@@ -211,8 +218,8 @@ hand-made rig either way.
   exactly that sample (the comparison's default rule of 1 % stands for everyone else). *(TEST-019, landed 2026-09-19)*
 - **The mirror correction, accepted.** Every converted rig had been written mirrored left for right, in a frame where the
   comparison could not see it; the converter now writes rigs in the same convention as the Queen's hand-made rig, everything
-  was regenerated, the comparison reproduces the real in-game render chains, and in-game looks at the Ender Knight's one
-  sword (the same hand, the same height, through both renderers) accepted it on 2026-09-19. For a comparison of your own,
+  was regenerated, the comparison reproduces the real in-game render chains, and an in-game look at the Ender Knight's
+  one sword (the same hand, the same height, through both renderers) accepted it on 2026-09-19. For a comparison of your own,
   `-Dorespawn.dev.classicRenderers=ender_knight` puts the knight back on its classic renderer. *(TEST-015, closed 2026-09-19)*
 - **Three classic-renderer quirks the GeckoLib rigs copy on purpose** (a converted rig draws exactly what the port's classic
   renderer draws; these are divergences of the classic renderer from 1.7.10, recorded for a later parity pass,
@@ -302,9 +309,9 @@ mounting, or hover behavior.
   `false`, or `modern.enabled = false`, is the 1.7.10 behaviour (pets fight only what their own scan
   picks, Mobzilla hunts everything but its eight 1.7.10 exclusions, the Pointysaurus only reacts to
   proximity and hits, the Cryolophosaurus remembers its attacker but never chases). The three goal
-  keys apply to newly spawned or loaded mobs, not live ones. Kept in BOTH modes on a safety
-  decision (MOD-036): on Valentine's Day the giant angry Girlfriend leaves Peaceful and creative
-  players alone, where 1.7.10 hunted them.
+  keys apply to newly spawned or loaded mobs, not live ones. Kept in BOTH modes for safety
+  (MOD-036): on Valentine's Day the giant angry Girlfriend leaves Peaceful and creative players alone,
+  where 1.7.10 hunted them.
 - While a player is actively steering a modern spider, two vanilla
   rider-physics rules kick in that unridden (or NPC-ridden) spiders do
   not get: step height rises from 0.6 to a full block, and mid-air

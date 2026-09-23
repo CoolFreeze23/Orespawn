@@ -3,7 +3,7 @@
 > *"Just plain fun!"* — the classic 1.7.10 OreSpawn, rebuilt for modern
 > Minecraft with 100% source-verified parity.
 
-**Version:** 1.21.1-2.0.0-beta.9 · **Loader:** NeoForge 21.1+ · **Minecraft:** 1.21.1
+**Version:** 1.21.1-2.0.0-beta.10 · **Loader:** NeoForge 21.1+ · **Minecraft:** 1.21.1
 **Status:** public beta — the 2.0 robot overhaul is live; the 1.0 parity
 core underneath is stable, with visual/audio polish in community review
 
@@ -69,7 +69,11 @@ post-beta patch.
 
 ## Roadmap
 
-- **2.0.0-beta.9 (this build)**: every creature's hit boxes follow its model —
+- **2.0.0-beta.10 (this build)**: the Girlfriend and the Boyfriend fight
+  properly again — their arms swing when they strike, throw or dance, and
+  they keep throwing shoes through a fight instead of stopping after their
+  first swing.
+- **2.0.0-beta.9**: every creature's hit boxes follow its model —
   several boxes along a long or winged creature's body, neck, legs, tail and
   wings, one box the size of a small one — and the extra boxes stay cheap: the
   server checks only the boxes near whatever it tests, and the player who
@@ -106,7 +110,7 @@ post-beta patch.
   writing the rigs mirrored left for right, in a frame where the
   comparison could not see it; every converted rig, clip and proof was
   regenerated in the corrected frame, the comparison now reproduces the
-  real in-game render chains, and an in-game look and the
+  real in-game render chains, and an in-game check and the
   contact-sheet review accepted the result. For animators,
   the animation contract is complete: when a creature's clips are
   delivered, its idle and walk blend by speed, flying and swimming
@@ -173,7 +177,8 @@ travel with it as listed here.
   `src/main/java/de/dertoaster/multihitboxlib/LICENSE-MultiHitboxLib.txt`.
   Upstream's build metadata declared `All Rights Reserved` and its README
   added terms of use; the upstream repository and mod pages have since been
-  deleted; no contact with the author was made, and the LICENSE text governs.
+  deleted; no contact with the author was made,
+  and the LICENSE text governs.
 - **Databuddy** by Commoble — MIT License, as stated by its upstream
   repository https://github.com/Commoble/databuddy ("Copyright (c) 2020 Joseph
   Bettendorff aka Commoble"; the nested jar and its POM carry no license text

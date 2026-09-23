@@ -32,3 +32,5 @@
 /tools/keyframe_clips/*.json text eol=lf
 # The reference-only clips the sampler writes (ReferenceClipSampler, gradle referenceClips) and their index are sha-pinned by the package manifests and byte-compared between runs; keep them LF.
 /tools/reference_clips/*.json text eol=lf
+# Release media: the pictures and animations each cut's notes link; binary.
+/phase_g_reports/release_media/** binary
