@@ -4,6 +4,50 @@ Newest first. Every version opens with what a player will notice, in plain words
 issue ids and the source lines, is folded under "Technical details" at the end of the version. The full release notes
 for a cut live in `phase_g_reports/` and on the release page.
 
+## 2.0.0-beta.9 — 2026-09-23 · [release page](https://github.com/CoolFreeze23/Orespawn/releases/tag/v1.21.1-2.0.0-beta.9) · [full notes](phase_g_reports/RELEASE_NOTES_2.0.0-beta.9.md)
+
+Every OreSpawn creature now has hit boxes that follow its model, and the work those boxes add is kept small for the server and for multiplayer.
+
+**Fixed**
+- Hits land where a creature is drawn. A long or winged creature has several boxes along its body, neck, legs, tail and wings; a small one has one box its own size. Before, every creature but the bosses had a single box that did not match its model: a 6-block Alosaurus in a box under 2 blocks wide, a 13-block Basilisk in one under 2.
+- A Crab or a Nightmare no longer starts out inside a box the wrong size. A freshly summoned Crab sat in a box four times its model until it grew.
+- A flame arrow or a tipped arrow that hits one of a boss's hit boxes now sets the boss on fire or gives it the effect, and Punch knocks the boss back. In beta.8 those landed on the box and were lost.
+- Pick-block and right-click items now work when you aim at one of a boss's hit boxes.
+- Under PlayNicely, the boxes you aim at on a shrunken boss match its smaller size. In beta.8 they stayed full size on your screen.
+
+**Changed**
+- Every hit box takes full damage, as the single old box did. The old box is still what a creature walks and collides with, but it no longer takes hits itself.
+- Mothra takes full damage wherever she is hit, as in the original. beta.8's hand-placed boxes took half on her body and a quarter on her wings.
+- Babies, a growing Crab, a Nightmare's size and the Valentine's Girlfriend get boxes scaled like their models.
+- The server now checks only the hit boxes of creatures near whatever it is testing, instead of every box in the world. In the densest test, 120 creatures packed together, each check got about seven times cheaper; creatures spread over a real world gain more.
+- In multiplayer, the player who sends a creature's pose to the server sends it every second tick for ordinary creatures; bosses stay every tick. That halves the busiest player's upload. The other players no longer send empty updates the server ignored.
+
+**Good to know**
+- Boxes are square from above, so long thin parts read a little wider than they look. Wings and fins are padded for the flap rather than tilting with it.
+- With no player nearby, a creature's boxes sit in its resting pose, still turned with its body.
+- The boxes were fitted from the models, not judged in play. If a creature's boxes look wrong, tell us which one.
+- Works in the worlds you already have.
+
+**Install:** put `orespawn-1.21.1-2.0.0-beta.9.jar` in `mods/` (NeoForge 21.1, Minecraft 1.21.1, GeckoLib 4.7 or newer) and take the beta.8 jar out. Worlds carry over.
+
+<details>
+<summary>Technical details</summary>
+
+##### What beta.9 is
+
+beta.9 is beta.8 plus two landings: ENT-S-173, hit boxes that follow the rigs on every species, and ENT-S-174, the cost of those boxes taken down (after asking whether they would cause lag). Nothing else moves. Both apply to worlds you already have.
+
+##### What changed
+
+- **Hit boxes that follow the rigs, every species.** The 103 living species drawn through a GeckoLib rig beyond the four bosses and the two robots carry MultiHitboxLib bone-synced profiles (666 parts; one box for 29 species, up to the adult Prince's 26) written from their rigs by `tools/hitbox_profiles.sh`: the species table from the registrations and every descriptor's render scale and transform, the writer's dump of each rig's drawn bones, `tools/hitbox_specs_from_rigs.py` grouping them into parts by geometry (touching bones merge while the union stays a compact square-footprint box the cubes fill, tiny bones fold into their neighbours, limb chains merge under the rig's cap, small creatures are one box, wings and fins padded for the flap; the adult Prince takes the King's grouping), and the batch write. Every part at full damage and not solid; no profile overrides the main size, so the registered box, a baby's half, the Crab's growth and Mothra's MOD-029 form stay the movement and collision box, unpickable and taking no damage itself. The part boxes follow the creature's size on both sides (the library's per-type `MHLibEntitySizeScales`, the port's `HitboxScales`); the server-side fallback places every box on its drawn rest segment, turned with the body (the profiles carry each part's rest rotation). A part stands for its creature where the game asks the entity itself (root vehicle, pick-block, fire, a right-click's item through `MixinPlayer`); a vanilla arrow's fire, potion effect, Punch and arrow count land on the creature through the new `MixinAbstractArrow`, its piercing lookup wrapped; the port's projectiles read the creature behind a hit part (`MyUtils.behindPart`). Mothra's hand-placed `OreSpawnPartEntity` layout and its head 1.0 / body 0.5 / wings 0.25 + 1 scheme retire. The Crab's and Pitch Black's cached boxes, stale from construction, are refreshed in their constructors. *(ENT-S-173; `HitboxProfileSweepTests` s173a-h)*
+- **The cost of the boxes.** NeoForge walks every part entity of a level in both `Level.getEntities` box queries; the vendored library now keeps a per-level `PartEntityIndex`, one group per creature with an envelope of its parts' boxes, and `MixinLevel` hands NeoForge's loop only the parts of the creatures whose envelope meets the query box, exactly the flat walk's answer. The envelope is marked stale in `Entity.setBoundingBox`, the only writer of an entity's box, when a part's box really changes, and rebuilt before the next query; membership follows the level's part map through its tracking callbacks, put by put and remove by remove, and through the library's own client robot registration; a query off the level's thread, or any disagreement between the map and the index, walks the whole map as before. The generated profiles carry `bone-sync-interval: 2`, so the master client sends their bone poses every second tick (the four bosses keep every tick), and on a tick without a packet the server moves the last pose along with the creature; a client that is not the master sends only its first packet after a change of master, not an empty keepalive every 8 ticks. *(ENT-S-174; `PartIndexTests` s174a-g)*
+
+##### How to install
+
+Put `orespawn-1.21.1-2.0.0-beta.9.jar` into the `mods` folder of a NeoForge 21.1 instance for Minecraft 1.21.1 together with GeckoLib 4.7 or newer, and take the beta.8 jar out; MultiHitboxLib and Databuddy are bundled in the jar. Existing worlds carry over.
+
+</details>
+
 ## 2.0.0-beta.8 — 2026-09-20 · [release page](https://github.com/CoolFreeze23/Orespawn/releases/tag/v1.21.1-2.0.0-beta.8) · [full notes](phase_g_reports/RELEASE_NOTES_2.0.0-beta.8.md)
 
 Two fixes: `/kill` kills every OreSpawn creature again, and the King, the Kraken and Godzilla have hit boxes that follow their models.

@@ -1,7 +1,7 @@
 # Known Issues — OreSpawn Port (BETA)
 
 **This release is a beta.** The game logic underneath has been through a
-1317-test automated suite (all green, in both robot modes; the count grows
+1332-test automated suite (all green, in both robot modes; the count grows
 with every remediation batch) plus hands-on play sessions, but a lot
 of the *visual and
 audio* polish has deliberately been left open for community
@@ -35,7 +35,19 @@ These came straight out of hand-testing and are fixed in code in this build;
 most still need a second pair of eyes in a real game. If one still looks
 wrong for you, please say so.
 
-**2.0.0-beta.8 (this build):**
+**2.0.0-beta.9 (this build):**
+
+- Every creature drawn through a rig has hit boxes that follow its model: several boxes along a long or winged
+  creature's body, one box the size of a small one, 666 in all over 103 species, every one at full damage as the
+  single old box was. Mothra's hand-placed boxes are gone (she takes full damage anywhere). A Crab or a Nightmare no
+  longer starts inside a box of the wrong size, and a flame or tipped arrow that hits a boss's box now reaches the
+  boss. Known limits: square-in-plan boxes, wings and fins padded rather than tilted, rest-pose boxes on a server
+  with no player in range. *(ENT-S-173)*
+- The boxes' cost is kept small: the server checks only the boxes of creatures near whatever it is testing, and the
+  player who sends a creature's pose to the server sends it every second tick for ordinary creatures (the bosses
+  every tick); the other players no longer send empty updates. *(ENT-S-174)*
+
+**2.0.0-beta.8:**
 
 - `/kill @e` kills every OreSpawn creature again, the bosses included and in the middle of a fight. Thirty species
   had capped, cooldown-gated, forwarded or refused the command's hit. *(ENT-S-172)*

@@ -3,7 +3,7 @@
 > *"Just plain fun!"* — the classic 1.7.10 OreSpawn, rebuilt for modern
 > Minecraft with 100% source-verified parity.
 
-**Version:** 1.21.1-2.0.0-beta.8 · **Loader:** NeoForge 21.1+ · **Minecraft:** 1.21.1
+**Version:** 1.21.1-2.0.0-beta.9 · **Loader:** NeoForge 21.1+ · **Minecraft:** 1.21.1
 **Status:** public beta — the 2.0 robot overhaul is live; the 1.0 parity
 core underneath is stable, with visual/audio polish in community review
 
@@ -69,7 +69,12 @@ post-beta patch.
 
 ## Roadmap
 
-- **2.0.0-beta.8 (this build)**: `/kill` kills every OreSpawn creature again,
+- **2.0.0-beta.9 (this build)**: every creature's hit boxes follow its model —
+  several boxes along a long or winged creature's body, neck, legs, tail and
+  wings, one box the size of a small one — and the extra boxes stay cheap: the
+  server checks only the boxes near whatever it tests, and the player who
+  streams a creature's pose sends it every second tick.
+- **2.0.0-beta.8**: `/kill` kills every OreSpawn creature again,
   including the bosses and in the middle of a fight; and the King, the Kraken and
   Godzilla have hit boxes that follow their models, the way the Queen's already
   did, in place of the hand-placed boxes and the floating head boxes.
