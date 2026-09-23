@@ -6,6 +6,7 @@ import de.dertoaster.multihitboxlib.network.client.CPacketBoneInformation;
 import de.dertoaster.multihitboxlib.util.BoneInformation;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.entity.PartEntity;
 import org.apache.commons.lang3.NotImplementedException;
 
@@ -113,6 +114,17 @@ public interface IMHLibFieldAccessor<T extends LivingEntity> {
     }
 
     public default void _mhlibAccess_setTicksSinceLastBoneInfoSend(int value) {
+        throw new NotImplementedException();
+    }
+
+    // ENT-S-174: where the entity stood (server side) on the tick the retained sync map was last applied as received; on
+    // a tick with no new packet mhlibAiStep shifts the retained world positions by the entity's movement since then.
+    // Null until the first packet is applied.
+    public default Vec3 _mhlibAccess_getSynchAnchor() {
+        throw new NotImplementedException();
+    }
+
+    public default void _mhlibAccess_setSynchAnchor(Vec3 value) {
         throw new NotImplementedException();
     }
 

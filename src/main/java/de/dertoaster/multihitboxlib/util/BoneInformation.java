@@ -19,6 +19,14 @@ public record BoneInformation(String name, boolean hidden, Vec3 worldPos, Vec3 s
 			).apply(instance, BoneInformation::new);
 	});
 
+	/**
+	 * ENT-S-174: the same bone moved by (dx, dy, dz) in the world - the retained pose carried along with its entity's
+	 * movement on a tick that brought no packet (IMultipartEntity#mhlibAiStep).
+	 */
+	public BoneInformation translated(double dx, double dy, double dz) {
+		return new BoneInformation(name(), hidden(), worldPos().add(dx, dy, dz), scale(), rotation());
+	}
+
 	public BoneInformation scale(double scaling) {
 		return new BoneInformation(
 				name(),

@@ -1,6 +1,8 @@
 package de.dertoaster.multihitboxlib.client;
 
+import de.dertoaster.multihitboxlib.api.IMHLibPartIndexHolder;
 import de.dertoaster.multihitboxlib.mixin.accessor.AccessorClientLevel;
+import de.dertoaster.multihitboxlib.util.PartEntityIndex;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.world.entity.Entity;
@@ -30,8 +32,13 @@ public final class MHLibClientPartRegistration {
         }
         Int2ObjectMap<PartEntity<?>> registry =
                 ((AccessorClientLevel) clientLevel).mhlib$getPartEntities();
+        // ENT-S-174: this is the one writer of the level's part map outside NeoForge's tracking callbacks, so it tells
+        // the level's part index of each part it puts, as the wrapped put in onTrackingStart does; without it the map
+        // outgrew the index while a modern robot was tracked and every client query walked the whole map.
+        final PartEntityIndex index = ((IMHLibPartIndexHolder) clientLevel)._mhlibAccess_getPartIndex();
         for (PartEntity<?> part : parts) {
-            registry.put(part.getId(), part);
+            final PartEntity<?> previous = registry.put(part.getId(), part);
+            index.onPut(part, previous);
         }
     }
 }

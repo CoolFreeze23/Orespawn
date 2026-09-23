@@ -7,7 +7,9 @@
     "pivot taken back through MHLib's rotation so the box sits on the drawn segment. Damage 1.0 on every part: the 1.7.10 mob",
     "was one full-damage box, this aligns the hit boxes with the model and does not rebalance. main-hitbox has no size override,",
     "so the movement and collision box stays Pitch Black's own 2.5x3.5 box times its size tier (PitchBlack.getDefaultDimensions),",
-    "not pickable and taking no damage itself: every hit goes through a part. Parts are not solid (a mob is pushed, not stood on)."
+    "not pickable and taking no damage itself: every hit goes through a part. Parts are not solid (a mob is pushed, not stood on).",
+    "bone-sync-interval 2 (ENT-S-174): the master client sends the bone pose every second tick; in between,",
+    "the server carries the last pose along with the creature's movement. The four bosses keep the library's every tick."
   ],
   "synched-assets": {
     "models": [],
@@ -18,6 +20,7 @@
   "trust-client": true,
   "part-update-steps": 3,
   "synched-part-update-steps": 1,
+  "bone-sync-interval": 2,
   "synched-bones": [
     "mem1",
     "mem3",

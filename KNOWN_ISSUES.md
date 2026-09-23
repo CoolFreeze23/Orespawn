@@ -216,13 +216,13 @@ hand-made rig either way.
   (you can stand on Godzilla's tail); the Kraken's tall 1.7.10 swim box is still its collision box; on a server with
   no player in render range the parts sit at their rest positions. Tell us what looks wrong.
 - **Every creature's hit boxes follow its model** (ENT-S-173): the 103 species drawn through a rig now carry
-  bone-synced hitbox parts fitted to the drawn model (one box for a small creature, up to 26 for the adult Prince; 656
+  bone-synced hitbox parts fitted to the drawn model (one box for a small creature, up to 26 for the adult Prince; 666
   in all), like the bosses; every part takes full damage, as the single 1.7.10 box did, and the old box stays the
   movement and collision box (a baby's half, the Crab's growth). Mothra's four hand-placed boxes are gone with them.
   Known limits, the bosses' too: the boxes are square in plan, so long thin parts read wider than they look; a wing or a
   fin is padded for the flap rather than tilting with it; on a server with no player in render range the parts sit at
-  their rest pose (on the model and turned with it, but not animated); a hundred visible creatures stream their bone
-  positions to the server each tick. The groupings
+  their rest pose (on the model and turned with it, but not animated); the player the server picks for a creature
+  sends its bone positions every second tick (the bosses every tick). *(ENT-S-173, ENT-S-174)* The groupings
   were made from the rigs, not judged in play — tell us which creature's boxes look wrong and we will hand-edit its spec.
 
 ---

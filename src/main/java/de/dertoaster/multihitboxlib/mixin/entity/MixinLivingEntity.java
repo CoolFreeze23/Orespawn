@@ -362,6 +362,22 @@ public abstract class MixinLivingEntity extends Entity implements IMultipartEnti
 		this.mhlibTicksSinceLastBoneInfoSend = value;
 	}
 
+	// ENT-S-174: the retained sync map's anchor (see IMHLibFieldAccessor).
+	@Unique
+	@Nullable
+	private Vec3 mhlibSynchAnchor;
+
+	@Override
+	@Nullable
+	public Vec3 _mhlibAccess_getSynchAnchor() {
+		return this.mhlibSynchAnchor;
+	}
+
+	@Override
+	public void _mhlibAccess_setSynchAnchor(@Nullable Vec3 value) {
+		this.mhlibSynchAnchor = value;
+	}
+
 	// BUG-044: per-entity render-tick stamp accessors (see the field comment above).
 	@Override
 	public int _mhlibAccess_getRenderTickStamp() {

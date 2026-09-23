@@ -12,12 +12,16 @@
 		"geckolib.MixinGeoRenderer",
 		"minecraft.MixinCompressionDecoder",
 		"minecraft.MixinPlayer",
-		"minecraft.MixinAbstractArrow"
+		"minecraft.MixinAbstractArrow",
+		"minecraft.MixinEntity",
+		"minecraft.MixinLevel",
+		"minecraft.MixinServerLevelEntityCallbacks"
 	],
 	"client": [
 		"accessor.AccessorClientLevel",
 		"accessor.AccessorEntityRenderer",
-		"minecraft.MixinMinecraft"
+		"minecraft.MixinMinecraft",
+		"minecraft.client.MixinClientLevelEntityCallbacks"
 	],
 	"injectors": {
 		"defaultRequire": 1

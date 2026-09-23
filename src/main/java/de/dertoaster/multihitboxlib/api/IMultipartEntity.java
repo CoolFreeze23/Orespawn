@@ -8,6 +8,7 @@ import de.dertoaster.multihitboxlib.network.client.CPacketBoneInformation;
 import de.dertoaster.multihitboxlib.network.server.SPacketSetMaster;
 import de.dertoaster.multihitboxlib.util.BodyYawFold;
 import de.dertoaster.multihitboxlib.util.BoneInformation;
+import de.dertoaster.multihitboxlib.util.BoneSyncGate;
 import de.dertoaster.multihitboxlib.util.ClientOnlyMethods;
 import de.dertoaster.multihitboxlib.util.MHLibCounters;
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
@@ -412,7 +413,7 @@ public interface IMultipartEntity<T extends Entity> {
 			final Optional<HitboxProfile> profile = this.getHitboxProfile();
 			if (profile.isPresent() && profile.get().syncToModel()) {
 				Map<String, BoneInformation> syncMap = access._mhlibAccess_getSynchMap();
-				this.alignSynchedSubParts((T)(Object)this, syncMap::getOrDefault);
+				this.alignSynchedSubParts((T)(Object)this, mhlibRetainedPoseRetrieval(e, syncMap, access));
 				// ──────────────────────────────────────────────────────
 				// OPT-003: the sync map is RETAINED between packets
 				// instead of being cleared here every tick. Legacy
@@ -438,6 +439,39 @@ public interface IMultipartEntity<T extends Entity> {
 		} else {
 			throw new IllegalStateException("Access interface not implemented");
 		}
+	}
+
+	/**
+	 * ENT-S-174: what the server's synched alignment reads for each bone. The retained sync map holds the WORLD positions the
+	 * master client drew; re-applied unchanged on a tick that brought no packet, it left the part boxes where they were
+	 * while the creature moved on - with the generated species' bone-sync-interval 2 every other tick. On the tick a
+	 * packet was applied ({@code ticksSinceLastSynch} still 0 at aiStep's tail) the map is read as received and the
+	 * entity's position is kept as its anchor; on a later tick with no packet every bone is moved by the entity's
+	 * movement since that anchor, so the parts follow the creature's position; a creature that has not moved reads
+	 * the map as received, bit for bit (OPT-003's retention unchanged). The turn is not followed: a part keeps the last
+	 * pose's bearing until the next packet (the body's yaw over a tick). An empty map (no stream, or a master reset)
+	 * clears the anchor.
+	 */
+	public default BiFunction<String, BoneInformation, BoneInformation> mhlibRetainedPoseRetrieval(final Entity entity,
+			final Map<String, BoneInformation> syncMap, final IMHLibFieldAccessor<?> access) {
+		if (syncMap.isEmpty() || access._mhlibAccess_getTicksSinceLastSynch() == 0) {
+			access._mhlibAccess_setSynchAnchor(syncMap.isEmpty() ? null : entity.position());
+			return syncMap::getOrDefault;
+		}
+		final Vec3 anchor = access._mhlibAccess_getSynchAnchor();
+		if (anchor == null) {
+			return syncMap::getOrDefault;
+		}
+		final double dx = entity.getX() - anchor.x;
+		final double dy = entity.getY() - anchor.y;
+		final double dz = entity.getZ() - anchor.z;
+		if (dx == 0.0D && dy == 0.0D && dz == 0.0D) {
+			return syncMap::getOrDefault;
+		}
+		return (name, fallback) -> {
+			final BoneInformation bi = syncMap.get(name);
+			return bi == null ? fallback : bi.translated(dx, dy, dz);
+		};
 	}
 
 	/**
@@ -539,26 +573,36 @@ public interface IMultipartEntity<T extends Entity> {
 			// ──────────────────────────────────────────────────────────
 			final int sinceLastSend = Math.min(access._mhlibAccess_getTicksSinceLastBoneInfoSend() + 1, BONE_INFORMATION_KEEPALIVE_TICKS);
 			access._mhlibAccess_setTicksSinceLastBoneInfoSend(sinceLastSend);
-			// System.out.println("Beginning bone information collection...");
-			if (this.getBoneInfoBuilder().isPresent()) {
-				// Send packet
-				// System.out.println("Sending bone information...");
-				CPacketBoneInformation packet = this.getBoneInfoBuilder().get().build();
-				final Map<String, BoneInformation> lastSent = access._mhlibAccess_getLastSentBoneInformation();
-				if (lastSent == null
-						|| sinceLastSend >= BONE_INFORMATION_KEEPALIVE_TICKS
-						|| !mhlibBoneInformationUnchanged(lastSent, packet.boneInformation())) {
-					packet.send();
-					access._mhlibAccess_setLastSentBoneInformation(packet.boneInformation());
-					access._mhlibAccess_setTicksSinceLastBoneInfoSend(0);
+			final Map<String, BoneInformation> lastSent = access._mhlibAccess_getLastSentBoneInformation();
+			final int interval = this.getHitboxProfile().map(HitboxProfile::boneSyncInterval).orElse(1);
+			// ENT-S-174: the whole decision is BoneSyncGate.decide, pure, which the gametests drive. (1) A client that
+			// is not the elected master sends its first packet after a master change (the one an election can
+			// settle on) and then nothing: the server reads no other client's packet
+			// (CPacketHandlerBoneInformation), yet every other client tracking the creature used to re-send it an empty
+			// one on every keepalive; tryAddBoneInformation already refuses a non-master's bones. (2) The profile's
+			// bone-sync-interval spaces the master's sends (2 for the generated species, 1 for the bosses): a held tick
+			// drops the builder and the next tick's collection replaces it, so every packet carries the newest pose. On
+			// a tick without a packet the server carries the last pose along with the creature's movement
+			// (mhlibRetainedPoseRetrieval); only the creature's turn and its bones' animation reach it a tick later.
+			// (3) OPT-003's change-only rule and the 8-tick keepalive decide a built packet (BoneSyncGate.shouldSend).
+			switch (BoneSyncGate.decide(mhlibLocalPlayerIsMaster(), lastSent == null, this.getBoneInfoBuilder().isPresent(), sinceLastSend, interval)) {
+				case SILENT, HOLD -> {
+					if (this.getBoneInfoBuilder().isPresent()) {
+						this.clearBoneInfoBuilder();
+					}
 				}
-				// else: payload proven bit-identical to the last-sent packet
-				// inside the keepalive window — the send is skipped.
-				this.clearBoneInfoBuilder();
-			} else {
-				// System.out.println("creating new packet");
-				CPacketBoneInformation.Builder builder = CPacketBoneInformation.builder(entity);
-				this.setBoneInfoBuilderContent(builder);
+				case START -> this.setBoneInfoBuilderContent(CPacketBoneInformation.builder(entity));
+				case BUILD -> {
+					final CPacketBoneInformation packet = this.getBoneInfoBuilder().get().build();
+					if (BoneSyncGate.shouldSend(lastSent == null, sinceLastSend, () -> mhlibBoneInformationUnchanged(lastSent, packet.boneInformation()))) {
+						packet.send();
+						access._mhlibAccess_setLastSentBoneInformation(packet.boneInformation());
+						access._mhlibAccess_setTicksSinceLastBoneInfoSend(0);
+					}
+					// else: payload proven bit-identical to the last-sent packet
+					// inside the keepalive window — the send is skipped.
+					this.clearBoneInfoBuilder();
+				}
 			}
 		}
 	}
@@ -761,6 +805,19 @@ public interface IMultipartEntity<T extends Entity> {
 		return Optional.empty();
 	}
 	
+	/**
+	 * ENT-S-174: whether the master the server elected for this entity (SPacketSetMaster) is this client's player -- the
+	 * check {@link #tryAddBoneInformation} makes per bone, for the once-per-tick send gate. Client side only.
+	 */
+	public default boolean mhlibLocalPlayerIsMaster() {
+		final UUID master = this.getMasterUUID();
+		if (master == null) {
+			return false;
+		}
+		final net.minecraft.world.entity.player.Player player = ClientOnlyMethods.getClientPlayer();
+		return player != null && master.equals(player.getUUID());
+	}
+
 	public default boolean tryAddBoneInformation(String boneName, boolean hidden, Vec3 position, Vec3 scaling, Vec3 rotation) {
 		IMHLibFieldAccessor access = (IMHLibFieldAccessor) this;
 		Entity entity = (Entity)this;
