@@ -640,14 +640,14 @@ public class OreSpawnConfig {
         //
         MODERN_ARTIST_ANIMATIONS = BUILDER.comment(
                 "MOD-038: artist keyframe animations on the GeckoLib candidate renderers. A species whose " +
-                        "animation file carries the standard contract's idle AND walk clips together (plus its group " +
+                        "animation file carries the standard idle AND walk clips together (plus its group " +
                         "clips) plays them through the phase-locked keyframe layers and its classic code-driven pose " +
                         "stands down; one without the other, or neither, keeps the classic pose whatever this says " +
-                        "(the Beaver ships its transcription since 2026-09-12; every other shipped clip file is empty " +
-                        "until a species' clips land). A shipped transcription plays always-on, bit-exact to the classic " +
-                        "formulas; an artist's file (an idle that keys a bone, fly / swim, a one-shot) plays the contract's " +
+                        "(the Beaver ships a transcription of its classic motion; every other species' clip file stays " +
+                        "empty until its clips are made). A shipped transcription plays always-on, bit-exact to the classic " +
+                        "formulas; an artist's file (an idle that keys a bone, fly / swim, a one-shot) plays the standard " +
                         "weighted layers - idle and walk cross-fading by walking speed, fly / swim ramping in over five ticks, " +
-                        "one-shots over the cycles on the bones they key (the weights slice, 2026-09-15). " +
+                        "one-shots over the cycles on the bones they key. " +
                         "Only takes effect while modern.enabled is true; classic mode always poses " +
                         "from the 1.7.10 formulas. On by default; set false to keep every " +
                         "species on the classic pose in modern mode too. Picked up by an entity as it (re)enters render " +

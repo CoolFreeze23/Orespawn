@@ -4,6 +4,36 @@ Newest first. Every version opens with what a player will notice, in plain words
 the technical detail, with the issue ids and the source lines, is folded under "Technical details" at the end of the
 version. The full release notes for a cut live in `phase_g_reports/` and on the release page.
 
+## 2.0.0-beta.11 — 2026-09-24 · [release page](https://github.com/CoolFreeze23/Orespawn/releases/tag/v1.21.1-2.0.0-beta.11) · [full notes](phase_g_reports/RELEASE_NOTES_2.0.0-beta.11.md)
+
+A tidy-up release: the option descriptions in the config file read in plain words. Nothing in the game plays differently.
+
+**Changed**
+- Three option descriptions in `config/orespawn-common.toml` are rewritten in plain words: the fireball fire rule (`fireRespectsMobGriefing`), the Chainsaw's sight check (`chainsawSweepVanillaSight`) and the artist animations switch (`artistAnimations`).
+
+![The three config options as they read in beta.11](phase_g_reports/release_media/2.0.0-beta.11/config_descriptions.png)
+
+*How the three options read in `config/orespawn-common.toml` from beta.11 on.*
+
+**Good to know**
+- Your settings stay as they are: the game rewrites only the descriptions in your existing config file, the first time it loads it.
+- Works in the worlds you already have.
+
+**Install:** put `orespawn-1.21.1-2.0.0-beta.11.jar` in `mods/` (NeoForge 21.1, Minecraft 1.21.1, GeckoLib 4.7 or newer) and take the beta.10 jar out. Worlds carry over.
+
+<details>
+<summary>Technical details</summary>
+
+##### What beta.11 is
+
+beta.11 is beta.10 with its text tidied: the three config descriptions above (MOD-031, MOD-037, MOD-038), the notes carried in the multi-part hit box profiles and the model data, and the comments in the source. No behaviour changes: the same 1,338 tests pass, and every model comparison and the benchmark verify against the same output as before.
+
+##### How to install
+
+Put `orespawn-1.21.1-2.0.0-beta.11.jar` into the `mods` folder of a NeoForge 21.1 instance for Minecraft 1.21.1 together with GeckoLib 4.7 or newer, and take the beta.10 jar out; MultiHitboxLib and Databuddy are bundled in the jar. Existing worlds and config files carry over.
+
+</details>
+
 ## 2.0.0-beta.10 — 2026-09-24 · [release page](https://github.com/CoolFreeze23/Orespawn/releases/tag/v1.21.1-2.0.0-beta.10) · [full notes](phase_g_reports/RELEASE_NOTES_2.0.0-beta.10.md)
 
 The Girlfriend and the Boyfriend fight properly again: they swing their arms when they strike, throw or dance, and they keep throwing shoes through a fight.

@@ -3,7 +3,7 @@
 > *"Just plain fun!"* — the classic 1.7.10 OreSpawn, rebuilt for modern
 > Minecraft with 100% source-verified parity.
 
-**Version:** 1.21.1-2.0.0-beta.10 · **Loader:** NeoForge 21.1+ · **Minecraft:** 1.21.1
+**Version:** 1.21.1-2.0.0-beta.11 · **Loader:** NeoForge 21.1+ · **Minecraft:** 1.21.1
 **Status:** public beta — the 2.0 robot overhaul is live; the 1.0 parity
 core underneath is stable, with visual/audio polish in community review
 
@@ -69,7 +69,10 @@ post-beta patch.
 
 ## Roadmap
 
-- **2.0.0-beta.10 (this build)**: the Girlfriend and the Boyfriend fight
+- **2.0.0-beta.11 (this build)**: tidier text — the option descriptions
+  in the config file read in plain words; nothing in the game plays
+  differently.
+- **2.0.0-beta.10**: the Girlfriend and the Boyfriend fight
   properly again — their arms swing when they strike, throw or dance, and
   they keep throwing shoes through a fight instead of stopping after their
   first swing.

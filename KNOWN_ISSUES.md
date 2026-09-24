@@ -35,7 +35,13 @@ These came straight out of hand-testing and are fixed in code in this build;
 most still need a second pair of eyes in a real game. If one still looks
 wrong for you, please say so.
 
-**2.0.0-beta.10 (this build):**
+**2.0.0-beta.11 (this build):**
+
+- The option descriptions in `config/orespawn-common.toml` read in plain words (the fireball fire rule, the
+  Chainsaw's sight check, the artist animations switch). Nothing plays differently; an existing config file picks up
+  the new descriptions the first time the game loads it, and your settings stay as they are.
+
+**2.0.0-beta.10:**
 
 - The Girlfriend and the Boyfriend keep throwing shoes through a fight and swing their arms when they hit, throw
   or dance. After their first swing it never ended, which stopped every later throw and hid the arm swing; they
