@@ -19,7 +19,10 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.StructureManager;
 import net.minecraft.world.level.WorldGenLevel;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.CrossCollisionBlock;
+import net.minecraft.world.level.block.WallBlock;
 import net.minecraft.world.level.block.entity.ChestBlockEntity;
 import net.minecraft.world.level.block.entity.RandomizableContainerBlockEntity;
 import net.minecraft.world.level.block.entity.SpawnerBlockEntity;
@@ -33,6 +36,9 @@ import net.minecraft.world.level.levelgen.structure.BoundingBox;
 import net.minecraft.world.level.levelgen.structure.StructurePiece;
 import net.minecraft.world.level.levelgen.structure.pieces.StructurePieceSerializationContext;
 import net.minecraft.world.level.storage.loot.LootTable;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Audit Part 2 &mdash; unified {@link StructurePiece} for the four legacy
@@ -475,7 +481,7 @@ public class LegacyDungeonPiece extends StructurePiece {
      */
     private record PassCtx(WorldGenLevel level, BlockPos.MutableBlockPos mut,
                            int cbMinX, int cbMaxX, int cbMinY, int cbMaxY,
-                           int cbMinZ, int cbMaxZ) {}
+                           int cbMinZ, int cbMaxZ, List<BlockPos> joiners) {}
 
     private final transient ThreadLocal<PassCtx> passCtx = new ThreadLocal<>();
 
@@ -532,9 +538,12 @@ public class LegacyDungeonPiece extends StructurePiece {
                 (long) this.boundingBox.minX() * 341873128712L
                         + (long) this.boundingBox.minZ() * 132897987541L);
 
+        // WGEN-076: a live pass (buildNow, a gametest, /place) settles the joins of its fences, panes, bars and walls
+        // when it ends; a worldgen pass hands them to the chunk's post-processing instead (see place).
+        boolean live = level instanceof ServerLevel;
         this.passCtx.set(new PassCtx(level, new BlockPos.MutableBlockPos(),
                 chunkBox.minX(), chunkBox.maxX(), chunkBox.minY(),
-                chunkBox.maxY(), chunkBox.minZ(), chunkBox.maxZ()));
+                chunkBox.maxY(), chunkBox.minZ(), chunkBox.maxZ(), live ? new ArrayList<>() : null));
 
         try {
             switch (dungeonType) {
@@ -584,6 +593,7 @@ public class LegacyDungeonPiece extends StructurePiece {
                 case HAUNTED_HOUSE -> HauntedHouseGenerator.generate(this, origin, rng);
                 case ENDER_KNIGHT_DUNGEON -> EnderKnightDungeonGenerator.generate(this, origin, rng);
             }
+            if (live) settleJoins(level, ctx().joiners());
         } finally {
             // BUG-033: scoped to this pass only — concurrent passes on other
             // threads keep their own context.
@@ -762,12 +772,53 @@ public class LegacyDungeonPiece extends StructurePiece {
         return c.level().getBlockState(c.mut()).is(Blocks.SNOW_BLOCK); // field_150433_aE, orig :1270
     }
 
-    /** Gated {@code level.setBlock} ({@link #FLAG_PIECE_WRITE}). */
+    /**
+     * Gated {@code level.setBlock} ({@link #FLAG_PIECE_WRITE}). A block that joins its neighbours (see
+     * {@link #joinsNeighbours}) is also queued for its joins: on a live pass it is settled when the pass ends
+     * ({@link #settleJoins}); on a worldgen pass the chunk settles it when it goes live, the way vanilla's structure
+     * pieces handle their fences and bars ({@code markPosForPostprocessing}).
+     */
     void place(int x, int y, int z, BlockState state) {
         if (!inChunk(x, y, z)) return;
         PassCtx c = ctx();
         c.mut().set(x, y, z);
         c.level().setBlock(c.mut(), state, FLAG_PIECE_WRITE);
+        if (joinsNeighbours(state)) {
+            if (c.joiners() != null) c.joiners().add(c.mut().immutable());
+            else c.level().getChunk(c.mut()).markPosForPostprocessing(c.mut());
+        }
+    }
+
+    /**
+     * WGEN-076: fences, glass panes, iron bars and walls. 1.7.10 joined them to their neighbours when it drew them
+     * (no join was ever stored, orig GenericDungeon's railings and cages are bare {@code setBlock} calls); 1.21.1 keeps
+     * the joins in the block state, which {@link #FLAG_PIECE_WRITE} never recomputes (it suppresses shape updates on
+     * purpose, TF-021), so every one of them stood as a lone post. Plants and every other block keep the suppressed
+     * updates: only these are settled, and only from their own neighbours.
+     */
+    public static boolean joinsNeighbours(BlockState state) {
+        Block block = state.getBlock();
+        return block instanceof CrossCollisionBlock || block instanceof WallBlock;
+    }
+
+    /**
+     * Settles each queued joiner from its finished neighbours, then any joiner next to it, so a join across the
+     * boundary of an earlier pass (a /place structure build runs one pass per chunk) is made from both sides.
+     */
+    private static void settleJoins(WorldGenLevel level, List<BlockPos> joiners) {
+        for (BlockPos pos : joiners) {
+            settleJoin(level, pos);
+            for (Direction d : Direction.values()) {
+                BlockPos next = pos.relative(d);
+                if (joinsNeighbours(level.getBlockState(next))) settleJoin(level, next);
+            }
+        }
+    }
+
+    private static void settleJoin(WorldGenLevel level, BlockPos pos) {
+        BlockState state = level.getBlockState(pos);
+        BlockState joined = Block.updateFromNeighbourShapes(state, level, pos);
+        if (joined != state) level.setBlock(pos, joined, FLAG_PIECE_WRITE);
     }
 
     /**
