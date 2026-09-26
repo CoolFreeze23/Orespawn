@@ -2,6 +2,7 @@ package danger.orespawn.world.feature;
 
 import com.mojang.serialization.Codec;
 import danger.orespawn.ModBlocks;
+import danger.orespawn.world.structure.UtopiaTreeStructure;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.Blocks;
@@ -58,6 +59,8 @@ public class MagicAppleTreeFeature extends Feature<NoneFeatureConfiguration> {
     @Override
     public boolean place(FeaturePlaceContext<NoneFeatureConfiguration> ctx) {
         WorldGenLevel level = ctx.level();
+        // WGEN-075: addAppleTrees never ran in a chunk that grew a huge tree (orig OreSpawnWorld.java:42-43).
+        if (UtopiaTreeStructure.bigTreeRootedAt(level, ctx.origin())) return false;
         BlockPos surface = level.getHeightmapPos(Heightmap.Types.WORLD_SURFACE_WG, ctx.origin());
         BlockState below = level.getBlockState(surface.below());
         if (!(below.is(Blocks.GRASS_BLOCK) || below.is(Blocks.DIRT) || below.is(Blocks.FARMLAND))) {

@@ -3,6 +3,7 @@ package danger.orespawn.world.feature;
 import com.mojang.serialization.Codec;
 import danger.orespawn.ModBlocks;
 import danger.orespawn.OreSpawnConfig;
+import danger.orespawn.world.structure.UtopiaTreeStructure;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.WorldGenLevel;
@@ -42,6 +43,10 @@ public class VeggiePatchFeature extends Feature<NoneFeatureConfiguration> {
         RandomSource random = context.random();
         int chunkX = context.origin().getX();
         int chunkZ = context.origin().getZ();
+
+        // WGEN-075: Utopia's addVeggies never ran in a chunk that grew a huge tree (orig OreSpawnWorld.java:42-47);
+        // the overworld's river and swamp patches never meet one.
+        if (UtopiaTreeStructure.bigTreeRootedAt(level, context.origin())) return false;
 
         // orig OreSpawnWorld.java:1883 — 1-in-15 per-chunk gate
         if (random.nextInt(15) != 0) return false;

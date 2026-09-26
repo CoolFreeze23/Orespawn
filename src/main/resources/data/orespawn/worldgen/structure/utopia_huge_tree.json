@@ -1,7 +1,7 @@
 {
   "type": "orespawn:utopia_tree",
   "biomes": "#orespawn:has_structure/utopia_trees",
-  "step": "vegetal_decoration",
+  "step": "top_layer_modification",
   "spawn_overrides": {},
   "terrain_adaptation": "none",
   "roll": "huge"

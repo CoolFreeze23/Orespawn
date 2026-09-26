@@ -2,8 +2,15 @@ package danger.orespawn.gametest;
 
 import danger.orespawn.ModBlocks;
 import danger.orespawn.OreSpawnMod;
+import danger.orespawn.world.feature.ModFeatures;
+import danger.orespawn.world.structure.RoyalTreePiece;
+import danger.orespawn.world.structure.RoyalTreeStructure;
 import danger.orespawn.world.structure.UtopiaTreePiece;
 import danger.orespawn.world.structure.UtopiaTreeStructure;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
@@ -12,15 +19,25 @@ import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.animal.IronGolem;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.RandomizableContainerBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.chunk.ChunkGeneratorStructureState;
+import net.minecraft.world.level.chunk.LevelChunk;
+import net.minecraft.world.level.levelgen.GenerationStep;
+import net.minecraft.world.level.levelgen.LegacyRandomSource;
+import net.minecraft.world.level.levelgen.WorldgenRandom;
+import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
+import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConfiguration;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
 import net.minecraft.world.level.levelgen.structure.Structure;
 import net.minecraft.world.level.levelgen.structure.StructureSet;
+import net.minecraft.world.level.levelgen.structure.StructureStart;
+import net.minecraft.world.level.levelgen.structure.pieces.PiecesContainer;
 import net.minecraft.world.level.levelgen.structure.placement.RandomSpreadStructurePlacement;
 import net.minecraft.world.phys.AABB;
 import net.neoforged.neoforge.gametest.GameTestHolder;
@@ -269,6 +286,133 @@ public class UtopiaTreeTests {
         }
         helper.assertTrue(golem, "no Iron Golem on the branches of forty critter trees (:169-171)");
         helper.assertTrue(chest, "no magic-apple chest in forty critter trees (:161-167, :394-398)");
+        helper.succeed();
+    }
+
+    /** A random seeded the way the structure pass seeds a structure's context ({@code GenerationContext.makeRandom}). */
+    private static WorldgenRandom chunkRandom(long seed, ChunkPos chunk) {
+        WorldgenRandom random = new WorldgenRandom(new LegacyRandomSource(0L));
+        random.setLargeFeatureSeed(seed, chunk.x, chunk.z);
+        return random;
+    }
+
+    /**
+     * WGEN-075 (GitHub issue #4): the huge and royal trees generate in top_layer_modification, after the vegetation step's
+     * trees and plants and after the groves, so they overwrite them where they build (1.7.10 ran OreSpawnWorld after the
+     * chunk's own decoration); the grove stays in the vegetation step.
+     */
+    @GameTest(template = "empty")
+    public static void w075a_big_trees_generate_after_the_vegetation(GameTestHelper helper) {
+        Registry<Structure> structures = helper.getLevel().registryAccess().registryOrThrow(Registries.STRUCTURE);
+        for (String id : new String[] {"orespawn:royal_tree_king", "orespawn:royal_tree_queen", "orespawn:utopia_huge_tree"}) {
+            Structure s = structures.get(ResourceLocation.parse(id));
+            helper.assertTrue(s != null && s.step() == GenerationStep.Decoration.TOP_LAYER_MODIFICATION,
+                    id + " must generate in top_layer_modification, after the vegetation and the groves");
+        }
+        Structure grove = structures.get(ResourceLocation.parse("orespawn:utopia_tree_grove"));
+        helper.assertTrue(grove != null && grove.step() == GenerationStep.Decoration.VEGETAL_DECORATION,
+                "the grove must stay in vegetal_decoration, before the big trees");
+        helper.succeed();
+    }
+
+    /**
+     * WGEN-075: no grove in a chunk where the huge roll grows a tree (orig OreSpawnWorld.java:42-43, addOtherTrees only
+     * when addHugeTree grew nothing), and no other grove changed by the check. Both rolls are made on the random the
+     * structure pass gives each of them (the same seed per chunk), with every column grass at Y 70.
+     */
+    @GameTest(template = "empty")
+    public static void w075b_no_grove_where_a_huge_tree_grows(GameTestHelper helper) {
+        UtopiaTreeStructure.ColumnProbe flat = (x, z, low, high) -> 70;
+        long seed = 20260926L;
+        int hugeChunks = 0;
+        int groveChunks = 0;
+        int refused = 0;
+        for (int cx = -150; cx < 150; cx++) {
+            for (int cz = -20; cz < 20; cz++) {
+                ChunkPos chunk = new ChunkPos(cx, cz);
+                boolean huge = !UtopiaTreeStructure.huge(chunkRandom(seed, chunk), chunk, flat).isEmpty();
+                boolean groveAlone = !UtopiaTreeStructure.grove(chunkRandom(seed, chunk), chunk, flat, () -> false).isEmpty();
+                boolean grove = !UtopiaTreeStructure.grove(chunkRandom(seed, chunk), chunk, flat,
+                        () -> !UtopiaTreeStructure.huge(chunkRandom(seed, chunk), chunk, flat).isEmpty()).isEmpty();
+                if (huge) {
+                    hugeChunks++;
+                    helper.assertTrue(!grove, "a grove grew in " + chunk + ", where the huge roll grew a tree");
+                    if (groveAlone) refused++;
+                } else {
+                    helper.assertTrue(grove == groveAlone, "the check changed the grove in " + chunk + ", which has no huge tree");
+                }
+                if (grove) groveChunks++;
+            }
+        }
+        helper.assertTrue(hugeChunks > 100, "only " + hugeChunks + " huge-tree chunks in 12000 (one in fifty expected)");
+        helper.assertTrue(groveChunks > 200, "only " + groveChunks + " grove chunks in 12000 (about one in thirty expected)");
+        helper.assertTrue(refused > 0, "no huge-tree chunk also rolled a grove, so the refusal went untested");
+        helper.succeed();
+    }
+
+    /**
+     * WGEN-075: the royal_trees chunks answered as the structure pass answers them (the level's own structure state,
+     * over a patch of chunks), and a grove refused wherever a big tree is rooted.
+     */
+    @GameTest(template = "empty")
+    public static void w075c_royal_tree_chunks_match_the_structure_pass(GameTestHelper helper) {
+        ServerLevel level = helper.getLevel();
+        StructureSet set = level.registryAccess().registryOrThrow(Registries.STRUCTURE_SET).get(RoyalTreeStructure.ROYAL_TREES);
+        helper.assertTrue(set != null && set.placement() instanceof RandomSpreadStructurePlacement,
+                "orespawn:royal_trees must be a random_spread structure set");
+        RandomSpreadStructurePlacement placement = (RandomSpreadStructurePlacement) set.placement();
+        ChunkGeneratorStructureState state = level.getChunkSource().getGeneratorState();
+        int picked = 0;
+        for (int cx = -400; cx < 400; cx++) {
+            for (int cz = -400; cz < 400; cz += 3) {
+                ChunkPos chunk = new ChunkPos(cx, cz);
+                boolean ours = RoyalTreeStructure.placementPicks(placement, state.getLevelSeed(), chunk);
+                helper.assertTrue(ours == placement.isStructureChunk(state, cx, cz),
+                        "the royal_trees placement disagrees with the structure pass at " + chunk);
+                if (ours) picked++;
+            }
+        }
+        helper.assertTrue(picked > 0, "no royal_trees chunk in the patch, so the comparison went untested");
+        UtopiaTreeStructure.ColumnProbe flat = (x, z, low, high) -> 70;
+        long seed = 20260926L;
+        for (int cx = 0; cx < 200; cx++) {
+            ChunkPos chunk = new ChunkPos(cx, 7);
+            if (UtopiaTreeStructure.grove(chunkRandom(seed, chunk), chunk, flat, () -> false).isEmpty()) continue;
+            helper.assertTrue(UtopiaTreeStructure.grove(chunkRandom(seed, chunk), chunk, flat, () -> true).isEmpty(),
+                    "a grove grew in " + chunk + ", where a big tree is rooted");
+            helper.succeed();
+            return;
+        }
+        helper.fail("no grove chunk found to refuse");
+    }
+
+    /**
+     * WGEN-075: the magic apple tree and the veggie patch stay out of a chunk where one of addHugeTree's trees is rooted
+     * (orig OreSpawnWorld.java:42-47), read from the chunk's structure starts: a royal tree's start is put in the test
+     * chunk, then taken out again.
+     */
+    @GameTest(template = "empty")
+    public static void w075d_no_apple_tree_or_veggies_under_a_big_tree(GameTestHelper helper) {
+        ServerLevel level = helper.getLevel();
+        BlockPos pos = helper.absolutePos(new BlockPos(1, 1, 1));
+        LevelChunk chunk = level.getChunkAt(pos);
+        Structure king = level.registryAccess().registryOrThrow(Registries.STRUCTURE)
+                .get(ResourceLocation.parse("orespawn:royal_tree_king"));
+        helper.assertTrue(king != null, "orespawn:royal_tree_king is not registered");
+        Map<Structure, StructureStart> saved = new HashMap<>(chunk.getAllStarts());
+        try {
+            helper.assertTrue(!UtopiaTreeStructure.bigTreeRootedAt(level, pos), "a big tree is already rooted in the test chunk");
+            chunk.setStartForStructure(king, new StructureStart(king, chunk.getPos(), 0,
+                    new PiecesContainer(List.of(new RoyalTreePiece(pos, false)))));
+            helper.assertTrue(UtopiaTreeStructure.bigTreeRootedAt(level, pos), "the royal tree's start went unseen");
+            FeaturePlaceContext<NoneFeatureConfiguration> ctx = new FeaturePlaceContext<>(Optional.empty(), level,
+                    level.getChunkSource().getGenerator(), RandomSource.create(1L), pos, NoneFeatureConfiguration.INSTANCE);
+            helper.assertTrue(!ModFeatures.MAGIC_APPLE_TREE.get().place(ctx), "a magic apple tree grew under a big tree");
+            helper.assertTrue(!ModFeatures.VEGGIE_PATCH.get().place(ctx), "a veggie patch grew under a big tree");
+        } finally {
+            chunk.setAllStarts(saved);
+        }
+        helper.assertTrue(!UtopiaTreeStructure.bigTreeRootedAt(level, pos), "the test chunk kept the royal tree's start");
         helper.succeed();
     }
 }

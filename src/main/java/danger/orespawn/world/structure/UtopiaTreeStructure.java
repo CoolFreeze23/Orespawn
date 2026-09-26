@@ -6,13 +6,23 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import danger.orespawn.OreSpawnConfig;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
+import java.util.function.BooleanSupplier;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Registry;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.RandomSource;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.level.ChunkPos;
+import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.levelgen.Heightmap;
+import net.minecraft.world.level.levelgen.LegacyRandomSource;
 import net.minecraft.world.level.levelgen.WorldgenRandom;
 import net.minecraft.world.level.levelgen.structure.Structure;
+import net.minecraft.world.level.levelgen.structure.StructureStart;
 import net.minecraft.world.level.levelgen.structure.StructureType;
 
 /**
@@ -41,6 +51,16 @@ import net.minecraft.world.level.levelgen.structure.StructureType;
  * under air beneath an overhang, which the huge roll's scan (:1844-1846) would have taken. The trees' own shape draws
  * come from a per-piece seed drawn after the type roll: the original drew its shapes from OreSpawnRand and the world's
  * random, never from the chunk's, so only the roll's draw order is the original's.
+ *
+ * <p>WGEN-075, the order the original kept (GitHub issue #4). OreSpawnWorld is a Forge world generator, which 1.7.10
+ * ran after the chunk's own decoration, and in Utopia it rolled the huge tree first and grew nothing else of its own
+ * in a chunk that got one: no apple trees, no grove, no veggies (OreSpawnWorld.java:42-47). The huge trees and the
+ * royal trees therefore generate in {@code top_layer_modification}, after every tree and plant of the vegetation step
+ * and after the groves, and overwrite them where they build, as the original's did (it spared only stone and bedrock,
+ * ItemMagicApple.isBoringBaseBlock); the grove, the magic apple trees and the Utopia veggies stay out of a chunk
+ * where one of those trees is rooted ({@link #bigTreeRootedIn}, {@link #bigTreeRootedAt}). A grove rooted in a
+ * neighbouring chunk can still reach under a big tree's branches, as the reporter remembered from 1.7.10; where the
+ * two meet, the big tree wins (in 1.7.10 whichever chunk populated last won).
  */
 public class UtopiaTreeStructure extends Structure {
 
@@ -74,9 +94,10 @@ public class UtopiaTreeStructure extends Structure {
 
     @Override
     public Optional<GenerationStub> findGenerationPoint(GenerationContext context) {
+        ColumnProbe probe = (x, z, low, high) -> grassBase(context, x, z, low, high);
         List<UtopiaTreePiece> pieces = switch (roll) {
-            case GROVE -> grove(context);
-            case HUGE -> huge(context);
+            case GROVE -> grove(context.random(), context.chunkPos(), probe, () -> bigTreeRootedIn(context, probe));
+            case HUGE -> huge(context.random(), context.chunkPos(), probe);
         };
         if (pieces.isEmpty()) return Optional.empty();
         BlockPos origin = pieces.get(0).origin();
@@ -93,8 +114,8 @@ public class UtopiaTreeStructure extends Structure {
      * choosing Wind or Sky for the whole chunk, up to five placement attempts, the fourth Wind tree or the third Sky
      * tree ending the grove. {@code dir} is assigned 0 once and never changed (:2527), so every Wind tree leans +x.
      */
-    private static List<UtopiaTreePiece> grove(GenerationContext context) {
-        WorldgenRandom random = context.random();
+    public static List<UtopiaTreePiece> grove(RandomSource random, ChunkPos chunk, ColumnProbe probe,
+                                              BooleanSupplier bigTreeHere) {
         List<UtopiaTreePiece> out = new ArrayList<>();
         if (random.nextInt(30) != 0) return out;                                   // :2511
         int nc = 5;                                                                 // :2509
@@ -107,14 +128,16 @@ public class UtopiaTreeStructure extends Structure {
             if (random.nextInt(4) != 0) return out;
             nc = 3;
         }
-        ChunkPos chunk = context.chunkPos();
+        // WGEN-075: addOtherTrees ran only when addHugeTree grew nothing in the chunk (:42-43). Asked after the grove's
+        // own gates, so the check costs one chunk in thirty and no grove elsewhere draws differently.
+        if (bigTreeHere.getAsBoolean()) return out;
         int dir = 0;                                                                // :2527
         int what = random.nextInt(2);                                               // :2528
         int count = 0;
         for (int i = 0; i < nc; i++) {                                              // :2529
             int posX = 3 + chunk.getMinBlockX() + random.nextInt(10);               // :2530
             int posZ = 3 + chunk.getMinBlockZ() + random.nextInt(10);               // :2531
-            int base = grassBase(context, posX, posZ, 50, 100);                     // :2532-2533
+            int base = probe.base(posX, posZ, 50, 100);                             // :2532-2533
             if (base == Integer.MIN_VALUE) continue;
             ++count;                                                                // :2534
             if (what == 0) {
@@ -146,18 +169,16 @@ public class UtopiaTreeStructure extends Structure {
      * 6 - nextInt(2) (:1849) for the square tree, redrawn 6 - nextInt(3) for the circular and round ones (:1869,
      * :1872); three trees in four carry no critters (:1852-1854).
      */
-    private static List<UtopiaTreePiece> huge(GenerationContext context) {
-        WorldgenRandom random = context.random();
+    public static List<UtopiaTreePiece> huge(RandomSource random, ChunkPos chunk, ColumnProbe probe) {
         List<UtopiaTreePiece> out = new ArrayList<>();
         if (random.nextInt(50) != 0) return out;                                   // :1832
         int lessLag = OreSpawnConfig.LESS_LAG.get();
         if (lessLag == 1 && random.nextInt(2) != 0) return out;                    // :1835
         if (lessLag == 2 && random.nextInt(4) != 0) return out;                    // :1838
-        ChunkPos chunk = context.chunkPos();
         for (int i = 0; i < 3; i++) {                                               // :1841
             int posX = 4 + chunk.getMinBlockX() + random.nextInt(8);                // :1842
             int posZ = 4 + chunk.getMinBlockZ() + random.nextInt(8);                // :1843
-            int base = grassBase(context, posX, posZ, 50, 127);                     // :1844-1845
+            int base = probe.base(posX, posZ, 50, 127);                             // :1844-1845
             if (base == Integer.MIN_VALUE) continue;
             BlockPos origin = new BlockPos(posX, base, posZ);
             int treeType = random.nextInt(4);                                       // :1848
@@ -179,6 +200,44 @@ public class UtopiaTreeStructure extends Structure {
             break;                                                                  // :1875 made_one
         }
         return out;
+    }
+
+    /** Answers a roll's column scan: the grass block's Y for a tree base inside the window, or {@link Integer#MIN_VALUE}. */
+    @FunctionalInterface
+    public interface ColumnProbe {
+        int base(int x, int z, int windowLow, int windowHigh);
+    }
+
+    /**
+     * WGEN-075: whether one of addHugeTree's trees is rooted in {@code context}'s chunk: the huge roll makes a tree
+     * here (replayed on a random seeded as the huge structure's own context seeds it, {@code makeRandom}: a
+     * {@code LegacyRandomSource(0)} given {@code setLargeFeatureSeed(seed, x, z)}, so it answers exactly what the huge
+     * structure decides), or the royal_trees set starts a royal tree here.
+     */
+    static boolean bigTreeRootedIn(GenerationContext context, ColumnProbe probe) {
+        ChunkPos chunk = context.chunkPos();
+        WorldgenRandom replay = new WorldgenRandom(new LegacyRandomSource(0L));
+        replay.setLargeFeatureSeed(context.seed(), chunk.x, chunk.z);
+        return !huge(replay, chunk, probe).isEmpty() || RoyalTreeStructure.startsIn(context);
+    }
+
+    /** The structures that are addHugeTree's trees: the Utopia huge tree and the two royal trees. */
+    private static final Set<ResourceLocation> BIG_TREES = Set.of(
+            ResourceLocation.fromNamespaceAndPath("orespawn", "utopia_huge_tree"),
+            ResourceLocation.fromNamespaceAndPath("orespawn", "royal_tree_king"),
+            ResourceLocation.fromNamespaceAndPath("orespawn", "royal_tree_queen"));
+
+    /**
+     * WGEN-075: whether one of addHugeTree's trees is rooted in the chunk holding {@code pos}, read from that chunk's
+     * structure starts (settled before any feature runs). The magic apple tree and the veggie features ask it before
+     * placing, since 1.7.10 grew neither in such a chunk (OreSpawnWorld.java:42-47).
+     */
+    public static boolean bigTreeRootedAt(WorldGenLevel level, BlockPos pos) {
+        Registry<Structure> structures = level.registryAccess().registryOrThrow(Registries.STRUCTURE);
+        for (Map.Entry<Structure, StructureStart> start : level.getChunk(pos).getAllStarts().entrySet()) {
+            if (start.getValue().isValid() && BIG_TREES.contains(structures.getKey(start.getKey()))) return true;
+        }
+        return false;
     }
 
     /**
