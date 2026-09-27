@@ -17,9 +17,12 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.level.ChunkPos;
+import net.minecraft.world.level.LevelHeightAccessor;
 import net.minecraft.world.level.WorldGenLevel;
+import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.LegacyRandomSource;
+import net.minecraft.world.level.levelgen.RandomState;
 import net.minecraft.world.level.levelgen.WorldgenRandom;
 import net.minecraft.world.level.levelgen.structure.Structure;
 import net.minecraft.world.level.levelgen.structure.StructureStart;
@@ -58,9 +61,19 @@ import net.minecraft.world.level.levelgen.structure.StructureType;
  * royal trees therefore generate in {@code top_layer_modification}, after every tree and plant of the vegetation step
  * and after the groves, and overwrite them where they build, as the original's did (it spared only stone and bedrock,
  * ItemMagicApple.isBoringBaseBlock); the grove, the magic apple trees and the Utopia veggies stay out of a chunk
- * where one of those trees is rooted ({@link #bigTreeRootedIn}, {@link #bigTreeRootedAt}). A grove rooted in a
+ * where one of those trees is rooted ({@link #chunkPass}, {@link #bigTreeRootedAt}). A grove rooted in a
  * neighbouring chunk can still reach under a big tree's branches, as the reporter remembered from 1.7.10; where the
  * two meet, the big tree wins (in 1.7.10 whichever chunk populated last won).
+ *
+ * <p>WGEN-077, one random for the whole pass. The original drew the huge roll, the apple trees and the grove from the
+ * populator's one random, in that order, and the apple trees short-circuited the grove: {@code !addAppleTrees(...) &&
+ * !addOtherTrees(...)} (:43) never ran addOtherTrees in a chunk that grew an apple tree. {@link #chunkPass} replays
+ * that pass on the chunk's worldgen random: the huge roll's draws, then (when it grew nothing and no royal tree starts
+ * here) the apple trees' ({@link #appleTrees}), then (when those grew nothing) the grove's. The grove structure, the
+ * magic apple tree feature and the King altars all read their answer from it, so they agree chunk for chunk. Drawing
+ * the rolls one after another on one random also keeps them as independent as the original's: two rolls that each
+ * started on a fresh copy of the chunk's random would share their first draw, and then the huge gate (one in fifty)
+ * would pass in a fifth of the grove chunks, not in a fiftieth.
  */
 public class UtopiaTreeStructure extends Structure {
 
@@ -94,11 +107,15 @@ public class UtopiaTreeStructure extends Structure {
 
     @Override
     public Optional<GenerationStub> findGenerationPoint(GenerationContext context) {
-        ColumnProbe probe = (x, z, low, high) -> grassBase(context, x, z, low, high);
+        ColumnProbe probe = probe(context);
         List<UtopiaTreePiece> pieces = switch (roll) {
-            case GROVE -> grove(context.random(), context.chunkPos(), probe, () -> bigTreeRootedIn(context, probe));
+            case GROVE -> chunkPass(context.seed(), context.chunkPos(), probe,
+                    () -> RoyalTreeStructure.startsIn(context)).grove();
             case HUGE -> huge(context.random(), context.chunkPos(), probe);
         };
+        // WGEN-077: the royal tree was the huge roll's own branch (:1860), so a chunk grew one big tree at most; where
+        // the royal_trees set starts a King or a Queen, the huge roll's tree gives way to it.
+        if (roll == Roll.HUGE && !pieces.isEmpty() && RoyalTreeStructure.startsIn(context)) return Optional.empty();
         if (pieces.isEmpty()) return Optional.empty();
         BlockPos origin = pieces.get(0).origin();
         return Optional.of(new GenerationStub(origin, builder -> pieces.forEach(builder::addPiece)));
@@ -114,8 +131,7 @@ public class UtopiaTreeStructure extends Structure {
      * choosing Wind or Sky for the whole chunk, up to five placement attempts, the fourth Wind tree or the third Sky
      * tree ending the grove. {@code dir} is assigned 0 once and never changed (:2527), so every Wind tree leans +x.
      */
-    public static List<UtopiaTreePiece> grove(RandomSource random, ChunkPos chunk, ColumnProbe probe,
-                                              BooleanSupplier bigTreeHere) {
+    public static List<UtopiaTreePiece> grove(RandomSource random, ChunkPos chunk, ColumnProbe probe) {
         List<UtopiaTreePiece> out = new ArrayList<>();
         if (random.nextInt(30) != 0) return out;                                   // :2511
         int nc = 5;                                                                 // :2509
@@ -128,9 +144,6 @@ public class UtopiaTreeStructure extends Structure {
             if (random.nextInt(4) != 0) return out;
             nc = 3;
         }
-        // WGEN-075: addOtherTrees ran only when addHugeTree grew nothing in the chunk (:42-43). Asked after the grove's
-        // own gates, so the check costs one chunk in thirty and no grove elsewhere draws differently.
-        if (bigTreeHere.getAsBoolean()) return out;
         int dir = 0;                                                                // :2527
         int what = random.nextInt(2);                                               // :2528
         int count = 0;
@@ -209,16 +222,72 @@ public class UtopiaTreeStructure extends Structure {
     }
 
     /**
-     * WGEN-075: whether one of addHugeTree's trees is rooted in {@code context}'s chunk: the huge roll makes a tree
-     * here (replayed on a random seeded as the huge structure's own context seeds it, {@code makeRandom}: a
-     * {@code LegacyRandomSource(0)} given {@code setLargeFeatureSeed(seed, x, z)}, so it answers exactly what the huge
-     * structure decides), or the royal_trees set starts a royal tree here.
+     * orig OreSpawnWorld.java:1792-1828 {@code addAppleTrees}: {@code freq} from the chunk's distance in chunks,
+     * folded to 0-14 (:1793, :1797); the count {@code 2 + nextInt(2 + (15 - freq) / 2)} (:1797) and the leaves draw
+     * (:1798, apple eight times in ten, cherry and peach once each; the port grows apple leaves for all three, see
+     * {@code MagicAppleTreeFeature}) come before the gate {@code nextInt(15 + freq)} (:1799-1801); the LessLag cuts
+     * (:1802-1807); then each tree at {@code 2 + nextInt(12)} into the chunk on the grass the scan finds (:1808-1825).
+     * Returns the grass blocks the trees stand on; empty when the chunk grows none (the original's {@code false}).
      */
-    static boolean bigTreeRootedIn(GenerationContext context, ColumnProbe probe) {
-        ChunkPos chunk = context.chunkPos();
-        WorldgenRandom replay = new WorldgenRandom(new LegacyRandomSource(0L));
-        replay.setLargeFeatureSeed(context.seed(), chunk.x, chunk.z);
-        return !huge(replay, chunk, probe).isEmpty() || RoyalTreeStructure.startsIn(context);
+    public static List<BlockPos> appleTrees(RandomSource random, ChunkPos chunk, ColumnProbe probe) {
+        List<BlockPos> out = new ArrayList<>();
+        int freq = (Math.abs(chunk.x) + Math.abs(chunk.z)) % 15;                   // :1793, :1797
+        int howmany = 2 + random.nextInt(2 + (15 - freq) / 2);                      // :1794, :1797
+        random.nextInt(10);                                                         // :1798 which
+        if (random.nextInt(15 + freq) != 0) return out;                            // :1799-1801
+        int lessLag = OreSpawnConfig.LESS_LAG.get();
+        if (lessLag == 1) howmany /= 2;                                             // :1802-1804
+        if (lessLag == 2 && (howmany /= 4) < 1) return out;                         // :1805-1807
+        for (int i = 0; i < howmany; i++) {                                         // :1808
+            int posX = 2 + chunk.getMinBlockX() + random.nextInt(12);               // :1809
+            int posZ = 2 + chunk.getMinBlockZ() + random.nextInt(12);               // :1810
+            int base = probe.base(posX, posZ, 50, 100);                             // :1811-1812
+            if (base != Integer.MIN_VALUE) out.add(new BlockPos(posX, base, posZ)); // :1813-1824
+        }
+        return out;
+    }
+
+    /**
+     * What the Utopia chunk pass grows (orig OreSpawnWorld.java:42-46): one of addHugeTree's trees (a huge tree or a
+     * royal tree), else apple trees, else a grove, or nothing.
+     */
+    public record ChunkPass(boolean bigTree, List<BlockPos> appleTrees, List<UtopiaTreePiece> grove) {
+        /** Whether the pass grew any tree of its own; the King altar rolled only when it grew none (:43-45). */
+        public boolean grewTrees() {
+            return bigTree || !appleTrees.isEmpty() || !grove.isEmpty();
+        }
+    }
+
+    private static final ChunkPass BIG_TREE = new ChunkPass(true, List.of(), List.of());
+
+    /**
+     * WGEN-075 / WGEN-077: the Utopia chunk pass on one random (orig OreSpawnWorld.java:42-46), seeded as the structure
+     * pass seeds a structure's context ({@code makeRandom}: a {@code LegacyRandomSource(0)} given
+     * {@code setLargeFeatureSeed(seed, x, z)}), so its first draws are exactly the huge structure's. The huge roll
+     * first; when it grows a tree, or {@code royalTreeHere} (the royal_trees set, keeper of the huge roll's royal
+     * branch) answers yes, nothing else of the pass grows. Otherwise the apple trees' draws follow on the same random,
+     * and the grove's only when the apple trees grew none (:43).
+     */
+    public static ChunkPass chunkPass(long seed, ChunkPos chunk, ColumnProbe probe, BooleanSupplier royalTreeHere) {
+        WorldgenRandom random = new WorldgenRandom(new LegacyRandomSource(0L));
+        random.setLargeFeatureSeed(seed, chunk.x, chunk.z);
+        if (!huge(random, chunk, probe).isEmpty() || royalTreeHere.getAsBoolean()) return BIG_TREE;
+        List<BlockPos> apples = appleTrees(random, chunk, probe);
+        if (!apples.isEmpty()) return new ChunkPass(false, List.copyOf(apples), List.of());
+        return new ChunkPass(false, List.of(), grove(random, chunk, probe));
+    }
+
+    /** The column probe for a structure's generation context (see {@link #grassBase}). */
+    public static ColumnProbe probe(GenerationContext context) {
+        return probe(context.chunkGenerator(), context.heightAccessor(), context.randomState());
+    }
+
+    /**
+     * The column probe on a chunk generator's base column: the same answer the structure pass gets, so a feature that
+     * replays the chunk pass agrees with the structures chunk for chunk.
+     */
+    public static ColumnProbe probe(ChunkGenerator generator, LevelHeightAccessor heights, RandomState randomState) {
+        return (x, z, low, high) -> grassBase(generator, heights, randomState, x, z, low, high);
     }
 
     /** The structures that are addHugeTree's trees: the Utopia huge tree and the two royal trees. */
@@ -246,11 +315,10 @@ public class UtopiaTreeStructure extends Structure {
      * the terrain) must be inside the window and must be solid ground, not water. Returns the base Y, or
      * {@link Integer#MIN_VALUE} when the column refuses.
      */
-    private static int grassBase(GenerationContext context, int x, int z, int windowLow, int windowHigh) {
-        int surface = context.chunkGenerator().getBaseHeight(x, z, Heightmap.Types.WORLD_SURFACE_WG,
-                context.heightAccessor(), context.randomState());
-        int floor = context.chunkGenerator().getBaseHeight(x, z, Heightmap.Types.OCEAN_FLOOR_WG,
-                context.heightAccessor(), context.randomState());
+    private static int grassBase(ChunkGenerator generator, LevelHeightAccessor heights, RandomState randomState,
+                                 int x, int z, int windowLow, int windowHigh) {
+        int surface = generator.getBaseHeight(x, z, Heightmap.Types.WORLD_SURFACE_WG, heights, randomState);
+        int floor = generator.getBaseHeight(x, z, Heightmap.Types.OCEAN_FLOOR_WG, heights, randomState);
         if (surface != floor) return Integer.MIN_VALUE;
         if (surface <= windowLow || surface > windowHigh) return Integer.MIN_VALUE;
         return surface - 1;

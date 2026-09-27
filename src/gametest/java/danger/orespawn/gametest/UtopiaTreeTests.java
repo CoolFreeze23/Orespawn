@@ -7,6 +7,15 @@ import danger.orespawn.world.structure.RoyalTreePiece;
 import danger.orespawn.world.structure.RoyalTreeStructure;
 import danger.orespawn.world.structure.UtopiaTreePiece;
 import danger.orespawn.world.structure.UtopiaTreeStructure;
+import danger.orespawn.world.DimensionStyle;
+import danger.orespawn.world.OreSpawnChunkGenerator;
+import net.minecraft.core.Holder;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.biome.FixedBiomeSource;
+import net.minecraft.world.level.levelgen.NoiseGeneratorSettings;
+import net.minecraft.world.level.levelgen.RandomState;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,6 +35,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.RandomizableContainerBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.chunk.ChunkGeneratorStructureState;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.levelgen.GenerationStep;
@@ -316,43 +326,51 @@ public class UtopiaTreeTests {
     }
 
     /**
-     * WGEN-075: no grove in a chunk where the huge roll grows a tree (orig OreSpawnWorld.java:42-43, addOtherTrees only
-     * when addHugeTree grew nothing), and no other grove changed by the check. Both rolls are made on the random the
-     * structure pass gives each of them (the same seed per chunk), with every column grass at Y 70.
+     * WGEN-075 / WGEN-077: the chunk pass over 60,000 chunks with every column grass at Y 70 (orig OreSpawnWorld.java:
+     * 42-46). A chunk grows a huge tree, apple trees or a grove, never two of them; the huge pass keeps the huge
+     * structure's own draws; and the three rolls are as independent as the original's consecutive draws: the grove
+     * count sits where one in thirty of the chunks with neither a huge tree nor apple trees puts it. (Two rolls that
+     * each began on a fresh copy of the chunk's random would share their first draw: the huge gate would then take a
+     * fifth of the grove chunks, not a fiftieth, and the count would fall about a sixth short.)
      */
     @GameTest(template = "empty")
-    public static void w075b_no_grove_where_a_huge_tree_grows(GameTestHelper helper) {
+    public static void w075b_the_chunk_pass_grows_one_kind_of_tree(GameTestHelper helper) {
         UtopiaTreeStructure.ColumnProbe flat = (x, z, low, high) -> 70;
         long seed = 20260926L;
         int hugeChunks = 0;
+        int appleChunks = 0;
         int groveChunks = 0;
-        int refused = 0;
-        for (int cx = -150; cx < 150; cx++) {
-            for (int cz = -20; cz < 20; cz++) {
+        double groveExpected = 0;
+        double appleExpected = 0;
+        for (int cx = -300; cx < 300; cx++) {
+            for (int cz = -50; cz < 50; cz++) {
                 ChunkPos chunk = new ChunkPos(cx, cz);
+                UtopiaTreeStructure.ChunkPass pass = UtopiaTreeStructure.chunkPass(seed, chunk, flat, () -> false);
                 boolean huge = !UtopiaTreeStructure.huge(chunkRandom(seed, chunk), chunk, flat).isEmpty();
-                boolean groveAlone = !UtopiaTreeStructure.grove(chunkRandom(seed, chunk), chunk, flat, () -> false).isEmpty();
-                boolean grove = !UtopiaTreeStructure.grove(chunkRandom(seed, chunk), chunk, flat,
-                        () -> !UtopiaTreeStructure.huge(chunkRandom(seed, chunk), chunk, flat).isEmpty()).isEmpty();
-                if (huge) {
-                    hugeChunks++;
-                    helper.assertTrue(!grove, "a grove grew in " + chunk + ", where the huge roll grew a tree");
-                    if (groveAlone) refused++;
-                } else {
-                    helper.assertTrue(grove == groveAlone, "the check changed the grove in " + chunk + ", which has no huge tree");
+                helper.assertTrue(pass.bigTree() == huge, "the pass and the huge structure disagree at " + chunk);
+                int kinds = (pass.bigTree() ? 1 : 0) + (pass.appleTrees().isEmpty() ? 0 : 1) + (pass.grove().isEmpty() ? 0 : 1);
+                helper.assertTrue(kinds <= 1, "the pass grew " + kinds + " kinds of tree in " + chunk + ": " + pass);
+                if (huge) hugeChunks++;
+                if (!pass.appleTrees().isEmpty()) appleChunks++;
+                if (!pass.grove().isEmpty()) groveChunks++;
+                if (!huge) {
+                    double apple = 1.0 / (15 + (Math.abs(cx) + Math.abs(cz)) % 15);
+                    appleExpected += apple;
+                    groveExpected += (1 - apple) / 30.0;
                 }
-                if (grove) groveChunks++;
             }
         }
-        helper.assertTrue(hugeChunks > 100, "only " + hugeChunks + " huge-tree chunks in 12000 (one in fifty expected)");
-        helper.assertTrue(groveChunks > 200, "only " + groveChunks + " grove chunks in 12000 (about one in thirty expected)");
-        helper.assertTrue(refused > 0, "no huge-tree chunk also rolled a grove, so the refusal went untested");
+        helper.assertTrue(Math.abs(hugeChunks - 1188) < 170, hugeChunks + " huge-tree chunks in 60,000 (about 1188 expected)");
+        helper.assertTrue(Math.abs(appleChunks - appleExpected) < 5 * Math.sqrt(appleExpected),
+                appleChunks + " apple-tree chunks in 60,000 (" + Math.round(appleExpected) + " expected)");
+        helper.assertTrue(Math.abs(groveChunks - groveExpected) < 5 * Math.sqrt(groveExpected),
+                groveChunks + " grove chunks in 60,000 (" + Math.round(groveExpected) + " expected)");
         helper.succeed();
     }
 
     /**
      * WGEN-075: the royal_trees chunks answered as the structure pass answers them (the level's own structure state,
-     * over a patch of chunks), and a grove refused wherever a big tree is rooted.
+     * over a patch of chunks), and a chunk where a royal tree starts grows nothing else of the pass.
      */
     @GameTest(template = "empty")
     public static void w075c_royal_tree_chunks_match_the_structure_pass(GameTestHelper helper) {
@@ -375,15 +393,20 @@ public class UtopiaTreeTests {
         helper.assertTrue(picked > 0, "no royal_trees chunk in the patch, so the comparison went untested");
         UtopiaTreeStructure.ColumnProbe flat = (x, z, low, high) -> 70;
         long seed = 20260926L;
-        for (int cx = 0; cx < 200; cx++) {
+        boolean apples = false;
+        boolean grove = false;
+        for (int cx = 0; cx < 400 && !(apples && grove); cx++) {
             ChunkPos chunk = new ChunkPos(cx, 7);
-            if (UtopiaTreeStructure.grove(chunkRandom(seed, chunk), chunk, flat, () -> false).isEmpty()) continue;
-            helper.assertTrue(UtopiaTreeStructure.grove(chunkRandom(seed, chunk), chunk, flat, () -> true).isEmpty(),
-                    "a grove grew in " + chunk + ", where a big tree is rooted");
-            helper.succeed();
-            return;
+            UtopiaTreeStructure.ChunkPass alone = UtopiaTreeStructure.chunkPass(seed, chunk, flat, () -> false);
+            if (alone.appleTrees().isEmpty() && alone.grove().isEmpty()) continue;
+            apples |= !alone.appleTrees().isEmpty();
+            grove |= !alone.grove().isEmpty();
+            UtopiaTreeStructure.ChunkPass royal = UtopiaTreeStructure.chunkPass(seed, chunk, flat, () -> true);
+            helper.assertTrue(royal.bigTree() && royal.appleTrees().isEmpty() && royal.grove().isEmpty(),
+                    "the pass grew " + royal + " in " + chunk + ", where a royal tree starts");
         }
-        helper.fail("no grove chunk found to refuse");
+        helper.assertTrue(apples && grove, "no apple-tree chunk or no grove chunk found to refuse");
+        helper.succeed();
     }
 
     /**
@@ -414,5 +437,123 @@ public class UtopiaTreeTests {
         }
         helper.assertTrue(!UtopiaTreeStructure.bigTreeRootedAt(level, pos), "the test chunk kept the royal tree's start");
         helper.succeed();
+    }
+
+    /**
+     * WGEN-077: the apple trees' roll (orig OreSpawnWorld.java:1792-1828): a chunk that grows them grows
+     * {@code 2 + nextInt(2 + (15 - freq) / 2)} of them, each {@code 2 + nextInt(12)} into the chunk on the grass the
+     * scan finds, and a column the scan refuses grows none; the gate's odds follow {@code freq}, one in 15 where it is
+     * 0 and one in 29 where it is 14.
+     */
+    @GameTest(template = "empty")
+    public static void w077a_the_apple_trees_roll(GameTestHelper helper) {
+        UtopiaTreeStructure.ColumnProbe flat = (x, z, low, high) -> 70;
+        UtopiaTreeStructure.ColumnProbe none = (x, z, low, high) -> Integer.MIN_VALUE;
+        long seed = 20260927L;
+        int[] chunks = new int[15];
+        int[] grew = new int[15];
+        for (int cx = 0; cx < 400; cx++) {
+            for (int cz = 0; cz < 150; cz++) {
+                ChunkPos chunk = new ChunkPos(cx, cz);
+                int freq = (cx + cz) % 15;
+                List<BlockPos> trees = UtopiaTreeStructure.appleTrees(chunkRandom(seed, chunk), chunk, flat);
+                chunks[freq]++;
+                if (trees.isEmpty()) continue;
+                grew[freq]++;
+                int most = 3 + (15 - freq) / 2;
+                helper.assertTrue(trees.size() >= 2 && trees.size() <= most, trees.size() + " apple trees in " + chunk
+                        + " (2 to " + most + " expected at freq " + freq + ")");
+                for (BlockPos tree : trees) {
+                    int dx = tree.getX() - chunk.getMinBlockX();
+                    int dz = tree.getZ() - chunk.getMinBlockZ();
+                    helper.assertTrue(dx >= 2 && dx <= 13 && dz >= 2 && dz <= 13 && tree.getY() == 70,
+                            "an apple tree at " + tree + " is outside 2..13 of " + chunk + " or off the grass");
+                }
+                helper.assertTrue(UtopiaTreeStructure.appleTrees(chunkRandom(seed, chunk), chunk, none).isEmpty(),
+                        "apple trees grew in " + chunk + " where no column has grass in the window");
+            }
+        }
+        double near = (double) grew[0] / chunks[0];
+        double far = (double) grew[14] / chunks[14];
+        helper.assertTrue(Math.abs(near - 1 / 15.0) < 0.012, "freq 0 grew apple trees in " + near + " of its chunks (1/15 expected)");
+        helper.assertTrue(Math.abs(far - 1 / 29.0) < 0.008, "freq 14 grew apple trees in " + far + " of its chunks (1/29 expected)");
+        helper.succeed();
+    }
+
+    /**
+     * WGEN-075 / WGEN-077 on the Utopia dimension's generator: the grove structure grows exactly the chunk pass's
+     * grove; the King altar refuses every chunk where the pass grows a tree (orig OreSpawnWorld.java:42-45) and still
+     * builds elsewhere; and the huge roll's tree gives way where the royal_trees set starts a King or a Queen.
+     */
+    @GameTest(template = "empty", timeoutTicks = 400)
+    public static void w077b_the_utopia_structures_read_one_chunk_pass(GameTestHelper helper) {
+        MinecraftServer server = helper.getLevel().getServer();
+        Holder<Biome> plains = server.registryAccess().registryOrThrow(Registries.BIOME)
+                .getHolderOrThrow(ResourceKey.create(Registries.BIOME, ResourceLocation.parse("orespawn:utopia_plains")));
+        ResourceKey<NoiseGeneratorSettings> inland = ResourceKey.create(Registries.NOISE_SETTINGS,
+                ResourceLocation.parse("orespawn:inland"));
+        ChunkGenerator generator = new OreSpawnChunkGenerator(new FixedBiomeSource(plains),
+                server.registryAccess().registryOrThrow(Registries.NOISE_SETTINGS).getHolderOrThrow(inland), DimensionStyle.UTOPIA);
+        long seed = 8780444890188216456L;
+        RandomState randomState = RandomState.create(server.registryAccess().asGetterLookup(), inland, seed);
+        Registry<Structure> structures = server.registryAccess().registryOrThrow(Registries.STRUCTURE);
+        Structure grove = structures.get(ResourceLocation.parse("orespawn:utopia_tree_grove"));
+        Structure huge = structures.get(ResourceLocation.parse("orespawn:utopia_huge_tree"));
+        Structure altar = structures.get(ResourceLocation.parse("orespawn:king_altar"));
+        helper.assertTrue(grove != null && huge != null && altar != null, "a Utopia structure is not registered");
+        int groves = 0;
+        int refused = 0;
+        int built = 0;
+        for (int cx = 0; cx < 40; cx++) {
+            for (int cz = 0; cz < 40; cz++) {
+                Structure.GenerationContext ctx = utopiaContext(helper, generator, randomState, seed, new ChunkPos(cx + 3000, cz - 1700));
+                UtopiaTreeStructure.ChunkPass pass = UtopiaTreeStructure.chunkPass(ctx.seed(), ctx.chunkPos(),
+                        UtopiaTreeStructure.probe(ctx), () -> RoyalTreeStructure.startsIn(ctx));
+                Optional<Structure.GenerationStub> g = grove.findValidGenerationPoint(ctx);
+                helper.assertTrue(g.isPresent() == !pass.grove().isEmpty(), "the grove structure and the pass disagree at "
+                        + ctx.chunkPos());
+                if (g.isPresent()) {
+                    groves++;
+                    helper.assertTrue(g.get().position().equals(pass.grove().get(0).origin()),
+                            "the grove structure's first tree is not the pass's at " + ctx.chunkPos());
+                }
+                boolean altarHere = altar.findValidGenerationPoint(ctx).isPresent();
+                if (pass.grewTrees()) {
+                    helper.assertTrue(!altarHere, "a King altar stands in " + ctx.chunkPos() + ", where the pass grew " + pass);
+                    refused++;
+                } else if (altarHere) {
+                    built++;
+                }
+            }
+        }
+        helper.assertTrue(groves > 0 && refused > 0 && built > 0, "the patch left a case untested: " + groves + " groves, "
+                + refused + " refused altars, " + built + " altars");
+        StructureSet royalSet = server.registryAccess().registryOrThrow(Registries.STRUCTURE_SET).get(RoyalTreeStructure.ROYAL_TREES);
+        RandomSpreadStructurePlacement placement = (RandomSpreadStructurePlacement) royalSet.placement();
+        int gaveWay = 0;
+        for (int i = -40; i < 40 && gaveWay == 0; i++) {
+            for (int j = -40; j < 40 && gaveWay == 0; j++) {
+                ChunkPos chunk = placement.getPotentialStructureChunk(seed, i * placement.spacing(), j * placement.spacing());
+                Structure.GenerationContext ctx = utopiaContext(helper, generator, randomState, seed, chunk);
+                if (!RoyalTreeStructure.startsIn(ctx)) continue;
+                if (UtopiaTreeStructure.huge(chunkRandom(seed, chunk), chunk, UtopiaTreeStructure.probe(ctx)).isEmpty()) continue;
+                helper.assertTrue(huge.findValidGenerationPoint(ctx).isEmpty(), "a huge tree grew in " + chunk + " beside a royal tree");
+                gaveWay++;
+            }
+        }
+        helper.assertTrue(gaveWay > 0, "no royal-tree chunk in 6,400 cells also rolled a huge tree, so the refusal went untested");
+        helper.succeed();
+    }
+
+    /**
+     * A structure context on a detached Utopia generator (data/orespawn/dimension/utopia.json: the fixed Utopia plains
+     * biome, the inland noise settings, the Utopia style), as the structure pass builds one for {@code chunk}. The test
+     * level serves as the height accessor, which only clamps {@code getBaseHeight} to the generator's own range.
+     */
+    private static Structure.GenerationContext utopiaContext(GameTestHelper helper, ChunkGenerator generator,
+                                                             RandomState randomState, long seed, ChunkPos chunk) {
+        ServerLevel level = helper.getLevel();
+        return new Structure.GenerationContext(level.getServer().registryAccess(), generator, generator.getBiomeSource(),
+                randomState, level.getStructureManager(), seed, chunk, level, biome -> true);
     }
 }

@@ -2,13 +2,17 @@ package danger.orespawn.world.feature;
 
 import com.mojang.serialization.Codec;
 import danger.orespawn.ModBlocks;
+import danger.orespawn.ModDimensionKeys;
 import danger.orespawn.world.structure.UtopiaTreeStructure;
+import java.util.List;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LeavesBlock;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.levelgen.Heightmap;
+import net.minecraft.world.level.levelgen.LegacyRandomSource;
+import net.minecraft.world.level.levelgen.WorldgenRandom;
 import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
 import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConfiguration;
@@ -34,16 +38,17 @@ import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConf
  *       Only fills air positions.</li>
  * </ol>
  *
- * <p><b>Spawn frequency (verified OreSpawnWorld.java:1792-1828,
- * addAppleTrees):</b> {@code random.nextInt(15 + freq) != 0} gating
- * (where {@code freq = (|cx/16| + |cz/16|) % 15}); {@code which =
- * nextInt(10)} &rarr; {@code which < 8} picks Apple Leaves
- * (80% of triggers); attempts {@code 2 + nextInt(2 + (15-freq)/2)}
- * placements per chunk &rarr; net <b>~1 apple grove per 15 chunks
- * near spawn, scaling to ~1 per 30 chunks far from spawn</b>. We
- * approximate this with {@code spacing=6, separation=2}, which yields
- * one grove per ~36 chunks &mdash; the closest stable lattice that
- * doesn't oversaturate the overworld.</p>
+ * <p><b>Where the trees go (WGEN-077; OreSpawnWorld.java:1792-1828,
+ * addAppleTrees):</b> the feature runs once per chunk and makes the
+ * original's roll itself ({@link UtopiaTreeStructure#appleTrees}): the
+ * gate {@code nextInt(15 + freq)} with {@code freq = (|cx| + |cz|) % 15},
+ * {@code 2 + nextInt(2 + (15 - freq) / 2)} trees at {@code 2 + nextInt(12)}
+ * into the chunk, each on the grass the scan finds. In Utopia that roll is
+ * the second of the chunk pass ({@link UtopiaTreeStructure#chunkPass}):
+ * after the huge roll, on the same random, and only when the huge roll grew
+ * nothing (:42-43); the grove then stays out of a chunk that grew an apple
+ * tree, as {@code !addAppleTrees(...) && !addOtherTrees(...)} (:43) kept
+ * it. The Village runs addAppleTrees on its own (:119).</p>
  *
  * <p><b>Stand-in note:</b> the legacy variant tracking ({@code which
  * == 8} cherry, {@code which == 9} peach) is not modeled here; the
@@ -61,15 +66,34 @@ public class MagicAppleTreeFeature extends Feature<NoneFeatureConfiguration> {
         WorldGenLevel level = ctx.level();
         // WGEN-075: addAppleTrees never ran in a chunk that grew a huge tree (orig OreSpawnWorld.java:42-43).
         if (UtopiaTreeStructure.bigTreeRootedAt(level, ctx.origin())) return false;
-        BlockPos surface = level.getHeightmapPos(Heightmap.Types.WORLD_SURFACE_WG, ctx.origin());
-        BlockState below = level.getBlockState(surface.below());
-        if (!(below.is(Blocks.GRASS_BLOCK) || below.is(Blocks.DIRT) || below.is(Blocks.FARMLAND))) {
+        ChunkPos chunk = new ChunkPos(ctx.origin());
+        UtopiaTreeStructure.ColumnProbe probe = UtopiaTreeStructure.probe(ctx.chunkGenerator(), level,
+                level.getLevel().getChunkSource().randomState());
+        List<BlockPos> trees;
+        if (level.getLevel().dimension() == ModDimensionKeys.UTOPIA) {
+            trees = UtopiaTreeStructure.chunkPass(level.getSeed(), chunk, probe, () -> false).appleTrees();
+        } else {
+            WorldgenRandom random = new WorldgenRandom(new LegacyRandomSource(0L));
+            random.setLargeFeatureSeed(level.getSeed(), chunk.x, chunk.z);
+            trees = UtopiaTreeStructure.appleTrees(random, chunk, probe);
+        }
+        boolean grew = false;
+        for (BlockPos base : trees) {
+            grew |= growTree(level, base);
+        }
+        return grew;
+    }
+
+    /** ItemAppleSeed.makeTree (orig :46-123) on the grass block at {@code base}; false when the ground or trunk refuses. */
+    private static boolean growTree(WorldGenLevel level, BlockPos base) {
+        BlockState ground = level.getBlockState(base);
+        if (!(ground.is(Blocks.GRASS_BLOCK) || ground.is(Blocks.DIRT) || ground.is(Blocks.FARMLAND))) {
             return false;
         }
 
-        int x = surface.getX();
-        int y = surface.getY() - 1; // Legacy uses (posY - 1) as the trunk base.
-        int z = surface.getZ();
+        int x = base.getX();
+        int y = base.getY(); // Legacy uses (posY - 1), the grass block, as the trunk base.
+        int z = base.getZ();
 
         // Legacy Apple Leaves dimensions.
         final int h1 = 12, h2 = 6, h3 = 9, h4 = 6, h5 = 14, w1 = 5, w2 = 3;

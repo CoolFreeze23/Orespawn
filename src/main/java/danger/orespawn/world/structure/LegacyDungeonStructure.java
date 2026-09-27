@@ -104,6 +104,14 @@ public class LegacyDungeonStructure extends Structure {
                 && OVERWORLD_DUNGEON_TYPES.contains(dungeonType)) {
             return Optional.empty();
         }
+        // WGEN-077: the King and Queen altars rolled only in a Utopia chunk whose own pass grew no tree: no huge or
+        // royal tree, no apple trees, no grove (orig OreSpawnWorld.java:42-45).
+        if ((dungeonType == LegacyDungeonPiece.DungeonType.KING_ALTAR
+                || dungeonType == LegacyDungeonPiece.DungeonType.QUEEN_ALTAR)
+                && UtopiaTreeStructure.chunkPass(context.seed(), context.chunkPos(), UtopiaTreeStructure.probe(context),
+                        () -> RoyalTreeStructure.startsIn(context)).grewTrees()) {
+            return Optional.empty();
+        }
         BlockPos origin = switch (placementOverride.orElse(dungeonType.placement)) {
             case SURFACE_CENTER -> surfaceCenterOrigin(context);
             case LOWEST_SURFACE_36 -> lowestSurfaceOrigin(context);
