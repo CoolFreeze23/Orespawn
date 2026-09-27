@@ -99,14 +99,17 @@ public class LegacyDungeonPiece extends StructurePiece {
      * </ul>
      */
     public enum DungeonType {
-        SHADOW(20, 12, 20),
-        GREENHOUSE(24, 2, 14),
+        // WGEN-079: addShadowDungeon's lowest-grass scan (orig OreSpawnWorld.java:2143-2169), built at lowestY.
+        SHADOW(-20, 20, 12, 20, -20, 20, PlacementMode.LOWEST_GRASS_36),
+        // WGEN-079: addD4Greenhouse's Islands grass anchor (orig OreSpawnWorld.java:2230-2251), as ROBOT_LAB's.
+        GREENHOUSE(-24, 24, 2, 14, -24, 24, PlacementMode.ISLANDS_GRASS),
         // Phase D6a reconciliation: anchor switched from the chunk-centre
         // heightmap probe to the faithful Islands D4 grass anchor
         // (addD4RobotLab: LessLag gate + nextInt(8) jitter + grass scan
         // Y20→5, OSW:2368-2389; audit spec d6_extraction/robot_lab_audit_spec.md).
         ROBOT_LAB(-48, 48, 2, 50, -48, 48, PlacementMode.ISLANDS_GRASS),
-        WHITE_HOUSE(48, 2, 25),
+        // WGEN-079: addD4WhiteHouse's Islands grass anchor (orig OreSpawnWorld.java:2299-2320).
+        WHITE_HOUSE(-48, 48, 2, 25, -48, 48, PlacementMode.ISLANDS_GRASS),
         // Audit Part 3 — buried 5x5 lapis surface antenna + 17-block descending
         // shaft + 4 cardinal "Part" rooms (W=15 wide max). Down -25, up +6.
         // D6b batch-4 F8 fix (dsb_sweep_spec.md): the south Part room writes
@@ -116,10 +119,12 @@ public class LegacyDungeonPiece extends StructurePiece {
         // alignments. Widened to the true footprint (X -19..+17, Z -21..+15)
         // +1 margin. Documented delta: the piece RandomSource seeds from the
         // bounding box, so worldgen layouts reseed for existing seeds.
-        ALIEN_WTF(-20, 20, 25, 6, -22, 20, PlacementMode.SURFACE_CENTER),
+        // WGEN-079: addAlienWTF's lowest-grass scan (orig OreSpawnWorld.java:2059-2085), built at lowestY.
+        ALIEN_WTF(-20, 20, 25, 6, -22, 20, PlacementMode.LOWEST_GRASS_36),
         // Audit Part 3 — hollow rad=10 sphere with surface decoration shell
         // (legacy line 4677). Down -10, up +5 (hollowed sky cap).
-        LEONOPTERYX_NEST(12, 10, 5),
+        // WGEN-079: addLeonNest's highest-grass scan (orig OreSpawnWorld.java:2115-2141).
+        LEONOPTERYX_NEST(-12, 12, 10, 5, -12, 12, PlacementMode.HIGHEST_GRASS_36),
         // Audit Part 3 — 51x51x48 grand altar (legacy line 4353/5697). Origin
         // is the SW corner of the pad, so positive X/Z reach is +56 with the
         // 5-block clear margin; we centre by passing the centre as origin
@@ -130,8 +135,9 @@ public class LegacyDungeonPiece extends StructurePiece {
         // GD:4364, writes to origin+58) in BOTH worldgen and buildNow.
         // Widened to down 10 / up 59 (+1 margin). Documented delta: piece
         // RNG seeds from the box, so layouts reseed for existing seeds.
-        KING_ALTAR(32, 10, 59),
-        QUEEN_ALTAR(32, 10, 59),
+        // WGEN-079: addKingAltar's eight-attempt grass scan (orig OreSpawnWorld.java:2549-2571).
+        KING_ALTAR(-32, 32, 10, 59, -32, 32, PlacementMode.UTOPIA_ALTAR),
+        QUEEN_ALTAR(-32, 32, 10, 59, -32, 32, PlacementMode.UTOPIA_ALTAR),
         // Audit Part 4 + Phase D5 reconciliation — King's / Queen's Challenge
         // Tower (legacy GenericDungeon.makeEnormousCastle line 191 /
         // makeEnormousCastleQ line 6393). 28x28 base + up to 6 stacked floors
@@ -179,7 +185,8 @@ public class LegacyDungeonPiece extends StructurePiece {
         // 1095-1363. Surface hut + 22-deep shaft into the 20×30 boss room
         // with altar/ziggurat; X −0..+34, Y −22..+5, Z −15..+14 (spec
         // d6_extraction/kyuubi_dungeon_spec.md, suggested entry adopted).
-        // Mining rotation i==1 slot (1/665, set 26/13 like BasiliskMaze).
+        // Mining rotation i==1 slot (1/665 before the cooldown, one chunk in
+        // 944 with it: set 31/8 like BasiliskMaze, WGEN-079).
         KYUUBI_DUNGEON(-1, 35, 23, 6, -16, 15, PlacementMode.LOWEST_SURFACE_36),
         // Phase D6a (WGEN-042, Ender Dragon Hospital) — orig GenericDungeon
         // .java:2815-2991. 10×10 iron-bar cage with 4 End Crystals on bedrock
@@ -399,11 +406,11 @@ public class LegacyDungeonPiece extends StructurePiece {
              * (:2097, not any-solid; grass identity collapses into the same
              * noise-surface probe, the documented SWAMP_GRASS_SURFACE-style
              * approximation) and the anchor is {@code lowestY} with NO −2
-             * sink (:2108 vs addBasiliskMaze's :2594). Future users with the
-             * identical scan: addAlienWTF (OSW:2059-2085 — ALIEN_WTF still
-             * anchors SURFACE_CENTER, a pre-D5 reconciliation candidate; not
-             * rewired this slice) and addBeeHive (OSW:2031-2057, at
-             * lowestY + 3).
+             * sink (:2108 vs addBasiliskMaze's :2594). The same scan serves
+             * addShadowDungeon (OSW:2143-2169) and addAlienWTF (OSW:2059-2085),
+             * both built at lowestY, and addBeeHive (OSW:2031-2057, at
+             * lowestY + 3) through {@code FeatureStructure}'s
+             * {@code lowest_grass_36} anchor (WGEN-079).
              */
             LOWEST_GRASS_36,
             /**
@@ -431,7 +438,31 @@ public class LegacyDungeonPiece extends StructurePiece {
              * Plains never exposing snow blocks) is unverified
              * against 1.7.10 vanilla itself — vanilla sources are not in the reference tree.
              */
-            SNOW_SURFACE_MINUS2
+            SNOW_SURFACE_MINUS2,
+            /**
+             * addLeonNest (WGEN-079; orig OreSpawnWorld.java:2115-2141): the
+             * 6×6 column grid of {@link #LOWEST_GRASS_36} (offsets
+             * {0,3,6,9,12,15}), each column's grass under air searched from
+             * Y128 down to Y81 (:2124-2125; the noise surface stands in for
+             * the grass, as in the other grass scans); a column replaces the
+             * kept one only when its grass is above the kept anchor
+             * ({@code posY <= highestY} skips, :2126, with highestY one above
+             * the kept grass), first seen winning ties; the anchor is the air
+             * above the grass ({@code highestY = posY + 1}, :2127), refused
+             * when no column qualified (:2135).
+             */
+            HIGHEST_GRASS_36,
+            /**
+             * addKingAltar (WGEN-079; orig OreSpawnWorld.java:2549-2571): up
+             * to eight attempts at chunk + 3 + nextInt(10) (:2554-2555), each
+             * searching Y100 down to Y51 for air over grass (:2556-2557; the
+             * noise surface, dry, stands in for the grass), the altar built
+             * on the grass ({@code posY - 1}, :2562/:2564). The original's
+             * {@code quickReallyBigSpaceCheck} (:2558, a scan of the real
+             * blocks around the site, which ends the roll when it fails)
+             * cannot be answered before the chunk exists and is left out.
+             */
+            UTOPIA_ALTAR
         }
 
         public final int minXOff;

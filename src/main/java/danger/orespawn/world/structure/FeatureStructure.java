@@ -43,6 +43,13 @@ import java.util.Optional;
  *       a few blocks above grade) use this to hand the feature a friendly
  *       starting Y so {@code /locate}'s reported coordinate matches the
  *       structure's actual centre.</li>
+ *   <li>{@code anchor} — where in the chunk the feature is handed its site (WGEN-079): {@code chunk_centre} (the
+ *       default), {@code lowest_grass_36} (the lowest grass of a 6×6 column grid above Y40, addBeeHive's scan,
+ *       orig OreSpawnWorld.java:2031-2057) or {@code grass_attempts_5} (five columns at chunk + nextInt(16), each
+ *       searched from Y128 down to grass under air above Y40, addANest's scan, :999-1021). A scan that finds
+ *       nothing refuses the chunk.</li>
+ *   <li>{@code overworld_dungeon} — honours {@code DisableOverworldDungeons}, which in 1.7.10 gated the whole
+ *       overworld structure pass, addANest included (orig OreSpawnWorld.java:284).</li>
  *   <li>{@code horizontal_extent} / {@code down_extent} / {@code up_extent} —
  *       half-widths of the bounding-box "permit" handed to
  *       {@link FeatureStructurePiece}. Defaults are {@code 16 / 16 / 80},
@@ -67,7 +74,9 @@ public class FeatureStructure extends Structure {
             com.mojang.serialization.Codec.INT.optionalFieldOf("y_offset", 0).forGetter(s -> s.yOffset),
             com.mojang.serialization.Codec.INT.optionalFieldOf("horizontal_extent", 16).forGetter(s -> s.horizontalExtent),
             com.mojang.serialization.Codec.INT.optionalFieldOf("down_extent", 16).forGetter(s -> s.downExtent),
-            com.mojang.serialization.Codec.INT.optionalFieldOf("up_extent", 80).forGetter(s -> s.upExtent)
+            com.mojang.serialization.Codec.INT.optionalFieldOf("up_extent", 80).forGetter(s -> s.upExtent),
+            com.mojang.serialization.Codec.STRING.optionalFieldOf("anchor", "chunk_centre").forGetter(s -> s.anchor),
+            com.mojang.serialization.Codec.BOOL.optionalFieldOf("overworld_dungeon", false).forGetter(s -> s.overworldDungeon)
     ).apply(inst, FeatureStructure::new));
 
     private final Holder<ConfiguredFeature<?, ?>> feature;
@@ -75,32 +84,76 @@ public class FeatureStructure extends Structure {
     private final int horizontalExtent;
     private final int downExtent;
     private final int upExtent;
+    private final String anchor;
+    private final boolean overworldDungeon;
 
     public FeatureStructure(StructureSettings settings, Holder<ConfiguredFeature<?, ?>> feature,
-                            int yOffset, int horizontalExtent, int downExtent, int upExtent) {
+                            int yOffset, int horizontalExtent, int downExtent, int upExtent,
+                            String anchor, boolean overworldDungeon) {
         super(settings);
         this.feature = feature;
         this.yOffset = yOffset;
         this.horizontalExtent = horizontalExtent;
         this.downExtent = downExtent;
         this.upExtent = upExtent;
+        this.anchor = anchor;
+        this.overworldDungeon = overworldDungeon;
     }
 
     @Override
     public Optional<GenerationStub> findGenerationPoint(GenerationContext context) {
-        ChunkPos chunk = context.chunkPos();
-        int x = chunk.getMinBlockX() + 8;
-        int z = chunk.getMinBlockZ() + 8;
-        int y = context.chunkGenerator().getBaseHeight(
-                x, z,
-                Heightmap.Types.WORLD_SURFACE_WG,
-                context.heightAccessor(),
-                context.randomState()
-        ) + yOffset;
-        BlockPos origin = new BlockPos(x, y, z);
+        if (overworldDungeon && danger.orespawn.OreSpawnConfig.DISABLE_OVERWORLD_DUNGEONS.get()) {
+            return Optional.empty();
+        }
+        BlockPos site = switch (anchor) {
+            case "lowest_grass_36" -> LegacyDungeonStructure.lowestGrassOrigin(context);
+            case "grass_attempts_5" -> grassAttempts(context);
+            default -> chunkCentre(context);
+        };
+        if (site == null) return Optional.empty();
+        BlockPos origin = site.above(yOffset);
         return Optional.of(new Structure.GenerationStub(origin, builder ->
                 builder.addPiece(new FeatureStructurePiece(
                         origin, feature, horizontalExtent, downExtent, upExtent))));
+    }
+
+    /** The site the feature is handed: {@code chunk_centre}, {@code lowest_grass_36} or {@code grass_attempts_5}. */
+    public String anchor() {
+        return anchor;
+    }
+
+    /** Whether {@code DisableOverworldDungeons} turns this structure off. */
+    public boolean overworldDungeon() {
+        return overworldDungeon;
+    }
+
+    private static BlockPos chunkCentre(GenerationContext context) {
+        ChunkPos chunk = context.chunkPos();
+        int x = chunk.getMinBlockX() + 8;
+        int z = chunk.getMinBlockZ() + 8;
+        int y = context.chunkGenerator().getBaseHeight(x, z, Heightmap.Types.WORLD_SURFACE_WG,
+                context.heightAccessor(), context.randomState());
+        return new BlockPos(x, y, z);
+    }
+
+    /**
+     * addANest's scan (orig OreSpawnWorld.java:999-1021): five columns at chunk + nextInt(16) (:1006-1007), each
+     * searched from Y128 down through air to the first block, which must be grass above Y40 (:1008-1009; the dry
+     * noise surface stands in for the grass); the site is the air above it, as the original handed its builders.
+     */
+    private static BlockPos grassAttempts(GenerationContext context) {
+        ChunkPos chunk = context.chunkPos();
+        for (int i = 0; i < 5; i++) {
+            int x = chunk.getMinBlockX() + context.random().nextInt(16);
+            int z = chunk.getMinBlockZ() + context.random().nextInt(16);
+            int surface = context.chunkGenerator().getBaseHeight(x, z, Heightmap.Types.WORLD_SURFACE_WG,
+                    context.heightAccessor(), context.randomState());
+            int floor = context.chunkGenerator().getBaseHeight(x, z, Heightmap.Types.OCEAN_FLOOR_WG,
+                    context.heightAccessor(), context.randomState());
+            if (surface != floor || surface <= 40 || surface > 128) continue;
+            return new BlockPos(x, surface, z);
+        }
+        return null;
     }
 
     @Override

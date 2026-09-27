@@ -9,7 +9,6 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.ChunkPos;
-import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.structure.Structure;
 import net.minecraft.world.level.levelgen.structure.StructureSet;
 import net.minecraft.world.level.levelgen.structure.StructureType;
@@ -27,9 +26,8 @@ import java.util.Optional;
  * <p>This class instantiates a single {@link RoyalTreePiece} into the
  * structure pieces builder. The piece carries the massive blueprint
  * bounding box and runs the chunk-by-chunk write algorithm in its
- * {@code postProcess}. The structure itself is otherwise minimal —
- * heightmap-anchored XZ at chunk centre, with a Y-bound rejection so we
- * never spawn a 60-tall tree near the world ceiling.</p>
+ * {@code postProcess}. The structure itself only picks the site, the huge
+ * tree roll's (see {@link #findGenerationPoint}).</p>
  *
  * <p>The single {@code queen_variant} codec field switches the entire
  * palette dispatch (gold/emerald/diamond → obsidian/ruby/amethyst, plus
@@ -51,26 +49,28 @@ public class RoyalTreeStructure extends Structure {
         this.queenVariant = queenVariant;
     }
 
+    /**
+     * WGEN-079: the royal tree was addHugeTree's 1% branch (orig OreSpawnWorld.java:1830-1880), so it takes the huge
+     * roll's site: up to three attempts at chunk + 4 + nextInt(8) (:1842-1843), each taking the grass under air inside
+     * Y51-127 (:1844-1846; the dry noise surface stands in for the grass, as for the huge trees), the tree built on the
+     * grass ({@code posY - 1}, :1864/:1866). A chunk where no attempt finds grass grows no royal tree.
+     */
     @Override
     public Optional<GenerationStub> findGenerationPoint(GenerationContext context) {
         ChunkPos chunk = context.chunkPos();
-        int x = chunk.getMinBlockX() + 8;
-        int z = chunk.getMinBlockZ() + 8;
-        int y = context.chunkGenerator().getBaseHeight(
-                x, z,
-                Heightmap.Types.WORLD_SURFACE_WG,
-                context.heightAccessor(),
-                context.randomState());
-
-        // Y-bound guard: reject any spawn that would put the apex within 64
-        // blocks of the world ceiling. Mirrors the legacy worldgen safeguard
-        // that prevented canopy clipping in 1.7.10.
-        if (y <= context.heightAccessor().getMinBuildHeight() + 4) return Optional.empty();
-        if (y + 64 >= context.heightAccessor().getMaxBuildHeight()) return Optional.empty();
-
-        BlockPos origin = new BlockPos(x, y, z);
-        return Optional.of(new GenerationStub(origin, builder ->
-                builder.addPiece(new RoyalTreePiece(origin, queenVariant))));
+        UtopiaTreeStructure.ColumnProbe probe = UtopiaTreeStructure.probe(context);
+        for (int i = 0; i < 3; i++) {
+            int x = 4 + chunk.getMinBlockX() + context.random().nextInt(8);
+            int z = 4 + chunk.getMinBlockZ() + context.random().nextInt(8);
+            int grass = probe.base(x, z, 50, 127);
+            if (grass == Integer.MIN_VALUE) continue;
+            // the canopy stays below the world ceiling (the window keeps the grass under Y127)
+            if (grass + 64 >= context.heightAccessor().getMaxBuildHeight()) return Optional.empty();
+            BlockPos origin = new BlockPos(x, grass, z);
+            return Optional.of(new GenerationStub(origin, builder ->
+                    builder.addPiece(new RoyalTreePiece(origin, queenVariant))));
+        }
+        return Optional.empty();
     }
 
     @Override

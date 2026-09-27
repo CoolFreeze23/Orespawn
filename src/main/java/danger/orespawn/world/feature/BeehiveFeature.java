@@ -95,10 +95,12 @@ public class BeehiveFeature extends Feature<NoneFeatureConfiguration> {
 
         // Legacy addBeeHive (OreSpawnWorld.java:2031) probes for the
         // lowest grass tile in the chunk, then calls makeBeeHive at
-        // (lowestX, lowestY + 3, lowestZ). Mirror that by adding 3 to
-        // the surface tile so the chamber pokes out of the ground.
+        // (lowestX, lowestY + 3, lowestZ). The structure hands this
+        // feature that column (FeatureStructure's lowest_grass_36 anchor);
+        // the heightmap position is the air above the grass tile, so the
+        // chamber goes two above it (WGEN-079: it had gone three).
         BlockPos surface = level.getHeightmapPos(Heightmap.Types.WORLD_SURFACE_WG, ctx.origin());
-        BlockPos cpos = surface.above(3);
+        BlockPos cpos = surface.above(2);
 
         // Bound-check the entire 10x35x10 footprint up-front.
         if (cpos.getY() + 1 >= level.getMaxBuildHeight() - 2) return false;

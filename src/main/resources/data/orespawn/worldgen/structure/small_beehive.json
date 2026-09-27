@@ -5,5 +5,7 @@
   "spawn_overrides": {},
   "terrain_adaptation": "none",
   "feature": "orespawn:small_beehive",
-  "y_offset": 0
+  "y_offset": 0,
+  "anchor": "grass_attempts_5",
+  "overworld_dungeon": true
 }

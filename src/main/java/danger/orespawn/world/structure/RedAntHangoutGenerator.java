@@ -41,9 +41,9 @@ import net.minecraft.world.level.block.state.BlockState;
  *     4 attempts, same Y&nbsp;100&rarr;41 air-over-grass scan, same
  *     12&times;12 {@code quickSpaceCheck} plane (orig OreSpawnWorld.java:
  *     2625-2633) &mdash; which is exactly
- *     {@code PlacementMode.VILLAGE_GRASS_SURFACE}; the 1/250 odds map to
- *     the structure set's spacing 16 / separation 8 (C7 sqrt
- *     equivalence).</li>
+ *     {@code PlacementMode.VILLAGE_GRASS_SURFACE}; the 1/250 odds, with the
+ *     Village's cooldown counted, map to the structure set's spacing 18 /
+ *     separation 5 (WGEN-079).</li>
  * <li><b>15 layers of unconditional air (spec S6):</b> {@code j = 1..15}
  *     force-clears a 16&times;16&times;15 volume &mdash; trees, hills,
  *     buildings, everything above the pad vanishes (orig :7050/:7060 write

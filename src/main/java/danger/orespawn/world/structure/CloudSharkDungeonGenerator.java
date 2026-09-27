@@ -24,7 +24,7 @@ import net.minecraft.world.level.storage.loot.LootTable;
  * {@code recently_placed}, no space check, orig OreSpawnWorld.java:
  * 179-181) at {@code x/z = 4 + chunk + nextInt(8)},
  * {@code y = 150 + nextInt(10)} (orig OreSpawnWorld.java:2423-2428) &mdash;
- * mapped to structure set spacing 17/8 (&radic;300 &asymp; 17.3) and
+ * mapped to structure set spacing 17/4 (&radic;300 &asymp; 17.3; WGEN-079) and
  * {@code PlacementMode.SKY_BAND_150}. Play-time trigger: Random Dungeon
  * Spawner type 14 (orig DungeonSpawnerBlock.java:95-97, unmodified click
  * position &mdash; a terrain-embedded build there is faithful).</p>

@@ -147,6 +147,8 @@ public class LegacyDungeonStructure extends Structure {
             }
             case SKY_BAND_70 -> skyBand70Origin(context);
             case LOWEST_GRASS_36 -> lowestGrassOrigin(context);
+            case HIGHEST_GRASS_36 -> highestGrassOrigin(context);
+            case UTOPIA_ALTAR -> utopiaAltarOrigin(context);
             case SNOW_SURFACE_MINUS2 -> {
                 // Igloo (WGEN-071; orig OreSpawnWorld.java:1265-1275): the
                 // SWAMP_GRASS_SURFACE scan shape — exact-name "Ice Plains"
@@ -401,7 +403,7 @@ public class LegacyDungeonStructure extends Structure {
      * ground). {@code recently_placed} (gate :79, set :2109) collapses into
      * structure-set separation per C7.
      */
-    private BlockPos lowestGrassOrigin(GenerationContext context) {
+    static BlockPos lowestGrassOrigin(GenerationContext context) {
         ChunkPos chunk = context.chunkPos();
         int lowestSurfaceY = 128;
         int lowestX = chunk.getMinBlockX();
@@ -426,6 +428,59 @@ public class LegacyDungeonStructure extends Structure {
         }
         if (!found || lowestSurfaceY <= 40) return null;
         return new BlockPos(lowestX, lowestSurfaceY, lowestZ);   // NO -2 (orig :2108)
+    }
+
+    /**
+     * {@link LegacyDungeonPiece.DungeonType.PlacementMode#HIGHEST_GRASS_36}, addLeonNest's anchor (WGEN-079; orig
+     * OreSpawnWorld.java:2115-2141): the 6×6 column grid, each column's surface (the noise surface standing in for the
+     * grass under air) accepted inside Y81-128 (:2124-2125); a column replaces the kept one only when its grass is
+     * above the kept anchor, which sits one above the kept grass ({@code posY <= highestY} skips, :2126-2127); the
+     * anchor is the air above the grass, refused when no column qualified (:2135).
+     */
+    private static BlockPos highestGrassOrigin(GenerationContext context) {
+        ChunkPos chunk = context.chunkPos();
+        int highestY = 30;                                                              // :2116
+        int highestX = chunk.getMinBlockX();
+        int highestZ = chunk.getMinBlockZ();
+        boolean found = false;
+        for (int xOff = 0; xOff < 16; xOff += 3) {                                      // :2120
+            for (int zOff = 0; zOff < 16; zOff += 3) {                                  // :2121
+                int x = chunk.getMinBlockX() + xOff;
+                int z = chunk.getMinBlockZ() + zOff;
+                int grassY = context.chunkGenerator().getBaseHeight(x, z, Heightmap.Types.WORLD_SURFACE_WG,
+                        context.heightAccessor(), context.randomState()) - 1;
+                if (grassY > 128 || grassY <= 80) continue;                             // :2124
+                if (grassY <= highestY) continue;                                       // :2126
+                highestY = grassY + 1;                                                  // :2127
+                highestX = x;
+                highestZ = z;
+                found = true;
+            }
+        }
+        if (!found || highestY <= 80) return null;                                      // :2135
+        return new BlockPos(highestX, highestY, highestZ);
+    }
+
+    /**
+     * {@link LegacyDungeonPiece.DungeonType.PlacementMode#UTOPIA_ALTAR}, addKingAltar's anchor (WGEN-079; orig
+     * OreSpawnWorld.java:2549-2571): up to eight attempts at chunk + 3 + nextInt(10) (:2554-2555), each accepting a
+     * column whose air over grass lies inside Y51-100 (:2556-2557; the noise surface, dry, stands in for the grass);
+     * the anchor is the grass block (:2562/:2564). The original's quickReallyBigSpaceCheck (:2558) reads real blocks
+     * and is left out.
+     */
+    private static BlockPos utopiaAltarOrigin(GenerationContext context) {
+        ChunkPos chunk = context.chunkPos();
+        for (int i = 0; i < 8; i++) {                                                   // :2553
+            int x = 3 + chunk.getMinBlockX() + context.random().nextInt(10);            // :2554
+            int z = 3 + chunk.getMinBlockZ() + context.random().nextInt(10);            // :2555
+            int surface = context.chunkGenerator().getBaseHeight(x, z, Heightmap.Types.WORLD_SURFACE_WG,
+                    context.heightAccessor(), context.randomState());
+            int floor = context.chunkGenerator().getBaseHeight(x, z, Heightmap.Types.OCEAN_FLOOR_WG,
+                    context.heightAccessor(), context.randomState());
+            if (surface != floor || surface <= 50 || surface > 100) continue;           // :2556-2557
+            return new BlockPos(x, surface - 1, z);                                     // :2562/:2564
+        }
+        return null;
     }
 
     /**
