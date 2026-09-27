@@ -1,7 +1,7 @@
 # Known Issues — OreSpawn Port (BETA)
 
 **This release is a beta.** The game logic underneath has been through a
-1338-test automated suite (all green, in both robot modes; the count grows
+1357-test automated suite (all green, in both robot modes; the count grows
 with every remediation batch) plus hands-on play sessions, but a lot
 of the *visual and
 audio* polish has deliberately been left open for community
@@ -35,7 +35,39 @@ These came straight out of hand-testing and are fixed in code in this build;
 most still need a second pair of eyes in a real game. If one still looks
 wrong for you, please say so.
 
-**2.0.0-beta.11 (this build):**
+**2.0.0-beta.12 (this build):**
+
+- Utopia's tall Wind and Sky trees, apple trees and vegetable patches no longer grow out of the base of a King or
+  Queen tree, or of Utopia's big square, round and circular trees: as in 1.7.10, none of them grows in the chunk where
+  a big tree is rooted, and where a tree from a neighbouring chunk runs into a big tree, the big tree wins. A tree
+  rooted next door can still reach under a big tree's branches, as in the original. New chunks only. *(WGEN-075,
+  GitHub #4)*
+- Fences, iron bars, glass panes and walls in OreSpawn's structures join their neighbours, as they did in 1.7.10,
+  instead of standing as separate posts. New chunks only: a structure already generated keeps its loose posts.
+  *(WGEN-076, GitHub #5)*
+- The Islands' challenge towers and its other big structures turn up about a third less often, as in 1.7.10: the
+  original skipped its structure roll for 49 chunks after every build, which the port had left out. The King's and
+  Queen's towers now share one placement, one tower at a time, instead of standing in pairs, and the other structures
+  no longer bunch together. The Islands' ruby dungeon, missing until now, generates. New chunks only; a new structure
+  at the edge of explored land can be cut off where it meets the old chunks. *(WGEN-078, GitHub #5)*
+- Apple trees and the Wind and Sky trees no longer share a Utopia chunk, and the King and Queen altars stay out of a
+  chunk that grew trees of its own, as in 1.7.10 (the chunk's rolls now run in the original's order). New chunks
+  only. *(WGEN-077)*
+- OreSpawn's structures in the overworld and in the Mining and Village dimensions turn up as often as in 1.7.10:
+  most came a fifth to three quarters more often before, Mining's Leonopteryx nests about four times as often. King
+  and Queen trees turn up about half again as often as before, as in 1.7.10. Mining's shadow dungeon, alien dungeon,
+  bee hive and Leonopteryx nest, the Islands' greenhouse and White House, and Utopia's royal trees and altars take the
+  sites the original's builders chose. The Village's villages stand in exactly the original's chunks. The small bee
+  hives and mantis hives grow only in forests, birch forests and jungles, and `DisableOverworldDungeons` turns them
+  off. New chunks only; a new structure at the edge of explored land can be cut off where it meets the old chunks.
+  *(WGEN-079)*
+- Each dimension's structures share one roll again, as in 1.7.10, so they spread out the way the original spread
+  them: no clumps or rows, no more of them side by side than in the original, and two of the same kind can again turn
+  up near each other. The King and Queen trees grow from Utopia's big-tree roll and the King and Queen altars come only
+  to chunks that grow no trees, at the original's odds (about half as many altars as before). New chunks only.
+  *(WGEN-080)*
+
+**2.0.0-beta.11:**
 
 - The option descriptions in `config/orespawn-common.toml` read in plain words (the fireball fire rule, the
   Chainsaw's sight check, the artist animations switch). Nothing plays differently; an existing config file picks up

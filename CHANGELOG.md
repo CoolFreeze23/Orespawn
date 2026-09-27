@@ -4,6 +4,74 @@ Newest first. Every version opens with what a player will notice, in plain words
 the technical detail, with the issue ids and the source lines, is folded under "Technical details" at the end of the
 version. The full release notes for a cut live in `phase_g_reports/` and on the release page.
 
+## 2.0.0-beta.12 — 2026-09-28 · [release page](https://github.com/CoolFreeze23/Orespawn/releases/tag/v1.21.1-2.0.0-beta.12) · [full notes](phase_g_reports/RELEASE_NOTES_2.0.0-beta.12.md)
+
+Fixes to how OreSpawn builds its world, from your reports. Only newly generated land changes.
+
+**Fixed**
+- King and Queen trees no longer have other trees growing up through their trunks. ([#4](https://github.com/CoolFreeze23/Orespawn/issues/4))
+- Fences, iron bars and glass panes in OreSpawn's buildings connect to each other again, instead of standing as loose posts. ([#5](https://github.com/CoolFreeze23/Orespawn/issues/5))
+- Structures spawn as often as in the original mod. Most were spawning too often, some up to four times too often. ([#5](https://github.com/CoolFreeze23/Orespawn/issues/5))
+- Structures are spread out like in the original. No more clumps, and the King's and Queen's towers no longer come in pairs. ([#5](https://github.com/CoolFreeze23/Orespawn/issues/5))
+- King and Queen trees are a bit more common again and their altars a bit rarer, both as in the original.
+- The Islands' ruby dungeon spawns again.
+- A few structures sat in odd spots or a block too high. They now sit where the original put them.
+- Villages in the Village dimension spawn in exactly the same places as in the original, for the same world seed.
+- Bee hives and mantis hives in the overworld only spawn in forests and jungles, like the original. The `DisableOverworldDungeons` setting now turns them off too.
+
+**Before and after**
+
+![Before and after: a King tree](phase_g_reports/release_media/2.0.0-beta.12/king_tree_before_after.jpg)
+
+*A King tree in the same world. Before: a tall tree grows straight up its trunk. After: the trunk stands clear.*
+
+![Before and after: a tower's railings](phase_g_reports/release_media/2.0.0-beta.12/tower_railings_before_after.jpg)
+
+*A challenge tower's balcony. Before: every railing fence stands alone. After: the railings connect.*
+
+![Before and after: a tower's iron bars](phase_g_reports/release_media/2.0.0-beta.12/tower_bars_before_after.jpg)
+
+*The same tower's cage. Before: the iron bars are thin separate posts. After: they join into walls.*
+
+![Before and after: where the Islands' towers spawn](phase_g_reports/release_media/2.0.0-beta.12/islands_towers_map.jpg)
+
+*Where the Islands' big towers spawn, in the same world. Before: too many, often in pairs. After: fewer, one at a time, like the original.*
+
+![Before and after: where the Mining dimension's dungeons spawn](phase_g_reports/release_media/2.0.0-beta.12/mining_map.jpg)
+
+*Where the Mining dimension's dungeons spawn, in the same world. Before: too many, in clusters. After: spread out like the original.*
+
+**Good to know**
+- Only newly generated land changes. Buildings and trees already in your world stay as they are, so explore new chunks to see the difference.
+- A structure right at the edge of explored land can be cut off where it meets old chunks.
+- Works with your existing worlds.
+
+**Install:** put `orespawn-1.21.1-2.0.0-beta.12.jar` in `mods/` (NeoForge 21.1, Minecraft 1.21.1, GeckoLib 4.7 or newer) and take the beta.11 jar out.
+
+<details>
+<summary>Technical details</summary>
+
+##### What beta.12 is
+
+beta.12 is beta.11 plus six worldgen fixes from GitHub issues #4 and #5: WGEN-075 and WGEN-077 (Utopia's big trees keep their chunk, and the chunk's rolls run on one random, in the original's order), WGEN-076 (the legacy structures' fences, panes, bars and walls join), WGEN-078 (the Islands' structure roll at the original's rate), WGEN-079 (every other dimension's rates and building sites checked against the original) and WGEN-080 (each dimension's structures on one roll again, spread out as the original spread them). All six apply to chunks generated from this version on.
+
+##### What changed
+
+- **Utopia's chunk pass (WGEN-075, WGEN-077).** In 1.7.10 the Utopia pass (`OreSpawnWorld`, an `IWorldGenerator` that ran after the chunk's decoration) drew everything from one random: `addHugeTree` first (its one-in-a-hundred royal branch grew the King or Queen tree), and only when it grew nothing the apple trees, then (only when those grew nothing: `!addAppleTrees(...) && !addOtherTrees(...)`) the Wind and Sky tree grove, then the King altar (only when neither grew anything) and the veggies (orig OreSpawnWorld.java:42-46). The port rolled the royal trees, the huge trees, the grove, the magic apple trees and the royal altars independently, so a grove could root in a King tree's chunk, and inside `vegetal_decoration` the grove was placed after the big trees (registry order) and wrote its trunks and branches through them. `UtopiaTreeStructure.chunkPass` now replays the pass on one random, seeded as the structure pass seeds a structure's context: the huge roll's draws (the royal branch included), then (when it grew nothing) the apple trees' roll exactly as `addAppleTrees` makes it (:1792-1828), then (when those grew nothing) the grove's, then (when that grew nothing) the altar's (:2549-2571). The grove structure, `MagicAppleTreeFeature` (once per chunk; the Village runs the apple roll on its own, as :119 does), the royal trees and the King and Queen altars all read it. The King, the Queen and the huge trees generate at `top_layer_modification`, after every vegetal feature and the grove, so where a neighbour's tree meets one of them the big tree wins (in 1.7.10 the chunk that populated last won). Seven gametests: `UtopiaTreeTests` w075a-d and w077a-b, `StructurePlacementTests` w080e.
+- **Fences, panes, bars and walls join (WGEN-076).** The legacy structures write without neighbour shape updates (`LegacyDungeonPiece`; TF-021, a fragile plant's own shape update can erase it), so every fence, pane, bar and wall kept its unjoined default state. 1.7.10 worked the joins out from the neighbours when it drew the block and stored nothing, so the original's structures showed them joined. Each fence, pane, bar and wall a legacy structure places is now handed to the chunk's post-processing (`ChunkAccess.markPosForPostprocessing`), which settles it against its finished neighbours when the chunk goes live, as vanilla's structure pieces do for their fences and bars; a structure built into a live world (`buildNow`) settles them itself once it is built. Every other block keeps the suppressed updates. Three gametests, `StructureJoinTests` w076a-c. The King's challenge tower in the pictures has 2,219 fences, bars and panes: all unjoined on beta.11, none on beta.12.
+- **The rates (WGEN-078, WGEN-079).** 1.7.10's rolls ran behind the shared `recently_placed` cooldown (orig OreSpawnWorld.java:30, 37-38): every build set it to 50 (the King altar to 100), `generate` counted it down once per populated chunk, and the rolls behind it ran only at 0, so in a dimension whose builders build with probability p per chunk they ran in 1 / (1 + 49p) of the chunks. It held the Islands' roll (:134: one chunk in 100, a build one chunk in 149), the overworld's pass (:284-321; each structure's share taken from the builders that share its biome: plains carries four, the ocean five at small odds), Mining's rotation (:79-104) and the Village's three builders (:120-129), whose shares come from their builders' site success measured on the port's own generators. The port had converted the nominal odds. The End's pass (:215-228) neither checks nor sets it; Crystal already runs the original's counter; Chaos and the Nether have no structures. The original's space checks against real blocks turned away a few more builds where an earlier structure stood in the plane they tested: 4.5% of the Islands' and 2% of the End's, simulated with the structures' footprints, and none in the Village. Beside the rates: the small bee hive and the mantis hive, one pick at even odds in the original (:1010), stand on exactly its biomes (forest, birch forest, jungle) and `DisableOverworldDungeons` covers them; the Village's villages use `MapGenMoreVillages`' own salt, 10387312, so they stand in exactly the original's chunks; the Islands' ruby dungeon and generic dungeon, two of the roll's builders, are structures of it. Eight structures took a chunk-centre site where the original's builder scanned: the shadow and WTF alien dungeons and the bee hive (the lowest grass of a 6×6 grid above Y40, and the bee hive's height was one too high), the Leonopteryx nest (the highest grass above Y80), the Islands' greenhouse and White House (the D4 grass scan), the royal altars (eight attempts for grass in Y51-100) and the royal trees (the huge roll's three attempts for grass in Y51-127).
+- **One roll per dimension (WGEN-080).** A structure set of one structure each spaced every kind on a grid of its own: no two of a kind ever close, any two kinds as close as chance put them, and the grids of one spacing lined up against each other. Each dimension's roll is one set now (`StructurePicks`): the overworld's two (the six-way pick 16/1, the chain 6/1), Mining's 9/0, the Village's 9/0, the End's 2/0 and the Islands' 9/1, each structure at a weight that gives it the original's odds and `orespawn:nothing` at the rest; the spacings are the ones whose spread came closest to the original's in a simulation of its rolls, cooldown and space checks on the same ground. The pick is final, as the original's roll was: a mixin on `ChunkGenerator.tryGenerateStructure` passes over every structure of these sets but vanilla's first pick, so a picked structure that finds no site leaves the spot empty instead of handing it to the next. The cloud shark keeps its own roll of one in 300 in every Islands chunk. The King and Queen trees are the huge roll's royal branch itself and the altars the pass's altar roll, both in every Utopia chunk. Vanilla's `frequency` is not used: with a spacing of 1 its roll lines up along z (the salt and the chunk's coordinates reach the seed in shuffled order). Over 40 simulated worlds the counts match the original's within a few percent in every dimension, and so does the spread: the share of structures with another within four chunks (Mining 10% in 1.7.10, 78% on beta.11, 10% on beta.12; the Islands 7%, 46% and 7%) and the share with one of their own kind within eight (Mining 11%, 0% and 10%). Eight gametests, `StructurePlacementTests` w080a-e and w079c, e and f, among them the structure pass itself run on a detached Mining generator; `IslandsRotationTests` w078a-b.
+
+![1.7.10, beta.11 and beta.12: where each dimension's structures stand](phase_g_reports/release_media/2.0.0-beta.12/dimensions_map.jpg)
+
+*Where each dimension's structures stand for one world seed. Left, 1.7.10: the original's own rules played out in a simulation on the same ground. Middle, beta.11. Right, beta.12.*
+
+##### How to install
+
+Put `orespawn-1.21.1-2.0.0-beta.12.jar` into the `mods` folder of a NeoForge 21.1 instance for Minecraft 1.21.1 together with GeckoLib 4.7 or newer, and take the beta.11 jar out; MultiHitboxLib and Databuddy are bundled in the jar. Existing worlds carry over; the fixes apply to chunks generated from now on.
+
+</details>
+
 ## 2.0.0-beta.11 — 2026-09-24 · [release page](https://github.com/CoolFreeze23/Orespawn/releases/tag/v1.21.1-2.0.0-beta.11) · [full notes](phase_g_reports/RELEASE_NOTES_2.0.0-beta.11.md)
 
 A tidy-up release: the option descriptions in the config file read in plain words. Nothing in the game plays differently.
