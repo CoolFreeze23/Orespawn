@@ -3,12 +3,16 @@
     {
       "structure": "orespawn:challenge_tower_king",
       "weight": 1
+    },
+    {
+      "structure": "orespawn:challenge_tower_queen",
+      "weight": 1
     }
   ],
   "placement": {
     "type": "minecraft:random_spread",
-    "spacing": 36,
-    "separation": 18,
-    "salt": 84320
+    "spacing": 31,
+    "separation": 8,
+    "salt": 2041911751
   }
 }

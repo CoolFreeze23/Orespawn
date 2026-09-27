@@ -476,9 +476,16 @@ public class LegacyDungeonStructure extends Structure {
      * the original's Y 20→5 downward scan (:2259-2261) — on the flat Islands
      * plane (grass Y7 via the {@code orespawn:islands} noise settings) the
      * noise-predicted heightmap − 1 is exactly that grass block. The original's
-     * {@code D4BigSpaceCheck} air probe and shared {@code recently_placed}
-     * cooldown belong to the structure-set spacing machinery, per the Phase C7
-     * treatment of the other Islands structures.
+     * shared {@code recently_placed} cooldown is in the structure sets' spacing
+     * (WGEN-078: every D4 build blocks the roll for the next 49 chunks, so the
+     * one-in-a-hundred roll builds one chunk in 149 on average; the two towers
+     * share one set, 31/8, King or Queen at even odds as the original's one
+     * pick at :2219 made them, and a one-slot structure's set is 53/8, each on
+     * a salt of its own so that no two sets lay their structures out in the same
+     * pattern). The separation of 8 chunks stands in for the reach of
+     * {@code D4BigSpaceCheck}, which kept a new build off the blocks of a
+     * tower-sized neighbour; a wider one would pen every set's start into the
+     * same corner of the shared grid.
      */
     private BlockPos islandsGrassOrigin(GenerationContext context) {
         if (danger.orespawn.OreSpawnConfig.LESS_LAG.get() != 0 && context.random().nextInt(2) != 0) {

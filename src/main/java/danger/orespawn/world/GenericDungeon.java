@@ -107,22 +107,30 @@ public class GenericDungeon {
     }
 
     /**
-     * Islands-dimension generic dungeon, faithful to the D4 dispatch
-     * (orig OreSpawnWorld.java:134-139 — 1/100 structure roll, share 4/19 →
-     * 1/475 chunks) and {@code addD4GenericDungeon}
-     * (orig OreSpawnWorld.java:2438-2452): corner at {@code chunk + nextInt(8)},
-     * scanning Y20 down to Y5 for grass; carved at the grass level so it sits
-     * embedded in the flat island plane. The original's shared
-     * {@code recently_placed}/D4BigSpaceCheck gating belongs to the
-     * structure-set machinery and is approximated by the flat 1/475 roll.
+     * The Islands' two dungeons, faithful to the D4 dispatch (orig OreSpawnWorld.java:134-176): the structure roll
+     * gives the generic dungeon four of its 19 slots ({@code addD4GenericDungeon}, :2438-2452) and the ruby dungeon
+     * one ({@code addD4RubyDungeon}, :2171-2185), each built on the grass a Y20-to-Y5 scan finds at
+     * {@code chunk + nextInt(8)}, embedded in the flat island plane. WGEN-078: the roll comes one chunk in a hundred,
+     * but only while the shared {@code recently_placed} cooldown is clear (:134), and every D4 build sets it to 50
+     * (:2181, :2448 and the others), which blocks the roll for the next 49 chunks the populator runs. A build therefore
+     * comes {@code p / (1 + 49p)} = one chunk in 149 on average, not one in 100: the generic dungeon one chunk in 708,
+     * the ruby dungeon one in 2831, one draw deciding both as the original's one roll did. The LessLag cuts are the
+     * builders' own (:2172-2174, :2439-2441). D4BigSpaceCheck is left to the rarity, as before.
      */
-    public static boolean tryPlaceIslandsGenericDungeon(WorldGenLevel level, RandomSource random, int cx, int cz) {
-        if (random.nextInt(475) != 0) return false;
+    public static boolean tryPlaceIslandsDungeon(WorldGenLevel level, RandomSource random, int cx, int cz) {
+        int roll = random.nextInt(2831);
+        if (roll > 4) return false;
+        boolean ruby = roll == 4;
+        if (danger.orespawn.OreSpawnConfig.LESS_LAG.get() != 0 && random.nextInt(ruby ? 2 : 4) != 0) return false;
         int x = cx + random.nextInt(8);
         int z = cz + random.nextInt(8);
         for (int y = 20; y > 4; y--) {
             if (!level.getBlockState(new BlockPos(x, y, z)).is(Blocks.GRASS_BLOCK)) continue;
-            makeGenericDungeon(level, random, new BlockPos(x, y, z));
+            if (ruby) {
+                makeRubyDungeon(level, random, new BlockPos(x, y, z));
+            } else {
+                makeGenericDungeon(level, random, new BlockPos(x, y, z));
+            }
             return true;
         }
         return false;

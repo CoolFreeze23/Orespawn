@@ -25,15 +25,18 @@ import net.minecraft.world.level.storage.loot.LootTable;
  *
  * <p>Worldgen anchor: the original fired from the Islands "D4" dispatch at
  * 1/100 ({@code recently_placed == 0 && nextInt(100) == 0}) &times; 1/19
- * ({@code i == 18}, the last table slot) = 1/1900 per Islands chunk (orig
- * OreSpawnWorld.java:132-135, :174-176) &mdash; mapped to structure set
- * spacing 44/22 (&radic;1900 &asymp; 43.6). {@code addD4Rainbow} itself
+ * ({@code i == 18}, the last table slot) = 1/1900 per eligible Islands chunk
+ * (orig OreSpawnWorld.java:132-135, :174-176). {@code addD4Rainbow} itself
  * (orig OreSpawnWorld.java:2430-2436) is UNCONDITIONAL &mdash; no ground
  * scan, no biome check, no LessLag gate, no failure path; it always builds,
  * always sets the shared {@code recently_placed = 50} cooldown, always
- * returns {@code true} (spec S7). That cooldown and the dispatch's 65&times;55
- * {@code D4BigSpaceCheck} air probe (orig OreSpawnWorld.java:2655-2664) are
- * absorbed into structure-set separation, the C7-approved approximation.
+ * returns {@code true} (spec S7). Every D4 build sets that cooldown, which
+ * blocks the roll for the next 49 chunks, so the roll builds one chunk in 149
+ * on average and the rainbow comes one chunk in 2831: structure set spacing
+ * 53/8 (&radic;2831 &asymp; 53.2; WGEN-078, which corrected the 44/22 that
+ * had left the cooldown out). The dispatch's 65&times;55
+ * {@code D4BigSpaceCheck} air probe (orig OreSpawnWorld.java:2655-2664) is
+ * absorbed into the set's separation of 8 chunks.
  * Anchoring is {@code PlacementMode.SKY_BAND_70}: {@code y = 70 + nextInt(20)}
  * (orig OreSpawnWorld.java:2433) &mdash; a DIFFERENT band from the Cloud
  * Shark's {@code SKY_BAND_150} (spec S9: losing it would move the build ~60
