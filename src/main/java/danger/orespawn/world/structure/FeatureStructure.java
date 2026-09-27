@@ -56,8 +56,7 @@ import java.util.Optional;
  *       which comfortably covers the Phase 13C Royal Trees (±9 horizontal,
  *       up to 60 tall). Smaller surface dungeons can keep the defaults; the
  *       only downside of an over-wide envelope is that vanilla treats it as
- *       a placement reservation, so don't push these much past 32 without
- *       also widening the matching {@code random_spread.spacing}.</li>
+ *       a placement reservation, so don't push these much past 32.</li>
  * </ul>
  *
  * <p>Placement (spread, salt, exclusion zones) lives in the matching

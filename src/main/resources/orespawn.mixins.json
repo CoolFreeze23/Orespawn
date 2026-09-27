@@ -3,7 +3,8 @@
   "package": "danger.orespawn.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
-    "LivingEntitySightMixin"
+    "LivingEntitySightMixin",
+    "StructurePickMixin"
   ],
   "client": [
     "EntityCullingMixin",

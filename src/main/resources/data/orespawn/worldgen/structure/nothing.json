@@ -1,0 +1,6 @@
+{
+  "type": "orespawn:nothing",
+  "biomes": [],
+  "step": "surface_structures",
+  "spawn_overrides": {}
+}

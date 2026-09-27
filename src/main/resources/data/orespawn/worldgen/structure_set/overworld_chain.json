@@ -1,0 +1,46 @@
+{
+  "structures": [
+    {
+      "structure": "orespawn:small_beehive",
+      "weight": 645
+    },
+    {
+      "structure": "orespawn:mantis_nest",
+      "weight": 645
+    },
+    {
+      "structure": "orespawn:haunted_house",
+      "weight": 907
+    },
+    {
+      "structure": "orespawn:leaf_monster_dungeon",
+      "weight": 844
+    },
+    {
+      "structure": "orespawn:spit_bug_lair",
+      "weight": 1325
+    },
+    {
+      "structure": "orespawn:igloo",
+      "weight": 1338
+    },
+    {
+      "structure": "orespawn:bouncy_castle",
+      "weight": 1290
+    },
+    {
+      "structure": "orespawn:rubber_ducky_pond",
+      "weight": 844
+    },
+    {
+      "structure": "orespawn:nothing",
+      "weight": 2162
+    }
+  ],
+  "placement": {
+    "type": "minecraft:random_spread",
+    "spacing": 6,
+    "separation": 1,
+    "salt": 1180007981
+  }
+}

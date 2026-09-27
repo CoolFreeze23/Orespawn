@@ -37,11 +37,11 @@ import java.util.List;
 public class GenericDungeon {
 
     /** Loot for the generic dungeon chest (orig GenericDungeon.java:62 + :183). */
-    private static final ResourceKey<LootTable> GENERIC_DUNGEON_LOOT = ResourceKey.create(
+    public static final ResourceKey<LootTable> GENERIC_DUNGEON_LOOT = ResourceKey.create(
             Registries.LOOT_TABLE, ResourceLocation.fromNamespaceAndPath("orespawn", "chests/generic_dungeon"));
 
     /** Loot for the Ruby Bird dungeon chest (orig RubyBirdDungeon.java:18 + :80). */
-    private static final ResourceKey<LootTable> RUBY_DUNGEON_LOOT = ResourceKey.create(
+    public static final ResourceKey<LootTable> RUBY_DUNGEON_LOOT = ResourceKey.create(
             Registries.LOOT_TABLE, ResourceLocation.fromNamespaceAndPath("orespawn", "chests/ruby_dungeon"));
 
     /**
@@ -107,36 +107,6 @@ public class GenericDungeon {
     }
 
     /**
-     * The Islands' two dungeons, faithful to the D4 dispatch (orig OreSpawnWorld.java:134-176): the structure roll
-     * gives the generic dungeon four of its 19 slots ({@code addD4GenericDungeon}, :2438-2452) and the ruby dungeon
-     * one ({@code addD4RubyDungeon}, :2171-2185), each built on the grass a Y20-to-Y5 scan finds at
-     * {@code chunk + nextInt(8)}, embedded in the flat island plane. WGEN-078: the roll comes one chunk in a hundred,
-     * but only while the shared {@code recently_placed} cooldown is clear (:134), and every D4 build sets it to 50
-     * (:2181, :2448 and the others), which blocks the roll for the next 49 chunks the populator runs. A build therefore
-     * comes {@code p / (1 + 49p)} = one chunk in 149 on average, not one in 100: the generic dungeon one chunk in 708,
-     * the ruby dungeon one in 2831, one draw deciding both as the original's one roll did. The LessLag cuts are the
-     * builders' own (:2172-2174, :2439-2441). D4BigSpaceCheck is left to the rarity, as before.
-     */
-    public static boolean tryPlaceIslandsDungeon(WorldGenLevel level, RandomSource random, int cx, int cz) {
-        int roll = random.nextInt(2831);
-        if (roll > 4) return false;
-        boolean ruby = roll == 4;
-        if (danger.orespawn.OreSpawnConfig.LESS_LAG.get() != 0 && random.nextInt(ruby ? 2 : 4) != 0) return false;
-        int x = cx + random.nextInt(8);
-        int z = cz + random.nextInt(8);
-        for (int y = 20; y > 4; y--) {
-            if (!level.getBlockState(new BlockPos(x, y, z)).is(Blocks.GRASS_BLOCK)) continue;
-            if (ruby) {
-                makeRubyDungeon(level, random, new BlockPos(x, y, z));
-            } else {
-                makeGenericDungeon(level, random, new BlockPos(x, y, z));
-            }
-            return true;
-        }
-        return false;
-    }
-
-    /**
      * Direct build at a fixed corner, no chance gate — used by the Dungeon
      * Spawner block's outcome 21 (orig DungeonSpawnerBlock.java:94-96 calls
      * {@code GenericDungeon.makeDungeon(world, random, x, y, z)} immediately).
@@ -163,7 +133,7 @@ public class GenericDungeon {
 
         // orig GenericDungeon.java:138-178 — spawner at centre, 12-mob pool
         BlockPos spawnerPos = corner.offset(width / 2, 1, width / 2);
-        placeSpawner(level, spawnerPos, SPAWNER_MOBS.get(random.nextInt(SPAWNER_MOBS.size())).get());
+        placeSpawner(level, spawnerPos, spawnerMob(random));
 
         // orig GenericDungeon.java:180-184 — chest at (width/2, 1, 1)
         placeChest(level, corner.offset(width / 2, 1, 1), GENERIC_DUNGEON_LOOT);
@@ -236,6 +206,16 @@ public class GenericDungeon {
         return random.nextInt(2) == 1
                 ? Blocks.MOSSY_COBBLESTONE.defaultBlockState()
                 : Blocks.COBBLESTONE.defaultBlockState();
+    }
+
+    /** The wall mix of the generic box ({@code ruby} false) or the ruby dungeon's, for the Islands' structure pieces. */
+    public static BlockState wallBlock(RandomSource random, boolean ruby) {
+        return wallMix(random, ruby ? ModBlocks.ORE_RUBY.get().defaultBlockState() : null);
+    }
+
+    /** The generic dungeon's spawner mob: the original's {@code nextInt(12)} ladder (orig GenericDungeon.java:141-177). */
+    public static EntityType<?> spawnerMob(RandomSource random) {
+        return SPAWNER_MOBS.get(random.nextInt(SPAWNER_MOBS.size())).get();
     }
 
     private static void placeSpawner(WorldGenLevel level, BlockPos pos, EntityType<?> mobType) {

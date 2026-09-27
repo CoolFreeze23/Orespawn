@@ -112,6 +112,13 @@ public class ModStructureTypes {
             STRUCTURE_PIECES.register("utopia_tree_piece",
                     () -> (StructurePieceType) UtopiaTreePiece::new);
 
+    /**
+     * The share of a one-pick structure set's roll that builds nothing (WGEN-080, {@link NothingStructure}): the
+     * original's miss, or its cooldown, weighted in beside the set's structures.
+     */
+    public static final DeferredHolder<StructureType<?>, StructureType<NothingStructure>> NOTHING =
+            STRUCTURE_TYPES.register("nothing", () -> () -> NothingStructure.CODEC);
+
     public static void register(IEventBus eventBus) {
         STRUCTURE_TYPES.register(eventBus);
         STRUCTURE_PIECES.register(eventBus);

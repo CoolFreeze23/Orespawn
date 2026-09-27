@@ -1,0 +1,38 @@
+{
+  "structures": [
+    {
+      "structure": "orespawn:play_pool",
+      "weight": 1084
+    },
+    {
+      "structure": "orespawn:water_dragon_lair",
+      "weight": 1084
+    },
+    {
+      "structure": "orespawn:gold_fish_bowl",
+      "weight": 1084
+    },
+    {
+      "structure": "orespawn:girlfriend_island",
+      "weight": 1265
+    },
+    {
+      "structure": "orespawn:monster_island",
+      "weight": 1265
+    },
+    {
+      "structure": "orespawn:frog_pond",
+      "weight": 786
+    },
+    {
+      "structure": "orespawn:nothing",
+      "weight": 3432
+    }
+  ],
+  "placement": {
+    "type": "minecraft:random_spread",
+    "spacing": 16,
+    "separation": 1,
+    "salt": 1476168498
+  }
+}

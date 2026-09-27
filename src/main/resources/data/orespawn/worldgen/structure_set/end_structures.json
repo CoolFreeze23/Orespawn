@@ -1,0 +1,30 @@
+{
+  "structures": [
+    {
+      "structure": "orespawn:ender_knight_dungeon_end",
+      "weight": 392
+    },
+    {
+      "structure": "orespawn:graveyard",
+      "weight": 392
+    },
+    {
+      "structure": "orespawn:hospital",
+      "weight": 392
+    },
+    {
+      "structure": "orespawn:ender_castle_end",
+      "weight": 196
+    },
+    {
+      "structure": "orespawn:nothing",
+      "weight": 8628
+    }
+  ],
+  "placement": {
+    "type": "minecraft:random_spread",
+    "spacing": 2,
+    "separation": 0,
+    "salt": 1479048793
+  }
+}

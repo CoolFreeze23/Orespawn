@@ -32,11 +32,11 @@ import net.minecraft.world.level.storage.loot.LootTable;
  * always sets the shared {@code recently_placed = 50} cooldown, always
  * returns {@code true} (spec S7). Every D4 build sets that cooldown, which
  * blocks the roll for the next 49 chunks, so the roll builds one chunk in 149
- * on average and the rainbow comes one chunk in 2831: structure set spacing
- * 53/8 (&radic;2831 &asymp; 53.2; WGEN-078, which corrected the 44/22 that
- * had left the cooldown out). The dispatch's 65&times;55
- * {@code D4BigSpaceCheck} air probe (orig OreSpawnWorld.java:2655-2664) is
- * absorbed into the set's separation of 8 chunks.
+ * on average and the rainbow comes one chunk in 2831: its one slot of the
+ * islands_structures set's roll (WGEN-078 counted the cooldown, WGEN-080 put
+ * the nineteen slots back in one roll). The dispatch's 65&times;55
+ * {@code D4BigSpaceCheck} air probe (orig OreSpawnWorld.java:2655-2664) reads
+ * blocks that do not exist when the set places, and is left out.
  * Anchoring is {@code PlacementMode.SKY_BAND_70}: {@code y = 70 + nextInt(20)}
  * (orig OreSpawnWorld.java:2433) &mdash; a DIFFERENT band from the Cloud
  * Shark's {@code SKY_BAND_150} (spec S9: losing it would move the build ~60

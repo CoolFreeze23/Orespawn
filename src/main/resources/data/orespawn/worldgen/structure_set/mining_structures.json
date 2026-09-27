@@ -1,0 +1,42 @@
+{
+  "structures": [
+    {
+      "structure": "orespawn:basilisk_maze",
+      "weight": 858
+    },
+    {
+      "structure": "orespawn:kyuubi_dungeon",
+      "weight": 858
+    },
+    {
+      "structure": "orespawn:beehive",
+      "weight": 858
+    },
+    {
+      "structure": "orespawn:shadow_dungeon",
+      "weight": 858
+    },
+    {
+      "structure": "orespawn:wtf_alien_dungeon",
+      "weight": 858
+    },
+    {
+      "structure": "orespawn:ender_knight_dungeon_mining",
+      "weight": 858
+    },
+    {
+      "structure": "orespawn:leonopteryx_nest",
+      "weight": 858
+    },
+    {
+      "structure": "orespawn:nothing",
+      "weight": 3994
+    }
+  ],
+  "placement": {
+    "type": "minecraft:random_spread",
+    "spacing": 9,
+    "separation": 0,
+    "salt": 1933714182
+  }
+}

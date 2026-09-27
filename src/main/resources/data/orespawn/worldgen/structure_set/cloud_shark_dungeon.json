@@ -1,11 +1,18 @@
 {
   "structures": [
-    { "structure": "orespawn:cloud_shark_dungeon", "weight": 1 }
+    {
+      "structure": "orespawn:cloud_shark_dungeon",
+      "weight": 1
+    },
+    {
+      "structure": "orespawn:nothing",
+      "weight": 299
+    }
   ],
   "placement": {
     "type": "minecraft:random_spread",
-    "spacing": 17,
-    "separation": 4,
+    "spacing": 1,
+    "separation": 0,
     "salt": 953402775
   }
 }

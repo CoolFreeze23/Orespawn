@@ -64,8 +64,8 @@ import net.minecraft.world.level.storage.loot.LootTable;
  *     what {@code PlacementMode.SWAMP_GRASS_SURFACE} returns; the doorway
  *     bottom (y+1) therefore sits two above the outside grass &mdash; a
  *     1-block step up onto the floor (spec S9, faithful). The original's
- *     1/285 chunk gate maps to the structure set with the shared overworld
- *     cooldown counted (WGEN-079: spacing 20 / separation 5; spec &sect;8), the
+ *     1/285 chunk gate maps to its weight in the overworld_chain set with the
+ *     shared overworld cooldown counted (WGEN-080; spec &sect;8), the
  *     exact-name "Plains"/"Taiga"/"Swampland" biome gate to the
  *     {@code has_structure/haunted_house} tag (plains/taiga/swamp, spec
  *     &sect;7). Documented absorbed deltas: 5 jitter attempts vs the mode's

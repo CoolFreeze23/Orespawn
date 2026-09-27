@@ -186,7 +186,7 @@ public class LegacyDungeonPiece extends StructurePiece {
         // with altar/ziggurat; X −0..+34, Y −22..+5, Z −15..+14 (spec
         // d6_extraction/kyuubi_dungeon_spec.md, suggested entry adopted).
         // Mining rotation i==1 slot (1/665 before the cooldown, one chunk in
-        // 944 with it: set 31/8 like BasiliskMaze, WGEN-079).
+        // 944 with it: one of mining_structures' seven, WGEN-080).
         KYUUBI_DUNGEON(-1, 35, 23, 6, -16, 15, PlacementMode.LOWEST_SURFACE_36),
         // Phase D6a (WGEN-042, Ender Dragon Hospital) — orig GenericDungeon
         // .java:2815-2991. 10×10 iron-bar cage with 4 End Crystals on bedrock
@@ -286,7 +286,13 @@ public class LegacyDungeonPiece extends StructurePiece {
         // OSW:1512-1525, END_SURFACE default) + Mining dimension via the
         // per-JSON placement_mode override LOWEST_GRASS_36 (addEnderKnight
         // OSW:2087-2113 — lowest-grass 6x6 scan, NO -2 sink).
-        ENDER_KNIGHT_DUNGEON(-1, 13, 1, 6, -3, 7, PlacementMode.END_SURFACE);
+        ENDER_KNIGHT_DUNGEON(-1, 13, 1, 6, -3, 7, PlacementMode.END_SURFACE),
+        // WGEN-080: the Islands' generic dungeon (addD4GenericDungeon, orig OreSpawnWorld.java:2438-2452, four of the
+        // D4 roll's nineteen slots) and ruby dungeon (addD4RubyDungeon, :2171-2185, one slot), built as structures so
+        // they share the roll's one spot with the D4 structures: the 12×12×6 and 10×10×5 cobblestone boxes of orig
+        // GenericDungeon.makeDungeon and RubyBirdDungeon.makeDungeon, the corner on the grass the D4 scan finds.
+        ISLANDS_GENERIC_DUNGEON(0, 11, 0, 5, 0, 11, PlacementMode.ISLANDS_GRASS),
+        ISLANDS_RUBY_DUNGEON(0, 9, 0, 4, 0, 9, PlacementMode.ISLANDS_GRASS);
 
         /** How {@link LegacyDungeonStructure#findGenerationPoint} anchors this type. */
         public enum PlacementMode {
@@ -623,6 +629,8 @@ public class LegacyDungeonPiece extends StructurePiece {
                 case RUBBER_DUCKY_POND -> RubberDuckyPondGenerator.generate(this, origin, rng);
                 case HAUNTED_HOUSE -> HauntedHouseGenerator.generate(this, origin, rng);
                 case ENDER_KNIGHT_DUNGEON -> EnderKnightDungeonGenerator.generate(this, origin, rng);
+                case ISLANDS_GENERIC_DUNGEON -> IslandsDungeonGenerator.generate(this, origin, rng, false);
+                case ISLANDS_RUBY_DUNGEON -> IslandsDungeonGenerator.generate(this, origin, rng, true);
             }
             if (live) settleJoins(level, ctx().joiners());
         } finally {

@@ -69,9 +69,9 @@ import java.util.Random;
  *       canonical surface variant.</li>
  * </ul>
  *
- * <p>Encoded by {@code structure_set/beehive.json} as
- * {@code spacing=24, separation=12} (~1 per 576 chunks) so it shares
- * the addANest grid with the mantis nest without colliding.</p>
+ * <p>Placed by the {@code beehive} structure, one of the seven of
+ * {@code structure_set/mining_structures.json}, Mining's one roll
+ * (orig OreSpawnWorld.java:79-104; WGEN-080).</p>
  *
  * <p><b>Stability guard:</b> the 30-block descent is bounds-checked
  * up-front; placement aborts if the shaft would clip the world floor

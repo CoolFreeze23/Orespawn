@@ -61,12 +61,10 @@ import java.util.Random;
  * <p><b>Spawn frequency (verified OreSpawnWorld.java:999-1018,
  * addANest):</b> {@code random.nextInt(230) != 0} gating, then a 50/50
  * split with the small bee hive variant &rarr; net <b>1 in 460
- * chunks</b> in Forest / Jungle / Birch Forest biomes. Encoded by
- * {@code structure_set/mantis_nest.json} as {@code spacing=24,
- * separation=12} which yields ~1 per 576 chunks &mdash; the closest
- * achievable {@code random_spread} cell that respects the legacy
- * minimum-distance constraint without colliding with the bee hive
- * grid.</p>
+ * chunks</b> in Forest / Jungle / Birch Forest biomes, with the overworld's
+ * cooldown counted one in 558. Placed by the {@code mantis_nest} structure
+ * in {@code structure_set/overworld_chain.json}, the overworld's chain roll,
+ * at that weight beside the small bee hive (WGEN-080).</p>
  *
  * <p><b>Stability guard:</b> the legacy version did unbounded
  * {@code FastSetBlock} writes that could clip max build height. We

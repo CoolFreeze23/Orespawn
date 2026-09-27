@@ -1,0 +1,26 @@
+{
+  "structures": [
+    {
+      "structure": "orespawn:damsel_in_distress",
+      "weight": 2520
+    },
+    {
+      "structure": "orespawn:spider_hangout",
+      "weight": 1800
+    },
+    {
+      "structure": "orespawn:red_ant_hangout",
+      "weight": 2520
+    },
+    {
+      "structure": "orespawn:nothing",
+      "weight": 3160
+    }
+  ],
+  "placement": {
+    "type": "minecraft:random_spread",
+    "spacing": 9,
+    "separation": 0,
+    "salt": 601828002
+  }
+}

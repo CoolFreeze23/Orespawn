@@ -6,6 +6,8 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.levelgen.Heightmap;
+import net.minecraft.world.level.levelgen.LegacyRandomSource;
+import net.minecraft.world.level.levelgen.WorldgenRandom;
 import net.minecraft.world.level.levelgen.structure.Structure;
 import net.minecraft.world.level.levelgen.structure.StructureType;
 
@@ -104,18 +106,11 @@ public class LegacyDungeonStructure extends Structure {
                 && OVERWORLD_DUNGEON_TYPES.contains(dungeonType)) {
             return Optional.empty();
         }
-        // WGEN-077: the King and Queen altars rolled only in a Utopia chunk whose own pass grew no tree: no huge or
-        // royal tree, no apple trees, no grove (orig OreSpawnWorld.java:42-45).
-        if ((dungeonType == LegacyDungeonPiece.DungeonType.KING_ALTAR
-                || dungeonType == LegacyDungeonPiece.DungeonType.QUEEN_ALTAR)
-                && UtopiaTreeStructure.chunkPass(context.seed(), context.chunkPos(), UtopiaTreeStructure.probe(context),
-                        () -> RoyalTreeStructure.startsIn(context)).grewTrees()) {
-            return Optional.empty();
-        }
         BlockPos origin = switch (placementOverride.orElse(dungeonType.placement)) {
             case SURFACE_CENTER -> surfaceCenterOrigin(context);
             case LOWEST_SURFACE_36 -> lowestSurfaceOrigin(context);
-            case ISLANDS_GRASS -> islandsGrassOrigin(context);
+            case ISLANDS_GRASS -> islandsGrassOrigin(context,
+                    dungeonType == LegacyDungeonPiece.DungeonType.ISLANDS_GENERIC_DUNGEON ? 4 : 2);
             case END_SURFACE -> endSurfaceOrigin(context);
             case OCEAN_SURFACE -> oceanSurfaceOrigin(context);
             case OCEAN_SURFACE_AIR -> {
@@ -142,13 +137,13 @@ public class LegacyDungeonStructure extends Structure {
             case ISLANDS_GRASS_AIR -> {
                 // Pumpkin (orig OreSpawnWorld.java:2416): the D4 i-roll hands
                 // makePumpkin the AIR block above the grass anchor.
-                BlockPos grass = islandsGrassOrigin(context);
+                BlockPos grass = islandsGrassOrigin(context, 2);
                 yield grass == null ? null : grass.above();
             }
             case SKY_BAND_70 -> skyBand70Origin(context);
             case LOWEST_GRASS_36 -> lowestGrassOrigin(context);
             case HIGHEST_GRASS_36 -> highestGrassOrigin(context);
-            case UTOPIA_ALTAR -> utopiaAltarOrigin(context);
+            case UTOPIA_ALTAR -> utopiaAltarOrigin(context, dungeonType == LegacyDungeonPiece.DungeonType.QUEEN_ALTAR);
             case SNOW_SURFACE_MINUS2 -> {
                 // Igloo (WGEN-071; orig OreSpawnWorld.java:1265-1275): the
                 // SWAMP_GRASS_SURFACE scan shape — exact-name "Ice Plains"
@@ -251,7 +246,7 @@ public class LegacyDungeonStructure extends Structure {
      * surfaces not to rise more than 3 blocks above the anchor — conservative
      * for the castle's looser +8 plane; documented in the D6a report.
      * Frequency (the 1/4 dimension roll × 1/50 / 1/25 gates) maps to the
-     * structure-set spacing per the C7 equivalence.
+     * weights of the end_structures set (WGEN-080).
      */
     private BlockPos endSurfaceOrigin(GenerationContext context) {
         ChunkPos chunk = context.chunkPos();
@@ -462,25 +457,34 @@ public class LegacyDungeonStructure extends Structure {
     }
 
     /**
-     * {@link LegacyDungeonPiece.DungeonType.PlacementMode#UTOPIA_ALTAR}, addKingAltar's anchor (WGEN-079; orig
-     * OreSpawnWorld.java:2549-2571): up to eight attempts at chunk + 3 + nextInt(10) (:2554-2555), each accepting a
-     * column whose air over grass lies inside Y51-100 (:2556-2557; the noise surface, dry, stands in for the grass);
-     * the anchor is the grass block (:2562/:2564). The original's quickReallyBigSpaceCheck (:2558) reads real blocks
-     * and is left out.
+     * The share of Utopia chunks the original's cooldown left open to the altar's roll (WGEN-080): an altar set
+     * {@code recently_placed} to 100 (orig OreSpawnWorld.java:2566), and the roll ran only while it was 0 (:43), so each
+     * altar blocked it in the next 99 chunks the populator ran. An altar builds in about one chunk in 3,500 (one in
+     * 2,000, in the nine chunks in ten whose pass grows no tree, on grass found in 64% of them), so the roll ran in
+     * 1 / (1 + 99 / 3,470) of the chunks. The draw that stands in for it is the chunk's own, salted apart from the
+     * pass's.
      */
-    private static BlockPos utopiaAltarOrigin(GenerationContext context) {
-        ChunkPos chunk = context.chunkPos();
-        for (int i = 0; i < 8; i++) {                                                   // :2553
-            int x = 3 + chunk.getMinBlockX() + context.random().nextInt(10);            // :2554
-            int z = 3 + chunk.getMinBlockZ() + context.random().nextInt(10);            // :2555
-            int surface = context.chunkGenerator().getBaseHeight(x, z, Heightmap.Types.WORLD_SURFACE_WG,
-                    context.heightAccessor(), context.randomState());
-            int floor = context.chunkGenerator().getBaseHeight(x, z, Heightmap.Types.OCEAN_FLOOR_WG,
-                    context.heightAccessor(), context.randomState());
-            if (surface != floor || surface <= 50 || surface > 100) continue;           // :2556-2557
-            return new BlockPos(x, surface - 1, z);                                     // :2562/:2564
-        }
-        return null;
+    private static final double ALTAR_COOLDOWN_CLEAR = 1 / (1 + 99 * (0.9 * 0.64 / 2000));
+    private static final int ALTAR_COOLDOWN_SALT = 1467310429;
+
+    /**
+     * {@link LegacyDungeonPiece.DungeonType.PlacementMode#UTOPIA_ALTAR}, addKingAltar (WGEN-079, WGEN-080; orig
+     * OreSpawnWorld.java:2549-2571): the altar the chunk's pass picked ({@link UtopiaTreeStructure#chunkPass}: the roll
+     * runs only in a chunk whose pass grew no tree, :42-45, and draws on after the grove's), when it is this altar and
+     * the cooldown's share lets the roll through. The anchor is the grass block (:2562/:2564).
+     */
+    private static BlockPos utopiaAltarOrigin(GenerationContext context, boolean queen) {
+        UtopiaTreeStructure.Altar altar = UtopiaTreeStructure.chunkPass(context.seed(), context.chunkPos(),
+                UtopiaTreeStructure.probe(context)).altar();
+        if (altar == null || altar.queen() != queen || !altarRollClear(context.seed(), context.chunkPos())) return null;
+        return altar.origin();
+    }
+
+    /** Whether the cooldown's share lets the altar's roll through in {@code chunk} (see {@link #ALTAR_COOLDOWN_CLEAR}). */
+    public static boolean altarRollClear(long seed, ChunkPos chunk) {
+        WorldgenRandom cooldown = new WorldgenRandom(new LegacyRandomSource(0L));
+        cooldown.setLargeFeatureWithSalt(seed, chunk.x, chunk.z, ALTAR_COOLDOWN_SALT);
+        return cooldown.nextDouble() < ALTAR_COOLDOWN_CLEAR;
     }
 
     /**
@@ -530,20 +534,20 @@ public class LegacyDungeonStructure extends Structure {
      * from the chunk corner (:2257-2258); anchor AT the grass block found by
      * the original's Y 20→5 downward scan (:2259-2261) — on the flat Islands
      * plane (grass Y7 via the {@code orespawn:islands} noise settings) the
-     * noise-predicted heightmap − 1 is exactly that grass block. The original's
-     * shared {@code recently_placed} cooldown is in the structure sets' spacing
-     * (WGEN-078: every D4 build blocks the roll for the next 49 chunks, so the
-     * one-in-a-hundred roll builds one chunk in 149 on average; the two towers
-     * share one set, 31/8, King or Queen at even odds as the original's one
-     * pick at :2219 made them, and a one-slot structure's set is 53/8, each on
-     * a salt of its own so that no two sets lay their structures out in the same
-     * pattern). The separation of 8 chunks stands in for the reach of
-     * {@code D4BigSpaceCheck}, which kept a new build off the blocks of a
-     * tower-sized neighbour; a wider one would pen every set's start into the
-     * same corner of the shared grid.
+     * noise-predicted heightmap − 1 is exactly that grass block. The generic
+     * dungeon's LessLag cut keeps one attempt in four (:2439-2441), every other
+     * D4 builder's one in two. The roll itself, one chunk in a hundred while the
+     * shared {@code recently_placed} cooldown is clear (:134), is the
+     * islands_structures set's (WGEN-078, WGEN-080): every D4 build blocked the
+     * roll for the next 49 chunks, so it built one chunk in 149 on average, and
+     * {@code D4BigSpaceCheck} (:2655-2664) turned away the 4.5% of them that an
+     * earlier structure's blocks stood in the way of (simulated with the
+     * structures' footprints). The set's one spot in every 9 by 9 chunks, a
+     * chunk apart from the next at least, picks one of the roll's nineteen
+     * slots at those odds, or nothing.
      */
-    private BlockPos islandsGrassOrigin(GenerationContext context) {
-        if (danger.orespawn.OreSpawnConfig.LESS_LAG.get() != 0 && context.random().nextInt(2) != 0) {
+    private BlockPos islandsGrassOrigin(GenerationContext context, int lessLagOdds) {
+        if (danger.orespawn.OreSpawnConfig.LESS_LAG.get() != 0 && context.random().nextInt(lessLagOdds) != 0) {
             return null;
         }
         ChunkPos chunk = context.chunkPos();

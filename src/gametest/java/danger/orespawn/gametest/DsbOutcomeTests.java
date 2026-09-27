@@ -782,17 +782,18 @@ public class DsbOutcomeTests {
         // -- Worldgen structure/structure-set registration (WGEN-071 FIXED
         // 2026-08-11, E3) — the guard used to assert ABSENCE while the finding
         // was open; the igloo now ships a natural-generation pipeline
-        // (orespawn:igloo structure + structure_set, snowy_plains tag,
-        // SNOW_SURFACE_MINUS2 mode per igloo_spec §7.2-7.3), so presence is
-        // the requirement. Namespace-scoped (vanilla minecraft:igloo exists).
+        // (orespawn:igloo structure, placed by the overworld_chain structure
+        // set since WGEN-080, snowy_plains tag, SNOW_SURFACE_MINUS2 mode per
+        // igloo_spec §7.2-7.3), so presence is the requirement.
+        // Namespace-scoped (vanilla minecraft:igloo exists).
         helper.assertTrue(level.registryAccess().registryOrThrow(Registries.STRUCTURE)
                         .keySet().stream().anyMatch(k -> k.getNamespace().equals("orespawn")
                                 && k.getPath().equals("igloo")),
                 "orespawn:igloo structure registration must exist (WGEN-071 fixed, E3)");
-        helper.assertTrue(level.registryAccess().registryOrThrow(Registries.STRUCTURE_SET)
-                        .keySet().stream().anyMatch(k -> k.getNamespace().equals("orespawn")
-                                && k.getPath().equals("igloo")),
-                "orespawn:igloo structure-set registration must exist (WGEN-071 fixed, E3)");
+        helper.assertTrue(level.registryAccess().registryOrThrow(Registries.STRUCTURE_SET).stream()
+                        .anyMatch(set -> set.structures().stream().anyMatch(e -> e.structure().unwrapKey()
+                                .map(k -> k.location().toString().equals("orespawn:igloo")).orElse(false))),
+                "orespawn:igloo must be placed by a registered structure set (WGEN-071 fixed, E3; WGEN-080)");
 
         // -- 16 independent 50% kit pools (statistical) ----------------------
         // 30 igloos → 480 Bernoulli(0.5) pool rolls; successful-pool total is

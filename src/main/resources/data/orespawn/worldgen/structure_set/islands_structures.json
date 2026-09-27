@@ -1,0 +1,74 @@
+{
+  "structures": [
+    {
+      "structure": "orespawn:challenge_tower_king",
+      "weight": 410
+    },
+    {
+      "structure": "orespawn:challenge_tower_queen",
+      "weight": 410
+    },
+    {
+      "structure": "orespawn:islands_generic_dungeon",
+      "weight": 1093
+    },
+    {
+      "structure": "orespawn:ender_castle_islands",
+      "weight": 273
+    },
+    {
+      "structure": "orespawn:inca_pyramid",
+      "weight": 273
+    },
+    {
+      "structure": "orespawn:robot_lab",
+      "weight": 273
+    },
+    {
+      "structure": "orespawn:mini_dungeon",
+      "weight": 273
+    },
+    {
+      "structure": "orespawn:islands_ruby_dungeon",
+      "weight": 273
+    },
+    {
+      "structure": "orespawn:cephadrome_altar",
+      "weight": 273
+    },
+    {
+      "structure": "orespawn:greenhouse",
+      "weight": 273
+    },
+    {
+      "structure": "orespawn:nightmare_rookery",
+      "weight": 273
+    },
+    {
+      "structure": "orespawn:stinky_house",
+      "weight": 273
+    },
+    {
+      "structure": "orespawn:white_house",
+      "weight": 273
+    },
+    {
+      "structure": "orespawn:pumpkin",
+      "weight": 273
+    },
+    {
+      "structure": "orespawn:rainbow",
+      "weight": 273
+    },
+    {
+      "structure": "orespawn:nothing",
+      "weight": 4811
+    }
+  ],
+  "placement": {
+    "type": "minecraft:random_spread",
+    "spacing": 9,
+    "separation": 1,
+    "salt": 1692626703
+  }
+}

@@ -86,10 +86,11 @@ import java.util.Random;
  * {@code 7 + nextInt(5)} draws (vs 1+nextInt(5) in the deep variant)
  * per legacy line 1449.</p>
  *
- * <p><b>Spawn frequency:</b> wired via {@code structure_set/small_beehive.json}
- * with {@code spacing=24, separation=12, salt=84314} so it shares the
- * Forest/Jungle {@code addANest} grid with {@link MantisNestFeature}
- * and {@link BeehiveFeature} but avoids salt collisions.</p>
+ * <p><b>Spawn frequency:</b> addANest's half of one in 230 Forest / Jungle /
+ * Birch Forest chunks (orig OreSpawnWorld.java:999-1021), one in 558 with
+ * the overworld's cooldown counted: the {@code small_beehive} structure's
+ * weight in {@code structure_set/overworld_chain.json}, beside
+ * {@link MantisNestFeature}'s (WGEN-080).</p>
  */
 public class SmallBeehiveFeature extends Feature<NoneFeatureConfiguration> {
 

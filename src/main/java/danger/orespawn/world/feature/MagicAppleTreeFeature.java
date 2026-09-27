@@ -71,7 +71,7 @@ public class MagicAppleTreeFeature extends Feature<NoneFeatureConfiguration> {
                 level.getLevel().getChunkSource().randomState());
         List<BlockPos> trees;
         if (level.getLevel().dimension() == ModDimensionKeys.UTOPIA) {
-            trees = UtopiaTreeStructure.chunkPass(level.getSeed(), chunk, probe, () -> false).appleTrees();
+            trees = UtopiaTreeStructure.chunkPass(level.getSeed(), chunk, probe).appleTrees();
         } else {
             WorldgenRandom random = new WorldgenRandom(new LegacyRandomSource(0L));
             random.setLargeFeatureSeed(level.getSeed(), chunk.x, chunk.z);

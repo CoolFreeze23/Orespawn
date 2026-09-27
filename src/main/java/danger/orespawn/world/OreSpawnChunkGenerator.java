@@ -794,10 +794,9 @@ public class OreSpawnChunkGenerator extends NoiseBasedChunkGenerator {
      *       chunk (1/16 gate).</li>
      *   <li><b>Islands</b> (orig OreSpawnWorld.java:134-176): the D4 generic
      *       dungeon takes 4/19 of the 1/100 structure roll and the ruby dungeon
-     *       1/19, both surfaced at grass level ({@code addD4GenericDungeon},
-     *       :2438-2452; {@code addD4RubyDungeon}, :2171-2185); with the roll's
-     *       {@code recently_placed} cooldown that is one chunk in 708 and one
-     *       in 2831 (WGEN-078, see {@link GenericDungeon#tryPlaceIslandsDungeon}).</li>
+     *       1/19 ({@code addD4GenericDungeon}, :2438-2452; {@code addD4RubyDungeon},
+     *       :2171-2185), so they are built as structures in the roll's own set,
+     *       islands_structures (WGEN-080), not here.</li>
      *   <li><b>Crystal / Chaos / overworld:</b> no generic or ruby dungeons in
      *       the original — none here. (The pre-C7 port wrongly rolled a Ruby
      *       dungeon in Crystal and generic dungeons everywhere; WGEN-034/035.)</li>
@@ -820,9 +819,8 @@ public class OreSpawnChunkGenerator extends NoiseBasedChunkGenerator {
                 }
             }
             case MINING, VILLAGE -> GenericDungeon.tryPlaceGenericDungeon(region, random, cx, cz);
-            case ISLANDS -> GenericDungeon.tryPlaceIslandsDungeon(region, random, cx, cz);
             default -> {
-                // Crystal, Chaos, DEFAULT: no dungeons (orig parity).
+                // Islands (its dungeons are structures, WGEN-080), Crystal, Chaos, DEFAULT: no dungeons here.
             }
         }
     }
