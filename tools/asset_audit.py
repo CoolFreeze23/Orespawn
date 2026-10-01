@@ -43,6 +43,12 @@ Checks
                       clip (*_reference.animation.json, the package sampler's
                       output under tools/reference_clips/) ships anywhere under
                       src/main/resources (never acknowledgeable).
+  9. ARMOUR STYLE     the modern armour style ships every set's geometry
+                      (armour_geo/, humanoid bones only, well-formed cubes),
+                      texture layers with their _n and _s maps, and icons, and
+                      nothing else in those folders; every file matches its
+                      SHA-256 in tools/armour_asset_pins.json (never
+                      acknowledgeable).
 
 
 Findings whose (category, name) pair is listed in ACKNOWLEDGED below are
@@ -135,7 +141,7 @@ HOOKS = {
 # landing).
 NEVER_ACKNOWLEDGED = {"HOOK_STALE", "LOCOMOTION_WORD", "GECKO_GEO_DRAW_ORDER_MISSING", "GECKO_GEO_SEAM_UNRECONCILED",
                       "GECKO_GEO_FACE_ORDER_INVALID", "GECKO_GEO_FLAT_CUBE_FACE_ORDER_MISSING",
-                      "GECKO_REFERENCE_CLIP_SHIPPED"}
+                      "GECKO_REFERENCE_CLIP_SHIPPED", "ARMOUR_ASSET_PIN"}
 
 # The reference-only clips (one per reachable state since 2026-09-14, every state a hook reads - walk, idle,
 # attack, fly, swim, the seed's names and the unnamed <getter>_<value> states - since 2026-09-14): the package
@@ -1253,6 +1259,116 @@ def check_geckolib(java_texts):
 
 
 # --------------------------------------------------------------------------
+# Check 9: the modern armour style
+# --------------------------------------------------------------------------
+# The modern armour style's generated assets: per set and piece its geometry (armour_geo/<set>_<piece>.json, cubes on
+# the humanoid bones the client's geometry builder knows), per set two texture layers with their LabPBR maps
+# (textures/models/armor/modern/<set>_layer_{1,2}{,_n,_s}.png) and per set and piece an icon
+# (textures/item/modern/<set>_<piece>.png). Every file is pinned by SHA-256 in tools/armour_asset_pins.json, which is
+# written when the assets are generated and checked: a changed, missing or unpinned file is ARMOUR_ASSET_PIN, never
+# acknowledgeable.
+ARMOUR_SETS = ("queen", "royal", "mobzilla", "ultimate", "emerald", "ruby", "amethyst", "lapis", "tigerseye", "pink",
+               "experience", "mothscale", "lavaeel", "peacock")
+ARMOUR_PIECES = ("helmet", "chestplate", "leggings", "boots")
+ARMOUR_BONES = {"head", "hat", "body", "rightarm", "leftarm", "rightleg", "leftleg"}
+ARMOUR_PINS = ROOT / "tools" / "armour_asset_pins.json"
+ARMOUR_DIRS = (ASSETS / "armour_geo", ASSETS / "textures" / "models" / "armor" / "modern",
+               ASSETS / "textures" / "item" / "modern")
+
+
+def armour_expected():
+    geo, textures, icons = ARMOUR_DIRS
+    out = set()
+    for s in ARMOUR_SETS:
+        for piece in ARMOUR_PIECES:
+            out.add(geo / ("%s_%s.json" % (s, piece)))
+            out.add(icons / ("%s_%s.png" % (s, piece)))
+        for layer in (1, 2):
+            for suffix in ("", "_n", "_s"):
+                out.add(textures / ("%s_layer_%d%s.png" % (s, layer, suffix)))
+    return out
+
+
+def _numbers(value, n):
+    return isinstance(value, list) and len(value) == n and all(
+        isinstance(v, (int, float)) and not isinstance(v, bool) for v in value)
+
+
+def armour_geometry_problem(path):
+    """The first thing wrong with an armour geometry file, or None."""
+    data, error = load_json(path)
+    if error:
+        return "does not parse: %s" % error
+    tw, th = data.get("texture_width"), data.get("texture_height")
+    if not (_numbers([tw, th], 2) and tw > 0 and th > 0):
+        return "texture_width and texture_height must be positive numbers"
+    bones = data.get("bones")
+    if not isinstance(bones, dict) or not bones:
+        return "no bones"
+    for bone, cubes in bones.items():
+        if bone not in ARMOUR_BONES:
+            return 'bone "%s" is not a humanoid bone (%s)' % (bone, ", ".join(sorted(ARMOUR_BONES)))
+        if not isinstance(cubes, list):
+            return 'bone "%s" holds no cube list' % bone
+        for i, c in enumerate(cubes):
+            where = "%s cube %d" % (bone, i)
+            if not (_numbers(c.get("origin"), 3) and _numbers(c.get("size"), 3)):
+                return "%s: origin and size must be three numbers" % where
+            if min(c["size"]) < 0:
+                return "%s: a negative size" % where
+            uv = c.get("uv")
+            if not (_numbers(uv, 2) and all(float(v).is_integer() and 0 <= v for v in uv)
+                    and uv[0] < tw and uv[1] < th):
+                return "%s: uv must be two whole texels inside the texture" % where
+            if "inflate" in c and not _numbers([c["inflate"]], 1):
+                return "%s: inflate must be a number" % where
+            if "mirror" in c and not isinstance(c["mirror"], bool):
+                return "%s: mirror must be true or false" % where
+            if ("rotation" in c) != ("pivot" in c) or ("rotation" in c and not (
+                    _numbers(c["rotation"], 3) and _numbers(c["pivot"], 3))):
+                return "%s: rotation and pivot come together, three numbers each" % where
+            if "uv_size" in c and not (_numbers(c["uv_size"], 3) and all(
+                    float(v).is_integer() and v >= 1 for v in c["uv_size"])):
+                return "%s: uv_size must be three whole texel counts of at least 1" % where
+    return None
+
+
+def check_armour_style():
+    import hashlib
+    expected = armour_expected()
+    for path in sorted(expected):
+        if not path.is_file():
+            err("ARMOUR_STYLE_MISSING", path.stem, "the modern armour style needs %s" % rel(path), path)
+    present = set()
+    for d in ARMOUR_DIRS:
+        if d.is_dir():
+            present |= {p for p in d.iterdir() if p.is_file()}
+    for path in sorted(present - expected):
+        err("ARMOUR_STYLE_UNEXPECTED", path.name, "not one of the 14 sets' modern armour files", path)
+    for path in sorted(p for p in present & expected if p.suffix == ".json"):
+        problem = armour_geometry_problem(path)
+        if problem:
+            err("ARMOUR_GEO_INVALID", path.stem, problem, path)
+    data, error = load_json(ARMOUR_PINS)
+    pins = data.get("files") if isinstance(data, dict) else None
+    if error or not isinstance(pins, dict):
+        err("ARMOUR_ASSET_PIN", "armour_asset_pins",
+            "the pin list is missing or unreadable (%s)" % (error or "no files map"), ARMOUR_PINS)
+        return {"files": len(present), "pinned": 0}
+    pinned = {ROOT / p for p in pins}
+    for p, digest in sorted(pins.items()):
+        path = ROOT / p
+        if not path.is_file():
+            err("ARMOUR_ASSET_PIN", path.name, "pinned but missing: %s" % p, ARMOUR_PINS)
+        elif hashlib.sha256(path.read_bytes()).hexdigest() != digest:
+            err("ARMOUR_ASSET_PIN", path.name, "changed since its pin: generate and check the armour assets again, "
+                "which rewrites tools/armour_asset_pins.json", path)
+    for path in sorted(present - pinned):
+        err("ARMOUR_ASSET_PIN", path.name, "not pinned in tools/armour_asset_pins.json", path)
+    return {"files": len(present), "pinned": len(pins)}
+
+
+# --------------------------------------------------------------------------
 # Reporting
 # --------------------------------------------------------------------------
 
@@ -1296,6 +1412,7 @@ def main():
     check_sound_events(sound_keys)
     check_index_case(java_texts)
     check_geckolib(java_texts)
+    armour = check_armour_style()
 
     # ---- report ----
     def is_hook_pending(f):
@@ -1371,6 +1488,7 @@ def main():
         print("JSON report written: %s" % out)
 
     print()
+    print("ARMOUR STYLE: %d files, %d pinned" % (armour["files"], armour["pinned"]))
     print("RESULT: %d error(s), %d advisory(ies), %d acknowledged; draw order: %d shipped geo: "
           "%d seam + %d outside-seam -> exit %d"
           % (len(errors), len(advisories), len(acknowledged), reconciliation["shipped"],
