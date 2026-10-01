@@ -6,11 +6,11 @@
   "benchmark_kind": "SMOKE_ONLY / COMPONENT_PROXY_ONLY / PENDING_LIVE_PRECUTOVER",
   "fixed_seed": "N/A — no randomized world exists in the headless component proxy",
   "profile": "smoke",
-  "captured_at_utc": "2026-09-24T00:48:17.321819Z",
+  "captured_at_utc": "2026-10-01T19:02:02.549069100Z",
   "manifest_sha256": "0efc84af822655d8e7a86c6e7fa29630b9a9ee51b6e6c1d6b7f10dad9d1ac2f8",
   "protocol_sha256": "19e3f79456089a654835ddf748f7fd424efde71f63f0714c38651176a6a07b4a",
   "provenance": {
-    "repository_base_revision": "f149baa0ac1eba4c2425edab19adf611e4abd267",
+    "repository_base_revision": "4b2595e1363d305d57a09359af9e4fc48b4304a7",
     "revision_semantics": "base revision plus exact working-tree source/input hashes below",
     "source_files_sha256": {
       "src/g1tool/java/danger/orespawn/g1/G1PerformanceBenchmark.java": "6d1934e1bc7e9b5e2bb1933c9bf39e8c55832cdbab39f46a7beaed28153b1b56",
@@ -18,7 +18,7 @@
       "tools/g1_benchmark_gate.py": "a39c40dafe3c4f39065f773ce335bbe0af68637c4b42bf5f53d6d9c330c0aa0f",
       "tools/g1_performance_benchmark.json": "19e3f79456089a654835ddf748f7fd424efde71f63f0714c38651176a6a07b4a",
       "tools/g1_model_proofs.json": "0efc84af822655d8e7a86c6e7fa29630b9a9ee51b6e6c1d6b7f10dad9d1ac2f8",
-      "build.gradle": "42c30e1964dbdab5c438f91ab9665107d4bf3dbf8a4a2cf0d89ee22c806f0ecc"
+      "build.gradle": "6faf28279580e613b021fbd56a96da58c84e678301d2f710166b8be5b0ffffa4"
     },
     "manifest_path": "tools/g1_model_proofs.json",
     "protocol_path": "tools/g1_performance_benchmark.json",
@@ -53,7 +53,7 @@
         "class_sha256": "868bcf055cc58752dab89a1672ff1a33d32ad31f342412d1a07f31969185fa81",
         "classpath_entry_name": "g1tool",
         "classpath_entry_kind": "directory",
-        "classpath_entry_sha256": "26ae668bcb1a9fd69264b126109091e3a86754f2a09084c069513f601ea038b1"
+        "classpath_entry_sha256": "b2918f6e2056660f276ac0a22c9692e787e0f4cde31f6e6bd3abcc4a5b40506f"
       },
       "candidate_animation_runtime": {
         "declared_version": "G1 candidate custom-animation runtime",
@@ -62,7 +62,7 @@
         "class_sha256": "50a59e10235eba009c6a47e4a0a48622c656788a3a50b48df8d029fa7afd4747",
         "classpath_entry_name": "g1tool",
         "classpath_entry_kind": "directory",
-        "classpath_entry_sha256": "26ae668bcb1a9fd69264b126109091e3a86754f2a09084c069513f601ea038b1"
+        "classpath_entry_sha256": "b2918f6e2056660f276ac0a22c9692e787e0f4cde31f6e6bd3abcc4a5b40506f"
       },
       "geckolib": {
         "declared_version": "GeckoLib 4.8.4",
@@ -80,16 +80,16 @@
         "class_sha256": "903e5ac9b59d208af8c118bf781d5e4c4e381fa17735b50a8ebca1bee9689953",
         "classpath_entry_name": "neoforge-21.1.223.jar",
         "classpath_entry_kind": "file",
-        "classpath_entry_sha256": "7fdde7231c51f2e69606e79b64b3585bd380089f8a9218c23cc65bb94a1f8edd"
+        "classpath_entry_sha256": "5282aa661191db67af7927467c03b3b22670eaa389cd8a8697953d12c29dbe65"
       },
       "minecraft": {
         "declared_version": "Minecraft 1.21.1",
         "representative_class": "net.minecraft.client.model.geom.ModelPart",
         "class_resource": "net/minecraft/client/model/geom/ModelPart.class",
-        "class_sha256": "78eb6811062aa5688d88b5d6b4d32de84da1eb75ab56c4c29e5fbfc4213727db",
+        "class_sha256": "1d2822d2c8eef5b5d6c0da753c24b1b5120e2cd50494384ba44584b2aec27aa2",
         "classpath_entry_name": "neoforge-21.1.223.jar",
         "classpath_entry_kind": "file",
-        "classpath_entry_sha256": "7fdde7231c51f2e69606e79b64b3585bd380089f8a9218c23cc65bb94a1f8edd"
+        "classpath_entry_sha256": "5282aa661191db67af7927467c03b3b22670eaa389cd8a8697953d12c29dbe65"
       }
     }
   },
@@ -145,69 +145,69 @@
           "starting_order": "classic/candidate",
           "alternation_unit": "timing batch",
           "classic": {
-            "sample_count": 971,
-            "median_frame_ms": 0.04636,
-            "p95_frame_ms": 0.07871,
-            "p99_frame_ms": 0.12597,
-            "one_percent_low_fps": 7938.398031277288
+            "sample_count": 913,
+            "median_frame_ms": 0.05121,
+            "p95_frame_ms": 0.07855,
+            "p99_frame_ms": 0.11686,
+            "one_percent_low_fps": 8557.247989046722
           },
           "candidate": {
-            "sample_count": 971,
-            "median_frame_ms": 0.14183,
-            "p95_frame_ms": 0.22425,
-            "p99_frame_ms": 0.36156,
-            "one_percent_low_fps": 2765.7926761809936
+            "sample_count": 913,
+            "median_frame_ms": 0.15419,
+            "p95_frame_ms": 0.24471,
+            "p99_frame_ms": 0.32142,
+            "one_percent_low_fps": 3111.194076286479
           },
-          "paired_wall_seconds": 2.0012694,
-          "client_cpu_percent_single_thread": 99.15581580370939,
+          "paired_wall_seconds": 2.0005883,
+          "client_cpu_percent_single_thread": 95.28447207253986,
           "gc_collections": 15,
-          "gc_time_ms": 11
+          "gc_time_ms": 10
         },
         {
           "run": 2,
           "starting_order": "candidate/classic",
           "alternation_unit": "timing batch",
           "classic": {
-            "sample_count": 928,
-            "median_frame_ms": 0.05052,
-            "p95_frame_ms": 0.07926,
-            "p99_frame_ms": 0.12822,
-            "one_percent_low_fps": 7799.095304944626
+            "sample_count": 976,
+            "median_frame_ms": 0.04775,
+            "p95_frame_ms": 0.07091,
+            "p99_frame_ms": 0.08554,
+            "one_percent_low_fps": 11690.437222352115
           },
           "candidate": {
-            "sample_count": 928,
-            "median_frame_ms": 0.14944,
-            "p95_frame_ms": 0.2213,
-            "p99_frame_ms": 0.37526,
-            "one_percent_low_fps": 2664.8190587859085
+            "sample_count": 976,
+            "median_frame_ms": 0.14651,
+            "p95_frame_ms": 0.20853,
+            "p99_frame_ms": 0.24077,
+            "one_percent_low_fps": 4153.341363126635
           },
-          "paired_wall_seconds": 2.0002399,
-          "client_cpu_percent_single_thread": 98.42569383802413,
-          "gc_collections": 14,
-          "gc_time_ms": 8
+          "paired_wall_seconds": 2.0004999,
+          "client_cpu_percent_single_thread": 96.06973736914458,
+          "gc_collections": 16,
+          "gc_time_ms": 10
         }
       ],
       "classic": {
         "aggregation": "median of per-run metric",
-        "median_frame_ms": 0.04844,
-        "p95_frame_ms": 0.078985,
-        "p99_frame_ms": 0.127095,
-        "one_percent_low_fps": 7868.130138872496
+        "median_frame_ms": 0.049479999999999996,
+        "p95_frame_ms": 0.07472999999999999,
+        "p99_frame_ms": 0.10120000000000001,
+        "one_percent_low_fps": 9881.422924901184
       },
       "candidate": {
         "aggregation": "median of per-run metric",
-        "median_frame_ms": 0.14563500000000001,
-        "p95_frame_ms": 0.222775,
-        "p99_frame_ms": 0.36841,
-        "one_percent_low_fps": 2714.3671453000734
+        "median_frame_ms": 0.15034999999999998,
+        "p95_frame_ms": 0.22662,
+        "p99_frame_ms": 0.281095,
+        "one_percent_low_fps": 3557.5161422294955
       },
       "allocation": {
         "classic_bytes_per_frame": 93880.0,
         "candidate_bytes_per_frame": 346680.0,
         "supported": true
       },
-      "median_regression_percent": 200.65028901734107,
-      "p95_regression_ms": 0.14379,
+      "median_regression_percent": 203.86014551333872,
+      "p95_regression_ms": 0.15189,
       "budget_scene": false
     },
     {
@@ -228,68 +228,68 @@
           "alternation_unit": "timing batch",
           "classic": {
             "sample_count": 562,
-            "median_frame_ms": 0.11134,
-            "p95_frame_ms": 0.13504,
-            "p99_frame_ms": 0.16869,
-            "one_percent_low_fps": 5928.033671231253
+            "median_frame_ms": 0.10985,
+            "p95_frame_ms": 0.18021,
+            "p99_frame_ms": 0.22238,
+            "one_percent_low_fps": 4496.807266840543
           },
           "candidate": {
             "sample_count": 562,
-            "median_frame_ms": 0.23692,
-            "p95_frame_ms": 0.28715,
-            "p99_frame_ms": 0.30743,
-            "one_percent_low_fps": 3252.7729889731
+            "median_frame_ms": 0.2187,
+            "p95_frame_ms": 0.32963,
+            "p99_frame_ms": 0.41178,
+            "one_percent_low_fps": 2428.481227840109
           },
-          "paired_wall_seconds": 2.0038449,
-          "client_cpu_percent_single_thread": 99.02837290450972,
-          "gc_collections": 12,
-          "gc_time_ms": 8
+          "paired_wall_seconds": 2.0034122,
+          "client_cpu_percent_single_thread": 97.48992244331946,
+          "gc_collections": 11,
+          "gc_time_ms": 7
         },
         {
           "run": 2,
           "starting_order": "candidate/classic",
           "alternation_unit": "timing batch",
           "classic": {
-            "sample_count": 523,
-            "median_frame_ms": 0.11323,
-            "p95_frame_ms": 0.18273,
-            "p99_frame_ms": 0.2729,
-            "one_percent_low_fps": 3664.345914254306
+            "sample_count": 561,
+            "median_frame_ms": 0.11374,
+            "p95_frame_ms": 0.16972,
+            "p99_frame_ms": 0.20188,
+            "one_percent_low_fps": 4953.437685753913
           },
           "candidate": {
-            "sample_count": 523,
-            "median_frame_ms": 0.24266,
-            "p95_frame_ms": 0.39238,
-            "p99_frame_ms": 0.51948,
-            "one_percent_low_fps": 1925.0019250019247
+            "sample_count": 561,
+            "median_frame_ms": 0.2194,
+            "p95_frame_ms": 0.31174,
+            "p99_frame_ms": 0.39706,
+            "one_percent_low_fps": 2518.511056263537
           },
-          "paired_wall_seconds": 2.0002373,
-          "client_cpu_percent_single_thread": 99.20697909193075,
-          "gc_collections": 10,
-          "gc_time_ms": 5
+          "paired_wall_seconds": 2.0001598,
+          "client_cpu_percent_single_thread": 99.21082305523788,
+          "gc_collections": 12,
+          "gc_time_ms": 8
         }
       ],
       "classic": {
         "aggregation": "median of per-run metric",
-        "median_frame_ms": 0.112285,
-        "p95_frame_ms": 0.158885,
-        "p99_frame_ms": 0.220795,
-        "one_percent_low_fps": 4529.088068117485
+        "median_frame_ms": 0.111795,
+        "p95_frame_ms": 0.174965,
+        "p99_frame_ms": 0.21212999999999999,
+        "one_percent_low_fps": 4714.090416254184
       },
       "candidate": {
         "aggregation": "median of per-run metric",
-        "median_frame_ms": 0.23979,
-        "p95_frame_ms": 0.339765,
-        "p99_frame_ms": 0.413455,
-        "one_percent_low_fps": 2418.6428994691078
+        "median_frame_ms": 0.21905000000000002,
+        "p95_frame_ms": 0.320685,
+        "p99_frame_ms": 0.40442,
+        "one_percent_low_fps": 2472.6769200336284
       },
       "allocation": {
         "classic_bytes_per_frame": 171480.0,
         "candidate_bytes_per_frame": 394680.0,
         "supported": true
       },
-      "median_regression_percent": 113.5547936055573,
-      "p95_regression_ms": 0.18087999999999999,
+      "median_regression_percent": 95.93899548280336,
+      "p95_regression_ms": 0.14572,
       "budget_scene": false
     },
     {
@@ -309,69 +309,69 @@
           "starting_order": "classic/candidate",
           "alternation_unit": "timing batch",
           "classic": {
-            "sample_count": 726,
-            "median_frame_ms": 0.08913,
-            "p95_frame_ms": 0.10575,
-            "p99_frame_ms": 0.11749,
-            "one_percent_low_fps": 8511.362669163333
+            "sample_count": 779,
+            "median_frame_ms": 0.07968,
+            "p95_frame_ms": 0.12265,
+            "p99_frame_ms": 0.17837,
+            "one_percent_low_fps": 5606.323933396871
           },
           "candidate": {
-            "sample_count": 726,
-            "median_frame_ms": 0.18512,
-            "p95_frame_ms": 0.2184,
-            "p99_frame_ms": 0.24039,
-            "one_percent_low_fps": 4159.906818087275
+            "sample_count": 779,
+            "median_frame_ms": 0.15886,
+            "p95_frame_ms": 0.23819,
+            "p99_frame_ms": 0.31222,
+            "one_percent_low_fps": 3202.869771315098
           },
-          "paired_wall_seconds": 2.0006021,
-          "client_cpu_percent_single_thread": 99.96990406038262,
-          "gc_collections": 11,
-          "gc_time_ms": 6
+          "paired_wall_seconds": 2.0012359,
+          "client_cpu_percent_single_thread": 96.81517306380522,
+          "gc_collections": 12,
+          "gc_time_ms": 7
         },
         {
           "run": 2,
           "starting_order": "candidate/classic",
           "alternation_unit": "timing batch",
           "classic": {
-            "sample_count": 732,
-            "median_frame_ms": 0.08684,
-            "p95_frame_ms": 0.10759,
-            "p99_frame_ms": 0.11768,
-            "one_percent_low_fps": 8497.62066621346
+            "sample_count": 718,
+            "median_frame_ms": 0.09214,
+            "p95_frame_ms": 0.12375,
+            "p99_frame_ms": 0.13714,
+            "one_percent_low_fps": 7291.81857955374
           },
           "candidate": {
-            "sample_count": 732,
-            "median_frame_ms": 0.1808,
-            "p95_frame_ms": 0.22384,
-            "p99_frame_ms": 0.25862,
-            "one_percent_low_fps": 3866.676977805274
+            "sample_count": 718,
+            "median_frame_ms": 0.18202,
+            "p95_frame_ms": 0.2372,
+            "p99_frame_ms": 0.26864,
+            "one_percent_low_fps": 3722.4538415723646
           },
-          "paired_wall_seconds": 2.0025079,
-          "client_cpu_percent_single_thread": 99.87476204213726,
-          "gc_collections": 11,
+          "paired_wall_seconds": 2.0010387,
+          "client_cpu_percent_single_thread": 97.60555855316541,
+          "gc_collections": 12,
           "gc_time_ms": 6
         }
       ],
       "classic": {
         "aggregation": "median of per-run metric",
-        "median_frame_ms": 0.08798500000000001,
-        "p95_frame_ms": 0.10667,
-        "p99_frame_ms": 0.117585,
-        "one_percent_low_fps": 8504.486116426415
+        "median_frame_ms": 0.08591,
+        "p95_frame_ms": 0.1232,
+        "p99_frame_ms": 0.157755,
+        "one_percent_low_fps": 6338.943298152198
       },
       "candidate": {
         "aggregation": "median of per-run metric",
-        "median_frame_ms": 0.18296,
-        "p95_frame_ms": 0.22112,
-        "p99_frame_ms": 0.249505,
-        "one_percent_low_fps": 4007.935712711168
+        "median_frame_ms": 0.17043999999999998,
+        "p95_frame_ms": 0.237695,
+        "p99_frame_ms": 0.29042999999999997,
+        "one_percent_low_fps": 3443.170471370038
       },
       "allocation": {
         "classic_bytes_per_frame": 132680.0,
         "candidate_bytes_per_frame": 305080.0,
         "supported": true
       },
-      "median_regression_percent": 107.94453600045463,
-      "p95_regression_ms": 0.11445000000000001,
+      "median_regression_percent": 98.39366779187519,
+      "p95_regression_ms": 0.11449499999999999,
       "budget_scene": true
     },
     {
@@ -391,22 +391,22 @@
           "starting_order": "classic/candidate",
           "alternation_unit": "timing batch",
           "classic": {
-            "sample_count": 651,
-            "median_frame_ms": 9.76E-4,
-            "p95_frame_ms": 0.001147,
-            "p99_frame_ms": 0.001193,
-            "one_percent_low_fps": 838222.9673093043
+            "sample_count": 621,
+            "median_frame_ms": 0.001018,
+            "p95_frame_ms": 0.001411,
+            "p99_frame_ms": 0.001669,
+            "one_percent_low_fps": 599161.1743559018
           },
           "candidate": {
-            "sample_count": 651,
-            "median_frame_ms": 0.002022,
-            "p95_frame_ms": 0.00241,
-            "p99_frame_ms": 0.002503,
-            "one_percent_low_fps": 399520.57530962845
+            "sample_count": 621,
+            "median_frame_ms": 0.002105,
+            "p95_frame_ms": 0.003006,
+            "p99_frame_ms": 0.003401,
+            "one_percent_low_fps": 294031.1673037342
           },
-          "paired_wall_seconds": 2.0011159,
-          "client_cpu_percent_single_thread": 99.94423611346049,
-          "gc_collections": 2,
+          "paired_wall_seconds": 2.0013017,
+          "client_cpu_percent_single_thread": 99.93495733301981,
+          "gc_collections": 1,
           "gc_time_ms": 1
         },
         {
@@ -414,46 +414,46 @@
           "starting_order": "candidate/classic",
           "alternation_unit": "timing batch",
           "classic": {
-            "sample_count": 677,
-            "median_frame_ms": 9.52E-4,
-            "p95_frame_ms": 0.001121,
-            "p99_frame_ms": 0.001182,
-            "one_percent_low_fps": 846023.6886632825
+            "sample_count": 613,
+            "median_frame_ms": 0.001046,
+            "p95_frame_ms": 0.001376,
+            "p99_frame_ms": 0.001652,
+            "one_percent_low_fps": 605326.8765133172
           },
           "candidate": {
-            "sample_count": 677,
-            "median_frame_ms": 0.001945,
-            "p95_frame_ms": 0.002274,
-            "p99_frame_ms": 0.00245,
-            "one_percent_low_fps": 408163.2653061225
+            "sample_count": 613,
+            "median_frame_ms": 0.002161,
+            "p95_frame_ms": 0.002875,
+            "p99_frame_ms": 0.003311,
+            "one_percent_low_fps": 302023.5578375113
           },
-          "paired_wall_seconds": 2.0021702,
-          "client_cpu_percent_single_thread": 99.89160761657526,
+          "paired_wall_seconds": 2.0014586,
+          "client_cpu_percent_single_thread": 98.36576184988289,
           "gc_collections": 1,
-          "gc_time_ms": 1
+          "gc_time_ms": 0
         }
       ],
       "classic": {
         "aggregation": "median of per-run metric",
-        "median_frame_ms": 9.64E-4,
-        "p95_frame_ms": 0.001134,
-        "p99_frame_ms": 0.0011875000000000002,
-        "one_percent_low_fps": 842105.2631578946
+        "median_frame_ms": 0.001032,
+        "p95_frame_ms": 0.0013935,
+        "p99_frame_ms": 0.0016605,
+        "one_percent_low_fps": 602228.2445046672
       },
       "candidate": {
         "aggregation": "median of per-run metric",
-        "median_frame_ms": 0.0019835,
-        "p95_frame_ms": 0.002342,
-        "p99_frame_ms": 0.0024765,
-        "one_percent_low_fps": 403795.6793862306
+        "median_frame_ms": 0.0021330000000000003,
+        "p95_frame_ms": 0.0029405,
+        "p99_frame_ms": 0.003356,
+        "one_percent_low_fps": 297973.7783075089
       },
       "allocation": {
         "classic_bytes_per_frame": 280.0,
         "candidate_bytes_per_frame": 280.0,
         "supported": true
       },
-      "median_regression_percent": 105.75726141078836,
-      "p95_regression_ms": 0.0012079999999999999,
+      "median_regression_percent": 106.68604651162794,
+      "p95_regression_ms": 0.001547,
       "budget_scene": false
     }
   ],
@@ -529,8 +529,8 @@
     "status": "Q6_PENDING_LIVE_PRECUTOVER",
     "scene": "mixed_100_visible",
     "comparison_to_q6_budget_prohibited": true,
-    "component_proxy_warning_median_regression_percent": 107.94453600045463,
-    "component_proxy_warning_p95_regression_ms": 0.11445000000000001,
+    "component_proxy_warning_median_regression_percent": 98.39366779187519,
+    "component_proxy_warning_p95_regression_ms": 0.11449499999999999,
     "provisional_limits_not_applied_to_component_proxy": {
       "max_median_frame_regression_percent": 10.0,
       "max_p95_frame_regression_ms": 2.0,
@@ -543,5 +543,5 @@
   "mhlib_packets_per_second": "not measured: no runtime entity/server in G1 proxy",
   "server_mspt_p95": "not measured: no runtime server in G1 proxy",
   "gpu_frame_time_ms": "not measured: no GPU submission in G1 proxy",
-  "vertex_checksum": "12105778381025165086"
+  "vertex_checksum": "395229224847786160"
 }

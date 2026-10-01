@@ -2,5 +2,13 @@
   "parent": "minecraft:item/generated",
   "textures": {
     "layer0": "orespawn:items/experience_helmet"
-  }
+  },
+  "overrides": [
+    {
+      "predicate": {
+        "orespawn:armour_style": 1
+      },
+      "model": "orespawn:item/modern/experience_helmet"
+    }
+  ]
 }

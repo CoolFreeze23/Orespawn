@@ -517,6 +517,20 @@ tasks.register('queenPartPlacementProbe', JavaExec) {
 }
 tasks.named('check') { dependsOn tasks.named('queenPartPlacementProbe') }
 
+// MOD-039, the modern armour style: the client's own ArmourGeometry builds every set's four pieces from armour_geo/
+// and each, posed on vanilla's armour model, shows exactly its slot's parts as vanilla's armour does (exit 1 on a
+// failure).
+tasks.register('armourModelProbe', JavaExec) {
+    group = 'verification'
+    description = 'Builds the 56 modern armour pieces and checks the parts each slot shows (ArmourModelProbe).'
+    dependsOn tasks.named('g1toolClasses')
+    classpath = sourceSets.g1tool.runtimeClasspath
+    mainClass = 'danger.orespawn.g1.ArmourModelProbe'
+    args file('src/main/resources/assets/orespawn/armour_geo').absolutePath
+    jvmArgs '-Djava.awt.headless=true'
+}
+tasks.named('check') { dependsOn tasks.named('armourModelProbe') }
+
 
 
 // BUG-032 (beta.3): the DISTRIBUTED jar must be the jarJar output (nested

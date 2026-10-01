@@ -36,4 +36,5 @@
 /phase_g_reports/release_media/** binary
 # The modern armour style's geometry and its pin list are SHA-256 pinned by the asset audit (check 9); keep them LF on every checkout.
 /src/main/resources/assets/orespawn/armour_geo/*.json text eol=lf
+/src/main/resources/assets/orespawn/models/item/modern/*.json text eol=lf
 /tools/armour_asset_pins.json text eol=lf

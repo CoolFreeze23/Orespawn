@@ -2,6 +2,9 @@ package danger.orespawn;
 
 import danger.orespawn.client.OreSpawnItemRenderer;
 import danger.orespawn.client.PhaseGDevRenderers;
+import danger.orespawn.client.armour.ArmourStyleClient;
+import danger.orespawn.client.armour.ArmourStyleConfig;
+import danger.orespawn.client.armour.VisualsScreen;
 import danger.orespawn.entity.client.*;
 import danger.orespawn.gui.CrystalFurnaceScreen;
 import danger.orespawn.gui.CrystalWorkbenchScreen;
@@ -14,19 +17,30 @@ import net.minecraft.world.level.FoliageColor;
 import net.minecraft.world.level.GrassColor;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.config.ModConfig;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 import net.neoforged.neoforge.client.event.ModelEvent;
+import net.neoforged.neoforge.client.event.RegisterClientReloadListenersEvent;
 import net.neoforged.neoforge.client.event.RegisterColorHandlersEvent;
 import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
 import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
 import net.neoforged.neoforge.client.extensions.common.RegisterClientExtensionsEvent;
+import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 
 @Mod(value = OreSpawnMod.MOD_ID, dist = Dist.CLIENT)
 public class OreSpawnClient {
 
-    public OreSpawnClient() {
+    /**
+     * The client's own settings (the armour style, MOD-039), and the OreSpawn Visuals screen behind the mod list's
+     * Config button.
+     */
+    public OreSpawnClient(ModContainer container) {
+        container.registerConfig(ModConfig.Type.CLIENT, ArmourStyleConfig.SPEC);
+        container.registerExtensionPoint(IConfigScreenFactory.class,
+                (IConfigScreenFactory) (modContainer, parent) -> new VisualsScreen(parent));
     }
 
     @EventBusSubscriber(modid = OreSpawnMod.MOD_ID, bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
@@ -41,6 +55,14 @@ public class OreSpawnClient {
             if (danger.orespawn.bench.BenchCommand.enabled()) {
                 danger.orespawn.client.bench.BenchClientSampler.install();
             }
+            // MOD-039: the armour icons follow the armour style through their item models' predicate
+            event.enqueueWork(ArmourStyleClient::registerItemProperties);
+        }
+
+        /** MOD-039: the modern armour pieces' models are built again from the resources after a reload. */
+        @SubscribeEvent
+        public static void registerReloadListeners(RegisterClientReloadListenersEvent event) {
+            ArmourStyleClient.registerReloadListener(event);
         }
 
         @SubscribeEvent
@@ -492,6 +514,9 @@ public class OreSpawnClient {
                     ModItems.CHAINSAW.get(),
                     ModItems.ATTITUDE_ADJUSTER.get(),
                     ModItems.SQUID_ZOOKA.get());
+
+            // MOD-039: the 14 armour sets' modern 3D pieces, while the armour style is modern
+            ArmourStyleClient.registerExtensions(event);
         }
     }
 }

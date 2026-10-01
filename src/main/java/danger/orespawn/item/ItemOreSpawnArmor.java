@@ -1,9 +1,12 @@
 package danger.orespawn.item;
 
 import danger.orespawn.OreSpawnConfig;
+import danger.orespawn.OreSpawnMod;
+import danger.orespawn.client.armour.ArmourPieces;
 import danger.orespawn.util.OreSpawnEnchantHelper;
 import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
@@ -119,9 +122,30 @@ public class ItemOreSpawnArmor extends ArmorItem {
     private static final double GLIDE_FALL_CAP = -0.1;
     private static final double QUEEN_FALL_CAP = -0.25;
 
+    /** The set's modern textures (MOD-039): layer 1 for the helmet, chestplate and boots, layer 2 for the leggings. */
+    private final ResourceLocation modernOuter;
+    private final ResourceLocation modernInner;
+
     public ItemOreSpawnArmor(Holder<ArmorMaterial> material, Type type, Item.Properties properties, String armorMaterialName) {
         super(material, type, properties);
         this.armorMaterialName = armorMaterialName;
+        this.modernOuter = ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID,
+                "textures/models/armor/modern/" + armorMaterialName + "_layer_1.png");
+        this.modernInner = ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID,
+                "textures/models/armor/modern/" + armorMaterialName + "_layer_2.png");
+    }
+
+    /**
+     * The armour style's texture (MOD-039): the set's modern layer for the wearer and stack the client's model hook has
+     * just handed the modern model (ArmourPieces.modernTexture), read at every call so a change shows at once; null
+     * keeps the material's classic layer, also for a caller that asks for the texture alone and draws its own model.
+     * Only client rendering asks, so the client setting is never read on a server.
+     */
+    @Override
+    public ResourceLocation getArmorTexture(ItemStack stack, Entity entity, EquipmentSlot slot, ArmorMaterial.Layer layer,
+                                            boolean innerModel) {
+        return ArmourPieces.modernTexture(armorMaterialName, slot, entity, stack)
+                ? (innerModel ? modernInner : modernOuter) : null;
     }
 
     @Override

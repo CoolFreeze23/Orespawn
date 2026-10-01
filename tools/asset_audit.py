@@ -45,10 +45,15 @@ Checks
                       src/main/resources (never acknowledgeable).
   9. ARMOUR STYLE     the modern armour style ships every set's geometry
                       (armour_geo/, humanoid bones only, well-formed cubes),
-                      texture layers with their _n and _s maps, and icons, and
-                      nothing else in those folders; every file matches its
-                      SHA-256 in tools/armour_asset_pins.json (never
-                      acknowledgeable).
+                      texture layers with their _n and _s maps, icons, icon
+                      models and the OreSpawn Visuals pictures, and nothing
+                      else in those folders; each piece's classic item model
+                      carries exactly one overrides entry, on the
+                      orespawn:armour_style predicate, to its modern model;
+                      every file matches its SHA-256 in
+                      tools/armour_asset_pins.json, and the classic textures,
+                      icons and item models (but for that entry) match their
+                      pins there too (never acknowledgeable).
 
 
 Findings whose (category, name) pair is listed in ACKNOWLEDGED below are
@@ -141,7 +146,7 @@ HOOKS = {
 # landing).
 NEVER_ACKNOWLEDGED = {"HOOK_STALE", "LOCOMOTION_WORD", "GECKO_GEO_DRAW_ORDER_MISSING", "GECKO_GEO_SEAM_UNRECONCILED",
                       "GECKO_GEO_FACE_ORDER_INVALID", "GECKO_GEO_FLAT_CUBE_FACE_ORDER_MISSING",
-                      "GECKO_REFERENCE_CLIP_SHIPPED", "ARMOUR_ASSET_PIN"}
+                      "GECKO_REFERENCE_CLIP_SHIPPED", "ARMOUR_ASSET_PIN", "ARMOUR_STYLE_MODEL"}
 
 # The reference-only clips (one per reachable state since 2026-09-14, every state a hook reads - walk, idle,
 # attack, fly, swim, the seed's names and the unnamed <getter>_<value> states - since 2026-09-14): the package
@@ -1273,20 +1278,58 @@ ARMOUR_PIECES = ("helmet", "chestplate", "leggings", "boots")
 ARMOUR_BONES = {"head", "hat", "body", "rightarm", "leftarm", "rightleg", "leftleg"}
 ARMOUR_PINS = ROOT / "tools" / "armour_asset_pins.json"
 ARMOUR_DIRS = (ASSETS / "armour_geo", ASSETS / "textures" / "models" / "armor" / "modern",
-               ASSETS / "textures" / "item" / "modern")
+               ASSETS / "textures" / "item" / "modern", ASSETS / "models" / "item" / "modern",
+               ASSETS / "textures" / "gui" / "visuals")
+# The style switch picks a piece's modern icon through one overrides entry in its classic item model.
+ARMOUR_STYLE_PREDICATE = "orespawn:armour_style"
 
 
 def armour_expected():
-    geo, textures, icons = ARMOUR_DIRS
-    out = set()
+    geo, textures, icons, models, pictures = ARMOUR_DIRS
+    out = {pictures / "classic.png", pictures / "modern.png"}
     for s in ARMOUR_SETS:
         for piece in ARMOUR_PIECES:
             out.add(geo / ("%s_%s.json" % (s, piece)))
             out.add(icons / ("%s_%s.png" % (s, piece)))
+            out.add(models / ("%s_%s.json" % (s, piece)))
         for layer in (1, 2):
             for suffix in ("", "_n", "_s"):
                 out.add(textures / ("%s_layer_%d%s.png" % (s, layer, suffix)))
     return out
+
+
+def armour_model_problem(name, data):
+    """The first thing wrong with a piece's classic item model and its one overrides entry, or None."""
+    modern = "orespawn:item/modern/" + name
+    overrides = data.get("overrides")
+    if not isinstance(overrides, list) or len(overrides) != 1:
+        return "must carry exactly one overrides entry (found %s)" % (
+            len(overrides) if isinstance(overrides, list) else "none")
+    entry = overrides[0]
+    if entry.get("predicate") != {ARMOUR_STYLE_PREDICATE: 1} or entry.get("model") != modern:
+        return 'the overrides entry must be {"predicate": {"%s": 1}, "model": "%s"}' % (ARMOUR_STYLE_PREDICATE, modern)
+    target = ASSETS / "models" / "item" / "modern" / (name + ".json")
+    target_data, error = load_json(target)
+    if error:
+        return "the modern model %s is missing or does not parse" % modern
+    layer = (target_data.get("textures") or {}).get("layer0")
+    if target_data.get("parent") != "minecraft:item/generated" or layer != modern:
+        return "the modern model must be item/generated with layer0 %s" % modern
+    if not (ASSETS / "textures" / "item" / "modern" / (name + ".png")).is_file():
+        return "the modern icon textures/item/modern/%s.png is missing" % name
+    return None
+
+
+def classic_digest(path):
+    """A classic armour file's pin: its bytes, or for an item model its content without the overrides entry."""
+    import hashlib
+    if path.suffix == ".json":
+        data, error = load_json(path)
+        if error:
+            return None
+        data.pop("overrides", None)
+        return hashlib.sha256(json.dumps(data, sort_keys=True).encode("utf-8")).hexdigest()
+    return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
 def _numbers(value, n):
@@ -1345,10 +1388,18 @@ def check_armour_style():
             present |= {p for p in d.iterdir() if p.is_file()}
     for path in sorted(present - expected):
         err("ARMOUR_STYLE_UNEXPECTED", path.name, "not one of the 14 sets' modern armour files", path)
-    for path in sorted(p for p in present & expected if p.suffix == ".json"):
+    for path in sorted(p for p in present & expected if p.suffix == ".json" and p.parent == ARMOUR_DIRS[0]):
         problem = armour_geometry_problem(path)
         if problem:
             err("ARMOUR_GEO_INVALID", path.stem, problem, path)
+    for s in ARMOUR_SETS:
+        for piece in ARMOUR_PIECES:
+            name = "%s_%s" % (s, piece)
+            path = ASSETS / "models" / "item" / (name + ".json")
+            data, error = load_json(path)
+            problem = ("does not parse: %s" % error) if error else armour_model_problem(name, data)
+            if problem:
+                err("ARMOUR_STYLE_MODEL", name, problem, path)
     data, error = load_json(ARMOUR_PINS)
     pins = data.get("files") if isinstance(data, dict) else None
     if error or not isinstance(pins, dict):
@@ -1365,7 +1416,19 @@ def check_armour_style():
                 "which rewrites tools/armour_asset_pins.json", path)
     for path in sorted(present - pinned):
         err("ARMOUR_ASSET_PIN", path.name, "not pinned in tools/armour_asset_pins.json", path)
-    return {"files": len(present), "pinned": len(pins)}
+    # The classic look stays as it was: its textures, its icons and its item models (but for the one overrides entry)
+    classic = data.get("classic")
+    if not isinstance(classic, dict) or not classic:
+        err("ARMOUR_ASSET_PIN", "armour_asset_pins", "the classic files' pins are missing", ARMOUR_PINS)
+        classic = {}
+    for p, digest in sorted(classic.items()):
+        path = ROOT / p
+        if not path.is_file():
+            err("ARMOUR_ASSET_PIN", path.name, "a classic armour file is missing: %s" % p, ARMOUR_PINS)
+        elif classic_digest(path) != digest:
+            err("ARMOUR_ASSET_PIN", path.name, "a classic armour file changed (the classic look is kept as it "
+                "was; an item model may only gain its overrides entry)", path)
+    return {"files": len(present), "pinned": len(pins), "classic": len(classic)}
 
 
 # --------------------------------------------------------------------------
@@ -1488,7 +1551,8 @@ def main():
         print("JSON report written: %s" % out)
 
     print()
-    print("ARMOUR STYLE: %d files, %d pinned" % (armour["files"], armour["pinned"]))
+    print("ARMOUR STYLE: %d files, %d pinned, %d classic files kept" % (armour["files"], armour["pinned"],
+                                                                         armour.get("classic", 0)))
     print("RESULT: %d error(s), %d advisory(ies), %d acknowledged; draw order: %d shipped geo: "
           "%d seam + %d outside-seam -> exit %d"
           % (len(errors), len(advisories), len(acknowledged), reconciliation["shipped"],
