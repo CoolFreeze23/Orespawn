@@ -257,7 +257,7 @@ public class ThePrinceTeen extends TamableAnimal
         // orig ThePrinceTeen.java:672-674 — grounded pet takes flight when the
         // owner is more than 20 blocks away.
         if (!this.level().isClientSide && this.getActivity() == 0 && this.isTame()
-                && this.getOwner() != null && !this.isOrderedToSit()
+                && this.getOwner() != null && !this.isOrderedToSit() && !this.isNoAi()
                 && this.distanceToSqr(this.getOwner()) > 400.0) {
             this.setActivity(1);
         }
@@ -602,7 +602,10 @@ public class ThePrinceTeen extends TamableAnimal
      */
     @Override
     public void aiStep() {
-        if (this.level().isClientSide || this.getActivity() == 0 || this.isRemoved()) {
+        // TEST-020: without AI (the NoAI tag) and without a rider the prince keeps to the ground step, its flight brain
+        // off; a rider still flies it
+        boolean ridden = this.isVehicle() && this.getControllingPassenger() instanceof Player;
+        if (this.level().isClientSide || this.getActivity() == 0 || this.isRemoved() || (this.isNoAi() && !ridden)) {
             super.aiStep();
             return;
         }

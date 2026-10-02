@@ -96,7 +96,8 @@ public class EntityCricket extends Animal {
             if (this.jumpCount > 0) {
                 --this.jumpCount;
             }
-            if (this.jumpCount == 0 && this.random.nextInt(50) == 1) {
+            // TEST-020: without AI (the NoAI tag) the cricket does not jump of its own accord
+            if (this.jumpCount == 0 && !this.isNoAi() && this.random.nextInt(50) == 1) {
                 this.jumpAround();
                 this.jumpCount = 50;
             }

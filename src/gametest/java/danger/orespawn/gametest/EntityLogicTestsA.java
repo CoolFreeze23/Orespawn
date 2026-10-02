@@ -160,7 +160,7 @@ public class EntityLogicTestsA {
      * prepared — a future {@code @BeforeBatch} must not read state restored here
      * (TEST-004).
      */
-    private static void onTestExit(GameTestHelper h, Runnable onExit) {
+    static void onTestExit(GameTestHelper h, Runnable onExit) {
         final boolean[] ran = {false};
         h.testInfo.addListener(new GameTestListener() {
             @Override

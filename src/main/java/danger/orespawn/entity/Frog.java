@@ -121,7 +121,8 @@ public class Frog extends Animal implements danger.orespawn.entity.pose.FrogPose
             if (this.jumpCount > 0) {
                 --this.jumpCount;
             }
-            if (this.jumpCount == 0 && this.random.nextInt(70) == 1) {
+            // TEST-020: without AI (the NoAI tag) the frog does not jump of its own accord, here or when hurt
+            if (this.jumpCount == 0 && !this.isNoAi() && this.random.nextInt(70) == 1) {
                 this.jumpAround();
                 this.jumpCount = 50;
             }
@@ -228,7 +229,7 @@ public class Frog extends Animal implements danger.orespawn.entity.pose.FrogPose
     @Override
     public boolean hurt(DamageSource source, float amount) {
         boolean result = super.hurt(source, amount);
-        if (!this.level().isClientSide && this.jumpCount <= 0) {
+        if (!this.level().isClientSide && this.jumpCount <= 0 && !this.isNoAi()) {
             this.jumpAround();
             this.jumpCount = 25;
         }

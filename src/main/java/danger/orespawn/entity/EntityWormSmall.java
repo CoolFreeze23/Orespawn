@@ -90,6 +90,8 @@ public class EntityWormSmall extends Monster {
     public void aiStep() {
         super.aiStep();
         if (this.level().isClientSide) return;
+        // TEST-020: without AI (the NoAI tag) the worm keeps out of its burrow cycle
+        if (this.isNoAi()) return;
 
         // OPT-007 (applied 2026-08-11, NEUTRAL HALF ONLY): no once-per-tick
         // sharing is possible in the small worm — this spherical-8 burrow/aim

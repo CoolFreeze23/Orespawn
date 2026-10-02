@@ -137,7 +137,33 @@ public class EntityWormLarge extends Monster {
     public void aiStep() {
         super.aiStep();
         if (this.level().isClientSide) return;
+        // TEST-020: without AI (the NoAI tag) the worm keeps out of its burrow cycle; its brood still comes
+        if (!this.isNoAi()) {
+            this.burrowCycle();
+        }
 
+        if (this.wormsSpawned == 0) {
+            this.wormsSpawned = 1;
+            if (this.level() instanceof ServerLevel serverLevel) {
+                for (int i = 0; i < 20; ++i) {
+                    spawnWorm(serverLevel, ModEntities.ENTITY_WORM_SMALL.get(),
+                            this.getX() + this.random.nextInt(6) - this.random.nextInt(6),
+                            this.getY(),
+                            this.getZ() + this.random.nextInt(6) - this.random.nextInt(6));
+                    spawnWorm(serverLevel, ModEntities.ENTITY_WORM_MEDIUM.get(),
+                            this.getX() + this.random.nextInt(5) - this.random.nextInt(5),
+                            this.getY(),
+                            this.getZ() + this.random.nextInt(5) - this.random.nextInt(5));
+                }
+            }
+        }
+    }
+
+    /**
+     * The burrow cycle, aiStep's server part: with a player within 8 blocks the worm faces it and comes up through the
+     * ground; without one it sinks, coming back up while the cell 3.5 blocks above it is not air.
+     */
+    private void burrowCycle() {
         Player target = this.nearestPlayerWithin8(); // OPT-007: shared per-tick scan
 
         if (target != null) {
@@ -165,22 +191,6 @@ public class EntityWormLarge extends Monster {
         if (this.noPhysics) {
             Vec3 motion = this.getDeltaMovement();
             this.setDeltaMovement(0, motion.y - 0.01, 0);
-        }
-
-        if (this.wormsSpawned == 0) {
-            this.wormsSpawned = 1;
-            if (this.level() instanceof ServerLevel serverLevel) {
-                for (int i = 0; i < 20; ++i) {
-                    spawnWorm(serverLevel, ModEntities.ENTITY_WORM_SMALL.get(),
-                            this.getX() + this.random.nextInt(6) - this.random.nextInt(6),
-                            this.getY(),
-                            this.getZ() + this.random.nextInt(6) - this.random.nextInt(6));
-                    spawnWorm(serverLevel, ModEntities.ENTITY_WORM_MEDIUM.get(),
-                            this.getX() + this.random.nextInt(5) - this.random.nextInt(5),
-                            this.getY(),
-                            this.getZ() + this.random.nextInt(5) - this.random.nextInt(5));
-                }
-            }
         }
     }
 

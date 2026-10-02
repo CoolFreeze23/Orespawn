@@ -114,6 +114,8 @@ public class EntityWormMedium extends Monster {
     public void aiStep() {
         super.aiStep();
         if (this.level().isClientSide) return;
+        // TEST-020: without AI (the NoAI tag) the worm keeps out of its burrow cycle
+        if (this.isNoAi()) return;
 
         EntityWormSmall nearbySmall = this.level().getNearestEntity(
                 EntityWormSmall.class, NON_COMBAT_TARGETING, // OPT-007: hoisted static final

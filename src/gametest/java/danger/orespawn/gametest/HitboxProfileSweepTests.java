@@ -11,7 +11,10 @@ import danger.orespawn.ModEntities;
 import danger.orespawn.OreSpawnConfig;
 import danger.orespawn.OreSpawnMod;
 import danger.orespawn.entity.Crab;
+import danger.orespawn.entity.Dragon;
 import danger.orespawn.entity.Mothra;
+import danger.orespawn.entity.ThePrinceAdult;
+import danger.orespawn.entity.ThePrinceTeen;
 import danger.orespawn.entity.OreSpawnPartEntity;
 import danger.orespawn.entity.hitbox.HitboxScales;
 import danger.orespawn.gametest.HitboxProfileExpectations.Expected;
@@ -26,13 +29,16 @@ import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestAssertException;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.AgeableMob;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.TamableAnimal;
 import net.minecraft.world.entity.Pose;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec2;
 import net.minecraft.world.phys.Vec3;
@@ -77,9 +83,9 @@ public class HitboxProfileSweepTests {
         return (EntityType<? extends Mob>) type.get();
     }
 
-    /** A frozen mob facing +z with no pitch: the fallback alignment rotates the part offsets by the entity's yaw and pitch. */
-    private static Mob spawnFrozen(GameTestHelper helper, EntityType<? extends Mob> type) {
-        Mob mob = helper.spawnWithNoFreeWill(type, POS);
+    /** {@link #spawnFrozen} at a position of the caller's. */
+    private static Mob spawnFrozenAt(GameTestHelper helper, EntityType<? extends Mob> type, BlockPos pos) {
+        Mob mob = helper.spawnWithNoFreeWill(type, pos);
         mob.setNoAi(true);
         mob.setPersistenceRequired();
         mob.setYRot(0.0F);
@@ -87,6 +93,11 @@ public class HitboxProfileSweepTests {
         mob.yBodyRot = 0.0F;
         mob.yHeadRot = 0.0F;
         return mob;
+    }
+
+    /** A frozen mob facing +z with no pitch: the fallback alignment rotates the part offsets by the entity's yaw and pitch. */
+    private static Mob spawnFrozen(GameTestHelper helper, EntityType<? extends Mob> type) {
+        return spawnFrozenAt(helper, type, POS);
     }
 
     @SuppressWarnings({"rawtypes", "unchecked"})
@@ -259,6 +270,207 @@ public class HitboxProfileSweepTests {
                 helper.assertTrue(off <= PLACE_EPS, expected.id() + " part " + part.getConfigName() + " centre " + box.getCenter()
                         + " is " + off + " from its drawn rest place " + expectedCentre + " (scale " + scale + ", rest rotation " + rest + ")");
             }
+        });
+    }
+
+    /**
+     * TEST-020: a flier without AI keeps still. The sweep spawns its mobs frozen (no AI) and checks their parts three
+     * ticks later; the Dragons' and the Princes' own behaviours ran whatever the NoAI tag said, so a frozen Dragon or
+     * Baby Dragon that took off (its passive behaviours switch it to flying on one tick in 750) flew, and the parts the
+     * library had placed before that flight moved it sat a move behind: s173b's red row at 9886127, -60, 10773056. Set
+     * flying, all four stay where they were spawned, facing as they were.
+     */
+    @GameTest(template = "empty_large", timeoutTicks = 60, batch = "hitboxProfilesAll")
+    public static void s173i_a_flier_without_ai_stays_where_it_was_spawned(GameTestHelper helper) {
+        List<String> ids = List.of("orespawn:dragon", "orespawn:baby_dragon", "orespawn:the_prince_adult", "orespawn:the_prince_teen");
+        List<Mob> fliers = new ArrayList<>();
+        List<Vec3> spawned = new ArrayList<>();
+        for (int i = 0; i < ids.size(); i++) {
+            Mob mob = spawnFrozenAt(helper, type(helper, ids.get(i)), POS.offset(i * 12 - 18, 0, 0));
+            setActivity(helper, mob, ids.get(i), 1);
+            fliers.add(mob);
+            spawned.add(mob.position());
+        }
+        helper.runAfterDelay(ALIGN_TICKS + 7, () -> {
+            List<String> failures = new ArrayList<>();
+            try {
+                for (int i = 0; i < fliers.size(); i++) {
+                    Mob mob = fliers.get(i);
+                    double moved = mob.position().distanceTo(spawned.get(i));
+                    int activity = activity(mob);
+                    if (activity != 1) {
+                        failures.add(ids.get(i) + " is no longer set flying (activity " + activity + "): the check would be vacuous");
+                    }
+                    if (moved > 1.0E-9) {
+                        failures.add(ids.get(i) + " without AI moved " + moved + " from where it was spawned (" + spawned.get(i)
+                                + " to " + mob.position() + ")");
+                    }
+                    if (mob.getYRot() != 0.0F) {
+                        failures.add(ids.get(i) + " without AI turned to yaw " + mob.getYRot());
+                    }
+                }
+            } finally {
+                fliers.forEach(Entity::discard);
+            }
+            helper.assertTrue(failures.isEmpty(), failures.size() + " failure(s): " + String.join("; ", failures));
+            helper.succeed();
+        });
+    }
+
+    /** The activity state of a Dragon or a Prince (0 on the ground, 1 flying). */
+    private static int activity(Mob mob) {
+        if (mob instanceof Dragon dragon) {
+            return dragon.getActivity();
+        }
+        if (mob instanceof ThePrinceAdult adult) {
+            return adult.getActivity();
+        }
+        return mob instanceof ThePrinceTeen teen ? teen.getActivity() : -1;
+    }
+
+    private static void setActivity(GameTestHelper helper, Mob mob, String id, int value) {
+        if (mob instanceof Dragon dragon) {
+            dragon.setActivity(value);
+        } else if (mob instanceof ThePrinceAdult adult) {
+            adult.setActivity(value);
+        } else if (mob instanceof ThePrinceTeen teen) {
+            teen.setActivity(value);
+        } else {
+            helper.fail(id + " is neither a Dragon nor a Prince");
+        }
+    }
+
+    /**
+     * TEST-020: a burrower or a hurt frog without AI stays where it was spawned. The three worms, buried (stone two and
+     * three blocks over each, the cells their burrow cycles read), rise through it on their own, 0.05 a tick; the frog
+     * jumps 0.35 when hurt. Without AI none of them moves: twenty ticks on, the frog hurt for no damage as it was
+     * spawned, every one stands where it was spawned.
+     */
+    @GameTest(template = "empty_large", timeoutTicks = 60, batch = "hitboxProfilesAll")
+    public static void s173j_a_burrower_or_a_hurt_frog_without_ai_stays_where_it_was_spawned(GameTestHelper helper) {
+        helper.assertFalse(OreSpawnConfig.PLAY_NICELY.get(),
+                "playNicely is on: the small worm would read only its own cell for its first fifty ticks");
+        List<String> worms = List.of("orespawn:worm_small", "orespawn:worm_medium", "orespawn:worm_large");
+        List<String> ids = new ArrayList<>();
+        List<Mob> mobs = new ArrayList<>();
+        List<Vec3> spawned = new ArrayList<>();
+        for (int i = 0; i < worms.size(); i++) {
+            BlockPos at = POS.offset(i * 12 - 18, 0, 0);
+            helper.setBlock(at.above(2), Blocks.STONE);
+            helper.setBlock(at.above(3), Blocks.STONE);
+            Mob worm = spawnFrozenAt(helper, type(helper, worms.get(i)), at);
+            ids.add(worms.get(i));
+            mobs.add(worm);
+            spawned.add(worm.position());
+        }
+        Mob frog = spawnFrozenAt(helper, type(helper, "orespawn:frog"), POS.offset(18, 0, 0));
+        ids.add("orespawn:frog");
+        mobs.add(frog);
+        spawned.add(frog.position());
+        frog.hurt(helper.getLevel().damageSources().generic(), 0.0F);
+        helper.runAfterDelay(20, () -> {
+            List<String> failures = new ArrayList<>();
+            try {
+                for (int i = 0; i < mobs.size(); i++) {
+                    double moved = mobs.get(i).position().distanceTo(spawned.get(i));
+                    if (moved > 1.0E-9) {
+                        failures.add(ids.get(i) + " without AI moved " + moved + " from where it was spawned (" + spawned.get(i)
+                                + " to " + mobs.get(i).position() + ")");
+                    }
+                }
+            } finally {
+                mobs.forEach(Entity::discard);
+            }
+            helper.assertTrue(failures.isEmpty(), failures.size() + " failure(s): " + String.join("; ", failures));
+            helper.succeed();
+        });
+    }
+
+    /**
+     * TEST-020: a tame flier without AI does not take off for its owner. A tame Dragon or Baby Dragon takes off when its
+     * owner flies or stands more than 12 blocks off (its passive behaviours at 20), a tame adult Prince at 30 and a teen
+     * at 20. Without AI none of them does: with the owner flying 48 to 57 blocks away, all four are still on the ground,
+     * where they were spawned, ten ticks on. A batch of its own: the owner, a player in the level, stays away from the
+     * sweep's mobs, and it leaves the level however the test ends.
+     */
+    @SuppressWarnings({"removal", "deprecation"})
+    @GameTest(template = "empty_large", timeoutTicks = 60, batch = "hitboxNoAiOwner")
+    public static void s173l_a_tame_flier_without_ai_does_not_take_off_for_its_owner(GameTestHelper helper) {
+        ServerPlayer owner = helper.makeMockServerPlayerInLevel();
+        List<Mob> mobs = new ArrayList<>();
+        EntityLogicTestsA.onTestExit(helper, () -> {
+            mobs.forEach(Entity::discard);
+            helper.getLevel().getServer().getPlayerList().remove(owner);
+        });
+        Vec3 ownerAt = helper.absoluteVec(new Vec3(44.5D, 8.0D, 44.5D));
+        owner.teleportTo(helper.getLevel(), ownerAt.x, ownerAt.y, ownerAt.z, 0.0F, 0.0F);
+        owner.getAbilities().mayfly = true;
+        owner.getAbilities().flying = true;
+        owner.onUpdateAbilities();
+        List<String> ids = List.of("orespawn:dragon", "orespawn:baby_dragon", "orespawn:the_prince_adult", "orespawn:the_prince_teen");
+        List<BlockPos> at = List.of(new BlockPos(4, 8, 4), new BlockPos(4, 8, 16), new BlockPos(16, 8, 4), new BlockPos(10, 8, 10));
+        List<Vec3> spawned = new ArrayList<>();
+        for (int i = 0; i < ids.size(); i++) {
+            Mob mob = spawnFrozenAt(helper, type(helper, ids.get(i)), at.get(i));
+            TamableAnimal pet = (TamableAnimal) mob;
+            pet.setTame(true, false);
+            pet.setOwnerUUID(owner.getUUID());
+            pet.setOrderedToSit(false);
+            mobs.add(mob);
+            spawned.add(mob.position());
+        }
+        helper.runAfterDelay(10, () -> {
+            List<String> failures = new ArrayList<>();
+            for (int i = 0; i < mobs.size(); i++) {
+                Mob mob = mobs.get(i);
+                double far = Math.sqrt(mob.distanceToSqr(owner));
+                if (((TamableAnimal) mob).getOwner() != owner || far <= 30.0D || !owner.getAbilities().flying) {
+                    failures.add(ids.get(i) + " does not see its owner flying more than 30 blocks off (" + far + "): the check would be vacuous");
+                }
+                if (activity(mob) != 0) {
+                    failures.add(ids.get(i) + " without AI took off for its owner (activity " + activity(mob) + ")");
+                }
+                double moved = mob.position().distanceTo(spawned.get(i));
+                if (moved > 1.0E-9) {
+                    failures.add(ids.get(i) + " without AI moved " + moved + " from where it was spawned");
+                }
+            }
+            helper.assertTrue(failures.isEmpty(), failures.size() + " failure(s): " + String.join("; ", failures));
+            helper.succeed();
+        });
+    }
+
+    /**
+     * TEST-020: a jumper without AI stays where it was spawned. The frog jumps 0.35 on its own one tick in 70 and the
+     * cricket 0.25 one tick in 50, each after the library has placed its parts; s173b caught a frog that had jumped on
+     * its last tick (0.35 against 0.05). Without AI neither jumps: after 600 ticks both stand where they were spawned.
+     * Without the hold the frog would stay put that long one time in about 5,600 and the cricket one in about 180,000.
+     */
+    @GameTest(template = "empty_large", timeoutTicks = 660, batch = "hitboxProfilesAll")
+    public static void s173k_a_jumper_without_ai_stays_where_it_was_spawned(GameTestHelper helper) {
+        List<String> ids = List.of("orespawn:frog", "orespawn:cricket");
+        List<Mob> mobs = new ArrayList<>();
+        List<Vec3> spawned = new ArrayList<>();
+        for (int i = 0; i < ids.size(); i++) {
+            Mob mob = spawnFrozenAt(helper, type(helper, ids.get(i)), POS.offset(i * 12 - 6, 0, 0));
+            mobs.add(mob);
+            spawned.add(mob.position());
+        }
+        helper.runAfterDelay(600, () -> {
+            List<String> failures = new ArrayList<>();
+            try {
+                for (int i = 0; i < mobs.size(); i++) {
+                    double moved = mobs.get(i).position().distanceTo(spawned.get(i));
+                    if (moved > 1.0E-9) {
+                        failures.add(ids.get(i) + " without AI moved " + moved + " from where it was spawned (" + spawned.get(i)
+                                + " to " + mobs.get(i).position() + ")");
+                    }
+                }
+            } finally {
+                mobs.forEach(Entity::discard);
+            }
+            helper.assertTrue(failures.isEmpty(), failures.size() + " failure(s): " + String.join("; ", failures));
+            helper.succeed();
         });
     }
 

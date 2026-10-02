@@ -400,7 +400,7 @@ public class Dragon extends TamableAnimal implements danger.orespawn.network.Rid
         this.setNoGravity(this.getActivity() == 1);
 
         if (this.getActivity() == 0 && this.isTame() && this.getOwner() != null
-                && !this.isOrderedToSit() && !this.isVehicle()) {
+                && !this.isOrderedToSit() && !this.isVehicle() && !this.isNoAi()) {
             if (this.distanceToSqr(this.getOwner()) > 144.0) {
                 this.setActivity(1);
             }
@@ -431,10 +431,13 @@ public class Dragon extends TamableAnimal implements danger.orespawn.network.Rid
             --this.fireballTicker;
         }
 
+        // TEST-020: without AI (the NoAI tag) a dragon does not fly of its own accord, as vanilla's AI stops for it
+        // (Mob.isEffectiveAi): the flight moves it here directly, past the travel step NoAI holds still. A rider still
+        // flies it.
         if (this.getActivity() == 1) {
             if (this.isVehicle() && this.getControllingPassenger() instanceof Player rider) {
                 serverRiddenTick(rider);
-            } else if (!this.isOrderedToSit()) {
+            } else if (!this.isOrderedToSit() && !this.isNoAi()) {
                 handleAIFlight();
             }
         }
@@ -891,22 +894,27 @@ public class Dragon extends TamableAnimal implements danger.orespawn.network.Rid
 
         if (this.isOrderedToSit()) return;
 
+        // TEST-020: without AI (the NoAI tag) the dragon does not take off of its own accord: the three switches to
+        // flying below stay off, the idle switch's landing with them, so a dragon without AI that is set flying (a hit
+        // does it) keeps that state where it is; its heals and its water-seeking still run
         this.ownerFlying = 0;
         if (this.isTame() && this.getOwner() != null && !this.isVehicle()) {
             if (this.getOwner() instanceof Player player && player.getAbilities().flying) {
                 this.ownerFlying = 1;
-                this.setActivity(1);
+                if (!this.isNoAi()) {
+                    this.setActivity(1);
+                }
             }
         }
 
-        if (this.isTame() && this.getOwner() != null && !this.isVehicle()) {
+        if (this.isTame() && this.getOwner() != null && !this.isVehicle() && !this.isNoAi()) {
             if (this.distanceToSqr(this.getOwner()) > 400.0) {
                 this.setActivity(1);
             }
         }
 
         // Random activity switching when idle
-        if (this.getRandom().nextInt(50) == 1 && !this.targetInSight && !this.isVehicle()) {
+        if (this.getRandom().nextInt(50) == 1 && !this.targetInSight && !this.isVehicle() && !this.isNoAi()) {
             if (this.getRandom().nextInt(15) == 1) {
                 this.setActivity(1);
             } else {

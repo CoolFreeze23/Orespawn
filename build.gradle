@@ -85,6 +85,9 @@ configurations {
     g1toolRuntimeOnly.extendsFrom runtimeOnly
 }
 
+// TEST-020: the forced game-test origin, x,z (blank or absent: the framework's random origin).
+String gametestOrigin = project.findProperty('gametestOrigin')?.toString()?.trim() ?: ''
+
 runs {
     configureEach {
         systemProperty 'forge.logging.markers', 'REGISTRIES'
@@ -109,11 +112,38 @@ runs {
         // server-side increments without a test seam in production code. This run only; the
         // 100-tick dump lines ("MHLib counters (server, per 100 ticks): ...") in the suite log are the visible side effect.
         systemProperty 'mhlib.counters', 'true'
+        // TEST-020: -PgametestOrigin=x,z lays the suite's grid out from that origin instead of the framework's random
+        // one (GameTestOriginMixin), to repeat a run where another failed: pass the x and z of the failed run's "N tests
+        // are now running at position x, y, z!" line. Such a run gets a world of its own, build/gametest-origin/<x>_<z>,
+        // started empty every time (the task below moves an earlier one aside): the run directory keeps its world from
+        // run to run, and a second run at the same origin would find the first run's far builds still standing there.
+        if (gametestOrigin) {
+            String origin = gametestOrigin
+            systemProperty 'orespawn.gametest.origin', origin
+            arguments.addAll '--universe', file('build/gametest-origin').getAbsolutePath(),
+                    '--world', origin.replaceAll('[^0-9-]+', '_')
+        }
         modSource project.sourceSets.gametest
     }
 
     data {
         arguments.addAll '--mod', project.mod_id, '--all', '--output', file('src/generated/resources/').getAbsolutePath(), '--existing', file('src/main/resources/').getAbsolutePath()
+    }
+}
+
+// TEST-020: a forced-origin run starts in an empty world. An earlier world at that origin is moved aside, named by the
+// time, when the run starts (not when the build is configured, which the configuration cache can reuse).
+if (gametestOrigin) {
+    File forcedWorld = file('build/gametest-origin/' + gametestOrigin.replaceAll('[^0-9-]+', '_'))
+    tasks.matching { it.name == 'runGameTestServer' }.configureEach {
+        doFirst {
+            if (forcedWorld.exists()) {
+                File aside = new File(forcedWorld.parentFile, forcedWorld.name + '-' + new Date().format('yyyyMMdd-HHmmss'))
+                if (!forcedWorld.renameTo(aside)) {
+                    throw new GradleException('could not move the earlier game-test world ' + forcedWorld + ' aside')
+                }
+            }
+        }
     }
 }
 
