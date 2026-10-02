@@ -577,6 +577,13 @@ public class Girlfriend extends TamableAnimal implements RangedAttackMob, danger
                     return InteractionResult.sidedSuccess(this.level().isClientSide);
                 }
 
+                // ENT-S-179, the port's own rule: armour for the body slot (horse and wolf armour) is refused. The
+                // original had no body slot, and its Girlfriend took horse armour into her hand like any other item;
+                // in the body slot nothing draws it and an empty hand cannot take it back. CONSUME, not PASS: a pass
+                // hands the click on to the off hand, and so to her empty-hand branch.
+                if (stack.getItem() instanceof ArmorItem bodyArmour && bodyArmour.getEquipmentSlot() == EquipmentSlot.BODY) {
+                    return InteractionResult.CONSUME;
+                }
                 if (!this.level().isClientSide) {
                     if (stack.getItem() instanceof ArmorItem armorItem) {
                         EquipmentSlot slot = armorItem.getEquipmentSlot();

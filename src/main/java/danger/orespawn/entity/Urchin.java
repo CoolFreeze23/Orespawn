@@ -139,7 +139,9 @@ public class Urchin extends Monster implements UrchinPose {
     @Override
     public void tick() {
         super.tick();
-        // orig Urchin.java:94-107 — daytime discard skipped when spawnered
+        // orig Urchin.java:97-99 — an Urchin that must persist (a name tag) is never discarded by day (ENT-S-178)
+        if (this.isPersistenceRequired()) return;
+        // orig Urchin.java:100-106 — daytime discard skipped when spawnered
         long timeOfDay = this.level().getDayTime() % 24000L;
         if (timeOfDay < 12000L && this.random.nextInt(400) == 1 && !this.level().isClientSide
                 && this.wasSpawnered == 0) {
