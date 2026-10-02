@@ -399,6 +399,10 @@ public class ModCreativeTabs {
                         if (OreSpawnConfig.wolfArmour()) {
                             ModItems.WOLF_ARMOR.forEach(item -> output.accept(item.get()));
                         }
+                        // Spears (MOD-043), the tiers' order, while the feature is on and Mounts of Mayhem is loaded
+                        if (OreSpawnConfig.spears()) {
+                            danger.orespawn.item.SpearTier.registeredItems().forEach(output::accept);
+                        }
                     })
                     .build());
 

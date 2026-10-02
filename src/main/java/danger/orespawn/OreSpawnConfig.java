@@ -346,6 +346,13 @@ public class OreSpawnConfig {
      */
     public static final ModConfigSpec.BooleanValue MODERN_WOLF_ARMOUR;
     /**
+     * MOD-043: the spears of the eight tool tiers, on Mounts of Mayhem's spear. They exist only while that mod is
+     * loaded, whatever this says; it gates their 8 recipes (the {@code orespawn:modern} load condition, beside
+     * {@code neoforge:mod_loaded}) and their creative-tab entries. Takes effect only while {@link #MODERN_ENABLED} is
+     * on -- read through {@link #spears()}, never directly.
+     */
+    public static final ModConfigSpec.BooleanValue MODERN_SPEARS;
+    /**
      * MOD-042: in the modern armour style, OreSpawn armour drawn from the item's texture alone on a model of its own
      * (Doggy Talents Next's dog armour) takes the set's dog texture, the modern base in the classic layer-1 layout,
      * instead of the classic texture. Takes effect only while {@link #MODERN_ENABLED} is on -- read through
@@ -572,7 +579,7 @@ public class OreSpawnConfig {
                         "modern.petsDefendOwner, modern.pointysaurusStareAggro, " +
                         "modern.cryolophosaurusRevengeChase, modern.chainsawSweepVanillaSight, " +
                         "modern.artistAnimations with modern.classicAnimationSpecies, modern.horseArmour, " +
-                        "modern.wolfArmour, modern.dogArmour); false = " +
+                        "modern.wolfArmour, modern.spears, modern.dogArmour); false = " +
                         "classic 1.7.10 " +
                         "parity everywhere, whatever the per-feature keys say. Phase G artist animations hang " +
                         "off this same switch (classic stays code-driven parity). Snapshotted features " +
@@ -704,6 +711,15 @@ public class OreSpawnConfig {
                         "change reaches the recipes and the King's drop on /reload or a restart, the creative tab " +
                         "when the world is joined again, and the challenge chest in King towers built after it."
         ).define("wolfArmour", true);
+        MODERN_SPEARS = BUILDER.comment(
+                "MOD-043: spears for the eight tool tiers (Ruby, Amethyst, Emerald, Ultimate, Crystal Pink, Tiger's " +
+                        "Eye, Crystal Wood, Crystal Stone) on Mounts of Mayhem's spear: they exist only while that mod " +
+                        "is installed, on the server and every client, and a world keeps them only while it is. Its " +
+                        "charge, its hold and its reload as the mod's own spears have them, with each tier's numbers. " +
+                        "Their 8 recipes load and their creative-tab entries show only while this and " +
+                        "modern.enabled are true. A change reaches the recipes on /reload or a restart and the " +
+                        "creative tab when the world is joined again."
+        ).define("spears", true);
         MODERN_DOG_ARMOUR = BUILDER.comment(
                 "MOD-042: in the modern armour style (the client's armourStyle), a Doggy Talents Next dog wearing " +
                         "OreSpawn armour shows the set's modern colours and plates: a dog texture per set, the modern " +
@@ -824,6 +840,16 @@ public class OreSpawnConfig {
      */
     public static boolean wolfArmour() {
         return MODERN_ENABLED.get() && MODERN_WOLF_ARMOUR.get();
+    }
+
+    /**
+     * MOD-043: the single {@code master && key} evaluation for the spears -- true only while {@link #MODERN_ENABLED}
+     * AND {@link #MODERN_SPEARS} are both on. Read by the {@code orespawn:modern} load condition as the data packs load
+     * (the 8 recipes, which also need Mounts of Mayhem) and by the creative tab as it fills; the spears themselves exist
+     * whenever that mod is loaded.
+     */
+    public static boolean spears() {
+        return MODERN_ENABLED.get() && MODERN_SPEARS.get();
     }
 
     /**

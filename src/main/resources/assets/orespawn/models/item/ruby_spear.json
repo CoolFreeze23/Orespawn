@@ -1,0 +1,31 @@
+{
+  "loader": "neoforge:separate_transforms",
+  "gui_light": "front",
+  "base": {
+    "parent": "mounts_of_mayhem:custom/diamond_spear",
+    "textures": {
+      "1": "orespawn:item/ruby_spear_held",
+      "particle": "orespawn:item/ruby_spear"
+    }
+  },
+  "perspectives": {
+    "gui": {
+      "parent": "item/generated",
+      "textures": {
+        "layer0": "orespawn:item/ruby_spear"
+      }
+    },
+    "fixed": {
+      "parent": "item/generated",
+      "textures": {
+        "layer0": "orespawn:item/ruby_spear"
+      }
+    },
+    "ground": {
+      "parent": "item/generated",
+      "textures": {
+        "layer0": "orespawn:item/ruby_spear"
+      }
+    }
+  }
+}

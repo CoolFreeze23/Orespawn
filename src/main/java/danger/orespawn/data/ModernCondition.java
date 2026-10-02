@@ -21,7 +21,8 @@ public record ModernCondition(String key) implements ICondition {
     /** The [modern] features a data file may be conditioned on, by key. */
     private static final Map<String, BooleanSupplier> FEATURES = Map.of(
             "horseArmour", OreSpawnConfig::horseArmour,
-            "wolfArmour", OreSpawnConfig::wolfArmour);
+            "wolfArmour", OreSpawnConfig::wolfArmour,
+            "spears", OreSpawnConfig::spears);
 
     public static final MapCodec<ModernCondition> CODEC = RecordCodecBuilder.mapCodec(builder -> builder.group(
             Codec.STRING.validate(key -> FEATURES.containsKey(key)

@@ -146,7 +146,8 @@ HOOKS = {
 # landing).
 NEVER_ACKNOWLEDGED = {"HOOK_STALE", "LOCOMOTION_WORD", "GECKO_GEO_DRAW_ORDER_MISSING", "GECKO_GEO_SEAM_UNRECONCILED",
                       "GECKO_GEO_FACE_ORDER_INVALID", "GECKO_GEO_FLAT_CUBE_FACE_ORDER_MISSING",
-                      "GECKO_REFERENCE_CLIP_SHIPPED", "ARMOUR_ASSET_PIN", "ARMOUR_STYLE_MODEL"}
+                      "GECKO_REFERENCE_CLIP_SHIPPED", "ARMOUR_ASSET_PIN", "ARMOUR_STYLE_MODEL", "SPEAR_MODEL",
+                      "SPEAR_RECIPE", "SPEAR_LANG"}
 
 # The reference-only clips (one per reachable state since 2026-09-14, every state a hook reads - walk, idle,
 # attack, fly, swim, the seed's names and the unnamed <getter>_<value> states - since 2026-09-14): the package
@@ -1412,13 +1413,88 @@ def armour_geometry_problem(path):
     return None
 
 
+# --------------------------------------------------------------------------
+# Check 10: the spears (MOD-043)
+# --------------------------------------------------------------------------
+# The eight tool tiers' spears exist only while Mounts of Mayhem is loaded, but their files always ship: per tier
+# (danger.orespawn.item.SpearTier) its item model (models/item/<tier>_spear.json: neoforge:separate_transforms, in hand
+# the tier's row's 3D spear mounts_of_mayhem:custom/<row>_spear with that model's texture key bound to
+# textures/item/<tier>_spear_held.png and its particles from the icon, and item/generated with textures/item/<tier>_spear.png
+# in the GUI, item frames and on the ground), both textures with their LabPBR maps, its name, and its recipe behind
+# neoforge:mod_loaded
+# (mounts_of_mayhem) and orespawn:modern (spears). The textures and models are pinned with the armour's files (check 9).
+SPEAR_ROW_KEYS = {"wooden": "6", "stone": "5", "iron": "3", "diamond": "1", "netherite": "4"}
+SPEAR_VIEWS = ("gui", "fixed", "ground")
+SPEAR_CONDITIONS = [{"type": "neoforge:mod_loaded", "modid": "mounts_of_mayhem"},
+                    {"type": "orespawn:modern", "key": "spears"}]
+
+
+def parse_spear_tiers():
+    """[(tier name, row)] from SpearTier's constants: NAME("name", ModToolTiers.X, Row.ROW)."""
+    path = JAVA / "item" / "SpearTier.java"
+    text = read(path)
+    tiers = [(m.group(1), m.group(2).lower()) for m in
+             re.finditer(r'^\s+[A-Z_]+\("([a-z_]+)", ModToolTiers\.[A-Z_]+, Row\.([A-Z]+)\)', text, re.M)]
+    if not tiers:
+        err("SPEAR_MODEL", "SpearTier", "no spear tiers parsed from SpearTier.java", path)
+    return tiers
+
+
+def spear_expected():
+    out = set()
+    for name, _ in parse_spear_tiers():
+        spear = name + "_spear"
+        for stem in (spear, spear + "_held"):
+            for suffix in ("", "_n", "_s"):
+                out.add(ASSETS / "textures" / "item" / ("%s%s.png" % (stem, suffix)))
+        out.add(ASSETS / "models" / "item" / (spear + ".json"))
+    return out
+
+
+def spear_model_problem(spear, row, data):
+    if not isinstance(data, dict) or data.get("loader") != "neoforge:separate_transforms":
+        return "not a neoforge:separate_transforms model"
+    base = data.get("base") if isinstance(data.get("base"), dict) else {}
+    if base.get("parent") != "mounts_of_mayhem:custom/%s_spear" % row:
+        return "in hand it is not the %s row's spear (mounts_of_mayhem:custom/%s_spear)" % (row, row)
+    held = "orespawn:item/%s_held" % spear
+    if row not in SPEAR_ROW_KEYS or base.get("textures") != {SPEAR_ROW_KEYS[row]: held,
+                                                             "particle": "orespawn:item/" + spear}:
+        return "in hand it does not bind the row's texture key to %s and its particles to the icon" % held
+    flat = {"parent": "item/generated", "textures": {"layer0": "orespawn:item/" + spear}}
+    views = data.get("perspectives") if isinstance(data.get("perspectives"), dict) else {}
+    if set(views) != set(SPEAR_VIEWS) or any(views[v] != flat for v in SPEAR_VIEWS):
+        return "the GUI, item frame and ground views are not item/generated with its icon"
+    return None
+
+
+def check_spears():
+    lang, _ = load_json(ASSETS / "lang" / "en_us.json")
+    tiers = parse_spear_tiers()
+    for name, row in tiers:
+        spear = name + "_spear"
+        model_path = ASSETS / "models" / "item" / (spear + ".json")
+        data, error = load_json(model_path)
+        problem = ("does not parse: %s" % error) if error else spear_model_problem(spear, row, data)
+        if problem:
+            err("SPEAR_MODEL", spear, problem, model_path)
+        if not isinstance(lang, dict) or not lang.get("item.orespawn." + spear):
+            err("SPEAR_LANG", spear, "no name for item.orespawn.%s" % spear, ASSETS / "lang" / "en_us.json")
+        recipe_path = DATA / "orespawn" / "recipe" / (spear + ".json")
+        recipe, error = load_json(recipe_path)
+        if error or not isinstance(recipe, dict) or recipe.get("neoforge:conditions") != SPEAR_CONDITIONS:
+            err("SPEAR_RECIPE", spear, "the recipe is missing or not behind neoforge:mod_loaded (mounts_of_mayhem) "
+                "and orespawn:modern (spears)", recipe_path)
+    return len(tiers)
+
+
 def check_armour_style():
     import hashlib
-    expected = armour_expected() | horse_armour_expected() | wolf_armour_expected()
+    expected = armour_expected() | horse_armour_expected() | wolf_armour_expected() | spear_expected()
     for path in sorted(expected):
         if not path.is_file():
             err("ARMOUR_STYLE_MISSING", path.stem,
-                "the modern armour style, the horse armour or the wolf armour needs %s" % rel(path), path)
+                "the modern armour style, the horse or wolf armour or the spears need %s" % rel(path), path)
     present = set()
     for d in ARMOUR_DIRS + (HORSE_ARMOUR_DIR, WOLF_ARMOUR_DIR):
         if d.is_dir():
@@ -1427,8 +1503,11 @@ def check_armour_style():
     for animal in ("horse", "wolf"):
         present |= {p for p in (ASSETS / "textures" / "item").glob("*_%s_armor.png" % animal)}
         present |= {p for p in (ASSETS / "models" / "item").glob("*_%s_armor.json" % animal)}
+    present |= {p for p in (ASSETS / "textures" / "item").glob("*_spear*.png")}
+    present |= {p for p in (ASSETS / "models" / "item").glob("*_spear.json")}
     for path in sorted(present - expected):
-        err("ARMOUR_STYLE_UNEXPECTED", path.name, "not one of the 14 sets' modern, horse or wolf armour files", path)
+        err("ARMOUR_STYLE_UNEXPECTED", path.name,
+            "not one of the 14 sets' modern, horse or wolf armour files or the spears' files", path)
     for path in sorted(p for p in present & expected if p.suffix == ".json" and p.parent == ARMOUR_DIRS[0]):
         problem = armour_geometry_problem(path)
         if problem:
@@ -1517,6 +1596,7 @@ def main():
     check_index_case(java_texts)
     check_geckolib(java_texts)
     armour = check_armour_style()
+    spears = check_spears()
 
     # ---- report ----
     def is_hook_pending(f):
@@ -1594,6 +1674,7 @@ def main():
     print()
     print("ARMOUR STYLE: %d files, %d pinned, %d classic files kept" % (armour["files"], armour["pinned"],
                                                                          armour.get("classic", 0)))
+    print("SPEARS: %d tiers checked (their models, names and recipes; their files pinned above)" % spears)
     print("RESULT: %d error(s), %d advisory(ies), %d acknowledged; draw order: %d shipped geo: "
           "%d seam + %d outside-seam -> exit %d"
           % (len(errors), len(advisories), len(acknowledged), reconciliation["shipped"],

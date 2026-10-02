@@ -1,0 +1,30 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "mounts_of_mayhem"
+    },
+    {
+      "type": "orespawn:modern",
+      "key": "spears"
+    }
+  ],
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "  a",
+    " b ",
+    "b  "
+  ],
+  "key": {
+    "a": {
+      "item": "orespawn:crystal_pink_ingot"
+    },
+    "b": {
+      "item": "orespawn:crystal_sticks"
+    }
+  },
+  "result": {
+    "id": "orespawn:crystal_pink_spear",
+    "count": 1
+  }
+}

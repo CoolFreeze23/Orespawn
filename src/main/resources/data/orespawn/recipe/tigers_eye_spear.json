@@ -1,0 +1,30 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "mounts_of_mayhem"
+    },
+    {
+      "type": "orespawn:modern",
+      "key": "spears"
+    }
+  ],
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "  a",
+    " b ",
+    "b  "
+  ],
+  "key": {
+    "a": {
+      "item": "orespawn:tigers_eye_ingot"
+    },
+    "b": {
+      "item": "orespawn:crystal_sticks"
+    }
+  },
+  "result": {
+    "id": "orespawn:tigers_eye_spear",
+    "count": 1
+  }
+}

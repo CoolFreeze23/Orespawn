@@ -1,0 +1,31 @@
+{
+  "loader": "neoforge:separate_transforms",
+  "gui_light": "front",
+  "base": {
+    "parent": "mounts_of_mayhem:custom/iron_spear",
+    "textures": {
+      "3": "orespawn:item/tigers_eye_spear_held",
+      "particle": "orespawn:item/tigers_eye_spear"
+    }
+  },
+  "perspectives": {
+    "gui": {
+      "parent": "item/generated",
+      "textures": {
+        "layer0": "orespawn:item/tigers_eye_spear"
+      }
+    },
+    "fixed": {
+      "parent": "item/generated",
+      "textures": {
+        "layer0": "orespawn:item/tigers_eye_spear"
+      }
+    },
+    "ground": {
+      "parent": "item/generated",
+      "textures": {
+        "layer0": "orespawn:item/tigers_eye_spear"
+      }
+    }
+  }
+}

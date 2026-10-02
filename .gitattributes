@@ -40,4 +40,6 @@
 # The horse and wolf armour's item models are generated and pinned with the armour's; keep them LF on every checkout.
 /src/main/resources/assets/orespawn/models/item/*_horse_armor.json text eol=lf
 /src/main/resources/assets/orespawn/models/item/*_wolf_armor.json text eol=lf
+# The spears' item models are generated and pinned with the armour's; keep them LF on every checkout.
+/src/main/resources/assets/orespawn/models/item/*_spear.json text eol=lf
 /tools/armour_asset_pins.json text eol=lf

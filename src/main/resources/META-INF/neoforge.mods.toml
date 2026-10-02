@@ -38,6 +38,15 @@ versionRange="${minecraft_version_range}"
 ordering="NONE"
 side="BOTH"
 
+# The spears of the eight tool tiers are built on Mounts of Mayhem's spear and exist only while it is installed;
+# built and tested against 1.9.8.
+[[dependencies.${mod_id}]]
+modId="mounts_of_mayhem"
+type="optional"
+versionRange="[1.9.8,)"
+ordering="NONE"
+side="BOTH"
+
 [[mixins]]
 config="orespawn.mixins.json"
 

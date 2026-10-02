@@ -80,6 +80,10 @@ public class OreSpawnMod {
         danger.orespawn.world.ModBiomeModifiers.register(modEventBus);
         danger.orespawn.loot.ModLootModifiers.register(modEventBus);
         danger.orespawn.data.ModConditions.register(modEventBus);
+        // MOD-043: the spears, only while Mounts of Mayhem is loaded (the compat class names its classes)
+        if (net.neoforged.fml.ModList.get().isLoaded(danger.orespawn.compat.MayhemSpears.MOD_ID)) {
+            danger.orespawn.compat.MayhemSpears.register(modEventBus);
+        }
 
         modEventBus.addListener(this::commonSetup);
         // Config registration replaces 1.12.2's Configuration class + manual

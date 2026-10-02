@@ -35,6 +35,19 @@ repositories {
         name = 'Commoble'
         url = 'https://commoble.net/maven/'
     }
+    // Modrinth's maven, for its own group only: Mounts of Mayhem, the spears' optional dependency (MOD-043), compiled
+    // against and never shipped.
+    exclusiveContent {
+        forRepository {
+            maven {
+                name = 'Modrinth'
+                url = 'https://api.modrinth.com/maven'
+            }
+        }
+        filter {
+            includeGroup 'maven.modrinth'
+        }
+    }
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -87,6 +100,14 @@ configurations {
 
 // TEST-020: the forced game-test origin, x,z (blank or absent: the framework's random origin).
 String gametestOrigin = project.findProperty('gametestOrigin')?.toString()?.trim() ?: ''
+// MOD-043: -PgametestMayhem (any value but false) puts Mounts of Mayhem 1.9.8 on the game-test source set's run-time
+// classpath, which the game-test server and the dev client both load, so the spears are registered there; the game-test
+// server then runs only the spears' rows (their own test namespace, orespawn_spears). The rest of the suite cannot run
+// with the mod loaded: it sends its player-animation payload to every player that joins, and the tests' mock players
+// hold connections that never negotiated it. Without the option the suite runs both namespaces, the spears' absent path.
+String mayhemOption = project.findProperty('gametestMayhem')?.toString()?.trim()
+boolean gametestMayhem = mayhemOption != null && !mayhemOption.equalsIgnoreCase('false')
+String gameTestNamespaces = gametestMayhem ? 'orespawn_spears' : project.mod_id + ',orespawn_spears'
 
 runs {
     configureEach {
@@ -96,17 +117,17 @@ runs {
     }
 
     client {
-        systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
+        systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id + ',orespawn_spears'
         modSource project.sourceSets.gametest
     }
 
     server {
-        systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
+        systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id + ',orespawn_spears'
         argument '--nogui'
     }
 
     gameTestServer {
-        systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
+        systemProperty 'neoforge.enabledGameTestNamespaces', gameTestNamespaces
         // Phase G slice (d), item 17 of the 2026-09-06 decisions: the MHLib counters are live on the game-test
         // server (MHLibCounters.ENABLED = Boolean.getBoolean("mhlib.counters")) so the counter rows pin the
         // server-side increments without a test seam in production code. This run only; the
@@ -598,6 +619,13 @@ dependencies {
     // under META-INF/jarjar/ and NeoForge loads it as the GAMELIBRARY its
     // manifest declares. Version range pins the 6.0.x line.
     jarJar("net.commoble.databuddy:databuddy-1.21:[6.0.0.0,6.1.0)")
+
+    // Mounts of Mayhem 1.9.8 (MOD-043): OreSpawn's spears extend its SpearItem. Compiled against only; at run time an
+    // optional dependency (neoforge.mods.toml), the spears registered only while it is loaded.
+    compileOnly "maven.modrinth:nautilus-spears-mounts-of-mayhem:1.9.8"
+    if (gametestMayhem) {
+        gametestRuntimeOnly "maven.modrinth:nautilus-spears-mounts-of-mayhem:1.9.8"
+    }
 }
 
 tasks.withType(ProcessResources).configureEach {

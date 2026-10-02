@@ -1,0 +1,33 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "mounts_of_mayhem"
+    },
+    {
+      "type": "orespawn:modern",
+      "key": "spears"
+    }
+  ],
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "  T",
+    " U ",
+    "I  "
+  ],
+  "key": {
+    "T": {
+      "item": "orespawn:ingot_titanium"
+    },
+    "U": {
+      "item": "orespawn:ingot_uranium"
+    },
+    "I": {
+      "tag": "c:ingots/iron"
+    }
+  },
+  "result": {
+    "id": "orespawn:ultimate_spear",
+    "count": 1
+  }
+}

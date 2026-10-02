@@ -1,0 +1,37 @@
+{
+  "replace": false,
+  "values": [
+    {
+      "id": "orespawn:ruby_spear",
+      "required": false
+    },
+    {
+      "id": "orespawn:amethyst_spear",
+      "required": false
+    },
+    {
+      "id": "orespawn:emerald_spear",
+      "required": false
+    },
+    {
+      "id": "orespawn:ultimate_spear",
+      "required": false
+    },
+    {
+      "id": "orespawn:crystal_pink_spear",
+      "required": false
+    },
+    {
+      "id": "orespawn:tigers_eye_spear",
+      "required": false
+    },
+    {
+      "id": "orespawn:crystal_wood_spear",
+      "required": false
+    },
+    {
+      "id": "orespawn:crystal_stone_spear",
+      "required": false
+    }
+  ]
+}
