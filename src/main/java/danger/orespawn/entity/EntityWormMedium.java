@@ -41,9 +41,9 @@ public class EntityWormMedium extends Monster {
      * non-spectator player in the 2.25/8.0/2.25 box) semantically different
      * from aiStep's forNonCombat nearest-small and spherical-8 player scans,
      * and merging them could change which worm/player is selected — not
-     * neutral, so each site keeps its own scan. Both stay same-tick fresh:
-     * the audit's every-2-4-ticks throttle was DECLINED by the decision
-     * (worm responsiveness is the contract).
+     * neutral, so each site keeps its own scan. Both stay same-tick fresh,
+     * never throttled to every 2-4 ticks (worm responsiveness is the
+     * contract).
      */
     private static final net.minecraft.world.entity.ai.targeting.TargetingConditions NON_COMBAT_TARGETING =
             net.minecraft.world.entity.ai.targeting.TargetingConditions.forNonCombat();

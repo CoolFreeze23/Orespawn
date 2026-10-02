@@ -34,13 +34,10 @@ import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 /**
  * Crash-regression tests (batch categories: crash).
  *
- * <p>Findings covered: BUG-003 (EntityRat {@code UUID.fromString("")}
- * ticking-entity crash, AUDIT_FINDINGS.md:5130-5136 / FIX_LOG.md "BUG-003 —
- * FIXED"), BUG-004 (Prince growth chain {@code tame(null)} NPE with the owner
- * offline, AUDIT_FINDINGS.md:5138-5142 / FIX_LOG.md "BUG-004 — FIXED"), and
- * BUG-006 (Godzilla jump-landing damage bypassing Creative/Spectator
- * invulnerability, AUDIT_FINDINGS.md:5154-5158 / FIX_LOG.md "BUG-006 —
- * FIXED").</p>
+ * <p>Findings covered, each fixed: BUG-003 (EntityRat
+ * {@code UUID.fromString("")} ticking-entity crash), BUG-004 (Prince growth
+ * chain {@code tame(null)} NPE with the owner offline), and BUG-006 (Godzilla
+ * jump-landing damage bypassing Creative/Spectator invulnerability).</p>
  */
 @GameTestHolder(OreSpawnMod.MOD_ID)
 @PrefixGameTestTemplate(false)
@@ -154,7 +151,7 @@ public class CrashReproTests {
      * {@code genericKill} (the /kill source, tagged BYPASSES_INVULNERABILITY),
      * killing Creative/Spectator players; the fix routes it as half
      * unattributed-explosion, half fall damage exactly like orig
-     * Godzilla.java:509-512 (port Godzilla.java:399-421, FIX_LOG.md BUG-006).
+     * Godzilla.java:509-512 (port Godzilla.java:399-421, BUG-006).
      * The landing branch itself only feeds positions/damage into the private
      * {@code doJumpDamage(x, y, z, dist, damage, knock)}
      * (Godzilla.java:573-583 calls it with the 25-block/37.5-damage outer
@@ -291,8 +288,8 @@ public class CrashReproTests {
      *
      * <p>Documented mechanism: pre-fix, {@code transformToTeen} called
      * {@code tame(getPlayerByUUID(owner))} and NPE'd the server when the owner
-     * was offline (AUDIT_FINDINGS BUG-004, orig-port ThePrince.java:241). The
-     * fix (FIX_LOG.md BUG-004; port ThePrince.java:536-554) null-checks and
+     * was offline (BUG-004, orig-port ThePrince.java:241). The fix (port
+     * ThePrince.java:536-554) null-checks and
      * falls back to {@code setOwnerUUID(...) + setTame(true, true)}. A
      * gametest mock player is never in {@code ServerLevel.players()}, so
      * {@code getPlayerByUUID} returns null — the owner is genuinely "offline"

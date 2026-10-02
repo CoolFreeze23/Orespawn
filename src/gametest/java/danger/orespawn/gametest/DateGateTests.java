@@ -106,10 +106,9 @@ public class DateGateTests {
      * restoring orig Ghost.java:145-160 + the Oct-31-only registration
      * OreSpawnMain.java:4518-4565). Data half: halloween_ghosts.json
      * registers ghost+ghost_skelly at w15 count 3-6 across the documented 20
-     * modern biomes (the orig 22-biome block after mapping/dedup —
-     * FIX_LOG.md "20 modern biomes after mapping"; D4_items_small_entities.md
-     * §13). Drop half (C2): Ghosts drop NOTHING on a player kill (FIX_LOG D4
-     * "Ghost/GhostSkelly (nothing)").
+     * modern biomes (the orig 22-biome block after mapping/dedup;
+     * D4_items_small_entities.md §13). Drop half (C2): Ghosts and Ghost
+     * Skellies drop NOTHING on a player kill.
      */
     @GameTest(template = "empty_large", batch = "orespawnDate1", timeoutTicks = 200)
     public void halloween_seasonal_biome_gate(GameTestHelper helper) {

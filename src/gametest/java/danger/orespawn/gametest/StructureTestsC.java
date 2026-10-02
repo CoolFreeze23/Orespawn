@@ -1214,9 +1214,9 @@ public class StructureTestsC {
 
     /**
      * Checklist item {@code i172-regression-greenhouse-plants-wgen-063};
-     * finding WGEN-063 (FIX_LOG.md Phase D close-out: "case 7 is
-     * REEDS/sugar cane (orig GD:5090-5092) and case 19 is MyRicePlant
-     * (GD:5123-5125) — both had silently drifted"; fix landed in
+     * finding WGEN-063 (case 7 is REEDS/sugar cane, orig GD:5090-5092,
+     * and case 19 is MyRicePlant, GD:5123-5125; both had silently drifted;
+     * fix landed in
      * LegacyDungeonPiece.pickGreenhousePlant, D6b batch-4 verify).
      * Documented mechanism (LegacyDungeonPiece.generateGreenhouse, port of
      * orig GD:5030-5168): interior j==1 cells with i%3!=2 plant at 2/3
@@ -1276,11 +1276,11 @@ public class StructureTestsC {
 
     /**
      * Checklist item {@code i173-regression-greenhouse-white-house-doors-wgen-067-068};
-     * findings WGEN-067/WGEN-068 (FIX_LOG.md Phase D close-out: "WGEN-067
+     * findings WGEN-067/WGEN-068 (WGEN-067:
      * greenhouse double-door entry rebuilt (two doors at width/2 and
      * width/2-1, lintels, meta-4 buttons — the D6a robot-lab door trace;
      * the port had a single door at the wrong x); WGEN-068 white-house
-     * door upper half restored + button re-hung NORTH"; pre-fix state
+     * door upper half restored + button re-hung NORTH; pre-fix state
      * recorded as dsb_sweep_spec.md flags F1/F2).
      * Documented positions (LegacyDungeonPiece.generateGreenhouse, orig
      * GD:5138-5147; makeWhWalls, orig GD:5548-5551): greenhouse ox=px-11,
@@ -1367,7 +1367,7 @@ public class StructureTestsC {
         helper.assertValueEqual(button.getValue(BlockStateProperties.ATTACH_FACE), AttachFace.WALL,
                 "i173: white house button attach face");
         helper.assertValueEqual(button.getValue(BlockStateProperties.HORIZONTAL_FACING),
-                Direction.NORTH, "i173: white house button facing (re-hung NORTH per FIX_LOG)");
+                Direction.NORTH, "i173: white house button facing (re-hung NORTH, WGEN-068)");
         // "Sits ON the wall (not floating)": the wall-attach support block —
         // pos.relative(facing.getOpposite()) = one south — is the quartz wall.
         helper.assertTrue(level.getBlockState(buttonPos.south()).is(Blocks.QUARTZ_BLOCK),
@@ -1475,11 +1475,11 @@ public class StructureTestsC {
 
     /**
      * Checklist item {@code i176-regression-bee-mantis-chests-item-068-069};
-     * findings ITEM-068/ITEM-069 (FIX_LOG.md Phase D close-out: "ITEM-068
+     * findings ITEM-068/ITEM-069 (ITEM-068:
      * bee/mantis/small-beehive chest facings restored (inward E/W/S/N ring
-     * per orig metas); ITEM-069 bee/mantis egg loot restored
+     * per orig metas); ITEM-069: bee/mantis egg loot restored
      * (BEE_SPAWN_EGG 2-8 w15, MANTIS_SPAWN_EGG 2-4 w20 — the invented
-     * golden-carrot/spider-eye stand-ins removed)").
+     * golden-carrot/spider-eye stand-ins removed)).
      * Documented mechanisms: BeehiveFeature.fillBeehiveChests (orig
      * GD:860-889 — inward metas 5/4/3/2 = E/W/S/N; beeContentsList GD:55,
      * egg entry 2-8 weight 15, fills 1+nextInt(5));

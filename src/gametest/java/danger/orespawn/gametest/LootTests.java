@@ -701,7 +701,7 @@ public class LootTests {
      * Ostrich. Expect: tamed 2-6 poppies; untamed Gazelle 0-2 beef, untamed
      * Ostrich 0-2 feathers."
      *
-     * <p>Documented values: ENT-D-037 (AUDIT_FINDINGS.md:1377-1383)
+     * <p>Documented values: ENT-D-037
      * — orig Gazelle.java:341-352 tamed → 2-6 poppies
      * (nextInt(5)+2), untamed → vanilla beef 0-2 (:337-339). ENT-K-046
      * — orig Ostrich.java:283-294 tamed → 2-6 poppies, untamed → feather
@@ -1214,9 +1214,9 @@ public class LootTests {
      * (0 XP) vs Nether (5-13 XP)".
      *
      * <p>Documented values: orig Lavafoam.java:110-116 — dimension -1 grants
-     * {@code 5 + nextInt(5) + nextInt(5)} = 5..13 XP, overworld nothing; fix
-     * record FIX_LOG.md:925-926 ("Lavafoam Nether XP bonus ... via
-     * getExpDrop"); port block/Lavafoam.java:36-45. Unlike the OreGenericEgg
+     * {@code 5 + nextInt(5) + nextInt(5)} = 5..13 XP, overworld nothing; the
+     * port restores the Nether XP bonus via getExpDrop
+     * (block/Lavafoam.java:36-45). Unlike the OreGenericEgg
      * family this block uses the NeoForge {@code getExpDrop} hook, so BOTH
      * the mechanism sampling and the real break path are asserted.</p>
      *
@@ -1286,7 +1286,7 @@ public class LootTests {
      *
      * <p>Documented values: BOSS-025 orig ThePrince.java:354-361
      * (nextInt(4)+1 beef) and BOSS-042 orig ThePrincess.java:342-349 —
-     * phase_c_reports/C5_bosses.md:23/:30, FIX_LOG.md:104 (the pre-fix
+     * phase_c_reports/C5_bosses.md:23/:30 (the pre-fix
      * tables dropped 1-4 DIAMOND, hence the explicit negative). BOSS-035
      * orig ThePrinceAdult.java:313-315 — PrinceEgg ×1 (C5:28); since D5 the
      * functional egg item is {@code orespawn:the_prince_spawn_egg}

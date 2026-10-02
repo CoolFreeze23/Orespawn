@@ -99,9 +99,8 @@ public class EntityWormSmall extends Monster {
         // deliberately different queries after the TF-035 vertical-reach fix
         // (see the comment there) and can select different players, so merging
         // them is not neutral. There is also no per-tick TargetingConditions
-        // allocation here to hoist. Both scans stay per-tick: the audit's
-        // throttle was DECLINED by the decision — same-tick freshness is
-        // the worm-responsiveness contract.
+        // allocation here to hoist. Both scans stay per-tick, never
+        // throttled: same-tick freshness is the worm-responsiveness contract.
         Player target = this.level().getNearestPlayer(this, 8.0);
 
         // orig WormSmall.java:94 — the up/down burrow cycle also runs (without

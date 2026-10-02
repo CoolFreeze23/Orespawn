@@ -941,7 +941,7 @@ public class ThePrinceAdult extends TamableAnimal
         // (The CAKE growth shortcut and GOLD-INGOT regression that used to
         // live here were port inventions — orig func_70085_c :1109-1249 has
         // neither; the real regression item is a DIAMOND (:1207-1226).
-        // Removed; see AUDIT_FINDINGS adult_cake_gold_dup.)
+        // Removed.)
 
         // Empty hand: saddle-free mount (orig ThePrinceAdult.java:1132-1139 —
         // mounting wakes the dragon and switches it to flight, activity 1).

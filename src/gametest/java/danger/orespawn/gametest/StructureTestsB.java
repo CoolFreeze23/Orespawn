@@ -1023,7 +1023,7 @@ public class StructureTestsB {
      * chest at (+3,+3,+3) (GD:3200-3204, meta 2) rolling 6-10 stacks of
      * the 7-entry weight-180 table (loot_table/chests/bouncy_castle.json;
      * orig GenericDungeon.java:41 + :3203). "Bouncy, friction 1.1":
-     * Block#getFriction() == 1.1f (ITEM-009, AUDIT_FINDINGS.md — orig
+     * Block#getFriction() == 1.1f (ITEM-009 — orig
      * Lavafoam.java:23-26; port ModBlocks.java LAVAFOAM registration) and
      * the collision push sets the away-from-centre velocity component to
      * 0.45 (orig Lavafoam.java:92; port block/Lavafoam.java entityInside).

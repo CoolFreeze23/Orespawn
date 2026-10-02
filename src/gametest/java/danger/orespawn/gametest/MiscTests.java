@@ -326,7 +326,7 @@ public class MiscTests {
      * player's inventory, each worn Experience armor piece occasionally grants
      * +1 XP — outer 1-in-60 roll per tick, chest piece 1-in-20 (orig
      * ExperienceSword.java:63-103; port ExperienceSword.java:40-78,
-     * AUDIT_FINDINGS ITEM-040/ITEM-057). Also asserts the ITEM-040 identity
+     * ITEM-040/ITEM-057). Also asserts the ITEM-040 identity
      * fixes: durability 1400 (orig :35) and baked Sharpness 2 +
      * Unbreaking 3 (orig :40-41, Looting-3 bug removed).
      *
@@ -611,7 +611,7 @@ public class MiscTests {
 
     /**
      * i015 — ITEM-029 (D4): special-food effects per orig ItemSunFish.java:
-     * 29-48 (FIX_LOG D4 "ITEM-029 — FIXED"): Butter Candy Speed+Jump 2000t
+     * 29-48: Butter Candy Speed+Jump 2000t
      * (100 s); Cooked Bacon Regen+Strength 2000t; Crystal Apple Regen+Strength
      * 3000t (150 s); Heart ("Love") Regen IV + Strength III + Fire Res III +
      * Resistance II 6000t (300 s) plus Speed+Jump 5000t (250 s). Port:

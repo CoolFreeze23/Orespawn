@@ -53,9 +53,9 @@ import java.util.function.Supplier;
  *
  * <p>Documented sources (citation convention: OSM:NN =
  * reference_1_7_10_source/sources/danger/orespawn/OreSpawnMain.java):
- * FIX_LOG.md "ITEM-059" (:123) + Phase C6 recipe pass (:329,
- * phase_c_reports/C6_recipe_diff.md); FIX_LOG.md "ITEM-060/061 — FIXED" /
- * "ITEM-062 — PARTIAL" (:904-911, D4) and "ITEM-062 — FIXED" (:823-827, D5);
+ * ITEM-059 and the Phase C6 recipe pass
+ * (phase_c_reports/C6_recipe_diff.md); ITEM-060/061 (D4) and ITEM-062 (D4,
+ * completed in D5);
  * phase_d_reports/D4_items_small_entities.md §5;
  * phase_d_reports/D5_structures_spawnores.md §5-§6;
  * phase_d_reports/d5_extraction/spawn_ores_spec.md §2 (119-row master table),
@@ -80,8 +80,8 @@ public class RecipeTests {
      * tools/d5_gen_spawn_ores.py ROWS (the water=True rows; the three
      * water=False rows are the Mobzilla/King/Queen PART blocks, which have no
      * water recipe — they are the nine-part combine INPUTS, see
-     * {@link #item062_nine_part_combines_and_pool_asymmetry}). Mapping
-     * decisions per FIX_LOG.md:823-827: vanilla mobs → modern vanilla eggs
+     * {@link #item062_nine_part_combines_and_pool_asymmetry}). The egg
+     * mapping: vanilla mobs → modern vanilla eggs
      * (ender_dragon/iron_golem/snow_golem/wither all exist since 1.20.5);
      * CriminalEgg → band_p_spawn_egg (WGEN-017); EnchantedCowEgg →
      * enchanted_apple_cow_spawn_egg (Phase-14 consolidation target).
@@ -273,9 +273,9 @@ public class RecipeTests {
      * {@code addSmelting(MyOreUraniumBlock, new ItemStack(UraniumNugget), 0.3f)}
      * (same shape for titanium) → result is ONE nugget, smelting XP 0.3, at the
      * 1.7.10 fixed furnace cook time of 200 ticks; orig OSM:3293/3295 — shaped
-     * "UUU"/"UUU"/"UUU" of nuggets → 1 ingot. Fix records: FIX_LOG.md:123
-     * (ITEM-059) and the Phase C6 recipe pass ("uranium/titanium smelting →
-     * nuggets XP 0.3"; phase_c_reports/C6_recipe_diff.md).</p>
+     * "UUU"/"UUU"/"UUU" of nuggets → 1 ingot. Fixed by ITEM-059 and the
+     * Phase C6 recipe pass ("uranium/titanium smelting → nuggets XP 0.3";
+     * phase_c_reports/C6_recipe_diff.md).</p>
      */
     @GameTest(template = "empty")
     public void item059_ore_smelts_to_nugget_not_ingot(GameTestHelper helper) {
@@ -325,8 +325,8 @@ public class RecipeTests {
      * ingots, cobweb from string. Expect: all five craft; oak door from
      * crystal planks also still works."
      *
-     * <p>Documented values (fix records FIX_LOG.md:904-911 and
-     * phase_d_reports/D4_items_small_entities.md §5):</p>
+     * <p>Documented values (phase_d_reports/D4_items_small_entities.md
+     * §5):</p>
      * <ul>
      *   <li>ITEM-060 skate bow — orig OSM:3160, shaped " TS"/"T S"/" TS",
      *       T = crystal sticks, S = string.</li>

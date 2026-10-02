@@ -44,7 +44,7 @@ public class BlockExperienceLeaves extends LeavesBlock {
     // ORIG BlockExperienceLeaves.java:41-46 (func_149690_a) is an empty stub and
     // :48-50 (func_149745_a) returns 0 — leaves drop NOTHING when harvested and
     // grant no harvest XP. A Phase-10 invention added a Bottle-o'-Enchanting +
-    // XP-orb bonus in playerDestroy here; removed for parity (see FIX_LOG D4).
+    // XP-orb bonus in playerDestroy here; removed for parity.
 
     @Override
     public boolean isRandomlyTicking(BlockState state) {

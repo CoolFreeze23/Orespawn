@@ -661,8 +661,8 @@ public class HitboxPartTests {
      * against gravity -- a later review's freeze applies to the ticking rows. No row covers the sweep: after
      * the swap the sweep box is the PARENT's box inflated (1, 0.25, 1) -- 24 x 24.5 x 24 around the hostile
      * Queen's body, not around the struck wing -- and the parent is excluded from its candidates (at HEAD it was
-     * one, taking the sweep's knockback(0.4) while its LivingEntity.hurt fell to the i-frames); recorded in
-     * the FIX_LOG, not pinned.
+     * one, taking the sweep's knockback(0.4) while its LivingEntity.hurt fell to the i-frames); noted here,
+     * not pinned.
      */
     @GameTest(template = "empty_large", batch = "spiderGaitIsolation")
     public void s4_player_attack_lands_on_the_parent_through_a_part(GameTestHelper helper) {

@@ -478,8 +478,8 @@ public class StructureTestsA {
         ServerLevel level = helper.getLevel();
         BlockPos o = farOrigin(helper, 601, 30);
 
-        // TF-023 harness race (proven fix pattern: StructureTestsC red-ant
-        // i165, FIX_LOG TF-023 CLOSED): freshly force-loaded chunks keep their
+        // TF-023 harness race (the fix pattern proven by StructureTestsC's
+        // red-ant i165): freshly force-loaded chunks keep their
         // entity sections HIDDEN until the queued FullChunkStatus promotion
         // pumps on the main thread, so an entity query against a just-built
         // far region can miss mobs that ARE in section storage. Pin the maze
@@ -762,8 +762,8 @@ public class StructureTestsA {
     // =====================================================================
 
     /**
-     * Checklist i126-wgen-052-053-056-item-066 (FIX_LOG.md:794 "Challenge
-     * Towers reconciled, WGEN-051..056 + ITEM-066"). Far region K=602.
+     * Checklist i126-wgen-052-053-056-item-066 (the Challenge Towers
+     * reconciled, WGEN-051..056 + ITEM-066). Far region K=602.
      *
      * <p>The tower level roll is deterministic on the worldgen path (piece RNG
      * seeded from the bounding box, LegacyDungeonPiece.java:465-470), so the
@@ -819,8 +819,8 @@ public class StructureTestsA {
                 + "(P ≈ 5e-29 under seed uniformity)");
         final BlockPos o = origin;
 
-        // TF-023 harness race (proven fix pattern: StructureTestsC red-ant
-        // i165, FIX_LOG TF-023 CLOSED): the prize-egg use spawns The Prince
+        // TF-023 harness race (the fix pattern proven by StructureTestsC's
+        // red-ant i165): the prize-egg use spawns The Prince
         // into freshly force-loaded chunks whose entity sections stay HIDDEN
         // until the queued FullChunkStatus promotion pumps, so the query after
         // the spawn could miss it. Pin the tower footprint (piece box
@@ -1301,8 +1301,8 @@ public class StructureTestsA {
     // =====================================================================
 
     /**
-     * Checklist i137-endercastle-islands (D6a, ender_castle_spec.md; FIX_LOG.md
-     * :758 notes PN-017): "/locate orespawn:ender_castle_islands in
+     * Checklist i137-endercastle-islands (D6a, ender_castle_spec.md;
+     * PN-017): "/locate orespawn:ender_castle_islands in
      * orespawn:islands: same castle at grass level". Far region K=604.
      *
      * <p>Mechanism (LegacyDungeonStructure.CODEC placement_mode override,
@@ -1940,8 +1940,8 @@ public class StructureTestsA {
         ServerLevel level = helper.getLevel();
         BlockPos o = farOrigin(helper, 608, 10);
 
-        // TF-023 harness race (proven fix pattern: StructureTestsC red-ant
-        // i165, FIX_LOG TF-023 CLOSED): the End Crystals are spawnEntity'd
+        // TF-023 harness race (the fix pattern proven by StructureTestsC's
+        // red-ant i165): the End Crystals are spawnEntity'd
         // during buildNow into freshly force-loaded chunks whose entity
         // sections stay HIDDEN until the queued FullChunkStatus promotion
         // pumps, so the crystal census could read 0 while the crystals WERE in

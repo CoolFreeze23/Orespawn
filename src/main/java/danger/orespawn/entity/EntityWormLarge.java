@@ -108,9 +108,8 @@ public class EntityWormLarge extends Monster {
      * segment-nearby guards return early) — and shared by the other.
      * <p>Invalidation story: the tick stamp IS the invalidation — the cached
      * value can never survive into the next tick, so same-tick freshness is
-     * preserved exactly, as the decision requires. The audit's
-     * every-2-4-ticks throttle was DECLINED by the same decision (worm
-     * responsiveness is the contract) and is deliberately not implemented.
+     * preserved exactly. Scanning only every 2-4 ticks is deliberately not
+     * done: worm responsiveness is the contract.
      * Only delta vs the old duplicate scans: the second caller sees the
      * first caller's result instead of re-querying after the sub-block intra-tick travel movement.
      */

@@ -361,7 +361,7 @@ public class ModEntityAttributes {
 
         // Pre-F sweep (2026-08-11) — the remaining unregistered-but-spawning
         // ids from the startup ServerLifecycleHooks error, each with its orig
-        // func_70601_bi evidence (see FIX_LOG pre-F entry). Predicate choice
+        // func_70601_bi evidence. Predicate choice
         // follows FUNCTION over convention: daytime-required Monster
         // subclasses (BandP/Bee/Crab/...) take Mob::checkMobSpawnRules because
         // Monster::checkMonsterSpawnRules would dead-gate them; super-calling

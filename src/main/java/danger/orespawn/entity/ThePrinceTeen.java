@@ -957,8 +957,7 @@ public class ThePrinceTeen extends TamableAnimal
             return InteractionResult.PASS;
         }
         // (The CAKE growth shortcut that used to live here was a port
-        // invention — orig func_70085_c :1127-1273 has no cake branch. Removed;
-        // see AUDIT_FINDINGS teen_cake_dup.)
+        // invention — orig func_70085_c :1127-1273 has no cake branch. Removed.)
 
         // Empty hand: saddle-free mount (orig ThePrinceTeen.java:1155-1162 —
         // mounting wakes the dragon and switches it to flight, activity 1).
