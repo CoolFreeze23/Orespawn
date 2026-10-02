@@ -20,6 +20,7 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.FixedBiomeSource;
@@ -154,10 +155,13 @@ public class IslandsRotationTests {
         LegacyDungeonPiece.DungeonType[] built = {LegacyDungeonPiece.DungeonType.ISLANDS_GENERIC_DUNGEON,
                 LegacyDungeonPiece.DungeonType.ISLANDS_RUBY_DUNGEON};
         int[] half = {6, 5};
+        // One seeded stream for both builds: the ruby dungeon's ruby ore is a 1-in-20 roll per wall and ceiling cell,
+        // so an unseeded build has none in (19/20)^244 of runs; under this seed it has 15.
+        RandomSource random = RandomSource.create(0L);
         for (int k = 0; k < 2; k++) {
             BlockPos corner = new BlockPos(here.getMinBlockX() + 2, 10, here.getMinBlockZ() + 2);
             try {
-                LegacyDungeonPiece.buildNow(level, corner, built[k]);
+                LegacyDungeonPiece.buildNow(level, corner, built[k], random);
                 BlockPos spawner = corner.offset(half[k], 1, half[k]);
                 String mob = spawnerMob(level, spawner);
                 if (k == 1) {

@@ -745,8 +745,10 @@ public class StructureTestsA {
         // the earlier delay-only attempt still raced the promotion queue).
         AABB chamber = new AABB(cb.getX() + 30, cb.getY(), cb.getZ(),
                 cb.getX() + 60, cb.getY() + 7, cb.getZ() + 30);
-        List<? extends Mob> basilisks =
-                level.getEntities(ModEntities.BASILISK.get(), chamber, e -> true);
+        // By class, not by type: a Basilisk's hit-box parts report its type, so a type query also returns them
+        // once they are placed (TEST-021).
+        List<danger.orespawn.entity.Basilisk> basilisks =
+                level.getEntitiesOfClass(danger.orespawn.entity.Basilisk.class, chamber, e -> true);
         helper.assertTrue(basilisks.size() == 3,
                 "expected exactly 3 chamber Basilisks (BM:397-410), got " + basilisks.size());
         for (Mob basilisk : basilisks) {

@@ -661,10 +661,18 @@ public class LegacyDungeonPiece extends StructurePiece {
      * layout.
      */
     public static void buildNow(ServerLevel level, BlockPos origin, DungeonType type) {
+        buildNow(level, origin, type, level.random);
+    }
+
+    /**
+     * {@link #buildNow(ServerLevel, BlockPos, DungeonType)} drawing from {@code random} instead of the level RNG, so a
+     * caller with a seeded source (a game test) gets the same layout every time.
+     */
+    public static void buildNow(ServerLevel level, BlockPos origin, DungeonType type, RandomSource random) {
         LegacyDungeonPiece piece = new LegacyDungeonPiece(origin, type);
-        piece.runtimeRandomOverride = level.random;
+        piece.runtimeRandomOverride = random;
         piece.postProcess(level, level.structureManager(), level.getChunkSource().getGenerator(),
-                level.random, piece.getBoundingBox(), new ChunkPos(origin), origin);
+                random, piece.getBoundingBox(), new ChunkPos(origin), origin);
     }
 
     /** Returns true iff the target cell is inside the per-chunk write window. */

@@ -14,6 +14,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.ItemStack;
@@ -156,9 +157,20 @@ public class DsbOutcomeTests {
     }
 
     /** Runs {@code buildForType} for one outcome and asserts its documented signature. */
+    /**
+     * The rookery (outcome 38) is built from a fixed seed. Its Pitch Black spawners stand only on spires whose random
+     * height reaches 19 blocks (1 in 10 each, over 52 spires), so 0.9^52, about 0.42 % of builds, have none, and a row
+     * requiring one failed by chance (TEST-003). Under this seed nine spires are capped, each with its chest and the
+     * spawner on top; the game's own odds are unchanged. Every other outcome's signature holds for any roll.
+     */
+    private static final int ROOKERY = 38;
+    private static final long ROOKERY_SEED = 38L;
+
     private static void buildAndAssert(GameTestHelper helper, BlockPos pos, int type) {
         ServerLevel level = helper.getLevel();
-        boolean placed = RandomDungeonSpawnerBlockEntity.buildForType(level, pos, type);
+        boolean placed = type == ROOKERY
+                ? RandomDungeonSpawnerBlockEntity.buildForType(level, pos, type, RandomSource.create(ROOKERY_SEED))
+                : RandomDungeonSpawnerBlockEntity.buildForType(level, pos, type);
         helper.assertTrue(placed, "DSB outcome " + type + ": buildForType returned false");
         assertOutcomeSignature(helper, level, pos, type);
     }

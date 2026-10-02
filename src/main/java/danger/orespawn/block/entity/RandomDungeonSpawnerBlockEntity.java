@@ -9,6 +9,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -200,57 +201,63 @@ public class RandomDungeonSpawnerBlockEntity extends BlockEntity {
     // nextInt(50) four hundred times. No behavioral change; production
     // callers are unchanged (detonate above).
     public static boolean buildForType(ServerLevel server, BlockPos pos, int type) {
+        return buildForType(server, pos, type, server.random);
+    }
+
+    /** {@link #buildForType(ServerLevel, BlockPos, int)} building with {@code random} (a game test's seeded
+     * source) instead of the level RNG. */
+    public static boolean buildForType(ServerLevel server, BlockPos pos, int type, RandomSource random) {
         return switch (type) {
-            case TYPE_RUBY_DUNGEON -> GenericDungeon.placeRubyDungeonAt(server, server.random, pos);
-            case TYPE_GENERIC_DUNGEON -> GenericDungeon.placeGenericDungeonAt(server, server.random, pos);
+            case TYPE_RUBY_DUNGEON -> GenericDungeon.placeRubyDungeonAt(server, random, pos);
+            case TYPE_GENERIC_DUNGEON -> GenericDungeon.placeGenericDungeonAt(server, random, pos);
             case TYPE_BASILISK_MAZE -> {
                 // orig DungeonSpawnerBlock.java:122-124 — same public builder as
                 // worldgen, at the block position with no ground scan or -2 offset.
                 LegacyDungeonPiece.buildNow(server, pos,
-                        LegacyDungeonPiece.DungeonType.BASILISK_MAZE);
+                        LegacyDungeonPiece.DungeonType.BASILISK_MAZE, random);
                 yield true;
             }
             case TYPE_NIGHTMARE_ROOKERY -> {
                 // orig DungeonSpawnerBlock.java:167-169.
                 LegacyDungeonPiece.buildNow(server, pos,
-                        LegacyDungeonPiece.DungeonType.NIGHTMARE_ROOKERY);
+                        LegacyDungeonPiece.DungeonType.NIGHTMARE_ROOKERY, random);
                 yield true;
             }
             case TYPE_ENORMOUS_CASTLE_KING -> {
                 // orig DungeonSpawnerBlock.java:59-61.
                 LegacyDungeonPiece.buildNow(server, pos,
-                        LegacyDungeonPiece.DungeonType.KING_TOWER);
+                        LegacyDungeonPiece.DungeonType.KING_TOWER, random);
                 yield true;
             }
             case TYPE_ENORMOUS_CASTLE_QUEEN -> {
                 // orig DungeonSpawnerBlock.java:194-196.
                 LegacyDungeonPiece.buildNow(server, pos,
-                        LegacyDungeonPiece.DungeonType.QUEEN_TOWER);
+                        LegacyDungeonPiece.DungeonType.QUEEN_TOWER, random);
                 yield true;
             }
             // Phase D6a — the six strong-model structures + the two tree outcomes.
             case TYPE_FAIRY_TREE ->
-                    danger.orespawn.world.CrystalStructures.buildFairyTreeAt(server, server.random, pos);
+                    danger.orespawn.world.CrystalStructures.buildFairyTreeAt(server, random, pos);
             case TYPE_FAIRY_CASTLE_TREE ->
-                    danger.orespawn.world.CrystalStructures.buildFairyCastleTreeAt(server, server.random, pos);
+                    danger.orespawn.world.CrystalStructures.buildFairyCastleTreeAt(server, random, pos);
             case TYPE_KYUUBI_DUNGEON -> {
                 LegacyDungeonPiece.buildNow(server, pos,
-                        LegacyDungeonPiece.DungeonType.KYUUBI_DUNGEON);
+                        LegacyDungeonPiece.DungeonType.KYUUBI_DUNGEON, random);
                 yield true;
             }
             case TYPE_HOSPITAL -> {
                 LegacyDungeonPiece.buildNow(server, pos,
-                        LegacyDungeonPiece.DungeonType.HOSPITAL);
+                        LegacyDungeonPiece.DungeonType.HOSPITAL, random);
                 yield true;
             }
             case TYPE_ENDER_CASTLE -> {
                 LegacyDungeonPiece.buildNow(server, pos,
-                        LegacyDungeonPiece.DungeonType.ENDER_CASTLE);
+                        LegacyDungeonPiece.DungeonType.ENDER_CASTLE, random);
                 yield true;
             }
             case TYPE_INCA_PYRAMID -> {
                 LegacyDungeonPiece.buildNow(server, pos,
-                        LegacyDungeonPiece.DungeonType.INCA_PYRAMID);
+                        LegacyDungeonPiece.DungeonType.INCA_PYRAMID, random);
                 yield true;
             }
             case TYPE_ROBOT_LAB -> {
@@ -262,98 +269,98 @@ public class RandomDungeonSpawnerBlockEntity extends BlockEntity {
                 // shifted the DSB build (-5, 0, -25) from the original's
                 // clicked-pos build; the +5/+25 pre-offset cancels it.
                 LegacyDungeonPiece.buildNow(server, pos.offset(5, 0, 25),
-                        LegacyDungeonPiece.DungeonType.ROBOT_LAB);
+                        LegacyDungeonPiece.DungeonType.ROBOT_LAB, random);
                 yield true;
             }
             case TYPE_MONSTER_ISLAND -> {
                 LegacyDungeonPiece.buildNow(server, pos,
-                        LegacyDungeonPiece.DungeonType.MONSTER_ISLAND);
+                        LegacyDungeonPiece.DungeonType.MONSTER_ISLAND, random);
                 yield true;
             }
             // Phase D6b batch 1.
             case TYPE_ROTATOR_STATION ->
-                    danger.orespawn.world.CrystalStructures.buildRotatorStationAt(server, server.random, pos);
+                    danger.orespawn.world.CrystalStructures.buildRotatorStationAt(server, random, pos);
             case TYPE_PLAY_POOL -> {
                 LegacyDungeonPiece.buildNow(server, pos,
-                        LegacyDungeonPiece.DungeonType.PLAY_POOL);
+                        LegacyDungeonPiece.DungeonType.PLAY_POOL, random);
                 yield true;
             }
             case TYPE_CLOUD_SHARK_DUNGEON -> {
                 LegacyDungeonPiece.buildNow(server, pos,
-                        LegacyDungeonPiece.DungeonType.CLOUD_SHARK_DUNGEON);
+                        LegacyDungeonPiece.DungeonType.CLOUD_SHARK_DUNGEON, random);
                 yield true;
             }
             case TYPE_GOLD_FISH_BOWL -> {
                 LegacyDungeonPiece.buildNow(server, pos,
-                        LegacyDungeonPiece.DungeonType.GOLD_FISH_BOWL);
+                        LegacyDungeonPiece.DungeonType.GOLD_FISH_BOWL, random);
                 yield true;
             }
             case TYPE_SPIT_BUG_LAIR -> {
                 LegacyDungeonPiece.buildNow(server, pos,
-                        LegacyDungeonPiece.DungeonType.SPIT_BUG_LAIR);
+                        LegacyDungeonPiece.DungeonType.SPIT_BUG_LAIR, random);
                 yield true;
             }
             // Phase D6b batch 2.
             case TYPE_WATER_DRAGON_LAIR -> {
                 LegacyDungeonPiece.buildNow(server, pos,
-                        LegacyDungeonPiece.DungeonType.WATER_DRAGON_LAIR);
+                        LegacyDungeonPiece.DungeonType.WATER_DRAGON_LAIR, random);
                 yield true;
             }
             case TYPE_LEAF_MONSTER_DUNGEON -> {
                 LegacyDungeonPiece.buildNow(server, pos,
-                        LegacyDungeonPiece.DungeonType.LEAF_MONSTER_DUNGEON);
+                        LegacyDungeonPiece.DungeonType.LEAF_MONSTER_DUNGEON, random);
                 yield true;
             }
             case TYPE_MINI_DUNGEON -> {
                 LegacyDungeonPiece.buildNow(server, pos,
-                        LegacyDungeonPiece.DungeonType.MINI_DUNGEON);
+                        LegacyDungeonPiece.DungeonType.MINI_DUNGEON, random);
                 yield true;
             }
             case TYPE_ENDER_REAPER_GRAVEYARD -> {
                 LegacyDungeonPiece.buildNow(server, pos,
-                        LegacyDungeonPiece.DungeonType.ENDER_REAPER_GRAVEYARD);
+                        LegacyDungeonPiece.DungeonType.ENDER_REAPER_GRAVEYARD, random);
                 yield true;
             }
             case TYPE_IGLOO -> {
                 LegacyDungeonPiece.buildNow(server, pos,
-                        LegacyDungeonPiece.DungeonType.IGLOO);
+                        LegacyDungeonPiece.DungeonType.IGLOO, random);
                 yield true;
             }
             case TYPE_CEPHADROME_ALTAR -> {
                 LegacyDungeonPiece.buildNow(server, pos,
-                        LegacyDungeonPiece.DungeonType.CEPHADROME_ALTAR);
+                        LegacyDungeonPiece.DungeonType.CEPHADROME_ALTAR, random);
                 yield true;
             }
             case TYPE_BOUNCY_CASTLE -> {
                 LegacyDungeonPiece.buildNow(server, pos,
-                        LegacyDungeonPiece.DungeonType.BOUNCY_CASTLE);
+                        LegacyDungeonPiece.DungeonType.BOUNCY_CASTLE, random);
                 yield true;
             }
             case TYPE_DAMSEL_IN_DISTRESS -> {
                 LegacyDungeonPiece.buildNow(server, pos,
-                        LegacyDungeonPiece.DungeonType.DAMSEL_IN_DISTRESS);
+                        LegacyDungeonPiece.DungeonType.DAMSEL_IN_DISTRESS, random);
                 yield true;
             }
             case TYPE_GIRLFRIEND_ISLAND -> {
                 LegacyDungeonPiece.buildNow(server, pos,
-                        LegacyDungeonPiece.DungeonType.GIRLFRIEND_ISLAND);
+                        LegacyDungeonPiece.DungeonType.GIRLFRIEND_ISLAND, random);
                 yield true;
             }
             case TYPE_STINKY_HOUSE -> {
                 LegacyDungeonPiece.buildNow(server, pos,
-                        LegacyDungeonPiece.DungeonType.STINKY_HOUSE);
+                        LegacyDungeonPiece.DungeonType.STINKY_HOUSE, random);
                 yield true;
             }
             case TYPE_PUMPKIN -> {
                 // orig DSB:186 — makePumpkin receives clickedY + 1; the DSB
                 // already cleared that cell (DSB:50-51 → the tick handler).
                 LegacyDungeonPiece.buildNow(server, pos.above(),
-                        LegacyDungeonPiece.DungeonType.PUMPKIN);
+                        LegacyDungeonPiece.DungeonType.PUMPKIN, random);
                 yield true;
             }
             case TYPE_RAINBOW -> {
                 LegacyDungeonPiece.buildNow(server, pos,
-                        LegacyDungeonPiece.DungeonType.RAINBOW);
+                        LegacyDungeonPiece.DungeonType.RAINBOW, random);
                 yield true;
             }
             // ---- D6b batch 4: final 19 outcomes. Group-A offsets cancel the
@@ -364,60 +371,60 @@ public class RandomDungeonSpawnerBlockEntity extends BlockEntity {
                 // orig DSB:66 — makeBeeHive at the clicked pos; extracted
                 // build core (BeehiveFeature.buildAt, orig GD:812-858).
                 danger.orespawn.world.feature.BeehiveFeature.buildAt(
-                        server, new java.util.Random(server.random.nextLong()), pos);
+                        server, new java.util.Random(random.nextLong()), pos);
                 yield true;
             }
             case TYPE_HAUNTED_HOUSE -> {
                 LegacyDungeonPiece.buildNow(server, pos,
-                        LegacyDungeonPiece.DungeonType.HAUNTED_HOUSE);
+                        LegacyDungeonPiece.DungeonType.HAUNTED_HOUSE, random);
                 yield true;
             }
             case TYPE_MANTIS_HIVE -> {
                 // orig DSB:72 — makeMantisHive; extracted core
                 // (MantisNestFeature.buildAt, orig GD:1012-1062).
                 danger.orespawn.world.feature.MantisNestFeature.buildAt(
-                        server, new java.util.Random(server.random.nextLong()), pos);
+                        server, new java.util.Random(random.nextLong()), pos);
                 yield true;
             }
             case TYPE_SMALL_BEE_HIVE -> {
                 // orig DSB:78 — makeSmallBeeHive; extracted core
                 // (SmallBeehiveFeature.buildAt, orig GD:1363-1451).
                 danger.orespawn.world.feature.SmallBeehiveFeature.buildAt(
-                        server, new java.util.Random(server.random.nextLong()), pos);
+                        server, new java.util.Random(random.nextLong()), pos);
                 yield true;
             }
             case TYPE_SHADOW_DUNGEON -> {
                 LegacyDungeonPiece.buildNow(server, pos,
-                        LegacyDungeonPiece.DungeonType.SHADOW);
+                        LegacyDungeonPiece.DungeonType.SHADOW, random);
                 yield true;
             }
             case TYPE_ALIEN_WTF_DUNGEON -> {
                 LegacyDungeonPiece.buildNow(server, pos,
-                        LegacyDungeonPiece.DungeonType.ALIEN_WTF);
+                        LegacyDungeonPiece.DungeonType.ALIEN_WTF, random);
                 yield true;
             }
             case TYPE_ENDER_KNIGHT_DUNGEON -> {
                 LegacyDungeonPiece.buildNow(server, pos,
-                        LegacyDungeonPiece.DungeonType.ENDER_KNIGHT_DUNGEON);
+                        LegacyDungeonPiece.DungeonType.ENDER_KNIGHT_DUNGEON, random);
                 yield true;
             }
             case TYPE_CRYSTAL_HAUNTED_HOUSE -> {
                 // orig DSB:129 — new adapter over the private Crystal builder
                 // (CrystalStructures GD:2993-3104 port).
                 danger.orespawn.world.CrystalStructures.buildCrystalHauntedHouseAt(
-                        server, server.random, pos);
+                        server, random, pos);
                 yield true;
             }
             case TYPE_KING_ALTAR -> {
                 // orig DSB:147 — original is corner-anchored; the port
                 // centres (ox = x - 25, oz = z - 25), so pre-offset +25/+25.
                 LegacyDungeonPiece.buildNow(server, pos.offset(25, 0, 25),
-                        LegacyDungeonPiece.DungeonType.KING_ALTAR);
+                        LegacyDungeonPiece.DungeonType.KING_ALTAR, random);
                 yield true;
             }
             case TYPE_LEON_NEST -> {
                 LegacyDungeonPiece.buildNow(server, pos,
-                        LegacyDungeonPiece.DungeonType.LEONOPTERYX_NEST);
+                        LegacyDungeonPiece.DungeonType.LEONOPTERYX_NEST, random);
                 yield true;
             }
             case TYPE_CRYSTAL_BATTLE_TOWER -> {
@@ -425,59 +432,59 @@ public class RandomDungeonSpawnerBlockEntity extends BlockEntity {
                 // builder (NOT the dead CrystalBattleTowerFeature, removed
                 // this batch under the no-fabrication rule — F4).
                 danger.orespawn.world.CrystalStructures.buildCrystalBattleTowerAt(
-                        server, server.random, pos);
+                        server, random, pos);
                 yield true;
             }
             case TYPE_GREENHOUSE_DUNGEON -> {
                 // orig DSB:162 — port centres (ox = x - 11, oz = z - 7).
                 LegacyDungeonPiece.buildNow(server, pos.offset(11, 0, 7),
-                        LegacyDungeonPiece.DungeonType.GREENHOUSE);
+                        LegacyDungeonPiece.DungeonType.GREENHOUSE, random);
                 yield true;
             }
             case TYPE_RUBBER_DUCKY_POND -> {
                 LegacyDungeonPiece.buildNow(server, pos,
-                        LegacyDungeonPiece.DungeonType.RUBBER_DUCKY_POND);
+                        LegacyDungeonPiece.DungeonType.RUBBER_DUCKY_POND, random);
                 yield true;
             }
             case TYPE_WHITE_HOUSE -> {
                 // orig DSB:177 — port centres (ox = x - 12, oz = z - 9).
                 LegacyDungeonPiece.buildNow(server, pos.offset(12, 0, 9),
-                        LegacyDungeonPiece.DungeonType.WHITE_HOUSE);
+                        LegacyDungeonPiece.DungeonType.WHITE_HOUSE, random);
                 yield true;
             }
             case TYPE_QUEEN_ALTAR -> {
                 // orig DSB:180 — same centring as the King altar.
                 LegacyDungeonPiece.buildNow(server, pos.offset(25, 0, 25),
-                        LegacyDungeonPiece.DungeonType.QUEEN_ALTAR);
+                        LegacyDungeonPiece.DungeonType.QUEEN_ALTAR, random);
                 yield true;
             }
             case TYPE_FROG_POND -> {
                 // orig DSB:183 — makeFrogPond receives clickedY + 1.
                 LegacyDungeonPiece.buildNow(server, pos.above(),
-                        LegacyDungeonPiece.DungeonType.FROG_POND);
+                        LegacyDungeonPiece.DungeonType.FROG_POND, random);
                 yield true;
             }
             case TYPE_ROUND_ROTATOR -> {
                 // orig DSB:189 — makeRoundRotator receives clickedY + 1;
                 // new adapter over the private Crystal builder (GD:6184-6258).
                 danger.orespawn.world.CrystalStructures.buildRoundRotatorAt(
-                        server, server.random, pos.above());
+                        server, random, pos.above());
                 yield true;
             }
             case TYPE_SPIDER_HANGOUT -> {
                 LegacyDungeonPiece.buildNow(server, pos,
-                        LegacyDungeonPiece.DungeonType.SPIDER_HANGOUT);
+                        LegacyDungeonPiece.DungeonType.SPIDER_HANGOUT, random);
                 yield true;
             }
             case TYPE_RED_ANT_HANGOUT -> {
                 LegacyDungeonPiece.buildNow(server, pos,
-                        LegacyDungeonPiece.DungeonType.RED_ANT_HANGOUT);
+                        LegacyDungeonPiece.DungeonType.RED_ANT_HANGOUT, random);
                 yield true;
             }
             // All 50 outcomes are wired (D6b batch 4); this arm is
             // unreachable for nextInt(50) rolls and exists only because an
             // int-typed switch requires it. Defensive fallback unchanged.
-            default -> GenericDungeon.placeGenericDungeonAt(server, server.random, pos);
+            default -> GenericDungeon.placeGenericDungeonAt(server, random, pos);
         };
     }
 
