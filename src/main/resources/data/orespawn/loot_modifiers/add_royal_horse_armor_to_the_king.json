@@ -1,0 +1,19 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "orespawn:modern",
+      "key": "horseArmour"
+    }
+  ],
+  "type": "orespawn:add_items",
+  "conditions": [
+    {
+      "condition": "neoforge:loot_table_id",
+      "loot_table_id": "orespawn:entities/the_king"
+    }
+  ],
+  "item": "orespawn:royal_horse_armor",
+  "min_count": 1,
+  "max_count": 1,
+  "chance": 1.0
+}

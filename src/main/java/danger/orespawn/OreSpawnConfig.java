@@ -331,6 +331,13 @@ public class OreSpawnConfig {
      */
     public static final ModConfigSpec.BooleanValue MODERN_ARTIST_ANIMATIONS;
     /**
+     * MOD-040: horse armour for the 14 armour sets. The items are registered whatever this says; it gates their 13
+     * recipes and the Royal Guardian one's drop from the King (the {@code orespawn:modern} load condition, read as the
+     * data packs load), their creative-tab entries and the Royal Guardian one in the King's challenge chest. Takes
+     * effect only while {@link #MODERN_ENABLED} is on -- read through {@link #horseArmour()}, never directly.
+     */
+    public static final ModConfigSpec.BooleanValue MODERN_HORSE_ARMOUR;
+    /**
      * MOD-038, the per-species flip list: registry names ({@code
      * orespawn:beaver}; the bare path is accepted for the mod's own species) kept on
      * the classic pose in modern mode even when their clips ship. Read with the
@@ -548,7 +555,8 @@ public class OreSpawnConfig {
                         "modern.fireRespectsMobGriefing, modern.godzillaSparesBossPeers, " +
                         "modern.petsDefendOwner, modern.pointysaurusStareAggro, " +
                         "modern.cryolophosaurusRevengeChase, modern.chainsawSweepVanillaSight, " +
-                        "modern.artistAnimations with modern.classicAnimationSpecies); false = classic 1.7.10 " +
+                        "modern.artistAnimations with modern.classicAnimationSpecies, modern.horseArmour); false = " +
+                        "classic 1.7.10 " +
                         "parity everywhere, whatever the per-feature keys say. Phase G artist animations hang " +
                         "off this same switch (classic stays code-driven parity). Snapshotted features " +
                         "(the robot gait mode, hitbox sub-keys, the goal keys petsDefendOwner / " +
@@ -658,6 +666,16 @@ public class OreSpawnConfig {
                         "ship -- registry names, e.g. [\"orespawn:beaver\"] (the bare name \"beaver\" is accepted for " +
                         "OreSpawn's own species). Empty by default. Same pick-up as artistAnimations."
         ).defineListAllowEmpty("classicAnimationSpecies", List.of(), element -> element instanceof String);
+        MODERN_HORSE_ARMOUR = BUILDER.comment(
+                "MOD-040: horse armour for the 14 armour sets: each set's chestplate value as its armour, the set's " +
+                        "toughness and knockback resistance, no durability, as vanilla's horse armour. Its 13 recipes " +
+                        "load and its creative-tab entries show only while this and modern.enabled are true; the " +
+                        "Royal Guardian horse armour has no recipe: the King drops it and his challenge chest holds it " +
+                        "beside the chestplate, likewise only while both are true. The items stay registered either " +
+                        "way, so worlds keep what they hold. A change reaches the recipes and the King's drop on " +
+                        "/reload or a restart, the creative tab when the world is joined again, and the challenge " +
+                        "chest in King towers built after it."
+        ).define("horseArmour", true);
         BUILDER.pop();
 
         SPEC = BUILDER.build();
@@ -748,6 +766,16 @@ public class OreSpawnConfig {
      */
     public static boolean chainsawSweepVanillaSight() {
         return MODERN_ENABLED.get() && MODERN_CHAINSAW_SWEEP_VANILLA_SIGHT.get();
+    }
+
+    /**
+     * MOD-040: the single {@code master && key} evaluation for the horse armour -- true only while
+     * {@link #MODERN_ENABLED} AND {@link #MODERN_HORSE_ARMOUR} are both on. Read by the {@code orespawn:modern} load
+     * condition as the data packs load (the 13 recipes, the King's drop), by the creative tab as it fills and by the
+     * King's challenge chest as it is built; the items are registered either way.
+     */
+    public static boolean horseArmour() {
+        return MODERN_ENABLED.get() && MODERN_HORSE_ARMOUR.get();
     }
 
     /**

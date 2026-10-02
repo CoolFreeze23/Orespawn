@@ -391,6 +391,10 @@ public class ModCreativeTabs {
                         output.accept(ModItems.LAPIS_CHESTPLATE.get());
                         output.accept(ModItems.LAPIS_LEGGINGS.get());
                         output.accept(ModItems.LAPIS_BOOTS.get());
+                        // Horse armour (MOD-040), in the armour's order, while the feature is on
+                        if (OreSpawnConfig.horseArmour()) {
+                            ModItems.HORSE_ARMOR.forEach(item -> output.accept(item.get()));
+                        }
                     })
                     .build());
 

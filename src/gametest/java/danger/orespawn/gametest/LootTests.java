@@ -4,6 +4,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import danger.orespawn.ModEntities;
+import danger.orespawn.OreSpawnConfig;
 import danger.orespawn.OreSpawnMod;
 import danger.orespawn.entity.Cockateil;
 import danger.orespawn.entity.EntityLavaLovingItem;
@@ -1550,13 +1551,22 @@ public class LootTests {
 
         Map<Item, Integer> drops = collectDrops(helper, area);
         int total = totalCount(drops);
-        helper.assertTrue(total == 305,
-                "King death produced " + total + " items, documented exactly 305 = 5 royal pieces"
-                        + " + 150 item draws + 150 block draws (orig TheKing.java:183-227)");
+        // MOD-040: while the horse armour is on the King also drops the Royal Guardian horse armour (a loot modifier on
+        // his table, beside the chestplate): 1.7.10's 305 and that one
+        boolean horseArmour = OreSpawnConfig.horseArmour();
+        int expected = 305 + (horseArmour ? 1 : 0);
+        helper.assertTrue(total == expected,
+                "King death produced " + total + " items, documented exactly " + expected + " = 5 royal pieces"
+                        + " + 150 item draws + 150 block draws (orig TheKing.java:183-227)"
+                        + (horseArmour ? " + the Royal Guardian horse armour" : ""));
         for (String piece : new String[]{"royal_helmet", "royal_chestplate", "royal_leggings",
                 "royal_boots", "royal_guardian_sword"}) {
             helper.assertTrue(drops.getOrDefault(item(NS + ":" + piece), 0) >= 1,
                     "King death missing " + piece + " (royal set, the_king.json)");
+        }
+        if (horseArmour) {
+            helper.assertTrue(drops.getOrDefault(item(NS + ":royal_horse_armor"), 0) >= 1,
+                    "King death missing the Royal Guardian horse armour (the horse armour is on)");
         }
         List<ThePrince> princes = helper.getEntities(ModEntities.THE_PRINCE.get());
         helper.assertTrue(princes.size() == 1,

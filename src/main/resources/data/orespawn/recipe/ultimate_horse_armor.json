@@ -1,0 +1,29 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "orespawn:modern",
+      "key": "horseArmour"
+    }
+  ],
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "A A",
+    "BBB",
+    "C C"
+  ],
+  "key": {
+    "A": {
+      "item": "minecraft:iron_ingot"
+    },
+    "B": {
+      "item": "orespawn:ingot_titanium"
+    },
+    "C": {
+      "item": "orespawn:ingot_uranium"
+    }
+  },
+  "result": {
+    "id": "orespawn:ultimate_horse_armor",
+    "count": 1
+  }
+}

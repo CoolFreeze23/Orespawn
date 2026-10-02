@@ -5,6 +5,10 @@ import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.food.FoodProperties;
 import danger.orespawn.item.*;
 import net.minecraft.core.Direction;
+import java.util.List;
+import net.minecraft.core.Holder;
+import net.minecraft.world.item.AnimalArmorItem;
+import net.minecraft.world.item.ArmorMaterial;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.AxeItem;
 import net.minecraft.world.item.BlockItem;
@@ -888,6 +892,49 @@ public class ModItems {
     public static final DeferredItem<Item> QUEEN_BOOTS = ITEMS.register("queen_boots",
             () -> new ItemOreSpawnArmor(ModArmorMaterials.QUEEN, ArmorItem.Type.BOOTS,
                     new Item.Properties().durability(ArmorItem.Type.BOOTS.getDurability(1500)), "queen"));
+
+    // MOD-040: horse armour for the 14 armour sets, vanilla's horse armour on each set's material: the chestplate's
+    // value as its armour (the material's body value), the material's toughness and knockback resistance, no
+    // durability, one to a stack. Registered whatever modern.horseArmour says; the key gates the recipes, the
+    // creative tab and the Royal Guardian one's drop and chest (OreSpawnConfig.horseArmour()).
+    public static final DeferredItem<Item> ULTIMATE_HORSE_ARMOR = ITEMS.register("ultimate_horse_armor",
+            () -> horseArmor(ModArmorMaterials.ULTIMATE));
+    public static final DeferredItem<Item> ROYAL_HORSE_ARMOR = ITEMS.register("royal_horse_armor",
+            () -> horseArmor(ModArmorMaterials.ROYAL));
+    public static final DeferredItem<Item> QUEEN_HORSE_ARMOR = ITEMS.register("queen_horse_armor",
+            () -> horseArmor(ModArmorMaterials.QUEEN));
+    public static final DeferredItem<Item> MOBZILLA_HORSE_ARMOR = ITEMS.register("mobzilla_horse_armor",
+            () -> horseArmor(ModArmorMaterials.MOBZILLA));
+    public static final DeferredItem<Item> EXPERIENCE_HORSE_ARMOR = ITEMS.register("experience_horse_armor",
+            () -> horseArmor(ModArmorMaterials.EXPERIENCE));
+    public static final DeferredItem<Item> RUBY_HORSE_ARMOR = ITEMS.register("ruby_horse_armor",
+            () -> horseArmor(ModArmorMaterials.RUBY));
+    public static final DeferredItem<Item> AMETHYST_HORSE_ARMOR = ITEMS.register("amethyst_horse_armor",
+            () -> horseArmor(ModArmorMaterials.AMETHYST));
+    public static final DeferredItem<Item> EMERALD_HORSE_ARMOR = ITEMS.register("emerald_horse_armor",
+            () -> horseArmor(ModArmorMaterials.EMERALD));
+    public static final DeferredItem<Item> LAVAEEL_HORSE_ARMOR = ITEMS.register("lavaeel_horse_armor",
+            () -> horseArmor(ModArmorMaterials.LAVA_EEL));
+    public static final DeferredItem<Item> MOTHSCALE_HORSE_ARMOR = ITEMS.register("mothscale_horse_armor",
+            () -> horseArmor(ModArmorMaterials.MOTH_SCALE));
+    public static final DeferredItem<Item> PEACOCK_HORSE_ARMOR = ITEMS.register("peacock_horse_armor",
+            () -> horseArmor(ModArmorMaterials.PEACOCK));
+    public static final DeferredItem<Item> PINK_HORSE_ARMOR = ITEMS.register("pink_horse_armor",
+            () -> horseArmor(ModArmorMaterials.PINK));
+    public static final DeferredItem<Item> TIGERSEYE_HORSE_ARMOR = ITEMS.register("tigerseye_horse_armor",
+            () -> horseArmor(ModArmorMaterials.TIGERS_EYE));
+    public static final DeferredItem<Item> LAPIS_HORSE_ARMOR = ITEMS.register("lapis_horse_armor",
+            () -> horseArmor(ModArmorMaterials.LAPIS));
+    /** MOD-040: the 14 horse armours, in the armour's order. */
+    public static final List<DeferredItem<Item>> HORSE_ARMOR = List.of(
+            ULTIMATE_HORSE_ARMOR, ROYAL_HORSE_ARMOR, QUEEN_HORSE_ARMOR, MOBZILLA_HORSE_ARMOR, EXPERIENCE_HORSE_ARMOR,
+            RUBY_HORSE_ARMOR, AMETHYST_HORSE_ARMOR, EMERALD_HORSE_ARMOR, LAVAEEL_HORSE_ARMOR, MOTHSCALE_HORSE_ARMOR,
+            PEACOCK_HORSE_ARMOR, PINK_HORSE_ARMOR, TIGERSEYE_HORSE_ARMOR, LAPIS_HORSE_ARMOR);
+
+    private static Item horseArmor(Holder<ArmorMaterial> material) {
+        return new AnimalArmorItem(material, AnimalArmorItem.BodyType.EQUESTRIAN, false, new Item.Properties().stacksTo(1));
+    }
+
 
     // Zoo cages — ITEM-023 (E3): cage_size values are the ORIGINAL ctor args
     // (orig OreSpawnMain.java:1931-1935: zoo2=3, zoo4=5, zoo6=9, zoo8=13,

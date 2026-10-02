@@ -3,6 +3,7 @@ package danger.orespawn.world.structure;
 import danger.orespawn.ModBlocks;
 import danger.orespawn.ModEntities;
 import danger.orespawn.ModItems;
+import danger.orespawn.OreSpawnConfig;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.Registries;
@@ -3091,6 +3092,11 @@ public class LegacyDungeonPiece extends StructurePiece {
                         ? ModItems.ROYAL_HELMET.get() : ModItems.QUEEN_HELMET.get()));
                 chest.setItem(2, new ItemStack(king
                         ? ModItems.ROYAL_CHESTPLATE.get() : ModItems.QUEEN_CHESTPLATE.get()));
+                // MOD-040: the Royal Guardian horse armour beside the King's chestplate, slot 3, while the horse
+                // armour is on (it has no recipe; the Queen's set has one and her chest stays as it was)
+                if (king && OreSpawnConfig.horseArmour()) {
+                    chest.setItem(3, new ItemStack(ModItems.ROYAL_HORSE_ARMOR.get()));
+                }
             }, random);
             // North chest (GD:764-774 / 6966-6976, faces south): leggings slot 1 + boots slot 2.
             placeChest(cposx + width / 2, cposy + 1, cposz + 1, Direction.SOUTH, (chest, rng) -> {

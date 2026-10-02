@@ -79,6 +79,7 @@ public class OreSpawnMod {
         danger.orespawn.world.structure.ModStructureTypes.register(modEventBus);
         danger.orespawn.world.ModBiomeModifiers.register(modEventBus);
         danger.orespawn.loot.ModLootModifiers.register(modEventBus);
+        danger.orespawn.data.ModConditions.register(modEventBus);
 
         modEventBus.addListener(this::commonSetup);
         // Config registration replaces 1.12.2's Configuration class + manual

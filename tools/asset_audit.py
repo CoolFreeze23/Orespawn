@@ -1269,9 +1269,11 @@ def check_geckolib(java_texts):
 # The modern armour style's generated assets: per set and piece its geometry (armour_geo/<set>_<piece>.json, cubes on
 # the humanoid bones the client's geometry builder knows), per set two texture layers with their LabPBR maps
 # (textures/models/armor/modern/<set>_layer_{1,2}{,_n,_s}.png) and per set and piece an icon
-# (textures/item/modern/<set>_<piece>.png). Every file is pinned by SHA-256 in tools/armour_asset_pins.json, which is
-# written when the assets are generated and checked: a changed, missing or unpinned file is ARMOUR_ASSET_PIN, never
-# acknowledgeable.
+# (textures/item/modern/<set>_<piece>.png). The horse armour (MOD-040) adds per set its texture with LabPBR maps
+# (textures/entity/horse/armor/horse_armor_<material>{,_n,_s}.png, the path the horse armour layer draws), its icon
+# (textures/item/<set>_horse_armor.png) and its item model (models/item/<set>_horse_armor.json). Every file is pinned by
+# SHA-256 in tools/armour_asset_pins.json, which is written when the assets are generated and checked: a changed,
+# missing or unpinned file is ARMOUR_ASSET_PIN, never acknowledgeable.
 ARMOUR_SETS = ("queen", "royal", "mobzilla", "ultimate", "emerald", "ruby", "amethyst", "lapis", "tigerseye", "pink",
                "experience", "mothscale", "lavaeel", "peacock")
 ARMOUR_PIECES = ("helmet", "chestplate", "leggings", "boots")
@@ -1282,6 +1284,23 @@ ARMOUR_DIRS = (ASSETS / "armour_geo", ASSETS / "textures" / "models" / "armor" /
                ASSETS / "textures" / "gui" / "visuals")
 # The style switch picks a piece's modern icon through one overrides entry in its classic item model.
 ARMOUR_STYLE_PREDICATE = "orespawn:armour_style"
+# The horse armour's folder (every file in it is expected), and each set's armour material name, from which the game's
+# horse armour layer builds the texture's path.
+HORSE_ARMOUR_DIR = ASSETS / "textures" / "entity" / "horse" / "armor"
+HORSE_ARMOUR_MATERIAL = {"queen": "queen", "royal": "royal", "mobzilla": "mobzilla", "ultimate": "ultimate",
+                         "emerald": "emerald", "ruby": "ruby", "amethyst": "amethyst", "lapis": "lapis",
+                         "tigerseye": "tigers_eye", "pink": "pink", "experience": "experience",
+                         "mothscale": "moth_scale", "lavaeel": "lava_eel", "peacock": "peacock"}
+
+
+def horse_armour_expected():
+    out = set()
+    for s in ARMOUR_SETS:
+        for suffix in ("", "_n", "_s"):
+            out.add(HORSE_ARMOUR_DIR / ("horse_armor_%s%s.png" % (HORSE_ARMOUR_MATERIAL[s], suffix)))
+        out.add(ASSETS / "textures" / "item" / ("%s_horse_armor.png" % s))
+        out.add(ASSETS / "models" / "item" / ("%s_horse_armor.json" % s))
+    return out
 
 
 def armour_expected():
@@ -1378,16 +1397,20 @@ def armour_geometry_problem(path):
 
 def check_armour_style():
     import hashlib
-    expected = armour_expected()
+    expected = armour_expected() | horse_armour_expected()
     for path in sorted(expected):
         if not path.is_file():
-            err("ARMOUR_STYLE_MISSING", path.stem, "the modern armour style needs %s" % rel(path), path)
+            err("ARMOUR_STYLE_MISSING", path.stem, "the modern armour style or the horse armour needs %s" % rel(path),
+                path)
     present = set()
-    for d in ARMOUR_DIRS:
+    for d in ARMOUR_DIRS + (HORSE_ARMOUR_DIR,):
         if d.is_dir():
             present |= {p for p in d.iterdir() if p.is_file()}
+    # the horse armour's icons and item models sit in folders shared with every other item: those by name
+    present |= {p for p in (ASSETS / "textures" / "item").glob("*_horse_armor.png")}
+    present |= {p for p in (ASSETS / "models" / "item").glob("*_horse_armor.json")}
     for path in sorted(present - expected):
-        err("ARMOUR_STYLE_UNEXPECTED", path.name, "not one of the 14 sets' modern armour files", path)
+        err("ARMOUR_STYLE_UNEXPECTED", path.name, "not one of the 14 sets' modern or horse armour files", path)
     for path in sorted(p for p in present & expected if p.suffix == ".json" and p.parent == ARMOUR_DIRS[0]):
         problem = armour_geometry_problem(path)
         if problem:

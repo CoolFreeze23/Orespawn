@@ -1,0 +1,23 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "orespawn:modern",
+      "key": "horseArmour"
+    }
+  ],
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "X X",
+    "XXX",
+    "X X"
+  ],
+  "key": {
+    "X": {
+      "item": "orespawn:ruby"
+    }
+  },
+  "result": {
+    "id": "orespawn:ruby_horse_armor",
+    "count": 1
+  }
+}
