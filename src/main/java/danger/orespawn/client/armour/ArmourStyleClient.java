@@ -22,8 +22,10 @@ import java.util.List;
 /**
  * The modern armour style's client side (MOD-039), wired from OreSpawnClient. All three parts read the setting at
  * every use, so the switch is instant: the armour model (the set's 3D piece, or the classic model it was handed), the
- * texture (ItemOreSpawnArmor.getArmorTexture: the modern layer, or the classic one) and the icon (the item models'
- * {@code orespawn:armour_style} predicate picks the modern model through their one overrides entry).
+ * texture (ItemOreSpawnArmor.getArmorTexture: the modern layer, the classic one, or the dog texture for a caller that
+ * draws its own model, MOD-042) and the icon (the item models' {@code orespawn:armour_style} predicate picks the modern
+ * model through their one overrides entry). Doggy Talents Next keeps a dog's texture for the session, so its dogs
+ * follow a switch after a restart.
  */
 public final class ArmourStyleClient {
     public static final String[] SETS = {"queen", "royal", "mobzilla", "ultimate", "emerald", "ruby", "amethyst",
@@ -78,17 +80,16 @@ public final class ArmourStyleClient {
 
     /**
      * One set's pieces: the modern model of the slot, posed and fitted as the wearer's own armour model, or the classic
-     * model it was handed (ArmourPieces.modern: the setting, the piece built, a wearer GeckoLib does not draw).
+     * model it was handed (ArmourPieces.handModel: the setting, a wearer whose layer draws this model with the item's
+     * texture, the piece built; each call in the modern style recorded for the texture hook).
      */
     private record SetExtensions(String set) implements IClientItemExtensions {
         @Override
         public HumanoidModel<?> getHumanoidArmorModel(LivingEntity entity, ItemStack stack, EquipmentSlot slot,
                                                       HumanoidModel<?> original) {
-            if (!ArmourPieces.modern(set, slot, entity)) return original;
-            ArmourModel model = ArmourModels.get(set, slot);
+            ArmourModel model = ArmourPieces.handModel(entity, stack, () -> ArmourModels.get(set, slot));
             if (model == null) return original;
             model.follow(original, slot);
-            ArmourPieces.issued(entity, stack);
             return model;
         }
     }

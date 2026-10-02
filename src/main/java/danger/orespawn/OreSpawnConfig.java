@@ -338,6 +338,14 @@ public class OreSpawnConfig {
      */
     public static final ModConfigSpec.BooleanValue MODERN_HORSE_ARMOUR;
     /**
+     * MOD-042: in the modern armour style, OreSpawn armour drawn from the item's texture alone on a model of its own
+     * (Doggy Talents Next's dog armour) takes the set's dog texture, the modern base in the classic layer-1 layout,
+     * instead of the classic texture. Takes effect only while {@link #MODERN_ENABLED} is on -- read through
+     * {@link #dogArmour()}, never directly, by the armour's texture hook on each player's client, from that player's
+     * own config.
+     */
+    public static final ModConfigSpec.BooleanValue MODERN_DOG_ARMOUR;
+    /**
      * MOD-038, the per-species flip list: registry names ({@code
      * orespawn:beaver}; the bare path is accepted for the mod's own species) kept on
      * the classic pose in modern mode even when their clips ship. Read with the
@@ -555,7 +563,8 @@ public class OreSpawnConfig {
                         "modern.fireRespectsMobGriefing, modern.godzillaSparesBossPeers, " +
                         "modern.petsDefendOwner, modern.pointysaurusStareAggro, " +
                         "modern.cryolophosaurusRevengeChase, modern.chainsawSweepVanillaSight, " +
-                        "modern.artistAnimations with modern.classicAnimationSpecies, modern.horseArmour); false = " +
+                        "modern.artistAnimations with modern.classicAnimationSpecies, modern.horseArmour, " +
+                        "modern.dogArmour); false = " +
                         "classic 1.7.10 " +
                         "parity everywhere, whatever the per-feature keys say. Phase G artist animations hang " +
                         "off this same switch (classic stays code-driven parity). Snapshotted features " +
@@ -676,6 +685,16 @@ public class OreSpawnConfig {
                         "/reload or a restart, the creative tab when the world is joined again, and the challenge " +
                         "chest in King towers built after it."
         ).define("horseArmour", true);
+        MODERN_DOG_ARMOUR = BUILDER.comment(
+                "MOD-042: in the modern armour style (the client's armourStyle), a Doggy Talents Next dog wearing " +
+                        "OreSpawn armour shows the set's modern colours and plates: a dog texture per set, the modern " +
+                        "armour's base drawn in the classic armour texture's layout, which the dog's armour model is " +
+                        "made for (any other armour drawn from the item's texture alone takes it too). Only takes " +
+                        "effect while modern.enabled is true; false keeps the classic textures there. Read by each " +
+                        "player's game from its own config. Doggy Talents Next keeps each piece's texture for the " +
+                        "session, so a change reaches dogs after a restart; its legacy armour render, when chosen in " +
+                        "its own config, draws its own textures instead."
+        ).define("dogArmour", true);
         BUILDER.pop();
 
         SPEC = BUILDER.build();
@@ -776,6 +795,15 @@ public class OreSpawnConfig {
      */
     public static boolean horseArmour() {
         return MODERN_ENABLED.get() && MODERN_HORSE_ARMOUR.get();
+    }
+
+    /**
+     * MOD-042: the single {@code master && key} evaluation for the dog texture -- true only while
+     * {@link #MODERN_ENABLED} AND {@link #MODERN_DOG_ARMOUR} are both on. Read by the armour's texture hook on the
+     * client (ArmourPieces.dogTexture), where the armour style setting is also read.
+     */
+    public static boolean dogArmour() {
+        return MODERN_ENABLED.get() && MODERN_DOG_ARMOUR.get();
     }
 
     /**

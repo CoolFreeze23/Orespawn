@@ -125,6 +125,7 @@ public class ItemOreSpawnArmor extends ArmorItem {
     /** The set's modern textures (MOD-039): layer 1 for the helmet, chestplate and boots, layer 2 for the leggings. */
     private final ResourceLocation modernOuter;
     private final ResourceLocation modernInner;
+    private final ResourceLocation dogTexture;
 
     public ItemOreSpawnArmor(Holder<ArmorMaterial> material, Type type, Item.Properties properties, String armorMaterialName) {
         super(material, type, properties);
@@ -133,19 +134,25 @@ public class ItemOreSpawnArmor extends ArmorItem {
                 "textures/models/armor/modern/" + armorMaterialName + "_layer_1.png");
         this.modernInner = ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID,
                 "textures/models/armor/modern/" + armorMaterialName + "_layer_2.png");
+        this.dogTexture = ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID,
+                "textures/models/armor/modern/" + armorMaterialName + "_dog.png");
     }
 
     /**
-     * The armour style's texture (MOD-039): the set's modern layer for the wearer and stack the client's model hook has
-     * just handed the modern model (ArmourPieces.modernTexture), read at every call so a change shows at once; null
-     * keeps the material's classic layer, also for a caller that asks for the texture alone and draws its own model.
-     * Only client rendering asks, so the client setting is never read on a server.
+     * The armour style's texture (MOD-039): the set's modern layer for the wearer and stack the client's model hook was
+     * just asked about and handed the modern model (ArmourPieces.modernTexture), read at every call so a change shows at
+     * once. A caller whose wearer and stack the model hook has not just recorded and that draws its own model, laid
+     * out for the classic layer 1 (Doggy Talents Next's dog armour), gets the set's dog texture while the modern style
+     * and modern.dogArmour are on (MOD-042, ArmourPieces.dogTexture, for the outer layer only). null keeps the
+     * material's classic layer. Only client rendering asks, so the client setting is never read on a server.
      */
     @Override
     public ResourceLocation getArmorTexture(ItemStack stack, Entity entity, EquipmentSlot slot, ArmorMaterial.Layer layer,
                                             boolean innerModel) {
-        return ArmourPieces.modernTexture(armorMaterialName, slot, entity, stack)
-                ? (innerModel ? modernInner : modernOuter) : null;
+        if (ArmourPieces.modernTexture(armorMaterialName, slot, entity, stack)) {
+            return innerModel ? modernInner : modernOuter;
+        }
+        return !innerModel && ArmourPieces.dogTexture(entity, stack) ? dogTexture : null;
     }
 
     @Override

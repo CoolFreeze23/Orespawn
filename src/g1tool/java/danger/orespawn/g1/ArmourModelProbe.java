@@ -23,6 +23,7 @@ import net.minecraft.client.model.geom.builders.CubeListBuilder;
 import net.minecraft.client.model.geom.builders.LayerDefinition;
 import net.minecraft.client.model.geom.builders.MeshDefinition;
 import net.minecraft.client.model.geom.builders.PartDefinition;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.monster.ZombieVillager;
@@ -39,6 +40,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Supplier;
 
 /**
  * The modern armour style's models where the build's JVM can load the client's model classes (MOD-039). Every set's
@@ -217,19 +219,72 @@ public final class ArmourModelProbe {
             System.out.println("ARMOUR MODELS FAIL: a GeoAnimatable wearer is not told apart from the others");
             failures++;
         }
-        // the modern texture goes only with the modern model: to the wearer and stack the model hook last handed it
-        // for (an armour layer asks for the model, then the texture), never to a caller that asks for the texture alone
+        // the model hook records, in the modern style, every wearer and stack it is asked about, the classic model handed
+        // as well (a piece whose geometry failed builds none), so the modern texture goes only with the modern model: to
+        // the wearer and stack last handed it (an armour layer asks for the model, then the texture), never to a caller
+        // that asks for the texture alone; in the classic style, without a wearer and for a mob GeckoLib draws it hands
+        // the classic model and neither builds nor records anything
         Object wearer = new Object(), otherWearer = new Object(), stack = new Object(), otherStack = new Object();
-        ArmourPieces.issued(wearer, stack);
-        boolean paired = ArmourPieces.issuedFor(wearer, stack) && !ArmourPieces.issuedFor(otherWearer, stack)
+        Object built = new Object();
+        int[] builds = {0};
+        Supplier<Object> modernModel = () -> {
+            builds[0]++;
+            return built;
+        };
+        Supplier<Object> failedModel = () -> {
+            builds[0]++;
+            return null;
+        };
+        boolean paired = ArmourPieces.handModel(true, wearer, stack, modernModel) == built
+                && ArmourPieces.issuedFor(wearer, stack) && !ArmourPieces.issuedFor(otherWearer, stack)
                 && !ArmourPieces.issuedFor(wearer, otherStack) && !ArmourPieces.issuedFor(null, null);
-        ArmourPieces.issued(otherWearer, otherStack);
-        paired &= !ArmourPieces.issuedFor(wearer, stack) && ArmourPieces.issuedFor(otherWearer, otherStack);
+        paired &= ArmourPieces.handModel(true, otherWearer, otherStack, modernModel) == built
+                && !ArmourPieces.issuedFor(wearer, stack) && ArmourPieces.issuedFor(otherWearer, otherStack);
+        paired &= ArmourPieces.handModel(true, wearer, stack, failedModel) == null
+                && !ArmourPieces.issuedFor(wearer, stack) && ArmourPieces.askedFor(wearer, stack)
+                && !ArmourPieces.askedFor(otherWearer, otherStack) && builds[0] == 3;
+        paired &= ArmourPieces.handModel(false, otherWearer, otherStack, modernModel) == null
+                && ArmourPieces.handModel(true, null, otherStack, modernModel) == null
+                && ArmourPieces.handModel(true, geckoLibMob, otherStack, modernModel) == null
+                && builds[0] == 3 && ArmourPieces.askedFor(wearer, stack);
         // a call without a wearer can never match, so its model is the classic one too
         paired &= !ArmourPieces.modern("queen", EquipmentSlot.HEAD, null);
         if (!paired) {
             System.out.println("ARMOUR MODELS FAIL: the modern texture is not tied to the modern model handed for the "
                     + "same wearer and stack");
+            failures++;
+        }
+        // MOD-042: a caller that asks for the texture alone (Doggy Talents Next's dog armour) gets the set's dog texture
+        // in the modern style with modern.dogArmour on, and never with the style classic or the key off, for a wearer and
+        // stack the model hook was last asked about (the classic model handed above, as for a piece whose geometry
+        // failed, or the modern one), for a mob GeckoLib draws or without a wearer; the same stack on another wearer, or
+        // the same wearer with another stack, is not the pair asked about
+        Object dogWearer = new Object(), dogStack = new Object();
+        boolean dog = ArmourPieces.dogTexture(true, true, dogWearer, dogStack)
+                && !ArmourPieces.dogTexture(false, true, dogWearer, dogStack)
+                && !ArmourPieces.dogTexture(true, false, dogWearer, dogStack)
+                && !ArmourPieces.dogTexture(true, true, wearer, stack)
+                && !ArmourPieces.dogTexture(true, true, geckoLibMob, dogStack)
+                && !ArmourPieces.dogTexture(true, true, null, dogStack)
+                && ArmourPieces.dogTexture(true, true, otherWearer, stack)
+                && ArmourPieces.dogTexture(true, true, wearer, otherStack);
+        ArmourPieces.handModel(true, dogWearer, dogStack, modernModel);
+        dog &= !ArmourPieces.dogTexture(true, true, dogWearer, dogStack)
+                && ArmourPieces.dogTexture(true, true, wearer, stack);
+        if (!dog) {
+            System.out.println("ARMOUR MODELS FAIL: the dog texture is not handed exactly to a caller that asks for the "
+                    + "texture alone in the modern style with modern.dogArmour on");
+            failures++;
+        }
+        // Doggy Talents Next's dogs are told apart by their type's namespace: the model hook hands them the classic
+        // model, unrecorded, since that mod draws whatever model it gets with the texture it keeps per item
+        boolean doggy = ArmourPieces.doggyTalentsType(ResourceLocation.fromNamespaceAndPath("doggytalents", "dog"))
+                && !ArmourPieces.doggyTalentsType(ResourceLocation.withDefaultNamespace("wolf"))
+                && !ArmourPieces.doggyTalentsType(ResourceLocation.fromNamespaceAndPath("orespawn", "dog"))
+                && !ArmourPieces.doggyTalentsType(null) && !ArmourPieces.doggyTalentsDog(new Object())
+                && !ArmourPieces.doggyTalentsDog(null);
+        if (!doggy) {
+            System.out.println("ARMOUR MODELS FAIL: a Doggy Talents Next dog is not told apart by its type's namespace");
             failures++;
         }
         // the client config writes its default file as a first start does: every value missing, so the spec tests
@@ -256,8 +311,11 @@ public final class ArmourModelProbe {
                 + "parts, each part holding the cubes it draws); each piece's base box drawn exactly on the wearer's own "
                 + "armour box as vanilla draws it, on the player, an armour stand, a zombie villager, a guard-shaped "
                 + "model and a piglin, and never shrunk (a drowned's outer pieces at the player's size), grown and as "
-                + "babies (%d boxes); the modern texture handed only with the modern model; GeckoLib's wearers kept "
-                + "classic; the client config's default file written (armourStyle = modern)%n", pieces, vertices, boxes);
+                + "babies (%d boxes); the modern texture handed only with the modern model; the dog texture only to a "
+                + "caller that asks for the texture alone, in the modern style with modern.dogArmour on, never where the "
+                + "model hook was asked, the classic model handed too; GeckoLib's wearers kept classic; Doggy Talents "
+                + "Next's dogs told apart; the client config's default file written (armourStyle = modern)%n", pieces,
+                vertices, boxes);
     }
 
     /**

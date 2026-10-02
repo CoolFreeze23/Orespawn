@@ -6,9 +6,9 @@ import net.neoforged.neoforge.common.ModConfigSpec;
 
 /**
  * The client settings, {@code config/orespawn-client.toml}: how OreSpawn's armour sets look (MOD-039). A cosmetic
- * choice, per player and never synced, so it lives here and not in the server-synced OreSpawnConfig, and outside
- * {@code [modern] enabled}, which governs gameplay only. It is read at every use, so a change from the OreSpawn
- * Visuals screen or in the file shows at once.
+ * choice, per player and never synced, so it lives here, in a client config, and outside {@code [modern] enabled}. It
+ * is read at every use, so a change from the OreSpawn Visuals screen or in the file shows at once, but for Doggy Talents
+ * Next's dogs: that mod keeps each piece's texture for the session, so they follow it after a restart.
  */
 public final class ArmourStyleConfig {
     public static final String MODERN = "modern";
@@ -22,7 +22,9 @@ public final class ArmourStyleConfig {
         builder.push("client");
         ARMOUR_STYLE = builder
                 .comment("How OreSpawn's 14 armour sets look: \"modern\" (3D pieces, new textures and icons) or "
-                        + "\"classic\" (the original textures and icons). A change shows at once, without a reload.")
+                        + "\"classic\" (the original textures and icons). A change shows at once, without a reload; "
+                        + "Doggy Talents Next's dogs keep each piece's texture for the session and follow it after a "
+                        + "restart.")
                 .translation("orespawn.configuration.armourStyle")
                 // a list that answers contains(null): the spec tests a missing value with it when it writes the
                 // file for the first time, and List.of throws there

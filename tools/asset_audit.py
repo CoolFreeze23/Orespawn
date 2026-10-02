@@ -1271,7 +1271,8 @@ def check_geckolib(java_texts):
 # (textures/models/armor/modern/<set>_layer_{1,2}{,_n,_s}.png) and per set and piece an icon
 # (textures/item/modern/<set>_<piece>.png). The horse armour (MOD-040) adds per set its texture with LabPBR maps
 # (textures/entity/horse/armor/horse_armor_<material>{,_n,_s}.png, the path the horse armour layer draws), its icon
-# (textures/item/<set>_horse_armor.png) and its item model (models/item/<set>_horse_armor.json). Every file is pinned by
+# (textures/item/<set>_horse_armor.png) and its item model (models/item/<set>_horse_armor.json); the dog texture (MOD-042)
+# per set, textures/models/armor/modern/<set>_dog{,_n,_s}.png. Every file is pinned by
 # SHA-256 in tools/armour_asset_pins.json, which is written when the assets are generated and checked: a changed,
 # missing or unpinned file is ARMOUR_ASSET_PIN, never acknowledgeable.
 ARMOUR_SETS = ("queen", "royal", "mobzilla", "ultimate", "emerald", "ruby", "amethyst", "lapis", "tigerseye", "pink",
@@ -1314,6 +1315,9 @@ def armour_expected():
         for layer in (1, 2):
             for suffix in ("", "_n", "_s"):
                 out.add(textures / ("%s_layer_%d%s.png" % (s, layer, suffix)))
+        # MOD-042: the dog texture, the modern base in the classic layer-1 layout
+        for suffix in ("", "_n", "_s"):
+            out.add(textures / ("%s_dog%s.png" % (s, suffix)))
     return out
 
 
