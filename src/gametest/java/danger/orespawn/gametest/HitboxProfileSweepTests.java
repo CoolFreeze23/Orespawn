@@ -18,6 +18,7 @@ import danger.orespawn.entity.ThePrinceTeen;
 import danger.orespawn.entity.OreSpawnPartEntity;
 import danger.orespawn.entity.hitbox.HitboxScales;
 import danger.orespawn.gametest.HitboxProfileExpectations.Expected;
+import de.dertoaster.multihitboxlib.api.IMHLibFieldAccessor;
 import de.dertoaster.multihitboxlib.api.IMultipartEntity;
 import de.dertoaster.multihitboxlib.api.MHLibEntitySizeScales;
 import de.dertoaster.multihitboxlib.entity.MHLibPartEntity;
@@ -700,5 +701,240 @@ public class HitboxProfileSweepTests {
             }
             helper.succeed();
         });
+    }
+
+    /** A part counts as stale when placing it again for the mob as it now stands moves it farther than this. */
+    private static final double STALE_EPS = 1.0E-6D;
+
+    /**
+     * How far a multipart mob's parts sit from where its synched alignment puts them for the mob as it now stands: the
+     * parts are placed again where they are (the server's fallback; a game test has no client) and the farthest part
+     * centre that moved is the answer. Zero when the parts were placed after the mob's last own move of the tick.
+     */
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    private static double staleness(GameTestHelper helper, Mob mob, String label) {
+        IMultipartEntity multipart = multipart(helper, mob, label);
+        PartEntity<?>[] parts = mob.getParts();
+        if (parts == null || parts.length == 0) {
+            return 0.0D;
+        }
+        Vec3[] before = new Vec3[parts.length];
+        for (int i = 0; i < parts.length; i++) {
+            before[i] = parts[i].getBoundingBox().getCenter();
+        }
+        IMHLibFieldAccessor access = (IMHLibFieldAccessor) (Object) mob;
+        multipart.alignSynchedSubParts(mob, multipart.mhlibRetainedPoseRetrieval(mob, access._mhlibAccess_getSynchMap(), access));
+        double worst = 0.0D;
+        for (int i = 0; i < parts.length; i++) {
+            worst = Math.max(worst, parts[i].getBoundingBox().getCenter().distanceTo(before[i]));
+        }
+        return worst;
+    }
+
+    /** Whether a mob made its own move this tick, against where it stood and how its body faced at the tick before. */
+    private interface OwnMove {
+        boolean made(Mob mob, Vec3 before, float bodyYawBefore);
+    }
+
+    /**
+     * Watches the mobs for {@code ticks} ticks. At the end of each it notes, for every mob, whether it made its own move
+     * and how stale its parts are (placing them again for the mob as it stands, see {@link #staleness}). The row fails if
+     * any part was stale at the end of any tick, if a mob made its move on fewer than {@code eachMoves} ticks, or if
+     * the mobs of an id made it on fewer than {@code idMoves} ticks in all (the check would be vacuous).
+     */
+    private static void watchParts(GameTestHelper helper, List<String> ids, List<Mob> mobs, int ticks, int eachMoves,
+            int idMoves, OwnMove ownMove) {
+        watchParts(helper, ids, mobs, ticks, eachMoves, idMoves, ownMove, mob -> { });
+    }
+
+    /** {@link #watchParts} with {@code afterMeasure} run on each mob once its tick is measured (to hold a state up). */
+    private static void watchParts(GameTestHelper helper, List<String> ids, List<Mob> mobs, int ticks, int eachMoves,
+            int idMoves, OwnMove ownMove, java.util.function.Consumer<Mob> afterMeasure) {
+        int n = mobs.size();
+        double[] worst = new double[n];
+        int[] worstTick = new int[n];
+        int[] staleTicks = new int[n];
+        int[] moves = new int[n];
+        Vec3[] before = new Vec3[n];
+        float[] yawBefore = new float[n];
+        for (int i = 0; i < n; i++) {
+            before[i] = mobs.get(i).position();
+            yawBefore[i] = mobs.get(i).yBodyRot;
+        }
+        for (int t = 1; t <= ticks; t++) {
+            final int tick = t;
+            helper.runAfterDelay(t, () -> {
+                for (int i = 0; i < n; i++) {
+                    Mob mob = mobs.get(i);
+                    if (mob.isRemoved()) {
+                        continue;
+                    }
+                    if (ownMove.made(mob, before[i], yawBefore[i])) {
+                        moves[i]++;
+                    }
+                    double stale = staleness(helper, mob, ids.get(i));
+                    if (stale > STALE_EPS) {
+                        staleTicks[i]++;
+                    }
+                    if (stale > worst[i]) {
+                        worst[i] = stale;
+                        worstTick[i] = tick;
+                    }
+                    before[i] = mob.position();
+                    yawBefore[i] = mob.yBodyRot;
+                    afterMeasure.accept(mob);
+                }
+            });
+        }
+        helper.runAfterDelay(ticks + 1, () -> {
+            List<String> failures = new ArrayList<>();
+            try {
+                java.util.Map<String, Integer> byId = new java.util.LinkedHashMap<>();
+                for (int i = 0; i < n; i++) {
+                    byId.merge(ids.get(i), moves[i], Integer::sum);
+                    if (mobs.get(i).isRemoved()) {
+                        failures.add(ids.get(i) + " #" + i + " was removed during the watch");
+                    }
+                    if (moves[i] < eachMoves) {
+                        failures.add(ids.get(i) + " #" + i + " made its own move on " + moves[i] + " tick(s), fewer than " + eachMoves
+                                + ": the check would be vacuous");
+                    }
+                    if (worst[i] > STALE_EPS) {
+                        failures.add(ids.get(i) + " #" + i + "'s parts sat up to " + worst[i] + " from where the alignment puts them for it"
+                                + " as it stood at the end of tick " + worstTick[i] + " (stale at the end of " + staleTicks[i] + " of "
+                                + ticks + " ticks)");
+                    }
+                }
+                byId.forEach((id, total) -> {
+                    if (total < idMoves) {
+                        failures.add(id + " made its own move on " + total + " tick(s) in all, fewer than " + idMoves
+                                + ": the check would be vacuous");
+                    }
+                });
+            } finally {
+                mobs.forEach(Entity::discard);
+            }
+            helper.assertTrue(failures.isEmpty(), failures.size() + " failure(s): " + String.join("; ", failures));
+            helper.succeed();
+        });
+    }
+
+    /**
+     * BUG-045 and ENT-S-176: a flier carries its parts through its flight. With AI a flying Dragon or Baby Dragon takes
+     * its flight step after LivingEntity.aiStep, where the library places the parts, and a flying Prince's server step
+     * skips aiStep altogether. At the end of every tick of their flight the parts stand where the alignment puts them
+     * for the flier as it now stands. Each is set flying again once its tick is measured (each lands one flying tick in
+     * about 54), and the row has a batch of its own: the fliers hunt the other rows' mobs.
+     */
+    @GameTest(template = "empty_large", timeoutTicks = 60, batch = "hitboxAfterTickFliers")
+    public static void s173m_a_flier_carries_its_parts_through_its_flight(GameTestHelper helper) {
+        List<String> ids = List.of("orespawn:dragon", "orespawn:baby_dragon", "orespawn:the_prince_adult", "orespawn:the_prince_teen");
+        List<Mob> fliers = new ArrayList<>();
+        for (int i = 0; i < ids.size(); i++) {
+            Mob mob = helper.spawnWithNoFreeWill(type(helper, ids.get(i)), POS.offset(i * 12 - 18, -2, 0));
+            mob.setPersistenceRequired();
+            setActivity(helper, mob, ids.get(i), 1);
+            fliers.add(mob);
+        }
+        watchParts(helper, ids, fliers, 12, 3, 0,
+                (mob, before, yawBefore) -> mob.position().distanceTo(before) > 1.0E-6,
+                mob -> setActivity(helper, mob, "a flier", 1));
+    }
+
+    /**
+     * BUG-045: a snap, a burrow or a body turn carries the parts. A Leaf Monster that is not attacking snaps to its
+     * block's centre and a right-angle yaw after LivingEntity.tick, with or without AI; a buried worm with AI rises
+     * through the stone after LivingEntity.aiStep, 0.05 a tick; and vanilla turns a frozen Alosaurus' body toward its
+     * head after aiStep. At the end of each tick their parts stand where the alignment puts them for them as they now
+     * stand. A batch of its own, as the other rows with mobs that act.
+     */
+    @GameTest(template = "empty_large", timeoutTicks = 60, batch = "hitboxAfterTickSnap")
+    public static void s173n_a_snap_a_burrow_or_a_body_turn_carries_the_parts(GameTestHelper helper) {
+        helper.assertFalse(OreSpawnConfig.PLAY_NICELY.get(),
+                "playNicely is on: the small worm would read only its own cell for its first fifty ticks");
+        List<String> ids = new ArrayList<>();
+        List<Mob> mobs = new ArrayList<>();
+        Mob leaf = helper.spawnWithNoFreeWill(type(helper, "orespawn:leaf_monster"), POS.offset(-18, 0, 12));
+        Vec3 corner = helper.absoluteVec(new Vec3(POS.getX() - 18, POS.getY(), POS.getZ() + 12));
+        leaf.moveTo(corner.x + 0.3D, corner.y, corner.z + 0.2D, 30.0F, 0.0F);
+        leaf.yBodyRot = 30.0F;
+        leaf.setPersistenceRequired();
+        ids.add("orespawn:leaf_monster");
+        mobs.add(leaf);
+        List<String> worms = List.of("orespawn:worm_small", "orespawn:worm_medium", "orespawn:worm_large");
+        for (int i = 0; i < worms.size(); i++) {
+            BlockPos at = POS.offset(i * 12 - 6, 0, 12);
+            helper.setBlock(at.above(2), Blocks.STONE);
+            helper.setBlock(at.above(3), Blocks.STONE);
+            Mob worm = helper.spawnWithNoFreeWill(type(helper, worms.get(i)), at);
+            worm.setPersistenceRequired();
+            ids.add(worms.get(i));
+            mobs.add(worm);
+        }
+        Mob turner = spawnFrozenAt(helper, type(helper, "orespawn:alosaurus"), POS.offset(-18, 0, -12));
+        turner.yHeadRot = 90.0F;
+        ids.add("orespawn:alosaurus");
+        mobs.add(turner);
+        watchParts(helper, ids, mobs, 6, 1, 0,
+                (mob, before, yawBefore) -> mob.position().distanceTo(before) > 1.0E-6 || mob.yBodyRot != yawBefore);
+    }
+
+    /**
+     * BUG-045: a Frog carries its parts through its jump. With AI a Frog jumps one tick in 70 (then rests 49 ticks),
+     * after LivingEntity.tick. Ten are watched for 200 ticks, in a batch of their own (a Frog hunts the insects of any
+     * row beside it): the chance that none jumps is (69/70)^2000, about 3.2e-13. At the end of every tick their parts
+     * stand where the alignment puts them for them as they now stand.
+     */
+    @GameTest(template = "empty_large", timeoutTicks = 260, batch = "hitboxAfterTickFrogs")
+    public static void s173o_a_frog_carries_its_parts_through_its_jump(GameTestHelper helper) {
+        watchJumpers(helper, "orespawn:frog");
+    }
+
+    /**
+     * BUG-045: a Cricket carries its parts through its jump. With AI a Cricket jumps one tick in 50 (then rests 49
+     * ticks), after LivingEntity.tick. Ten are watched for 200 ticks, in a batch of their own (apart from the Frogs, which
+     * eat them): the chance that none jumps is (49/50)^2000, about 2.8e-18.
+     */
+    @GameTest(template = "empty_large", timeoutTicks = 260, batch = "hitboxAfterTickCrickets")
+    public static void s173p_a_cricket_carries_its_parts_through_its_jump(GameTestHelper helper) {
+        watchJumpers(helper, "orespawn:cricket");
+    }
+
+    private static void watchJumpers(GameTestHelper helper, String id) {
+        List<String> ids = new ArrayList<>();
+        List<Mob> mobs = new ArrayList<>();
+        for (int i = 0; i < 10; i++) {
+            Mob mob = helper.spawnWithNoFreeWill(type(helper, id), POS.offset(i * 4 - 18, -8, 0));
+            mob.setPersistenceRequired();
+            ids.add(id);
+            mobs.add(mob);
+        }
+        watchParts(helper, ids, mobs, 200, 0, 1, (mob, before, yawBefore) -> mob.getY() - before.y > 0.2D);
+    }
+
+    /**
+     * BUG-045: a rider carries its parts with its seat. A rider's seat is set after its own tick (Entity.rideTick: its
+     * tick, then the vehicle's positionRider, which for a boat also turns the rider's body to the boat's yaw), so a
+     * frozen Alosaurus seated in a boat on the floor, which the row moves 0.2 and turns 15 degrees between ticks, takes
+     * its seat after the placement on every tick. At the end of every tick its parts stand where the alignment puts them
+     * for it as it now sits.
+     */
+    @GameTest(template = "empty_large", timeoutTicks = 60, batch = "hitboxAfterTickRider")
+    public static void s173q_a_rider_carries_its_parts_with_its_seat(GameTestHelper helper) {
+        Mob rider = spawnFrozenAt(helper, type(helper, "orespawn:alosaurus"), POS.offset(0, -8, 0));
+        net.minecraft.world.entity.vehicle.Boat boat = helper.spawn(EntityType.BOAT, POS.offset(0, -8, 6));
+        helper.assertTrue(rider.startRiding(boat, true), "the Alosaurus did not take its seat in the boat");
+        boat.positionRider(rider);
+        List<Mob> mobs = List.of(rider);
+        for (int t = 0; t <= 8; t++) {
+            helper.runAfterDelay(t, () -> {
+                boat.setPos(boat.getX() + 0.2D, boat.getY(), boat.getZ());
+                boat.setYRot(boat.getYRot() + 15.0F);
+            });
+        }
+        watchParts(helper, List.of("orespawn:alosaurus"), mobs, 8, 4, 0,
+                (mob, before, yawBefore) -> mob.position().distanceTo(before) > 1.0E-6,
+                mob -> { });
+        helper.runAfterDelay(9, boat::discard);
     }
 }

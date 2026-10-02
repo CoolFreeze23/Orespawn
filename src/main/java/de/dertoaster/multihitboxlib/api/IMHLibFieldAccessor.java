@@ -4,6 +4,7 @@ import de.dertoaster.multihitboxlib.entity.MHLibPartEntity;
 import de.dertoaster.multihitboxlib.entity.hitbox.HitboxProfile;
 import de.dertoaster.multihitboxlib.network.client.CPacketBoneInformation;
 import de.dertoaster.multihitboxlib.util.BoneInformation;
+import de.dertoaster.multihitboxlib.util.PlacementStamp;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
@@ -125,6 +126,27 @@ public interface IMHLibFieldAccessor<T extends LivingEntity> {
     }
 
     public default void _mhlibAccess_setSynchAnchor(Vec3 value) {
+        throw new NotImplementedException();
+    }
+
+    // BUG-045 / ENT-S-176: the retained sync map was applied as received and no placement has read it yet. The first
+    // placement after a packet anchors it (mhlibRetainedPoseRetrieval); this replaced reading "ticksSinceLastSynch is
+    // 0", which a placement after the entity's tick (mhlibAfterTick) would never see, the counter having moved on.
+    public default boolean _mhlibAccess_isPoseFresh() {
+        throw new NotImplementedException();
+    }
+
+    public default void _mhlibAccess_setPoseFresh(boolean value) {
+        throw new NotImplementedException();
+    }
+
+    // BUG-045 / ENT-S-176: what the synched parts were last placed for (util.PlacementStamp). Null until the first
+    // placement.
+    public default PlacementStamp _mhlibAccess_getPlacementStamp() {
+        throw new NotImplementedException();
+    }
+
+    public default void _mhlibAccess_setPlacementStamp(PlacementStamp value) {
         throw new NotImplementedException();
     }
 

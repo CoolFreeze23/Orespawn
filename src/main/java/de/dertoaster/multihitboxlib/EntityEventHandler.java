@@ -7,10 +7,12 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.Vec2;
+import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.EntityEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
+import net.neoforged.neoforge.event.tick.EntityTickEvent;
 
 /**
  * Game-bus event hooks for multipart entities: custom main-hitbox dimensions and
@@ -40,6 +42,19 @@ public class EntityEventHandler {
 		}
 	}
 	
+	/**
+	 * BUG-045 / ENT-S-176: after an entity's tick (the event fires right after {@code tick()}, in the level's tick of it
+	 * and in a rider's rideTick), a multipart entity's synched parts follow its last own move
+	 * ({@link IMultipartEntity#mhlibAfterTick}). The lowest priority, so a listener that moves the entity runs first.
+	 */
+	@SubscribeEvent(priority = EventPriority.LOWEST)
+	public static void onEntityTickPost(EntityTickEvent.Post event) {
+		Entity ent = event.getEntity();
+		if (ent instanceof IMultipartEntity<?> ime && ent.isMultipartEntity()) {
+			ime.mhlibAfterTick();
+		}
+	}
+
 	@SubscribeEvent
 	public static void onStartTracking(PlayerEvent.StartTracking event) {
 		if (event.getTarget() instanceof LivingEntity && event.getTarget().isMultipartEntity()) {

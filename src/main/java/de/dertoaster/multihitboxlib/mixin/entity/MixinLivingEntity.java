@@ -27,6 +27,7 @@ import de.dertoaster.multihitboxlib.entity.MHLibPartEntity;
 import de.dertoaster.multihitboxlib.entity.hitbox.HitboxProfile;
 import de.dertoaster.multihitboxlib.network.client.CPacketBoneInformation;
 import de.dertoaster.multihitboxlib.util.BoneInformation;
+import de.dertoaster.multihitboxlib.util.PlacementStamp;
 import de.dertoaster.multihitboxlib.util.RenderTickGate;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -376,6 +377,34 @@ public abstract class MixinLivingEntity extends Entity implements IMultipartEnti
 	@Override
 	public void _mhlibAccess_setSynchAnchor(@Nullable Vec3 value) {
 		this.mhlibSynchAnchor = value;
+	}
+
+	// BUG-045 / ENT-S-176: the pose flag and the placement stamp (see IMHLibFieldAccessor). No initializers, as above.
+	@Unique
+	private boolean mhlibPoseFresh;
+	@Unique
+	@Nullable
+	private PlacementStamp mhlibPlacementStamp;
+
+	@Override
+	public boolean _mhlibAccess_isPoseFresh() {
+		return this.mhlibPoseFresh;
+	}
+
+	@Override
+	public void _mhlibAccess_setPoseFresh(boolean value) {
+		this.mhlibPoseFresh = value;
+	}
+
+	@Override
+	@Nullable
+	public PlacementStamp _mhlibAccess_getPlacementStamp() {
+		return this.mhlibPlacementStamp;
+	}
+
+	@Override
+	public void _mhlibAccess_setPlacementStamp(@Nullable PlacementStamp value) {
+		this.mhlibPlacementStamp = value;
 	}
 
 	// BUG-044: per-entity render-tick stamp accessors (see the field comment above).

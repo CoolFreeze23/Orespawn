@@ -15,7 +15,8 @@
 		"minecraft.MixinAbstractArrow",
 		"minecraft.MixinEntity",
 		"minecraft.MixinLevel",
-		"minecraft.MixinServerLevelEntityCallbacks"
+		"minecraft.MixinServerLevelEntityCallbacks",
+		"minecraft.MixinServerLevelPassengers"
 	],
 	"client": [
 		"accessor.AccessorClientLevel",

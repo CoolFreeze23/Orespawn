@@ -60,7 +60,8 @@ import java.util.function.LongSupplier;
  * {@code server.align_sub_parts_parts} / {@code server.align_synched_parts} (parts placed by the
  * two alignment loops), {@code server.part_setpos} ({@code MHLibPartEntity.setPos} on the server:
  * the alignment's call AND {@code updateLastPos}'s call from every part tick), and
- * {@code server.placement_ns} ({@code mhlibAiStep}'s server path plus
+ * {@code server.placement_ns} ({@code mhlibAiStep}'s server path, and the placement after the tick when it runs
+ * ({@code mhlibAfterTick}, BUG-045), plus
  * {@code ModernSpiderGait.feedParts}). Server sites guard with the same {@link #ENABLED} constant as the
  * client sites ({@code if (MHLibCounters.ENABLED)...}, folded by the JIT when the property is unset, so
  * the disabled path costs nothing on either side -- slice (d) had OR'd a package-private test seam into the

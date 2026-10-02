@@ -11,6 +11,7 @@ import de.dertoaster.multihitboxlib.util.BoneInformation;
 import de.dertoaster.multihitboxlib.util.BoneSyncGate;
 import de.dertoaster.multihitboxlib.util.ClientOnlyMethods;
 import de.dertoaster.multihitboxlib.util.MHLibCounters;
+import de.dertoaster.multihitboxlib.util.PlacementStamp;
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
@@ -153,6 +154,7 @@ public interface IMultipartEntity<T extends Entity> {
 				});
 			}
 			access._mhlibAccess_setTicksSinceLastSynch(0);
+			access._mhlibAccess_setPoseFresh(true);
 		} else {
 			throw new IllegalStateException("Access interface not implemented");
 		}
@@ -391,6 +393,43 @@ public interface IMultipartEntity<T extends Entity> {
 		}
 	}
 
+	/**
+	 * BUG-045 / ENT-S-176: the synched parts placed again after the entity's whole tick (EntityTickEvent.Post, server
+	 * side), when the entity moved, turned or changed size after aiStep's placement - a dragon's flight step, a frog's or
+	 * a cricket's jump, a worm's burrow, a snap to a block's centre, Robot 1's spin, vanilla's body turn - or when that
+	 * placement did not run this tick (a flying Prince's step skips LivingEntity.aiStep). The alignment alone runs again,
+	 * from the retained pose: the server's election (updateSynching) stays where it was, at aiStep's tail, which a
+	 * flying Prince's step skips as before; the parts' own tick keeps its place; and the unsynched parts (the gait-fed
+	 * robots' legs) keep what their gait gives them. Timed with the aiStep placement (server.placement_ns). Called from
+	 * EntityTickEvent.Post (EntityEventHandler) and, for a rider, once its rideTick has set its seat
+	 * (MixinServerLevelPassengers).
+	 */
+	@SuppressWarnings("unchecked")
+	public default void mhlibAfterTick() {
+		if (!(this instanceof IMHLibFieldAccessor<?> access) || !(this instanceof Entity entity)) {
+			return;
+		}
+		if (entity.level().isClientSide() || entity.isRemoved()) {
+			return;
+		}
+		final Optional<HitboxProfile> profile = this.getHitboxProfile();
+		if (profile.isEmpty() || !profile.get().syncToModel()) {
+			return;
+		}
+		final double scale = this.mhlibGetEntitySizeInternally((T) entity);
+		final PlacementStamp stamp = access._mhlibAccess_getPlacementStamp();
+		if (stamp != null && stamp.matches(entity, scale)) {
+			return;
+		}
+		final boolean measure = MHLibCounters.ENABLED;
+		final long placementStart = measure ? System.nanoTime() : 0L;
+		this.alignSynchedSubParts((T) entity, this.mhlibRetainedPoseRetrieval(entity, access._mhlibAccess_getSynchMap(), access));
+		access._mhlibAccess_setPlacementStamp(PlacementStamp.of(entity, scale));
+		if (measure) {
+			MHLibCounters.SERVER_PLACEMENT_NS.add(System.nanoTime() - placementStart);
+		}
+	}
+
 	public default <E extends Entity & IMultipartEntity<?>> void mhlibAiStep() {
 		if (this instanceof IMHLibFieldAccessor access) {
 			E e = (E)this;
@@ -414,6 +453,8 @@ public interface IMultipartEntity<T extends Entity> {
 			if (profile.isPresent() && profile.get().syncToModel()) {
 				Map<String, BoneInformation> syncMap = access._mhlibAccess_getSynchMap();
 				this.alignSynchedSubParts((T)(Object)this, mhlibRetainedPoseRetrieval(e, syncMap, access));
+				// BUG-045: what they were placed for, so the placement after the tick can tell a later move
+				access._mhlibAccess_setPlacementStamp(PlacementStamp.of(e, this.mhlibGetEntitySizeInternally((T)(Object)this)));
 				// ──────────────────────────────────────────────────────
 				// OPT-003: the sync map is RETAINED between packets
 				// instead of being cleared here every tick. Legacy
@@ -444,17 +485,19 @@ public interface IMultipartEntity<T extends Entity> {
 	/**
 	 * ENT-S-174: what the server's synched alignment reads for each bone. The retained sync map holds the WORLD positions the
 	 * master client drew; re-applied unchanged on a tick that brought no packet, it left the part boxes where they were
-	 * while the creature moved on - with the generated species' bone-sync-interval 2 every other tick. On the tick a
-	 * packet was applied ({@code ticksSinceLastSynch} still 0 at aiStep's tail) the map is read as received and the
-	 * entity's position is kept as its anchor; on a later tick with no packet every bone is moved by the entity's
-	 * movement since that anchor, so the parts follow the creature's position; a creature that has not moved reads
+	 * while the creature moved on - with the generated species' bone-sync-interval 2 every other tick. The first
+	 * placement after a packet was applied (the pose-fresh flag, set by the packet and cleared here; BUG-045) reads the
+	 * map as received and keeps the entity's position as its anchor; every later placement with no new packet, the one
+	 * after the same tick included, moves every bone by the entity's movement since that anchor, so the parts follow
+	 * the creature's position; a creature that has not moved reads
 	 * the map as received, bit for bit (OPT-003's retention unchanged). The turn is not followed: a part keeps the last
 	 * pose's bearing until the next packet (the body's yaw over a tick). An empty map (no stream, or a master reset)
 	 * clears the anchor.
 	 */
 	public default BiFunction<String, BoneInformation, BoneInformation> mhlibRetainedPoseRetrieval(final Entity entity,
 			final Map<String, BoneInformation> syncMap, final IMHLibFieldAccessor<?> access) {
-		if (syncMap.isEmpty() || access._mhlibAccess_getTicksSinceLastSynch() == 0) {
+		if (syncMap.isEmpty() || access._mhlibAccess_isPoseFresh()) {
+			access._mhlibAccess_setPoseFresh(false);
 			access._mhlibAccess_setSynchAnchor(syncMap.isEmpty() ? null : entity.position());
 			return syncMap::getOrDefault;
 		}
