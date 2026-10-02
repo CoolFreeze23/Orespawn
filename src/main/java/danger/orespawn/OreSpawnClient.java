@@ -10,9 +10,12 @@ import danger.orespawn.gui.CrystalFurnaceScreen;
 import danger.orespawn.gui.CrystalWorkbenchScreen;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.client.renderer.BiomeColors;
+import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.ThrownItemRenderer;
+import net.minecraft.client.renderer.entity.WolfRenderer;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.FoliageColor;
 import net.minecraft.world.level.GrassColor;
 import net.neoforged.api.distmarker.Dist;
@@ -63,6 +66,20 @@ public class OreSpawnClient {
         @SubscribeEvent
         public static void registerReloadListeners(RegisterClientReloadListenersEvent event) {
             ArmourStyleClient.registerReloadListener(event);
+        }
+
+        /**
+         * MOD-041: the sets' wolf armour drawn on every wolf renderer (vanilla's wolf's and those other mods register
+         * for their wolves), beside vanilla's wolf armour layer, which that renderer adds for itself.
+         */
+        @SubscribeEvent
+        public static void addLayers(EntityRenderersEvent.AddLayers event) {
+            for (EntityType<?> type : event.getEntityTypes()) {
+                EntityRenderer<?> renderer = event.getRenderer(type);
+                if (renderer instanceof WolfRenderer wolves) {
+                    wolves.addLayer(new WolfArmourLayer(wolves, event.getEntityModels()));
+                }
+            }
         }
 
         @SubscribeEvent

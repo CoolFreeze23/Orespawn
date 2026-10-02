@@ -338,6 +338,14 @@ public class OreSpawnConfig {
      */
     public static final ModConfigSpec.BooleanValue MODERN_HORSE_ARMOUR;
     /**
+     * MOD-041: wolf armour for the 14 armour sets. The items are registered and work on a wolf whatever this says; it
+     * gates their 13 recipes and the Royal Guardian one's drop from the King (the {@code orespawn:modern} load
+     * condition, read as the data packs load), their creative-tab entries and the Royal Guardian one in the King's
+     * challenge chest. Takes effect only while {@link #MODERN_ENABLED} is on -- read through {@link #wolfArmour()},
+     * never directly.
+     */
+    public static final ModConfigSpec.BooleanValue MODERN_WOLF_ARMOUR;
+    /**
      * MOD-042: in the modern armour style, OreSpawn armour drawn from the item's texture alone on a model of its own
      * (Doggy Talents Next's dog armour) takes the set's dog texture, the modern base in the classic layer-1 layout,
      * instead of the classic texture. Takes effect only while {@link #MODERN_ENABLED} is on -- read through
@@ -564,7 +572,7 @@ public class OreSpawnConfig {
                         "modern.petsDefendOwner, modern.pointysaurusStareAggro, " +
                         "modern.cryolophosaurusRevengeChase, modern.chainsawSweepVanillaSight, " +
                         "modern.artistAnimations with modern.classicAnimationSpecies, modern.horseArmour, " +
-                        "modern.dogArmour); false = " +
+                        "modern.wolfArmour, modern.dogArmour); false = " +
                         "classic 1.7.10 " +
                         "parity everywhere, whatever the per-feature keys say. Phase G artist animations hang " +
                         "off this same switch (classic stays code-driven parity). Snapshotted features " +
@@ -685,6 +693,17 @@ public class OreSpawnConfig {
                         "/reload or a restart, the creative tab when the world is joined again, and the challenge " +
                         "chest in King towers built after it."
         ).define("horseArmour", true);
+        MODERN_WOLF_ARMOUR = BUILDER.comment(
+                "MOD-041: wolf armour for the 14 armour sets: each set's chestplate value as its armour, the set's " +
+                        "toughness and knockback resistance, no durability. A tamed wolf's owner puts it on with a " +
+                        "click and takes it off with shears, as vanilla's wolf armour, but it never takes the wolf's " +
+                        "damage into itself. Its 13 recipes load and its creative-tab entries show only while this " +
+                        "and modern.enabled are true; the Royal Guardian wolf armour has no recipe: the King drops it " +
+                        "and his challenge chest holds it beside the chestplate, likewise only while both are true. " +
+                        "The items stay registered and keep working either way, so worlds keep what they hold. A " +
+                        "change reaches the recipes and the King's drop on /reload or a restart, the creative tab " +
+                        "when the world is joined again, and the challenge chest in King towers built after it."
+        ).define("wolfArmour", true);
         MODERN_DOG_ARMOUR = BUILDER.comment(
                 "MOD-042: in the modern armour style (the client's armourStyle), a Doggy Talents Next dog wearing " +
                         "OreSpawn armour shows the set's modern colours and plates: a dog texture per set, the modern " +
@@ -795,6 +814,16 @@ public class OreSpawnConfig {
      */
     public static boolean horseArmour() {
         return MODERN_ENABLED.get() && MODERN_HORSE_ARMOUR.get();
+    }
+
+    /**
+     * MOD-041: the single {@code master && key} evaluation for the wolf armour -- true only while
+     * {@link #MODERN_ENABLED} AND {@link #MODERN_WOLF_ARMOUR} are both on. Read by the {@code orespawn:modern} load
+     * condition as the data packs load (the 13 recipes, the King's drop), by the creative tab as it fills and by the
+     * King's challenge chest as it is built; the items are registered, and work on a wolf, either way.
+     */
+    public static boolean wolfArmour() {
+        return MODERN_ENABLED.get() && MODERN_WOLF_ARMOUR.get();
     }
 
     /**

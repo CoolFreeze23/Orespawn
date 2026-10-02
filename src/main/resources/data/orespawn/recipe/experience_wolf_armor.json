@@ -1,0 +1,26 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "orespawn:modern",
+      "key": "wolfArmour"
+    }
+  ],
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "AAA",
+    "ABA",
+    "AAA"
+  ],
+  "key": {
+    "A": {
+      "item": "minecraft:experience_bottle"
+    },
+    "B": {
+      "item": "orespawn:emerald_wolf_armor"
+    }
+  },
+  "result": {
+    "id": "orespawn:experience_wolf_armor",
+    "count": 1
+  }
+}

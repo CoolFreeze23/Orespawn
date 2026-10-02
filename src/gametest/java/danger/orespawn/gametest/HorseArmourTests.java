@@ -297,8 +297,8 @@ public class HorseArmourTests {
     private static List<Item> horseArmourIn(CreativeModeTab tab) {
         List<Item> out = new ArrayList<>();
         for (ItemStack stack : tab.getDisplayItems()) {
-            if (stack.getItem() instanceof AnimalArmorItem && BuiltInRegistries.ITEM.getKey(stack.getItem()).getNamespace()
-                    .equals(OreSpawnMod.MOD_ID)) {
+            if (stack.getItem() instanceof AnimalArmorItem animal && animal.getBodyType() == AnimalArmorItem.BodyType.EQUESTRIAN
+                    && BuiltInRegistries.ITEM.getKey(stack.getItem()).getNamespace().equals(OreSpawnMod.MOD_ID)) {
                 out.add(stack.getItem());
             }
         }

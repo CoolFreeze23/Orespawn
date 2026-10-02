@@ -395,6 +395,10 @@ public class ModCreativeTabs {
                         if (OreSpawnConfig.horseArmour()) {
                             ModItems.HORSE_ARMOR.forEach(item -> output.accept(item.get()));
                         }
+                        // Wolf armour (MOD-041), in the armour's order, while the feature is on
+                        if (OreSpawnConfig.wolfArmour()) {
+                            ModItems.WOLF_ARMOR.forEach(item -> output.accept(item.get()));
+                        }
                     })
                     .build());
 

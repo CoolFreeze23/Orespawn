@@ -1,0 +1,23 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "orespawn:modern",
+      "key": "wolfArmour"
+    }
+  ],
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "X  ",
+    "XXX",
+    "X X"
+  ],
+  "key": {
+    "X": {
+      "item": "orespawn:crystal_pink_ingot"
+    }
+  },
+  "result": {
+    "id": "orespawn:pink_wolf_armor",
+    "count": 1
+  }
+}

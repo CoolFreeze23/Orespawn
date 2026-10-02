@@ -935,6 +935,48 @@ public class ModItems {
         return new AnimalArmorItem(material, AnimalArmorItem.BodyType.EQUESTRIAN, false, new Item.Properties().stacksTo(1));
     }
 
+    // MOD-041: wolf armour for the 14 armour sets, vanilla's wolf armour on each set's material, with the horse
+    // armour's values: the chestplate's value as its armour, the material's toughness and knockback resistance, no
+    // durability, one to a stack. Registered whatever modern.wolfArmour says; the key gates the recipes, the creative
+    // tab and the Royal Guardian one's drop and chest (OreSpawnConfig.wolfArmour()). WolfArmourEvents puts it on a wolf.
+    public static final DeferredItem<Item> ULTIMATE_WOLF_ARMOR = ITEMS.register("ultimate_wolf_armor",
+            () -> wolfArmor(ModArmorMaterials.ULTIMATE));
+    public static final DeferredItem<Item> ROYAL_WOLF_ARMOR = ITEMS.register("royal_wolf_armor",
+            () -> wolfArmor(ModArmorMaterials.ROYAL));
+    public static final DeferredItem<Item> QUEEN_WOLF_ARMOR = ITEMS.register("queen_wolf_armor",
+            () -> wolfArmor(ModArmorMaterials.QUEEN));
+    public static final DeferredItem<Item> MOBZILLA_WOLF_ARMOR = ITEMS.register("mobzilla_wolf_armor",
+            () -> wolfArmor(ModArmorMaterials.MOBZILLA));
+    public static final DeferredItem<Item> EXPERIENCE_WOLF_ARMOR = ITEMS.register("experience_wolf_armor",
+            () -> wolfArmor(ModArmorMaterials.EXPERIENCE));
+    public static final DeferredItem<Item> RUBY_WOLF_ARMOR = ITEMS.register("ruby_wolf_armor",
+            () -> wolfArmor(ModArmorMaterials.RUBY));
+    public static final DeferredItem<Item> AMETHYST_WOLF_ARMOR = ITEMS.register("amethyst_wolf_armor",
+            () -> wolfArmor(ModArmorMaterials.AMETHYST));
+    public static final DeferredItem<Item> EMERALD_WOLF_ARMOR = ITEMS.register("emerald_wolf_armor",
+            () -> wolfArmor(ModArmorMaterials.EMERALD));
+    public static final DeferredItem<Item> LAVAEEL_WOLF_ARMOR = ITEMS.register("lavaeel_wolf_armor",
+            () -> wolfArmor(ModArmorMaterials.LAVA_EEL));
+    public static final DeferredItem<Item> MOTHSCALE_WOLF_ARMOR = ITEMS.register("mothscale_wolf_armor",
+            () -> wolfArmor(ModArmorMaterials.MOTH_SCALE));
+    public static final DeferredItem<Item> PEACOCK_WOLF_ARMOR = ITEMS.register("peacock_wolf_armor",
+            () -> wolfArmor(ModArmorMaterials.PEACOCK));
+    public static final DeferredItem<Item> PINK_WOLF_ARMOR = ITEMS.register("pink_wolf_armor",
+            () -> wolfArmor(ModArmorMaterials.PINK));
+    public static final DeferredItem<Item> TIGERSEYE_WOLF_ARMOR = ITEMS.register("tigerseye_wolf_armor",
+            () -> wolfArmor(ModArmorMaterials.TIGERS_EYE));
+    public static final DeferredItem<Item> LAPIS_WOLF_ARMOR = ITEMS.register("lapis_wolf_armor",
+            () -> wolfArmor(ModArmorMaterials.LAPIS));
+    /** The wolf armour in the armour's order. */
+    public static final List<DeferredItem<Item>> WOLF_ARMOR = List.of(
+            ULTIMATE_WOLF_ARMOR, ROYAL_WOLF_ARMOR, QUEEN_WOLF_ARMOR, MOBZILLA_WOLF_ARMOR, EXPERIENCE_WOLF_ARMOR,
+            RUBY_WOLF_ARMOR, AMETHYST_WOLF_ARMOR, EMERALD_WOLF_ARMOR, LAVAEEL_WOLF_ARMOR, MOTHSCALE_WOLF_ARMOR,
+            PEACOCK_WOLF_ARMOR, PINK_WOLF_ARMOR, TIGERSEYE_WOLF_ARMOR, LAPIS_WOLF_ARMOR);
+
+    private static Item wolfArmor(Holder<ArmorMaterial> material) {
+        return new ItemOreSpawnWolfArmor(material, new Item.Properties().stacksTo(1));
+    }
+
 
     // Zoo cages — ITEM-023 (E3): cage_size values are the ORIGINAL ctor args
     // (orig OreSpawnMain.java:1931-1935: zoo2=3, zoo4=5, zoo6=9, zoo8=13,

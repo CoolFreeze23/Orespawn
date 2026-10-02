@@ -1272,9 +1272,11 @@ def check_geckolib(java_texts):
 # (textures/item/modern/<set>_<piece>.png). The horse armour (MOD-040) adds per set its texture with LabPBR maps
 # (textures/entity/horse/armor/horse_armor_<material>{,_n,_s}.png, the path the horse armour layer draws), its icon
 # (textures/item/<set>_horse_armor.png) and its item model (models/item/<set>_horse_armor.json); the dog texture (MOD-042)
-# per set, textures/models/armor/modern/<set>_dog{,_n,_s}.png. Every file is pinned by
-# SHA-256 in tools/armour_asset_pins.json, which is written when the assets are generated and checked: a changed,
-# missing or unpinned file is ARMOUR_ASSET_PIN, never acknowledgeable.
+# per set, textures/models/armor/modern/<set>_dog{,_n,_s}.png; the wolf armour (MOD-041) per set its texture with LabPBR
+# maps (textures/entity/wolf/armor/wolf_armor_<material>{,_n,_s}.png, the path its item gives the wolf's armour layer),
+# its icon (textures/item/<set>_wolf_armor.png) and its item model (models/item/<set>_wolf_armor.json). Every file is
+# pinned by SHA-256 in tools/armour_asset_pins.json, which is written when the assets are generated and checked: a
+# changed, missing or unpinned file is ARMOUR_ASSET_PIN, never acknowledgeable.
 ARMOUR_SETS = ("queen", "royal", "mobzilla", "ultimate", "emerald", "ruby", "amethyst", "lapis", "tigerseye", "pink",
                "experience", "mothscale", "lavaeel", "peacock")
 ARMOUR_PIECES = ("helmet", "chestplate", "leggings", "boots")
@@ -1293,14 +1295,25 @@ HORSE_ARMOUR_MATERIAL = {"queen": "queen", "royal": "royal", "mobzilla": "mobzil
                          "tigerseye": "tigers_eye", "pink": "pink", "experience": "experience",
                          "mothscale": "moth_scale", "lavaeel": "lava_eel", "peacock": "peacock"}
 
+# The wolf armour's folder (every file in it is expected); its textures are named by the same material names.
+WOLF_ARMOUR_DIR = ASSETS / "textures" / "entity" / "wolf" / "armor"
+
 
 def horse_armour_expected():
+    return animal_armour_expected("horse", HORSE_ARMOUR_DIR)
+
+
+def wolf_armour_expected():
+    return animal_armour_expected("wolf", WOLF_ARMOUR_DIR)
+
+
+def animal_armour_expected(animal, folder):
     out = set()
     for s in ARMOUR_SETS:
         for suffix in ("", "_n", "_s"):
-            out.add(HORSE_ARMOUR_DIR / ("horse_armor_%s%s.png" % (HORSE_ARMOUR_MATERIAL[s], suffix)))
-        out.add(ASSETS / "textures" / "item" / ("%s_horse_armor.png" % s))
-        out.add(ASSETS / "models" / "item" / ("%s_horse_armor.json" % s))
+            out.add(folder / ("%s_armor_%s%s.png" % (animal, HORSE_ARMOUR_MATERIAL[s], suffix)))
+        out.add(ASSETS / "textures" / "item" / ("%s_%s_armor.png" % (s, animal)))
+        out.add(ASSETS / "models" / "item" / ("%s_%s_armor.json" % (s, animal)))
     return out
 
 
@@ -1401,20 +1414,21 @@ def armour_geometry_problem(path):
 
 def check_armour_style():
     import hashlib
-    expected = armour_expected() | horse_armour_expected()
+    expected = armour_expected() | horse_armour_expected() | wolf_armour_expected()
     for path in sorted(expected):
         if not path.is_file():
-            err("ARMOUR_STYLE_MISSING", path.stem, "the modern armour style or the horse armour needs %s" % rel(path),
-                path)
+            err("ARMOUR_STYLE_MISSING", path.stem,
+                "the modern armour style, the horse armour or the wolf armour needs %s" % rel(path), path)
     present = set()
-    for d in ARMOUR_DIRS + (HORSE_ARMOUR_DIR,):
+    for d in ARMOUR_DIRS + (HORSE_ARMOUR_DIR, WOLF_ARMOUR_DIR):
         if d.is_dir():
             present |= {p for p in d.iterdir() if p.is_file()}
-    # the horse armour's icons and item models sit in folders shared with every other item: those by name
-    present |= {p for p in (ASSETS / "textures" / "item").glob("*_horse_armor.png")}
-    present |= {p for p in (ASSETS / "models" / "item").glob("*_horse_armor.json")}
+    # the horse and wolf armour's icons and item models sit in folders shared with every other item: those by name
+    for animal in ("horse", "wolf"):
+        present |= {p for p in (ASSETS / "textures" / "item").glob("*_%s_armor.png" % animal)}
+        present |= {p for p in (ASSETS / "models" / "item").glob("*_%s_armor.json" % animal)}
     for path in sorted(present - expected):
-        err("ARMOUR_STYLE_UNEXPECTED", path.name, "not one of the 14 sets' modern or horse armour files", path)
+        err("ARMOUR_STYLE_UNEXPECTED", path.name, "not one of the 14 sets' modern, horse or wolf armour files", path)
     for path in sorted(p for p in present & expected if p.suffix == ".json" and p.parent == ARMOUR_DIRS[0]):
         problem = armour_geometry_problem(path)
         if problem:

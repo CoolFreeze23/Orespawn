@@ -3097,6 +3097,10 @@ public class LegacyDungeonPiece extends StructurePiece {
                 if (king && OreSpawnConfig.horseArmour()) {
                     chest.setItem(3, new ItemStack(ModItems.ROYAL_HORSE_ARMOR.get()));
                 }
+                // MOD-041: and the Royal Guardian wolf armour beside it, slot 4, while the wolf armour is on
+                if (king && OreSpawnConfig.wolfArmour()) {
+                    chest.setItem(4, new ItemStack(ModItems.ROYAL_WOLF_ARMOR.get()));
+                }
             }, random);
             // North chest (GD:764-774 / 6966-6976, faces south): leggings slot 1 + boots slot 2.
             placeChest(cposx + width / 2, cposy + 1, cposz + 1, Direction.SOUTH, (chest, rng) -> {

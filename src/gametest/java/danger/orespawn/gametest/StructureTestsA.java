@@ -88,7 +88,7 @@ import java.util.Set;
  * template at {@code helper.absolutePos(0,0,0).offset(K*512, 0, 50000)} with a
  * per-test K so no two tests share chunks. K map: i122=601, i126=602, i127=603,
  * i137=604, i138=605, i139=606, i140=607, i141=608, i142=609, i145=610,
- * i146=611, mod040e=612 (i007 runs entirely inside its template). Far asserts use
+ * i146=611, mod040e=612, mod041g=613 (i007 runs entirely inside its template). Far asserts use
  * {@code helper.getLevel().getBlockState(...)} on absolute positions, never the
  * template-relative helper asserts.</p>
  *
@@ -883,6 +883,43 @@ public class StructureTestsA {
         helper.succeed();
     }
 
+    /**
+     * MOD-041: with the wolf armour off, a level-6 King tower's east prize chest holds the Royal helmet and chestplate
+     * (slots 1 and 2) and nothing in slot 4 (i126 checks the Royal Guardian wolf armour there with it on). The tower is
+     * built in one call, the key held off around it.
+     */
+    @GameTest(template = "empty", timeoutTicks = 100)
+    public void mod041g_the_king_towers_chest_without_the_wolf_armour(GameTestHelper helper) {
+        ServerLevel level = helper.getLevel();
+        BlockPos base = farOrigin(helper, 613, 10);
+        BlockPos origin = null;
+        for (int i = 0; i < 200; i++) {
+            BlockPos candidate = base.offset(0, 0, i);
+            if (predictTowerLevel(candidate, LegacyDungeonPiece.DungeonType.KING_TOWER) == 6) {
+                origin = candidate;
+                break;
+            }
+        }
+        helper.assertTrue(origin != null, "no level-6 King tower seed among 200 candidates");
+        final boolean key = OreSpawnConfig.MODERN_WOLF_ARMOUR.get();
+        try {
+            OreSpawnConfig.MODERN_WOLF_ARMOUR.set(false);
+            helper.assertFalse(OreSpawnConfig.wolfArmour(), "the wolf armour is still on");
+            buildWorldgenPath(level, origin, LegacyDungeonPiece.DungeonType.KING_TOWER);
+        } finally {
+            OreSpawnConfig.MODERN_WOLF_ARMOUR.set(key);
+        }
+        BlockPos eastChestPos = origin.offset(1, 16, 1).offset(24, 1, 13);
+        helper.assertTrue(level.getBlockEntity(eastChestPos) instanceof RandomizableContainerBlockEntity,
+                "the east prize chest is missing");
+        RandomizableContainerBlockEntity east = (RandomizableContainerBlockEntity) level.getBlockEntity(eastChestPos);
+        helper.assertTrue(east.getItem(1).is(ModItems.ROYAL_HELMET.get()) && east.getItem(2).is(ModItems.ROYAL_CHESTPLATE.get()),
+                "the east prize chest should hold the Royal helmet (slot 1) and chestplate (slot 2)");
+        helper.assertTrue(east.getItem(4).isEmpty(),
+                "with the wolf armour off the east prize chest's slot 4 holds " + itemId(east.getItem(4)));
+        helper.succeed();
+    }
+
     /** Build + asserts of {@link #i126_challenge_tower_level6_prizes} (body
      *  unchanged by the TF-023 infra fix — only moved behind the chunk
      *  pre-ticketing; the previously-delayed Prince query now runs same-tick,
@@ -943,6 +980,10 @@ public class StructureTestsA {
         helper.assertTrue(eastBe.getItem(3).is(ModItems.ROYAL_HORSE_ARMOR.get()) == OreSpawnConfig.horseArmour(),
                 "east prize chest's slot 3 holds " + itemId(eastBe.getItem(3)) + " with the horse armour "
                         + (OreSpawnConfig.horseArmour() ? "on" : "off"));
+        // MOD-041: and the Royal Guardian wolf armour beside it (slot 4) exactly while the wolf armour is on
+        helper.assertTrue(eastBe.getItem(4).is(ModItems.ROYAL_WOLF_ARMOR.get()) == OreSpawnConfig.wolfArmour(),
+                "east prize chest's slot 4 holds " + itemId(eastBe.getItem(4)) + " with the wolf armour "
+                        + (OreSpawnConfig.wolfArmour() ? "on" : "off"));
 
         // North chest: leggings + boots (GD:764-774), faces SOUTH.
         BlockPos northChestPos = f1.offset(13, 1, 1);

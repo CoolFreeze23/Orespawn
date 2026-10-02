@@ -1551,14 +1551,16 @@ public class LootTests {
 
         Map<Item, Integer> drops = collectDrops(helper, area);
         int total = totalCount(drops);
-        // MOD-040: while the horse armour is on the King also drops the Royal Guardian horse armour (a loot modifier on
-        // his table, beside the chestplate): 1.7.10's 305 and that one
+        // MOD-040, MOD-041: while the horse and the wolf armour are on the King also drops the Royal Guardian horse and
+        // wolf armour (loot modifiers on his table, beside the chestplate): 1.7.10's 305 and those
         boolean horseArmour = OreSpawnConfig.horseArmour();
-        int expected = 305 + (horseArmour ? 1 : 0);
+        boolean wolfArmour = OreSpawnConfig.wolfArmour();
+        int expected = 305 + (horseArmour ? 1 : 0) + (wolfArmour ? 1 : 0);
         helper.assertTrue(total == expected,
                 "King death produced " + total + " items, documented exactly " + expected + " = 5 royal pieces"
                         + " + 150 item draws + 150 block draws (orig TheKing.java:183-227)"
-                        + (horseArmour ? " + the Royal Guardian horse armour" : ""));
+                        + (horseArmour ? " + the Royal Guardian horse armour" : "")
+                        + (wolfArmour ? " + the Royal Guardian wolf armour" : ""));
         for (String piece : new String[]{"royal_helmet", "royal_chestplate", "royal_leggings",
                 "royal_boots", "royal_guardian_sword"}) {
             helper.assertTrue(drops.getOrDefault(item(NS + ":" + piece), 0) >= 1,
@@ -1567,6 +1569,10 @@ public class LootTests {
         if (horseArmour) {
             helper.assertTrue(drops.getOrDefault(item(NS + ":royal_horse_armor"), 0) >= 1,
                     "King death missing the Royal Guardian horse armour (the horse armour is on)");
+        }
+        if (wolfArmour) {
+            helper.assertTrue(drops.getOrDefault(item(NS + ":royal_wolf_armor"), 0) >= 1,
+                    "King death missing the Royal Guardian wolf armour (the wolf armour is on)");
         }
         List<ThePrince> princes = helper.getEntities(ModEntities.THE_PRINCE.get());
         helper.assertTrue(princes.size() == 1,
