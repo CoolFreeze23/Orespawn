@@ -679,7 +679,6 @@ tasks.withType(JavaCompile).configureEach {
 // task's nested closures (which run with the Task as their delegate)
 // can still see them.
 def deployModId = project.mod_id
-def deployModVersion = project.mod_version
 def deployPrismDir = project.findProperty('prism_mods_dir')
 
 tasks.register('deployToPrism', Copy) {
@@ -710,11 +709,13 @@ tasks.register('deployToPrism', Copy) {
         }
     }
 
-    from tasks.named('jar').flatMap { it.archiveFile }
+    // BUG-046: the full jar, jarJar's archive with databuddy nested in it, never the jar task's -slim one
+    def deployJar = tasks.named('jarJar').flatMap { it.archiveFile }
+    from deployJar
     into prismModsDir
 
     doLast {
-        logger.lifecycle("deployToPrism: copied ${deployModId}-${deployModVersion}.jar -> ${prismModsDir}")
+        logger.lifecycle("deployToPrism: copied ${deployJar.get().asFile.name} -> ${prismModsDir}")
     }
 }
 
