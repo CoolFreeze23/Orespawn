@@ -38,10 +38,10 @@ public class ExperienceSword extends SwordItem {
 
     @Override
     public void inventoryTick(ItemStack stack, Level level, Entity entity, int slotId, boolean isSelected) {
-        if (!level.isClientSide && !OreSpawnEnchantHelper.hasAnyEnchantments(stack)) {
-            // orig ExperienceSword.java:40-41 — Sharpness 2 + Unbreaking 3
-            OreSpawnEnchantHelper.applyEnchantment(stack, level, Enchantments.SHARPNESS, 2);
-            OreSpawnEnchantHelper.applyEnchantment(stack, level, Enchantments.UNBREAKING, 3);
+        // orig ExperienceSword.java:44-50 — keyed on Sharpness: while it reads 0, Sharpness 2 + Unbreaking 3
+        if (!level.isClientSide && OreSpawnEnchantHelper.level(stack, level, Enchantments.SHARPNESS) <= 0) {
+            OreSpawnEnchantHelper.addIfAbsent(stack, level, Enchantments.SHARPNESS, 2);
+            OreSpawnEnchantHelper.addIfAbsent(stack, level, Enchantments.UNBREAKING, 3);
         }
         tickArmorExperience(level, entity);
     }

@@ -20,8 +20,9 @@ public class PoisonSword extends SwordItem {
 
     @Override
     public void inventoryTick(ItemStack stack, Level level, Entity entity, int slotId, boolean isSelected) {
-        if (!level.isClientSide && !OreSpawnEnchantHelper.hasAnyEnchantments(stack)) {
-            OreSpawnEnchantHelper.applyEnchantment(stack, level, Enchantments.SHARPNESS, 1);
+        // orig PoisonSword.java:39-44 — keyed on Sharpness: while it reads 0, Sharpness 1
+        if (!level.isClientSide && OreSpawnEnchantHelper.level(stack, level, Enchantments.SHARPNESS) <= 0) {
+            OreSpawnEnchantHelper.addIfAbsent(stack, level, Enchantments.SHARPNESS, 1);
         }
     }
 

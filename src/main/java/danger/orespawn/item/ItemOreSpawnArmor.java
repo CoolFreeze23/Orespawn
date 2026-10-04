@@ -18,6 +18,7 @@ import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
 
+import java.util.List;
 import java.util.Map;
 
 public class ItemOreSpawnArmor extends ArmorItem {
@@ -26,6 +27,24 @@ public class ItemOreSpawnArmor extends ArmorItem {
     private record EnchantEntry(ResourceKey<Enchantment> key, int level) {}
 
     private record ArmorEnchants(EnchantEntry[] allPieces, EnchantEntry[] helmet, EnchantEntry[] boots) {}
+
+    /**
+     * orig ItemOreSpawnArmor.java:202-226 — a piece adds its set only while none of the eight enchantments an armour
+     * set can carry reads above 0 (Protection, Fire, Blast and Projectile Protection, Respiration, Aqua Affinity,
+     * Unbreaking, Feather Falling), so a boss drop whose dice put any of them on keeps its dice alone.
+     */
+    private static final List<ResourceKey<Enchantment>> OWN_KIND = List.of(Enchantments.PROTECTION,
+            Enchantments.FIRE_PROTECTION, Enchantments.BLAST_PROTECTION, Enchantments.PROJECTILE_PROTECTION,
+            Enchantments.RESPIRATION, Enchantments.AQUA_AFFINITY, Enchantments.UNBREAKING, Enchantments.FEATHER_FALLING);
+
+    private static boolean carriesOwnKind(ItemStack stack, Level level) {
+        for (ResourceKey<Enchantment> key : OWN_KIND) {
+            if (OreSpawnEnchantHelper.level(stack, level, key) > 0) {
+                return true;
+            }
+        }
+        return false;
+    }
 
     private static final Map<String, ArmorEnchants> ENCHANT_TABLE = Map.ofEntries(
         // orig OreSpawnMain.java:1498 — Mobzilla: prot10 fire10 blast10 proj10 unb5 fall10,
@@ -172,20 +191,20 @@ public class ItemOreSpawnArmor extends ArmorItem {
         // contract that every acquisition path (crafting, /give, dungeon
         // loot, old saves) self-heals. The glide handling below
         // intentionally stays per-tick — it caps fall velocity every tick and must not be gated.
-        if (entity.tickCount % 20 == 0 && !OreSpawnEnchantHelper.hasAnyEnchantments(stack)) {
+        if (entity.tickCount % 20 == 0 && !carriesOwnKind(stack, level)) {
             ArmorEnchants enchants = ENCHANT_TABLE.get(armorMaterialName);
             if (enchants != null) {
                 for (EnchantEntry e : enchants.allPieces()) {
-                    OreSpawnEnchantHelper.applyEnchantment(stack, level, e.key(), e.level());
+                    OreSpawnEnchantHelper.addIfAbsent(stack, level, e.key(), e.level());
                 }
                 if (getType() == Type.HELMET) {
                     for (EnchantEntry e : enchants.helmet()) {
-                        OreSpawnEnchantHelper.applyEnchantment(stack, level, e.key(), e.level());
+                        OreSpawnEnchantHelper.addIfAbsent(stack, level, e.key(), e.level());
                     }
                 }
                 if (getType() == Type.BOOTS) {
                     for (EnchantEntry e : enchants.boots()) {
-                        OreSpawnEnchantHelper.applyEnchantment(stack, level, e.key(), e.level());
+                        OreSpawnEnchantHelper.addIfAbsent(stack, level, e.key(), e.level());
                     }
                 }
             }

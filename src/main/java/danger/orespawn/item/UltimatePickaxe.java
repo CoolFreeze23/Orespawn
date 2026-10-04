@@ -19,9 +19,10 @@ public class UltimatePickaxe extends PickaxeItem {
 
     @Override
     public void inventoryTick(ItemStack stack, Level level, Entity entity, int slotId, boolean isSelected) {
-        if (!level.isClientSide && !OreSpawnEnchantHelper.hasAnyEnchantments(stack)) {
-            OreSpawnEnchantHelper.applyEnchantment(stack, level, Enchantments.EFFICIENCY, 5);
-            OreSpawnEnchantHelper.applyEnchantment(stack, level, Enchantments.FORTUNE, 5);
+        // orig UltimatePickaxe.java:44-50 — keyed on Efficiency: while it reads 0, Efficiency 5 and Fortune 5
+        if (!level.isClientSide && OreSpawnEnchantHelper.level(stack, level, Enchantments.EFFICIENCY) <= 0) {
+            OreSpawnEnchantHelper.addIfAbsent(stack, level, Enchantments.EFFICIENCY, 5);
+            OreSpawnEnchantHelper.addIfAbsent(stack, level, Enchantments.FORTUNE, 5);
         }
     }
 

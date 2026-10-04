@@ -59,23 +59,24 @@ public class UltimateSword extends SwordItem {
     @Override
     public void inventoryTick(ItemStack stack, Level level, Entity entity, int slotId, boolean isSelected) {
         if (level.isClientSide || variant == Variant.NONE) return;
-        if (OreSpawnEnchantHelper.hasAnyEnchantments(stack)) return;
+        // orig UltimateSword.java:70-89 — keyed on Looting: its set only while Looting reads 0
+        if (OreSpawnEnchantHelper.level(stack, level, Enchantments.LOOTING) > 0) return;
         // orig OreSpawnMain.java:1518 — UltimateSwordEnchantmentLevel, default 5
         int magic = OreSpawnConfig.ULTIMATE_SWORD_MAGIC.get();
         if (variant == Variant.FULL) {
             // orig UltimateSword.java:49-55 — Sharp/Smite/Bane = magic,
             // KB/Looting/Unbreaking = 1 + magic/2, Fire Aspect = 1 + magic/3
-            OreSpawnEnchantHelper.applyEnchantment(stack, level, Enchantments.SHARPNESS, magic);
-            OreSpawnEnchantHelper.applyEnchantment(stack, level, Enchantments.SMITE, magic);
-            OreSpawnEnchantHelper.applyEnchantment(stack, level, Enchantments.BANE_OF_ARTHROPODS, magic);
-            OreSpawnEnchantHelper.applyEnchantment(stack, level, Enchantments.KNOCKBACK, 1 + magic / 2);
-            OreSpawnEnchantHelper.applyEnchantment(stack, level, Enchantments.LOOTING, 1 + magic / 2);
-            OreSpawnEnchantHelper.applyEnchantment(stack, level, Enchantments.UNBREAKING, 1 + magic / 2);
-            OreSpawnEnchantHelper.applyEnchantment(stack, level, Enchantments.FIRE_ASPECT, 1 + magic / 3);
+            OreSpawnEnchantHelper.addIfAbsent(stack, level, Enchantments.SHARPNESS, magic);
+            OreSpawnEnchantHelper.addIfAbsent(stack, level, Enchantments.SMITE, magic);
+            OreSpawnEnchantHelper.addIfAbsent(stack, level, Enchantments.BANE_OF_ARTHROPODS, magic);
+            OreSpawnEnchantHelper.addIfAbsent(stack, level, Enchantments.KNOCKBACK, 1 + magic / 2);
+            OreSpawnEnchantHelper.addIfAbsent(stack, level, Enchantments.LOOTING, 1 + magic / 2);
+            OreSpawnEnchantHelper.addIfAbsent(stack, level, Enchantments.UNBREAKING, 1 + magic / 2);
+            OreSpawnEnchantHelper.addIfAbsent(stack, level, Enchantments.FIRE_ASPECT, 1 + magic / 3);
         } else {
             // orig UltimateSword.java:57-58 — Battle Axe: Looting + Unbreaking
-            OreSpawnEnchantHelper.applyEnchantment(stack, level, Enchantments.LOOTING, 1 + magic / 2);
-            OreSpawnEnchantHelper.applyEnchantment(stack, level, Enchantments.UNBREAKING, 1 + magic / 2);
+            OreSpawnEnchantHelper.addIfAbsent(stack, level, Enchantments.LOOTING, 1 + magic / 2);
+            OreSpawnEnchantHelper.addIfAbsent(stack, level, Enchantments.UNBREAKING, 1 + magic / 2);
         }
     }
 

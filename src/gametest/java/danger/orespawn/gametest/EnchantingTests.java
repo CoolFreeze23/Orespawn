@@ -1,17 +1,11 @@
 package danger.orespawn.gametest;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.UncheckedIOException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
-
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 
 import danger.orespawn.ModItems;
 import danger.orespawn.OreSpawnMod;
@@ -25,8 +19,6 @@ import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.packs.resources.Resource;
-import net.minecraft.util.GsonHelper;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AnvilMenu;
 import net.minecraft.world.inventory.ContainerLevelAccess;
@@ -248,71 +240,6 @@ public class EnchantingTests {
             };
         }
         return null;
-    }
-
-    /**
-     * The boss drops that enchant themselves come bare: an item that puts its own set on itself in an inventory (on its
-     * first tick, the armour within a second) only while it carries no enchantment, so a random one from the loot would
-     * stop its own set for good.
-     * In the six tables that enchant OreSpawn gear at random (Godzilla, Kraken, Basilisk, Cater Killer, Cephadrome,
-     * Trooper Bug), no entry of such an item carries enchant_randomly, and the other OreSpawn gear entries that did keep
-     * it (58).
-     */
-    @GameTest(template = "empty")
-    public static void item073d_self_enchanting_drops_come_bare(GameTestHelper helper) {
-        Player player = helper.makeMockPlayer(GameType.SURVIVAL);
-        List<String> misses = new ArrayList<>();
-        int selfEnchanting = 0;
-        int randomly = 0;
-        for (String table : List.of("godzilla", "kraken", "basilisk", "cater_killer", "cephadrome", "trooper_bug")) {
-            JsonObject json = lootJson(helper, "loot_table/entities/" + table + ".json");
-            for (JsonElement pool : GsonHelper.getAsJsonArray(json, "pools")) {
-                for (JsonElement entry : GsonHelper.getAsJsonArray(pool.getAsJsonObject(), "entries")) {
-                    JsonObject e = entry.getAsJsonObject();
-                    String name = GsonHelper.getAsString(e, "name", "");
-                    if (!name.startsWith(OreSpawnMod.MOD_ID + ":")) {
-                        continue;
-                    }
-                    boolean random = false;
-                    if (e.has("functions")) {
-                        for (JsonElement f : e.getAsJsonArray("functions")) {
-                            random |= "minecraft:enchant_randomly".equals(GsonHelper.getAsString(f.getAsJsonObject(), "function", ""));
-                        }
-                    }
-                    Item item = BuiltInRegistries.ITEM.get(ResourceLocation.parse(name));
-                    if (counterpart(item) == null && !DURABILITY_ONLY.containsKey(name.substring(name.indexOf(':') + 1))) {
-                        continue;               // not gear: scales, eggs and the like
-                    }
-                    ItemStack stack = new ItemStack(item);
-                    item.inventoryTick(stack, helper.getLevel(), player, 0, false);
-                    boolean own = !stack.getEnchantments().isEmpty();
-                    if (own) {
-                        selfEnchanting++;
-                        if (random) {
-                            misses.add(table + " enchants " + name + " at random");
-                        }
-                    } else if (random) {
-                        randomly++;
-                    }
-                }
-            }
-        }
-        helper.assertTrue(selfEnchanting >= 19, "only " + selfEnchanting + " self-enchanting entries found: the check would prove little");
-        helper.assertTrue(misses.isEmpty(), String.join("; ", misses));
-        helper.assertTrue(randomly == 58, randomly + " other OreSpawn gear entries enchanted at random, not 58");
-        helper.succeed();
-    }
-
-    /** The loot table file as the running server's resource stack serves it. */
-    private static JsonObject lootJson(GameTestHelper helper, String path) {
-        ResourceLocation file = ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, path);
-        Resource resource = helper.getLevel().getServer().getResourceManager().getResource(file)
-                .orElseThrow(() -> new IllegalStateException("missing " + file));
-        try (BufferedReader reader = resource.openAsReader()) {
-            return GsonHelper.parse(reader);
-        } catch (IOException e) {
-            throw new UncheckedIOException("cannot read " + file, e);
-        }
     }
 
     private static void count(Map<String, Integer> counts, String group) {

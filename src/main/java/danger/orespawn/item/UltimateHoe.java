@@ -25,8 +25,9 @@ public class UltimateHoe extends HoeItem {
 
     @Override
     public void inventoryTick(ItemStack stack, Level level, Entity entity, int slotId, boolean isSelected) {
-        if (!level.isClientSide && !OreSpawnEnchantHelper.hasAnyEnchantments(stack)) {
-            OreSpawnEnchantHelper.applyEnchantment(stack, level, Enchantments.EFFICIENCY, 2);
+        // orig UltimateHoe.java:35-40 — keyed on Efficiency: while it reads 0, Efficiency 2
+        if (!level.isClientSide && OreSpawnEnchantHelper.level(stack, level, Enchantments.EFFICIENCY) <= 0) {
+            OreSpawnEnchantHelper.addIfAbsent(stack, level, Enchantments.EFFICIENCY, 2);
         }
     }
 

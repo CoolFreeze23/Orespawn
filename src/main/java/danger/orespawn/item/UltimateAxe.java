@@ -18,8 +18,9 @@ public class UltimateAxe extends AxeItem {
 
     @Override
     public void inventoryTick(ItemStack stack, Level level, Entity entity, int slotId, boolean isSelected) {
-        if (!level.isClientSide && !OreSpawnEnchantHelper.hasAnyEnchantments(stack)) {
-            OreSpawnEnchantHelper.applyEnchantment(stack, level, Enchantments.EFFICIENCY, 5);
+        // orig UltimateAxe.java:38-43 — keyed on Efficiency: while it reads 0, Efficiency 5
+        if (!level.isClientSide && OreSpawnEnchantHelper.level(stack, level, Enchantments.EFFICIENCY) <= 0) {
+            OreSpawnEnchantHelper.addIfAbsent(stack, level, Enchantments.EFFICIENCY, 5);
         }
     }
 

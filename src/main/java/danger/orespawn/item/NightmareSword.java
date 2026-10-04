@@ -27,11 +27,11 @@ public class NightmareSword extends SwordItem {
 
     @Override
     public void inventoryTick(ItemStack stack, Level level, Entity entity, int slotId, boolean isSelected) {
-        if (!level.isClientSide && !OreSpawnEnchantHelper.hasAnyEnchantments(stack)) {
-            // orig NightmareSword.java:31-33 — Sharpness 1, Knockback 3, Fire Aspect 1
-            OreSpawnEnchantHelper.applyEnchantment(stack, level, Enchantments.SHARPNESS, 1);
-            OreSpawnEnchantHelper.applyEnchantment(stack, level, Enchantments.KNOCKBACK, 3);
-            OreSpawnEnchantHelper.applyEnchantment(stack, level, Enchantments.FIRE_ASPECT, 1);
+        // orig NightmareSword.java:36-43 — keyed on Knockback: while it reads 0, Sharpness 1, Knockback 3, Fire Aspect 1
+        if (!level.isClientSide && OreSpawnEnchantHelper.level(stack, level, Enchantments.KNOCKBACK) <= 0) {
+            OreSpawnEnchantHelper.addIfAbsent(stack, level, Enchantments.SHARPNESS, 1);
+            OreSpawnEnchantHelper.addIfAbsent(stack, level, Enchantments.KNOCKBACK, 3);
+            OreSpawnEnchantHelper.addIfAbsent(stack, level, Enchantments.FIRE_ASPECT, 1);
         }
     }
 

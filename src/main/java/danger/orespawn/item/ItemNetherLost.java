@@ -25,9 +25,9 @@ public class ItemNetherLost extends Item {
     public void inventoryTick(ItemStack stack, Level level, Entity entity, int slotId, boolean isSelected) {
         if (level.isClientSide) return;
 
-        // orig ItemNetherLost.java:30,36 — Sharpness (field_77338_j) 2 baked on
-        if (!OreSpawnEnchantHelper.hasAnyEnchantments(stack)) {
-            OreSpawnEnchantHelper.applyEnchantment(stack, level, Enchantments.SHARPNESS, 2);
+        // orig ItemNetherLost.java:33-38 — keyed on Sharpness (field_77338_j): while it reads 0, Sharpness 2
+        if (OreSpawnEnchantHelper.level(stack, level, Enchantments.SHARPNESS) <= 0) {
+            OreSpawnEnchantHelper.addIfAbsent(stack, level, Enchantments.SHARPNESS, 2);
         }
 
         // orig ItemNetherLost.java:50-52 — held item, Nether only (dimension -1),

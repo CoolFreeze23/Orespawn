@@ -33,14 +33,14 @@ public class UltimateBow extends BowItem {
 
     @Override
     public void inventoryTick(ItemStack stack, Level level, Entity entity, int slotId, boolean isSelected) {
-        if (!level.isClientSide && !OreSpawnEnchantHelper.hasAnyEnchantments(stack)) {
-            // orig UltimateBow.java:30-33 — fixed self-enchants Power 5 / Flame 3 /
-            // Punch 2 / Infinity 1. The ultimateBowDamage config scales the ARROW's
-            // base damage instead (orig UltimateArrow.java:157), not the Power level.
-            OreSpawnEnchantHelper.applyEnchantment(stack, level, Enchantments.POWER, 5);
-            OreSpawnEnchantHelper.applyEnchantment(stack, level, Enchantments.FLAME, 3);
-            OreSpawnEnchantHelper.applyEnchantment(stack, level, Enchantments.PUNCH, 2);
-            OreSpawnEnchantHelper.applyEnchantment(stack, level, Enchantments.INFINITY, 1);
+        // orig UltimateBow.java:36-44 — keyed on Infinity: while it reads 0, the fixed Power 5 / Flame 3 / Punch 2 /
+        // Infinity 1. The ultimateBowDamage config scales the ARROW's base damage instead (orig UltimateArrow.java:157),
+        // not the Power level.
+        if (!level.isClientSide && OreSpawnEnchantHelper.level(stack, level, Enchantments.INFINITY) <= 0) {
+            OreSpawnEnchantHelper.addIfAbsent(stack, level, Enchantments.POWER, 5);
+            OreSpawnEnchantHelper.addIfAbsent(stack, level, Enchantments.FLAME, 3);
+            OreSpawnEnchantHelper.addIfAbsent(stack, level, Enchantments.PUNCH, 2);
+            OreSpawnEnchantHelper.addIfAbsent(stack, level, Enchantments.INFINITY, 1);
         }
     }
 
