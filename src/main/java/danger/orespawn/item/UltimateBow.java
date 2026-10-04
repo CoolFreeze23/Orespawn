@@ -20,6 +20,17 @@ public class UltimateBow extends BowItem {
         super(properties);
     }
 
+    /**
+     * orig UltimateBow.java:83-85 — getItemEnchantability 50 (a vanilla bow has 1). It takes the durability set
+     * (Unbreaking, Mending, Curse of Vanishing) at the anvil, and the table offers it Unbreaking while it carries no
+     * enchantment, which its own Power, Flame, Punch and Infinity end on its first tick in an inventory; no bow
+     * enchantments from the table or the anvil, which 1.7.10's plain-Item bows never took there.
+     */
+    @Override
+    public int getEnchantmentValue() {
+        return 50;
+    }
+
     @Override
     public void inventoryTick(ItemStack stack, Level level, Entity entity, int slotId, boolean isSelected) {
         if (!level.isClientSide && !OreSpawnEnchantHelper.hasAnyEnchantments(stack)) {

@@ -1,0 +1,13 @@
+{
+  "replace": false,
+  "values": [
+    "orespawn:ultimate_axe",
+    "orespawn:ruby_axe",
+    "orespawn:amethyst_axe",
+    "orespawn:emerald_axe",
+    "orespawn:crystal_wood_axe",
+    "orespawn:crystal_stone_axe",
+    "orespawn:crystal_pink_axe",
+    "orespawn:tigers_eye_axe"
+  ]
+}

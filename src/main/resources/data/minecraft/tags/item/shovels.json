@@ -1,0 +1,13 @@
+{
+  "replace": false,
+  "values": [
+    "orespawn:ultimate_shovel",
+    "orespawn:ruby_shovel",
+    "orespawn:amethyst_shovel",
+    "orespawn:emerald_shovel",
+    "orespawn:crystal_wood_shovel",
+    "orespawn:crystal_stone_shovel",
+    "orespawn:crystal_pink_shovel",
+    "orespawn:tigers_eye_shovel"
+  ]
+}

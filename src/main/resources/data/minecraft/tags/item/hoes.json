@@ -1,0 +1,13 @@
+{
+  "replace": false,
+  "values": [
+    "orespawn:ultimate_hoe",
+    "orespawn:ruby_hoe",
+    "orespawn:amethyst_hoe",
+    "orespawn:emerald_hoe",
+    "orespawn:crystal_wood_hoe",
+    "orespawn:crystal_stone_hoe",
+    "orespawn:crystal_pink_hoe",
+    "orespawn:tigers_eye_hoe"
+  ]
+}

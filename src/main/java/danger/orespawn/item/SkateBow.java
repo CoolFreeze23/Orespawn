@@ -26,6 +26,16 @@ public class SkateBow extends BowItem {
         super(properties);
     }
 
+    /**
+     * orig SkateBow.java:87-89 — getItemEnchantability 50 (a vanilla bow has 1). It takes the durability set
+     * (Unbreaking, Mending, Curse of Vanishing), so the table offers it Unbreaking as 1.7.10's did; no bow
+     * enchantments from the table or the anvil, which 1.7.10's plain-Item bows never took there.
+     */
+    @Override
+    public int getEnchantmentValue() {
+        return 50;
+    }
+
     @Override
     public void releaseUsing(ItemStack stack, Level level, LivingEntity entityLiving, int timeLeft) {
         if (!(entityLiving instanceof Player player)) return;

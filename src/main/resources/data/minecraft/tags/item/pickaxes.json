@@ -1,0 +1,13 @@
+{
+  "replace": false,
+  "values": [
+    "orespawn:ultimate_pickaxe",
+    "orespawn:ruby_pickaxe",
+    "orespawn:amethyst_pickaxe",
+    "orespawn:emerald_pickaxe",
+    "orespawn:crystal_wood_pickaxe",
+    "orespawn:crystal_stone_pickaxe",
+    "orespawn:crystal_pink_pickaxe",
+    "orespawn:tigers_eye_pickaxe"
+  ]
+}

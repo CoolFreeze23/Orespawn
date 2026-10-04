@@ -1,38 +1,6 @@
 {
   "replace": false,
   "values": [
-    {
-      "id": "orespawn:ruby_spear",
-      "required": false
-    },
-    {
-      "id": "orespawn:amethyst_spear",
-      "required": false
-    },
-    {
-      "id": "orespawn:emerald_spear",
-      "required": false
-    },
-    {
-      "id": "orespawn:ultimate_spear",
-      "required": false
-    },
-    {
-      "id": "orespawn:crystal_pink_spear",
-      "required": false
-    },
-    {
-      "id": "orespawn:tigers_eye_spear",
-      "required": false
-    },
-    {
-      "id": "orespawn:crystal_wood_spear",
-      "required": false
-    },
-    {
-      "id": "orespawn:crystal_stone_spear",
-      "required": false
-    },
     "orespawn:ultimate_helmet",
     "orespawn:mobzilla_helmet",
     "orespawn:lavaeel_helmet",
@@ -88,15 +56,6 @@
     "orespawn:peacock_boots",
     "orespawn:royal_boots",
     "orespawn:lapis_boots",
-    "orespawn:queen_boots",
-    "orespawn:ultimate_bow",
-    "orespawn:skate_bow",
-    "orespawn:ultimate_fishing_rod",
-    "orespawn:ray_gun",
-    "orespawn:squid_zooka",
-    "orespawn:thunder_staff",
-    "orespawn:wrench",
-    "orespawn:sifter",
-    "orespawn:nether_lost"
+    "orespawn:queen_boots"
   ]
 }
