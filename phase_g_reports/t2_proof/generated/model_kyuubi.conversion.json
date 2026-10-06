@@ -5,9 +5,9 @@
   "proof_scope": "production_proof_model",
   "ground_truth": "executed compiled LayerDefinition and baked ModelPart",
   "source_class": "danger.orespawn.entity.client.KyuubiModel",
-  "source_class_sha256": "5dc092b8d86438b7f690d3eb063b7238b1f3509eadc06a2529d37199b3db08d8",
-  "compiled_dump_sha256": "fc615dc4b8220821d8cf829e50ea32bb490efc0a042d34379972d17c91457099",
-  "geometry_sha256": "ffe8b57e319e0b303c4b9ca689798d8fdd1301c3db5bc873f5b346347f9cac97",
+  "source_class_sha256": "6a6fb073ce92c9a4e43b104d4d411491f3820f951f406ae1689cf305bbcb8f5b",
+  "compiled_dump_sha256": "54a2ad2357eec67cacfee603fbc5af8e7ac40b7e1fe497004bb5da337a9321d1",
+  "geometry_sha256": "9a7aa5a16b5a8ba2de12d4b1647f9eb3b43225313f74dfc25973b865f7b709ec",
   "animation_sha256": "7882082857fdb11e02f158ebc3a6d3f970e2ac60d54813f0e903ee97b2293749",
   "animation_contract_sha256": "07244bfa4396c19377194567e26afe99d829de3076c1f13020a154a847f5ddca",
   "bone_count": 42,
@@ -133,6 +133,435 @@
     "ordered_pairs": 861,
     "tie_break": "converter emission order for pairs never drawn together in any capture",
     "lifting": "pre-order over the geo bone tree, siblings by their subtree's first classic draw"
+  },
+  "cube_face_order": {
+    "body": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "bodyFire": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "chest": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "chestFire": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "head": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "headFire": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "lfArmLower": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "lfArmLowerFire": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "lfArmUpper": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "lfArmUpperFire": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "lfHorn1": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "lfHorn2": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "lfHorn3": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "lfHorn4": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "lfHorn5": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "lfLegLower": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "lfLegLowerFire": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "lfLegUpper": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "lfLegUppperFire": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "rtArmLower": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "rtArmLowerFire": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "rtArmUpper": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "rtArmUpperFire": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "rtHorn1": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "rtHorn2": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "rtHorn3": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "rtHorn4": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "rtHorn5": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "rtLegLower": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "rtLegLowerFire": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "rtLegUpper": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "rtLegUpperFire": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "tail0": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "tail1": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "tail2": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "tail3": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "tail4": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "tail5": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "tail6": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "tail7": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "tail8": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "tail9": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ]
+  },
+  "cube_face_order_evidence": {
+    "rule": "NeoForge 21.1.223 ModelPart.Cube.<init> polygon order DOWN, UP, WEST, NORTH, EAST, SOUTH (offsets 365-785: DOWN 365, UP 436, WEST 507, NORTH 578, EAST 649, SOUTH 720), mirror negating the X normals; GeckoLib labels by the direction whose step is the classic normal reflected in X and Y (the entity frame: the classic chain's scale(-1, -1, 1) and the baker's x negation alike, TEST-015)",
+    "cube_bearing_bones": 42,
+    "cubes": 42,
+    "verified_unrotated_cubes_at_bind": 1,
+    "verification": "captured normals (the entity frame) of every cube unrotated at bind equal the rule's, in order; the parity tool's draw-order leg compares the per-quad normal sequences of both renderers on every capture"
   },
   "animation_contract": {
     "schema_version": 1,

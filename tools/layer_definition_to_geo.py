@@ -928,6 +928,30 @@ def classic_face_normals(mirror: bool) -> list[tuple[float, float, float]]:
     return normals
 
 
+def capture_rotation(render_transform: dict[str, Any] | None):
+    """The map a declared render transform applies to an entity-frame normal of the capture: the descriptor's
+    mulPose about X, then Y, then Z (M = Rx Ry Rz, the classic renderToBuffer's own order) conjugated into the entity
+    frame F = diag(-1, -1, 1); the identity when none is declared. Rounded to six places, as the captured normals are."""
+    if not render_transform:
+        return lambda normal: normal
+    ax, ay, az = (math.radians(float(v)) for v in render_transform["rotation_degrees_xyz"])
+    rx = ((1, 0, 0), (0, math.cos(ax), -math.sin(ax)), (0, math.sin(ax), math.cos(ax)))
+    ry = ((math.cos(ay), 0, math.sin(ay)), (0, 1, 0), (-math.sin(ay), 0, math.cos(ay)))
+    rz = ((math.cos(az), -math.sin(az), 0), (math.sin(az), math.cos(az), 0), (0, 0, 1))
+
+    def mul(a, b):
+        return tuple(tuple(sum(a[i][k] * b[k][j] for k in range(3)) for j in range(3)) for i in range(3))
+
+    f = ((-1, 0, 0), (0, -1, 0), (0, 0, 1))
+    m = mul(mul(f, mul(mul(rx, ry), rz)), f)  # F M F^-1, F its own inverse
+
+    def apply(normal):
+        out = tuple(round(sum(m[i][k] * normal[k] for k in range(3)), 6) for i in range(3))
+        return tuple(0.0 if v == 0 else v for v in out)
+
+    return apply
+
+
 def derive_cube_face_order(compiled: dict[str, Any], bones: list[dict[str, Any]],
                            mirror_flags: dict[str, list[bool]],
                            unrotated_at_bind: set[str]) -> tuple[dict[str, list[list[str]]], dict[str, Any]]:
@@ -951,6 +975,11 @@ def derive_cube_face_order(compiled: dict[str, Any], bones: list[dict[str, Any]]
         order[bone["name"]] = [classic_face_labels(mirror) for mirror in flags]
     bind = next((sample for sample in compiled["samples"]
                  if sample["id"] == "bind" and sample.get("capture_kind") == "full"), None)
+    # A rig with a constant render transform (TEST-013: the classic renderToBuffer's own mulPose, the descriptor's
+    # renderTransform) has its capture taken through it, so the rule's normals are carried through the same rotation
+    # before they are compared: the capture is in the entity frame F = diag(-1, -1, 1), so the rotation R of the model
+    # frame acts there as F R F^-1.
+    turn = capture_rotation(compiled.get("render_transform"))
     verified = 0
     if bind is not None:
         for cube in bind["cubes"]:
@@ -967,7 +996,7 @@ def derive_cube_face_order(compiled: dict[str, Any], bones: list[dict[str, Any]]
                 if len(normals) != 1:
                     raise ValueError(f"{compiled['model_id']}: {bone_name} quad vertices disagree on the normal")
                 captured.append(next(iter(normals)))
-            expected = classic_face_normals(mirror)
+            expected = [turn(normal) for normal in classic_face_normals(mirror)]
             if captured != expected:
                 raise ValueError(
                     f"FINDING {compiled['model_id']}: {bone_name} cube {cube['cube_index']} emits its faces with normals "

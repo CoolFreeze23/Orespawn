@@ -41,6 +41,9 @@ public final class TriffidGeoReplacement extends OreSpawnGeoReplacement<EntityTr
             ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "animations/entity/triffid.animation.json"),
             ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "textures/entity/triffid.png"),
             TriffidRenderer.SHADOW) {
+        /** TriffidModel.renderToBuffer's YP -90 (orig ModelTriffid.java:1404; ENT-S-162), which no bone of the rig can pose. */
+        @Override public RenderTransform renderTransform() { return RenderTransform.rotationDegrees(0.0F, -90.0F, 0.0F); }
+
         /**
          * A rig with zero-thickness cubes (the eleven leaf tips c1-c11, 0 x 5 x 2): the shipped geo carries the classic
          * within-cube face order ({@link FaceOrder#KEY}; TEST-007) and the seam expects it.

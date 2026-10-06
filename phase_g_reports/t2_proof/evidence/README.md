@@ -315,7 +315,9 @@ The independent gates are:
 
 - Accepted path: production OreSpawnGeoReplacement.applyCustomAnimations through OreSpawnGeoReplacementModel.setCustomAnimations (`danger.orespawn.entity.client.GammaMetroidGeoReplacement`).
 - Rotation maximum delta 0 radians; position maximum delta 0 model units over 378 position channels; inputs {'limb_swing': 0.0, 'limb_swing_amounts': [0.0], 'net_head_yaw_degrees': 0.0, 'head_pitch_degrees': 0.0}.
-- Visual z-fight pixels compared, none excluded (G2 root-order contract): maximum contested fraction 0.000732421875, a diagnostic. Pair-contested pixels (the same two front faces on both sides within 1e-05 blocks) never a mismatch: maximum fraction 0 under the cap 0.01.
+- Visual z-fight pixels compared, none excluded (G2 root-order contract): maximum contested fraction 0.000762939453125, a diagnostic. Pair-contested pixels (the same two front faces on both sides within 1e-05 blocks) never a mismatch: maximum fraction 0 under the cap 0.01.
+- Render mode: entity_translucent (vertex colour (255, 255, 255, 255), light world): blend SRC_ALPHA / ONE_MINUS_SRC_ALPHA / ONE / ONE_MINUS_SRC_ALPHA over the background in emission order, LEQUAL depth test with the depth written (fragments within 1e-05 blocks are one plane and all pass), texel alpha < 0.1 discarded; the same emulation on both sides.
+- Render state observed: both sides request entity_translucent (RenderType.entityTranslucent, the classic model's own render-type function - the same object on the candidate), vertex colour (255, 255, 255, 255) and packed light 0 at every captured vertex (3024 classic + 3024 candidate).
 
 ## model_irukandji (Tier 2)
 
@@ -477,15 +479,17 @@ The independent gates are:
 ## model_kyuubi (Tier 2)
 
 - Exact bones: 42; cubes: 42.
-- Geometry maximum corner delta: 4.09351927059e-07 blocks (epsilon 1e-05).
-- Surface maximum UV delta: 0; normal delta: 1.72207755708e-07.
+- Geometry maximum corner delta: 4.49999999819e-07 blocks (epsilon 1e-05).
+- Surface maximum UV delta: 0; normal delta: 2.19822757245e-07.
 - Animation maximum rotation delta: 0 radians (epsilon 2e-06).
 - Visual maximum changed fraction: 0; maximum mean absolute error: 0; maximum pair-contested fraction: 0 (never a mismatch; cap 0.01).
 - Draw order: GeckoLib bone order equals the classic draw order over 21 captures (882 draws).
 
 - Accepted path: production OreSpawnGeoReplacement.applyCustomAnimations through OreSpawnGeoReplacementModel.setCustomAnimations (`danger.orespawn.entity.client.KyuubiGeoReplacement`).
 - Rotation maximum delta 0 radians; position maximum delta 1.00000000103e-06 model units over 2646 position channels; inputs {'limb_swing': 0.0, 'limb_swing_amounts': [0.0, 0.25, 0.5, 1.0], 'net_head_yaw_degrees': 30.0, 'head_pitch_degrees': 10.0}.
-- Visual z-fight pixels compared, none excluded (G2 root-order contract): maximum contested fraction 0.0010986328125, a diagnostic. Pair-contested pixels (the same two front faces on both sides within 1e-05 blocks) never a mismatch: maximum fraction 0 under the cap 0.01.
+- Visual z-fight pixels compared, none excluded (G2 root-order contract): maximum contested fraction 0.00642395019531, a diagnostic. Pair-contested pixels (the same two front faces on both sides within 1e-05 blocks) never a mismatch: maximum fraction 0 under the cap 0.01.
+- Render mode: entity_translucent (vertex colour (255, 255, 255, 255), light world): blend SRC_ALPHA / ONE_MINUS_SRC_ALPHA / ONE / ONE_MINUS_SRC_ALPHA over the background in emission order, LEQUAL depth test with the depth written (fragments within 1e-05 blocks are one plane and all pass), texel alpha < 0.1 discarded; the same emulation on both sides.
+- Render state observed: both sides request entity_translucent (RenderType.entityTranslucent, the classic model's own render-type function - the same object on the candidate), vertex colour (255, 255, 255, 255) and packed light 0 at every captured vertex (21168 classic + 21168 candidate).
 
 ## model_leafmonster (Tier 2)
 
@@ -960,15 +964,15 @@ The independent gates are:
 ## model_triffid (Tier 2)
 
 - Exact bones: 178; cubes: 178.
-- Geometry maximum corner delta: 8.12165383183e-07 blocks (epsilon 1e-05).
-- Surface maximum UV delta: 0; normal delta: 2.8287099534e-07.
+- Geometry maximum corner delta: 1.0198529303e-06 blocks (epsilon 1e-05).
+- Surface maximum UV delta: 0; normal delta: 3.32710084028e-07.
 - Animation maximum rotation delta: 0 radians (epsilon 2e-06).
 - Visual maximum changed fraction: 0; maximum mean absolute error: 0; maximum pair-contested fraction: 0 (never a mismatch; cap 0.01).
 - Draw order: GeckoLib bone order equals the classic draw order over 16 captures (2848 draws).
 
 - Accepted path: production OreSpawnGeoReplacement.applyCustomAnimations posed from declared entity states through the entity's pose interface; compiled poseFrom on the same states (`danger.orespawn.entity.client.TriffidGeoReplacement`).
 - Entity states: ['idle', 'open', 'attacking']; rotation maximum delta 0 radians; position maximum delta 2.99999999953e-06 model units; hidden-bone checks 15.
-- Visual z-fight pixels compared, none excluded (G2 root-order contract): maximum contested fraction 0.00341796875, a diagnostic. Pair-contested pixels (the same two front faces on both sides within 1e-05 blocks) never a mismatch: maximum fraction 0 under the cap 0.01.
+- Visual z-fight pixels compared, none excluded (G2 root-order contract): maximum contested fraction 0.00587463378906, a diagnostic. Pair-contested pixels (the same two front faces on both sides within 1e-05 blocks) never a mismatch: maximum fraction 0 under the cap 0.01.
 
 ## model_emperorscorpion (Tier 1)
 

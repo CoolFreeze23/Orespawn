@@ -4,10 +4,13 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import danger.orespawn.ModEntities;
 import danger.orespawn.OreSpawnMod;
 import danger.orespawn.entity.EntityGammaMetroid;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import software.bernie.geckolib.animation.AnimationProcessor;
+
+import java.util.function.Function;
 
 /**
  * GeckoLib Gamma Metroid (the third Tier-2 slice, 2026-09-13): {@link GammaMetroidModel#setupAnim} verbatim on the
@@ -37,6 +40,22 @@ public final class GammaMetroidGeoReplacement extends OreSpawnGeoReplacement<Ent
                 return;
             }
             poseStack.scale(GammaMetroidRenderer.SCALE, GammaMetroidRenderer.SCALE, GammaMetroidRenderer.SCALE);
+        }
+
+        /** The classic model's render type, handed over by identity: entity_translucent (orig ModelGammaMetroid's GL_BLEND). */
+        @Override
+        public Function<ResourceLocation, RenderType> renderType(EntityGammaMetroid entity) {
+            return GammaMetroidModel.RENDER_TYPE;
+        }
+
+        /**
+         * A blending rig (entity_translucent): the order a cube's six faces are emitted in is visible in the blend, so the
+         * shipped geo carries the classic within-cube order ({@link FaceOrder#KEY}; ENT-S-146, the Ghost form) and the
+         * seam expects it.
+         */
+        @Override
+        public boolean cubeFaceOrderRequired() {
+            return true;
         }
     };
 

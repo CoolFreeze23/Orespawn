@@ -8,8 +8,6 @@
         "texture_height": 64,
         "orespawn:bone_draw_order": [
           "core",
-          "shell1",
-          "shell2",
           "shell3",
           "shell4",
           "head",
@@ -27,8 +25,222 @@
           "rrupperleg",
           "rrlowerleg",
           "bellyinside",
+          "shell1",
+          "shell2",
           "bellyoutside"
-        ]
+        ],
+        "orespawn:cube_face_order": {
+          "beaklower": [
+            [
+              "up",
+              "down",
+              "east",
+              "north",
+              "west",
+              "south"
+            ]
+          ],
+          "beakupper": [
+            [
+              "up",
+              "down",
+              "east",
+              "north",
+              "west",
+              "south"
+            ]
+          ],
+          "bellyinside": [
+            [
+              "up",
+              "down",
+              "east",
+              "north",
+              "west",
+              "south"
+            ]
+          ],
+          "bellyoutside": [
+            [
+              "up",
+              "down",
+              "east",
+              "north",
+              "west",
+              "south"
+            ]
+          ],
+          "core": [
+            [
+              "up",
+              "down",
+              "east",
+              "north",
+              "west",
+              "south"
+            ]
+          ],
+          "head": [
+            [
+              "up",
+              "down",
+              "east",
+              "north",
+              "west",
+              "south"
+            ]
+          ],
+          "lefttusk": [
+            [
+              "up",
+              "down",
+              "east",
+              "north",
+              "west",
+              "south"
+            ]
+          ],
+          "lflowerleg": [
+            [
+              "up",
+              "down",
+              "east",
+              "north",
+              "west",
+              "south"
+            ]
+          ],
+          "lfupperleg": [
+            [
+              "up",
+              "down",
+              "east",
+              "north",
+              "west",
+              "south"
+            ]
+          ],
+          "lrlowerleg": [
+            [
+              "up",
+              "down",
+              "east",
+              "north",
+              "west",
+              "south"
+            ]
+          ],
+          "lrupperleg": [
+            [
+              "up",
+              "down",
+              "east",
+              "north",
+              "west",
+              "south"
+            ]
+          ],
+          "middletusk": [
+            [
+              "up",
+              "down",
+              "east",
+              "north",
+              "west",
+              "south"
+            ]
+          ],
+          "rflowerleg": [
+            [
+              "up",
+              "down",
+              "east",
+              "north",
+              "west",
+              "south"
+            ]
+          ],
+          "rfupperleg": [
+            [
+              "up",
+              "down",
+              "east",
+              "north",
+              "west",
+              "south"
+            ]
+          ],
+          "righttusk": [
+            [
+              "up",
+              "down",
+              "east",
+              "north",
+              "west",
+              "south"
+            ]
+          ],
+          "rrlowerleg": [
+            [
+              "up",
+              "down",
+              "east",
+              "north",
+              "west",
+              "south"
+            ]
+          ],
+          "rrupperleg": [
+            [
+              "up",
+              "down",
+              "east",
+              "north",
+              "west",
+              "south"
+            ]
+          ],
+          "shell1": [
+            [
+              "up",
+              "down",
+              "east",
+              "north",
+              "west",
+              "south"
+            ]
+          ],
+          "shell2": [
+            [
+              "up",
+              "down",
+              "east",
+              "north",
+              "west",
+              "south"
+            ]
+          ],
+          "shell3": [
+            [
+              "up",
+              "down",
+              "east",
+              "north",
+              "west",
+              "south"
+            ]
+          ],
+          "shell4": [
+            [
+              "up",
+              "down",
+              "east",
+              "north",
+              "west",
+              "south"
+            ]
+          ]
+        }
       },
       "bones": [
         {

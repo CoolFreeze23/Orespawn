@@ -7,7 +7,11 @@ import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
+
+import java.util.function.Function;
 /**
  * BUG-041 stage 2 (2026-09-13): the 1.7.10 export sets {@code mirror = true} AFTER {@code addBox} (orig ModelGammaMetroid.java:
  * 21 stores, all inert - 1.7.10's ModelBox reads the flag in its constructor, law 11 from Mojang's 1.7.10 jar),
@@ -24,7 +28,15 @@ public class GammaMetroidModel<T extends EntityGammaMetroid> extends EntityModel
     private final ModelPart lfUpperLeg, lfLowerLeg, lrUpperLeg, lrLowerLeg;
     private final ModelPart rfUpperLeg, rfLowerLeg, rrUpperLeg, rrLowerLeg;
 
+    /**
+     * orig ModelGammaMetroid.java:209-210: GL_BLEND on, glBlendFunc(SRC_ALPHA, ONE_MINUS_SRC_ALPHA), around every part
+     * (:211-231), so the texture's semi-transparent texels (768 of the 13,542 drawn) are
+     * drawn see-through. The GeckoLib descriptor hands over this very object (the GhostModel form).
+     */
+    public static final Function<ResourceLocation, RenderType> RENDER_TYPE = RenderType::entityTranslucent;
+
     public GammaMetroidModel(ModelPart root) {
+        super(RENDER_TYPE);
         this.shell1 = root.getChild("shell1");
         this.shell2 = root.getChild("shell2");
         this.shell3 = root.getChild("shell3");
@@ -89,9 +101,9 @@ public class GammaMetroidModel<T extends EntityGammaMetroid> extends EntityModel
 
     @Override
     public void renderToBuffer(PoseStack ps, VertexConsumer vc, int light, int overlay, int color) {
+        // the original's part order (orig ModelGammaMetroid.java:211-231: Core, Shell3, Shell4, Head ... Bellyinside, Shell1,
+        // Shell2, Bellyoutside): under blending the order the parts are drawn in shows
         core.render(ps, vc, light, overlay, color);
-        shell1.render(ps, vc, light, overlay, color);
-        shell2.render(ps, vc, light, overlay, color);
         shell3.render(ps, vc, light, overlay, color);
         shell4.render(ps, vc, light, overlay, color);
         head.render(ps, vc, light, overlay, color);
@@ -109,6 +121,8 @@ public class GammaMetroidModel<T extends EntityGammaMetroid> extends EntityModel
         rrUpperLeg.render(ps, vc, light, overlay, color);
         rrLowerLeg.render(ps, vc, light, overlay, color);
         bellyInside.render(ps, vc, light, overlay, color);
+        shell1.render(ps, vc, light, overlay, color);
+        shell2.render(ps, vc, light, overlay, color);
         bellyOutside.render(ps, vc, light, overlay, color);
     }
 }

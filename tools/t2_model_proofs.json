@@ -1677,6 +1677,19 @@
         "yaw_degrees": 34.0,
         "pitch_degrees": -28.0
       },
+      "cube_face_order": "classic",
+      "face_order_note": "the GitHub #7 slice (2026-10-07): the 1.7.10 model draws every part under GL_BLEND (orig ModelGammaMetroid.java:209-210) and 768 of the texture's 13,542 drawn texels are semi-transparent, so the rig draws under a BLENDING visual mode (entity_translucent, below), where the order a cube's six faces are emitted in is visible in the blend, and vanilla's ModelPart.Cube and GeckoLib's buildQuads emit a cube's faces in different orders, so the shipped geo carries the classic within-cube order under orespawn:cube_face_order (the FaceOrder contract, ENT-S-146; the harness refuses a blending rig whose generated geo carries none), the seam permutes every cube's quads into it (FaceOrder.apply) and the draw-order leg compares the per-quad normal sequences of both renderers on every capture; the descriptor requires the key",
+      "visual_mode": {
+        "render_type": "entity_translucent",
+        "vertex_color": [
+          255,
+          255,
+          255,
+          255
+        ],
+        "light": "world",
+        "note": "GammaMetroidRenderer draws GammaMetroidModel.RENDER_TYPE applied to the texture (RenderType::entityTranslucent - the gammametroid.png alpha honoured, the 1.7.10 GL_BLEND look, orig ModelGammaMetroid.java:209-210, the parts in the original's order :211-231) and the descriptor hands back the same function by identity; white vertices and the world's light on both sides; the rasteriser blends over the background in emission order with the depth written (LEQUAL), the same on both sides"
+      },
       "channels": [],
       "hook_note": "the third Tier-2 slice: a HOOK rig - the shipped pose is the classic setupAnim verbatim in the descriptor's applyCustomAnimations(processor, PoseInputs); no keyframe layer, no transcription, no clip manifest (the self-gate stays closed until an artist delivers idle and walk); channels [] because tools/layer_definition_to_geo.py refuses channels on a code_driven / entity_state entry without a keyframe_reference_leg - the reference-clip sampler's span comes from its RULES row for this id (ReferenceClipSampler.RULES, the source lines cited); the animation leg proves the hook at 0 rad against the classic model at the same inputs on every sample"
     },
@@ -2548,6 +2561,19 @@
       "camera": {
         "yaw_degrees": 34.0,
         "pitch_degrees": -28.0
+      },
+      "cube_face_order": "classic",
+      "face_order_note": "the GitHub #7 slice (2026-10-07): the 1.7.10 model draws every part under GL_BLEND (orig ModelKyuubi.java:428-430) and the flame shell's texels carry alpha 154-158, so the rig draws under a BLENDING visual mode (entity_translucent, below), where the order a cube's six faces are emitted in is visible in the blend, and vanilla's ModelPart.Cube and GeckoLib's buildQuads emit a cube's faces in different orders, so the shipped geo carries the classic within-cube order under orespawn:cube_face_order (the FaceOrder contract, ENT-S-146; the harness refuses a blending rig whose generated geo carries none), the seam permutes every cube's quads into it (FaceOrder.apply) and the draw-order leg compares the per-quad normal sequences of both renderers on every capture; the descriptor requires the key",
+      "visual_mode": {
+        "render_type": "entity_translucent",
+        "vertex_color": [
+          255,
+          255,
+          255,
+          255
+        ],
+        "light": "world",
+        "note": "KyuubiRenderer draws KyuubiModel.RENDER_TYPE applied to the texture (RenderType::entityTranslucent - the kyuubi.png alpha honoured, the 1.7.10 GL_BLEND look, orig ModelKyuubi.java:428-430) and the descriptor hands back the same function by identity; white vertices and the world's light on both sides; the rasteriser blends over the background in emission order with the depth written (LEQUAL), the same on both sides"
       },
       "channels": [],
       "hook_note": "the fourth Tier-2 slice (T2d - on the hook already written): a HOOK rig - the shipped pose is the classic setupAnim verbatim in the descriptor's applyCustomAnimations(processor, PoseInputs); no keyframe layer, no transcription, no clip manifest (the self-gate stays closed until an artist delivers idle and walk); channels [] because tools/layer_definition_to_geo.py refuses channels on a code_driven / entity_state entry without a keyframe_reference_leg - the reference-clip sampler's span comes from its RULES row for this id (ReferenceClipSampler.RULES, the source lines cited; the row the hook survey wrote as its HOOK_RULES row, carried unchanged); the animation leg proves the hook at 0 rad against the classic model at the same inputs on every sample"

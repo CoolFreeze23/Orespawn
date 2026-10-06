@@ -5,9 +5,9 @@
   "proof_scope": "production_proof_model",
   "ground_truth": "executed compiled LayerDefinition and baked ModelPart",
   "source_class": "danger.orespawn.entity.client.GammaMetroidModel",
-  "source_class_sha256": "9e56c7f10e90879aa9dff1fecff42698c21c31e95f26e4198ddf34ae9a56ae65",
-  "compiled_dump_sha256": "e5fc72973516d21f69757de2c8cf9e1da91bcc950e01363b12c1e7d114395c15",
-  "geometry_sha256": "622905d4a39420dfdd4520870e697634233a447966c23298bf913925aac571b5",
+  "source_class_sha256": "87082ce84b32c61bd9c0f2455147960ac67f7243e35f7bb12d0777ef6f90ad26",
+  "compiled_dump_sha256": "fdc07789e01be69a185fa2a4b769065dfaa6414a5531a525a5e1c5d68b7e3dc2",
+  "geometry_sha256": "222e69e92b1b6e750af47ced6e1f6249ada0761720fb82d636319d6795bfea5f",
   "animation_sha256": "7882082857fdb11e02f158ebc3a6d3f970e2ac60d54813f0e903ee97b2293749",
   "animation_contract_sha256": "7f7070a9a5b7ba682612858dc934a8f771aa3b9ccb8ca55d698da13cd8fd03d1",
   "bone_count": 21,
@@ -39,8 +39,6 @@
   ],
   "bone_draw_order": [
     "core",
-    "shell1",
-    "shell2",
     "shell3",
     "shell4",
     "head",
@@ -58,6 +56,8 @@
     "rrupperleg",
     "rrlowerleg",
     "bellyinside",
+    "shell1",
+    "shell2",
     "bellyoutside"
   ],
   "draw_order_evidence": {
@@ -76,6 +76,225 @@
     "ordered_pairs": 210,
     "tie_break": "converter emission order for pairs never drawn together in any capture",
     "lifting": "pre-order over the geo bone tree, siblings by their subtree's first classic draw"
+  },
+  "cube_face_order": {
+    "beaklower": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "beakupper": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "bellyinside": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "bellyoutside": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "core": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "head": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "lefttusk": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "lflowerleg": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "lfupperleg": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "lrlowerleg": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "lrupperleg": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "middletusk": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "rflowerleg": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "rfupperleg": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "righttusk": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "rrlowerleg": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "rrupperleg": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "shell1": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "shell2": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "shell3": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ],
+    "shell4": [
+      [
+        "up",
+        "down",
+        "east",
+        "north",
+        "west",
+        "south"
+      ]
+    ]
+  },
+  "cube_face_order_evidence": {
+    "rule": "NeoForge 21.1.223 ModelPart.Cube.<init> polygon order DOWN, UP, WEST, NORTH, EAST, SOUTH (offsets 365-785: DOWN 365, UP 436, WEST 507, NORTH 578, EAST 649, SOUTH 720), mirror negating the X normals; GeckoLib labels by the direction whose step is the classic normal reflected in X and Y (the entity frame: the classic chain's scale(-1, -1, 1) and the baker's x negation alike, TEST-015)",
+    "cube_bearing_bones": 21,
+    "cubes": 21,
+    "verified_unrotated_cubes_at_bind": 1,
+    "verification": "captured normals (the entity frame) of every cube unrotated at bind equal the rule's, in order; the parity tool's draw-order leg compares the per-quad normal sequences of both renderers on every capture"
   },
   "animation_contract": {
     "schema_version": 1,

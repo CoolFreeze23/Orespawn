@@ -608,7 +608,9 @@ public class T2SeamTests {
                 new HookSpecies("cloud_shark", new CloudSharkGeoReplacement(), "cloudshark", 0.5F, true, null, "leftfin"),
                 new HookSpecies("bee", new BeeGeoReplacement(), "bee", BeeRenderer.SHADOW, true, rest, "WingLeft"),
                 new HookSpecies("fairy", new FairyGeoReplacement(), "fairy", FairyRenderer.SHADOW, true, null, "lwing1"),
-                new HookSpecies("gamma_metroid", new GammaMetroidGeoReplacement(), "gammametroid", GammaMetroidRenderer.SHADOW, false, null, "lefttusk"),
+                // the Gamma Metroid and the Kyuubi draw blended (orig ModelGammaMetroid.java:209-210, ModelKyuubi.java:428-430):
+                // translucent, so the classic face order (GitHub #7)
+                new HookSpecies("gamma_metroid", new GammaMetroidGeoReplacement(), "gammametroid", GammaMetroidRenderer.SHADOW, true, null, "lefttusk"),
                 new HookSpecies("irukandji", new IrukandjiGeoReplacement(), "irukandji", IrukandjiRenderer.SHADOW, false, null, "t11"),
                 new HookSpecies("skate", new SkateGeoReplacement(), "skate", SkateRenderer.SHADOW, false, null, "Shape1"),
                 new HookSpecies("rubber_ducky", new RubberDuckyGeoReplacement(), "rubberducky", RubberDuckyRenderer.SHADOW, false, null, "lwing"),
@@ -676,7 +678,8 @@ public class T2SeamTests {
         return List.of(
                 // the Crab: the eight leg poses land on the explicit-form clones (leg1__i0 is draw 0, the left side's front leg)
                 new HookSpecies("crab", new CrabGeoReplacement(), "crab", CrabRenderer.SHADOW, false, rest, "leg1__i0"),
-                new HookSpecies("kyuubi", new KyuubiGeoReplacement(), "kyuubi", KyuubiRenderer.SHADOW, false, null, "tail1"),
+                // the Kyuubi draws blended (orig ModelKyuubi.java:428-430): translucent, so the classic face order (GitHub #7)
+                new HookSpecies("kyuubi", new KyuubiGeoReplacement(), "kyuubi", KyuubiRenderer.SHADOW, true, null, "tail1"),
                 // the Leaf Monster at rest is the still bush (every rotation 0): the attacking branch moves its legs
                 new HookSpecies("leaf_monster", new LeafMonsterGeoReplacement(), "leafmonster", LeafMonsterRenderer.SHADOW, false, attacking, "lleg"),
                 // AlosaurusRenderer's constructor passes the literal 1.0f (no SHADOW constant)

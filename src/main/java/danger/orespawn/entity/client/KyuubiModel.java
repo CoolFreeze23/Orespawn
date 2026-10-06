@@ -2,12 +2,17 @@ package danger.orespawn.entity.client;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.math.Axis;
 import danger.orespawn.entity.EntityKyuubi;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
+
+import java.util.function.Function;
 
 public class KyuubiModel extends EntityModel<EntityKyuubi> {
     /** Animation frequency constant; orig ModelKyuubi.java:15,60 (wingspeed), value from orig ClientProxyOreSpawn.java:432. */
@@ -55,7 +60,15 @@ public class KyuubiModel extends EntityModel<EntityKyuubi> {
     private final ModelPart rtLegUpperFire;
     private final ModelPart rtLegLowerFire;
 
+    /**
+     * orig ModelKyuubi.java:428-430: GL_BLEND on, glBlendFunc(SRC_ALPHA, ONE_MINUS_SRC_ALPHA), around every part, so the
+     * flame shell (the *Fire parts; their texels carry alpha 154-158) is drawn see-through over the figure inside it.
+     * The GeckoLib descriptor hands over this very object (the GhostModel form).
+     */
+    public static final Function<ResourceLocation, RenderType> RENDER_TYPE = RenderType::entityTranslucent;
+
     public KyuubiModel(ModelPart root) {
+        super(RENDER_TYPE);
         this.rtHorn5 = root.getChild("rtHorn5");
         this.lfHorn5 = root.getChild("lfHorn5");
         this.tail9 = root.getChild("tail9");
@@ -429,6 +442,9 @@ public class KyuubiModel extends EntityModel<EntityKyuubi> {
 
     @Override
     public void renderToBuffer(PoseStack poseStack, VertexConsumer vertexConsumer, int packedLight, int packedOverlay, int color) {
+        poseStack.pushPose();
+        // orig ModelKyuubi.java:432: glRotatef(180, 0, 1, 0) before the part list (:434-475); the rig faces +z without it
+        poseStack.mulPose(Axis.YP.rotationDegrees(180.0F));
         this.lfLegLower.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
         this.rtLegLower.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
         this.head.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
@@ -471,5 +487,6 @@ public class KyuubiModel extends EntityModel<EntityKyuubi> {
         this.lfLegLowerFire.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
         this.rtLegUpperFire.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
         this.rtLegLowerFire.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        poseStack.popPose();
     }
 }

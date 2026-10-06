@@ -3,10 +3,13 @@ package danger.orespawn.entity.client;
 import danger.orespawn.ModEntities;
 import danger.orespawn.OreSpawnMod;
 import danger.orespawn.entity.EntityKyuubi;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import software.bernie.geckolib.animation.AnimationProcessor;
+
+import java.util.function.Function;
 
 /**
  * GeckoLib Kyuubi (the hook survey, landed by the fourth Tier-2 slice T2d): {@link KyuubiModel#setupAnim} verbatim
@@ -37,6 +40,24 @@ public final class KyuubiGeoReplacement extends OreSpawnGeoReplacement<EntityKyu
             ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "animations/entity/kyuubi.animation.json"),
             ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "textures/entity/kyuubi.png"),
             KyuubiRenderer.SHADOW) {
+        /** KyuubiModel.renderToBuffer's YP 180 (orig ModelKyuubi.java:432), which no bone of the converted rig can pose. */
+        @Override public RenderTransform renderTransform() { return RenderTransform.rotationDegrees(0.0F, 180.0F, 0.0F); }
+
+        /** The classic model's render type, handed over by identity: entity_translucent (orig ModelKyuubi.java:428-430). */
+        @Override
+        public Function<ResourceLocation, RenderType> renderType(EntityKyuubi entity) {
+            return KyuubiModel.RENDER_TYPE;
+        }
+
+        /**
+         * A blending rig (entity_translucent): the order a cube's six faces are emitted in is visible in the blend, so the
+         * shipped geo carries the classic within-cube order ({@link FaceOrder#KEY}; ENT-S-146, the Ghost form) and the
+         * seam expects it.
+         */
+        @Override
+        public boolean cubeFaceOrderRequired() {
+            return true;
+        }
     };
 
     public KyuubiGeoReplacement() {

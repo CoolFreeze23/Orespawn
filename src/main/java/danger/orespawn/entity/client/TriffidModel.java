@@ -2,6 +2,7 @@ package danger.orespawn.entity.client;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.math.Axis;
 import danger.orespawn.entity.EntityTriffid;
 import danger.orespawn.entity.pose.TriffidPose;
 import net.minecraft.client.model.EntityModel;
@@ -1418,6 +1419,10 @@ public class TriffidModel extends EntityModel<EntityTriffid> {
 
     @Override
     public void renderToBuffer(PoseStack poseStack, VertexConsumer vertexConsumer, int packedLight, int packedOverlay, int color) {
+        poseStack.pushPose();
+        // orig ModelTriffid.java:1401-1405: glPushMatrix, glRotatef(-90, 0, 1, 0) before the part list (:1406-1583) and
+        // glPopMatrix after it (:1584); ENT-S-162
+        poseStack.mulPose(Axis.YP.rotationDegrees(-90.0F));
         this.r9.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
         this.b14.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
         this.base.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
@@ -1596,6 +1601,7 @@ public class TriffidModel extends EntityModel<EntityTriffid> {
         this.l16.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
         this.l44.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
         this.root.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        poseStack.popPose();
     }
 
     private void leafpartA(float newangle, ModelPart l1, ModelPart l2, int j) {
