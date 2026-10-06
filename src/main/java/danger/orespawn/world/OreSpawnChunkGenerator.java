@@ -293,6 +293,9 @@ public class OreSpawnChunkGenerator extends NoiseBasedChunkGenerator {
 
     @Override
     public void applyBiomeDecoration(WorldGenLevel level, ChunkAccess chunk, StructureManager structureManager) {
+        // BUG-021: the blocks a neighbour's decoration kept for this chunk (DeferredWrites), laid before its own
+        // decoration, as the original's neighbour wrote them into this chunk before it populated
+        DeferredWrites.applyPending(level, chunk.getPos());
         super.applyBiomeDecoration(level, chunk, structureManager);
 
         // Decoration (as opposed to buildSurface) runs after neighboring

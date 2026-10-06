@@ -26,16 +26,13 @@ import net.minecraft.world.level.storage.loot.LootTable;
  * OreSpawnWorld, GenericDungeon, and Trees classes.
  *
  * <p>Invocation: called from {@link OreSpawnChunkGenerator#applyBiomeDecoration}
- * (NOT {@code buildSurface}). NOTE (BUG-021): decoration-phase placement does
- * NOT fully prevent chunk-border truncation — the {@code WorldGenRegion} only
- * accepts block writes within a 1-chunk radius of the decorated chunk, and
- * silently drops anything farther. Structures whose geometry fits ~24 blocks
- * from the anchor are safe (battle tower, rotator, haunted house, maze bits);
- * FairyCastleTree can reach ~25-42 blocks and gets sheared — its conversion to
- * the LegacyDungeonStructure pipeline is tracked in BUG-021 (pending
- * sign-off). The live-tick DSB adapters write to a ServerLevel and are
- * unaffected. {@link #safeSetBlock} warns when a write is dropped so any
- * truncation is observable in the log.</p>
+ * (NOT {@code buildSurface}). BUG-021 (GitHub #6): the {@code WorldGenRegion}
+ * accepts block writes only within a 1-chunk radius of the decorated chunk, and
+ * a FairyCastleTree reaches 25-42 blocks from its trunk; the builders' writes go
+ * through {@link DeferredWrites}, which keeps a write beyond that radius for its
+ * chunk and lays it there at that chunk's own decoration, or on the server thread
+ * once a finished chunk is loaded, so the tree is no longer sheared. The live-tick
+ * DSB adapters write to a ServerLevel and are unaffected.</p>
  *
  * <p>1.21.1 paradigm notes:</p>
  * <ul>
@@ -309,10 +306,8 @@ public class CrystalStructures {
         for (int l1 = -2; l1 <= 2; l1++) {
             for (int l2 = -2; l2 <= 2; l2++) {
                 for (int l3 = 0; l3 <= 1; l3++) {
-                    BlockPos pos = new BlockPos(x + l1, y + l3, z + l2);
-                    if (level.getBlockState(pos).isAir()) {
-                        level.setBlock(pos, leaves3, 2);
-                    }
+                    // only on air, as the original's leaves; kept for its chunk when that chunk may not be written now
+                    DeferredWrites.setBlock(level, new BlockPos(x + l1, y + l3, z + l2), leaves3, true);
                 }
             }
         }
@@ -324,10 +319,8 @@ public class CrystalStructures {
         for (int l1 = -1; l1 <= 1; l1++) {
             for (int l2 = -1; l2 <= 1; l2++) {
                 for (int l3 = 0; l3 <= 1; l3++) {
-                    BlockPos pos = new BlockPos(x + l1, y + l3, z + l2);
-                    if (level.getBlockState(pos).isAir()) {
-                        level.setBlock(pos, l3 == 0 ? leaves2 : leaves3, 2);
-                    }
+                    // only on air, as the original's leaves; kept for its chunk when that chunk may not be written now
+                    DeferredWrites.setBlock(level, new BlockPos(x + l1, y + l3, z + l2), l3 == 0 ? leaves2 : leaves3, true);
                 }
             }
         }
@@ -1073,40 +1066,18 @@ public class CrystalStructures {
      * the spawn entity id into the block entity NBT.</p>
      */
     private static void placeSpawner(WorldGenLevel level, BlockPos pos, EntityType<?> mobType) {
-        level.setBlock(pos, Blocks.SPAWNER.defaultBlockState(), 2);
-        if (level.getBlockEntity(pos) instanceof SpawnerBlockEntity spawner) {
-            spawner.getSpawner().setEntityId(mobType, null, level.getRandom(), pos);
-        }
+        DeferredWrites.spawner(level, pos, mobType);
     }
 
     /**
-     * Bounds-checked {@link WorldGenLevel#setBlock} wrapper. Silently drops writes
-     * outside the world's build height so large circular structures (Battle Tower,
-     * Round Rotator) never throw when their perimeter extends past Y=320/Y=-64.
+     * The builders' block write. BUG-021 (GitHub #6): a decoration pass may write only into its own chunk and the eight
+     * around it, and a Fairy Castle Tree reaches farther; a write beyond them is kept for its chunk and lands there the
+     * first time it can ({@link DeferredWrites}), as the original wrote into the neighbouring chunks during population.
+     * Writes outside the world's build height are dropped, as before.
      */
     private static void safeSetBlock(WorldGenLevel level, int x, int y, int z, BlockState state) {
-        BlockPos pos = new BlockPos(x, y, z);
-        if (y >= level.getMinBuildHeight() && y < level.getMaxBuildHeight()) {
-            // BUG-021: a WorldGenRegion refuses writes outside its 1-chunk
-            // radius (ensureCanWrite=false) and would drop them silently —
-            // surface it so sheared structures are observable in the log
-            // (throttled to one warning per second; plain setBlock's false
-            // return can't be used here, it also fires on same-state writes).
-            if (!level.ensureCanWrite(pos)) {
-                long now = System.currentTimeMillis();
-                if (now - lastDroppedWriteWarnMillis > 1000L) {
-                    lastDroppedWriteWarnMillis = now;
-                    org.slf4j.LoggerFactory.getLogger(CrystalStructures.class)
-                            .warn("Crystal structure write dropped at {} (outside the writable region — BUG-021)", pos);
-                }
-                return;
-            }
-            level.setBlock(pos, state, 2);
-        }
+        DeferredWrites.setBlock(level, new BlockPos(x, y, z), state, false);
     }
-
-    /** Throttle for the BUG-021 dropped-write warning. */
-    private static volatile long lastDroppedWriteWarnMillis = 0L;
 
     // =====================================================================
     // CRYSTAL-SPECIFIC CHEST LOOT
@@ -1120,10 +1091,7 @@ public class CrystalStructures {
      * tools/gen_loot_tables.py with per-entry citations.
      */
     private static void placeLootChest(WorldGenLevel level, BlockPos pos, ResourceKey<LootTable> loot) {
-        level.setBlock(pos, Blocks.CHEST.defaultBlockState(), 2);
-        if (level.getBlockEntity(pos) instanceof RandomizableContainerBlockEntity container) {
-            container.setLootTable(loot);
-        }
+        DeferredWrites.chest(level, pos, loot);
     }
 
     /**
