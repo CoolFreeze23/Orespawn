@@ -947,4 +947,31 @@ public class MiscTests {
                 "TEST-004: arrival head cell must be passable");
         helper.succeed();
     }
+
+    /**
+     * BUG-047: the five OreSpawn leaves are drawn in the biome's foliage colour, as 1.7.10 drew them (each extends
+     * BlockLeaves and keeps its colorMultiplier): their block models take vanilla's leaves model, whose faces carry the
+     * tint index the colour the client registers for them needs, and their items' models are those block models.
+     */
+    @GameTest(template = "empty")
+    public static void bug047_the_orespawn_leaves_take_the_foliage_tint(GameTestHelper helper) {
+        for (String name : new String[] {"apple_leaves", "scary_leaves", "cherry_leaves", "peach_leaves", "experience_leaves"}) {
+            JsonObject block = bundledJson("/assets/orespawn/models/block/" + name + ".json");
+            helper.assertTrue("minecraft:block/leaves".equals(block.get("parent").getAsString()),
+                    name + "'s block model takes " + block.get("parent") + ", whose faces carry no tint index");
+            JsonObject item = bundledJson("/assets/orespawn/models/item/" + name + ".json");
+            helper.assertTrue(("orespawn:block/" + name).equals(item.get("parent").getAsString()),
+                    name + "'s item model is " + item.get("parent") + ", not its block model");
+        }
+        helper.succeed();
+    }
+
+    private static JsonObject bundledJson(String path) {
+        try (InputStream in = MiscTests.class.getResourceAsStream(path)) {
+            if (in == null) throw new AssertionError("no " + path);
+            return JsonParser.parseReader(new InputStreamReader(in, StandardCharsets.UTF_8)).getAsJsonObject();
+        } catch (java.io.IOException e) {
+            throw new AssertionError("unreadable " + path + ": " + e);
+        }
+    }
 }
