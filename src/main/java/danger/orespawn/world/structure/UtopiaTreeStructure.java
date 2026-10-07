@@ -4,6 +4,7 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import danger.orespawn.OreSpawnConfig;
+import danger.orespawn.world.LegacyTerrainReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -12,22 +13,16 @@ import java.util.Optional;
 import java.util.Set;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Registry;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.LevelHeightAccessor;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.chunk.ChunkGenerator;
-import net.minecraft.world.level.levelgen.DensityFunction;
-import net.minecraft.world.level.levelgen.DensityFunctions;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.LegacyRandomSource;
-import net.minecraft.world.level.levelgen.NoiseBasedChunkGenerator;
-import net.minecraft.world.level.levelgen.NoiseSettings;
 import net.minecraft.world.level.levelgen.RandomState;
 import net.minecraft.world.level.levelgen.WorldgenRandom;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
@@ -333,6 +328,25 @@ public class UtopiaTreeStructure extends Structure {
         return new ChunkPass(huge, List.of(), List.of(), altarRoll(random, chunk, probe));
     }
 
+    /** A probe that finds no grass anywhere. */
+    private static final ColumnProbe NO_GRASS = (x, z, low, high) -> Integer.MIN_VALUE;
+
+    /**
+     * Whether the altar roll passes in the one pass that reaches it: a pass reaches the roll only when none of the
+     * chunk's tree rolls grew a tree, so every attempt of theirs found no grass (a grass found always grows its tree:
+     * the huge roll's every type, the apple tree, the grove's Wind tree, and its Sky tree, whose top of 190 or more is
+     * always 20 over a base of at most 100) and the draws before the roll are those of a pass that finds no grass
+     * anywhere. False: the chunk has no altar whatever its terrain. True: {@link #chunkPass} decides.
+     */
+    public static boolean altarRollReached(long seed, ChunkPos chunk) {
+        WorldgenRandom random = new WorldgenRandom(new LegacyRandomSource(0L));
+        random.setLargeFeatureSeed(seed, chunk.x, chunk.z);
+        if (hugeRoll(random, chunk, NO_GRASS).madeOne()) return false;
+        if (!appleTrees(random, chunk, NO_GRASS).isEmpty()) return false;
+        if (!grove(random, chunk, NO_GRASS).isEmpty()) return false;
+        return random.nextInt(2000) == 1;                                           // :2550
+    }
+
     /**
      * orig OreSpawnWorld.java:2549-2571 {@code addKingAltar}, drawn on after the pass's tree rolls as the original drew
      * it: one chunk in 2,000 ({@code nextInt(2000) != 1} ends it, :2550), then up to eight attempts at chunk + 3 +
@@ -422,8 +436,7 @@ public class UtopiaTreeStructure extends Structure {
         int plane = grass.getY() + 8;
         int minX = grass.getX() - 5, maxX = grass.getX() + 54, minZ = grass.getZ() - 5, maxZ = grass.getZ() + 54;
         int minY = heights.getMinBuildHeight(), maxY = heights.getMaxBuildHeight();
-        PlaneRead terrain = readPlaneTerrain(generator, heights, randomState, minX, maxX, minZ, maxZ, plane);
-        if (terrain == PlaneRead.BLOCKED) return false;
+        if (!planeTerrainClear(generator, heights, randomState, minX, maxX, minZ, maxZ, plane)) return false;
         ColumnProbe probe = probe(generator, heights, randomState);
         int reach = 144;  // the farthest any Utopia tree's cells reach from its site (RoyalTreePiece's permit)
         int cx0 = (minX - reach) >> 4, cx1 = (maxX + reach) >> 4, cz0 = (minZ - reach) >> 4, cz1 = (maxZ + reach) >> 4;
@@ -450,77 +463,22 @@ public class UtopiaTreeStructure extends Structure {
                 if (hit[0]) return false;
             }
         }
-        // the aquifer's barrier band (readPlaneTerrain): every column read only for a site the rest of the check passes
-        return terrain == PlaneRead.CLEAR
-                || planeTerrainClearByColumns(generator, heights, randomState, minX, maxX, minZ, maxZ, plane);
+        return true;
     }
-
-    /** The registry id of vanilla's {@code interpolated} density marker. */
-    private static final ResourceLocation INTERPOLATED = ResourceLocation.withDefaultNamespace("interpolated");
-
-    /**
-     * How far above the sea level the aquifer can still wall air off with stone: where two of its cells at nearly the
-     * same distance hold different water levels it puts a barrier between them (Aquifer.calculatePressure's barrier
-     * noise), up to four blocks above the higher level, and the sea's level is the higher one beside a dry cell.
-     */
-    private static final int AQUIFER_BARRIER_REACH = 5;
-
-    /** The terrain read's answer: the plane blocked, clear, or clear by the density with every column still to read. */
-    private enum PlaneRead { BLOCKED, CLEAR, CONFIRM }
 
     /**
      * The check's terrain half: whether every block of the plane over the rectangle is air as the generator builds it.
-     * When the generator's final density is one interpolated function (the 1.7.10 terrain's settings) the plane is read
-     * at its cell corners: the density at the corners of the cells it crosses, interpolated for each block as the noise
-     * chunk fills a cell for the blocks it places (Mth.lerp3: x, then y, then z), a block solid where the value is above
-     * zero (the aquifer answers stone there whatever its water). About 600 density samples for the 60 x 60 plane, where
-     * reading every column builds 3,600 noise columns with their aquifer (seconds a site). Where the density says air
-     * the aquifer decides: below the sea level between water and air, so a plane there reads every column; up to four
-     * blocks above it its barrier can still put stone there, so the corners' "clear" is confirmed by every column
-     * ({@link #AQUIFER_BARRIER_REACH}); higher, it gives air. Any other generator reads every column
+     * The 1.7.10 terrain's generators (one interpolated final density) are read by {@link LegacyTerrainReader}: the
+     * density from the cell corners, the aquifer only where it can answer other than air, every block as getBaseColumn
+     * builds it without building a noise column per column. Any other generator reads every column
      * ({@link #planeTerrainClearByColumns}).
      */
     public static boolean planeTerrainClear(ChunkGenerator generator, LevelHeightAccessor heights, RandomState randomState,
                                             int minX, int maxX, int minZ, int maxZ, int plane) {
-        PlaneRead read = readPlaneTerrain(generator, heights, randomState, minX, maxX, minZ, maxZ, plane);
-        return read == PlaneRead.CLEAR || read == PlaneRead.CONFIRM
-                && planeTerrainClearByColumns(generator, heights, randomState, minX, maxX, minZ, maxZ, plane);
-    }
-
-    /** {@link #planeTerrainClear}'s read, with the barrier band's columns left to the caller ({@link PlaneRead#CONFIRM}). */
-    private static PlaneRead readPlaneTerrain(ChunkGenerator generator, LevelHeightAccessor heights,
-                                              RandomState randomState, int minX, int maxX, int minZ, int maxZ, int plane) {
-        if (plane < heights.getMinBuildHeight() || plane >= heights.getMaxBuildHeight()) return PlaneRead.BLOCKED;
-        DensityFunction density = interpolatedDensity(generator, randomState);
-        if (density == null || plane < generator.getSeaLevel()) {
-            return planeTerrainClearByColumns(generator, heights, randomState, minX, maxX, minZ, maxZ, plane)
-                    ? PlaneRead.CLEAR : PlaneRead.BLOCKED;
-        }
-        NoiseSettings noise = ((NoiseBasedChunkGenerator) generator).generatorSettings().value().noiseSettings();
-        int width = noise.getCellWidth(), height = noise.getCellHeight();
-        int y0 = Math.floorDiv(plane, height) * height;
-        double fy = (double) (plane - y0) / (double) height;
-        int cx0 = Math.floorDiv(minX, width), cz0 = Math.floorDiv(minZ, width);
-        int nx = Math.floorDiv(maxX, width) - cx0 + 2, nz = Math.floorDiv(maxZ, width) - cz0 + 2;
-        double[][] low = new double[nx][nz], high = new double[nx][nz];
-        for (int i = 0; i < nx; i++) {
-            for (int k = 0; k < nz; k++) {
-                int x = (cx0 + i) * width, z = (cz0 + k) * width;
-                low[i][k] = density.compute(new DensityFunction.SinglePointContext(x, y0, z));
-                high[i][k] = density.compute(new DensityFunction.SinglePointContext(x, y0 + height, z));
-            }
-        }
-        for (int x = minX; x <= maxX; x++) {
-            int i = Math.floorDiv(x, width) - cx0;
-            double fx = (double) Math.floorMod(x, width) / (double) width;
-            for (int z = minZ; z <= maxZ; z++) {
-                int k = Math.floorDiv(z, width) - cz0;
-                double fz = (double) Math.floorMod(z, width) / (double) width;
-                if (Mth.lerp3(fx, fy, fz, low[i][k], low[i + 1][k], high[i][k], high[i + 1][k],
-                        low[i][k + 1], low[i + 1][k + 1], high[i][k + 1], high[i + 1][k + 1]) > 0.0) return PlaneRead.BLOCKED;
-            }
-        }
-        return plane < generator.getSeaLevel() + AQUIFER_BARRIER_REACH ? PlaneRead.CONFIRM : PlaneRead.CLEAR;
+        if (plane < heights.getMinBuildHeight() || plane >= heights.getMaxBuildHeight()) return false;
+        LegacyTerrainReader reader = LegacyTerrainReader.of(generator, heights, randomState);
+        if (reader == null) return planeTerrainClearByColumns(generator, heights, randomState, minX, maxX, minZ, maxZ, plane);
+        return reader.planeClear(minX, maxX, minZ, maxZ, plane);
     }
 
     /** The full read: every column of the rectangle built as the generator builds it, its block at the plane air. */
@@ -534,17 +492,6 @@ public class UtopiaTreeStructure extends Structure {
             }
         }
         return true;
-    }
-
-    /** The generator's final density when it is one interpolated function, unwrapped; otherwise null. */
-    private static DensityFunction interpolatedDensity(ChunkGenerator generator, RandomState randomState) {
-        if (!(generator instanceof NoiseBasedChunkGenerator)) return null;
-        DensityFunction density = randomState.router().finalDensity();
-        if (density instanceof DensityFunctions.MarkerOrMarked marker
-                && INTERPOLATED.equals(BuiltInRegistries.DENSITY_FUNCTION_TYPE.getKey(marker.codec().codec()))) {
-            return marker.wrapped();
-        }
-        return null;
     }
 
     private static boolean reaches(BoundingBox box, int plane, int minX, int maxX, int minZ, int maxZ) {
@@ -572,9 +519,17 @@ public class UtopiaTreeStructure extends Structure {
 
     /**
      * The column probe on a chunk generator's base column: the same answer the structure pass gets, so a feature that
-     * replays the chunk pass agrees with the structures chunk for chunk.
+     * replays the chunk pass agrees with the structures chunk for chunk. The 1.7.10 terrain's generators answer through
+     * {@link LegacyTerrainReader} (the same answer as {@link #fullProbe}, without building the two noise columns).
      */
     public static ColumnProbe probe(ChunkGenerator generator, LevelHeightAccessor heights, RandomState randomState) {
+        LegacyTerrainReader reader = LegacyTerrainReader.of(generator, heights, randomState);
+        if (reader != null) return reader::grassBase;
+        return fullProbe(generator, heights, randomState);
+    }
+
+    /** The column probe read from the generator's own noise columns ({@link #grassBase}). */
+    public static ColumnProbe fullProbe(ChunkGenerator generator, LevelHeightAccessor heights, RandomState randomState) {
         return (x, z, low, high) -> grassBase(generator, heights, randomState, x, z, low, high);
     }
 

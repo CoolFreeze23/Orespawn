@@ -36,6 +36,14 @@ public final class LegacyTerrainNoise extends BlendedNoise {
 
     /** The bounds the router may assume; the density's real range is far inside them. */
     private static final double BOUND = 1.0E6;
+    /** The first block at cell 32, where the slide has reached its end value. */
+    private static final int SLID_OUT_Y = 256;
+    /**
+     * At least the limit noises' blend in 1.7.10's units: sixteen octaves weighted 1, 2, 4 ... 32,768 (65,535 in all),
+     * each improved-noise sample at most 2 in magnitude (two unit components of a gradient against offsets inside the
+     * unit cell, mixed by weights between 0 and 1), divided by 512.
+     */
+    private static final double BLEND_BOUND = 65535.0 * 2.001 / 512.0;
 
     private final float rootHeight;
     private final float heightVariation;
@@ -103,6 +111,10 @@ public final class LegacyTerrainNoise extends BlendedNoise {
      */
     @Override
     public double compute(DensityFunction.FunctionContext context) {
+        if (context.blockY() >= SLID_OUT_Y) {
+            // the original's 33 cells end at y 256: from there the slide's end value is the whole density (d10 * 0 - 10)
+            return -10.0 / 128.0;
+        }
         // MathHelper.denormalizeClamp(e / 512, f / 512, (d / 10 + 1) / 2): vanilla's BlendedNoise returns it / 128
         double blend = super.compute(context) * 128.0;
         double centre = this.columnCentre(context.blockX(), context.blockZ());
@@ -118,6 +130,18 @@ public final class LegacyTerrainNoise extends BlendedNoise {
             d10 = d10 * (1.0 - d11) + -10.0 * d11;
         }
         return d10 / 128.0;
+    }
+
+    /**
+     * A cell height (block y / 8) at and above which the density in the column is at most {@code threshold}, worked out
+     * from the column's depth noise alone: the blend is at most {@link #BLEND_BOUND}, above the centre the depth term
+     * grows by 6 / scale a cell, and the slide only mixes in -10. For a threshold of at least -10 / 128; the reader of
+     * the terrain starts its scans there.
+     */
+    public double cellYAtMost(int blockX, int blockZ, double threshold) {
+        // the depth term grows upward only with a positive scale, and the slide's -10 must be under the threshold
+        if (!(this.scale > 0.0) || threshold < -10.0 / 128.0 || threshold > BLEND_BOUND / 256.0) return Double.POSITIVE_INFINITY;
+        return this.columnCentre(blockX, blockZ) + (BLEND_BOUND - 128.0 * threshold) * this.scale / 6.0 + 0.01;
     }
 
     /** d5: the column's centre cell, from the depth noise (orig :232-255). */

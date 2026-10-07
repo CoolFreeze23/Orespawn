@@ -706,7 +706,7 @@ public class UtopiaTreeTests {
      * Utopia generator, a site whose plane meets a huge tree's crown is refused although the terrain under the plane is
      * clear (the trees half of the check); a site whose plane meets the terrain is refused; every site the check accepts
      * has the terrain below the plane over the whole 60 x 60 (an independent scan of the generator's surface). At every
-     * site the check's corner read of the plane equals the full read. The scans run off the server thread (TEST-024).
+     * site the check's terrain reads equal the full read. The scans run off the server thread (TEST-024).
      */
     @GameTest(template = "empty", timeoutTicks = 24000)
     public static void w081a_an_altar_needs_the_plane_above_it_clear(GameTestHelper helper) {
@@ -738,7 +738,7 @@ public class UtopiaTreeTests {
                     if (hit != null) {
                         BlockPos grass = new BlockPos(hit[0] - 10, plane - 8, hit[1] - 10);
                         if (terrainBelow(generator, level, state, grass, plane)) {
-                            terrainReadsAgree(helper, generator, level, state, grass);
+                            terrainReadsAgree(helper, generator, level, state, seed, grass);
                             helper.assertTrue(!UtopiaTreeStructure.reallyBigSpaceClear(seed, generator, level, state, grass),
                                     "a site whose plane meets the huge tree at " + tree.origin() + " passed the check");
                             treeRefusals++;
@@ -752,7 +752,7 @@ public class UtopiaTreeTests {
                         chunk.getMinBlockZ() + 8) : null);
                 if (site == null) continue;
                 boolean clearTerrain = terrainBelow(generator, level, state, site, site.getY() + 8);
-                terrainReadsAgree(helper, generator, level, state, site);
+                terrainReadsAgree(helper, generator, level, state, seed, site);
                 boolean ok = UtopiaTreeStructure.reallyBigSpaceClear(seed, generator, level, state, site);
                 helper.assertTrue(!ok || clearTerrain, "the check accepted " + site + " though the terrain reaches the plane");
                 if (!clearTerrain) terrainRefusals++;
@@ -774,19 +774,44 @@ public class UtopiaTreeTests {
     }
 
     /**
-     * The altar check's terrain read at the plane's cell corners against every column built in full (the generator's
-     * own noise column, its aquifer included), over the 60 x 60 eight above {@code grass}: w081a and w080e ask it at
-     * every site they put to the check, so the two reads are compared over every candidate the altar tests use.
+     * The altar check's terrain reads (LegacyTerrainReader) against the generator's own noise columns, built in full with
+     * their aquifer, at a site: the plane eight above {@code grass} over the 60 x 60, and every column probe of the chunk
+     * passes the trees half replays around it (the huge, apple, grove and altar rolls' scans, each asked of both reads,
+     * the passes going on with the full read's answers). w081a and w080e ask it at every site they put to the check, so
+     * the two reads are compared over every candidate the altar tests use.
      */
     static void terrainReadsAgree(GameTestHelper helper, ChunkGenerator generator, net.minecraft.world.level.LevelHeightAccessor heights,
-                                  RandomState state, BlockPos grass) {
+                                  RandomState state, long seed, BlockPos grass) {
         int plane = grass.getY() + 8;
         int minX = grass.getX() - 5, maxX = grass.getX() + 54, minZ = grass.getZ() - 5, maxZ = grass.getZ() + 54;
-        boolean corners = UtopiaTreeStructure.planeTerrainClear(generator, heights, state, minX, maxX, minZ, maxZ, plane);
+        danger.orespawn.world.LegacyTerrainReader terrain = danger.orespawn.world.LegacyTerrainReader.of(generator, heights, state);
+        helper.assertTrue(terrain != null && terrain.bounded(), "the 1.7.10 terrain's generator has no bounded reader");
+        boolean read = UtopiaTreeStructure.planeTerrainClear(generator, heights, state, minX, maxX, minZ, maxZ, plane);
         boolean full = java.util.stream.IntStream.rangeClosed(minX, maxX).parallel().allMatch(x ->
                 UtopiaTreeStructure.planeTerrainClearByColumns(generator, heights, state, x, x, minZ, maxZ, plane));
-        helper.assertTrue(corners == full, "at " + grass + " the corner read says the plane is " + (corners ? "clear" : "blocked")
+        helper.assertTrue(read == full, "at " + grass + " the reader says the plane is " + (read ? "clear" : "blocked")
                 + ", every column built in full " + (full ? "clear" : "blocked"));
+        UtopiaTreeStructure.ColumnProbe reader = UtopiaTreeStructure.probe(generator, heights, state);
+        UtopiaTreeStructure.ColumnProbe columns = UtopiaTreeStructure.fullProbe(generator, heights, state);
+        int reach = 144;
+        int cx0 = (minX - reach) >> 4, cx1 = (maxX + reach) >> 4, cz0 = (minZ - reach) >> 4, cz1 = (maxZ + reach) >> 4;
+        java.util.List<String> differ = java.util.Collections.synchronizedList(new java.util.ArrayList<>());
+        java.util.concurrent.atomic.AtomicLong asked = new java.util.concurrent.atomic.AtomicLong();
+        java.util.stream.IntStream.rangeClosed(cx0, cx1).parallel().forEach(cx -> {
+            for (int cz = cz0; cz <= cz1; cz++) {
+                UtopiaTreeStructure.chunkPass(seed, new ChunkPos(cx, cz), (x, z, low, high) -> {
+                    int a = reader.base(x, z, low, high), b = columns.base(x, z, low, high);
+                    asked.incrementAndGet();
+                    if (a != b && differ.size() < 5) {
+                        differ.add("(" + x + ", " + z + ") in (" + low + ", " + high + "]: the reader " + a + ", the columns " + b);
+                    }
+                    return b;
+                });
+            }
+        });
+        helper.assertTrue(asked.get() > 0, "around " + grass + " the trees half's passes asked no column probe");
+        helper.assertTrue(differ.isEmpty(), "around " + grass + " " + differ.size() + "+ of " + asked.get()
+                + " column probes differ: " + differ);
     }
 
     /**

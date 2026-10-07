@@ -522,7 +522,7 @@ public class StructurePlacementTests {
                             + " grew " + pass + " beside the huge roll's tree");
                     UtopiaTreeStructure.Altar altar = pass.altar();
                     if (altar != null || c % 97 == 0) {
-                        if (altar != null) UtopiaTreeTests.terrainReadsAgree(helper, gen, helper.getLevel(), state, altar.origin());
+                        if (altar != null) UtopiaTreeTests.terrainReadsAgree(helper, gen, helper.getLevel(), state, seed, altar.origin());
                         boolean clear = LegacyDungeonStructure.altarRollClear(seed, chunk)
                                 && (altar == null || UtopiaTreeStructure.reallyBigSpaceClear(seed, gen, helper.getLevel(), state,
                                 altar.origin()));
