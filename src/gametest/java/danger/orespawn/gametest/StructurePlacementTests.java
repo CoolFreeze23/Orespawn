@@ -81,12 +81,12 @@ public class StructurePlacementTests {
     private static final double F_DESERT = factor(1.0 / 230);
     /** The haunted house stands in plains, taiga and swamp; the cooldown weighted by their share of its ground. */
     private static final double F_HAUNTED = 0.5 * F_PLAINS + 0.3 * F_TAIGA + 0.2 * F_SWAMP;
-    // Mining (:79-104): nextInt(95) == 1, then nextInt(7); six of the seven builders find their lowest-surface or
-    // lowest-grass site in 89% of chunks, the Leonopteryx nest its grass above Y80 in 34%
-    private static final double F_MINING = factor((6 * 0.8925 + 0.3375) / 665);
-    // the Village (:120-129): the damsel 1/250 (58% of chunks have its site), the spider hangout 1/350 (49%), the
-    // red ant hangout 1/250 (53%)
-    private static final double F_VILLAGE = factor(0.5825 / 250 + 0.49 / 350 + 0.525 / 250);
+    // Mining (:79-104): nextInt(95) == 1, then nextInt(7); on the 1.7.10 terrain six of the seven builders find their
+    // lowest-surface or lowest-grass site in every chunk, the Leonopteryx nest its grass above Y80 in 85%
+    private static final double F_MINING = factor((6 * 1.0 + 0.8525) / 665);
+    // the Village (:120-129): the damsel 1/250 (93% of chunks have its site), the spider hangout 1/350 (73%), the
+    // red ant hangout 1/250 (79%)
+    private static final double F_VILLAGE = factor(0.93 / 250 + 0.73 / 350 + 0.7875 / 250);
     // the End (:215-228) has no cooldown, but quickSpaceCheck (:2625-2633) turned a build away where an earlier
     // structure stood in its plane: 2.0% of them, simulated with the structures' footprints
     private static final double KEPT_END = 0.980;

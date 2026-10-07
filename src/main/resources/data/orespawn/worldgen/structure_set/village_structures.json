@@ -2,19 +2,19 @@
   "structures": [
     {
       "structure": "orespawn:damsel_in_distress",
-      "weight": 2520
+      "weight": 2252
     },
     {
       "structure": "orespawn:spider_hangout",
-      "weight": 1800
+      "weight": 1608
     },
     {
       "structure": "orespawn:red_ant_hangout",
-      "weight": 2520
+      "weight": 2252
     },
     {
       "structure": "orespawn:nothing",
-      "weight": 3160
+      "weight": 3888
     }
   ],
   "placement": {
