@@ -1,5 +1,8 @@
 package danger.orespawn.entity.client;
 
+import java.util.function.Function;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.client.renderer.RenderType;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import danger.orespawn.entity.ThePrince;
@@ -55,6 +58,15 @@ public class ModelThePrince extends EntityModel<ThePrince> {
     private final ModelPart Ljaw;
     private final ModelPart jaw;
     private final ModelPart Rjaw;
+
+    /**
+     * The wing membranes' pass (orig ModelThePrince.java:420-432): {@code GL_BLEND} with {@code glBlendFunc(SRC_ALPHA, ONE_MINUS_SRC_ALPHA)}
+     * and {@code glColor4f(0.75, 0.75, 0.75, 0.55)} around Rwing2, Rwing3, Lwing2, Lwing3, Lwing, Rwing. Drawn by {@link WingMembraneLayer} after the opaque
+     * pass; the GeckoLib descriptor declares the same pass with these very objects (the {@link ModelTheKing} form).
+     */
+    public static final Function<ResourceLocation, RenderType> WING_MEMBRANE_RENDER_TYPE = RenderType::entityTranslucent;
+    /** orig ModelThePrince.java:424: 0.75 grey, 0.55 alpha, packed as ModelTheKing's ({@code 140 << 24 | 191 << 16 | 191 << 8 | 191}). */
+    public static final int WING_MEMBRANE_COLOR = (140 << 24) | (191 << 16) | (191 << 8) | 191;
 
     public ModelThePrince(ModelPart root) {
         this.body = root.getChild("body");
@@ -348,11 +360,15 @@ public class ModelThePrince extends EntityModel<ThePrince> {
         this.Ljaw.render(poseStack, buffer, packedLight, packedOverlay, color);
         this.jaw.render(poseStack, buffer, packedLight, packedOverlay, color);
         this.Rjaw.render(poseStack, buffer, packedLight, packedOverlay, color);
-        this.Rwing2.render(poseStack, buffer, packedLight, packedOverlay, color);
-        this.Rwing3.render(poseStack, buffer, packedLight, packedOverlay, color);
-        this.Lwing2.render(poseStack, buffer, packedLight, packedOverlay, color);
-        this.Lwing3.render(poseStack, buffer, packedLight, packedOverlay, color);
-        this.Lwing.render(poseStack, buffer, packedLight, packedOverlay, color);
-        this.Rwing.render(poseStack, buffer, packedLight, packedOverlay, color);
+    }
+
+    /** The wing membranes alone, in the original's order (ModelThePrince.java:420-432): {@link WingMembraneLayer}'s pass. */
+    public void renderWingMembranes(PoseStack poseStack, VertexConsumer consumer, int packedLight, int packedOverlay, int color) {
+        this.Rwing2.render(poseStack, consumer, packedLight, packedOverlay, color);
+        this.Rwing3.render(poseStack, consumer, packedLight, packedOverlay, color);
+        this.Lwing2.render(poseStack, consumer, packedLight, packedOverlay, color);
+        this.Lwing3.render(poseStack, consumer, packedLight, packedOverlay, color);
+        this.Lwing.render(poseStack, consumer, packedLight, packedOverlay, color);
+        this.Rwing.render(poseStack, consumer, packedLight, packedOverlay, color);
     }
 }

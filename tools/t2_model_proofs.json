@@ -3553,13 +3553,13 @@
       "visual_mode": {
         "render_type": "entity_translucent",
         "vertex_color": [
-          255,
-          255,
-          255,
-          255
+          191,
+          191,
+          191,
+          63
         ],
         "light": "world",
-        "note": "GhostSkellyRenderer.getRenderType returns RenderType.entityTranslucent(texture) (the soft alpha edges; the 1.7.10 look) and GhostSkellyModel now stores the same function as its Model.renderType (RENDER_TYPE, the FairyModel / ModelPurplePower form, added by T2e) which the descriptor hands back by identity; white vertices and the world's light on both sides; the rasteriser blends over the background in emission order with the depth written (LEQUAL), the same on both sides"
+        "note": "GhostSkellyRenderer.getRenderType returns RenderType.entityTranslucent(texture) (the soft alpha edges; the 1.7.10 look) and GhostSkellyModel now stores the same function as its Model.renderType (RENDER_TYPE, the FairyModel / ModelPurplePower form, added by T2e) which the descriptor hands back by identity; white vertices and the world's light on both sides; the rasteriser blends over the background in emission order with the depth written (LEQUAL), the same on both sides; GitHub #6/#7 slice (2026-10-07): the 1.7.10 glColor4f(0.75, 0.75, 0.75, 0.25) under the blend is the packed COLOR 0x3FBFBFBF on both sides (the classic model's parts, the descriptor's renderColor)"
       },
       "channels": [],
       "hook_note": "the fifth Tier-2 slice (T2e - on the hook already written): a HOOK rig - the shipped pose is the classic setupAnim verbatim in the descriptor's applyCustomAnimations(processor, PoseInputs); no keyframe layer, no transcription, no clip manifest (the self-gate stays closed until an artist delivers idle and walk); channels [] because tools/layer_definition_to_geo.py refuses channels on a code_driven / entity_state entry without a keyframe_reference_leg - the reference-clip sampler's span comes from its RULES row for this id (ReferenceClipSampler.RULES, the source lines cited; the row the hook survey wrote as its HOOK_RULES row, carried unchanged); the animation leg proves the hook at 0 rad against the classic model at the same inputs on every sample"
@@ -6394,7 +6394,28 @@
       "cube_face_order": "classic",
       "face_order_note": "the first Tier-1 slice (T1a, 2026-09-15): this rig carries zero-thickness cubes (the six wing parts Lwing / Rwing 22 x 0 x 10, Lwing2 / Rwing2 12 x 0 x 10 and Lwing3 / Rwing3 10 x 0 x 10; no cube is mirrored since BUG-041 stage 2), each drawing its two coplanar faces without culling; where the two faces carry different texels the z-fight winner is the face emitted last (LEQUAL in-game; the harness's rasteriser: first-wins throughout the contest window, TEST-006), and vanilla's ModelPart.Cube and GeckoLib's buildQuads emit a cube's faces in different orders, so the shipped geo carries the classic within-cube order under orespawn:cube_face_order (the FaceOrder contract, ENT-S-146; the audit's TEST-007 rule refuses a cutout rig with such a cube that omits it), the seam permutes every cube's quads into it (FaceOrder.apply) and the draw-order leg compares the per-quad normal sequences of both renderers on every capture; the descriptor requires the key (a re-exported pack that drops it gets one WARN); bind stays a visual sample under the pair-contested rule",
       "channels": [],
-      "hook_note": "the first Tier-1 slice (T1a - on the hook already written, a Tier-1 rig lands exactly as a Tier-2 rig does: hitbox profiles excluded, the classic single hitbox stays, nothing of the profile phase): a HOOK rig - the shipped pose is the classic setupAnim verbatim in the descriptor's applyCustomAnimations(processor, PoseInputs); no keyframe layer, no transcription, no clip manifest (the self-gate stays closed until an artist delivers idle and walk); channels [] because tools/layer_definition_to_geo.py refuses channels on a code_driven / entity_state entry without a keyframe_reference_leg - the reference-clip sampler's span comes from its RULES row for this id (ReferenceClipSampler.RULES, the source lines cited; the row the hook survey wrote as its HOOK_RULES row, carried unchanged); the animation leg proves the hook at 0 rad against the classic model at the same inputs on every sample"
+      "hook_note": "the first Tier-1 slice (T1a - on the hook already written, a Tier-1 rig lands exactly as a Tier-2 rig does: hitbox profiles excluded, the classic single hitbox stays, nothing of the profile phase): a HOOK rig - the shipped pose is the classic setupAnim verbatim in the descriptor's applyCustomAnimations(processor, PoseInputs); no keyframe layer, no transcription, no clip manifest (the self-gate stays closed until an artist delivers idle and walk); channels [] because tools/layer_definition_to_geo.py refuses channels on a code_driven / entity_state entry without a keyframe_reference_leg - the reference-clip sampler's span comes from its RULES row for this id (ReferenceClipSampler.RULES, the source lines cited; the row the hook survey wrote as its HOOK_RULES row, carried unchanged); the animation leg proves the hook at 0 rad against the classic model at the same inputs on every sample",
+      "second_pass": {
+        "classic_method": "renderWingMembranes",
+        "bones": [
+          "Rwing2",
+          "Rwing3",
+          "Lwing2",
+          "Lwing3",
+          "Lwing",
+          "Rwing"
+        ],
+        "classic_render_type_field": "WING_MEMBRANE_RENDER_TYPE",
+        "classic_color_field": "WING_MEMBRANE_COLOR",
+        "render_type": "entity_translucent",
+        "vertex_color": [
+          191,
+          191,
+          191,
+          140
+        ],
+        "note": "the GitHub #6/#7 slice (2026-10-07): the 1.7.10 model drew its wing membranes in a GL_BLEND block at 0.75 grey and 0.55 alpha (ModelThePrince.java:420-432); the classic side draws ModelThePrince.renderWingMembranes from WingMembraneLayer (RenderType.entityTranslucent at the packed 0x8CBFBFBF tint, NO_OVERLAY) under the living renderer's own chain, the seam's SecondPassLayer re-renders the same bones alone on the descriptor's pass render type with its colour after the opaque pass (the King's form, TEST-018)"
+      }
     },
     {
       "id": "model_theprinceadult",
@@ -6464,7 +6485,32 @@
         "pitch_degrees": -28.0
       },
       "channels": [],
-      "hook_note": "the first Tier-1 slice (T1a - on the hook already written, a Tier-1 rig lands exactly as a Tier-2 rig does: hitbox profiles excluded, the classic single hitbox stays, nothing of the profile phase): a HOOK rig - the shipped pose is the classic setupAnim verbatim in the descriptor's applyCustomAnimations(processor, PoseInputs); no keyframe layer, no transcription, no clip manifest (the self-gate stays closed until an artist delivers idle and walk); channels [] because tools/layer_definition_to_geo.py refuses channels on a code_driven / entity_state entry without a keyframe_reference_leg - the reference-clip sampler's span comes from its RULES row for this id (ReferenceClipSampler.RULES, the source lines cited; the row the hook survey wrote as its HOOK_RULES row, carried unchanged); the animation leg proves the hook at 0 rad against the classic model at the same inputs on every sample"
+      "hook_note": "the first Tier-1 slice (T1a - on the hook already written, a Tier-1 rig lands exactly as a Tier-2 rig does: hitbox profiles excluded, the classic single hitbox stays, nothing of the profile phase): a HOOK rig - the shipped pose is the classic setupAnim verbatim in the descriptor's applyCustomAnimations(processor, PoseInputs); no keyframe layer, no transcription, no clip manifest (the self-gate stays closed until an artist delivers idle and walk); channels [] because tools/layer_definition_to_geo.py refuses channels on a code_driven / entity_state entry without a keyframe_reference_leg - the reference-clip sampler's span comes from its RULES row for this id (ReferenceClipSampler.RULES, the source lines cited; the row the hook survey wrote as its HOOK_RULES row, carried unchanged); the animation leg proves the hook at 0 rad against the classic model at the same inputs on every sample",
+      "second_pass": {
+        "classic_method": "renderWingMembranes",
+        "bones": [
+          "Lwing2",
+          "Lwing4",
+          "Lwing6",
+          "Lwing8",
+          "Lwing10",
+          "Rwing2",
+          "Rwing4",
+          "Rwing6",
+          "Rwing8",
+          "Rwing10"
+        ],
+        "classic_render_type_field": "WING_MEMBRANE_RENDER_TYPE",
+        "classic_color_field": "WING_MEMBRANE_COLOR",
+        "render_type": "entity_translucent",
+        "vertex_color": [
+          191,
+          191,
+          191,
+          140
+        ],
+        "note": "the GitHub #6/#7 slice (2026-10-07): the 1.7.10 model drew its wing membranes in a GL_BLEND block at 0.75 grey and 0.55 alpha (ModelThePrinceAdult.java:1184-1200); the classic side draws ModelThePrinceAdult.renderWingMembranes from WingMembraneLayer (RenderType.entityTranslucent at the packed 0x8CBFBFBF tint, NO_OVERLAY) under the living renderer's own chain, the seam's SecondPassLayer re-renders the same bones alone on the descriptor's pass render type with its colour after the opaque pass (the King's form, TEST-018)"
+      }
     },
     {
       "id": "model_theprinceteen",
@@ -6534,7 +6580,30 @@
         "pitch_degrees": -28.0
       },
       "channels": [],
-      "hook_note": "the second Tier-1 slice (T1b - on the hook already written, a Tier-1 rig lands exactly as a Tier-2 rig does: hitbox profiles excluded, the classic single hitbox stays, nothing of the profile phase): a HOOK rig - the shipped pose is the classic setupAnim verbatim in the descriptor's applyCustomAnimations(processor, PoseInputs); no keyframe layer, no transcription, no clip manifest (the self-gate stays closed until an artist delivers idle and walk); channels [] because tools/layer_definition_to_geo.py refuses channels on a code_driven / entity_state entry without a keyframe_reference_leg - the reference-clip sampler's span comes from its RULES row for this id (ReferenceClipSampler.RULES, the source lines cited; the row the hook survey wrote as its HOOK_RULES row, carried unchanged); the animation leg proves the hook at 0 rad against the classic model at the same inputs on every sample"
+      "hook_note": "the second Tier-1 slice (T1b - on the hook already written, a Tier-1 rig lands exactly as a Tier-2 rig does: hitbox profiles excluded, the classic single hitbox stays, nothing of the profile phase): a HOOK rig - the shipped pose is the classic setupAnim verbatim in the descriptor's applyCustomAnimations(processor, PoseInputs); no keyframe layer, no transcription, no clip manifest (the self-gate stays closed until an artist delivers idle and walk); channels [] because tools/layer_definition_to_geo.py refuses channels on a code_driven / entity_state entry without a keyframe_reference_leg - the reference-clip sampler's span comes from its RULES row for this id (ReferenceClipSampler.RULES, the source lines cited; the row the hook survey wrote as its HOOK_RULES row, carried unchanged); the animation leg proves the hook at 0 rad against the classic model at the same inputs on every sample",
+      "second_pass": {
+        "classic_method": "renderWingMembranes",
+        "bones": [
+          "mem1",
+          "mem2",
+          "rmem1",
+          "rmem2",
+          "mem3",
+          "rmem3",
+          "mem4",
+          "rmem4"
+        ],
+        "classic_render_type_field": "WING_MEMBRANE_RENDER_TYPE",
+        "classic_color_field": "WING_MEMBRANE_COLOR",
+        "render_type": "entity_translucent",
+        "vertex_color": [
+          191,
+          191,
+          191,
+          140
+        ],
+        "note": "the GitHub #6/#7 slice (2026-10-07): the 1.7.10 model drew its wing membranes in a GL_BLEND block at 0.75 grey and 0.55 alpha (ModelThePrinceTeen.java:869-883); the classic side draws ModelThePrinceTeen.renderWingMembranes from WingMembraneLayer (RenderType.entityTranslucent at the packed 0x8CBFBFBF tint, NO_OVERLAY) under the living renderer's own chain, the seam's SecondPassLayer re-renders the same bones alone on the descriptor's pass render type with its colour after the opaque pass (the King's form, TEST-018)"
+      }
     },
     {
       "id": "model_waterdragon",
@@ -6761,13 +6830,13 @@
       "visual_mode": {
         "render_type": "entity_translucent",
         "vertex_color": [
-          255,
-          255,
-          255,
-          255
+          191,
+          191,
+          191,
+          63
         ],
         "light": "world",
-        "note": "GhostRenderer.getRenderType returns GhostModel.RENDER_TYPE applied to the texture (RenderType::entityTranslucent - the ghost.png alpha honoured, the 1.7.10 GL_BLEND look; ENT-S-160 (a), the ENT-S-146 move landed by the remainder slice) and GhostModel stores the same function as its Model.renderType (the FairyModel / GhostSkellyModel form) which the descriptor hands back by identity; white vertices and the world's light on both sides (the 1.7.10 0.75 tint and 0.25 alpha are ENT-S-092's renderer question, not the port's); the rasteriser blends over the background in emission order with the depth written (LEQUAL), the same on both sides"
+        "note": "GhostRenderer.getRenderType returns GhostModel.RENDER_TYPE applied to the texture (RenderType::entityTranslucent - the ghost.png alpha honoured, the 1.7.10 GL_BLEND look; ENT-S-160 (a), the ENT-S-146 move landed by the remainder slice) and GhostModel stores the same function as its Model.renderType (the FairyModel / GhostSkellyModel form) which the descriptor hands back by identity; white vertices and the world's light on both sides (the 1.7.10 0.75 tint and 0.25 alpha are ENT-S-092's renderer question, not the port's); the rasteriser blends over the background in emission order with the depth written (LEQUAL), the same on both sides; GitHub #6/#7 slice (2026-10-07): the 1.7.10 glColor4f(0.75, 0.75, 0.75, 0.25) under the blend is the packed COLOR 0x3FBFBFBF on both sides (the classic model's parts, the descriptor's renderColor)"
       },
       "channels": [],
       "hook_note": "the remainder slice (on the hook already written, or written by this slice for the three rigs held since the hooks' landing; a Tier-1 rig lands exactly as a Tier-2 rig does: hitbox profiles excluded, the classic single hitbox stays, nothing of the profile phase): a HOOK rig - the shipped pose is the classic setupAnim verbatim in the descriptor's applyCustomAnimations(processor, PoseInputs); no keyframe layer, no transcription, no clip manifest (the self-gate stays closed until an artist delivers idle and walk); channels [] because tools/layer_definition_to_geo.py refuses channels on a code_driven / entity_state entry without a keyframe_reference_leg - the reference-clip sampler's span comes from its RULES row for this id (ReferenceClipSampler.RULES, the source lines cited; the row the hook survey wrote as its HOOK_RULES row, carried unchanged, or the row this slice authored); the animation leg proves the hook at 0 rad against the classic model at the same inputs on every sample"
@@ -6986,7 +7055,31 @@
       "cube_face_order": "classic",
       "face_order_note": "the remainder slice (2026-09-15): this rig carries zero-thickness cubes (the six wing parts Lwing / Rwing 22 x 0 x 10, Lwing2 / Rwing2 12 x 0 x 10 and Lwing3 / Rwing3 10 x 0 x 10; no cube is mirrored since BUG-041 stage 2), each drawing its two coplanar faces without culling; where the two faces carry different texels the z-fight winner is the face emitted last (LEQUAL in-game; the harness's rasteriser: first-wins throughout the contest window, TEST-006), and vanilla's ModelPart.Cube and GeckoLib's buildQuads emit a cube's faces in different orders, so the shipped geo carries the classic within-cube order under orespawn:cube_face_order (the FaceOrder contract, ENT-S-146; the audit's TEST-007 rule refuses a cutout rig with such a cube that omits it), the seam permutes every cube's quads into it (FaceOrder.apply) and the draw-order leg compares the per-quad normal sequences of both renderers on every capture; the descriptor requires the key (a re-exported pack that drops it gets one WARN); bind stays a visual sample under the pair-contested rule",
       "channels": [],
-      "hook_note": "the remainder slice (on the hook already written, or written by this slice for the three rigs held since the hooks' landing; a Tier-1 rig lands exactly as a Tier-2 rig does: hitbox profiles excluded, the classic single hitbox stays, nothing of the profile phase): a HOOK rig - the shipped pose is the classic setupAnim verbatim in the descriptor's applyCustomAnimations(processor, PoseInputs); no keyframe layer, no transcription, no clip manifest (the self-gate stays closed until an artist delivers idle and walk); channels [] because tools/layer_definition_to_geo.py refuses channels on a code_driven / entity_state entry without a keyframe_reference_leg - the reference-clip sampler's span comes from its RULES row for this id (ReferenceClipSampler.RULES, the source lines cited; the row the hook survey wrote as its HOOK_RULES row, carried unchanged, or the row this slice authored); the animation leg proves the hook at 0 rad against the classic model at the same inputs on every sample"
+      "hook_note": "the remainder slice (on the hook already written, or written by this slice for the three rigs held since the hooks' landing; a Tier-1 rig lands exactly as a Tier-2 rig does: hitbox profiles excluded, the classic single hitbox stays, nothing of the profile phase): a HOOK rig - the shipped pose is the classic setupAnim verbatim in the descriptor's applyCustomAnimations(processor, PoseInputs); no keyframe layer, no transcription, no clip manifest (the self-gate stays closed until an artist delivers idle and walk); channels [] because tools/layer_definition_to_geo.py refuses channels on a code_driven / entity_state entry without a keyframe_reference_leg - the reference-clip sampler's span comes from its RULES row for this id (ReferenceClipSampler.RULES, the source lines cited; the row the hook survey wrote as its HOOK_RULES row, carried unchanged, or the row this slice authored); the animation leg proves the hook at 0 rad against the classic model at the same inputs on every sample",
+      "second_pass": {
+        "classic_method": "renderWingMembranes",
+        "bones": [
+          "Rwing2",
+          "Rwing3",
+          "Lwing2",
+          "Lwing3",
+          "Lwing",
+          "Rwing",
+          "Lpower",
+          "Cpower",
+          "Rpower"
+        ],
+        "classic_render_type_field": "WING_MEMBRANE_RENDER_TYPE",
+        "classic_color_field": "WING_MEMBRANE_COLOR",
+        "render_type": "entity_translucent",
+        "vertex_color": [
+          191,
+          191,
+          191,
+          140
+        ],
+        "note": "the GitHub #6/#7 slice (2026-10-07): the 1.7.10 model drew its wing membranes in a GL_BLEND block at 0.75 grey and 0.55 alpha (ModelThePrincess.java:470-487); the classic side draws ModelThePrincess.renderWingMembranes from WingMembraneLayer (RenderType.entityTranslucent at the packed 0x8CBFBFBF tint, NO_OVERLAY) under the living renderer's own chain, the seam's SecondPassLayer re-renders the same bones alone on the descriptor's pass render type with its colour after the opaque pass (the King's form, TEST-018)"
+      }
     },
     {
       "id": "model_theking",

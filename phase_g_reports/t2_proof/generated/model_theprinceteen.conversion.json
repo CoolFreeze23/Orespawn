@@ -5,8 +5,8 @@
   "proof_scope": "production_proof_model",
   "ground_truth": "executed compiled LayerDefinition and baked ModelPart",
   "source_class": "danger.orespawn.entity.client.ModelThePrinceTeen",
-  "source_class_sha256": "5352b71afeb4c526ee67b113018d78b8eb865639fed8467489f11f0936a75d33",
-  "compiled_dump_sha256": "e0509bf7c35a6ca26bb11008c06a9edf162c3d09a9a841401cf7fe8d2b107ef6",
+  "source_class_sha256": "721f1e5062703adebfd01179f75714b48ec0e0852124b77e8c01cc087c90f8a5",
+  "compiled_dump_sha256": "db1f09419ff2239be230b57921e8d8d52d8b4d3491a1da313a6960818a9e7edc",
   "geometry_sha256": "b2f7ee96ae3a60ba3c9234a23f2619081b99b72a30318ce8ee751e32b1aec697",
   "animation_sha256": "7882082857fdb11e02f158ebc3a6d3f970e2ac60d54813f0e903ee97b2293749",
   "animation_contract_sha256": "c61eb7bd6969ba6be82b8246bd63b6254c39242bc10127e1d15a61d320b4649d",
@@ -248,6 +248,17 @@
     "cube_bearing_units": 71,
     "observed_units": 71,
     "unobserved_units": [],
+    "second_pass_units": [
+      "mem1",
+      "mem2",
+      "rmem1",
+      "rmem2",
+      "mem3",
+      "rmem3",
+      "mem4",
+      "rmem4"
+    ],
+    "second_pass_rule": "the classic renderer draws the pass after its opaque pass, so each capture's order is the main sequence then the pass sequence: the pass's bones take the key's tail in the pass's own order",
     "ordered_pairs": 2485,
     "tie_break": "converter emission order for pairs never drawn together in any capture",
     "lifting": "pre-order over the geo bone tree, siblings by their subtree's first classic draw"

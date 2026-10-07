@@ -1,5 +1,6 @@
 package danger.orespawn.entity.client;
 
+import net.minecraft.util.FastColor;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import danger.orespawn.entity.Ghost;
@@ -39,6 +40,13 @@ public class GhostModel<T extends Ghost> extends EntityModel<T> {
     private final ModelPart lArm;
     private final ModelPart rArm;
 
+    /**
+     * orig ModelGhost.java:52: {@code glColor4f(0.75, 0.75, 0.75, 0.25)} under the blend, so the ghost is drawn a quarter opaque and
+     * grey; packed as the King's membranes are ({@code 63 << 24 | 191 << 16 | 191 << 8 | 191}) and handed to every part.
+     * The GeckoLib descriptor's {@code renderColor} returns it.
+     */
+    public static final int COLOR = (63 << 24) | (191 << 16) | (191 << 8) | 191;
+
     public GhostModel(ModelPart root) {
         super(RENDER_TYPE);
         this.headAndBody = root.getChild("HeadAndBody");
@@ -75,8 +83,11 @@ public class GhostModel<T extends Ghost> extends EntityModel<T> {
 
     @Override
     public void renderToBuffer(PoseStack ps, VertexConsumer vc, int light, int overlay, int color) {
-        this.headAndBody.render(ps, vc, light, overlay, color);
-        this.lArm.render(ps, vc, light, overlay, color);
-        this.rArm.render(ps, vc, light, overlay, color);
+        // orig ModelGhost.java:52-56: every part under the 0.25-alpha grey tint (COLOR), over the colour the renderer
+        // hands in (white, or vanilla's translucent alpha for a ghost only a spectator sees)
+        int tint = FastColor.ARGB32.multiply(color, COLOR);
+        this.headAndBody.render(ps, vc, light, overlay, tint);
+        this.lArm.render(ps, vc, light, overlay, tint);
+        this.rArm.render(ps, vc, light, overlay, tint);
     }
 }

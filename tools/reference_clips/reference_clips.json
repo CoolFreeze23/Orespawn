@@ -2100,7 +2100,7 @@
             "values": [],
             "not_enumerable": "the entity RNG (the seeded source the pose rolls), not a value the code branches on",
             "read_at": [
-              "GhostSkellyGeoReplacement:104"
+              "GhostSkellyGeoReplacement:110"
             ]
           },
           {
@@ -2111,7 +2111,7 @@
             "values": [],
             "not_enumerable": "a RenderInfo latch (the per-entity scratch the pose reads and writes), not a value the code branches on",
             "read_at": [
-              "GhostSkellyGeoReplacement:82"
+              "GhostSkellyGeoReplacement:88"
             ]
           }
         ],
@@ -3413,9 +3413,9 @@
               2
             ],
             "read_at": [
-              "OstrichGeoReplacement:127 == 0",
-              "OstrichGeoReplacement:170 != 0",
-              "OstrichGeoReplacement:171 > 1"
+              "OstrichGeoReplacement:135 == 0",
+              "OstrichGeoReplacement:178 != 0",
+              "OstrichGeoReplacement:179 > 1"
             ]
           },
           {
@@ -3426,7 +3426,7 @@
             "values": [],
             "not_enumerable": "the entity RNG (the seeded source the pose rolls), not a value the code branches on",
             "read_at": [
-              "OstrichGeoReplacement:156"
+              "OstrichGeoReplacement:164"
             ]
           },
           {
@@ -3437,7 +3437,7 @@
             "values": [],
             "not_enumerable": "a RenderInfo latch (the per-entity scratch the pose reads and writes), not a value the code branches on",
             "read_at": [
-              "OstrichGeoReplacement:110"
+              "OstrichGeoReplacement:118"
             ]
           },
           {
@@ -3448,8 +3448,8 @@
             "values": [],
             "not_enumerable": "a position read for the movement delta (lspeed = |xOld - x, zOld - z|; 0 on a probe that does not move), not an enumerable state",
             "read_at": [
-              "OstrichGeoReplacement:71",
-              "OstrichGeoReplacement:71"
+              "OstrichGeoReplacement:79",
+              "OstrichGeoReplacement:79"
             ]
           },
           {
@@ -3460,7 +3460,7 @@
             "values": [],
             "not_enumerable": "a yaw (the turn rate the flying head follows), not an enumerable state",
             "read_at": [
-              "OstrichGeoReplacement:113"
+              "OstrichGeoReplacement:121"
             ]
           },
           {
@@ -3471,8 +3471,8 @@
             "values": [],
             "not_enumerable": "a position read for the movement delta (lspeed = |xOld - x, zOld - z|; 0 on a probe that does not move), not an enumerable state",
             "read_at": [
-              "OstrichGeoReplacement:71",
-              "OstrichGeoReplacement:71"
+              "OstrichGeoReplacement:79",
+              "OstrichGeoReplacement:79"
             ]
           },
           {
@@ -3484,7 +3484,7 @@
               true
             ],
             "read_at": [
-              "OstrichGeoReplacement:127"
+              "OstrichGeoReplacement:135"
             ]
           },
           {
@@ -3496,7 +3496,7 @@
               true
             ],
             "read_at": [
-              "OstrichGeoReplacement:112"
+              "OstrichGeoReplacement:120"
             ]
           },
           {
@@ -3507,8 +3507,8 @@
             "values": [],
             "not_enumerable": "a position read for the movement delta (lspeed = |xOld - x, zOld - z|; 0 on a probe that does not move), not an enumerable state",
             "read_at": [
-              "OstrichGeoReplacement:71",
-              "OstrichGeoReplacement:71"
+              "OstrichGeoReplacement:79",
+              "OstrichGeoReplacement:79"
             ]
           },
           {
@@ -3519,7 +3519,7 @@
             "values": [],
             "not_enumerable": "a yaw (the turn rate the flying head follows), not an enumerable state",
             "read_at": [
-              "OstrichGeoReplacement:113"
+              "OstrichGeoReplacement:121"
             ]
           },
           {
@@ -3530,8 +3530,8 @@
             "values": [],
             "not_enumerable": "a position read for the movement delta (lspeed = |xOld - x, zOld - z|; 0 on a probe that does not move), not an enumerable state",
             "read_at": [
-              "OstrichGeoReplacement:71",
-              "OstrichGeoReplacement:71"
+              "OstrichGeoReplacement:79",
+              "OstrichGeoReplacement:79"
             ]
           }
         ],
@@ -4703,7 +4703,7 @@
               2
             ],
             "read_at": [
-              "ThePrinceGeoReplacement:97 (current_activity) != 2"
+              "ThePrinceGeoReplacement:106 (current_activity) != 2"
             ]
           },
           {
@@ -4715,10 +4715,10 @@
               1
             ],
             "read_at": [
-              "ThePrinceGeoReplacement:84 != 0",
-              "ThePrinceGeoReplacement:97 != 0",
-              "ThePrinceGeoReplacement:110 != 0",
-              "ThePrinceGeoReplacement:190 != 0"
+              "ThePrinceGeoReplacement:93 != 0",
+              "ThePrinceGeoReplacement:106 != 0",
+              "ThePrinceGeoReplacement:119 != 0",
+              "ThePrinceGeoReplacement:199 != 0"
             ]
           },
           {
@@ -4727,9 +4727,9 @@
             "type": "int",
             "enumerable": false,
             "values": [],
-            "not_enumerable": "an int read used only arithmetically or passed as an argument, never compared with a literal (ThePrinceGeoReplacement:212: d1 = entity.getHead1Ext();)",
+            "not_enumerable": "an int read used only arithmetically or passed as an argument, never compared with a literal (ThePrinceGeoReplacement:221: d1 = entity.getHead1Ext();)",
             "read_at": [
-              "ThePrinceGeoReplacement:212"
+              "ThePrinceGeoReplacement:221"
             ]
           },
           {
@@ -4738,9 +4738,9 @@
             "type": "int",
             "enumerable": false,
             "values": [],
-            "not_enumerable": "an int read used only arithmetically or passed as an argument, never compared with a literal (ThePrinceGeoReplacement:213: d2 = entity.getHead2Ext();)",
+            "not_enumerable": "an int read used only arithmetically or passed as an argument, never compared with a literal (ThePrinceGeoReplacement:222: d2 = entity.getHead2Ext();)",
             "read_at": [
-              "ThePrinceGeoReplacement:213"
+              "ThePrinceGeoReplacement:222"
             ]
           },
           {
@@ -4749,9 +4749,9 @@
             "type": "int",
             "enumerable": false,
             "values": [],
-            "not_enumerable": "an int read used only arithmetically or passed as an argument, never compared with a literal (ThePrinceGeoReplacement:214: d3 = entity.getHead3Ext();)",
+            "not_enumerable": "an int read used only arithmetically or passed as an argument, never compared with a literal (ThePrinceGeoReplacement:223: d3 = entity.getHead3Ext();)",
             "read_at": [
-              "ThePrinceGeoReplacement:214"
+              "ThePrinceGeoReplacement:223"
             ]
           },
           {
@@ -4763,7 +4763,7 @@
               true
             ],
             "read_at": [
-              "ThePrinceGeoReplacement:107"
+              "ThePrinceGeoReplacement:116"
             ]
           }
         ],
@@ -4773,17 +4773,17 @@
         {
           "getter": "ThePrincePose.getHead1Ext()",
           "type": "int",
-          "reason": "an int read used only arithmetically or passed as an argument, never compared with a literal (ThePrinceGeoReplacement:212: d1 = entity.getHead1Ext();)"
+          "reason": "an int read used only arithmetically or passed as an argument, never compared with a literal (ThePrinceGeoReplacement:221: d1 = entity.getHead1Ext();)"
         },
         {
           "getter": "ThePrincePose.getHead2Ext()",
           "type": "int",
-          "reason": "an int read used only arithmetically or passed as an argument, never compared with a literal (ThePrinceGeoReplacement:213: d2 = entity.getHead2Ext();)"
+          "reason": "an int read used only arithmetically or passed as an argument, never compared with a literal (ThePrinceGeoReplacement:222: d2 = entity.getHead2Ext();)"
         },
         {
           "getter": "ThePrincePose.getHead3Ext()",
           "type": "int",
-          "reason": "an int read used only arithmetically or passed as an argument, never compared with a literal (ThePrinceGeoReplacement:214: d3 = entity.getHead3Ext();)"
+          "reason": "an int read used only arithmetically or passed as an argument, never compared with a literal (ThePrinceGeoReplacement:223: d3 = entity.getHead3Ext();)"
         }
       ],
       "states": [
@@ -4818,9 +4818,9 @@
               1
             ],
             "read_at": [
-              "ThePrinceAdultGeoReplacement:91 == 0",
-              "ThePrinceAdultGeoReplacement:175 == 0",
-              "ThePrinceAdultGeoReplacement:301 != 0"
+              "ThePrinceAdultGeoReplacement:100 == 0",
+              "ThePrinceAdultGeoReplacement:184 == 0",
+              "ThePrinceAdultGeoReplacement:310 != 0"
             ]
           },
           {
@@ -4832,11 +4832,11 @@
               1
             ],
             "read_at": [
-              "ThePrinceAdultGeoReplacement:87 != 0",
-              "ThePrinceAdultGeoReplacement:154 != 0",
-              "ThePrinceAdultGeoReplacement:173 != 0",
-              "ThePrinceAdultGeoReplacement:225 != 0",
-              "ThePrinceAdultGeoReplacement:284 != 0"
+              "ThePrinceAdultGeoReplacement:96 != 0",
+              "ThePrinceAdultGeoReplacement:163 != 0",
+              "ThePrinceAdultGeoReplacement:182 != 0",
+              "ThePrinceAdultGeoReplacement:234 != 0",
+              "ThePrinceAdultGeoReplacement:293 != 0"
             ]
           },
           {
@@ -4845,11 +4845,11 @@
             "type": "int",
             "enumerable": false,
             "values": [],
-            "not_enumerable": "an int read used only arithmetically or passed as an argument, never compared with a literal (ThePrinceAdultGeoReplacement:286: Lheadud = (float) Math.toRadians(entity.getHead1Ext() - 30);; ThePrinceAdultGeoReplacement:303: Lheadud = (float) Math.toRadians(entity.getHead1Ext() - 30);; ThePrinceAdultGeoReplacement:312: Lheadud = (float) Math.toRadians(entity.getHead1Ext() - 30);)",
+            "not_enumerable": "an int read used only arithmetically or passed as an argument, never compared with a literal (ThePrinceAdultGeoReplacement:295: Lheadud = (float) Math.toRadians(entity.getHead1Ext() - 30);; ThePrinceAdultGeoReplacement:312: Lheadud = (float) Math.toRadians(entity.getHead1Ext() - 30);; ThePrinceAdultGeoReplacement:321: Lheadud = (float) Math.toRadians(entity.getHead1Ext() - 30);)",
             "read_at": [
-              "ThePrinceAdultGeoReplacement:286",
-              "ThePrinceAdultGeoReplacement:303",
-              "ThePrinceAdultGeoReplacement:312"
+              "ThePrinceAdultGeoReplacement:295",
+              "ThePrinceAdultGeoReplacement:312",
+              "ThePrinceAdultGeoReplacement:321"
             ]
           },
           {
@@ -4858,11 +4858,11 @@
             "type": "int",
             "enumerable": false,
             "values": [],
-            "not_enumerable": "an int read used only arithmetically or passed as an argument, never compared with a literal (ThePrinceAdultGeoReplacement:292: Cheadud = (float) Math.toRadians(entity.getHead2Ext() - 30);; ThePrinceAdultGeoReplacement:309: Cheadud = (float) Math.toRadians(entity.getHead2Ext() - 30);; ThePrinceAdultGeoReplacement:314: Cheadud = (float) Math.toRadians(entity.getHead2Ext() - 30);)",
+            "not_enumerable": "an int read used only arithmetically or passed as an argument, never compared with a literal (ThePrinceAdultGeoReplacement:301: Cheadud = (float) Math.toRadians(entity.getHead2Ext() - 30);; ThePrinceAdultGeoReplacement:318: Cheadud = (float) Math.toRadians(entity.getHead2Ext() - 30);; ThePrinceAdultGeoReplacement:323: Cheadud = (float) Math.toRadians(entity.getHead2Ext() - 30);)",
             "read_at": [
-              "ThePrinceAdultGeoReplacement:292",
-              "ThePrinceAdultGeoReplacement:309",
-              "ThePrinceAdultGeoReplacement:314"
+              "ThePrinceAdultGeoReplacement:301",
+              "ThePrinceAdultGeoReplacement:318",
+              "ThePrinceAdultGeoReplacement:323"
             ]
           },
           {
@@ -4871,11 +4871,11 @@
             "type": "int",
             "enumerable": false,
             "values": [],
-            "not_enumerable": "an int read used only arithmetically or passed as an argument, never compared with a literal (ThePrinceAdultGeoReplacement:289: Rheadud = (float) Math.toRadians(entity.getHead3Ext() - 30);; ThePrinceAdultGeoReplacement:306: Rheadud = (float) Math.toRadians(entity.getHead3Ext() - 30);; ThePrinceAdultGeoReplacement:313: Rheadud = (float) Math.toRadians(entity.getHead3Ext() - 30);)",
+            "not_enumerable": "an int read used only arithmetically or passed as an argument, never compared with a literal (ThePrinceAdultGeoReplacement:298: Rheadud = (float) Math.toRadians(entity.getHead3Ext() - 30);; ThePrinceAdultGeoReplacement:315: Rheadud = (float) Math.toRadians(entity.getHead3Ext() - 30);; ThePrinceAdultGeoReplacement:322: Rheadud = (float) Math.toRadians(entity.getHead3Ext() - 30);)",
             "read_at": [
-              "ThePrinceAdultGeoReplacement:289",
-              "ThePrinceAdultGeoReplacement:306",
-              "ThePrinceAdultGeoReplacement:313"
+              "ThePrinceAdultGeoReplacement:298",
+              "ThePrinceAdultGeoReplacement:315",
+              "ThePrinceAdultGeoReplacement:322"
             ]
           },
           {
@@ -4887,9 +4887,9 @@
               true
             ],
             "read_at": [
-              "ThePrinceAdultGeoReplacement:95",
-              "ThePrinceAdultGeoReplacement:175",
-              "ThePrinceAdultGeoReplacement:229"
+              "ThePrinceAdultGeoReplacement:104",
+              "ThePrinceAdultGeoReplacement:184",
+              "ThePrinceAdultGeoReplacement:238"
             ]
           }
         ],
@@ -4899,17 +4899,17 @@
         {
           "getter": "ThePrinceAdultPose.getHead1Ext()",
           "type": "int",
-          "reason": "an int read used only arithmetically or passed as an argument, never compared with a literal (ThePrinceAdultGeoReplacement:286: Lheadud = (float) Math.toRadians(entity.getHead1Ext() - 30);; ThePrinceAdultGeoReplacement:303: Lheadud = (float) Math.toRadians(entity.getHead1Ext() - 30);; ThePrinceAdultGeoReplacement:312: Lheadud = (float) Math.toRadians(entity.getHead1Ext() - 30);)"
+          "reason": "an int read used only arithmetically or passed as an argument, never compared with a literal (ThePrinceAdultGeoReplacement:295: Lheadud = (float) Math.toRadians(entity.getHead1Ext() - 30);; ThePrinceAdultGeoReplacement:312: Lheadud = (float) Math.toRadians(entity.getHead1Ext() - 30);; ThePrinceAdultGeoReplacement:321: Lheadud = (float) Math.toRadians(entity.getHead1Ext() - 30);)"
         },
         {
           "getter": "ThePrinceAdultPose.getHead2Ext()",
           "type": "int",
-          "reason": "an int read used only arithmetically or passed as an argument, never compared with a literal (ThePrinceAdultGeoReplacement:292: Cheadud = (float) Math.toRadians(entity.getHead2Ext() - 30);; ThePrinceAdultGeoReplacement:309: Cheadud = (float) Math.toRadians(entity.getHead2Ext() - 30);; ThePrinceAdultGeoReplacement:314: Cheadud = (float) Math.toRadians(entity.getHead2Ext() - 30);)"
+          "reason": "an int read used only arithmetically or passed as an argument, never compared with a literal (ThePrinceAdultGeoReplacement:301: Cheadud = (float) Math.toRadians(entity.getHead2Ext() - 30);; ThePrinceAdultGeoReplacement:318: Cheadud = (float) Math.toRadians(entity.getHead2Ext() - 30);; ThePrinceAdultGeoReplacement:323: Cheadud = (float) Math.toRadians(entity.getHead2Ext() - 30);)"
         },
         {
           "getter": "ThePrinceAdultPose.getHead3Ext()",
           "type": "int",
-          "reason": "an int read used only arithmetically or passed as an argument, never compared with a literal (ThePrinceAdultGeoReplacement:289: Rheadud = (float) Math.toRadians(entity.getHead3Ext() - 30);; ThePrinceAdultGeoReplacement:306: Rheadud = (float) Math.toRadians(entity.getHead3Ext() - 30);; ThePrinceAdultGeoReplacement:313: Rheadud = (float) Math.toRadians(entity.getHead3Ext() - 30);)"
+          "reason": "an int read used only arithmetically or passed as an argument, never compared with a literal (ThePrinceAdultGeoReplacement:298: Rheadud = (float) Math.toRadians(entity.getHead3Ext() - 30);; ThePrinceAdultGeoReplacement:315: Rheadud = (float) Math.toRadians(entity.getHead3Ext() - 30);; ThePrinceAdultGeoReplacement:322: Rheadud = (float) Math.toRadians(entity.getHead3Ext() - 30);)"
         }
       ],
       "states": [
@@ -4944,11 +4944,11 @@
               1
             ],
             "read_at": [
-              "ThePrinceTeenGeoReplacement:89 (current_activity) == 0",
-              "ThePrinceTeenGeoReplacement:92 (current_activity) == 1",
-              "ThePrinceTeenGeoReplacement:155 (current_activity) == 1",
-              "ThePrinceTeenGeoReplacement:161 (current_activity) == 1",
-              "ThePrinceTeenGeoReplacement:249 == 1"
+              "ThePrinceTeenGeoReplacement:98 (current_activity) == 0",
+              "ThePrinceTeenGeoReplacement:101 (current_activity) == 1",
+              "ThePrinceTeenGeoReplacement:164 (current_activity) == 1",
+              "ThePrinceTeenGeoReplacement:170 (current_activity) == 1",
+              "ThePrinceTeenGeoReplacement:258 == 1"
             ]
           },
           {
@@ -4960,11 +4960,11 @@
               1
             ],
             "read_at": [
-              "ThePrinceTeenGeoReplacement:95 != 0",
-              "ThePrinceTeenGeoReplacement:148 != 0",
-              "ThePrinceTeenGeoReplacement:155 == 0",
-              "ThePrinceTeenGeoReplacement:202 != 0",
-              "ThePrinceTeenGeoReplacement:315 != 0"
+              "ThePrinceTeenGeoReplacement:104 != 0",
+              "ThePrinceTeenGeoReplacement:157 != 0",
+              "ThePrinceTeenGeoReplacement:164 == 0",
+              "ThePrinceTeenGeoReplacement:211 != 0",
+              "ThePrinceTeenGeoReplacement:324 != 0"
             ]
           },
           {
@@ -4973,9 +4973,9 @@
             "type": "int",
             "enumerable": false,
             "values": [],
-            "not_enumerable": "an int read used only arithmetically or passed as an argument, never compared with a literal (ThePrinceTeenGeoReplacement:349: d1 = entity.getHead1Ext();)",
+            "not_enumerable": "an int read used only arithmetically or passed as an argument, never compared with a literal (ThePrinceTeenGeoReplacement:358: d1 = entity.getHead1Ext();)",
             "read_at": [
-              "ThePrinceTeenGeoReplacement:349"
+              "ThePrinceTeenGeoReplacement:358"
             ]
           },
           {
@@ -4984,9 +4984,9 @@
             "type": "int",
             "enumerable": false,
             "values": [],
-            "not_enumerable": "an int read used only arithmetically or passed as an argument, never compared with a literal (ThePrinceTeenGeoReplacement:350: d2 = entity.getHead2Ext();)",
+            "not_enumerable": "an int read used only arithmetically or passed as an argument, never compared with a literal (ThePrinceTeenGeoReplacement:359: d2 = entity.getHead2Ext();)",
             "read_at": [
-              "ThePrinceTeenGeoReplacement:350"
+              "ThePrinceTeenGeoReplacement:359"
             ]
           },
           {
@@ -4995,9 +4995,9 @@
             "type": "int",
             "enumerable": false,
             "values": [],
-            "not_enumerable": "an int read used only arithmetically or passed as an argument, never compared with a literal (ThePrinceTeenGeoReplacement:351: d3 = entity.getHead3Ext();)",
+            "not_enumerable": "an int read used only arithmetically or passed as an argument, never compared with a literal (ThePrinceTeenGeoReplacement:360: d3 = entity.getHead3Ext();)",
             "read_at": [
-              "ThePrinceTeenGeoReplacement:351"
+              "ThePrinceTeenGeoReplacement:360"
             ]
           },
           {
@@ -5008,7 +5008,7 @@
             "values": [],
             "not_enumerable": "a RenderInfo latch (the per-entity scratch the pose reads and writes), not a value the code branches on",
             "read_at": [
-              "ThePrinceTeenGeoReplacement:87"
+              "ThePrinceTeenGeoReplacement:96"
             ]
           },
           {
@@ -5019,7 +5019,7 @@
             "values": [],
             "not_enumerable": "a yaw (the turn rate the flying head follows), not an enumerable state",
             "read_at": [
-              "ThePrinceTeenGeoReplacement:252"
+              "ThePrinceTeenGeoReplacement:261"
             ]
           },
           {
@@ -5031,7 +5031,7 @@
               true
             ],
             "read_at": [
-              "ThePrinceTeenGeoReplacement:206"
+              "ThePrinceTeenGeoReplacement:215"
             ]
           },
           {
@@ -5042,7 +5042,7 @@
             "values": [],
             "not_enumerable": "a yaw (the turn rate the flying head follows), not an enumerable state",
             "read_at": [
-              "ThePrinceTeenGeoReplacement:252"
+              "ThePrinceTeenGeoReplacement:261"
             ]
           }
         ],
@@ -5052,17 +5052,17 @@
         {
           "getter": "ThePrinceTeenPose.getHead1Ext()",
           "type": "int",
-          "reason": "an int read used only arithmetically or passed as an argument, never compared with a literal (ThePrinceTeenGeoReplacement:349: d1 = entity.getHead1Ext();)"
+          "reason": "an int read used only arithmetically or passed as an argument, never compared with a literal (ThePrinceTeenGeoReplacement:358: d1 = entity.getHead1Ext();)"
         },
         {
           "getter": "ThePrinceTeenPose.getHead2Ext()",
           "type": "int",
-          "reason": "an int read used only arithmetically or passed as an argument, never compared with a literal (ThePrinceTeenGeoReplacement:350: d2 = entity.getHead2Ext();)"
+          "reason": "an int read used only arithmetically or passed as an argument, never compared with a literal (ThePrinceTeenGeoReplacement:359: d2 = entity.getHead2Ext();)"
         },
         {
           "getter": "ThePrinceTeenPose.getHead3Ext()",
           "type": "int",
-          "reason": "an int read used only arithmetically or passed as an argument, never compared with a literal (ThePrinceTeenGeoReplacement:351: d3 = entity.getHead3Ext();)"
+          "reason": "an int read used only arithmetically or passed as an argument, never compared with a literal (ThePrinceTeenGeoReplacement:360: d3 = entity.getHead3Ext();)"
         },
         {
           "getter": "ThePrinceTeenPose.getRenderInfo()",
@@ -5112,7 +5112,7 @@
               2
             ],
             "read_at": [
-              "ThePrincessGeoReplacement:108 (current_activity) != 2"
+              "ThePrincessGeoReplacement:123 (current_activity) != 2"
             ]
           },
           {
@@ -5124,10 +5124,11 @@
               1
             ],
             "read_at": [
-              "ThePrincessGeoReplacement:95 != 0",
-              "ThePrincessGeoReplacement:108 != 0",
-              "ThePrincessGeoReplacement:121 != 0",
-              "ThePrincessGeoReplacement:201 != 0"
+              "ThePrincessGeoReplacement:91 != 0",
+              "ThePrincessGeoReplacement:110 != 0",
+              "ThePrincessGeoReplacement:123 != 0",
+              "ThePrincessGeoReplacement:136 != 0",
+              "ThePrincessGeoReplacement:216 != 0"
             ]
           },
           {
@@ -5136,9 +5137,9 @@
             "type": "int",
             "enumerable": false,
             "values": [],
-            "not_enumerable": "an int read used only arithmetically or passed as an argument, never compared with a literal (ThePrincessGeoReplacement:223: d1 = entity.getHead1Ext();)",
+            "not_enumerable": "an int read used only arithmetically or passed as an argument, never compared with a literal (ThePrincessGeoReplacement:238: d1 = entity.getHead1Ext();)",
             "read_at": [
-              "ThePrincessGeoReplacement:223"
+              "ThePrincessGeoReplacement:238"
             ]
           },
           {
@@ -5147,9 +5148,9 @@
             "type": "int",
             "enumerable": false,
             "values": [],
-            "not_enumerable": "an int read used only arithmetically or passed as an argument, never compared with a literal (ThePrincessGeoReplacement:224: d2 = entity.getHead2Ext();)",
+            "not_enumerable": "an int read used only arithmetically or passed as an argument, never compared with a literal (ThePrincessGeoReplacement:239: d2 = entity.getHead2Ext();)",
             "read_at": [
-              "ThePrincessGeoReplacement:224"
+              "ThePrincessGeoReplacement:239"
             ]
           },
           {
@@ -5158,9 +5159,9 @@
             "type": "int",
             "enumerable": false,
             "values": [],
-            "not_enumerable": "an int read used only arithmetically or passed as an argument, never compared with a literal (ThePrincessGeoReplacement:225: d3 = entity.getHead3Ext();)",
+            "not_enumerable": "an int read used only arithmetically or passed as an argument, never compared with a literal (ThePrincessGeoReplacement:240: d3 = entity.getHead3Ext();)",
             "read_at": [
-              "ThePrincessGeoReplacement:225"
+              "ThePrincessGeoReplacement:240"
             ]
           },
           {
@@ -5172,7 +5173,7 @@
               true
             ],
             "read_at": [
-              "ThePrincessGeoReplacement:118"
+              "ThePrincessGeoReplacement:133"
             ]
           }
         ],
@@ -5182,17 +5183,17 @@
         {
           "getter": "ThePrincessPose.getHead1Ext()",
           "type": "int",
-          "reason": "an int read used only arithmetically or passed as an argument, never compared with a literal (ThePrincessGeoReplacement:223: d1 = entity.getHead1Ext();)"
+          "reason": "an int read used only arithmetically or passed as an argument, never compared with a literal (ThePrincessGeoReplacement:238: d1 = entity.getHead1Ext();)"
         },
         {
           "getter": "ThePrincessPose.getHead2Ext()",
           "type": "int",
-          "reason": "an int read used only arithmetically or passed as an argument, never compared with a literal (ThePrincessGeoReplacement:224: d2 = entity.getHead2Ext();)"
+          "reason": "an int read used only arithmetically or passed as an argument, never compared with a literal (ThePrincessGeoReplacement:239: d2 = entity.getHead2Ext();)"
         },
         {
           "getter": "ThePrincessPose.getHead3Ext()",
           "type": "int",
-          "reason": "an int read used only arithmetically or passed as an argument, never compared with a literal (ThePrincessGeoReplacement:225: d3 = entity.getHead3Ext();)"
+          "reason": "an int read used only arithmetically or passed as an argument, never compared with a literal (ThePrincessGeoReplacement:240: d3 = entity.getHead3Ext();)"
         }
       ],
       "states": [

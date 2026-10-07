@@ -31,7 +31,9 @@ public class StinkBugRenderer extends MobRenderer<EntityStinkBug, StinkBugModel>
 
     @Override
     protected void scale(EntityStinkBug entity, PoseStack poseStack, float partialTick) {
-        // orig preRenderScale: GL11.glScalef(scale, scale, scale), the LivingEntityRenderer.scale slot
-        poseStack.scale(SCALE, SCALE, SCALE);
+        // orig RenderStinkBug.preRenderScale (:39-45): a child at scale / 2, otherwise scale; the
+        // LivingEntityRenderer.scale slot
+        float s = entity.isBaby() ? SCALE / 2.0F : SCALE;
+        poseStack.scale(s, s, s);
     }
 }

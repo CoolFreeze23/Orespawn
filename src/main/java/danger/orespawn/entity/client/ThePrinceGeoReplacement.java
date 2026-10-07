@@ -64,6 +64,15 @@ public final class ThePrinceGeoReplacement extends OreSpawnGeoReplacement<ThePri
         public boolean cubeFaceOrderRequired() {
             return true;
         }
+
+        /**
+         * The wing membranes' blended pass (ModelThePrince.java:420-432): the seam's second pass over these bones on the classic model's own
+         * render type and colour ({@link ModelThePrince#renderWingMembranes}, drawn there by {@link WingMembraneLayer}).
+         */
+        @Override
+        public SecondPass secondPass() {
+            return new SecondPass(java.util.List.of("Rwing2", "Rwing3", "Lwing2", "Lwing3", "Lwing", "Rwing"), ModelThePrince.WING_MEMBRANE_RENDER_TYPE, ModelThePrince.WING_MEMBRANE_COLOR);
+        }
     };
 
     public ThePrinceGeoReplacement() {

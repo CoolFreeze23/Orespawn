@@ -29,6 +29,9 @@ public class ThePrinceTeenRenderer extends MobRenderer<ThePrinceTeen, ModelThePr
 
     public ThePrinceTeenRenderer(EntityRendererProvider.Context context) {
         super(context, new ModelThePrinceTeen(context.bakeLayer(MODEL_LAYER)), SHADOW);
+        // the original's blended wing membranes (ModelThePrinceTeen.java:869-883), a second pass after the opaque one
+        this.addLayer(new WingMembraneLayer<>(this, ModelThePrinceTeen::renderWingMembranes, ModelThePrinceTeen.WING_MEMBRANE_RENDER_TYPE,
+                ModelThePrinceTeen.WING_MEMBRANE_COLOR));
     }
 
     @Override

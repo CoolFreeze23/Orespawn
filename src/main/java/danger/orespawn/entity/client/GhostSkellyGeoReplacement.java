@@ -64,6 +64,12 @@ public final class GhostSkellyGeoReplacement extends OreSpawnGeoReplacement<Ghos
         public boolean cubeFaceOrderRequired() {
             return true;
         }
+
+        /** The classic model's tint (orig glColor4f(0.75, 0.75, 0.75, 0.25)), {@link GhostSkellyModel#COLOR}. */
+        @Override
+        public int renderColor(GhostSkelly entity, float partialTick) {
+            return GhostSkellyModel.COLOR;
+        }
     };
 
     public GhostSkellyGeoReplacement() {

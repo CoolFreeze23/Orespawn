@@ -55,6 +55,12 @@ public final class GhostGeoReplacement extends OreSpawnGeoReplacement<Ghost> {
         public boolean cubeFaceOrderRequired() {
             return true;
         }
+
+        /** The classic model's tint (orig glColor4f(0.75, 0.75, 0.75, 0.25)), {@link GhostModel#COLOR}. */
+        @Override
+        public int renderColor(Ghost entity, float partialTick) {
+            return GhostModel.COLOR;
+        }
     };
 
     public GhostGeoReplacement() {

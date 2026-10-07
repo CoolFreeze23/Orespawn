@@ -34,8 +34,12 @@ public final class StinkBugGeoReplacement extends OreSpawnGeoReplacement<EntityS
             StinkBugRenderer.SHADOW) {
         @Override
         public void applyScale(EntityStinkBug entity, PoseStack poseStack, float partialTick) {
-            // orig RenderStinkBug.preRenderScale: GL11.glScalef(scale, scale, scale) (StinkBugRenderer.scale)
-            poseStack.scale(StinkBugRenderer.SCALE, StinkBugRenderer.SCALE, StinkBugRenderer.SCALE);
+            // orig RenderStinkBug.preRenderScale (:39-45): a child at scale / 2, otherwise scale (StinkBugRenderer.scale)
+            if (entity.isBaby()) {
+                poseStack.scale(StinkBugRenderer.SCALE / 2.0F, StinkBugRenderer.SCALE / 2.0F, StinkBugRenderer.SCALE / 2.0F);
+            } else {
+                poseStack.scale(StinkBugRenderer.SCALE, StinkBugRenderer.SCALE, StinkBugRenderer.SCALE);
+            }
         }
     };
 

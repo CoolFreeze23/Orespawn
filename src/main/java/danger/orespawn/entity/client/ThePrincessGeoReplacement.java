@@ -75,6 +75,21 @@ public final class ThePrincessGeoReplacement extends OreSpawnGeoReplacement<TheP
         public boolean cubeFaceOrderRequired() {
             return true;
         }
+
+        /**
+         * The wing membranes' blended pass (ModelThePrincess.java:470-487): the seam's second pass over these bones on the classic model's own
+         * render type and colour ({@link ModelThePrincess#renderWingMembranes}, drawn there by {@link WingMembraneLayer}).
+         */
+        @Override
+        public SecondPass secondPass() {
+            return new SecondPass(java.util.List.of("Rwing2", "Rwing3", "Lwing2", "Lwing3", "Lwing", "Rwing", "Lpower", "Cpower", "Rpower"), ModelThePrincess.WING_MEMBRANE_RENDER_TYPE, ModelThePrincess.WING_MEMBRANE_COLOR);
+        }
+
+        /** orig RenderThePrincess.java:48-52, as ThePrincessRenderer: the second texture while she attacks. */
+        @Override
+        public ResourceLocation texture(ThePrincess entity) {
+            return entity.getAttacking() != 0 ? ThePrincessRenderer.ATTACK_TEXTURE : super.texture(entity);
+        }
     };
 
     public ThePrincessGeoReplacement() {

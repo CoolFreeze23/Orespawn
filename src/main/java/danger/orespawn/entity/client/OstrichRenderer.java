@@ -1,5 +1,6 @@
 package danger.orespawn.entity.client;
 
+import com.mojang.blaze3d.vertex.PoseStack;
 import danger.orespawn.OreSpawnMod;
 import danger.orespawn.entity.Ostrich;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
@@ -21,6 +22,13 @@ public class OstrichRenderer extends MobRenderer<Ostrich, OstrichModel> {
             new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "ostrich"), "main");
     /** orig RenderOstrich.scale = 1.0f (third constructor argument, ClientProxyOreSpawn.java:450). */
     public static final float SCALE = 1.0F;
+
+    /** orig RenderOstrich.preRenderScale (:42-48): a child at scale / 2, otherwise scale. */
+    @Override
+    protected void scale(Ostrich entity, PoseStack poseStack, float partialTick) {
+        float s = entity.isBaby() ? SCALE / 2.0F : SCALE;
+        poseStack.scale(s, s, s);
+    }
     /** orig RenderLiving shadow = 0.55f * 1.0f (RenderOstrich.java:26). */
     public static final float SHADOW = 0.55F * 1.0F;
 

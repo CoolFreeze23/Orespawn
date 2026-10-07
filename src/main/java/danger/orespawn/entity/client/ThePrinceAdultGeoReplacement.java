@@ -56,6 +56,15 @@ public final class ThePrinceAdultGeoReplacement extends OreSpawnGeoReplacement<T
             ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "textures/entity/theprinceadult.png"),
             // ThePrinceAdultRenderer's constructor passes the literal 1.2f (no SHADOW constant): the equal literal
             1.2F) {
+
+        /**
+         * The wing membranes' blended pass (ModelThePrinceAdult.java:1184-1200): the seam's second pass over these bones on the classic model's own
+         * render type and colour ({@link ModelThePrinceAdult#renderWingMembranes}, drawn there by {@link WingMembraneLayer}).
+         */
+        @Override
+        public SecondPass secondPass() {
+            return new SecondPass(java.util.List.of("Lwing2", "Lwing4", "Lwing6", "Lwing8", "Lwing10", "Rwing2", "Rwing4", "Rwing6", "Rwing8", "Rwing10"), ModelThePrinceAdult.WING_MEMBRANE_RENDER_TYPE, ModelThePrinceAdult.WING_MEMBRANE_COLOR);
+        }
     };
 
     public ThePrinceAdultGeoReplacement() {

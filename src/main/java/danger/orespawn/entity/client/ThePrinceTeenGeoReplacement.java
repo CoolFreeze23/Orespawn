@@ -54,6 +54,15 @@ public final class ThePrinceTeenGeoReplacement extends OreSpawnGeoReplacement<Th
             // orig RenderThePrinceTeen.preRenderCallback: GL11.glScalef(scale, scale, scale) (ThePrinceTeenRenderer.scale)
             poseStack.scale(ThePrinceTeenRenderer.SCALE, ThePrinceTeenRenderer.SCALE, ThePrinceTeenRenderer.SCALE);
         }
+
+        /**
+         * The wing membranes' blended pass (ModelThePrinceTeen.java:869-883): the seam's second pass over these bones on the classic model's own
+         * render type and colour ({@link ModelThePrinceTeen#renderWingMembranes}, drawn there by {@link WingMembraneLayer}).
+         */
+        @Override
+        public SecondPass secondPass() {
+            return new SecondPass(java.util.List.of("mem1", "mem2", "rmem1", "rmem2", "mem3", "rmem3", "mem4", "rmem4"), ModelThePrinceTeen.WING_MEMBRANE_RENDER_TYPE, ModelThePrinceTeen.WING_MEMBRANE_COLOR);
+        }
     };
 
     private static final String[] L_CLAWS = {"lclaw2", "lclaw4", "lclaw5", "lclaw6", "lclaw7"};

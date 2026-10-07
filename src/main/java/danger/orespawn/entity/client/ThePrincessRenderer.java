@@ -11,6 +11,9 @@ import net.minecraft.resources.ResourceLocation;
 
 public class ThePrincessRenderer extends MobRenderer<ThePrincess, ModelThePrincess> {
 
+    /** orig RenderThePrincess.java:21 texture2, ThePrincesstexture2.png (theprincess2.png, byte-identical). */
+    public static final ResourceLocation ATTACK_TEXTURE =
+            ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "textures/entity/theprincess2.png");
     private static final ResourceLocation TEXTURE =
             ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "textures/entity/theprincess.png");
 
@@ -22,6 +25,9 @@ public class ThePrincessRenderer extends MobRenderer<ThePrincess, ModelThePrince
 
     public ThePrincessRenderer(EntityRendererProvider.Context context) {
         super(context, new ModelThePrincess(context.bakeLayer(MODEL_LAYER)), 0.7f * 0.7f);
+        // the original's blended wing membranes (ModelThePrincess.java:470-487), a second pass after the opaque one
+        this.addLayer(new WingMembraneLayer<>(this, ModelThePrincess::renderWingMembranes, ModelThePrincess.WING_MEMBRANE_RENDER_TYPE,
+                ModelThePrincess.WING_MEMBRANE_COLOR));
     }
 
     @Override
@@ -35,6 +41,7 @@ public class ThePrincessRenderer extends MobRenderer<ThePrincess, ModelThePrince
 
     @Override
     public ResourceLocation getTextureLocation(ThePrincess entity) {
-        return TEXTURE;
+        // orig RenderThePrincess.java:48-52: ThePrincesstexture2.png while she attacks
+        return entity.getAttacking() != 0 ? ATTACK_TEXTURE : TEXTURE;
     }
 }

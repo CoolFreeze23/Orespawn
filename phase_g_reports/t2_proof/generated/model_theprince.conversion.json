@@ -5,8 +5,8 @@
   "proof_scope": "production_proof_model",
   "ground_truth": "executed compiled LayerDefinition and baked ModelPart",
   "source_class": "danger.orespawn.entity.client.ModelThePrince",
-  "source_class_sha256": "cc1d64f3443c05ad0e65d06153ec60dd05a602512b50513cb3a1123f02c25415",
-  "compiled_dump_sha256": "ca5dab0fa15f0893076fac0fd322efb636ea2db3c86cffda3f8e20275ead58f1",
+  "source_class_sha256": "23672447b4e43670d66583f6a5715dcc26b7dbb952813093ca6fde9e4bcd53f6",
+  "compiled_dump_sha256": "822eadf1d5ec41392619fb4376734bdeb00bd1e780603490fad94bb9f1eaad4b",
   "geometry_sha256": "126eff4f7763f15e44153055a18b3b598d0825c01a466e53fa2263d4bdf4e241",
   "animation_sha256": "7882082857fdb11e02f158ebc3a6d3f970e2ac60d54813f0e903ee97b2293749",
   "animation_contract_sha256": "a7ca607eda3689062e36c6255ddc8ef2165a3ea1e100578be6525f5054ccdeac",
@@ -176,6 +176,15 @@
     "cube_bearing_units": 35,
     "observed_units": 35,
     "unobserved_units": [],
+    "second_pass_units": [
+      "Rwing2",
+      "Rwing3",
+      "Lwing2",
+      "Lwing3",
+      "Lwing",
+      "Rwing"
+    ],
+    "second_pass_rule": "the classic renderer draws the pass after its opaque pass, so each capture's order is the main sequence then the pass sequence: the pass's bones take the key's tail in the pass's own order",
     "ordered_pairs": 595,
     "tie_break": "converter emission order for pairs never drawn together in any capture",
     "lifting": "pre-order over the geo bone tree, siblings by their subtree's first classic draw"

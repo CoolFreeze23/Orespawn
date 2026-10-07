@@ -744,14 +744,14 @@ The independent gates are:
 - Geometry maximum corner delta: 3.01522801969e-07 blocks (epsilon 1e-05).
 - Surface maximum UV delta: 0; normal delta: 1.50030177641e-07.
 - Animation maximum rotation delta: 0 radians (epsilon 2e-06).
-- Visual maximum changed fraction: 1.52587890625e-05; maximum mean absolute error: 0.002685546875; maximum pair-contested fraction: 0 (never a mismatch; cap 0.01).
+- Visual maximum changed fraction: 1.52587890625e-05; maximum mean absolute error: 0.000473022460938; maximum pair-contested fraction: 0 (never a mismatch; cap 0.01).
 - Draw order: GeckoLib bone order equals the classic draw order over 6 captures (60 draws).
 
 - Accepted path: production OreSpawnGeoReplacement.applyCustomAnimations posed from declared entity states through the entity's pose interface; compiled poseFrom on the same states (`danger.orespawn.entity.client.GhostSkellyGeoReplacement`).
 - Entity states: ['idle']; rotation maximum delta 0 radians; position maximum delta 0 model units; hidden-bone checks 5.
 - Visual z-fight pixels compared, none excluded (G2 root-order contract): maximum contested fraction 0.00148010253906, a diagnostic. Pair-contested pixels (the same two front faces on both sides within 1e-05 blocks) never a mismatch: maximum fraction 0 under the cap 0.01.
-- Render mode: entity_translucent (vertex colour (255, 255, 255, 255), light world): blend SRC_ALPHA / ONE_MINUS_SRC_ALPHA / ONE / ONE_MINUS_SRC_ALPHA over the background in emission order, LEQUAL depth test with the depth written (fragments within 1e-05 blocks are one plane and all pass), texel alpha < 0.1 discarded; the same emulation on both sides.
-- Render state observed: both sides request entity_translucent (RenderType.entityTranslucent, the classic model's own render-type function - the same object on the candidate), vertex colour (255, 255, 255, 255) and packed light 0 at every captured vertex (1440 classic + 1440 candidate).
+- Render mode: entity_translucent (vertex colour (191, 191, 191, 63), light world): blend SRC_ALPHA / ONE_MINUS_SRC_ALPHA / ONE / ONE_MINUS_SRC_ALPHA over the background in emission order, LEQUAL depth test with the depth written (fragments within 1e-05 blocks are one plane and all pass), texel alpha < 0.1 discarded; the same emulation on both sides.
+- Render state observed: both sides request entity_translucent (RenderType.entityTranslucent, the classic model's own render-type function - the same object on the candidate), vertex colour (191, 191, 191, 63) and packed light 0 at every captured vertex (1440 classic + 1440 candidate).
 
 ## model_hydrolisc (Tier 2)
 
@@ -1226,7 +1226,7 @@ The independent gates are:
 - Surface maximum UV delta: 0; normal delta: 1.48672355968e-07.
 - Animation maximum rotation delta: 0 radians (epsilon 2e-06).
 - Visual maximum changed fraction: 0; maximum mean absolute error: 0; maximum pair-contested fraction: 0 (never a mismatch; cap 0.01).
-- Draw order: GeckoLib bone order equals the classic draw order over 81 captures (2835 draws).
+- Draw order: GeckoLib bone order equals the classic draw order over 81 captures (2349 draws).
 
 - Accepted path: production OreSpawnGeoReplacement.applyCustomAnimations posed from declared entity states through the entity's pose interface; compiled poseFrom on the same states (`danger.orespawn.entity.client.ThePrinceGeoReplacement`).
 - Entity states: ['idle', 'attacking', 'legs_folded', 'sitting']; rotation maximum delta 0 radians; position maximum delta 0 model units; hidden-bone checks 80.
@@ -1239,11 +1239,11 @@ The independent gates are:
 - Surface maximum UV delta: 0; normal delta: 1.5556349194e-07.
 - Animation maximum rotation delta: 0 radians (epsilon 2e-06).
 - Visual maximum changed fraction: 1.52587890625e-05; maximum mean absolute error: 9.1552734375e-05; maximum pair-contested fraction: 1.52587890625e-05 (never a mismatch; cap 0.01).
-- Draw order: GeckoLib bone order equals the classic draw order over 81 captures (9639 draws).
+- Draw order: GeckoLib bone order equals the classic draw order over 81 captures (8829 draws).
 
 - Accepted path: production OreSpawnGeoReplacement.applyCustomAnimations posed from declared entity states through the entity's pose interface; compiled poseFrom on the same states (`danger.orespawn.entity.client.ThePrinceAdultGeoReplacement`).
 - Entity states: ['idle', 'attacking', 'flying', 'sitting']; rotation maximum delta 0 radians; position maximum delta 1.9999999985e-06 model units; hidden-bone checks 80.
-- Visual z-fight pixels compared, none excluded (G2 root-order contract): maximum contested fraction 0.000259399414062, a diagnostic. Pair-contested pixels (the same two front faces on both sides within 1e-05 blocks) never a mismatch: maximum fraction 1.52587890625e-05 under the cap 0.01.
+- Visual z-fight pixels compared, none excluded (G2 root-order contract): maximum contested fraction 0.0015869140625, a diagnostic. Pair-contested pixels (the same two front faces on both sides within 1e-05 blocks) never a mismatch: maximum fraction 1.52587890625e-05 under the cap 0.01.
 
 ## model_theprinceteen (Tier 1)
 
@@ -1252,11 +1252,11 @@ The independent gates are:
 - Surface maximum UV delta: 0; normal delta: 2.11896201016e-07.
 - Animation maximum rotation delta: 0 radians (epsilon 2e-06).
 - Visual maximum changed fraction: 0; maximum mean absolute error: 0; maximum pair-contested fraction: 1.52587890625e-05 (never a mismatch; cap 0.01).
-- Draw order: GeckoLib bone order equals the classic draw order over 81 captures (5751 draws).
+- Draw order: GeckoLib bone order equals the classic draw order over 81 captures (5103 draws).
 
 - Accepted path: production OreSpawnGeoReplacement.applyCustomAnimations posed from declared entity states through the entity's pose interface; compiled poseFrom on the same states (`danger.orespawn.entity.client.ThePrinceTeenGeoReplacement`).
 - Entity states: ['idle', 'attacking', 'flying', 'sitting']; rotation maximum delta 0 radians; position maximum delta 4.00000000234e-07 model units; hidden-bone checks 80.
-- Visual z-fight pixels compared, none excluded (G2 root-order contract): maximum contested fraction 0.000503540039062, a diagnostic. Pair-contested pixels (the same two front faces on both sides within 1e-05 blocks) never a mismatch: maximum fraction 1.52587890625e-05 under the cap 0.01.
+- Visual z-fight pixels compared, none excluded (G2 root-order contract): maximum contested fraction 0.00151062011719, a diagnostic. Pair-contested pixels (the same two front faces on both sides within 1e-05 blocks) never a mismatch: maximum fraction 1.52587890625e-05 under the cap 0.01.
 
 ## model_waterdragon (Tier 1)
 
@@ -1309,8 +1309,8 @@ The independent gates are:
 - Accepted path: production OreSpawnGeoReplacement.applyCustomAnimations through OreSpawnGeoReplacementModel.setCustomAnimations (`danger.orespawn.entity.client.GhostGeoReplacement`).
 - Rotation maximum delta 0 radians; position maximum delta 0 model units over 54 position channels; inputs {'limb_swing': 0.0, 'limb_swing_amounts': [0.0], 'net_head_yaw_degrees': 0.0, 'head_pitch_degrees': 0.0}.
 - Visual z-fight pixels compared, none excluded (G2 root-order contract): maximum contested fraction 1.52587890625e-05, a diagnostic. Pair-contested pixels (the same two front faces on both sides within 1e-05 blocks) never a mismatch: maximum fraction 0 under the cap 0.01.
-- Render mode: entity_translucent (vertex colour (255, 255, 255, 255), light world): blend SRC_ALPHA / ONE_MINUS_SRC_ALPHA / ONE / ONE_MINUS_SRC_ALPHA over the background in emission order, LEQUAL depth test with the depth written (fragments within 1e-05 blocks are one plane and all pass), texel alpha < 0.1 discarded; the same emulation on both sides.
-- Render state observed: both sides request entity_translucent (RenderType.entityTranslucent, the classic model's own render-type function - the same object on the candidate), vertex colour (255, 255, 255, 255) and packed light 0 at every captured vertex (432 classic + 432 candidate).
+- Render mode: entity_translucent (vertex colour (191, 191, 191, 63), light world): blend SRC_ALPHA / ONE_MINUS_SRC_ALPHA / ONE / ONE_MINUS_SRC_ALPHA over the background in emission order, LEQUAL depth test with the depth written (fragments within 1e-05 blocks are one plane and all pass), texel alpha < 0.1 discarded; the same emulation on both sides.
+- Render state observed: both sides request entity_translucent (RenderType.entityTranslucent, the classic model's own render-type function - the same object on the candidate), vertex colour (191, 191, 191, 63) and packed light 0 at every captured vertex (432 classic + 432 candidate).
 
 ## model_boyfriend (Tier 2)
 
@@ -1345,11 +1345,11 @@ The independent gates are:
 - Surface maximum UV delta: 0; normal delta: 1.48672355968e-07.
 - Animation maximum rotation delta: 0 radians (epsilon 2e-06).
 - Visual maximum changed fraction: 0; maximum mean absolute error: 0; maximum pair-contested fraction: 9.1552734375e-05 (never a mismatch; cap 0.01).
-- Draw order: GeckoLib bone order equals the classic draw order over 81 captures (2997 draws).
+- Draw order: GeckoLib bone order equals the classic draw order over 81 captures (2268 draws).
 
 - Accepted path: production OreSpawnGeoReplacement.applyCustomAnimations posed from declared entity states through the entity's pose interface; compiled poseFrom on the same states (`danger.orespawn.entity.client.ThePrincessGeoReplacement`).
 - Entity states: ['idle', 'attacking', 'legs_folded', 'sitting']; rotation maximum delta 0 radians; position maximum delta 0 model units; hidden-bone checks 80.
-- Visual z-fight pixels compared, none excluded (G2 root-order contract): maximum contested fraction 0.00155639648438, a diagnostic. Pair-contested pixels (the same two front faces on both sides within 1e-05 blocks) never a mismatch: maximum fraction 9.1552734375e-05 under the cap 0.01.
+- Visual z-fight pixels compared, none excluded (G2 root-order contract): maximum contested fraction 0.00320434570312, a diagnostic. Pair-contested pixels (the same two front faces on both sides within 1e-05 blocks) never a mismatch: maximum fraction 9.1552734375e-05 under the cap 0.01.
 
 ## model_theking (Tier 1)
 

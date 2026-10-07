@@ -1,5 +1,6 @@
 package danger.orespawn.entity.client;
 
+import net.minecraft.util.FastColor;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import danger.orespawn.entity.GhostSkelly;
@@ -41,6 +42,13 @@ public class GhostSkellyModel extends EntityModel<GhostSkelly> {
     private final ModelPart lsleeve;
     private final ModelPart lchains;
     private final ModelPart rchains;
+
+    /**
+     * orig ModelGhostSkelly.java:127: {@code glColor4f(0.75, 0.75, 0.75, 0.25)} under the blend, so the ghost is drawn a quarter opaque and
+     * grey; packed as the King's membranes are ({@code 63 << 24 | 191 << 16 | 191 << 8 | 191}) and handed to every part.
+     * The GeckoLib descriptor's {@code renderColor} returns it.
+     */
+    public static final int COLOR = (63 << 24) | (191 << 16) | (191 << 8) | 191;
 
     public GhostSkellyModel(ModelPart root) {
         super(RENDER_TYPE);
@@ -154,15 +162,17 @@ public class GhostSkellyModel extends EntityModel<GhostSkelly> {
 
     @Override
     public void renderToBuffer(PoseStack poseStack, VertexConsumer vertexConsumer, int packedLight, int packedOverlay, int color) {
-        this.body.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
-        this.shirt.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
-        this.head.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
-        this.stem.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
-        this.rarm.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
-        this.larm.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
-        this.rsleeve.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
-        this.lsleeve.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
-        this.lchains.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
-        this.rchains.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
+        // the 0.25-alpha grey tint (COLOR) over the colour the renderer hands in
+        int tint = FastColor.ARGB32.multiply(color, COLOR);
+        this.body.render(poseStack, vertexConsumer, packedLight, packedOverlay, tint);
+        this.shirt.render(poseStack, vertexConsumer, packedLight, packedOverlay, tint);
+        this.head.render(poseStack, vertexConsumer, packedLight, packedOverlay, tint);
+        this.stem.render(poseStack, vertexConsumer, packedLight, packedOverlay, tint);
+        this.rarm.render(poseStack, vertexConsumer, packedLight, packedOverlay, tint);
+        this.larm.render(poseStack, vertexConsumer, packedLight, packedOverlay, tint);
+        this.rsleeve.render(poseStack, vertexConsumer, packedLight, packedOverlay, tint);
+        this.lsleeve.render(poseStack, vertexConsumer, packedLight, packedOverlay, tint);
+        this.lchains.render(poseStack, vertexConsumer, packedLight, packedOverlay, tint);
+        this.rchains.render(poseStack, vertexConsumer, packedLight, packedOverlay, tint);
     }
 }

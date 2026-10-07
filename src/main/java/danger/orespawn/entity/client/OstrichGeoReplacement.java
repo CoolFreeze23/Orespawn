@@ -1,5 +1,6 @@
 package danger.orespawn.entity.client;
 
+import com.mojang.blaze3d.vertex.PoseStack;
 import danger.orespawn.ModEntities;
 import danger.orespawn.OreSpawnMod;
 import danger.orespawn.entity.Ostrich;
@@ -51,6 +52,13 @@ public final class OstrichGeoReplacement extends OreSpawnGeoReplacement<Ostrich>
         @Override
         public boolean cubeFaceOrderRequired() {
             return true;
+        }
+
+        /** orig RenderOstrich.preRenderScale (:42-48), as OstrichRenderer.scale: a child at scale / 2. */
+        @Override
+        public void applyScale(Ostrich entity, PoseStack poseStack, float partialTick) {
+            float s = entity.isBaby() ? OstrichRenderer.SCALE / 2.0F : OstrichRenderer.SCALE;
+            poseStack.scale(s, s, s);
         }
     };
 
