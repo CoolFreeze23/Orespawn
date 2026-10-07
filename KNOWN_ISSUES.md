@@ -217,15 +217,15 @@ don't report them as bugs. Configurable modern behavior for each is on the
 
 ## Optional non-source content (off by default)
 
-The Vampire Butterfly, Apple Cow, and Golden Apple Cow appear on the classic
-OreSpawn wiki but never existed in the 1.7.10 mod's code, so a source-faithful
-build can't ship them enabled. They're still in the mod — set
-`phase14ContentEnable = true` in the config to get their spawns and creative
-spawn eggs back. That one line is enough unless you have set `modern.enabled =
-false`, the master switch that forces every 2.0 feature (this content included)
-to its classic/off value; it defaults to true and defers to the per-feature
-keys. (The Enchanted Golden Apple Cow IS original content and is
-always on.) *(MOD-021)*
+The Vampire Butterfly and two cows from the classic OreSpawn wiki, shown in game
+as the Orchard Cow (Wiki) and the Golden Orchard Cow (Wiki), never existed in the
+1.7.10 mod's code, so a source-faithful build can't ship them enabled. They're
+still in the mod — set `phase14ContentEnable = true` in the config to get their
+spawns and creative spawn eggs back. That one line is enough unless you have set
+`modern.enabled = false`, the master switch that forces every 2.0 feature (this
+content included) to its classic/off value; it defaults to true and defers to the
+per-feature keys. (The original's own cows, the Apple Cow, the Golden Apple Cow
+and the Enchanted Golden Apple Cow, are always on.) *(MOD-021)*
 
 ---
 
