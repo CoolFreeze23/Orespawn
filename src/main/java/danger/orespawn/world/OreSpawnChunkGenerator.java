@@ -155,15 +155,11 @@ public class OreSpawnChunkGenerator extends NoiseBasedChunkGenerator {
             case ISLANDS -> applyIslandsSurface(chunk, region.getRandom());
             case CHAOS -> applyChaosSurface(chunk, region.getRandom());
             case VILLAGE, UTOPIA, MINING, DEFAULT -> {
-                // Pass-through â€” vanilla noise + the dungeon pass above is
-                // sufficient. The "no oceans" continental shape for
-                // UTOPIA/VILLAGE/MINING is now data-driven via the
-                // orespawn:inland noise_settings (constant continentalness),
-                // and Chaos terrain via orespawn:chaos (nether-style noise,
-                // orig ChunkProviderOreSpawn6), so the chunk generator stays
-                // clean: surface rules apply properly to the new landmass
-                // without any post-fill hack patching raw stone over
-                // generated terrain.
+                // Pass-through: the terrain is data-driven, the 1.7.10
+                // generator's (orespawn:legacy_utopia / legacy_extreme_hills,
+                // LegacyTerrainNoise, orig ChunkProviderOreSpawn{,2,3}), and
+                // Chaos's orespawn:chaos (nether-style noise, orig
+                // ChunkProviderOreSpawn6); the surface rules dress it.
             }
         }
     }
@@ -337,11 +333,16 @@ public class OreSpawnChunkGenerator extends NoiseBasedChunkGenerator {
      * Replaces all vanilla terrain blocks with Crystal dimension equivalents.
      * The original 1.7.10 generated the entire chunk with CrystalStone as the base
      * block, with CrystalGrass on the surface. This post-processes the vanilla
-     * noise terrain to achieve the same result.
+     * noise terrain to achieve the same result: a column's first solid block
+     * becomes CrystalGrass at Y62 and up and CrystalStone below, the floor of a
+     * lake (orig ChunkProviderOreSpawn5.MygenBiomeTerrain, :160-182: the top
+     * block only at {@code l1 >= 62}, the filler below).
      *
-     * Also fills in shallow water (Y >= 56) with crystal stone to reduce the
-     * oversized oceans that vanilla overworld noise creates. The original 1.7.10
-     * dimension had custom noise that generated mostly land.
+     * <p>GitHub #6: the terrain is the original's again (orespawn:legacy_crystal),
+     * lakes and all, so the fill that turned every sea floor at Y56 or above into
+     * crystal stone, to cut down the 1.18 overworld noise's oceans, is gone; the
+     * original left the water (its terrain pass filled every air cell below 63
+     * with it, orig ChunkProviderOreSpawn5.java:121).</p>
      *
      * <p><b>OPT-008:</b> the old implementation walked every column from the
      * build ceiling and ran a separate {@code fillShallowWater} pre-pass over
@@ -351,14 +352,11 @@ public class OreSpawnChunkGenerator extends NoiseBasedChunkGenerator {
      * counts as non-air — so every skipped level was a guaranteed
      * {@code isAir() -> continue} iteration), with one reusable cursor. The
      * heightmap is maintained by {@code ProtoChunk.setBlockState}, so our own
-     * writes can never leave it stale-low. The shallow-water fill is fused in
-     * as an inline state machine; block output is identical to the old
-     * fill-then-replace sequence (see inline comments for the invariants).</p>
+     * writes can never leave it stale-low.</p>
      */
     private void replaceTerrain(ChunkAccess chunk) {
         BlockState crystalGrass = ModBlocks.CRYSTAL_GRASS.get().defaultBlockState();
         BlockState crystalStone = ModBlocks.CRYSTAL_STONE.get().defaultBlockState();
-        BlockState air = Blocks.AIR.defaultBlockState();
         int minX = chunk.getPos().getMinBlockX();
         int minZ = chunk.getPos().getMinBlockZ();
         int minY = chunk.getMinBuildHeight();
@@ -371,52 +369,10 @@ public class OreSpawnChunkGenerator extends NoiseBasedChunkGenerator {
 
                 int top = chunk.getHeight(Heightmap.Types.WORLD_SURFACE_WG, worldX, worldZ);
 
-                // OPT-008: shallow-water fill state machine (the old
-                // fillShallowWater pre-pass, fused into this descent). It only
-                // engages at Y<=70 — the old pass started its scan at Y70, and
-                // any levels between the heightmap and Y70 were air
-                // fall-throughs for it anyway. Its writes all land strictly
-                // above the seabed, inside the water/air span that the
-                // replacement logic below never writes to (pre-fill those
-                // levels are water/air and get skipped; post-fill they are
-                // crystal blocks the old replacement pass matched nothing on),
-                // so the write set is identical to the old two-pass order.
                 boolean hitSurface = false;
-                int waterTopY = -1;
-                boolean waterScanDone = false;
 
                 for (int y = top; y >= minY; y--) {
                     BlockState state = chunk.getBlockState(cursor.set(worldX, y, worldZ));
-
-                    if (!waterScanDone && y <= 70) {
-                        if (state.is(Blocks.WATER)) {
-                            if (waterTopY == -1) waterTopY = y;
-                        } else if (!state.isAir()) {
-                            // First non-air at/below Y70: the old pre-pass
-                            // stopped here — it is the seabed if water was
-                            // seen above, otherwise there is nothing to fill.
-                            if (waterTopY != -1 && y >= 56) {
-                                // Shallow sea: fill the water column with
-                                // crystal stone, cap it with crystal grass and
-                                // clear one water block above the cap —
-                                // exactly the old fillShallowWater writes.
-                                for (int fy = y + 1; fy <= waterTopY; fy++) {
-                                    chunk.setBlockState(cursor.set(worldX, fy, worldZ), crystalStone, false);
-                                }
-                                chunk.setBlockState(cursor.set(worldX, waterTopY, worldZ), crystalGrass, false);
-                                if (chunk.getBlockState(cursor.set(worldX, waterTopY + 1, worldZ)).is(Blocks.WATER)) {
-                                    chunk.setBlockState(cursor, air, false);
-                                }
-                                // The old replacement pass ran after the fill
-                                // and saw the crystal-grass cap as this
-                                // column's first non-air block, so the seabed
-                                // below it was never surface-converted —
-                                // mirror that by marking the surface as hit.
-                                hitSurface = true;
-                            }
-                            waterScanDone = true;
-                        }
-                    }
 
                     if (state.isAir() || state.is(Blocks.WATER) || state.is(Blocks.LAVA)) {
                         continue;
@@ -428,8 +384,9 @@ public class OreSpawnChunkGenerator extends NoiseBasedChunkGenerator {
 
                     if (!hitSurface) {
                         hitSurface = true;
-                        if (state.is(Blocks.GRASS_BLOCK) || state.is(Blocks.SAND)
-                                || state.is(Blocks.MYCELIUM) || state.is(Blocks.DIRT)) {
+                        // the top block only at Y62 and up (orig :175-179); a lower floor falls through to crystal stone
+                        if (y >= 62 && (state.is(Blocks.GRASS_BLOCK) || state.is(Blocks.SAND)
+                                || state.is(Blocks.MYCELIUM) || state.is(Blocks.DIRT))) {
                             chunk.setBlockState(cursor.set(worldX, y, worldZ), crystalGrass, false);
                             continue;
                         }

@@ -6,7 +6,7 @@
       "type": "minecraft:fixed",
       "biome": "orespawn:village_biome"
     },
-    "settings": "orespawn:inland",
+    "settings": "orespawn:legacy_utopia",
     "dimension_style": "village"
   }
 }

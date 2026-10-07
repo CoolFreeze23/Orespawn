@@ -6,7 +6,7 @@
       "type": "minecraft:fixed",
       "biome": "orespawn:crystal_plains"
     },
-    "settings": "orespawn:inland",
+    "settings": "orespawn:legacy_crystal",
     "dimension_style": "crystal"
   }
 }

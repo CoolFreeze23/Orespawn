@@ -4,6 +4,7 @@ import com.mojang.serialization.MapCodec;
 import danger.orespawn.OreSpawnMod;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.level.chunk.ChunkGenerator;
+import net.minecraft.world.level.levelgen.DensityFunction;
 import net.minecraft.world.level.levelgen.placement.PlacementModifierType;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredHolder;
@@ -68,12 +69,24 @@ public class ModWorldGen {
     public static final DeferredHolder<PlacementModifierType<?>, PlacementModifierType<OreSpawnVeinPlacement>> VEIN_COUNT =
             PLACEMENT_MODIFIERS.register("vein_count", () -> () -> OreSpawnVeinPlacement.CODEC);
 
+    /** DeferredRegister for custom density functions (the 1.7.10 terrain, GitHub #6). */
+    public static final DeferredRegister<MapCodec<? extends DensityFunction>> DENSITY_FUNCTION_TYPES =
+            DeferredRegister.create(Registries.DENSITY_FUNCTION_TYPE, OreSpawnMod.MOD_ID);
+
     /**
-     * Wire the chunk-generator and placement-modifier registers onto the mod
+     * {@code orespawn:legacy_terrain} — the 1.7.10 overworld generator's density, which the original built Utopia, the
+     * Village, Crystal and Mining on (see {@link LegacyTerrainNoise}).
+     */
+    public static final DeferredHolder<MapCodec<? extends DensityFunction>, MapCodec<LegacyTerrainNoise>> LEGACY_TERRAIN =
+            DENSITY_FUNCTION_TYPES.register("legacy_terrain", () -> LegacyTerrainNoise.CODEC.codec());
+
+    /**
+     * Wire the chunk-generator, placement-modifier and density-function registers onto the mod
      * event bus. Called from {@link danger.orespawn.OreSpawnMod#OreSpawnMod}.
      */
     public static void register(IEventBus eventBus) {
         CHUNK_GENERATORS.register(eventBus);
         PLACEMENT_MODIFIERS.register(eventBus);
+        DENSITY_FUNCTION_TYPES.register(eventBus);
     }
 }

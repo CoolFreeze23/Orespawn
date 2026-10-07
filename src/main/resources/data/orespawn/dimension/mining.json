@@ -6,7 +6,7 @@
       "type": "minecraft:fixed",
       "biome": "orespawn:mining_biome"
     },
-    "settings": "orespawn:inland",
+    "settings": "orespawn:legacy_extreme_hills",
     "dimension_style": "mining"
   }
 }

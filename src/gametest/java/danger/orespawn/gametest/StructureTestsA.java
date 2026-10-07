@@ -468,7 +468,7 @@ public class StructureTestsA {
      *       lowest-of-36-columns surface (PlacementMode.LOWEST_SURFACE_36,
      *       LegacyDungeonStructure.java:180-210, OSW:2573-2597): the scan is
      *       RNG-free, so the test replicates it against the real Mining
-     *       generator (dimension/mining.json: orespawn:inland noise, MINING
+     *       generator (dimension/mining.json: orespawn:legacy_extreme_hills noise, MINING
      *       style) and asserts findGenerationPoint returns exactly
      *       lowest−2.</li>
      * </ul>
@@ -687,14 +687,14 @@ public class StructureTestsA {
         MinecraftServer server = level.getServer();
         Holder<Biome> miningBiome = server.registryAccess().registryOrThrow(Registries.BIOME)
                 .getHolderOrThrow(ResourceKey.create(Registries.BIOME, rl("mining_biome")));
-        Holder<NoiseGeneratorSettings> inland =
+        Holder<NoiseGeneratorSettings> miningTerrain =
                 server.registryAccess().registryOrThrow(Registries.NOISE_SETTINGS)
-                        .getHolderOrThrow(ResourceKey.create(Registries.NOISE_SETTINGS, rl("inland")));
+                        .getHolderOrThrow(ResourceKey.create(Registries.NOISE_SETTINGS, rl("legacy_extreme_hills")));
         OreSpawnChunkGenerator miningGen = new OreSpawnChunkGenerator(
-                new FixedBiomeSource(miningBiome), inland, DimensionStyle.MINING);
+                new FixedBiomeSource(miningBiome), miningTerrain, DimensionStyle.MINING);
         RandomState miningRandom = RandomState.create(
                 server.registryAccess().asGetterLookup(),
-                ResourceKey.create(Registries.NOISE_SETTINGS, rl("inland")), 0L);
+                ResourceKey.create(Registries.NOISE_SETTINGS, rl("legacy_extreme_hills")), 0L);
         Structure maze = registeredStructure(helper, "basilisk_maze");
         int comparisons = 0;
         for (int c = 0; c < 300 && comparisons < 3; c++) {
