@@ -138,15 +138,6 @@ public class OreSpawnChunkGenerator extends NoiseBasedChunkGenerator {
     public void buildSurface(WorldGenRegion region, StructureManager structures, RandomState randomState, ChunkAccess chunk) {
         super.buildSurface(region, structures, randomState, chunk);
 
-        try {
-            placeDungeons(region, chunk);
-        } catch (Exception e) {
-            // Dungeon placement can fail during early dimension generation (e.g.
-            // when neighboring chunks referenced for solidity checks haven't been
-            // generated yet). Failing silently here is correct: dungeons are
-            // decorative and a missed chunk just means no dungeon in that chunk.
-        }
-
         // Dispatch per-dimension surface post-processing. A switch over the
         // enum keeps every style's hook in one place and compiles to a clean
         // tableswitch at runtime.
@@ -299,6 +290,20 @@ public class OreSpawnChunkGenerator extends NoiseBasedChunkGenerator {
         // multi-chunk structures are safe to place here. Each style opts in
         // to its own decoration pass; failures are logged-and-ignored so a
         // single bad chunk never bricks worldgen.
+        // Utopia's, Mining's and the Village's dungeons, after the chunk's decoration as the original's
+        // OreSpawnWorld.generate ran after the chunk provider's populate (orig OreSpawnWorld.java:47-51): the ruby
+        // dungeon's scan then sees the decoration's lava, and a room reaching into its +x/+z neighbour is written
+        // whole (this step may write one chunk round; the surface step only the chunk itself, so a room's far side
+        // was dropped there).
+        if (level instanceof WorldGenRegion region) {
+            try {
+                placeDungeons(region, chunk);
+            } catch (Exception e) {
+                org.slf4j.LoggerFactory.getLogger(OreSpawnChunkGenerator.class)
+                        .warn("Dungeon decoration failed for chunk {}", chunk.getPos(), e);
+            }
+        }
+
         if (style == DimensionStyle.CRYSTAL) {
             try {
                 RandomSource random = level.getRandom();
