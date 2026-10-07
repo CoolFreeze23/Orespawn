@@ -108,34 +108,35 @@ public class TerrainParityTests {
      * Crystal a little rougher (0.5) and Mining in extreme hills (1.0, 0.5); nothing climbs into the mountains the 1.18
      * noise raised thousands of blocks out.
      */
-    @GameTest(template = "empty", timeoutTicks = 1200)
+    @GameTest(template = "empty", timeoutTicks = 24000)
     public static void gh6t_c_no_mountains_far_out(GameTestHelper helper) {
-        MinecraftServer server = helper.getLevel().getServer();
-        LevelHeightAccessor heights = LevelHeightAccessor.create(-64, 384);
-        Object[][] cases = {{"utopia_plains", "legacy_utopia", DimensionStyle.UTOPIA, 50, 100},
-                {"crystal_plains", "legacy_crystal", DimensionStyle.CRYSTAL, 45, 125},
-                {"mining_biome", "legacy_extreme_hills", DimensionStyle.MINING, 60, 145}};
-        for (Object[] c : cases) {
-            Holder<Biome> biome = server.registryAccess().registryOrThrow(Registries.BIOME)
-                    .getHolderOrThrow(ResourceKey.create(Registries.BIOME, rl((String) c[0])));
-            Holder<NoiseGeneratorSettings> settings = server.registryAccess().registryOrThrow(Registries.NOISE_SETTINGS)
-                    .getHolderOrThrow(ResourceKey.create(Registries.NOISE_SETTINGS, rl((String) c[1])));
-            // as the dimension file builds it: orespawn:orespawn on the fixed biome and the settings
-            ChunkGenerator generator = new OreSpawnChunkGenerator(new FixedBiomeSource(biome), settings, (DimensionStyle) c[2]);
-            for (long seed : new long[] {12345L, 987654321L}) {
-                RandomState state = state(server, (String) c[1], seed);
-                int lowest = Integer.MAX_VALUE, highest = Integer.MIN_VALUE;
-                for (int x = -16000; x <= 16000; x += 1600) {
-                    for (int z = -16000; z <= 16000; z += 1600) {
-                        int top = generator.getBaseHeight(x, z, Heightmap.Types.OCEAN_FLOOR_WG, heights, state);
-                        lowest = Math.min(lowest, top);
-                        highest = Math.max(highest, top);
+        OffThread.run(helper, () -> {
+            MinecraftServer server = helper.getLevel().getServer();
+            LevelHeightAccessor heights = LevelHeightAccessor.create(-64, 384);
+            Object[][] cases = {{"utopia_plains", "legacy_utopia", DimensionStyle.UTOPIA, 50, 100},
+                    {"crystal_plains", "legacy_crystal", DimensionStyle.CRYSTAL, 45, 125},
+                    {"mining_biome", "legacy_extreme_hills", DimensionStyle.MINING, 60, 145}};
+            for (Object[] c : cases) {
+                Holder<Biome> biome = server.registryAccess().registryOrThrow(Registries.BIOME)
+                        .getHolderOrThrow(ResourceKey.create(Registries.BIOME, rl((String) c[0])));
+                Holder<NoiseGeneratorSettings> settings = server.registryAccess().registryOrThrow(Registries.NOISE_SETTINGS)
+                        .getHolderOrThrow(ResourceKey.create(Registries.NOISE_SETTINGS, rl((String) c[1])));
+                // as the dimension file builds it: orespawn:orespawn on the fixed biome and the settings
+                ChunkGenerator generator = new OreSpawnChunkGenerator(new FixedBiomeSource(biome), settings, (DimensionStyle) c[2]);
+                for (long seed : new long[] {12345L, 987654321L}) {
+                    RandomState state = state(server, (String) c[1], seed);
+                    int lowest = Integer.MAX_VALUE, highest = Integer.MIN_VALUE;
+                    for (int x = -16000; x <= 16000; x += 1600) {
+                        for (int z = -16000; z <= 16000; z += 1600) {
+                            int top = generator.getBaseHeight(x, z, Heightmap.Types.OCEAN_FLOOR_WG, heights, state);
+                            lowest = Math.min(lowest, top);
+                            highest = Math.max(highest, top);
+                        }
                     }
+                    helper.assertTrue(lowest >= (Integer) c[3] && highest <= (Integer) c[4], c[1] + " at seed " + seed
+                            + ": surface from " + lowest + " to " + highest + ", outside the original's " + c[3] + "-" + c[4]);
                 }
-                helper.assertTrue(lowest >= (Integer) c[3] && highest <= (Integer) c[4], c[1] + " at seed " + seed
-                        + ": surface from " + lowest + " to " + highest + ", outside the original's " + c[3] + "-" + c[4]);
             }
-        }
-        helper.succeed();
+        });
     }
 }

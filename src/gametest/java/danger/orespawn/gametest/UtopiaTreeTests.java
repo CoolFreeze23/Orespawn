@@ -705,68 +705,88 @@ public class UtopiaTreeTests {
      * OreSpawnWorld.java:2558-2560, :2645-2653): the 60 x 60 plane eight above the altar's grass must be air. On the
      * Utopia generator, a site whose plane meets a huge tree's crown is refused although the terrain under the plane is
      * clear (the trees half of the check); a site whose plane meets the terrain is refused; every site the check accepts
-     * has the terrain below the plane over the whole 60 x 60 (an independent scan of the generator's surface).
+     * has the terrain below the plane over the whole 60 x 60 (an independent scan of the generator's surface). At every
+     * site the check's corner read of the plane equals the full read. The scans run off the server thread (TEST-024).
      */
-    @GameTest(template = "empty", timeoutTicks = 2400)
+    @GameTest(template = "empty", timeoutTicks = 24000)
     public static void w081a_an_altar_needs_the_plane_above_it_clear(GameTestHelper helper) {
-        MinecraftServer server = helper.getLevel().getServer();
-        Holder<Biome> plains = server.registryAccess().registryOrThrow(Registries.BIOME)
-                .getHolderOrThrow(ResourceKey.create(Registries.BIOME, ResourceLocation.parse("orespawn:utopia_plains")));
-        ResourceKey<NoiseGeneratorSettings> terrain = ResourceKey.create(Registries.NOISE_SETTINGS,
-                ResourceLocation.parse("orespawn:legacy_utopia"));
-        ChunkGenerator generator = new OreSpawnChunkGenerator(new FixedBiomeSource(plains),
-                server.registryAccess().registryOrThrow(Registries.NOISE_SETTINGS).getHolderOrThrow(terrain), DimensionStyle.UTOPIA);
-        long seed = 8780444890188216456L;
-        RandomState state = RandomState.create(server.registryAccess().asGetterLookup(), terrain, seed);
-        ServerLevel level = helper.getLevel();
-        UtopiaTreeStructure.ColumnProbe probe = UtopiaTreeStructure.probe(generator, level, state);
-        int treeRefusals = 0, terrainRefusals = 0, accepted = 0;
-        for (int c = 0; c < 4000 && (treeRefusals < 1 || terrainRefusals < 1 || accepted < 1); c++) {
-            ChunkPos chunk = new ChunkPos(-500 + c % 60, 900 + c / 60);
-            UtopiaTreeStructure.ChunkPass pass = UtopiaTreeStructure.chunkPass(seed, chunk, probe);
-            if (treeRefusals < 1 && !pass.huge().trees().isEmpty()) {
-                UtopiaTreePiece tree = pass.huge().trees().get(0);
-                int plane = tree.origin().getY() + 12;
-                int[] hit = null;
-                java.util.List<int[]> cells = new java.util.ArrayList<>();
-                tree.forEachCell(level.getMinBuildHeight(), level.getMaxBuildHeight(), (x, y, z) -> {
-                    if (y == plane) cells.add(new int[] {x, z});
-                });
-                if (!cells.isEmpty()) hit = cells.get(0);
-                if (hit != null) {
-                    BlockPos grass = new BlockPos(hit[0] - 10, plane - 8, hit[1] - 10);
-                    if (terrainBelow(generator, level, state, grass, plane)) {
-                        helper.assertTrue(!UtopiaTreeStructure.reallyBigSpaceClear(seed, generator, level, state, grass),
-                                "a site whose plane meets the huge tree at " + tree.origin() + " passed the check");
-                        treeRefusals++;
+        OffThread.run(helper, () -> {
+            MinecraftServer server = helper.getLevel().getServer();
+            Holder<Biome> plains = server.registryAccess().registryOrThrow(Registries.BIOME)
+                    .getHolderOrThrow(ResourceKey.create(Registries.BIOME, ResourceLocation.parse("orespawn:utopia_plains")));
+            ResourceKey<NoiseGeneratorSettings> terrain = ResourceKey.create(Registries.NOISE_SETTINGS,
+                    ResourceLocation.parse("orespawn:legacy_utopia"));
+            ChunkGenerator generator = new OreSpawnChunkGenerator(new FixedBiomeSource(plains),
+                    server.registryAccess().registryOrThrow(Registries.NOISE_SETTINGS).getHolderOrThrow(terrain), DimensionStyle.UTOPIA);
+            long seed = 8780444890188216456L;
+            RandomState state = RandomState.create(server.registryAccess().asGetterLookup(), terrain, seed);
+            ServerLevel level = helper.getLevel();
+            UtopiaTreeStructure.ColumnProbe probe = UtopiaTreeStructure.probe(generator, level, state);
+            int treeRefusals = 0, terrainRefusals = 0, accepted = 0;
+            for (int c = 0; c < 4000 && (treeRefusals < 1 || terrainRefusals < 1 || accepted < 1); c++) {
+                ChunkPos chunk = new ChunkPos(-500 + c % 60, 900 + c / 60);
+                UtopiaTreeStructure.ChunkPass pass = UtopiaTreeStructure.chunkPass(seed, chunk, probe);
+                if (treeRefusals < 1 && !pass.huge().trees().isEmpty()) {
+                    UtopiaTreePiece tree = pass.huge().trees().get(0);
+                    int plane = tree.origin().getY() + 12;
+                    int[] hit = null;
+                    java.util.List<int[]> cells = new java.util.ArrayList<>();
+                    tree.forEachCell(level.getMinBuildHeight(), level.getMaxBuildHeight(), (x, y, z) -> {
+                        if (y == plane) cells.add(new int[] {x, z});
+                    });
+                    if (!cells.isEmpty()) hit = cells.get(0);
+                    if (hit != null) {
+                        BlockPos grass = new BlockPos(hit[0] - 10, plane - 8, hit[1] - 10);
+                        if (terrainBelow(generator, level, state, grass, plane)) {
+                            terrainReadsAgree(helper, generator, level, state, grass);
+                            helper.assertTrue(!UtopiaTreeStructure.reallyBigSpaceClear(seed, generator, level, state, grass),
+                                    "a site whose plane meets the huge tree at " + tree.origin() + " passed the check");
+                            treeRefusals++;
+                        }
                     }
                 }
+                UtopiaTreeStructure.Altar altar = pass.altar();
+                BlockPos site = altar != null ? altar.origin() : (c % 41 == 0 && probe.base(chunk.getMinBlockX() + 8,
+                        chunk.getMinBlockZ() + 8, 50, 100) != Integer.MIN_VALUE
+                        ? new BlockPos(chunk.getMinBlockX() + 8, probe.base(chunk.getMinBlockX() + 8, chunk.getMinBlockZ() + 8, 50, 100),
+                        chunk.getMinBlockZ() + 8) : null);
+                if (site == null) continue;
+                boolean clearTerrain = terrainBelow(generator, level, state, site, site.getY() + 8);
+                terrainReadsAgree(helper, generator, level, state, site);
+                boolean ok = UtopiaTreeStructure.reallyBigSpaceClear(seed, generator, level, state, site);
+                helper.assertTrue(!ok || clearTerrain, "the check accepted " + site + " though the terrain reaches the plane");
+                if (!clearTerrain) terrainRefusals++;
+                if (ok) accepted++;
             }
-            UtopiaTreeStructure.Altar altar = pass.altar();
-            BlockPos site = altar != null ? altar.origin() : (c % 41 == 0 && probe.base(chunk.getMinBlockX() + 8,
-                    chunk.getMinBlockZ() + 8, 50, 100) != Integer.MIN_VALUE
-                    ? new BlockPos(chunk.getMinBlockX() + 8, probe.base(chunk.getMinBlockX() + 8, chunk.getMinBlockZ() + 8, 50, 100),
-                    chunk.getMinBlockZ() + 8) : null);
-            if (site == null) continue;
-            boolean clearTerrain = terrainBelow(generator, level, state, site, site.getY() + 8);
-            boolean ok = UtopiaTreeStructure.reallyBigSpaceClear(seed, generator, level, state, site);
-            helper.assertTrue(!ok || clearTerrain, "the check accepted " + site + " though the terrain reaches the plane");
-            if (!clearTerrain) terrainRefusals++;
-            if (ok) accepted++;
-        }
-        helper.assertTrue(treeRefusals > 0 && terrainRefusals > 0 && accepted > 0, "the patch left a case untested: "
-                + treeRefusals + " tree refusals, " + terrainRefusals + " terrain refusals, " + accepted + " accepted sites");
-        helper.succeed();
+            helper.assertTrue(treeRefusals > 0 && terrainRefusals > 0 && accepted > 0, "the patch left a case untested: "
+                    + treeRefusals + " tree refusals, " + terrainRefusals + " terrain refusals, " + accepted + " accepted sites");
+        });
     }
 
     /** Whether the generator's terrain stays below {@code plane} over the altar check's 60 x 60 (water counts as terrain). */
     private static boolean terrainBelow(ChunkGenerator generator, ServerLevel level, RandomState state, BlockPos grass, int plane) {
-        for (int x = grass.getX() - 5; x <= grass.getX() + 54; x++) {
+        return java.util.stream.IntStream.rangeClosed(grass.getX() - 5, grass.getX() + 54).parallel().allMatch(x -> {
             for (int z = grass.getZ() - 5; z <= grass.getZ() + 54; z++) {
                 if (generator.getBaseHeight(x, z, Heightmap.Types.WORLD_SURFACE_WG, level, state) > plane) return false;
             }
-        }
-        return true;
+            return true;
+        });
+    }
+
+    /**
+     * The altar check's terrain read at the plane's cell corners against every column built in full (the generator's
+     * own noise column, its aquifer included), over the 60 x 60 eight above {@code grass}: w081a and w080e ask it at
+     * every site they put to the check, so the two reads are compared over every candidate the altar tests use.
+     */
+    static void terrainReadsAgree(GameTestHelper helper, ChunkGenerator generator, net.minecraft.world.level.LevelHeightAccessor heights,
+                                  RandomState state, BlockPos grass) {
+        int plane = grass.getY() + 8;
+        int minX = grass.getX() - 5, maxX = grass.getX() + 54, minZ = grass.getZ() - 5, maxZ = grass.getZ() + 54;
+        boolean corners = UtopiaTreeStructure.planeTerrainClear(generator, heights, state, minX, maxX, minZ, maxZ, plane);
+        boolean full = java.util.stream.IntStream.rangeClosed(minX, maxX).parallel().allMatch(x ->
+                UtopiaTreeStructure.planeTerrainClearByColumns(generator, heights, state, x, x, minZ, maxZ, plane));
+        helper.assertTrue(corners == full, "at " + grass + " the corner read says the plane is " + (corners ? "clear" : "blocked")
+                + ", every column built in full " + (full ? "clear" : "blocked"));
     }
 
     /**

@@ -458,91 +458,93 @@ public class StructurePlacementTests {
      * altars build where the chunk's pass picks them (addKingAltar's roll after the grove's, :2549-2571) and the
      * cooldown's share lets the roll through.
      */
-    @GameTest(template = "empty", timeoutTicks = 600)
+    @GameTest(template = "empty", timeoutTicks = 24000)
     public static void w080e_utopia_royal_trees_and_altars_follow_the_pass(GameTestHelper helper) {
-        ChunkGenerator gen = generator(helper, "orespawn:utopia_plains", "orespawn:legacy_utopia", DimensionStyle.UTOPIA);
-        long seed = 8780444890188216456L;
-        RandomState state = randomState(helper, "orespawn:legacy_utopia", seed);
-        Structure king = structure(helper, "utopia_royal_tree_king");
-        Structure queen = structure(helper, "utopia_royal_tree_queen");
-        Structure huge = structure(helper, "utopia_huge_tree");
-        Structure kingAltar = structure(helper, "utopia_temple_king_altar");
-        Structure queenAltar = structure(helper, "utopia_temple_queen_altar");
-        int oldLessLag = OreSpawnConfig.LESS_LAG.get();
-        OreSpawnConfig.LESS_LAG.set(0);
-        int royals = 0;
-        int altars = 0;
-        int checked = 0;
-        try {
-            for (int c = 0; c < 40000 && (royals < 2 || altars < 2); c++) {
-                ChunkPos chunk = new ChunkPos(-9000 + c % 200, 4000 + c / 200);
-                WorldgenRandom r = new WorldgenRandom(new LegacyRandomSource(0L));
-                r.setLargeFeatureSeed(seed, chunk.x, chunk.z);
-                BlockPos royal = null;
-                boolean queenPick = false;
-                boolean treeHere = false;
-                if (r.nextInt(50) == 0) {
-                    for (int i = 0; i < 3 && !treeHere; i++) {
-                        int x = 4 + chunk.getMinBlockX() + r.nextInt(8);
-                        int z = 4 + chunk.getMinBlockZ() + r.nextInt(8);
-                        int top = surface(gen, helper, state, x, z, Heightmap.Types.WORLD_SURFACE_WG);
-                        int floor = surface(gen, helper, state, x, z, Heightmap.Types.OCEAN_FLOOR_WG);
-                        if (top != floor || top <= 50 || top > 127) continue;
-                        treeHere = true;
-                        r.nextInt(4);
-                        r.nextInt(2);
-                        r.nextInt(100);
-                        if (r.nextInt(100) == 0) {
-                            royal = new BlockPos(x, top - 1, z);
-                            queenPick = r.nextInt(2) != 0;
+        OffThread.run(helper, () -> {
+            ChunkGenerator gen = generator(helper, "orespawn:utopia_plains", "orespawn:legacy_utopia", DimensionStyle.UTOPIA);
+            long seed = 8780444890188216456L;
+            RandomState state = randomState(helper, "orespawn:legacy_utopia", seed);
+            Structure king = structure(helper, "utopia_royal_tree_king");
+            Structure queen = structure(helper, "utopia_royal_tree_queen");
+            Structure huge = structure(helper, "utopia_huge_tree");
+            Structure kingAltar = structure(helper, "utopia_temple_king_altar");
+            Structure queenAltar = structure(helper, "utopia_temple_queen_altar");
+            int oldLessLag = OreSpawnConfig.LESS_LAG.get();
+            OreSpawnConfig.LESS_LAG.set(0);
+            int royals = 0;
+            int altars = 0;
+            int checked = 0;
+            try {
+                for (int c = 0; c < 40000 && (royals < 2 || altars < 2); c++) {
+                    ChunkPos chunk = new ChunkPos(-9000 + c % 200, 4000 + c / 200);
+                    WorldgenRandom r = new WorldgenRandom(new LegacyRandomSource(0L));
+                    r.setLargeFeatureSeed(seed, chunk.x, chunk.z);
+                    BlockPos royal = null;
+                    boolean queenPick = false;
+                    boolean treeHere = false;
+                    if (r.nextInt(50) == 0) {
+                        for (int i = 0; i < 3 && !treeHere; i++) {
+                            int x = 4 + chunk.getMinBlockX() + r.nextInt(8);
+                            int z = 4 + chunk.getMinBlockZ() + r.nextInt(8);
+                            int top = surface(gen, helper, state, x, z, Heightmap.Types.WORLD_SURFACE_WG);
+                            int floor = surface(gen, helper, state, x, z, Heightmap.Types.OCEAN_FLOOR_WG);
+                            if (top != floor || top <= 50 || top > 127) continue;
+                            treeHere = true;
+                            r.nextInt(4);
+                            r.nextInt(2);
+                            r.nextInt(100);
+                            if (r.nextInt(100) == 0) {
+                                royal = new BlockPos(x, top - 1, z);
+                                queenPick = r.nextInt(2) != 0;
+                            }
                         }
                     }
-                }
-                if (treeHere || c % 97 == 0) {
-                    Optional<BlockPos> k = king.findValidGenerationPoint(context(helper, gen, state, seed, chunk))
-                            .map(Structure.GenerationStub::position);
-                    Optional<BlockPos> q = queen.findValidGenerationPoint(context(helper, gen, state, seed, chunk))
-                            .map(Structure.GenerationStub::position);
-                    helper.assertTrue(k.equals(Optional.ofNullable(royal != null && !queenPick ? royal : null))
-                                    && q.equals(Optional.ofNullable(royal != null && queenPick ? royal : null)),
-                            "at " + chunk + " the King tree stands at " + k + " and the Queen at " + q
-                                    + "; the huge roll's royal branch is " + royal + (queenPick ? " (Queen)" : " (King)"));
-                    if (royal != null) {
-                        royals++;
-                        helper.assertTrue(huge.findValidGenerationPoint(context(helper, gen, state, seed, chunk)).isEmpty(),
-                                "a huge tree grew beside the"
-                                + " royal tree at " + chunk);
+                    if (treeHere || c % 97 == 0) {
+                        Optional<BlockPos> k = king.findValidGenerationPoint(context(helper, gen, state, seed, chunk))
+                                .map(Structure.GenerationStub::position);
+                        Optional<BlockPos> q = queen.findValidGenerationPoint(context(helper, gen, state, seed, chunk))
+                                .map(Structure.GenerationStub::position);
+                        helper.assertTrue(k.equals(Optional.ofNullable(royal != null && !queenPick ? royal : null))
+                                        && q.equals(Optional.ofNullable(royal != null && queenPick ? royal : null)),
+                                "at " + chunk + " the King tree stands at " + k + " and the Queen at " + q
+                                        + "; the huge roll's royal branch is " + royal + (queenPick ? " (Queen)" : " (King)"));
+                        if (royal != null) {
+                            royals++;
+                            helper.assertTrue(huge.findValidGenerationPoint(context(helper, gen, state, seed, chunk)).isEmpty(),
+                                    "a huge tree grew beside the"
+                                    + " royal tree at " + chunk);
+                        }
+                        checked++;
                     }
-                    checked++;
+                    UtopiaTreeStructure.ChunkPass pass = UtopiaTreeStructure.chunkPass(seed, chunk,
+                            UtopiaTreeStructure.probe(context(helper, gen, state, seed, chunk)));
+                    helper.assertTrue(!treeHere || (pass.bigTree() && pass.altar() == null), "the pass at " + chunk
+                            + " grew " + pass + " beside the huge roll's tree");
+                    UtopiaTreeStructure.Altar altar = pass.altar();
+                    if (altar != null || c % 97 == 0) {
+                        if (altar != null) UtopiaTreeTests.terrainReadsAgree(helper, gen, helper.getLevel(), state, altar.origin());
+                        boolean clear = LegacyDungeonStructure.altarRollClear(seed, chunk)
+                                && (altar == null || UtopiaTreeStructure.reallyBigSpaceClear(seed, gen, helper.getLevel(), state,
+                                altar.origin()));
+                        Optional<BlockPos> ka = kingAltar.findValidGenerationPoint(context(helper, gen, state, seed, chunk))
+                                .map(Structure.GenerationStub::position);
+                        Optional<BlockPos> qa = queenAltar.findValidGenerationPoint(context(helper, gen, state, seed, chunk))
+                                .map(Structure.GenerationStub::position);
+                        // the piece's origin is its pad's centre, over the grass corner the pass found
+                        BlockPos pad = altar == null ? null : altar.origin().offset(LegacyDungeonStructure.ALTAR_HALF_PAD, 0,
+                                LegacyDungeonStructure.ALTAR_HALF_PAD);
+                        helper.assertTrue(ka.equals(Optional.ofNullable(altar != null && clear && !altar.queen() ? pad : null))
+                                        && qa.equals(Optional.ofNullable(altar != null && clear && altar.queen() ? pad : null)),
+                                "at " + chunk + " the King altar stands at " + ka + " and the Queen's at " + qa
+                                        + "; the pass picked " + altar + (clear ? "" : " behind the cooldown or the space check"));
+                        if (altar != null) altars++;
+                    }
                 }
-                UtopiaTreeStructure.ChunkPass pass = UtopiaTreeStructure.chunkPass(seed, chunk,
-                        UtopiaTreeStructure.probe(context(helper, gen, state, seed, chunk)));
-                helper.assertTrue(!treeHere || (pass.bigTree() && pass.altar() == null), "the pass at " + chunk
-                        + " grew " + pass + " beside the huge roll's tree");
-                UtopiaTreeStructure.Altar altar = pass.altar();
-                if (altar != null || c % 97 == 0) {
-                    boolean clear = LegacyDungeonStructure.altarRollClear(seed, chunk)
-                            && (altar == null || UtopiaTreeStructure.reallyBigSpaceClear(seed, gen, helper.getLevel(), state,
-                            altar.origin()));
-                    Optional<BlockPos> ka = kingAltar.findValidGenerationPoint(context(helper, gen, state, seed, chunk))
-                            .map(Structure.GenerationStub::position);
-                    Optional<BlockPos> qa = queenAltar.findValidGenerationPoint(context(helper, gen, state, seed, chunk))
-                            .map(Structure.GenerationStub::position);
-                    // the piece's origin is its pad's centre, over the grass corner the pass found
-                    BlockPos pad = altar == null ? null : altar.origin().offset(LegacyDungeonStructure.ALTAR_HALF_PAD, 0,
-                            LegacyDungeonStructure.ALTAR_HALF_PAD);
-                    helper.assertTrue(ka.equals(Optional.ofNullable(altar != null && clear && !altar.queen() ? pad : null))
-                                    && qa.equals(Optional.ofNullable(altar != null && clear && altar.queen() ? pad : null)),
-                            "at " + chunk + " the King altar stands at " + ka + " and the Queen's at " + qa
-                                    + "; the pass picked " + altar + (clear ? "" : " behind the cooldown or the space check"));
-                    if (altar != null) altars++;
-                }
+            } finally {
+                OreSpawnConfig.LESS_LAG.set(oldLessLag);
             }
-        } finally {
-            OreSpawnConfig.LESS_LAG.set(oldLessLag);
-        }
-        helper.assertTrue(royals > 0 && altars > 0 && checked > 0, "the patch left a case untested: " + royals
-                + " royal trees, " + altars + " altars");
-        helper.succeed();
+            helper.assertTrue(royals > 0 && altars > 0 && checked > 0, "the patch left a case untested: " + royals
+                    + " royal trees, " + altars + " altars");
+        });
     }
 }
