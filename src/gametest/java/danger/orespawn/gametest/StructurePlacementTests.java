@@ -339,9 +339,9 @@ public class StructurePlacementTests {
     public static void w080d_the_structure_pass_keeps_to_the_pick(GameTestHelper helper) {
         ServerLevel level = helper.getLevel();
         RegistryAccess access = level.getServer().registryAccess();
-        ChunkGenerator gen = generator(helper, "orespawn:mining_biome", "orespawn:inland", DimensionStyle.MINING);
+        ChunkGenerator gen = generator(helper, "orespawn:mining_biome", "orespawn:legacy_extreme_hills", DimensionStyle.MINING);
         long seed = 8780444890188216456L;
-        RandomState state = randomState(helper, "orespawn:inland", seed);
+        RandomState state = randomState(helper, "orespawn:legacy_extreme_hills", seed);
         ChunkGeneratorStructureState structureState = gen.createState(access.lookupOrThrow(Registries.STRUCTURE_SET), state, seed);
         StructureSet mining = set(helper, "mining_structures");
         RandomSpreadStructurePlacement placement = (RandomSpreadStructurePlacement) mining.placement();
@@ -412,9 +412,9 @@ public class StructurePlacementTests {
      */
     @GameTest(template = "empty", timeoutTicks = 400)
     public static void w079f_mining_sites_replay_the_original_scans(GameTestHelper helper) {
-        ChunkGenerator gen = generator(helper, "orespawn:mining_biome", "orespawn:inland", DimensionStyle.MINING);
+        ChunkGenerator gen = generator(helper, "orespawn:mining_biome", "orespawn:legacy_extreme_hills", DimensionStyle.MINING);
         long seed = 8780444890188216456L;
-        RandomState state = randomState(helper, "orespawn:inland", seed);
+        RandomState state = randomState(helper, "orespawn:legacy_extreme_hills", seed);
         Structure leon = structure(helper, "leonopteryx_nest");
         Structure hive = structure(helper, "beehive");
         Structure knight = structure(helper, "ender_knight_dungeon_mining");
@@ -460,14 +460,14 @@ public class StructurePlacementTests {
      */
     @GameTest(template = "empty", timeoutTicks = 600)
     public static void w080e_utopia_royal_trees_and_altars_follow_the_pass(GameTestHelper helper) {
-        ChunkGenerator gen = generator(helper, "orespawn:utopia_plains", "orespawn:inland", DimensionStyle.UTOPIA);
+        ChunkGenerator gen = generator(helper, "orespawn:utopia_plains", "orespawn:legacy_utopia", DimensionStyle.UTOPIA);
         long seed = 8780444890188216456L;
-        RandomState state = randomState(helper, "orespawn:inland", seed);
-        Structure king = structure(helper, "royal_tree_king");
-        Structure queen = structure(helper, "royal_tree_queen");
+        RandomState state = randomState(helper, "orespawn:legacy_utopia", seed);
+        Structure king = structure(helper, "utopia_royal_tree_king");
+        Structure queen = structure(helper, "utopia_royal_tree_queen");
         Structure huge = structure(helper, "utopia_huge_tree");
-        Structure kingAltar = structure(helper, "king_altar");
-        Structure queenAltar = structure(helper, "queen_altar");
+        Structure kingAltar = structure(helper, "utopia_temple_king_altar");
+        Structure queenAltar = structure(helper, "utopia_temple_queen_altar");
         int oldLessLag = OreSpawnConfig.LESS_LAG.get();
         OreSpawnConfig.LESS_LAG.set(0);
         int royals = 0;
@@ -521,15 +521,20 @@ public class StructurePlacementTests {
                         + " grew " + pass + " beside the huge roll's tree");
                 UtopiaTreeStructure.Altar altar = pass.altar();
                 if (altar != null || c % 97 == 0) {
-                    boolean clear = LegacyDungeonStructure.altarRollClear(seed, chunk);
+                    boolean clear = LegacyDungeonStructure.altarRollClear(seed, chunk)
+                            && (altar == null || UtopiaTreeStructure.reallyBigSpaceClear(seed, gen, helper.getLevel(), state,
+                            altar.origin()));
                     Optional<BlockPos> ka = kingAltar.findValidGenerationPoint(context(helper, gen, state, seed, chunk))
                             .map(Structure.GenerationStub::position);
                     Optional<BlockPos> qa = queenAltar.findValidGenerationPoint(context(helper, gen, state, seed, chunk))
                             .map(Structure.GenerationStub::position);
-                    helper.assertTrue(ka.equals(Optional.ofNullable(altar != null && clear && !altar.queen() ? altar.origin() : null))
-                                    && qa.equals(Optional.ofNullable(altar != null && clear && altar.queen() ? altar.origin() : null)),
+                    // the piece's origin is its pad's centre, over the grass corner the pass found
+                    BlockPos pad = altar == null ? null : altar.origin().offset(LegacyDungeonStructure.ALTAR_HALF_PAD, 0,
+                            LegacyDungeonStructure.ALTAR_HALF_PAD);
+                    helper.assertTrue(ka.equals(Optional.ofNullable(altar != null && clear && !altar.queen() ? pad : null))
+                                    && qa.equals(Optional.ofNullable(altar != null && clear && altar.queen() ? pad : null)),
                             "at " + chunk + " the King altar stands at " + ka + " and the Queen's at " + qa
-                                    + "; the pass picked " + altar + (clear ? "" : " behind the cooldown"));
+                                    + "; the pass picked " + altar + (clear ? "" : " behind the cooldown or the space check"));
                     if (altar != null) altars++;
                 }
             }

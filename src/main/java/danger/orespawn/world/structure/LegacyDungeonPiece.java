@@ -464,10 +464,11 @@ public class LegacyDungeonPiece extends StructurePiece {
              * to eight attempts at chunk + 3 + nextInt(10) (:2554-2555), each
              * searching Y100 down to Y51 for air over grass (:2556-2557; the
              * noise surface, dry, stands in for the grass), the altar built
-             * on the grass ({@code posY - 1}, :2562/:2564). The original's
-             * {@code quickReallyBigSpaceCheck} (:2558, a scan of the real
-             * blocks around the site, which ends the roll when it fails)
-             * cannot be answered before the chunk exists and is left out.
+             * on the grass ({@code posY - 1}, :2562/:2564), when the original's
+             * {@code quickReallyBigSpaceCheck} (:2558: the 60 x 60 plane eight
+             * above the grass all air, the roll ended when it fails) holds for
+             * the terrain and the Utopia trees around the site
+             * ({@code UtopiaTreeStructure.reallyBigSpaceClear}).
              */
             UTOPIA_ALTAR
         }

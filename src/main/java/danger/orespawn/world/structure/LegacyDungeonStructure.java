@@ -471,14 +471,25 @@ public class LegacyDungeonStructure extends Structure {
      * {@link LegacyDungeonPiece.DungeonType.PlacementMode#UTOPIA_ALTAR}, addKingAltar (WGEN-079, WGEN-080; orig
      * OreSpawnWorld.java:2549-2571): the altar the chunk's pass picked ({@link UtopiaTreeStructure#chunkPass}: the roll
      * runs only in a chunk whose pass grew no tree, :42-45, and draws on after the grove's), when it is this altar and
-     * the cooldown's share lets the roll through. The anchor is the grass block (:2562/:2564).
+     * the cooldown's share lets the roll through and the plane eight above the grass is clear
+     * ({@link UtopiaTreeStructure#reallyBigSpaceClear}, the original's quickReallyBigSpaceCheck, :2558). The anchor is
+     * the grass block (:2562/:2564).
      */
     private static BlockPos utopiaAltarOrigin(GenerationContext context, boolean queen) {
         UtopiaTreeStructure.Altar altar = UtopiaTreeStructure.chunkPass(context.seed(), context.chunkPos(),
                 UtopiaTreeStructure.probe(context)).altar();
         if (altar == null || altar.queen() != queen || !altarRollClear(context.seed(), context.chunkPos())) return null;
-        return altar.origin();
+        // orig OreSpawnWorld.java:2558-2560: quickReallyBigSpaceCheck on the first grass found, the roll ended when it fails
+        if (!UtopiaTreeStructure.reallyBigSpaceClear(context.seed(), context.chunkGenerator(), context.heightAccessor(),
+                context.randomState(), altar.origin())) return null;
+        // the original built the altar with its pad's corner on that grass (makeKingAltar(world, posX, posY - 1, posZ),
+        // :2562-2565; GenericDungeon.java:4364-4371 clears -5..55 from it, the plane the check read); the piece centres
+        // its 51 x 51 pad on the origin it is given, so the origin is the pad's centre over that corner
+        return altar.origin().offset(ALTAR_HALF_PAD, 0, ALTAR_HALF_PAD);
     }
+
+    /** Half the altar's 51-block pad: the piece's centre lies this far from the pad's corner on each axis. */
+    public static final int ALTAR_HALF_PAD = 25;
 
     /** Whether the cooldown's share lets the altar's roll through in {@code chunk} (see {@link #ALTAR_COOLDOWN_CLEAR}). */
     public static boolean altarRollClear(long seed, ChunkPos chunk) {

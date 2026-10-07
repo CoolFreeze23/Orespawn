@@ -14,6 +14,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.FixedBiomeSource;
 import net.minecraft.world.level.levelgen.NoiseGeneratorSettings;
+import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.RandomState;
 import java.util.HashMap;
 import java.util.List;
@@ -308,12 +309,36 @@ public class UtopiaTreeTests {
     /**
      * WGEN-075 (GitHub issue #4): the huge and royal trees generate in top_layer_modification, after the vegetation step's
      * trees and plants and after the groves, so they overwrite them where they build (1.7.10 ran OreSpawnWorld after the
-     * chunk's own decoration); the grove stays in the vegetation step.
+     * chunk's own decoration); the grove stays in the vegetation step. WGEN-084 (GitHub #6): within that step the royal
+     * trees come after the huge tree, so a huge tree rooted next door no longer cuts into them: the structure registry's
+     * order is the order the step places them in (ChunkGenerator.applyBiomeDecoration groups registry.stream() by step).
+     * The royal tree set holds the new ids; the ids older worlds started their royal trees with stay registered, in no set.
      */
     @GameTest(template = "empty")
     public static void w075a_big_trees_generate_after_the_vegetation(GameTestHelper helper) {
         Registry<Structure> structures = helper.getLevel().registryAccess().registryOrThrow(Registries.STRUCTURE);
-        for (String id : new String[] {"orespawn:royal_tree_king", "orespawn:royal_tree_queen", "orespawn:utopia_huge_tree"}) {
+        List<ResourceLocation> order = structures.stream().map(structures::getKey).toList();
+        int huge = order.indexOf(ResourceLocation.parse("orespawn:utopia_huge_tree"));
+        for (String id : new String[] {"orespawn:utopia_royal_tree_king", "orespawn:utopia_royal_tree_queen"}) {
+            int royal = order.indexOf(ResourceLocation.parse(id));
+            helper.assertTrue(huge >= 0 && royal > huge, id + " (registry index " + royal + ") must be placed after "
+                    + "orespawn:utopia_huge_tree (" + huge + ")");
+        }
+        StructureSet royalSet = helper.getLevel().registryAccess().registryOrThrow(Registries.STRUCTURE_SET)
+                .get(ResourceLocation.parse("orespawn:royal_trees"));
+        List<String> members = royalSet == null ? List.of() : royalSet.structures().stream()
+                .map(e -> e.structure().unwrapKey().map(k -> k.location().toString()).orElse("?")).toList();
+        helper.assertTrue(members.equals(List.of("orespawn:utopia_royal_tree_king", "orespawn:utopia_royal_tree_queen")),
+                "orespawn:royal_trees holds " + members);
+        for (StructureSet set : helper.getLevel().registryAccess().registryOrThrow(Registries.STRUCTURE_SET)) {
+            for (StructureSet.StructureSelectionEntry e : set.structures()) {
+                String id = e.structure().unwrapKey().map(k -> k.location().toString()).orElse("?");
+                helper.assertTrue(!id.equals("orespawn:royal_tree_king") && !id.equals("orespawn:royal_tree_queen"),
+                        id + " still starts new trees from a structure set");
+            }
+        }
+        for (String id : new String[] {"orespawn:utopia_royal_tree_king", "orespawn:utopia_royal_tree_queen",
+                "orespawn:royal_tree_king", "orespawn:royal_tree_queen", "orespawn:utopia_huge_tree"}) {
             Structure s = structures.get(ResourceLocation.parse(id));
             helper.assertTrue(s != null && s.step() == GenerationStep.Decoration.TOP_LAYER_MODIFICATION,
                     id + " must generate in top_layer_modification, after the vegetation and the groves");
@@ -321,6 +346,50 @@ public class UtopiaTreeTests {
         Structure grove = structures.get(ResourceLocation.parse("orespawn:utopia_tree_grove"));
         helper.assertTrue(grove != null && grove.step() == GenerationStep.Decoration.VEGETAL_DECORATION,
                 "the grove must stay in vegetal_decoration, before the big trees");
+        // the altars after every tree (their clearing last, as when 1.7.10's altar chunk generated after its
+        // neighbours'), in the royal_altars set; the old ids registered for old worlds, in no set
+        int lastTree = Math.max(order.indexOf(ResourceLocation.parse("orespawn:utopia_royal_tree_king")),
+                order.indexOf(ResourceLocation.parse("orespawn:utopia_royal_tree_queen")));
+        for (String id : new String[] {"orespawn:utopia_temple_king_altar", "orespawn:utopia_temple_queen_altar"}) {
+            Structure s = structures.get(ResourceLocation.parse(id));
+            helper.assertTrue(s != null && s.step() == GenerationStep.Decoration.TOP_LAYER_MODIFICATION
+                    && order.indexOf(ResourceLocation.parse(id)) > lastTree, id + " must place in top_layer_modification after the royal trees");
+        }
+        StructureSet altarSet = helper.getLevel().registryAccess().registryOrThrow(Registries.STRUCTURE_SET)
+                .get(ResourceLocation.parse("orespawn:royal_altars"));
+        List<String> altarMembers = altarSet == null ? List.of() : altarSet.structures().stream()
+                .map(e -> e.structure().unwrapKey().map(k -> k.location().toString()).orElse("?")).toList();
+        helper.assertTrue(altarMembers.equals(List.of("orespawn:utopia_temple_king_altar", "orespawn:utopia_temple_queen_altar")),
+                "orespawn:royal_altars holds " + altarMembers);
+        for (StructureSet set : helper.getLevel().registryAccess().registryOrThrow(Registries.STRUCTURE_SET)) {
+            for (StructureSet.StructureSelectionEntry e : set.structures()) {
+                String id = e.structure().unwrapKey().map(k -> k.location().toString()).orElse("?");
+                helper.assertTrue(!id.equals("orespawn:king_altar") && !id.equals("orespawn:queen_altar"),
+                        id + " still starts new altars from a structure set");
+            }
+        }
+        helper.assertTrue(structures.get(ResourceLocation.parse("orespawn:king_altar")) != null
+                && structures.get(ResourceLocation.parse("orespawn:queen_altar")) != null, "the old altar ids must stay registered");
+        helper.succeed();
+    }
+
+    /**
+     * WGEN-083: Utopia and the Village have no trees of their own (BiomeGenUtopianPlains.java:133, treesPerChunk -999);
+     * Chaos has one a chunk, a second one time in ten (setChaosCreatures, :343-345), first in its vegetal step.
+     */
+    @GameTest(template = "empty")
+    public static void w083a_the_biomes_trees_as_the_original(GameTestHelper helper) {
+        Registry<Biome> biomes = helper.getLevel().registryAccess().registryOrThrow(Registries.BIOME);
+        for (String id : new String[] {"orespawn:utopia_plains", "orespawn:village_biome", "orespawn:chaos_biome"}) {
+            Biome biome = biomes.get(ResourceLocation.parse(id));
+            helper.assertTrue(biome != null, id + " is not registered");
+            List<String> vegetal = biome.getGenerationSettings().features().get(GenerationStep.Decoration.VEGETAL_DECORATION.ordinal())
+                    .stream().map(h -> h.unwrapKey().map(k -> k.location().toString()).orElse("?")).toList();
+            helper.assertTrue(vegetal.stream().noneMatch(f -> f.startsWith("minecraft:trees_")), id + " carries vanilla trees: " + vegetal);
+            boolean chaos = id.equals("orespawn:chaos_biome");
+            helper.assertTrue(chaos == (!vegetal.isEmpty() && vegetal.get(0).equals("orespawn:chaos_trees")),
+                    id + (chaos ? " must place its tree first" : " must have no tree") + ": " + vegetal);
+        }
         helper.succeed();
     }
 
@@ -435,10 +504,11 @@ public class UtopiaTreeTests {
     }
 
     /**
-     * WGEN-077: the apple trees' roll (orig OreSpawnWorld.java:1792-1828): a chunk that grows them grows
+     * WGEN-077: the apple trees' roll (orig OreSpawnWorld.java:1792-1828): a chunk that grows them tries
      * {@code 2 + nextInt(2 + (15 - freq) / 2)} of them, each {@code 2 + nextInt(12)} into the chunk on the grass the
      * scan finds, and a column the scan refuses grows none; the gate's odds follow {@code freq}, one in 15 where it is
-     * 0 and one in 29 where it is 14.
+     * 0 and one in 29 where it is 14. WGEN-082 (GitHub #6): the scan stops at an earlier tree's crown, so on flat grass no
+     * tree stands within six blocks of an earlier one (the crown's widest disc), and the first always grows.
      */
     @GameTest(template = "empty")
     public static void w077a_the_apple_trees_roll(GameTestHelper helper) {
@@ -456,8 +526,16 @@ public class UtopiaTreeTests {
                 if (trees.isEmpty()) continue;
                 grew[freq]++;
                 int most = 3 + (15 - freq) / 2;
-                helper.assertTrue(trees.size() >= 2 && trees.size() <= most, trees.size() + " apple trees in " + chunk
-                        + " (2 to " + most + " expected at freq " + freq + ")");
+                helper.assertTrue(trees.size() >= 1 && trees.size() <= most, trees.size() + " apple trees in " + chunk
+                        + " (1 to " + most + " expected at freq " + freq + ")");
+                for (int i = 1; i < trees.size(); i++) {
+                    for (int j = 0; j < i; j++) {
+                        int r = Math.max(Math.abs(trees.get(i).getX() - trees.get(j).getX()),
+                                Math.abs(trees.get(i).getZ() - trees.get(j).getZ()));
+                        helper.assertTrue(r > 6, "the apple tree at " + trees.get(i) + " grew inside the crown of the one"
+                                + " at " + trees.get(j) + " in " + chunk);
+                    }
+                }
                 for (BlockPos tree : trees) {
                     int dx = tree.getX() - chunk.getMinBlockX();
                     int dz = tree.getZ() - chunk.getMinBlockZ();
@@ -485,12 +563,12 @@ public class UtopiaTreeTests {
         MinecraftServer server = helper.getLevel().getServer();
         Holder<Biome> plains = server.registryAccess().registryOrThrow(Registries.BIOME)
                 .getHolderOrThrow(ResourceKey.create(Registries.BIOME, ResourceLocation.parse("orespawn:utopia_plains")));
-        ResourceKey<NoiseGeneratorSettings> inland = ResourceKey.create(Registries.NOISE_SETTINGS,
-                ResourceLocation.parse("orespawn:inland"));
+        ResourceKey<NoiseGeneratorSettings> terrain = ResourceKey.create(Registries.NOISE_SETTINGS,
+                ResourceLocation.parse("orespawn:legacy_utopia"));
         ChunkGenerator generator = new OreSpawnChunkGenerator(new FixedBiomeSource(plains),
-                server.registryAccess().registryOrThrow(Registries.NOISE_SETTINGS).getHolderOrThrow(inland), DimensionStyle.UTOPIA);
+                server.registryAccess().registryOrThrow(Registries.NOISE_SETTINGS).getHolderOrThrow(terrain), DimensionStyle.UTOPIA);
         long seed = 8780444890188216456L;
-        RandomState randomState = RandomState.create(server.registryAccess().asGetterLookup(), inland, seed);
+        RandomState randomState = RandomState.create(server.registryAccess().asGetterLookup(), terrain, seed);
         Registry<Structure> structures = server.registryAccess().registryOrThrow(Registries.STRUCTURE);
         Structure grove = structures.get(ResourceLocation.parse("orespawn:utopia_tree_grove"));
         Structure altar = structures.get(ResourceLocation.parse("orespawn:king_altar"));
@@ -522,9 +600,178 @@ public class UtopiaTreeTests {
         helper.succeed();
     }
 
+
+    /**
+     * WGEN-082 (GitHub #6): a grove's later attempt fails where an earlier tree of the grove stands over its column
+     * below Y100, as the original's scan from Y100 down through air only (orig OreSpawnWorld.java:2532) failed. The Wind
+     * tree's cells are written out here from the original (orig Trees.java:21-77: the trunk, the leaf column on the lean
+     * side past a fifth of the height, a branch every fourth row past a quarter with its leaves, the two tip leaves) and
+     * checked column by column against the grove's shadow; a Sky tree's canopy (Y190 and up) shades nothing but its trunk.
+     */
+    @GameTest(template = "empty")
+    public static void w082a_a_grove_attempt_under_an_earlier_tree_fails(GameTestHelper helper) {
+        ChunkPos chunk = new ChunkPos(40, -12);
+        int x0 = chunk.getMinBlockX() + 4, z0 = chunk.getMinBlockZ() + 7, y0 = 70, height = 44;
+        UtopiaTreeStructure.ScanShadow shadow = new UtopiaTreeStructure.ScanShadow(chunk, 3, 12);
+        shadow.add(UtopiaTreePiece.wind(new BlockPos(x0, y0, z0), height, 0));
+        java.util.Map<Long, Integer> highest = new java.util.HashMap<>();
+        java.util.function.BiConsumer<int[], Integer> cell = (xz, y) -> {
+            if (y <= 100) highest.merge(ChunkPos.asLong(xz[0], xz[1]), y, Math::max);
+        };
+        for (int j = 0; j < height; j++) {                                               // Trees.java:68
+            cell.accept(new int[] {x0, z0}, y0 + j);                                     // :69
+            if (j <= height / 5) continue;                                               // :70
+            cell.accept(new int[] {x0 + 1, z0}, y0 + j);                                 // :71
+            if (j <= height / 4 || j % 4 != 0) continue;                                 // :72
+            int length = height - j, by = y0 + j;                                        // :73
+            for (int i = 1; i <= length; i++) {                                          // :22
+                cell.accept(new int[] {x0 + i, z0}, by);                                 // :23
+                cell.accept(new int[] {x0 + i, z0}, by + 1);                             // :24-26
+                if (i < length / 3) cell.accept(new int[] {x0 + i, z0}, by + 2);        // :27-29
+                if (i <= length / 3) continue;                                           // :30
+                cell.accept(new int[] {x0 + i, z0 + 1}, by);                             // :31-33
+                cell.accept(new int[] {x0 + i, z0 - 1}, by);                             // :34-35
+            }
+            cell.accept(new int[] {x0 + length + 1, z0}, by);                            // :37-39
+            cell.accept(new int[] {x0 + length + 2, z0}, by);                            // :40-42
+        }
+        cell.accept(new int[] {x0, z0}, y0 + height);                                    // :76
+        int blocked = 0;
+        for (int x = chunk.getMinBlockX() + 3; x <= chunk.getMinBlockX() + 12; x++) {
+            for (int z = chunk.getMinBlockZ() + 3; z <= chunk.getMinBlockZ() + 12; z++) {
+                Integer top = highest.get(ChunkPos.asLong(x, z));
+                boolean expected = top != null && top > y0;
+                helper.assertTrue(shadow.blocks(x, z, y0) == expected, "the grove's shadow at (" + x + ", " + z
+                        + ") says " + shadow.blocks(x, z, y0) + ", the original's scan " + (expected ? "stops" : "passes"));
+                if (expected) blocked++;
+            }
+        }
+        helper.assertTrue(blocked >= 10, "the Wind tree shaded only " + blocked + " columns of the window");
+        helper.assertTrue(!shadow.blocks(x0 - 1, z0 + 3, y0), "a column behind the Wind tree's lean is shaded");
+        UtopiaTreeStructure.ScanShadow sky = new UtopiaTreeStructure.ScanShadow(chunk, 3, 12);
+        sky.add(UtopiaTreePiece.sky(new BlockPos(x0, y0, z0), 195, 30, 2));
+        helper.assertTrue(sky.blocks(x0, z0, y0), "the Sky tree's trunk does not stop a scan on its own column");
+        helper.assertTrue(!sky.blocks(x0 + 5, z0, y0) && !sky.blocks(x0, z0 + 5, y0),
+                "the Sky tree's canopy, above Y100, stopped a scan");
+        helper.succeed();
+    }
+
+    /**
+     * WGEN-082 (GitHub #6): an orchard's later tree fails where an earlier one stands over its column below Y100. The
+     * apple tree's cells are written out from the original (orig ItemAppleSeed.java:46-123: the trunk to +11, the arms
+     * at +6 and +9, the crown's square discs at +6 to +13 six, five and four out) and every column around it is checked
+     * against UtopiaTreeStructure.underAppleTree for grass from Y64 to Y99.
+     */
+    @GameTest(template = "empty")
+    public static void w082b_an_apple_crown_stops_a_later_scan(GameTestHelper helper) {
+        BlockPos tree = new BlockPos(100, 90, -40);
+        final int h1 = 12, h2 = 6, h3 = 9, h4 = 6, h5 = 14, w1 = 5, w2 = 3;
+        java.util.Map<Long, int[]> span = new java.util.HashMap<>();
+        java.util.function.BiConsumer<long[], Integer> cell = (xz, y) -> span.merge(xz[0], new int[] {y, y},
+                (a, b) -> new int[] {Math.min(a[0], b[0]), Math.max(a[1], b[1])});
+        int x = tree.getX(), y = tree.getY(), z = tree.getZ();
+        for (int j = 1; j < h1; j++) cell.accept(new long[] {ChunkPos.asLong(x, z)}, y + j);                    // :77-79
+        for (int j = 1; j < w1; j++) {                                                                           // :80-91
+            for (int[] d : new int[][] {{j, 0}, {-j, 0}, {0, j}, {0, -j}}) cell.accept(new long[] {ChunkPos.asLong(x + d[0], z + d[1])}, y + h2);
+        }
+        for (int j = 1; j < w2; j++) {                                                                           // :92-103
+            for (int[] d : new int[][] {{j, 0}, {-j, 0}, {0, j}, {0, -j}}) cell.accept(new long[] {ChunkPos.asLong(x + d[0], z + d[1])}, y + h3);
+        }
+        for (int i = h4; i < h5; i++) {                                                                          // :104-121
+            int width = i > 10 ? 4 : i > 8 ? 5 : 6;
+            for (int dx = -width; dx <= width; dx++) {
+                for (int dz = -width; dz <= width; dz++) cell.accept(new long[] {ChunkPos.asLong(x + dx, z + dz)}, y + i);
+            }
+        }
+        int checks = 0;
+        for (int dx = -8; dx <= 8; dx++) {
+            for (int dz = -8; dz <= 8; dz++) {
+                int[] cells = span.get(ChunkPos.asLong(x + dx, z + dz));
+                for (int base = 64; base <= 99; base++) {
+                    boolean expected = cells != null && Math.max(cells[0], base + 1) <= Math.min(cells[1], 100);
+                    boolean got = UtopiaTreeStructure.underAppleTree(List.of(tree), x + dx, z + dz, base);
+                    helper.assertTrue(got == expected, "at (" + dx + ", " + dz + ") over grass at Y" + base + " the"
+                            + " crown test says " + got + ", the original's scan " + (expected ? "stops" : "passes"));
+                    checks++;
+                }
+            }
+        }
+        helper.assertTrue(checks > 10000, "only " + checks + " columns checked");
+        helper.succeed();
+    }
+
+    /**
+     * WGEN-081 (GitHub #6): the King and Queen altars ask the original's quickReallyBigSpaceCheck (orig
+     * OreSpawnWorld.java:2558-2560, :2645-2653): the 60 x 60 plane eight above the altar's grass must be air. On the
+     * Utopia generator, a site whose plane meets a huge tree's crown is refused although the terrain under the plane is
+     * clear (the trees half of the check); a site whose plane meets the terrain is refused; every site the check accepts
+     * has the terrain below the plane over the whole 60 x 60 (an independent scan of the generator's surface).
+     */
+    @GameTest(template = "empty", timeoutTicks = 2400)
+    public static void w081a_an_altar_needs_the_plane_above_it_clear(GameTestHelper helper) {
+        MinecraftServer server = helper.getLevel().getServer();
+        Holder<Biome> plains = server.registryAccess().registryOrThrow(Registries.BIOME)
+                .getHolderOrThrow(ResourceKey.create(Registries.BIOME, ResourceLocation.parse("orespawn:utopia_plains")));
+        ResourceKey<NoiseGeneratorSettings> terrain = ResourceKey.create(Registries.NOISE_SETTINGS,
+                ResourceLocation.parse("orespawn:legacy_utopia"));
+        ChunkGenerator generator = new OreSpawnChunkGenerator(new FixedBiomeSource(plains),
+                server.registryAccess().registryOrThrow(Registries.NOISE_SETTINGS).getHolderOrThrow(terrain), DimensionStyle.UTOPIA);
+        long seed = 8780444890188216456L;
+        RandomState state = RandomState.create(server.registryAccess().asGetterLookup(), terrain, seed);
+        ServerLevel level = helper.getLevel();
+        UtopiaTreeStructure.ColumnProbe probe = UtopiaTreeStructure.probe(generator, level, state);
+        int treeRefusals = 0, terrainRefusals = 0, accepted = 0;
+        for (int c = 0; c < 4000 && (treeRefusals < 1 || terrainRefusals < 1 || accepted < 1); c++) {
+            ChunkPos chunk = new ChunkPos(-500 + c % 60, 900 + c / 60);
+            UtopiaTreeStructure.ChunkPass pass = UtopiaTreeStructure.chunkPass(seed, chunk, probe);
+            if (treeRefusals < 1 && !pass.huge().trees().isEmpty()) {
+                UtopiaTreePiece tree = pass.huge().trees().get(0);
+                int plane = tree.origin().getY() + 12;
+                int[] hit = null;
+                java.util.List<int[]> cells = new java.util.ArrayList<>();
+                tree.forEachCell(level.getMinBuildHeight(), level.getMaxBuildHeight(), (x, y, z) -> {
+                    if (y == plane) cells.add(new int[] {x, z});
+                });
+                if (!cells.isEmpty()) hit = cells.get(0);
+                if (hit != null) {
+                    BlockPos grass = new BlockPos(hit[0] - 10, plane - 8, hit[1] - 10);
+                    if (terrainBelow(generator, level, state, grass, plane)) {
+                        helper.assertTrue(!UtopiaTreeStructure.reallyBigSpaceClear(seed, generator, level, state, grass),
+                                "a site whose plane meets the huge tree at " + tree.origin() + " passed the check");
+                        treeRefusals++;
+                    }
+                }
+            }
+            UtopiaTreeStructure.Altar altar = pass.altar();
+            BlockPos site = altar != null ? altar.origin() : (c % 41 == 0 && probe.base(chunk.getMinBlockX() + 8,
+                    chunk.getMinBlockZ() + 8, 50, 100) != Integer.MIN_VALUE
+                    ? new BlockPos(chunk.getMinBlockX() + 8, probe.base(chunk.getMinBlockX() + 8, chunk.getMinBlockZ() + 8, 50, 100),
+                    chunk.getMinBlockZ() + 8) : null);
+            if (site == null) continue;
+            boolean clearTerrain = terrainBelow(generator, level, state, site, site.getY() + 8);
+            boolean ok = UtopiaTreeStructure.reallyBigSpaceClear(seed, generator, level, state, site);
+            helper.assertTrue(!ok || clearTerrain, "the check accepted " + site + " though the terrain reaches the plane");
+            if (!clearTerrain) terrainRefusals++;
+            if (ok) accepted++;
+        }
+        helper.assertTrue(treeRefusals > 0 && terrainRefusals > 0 && accepted > 0, "the patch left a case untested: "
+                + treeRefusals + " tree refusals, " + terrainRefusals + " terrain refusals, " + accepted + " accepted sites");
+        helper.succeed();
+    }
+
+    /** Whether the generator's terrain stays below {@code plane} over the altar check's 60 x 60 (water counts as terrain). */
+    private static boolean terrainBelow(ChunkGenerator generator, ServerLevel level, RandomState state, BlockPos grass, int plane) {
+        for (int x = grass.getX() - 5; x <= grass.getX() + 54; x++) {
+            for (int z = grass.getZ() - 5; z <= grass.getZ() + 54; z++) {
+                if (generator.getBaseHeight(x, z, Heightmap.Types.WORLD_SURFACE_WG, level, state) > plane) return false;
+            }
+        }
+        return true;
+    }
+
     /**
      * A structure context on a detached Utopia generator (data/orespawn/dimension/utopia.json: the fixed Utopia plains
-     * biome, the inland noise settings, the Utopia style), as the structure pass builds one for {@code chunk}. The test
+     * biome, the 1.7.10 terrain's noise settings, the Utopia style), as the structure pass builds one for {@code chunk}. The test
      * level serves as the height accessor, which only clamps {@code getBaseHeight} to the generator's own range.
      */
     private static Structure.GenerationContext utopiaContext(GameTestHelper helper, ChunkGenerator generator,

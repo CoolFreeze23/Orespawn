@@ -148,7 +148,7 @@ public class RoyalTreePiece extends StructurePiece {
     private record PassCtx(WorldGenLevel level, BlockPos.MutableBlockPos mut,
                            int minY, int maxY,
                            int cbMinX, int cbMaxX, int cbMinY, int cbMaxY,
-                           int cbMinZ, int cbMaxZ) {}
+                           int cbMinZ, int cbMaxZ, UtopiaTreePiece.CellSink sink) {}
 
     private final transient ThreadLocal<PassCtx> passCtx = new ThreadLocal<>();
 
@@ -229,7 +229,7 @@ public class RoyalTreePiece extends StructurePiece {
         this.passCtx.set(new PassCtx(level, new BlockPos.MutableBlockPos(),
                 level.getMinBuildHeight(), level.getMaxBuildHeight(),
                 chunkBox.minX(), chunkBox.maxX(), chunkBox.minY(),
-                chunkBox.maxY(), chunkBox.minZ(), chunkBox.maxZ()));
+                chunkBox.maxY(), chunkBox.minZ(), chunkBox.maxZ(), null));
 
         BlockState trunk;
         BlockState leaves;
@@ -275,8 +275,39 @@ public class RoyalTreePiece extends StructurePiece {
         if (x < c.cbMinX() || x > c.cbMaxX()) return;
         if (z < c.cbMinZ() || z > c.cbMaxZ()) return;
         if (y < c.cbMinY() || y > c.cbMaxY()) return;
+        if (c.sink() != null) {
+            c.sink().accept(x, y, z);
+            return;
+        }
         c.mut().set(x, y, z);
         c.level().setBlock(c.mut(), state, FLAG_CLIENTS_ONLY);
+    }
+
+    /**
+     * Every cell the tree writes, nothing written: the algorithm runs once with no chunk window, from the same seed as
+     * every {@link #postProcess} pass. The Utopia altar's space check asks it ({@link UtopiaTreeStructure}).
+     * {@code minY} / {@code maxY} are the world's build range.
+     */
+    public void forEachCell(int minY, int maxY, UtopiaTreePiece.CellSink sink) {
+        RandomSource rng = RandomSource.create(
+                (long) this.boundingBox.minX() * 341873128712L
+                        + (long) this.boundingBox.minZ() * 132897987541L);
+        this.passCtx.set(new PassCtx(null, new BlockPos.MutableBlockPos(), minY, maxY,
+                Integer.MIN_VALUE, Integer.MAX_VALUE, Integer.MIN_VALUE, Integer.MAX_VALUE, Integer.MIN_VALUE,
+                Integer.MAX_VALUE, sink));
+        try {
+            if (queenVariant) {
+                makeBigSquareTree(rng, origin.getX(), origin.getY(), origin.getZ(), Blocks.OBSIDIAN.defaultBlockState(),
+                        ModBlocks.BLOCK_RUBY.get().defaultBlockState(), ModBlocks.BLOCK_AMETHYST.get().defaultBlockState(),
+                        ModBlocks.QUEEN_SPAWNER.get().defaultBlockState());
+            } else {
+                makeBigSquareTree(rng, origin.getX(), origin.getY(), origin.getZ(), Blocks.GOLD_BLOCK.defaultBlockState(),
+                        Blocks.EMERALD_BLOCK.defaultBlockState(), Blocks.DIAMOND_BLOCK.defaultBlockState(),
+                        ModBlocks.KING_SPAWNER.get().defaultBlockState());
+            }
+        } finally {
+            this.passCtx.remove();
+        }
     }
 
     /**

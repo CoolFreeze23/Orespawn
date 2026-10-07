@@ -1,11 +1,11 @@
 {
   "structures": [
     {
-      "structure": "orespawn:king_altar",
+      "structure": "orespawn:utopia_temple_king_altar",
       "weight": 1
     },
     {
-      "structure": "orespawn:queen_altar",
+      "structure": "orespawn:utopia_temple_queen_altar",
       "weight": 1
     }
   ],

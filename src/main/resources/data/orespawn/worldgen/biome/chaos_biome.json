@@ -413,7 +413,7 @@
       "minecraft:spring_lava"
     ],
     [
-      "minecraft:trees_plains",
+      "orespawn:chaos_trees",
       "minecraft:flower_default",
       "minecraft:patch_grass_plain",
       "orespawn:anthill_chaos",

@@ -79,9 +79,25 @@ public class MagicAppleTreeFeature extends Feature<NoneFeatureConfiguration> {
         }
         boolean grew = false;
         for (BlockPos base : trees) {
-            grew |= growTree(level, base);
+            BlockPos grass = scan(level, base.getX(), base.getZ());
+            if (grass != null) grew |= growTree(level, grass);
         }
         return grew;
+    }
+
+    /**
+     * orig OreSpawnWorld.java:1811-1812, the scan in the world as it stands: from Y100 down through air only, the tree on
+     * the first block below the air when that block is grass; anything else first (a plant on the grass, a crop, an
+     * earlier tree's crown or trunk) ends the scan and the tree does not grow. GitHub #6: the trees of an orchard no
+     * longer grow inside each other's crowns.
+     */
+    private static BlockPos scan(WorldGenLevel level, int x, int z) {
+        BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
+        for (int y = 100; y > 50; --y) {
+            if (!level.getBlockState(pos.set(x, y, z)).isAir()) return null;
+            if (level.getBlockState(pos.set(x, y - 1, z)).is(Blocks.GRASS_BLOCK)) return new BlockPos(x, y - 1, z);
+        }
+        return null;
     }
 
     /** ItemAppleSeed.makeTree (orig :46-123) on the grass block at {@code base}; false when the ground or trunk refuses. */

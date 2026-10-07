@@ -192,7 +192,13 @@ public class UtopiaTreePiece extends StructurePiece {
     // ---- The per-pass context (BUG-033: passes of one piece run concurrently; each keeps its own) ----------------
 
     private record PassCtx(WorldGenLevel level, BlockPos.MutableBlockPos mut, int minY, int maxY,
-                           int cbMinX, int cbMaxX, int cbMinY, int cbMaxY, int cbMinZ, int cbMaxZ) {}
+                           int cbMinX, int cbMaxX, int cbMinY, int cbMaxY, int cbMinZ, int cbMaxZ, CellSink sink) {}
+
+    /** A cell the tree writes, as {@link #forEachCell} reports it. */
+    @FunctionalInterface
+    public interface CellSink {
+        void accept(int x, int y, int z);
+    }
 
     private final transient ThreadLocal<PassCtx> passCtx = new ThreadLocal<>();
 
@@ -205,7 +211,30 @@ public class UtopiaTreePiece extends StructurePiece {
                             RandomSource random, BoundingBox chunkBox, ChunkPos chunkPos, BlockPos pivot) {
         passCtx.set(new PassCtx(level, new BlockPos.MutableBlockPos(),
                 level.getMinBuildHeight(), level.getMaxBuildHeight(),
-                chunkBox.minX(), chunkBox.maxX(), chunkBox.minY(), chunkBox.maxY(), chunkBox.minZ(), chunkBox.maxZ()));
+                chunkBox.minX(), chunkBox.maxX(), chunkBox.minY(), chunkBox.maxY(), chunkBox.minZ(), chunkBox.maxZ(), null));
+        try {
+            switch (kind) {
+                case SKY -> skyTree();
+                case WIND -> windTree();
+                case ROUND -> bigRoundTree(RandomSource.create(seed));
+                case SQUARE -> bigSquareTree(RandomSource.create(seed));
+                case CIRCULAR -> bigCircularTree(RandomSource.create(seed));
+            }
+        } finally {
+            passCtx.remove();
+        }
+    }
+
+    /**
+     * Every cell the tree writes (a log, a leaf, a chest, a step), standing in an empty world: the whole algorithm runs
+     * once with no chunk window, every write reported and nothing written, every read answering air. The original's
+     * column scans and its altar's space check saw these cells once the tree had grown; the Utopia pass asks this so it
+     * can see them too ({@link UtopiaTreeStructure}). {@code minY} / {@code maxY} are the world's build range.
+     */
+    public void forEachCell(int minY, int maxY, CellSink sink) {
+        passCtx.set(new PassCtx(null, new BlockPos.MutableBlockPos(), minY, maxY,
+                Integer.MIN_VALUE, Integer.MAX_VALUE, Integer.MIN_VALUE, Integer.MAX_VALUE, Integer.MIN_VALUE,
+                Integer.MAX_VALUE, sink));
         try {
             switch (kind) {
                 case SKY -> skyTree();
@@ -232,6 +261,10 @@ public class UtopiaTreePiece extends StructurePiece {
         PassCtx c = ctx();
         if (y < c.minY() || y >= c.maxY()) return;
         if (!inChunk(x, y, z)) return;
+        if (c.sink() != null) {
+            c.sink().accept(x, y, z);
+            return;
+        }
         c.mut().set(x, y, z);
         c.level().setBlock(c.mut(), state, FLAG_CLIENTS_ONLY);
     }
@@ -241,6 +274,7 @@ public class UtopiaTreePiece extends StructurePiece {
         PassCtx c = ctx();
         if (y < c.minY() || y >= c.maxY()) return null;
         if (!inChunk(x, y, z)) return null;
+        if (c.sink() != null) return null;
         c.mut().set(x, y, z);
         return c.level().getBlockState(c.mut());
     }
@@ -298,6 +332,10 @@ public class UtopiaTreePiece extends StructurePiece {
         if (!inChunk(x, y, z)) return;
         PassCtx c = ctx();
         if (y < c.minY() || y >= c.maxY()) return;
+        if (c.sink() != null) {
+            c.sink().accept(x, y, z);
+            return;
+        }
         BlockPos pos = new BlockPos(x, y, z);
         c.level().setBlock(pos, Blocks.CHEST.defaultBlockState(), FLAG_CLIENTS_ONLY);
         if (c.level().getBlockEntity(pos) instanceof RandomizableContainerBlockEntity container) {
@@ -312,6 +350,7 @@ public class UtopiaTreePiece extends StructurePiece {
     private void ironGolem(double x, double y, double z) {
         int bx = Mth.floor(x), by = Mth.floor(y), bz = Mth.floor(z);
         if (!inChunk(bx, by, bz)) return;
+        if (ctx().sink() != null) return;
         WorldGenLevel level = ctx().level();
         IronGolem golem = EntityType.IRON_GOLEM.create(level.getLevel());
         if (golem == null) return;

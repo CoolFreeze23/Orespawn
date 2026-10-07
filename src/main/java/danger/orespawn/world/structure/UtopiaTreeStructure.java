@@ -5,6 +5,7 @@ import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import danger.orespawn.OreSpawnConfig;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -23,6 +24,7 @@ import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.LegacyRandomSource;
 import net.minecraft.world.level.levelgen.RandomState;
 import net.minecraft.world.level.levelgen.WorldgenRandom;
+import net.minecraft.world.level.levelgen.structure.BoundingBox;
 import net.minecraft.world.level.levelgen.structure.Structure;
 import net.minecraft.world.level.levelgen.structure.StructureStart;
 import net.minecraft.world.level.levelgen.structure.StructureType;
@@ -49,9 +51,11 @@ import net.minecraft.world.level.levelgen.structure.StructureType;
  * ({@link #hugeRoll}).
  *
  * <p>The original's downward air scan for a grass block under air is answered from the chunk generator's base column
- * (the terrain before decoration): the surface must be inside the original's window and must not be water. A canopy
- * that an earlier tree left over the column, which stopped the original's scan, is not seen here; nor is a grass block
- * under air beneath an overhang, which the huge roll's scan (:1844-1846) would have taken. The trees' own shape draws
+ * (the terrain before decoration): the surface must be inside the original's window and must not be water. A log or a
+ * leaf of a tree the same pass grew earlier, over the column below Y100, stops the grove's and the apple trees' scans as
+ * it stopped the original's ({@link ScanShadow}, {@link #underAppleTree}; GitHub #6); a tree of a neighbouring chunk,
+ * which the original saw only when that chunk had populated first, is not seen, nor a plant on the grass, nor a grass
+ * block under air beneath an overhang, which the huge roll's scan (:1844-1846) would have taken. The trees' own shape draws
  * come from a per-piece seed drawn after the type roll: the original drew its shapes from OreSpawnRand and the world's
  * random, never from the chunk's, so only the roll's draw order is the original's.
  *
@@ -63,7 +67,12 @@ import net.minecraft.world.level.levelgen.structure.StructureType;
  * ItemMagicApple.isBoringBaseBlock); the grove, the magic apple trees and the Utopia veggies stay out of a chunk
  * where one of those trees is rooted ({@link #chunkPass}, {@link #bigTreeRootedAt}). A grove rooted in a
  * neighbouring chunk can still reach under a big tree's branches, as the reporter remembered from 1.7.10; where the
- * two meet, the big tree wins (in 1.7.10 whichever chunk populated last won).
+ * two meet, the big tree wins (in 1.7.10 whichever chunk populated last won). GitHub #6: among the big trees the royal
+ * ones now come last, so a huge tree rooted next door no longer cuts into a King or Queen tree: the structures of one
+ * step generate in the order of their ids' paths, and the royal trees are {@code utopia_royal_tree_king} and
+ * {@code utopia_royal_tree_queen}, after {@code utopia_huge_tree} (1.7.10 gave either order, as the chunks populated);
+ * {@code royal_tree_king} and {@code royal_tree_queen} stay registered, out of every structure set, for the trees older
+ * worlds already started.
  *
  * <p>WGEN-077, one random for the whole pass. The original drew the huge roll, the apple trees and the grove from the
  * populator's one random, in that order, and the apple trees short-circuited the grove: {@code !addAppleTrees(...) &&
@@ -148,17 +157,22 @@ public class UtopiaTreeStructure extends Structure {
         int dir = 0;                                                                // :2527
         int what = random.nextInt(2);                                               // :2528
         int count = 0;
+        ScanShadow shadow = new ScanShadow(chunk, 3, 12);
         for (int i = 0; i < nc; i++) {                                              // :2529
             int posX = 3 + chunk.getMinBlockX() + random.nextInt(10);               // :2530
             int posZ = 3 + chunk.getMinBlockZ() + random.nextInt(10);               // :2531
             int base = probe.base(posX, posZ, 50, 100);                             // :2532-2533
             if (base == Integer.MIN_VALUE) continue;
+            // the scan runs down from Y100 through air only (:2532): an earlier tree of this grove over the column stops it
+            if (shadow.blocks(posX, posZ, base)) continue;
             ++count;                                                                // :2534
             if (what == 0) {
                 // orig Trees.java:66-67 WindTree: height nextInt(8) + 40; width nextInt(4) + 8, drawn and unused
                 int height = random.nextInt(8) + 40;
                 random.nextInt(4);
-                out.add(UtopiaTreePiece.wind(new BlockPos(posX, base, posZ), height, dir));
+                UtopiaTreePiece wind = UtopiaTreePiece.wind(new BlockPos(posX, base, posZ), height, dir);
+                out.add(wind);
+                shadow.add(wind);
                 if (count >= 4) break;                                              // :2537-2538
             } else {
                 // orig Trees.java:101-104 SkyTree: the top nextInt(15) + 190, an absolute Y; no tree under 20 blocks
@@ -167,7 +181,9 @@ public class UtopiaTreeStructure extends Structure {
                 if (top - base >= 20) {
                     int width = random.nextInt(10) + 25;
                     int drop = random.nextInt(4);
-                    out.add(UtopiaTreePiece.sky(new BlockPos(posX, base, posZ), top, width, drop));
+                    UtopiaTreePiece sky = UtopiaTreePiece.sky(new BlockPos(posX, base, posZ), top, width, drop);
+                    out.add(sky);
+                    shadow.add(sky);
                 }
                 if (count >= 3) break;                                              // :2541-2542
             }
@@ -264,7 +280,10 @@ public class UtopiaTreeStructure extends Structure {
             int posX = 2 + chunk.getMinBlockX() + random.nextInt(12);               // :1809
             int posZ = 2 + chunk.getMinBlockZ() + random.nextInt(12);               // :1810
             int base = probe.base(posX, posZ, 50, 100);                             // :1811-1812
-            if (base != Integer.MIN_VALUE) out.add(new BlockPos(posX, base, posZ)); // :1813-1824
+            // the scan runs down from Y100 through air only (:1811): an earlier tree's crown or trunk over the column
+            // stops it before it reaches the grass
+            if (base == Integer.MIN_VALUE || underAppleTree(out, posX, posZ, base)) continue;
+            out.add(new BlockPos(posX, base, posZ));                                // :1813-1824
         }
         return out;
     }
@@ -276,14 +295,17 @@ public class UtopiaTreeStructure extends Structure {
      * What the Utopia chunk pass grows (orig OreSpawnWorld.java:42-46): one of addHugeTree's trees (a huge tree or a
      * royal tree), else apple trees, else a grove, else, when none of them grew, the altar its roll picked (or none).
      */
-    public record ChunkPass(boolean bigTree, List<BlockPos> appleTrees, List<UtopiaTreePiece> grove, Altar altar) {
+    public record ChunkPass(HugeRoll huge, List<BlockPos> appleTrees, List<UtopiaTreePiece> grove, Altar altar) {
+        /** Whether addHugeTree grew a tree here (a huge one or a royal one). */
+        public boolean bigTree() {
+            return huge.madeOne();
+        }
+
         /** Whether the pass grew any tree of its own; the King altar rolled only when it grew none (:43-45). */
         public boolean grewTrees() {
-            return bigTree || !appleTrees.isEmpty() || !grove.isEmpty();
+            return bigTree() || !appleTrees.isEmpty() || !grove.isEmpty();
         }
     }
-
-    private static final ChunkPass BIG_TREE = new ChunkPass(true, List.of(), List.of(), null);
 
     /**
      * WGEN-075 / WGEN-077 / WGEN-080: the Utopia chunk pass on one random (orig OreSpawnWorld.java:42-46), seeded as
@@ -296,12 +318,13 @@ public class UtopiaTreeStructure extends Structure {
     public static ChunkPass chunkPass(long seed, ChunkPos chunk, ColumnProbe probe) {
         WorldgenRandom random = new WorldgenRandom(new LegacyRandomSource(0L));
         random.setLargeFeatureSeed(seed, chunk.x, chunk.z);
-        if (hugeRoll(random, chunk, probe).madeOne()) return BIG_TREE;
+        HugeRoll huge = hugeRoll(random, chunk, probe);
+        if (huge.madeOne()) return new ChunkPass(huge, List.of(), List.of(), null);
         List<BlockPos> apples = appleTrees(random, chunk, probe);
-        if (!apples.isEmpty()) return new ChunkPass(false, List.copyOf(apples), List.of(), null);
+        if (!apples.isEmpty()) return new ChunkPass(huge, List.copyOf(apples), List.of(), null);
         List<UtopiaTreePiece> grove = grove(random, chunk, probe);
-        if (!grove.isEmpty()) return new ChunkPass(false, List.of(), grove, null);
-        return new ChunkPass(false, List.of(), List.of(), altarRoll(random, chunk, probe));
+        if (!grove.isEmpty()) return new ChunkPass(huge, List.of(), grove, null);
+        return new ChunkPass(huge, List.of(), List.of(), altarRoll(random, chunk, probe));
     }
 
     /**
@@ -309,9 +332,9 @@ public class UtopiaTreeStructure extends Structure {
      * it: one chunk in 2,000 ({@code nextInt(2000) != 1} ends it, :2550), then up to eight attempts at chunk + 3 +
      * nextInt(10) (:2553-2555) for grass under air inside Y51-100 (:2556-2557, the base column as for the trees), and
      * on the first grass found the King when the next draw is 0 and the Queen otherwise (:2562-2565). The altar is built
-     * on the grass ({@code posY - 1}). The original's quickReallyBigSpaceCheck (:2558) reads blocks that do not exist yet
-     * and is not asked; the cooldown the original checked first (:43) is the royal_altars structure's share
-     * ({@code LegacyDungeonStructure}).
+     * on the grass ({@code posY - 1}). The original's quickReallyBigSpaceCheck (:2558) is {@link #reallyBigSpaceClear},
+     * asked by the altar's structure on the site this returns; the cooldown the original checked first (:43) is the
+     * royal_altars structure's share ({@code LegacyDungeonStructure}).
      */
     static Altar altarRoll(RandomSource random, ChunkPos chunk, ColumnProbe probe) {
         if (random.nextInt(2000) != 1) return null;                                // :2550
@@ -323,6 +346,127 @@ public class UtopiaTreeStructure extends Structure {
             return new Altar(new BlockPos(posX, base, posZ), random.nextInt(2) != 0); // :2562, King on 0
         }
         return null;
+    }
+
+
+    /**
+     * The cells a pass's earlier trees put over the columns its later attempts can pick, as the original's downward scans
+     * met them: the scan runs from Y100 down through air only (addOtherTrees :2532, addAppleTrees :1811), so a log or a
+     * leaf of a tree grown earlier in the same pass, anywhere from Y100 down to the grass, ends it before it finds the
+     * grass. Kept per column as the highest such cell; cells above Y100 never stop a scan.
+     */
+    public static final class ScanShadow {
+        public static final int SCAN_TOP = 100;
+        private final int minX, maxX, minZ, maxZ;
+        private final Map<Long, Integer> top = new HashMap<>();
+
+        /** The columns of {@code chunk} from {@code from} to {@code to} blocks in, the attempts' own window. */
+        public ScanShadow(ChunkPos chunk, int from, int to) {
+            this.minX = chunk.getMinBlockX() + from;
+            this.maxX = chunk.getMinBlockX() + to;
+            this.minZ = chunk.getMinBlockZ() + from;
+            this.maxZ = chunk.getMinBlockZ() + to;
+        }
+
+        public void add(UtopiaTreePiece tree) {
+            tree.forEachCell(Integer.MIN_VALUE / 2, SCAN_TOP + 1, (x, y, z) -> {
+                if (x < minX || x > maxX || z < minZ || z > maxZ || y > SCAN_TOP) return;
+                top.merge(ChunkPos.asLong(x, z), y, Math::max);
+            });
+        }
+
+        /** Whether a cell of an earlier tree stands in the column above the grass at {@code base}, up to Y100. */
+        public boolean blocks(int x, int z, int base) {
+            Integer y = top.get(ChunkPos.asLong(x, z));
+            return y != null && y > base;
+        }
+    }
+
+    /**
+     * orig ItemAppleSeed.makeTree (ItemAppleSeed.java:46-123, MagicAppleTreeFeature's geometry): the trunk from the grass
+     * up eleven blocks, the arms at +6 (four out) and +9 (two out), the crown's square discs at +6 to +8 (six out), +9 to
+     * +10 (five) and +11 to +13 (four). Whether one of {@code trees} has a cell over the column {@code (x, z)} above the
+     * grass at {@code base}, up to Y100, where the original's scan (:1811) stops.
+     */
+    public static boolean underAppleTree(List<BlockPos> trees, int x, int z, int base) {
+        for (BlockPos t : trees) {
+            int r = Math.max(Math.abs(x - t.getX()), Math.abs(z - t.getZ()));
+            int highest;
+            if (r <= 4) highest = t.getY() + 13;
+            else if (r == 5) highest = t.getY() + 10;
+            else if (r == 6) highest = t.getY() + 8;
+            else continue;
+            int lowest = r == 0 ? t.getY() + 1 : t.getY() + 6;   // the trunk from the grass up; elsewhere the crown
+            if (Math.max(lowest, base + 1) <= Math.min(highest, ScanShadow.SCAN_TOP)) return true;
+        }
+        return false;
+    }
+
+    /**
+     * orig OreSpawnWorld.java:2645-2653 {@code quickReallyBigSpaceCheck}, which addKingAltar asks on the first grass it
+     * finds and which ends the roll when it fails (:2558-2560): every block of the 60 x 60 plane eight above the grass,
+     * from five before the site to 54 past it on both axes, must be air. The original read the world as it stood: the
+     * terrain, and the trees already grown around the site. Asked here of the terrain the generator gives for those
+     * columns (stone or water at the plane fails it, as in the original) and of every Utopia tree with a cell on the
+     * plane: the huge and royal trees, the apple trees and the groves of every chunk close enough to reach it, as if
+     * they had all grown first (in 1.7.10 a neighbour that populated after the altar could still grow into it).
+     */
+    public static boolean reallyBigSpaceClear(long seed, ChunkGenerator generator, LevelHeightAccessor heights,
+                                              RandomState randomState, BlockPos grass) {
+        int plane = grass.getY() + 8;
+        int minX = grass.getX() - 5, maxX = grass.getX() + 54, minZ = grass.getZ() - 5, maxZ = grass.getZ() + 54;
+        int minY = heights.getMinBuildHeight(), maxY = heights.getMaxBuildHeight();
+        if (plane < minY || plane >= maxY) return false;
+        for (int x = minX; x <= maxX; x++) {
+            for (int z = minZ; z <= maxZ; z++) {
+                if (!generator.getBaseColumn(x, z, heights, randomState).getBlock(plane).isAir()) return false;
+            }
+        }
+        ColumnProbe probe = probe(generator, heights, randomState);
+        int reach = 144;  // the farthest any Utopia tree's cells reach from its site (RoyalTreePiece's permit)
+        int cx0 = (minX - reach) >> 4, cx1 = (maxX + reach) >> 4, cz0 = (minZ - reach) >> 4, cz1 = (maxZ + reach) >> 4;
+        boolean[] hit = new boolean[1];
+        UtopiaTreePiece.CellSink sink = (x, y, z) -> {
+            if (y == plane && x >= minX && x <= maxX && z >= minZ && z <= maxZ) hit[0] = true;
+        };
+        for (int cx = cx0; cx <= cx1; cx++) {
+            for (int cz = cz0; cz <= cz1; cz++) {
+                ChunkPass pass = chunkPass(seed, new ChunkPos(cx, cz), probe);
+                for (UtopiaTreePiece tree : pass.huge().trees()) {
+                    if (reaches(tree.getBoundingBox(), plane, minX, maxX, minZ, maxZ)) tree.forEachCell(minY, maxY, sink);
+                }
+                if (pass.huge().royal() != null) {
+                    RoyalTreePiece royal = new RoyalTreePiece(pass.huge().royal(), pass.huge().queen());
+                    if (reaches(royal.getBoundingBox(), plane, minX, maxX, minZ, maxZ)) royal.forEachCell(minY, maxY, sink);
+                }
+                for (UtopiaTreePiece tree : pass.grove()) {
+                    if (reaches(tree.getBoundingBox(), plane, minX, maxX, minZ, maxZ)) tree.forEachCell(minY, maxY, sink);
+                }
+                for (BlockPos apple : pass.appleTrees()) {
+                    if (appleCellOnPlane(apple, plane, minX, maxX, minZ, maxZ)) return false;
+                }
+                if (hit[0]) return false;
+            }
+        }
+        return true;
+    }
+
+    private static boolean reaches(BoundingBox box, int plane, int minX, int maxX, int minZ, int maxZ) {
+        return box.minY() <= plane && box.maxY() >= plane && box.minX() <= maxX && box.maxX() >= minX
+                && box.minZ() <= maxZ && box.maxZ() >= minZ;
+    }
+
+    /** Whether an apple tree on the grass at {@code t} has a cell on the plane inside the rectangle (makeTree's shape). */
+    private static boolean appleCellOnPlane(BlockPos t, int plane, int minX, int maxX, int minZ, int maxZ) {
+        int h = plane - t.getY();
+        int r;
+        if (h >= 1 && h <= 5) r = 0;            // the trunk alone
+        else if (h >= 6 && h <= 8) r = 6;       // the widest discs (the arms at +6 lie inside them)
+        else if (h == 9 || h == 10) r = 5;
+        else if (h == 11) r = 4;                // the trunk's top log and the narrow discs
+        else if (h == 12 || h == 13) r = 4;
+        else return false;
+        return t.getX() - r <= maxX && t.getX() + r >= minX && t.getZ() - r <= maxZ && t.getZ() + r >= minZ;
     }
 
     /** The column probe for a structure's generation context (see {@link #grassBase}). */
@@ -338,9 +482,14 @@ public class UtopiaTreeStructure extends Structure {
         return (x, z, low, high) -> grassBase(generator, heights, randomState, x, z, low, high);
     }
 
-    /** The structures that are addHugeTree's trees: the Utopia huge tree and the two royal trees. */
+    /**
+     * The structures that are addHugeTree's trees: the Utopia huge tree and the two royal trees, under their ids since
+     * GitHub #6 and under the ids older worlds started them with.
+     */
     private static final Set<ResourceLocation> BIG_TREES = Set.of(
             ResourceLocation.fromNamespaceAndPath("orespawn", "utopia_huge_tree"),
+            ResourceLocation.fromNamespaceAndPath("orespawn", "utopia_royal_tree_king"),
+            ResourceLocation.fromNamespaceAndPath("orespawn", "utopia_royal_tree_queen"),
             ResourceLocation.fromNamespaceAndPath("orespawn", "royal_tree_king"),
             ResourceLocation.fromNamespaceAndPath("orespawn", "royal_tree_queen"));
 

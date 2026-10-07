@@ -1,11 +1,11 @@
 {
   "structures": [
     {
-      "structure": "orespawn:royal_tree_king",
+      "structure": "orespawn:utopia_royal_tree_king",
       "weight": 1
     },
     {
-      "structure": "orespawn:royal_tree_queen",
+      "structure": "orespawn:utopia_royal_tree_queen",
       "weight": 1
     }
   ],
