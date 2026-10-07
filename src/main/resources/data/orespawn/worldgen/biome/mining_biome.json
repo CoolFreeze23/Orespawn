@@ -1,10 +1,10 @@
 {
-  "temperature": 0.5,
-  "downfall": 0.0,
+  "temperature": 0.8,
+  "downfall": 0.01,
   "has_precipitation": false,
   "effects": {
-    "sky_color": 5066061,
-    "fog_color": 5066061,
+    "sky_color": 7907327,
+    "fog_color": 12638463,
     "water_color": 4159204,
     "water_fog_color": 329011,
     "mood_sound": {
@@ -187,9 +187,8 @@
   "spawn_costs": {},
   "carvers": {
     "air": [
-      "minecraft:cave",
-      "minecraft:cave_extra_underground",
-      "minecraft:canyon"
+      "orespawn:legacy_cave",
+      "orespawn:legacy_canyon"
     ]
   },
   "features": [
@@ -244,7 +243,10 @@
       "orespawn:ore_boost_emerald_mining",
       "orespawn:ore_boost_emerald_block_mining",
       "orespawn:ore_boost_gold_mining",
-      "orespawn:ore_boost_gold_block_mining"
+      "orespawn:ore_boost_gold_block_mining",
+      "minecraft:disk_sand",
+      "minecraft:disk_clay",
+      "minecraft:disk_gravel"
     ],
     [],
     [

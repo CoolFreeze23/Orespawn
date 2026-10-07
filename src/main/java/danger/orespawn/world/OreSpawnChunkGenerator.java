@@ -27,11 +27,10 @@ import net.minecraft.world.level.StructureManager;
  * blending) still benefits from 1.21.1's noise router pipeline, but adds:
  *
  * <ul>
- *   <li>Post-terrain block replacement: vanilla stone/grass/dirt become
- *       CrystalStone and CrystalGrass to match the original 1.7.10 palette
- *       (CRYSTAL style only).</li>
- *   <li>Shallow-water fill: converts shallow seas to land so the Crystal
- *       dimension is mostly walkable, like the original (CRYSTAL style only).</li>
+ *   <li>The original's own surface on the original's terrain in Utopia, the
+ *       Village, Mining and Crystal ({@link LegacySurface}: grass and dirt,
+ *       Extreme Hills' stone, crystal grass on crystal stone), in place of
+ *       the surface rules.</li>
  *   <li>Custom per-chunk features: mazes, crystal trees, flora, ore veins.</li>
  *   <li>Cross-chunk structures (battle towers, haunted houses) placed in
  *       {@link #applyBiomeDecoration} so neighboring chunks are stable.</li>
@@ -136,21 +135,32 @@ public class OreSpawnChunkGenerator extends NoiseBasedChunkGenerator {
 
     @Override
     public void buildSurface(WorldGenRegion region, StructureManager structures, RandomState randomState, ChunkAccess chunk) {
-        super.buildSurface(region, structures, randomState, chunk);
+        // Utopia, the Village, Mining and Crystal: the original's own surface on the original's terrain
+        // (LegacySurface); the surface rules only where the terrain is not the legacy noise (a datapack's settings).
+        LegacySurface.Kind legacyKind = switch (style) {
+            case UTOPIA, VILLAGE -> LegacySurface.Kind.PLAINS;
+            case MINING -> LegacySurface.Kind.EXTREME_HILLS;
+            case CRYSTAL -> LegacySurface.Kind.CRYSTAL;
+            default -> null;
+        };
+        LegacyTerrainNoise legacyNoise = legacyKind == null ? null : LegacyTerrainReader.legacyNoise(randomState);
+        if (legacyNoise != null) {
+            LegacySurface.build(chunk, legacyNoise, legacyKind);
+        } else {
+            super.buildSurface(region, structures, randomState, chunk);
+        }
 
         // Dispatch per-dimension surface post-processing. A switch over the
         // enum keeps every style's hook in one place and compiles to a clean
         // tableswitch at runtime.
         switch (style) {
-            case CRYSTAL -> applyCrystalSurface(chunk, region.getRandom());
+            case CRYSTAL -> applyCrystalSurface(chunk, region.getRandom(), legacyNoise == null);
             case ISLANDS -> applyIslandsSurface(chunk, region.getRandom());
             case CHAOS -> applyChaosSurface(chunk, region.getRandom());
             case VILLAGE, UTOPIA, MINING, DEFAULT -> {
-                // Pass-through: the terrain is data-driven, the 1.7.10
-                // generator's (orespawn:legacy_utopia / legacy_extreme_hills,
-                // LegacyTerrainNoise, orig ChunkProviderOreSpawn{,2,3}), and
-                // Chaos's orespawn:chaos (nether-style noise, orig
-                // ChunkProviderOreSpawn6); the surface rules dress it.
+                // Pass-through: the terrain is the 1.7.10 generator's (orespawn:legacy_utopia / legacy_extreme_hills,
+                // LegacyTerrainNoise, orig ChunkProviderOreSpawn{,2,3}) under its own surface; Chaos's is
+                // orespawn:chaos (nether-style noise, orig ChunkProviderOreSpawn6).
             }
         }
     }
@@ -160,8 +170,9 @@ public class OreSpawnChunkGenerator extends NoiseBasedChunkGenerator {
      * from the old inline body so the style dispatch in {@link #buildSurface}
      * reads top-down without nested branches.
      */
-    private void applyCrystalSurface(ChunkAccess chunk, RandomSource random) {
-        replaceTerrain(chunk);
+    private void applyCrystalSurface(ChunkAccess chunk, RandomSource random, boolean vanillaSurface) {
+        // the legacy surface lays crystal grass on the crystal stone itself; the surface rules' blocks need replacing
+        if (vanillaSurface) replaceTerrain(chunk);
         CrystalMaze.generate(chunk, random, chunk.getPos().getMinBlockX(), 25, chunk.getPos().getMinBlockZ());
         CrystalTreeGenerator.generate(chunk, random);
         generatePinkTourmaline(chunk, random);

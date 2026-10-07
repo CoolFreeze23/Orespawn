@@ -170,9 +170,8 @@
   "spawn_costs": {},
   "carvers": {
     "air": [
-      "minecraft:cave",
-      "minecraft:cave_extra_underground",
-      "minecraft:canyon"
+      "orespawn:legacy_cave",
+      "orespawn:legacy_canyon"
     ]
   },
   "features": [
@@ -212,7 +211,10 @@
       "orespawn:ore_titanium",
       "orespawn:ore_salt",
       "orespawn:red_ant_troll",
-      "orespawn:termite_troll"
+      "orespawn:termite_troll",
+      "minecraft:disk_sand",
+      "minecraft:disk_clay",
+      "minecraft:disk_gravel"
     ],
     [],
     [

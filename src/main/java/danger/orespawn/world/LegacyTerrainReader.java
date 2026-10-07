@@ -171,6 +171,13 @@ public final class LegacyTerrainReader {
         }).orElse(null);
     }
 
+    /** The original's seeded terrain noise when the final density interpolates it; otherwise null (the surface's noise). */
+    @Nullable
+    public static LegacyTerrainNoise legacyNoise(RandomState randomState) {
+        DensityFunction terrain = interpolatedArgument(randomState.router().finalDensity());
+        return terrain != null && unwrap(terrain) instanceof LegacyTerrainNoise noise ? noise : null;
+    }
+
     /**
      * The argument of the final density when it is one interpolated function; otherwise null. The router's functions come
      * wrapped in holders (the noise settings' codec keeps every router field as a holder, inline ones as direct holders),

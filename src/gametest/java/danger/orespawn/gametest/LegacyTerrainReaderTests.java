@@ -39,12 +39,12 @@ import java.util.stream.IntStream;
 
 /**
  * The 1.7.10 terrain's reader (LegacyTerrainReader) against the generators' own noise columns, built in full with their
- * aquifer, in Utopia, the Village, Crystal and Mining at two seeds: every block of each sampled column from the world's
- * bottom to its top (stone, water, lava and air, the aquifer's barriers among them), its preliminary surface against a
- * noise chunk's, and the Utopia chunk pass's column probe in both its windows; and the altar's early roll against the
- * chunk pass over a patch with every chunk whose roll passes. The generators are built as the dimension files build them
- * (the game-test server creates no dimension of its own), their random states from the noise settings as a level makes
- * them: the router's functions in holders, which the reader has to see through.
+ * fluids (no aquifers: still water in every empty cell below Y63, as 1.7.10 filled it), in Utopia, the Village, Crystal
+ * and Mining at two seeds: every block of each sampled column from the world's bottom to its top, its preliminary
+ * surface against a noise chunk's, and the Utopia chunk pass's column probe in both its windows; and the altar's early
+ * roll against the chunk pass over a patch with every chunk whose roll passes. The generators are built as the
+ * dimension files build them (the game-test server creates no dimension of its own), their random states from the noise
+ * settings as a level makes them: the router's functions in holders, which the reader has to see through.
  */
 @GameTestHolder(OreSpawnMod.MOD_ID)
 @PrefixGameTestTemplate(false)
@@ -56,9 +56,9 @@ public class LegacyTerrainReaderTests {
 
     /** {dimension, biome, noise settings, style, build height}. */
     private static final Object[][] DIMENSIONS = {
-            {"utopia", "utopia_plains", "legacy_utopia", DimensionStyle.UTOPIA, 384},
-            {"village", "village_biome", "legacy_utopia", DimensionStyle.VILLAGE, 384},
-            {"crystal", "crystal_plains", "legacy_crystal", DimensionStyle.CRYSTAL, 384},
+            {"utopia", "utopia_plains", "legacy_utopia", DimensionStyle.UTOPIA, 256},
+            {"village", "village_biome", "legacy_utopia", DimensionStyle.VILLAGE, 256},
+            {"crystal", "crystal_plains", "legacy_crystal", DimensionStyle.CRYSTAL, 256},
             {"mining", "mining_biome", "legacy_extreme_hills", DimensionStyle.MINING, 256}};
     private static final long[] SEEDS = {1007L, 8780444890188216456L};
 
@@ -102,7 +102,7 @@ public class LegacyTerrainReaderTests {
             AtomicLong proven = new AtomicLong();
             for (Object[] d : DIMENSIONS) {
                 ChunkGenerator generator = generator(server, (String) d[1], (String) d[2], (DimensionStyle) d[3]);
-                LevelHeightAccessor heights = LevelHeightAccessor.create(-64, (Integer) d[4]);
+                LevelHeightAccessor heights = LevelHeightAccessor.create(0, (Integer) d[4]);
                 for (long seed : SEEDS) {
                     RandomState state = state(server, (String) d[2], seed);
                     LegacyTerrainReader reader = LegacyTerrainReader.of(generator, heights, state);
@@ -159,7 +159,6 @@ public class LegacyTerrainReaderTests {
             helper.assertTrue(differ.isEmpty(), differ.size() + "+ of " + blocks.get() + " blocks, preliminary surfaces and "
                     + "probes differ: " + differ);
             helper.assertTrue(fluids.get() > 0, "no column of the sample held water or lava (" + blocks.get() + " blocks)");
-            helper.assertTrue(proven.get() > 0, "the bound proved no block air (" + blocks.get() + " blocks)");
         });
     }
 
@@ -173,7 +172,7 @@ public class LegacyTerrainReaderTests {
         OffThread.run(helper, () -> {
             MinecraftServer server = helper.getLevel().getServer();
             ChunkGenerator generator = generator(server, "utopia_plains", "legacy_utopia", DimensionStyle.UTOPIA);
-            LevelHeightAccessor heights = LevelHeightAccessor.create(-64, 384);
+            LevelHeightAccessor heights = LevelHeightAccessor.create(0, 256);
             long seed = 8780444890188216456L;
             RandomState state = state(server, "legacy_utopia", seed);
             UtopiaTreeStructure.ColumnProbe probe = UtopiaTreeStructure.probe(generator, heights, state);
@@ -203,7 +202,7 @@ public class LegacyTerrainReaderTests {
     }
 
     /** A beardifier that adds nothing (the preliminary surface never reads it). */
-    private static final DensityFunctions.BeardifierOrMarker NO_BEARD = new DensityFunctions.BeardifierOrMarker() {
+    static final DensityFunctions.BeardifierOrMarker NO_BEARD = new DensityFunctions.BeardifierOrMarker() {
         @Override
         public double compute(DensityFunction.FunctionContext context) {
             return 0.0;

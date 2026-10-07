@@ -11,7 +11,6 @@ import net.minecraft.world.level.levelgen.LegacyRandomSource;
 import net.minecraft.world.level.levelgen.XoroshiroRandomSource;
 import net.minecraft.world.level.levelgen.synth.BlendedNoise;
 import net.minecraft.world.level.levelgen.synth.ImprovedNoise;
-import net.minecraft.world.level.levelgen.synth.SimplexNoise;
 
 /**
  * The terrain of the dimensions the original built on its copy of the 1.7.10 overworld generator: Utopia, the Village,
@@ -24,7 +23,7 @@ import net.minecraft.world.level.levelgen.synth.SimplexNoise;
  * main noise (vanilla's {@link BlendedNoise}, which reproduces 1.7.10's blend of the three and which the noise settings'
  * {@code legacy_random_source} hands a {@code LegacyRandomSource(seed)}), the 4-octave surface noise, the 10-octave
  * scale noise and the 16-octave depth noise; this class draws the last three from the same source, after the first
- * three, so the depth noise is the original's. Each dimension is one biome (WorldChunkManagerHell), so the 5 x 5
+ * three, so the surface and depth noises are the original's. Each dimension is one biome (WorldChunkManagerHell), so the 5 x 5
  * parabolic biome weighting reduces to that biome's height and variation, worked out once in the same float steps.</p>
  */
 public final class LegacyTerrainNoise extends BlendedNoise {
@@ -49,6 +48,8 @@ public final class LegacyTerrainNoise extends BlendedNoise {
     private final float heightVariation;
     /** noiseGen6, the original's 16-octave depth noise. */
     private final ImprovedNoise[] depthOctaves = new ImprovedNoise[16];
+    /** field_147430_m, the original's 4-octave surface noise (NoiseGeneratorPerlin): the surface's depth and Mining's stone. */
+    private final LegacySimplex[] surfaceOctaves = new LegacySimplex[4];
     /** d14 and d12 before the depth noise: the biome's variation and height after the parabolic weighting. */
     private final double scale;
     private final double offset;
@@ -58,8 +59,8 @@ public final class LegacyTerrainNoise extends BlendedNoise {
     private LegacyTerrainNoise(RandomSource random, float rootHeight, float heightVariation) {
         // field_147431_j, field_147432_k, field_147429_l: the limit and main noises
         super(random, 0.25, 0.125, 80.0, 160.0, 8.0);
-        // field_147430_m, NoiseGeneratorPerlin(rand, 4): four simplex generators, drawn and not used here
-        for (int i = 0; i < 4; i++) new SimplexNoise(random);
+        // field_147430_m, NoiseGeneratorPerlin(rand, 4): the surface noise's four simplex generators
+        for (int i = 0; i < 4; i++) this.surfaceOctaves[i] = new LegacySimplex(random);
         // noiseGen5, NoiseGeneratorOctaves(rand, 10): drawn and not used by the terrain
         for (int i = 0; i < 10; i++) new ImprovedNoise(random);
         // noiseGen6, NoiseGeneratorOctaves(rand, 16): the depth noise
@@ -144,6 +145,24 @@ public final class LegacyTerrainNoise extends BlendedNoise {
         return this.columnCentre(blockX, blockZ) + (BLEND_BOUND - 128.0 * threshold) * this.scale / 6.0 + 0.01;
     }
 
+    /**
+     * The original's surface noise at a block column (orig replaceBlocksForBiome: {@code stoneNoise} from
+     * {@code field_147430_m.func_151599_a(arr, chunkX * 16, chunkZ * 16, 16, 16, 0.0625, 0.0625, 1.0)}): four simplex
+     * octaves, each at half the frequency and twice the amplitude of the one before, 0.55 the first, summed in the
+     * original's order. The array's index and the surface pass's swap of x and z cancel, so a column's value is the
+     * noise at its own x and z.
+     */
+    public double surfaceNoise(int blockX, int blockZ) {
+        double sum = 0.0;
+        double step = 1.0;
+        for (LegacySimplex octave : this.surfaceOctaves) {
+            double frequency = 0.0625 * step;
+            sum += octave.value((double) blockX * frequency + octave.xo, (double) blockZ * frequency + octave.yo) * (0.55 / step);
+            step *= 0.5;
+        }
+        return sum;
+    }
+
     /** d5: the column's centre cell, from the depth noise (orig :232-255). */
     private double columnCentre(int blockX, int blockZ) {
         double[] last = this.lastColumn.get();
@@ -191,6 +210,74 @@ public final class LegacyTerrainNoise extends BlendedNoise {
             d3 /= 2.0;
         }
         return sum;
+    }
+
+    /**
+     * 1.7.10's simplex generator (NoiseGeneratorSimplex), its two-dimensional value as the surface noise sums it: the
+     * same draws as vanilla's {@code SimplexNoise} (three offsets, then the permutation), and the original's floor,
+     * which takes one off an exact non-positive whole number where {@code Mth.floor} does not.
+     */
+    static final class LegacySimplex {
+        private static final int[][] GRADIENT = {{1, 1, 0}, {-1, 1, 0}, {1, -1, 0}, {-1, -1, 0}, {1, 0, 1}, {-1, 0, 1},
+                {1, 0, -1}, {-1, 0, -1}, {0, 1, 1}, {0, -1, 1}, {0, 1, -1}, {0, -1, -1}};
+        private static final double F2 = 0.5 * (Math.sqrt(3.0) - 1.0);
+        private static final double G2 = (3.0 - Math.sqrt(3.0)) / 6.0;
+        final double xo;
+        final double yo;
+        private final int[] p = new int[512];
+
+        LegacySimplex(RandomSource random) {
+            this.xo = random.nextDouble() * 256.0;
+            this.yo = random.nextDouble() * 256.0;
+            random.nextDouble(); // zo, unused in two dimensions
+            for (int i = 0; i < 256; i++) this.p[i] = i;
+            for (int i = 0; i < 256; i++) {
+                int j = random.nextInt(256 - i) + i;
+                int k = this.p[i];
+                this.p[i] = this.p[j];
+                this.p[j] = k;
+                this.p[i + 256] = this.p[i];
+            }
+        }
+
+        private static int floor(double value) {
+            return value > 0.0 ? (int) value : (int) value - 1;
+        }
+
+        private static double corner(int gradient, double x, double y) {
+            double t = 0.5 - x * x - y * y;
+            if (t < 0.0) return 0.0;
+            t *= t;
+            return t * t * (GRADIENT[gradient][0] * x + GRADIENT[gradient][1] * y);
+        }
+
+        double value(double x, double y) {
+            double s = (x + y) * F2;
+            int i = floor(x + s);
+            int j = floor(y + s);
+            double t = (double) (i + j) * G2;
+            double x0 = x - ((double) i - t);
+            double y0 = y - ((double) j - t);
+            int i1;
+            int j1;
+            if (x0 > y0) {
+                i1 = 1;
+                j1 = 0;
+            } else {
+                i1 = 0;
+                j1 = 1;
+            }
+            double x1 = x0 - (double) i1 + G2;
+            double y1 = y0 - (double) j1 + G2;
+            double x2 = x0 - 1.0 + 2.0 * G2;
+            double y2 = y0 - 1.0 + 2.0 * G2;
+            int ii = i & 255;
+            int jj = j & 255;
+            int g0 = this.p[ii + this.p[jj]] % 12;
+            int g1 = this.p[ii + i1 + this.p[jj + j1]] % 12;
+            int g2 = this.p[ii + 1 + this.p[jj + 1]] % 12;
+            return 70.0 * (corner(g0, x0, y0) + corner(g1, x1, y1) + corner(g2, x2, y2));
+        }
     }
 
     private static double wrap(double value) {
