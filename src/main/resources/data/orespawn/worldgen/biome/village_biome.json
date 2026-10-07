@@ -107,12 +107,6 @@
         "weight": 2,
         "minCount": 1,
         "maxCount": 1
-      },
-      {
-        "type": "orespawn:band_p",
-        "weight": 15,
-        "minCount": 1,
-        "maxCount": 2
       }
     ],
     "creature": [
@@ -177,6 +171,62 @@
         "maxCount": 4
       },
       {
+        "type": "orespawn:girlfriend",
+        "weight": 1,
+        "minCount": 2,
+        "maxCount": 3
+      },
+      {
+        "type": "orespawn:boyfriend",
+        "weight": 1,
+        "minCount": 2,
+        "maxCount": 3
+      },
+      {
+        "type": "orespawn:red_cow",
+        "weight": 8,
+        "minCount": 4,
+        "maxCount": 8
+      },
+      {
+        "type": "orespawn:gold_cow",
+        "weight": 6,
+        "minCount": 2,
+        "maxCount": 6
+      },
+      {
+        "type": "orespawn:enchanted_apple_cow",
+        "weight": 4,
+        "minCount": 2,
+        "maxCount": 4
+      }
+    ],
+    "ambient": [
+      {
+        "type": "minecraft:bat",
+        "weight": 10,
+        "minCount": 8,
+        "maxCount": 8
+      },
+      {
+        "type": "orespawn:firefly",
+        "weight": 15,
+        "minCount": 3,
+        "maxCount": 6
+      },
+      {
+        "type": "orespawn:butterfly",
+        "weight": 20,
+        "minCount": 3,
+        "maxCount": 6
+      },
+      {
+        "type": "orespawn:luna_moth",
+        "weight": 10,
+        "minCount": 1,
+        "maxCount": 5
+      },
+      {
         "type": "orespawn:chipmunk",
         "weight": 3,
         "minCount": 1,
@@ -207,34 +257,22 @@
         "maxCount": 6
       },
       {
-        "type": "orespawn:girlfriend",
-        "weight": 1,
-        "minCount": 2,
-        "maxCount": 3
-      },
-      {
-        "type": "orespawn:boyfriend",
-        "weight": 1,
-        "minCount": 2,
-        "maxCount": 3
-      },
-      {
-        "type": "orespawn:red_cow",
-        "weight": 8,
-        "minCount": 4,
-        "maxCount": 8
-      },
-      {
-        "type": "orespawn:gold_cow",
-        "weight": 6,
-        "minCount": 2,
+        "type": "orespawn:firefly",
+        "weight": 10,
+        "minCount": 3,
         "maxCount": 6
       },
       {
-        "type": "orespawn:enchanted_apple_cow",
-        "weight": 4,
-        "minCount": 2,
-        "maxCount": 4
+        "type": "orespawn:butterfly",
+        "weight": 25,
+        "minCount": 3,
+        "maxCount": 6
+      },
+      {
+        "type": "orespawn:luna_moth",
+        "weight": 20,
+        "minCount": 1,
+        "maxCount": 5
       },
       {
         "type": "orespawn:chipmunk",
@@ -259,50 +297,12 @@
         "weight": 2,
         "minCount": 1,
         "maxCount": 1
-      }
-    ],
-    "ambient": [
-      {
-        "type": "minecraft:bat",
-        "weight": 10,
-        "minCount": 8,
-        "maxCount": 8
       },
       {
-        "type": "orespawn:firefly",
+        "type": "orespawn:band_p",
         "weight": 15,
-        "minCount": 3,
-        "maxCount": 6
-      },
-      {
-        "type": "orespawn:butterfly",
-        "weight": 20,
-        "minCount": 3,
-        "maxCount": 6
-      },
-      {
-        "type": "orespawn:luna_moth",
-        "weight": 10,
         "minCount": 1,
-        "maxCount": 5
-      },
-      {
-        "type": "orespawn:firefly",
-        "weight": 10,
-        "minCount": 3,
-        "maxCount": 6
-      },
-      {
-        "type": "orespawn:butterfly",
-        "weight": 25,
-        "minCount": 3,
-        "maxCount": 6
-      },
-      {
-        "type": "orespawn:luna_moth",
-        "weight": 20,
-        "minCount": 1,
-        "maxCount": 5
+        "maxCount": 2
       }
     ],
     "water_creature": [

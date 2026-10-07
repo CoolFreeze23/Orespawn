@@ -456,11 +456,12 @@ public class ModEntities {
                     // 1.7.10 EntityAgeable.setSize deferred the second constructor call, so the server box was 0.1 until an age change or an NBT reload: a constructor-ordering transient deliberately not reproduced
                     .sized(0.2f, 0.2f).clientTrackingRange(8).build("termite"));
 
-    // T-Shirt is a novelty gag entity (cosmetic prop) — not a naturally
-    // spawning mob. Registered under MISC to exclude it from CREATURE spawn
-    // passes; it is still summonable via /summon and spawn-eggs.
+    // The T-Shirt spawns naturally: the Village's ambient list, 2/1/1 (orig BiomeGenUtopianPlains.java:323-325),
+    // under its own rule (day, y >= 50, no other within 20/8/20). CREATURE, the cap its 1.7.10 class counted against
+    // (Tshirt extends EntityAnimal, orig Tshirt.java:15-16); a MISC type turns every spawn entry into a pig
+    // (MobSpawnSettings.SpawnerData), which is how it never spawned (GitHub #6).
     public static final DeferredHolder<EntityType<?>, EntityType<EntityTshirt>> ENTITY_TSHIRT =
-            ENTITY_TYPES.register("tshirt", () -> EntityType.Builder.of(EntityTshirt::new, MobCategory.MISC)
+            ENTITY_TYPES.register("tshirt", () -> EntityType.Builder.of(EntityTshirt::new, MobCategory.CREATURE)
                     // 1.7.10 func_70105_a: Tshirt = 4.0 x 4.0 (orig Tshirt.java:21), ENT-S-095; was an uncited 0.6 x 1.8
                     .sized(4.0f, 4.0f).clientTrackingRange(10).build("tshirt"));
 
@@ -738,7 +739,9 @@ public class ModEntities {
                     .sized(2.5f, 2.25f).clientTrackingRange(10).build("cephadrome"));
 
     public static final DeferredHolder<EntityType<?>, EntityType<RedCow>> RED_COW =
-            ENTITY_TYPES.register("red_cow", () -> EntityType.Builder.of(RedCow::new, MobCategory.MISC)
+            // CREATURE, as its 1.7.10 class (RedCow extends EntityCow, orig RedCow.java:11-12): a MISC type turns every
+            // spawn entry into a pig (MobSpawnSettings.SpawnerData), so the original's Apple Cow never spawned (GitHub #6)
+            ENTITY_TYPES.register("red_cow", () -> EntityType.Builder.of(RedCow::new, MobCategory.CREATURE)
                     // 1.7.10 func_70105_a: RedCow = 0.9 x 1.3, inherited from vanilla EntityCow (orig RedCow.java:11-12 extends EntityCow, no setSize), ENT-S-095; was the modern cow 0.9 x 1.4
                     .sized(0.9f, 1.3f).clientTrackingRange(10).build("red_cow"));
 
@@ -797,7 +800,9 @@ public class ModEntities {
                     .sized(0.5f, 0.5f).clientTrackingRange(8).build("ruby_bird"));
 
     public static final DeferredHolder<EntityType<?>, EntityType<SpiderDriver>> SPIDER_DRIVER =
-            ENTITY_TYPES.register("spider_driver", () -> EntityType.Builder.of(SpiderDriver::new, MobCategory.MISC)
+            // MONSTER, as its 1.7.10 class (SpiderDriver extends EntitySpider, orig SpiderDriver.java:31-32): a MISC type
+            // turns every spawn entry into a pig, so the Village's 20/3/5 Spider Drivers were pigs (GitHub #6)
+            ENTITY_TYPES.register("spider_driver", () -> EntityType.Builder.of(SpiderDriver::new, MobCategory.MONSTER)
                     .sized(1.4f, 0.9f).clientTrackingRange(10).build("spider_driver"));
 
     // ==================== MISC (Projectiles) ====================

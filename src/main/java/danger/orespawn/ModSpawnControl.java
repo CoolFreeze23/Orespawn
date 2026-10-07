@@ -104,6 +104,9 @@ public class ModSpawnControl {
                     Map.entry(ModEntities.BASILISK.get(),            OreSpawnConfig.BASILISK_ENABLE::get),
                     Map.entry(ModEntities.ENTITY_DRAGONFLY.get(),    OreSpawnConfig.DRAGONFLY_ENABLE::get),
                     Map.entry(ModEntities.JEFFERY.get(),             OreSpawnConfig.JEFFERY_ENABLE::get),
+                    // the Village's GiantRobot entry is gated by JefferyEnable (orig BiomeGenUtopianPlains.java:288-290;
+                    // GiantRobot registers as "Jeffery", orig OreSpawnMain.java:4497)
+                    Map.entry(ModEntities.GIANT_ROBOT.get(),         OreSpawnConfig.JEFFERY_ENABLE::get),
                     // Remaining flags from the original's ~100-entry table
                     // (orig OreSpawnMain.java:6364-6465), wired for ANIM-018.
                     Map.entry(ModEntities.ROCK_BASE.get(),           OreSpawnConfig.ROCK_ENABLE::get),
@@ -192,6 +195,19 @@ public class ModSpawnControl {
             );
         }
         return spawnControls;
+    }
+
+    /**
+     * Whether a mob may spawn naturally under the config: false when its own enable flag is off or every mob is
+     * disabled, true for a mob no flag gates. The original added a disabled mob to no spawn list at all
+     * ({@code if (XEnable != 0) addSpawn(...)}, orig OreSpawnMain.java:4521-4981, BiomeGenUtopianPlains.java); the
+     * biome modifier {@code orespawn:remove_disabled_spawns} applies this at server start, so a disabled entry neither
+     * spawns at chunk generation nor takes a share of its list.
+     */
+    public static boolean naturalSpawnEnabled(EntityType<?> type) {
+        Supplier<Boolean> enabledSupplier = getSpawnControls().get(type);
+        if (enabledSupplier == null) return true;
+        return !OreSpawnConfig.ALL_MOBS_DISABLE.get() && enabledSupplier.get();
     }
 
     /**

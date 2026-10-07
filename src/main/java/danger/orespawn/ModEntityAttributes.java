@@ -164,6 +164,18 @@ public class ModEntityAttributes {
         event.put(ModEntities.VAMPIRE_BUTTERFLY.get(), VampireButterfly.createAttributes().build());
     }
 
+    /**
+     * The original's cows' rule, for the Red Cow, the Gold Cow and the Enchanted Cow: EntityAnimal's (grass below,
+     * light above 8) for the spawns while the world runs; with the chunk, any ground the ON_GROUND placement accepts,
+     * because 1.7.10's chunk-generation spawner (SpawnerAnimals.performWorldGenSpawning) asked only for a solid block
+     * below and never called getCanSpawnHere. That is how the Enchanted Cow's 15/3/6 herds stood on the mushroom
+     * islands' mycelium (orig OreSpawnMain.java:4623), as vanilla's mooshrooms did.
+     */
+    public static boolean originalCowSpawnRules(EntityType<? extends Animal> type, LevelAccessor level, MobSpawnType spawnType,
+                                                BlockPos pos, RandomSource random) {
+        return spawnType == MobSpawnType.CHUNK_GENERATION || Animal.checkAnimalSpawnRules(type, level, spawnType, pos, random);
+    }
+
     @SubscribeEvent
     public static void registerSpawnPlacements(RegisterSpawnPlacementsEvent event) {
         // Water mobs
@@ -317,8 +329,22 @@ public class ModEntityAttributes {
                 Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Animal::checkAnimalSpawnRules, RegisterSpawnPlacementsEvent.Operation.AND);
         event.register(ModEntities.GOLDEN_APPLE_COW.get(), SpawnPlacementTypes.ON_GROUND,
                 Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Animal::checkAnimalSpawnRules, RegisterSpawnPlacementsEvent.Operation.AND);
+        // GitHub #6: the original's three cows (RedCow "Apple Cow", GoldCow "Golden Apple Cow", EnchantedCow) spawn
+        // under EntityAnimal's rule, grass below and light above 8 (none overrides getCanSpawnHere: orig RedCow.java,
+        // GoldCow.java, EnchantedCow.java), except with the chunk: see originalCowSpawnRules. The Red and Gold Cows
+        // had no placement (the Gold Cow spawned on any block), the Enchanted Cow never spawned on mycelium.
         event.register(ModEntities.ENCHANTED_APPLE_COW.get(), SpawnPlacementTypes.ON_GROUND,
-                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Animal::checkAnimalSpawnRules, RegisterSpawnPlacementsEvent.Operation.AND);
+                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, ModEntityAttributes::originalCowSpawnRules, RegisterSpawnPlacementsEvent.Operation.AND);
+        event.register(ModEntities.RED_COW.get(), SpawnPlacementTypes.ON_GROUND,
+                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, ModEntityAttributes::originalCowSpawnRules, RegisterSpawnPlacementsEvent.Operation.AND);
+        event.register(ModEntities.GOLD_COW.get(), SpawnPlacementTypes.ON_GROUND,
+                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, ModEntityAttributes::originalCowSpawnRules, RegisterSpawnPlacementsEvent.Operation.AND);
+        // the Spider Driver's robot bypass, else the spider's own darkness rule (orig SpiderDriver.java:177-184)
+        event.register(ModEntities.SPIDER_DRIVER.get(), SpawnPlacementTypes.ON_GROUND,
+                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpiderDriver::checkSpiderDriverSpawnRules, RegisterSpawnPlacementsEvent.Operation.AND);
+        // the T-Shirt's own rule replaces EntityAnimal's (orig Tshirt.java:93-104, no super call): a solid block below
+        event.register(ModEntities.ENTITY_TSHIRT.get(), SpawnPlacementTypes.ON_GROUND,
+                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Mob::checkMobSpawnRules, RegisterSpawnPlacementsEvent.Operation.AND);
 
         // Phase 14 — Vampire Butterfly is a flying hostile, gets the
         // NO_RESTRICTIONS placement (matches CloudShark / Mothra) and

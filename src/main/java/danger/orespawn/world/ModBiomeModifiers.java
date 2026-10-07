@@ -1,5 +1,6 @@
 package danger.orespawn.world;
 
+import danger.orespawn.ModSpawnControl;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import danger.orespawn.OreSpawnMod;
@@ -38,6 +39,10 @@ public final class ModBiomeModifiers {
                     MobSpawnSettings.SpawnerData.CODEC.listOf().fieldOf("spawners").forGetter(AddSpawnsInCategory::spawners)
             ).apply(inst, AddSpawnsInCategory::new)));
 
+    /** JSON type {@code orespawn:remove_disabled_spawns}: no fields, every biome. */
+    public static final DeferredHolder<MapCodec<? extends BiomeModifier>, MapCodec<RemoveDisabledSpawns>> REMOVE_DISABLED_SPAWNS =
+            SERIALIZERS.register("remove_disabled_spawns", () -> MapCodec.unit(RemoveDisabledSpawns.INSTANCE));
+
     private ModBiomeModifiers() {
     }
 
@@ -60,6 +65,30 @@ public final class ModBiomeModifiers {
         @Override
         public MapCodec<? extends BiomeModifier> codec() {
             return ADD_SPAWNS_IN_CATEGORY.get();
+        }
+    }
+
+    /**
+     * Takes every disabled mob ({@link ModSpawnControl#naturalSpawnEnabled}) out of every spawn list of every biome,
+     * after all the adds: the original never added a disabled mob to a list ({@code if (XEnable != 0) addSpawn(...)}),
+     * so it neither spawned at chunk generation nor took a share of the list. The config is read once, at server start,
+     * as the original read its own once at load.
+     */
+    public enum RemoveDisabledSpawns implements BiomeModifier {
+        INSTANCE;
+
+        @Override
+        public void modify(Holder<Biome> biome, Phase phase, ModifiableBiomeInfo.BiomeInfo.Builder builder) {
+            if (phase != Phase.REMOVE) return;
+            for (MobCategory category : builder.getMobSpawnSettings().getSpawnerTypes()) {
+                builder.getMobSpawnSettings().getSpawner(category)
+                        .removeIf(spawner -> !ModSpawnControl.naturalSpawnEnabled(spawner.type));
+            }
+        }
+
+        @Override
+        public MapCodec<? extends BiomeModifier> codec() {
+            return REMOVE_DISABLED_SPAWNS.get();
         }
     }
 }

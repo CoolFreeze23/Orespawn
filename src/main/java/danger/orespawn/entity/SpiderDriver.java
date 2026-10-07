@@ -1,5 +1,10 @@
 package danger.orespawn.entity;
 
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.level.ServerLevelAccessor;
+import net.minecraft.world.entity.monster.Monster;
+import net.minecraft.util.RandomSource;
+import net.minecraft.core.BlockPos;
 import java.util.Comparator;
 import java.util.List;
 import net.minecraft.resources.ResourceLocation;
@@ -181,5 +186,17 @@ public class SpiderDriver extends Spider {
                 this.getBoundingBox().inflate(24.0, 12.0, 24.0));
         if (!nearby.isEmpty()) return true;
         return super.checkSpawnRules(level, spawnType);
+    }
+
+    /**
+     * The spawn placement's half of orig SpiderDriver.func_70601_bi (:177-184), read at the spawn position before the mob
+     * exists: a Spider Robot within 24/12/24 lets one spawn whatever the light, else the spider's own rule
+     * (EntityMob: not peaceful, dark enough). The instance half is {@link #checkSpawnRules}.
+     */
+    public static boolean checkSpiderDriverSpawnRules(EntityType<SpiderDriver> type, ServerLevelAccessor level,
+                                                      MobSpawnType spawnType, BlockPos pos, RandomSource random) {
+        AABB around = type.getSpawnAABB(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5).inflate(24.0, 12.0, 24.0);
+        if (!level.getEntitiesOfClass(SpiderRobot.class, around).isEmpty()) return true;
+        return Monster.checkMonsterSpawnRules(type, level, spawnType, pos, random);
     }
 }
