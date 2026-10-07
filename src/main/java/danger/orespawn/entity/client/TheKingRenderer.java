@@ -1,15 +1,12 @@
 package danger.orespawn.entity.client;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
 import danger.orespawn.OreSpawnMod;
 import danger.orespawn.entity.TheKing;
-import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.culling.Frustum;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
-import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.resources.ResourceLocation;
 
@@ -23,7 +20,7 @@ import net.minecraft.resources.ResourceLocation;
  *   <li>Pass 1 (opaque): delegates to {@code super.render(...)} which invokes
  *       {@link ModelTheKing#renderToBuffer} on the entity-cutout buffer. Renders
  *       the head cluster, neck chains, body, tail, legs, wing bones, etc.</li>
- *   <li>Pass 2 (translucent): rebuilds the entity-space pose and invokes
+ *   <li>Pass 2 (translucent): {@link WingMembraneLayer}, inside the living renderer's own pose, invokes
  *       {@link ModelTheKing#renderWingMembranes} against a
  *       {@link RenderType#entityTranslucent} buffer with a packed tint
  *       reproducing the legacy {@code glColor4f(0.75, 0.75, 0.75, 0.55)} look
@@ -60,6 +57,11 @@ public class TheKingRenderer extends MobRenderer<TheKing, ModelTheKing> {
 
     public TheKingRenderer(EntityRendererProvider.Context context) {
         super(context, new ModelTheKing(context.bakeLayer(MODEL_LAYER)), SHADOW);
+        // the translucent wing membranes, a second pass inside the living renderer's own pose (yaw, death tilt, flip,
+        // scale): this pass once rebuilt the transform itself with an extra 1.501 lift and drew the membranes 1.5
+        // blocks above the wings, also while the King was invisible
+        this.addLayer(new WingMembraneLayer<>(this, ModelTheKing::renderWingMembranes, ModelTheKing.WING_MEMBRANE_RENDER_TYPE,
+                ModelTheKing.WING_MEMBRANE_COLOR));
     }
 
     @Override
@@ -67,45 +69,9 @@ public class TheKingRenderer extends MobRenderer<TheKing, ModelTheKing> {
         // BOSS-017 / ENT-S-092: orig RenderTheKing.preRenderScale (RenderTheKing.java:39-45): a PlayNicely
         // King (getPlayNicely() != 0) gets GL11.glScalef(scale / 4.0f, ...), otherwise
         // GL11.glScalef(scale, scale, scale) - same pipeline position as LivingEntityRenderer.scale
-        // (after the (-1,-1,1) flip, before the -1.501 lift). setupEntityTransform re-enters this hook
-        // for the wing-membrane pass inside its own push/pop, so the two passes do not compound.
+        // (after the (-1,-1,1) flip, before the -1.501 lift); the wing-membrane layer draws under it.
         float effectiveScale = entity.getPlayNicely() != 0 ? SCALE / 4.0F : SCALE;
         poseStack.scale(effectiveScale, effectiveScale, effectiveScale);
-    }
-
-    @Override
-    public void render(TheKing entity, float entityYaw, float partialTicks,
-                       PoseStack poseStack, MultiBufferSource buffer, int packedLight) {
-        // Pass 1: opaque parts via the standard MobRenderer pipeline.
-        super.render(entity, entityYaw, partialTicks, poseStack, buffer, packedLight);
-
-        // Pass 2: translucent wing membranes. We must rebuild the entity-space
-        // transform super.render already popped (translate to entity, yaw, flip).
-        ResourceLocation tex = getTextureLocation(entity);
-        poseStack.pushPose();
-        setupEntityTransform(entity, poseStack, entityYaw, partialTicks);
-
-        VertexConsumer translucentVC = buffer.getBuffer(ModelTheKing.WING_MEMBRANE_RENDER_TYPE.apply(tex));
-        this.getModel().renderWingMembranes(poseStack, translucentVC, packedLight,
-                OverlayTexture.NO_OVERLAY, ModelTheKing.WING_MEMBRANE_COLOR);
-
-        poseStack.popPose();
-    }
-
-    /**
-     * Reproduces the entity-to-model-space transform applied inside
-     * {@code LivingEntityRenderer#render}: translate to entity feet, rotate body yaw,
-     * scale, flip the model upside-down (Minecraft model space is Y-inverted).
-     */
-    private void setupEntityTransform(TheKing entity, PoseStack poseStack,
-                                      float entityYaw, float partialTicks) {
-        float bodyYaw = net.minecraft.util.Mth.rotLerp(partialTicks,
-                entity.yBodyRotO, entity.yBodyRot);
-        poseStack.translate(0.0F, 1.501F, 0.0F);
-        poseStack.mulPose(com.mojang.math.Axis.YP.rotationDegrees(180.0F - bodyYaw));
-        poseStack.scale(-1.0F, -1.0F, 1.0F);
-        this.scale(entity, poseStack, partialTicks);
-        poseStack.translate(0.0F, -1.501F, 0.0F);
     }
 
     // OPT-013: evaluated for replacement with a finite inflated cull box and
