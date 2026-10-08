@@ -1,0 +1,10 @@
+{
+  "type": "orespawn:chaos_red_colours",
+  "biomes": "orespawn:chaos_biome",
+  "sky_color": 6684672,
+  "fog_color": 8388608,
+  "water_color": 3342336,
+  "water_fog_color": 1644544,
+  "grass_color": 5283072,
+  "foliage_color": 5283072
+}

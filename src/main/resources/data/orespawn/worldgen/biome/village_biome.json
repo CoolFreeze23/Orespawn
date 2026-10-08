@@ -3,12 +3,10 @@
   "downfall": 0.5,
   "has_precipitation": true,
   "effects": {
-    "sky_color": 7907327,
+    "sky_color": 8038143,
     "fog_color": 12638463,
     "water_color": 4159204,
     "water_fog_color": 329011,
-    "grass_color": 7842607,
-    "foliage_color": 6266419,
     "mood_sound": {
       "sound": "minecraft:ambient.cave",
       "tick_delay": 6000,
@@ -388,8 +386,7 @@
       "orespawn:spring_lava_dim"
     ],
     [
-      "minecraft:flower_default",
-      "minecraft:patch_grass_plain",
+      "orespawn:legacy_plants_utopian",
       "orespawn:anthill",
       "orespawn:magic_apple_tree",
       "orespawn:wild_corn",

@@ -369,6 +369,12 @@ public class OreSpawnConfig {
      */
     public static final ModConfigSpec.BooleanValue MODERN_ALTAR_TERRAIN;
     /**
+     * WGEN-106: the Chaos dimension in the port's own red (a dark red sky, fog and water, its own grass and leaf colour)
+     * instead of the original's, vanilla's colours for its climate. Takes effect only while {@link #MODERN_ENABLED} is on
+     * -- read through {@link #chaosRed()}, never directly, when the world starts (the biome's colours are set then).
+     */
+    public static final ModConfigSpec.BooleanValue MODERN_CHAOS_RED;
+    /**
      * MOD-038, the per-species flip list: registry names ({@code
      * orespawn:beaver}; the bare path is accepted for the mod's own species) kept on
      * the classic pose in modern mode even when their clips ship. Read with the
@@ -587,7 +593,7 @@ public class OreSpawnConfig {
                         "modern.petsDefendOwner, modern.pointysaurusStareAggro, " +
                         "modern.cryolophosaurusRevengeChase, modern.chainsawSweepVanillaSight, " +
                         "modern.artistAnimations with modern.classicAnimationSpecies, modern.horseArmour, " +
-                        "modern.wolfArmour, modern.spears, modern.dogArmour, modern.altarTerrain); false = " +
+                        "modern.wolfArmour, modern.spears, modern.dogArmour, modern.altarTerrain, modern.chaosRed); false = " +
                         "classic 1.7.10 " +
                         "parity everywhere, whatever the per-feature keys say. Phase G artist animations hang " +
                         "off this same switch (classic stays code-driven parity). Snapshotted features " +
@@ -747,6 +753,12 @@ public class OreSpawnConfig {
                         "1.7.10's flat pad with its straight cut and its nine-block skirt. Applies to altars laid out " +
                         "after the change, in chunks not yet generated."
         ).define("altarTerrain", true);
+        MODERN_CHAOS_RED = BUILDER.comment(
+                "The Chaos dimension in a dark red: red sky, fog and water, and its own grass and leaf colour. The " +
+                        "original's Chaos has the ordinary blue sky and water, which is what false (the default) gives. " +
+                        "Only takes effect while modern.enabled is true. Read when the world starts: close the world and " +
+                        "open it again to see a change."
+        ).define("chaosRed", false);
         BUILDER.pop();
 
         SPEC = BUILDER.build();
@@ -884,6 +896,11 @@ public class OreSpawnConfig {
      */
     public static boolean altarTerrain() {
         return MODERN_ENABLED.get() && MODERN_ALTAR_TERRAIN.get();
+    }
+
+    /** WGEN-106: true only while {@link #MODERN_ENABLED} AND {@link #MODERN_CHAOS_RED} are both on. */
+    public static boolean chaosRed() {
+        return MODERN_ENABLED.get() && MODERN_CHAOS_RED.get();
     }
 
     /**

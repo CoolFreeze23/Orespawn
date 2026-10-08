@@ -39,6 +39,21 @@ public final class ModBiomeModifiers {
                     MobSpawnSettings.SpawnerData.CODEC.listOf().fieldOf("spawners").forGetter(AddSpawnsInCategory::spawners)
             ).apply(inst, AddSpawnsInCategory::new)));
 
+    /**
+     * JSON type {@code orespawn:chaos_red_colours}: the port's red Chaos (WGEN-106), its sky, fog, water, water fog, grass and
+     * foliage colours set on {@code biomes} while {@code modern.chaosRed} is on; off, the biome keeps the original's.
+     */
+    public static final DeferredHolder<MapCodec<? extends BiomeModifier>, MapCodec<ChaosRedColours>> CHAOS_RED_COLOURS =
+            SERIALIZERS.register("chaos_red_colours", () -> RecordCodecBuilder.mapCodec(inst -> inst.group(
+                    Biome.LIST_CODEC.fieldOf("biomes").forGetter(ChaosRedColours::biomes),
+                    com.mojang.serialization.Codec.INT.fieldOf("sky_color").forGetter(ChaosRedColours::sky),
+                    com.mojang.serialization.Codec.INT.fieldOf("fog_color").forGetter(ChaosRedColours::fog),
+                    com.mojang.serialization.Codec.INT.fieldOf("water_color").forGetter(ChaosRedColours::water),
+                    com.mojang.serialization.Codec.INT.fieldOf("water_fog_color").forGetter(ChaosRedColours::waterFog),
+                    com.mojang.serialization.Codec.INT.fieldOf("grass_color").forGetter(ChaosRedColours::grass),
+                    com.mojang.serialization.Codec.INT.fieldOf("foliage_color").forGetter(ChaosRedColours::foliage)
+            ).apply(inst, ChaosRedColours::new)));
+
     /** JSON type {@code orespawn:remove_disabled_spawns}: no fields, every biome. */
     public static final DeferredHolder<MapCodec<? extends BiomeModifier>, MapCodec<RemoveDisabledSpawns>> REMOVE_DISABLED_SPAWNS =
             SERIALIZERS.register("remove_disabled_spawns", () -> MapCodec.unit(RemoveDisabledSpawns.INSTANCE));
@@ -65,6 +80,22 @@ public final class ModBiomeModifiers {
         @Override
         public MapCodec<? extends BiomeModifier> codec() {
             return ADD_SPAWNS_IN_CATEGORY.get();
+        }
+    }
+
+    /** The port's red Chaos, while {@code modern.chaosRed} is on; read once, when the world starts. */
+    public record ChaosRedColours(HolderSet<Biome> biomes, int sky, int fog, int water, int waterFog, int grass, int foliage)
+            implements BiomeModifier {
+        @Override
+        public void modify(Holder<Biome> biome, Phase phase, ModifiableBiomeInfo.BiomeInfo.Builder builder) {
+            if (phase != Phase.AFTER_EVERYTHING || !biomes.contains(biome) || !danger.orespawn.OreSpawnConfig.chaosRed()) return;
+            builder.getSpecialEffects().skyColor(sky).fogColor(fog).waterColor(water).waterFogColor(waterFog)
+                    .grassColorOverride(grass).foliageColorOverride(foliage);
+        }
+
+        @Override
+        public MapCodec<? extends BiomeModifier> codec() {
+            return CHAOS_RED_COLOURS.get();
         }
     }
 

@@ -1,0 +1,8 @@
+{
+  "feature": "orespawn:legacy_plants_utopian",
+  "placement": [
+    {
+      "type": "minecraft:biome"
+    }
+  ]
+}

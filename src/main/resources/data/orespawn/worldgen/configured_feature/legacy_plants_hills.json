@@ -1,0 +1,9 @@
+{
+  "type": "orespawn:legacy_plants",
+  "config": {
+    "flowers_per_chunk": 0,
+    "grass_per_chunk": 0,
+    "mushrooms_per_chunk": 0,
+    "reeds_per_chunk": 0
+  }
+}

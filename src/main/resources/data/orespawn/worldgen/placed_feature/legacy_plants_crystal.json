@@ -1,5 +1,5 @@
 {
-  "feature": "orespawn:spawn_ores_chaos",
+  "feature": "orespawn:legacy_plants_crystal",
   "placement": [
     {
       "type": "minecraft:biome"

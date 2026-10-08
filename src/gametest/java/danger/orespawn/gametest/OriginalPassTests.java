@@ -7,6 +7,7 @@ import danger.orespawn.OreSpawnMod;
 import danger.orespawn.world.BelowOrChancePlacement;
 import danger.orespawn.world.LegacyChunkVein;
 import danger.orespawn.world.feature.LegacyHillsDecorationFeature;
+import danger.orespawn.world.feature.LegacyPlantsFeature;
 import danger.orespawn.world.feature.SafeLakeFeature;
 import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
 import it.unimi.dsi.fastutil.longs.LongSet;
@@ -240,7 +241,9 @@ public class OriginalPassTests {
         }
         helper.assertTrue(wrong.isEmpty(), "not as ChunkOreGenerator lays them: " + wrong);
         // the pass runs as the chunk is built, before the biome's decorator lays its ores, in ChunkOreGenerator's order
-        for (String[] b : new String[][] {{"utopia_plains", "_dim"}, {"village_biome", "_dim"}, {"mining_biome", "_mining"}}) {
+        // Chaos runs the same pass once a chunk as Utopia (ChunkProviderOreSpawn6.java:197)
+        for (String[] b : new String[][] {{"utopia_plains", "_dim"}, {"village_biome", "_dim"}, {"mining_biome", "_mining"},
+                {"chaos_biome", "_dim"}}) {
             List<String> ores = liveStep(helper, b[0], 6);
             List<String> pass = new ArrayList<>();
             for (String name : PASS) pass.add("orespawn:" + name + b[1]);
@@ -250,15 +253,18 @@ public class OriginalPassTests {
                             && ores.stream().filter(pass::contains).count() == pass.size() && !overworlds,
                     b[0] + " does not run the original's pass first and once: " + ores);
         }
+        // and its decorator lays 1.7.10's ore set after it, as in the other three: no 1.21 ore left
         List<String> chaos = liveStep(helper, "chaos_biome", 6);
-        helper.assertTrue(chaos.contains("orespawn:spawn_ores_chaos") && !chaos.contains("orespawn:spawn_ores_dim"),
-                "Chaos's spawn ores: " + chaos);
+        List<String> set1710 = List.of("orespawn:ore_dirt_1710", "orespawn:ore_gravel_1710", "orespawn:ore_coal_1710",
+                "orespawn:ore_iron_1710", "orespawn:ore_gold_1710", "orespawn:ore_redstone_1710", "orespawn:ore_diamond_1710",
+                "orespawn:ore_lapis_1710");
+        helper.assertTrue(chaos.subList(PASS.length, PASS.length + set1710.size()).equals(set1710)
+                        && chaos.stream().noneMatch(f -> f.startsWith("minecraft:ore_")),
+                "Chaos's ores: " + chaos);
         JsonObject spawnDim = json(helper, "worldgen/configured_feature/spawn_ores_dim.json").getAsJsonObject("config");
         JsonObject spawnMining = json(helper, "worldgen/configured_feature/spawn_ores_mining.json").getAsJsonObject("config");
-        JsonObject spawnChaos = json(helper, "worldgen/configured_feature/spawn_ores_chaos.json").getAsJsonObject("config");
-        helper.assertTrue(spawnDim.get("chunk_veins").getAsBoolean() && spawnMining.get("chunk_veins").getAsBoolean()
-                        && !spawnChaos.has("chunk_veins"),
-                "the spawn ores: " + spawnDim + ", " + spawnMining + ", Chaos " + spawnChaos);
+        helper.assertTrue(spawnDim.get("chunk_veins").getAsBoolean() && spawnMining.get("chunk_veins").getAsBoolean(),
+                "the spawn ores: " + spawnDim + ", " + spawnMining);
         // the vein: centred 8 in from its origin, and of what lies outside the origin's chunk nothing laid
         RandomSource random = RandomSource.create(97L);
         long cells = 0, kept = 0;
@@ -294,26 +300,105 @@ public class OriginalPassTests {
     }
 
     @GameTest(template = "empty")
-    public static void wgen101a_utopia_and_crystal_take_the_originals_colours(GameTestHelper helper) {
+    public static void wgen101a_the_dimensions_take_the_originals_climate_and_colours(GameTestHelper helper) {
         Registry<Biome> biomes = helper.getLevel().getServer().registryAccess().registryOrThrow(Registries.BIOME);
-        for (String name : new String[] {"utopia_plains", "crystal_plains"}) {
+        // 1.7.10: each provider sets its one biome's climate as the world loads (Utopia's and the Village's 0.7 and 0.5,
+        // WorldProviderOreSpawn.java:54 and 3.java:34; Mining's, the Islands', Crystal's and Chaos's 0.8 and 0.01,
+        // 2.java:29, 4.java:33, 5.java:34 and 6.java:33) and none sets a colour: the overworld's fog, vanilla's water,
+        // getSkyColorByTemp through AWT's HSB rounding and the colormaps at the climate. Chaos's red is modern.chaosRed's,
+        // off by default.
+        Object[][] want = {{"utopia_plains", 0.7F, 0.5F, 0x7AA6FF}, {"village_biome", 0.7F, 0.5F, 0x7AA6FF},
+                {"mining_biome", 0.8F, 0.01F, 0x79A7FF}, {"island_biome", 0.8F, 0.01F, 0x79A7FF},
+                {"crystal_plains", 0.8F, 0.01F, 0x79A7FF}, {"chaos_biome", 0.8F, 0.01F, 0x79A7FF}};
+        helper.assertFalse(danger.orespawn.OreSpawnConfig.chaosRed(), "modern.chaosRed is on by default");
+        for (Object[] w : want) {
+            String name = (String) w[0];
             Biome biome = biomes.get(ResourceKey.create(Registries.BIOME, rl(name)));
             helper.assertTrue(biome != null, "no " + name);
             BiomeSpecialEffects e = biome.getSpecialEffects();
-            // 1.7.10: the overworld's fog, vanilla's water, and getSkyColorByTemp and the colormaps at the provider's
-            // climate: Utopia's 0.7 and 0.5 (WorldProviderOreSpawn.java:54), Crystal's 0.8 and 0.01, which its provider
-            // sets as the world loads (WorldProviderOreSpawn5.java:34); the sky through AWT's HSB rounding
-            boolean utopia = name.equals("utopia_plains");
-            boolean grass = utopia
-                    ? e.getGrassColorOverride().isEmpty() && e.getFoliageColorOverride().isEmpty()
-                    && Math.abs(biome.getBaseTemperature() - 0.7F) < 1e-6 && Math.abs(biome.getModifiedClimateSettings().downfall() - 0.5F) < 1e-6
-                    : e.getGrassColorOverride().orElse(0) == 0xB1B762 && e.getFoliageColorOverride().orElse(0) == 0x9DA43B;
-            helper.assertTrue(e.getSkyColor() == (utopia ? 0x7AA6FF : 0x79A7FF) && e.getFogColor() == 0xC0D8FF
-                            && e.getWaterColor() == 0x3F76E4 && e.getWaterFogColor() == 0x050533 && grass,
-                    name + "'s colours: sky " + Integer.toHexString(e.getSkyColor()) + ", fog " + Integer.toHexString(e.getFogColor())
+            helper.assertTrue(Math.abs(biome.getBaseTemperature() - (Float) w[1]) < 1e-6
+                            && Math.abs(biome.getModifiedClimateSettings().downfall() - (Float) w[2]) < 1e-6
+                            && e.getGrassColorOverride().isEmpty() && e.getFoliageColorOverride().isEmpty()
+                            && e.getSkyColor() == (Integer) w[3] && e.getFogColor() == 0xC0D8FF
+                            && e.getWaterColor() == 0x3F76E4 && e.getWaterFogColor() == 0x050533,
+                    name + ": " + biome.getBaseTemperature() + " and " + biome.getModifiedClimateSettings().downfall()
+                            + ", sky " + Integer.toHexString(e.getSkyColor()) + ", fog " + Integer.toHexString(e.getFogColor())
                             + ", water " + Integer.toHexString(e.getWaterColor()) + ", grass " + e.getGrassColorOverride()
                             + ", foliage " + e.getFoliageColorOverride());
         }
+        // the red the option brings back, on the Chaos biome only
+        JsonObject red = json(helper, "neoforge/biome_modifier/chaos_red.json");
+        helper.assertTrue(red.get("type").getAsString().equals("orespawn:chaos_red_colours")
+                        && red.get("biomes").getAsString().equals("orespawn:chaos_biome")
+                        && red.get("sky_color").getAsInt() == 0x660000 && red.get("water_color").getAsInt() == 0x330000,
+                "the red Chaos: " + red);
+        helper.succeed();
+    }
+
+    /** WGEN-103, WGEN-105, WGEN-109: the decorator's plants in each of the original's dimensions, at its counts. */
+    @GameTest(template = "empty")
+    public static void wgen103a_the_decorators_plants_in_the_originals_dimensions(GameTestHelper helper) {
+        Registry<ConfiguredFeature<?, ?>> configured = helper.getLevel().getServer().registryAccess()
+                .registryOrThrow(Registries.CONFIGURED_FEATURE);
+        // BiomeGenUtopianPlains: the constructor's 4 flowers and 6 grass (Utopia, the Village), setCrystalCreatures' and
+        // setChaosCreatures' -999s and 2 and 4; Mining's flowers and grass are hills_decoration_1710's
+        Object[][] want = {{"legacy_plants_utopian", 4, 6, 0, 0}, {"legacy_plants_chaos", 2, 4, -999, -999},
+                {"legacy_plants_crystal", -999, -999, -999, -999}, {"legacy_plants_hills", 0, 0, 0, 0}};
+        for (Object[] w : want) {
+            ConfiguredFeature<?, ?> f = configured.get(rl((String) w[0]));
+            helper.assertTrue(f != null && f.config() instanceof LegacyPlantsFeature.Config c
+                            && c.flowersPerChunk() == (Integer) w[1] && c.grassPerChunk() == (Integer) w[2]
+                            && c.mushroomsPerChunk() == (Integer) w[3] && c.reedsPerChunk() == (Integer) w[4],
+                    w[0] + ": " + (f == null ? "none" : f.config()));
+        }
+        String[][] wiring = {{"utopia_plains", "legacy_plants_utopian"}, {"village_biome", "legacy_plants_utopian"},
+                {"chaos_biome", "legacy_plants_chaos"}, {"crystal_plains", "legacy_plants_crystal"},
+                {"mining_biome", "legacy_plants_hills"}};
+        for (String[] w : wiring) {
+            List<String> vegetal = liveStep(helper, w[0], 9);
+            boolean vanilla = vegetal.stream().anyMatch(f -> f.startsWith("minecraft:flower_") || f.startsWith("minecraft:patch_")
+                    || f.endsWith("_mushroom_normal"));
+            helper.assertTrue(vegetal.contains("orespawn:" + w[1]) && !vanilla, w[0] + "'s plants: " + vegetal);
+        }
+        helper.succeed();
+    }
+
+    /** The light 1.7.10 had while decorating, which the plants read: the column's, less each block's opacity above. */
+    @GameTest(template = "empty")
+    public static void wgen103b_the_plants_read_the_originals_light(GameTestHelper helper) {
+        ServerLevel level = helper.getLevel();
+        BlockPos base = helper.absolutePos(new BlockPos(0, 1, 0));
+        BlockPos.MutableBlockPos at = new BlockPos.MutableBlockPos();
+        // clear the column far above, then three layers of leaves and a layer of water over the cell
+        for (int y = 1; y < 40; y++) level.setBlock(at.set(base.getX(), base.getY() + y, base.getZ()), Blocks.AIR.defaultBlockState(), 2);
+        int open = danger.orespawn.world.LegacyLight.sky(level, base.getX(), base.getY(), base.getZ());
+        for (int y = 2; y <= 4; y++) level.setBlock(at.set(base.getX(), base.getY() + y, base.getZ()), Blocks.OAK_LEAVES.defaultBlockState(), 2);
+        int leaves = danger.orespawn.world.LegacyLight.sky(level, base.getX(), base.getY(), base.getZ());
+        level.setBlock(at.set(base.getX(), base.getY() + 6, base.getZ()), Blocks.WATER.defaultBlockState(), 2);
+        int water = danger.orespawn.world.LegacyLight.sky(level, base.getX(), base.getY(), base.getZ());
+        level.setBlock(at.set(base.getX(), base.getY() + 8, base.getZ()), Blocks.STONE.defaultBlockState(), 2);
+        int roofed = danger.orespawn.world.LegacyLight.sky(level, base.getX(), base.getY(), base.getZ());
+        for (int y = 1; y < 40; y++) level.setBlock(at.set(base.getX(), base.getY() + y, base.getZ()), Blocks.AIR.defaultBlockState(), 2);
+        helper.assertTrue(open == 15 && leaves == 12 && water == 9 && roofed == 0,
+                "the light under nothing, three leaves, water, stone: " + open + ", " + leaves + ", " + water + ", " + roofed);
+        helper.succeed();
+    }
+
+    /** WGEN-105: the caves' lava to Y10, as 1.7.10's carvers leave it; Mining's ruby after the springs. */
+    @GameTest(template = "empty")
+    public static void wgen105a_the_caves_lava_and_the_rubys_order(GameTestHelper helper) {
+        // MapGenCaves and MapGenRavine test y < 10 one block under the cell they carve, so the lava stands to Y10
+        for (String carver : new String[] {"legacy_cave", "legacy_canyon"}) {
+            JsonObject c = json(helper, "worldgen/configured_carver/" + carver + ".json").getAsJsonObject("config");
+            int lava = c.getAsJsonObject("lava_level").get("absolute").getAsInt();
+            helper.assertTrue(lava == 10, carver + "'s lava stands to Y" + lava);
+        }
+        // OreSpawnWorld.generateRuby runs after the provider's population, its springs' lava there to find
+        List<String> ores = liveStep(helper, "mining_biome", 6);
+        List<String> springs = liveStep(helper, "mining_biome", 8);
+        helper.assertTrue(!ores.contains("orespawn:ore_ruby_mining")
+                        && springs.indexOf("orespawn:ore_ruby_mining") > springs.indexOf("orespawn:spring_lava_dim"),
+                "Mining's ruby: ores " + ores + ", springs " + springs);
         helper.succeed();
     }
 }

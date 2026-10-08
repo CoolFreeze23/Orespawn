@@ -212,12 +212,7 @@
       "orespawn:spring_lava_dim"
     ],
     [
-      "minecraft:flower_default",
-      "minecraft:patch_grass_plain",
-      "minecraft:brown_mushroom_normal",
-      "minecraft:red_mushroom_normal",
-      "minecraft:patch_sugar_cane",
-      "minecraft:patch_pumpkin",
+      "orespawn:legacy_plants_utopian",
       "orespawn:anthill",
       "orespawn:veggie_patch_utopia",
       "orespawn:wild_strawberries",

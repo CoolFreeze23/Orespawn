@@ -1,0 +1,8 @@
+{
+  "feature": "orespawn:legacy_plants_chaos",
+  "placement": [
+    {
+      "type": "minecraft:biome"
+    }
+  ]
+}

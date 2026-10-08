@@ -2,7 +2,7 @@
   "type": "orespawn:legacy_canyon",
   "config": {
     "lava_level": {
-      "absolute": 9
+      "absolute": 10
     },
     "probability": 0.02,
     "replaceable": "#minecraft:overworld_carver_replaceables",

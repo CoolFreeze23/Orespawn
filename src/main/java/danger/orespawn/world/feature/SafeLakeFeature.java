@@ -52,6 +52,10 @@ import net.minecraft.world.level.levelgen.feature.LakeFeature;
  * (16 blocks square, from 8 in) a village's box meets ({@code !flag}, ChunkProviderOreSpawn3.java:288, 292 and 298);
  * here a lake is skipped when a structure in {@code #orespawn:lakes_avoid} (the Village's villages) references one of
  * the chunks that window meets: the chunk and its east, south and south-east neighbours.</p>
+ *
+ * <p>Fourth: the grass step 1.7.10's WorldGenLakes has and 1.21's dropped: the dirt under the lake's open part turned
+ * to grass where the sky's light reaches the cell over it (the light as the original had it while decorating,
+ * {@link danger.orespawn.world.LegacyLight}).</p>
  */
 public class SafeLakeFeature extends Feature<LakeFeature.Configuration> {
     private static final BlockState AIR = Blocks.CAVE_AIR.defaultBlockState();
@@ -154,6 +158,21 @@ public class SafeLakeFeature extends Feature<LakeFeature.Configuration> {
                                     this.markAboveForPostProcessing(worldgenlevel, blockpos1);
                                 }
                             }
+                        }
+                    }
+                }
+            }
+
+            // 1.7.10's WorldGenLakes then turns the dirt under the lake's open part to grass where the sky's light
+            // reaches the cell over it (to mycelium in a biome topped with mycelium, which these dimensions have none of)
+            for (int gx = 0; gx < 16; gx++) {
+                for (int gz = 0; gz < 16; gz++) {
+                    for (int gy = 4; gy < 8; gy++) {
+                        if (!aboolean[(gx * 16 + gz) * 8 + gy]) continue;
+                        BlockPos under = blockpos.offset(gx, gy - 1, gz);
+                        if (worldgenlevel.getBlockState(under).is(Blocks.DIRT)
+                                && danger.orespawn.world.LegacyLight.sky(worldgenlevel, under.getX(), under.getY() + 1, under.getZ()) > 0) {
+                            worldgenlevel.setBlock(under, Blocks.GRASS_BLOCK.defaultBlockState(), 2);
                         }
                     }
                 }

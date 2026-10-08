@@ -54,6 +54,10 @@ public class ModFeatures {
     public static final DeferredHolder<Feature<?>, LegacyHillsDecorationFeature> HILLS_DECORATION =
             FEATURES.register("hills_decoration", () -> new LegacyHillsDecorationFeature(NoneFeatureConfiguration.CODEC));
 
+    // The plants 1.7.10's decorator sets in the original's dimensions, after each one's counts.
+    public static final DeferredHolder<Feature<?>, LegacyPlantsFeature> LEGACY_PLANTS =
+            FEATURES.register("legacy_plants", () -> new LegacyPlantsFeature(LegacyPlantsFeature.Config.CODEC));
+
     // Mining's falls of water and lava on its hillsides (the original's OreSpawnWorld.addLavaAndWater).
     public static final DeferredHolder<Feature<?>, LavaAndWaterFeature> LAVA_AND_WATER =
             FEATURES.register("lava_and_water", () -> new LavaAndWaterFeature(NoneFeatureConfiguration.CODEC));

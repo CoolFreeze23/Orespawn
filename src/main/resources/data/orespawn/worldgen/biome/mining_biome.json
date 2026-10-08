@@ -3,7 +3,7 @@
   "downfall": 0.01,
   "has_precipitation": false,
   "effects": {
-    "sky_color": 7907327,
+    "sky_color": 7972863,
     "fog_color": 12638463,
     "water_color": 4159204,
     "water_fog_color": 329011,
@@ -228,7 +228,6 @@
       "orespawn:ore_lapis_1710",
       "orespawn:ore_emerald_1710",
       "orespawn:ore_silverfish_1710",
-      "orespawn:ore_ruby_mining",
       "orespawn:ore_lapis_mining_large",
       "orespawn:ore_lapis_mining_small",
       "minecraft:disk_sand",
@@ -238,11 +237,13 @@
     [],
     [
       "orespawn:spring_water_dim",
-      "orespawn:spring_lava_dim"
+      "orespawn:spring_lava_dim",
+      "orespawn:ore_ruby_mining"
     ],
     [
       "orespawn:hills_decoration_1710",
       "orespawn:lava_and_water",
+      "orespawn:legacy_plants_hills",
       "orespawn:anthill_mining",
       "orespawn:veggie_patch"
     ],
