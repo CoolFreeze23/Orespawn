@@ -150,29 +150,67 @@ public class OriginalPassTests {
                     l[0] + "'s shell is not " + l[1] + ": " + (f == null ? "none" : f.config()));
         }
         // ChunkProviderOreSpawn3.java:292 and 298: no lake where the Village's villages reach the chunk's population
-        // window, which meets the chunk and its east, south and south-east neighbours
+        // window (16 x 16 from eight in); WGEN-094: a village's piece, not its whole box, the villages being 1.21's.
+        // A one-piece start four chunks off, referenced by the chunks its piece lies in, its piece in turn in the window
+        // (in the chunk, east, south, at the window's far corner) and out of it (the chunk's west half, east of it)
         Structure village = server.registryAccess().registryOrThrow(Registries.STRUCTURE).get(rl("dim_village"));
         helper.assertTrue(village != null, "no orespawn:dim_village");
         ServerLevel level = helper.getLevel();
         BlockPos at = helper.absolutePos(BlockPos.ZERO);
-        int cx = (at.getX() >> 4) + 1, cz = (at.getZ() >> 4) + 1;
+        int cx = (at.getX() >> 4) + 1, cz = (at.getZ() >> 4) + 1, x = cx << 4, z = cz << 4;
         helper.assertFalse(SafeLakeFeature.inVillageLand(level, cx, cz), "village land with no village");
+        ChunkPos origin = new ChunkPos(cx + 4, cz + 4);
+        ChunkAccess startChunk = level.getChunk(origin.x, origin.z);
+        Map<Structure, net.minecraft.world.level.levelgen.structure.StructureStart> savedStarts =
+                new HashMap<>(startChunk.getAllStarts());
         String wrong = null;
-        for (int[] d : new int[][] {{0, 0, 1}, {1, 0, 1}, {0, 1, 1}, {1, 1, 1}, {-1, 0, 0}, {0, -1, 0}, {2, 0, 0}}) {
-            ChunkAccess chunk = level.getChunk(cx + d[0], cz + d[1]);
-            Map<Structure, LongSet> saved = new HashMap<>();
-            chunk.getAllReferences().forEach((k, v) -> saved.put(k, new LongOpenHashSet(v)));
+        // piece boxes {minX, minZ, maxX, maxZ} relative to the chunk's corner; whether the window holds them
+        for (int[] d : new int[][] {{9, 9, 12, 12, 1}, {16, 10, 20, 12, 1}, {10, 17, 12, 21, 1}, {23, 23, 30, 30, 1},
+                {0, 0, 6, 15, 0}, {24, 9, 30, 12, 0}, {9, 24, 12, 30, 0}}) {
+            net.minecraft.world.level.levelgen.structure.BoundingBox box =
+                    new net.minecraft.world.level.levelgen.structure.BoundingBox(x + d[0], 60, z + d[1], x + d[2], 70, z + d[3]);
+            net.minecraft.world.level.levelgen.structure.StructurePiece piece =
+                    new net.minecraft.world.level.levelgen.structure.StructurePiece(
+                            net.minecraft.world.level.levelgen.structure.pieces.StructurePieceType.JIGSAW, 0, box) {
+                        @Override
+                        protected void addAdditionalSaveData(
+                                net.minecraft.world.level.levelgen.structure.pieces.StructurePieceSerializationContext context,
+                                net.minecraft.nbt.CompoundTag tag) {
+                        }
+
+                        @Override
+                        public void postProcess(net.minecraft.world.level.WorldGenLevel level,
+                                                net.minecraft.world.level.StructureManager structures,
+                                                net.minecraft.world.level.chunk.ChunkGenerator generator, RandomSource random,
+                                                net.minecraft.world.level.levelgen.structure.BoundingBox chunkBox,
+                                                ChunkPos chunkPos, BlockPos pivot) {
+                        }
+                    };
+            Map<ChunkAccess, Map<Structure, LongSet>> savedReferences = new HashMap<>();
             try {
-                chunk.addReferenceForStructure(village, ChunkPos.asLong(cx + 4, cz + 4));
-                if (SafeLakeFeature.inVillageLand(level, cx, cz) != (d[2] == 1)) {
-                    wrong = "a village referenced at " + d[0] + ", " + d[1] + (d[2] == 1 ? " lets a lake in" : " keeps a lake out");
+                startChunk.setStartForStructure(village, new net.minecraft.world.level.levelgen.structure.StructureStart(
+                        village, origin, 0, new net.minecraft.world.level.levelgen.structure.pieces.PiecesContainer(
+                        List.of(piece))));
+                for (int px = box.minX() >> 4; px <= box.maxX() >> 4; px++) {
+                    for (int pz = box.minZ() >> 4; pz <= box.maxZ() >> 4; pz++) {
+                        ChunkAccess chunk = level.getChunk(px, pz);
+                        Map<Structure, LongSet> saved = new HashMap<>();
+                        chunk.getAllReferences().forEach((k, v) -> saved.put(k, new LongOpenHashSet(v)));
+                        savedReferences.putIfAbsent(chunk, saved);
+                        chunk.addReferenceForStructure(village, origin.toLong());
+                    }
+                }
+                if (SafeLakeFeature.inVillageLand(level, cx, cz) != (d[4] == 1)) {
+                    wrong = "a village piece at " + d[0] + ".." + d[2] + ", " + d[1] + ".." + d[3]
+                            + (d[4] == 1 ? " lets a lake in" : " keeps a lake out");
                 }
             } finally {
-                chunk.setAllReferences(saved);
+                savedReferences.forEach(ChunkAccess::setAllReferences);
+                startChunk.setAllStarts(savedStarts);
             }
         }
         helper.assertTrue(wrong == null, String.valueOf(wrong));
-        helper.assertFalse(SafeLakeFeature.inVillageLand(level, cx, cz), "the references were not restored");
+        helper.assertFalse(SafeLakeFeature.inVillageLand(level, cx, cz), "the starts and references were not restored");
         helper.succeed();
     }
 

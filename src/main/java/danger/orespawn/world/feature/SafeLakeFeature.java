@@ -50,8 +50,10 @@ import net.minecraft.world.level.levelgen.feature.LakeFeature;
  *
  * <p>Third: no lake in village land. The original's Village skips both its lakes in a chunk whose population window
  * (16 blocks square, from 8 in) a village's box meets ({@code !flag}, ChunkProviderOreSpawn3.java:288, 292 and 298);
- * here a lake is skipped when a structure in {@code #orespawn:lakes_avoid} (the Village's villages) references one of
- * the chunks that window meets: the chunk and its east, south and south-east neighbours.</p>
+ * here a lake is skipped when a piece of a structure in {@code #orespawn:lakes_avoid} (the Village's villages) meets
+ * that window. The villages here are 1.21's, several times the original's, so their pieces are read rather than their
+ * whole box; their starts are found through the references of the chunks the window meets, the chunk and its east,
+ * south and south-east neighbours.</p>
  *
  * <p>Fourth: the grass step 1.7.10's WorldGenLakes has and 1.21's dropped: the dirt under the lake's open part turned
  * to grass where the sky's light reaches the cell over it (the light as the original had it while decorating,
@@ -264,15 +266,33 @@ public class SafeLakeFeature extends Feature<LakeFeature.Configuration> {
         return level.getFluidState(pos).getType() == Fluids.WATER && state.getBlock() instanceof LiquidBlock;
     }
 
-    /** Whether the chunk, or the chunks east, south and south-east of it, reference a structure lakes keep out of. */
+    /**
+     * Whether a piece of a structure lakes keep out of meets the chunk's population window, the 16 x 16 blocks from eight
+     * in: its starts are the ones the chunk and its east, south and south-east neighbours reference, the chunks the
+     * window meets.
+     */
     public static boolean inVillageLand(WorldGenLevel level, int chunkX, int chunkZ) {
         net.minecraft.core.Registry<net.minecraft.world.level.levelgen.structure.Structure> structures =
                 level.registryAccess().registryOrThrow(net.minecraft.core.registries.Registries.STRUCTURE);
+        int minX = (chunkX << 4) + 8, minZ = (chunkZ << 4) + 8, maxX = minX + 15, maxZ = minZ + 15;
         for (int dx = 0; dx <= 1; dx++) {
             for (int dz = 0; dz <= 1; dz++) {
                 for (var reference : level.getChunk(chunkX + dx, chunkZ + dz).getAllReferences().entrySet()) {
-                    if (!reference.getValue().isEmpty() && structures.wrapAsHolder(reference.getKey()).is(LAKES_AVOID)) {
-                        return true;
+                    if (reference.getValue().isEmpty() || !structures.wrapAsHolder(reference.getKey()).is(LAKES_AVOID)) {
+                        continue;
+                    }
+                    for (long origin : reference.getValue()) {
+                        net.minecraft.world.level.ChunkPos start = new net.minecraft.world.level.ChunkPos(origin);
+                        net.minecraft.world.level.chunk.ChunkAccess chunk = level.getChunk(start.x, start.z,
+                                net.minecraft.world.level.chunk.status.ChunkStatus.STRUCTURE_STARTS, false);
+                        var village = chunk == null ? null : chunk.getStartForStructure(reference.getKey());
+                        if (village == null || !village.isValid()) continue;
+                        for (var piece : village.getPieces()) {
+                            var box = piece.getBoundingBox();
+                            if (box.maxX() >= minX && box.minX() <= maxX && box.maxZ() >= minZ && box.minZ() <= maxZ) {
+                                return true;
+                            }
+                        }
                     }
                 }
             }
