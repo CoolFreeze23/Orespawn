@@ -1,11 +1,14 @@
 package danger.orespawn.gametest;
 
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import danger.orespawn.OreSpawnMod;
 import danger.orespawn.world.DimensionStyle;
 import danger.orespawn.world.GenerationRange;
 import danger.orespawn.world.OreSpawnChunkGenerator;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
+import net.minecraft.core.HolderSet;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.gametest.framework.GameTest;
@@ -23,20 +26,24 @@ import net.minecraft.world.level.chunk.ProtoChunk;
 import net.minecraft.world.level.chunk.UpgradeData;
 import net.minecraft.world.level.dimension.DimensionType;
 import net.minecraft.world.level.levelgen.Aquifer;
+import net.minecraft.world.level.levelgen.GenerationStep;
 import net.minecraft.world.level.levelgen.NoiseChunk;
 import net.minecraft.world.level.levelgen.NoiseGeneratorSettings;
 import net.minecraft.world.level.levelgen.RandomState;
 import net.minecraft.world.level.levelgen.blending.Blender;
+import net.minecraft.world.level.levelgen.feature.configurations.OreConfiguration;
+import net.minecraft.world.level.levelgen.placement.PlacedFeature;
 import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 
+import java.io.Reader;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * WGEN-096: Utopia, the Village, Crystal and Mining keep the build range of earlier versions, Y-64 to 320,
+ * WGEN-096 and WGEN-095: Utopia, the Village, Crystal and Mining keep the build range of earlier versions, Y-64 to 320,
  * so land saved in it keeps every block, and build the original's world inside it: the 1.7.10 terrain and surface from
- * Y0 to 256 as before, solid bedrock below, nothing above.
+ * Y0 to 256 as before, solid bedrock below, nothing above; their ores 1.7.10's decorator's, at its counts and heights.
  */
 @GameTestHolder(OreSpawnMod.MOD_ID)
 @PrefixGameTestTemplate(false)
@@ -140,5 +147,60 @@ public class BuildRangeTests {
         generator.fillFromNoise(Blender.empty(), state, helper.getLevel().structureManager(), chunk).join();
         helper.assertTrue(generator.buildOriginalSurface(chunk, state), "no original surface for " + generator.getStyle());
         return chunk;
+    }
+
+    @GameTest(template = "empty")
+    public static void wgen095b_the_original_dimensions_place_the_1_7_10_ores(GameTestHelper helper) {
+        MinecraftServer server = helper.getLevel().getServer();
+        Registry<Biome> biomes = server.registryAccess().registryOrThrow(Registries.BIOME);
+        List<String> decorator = List.of("dirt", "gravel", "coal", "iron", "gold", "redstone", "diamond", "lapis");
+        for (String[] b : new String[][] {{"utopia_plains", ""}, {"village_biome", ""}, {"mining_biome", "hills"}}) {
+            Biome biome = biomes.get(rl(b[0]));
+            helper.assertTrue(biome != null, "no biome " + b[0]);
+            List<HolderSet<PlacedFeature>> steps = biome.getGenerationSettings().features();
+            List<String> ores = new ArrayList<>();
+            for (Holder<PlacedFeature> f : steps.get(GenerationStep.Decoration.UNDERGROUND_ORES.ordinal())) {
+                String id = f.unwrapKey().orElseThrow().location().toString();
+                helper.assertTrue(!id.startsWith("minecraft:ore_"), b[0] + " still places " + id);
+                if (id.endsWith("_1710")) ores.add(id.substring("orespawn:ore_".length(), id.length() - "_1710".length()));
+            }
+            List<String> expected = new ArrayList<>(decorator);
+            if (!b[1].isEmpty()) expected.addAll(List.of("emerald", "silverfish"));
+            helper.assertTrue(ores.equals(expected), b[0] + " places " + ores + ", not 1.7.10's " + expected);
+            for (Holder<PlacedFeature> f : steps.get(GenerationStep.Decoration.FLUID_SPRINGS.ordinal())) {
+                String id = f.unwrapKey().orElseThrow().location().toString();
+                helper.assertTrue(id.startsWith("orespawn:spring_"), b[0] + " places the spring " + id);
+            }
+        }
+        // the decorator's veins: size a vein, veins a chunk, and the heights, as BiomeDecorator.generateOres has them
+        Object[][] table = {{"dirt", 32, 20, 0, 255}, {"gravel", 32, 10, 0, 255}, {"coal", 16, 20, 0, 127},
+                {"iron", 8, 20, 0, 63}, {"gold", 8, 2, 0, 31}, {"redstone", 7, 8, 0, 15}, {"diamond", 7, 1, 0, 15},
+                {"lapis", 6, 1, 0, 30}, {"silverfish", 8, 7, 0, 63}};
+        var configured = server.registryAccess().registryOrThrow(Registries.CONFIGURED_FEATURE);
+        for (Object[] row : table) {
+            var feature = configured.get(rl("ore_" + row[0] + "_1710"));
+            helper.assertTrue(feature != null && feature.config() instanceof OreConfiguration ore && ore.size == (Integer) row[1]
+                    && ore.targetStates.size() == 1, row[0] + "'s vein is not 1.7.10's size " + row[1]);
+            JsonObject placed = json(helper, "worldgen/placed_feature/ore_" + row[0] + "_1710.json");
+            var steps = placed.getAsJsonArray("placement");
+            int count = steps.get(0).getAsJsonObject().get("count").getAsInt();
+            JsonObject height = steps.get(2).getAsJsonObject().getAsJsonObject("height");
+            int low = height.getAsJsonObject("min_inclusive").get("absolute").getAsInt();
+            int high = height.getAsJsonObject("max_inclusive").get("absolute").getAsInt();
+            helper.assertTrue(count == (Integer) row[2] && low == (Integer) row[3] && high == (Integer) row[4],
+                    row[0] + ": " + count + " veins at Y" + low + "-" + high + ", not 1.7.10's " + row[2] + " at Y" + row[3]
+                            + "-" + row[4]);
+        }
+        helper.succeed();
+    }
+
+    private static JsonObject json(GameTestHelper helper, String path) {
+        var resource = helper.getLevel().getServer().getResourceManager().getResource(rl(path));
+        helper.assertTrue(resource.isPresent(), "no " + path);
+        try (Reader reader = resource.get().openAsReader()) {
+            return JsonParser.parseReader(reader).getAsJsonObject();
+        } catch (java.io.IOException e) {
+            throw new IllegalStateException(path, e);
+        }
     }
 }
