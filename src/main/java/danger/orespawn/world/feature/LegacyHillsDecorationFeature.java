@@ -2,12 +2,12 @@ package danger.orespawn.world.feature;
 
 import com.mojang.serialization.Codec;
 import danger.orespawn.world.GenerationRange;
+import danger.orespawn.world.LegacyLight;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.tags.BlockTags;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.Blocks;
@@ -24,8 +24,8 @@ import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConf
  * BiomeGenBase read from the 1.7.10 server jar): no tree a chunk but one more in one chunk in ten, at the top of its
  * column, two in three a spruce and the rest an oak, one in ten of those a big one; two flower patches, each a dandelion's
  * two in three and else a poppy's, 64 tries round a height drawn below the column's top plus 32; one grass patch, 128
- * tries round the ground under a height drawn below twice the top. A flower or tuft stands where its cell is air, its
- * block below can carry it and it has the sky over it but for leaves (1.7.10: sky or a light of 8).
+ * tries round the ground under a height drawn below twice the top, each place drawn from eight blocks into the chunk.
+ * A flower or tuft stands where its cell is air and its block below can carry it, whatever the light (BlockBush).
  */
 public class LegacyHillsDecorationFeature extends Feature<NoneFeatureConfiguration> {
     /** The trees 1.7.10's extreme hills grow (WorldGenTaiga2, WorldGenTrees, WorldGenBigTree), as 1.21's own. */
@@ -58,7 +58,8 @@ public class LegacyHillsDecorationFeature extends Feature<NoneFeatureConfigurati
     public boolean place(FeaturePlaceContext<NoneFeatureConfiguration> context) {
         WorldGenLevel level = context.level();
         RandomSource random = context.random();
-        int x0 = context.origin().getX() & ~15, z0 = context.origin().getZ() & ~15;
+        // the decorator draws its places at chunk_X + nextInt(16) + 8, as LegacyPlantsFeature
+        int x0 = (context.origin().getX() & ~15) + 8, z0 = (context.origin().getZ() & ~15) + 8;
         int bottom = GenerationRange.bottom(context.chunkGenerator(), level);
         Registry<ConfiguredFeature<?, ?>> features = level.registryAccess().registryOrThrow(Registries.CONFIGURED_FEATURE);
         boolean placed = false;
@@ -90,7 +91,7 @@ public class LegacyHillsDecorationFeature extends Feature<NoneFeatureConfigurati
             BlockPos.MutableBlockPos at = new BlockPos.MutableBlockPos(x, y, z);
             while (at.getY() > bottom) {
                 BlockState state = level.getBlockState(at);
-                if (!state.isAir() && !state.is(BlockTags.LEAVES)) break;
+                if (!state.isAir() && !LegacyLight.isLeaves(state)) break;
                 at.move(0, -1, 0);
             }
             placed |= patch(level, random, x, at.getY(), z, Blocks.SHORT_GRASS.defaultBlockState(), 128);
@@ -105,8 +106,7 @@ public class LegacyHillsDecorationFeature extends Feature<NoneFeatureConfigurati
         for (int i = 0; i < tries; i++) {
             at.set(x + random.nextInt(8) - random.nextInt(8), y + random.nextInt(4) - random.nextInt(4),
                     z + random.nextInt(8) - random.nextInt(8));
-            if (level.isEmptyBlock(at) && plant.canSurvive(level, at)
-                    && at.getY() >= level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, at.getX(), at.getZ())) {
+            if (level.isEmptyBlock(at) && plant.canSurvive(level, at)) {
                 level.setBlock(at, plant, 2);
                 placed = true;
             }

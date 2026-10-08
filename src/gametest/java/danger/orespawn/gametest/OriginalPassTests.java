@@ -363,24 +363,55 @@ public class OriginalPassTests {
         helper.succeed();
     }
 
-    /** The light 1.7.10 had while decorating, which the plants read: the column's, less each block's opacity above. */
+    /**
+     * WGEN-110: the light 1.7.10 had while decorating, which the mushrooms read (Chunk.generateSkylightMap): the
+     * column's from 15 down, each block taking its opacity off and, once the light is under 15, each clear block one,
+     * the cell's own included; OreSpawn's leaves are leaves to it. A mushroom stands under 13 on a block that carries
+     * it, or on mycelium (BlockMushroom.canBlockStay); a flower or a tuft reads no light (BlockBush.canBlockStay).
+     */
     @GameTest(template = "empty")
     public static void wgen103b_the_plants_read_the_originals_light(GameTestHelper helper) {
         ServerLevel level = helper.getLevel();
         BlockPos base = helper.absolutePos(new BlockPos(0, 1, 0));
-        BlockPos.MutableBlockPos at = new BlockPos.MutableBlockPos();
-        // clear the column far above, then three layers of leaves and a layer of water over the cell
-        for (int y = 1; y < 40; y++) level.setBlock(at.set(base.getX(), base.getY() + y, base.getZ()), Blocks.AIR.defaultBlockState(), 2);
-        int open = danger.orespawn.world.LegacyLight.sky(level, base.getX(), base.getY(), base.getZ());
-        for (int y = 2; y <= 4; y++) level.setBlock(at.set(base.getX(), base.getY() + y, base.getZ()), Blocks.OAK_LEAVES.defaultBlockState(), 2);
-        int leaves = danger.orespawn.world.LegacyLight.sky(level, base.getX(), base.getY(), base.getZ());
-        level.setBlock(at.set(base.getX(), base.getY() + 6, base.getZ()), Blocks.WATER.defaultBlockState(), 2);
-        int water = danger.orespawn.world.LegacyLight.sky(level, base.getX(), base.getY(), base.getZ());
-        level.setBlock(at.set(base.getX(), base.getY() + 8, base.getZ()), Blocks.STONE.defaultBlockState(), 2);
-        int roofed = danger.orespawn.world.LegacyLight.sky(level, base.getX(), base.getY(), base.getZ());
-        for (int y = 1; y < 40; y++) level.setBlock(at.set(base.getX(), base.getY() + y, base.getZ()), Blocks.AIR.defaultBlockState(), 2);
-        helper.assertTrue(open == 15 && leaves == 12 && water == 9 && roofed == 0,
-                "the light under nothing, three leaves, water, stone: " + open + ", " + leaves + ", " + water + ", " + roofed);
+        net.minecraft.world.level.block.state.BlockState floor = level.getBlockState(base.below());
+        Runnable clear = () -> {
+            for (int y = 0; y < 40; y++) level.setBlock(base.above(y), Blocks.AIR.defaultBlockState(), 2);
+        };
+        java.util.function.IntSupplier light = () -> danger.orespawn.world.LegacyLight.sky(level, base.getX(),
+                base.getY(), base.getZ());
+        // three layers of leaves two over the cell, then a layer of water, then stone
+        clear.run();
+        int open = light.getAsInt();
+        for (int y = 2; y <= 4; y++) level.setBlock(base.above(y), Blocks.OAK_LEAVES.defaultBlockState(), 2);
+        int leaves = light.getAsInt();
+        level.setBlock(base.above(6), Blocks.WATER.defaultBlockState(), 2);
+        int water = light.getAsInt();
+        level.setBlock(base.above(8), Blocks.STONE.defaultBlockState(), 2);
+        int roofed = light.getAsInt();
+        clear.run();
+        for (int y = 2; y <= 4; y++) level.setBlock(base.above(y), danger.orespawn.ModBlocks.APPLE_LEAVES.get().defaultBlockState(), 2);
+        int apple = light.getAsInt();
+        clear.run();
+        level.setBlock(base.above(2), danger.orespawn.ModBlocks.CRYSTAL_LEAVES.get().defaultBlockState(), 2);
+        int crystal = light.getAsInt();
+        // the plants at the cell: a mushroom on stone under the crystal leaves (12) but not in the open (15), one on
+        // mycelium in the open, a dandelion on grass under stone
+        level.setBlock(base.below(), Blocks.STONE.defaultBlockState(), 2);
+        boolean shaded = LegacyPlantsFeature.stays(level, base, Blocks.BROWN_MUSHROOM.defaultBlockState());
+        clear.run();
+        boolean exposed = LegacyPlantsFeature.stays(level, base, Blocks.BROWN_MUSHROOM.defaultBlockState());
+        level.setBlock(base.below(), Blocks.MYCELIUM.defaultBlockState(), 2);
+        boolean mycelium = LegacyPlantsFeature.stays(level, base, Blocks.RED_MUSHROOM.defaultBlockState());
+        level.setBlock(base.below(), Blocks.GRASS_BLOCK.defaultBlockState(), 2);
+        level.setBlock(base.above(3), Blocks.STONE.defaultBlockState(), 2);
+        boolean dark = LegacyPlantsFeature.stays(level, base, Blocks.DANDELION.defaultBlockState());
+        clear.run();
+        level.setBlock(base.below(), floor, 2);
+        helper.assertTrue(open == 15 && leaves == 10 && water == 6 && roofed == 0 && apple == 10 && crystal == 12,
+                "the light under nothing, three leaves, water, stone, three apple leaves, a crystal leaf: " + open + ", "
+                        + leaves + ", " + water + ", " + roofed + ", " + apple + ", " + crystal);
+        helper.assertTrue(shaded && !exposed && mycelium && dark, "a mushroom shaded " + shaded + ", in the open "
+                + exposed + ", on mycelium " + mycelium + "; a dandelion in the dark " + dark);
         helper.succeed();
     }
 

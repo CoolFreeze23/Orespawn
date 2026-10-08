@@ -10,6 +10,7 @@ import net.minecraft.tags.BlockTags;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.MushroomBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.feature.Feature;
@@ -17,6 +18,7 @@ import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
 import net.minecraft.world.level.levelgen.feature.configurations.FeatureConfiguration;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.tags.FluidTags;
+import net.neoforged.neoforge.common.util.TriState;
 
 /**
  * The plants 1.7.10's BiomeDecorator.genDecorations sets in the original's dimensions (read from the 1.7.10 server jar),
@@ -28,11 +30,11 @@ import net.minecraft.tags.FluidTags;
  * one in eight, ten reed tries and a pumpkin patch one chunk in 32, each round a height drawn below twice the top. A count
  * of -999 (the original's "none") or 0 sets nothing.
  *
- * <p>The rules are the original's: a flower or a tuft stands in air on soil that carries it with a light of 8 or more,
- * a mushroom in air on solid ground (or mycelium or podzol) with a light under 13, a reed in air on soil with water beside
- * the soil, two to four high, a pumpkin in air on grass. The light is the one 1.7.10 had while decorating
- * ({@link LegacyLight}): its columns' sky light, which puts the original's mushrooms in caves, in rooms and under deep
- * shade and keeps its flowers out of them.</p>
+ * <p>The rules are the original's: a flower or a tuft stands in air on soil that carries it, whatever the light
+ * (BlockBush), a mushroom in air on mycelium or podzol, or on a block that carries it with a light under 13
+ * (BlockMushroom), a reed in air on soil with water beside the soil, two to four high, a pumpkin in air on grass. The
+ * light is the one 1.7.10 had while decorating ({@link LegacyLight}), not the game's, which a generating chunk has
+ * not yet: its columns' sky light, which puts the original's mushrooms in caves, in rooms and under shade.</p>
  */
 public class LegacyPlantsFeature extends Feature<LegacyPlantsFeature.Config> {
     public record Config(int flowersPerChunk, int grassPerChunk, int mushroomsPerChunk, int reedsPerChunk)
@@ -63,7 +65,7 @@ public class LegacyPlantsFeature extends Feature<LegacyPlantsFeature.Config> {
         for (int i = 0; i < config.flowersPerChunk(); i++) {
             int x = x0 + random.nextInt(16), z = z0 + random.nextInt(16);
             int y = random.nextInt(Math.max(top(level, x, z) + 32, 1));
-            placed |= patch(level, random, x, y, z, LegacyHillsDecorationFeature.flower(random), 64, Rule.BUSH);
+            placed |= patch(level, random, x, y, z, LegacyHillsDecorationFeature.flower(random), 64);
         }
         for (int i = 0; i < config.grassPerChunk(); i++) {
             int x = x0 + random.nextInt(16), z = z0 + random.nextInt(16);
@@ -72,15 +74,15 @@ public class LegacyPlantsFeature extends Feature<LegacyPlantsFeature.Config> {
             BlockPos.MutableBlockPos at = new BlockPos.MutableBlockPos(x, random.nextInt(twice), z);
             while (at.getY() > bottom) {
                 BlockState state = level.getBlockState(at);
-                if (!state.isAir() && !state.is(BlockTags.LEAVES)) break;
+                if (!state.isAir() && !LegacyLight.isLeaves(state)) break;
                 at.move(Direction.DOWN);
             }
-            placed |= patch(level, random, x, at.getY(), z, Blocks.SHORT_GRASS.defaultBlockState(), 128, Rule.BUSH);
+            placed |= patch(level, random, x, at.getY(), z, Blocks.SHORT_GRASS.defaultBlockState(), 128);
         }
         for (int i = 0; i < config.mushroomsPerChunk(); i++) {
             if (random.nextInt(4) == 0) {
                 int x = x0 + random.nextInt(16), z = z0 + random.nextInt(16);
-                placed |= patch(level, random, x, top(level, x, z), z, Blocks.BROWN_MUSHROOM.defaultBlockState(), 64, Rule.MUSHROOM);
+                placed |= patch(level, random, x, top(level, x, z), z, Blocks.BROWN_MUSHROOM.defaultBlockState(), 64);
             }
             if (random.nextInt(8) == 0) {
                 placed |= mushrooms(level, random, x0, z0, Blocks.RED_MUSHROOM.defaultBlockState());
@@ -113,20 +115,17 @@ public class LegacyPlantsFeature extends Feature<LegacyPlantsFeature.Config> {
     private static boolean mushrooms(WorldGenLevel level, RandomSource random, int x0, int z0, BlockState mushroom) {
         int x = x0 + random.nextInt(16), z = z0 + random.nextInt(16);
         int twice = top(level, x, z) * 2;
-        return twice > 0 && patch(level, random, x, random.nextInt(twice), z, mushroom, 64, Rule.MUSHROOM);
+        return twice > 0 && patch(level, random, x, random.nextInt(twice), z, mushroom, 64);
     }
 
-    private enum Rule { BUSH, MUSHROOM }
-
     /** WorldGenFlowers and WorldGenTallGrass: {@code tries} cells round x, y, z, 7 out and 3 up or down, triangular. */
-    private static boolean patch(WorldGenLevel level, RandomSource random, int x, int y, int z, BlockState plant, int tries,
-                                 Rule rule) {
+    private static boolean patch(WorldGenLevel level, RandomSource random, int x, int y, int z, BlockState plant, int tries) {
         boolean placed = false;
         BlockPos.MutableBlockPos at = new BlockPos.MutableBlockPos();
         for (int i = 0; i < tries; i++) {
             at.set(x + random.nextInt(8) - random.nextInt(8), y + random.nextInt(4) - random.nextInt(4),
                     z + random.nextInt(8) - random.nextInt(8));
-            if (level.isEmptyBlock(at) && plant.canSurvive(level, at) && lit(level, at, rule)) {
+            if (level.isEmptyBlock(at) && stays(level, at, plant)) {
                 level.setBlock(at, plant, 2);
                 placed = true;
             }
@@ -134,11 +133,20 @@ public class LegacyPlantsFeature extends Feature<LegacyPlantsFeature.Config> {
         return placed;
     }
 
-    /** BlockBush.canBlockStay's light of 8 (or the sky), BlockMushroom's under 13 unless on mycelium or podzol. */
-    private static boolean lit(WorldGenLevel level, BlockPos at, Rule rule) {
-        int light = LegacyLight.sky(level, at.getX(), at.getY(), at.getZ());
-        if (rule == Rule.BUSH) return light >= 8;
-        return light < 13 || level.getBlockState(at.below()).is(BlockTags.MUSHROOM_GROW_BLOCK);
+    /**
+     * Whether the plant may stand at {@code at} by 1.7.10's rules: a flower or a tuft on a block that carries it, whatever
+     * the light (BlockBush.canBlockStay); a mushroom on mycelium or podzol, or with a light under 13 ({@link LegacyLight})
+     * on a block that carries it (BlockMushroom.canBlockStay). Not 1.21's mushroom rule, which reads the game's light, and
+     * a generating chunk and its neighbours have theirs or not by the order they generate in.
+     */
+    public static boolean stays(WorldGenLevel level, BlockPos at, BlockState plant) {
+        if (!(plant.getBlock() instanceof MushroomBlock)) return plant.canSurvive(level, at);
+        BlockPos below = at.below();
+        BlockState soil = level.getBlockState(below);
+        if (soil.is(BlockTags.MUSHROOM_GROW_BLOCK)) return true;
+        TriState sustains = soil.canSustainPlant(level, below, Direction.UP, plant);
+        boolean carries = sustains.isDefault() ? soil.isSolidRender(level, below) : sustains.isTrue();
+        return carries && LegacyLight.sky(level, at.getX(), at.getY(), at.getZ()) < 13;
     }
 
     /** WorldGenReed: 20 tries at the height given, 3 out, triangular, in air with water beside the block under. */
