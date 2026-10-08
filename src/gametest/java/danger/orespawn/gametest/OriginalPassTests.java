@@ -360,6 +360,22 @@ public class OriginalPassTests {
                     || f.endsWith("_mushroom_normal"));
             helper.assertTrue(vegetal.contains("orespawn:" + w[1]) && !vanilla, w[0] + "'s plants: " + vegetal);
         }
+        // WGEN-113: Utopia's and the Village's plants are blind to every log and leaf, their trees OreSpawnWorld's, grown
+        // after the decorator; Crystal's, Chaos's and Mining's see theirs
+        net.minecraft.tags.TagKey<net.minecraft.world.level.block.Block> unseen =
+                net.minecraft.tags.TagKey.create(Registries.BLOCK, rl("decoration_unseen"));
+        for (Object[] w : want) {
+            ConfiguredFeature<?, ?> f = configured.get(rl((String) w[0]));
+            boolean blind = f.config() instanceof LegacyPlantsFeature.Config c && c.unseen().equals(java.util.Optional.of(unseen));
+            boolean sees = f.config() instanceof LegacyPlantsFeature.Config c && c.unseen().isEmpty();
+            helper.assertTrue(w[0].equals("legacy_plants_utopian") ? blind : sees, w[0] + "'s unseen blocks: " + f.config());
+        }
+        helper.assertTrue(Blocks.OAK_LOG.defaultBlockState().is(unseen) && Blocks.JUNGLE_LEAVES.defaultBlockState().is(unseen)
+                        && danger.orespawn.ModBlocks.APPLE_LEAVES.get().defaultBlockState().is(unseen)
+                        && danger.orespawn.ModBlocks.SKY_TREE_LOG.get().defaultBlockState().is(unseen)
+                        && !danger.orespawn.ModBlocks.CRYSTAL_LEAVES.get().defaultBlockState().is(unseen)
+                        && !Blocks.GRASS_BLOCK.defaultBlockState().is(unseen),
+                "#orespawn:decoration_unseen holds the trees' logs and leaves, not the crystal trees' or the ground");
         helper.succeed();
     }
 
@@ -367,7 +383,8 @@ public class OriginalPassTests {
      * WGEN-110: the light 1.7.10 had while decorating, which the mushrooms read (Chunk.generateSkylightMap): the
      * column's from 15 down, each block taking its opacity off and, once the light is under 15, each clear block one,
      * the cell's own included; OreSpawn's leaves are leaves to it. A mushroom stands under 13 on a block that carries
-     * it, or on mycelium (BlockMushroom.canBlockStay); a flower or a tuft reads no light (BlockBush.canBlockStay).
+     * it, leaves included, or on mycelium (BlockMushroom.canBlockStay); a flower or a tuft reads no light
+     * (BlockBush.canBlockStay).
      */
     @GameTest(template = "empty")
     public static void wgen103b_the_plants_read_the_originals_light(GameTestHelper helper) {
@@ -394,8 +411,26 @@ public class OriginalPassTests {
         clear.run();
         level.setBlock(base.above(2), danger.orespawn.ModBlocks.CRYSTAL_LEAVES.get().defaultBlockState(), 2);
         int crystal = light.getAsInt();
-        // the plants at the cell: a mushroom on stone under the crystal leaves (12) but not in the open (15), one on
-        // mycelium in the open, a dandelion on grass under stone
+        // WGEN-113: blind to Utopia's trees, the light under three apple leaves is the open sky's and the height map
+        // passes over them to the ground (stone under the cell); seeing them, the height is over the leaves
+        clear.run();
+        level.setBlock(base.below(), Blocks.STONE.defaultBlockState(), 2);
+        for (int y = 2; y <= 4; y++) level.setBlock(base.above(y), danger.orespawn.ModBlocks.APPLE_LEAVES.get().defaultBlockState(), 2);
+        java.util.function.Predicate<net.minecraft.world.level.block.state.BlockState> trees =
+                s -> s.is(net.minecraft.tags.TagKey.create(Registries.BLOCK, rl("decoration_unseen")));
+        int blind = danger.orespawn.world.LegacyLight.sky(level, base.getX(), base.getY(), base.getZ(), trees);
+        int heightSeen = danger.orespawn.world.LegacyLight.height(level, base.getX(), base.getZ(), s -> false);
+        int heightBlind = danger.orespawn.world.LegacyLight.height(level, base.getX(), base.getZ(), trees);
+        boolean blindMushroom = LegacyPlantsFeature.stays(level, base, Blocks.BROWN_MUSHROOM.defaultBlockState(), trees);
+        clear.run();
+        level.setBlock(base.above(2), danger.orespawn.ModBlocks.CRYSTAL_LEAVES.get().defaultBlockState(), 2);
+        helper.assertTrue(blind == 15 && heightSeen == base.getY() + 5 && heightBlind == base.getY() && !blindMushroom,
+                "blind to the trees: the light " + blind + ", the height seen " + heightSeen + " and blind " + heightBlind
+                        + " over the cell at " + base.getY() + ", a mushroom " + blindMushroom);
+        // the plants at the cell: a mushroom on stone and on oak leaves under the crystal leaves (12) but not in the
+        // open (15), one on mycelium in the open, a dandelion on grass under stone
+        level.setBlock(base.below(), Blocks.OAK_LEAVES.defaultBlockState(), 2);
+        boolean onLeaves = LegacyPlantsFeature.stays(level, base, Blocks.RED_MUSHROOM.defaultBlockState());
         level.setBlock(base.below(), Blocks.STONE.defaultBlockState(), 2);
         boolean shaded = LegacyPlantsFeature.stays(level, base, Blocks.BROWN_MUSHROOM.defaultBlockState());
         clear.run();
@@ -410,8 +445,9 @@ public class OriginalPassTests {
         helper.assertTrue(open == 15 && leaves == 10 && water == 6 && roofed == 0 && apple == 10 && crystal == 12,
                 "the light under nothing, three leaves, water, stone, three apple leaves, a crystal leaf: " + open + ", "
                         + leaves + ", " + water + ", " + roofed + ", " + apple + ", " + crystal);
-        helper.assertTrue(shaded && !exposed && mycelium && dark, "a mushroom shaded " + shaded + ", in the open "
-                + exposed + ", on mycelium " + mycelium + "; a dandelion in the dark " + dark);
+        helper.assertTrue(shaded && onLeaves && !exposed && mycelium && dark, "a mushroom shaded " + shaded
+                + ", on leaves " + onLeaves + ", in the open " + exposed + ", on mycelium " + mycelium
+                + "; a dandelion in the dark " + dark);
         helper.succeed();
     }
 

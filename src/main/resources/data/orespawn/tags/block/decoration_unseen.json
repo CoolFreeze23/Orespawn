@@ -1,0 +1,13 @@
+{
+  "values": [
+    "#minecraft:logs",
+    "#minecraft:leaves",
+    "orespawn:sky_tree_log",
+    "orespawn:duplicator_log",
+    "orespawn:apple_leaves",
+    "orespawn:cherry_leaves",
+    "orespawn:peach_leaves",
+    "orespawn:scary_leaves",
+    "orespawn:experience_leaves"
+  ]
+}

@@ -12,7 +12,6 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
 import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
@@ -24,7 +23,8 @@ import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConf
  * BiomeGenBase read from the 1.7.10 server jar): no tree a chunk but one more in one chunk in ten, at the top of its
  * column, two in three a spruce and the rest an oak, one in ten of those a big one; two flower patches, each a dandelion's
  * two in three and else a poppy's, 64 tries round a height drawn below the column's top plus 32; one grass patch, 128
- * tries round the ground under a height drawn below twice the top, each place drawn from eight blocks into the chunk.
+ * tries round the ground under a height drawn below twice the top, each place drawn from eight blocks into the chunk
+ * and each height from 1.7.10's height map ({@link LegacyLight#height}).
  * A flower or tuft stands where its cell is air and its block below can carry it, whatever the light (BlockBush).
  */
 public class LegacyHillsDecorationFeature extends Feature<NoneFeatureConfiguration> {
@@ -68,7 +68,7 @@ public class LegacyHillsDecorationFeature extends Feature<NoneFeatureConfigurati
         int trees = random.nextInt(10) == 0 ? 1 : 0;
         for (int i = 0; i < trees; i++) {
             int x = x0 + random.nextInt(16), z = z0 + random.nextInt(16);
-            BlockPos at = new BlockPos(x, level.getHeight(Heightmap.Types.MOTION_BLOCKING, x, z), z);
+            BlockPos at = new BlockPos(x, LegacyLight.height(level, x, z, state -> false), z);
             ConfiguredFeature<?, ?> tree = features.get(tree(random).key);
             // 1.7.10's tree generators grow only on soil a sapling takes
             if (tree != null && Blocks.OAK_SAPLING.defaultBlockState().canSurvive(level, at)) {
@@ -79,13 +79,13 @@ public class LegacyHillsDecorationFeature extends Feature<NoneFeatureConfigurati
         // flowers: flowersPerChunk 2, each round nextInt(top + 32)
         for (int i = 0; i < 2; i++) {
             int x = x0 + random.nextInt(16), z = z0 + random.nextInt(16);
-            int y = random.nextInt(level.getHeight(Heightmap.Types.MOTION_BLOCKING, x, z) + 32);
+            int y = random.nextInt(Math.max(LegacyLight.height(level, x, z, state -> false) + 32, 1));
             placed |= patch(level, random, x, y, z, flower(random), 64);
         }
 
         // grass: grassPerChunk 1, round the ground under nextInt(top * 2)
         int x = x0 + random.nextInt(16), z = z0 + random.nextInt(16);
-        int twice = level.getHeight(Heightmap.Types.MOTION_BLOCKING, x, z) * 2;
+        int twice = LegacyLight.height(level, x, z, state -> false) * 2;
         if (twice > 0) {
             int y = random.nextInt(twice);
             BlockPos.MutableBlockPos at = new BlockPos.MutableBlockPos(x, y, z);
