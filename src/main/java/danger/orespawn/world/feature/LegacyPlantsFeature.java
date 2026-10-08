@@ -54,7 +54,9 @@ public class LegacyPlantsFeature extends Feature<LegacyPlantsFeature.Config> {
         WorldGenLevel level = context.level();
         RandomSource random = context.random();
         Config config = context.config();
-        int x0 = context.origin().getX() & ~15, z0 = context.origin().getZ() & ~15;
+        // the decorator draws its places at chunk_X + nextInt(16) + 8: eight blocks into the chunks east and south, so a
+        // chunk's plants are half its own and half its neighbours'
+        int x0 = (context.origin().getX() & ~15) + 8, z0 = (context.origin().getZ() & ~15) + 8;
         int bottom = GenerationRange.bottom(context.chunkGenerator(), level);
         boolean placed = false;
 

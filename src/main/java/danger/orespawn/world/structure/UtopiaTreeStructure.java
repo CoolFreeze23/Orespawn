@@ -264,30 +264,62 @@ public class UtopiaTreeStructure extends Structure {
     /**
      * orig OreSpawnWorld.java:1792-1828 {@code addAppleTrees}: {@code freq} from the chunk's distance in chunks,
      * folded to 0-14 (:1793, :1797); the count {@code 2 + nextInt(2 + (15 - freq) / 2)} (:1797) and the leaves draw
-     * (:1798, apple eight times in ten, cherry and peach once each; the port grows apple leaves for all three, see
-     * {@code MagicAppleTreeFeature}) come before the gate {@code nextInt(15 + freq)} (:1799-1801); the LessLag cuts
-     * (:1802-1807); then each tree at {@code 2 + nextInt(12)} into the chunk on the grass the scan finds (:1808-1825).
-     * Returns the grass blocks the trees stand on; empty when the chunk grows none (the original's {@code false}).
+     * (:1798, {@link Fruit#of}: apple eight times in ten, cherry and peach once each, every tree of the chunk the same)
+     * come before the gate {@code nextInt(15 + freq)} (:1799-1801); the LessLag cuts (:1802-1807); then each tree at
+     * {@code 2 + nextInt(12)} into the chunk on the grass the scan finds (:1808-1825). Returns the grass blocks the
+     * trees stand on; empty when the chunk grows none (the original's {@code false}).
      */
     public static List<BlockPos> appleTrees(RandomSource random, ChunkPos chunk, ColumnProbe probe) {
+        return orchard(random, chunk, probe).bases();
+    }
+
+    /** The fruit trees addAppleTrees grows: ItemAppleSeed.makeTree's three, each with its own leaves and size. */
+    public enum Fruit {
+        // orig ItemAppleSeed.java:52-75: the trunk's height, the two rings of arms' heights and lengths, the leaf discs'
+        // first and last heights; cherry and peach discs one block narrower (:112-114)
+        APPLE(12, 6, 9, 6, 14, 5, 3, 0), CHERRY(8, 3, 5, 3, 10, 3, 1, 1), PEACH(10, 5, 7, 5, 12, 4, 2, 1);
+
+        public final int h1, h2, h3, h4, h5, w1, w2, narrower;
+
+        Fruit(int h1, int h2, int h3, int h4, int h5, int w1, int w2, int narrower) {
+            this.h1 = h1; this.h2 = h2; this.h3 = h3; this.h4 = h4; this.h5 = h5; this.w1 = w1; this.w2 = w2;
+            this.narrower = narrower;
+        }
+
+        /** orig OreSpawnWorld.java:1798, 1814-1822: {@code which} under 8 an apple, 8 a cherry, 9 a peach. */
+        public static Fruit of(int which) {
+            return which == 8 ? CHERRY : which == 9 ? PEACH : APPLE;
+        }
+
+        /** The half width of the leaf disc {@code i} blocks over the grass (:104-111). */
+        public int discWidth(int i) {
+            return (i > 10 ? 4 : i > 8 ? 5 : 6) - narrower;
+        }
+    }
+
+    /** The trees addAppleTrees grows in a chunk: where they stand and their fruit. */
+    public record Orchard(List<BlockPos> bases, Fruit fruit) {}
+
+    /** {@link #appleTrees} with the fruit the chunk's trees bear. */
+    public static Orchard orchard(RandomSource random, ChunkPos chunk, ColumnProbe probe) {
         List<BlockPos> out = new ArrayList<>();
         int freq = (Math.abs(chunk.x) + Math.abs(chunk.z)) % 15;                   // :1793, :1797
         int howmany = 2 + random.nextInt(2 + (15 - freq) / 2);                      // :1794, :1797
-        random.nextInt(10);                                                         // :1798 which
-        if (random.nextInt(15 + freq) != 0) return out;                            // :1799-1801
+        Fruit fruit = Fruit.of(random.nextInt(10));                                 // :1798 which
+        if (random.nextInt(15 + freq) != 0) return new Orchard(out, fruit);        // :1799-1801
         int lessLag = OreSpawnConfig.LESS_LAG.get();
         if (lessLag == 1) howmany /= 2;                                             // :1802-1804
-        if (lessLag == 2 && (howmany /= 4) < 1) return out;                         // :1805-1807
+        if (lessLag == 2 && (howmany /= 4) < 1) return new Orchard(out, fruit);     // :1805-1807
         for (int i = 0; i < howmany; i++) {                                         // :1808
             int posX = 2 + chunk.getMinBlockX() + random.nextInt(12);               // :1809
             int posZ = 2 + chunk.getMinBlockZ() + random.nextInt(12);               // :1810
             int base = probe.base(posX, posZ, 50, 100);                             // :1811-1812
             // the scan runs down from Y100 through air only (:1811): an earlier tree's crown or trunk over the column
             // stops it before it reaches the grass
-            if (base == Integer.MIN_VALUE || underAppleTree(out, posX, posZ, base)) continue;
+            if (base == Integer.MIN_VALUE || underAppleTree(out, fruit, posX, posZ, base)) continue;
             out.add(new BlockPos(posX, base, posZ));                                // :1813-1824
         }
-        return out;
+        return new Orchard(out, fruit);
     }
 
     /** The King or Queen altar the pass's altar roll builds: on the grass at {@code origin}. */
@@ -297,7 +329,7 @@ public class UtopiaTreeStructure extends Structure {
      * What the Utopia chunk pass grows (orig OreSpawnWorld.java:42-46): one of addHugeTree's trees (a huge tree or a
      * royal tree), else apple trees, else a grove, else, when none of them grew, the altar its roll picked (or none).
      */
-    public record ChunkPass(HugeRoll huge, List<BlockPos> appleTrees, List<UtopiaTreePiece> grove, Altar altar) {
+    public record ChunkPass(HugeRoll huge, List<BlockPos> appleTrees, Fruit fruit, List<UtopiaTreePiece> grove, Altar altar) {
         /** Whether addHugeTree grew a tree here (a huge one or a royal one). */
         public boolean bigTree() {
             return huge.madeOne();
@@ -321,12 +353,14 @@ public class UtopiaTreeStructure extends Structure {
         WorldgenRandom random = new WorldgenRandom(new LegacyRandomSource(0L));
         random.setLargeFeatureSeed(seed, chunk.x, chunk.z);
         HugeRoll huge = hugeRoll(random, chunk, probe);
-        if (huge.madeOne()) return new ChunkPass(huge, List.of(), List.of(), null);
-        List<BlockPos> apples = appleTrees(random, chunk, probe);
-        if (!apples.isEmpty()) return new ChunkPass(huge, List.copyOf(apples), List.of(), null);
+        if (huge.madeOne()) return new ChunkPass(huge, List.of(), Fruit.APPLE, List.of(), null);
+        Orchard orchard = orchard(random, chunk, probe);
+        if (!orchard.bases().isEmpty()) {
+            return new ChunkPass(huge, List.copyOf(orchard.bases()), orchard.fruit(), List.of(), null);
+        }
         List<UtopiaTreePiece> grove = grove(random, chunk, probe);
-        if (!grove.isEmpty()) return new ChunkPass(huge, List.of(), grove, null);
-        return new ChunkPass(huge, List.of(), List.of(), altarRoll(random, chunk, probe));
+        if (!grove.isEmpty()) return new ChunkPass(huge, List.of(), Fruit.APPLE, grove, null);
+        return new ChunkPass(huge, List.of(), Fruit.APPLE, List.of(), altarRoll(random, chunk, probe));
     }
 
     /** A probe that finds no grass anywhere. */
@@ -410,14 +444,22 @@ public class UtopiaTreeStructure extends Structure {
      * grass at {@code base}, up to Y100, where the original's scan (:1811) stops.
      */
     public static boolean underAppleTree(List<BlockPos> trees, int x, int z, int base) {
+        return underAppleTree(trees, Fruit.APPLE, x, z, base);
+    }
+
+    /** {@link #underAppleTree} for trees of {@code fruit}: its trunk and its crown's discs (a cherry's and a peach's smaller). */
+    public static boolean underAppleTree(List<BlockPos> trees, Fruit fruit, int x, int z, int base) {
         for (BlockPos t : trees) {
             int r = Math.max(Math.abs(x - t.getX()), Math.abs(z - t.getZ()));
-            int highest;
-            if (r <= 4) highest = t.getY() + 13;
-            else if (r == 5) highest = t.getY() + 10;
-            else if (r == 6) highest = t.getY() + 8;
-            else continue;
-            int lowest = r == 0 ? t.getY() + 1 : t.getY() + 6;   // the trunk from the grass up; elsewhere the crown
+            int highest = Integer.MIN_VALUE;
+            for (int i = fruit.h5 - 1; i >= fruit.h4; i--) {
+                if (fruit.discWidth(i) >= r) {
+                    highest = t.getY() + i;
+                    break;
+                }
+            }
+            if (highest == Integer.MIN_VALUE) continue;
+            int lowest = r == 0 ? t.getY() + 1 : t.getY() + fruit.h4;   // the trunk from the grass up; elsewhere the crown
             if (Math.max(lowest, base + 1) <= Math.min(highest, ScanShadow.SCAN_TOP)) return true;
         }
         return false;
@@ -459,7 +501,7 @@ public class UtopiaTreeStructure extends Structure {
                     if (reaches(tree.getBoundingBox(), plane, minX, maxX, minZ, maxZ)) tree.forEachCell(minY, maxY, sink);
                 }
                 for (BlockPos apple : pass.appleTrees()) {
-                    if (appleCellOnPlane(apple, plane, minX, maxX, minZ, maxZ)) return false;
+                    if (appleCellOnPlane(apple, pass.fruit(), plane, minX, maxX, minZ, maxZ)) return false;
                 }
                 if (hit[0]) return false;
             }
@@ -504,15 +546,15 @@ public class UtopiaTreeStructure extends Structure {
                 && box.minZ() <= maxZ && box.maxZ() >= minZ;
     }
 
-    /** Whether an apple tree on the grass at {@code t} has a cell on the plane inside the rectangle (makeTree's shape). */
-    private static boolean appleCellOnPlane(BlockPos t, int plane, int minX, int maxX, int minZ, int maxZ) {
+    /**
+     * Whether a fruit tree on the grass at {@code t} has a cell on the plane inside the rectangle (makeTree's shape: the
+     * trunk alone under the leaf discs, the arms and the trunk's top inside them).
+     */
+    private static boolean appleCellOnPlane(BlockPos t, Fruit fruit, int plane, int minX, int maxX, int minZ, int maxZ) {
         int h = plane - t.getY();
         int r;
-        if (h >= 1 && h <= 5) r = 0;            // the trunk alone
-        else if (h >= 6 && h <= 8) r = 6;       // the widest discs (the arms at +6 lie inside them)
-        else if (h == 9 || h == 10) r = 5;
-        else if (h == 11) r = 4;                // the trunk's top log and the narrow discs
-        else if (h == 12 || h == 13) r = 4;
+        if (h >= 1 && h < fruit.h4) r = 0;
+        else if (h >= fruit.h4 && h < fruit.h5) r = fruit.discWidth(h);
         else return false;
         return t.getX() - r <= maxX && t.getX() + r >= minX && t.getZ() - r <= maxZ && t.getZ() + r >= minZ;
     }

@@ -51,11 +51,8 @@ import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConf
  * tree, as {@code !addAppleTrees(...) && !addOtherTrees(...)} (:43) kept
  * it. The Village runs addAppleTrees on its own (:119).</p>
  *
- * <p><b>Stand-in note:</b> the legacy variant tracking ({@code which
- * == 8} cherry, {@code which == 9} peach) is not modeled here; the
- * 1.21.1 mod ships only the Apple Leaves block, so all Magic Apple
- * Tree placements use Apple Leaves to stay loyal to the dominant
- * 80% legacy outcome.</p>
+ * <p>The chunk's trees bear the fruit its roll drew ({@code which}: under 8 apple, 8 cherry, 9 peach), each with
+ * its own leaves and size as ItemAppleSeed.makeTree grows them (UtopiaTreeStructure.Fruit).</p>
  */
 public class MagicAppleTreeFeature extends Feature<NoneFeatureConfiguration> {
     public MagicAppleTreeFeature(Codec<NoneFeatureConfiguration> codec) {
@@ -71,17 +68,22 @@ public class MagicAppleTreeFeature extends Feature<NoneFeatureConfiguration> {
         UtopiaTreeStructure.ColumnProbe probe = UtopiaTreeStructure.probe(ctx.chunkGenerator(), level,
                 level.getLevel().getChunkSource().randomState());
         List<BlockPos> trees;
+        UtopiaTreeStructure.Fruit fruit;
         if (level.getLevel().dimension() == ModDimensionKeys.UTOPIA) {
-            trees = UtopiaTreeStructure.chunkPass(level.getSeed(), chunk, probe).appleTrees();
+            UtopiaTreeStructure.ChunkPass pass = UtopiaTreeStructure.chunkPass(level.getSeed(), chunk, probe);
+            trees = pass.appleTrees();
+            fruit = pass.fruit();
         } else {
             WorldgenRandom random = new WorldgenRandom(new LegacyRandomSource(0L));
             random.setLargeFeatureSeed(level.getSeed(), chunk.x, chunk.z);
-            trees = UtopiaTreeStructure.appleTrees(random, chunk, probe);
+            UtopiaTreeStructure.Orchard orchard = UtopiaTreeStructure.orchard(random, chunk, probe);
+            trees = orchard.bases();
+            fruit = orchard.fruit();
         }
         boolean grew = false;
         for (BlockPos base : trees) {
             BlockPos grass = scan(level, base.getX(), base.getZ());
-            if (grass != null) grew |= growTree(level, grass, GenerationRange.top(ctx.chunkGenerator(), level));
+            if (grass != null) grew |= growTree(level, grass, GenerationRange.top(ctx.chunkGenerator(), level), fruit);
         }
         return grew;
     }
@@ -102,7 +104,7 @@ public class MagicAppleTreeFeature extends Feature<NoneFeatureConfiguration> {
     }
 
     /** ItemAppleSeed.makeTree (orig :46-123) on the grass block at {@code base}; false when the ground or trunk refuses. */
-    private static boolean growTree(WorldGenLevel level, BlockPos base, int top) {
+    private static boolean growTree(WorldGenLevel level, BlockPos base, int top, UtopiaTreeStructure.Fruit fruit) {
         BlockState ground = level.getBlockState(base);
         if (!(ground.is(Blocks.GRASS_BLOCK) || ground.is(Blocks.DIRT) || ground.is(Blocks.FARMLAND))) {
             return false;
@@ -112,8 +114,8 @@ public class MagicAppleTreeFeature extends Feature<NoneFeatureConfiguration> {
         int y = base.getY(); // Legacy uses (posY - 1), the grass block, as the trunk base.
         int z = base.getZ();
 
-        // Legacy Apple Leaves dimensions.
-        final int h1 = 12, h2 = 6, h3 = 9, h4 = 6, h5 = 14, w1 = 5, w2 = 3;
+        // orig :52-75: the fruit's dimensions
+        final int h1 = fruit.h1, h2 = fruit.h2, h3 = fruit.h3, h4 = fruit.h4, h5 = fruit.h5, w1 = fruit.w1, w2 = fruit.w2;
 
         if (y + h5 + 2 >= top) return false;
 
@@ -123,7 +125,9 @@ public class MagicAppleTreeFeature extends Feature<NoneFeatureConfiguration> {
         // which decays the entire canopy on the first random tick. Pin
         // PERSISTENT=true and DISTANCE=1 so worldgen-placed leaves never
         // decay regardless of trunk recompute distance.
-        BlockState leaves = ModBlocks.APPLE_LEAVES.get().defaultBlockState()
+        BlockState leaves = (fruit == UtopiaTreeStructure.Fruit.CHERRY ? ModBlocks.CHERRY_LEAVES
+                : fruit == UtopiaTreeStructure.Fruit.PEACH ? ModBlocks.PEACH_LEAVES : ModBlocks.APPLE_LEAVES).get()
+                .defaultBlockState()
                 .setValue(LeavesBlock.PERSISTENT, true)
                 .setValue(LeavesBlock.DISTANCE, 1);
 
@@ -153,9 +157,7 @@ public class MagicAppleTreeFeature extends Feature<NoneFeatureConfiguration> {
         }
         // Stacked leaf disks (legacy lines 104-121).
         for (int i = h4; i < h5; i++) {
-            int width = 6;
-            if (i > 8) width = 5;
-            if (i > 10) width = 4;
+            int width = fruit.discWidth(i); // a cherry's and a peach's one block narrower (orig :112-114)
             for (int j = -width; j <= width; j++) {
                 for (int k = -width; k <= width; k++) {
                     BlockPos pos = new BlockPos(x + k, y + i, z + j);

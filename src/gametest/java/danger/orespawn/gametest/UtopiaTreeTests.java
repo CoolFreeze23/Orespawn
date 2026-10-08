@@ -554,6 +554,47 @@ public class UtopiaTreeTests {
     }
 
     /**
+     * WGEN-108: an orchard bears the fruit its roll drew (orig OreSpawnWorld.java:1798, 1814-1822): apple eight times in
+     * ten, cherry and peach once each, every tree of the chunk alike; each fruit's tree as ItemAppleSeed.makeTree grows it
+     * (:52-75, 112-114), and the scan stops at a cherry's or a peach's crown where it reaches, not an apple's.
+     */
+    @GameTest(template = "empty")
+    public static void w108a_the_orchards_fruit(GameTestHelper helper) {
+        UtopiaTreeStructure.ColumnProbe flat = (x, z, low, high) -> 70;
+        long seed = 20261009L;
+        java.util.Map<UtopiaTreeStructure.Fruit, Integer> fruits = new java.util.EnumMap<>(UtopiaTreeStructure.Fruit.class);
+        int orchards = 0;
+        for (int cx = 0; cx < 400; cx++) {
+            for (int cz = 0; cz < 150; cz++) {
+                ChunkPos chunk = new ChunkPos(cx, cz);
+                UtopiaTreeStructure.Orchard orchard = UtopiaTreeStructure.orchard(chunkRandom(seed, chunk), chunk, flat);
+                if (orchard.bases().isEmpty()) continue;
+                orchards++;
+                fruits.merge(orchard.fruit(), 1, Integer::sum);
+            }
+        }
+        double apple = fruits.getOrDefault(UtopiaTreeStructure.Fruit.APPLE, 0) / (double) orchards;
+        double cherry = fruits.getOrDefault(UtopiaTreeStructure.Fruit.CHERRY, 0) / (double) orchards;
+        double peach = fruits.getOrDefault(UtopiaTreeStructure.Fruit.PEACH, 0) / (double) orchards;
+        helper.assertTrue(orchards > 1000 && Math.abs(apple - 0.8) < 0.03 && Math.abs(cherry - 0.1) < 0.02
+                        && Math.abs(peach - 0.1) < 0.02,
+                orchards + " orchards: apple " + apple + ", cherry " + cherry + ", peach " + peach + " (0.8, 0.1, 0.1)");
+        UtopiaTreeStructure.Fruit a = UtopiaTreeStructure.Fruit.APPLE, c = UtopiaTreeStructure.Fruit.CHERRY,
+                p = UtopiaTreeStructure.Fruit.PEACH;
+        helper.assertTrue(a.h1 == 12 && a.h5 == 14 && a.discWidth(6) == 6 && a.discWidth(13) == 4
+                        && c.h1 == 8 && c.h4 == 3 && c.h5 == 10 && c.w1 == 3 && c.discWidth(3) == 5 && c.discWidth(9) == 4
+                        && p.h1 == 10 && p.h4 == 5 && p.h5 == 12 && p.w1 == 4 && p.discWidth(11) == 3,
+                "the fruit trees' sizes");
+        BlockPos tree = new BlockPos(0, 70, 0);
+        helper.assertTrue(UtopiaTreeStructure.underAppleTree(List.of(tree), a, 6, 0, 70)
+                        && !UtopiaTreeStructure.underAppleTree(List.of(tree), c, 6, 0, 70)
+                        && UtopiaTreeStructure.underAppleTree(List.of(tree), c, 5, 0, 70)
+                        && !UtopiaTreeStructure.underAppleTree(List.of(tree), p, 6, 0, 70),
+                "a crown six out stops the scan under an apple tree, not a cherry's or a peach's");
+        helper.succeed();
+    }
+
+    /**
      * WGEN-075 / WGEN-077 on the Utopia dimension's generator: the grove structure grows exactly the chunk pass's
      * grove, and the King altar refuses every chunk where the pass grows a tree (orig OreSpawnWorld.java:42-45). Where
      * an altar does build, and the royal trees, are StructurePlacementTests' w080e.
