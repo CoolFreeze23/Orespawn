@@ -393,14 +393,17 @@ public class OriginalPassTests {
             int lava = c.getAsJsonObject("lava_level").get("absolute").getAsInt();
             helper.assertTrue(lava == 10, carver + "'s lava stands to Y" + lava);
         }
-        // OreSpawnWorld.generateRuby runs after the provider's population, its springs' lava there to find, and before
-        // the falls (addLavaAndWater); the springs' step keeps the springs alone
+        // OreSpawnWorld.generateRuby runs after the provider's population (its springs' lava there to find, and the
+        // decorator's plants), first of OreSpawnWorld's own; the springs' step keeps the springs alone. The falls
+        // (addLavaAndWater) stand at Y74 to 128, above the ruby's scan, which starts at Y50 or lower: either may run first
         List<String> ores = liveStep(helper, "mining_biome", 6);
         List<String> springs = liveStep(helper, "mining_biome", 8);
         List<String> vegetal = liveStep(helper, "mining_biome", 9);
+        int ruby = vegetal.indexOf("orespawn:ore_ruby_mining");
         helper.assertTrue(!ores.contains("orespawn:ore_ruby_mining") && !springs.contains("orespawn:ore_ruby_mining")
-                        && vegetal.indexOf("orespawn:ore_ruby_mining") == 0
-                        && vegetal.indexOf("orespawn:lava_and_water") > 0,
+                        && ruby > vegetal.indexOf("orespawn:hills_decoration_1710")
+                        && ruby > vegetal.indexOf("orespawn:legacy_plants_hills")
+                        && ruby < vegetal.indexOf("orespawn:anthill_mining"),
                 "Mining's ruby: ores " + ores + ", springs " + springs + ", then " + vegetal);
         helper.succeed();
     }
