@@ -393,12 +393,15 @@ public class OriginalPassTests {
             int lava = c.getAsJsonObject("lava_level").get("absolute").getAsInt();
             helper.assertTrue(lava == 10, carver + "'s lava stands to Y" + lava);
         }
-        // OreSpawnWorld.generateRuby runs after the provider's population, its springs' lava there to find
+        // OreSpawnWorld.generateRuby runs after the provider's population, its springs' lava there to find, and before
+        // the falls (addLavaAndWater); the springs' step keeps the springs alone
         List<String> ores = liveStep(helper, "mining_biome", 6);
         List<String> springs = liveStep(helper, "mining_biome", 8);
-        helper.assertTrue(!ores.contains("orespawn:ore_ruby_mining")
-                        && springs.indexOf("orespawn:ore_ruby_mining") > springs.indexOf("orespawn:spring_lava_dim"),
-                "Mining's ruby: ores " + ores + ", springs " + springs);
+        List<String> vegetal = liveStep(helper, "mining_biome", 9);
+        helper.assertTrue(!ores.contains("orespawn:ore_ruby_mining") && !springs.contains("orespawn:ore_ruby_mining")
+                        && vegetal.indexOf("orespawn:ore_ruby_mining") == 0
+                        && vegetal.indexOf("orespawn:lava_and_water") > 0,
+                "Mining's ruby: ores " + ores + ", springs " + springs + ", then " + vegetal);
         helper.succeed();
     }
 }

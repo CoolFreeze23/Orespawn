@@ -237,10 +237,10 @@
     [],
     [
       "orespawn:spring_water_dim",
-      "orespawn:spring_lava_dim",
-      "orespawn:ore_ruby_mining"
+      "orespawn:spring_lava_dim"
     ],
     [
+      "orespawn:ore_ruby_mining",
       "orespawn:hills_decoration_1710",
       "orespawn:lava_and_water",
       "orespawn:legacy_plants_hills",

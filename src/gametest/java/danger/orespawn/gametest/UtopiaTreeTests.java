@@ -508,7 +508,8 @@ public class UtopiaTreeTests {
      * {@code 2 + nextInt(2 + (15 - freq) / 2)} of them, each {@code 2 + nextInt(12)} into the chunk on the grass the
      * scan finds, and a column the scan refuses grows none; the gate's odds follow {@code freq}, one in 15 where it is
      * 0 and one in 29 where it is 14. WGEN-082 (GitHub #6): the scan stops at an earlier tree's crown, so on flat grass no
-     * tree stands within six blocks of an earlier one (the crown's widest disc), and the first always grows.
+     * tree stands within an earlier one's widest disc (six out for an apple tree, five for a cherry's or a peach's,
+     * WGEN-108), and the first always grows.
      */
     @GameTest(template = "empty")
     public static void w077a_the_apple_trees_roll(GameTestHelper helper) {
@@ -521,7 +522,9 @@ public class UtopiaTreeTests {
             for (int cz = 0; cz < 150; cz++) {
                 ChunkPos chunk = new ChunkPos(cx, cz);
                 int freq = (cx + cz) % 15;
-                List<BlockPos> trees = UtopiaTreeStructure.appleTrees(chunkRandom(seed, chunk), chunk, flat);
+                UtopiaTreeStructure.Orchard orchard = UtopiaTreeStructure.orchard(chunkRandom(seed, chunk), chunk, flat);
+                List<BlockPos> trees = orchard.bases();
+                int widest = orchard.fruit().discWidth(orchard.fruit().h4);
                 chunks[freq]++;
                 if (trees.isEmpty()) continue;
                 grew[freq]++;
@@ -532,8 +535,8 @@ public class UtopiaTreeTests {
                     for (int j = 0; j < i; j++) {
                         int r = Math.max(Math.abs(trees.get(i).getX() - trees.get(j).getX()),
                                 Math.abs(trees.get(i).getZ() - trees.get(j).getZ()));
-                        helper.assertTrue(r > 6, "the apple tree at " + trees.get(i) + " grew inside the crown of the one"
-                                + " at " + trees.get(j) + " in " + chunk);
+                        helper.assertTrue(r > widest, "the " + orchard.fruit() + " tree at " + trees.get(i) + " grew inside"
+                                + " the crown of the one at " + trees.get(j) + " in " + chunk + " (its widest disc " + widest + ")");
                     }
                 }
                 for (BlockPos tree : trees) {
