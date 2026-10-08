@@ -5,6 +5,7 @@ import com.google.gson.JsonParser;
 import danger.orespawn.OreSpawnMod;
 import danger.orespawn.world.DimensionStyle;
 import danger.orespawn.world.GenerationRange;
+import danger.orespawn.world.OldLandBiomes;
 import danger.orespawn.world.OreSpawnChunkGenerator;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
@@ -21,6 +22,7 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.LevelHeightAccessor;
 import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.biome.Biomes;
 import net.minecraft.world.level.biome.FixedBiomeSource;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
@@ -47,7 +49,7 @@ import java.util.List;
  * WGEN-096 and WGEN-095: Utopia, the Village, Crystal and Mining keep the build range of earlier versions, Y-64 to 320,
  * so land saved in it keeps every block, and build the original's world inside it: the 1.7.10 terrain and surface from
  * Y0 to 256 as before, solid bedrock below, nothing above; spawning from Y0 in their new land, old land in its own
- * biome; their ores 1.7.10's decorator's, at its counts and heights.
+ * biome where the game filled in plains; their ores 1.7.10's decorator's, at its counts and heights.
  */
 @GameTestHolder(OreSpawnMod.MOD_ID)
 @PrefixGameTestTemplate(false)
@@ -225,13 +227,32 @@ public class BuildRangeTests {
         helper.assertTrue(emerald != null && emerald.config() instanceof ReplaceBlockConfiguration replace
                         && replace.targetStates.size() == 1
                         && replace.targetStates.get(0).state.is(Blocks.EMERALD_ORE)
-                        && replace.targetStates.get(0).target.test(Blocks.STONE.defaultBlockState(), RandomSource.create(1L)),
+                        && replace.targetStates.get(0).target.test(Blocks.STONE.defaultBlockState(), RandomSource.create(1L))
+                        && !replace.targetStates.get(0).target.test(Blocks.DEEPSLATE.defaultBlockState(), RandomSource.create(1L)),
                 "the emeralds are not single emerald ores in stone");
         JsonObject emeralds = json(helper, "worldgen/placed_feature/ore_emerald_1710.json");
-        String placement = emeralds.getAsJsonArray("placement").toString();
-        helper.assertTrue(placement.contains("\"min_inclusive\":3") && placement.contains("\"max_inclusive\":8")
-                        && placement.contains("{\"absolute\":4}") && placement.contains("{\"absolute\":31}"),
-                "the emeralds are not 3 to 8 a chunk at Y4-31: " + placement);
+        String counter = "", provider = "";
+        int fewest = -1, most = -1, low = -1, high = -1;
+        for (var step : emeralds.getAsJsonArray("placement")) {
+            JsonObject modifier = step.getAsJsonObject();
+            String type = modifier.get("type").getAsString();
+            if (type.equals("minecraft:count")) {
+                JsonObject count = modifier.getAsJsonObject("count");
+                counter = count.get("type").getAsString();
+                fewest = count.get("min_inclusive").getAsInt();
+                most = count.get("max_inclusive").getAsInt();
+            }
+            if (type.equals("minecraft:height_range")) {
+                JsonObject height = modifier.getAsJsonObject("height");
+                provider = height.get("type").getAsString();
+                low = height.getAsJsonObject("min_inclusive").get("absolute").getAsInt();
+                high = height.getAsJsonObject("max_inclusive").get("absolute").getAsInt();
+            }
+        }
+        helper.assertTrue(counter.equals("minecraft:uniform") && fewest == 3 && most == 8
+                        && provider.equals("minecraft:uniform") && low == 4 && high == 31,
+                "the emeralds are " + counter + " " + fewest + "-" + most + " a chunk, " + provider + " Y" + low + "-"
+                        + high + ", not uniform 3 to 8 a chunk at Y4-31");
         helper.succeed();
     }
 
@@ -269,22 +290,34 @@ public class BuildRangeTests {
     public static void wgen096f_old_land_takes_the_dimensions_own_biome(GameTestHelper helper) {
         MinecraftServer server = helper.getLevel().getServer();
         Registry<Biome> biomes = server.registryAccess().registryOrThrow(Registries.BIOME);
-        Holder<Biome> mining = biomes.getHolderOrThrow(ResourceKey.create(Registries.BIOME, rl("mining_biome")));
-        Holder<Biome> plains = biomes.getHolderOrThrow(net.minecraft.world.level.biome.Biomes.PLAINS);
-        // an old Mining chunk: its biome saved to Y192, plains over it, as the game fills sections a save lacks
+        ResourceKey<Biome> own = ResourceKey.create(Registries.BIOME, rl("mining_biome"));
+        Holder<Biome> mining = biomes.getHolderOrThrow(own);
+        Holder<Biome> plains = biomes.getHolderOrThrow(Biomes.PLAINS);
+        Holder<Biome> desert = biomes.getHolderOrThrow(Biomes.DESERT);
+        // an old Mining chunk: its biome saved to Y192, plains over it, as the game fills sections a save lacks; and a
+        // desert set by hand down one corner (with /fillbiome, say), which stays
         ProtoChunk chunk = new ProtoChunk(new ChunkPos(-5, 7), UpgradeData.EMPTY, LevelHeightAccessor.create(-64, 384),
                 biomes, null);
         var sections = chunk.getSections();
         for (int i = 0; i < sections.length; i++) {
             Holder<Biome> b = chunk.getSectionYFromSectionIndex(i) < 12 ? mining : plains;
-            sections[i].fillBiomesFromNoise((x, y, z, s) -> b, null, 0, 0, 0);
+            sections[i].fillBiomesFromNoise((x, y, z, s) -> x == 0 && z == 0 ? desert : b, null, 0, 0, 0);
         }
-        boolean first = danger.orespawn.world.OldLandBiomes.refill(chunk, mining);
-        boolean only = true;
-        for (var section : sections) only &= !danger.orespawn.world.OldLandBiomes.holds(section, b -> !b.equals(mining));
-        boolean second = danger.orespawn.world.OldLandBiomes.refill(chunk, mining);
-        helper.assertTrue(first && only && !second, "the old chunk's plains were " + (first ? "" : "not ")
-                + "refilled, only Mining's biome " + only + ", a second pass changed it " + second);
+        boolean first = OldLandBiomes.refill(chunk, mining);
+        int wrong = 0;
+        for (var section : sections) {
+            for (int x = 0; x < 4; x++) {
+                for (int y = 0; y < 4; y++) {
+                    for (int z = 0; z < 4; z++) {
+                        if (!section.getNoiseBiome(x, y, z).is(x == 0 && z == 0 ? Biomes.DESERT : own)) wrong++;
+                    }
+                }
+            }
+        }
+        boolean second = OldLandBiomes.refill(chunk, mining);
+        helper.assertTrue(first && wrong == 0 && !second, "the old chunk's plains were " + (first ? "" : "not ")
+                + "refilled, " + wrong + " cells neither Mining's nor the desert set by hand, a second pass changed it "
+                + second);
         helper.succeed();
     }
 
