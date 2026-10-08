@@ -12,8 +12,6 @@ import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LeavesBlock;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.levelgen.LegacyRandomSource;
-import net.minecraft.world.level.levelgen.WorldgenRandom;
 import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
 import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConfiguration;
@@ -74,9 +72,9 @@ public class MagicAppleTreeFeature extends Feature<NoneFeatureConfiguration> {
             trees = pass.appleTrees();
             fruit = pass.fruit();
         } else {
-            WorldgenRandom random = new WorldgenRandom(new LegacyRandomSource(0L));
-            random.setLargeFeatureSeed(level.getSeed(), chunk.x, chunk.z);
-            UtopiaTreeStructure.Orchard orchard = UtopiaTreeStructure.orchard(random, chunk, probe);
+            // WGEN-108: the Village's orchard on the random the original drew it from, after its mosquitos and ants
+            UtopiaTreeStructure.Orchard orchard = UtopiaTreeStructure.orchard(
+                    UtopiaTreeStructure.villageRandom(level.getSeed(), chunk, probe), chunk, probe);
             trees = orchard.bases();
             fruit = orchard.fruit();
         }

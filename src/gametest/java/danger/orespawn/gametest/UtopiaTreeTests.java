@@ -414,7 +414,8 @@ public class UtopiaTreeTests {
             for (int cz = -50; cz < 50; cz++) {
                 ChunkPos chunk = new ChunkPos(cx, cz);
                 UtopiaTreeStructure.ChunkPass pass = UtopiaTreeStructure.chunkPass(seed, chunk, flat);
-                boolean huge = UtopiaTreeStructure.hugeRoll(chunkRandom(seed, chunk), chunk, flat).madeOne();
+                boolean huge = UtopiaTreeStructure.hugeRoll(UtopiaTreeStructure.utopiaRandom(seed, chunk, flat), chunk,
+                        flat).madeOne();
                 helper.assertTrue(pass.bigTree() == huge, "the pass and the huge structure disagree at " + chunk);
                 int kinds = (pass.bigTree() ? 1 : 0) + (pass.appleTrees().isEmpty() ? 0 : 1) + (pass.grove().isEmpty() ? 0 : 1);
                 helper.assertTrue(kinds <= 1, "the pass grew " + kinds + " kinds of tree in " + chunk + ": " + pass);
@@ -453,7 +454,8 @@ public class UtopiaTreeTests {
             for (int cz = -200; cz < 200; cz++) {
                 ChunkPos chunk = new ChunkPos(cx, cz);
                 chunks++;
-                UtopiaTreeStructure.HugeRoll roll = UtopiaTreeStructure.hugeRoll(chunkRandom(seed, chunk), chunk, flat);
+                UtopiaTreeStructure.HugeRoll roll = UtopiaTreeStructure.hugeRoll(
+                        UtopiaTreeStructure.utopiaRandom(seed, chunk, flat), chunk, flat);
                 if (roll.royal() == null) continue;
                 royals++;
                 if (roll.queen()) queens++;
@@ -553,6 +555,25 @@ public class UtopiaTreeTests {
         double far = (double) grew[14] / chunks[14];
         helper.assertTrue(Math.abs(near - 1 / 15.0) < 0.012, "freq 0 grew apple trees in " + near + " of its chunks (1/15 expected)");
         helper.assertTrue(Math.abs(far - 1 / 29.0) < 0.008, "freq 14 grew apple trees in " + far + " of its chunks (1/29 expected)");
+        helper.succeed();
+    }
+
+    /**
+     * WGEN-108: the trees' random is the one Forge gave the original's OreSpawnWorld (GameRegistry.generateWorld:
+     * {@code new Random(seed)}, its two longs shifted right by three, {@code xSeed * chunkX + zSeed * chunkZ ^ seed}),
+     * java.util.Random's own sequence: the first draws for four chunks, worked out apart from the mod (java.util.Random's
+     * LCG, its nextLong and its nextInt with a bound).
+     */
+    @GameTest(template = "empty")
+    public static void w108b_the_trees_random_is_forge_s(GameTestHelper helper) {
+        long[][] want = {{1007L, 0, 0, 14, 0, 4, 3}, {1007L, 3, -5, 28, 8, 8, 0}, {1007L, -40, 40, 6, 6, 5, 1},
+                {-8780444890188216456L, 125, 7, 14, 1, 4, 1}};
+        for (long[] w : want) {
+            net.minecraft.util.RandomSource random = UtopiaTreeStructure.forgeRandom(w[0], new ChunkPos((int) w[1], (int) w[2]));
+            int[] got = {random.nextInt(50), random.nextInt(16), random.nextInt(20), random.nextInt(4)};
+            helper.assertTrue(got[0] == w[3] && got[1] == w[4] && got[2] == w[5] && got[3] == w[6],
+                    "seed " + w[0] + " chunk " + w[1] + ", " + w[2] + ": " + java.util.Arrays.toString(got));
+        }
         helper.succeed();
     }
 

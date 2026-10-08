@@ -45,8 +45,8 @@ public class RoyalTreeStructure extends Structure {
 
     /**
      * WGEN-080: the royal tree is addHugeTree's own royal branch (orig OreSpawnWorld.java:1830-1880), read from the
-     * chunk's huge roll ({@link UtopiaTreeStructure#hugeRoll}) on the random the structure pass gives every structure
-     * of the chunk: the one-in-fifty gate, up to three attempts at chunk + 4 + nextInt(8) (:1842-1843) for the grass
+     * chunk's huge roll ({@link UtopiaTreeStructure#hugeRoll}) on the random the original drew it from
+     * ({@link UtopiaTreeStructure#utopiaRandom}, as the huge trees and the chunk pass): the one-in-fifty gate, up to three attempts at chunk + 4 + nextInt(8) (:1842-1843) for the grass
      * under air inside Y51-127 (:1844-1846; the dry noise surface stands in for the grass, as for the huge trees), the
      * type roll's 0 (:1855, :1860), then the King on a 0 and the Queen otherwise (:1863). The tree is built on the grass
      * ({@code posY - 1}, :1864/:1866). The royal_trees set asks every chunk (spacing 1) and tries both trees; the one
@@ -55,8 +55,9 @@ public class RoyalTreeStructure extends Structure {
      */
     @Override
     public Optional<GenerationStub> findGenerationPoint(GenerationContext context) {
-        UtopiaTreeStructure.HugeRoll roll = UtopiaTreeStructure.hugeRoll(context.random(), context.chunkPos(),
-                UtopiaTreeStructure.probe(context));
+        UtopiaTreeStructure.ColumnProbe probe = UtopiaTreeStructure.probe(context);
+        UtopiaTreeStructure.HugeRoll roll = UtopiaTreeStructure.hugeRoll(
+                UtopiaTreeStructure.utopiaRandom(context.seed(), context.chunkPos(), probe), context.chunkPos(), probe);
         if (roll.royal() == null || roll.queen() != queenVariant) return Optional.empty();
         BlockPos origin = roll.royal();
         // the canopy stays below the world ceiling (the window keeps the grass under Y127)

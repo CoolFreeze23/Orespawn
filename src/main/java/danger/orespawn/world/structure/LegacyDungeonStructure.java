@@ -483,9 +483,9 @@ public class LegacyDungeonStructure extends Structure {
     private static BlockPos utopiaAltarOrigin(GenerationContext context, boolean queen) {
         // the pass's altar roll runs only where no tree grew: where that roll fails the chunk has no altar whatever the
         // terrain, so the pass and its column probes are left to the one chunk in 2,000 where it passes
-        if (!UtopiaTreeStructure.altarRollReached(context.seed(), context.chunkPos())) return null;
-        UtopiaTreeStructure.Altar altar = UtopiaTreeStructure.chunkPass(context.seed(), context.chunkPos(),
-                UtopiaTreeStructure.probe(context)).altar();
+        UtopiaTreeStructure.ColumnProbe probe = UtopiaTreeStructure.probe(context);
+        if (!UtopiaTreeStructure.altarRollReached(context.seed(), context.chunkPos(), probe)) return null;
+        UtopiaTreeStructure.Altar altar = UtopiaTreeStructure.chunkPass(context.seed(), context.chunkPos(), probe).altar();
         if (altar == null || altar.queen() != queen || !altarRollClear(context.seed(), context.chunkPos())) return null;
         // orig OreSpawnWorld.java:2558-2560: quickReallyBigSpaceCheck on the first grass found, the roll ended when it fails
         if (!UtopiaTreeStructure.reallyBigSpaceClear(context.seed(), context.chunkGenerator(), context.heightAccessor(),

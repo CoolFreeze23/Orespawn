@@ -181,7 +181,7 @@ public class LegacyTerrainReaderTests {
             IntStream.range(0, 200).parallel().forEach(i -> {
                 for (int j = 0; j < 200; j++) {
                     ChunkPos chunk = new ChunkPos(-100 + i, 400 + j);
-                    if (UtopiaTreeStructure.altarRollReached(seed, chunk)) {
+                    if (UtopiaTreeStructure.altarRollReached(seed, chunk, probe)) {
                         passing.add(chunk);
                     } else if ((i * 200 + j) % 20 == 7) {
                         failing.add(chunk);

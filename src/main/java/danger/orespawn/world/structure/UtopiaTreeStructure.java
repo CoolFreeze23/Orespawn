@@ -25,7 +25,6 @@ import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.LegacyRandomSource;
 import net.minecraft.world.level.levelgen.RandomState;
-import net.minecraft.world.level.levelgen.WorldgenRandom;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
 import net.minecraft.world.level.levelgen.structure.Structure;
 import net.minecraft.world.level.levelgen.structure.StructureStart;
@@ -46,9 +45,9 @@ import net.minecraft.world.level.levelgen.structure.StructureType;
  *
  * <p>Two structures share this type, told apart by the {@code roll} field: {@code grove} carries the addOtherTrees
  * roll, {@code huge} the addHugeTree roll. Each is placed with {@code random_spread} spacing 1 / separation 0, so every
- * Utopia chunk asks {@link #findGenerationPoint}, which makes the original's per-chunk roll with the chunk's own
- * worldgen random (the gate, the LessLag gates, the placement attempts and the per-tree parameters, in the original's
- * draw order) and answers with the pieces or with nothing. The royal branch of the huge roll (one in a hundred) makes
+ * Utopia chunk asks {@link #findGenerationPoint}, which makes the original's per-chunk roll on the random the original
+ * drew it from ({@link #utopiaRandom}: the chunk's Forge seed, WGEN-108; the gate, the LessLag gates, the placement
+ * attempts and the per-tree parameters, in the original's draw order) and answers with the pieces or with nothing. The royal branch of the huge roll (one in a hundred) makes
  * no tree here: the King or the Queen it picks is built by {@link RoyalTreeStructure}, which reads the same roll
  * ({@link #hugeRoll}).
  *
@@ -79,7 +78,7 @@ import net.minecraft.world.level.levelgen.structure.StructureType;
  * <p>WGEN-077, one random for the whole pass. The original drew the huge roll, the apple trees and the grove from the
  * populator's one random, in that order, and the apple trees short-circuited the grove: {@code !addAppleTrees(...) &&
  * !addOtherTrees(...)} (:43) never ran addOtherTrees in a chunk that grew an apple tree. {@link #chunkPass} replays
- * that pass on the chunk's worldgen random: the huge roll's draws, then (when it grew nothing, a royal tree included)
+ * that pass on the original's random ({@link #utopiaRandom}): the huge roll's draws, then (when it grew nothing, a royal tree included)
  * the apple trees' ({@link #appleTrees}), then (when those grew nothing) the grove's. The grove structure, the magic
  * apple tree feature and the King altars all read their answer from it, so they agree chunk for chunk. Drawing the
  * rolls one after another on one random also keeps them as independent as the original's: two rolls that each started
@@ -126,7 +125,7 @@ public class UtopiaTreeStructure extends Structure {
         ColumnProbe probe = probe(context);
         List<UtopiaTreePiece> pieces = switch (roll) {
             case GROVE -> chunkPass(context.seed(), context.chunkPos(), probe).grove();
-            case HUGE -> huge(context.random(), context.chunkPos(), probe);
+            case HUGE -> huge(utopiaRandom(context.seed(), context.chunkPos(), probe), context.chunkPos(), probe);
         };
         if (pieces.isEmpty()) return Optional.empty();
         BlockPos origin = pieces.get(0).origin();
@@ -342,16 +341,14 @@ public class UtopiaTreeStructure extends Structure {
     }
 
     /**
-     * WGEN-075 / WGEN-077 / WGEN-080: the Utopia chunk pass on one random (orig OreSpawnWorld.java:42-46), seeded as
-     * the structure pass seeds a structure's context ({@code makeRandom}: a {@code LegacyRandomSource(0)} given
-     * {@code setLargeFeatureSeed(seed, x, z)}), so its first draws are exactly the huge and royal structures'. The huge
+     * WGEN-075 / WGEN-077 / WGEN-080: the Utopia chunk pass on one random (orig OreSpawnWorld.java:42-46), the one the
+     * original drew it from ({@link #utopiaRandom}, WGEN-108), as the huge and royal structures draw theirs. The huge
      * roll first; when it grows a tree (a royal one included), nothing else of the pass grows. Otherwise the apple
      * trees' draws follow on the same random, the grove's only when the apple trees grew none (:43), and the altar's
      * roll only when the grove grew none too (:43-44, {@link #altarRoll}).
      */
     public static ChunkPass chunkPass(long seed, ChunkPos chunk, ColumnProbe probe) {
-        WorldgenRandom random = new WorldgenRandom(new LegacyRandomSource(0L));
-        random.setLargeFeatureSeed(seed, chunk.x, chunk.z);
+        RandomSource random = utopiaRandom(seed, chunk, probe);
         HugeRoll huge = hugeRoll(random, chunk, probe);
         if (huge.madeOne()) return new ChunkPass(huge, List.of(), Fruit.APPLE, List.of(), null);
         Orchard orchard = orchard(random, chunk, probe);
@@ -367,15 +364,113 @@ public class UtopiaTreeStructure extends Structure {
     private static final ColumnProbe NO_GRASS = (x, z, low, high) -> Integer.MIN_VALUE;
 
     /**
+     * WGEN-108: the random the original's OreSpawnWorld drew a chunk's trees from. Forge seeds every world generator of a
+     * chunk alike (GameRegistry.generateWorld, Forge 10.13.4.1614): {@code new Random(seed)}, its two longs shifted right
+     * by three, then {@code xSeed * chunkX + zSeed * chunkZ ^ seed}; LegacyRandomSource is java.util.Random's LCG.
+     */
+    public static RandomSource forgeRandom(long seed, ChunkPos chunk) {
+        LegacyRandomSource world = new LegacyRandomSource(seed);
+        long xSeed = world.nextLong() >> 3;
+        long zSeed = world.nextLong() >> 3;
+        return new LegacyRandomSource(xSeed * chunk.x + zSeed * chunk.z ^ seed);
+    }
+
+    /**
+     * WGEN-108: {@link #forgeRandom} drawn on to Utopia's tree rolls. The Utopia branch of OreSpawnWorld.generate runs
+     * generateSurface first (OreSpawnWorld.java:40-41, 274-328): each patch's gate, its places, and where a gate passes,
+     * the draws it makes on the grass under air it finds from Y100 down (the column probe: the ground before the
+     * decoration; the original's scans also stopped on its decorator's grass and flowers, so a chunk where a gate passed
+     * can draw on differently). The 1.7.10 corn's and tomatoes' nine air blocks over the grass are taken as clear, the
+     * ground having no trees yet. Then addHugeTree (:42).
+     */
+    public static RandomSource utopiaRandom(long seed, ChunkPos chunk, ColumnProbe probe) {
+        RandomSource random = forgeRandom(seed, chunk);
+        int lessLag = OreSpawnConfig.LESS_LAG.get();
+        if (random.nextInt(20) == 0) {                                              // addStrawberries :961-976
+            for (int i = 0; i < 5; i++) {
+                random.nextInt(16);
+                random.nextInt(16);
+            }
+        }
+        if (random.nextInt(35) == 1) {                                              // addCorn :1023-1067
+            int tries = lessLag == 1 ? 5 : lessLag == 2 ? 3 : 6;
+            for (int i = 0; i < tries; i++) {
+                if (surfaceGrass(random, chunk, probe)) random.nextInt(5);
+            }
+        }
+        if (random.nextInt(70) == 1) {                                              // addTomatoes :1069-1106
+            for (int i = 0; i < 5; i++) {
+                if (surfaceGrass(random, chunk, probe)) random.nextInt(3);
+            }
+        }
+        if (random.nextInt(15) == 0) {                                              // addVeggies :1882-1923
+            for (int i = 0; i < 8; i++) {
+                if (!surfaceGrass(random, chunk, probe)) continue;
+                int what = random.nextInt(6);
+                if (what == 4) random.nextInt(10);
+                else if (what == 5) random.nextInt(50);
+            }
+        }
+        if (random.nextInt(10 + lessLag * 2) == 0) {                                // addButterfliesAndMoths :1108-1133
+            for (int i = 0; i < 4; i++) {
+                if (surfaceGrass(random, chunk, probe)) random.nextInt(3);
+            }
+        }
+        mosquitoDraws(random, lessLag);                                             // addMosquitos :1418-1436
+        antDraws(random, chunk, probe, lessLag);                                    // addAnts(.., 4) :1472-1502
+        return random;
+    }
+
+    /**
+     * WGEN-108: {@link #forgeRandom} drawn on to the Village's orchard: the Village branch of OreSpawnWorld.generate runs
+     * its mosquitos and ants before addAppleTrees (OreSpawnWorld.java:114-119).
+     */
+    public static RandomSource villageRandom(long seed, ChunkPos chunk, ColumnProbe probe) {
+        RandomSource random = forgeRandom(seed, chunk);
+        int lessLag = OreSpawnConfig.LESS_LAG.get();
+        mosquitoDraws(random, lessLag);
+        antDraws(random, chunk, probe, lessLag);
+        return random;
+    }
+
+    /** addMosquitos in Utopia and the Village (OreSpawnWorld.java:1418-1436): its gates, and its places when they pass. */
+    private static void mosquitoDraws(RandomSource random, int lessLag) {
+        if (!OreSpawnConfig.MOSQUITO_ENABLE.get()) return;
+        if (random.nextInt(25 + lessLag * 2) != 0) return;
+        if (random.nextInt(3) != 0) return;
+        for (int i = 0; i < 2; i++) {
+            random.nextInt(16);
+            random.nextInt(16);
+        }
+    }
+
+    /** addAnts with a red frequency of 4 (OreSpawnWorld.java:1472-1502): nothing when no ant is enabled. */
+    private static void antDraws(RandomSource random, ChunkPos chunk, ColumnProbe probe, int lessLag) {
+        if (!OreSpawnConfig.RED_ANT_ENABLE.get() && !OreSpawnConfig.BLACK_ANT_ENABLE.get()
+                && !OreSpawnConfig.RAINBOW_ANT_ENABLE.get() && !OreSpawnConfig.UNSTABLE_ANT_ENABLE.get()) return;
+        if (random.nextInt(30 + lessLag * 4) != 0) return;
+        for (int i = 0; i < 4; i++) {
+            if (surfaceGrass(random, chunk, probe) && random.nextInt(4) == 0) random.nextInt(4);
+        }
+    }
+
+    /** A generateSurface place, chunk + nextInt(16) each way, and whether its scan from Y100 down finds grass over Y40. */
+    private static boolean surfaceGrass(RandomSource random, ChunkPos chunk, ColumnProbe probe) {
+        int x = chunk.getMinBlockX() + random.nextInt(16);
+        int z = chunk.getMinBlockZ() + random.nextInt(16);
+        return probe.base(x, z, 40, 100) != Integer.MIN_VALUE;
+    }
+
+    /**
      * Whether the altar roll passes in the one pass that reaches it: a pass reaches the roll only when none of the
      * chunk's tree rolls grew a tree, so every attempt of theirs found no grass (a grass found always grows its tree:
      * the huge roll's every type, the apple tree, the grove's Wind tree, and its Sky tree, whose top of 190 or more is
-     * always 20 over a base of at most 100) and the draws before the roll are those of a pass that finds no grass
-     * anywhere. False: the chunk has no altar whatever its terrain. True: {@link #chunkPass} decides.
+     * always 20 over a base of at most 100) and the tree rolls' draws before the roll are those of a pass that finds no
+     * grass anywhere (the surface patches' draws before them read the ground, {@link #utopiaRandom}). False: the chunk has
+     * no altar whatever its terrain. True: {@link #chunkPass} decides.
      */
-    public static boolean altarRollReached(long seed, ChunkPos chunk) {
-        WorldgenRandom random = new WorldgenRandom(new LegacyRandomSource(0L));
-        random.setLargeFeatureSeed(seed, chunk.x, chunk.z);
+    public static boolean altarRollReached(long seed, ChunkPos chunk, ColumnProbe probe) {
+        RandomSource random = utopiaRandom(seed, chunk, probe);
         if (hugeRoll(random, chunk, NO_GRASS).madeOne()) return false;
         if (!appleTrees(random, chunk, NO_GRASS).isEmpty()) return false;
         if (!grove(random, chunk, NO_GRASS).isEmpty()) return false;
