@@ -1,0 +1,8 @@
+{
+  "feature": "orespawn:lava_and_water",
+  "placement": [
+    {
+      "type": "minecraft:biome"
+    }
+  ]
+}

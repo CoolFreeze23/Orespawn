@@ -1,5 +1,5 @@
 {
-  "feature": "orespawn:ore_block_ruby",
+  "feature": "orespawn:chunk_ore_block_ruby",
   "placement": [
     {
       "type": "orespawn:vein_count",
@@ -7,10 +7,8 @@
       "min_y": 0,
       "max_y": 15,
       "passes": 3,
-      "less_ore_passes": 0
-    },
-    {
-      "type": "minecraft:in_square"
+      "less_ore_passes": 0,
+      "chunk_window": true
     },
     {
       "type": "minecraft:biome"

@@ -1,0 +1,17 @@
+{
+  "feature": "orespawn:chunk_red_ant_troll",
+  "placement": [
+    {
+      "type": "orespawn:vein_count",
+      "count": 4,
+      "min_y": 5,
+      "max_y": 50,
+      "extra_dice": 4,
+      "less_ore_divisor": 2,
+      "chunk_window": true
+    },
+    {
+      "type": "minecraft:biome"
+    }
+  ]
+}

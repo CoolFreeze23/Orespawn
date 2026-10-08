@@ -1,0 +1,8 @@
+{
+  "feature": "orespawn:hills_decoration_1710",
+  "placement": [
+    {
+      "type": "minecraft:biome"
+    }
+  ]
+}

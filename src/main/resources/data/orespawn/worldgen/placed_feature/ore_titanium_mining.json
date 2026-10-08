@@ -1,5 +1,5 @@
 {
-  "feature": "orespawn:ore_titanium",
+  "feature": "orespawn:chunk_ore_titanium",
   "placement": [
     {
       "type": "orespawn:vein_count",
@@ -9,10 +9,8 @@
       "extra_dice": 9,
       "less_ore_divisor": 3,
       "passes": 3,
-      "less_ore_passes": 1
-    },
-    {
-      "type": "minecraft:in_square"
+      "less_ore_passes": 1,
+      "chunk_window": true
     },
     {
       "type": "minecraft:biome"

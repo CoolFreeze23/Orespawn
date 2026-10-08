@@ -874,7 +874,7 @@ public class MiscTests {
             }
         }
         SpawnOresPoolFeature feature = ModFeatures.SPAWN_ORES_POOL.get();
-        SpawnOresPoolFeature.Configuration cfg = new SpawnOresPoolFeature.Configuration(20, 1, 1);
+        SpawnOresPoolFeature.Configuration cfg = new SpawnOresPoolFeature.Configuration(20, 1, 1, false);
         FeaturePlaceContext<SpawnOresPoolFeature.Configuration> ctx = new FeaturePlaceContext<>(
                 Optional.empty(), level, level.getChunkSource().getGenerator(), level.random,
                 chunkOrigin, cfg);

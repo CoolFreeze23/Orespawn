@@ -43,6 +43,10 @@ import net.minecraft.world.level.levelgen.feature.LakeFeature;
  * Village/Mining dimensions the clamped sample resolves to the identical
  * biome, so behavior is unchanged; in any multi-biome use the freeze check
  * would approximate the biome by at most 15 blocks — documented delta.</p>
+ *
+ * <p>Second change: the lake first sinks through air to the ground, as 1.7.10's WorldGenLakes does
+ * ({@code while (y > 5 && world.isAirBlock(x, y, z)) --y}), so the original's lakes rolled at any height over the land
+ * lie on it rather than fail in the air.</p>
  */
 public class SafeLakeFeature extends Feature<LakeFeature.Configuration> {
     private static final BlockState AIR = Blocks.CAVE_AIR.defaultBlockState();
@@ -61,7 +65,13 @@ public class SafeLakeFeature extends Feature<LakeFeature.Configuration> {
         // are the safe window for biome lookups (see class Javadoc).
         int chunkMinX = context.origin().getX() & ~15;
         int chunkMinZ = context.origin().getZ() & ~15;
-        if (blockpos.getY() <= GenerationRange.bottom(context.chunkGenerator(), worldgenlevel) + 4) {
+        // 1.7.10's WorldGenLakes first sinks through air to the ground (while y > 5 and the block is air), so a lake
+        // rolled over the land lies on it; 1.21's copy left that to the placement, and these lakes' placement draws Y.
+        int bottom = GenerationRange.bottom(context.chunkGenerator(), worldgenlevel);
+        while (blockpos.getY() > bottom + 5 && worldgenlevel.isEmptyBlock(blockpos)) {
+            blockpos = blockpos.below();
+        }
+        if (blockpos.getY() <= bottom + 4) {
             return false;
         } else {
             blockpos = blockpos.below(4);

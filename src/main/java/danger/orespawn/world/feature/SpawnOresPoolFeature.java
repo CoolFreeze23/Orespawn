@@ -4,6 +4,8 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import danger.orespawn.ModBlocks;
 import danger.orespawn.OreSpawnConfig;
+import danger.orespawn.world.GenerationRange;
+import danger.orespawn.world.LegacyChunkVein;
 import net.minecraft.core.BlockPos;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.RandomSource;
@@ -65,11 +67,13 @@ public class SpawnOresPoolFeature extends Feature<SpawnOresPoolFeature.Configura
     private static final int MIN_DEPTH = 50;
     private static final int MAX_DEPTH = 128;
 
-    public record Configuration(int countDice, int passes, int lessOrePasses) implements FeatureConfiguration {
+    public record Configuration(int countDice, int passes, int lessOrePasses, boolean chunkVeins) implements FeatureConfiguration {
         public static final Codec<Configuration> CODEC = RecordCodecBuilder.create(instance -> instance.group(
                 Codec.INT.fieldOf("count_dice").forGetter(Configuration::countDice),
                 Codec.INT.optionalFieldOf("passes", 1).forGetter(Configuration::passes),
-                Codec.INT.optionalFieldOf("less_ore_passes", 1).forGetter(Configuration::lessOrePasses)
+                Codec.INT.optionalFieldOf("less_ore_passes", 1).forGetter(Configuration::lessOrePasses),
+                // ChunkOreGenerator's vein (Utopia, the Village, Mining): centred 8 in and kept to the chunk
+                Codec.BOOL.optionalFieldOf("chunk_veins", false).forGetter(Configuration::chunkVeins)
         ).apply(instance, Configuration::new));
     }
 
@@ -236,11 +240,17 @@ public class SpawnOresPoolFeature extends Feature<SpawnOresPoolFeature.Configura
                 Block block = random.nextInt(104) < 7
                         ? RARE_POOL.get(random.nextInt(RARE_POOL.size())).get()
                         : COMMON_POOL.get(random.nextInt(COMMON_POOL.size())).get();
+                BlockPos at = new BlockPos(chunkOrigin.getX() + x, y, chunkOrigin.getZ() + z);
+                if (config.chunkVeins()) {
+                    placedAnything |= LegacyChunkVein.place(level, random, at, CLUMP_SIZE, block.defaultBlockState(),
+                            stoneTarget, GenerationRange.bottom(context.chunkGenerator(), level),
+                            GenerationRange.top(context.chunkGenerator(), level)) > 0;
+                    continue;
+                }
                 OreConfiguration veinConfig = new OreConfiguration(
                         List.of(OreConfiguration.target(stoneTarget, block.defaultBlockState())),
                         CLUMP_SIZE);
-                placedAnything |= Feature.ORE.place(veinConfig, level, context.chunkGenerator(), random,
-                        new BlockPos(chunkOrigin.getX() + x, y, chunkOrigin.getZ() + z));
+                placedAnything |= Feature.ORE.place(veinConfig, level, context.chunkGenerator(), random, at);
             }
         }
         return placedAnything;

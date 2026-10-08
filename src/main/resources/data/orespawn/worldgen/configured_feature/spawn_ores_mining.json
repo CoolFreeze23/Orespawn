@@ -3,6 +3,7 @@
   "config": {
     "count_dice": 30,
     "passes": 3,
-    "less_ore_passes": 1
+    "less_ore_passes": 1,
+    "chunk_veins": true
   }
 }

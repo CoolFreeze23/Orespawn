@@ -1,6 +1,7 @@
 {
   "type": "orespawn:spawn_ores_pool",
   "config": {
-    "count_dice": 30
+    "count_dice": 30,
+    "chunk_veins": true
   }
 }

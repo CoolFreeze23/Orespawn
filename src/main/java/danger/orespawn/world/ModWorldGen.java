@@ -69,6 +69,13 @@ public class ModWorldGen {
     public static final DeferredHolder<PlacementModifierType<?>, PlacementModifierType<OreSpawnVeinPlacement>> VEIN_COUNT =
             PLACEMENT_MODIFIERS.register("vein_count", () -> () -> OreSpawnVeinPlacement.CODEC);
 
+    /**
+     * {@code orespawn:below_or_chance} — a position under {@code y}, or one in {@code chance} of the rest: the original's
+     * lava-lake gate in the Village and Mining. See {@link BelowOrChancePlacement}.
+     */
+    public static final DeferredHolder<PlacementModifierType<?>, PlacementModifierType<BelowOrChancePlacement>> BELOW_OR_CHANCE =
+            PLACEMENT_MODIFIERS.register("below_or_chance", () -> () -> BelowOrChancePlacement.CODEC);
+
     /** DeferredRegister for custom density functions (the 1.7.10 terrain, GitHub #6). */
     public static final DeferredRegister<MapCodec<? extends DensityFunction>> DENSITY_FUNCTION_TYPES =
             DeferredRegister.create(Registries.DENSITY_FUNCTION_TYPE, OreSpawnMod.MOD_ID);

@@ -42,6 +42,11 @@ import net.minecraft.world.level.levelgen.placement.PlacementModifierType;
  * So Mining features use {@code passes: 3, less_ore_passes: 1}, while the
  * LessOre==0-only boost passes use {@code less_ore_passes: 0}.</p>
  *
+ * <p>{@code chunk_window} gives each attempt the x and z ChunkOreGenerator draws, 3 + nextInt(10) into the chunk on
+ * each (x, then the Y roll, then z, as the original orders them), for its veins ({@code orespawn:chunk_ore}), which
+ * centre 8 blocks further in and keep to that chunk; without it the attempt keeps the incoming x and z for a following
+ * {@code in_square}.</p>
+ *
  * <p>Thread safety: stateless apart from immutable codec fields; the config
  * read is a NeoForge config getter (safe from worker threads).</p>
  */
@@ -57,7 +62,8 @@ public class OreSpawnVeinPlacement extends PlacementModifier {
             Codec.intRange(0, 256).fieldOf("max_y").forGetter(p -> p.maxY),
             Codec.intRange(1, 8).optionalFieldOf("passes", 1).forGetter(p -> p.passes),
             Codec.intRange(0, 8).optionalFieldOf("less_ore_passes").forGetter(p -> p.lessOrePasses),
-            Codec.intRange(1, 16).optionalFieldOf("less_ore_divisor", 1).forGetter(p -> p.lessOreDivisor)
+            Codec.intRange(1, 16).optionalFieldOf("less_ore_divisor", 1).forGetter(p -> p.lessOreDivisor),
+            Codec.BOOL.optionalFieldOf("chunk_window", false).forGetter(p -> p.chunkWindow)
     ).apply(instance, OreSpawnVeinPlacement::new));
 
     private final int count;
@@ -67,9 +73,10 @@ public class OreSpawnVeinPlacement extends PlacementModifier {
     private final int passes;
     private final Optional<Integer> lessOrePasses;
     private final int lessOreDivisor;
+    private final boolean chunkWindow;
 
     public OreSpawnVeinPlacement(int count, int extraDice, int minY, int maxY,
-                                 int passes, Optional<Integer> lessOrePasses, int lessOreDivisor) {
+                                 int passes, Optional<Integer> lessOrePasses, int lessOreDivisor, boolean chunkWindow) {
         this.count = count;
         this.extraDice = extraDice;
         this.minY = minY;
@@ -77,6 +84,7 @@ public class OreSpawnVeinPlacement extends PlacementModifier {
         this.passes = passes;
         this.lessOrePasses = lessOrePasses;
         this.lessOreDivisor = lessOreDivisor;
+        this.chunkWindow = chunkWindow;
     }
 
     @Override
@@ -92,6 +100,17 @@ public class OreSpawnVeinPlacement extends PlacementModifier {
                 attempts /= this.lessOreDivisor;
             }
             for (int i = 0; i < attempts; i++) {
+                if (this.chunkWindow) {
+                    // orig ChunkOreGenerator: x = 3 + chunkX + nextInt(10), y = nextInt(128), z = 3 + chunkZ + nextInt(10)
+                    int x = (pos.getX() & ~15) + 3 + random.nextInt(10);
+                    int y = random.nextInt(Y_DICE);
+                    int z = (pos.getZ() & ~15) + 3 + random.nextInt(10);
+                    if (y < this.minY || y > this.maxY) {
+                        continue;
+                    }
+                    out.add(new BlockPos(x, y, z));
+                    continue;
+                }
                 // orig: randPosY = nextInt(128); reject outside [mindepth, maxdepth]
                 int y = random.nextInt(Y_DICE);
                 if (y < this.minY || y > this.maxY) {

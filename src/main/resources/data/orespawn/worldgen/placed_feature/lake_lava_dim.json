@@ -22,6 +22,11 @@
       }
     },
     {
+      "type": "orespawn:below_or_chance",
+      "y": 63,
+      "chance": 10
+    },
+    {
       "type": "minecraft:biome"
     }
   ]

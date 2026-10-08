@@ -1,0 +1,17 @@
+{
+  "feature": "orespawn:chunk_ore_salt",
+  "placement": [
+    {
+      "type": "orespawn:vein_count",
+      "count": 5,
+      "min_y": 50,
+      "max_y": 127,
+      "extra_dice": 9,
+      "less_ore_divisor": 3,
+      "chunk_window": true
+    },
+    {
+      "type": "minecraft:biome"
+    }
+  ]
+}

@@ -44,6 +44,20 @@ public class ModFeatures {
             FEATURES.register("spawn_ores_pool",
                     () -> new SpawnOresPoolFeature(SpawnOresPoolFeature.Configuration.CODEC));
 
+    // The original's ChunkOreGenerator vein for OreSpawn's own ore pass in Utopia, the Village and Mining: centred 8 in
+    // from its origin and kept to the origin's chunk (LegacyChunkVein).
+    public static final DeferredHolder<Feature<?>, ChunkOreFeature> CHUNK_ORE =
+            FEATURES.register("chunk_ore", () -> new ChunkOreFeature(
+                    net.minecraft.world.level.levelgen.feature.configurations.OreConfiguration.CODEC));
+
+    // Mining's trees, flowers and grass as 1.7.10's extreme hills decorator plants them.
+    public static final DeferredHolder<Feature<?>, LegacyHillsDecorationFeature> HILLS_DECORATION =
+            FEATURES.register("hills_decoration", () -> new LegacyHillsDecorationFeature(NoneFeatureConfiguration.CODEC));
+
+    // Mining's falls of water and lava on its hillsides (the original's OreSpawnWorld.addLavaAndWater).
+    public static final DeferredHolder<Feature<?>, LavaAndWaterFeature> LAVA_AND_WATER =
+            FEATURES.register("lava_and_water", () -> new LavaAndWaterFeature(NoneFeatureConfiguration.CODEC));
+
     // QA Fix Part 5 — Small Beehive (the "skep" surface variant).
     // Authentic port of GenericDungeon.makeSmallBeeHive (1.7.10 line
     // 1363). The legacy addANest 50/50 branch (OreSpawnWorld.java:1010)

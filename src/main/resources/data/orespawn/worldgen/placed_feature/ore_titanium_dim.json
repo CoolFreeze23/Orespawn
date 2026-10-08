@@ -1,0 +1,17 @@
+{
+  "feature": "orespawn:chunk_ore_titanium",
+  "placement": [
+    {
+      "type": "orespawn:vein_count",
+      "count": 3,
+      "min_y": 0,
+      "max_y": 20,
+      "extra_dice": 9,
+      "less_ore_divisor": 3,
+      "chunk_window": true
+    },
+    {
+      "type": "minecraft:biome"
+    }
+  ]
+}
