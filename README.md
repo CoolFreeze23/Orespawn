@@ -3,7 +3,7 @@
 > *"Just plain fun!"* — the classic 1.7.10 OreSpawn, rebuilt for modern
 > Minecraft with 100% source-verified parity.
 
-**Version:** 1.21.1-2.0.0-beta.12 · **Loader:** NeoForge 21.1+ · **Minecraft:** 1.21.1
+**Version:** 1.21.1-2.0.0-beta.13 · **Loader:** NeoForge 21.1+ · **Minecraft:** 1.21.1
 **Status:** public beta — the 2.0 robot overhaul is live; the 1.0 parity
 core underneath is stable, with visual/audio polish in community review
 
@@ -69,7 +69,12 @@ post-beta patch.
 
 ## Roadmap
 
-- **2.0.0-beta.12 (this build)**: worldgen fixes from player reports —
+- **2.0.0-beta.13 (this build)**: a modern style for all 14 armour sets, horse
+  and wolf armour, spears with Mounts of Mayhem, and enchanting for OreSpawn's own
+  gear; Utopia, the Village, Crystal and Mining built on the original's 1.7.10
+  terrain again, with its water, caves, springs, ores and colours; the Royal
+  Altars fitted to the land around them. The terrain reaches new chunks only.
+- **2.0.0-beta.12**: worldgen fixes from player reports —
   Utopia's King and Queen trees stand clear of the Wind and Sky trees, apple
   trees and vegetable patches that grew up their trunks; the fences, iron bars,
   glass panes and walls in OreSpawn's structures join up instead of standing as

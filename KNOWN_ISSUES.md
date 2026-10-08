@@ -1,7 +1,7 @@
 # Known Issues — OreSpawn Port (BETA)
 
 **This release is a beta.** The game logic underneath has been through a
-1357-test automated suite (all green, in both robot modes; the count grows
+1422-test automated suite (all green, in both robot modes; the count grows
 with every remediation batch) plus hands-on play sessions, but a lot
 of the *visual and
 audio* polish has deliberately been left open for community
@@ -35,7 +35,31 @@ These came straight out of hand-testing and are fixed in code in this build;
 most still need a second pair of eyes in a real game. If one still looks
 wrong for you, please say so.
 
-**2.0.0-beta.12 (this build):**
+**2.0.0-beta.13 (this build):**
+
+- Utopia, the Village, Crystal and Mining are built on the original's 1.7.10 terrain again (no mountains far out); Utopia's trees keep apart and off the Royal Altars, and Chaos has its trees. *(WGEN-087, WGEN-081 to WGEN-084)*
+- Their water, surface and depth are the original's and their caves are made by its rules (still water below Y63, the original's surface, caves as common and as deep as its, bedrock at Y0, Mining's bare stone and blue sky), checked against a real 1.7.10 server; the Crystal Fairy Trees are as rare as the original's. *(WGEN-093, WGEN-092)*
+- Land generated there by an earlier beta keeps everything, below Y0 and above Y256 too: the dimensions keep their height range, with the original's world built inside it. Their ores are the original's. *(WGEN-096, WGEN-095)*
+- Their springs and lava lakes, OreSpawn's own ores in them, and Utopia's and Crystal's colours are the original's; Mining's trees, flowers, grass and falls are back. *(WGEN-099, WGEN-097, WGEN-101, WGEN-102)*
+- The apple, cherry, peach, scary and experience leaves take the biome's colour; Mining's and the Village's structures spawn as often as the original's on the new terrain. *(BUG-047, WGEN-091)*
+- New, a modern option: the Royal Altars fitted to the land round them (`[modern] altarTerrain`, default on). *(MOD-044)*
+- The Crystal dimension's tree platforms are whole across chunk edges; the dungeons of Utopia, Mining and the Village too. *(BUG-021, WGEN-088)*
+- The Apple Cow, the Spider Driver and the T-Shirt spawn; Utopia's, the Village's and Chaos's spawn lists are the original's; disabled mobs stay out of every list. *(ENT-S-190, WGEN-085, ENT-S-191)*
+- The Apple Cow and the Golden Apple Cow have the original's names; the optional wiki cows are the Orchard Cow (Wiki) and the Golden Orchard Cow (Wiki). *(ENT-S-192)*
+- The Kyuubi, the Gamma Metroid, the Princes' and the Princess's wings and the Ghosts are drawn see-through as in the original; the Kyuubi and the Triffid face the original's way. *(ENT-S-182 to ENT-S-188, ENT-S-162)*
+- OreSpawn's swords, tools and armour take enchantments at the enchanting table and the anvil, each what its vanilla
+  counterpart takes; the Ultimate Bow, the Skate Bow and the gadgets that wear out take Unbreaking and Mending.
+  *(ITEM-073)*
+- OreSpawn gear dropped by Godzilla, the Kraken, the Basilisk, the Cater Killer, the Cephadrome and the Trooper Bug
+  rolls the original's enchantments with its chances and levels, and the gear that enchants itself checks for its own
+  enchantments as the original did. The Emerald Pickaxe gives itself Silk Touch. *(ITEM-075, ITEM-076)*
+- A creature's hit boxes keep up with it when it flies, jumps, burrows or turns, and when a rider gets on; a flying
+  Prince can be hit where it is. *(the multipart creatures' hit boxes)*
+- A Dragon, Baby Dragon, Prince, Frog, Cricket or worm with the NoAI tag no longer takes off, flies, jumps or burrows
+  on its own. *(TEST-020)*
+- A name-tagged Urchin stays in daylight; a tamed Girlfriend refuses horse and wolf armour. *(ENT-S-178, ENT-S-179)*
+
+**2.0.0-beta.12:**
 
 - Utopia's tall Wind and Sky trees, apple trees and vegetable patches no longer grow out of the base of a King or
   Queen tree, or of Utopia's big square, round and circular trees: as in 1.7.10, none of them grows in the chunk where
@@ -195,6 +219,31 @@ wrong for you, please say so.
 - The WaterDragon no longer crashes on spawn — it can actually appear in your world now. *(TEST-005 / TF-001, TF-026)*
 - Ruby and amethyst ores drop gems (and XP) when mined without Silk Touch. *(i013 / TF-017, TF-022)*
 - The lava fishing bobber floats properly on the lava surface instead of sinking and drifting oddly. *(i085 / TF-028)*
+
+---
+
+## Known limits of the new features (2.0.0-beta.13)
+
+- **The Royal Altars' fitted ground:** a hillside more than 16 blocks over the pad keeps a lower wall at the ring's edge; ground more than 59 over the pad stays as an overhang; water or lava standing against a cut (a spring, a pond beyond the ring) runs into it when a block next to it changes; a tree standing on a cut keeps its column of ground.
+- **Chance in the original's dimensions:** in Utopia, the Village and Mining the caves and ravines are made by the original's rules (as many, as deep, lava near the bottom) but fall in other places than the original's, and trees, plants, ponds and other things placed by chance land elsewhere too. Where one of them crosses a chunk edge, which lands last follows the order the game generates the chunks in, so two worlds of one seed can differ slightly there. *(WGEN-100, WGEN-098)*
+- **Trees in the original's dimensions:** Mining has more trees than the original (41 against 25 in the 400 x 400 blocks round the spawn), since 1.21's trees grow in spots where 1.7.10's needed more room; Utopia has about a fifth less tree cover than the original (0.77 of it round the spawn, 0.82 over four places out to 8,000 blocks east), its cause not yet found. *(WGEN-102, WGEN-108)*
+- **The Village's water:** its 1.21 jigsaw villages reshape the ground round them, so there is less water in and round them than in the original. *(WGEN-094)*
+- **The 1.7.10 terrain in existing worlds:** Utopia, the Village, Crystal and Mining generate new land with the original's terrain; where it meets land generated by beta.12 or earlier there is a visible step or cliff. For the original terrain everywhere in one of them, take out anything worth keeping, close the world and delete that dimension's folder under the world's `dimensions/orespawn/` (`utopia`, `village`, `crystal` or `mining`). *(WGEN-087)*
+- **The modern armour style:** mobs whose armour GeckoLib draws (Iron's Spells' wizards, for one) wear the classic look
+  in both styles. On a zombie villager the leggings' details show through the robe. A piece whose geometry fails to
+  load (a broken resource pack) shows the classic model and texture but keeps its modern icon. On a mob whose armour
+  model has boxes of another size than the player's, the pieces fit as on the player.
+- **Horse armour:** the texture leaves the belly, the ears and the mane bare, as vanilla's horse armour does. A change
+  of `[modern] horseArmour` reaches the recipes and the King's drop on `/reload` or a restart, the creative tab when
+  the world is joined again.
+- **Wolf armour:** Doggy Talents Next dogs can't wear it (they take only vanilla's); a training treat on a wolf
+  wearing one drops the armour first, and the next treat trains it. A summoned wolf (Ars Nouveau's) never takes it.
+- **The dogs' modern look:** Doggy Talents Next keeps each piece's texture for the session, so a change of style or of
+  `[modern] dogArmour` reaches dogs after a restart; its legacy armour render draws its own textures; a heavy helmet's
+  closed visor covers a dog's face.
+- **Spears:** they need Mounts of Mayhem (tested with 1.9.8) on the server and every client, and a world keeps its
+  OreSpawn spears only while it is installed. They have no left-click jab; the mod's Lunge enchantment does not go on
+  them.
 
 ---
 

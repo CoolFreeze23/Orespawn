@@ -4,6 +4,117 @@ Newest first. Every version opens with what a player will notice, in plain words
 the technical detail, with the issue ids and the source lines, is folded under "Technical details" at the end of the
 version. The full release notes for a cut live in `phase_g_reports/` and on the release page.
 
+## 2.0.0-beta.13 — 2026-10-09 · [release page](https://github.com/CoolFreeze23/Orespawn/releases/tag/v1.21.1-2.0.0-beta.13) · [full notes](phase_g_reports/RELEASE_NOTES_2.0.0-beta.13.md)
+
+A new look for OreSpawn's armour, armour for your horses and wolves, spears, and enchanting that works for OreSpawn's own swords, tools and armour.
+
+**Added**
+- A modern style for all 14 armour sets: 3D pieces with new textures and icons. Switch between modern and classic at any time in the OreSpawn Visuals screen (press O, or Config in the mod list). The choice is yours alone; other players keep their own.
+- Horse armour for all 14 sets, with the set's armour value. Thirteen are crafted from the set's material in the shape of leather horse armour; the Royal Guardian one drops from the King and waits in his tower's prize chest.
+- Wolf armour for all 14 sets, crafted and found the same way. It never wears out, and shears take it off again, as with vanilla wolf armour.
+- Spears for the eight tool tiers (Ruby, Amethyst, Emerald, Ultimate, Crystal Pink, Tiger's Eye, Crystal Wood and Crystal Stone) when Mounts of Mayhem 1.9.8 is installed. They charge like that mod's spears, each with its tier's strength.
+- Dogs from Doggy Talents Next wear OreSpawn armour in the modern style too.
+- Royal Altars in Utopia sit into the land around them: a hillside is sloped back from the hall and a drop is banked up with grass, instead of a sheer cut wall and a dirt block. Turn it off with `altarTerrain = false` under `[modern]` for the original's flat pad.
+
+**Fixed**
+- Utopia, the Village, Crystal and Mining have the original's terrain again: gentle plains with ponds and lakes in Utopia and the Village, rougher hills in Crystal, extreme hills in Mining. No more mountains thousands of blocks out.
+- Their water, ground and ores are the original's too, and their caves are made by the original's rules: lakes and low ground are full of water, lake floors have sand, gravel and clay, caves and ravines are as common and as deep as the original's with lava near the bottom (each falls where chance puts it, not where the original's did), new land rests on bedrock at Y0, and the ores are the original's, with no copper, granite, diorite or andesite. Mining has its bare stone peaks and its blue sky back, and its structures and the Village's spawn as often as in the original on the new terrain.
+- Apple, cherry, peach, scary and experience leaves take the colour of the biome they grow in, as in the original, instead of grey.
+- Utopia, the Village and Mining have the original's springs again (twice as many water springs, and the Village its lava springs), and lava lakes above sea level are as rare as in the original. A lake that starts over high ground settles onto it, as the original's did, and the Village's lakes keep out of its villages. Mining has its trees, flowers and grass back, and its waterfalls and lavafalls down the hillsides.
+- OreSpawn's own ores (amethyst, salt, titanium, uranium, the troll blocks and the mob ores) come as often as in the original in Utopia, the Village and Mining; they came two to three times as often. Utopia and the Village also get the original's extra diamond, emerald and gold.
+- Utopia and Crystal have the original's sky, water, grass and leaf colours.
+- Utopia's trees no longer grow into each other or through the Royal Altars, and a huge tree no longer grows over a Queen tree. The altars stand where the original put them and clear the trees around their hall. Chaos has its trees back.
+- The Fairy Castle Trees' floating platforms in the Crystal dimension, chests included, are whole across chunk edges.
+- The Apple Cow, the Spider Driver and the T-Shirt spawn naturally again; before, they came out as pigs. Utopia, the Village and Chaos spawn the original's creatures, so the cows are as common there as in classic, and Enchanted Golden Apple Cows are back on mushroom islands. A mob turned off in the config no longer spawns as new chunks generate.
+- The Apple Cow and the Golden Apple Cow have their original names back (they were listed as the Red Cow and the Gold Cow). The two optional cows from the classic wiki, off by default, are now the Orchard Cow (Wiki) and the Golden Orchard Cow (Wiki).
+- The Kyuubi is see-through and walks head first again; the Gamma Metroid is see-through; the Triffid faces the way the original's did.
+- The Princes' and the Princess's wings are see-through and tinted again; the Ghost and the Ghost Skelly are pale and see-through; baby Ostriches and Stink Bugs are half size; the Princess shows her attack texture; the Spider Driver has glowing eyes and turns over when it dies.
+- Dungeons in Utopia, Mining and the Village are no longer cut off at chunk edges, and Utopia's ruby dungeons can be found again.
+- OreSpawn's swords, tools and armour can be enchanted at the enchanting table and the anvil, as in the original. Each takes what its vanilla counterpart takes.
+- The Ultimate Bow, the Skate Bow and the gadgets that wear out (the Ultimate Fishing Rod, Ray Gun, SquidZooka, Thunder Staff, Wrench, Sifter and NetherLost) take Unbreaking and Mending.
+- OreSpawn gear dropped by Godzilla, the Kraken, the Basilisk, the Cater Killer, the Cephadrome and the Trooper Bug rolls the original mod's enchantments, with its chances and levels. Before, it always dropped plain.
+- Gear that enchants itself, like the Ultimate tools and armour, checks for its own enchantments the way the original did, so a boss drop that rolled other enchantments still gets its own.
+- The Emerald Pickaxe gives itself Silk Touch, as in the original, instead of Fortune.
+- Big creatures' hit boxes keep up with them when they fly, jump, burrow or turn, and when a rider gets on. Before, they could trail a step behind, so a hit could miss.
+- A flying Prince can be hit where it is. Before, its hit boxes stayed where it took off.
+- A Dragon, Baby Dragon, Prince, Frog, Cricket or worm with the NoAI tag no longer takes off, flies, jumps or burrows on its own.
+- A name-tagged Urchin no longer vanishes in daylight.
+- A tamed Girlfriend no longer takes horse or wolf armour, which she could not show and you could not get back.
+
+**The new look**
+
+![Seven armour sets, classic and modern](phase_g_reports/release_media/2.0.0-beta.13/armour_sets_1.jpg)
+
+![The other seven sets, classic and modern](phase_g_reports/release_media/2.0.0-beta.13/armour_sets_2.jpg)
+
+*All 14 sets on armour stands, seven to a picture. Top: classic. Bottom: modern.*
+
+![Horse armour](phase_g_reports/release_media/2.0.0-beta.13/horse_armour.jpg)
+
+*Horse armour for all 14 sets.*
+
+![Wolf armour](phase_g_reports/release_media/2.0.0-beta.13/wolf_armour.jpg)
+
+*Wolf armour for all 14 sets.*
+
+![The eight spears on armour stands](phase_g_reports/release_media/2.0.0-beta.13/spears.jpg)
+
+*The eight spears (with Mounts of Mayhem), each stand in its tier's armour where the tier has a set.*
+
+![An enchanting table offering Sharpness for a Ruby Sword](phase_g_reports/release_media/2.0.0-beta.13/enchanting.png)
+
+*A Ruby Sword at the enchanting table. Before this version, OreSpawn's gear got no offers.*
+
+![Royal Altars on a hillside and by a lake, the original's flat pad and fitted to the land](phase_g_reports/release_media/2.0.0-beta.13/altar_ground.jpg)
+
+*Royal Altars on a hillside and by a lake. Left: the original's flat pad, cut into the hill or standing on a block of dirt. Right: fitted to the land around it, as this version builds them.*
+
+**Good to know**
+- Works with your existing worlds. In Utopia, the Village, Crystal and Mining, land an earlier beta generated keeps its terrain and everything built in it, from the deepest mine to the highest peak, and new land gets the original's, so expect a step or a cliff where they meet. Trees, altars and platforms already generated stay as they are.
+- To get the original terrain everywhere in one of those dimensions, take out anything worth keeping there, close the world (with nobody left in that dimension) and delete the dimension's folder inside the world folder (`saves/<your world>/` in single player, `world/` on a server): `dimensions/orespawn/utopia`, `dimensions/orespawn/village`, `dimensions/orespawn/crystal` or `dimensions/orespawn/mining`. It generates fresh the next time anyone goes there.
+- Mounts of Mayhem 1.9.8 is optional and only needed for the spears. On a server, install it on the server and on every client. Without it there are no spears and nothing else changes.
+- Horse armour, wolf armour, spears, the dogs' modern look and the altars' fitted ground can each be turned off under `[modern]` in `config/orespawn-common.toml`, or every modern feature at once with `enabled = false`. The armour style is your own setting, in the Visuals screen or `config/orespawn-client.toml`.
+- Doggy Talents Next dogs can't wear the new wolf armour (they take only vanilla's): a training treat on a wolf wearing one drops the armour first. A Doggy Talents dog shows a change of style after a restart.
+- Mobs whose armour GeckoLib draws, like Iron's Spells' wizards, keep the classic look in both styles.
+- An Emerald Pickaxe from an earlier beta keeps its Fortune I and gains Silk Touch I.
+- In Utopia, the Village and Mining the caves and ravines are made by the original's rules (as many, as deep, lava near the bottom) but fall in other places than the original's, and trees, plants, ponds and other things placed by chance land elsewhere too. Where one of them crosses a chunk edge, which lands last follows the order the game generates the chunks in, so two worlds of one seed can differ slightly there.
+- Mining has more trees than the original (41 against 25 in the 400 x 400 blocks round the spawn): Minecraft 1.21's trees grow in spots the original's needed more room for. Utopia has about a fifth less tree cover than the original.
+- Works with your existing worlds.
+
+**Install:** put `orespawn-1.21.1-2.0.0-beta.13.jar` in `mods/` (NeoForge 21.1, Minecraft 1.21.1, GeckoLib 4.7 or newer) and take the beta.12 jar out. For the spears, add Mounts of Mayhem 1.9.8.
+
+<details>
+<summary>Technical details</summary>
+
+##### What beta.13 is
+
+beta.13 is beta.12 plus five modern features and the fixes found while making them: MOD-039 (the modern armour style, a client setting), MOD-040 and MOD-041 (horse and wolf armour for the 14 sets), MOD-042 (the Doggy Talents Next dog texture) and MOD-043 (spears through Mounts of Mayhem, an optional dependency); ITEM-072 (the modern limbs' side colours), ITEM-073 (enchanting for OreSpawn's gear), ITEM-075 and ITEM-076 (the bosses' gear rolls the original's dice; the self-enchanting gear keys as the original did; the Emerald Pickaxe's Silk Touch); TEST-020 (mobs without AI stay still), the multipart creatures' hit boxes after late moves, ENT-S-178 (the Urchin) and ENT-S-179 (the Girlfriend), and two chance-dependent structure tests built from fixed seeds. From GitHub #6 and #7 and the checks that followed: the four dimensions on the original's 1.7.10 terrain (WGEN-087) with its water, surface, depth and caves (WGEN-093), Utopia's trees and altars (WGEN-081 to WGEN-084), the Crystal platforms and the dungeons whole across chunk edges (BUG-021, WGEN-088), the cows (ENT-S-190, WGEN-085, ENT-S-191, ENT-S-192), the renderers (ENT-S-182 to ENT-S-188, ENT-S-162), the leaves' tint (BUG-047), Mining's and the Village's structure weights (WGEN-091), the Royal Altars fitted to their ground (MOD-044, a modern option), the dimensions' height range kept so old land loses nothing (WGEN-096) and the original's ores (WGEN-095).
+
+##### What changed
+
+- **The modern armour style (MOD-039).** `[client] armourStyle` in `config/orespawn-client.toml`, read at every use: the worn model (an `IClientItemExtensions` per set: the set's `ArmourModel` or the classic one), the worn texture and the icon (the `orespawn:armour_style` predicate, one overrides entry per classic item model). The pieces are built from `armour_geo/` on the player's armour boxes, laid onto a wearer's own boxes where its armour model moves or grows them; the modern texture goes only with the modern model. Four access-transformer entries on `ModelPart`'s cube faces. The assets are pinned by SHA-256 (`tools/armour_asset_pins.json`, the asset audit's check 9) and every piece is checked by `armourModelProbe` on the player, an armour stand, a zombie villager, a guard-shaped model and a piglin. ITEM-072: the limbs' side faces took the classic texture's colours back to front; eleven sets changed. Limits: a piece whose geometry fails keeps its modern icon over the classic model; GeckoLib's item armour layer always draws the classic texture; a zombie villager's leggings details show through its robe.
+- **Horse and wolf armour (MOD-040, MOD-041).** `AnimalArmorItem` on each set's material: the chestplate's armour value, the material's toughness and knockback resistance, no durability. Recipes in vanilla's shapes; the Royal Guardian pieces from the King (a loot modifier) and his challenge chest. The wolf's own `hasArmor()` takes vanilla's item only, so ours has a layer on every wolf renderer, an interaction event for the owner and the shears, and cuts the wolf's damage by its armour instead of absorbing it. `[modern] horseArmour` and `wolfArmour` gate the recipes, the drop, the chest's piece and the creative tab.
+- **The dog texture (MOD-042).** In the modern style, a caller that asks for the texture alone (Doggy Talents Next's dog armour) gets a 64 × 32 dog texture per set; `[modern] dogArmour`. Doggy Talents Next caches it, so a change reaches dogs after a restart.
+- **Spears (MOD-043).** Eight tiers on Mounts of Mayhem's `SpearItem`, registered only with `mounts_of_mayhem` loaded (optional, `[1.9.8,)`): durability the tier's uses, attack damage its bonus + 1, the charge's values from the mod's row for the vanilla tier at the tier's mining level. `#minecraft:spears` and `enchantable/durability` as optional entries; Lunge refused. Recipes behind `neoforge:mod_loaded` and `[modern] spears`.
+- **Enchanting (ITEM-073).** OreSpawn's swords, axes, pickaxes, shovels and hoes in vanilla's tool tags, each armour piece in `enchantable/<slot>_armor` and `equippable`, the armour, the two bows and the damageable gadgets in `enchantable/durability`; the bows keep the original's enchantability of 50.
+- **Boss loot (ITEM-075, ITEM-076).** The 77 OreSpawn gear entries the original enchanted roll its dice as `set_enchantments` under `random_chance` 1/K (read from the 1.7.10 jar: 516 checks, each `nextInt(K) == 1`); the 13 it dropped plain stay plain. The self-enchanting classes key on their own enchantment (the armour on its eight), as 1.7.10 did; the Emerald Pickaxe gives itself Silk Touch I.
+- **Hit boxes after late moves; NoAI (TEST-020).** A multipart creature's boxes are placed again after its whole tick when it moved, turned or changed size since its AI step, and after a rider takes its seat; the Dragon, Baby Dragon, Prince, Frog, Cricket and the worms hold still without AI.
+- **The Urchin and the Girlfriend (ENT-S-178, ENT-S-179).** A persistent Urchin skips its daytime despawn (orig Urchin.java:97-99); a tamed Girlfriend refuses body armour.
+- **The 1.7.10 dimensions (WGEN-087, WGEN-093).** `orespawn:legacy_terrain` is the original's density, seeded as its world was; no aquifers (still water below Y63); `LegacySurface`, the original's genBiomeTerrain with its surface noise rebuilt from the terrain noise's simplex generators; the original's world from Y0 to 256 on its bedrock inside the build range kept (Y-64 to 320), solid bedrock below, nothing above; `orespawn:legacy_cave` and `orespawn:legacy_canyon` with the original's chances, heights and lava level; vanilla's sand, clay and gravel discs at the original's counts; Mining's 0.8/0.01 climate and blue sky. Compared with a real 1.7.10 server at one seed: 46,080 columns identical, terrain, surface noise and surface.
+- **The leaves (BUG-047).** The five leaf models take `minecraft:block/leaves` (tint index 0) as parent.
+- **Mining's and the Village's weights (WGEN-091).** Re-derived from the builders' site rates on the final terrain with WGEN-080's formula: Mining's seven 809, the Damsel and the Red Ant Hangout 2252, the Spider Hangout 1608.
+- **The Royal Altars' ground (MOD-044).** `[modern] altarTerrain` (default true): the altar's piece reaches 16 blocks past its envelope and, after the build, slopes the ground round it one block a block from the surface decoration has reached; a trunk on its ground or another build keeps its column. Placement, the altar and its random are unchanged; the choice is saved with the piece.
+- **The height range kept (WGEN-096).** Utopia, the Village, Crystal and Mining keep Y-64 to 320 (Mining widened from 192), so land an earlier beta saved loads whole; the original's world is built inside it from Y0 to 256 (`GenerationRange`: 1.21's own generation range, the noise's within the build range, for OreSpawn's trees, dungeons, altars, hives, lakes and apple trees too; solid bedrock below Y0 in new chunks; the springs at absolute heights; natural spawning from Y0 in new land; old Mining land above Y192 given Mining's biome as it loads).
+- **The springs, Mining's decoration, the ore pass and the colours (WGEN-099, WGEN-102, WGEN-097, WGEN-101).** `spring_water_1710` (50 a chunk, `biased_to_bottom` 0 to 255 inner 8) and `spring_lava_1710` in stone only; the Village's lava springs; `orespawn:below_or_chance` on the lava lakes; `SafeLakeFeature` sinks through air first and skips a chunk a structure in `#orespawn:lakes_avoid` (the Village's villages) reaches; water lakes without the stone wall; Mining's `hills_decoration_1710` and `lava_and_water`; `orespawn:chunk_ore` with `chunk_window` and the spawn ores' `chunk_veins` (ChunkOreGenerator's vein, centred eight in and kept to its chunk) first in Utopia's, the Village's and Mining's ore step, in the pass's order, the boosts in Utopia and the Village; Utopia's colours vanilla's for 0.7 and 0.5, Crystal's for 0.8 and 0.01.
+- **The original's ores (WGEN-095).** BiomeDecorator.generateOres's set in Utopia, the Village and Mining (`orespawn:ore_*_1710`: its vein sizes, counts and heights, replacing stone), Mining's emeralds and silverfish stone from BiomeGenHills; no copper, granite, diorite, andesite, tuff or deepslate.
+- **Tests.** The Nightmare Rookery and Islands ruby dungeon tests build from fixed seeds; the Basilisk maze test counts Basilisks by class.
+
+##### How to install
+
+Put `orespawn-1.21.1-2.0.0-beta.13.jar` into the `mods` folder of a NeoForge 21.1 instance for Minecraft 1.21.1 together with GeckoLib 4.7 or newer, and take the beta.12 jar out; MultiHitboxLib and Databuddy are bundled in the jar. For the spears, add Mounts of Mayhem 1.9.8 (on a server: on the server and every client). Existing worlds carry over.
+
+</details>
+
 ## 2.0.0-beta.12 — 2026-09-28 · [release page](https://github.com/CoolFreeze23/Orespawn/releases/tag/v1.21.1-2.0.0-beta.12) · [full notes](phase_g_reports/RELEASE_NOTES_2.0.0-beta.12.md)
 
 Fixes to how OreSpawn builds its world, from your reports. Only newly generated land changes.
