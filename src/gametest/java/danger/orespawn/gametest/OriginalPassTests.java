@@ -1,6 +1,5 @@
 package danger.orespawn.gametest;
 
-import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -8,7 +7,11 @@ import danger.orespawn.OreSpawnMod;
 import danger.orespawn.world.BelowOrChancePlacement;
 import danger.orespawn.world.LegacyChunkVein;
 import danger.orespawn.world.feature.LegacyHillsDecorationFeature;
+import danger.orespawn.world.feature.SafeLakeFeature;
+import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
+import it.unimi.dsi.fastutil.longs.LongSet;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.gametest.framework.GameTest;
@@ -16,20 +19,28 @@ import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.BiomeSpecialEffects;
+import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
+import net.minecraft.world.level.levelgen.feature.LakeFeature;
 import net.minecraft.world.level.levelgen.feature.configurations.OreConfiguration;
 import net.minecraft.world.level.levelgen.feature.configurations.SpringConfiguration;
+import net.minecraft.world.level.levelgen.placement.PlacedFeature;
+import net.minecraft.world.level.levelgen.structure.Structure;
 import net.minecraft.world.level.material.Fluids;
 import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 
 import java.io.Reader;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * WGEN-099, WGEN-102, WGEN-097 and WGEN-101: the original's springs and lava-lake gate, Mining's extreme hills
@@ -60,6 +71,18 @@ public class OriginalPassTests {
         List<String> out = new ArrayList<>();
         for (JsonElement e : json(helper, "worldgen/biome/" + biome + ".json").getAsJsonArray("features").get(step).getAsJsonArray()) {
             out.add(e.getAsString());
+        }
+        return out;
+    }
+
+    /** A biome's features in one step as the server runs them, after the biome modifiers. */
+    private static List<String> liveStep(GameTestHelper helper, String biome, int step) {
+        Biome b = helper.getLevel().getServer().registryAccess().registryOrThrow(Registries.BIOME)
+                .get(ResourceKey.create(Registries.BIOME, rl(biome)));
+        helper.assertTrue(b != null, "no " + biome);
+        List<String> out = new ArrayList<>();
+        for (Holder<PlacedFeature> f : b.getGenerationSettings().features().get(step)) {
+            out.add(f.unwrapKey().map(k -> k.location().toString()).orElse("(direct)"));
         }
         return out;
     }
@@ -118,6 +141,37 @@ public class OriginalPassTests {
         }
         helper.assertTrue(under == 20_000 && over > 1_800 && over < 2_200,
                 "the gate kept " + under + " of 20,000 lakes under Y63 and " + over + " of 20,000 over it (want all, ~2,000)");
+        // WorldGenLakes shells its lava lakes in stone and its water lakes in nothing (line 102, Material.lava)
+        for (String[] l : new String[][] {{"lake_water", "air"}, {"lake_lava", "stone"}}) {
+            ConfiguredFeature<?, ?> f = configured.get(rl(l[0]));
+            helper.assertTrue(f != null && f.config() instanceof LakeFeature.Configuration c
+                            && c.barrier().getState(random, BlockPos.ZERO).is(l[1].equals("air") ? Blocks.AIR : Blocks.STONE),
+                    l[0] + "'s shell is not " + l[1] + ": " + (f == null ? "none" : f.config()));
+        }
+        // ChunkProviderOreSpawn3.java:292 and 298: no lake where the Village's villages reach the chunk's population
+        // window, which meets the chunk and its east, south and south-east neighbours
+        Structure village = server.registryAccess().registryOrThrow(Registries.STRUCTURE).get(rl("dim_village"));
+        helper.assertTrue(village != null, "no orespawn:dim_village");
+        ServerLevel level = helper.getLevel();
+        BlockPos at = helper.absolutePos(BlockPos.ZERO);
+        int cx = (at.getX() >> 4) + 1, cz = (at.getZ() >> 4) + 1;
+        helper.assertFalse(SafeLakeFeature.inVillageLand(level, cx, cz), "village land with no village");
+        String wrong = null;
+        for (int[] d : new int[][] {{0, 0, 1}, {1, 0, 1}, {0, 1, 1}, {1, 1, 1}, {-1, 0, 0}, {0, -1, 0}, {2, 0, 0}}) {
+            ChunkAccess chunk = level.getChunk(cx + d[0], cz + d[1]);
+            Map<Structure, LongSet> saved = new HashMap<>();
+            chunk.getAllReferences().forEach((k, v) -> saved.put(k, new LongOpenHashSet(v)));
+            try {
+                chunk.addReferenceForStructure(village, ChunkPos.asLong(cx + 4, cz + 4));
+                if (SafeLakeFeature.inVillageLand(level, cx, cz) != (d[2] == 1)) {
+                    wrong = "a village referenced at " + d[0] + ", " + d[1] + (d[2] == 1 ? " lets a lake in" : " keeps a lake out");
+                }
+            } finally {
+                chunk.setAllReferences(saved);
+            }
+        }
+        helper.assertTrue(wrong == null, String.valueOf(wrong));
+        helper.assertFalse(SafeLakeFeature.inVillageLand(level, cx, cz), "the references were not restored");
         helper.succeed();
     }
 
@@ -151,6 +205,11 @@ public class OriginalPassTests {
             {"ore_boost_diamond_block", 4}, {"ore_boost_emerald", 6}, {"ore_boost_emerald_block", 4},
             {"ore_boost_gold", 8}, {"ore_boost_gold_block", 4}, {"ore_block_ruby", 2}};
 
+    /** ChunkOreGenerator.generateOresInChunk's order: the spawn ores, the four ores, the trolls, then the boosts. */
+    private static final String[] PASS = {"spawn_ores", "ore_uranium", "ore_titanium", "ore_amethyst", "ore_salt",
+            "red_ant_troll", "termite_troll", "ore_boost_diamond", "ore_boost_diamond_block", "ore_boost_emerald",
+            "ore_boost_emerald_block", "ore_boost_gold", "ore_boost_gold_block", "ore_block_ruby"};
+
     @GameTest(template = "empty")
     public static void wgen097a_the_orespawn_ore_pass_as_chunkoregenerator_lays_it(GameTestHelper helper) {
         MinecraftServer server = helper.getLevel().getServer();
@@ -180,20 +239,26 @@ public class OriginalPassTests {
             }
         }
         helper.assertTrue(wrong.isEmpty(), "not as ChunkOreGenerator lays them: " + wrong);
-        for (String biome : new String[] {"utopia_plains", "village_biome"}) {
-            List<String> ores = step(helper, biome, 6);
-            for (Object[] row : SIZES) {
-                helper.assertTrue(ores.contains("orespawn:" + row[0] + "_dim") && !ores.contains("orespawn:" + row[0]),
-                        biome + " does not run " + row[0] + " as the original's pass: " + ores);
-            }
+        // the pass runs as the chunk is built, before the biome's decorator lays its ores, in ChunkOreGenerator's order
+        for (String[] b : new String[][] {{"utopia_plains", "_dim"}, {"village_biome", "_dim"}, {"mining_biome", "_mining"}}) {
+            List<String> ores = liveStep(helper, b[0], 6);
+            List<String> pass = new ArrayList<>();
+            for (String name : PASS) pass.add("orespawn:" + name + b[1]);
+            boolean overworlds = false;
+            for (Object[] row : SIZES) overworlds |= ores.contains("orespawn:" + row[0]);
+            helper.assertTrue(ores.size() > pass.size() && ores.subList(0, pass.size()).equals(pass)
+                            && ores.stream().filter(pass::contains).count() == pass.size() && !overworlds,
+                    b[0] + " does not run the original's pass first and once: " + ores);
         }
+        List<String> chaos = liveStep(helper, "chaos_biome", 6);
+        helper.assertTrue(chaos.contains("orespawn:spawn_ores_chaos") && !chaos.contains("orespawn:spawn_ores_dim"),
+                "Chaos's spawn ores: " + chaos);
         JsonObject spawnDim = json(helper, "worldgen/configured_feature/spawn_ores_dim.json").getAsJsonObject("config");
         JsonObject spawnMining = json(helper, "worldgen/configured_feature/spawn_ores_mining.json").getAsJsonObject("config");
         JsonObject spawnChaos = json(helper, "worldgen/configured_feature/spawn_ores_chaos.json").getAsJsonObject("config");
-        JsonArray dims = json(helper, "neoforge/biome_modifier/add_spawn_ores_dims.json").getAsJsonArray("biomes");
         helper.assertTrue(spawnDim.get("chunk_veins").getAsBoolean() && spawnMining.get("chunk_veins").getAsBoolean()
-                        && !spawnChaos.has("chunk_veins") && dims.size() == 2,
-                "the spawn ores: " + spawnDim + ", " + spawnMining + ", Chaos " + spawnChaos + ", " + dims);
+                        && !spawnChaos.has("chunk_veins"),
+                "the spawn ores: " + spawnDim + ", " + spawnMining + ", Chaos " + spawnChaos);
         // the vein: centred 8 in from its origin, and of what lies outside the origin's chunk nothing laid
         RandomSource random = RandomSource.create(97L);
         long cells = 0, kept = 0;
@@ -235,13 +300,16 @@ public class OriginalPassTests {
             Biome biome = biomes.get(ResourceKey.create(Registries.BIOME, rl(name)));
             helper.assertTrue(biome != null, "no " + name);
             BiomeSpecialEffects e = biome.getSpecialEffects();
-            // 1.7.10: getSkyColorByTemp(0.7), the overworld's fog, vanilla's water; the colormaps at 0.7 and 0.5
-            boolean grass = name.equals("utopia_plains")
+            // 1.7.10: the overworld's fog, vanilla's water, and getSkyColorByTemp and the colormaps at the provider's
+            // climate: Utopia's 0.7 and 0.5 (WorldProviderOreSpawn.java:54), Crystal's 0.8 and 0.01, which its provider
+            // sets as the world loads (WorldProviderOreSpawn5.java:34); the sky through AWT's HSB rounding
+            boolean utopia = name.equals("utopia_plains");
+            boolean grass = utopia
                     ? e.getGrassColorOverride().isEmpty() && e.getFoliageColorOverride().isEmpty()
                     && Math.abs(biome.getBaseTemperature() - 0.7F) < 1e-6 && Math.abs(biome.getModifiedClimateSettings().downfall() - 0.5F) < 1e-6
-                    : e.getGrassColorOverride().orElse(0) == 0x8CBD5F && e.getFoliageColorOverride().orElse(0) == 0x70AB38;
-            helper.assertTrue(e.getSkyColor() == 0x7AA6FF && e.getFogColor() == 0xC0D8FF && e.getWaterColor() == 0x3F76E4
-                            && e.getWaterFogColor() == 0x050533 && grass,
+                    : e.getGrassColorOverride().orElse(0) == 0xB1B762 && e.getFoliageColorOverride().orElse(0) == 0x9DA43B;
+            helper.assertTrue(e.getSkyColor() == (utopia ? 0x7AA6FF : 0x79A7FF) && e.getFogColor() == 0xC0D8FF
+                            && e.getWaterColor() == 0x3F76E4 && e.getWaterFogColor() == 0x050533 && grass,
                     name + "'s colours: sky " + Integer.toHexString(e.getSkyColor()) + ", fog " + Integer.toHexString(e.getFogColor())
                             + ", water " + Integer.toHexString(e.getWaterColor()) + ", grass " + e.getGrassColorOverride()
                             + ", foliage " + e.getFoliageColorOverride());

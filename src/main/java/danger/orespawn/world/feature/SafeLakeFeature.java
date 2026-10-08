@@ -47,9 +47,18 @@ import net.minecraft.world.level.levelgen.feature.LakeFeature;
  * <p>Second change: the lake first sinks through air to the ground, as 1.7.10's WorldGenLakes does
  * ({@code while (y > 5 && world.isAirBlock(x, y, z)) --y}), so the original's lakes rolled at any height over the land
  * lie on it rather than fail in the air.</p>
+ *
+ * <p>Third: no lake in village land. The original's Village skips both its lakes in a chunk whose population window
+ * (16 blocks square, from 8 in) a village's box meets ({@code !flag}, ChunkProviderOreSpawn3.java:288, 292 and 298);
+ * here a lake is skipped when a structure in {@code #orespawn:lakes_avoid} (the Village's villages) references one of
+ * the chunks that window meets: the chunk and its east, south and south-east neighbours.</p>
  */
 public class SafeLakeFeature extends Feature<LakeFeature.Configuration> {
     private static final BlockState AIR = Blocks.CAVE_AIR.defaultBlockState();
+    /** The structures a lake keeps out of, as the original's Village kept its lakes out of its villages. */
+    public static final net.minecraft.tags.TagKey<net.minecraft.world.level.levelgen.structure.Structure> LAKES_AVOID =
+            net.minecraft.tags.TagKey.create(net.minecraft.core.registries.Registries.STRUCTURE,
+                    net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("orespawn", "lakes_avoid"));
 
     public SafeLakeFeature(Codec<LakeFeature.Configuration> codec) {
         super(codec);
@@ -65,6 +74,9 @@ public class SafeLakeFeature extends Feature<LakeFeature.Configuration> {
         // are the safe window for biome lookups (see class Javadoc).
         int chunkMinX = context.origin().getX() & ~15;
         int chunkMinZ = context.origin().getZ() & ~15;
+        if (inVillageLand(worldgenlevel, chunkMinX >> 4, chunkMinZ >> 4)) {
+            return false;
+        }
         // 1.7.10's WorldGenLakes first sinks through air to the ground (while y > 5 and the block is air), so a lake
         // rolled over the land lies on it; 1.21's copy left that to the placement, and these lakes' placement draws Y.
         int bottom = GenerationRange.bottom(context.chunkGenerator(), worldgenlevel);
@@ -231,5 +243,21 @@ public class SafeLakeFeature extends Feature<LakeFeature.Configuration> {
         }
         BlockState state = level.getBlockState(pos);
         return level.getFluidState(pos).getType() == Fluids.WATER && state.getBlock() instanceof LiquidBlock;
+    }
+
+    /** Whether the chunk, or the chunks east, south and south-east of it, reference a structure lakes keep out of. */
+    public static boolean inVillageLand(WorldGenLevel level, int chunkX, int chunkZ) {
+        net.minecraft.core.Registry<net.minecraft.world.level.levelgen.structure.Structure> structures =
+                level.registryAccess().registryOrThrow(net.minecraft.core.registries.Registries.STRUCTURE);
+        for (int dx = 0; dx <= 1; dx++) {
+            for (int dz = 0; dz <= 1; dz++) {
+                for (var reference : level.getChunk(chunkX + dx, chunkZ + dz).getAllReferences().entrySet()) {
+                    if (!reference.getValue().isEmpty() && structures.wrapAsHolder(reference.getKey()).is(LAKES_AVOID)) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
     }
 }
