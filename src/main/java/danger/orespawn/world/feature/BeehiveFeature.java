@@ -3,6 +3,7 @@ package danger.orespawn.world.feature;
 import com.mojang.serialization.Codec;
 import danger.orespawn.ModEntities;
 import danger.orespawn.ModItems;
+import danger.orespawn.world.GenerationRange;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.entity.EntityType;
@@ -103,8 +104,8 @@ public class BeehiveFeature extends Feature<NoneFeatureConfiguration> {
         BlockPos cpos = surface.above(2);
 
         // Bound-check the entire 10x35x10 footprint up-front.
-        if (cpos.getY() + 1 >= level.getMaxBuildHeight() - 2) return false;
-        if (cpos.getY() - HEIGHT - 1 <= level.getMinBuildHeight() + 2) return false;
+        if (cpos.getY() + 1 >= GenerationRange.top(ctx.chunkGenerator(), level) - 2) return false;
+        if (cpos.getY() - HEIGHT - 1 <= GenerationRange.bottom(ctx.chunkGenerator(), level) + 2) return false;
 
         return buildAt(level, random, cpos);
     }

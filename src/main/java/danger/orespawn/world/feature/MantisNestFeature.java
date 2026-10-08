@@ -3,6 +3,7 @@ package danger.orespawn.world.feature;
 import com.mojang.serialization.Codec;
 import danger.orespawn.ModEntities;
 import danger.orespawn.ModItems;
+import danger.orespawn.world.GenerationRange;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.entity.EntityType;
@@ -92,8 +93,8 @@ public class MantisNestFeature extends Feature<NoneFeatureConfiguration> {
         // descends ~7 blocks down, so we need ~28 blocks of vertical
         // headroom around the anchor. Bail early if any of it would
         // clip world bounds (legacy version had no such check).
-        if (cpos.getY() + 20 >= level.getMaxBuildHeight() - 2) return false;
-        if (cpos.getY() - 7 <= level.getMinBuildHeight() + 2) return false;
+        if (cpos.getY() + 20 >= GenerationRange.top(ctx.chunkGenerator(), level) - 2) return false;
+        if (cpos.getY() - 7 <= GenerationRange.bottom(ctx.chunkGenerator(), level) + 2) return false;
 
         return buildAt(level, random, cpos);
     }

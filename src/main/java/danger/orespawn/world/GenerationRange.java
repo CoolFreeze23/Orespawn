@@ -1,7 +1,10 @@
 package danger.orespawn.world;
 
 import net.minecraft.world.level.LevelHeightAccessor;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.level.chunk.ChunkGenerator;
+import net.minecraft.world.level.chunk.LevelChunkSection;
 import net.minecraft.world.level.levelgen.WorldGenerationContext;
 
 /**
@@ -26,6 +29,18 @@ public final class GenerationRange {
         if (!original(generator)) return level.getMaxBuildHeight();
         WorldGenerationContext context = new WorldGenerationContext(generator, level);
         return context.getMinGenY() + context.getGenDepth();
+    }
+
+    /**
+     * The lowest height natural spawning tries in a chunk: the bottom of world generation where the chunk lies on the
+     * solid bedrock this version lays under the original's world (nothing lives in it); the build range's bottom in land
+     * an earlier version generated there (its caves below Y0 keep spawning as they did) and in every other dimension.
+     */
+    public static int spawnBottom(ChunkGenerator generator, ChunkAccess chunk, int buildBottom) {
+        int bottom = bottom(generator, chunk);
+        if (bottom <= buildBottom) return buildBottom;
+        LevelChunkSection under = chunk.getSection(chunk.getSectionIndex(bottom - 1));
+        return under.getStates().maybeHas(state -> !state.is(Blocks.BEDROCK)) ? buildBottom : bottom;
     }
 
     private static boolean original(ChunkGenerator generator) {

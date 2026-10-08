@@ -5,6 +5,7 @@
   "mixins": [
     "GameTestOriginMixin",
     "LivingEntitySightMixin",
+    "NaturalSpawnerMixin",
     "StructurePickMixin"
   ],
   "client": [

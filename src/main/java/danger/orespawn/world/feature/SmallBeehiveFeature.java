@@ -3,6 +3,7 @@ package danger.orespawn.world.feature;
 import com.mojang.serialization.Codec;
 import danger.orespawn.ModEntities;
 import danger.orespawn.ModItems;
+import danger.orespawn.world.GenerationRange;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.entity.EntityType;
@@ -118,8 +119,8 @@ public class SmallBeehiveFeature extends Feature<NoneFeatureConfiguration> {
 
         // Bound-check the entire vertical span (~22 blocks up) up-front so
         // the skep doesn't shear at the build limit.
-        if (cpos.getY() + HEIGHT + 2 >= level.getMaxBuildHeight() - 2) return false;
-        if (cpos.getY() <= level.getMinBuildHeight() + 2) return false;
+        if (cpos.getY() + HEIGHT + 2 >= GenerationRange.top(ctx.chunkGenerator(), level) - 2) return false;
+        if (cpos.getY() <= GenerationRange.bottom(ctx.chunkGenerator(), level) + 2) return false;
 
         return buildAt(level, random, cpos);
     }

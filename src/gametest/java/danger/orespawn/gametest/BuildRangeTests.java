@@ -10,12 +10,14 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.LevelHeightAccessor;
 import net.minecraft.world.level.biome.Biome;
@@ -32,6 +34,7 @@ import net.minecraft.world.level.levelgen.NoiseGeneratorSettings;
 import net.minecraft.world.level.levelgen.RandomState;
 import net.minecraft.world.level.levelgen.blending.Blender;
 import net.minecraft.world.level.levelgen.feature.configurations.OreConfiguration;
+import net.minecraft.world.level.levelgen.feature.configurations.ReplaceBlockConfiguration;
 import net.minecraft.world.level.levelgen.placement.PlacedFeature;
 import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
@@ -43,7 +46,8 @@ import java.util.List;
 /**
  * WGEN-096 and WGEN-095: Utopia, the Village, Crystal and Mining keep the build range of earlier versions, Y-64 to 320,
  * so land saved in it keeps every block, and build the original's world inside it: the 1.7.10 terrain and surface from
- * Y0 to 256 as before, solid bedrock below, nothing above; their ores 1.7.10's decorator's, at its counts and heights.
+ * Y0 to 256 as before, solid bedrock below, nothing above; spawning from Y0 in their new land, old land in its own
+ * biome; their ores 1.7.10's decorator's, at its counts and heights.
  */
 @GameTestHolder(OreSpawnMod.MOD_ID)
 @PrefixGameTestTemplate(false)
@@ -83,12 +87,17 @@ public class BuildRangeTests {
                     d[0] + " does not generate in the original's Y0 to 256: " + GenerationRange.bottom(generator, range)
                             + " to " + GenerationRange.top(generator, range));
         }
-        // the dimensions this leaves alone generate in their whole build range, whatever their noise covers
+        // the dimensions this leaves alone generate in their whole build range, whatever their noise covers (Chaos's
+        // noise is 128 high in its 256-high range)
         for (Object[] d : new Object[][] {{"chaos_biome", "chaos", DimensionStyle.CHAOS},
                 {"island_biome", "islands", DimensionStyle.ISLANDS}}) {
             OreSpawnChunkGenerator generator = generator(server, (String) d[0], (String) d[1], (DimensionStyle) d[2]);
-            helper.assertTrue(!generator.originalWorld() && GenerationRange.bottom(generator, range) == -64
-                    && GenerationRange.top(generator, range) == 320, d[1] + "'s generation range was narrowed");
+            DimensionType type = types.get(rl((String) d[1]));
+            LevelHeightAccessor own = LevelHeightAccessor.create(type.minY(), type.height());
+            helper.assertTrue(!generator.originalWorld() && GenerationRange.bottom(generator, own) == type.minY()
+                            && GenerationRange.top(generator, own) == type.minY() + type.height(),
+                    d[1] + "'s generation range was narrowed: " + GenerationRange.bottom(generator, own) + " to "
+                            + GenerationRange.top(generator, own));
         }
         helper.succeed();
     }
@@ -172,25 +181,110 @@ public class BuildRangeTests {
                 helper.assertTrue(id.startsWith("orespawn:spring_"), b[0] + " places the spring " + id);
             }
         }
-        // the decorator's veins: size a vein, veins a chunk, and the heights, as BiomeDecorator.generateOres has them
-        Object[][] table = {{"dirt", 32, 20, 0, 255}, {"gravel", 32, 10, 0, 255}, {"coal", 16, 20, 0, 127},
-                {"iron", 8, 20, 0, 63}, {"gold", 8, 2, 0, 31}, {"redstone", 7, 8, 0, 15}, {"diamond", 7, 1, 0, 15},
-                {"lapis", 6, 1, 0, 30}, {"silverfish", 8, 7, 0, 63}};
+        // the decorator's veins as BiomeDecorator.generateOres has them: the block, its size, veins a chunk, the height
+        // provider and its range; then BiomeGenHills's silverfish stone (Mining)
+        Object[][] table = {{"dirt", "minecraft:dirt", 32, 20, "uniform", 0, 255},
+                {"gravel", "minecraft:gravel", 32, 10, "uniform", 0, 255},
+                {"coal", "minecraft:coal_ore", 16, 20, "uniform", 0, 127},
+                {"iron", "minecraft:iron_ore", 8, 20, "uniform", 0, 63},
+                {"gold", "minecraft:gold_ore", 8, 2, "uniform", 0, 31},
+                {"redstone", "minecraft:redstone_ore", 7, 8, "uniform", 0, 15},
+                {"diamond", "minecraft:diamond_ore", 7, 1, "uniform", 0, 15},
+                {"lapis", "minecraft:lapis_ore", 6, 1, "trapezoid", 0, 30},
+                {"silverfish", "minecraft:infested_stone", 8, 7, "uniform", 0, 63}};
         var configured = server.registryAccess().registryOrThrow(Registries.CONFIGURED_FEATURE);
         for (Object[] row : table) {
             var feature = configured.get(rl("ore_" + row[0] + "_1710"));
-            helper.assertTrue(feature != null && feature.config() instanceof OreConfiguration ore && ore.size == (Integer) row[1]
-                    && ore.targetStates.size() == 1, row[0] + "'s vein is not 1.7.10's size " + row[1]);
+            helper.assertTrue(feature != null && feature.config() instanceof OreConfiguration ore && ore.size == (Integer) row[2]
+                    && ore.targetStates.size() == 1
+                    && ore.targetStates.get(0).target.test(Blocks.STONE.defaultBlockState(), RandomSource.create(1L))
+                    && !ore.targetStates.get(0).target.test(Blocks.DEEPSLATE.defaultBlockState(), RandomSource.create(1L))
+                    && BuiltInRegistries.BLOCK.getKey(ore.targetStates.get(0).state.getBlock()).toString().equals(row[1]),
+                    row[0] + "'s vein is not 1.7.10's: " + row[1] + " in stone, size " + row[2]);
             JsonObject placed = json(helper, "worldgen/placed_feature/ore_" + row[0] + "_1710.json");
-            var steps = placed.getAsJsonArray("placement");
-            int count = steps.get(0).getAsJsonObject().get("count").getAsInt();
-            JsonObject height = steps.get(2).getAsJsonObject().getAsJsonObject("height");
-            int low = height.getAsJsonObject("min_inclusive").get("absolute").getAsInt();
-            int high = height.getAsJsonObject("max_inclusive").get("absolute").getAsInt();
-            helper.assertTrue(count == (Integer) row[2] && low == (Integer) row[3] && high == (Integer) row[4],
-                    row[0] + ": " + count + " veins at Y" + low + "-" + high + ", not 1.7.10's " + row[2] + " at Y" + row[3]
-                            + "-" + row[4]);
+            int count = -1, low = -1, high = -1;
+            String provider = "";
+            for (var step : placed.getAsJsonArray("placement")) {
+                JsonObject modifier = step.getAsJsonObject();
+                String type = modifier.get("type").getAsString();
+                if (type.equals("minecraft:count")) count = modifier.get("count").getAsInt();
+                if (type.equals("minecraft:height_range")) {
+                    JsonObject height = modifier.getAsJsonObject("height");
+                    provider = height.get("type").getAsString();
+                    low = height.getAsJsonObject("min_inclusive").get("absolute").getAsInt();
+                    high = height.getAsJsonObject("max_inclusive").get("absolute").getAsInt();
+                }
+            }
+            helper.assertTrue(count == (Integer) row[3] && provider.equals("minecraft:" + row[4]) && low == (Integer) row[5]
+                            && high == (Integer) row[6],
+                    row[0] + ": " + count + " veins, " + provider + " Y" + low + "-" + high + ", not 1.7.10's " + row[3]
+                            + ", " + row[4] + " Y" + row[5] + "-" + row[6]);
         }
+        // BiomeGenHills's emeralds: 3 to 8 single blocks a chunk in stone at Y4 to 31
+        var emerald = configured.get(rl("ore_emerald_1710"));
+        helper.assertTrue(emerald != null && emerald.config() instanceof ReplaceBlockConfiguration replace
+                        && replace.targetStates.size() == 1
+                        && replace.targetStates.get(0).state.is(Blocks.EMERALD_ORE)
+                        && replace.targetStates.get(0).target.test(Blocks.STONE.defaultBlockState(), RandomSource.create(1L)),
+                "the emeralds are not single emerald ores in stone");
+        JsonObject emeralds = json(helper, "worldgen/placed_feature/ore_emerald_1710.json");
+        String placement = emeralds.getAsJsonArray("placement").toString();
+        helper.assertTrue(placement.contains("\"min_inclusive\":3") && placement.contains("\"max_inclusive\":8")
+                        && placement.contains("{\"absolute\":4}") && placement.contains("{\"absolute\":31}"),
+                "the emeralds are not 3 to 8 a chunk at Y4-31: " + placement);
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void wgen096e_spawning_starts_at_the_original_floor_in_new_land_only(GameTestHelper helper) {
+        MinecraftServer server = helper.getLevel().getServer();
+        Registry<Biome> biomes = server.registryAccess().registryOrThrow(Registries.BIOME);
+        LevelHeightAccessor range = LevelHeightAccessor.create(-64, 384);
+        OreSpawnChunkGenerator utopia = generator(server, "utopia_plains", "legacy_utopia", DimensionStyle.UTOPIA);
+        RandomState state = RandomState.create(server.registryAccess().asGetterLookup(),
+                ResourceKey.create(Registries.NOISE_SETTINGS, rl("legacy_utopia")), 1007L);
+        // new land, built by the dimension's generator: solid bedrock under Y0
+        ProtoChunk fresh = build(helper, utopia, state, biomes, new int[] {2, 3}, range);
+        BlockPos.MutableBlockPos p = new BlockPos.MutableBlockPos();
+        // land an earlier version generated: deepslate and a cave under Y0
+        ProtoChunk old = new ProtoChunk(new ChunkPos(2, 3), UpgradeData.EMPTY, range, biomes, null);
+        for (int y = -64; y < 0; y++) {
+            for (int x = 0; x < 16; x++) {
+                for (int z = 0; z < 16; z++) {
+                    old.setBlockState(p.set(32 + x, y, 48 + z), y == -10 ? Blocks.AIR.defaultBlockState()
+                            : Blocks.DEEPSLATE.defaultBlockState(), false);
+                }
+            }
+        }
+        int newBottom = GenerationRange.spawnBottom(utopia, fresh, -64);
+        int oldBottom = GenerationRange.spawnBottom(utopia, old, -64);
+        OreSpawnChunkGenerator chaos = generator(server, "chaos_biome", "chaos", DimensionStyle.CHAOS);
+        int chaosBottom = GenerationRange.spawnBottom(chaos, fresh, -64);
+        helper.assertTrue(newBottom == 0 && oldBottom == -64 && chaosBottom == -64, "spawning starts at " + newBottom
+                + " in new land, " + oldBottom + " in old land, " + chaosBottom + " in Chaos (want 0, -64, -64)");
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void wgen096f_old_land_takes_the_dimensions_own_biome(GameTestHelper helper) {
+        MinecraftServer server = helper.getLevel().getServer();
+        Registry<Biome> biomes = server.registryAccess().registryOrThrow(Registries.BIOME);
+        Holder<Biome> mining = biomes.getHolderOrThrow(ResourceKey.create(Registries.BIOME, rl("mining_biome")));
+        Holder<Biome> plains = biomes.getHolderOrThrow(net.minecraft.world.level.biome.Biomes.PLAINS);
+        // an old Mining chunk: its biome saved to Y192, plains over it, as the game fills sections a save lacks
+        ProtoChunk chunk = new ProtoChunk(new ChunkPos(-5, 7), UpgradeData.EMPTY, LevelHeightAccessor.create(-64, 384),
+                biomes, null);
+        var sections = chunk.getSections();
+        for (int i = 0; i < sections.length; i++) {
+            Holder<Biome> b = chunk.getSectionYFromSectionIndex(i) < 12 ? mining : plains;
+            sections[i].fillBiomesFromNoise((x, y, z, s) -> b, null, 0, 0, 0);
+        }
+        boolean first = danger.orespawn.world.OldLandBiomes.refill(chunk, mining);
+        boolean only = true;
+        for (var section : sections) only &= !danger.orespawn.world.OldLandBiomes.holds(section, b -> !b.equals(mining));
+        boolean second = danger.orespawn.world.OldLandBiomes.refill(chunk, mining);
+        helper.assertTrue(first && only && !second, "the old chunk's plains were " + (first ? "" : "not ")
+                + "refilled, only Mining's biome " + only + ", a second pass changed it " + second);
         helper.succeed();
     }
 
