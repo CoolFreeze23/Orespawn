@@ -1,6 +1,7 @@
 package danger.orespawn.world.feature;
 
 import com.mojang.serialization.Codec;
+import danger.orespawn.world.GenerationRange;
 import net.minecraft.core.BlockPos;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.FluidTags;
@@ -60,7 +61,7 @@ public class SafeLakeFeature extends Feature<LakeFeature.Configuration> {
         // are the safe window for biome lookups (see class Javadoc).
         int chunkMinX = context.origin().getX() & ~15;
         int chunkMinZ = context.origin().getZ() & ~15;
-        if (blockpos.getY() <= worldgenlevel.getMinBuildHeight() + 4) {
+        if (blockpos.getY() <= GenerationRange.bottom(context.chunkGenerator(), worldgenlevel) + 4) {
             return false;
         } else {
             blockpos = blockpos.below(4);

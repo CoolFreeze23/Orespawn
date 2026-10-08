@@ -2,6 +2,7 @@ package danger.orespawn.world.structure;
 
 import danger.orespawn.ModBlocks;
 import danger.orespawn.OreSpawnMod;
+import danger.orespawn.world.GenerationRange;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
@@ -210,7 +211,7 @@ public class UtopiaTreePiece extends StructurePiece {
     public void postProcess(WorldGenLevel level, StructureManager structureManager, ChunkGenerator chunkGenerator,
                             RandomSource random, BoundingBox chunkBox, ChunkPos chunkPos, BlockPos pivot) {
         passCtx.set(new PassCtx(level, new BlockPos.MutableBlockPos(),
-                level.getMinBuildHeight(), level.getMaxBuildHeight(),
+                GenerationRange.bottom(chunkGenerator, level), GenerationRange.top(chunkGenerator, level),
                 chunkBox.minX(), chunkBox.maxX(), chunkBox.minY(), chunkBox.maxY(), chunkBox.minZ(), chunkBox.maxZ(), null));
         try {
             switch (kind) {

@@ -4,6 +4,7 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import danger.orespawn.OreSpawnConfig;
+import danger.orespawn.world.GenerationRange;
 import danger.orespawn.world.LegacyTerrainReader;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -435,7 +436,7 @@ public class UtopiaTreeStructure extends Structure {
                                               RandomState randomState, BlockPos grass) {
         int plane = grass.getY() + 8;
         int minX = grass.getX() - 5, maxX = grass.getX() + 54, minZ = grass.getZ() - 5, maxZ = grass.getZ() + 54;
-        int minY = heights.getMinBuildHeight(), maxY = heights.getMaxBuildHeight();
+        int minY = GenerationRange.bottom(generator, heights), maxY = GenerationRange.top(generator, heights);
         if (!planeTerrainClear(generator, heights, randomState, minX, maxX, minZ, maxZ, plane)) return false;
         ColumnProbe probe = probe(generator, heights, randomState);
         int reach = 144;  // the farthest any Utopia tree's cells reach from its site (RoyalTreePiece's permit)
@@ -475,7 +476,9 @@ public class UtopiaTreeStructure extends Structure {
      */
     public static boolean planeTerrainClear(ChunkGenerator generator, LevelHeightAccessor heights, RandomState randomState,
                                             int minX, int maxX, int minZ, int maxZ, int plane) {
-        if (plane < heights.getMinBuildHeight() || plane >= heights.getMaxBuildHeight()) return false;
+        if (plane < GenerationRange.bottom(generator, heights) || plane >= GenerationRange.top(generator, heights)) {
+            return false;
+        }
         LegacyTerrainReader reader = LegacyTerrainReader.of(generator, heights, randomState);
         if (reader == null) return planeTerrainClearByColumns(generator, heights, randomState, minX, maxX, minZ, maxZ, plane);
         return reader.planeClear(minX, maxX, minZ, maxZ, plane);
@@ -485,7 +488,9 @@ public class UtopiaTreeStructure extends Structure {
     public static boolean planeTerrainClearByColumns(ChunkGenerator generator, LevelHeightAccessor heights,
                                                      RandomState randomState, int minX, int maxX, int minZ, int maxZ,
                                                      int plane) {
-        if (plane < heights.getMinBuildHeight() || plane >= heights.getMaxBuildHeight()) return false;
+        if (plane < GenerationRange.bottom(generator, heights) || plane >= GenerationRange.top(generator, heights)) {
+            return false;
+        }
         for (int x = minX; x <= maxX; x++) {
             for (int z = minZ; z <= maxZ; z++) {
                 if (!generator.getBaseColumn(x, z, heights, randomState).getBlock(plane).isAir()) return false;

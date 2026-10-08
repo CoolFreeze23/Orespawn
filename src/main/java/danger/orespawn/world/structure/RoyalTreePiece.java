@@ -1,6 +1,7 @@
 package danger.orespawn.world.structure;
 
 import danger.orespawn.ModBlocks;
+import danger.orespawn.world.GenerationRange;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.RandomSource;
@@ -227,7 +228,7 @@ public class RoyalTreePiece extends StructurePiece {
                         + (long) this.boundingBox.minZ() * 132897987541L);
 
         this.passCtx.set(new PassCtx(level, new BlockPos.MutableBlockPos(),
-                level.getMinBuildHeight(), level.getMaxBuildHeight(),
+                GenerationRange.bottom(chunkGenerator, level), GenerationRange.top(chunkGenerator, level),
                 chunkBox.minX(), chunkBox.maxX(), chunkBox.minY(),
                 chunkBox.maxY(), chunkBox.minZ(), chunkBox.maxZ(), null));
 

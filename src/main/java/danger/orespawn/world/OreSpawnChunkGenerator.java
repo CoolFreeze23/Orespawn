@@ -137,18 +137,9 @@ public class OreSpawnChunkGenerator extends NoiseBasedChunkGenerator {
     public void buildSurface(WorldGenRegion region, StructureManager structures, RandomState randomState, ChunkAccess chunk) {
         // Utopia, the Village, Mining and Crystal: the original's own surface on the original's terrain
         // (LegacySurface); the surface rules only where the terrain is not the legacy noise (a datapack's settings).
-        LegacySurface.Kind legacyKind = switch (style) {
-            case UTOPIA, VILLAGE -> LegacySurface.Kind.PLAINS;
-            case MINING -> LegacySurface.Kind.EXTREME_HILLS;
-            case CRYSTAL -> LegacySurface.Kind.CRYSTAL;
-            default -> null;
-        };
-        LegacyTerrainNoise legacyNoise = legacyKind == null ? null : LegacyTerrainReader.legacyNoise(randomState);
-        if (legacyNoise != null) {
-            LegacySurface.build(chunk, legacyNoise, legacyKind);
-        } else {
-            super.buildSurface(region, structures, randomState, chunk);
-        }
+        boolean legacy = buildOriginalSurface(chunk, randomState);
+        if (!legacy) super.buildSurface(region, structures, randomState, chunk);
+        LegacyTerrainNoise legacyNoise = legacy ? LegacyTerrainReader.legacyNoise(randomState) : null;
 
         // Dispatch per-dimension surface post-processing. A switch over the
         // enum keeps every style's hook in one place and compiles to a clean
@@ -161,6 +152,55 @@ public class OreSpawnChunkGenerator extends NoiseBasedChunkGenerator {
                 // Pass-through: the terrain is the 1.7.10 generator's (orespawn:legacy_utopia / legacy_extreme_hills,
                 // LegacyTerrainNoise, orig ChunkProviderOreSpawn{,2,3}) under its own surface; Chaos's is
                 // orespawn:chaos (nether-style noise, orig ChunkProviderOreSpawn6).
+            }
+        }
+    }
+
+    /**
+     * The original's surface on a chunk the original's terrain filled, in Utopia, the Village, Mining and Crystal: the
+     * 1.7.10 surface pass from Y255 down ({@link LegacySurface}), then solid bedrock below the original's world. False,
+     * and nothing done, where the dimension or its terrain is not the original's.
+     */
+    public boolean buildOriginalSurface(ChunkAccess chunk, RandomState randomState) {
+        LegacySurface.Kind legacyKind = switch (style) {
+            case UTOPIA, VILLAGE -> LegacySurface.Kind.PLAINS;
+            case MINING -> LegacySurface.Kind.EXTREME_HILLS;
+            case CRYSTAL -> LegacySurface.Kind.CRYSTAL;
+            default -> null;
+        };
+        LegacyTerrainNoise legacyNoise = legacyKind == null ? null : LegacyTerrainReader.legacyNoise(randomState);
+        if (legacyNoise == null) return false;
+        LegacySurface.build(chunk, legacyNoise, legacyKind);
+        bedrockBelow(chunk, GenerationRange.bottom(this, chunk));
+        return true;
+    }
+
+    /** Whether this generator builds the original's 1.7.10 world: Utopia, the Village, Mining and Crystal. */
+    public boolean originalWorld() {
+        return style == DimensionStyle.UTOPIA || style == DimensionStyle.VILLAGE || style == DimensionStyle.MINING
+                || style == DimensionStyle.CRYSTAL;
+    }
+
+    /**
+     * Solid bedrock under the original's world in a new chunk: the build range reaches below its Y0 so that land an
+     * earlier version generated keeps every block, but nothing is generated there and nothing can be reached.
+     */
+    private static void bedrockBelow(ChunkAccess chunk, int bottom) {
+        BlockState bedrock = Blocks.BEDROCK.defaultBlockState();
+        net.minecraft.world.level.chunk.LevelChunkSection[] sections = chunk.getSections();
+        for (int i = 0; i < sections.length; i++) {
+            int sectionBottom = net.minecraft.core.SectionPos.sectionToBlockCoord(chunk.getSectionYFromSectionIndex(i));
+            if (sectionBottom + 16 <= bottom) {
+                sections[i] = new net.minecraft.world.level.chunk.LevelChunkSection(
+                        new net.minecraft.world.level.chunk.PalettedContainer<>(net.minecraft.world.level.block.Block.BLOCK_STATE_REGISTRY,
+                                bedrock, net.minecraft.world.level.chunk.PalettedContainer.Strategy.SECTION_STATES),
+                        sections[i].getBiomes());
+            } else if (sectionBottom < bottom) {
+                for (int y = sectionBottom; y < bottom; y++) {
+                    for (int z = 0; z < 16; z++) {
+                        for (int x = 0; x < 16; x++) sections[i].setBlockState(x, y & 15, z, bedrock, false);
+                    }
+                }
             }
         }
     }

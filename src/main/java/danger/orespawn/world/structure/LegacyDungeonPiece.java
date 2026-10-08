@@ -4,6 +4,7 @@ import danger.orespawn.ModBlocks;
 import danger.orespawn.ModEntities;
 import danger.orespawn.ModItems;
 import danger.orespawn.OreSpawnConfig;
+import danger.orespawn.world.GenerationRange;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.Registries;
@@ -610,9 +611,11 @@ public class LegacyDungeonPiece extends StructurePiece {
         // WGEN-076: a live pass (buildNow, a gametest, /place) settles the joins of its fences, panes, bars and walls
         // when it ends; a worldgen pass hands them to the chunk's post-processing instead (see place).
         boolean live = level instanceof ServerLevel;
+        // writes keep to the heights world generation builds at (in the original's dimensions Y0 to 256)
         this.passCtx.set(new PassCtx(level, new BlockPos.MutableBlockPos(),
-                chunkBox.minX(), chunkBox.maxX(), chunkBox.minY(),
-                chunkBox.maxY(), chunkBox.minZ(), chunkBox.maxZ(), live ? new ArrayList<>() : null));
+                chunkBox.minX(), chunkBox.maxX(), Math.max(chunkBox.minY(), GenerationRange.bottom(chunkGenerator, level)),
+                Math.min(chunkBox.maxY(), GenerationRange.top(chunkGenerator, level) - 1), chunkBox.minZ(), chunkBox.maxZ(),
+                live ? new ArrayList<>() : null));
 
         try {
             switch (dungeonType) {

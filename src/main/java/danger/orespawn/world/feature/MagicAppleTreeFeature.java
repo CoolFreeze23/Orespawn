@@ -3,6 +3,7 @@ package danger.orespawn.world.feature;
 import com.mojang.serialization.Codec;
 import danger.orespawn.ModBlocks;
 import danger.orespawn.ModDimensionKeys;
+import danger.orespawn.world.GenerationRange;
 import danger.orespawn.world.structure.UtopiaTreeStructure;
 import java.util.List;
 import net.minecraft.core.BlockPos;
@@ -80,7 +81,7 @@ public class MagicAppleTreeFeature extends Feature<NoneFeatureConfiguration> {
         boolean grew = false;
         for (BlockPos base : trees) {
             BlockPos grass = scan(level, base.getX(), base.getZ());
-            if (grass != null) grew |= growTree(level, grass);
+            if (grass != null) grew |= growTree(level, grass, GenerationRange.top(ctx.chunkGenerator(), level));
         }
         return grew;
     }
@@ -101,7 +102,7 @@ public class MagicAppleTreeFeature extends Feature<NoneFeatureConfiguration> {
     }
 
     /** ItemAppleSeed.makeTree (orig :46-123) on the grass block at {@code base}; false when the ground or trunk refuses. */
-    private static boolean growTree(WorldGenLevel level, BlockPos base) {
+    private static boolean growTree(WorldGenLevel level, BlockPos base, int top) {
         BlockState ground = level.getBlockState(base);
         if (!(ground.is(Blocks.GRASS_BLOCK) || ground.is(Blocks.DIRT) || ground.is(Blocks.FARMLAND))) {
             return false;
@@ -114,7 +115,7 @@ public class MagicAppleTreeFeature extends Feature<NoneFeatureConfiguration> {
         // Legacy Apple Leaves dimensions.
         final int h1 = 12, h2 = 6, h3 = 9, h4 = 6, h5 = 14, w1 = 5, w2 = 3;
 
-        if (y + h5 + 2 >= level.getMaxBuildHeight()) return false;
+        if (y + h5 + 2 >= top) return false;
 
         BlockState log = Blocks.OAK_LOG.defaultBlockState();
         // QA fix: Apple Leaves block extends LeavesBlock so the engine

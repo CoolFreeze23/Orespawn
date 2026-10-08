@@ -3,6 +3,7 @@ package danger.orespawn.world.structure;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import danger.orespawn.world.GenerationRange;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.levelgen.structure.Structure;
 import net.minecraft.world.level.levelgen.structure.StructureType;
@@ -59,7 +60,9 @@ public class RoyalTreeStructure extends Structure {
         if (roll.royal() == null || roll.queen() != queenVariant) return Optional.empty();
         BlockPos origin = roll.royal();
         // the canopy stays below the world ceiling (the window keeps the grass under Y127)
-        if (origin.getY() + 64 >= context.heightAccessor().getMaxBuildHeight()) return Optional.empty();
+        if (origin.getY() + 64 >= GenerationRange.top(context.chunkGenerator(), context.heightAccessor())) {
+            return Optional.empty();
+        }
         return Optional.of(new GenerationStub(origin, builder ->
                 builder.addPiece(new RoyalTreePiece(origin, queenVariant))));
     }

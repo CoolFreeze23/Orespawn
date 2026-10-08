@@ -3,6 +3,7 @@ package danger.orespawn.world.structure;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import danger.orespawn.world.GenerationRange;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.levelgen.Heightmap;
@@ -162,7 +163,8 @@ public class LegacyDungeonStructure extends Structure {
             }
         };
         if (origin == null) return Optional.empty();
-        if (origin.getY() + dungeonType.upExtent + 4 >= context.heightAccessor().getMaxBuildHeight()) {
+        if (origin.getY() + dungeonType.upExtent + 4
+                >= GenerationRange.top(context.chunkGenerator(), context.heightAccessor())) {
             return Optional.empty();
         }
         BlockPos finalOrigin = origin;
@@ -185,7 +187,7 @@ public class LegacyDungeonStructure extends Structure {
         int y = context.chunkGenerator().getBaseHeight(
                 x, z, Heightmap.Types.WORLD_SURFACE_WG,
                 context.heightAccessor(), context.randomState());
-        if (y <= context.heightAccessor().getMinBuildHeight() + 12) return null;
+        if (y <= GenerationRange.bottom(context.chunkGenerator(), context.heightAccessor()) + 12) return null;
         return new BlockPos(x, y, z);
     }
 
@@ -260,7 +262,7 @@ public class LegacyDungeonStructure extends Structure {
                     x, z, Heightmap.Types.WORLD_SURFACE_WG,
                     context.heightAccessor(), context.randomState());
             // Void column — no end-stone surface to sit on.
-            if (firstFree <= context.heightAccessor().getMinBuildHeight() + 1) continue;
+            if (firstFree <= GenerationRange.bottom(context.chunkGenerator(), context.heightAccessor()) + 1) continue;
             // orig :1564/:1549 — the scan only visits Y 90 down to 11.
             if (firstFree > 90 || firstFree < 11) continue;
             if (!footprintClearAbove(context, x, z, firstFree)) continue;

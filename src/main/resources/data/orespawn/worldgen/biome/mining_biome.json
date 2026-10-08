@@ -250,8 +250,8 @@
     ],
     [],
     [
-      "minecraft:spring_water",
-      "minecraft:spring_lava"
+      "orespawn:spring_water_dim",
+      "orespawn:spring_lava_dim"
     ],
     [
       "orespawn:anthill_mining",
