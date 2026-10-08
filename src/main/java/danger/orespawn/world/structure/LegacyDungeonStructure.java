@@ -166,8 +166,11 @@ public class LegacyDungeonStructure extends Structure {
             return Optional.empty();
         }
         BlockPos finalOrigin = origin;
+        // MOD-044: an altar laid out while modern.altarTerrain is on is fitted to its ground (the piece ignores it for
+        // every other type), and keeps that whatever the setting says when its chunks generate
+        boolean fitted = danger.orespawn.OreSpawnConfig.altarTerrain();
         return Optional.of(new GenerationStub(finalOrigin, builder ->
-                builder.addPiece(new LegacyDungeonPiece(finalOrigin, dungeonType))));
+                builder.addPiece(new LegacyDungeonPiece(finalOrigin, dungeonType, fitted))));
     }
 
     /**

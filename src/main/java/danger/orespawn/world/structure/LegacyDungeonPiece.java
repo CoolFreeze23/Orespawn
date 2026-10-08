@@ -11,6 +11,8 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.tags.BlockTags;
+import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.EntityType;
@@ -501,6 +503,8 @@ public class LegacyDungeonPiece extends StructurePiece {
 
     private final DungeonType dungeonType;
     private final BlockPos origin;
+    /** MOD-044: a Royal Altar fitted to its ground (modern.altarTerrain when it was laid out); false for every other. */
+    private final boolean fitted;
 
     /**
      * BUG-033 (beta.3): per-pass state for the gated helpers below, held in
@@ -530,22 +534,45 @@ public class LegacyDungeonPiece extends StructurePiece {
     }
 
     public LegacyDungeonPiece(BlockPos origin, DungeonType dungeonType) {
-        super(ModStructureTypes.LEGACY_DUNGEON_PIECE.get(), 0,
-                new BoundingBox(
-                        origin.getX() + dungeonType.minXOff,
-                        origin.getY() - dungeonType.downExtent,
-                        origin.getZ() + dungeonType.minZOff,
-                        origin.getX() + dungeonType.maxXOff,
-                        origin.getY() + dungeonType.upExtent,
-                        origin.getZ() + dungeonType.maxZOff));
+        this(origin, dungeonType, false);
+    }
+
+    /**
+     * {@code fitted} (MOD-044) is taken only by the Royal Altars: their box then reaches out over the ground round them
+     * that {@link #fitAltarGround} shapes, {@link #ALTAR_FIT_RING} blocks beyond the envelope the build clears.
+     */
+    public LegacyDungeonPiece(BlockPos origin, DungeonType dungeonType, boolean fitted) {
+        super(ModStructureTypes.LEGACY_DUNGEON_PIECE.get(), 0, box(origin, dungeonType, fitted && isAltar(dungeonType)));
         this.origin = origin.immutable();
         this.dungeonType = dungeonType;
+        this.fitted = fitted && isAltar(dungeonType);
     }
 
     public LegacyDungeonPiece(StructurePieceSerializationContext ctx, CompoundTag tag) {
         super(ModStructureTypes.LEGACY_DUNGEON_PIECE.get(), tag);
         this.origin = new BlockPos(tag.getInt("ox"), tag.getInt("oy"), tag.getInt("oz"));
         this.dungeonType = DungeonType.valueOf(tag.getString("dt"));
+        this.fitted = tag.getBoolean("fit") && isAltar(this.dungeonType);
+    }
+
+    private static boolean isAltar(DungeonType type) {
+        return type == DungeonType.KING_ALTAR || type == DungeonType.QUEEN_ALTAR;
+    }
+
+    private static BoundingBox box(BlockPos origin, DungeonType type, boolean fitted) {
+        // the pad is 51 wide on the origin, the envelope five more each way, the fitted ground the ring beyond that,
+        // down to the deepest fill
+        int reach = ALTAR_HALF_ENVELOPE + ALTAR_FIT_RING;
+        return fitted
+                ? new BoundingBox(origin.getX() - reach, origin.getY() - type.downExtent - ALTAR_FIT_RING,
+                        origin.getZ() - reach, origin.getX() + reach, origin.getY() + type.upExtent, origin.getZ() + reach)
+                : new BoundingBox(origin.getX() + type.minXOff, origin.getY() - type.downExtent, origin.getZ() + type.minZOff,
+                        origin.getX() + type.maxXOff, origin.getY() + type.upExtent, origin.getZ() + type.maxZOff);
+    }
+
+    /** Whether this piece is a Royal Altar fitted to its ground (MOD-044). */
+    public boolean fitted() {
+        return this.fitted;
     }
 
     @Override
@@ -554,6 +581,7 @@ public class LegacyDungeonPiece extends StructurePiece {
         tag.putInt("oy", origin.getY());
         tag.putInt("oz", origin.getZ());
         tag.putString("dt", dungeonType.name());
+        if (fitted) tag.putBoolean("fit", true);
     }
 
     /**
@@ -572,10 +600,12 @@ public class LegacyDungeonPiece extends StructurePiece {
                             BoundingBox chunkBox, ChunkPos chunkPos, BlockPos pivot) {
         // RoyalTreePiece pattern: deterministic per-piece RNG seeded from the
         // bounding box corners so every chunk pass paints the same slice.
+        // (a fitted altar's wider box seeds from the corner its type's box would have)
         RandomSource rng = runtimeRandomOverride != null ? runtimeRandomOverride
                 : RandomSource.create(
-                (long) this.boundingBox.minX() * 341873128712L
-                        + (long) this.boundingBox.minZ() * 132897987541L);
+                (long) (fitted ? this.origin.getX() + dungeonType.minXOff : this.boundingBox.minX()) * 341873128712L
+                        + (long) (fitted ? this.origin.getZ() + dungeonType.minZOff : this.boundingBox.minZ())
+                        * 132897987541L);
 
         // WGEN-076: a live pass (buildNow, a gametest, /place) settles the joins of its fences, panes, bars and walls
         // when it ends; a worldgen pass hands them to the chunk's post-processing instead (see place).
@@ -670,7 +700,12 @@ public class LegacyDungeonPiece extends StructurePiece {
      * caller with a seeded source (a game test) gets the same layout every time.
      */
     public static void buildNow(ServerLevel level, BlockPos origin, DungeonType type, RandomSource random) {
-        LegacyDungeonPiece piece = new LegacyDungeonPiece(origin, type);
+        buildNow(level, origin, type, random, false);
+    }
+
+    /** {@link #buildNow(ServerLevel, BlockPos, DungeonType, RandomSource)}, a Royal Altar fitted to its ground when asked. */
+    public static void buildNow(ServerLevel level, BlockPos origin, DungeonType type, RandomSource random, boolean fitted) {
+        LegacyDungeonPiece piece = new LegacyDungeonPiece(origin, type, fitted);
         piece.runtimeRandomOverride = random;
         piece.postProcess(level, level.structureManager(), level.getChunkSource().getGenerator(),
                 random, piece.getBoundingBox(), new ChunkPos(origin), origin);
@@ -2255,6 +2290,16 @@ public class LegacyDungeonPiece extends StructurePiece {
         for (int i = 0; i < width; i++) {
             for (int k = 0; k < length; k++) {
                 place(ox + i, cposy, oz + k, grass);
+                if (fitted) {
+                    // MOD-044: a fitted altar's skirt goes down to the ground under the pad, through air, water,
+                    // plants and leaves, as deep as the ground round it is filled
+                    for (int v = 1; v <= 9 + ALTAR_FIT_RING; v++) {
+                        if (!inChunk(ox + i, cposy - v, oz + k)) break;
+                        if (!fillable(ctx().level().getBlockState(new BlockPos(ox + i, cposy - v, oz + k)))) break;
+                        place(ox + i, cposy - v, oz + k, dirt);
+                    }
+                    continue;
+                }
                 for (int v = 1; v < 10; v++) {
                     if (!inChunk(ox + i, cposy - v, oz + k)) continue;
                     BlockState here = ctx().level().getBlockState(
@@ -2286,6 +2331,170 @@ public class LegacyDungeonPiece extends StructurePiece {
         buildRoyalPortraitWall(ox + 4, cposy + 10, oz + 9, king);
         // Phase 6: centre altar pyramid (legacy line 4404 / 5748).
         buildRoyalCenterAltar(ox + width / 2, cposy, oz + length / 2, king);
+        if (fitted) fitAltarGround(ox, oz, cposy);
+    }
+
+    /** Half the cleared envelope round a Royal Altar's centre: its 51-block pad and five blocks each way. */
+    static final int ALTAR_HALF_ENVELOPE = 30;
+    /** MOD-044: how far beyond the envelope a fitted altar's ground is shaped: walls and drops up to this high. */
+    public static final int ALTAR_FIT_RING = 16;
+
+    /**
+     * MOD-044: where a fitted altar brings a column of natural ground whose top is at {@code ground}, {@code out} blocks
+     * beyond its cleared envelope (zero or less: the strip inside it, round the pad): within one block a block of the
+     * pad's level, the strip level with the pad.
+     */
+    public static int fittedGround(int ground, int padY, int out) {
+        int reach = Math.max(0, out);
+        return Mth.clamp(ground, padY - reach, padY + reach);
+    }
+
+    /**
+     * MOD-044 (modern.altarTerrain): the ground round the altar fitted to it, after the build. The strip between the pad
+     * and the envelope the build clears (five blocks) is filled level with the pad; beyond the envelope, out to
+     * {@link #ALTAR_FIT_RING} blocks, each column's natural ground is brought within one block per block of distance of
+     * the pad's level ({@link #fittedGround}): a hillside above it cut back to that slope with grass on the cut and dirt
+     * under the grass, a drop below it filled to it with dirt and a grass top. Only natural ground and what grows on it
+     * is cut, and only air, water, plants and leaves are filled; a column with a trunk standing on its ground, or
+     * another build over it, is left as it stands, while a canopy or a branch over a column stays where it is over the
+     * cut. Each column is read and written in the chunk being built, as the skirt's cells are, from its surface down:
+     * in a world being generated the surface the chunk's decoration has reached (its plants and trees stand before the
+     * altar is built, as in the original).
+     */
+    private void fitAltarGround(int ox, int oz, int padY) {
+        PassCtx c = ctx();
+        int ceiling = padY + dungeonType.upExtent;
+        int floor = padY - dungeonType.downExtent - ALTAR_FIT_RING;
+        for (int i = -5 - ALTAR_FIT_RING; i <= 55 + ALTAR_FIT_RING; i++) {
+            for (int k = -5 - ALTAR_FIT_RING; k <= 55 + ALTAR_FIT_RING; k++) {
+                if (i >= 0 && i <= 50 && k >= 0 && k <= 50) continue;
+                int x = ox + i, z = oz + k;
+                if (!inChunk(x, padY, z)) continue;
+                int out = Math.max(Math.max(-5 - i, i - 55), Math.max(-5 - k, k - 55));
+                // the strip inside the envelope is cleared from the pad's level up, under the ceiling's overhanging rim
+                int top = out <= 0 ? padY - 1
+                        : Math.min(ceiling, c.level().getHeight(Heightmap.Types.WORLD_SURFACE, x, z) - 1);
+                fitColumn(new Column() {
+                    @Override
+                    public BlockState get(int y) {
+                        return c.level().getBlockState(c.mut().set(x, y, z));
+                    }
+
+                    @Override
+                    public void set(int y, BlockState state) {
+                        place(x, y, z, state);
+                    }
+                }, padY, out, top, floor);
+            }
+        }
+    }
+
+    /** One column's blocks by height: the fitted ground's, as the build reads and writes them (and its tests). */
+    public interface Column {
+        BlockState get(int y);
+
+        void set(int y, BlockState state);
+    }
+
+    /**
+     * MOD-044: one column of the ground round a fitted altar, {@code out} blocks beyond its envelope: its natural
+     * ground found from {@code top} down to {@code floor} through air, water, plants, leaves and logs (anything else
+     * first, another build, and the column is left), then cut back to {@link #fittedGround} (beyond the envelope not
+     * where a trunk stands on the ground; the ground above the target gone, and what grew on it: plants, a bush up to
+     * two leaves high; a crown resting on the slope, a canopy or a branch over air stays; grass on the cut, dirt under
+     * the grass) or filled up to it (dirt with a grass top over the water, plants and leaves there, round any log, the
+     * old grass under the fill made dirt, a plant rooted under the fill and reaching above it gone with it).
+     */
+    public static void fitColumn(Column column, int padY, int out, int top, int floor) {
+        BlockState air = Blocks.AIR.defaultBlockState();
+        BlockState grass = Blocks.GRASS_BLOCK.defaultBlockState();
+        BlockState dirt = Blocks.DIRT.defaultBlockState();
+        int ground = Integer.MIN_VALUE;
+        for (int y = top; y >= floor; y--) {
+            BlockState here = column.get(y);
+            if (naturalGround(here)) {
+                ground = y;
+                break;
+            }
+            if (!fillable(here) && !log(here)) return;
+        }
+        if (ground == Integer.MIN_VALUE) return;
+        int target = fittedGround(ground, padY, out);
+        if (ground > target) {
+            if (out > 0 && log(column.get(ground + 1))) return;
+            for (int y = ground; y > target; y--) {
+                BlockState here = column.get(y);
+                if (!here.isAir() && (naturalGround(here) || fillable(here))) column.set(y, air);
+            }
+            int above = ground + 1;
+            for (; above <= top; above++) {
+                BlockState here = column.get(above);
+                if (here.isAir() || !fillable(here) || leaves(here)) break;
+                column.set(above, air);
+            }
+            // a bush (leaves at most two high, open above) goes too; a crown resting on the slope stays
+            int bush = 0;
+            while (above + bush <= top && leaves(column.get(above + bush))) bush++;
+            if (bush > 0 && bush <= 2 && (above + bush > top || column.get(above + bush).isAir())) {
+                for (int b = 0; b < bush; b++) column.set(above + b, air);
+            }
+            column.set(target, grass);
+            for (int y = target - 1; y >= target - 2; y--) {
+                if (naturalGround(column.get(y))) column.set(y, dirt);
+            }
+        } else if (ground < target) {
+            // every cell above the ground was passed by the scan (or stands over the surface, air)
+            if (column.get(ground).is(Blocks.GRASS_BLOCK)) column.set(ground, dirt);
+            for (int y = ground + 1; y <= target; y++) {
+                if (!log(column.get(y))) column.set(y, y == target ? grass : dirt);
+            }
+            for (int y = target + 1; y <= top && plant(column.get(y)); y++) column.set(y, air);
+        }
+    }
+
+    /** The ground a fitted altar may cut: soil, the overworld's stones, sand, gravel, clay and the ores in them. */
+    private static boolean naturalGround(BlockState state) {
+        return state.is(BlockTags.DIRT) || state.is(BlockTags.BASE_STONE_OVERWORLD) || state.is(Blocks.GRAVEL)
+                || state.is(Blocks.SAND) || state.is(Blocks.SANDSTONE) || state.is(Blocks.CLAY)
+                || state.is(net.neoforged.neoforge.common.Tags.Blocks.ORES) || orespawnGround(state);
+    }
+
+    /** OreSpawn's own ores in Utopia's stone, its spawn ores among them, and the ant hills set into its grass. */
+    private static boolean orespawnGround(BlockState state) {
+        return state.is(ModBlocks.ORE_AMETHYST.get()) || state.is(ModBlocks.ORE_URANIUM.get())
+                || state.is(ModBlocks.ORE_TITANIUM.get()) || state.is(ModBlocks.ORE_SALT.get())
+                || state.is(ModBlocks.ORE_RUBY.get()) || state.is(ModBlocks.RED_ANT_TROLL.get())
+                || state.is(ModBlocks.TERMITE_TROLL.get()) || state.is(ModBlocks.ANT_BLOCK.get())
+                || state.is(ModBlocks.RED_ANT_BLOCK.get()) || state.is(ModBlocks.RAINBOW_ANT_BLOCK.get())
+                || state.is(ModBlocks.UNSTABLE_ANT_BLOCK.get()) || state.is(ModBlocks.TERMITE_BLOCK.get())
+                || state.getBlock() instanceof danger.orespawn.block.OreGenericEgg;
+    }
+
+    /** What a fitted altar's ground passes over and may fill: air, water and lava, plants and leaves. */
+    private static boolean fillable(BlockState state) {
+        return state.isAir() || state.canBeReplaced() || state.getBlock() instanceof net.minecraft.world.level.block.LiquidBlock
+                || leaves(state) || plant(state);
+    }
+
+    /** Leaves, vanilla's and OreSpawn's (which are not in the leaves tag). */
+    private static boolean leaves(BlockState state) {
+        return state.is(BlockTags.LEAVES) || state.getBlock() instanceof net.minecraft.world.level.block.LeavesBlock;
+    }
+
+    /** Logs, vanilla's and OreSpawn's (which are not in the logs tag). */
+    private static boolean log(BlockState state) {
+        return state.is(BlockTags.LOGS) || state.is(ModBlocks.SKY_TREE_LOG.get()) || state.is(ModBlocks.DUPLICATOR_LOG.get())
+                || state.is(ModBlocks.CRYSTAL_TREE_LOG.get());
+    }
+
+    /** What grows on the ground: grass, flowers, crops, mushrooms, saplings, sugar cane, cactus, vines, pumpkins, melons. */
+    private static boolean plant(BlockState state) {
+        Block block = state.getBlock();
+        return block instanceof net.minecraft.world.level.block.BushBlock
+                || block instanceof net.minecraft.world.level.block.SugarCaneBlock
+                || block instanceof net.minecraft.world.level.block.CactusBlock
+                || block instanceof net.minecraft.world.level.block.VineBlock
+                || state.is(Blocks.PUMPKIN) || state.is(Blocks.MELON);
     }
 
     /** Direct port of {@code makekingcolumn} / {@code makequeencolumn}. */

@@ -361,6 +361,14 @@ public class OreSpawnConfig {
      */
     public static final ModConfigSpec.BooleanValue MODERN_DOG_ARMOUR;
     /**
+     * MOD-044: a Royal Altar built in Utopia from now on fitted to its ground: the strip between its pad and the envelope
+     * it clears filled level with the pad, the ground round it brought to a slope of one block a block for 16 blocks (a
+     * hillside cut back, a drop filled), the dirt under the pad going down to the ground (up to 25 blocks). Where the
+     * altars go and what they are is unchanged. Takes effect only while {@link #MODERN_ENABLED} is on -- read through {@link #altarTerrain()}, never
+     * directly, when an altar's structure is laid out; an altar keeps the choice it was laid out with.
+     */
+    public static final ModConfigSpec.BooleanValue MODERN_ALTAR_TERRAIN;
+    /**
      * MOD-038, the per-species flip list: registry names ({@code
      * orespawn:beaver}; the bare path is accepted for the mod's own species) kept on
      * the classic pose in modern mode even when their clips ship. Read with the
@@ -579,13 +587,14 @@ public class OreSpawnConfig {
                         "modern.petsDefendOwner, modern.pointysaurusStareAggro, " +
                         "modern.cryolophosaurusRevengeChase, modern.chainsawSweepVanillaSight, " +
                         "modern.artistAnimations with modern.classicAnimationSpecies, modern.horseArmour, " +
-                        "modern.wolfArmour, modern.spears, modern.dogArmour); false = " +
+                        "modern.wolfArmour, modern.spears, modern.dogArmour, modern.altarTerrain); false = " +
                         "classic 1.7.10 " +
                         "parity everywhere, whatever the per-feature keys say. Phase G artist animations hang " +
                         "off this same switch (classic stays code-driven parity). Snapshotted features " +
                         "(the robot gait mode, hitbox sub-keys, the goal keys petsDefendOwner / " +
                         "pointysaurusStareAggro / cryolophosaurusRevengeChase, the per-entity animation layers " +
-                        "of artistAnimations) pick up a flip on newly spawned/loaded entities, not live ones."
+                        "of artistAnimations) pick up a flip on newly spawned/loaded entities, not live ones, " +
+                        "and altarTerrain on altars laid out after it."
         ).define("enabled", true);
         MODERN_MOTHRA_WIDE_ROOT_HITBOX = BUILDER.comment(
                 "MOD-029: Mothra's root hitbox is 6 x 3 (the port's original size) instead of the 1.7.10 " +
@@ -730,6 +739,14 @@ public class OreSpawnConfig {
                         "session, so a change reaches dogs after a restart; its legacy armour render, when chosen in " +
                         "its own config, draws its own textures instead."
         ).define("dogArmour", true);
+        MODERN_ALTAR_TERRAIN = BUILDER.comment(
+                "MOD-044: the Royal Altars Utopia builds fitted to their ground: the cleared strip round the pad level " +
+                        "with it, the ground round the altar sloped one block a block for 16 blocks (a hillside cut " +
+                        "back, a drop filled), the dirt under the pad going down to the ground, up to 25 blocks. " +
+                        "Where the altars go is unchanged. Only takes effect while modern.enabled is true; false (or classic mode) builds " +
+                        "1.7.10's flat pad with its straight cut and its nine-block skirt. Applies to altars laid out " +
+                        "after the change, in chunks not yet generated."
+        ).define("altarTerrain", true);
         BUILDER.pop();
 
         SPEC = BUILDER.build();
@@ -859,6 +876,14 @@ public class OreSpawnConfig {
      */
     public static boolean dogArmour() {
         return MODERN_ENABLED.get() && MODERN_DOG_ARMOUR.get();
+    }
+
+    /**
+     * MOD-044: the single {@code master && key} evaluation for the fitted altars -- true only while
+     * {@link #MODERN_ENABLED} AND {@link #MODERN_ALTAR_TERRAIN} are both on. Read when an altar's structure is laid out.
+     */
+    public static boolean altarTerrain() {
+        return MODERN_ENABLED.get() && MODERN_ALTAR_TERRAIN.get();
     }
 
     /**
