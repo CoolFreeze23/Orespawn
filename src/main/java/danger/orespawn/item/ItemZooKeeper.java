@@ -19,8 +19,9 @@ import net.minecraft.world.item.enchantment.Enchantments;
 /**
  * ZooKeeper, ported from 1.7.10 ItemZooKeeper.java:24-50. Left-clicking a mob
  * makes it persistent (never despawns) with smoke/explosion particle bursts
- * and an explosion sound; costs 2 durability per use on a 1-durability item,
- * so it breaks after a single use.
+ * and an explosion sound; costs 2 durability per use on a 2-durability item
+ * (the original's 1, broken past it where 1.21 breaks at it), so it breaks
+ * after a single use unless Unbreaking spares a point.
  */
 public class ItemZooKeeper extends Item {
     public ItemZooKeeper(Item.Properties properties) {

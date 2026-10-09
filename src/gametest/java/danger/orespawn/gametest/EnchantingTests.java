@@ -107,6 +107,13 @@ public class EnchantingTests {
         helper.assertTrue(mending.endsWith("anvil no"), "the Zoo Keeper and Mending: " + mending);
         helper.assertTrue(kit.endsWith("anvil no") && launcher.endsWith("anvil no"),
                 "the Spider Robot Kit: " + kit + "; the Creeper Launcher: " + launcher);
+        // 1.7.10 broke it when its damage passed its one point of durability; here two points, broken on reaching
+        // them: a capture of two with a point spared leaves it whole, as there
+        ItemStack zoo = new ItemStack(ModItems.ZOO_KEEPER.get());
+        zoo.hurtAndBreak(1, helper.getLevel(), null, item -> { });
+        helper.assertTrue(zoo.getMaxDamage() == 2 && !zoo.isEmpty() && zoo.getDamageValue() == 1,
+                "the Zoo Keeper: durability " + zoo.getMaxDamage() + ", after one point " + zoo.getDamageValue()
+                        + (zoo.isEmpty() ? " (broken)" : ""));
         helper.succeed();
     }
 

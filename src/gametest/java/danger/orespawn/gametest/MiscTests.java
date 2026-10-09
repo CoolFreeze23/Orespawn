@@ -394,7 +394,7 @@ public class MiscTests {
         helper.assertTrue(pig.isPersistenceRequired(),
                 "ZooKeeper left-click sets persistence (orig :44)");
         helper.assertTrue(zoo.isEmpty(),
-                "ZooKeeper breaks after a single use (2 dmg vs durability 1)");
+                "ZooKeeper breaks after a single use (2 dmg vs durability 2)");
         pig.discard();
 
         // -- Wrench refusal: healthy + unowned ----------------------------

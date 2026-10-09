@@ -654,8 +654,10 @@ public class ModItems {
             () -> new ItemSpiderRobotKit(new Item.Properties().stacksTo(1).durability((int) MobStats.ANT_ROBOT.maxHealth()),
                     () -> ModEntities.ANT_ROBOT.get()));
     public static final DeferredItem<Item> ZOO_KEEPER = ITEMS.register("zoo_keeper",
-            // orig ItemZooKeeper.java:21 â€” setMaxDamage(1)
-            () -> new ItemZooKeeper(new Item.Properties().durability(1)));
+            // orig ItemZooKeeper.java:21: setMaxDamage(1), a capture costing 2. 1.7.10 broke an item when its damage
+            // passed its maximum, 1.21 when it reaches it: two of durability break it after one capture as 1.7.10's
+            // did, and Unbreaking spares it as often
+            () -> new ItemZooKeeper(new Item.Properties().durability(2)));
     public static final DeferredItem<Item> NETHER_LOST = ITEMS.register("nether_lost",
             // orig ItemNetherLost.java:24-25 â€” stack 1, setMaxDamage(3000)
             () -> new ItemNetherLost(new Item.Properties().stacksTo(1).durability(3000)));
