@@ -316,6 +316,33 @@ public class BossDropTests {
     }
 
     /**
+     * ITEM-080: Godzilla's, the Kraken's and the Attack Squid's tables drop a golden carrot where the original's did
+     * (orig Godzilla.java:1149, Kraken.java:558, AttackSquid.java:182: {@code Items.field_151150_bK}, MCP's
+     * golden_carrot), one bare entry each at weight 1, and no glistering melon slice, which the original never dropped.
+     */
+    @GameTest(template = "empty")
+    public static void loot080a_the_golden_carrot_where_the_original_dropped_it(GameTestHelper helper) {
+        for (String mob : List.of("godzilla", "kraken", "attack_squid")) {
+            int carrots = 0;
+            for (JsonElement pool : GsonHelper.getAsJsonArray(table(helper, mob), "pools")) {
+                for (JsonElement entry : GsonHelper.getAsJsonArray(pool.getAsJsonObject(), "entries")) {
+                    JsonObject e = entry.getAsJsonObject();
+                    String name = GsonHelper.getAsString(e, "name", "");
+                    helper.assertFalse(name.equals("minecraft:glistering_melon_slice"),
+                            mob + " drops a glistering melon slice, which the original never dropped");
+                    if (name.equals("minecraft:golden_carrot")) {
+                        carrots++;
+                        helper.assertTrue(GsonHelper.getAsInt(e, "weight", 1) == 1 && !e.has("functions")
+                                && !e.has("conditions"), mob + "'s golden carrot is not one bare entry at weight 1: " + e);
+                    }
+                }
+            }
+            helper.assertTrue(carrots == 1, mob + " has " + carrots + " golden carrot entries, not the original's one");
+        }
+        helper.succeed();
+    }
+
+    /**
      * One set_enchantments function against one die of the original: null when they agree, else what differs. A die
      * repeating an enchantment the entry's earlier functions set adds to it (ITEM-077), no other does; Aqua Affinity
      * is set at I (ITEM-078).

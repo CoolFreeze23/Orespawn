@@ -6,7 +6,7 @@
       "entries": [
         {"type": "minecraft:item", "name": "minecraft:gold_nugget", "weight": 1},
         {"type": "minecraft:item", "name": "minecraft:gold_ingot", "weight": 1},
-        {"type": "minecraft:item", "name": "minecraft:glistering_melon_slice", "weight": 1},
+        {"type": "minecraft:item", "name": "minecraft:golden_carrot", "weight": 1},
         {"type": "minecraft:item", "name": "minecraft:golden_sword", "weight": 1, "functions": [{"function": "minecraft:enchant_randomly"}]},
         {"type": "minecraft:item", "name": "minecraft:golden_shovel", "weight": 1, "functions": [{"function": "minecraft:enchant_randomly"}]},
         {"type": "minecraft:item", "name": "minecraft:golden_pickaxe", "weight": 1, "functions": [{"function": "minecraft:enchant_randomly"}]},
