@@ -477,8 +477,10 @@ public class StructurePlacementTests {
             try {
                 for (int c = 0; c < 40000 && (royals < 2 || altars < 2); c++) {
                     ChunkPos chunk = new ChunkPos(-9000 + c % 200, 4000 + c / 200);
-                    WorldgenRandom r = new WorldgenRandom(new LegacyRandomSource(0L));
-                    r.setLargeFeatureSeed(seed, chunk.x, chunk.z);
+                    // WGEN-108: the roll starts where the original's did, on the chunk's Forge random after its surface
+                    // patches' draws; the huge roll itself is worked out here from the worldgen heightmaps
+                    UtopiaTreeStructure.ColumnProbe probe = UtopiaTreeStructure.probe(context(helper, gen, state, seed, chunk));
+                    net.minecraft.util.RandomSource r = UtopiaTreeStructure.utopiaRandom(seed, chunk, probe);
                     BlockPos royal = null;
                     boolean queenPick = false;
                     boolean treeHere = false;
@@ -516,8 +518,7 @@ public class StructurePlacementTests {
                         }
                         checked++;
                     }
-                    UtopiaTreeStructure.ChunkPass pass = UtopiaTreeStructure.chunkPass(seed, chunk,
-                            UtopiaTreeStructure.probe(context(helper, gen, state, seed, chunk)));
+                    UtopiaTreeStructure.ChunkPass pass = UtopiaTreeStructure.chunkPass(seed, chunk, probe);
                     helper.assertTrue(!treeHere || (pass.bigTree() && pass.altar() == null), "the pass at " + chunk
                             + " grew " + pass + " beside the huge roll's tree");
                     UtopiaTreeStructure.Altar altar = pass.altar();

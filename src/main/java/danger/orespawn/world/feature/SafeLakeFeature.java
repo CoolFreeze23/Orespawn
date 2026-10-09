@@ -283,6 +283,9 @@ public class SafeLakeFeature extends Feature<LakeFeature.Configuration> {
                     }
                     for (long origin : reference.getValue()) {
                         net.minecraft.world.level.ChunkPos start = new net.minecraft.world.level.ChunkPos(origin);
+                        // a generating region holds the chunks a few round it only; a start beyond them is left out
+                        // (the Village's villages start within eight chunks of every chunk they reach)
+                        if (!level.hasChunk(start.x, start.z)) continue;
                         net.minecraft.world.level.chunk.ChunkAccess chunk = level.getChunk(start.x, start.z,
                                 net.minecraft.world.level.chunk.status.ChunkStatus.STRUCTURE_STARTS, false);
                         var village = chunk == null ? null : chunk.getStartForStructure(reference.getKey());
