@@ -131,7 +131,7 @@
       "expected_shadow": 0,
       "expected_scale": 0.5,
       "ref_derivation": "shadow: ClientProxyOreSpawn.java:392 `new RenderShoe()`; RenderShoe.java (19 lines, only func_76986_a :12-18) declares no constructor and RenderSpinner.java (55 lines: fields :17-18, func_76986_a :20-30, func_77026_a :32-50 ... | scale: RenderSpinner.java:25 `GL11.glScalef(0.5f, 0.5f, 0.5f)` applied to a 1.0 x 1.0 quad (func_77026_a :37-39 var7=1.0, var8=0.5, var9=0.25; vertices :45-48 span x -0.5..0.5, y -0.25..0.75) -> a 0.5-block billboard. ...",
-      "port_renderer": "vanilla:ThrownItemRenderer",
+      "port_renderer": "src/main/java/danger/orespawn/entity/client/SpinnerRenderer.java",
       "port_candidate": "none",
       "truth_verdicts": {
         "shadow": "MATCH",
@@ -139,7 +139,7 @@
       },
       "truth_verified": true,
       "status": "not_applicable",
-      "reason": "ThrownItemRenderer (vanilla) renders the item sprite; shadow 0 by EntityRenderer default, scale via the item model's GROUND transform (MATCH_VIA_OTHER_PATH)",
+      "reason": "SpinnerRenderer draws the item sprite as vanilla's ThrownItemRenderer does, turned about the view axis by the entity's pitch as RenderSpinner turned it (ENT-S-195); shadow 0 by EntityRenderer default, scale via the item model's GROUND transform (MATCH_VIA_OTHER_PATH)",
       "mod": null
     },
     {
@@ -150,7 +150,7 @@
       "expected_shadow": 0,
       "expected_scale": 0.5,
       "ref_derivation": "shadow: ClientProxyOreSpawn.java:393 `new RenderItemUrchin()`; neither RenderItemUrchin.java (54 lines, only func_76986_a :19-53) nor RenderSpinner.java declares a constructor -> Render default shadowSize = 0. | scale: RenderSpinner.java:25 `GL11.glScalef(0.5f, 0.5f, 0.5f)` on the 1.0 x 1.0 quad (func_77026_a :37-48) -> 0.5-block billboard; RenderItemUrchin adds no scale (it only selects the icon index then calls super at :52).",
-      "port_renderer": "vanilla:ThrownItemRenderer",
+      "port_renderer": "src/main/java/danger/orespawn/entity/client/SpinnerRenderer.java",
       "port_candidate": "none",
       "truth_verdicts": {
         "shadow": "MATCH",
@@ -158,7 +158,7 @@
       },
       "truth_verified": true,
       "status": "not_applicable",
-      "reason": "ThrownItemRenderer (vanilla) renders the item sprite; shadow 0 by EntityRenderer default, scale via the item model's GROUND transform (MATCH_VIA_OTHER_PATH)",
+      "reason": "SpinnerRenderer draws the item sprite as vanilla's ThrownItemRenderer does, turned about the view axis by the entity's pitch as RenderSpinner turned it (ENT-S-195); shadow 0 by EntityRenderer default, scale via the item model's GROUND transform (MATCH_VIA_OTHER_PATH)",
       "mod": null
     },
     {
@@ -169,7 +169,7 @@
       "expected_shadow": 0,
       "expected_scale": 0.5,
       "ref_derivation": "shadow: Registration is `new RenderItemUrchin()` with no args (ClientProxyOreSpawn.java:394). RenderItemUrchin.java:17-54 declares no constructor and never touches shadowSize ... | scale: RenderSpinner.java:25 `GL11.glScalef(0.5f, 0.5f, 0.5f)` inside doRender (func_76986_a :20-30), applied to a unit quad drawn by func_77026_a: var7=1.0 (:37), var8=0.5 (:38), var9=0.25 (:39), vertices :45-48 span x -0.5..0.5 ...",
-      "port_renderer": "vanilla:ThrownItemRenderer",
+      "port_renderer": "src/main/java/danger/orespawn/entity/client/SpinnerRenderer.java",
       "port_candidate": "none",
       "truth_verdicts": {
         "shadow": "MATCH",
@@ -177,7 +177,7 @@
       },
       "truth_verified": true,
       "status": "not_applicable",
-      "reason": "ThrownItemRenderer (vanilla) renders the item sprite; shadow 0 by EntityRenderer default, scale via the item model's GROUND transform (MATCH_VIA_OTHER_PATH)",
+      "reason": "SpinnerRenderer draws the item sprite as vanilla's ThrownItemRenderer does, turned about the view axis by the entity's pitch as RenderSpinner turned it (ENT-S-195); shadow 0 by EntityRenderer default, scale via the item model's GROUND transform (MATCH_VIA_OTHER_PATH)",
       "mod": null
     },
     {
@@ -188,7 +188,7 @@
       "expected_shadow": 0,
       "expected_scale": 0.5,
       "ref_derivation": "shadow: `new RenderItemUrchin()` no-arg (ClientProxyOreSpawn.java:395); RenderItemUrchin.java:17-54 and RenderSpinner.java:15-55 define no constructor and never set shadowSize => Render default 0. Re-verified. | scale: RenderSpinner.java:25 glScalef(0.5f,0.5f,0.5f) on the unit quad (:37-39,:45-48) => 0.5-block billboard, x -0.25..0.25, y -0.125..0.375. Re-verified.",
-      "port_renderer": "vanilla:ThrownItemRenderer",
+      "port_renderer": "src/main/java/danger/orespawn/entity/client/SpinnerRenderer.java",
       "port_candidate": "none",
       "truth_verdicts": {
         "shadow": "MATCH",
@@ -196,7 +196,7 @@
       },
       "truth_verified": true,
       "status": "not_applicable",
-      "reason": "ThrownItemRenderer (vanilla) renders the item sprite; shadow 0 by EntityRenderer default, scale via the item model's GROUND transform (MATCH_VIA_OTHER_PATH)",
+      "reason": "SpinnerRenderer draws the item sprite as vanilla's ThrownItemRenderer does, turned about the view axis by the entity's pitch as RenderSpinner turned it (ENT-S-195); shadow 0 by EntityRenderer default, scale via the item model's GROUND transform (MATCH_VIA_OTHER_PATH)",
       "mod": null
     },
     {
@@ -207,7 +207,7 @@
       "expected_shadow": 0,
       "expected_scale": 0.5,
       "ref_derivation": "shadow: `new RenderItemUrchin()` no-arg (ClientProxyOreSpawn.java:396); no constructor in RenderItemUrchin.java:17-54 or RenderSpinner.java:15-55, shadowSize never set => 0. Re-verified. | scale: RenderSpinner.java:25 glScalef(0.5f,0.5f,0.5f) on the unit quad (:37-39,:45-48) => 0.5-block billboard. Re-verified.",
-      "port_renderer": "vanilla:ThrownItemRenderer",
+      "port_renderer": "src/main/java/danger/orespawn/entity/client/SpinnerRenderer.java",
       "port_candidate": "none",
       "truth_verdicts": {
         "shadow": "MATCH",
@@ -215,7 +215,7 @@
       },
       "truth_verified": true,
       "status": "not_applicable",
-      "reason": "ThrownItemRenderer (vanilla) renders the item sprite; shadow 0 by EntityRenderer default, scale via the item model's GROUND transform (MATCH_VIA_OTHER_PATH)",
+      "reason": "SpinnerRenderer draws the item sprite as vanilla's ThrownItemRenderer does, turned about the view axis by the entity's pitch as RenderSpinner turned it (ENT-S-195); shadow 0 by EntityRenderer default, scale via the item model's GROUND transform (MATCH_VIA_OTHER_PATH)",
       "mod": null
     },
     {
@@ -226,7 +226,7 @@
       "expected_shadow": 0,
       "expected_scale": 0.5,
       "ref_derivation": "shadow: `new RenderItemUrchin()` no-arg (ClientProxyOreSpawn.java:397); no constructor / no shadowSize in RenderItemUrchin.java:17-54 or RenderSpinner.java:15-55 => 0. Re-verified. | scale: RenderSpinner.java:25 glScalef(0.5f,0.5f,0.5f) on the unit quad (:37-39,:45-48). Re-verified.",
-      "port_renderer": "vanilla:ThrownItemRenderer",
+      "port_renderer": "src/main/java/danger/orespawn/entity/client/SpinnerRenderer.java",
       "port_candidate": "none",
       "truth_verdicts": {
         "shadow": "MATCH",
@@ -234,7 +234,7 @@
       },
       "truth_verified": true,
       "status": "not_applicable",
-      "reason": "ThrownItemRenderer (vanilla) renders the item sprite; shadow 0 by EntityRenderer default, scale via the item model's GROUND transform (MATCH_VIA_OTHER_PATH)",
+      "reason": "SpinnerRenderer draws the item sprite as vanilla's ThrownItemRenderer does, turned about the view axis by the entity's pitch as RenderSpinner turned it (ENT-S-195); shadow 0 by EntityRenderer default, scale via the item model's GROUND transform (MATCH_VIA_OTHER_PATH)",
       "mod": null
     },
     {
@@ -245,7 +245,7 @@
       "expected_shadow": 0,
       "expected_scale": 0.5,
       "ref_derivation": "shadow: `new RenderItemUrchin()` no-arg (ClientProxyOreSpawn.java:398); no constructor / no shadowSize in RenderItemUrchin.java:17-54 or RenderSpinner.java:15-55 => 0. Re-verified. | scale: RenderSpinner.java:25 glScalef(0.5f,0.5f,0.5f) on the unit quad (:37-39,:45-48). Re-verified.",
-      "port_renderer": "vanilla:ThrownItemRenderer",
+      "port_renderer": "src/main/java/danger/orespawn/entity/client/SpinnerRenderer.java",
       "port_candidate": "none",
       "truth_verdicts": {
         "shadow": "MATCH",
@@ -253,7 +253,7 @@
       },
       "truth_verified": true,
       "status": "not_applicable",
-      "reason": "ThrownItemRenderer (vanilla) renders the item sprite; shadow 0 by EntityRenderer default, scale via the item model's GROUND transform (MATCH_VIA_OTHER_PATH)",
+      "reason": "SpinnerRenderer draws the item sprite as vanilla's ThrownItemRenderer does, turned about the view axis by the entity's pitch as RenderSpinner turned it (ENT-S-195); shadow 0 by EntityRenderer default, scale via the item model's GROUND transform (MATCH_VIA_OTHER_PATH)",
       "mod": null
     },
     {
@@ -264,7 +264,7 @@
       "expected_shadow": 0,
       "expected_scale": 0.5,
       "ref_derivation": "shadow: `new RenderItemUrchin()` no-arg (ClientProxyOreSpawn.java:399); no constructor / no shadowSize in RenderItemUrchin.java:17-54 or RenderSpinner.java:15-55 => 0. Re-verified. | scale: RenderSpinner.java:25 glScalef(0.5f,0.5f,0.5f) on the unit quad (:37-39,:45-48). Re-verified.",
-      "port_renderer": "vanilla:ThrownItemRenderer",
+      "port_renderer": "src/main/java/danger/orespawn/entity/client/SpinnerRenderer.java",
       "port_candidate": "none",
       "truth_verdicts": {
         "shadow": "MATCH",
@@ -272,7 +272,7 @@
       },
       "truth_verified": true,
       "status": "not_applicable",
-      "reason": "ThrownItemRenderer (vanilla) renders the item sprite; shadow 0 by EntityRenderer default, scale via the item model's GROUND transform (MATCH_VIA_OTHER_PATH)",
+      "reason": "SpinnerRenderer draws the item sprite as vanilla's ThrownItemRenderer does, turned about the view axis by the entity's pitch as RenderSpinner turned it (ENT-S-195); shadow 0 by EntityRenderer default, scale via the item model's GROUND transform (MATCH_VIA_OTHER_PATH)",
       "mod": null
     },
     {
@@ -302,7 +302,7 @@
       "expected_shadow": 0,
       "expected_scale": 0.5,
       "ref_derivation": "shadow: `new RenderCage()` no-arg (ClientProxyOreSpawn.java:401); RenderCage.java:10-20 declares no constructor (only the func_76986_a override :12-19) and RenderSpinner.java:15-55 has no constructor/shadowSize assignment => Render default 0. Re-verified. | scale: RenderCage.java:18 calls super.func_76986_a => RenderSpinner.java:25 glScalef(0.5f,0.5f,0.5f) on the unit quad (:37-39,:45-48) => 0.5-block billboard, x -0.25..0.25, y -0.125..0.375. Re-verified.",
-      "port_renderer": "vanilla:ThrownItemRenderer",
+      "port_renderer": "src/main/java/danger/orespawn/entity/client/SpinnerRenderer.java",
       "port_candidate": "none",
       "truth_verdicts": {
         "shadow": "MATCH",
@@ -310,7 +310,7 @@
       },
       "truth_verified": true,
       "status": "not_applicable",
-      "reason": "ThrownItemRenderer (vanilla) renders the item sprite; shadow 0 by EntityRenderer default, scale via the item model's GROUND transform (MATCH_VIA_OTHER_PATH)",
+      "reason": "SpinnerRenderer draws the item sprite as vanilla's ThrownItemRenderer does, turned about the view axis by the entity's pitch as RenderSpinner turned it (ENT-S-195); shadow 0 by EntityRenderer default, scale via the item model's GROUND transform (MATCH_VIA_OTHER_PATH)",
       "mod": null
     },
     {
@@ -359,7 +359,7 @@
       "expected_shadow": 0,
       "expected_scale": 0.5,
       "ref_derivation": "shadow: `new RenderThrownRock()` \u2014 RenderThrownRock.java declares no constructor (lines 18-29 are only the twelve texture constants; methods start at :31) and never assigns shadowSize => 0.0f by the proven plain-Render engine fact. | scale: RenderThrownRock.func_76986_a (doRender): glTranslatef(x,y,z) (RenderThrownRock.java:34), glEnable(RESCALE_NORMAL) (:35), GL11.glScalef(0.5f,0.5f,0.5f) (:36), then func_77026_a draws a 1.0x1.0 quad (var7=1.0f, var8=0.5f, var9=0.25f ...",
-      "port_renderer": "vanilla:ThrownItemRenderer",
+      "port_renderer": "src/main/java/danger/orespawn/entity/client/SpinnerRenderer.java",
       "port_candidate": "none",
       "truth_verdicts": {
         "shadow": "MATCH",
@@ -367,7 +367,7 @@
       },
       "truth_verified": true,
       "status": "not_applicable",
-      "reason": "ThrownItemRenderer (vanilla) renders the item sprite; shadow 0 by EntityRenderer default, scale via the item model's GROUND transform (MATCH_VIA_OTHER_PATH)",
+      "reason": "SpinnerRenderer draws the item sprite as vanilla's ThrownItemRenderer does, turned about the view axis by the entity's pitch as RenderSpinner turned it (ENT-S-195); shadow 0 by EntityRenderer default, scale via the item model's GROUND transform (MATCH_VIA_OTHER_PATH)",
       "mod": null
     },
     {
