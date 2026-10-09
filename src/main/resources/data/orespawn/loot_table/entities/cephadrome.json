@@ -48,7 +48,7 @@
             {"function": "minecraft:set_enchantments", "enchantments": {"minecraft:looting": {"type": "minecraft:uniform", "min": 1, "max": 5}}, "conditions": [{"condition": "minecraft:random_chance", "chance": 0.16666667}]},
             {"function": "minecraft:set_enchantments", "enchantments": {"minecraft:knockback": {"type": "minecraft:uniform", "min": 1, "max": 5}}, "conditions": [{"condition": "minecraft:random_chance", "chance": 0.16666667}]},
             {"function": "minecraft:set_enchantments", "enchantments": {"minecraft:bane_of_arthropods": {"type": "minecraft:uniform", "min": 1, "max": 5}}, "conditions": [{"condition": "minecraft:random_chance", "chance": 0.16666667}]},
-            {"function": "minecraft:set_enchantments", "enchantments": {"minecraft:sharpness": {"type": "minecraft:uniform", "min": 1, "max": 5}}, "conditions": [{"condition": "minecraft:random_chance", "chance": 0.16666667}]}
+            {"function": "minecraft:set_enchantments", "enchantments": {"minecraft:sharpness": {"type": "minecraft:uniform", "min": 1, "max": 5}}, "conditions": [{"condition": "minecraft:random_chance", "chance": 0.16666667}], "add": true}
           ]
         },
         {
@@ -93,7 +93,7 @@
           "name": "orespawn:ruby_helmet",
           "weight": 1,
           "functions": [
-            {"function": "minecraft:set_enchantments", "enchantments": {"minecraft:aqua_affinity": {"type": "minecraft:uniform", "min": 1, "max": 5}}, "conditions": [{"condition": "minecraft:random_chance", "chance": 0.16666667}]},
+            {"function": "minecraft:set_enchantments", "enchantments": {"minecraft:aqua_affinity": 1}, "conditions": [{"condition": "minecraft:random_chance", "chance": 0.16666667}]},
             {"function": "minecraft:set_enchantments", "enchantments": {"minecraft:respiration": {"type": "minecraft:uniform", "min": 1, "max": 2}}, "conditions": [{"condition": "minecraft:random_chance", "chance": 0.16666667}]},
             {"function": "minecraft:set_enchantments", "enchantments": {"minecraft:unbreaking": {"type": "minecraft:uniform", "min": 2, "max": 5}}, "conditions": [{"condition": "minecraft:random_chance", "chance": 0.5}]},
             {"function": "minecraft:set_enchantments", "enchantments": {"minecraft:projectile_protection": {"type": "minecraft:uniform", "min": 1, "max": 5}}, "conditions": [{"condition": "minecraft:random_chance", "chance": 0.16666667}]},

@@ -985,6 +985,825 @@
      }
     ]
    }
+  ],
+  "minecraft:diamond_sword": [
+   {
+    "weight": 1,
+    "dice": [
+     {
+      "enchantment": "minecraft:sharpness",
+      "one_in": 6,
+      "min": 1,
+      "max": 5
+     },
+     {
+      "enchantment": "minecraft:bane_of_arthropods",
+      "one_in": 6,
+      "min": 1,
+      "max": 5
+     },
+     {
+      "enchantment": "minecraft:knockback",
+      "one_in": 6,
+      "min": 1,
+      "max": 5
+     },
+     {
+      "enchantment": "minecraft:looting",
+      "one_in": 6,
+      "min": 1,
+      "max": 5
+     },
+     {
+      "enchantment": "minecraft:unbreaking",
+      "one_in": 2,
+      "min": 2,
+      "max": 5
+     },
+     {
+      "enchantment": "minecraft:fire_aspect",
+      "one_in": 6,
+      "min": 1,
+      "max": 5
+     },
+     {
+      "enchantment": "minecraft:sharpness",
+      "one_in": 6,
+      "min": 1,
+      "max": 5
+     }
+    ]
+   }
+  ],
+  "minecraft:diamond_shovel": [
+   {
+    "weight": 1,
+    "dice": [
+     {
+      "enchantment": "minecraft:unbreaking",
+      "one_in": 2,
+      "min": 2,
+      "max": 5
+     },
+     {
+      "enchantment": "minecraft:efficiency",
+      "one_in": 6,
+      "min": 1,
+      "max": 5
+     }
+    ]
+   }
+  ],
+  "minecraft:diamond_pickaxe": [
+   {
+    "weight": 1,
+    "dice": [
+     {
+      "enchantment": "minecraft:unbreaking",
+      "one_in": 2,
+      "min": 2,
+      "max": 5
+     },
+     {
+      "enchantment": "minecraft:efficiency",
+      "one_in": 6,
+      "min": 1,
+      "max": 5
+     },
+     {
+      "enchantment": "minecraft:fortune",
+      "one_in": 6,
+      "min": 1,
+      "max": 5
+     }
+    ]
+   }
+  ],
+  "minecraft:diamond_axe": [
+   {
+    "weight": 1,
+    "dice": [
+     {
+      "enchantment": "minecraft:unbreaking",
+      "one_in": 2,
+      "min": 2,
+      "max": 5
+     },
+     {
+      "enchantment": "minecraft:efficiency",
+      "one_in": 6,
+      "min": 1,
+      "max": 5
+     }
+    ]
+   }
+  ],
+  "minecraft:diamond_hoe": [
+   {
+    "weight": 1,
+    "dice": [
+     {
+      "enchantment": "minecraft:unbreaking",
+      "one_in": 2,
+      "min": 2,
+      "max": 5
+     },
+     {
+      "enchantment": "minecraft:efficiency",
+      "one_in": 6,
+      "min": 1,
+      "max": 5
+     }
+    ]
+   }
+  ],
+  "minecraft:diamond_helmet": [
+   {
+    "weight": 1,
+    "dice": [
+     {
+      "enchantment": "minecraft:protection",
+      "one_in": 6,
+      "min": 1,
+      "max": 5
+     },
+     {
+      "enchantment": "minecraft:blast_protection",
+      "one_in": 6,
+      "min": 1,
+      "max": 5
+     },
+     {
+      "enchantment": "minecraft:fire_protection",
+      "one_in": 6,
+      "min": 1,
+      "max": 5
+     },
+     {
+      "enchantment": "minecraft:projectile_protection",
+      "one_in": 6,
+      "min": 1,
+      "max": 5
+     },
+     {
+      "enchantment": "minecraft:unbreaking",
+      "one_in": 2,
+      "min": 2,
+      "max": 5
+     },
+     {
+      "enchantment": "minecraft:respiration",
+      "one_in": 6,
+      "min": 1,
+      "max": 2
+     },
+     {
+      "enchantment": "minecraft:aqua_affinity",
+      "one_in": 6,
+      "min": 1,
+      "max": 5
+     }
+    ]
+   }
+  ],
+  "minecraft:diamond_chestplate": [
+   {
+    "weight": 1,
+    "dice": [
+     {
+      "enchantment": "minecraft:protection",
+      "one_in": 6,
+      "min": 1,
+      "max": 5
+     },
+     {
+      "enchantment": "minecraft:blast_protection",
+      "one_in": 6,
+      "min": 1,
+      "max": 5
+     },
+     {
+      "enchantment": "minecraft:fire_protection",
+      "one_in": 6,
+      "min": 1,
+      "max": 5
+     },
+     {
+      "enchantment": "minecraft:projectile_protection",
+      "one_in": 6,
+      "min": 1,
+      "max": 5
+     },
+     {
+      "enchantment": "minecraft:unbreaking",
+      "one_in": 2,
+      "min": 2,
+      "max": 5
+     }
+    ]
+   }
+  ],
+  "minecraft:diamond_leggings": [
+   {
+    "weight": 1,
+    "dice": [
+     {
+      "enchantment": "minecraft:protection",
+      "one_in": 6,
+      "min": 1,
+      "max": 5
+     },
+     {
+      "enchantment": "minecraft:blast_protection",
+      "one_in": 6,
+      "min": 1,
+      "max": 5
+     },
+     {
+      "enchantment": "minecraft:fire_protection",
+      "one_in": 6,
+      "min": 1,
+      "max": 5
+     },
+     {
+      "enchantment": "minecraft:projectile_protection",
+      "one_in": 6,
+      "min": 1,
+      "max": 5
+     },
+     {
+      "enchantment": "minecraft:unbreaking",
+      "one_in": 2,
+      "min": 2,
+      "max": 5
+     }
+    ]
+   }
+  ],
+  "minecraft:diamond_boots": [
+   {
+    "weight": 1,
+    "dice": [
+     {
+      "enchantment": "minecraft:feather_falling",
+      "one_in": 6,
+      "min": 5,
+      "max": 9
+     },
+     {
+      "enchantment": "minecraft:unbreaking",
+      "one_in": 2,
+      "min": 2,
+      "max": 5
+     }
+    ]
+   }
+  ],
+  "minecraft:iron_sword": [
+   {
+    "weight": 1,
+    "dice": [
+     {
+      "enchantment": "minecraft:sharpness",
+      "one_in": 6,
+      "min": 1,
+      "max": 5
+     },
+     {
+      "enchantment": "minecraft:bane_of_arthropods",
+      "one_in": 6,
+      "min": 1,
+      "max": 5
+     },
+     {
+      "enchantment": "minecraft:knockback",
+      "one_in": 6,
+      "min": 1,
+      "max": 5
+     },
+     {
+      "enchantment": "minecraft:looting",
+      "one_in": 6,
+      "min": 1,
+      "max": 5
+     },
+     {
+      "enchantment": "minecraft:unbreaking",
+      "one_in": 2,
+      "min": 2,
+      "max": 5
+     },
+     {
+      "enchantment": "minecraft:fire_aspect",
+      "one_in": 6,
+      "min": 1,
+      "max": 5
+     },
+     {
+      "enchantment": "minecraft:sharpness",
+      "one_in": 6,
+      "min": 1,
+      "max": 5
+     }
+    ]
+   }
+  ],
+  "minecraft:iron_shovel": [
+   {
+    "weight": 1,
+    "dice": [
+     {
+      "enchantment": "minecraft:unbreaking",
+      "one_in": 2,
+      "min": 2,
+      "max": 5
+     },
+     {
+      "enchantment": "minecraft:efficiency",
+      "one_in": 6,
+      "min": 1,
+      "max": 5
+     }
+    ]
+   }
+  ],
+  "minecraft:iron_pickaxe": [
+   {
+    "weight": 1,
+    "dice": [
+     {
+      "enchantment": "minecraft:unbreaking",
+      "one_in": 2,
+      "min": 2,
+      "max": 5
+     },
+     {
+      "enchantment": "minecraft:efficiency",
+      "one_in": 6,
+      "min": 1,
+      "max": 5
+     },
+     {
+      "enchantment": "minecraft:fortune",
+      "one_in": 6,
+      "min": 1,
+      "max": 5
+     }
+    ]
+   }
+  ],
+  "minecraft:iron_axe": [
+   {
+    "weight": 1,
+    "dice": [
+     {
+      "enchantment": "minecraft:unbreaking",
+      "one_in": 2,
+      "min": 2,
+      "max": 5
+     },
+     {
+      "enchantment": "minecraft:efficiency",
+      "one_in": 6,
+      "min": 1,
+      "max": 5
+     }
+    ]
+   }
+  ],
+  "minecraft:iron_hoe": [
+   {
+    "weight": 1,
+    "dice": [
+     {
+      "enchantment": "minecraft:unbreaking",
+      "one_in": 2,
+      "min": 2,
+      "max": 5
+     },
+     {
+      "enchantment": "minecraft:efficiency",
+      "one_in": 6,
+      "min": 1,
+      "max": 5
+     }
+    ]
+   }
+  ],
+  "minecraft:iron_helmet": [
+   {
+    "weight": 1,
+    "dice": [
+     {
+      "enchantment": "minecraft:protection",
+      "one_in": 6,
+      "min": 1,
+      "max": 5
+     },
+     {
+      "enchantment": "minecraft:blast_protection",
+      "one_in": 6,
+      "min": 1,
+      "max": 5
+     },
+     {
+      "enchantment": "minecraft:fire_protection",
+      "one_in": 6,
+      "min": 1,
+      "max": 5
+     },
+     {
+      "enchantment": "minecraft:projectile_protection",
+      "one_in": 6,
+      "min": 1,
+      "max": 5
+     },
+     {
+      "enchantment": "minecraft:unbreaking",
+      "one_in": 2,
+      "min": 2,
+      "max": 5
+     },
+     {
+      "enchantment": "minecraft:respiration",
+      "one_in": 6,
+      "min": 1,
+      "max": 5
+     },
+     {
+      "enchantment": "minecraft:aqua_affinity",
+      "one_in": 6,
+      "min": 1,
+      "max": 5
+     }
+    ]
+   }
+  ],
+  "minecraft:iron_chestplate": [
+   {
+    "weight": 1,
+    "dice": [
+     {
+      "enchantment": "minecraft:protection",
+      "one_in": 6,
+      "min": 1,
+      "max": 5
+     },
+     {
+      "enchantment": "minecraft:blast_protection",
+      "one_in": 6,
+      "min": 1,
+      "max": 5
+     },
+     {
+      "enchantment": "minecraft:fire_protection",
+      "one_in": 6,
+      "min": 1,
+      "max": 5
+     },
+     {
+      "enchantment": "minecraft:projectile_protection",
+      "one_in": 6,
+      "min": 1,
+      "max": 5
+     },
+     {
+      "enchantment": "minecraft:unbreaking",
+      "one_in": 2,
+      "min": 2,
+      "max": 5
+     }
+    ]
+   }
+  ],
+  "minecraft:iron_leggings": [
+   {
+    "weight": 1,
+    "dice": [
+     {
+      "enchantment": "minecraft:protection",
+      "one_in": 6,
+      "min": 1,
+      "max": 5
+     },
+     {
+      "enchantment": "minecraft:blast_protection",
+      "one_in": 6,
+      "min": 1,
+      "max": 5
+     },
+     {
+      "enchantment": "minecraft:fire_protection",
+      "one_in": 6,
+      "min": 1,
+      "max": 5
+     },
+     {
+      "enchantment": "minecraft:projectile_protection",
+      "one_in": 6,
+      "min": 1,
+      "max": 5
+     },
+     {
+      "enchantment": "minecraft:unbreaking",
+      "one_in": 2,
+      "min": 2,
+      "max": 5
+     }
+    ]
+   }
+  ],
+  "minecraft:iron_boots": [
+   {
+    "weight": 1,
+    "dice": [
+     {
+      "enchantment": "minecraft:feather_falling",
+      "one_in": 6,
+      "min": 5,
+      "max": 9
+     },
+     {
+      "enchantment": "minecraft:unbreaking",
+      "one_in": 2,
+      "min": 2,
+      "max": 5
+     }
+    ]
+   }
+  ],
+  "minecraft:golden_sword": [
+   {
+    "weight": 1,
+    "dice": [
+     {
+      "enchantment": "minecraft:sharpness",
+      "one_in": 6,
+      "min": 1,
+      "max": 5
+     },
+     {
+      "enchantment": "minecraft:bane_of_arthropods",
+      "one_in": 6,
+      "min": 1,
+      "max": 5
+     },
+     {
+      "enchantment": "minecraft:knockback",
+      "one_in": 6,
+      "min": 1,
+      "max": 5
+     },
+     {
+      "enchantment": "minecraft:looting",
+      "one_in": 6,
+      "min": 1,
+      "max": 5
+     },
+     {
+      "enchantment": "minecraft:unbreaking",
+      "one_in": 2,
+      "min": 2,
+      "max": 5
+     },
+     {
+      "enchantment": "minecraft:fire_aspect",
+      "one_in": 6,
+      "min": 1,
+      "max": 5
+     },
+     {
+      "enchantment": "minecraft:sharpness",
+      "one_in": 6,
+      "min": 1,
+      "max": 5
+     }
+    ]
+   }
+  ],
+  "minecraft:golden_shovel": [
+   {
+    "weight": 1,
+    "dice": [
+     {
+      "enchantment": "minecraft:unbreaking",
+      "one_in": 2,
+      "min": 2,
+      "max": 5
+     },
+     {
+      "enchantment": "minecraft:efficiency",
+      "one_in": 6,
+      "min": 1,
+      "max": 5
+     }
+    ]
+   }
+  ],
+  "minecraft:golden_pickaxe": [
+   {
+    "weight": 1,
+    "dice": [
+     {
+      "enchantment": "minecraft:unbreaking",
+      "one_in": 2,
+      "min": 2,
+      "max": 5
+     },
+     {
+      "enchantment": "minecraft:efficiency",
+      "one_in": 6,
+      "min": 1,
+      "max": 5
+     },
+     {
+      "enchantment": "minecraft:fortune",
+      "one_in": 6,
+      "min": 1,
+      "max": 5
+     }
+    ]
+   }
+  ],
+  "minecraft:golden_axe": [
+   {
+    "weight": 1,
+    "dice": [
+     {
+      "enchantment": "minecraft:unbreaking",
+      "one_in": 2,
+      "min": 2,
+      "max": 5
+     },
+     {
+      "enchantment": "minecraft:efficiency",
+      "one_in": 6,
+      "min": 1,
+      "max": 5
+     }
+    ]
+   }
+  ],
+  "minecraft:golden_hoe": [
+   {
+    "weight": 1,
+    "dice": [
+     {
+      "enchantment": "minecraft:unbreaking",
+      "one_in": 2,
+      "min": 2,
+      "max": 5
+     },
+     {
+      "enchantment": "minecraft:efficiency",
+      "one_in": 6,
+      "min": 1,
+      "max": 5
+     }
+    ]
+   }
+  ],
+  "minecraft:golden_helmet": [
+   {
+    "weight": 1,
+    "dice": [
+     {
+      "enchantment": "minecraft:protection",
+      "one_in": 6,
+      "min": 1,
+      "max": 5
+     },
+     {
+      "enchantment": "minecraft:blast_protection",
+      "one_in": 6,
+      "min": 1,
+      "max": 5
+     },
+     {
+      "enchantment": "minecraft:fire_protection",
+      "one_in": 6,
+      "min": 1,
+      "max": 5
+     },
+     {
+      "enchantment": "minecraft:projectile_protection",
+      "one_in": 6,
+      "min": 1,
+      "max": 5
+     },
+     {
+      "enchantment": "minecraft:unbreaking",
+      "one_in": 2,
+      "min": 2,
+      "max": 5
+     },
+     {
+      "enchantment": "minecraft:respiration",
+      "one_in": 6,
+      "min": 1,
+      "max": 5
+     },
+     {
+      "enchantment": "minecraft:aqua_affinity",
+      "one_in": 6,
+      "min": 1,
+      "max": 5
+     }
+    ]
+   }
+  ],
+  "minecraft:golden_chestplate": [
+   {
+    "weight": 1,
+    "dice": [
+     {
+      "enchantment": "minecraft:protection",
+      "one_in": 6,
+      "min": 1,
+      "max": 5
+     },
+     {
+      "enchantment": "minecraft:blast_protection",
+      "one_in": 6,
+      "min": 1,
+      "max": 5
+     },
+     {
+      "enchantment": "minecraft:fire_protection",
+      "one_in": 6,
+      "min": 1,
+      "max": 5
+     },
+     {
+      "enchantment": "minecraft:projectile_protection",
+      "one_in": 6,
+      "min": 1,
+      "max": 5
+     },
+     {
+      "enchantment": "minecraft:unbreaking",
+      "one_in": 2,
+      "min": 2,
+      "max": 5
+     }
+    ]
+   }
+  ],
+  "minecraft:golden_leggings": [
+   {
+    "weight": 1,
+    "dice": [
+     {
+      "enchantment": "minecraft:protection",
+      "one_in": 6,
+      "min": 1,
+      "max": 5
+     },
+     {
+      "enchantment": "minecraft:blast_protection",
+      "one_in": 6,
+      "min": 1,
+      "max": 5
+     },
+     {
+      "enchantment": "minecraft:fire_protection",
+      "one_in": 6,
+      "min": 1,
+      "max": 5
+     },
+     {
+      "enchantment": "minecraft:projectile_protection",
+      "one_in": 6,
+      "min": 1,
+      "max": 5
+     },
+     {
+      "enchantment": "minecraft:unbreaking",
+      "one_in": 2,
+      "min": 2,
+      "max": 5
+     }
+    ]
+   }
+  ],
+  "minecraft:golden_boots": [
+   {
+    "weight": 1,
+    "dice": [
+     {
+      "enchantment": "minecraft:feather_falling",
+      "one_in": 6,
+      "min": 5,
+      "max": 9
+     },
+     {
+      "enchantment": "minecraft:unbreaking",
+      "one_in": 2,
+      "min": 2,
+      "max": 5
+     }
+    ]
+   }
   ]
  },
  "kraken": {
@@ -1335,6 +2154,825 @@
       "enchantment": "minecraft:efficiency",
       "one_in": 6,
       "min": 1,
+      "max": 5
+     }
+    ]
+   }
+  ],
+  "minecraft:diamond_sword": [
+   {
+    "weight": 1,
+    "dice": [
+     {
+      "enchantment": "minecraft:sharpness",
+      "one_in": 6,
+      "min": 1,
+      "max": 5
+     },
+     {
+      "enchantment": "minecraft:bane_of_arthropods",
+      "one_in": 6,
+      "min": 1,
+      "max": 5
+     },
+     {
+      "enchantment": "minecraft:knockback",
+      "one_in": 6,
+      "min": 1,
+      "max": 5
+     },
+     {
+      "enchantment": "minecraft:looting",
+      "one_in": 6,
+      "min": 1,
+      "max": 5
+     },
+     {
+      "enchantment": "minecraft:unbreaking",
+      "one_in": 2,
+      "min": 2,
+      "max": 5
+     },
+     {
+      "enchantment": "minecraft:fire_aspect",
+      "one_in": 6,
+      "min": 1,
+      "max": 5
+     },
+     {
+      "enchantment": "minecraft:sharpness",
+      "one_in": 6,
+      "min": 1,
+      "max": 5
+     }
+    ]
+   }
+  ],
+  "minecraft:diamond_shovel": [
+   {
+    "weight": 1,
+    "dice": [
+     {
+      "enchantment": "minecraft:unbreaking",
+      "one_in": 2,
+      "min": 2,
+      "max": 5
+     },
+     {
+      "enchantment": "minecraft:efficiency",
+      "one_in": 6,
+      "min": 1,
+      "max": 5
+     }
+    ]
+   }
+  ],
+  "minecraft:diamond_pickaxe": [
+   {
+    "weight": 1,
+    "dice": [
+     {
+      "enchantment": "minecraft:unbreaking",
+      "one_in": 2,
+      "min": 2,
+      "max": 5
+     },
+     {
+      "enchantment": "minecraft:efficiency",
+      "one_in": 6,
+      "min": 1,
+      "max": 5
+     },
+     {
+      "enchantment": "minecraft:fortune",
+      "one_in": 6,
+      "min": 1,
+      "max": 5
+     }
+    ]
+   }
+  ],
+  "minecraft:diamond_axe": [
+   {
+    "weight": 1,
+    "dice": [
+     {
+      "enchantment": "minecraft:unbreaking",
+      "one_in": 2,
+      "min": 2,
+      "max": 5
+     },
+     {
+      "enchantment": "minecraft:efficiency",
+      "one_in": 6,
+      "min": 1,
+      "max": 5
+     }
+    ]
+   }
+  ],
+  "minecraft:diamond_hoe": [
+   {
+    "weight": 1,
+    "dice": [
+     {
+      "enchantment": "minecraft:unbreaking",
+      "one_in": 2,
+      "min": 2,
+      "max": 5
+     },
+     {
+      "enchantment": "minecraft:efficiency",
+      "one_in": 6,
+      "min": 1,
+      "max": 5
+     }
+    ]
+   }
+  ],
+  "minecraft:diamond_helmet": [
+   {
+    "weight": 1,
+    "dice": [
+     {
+      "enchantment": "minecraft:protection",
+      "one_in": 6,
+      "min": 1,
+      "max": 5
+     },
+     {
+      "enchantment": "minecraft:blast_protection",
+      "one_in": 6,
+      "min": 1,
+      "max": 5
+     },
+     {
+      "enchantment": "minecraft:fire_protection",
+      "one_in": 6,
+      "min": 1,
+      "max": 5
+     },
+     {
+      "enchantment": "minecraft:projectile_protection",
+      "one_in": 6,
+      "min": 1,
+      "max": 5
+     },
+     {
+      "enchantment": "minecraft:unbreaking",
+      "one_in": 2,
+      "min": 2,
+      "max": 5
+     },
+     {
+      "enchantment": "minecraft:respiration",
+      "one_in": 6,
+      "min": 1,
+      "max": 2
+     },
+     {
+      "enchantment": "minecraft:aqua_affinity",
+      "one_in": 6,
+      "min": 1,
+      "max": 5
+     }
+    ]
+   }
+  ],
+  "minecraft:diamond_chestplate": [
+   {
+    "weight": 1,
+    "dice": [
+     {
+      "enchantment": "minecraft:protection",
+      "one_in": 6,
+      "min": 1,
+      "max": 5
+     },
+     {
+      "enchantment": "minecraft:blast_protection",
+      "one_in": 6,
+      "min": 1,
+      "max": 5
+     },
+     {
+      "enchantment": "minecraft:fire_protection",
+      "one_in": 6,
+      "min": 1,
+      "max": 5
+     },
+     {
+      "enchantment": "minecraft:projectile_protection",
+      "one_in": 6,
+      "min": 1,
+      "max": 5
+     },
+     {
+      "enchantment": "minecraft:unbreaking",
+      "one_in": 2,
+      "min": 2,
+      "max": 5
+     }
+    ]
+   }
+  ],
+  "minecraft:diamond_leggings": [
+   {
+    "weight": 1,
+    "dice": [
+     {
+      "enchantment": "minecraft:protection",
+      "one_in": 6,
+      "min": 1,
+      "max": 5
+     },
+     {
+      "enchantment": "minecraft:blast_protection",
+      "one_in": 6,
+      "min": 1,
+      "max": 5
+     },
+     {
+      "enchantment": "minecraft:fire_protection",
+      "one_in": 6,
+      "min": 1,
+      "max": 5
+     },
+     {
+      "enchantment": "minecraft:projectile_protection",
+      "one_in": 6,
+      "min": 1,
+      "max": 5
+     },
+     {
+      "enchantment": "minecraft:unbreaking",
+      "one_in": 2,
+      "min": 2,
+      "max": 5
+     }
+    ]
+   }
+  ],
+  "minecraft:diamond_boots": [
+   {
+    "weight": 1,
+    "dice": [
+     {
+      "enchantment": "minecraft:feather_falling",
+      "one_in": 6,
+      "min": 5,
+      "max": 9
+     },
+     {
+      "enchantment": "minecraft:unbreaking",
+      "one_in": 2,
+      "min": 2,
+      "max": 5
+     }
+    ]
+   }
+  ],
+  "minecraft:iron_sword": [
+   {
+    "weight": 1,
+    "dice": [
+     {
+      "enchantment": "minecraft:sharpness",
+      "one_in": 6,
+      "min": 1,
+      "max": 5
+     },
+     {
+      "enchantment": "minecraft:bane_of_arthropods",
+      "one_in": 6,
+      "min": 1,
+      "max": 5
+     },
+     {
+      "enchantment": "minecraft:knockback",
+      "one_in": 6,
+      "min": 1,
+      "max": 5
+     },
+     {
+      "enchantment": "minecraft:looting",
+      "one_in": 6,
+      "min": 1,
+      "max": 5
+     },
+     {
+      "enchantment": "minecraft:unbreaking",
+      "one_in": 2,
+      "min": 2,
+      "max": 5
+     },
+     {
+      "enchantment": "minecraft:fire_aspect",
+      "one_in": 6,
+      "min": 1,
+      "max": 5
+     },
+     {
+      "enchantment": "minecraft:sharpness",
+      "one_in": 6,
+      "min": 1,
+      "max": 5
+     }
+    ]
+   }
+  ],
+  "minecraft:iron_shovel": [
+   {
+    "weight": 1,
+    "dice": [
+     {
+      "enchantment": "minecraft:unbreaking",
+      "one_in": 2,
+      "min": 2,
+      "max": 5
+     },
+     {
+      "enchantment": "minecraft:efficiency",
+      "one_in": 6,
+      "min": 1,
+      "max": 5
+     }
+    ]
+   }
+  ],
+  "minecraft:iron_pickaxe": [
+   {
+    "weight": 1,
+    "dice": [
+     {
+      "enchantment": "minecraft:unbreaking",
+      "one_in": 2,
+      "min": 2,
+      "max": 5
+     },
+     {
+      "enchantment": "minecraft:efficiency",
+      "one_in": 6,
+      "min": 1,
+      "max": 5
+     },
+     {
+      "enchantment": "minecraft:fortune",
+      "one_in": 6,
+      "min": 1,
+      "max": 5
+     }
+    ]
+   }
+  ],
+  "minecraft:iron_axe": [
+   {
+    "weight": 1,
+    "dice": [
+     {
+      "enchantment": "minecraft:unbreaking",
+      "one_in": 2,
+      "min": 2,
+      "max": 5
+     },
+     {
+      "enchantment": "minecraft:efficiency",
+      "one_in": 6,
+      "min": 1,
+      "max": 5
+     }
+    ]
+   }
+  ],
+  "minecraft:iron_hoe": [
+   {
+    "weight": 1,
+    "dice": [
+     {
+      "enchantment": "minecraft:unbreaking",
+      "one_in": 2,
+      "min": 2,
+      "max": 5
+     },
+     {
+      "enchantment": "minecraft:efficiency",
+      "one_in": 6,
+      "min": 1,
+      "max": 5
+     }
+    ]
+   }
+  ],
+  "minecraft:iron_helmet": [
+   {
+    "weight": 1,
+    "dice": [
+     {
+      "enchantment": "minecraft:protection",
+      "one_in": 6,
+      "min": 1,
+      "max": 5
+     },
+     {
+      "enchantment": "minecraft:blast_protection",
+      "one_in": 6,
+      "min": 1,
+      "max": 5
+     },
+     {
+      "enchantment": "minecraft:fire_protection",
+      "one_in": 6,
+      "min": 1,
+      "max": 5
+     },
+     {
+      "enchantment": "minecraft:projectile_protection",
+      "one_in": 6,
+      "min": 1,
+      "max": 5
+     },
+     {
+      "enchantment": "minecraft:unbreaking",
+      "one_in": 2,
+      "min": 2,
+      "max": 5
+     },
+     {
+      "enchantment": "minecraft:respiration",
+      "one_in": 6,
+      "min": 1,
+      "max": 5
+     },
+     {
+      "enchantment": "minecraft:aqua_affinity",
+      "one_in": 6,
+      "min": 1,
+      "max": 5
+     }
+    ]
+   }
+  ],
+  "minecraft:iron_chestplate": [
+   {
+    "weight": 1,
+    "dice": [
+     {
+      "enchantment": "minecraft:protection",
+      "one_in": 6,
+      "min": 1,
+      "max": 5
+     },
+     {
+      "enchantment": "minecraft:blast_protection",
+      "one_in": 6,
+      "min": 1,
+      "max": 5
+     },
+     {
+      "enchantment": "minecraft:fire_protection",
+      "one_in": 6,
+      "min": 1,
+      "max": 5
+     },
+     {
+      "enchantment": "minecraft:projectile_protection",
+      "one_in": 6,
+      "min": 1,
+      "max": 5
+     },
+     {
+      "enchantment": "minecraft:unbreaking",
+      "one_in": 2,
+      "min": 2,
+      "max": 5
+     }
+    ]
+   }
+  ],
+  "minecraft:iron_leggings": [
+   {
+    "weight": 1,
+    "dice": [
+     {
+      "enchantment": "minecraft:protection",
+      "one_in": 6,
+      "min": 1,
+      "max": 5
+     },
+     {
+      "enchantment": "minecraft:blast_protection",
+      "one_in": 6,
+      "min": 1,
+      "max": 5
+     },
+     {
+      "enchantment": "minecraft:fire_protection",
+      "one_in": 6,
+      "min": 1,
+      "max": 5
+     },
+     {
+      "enchantment": "minecraft:projectile_protection",
+      "one_in": 6,
+      "min": 1,
+      "max": 5
+     },
+     {
+      "enchantment": "minecraft:unbreaking",
+      "one_in": 2,
+      "min": 2,
+      "max": 5
+     }
+    ]
+   }
+  ],
+  "minecraft:iron_boots": [
+   {
+    "weight": 1,
+    "dice": [
+     {
+      "enchantment": "minecraft:feather_falling",
+      "one_in": 6,
+      "min": 5,
+      "max": 9
+     },
+     {
+      "enchantment": "minecraft:unbreaking",
+      "one_in": 2,
+      "min": 2,
+      "max": 5
+     }
+    ]
+   }
+  ],
+  "minecraft:golden_sword": [
+   {
+    "weight": 1,
+    "dice": [
+     {
+      "enchantment": "minecraft:sharpness",
+      "one_in": 6,
+      "min": 1,
+      "max": 5
+     },
+     {
+      "enchantment": "minecraft:bane_of_arthropods",
+      "one_in": 6,
+      "min": 1,
+      "max": 5
+     },
+     {
+      "enchantment": "minecraft:knockback",
+      "one_in": 6,
+      "min": 1,
+      "max": 5
+     },
+     {
+      "enchantment": "minecraft:looting",
+      "one_in": 6,
+      "min": 1,
+      "max": 5
+     },
+     {
+      "enchantment": "minecraft:unbreaking",
+      "one_in": 2,
+      "min": 2,
+      "max": 5
+     },
+     {
+      "enchantment": "minecraft:fire_aspect",
+      "one_in": 6,
+      "min": 1,
+      "max": 5
+     },
+     {
+      "enchantment": "minecraft:sharpness",
+      "one_in": 6,
+      "min": 1,
+      "max": 5
+     }
+    ]
+   }
+  ],
+  "minecraft:golden_shovel": [
+   {
+    "weight": 1,
+    "dice": [
+     {
+      "enchantment": "minecraft:unbreaking",
+      "one_in": 2,
+      "min": 2,
+      "max": 5
+     },
+     {
+      "enchantment": "minecraft:efficiency",
+      "one_in": 6,
+      "min": 1,
+      "max": 5
+     }
+    ]
+   }
+  ],
+  "minecraft:golden_pickaxe": [
+   {
+    "weight": 1,
+    "dice": [
+     {
+      "enchantment": "minecraft:unbreaking",
+      "one_in": 2,
+      "min": 2,
+      "max": 5
+     },
+     {
+      "enchantment": "minecraft:efficiency",
+      "one_in": 6,
+      "min": 1,
+      "max": 5
+     },
+     {
+      "enchantment": "minecraft:fortune",
+      "one_in": 6,
+      "min": 1,
+      "max": 5
+     }
+    ]
+   }
+  ],
+  "minecraft:golden_axe": [
+   {
+    "weight": 1,
+    "dice": [
+     {
+      "enchantment": "minecraft:unbreaking",
+      "one_in": 2,
+      "min": 2,
+      "max": 5
+     },
+     {
+      "enchantment": "minecraft:efficiency",
+      "one_in": 6,
+      "min": 1,
+      "max": 5
+     }
+    ]
+   }
+  ],
+  "minecraft:golden_hoe": [
+   {
+    "weight": 1,
+    "dice": [
+     {
+      "enchantment": "minecraft:unbreaking",
+      "one_in": 2,
+      "min": 2,
+      "max": 5
+     },
+     {
+      "enchantment": "minecraft:efficiency",
+      "one_in": 6,
+      "min": 1,
+      "max": 5
+     }
+    ]
+   }
+  ],
+  "minecraft:golden_helmet": [
+   {
+    "weight": 1,
+    "dice": [
+     {
+      "enchantment": "minecraft:protection",
+      "one_in": 6,
+      "min": 1,
+      "max": 5
+     },
+     {
+      "enchantment": "minecraft:blast_protection",
+      "one_in": 6,
+      "min": 1,
+      "max": 5
+     },
+     {
+      "enchantment": "minecraft:fire_protection",
+      "one_in": 6,
+      "min": 1,
+      "max": 5
+     },
+     {
+      "enchantment": "minecraft:projectile_protection",
+      "one_in": 6,
+      "min": 1,
+      "max": 5
+     },
+     {
+      "enchantment": "minecraft:unbreaking",
+      "one_in": 2,
+      "min": 2,
+      "max": 5
+     },
+     {
+      "enchantment": "minecraft:respiration",
+      "one_in": 6,
+      "min": 1,
+      "max": 5
+     },
+     {
+      "enchantment": "minecraft:aqua_affinity",
+      "one_in": 6,
+      "min": 1,
+      "max": 5
+     }
+    ]
+   }
+  ],
+  "minecraft:golden_chestplate": [
+   {
+    "weight": 1,
+    "dice": [
+     {
+      "enchantment": "minecraft:protection",
+      "one_in": 6,
+      "min": 1,
+      "max": 5
+     },
+     {
+      "enchantment": "minecraft:blast_protection",
+      "one_in": 6,
+      "min": 1,
+      "max": 5
+     },
+     {
+      "enchantment": "minecraft:fire_protection",
+      "one_in": 6,
+      "min": 1,
+      "max": 5
+     },
+     {
+      "enchantment": "minecraft:projectile_protection",
+      "one_in": 6,
+      "min": 1,
+      "max": 5
+     },
+     {
+      "enchantment": "minecraft:unbreaking",
+      "one_in": 2,
+      "min": 2,
+      "max": 5
+     }
+    ]
+   }
+  ],
+  "minecraft:golden_leggings": [
+   {
+    "weight": 1,
+    "dice": [
+     {
+      "enchantment": "minecraft:protection",
+      "one_in": 6,
+      "min": 1,
+      "max": 5
+     },
+     {
+      "enchantment": "minecraft:blast_protection",
+      "one_in": 6,
+      "min": 1,
+      "max": 5
+     },
+     {
+      "enchantment": "minecraft:fire_protection",
+      "one_in": 6,
+      "min": 1,
+      "max": 5
+     },
+     {
+      "enchantment": "minecraft:projectile_protection",
+      "one_in": 6,
+      "min": 1,
+      "max": 5
+     },
+     {
+      "enchantment": "minecraft:unbreaking",
+      "one_in": 2,
+      "min": 2,
+      "max": 5
+     }
+    ]
+   }
+  ],
+  "minecraft:golden_boots": [
+   {
+    "weight": 1,
+    "dice": [
+     {
+      "enchantment": "minecraft:feather_falling",
+      "one_in": 6,
+      "min": 5,
+      "max": 9
+     },
+     {
+      "enchantment": "minecraft:unbreaking",
+      "one_in": 2,
+      "min": 2,
       "max": 5
      }
     ]

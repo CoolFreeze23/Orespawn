@@ -46,10 +46,13 @@ import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 
 /**
- * The six bosses' OreSpawn gear drops (Godzilla, Kraken, Basilisk, Cater Killer, Cephadrome, Trooper Bug). Each piece
- * rolls the original's enchantment dice, one chance and one level range per enchantment, as the 1.7.10 drop code has
- * them (orespawn_gametest/loot/boss_drop_dice.json); the gear that enchants itself takes its own set as the original
- * keyed it: while its key enchantment reads 0 (an armour piece: while none of its eight does).
+ * The six bosses' gear drops (Godzilla, Kraken, Basilisk, Cater Killer, Cephadrome, Trooper Bug): OreSpawn's, and
+ * Godzilla's and the Kraken's diamond, iron and golden gear (ITEM-079). Each piece rolls the original's enchantment dice,
+ * one chance and one level range per enchantment, as the 1.7.10 drop code has them
+ * (orespawn_gametest/loot/boss_drop_dice.json); a die that rolls an enchantment the piece already rolled adds to it, as
+ * 1.7.10's damage summed both entries (ITEM-077); Aqua Affinity comes at I, 1.7.10's having been on or off whatever its
+ * level (ITEM-078). The gear that enchants itself takes its own set as the original keyed it: while its key enchantment
+ * reads 0 (an armour piece: while none of its eight does).
  */
 @GameTestHolder(OreSpawnMod.MOD_ID)
 @PrefixGameTestTemplate(false)
@@ -201,7 +204,7 @@ public class BossDropTests {
      * gains Efficiency V and Fortune V, its Unbreaking III standing; an Emerald Pickaxe with Efficiency II gains Silk
      * Touch I; an Experience Sword with Looting II gains Sharpness II and Unbreaking III. As the original keyed it: an
      * Ultimate Pickaxe with Efficiency II, and an Ultimate Helmet with Protection II, keep their dice alone; a bare
-     * Ultimate Helmet takes its whole set, the four protections V, Respiration II and Aqua Affinity III.
+     * Ultimate Helmet takes its whole set, the four protections V, Respiration II and Aqua Affinity I (ITEM-078).
      */
     @GameTest(template = "empty")
     public static void loot065c_a_dice_drop_gains_its_own_set_on_its_first_tick(GameTestHelper helper) {
@@ -228,22 +231,22 @@ public class BossDropTests {
         ItemStack bare = new ItemStack(ModItems.ULTIMATE_HELMET.get());
         tick(level, player, bare);
         expect(helper, registry, "a bare Ultimate Helmet", bare, Map.of("protection", 5, "fire_protection", 5,
-                "blast_protection", 5, "projectile_protection", 5, "respiration", 2, "aqua_affinity", 3));
+                "blast_protection", 5, "projectile_protection", 5, "respiration", 2, "aqua_affinity", 1));
         helper.succeed();
     }
 
     /**
-     * The tables themselves, entry by entry against the original's dice: each OreSpawn gear entry of the six, in its
-     * table's order, has the original's weight and exactly its dice as set_enchantments functions, last die first, each
-     * one enchantment at its level (a constant, or uniform from min to max) under a random_chance of 1 in one_in; an
-     * entry the original dropped bare sets none. No OreSpawn entry enchants at random, 77 roll dice, and the vanilla gear
-     * beside them keeps its one random enchantment.
+     * The tables themselves, entry by entry against the original's dice: each gear entry of the six the original rolled
+     * (OreSpawn's, and Godzilla's and the Kraken's vanilla gear), in its table's order, has the original's weight and
+     * exactly its dice as set_enchantments functions, last die first, each one enchantment at its level (a constant, or
+     * uniform from min to max; Aqua Affinity at I) under a random_chance of 1 in one_in, a die repeating an enchantment
+     * the entry already set adding to it and no other; an entry the original dropped bare sets none. No gear entry
+     * enchants at random, and 131 roll dice (77 OreSpawn, 54 vanilla).
      */
     @GameTest(template = "empty")
     public static void loot065d_the_tables_carry_the_dice_not_a_random_enchantment(GameTestHelper helper) {
         JsonObject dice = dice();
         int rolled = 0;
-        int vanillaRandom = 0;
         List<String> misses = new ArrayList<>();
         for (String boss : BOSSES) {
             JsonObject items = dice.getAsJsonObject(boss);
@@ -261,15 +264,11 @@ public class BossDropTests {
                             sets.add(f.getAsJsonObject());
                         }
                     }
-                    if (!name.startsWith(OreSpawnMod.MOD_ID + ":")) {
-                        vanillaRandom += random ? 1 : 0;
-                        continue;
-                    }
                     if (random) {
                         misses.add(boss + " enchants " + name + " at random");
                     }
                     if (!items.has(name)) {
-                        if (!sets.isEmpty()) {
+                        if (!sets.isEmpty() && name.startsWith(OreSpawnMod.MOD_ID + ":")) {
                             misses.add(boss + " sets enchantments on " + name + ", which is not gear the original rolled");
                         }
                         continue;
@@ -291,9 +290,11 @@ public class BossDropTests {
                         misses.add(where + ": " + sets.size() + " dice, not " + wantDice.size());
                         continue;
                     }
+                    Set<String> set = new java.util.HashSet<>();
                     for (int i = 0; i < sets.size(); i++) {
                         int die = wantDice.size() - 1 - i;
-                        String miss = die(sets.get(i), wantDice.get(die).getAsJsonObject());
+                        String enchantment = wantDice.get(die).getAsJsonObject().get("enchantment").getAsString();
+                        String miss = die(sets.get(i), wantDice.get(die).getAsJsonObject(), !set.add(enchantment));
                         if (miss != null) {
                             misses.add(where + ", die " + (die + 1) + ": " + miss);
                         }
@@ -310,23 +311,27 @@ public class BossDropTests {
         }
         helper.assertTrue(misses.isEmpty(), misses.size() + " misses, the first: "
                 + String.join("; ", misses.subList(0, Math.min(10, misses.size()))));
-        helper.assertTrue(rolled == 77, rolled + " OreSpawn entries roll dice, not 77");
-        helper.assertTrue(vanillaRandom > 0, "no vanilla gear entry kept its random enchantment");
+        helper.assertTrue(rolled == 131, rolled + " gear entries roll dice, not 131");
         helper.succeed();
     }
 
-    /** One set_enchantments function against one die of the original: null when they agree, else what differs. */
-    private static String die(JsonObject function, JsonObject die) {
+    /**
+     * One set_enchantments function against one die of the original: null when they agree, else what differs. A die
+     * repeating an enchantment the entry's earlier functions set adds to it (ITEM-077), no other does; Aqua Affinity
+     * is set at I (ITEM-078).
+     */
+    private static String die(JsonObject function, JsonObject die, boolean repeat) {
         String enchantment = die.get("enchantment").getAsString();
         JsonObject enchantments = GsonHelper.getAsJsonObject(function, "enchantments", new JsonObject());
         if (enchantments.size() != 1 || !enchantments.has(enchantment)) {
             return "sets " + enchantments.keySet() + ", not " + enchantment;
         }
-        if (GsonHelper.getAsBoolean(function, "add", false)) {
-            return "adds to the level it finds";
+        if (GsonHelper.getAsBoolean(function, "add", false) != repeat) {
+            return repeat ? "sets the level an earlier die rolled, not adding to it" : "adds to the level it finds";
         }
-        int min = die.get("min").getAsInt();
-        int max = die.get("max").getAsInt();
+        boolean aqua = enchantment.equals("minecraft:aqua_affinity");
+        int min = aqua ? 1 : die.get("min").getAsInt();
+        int max = aqua ? 1 : die.get("max").getAsInt();
         JsonElement level = enchantments.get(enchantment);
         boolean levelHolds = level.isJsonPrimitive()
                 ? min == max && level.getAsInt() == min
@@ -372,17 +377,24 @@ public class BossDropTests {
         }
     }
 
-    /** Each enchantment an item's entries can roll, with the lowest and highest level any of them gives it. */
+    /**
+     * Each enchantment an item's entries can roll, with the lowest and highest level any of them gives it: two dice of
+     * one enchantment add up (ITEM-077), Aqua Affinity comes at I (ITEM-078).
+     */
     private static Map<String, int[]> allowed(JsonArray entries) {
         Map<String, int[]> out = new HashMap<>();
         for (JsonElement entry : entries) {
+            Map<String, int[]> mine = new HashMap<>();
             for (JsonElement d : entry.getAsJsonObject().getAsJsonArray("dice")) {
                 JsonObject o = d.getAsJsonObject();
-                int lo = o.get("min").getAsInt();
-                int hi = o.get("max").getAsInt();
-                out.merge(o.get("enchantment").getAsString(), new int[]{lo, hi},
-                        (a, b) -> new int[]{Math.min(a[0], b[0]), Math.max(a[1], b[1])});
+                String name = o.get("enchantment").getAsString();
+                boolean aqua = name.equals("minecraft:aqua_affinity");
+                int lo = aqua ? 1 : o.get("min").getAsInt();
+                int hi = aqua ? 1 : o.get("max").getAsInt();
+                mine.merge(name, new int[]{lo, hi}, (a, b) -> new int[]{Math.min(a[0], b[0]), a[1] + b[1]});
             }
+            mine.forEach((name, range) -> out.merge(name, range,
+                    (a, b) -> new int[]{Math.min(a[0], b[0]), Math.max(a[1], b[1])}));
         }
         return out;
     }

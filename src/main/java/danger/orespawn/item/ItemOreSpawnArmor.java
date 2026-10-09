@@ -70,7 +70,8 @@ public class ItemOreSpawnArmor extends ArmorItem {
             },
             new EnchantEntry[]{
                 new EnchantEntry(Enchantments.RESPIRATION, 1),
-                new EnchantEntry(Enchantments.AQUA_AFFINITY, 2)
+                // orig 2; 1.7.10's Aqua Affinity was on or off whatever its level (ITEM-078), 1.21's grows with it
+                new EnchantEntry(Enchantments.AQUA_AFFINITY, 1)
             },
             new EnchantEntry[]{ new EnchantEntry(Enchantments.FEATHER_FALLING, 10) }
         )),
@@ -84,7 +85,8 @@ public class ItemOreSpawnArmor extends ArmorItem {
             },
             new EnchantEntry[]{
                 new EnchantEntry(Enchantments.RESPIRATION, 2),
-                new EnchantEntry(Enchantments.AQUA_AFFINITY, 3)
+                // orig 3; Aqua Affinity I has 1.7.10's effect (ITEM-078)
+                new EnchantEntry(Enchantments.AQUA_AFFINITY, 1)
             },
             new EnchantEntry[]{ new EnchantEntry(Enchantments.FEATHER_FALLING, 3) }
         )),
@@ -97,7 +99,8 @@ public class ItemOreSpawnArmor extends ArmorItem {
             },
             new EnchantEntry[]{
                 new EnchantEntry(Enchantments.RESPIRATION, 1),
-                new EnchantEntry(Enchantments.AQUA_AFFINITY, 2)
+                // orig 2; Aqua Affinity I has 1.7.10's effect (ITEM-078)
+                new EnchantEntry(Enchantments.AQUA_AFFINITY, 1)
             },
             new EnchantEntry[]{ new EnchantEntry(Enchantments.FEATHER_FALLING, 2) }
         )),
