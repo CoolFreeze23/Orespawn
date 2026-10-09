@@ -1218,8 +1218,9 @@ public class EntityLogicTestsB {
     /**
      * ENT-S-189: the Cater Killer carries the server's PlayNicely to its renderers, as the original's datawatcher 21 did
      * (orig CaterKiller.java:81 and :437, set every AI tick; RenderCaterKiller.preRenderScale :39-45 halved the drawn
-     * scale on it): the entity's synced copy follows the server's setting within its next AI ticks, both ways. The
-     * renderers read only that copy, never the client's own config, which a server does not send.
+     * scale on it): the entity's synced copy follows the server's setting within its next AI ticks, both ways, and a
+     * new one, one without AI too, starts with the server's (orig :81 defined the watcher with it), which its spawn
+     * packet carries. The renderers read only that copy, never the client's own config, which a server does not send.
      */
     // its own batch: PlayNicely stays on for ticks, which no other test may see
     @GameTest(template = "empty_large", batch = "caterKillerPlayNicelySync")
@@ -1228,6 +1229,10 @@ public class EntityLogicTestsB {
         boolean playNicelyBefore = OreSpawnConfig.PLAY_NICELY.get();
         EntityLogicTestsA.onTestExit(helper, () -> OreSpawnConfig.PLAY_NICELY.set(playNicelyBefore));
         OreSpawnConfig.PLAY_NICELY.set(true);
+        EntityCaterKiller still = helper.spawnWithNoFreeWill(ModEntities.ENTITY_CATER_KILLER.get(), new BlockPos(14, 1, 14));
+        check(still.getPlayNicely() == 1, "a new Cater Killer without AI starts with " + still.getPlayNicely()
+                + ", not the server's PlayNicely");
+        still.discard();
         EntityCaterKiller cater = helper.spawn(ModEntities.ENTITY_CATER_KILLER.get(), new BlockPos(24, 1, 24));
         helper.startSequence().thenExecuteAfter(3, () -> {
             check(cater.getPlayNicely() == 1, "the Cater Killer's copy is " + cater.getPlayNicely()

@@ -112,6 +112,9 @@ public class EntityCaterKiller extends Monster implements CaterKillerPose {
     public EntityCaterKiller(EntityType<? extends EntityCaterKiller> type, Level level) {
         super(type, level);
         this.xpReward = 200;
+        // the server's PlayNicely from the start, as the original defined datawatcher 21 with it (orig :81): the spawn
+        // packet carries it, so a client draws the right size before the first AI tick, and for a mob without AI
+        if (!level.isClientSide) this.entityData.set(DATA_PLAY_NICELY, OreSpawnConfig.PLAY_NICELY.get() ? 1 : 0);
     }
 
     @Override
