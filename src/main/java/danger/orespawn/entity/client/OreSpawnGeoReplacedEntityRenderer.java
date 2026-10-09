@@ -417,6 +417,10 @@ public abstract class OreSpawnGeoReplacedEntityRenderer<E extends Entity, A exte
         public void render(PoseStack poseStack, A animatable, BakedGeoModel bakedModel, RenderType renderType,
                            MultiBufferSource bufferSource, VertexConsumer buffer, float partialTick, int packedLight,
                            int packedOverlay) {
+            // ENT-S-189: an invisible mob draws no second pass, as the classic WingMembraneLayer returns for one; 1.7.10's
+            // passes were inside the model's render, which RendererLivingEntity.renderModel skips for an invisible body
+            Entity entity = this.owner.getCurrentEntity();
+            if (entity != null && entity.isInvisible()) return;
             List<GeoBone> bones = new ArrayList<>();
             collectBones(bakedModel.topLevelBones(), bones);
             boolean[] hidden = new boolean[bones.size()];

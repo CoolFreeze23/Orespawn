@@ -1,7 +1,6 @@
 package danger.orespawn.entity.client;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import danger.orespawn.OreSpawnConfig;
 import danger.orespawn.OreSpawnMod;
 import danger.orespawn.entity.EntityCaterKiller;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -36,9 +35,8 @@ public class CaterKillerRenderer extends MobRenderer<EntityCaterKiller, CaterKil
         // if (getPlayNicely() != 0) GL11.glScalef(scale / 2, ...) else GL11.glScalef(scale, scale, scale)
         // - same pipeline position as LivingEntityRenderer.scale (after the (-1,-1,1) flip, before
         // the -1.501 lift). orig getPlayNicely() (CaterKiller.java:84-86) read the datawatcher copy
-        // of OreSpawnMain.PlayNicely; the port has no such accessor and reads the config directly,
-        // as EntityCaterKiller.getDefaultDimensions (:84-88) already does for the hitbox.
-        if (OreSpawnConfig.PLAY_NICELY.get()) {
+        // of the server's OreSpawnMain.PlayNicely; so does EntityCaterKiller.getPlayNicely (ENT-S-189).
+        if (entity.getPlayNicely() != 0) {
             poseStack.scale(SCALE / 2.0F, SCALE / 2.0F, SCALE / 2.0F);
             return;
         }

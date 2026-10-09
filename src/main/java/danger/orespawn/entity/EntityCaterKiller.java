@@ -53,6 +53,13 @@ public class EntityCaterKiller extends Monster implements CaterKillerPose {
             ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "caterkiller_death"));
     private static final EntityDataAccessor<Integer> DATA_ATTACKING =
             SynchedEntityData.defineId(EntityCaterKiller.class, EntityDataSerializers.INT);
+    /**
+     * ENT-S-189: the server's PlayNicely, copied every AI tick for the renderers' half size (orig CaterKiller.java:81 and
+     * :437, its datawatcher 21, read by RenderCaterKiller.preRenderScale :39-45). The config is common, never sent to a
+     * client, so a renderer reading its own would follow the client's setting, not the server's.
+     */
+    private static final EntityDataAccessor<Integer> DATA_PLAY_NICELY =
+            SynchedEntityData.defineId(EntityCaterKiller.class, EntityDataSerializers.INT);
 
     /**
      * Metamorphosis timer — orig CaterKiller.java:438-448: after 2400 ticks
@@ -149,10 +156,16 @@ public class EntityCaterKiller extends Monster implements CaterKillerPose {
     protected void defineSynchedData(SynchedEntityData.Builder builder) {
         super.defineSynchedData(builder);
         builder.define(DATA_ATTACKING, 0);
+        builder.define(DATA_PLAY_NICELY, 0);
     }
 
     public int getAttacking() {
         return this.entityData.get(DATA_ATTACKING);
+    }
+
+    /** ENT-S-189: the server's PlayNicely as the renderers read it (orig getPlayNicely, CaterKiller.java:84-86). */
+    public int getPlayNicely() {
+        return this.entityData.get(DATA_PLAY_NICELY);
     }
 
     public void setAttacking(int value) {
@@ -268,6 +281,8 @@ public class EntityCaterKiller extends Monster implements CaterKillerPose {
     protected void customServerAiStep() {
         if (this.isRemoved()) return;
         super.customServerAiStep();
+        // orig :437, every AI tick: the renderers' copy of the server's PlayNicely (ENT-S-189)
+        this.entityData.set(DATA_PLAY_NICELY, OreSpawnConfig.PLAY_NICELY.get() ? 1 : 0);
 
         // orig CaterKiller.java:438-448 — timed metamorphosis: while damaged,
         // count up; past 2400 ticks spawn 1 Brutalfly + 10 Butterflies with an

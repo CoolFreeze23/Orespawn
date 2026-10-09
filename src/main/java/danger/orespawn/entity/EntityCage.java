@@ -61,7 +61,8 @@ public class EntityCage extends ThrowableProjectile implements ItemSupplier {
     private static final int HIT_PARTICLE_BURST_COUNT = 4;
     private static final double PARTICLE_OFFSET_Y = 0.25;
     private static final float EXPLODE_SOUND_PITCH = 1.5f;
-    private static final float ROTATION_STEP_DEGREES = 30.0f;
+    /** orig EntityCage.java:942: 20 degrees a tick (the other spinners turn 30 or 50); the port had 30. */
+    private static final float ROTATION_STEP_DEGREES = 20.0f;
     private static final float FULL_ROTATION_DEGREES = 360.0f;
 
     private int cageIndex = DEFAULT_CAGE_INDEX;

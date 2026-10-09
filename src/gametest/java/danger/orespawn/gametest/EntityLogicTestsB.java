@@ -1215,6 +1215,31 @@ public class EntityLogicTestsB {
         helper.succeed();
     }
 
+    /**
+     * ENT-S-189: the Cater Killer carries the server's PlayNicely to its renderers, as the original's datawatcher 21 did
+     * (orig CaterKiller.java:81 and :437, set every AI tick; RenderCaterKiller.preRenderScale :39-45 halved the drawn
+     * scale on it): the entity's synced copy follows the server's setting within its next AI ticks, both ways. The
+     * renderers read only that copy, never the client's own config, which a server does not send.
+     */
+    // its own batch: PlayNicely stays on for ticks, which no other test may see
+    @GameTest(template = "empty_large", batch = "caterKillerPlayNicelySync")
+    public void ents189d_the_cater_killer_carries_the_server_play_nicely(GameTestHelper helper) {
+        floor(helper, 18, 18, 30, 30);
+        boolean playNicelyBefore = OreSpawnConfig.PLAY_NICELY.get();
+        EntityLogicTestsA.onTestExit(helper, () -> OreSpawnConfig.PLAY_NICELY.set(playNicelyBefore));
+        OreSpawnConfig.PLAY_NICELY.set(true);
+        EntityCaterKiller cater = helper.spawn(ModEntities.ENTITY_CATER_KILLER.get(), new BlockPos(24, 1, 24));
+        helper.startSequence().thenExecuteAfter(3, () -> {
+            check(cater.getPlayNicely() == 1, "the Cater Killer's copy is " + cater.getPlayNicely()
+                    + " with the server's PlayNicely on");
+            OreSpawnConfig.PLAY_NICELY.set(false);
+        }).thenExecuteAfter(3, () -> {
+            check(cater.getPlayNicely() == 0, "the Cater Killer's copy is " + cater.getPlayNicely()
+                    + " with the server's PlayNicely off");
+            cater.discard();
+        }).thenSucceed();
+    }
+
     // ================================================================
     // i088-ent-a-018-019 — AttackSquid range gate
     // ================================================================

@@ -2,7 +2,6 @@ package danger.orespawn.entity.client;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import danger.orespawn.ModEntities;
-import danger.orespawn.OreSpawnConfig;
 import danger.orespawn.OreSpawnMod;
 import danger.orespawn.entity.EntityCaterKiller;
 import danger.orespawn.entity.pose.CaterKillerPose;
@@ -27,8 +26,8 @@ import software.bernie.geckolib.animation.AnimationProcessor;
  * CaterKillerPose} (the S4 doctrine); the positions through {@link #moveTo} (an unwritten x or z component is the
  * part's current classic position, {@link #classicPosition}).
  *
- * <p>Scale and shadow follow {@link CaterKillerRenderer}: 1.25 render scale, halved when {@code PLAY_NICELY} is on
- * (orig getPlayNicely), and a 1.0 x 1.25 shadow (ENT-S-092).</p>
+ * <p>Scale and shadow follow {@link CaterKillerRenderer}: 1.25 render scale, halved when the server's PlayNicely is on
+ * (orig getPlayNicely, the entity's synced copy), and a 1.0 x 1.25 shadow (ENT-S-092).</p>
  */
 public final class CaterKillerGeoReplacement extends OreSpawnGeoReplacement<EntityCaterKiller> {
     /** orig ModelCaterKiller.java:14,48 {@code wingspeed} = 0.22f (ClientProxyOreSpawn.java:499): the chain's second multiply. */
@@ -43,8 +42,8 @@ public final class CaterKillerGeoReplacement extends OreSpawnGeoReplacement<Enti
         @Override
         public void applyScale(EntityCaterKiller entity, PoseStack poseStack, float partialTick) {
             // orig RenderCaterKiller.preRenderScale (:39-45): if (getPlayNicely() != 0) glScalef(scale / 2) else glScalef(scale)
-            // - the port reads the config directly, as CaterKillerRenderer.scale does
-            if (OreSpawnConfig.PLAY_NICELY.get()) {
+            // - the entity's copy of the server's PlayNicely, as CaterKillerRenderer.scale reads it (ENT-S-189)
+            if (entity.getPlayNicely() != 0) {
                 poseStack.scale(CaterKillerRenderer.SCALE / 2.0F, CaterKillerRenderer.SCALE / 2.0F, CaterKillerRenderer.SCALE / 2.0F);
                 return;
             }
