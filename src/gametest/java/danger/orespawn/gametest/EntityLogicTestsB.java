@@ -1529,7 +1529,7 @@ public class EntityLogicTestsB {
     /**
      * Checklist item i101-boss-010 (BOSS-010). The Queen spawns dormant
      * (blue, IS_AWAKE=false — TheQueen.java:271-273); the first hit starts the
-     * 60-tick wake-up (WAKE_UP_DURATION_TICKS,
+     * 72-tick wake-up (WAKE_UP_DURATION_TICKS,
      * TheQueen.java:131-132, 536-538) but must NOT absorb damage: the 1.7.10
      * Queen had no dormant phase, so the triggering hit and every hit during
      * the window fall through to the normal damage path (TheQueen.java:527-586).
@@ -1544,6 +1544,11 @@ public class EntityLogicTestsB {
         floor(helper, 10, 10, 38, 38);
         ServerLevel level = helper.getLevel();
         TheQueen queen = helper.spawn(ModEntities.THE_QUEEN.get(), new BlockPos(24, 1, 24));
+        // From her first tick she flies toward a point up to 120 blocks off (aiStepPrimary). Held where she spawned,
+        // she keeps to the test's force-loaded chunks, where entities tick: one that flew out of them stopped ticking,
+        // and her wake-up count with her, short of the window's end.
+        Vec3 home = queen.position();
+        helper.onEachTick(() -> queen.moveTo(home.x, home.y, home.z, queen.getYRot(), queen.getXRot()));
         Player attacker = helper.makeMockPlayer(GameType.SURVIVAL);
         Vec3 apos = helper.absoluteVec(new Vec3(24.0, 1.0, 20.0));
         attacker.moveTo(apos.x, apos.y, apos.z, 0.0f, 0.0f);
@@ -1557,10 +1562,10 @@ public class EntityLogicTestsB {
             check(landed, "first hit on the dormant Queen must land");
             delta1[0] = before - queen.getHealth();
             check(delta1[0] > 0.0f, "first hit must deal real damage (BOSS-010)");
-            check(queen.getTransitionTicks() > 0, "first hit must start the 60-tick wake-up");
+            check(queen.getTransitionTicks() > 0, "first hit must start the 72-tick wake-up");
             check(!queen.isAwake(), "she is not awake until the window completes");
         }).thenExecuteAfter(25, () -> {
-            // 25 ticks in: window still open (60), her 20-tick i-frames expired.
+            // 25 ticks in: window still open (72), her 20-tick i-frames expired.
             check(!queen.isAwake() && queen.getTransitionTicks() > 0, "still waking up 25 ticks in");
             float before = queen.getHealth();
             boolean landed = queen.hurt(level.damageSources().playerAttack(attacker), 200.0f);
@@ -1575,8 +1580,8 @@ public class EntityLogicTestsB {
                     "Queen must be able to attack during the wake-up window");
             victim.discard();
         }).thenExecuteAfter(50, () -> {
-            // t ≈ 75 > 60: the transition has completed.
-            check(queen.isAwake(), "Queen must be awake once the 60-tick window has elapsed (TheQueen.java:683-695)");
+            // t ≈ 75 > 72: the transition has completed.
+            check(queen.isAwake(), "Queen must be awake once the 72-tick window has elapsed (TheQueen.java:683-695)");
             queen.discard();
             AABB around = new AABB(helper.absolutePos(new BlockPos(24, 1, 24))).inflate(64, 32, 64);
             for (QueenHead head : level.getEntitiesOfClass(QueenHead.class, around)) {
