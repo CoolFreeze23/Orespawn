@@ -97,6 +97,10 @@ public class Kraken extends Monster implements KrakenPose, IMHLibSizeCallback<Kr
         // pattern, orig TheKing.java:85-89). The render shrink tracks the
         // live flag through DATA_PLAY_NICELY instead.
         this.playNicelyShrunk = danger.orespawn.OreSpawnConfig.PLAY_NICELY.get();
+        // ENT-S-199: the renderers' copy from the start on the server, as the original defined datawatcher 21 with
+        // the setting (orig Kraken.java:97): the spawn data carries it, so a client draws the shrink before the
+        // first AI tick, and for one without AI
+        if (!level.isClientSide) this.entityData.set(DATA_PLAY_NICELY, this.playNicelyShrunk ? 1 : 0);
         this.refreshDimensions();
     }
 

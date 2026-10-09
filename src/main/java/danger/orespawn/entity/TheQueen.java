@@ -238,6 +238,10 @@ public class TheQueen extends Monster implements GeoEntity, IMHLibSizeCallback<T
         // BOSS-017: orig TheQueen.java:78-82 — constructor-time PlayNicely
         // snapshot picks the 5.5x6 box (see getDefaultDimensions).
         this.playNicelyShrunk = danger.orespawn.OreSpawnConfig.PLAY_NICELY.get();
+        // ENT-S-199: the renderers' copy from the start on the server, as the original defined datawatcher 21 with
+        // the setting (orig TheQueen.java:107): the spawn data carries it, so a client draws the shrink before the
+        // first AI tick, and for one without AI
+        if (!level.isClientSide) this.entityData.set(DATA_PLAY_NICELY, this.playNicelyShrunk ? 1 : 0);
         this.refreshDimensions();
         // No part construction here -- MHLib's mixin into LivingEntity#<init>
         // (mhlibOnConstructor) reads the hitbox profile keyed by this

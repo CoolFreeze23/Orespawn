@@ -28,12 +28,15 @@ import danger.orespawn.entity.EntityWormLarge;
 import danger.orespawn.entity.EntityWormMedium;
 import danger.orespawn.entity.EntityWormSmall;
 import danger.orespawn.entity.GiantRobot;
+import danger.orespawn.entity.Godzilla;
 import danger.orespawn.entity.InkSack;
+import danger.orespawn.entity.Kraken;
 import danger.orespawn.entity.LaserBall;
 import danger.orespawn.entity.Mothra;
 import danger.orespawn.entity.Ostrich;
 import danger.orespawn.entity.Peacock;
 import danger.orespawn.entity.QueenHead;
+import danger.orespawn.entity.TheKing;
 import danger.orespawn.entity.ThePrince;
 import danger.orespawn.entity.TheQueen;
 import danger.orespawn.entity.VelocityRaptor;
@@ -1244,6 +1247,37 @@ public class EntityLogicTestsB {
                     + " with the server's PlayNicely off");
             cater.discard();
         }).thenSucceed();
+    }
+
+    /**
+     * ENT-S-199: Godzilla, the King, the Queen and the Kraken carry the server's PlayNicely to their renderers from the
+     * start, as the originals defined datawatcher 21 with it (orig Godzilla.java:101, TheKing.java:113,
+     * TheQueen.java:107, Kraken.java:97): each, made on the server, has the setting before any tick, on and off, which
+     * its spawn data carries to a client (their AI step only kept it current).
+     */
+    @GameTest(template = "empty")
+    public void ents199a_the_bosses_start_with_the_server_play_nicely(GameTestHelper helper) {
+        ServerLevel level = helper.getLevel();
+        boolean playNicelyBefore = OreSpawnConfig.PLAY_NICELY.get();
+        try {
+            for (boolean on : new boolean[] {true, false}) {
+                OreSpawnConfig.PLAY_NICELY.set(on);
+                int want = on ? 1 : 0;
+                Godzilla godzilla = ModEntities.GODZILLA.get().create(level);
+                TheKing king = ModEntities.THE_KING.get().create(level);
+                TheQueen queen = ModEntities.THE_QUEEN.get().create(level);
+                Kraken kraken = ModEntities.KRAKEN.get().create(level);
+                check(godzilla != null && king != null && queen != null && kraken != null, "a boss could not be made");
+                check(godzilla.getPlayNicely() == want && king.getPlayNicely() == want && queen.getPlayNicely() == want
+                                && kraken.getPlayNicely() == want,
+                        "with PlayNicely " + on + " the new bosses carry Godzilla " + godzilla.getPlayNicely() + ", the King "
+                                + king.getPlayNicely() + ", the Queen " + queen.getPlayNicely() + ", the Kraken "
+                                + kraken.getPlayNicely() + ", not " + want);
+            }
+        } finally {
+            OreSpawnConfig.PLAY_NICELY.set(playNicelyBefore);
+        }
+        helper.succeed();
     }
 
     // ================================================================
