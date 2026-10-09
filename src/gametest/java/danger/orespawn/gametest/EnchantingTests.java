@@ -88,6 +88,28 @@ public class EnchantingTests {
         helper.succeed();
     }
 
+    /**
+     * ITEM-074: the Zoo Keeper, one durability and two a capture, took Unbreaking from a book at 1.7.10's anvil, which
+     * could spare it a capture: the anvil puts an Unbreaking book on it here too, not a Mending one, and the table offers
+     * it nothing. The robot kits and the Creeper Launcher, used up whole there, take no book.
+     */
+    @GameTest(template = "empty")
+    public static void item074a_the_zoo_keeper_takes_unbreaking_at_the_anvil(GameTestHelper helper) {
+        Player player = helper.makeMockPlayer(GameType.SURVIVAL);
+        ContainerLevelAccess access = ContainerLevelAccess.create(helper.getLevel(), helper.absolutePos(new BlockPos(1, 2, 1)));
+        Registry<Enchantment> registry = helper.getLevel().registryAccess().registryOrThrow(Registries.ENCHANTMENT);
+        String unbreaking = offers(player, access, new ItemStack(ModItems.ZOO_KEEPER.get()), holder(registry, "unbreaking"));
+        String mending = offers(player, access, new ItemStack(ModItems.ZOO_KEEPER.get()), holder(registry, "mending"));
+        String kit = offers(player, access, new ItemStack(ModItems.SPIDER_ROBOT_KIT.get()), holder(registry, "unbreaking"));
+        String launcher = offers(player, access, new ItemStack(ModItems.CREEPER_LAUNCHER.get()), holder(registry, "unbreaking"));
+        helper.assertTrue(unbreaking.startsWith("table no") && unbreaking.endsWith("anvil yes"),
+                "the Zoo Keeper and Unbreaking: " + unbreaking);
+        helper.assertTrue(mending.endsWith("anvil no"), "the Zoo Keeper and Mending: " + mending);
+        helper.assertTrue(kit.endsWith("anvil no") && launcher.endsWith("anvil no"),
+                "the Spider Robot Kit: " + kit + "; the Creeper Launcher: " + launcher);
+        helper.succeed();
+    }
+
     /** Whether the table offers the item anything in its three slots, and whether the anvil puts a level I book of the enchantment on it. */
     private static String offers(Player player, ContainerLevelAccess access, ItemStack item, Holder<Enchantment> book) {
         EnchantmentMenu table = new EnchantmentMenu(1, player.getInventory(), access);
@@ -126,8 +148,9 @@ public class EnchantingTests {
      * registry, by the game's own tests (ItemStack.supportsEnchantment, isPrimaryItemFor, getEnchantmentValue): a sword,
      * axe, pickaxe, shovel or hoe exactly as the iron one, and an armour piece exactly as the iron piece of its slot,
      * each with an enchantment value above 0; the items in DURABILITY_ONLY the durability set alone, at their values;
-     * every other item nothing (the robot kits, the Zoo Keeper, the Creeper Launcher, the shoes, the horse and wolf
-     * armour and the rest). Each miss is collected, then all are reported together; each group's count is checked.
+     * the Zoo Keeper Unbreaking alone (ITEM-074), at no value; every other item nothing (the robot kits, the Creeper
+     * Launcher, the shoes, the horse and wolf armour and the rest). Each miss is collected, then all are reported
+     * together; each group's count is checked.
      */
     @GameTest(template = "empty")
     public static void item073b_every_item_takes_what_its_class_takes(GameTestHelper helper) {
@@ -183,6 +206,17 @@ public class EnchantingTests {
                 if (stack.getEnchantmentValue() != DURABILITY_ONLY.get(path)) {
                     misses.add(path + ": enchantment value " + stack.getEnchantmentValue() + ", not " + DURABILITY_ONLY.get(path));
                 }
+            } else if (path.equals("zoo_keeper")) {
+                count(counts, "unbreaking only");
+                for (Holder.Reference<Enchantment> e : all) {
+                    boolean expected = e.key().location().getPath().equals("unbreaking");
+                    if (stack.supportsEnchantment(e) != expected) {
+                        misses.add(path + (expected ? " refuses " : " takes ") + e.key().location().getPath());
+                    }
+                }
+                if (stack.getEnchantmentValue() != 0) {
+                    misses.add(path + ": enchantment value " + stack.getEnchantmentValue() + ", not 0");
+                }
             } else {
                 count(counts, "nothing");
                 for (Holder.Reference<Enchantment> e : all) {
@@ -203,6 +237,7 @@ public class EnchantingTests {
         expected.put("leggings", 14);
         expected.put("boots", 14);
         expected.put("durability only", DURABILITY_ONLY.size());
+        expected.put("unbreaking only", 1);
         expected.forEach((group, n) -> {
             if (!n.equals(counts.getOrDefault(group, 0))) {
                 misses.add(0, "the registry has " + counts.getOrDefault(group, 0) + " " + group + ", the test expects " + n);

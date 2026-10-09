@@ -1,5 +1,6 @@
 package danger.orespawn.item;
 
+import net.minecraft.core.Holder;
 import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
@@ -12,6 +13,8 @@ import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.item.enchantment.Enchantments;
 
 /**
  * ZooKeeper, ported from 1.7.10 ItemZooKeeper.java:24-50. Left-clicking a mob
@@ -22,6 +25,15 @@ import net.minecraft.world.item.ItemStack;
 public class ItemZooKeeper extends Item {
     public ItemZooKeeper(Item.Properties properties) {
         super(properties);
+    }
+
+    /**
+     * ITEM-074: the original was a plain item of one durability (orig ItemZooKeeper.java:21), so 1.7.10's anvil let a book
+     * put Unbreaking on it, which can spare a capture; nothing else, and nothing at the table (no enchantability).
+     */
+    @Override
+    public boolean supportsEnchantment(ItemStack stack, Holder<Enchantment> enchantment) {
+        return enchantment.is(Enchantments.UNBREAKING) || super.supportsEnchantment(stack, enchantment);
     }
 
     @Override
