@@ -183,7 +183,7 @@ public class StructureTestsA {
      * through {@code createStackSplitter} (LootTable.java, 1.21.1), which
      * splits any pick whose count reaches the item's max stack size into
      * multiple stacks — e.g. one caged_mob pick of 2-4 (unstackable, BM:28)
-     * or one zoo_keeper pick of 10-16 (durability 1 ⇒ unstackable, GD:60)
+     * or one zoo_keeper pick of 10-16 (damageable ⇒ unstackable, GD:60)
      * became 2-16 stacks and tripped the roll-count bounds. The originals
      * behaved the same in-chest (1.7.10 ChestGenHooks.generateStacks splits
      * over-limit picks into singles), so the documented 5-10/5-11 ranges are

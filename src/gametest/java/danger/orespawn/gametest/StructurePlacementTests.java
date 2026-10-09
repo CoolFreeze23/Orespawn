@@ -334,46 +334,49 @@ public class StructurePlacementTests {
      * chunks at mining_structures' spots. A spot builds its first pick where that structure finds its site and nothing
      * otherwise, never one of the others: where the pick is the Leonopteryx nest and its highest grass above Y80 is
      * missing, vanilla alone would have gone on to the next structure, whose lowest grass is nearly always there.
+     * The scan runs off the server thread (TEST-025).
      */
-    @GameTest(template = "empty", timeoutTicks = 400)
+    @GameTest(template = "empty", timeoutTicks = 24000)
     public static void w080d_the_structure_pass_keeps_to_the_pick(GameTestHelper helper) {
-        ServerLevel level = helper.getLevel();
-        RegistryAccess access = level.getServer().registryAccess();
-        ChunkGenerator gen = generator(helper, "orespawn:mining_biome", "orespawn:legacy_extreme_hills", DimensionStyle.MINING);
-        long seed = 8780444890188216456L;
-        RandomState state = randomState(helper, "orespawn:legacy_extreme_hills", seed);
-        ChunkGeneratorStructureState structureState = gen.createState(access.lookupOrThrow(Registries.STRUCTURE_SET), state, seed);
-        StructureSet mining = set(helper, "mining_structures");
-        RandomSpreadStructurePlacement placement = (RandomSpreadStructurePlacement) mining.placement();
-        Set<Structure> miningStructures = mining.structures().stream().map(e -> e.structure().value())
-                .filter(s -> !(s instanceof NothingStructure)).collect(Collectors.toSet());
-        int built = 0;
-        int emptyPick = 0;
-        int siteless = 0;
-        for (int i = 0; i < 16; i++) {
-            for (int j = 0; j < 16; j++) {
-                ChunkPos chunk = placement.getPotentialStructureChunk(seed, (40 + i) * 9, (-20 + j) * 9);
-                ProtoChunk proto = new ProtoChunk(chunk, UpgradeData.EMPTY, level, access.registryOrThrow(Registries.BIOME), null);
-                gen.createStructures(access, structureState, level.structureManager(), proto, level.getStructureManager());
-                List<Structure> starts = proto.getAllStarts().entrySet().stream()
-                        .filter(e -> e.getValue().isValid() && miningStructures.contains(e.getKey()))
-                        .map(Map.Entry::getKey).toList();
-                Structure pick = StructurePicks.firstPick(mining, seed, chunk).structure().value();
-                Optional<Structure.GenerationStub> site = pick.findValidGenerationPoint(context(helper, gen, state, seed, chunk));
-                if (site.isPresent()) {
-                    helper.assertTrue(starts.equals(List.of(pick)), "the spot at " + chunk + " built " + starts
-                            + ", its pick was " + pick);
-                    built++;
-                } else {
-                    helper.assertTrue(starts.isEmpty(), "the spot at " + chunk + " built " + starts + ", though its pick "
-                            + pick + " found no site");
-                    if (miningStructures.contains(pick)) siteless++; else emptyPick++;
+        OffThread.run(helper, () -> {
+            ServerLevel level = helper.getLevel();
+            RegistryAccess access = level.getServer().registryAccess();
+            ChunkGenerator gen = generator(helper, "orespawn:mining_biome", "orespawn:legacy_extreme_hills", DimensionStyle.MINING);
+            long seed = 8780444890188216456L;
+            RandomState state = randomState(helper, "orespawn:legacy_extreme_hills", seed);
+            ChunkGeneratorStructureState structureState = gen.createState(access.lookupOrThrow(Registries.STRUCTURE_SET), state, seed);
+            StructureSet mining = set(helper, "mining_structures");
+            RandomSpreadStructurePlacement placement = (RandomSpreadStructurePlacement) mining.placement();
+            Set<Structure> miningStructures = mining.structures().stream().map(e -> e.structure().value())
+                    .filter(s -> !(s instanceof NothingStructure)).collect(Collectors.toSet());
+            int built = 0;
+            int emptyPick = 0;
+            int siteless = 0;
+            for (int i = 0; i < 16; i++) {
+                OffThread.check(helper);
+                for (int j = 0; j < 16; j++) {
+                    ChunkPos chunk = placement.getPotentialStructureChunk(seed, (40 + i) * 9, (-20 + j) * 9);
+                    ProtoChunk proto = new ProtoChunk(chunk, UpgradeData.EMPTY, level, access.registryOrThrow(Registries.BIOME), null);
+                    gen.createStructures(access, structureState, level.structureManager(), proto, level.getStructureManager());
+                    List<Structure> starts = proto.getAllStarts().entrySet().stream()
+                            .filter(e -> e.getValue().isValid() && miningStructures.contains(e.getKey()))
+                            .map(Map.Entry::getKey).toList();
+                    Structure pick = StructurePicks.firstPick(mining, seed, chunk).structure().value();
+                    Optional<Structure.GenerationStub> site = pick.findValidGenerationPoint(context(helper, gen, state, seed, chunk));
+                    if (site.isPresent()) {
+                        helper.assertTrue(starts.equals(List.of(pick)), "the spot at " + chunk + " built " + starts
+                                + ", its pick was " + pick);
+                        built++;
+                    } else {
+                        helper.assertTrue(starts.isEmpty(), "the spot at " + chunk + " built " + starts + ", though its pick "
+                                + pick + " found no site");
+                        if (miningStructures.contains(pick)) siteless++; else emptyPick++;
+                    }
                 }
             }
-        }
-        helper.assertTrue(built > 0 && emptyPick > 0 && siteless > 0, "the patch left a case untested: " + built
-                + " built, " + emptyPick + " nothing picked, " + siteless + " picks without a site");
-        helper.succeed();
+            helper.assertTrue(built > 0 && emptyPick > 0 && siteless > 0, "the patch left a case untested: " + built
+                    + " built, " + emptyPick + " nothing picked, " + siteless + " picks without a site");
+        });
     }
 
     /**
@@ -409,45 +412,48 @@ public class StructurePlacementTests {
      * addLeonNest's (orig OreSpawnWorld.java:2115-2141: the 6×6 grid, grass inside Y81-128, a column replacing the kept
      * one only when its grass is above the kept anchor, the anchor one above the grass, none without a column), and the
      * bee hive stands on the same lowest grass the ender knight dungeon's LOWEST_GRASS_36 scan finds.
+     * The scan runs off the server thread (TEST-025).
      */
-    @GameTest(template = "empty", timeoutTicks = 400)
+    @GameTest(template = "empty", timeoutTicks = 24000)
     public static void w079f_mining_sites_replay_the_original_scans(GameTestHelper helper) {
-        ChunkGenerator gen = generator(helper, "orespawn:mining_biome", "orespawn:legacy_extreme_hills", DimensionStyle.MINING);
-        long seed = 8780444890188216456L;
-        RandomState state = randomState(helper, "orespawn:legacy_extreme_hills", seed);
-        Structure leon = structure(helper, "leonopteryx_nest");
-        Structure hive = structure(helper, "beehive");
-        Structure knight = structure(helper, "ender_knight_dungeon_mining");
-        int nests = 0;
-        int refused = 0;
-        for (int c = 0; c < 120; c++) {
-            ChunkPos chunk = new ChunkPos(700 + c * 5, -300 + c * 3);
-            int highestY = 30;
-            BlockPos expected = null;
-            for (int i = 0; i < 16; i += 3) {
-                for (int j = 0; j < 16; j += 3) {
-                    int x = chunk.getMinBlockX() + i;
-                    int z = chunk.getMinBlockZ() + j;
-                    int grass = surface(gen, helper, state, x, z, Heightmap.Types.WORLD_SURFACE_WG) - 1;
-                    if (grass > 128 || grass <= 80 || grass <= highestY) continue;
-                    highestY = grass + 1;
-                    expected = new BlockPos(x, highestY, z);
+        OffThread.run(helper, () -> {
+            ChunkGenerator gen = generator(helper, "orespawn:mining_biome", "orespawn:legacy_extreme_hills", DimensionStyle.MINING);
+            long seed = 8780444890188216456L;
+            RandomState state = randomState(helper, "orespawn:legacy_extreme_hills", seed);
+            Structure leon = structure(helper, "leonopteryx_nest");
+            Structure hive = structure(helper, "beehive");
+            Structure knight = structure(helper, "ender_knight_dungeon_mining");
+            int nests = 0;
+            int refused = 0;
+            for (int c = 0; c < 120; c++) {
+                OffThread.check(helper);
+                ChunkPos chunk = new ChunkPos(700 + c * 5, -300 + c * 3);
+                int highestY = 30;
+                BlockPos expected = null;
+                for (int i = 0; i < 16; i += 3) {
+                    for (int j = 0; j < 16; j += 3) {
+                        int x = chunk.getMinBlockX() + i;
+                        int z = chunk.getMinBlockZ() + j;
+                        int grass = surface(gen, helper, state, x, z, Heightmap.Types.WORLD_SURFACE_WG) - 1;
+                        if (grass > 128 || grass <= 80 || grass <= highestY) continue;
+                        highestY = grass + 1;
+                        expected = new BlockPos(x, highestY, z);
+                    }
                 }
+                Optional<Structure.GenerationStub> stub = leon.findValidGenerationPoint(context(helper, gen, state, seed, chunk));
+                helper.assertTrue(stub.map(Structure.GenerationStub::position).orElse(null) == null ? expected == null
+                                : stub.get().position().equals(expected),
+                        "the Leonopteryx nest's site at " + chunk + " is " + stub.map(Structure.GenerationStub::position)
+                                + ", addLeonNest's is " + expected);
+                if (expected != null) nests++; else refused++;
+                Optional<Structure.GenerationStub> h = hive.findValidGenerationPoint(context(helper, gen, state, seed, chunk));
+                Optional<Structure.GenerationStub> k = knight.findValidGenerationPoint(context(helper, gen, state, seed, chunk));
+                helper.assertTrue(h.map(Structure.GenerationStub::position).equals(k.map(Structure.GenerationStub::position)),
+                        "the bee hive's site at " + chunk + " is " + h.map(Structure.GenerationStub::position)
+                                + ", the lowest grass is " + k.map(Structure.GenerationStub::position));
             }
-            Optional<Structure.GenerationStub> stub = leon.findValidGenerationPoint(context(helper, gen, state, seed, chunk));
-            helper.assertTrue(stub.map(Structure.GenerationStub::position).orElse(null) == null ? expected == null
-                            : stub.get().position().equals(expected),
-                    "the Leonopteryx nest's site at " + chunk + " is " + stub.map(Structure.GenerationStub::position)
-                            + ", addLeonNest's is " + expected);
-            if (expected != null) nests++; else refused++;
-            Optional<Structure.GenerationStub> h = hive.findValidGenerationPoint(context(helper, gen, state, seed, chunk));
-            Optional<Structure.GenerationStub> k = knight.findValidGenerationPoint(context(helper, gen, state, seed, chunk));
-            helper.assertTrue(h.map(Structure.GenerationStub::position).equals(k.map(Structure.GenerationStub::position)),
-                    "the bee hive's site at " + chunk + " is " + h.map(Structure.GenerationStub::position)
-                            + ", the lowest grass is " + k.map(Structure.GenerationStub::position));
-        }
-        helper.assertTrue(nests > 0 && refused > 0, "the patch left a case untested: " + nests + " nests, " + refused + " refusals");
-        helper.succeed();
+            helper.assertTrue(nests > 0 && refused > 0, "the patch left a case untested: " + nests + " nests, " + refused + " refusals");
+        });
     }
 
     /**
@@ -460,6 +466,11 @@ public class StructurePlacementTests {
      */
     @GameTest(template = "empty", timeoutTicks = 24000)
     public static void w080e_utopia_royal_trees_and_altars_follow_the_pass(GameTestHelper helper) {
+        // LESS_LAG at 0 for the whole scan, set and restored on the server thread (TEST-025), as the other tests that
+        // open it do within their tick: the scan only reads it
+        int oldLessLag = OreSpawnConfig.LESS_LAG.get();
+        OreSpawnConfig.LESS_LAG.set(0);
+        EntityLogicTestsA.onTestExit(helper, () -> OreSpawnConfig.LESS_LAG.set(oldLessLag));
         OffThread.run(helper, () -> {
             ChunkGenerator gen = generator(helper, "orespawn:utopia_plains", "orespawn:legacy_utopia", DimensionStyle.UTOPIA);
             long seed = 8780444890188216456L;
@@ -469,80 +480,75 @@ public class StructurePlacementTests {
             Structure huge = structure(helper, "utopia_huge_tree");
             Structure kingAltar = structure(helper, "utopia_temple_king_altar");
             Structure queenAltar = structure(helper, "utopia_temple_queen_altar");
-            int oldLessLag = OreSpawnConfig.LESS_LAG.get();
-            OreSpawnConfig.LESS_LAG.set(0);
             int royals = 0;
             int altars = 0;
             int checked = 0;
-            try {
-                for (int c = 0; c < 40000 && (royals < 2 || altars < 2); c++) {
-                    ChunkPos chunk = new ChunkPos(-9000 + c % 200, 4000 + c / 200);
-                    // WGEN-108: the roll starts where the original's did, on the chunk's Forge random after its surface
-                    // patches' draws; the huge roll itself is worked out here from the worldgen heightmaps
-                    UtopiaTreeStructure.ColumnProbe probe = UtopiaTreeStructure.probe(context(helper, gen, state, seed, chunk));
-                    net.minecraft.util.RandomSource r = UtopiaTreeStructure.utopiaRandom(seed, chunk, probe);
-                    BlockPos royal = null;
-                    boolean queenPick = false;
-                    boolean treeHere = false;
-                    if (r.nextInt(50) == 0) {
-                        for (int i = 0; i < 3 && !treeHere; i++) {
-                            int x = 4 + chunk.getMinBlockX() + r.nextInt(8);
-                            int z = 4 + chunk.getMinBlockZ() + r.nextInt(8);
-                            int top = surface(gen, helper, state, x, z, Heightmap.Types.WORLD_SURFACE_WG);
-                            int floor = surface(gen, helper, state, x, z, Heightmap.Types.OCEAN_FLOOR_WG);
-                            if (top != floor || top <= 50 || top > 127) continue;
-                            treeHere = true;
-                            r.nextInt(4);
-                            r.nextInt(2);
-                            r.nextInt(100);
-                            if (r.nextInt(100) == 0) {
-                                royal = new BlockPos(x, top - 1, z);
-                                queenPick = r.nextInt(2) != 0;
-                            }
+            for (int c = 0; c < 40000 && (royals < 2 || altars < 2); c++) {
+                OffThread.check(helper);
+                ChunkPos chunk = new ChunkPos(-9000 + c % 200, 4000 + c / 200);
+                // WGEN-108: the roll starts where the original's did, on the chunk's Forge random after its surface
+                // patches' draws; the huge roll itself is worked out here from the worldgen heightmaps
+                UtopiaTreeStructure.ColumnProbe probe = UtopiaTreeStructure.probe(context(helper, gen, state, seed, chunk));
+                net.minecraft.util.RandomSource r = UtopiaTreeStructure.utopiaRandom(seed, chunk, probe);
+                BlockPos royal = null;
+                boolean queenPick = false;
+                boolean treeHere = false;
+                if (r.nextInt(50) == 0) {
+                    for (int i = 0; i < 3 && !treeHere; i++) {
+                        int x = 4 + chunk.getMinBlockX() + r.nextInt(8);
+                        int z = 4 + chunk.getMinBlockZ() + r.nextInt(8);
+                        int top = surface(gen, helper, state, x, z, Heightmap.Types.WORLD_SURFACE_WG);
+                        int floor = surface(gen, helper, state, x, z, Heightmap.Types.OCEAN_FLOOR_WG);
+                        if (top != floor || top <= 50 || top > 127) continue;
+                        treeHere = true;
+                        r.nextInt(4);
+                        r.nextInt(2);
+                        r.nextInt(100);
+                        if (r.nextInt(100) == 0) {
+                            royal = new BlockPos(x, top - 1, z);
+                            queenPick = r.nextInt(2) != 0;
                         }
-                    }
-                    if (treeHere || c % 97 == 0) {
-                        Optional<BlockPos> k = king.findValidGenerationPoint(context(helper, gen, state, seed, chunk))
-                                .map(Structure.GenerationStub::position);
-                        Optional<BlockPos> q = queen.findValidGenerationPoint(context(helper, gen, state, seed, chunk))
-                                .map(Structure.GenerationStub::position);
-                        helper.assertTrue(k.equals(Optional.ofNullable(royal != null && !queenPick ? royal : null))
-                                        && q.equals(Optional.ofNullable(royal != null && queenPick ? royal : null)),
-                                "at " + chunk + " the King tree stands at " + k + " and the Queen at " + q
-                                        + "; the huge roll's royal branch is " + royal + (queenPick ? " (Queen)" : " (King)"));
-                        if (royal != null) {
-                            royals++;
-                            helper.assertTrue(huge.findValidGenerationPoint(context(helper, gen, state, seed, chunk)).isEmpty(),
-                                    "a huge tree grew beside the"
-                                    + " royal tree at " + chunk);
-                        }
-                        checked++;
-                    }
-                    UtopiaTreeStructure.ChunkPass pass = UtopiaTreeStructure.chunkPass(seed, chunk, probe);
-                    helper.assertTrue(!treeHere || (pass.bigTree() && pass.altar() == null), "the pass at " + chunk
-                            + " grew " + pass + " beside the huge roll's tree");
-                    UtopiaTreeStructure.Altar altar = pass.altar();
-                    if (altar != null || c % 97 == 0) {
-                        if (altar != null) UtopiaTreeTests.terrainReadsAgree(helper, gen, helper.getLevel(), state, seed, altar.origin());
-                        boolean clear = LegacyDungeonStructure.altarRollClear(seed, chunk)
-                                && (altar == null || UtopiaTreeStructure.reallyBigSpaceClear(seed, gen, helper.getLevel(), state,
-                                altar.origin()));
-                        Optional<BlockPos> ka = kingAltar.findValidGenerationPoint(context(helper, gen, state, seed, chunk))
-                                .map(Structure.GenerationStub::position);
-                        Optional<BlockPos> qa = queenAltar.findValidGenerationPoint(context(helper, gen, state, seed, chunk))
-                                .map(Structure.GenerationStub::position);
-                        // the piece's origin is its pad's centre, over the grass corner the pass found
-                        BlockPos pad = altar == null ? null : altar.origin().offset(LegacyDungeonStructure.ALTAR_HALF_PAD, 0,
-                                LegacyDungeonStructure.ALTAR_HALF_PAD);
-                        helper.assertTrue(ka.equals(Optional.ofNullable(altar != null && clear && !altar.queen() ? pad : null))
-                                        && qa.equals(Optional.ofNullable(altar != null && clear && altar.queen() ? pad : null)),
-                                "at " + chunk + " the King altar stands at " + ka + " and the Queen's at " + qa
-                                        + "; the pass picked " + altar + (clear ? "" : " behind the cooldown or the space check"));
-                        if (altar != null) altars++;
                     }
                 }
-            } finally {
-                OreSpawnConfig.LESS_LAG.set(oldLessLag);
+                if (treeHere || c % 97 == 0) {
+                    Optional<BlockPos> k = king.findValidGenerationPoint(context(helper, gen, state, seed, chunk))
+                            .map(Structure.GenerationStub::position);
+                    Optional<BlockPos> q = queen.findValidGenerationPoint(context(helper, gen, state, seed, chunk))
+                            .map(Structure.GenerationStub::position);
+                    helper.assertTrue(k.equals(Optional.ofNullable(royal != null && !queenPick ? royal : null))
+                                    && q.equals(Optional.ofNullable(royal != null && queenPick ? royal : null)),
+                            "at " + chunk + " the King tree stands at " + k + " and the Queen at " + q
+                                    + "; the huge roll's royal branch is " + royal + (queenPick ? " (Queen)" : " (King)"));
+                    if (royal != null) {
+                        royals++;
+                        helper.assertTrue(huge.findValidGenerationPoint(context(helper, gen, state, seed, chunk)).isEmpty(),
+                                "a huge tree grew beside the"
+                                + " royal tree at " + chunk);
+                    }
+                    checked++;
+                }
+                UtopiaTreeStructure.ChunkPass pass = UtopiaTreeStructure.chunkPass(seed, chunk, probe);
+                helper.assertTrue(!treeHere || (pass.bigTree() && pass.altar() == null), "the pass at " + chunk
+                        + " grew " + pass + " beside the huge roll's tree");
+                UtopiaTreeStructure.Altar altar = pass.altar();
+                if (altar != null || c % 97 == 0) {
+                    if (altar != null) UtopiaTreeTests.terrainReadsAgree(helper, gen, helper.getLevel(), state, seed, altar.origin());
+                    boolean clear = LegacyDungeonStructure.altarRollClear(seed, chunk)
+                            && (altar == null || UtopiaTreeStructure.reallyBigSpaceClear(seed, gen, helper.getLevel(), state,
+                            altar.origin()));
+                    Optional<BlockPos> ka = kingAltar.findValidGenerationPoint(context(helper, gen, state, seed, chunk))
+                            .map(Structure.GenerationStub::position);
+                    Optional<BlockPos> qa = queenAltar.findValidGenerationPoint(context(helper, gen, state, seed, chunk))
+                            .map(Structure.GenerationStub::position);
+                    // the piece's origin is its pad's centre, over the grass corner the pass found
+                    BlockPos pad = altar == null ? null : altar.origin().offset(LegacyDungeonStructure.ALTAR_HALF_PAD, 0,
+                            LegacyDungeonStructure.ALTAR_HALF_PAD);
+                    helper.assertTrue(ka.equals(Optional.ofNullable(altar != null && clear && !altar.queen() ? pad : null))
+                                    && qa.equals(Optional.ofNullable(altar != null && clear && altar.queen() ? pad : null)),
+                            "at " + chunk + " the King altar stands at " + ka + " and the Queen's at " + qa
+                                    + "; the pass picked " + altar + (clear ? "" : " behind the cooldown or the space check"));
+                    if (altar != null) altars++;
+                }
             }
             helper.assertTrue(royals > 0 && altars > 0 && checked > 0, "the patch left a case untested: " + royals
                     + " royal trees, " + altars + " altars");

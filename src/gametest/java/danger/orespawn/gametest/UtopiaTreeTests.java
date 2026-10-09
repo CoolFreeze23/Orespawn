@@ -622,47 +622,50 @@ public class UtopiaTreeTests {
      * WGEN-075 / WGEN-077 on the Utopia dimension's generator: the grove structure grows exactly the chunk pass's
      * grove, and the King altar refuses every chunk where the pass grows a tree (orig OreSpawnWorld.java:42-45). Where
      * an altar does build, and the royal trees, are StructurePlacementTests' w080e.
+     * The scan runs off the server thread (TEST-025).
      */
-    @GameTest(template = "empty", timeoutTicks = 400)
+    @GameTest(template = "empty", timeoutTicks = 24000)
     public static void w077b_the_utopia_structures_read_one_chunk_pass(GameTestHelper helper) {
-        MinecraftServer server = helper.getLevel().getServer();
-        Holder<Biome> plains = server.registryAccess().registryOrThrow(Registries.BIOME)
-                .getHolderOrThrow(ResourceKey.create(Registries.BIOME, ResourceLocation.parse("orespawn:utopia_plains")));
-        ResourceKey<NoiseGeneratorSettings> terrain = ResourceKey.create(Registries.NOISE_SETTINGS,
-                ResourceLocation.parse("orespawn:legacy_utopia"));
-        ChunkGenerator generator = new OreSpawnChunkGenerator(new FixedBiomeSource(plains),
-                server.registryAccess().registryOrThrow(Registries.NOISE_SETTINGS).getHolderOrThrow(terrain), DimensionStyle.UTOPIA);
-        long seed = 8780444890188216456L;
-        RandomState randomState = RandomState.create(server.registryAccess().asGetterLookup(), terrain, seed);
-        Registry<Structure> structures = server.registryAccess().registryOrThrow(Registries.STRUCTURE);
-        Structure grove = structures.get(ResourceLocation.parse("orespawn:utopia_tree_grove"));
-        Structure altar = structures.get(ResourceLocation.parse("orespawn:king_altar"));
-        helper.assertTrue(grove != null && altar != null, "a Utopia structure is not registered");
-        int groves = 0;
-        int refused = 0;
-        for (int cx = 0; cx < 40; cx++) {
-            for (int cz = 0; cz < 40; cz++) {
-                Structure.GenerationContext ctx = utopiaContext(helper, generator, randomState, seed, new ChunkPos(cx + 3000, cz - 1700));
-                UtopiaTreeStructure.ChunkPass pass = UtopiaTreeStructure.chunkPass(ctx.seed(), ctx.chunkPos(),
-                        UtopiaTreeStructure.probe(ctx));
-                Optional<Structure.GenerationStub> g = grove.findValidGenerationPoint(ctx);
-                helper.assertTrue(g.isPresent() == !pass.grove().isEmpty(), "the grove structure and the pass disagree at "
-                        + ctx.chunkPos());
-                if (g.isPresent()) {
-                    groves++;
-                    helper.assertTrue(g.get().position().equals(pass.grove().get(0).origin()),
-                            "the grove structure's first tree is not the pass's at " + ctx.chunkPos());
-                }
-                if (pass.grewTrees()) {
-                    helper.assertTrue(altar.findValidGenerationPoint(ctx).isEmpty(), "a King altar stands in "
-                            + ctx.chunkPos() + ", where the pass grew " + pass);
-                    refused++;
+        OffThread.run(helper, () -> {
+            MinecraftServer server = helper.getLevel().getServer();
+            Holder<Biome> plains = server.registryAccess().registryOrThrow(Registries.BIOME)
+                    .getHolderOrThrow(ResourceKey.create(Registries.BIOME, ResourceLocation.parse("orespawn:utopia_plains")));
+            ResourceKey<NoiseGeneratorSettings> terrain = ResourceKey.create(Registries.NOISE_SETTINGS,
+                    ResourceLocation.parse("orespawn:legacy_utopia"));
+            ChunkGenerator generator = new OreSpawnChunkGenerator(new FixedBiomeSource(plains),
+                    server.registryAccess().registryOrThrow(Registries.NOISE_SETTINGS).getHolderOrThrow(terrain), DimensionStyle.UTOPIA);
+            long seed = 8780444890188216456L;
+            RandomState randomState = RandomState.create(server.registryAccess().asGetterLookup(), terrain, seed);
+            Registry<Structure> structures = server.registryAccess().registryOrThrow(Registries.STRUCTURE);
+            Structure grove = structures.get(ResourceLocation.parse("orespawn:utopia_tree_grove"));
+            Structure altar = structures.get(ResourceLocation.parse("orespawn:king_altar"));
+            helper.assertTrue(grove != null && altar != null, "a Utopia structure is not registered");
+            int groves = 0;
+            int refused = 0;
+            for (int cx = 0; cx < 40; cx++) {
+                OffThread.check(helper);
+                for (int cz = 0; cz < 40; cz++) {
+                    Structure.GenerationContext ctx = utopiaContext(helper, generator, randomState, seed, new ChunkPos(cx + 3000, cz - 1700));
+                    UtopiaTreeStructure.ChunkPass pass = UtopiaTreeStructure.chunkPass(ctx.seed(), ctx.chunkPos(),
+                            UtopiaTreeStructure.probe(ctx));
+                    Optional<Structure.GenerationStub> g = grove.findValidGenerationPoint(ctx);
+                    helper.assertTrue(g.isPresent() == !pass.grove().isEmpty(), "the grove structure and the pass disagree at "
+                            + ctx.chunkPos());
+                    if (g.isPresent()) {
+                        groves++;
+                        helper.assertTrue(g.get().position().equals(pass.grove().get(0).origin()),
+                                "the grove structure's first tree is not the pass's at " + ctx.chunkPos());
+                    }
+                    if (pass.grewTrees()) {
+                        helper.assertTrue(altar.findValidGenerationPoint(ctx).isEmpty(), "a King altar stands in "
+                                + ctx.chunkPos() + ", where the pass grew " + pass);
+                        refused++;
+                    }
                 }
             }
-        }
-        helper.assertTrue(groves > 0 && refused > 0, "the patch left a case untested: " + groves + " groves, "
-                + refused + " refused altars");
-        helper.succeed();
+            helper.assertTrue(groves > 0 && refused > 0, "the patch left a case untested: " + groves + " groves, "
+                    + refused + " refused altars");
+        });
     }
 
 
@@ -789,6 +792,7 @@ public class UtopiaTreeTests {
             UtopiaTreeStructure.ColumnProbe probe = UtopiaTreeStructure.probe(generator, level, state);
             int treeRefusals = 0, terrainRefusals = 0, accepted = 0;
             for (int c = 0; c < 4000 && (treeRefusals < 1 || terrainRefusals < 1 || accepted < 1); c++) {
+                OffThread.check(helper);
                 ChunkPos chunk = new ChunkPos(-500 + c % 60, 900 + c / 60);
                 UtopiaTreeStructure.ChunkPass pass = UtopiaTreeStructure.chunkPass(seed, chunk, probe);
                 if (treeRefusals < 1 && !pass.huge().trees().isEmpty()) {

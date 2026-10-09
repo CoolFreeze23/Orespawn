@@ -110,6 +110,7 @@ public class LegacyTerrainReaderTests {
                     helper.assertTrue(reader.bounded(), d[0] + " at seed " + seed + "'s reader scans from the top");
                     UtopiaTreeStructure.ColumnProbe full = UtopiaTreeStructure.fullProbe(generator, heights, state);
                     columns().parallelStream().forEach(at -> {
+                        OffThread.check(helper);
                         int x = at[0], z = at[1];
                         NoiseColumn column = generator.getBaseColumn(x, z, heights, state);
                         for (int y = heights.getMinBuildHeight(); y < heights.getMaxBuildHeight(); y++) {
@@ -180,6 +181,7 @@ public class LegacyTerrainReaderTests {
             List<ChunkPos> failing = Collections.synchronizedList(new ArrayList<>());
             IntStream.range(0, 200).parallel().forEach(i -> {
                 for (int j = 0; j < 200; j++) {
+                    OffThread.check(helper);
                     ChunkPos chunk = new ChunkPos(-100 + i, 400 + j);
                     if (UtopiaTreeStructure.altarRollReached(seed, chunk, probe)) {
                         passing.add(chunk);

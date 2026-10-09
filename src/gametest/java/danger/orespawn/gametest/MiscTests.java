@@ -370,9 +370,10 @@ public class MiscTests {
 
     /**
      * i011 (part 1) — ITEM-050/052: ZooKeeper makes a mob persistent and
-     * breaks after ONE use (2 damage on a 1-durability item — orig
+     * breaks after ONE use (2 damage on a 2-durability item, which 1.21 breaks
+     * at its maximum as 1.7.10 broke the 1-durability one past it — orig
      * ItemZooKeeper.java:44-45; port ItemZooKeeper.java:41-49, ModItems
-     * durability(1)); the Wrench refuses a healthy unowned AntRobot (orig
+     * durability(2), ITEM-074); the Wrench refuses a healthy unowned AntRobot (orig
      * ItemWrench.java:50-57), disassembles one below half health into an
      * ant_robot_kit carrying missing HP as item damage (orig :86-94), and the
      * kit re-spawns the robot with carried-over health, custom name and owned

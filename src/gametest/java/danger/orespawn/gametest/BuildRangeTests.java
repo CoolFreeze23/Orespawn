@@ -116,6 +116,7 @@ public class BuildRangeTests {
                 RandomState state = RandomState.create(server.registryAccess().asGetterLookup(),
                         ResourceKey.create(Registries.NOISE_SETTINGS, rl((String) d[2])), 1007L);
                 for (int[] at : new int[][] {{0, 0}, {-3, 5}, {1875, -1250}}) {
+                    OffThread.check(helper);
                     // the same chunk built in the original's 256-high world and in the build range kept
                     ProtoChunk original = build(helper, generator, state, biomes, at, LevelHeightAccessor.create(0, 256));
                     ProtoChunk kept = build(helper, generator, state, biomes, at, LevelHeightAccessor.create(-64, 384));
@@ -140,7 +141,6 @@ public class BuildRangeTests {
                 }
             }
             helper.assertTrue(wrong.isEmpty() && chunks == 12, "chunks " + chunks + ": " + wrong);
-            helper.succeed();
         });
     }
 

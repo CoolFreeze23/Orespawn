@@ -145,6 +145,7 @@ public class TerrainParityTests {
                     RandomState state = state(server, (String) c[1], seed);
                     int lowest = Integer.MAX_VALUE, highest = Integer.MIN_VALUE;
                     for (int x = -16000; x <= 16000; x += 1600) {
+                        OffThread.check(helper);
                         for (int z = -16000; z <= 16000; z += 1600) {
                             int top = generator.getBaseHeight(x, z, Heightmap.Types.OCEAN_FLOOR_WG, heights, state);
                             lowest = Math.min(lowest, top);
@@ -227,6 +228,7 @@ public class TerrainParityTests {
                         int x0 = in.readInt(), z0 = in.readInt(), x1 = in.readInt(), z1 = in.readInt();
                         for (int cz = z0; cz <= z1; cz++) {
                             for (int cx = x0; cx <= x1; cx++) {
+                                OffThread.check(helper);
                                 ProtoChunk chunk = new ProtoChunk(new ChunkPos(cx, cz), UpgradeData.EMPTY, heights, biomes, null);
                                 chunk.fillBiomesFromNoise(generator.getBiomeSource(), state.sampler());
                                 chunk.getOrCreateNoiseChunk(c -> NoiseChunk.forChunk(c, state, LegacyTerrainReaderTests.NO_BEARD,
