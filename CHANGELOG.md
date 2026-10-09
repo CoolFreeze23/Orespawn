@@ -4,6 +4,66 @@ Newest first. Every version opens with what a player will notice, in plain words
 the technical detail, with the issue ids and the source lines, is folded under "Technical details" at the end of the
 version. The full release notes for a cut live in `phase_g_reports/` and on the release page.
 
+## 2.0.0-beta.14 — 2026-10-10 · [release page](https://github.com/CoolFreeze23/Orespawn/releases/tag/v1.21.1-2.0.0-beta.14) · [full notes](phase_g_reports/RELEASE_NOTES_2.0.0-beta.14.md)
+
+The original's dimensions grow its flowers, mushrooms, reeds, colours and trees again, the bosses' gear rolls the original's enchantments, and a few creatures and items look and move as they did.
+
+**Fixed**
+- Utopia, the Village, Chaos, Crystal and Mining grow the original's flowers, grass, mushrooms, reeds and pumpkins, about as many as the original's and where it let them grow: flowers and grass wherever their soil takes them, mushrooms where the original's light was dim enough, under trees and in caves. Before, Utopia, the Village and Chaos had 1.21's flowers, with tulips and others the original never had and few dandelions and poppies, and Crystal and Mining had no mushrooms or reeds.
+- Chaos's ores are the original's: OreSpawn's own ores and the vanilla ones as often as in the original, and no copper. Before, OreSpawn's ores came three times as often there.
+- The lava in the caves of Utopia, the Village and Mining stands one block higher, as the original's did, and Mining's rubies are as common as the original's.
+- The Village, Islands, Chaos, Crystal and Mining have the original's climate and its sky, water, grass and leaf colours. Chaos's red sky and water are now an option: `chaosRed = true` under `[modern]`, with the modern options on.
+- The dirt round a lake's shore turns to grass where the sky reaches it, as in the original.
+- The orchards of Utopia and the Village grow cherry and peach trees too, one orchard in ten each, smaller than an apple tree and with their own blossom, as in the original. Before, every orchard grew apple trees.
+- Utopia's huge trees, King and Queen trees, orchards and groves, and the Village's orchards, grow in the chunks the original grew them in for the same seed, most of them on the very same spot. Before, the same trees grew at the same odds but elsewhere, so a place could be much more or less wooded than in the original.
+- The Village's lakes keep out of its villages' buildings and streets only, as the original's did, instead of every chunk a village came near, so there is water round the villages again.
+- Godzilla's and the Kraken's diamond, iron and golden swords, tools and armour roll the original's enchantments, with its chances and levels, as their OreSpawn gear already did, instead of one random enchantment that could be a curse or Mending.
+- A boss sword that rolls Sharpness twice adds the two levels, as the original's damage counted both rolls.
+- Aqua Affinity comes at level I on the bosses' helmets and on the Ultimate, Royal and Lava Eel helmets, as the original's worked the same at any level; above I it made mining under water faster than on land.
+- The Zoo Keeper takes Unbreaking from a book at the anvil, as in the original, which can spare it a capture.
+- Godzilla, the Kraken and the Attack Squid drop a golden carrot where the original did, instead of a glistering melon slice.
+- An invisible mob no longer shows its wing membranes, glowing orbs and other see-through parts.
+- Thrown shoes, rocks, urchins, cages and the water, laser and ice balls, ink sacks, acid and dead Irukandji spin in flight as in the original; the cage turns at the original's speed.
+- The Cater Killer, Godzilla, the King, the Queen and the Kraken are drawn at their PlayNicely size by the server's setting, not the player's own, and from the moment they appear.
+- The Squid Zooka is held as in the original: resting level on the shoulder in third person and pointing ahead in first person, at the original's size.
+
+**Good to know**
+- Only newly generated land changes. In Utopia, the Village, Chaos, Crystal and Mining, land an earlier beta generated keeps its plants, trees and ores; new land gets the original's.
+- Chaos's red sky and water from earlier betas are an option now: `chaosRed = true` under `[modern]` in `config/orespawn-common.toml`, with the modern options on. Without it Chaos has the original's colours.
+- The trees of Utopia and the Village grow where the original's grew for the same seed, most of them on the very same spot; where the original's other plants stood in the way of a tree, it grows a little apart. The orchards grow about four fifths of the original's fruit trees, the cause not yet found. Caves, plants and ponds still fall where chance puts them.
+- The Village's 1.21 villages are about four times the size of the original's and reshape the ground round them, so with the lakes kept out of their buildings and streets there is about half the original's water round them.
+- A helmet that already has Aqua Affinity II or higher keeps it; new drops and new helmets come at I.
+- The Squid Zooka is as big as the original's: about six blocks long on the shoulder, and in first person its back reaches behind the view.
+
+**Install:** put `orespawn-1.21.1-2.0.0-beta.14.jar` in `mods/` (NeoForge 21.1, Minecraft 1.21.1, GeckoLib 4.7 or newer) and take the beta.13 jar out. For the spears, add Mounts of Mayhem 1.9.8.
+
+**Install:** put `orespawn-1.21.1-2.0.0-beta.14.jar` in `mods/` (NeoForge 21.1, Minecraft 1.21.1, GeckoLib 4.7 or newer) and take the beta.13 jar out. For the spears, add Mounts of Mayhem 1.9.8.
+
+<details>
+<summary>Technical details</summary>
+
+##### What beta.14 is
+
+beta.14 is beta.13 with the rest of the original's decoration in its five dimensions (WGEN-103 to WGEN-110, WGEN-113, WGEN-094), the bosses' gear and the Zoo Keeper as the original had them (ITEM-074, ITEM-077 to ITEM-080), and render fixes against the original's renderers (ENT-S-194 to ENT-S-197, ENT-S-199).
+
+##### What changed
+
+- **The plants (WGEN-109, WGEN-110, WGEN-113, WGEN-103).** `LegacyPlantsFeature` is 1.7.10's BiomeDecorator plants with BiomeGenUtopianPlains' counts, from eight blocks in, at 1.7.10's height map; a flower or grass needs only its soil, a mushroom 1.7.10's light under 13 (`LegacyLight`, Chunk.generateSkylightMap); Utopia's and the Village's trees stay unseen by it, as by the original's (`#orespawn:decoration_unseen`).
+- **Chaos's ores, the caves' lava, Mining's ruby (WGEN-104, WGEN-105).** Chaos's ore step as the other dimensions'; the legacy carvers' lava to Y10; Mining's ruby after the springs and the plants.
+- **The climates and colours (WGEN-106).** The 1.7.10 climates and the colours they give; Chaos's red behind `[modern] chaosRed`.
+- **The lakes (WGEN-107, WGEN-094).** The shore's grass; a lake skipped where a village's piece meets the chunk's population window.
+- **The trees (WGEN-108).** Each chunk's random seeded as Forge's GameRegistry.generateWorld and drawn after the surface patches (`UtopiaTreeStructure.forgeRandom`, `utopiaRandom`, `villageRandom`); the orchards' cherry and peach trees.
+- **The bosses' gear (ITEM-077, ITEM-078, ITEM-079, ITEM-080).** A repeated `set_enchantments` adds; Aqua Affinity at I; Godzilla's and the Kraken's vanilla gear on the original's dice; the golden carrot.
+- **The Zoo Keeper (ITEM-074).** Unbreaking at the anvil; two points of durability, as the original's one behaved under 1.7.10's break rule.
+- **The renderers (ENT-S-194 to ENT-S-197, ENT-S-199).** The seam's second pass hidden for an invisible mob; `SpinnerRenderer` for the original's spinning projectiles; the synced PlayNicely from construction; the Squid Zooka's holds from both versions' hand chains.
+- **Tests (TEST-025, TEST-029).** Three scans off the server thread and every scan stopped at its test's end; the Queen's wake-up test holds her at her spawn.
+
+##### How to install
+
+Put `orespawn-1.21.1-2.0.0-beta.14.jar` into the `mods` folder of a NeoForge 21.1 instance for Minecraft 1.21.1 together with GeckoLib 4.7 or newer, and take the beta.13 jar out. Existing worlds carry over.
+
+</details>
+
 ## 2.0.0-beta.13 — 2026-10-09 · [release page](https://github.com/CoolFreeze23/Orespawn/releases/tag/v1.21.1-2.0.0-beta.13) · [full notes](phase_g_reports/RELEASE_NOTES_2.0.0-beta.13.md)
 
 A new look for OreSpawn's armour, armour for your horses and wolves, spears, and enchanting that works for OreSpawn's own swords, tools and armour.

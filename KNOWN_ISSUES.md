@@ -1,7 +1,7 @@
 # Known Issues — OreSpawn Port (BETA)
 
 **This release is a beta.** The game logic underneath has been through a
-1422-test automated suite (all green, in both robot modes; the count grows
+1431-test automated suite (all green, in both robot modes; the count grows
 with every remediation batch) plus hands-on play sessions, but a lot
 of the *visual and
 audio* polish has deliberately been left open for community
@@ -35,7 +35,17 @@ These came straight out of hand-testing and are fixed in code in this build;
 most still need a second pair of eyes in a real game. If one still looks
 wrong for you, please say so.
 
-**2.0.0-beta.13 (this build):**
+**2.0.0-beta.14 (this build):**
+
+- Utopia, the Village, Chaos, Crystal and Mining grow the original's flowers, grass, mushrooms, reeds and pumpkins, by its counts and rules, the mushrooms by its light. *(WGEN-109, WGEN-110, WGEN-103, WGEN-105)*
+- Chaos's ores are the original's; the caves' lava stands to the original's height and Mining's rubies are as common as its. *(WGEN-104, WGEN-105)*
+- The Village, Islands, Chaos, Crystal and Mining have the original's climate and colours; Chaos's red is an option (`[modern] chaosRed`, default off). *(WGEN-106)*
+- The lakes' shores turn to grass as the original's did; the orchards grow cherry and peach trees as well as apple trees. *(WGEN-107, WGEN-108)*
+- Utopia's and the Village's trees grow in the original's chunks for the same seed; the Village's lakes keep out of its villages' buildings and streets only. *(WGEN-108, WGEN-094)*
+- Godzilla's and the Kraken's vanilla gear rolls the original's enchantments; a doubled Sharpness adds up; Aqua Affinity comes at I; the Zoo Keeper takes Unbreaking from a book; Godzilla, the Kraken and the Attack Squid drop the original's golden carrot. *(ITEM-079, ITEM-077, ITEM-078, ITEM-074, ITEM-080)*
+- An invisible mob hides its see-through parts; the original's spinning projectiles spin; the PlayNicely sizes follow the server's setting from the start; the Squid Zooka is held as the original's. *(ENT-S-194, ENT-S-195, ENT-S-196, ENT-S-199, ENT-S-197)*
+
+**2.0.0-beta.13:**
 
 - Utopia, the Village, Crystal and Mining are built on the original's 1.7.10 terrain again (no mountains far out); Utopia's trees keep apart and off the Royal Altars, and Chaos has its trees. *(WGEN-087, WGEN-081 to WGEN-084)*
 - Their water, surface and depth are the original's and their caves are made by its rules (still water below Y63, the original's surface, caves as common and as deep as its, bedrock at Y0, Mining's bare stone and blue sky), checked against a real 1.7.10 server; the Crystal Fairy Trees are as rare as the original's. *(WGEN-093, WGEN-092)*
@@ -219,6 +229,15 @@ wrong for you, please say so.
 - The WaterDragon no longer crashes on spawn — it can actually appear in your world now. *(TEST-005 / TF-001, TF-026)*
 - Ruby and amethyst ores drop gems (and XP) when mined without Silk Touch. *(i013 / TF-017, TF-022)*
 - The lava fishing bobber floats properly on the lava surface instead of sinking and drifting oddly. *(i085 / TF-028)*
+
+---
+
+## Known limits of the new features (2.0.0-beta.14)
+
+- **Trees in the original's dimensions:** Utopia's huge, royal and fruit trees grow in the chunks the original grew them in for the same seed, most of them on the very same spot (seven trunks in ten, half the orchards); where the original's other plants stood in the way of a tree, it grows a little apart. The orchards grow about four fifths of the original's fruit trees, the cause not yet found. Mining has more trees than the original (41 against 25 in the 400 x 400 blocks round the spawn), since 1.21's trees grow in spots where 1.7.10's needed more room. *(WGEN-108, WGEN-102)*
+- **The Village's water:** its 1.21 villages are about four times the original's and reshape the ground round them; lakes keep out of where their buildings and streets reach, so there is about half the original's water round them. *(WGEN-094)*
+- **The Squid Zooka's size:** it is as big as the original's, about six blocks long on the shoulder, and in first person its back reaches behind the view. *(ENT-S-197)*
+- **Plants in the original's dimensions:** the flowers, grass, mushrooms and reeds grow after the dimensions' structures and huge trees, where the original grew them first; a spring's or a fall's water runs only once the chunk is near a player, so fewer reeds find water beside them in fresh land. *(WGEN-109, WGEN-102)*
 
 ---
 
