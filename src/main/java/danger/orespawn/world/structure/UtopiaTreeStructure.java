@@ -6,12 +6,14 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import danger.orespawn.OreSpawnConfig;
 import danger.orespawn.world.GenerationRange;
 import danger.orespawn.world.LegacyTerrainReader;
+import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Consumer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.Registries;
@@ -22,8 +24,11 @@ import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.LevelHeightAccessor;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.chunk.ChunkGenerator;
+import net.minecraft.world.level.levelgen.BitRandomSource;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.LegacyRandomSource;
+import net.minecraft.world.level.levelgen.MarsagliaPolarGaussian;
+import net.minecraft.world.level.levelgen.PositionalRandomFactory;
 import net.minecraft.world.level.levelgen.RandomState;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
 import net.minecraft.world.level.levelgen.structure.Structure;
@@ -369,10 +374,15 @@ public class UtopiaTreeStructure extends Structure {
      * by three, then {@code xSeed * chunkX + zSeed * chunkZ ^ seed}; LegacyRandomSource is java.util.Random's LCG.
      */
     public static RandomSource forgeRandom(long seed, ChunkPos chunk) {
+        return new LegacyRandomSource(forgeSeed(seed, chunk));
+    }
+
+    /** The seed {@link #forgeRandom} gives the chunk's random. */
+    private static long forgeSeed(long seed, ChunkPos chunk) {
         LegacyRandomSource world = new LegacyRandomSource(seed);
         long xSeed = world.nextLong() >> 3;
         long zSeed = world.nextLong() >> 3;
-        return new LegacyRandomSource(xSeed * chunk.x + zSeed * chunk.z ^ seed);
+        return xSeed * chunk.x + zSeed * chunk.z ^ seed;
     }
 
     /**
@@ -384,8 +394,14 @@ public class UtopiaTreeStructure extends Structure {
      * ground having no trees yet. Then addHugeTree (:42).
      */
     public static RandomSource utopiaRandom(long seed, ChunkPos chunk, ColumnProbe probe) {
+        return utopiaRandom(seed, chunk, probe, OreSpawnConfig.LESS_LAG.get(), OreSpawnConfig.MOSQUITO_ENABLE.get(),
+                antsEnabled());
+    }
+
+    /** {@link #utopiaRandom} under the given LessLag, with the mosquitos and the ants enabled or not. */
+    public static RandomSource utopiaRandom(long seed, ChunkPos chunk, ColumnProbe probe, int lessLag, boolean mosquitos,
+            boolean ants) {
         RandomSource random = forgeRandom(seed, chunk);
-        int lessLag = OreSpawnConfig.LESS_LAG.get();
         if (random.nextInt(20) == 0) {                                              // addStrawberries :961-976
             for (int i = 0; i < 5; i++) {
                 random.nextInt(16);
@@ -416,9 +432,122 @@ public class UtopiaTreeStructure extends Structure {
                 if (surfaceGrass(random, chunk, probe)) random.nextInt(3);
             }
         }
-        mosquitoDraws(random, lessLag);                                             // addMosquitos :1418-1436
-        antDraws(random, chunk, probe, lessLag);                                    // addAnts(.., 4) :1472-1502
+        mosquitoDraws(random, lessLag, mosquitos);                                  // addMosquitos :1418-1436
+        antDraws(random, chunk, probe, lessLag, ants);                              // addAnts(.., 4) :1472-1502
         return random;
+    }
+
+    /**
+     * WGEN-115: every state {@link #utopiaRandom}'s random can be left in, whatever the ground answers at its places,
+     * as the raw states of java.util.Random's generator. The gates and draws are utopiaRandom's; a place's answer only
+     * decides whether the place's own draws follow its two coordinates, so the states after a place are those before it,
+     * each advanced by the coordinates, and again by the draws on grass. The random is one stream, so two answers that
+     * leave it as far along leave it in the same state: the set stays small (one state in most chunks).
+     */
+    public static long[] patchStates(long seed, ChunkPos chunk, int lessLag, boolean mosquitos, boolean ants) {
+        StateRandom random = StateRandom.seeded(forgeSeed(seed, chunk));
+        if (random.nextInt(20) == 0) {                                              // addStrawberries
+            for (int i = 0; i < 5; i++) {
+                random.nextInt(16);
+                random.nextInt(16);
+            }
+        }
+        long[] states = {random.state};
+        states = patch(states, 35, 1, lessLag == 1 ? 5 : lessLag == 2 ? 3 : 6, r -> r.nextInt(5)); // addCorn
+        states = patch(states, 70, 1, 5, r -> r.nextInt(3));                       // addTomatoes
+        states = patch(states, 15, 0, 8, r -> {                                    // addVeggies
+            int what = r.nextInt(6);
+            if (what == 4) r.nextInt(10);
+            else if (what == 5) r.nextInt(50);
+        });
+        states = patch(states, 10 + lessLag * 2, 0, 4, r -> r.nextInt(3));        // addButterfliesAndMoths
+        for (int i = 0; i < states.length; i++) {                                  // addMosquitos: no places read
+            StateRandom at = new StateRandom(states[i]);
+            mosquitoDraws(at, lessLag, mosquitos);
+            states[i] = at.state;
+        }
+        if (!ants) return states;
+        return patch(states, 30 + lessLag * 4, 0, 4, r -> {                       // addAnts
+            if (r.nextInt(4) == 0) r.nextInt(4);
+        });
+    }
+
+    /**
+     * A surface patch over a set of states: its gate, {@code nextInt(bound) == pass}, then {@code places} places, each
+     * its two coordinates followed, on grass, by {@code onGrass}'s draws.
+     */
+    private static long[] patch(long[] states, int bound, int pass, int places, Consumer<StateRandom> onGrass) {
+        LongOpenHashSet out = new LongOpenHashSet();
+        for (long state : states) {
+            StateRandom gate = new StateRandom(state);
+            if (gate.nextInt(bound) != pass) {
+                out.add(gate.state);
+                continue;
+            }
+            LongOpenHashSet here = new LongOpenHashSet();
+            here.add(gate.state);
+            for (int i = 0; i < places; i++) {
+                LongOpenHashSet next = new LongOpenHashSet();
+                for (long at : here.toLongArray()) {
+                    StateRandom random = new StateRandom(at);
+                    random.nextInt(16);
+                    random.nextInt(16);
+                    next.add(random.state);                                         // no grass there
+                    onGrass.accept(random);
+                    next.add(random.state);                                         // grass
+                }
+                here = next;
+            }
+            out.addAll(here);
+        }
+        return out.toLongArray();
+    }
+
+    /**
+     * java.util.Random's generator with its raw state open, drawing as {@link LegacyRandomSource} does (the same
+     * {@code next}; every other draw is BitRandomSource's).
+     */
+    static final class StateRandom implements BitRandomSource {
+        private static final long MULTIPLIER = 0x5DEECE66DL;
+        private static final long MASK = (1L << 48) - 1;
+        private final MarsagliaPolarGaussian gaussian = new MarsagliaPolarGaussian(this);
+        long state;
+
+        StateRandom(long state) {
+            this.state = state;
+        }
+
+        /** As {@code new LegacyRandomSource(seed)}. */
+        static StateRandom seeded(long seed) {
+            return new StateRandom((seed ^ MULTIPLIER) & MASK);
+        }
+
+        @Override
+        public int next(int bits) {
+            this.state = this.state * MULTIPLIER + 11L & MASK;
+            return (int) (this.state >> 48 - bits);
+        }
+
+        @Override
+        public RandomSource fork() {
+            return new LegacyRandomSource(this.nextLong());
+        }
+
+        @Override
+        public PositionalRandomFactory forkPositional() {
+            return new LegacyRandomSource.LegacyPositionalRandomFactory(this.nextLong());
+        }
+
+        @Override
+        public void setSeed(long seed) {
+            this.state = (seed ^ MULTIPLIER) & MASK;
+            this.gaussian.reset();
+        }
+
+        @Override
+        public double nextGaussian() {
+            return this.gaussian.nextGaussian();
+        }
     }
 
     /**
@@ -428,14 +557,20 @@ public class UtopiaTreeStructure extends Structure {
     public static RandomSource villageRandom(long seed, ChunkPos chunk, ColumnProbe probe) {
         RandomSource random = forgeRandom(seed, chunk);
         int lessLag = OreSpawnConfig.LESS_LAG.get();
-        mosquitoDraws(random, lessLag);
-        antDraws(random, chunk, probe, lessLag);
+        mosquitoDraws(random, lessLag, OreSpawnConfig.MOSQUITO_ENABLE.get());
+        antDraws(random, chunk, probe, lessLag, antsEnabled());
         return random;
     }
 
+    /** Whether any of the ants addAnts places is enabled; with none it draws nothing. */
+    private static boolean antsEnabled() {
+        return OreSpawnConfig.RED_ANT_ENABLE.get() || OreSpawnConfig.BLACK_ANT_ENABLE.get()
+                || OreSpawnConfig.RAINBOW_ANT_ENABLE.get() || OreSpawnConfig.UNSTABLE_ANT_ENABLE.get();
+    }
+
     /** addMosquitos in Utopia and the Village (OreSpawnWorld.java:1418-1436): its gates, and its places when they pass. */
-    private static void mosquitoDraws(RandomSource random, int lessLag) {
-        if (!OreSpawnConfig.MOSQUITO_ENABLE.get()) return;
+    private static void mosquitoDraws(RandomSource random, int lessLag, boolean enabled) {
+        if (!enabled) return;
         if (random.nextInt(25 + lessLag * 2) != 0) return;
         if (random.nextInt(3) != 0) return;
         for (int i = 0; i < 2; i++) {
@@ -445,9 +580,8 @@ public class UtopiaTreeStructure extends Structure {
     }
 
     /** addAnts with a red frequency of 4 (OreSpawnWorld.java:1472-1502): nothing when no ant is enabled. */
-    private static void antDraws(RandomSource random, ChunkPos chunk, ColumnProbe probe, int lessLag) {
-        if (!OreSpawnConfig.RED_ANT_ENABLE.get() && !OreSpawnConfig.BLACK_ANT_ENABLE.get()
-                && !OreSpawnConfig.RAINBOW_ANT_ENABLE.get() && !OreSpawnConfig.UNSTABLE_ANT_ENABLE.get()) return;
+    private static void antDraws(RandomSource random, ChunkPos chunk, ColumnProbe probe, int lessLag, boolean enabled) {
+        if (!enabled) return;
         if (random.nextInt(30 + lessLag * 4) != 0) return;
         for (int i = 0; i < 4; i++) {
             if (surfaceGrass(random, chunk, probe) && random.nextInt(4) == 0) random.nextInt(4);
@@ -467,10 +601,25 @@ public class UtopiaTreeStructure extends Structure {
      * the huge roll's every type, the apple tree, the grove's Wind tree, and its Sky tree, whose top of 190 or more is
      * always 20 over a base of at most 100) and the tree rolls' draws before the roll are those of a pass that finds no
      * grass anywhere (the surface patches' draws before them read the ground, {@link #utopiaRandom}). False: the chunk has
-     * no altar whatever its terrain. True: {@link #chunkPass} decides.
+     * no altar whatever its terrain. True: {@link #chunkPass} decides. WGEN-115: the roll is first run on every state the
+     * patches can leave the random in ({@link #patchStates}); where it passes on none, the chunk has no altar whatever
+     * the ground answers the patches, and the ground is read only where it passes on one.
      */
     public static boolean altarRollReached(long seed, ChunkPos chunk, ColumnProbe probe) {
-        RandomSource random = utopiaRandom(seed, chunk, probe);
+        int lessLag = OreSpawnConfig.LESS_LAG.get();
+        boolean mosquitos = OreSpawnConfig.MOSQUITO_ENABLE.get(), ants = antsEnabled();
+        boolean possible = false;
+        for (long state : patchStates(seed, chunk, lessLag, mosquitos, ants)) {
+            if (altarRollAfterPatches(new StateRandom(state), chunk)) {
+                possible = true;
+                break;
+            }
+        }
+        return possible && altarRollAfterPatches(utopiaRandom(seed, chunk, probe, lessLag, mosquitos, ants), chunk);
+    }
+
+    /** The tree rolls of a pass that finds no grass, on a random past the surface patches, then the altar's draw. */
+    private static boolean altarRollAfterPatches(RandomSource random, ChunkPos chunk) {
         if (hugeRoll(random, chunk, NO_GRASS).madeOne()) return false;
         if (!appleTrees(random, chunk, NO_GRASS).isEmpty()) return false;
         if (!grove(random, chunk, NO_GRASS).isEmpty()) return false;

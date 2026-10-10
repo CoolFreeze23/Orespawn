@@ -619,6 +619,92 @@ public class UtopiaTreeTests {
     }
 
     /**
+     * WGEN-115: the states {@link UtopiaTreeStructure#patchStates} gives hold the one the surface patches leave
+     * utopiaRandom's random in, whatever the ground answers: at every setting (LessLag 0 to 2, the mosquitos and the
+     * ants on or off), over 2,500 chunks and four grounds (no grass, grass everywhere, grass in stripes, grass in three
+     * columns in four), the random utopiaRandom returns draws the same next long as one of the states, worked out here
+     * from java.util.Random's LCG. And the altar's early roll answers as before it was decided without the ground (the
+     * patches on the ground, the tree rolls on no grass, the 1-in-2,000 draw) over 200 x 200 chunks on two grounds,
+     * while it reads the ground in under one chunk in a hundred where the patches read it in about one in five.
+     */
+    @GameTest(template = "empty", timeoutTicks = 24000)
+    public static void wgen115a_the_altar_roll_decided_without_the_ground(GameTestHelper helper) {
+        OffThread.run(helper, () -> {
+            long seed = 8780444890188216456L;
+            UtopiaTreeStructure.ColumnProbe none = (x, z, low, high) -> Integer.MIN_VALUE;
+            UtopiaTreeStructure.ColumnProbe all = (x, z, low, high) -> 70;
+            UtopiaTreeStructure.ColumnProbe stripes = (x, z, low, high) -> ((x >> 2) + (z >> 3) & 1) == 0 ? 70
+                    : Integer.MIN_VALUE;
+            UtopiaTreeStructure.ColumnProbe scattered = (x, z, low, high) -> (scramble(x, z) & 3) != 0 ? 64
+                    : Integer.MIN_VALUE;
+            UtopiaTreeStructure.ColumnProbe[] grounds = {none, all, stripes, scattered};
+            int branched = 0;
+            for (int lessLag = 0; lessLag <= 2; lessLag++) {
+                for (int flags = 0; flags < 4; flags++) {
+                    boolean mosquitos = (flags & 1) != 0, ants = (flags & 2) != 0;
+                    OffThread.check(helper);
+                    for (int i = 0; i < 2500; i++) {
+                        ChunkPos chunk = new ChunkPos(-25 + i % 50, 300 + i / 50);
+                        long[] states = UtopiaTreeStructure.patchStates(seed, chunk, lessLag, mosquitos, ants);
+                        if (states.length > 1) branched++;
+                        for (UtopiaTreeStructure.ColumnProbe ground : grounds) {
+                            long next = UtopiaTreeStructure.utopiaRandom(seed, chunk, ground, lessLag, mosquitos, ants)
+                                    .nextLong();
+                            boolean held = false;
+                            for (long state : states) held |= nextLong(state) == next;
+                            helper.assertTrue(held, "LessLag " + lessLag + ", mosquitos " + mosquitos + ", ants " + ants
+                                    + ": chunk " + chunk + "'s random on a ground is in none of its " + states.length
+                                    + " states");
+                        }
+                    }
+                }
+            }
+            helper.assertTrue(branched > 1000, "only " + branched + " of 30,000 chunks' patches read the ground");
+            int passing = 0, readNow = 0, readBefore = 0;
+            int[] asked = {0};
+            for (UtopiaTreeStructure.ColumnProbe ground : new UtopiaTreeStructure.ColumnProbe[] {all, scattered}) {
+                UtopiaTreeStructure.ColumnProbe counted = (x, z, low, high) -> {
+                    asked[0]++;
+                    return ground.base(x, z, low, high);
+                };
+                for (int i = 0; i < 200; i++) {
+                    OffThread.check(helper);
+                    for (int j = 0; j < 200; j++) {
+                        ChunkPos chunk = new ChunkPos(-100 + i, 400 + j);
+                        asked[0] = 0;
+                        RandomSource random = UtopiaTreeStructure.utopiaRandom(seed, chunk, counted);
+                        if (asked[0] > 0) readBefore++;
+                        boolean before = !UtopiaTreeStructure.hugeRoll(random, chunk, none).madeOne()
+                                && UtopiaTreeStructure.appleTrees(random, chunk, none).isEmpty()
+                                && UtopiaTreeStructure.grove(random, chunk, none).isEmpty() && random.nextInt(2000) == 1;
+                        asked[0] = 0;
+                        boolean now = UtopiaTreeStructure.altarRollReached(seed, chunk, counted);
+                        if (asked[0] > 0) readNow++;
+                        helper.assertTrue(now == before, "chunk " + chunk + ": the early roll " + now + ", before " + before);
+                        if (before) passing++;
+                    }
+                }
+            }
+            helper.assertTrue(passing >= 16 && passing <= 80, passing + " of 80,000 rolls pass, not about one in 2,000");
+            helper.assertTrue(readNow < 800 && readBefore > 8000, "the ground read in " + readNow
+                    + " of 80,000 chunks, before in " + readBefore);
+        });
+    }
+
+    /** java.util.Random's nextLong from its raw 48-bit state: two steps of its LCG, 32 bits each. */
+    private static long nextLong(long state) {
+        long first = state * 0x5DEECE66DL + 0xBL & (1L << 48) - 1;
+        long second = first * 0x5DEECE66DL + 0xBL & (1L << 48) - 1;
+        return ((long) (int) (first >>> 16) << 32) + (int) (second >>> 16);
+    }
+
+    /** A column's bits spread out, for a ground of grass in three columns in four. */
+    private static long scramble(int x, int z) {
+        long h = x * 0x9E3779B97F4A7C15L ^ z * 0xC2B2AE3D27D4EB4FL;
+        return h ^ h >>> 29;
+    }
+
+    /**
      * WGEN-075 / WGEN-077 on the Utopia dimension's generator: the grove structure grows exactly the chunk pass's
      * grove, and the King altar refuses every chunk where the pass grows a tree (orig OreSpawnWorld.java:42-45). Where
      * an altar does build, and the royal trees, are StructurePlacementTests' w080e.
