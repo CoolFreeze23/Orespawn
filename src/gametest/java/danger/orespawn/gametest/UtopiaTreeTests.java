@@ -694,8 +694,10 @@ public class UtopiaTreeTests {
     /**
      * WGEN-116: the huge roll's and the grove's gates decided on the surface patches' states. Over 40,000 chunks and four
      * grounds, where hugeRollReached says no the huge roll grows nothing (no huge tree, no royal tree), and where
-     * groveReached says no the chunk pass grows no grove; both say yes in few chunks, and the grounds do grow both, so
-     * the check is not empty. The patch states kept on the thread are the chunk's and the settings', asked in turn.
+     * groveReached says no the chunk pass grows no grove; the grounds do grow both, so the check is not empty. Each
+     * says yes in under half the chunks whose patches read the ground before (on grass everywhere): a chunk whose
+     * patches can read it has several states, each a chance at the gates. The patch states kept on the thread are the
+     * chunk's and the settings', asked in turn.
      */
     @GameTest(template = "empty", timeoutTicks = 24000)
     public static void wgen116a_the_tree_rolls_decided_without_the_ground(GameTestHelper helper) {
@@ -708,7 +710,12 @@ public class UtopiaTreeTests {
             UtopiaTreeStructure.ColumnProbe scattered = (x, z, low, high) -> (scramble(x, z) & 3) != 0 ? 64
                     : Integer.MIN_VALUE;
             UtopiaTreeStructure.ColumnProbe[] grounds = {none, all, stripes, scattered};
-            int hugeReached = 0, groveReached = 0, hugeGrown = 0, royalGrown = 0, groveGrown = 0;
+            int[] asked = {0};
+            UtopiaTreeStructure.ColumnProbe counted = (x, z, low, high) -> {
+                asked[0]++;
+                return 70;
+            };
+            int hugeReached = 0, groveReached = 0, readBefore = 0, hugeGrown = 0, royalGrown = 0, groveGrown = 0;
             for (int i = 0; i < 200; i++) {
                 OffThread.check(helper);
                 for (int j = 0; j < 200; j++) {
@@ -717,6 +724,9 @@ public class UtopiaTreeTests {
                     boolean grove = UtopiaTreeStructure.groveReached(seed, chunk);
                     if (huge) hugeReached++;
                     if (grove) groveReached++;
+                    asked[0] = 0;
+                    UtopiaTreeStructure.utopiaRandom(seed, chunk, counted);
+                    if (asked[0] > 0) readBefore++;
                     for (UtopiaTreeStructure.ColumnProbe ground : grounds) {
                         UtopiaTreeStructure.HugeRoll roll = UtopiaTreeStructure.hugeRoll(
                                 UtopiaTreeStructure.utopiaRandom(seed, chunk, ground), chunk, ground);
@@ -733,8 +743,9 @@ public class UtopiaTreeTests {
             }
             helper.assertTrue(hugeGrown > 0 && groveGrown > 0, "the grounds grew " + hugeGrown + " huge trees and "
                     + groveGrown + " groves: nothing to check against");
-            helper.assertTrue(hugeReached < 2000 && groveReached < 3000, "the huge roll reached in " + hugeReached
-                    + " of 40,000 chunks, the grove in " + groveReached + ": not about one in fifty and one in thirty");
+            helper.assertTrue(2 * hugeReached < readBefore && 2 * groveReached < readBefore, "the huge roll reached in "
+                    + hugeReached + " of 40,000 chunks and the grove in " + groveReached + ", where the patches read the"
+                    + " ground in " + readBefore + ": not under half as many");
             helper.assertTrue(royalGrown <= hugeGrown, royalGrown + " royal trees against " + hugeGrown + " huge ones");
             ChunkPos a = new ChunkPos(5, 7), b = new ChunkPos(-9, 11);
             for (int lessLag = 0; lessLag <= 2; lessLag++) {
