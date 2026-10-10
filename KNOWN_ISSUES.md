@@ -238,6 +238,7 @@ wrong for you, please say so.
 - **The Village's water:** its 1.21 villages are about four times the original's and reshape the ground round them; lakes keep out of where their buildings and streets reach, so there is about half the original's water round them. *(WGEN-094)*
 - **The Squid Zooka's size:** it is as big as the original's, about six blocks long on the shoulder, and in first person its back reaches behind the view. *(ENT-S-197)*
 - **Plants in the original's dimensions:** the flowers, grass, mushrooms and reeds grow after the dimensions' structures and huge trees, where the original grew them first; a spring's or a fall's water runs only once the chunk is near a player, so fewer reeds find water beside them in fresh land. *(WGEN-109, WGEN-102)*
+- **Pumpkins and the maze's mushrooms:** Utopia grows about two and a half times the original's pumpkin patches, and Crystal's maze about one and a half times its mushrooms, the cause not yet found. *(WGEN-114)*
 
 ---
 
