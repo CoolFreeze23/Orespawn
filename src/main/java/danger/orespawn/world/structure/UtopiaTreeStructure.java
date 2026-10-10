@@ -127,6 +127,12 @@ public class UtopiaTreeStructure extends Structure {
 
     @Override
     public Optional<GenerationStub> findGenerationPoint(GenerationContext context) {
+        // WGEN-116: most chunks are decided on the patches' states, the ground unread
+        boolean reached = switch (roll) {
+            case GROVE -> groveReached(context.seed(), context.chunkPos());
+            case HUGE -> hugeRollReached(context.seed(), context.chunkPos());
+        };
+        if (!reached) return Optional.empty();
         ColumnProbe probe = probe(context);
         List<UtopiaTreePiece> pieces = switch (roll) {
             case GROVE -> chunkPass(context.seed(), context.chunkPos(), probe).grove();
@@ -149,17 +155,9 @@ public class UtopiaTreeStructure extends Structure {
      */
     public static List<UtopiaTreePiece> grove(RandomSource random, ChunkPos chunk, ColumnProbe probe) {
         List<UtopiaTreePiece> out = new ArrayList<>();
-        if (random.nextInt(30) != 0) return out;                                   // :2511
-        int nc = 5;                                                                 // :2509
         int lessLag = OreSpawnConfig.LESS_LAG.get();
-        if (lessLag == 1) {                                                         // :2514-2519
-            if (random.nextInt(2) != 0) return out;
-            nc = 4;
-        }
-        if (lessLag == 2) {                                                         // :2520-2525
-            if (random.nextInt(4) != 0) return out;
-            nc = 3;
-        }
+        if (!groveGatesPass(random, lessLag)) return out;                          // :2511-2525
+        int nc = lessLag == 1 ? 4 : lessLag == 2 ? 3 : 5;                           // :2509, :2518, :2524
         int dir = 0;                                                                // :2527
         int what = random.nextInt(2);                                               // :2528
         int count = 0;
@@ -197,6 +195,56 @@ public class UtopiaTreeStructure extends Structure {
         return out;
     }
 
+    /**
+     * addOtherTrees' gates (orig OreSpawnWorld.java:2511-2525): the 1-in-30 draw, then at LessLag 1 a 1-in-2 and at
+     * LessLag 2 a 1-in-4; true when the grove goes on to its placement attempts.
+     */
+    static boolean groveGatesPass(RandomSource random, int lessLag) {
+        if (random.nextInt(30) != 0) return false;                                  // :2511
+        if (lessLag == 1 && random.nextInt(2) != 0) return false;                   // :2514-2519
+        return lessLag != 2 || random.nextInt(4) == 0;                              // :2520-2525
+    }
+
+    /**
+     * addHugeTree's gates (orig OreSpawnWorld.java:1832-1838): the 1-in-50 draw, then at LessLag 1 a 1-in-2 and at
+     * LessLag 2 a 1-in-4; true when the roll goes on to its placement attempts.
+     */
+    static boolean hugeGatesPass(RandomSource random, int lessLag) {
+        if (random.nextInt(50) != 0) return false;                                  // :1832
+        if (lessLag == 1 && random.nextInt(2) != 0) return false;                   // :1835
+        return lessLag != 2 || random.nextInt(4) == 0;                              // :1838
+    }
+
+    /**
+     * WGEN-116: whether the huge roll can reach its placement attempts in the chunk, whatever the ground: its gates run on
+     * every state the surface patches can leave the random in ({@link #chunkPatchStates}). False: no huge tree and no
+     * royal tree grows there, and the ground need not be read (most chunks).
+     */
+    public static boolean hugeRollReached(long seed, ChunkPos chunk) {
+        int lessLag = OreSpawnConfig.LESS_LAG.get();
+        for (long state : chunkPatchStates(seed, chunk, lessLag, OreSpawnConfig.MOSQUITO_ENABLE.get(), antsEnabled())) {
+            if (hugeGatesPass(new StateRandom(state), lessLag)) return true;
+        }
+        return false;
+    }
+
+    /**
+     * WGEN-116: whether the chunk pass can reach the grove's placement attempts, whatever the ground. On each state the
+     * patches can leave the random in, the huge roll and the apple trees run on no grass (where either grows a tree the
+     * pass grows no grove, and where neither finds grass their draws are those on no grass; the apple trees draw the same
+     * whatever they find), then the grove's gates. False: no grove grows there, and the ground need not be read.
+     */
+    public static boolean groveReached(long seed, ChunkPos chunk) {
+        int lessLag = OreSpawnConfig.LESS_LAG.get();
+        for (long state : chunkPatchStates(seed, chunk, lessLag, OreSpawnConfig.MOSQUITO_ENABLE.get(), antsEnabled())) {
+            RandomSource random = new StateRandom(state);
+            hugeRoll(random, chunk, NO_GRASS);
+            orchard(random, chunk, NO_GRASS);
+            if (groveGatesPass(random, lessLag)) return true;
+        }
+        return false;
+    }
+
     /** The huge roll's trees: the pieces of a square, circular or round tree, empty for no tree or a royal tree. */
     public static List<UtopiaTreePiece> huge(RandomSource random, ChunkPos chunk, ColumnProbe probe) {
         return hugeRoll(random, chunk, probe).trees();
@@ -226,10 +274,7 @@ public class UtopiaTreeStructure extends Structure {
      * its grass, and never beside another of the roll's trees.
      */
     public static HugeRoll hugeRoll(RandomSource random, ChunkPos chunk, ColumnProbe probe) {
-        if (random.nextInt(50) != 0) return HugeRoll.NONE;                         // :1832
-        int lessLag = OreSpawnConfig.LESS_LAG.get();
-        if (lessLag == 1 && random.nextInt(2) != 0) return HugeRoll.NONE;          // :1835
-        if (lessLag == 2 && random.nextInt(4) != 0) return HugeRoll.NONE;          // :1838
+        if (!hugeGatesPass(random, OreSpawnConfig.LESS_LAG.get())) return HugeRoll.NONE; // :1832-1838
         for (int i = 0; i < 3; i++) {                                               // :1841
             int posX = 4 + chunk.getMinBlockX() + random.nextInt(8);                // :1842
             int posZ = 4 + chunk.getMinBlockZ() + random.nextInt(8);                // :1843
@@ -473,6 +518,26 @@ public class UtopiaTreeStructure extends Structure {
     }
 
     /**
+     * WGEN-116: {@link #patchStates} for the chunk the calling thread last asked about, or worked out again. A chunk's
+     * structure starts ask for the same chunk's states in turn on one thread (the grove, the huge tree, the two royal
+     * trees and the two altars), so the last chunk's are kept on each thread. The array is shared: read it only.
+     */
+    public static long[] chunkPatchStates(long seed, ChunkPos chunk, int lessLag, boolean mosquitos, boolean ants) {
+        PatchStates kept = LAST_PATCH_STATES.get();
+        if (kept != null && kept.seed == seed && kept.x == chunk.x && kept.z == chunk.z && kept.lessLag == lessLag
+                && kept.mosquitos == mosquitos && kept.ants == ants) {
+            return kept.states;
+        }
+        long[] states = patchStates(seed, chunk, lessLag, mosquitos, ants);
+        LAST_PATCH_STATES.set(new PatchStates(seed, chunk.x, chunk.z, lessLag, mosquitos, ants, states));
+        return states;
+    }
+
+    private record PatchStates(long seed, int x, int z, int lessLag, boolean mosquitos, boolean ants, long[] states) {}
+
+    private static final ThreadLocal<PatchStates> LAST_PATCH_STATES = new ThreadLocal<>();
+
+    /**
      * A surface patch over a set of states: its gate, {@code nextInt(bound) == pass}, then {@code places} places, each
      * its two coordinates followed, on grass, by {@code onGrass}'s draws.
      */
@@ -609,7 +674,7 @@ public class UtopiaTreeStructure extends Structure {
         int lessLag = OreSpawnConfig.LESS_LAG.get();
         boolean mosquitos = OreSpawnConfig.MOSQUITO_ENABLE.get(), ants = antsEnabled();
         boolean possible = false;
-        for (long state : patchStates(seed, chunk, lessLag, mosquitos, ants)) {
+        for (long state : chunkPatchStates(seed, chunk, lessLag, mosquitos, ants)) {
             if (altarRollAfterPatches(new StateRandom(state), chunk)) {
                 possible = true;
                 break;

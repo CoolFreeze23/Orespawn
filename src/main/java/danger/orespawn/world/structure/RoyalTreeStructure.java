@@ -55,6 +55,8 @@ public class RoyalTreeStructure extends Structure {
      */
     @Override
     public Optional<GenerationStub> findGenerationPoint(GenerationContext context) {
+        // WGEN-116: the royal branch is the huge roll's, so a chunk whose huge roll cannot pass its gates grows none
+        if (!UtopiaTreeStructure.hugeRollReached(context.seed(), context.chunkPos())) return Optional.empty();
         UtopiaTreeStructure.ColumnProbe probe = UtopiaTreeStructure.probe(context);
         UtopiaTreeStructure.HugeRoll roll = UtopiaTreeStructure.hugeRoll(
                 UtopiaTreeStructure.utopiaRandom(context.seed(), context.chunkPos(), probe), context.chunkPos(), probe);

@@ -691,6 +691,71 @@ public class UtopiaTreeTests {
         });
     }
 
+    /**
+     * WGEN-116: the huge roll's and the grove's gates decided on the surface patches' states. Over 40,000 chunks and four
+     * grounds, where hugeRollReached says no the huge roll grows nothing (no huge tree, no royal tree), and where
+     * groveReached says no the chunk pass grows no grove; both say yes in few chunks, and the grounds do grow both, so
+     * the check is not empty. The patch states kept on the thread are the chunk's and the settings', asked in turn.
+     */
+    @GameTest(template = "empty", timeoutTicks = 24000)
+    public static void wgen116a_the_tree_rolls_decided_without_the_ground(GameTestHelper helper) {
+        OffThread.run(helper, () -> {
+            long seed = 8780444890188216456L;
+            UtopiaTreeStructure.ColumnProbe none = (x, z, low, high) -> Integer.MIN_VALUE;
+            UtopiaTreeStructure.ColumnProbe all = (x, z, low, high) -> 70;
+            UtopiaTreeStructure.ColumnProbe stripes = (x, z, low, high) -> ((x >> 2) + (z >> 3) & 1) == 0 ? 70
+                    : Integer.MIN_VALUE;
+            UtopiaTreeStructure.ColumnProbe scattered = (x, z, low, high) -> (scramble(x, z) & 3) != 0 ? 64
+                    : Integer.MIN_VALUE;
+            UtopiaTreeStructure.ColumnProbe[] grounds = {none, all, stripes, scattered};
+            int hugeReached = 0, groveReached = 0, hugeGrown = 0, royalGrown = 0, groveGrown = 0;
+            for (int i = 0; i < 200; i++) {
+                OffThread.check(helper);
+                for (int j = 0; j < 200; j++) {
+                    ChunkPos chunk = new ChunkPos(-100 + i, 400 + j);
+                    boolean huge = UtopiaTreeStructure.hugeRollReached(seed, chunk);
+                    boolean grove = UtopiaTreeStructure.groveReached(seed, chunk);
+                    if (huge) hugeReached++;
+                    if (grove) groveReached++;
+                    for (UtopiaTreeStructure.ColumnProbe ground : grounds) {
+                        UtopiaTreeStructure.HugeRoll roll = UtopiaTreeStructure.hugeRoll(
+                                UtopiaTreeStructure.utopiaRandom(seed, chunk, ground), chunk, ground);
+                        helper.assertTrue(huge || !roll.madeOne(), "chunk " + chunk
+                                + ": the huge roll grew a tree where no patch state passes its gates");
+                        if (!roll.trees().isEmpty()) hugeGrown++;
+                        if (roll.royal() != null) royalGrown++;
+                        List<UtopiaTreePiece> pass = UtopiaTreeStructure.chunkPass(seed, chunk, ground).grove();
+                        helper.assertTrue(grove || pass.isEmpty(), "chunk " + chunk
+                                + ": the chunk pass grew a grove where no patch state reaches its gates");
+                        if (!pass.isEmpty()) groveGrown++;
+                    }
+                }
+            }
+            helper.assertTrue(hugeGrown > 0 && groveGrown > 0, "the grounds grew " + hugeGrown + " huge trees and "
+                    + groveGrown + " groves: nothing to check against");
+            helper.assertTrue(hugeReached < 2000 && groveReached < 3000, "the huge roll reached in " + hugeReached
+                    + " of 40,000 chunks, the grove in " + groveReached + ": not about one in fifty and one in thirty");
+            helper.assertTrue(royalGrown <= hugeGrown, royalGrown + " royal trees against " + hugeGrown + " huge ones");
+            ChunkPos a = new ChunkPos(5, 7), b = new ChunkPos(-9, 11);
+            for (int lessLag = 0; lessLag <= 2; lessLag++) {
+                for (int flags = 0; flags < 4; flags++) {
+                    boolean mosquitos = (flags & 1) != 0, ants = (flags & 2) != 0;
+                    for (ChunkPos chunk : new ChunkPos[] {a, b, a}) {
+                        helper.assertTrue(java.util.Arrays.equals(
+                                UtopiaTreeStructure.chunkPatchStates(seed, chunk, lessLag, mosquitos, ants),
+                                UtopiaTreeStructure.patchStates(seed, chunk, lessLag, mosquitos, ants)),
+                                "the kept patch states of chunk " + chunk + " at LessLag " + lessLag + ", mosquitos "
+                                        + mosquitos + ", ants " + ants + " are not the chunk's");
+                    }
+                    helper.assertTrue(java.util.Arrays.equals(
+                            UtopiaTreeStructure.chunkPatchStates(seed + 1, a, lessLag, mosquitos, ants),
+                            UtopiaTreeStructure.patchStates(seed + 1, a, lessLag, mosquitos, ants)),
+                            "the kept patch states answered for another seed");
+                }
+            }
+        });
+    }
+
     /** java.util.Random's nextLong from its raw 48-bit state: two steps of its LCG, 32 bits each. */
     private static long nextLong(long state) {
         long first = state * 0x5DEECE66DL + 0xBL & (1L << 48) - 1;

@@ -2,6 +2,7 @@ package danger.orespawn.world;
 
 import com.google.gson.JsonElement;
 import com.mojang.serialization.JsonOps;
+import it.unimi.dsi.fastutil.HashCommon;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.QuartPos;
 import net.minecraft.core.SectionPos;
@@ -625,7 +626,9 @@ public final class LegacyTerrainReader {
     }
 
     private Column column(int x, int z) {
-        long key = ((long) x << 32) | (z & 0xFFFFFFFFL);
+        // WGEN-116: the column's x << 32 | z hashes to x ^ z, which put a square of columns into few of the map's bins;
+        // mixed (a bijection, so every column keeps a key of its own) they spread
+        long key = HashCommon.mix(((long) x << 32) | (z & 0xFFFFFFFFL));
         Column known = this.columns.get(key);
         if (known != null) return known;
         if (this.columns.size() > COLUMN_LIMIT) this.columns.clear();
