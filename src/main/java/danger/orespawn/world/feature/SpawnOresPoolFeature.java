@@ -250,7 +250,8 @@ public class SpawnOresPoolFeature extends Feature<SpawnOresPoolFeature.Configura
                 OreConfiguration veinConfig = new OreConfiguration(
                         List.of(OreConfiguration.target(stoneTarget, block.defaultBlockState())),
                         CLUMP_SIZE);
-                placedAnything |= Feature.ORE.place(veinConfig, level, context.chunkGenerator(), random, at);
+                // WGEN-117: the legacy ore, whose draws no height check moves (vanilla's moved the pool's later veins)
+                placedAnything |= ModFeatures.LEGACY_ORE.get().place(veinConfig, level, context.chunkGenerator(), random, at);
             }
         }
         return placedAnything;

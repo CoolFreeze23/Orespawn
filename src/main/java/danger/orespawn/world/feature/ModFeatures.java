@@ -167,6 +167,10 @@ public class ModFeatures {
     public static final DeferredHolder<Feature<?>, LegacyOreFeature> LEGACY_ORE =
             FEATURES.register("legacy_ore", () -> new LegacyOreFeature(net.minecraft.world.level.levelgen.feature.configurations.OreConfiguration.CODEC));
 
+    // WGEN-117: Mining's and the Village's monster rooms, each try on a random of its own
+    public static final DeferredHolder<Feature<?>, LegacyMonsterRoomFeature> LEGACY_MONSTER_ROOM =
+            FEATURES.register("legacy_monster_room", () -> new LegacyMonsterRoomFeature(NoneFeatureConfiguration.CODEC));
+
     // WGEN-118: the Islands' Island blocks, after the unstable anthills as the original ran them
     public static final DeferredHolder<Feature<?>, IslandBlockFeature> ISLAND_BLOCK =
             FEATURES.register("island_block", () -> new IslandBlockFeature(NoneFeatureConfiguration.CODEC));

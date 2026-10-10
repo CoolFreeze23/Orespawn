@@ -594,10 +594,71 @@ public class OriginalPassTests {
     }
 
     /**
+     * WGEN-117: Mining's and the Village's monster rooms take one draw from the placement's random whether or not the
+     * room builds. From one seed, a site whose walls have one opening (the room builds) and a closed one (it does not)
+     * leave the random alike for `orespawn:legacy_monster_room`, otherwise for vanilla's room; `monster_room_dim` is the
+     * legacy kind.
+     */
+    @GameTest(template = "empty")
+    public static void wgen117b_the_monster_rooms_draw_alike_built_or_not(GameTestHelper helper) {
+        ServerLevel level = helper.getLevel();
+        net.minecraft.world.level.chunk.ChunkGenerator generator = level.getChunkSource().getGenerator();
+        BlockPos[] sites = {helper.absolutePos(new BlockPos(1, 8, 1)), helper.absolutePos(new BlockPos(1, 8, 1)).east(20)};
+        for (int k = 0; k < 2; k++) {
+            for (BlockPos p : BlockPos.betweenClosed(sites[k].offset(-6, -2, -6), sites[k].offset(6, 5, 6))) {
+                level.setBlock(p, Blocks.STONE.defaultBlockState(), 2);
+            }
+        }
+        // one opening into the first site's wall, whatever size the room draws (a tunnel from x -6 to x -3 at the floor)
+        for (int x = -6; x <= -3; x++) {
+            level.setBlock(sites[0].offset(x, 0, 0), Blocks.AIR.defaultBlockState(), 2);
+            level.setBlock(sites[0].offset(x, 1, 0), Blocks.AIR.defaultBlockState(), 2);
+        }
+        long[] legacy = new long[2], vanilla = new long[2];
+        for (int k = 0; k < 2; k++) {
+            RandomSource random = RandomSource.create(117L);
+            danger.orespawn.world.feature.ModFeatures.LEGACY_MONSTER_ROOM.get().place(new net.minecraft.world.level.levelgen
+                    .feature.FeaturePlaceContext<>(java.util.Optional.empty(), level, generator, random, sites[k],
+                    net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConfiguration.INSTANCE));
+            legacy[k] = random.nextLong();
+        }
+        helper.assertTrue(level.getBlockState(sites[0]).is(Blocks.SPAWNER), "no room built at the open site");
+        for (int k = 0; k < 2; k++) {
+            for (BlockPos p : BlockPos.betweenClosed(sites[k].offset(-6, -2, -6), sites[k].offset(6, 5, 6))) {
+                level.setBlock(p, Blocks.STONE.defaultBlockState(), 2);
+            }
+        }
+        for (int x = -6; x <= -3; x++) {
+            level.setBlock(sites[0].offset(x, 0, 0), Blocks.AIR.defaultBlockState(), 2);
+            level.setBlock(sites[0].offset(x, 1, 0), Blocks.AIR.defaultBlockState(), 2);
+        }
+        for (int k = 0; k < 2; k++) {
+            RandomSource plain = RandomSource.create(117L);
+            net.minecraft.world.level.levelgen.feature.Feature.MONSTER_ROOM.place(new net.minecraft.world.level.levelgen
+                    .feature.FeaturePlaceContext<>(java.util.Optional.empty(), level, generator, plain, sites[k],
+                    net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConfiguration.INSTANCE));
+            vanilla[k] = plain.nextLong();
+        }
+        helper.assertTrue(legacy[0] == legacy[1], "the legacy room's draws differ, built or not");
+        helper.assertTrue(vanilla[0] != vanilla[1], "vanilla's room drew alike built or not: the check proves nothing");
+        PlacedFeature placed = level.registryAccess().registryOrThrow(Registries.PLACED_FEATURE)
+                .get(ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "monster_room_dim"));
+        helper.assertTrue(placed != null && placed.feature().value().feature()
+                == danger.orespawn.world.feature.ModFeatures.LEGACY_MONSTER_ROOM.get(), "monster_room_dim is not the legacy room");
+        for (int k = 0; k < 2; k++) {
+            for (BlockPos p : BlockPos.betweenClosed(sites[k].offset(-6, -2, -6), sites[k].offset(6, 5, 6))) {
+                level.setBlock(p, Blocks.AIR.defaultBlockState(), 2);
+            }
+        }
+        helper.succeed();
+    }
+
+    /**
      * WGEN-117: the dimensions' 1.7.10 ores draw a vein's shape whatever the ground, as the original's WorldGenMinable,
      * so the places the placement draws after it are the same. From one seed, a vein in the open air and one in stone
      * leave the random alike (the feature `orespawn:legacy_ore`); vanilla's ore, which draws the shape only where the
-     * ocean floor reaches the vein, leaves it otherwise. The dimensions' 1.7.10 ores are all of the legacy kind.
+     * ocean floor reaches the vein, leaves it otherwise. The dimensions' 1.7.10 ores and OreSpawn's own ores elsewhere
+     * are all of the legacy kind.
      */
     @GameTest(template = "empty")
     public static void wgen117a_the_legacy_ores_draw_alike_on_any_ground(GameTestHelper helper) {
@@ -628,7 +689,10 @@ public class OriginalPassTests {
         Registry<ConfiguredFeature<?, ?>> features = level.registryAccess().registryOrThrow(Registries.CONFIGURED_FEATURE);
         for (String name : new String[] {"ore_dirt_1710", "ore_gravel_1710", "ore_coal_1710", "ore_iron_1710",
                 "ore_gold_1710", "ore_redstone_1710", "ore_diamond_1710", "ore_lapis_1710", "ore_silverfish_1710",
-                "ore_lapis_mining_large", "ore_lapis_mining_small"}) {
+                "ore_lapis_mining_large", "ore_lapis_mining_small", "ore_amethyst", "ore_uranium", "ore_titanium",
+                "ore_salt", "ore_block_ruby", "ore_boost_diamond", "ore_boost_diamond_block", "ore_boost_emerald",
+                "ore_boost_emerald_block", "ore_boost_gold", "ore_boost_gold_block", "red_ant_troll", "termite_troll",
+                "lavafoam_nether", "ore_ruby_nether"}) {
             ConfiguredFeature<?, ?> feature = features.get(ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, name));
             helper.assertTrue(feature != null && feature.feature() == danger.orespawn.world.feature.ModFeatures.LEGACY_ORE.get(),
                     name + " is not the legacy ore");

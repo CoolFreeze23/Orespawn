@@ -1,5 +1,5 @@
 {
-  "feature": "minecraft:monster_room",
+  "feature": "orespawn:legacy_monster_room",
   "placement": [
     {
       "type": "minecraft:count",
