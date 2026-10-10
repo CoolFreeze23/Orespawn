@@ -489,6 +489,37 @@ public class OriginalPassTests {
         helper.succeed();
     }
 
+    /**
+     * WGEN-111: the legacy carvers look for water on the shell of a stretch's box up to Y248, as MapGenCaves and
+     * MapGenRavine did (both clamp the box's top at 248): a box from Y118 to Y132 finds water at Y125 on an edge column
+     * (clamped at 120 it looked to Y121 only); a box at the top of the world looks to Y249, water at Y248 found and at
+     * Y252 not.
+     */
+    @GameTest(template = "empty")
+    public static void wgen111a_the_carvers_look_for_water_to_y248(GameTestHelper helper) {
+        ServerLevel level = helper.getLevel();
+        ChunkAccess chunk = level.getChunk(helper.absolutePos(BlockPos.ZERO));
+        int x = chunk.getPos().getMinBlockX() + 8, z = chunk.getPos().getMinBlockZ() + 8;
+        // a box of horizontal radius 2 round (x + 0.5, y, z + 0.5): its edge columns at x - 3 and x + 2
+        BlockPos[] water = {new BlockPos(x - 3, 125, z), new BlockPos(x - 3, 248, z), new BlockPos(x - 3, 252, z)};
+        try {
+            level.setBlockAndUpdate(water[0], Blocks.WATER.defaultBlockState());
+            boolean midway = danger.orespawn.world.carver.LegacyCarvers.waterOnShell(chunk, x + 0.5, 125.0, z + 0.5, 2.0, 6.0);
+            level.setBlockAndUpdate(water[0], Blocks.AIR.defaultBlockState());
+            level.setBlockAndUpdate(water[2], Blocks.WATER.defaultBlockState());
+            boolean aboveTheClamp = danger.orespawn.world.carver.LegacyCarvers.waterOnShell(chunk, x + 0.5, 250.0, z + 0.5, 2.0, 6.0);
+            level.setBlockAndUpdate(water[2], Blocks.AIR.defaultBlockState());
+            level.setBlockAndUpdate(water[1], Blocks.WATER.defaultBlockState());
+            boolean atTheClamp = danger.orespawn.world.carver.LegacyCarvers.waterOnShell(chunk, x + 0.5, 250.0, z + 0.5, 2.0, 6.0);
+            helper.assertTrue(midway, "water at Y125 on the shell of a box from Y118 to Y132 not found");
+            helper.assertTrue(atTheClamp && !aboveTheClamp, "the box's top at Y248: water at Y248 found " + atTheClamp
+                    + ", at Y252 " + aboveTheClamp);
+        } finally {
+            for (BlockPos pos : water) level.setBlockAndUpdate(pos, Blocks.AIR.defaultBlockState());
+        }
+        helper.succeed();
+    }
+
     /** WGEN-105: the caves' lava to Y10, as 1.7.10's carvers leave it; Mining's ruby after the springs. */
     @GameTest(template = "empty")
     public static void wgen105a_the_caves_lava_and_the_rubys_order(GameTestHelper helper) {

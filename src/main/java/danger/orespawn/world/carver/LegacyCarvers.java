@@ -66,15 +66,17 @@ public final class LegacyCarvers {
     /**
      * Whether water stands on the shell of the box the original checked before carving a stretch: x and z from one
      * below the ellipsoid's floor to one past its ceiling, inside the chunk; y from one under its bottom to one over
-     * its top, clamped to 1 and 120; every height at the box's edge columns, the top and bottom inside.
+     * its top, clamped to 1 and 248 (WGEN-111: MapGenCaves and MapGenRavine clamp at 248); every height at the box's
+     * edge columns, the top and bottom inside.
      */
-    static boolean waterOnShell(ChunkAccess chunk, double x, double y, double z, double horizontalRadius, double verticalRadius) {
+    public static boolean waterOnShell(ChunkAccess chunk, double x, double y, double z, double horizontalRadius,
+                                       double verticalRadius) {
         int minX = chunk.getPos().getMinBlockX();
         int minZ = chunk.getPos().getMinBlockZ();
         int x0 = Math.max(Mth.floor(x - horizontalRadius) - minX - 1, 0);
         int x1 = Math.min(Mth.floor(x + horizontalRadius) - minX + 1, 16);
         int y0 = Math.max(Mth.floor(y - verticalRadius) - 1, 1);
-        int y1 = Math.min(Mth.floor(y + verticalRadius) + 1, 120);
+        int y1 = Math.min(Mth.floor(y + verticalRadius) + 1, 248);
         int z0 = Math.max(Mth.floor(z - horizontalRadius) - minZ - 1, 0);
         int z1 = Math.min(Mth.floor(z + horizontalRadius) - minZ + 1, 16);
         BlockPos.MutableBlockPos cursor = new BlockPos.MutableBlockPos();
