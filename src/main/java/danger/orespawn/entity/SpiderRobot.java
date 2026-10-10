@@ -423,12 +423,10 @@ public class SpiderRobot extends Mob implements ICustomHitboxProfileSupplier, IM
      * S3b body transform — the same transform the leg parts ride. Honest
      * bounds (reviewer-corrected): only LIFT/SAG carry the ridden ±0.15
      * clamp; pitch/roll keep MAX_TILT 0.35, so the composed seat may
-     * swing up to ~1.3 blocks on steep terrain, and under tilt the rider
-     * slips vs the RENDERED shell by ~1.501·sin(tilt) (the render is
-     * pivot-conjugated about the vanilla +1.501 offset, the seat about
-     * the anchor — the same accepted constant-quirk family the leg part
-     * boxes carry). Classic applies the untransformed original math —
-     * bit-identical to 1.0.
+     * swing up to ~1.3 blocks on steep terrain; the render and the seat
+     * both turn about the anchor (the original's render chain draws the
+     * model there, ENT-S-198). Classic applies the untransformed original
+     * math.
      */
     @Override
     protected void positionRider(Entity passenger, Entity.MoveFunction move) {

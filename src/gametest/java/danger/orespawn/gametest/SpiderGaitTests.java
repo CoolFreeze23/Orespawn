@@ -69,10 +69,10 @@ public class SpiderGaitTests {
      * {@code a_i = p_i + ud}), then the render transform's model→world action
      * for vectors (horizontal azimuth reflection
      * {@code α_world = yawRad − α_model}, vertical negation, ÷16 — derivation
-     * and the two shared-with-classic absolute-space caveats, the vanilla
-     * +1.501 vertical render translate and entity-vs-body yaw, are documented
-     * in {@code ModernSpiderGait.solveLegAngles}; both are constants/shared
-     * offsets that cancel from every vector this harness asserts on).
+     * and the shared-with-classic absolute-space caveat, the interpolated
+     * render yaw against the entity's yaw, are documented in
+     * {@code ModernSpiderGait.solveLegAngles}; it is a shared offset that
+     * cancels from every vector this harness asserts on).
      *
      * <p>The five input angles are round-tripped through {@code float}
      * first, because that is the precision the real path stores/consumes
@@ -869,11 +869,43 @@ public class SpiderGaitTests {
     // =====================================================================
 
     /**
+     * ENT-S-198: the Ant and Spider Robots' renderers draw the original's
+     * chain (OriginalRobotChain, the very matrix they draw with; orig
+     * RenderAntRobot.renderAntRobot :27-35, RenderSpiderRobot): the model's
+     * origin at the entity's anchor, and a hip set at model y = yoff x -16 px
+     * (ModelSpiderRobot's Leg1p1, ModelAntRobot's Leg1) at the anchor's y +
+     * yoff, where the leg solver puts it (realposy = y + yoff); the living
+     * chain the port drew them with put every point 1.501 higher. The
+     * horizontal turn is 180 - yaw after the (-1, -1, 1) flip.
+     */
+    @GameTest(template = "empty")
+    public void s198a_the_robots_draw_at_their_anchor(GameTestHelper helper) {
+        float yoff = 1.25f;
+        for (float yaw : new float[] {0.0f, 37.5f, -120.0f, 217.0f}) {
+            org.joml.Matrix4f chain = danger.orespawn.entity.client.OriginalRobotChain.modelToAnchor(yaw);
+            org.joml.Vector3f origin = chain.transformPosition(new org.joml.Vector3f());
+            org.joml.Vector3f hip = chain.transformPosition(new org.joml.Vector3f(0.5f, yoff * -16.0f / 16.0f, 0.0f));
+            assertClose(helper, "the model's origin (yaw " + yaw + ")", origin.x(), origin.y(), origin.z(),
+                    0.0, 0.0, 0.0, 1.0E-6);
+            double turn = Math.toRadians(180.0 - yaw);
+            assertClose(helper, "a hip (yaw " + yaw + ")", hip.x(), hip.y(), hip.z(),
+                    -0.5 * Math.cos(turn), yoff, 0.5 * Math.sin(turn), 1.0E-5);
+            org.joml.Matrix4f living = new org.joml.Matrix4f().rotateY((float) turn).scale(-1.0f, -1.0f, 1.0f)
+                    .translate(0.0f, -1.501f, 0.0f);
+            org.joml.Vector3f lifted = living.transformPosition(new org.joml.Vector3f(0.5f, yoff * -1.0f, 0.0f));
+            helper.assertTrue(Math.abs(lifted.y() - hip.y() - 1.501f) < 1.0E-5f,
+                    "the living chain's hip " + lifted.y() + " against the original's " + hip.y());
+        }
+        helper.succeed();
+    }
+
+    /**
      * S3b's mandated first proof (the S2 angle-conversion of this slice),
      * hardened per independent review. Three layers, weakest to strongest:
      * (1) T∘T⁻¹ identity on probe vectors; (2) a JOML replay of the
-     * renderer's EXACT op sequence (translate(lift+1.501), Ry(a), Rx(p),
-     * Rz(r), Ry(−a), translate(−1.501)) asserted equal to the double-math
+     * renderer's EXACT op sequence (translate(lift+d), Ry(a), Rx(p),
+     * Rz(r), Ry(−a), translate(−d), d the model's pivot: 0 since the
+     * robots draw the original's chain, ENT-S-198) asserted equal to the double-math
      * {@code bodyTransform} — this catches transcription drift
      * (order/handedness/sign/pivot), the blind spot in which the review
      * found the anchor-pivot BLOCKER; (3) the full compensation round trip:
@@ -887,7 +919,7 @@ public class SpiderGaitTests {
      */
     @GameTest(template = "empty")
     public void s3b_tilt_compensation_harness(GameTestHelper helper) {
-        double renderOffset = ModernSpiderGait.VANILLA_RENDER_Y_OFFSET;
+        double renderOffset = ModernSpiderGait.MODEL_PIVOT_Y_OFFSET;
 
         // (1) Transform-pair identity on representative vectors.
         double[][] probes = {{17.2, -0.4, 3.1}, {-9.5, 5.9, -12.0}, {0.1, -6.0, 16.4}};
@@ -900,7 +932,7 @@ public class SpiderGaitTests {
 
         // (2) Renderer-transcription replay: the PoseStack op sequence as a
         // JOML matrix must act on model-chain points (solver vector + the
-        // vanilla +1.501 offset) exactly as bodyTransform acts on solver
+        // model's pivot offset) exactly as bodyTransform acts on solver
         // vectors.
         double[][] replayCases = {{0.0, 0.35, 0.0, 0.0}, {37.5, -0.3, 0.2, -0.6}, {-90.0, 0.25, -0.35, 1.0}};
         for (double[] c : replayCases) {

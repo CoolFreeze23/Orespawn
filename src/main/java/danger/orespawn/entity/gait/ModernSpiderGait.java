@@ -215,14 +215,15 @@ public final class ModernSpiderGait {
     // The S5 rest-heading dead-band/rate constants are per-rig (LegRig
     // restYawDeadbandDeg/restYawRateDeg — full anti-dance rationale there).
     /**
-     * The vanilla render chain draws the model this far ABOVE the entity
-     * anchor (LivingEntityRenderer's translate(0,−1.501,0) after the
-     * (−1,−1,1) flip). The tilt must be conjugated about THAT pivot — a
-     * rotation about the bare anchor displaces every planted foot by
-     * (R−I)·(0,1.501,0), up to ~0.52 blocks at the tilt clamp
-     * (independent-review BLOCKER).
+     * How far above the entity anchor the robots' renderers draw the model:
+     * the original's chain (RenderSpiderRobot, RenderAntRobot) draws it at
+     * the anchor itself, without the living chain's 1.501 lift (ENT-S-198).
+     * The tilt is conjugated about this pivot, the model's own: a rotation
+     * about any other point displaces every planted foot by (R−I)·(0,d,0)
+     * for the distance d between them (independent-review BLOCKER, when the
+     * model stood 1.501 above the anchor).
      */
-    public static final float VANILLA_RENDER_Y_OFFSET = 1.501f;
+    public static final float MODEL_PIVOT_Y_OFFSET = 0.0f;
     // The tilt-target centroid spans are rig-derived (LegRig pitchSpan/
     // rollSpan, computed in its ctor from the rest stance at yaw 0).
 
@@ -1263,7 +1264,7 @@ public final class ModernSpiderGait {
                 fz = footZ[leg];
             }
             // S3b foot compensation: the renderer applies bodyTransform
-            // (pivot-conjugated about the vanilla +1.501 model offset) to
+            // (pivot-conjugated about the model's pivot, the anchor) to
             // the whole model, so the solve targets the INVERSE-transformed
             // foot — the tilted render then lands the foot back on its true
             // world anchor and planted feet stay motionless under tilt.
@@ -1522,15 +1523,15 @@ public final class ModernSpiderGait {
      * foot→hip azimuth, SpiderRobot.updateLegs:626-627). The classic code
      * corroborates the mapping; the S2 harness verifies it numerically.</p>
      *
-     * <p><b>Two shared, faithful absolute-space caveats</b> (independent
-     * review, as faithful — do NOT in any slice): the mapping is exact for
-     * vectors and angles, but the vanilla renderer additionally
-     * translates the whole model by a constant (+1.501 blocks vertical at
-     * render), and rotates by the interpolated BODY yaw while this
-     * conversion — like classic's updateLegs, which uses
-     * {@code getYRot()} in the identical places — poses against entity yaw.
-     * Both offsets exist identically in classic (1.7.10 included), cancel
-     * from every angle and delta this solver computes, and are preserved.</p>
+     * <p><b>A shared, faithful absolute-space caveat</b> (independent
+     * review, as faithful): the mapping is exact for vectors and angles, but
+     * the renderer rotates by the interpolated yaw while this conversion —
+     * like classic's updateLegs, which uses {@code getYRot()} in the
+     * identical places — poses against the entity's current yaw. The offset
+     * exists identically in classic (1.7.10 included), cancels from every
+     * angle and delta this solver computes, and is preserved. (The living
+     * chain's +1.501 vertical translate the port once drew the robots with
+     * is gone: they draw the original's chain, ENT-S-198.)</p>
      *
      * <p><b>Angle split.</b> The model only consumes the sums
      * {@code p_i + ud}, so the split is one-parameter redundant; classic
