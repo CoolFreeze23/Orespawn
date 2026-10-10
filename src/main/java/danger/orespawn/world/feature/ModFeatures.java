@@ -163,6 +163,10 @@ public class ModFeatures {
     public static final DeferredHolder<Feature<?>, UnstableAnthillFeature> UNSTABLE_ANTHILL =
             FEATURES.register("unstable_anthill", () -> new UnstableAnthillFeature(NoneFeatureConfiguration.CODEC));
 
+    // WGEN-117: the dimensions' 1.7.10 ores, every vein's shape drawn whatever the ground
+    public static final DeferredHolder<Feature<?>, LegacyOreFeature> LEGACY_ORE =
+            FEATURES.register("legacy_ore", () -> new LegacyOreFeature(net.minecraft.world.level.levelgen.feature.configurations.OreConfiguration.CODEC));
+
     // Phase C7 (WGEN-030 et al) — wild veggie patches
     // (orig OreSpawnWorld.addVeggies, OreSpawnWorld.java:1882-1921).
     public static final DeferredHolder<Feature<?>, VeggiePatchFeature> VEGGIE_PATCH =

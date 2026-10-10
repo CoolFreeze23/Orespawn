@@ -514,6 +514,49 @@ public class OriginalPassTests {
     }
 
     /**
+     * WGEN-117: the dimensions' 1.7.10 ores draw a vein's shape whatever the ground, as the original's WorldGenMinable,
+     * so the places the placement draws after it are the same. From one seed, a vein in the open air and one in stone
+     * leave the random alike (the feature `orespawn:legacy_ore`); vanilla's ore, which draws the shape only where the
+     * ocean floor reaches the vein, leaves it otherwise. The dimensions' 1.7.10 ores are all of the legacy kind.
+     */
+    @GameTest(template = "empty")
+    public static void wgen117a_the_legacy_ores_draw_alike_on_any_ground(GameTestHelper helper) {
+        ServerLevel level = helper.getLevel();
+        net.minecraft.world.level.chunk.ChunkGenerator generator = level.getChunkSource().getGenerator();
+        OreConfiguration config = new OreConfiguration(java.util.List.of(OreConfiguration.target(
+                new net.minecraft.world.level.levelgen.structure.templatesystem.BlockMatchTest(Blocks.STONE),
+                Blocks.DIRT.defaultBlockState())), 32);
+        BlockPos ground = helper.absolutePos(new BlockPos(1, 2, 1));
+        for (BlockPos p : BlockPos.betweenClosed(ground.offset(-6, -4, -6), ground.offset(6, 4, 6))) {
+            level.setBlock(p, Blocks.STONE.defaultBlockState(), 2);
+        }
+        BlockPos sky = new BlockPos(ground.getX(), level.getMaxBuildHeight() - 20, ground.getZ());
+        long[] legacy = new long[2], vanilla = new long[2];
+        BlockPos[] origins = {sky, ground};
+        for (int i = 0; i < 2; i++) {
+            RandomSource random = RandomSource.create(117L);
+            danger.orespawn.world.feature.ModFeatures.LEGACY_ORE.get().place(new net.minecraft.world.level.levelgen.feature
+                    .FeaturePlaceContext<>(java.util.Optional.empty(), level, generator, random, origins[i], config));
+            legacy[i] = random.nextLong();
+            RandomSource plain = RandomSource.create(117L);
+            net.minecraft.world.level.levelgen.feature.Feature.ORE.place(new net.minecraft.world.level.levelgen.feature
+                    .FeaturePlaceContext<>(java.util.Optional.empty(), level, generator, plain, origins[i], config));
+            vanilla[i] = plain.nextLong();
+        }
+        helper.assertTrue(legacy[0] == legacy[1], "the legacy ore's draws differ between the air and the stone");
+        helper.assertTrue(vanilla[0] != vanilla[1], "vanilla's ore drew alike in the air and in stone: the check proves nothing");
+        Registry<ConfiguredFeature<?, ?>> features = level.registryAccess().registryOrThrow(Registries.CONFIGURED_FEATURE);
+        for (String name : new String[] {"ore_dirt_1710", "ore_gravel_1710", "ore_coal_1710", "ore_iron_1710",
+                "ore_gold_1710", "ore_redstone_1710", "ore_diamond_1710", "ore_lapis_1710", "ore_silverfish_1710",
+                "ore_lapis_mining_large", "ore_lapis_mining_small"}) {
+            ConfiguredFeature<?, ?> feature = features.get(ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, name));
+            helper.assertTrue(feature != null && feature.feature() == danger.orespawn.world.feature.ModFeatures.LEGACY_ORE.get(),
+                    name + " is not the legacy ore");
+        }
+        helper.succeed();
+    }
+
+    /**
      * WGEN-111: the legacy carvers look for water on the shell of a stretch's box up to Y248, as MapGenCaves and
      * MapGenRavine did (both clamp the box's top at 248): a box from Y118 to Y132 finds water at Y125 on an edge column
      * (clamped at 120 it looked to Y121 only); a box at the top of the world looks to Y249, water at Y248 found and at
