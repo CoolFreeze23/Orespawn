@@ -375,6 +375,13 @@ public class OreSpawnConfig {
      */
     public static final ModConfigSpec.BooleanValue MODERN_CHAOS_RED;
     /**
+     * WGEN-112: Chaos with vanilla 1.21's caves and canyons, which earlier betas carved there; the original's Chaos
+     * had none (ChunkProviderOreSpawn6 ran no MapGenCaves or MapGenRavine). Takes effect only while
+     * {@link #MODERN_ENABLED} is on -- read through {@link #chaosCaves()}, never directly, when the world starts (the
+     * biome's carvers are set then).
+     */
+    public static final ModConfigSpec.BooleanValue MODERN_CHAOS_CAVES;
+    /**
      * WGEN-086: the overworld spawns earlier betas gave species the original never listed there (the Cave Fisher, Cliff
      * Racer, Cloud Shark, Creeping Horror, Cryolophosaurus, Gazelle, Nastysaurus, Pointysaurus and Rotator, and the
      * Ostrich and Cassowary in every biome) on top of the original's lists. Takes effect only while
@@ -602,6 +609,7 @@ public class OreSpawnConfig {
                         "modern.cryolophosaurusRevengeChase, modern.chainsawSweepVanillaSight, " +
                         "modern.artistAnimations with modern.classicAnimationSpecies, modern.horseArmour, " +
                         "modern.wolfArmour, modern.spears, modern.dogArmour, modern.altarTerrain, modern.chaosRed, " +
+                        "modern.chaosCaves, " +
                         "modern.extraSpawns); false = " +
                         "classic 1.7.10 " +
                         "parity everywhere, whatever the per-feature keys say. Phase G artist animations hang " +
@@ -768,6 +776,12 @@ public class OreSpawnConfig {
                         "Only takes effect while modern.enabled is true. Read when the world starts: close the world and " +
                         "open it again to see a change."
         ).define("chaosRed", false);
+        MODERN_CHAOS_CAVES = BUILDER.comment(
+                "The Chaos dimension with vanilla's caves and canyons, as earlier betas carved them. The original's " +
+                        "Chaos has none, which is what false (the default) gives. Only takes effect while " +
+                        "modern.enabled is true. Read when the world starts, and only land generated afterwards " +
+                        "changes: close the world and open it again to see a change."
+        ).define("chaosCaves", false);
         MODERN_EXTRA_SPAWNS = BUILDER.comment(
                 "Extra overworld spawns from earlier betas, on top of the original's lists: the Cave Fisher, Cliff " +
                         "Racer, Cloud Shark, Creeping Horror, Cryolophosaurus, Gazelle, Nastysaurus, Pointysaurus and " +
@@ -918,6 +932,11 @@ public class OreSpawnConfig {
     /** WGEN-106: true only while {@link #MODERN_ENABLED} AND {@link #MODERN_CHAOS_RED} are both on. */
     public static boolean chaosRed() {
         return MODERN_ENABLED.get() && MODERN_CHAOS_RED.get();
+    }
+
+    /** WGEN-112: true only while {@link #MODERN_ENABLED} AND {@link #MODERN_CHAOS_CAVES} are both on. */
+    public static boolean chaosCaves() {
+        return MODERN_ENABLED.get() && MODERN_CHAOS_CAVES.get();
     }
 
     /** WGEN-086: true only while {@link #MODERN_ENABLED} AND {@link #MODERN_EXTRA_SPAWNS} are both on. */

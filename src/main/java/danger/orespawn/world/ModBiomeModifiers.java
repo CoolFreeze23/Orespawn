@@ -15,6 +15,8 @@ import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.MobSpawnSettings;
+import net.minecraft.world.level.levelgen.GenerationStep;
+import net.minecraft.world.level.levelgen.carver.ConfiguredWorldCarver;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.common.world.BiomeModifier;
 import net.neoforged.neoforge.common.world.ModifiableBiomeInfo;
@@ -68,6 +70,16 @@ public final class ModBiomeModifiers {
             SERIALIZERS.register("spawn_table", () -> RecordCodecBuilder.mapCodec(inst -> inst.group(
                     SpawnTable.Entry.CODEC.listOf().fieldOf("entries").forGetter(SpawnTable::entries)
             ).apply(inst, SpawnTable::new)));
+
+    /**
+     * JSON type {@code orespawn:chaos_caves}: vanilla 1.21's carvers on {@code biomes} while {@code modern.chaosCaves} is
+     * on (WGEN-112); off, the biome carves as the original's Chaos did, not at all.
+     */
+    public static final DeferredHolder<MapCodec<? extends BiomeModifier>, MapCodec<ChaosCaves>> CHAOS_CAVES =
+            SERIALIZERS.register("chaos_caves", () -> RecordCodecBuilder.mapCodec(inst -> inst.group(
+                    Biome.LIST_CODEC.fieldOf("biomes").forGetter(ChaosCaves::biomes),
+                    ConfiguredWorldCarver.LIST_CODEC.fieldOf("carvers").forGetter(ChaosCaves::carvers)
+            ).apply(inst, ChaosCaves::new)));
 
     /** JSON type {@code orespawn:remove_disabled_spawns}: no fields, every biome. */
     public static final DeferredHolder<MapCodec<? extends BiomeModifier>, MapCodec<RemoveDisabledSpawns>> REMOVE_DISABLED_SPAWNS =
@@ -190,6 +202,22 @@ public final class ModBiomeModifiers {
         @Override
         public MapCodec<? extends BiomeModifier> codec() {
             return SPAWN_TABLE.get();
+        }
+    }
+
+    /** Chaos's earlier caves and canyons, while {@code modern.chaosCaves} is on; read when the world starts. */
+    public record ChaosCaves(HolderSet<Biome> biomes, HolderSet<ConfiguredWorldCarver<?>> carvers) implements BiomeModifier {
+        @Override
+        public void modify(Holder<Biome> biome, Phase phase, ModifiableBiomeInfo.BiomeInfo.Builder builder) {
+            if (phase != Phase.ADD || !biomes.contains(biome) || !OreSpawnConfig.chaosCaves()) return;
+            for (Holder<ConfiguredWorldCarver<?>> carver : carvers) {
+                builder.getGenerationSettings().addCarver(GenerationStep.Carving.AIR, carver);
+            }
+        }
+
+        @Override
+        public MapCodec<? extends BiomeModifier> codec() {
+            return CHAOS_CAVES.get();
         }
     }
 

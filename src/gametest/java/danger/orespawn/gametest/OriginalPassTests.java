@@ -373,6 +373,30 @@ public class OriginalPassTests {
         helper.succeed();
     }
 
+    /**
+     * WGEN-112: Chaos carves nothing, as the original's (ChunkProviderOreSpawn6 ran no MapGenCaves or MapGenRavine);
+     * {@code modern.chaosCaves}, off by default, adds 1.21's caves and canyons back (chaos_caves.json).
+     */
+    @GameTest(template = "empty")
+    public static void wgen112a_chaos_carves_nothing_by_default(GameTestHelper helper) {
+        Registry<Biome> biomes = helper.getLevel().getServer().registryAccess().registryOrThrow(Registries.BIOME);
+        Biome chaos = biomes.get(ResourceKey.create(Registries.BIOME, rl("chaos_biome")));
+        helper.assertTrue(chaos != null, "no chaos_biome");
+        helper.assertFalse(danger.orespawn.OreSpawnConfig.chaosCaves(), "modern.chaosCaves is on by default");
+        for (net.minecraft.world.level.levelgen.GenerationStep.Carving step
+                : net.minecraft.world.level.levelgen.GenerationStep.Carving.values()) {
+            helper.assertTrue(!chaos.getGenerationSettings().getCarvers(step).iterator().hasNext(),
+                    "Chaos carves in its " + step + " step");
+        }
+        JsonObject caves = json(helper, "neoforge/biome_modifier/chaos_caves.json");
+        List<String> carvers = new ArrayList<>();
+        caves.getAsJsonArray("carvers").forEach(c -> carvers.add(c.getAsString()));
+        helper.assertTrue(caves.get("type").getAsString().equals("orespawn:chaos_caves")
+                        && carvers.equals(List.of("minecraft:cave", "minecraft:cave_extra_underground", "minecraft:canyon")),
+                "chaos_caves.json: " + caves);
+        helper.succeed();
+    }
+
     /** WGEN-103, WGEN-105, WGEN-109: the decorator's plants in each of the original's dimensions, at its counts. */
     @GameTest(template = "empty")
     public static void wgen103a_the_decorators_plants_in_the_originals_dimensions(GameTestHelper helper) {
