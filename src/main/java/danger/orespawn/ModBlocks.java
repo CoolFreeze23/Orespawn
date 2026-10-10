@@ -156,8 +156,10 @@ public class ModBlocks {
                     RepellentBlock.Variant.CREEPER));
 
     // Island block
+    // WGEN-118: orig IslandBlock (a BlockReed, light 0.9): instant to break, no collision, ticking into a flying island
     public static final DeferredBlock<Block> ISLAND = BLOCKS.register("island",
-            () -> new Block(BlockBehaviour.Properties.of().strength(1.0f).lightLevel(s -> 14)));
+            () -> new IslandBlock(BlockBehaviour.Properties.of().instabreak().noCollission().noOcclusion()
+                    .randomTicks().lightLevel(s -> 13)));
 
     // Boss summon eggs (1.7.10 OreGenericEgg port — 50% chance of 5..9 bonus XP
     // on break, orig OreGenericEgg.java:24-30). Since D5 these are ordinary

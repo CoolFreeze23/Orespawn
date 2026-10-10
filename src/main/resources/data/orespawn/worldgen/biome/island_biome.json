@@ -135,7 +135,8 @@
     [],
     [],
     [
-      "orespawn:unstable_anthill"
+      "orespawn:unstable_anthill",
+      "orespawn:island_block"
     ]
   ]
 }

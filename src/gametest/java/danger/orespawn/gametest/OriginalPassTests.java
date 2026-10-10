@@ -514,6 +514,86 @@ public class OriginalPassTests {
     }
 
     /**
+     * WGEN-118: the Island block as the original's IslandBlock. It stays only on a solid block; ticking, it makes one to
+     * three flying islands (the Island or the Island Too) at its own x and z, 12 to 66 blocks up at the default island
+     * size (12 + nextInt(55)), where the 21 x 21 layer there is air, and is gone.
+     */
+    @GameTest(template = "empty")
+    public static void wgen118a_the_island_block_makes_islands_as_it_ticks(GameTestHelper helper) {
+        ServerLevel level = helper.getLevel();
+        BlockPos pos = helper.absolutePos(new BlockPos(1, 2, 1));
+        level.setBlock(pos.below(), Blocks.GRASS_BLOCK.defaultBlockState(), 2);
+        net.minecraft.world.level.block.state.BlockState island = danger.orespawn.ModBlocks.ISLAND.get().defaultBlockState();
+        helper.assertTrue(island.canSurvive(level, pos), "the Island block will not stand on grass");
+        level.setBlock(pos.below(), Blocks.AIR.defaultBlockState(), 2);
+        helper.assertTrue(!island.canSurvive(level, pos), "the Island block stands on air");
+        level.setBlock(pos.below(), Blocks.GRASS_BLOCK.defaultBlockState(), 2);
+        level.setBlock(pos, island, 2);
+        danger.orespawn.block.IslandBlock.growIslands(level, pos);
+        helper.assertTrue(level.getBlockState(pos).isAir(), "the Island block is still there after its tick");
+        net.minecraft.world.phys.AABB above = new net.minecraft.world.phys.AABB(pos.getX() - 1, pos.getY() + 1, pos.getZ() - 1,
+                pos.getX() + 2, pos.getY() + 80, pos.getZ() + 2);
+        List<net.minecraft.world.entity.Entity> islands = level.getEntities((net.minecraft.world.entity.Entity) null, above,
+                e -> e.getType() == danger.orespawn.ModEntities.ISLAND.get()
+                        || e.getType() == danger.orespawn.ModEntities.ISLAND_TOO.get());
+        helper.assertTrue(!islands.isEmpty() && islands.size() <= 3, islands.size() + " islands made, not one to three");
+        for (net.minecraft.world.entity.Entity e : islands) {
+            double up = e.getY() - pos.getY();
+            helper.assertTrue(e.getX() == pos.getX() && e.getZ() == pos.getZ() && up >= 12 && up < 67,
+                    "an island at " + e.position() + ", not over the block 12 to 66 up");
+            e.discard();
+        }
+        helper.succeed();
+    }
+
+    /**
+     * WGEN-118: the Islands' decoration places the block as the original's addIslands: from a seed whose roll passes (one
+     * chunk in ten at LessLag 0), at chunk + 2 + nextInt(12) each way, the first air from Y20 down with grass below it.
+     * The Islands biome lists the feature after the unstable anthills.
+     */
+    @GameTest(template = "empty")
+    public static void wgen118b_the_islands_place_the_island_block(GameTestHelper helper) {
+        ServerLevel level = helper.getLevel();
+        BlockPos column = helper.absolutePos(new BlockPos(1, 2, 1));
+        long seed = -1;
+        int dx = 0, dz = 0;
+        for (long s = 0; s < 10_000 && seed < 0; s++) {
+            RandomSource r = RandomSource.create(s);
+            int x = 2 + r.nextInt(12), z = 2 + r.nextInt(12);
+            if (r.nextInt(10) == 1) {
+                seed = s;
+                dx = x;
+                dz = z;
+            }
+        }
+        helper.assertTrue(seed >= 0, "no seed passes the roll");
+        BlockPos grass = new BlockPos(column.getX(), 7, column.getZ());
+        for (int y = 8; y <= 21; y++) level.setBlock(grass.atY(y), Blocks.AIR.defaultBlockState(), 2);
+        level.setBlock(grass, Blocks.GRASS_BLOCK.defaultBlockState(), 2);
+        BlockPos origin = new BlockPos(column.getX() - dx, 0, column.getZ() - dz);
+        boolean placed = danger.orespawn.world.feature.ModFeatures.ISLAND_BLOCK.get().place(
+                new net.minecraft.world.level.levelgen.feature.FeaturePlaceContext<>(java.util.Optional.empty(), level,
+                        level.getChunkSource().getGenerator(), RandomSource.create(seed), origin,
+                        net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConfiguration.INSTANCE));
+        helper.assertTrue(placed && level.getBlockState(grass.above()).is(danger.orespawn.ModBlocks.ISLAND.get()),
+                "the Island block not set on the grass at Y8");
+        level.setBlock(grass.above(), Blocks.AIR.defaultBlockState(), 2);
+        level.setBlock(grass, Blocks.AIR.defaultBlockState(), 2);
+        List<String> step = new ArrayList<>();
+        try (Reader reader = helper.getLevel().getServer().getResourceManager()
+                .getResourceOrThrow(ResourceLocation.fromNamespaceAndPath(OreSpawnMod.MOD_ID, "worldgen/biome/island_biome.json"))
+                .openAsReader()) {
+            JsonParser.parseReader(reader).getAsJsonObject().getAsJsonArray("features").get(9).getAsJsonArray()
+                    .forEach(e -> step.add(e.getAsString()));
+        } catch (java.io.IOException ex) {
+            throw new IllegalStateException(ex);
+        }
+        helper.assertTrue(step.equals(List.of("orespawn:unstable_anthill", "orespawn:island_block")),
+                "the Islands' step 9 is " + step);
+        helper.succeed();
+    }
+
+    /**
      * WGEN-117: the dimensions' 1.7.10 ores draw a vein's shape whatever the ground, as the original's WorldGenMinable,
      * so the places the placement draws after it are the same. From one seed, a vein in the open air and one in stone
      * leave the random alike (the feature `orespawn:legacy_ore`); vanilla's ore, which draws the shape only where the

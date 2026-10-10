@@ -167,6 +167,10 @@ public class ModFeatures {
     public static final DeferredHolder<Feature<?>, LegacyOreFeature> LEGACY_ORE =
             FEATURES.register("legacy_ore", () -> new LegacyOreFeature(net.minecraft.world.level.levelgen.feature.configurations.OreConfiguration.CODEC));
 
+    // WGEN-118: the Islands' Island blocks, after the unstable anthills as the original ran them
+    public static final DeferredHolder<Feature<?>, IslandBlockFeature> ISLAND_BLOCK =
+            FEATURES.register("island_block", () -> new IslandBlockFeature(NoneFeatureConfiguration.CODEC));
+
     // Phase C7 (WGEN-030 et al) — wild veggie patches
     // (orig OreSpawnWorld.addVeggies, OreSpawnWorld.java:1882-1921).
     public static final DeferredHolder<Feature<?>, VeggiePatchFeature> VEGGIE_PATCH =

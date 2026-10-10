@@ -1,3 +1,6 @@
 {
-  "parent": "orespawn:block/island"
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "orespawn:blocks/island"
+  }
 }
