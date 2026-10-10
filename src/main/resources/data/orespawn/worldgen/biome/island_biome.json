@@ -59,18 +59,31 @@
         "maxCount": 2
       }
     ],
-    "creature": [
+    "creature": [],
+    "ambient": [
       {
-        "type": "orespawn:island",
-        "weight": 1,
-        "minCount": 1,
-        "maxCount": 1
+        "type": "orespawn:butterfly",
+        "weight": 5,
+        "minCount": 2,
+        "maxCount": 6
       },
       {
-        "type": "orespawn:island_too",
-        "weight": 1,
+        "type": "orespawn:cockateil",
+        "weight": 4,
         "minCount": 1,
-        "maxCount": 1
+        "maxCount": 2
+      },
+      {
+        "type": "orespawn:luna_moth",
+        "weight": 5,
+        "minCount": 2,
+        "maxCount": 4
+      },
+      {
+        "type": "orespawn:firefly",
+        "weight": 10,
+        "minCount": 4,
+        "maxCount": 8
       },
       {
         "type": "orespawn:dragon",
@@ -101,32 +114,6 @@
         "weight": 5,
         "minCount": 2,
         "maxCount": 4
-      }
-    ],
-    "ambient": [
-      {
-        "type": "orespawn:butterfly",
-        "weight": 5,
-        "minCount": 2,
-        "maxCount": 6
-      },
-      {
-        "type": "orespawn:cockateil",
-        "weight": 4,
-        "minCount": 1,
-        "maxCount": 2
-      },
-      {
-        "type": "orespawn:luna_moth",
-        "weight": 5,
-        "minCount": 2,
-        "maxCount": 4
-      },
-      {
-        "type": "orespawn:firefly",
-        "weight": 10,
-        "minCount": 4,
-        "maxCount": 8
       }
     ],
     "water_creature": [],

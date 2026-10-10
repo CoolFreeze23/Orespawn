@@ -1,13 +1,13 @@
 package danger.orespawn.gametest;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import danger.orespawn.ModEntities;
 import danger.orespawn.OreSpawnMod;
 import danger.orespawn.entity.Girlfriend;
 import danger.orespawn.util.SeasonalDates;
+import danger.orespawn.world.ModBiomeModifiers;
+import net.minecraft.core.Holder;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.core.BlockPos;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
@@ -21,14 +21,14 @@ import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.Biomes;
+import net.minecraft.world.level.biome.MobSpawnSettings;
 import net.minecraft.world.phys.AABB;
 import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Supplier;
 
 /**
@@ -86,57 +86,45 @@ public class DateGateTests {
         }
     }
 
-    private static JsonObject bundledJson(String path) {
-        try (InputStream in = DateGateTests.class.getResourceAsStream(path)) {
-            return JsonParser.parseReader(new InputStreamReader(in, StandardCharsets.UTF_8))
-                    .getAsJsonObject();
-        } catch (Exception e) {
-            throw new IllegalStateException("cannot load bundled resource " + path, e);
-        }
-    }
-
     // ---------------------------------------------------------------
 
     /**
-     * i177 (ANIM-016 Halloween, closes ENT-D-039/041) — seasonal-biome half.
-     * In a NON-year-round biome (plains), Ghost/GhostSkelly natural spawns
-     * pass only on Oct 31 at night: the gate is
-     * {@code SeasonalDates.isHalloween() || inYearRoundGhostBiome} then
-     * {@code !isDaytime} (port Ghost.java:184-198 / GhostSkelly.java:177-188,
-     * restoring orig Ghost.java:145-160 + the Oct-31-only registration
-     * OreSpawnMain.java:4518-4565). Data half: halloween_ghosts.json
-     * registers ghost+ghost_skelly at w15 count 3-6 across the documented 20
-     * modern biomes (the orig 22-biome block after mapping/dedup;
-     * D4_items_small_entities.md §13). Drop half (C2): Ghosts and Ghost
-     * Skellies drop NOTHING on a player kill.
+     * The OreSpawn entries of {@code type} the spawn table gives {@code biome} on {@code date}: the original added its
+     * dated blocks only when the server started on their day (OreSpawnMain.java:4518-4571), and the table's entries
+     * hold on that day alone (WGEN-086).
+     */
+    private static List<String> tableRows(GameTestHelper helper, net.minecraft.resources.ResourceKey<Biome> biome,
+                                           LocalDate date, String type) {
+        ModBiomeModifiers.SpawnTable table = SpawnTableTests.table(helper, "original_spawns.json");
+        Holder<Biome> holder = helper.getLevel().registryAccess().registryOrThrow(Registries.BIOME).getHolderOrThrow(biome);
+        List<String> out = new ArrayList<>();
+        for (ModBiomeModifiers.SpawnTable.Entry e : table.entries()) {
+            if (!e.biomes().contains(holder) || !withClock(date, () -> e.when().holds())) continue;
+            for (MobSpawnSettings.SpawnerData d : e.spawners()) {
+                if (BuiltInRegistries.ENTITY_TYPE.getKey(d.type).toString().equals(type)) {
+                    out.add(e.category().getName() + " " + SpawnTableTests.row(d));
+                }
+            }
+        }
+        return out;
+    }
+
+    /**
+     * i177 (ANIM-016 Halloween, closes ENT-D-039/041), WGEN-086: the original's Halloween block put the Ghost and the
+     * Ghost Skelly (ambient, w15 3-6) into 22 biomes only when the server started on 31 October (OreSpawnMain.java:4518-4565):
+     * the plains list them on that day and on no other. Their own rule (orig Ghost.java:145-160, GhostSkelly.java)
+     * reads no date: night passes, day does not. Drop half (C2): Ghosts and Ghost Skellies drop NOTHING on a player kill.
      */
     @GameTest(template = "empty_large", batch = "orespawnDate1", timeoutTicks = 200)
     public void halloween_seasonal_biome_gate(GameTestHelper helper) {
         ServerLevel level = helper.getLevel();
         setBiomeRaisingFillLimit(helper, Biomes.PLAINS);
-
-        // Data assert straight off the shipped biome modifier JSON.
-        JsonObject json = bundledJson(
-                "/data/orespawn/neoforge/biome_modifier/halloween_ghosts.json");
-        JsonArray biomes = json.getAsJsonArray("biomes");
-        helper.assertValueEqual(biomes.size(), 20,
-                "halloween_ghosts.json: the 22-biome orig block maps to 20 modern biomes");
-        int ghostSpawners = 0;
-        for (JsonElement e : json.getAsJsonArray("spawners")) {
-            JsonObject spawner = e.getAsJsonObject();
-            String type = spawner.get("type").getAsString();
-            if (type.equals("orespawn:ghost") || type.equals("orespawn:ghost_skelly")) {
-                ghostSpawners++;
-                helper.assertValueEqual(spawner.get("weight").getAsInt(), 15,
-                        "halloween spawn weight 15 (orig w15 block)");
-                helper.assertValueEqual(spawner.get("minCount").getAsInt(), 3,
-                        "halloween min pack 3");
-                helper.assertValueEqual(spawner.get("maxCount").getAsInt(), 6,
-                        "halloween max pack 6");
-            }
+        for (String type : new String[] {"orespawn:ghost", "orespawn:ghost_skelly"}) {
+            helper.assertValueEqual(tableRows(helper, Biomes.PLAINS, HALLOWEEN, type),
+                    List.of("ambient " + type + " 15x3-6"), type + " in the plains on 31 October");
+            helper.assertTrue(tableRows(helper, Biomes.PLAINS, NEUTRAL, type).isEmpty(),
+                    type + " listed in the plains on an ordinary day");
         }
-        helper.assertValueEqual(ghostSpawners, 2,
-                "halloween_ghosts.json registers both ghost and ghost_skelly");
 
         long originalDayTime = level.getDayTime();
         Mob ghost = ModEntities.GHOST.get().create(level);
@@ -154,10 +142,10 @@ public class DateGateTests {
                 String name = mob.getType().toShortString();
                 helper.assertTrue(withClock(HALLOWEEN,
                                 () -> mob.checkSpawnRules(level, MobSpawnType.NATURAL)),
-                        name + ": Oct 31 + night + plains → may spawn");
-                helper.assertFalse(withClock(NEUTRAL,
+                        name + ": night passes on 31 October");
+                helper.assertTrue(withClock(NEUTRAL,
                                 () -> mob.checkSpawnRules(level, MobSpawnType.NATURAL)),
-                        name + ": normal date + plains → blocked (not a year-round biome)");
+                        name + ": night passes on any day (the date is the list's, not the rule's)");
             }
             level.setDayTime(6000); // noon
         });
@@ -184,15 +172,22 @@ public class DateGateTests {
     }
 
     /**
-     * i177 (ANIM-016 Halloween) — year-round half: in the five ungated biomes
-     * (snowy taiga, taiga, frozen river, jungle, dark forest — orig
-     * OreSpawnMain.java:4783-4795, port OriginalSpawnGates.inYearRoundGhostBiome)
-     * Ghost/GhostSkelly spawn on ANY date at night, and never in daytime.
+     * i177 (ANIM-016 Halloween) — year-round half, WGEN-086: the original's GhostEnable and GhostSkellyEnable blocks
+     * (OreSpawnMain.java:4783-4795) list them all year in five biomes; the Roofed Forest's w15 2-5 (dark_forest). On 31
+     * October the Halloween block ran first and those calls after it, so Forge's addSpawn (an entry of the class takes
+     * the new values and a new entry is added) left that entry twice. Their rule passes at night on any day.
      */
     @GameTest(template = "empty_large", batch = "orespawnDate2", timeoutTicks = 200)
     public void halloween_year_round_biomes(GameTestHelper helper) {
         ServerLevel level = helper.getLevel();
         setBiomeRaisingFillLimit(helper, Biomes.DARK_FOREST);
+        for (String type : new String[] {"orespawn:ghost", "orespawn:ghost_skelly"}) {
+            helper.assertValueEqual(tableRows(helper, Biomes.DARK_FOREST, NEUTRAL, type),
+                    List.of("ambient " + type + " 15x2-5"), type + " in the dark forest on an ordinary day");
+            helper.assertValueEqual(tableRows(helper, Biomes.DARK_FOREST, HALLOWEEN, type),
+                    List.of("ambient " + type + " 15x2-5", "ambient " + type + " 15x2-5"),
+                    type + " in the dark forest on 31 October");
+        }
 
         long originalDayTime = level.getDayTime();
         Mob ghost = ModEntities.GHOST.get().create(level);
@@ -209,8 +204,7 @@ public class DateGateTests {
             for (Mob mob : new Mob[]{ghost, skelly}) {
                 helper.assertTrue(withClock(NEUTRAL,
                                 () -> mob.checkSpawnRules(level, MobSpawnType.NATURAL)),
-                        mob.getType().toShortString()
-                                + ": dark forest is year-round — normal date + night passes");
+                        mob.getType().toShortString() + ": night passes on an ordinary day");
             }
             level.setDayTime(6000);
         });
@@ -218,7 +212,7 @@ public class DateGateTests {
             for (Mob mob : new Mob[]{ghost, skelly}) {
                 helper.assertFalse(withClock(NEUTRAL,
                                 () -> mob.checkSpawnRules(level, MobSpawnType.NATURAL)),
-                        mob.getType().toShortString() + ": still night-only in year-round biomes");
+                        mob.getType().toShortString() + ": still night-only");
                 mob.discard();
             }
             level.setDayTime(originalDayTime);
@@ -283,37 +277,19 @@ public class DateGateTests {
     }
 
     /**
-     * i179 (ANIM-016 Easter, closes ENT-D-011): EasterBunny NATURAL spawns
-     * pass only on Apr 20 — {@code checkSpawnRules} denies unless
-     * {@code SeasonalDates.isEaster()}, then requires y ≥ 50, daytime, and no
-     * other bunny within 32/8/32 (port EasterBunny.java:246-257, restoring
-     * orig EasterBunny.java:67-77 + the Apr-20-only registration
-     * OreSpawnMain.java:4570-4571,4681). Biome registration data half: the
-     * three shipped companion_easter_bunny__* biome
-     * modifiers all spawn {@code orespawn:easter_bunny}.
-     * Egg-laying itself is date-independent and covered by A4 — out of
-     * scope here.
+     * i179 (ANIM-016 Easter, closes ENT-D-011), WGEN-086: the original listed the Easter Bunny (ambient) only when the
+     * server started on 20 April (OreSpawnMain.java:4570-4571, 4681-4689): the plains carry it on that day (w10 1-2)
+     * and on no other, not on 19 April. Its own rule (orig EasterBunny.java:67-77) reads no date: y at least 50,
+     * daytime, no other bunny within 32/8/32. Egg-laying itself is date-independent and covered by A4.
      */
     @GameTest(template = "empty_large", batch = "orespawnDate4", timeoutTicks = 200)
     public void easter_bunny_gate(GameTestHelper helper) {
         ServerLevel level = helper.getLevel();
-
-        // Data assert: the bunny's natural-spawn registration exists.
-        String[] modifiers = {
-                "/data/orespawn/neoforge/biome_modifier/companion_easter_bunny__plains_forests.json",
-                "/data/orespawn/neoforge/biome_modifier/companion_easter_bunny__birch_taigas.json",
-                "/data/orespawn/neoforge/biome_modifier/companion_easter_bunny__taiga.json"};
-        for (String path : modifiers) {
-            JsonObject json = bundledJson(path);
-            helper.assertValueEqual(json.get("type").getAsString(), "neoforge:add_spawns",
-                    path + " adds spawns");
-            JsonElement spawners = json.get("spawners");
-            JsonObject first = spawners.isJsonArray()
-                    ? spawners.getAsJsonArray().get(0).getAsJsonObject()
-                    : spawners.getAsJsonObject();
-            helper.assertValueEqual(first.get("type").getAsString(), "orespawn:easter_bunny",
-                    path + " spawns the easter bunny");
-        }
+        helper.assertValueEqual(tableRows(helper, Biomes.PLAINS, EASTER, "orespawn:easter_bunny"),
+                List.of("ambient orespawn:easter_bunny 10x1-2"), "the bunny in the plains on 20 April");
+        helper.assertTrue(tableRows(helper, Biomes.PLAINS, NEUTRAL, "orespawn:easter_bunny").isEmpty()
+                        && tableRows(helper, Biomes.PLAINS, LocalDate.of(2026, 4, 19), "orespawn:easter_bunny").isEmpty(),
+                "the bunny listed on another day");
 
         long originalDayTime = level.getDayTime();
         Mob bunny = ModEntities.EASTER_BUNNY.get().create(level);
@@ -324,16 +300,10 @@ public class DateGateTests {
 
         level.setDayTime(1000); // morning
         helper.runAfterDelay(5, () -> {
-            helper.assertTrue(withClock(EASTER,
+            helper.assertTrue(withClock(NEUTRAL,
                             () -> bunny.checkSpawnRules(level, MobSpawnType.NATURAL)),
-                    "Apr 20 + day + y>=50 → EasterBunny may spawn");
-            helper.assertFalse(withClock(NEUTRAL,
-                            () -> bunny.checkSpawnRules(level, MobSpawnType.NATURAL)),
-                    "any other date → never (ENT-D-011)");
-            helper.assertFalse(withClock(LocalDate.of(2026, 4, 19),
-                            () -> bunny.checkSpawnRules(level, MobSpawnType.NATURAL)),
-                    "Apr 19 is not Easter (fixed Apr 20 gate)");
-            // y < 50 fails even on Easter (orig EasterBunny.java:67-77).
+                    "day + y>=50 passes on any day (the date is the list's, not the rule's)");
+            // y < 50 fails (orig EasterBunny.java:67-77).
             bunny.setPos(center.getX() + 0.5, 30.0, center.getZ() + 0.5);
             helper.assertFalse(withClock(EASTER,
                             () -> bunny.checkSpawnRules(level, MobSpawnType.NATURAL)),

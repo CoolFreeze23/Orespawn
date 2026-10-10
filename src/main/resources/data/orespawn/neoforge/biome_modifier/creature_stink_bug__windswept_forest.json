@@ -1,5 +1,0 @@
-{
-  "type": "neoforge:add_spawns",
-  "biomes": "minecraft:windswept_forest",
-  "spawners": { "type": "orespawn:stink_bug", "weight": 6, "minCount": 2, "maxCount": 4 }
-}

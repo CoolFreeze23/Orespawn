@@ -167,6 +167,8 @@ public class Godzilla extends Monster implements GodzillaPose, IMHLibSizeCallbac
                 && spawnType != MobSpawnType.SPAWNER) {
             return super.checkSpawnRules(level, spawnType);
         }
+        // orig Godzilla.java:558-560: isValidLightLevel first, the monster darkness (WGEN-086: no longer the predicate's)
+        if (!OriginalSpawnGates.isDarkEnough(this, level)) return false;
         if (this.getY() < 50.0) return false;
         if (!level.canSeeSky(this.blockPosition())) return false;
 

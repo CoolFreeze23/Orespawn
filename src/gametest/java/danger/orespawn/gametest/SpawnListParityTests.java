@@ -19,7 +19,6 @@ import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.entity.MobSpawnType;
-import net.minecraft.world.entity.SpawnPlacementTypes;
 import net.minecraft.world.entity.SpawnPlacements;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.level.biome.Biome;
@@ -106,7 +105,7 @@ public class SpawnListParityTests {
     /**
      * The cow line's categories and rules: the Red Cow, Gold Cow and Enchanted Cow count as creatures and spawn under
      * EntityAnimal's rule (grass below, bright) while the world runs and on any ground with the chunk; the Spider Driver
-     * is a monster, the T-Shirt a creature.
+     * is a monster, the T-Shirt a creature; each placed by the list it is drawn from (WGEN-086).
      */
     @GameTest(template = "empty")
     public static void gh6b_cow_line_categories_and_spawn_rule(GameTestHelper helper) {
@@ -118,8 +117,8 @@ public class SpawnListParityTests {
         helper.assertTrue(ModEntities.ENTITY_TSHIRT.get().getCategory() == MobCategory.CREATURE, "tshirt is not CREATURE");
         for (EntityType<?> type : List.of(ModEntities.RED_COW.get(), ModEntities.GOLD_COW.get(),
                 ModEntities.SPIDER_DRIVER.get(), ModEntities.ENTITY_TSHIRT.get())) {
-            helper.assertTrue(SpawnPlacements.getPlacementType(type) == SpawnPlacementTypes.ON_GROUND,
-                    BuiltInRegistries.ENTITY_TYPE.getKey(type) + " has no ON_GROUND placement");
+            helper.assertTrue(SpawnPlacements.getPlacementType(type) == danger.orespawn.entity.ListedSpawnPlacement.INSTANCE,
+                    BuiltInRegistries.ENTITY_TYPE.getKey(type) + " is not placed by its list (WGEN-086)");
         }
         ServerLevel level = helper.getLevel();
         BlockPos grass = helper.absolutePos(new BlockPos(1, 1, 1));

@@ -1,12 +1,16 @@
 package danger.orespawn.world;
 
 import danger.orespawn.ModSpawnControl;
+import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import danger.orespawn.OreSpawnConfig;
 import danger.orespawn.OreSpawnMod;
+import danger.orespawn.util.SeasonalDates;
 import java.util.List;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderSet;
+import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.MobSpawnSettings;
@@ -25,7 +29,7 @@ import net.neoforged.neoforge.registries.NeoForgeRegistries;
  * cannot express a 1.7.10 registration that put one species into a list of another type: the Frog's river and swamp
  * entries were {@code EnumCreatureType.waterCreature} (orig OreSpawnMain.java:4963, :4966) and its river, jungle and
  * swamp entries {@code ambient} (:4964, :4965, :4967) while the Frog itself counts as a creature (ENT-S-170). The list
- * an entry sits in decides the pass that spawns it, that pass's cap and — through {@code FrogSpawnPlacement} — whether
+ * an entry sits in decides the pass that spawns it, that pass's cap and — through {@code ListedSpawnPlacement} — whether
  * it is placed in water or on the ground.
  */
 public final class ModBiomeModifiers {
@@ -54,6 +58,15 @@ public final class ModBiomeModifiers {
                     com.mojang.serialization.Codec.INT.fieldOf("foliage_color").forGetter(ChaosRedColours::foliage)
             ).apply(inst, ChaosRedColours::new)));
 
+    /**
+     * JSON type {@code orespawn:spawn_table} (WGEN-086): spawn entries in named lists, many to a file, each with its
+     * biomes, its list ({@code category}), its spawners and when it applies ({@code when}, {@code always} if left out).
+     */
+    public static final DeferredHolder<MapCodec<? extends BiomeModifier>, MapCodec<SpawnTable>> SPAWN_TABLE =
+            SERIALIZERS.register("spawn_table", () -> RecordCodecBuilder.mapCodec(inst -> inst.group(
+                    SpawnTable.Entry.CODEC.listOf().fieldOf("entries").forGetter(SpawnTable::entries)
+            ).apply(inst, SpawnTable::new)));
+
     /** JSON type {@code orespawn:remove_disabled_spawns}: no fields, every biome. */
     public static final DeferredHolder<MapCodec<? extends BiomeModifier>, MapCodec<RemoveDisabledSpawns>> REMOVE_DISABLED_SPAWNS =
             SERIALIZERS.register("remove_disabled_spawns", () -> MapCodec.unit(RemoveDisabledSpawns.INSTANCE));
@@ -80,6 +93,73 @@ public final class ModBiomeModifiers {
         @Override
         public MapCodec<? extends BiomeModifier> codec() {
             return ADD_SPAWNS_IN_CATEGORY.get();
+        }
+    }
+
+    /**
+     * The overworld's and the Nether's spawn lists as the original's (generated from its addSpawn calls by
+     * tools/ref1710/gen_spawn_tables.py, original_spawns.json), and the port's own overworld spawns behind
+     * {@code [modern] extraSpawns} (extra_spawns.json). Every entry goes into its named list, whatever its entity's own
+     * category, as the original listed it. The conditions are read as the server starts, as the original read its
+     * calendar at load (OreSpawnMain.java:4518-4571).
+     */
+    public record SpawnTable(List<Entry> entries) implements BiomeModifier {
+        /** One entry: its biomes, its list, its spawners and when it applies. */
+        public record Entry(HolderSet<Biome> biomes, MobCategory category, List<MobSpawnSettings.SpawnerData> spawners,
+                            When when) {
+            static final Codec<Entry> CODEC = RecordCodecBuilder.create(inst -> inst.group(
+                    Biome.LIST_CODEC.fieldOf("biomes").forGetter(Entry::biomes),
+                    MobCategory.CODEC.fieldOf("category").forGetter(Entry::category),
+                    MobSpawnSettings.SpawnerData.CODEC.listOf().fieldOf("spawners").forGetter(Entry::spawners),
+                    When.CODEC.optionalFieldOf("when", When.ALWAYS).forGetter(Entry::when)
+            ).apply(inst, Entry::new));
+        }
+
+        /**
+         * When an entry applies: {@code always}; on 31 October ({@code halloween}) or 20 April ({@code easter}), the
+         * original's dated blocks, or on any other day ({@code ordinary}); or while {@code [modern] extraSpawns} is on
+         * ({@code extra_spawns}).
+         */
+        public enum When implements StringRepresentable {
+            ALWAYS("always"), ORDINARY("ordinary"), HALLOWEEN("halloween"), EASTER("easter"), EXTRA_SPAWNS("extra_spawns");
+
+            static final Codec<When> CODEC = StringRepresentable.fromEnum(When::values);
+            private final String name;
+
+            When(String name) {
+                this.name = name;
+            }
+
+            @Override
+            public String getSerializedName() {
+                return this.name;
+            }
+
+            public boolean holds() {
+                return switch (this) {
+                    case ALWAYS -> true;
+                    case ORDINARY -> !SeasonalDates.isHalloween() && !SeasonalDates.isEaster();
+                    case HALLOWEEN -> SeasonalDates.isHalloween();
+                    case EASTER -> SeasonalDates.isEaster();
+                    case EXTRA_SPAWNS -> OreSpawnConfig.extraSpawns();
+                };
+            }
+        }
+
+        @Override
+        public void modify(Holder<Biome> biome, Phase phase, ModifiableBiomeInfo.BiomeInfo.Builder builder) {
+            if (phase != Phase.ADD) return;
+            for (Entry entry : this.entries) {
+                if (!entry.biomes().contains(biome) || !entry.when().holds()) continue;
+                for (MobSpawnSettings.SpawnerData spawner : entry.spawners()) {
+                    builder.getMobSpawnSettings().addSpawn(entry.category(), spawner);
+                }
+            }
+        }
+
+        @Override
+        public MapCodec<? extends BiomeModifier> codec() {
+            return SPAWN_TABLE.get();
         }
     }
 

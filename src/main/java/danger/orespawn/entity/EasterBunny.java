@@ -254,10 +254,6 @@ public class EasterBunny extends Animal {
     @Override
     public boolean checkSpawnRules(net.minecraft.world.level.LevelAccessor level,
                                    net.minecraft.world.entity.MobSpawnType spawnType) {
-        // orig OreSpawnMain.java:4570-4571,4681 — spawns only registered on
-        // April 20 ("Easter"); the port's biome modifiers are static, so the
-        // date gate lives here (closes the ENT-D-011 remainder).
-        if (!danger.orespawn.util.SeasonalDates.isEaster()) return false;
         if (this.getY() < 50.0) return false;
         if (!OriginalSpawnGates.isDaytime(level)) return false;
         return !OriginalSpawnGates.anyOtherNearby(this, level, EasterBunny.class, 32.0, 8.0, 32.0);

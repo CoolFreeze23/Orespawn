@@ -375,6 +375,14 @@ public class OreSpawnConfig {
      */
     public static final ModConfigSpec.BooleanValue MODERN_CHAOS_RED;
     /**
+     * WGEN-086: the overworld spawns earlier betas gave species the original never listed there (the Cave Fisher, Cliff
+     * Racer, Cloud Shark, Creeping Horror, Cryolophosaurus, Gazelle, Nastysaurus, Pointysaurus and Rotator, and the
+     * Ostrich and Cassowary in every biome) on top of the original's lists. Takes effect only while
+     * {@link #MODERN_ENABLED} is on -- read through {@link #extraSpawns()}, never directly, when the world starts (the
+     * biomes' lists are built then).
+     */
+    public static final ModConfigSpec.BooleanValue MODERN_EXTRA_SPAWNS;
+    /**
      * MOD-038, the per-species flip list: registry names ({@code
      * orespawn:beaver}; the bare path is accepted for the mod's own species) kept on
      * the classic pose in modern mode even when their clips ship. Read with the
@@ -593,7 +601,8 @@ public class OreSpawnConfig {
                         "modern.petsDefendOwner, modern.pointysaurusStareAggro, " +
                         "modern.cryolophosaurusRevengeChase, modern.chainsawSweepVanillaSight, " +
                         "modern.artistAnimations with modern.classicAnimationSpecies, modern.horseArmour, " +
-                        "modern.wolfArmour, modern.spears, modern.dogArmour, modern.altarTerrain, modern.chaosRed); false = " +
+                        "modern.wolfArmour, modern.spears, modern.dogArmour, modern.altarTerrain, modern.chaosRed, " +
+                        "modern.extraSpawns); false = " +
                         "classic 1.7.10 " +
                         "parity everywhere, whatever the per-feature keys say. Phase G artist animations hang " +
                         "off this same switch (classic stays code-driven parity). Snapshotted features " +
@@ -759,6 +768,14 @@ public class OreSpawnConfig {
                         "Only takes effect while modern.enabled is true. Read when the world starts: close the world and " +
                         "open it again to see a change."
         ).define("chaosRed", false);
+        MODERN_EXTRA_SPAWNS = BUILDER.comment(
+                "Extra overworld spawns from earlier betas, on top of the original's lists: the Cave Fisher, Cliff " +
+                        "Racer, Cloud Shark, Creeping Horror, Cryolophosaurus, Gazelle, Nastysaurus, Pointysaurus and " +
+                        "Rotator in every overworld biome, and the Ostrich and Cassowary everywhere besides their " +
+                        "original biomes. The original spawned these only in their own dimensions; false (the default) " +
+                        "keeps the original's lists. Only takes effect while modern.enabled is true. Read when the " +
+                        "world starts: close the world and open it again to see a change."
+        ).define("extraSpawns", false);
         BUILDER.pop();
 
         SPEC = BUILDER.build();
@@ -901,6 +918,11 @@ public class OreSpawnConfig {
     /** WGEN-106: true only while {@link #MODERN_ENABLED} AND {@link #MODERN_CHAOS_RED} are both on. */
     public static boolean chaosRed() {
         return MODERN_ENABLED.get() && MODERN_CHAOS_RED.get();
+    }
+
+    /** WGEN-086: true only while {@link #MODERN_ENABLED} AND {@link #MODERN_EXTRA_SPAWNS} are both on. */
+    public static boolean extraSpawns() {
+        return MODERN_ENABLED.get() && MODERN_EXTRA_SPAWNS.get();
     }
 
     /**

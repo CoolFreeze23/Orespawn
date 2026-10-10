@@ -1,0 +1,179 @@
+{
+  "type": "orespawn:spawn_table",
+  "entries": [
+    {
+      "biomes": "#minecraft:is_overworld",
+      "category": "monster",
+      "spawners": [
+        {
+          "type": "orespawn:rotator",
+          "weight": 5,
+          "minCount": 1,
+          "maxCount": 1
+        },
+        {
+          "type": "orespawn:cryolophosaurus",
+          "weight": 3,
+          "minCount": 1,
+          "maxCount": 1
+        },
+        {
+          "type": "orespawn:pointysaurus",
+          "weight": 3,
+          "minCount": 1,
+          "maxCount": 1
+        },
+        {
+          "type": "orespawn:nastysaurus",
+          "weight": 3,
+          "minCount": 1,
+          "maxCount": 1
+        },
+        {
+          "type": "orespawn:creeping_horror",
+          "weight": 3,
+          "minCount": 1,
+          "maxCount": 1
+        },
+        {
+          "type": "orespawn:cloud_shark",
+          "weight": 2,
+          "minCount": 1,
+          "maxCount": 1
+        },
+        {
+          "type": "orespawn:cave_fisher",
+          "weight": 12,
+          "minCount": 1,
+          "maxCount": 2
+        }
+      ],
+      "when": "extra_spawns"
+    },
+    {
+      "biomes": "#minecraft:is_overworld",
+      "category": "creature",
+      "spawners": [
+        {
+          "type": "orespawn:cassowary",
+          "weight": 5,
+          "minCount": 1,
+          "maxCount": 2
+        },
+        {
+          "type": "orespawn:gazelle",
+          "weight": 8,
+          "minCount": 2,
+          "maxCount": 4
+        },
+        {
+          "type": "orespawn:ostrich",
+          "weight": 6,
+          "minCount": 1,
+          "maxCount": 2
+        },
+        {
+          "type": "orespawn:cliff_racer",
+          "weight": 5,
+          "minCount": 1,
+          "maxCount": 2
+        }
+      ],
+      "when": "extra_spawns"
+    },
+    {
+      "biomes": "#c:is_cold/overworld",
+      "category": "monster",
+      "spawners": [
+        {
+          "type": "orespawn:cryolophosaurus",
+          "weight": 2,
+          "minCount": 1,
+          "maxCount": 2
+        }
+      ],
+      "when": "extra_spawns"
+    },
+    {
+      "biomes": [
+        "minecraft:snowy_plains",
+        "minecraft:snowy_taiga",
+        "minecraft:snowy_slopes",
+        "minecraft:grove",
+        "minecraft:frozen_peaks",
+        "minecraft:jagged_peaks"
+      ],
+      "category": "monster",
+      "spawners": [
+        {
+          "type": "orespawn:cryolophosaurus",
+          "weight": 2,
+          "minCount": 1,
+          "maxCount": 2
+        }
+      ],
+      "when": "extra_spawns"
+    },
+    {
+      "biomes": "#minecraft:is_cold",
+      "category": "monster",
+      "spawners": [
+        {
+          "type": "orespawn:cryolophosaurus",
+          "weight": 2,
+          "minCount": 1,
+          "maxCount": 2
+        }
+      ],
+      "when": "extra_spawns"
+    },
+    {
+      "biomes": "#minecraft:is_taiga",
+      "category": "monster",
+      "spawners": [
+        {
+          "type": "orespawn:cryolophosaurus",
+          "weight": 2,
+          "minCount": 1,
+          "maxCount": 2
+        }
+      ],
+      "when": "extra_spawns"
+    },
+    {
+      "biomes": [
+        "minecraft:swamp",
+        "minecraft:mangrove_swamp"
+      ],
+      "category": "monster",
+      "spawners": [
+        {
+          "type": "orespawn:nastysaurus",
+          "weight": 1,
+          "minCount": 1,
+          "maxCount": 1
+        }
+      ],
+      "when": "extra_spawns"
+    },
+    {
+      "biomes": "#minecraft:is_jungle",
+      "category": "monster",
+      "spawners": [
+        {
+          "type": "orespawn:nastysaurus",
+          "weight": 1,
+          "minCount": 1,
+          "maxCount": 1
+        },
+        {
+          "type": "orespawn:pointysaurus",
+          "weight": 1,
+          "minCount": 1,
+          "maxCount": 1
+        }
+      ],
+      "when": "extra_spawns"
+    }
+  ]
+}

@@ -2,7 +2,7 @@ package danger.orespawn.gametest;
 
 import danger.orespawn.ModEntities;
 import danger.orespawn.OreSpawnMod;
-import danger.orespawn.entity.FrogSpawnPlacement;
+import danger.orespawn.entity.ListedSpawnPlacement;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.Registries;
@@ -29,8 +29,8 @@ public class FrogSpawnPlacementTests {
 
     @GameTest(template = "empty")
     public static void s170a_frog_placement_type_is_the_list_aware_one(GameTestHelper helper) {
-        helper.assertTrue(SpawnPlacements.getPlacementType(ModEntities.FROG.get()) == FrogSpawnPlacement.INSTANCE,
-                "the Frog's spawn placement type is not FrogSpawnPlacement (ENT-S-170)");
+        helper.assertTrue(SpawnPlacements.getPlacementType(ModEntities.FROG.get()) == ListedSpawnPlacement.INSTANCE,
+                "the Frog's spawn placement type is not ListedSpawnPlacement (ENT-S-170)");
         helper.succeed();
     }
 
@@ -38,7 +38,7 @@ public class FrogSpawnPlacementTests {
      * The lists as the port ships them: Utopia, the Village and the Crystal plains carry the Frog as a water creature
      * and nowhere else (orig BiomeGenUtopianPlains.java:135; the Crystal w1 3-5); the river and the swamp carry it in
      * both their water and their ambient lists, the jungle in its ambient list only (orig OreSpawnMain.java:4963-4967,
-     * the companion modifiers through orespawn:add_spawns_in_category).
+     * the spawn table, original_spawns.json, keeping each entry in its list).
      */
     @GameTest(template = "empty")
     public static void s170b_biome_lists_carry_the_frog_as_the_original_did(GameTestHelper helper) {
@@ -48,23 +48,23 @@ public class FrogSpawnPlacementTests {
             Biome biome = biomes.get(ResourceLocation.parse(id));
             helper.assertTrue(biome != null, id + " is not registered");
             MobSpawnSettings settings = biome.getMobSettings();
-            helper.assertTrue(FrogSpawnPlacement.listedAsWater(settings, frog),
+            helper.assertTrue(ListedSpawnPlacement.listedAsWater(settings, frog),
                     id + " should carry the Frog in its water list");
-            helper.assertTrue(!FrogSpawnPlacement.listedOnGround(settings, frog),
+            helper.assertTrue(!ListedSpawnPlacement.listedOnGround(settings, frog),
                     id + " should carry the Frog in no ground list");
         }
         for (String id : new String[] {"river", "swamp"}) {
             Biome biome = biomes.get(ResourceLocation.withDefaultNamespace(id));
             helper.assertTrue(biome != null, "minecraft:" + id + " is not registered");
-            helper.assertTrue(FrogSpawnPlacement.listedAsWater(biome.getMobSettings(), frog),
+            helper.assertTrue(ListedSpawnPlacement.listedAsWater(biome.getMobSettings(), frog),
                     "minecraft:" + id + " should carry the Frog in its water list (orig OreSpawnMain.java:4963 / :4966)");
-            helper.assertTrue(FrogSpawnPlacement.listedOnGround(biome.getMobSettings(), frog),
+            helper.assertTrue(ListedSpawnPlacement.listedOnGround(biome.getMobSettings(), frog),
                     "minecraft:" + id + " should carry the Frog in its ambient list (orig :4964 / :4967)");
         }
         Biome jungle = biomes.get(ResourceLocation.withDefaultNamespace("jungle"));
         helper.assertTrue(jungle != null, "minecraft:jungle is not registered");
-        helper.assertTrue(FrogSpawnPlacement.listedOnGround(jungle.getMobSettings(), frog)
-                        && !FrogSpawnPlacement.listedAsWater(jungle.getMobSettings(), frog),
+        helper.assertTrue(ListedSpawnPlacement.listedOnGround(jungle.getMobSettings(), frog)
+                        && !ListedSpawnPlacement.listedAsWater(jungle.getMobSettings(), frog),
                 "minecraft:jungle should carry the Frog in its ambient list only (orig :4965)");
         helper.succeed();
     }
@@ -88,20 +88,20 @@ public class FrogSpawnPlacementTests {
         helper.setBlock(new BlockPos(7, 2, 7), Blocks.WATER);
         BlockPos shallow = helper.absolutePos(new BlockPos(7, 2, 7));
 
-        helper.assertTrue(!FrogSpawnPlacement.isSpawnPositionOk(level, ground, frog, true, false),
+        helper.assertTrue(!ListedSpawnPlacement.isSpawnPositionOk(level, ground, frog, true, false),
                 "a water-listed Frog took dry ground");
-        helper.assertTrue(!FrogSpawnPlacement.isSpawnPositionOk(level, shallow, frog, true, false),
+        helper.assertTrue(!ListedSpawnPlacement.isSpawnPositionOk(level, shallow, frog, true, false),
                 "a water-listed Frog took one-deep water (orig: liquid at the cell AND below it)");
-        helper.assertTrue(FrogSpawnPlacement.isSpawnPositionOk(level, water, frog, true, false),
+        helper.assertTrue(ListedSpawnPlacement.isSpawnPositionOk(level, water, frog, true, false),
                 "a water-listed Frog refused two-deep water");
-        helper.assertTrue(FrogSpawnPlacement.isSpawnPositionOk(level, ground, frog, false, true),
+        helper.assertTrue(ListedSpawnPlacement.isSpawnPositionOk(level, ground, frog, false, true),
                 "a ground-listed Frog refused dry ground");
-        helper.assertTrue(!FrogSpawnPlacement.isSpawnPositionOk(level, water, frog, false, true),
+        helper.assertTrue(!ListedSpawnPlacement.isSpawnPositionOk(level, water, frog, false, true),
                 "a ground-listed Frog took water");
-        helper.assertTrue(FrogSpawnPlacement.isSpawnPositionOk(level, ground, frog, true, true)
-                        && FrogSpawnPlacement.isSpawnPositionOk(level, water, frog, true, true),
+        helper.assertTrue(ListedSpawnPlacement.isSpawnPositionOk(level, ground, frog, true, true)
+                        && ListedSpawnPlacement.isSpawnPositionOk(level, water, frog, true, true),
                 "a Frog listed in both refused one of its two placements");
-        helper.assertTrue(FrogSpawnPlacement.isSpawnPositionOk(level, ground, frog, false, false),
+        helper.assertTrue(ListedSpawnPlacement.isSpawnPositionOk(level, ground, frog, false, false),
                 "an unlisted Frog lost the ground rule");
         helper.succeed();
     }
