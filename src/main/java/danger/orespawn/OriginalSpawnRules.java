@@ -22,7 +22,8 @@ import net.neoforged.neoforge.event.entity.living.MobSpawnEvent;
  *
  * <p>1.7.10's chunk-generation spawner (SpawnerAnimals.performWorldGenSpawning) asked no rule at all, only a solid block
  * below (the placement, still asked): an OreSpawn species spawned with the chunk passes both checks here, as the
- * original's did. Spawner blocks keep the game's checks.
+ * original's did (not the optional wiki cows, which the original never had). Spawner blocks keep the game's checks, and
+ * a result another mod has already set stands.
  */
 @EventBusSubscriber(modid = OreSpawnMod.MOD_ID)
 public final class OriginalSpawnRules {
@@ -33,13 +34,16 @@ public final class OriginalSpawnRules {
      */
     private static final Set<String> INHERITED = Set.of("red_cow", "gold_cow", "enchanted_apple_cow", "crystal_cow",
             "hydrolisc", "girlfriend", "boyfriend", "spider_driver", "apple_cow", "golden_apple_cow");
+    /** The optional wiki cows: no original of theirs spawned with a chunk, so a chunk's spawning keeps the game's checks. */
+    private static final Set<String> NOT_ORIGINAL = Set.of("apple_cow", "golden_apple_cow");
 
     private OriginalSpawnRules() {
     }
 
     @SubscribeEvent
     public static void onPlacementCheck(MobSpawnEvent.SpawnPlacementCheck event) {
-        if (event.getSpawnType() == MobSpawnType.CHUNK_GENERATION && isOreSpawn(event.getEntityType())) {
+        if (event.getResult() != MobSpawnEvent.SpawnPlacementCheck.Result.DEFAULT) return;
+        if (event.getSpawnType() == MobSpawnType.CHUNK_GENERATION && chunkSpawnReadsNoRule(event.getEntityType())) {
             event.setResult(MobSpawnEvent.SpawnPlacementCheck.Result.SUCCEED);
         }
     }
@@ -47,8 +51,10 @@ public final class OriginalSpawnRules {
     @SubscribeEvent
     public static void onPositionCheck(MobSpawnEvent.PositionCheck event) {
         Mob mob = event.getEntity();
+        if (event.getResult() != MobSpawnEvent.PositionCheck.Result.DEFAULT) return;
         if (event.getSpawner() != null || !isOreSpawn(mob.getType())) return;
         if (event.getSpawnType() == MobSpawnType.CHUNK_GENERATION) {
+            if (!chunkSpawnReadsNoRule(mob.getType())) return;
             event.setResult(MobSpawnEvent.PositionCheck.Result.SUCCEED);
         } else if (event.getSpawnType() == MobSpawnType.NATURAL && ownRule(mob.getType())) {
             event.setResult(mob.checkSpawnRules(event.getLevel(), MobSpawnType.NATURAL)
@@ -59,6 +65,11 @@ public final class OriginalSpawnRules {
     /** Whether the species' own transcribed rule is its whole natural-spawn rule (an OreSpawn species, not inherited). */
     public static boolean ownRule(EntityType<?> type) {
         return isOreSpawn(type) && !INHERITED.contains(BuiltInRegistries.ENTITY_TYPE.getKey(type).getPath());
+    }
+
+    /** Whether a chunk's spawning of the species reads no rule: an OreSpawn species the original had. */
+    public static boolean chunkSpawnReadsNoRule(EntityType<?> type) {
+        return isOreSpawn(type) && !NOT_ORIGINAL.contains(BuiltInRegistries.ENTITY_TYPE.getKey(type).getPath());
     }
 
     private static boolean isOreSpawn(EntityType<?> type) {

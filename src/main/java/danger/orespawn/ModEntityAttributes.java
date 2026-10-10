@@ -323,9 +323,8 @@ public class ModEntityAttributes {
         // orig Island.java — no func_70601_bi override; 1.7.10 EntityAnimal default, same mapping as the IslandToo sibling
         event.register(ModEntities.ISLAND.get(), SpawnPlacementTypes.ON_GROUND,
                 Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Animal::checkAnimalSpawnRules, RegisterSpawnPlacementsEvent.Operation.AND);
-        // leonopteryx — same class + rules as leon (orig Leon.java:452-478); supersedes the old Animal-predicate line in the "Flying mobs" block (removed via sharedEdits)
-        event.register(ModEntities.LEONOPTERYX.get(), SpawnPlacementTypes.NO_RESTRICTIONS,
-                Heightmap.Types.MOTION_BLOCKING, Mob::checkMobSpawnRules, RegisterSpawnPlacementsEvent.Operation.AND);
+        // leonopteryx — the Leon's class under its save-compat id (TF-030), registered as the Leon is (orig Leon.java:452-478)
+        listed(event, ModEntities.LEONOPTERYX.get(), ModEntityAttributes::originalRuleAlone);
     }
 
     /** A listed species: placed by the list the biome carries it in, its predicate as given. */

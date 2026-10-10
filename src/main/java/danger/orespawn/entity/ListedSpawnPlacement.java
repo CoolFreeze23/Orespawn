@@ -24,10 +24,12 @@ import net.minecraft.world.level.biome.MobSpawnSettings;
  * {@link SpawnPlacementType} per type: with {@link SpawnPlacementTypes#ON_GROUND} for the Frog the water-creature
  * pass, which runs every tick, put Frogs on land all over Utopia (GitHub issue #2).
  *
- * <p>This placement type reads the biome spawner lists at the position: the water rule applies where the species is
- * listed as a water creature, the ground rule where an ambient, creature or monster list carries it, either where both
- * do; a biome that lists it in neither (a spawner block, a spawn egg, a datapack with its own lists) keeps the ground
- * rule. The entity's own rule runs after this ({@code OriginalSpawnRules}).
+ * <p>Natural spawning knows the list it drew the species from, and places it by that list alone
+ * ({@link #isSpawnPositionOk(LevelReader, BlockPos, EntityType, MobCategory)}, NaturalSpawnerMixin). Any other caller
+ * reads the biome spawner lists at the position: the water rule applies where the species is listed as a water
+ * creature, the ground rule where an ambient, creature or monster list carries it, either where both do; a biome that
+ * lists it in neither (a spawner block, a spawn egg, a datapack with its own lists) keeps the ground rule. The entity's
+ * own rule runs after this ({@code OriginalSpawnRules}).
  */
 public final class ListedSpawnPlacement implements SpawnPlacementType {
     public static final ListedSpawnPlacement INSTANCE = new ListedSpawnPlacement();
@@ -57,13 +59,25 @@ public final class ListedSpawnPlacement implements SpawnPlacementType {
     }
 
     /**
+     * The rule of the list a natural spawn drew the species from (WGEN-086; the natural spawner's call, through
+     * NaturalSpawnerMixin): the water rule for a water list, the ground rule for any other, as 1.7.10 placed an entry by
+     * its list's creature type, whatever other lists of the biome carry the species.
+     */
+    public static boolean isSpawnPositionOk(LevelReader level, BlockPos pos, EntityType<?> type, MobCategory drawnFrom) {
+        return drawnFrom == MobCategory.WATER_CREATURE || drawnFrom == MobCategory.WATER_AMBIENT
+                ? isTwoDeepLiquid(level, pos)
+                : SpawnPlacementTypes.ON_GROUND.isSpawnPositionOk(level, pos, type);
+    }
+
+    /**
      * orig SpawnerAnimals.canCreatureTypeSpawnAtLocation, the water branch: liquid at the cell and below it, no normal
-     * cube above ({@code isRedstoneConductor} is the 1.21.1 reading of 1.7.10 {@code Block.isNormalCube}).
+     * cube above ({@code isRedstoneConductor} is the 1.21.1 reading of 1.7.10 {@code Block.isNormalCube}). A cell is
+     * liquid when it holds a fluid, so the kelp, seagrass and waterlogged blocks of 1.21's waters count as their water.
      */
     public static boolean isTwoDeepLiquid(LevelReader level, BlockPos pos) {
         BlockPos above = pos.above();
-        return level.getBlockState(pos).liquid()
-                && level.getBlockState(pos.below()).liquid()
+        return !level.getFluidState(pos).isEmpty()
+                && !level.getFluidState(pos.below()).isEmpty()
                 && !level.getBlockState(above).isRedstoneConductor(level, above);
     }
 

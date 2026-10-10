@@ -42,10 +42,10 @@ import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 
 /**
- * WGEN-086: the overworld's and the Nether's spawn lists as the original's (original_spawns.json, written by
- * tools/ref1710/gen_spawn_tables.py from the original's addSpawn calls and checked there against the 1.7.10 reference
- * server's lists), the port's own overworld spawns behind {@code [modern] extraSpawns} (extra_spawns.json), every
- * listed species placed by its list and judged by its own 1.7.10 rule alone, and Mining's and the Islands' lists.
+ * WGEN-086: the overworld's and the Nether's spawn lists as the original's (original_spawns.json: the original's
+ * addSpawn calls replayed as Forge 10.13.4.1614 ran them, its default lists the same as a 1.7.10 server's), the port's
+ * own overworld spawns behind {@code [modern] extraSpawns} (extra_spawns.json), every listed species placed by the
+ * list it was drawn from and judged by its own 1.7.10 rule alone, and Mining's and the Islands' lists.
  */
 @GameTestHolder(OreSpawnMod.MOD_ID)
 @PrefixGameTestTemplate(false)
@@ -96,7 +96,8 @@ public class SpawnTableTests {
 
     /**
      * Every overworld and Nether biome lists exactly the OreSpawn entries original_spawns.json gives it for the day the
-     * server started (in their named lists, a repeated entry twice), less the mobs the config disables; with
+     * server started (the day read once as it started; in their named lists, a repeated entry twice), less the mobs
+     * the config disables; with
      * {@code [modern] extraSpawns} off by default, none of extra_spawns.json's beyond them. The table holds the original's 55
      * species, the dates' entries apart, and no 1.21 biome without an ancestor (cherry grove, the caves) lists any.
      */
@@ -110,6 +111,7 @@ public class SpawnTableTests {
         long dated = original.entries().stream().filter(e -> e.when() != ModBiomeModifiers.SpawnTable.When.ALWAYS).count();
         helper.assertTrue(dated > 0, "original_spawns.json holds no dated entry");
         Registry<Biome> biomes = helper.getLevel().registryAccess().registryOrThrow(Registries.BIOME);
+        ModBiomeModifiers.SpawnTable.Today day = ModBiomeModifiers.SpawnTable.today();
         List<String> wrong = new ArrayList<>();
         int checked = 0;
         for (Map.Entry<net.minecraft.resources.ResourceKey<Biome>, Biome> b : biomes.entrySet()) {
@@ -118,7 +120,7 @@ public class SpawnTableTests {
             for (MobCategory category : MobCategory.values()) {
                 Map<String, Integer> want = new TreeMap<>();
                 for (ModBiomeModifiers.SpawnTable.Entry e : original.entries()) {
-                    if (e.category() != category || !e.biomes().contains(holder) || !e.when().holds()) continue;
+                    if (e.category() != category || !e.biomes().contains(holder) || !e.when().holdsOn(day)) continue;
                     for (MobSpawnSettings.SpawnerData d : e.spawners()) {
                         if (ModSpawnControl.naturalSpawnEnabled(d.type)) want.merge(row(d), 1, Integer::sum);
                     }
@@ -204,10 +206,21 @@ public class SpawnTableTests {
         helper.assertTrue(!mantis.checkSpawnRules(level, MobSpawnType.NATURAL)
                         && !EventHooks.checkSpawnPosition(mantis, level, MobSpawnType.NATURAL),
                 "the Mantis in the pool, its air box full of water, passed its own rule");
-        helper.assertTrue(EventHooks.checkSpawnPosition(mantis, level, MobSpawnType.CHUNK_GENERATION)
-                        && SpawnPlacements.checkSpawnRules(ModEntities.RED_COW.get(), level, MobSpawnType.CHUNK_GENERATION,
-                        pool, level.getRandom()),
-                "a chunk's spawning read a rule");
+        helper.assertTrue(EventHooks.checkSpawnPosition(mantis, level, MobSpawnType.CHUNK_GENERATION),
+                "a chunk's spawning read the Mantis's rule");
+        // the Girlfriend's predicate is EntityAnimal's rule, which refuses bare stone: only the handler lets her
+        // spawn with a chunk there, as 1.7.10's chunk spawner asked no rule; the optional wiki cow keeps the game's
+        BlockPos stone = helper.absolutePos(new BlockPos(5, 1, 5));
+        level.setBlockAndUpdate(stone, Blocks.STONE.defaultBlockState());
+        level.setBlockAndUpdate(stone.above(), Blocks.AIR.defaultBlockState());
+        helper.assertTrue(!SpawnPlacements.checkSpawnRules(ModEntities.GIRLFRIEND.get(), level, MobSpawnType.NATURAL,
+                        stone.above(), level.getRandom())
+                        && SpawnPlacements.checkSpawnRules(ModEntities.GIRLFRIEND.get(), level, MobSpawnType.CHUNK_GENERATION,
+                        stone.above(), level.getRandom()),
+                "the Girlfriend on stone: refused while the world runs, passed with the chunk");
+        helper.assertTrue(!SpawnPlacements.checkSpawnRules(ModEntities.APPLE_COW.get(), level, MobSpawnType.CHUNK_GENERATION,
+                        stone.above(), level.getRandom()),
+                "the optional wiki cow spawned on stone with the chunk");
         helper.succeed();
     }
 
@@ -238,19 +251,59 @@ public class SpawnTableTests {
         Registry<Biome> biomes = helper.getLevel().registryAccess().registryOrThrow(Registries.BIOME);
         Biome mining = biomes.get(ResourceLocation.parse("orespawn:mining_biome"));
         Biome islands = biomes.get(ResourceLocation.parse("orespawn:island_biome"));
-        List<String> miningAmbient = enabled("minecraft:bat 10x8-8", "orespawn:velocity_raptor 1x2-4",
+        List<String> miningAmbient = new ArrayList<>(enabled("minecraft:bat 10x8-8", "orespawn:velocity_raptor 1x2-4",
                 "orespawn:dragonfly 2x1-3", "orespawn:camarasaurus 1x2-4", "orespawn:baryonyx 2x4-8",
                 "orespawn:butterfly 5x1-2", "orespawn:luna_moth 8x1-2", "orespawn:cassowary 5x1-2",
                 "orespawn:cockateil 10x1-2", "orespawn:mothra 2x1-1", "orespawn:ender_knight 4x2-4",
-                "orespawn:ender_reaper 2x1-2");
+                "orespawn:ender_reaper 2x1-2"));
         List<String> islandsAmbient = enabled("orespawn:butterfly 5x2-6", "orespawn:cockateil 4x1-2",
                 "orespawn:luna_moth 5x2-4", "orespawn:firefly 10x4-8", "orespawn:dragon 1x1-2", "orespawn:stinky 2x1-2",
                 "orespawn:cliff_racer 20x3-6", "orespawn:cloud_shark 1x1-1", "orespawn:gold_fish 5x2-4");
+        // on 31 October the Halloween block's ghosts too, as Mining's biome was Extreme Hills (the table's dated entries)
+        Holder<Biome> miningHolder = biomes.wrapAsHolder(mining);
+        ModBiomeModifiers.SpawnTable.Today day = ModBiomeModifiers.SpawnTable.today();
+        for (ModBiomeModifiers.SpawnTable.Entry e : table(helper, "original_spawns.json").entries()) {
+            if (e.category() != MobCategory.AMBIENT || !e.biomes().contains(miningHolder) || !e.when().holdsOn(day)) continue;
+            for (MobSpawnSettings.SpawnerData d : e.spawners()) {
+                if (ModSpawnControl.naturalSpawnEnabled(d.type)) miningAmbient.add(row(d));
+            }
+        }
         helper.assertTrue(list(mining, MobCategory.AMBIENT).equals(miningAmbient),
-                "Mining's ambient list " + list(mining, MobCategory.AMBIENT));
+                "Mining's ambient list " + list(mining, MobCategory.AMBIENT) + ", want " + miningAmbient);
         helper.assertTrue(list(islands, MobCategory.AMBIENT).equals(islandsAmbient)
                         && list(islands, MobCategory.CREATURE).isEmpty(),
                 "the Islands' lists " + list(islands, MobCategory.AMBIENT) + " / " + list(islands, MobCategory.CREATURE));
+        helper.succeed();
+    }
+
+    /**
+     * A natural spawn is placed by the list it was drawn from (NaturalSpawnerMixin): the Frog, which the river lists in
+     * its water and its ambient list, drawn from the water list only in two-deep water and from the ambient list only
+     * on the ground, as 1.7.10 placed an entry by its list's creature type; and a cell of kelp over water is water.
+     */
+    @GameTest(template = "empty")
+    public static void wgen086e_a_draw_is_placed_by_its_list(GameTestHelper helper) {
+        ServerLevel level = helper.getLevel();
+        BlockPos ground = helper.absolutePos(new BlockPos(1, 1, 1));
+        level.setBlockAndUpdate(ground.below(), Blocks.GRASS_BLOCK.defaultBlockState());
+        level.setBlockAndUpdate(ground, Blocks.AIR.defaultBlockState());
+        level.setBlockAndUpdate(ground.above(), Blocks.AIR.defaultBlockState());
+        BlockPos water = helper.absolutePos(new BlockPos(3, 2, 3));
+        level.setBlockAndUpdate(water.below(), Blocks.WATER.defaultBlockState());
+        level.setBlockAndUpdate(water, Blocks.WATER.defaultBlockState());
+        level.setBlockAndUpdate(water.above(), Blocks.AIR.defaultBlockState());
+        BlockPos kelp = helper.absolutePos(new BlockPos(5, 2, 3));
+        level.setBlockAndUpdate(kelp.below(), Blocks.WATER.defaultBlockState());
+        level.setBlockAndUpdate(kelp, Blocks.KELP_PLANT.defaultBlockState());
+        level.setBlockAndUpdate(kelp.above(), Blocks.WATER.defaultBlockState());
+        EntityType<?> frog = ModEntities.FROG.get();
+        helper.assertTrue(ListedSpawnPlacement.isSpawnPositionOk(level, water, frog, MobCategory.WATER_CREATURE)
+                        && !ListedSpawnPlacement.isSpawnPositionOk(level, ground, frog, MobCategory.WATER_CREATURE),
+                "a water draw: two-deep water only");
+        helper.assertTrue(ListedSpawnPlacement.isSpawnPositionOk(level, ground, frog, MobCategory.AMBIENT)
+                        && !ListedSpawnPlacement.isSpawnPositionOk(level, water, frog, MobCategory.AMBIENT),
+                "an ambient draw: the ground only");
+        helper.assertTrue(ListedSpawnPlacement.isTwoDeepLiquid(level, kelp), "kelp over water is not water");
         helper.succeed();
     }
 }

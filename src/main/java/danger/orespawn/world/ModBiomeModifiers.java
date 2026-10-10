@@ -10,6 +10,7 @@ import danger.orespawn.util.SeasonalDates;
 import java.util.List;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderSet;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.level.biome.Biome;
@@ -20,6 +21,7 @@ import net.neoforged.neoforge.common.world.ModifiableBiomeInfo;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.neoforged.neoforge.registries.NeoForgeRegistries;
+import net.neoforged.neoforge.server.ServerLifecycleHooks;
 
 /**
  * The mod's own biome modifier serializers.
@@ -97,13 +99,34 @@ public final class ModBiomeModifiers {
     }
 
     /**
-     * The overworld's and the Nether's spawn lists as the original's (generated from its addSpawn calls by
-     * tools/ref1710/gen_spawn_tables.py, original_spawns.json), and the port's own overworld spawns behind
-     * {@code [modern] extraSpawns} (extra_spawns.json). Every entry goes into its named list, whatever its entity's own
-     * category, as the original listed it. The conditions are read as the server starts, as the original read its
-     * calendar at load (OreSpawnMain.java:4518-4571).
+     * The overworld's and the Nether's spawn lists as the original's (original_spawns.json: its EntityRegistry.addSpawn
+     * calls, OreSpawnMain.java:4500-5000, replayed as Forge 10.13.4.1614 ran them; and the dated blocks' additions to
+     * Mining, whose biome was Extreme Hills), and the port's own overworld spawns behind {@code [modern] extraSpawns}
+     * (extra_spawns.json). Every entry goes into its named list, whatever its entity's own category, as the original
+     * listed it. The day's conditions are read once as the server starts ({@link #today}), as the original read its
+     * calendar once at load (OreSpawnMain.java:4518-4571).
      */
     public record SpawnTable(List<Entry> entries) implements BiomeModifier {
+        /** The conditions of the day a server started: the dates' and the {@code extraSpawns} option's. */
+        public record Today(boolean halloween, boolean easter, boolean extraSpawns) {
+        }
+
+        private static MinecraftServer todayServer;
+        private static Today today;
+
+        /**
+         * The conditions of the running server's start, read on the first call for it (the first biome it modifies), so
+         * every list of one start takes the same day even across midnight.
+         */
+        public static synchronized Today today() {
+            MinecraftServer server = ServerLifecycleHooks.getCurrentServer();
+            if (today == null || server != todayServer) {
+                todayServer = server;
+                today = new Today(SeasonalDates.isHalloween(), SeasonalDates.isEaster(), OreSpawnConfig.extraSpawns());
+            }
+            return today;
+        }
+
         /** One entry: its biomes, its list, its spawners and when it applies. */
         public record Entry(HolderSet<Biome> biomes, MobCategory category, List<MobSpawnSettings.SpawnerData> spawners,
                             When when) {
@@ -135,22 +158,29 @@ public final class ModBiomeModifiers {
                 return this.name;
             }
 
-            public boolean holds() {
+            /** Whether the entry applies on the given day. */
+            public boolean holdsOn(Today day) {
                 return switch (this) {
                     case ALWAYS -> true;
-                    case ORDINARY -> !SeasonalDates.isHalloween() && !SeasonalDates.isEaster();
-                    case HALLOWEEN -> SeasonalDates.isHalloween();
-                    case EASTER -> SeasonalDates.isEaster();
-                    case EXTRA_SPAWNS -> OreSpawnConfig.extraSpawns();
+                    case ORDINARY -> !day.halloween() && !day.easter();
+                    case HALLOWEEN -> day.halloween();
+                    case EASTER -> day.easter();
+                    case EXTRA_SPAWNS -> day.extraSpawns();
                 };
+            }
+
+            /** Whether the entry applies now (the clock and the config read at this call). */
+            public boolean holds() {
+                return holdsOn(new Today(SeasonalDates.isHalloween(), SeasonalDates.isEaster(), OreSpawnConfig.extraSpawns()));
             }
         }
 
         @Override
         public void modify(Holder<Biome> biome, Phase phase, ModifiableBiomeInfo.BiomeInfo.Builder builder) {
             if (phase != Phase.ADD) return;
+            Today day = today();
             for (Entry entry : this.entries) {
-                if (!entry.biomes().contains(biome) || !entry.when().holds()) continue;
+                if (!entry.biomes().contains(biome) || !entry.when().holdsOn(day)) continue;
                 for (MobSpawnSettings.SpawnerData spawner : entry.spawners()) {
                     builder.getMobSpawnSettings().addSpawn(entry.category(), spawner);
                 }
