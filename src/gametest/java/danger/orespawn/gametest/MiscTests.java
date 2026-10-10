@@ -967,6 +967,44 @@ public class MiscTests {
         helper.succeed();
     }
 
+    /**
+     * BUG-048: a block model built on vanilla's see-through parents (leaves, cross, crop, ...) is drawn solid in 1.21
+     * unless it names its render type (vanilla's own blocks get theirs from ItemBlockRenderTypes): the fruit trees'
+     * leaves were opaque cubes, and the bug plants showed their texture's empty pixels. Every OreSpawn block's model,
+     * through OreSpawn's own parents, that reaches one of them names a render type.
+     */
+    @GameTest(template = "empty")
+    public static void bug048_see_through_block_models_name_their_render_type(GameTestHelper helper) {
+        java.util.Set<String> seeThrough = java.util.Set.of("minecraft:block/leaves", "minecraft:block/cross",
+                "minecraft:block/tinted_cross", "minecraft:block/crop", "minecraft:block/flower_pot_cross",
+                "minecraft:block/stem_growth0", "minecraft:block/rail_flat");
+        int checked = 0;
+        java.util.List<String> missing = new java.util.ArrayList<>();
+        for (net.minecraft.resources.ResourceLocation id : net.minecraft.core.registries.BuiltInRegistries.BLOCK.keySet()) {
+            if (!id.getNamespace().equals("orespawn")) continue;
+            String name = id.getPath();
+            boolean named = false;
+            String reached = null;
+            for (int depth = 0; depth < 8 && name != null; depth++) {
+                if (MiscTests.class.getResource("/assets/orespawn/models/block/" + name + ".json") == null) break;
+                JsonObject model = bundledJson("/assets/orespawn/models/block/" + name + ".json");
+                if (model.has("render_type")) named = true;
+                String parent = model.has("parent") ? model.get("parent").getAsString() : "";
+                if (seeThrough.contains(parent)) {
+                    reached = parent;
+                    break;
+                }
+                name = parent.startsWith("orespawn:block/") ? parent.substring("orespawn:block/".length()) : null;
+            }
+            if (reached == null) continue;
+            checked++;
+            if (!named) missing.add(id.getPath() + " (" + reached + ")");
+        }
+        helper.assertTrue(checked >= 9, "only " + checked + " see-through block models found");
+        helper.assertTrue(missing.isEmpty(), "drawn solid, no render type: " + missing);
+        helper.succeed();
+    }
+
     private static JsonObject bundledJson(String path) {
         try (InputStream in = MiscTests.class.getResourceAsStream(path)) {
             if (in == null) throw new AssertionError("no " + path);
