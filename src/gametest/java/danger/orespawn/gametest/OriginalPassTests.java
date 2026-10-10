@@ -593,6 +593,133 @@ public class OriginalPassTests {
         helper.succeed();
     }
 
+    private static Object islandCall(Object island, String method) {
+        try {
+            java.lang.reflect.Method m = island.getClass().getDeclaredMethod(method);
+            m.setAccessible(true);
+            return m.invoke(island);
+        } catch (ReflectiveOperationException e) {
+            throw new IllegalStateException(method, e);
+        }
+    }
+
+    private static void islandField(Object island, String name, Object value) {
+        try {
+            java.lang.reflect.Field f = island.getClass().getDeclaredField(name);
+            f.setAccessible(true);
+            f.set(island, value);
+        } catch (ReflectiveOperationException e) {
+            throw new IllegalStateException(name, e);
+        }
+    }
+
+    /**
+     * WGEN-119: the Island Too as the original's (IslandToo.java): a stepped slab of stone (the island's ore through it),
+     * grass on top; a drift a block east moves it, its west face cleared and its east face built, the entity a block
+     * on; and it never despawns. Made at a fixed small size (one wide, one deep), never added to the level, so no random
+     * draw sizes it and nothing of it ticks.
+     */
+    @GameTest(template = "empty")
+    public static void wgen119a_the_island_too_drifts_with_its_blocks(GameTestHelper helper) {
+        ServerLevel level = helper.getLevel();
+        BlockPos c = helper.absolutePos(new BlockPos(1, 3, 1));
+        for (int x = -4; x <= 4; x++) for (int y = 0; y <= 3; y++) for (int z = -3; z <= 3; z++) {
+            level.setBlock(c.offset(x, y, z), Blocks.AIR.defaultBlockState(), 2);
+        }
+        danger.orespawn.entity.IslandToo isle = danger.orespawn.ModEntities.ISLAND_TOO.get().create(level);
+        isle.moveTo(c.getX() + 0.5, c.getY(), c.getZ() + 0.5, 0f, 0f);
+        islandField(isle, "length", 1);
+        islandField(isle, "width", 1);
+        islandField(isle, "depth", 1);
+        islandField(isle, "blocktype", 1);
+        islandField(isle, "myX", c.getX() + 0.5);
+        islandField(isle, "myY", (double) c.getY());
+        islandField(isle, "myZ", c.getZ() + 0.5);
+        islandCall(isle, "createIsland");
+        // layer 0: a 3 x 3 of stone or coal ore (the centre left air); layer 1 (the top): grass, or water, or the odd
+        // flower's block under it
+        for (int x = -1; x <= 1; x++) for (int z = -1; z <= 1; z++) {
+            net.minecraft.world.level.block.state.BlockState low = level.getBlockState(c.offset(x, 0, z));
+            boolean centre = x == 0 && z == 0;
+            helper.assertTrue(centre ? low.isAir() : low.is(Blocks.STONE) || low.is(Blocks.COAL_ORE)
+                            || !low.isAir(), "the slab's layer 0 at " + x + "," + z + " is " + low);
+            net.minecraft.world.level.block.state.BlockState top = level.getBlockState(c.offset(x, 1, z));
+            helper.assertTrue(top.is(Blocks.GRASS_BLOCK) || top.is(Blocks.WATER), "the top at " + x + "," + z + " is " + top);
+        }
+        // a drift east: speed a whole block, heading 2 (east)
+        islandField(isle, "dir", 2);
+        islandField(isle, "speed", 1.0f);
+        islandCall(isle, "updateIsland");
+        helper.assertTrue(isle.getX() == c.getX() + 1.5, "the Island Too at x " + isle.getX() + ", not a block east");
+        for (int z = -1; z <= 1; z++) {
+            helper.assertTrue(level.getBlockState(c.offset(-1, 1, z)).isAir(), "its west top face stays at z " + z);
+            net.minecraft.world.level.block.state.BlockState east = level.getBlockState(c.offset(2, 1, z));
+            helper.assertTrue(east.is(Blocks.GRASS_BLOCK) || east.is(Blocks.WATER), "its new east top face at z " + z + " is " + east);
+            helper.assertTrue(!level.getBlockState(c.offset(2, 0, z)).isAir(), "its new east face below at z " + z + " is air");
+        }
+        helper.assertTrue(!isle.removeWhenFarAway(1.0E6), "the Island Too may despawn");
+        for (int x = -4; x <= 4; x++) for (int y = 0; y <= 3; y++) for (int z = -3; z <= 3; z++) {
+            level.setBlock(c.offset(x, y, z), Blocks.AIR.defaultBlockState(), 2);
+        }
+        helper.succeed();
+    }
+
+    /**
+     * WGEN-119: the Island as the original's (Island.java): end stone and diamond ore under a top of mycelium (or the odd
+     * lava), mushrooms on it now and then; a drift moves it, its rings cleared and built again round its new place; and
+     * it never despawns. Radius 2, two deep, never added to the level.
+     */
+    @GameTest(template = "empty")
+    public static void wgen119b_the_island_drifts_with_its_blocks(GameTestHelper helper) {
+        ServerLevel level = helper.getLevel();
+        BlockPos c = helper.absolutePos(new BlockPos(1, 3, 1));
+        for (int x = -5; x <= 5; x++) for (int y = -1; y <= 3; y++) for (int z = -5; z <= 5; z++) {
+            level.setBlock(c.offset(x, y, z), Blocks.AIR.defaultBlockState(), 2);
+        }
+        danger.orespawn.entity.Island isle = danger.orespawn.ModEntities.ISLAND.get().create(level);
+        isle.moveTo(c.getX() + 0.5, c.getY(), c.getZ() + 0.5, 0f, 0f);
+        islandField(isle, "radius", 2);
+        islandField(isle, "depth", 2);
+        islandField(isle, "dir", 0.0f);
+        islandField(isle, "myX", c.getX() + 0.5);
+        islandField(isle, "myY", (double) c.getY());
+        islandField(isle, "myZ", c.getZ() + 0.5);
+        islandCall(isle, "createIsland");
+        // the top's cells (mycelium, or the odd lava) at Y+1, and what lies under the ring at Y; the cells' places
+        // follow the original's (int) casts, so they are found, not assumed
+        java.util.function.Supplier<List<BlockPos>> topCells = () -> {
+            List<BlockPos> out = new ArrayList<>();
+            for (int x = -5; x <= 5; x++) for (int z = -5; z <= 5; z++) {
+                net.minecraft.world.level.block.state.BlockState s = level.getBlockState(c.offset(x, 1, z));
+                if (s.is(Blocks.MYCELIUM) || s.is(Blocks.LAVA)) out.add(c.offset(x, 1, z));
+            }
+            return out;
+        };
+        List<BlockPos> before = topCells.get();
+        helper.assertTrue(before.size() >= 6, "the Island's top holds " + before.size() + " mycelium cells");
+        int under = 0;
+        for (int x = -5; x <= 5; x++) for (int z = -5; z <= 5; z++) {
+            net.minecraft.world.level.block.state.BlockState s = level.getBlockState(c.offset(x, 0, z));
+            if (s.is(Blocks.END_STONE) || s.is(Blocks.DIAMOND_ORE)) under++;
+            helper.assertTrue(!s.is(Blocks.SAND) && !s.is(Blocks.SANDSTONE), "the Island holds " + s);
+        }
+        helper.assertTrue(under >= 2, "under the top " + under + " end stone or diamond ore cells");
+        double meanBefore = before.stream().mapToInt(BlockPos::getX).average().orElse(0);
+        // heading 0 (east), a drift of a whole block
+        islandField(isle, "speed", 1.0f);
+        islandCall(isle, "updateIsland");
+        helper.assertTrue(isle.getX() == c.getX() + 1.5, "the Island at x " + isle.getX() + ", not a block east");
+        List<BlockPos> after = topCells.get();
+        double meanAfter = after.stream().mapToInt(BlockPos::getX).average().orElse(0);
+        helper.assertTrue(after.size() >= 6 && meanAfter - meanBefore > 0.5 && meanAfter - meanBefore < 1.5,
+                "the top moved from mean x " + meanBefore + " to " + meanAfter + " (" + after.size() + " cells)");
+        helper.assertTrue(!isle.removeWhenFarAway(1.0E6), "the Island may despawn");
+        for (int x = -5; x <= 5; x++) for (int y = -1; y <= 3; y++) for (int z = -5; z <= 5; z++) {
+            level.setBlock(c.offset(x, y, z), Blocks.AIR.defaultBlockState(), 2);
+        }
+        helper.succeed();
+    }
+
     /**
      * WGEN-117: Mining's and the Village's monster rooms take one draw from the placement's random whether or not the
      * room builds. From one seed, a site whose walls have one opening (the room builds) and a closed one (it does not)

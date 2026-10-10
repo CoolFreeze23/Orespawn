@@ -1,4 +1,19 @@
 {
   "type": "minecraft:entity",
-  "pools": []
+  "_comment": "orig IslandToo.java:440-442 — getDropItem the Island block (MyIslandBlock); vanilla EntityAnimal drop of nextInt(3) = 0-2 (+looting). WGEN-119.",
+  "pools": [
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "orespawn:island",
+          "functions": [
+            {"function": "minecraft:set_count", "count": {"type": "minecraft:uniform", "min": 0, "max": 2}},
+            {"function": "minecraft:enchanted_count_increase", "enchantment": "minecraft:looting", "count": {"type": "minecraft:uniform", "min": 0, "max": 1}}
+          ]
+        }
+      ]
+    }
+  ]
 }
