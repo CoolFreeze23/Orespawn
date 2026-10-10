@@ -234,11 +234,11 @@ wrong for you, please say so.
 
 ## Known limits of the new features (2.0.0-beta.14)
 
-- **Trees in the original's dimensions:** Utopia's huge, royal and fruit trees grow in the chunks the original grew them in for the same seed, most of them on the very same spot (seven trunks in ten, half the orchards); where the original's other plants stood in the way of a tree, it grows a little apart. The orchards grow about four fifths of the original's fruit trees, the cause not yet found. Mining has more trees than the original (41 against 25 in the 400 x 400 blocks round the spawn), since 1.21's trees grow in spots where 1.7.10's needed more room. *(WGEN-108, WGEN-102)*
+- **Trees in the original's dimensions:** Utopia's huge, royal and fruit trees grow in the chunks the original grew them in for the same seed, most of them on the very same spot (seven trunks in ten, half the orchards); where the original's other plants stood in the way of a tree, it grows a little apart. The orchards grow as many fruit trees as the original's (counted by their crowns over 161 x 161 chunks, 1.02 of its); the four fifths first given here counted trunks by a rule that missed some of the port's. Mining has more trees than the original (41 against 25 in the 400 x 400 blocks round the spawn), since 1.21's trees grow in spots where 1.7.10's needed more room. *(WGEN-108, WGEN-102)*
 - **The Village's water:** its 1.21 villages are about four times the original's and reshape the ground round them; lakes keep out of where their buildings and streets reach, so there is about half the original's water round them. *(WGEN-094)*
 - **The Squid Zooka's size:** it is as big as the original's, about six blocks long on the shoulder, and in first person its back reaches behind the view. *(ENT-S-197)*
 - **Plants in the original's dimensions:** the flowers, grass, mushrooms and reeds grow after the dimensions' structures and huge trees, where the original grew them first; a spring's or a fall's water runs only once the chunk is near a player, so fewer reeds find water beside them in fresh land. *(WGEN-109, WGEN-102)*
-- **Pumpkins and the maze's mushrooms:** Utopia grows about two and a half times the original's pumpkin patches, and Crystal's maze about one and a half times its mushrooms, the cause not yet found. *(WGEN-114)*
+- **Pumpkins and the maze's mushrooms:** they follow the original's rules and heights patch for patch, and their numbers vary from seed to seed on both sides; the two and a half and one and a half times first given here were one seed's draw (1007): at seeds 2026 and 4242 Utopia's pumpkins come to 0.97 and 1.14 times the original's, and at 2026 the maze's mushrooms to 0.84 times. *(WGEN-114)*
 
 ---
 
