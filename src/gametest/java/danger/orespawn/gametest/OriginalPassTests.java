@@ -344,27 +344,36 @@ public class OriginalPassTests {
         // WorldProviderOreSpawn.java:54 and 3.java:34; Mining's, the Islands', Crystal's and Chaos's 0.8 and 0.01,
         // 2.java:29, 4.java:33, 5.java:34 and 6.java:33) and none sets a colour: the overworld's fog, vanilla's water,
         // getSkyColorByTemp through AWT's HSB rounding and the colormaps at the climate. Chaos's red is modern.chaosRed's,
-        // off by default.
+        // on by default since beta.15 (MOD-045): with it on, Chaos alone takes beta.13's red on the original's climate.
         Object[][] want = {{"utopia_plains", 0.7F, 0.5F, 0x7AA6FF}, {"village_biome", 0.7F, 0.5F, 0x7AA6FF},
                 {"mining_biome", 0.8F, 0.01F, 0x79A7FF}, {"island_biome", 0.8F, 0.01F, 0x79A7FF},
                 {"crystal_plains", 0.8F, 0.01F, 0x79A7FF}, {"chaos_biome", 0.8F, 0.01F, 0x79A7FF}};
-        helper.assertFalse(danger.orespawn.OreSpawnConfig.chaosRed(), "modern.chaosRed is on by default");
+        // the key's default; the colours below follow the setting the server read (a config file an earlier beta wrote
+        // keeps chaosRed = false, as the game-test server's own may)
+        helper.assertTrue(danger.orespawn.OreSpawnConfig.MODERN_CHAOS_RED.getDefault(), "modern.chaosRed is off by default");
         for (Object[] w : want) {
             String name = (String) w[0];
             Biome biome = biomes.get(ResourceKey.create(Registries.BIOME, rl(name)));
             helper.assertTrue(biome != null, "no " + name);
             BiomeSpecialEffects e = biome.getSpecialEffects();
+            boolean red = name.equals("chaos_biome") && danger.orespawn.OreSpawnConfig.chaosRed();
+            boolean colours = red
+                    ? e.getGrassColorOverride().equals(java.util.Optional.of(0x509D00))
+                            && e.getFoliageColorOverride().equals(java.util.Optional.of(0x509D00))
+                            && e.getSkyColor() == 0x660000 && e.getFogColor() == 0x800000
+                            && e.getWaterColor() == 0x330000 && e.getWaterFogColor() == 0x191800
+                    : e.getGrassColorOverride().isEmpty() && e.getFoliageColorOverride().isEmpty()
+                            && e.getSkyColor() == (Integer) w[3] && e.getFogColor() == 0xC0D8FF
+                            && e.getWaterColor() == 0x3F76E4 && e.getWaterFogColor() == 0x050533;
             helper.assertTrue(Math.abs(biome.getBaseTemperature() - (Float) w[1]) < 1e-6
                             && Math.abs(biome.getModifiedClimateSettings().downfall() - (Float) w[2]) < 1e-6
-                            && e.getGrassColorOverride().isEmpty() && e.getFoliageColorOverride().isEmpty()
-                            && e.getSkyColor() == (Integer) w[3] && e.getFogColor() == 0xC0D8FF
-                            && e.getWaterColor() == 0x3F76E4 && e.getWaterFogColor() == 0x050533,
+                            && colours,
                     name + ": " + biome.getBaseTemperature() + " and " + biome.getModifiedClimateSettings().downfall()
                             + ", sky " + Integer.toHexString(e.getSkyColor()) + ", fog " + Integer.toHexString(e.getFogColor())
                             + ", water " + Integer.toHexString(e.getWaterColor()) + ", grass " + e.getGrassColorOverride()
                             + ", foliage " + e.getFoliageColorOverride());
         }
-        // the red the option brings back, on the Chaos biome only
+        // the red, on the Chaos biome only
         JsonObject red = json(helper, "neoforge/biome_modifier/chaos_red.json");
         helper.assertTrue(red.get("type").getAsString().equals("orespawn:chaos_red_colours")
                         && red.get("biomes").getAsString().equals("orespawn:chaos_biome")

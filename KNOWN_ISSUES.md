@@ -39,7 +39,7 @@ wrong for you, please say so.
 
 - Utopia, the Village, Chaos, Crystal and Mining grow the original's flowers, grass, mushrooms, reeds and pumpkins, by its counts and rules, the mushrooms by its light. *(WGEN-109, WGEN-110, WGEN-103, WGEN-105)*
 - Chaos's ores are the original's; the caves' lava stands to the original's height and Mining's rubies are as common as its. *(WGEN-104, WGEN-105)*
-- The Village, Islands, Chaos, Crystal and Mining have the original's climate and colours; Chaos's red is an option (`[modern] chaosRed`, default off). *(WGEN-106)*
+- The Village, Islands, Chaos, Crystal and Mining have the original's climate and colours; Chaos's red was an option in beta.14 (`[modern] chaosRed`, default off); since beta.15 it is the default and the original's colours are the option (`chaosRed = false`). *(WGEN-106, MOD-045)*
 - The lakes' shores turn to grass as the original's did; the orchards grow cherry and peach trees as well as apple trees. *(WGEN-107, WGEN-108)*
 - Utopia's and the Village's trees grow in the original's chunks for the same seed; the Village's lakes keep out of its villages' buildings and streets only. *(WGEN-108, WGEN-094)*
 - Godzilla's and the Kraken's vanilla gear rolls the original's enchantments; a doubled Sharpness adds up; Aqua Affinity comes at I; the Zoo Keeper takes Unbreaking from a book; Godzilla, the Kraken and the Attack Squid drop the original's golden carrot. *(ITEM-079, ITEM-077, ITEM-078, ITEM-074, ITEM-080)*

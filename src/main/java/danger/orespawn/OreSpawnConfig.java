@@ -369,8 +369,9 @@ public class OreSpawnConfig {
      */
     public static final ModConfigSpec.BooleanValue MODERN_ALTAR_TERRAIN;
     /**
-     * WGEN-106: the Chaos dimension in the port's own red (a dark red sky, fog and water, its own grass and leaf colour)
-     * instead of the original's, vanilla's colours for its climate. Takes effect only while {@link #MODERN_ENABLED} is on
+     * WGEN-106, MOD-045: the Chaos dimension in the port's own red (a dark red sky, fog and water, its own grass and leaf
+     * colour) instead of the original's, vanilla's colours for its climate; on by default since beta.15, the original's
+     * colours with it off or in classic mode. Takes effect only while {@link #MODERN_ENABLED} is on
      * -- read through {@link #chaosRed()}, never directly, when the world starts (the biome's colours are set then).
      */
     public static final ModConfigSpec.BooleanValue MODERN_CHAOS_RED;
@@ -771,11 +772,12 @@ public class OreSpawnConfig {
                         "after the change, in chunks not yet generated."
         ).define("altarTerrain", true);
         MODERN_CHAOS_RED = BUILDER.comment(
-                "The Chaos dimension in a dark red: red sky, fog and water, and its own grass and leaf colour. The " +
-                        "original's Chaos has the ordinary blue sky and water, which is what false (the default) gives. " +
-                        "Only takes effect while modern.enabled is true. Read when the world starts: close the world and " +
-                        "open it again to see a change."
-        ).define("chaosRed", false);
+                "MOD-045: the Chaos dimension in a dark red: red sky, fog and water, and its own grass and leaf colour " +
+                        "(the default). The original's Chaos has the ordinary blue sky and water, which is what false " +
+                        "gives, as does classic mode. Only takes effect while modern.enabled is true. A config file " +
+                        "beta.14 wrote keeps chaosRed = false; set it to true for the red. Read when the world starts: " +
+                        "close the world and open it again to see a change."
+        ).define("chaosRed", true);
         MODERN_CHAOS_CAVES = BUILDER.comment(
                 "The Chaos dimension with vanilla's caves and canyons, as earlier betas carved them. The original's " +
                         "Chaos has none, which is what false (the default) gives. Only takes effect while " +
