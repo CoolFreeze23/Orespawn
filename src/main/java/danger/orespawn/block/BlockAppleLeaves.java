@@ -52,10 +52,16 @@ public class BlockAppleLeaves extends LeavesBlock {
 
     @Override
     public void randomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
-        super.randomTick(state, level, pos, random);
-        if (level.isClientSide()) return;
-
+        // orig BlockAppleLeaves.java:55-81: the leaves' own rule in place of BlockLeaves' decay (BUG-049): a block that
+        // holds leaves within 2 across and down (1 in the Islands), 3 steps, or the leaf falls with its drops
         boolean inIslands = level.dimension().equals(ISLANDS);
+        Boolean near = LegacyLeaves.logNear(level, pos, inIslands ? 1 : 2);
+        if (near == null) return;
+        if (!near) {
+            dropAppleProducts(level, pos, random);
+            level.setBlock(pos, Blocks.AIR.defaultBlockState(), 2);
+            return;
+        }
 
         BlockPos below = pos.below();
         BlockState belowState = level.getBlockState(below);

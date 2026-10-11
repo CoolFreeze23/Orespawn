@@ -1005,6 +1005,44 @@ public class MiscTests {
         helper.succeed();
     }
 
+    /**
+     * BUG-049: the apple, cherry, peach and experience leaves keep to the original's own rule (BlockAppleLeaves,
+     * BlockScaryLeaves, BlockExperienceLeaves updateTick): on a random tick a leaf with a log within 2 across and down to
+     * level, 3 steps, stays; one without falls, whatever its persistent flag (the original had no decay bit). A leaf just
+     * under a log falls: the original looks across and down, never up.
+     */
+    @GameTest(template = "empty")
+    public static void bug049_fruit_leaves_keep_to_their_logs_as_the_original(GameTestHelper helper) {
+        net.minecraft.server.level.ServerLevel level = helper.getLevel();
+        net.minecraft.core.BlockPos log = helper.absolutePos(new net.minecraft.core.BlockPos(1, 3, 1));
+        java.util.List<net.minecraft.world.level.block.Block> kinds = java.util.List.of(
+                danger.orespawn.ModBlocks.APPLE_LEAVES.get(), danger.orespawn.ModBlocks.CHERRY_LEAVES.get(),
+                danger.orespawn.ModBlocks.PEACH_LEAVES.get(), danger.orespawn.ModBlocks.EXPERIENCE_LEAVES.get());
+        for (net.minecraft.world.level.block.Block kind : kinds) {
+            level.setBlock(log, net.minecraft.world.level.block.Blocks.OAK_LOG.defaultBlockState(), 2);
+            net.minecraft.world.level.block.state.BlockState leaf = kind.defaultBlockState()
+                    .setValue(net.minecraft.world.level.block.LeavesBlock.PERSISTENT, true);
+            // stays: beside the log; two above it (the log 2 below, 2 steps)
+            net.minecraft.core.BlockPos beside = log.east(), above = log.above(2);
+            // falls: 4 steps off (2 east, 2 north, level); just under the log (it looks only down and across)
+            net.minecraft.core.BlockPos far = log.east(2).north(2), under = log.below();
+            for (net.minecraft.core.BlockPos p : java.util.List.of(beside, above, far, under)) level.setBlock(p, leaf, 2);
+            for (net.minecraft.core.BlockPos p : java.util.List.of(beside, above, far, under)) {
+                level.getBlockState(p).randomTick(level, p, level.getRandom());
+            }
+            helper.assertTrue(level.getBlockState(beside).is(kind), kind + " beside its log fell");
+            helper.assertTrue(level.getBlockState(above).is(kind), kind + " two over its log fell");
+            helper.assertTrue(level.getBlockState(far).isAir(), kind + " four steps from a log stays");
+            helper.assertTrue(level.getBlockState(under).isAir(), kind + " under its log stays");
+            for (net.minecraft.core.BlockPos p : java.util.List.of(log, beside, above, far, under)) {
+                level.setBlock(p, net.minecraft.world.level.block.Blocks.AIR.defaultBlockState(), 2);
+            }
+        }
+        level.getEntitiesOfClass(net.minecraft.world.entity.item.ItemEntity.class, new net.minecraft.world.phys.AABB(log).inflate(6))
+                .forEach(net.minecraft.world.entity.Entity::discard);
+        helper.succeed();
+    }
+
     private static JsonObject bundledJson(String path) {
         try (InputStream in = MiscTests.class.getResourceAsStream(path)) {
             if (in == null) throw new AssertionError("no " + path);

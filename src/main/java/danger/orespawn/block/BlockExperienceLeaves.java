@@ -53,8 +53,14 @@ public class BlockExperienceLeaves extends LeavesBlock {
 
     @Override
     public void randomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
-        super.randomTick(state, level, pos, random);
-        if (level.isClientSide()) return;
+        // orig BlockExperienceLeaves.java:46-75: the leaves' own rule in place of BlockLeaves' decay (BUG-049): a block
+        // that holds leaves within 2 across and down, 3 steps, or the leaf falls (it drops nothing, :36-39)
+        Boolean near = LegacyLeaves.logNear(level, pos, 2);
+        if (near == null) return;
+        if (!near) {
+            level.setBlock(pos, Blocks.AIR.defaultBlockState(), 2);
+            return;
+        }
 
         long timeOfDayTicks = level.getDayTime() % TICKS_PER_DAY;
         if (timeOfDayTicks < XP_DROP_WINDOW_START || timeOfDayTicks > XP_DROP_WINDOW_END) return;
