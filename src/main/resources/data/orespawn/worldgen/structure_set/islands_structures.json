@@ -2,67 +2,67 @@
   "structures": [
     {
       "structure": "orespawn:challenge_tower_king",
-      "weight": 410
+      "weight": 429
     },
     {
       "structure": "orespawn:challenge_tower_queen",
-      "weight": 410
+      "weight": 429
     },
     {
       "structure": "orespawn:islands_generic_dungeon",
-      "weight": 1093
+      "weight": 1144
     },
     {
       "structure": "orespawn:ender_castle_islands",
-      "weight": 273
+      "weight": 286
     },
     {
       "structure": "orespawn:inca_pyramid",
-      "weight": 273
+      "weight": 286
     },
     {
       "structure": "orespawn:robot_lab",
-      "weight": 273
+      "weight": 286
     },
     {
       "structure": "orespawn:mini_dungeon",
-      "weight": 273
+      "weight": 286
     },
     {
       "structure": "orespawn:islands_ruby_dungeon",
-      "weight": 273
+      "weight": 286
     },
     {
       "structure": "orespawn:cephadrome_altar",
-      "weight": 273
+      "weight": 286
     },
     {
       "structure": "orespawn:greenhouse",
-      "weight": 273
+      "weight": 286
     },
     {
       "structure": "orespawn:nightmare_rookery",
-      "weight": 273
+      "weight": 286
     },
     {
       "structure": "orespawn:stinky_house",
-      "weight": 273
+      "weight": 286
     },
     {
       "structure": "orespawn:white_house",
-      "weight": 273
+      "weight": 286
     },
     {
       "structure": "orespawn:pumpkin",
-      "weight": 273
+      "weight": 286
     },
     {
       "structure": "orespawn:rainbow",
-      "weight": 273
+      "weight": 286
     },
     {
       "structure": "orespawn:nothing",
-      "weight": 4811
+      "weight": 4566
     }
   ],
   "placement": {

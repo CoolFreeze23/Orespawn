@@ -58,9 +58,10 @@ public class IslandsRotationTests {
             "ender_castle_islands", "inca_pyramid", "robot_lab", "mini_dungeon", "islands_ruby_dungeon",
             "cephadrome_altar", "greenhouse", "nightmare_rookery", "stinky_house", "white_house", "pumpkin", "rainbow"};
     private static final double[] SLOTS = {1.5, 1.5, 4, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
-    /** The share of the roll's builds D4BigSpaceCheck (:2655-2664) let through, the rest turned away where an earlier
-     *  structure stood in its plane: simulated with the structures' footprints, 95.5%. */
-    private static final double KEPT = 0.955;
+    /** The share of the roll's builds the weights keep for D4BigSpaceCheck (:2655-2664): all of them since WGEN-120,
+     *  which turns a spot away where an earlier structure stands in the check (IslandsSpaceCheck); WGEN-080's weights
+     *  had kept 95.5%, the share it simulated, and refused none. */
+    private static final double KEPT = 1.0;
 
     private static final String[] RETIRED = {"challenge_towers", "challenge_tower_king", "challenge_tower_queen",
             "ender_castle_islands", "inca_pyramid", "robot_lab", "mini_dungeon", "cephadrome_altar", "greenhouse",
@@ -68,7 +69,7 @@ public class IslandsRotationTests {
 
     /**
      * The roll's one set: 9 by 9 chunks a spot, a separation of one, each builder at its slots of nineteen of one
-     * build in 149 chunks, less the builds the space check turned away.
+     * build in 149 chunks; the space check's refusals come from IslandsSpaceCheck (w078c), not the weights.
      */
     @GameTest(template = "empty")
     public static void w078a_the_islands_roll_is_one_set(GameTestHelper helper) {
@@ -188,6 +189,99 @@ public class IslandsRotationTests {
                 }
             }
         }
+        helper.succeed();
+    }
+
+    /**
+     * WGEN-120 (#8): the original's space checks between the Islands' structures. On a detached Islands generator, over
+     * 32 by 32 cells of islands_structures: no built spot has an earlier built neighbour (IslandsSpaceCheck's stand-in
+     * order) whose envelope meets its D4BigSpaceCheck box at Y11 (orig :2655-2664: x -25 to 39, z -25 to 29 from the
+     * chunk's corner) or, for a tower, its air check 18 over its grass (orig :2212-2218: x -20 to 32, z -4 to 32 from the
+     * site); every pick turned away has one; and the share turned away is near the 4.5% WGEN-080 simulated for the
+     * original.
+     */
+    @GameTest(template = "empty", timeoutTicks = 400)
+    public static void w078c_an_islands_structure_is_never_built_into_another(GameTestHelper helper) {
+        ServerLevel level = helper.getLevel();
+        MinecraftServer server = level.getServer();
+        Holder<Biome> island = server.registryAccess().registryOrThrow(Registries.BIOME)
+                .getHolderOrThrow(ResourceKey.create(Registries.BIOME, ResourceLocation.parse("orespawn:island_biome")));
+        ResourceKey<NoiseGeneratorSettings> islands = ResourceKey.create(Registries.NOISE_SETTINGS,
+                ResourceLocation.parse("orespawn:islands"));
+        OreSpawnChunkGenerator gen = new OreSpawnChunkGenerator(new FixedBiomeSource(island),
+                server.registryAccess().registryOrThrow(Registries.NOISE_SETTINGS).getHolderOrThrow(islands), DimensionStyle.ISLANDS);
+        long seed = 1007L;
+        RandomState state = RandomState.create(server.registryAccess().asGetterLookup(), islands, seed);
+        StructureSet set = server.registryAccess().registryOrThrow(Registries.STRUCTURE_SET)
+                .get(ResourceLocation.fromNamespaceAndPath("orespawn", "islands_structures"));
+        RandomSpreadStructurePlacement placement = (RandomSpreadStructurePlacement) set.placement();
+        int cells = 16;
+        int side = 2 * cells;
+        LegacyDungeonPiece.DungeonType[][] type = new LegacyDungeonPiece.DungeonType[side][side];
+        BlockPos[][] site = new BlockPos[side][side];
+        boolean[][] built = new boolean[side][side];
+        ChunkPos[][] spot = new ChunkPos[side][side];
+        int oldLessLag = OreSpawnConfig.LESS_LAG.get();
+        OreSpawnConfig.LESS_LAG.set(0);
+        try {
+            for (int i = 0; i < side; i++) {
+                for (int j = 0; j < side; j++) {
+                    int gx = i - cells, gz = j - cells;
+                    ChunkPos chunk = placement.getPotentialStructureChunk(seed, gx * placement.spacing(), gz * placement.spacing());
+                    spot[i][j] = chunk;
+                    Structure structure = StructurePicks.firstPick(set, seed, chunk).structure().value();
+                    if (!(structure instanceof danger.orespawn.world.structure.LegacyDungeonStructure legacy)) continue;
+                    type[i][j] = legacy.dungeonType();
+                    Optional<BlockPos> stub = structure.findValidGenerationPoint(new Structure.GenerationContext(
+                            server.registryAccess(), gen, gen.getBiomeSource(), state, level.getStructureManager(), seed,
+                            chunk, level, structure.biomes()::contains)).map(Structure.GenerationStub::position);
+                    built[i][j] = stub.isPresent();
+                    site[i][j] = stub.orElse(null);
+                    if (type[i][j] != LegacyDungeonPiece.DungeonType.RAINBOW) {
+                        // the site written out: the D4 scan's chunk + nextInt(8) and the grass under it (the pumpkin's
+                        // air above); the rainbow's own lies in the sky and matters to no check of its own
+                        WorldgenRandom r = new WorldgenRandom(new LegacyRandomSource(0L));
+                        r.setLargeFeatureSeed(seed, chunk.x, chunk.z);
+                        int x = chunk.getMinBlockX() + r.nextInt(8);
+                        int z = chunk.getMinBlockZ() + r.nextInt(8);
+                        int grass = gen.getBaseHeight(x, z, Heightmap.Types.WORLD_SURFACE_WG, level, state) - 1;
+                        BlockPos scan = new BlockPos(x, type[i][j] == LegacyDungeonPiece.DungeonType.PUMPKIN ? grass + 1 : grass, z);
+                        helper.assertTrue(stub.isEmpty() || stub.get().equals(scan), type[i][j] + " at " + chunk
+                                + " stands at " + stub + ", the D4 scan's site " + scan);
+                        site[i][j] = scan;
+                    }
+                }
+            }
+        } finally {
+            OreSpawnConfig.LESS_LAG.set(oldLessLag);
+        }
+        int picks = 0, refused = 0;
+        List<String> wrong = new ArrayList<>();
+        for (int i = 0; i < side; i++) {
+            for (int j = 0; j < side; j++) {
+                if (type[i][j] == null) continue;
+                picks++;
+                if (!built[i][j]) refused++;
+                boolean blocked = false;
+                for (int di = -1; di <= 1; di++) {
+                    for (int dj = -1; dj <= 1; dj++) {
+                        int a = i + di, b = j + dj;
+                        if ((di == 0 && dj == 0) || a < 0 || b < 0 || a >= side || b >= side || !built[a][b]) continue;
+                        if (!danger.orespawn.world.structure.IslandsSpaceCheck.before(seed, a - cells, b - cells, i - cells, j - cells)) continue;
+                        blocked |= danger.orespawn.world.structure.IslandsSpaceCheck.blocks(type[a][b], site[a][b], spot[i][j],
+                                type[i][j], site[i][j]);
+                    }
+                }
+                // the patch's edge cells have neighbours outside it: only the inner cells' refusals are fully seen
+                boolean inner = i > 0 && j > 0 && i < side - 1 && j < side - 1;
+                if (built[i][j] && blocked) wrong.add(type[i][j] + " built at " + spot[i][j] + " into an earlier structure");
+                if (!built[i][j] && !blocked && inner) wrong.add(type[i][j] + " turned away at " + spot[i][j] + " with nothing earlier in its way");
+            }
+        }
+        helper.assertTrue(wrong.isEmpty(), wrong.size() + " wrong, the first: " + String.join("; ", wrong.subList(0, Math.min(5, wrong.size()))));
+        double share = (double) refused / picks;
+        helper.assertTrue(share > 0.02 && share < 0.08, refused + " of " + picks + " picks turned away ("
+                + Math.round(share * 1000) / 10.0 + "%), the original's about 4.5%");
         helper.succeed();
     }
 }

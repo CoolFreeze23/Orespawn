@@ -89,6 +89,24 @@ public class LegacyDungeonStructure extends Structure {
 
     @Override
     public Optional<GenerationStub> findGenerationPoint(GenerationContext context) {
+        BlockPos origin = siteOf(context);
+        if (origin == null) return Optional.empty();
+        // WGEN-120 (#8): an Islands spot where an earlier structure stands in the original's space checks stays empty
+        if (IslandsSpaceCheck.refused(context, this)) return Optional.empty();
+        BlockPos finalOrigin = origin;
+        // MOD-044: an altar laid out while modern.altarTerrain is on is fitted to its ground (the piece ignores it for
+        // every other type), and keeps that whatever the setting says when its chunks generate
+        boolean fitted = danger.orespawn.OreSpawnConfig.altarTerrain();
+        return Optional.of(new GenerationStub(finalOrigin, builder ->
+                builder.addPiece(new LegacyDungeonPiece(finalOrigin, dungeonType, fitted))));
+    }
+
+    public LegacyDungeonPiece.DungeonType dungeonType() {
+        return this.dungeonType;
+    }
+
+    /** The structure's site in the context's chunk by its placement's rules, or null where it finds none. */
+    BlockPos siteOf(GenerationContext context) {
         // Spider Hangout worldgen honors the SpiderDriverEnable config gate
         // (orig OreSpawnWorld.java:1323-1325: `if (SpiderDriverEnable == 0)
         // return false;`) — the LESS_LAG precedent (islandsGrassOrigin). The
@@ -96,7 +114,7 @@ public class LegacyDungeonStructure extends Structure {
         // through buildNow, untouched by this check.
         if (dungeonType == LegacyDungeonPiece.DungeonType.SPIDER_HANGOUT
                 && !danger.orespawn.OreSpawnConfig.SPIDER_DRIVER_ENABLE.get()) {
-            return Optional.empty();
+            return null;
         }
         // DisableOverworldDungeons (orig OreSpawnWorld.java:284) gated the
         // ENTIRE overworld dungeon dispatch. D6b close-out fix: the config
@@ -105,7 +123,7 @@ public class LegacyDungeonStructure extends Structure {
         // Spawner Block path was never gated.
         if (danger.orespawn.OreSpawnConfig.DISABLE_OVERWORLD_DUNGEONS.get()
                 && OVERWORLD_DUNGEON_TYPES.contains(dungeonType)) {
-            return Optional.empty();
+            return null;
         }
         BlockPos origin = switch (placementOverride.orElse(dungeonType.placement)) {
             case SURFACE_CENTER -> surfaceCenterOrigin(context);
@@ -162,17 +180,12 @@ public class LegacyDungeonStructure extends Structure {
                 yield air == null ? null : air.below(2);
             }
         };
-        if (origin == null) return Optional.empty();
+        if (origin == null) return null;
         if (origin.getY() + dungeonType.upExtent + 4
                 >= GenerationRange.top(context.chunkGenerator(), context.heightAccessor())) {
-            return Optional.empty();
+            return null;
         }
-        BlockPos finalOrigin = origin;
-        // MOD-044: an altar laid out while modern.altarTerrain is on is fitted to its ground (the piece ignores it for
-        // every other type), and keeps that whatever the setting says when its chunks generate
-        boolean fitted = danger.orespawn.OreSpawnConfig.altarTerrain();
-        return Optional.of(new GenerationStub(finalOrigin, builder ->
-                builder.addPiece(new LegacyDungeonPiece(finalOrigin, dungeonType, fitted))));
+        return origin;
     }
 
     /**
@@ -558,12 +571,12 @@ public class LegacyDungeonStructure extends Structure {
      * D4 builder's one in two. The roll itself, one chunk in a hundred while the
      * shared {@code recently_placed} cooldown is clear (:134), is the
      * islands_structures set's (WGEN-078, WGEN-080): every D4 build blocked the
-     * roll for the next 49 chunks, so it built one chunk in 149 on average, and
-     * {@code D4BigSpaceCheck} (:2655-2664) turned away the 4.5% of them that an
-     * earlier structure's blocks stood in the way of (simulated with the
-     * structures' footprints). The set's one spot in every 9 by 9 chunks, a
-     * chunk apart from the next at least, picks one of the roll's nineteen
-     * slots at those odds, or nothing.
+     * roll for the next 49 chunks, so it built one chunk in 149 on average. The
+     * set's one spot in every 9 by 9 chunks, a chunk apart from the next at
+     * least, picks one of the roll's nineteen slots at those odds, or nothing;
+     * {@code D4BigSpaceCheck} (:2655-2664) and the tower's own air check turn a
+     * spot away where an earlier structure stands in them ({@link IslandsSpaceCheck},
+     * WGEN-120).
      */
     private BlockPos islandsGrassOrigin(GenerationContext context, int lessLagOdds) {
         if (danger.orespawn.OreSpawnConfig.LESS_LAG.get() != 0 && context.random().nextInt(lessLagOdds) != 0) {
