@@ -19,6 +19,14 @@ public class MyUtils {
         return entity instanceof net.neoforged.neoforge.entity.PartEntity<?> part && part.getParent() != null ? part.getParent() : entity;
     }
 
+    /**
+     * BUG-050 (#9): whether what a caster started has outlived it -- the caster (a projectile's owner as the level
+     * finds it, or a summoned creature's caster) dead, removed, or not in the level at all (null).
+     */
+    public static boolean casterGone(Entity caster) {
+        return caster == null || caster.isRemoved() || !caster.isAlive();
+    }
+
     public static boolean isRoyalty(Entity entity) {
         entity = behindPart(entity);
         return entity instanceof TheKing

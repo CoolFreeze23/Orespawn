@@ -1,6 +1,7 @@
 package danger.orespawn.entity;
 
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.Entity;
@@ -37,6 +38,18 @@ public class ThunderBolt extends ThrowableProjectile {
     public ThunderBolt(Level level, double x, double y, double z) {
         super(ModEntities.THUNDER_BOLT.get(), level);
         this.setPos(x, y, z);
+    }
+
+    /**
+     * BUG-050 (#9), a change of the port's own ("what she started ends with her"): a bolt the Queen fires
+     * ({@link TheQueen#fireLightning}) ends once its owner is dead or gone, saved with it so a bolt that fell into land
+     * no one was near ends there too when it loads. The original's bolts had no thrower (ThunderBolt(World, x, y, z))
+     * and fell until they hit; the port's own change.
+     */
+    private boolean endsWithOwner;
+
+    public void endWithOwner() {
+        this.endsWithOwner = true;
     }
 
     @Override
@@ -93,6 +106,10 @@ public class ThunderBolt extends ThrowableProjectile {
 
     @Override
     public void tick() {
+        if (!this.level().isClientSide && this.endsWithOwner && MyUtils.casterGone(this.getOwner())) {
+            this.discard();
+            return;
+        }
         super.tick();
         // LESS_LAG level 2 skips trail particles entirely to reduce client overhead
         if (this.level().isClientSide && OreSpawnConfig.LESS_LAG.get() < 2) {
@@ -104,5 +121,17 @@ public class ThunderBolt extends ThrowableProjectile {
                         this.random.nextGaussian() / PARTICLE_GAUSSIAN_SCALE);
             }
         }
+    }
+
+    @Override
+    public void addAdditionalSaveData(CompoundTag tag) {
+        super.addAdditionalSaveData(tag);
+        if (this.endsWithOwner) tag.putBoolean("EndsWithOwner", true);
+    }
+
+    @Override
+    public void readAdditionalSaveData(CompoundTag tag) {
+        super.readAdditionalSaveData(tag);
+        this.endsWithOwner = tag.getBoolean("EndsWithOwner");
     }
 }

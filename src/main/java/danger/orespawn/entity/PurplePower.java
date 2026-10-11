@@ -88,8 +88,24 @@ public class PurplePower extends Mob implements PurplePowerPose {
         return false;
     }
 
+    /**
+     * BUG-050 (#9), a change of the port's own ("what she started ends with her"): the Queen's purple powers
+     * ({@link TheQueen#aiStepMoodEffects}) go once she is dead or gone, without their blast, saved with them. The
+     * original's lived on (each went, exploding, at one in 2,500 a tick); the port's own change.
+     */
+    private java.util.UUID caster;
+
+    public void endWithCaster(Entity queen) {
+        this.caster = queen.getUUID();
+    }
+
     @Override
     public void tick() {
+        if (this.caster != null && this.level() instanceof net.minecraft.server.level.ServerLevel server
+                && MyUtils.casterGone(server.getEntity(this.caster))) {
+            this.discard();
+            return;
+        }
         super.tick();
         Vec3 motion = this.getDeltaMovement();
         this.setDeltaMovement(motion.x, motion.y * 0.6, motion.z);
@@ -242,12 +258,14 @@ public class PurplePower extends Mob implements PurplePowerPose {
     public void addAdditionalSaveData(CompoundTag tag) {
         super.addAdditionalSaveData(tag);
         tag.putInt("PurpleType", this.purpleType);
+        if (this.caster != null) tag.putUUID("Caster", this.caster);
     }
 
     @Override
     public void readAdditionalSaveData(CompoundTag tag) {
         super.readAdditionalSaveData(tag);
         this.purpleType = tag.getInt("PurpleType");
+        this.caster = tag.hasUUID("Caster") ? tag.getUUID("Caster") : null;
     }
 
     /** orig PurplePower.java:226-228 — always allowed. */

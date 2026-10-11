@@ -79,6 +79,24 @@ public class BetterFireball extends LargeFireball {
         this.hasImpulse = true;
         this.setOwner(shooter);
         this.setRot(shooter.getYRot(), shooter.getXRot());
+        this.shooterHeld = true;
+    }
+
+    /**
+     * BUG-050 (#9): orig BetterFireball.java:104, {@code shootingEntity != null && shootingEntity.isDead} -- a shot
+     * ends once its shooter is removed. 1.21's own check (AbstractHurtingProjectile.tick) lets a shot whose owner is
+     * gone fly on (getOwner() answers null once the owner is removed), so the port lost it. As the original held its
+     * shooter only in memory (shootingEntity was not saved), the rule holds for a shot from this session only.
+     */
+    private boolean shooterHeld;
+    /**
+     * BUG-050 (#9), a change of the port's own ("what she started ends with her"): the Queen's shots end once
+     * she is dead or gone, saved with them, so a shot that flew into land no one was near ends there too when it loads.
+     */
+    private boolean endsWithOwner;
+
+    public void endWithOwner() {
+        this.endsWithOwner = true;
     }
 
     public void setNotMe() { this.notme = true; }
@@ -112,6 +130,13 @@ public class BetterFireball extends LargeFireball {
 
     @Override
     public void tick() {
+        if (!this.level().isClientSide) {
+            Entity shooter = this.getOwner();
+            if (this.endsWithOwner ? danger.orespawn.util.MyUtils.casterGone(shooter) : this.shooterHeld && shooter == null) {
+                this.discard();
+                return;
+            }
+        }
         super.tick();
         this.ticksAlive++;
         if (this.ticksAlive >= MAX_LIFETIME_TICKS) {
@@ -301,6 +326,7 @@ public class BetterFireball extends LargeFireball {
     public void addAdditionalSaveData(CompoundTag tag) {
         super.addAdditionalSaveData(tag);
         tag.putInt("ExplosionPower", this.explosionPower);
+        if (this.endsWithOwner) tag.putBoolean("EndsWithOwner", true);
     }
 
     @Override
@@ -309,5 +335,6 @@ public class BetterFireball extends LargeFireball {
         if (tag.contains("ExplosionPower")) {
             this.explosionPower = tag.getInt("ExplosionPower");
         }
+        this.endsWithOwner = tag.getBoolean("EndsWithOwner");
     }
 }

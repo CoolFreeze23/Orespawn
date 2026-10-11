@@ -448,6 +448,32 @@ public class TheQueen extends Monster implements GeoEntity, IMHLibSizeCallback<T
     // queen scale / raw beef / bone / rotten flesh). The Princess spawn from the
     // same original method lives in die() â€” it is not an item drop.
 
+    /**
+     * BUG-050 (#9): orig dropItemRand (TheQueen.java:185-188) -- each item of her death drop on its own, 12 blocks over
+     * her and up to 19 blocks round ({@code nextInt(20) - nextInt(20)} each way), the loot table's stacks split one by
+     * one. Through the death's capture when one runs, so LivingDropsEvent sees them as it sees any drop.
+     */
+    @Override
+    public net.minecraft.world.entity.item.ItemEntity spawnAtLocation(net.minecraft.world.item.ItemStack stack, float offsetY) {
+        if (!this.isDeadOrDying() || stack.isEmpty() || this.level().isClientSide) {
+            return super.spawnAtLocation(stack, offsetY);
+        }
+        net.minecraft.world.entity.item.ItemEntity last = null;
+        while (!stack.isEmpty()) {
+            net.minecraft.world.entity.item.ItemEntity item = new net.minecraft.world.entity.item.ItemEntity(this.level(),
+                    this.getX() + this.getRandom().nextInt(20) - this.getRandom().nextInt(20), this.getY() + 12.0,
+                    this.getZ() + this.getRandom().nextInt(20) - this.getRandom().nextInt(20), stack.split(1));
+            java.util.Collection<net.minecraft.world.entity.item.ItemEntity> captured = this.captureDrops();
+            if (captured != null) {
+                captured.add(item);
+            } else {
+                this.level().addFreshEntity(item);
+            }
+            last = item;
+        }
+        return last;
+    }
+
     @Override
     public EntityDimensions getDefaultDimensions(Pose pose) {
         // BOSS-017 / ENT-S-095 batch 3: orig TheQueen.java:78-82 setSize(22, 24)
@@ -665,6 +691,14 @@ public class TheQueen extends Monster implements GeoEntity, IMHLibSizeCallback<T
 
     @Override
     public boolean hurt(DamageSource source, float amount) {
+        // BUG-050 (#9): a dying Queen takes nothing more, healing included. Her explosion clause below runs before
+        // vanilla's own dead-or-dying refusal, so a blast in her death ticks (her own big fireballs and purple powers
+        // explode with no entity behind them, at the player beside her) set her health back up: she lived on with 1.21's
+        // dead flag set, and her next death ran LivingEntity.die's `!this.dead` guard -- no drops, no experience. The
+        // original's onDeath had no such guard; her one death now drops what the original's dropped.
+        if (this.isDeadOrDying()) {
+            return false;
+        }
         // ENT-S-172: damage that bypasses invulnerability - /kill, the void - is never capped, gated or refused:
         // vanilla's own gates yield to this tag (Entity.isInvulnerableTo's Invulnerable flag, the totem's
         // checkTotemDeathProtection, WitherBoss.hurt's spawn-armour gate; the Ender Dragon answers /kill in its own
@@ -684,7 +718,9 @@ public class TheQueen extends Monster implements GeoEntity, IMHLibSizeCallback<T
 
         this.mood = 1;
 
-        if (source.is(DamageTypes.EXPLOSION)) {
+        // BUG-050: orig :776 isExplosion() -- every blast heals her, whoever set it off; 1.21 types a blast an entity set
+        // off (her own thunder bolts', a creeper's, a player's TNT) PLAYER_EXPLOSION, which the port's EXPLOSION alone missed
+        if (source.is(net.minecraft.tags.DamageTypeTags.IS_EXPLOSION)) {
             float healedHealth = this.getHealth();
             healedHealth += amount / 2.0f;
             if (healedHealth > this.getMaxHealth()) {
@@ -953,6 +989,7 @@ public class TheQueen extends Monster implements GeoEntity, IMHLibSizeCallback<T
                     Vec3 mot = this.getDeltaMovement();
                     pwr.setDeltaMovement(mot.x * 3.0, 0, mot.z * 3.0);
                     pwr.setPurpleType(10);
+                    pwr.endWithCaster(this);
                     this.level().addFreshEntity(pwr);
                 }
             }
@@ -1297,6 +1334,7 @@ public class TheQueen extends Monster implements GeoEntity, IMHLibSizeCallback<T
             bf.moveTo(cx, this.getY() + yoff, cz, this.getYRot(), 0.0f);
             bf.setPos(cx, this.getY() + yoff, cz);
             bf.setReallyBig();
+            bf.endWithOwner();
             this.level().addFreshEntity(bf);
 
             this.playSound(SoundEvents.TNT_PRIMED, 1.0f, 1.0f / (this.getRandom().nextFloat() * 0.4f + 0.8f));
@@ -1313,6 +1351,7 @@ public class TheQueen extends Monster implements GeoEntity, IMHLibSizeCallback<T
                 bf.setPos(cx, this.getY() + yoff, cz);
                 bf.setBig();
                 if (this.getRandom().nextInt(2) == 1) bf.setSmall();
+                bf.endWithOwner();
                 this.level().addFreshEntity(bf);
             }
             this.playSound(SoundEvents.ARROW_SHOOT, 1.0f, 1.0f / (this.getRandom().nextFloat() * 0.4f + 0.8f));
@@ -1330,6 +1369,7 @@ public class TheQueen extends Monster implements GeoEntity, IMHLibSizeCallback<T
             for (int i = 0; i < 3; i++) {
                 ThunderBolt lb = new ThunderBolt(this.level(), cx, this.getY() + yoff, cz);
                 lb.setOwner(this);
+                lb.endWithOwner();
                 lb.moveTo(cx, this.getY() + yoff, cz, 0.0f, 0.0f);
                 double dx = e.getX() - lb.getX();
                 double dy = e.getY() + 0.25 - lb.getY();

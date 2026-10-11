@@ -1487,10 +1487,12 @@ public class LootTests {
         godzillaBoss.discard();
 
         // ---- TheQueen ----
-        clearDropsAndXp(helper, area);
+        // BUG-050: her drop lies as the original's dropItemRand scattered it, up to 19 blocks round
+        AABB queenArea = box(center, 24, 30);
+        clearDropsAndXp(helper, queenArea);
         LivingEntity queen = spawnLiving(helper, "the_queen", relSpot);
         killByPlayer(helper, queen, player);
-        drops = collectDrops(helper, area);
+        drops = collectDrops(helper, queenArea);
         helper.assertTrue(drops.getOrDefault(item(NS + ":royal_guardian_sword"), 0) == 1
                         && drops.getOrDefault(item(NS + ":the_prince_spawn_egg"), 0) == 1
                         && drops.getOrDefault(item(NS + ":queen_scale"), 0) == 56
@@ -1507,7 +1509,7 @@ public class LootTests {
         princesses.forEach(Entity::discard);
         queen.discard();
 
-        clearDropsAndXp(helper, area);
+        clearDropsAndXp(helper, queenArea);
         helper.succeed();
     }
 

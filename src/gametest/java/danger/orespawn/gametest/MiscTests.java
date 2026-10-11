@@ -1043,6 +1043,150 @@ public class MiscTests {
         helper.succeed();
     }
 
+    /**
+     * BUG-050 (#9): the Queen killed by a player drops what the original's dropFewItems dropped (TheQueen.java:190-200:
+     * the Royal Guardian Sword, the Prince's egg and 56 each of queen scales, beef, bones and rotten flesh, each one an
+     * item of its own, 12 over her and up to 19 blocks round) and her 25,000 experience (field_70728_aV, :84), and the
+     * Princess comes (:193) -- also when a blast with no entity behind it (her own big fireballs', her purple powers')
+     * catches her in her death ticks: it no longer heals her back to a life whose next death dropped nothing.
+     */
+    @GameTest(template = "empty", timeoutTicks = 200)
+    public static void bug050a_the_queen_drops_and_gives_her_experience_when_killed(GameTestHelper helper) {
+        ServerLevel level = helper.getLevel();
+        Player player = helper.makeMockPlayer(GameType.CREATIVE);
+        danger.orespawn.entity.TheQueen queen = helper.spawnWithNoFreeWill(ModEntities.THE_QUEEN.get(), new BlockPos(8, 120, 8));
+        Vec3 at = queen.position();
+        int hits = killQueen(level, queen, player);
+        helper.assertTrue(!queen.isAlive(), "the Queen still alive after " + hits + " hits, health " + queen.getHealth());
+        boolean healed = queen.hurt(level.damageSources().explosion(null, null), 600.0F);
+        helper.assertTrue(!healed && queen.getHealth() <= 0.0F && queen.isDeadOrDying(),
+                "a blast in her death ticks brought her back: health " + queen.getHealth());
+        int hitsTaken = hits;
+        helper.runAfterDelay(2, () -> {
+            AABB box = new AABB(at, at).inflate(24.0, 0.0, 24.0).expandTowards(0.0, 20.0, 0.0).inflate(0.0, 4.0, 0.0);
+            java.util.Map<String, Integer> drops = new java.util.TreeMap<>();
+            int entities = 0;
+            for (ItemEntity item : level.getEntitiesOfClass(ItemEntity.class, box)) {
+                drops.merge(BuiltInRegistries.ITEM.getKey(item.getItem().getItem()).toString(), item.getItem().getCount(), Integer::sum);
+                entities++;
+            }
+            int xp = 0;
+            try {
+                java.lang.reflect.Field count = ExperienceOrb.class.getDeclaredField("count");
+                count.setAccessible(true);
+                for (ExperienceOrb orb : level.getEntitiesOfClass(ExperienceOrb.class, box)) xp += orb.getValue() * count.getInt(orb);
+            } catch (ReflectiveOperationException e) {
+                throw new AssertionError(e);
+            }
+            int princesses = level.getEntitiesOfClass(danger.orespawn.entity.ThePrincess.class, box.inflate(4.0)).size();
+            java.util.Map<String, Integer> want = new java.util.TreeMap<>(java.util.Map.of(
+                    "orespawn:royal_guardian_sword", 1, "orespawn:the_prince_spawn_egg", 1, "orespawn:queen_scale", 56,
+                    "minecraft:beef", 56, "minecraft:bone", 56, "minecraft:rotten_flesh", 56));
+            String seen = "after " + hitsTaken + " hits: drops " + drops + " in " + entities + " items, experience " + xp
+                    + ", princesses " + princesses + ", dead " + queen.isDeadOrDying() + ", removed " + queen.isRemoved();
+            helper.assertTrue(drops.equals(want), "the Queen's drops, " + seen);
+            // one item an entity as the original's; two that land together may merge, as 1.7.10's EntityItems did
+            helper.assertTrue(entities >= 200, "the drops one item each as the original's, " + seen);
+            helper.assertTrue(level.getEntitiesOfClass(ItemEntity.class, box).stream().allMatch(i ->
+                    Math.abs(i.getX() - at.x) < 20.5 && Math.abs(i.getZ() - at.z) < 20.5 && i.getY() > at.y + 10.0),
+                    "the drops 12 over her and within 19 blocks round, " + seen);
+            helper.assertTrue(xp == 25000, "the Queen's experience, " + seen);
+            helper.assertTrue(princesses == 1, "the Princess, " + seen);
+            level.getEntitiesOfClass(ItemEntity.class, box).forEach(net.minecraft.world.entity.Entity::discard);
+            level.getEntitiesOfClass(ExperienceOrb.class, box).forEach(net.minecraft.world.entity.Entity::discard);
+            level.getEntitiesOfClass(danger.orespawn.entity.ThePrincess.class, box.inflate(4.0)).forEach(net.minecraft.world.entity.Entity::discard);
+            helper.succeed();
+        });
+    }
+
+    /**
+     * BUG-050 (#9): what the Queen started ends with her (a change of the port's own): her thunder bolts, her
+     * fireballs and her purple powers go on their first tick after her death, a fireball another shooter fired goes once
+     * its shooter is gone (orig BetterFireball.java:104) and not before; and every blast heals her, whoever set it off
+     * (orig :776, isExplosion()).
+     */
+    @GameTest(template = "empty", timeoutTicks = 100)
+    public static void bug050b_what_the_queen_started_ends_with_her(GameTestHelper helper) {
+        ServerLevel level = helper.getLevel();
+        Player player = helper.makeMockPlayer(GameType.CREATIVE);
+        danger.orespawn.entity.TheQueen queen = helper.spawnWithNoFreeWill(ModEntities.THE_QUEEN.get(), new BlockPos(8, 140, 8));
+        // every blast heals her: one with no entity behind it and one a player's (PLAYER_EXPLOSION in 1.21)
+        queen.setHealth(1000.0F);
+        try {
+            java.lang.reflect.Field timer = danger.orespawn.entity.TheQueen.class.getDeclaredField("hurtTimer");
+            timer.setAccessible(true);
+            queen.hurt(level.damageSources().explosion(null, null), 100.0F);
+            timer.setInt(queen, 0);
+            queen.hurt(level.damageSources().explosion(player, player), 100.0F);
+        } catch (ReflectiveOperationException e) {
+            throw new AssertionError(e);
+        }
+        helper.assertTrue(Math.abs(queen.getHealth() - 1100.0F) < 0.01F, "two blasts of 100 heal her 50 each: " + queen.getHealth());
+        // the casts in the test's own chunk, which the runner keeps ticking (a chunk beside it ticks no entities)
+        net.minecraft.world.level.ChunkPos own = new net.minecraft.world.level.ChunkPos(helper.absolutePos(BlockPos.ZERO));
+        Vec3 out = new Vec3(own.getMinBlockX() + 8.5, 185.5, own.getMinBlockZ() + 8.5);
+        danger.orespawn.entity.ThunderBolt bolt = new danger.orespawn.entity.ThunderBolt(level, out.x, out.y, out.z);
+        bolt.setOwner(queen);
+        bolt.endWithOwner();
+        bolt.setNoGravity(true);
+        danger.orespawn.entity.BetterFireball hers = new danger.orespawn.entity.BetterFireball(level, queen, new Vec3(0, 0.0001, 0));
+        hers.setPos(out.x + 4, out.y, out.z);
+        hers.endWithOwner();
+        danger.orespawn.entity.PurplePower purple = ModEntities.PURPLE_POWER.get().create(level);
+        purple.moveTo(out.x - 4, out.y, out.z, 0, 0);
+        purple.setNoAi(true);
+        purple.endWithCaster(queen);
+        Pig pig = EntityType.PIG.create(level);
+        pig.moveTo(out.x, out.y + 10, out.z, 0, 0);
+        pig.setNoAi(true);
+        pig.setNoGravity(true);
+        level.addFreshEntity(pig);
+        danger.orespawn.entity.BetterFireball pigs = new danger.orespawn.entity.BetterFireball(level, pig, new Vec3(0, 0.0001, 0));
+        pigs.setPos(out.x, out.y, out.z + 4);
+        danger.orespawn.entity.BetterFireball loose = new danger.orespawn.entity.BetterFireball(ModEntities.BETTER_FIREBALL.get(), level);
+        loose.setPos(out.x, out.y, out.z - 4);
+        loose.setDeltaMovement(0, 0.0001, 0);
+        for (net.minecraft.world.entity.Entity e : java.util.List.of(bolt, hers, purple, pigs, loose)) level.addFreshEntity(e);
+        helper.runAfterDelay(3, () -> {
+            // the purple power is left out here: it goes by itself at one in 2,500 a tick (orig PurplePower.java:131)
+            helper.assertTrue(!bolt.isRemoved() && !hers.isRemoved() && !pigs.isRemoved() && !loose.isRemoved(),
+                    "a cast went while its caster lived: bolt " + bolt.isRemoved() + ", fireball " + hers.isRemoved()
+                            + ", the pig's " + pigs.isRemoved() + ", loose " + loose.isRemoved());
+            killQueen(level, queen, player);
+            pig.discard();
+        });
+        helper.runAfterDelay(6, () -> {
+            helper.assertTrue(bolt.isRemoved() && hers.isRemoved() && purple.isRemoved(), "her casts outlived her: bolt "
+                    + bolt.isRemoved() + ", fireball " + hers.isRemoved() + ", purple " + purple.isRemoved());
+            helper.assertTrue(pigs.isRemoved(), "a fireball outlived its shooter");
+            helper.assertTrue(!loose.isRemoved(), "a fireball with no shooter went");
+            loose.discard();
+            AABB box = new AABB(helper.absolutePos(BlockPos.ZERO)).inflate(64.0);
+            level.getEntitiesOfClass(ItemEntity.class, box).forEach(net.minecraft.world.entity.Entity::discard);
+            level.getEntitiesOfClass(ExperienceOrb.class, box).forEach(net.minecraft.world.entity.Entity::discard);
+            level.getEntitiesOfClass(danger.orespawn.entity.ThePrincess.class, box).forEach(net.minecraft.world.entity.Entity::discard);
+            helper.succeed();
+        });
+    }
+
+    /** Kills the Queen with a player's hits of 750, her 20-tick hurt timer cleared between them; the hits it took. */
+    private static int killQueen(ServerLevel level, danger.orespawn.entity.TheQueen queen, Player player) {
+        int hits = 0;
+        try {
+            java.lang.reflect.Field timer = danger.orespawn.entity.TheQueen.class.getDeclaredField("hurtTimer");
+            timer.setAccessible(true);
+            while (queen.isAlive() && hits < 400) {
+                timer.setInt(queen, 0);
+                queen.invulnerableTime = 0;
+                queen.hurt(level.damageSources().playerAttack(player), 750.0F);
+                hits++;
+            }
+        } catch (ReflectiveOperationException e) {
+            throw new AssertionError(e);
+        }
+        return hits;
+    }
+
     private static JsonObject bundledJson(String path) {
         try (InputStream in = MiscTests.class.getResourceAsStream(path)) {
             if (in == null) throw new AssertionError("no " + path);
