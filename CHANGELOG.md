@@ -4,6 +4,74 @@ Newest first. Every version opens with what a player will notice, in plain words
 the technical detail, with the issue ids and the source lines, is folded under "Technical details" at the end of the
 version. The full release notes for a cut live in `phase_g_reports/` and on the release page.
 
+## 2.0.0-beta.15 — 2026-10-11 · [release page](https://github.com/CoolFreeze23/Orespawn/releases/tag/v1.21.1-2.0.0-beta.15) · [full notes](phase_g_reports/RELEASE_NOTES_2.0.0-beta.15.md)
+
+OreSpawn's creatures spawn from the original's lists again, one seed gives the same OreSpawn ores every time, the Queen drops her loot and the Islands' structures stand apart (GitHub #9 and #8), the flying Islands fly, and Chaos is red again by default.
+
+**Reported on GitHub**
+- [#9](https://github.com/CoolFreeze23/Orespawn/issues/9), the Queen: she drops her loot and experience again, and what she fires or summons ends with her.
+- [#8](https://github.com/CoolFreeze23/Orespawn/issues/8), the Islands' towers: no longer built into each other; the King's and the Queen's come at even odds, as in the original.
+- [#6](https://github.com/CoolFreeze23/Orespawn/issues/6), Utopia's big trees: checked against the original at the same seed; since beta.14 they grow where its did, no closer together and no smaller.
+
+**Changed**
+- Chaos is red again by default: its red sky, fog and water and its own grass and leaf colour, as before beta.14. The original's colours are the option now: `chaosRed = false` under `[modern]` in `config/orespawn-common.toml`; classic mode has them too.
+
+**Fixed**
+- `/locate` for the King and Queen altars answers in about a second at most again (1.13 s the slowest, from the spawn and from 20,000 blocks out each way). In beta.14 a search took up to seven and a half seconds, and the server stood still while it searched.
+- OreSpawn's creatures spawn in the overworld and the Nether from the original's own lists: in its biomes, as often and in groups of its sizes. Most of its monsters (the Mantis, the Bee, the Scorpions, the Ender Knight and many more) were drawn from the same list as zombies and skeletons, so they came far less often than in the original; they come as often as they did.
+- The Mantis, the Cater Killer, the Sea Viper and the Irukandji spawn in the open by day again, as in the original, where they could only appear in dark places; the Cloud Shark and the Large Worm no longer wait for the dark, and no creature needs grass or light the original did not ask for.
+- The Whale, the Flounder, the Skate, the Irukandji, the Sea Monster, the Attack Squid, the Rubber Ducky, the Water Dragon and the Frog spawn in water again, and the Crab and the Lizard come out of the water as the original's did.
+- The Gazelle, the Cliff Racer, the Cloud Shark, the Cave Fisher, the Creeping Horror, the Rotator and the dinosaurs no longer spawn all over the overworld, nor the Ostrich and the Cassowary beyond the original's few biomes: the original kept them to their own dimensions. They are an option: `extraSpawns = true` under `[modern]`, with the modern options on.
+- Mining has its butterflies, moths, cockatiels, cassowaries, Mothra and the Ender Knights and Reapers again, and the Islands' dragons, cliff racers, cloud sharks, gold fish and Stinkies spawn as the original's did.
+- Caves and ravines in Utopia, the Village, Crystal and Mining stop short of water standing above them up to the original's height (Y248), where they stopped looking at Y120, so a tunnel under a lake on high ground no longer cuts into it.
+- The Ant and Spider Robots stand on the ground again: they were drawn a block and a half above where their legs stood, and showed a death tilt, a red hurt flash and a name tag the original's robots never had. A rider sits in the original's seat on them.
+- Chaos has no caves or ravines, as the original's Chaos had none. Earlier betas' caves and canyons are an option: `chaosCaves = true` under `[modern]`, with the modern options on (new land only).
+- A new part of Utopia comes in sooner: the first chunk of a fresh area takes about a third of the time beta.14 took (a median of 212 ms against 583 in the same conditions), as the huge trees', royal trees' and groves' rolls no longer read the land in the many chunks where it could not change them. The trees stand where they did.
+- The flying Island and Island Too rise again from the Island block, as in the original: the Islands leave one on their grass now and then, and as it ticks it sends up one to three flying islands and is gone. And they fly: each drifts on its heading, its blocks moving with it, and blows up where it runs into another. The Island is the original's end stone and diamond ore under mycelium and mushrooms (it was sand), the Island Too a stepped slab of stone with its ore, under grass with now and then water, flowers and a small tree; they no longer vanish when no one is near, and drop the Island block.
+- The apple, cherry and peach trees wear round as the original's: a leaf with no trunk or branch close below it falls (with now and then its fruit), so the orchards' crowns no longer stay great square blocks of leaves once the land around them is lived in. The experience and scary leaves keep the same rule.
+- The butterfly, firefly, mosquito and moth plants no longer show their texture's empty corners; the fruit leaves stay see-through on Fast graphics too, as the original's did.
+- Utopia, Mining, the Village, Chaos, the overworld's and the Nether's OreSpawn ores generate the same from one seed every time: 1.21's ore placement checked the ground's height before drawing each vein, so one vein checked differently moved every later vein of that ore in the chunk, and two worlds of one seed came out with whole blobs of dirt, gravel and ore in one and plain stone in the other. Every vein is drawn now, as the original's generator drew them. Mining's and the Village's dungeons are made repeatable too, a change of the port's own: the original's dungeon tries shared one random, so a room that was built moved the tries after it, as 1.21's do; each try now draws from a random of its own, the rooms as many, as big and as stocked as before.
+- The Queen drops her loot and her 25,000 experience when killed, scattered round her as in the original: the Royal Guardian Sword, the Prince's egg, queen scales, beef, bones and rotten flesh, and the Princess comes. A blast from her own fireballs or purple orbs in her last moments healed her back to life for a moment, and her second death dropped nothing. Every blast heals her again, as in the original, whoever set it off. ([#9](https://github.com/CoolFreeze23/Orespawn/issues/9))
+- What the Queen fires or summons ends with her: her fireballs, lightning bolts and purple orbs no longer go on falling after the fight, also where they flew into land no one was near. Any creature's fireball now ends when the creature that fired it is gone, as the original's did. ([#9](https://github.com/CoolFreeze23/Orespawn/issues/9))
+- The Islands' structures are no longer built into each other, two towers joined among them: the original never built a structure where an earlier one stood in its way, and beta.15 turns such a spot away again. The towers come as often as before, one in about 1,000 chunks, the King's and the Queen's at even odds. ([#8](https://github.com/CoolFreeze23/Orespawn/issues/8))
+
+**Good to know**
+- 1.21's newer biomes take the creatures of the biome they grew from: the warm and cold oceans the ocean's, the bamboo jungle the jungle's, the mangrove swamp the swamp's, the meadows, groves and peaks the mountains', the new Nether biomes the Nether's. The cherry grove and the cave biomes have none of OreSpawn's.
+- Chaos land an earlier beta generated keeps its caves; new Chaos land has none.
+- Islands land an earlier beta generated keeps its structures, joined towers too. New Islands land places its structures afresh, so a structure not yet generated may stand a little elsewhere or be another kind.
+- A config file beta.14 wrote keeps `chaosRed = false`, beta.14's default, so Chaos keeps the original's colours there. For the red, change that line under `[modern]` in `config/orespawn-common.toml` to `chaosRed = true`.
+- The Halloween Ghosts and the Easter Bunny are listed when the world is opened on 31 October or 20 April, as the original listed them.
+- Fruit, experience and scary leaves fall when no log stands within reach below them, leaves a player placed included (the original had no exception): builds from earlier betas that used them away from logs lose them, and old orchards wear round once their chunks tick.
+- A flying Island or Island Too drifting into land or a build replaces what it meets with its own blocks, and blows up where the Island meets stone or the Island Too meets end stone; they no longer despawn. Killing one stops it (it drops the Island block).
+
+**Install:** put `orespawn-1.21.1-2.0.0-beta.15.jar` in `mods/` (NeoForge 21.1, Minecraft 1.21.1, GeckoLib 4.7 or newer) and take the beta.14 jar out. For the spears, add Mounts of Mayhem 1.9.8.
+
+<details>
+<summary>Technical details</summary>
+
+##### What beta.15 is
+
+beta.15 is beta.14 with the original's spawn lists, the ores and dungeons made repeatable from one seed, the altars' searches and new land fast again, the original's flying Islands, orchards, robots and Chaos without caves, the GitHub issues #9 and #8 fixed and #6 checked against the original, and Chaos's red back as the default; and pictures of what changed, beta.14's too.
+
+##### What changed
+
+- **The spawn lists (WGEN-086).** The overworld's and the Nether's lists from the original's addSpawn calls, replayed as Forge ran them (`orespawn:spawn_table`, `original_spawns.json`; the dates' entries on their days), each mob in its own list, its biomes through the 1.18 upgrade and by descent; every listed mob placed by its list (`ListedSpawnPlacement`) and judged by its own rule alone (`OriginalSpawnRules`); earlier betas' extra spawns behind `[modern] extraSpawns` (MOD-046); Mining's and the Islands' lists.
+- **The robots' render chain (ENT-S-198).** AntRobotRenderer and SpiderRobotRenderer draw RenderAntRobot's and RenderSpiderRobot's chain (`OriginalRobotChain`: 180 - yaw, the flip, the model at the anchor), not the living chain's 1.501 lift, death tilt, overlay or name tag; the modern gait turns about the same pivot.
+- **Chaos's caves (WGEN-112).** `chaos_biome.json` carves nothing; `orespawn:chaos_caves` adds vanilla's three carvers back under `[modern] chaosCaves` (MOD-047).
+- **The carvers' water check (WGEN-111).** `LegacyCarvers.waterOnShell` looks to Y248 over a stretch's box, as MapGenCaves and MapGenRavine clamp it, where it stopped at Y120.
+- **The altars' early roll (WGEN-115).** `UtopiaTreeStructure.altarRollReached` runs the tree rolls on no grass and the 1-in-2,000 draw on every state the surface patches can leave the chunk's random in (`patchStates`), and reads the ground only where one passes; the answers are unchanged.
+- **Utopia's tree rolls (WGEN-116).** `UtopiaTreeStructure.hugeRollReached` and `groveReached` run the huge roll's and the grove's gates (`hugeGatesPass`, `groveGatesPass`, which the rolls call themselves) on every state the surface patches can leave the chunk's random in, as WGEN-115's altar roll does; the huge tree, the royal trees and the grove read the ground only where one passes. `chunkPatchStates` keeps a chunk's states for its structure starts; `LegacyTerrainReader`'s column cache mixes its keys. The structure starts of 361 fresh chunks: 137 to 169 ms before, 41 to 50 ms after; a fresh area's first chunk 46 per cent less.
+
+- **The Queen's death (BUG-050, #9).** `TheQueen.hurt` refuses anything once she is dead or dying (a blast in her death ticks had healed her back to a life whose death dropped nothing); every blast heals her (`DamageTypeTags.IS_EXPLOSION`); her death drop placed as `dropItemRand`; `BetterFireball` ends with its shooter (orig :104); her bolts, fireballs and purple powers end with her, the tie saved.
+- **The Islands' space checks (WGEN-120, #8).** `IslandsSpaceCheck`: an Islands spot is turned away where an earlier built neighbour's envelope meets `D4BigSpaceCheck`'s box or a tower's own; the weights at the original's odds before the checks.
+- **Chaos's red the default (MOD-045).** `[modern] chaosRed` defaults to true.
+
+##### How to install
+
+Put `orespawn-1.21.1-2.0.0-beta.15.jar` into the `mods` folder of a NeoForge 21.1 instance for Minecraft 1.21.1 together with GeckoLib 4.7 or newer, and take the beta.14 jar out; MultiHitboxLib and Databuddy are bundled in the jar. For the spears, add Mounts of Mayhem 1.9.8 (on a server: on the server and every client). Existing worlds carry over.
+
+</details>
+
 ## 2.0.0-beta.14 — 2026-10-10 · [release page](https://github.com/CoolFreeze23/Orespawn/releases/tag/v1.21.1-2.0.0-beta.14) · [full notes](phase_g_reports/RELEASE_NOTES_2.0.0-beta.14.md)
 
 The original's dimensions grow its flowers, mushrooms, reeds, colours and trees again, the bosses' gear rolls the original's enchantments, and a few creatures and items look and move as they did.

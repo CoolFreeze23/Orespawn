@@ -3,7 +3,7 @@
 > *"Just plain fun!"* — the classic 1.7.10 OreSpawn, rebuilt for modern
 > Minecraft with 100% source-verified parity.
 
-**Version:** 1.21.1-2.0.0-beta.14 · **Loader:** NeoForge 21.1+ · **Minecraft:** 1.21.1
+**Version:** 1.21.1-2.0.0-beta.15 · **Loader:** NeoForge 21.1+ · **Minecraft:** 1.21.1
 **Status:** public beta — the 2.0 robot overhaul is live; the 1.0 parity
 core underneath is stable, with visual/audio polish in community review
 
@@ -69,7 +69,12 @@ post-beta patch.
 
 ## Roadmap
 
-- **2.0.0-beta.14 (this build)**: the original's flowers, mushrooms, reeds,
+- **2.0.0-beta.15 (this build)**: the original's spawn lists; OreSpawn's ores
+  and the dimensions' dungeons the same from one seed every time; the altars'
+  /locate and new land fast again; the flying Islands, the orchards and the
+  robots as the original's; the Queen's drop and the Islands' structures apart
+  (GitHub #9 and #8); Chaos red again by default.
+- **2.0.0-beta.14**: the original's flowers, mushrooms, reeds,
   ores, colours and trees in its five dimensions, the trees in the original's
   chunks for the same seed; the bosses' vanilla gear on the original's
   enchantments; invisible mobs, spinning projectiles, PlayNicely sizes and the

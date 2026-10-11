@@ -1,7 +1,7 @@
 # Known Issues — OreSpawn Port (BETA)
 
 **This release is a beta.** The game logic underneath has been through a
-1431-test automated suite (all green, in both robot modes; the count grows
+1452-test automated suite (all green, in both robot modes; the count grows
 with every remediation batch) plus hands-on play sessions, but a lot
 of the *visual and
 audio* polish has deliberately been left open for community
@@ -35,7 +35,22 @@ These came straight out of hand-testing and are fixed in code in this build;
 most still need a second pair of eyes in a real game. If one still looks
 wrong for you, please say so.
 
-**2.0.0-beta.14 (this build):**
+**2.0.0-beta.15 (this build):**
+
+- Chaos is red by default again; the original's colours are the option (`[modern] chaosRed = false`). A config file beta.14 wrote keeps `chaosRed = false`. *(MOD-045)*
+- `/locate` for the Royal Altars answers in about a second at most again (1.13 s the slowest), where beta.14 took up to seven and a half seconds. *(WGEN-115)*
+- OreSpawn's creatures spawn from the original's lists, in its biomes and by its own rules, the sea creatures in water again; earlier betas' extra overworld spawns are an option (`[modern] extraSpawns`, default off). *(WGEN-086)*
+- The legacy caves and ravines stop short of water above them up to Y248, as the original's did. *(WGEN-111)*
+- The Ant and Spider Robots are drawn where the original drew them, standing on their legs' footing. *(ENT-S-198)*
+- Chaos carves no caves, as the original's; earlier betas' caves are an option (`[modern] chaosCaves`, default off). *(WGEN-112)*
+- A fresh area of Utopia comes in sooner: its tree rolls no longer read the land where it cannot change them. *(WGEN-116)*
+- The flying Island and Island Too rise from the Island block again, which the Islands leave on their grass, and drift as the original's, their blocks moving with them. *(WGEN-118, WGEN-119)*
+- The fruit trees wear round as the original's, their leaves keeping to the trunk and branches; the bug plants show no empty corners. *(BUG-049, BUG-048)*
+- One seed generates the same OreSpawn ores every time, every vein drawn as the original's were; Mining's and the Village's dungeons are made repeatable too, each try on a random of its own (the port's own change: the original's tries shared one). *(WGEN-117)*
+- The Queen drops her loot and experience when killed, scattered as the original's, and what she fires or summons ends with her; every blast heals her, as the original's. *(BUG-050, #9)*
+- The Islands' structures are never built into each other: a spot where an earlier one stands in the original's space checks stays empty. *(WGEN-120, #8)*
+
+**2.0.0-beta.14:**
 
 - Utopia, the Village, Chaos, Crystal and Mining grow the original's flowers, grass, mushrooms, reeds and pumpkins, by its counts and rules, the mushrooms by its light. *(WGEN-109, WGEN-110, WGEN-103, WGEN-105)*
 - Chaos's ores are the original's; the caves' lava stands to the original's height and Mining's rubies are as common as its. *(WGEN-104, WGEN-105)*
@@ -231,6 +246,10 @@ wrong for you, please say so.
 - The lava fishing bobber floats properly on the lava surface instead of sinking and drifting oddly. *(i085 / TF-028)*
 
 ---
+
+## Known limits of the new features (2.0.0-beta.15)
+
+None new; beta.14's known limits carry over, but for two that were measures and not limits: the orchards grow as many fruit trees as the original's (the four fifths counted trunks by a rule that missed some), and the pumpkins and the maze's mushrooms follow the original's rules patch for patch, their two and a half and one and a half times one seed's draw (0.97, 1.14 and 0.84 times at two other seeds). Their lines say so. *(WGEN-108, WGEN-114)*
 
 ## Known limits of the new features (2.0.0-beta.14)
 
