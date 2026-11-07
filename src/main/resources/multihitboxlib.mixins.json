@@ -7,9 +7,6 @@
 	"mixins": [
 		"entity.MixinLivingEntity",
 		"entity.MixinServerEntity",
-		"geckolib.MixinGeoEntityRenderer",
-		"geckolib.MixinGeoReplacedEntityRenderer",
-		"geckolib.MixinGeoRenderer",
 		"minecraft.MixinCompressionDecoder",
 		"minecraft.MixinPlayer",
 		"minecraft.MixinAbstractArrow",
@@ -21,6 +18,9 @@
 	"client": [
 		"accessor.AccessorClientLevel",
 		"accessor.AccessorEntityRenderer",
+		"geckolib.MixinGeoEntityRenderer",
+		"geckolib.MixinGeoReplacedEntityRenderer",
+		"geckolib.MixinGeoRenderer",
 		"minecraft.MixinMinecraft",
 		"minecraft.client.MixinClientLevelEntityCallbacks"
 	],
