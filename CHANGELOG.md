@@ -4,6 +4,44 @@ Newest first. Every version opens with what a player will notice, in plain words
 the technical detail, with the issue ids and the source lines, is folded under "Technical details" at the end of the
 version. The full release notes for a cut live in `phase_g_reports/` and on the release page.
 
+## 2.0.0-beta.16 — unreleased (on master, not yet in a release jar)
+
+New Modern armour for all 14 sets, and the Gamma Metroid's shell is whole again.
+
+**Changed**
+- The Modern armour style is new for all 14 sets: 3D pieces with each set's own details (the Queen's tiara and scaled mantle, the Royal Guardian's crown, collar and cape, Mobzilla's dorsal plates and claws, Ultimate's swept wings and core gem, Tiger's Eye's ears and claws, Crystal Pink's shards, Moth Scale's antennae and folded wings, the Lava Eel's fins and glowing seams, the Peacock's crest and feather fan), new textures with LabPBR maps, and new inventory icons. The horse, wolf and dog armour of every set match. Choose Modern or Classic in the OreSpawn Visuals screen (O by default); the Classic style is unchanged.
+
+**Fixed**
+- The Gamma Metroid's shell no longer has a hole on its right side: two faces of each dome piece were left half unpainted, and now carry the shell's own pattern.
+
+**In pictures** (from the game, the port alone with no resource pack; only cropped, scaled and labelled)
+
+All 14 sets, front and back:
+
+![All 14 armour sets in the new Modern style, from the front](phase_g_reports/release_media/2.0.0-beta.16/armour_sets_front.jpg)
+
+![All 14 armour sets in the new Modern style, from the back](phase_g_reports/release_media/2.0.0-beta.16/armour_sets_back.jpg)
+
+Each set up close, from three-quarters:
+
+![Each armour set up close from three-quarters](phase_g_reports/release_media/2.0.0-beta.16/armour_closeups.jpg)
+
+The new icons: every set's four pieces, its horse armour and its wolf armour, as the inventory draws them:
+
+![The new armour icons, horse armour and wolf armour icons for all 14 sets](phase_g_reports/release_media/2.0.0-beta.16/armour_icons.jpg)
+
+Each set's armour on a horse and a wolf:
+
+![Every set's horse and wolf armour](phase_g_reports/release_media/2.0.0-beta.16/armour_animals.jpg)
+
+<details>
+<summary>Technical details</summary>
+
+- The Modern style's files are new: `armour_geo/<set>_<piece>.json` (56), `textures/models/armor/modern/` (atlases and dog textures with `_n`/`_s`), `textures/item/modern/` icons and `models/item/modern/` models, the horse and wolf armour's textures, icons and item models, and `textures/gui/visuals/modern.png`. The spears are unchanged. `tools/armour_asset_pins.json` pins the new files; the asset audit passes.
+- `textures/entity/gammametroid.png`: 392 fully clear pixels on the dome's side and underside faces (shell1 at 95,0 to 114,31; shell2 at 24,30 to 40,54) are painted from each piece's opposite face, mirrored as the box wraps. Painted pixels and every other part of the sheet are unchanged.
+
+</details>
+
 ## 2.0.0-beta.15 — 2026-10-11 · [release page](https://github.com/CoolFreeze23/Orespawn/releases/tag/v1.21.1-2.0.0-beta.15) · [full notes](phase_g_reports/RELEASE_NOTES_2.0.0-beta.15.md)
 
 OreSpawn's creatures spawn from the original's lists again, one seed gives the same OreSpawn ores every time, the Queen drops her loot and the Islands' structures stand apart (GitHub #9 and #8), the flying Islands fly, and Chaos is red again by default.
