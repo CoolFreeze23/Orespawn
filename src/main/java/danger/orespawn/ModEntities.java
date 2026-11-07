@@ -622,27 +622,23 @@ public class ModEntities {
                     // 1.7.10 func_70105_a: Firefly = 0.4 x 0.8 (orig Firefly.java:29), ENT-S-095; was an uncited 0.2 x 0.2
                     .sized(0.4f, 0.8f).clientTrackingRange(8).build("firefly"));
 
-    // Ghost / GhostSkelly were AMBIENT originally, but in 1.7.10 source they
-    // are combat mobs that attack players (see reference_1_7_10_source
-    // Ghost.java/GhostSkelly.java). AMBIENT caps out their spawn attempts at
-    // a very low mob-cap and routes them through the AMBIENT (bat-style)
-    // spawn rules — inappropriate for an aggressive mob. Moved to MONSTER
-    // so future combat-AI goals (Phase 4B/C) hook into the proper target
-    // selector + despawn rules, and spawning respects light-level gating.
-    //
-    // NOTE: the Java classes still extend AmbientCreature today. That's OK
-    // at the registry level (MobCategory is independent of class hierarchy),
-    // but Phase 4C will refactor them to extend Monster/PathfinderMob so
-    // they can carry real target goals. Tracking issue: see inventory notes.
+    // Ghost / GhostSkelly count as ambient creatures, as their 1.7.10 classes (EntityAmbientCreature) did: the 1.7.10
+    // spawner counted a mob toward the cap of every creature type whose class it extends, and 1.21.1 counts it toward
+    // its type's MobCategory alone. Both are drawn from ambient lists only (the Halloween and seasonal entries of
+    // original_spawns.json), so the ambient pass spawns them and must also be the cap they fill. Typed as monsters, the
+    // ambient pass never counted them, and it kept adding Ghosts while the bats and moths stayed under the ambient
+    // cap; on Peaceful nothing removed them (an AmbientCreature stays on Peaceful, as the original's did), and on the
+    // other difficulties they took the monster cap's room from the dimension's real monsters. Their touch attack and
+    // their own night rule do not depend on the category.
     // Ghost: 1.7.10 func_70105_a(0.5f, 1.5f).
     public static final DeferredHolder<EntityType<?>, EntityType<Ghost>> GHOST =
-            ENTITY_TYPES.register("ghost", () -> EntityType.Builder.of(Ghost::new, MobCategory.MONSTER)
+            ENTITY_TYPES.register("ghost", () -> EntityType.Builder.of(Ghost::new, MobCategory.AMBIENT)
                     .sized(0.5f, 1.5f).clientTrackingRange(10).build("ghost"));
 
     // GhostSkelly: 1.7.10 func_70105_a(1.5f, 2.0f) — intentionally larger
     // than Ghost so its skeletal silhouette reads correctly at distance.
     public static final DeferredHolder<EntityType<?>, EntityType<GhostSkelly>> GHOST_SKELLY =
-            ENTITY_TYPES.register("ghost_skelly", () -> EntityType.Builder.of(GhostSkelly::new, MobCategory.MONSTER)
+            ENTITY_TYPES.register("ghost_skelly", () -> EntityType.Builder.of(GhostSkelly::new, MobCategory.AMBIENT)
                     .sized(1.5f, 2.0f).clientTrackingRange(10).build("ghost_skelly"));
 
     // 1.7.10 func_70105_a: Mothra = 5.0 × 2.0 (orig Mothra.java:65). The port shipped 6 × 3 under the

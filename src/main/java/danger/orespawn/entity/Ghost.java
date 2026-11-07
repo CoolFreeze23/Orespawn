@@ -26,10 +26,10 @@ import danger.orespawn.OreSpawnMod;
 /**
  * Ghost — hauntingly hovers toward the nearest player and inflicts small
  * contact damage. 1.7.10's EntityAmbientCreature subclass had no damage at
- * all; Phase 4D (dimension locals) intentionally upgrades it to a
- * MobCategory.MONSTER with a weak touch attack so Chaos dimension spawns
- * feel threatening. The flight/hover AI is kept identical to 1.7.10 so
- * the silhouette and movement cadence are preserved.
+ * all; the port adds a weak touch attack so Chaos dimension spawns feel
+ * threatening. It still counts as an ambient creature for spawning
+ * (MobCategory.AMBIENT, see ModEntities). The flight/hover AI is kept
+ * identical to 1.7.10 so the silhouette and movement cadence are preserved.
  */
 public class Ghost extends AmbientCreature {
     // OPT-011: cached SoundEvents — identical createVariableRangeEvent ids,

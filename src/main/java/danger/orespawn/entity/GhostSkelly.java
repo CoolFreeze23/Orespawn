@@ -26,8 +26,8 @@ import danger.orespawn.entity.pose.GhostSkellyPose;
 
 /**
  * GhostSkelly — sister mob to {@link Ghost} with a heavier silhouette and
- * stronger contact damage. See Ghost.java for the rationale behind the
- * 1.7.10 -> 1.21.1 monster-category upgrade.
+ * stronger contact damage. Like the Ghost it counts as an ambient creature
+ * for spawning (MobCategory.AMBIENT, see ModEntities).
  */
 public class GhostSkelly extends AmbientCreature implements GhostSkellyPose {
     // OPT-011: cached SoundEvents — identical createVariableRangeEvent ids,
