@@ -1,114 +1,85 @@
 {
- "set": "amethyst",
- "piece": "boots",
- "base": "fine",
- "texture_width": 384,
- "texture_height": 256,
- "bones": {
-  "leftleg": [
-   {
-    "origin": [
-     -2,
-     -12,
-     -2
+  "set": "amethyst",
+  "piece": "boots",
+  "template": "diamond",
+  "texture_width": 384,
+  "texture_height": 256,
+  "bones": {
+    "leftleg": [
+      {
+        "origin": [
+          -2.5,
+          -12.5,
+          -2.5
+        ],
+        "size": [
+          5,
+          9,
+          5
+        ],
+        "uv": [
+          0,
+          70
+        ],
+        "inflate": 0.01,
+        "mirror": false
+      },
+      {
+        "origin": [
+          -3,
+          -13,
+          -3
+        ],
+        "size": [
+          6,
+          10,
+          6
+        ],
+        "uv": [
+          22,
+          68
+        ],
+        "inflate": 0.01,
+        "mirror": false
+      }
     ],
-    "size": [
-     4,
-     12,
-     4
-    ],
-    "uv": [
-     30,
-     34
-    ],
-    "inflate": 0.9
-   },
-   {
-    "origin": [
-     -2.4,
-     -13.0,
-     -3.5
-    ],
-    "size": [
-     4.8,
-     1.8,
-     1.2
-    ],
-    "uv": [
-     47,
-     34
+    "rightleg": [
+      {
+        "origin": [
+          -2.5,
+          -12.5,
+          -2.5
+        ],
+        "size": [
+          5,
+          9,
+          5
+        ],
+        "uv": [
+          0,
+          56
+        ],
+        "inflate": 0.01,
+        "mirror": false
+      },
+      {
+        "origin": [
+          -3,
+          -13,
+          -3
+        ],
+        "size": [
+          6,
+          10,
+          6
+        ],
+        "uv": [
+          22,
+          52
+        ],
+        "inflate": 0.01,
+        "mirror": false
+      }
     ]
-   },
-   {
-    "origin": [
-     -3.2,
-     -5.6,
-     -3.2
-    ],
-    "size": [
-     6.4,
-     1.2,
-     6.4
-    ],
-    "uv": [
-     58,
-     34
-    ]
-   }
-  ],
-  "rightleg": [
-   {
-    "origin": [
-     -2,
-     -12,
-     -2
-    ],
-    "size": [
-     4,
-     12,
-     4
-    ],
-    "uv": [
-     30,
-     34
-    ],
-    "inflate": 0.9,
-    "mirror": true
-   },
-   {
-    "origin": [
-     -2.4,
-     -13.0,
-     -3.5
-    ],
-    "size": [
-     4.8,
-     1.8,
-     1.2
-    ],
-    "uv": [
-     47,
-     34
-    ],
-    "mirror": true
-   },
-   {
-    "origin": [
-     -3.2,
-     -5.6,
-     -3.2
-    ],
-    "size": [
-     6.4,
-     1.2,
-     6.4
-    ],
-    "uv": [
-     58,
-     34
-    ],
-    "mirror": true
-   }
-  ]
- }
+  }
 }

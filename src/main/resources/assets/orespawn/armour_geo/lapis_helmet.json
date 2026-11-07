@@ -1,113 +1,65 @@
 {
- "set": "lapis",
- "piece": "helmet",
- "base": "fine",
- "texture_width": 384,
- "texture_height": 256,
- "bones": {
-  "head": [
-   {
-    "origin": [
-     -4,
-     0,
-     -4
-    ],
-    "size": [
-     8,
-     8,
-     8
-    ],
-    "uv": [
-     0,
-     0
-    ],
-    "inflate": 1.0
-   },
-   {
-    "origin": [
-     -5.0,
-     5.6,
-     -5.5
-    ],
-    "size": [
-     10.0,
-     1.0,
-     0.5
-    ],
-    "uv": [
-     33,
-     0
-    ],
-    "uv_size": [
-     10,
-     1,
-     1
+  "set": "lapis",
+  "piece": "helmet",
+  "template": "diamond",
+  "texture_width": 384,
+  "texture_height": 256,
+  "bones": {
+    "head": [
+      {
+        "origin": [
+          -4.5,
+          -0.5,
+          -4.5
+        ],
+        "size": [
+          9,
+          9,
+          9
+        ],
+        "uv": [
+          0,
+          20
+        ],
+        "inflate": 0.1,
+        "mirror": false
+      },
+      {
+        "origin": [
+          -5,
+          -1,
+          -5
+        ],
+        "size": [
+          10,
+          10,
+          10
+        ],
+        "uv": [
+          0,
+          0
+        ],
+        "inflate": 0,
+        "mirror": false
+      },
+      {
+        "origin": [
+          -1.06,
+          3.2025,
+          -5.26
+        ],
+        "size": [
+          2.12,
+          5.32,
+          10.52
+        ],
+        "uv": [
+          36,
+          17
+        ],
+        "inflate": 0.2,
+        "mirror": false
+      }
     ]
-   },
-   {
-    "origin": [
-     -0.6,
-     1.6,
-     -5.6
-    ],
-    "size": [
-     1.2,
-     4.0,
-     0.6
-    ],
-    "uv": [
-     56,
-     0
-    ],
-    "uv_size": [
-     1,
-     4,
-     1
-    ]
-   },
-   {
-    "origin": [
-     5.0,
-     -1.0,
-     -5.0
-    ],
-    "size": [
-     0.5,
-     4.0,
-     5.0
-    ],
-    "uv": [
-     61,
-     0
-    ],
-    "uv_size": [
-     1,
-     4,
-     5
-    ]
-   },
-   {
-    "origin": [
-     -5.5,
-     -1.0,
-     -5.0
-    ],
-    "size": [
-     0.5,
-     4.0,
-     5.0
-    ],
-    "uv": [
-     61,
-     0
-    ],
-    "mirror": true,
-    "uv_size": [
-     1,
-     4,
-     5
-    ]
-   }
-  ]
- }
+  }
 }
