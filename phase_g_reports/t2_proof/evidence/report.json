@@ -7412,7 +7412,7 @@
       "proof_scope": "production_proof_model",
       "source_class": "danger.orespawn.entity.client.GammaMetroidModel",
       "source_class_sha256": "87082ce84b32c61bd9c0f2455147960ac67f7243e35f7bb12d0777ef6f90ad26",
-      "compiled_dump_sha256": "fdc07789e01be69a185fa2a4b769065dfaa6414a5531a525a5e1c5d68b7e3dc2",
+      "compiled_dump_sha256": "3d7e26855ba13fbb17ced9f47f49b125f509240b0b4de88b37700d3d231adc21",
       "bone_count": 21,
       "cube_count": 21,
       "geometry_sha256": "222e69e92b1b6e750af47ced6e1f6249ada0761720fb82d636319d6795bfea5f",
