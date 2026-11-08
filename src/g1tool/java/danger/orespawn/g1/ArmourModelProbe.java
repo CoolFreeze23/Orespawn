@@ -62,8 +62,11 @@ import java.util.function.Supplier;
  *   <li>every vertex carries the light, overlay and colour the layer passed, and drawn on a turned pose (on the player
  *       and, fitted, on a zombie villager) every face's normal is a unit vector pointing out of its cube;</li>
  *   <li>each shown part holds the cubes it draws (a renderer that draws a model's parts itself finds them);</li>
- *   <li>each shown part's first cube, the piece's base box, is drawn exactly where vanilla draws the wearer's own armour
- *       box for that part (vanilla's renderToBuffer of the wearer's armour model with that part alone shown): on the
+ *   <li>a shown part's base box, the cube that sits on vanilla's own armour box on the player (wherever it stands in
+ *       the file), is drawn exactly where vanilla draws the wearer's own armour box for that part (vanilla's
+ *       renderToBuffer of the wearer's armour model with that part alone shown); a part with no such cube is named in
+ *       {@link #NO_BASE_BOX} (the 3D pieces whose shells, plates and pauldrons stand off vanilla's box by design), and a
+ *       part named there must have none: on the
  *       player, an armour stand, a zombie villager (its helmet box 2 higher, its body and legs grown 0.1 over its robe),
  *       a guard-shaped model (a humanoid mesh with its helmet box at y -10, as Guard Villagers' guards wear) and a
  *       piglin (its outer armour at 1.02), grown and as babies; and never shrunk: a drowned, whose outer armour vanilla
@@ -81,6 +84,57 @@ public final class ArmourModelProbe {
             {"left_arm", "leftarm"}, {"right_leg", "rightleg"}, {"left_leg", "leftleg"}, {"hat", "hat"}};
     /** What the layer passes, each value distinct so a swap shows (light: block 7, sky 15; overlay u 3, v 10). */
     private static final int LIGHT = 0x00F00070, OVERLAY = 0x000A0003, COLOR = 0xFF406080;
+    /**
+     * The parts with no cube on vanilla's armour box, by design: the Modern pieces' own shells, plates and pauldrons
+     * (the chestplates' arms are shoulder pieces, the leggings and boots wrap the leg in their own boxes, the Queen's,
+     * the Royal Guardian's and Mobzilla's helmets sit on boxes of their own). Every other part carries vanilla's box.
+     */
+    private static final Map<String, Set<String>> NO_BASE_BOX = Map.ofEntries(
+            Map.entry("amethyst_boots", Set.of("left_leg", "right_leg")),
+            Map.entry("amethyst_chestplate", Set.of("body", "left_arm", "right_arm")),
+            Map.entry("amethyst_leggings", Set.of("body", "left_leg", "right_leg")),
+            Map.entry("emerald_boots", Set.of("left_leg", "right_leg")),
+            Map.entry("emerald_chestplate", Set.of("body", "left_arm", "right_arm")),
+            Map.entry("emerald_leggings", Set.of("body", "left_leg", "right_leg")),
+            Map.entry("experience_boots", Set.of("left_leg", "right_leg")),
+            Map.entry("experience_chestplate", Set.of("body", "left_arm", "right_arm")),
+            Map.entry("experience_leggings", Set.of("body", "left_leg", "right_leg")),
+            Map.entry("lapis_boots", Set.of("left_leg", "right_leg")),
+            Map.entry("lapis_chestplate", Set.of("body", "left_arm", "right_arm")),
+            Map.entry("lapis_leggings", Set.of("body", "left_leg", "right_leg")),
+            Map.entry("lavaeel_boots", Set.of("right_leg", "left_leg")),
+            Map.entry("lavaeel_chestplate", Set.of("body", "left_arm", "right_arm")),
+            Map.entry("lavaeel_leggings", Set.of("body", "right_leg", "left_leg")),
+            Map.entry("mobzilla_boots", Set.of("left_leg", "right_leg")),
+            Map.entry("mobzilla_chestplate", Set.of("body", "left_arm", "right_arm")),
+            Map.entry("mobzilla_helmet", Set.of("head")),
+            Map.entry("mobzilla_leggings", Set.of("body", "left_leg", "right_leg")),
+            Map.entry("mothscale_boots", Set.of("right_leg", "left_leg")),
+            Map.entry("mothscale_chestplate", Set.of("body", "left_arm", "right_arm")),
+            Map.entry("mothscale_leggings", Set.of("body", "left_leg", "right_leg")),
+            Map.entry("peacock_boots", Set.of("right_leg", "left_leg")),
+            Map.entry("peacock_chestplate", Set.of("body", "left_arm", "right_arm")),
+            Map.entry("peacock_leggings", Set.of("body", "right_leg", "left_leg")),
+            Map.entry("pink_boots", Set.of("left_leg", "right_leg")),
+            Map.entry("pink_chestplate", Set.of("body", "left_arm", "right_arm")),
+            Map.entry("pink_leggings", Set.of("body", "left_leg", "right_leg")),
+            Map.entry("queen_boots", Set.of("left_leg", "right_leg")),
+            Map.entry("queen_chestplate", Set.of("body", "left_arm", "right_arm")),
+            Map.entry("queen_helmet", Set.of("head")),
+            Map.entry("queen_leggings", Set.of("body", "left_leg", "right_leg")),
+            Map.entry("royal_boots", Set.of("left_leg", "right_leg")),
+            Map.entry("royal_chestplate", Set.of("body", "left_arm", "right_arm")),
+            Map.entry("royal_helmet", Set.of("head")),
+            Map.entry("royal_leggings", Set.of("body", "left_leg", "right_leg")),
+            Map.entry("ruby_boots", Set.of("left_leg", "right_leg")),
+            Map.entry("ruby_chestplate", Set.of("body", "left_arm", "right_arm")),
+            Map.entry("ruby_leggings", Set.of("body", "left_leg", "right_leg")),
+            Map.entry("tigerseye_boots", Set.of("left_leg", "right_leg")),
+            Map.entry("tigerseye_chestplate", Set.of("body", "left_arm", "right_arm")),
+            Map.entry("tigerseye_leggings", Set.of("body", "left_leg", "right_leg")),
+            Map.entry("ultimate_boots", Set.of("left_leg", "right_leg")),
+            Map.entry("ultimate_chestplate", Set.of("body", "left_arm", "right_arm")),
+            Map.entry("ultimate_leggings", Set.of("body", "left_leg", "right_leg")));
 
     private ArmourModelProbe() {
     }
@@ -173,16 +227,46 @@ public final class ArmourModelProbe {
                         failures++;
                     }
                 }
+                // each part's base box: the cube drawn on vanilla's own armour box on the player, or none (named)
+                Map<String, Integer> base = new LinkedHashMap<>();
+                HumanoidModel<?>[] player = wearers.get("the player");
+                for (String part : shown) {
+                    if (part.equals("hat")) continue;
+                    Recorder ours = draw(model, player[slot == EquipmentSlot.LEGS ? 0 : 1], slot, false, part,
+                            new PoseStack());
+                    Recorder theirs = drawVanilla(player[slot == EquipmentSlot.LEGS ? 2 : 3], false, part);
+                    float[] box = extent(theirs.positions, 0, theirs.positions.size());
+                    int found = -1;
+                    for (int cube = 0; (cube + 1) * 24 <= ours.positions.size() && found < 0; cube++) {
+                        if (sameBox(extent(ours.positions, cube * 24, (cube + 1) * 24), box) == null) found = cube;
+                    }
+                    boolean named = NO_BASE_BOX.getOrDefault(name, Set.of()).contains(part);
+                    if (ours.positions.size() < 24) {
+                        System.out.printf("ARMOUR MODELS FAIL: %s's %s draws no cube%n", name, part);
+                        failures++;
+                    } else if (found < 0 && !named) {
+                        System.out.printf("ARMOUR MODELS FAIL: %s's %s has no cube on vanilla's armour box and is not "
+                                + "named in NO_BASE_BOX%n", name, part);
+                        failures++;
+                    } else if (found >= 0 && named) {
+                        System.out.printf("ARMOUR MODELS FAIL: %s's %s is named in NO_BASE_BOX but its cube %d sits on "
+                                + "vanilla's armour box%n", name, part, found);
+                        failures++;
+                    } else if (found >= 0) {
+                        base.put(part, found);
+                    }
+                }
                 for (Map.Entry<String, HumanoidModel<?>[]> wearer : wearers.entrySet()) {
                     HumanoidModel<?> original = wearer.getValue()[slot == EquipmentSlot.LEGS ? 0 : 1];
                     HumanoidModel<?> target = wearer.getValue()[slot == EquipmentSlot.LEGS ? 2 : 3];
                     for (boolean young : new boolean[]{false, true}) {
-                        for (String part : shown) {
-                            if (part.equals("hat")) continue;
+                        for (Map.Entry<String, Integer> entry : base.entrySet()) {
+                            String part = entry.getKey();
+                            int at = entry.getValue() * 24;
                             Recorder ours = draw(model, original, slot, young, part, new PoseStack());
                             Recorder theirs = drawVanilla(target, young, part);
-                            String wrong = ours.positions.size() < 24 ? "draws no cube"
-                                    : sameBox(extent(ours.positions, 0, 24),
+                            String wrong = ours.positions.size() < at + 24 ? "draws no cube"
+                                    : sameBox(extent(ours.positions, at, at + 24),
                                     extent(theirs.positions, 0, theirs.positions.size()));
                             if (wrong != null) {
                                 System.out.printf("ARMOUR MODELS FAIL: %s's base box on %s's %s (%s) %s%n", name,
@@ -308,7 +392,8 @@ public final class ArmourModelProbe {
         System.out.printf("ARMOUR MODELS PASS: %d pieces drawn as the armour layer draws them (%d vertices, each on the "
                 + "UV the file's box UV gives it, every unrotated face turned as vanilla turns it, every normal a unit "
                 + "vector out of its cube on a turned pose, the light, overlay and colour handed on, only the slot's "
-                + "parts, each part holding the cubes it draws); each piece's base box drawn exactly on the wearer's own "
+                + "parts, each part holding the cubes it draws); each part's base box (the parts NO_BASE_BOX names have "
+                + "none, by design) drawn exactly on the wearer's own "
                 + "armour box as vanilla draws it, on the player, an armour stand, a zombie villager, a guard-shaped "
                 + "model and a piglin, and never shrunk (a drowned's outer pieces at the player's size), grown and as "
                 + "babies (%d boxes); the modern texture handed only with the modern model; the dog texture only to a "
