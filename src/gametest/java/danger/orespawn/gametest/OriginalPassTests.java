@@ -355,7 +355,9 @@ public class OriginalPassTests {
             String name = (String) w[0];
             Biome biome = biomes.get(ResourceKey.create(Registries.BIOME, rl(name)));
             helper.assertTrue(biome != null, "no " + name);
-            BiomeSpecialEffects e = biome.getSpecialEffects();
+            // the effects the game draws with: NeoForge points every read of the biome's effects at the modified ones
+            // except getSpecialEffects() itself, which keeps returning the biome file's own
+            BiomeSpecialEffects e = biome.getModifiedSpecialEffects();
             boolean red = name.equals("chaos_biome") && danger.orespawn.OreSpawnConfig.chaosRed();
             boolean colours = red
                     ? e.getGrassColorOverride().equals(java.util.Optional.of(0x509D00))
