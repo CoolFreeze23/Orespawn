@@ -4,15 +4,23 @@ Newest first. Every version opens with what a player will notice, in plain words
 the technical detail, with the issue ids and the source lines, is folded under "Technical details" at the end of the
 version. The full release notes for a cut live in `phase_g_reports/` and on the release page.
 
-## 2.0.0-beta.16 — unreleased (on master, not yet in a release jar)
+## 2.0.0-beta.16 — 2026-11-08 · [release page](https://github.com/CoolFreeze23/Orespawn/releases/tag/v1.21.1-2.0.0-beta.16) · [full notes](phase_g_reports/RELEASE_NOTES_2.0.0-beta.16.md)
 
-New Modern armour for all 14 sets, and the Gamma Metroid's shell is whole again.
+New Modern armour for all 14 sets, the Gamma Metroid's shell is whole again, Ghosts and Ghost Skeletons keep to the ambient mob cap again, and dedicated servers start without two MultiHitboxLib errors.
 
 **Changed**
 - The Modern armour style is new for all 14 sets: 3D pieces with each set's own details (the Queen's tiara and scaled mantle, the Royal Guardian's crown, collar and cape, Mobzilla's dorsal plates and claws, Ultimate's swept wings and core gem, Tiger's Eye's ears and claws, Crystal Pink's shards, Moth Scale's antennae and folded wings, the Lava Eel's fins and glowing seams, the Peacock's crest and feather fan), new textures with LabPBR maps, and new inventory icons. The horse, wolf and dog armour of every set match. Choose Modern or Classic in the OreSpawn Visuals screen (O by default); the Classic style is unchanged.
 
 **Fixed**
 - The Gamma Metroid's shell no longer has a hole on its right side: two faces of each dome piece were left half unpainted, and now carry the shell's own pattern.
+- Ghosts and Ghost Skeletons count toward the ambient mob cap again, as in the original. Counted as monsters, the ambient spawning that adds them never stopped for them: on 31 October the Mining dimension filled with dozens of them, on Peaceful too, and elsewhere they took the room of the dimension's real monsters.
+- Dedicated servers no longer log "Attempted to load class net/minecraft/client/renderer/entity/EntityRenderer for invalid dist DEDICATED_SERVER" twice at startup.
+
+**Good to know**
+- Ghosts and Ghost Skeletons already in a world stay; new ones stop coming once the ambient cap is full, so a crowded area thins out as they despawn.
+- A command selector with a distance or a volume (`@e[type=orespawn:alien,distance=..10]`) also returns each multi-hitbox creature's hitbox parts, as NeoForge does for every multipart entity, the Ender Dragon included: an Alien answers 14, a dragon 9. Without a distance or volume a selector returns the creature alone.
+
+**Install:** put `orespawn-1.21.1-2.0.0-beta.16.jar` in `mods/` (NeoForge 21.1, Minecraft 1.21.1, GeckoLib 4.7 or newer) and take the beta.15 jar out. For the spears, add Mounts of Mayhem 1.9.8.
 
 **In pictures** (from the game, the port alone with no resource pack; only cropped, scaled and labelled)
 
@@ -37,8 +45,23 @@ Each set's armour on a horse and a wolf:
 <details>
 <summary>Technical details</summary>
 
+##### What beta.16 is
+
+beta.16 is beta.15 with the new Modern armour, the Gamma Metroid's shell painted whole, the Ghost and the Ghost Skelly counted as ambient creatures again, and MultiHitboxLib's GeckoLib renderer mixins on the client only.
+
+##### What changed
+
 - The Modern style's files are new: `armour_geo/<set>_<piece>.json` (56), `textures/models/armor/modern/` (atlases and dog textures with `_n`/`_s`), `textures/item/modern/` icons and `models/item/modern/` models, the horse and wolf armour's textures, icons and item models, and `textures/gui/visuals/modern.png`. The spears are unchanged. `tools/armour_asset_pins.json` pins the new files; the asset audit passes.
 - `textures/entity/gammametroid.png`: 392 fully clear pixels on the dome's side and underside faces (shell1 at 95,0 to 114,31; shell2 at 24,30 to 40,54) are painted from each piece's opposite face, mirrored as the box wraps. Painted pixels and every other part of the sheet are unchanged.
+- `orespawn:ghost` and `orespawn:ghost_skelly` are `MobCategory.AMBIENT` (were `MONSTER`), as their 1.7.10 classes (EntityAmbientCreature) counted. Both are drawn from ambient lists only, and 1.21 counts a mob toward its type's category alone. Tests `spawncount_a` and `spawncount_b`.
+- `multihitboxlib.mixins.json`: `geckolib.MixinGeoEntityRenderer`, `MixinGeoReplacedEntityRenderer` and `MixinGeoRenderer` move from `mixins` to `client`.
+- Test `wgen101a` reads the colours the game draws with (`getModifiedSpecialEffects()`); `getSpecialEffects()` keeps returning the biome file's own, so on a fresh config the test failed though Chaos was red in game.
+- `ArmourModelProbe` checks each part's own base box (the cube on vanilla's armour box, wherever it stands in the file) and names the 45 Modern pieces that have none by design (`NO_BASE_BOX`). Re-pinned: the T2 proof's Gamma Metroid entry and the G1 benchmark.
+
+
+##### How to install
+
+Put `orespawn-1.21.1-2.0.0-beta.16.jar` into the `mods` folder of a NeoForge 21.1 instance for Minecraft 1.21.1 together with GeckoLib 4.7 or newer, and take the beta.15 jar out; MultiHitboxLib and Databuddy are bundled in the jar. For the spears, add Mounts of Mayhem 1.9.8 (on a server: on the server and every client). Existing worlds carry over.
 
 </details>
 

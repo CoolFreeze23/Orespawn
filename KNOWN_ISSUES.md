@@ -1,7 +1,7 @@
 # Known Issues — OreSpawn Port (BETA)
 
 **This release is a beta.** The game logic underneath has been through a
-1452-test automated suite (all green, in both robot modes; the count grows
+1454-test automated suite (all green, in both robot modes; the count grows
 with every remediation batch) plus hands-on play sessions, but a lot
 of the *visual and
 audio* polish has deliberately been left open for community
@@ -35,7 +35,14 @@ These came straight out of hand-testing and are fixed in code in this build;
 most still need a second pair of eyes in a real game. If one still looks
 wrong for you, please say so.
 
-**2.0.0-beta.15 (this build):**
+**2.0.0-beta.16 (this build):**
+
+- The Modern armour style is new for all 14 sets, with the horse, wolf and dog armour to match; the Classic style is unchanged. Please say if a piece sits wrong on a player, a horse, a wolf or a dog.
+- The Gamma Metroid's shell is whole: the right side and underside of its dome pieces no longer show a hole.
+- Ghosts and Ghost Skeletons count toward the ambient mob cap again, as in the original; on 31 October they no longer crowd the Mining dimension or Peaceful worlds.
+- Dedicated servers start without MultiHitboxLib's two "invalid dist" errors.
+
+**2.0.0-beta.15:**
 
 - Chaos is red by default again; the original's colours are the option (`[modern] chaosRed = false`). A config file beta.14 wrote keeps `chaosRed = false`. *(MOD-045)*
 - `/locate` for the Royal Altars answers in about a second at most again (1.13 s the slowest), where beta.14 took up to seven and a half seconds. *(WGEN-115)*
@@ -246,6 +253,10 @@ wrong for you, please say so.
 - The lava fishing bobber floats properly on the lava surface instead of sinking and drifting oddly. *(i085 / TF-028)*
 
 ---
+
+## Known limits of the new features (2.0.0-beta.16)
+
+- **Selectors and hitbox parts:** a command selector with a distance or a volume (`@e[type=orespawn:alien,distance=..10]`) returns each multi-hitbox creature's parts as well (an Alien answers 14), as NeoForge does for every multipart entity, the Ender Dragon included. `execute as` over such a selector runs once per part; a selector without a distance or volume returns the creature alone.
 
 ## Known limits of the new features (2.0.0-beta.15)
 
